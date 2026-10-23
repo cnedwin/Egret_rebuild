@@ -637,7 +637,9 @@ function surfaceRules(root, id, snapshot) {
   let admittedAtlasSuccessor = false;
   for (const name of packages) {
     const file = 'packages/' + name + '/package.json', value = JSON.parse(read(root, file, id)), expectedPackage = snapshot.packages[name];
-    if(m31UiPackagePairs.some(pair=>pair.current.path===file)&&m31UiPackageSuccessor(m31UiPackagePairs.find(pair=>pair.current.path===file).base,read(root,file,id))){
+    // Preserve assigned export/DAG refusal precedence; complete raw package admission stays below.
+    if(m31UiPackagePairs.some(pair=>pair.current.path===file)
+      &&equal(value.exports?.['./ui'],{types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'})){
       delete value.exports['./ui'];
     }
     let projectedExports = value.exports, projectedImports = value.imports;

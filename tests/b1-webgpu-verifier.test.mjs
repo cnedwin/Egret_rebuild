@@ -376,7 +376,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   const { resolveB1Dependency } = await import(pathToFileURL(join(repository, 'tools/b1-webgpu/registryProvenance.mjs')).href);
   const served = new Map();
   // Evaluate only the verifier's policy declarations and collector, never emitted SDK code or main().
-  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
+  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
     repository: await realpath(repository), sep, assert, resolve, readFile: selectedReadFile, realpath, resolveB1Dependency, URL,
     served, identities: new Map(), hash: body => createHash('sha256').update(body).digest('hex'),
   }, { timeout: 1000 });
@@ -394,7 +394,8 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   assert.equal(policy.historicalSourceModuleLimit, 128);
   assert.equal(policy.m15SourceModuleLimit, 133);
   assert.equal(policy.m15ModuleIdentities.size, 133);
-  assert.equal(policy.currentModuleIdentities.size, 133);
+  assert.equal(policy.m31SourceModuleLimit, 135);
+  assert.equal(policy.currentModuleIdentities.size, 135);
   assert.deepEqual([...policy.m12PerformanceModuleSuccessors.keys()].sort(), ["packages/engine/dist/rendering/admitTexturedFrame2D.js","packages/engine/dist/rendering/prepareImages2D.js","packages/engine/dist/rendering/prepareRectangles2D.js","packages/engine/dist/rendering/prepareTexturedDraws2D.js","packages/engine/dist/rendering/prepareTexturedMesh2D.js","packages/engine/dist/rendering/preparedFrameCache2D.js","packages/engine/dist/web/WebGPUHost.js","packages/runtime/dist/texturedFrameCapture.js"]);
   for (const [name, successor] of policy.m12PerformanceModuleSuccessors) {
     assert.ok(policy.m15ModuleIdentities.has(name), 'A successor cannot add a module');
@@ -402,7 +403,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
     assert.deepEqual(policy.currentModuleIdentities.get(name), successor);
   }
   assert.equal(policy.m15ModuleIdentities.get('packages/engine/dist/web/WebGPUHost.js').sha256, 'edfd58cc7facae99f49541d906224bff1df9f32f49a26a630d2de70c5040752d');
-  assert.match(source, /served\.size < m15SourceModuleLimit/);
+  assert.match(source, /served\.size < m31SourceModuleLimit/);
   assert.match(source, /body\.length <= 1024 \* 1024/);
   assert.match(source, /emitted <= 4 \* 1024 \* 1024/);
   return { ...policy, served };
@@ -413,7 +414,7 @@ test('S07 the finite native collector admits the actual current emitted public c
   for (const entry of policy.entryNames) await policy.collect(entry);
   const bytes = [...policy.served.values()].reduce((sum, value) => sum + value.body.length, 0);
   policy.assertCurrentClosure();
-  assert.equal(policy.served.size, 133); assert.ok(bytes <= 4 * 1024 * 1024);
+  assert.equal(policy.served.size, 135); assert.ok(bytes <= 4 * 1024 * 1024);
   t.diagnostic(`Actual emitted closure: ${policy.served.size} modules, ${bytes} bytes; SDK code was read, never evaluated`);
 });
 
@@ -432,11 +433,11 @@ async function completeCurrentClosure(policy = undefined) {
   const current = policy ?? await emittedClosurePolicy();
   for (const entry of current.entryNames) await current.collect(entry);
   current.assertCurrentClosure();
-  assert.equal(current.served.size, 133);
+  assert.equal(current.served.size, 135);
   return current;
 }
 
-test('S09 the actual 133-module closure cannot admit a 134th real file even after a local allowlist mutation', async () => {
+test('S09 the actual 135-module closure cannot admit a 136th real file even after a local allowlist mutation', async () => {
   const policy = await completeCurrentClosure();
   const extra = 'packages/engine/dist/web/BrowserTextureProvider.js';
   const body = await readFile(join(repository, extra));
@@ -448,7 +449,7 @@ test('S09 the actual 133-module closure cannot admit a 134th real file even afte
     policy.allowedModules.add(extra);
     policy.currentModuleIdentities.set(extra, { bytes: body.length, sha256: createHash('sha256').update(body).digest('hex') });
     await assert.rejects(policy.collect(extra), error => error.message === 'Finite emitted closure exceeded');
-    assert.equal(policy.served.size, 133);
+    assert.equal(policy.served.size, 135);
     assert.equal(policy.served.has('/' + extra), false);
   } catch (cause) {
     failures.push(cause);
@@ -544,24 +545,24 @@ async function requestQuotaFixture() {
 }
 test('S12 actual selected route closures include both original and copied SDK URLs in all nine request budgets',async t=>{
   const value=await requestQuotaFixture();
-  assert.ok(value.limit>=1238,'The fixed nine complete windows require 1238 requests before optional favicon allowances');
-  assert.equal(value.limit,1247);assert.equal(value.report.requestCapacity.historical,1051);assert.equal(value.report.requestCapacity.previous,1197);
+  assert.ok(value.limit>=1256,'The fixed nine complete windows require 1256 requests before optional favicon allowances');
+  assert.equal(value.limit,1265);assert.equal(value.report.requestCapacity.historical,1051);assert.equal(value.report.requestCapacity.previous,1197);
   const rows=value.report.requestCapacity.perWindow;assert.deepEqual(Array.from(rows,row=>row.mode),['baseline','N1','N2','N3','N4','N5','S1','S2','SN1']);
-  assert.deepEqual(Array.from(rows,row=>row.modules),[133,134,134,134,134,134,133,133,133]);
-  assert.equal(rows.reduce((sum,row)=>sum+row.routes.length,0),1238);
+  assert.deepEqual(Array.from(rows,row=>row.modules),[135,136,136,136,136,136,135,135,135]);
+  assert.equal(rows.reduce((sum,row)=>sum+row.routes.length,0),1256);
   for(const row of rows){assert.equal(new Set(row.routes).size,row.routes.length);assert.equal(row.companions,3);assert.equal(row.html,1);assert.equal(row.favicon,1);}
-  value.policy.served.set('/unused-metadata.mjs',{body:Buffer.from(''),contentType:'text/javascript'});assert.equal(value.calculate(),1247,'Unreachable served routes cannot inflate the budget');
+  value.policy.served.set('/unused-metadata.mjs',{body:Buffer.from(''),contentType:'text/javascript'});assert.equal(value.calculate(),1265,'Unreachable served routes cannot inflate the budget');
   t.diagnostic('Selected-map closure is filesystem metadata, not observed browser requests or rendering acceptance');
 });
 test('S13 actual request handler accepts every necessary route and retains finite overflow refusal',async()=>{
-  const value=await requestQuotaFixture();assert.ok(value.limit>=1238);
+  const value=await requestQuotaFixture();assert.ok(value.limit>=1256);
   value.report.requests=[];
   const request=pathname=>{let code;value.handler({url:pathname,method:'GET'},{writeHead(status){code=status;},end(){}});return code;};
   for(const row of value.report.requestCapacity.perWindow)for(const route of row.routes)assert.equal(request(route),200);
-  assert.equal(value.report.requests.length,1238);assert.notEqual(value.report.requestOverflow,true);
+  assert.equal(value.report.requests.length,1256);assert.notEqual(value.report.requestOverflow,true);
   for(let index=0;index<9;index++)assert.equal(request('/favicon.ico'),404);
-  assert.equal(value.report.requests.length,1247);assert.notEqual(value.report.requestOverflow,true);
-  assert.equal(request('/index.html'),429);assert.equal(value.report.requestOverflow,true);assert.equal(value.report.requests.length,1247);
+  assert.equal(value.report.requests.length,1265);assert.notEqual(value.report.requestOverflow,true);
+  assert.equal(request('/index.html'),429);assert.equal(value.report.requestOverflow,true);assert.equal(value.report.requests.length,1265);
 });
 
 
@@ -598,6 +599,115 @@ for (const target of ['packages/contracts/dist/resources/index.js', 'packages/co
     await assert.rejects(policy.collect(target), error => error.code === 'ERR_ASSERTION' &&
       error.message.startsWith('Current emitted raw identity changed: ' + target));
     assert.equal(policy.served.size, 0, 'Changed successor must be refused before capture');
+    assert.deepEqual(await readFile(join(repository, target)), original);
+    await completeCurrentClosure();
+  });
+}
+
+// Exact UI successors are independently pinned; old tables remain historical evidence.
+const uiSuccessors = [
+  [
+    "packages/engine/dist/Engine.js",
+    {
+      "bytes": 22046,
+      "sha256": "42ea7f41b79061115a2ed3ac9312163201ca0a942627c8279b3484bf5a9b5239"
+    }
+  ],
+  [
+    "packages/runtime/dist/Scope.js",
+    {
+      "bytes": 4927,
+      "sha256": "f49aff05fbef7adde7e96bb36f968ea2cbfb64b2875ba10a6c07f9455d1307ab"
+    }
+  ],
+  [
+    "packages/runtime/dist/displayTreeState.js",
+    {
+      "bytes": 17075,
+      "sha256": "c7f4b2dc7895c9f14c532be2ef752fe54d7eeefba0716f2bf549e460864b0b0f"
+    }
+  ],
+  [
+    "packages/runtime/dist/displayVisualState.js",
+    {
+      "bytes": 4129,
+      "sha256": "a3740df92ab4e1e2b8807674f5e79f2d07bf39bba18a4d6150249c0a22f7b998"
+    }
+  ],
+  [
+    "packages/runtime/dist/DisplayObject.js",
+    {
+      "bytes": 7755,
+      "sha256": "581492976c85f3f8abb3c44039c06a4aa6fcf6e8153d4b174fa67d25249fd7aa"
+    }
+  ],
+  [
+    "packages/runtime/dist/displayHitState.js",
+    {
+      "bytes": 3481,
+      "sha256": "99cbbb70f8c223fbbdf59bf892c4a216f45effa38d22a50f7aa18c9b6adba4d6"
+    }
+  ],
+  [
+    "packages/runtime/dist/DisplayObjectContainer.js",
+    {
+      "bytes": 9277,
+      "sha256": "ec71cbae41ffda303f40ec404ede643e798c97bc3e421083873c5ad5ce15acc6"
+    }
+  ]
+];
+const uiAdditions = [
+  [
+    "packages/runtime/dist/ui/managedState.js",
+    {
+      "bytes": 1630,
+      "sha256": "40e519e12a711fde43556cf6f15d02214448dfc5e037eb070c215bd811e4ff62"
+    }
+  ],
+  [
+    "packages/engine/dist/internal/uiFactoryState.js",
+    {
+      "bytes": 4420,
+      "sha256": "0a67b4189539e30baae0e7c7befc58fdeec6fdc357b352f93cecbd511cd06046"
+    }
+  ]
+];
+test('S16 UI cooperation admits only seven exact successors and two eager dependencies', async () => {
+  const source = await readFile(cli, 'utf8');
+  for (const [name, expected] of [['m31UiModuleSuccessors', uiSuccessors], ['m31UiModuleAdditions', uiAdditions]]) {
+    const declaration = source.match(new RegExp('const ' + name + ' = new Map\\((\\[[\\s\\S]*?\\n\\])\\);'));
+    assert.ok(declaration, 'Explicit finite UI table required: ' + name);
+    assert.deepEqual(JSON.parse(JSON.stringify(runInNewContext(declaration[1], {}, { timeout: 1000 }))), expected);
+  }
+  const policy = await completeCurrentClosure();
+  for (const [name, expected] of uiSuccessors) {
+    assert.ok(policy.m15ModuleIdentities.has(name), 'A successor must retain historical membership');
+    assert.notEqual(policy.m15ModuleIdentities.get(name).sha256, expected.sha256);
+    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), expected);
+  }
+  for (const [name, expected] of uiAdditions) {
+    assert.equal(policy.m15ModuleIdentities.has(name), false);
+    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), expected);
+  }
+  for (const name of ['packages/engine/dist/ui/index.js', 'packages/runtime/dist/ui/index.js']) {
+    assert.equal(policy.allowedModules.has(name), false, 'Optional UI assembly cannot enter this default closure');
+    await assert.rejects(policy.collect(name), error => error.message === 'Unapproved public native dependency: ' + name);
+  }
+});
+for (const [target] of [...uiSuccessors, ...uiAdditions]) {
+  test('S17 UI identity refuses an unknown same-length byte: ' + target, async () => {
+    await completeCurrentClosure();
+    const original = await readFile(join(repository, target));
+    const policy = await emittedClosurePolicy({ selectedReadFile: async (...args) => {
+      const value = await readFile(...args);
+      if (resolve(args[0]) !== resolve(repository, target)) return value;
+      const copy = Buffer.from(value); copy[0] ^= 1;
+      assert.equal(copy.length, original.length);
+      return copy;
+    } });
+    await assert.rejects(policy.collect(target), error => error.code === 'ERR_ASSERTION' &&
+      error.message.startsWith('Current emitted raw identity changed: ' + target));
+    assert.equal(policy.served.size, 0, 'Unknown UI bytes must be refused before capture');
     assert.deepEqual(await readFile(join(repository, target)), original);
     await completeCurrentClosure();
   });

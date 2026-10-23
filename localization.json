@@ -1858,8 +1858,8 @@
       "en": "knowledge-base/en/docs/historical-browser-workflow.md",
       "zh": "knowledge-base/Cns/docs/historical-browser-workflow.md",
       "kind": "public_reading",
-      "enSha256": "80c4a4db9661bcb5cbb775536894be2b26399dae9bcbd0c18e41508c0402c5e9",
-      "zhSha256": "9b668d9aec5ad915310b959162a99f6b886951e03e2fed9746602aa0aac62521"
+      "enSha256": "fe11717a7b1af12380f7fc836e828204338ca5a878dc1a273d5da9cb0731adda",
+      "zhSha256": "bec240c192e0ac05274fefe5760b6dac7b2acaf474a8bbadcaa0470413e16542"
     },
     {
       "en": "knowledge-base/en/docs/dependency-aware-checks.md",
@@ -2442,7 +2442,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "e0e4a1e560b8d687e9bc38076d5d707af635e0bb6316bc5fe94a8218606ecf0f"
+      "sha256": "0e2832e84b089ac0f3ccc1a6e6c2ea085a278acda639692ed05a617fb39eeee4"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2454,7 +2454,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "8d78909513d2306bd8886800df4b7a819a8971d6299bd781f676785930ed9e4b"
+      "sha256": "a1df0344da4dd376dd0ab9096b4eba60756cf32266b40ff71b40e4de6703542e"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -3004,7 +3004,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "f56f1a967d794bb657be574e6a2595e1a628b1f16ed707f781ce264830d91589"
+      "sha256": "dee49b3e1128b22bd999b367b178977825a0658744ed98f3893100ba8144093e"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3624,7 +3624,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "73b6aa3594494bd105bc0db8c0ec4db4fce14cfc39d4a597a0e6e90758a67875"
+      "sha256": "87712b8ed1d22f93afc3ed3ae3f809b5536cd0f5325a2c633960e015a6704b12"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3652,7 +3652,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "57c2496a9afb9520125123c2768efea4fd5ef86932709102300100273b0e8c67"
+      "sha256": "ae7023e5192d68ec73bb073ebdc65633278d43fb699bf233dcd961122daa9dd5"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
