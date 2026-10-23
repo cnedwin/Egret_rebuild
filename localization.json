@@ -2040,8 +2040,8 @@
       "en": "knowledge-base/en/docs/sequence-controls.md",
       "zh": "knowledge-base/Cns/docs/sequence-controls.md",
       "kind": "public_reading",
-      "enSha256": "f0ae5564aff3b70156eb5b0c26fa3c161feec8bc20501f3f08fb6ecbf0b1a84c",
-      "zhSha256": "152b133018e13e53e180e56369d72a5e9dc8694526dbff5f9fb3a2ab5d250d65"
+      "enSha256": "39c6c440d52995f71828e96b869f6c686c0cb909922226f4c42df165254ab934",
+      "zhSha256": "e56faebdf6cb6efbe486e889808636c90c156424cbe7fe19020ee503332187e5"
     },
     {
       "en": "examples/sequence-controls/README.md",

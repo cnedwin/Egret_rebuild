@@ -71,6 +71,6 @@
 
 行为参考使用原创四色共享图集和两个独立控制实例。验收矩阵覆盖字面帧、时间与事件顺序、非二进制时长的规范边界、倍率、暂停、跳转、新旧目标占用、数值边界、取消、回调顺序和故障隔离。实际 WebGPU、WebGL2 检查还需比较像素、裁剪以及不推进播放的保留帧重放。各项声明必须由当前执行和结果证据支持后才能验收。
 
-[可运行示例](../../../examples/sequence-controls/README.zh-CN.md)通过真实内容管线构建原创 PNG、图集和序列帧输入。[已保存的结果摘要](../../../examples/sequence-controls/verification-summary.json)记录了 Windows、Node 26.7.0、默认无界面 Edge 155.0.4283.62 和 Playwright 1.62.1。WebGPU 与 WebGL2 各通过 15 项固定检查及 185 次精确像素比较，覆盖 11 步时间序列、完整事件记录、十进制边界、故障隔离和 96,000 字节保留帧比较。采集保留 40 份原始 RGBA、28 张 PNG 以及 677 项实际输入的冻结身份，并验证源文件、快照完整性和清理结果。控制器退役后，全部 256 个公开时钟订阅槽均可用，第 257 次申请被拒绝；五项持有租约全部释放。这些是逻辑生命周期和有限浏览器行为的实测结果，不是物理内存或速度测量。
+[可运行示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/sequence-controls/README.zh-CN.md)通过真实内容管线构建原创 PNG、图集和序列帧输入。[已保存的结果摘要](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/sequence-controls/verification-summary.json)记录了 Windows、Node 26.7.0、默认无界面 Edge 155.0.4283.62 和 Playwright 1.62.1。WebGPU 与 WebGL2 各通过 15 项固定检查及 185 次精确像素比较，覆盖 11 步时间序列、完整事件记录、十进制边界、故障隔离和 96,000 字节保留帧比较。采集保留 40 份原始 RGBA、28 张 PNG 以及 677 项实际输入的冻结身份，并验证源文件、快照完整性和清理结果。控制器退役后，全部 256 个公开时钟订阅槽均可用，第 257 次申请被拒绝；五项持有租约全部释放。这些是逻辑生命周期和有限浏览器行为的实测结果，不是物理内存或速度测量。
 
 本配置提供序列帧控制，不代表完整 Spine、通用动画调度器、物理内存行为、原生手机输入或帧耗时目标通过。M1.2 全脏 10.3 ms、目标 8 ms 仍然开放。参见 [M2 计划](m2-spine-content-plan.md)、[原有播放契约](时钟驱动序列动画契约.md)、[时钟契约](游戏时间核心契约.md)和[内容构建契约](content-build-pipeline.md)。
