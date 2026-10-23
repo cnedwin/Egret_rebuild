@@ -59,6 +59,14 @@
     "./web/resources": {
       "types": "./dist/web/resources.d.ts",
       "import": "./dist/web/resources.js"
+    },
+    "./input": {
+      "types": "./dist/input.d.ts",
+      "import": "./dist/input.js"
+    },
+    "./web/pointer": {
+      "types": "./dist/web/pointer.d.ts",
+      "import": "./dist/web/pointer.js"
     }
   },
   "dependencies": {
@@ -78,6 +86,10 @@
     "#egret-manifest-resources": {
       "types": "./dist/manifestResourceState.d.ts",
       "import": "./dist/manifestResourceState.js"
+    },
+    "#egret-pointer-input": {
+      "types": "./dist/pointerInput.d.ts",
+      "import": "./dist/pointerInput.js"
     }
   }
 }

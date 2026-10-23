@@ -204,3 +204,9 @@ Only `tools/shared-rendering/resource-recovery-observations.mjs` may install the
 
 Preflight every descriptor before any replacement. Bound pressure records to 16,384 rows and 4,096 object identities, PNG records to 8,192 rows and four original promises, and GPU acquisition to sixteen request/device/adapter identities and 256 events. Overflow or observation failure cannot replace an original call result; forward the call, retain incomplete status and make no complete-drain claim. Restore every original descriptor field only after actual original work has drained and the Host has closed. Unknown settlement or a collector deadline requires explicit incomplete cleanup and realm disposal; it never proves native retirement. These permissions add no private product import, SDK export, general interception authority or extension of the existing controlled unit permissions.
 <!-- M15-NATIVE-RECOVERY-POLICY-END -->
+
+## M3 multi-contact input slice
+
+The optional @egret/engine/input and @egret/engine/web/pointer entries follow [the multi-contact contract](knowledge-base/en/docs/multi-pointer-input.md). Preserve the old MI1 entry and genuine Engine/Scope/Stage authority; core state lives in the DOM-free runtime input module. Runtime-port unit schedules are distinct from genuine public Engine behavior and actual browser evidence.
+
+Only tests/browser-pointer.test.mjs may install its declared test-owned WebIDL/Window/Document/Canvas/EventTarget/PointerEvent/CSS/rectangle ports in place of the corresponding complete global descriptors, with serial execution and exact restoration after genuine Engine cleanup. Assigned listener/capture failures and reentry occur only on those test-owned ports. No actual native prototype, private SDK import, product test export or physical-device proof is permitted. The browser example and actual collection use ordinary public SDK entries without native interception.

@@ -1,0 +1,1469 @@
+{
+  "format": "egret.multi-pointer-browser/1",
+  "status": "PASS",
+  "startedAt": "2026-10-23T10:55:05.754Z",
+  "collector": {
+    "path": "tools/verify-multi-pointer.mjs",
+    "bytes": 22980,
+    "sha256": "e8af08ee9af77c7da8267f86aafdd7a12a2a7f8897ce2e8302a8c970ab2c8eea"
+  },
+  "environment": {
+    "node": "v26.7.0",
+    "platform": "win32",
+    "architecture": "x64",
+    "playwright": "1.62.1",
+    "channel": "msedge",
+    "headless": true,
+    "extraFlags": [],
+    "physicalDevice": false,
+    "input": "Playwright mouse and CDP touch injection; not physical fingers",
+    "viewport": {
+      "width": 900,
+      "height": 850
+    },
+    "deviceScaleFactor": 2,
+    "browser": "155.0.4283.62",
+    "browserProtocol": {
+      "protocolVersion": "1.3",
+      "product": "Edg/155.0.4283.62",
+      "revision": "@aa3a7406ba8c53a83536df539f07124d73c899bd",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0",
+      "jsVersion": "15.5.9.7"
+    }
+  },
+  "toolDependencies": {
+    "playwright": [
+      {
+        "path": "package.json",
+        "bytes": 1416,
+        "sha256": "ca170ec143a88ed3043ac953eb3b2377b2b97304104f4e1e23316684ce2c35af"
+      },
+      {
+        "path": "index.mjs",
+        "bytes": 704,
+        "sha256": "a0f5715ea22354f922791a9c53dc012d5d5c067ff9cc4cd35ffb7cd272071a9f"
+      }
+    ]
+  },
+  "protocolQualification": {
+    "scope": "Observed browser version only; CDP injection does not qualify physical-device touch.",
+    "source": "https://chromium.googlesource.com/chromium/src/+/refs/heads/main/content/browser/devtools/protocol/input_handler.cc",
+    "explanation": "Chromium CreateWebTouchEvents removes the supplied IDs for a nonempty touchEnd; an empty touchEnd releases all remaining contacts. The protocol prose and SyntheticPointerActions branch differ. This collector verifies the behavior on its recorded Edge build without enabling feature flags."
+  },
+  "files": [
+    {
+      "path": "examples/multi-pointer/index.html",
+      "bytes": 2826,
+      "sha256": "bda7327472c1ac99a690c8a4bb10435df717b37af4811d52004e9f3c652ab6b4"
+    },
+    {
+      "path": "examples/multi-pointer/main.mjs",
+      "bytes": 5559,
+      "sha256": "127d5f13e97085112a03a5948e41d5e3b9041efb82e070721ccee326001b2e57"
+    },
+    {
+      "path": "packages/engine/dist/index.js",
+      "bytes": 1358,
+      "sha256": "96afca247999dc46d1321ce15138fbe01fffde0aafbb76fb48440a09b67ca082"
+    },
+    {
+      "path": "packages/engine/dist/Engine.js",
+      "bytes": 21169,
+      "sha256": "61e9613b37d886859d2f11ed23b889684b24a0aba39b4d8f324fb2d5a003f933"
+    },
+    {
+      "path": "packages/contracts/dist/index.js",
+      "bytes": 540,
+      "sha256": "f90933caf2643c0d4aa688eff5264160a7e931ee54b94c80163e1535e398ebce"
+    },
+    {
+      "path": "packages/contracts/dist/ImageData2D.js",
+      "bytes": 5361,
+      "sha256": "08bd03f81a5b789a37d4ac84c647b59945273dd22a70305b9440ae66321fdfcd"
+    },
+    {
+      "path": "packages/contracts/dist/TexturedGeometry2D.js",
+      "bytes": 7696,
+      "sha256": "b3cdb387cb84078bf67769b8f6861cec4c904d256e79f0be151fdc8d38cc98aa"
+    },
+    {
+      "path": "packages/contracts/dist/SharedMaterial2D.js",
+      "bytes": 7517,
+      "sha256": "5eed01974eb0856bec1628f542c5fa759c123f0b25446504b16bb57856dcc5f6"
+    },
+    {
+      "path": "packages/contracts/dist/SharedGeometry2D.js",
+      "bytes": 8593,
+      "sha256": "0b5ba021999903be40c9ba97206e07cb9f633ea3248efc33f7f0e9dbc3e74302"
+    },
+    {
+      "path": "packages/contracts/dist/TexturedRenderFrame2D.js",
+      "bytes": 200,
+      "sha256": "735bcac8275f424e48829e167f0cebd21ab30817755650c24f4ffd88fa9620a8"
+    },
+    {
+      "path": "packages/contracts/dist/SharedRenderFrame2D.js",
+      "bytes": 263,
+      "sha256": "73eb564457e0e23af0dbe6b0170c1707d52d4320706eb9e3b4dfee48c38aacf7"
+    },
+    {
+      "path": "packages/runtime/dist/index.js",
+      "bytes": 1708,
+      "sha256": "c8cbc112cd5597e0729c34368954d74a94511638d3efab1fec78603e2f7007f5"
+    },
+    {
+      "path": "packages/runtime/dist/CancellationController.js",
+      "bytes": 2112,
+      "sha256": "f2a27aee08b35e3ca17b7feb3f8166c3efc388e38d70f3f0c9b0ef13455e24c7"
+    },
+    {
+      "path": "packages/runtime/dist/diagnostics.js",
+      "bytes": 549,
+      "sha256": "32711ffa07c5bfcedc4775756d3180d1c6969086d082be623d6bd1a40eab796f"
+    },
+    {
+      "path": "packages/runtime/dist/EgretError.js",
+      "bytes": 508,
+      "sha256": "34693e8147cb8142260471f4f80897ebd59a409486026ab0931b6f7523cf2f9f"
+    },
+    {
+      "path": "packages/runtime/dist/Scope.js",
+      "bytes": 4811,
+      "sha256": "773d15a4e82f268ea00a16f7bb1746705845364b5f0c1e2adeabbd8fd7707647"
+    },
+    {
+      "path": "packages/runtime/dist/ownership.js",
+      "bytes": 6711,
+      "sha256": "a26b1fcd8232dc000ed45fc522784668cb5c69b35d187cea21419cf6b3da7b52"
+    },
+    {
+      "path": "packages/runtime/dist/displayVisualState.js",
+      "bytes": 4036,
+      "sha256": "92dd463f12869fded4ca7cdf38e18ac4fdceff0809a6368ce48c6ca8e9110814"
+    },
+    {
+      "path": "packages/runtime/dist/displayTreeState.js",
+      "bytes": 15727,
+      "sha256": "e0f8ab70550bfc4a879c29b475f2374bf342d831c643ee18cef8744fec1c79aa"
+    },
+    {
+      "path": "packages/runtime/dist/frameCaptureCache.js",
+      "bytes": 15981,
+      "sha256": "b041688739321426600fb1ad1a2dfd005ebcdca93d3e5beb90d2dab8219757f0"
+    },
+    {
+      "path": "packages/runtime/dist/Event.js",
+      "bytes": 2393,
+      "sha256": "d6b60b43d3768d67424d907410c832594b554d870185c6f9d871f62853edce7a"
+    },
+    {
+      "path": "packages/runtime/dist/EventDispatcher.js",
+      "bytes": 7218,
+      "sha256": "573e357a5018379b244f1cc1cd26e51951b7b7ad4421e5c840a82031868abcb7"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObject.js",
+      "bytes": 7658,
+      "sha256": "0f8e18b08432736d24d93b71a75806bca09a84f07b7887b4b82677d33fccd44f"
+    },
+    {
+      "path": "packages/runtime/dist/displayHitState.js",
+      "bytes": 3388,
+      "sha256": "13da7621b9ff3091980084c5a8df9b8f86a80843d8eb097882c37d68068dd96c"
+    },
+    {
+      "path": "packages/runtime/dist/displayBounds.js",
+      "bytes": 7900,
+      "sha256": "648a056edd70cbd8ffa2e6bb45f03e6e6c42f8f9a03708d52eaa227157786231"
+    },
+    {
+      "path": "packages/runtime/dist/bitmapDisplayState.js",
+      "bytes": 1066,
+      "sha256": "fd50bff484322b93d54755698a1928edd46526a1f8a57816928499fc36b9bd73"
+    },
+    {
+      "path": "packages/runtime/dist/meshDisplayState.js",
+      "bytes": 978,
+      "sha256": "867eeb0aed95cb6d28fafe3ab02560acaf428086c89df0d61da9313b2a63ef55"
+    },
+    {
+      "path": "packages/runtime/dist/textDisplayState.js",
+      "bytes": 1185,
+      "sha256": "b61cab464a2c46a9bda0cec4d6dea3561c2588d675eef2bb8b80dab4bd332156"
+    },
+    {
+      "path": "packages/runtime/dist/displayTransform.js",
+      "bytes": 1258,
+      "sha256": "c508f3c99d02453c24ee705ec07af136ebb1591333fcab0be2537a27690a0e05"
+    },
+    {
+      "path": "packages/runtime/dist/displayCoordinates.js",
+      "bytes": 3352,
+      "sha256": "f2604e5359839916ae9cba2582ce896e069a69d013664b3e7ee95f85378df890"
+    },
+    {
+      "path": "packages/runtime/dist/coordinateInverse.js",
+      "bytes": 4201,
+      "sha256": "7cc84087cf8d2d8e92b3c5f1f560d8feacc4cea4cfe1f6511248a7bda86cd69a"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObjectContainer.js",
+      "bytes": 8630,
+      "sha256": "f379a1da5a940710864a92b00349aa6d11b1de2b580b06f8f736c8131321a673"
+    },
+    {
+      "path": "packages/runtime/dist/Stage.js",
+      "bytes": 1170,
+      "sha256": "06a06d17ec70f30ddc16692eb2fc7434cbf609e07f05328c48e48b72674e864d"
+    },
+    {
+      "path": "packages/runtime/dist/displayHitTest.js",
+      "bytes": 6873,
+      "sha256": "7ec9518b01bed802d0c254d13906c9920655b77d34626af17d0d87e0f5332196"
+    },
+    {
+      "path": "packages/runtime/dist/AssetManager.js",
+      "bytes": 17534,
+      "sha256": "c84c30bf6487b95e176a20caec5f16828fb8a71374fc5428d123506913a46340"
+    },
+    {
+      "path": "packages/runtime/dist/AssetLease.js",
+      "bytes": 2698,
+      "sha256": "db4e5a3f9c29554eca36480e9f4e42e4aa63008f0ada90b09a9302db5f097e0f"
+    },
+    {
+      "path": "packages/runtime/dist/AssetRef.js",
+      "bytes": 1218,
+      "sha256": "71f8764d8e825d946a308f6d75528bff9e2622780fb0625a8c662e202e46f024"
+    },
+    {
+      "path": "packages/runtime/dist/assetManagerOwnerState.js",
+      "bytes": 2888,
+      "sha256": "9db66146430152ab5a0d07f704d9b27f5daa70834981ac33b5e9eb1194de563a"
+    },
+    {
+      "path": "packages/runtime/dist/Sprite.js",
+      "bytes": 464,
+      "sha256": "75d96bf10122f2371ee9dcb5369336bfc9295dba8a8d350f49af19745a67cd24"
+    },
+    {
+      "path": "packages/runtime/dist/Graphics.js",
+      "bytes": 1448,
+      "sha256": "c4637f250e7059ca46a313898d5afbbf283b2a164cbcabb9b3fd729fd69afeff"
+    },
+    {
+      "path": "packages/runtime/dist/frameCapture.js",
+      "bytes": 8393,
+      "sha256": "0ea5d699ed3dbaff63904ed5fcb0cb1b99f10b9c5357740e6186f7dc6a8f9e72"
+    },
+    {
+      "path": "packages/runtime/dist/bitmapAtlasPlacement.js",
+      "bytes": 1753,
+      "sha256": "55aa9193fd9cfa060e45b10ad02e7d60a3ee83fdafef9f67a80347de741e7cb2"
+    },
+    {
+      "path": "packages/runtime/dist/Bitmap.js",
+      "bytes": 23075,
+      "sha256": "075a6f146714c98fec748aeabe52e3cf38d0213eb6a4f868d7fb846bb59196b8"
+    },
+    {
+      "path": "packages/runtime/dist/atlasFrameLayout.js",
+      "bytes": 1991,
+      "sha256": "a1e35328e4f911087b80b268e0c82c71b620bc1837401fea0db8269febc95eee"
+    },
+    {
+      "path": "packages/runtime/dist/sharedFrameCapture.js",
+      "bytes": 19247,
+      "sha256": "81358a25a54262dca6439fee2710cc9b4255f43bd3e9b1aad6894f675f3028bc"
+    },
+    {
+      "path": "packages/runtime/dist/meshCaptureSnapshot.js",
+      "bytes": 610,
+      "sha256": "65a2523739ba5ec960290fe217cc7dcaad58729438ccbf77663d7306d5c3bd56"
+    },
+    {
+      "path": "packages/runtime/dist/Texture.js",
+      "bytes": 7579,
+      "sha256": "fc0b399b96874a836c899d1bdae2fb48e70e7ad831fdfa5aeb32ebcecd32e00e"
+    },
+    {
+      "path": "packages/runtime/dist/imageFrameBudget.js",
+      "bytes": 1802,
+      "sha256": "f7b61124a43c7b9621698c03efbd9e565b83977e839a0e737afe1827d1d54ac0"
+    },
+    {
+      "path": "packages/runtime/dist/texturedFrameCapture.js",
+      "bytes": 15193,
+      "sha256": "987bfb7d35185b57ddbf3aed8a73933b2b6c2a5cc0fe4beb31f016feef6dbf85"
+    },
+    {
+      "path": "packages/runtime/dist/texturedFrameBudget.js",
+      "bytes": 1542,
+      "sha256": "f8287dcba0eeebcd898c055b62e1249754d2c121b09f8734a55aaf248c54f2c3"
+    },
+    {
+      "path": "packages/runtime/dist/Mesh2D.js",
+      "bytes": 4604,
+      "sha256": "4e813aeb81bae9d15102aa383f8618d49767eb68046143eabbaddd71d5e52950"
+    },
+    {
+      "path": "packages/runtime/dist/sequenceClip.js",
+      "bytes": 8216,
+      "sha256": "87a1aaf749638e90f5ace7a01b8b604ad8994c1ece39593c963be678519b2925"
+    },
+    {
+      "path": "packages/runtime/dist/SequencePlayer.js",
+      "bytes": 3069,
+      "sha256": "1a5de3251dd6e98b63afa02b1a6e3105538c89671b27d32ba7a69c972c37715f"
+    },
+    {
+      "path": "packages/runtime/dist/ByteReader.js",
+      "bytes": 6839,
+      "sha256": "c8fd39e01476ff6961925a70caa90749cb808713bd89f8066f6340f0fdf2092a"
+    },
+    {
+      "path": "packages/runtime/dist/displayInputOperations.js",
+      "bytes": 3210,
+      "sha256": "650e7037c3024c2efefd39e32bbf2d946560fc0495a21db2797a762cd36992e4"
+    },
+    {
+      "path": "packages/runtime/dist/ByteWriter.js",
+      "bytes": 7375,
+      "sha256": "19ab3ae8e6213fd83f915e5ea8dd4baf5e9d1960e021fcf4a12d39b934f2df76"
+    },
+    {
+      "path": "packages/runtime/dist/NineSliceGeometry2D.js",
+      "bytes": 5487,
+      "sha256": "06373188c1f7abf86e593387c7ddc3c7ce745927be39bb06b6af840ddc404126"
+    },
+    {
+      "path": "packages/runtime/dist/NineSliceBitmap.js",
+      "bytes": 6749,
+      "sha256": "b30062f359b294fba6bf32421779f42c23c7bdc63b20df00d7f66379f56696f8"
+    },
+    {
+      "path": "packages/runtime/dist/spriteSheet.js",
+      "bytes": 11824,
+      "sha256": "5f15aca4af6961cfd65f0e4c5243f7f81ccac9267056815d2401226b4d8dd00d"
+    },
+    {
+      "path": "packages/engine/dist/bitmapResourceSlot.js",
+      "bytes": 10956,
+      "sha256": "27a628aa27688f37f789455d4be4e802a7d7e46bd88bd6279304a2f9cfd2b73e"
+    },
+    {
+      "path": "packages/engine/dist/bitmapBindingTicket.js",
+      "bytes": 7431,
+      "sha256": "3024b2d5e809b4e304796fd22ccc1bdaecad3a87080701d757bb64b822f81e42"
+    },
+    {
+      "path": "packages/engine/dist/closeHost.js",
+      "bytes": 2440,
+      "sha256": "4a486e51396da8014487febfa29b465e8351023dd2169bd568f66f22383b83a7"
+    },
+    {
+      "path": "packages/engine/dist/internal/texturedFrameState.js",
+      "bytes": 975,
+      "sha256": "1fb9cc9e234a5bfe5a914f613fbb0dac8019840343f5df02fa4ec3d78b900300"
+    },
+    {
+      "path": "packages/engine/dist/gameClock.js",
+      "bytes": 9342,
+      "sha256": "fe76c89615b916f29e9287bff189d0d4b6da88936a94e3e9f058f9e19a4187ec"
+    },
+    {
+      "path": "packages/engine/dist/tween.js",
+      "bytes": 12172,
+      "sha256": "e9a1f3588e21fed0e49285a2c89eb8ea48557759242cb2a3128890399426444d"
+    },
+    {
+      "path": "packages/engine/dist/internal/textFieldFactoryState.js",
+      "bytes": 1108,
+      "sha256": "fa69fb138980f01bfda9cf70214705a89f88de52435a8d59abe51a2e729c7568"
+    },
+    {
+      "path": "packages/engine/dist/assetGroup.js",
+      "bytes": 11120,
+      "sha256": "86627b3431b17f52b70877ef6d8e8e32713e61dfac9a930825e5b640c1a08a3c"
+    },
+    {
+      "path": "packages/engine/dist/manifestAssetGroup.js",
+      "bytes": 16305,
+      "sha256": "d30b5f3233bc6022de5ed7a581ad1f651825470efb6e19b7875f62a8a4514d50"
+    },
+    {
+      "path": "packages/contracts/dist/resources/index.js",
+      "bytes": 283,
+      "sha256": "2ea27b7090a99051f53c9a314142b34a01ac4f2831fce3435c0e7ccdc26335ea"
+    },
+    {
+      "path": "packages/contracts/dist/resources/manifestAdmission.js",
+      "bytes": 16232,
+      "sha256": "39604bb6f530d229e576f0122e53d90d1b05270b2ae229322fe0f402e3d7c715"
+    },
+    {
+      "path": "packages/contracts/dist/resources/sha256.js",
+      "bytes": 5264,
+      "sha256": "076bd16070e02ce539aacb2e420c665eb62655431fa208e1293d09e6a86a939f"
+    },
+    {
+      "path": "packages/engine/dist/manifestResourceState.js",
+      "bytes": 2387,
+      "sha256": "46662790efbb2fb844034da7782df72213f1fe8a46a404d6ad54f1b4396a0417"
+    },
+    {
+      "path": "packages/engine/dist/mouseInput.js",
+      "bytes": 19479,
+      "sha256": "6ec0b9d091c8d10a9e033e19575704795bb3636fd0fac1fd01960f43bd18476e"
+    },
+    {
+      "path": "packages/engine/dist/internal/mouseInputFactoryState.js",
+      "bytes": 4356,
+      "sha256": "bfb0f749f658c2365e8d8a3605f0de8269e2d27cb978a689ef6f3af0b149bbe9"
+    },
+    {
+      "path": "packages/engine/dist/bitmapButton.js",
+      "bytes": 13700,
+      "sha256": "1e6540a6ad9c25749dda3d404df2571fd16a053be13849b89b1dda4d44237b77"
+    },
+    {
+      "path": "packages/engine/dist/sequencePlayback.js",
+      "bytes": 12959,
+      "sha256": "d608693c9d2a6219feba89fe5e357e2a4325331417a6e66fa41692896ad3980d"
+    },
+    {
+      "path": "packages/engine/dist/createEngine.js",
+      "bytes": 1347,
+      "sha256": "dcb5a5185202248ebd401799bfe5e1fec9e5d4e9f6ad6c9d836145db2ebd243c"
+    },
+    {
+      "path": "packages/engine/dist/startEngine.js",
+      "bytes": 1275,
+      "sha256": "e250a877eeb8523473963504646e1c80c16ceb2c326b3f10788c0ee4550c23bc"
+    },
+    {
+      "path": "packages/engine/dist/surfaceOwnership.js",
+      "bytes": 615,
+      "sha256": "e37243cf059c239fb8a56beddcd0020c2f9a0df80db1017012443e72748f75be"
+    },
+    {
+      "path": "packages/engine/dist/createEngineForProfile.js",
+      "bytes": 3663,
+      "sha256": "f8ef8b3e4f154fa3da1ecab1d8253e83fe06f164f79709d6349d2c4821bcc4e7"
+    },
+    {
+      "path": "packages/engine/dist/web/index.js",
+      "bytes": 85,
+      "sha256": "5df04a30354456e0d8a316ba156a4a8b9b43f5ff7c8601ac2e0b41af4c7fd27d"
+    },
+    {
+      "path": "packages/engine/dist/web/CanvasHost.js",
+      "bytes": 10806,
+      "sha256": "263ddae8fd338ec9ee8ffb2dcfb0ff697ca64dbfa65702bd4ee3c1c34209bc53"
+    },
+    {
+      "path": "packages/engine/dist/web/copyCanvasFrame.js",
+      "bytes": 12216,
+      "sha256": "21c63bfa56adb5126a3850b0522a4d25db5dad74164255e46f52a9e596548030"
+    },
+    {
+      "path": "packages/engine/dist/web/imageProjections2D.js",
+      "bytes": 6102,
+      "sha256": "f7e8ec0c7d13cef5050bfc087297ea02c893775ad1773603b7ca643d64c8f14c"
+    },
+    {
+      "path": "packages/engine/dist/rendering/ownedPreparationFailure2D.js",
+      "bytes": 1082,
+      "sha256": "2c762d5297f10925364d7ccffe77e654ddbc7238d48423c96675f1fa9fe6f338"
+    },
+    {
+      "path": "packages/engine/dist/web/canvasImageProjection.js",
+      "bytes": 1155,
+      "sha256": "16ff8af6cee007967b525301da2efa4c299d4054218e459ccec916391415a3a5"
+    },
+    {
+      "path": "packages/engine/dist/web/pointer.js",
+      "bytes": 191,
+      "sha256": "1823f6dcc495e1a630268c233e1b22a616d64cd917a1b2c3396aa94c98abc287"
+    },
+    {
+      "path": "packages/engine/dist/web/BrowserPointerInput.js",
+      "bytes": 20216,
+      "sha256": "0fd5ef63c9053833adad3b67b18d5c7f40901431966f4ae7a685de296d2273ac"
+    },
+    {
+      "path": "packages/engine/dist/pointerInput.js",
+      "bytes": 8610,
+      "sha256": "e6036da474fcfd7725ea133bf49f238574e67c0ddb0a2d26d64c6d152e9ca656"
+    },
+    {
+      "path": "packages/runtime/dist/input/index.js",
+      "bytes": 130,
+      "sha256": "6620cbb501812b1704bc0fb93ae253918c47dab107fce4d154cfeda2008ae1b2"
+    },
+    {
+      "path": "packages/runtime/dist/input/PointerRouter.js",
+      "bytes": 15561,
+      "sha256": "c11a2916394fe30ca15b1b21c5032e9412a4808c8779ff280cb8e293efca5f43"
+    }
+  ],
+  "source": [
+    {
+      "path": "packages/engine/src/index.ts",
+      "bytes": 4162,
+      "sha256": "c83485f3f51530025dd0567d4f7685930a8171821dd04d6916dfa9f8241d1fad"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "bytes": 24333,
+      "sha256": "ee2e61e0e038ae425e26bc9913da38b80cfe9117b782f0712c3ebeca51f92cfd"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "bytes": 2452,
+      "sha256": "dcdc09ded4557146775ee700087cfc2e9b14dc45e30f6d569848cebe0e3583e0"
+    },
+    {
+      "path": "packages/contracts/src/ImageData2D.ts",
+      "bytes": 6489,
+      "sha256": "8e093ee8b06d6c44eae0248dd140372c8da0f8efd01523a880d67a09542fd134"
+    },
+    {
+      "path": "packages/contracts/src/TexturedGeometry2D.ts",
+      "bytes": 9279,
+      "sha256": "ebfdafec006bd646cf35ec9a0b3610fc4c55b568db79cacca3d93d3acab75dfc"
+    },
+    {
+      "path": "packages/contracts/src/SharedMaterial2D.ts",
+      "bytes": 9365,
+      "sha256": "ab313783ef45757a4fdfbd705a509c05e76a0de0420d64f2756e753581394018"
+    },
+    {
+      "path": "packages/contracts/src/SharedGeometry2D.ts",
+      "bytes": 10257,
+      "sha256": "5e93fe14376e806060ab04c3bc1bb795507ad94573c420064a7e67713d47cf09"
+    },
+    {
+      "path": "packages/contracts/src/TexturedRenderFrame2D.ts",
+      "bytes": 1718,
+      "sha256": "81c0b9fdf5425b42b159777388c61a72fd7a6f656b34fe8ae92c2f4b2f5cbaf4"
+    },
+    {
+      "path": "packages/contracts/src/SharedRenderFrame2D.ts",
+      "bytes": 3470,
+      "sha256": "2d4586da83d5bc57113166568c27ea3be7d797be067f2ed2293759637d8ec120"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "bytes": 3175,
+      "sha256": "49dea0acbe38ef6fde21431b335da2c74e5324d8f607c9b9d6712323d8cf8beb"
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "bytes": 2536,
+      "sha256": "1f669f03990da30cee01b0590c8e6c3b2c04d9634fb459d9134cb50d023e1c19"
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "bytes": 601,
+      "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294"
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "bytes": 652,
+      "sha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08"
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "bytes": 4765,
+      "sha256": "c369db2b08df36e22553859c6ec7ccc110550bf32e5cbd3ffca1925f201f3044"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "bytes": 9816,
+      "sha256": "1510c8ae9fb345b9dbd39cf3fb820acd1937ec73729af1ccc87765948194fd18"
+    },
+    {
+      "path": "packages/runtime/src/displayVisualState.ts",
+      "bytes": 5010,
+      "sha256": "37eb73606ef83683ed364901d40277996272b8620cf0682f13bebefcdf2e53fc"
+    },
+    {
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "bytes": 18261,
+      "sha256": "f3d0dd262d872f52fc8235b1df876cb54af6c0718bc0116525f64804b1a06f32"
+    },
+    {
+      "path": "packages/runtime/src/frameCaptureCache.ts",
+      "bytes": 18988,
+      "sha256": "575c0e5881631b7e438eea59ace23eec1e70e5e554f38980ccb268f8f5eefd31"
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "bytes": 3379,
+      "sha256": "de5671dcddbde4637c22b5ea2bff9ebb520c7aed503608e670d0efc08cf9539c"
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "bytes": 7997,
+      "sha256": "f04d19f24c30d5a4b81787e7df94688d1489578e629180ac09929e244f04355f"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "bytes": 8159,
+      "sha256": "9802809b6b183f9e25ed73166d62cde09cfee0a5348a3f4fdb26c7a84bac8064"
+    },
+    {
+      "path": "packages/runtime/src/displayHitState.ts",
+      "bytes": 3705,
+      "sha256": "b4b2d765831cb6a8c7b26ef3faaec8bb4b44b8ee12d345a7cc465ed53e5ecebf"
+    },
+    {
+      "path": "packages/runtime/src/displayBounds.ts",
+      "bytes": 7886,
+      "sha256": "77c01d020bde3a443eaf7a2aac1bff5a531212cb9a8f354485024aae632f4fd3"
+    },
+    {
+      "path": "packages/runtime/src/bitmapDisplayState.ts",
+      "bytes": 1918,
+      "sha256": "bd6b5d5f7a607c503fc76a36ba0f2515ee747c76cadc5d886bde8085299af273"
+    },
+    {
+      "path": "packages/runtime/src/meshDisplayState.ts",
+      "bytes": 1614,
+      "sha256": "bece3c799dac1349fa2ae23b2e9cb891e3a82b984e998cbb3f2fbb7771e9b65b"
+    },
+    {
+      "path": "packages/runtime/src/textDisplayState.ts",
+      "bytes": 1788,
+      "sha256": "f9ec119609eb6d9c607a8f8c7f348326d2f41e7990843c4a075ef3d4b3313405"
+    },
+    {
+      "path": "packages/runtime/src/displayTransform.ts",
+      "bytes": 1244,
+      "sha256": "74ce654a07a401d0a4b527d2888d72c24168b51a3142b150e5a33f1542fe2c6d"
+    },
+    {
+      "path": "packages/runtime/src/displayCoordinates.ts",
+      "bytes": 3515,
+      "sha256": "803047a0fef81cb685021be92799dece597f8152f668a9eba8392411ac536a25"
+    },
+    {
+      "path": "packages/runtime/src/coordinateInverse.ts",
+      "bytes": 4359,
+      "sha256": "bb17707ec9d932dbcd9a8b46ce595fb14a75b283a438fc88e5d5e009b99078de"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "bytes": 8088,
+      "sha256": "3b77ccc45a6cd1d84598ed24f73df5f17cb5818acba09fa26b691324591f11be"
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "bytes": 1448,
+      "sha256": "629b19abac38cc3ecd6c340b808dec5158650e381407eaba7a5d1050d2b2dfb1"
+    },
+    {
+      "path": "packages/runtime/src/displayHitTest.ts",
+      "bytes": 7248,
+      "sha256": "87de8d0a1957cf33e04f025dd95b471f4a584a3d2fe2c4622319029a05f2312d"
+    },
+    {
+      "path": "packages/runtime/src/AssetManager.ts",
+      "bytes": 17021,
+      "sha256": "800760598f41e47d092cfc7d91ae3c4e21035bcaf4883618c932b6c9884aa0a6"
+    },
+    {
+      "path": "packages/runtime/src/AssetLease.ts",
+      "bytes": 3326,
+      "sha256": "36c298af613284e1daa2501b2e823729c6d25da1a6480c1715d54704c1c04a5c"
+    },
+    {
+      "path": "packages/runtime/src/AssetRef.ts",
+      "bytes": 1818,
+      "sha256": "48963664a8a048697a962f1c3d56826333e65e3bbf05d1524d7c30b049a10ab7"
+    },
+    {
+      "path": "packages/runtime/src/assetManagerOwnerState.ts",
+      "bytes": 4195,
+      "sha256": "876d4e019270abda5ac30b710ee2aeec6ebd71dc78a5c5b9d05231e04b5cef15"
+    },
+    {
+      "path": "packages/runtime/src/Sprite.ts",
+      "bytes": 442,
+      "sha256": "a3175515cdeedc283199870cd683e541acf208f04330c63c3f5f5eee2e328bba"
+    },
+    {
+      "path": "packages/runtime/src/Graphics.ts",
+      "bytes": 1488,
+      "sha256": "40ad187b36eed1b2ba111c7672550139c7308ac720f43361d55ad9c13c3ac7ff"
+    },
+    {
+      "path": "packages/runtime/src/frameCapture.ts",
+      "bytes": 8422,
+      "sha256": "2910a1ffb0113aa7192a7d1c0dea49b3697b3621e2b34fe5485ade35ee1d34b9"
+    },
+    {
+      "path": "packages/runtime/src/bitmapAtlasPlacement.ts",
+      "bytes": 1866,
+      "sha256": "4788c344d2d03fe449d1d4901878b610993f3cf931e4591a2fe574a3a88b5365"
+    },
+    {
+      "path": "packages/runtime/src/Bitmap.ts",
+      "bytes": 23492,
+      "sha256": "8bfbaffa087e502b6b53863f7ae2e63ee00db7eb3642db9b15c1ad2b20917868"
+    },
+    {
+      "path": "packages/runtime/src/atlasFrameLayout.ts",
+      "bytes": 2507,
+      "sha256": "b8b417c238d20dab92550f73258e99caa3eda96b317ebb94117f87dfa49b6ba8"
+    },
+    {
+      "path": "packages/runtime/src/sharedFrameCapture.ts",
+      "bytes": 21282,
+      "sha256": "4ef0a109ca0040d56cc71822deb1ea3435b42b06ef0cf328252cb672785917b2"
+    },
+    {
+      "path": "packages/runtime/src/meshCaptureSnapshot.ts",
+      "bytes": 695,
+      "sha256": "1259670e400cbe432f2edf176d1b7ddb6dbcc08d89c89038c4b3a30a9c4ae966"
+    },
+    {
+      "path": "packages/runtime/src/Texture.ts",
+      "bytes": 8333,
+      "sha256": "3dbaac58fd9f2b744896801039d247a45e51e64d2afa51c1a2a6acf8bc47159f"
+    },
+    {
+      "path": "packages/runtime/src/imageFrameBudget.ts",
+      "bytes": 1968,
+      "sha256": "591700c47a2ec78a5a2e11b9b380386e6d79fd0bc09a5d37c0a637bbc4d5b19e"
+    },
+    {
+      "path": "packages/runtime/src/texturedFrameCapture.ts",
+      "bytes": 15606,
+      "sha256": "b245c0df9d3a05455a56e69e96352d6f98193e6c8bc3b7f644c3aeec70329734"
+    },
+    {
+      "path": "packages/runtime/src/texturedFrameBudget.ts",
+      "bytes": 1684,
+      "sha256": "5c9a21cdf862e4796aa1dc76f97c5e9219b02920b06528f0745456b67edb46fa"
+    },
+    {
+      "path": "packages/runtime/src/Mesh2D.ts",
+      "bytes": 5179,
+      "sha256": "aa0c2277fd7b2b251595675a634015fd6c1e6cb175a137f5c9ef2592916ad56f"
+    },
+    {
+      "path": "packages/runtime/src/sequenceClip.ts",
+      "bytes": 9515,
+      "sha256": "9bda5884f85f0cf3144eae8cab0f7743b2a1b2c37b179d71a6ef9f60bdcb8d4d"
+    },
+    {
+      "path": "packages/runtime/src/SequencePlayer.ts",
+      "bytes": 3462,
+      "sha256": "1e3d1f9ac607fa35a634cf9eb2ef15d94541bd24bc811d44cdc3cd78548f3635"
+    },
+    {
+      "path": "packages/runtime/src/ByteReader.ts",
+      "bytes": 7470,
+      "sha256": "6bdfd946873b01d829682dccdaca85e0c11e579574657d4c2c5d0b901766dedb"
+    },
+    {
+      "path": "packages/runtime/src/displayInputOperations.ts",
+      "bytes": 3520,
+      "sha256": "f8a803b10a513afa25fd68d9e28055eeb186e3e6bd9fb00a15c9e8ae78cbce15"
+    },
+    {
+      "path": "packages/runtime/src/ByteWriter.ts",
+      "bytes": 8121,
+      "sha256": "3fde5a988ac6899b2fab51b296d28905267b59f1df92ccb49b5d97eac8cf6577"
+    },
+    {
+      "path": "packages/runtime/src/NineSliceGeometry2D.ts",
+      "bytes": 6142,
+      "sha256": "84150122949a6693e75d5a7e50a36a3b4372f5b0f58e3f9df968352a52fe182b"
+    },
+    {
+      "path": "packages/runtime/src/NineSliceBitmap.ts",
+      "bytes": 8032,
+      "sha256": "3223bf4aa87e6cac7de10e4e4a224aecdefdb2df5046ee7c7b8a73eaf9c66809"
+    },
+    {
+      "path": "packages/runtime/src/spriteSheet.ts",
+      "bytes": 13911,
+      "sha256": "7f2c0b7eb005ddaf9620c8b53dd1909856bb897aa46a2852efe0134840d47c6c"
+    },
+    {
+      "path": "packages/engine/src/bitmapResourceSlot.ts",
+      "bytes": 12435,
+      "sha256": "e9a2c675b6b9d897b446e46aa3198905fff899207b68262fbccd312d711aba8b"
+    },
+    {
+      "path": "packages/engine/src/bitmapBindingTicket.ts",
+      "bytes": 8604,
+      "sha256": "752f57b884d37477730622e4942fa08d321ebf2b250670ad81de7a9812b32179"
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "bytes": 2307,
+      "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f"
+    },
+    {
+      "path": "packages/engine/src/internal/texturedFrameState.ts",
+      "bytes": 1285,
+      "sha256": "5b16b3fe588061fe35025db13c56e8a13857979bff33d6edf1641e70132ad18e"
+    },
+    {
+      "path": "packages/engine/src/gameClock.ts",
+      "bytes": 9147,
+      "sha256": "1115ee023465b0501b563e696b93f7f86f18e85d1fb57b2eed3d1c896bd71141"
+    },
+    {
+      "path": "packages/engine/src/tween.ts",
+      "bytes": 13260,
+      "sha256": "3f861705988d55cd556d031973dddc67dfaca13964c4175bd958292e00d1022f"
+    },
+    {
+      "path": "packages/engine/src/internal/textFieldFactoryState.ts",
+      "bytes": 1535,
+      "sha256": "8602e59028681b31fa2156c1e725290f4eb8a782f5324b7c3c2b22e549279014"
+    },
+    {
+      "path": "packages/engine/src/assetGroup.ts",
+      "bytes": 12499,
+      "sha256": "66572c1ac1df6d0e9f64f32d72fbf46b08624ba4c48047179bab6c648af39de3"
+    },
+    {
+      "path": "packages/engine/src/manifestAssetGroup.ts",
+      "bytes": 16848,
+      "sha256": "8a4542d24f43a6b78809cced4289f29b7909bbd33134a6e426a3fc223dfa7558"
+    },
+    {
+      "path": "packages/contracts/src/resources/index.ts",
+      "bytes": 507,
+      "sha256": "a2df37b06a9c313f2c1bb44464f4c96e1c4ef7c7bde1ae234668bc252b561d3a"
+    },
+    {
+      "path": "packages/contracts/src/resources/manifestAdmission.ts",
+      "bytes": 15728,
+      "sha256": "14df641417569f885e8658561da45dc6c5508380ab2c84f37f22b2ea734c1860"
+    },
+    {
+      "path": "packages/contracts/src/resources/sha256.ts",
+      "bytes": 4503,
+      "sha256": "acb64d9803f6428a12962e6582f0dd1fcd73336583b4fa1382dda349040821fa"
+    },
+    {
+      "path": "packages/engine/src/manifestResourceState.ts",
+      "bytes": 3180,
+      "sha256": "6467821a0f663aa4cc7ed5f386b4467128758de52ff30ee159bf7b13fcdc24fb"
+    },
+    {
+      "path": "packages/engine/src/mouseInput.ts",
+      "bytes": 22563,
+      "sha256": "83ca7db6c00c65b88c093b787c82093984c98bfa1b6053643527f8adb7e7e5bd"
+    },
+    {
+      "path": "packages/engine/src/internal/mouseInputFactoryState.ts",
+      "bytes": 5963,
+      "sha256": "ef3d075050fc7f29c9dd7d94f7542cf23e11e6c9b59a037f5f0f41afa738142f"
+    },
+    {
+      "path": "packages/engine/src/bitmapButton.ts",
+      "bytes": 14377,
+      "sha256": "23e54e21d0df126e598cb3e929e7d306accc04a79cad34e418ba94df2fba9fac"
+    },
+    {
+      "path": "packages/engine/src/sequencePlayback.ts",
+      "bytes": 13644,
+      "sha256": "dd72d68e12037cbfe4fb47d20e3133ed07ec1af14f88cb76bab1d3241a35c4f6"
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "bytes": 1408,
+      "sha256": "626ab89ddf8ecfb248e6ef62e5c088a9439d78657b6e005e23e7da9fedd6b0cc"
+    },
+    {
+      "path": "packages/engine/src/startEngine.ts",
+      "bytes": 1370,
+      "sha256": "8c61c07c5e22ff48a0d7ade0befceb84ab19af4452e7793d4a2fb21c184249d0"
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "bytes": 579,
+      "sha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320"
+    },
+    {
+      "path": "packages/engine/src/createEngineForProfile.ts",
+      "bytes": 4035,
+      "sha256": "3bd2c6fa07ac05461f28ac11988474158a81070caf64a03438f73825eda19b9d"
+    },
+    {
+      "path": "packages/engine/web/index.ts",
+      "bytes": 122,
+      "sha256": "1c06c610493ff706ed07983a2bdd826aaf8a2b3af8c88563ad99e1324f2a7e4e"
+    },
+    {
+      "path": "packages/engine/web/CanvasHost.ts",
+      "bytes": 11376,
+      "sha256": "82236ce1a291da6409007c42ecc767b2cb382d23eabf65efc6707dd9806f6642"
+    },
+    {
+      "path": "packages/engine/web/copyCanvasFrame.ts",
+      "bytes": 13543,
+      "sha256": "03e8d3110915aac30fcd6908c4a5d6f15cfc37f4f9e4697baeadd2f769ca67ef"
+    },
+    {
+      "path": "packages/engine/web/imageProjections2D.ts",
+      "bytes": 7164,
+      "sha256": "937bfc89c93b941a78cc37242544e3d7b2ecd94454148006a0ff52e9ed3cfd17"
+    },
+    {
+      "path": "packages/engine/rendering/ownedPreparationFailure2D.ts",
+      "bytes": 1027,
+      "sha256": "475525f49142c8fc94c6885b3af01931f418e5233d9b91bf7cf48dc1080cfec9"
+    },
+    {
+      "path": "packages/engine/web/canvasImageProjection.ts",
+      "bytes": 1220,
+      "sha256": "0d8bec0566c69f69e462f14c30507abe182dcdfded7fbf3c83abdb71e4adc23e"
+    },
+    {
+      "path": "packages/engine/web/pointer.ts",
+      "bytes": 235,
+      "sha256": "ee0372b3f7a681db810bb40e8083fb3d51ae1571be68198c89ee0c326c9b2610"
+    },
+    {
+      "path": "packages/engine/web/BrowserPointerInput.ts",
+      "bytes": 17991,
+      "sha256": "03ce6f72524e814f7c0f6949670e238f69988fe3826bb1b070430da1eb03adca"
+    },
+    {
+      "path": "packages/engine/src/pointerInput.ts",
+      "bytes": 8380,
+      "sha256": "fefd9e3856bc101a76a455e04cb1eacdcaddaff85ae5c19a70d4a41cc4918f1d"
+    },
+    {
+      "path": "packages/runtime/src/input/index.ts",
+      "bytes": 307,
+      "sha256": "e44a730d131d9545107a39fe75063b868ad2ba6d7d7c82964d9e8e4f06dcdc9a"
+    },
+    {
+      "path": "packages/runtime/src/input/PointerRouter.ts",
+      "bytes": 14129,
+      "sha256": "3664f2e0fc81446761cf3436025c6eca4c8f18fa44777a93f0290236171f4c03"
+    },
+    {
+      "path": "tools/verify-multi-pointer.mjs",
+      "bytes": 22980,
+      "sha256": "e8af08ee9af77c7da8267f86aafdd7a12a2a7f8897ce2e8302a8c970ab2c8eea"
+    },
+    {
+      "path": "tools/lib/file-identity.mjs",
+      "bytes": 5065,
+      "sha256": "999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1108,
+      "sha256": "16a969b9a50653b1733893c59ee4cd1d29845208c11bd182036bc585372834d0"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "bytes": 9017,
+      "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"
+    },
+    {
+      "path": "tsconfig.json",
+      "bytes": 369,
+      "sha256": "d9253848fbde9041d0f7540553dbabc7f723856e7f4513358d41aa0384fab0ef"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "bytes": 446,
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    },
+    {
+      "path": "examples/multi-pointer/index.html",
+      "bytes": 2826,
+      "sha256": "bda7327472c1ac99a690c8a4bb10435df717b37af4811d52004e9f3c652ab6b4"
+    },
+    {
+      "path": "examples/multi-pointer/main.mjs",
+      "bytes": 5559,
+      "sha256": "127d5f13e97085112a03a5948e41d5e3b9041efb82e070721ccee326001b2e57"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "bytes": 319,
+      "sha256": "f40591968003b235cddf38a576c1250a28ef965726750d377f0691a8e6f48e9e"
+    },
+    {
+      "path": "packages/contracts/tsconfig.json",
+      "bytes": 135,
+      "sha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6"
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "bytes": 471,
+      "sha256": "97b2d4678df4fd137b681a54511ce625935accfc3014da4800902f4a241c8db1"
+    },
+    {
+      "path": "packages/runtime/tsconfig.json",
+      "bytes": 181,
+      "sha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "bytes": 2494,
+      "sha256": "65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951"
+    },
+    {
+      "path": "packages/engine/tsconfig.json",
+      "bytes": 207,
+      "sha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4"
+    },
+    {
+      "path": "packages/engine/tsconfig.web.json",
+      "bytes": 356,
+      "sha256": "c1db022356fde98656725aff6d5e795d8a54bed48046fecb49b33c3c73f2bea3"
+    },
+    {
+      "path": "packages/engine/tsconfig.rendering.json",
+      "bytes": 307,
+      "sha256": "f5a7e4fe1d79c140d9472417b8ddfbd0104929a982cdf61dae247735f1b6f13a"
+    }
+  ],
+  "sourceFreeze": {
+    "beforeBrowserLaunch": true,
+    "files": 194,
+    "bytes": 1226766
+  },
+  "checks": [
+    {
+      "name": "native mouse capture and outside release",
+      "pass": true,
+      "terminal": {
+        "kind": "end",
+        "region": "left",
+        "id": 1,
+        "generation": 1,
+        "pointerId": 1,
+        "pointerType": "mouse",
+        "globalX": 330,
+        "globalY": 10,
+        "sequence": 3,
+        "viewportRevision": 0
+      }
+    },
+    {
+      "name": "two authored Canvas regions",
+      "pass": true,
+      "pixels": [
+        [
+          8,
+          126,
+          139,
+          255
+        ],
+        [
+          196,
+          82,
+          51,
+          255
+        ]
+      ]
+    },
+    {
+      "name": "Engine close and inline style restoration",
+      "pass": true,
+      "terminals": [
+        {
+          "kind": "end",
+          "region": "left",
+          "id": 1,
+          "generation": 1,
+          "pointerId": 1,
+          "pointerType": "mouse",
+          "globalX": 330,
+          "globalY": 10,
+          "sequence": 3,
+          "viewportRevision": 0
+        }
+      ],
+      "nativeCapture": false
+    },
+    {
+      "name": "two browser touch contacts including secondary pointer",
+      "pass": true,
+      "active": [
+        {
+          "kind": "begin",
+          "region": "left",
+          "id": 1,
+          "generation": 1,
+          "pointerId": 2,
+          "pointerType": "touch",
+          "globalX": 60,
+          "globalY": 80,
+          "sequence": 1,
+          "viewportRevision": 0
+        },
+        {
+          "kind": "begin",
+          "region": "right",
+          "id": 2,
+          "generation": 1,
+          "pointerId": 3,
+          "pointerType": "touch",
+          "globalX": 220,
+          "globalY": 80,
+          "sequence": 2,
+          "viewportRevision": 0
+        }
+      ],
+      "nativeCapture": [
+        true,
+        true
+      ]
+    },
+    {
+      "name": "partial release observed state",
+      "active": [
+        {
+          "kind": "begin",
+          "region": "right",
+          "id": 2,
+          "generation": 1,
+          "pointerId": 3,
+          "pointerType": "touch",
+          "globalX": 220,
+          "globalY": 80,
+          "sequence": 2,
+          "viewportRevision": 0
+        }
+      ],
+      "notifications": [
+        {
+          "kind": "begin",
+          "region": "left",
+          "id": 1,
+          "generation": 1,
+          "pointerId": 2,
+          "pointerType": "touch",
+          "globalX": 60,
+          "globalY": 80,
+          "sequence": 1,
+          "viewportRevision": 0
+        },
+        {
+          "kind": "begin",
+          "region": "right",
+          "id": 2,
+          "generation": 1,
+          "pointerId": 3,
+          "pointerType": "touch",
+          "globalX": 220,
+          "globalY": 80,
+          "sequence": 2,
+          "viewportRevision": 0
+        },
+        {
+          "kind": "move",
+          "region": "left",
+          "id": 1,
+          "generation": 1,
+          "pointerId": 2,
+          "pointerType": "touch",
+          "globalX": 327.5,
+          "globalY": 80,
+          "sequence": 3,
+          "viewportRevision": 0
+        },
+        {
+          "kind": "end",
+          "region": "left",
+          "id": 1,
+          "generation": 1,
+          "pointerId": 2,
+          "pointerType": "touch",
+          "globalX": 327.5,
+          "globalY": 80,
+          "sequence": 4,
+          "viewportRevision": 0
+        }
+      ]
+    },
+    {
+      "name": "independent captured movement and release",
+      "pass": true,
+      "terminals": [
+        {
+          "kind": "end",
+          "region": "left",
+          "id": 1,
+          "generation": 1,
+          "pointerId": 2,
+          "pointerType": "touch",
+          "globalX": 327.5,
+          "globalY": 80,
+          "sequence": 4,
+          "viewportRevision": 0
+        },
+        {
+          "kind": "end",
+          "region": "right",
+          "id": 2,
+          "generation": 1,
+          "pointerId": 3,
+          "pointerType": "touch",
+          "globalX": 220,
+          "globalY": 80,
+          "sequence": 5,
+          "viewportRevision": 0
+        }
+      ],
+      "nativeCapture": [
+        false,
+        false
+      ]
+    },
+    {
+      "name": "five browser-injected contacts",
+      "pass": true,
+      "maximum": 5
+    },
+    {
+      "name": "system touch cancellation",
+      "pass": true,
+      "cancels": 5,
+      "terminals": [
+        {
+          "kind": "cancel",
+          "reason": "pointercancel",
+          "region": "left",
+          "id": 3,
+          "generation": 1,
+          "pointerId": 4,
+          "pointerType": "touch",
+          "globalX": 30,
+          "globalY": 80,
+          "sequence": 11,
+          "viewportRevision": 0
+        },
+        {
+          "kind": "cancel",
+          "reason": "pointercancel",
+          "region": "left",
+          "id": 4,
+          "generation": 1,
+          "pointerId": 5,
+          "pointerType": "touch",
+          "globalX": 85,
+          "globalY": 80,
+          "sequence": 12,
+          "viewportRevision": 0
+        },
+        {
+          "kind": "cancel",
+          "reason": "pointercancel",
+          "region": "left",
+          "id": 5,
+          "generation": 1,
+          "pointerId": 6,
+          "pointerType": "touch",
+          "globalX": 140,
+          "globalY": 80,
+          "sequence": 13,
+          "viewportRevision": 0
+        },
+        {
+          "kind": "cancel",
+          "reason": "pointercancel",
+          "region": "right",
+          "id": 6,
+          "generation": 1,
+          "pointerId": 7,
+          "pointerType": "touch",
+          "globalX": 195,
+          "globalY": 80,
+          "sequence": 14,
+          "viewportRevision": 0
+        },
+        {
+          "kind": "cancel",
+          "reason": "pointercancel",
+          "region": "right",
+          "id": 7,
+          "generation": 1,
+          "pointerId": 8,
+          "pointerType": "touch",
+          "globalX": 250,
+          "globalY": 80,
+          "sequence": 15,
+          "viewportRevision": 0
+        }
+      ]
+    },
+    {
+      "name": "viewport cancellation poststate and new revision",
+      "pass": true,
+      "oldRevision": 0,
+      "revision": 2,
+      "terminals": [
+        {
+          "kind": "cancel",
+          "reason": "viewport",
+          "region": "left",
+          "id": 8,
+          "generation": 1,
+          "pointerId": 9,
+          "pointerType": "touch",
+          "globalX": 60,
+          "globalY": 80,
+          "sequence": 18,
+          "viewportRevision": 0
+        },
+        {
+          "kind": "cancel",
+          "reason": "viewport",
+          "region": "right",
+          "id": 9,
+          "generation": 1,
+          "pointerId": 10,
+          "pointerType": "touch",
+          "globalX": 220,
+          "globalY": 80,
+          "sequence": 19,
+          "viewportRevision": 0
+        }
+      ]
+    },
+    {
+      "name": "fresh down after resize",
+      "pass": true
+    },
+    {
+      "name": "close with browser contact held",
+      "pass": true,
+      "terminals": [
+        {
+          "kind": "cancel",
+          "reason": "dispose",
+          "region": "outside",
+          "id": 10,
+          "generation": 1,
+          "pointerId": 11,
+          "pointerType": "touch",
+          "globalX": 60,
+          "globalY": 80,
+          "sequence": 21,
+          "viewportRevision": 2
+        }
+      ],
+      "nativeCapture": false,
+      "inlineTouchAction": ""
+    }
+  ],
+  "errors": [],
+  "cleanup": {
+    "contexts": true,
+    "browser": true,
+    "server": true
+  },
+  "snapshotIntegrity": true,
+  "served": [
+    "examples/multi-pointer/index.html",
+    "examples/multi-pointer/main.mjs",
+    "packages/contracts/dist/ImageData2D.js",
+    "packages/contracts/dist/SharedGeometry2D.js",
+    "packages/contracts/dist/SharedMaterial2D.js",
+    "packages/contracts/dist/SharedRenderFrame2D.js",
+    "packages/contracts/dist/TexturedGeometry2D.js",
+    "packages/contracts/dist/TexturedRenderFrame2D.js",
+    "packages/contracts/dist/index.js",
+    "packages/contracts/dist/resources/index.js",
+    "packages/contracts/dist/resources/manifestAdmission.js",
+    "packages/contracts/dist/resources/sha256.js",
+    "packages/engine/dist/Engine.js",
+    "packages/engine/dist/assetGroup.js",
+    "packages/engine/dist/bitmapBindingTicket.js",
+    "packages/engine/dist/bitmapButton.js",
+    "packages/engine/dist/bitmapResourceSlot.js",
+    "packages/engine/dist/closeHost.js",
+    "packages/engine/dist/createEngine.js",
+    "packages/engine/dist/createEngineForProfile.js",
+    "packages/engine/dist/gameClock.js",
+    "packages/engine/dist/index.js",
+    "packages/engine/dist/internal/mouseInputFactoryState.js",
+    "packages/engine/dist/internal/textFieldFactoryState.js",
+    "packages/engine/dist/internal/texturedFrameState.js",
+    "packages/engine/dist/manifestAssetGroup.js",
+    "packages/engine/dist/manifestResourceState.js",
+    "packages/engine/dist/mouseInput.js",
+    "packages/engine/dist/pointerInput.js",
+    "packages/engine/dist/rendering/ownedPreparationFailure2D.js",
+    "packages/engine/dist/sequencePlayback.js",
+    "packages/engine/dist/startEngine.js",
+    "packages/engine/dist/surfaceOwnership.js",
+    "packages/engine/dist/tween.js",
+    "packages/engine/dist/web/BrowserPointerInput.js",
+    "packages/engine/dist/web/CanvasHost.js",
+    "packages/engine/dist/web/canvasImageProjection.js",
+    "packages/engine/dist/web/copyCanvasFrame.js",
+    "packages/engine/dist/web/imageProjections2D.js",
+    "packages/engine/dist/web/index.js",
+    "packages/engine/dist/web/pointer.js",
+    "packages/runtime/dist/AssetLease.js",
+    "packages/runtime/dist/AssetManager.js",
+    "packages/runtime/dist/AssetRef.js",
+    "packages/runtime/dist/Bitmap.js",
+    "packages/runtime/dist/ByteReader.js",
+    "packages/runtime/dist/ByteWriter.js",
+    "packages/runtime/dist/CancellationController.js",
+    "packages/runtime/dist/DisplayObject.js",
+    "packages/runtime/dist/DisplayObjectContainer.js",
+    "packages/runtime/dist/EgretError.js",
+    "packages/runtime/dist/Event.js",
+    "packages/runtime/dist/EventDispatcher.js",
+    "packages/runtime/dist/Graphics.js",
+    "packages/runtime/dist/Mesh2D.js",
+    "packages/runtime/dist/NineSliceBitmap.js",
+    "packages/runtime/dist/NineSliceGeometry2D.js",
+    "packages/runtime/dist/Scope.js",
+    "packages/runtime/dist/SequencePlayer.js",
+    "packages/runtime/dist/Sprite.js",
+    "packages/runtime/dist/Stage.js",
+    "packages/runtime/dist/Texture.js",
+    "packages/runtime/dist/assetManagerOwnerState.js",
+    "packages/runtime/dist/atlasFrameLayout.js",
+    "packages/runtime/dist/bitmapAtlasPlacement.js",
+    "packages/runtime/dist/bitmapDisplayState.js",
+    "packages/runtime/dist/coordinateInverse.js",
+    "packages/runtime/dist/diagnostics.js",
+    "packages/runtime/dist/displayBounds.js",
+    "packages/runtime/dist/displayCoordinates.js",
+    "packages/runtime/dist/displayHitState.js",
+    "packages/runtime/dist/displayHitTest.js",
+    "packages/runtime/dist/displayInputOperations.js",
+    "packages/runtime/dist/displayTransform.js",
+    "packages/runtime/dist/displayTreeState.js",
+    "packages/runtime/dist/displayVisualState.js",
+    "packages/runtime/dist/frameCapture.js",
+    "packages/runtime/dist/frameCaptureCache.js",
+    "packages/runtime/dist/imageFrameBudget.js",
+    "packages/runtime/dist/index.js",
+    "packages/runtime/dist/input/PointerRouter.js",
+    "packages/runtime/dist/input/index.js",
+    "packages/runtime/dist/meshCaptureSnapshot.js",
+    "packages/runtime/dist/meshDisplayState.js",
+    "packages/runtime/dist/ownership.js",
+    "packages/runtime/dist/sequenceClip.js",
+    "packages/runtime/dist/sharedFrameCapture.js",
+    "packages/runtime/dist/spriteSheet.js",
+    "packages/runtime/dist/textDisplayState.js",
+    "packages/runtime/dist/texturedFrameBudget.js",
+    "packages/runtime/dist/texturedFrameCapture.js"
+  ],
+  "endedAt": "2026-10-23T10:55:07.430Z"
+}

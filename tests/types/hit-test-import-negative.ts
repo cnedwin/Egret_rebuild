@@ -12,7 +12,7 @@ import { queryDisplayHit } from '@egret/runtime';
 import { queryDisplayHit as EngineDeep } from '@egret/engine/displayHitTest';
 // HIT_TEST_IMPORT_CASE runtime-deep-state TS2307
 import { readDisplayHitState as RuntimeDeep } from '@egret/runtime/displayHitState';
-// HIT_TEST_IMPORT_CASE no-input-subpath TS2307
+// HIT_TEST_IMPORT_CASE no-legacy-input-router TS2305
 import { createInputRouter } from '@egret/engine/input';
 void [readDisplayHitState, queryDisplayHit, EngineDeep, RuntimeDeep, createInputRouter];
 export type { WebOptions, GpuOptions, TextOptions };

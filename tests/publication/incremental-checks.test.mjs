@@ -668,9 +668,18 @@ test('registered successors stay separate from original raw expectations',async(
 const m15BootstrapBefore="m13HelperPin.bytes !== 11980 || m13HelperPin.sha256 !== '7f4a82751f0e9e5b3f1b9de5a17816b20cd169ed02f9130b1a7c3989c547b634'";
 const m15BootstrapAfter="m13HelperPin.bytes !== 12701 || m13HelperPin.sha256 !== '0c8ae45e31b879ca8e84633091f3a5e938d7712c4f2dff7cf1af3013859b91ad'";
 const m12BootstrapAfter="m13HelperPin.bytes !== 14254 || m13HelperPin.sha256 !== '01ac10f3471436f5b5a72ae01abe4813f7843a331a2b071e74c281ee3d3aaa0d'";
+// Project only the nine exact M3.3 bootstrap successors back to the retained M1.2 fixtures.
+const m33BootstrapAfter="m13HelperPin.bytes !== 16190 || m13HelperPin.sha256 !== '6410f814c90eaf001850a35ff74e826ca994e39cea7434b10a94dda165a01b88'";
+const m33StrictGateHistory=[{"path":"tools/bitmap-resource-slot-types.mjs","predecessor":{"bytes":11184,"sha256":"e368d684d0fcaa7ad64539464110f8313cd8e17f2769421cd534953064317629"},"current":{"bytes":11184,"sha256":"6e6bf53aa8ef8f966c3ea19a51fa753d66a78755d6d4308b75df98d2f6f279ca"}},{"path":"tools/bitmap-binding-ticket-types.mjs","predecessor":{"bytes":13887,"sha256":"c59ec5a76da98fae8389671152ef38ae07653ce6b8680443b3a05c89061753f9"},"current":{"bytes":13887,"sha256":"e29cd5ec5e3e0ac49c1ed60f5625f9619ebfd2efb47eff54a73f5c89e55d4338"}},{"path":"tools/linear-layout-types.mjs","predecessor":{"bytes":11073,"sha256":"aecf36d5290b8691cb08b838a008767300f1d62793dfaf3a482ff349cf87f369"},"current":{"bytes":11073,"sha256":"2b1fcdaab0348fc048336809ceb54f90d32a01ba9808beaff4a813c82c90faee"}},{"path":"tools/bitmap-button-types.mjs","predecessor":{"bytes":17175,"sha256":"38049fb026e9602a5666709a6995a83d619e55f4ff69c777bd282fcc4f13a594"},"current":{"bytes":17175,"sha256":"20d345fe4a69ce04e7092191c9dfb51a2c12c487985507bcb6cec77ab833b19e"}},{"path":"tools/display-anchor-offsets-types.mjs","predecessor":{"bytes":16526,"sha256":"ec55c864f05220560e9bf1dec478bb4ec9654cdf643230d2fe029dcfc9e2633a"},"current":{"bytes":16526,"sha256":"41b9b17458129ad80e06e9585e6389456bde45a2c14f8fc1b34e7677c45ebdda"}},{"path":"tools/display-container-add-child-at-types.mjs","predecessor":{"bytes":18718,"sha256":"39dbbc65ab64ddc2f9f4cf92333f689d8a8998e20277d9a327bf7ecd179e9fbe"},"current":{"bytes":18718,"sha256":"43938661831d4cd464867fc3c32e925c021fafb45fc567f41a3fe5d1f5371227"}},{"path":"tools/display-container-child-index-types.mjs","predecessor":{"bytes":17112,"sha256":"74c3722cb43b203b46e7aed2f442f34e220849be55a92dc165e48af29c156a0f"},"current":{"bytes":17112,"sha256":"fafb90b31816b298863a2742afdeb380d622d47626daaa202a9895498b045e90"}},{"path":"tools/display-container-remove-children-types.mjs","predecessor":{"bytes":15268,"sha256":"08abd88096100f2dc45f0b197cdde72baf55bfff93e34c6f1e508c7ef0fa7514"},"current":{"bytes":15268,"sha256":"47cc4b3670285c429cfdbd63d1b5276ce69df829e8b084357644c6a305f1b18d"}},{"path":"tools/sequence-playback-types.mjs","predecessor":{"bytes":19255,"sha256":"4b0dccd9c27eeb4ae049a80048e978f821fde744c712530a6d342dcad8abaf35"},"current":{"bytes":19255,"sha256":"1478a503c52bad8cca832b86437b7a7546db0eadbc7fbdc9c7ec119ba950fe01"}}];
+function m33StrictPredecessor(file,raw){
+ const selected=m33StrictGateHistory.find(row=>row.path===file);if(!selected)return raw;
+ const identity=bytes=>({bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
+ assert.deepEqual(identity(raw),selected.current);const text=raw.toString();assert.equal(text.split(m33BootstrapAfter).length,2);
+ const previous=Buffer.from(text.replace(m33BootstrapAfter,m12BootstrapAfter));assert.deepEqual(identity(previous),selected.predecessor);return previous;
+}
 function inlineCompilerFixture({m15=false,m12=false}={}){
  const f=compilerFixture();
- for(const name of ['check-types','bitmap-resource-slot-types','bitmap-binding-ticket-types','linear-layout-types','bitmap-button-types','display-anchor-offsets-types','display-container-add-child-at-types','display-container-child-index-types','display-container-remove-children-types','sequence-playback-types']){const current=fs.readFileSync(new URL('../../tools/'+name+'.mjs',import.meta.url)),raw=Buffer.from(current.toString().replace(m12BootstrapAfter,m15BootstrapAfter));f.put('tools/'+name+'.mjs',m12?current:m15?raw:Buffer.from(raw.toString().replace(m15BootstrapAfter,m15BootstrapBefore)));}
+ for(const name of ['check-types','bitmap-resource-slot-types','bitmap-binding-ticket-types','linear-layout-types','bitmap-button-types','display-anchor-offsets-types','display-container-add-child-at-types','display-container-child-index-types','display-container-remove-children-types','sequence-playback-types']){const file='tools/'+name+'.mjs',current=m33StrictPredecessor(file,fs.readFileSync(new URL('../../'+file,import.meta.url))),raw=Buffer.from(current.toString().replace(m12BootstrapAfter,m15BootstrapAfter));f.put(file,m12?current:m15?raw:Buffer.from(raw.toString().replace(m15BootstrapAfter,m15BootstrapBefore)));}
  for(const [family,lanes]of [['mouse-input',['positive','negative','import-negative','dom-free-negative']],['spine-import-plan',['positive','negative','import-negative']]])for(const lane of lanes){const file='tests/types/'+family+'-'+lane+'.ts';f.put(file,fs.readFileSync(new URL('../../'+file,import.meta.url)));}
  for(const name of ['display-container-add-child-at','display-container-child-index','display-container-remove-children','sequence-playback']){
   const file='tests/types/'+name+'-diagnostic-expectations.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file))),original=JSON.parse(fs.readFileSync(new URL('../../'+file,import.meta.url)));
@@ -1147,8 +1156,48 @@ test('M1.5 maintenance keeps three graph groups and seventeen pair roles beside 
  }finally{f.close();}
 });
 
+// Authenticate the whole current source before undoing only its bounded M3 insertions.
+const m33BoundarySources = [{"path":"tools/spritesheet-boundary.mjs","current":{"bytes":202670,"sha256":"0da3517e80ae80562655bfcd98e6468c9a9f9ed16fde4b590f357cc4195365c4"},"predecessor":{"bytes":192441,"sha256":"ecab5b53ef95905ccc0d497d22ae21f0fdcdb722af9a131fcdc8f33a28322345"}},{"path":"tools/sequence-playback-boundary.mjs","current":{"bytes":45750,"sha256":"220c68bd0afcf72fc41ba75bf67844c75293b51c885023e5ad41a1c312a0bea9"},"predecessor":{"bytes":43012,"sha256":"2d95757ddd9c3a6d1762fd44ba02461ef92504690f2e1e4c342a5f6d71f10a62"}},{"path":"tools/browser-png-boundary.mjs","current":{"bytes":209858,"sha256":"2fcd26757382cabb4c28ea8bb0652b6867c550add31f1c514661ce860a4f0ba0"},"predecessor":{"bytes":198282,"sha256":"76ff8a040936e5eace5eff3c94f3da733d512328f0fde507b958c8d32012413e"}},{"path":"tools/bitmap-resource-slot-boundary.mjs","current":{"bytes":40977,"sha256":"f6b5f7f4cae9c7eff328f5e7e6f53de7db23c977a587bfd0b76c9ee2e1112146"},"predecessor":{"bytes":38244,"sha256":"1a4046d1bd5003714ca030ade053f412c98ca1f787d35357b823a12005e791a3"}},{"path":"tools/bitmap-binding-ticket-boundary.mjs","current":{"bytes":47556,"sha256":"2b85a5206b2cfad092ecb42d1200b3e87d9a916a38529087862a94933bdbc4a6"},"predecessor":{"bytes":44823,"sha256":"690d56e1eb726d55990d6a8cd37b2215b1f3bb44430ca5c54abc67cdcffe8026"}},{"path":"tools/atlas-import-boundary.mjs","current":{"bytes":107421,"sha256":"6c670e346640165395fd0019b4fa7edd259fa844da70f8a04a9dabbdb597ae8f"},"predecessor":{"bytes":97146,"sha256":"67b80c84cbfd35c511e739c6afb2d64c80ebe9abf03ecf54cdc68b3f3dc3c5f5"}}];
+function m33BoundaryHistory(raw,owner){
+ const selected=m33BoundarySources.find(row=>row.path===owner);assert(selected);
+ const identity=bytes=>({bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
+ if(JSON.stringify(identity(raw))===JSON.stringify(selected.predecessor))return raw;
+ assert.deepEqual(identity(raw),selected.current);
+ let text=raw.toString();
+ const replace=(from,to='')=>{assert.equal(text.split(from).length,2);text=text.replace(from,to);};
+ const strip=name=>{const start='// '+name+'-BEGIN\n',end='// '+name+'-END\n\n';assert.equal(text.split(start).length,2);assert.equal(text.split(end).length,2);const a=text.indexOf(start),b=text.indexOf(end,a)+end.length;assert(b>a);text=text.slice(0,a)+text.slice(b);};
+ strip('M3-POINTER-PACKAGE');
+ if(['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs','tools/atlas-import-boundary.mjs'].includes(owner)){
+  strip('M3-POINTER-GRAPH');
+  const actual=owner.includes('browser-png')?'actual':'actualNames';
+  replace('  const pointer=m3PointerGraph(root,graph,'+actual+');\n  if(pointer!==undefined)return pointer;\n');
+ }
+ if(owner==='tools/browser-png-boundary.mjs'){
+  replace('function m12PreparationHotPathGraph(root,base,actual) {','function m12PreparationHotPathGraph(base,actual) {');
+  replace('const optimized=m12PreparationHotPathGraph(root,graph,actual);','const optimized=m12PreparationHotPathGraph(graph,actual);');
+  replace(' && !m3PointerPackageSuccessor(row, read(root,row.path,id))');
+  const start='    // M3 adds only the named optional input routes and private pointer binding.\n',end='    if (!equal(projectedExports, expectedPackage.exports))';
+  assert.equal(text.split(start).length,2);assert.equal(text.split(end).length,2);const a=text.indexOf(start),b=text.indexOf(end,a);assert(b>a);text=text.slice(0,a)+text.slice(b);
+ }else if(owner==='tools/atlas-import-boundary.mjs')replace('if (m3PointerPackageSuccessor(pin,readFileSync(path.join(root,pin.path)))) return; ');
+ else if(owner==='tools/spritesheet-boundary.mjs')replace('m3PointerPackageSuccessor(expected, bytes) || ');
+ else if(owner==='tools/sequence-playback-boundary.mjs')replace('m3PointerPackageSuccessor(pin, bytes) || ');
+ else replace('m3PointerPackageSuccessor(pin,raw)||');
+ const previous=Buffer.from(text);assert.deepEqual(identity(previous),selected.predecessor);return previous;
+}
+
+// Historical metadata fixtures use the exact engine package that accompanied their tools.
+function m33BoundaryFixtureInput(file){
+ const raw=fs.readFileSync(new URL('../../'+file,import.meta.url));if(file!=='packages/engine/package.json')return raw;
+ const identity=bytes=>({bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
+ assert.deepEqual(identity(raw),{bytes:2494,sha256:'65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951'});
+ const value=JSON.parse(raw.toString());delete value.exports['./input'];delete value.exports['./web/pointer'];delete value.imports['#egret-pointer-input'];
+ const previous=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ assert.deepEqual(identity(previous),{bytes:2167,sha256:'be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143'});return previous;
+}
+
 // Undo only the bounded insertion; the retained complete source pin authenticates history.
 function m12BoundaryHistory(raw,owner){
+ raw=m33BoundaryHistory(raw,owner);
  const text=raw.toString(),start='// M12-PREPARATION-HOTPATH-BEGIN\n',end='// M12-PREPARATION-HOTPATH-END\n';
  if(!text.includes(start))return raw;
  assert.equal(text.split(start).length,2);assert.equal(text.split(end).length,2);
@@ -1168,7 +1217,7 @@ test('M1.5 maintenance reads six exact source owners and refuses unreviewed post
    assert.deepEqual({path:pin.path,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')},pin);
    f.put(pin.path,raw);
   }
-  for(const file of ['tools/bitmap-resource-slot-policy.json','tools/bitmap-binding-ticket-policy.json','tests/types/atlas-import-diagnostic-expectations.json','packages/engine/dist/Engine.d.ts','packages/contracts/package.json','packages/engine/package.json','packages/project/package.json'])f.put(file,fs.readFileSync(new URL('../../'+file,import.meta.url)));
+  for(const file of ['tools/bitmap-resource-slot-policy.json','tools/bitmap-binding-ticket-policy.json','tests/types/atlas-import-diagnostic-expectations.json','packages/engine/dist/Engine.d.ts','packages/contracts/package.json','packages/engine/package.json','packages/project/package.json'])f.put(file,m33BoundaryFixtureInput(file));
   const collect=()=>m.prepareBaselineReview(f.root),baseline=collect();
   assert.equal(baseline.status,'review-required');
   const graphs=baseline.declarations.filter(row=>row.binding==='m15ResourceRecoveryGraphSuccessor');
@@ -1239,8 +1288,8 @@ test('M1.5 inline maintenance preserves delegate and scene revisions with exact 
 test('M1.2 hotpath metadata keeps three exact current graph owners beside immutable M1.5 sources',async()=>{
  const m=await maintenance(),f=baselineFixture();try{
   const owners=[{"path":"tools/spritesheet-boundary.mjs","bytes":192441,"sha256":"ecab5b53ef95905ccc0d497d22ae21f0fdcdb722af9a131fcdc8f33a28322345"},{"path":"tools/browser-png-boundary.mjs","bytes":198282,"sha256":"76ff8a040936e5eace5eff3c94f3da733d512328f0fde507b958c8d32012413e"},{"path":"tools/atlas-import-boundary.mjs","bytes":97146,"sha256":"67b80c84cbfd35c511e739c6afb2d64c80ebe9abf03ecf54cdc68b3f3dc3c5f5"}];
-  for(const row of owners){const raw=fs.readFileSync(new URL('../../'+row.path,import.meta.url));assert.deepEqual({path:row.path,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')},row);f.put(row.path,raw);}
-  for(const file of ['tests/types/atlas-import-diagnostic-expectations.json','packages/engine/dist/Engine.d.ts','packages/contracts/package.json','packages/engine/package.json','packages/project/package.json'])f.put(file,fs.readFileSync(new URL('../../'+file,import.meta.url)));
+  for(const row of owners){const raw=m33BoundaryHistory(fs.readFileSync(new URL('../../'+row.path,import.meta.url)),row.path);assert.deepEqual({path:row.path,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')},row);f.put(row.path,raw);}
+  for(const file of ['tests/types/atlas-import-diagnostic-expectations.json','packages/engine/dist/Engine.d.ts','packages/contracts/package.json','packages/engine/package.json','packages/project/package.json'])f.put(file,m33BoundaryFixtureInput(file));
   const collect=()=>m.prepareBaselineReview(f.root),current=collect(),groups=current.declarations.filter(row=>row.binding==='m12PreparationHotPathGraphSuccessor');
   assert.equal(current.status,'review-required');assert.equal(groups.length,3);assert(groups.every(row=>row.rows.length===22));
   for(const [index,coverage]of current.graphCoverage.entries())assert.deepEqual(coverage.preparationHotPathSuccessor,{owner:owners[index].path,binding:'m12PreparationHotPathGraphSuccessor'});
@@ -1259,7 +1308,7 @@ test('M1.2 hotpath metadata keeps three exact current graph owners beside immuta
 
 // Execute only the exact tool-local metadata selector, with real retained JSON declarations.
 test('M1.2 hotpath PNG selector admits a complete group and preserves assigned missing or drift paths',()=>{
- const text=fs.readFileSync(new URL('../../tools/browser-png-boundary.mjs',import.meta.url),'utf8');
+ const text=m33BoundaryHistory(fs.readFileSync(new URL('../../tools/browser-png-boundary.mjs',import.meta.url)),'tools/browser-png-boundary.mjs').toString();
  const literal=name=>{const anchor='const '+name+' = ',lines=text.split('\n').filter(line=>line.startsWith(anchor));assert.equal(lines.length,1);return JSON.parse(lines[0].slice(anchor.length,-1));};
  let base=[...literal('acceptedSnapshot').graph,...literal('atlasGraphSuccessor')];
  const pairs=literal('imageResidencySuccessors');base=base.map(row=>{const pair=pairs.find(pair=>pair.path===row.path);return pair&&row.bytes===pair.base.bytes&&row.sha256===pair.base.sha256?{path:row.path,...pair.current}:row;});

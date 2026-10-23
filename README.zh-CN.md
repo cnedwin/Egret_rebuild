@@ -23,6 +23,10 @@ Years later, as times change and technology advances, many developers continue t
 
 [M2–M4 路线](knowledge-base/Cns/docs/m2-m4-delivery-plan.md)衔接完整 Spine／内容、UI／文字／输入及混合核心验收。从 [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56)、[M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) 或 [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58) 选择完整工作包，每项说明代码入口、依赖和可评审验收。
 
+## M3.3 多触点基础
+
+M3.3 增加可选 DOM-free 触点路由及 Engine／浏览器入口，支持独立多触点会话、捕获、取消，以及视口和生命周期清理。附双区域示例与可复现桌面采集器，定向回归通过 176 项。参阅[契约与证据](knowledge-base/Cns/docs/multi-pointer-input.md)。完整 M3.3 焦点／IME、M3.4 手势及 Android／iPhone 真机验收继续开放。
+
 ## 我们正在构建的产品
 
 白鹭引擎面向使用 AI 创作游戏的新创作者，也服务于希望将手游制作经验带到 Web 的开发者。产品以复杂二维界面和轻量三维内容为中心，通过精简的渲染与运行时、明确的资源所有权，以及代码、可视化工具和 Agent 共用的工程模型，支撑持续创作。

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/multi-pointer/browser-verification.json",
+      "originRole": "Original desktop browser observation for the bounded M3.3 input fixture; injected events, not physical-device acceptance."
+    },
+    {
+      "path": "examples/multi-pointer/index.html",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/multi-pointer/main.mjs",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/multi-pointer/README.md",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/multi-pointer/README.zh-CN.md",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/multi-pointer-input.md",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/multi-pointer-input.md",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/src/input.ts",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/pointerInput.ts",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/pointerInputTypes.ts",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/BrowserPointerInput.ts",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/pointer.ts",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/input/index.ts",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/input/PointerRouter.ts",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/input/types.ts",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/browser-pointer.test.mjs",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/pointer-input.test.mjs",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/pointer-router.test.mjs",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-multi-pointer.mjs",
+      "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/multi-pointer-input.md",
+      "zh": "knowledge-base/Cns/docs/multi-pointer-input.md"
+    },
+    {
+      "en": "examples/multi-pointer/README.md",
+      "zh": "examples/multi-pointer/README.zh-CN.md"
+    }
+  ]
+}

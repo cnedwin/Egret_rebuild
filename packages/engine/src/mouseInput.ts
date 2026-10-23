@@ -52,6 +52,7 @@ export interface MouseInputEnginePort {
   scope(value: unknown): ScopePorts;
   report(diagnostic: Diagnostic): void;
   captureCleanup(cause: unknown): void;
+  onClose(listener: () => void): () => void;
   addRecord(record: InputRecord): void;
   removeRecord(record: InputRecord): void;
 }
@@ -73,6 +74,7 @@ export function createMouseInputOwner(engine: object, assembly: MouseInputAssemb
   const remove = Object.getOwnPropertyDescriptor(prototype, 'removeEventListener')!.value as CancellationSignal['removeEventListener'];
   const originalSignals = new WeakMap<Scope, CancellationSignal>();
   const records = new Set<InputRecord>();
+  const shutdown = new Set<() => void>();
   let started = false;
   const port: MouseInputEnginePort = Object.freeze({
     surface: assembly.surface, operations: assembly.operations,
@@ -100,6 +102,10 @@ export function createMouseInputOwner(engine: object, assembly: MouseInputAssemb
         remove(listener: MouseInputNativeListener): void { APPLY(remove, signal, ['abort', listener]); },
       });
     },
+    onClose(listener: () => void): () => void {
+      assembly.assertOpen(); shutdown.add(listener);
+      return (): void => { shutdown.delete(listener); };
+    },
     addRecord(record: InputRecord): void { records.add(record); },
     removeRecord(record: InputRecord): void { records.delete(record); },
   });
@@ -109,7 +115,17 @@ export function createMouseInputOwner(engine: object, assembly: MouseInputAssemb
       originalSignals.set(scope, scope.signal);
       registerMouseInputScope(scope, engine);
     },
-    close(): void { for (const record of [...records]) retire(record, 'owner'); },
+    close(): void {
+      for (const record of [...records]) retire(record, 'owner');
+      const listeners = [...shutdown]; shutdown.clear();
+      for (const listener of listeners) {
+        try { listener(); }
+        catch (cause) {
+          assembly.captureCleanup(cause);
+          assembly.report({ code: 'POINTER_INPUT_CLEANUP_FAILED', phase: 'engine', severity: 'error', cause });
+        }
+      }
+    },
   });
 }
 

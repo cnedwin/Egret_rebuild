@@ -163,6 +163,10 @@ const m15StrictBootstrap = {"before":"m13HelperPin.bytes !== 11980 || m13HelperP
 // Current helper bootstraps reverse exactly to their retained M1.5 actors.
 const m12HotPathStrictSourceSuccessors = [{"path":"tools/bitmap-resource-slot-types.mjs","predecessor":{"bytes":11184,"sha256":"c97f8b75d9103477c7f5e5932f0fb75e588d42eec31a73e6f66327fae9275eaf"},"current":{"bytes":11184,"sha256":"e368d684d0fcaa7ad64539464110f8313cd8e17f2769421cd534953064317629"}},{"path":"tools/bitmap-binding-ticket-types.mjs","predecessor":{"bytes":13887,"sha256":"b36874eaab10b6c275424584d062b599f8e14a215336a7722e9a3783190a8782"},"current":{"bytes":13887,"sha256":"c59ec5a76da98fae8389671152ef38ae07653ce6b8680443b3a05c89061753f9"}},{"path":"tools/linear-layout-types.mjs","predecessor":{"bytes":11073,"sha256":"89cf1e6e5fd099871ff0d7388df1b0b6e6accd36c78aef9aa33e1e5426fa71c3"},"current":{"bytes":11073,"sha256":"aecf36d5290b8691cb08b838a008767300f1d62793dfaf3a482ff349cf87f369"}},{"path":"tools/bitmap-button-types.mjs","predecessor":{"bytes":17175,"sha256":"919546bc07a51a78d499ae070618d7000e2d87774ad4af3c8a540b395924bbb8"},"current":{"bytes":17175,"sha256":"38049fb026e9602a5666709a6995a83d619e55f4ff69c777bd282fcc4f13a594"}},{"path":"tools/display-anchor-offsets-types.mjs","predecessor":{"bytes":16526,"sha256":"9d37f5989501d97094b25a0d9130f98c906cdc60bea4b1f9a042279b7279f90c"},"current":{"bytes":16526,"sha256":"ec55c864f05220560e9bf1dec478bb4ec9654cdf643230d2fe029dcfc9e2633a"}},{"path":"tools/display-container-add-child-at-types.mjs","predecessor":{"bytes":18718,"sha256":"f25ded3a21e455bfc45d5181025d7fd6dcd43cd666a08bc246855fce4452ee91"},"current":{"bytes":18718,"sha256":"39dbbc65ab64ddc2f9f4cf92333f689d8a8998e20277d9a327bf7ecd179e9fbe"}},{"path":"tools/display-container-child-index-types.mjs","predecessor":{"bytes":17112,"sha256":"fb2d518381df6f41795f198c5b353b03fc194361151bbdd5963fde78e7f38929"},"current":{"bytes":17112,"sha256":"74c3722cb43b203b46e7aed2f442f34e220849be55a92dc165e48af29c156a0f"}},{"path":"tools/display-container-remove-children-types.mjs","predecessor":{"bytes":15268,"sha256":"f03e8cfc77240d8ea40021333bf13e56cc15e0e0f469442fd6a72dee7e5bd31b"},"current":{"bytes":15268,"sha256":"08abd88096100f2dc45f0b197cdde72baf55bfff93e34c6f1e508c7ef0fa7514"}},{"path":"tools/sequence-playback-types.mjs","predecessor":{"bytes":19255,"sha256":"6dffcc40c3654db9c9faa2f9983eafea7b6e91960aab20f279b0f5caba9a66be"},"current":{"bytes":19255,"sha256":"4b0dccd9c27eeb4ae049a80048e978f821fde744c712530a6d342dcad8abaf35"}}];
 const m12HotPathStrictBootstrap = {"before":"m13HelperPin.bytes !== 12701 || m13HelperPin.sha256 !== '0c8ae45e31b879ca8e84633091f3a5e938d7712c4f2dff7cf1af3013859b91ad'","after":"m13HelperPin.bytes !== 14254 || m13HelperPin.sha256 !== '01ac10f3471436f5b5a72ae01abe4813f7843a331a2b071e74c281ee3d3aaa0d'"};
+// M3.3 admits only the nine existing wrappers with the reviewed pointer-input helper bootstrap.
+// Each exact inverse retains the complete M1.2/M1.5/M1.4 predecessor chain.
+const m33PointerStrictSourceSuccessors = [{"path":"tools/bitmap-resource-slot-types.mjs","predecessor":{"bytes":11184,"sha256":"e368d684d0fcaa7ad64539464110f8313cd8e17f2769421cd534953064317629"},"current":{"bytes":11184,"sha256":"6e6bf53aa8ef8f966c3ea19a51fa753d66a78755d6d4308b75df98d2f6f279ca"}},{"path":"tools/bitmap-binding-ticket-types.mjs","predecessor":{"bytes":13887,"sha256":"c59ec5a76da98fae8389671152ef38ae07653ce6b8680443b3a05c89061753f9"},"current":{"bytes":13887,"sha256":"e29cd5ec5e3e0ac49c1ed60f5625f9619ebfd2efb47eff54a73f5c89e55d4338"}},{"path":"tools/linear-layout-types.mjs","predecessor":{"bytes":11073,"sha256":"aecf36d5290b8691cb08b838a008767300f1d62793dfaf3a482ff349cf87f369"},"current":{"bytes":11073,"sha256":"2b1fcdaab0348fc048336809ceb54f90d32a01ba9808beaff4a813c82c90faee"}},{"path":"tools/bitmap-button-types.mjs","predecessor":{"bytes":17175,"sha256":"38049fb026e9602a5666709a6995a83d619e55f4ff69c777bd282fcc4f13a594"},"current":{"bytes":17175,"sha256":"20d345fe4a69ce04e7092191c9dfb51a2c12c487985507bcb6cec77ab833b19e"}},{"path":"tools/display-anchor-offsets-types.mjs","predecessor":{"bytes":16526,"sha256":"ec55c864f05220560e9bf1dec478bb4ec9654cdf643230d2fe029dcfc9e2633a"},"current":{"bytes":16526,"sha256":"41b9b17458129ad80e06e9585e6389456bde45a2c14f8fc1b34e7677c45ebdda"}},{"path":"tools/display-container-add-child-at-types.mjs","predecessor":{"bytes":18718,"sha256":"39dbbc65ab64ddc2f9f4cf92333f689d8a8998e20277d9a327bf7ecd179e9fbe"},"current":{"bytes":18718,"sha256":"43938661831d4cd464867fc3c32e925c021fafb45fc567f41a3fe5d1f5371227"}},{"path":"tools/display-container-child-index-types.mjs","predecessor":{"bytes":17112,"sha256":"74c3722cb43b203b46e7aed2f442f34e220849be55a92dc165e48af29c156a0f"},"current":{"bytes":17112,"sha256":"fafb90b31816b298863a2742afdeb380d622d47626daaa202a9895498b045e90"}},{"path":"tools/display-container-remove-children-types.mjs","predecessor":{"bytes":15268,"sha256":"08abd88096100f2dc45f0b197cdde72baf55bfff93e34c6f1e508c7ef0fa7514"},"current":{"bytes":15268,"sha256":"47cc4b3670285c429cfdbd63d1b5276ce69df829e8b084357644c6a305f1b18d"}},{"path":"tools/sequence-playback-types.mjs","predecessor":{"bytes":19255,"sha256":"4b0dccd9c27eeb4ae049a80048e978f821fde744c712530a6d342dcad8abaf35"},"current":{"bytes":19255,"sha256":"1478a503c52bad8cca832b86437b7a7546db0eadbc7fbdc9c7ec119ba950fe01"}}];
+const m33PointerStrictBootstrap = {"before":"m13HelperPin.bytes !== 14254 || m13HelperPin.sha256 !== '01ac10f3471436f5b5a72ae01abe4813f7843a331a2b071e74c281ee3d3aaa0d'","after":"m13HelperPin.bytes !== 16190 || m13HelperPin.sha256 !== '6410f814c90eaf001850a35ff74e826ca994e39cea7434b10a94dda165a01b88'"};
 const inlineInventories=[
  ['mouseTypeExpectations','mouse-input',['positive','negative','import-negative','dom-free-negative']],
  ['spineTypeExpectations','spine-import-plan',['positive','negative','import-negative']]
@@ -294,7 +298,10 @@ export function prepareCompilerReview(root,options={}){
    const hotPath=m12HotPathStrictSourceSuccessors.find(row=>row.path===expected.path),hotPathLatest=hotPath?{path:hotPath.path,...hotPath.current}:null;
    if(hotPath)requireThat(recoveryLatest!==null&&equal(recoveryLatest,{path:hotPath.path,...hotPath.predecessor}),'M1.2 hotpath strict predecessor differs');
    const hotPathSelected=hotPathLatest!==null&&equal(current,hotPathLatest);
-   requireThat(equal(current,expected)||newer!==null&&equal(current,newer)||equal(current,latest)||glSelected||delegateSelected||sceneSelected||strictSelected||recoverySelected||hotPathSelected,'Unreviewed inline policy source: '+expected.path);
+   const pointer=m33PointerStrictSourceSuccessors.find(row=>row.path===expected.path),pointerLatest=pointer?{path:pointer.path,...pointer.current}:null;
+   if(pointer)requireThat(hotPathLatest!==null&&equal(hotPathLatest,{path:pointer.path,...pointer.predecessor}),'M3.3 pointer strict predecessor differs');
+   const pointerSelected=pointerLatest!==null&&equal(current,pointerLatest);
+   requireThat(equal(current,expected)||newer!==null&&equal(current,newer)||equal(current,latest)||glSelected||delegateSelected||sceneSelected||strictSelected||recoverySelected||hotPathSelected||pointerSelected,'Unreviewed inline policy source: '+expected.path);
    const raw=fs.readFileSync(path.join(root,expected.path));requireThat(raw.length===current.bytes&&createHash('sha256').update(raw).digest('hex')===current.sha256,'Inline source changed while reading');
    // Verify the whole retained M1.3 program after removing the exact final line.
    // Original values and byte offsets remain authoritative for inline extraction.
@@ -314,26 +321,32 @@ export function prepareCompilerReview(root,options={}){
      &&createHash('sha256').update(before).digest('hex')===webgl.predecessor.sha256,'M1.4 inline append differs');
    }
    let strictRaw=raw;
-   if(hotPathSelected){
+   if(pointerSelected){
+    const text=new TextDecoder('utf-8',{fatal:true}).decode(strictRaw);
+    requireThat(text.split(m33PointerStrictBootstrap.after).length===2,'M3.3 pointer strict bootstrap differs');
+    strictRaw=Buffer.from(text.replace(m33PointerStrictBootstrap.after,m33PointerStrictBootstrap.before));
+    requireThat(strictRaw.length===pointer.predecessor.bytes&&createHash('sha256').update(strictRaw).digest('hex')===pointer.predecessor.sha256,'M3.3 pointer strict predecessor bytes differ');
+   }
+   if(hotPathSelected||pointerSelected){
     const text=new TextDecoder('utf-8',{fatal:true}).decode(strictRaw);
     requireThat(text.split(m12HotPathStrictBootstrap.after).length===2,'M1.2 hotpath strict bootstrap differs');
     strictRaw=Buffer.from(text.replace(m12HotPathStrictBootstrap.after,m12HotPathStrictBootstrap.before));
     requireThat(strictRaw.length===hotPath.predecessor.bytes&&createHash('sha256').update(strictRaw).digest('hex')===hotPath.predecessor.sha256,'M1.2 hotpath strict predecessor bytes differ');
    }
-   if(recoverySelected||hotPathSelected){
+   if(recoverySelected||hotPathSelected||pointerSelected){
     const text=new TextDecoder('utf-8',{fatal:true}).decode(strictRaw);
     requireThat(text.split(m15StrictBootstrap.after).length===2,'M1.5 strict bootstrap differs');
     strictRaw=Buffer.from(text.replace(m15StrictBootstrap.after,m15StrictBootstrap.before));
     requireThat(strictRaw.length===recovery.predecessor.bytes&&createHash('sha256').update(strictRaw).digest('hex')===recovery.predecessor.sha256,'M1.5 strict predecessor bytes differ');
    }
-   if(strictSelected||recoverySelected||hotPathSelected){
+   if(strictSelected||recoverySelected||hotPathSelected||pointerSelected){
     const text=new TextDecoder('utf-8',{fatal:true}).decode(strictRaw);
     requireThat(text.split(m14StrictBootstrap.after).length===2,'M1.4 strict bootstrap differs');
     const before=Buffer.from(text.replace(m14StrictBootstrap.after,m14StrictBootstrap.before));
     requireThat(before.length===strict.predecessor.bytes&&createHash('sha256').update(before).digest('hex')===strict.predecessor.sha256,'M1.4 strict predecessor bytes differ');
    }
    texts.set(expected.path,new TextDecoder('utf-8',{fatal:true}).decode(raw));sources.push(current);
-   sourceRevisions.push({base:expected,predecessor:newer,successor:latest,...(webgl?{m14Successor:glLatest}:{}),...(inlineRecovery?{m15DelegateSuccessor:delegateLatest,m15SceneSuccessor:sceneLatest}:{}),...(strict?{m14StrictSuccessor:strictLatest}:{}),...(recovery?{m15StrictSuccessor:recoveryLatest}:{}),...(hotPath?{m12HotPathStrictSuccessor:hotPathLatest}:{}),current,selection:equal(current,expected)?'base':newer!==null&&equal(current,newer)?'predecessor':glSelected?'m14-current':delegateSelected?'m15-delegate-current':sceneSelected?'m15-scene-current':strictSelected?'m14-strict-current':recoverySelected?'m15-strict-current':hotPathSelected?'m12-hotpath-strict-current':'current',admission:'not-evaluated'});
+   sourceRevisions.push({base:expected,predecessor:newer,successor:latest,...(webgl?{m14Successor:glLatest}:{}),...(inlineRecovery?{m15DelegateSuccessor:delegateLatest,m15SceneSuccessor:sceneLatest}:{}),...(strict?{m14StrictSuccessor:strictLatest}:{}),...(recovery?{m15StrictSuccessor:recoveryLatest}:{}),...(hotPath?{m12HotPathStrictSuccessor:hotPathLatest}:{}),...(pointer?{m33PointerStrictSuccessor:pointerLatest}:{}),current,selection:equal(current,expected)?'base':newer!==null&&equal(current,newer)?'predecessor':glSelected?'m14-current':delegateSelected?'m15-delegate-current':sceneSelected?'m15-scene-current':strictSelected?'m14-strict-current':recoverySelected?'m15-strict-current':hotPathSelected?'m12-hotpath-strict-current':pointerSelected?'m33-pointer-strict-current':'current',admission:'not-evaluated'});
   }
   function span(owner,start,end){const text=texts.get(owner),raw=Buffer.from(text.slice(start,end));return {owner,startByte:Buffer.byteLength(text.slice(0,start)),endByte:Buffer.byteLength(text.slice(0,end)),bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')};}
   // Only JSON initializers in authenticated revisions are supported. This is
@@ -368,7 +381,7 @@ export function prepareCompilerReview(root,options={}){
   }
   const sequence=gate('sequence-playback'),expected=literal(sequence,'expectedCurrentSourcePins');add(sequence,'expectedCurrentSourcePins',expected);
   conditions.push({kind:'sequence-negative-successor',gate:sequence,inventory:inventoryPath('sequence-playback'),lane:'negative',sourceAgreement:equal(expected,records.get('sequence-playback').currentDeclarationSuccessor.sourcePins),selector:'currentDeclarationSuccessor.sourcePins',admission:'not-evaluated'});
-  if(['predecessor','current','m14-strict-current','m15-strict-current','m12-hotpath-strict-current'].includes(sourceRevisions.find(row=>row.current.path===sequence)?.selection)){
+  if(['predecessor','current','m14-strict-current','m15-strict-current','m12-hotpath-strict-current','m33-pointer-strict-current'].includes(sourceRevisions.find(row=>row.current.path===sequence)?.selection)){
    const incremental=literal(sequence,'m12IncrementalSourcePins');add(sequence,'m12IncrementalSourcePins',incremental);
    const current=expected.map(row=>observe('repository',row.path));
    conditions.push({kind:'sequence-source-successor',gate:sequence,baseBinding:'expectedCurrentSourcePins',currentBinding:'m12IncrementalSourcePins',
