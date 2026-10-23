@@ -1,0 +1,18 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>From source to motion / 从素材到动画</title><link rel="icon" href="data:,"><style>
+:root{font-family:Inter,system-ui,sans-serif;color:#edf2fc;background:#0c1323}body{max-width:780px;margin:64px auto;padding:0 24px}small{color:#8ca6d5;letter-spacing:.14em}h1{font-size:clamp(30px,5vw,50px);line-height:1.15;letter-spacing:-.04em;margin:18px 0}p{color:#acbdd7;line-height:1.7}section{margin:32px 0;padding:28px;background:#162238;border:1px solid #30415d;border-radius:20px}canvas{width:100%;height:auto;image-rendering:pixelated;border-radius:10px}button{background:#a6e8cd;color:#142c28;border:0;padding:12px 18px;border-radius:9px;font:inherit;cursor:pointer;margin:16px 10px 0 0}button:disabled{opacity:.5;cursor:wait}button:focus-visible,a:focus-visible{outline:3px solid #fff;outline-offset:4px}#close{background:#293a56;color:#e6eefc}#status{min-height:2em}footer{color:#8ca6d5;font-size:13px}
+</style><script type="importmap">{"imports":{
+"@egret/engine":"../../packages/engine/dist/index.js",
+"@egret/engine/web":"../../packages/engine/dist/web/index.js",
+"@egret/engine/resources":"../../packages/engine/dist/resources.js",
+"@egret/engine/web/resources":"../../packages/engine/dist/web/resources.js",
+"@egret/runtime":"../../packages/runtime/dist/index.js",
+"@egret/runtime/text":"../../packages/runtime/dist/text/index.js",
+"@egret/contracts":"../../packages/contracts/dist/index.js",
+"@egret/contracts/resources":"../../packages/contracts/dist/resources/index.js",
+"#egret-mouse-input":"../../packages/engine/dist/mouseInput.js",
+"#egret-textured-frame-state":"../../packages/engine/dist/internal/texturedFrameState.js",
+"#egret-manifest-resources":"../../packages/engine/dist/manifestResourceState.js",
+"robust-predicates":"../../packages/engine/node_modules/robust-predicates/index.js"
+}}</script></head><body><small>EGRET · CONTENT BUILD</small><h1>From source to motion<br><span lang="zh-CN">从素材到动画</span></h1><p>One tiny atlas, two moments of colour. Step forward to turn red into green; the blue square stays blue.<br><span lang="zh-CN">一张小图集，两帧色彩。向前步进，让红色变为绿色；蓝色方块保持不变。</span></p><section><canvas id="scene" width="12" height="6" aria-label="Animated red or green square beside a blue square / 红绿动画方块与蓝色方块">Canvas is required.</canvas><button id="step" disabled>Next moment / 下一帧</button><button id="close">Close / 关闭</button><p id="status" role="status" aria-live="polite">Loading generated content / 正在加载构建内容</p></section><footer>Original synthetic artwork · Apache-2.0<br><span lang="zh-CN">原创合成素材 · Apache-2.0</span></footer><script type="module" src="./main.mjs"></script></body></html>

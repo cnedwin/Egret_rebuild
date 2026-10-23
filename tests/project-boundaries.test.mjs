@@ -285,6 +285,9 @@ for (const [label, file, suffix, reason] of [
 // M1.5 additions preserve the historical M1.3 refusal controls above.
 for (const [label, file, suffix, reason] of [
   ['observation data', 'tools/m15-strict-successors.json', '\n', 'changed successor data'],
+  ['content plan declaration', 'packages/contracts/dist/ResourceManifest.d.ts', '\n// unregistered content plan declaration\n',
+    'source/config/compiler identity changed: packages/contracts/dist/ResourceManifest.d.ts'],
+  ['content tool lock', 'pnpm-lock.yaml', '\n', 'source/config/compiler identity changed: pnpm-lock.yaml'],
   ['manifest declaration', 'packages/engine/dist/manifestResourceTypes.d.ts', '\n// unregistered manifest declaration\n',
     'source/config/compiler identity changed: packages/engine/dist/manifestResourceTypes.d.ts'],
 ]) test('M1.5 strict successor rejects ' + label + ' between genuine complete baselines', () => isolated(fixture => {

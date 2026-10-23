@@ -2,7 +2,9 @@
 
 English | [简体中文](../../Cns/docs/m2-spine-content-plan.md)
 
-Design proposal · 2026-10-23 · No implementation or new acceptance is claimed.
+Plan with implementation status · 2026-10-23 · Complete milestone acceptance remains open.
+
+M2.1 now has a first source-to-build implementation for PNG, a finite single-page atlas profile and sequences, with persistent cache and project adoption. See the [content build contract](content-build-pipeline.md) for current scope and evidence. Full Spine/font/variant acceptance remains open; the existing eleven work packages are retained.
 
 ## Outcome and entry conditions
 

@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/content-build/README.md",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/README.zh-CN.md",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/index.html",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/main.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/selection.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/sources/PROVENANCE.md",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/sources/PROVENANCE.zh-CN.md",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/sources/atlas.json",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/sources/other.png",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/sources/page.png",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/verification-summary.json",
+      "originRole": "Public privacy-safe projection of the retained actual browser receipt; first-party, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/verification/advanced-green.rgba",
+      "originRole": "Unmodified native Canvas readback from the recorded first-party generated-content browser fixture; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/verification/completed-green.rgba",
+      "originRole": "Unmodified native Canvas readback from the recorded first-party generated-content browser fixture; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/verification/startup-red.rgba",
+      "originRole": "Unmodified native Canvas readback from the recorded first-party generated-content browser fixture; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/content-build-pipeline.md",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/content-build-pipeline.md",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/project/src/resources/content.ts",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/content-browser-collector.test.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/content-build.test.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/content-cli.test.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/content-importers.test.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/content-input.test.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/content-png.test.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/content-project.test.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/content-store.test.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/resource-build-keys.test.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/build-content.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/content/author-example.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/content/build.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/content/importers.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/content/input.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/content/png.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/content/store.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/verify-content-build.mjs",
+      "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/content-build-pipeline.md",
+      "zh": "knowledge-base/Cns/docs/content-build-pipeline.md"
+    },
+    {
+      "en": "examples/content-build/README.md",
+      "zh": "examples/content-build/README.zh-CN.md"
+    },
+    {
+      "en": "examples/content-build/sources/PROVENANCE.md",
+      "zh": "examples/content-build/sources/PROVENANCE.zh-CN.md"
+    }
+  ],
+  "frozenInputs": [
+    {
+      "path": "third-party/pngjs-7.0.0.LICENSE",
+      "bytes": 1150,
+      "sha256": "be75ef59c5cf59715588a17a82dff7dd3e83c4dba3c458676bb9311e05fbedc5",
+      "originRole": "Unmodified upstream pngjs 7.0.0 MIT license; public build-time dependency, not independently authored Egret code."
+    }
+  ]
+}

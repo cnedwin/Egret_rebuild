@@ -26,8 +26,8 @@ function frozen(value){if(value!==null&&typeof value==='object'){assert.equal(Ob
 
 // Break caught: the new optional APIs are absent, leaked at the roots or omitted.
 test('optional public entry availability is an explicit assertion',async()=>{
- api();assert.deepEqual(Object.keys(contracts).sort(),['admitResourceManifest','buildResourceManifest','getResourceManifestIdentityInputs','isAdmittedResourceManifest','serializeResourceManifest','validateResourceBuildDescription'].sort());
- assert.deepEqual(Object.keys(project).sort(),['describeResourceBuild','parseResourceManifest','serializeResourceManifest'].sort());
+ api();assert.deepEqual(Object.keys(contracts).sort(),['admitResourceManifest','buildResourceManifest','evaluateResourceBuildKeys','getResourceManifestIdentityInputs','isAdmittedResourceManifest','serializeResourceManifest','validateResourceBuildDescription','validateResourceBuildPlanDescription'].sort());
+ assert.deepEqual(Object.keys(project).sort(),['describeResourceBuild','parseResourceManifest','serializeResourceManifest','describeContentRecipes','bindContentArtifacts','createContentAdoption'].sort());
  const rootProject=await import('@egret/project');assert.equal(Object.keys(rootProject).length,6);
  const rootContracts=await import('@egret/contracts');assert.equal(Object.hasOwn(rootContracts,'buildResourceManifest'),false);
 });

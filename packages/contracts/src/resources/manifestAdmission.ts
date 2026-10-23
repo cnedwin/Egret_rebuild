@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import type { JsonObject, JsonValue, ProjectFile, ProjectVersionPins } from '../ProjectFormat.generated.js';
-import type { AdmittedResourceManifest, ResourceBuildDescription, ResourceBuildEntry, ResourceManifestEntry, ResourceManifestDiagnosticCode, ResourceManifestIdentityInputs, ResourceManifestResult } from '../ResourceManifest.js';
+import type { AdmittedResourceManifest, ResourceBuildDescription, ResourceBuildEntry, ResourceBuildSourceEntry, ResourceBuildPlanDescription, ResourceBuildKeyEntry, ResourceBuildKeyPlan, ResourceManifestEntry, ResourceManifestDiagnosticCode, ResourceManifestIdentityInputs, ResourceManifestResult } from '../ResourceManifest.js';
 import { sha256Utf8, utf8ByteLength } from './sha256.js';
 
 const MAX_BYTES=4194304;
@@ -96,20 +96,24 @@ function file(value:JsonValue|undefined,role:'source'|'asset',pointer:string):Pr
   return item as unknown as ProjectFile;
 }
 
-function prepare(input:unknown,claimed:boolean){
+type PreparedNode<T>={entry:T;pointer:string;claimed?:RecordValue};
+type Prepared<T>={projectId:string;targetProfile:string;versions:ProjectVersionPins;selected:Map<string,PreparedNode<T>>;ids:string[];order:string[]};
+function prepare(input:unknown,claimed:boolean,sourceOnly?:false):Prepared<ResourceBuildEntry>;
+function prepare(input:unknown,claimed:false,sourceOnly:true):Prepared<ResourceBuildSourceEntry>;
+function prepare(input:unknown,claimed:boolean,sourceOnly=false):Prepared<ResourceBuildSourceEntry>{
   const raw=exact(capture(input),['format','projectId','targetProfile','versions','entries'],'');
-  if(raw.format!==(claimed?'egret.resource-manifest/1':'egret.resource-build/1'))fail('RESOURCE_FORMAT_UNSUPPORTED','/format');
+  if(raw.format!==(sourceOnly?'egret.resource-build-plan/1':claimed?'egret.resource-manifest/1':'egret.resource-build/1'))fail('RESOURCE_FORMAT_UNSUPPORTED','/format');
   const projectId=identity(raw.projectId,'p','/projectId'),targetProfile=text(raw.targetProfile,'/targetProfile');
   const versionData=exact(raw.versions,['engineVersion','resourceFormatVersion','toolProtocolVersion'],'/versions');
   text(versionData.engineVersion,'/versions/engineVersion');text(versionData.resourceFormatVersion,'/versions/resourceFormatVersion');
   if(versionData.toolProtocolVersion!=='1.0')fail('RESOURCE_FORMAT_UNSUPPORTED','/versions/toolProtocolVersion');
   const versions=versionData as unknown as ProjectVersionPins,entries=array(raw.entries,'/entries');
   if(entries.length>4096)fail('RESOURCE_LIMIT_EXCEEDED','/entries');
-  const selected=new Map<string,{entry:ResourceBuildEntry;pointer:string;claimed?:RecordValue}>();
+  const selected=new Map<string,PreparedNode<ResourceBuildSourceEntry>>();
   const fileRecords=new Map<string,string>(),pathOwners=new Map<string,string>();let edges=0;
   const baseKeys=['id','resourceKind','source','artifact','importer','settings','artifactFormatVersion','targetProfile','dependencies','provenance'];
   for(let index=0;index<entries.length;index++){
-    const pointer='/entries/'+index,item=exact(entries[index],claimed?[...baseKeys,'buildKey','runtimeIdentity']:baseKeys,pointer);
+    const pointer='/entries/'+index,item=exact(entries[index],sourceOnly?baseKeys.filter(key=>key!=='artifact'):claimed?[...baseKeys,'buildKey','runtimeIdentity']:baseKeys,pointer);
     const id=identity(item.id,'e',pointer+'/id');if(selected.has(id))fail('RESOURCE_ID_DUPLICATE',pointer+'/id');
     text(item.resourceKind,pointer+'/resourceKind');text(item.artifactFormatVersion,pointer+'/artifactFormatVersion');
     if(text(item.targetProfile,pointer+'/targetProfile')!==targetProfile)fail('RESOURCE_DEPENDENCY_INVALID',pointer+'/targetProfile');
@@ -122,7 +126,8 @@ function prepare(input:unknown,claimed:boolean){
       const name=identity(dependencies[dependency],'e',pointer+'/dependencies/'+dependency);
       if(seen.has(name))fail('RESOURCE_DEPENDENCY_INVALID',pointer+'/dependencies/'+dependency);seen.add(name);
     }
-    for(const [name,role] of [['source','source'],['artifact','asset']] as const){
+    const files=sourceOnly?([['source','source']] as const):([['source','source'],['artifact','asset']] as const);
+    for(const [name,role] of files){
       const current=file(item[name],role,pointer+'/'+name),encoded=canonical(current),old=fileRecords.get(current.id);
       if(old!==undefined&&old!==encoded)fail('RESOURCE_FILE_MISMATCH',pointer+'/'+name);
       fileRecords.set(current.id,encoded);
@@ -130,7 +135,7 @@ function prepare(input:unknown,claimed:boolean){
       if(owner!==undefined&&owner!==current.id)fail('RESOURCE_FILE_MISMATCH',pointer+'/'+name+'/path');pathOwners.set(pathKey,current.id);
     }
     if(claimed){digest(item.buildKey,pointer+'/buildKey');digest(item.runtimeIdentity,pointer+'/runtimeIdentity');}
-    const entry:Object & ResourceBuildEntry=Object.freeze({id:item.id,resourceKind:item.resourceKind,source:item.source,artifact:item.artifact,importer:item.importer,settings:item.settings,artifactFormatVersion:item.artifactFormatVersion,targetProfile:item.targetProfile,dependencies:item.dependencies,provenance:item.provenance}) as unknown as ResourceBuildEntry;
+    const entry=Object.freeze({id:item.id,resourceKind:item.resourceKind,source:item.source,...(sourceOnly?{}:{artifact:item.artifact}),importer:item.importer,settings:item.settings,artifactFormatVersion:item.artifactFormatVersion,targetProfile:item.targetProfile,dependencies:item.dependencies,provenance:item.provenance}) as unknown as ResourceBuildSourceEntry;
     selected.set(id,claimed?{entry,pointer,claimed:item}:{entry,pointer});
   }
   for(const {entry,pointer} of selected.values())for(const dependency of entry.dependencies)if(!selected.has(dependency))fail('RESOURCE_DEPENDENCY_INVALID',pointer+'/dependencies');
@@ -149,14 +154,20 @@ function prepare(input:unknown,claimed:boolean){
   return {projectId,targetProfile,versions,selected,ids,order};
 }
 
+// The pre-artifact and final-manifest paths share this exact projection and hash.
+// File binding and artifact identity remain outside the intrinsic build key.
+function buildIdentity(entry:ResourceBuildSourceEntry,targetProfile:string,versions:ProjectVersionPins,completed:ReadonlyMap<string,{readonly buildKey:string}>){
+  const dependencies=entry.dependencies.map(dependency=>({id:dependency,buildKey:completed.get(dependency)!.buildKey}));
+  const build=canonical({format:'egret.resource-build-key/1',resourceKind:entry.resourceKind,importer:entry.importer,settings:entry.settings,artifactFormatVersion:entry.artifactFormatVersion,targetProfile,versions,source:{sha256:entry.source.sha256,byteLength:entry.source.byteLength},dependencies,provenance:entry.provenance});
+  return {build,buildKey:sha256Utf8(build)};
+}
+
 function evaluate(input:unknown,claimed:boolean):AdmittedResourceManifest{
   const {projectId,targetProfile,versions,selected,ids,order}=prepare(input,claimed);
   const completed=new Map<string,ResourceManifestEntry>(),inputs=new Map<string,ResourceManifestIdentityInputs>();
   for(const id of order){
     const node=selected.get(id)!,entry=node.entry;
-    const dependencies=entry.dependencies.map(dependency=>({id:dependency,buildKey:completed.get(dependency)!.buildKey}));
-    const build=canonical({format:'egret.resource-build-key/1',resourceKind:entry.resourceKind,importer:entry.importer,settings:entry.settings,artifactFormatVersion:entry.artifactFormatVersion,targetProfile,versions,source:{sha256:entry.source.sha256,byteLength:entry.source.byteLength},dependencies,provenance:entry.provenance});
-    const buildKey=sha256Utf8(build);
+    const {build,buildKey}=buildIdentity(entry,targetProfile,versions,completed);
     const runtime=canonical({format:'egret.resource-identity/1',projectId,id,buildKey,artifact:{sha256:entry.artifact.sha256,byteLength:entry.artifact.byteLength,mediaType:entry.artifact.mediaType},artifactFormatVersion:entry.artifactFormatVersion,targetProfile});
     const runtimeIdentity=sha256Utf8(runtime);
     if(node.claimed&&(node.claimed.buildKey!==buildKey||node.claimed.runtimeIdentity!==runtimeIdentity))fail('RESOURCE_KEY_MISMATCH',node.pointer);
@@ -165,6 +176,28 @@ function evaluate(input:unknown,claimed:boolean):AdmittedResourceManifest{
   const manifest=Object.freeze({format:'egret.resource-manifest/1',projectId,targetProfile,versions,entries:Object.freeze(ids.map(id=>completed.get(id)!))}) as AdmittedResourceManifest;
   const encoded=canonical(manifest);if(utf8ByteLength(encoded)>MAX_BYTES)fail('RESOURCE_LIMIT_EXCEEDED','');
   admitted.set(manifest,Object.freeze({text:encoded,inputs}));return manifest;
+}
+
+// Plans validate source metadata only; they confer no final manifest admission.
+export function validateResourceBuildPlanDescription(input:unknown):ResourceManifestResult<ResourceBuildPlanDescription>{
+  try{
+    const {projectId,targetProfile,versions,selected,ids}=prepare(input,false,true);
+    const result=Object.freeze({format:'egret.resource-build-plan/1',projectId,targetProfile,versions,entries:Object.freeze(ids.map(id=>selected.get(id)!.entry))}) as ResourceBuildPlanDescription;
+    return success(result);
+  }catch(error){return rejection(error);}
+}
+export function evaluateResourceBuildKeys(description:ResourceBuildPlanDescription):ResourceManifestResult<ResourceBuildKeyPlan>{
+  try{
+    const {projectId,targetProfile,versions,selected,ids,order}=prepare(description,false,true);
+    const completed=new Map<string,ResourceBuildKeyEntry>();
+    for(const id of order){
+      const entry=selected.get(id)!.entry,{buildKey}=buildIdentity(entry,targetProfile,versions,completed);
+      completed.set(id,Object.freeze({...entry,buildKey}));
+    }
+    const result=Object.freeze({format:'egret.resource-build-keys/1',projectId,targetProfile,versions,entries:Object.freeze(ids.map(id=>completed.get(id)!))}) as ResourceBuildKeyPlan;
+    if(utf8ByteLength(canonical(result))>MAX_BYTES)fail('RESOURCE_LIMIT_EXCEEDED','');
+    return success(result);
+  }catch(error){return rejection(error);}
 }
 
 // Description admission shares every schema/graph rule while deliberately doing

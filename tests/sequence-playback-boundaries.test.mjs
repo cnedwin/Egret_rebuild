@@ -137,6 +137,8 @@ test('SQP-P00 current built root satisfies the named source/emission policy', ()
   seqpcAccepted(seqpcCheck(['--root', seqpcRepository]));
 });
 const seqpcControls = [
+  { name: 'SQP-M21 content lock rejects unreviewed bytes', code: 'SEQP_BOUNDARY_PACKAGE_DAG',
+    files: ['pnpm-lock.yaml'], append: '\n# unreviewed content lock\n' },
   { name: 'SQP-P01 root private-owner type leak', code: 'SEQP_BOUNDARY_PRIVATE_OWNER',
     files: ['packages/engine/src/index.ts', 'packages/engine/dist/index.d.ts'],
     append: "\nexport type { SequencePlaybackOwner } from './sequencePlayback.js';\n" },
