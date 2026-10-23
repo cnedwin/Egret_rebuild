@@ -1956,8 +1956,8 @@
       "en": "knowledge-base/en/docs/m2-m4-delivery-plan.md",
       "zh": "knowledge-base/Cns/docs/m2-m4-delivery-plan.md",
       "kind": "public_reading",
-      "enSha256": "3ea828acf5e66d890a24bd771e5be6a27b2d8c3801222c46d02ae1bc9f8aa856",
-      "zhSha256": "fefc1651ba38c562aae8616e10b18cd4cba6e5bbb3f855f15c50dc4c50554694"
+      "enSha256": "91ca279e411963474ddc5fe9fa184e7c0063f165fb7b02bc65305f86e4ab130b",
+      "zhSha256": "20781bedcc98aa5fa999b7b6146647263b45f66edf1b3bff19215b786ceff6a0"
     },
     {
       "en": "knowledge-base/en/docs/m2-spine-content-plan.md",
@@ -1970,15 +1970,15 @@
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "67505a75dc5110e296aa62b18f59c0b72587a2ad6b28f0d185668fef8a0e7800",
-      "zhSha256": "6fb39c5b3738805e703c33fa75cb4c1cdb7ef4864240aebc18ac4ad2d4ed11f5"
+      "enSha256": "5df0d2ff437a4906dca5f686d60f1bba000ebf55d8113f6e29dc589001175d40",
+      "zhSha256": "2000b1df2a81f09024f8626af3e21dc4c722f3eeadff6309e4e881cbc85b9e6a"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
       "zh": "knowledge-base/Cns/docs/m4-core-acceptance-plan.md",
       "kind": "public_reading",
-      "enSha256": "5b8fa038f96dfb1304d2e4b342e9e06ce571d61d7648bc33880b31b25bed963f",
-      "zhSha256": "bda382a65af250ccb75347f2febfefd7374cee42e1eff2aad63cef4a7c911631"
+      "enSha256": "362733da7db9bf8dba61410ad252e94069b8f307218928e2e3feea1baa8bce0d",
+      "zhSha256": "ebe7e31bfb17745065a6a9afc8a5c428cce07df59f7dde4eb9704cf553939820"
     }
   ],
   "registries": [

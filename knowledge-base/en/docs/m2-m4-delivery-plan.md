@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/m2-m4-delivery-plan.md)
 
-2026-10-23 · Design baseline 2 · Engineering preview 0.61.0
+2026-10-23 · Design baseline 3 · Engineering preview 0.61.0
 
 ## Purpose and current baseline
 
@@ -30,7 +30,7 @@ The renderers remain WebGPU plus WebGL2 with explicit capabilities; Canvas retai
 | Asset to instance | Shared decoded data and leases → animation/UI instances | Data may be shared; track state, skins, event cursors, layout, selection and interaction state belong to each instance. Scope owns cancellation and final release. M2/M3 share existing ownership semantics. |
 | Instance to render | Animation sampling and UI layout → authenticated ordered frame data | Advance time explicitly once. Capture never advances time. Preserve painter/slot order; immutable retained frames cannot reference reused mutable scratch storage. M2/M3 supply public-behavior examples at the boundary. |
 | Render to device | Shared preparation/residency → WebGPU/WebGL2 | Keep complete material/clip keys, bounded uploads and device generations. Resource release and native completion are different events. A new clipping path requires actual pixel and loss/recovery evidence on both declared backends. |
-| Host to UI | Host pointer/keyboard/composition/fonts/semantics → UI controller | Host-specific DOM/native behavior stays in optional adapters. Core layout and events remain host-free. Late host callbacks cannot revive disposed scopes. M3 owns the input/focus/IME contract. |
+| Host to game/UI | Host pointer/keyboard/composition/fonts/semantics → shared input and UI controllers | Host-specific DOM/native behavior stays in optional adapters. Core layout and events remain host-free. Late host callbacks cannot revive disposed scopes. M3 owns the input/focus/IME contract. |
 | Content to tools | Stable project IDs, commands, diagnostics and build artifacts → future code/visual/Agent tools | Expose serializable intent and precise diagnostics, not native objects. Apply edits through existing transactional project authority; no model calls in frame execution. |
 
 Retain the existing four core packages. A separately enabled Spine package may isolate the qualified third-party runtime, license and bundle boundary described in M2; it does not become a default-engine dependency. Proposed types and optional entries in subsystem plans are design targets, not current exports. A work package freezes its cross-module signature, error semantics and compatibility mapping before dependent implementation starts. Review these in the capability Issue and its plan; do not create a second global contract registry.
@@ -68,8 +68,9 @@ flowchart LR
     M21 --> M22[M2.2 Animation instances]
     M22 -->|draw interface ready| M23[M2.3 Graphics adapter]
     M23 --> M24[M2.4 Integrated animation]
-    M31 --> M33[M3.3 Editing and input]
-    M32 --> M33
+    M1 --> M33[M3.3 Game input, multi-touch and editing]
+    M31 -->|UI integration| M33
+    M32 -->|editing integration| M33
     M33 --> M34[M3.4 Controls and semantics]
     M24 --> M4[M4 Mixed scenarios and core acceptance]
     M34 --> M4
@@ -82,6 +83,14 @@ flowchart LR
 4. Publish a scoped engineering preview if only desktop evidence exists. A stable core or device-support statement needs the corresponding complete acceptance. M4 does not certify the full product roadmap.
 
 The sequence is dependency-based, not a staffing or calendar promise. Parallel contributions require one owner per public interface and coordination before changes to shared preparation/resource modules.
+
+### Mobile input responsibility and delivery
+
+Mobile touch and independent simultaneous contacts are mandatory M3 functionality and M4 qualification. Preserve the eleven packages: M3.3 (#89) owns host-free game/UI contact state, per-contact routing/capture/cancellation and browser adapters; M3.4 (#90) owns gesture arbitration, accessible controls and the two-hand example; M4.1 (#91) integrates the mobile variant into the same editable project; M4.2 (#92) owns Android Chrome/iPhone Safari physical-device acceptance under X-MTouch/1; M4.3 (#93) publishes only proven combinations. M3.1 supplies committed hit geometry; M3.2 supplies text readiness; M2 consumes game commands without its own input listeners.
+
+M3.3 can deliver raw game multi-touch against existing display/Scope contracts before automatic UI layout or IME is finished. UI integration then consumes M3.1/M3.2; all existing focus/editing requirements remain in that package. Input is an optional core capability shared by scenes and UI, not a dependency on the full UI/text system. Keep old mouse-only APIs compatible and desktop regressions separate. Use the detailed contact contract and gesture ownership in the M3 plan, and the device/actions/budget matrix in M4; no new registry, task family or acceptance framework is needed.
+
+Both required phone rows start OPEN. Real touch, cancellation, simultaneous controls, scrolling, rotation and keyboard behavior need actual devices; CI and desktop emulation cannot close them. X-D60/1 and the original M1.2 failed timing stay unchanged. A limited desktop preview may precede mobile qualification, but cannot close M3/M4 or claim mobile support. Mini-game/native host delivery remains separately scoped; the shared input contract preserves that extension boundary without certifying those hosts.
 
 ## Existing code: retain, refactor, retire
 

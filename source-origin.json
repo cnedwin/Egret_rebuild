@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "b0e261c2935eb81afb891fb9d3374b82d6f55577a3a178d411cdcc2392e0e04a",
+      "sha256": "d12597d7436b6dd5c8528010ec50ee970fb14cb0b52e4d1c5e72348cb9600a82",
       "bytes": 351653,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -12758,14 +12758,14 @@
     {
       "path": "knowledge-base/en/docs/m2-m4-delivery-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 18145,
-      "sha256": "3ea828acf5e66d890a24bd771e5be6a27b2d8c3801222c46d02ae1bc9f8aa856"
+      "bytes": 20051,
+      "sha256": "91ca279e411963474ddc5fe9fa184e7c0063f165fb7b02bc65305f86e4ab130b"
     },
     {
       "path": "knowledge-base/Cns/docs/m2-m4-delivery-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 15019,
-      "sha256": "fefc1651ba38c562aae8616e10b18cd4cba6e5bbb3f855f15c50dc4c50554694"
+      "bytes": 16627,
+      "sha256": "20781bedcc98aa5fa999b7b6146647263b45f66edf1b3bff19215b786ceff6a0"
     },
     {
       "path": "knowledge-base/en/docs/m2-spine-content-plan.md",
@@ -12782,26 +12782,26 @@
     {
       "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 36323,
-      "sha256": "67505a75dc5110e296aa62b18f59c0b72587a2ad6b28f0d185668fef8a0e7800"
+      "bytes": 44426,
+      "sha256": "5df0d2ff437a4906dca5f686d60f1bba000ebf55d8113f6e29dc589001175d40"
     },
     {
       "path": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 30598,
-      "sha256": "6fb39c5b3738805e703c33fa75cb4c1cdb7ef4864240aebc18ac4ad2d4ed11f5"
+      "bytes": 37378,
+      "sha256": "2000b1df2a81f09024f8626af3e21dc4c722f3eeadff6309e4e881cbc85b9e6a"
     },
     {
       "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 26640,
-      "sha256": "5b8fa038f96dfb1304d2e4b342e9e06ce571d61d7648bc33880b31b25bed963f"
+      "bytes": 32564,
+      "sha256": "362733da7db9bf8dba61410ad252e94069b8f307218928e2e3feea1baa8bce0d"
     },
     {
       "path": "knowledge-base/Cns/docs/m4-core-acceptance-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 22068,
-      "sha256": "bda382a65af250ccb75347f2febfefd7374cee42e1eff2aad63cef4a7c911631"
+      "bytes": 27071,
+      "sha256": "ebe7e31bfb17745065a6a9afc8a5c428cce07df59f7dde4eb9704cf553939820"
     },
     {
       "path": "contributions/m2-m4-design.json",
