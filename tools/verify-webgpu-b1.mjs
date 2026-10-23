@@ -381,7 +381,13 @@ const m12PerformanceModuleSuccessors = new Map([
 ]);
 assert.equal(m12PerformanceModuleSuccessors.size, 8);
 for (const name of m12PerformanceModuleSuccessors.keys()) assert.ok(m15ModuleIdentities.has(name), 'Performance successor must retain M1.5 membership');
-const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors]);
+// M3 preserves the public closure and admits only this reviewed mouse compatibility emission.
+const m33MouseCompatibilityModuleSuccessor = new Map([
+  ["packages/engine/dist/mouseInput.js", { bytes: 19479, sha256: "6ec0b9d091c8d10a9e033e19575704795bb3636fd0fac1fd01960f43bd18476e" }],
+]);
+assert.equal(m33MouseCompatibilityModuleSuccessor.size, 1);
+for (const name of m33MouseCompatibilityModuleSuccessor.keys()) assert.ok(m15ModuleIdentities.has(name), 'Mouse compatibility successor must retain M1.5 membership');
+const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors, ...m33MouseCompatibilityModuleSuccessor]);
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {
   assert.deepEqual([...served.keys()].map(url => url.slice(1)).sort(), [...currentModuleIdentities.keys()].sort(),

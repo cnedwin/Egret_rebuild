@@ -51,6 +51,34 @@ function read(root, relative) {
 // Exact M1.5 package successors; all retained package tuples/inverses remain below.
 const m15ResourcePackageSuccessors = [{"base":{"path":"packages/contracts/package.json","bytes":179,"sha256":"fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"},"current":{"path":"packages/contracts/package.json","bytes":319,"sha256":"f40591968003b235cddf38a576c1250a28ef965726750d377f0691a8e6f48e9e"}},{"base":{"path":"packages/engine/package.json","bytes":1567,"sha256":"e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"},"current":{"path":"packages/engine/package.json","bytes":2167,"sha256":"be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143"}},{"base":{"path":"packages/project/package.json","bytes":397,"sha256":"295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945"},"current":{"path":"packages/project/package.json","bytes":621,"sha256":"e6ec9743041ee5489297861ad5ed810021875dae7c041011a0f6d4e754eb6462"}}];
 const m15ResourceAtlasPackageSuccessor = [{"base":{"path":"packages/project/package.json","bytes":503,"sha256":"4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af"},"current":{"path":"packages/project/package.json","bytes":621,"sha256":"e6ec9743041ee5489297861ad5ed810021875dae7c041011a0f6d4e754eb6462"}}];
+// M3-POINTER-PACKAGE-BEGIN
+// Two exact current packages invert to their retained predecessors; no old row changes.
+const m3PointerPackageSuccessors = [{"base":{"path":"packages/engine/package.json","bytes":2167,"sha256":"be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143"},"current":{"path":"packages/engine/package.json","bytes":2494,"sha256":"65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951"}},{"base":{"path":"packages/runtime/package.json","bytes":327,"sha256":"b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"},"current":{"path":"packages/runtime/package.json","bytes":471,"sha256":"97b2d4678df4fd137b681a54511ce625935accfc3014da4800902f4a241c8db1"}}];
+const m3RuntimePackagePredecessor = "{\n  \"name\": \"@egret/runtime\",\n  \"version\": \"0.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"exports\": {\n    \".\": { \"types\": \"./dist/index.d.ts\", \"import\": \"./dist/index.js\" },\n    \"./text\": { \"types\": \"./dist/text/index.d.ts\", \"import\": \"./dist/text/index.js\" }\n  },\n  \"dependencies\": { \"@egret/contracts\": \"workspace:*\" }\n}\n";
+function m3PointerPackageSuccessor(expected, raw) {
+  const pair=m3PointerPackageSuccessors.find(row=>row.base.path===expected?.path);
+  const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+  if(!pair||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;
+  const value=JSON.parse(raw.toString('utf8'));
+  const remove=(key,mapping)=>{if(JSON.stringify(value.exports[key])!==JSON.stringify(mapping))return false;delete value.exports[key];return true;};
+  let predecessor;
+  if(expected.path==='packages/engine/package.json') {
+    if(!remove('./input',{types:'./dist/input.d.ts',import:'./dist/input.js'})
+      ||!remove('./web/pointer',{types:'./dist/web/pointer.d.ts',import:'./dist/web/pointer.js'})
+      ||JSON.stringify(value.imports['#egret-pointer-input'])!==JSON.stringify({types:'./dist/pointerInput.d.ts',import:'./dist/pointerInput.js'}))return false;
+    delete value.imports['#egret-pointer-input'];
+    predecessor=Buffer.from(JSON.stringify(value,null,2)+String.fromCharCode(10));
+  } else {
+    if(!remove('./input',{types:'./dist/input/index.d.ts',import:'./dist/input/index.js'})
+      ||JSON.stringify(value)!==JSON.stringify(JSON.parse(m3RuntimePackagePredecessor)))return false;
+    predecessor=Buffer.from(m3RuntimePackagePredecessor);
+  }
+  if(predecessor.length!==pair.base.bytes||digest(predecessor)!==pair.base.sha256)return false;
+  return expected.bytes===pair.base.bytes&&expected.sha256===pair.base.sha256
+    ||m15ResourcePackageSuccessor(expected,predecessor);
+}
+// M3-POINTER-PACKAGE-END
+
 function m15ResourcePackageSuccessor(expected, raw) {
   const pair=[...m15ResourcePackageSuccessors,...m15ResourceAtlasPackageSuccessor].find(row=>row.base.path===expected?.path
     &&row.base.bytes===expected.bytes&&row.base.sha256===expected.sha256);
@@ -115,7 +143,7 @@ function ss1ImageResidencySuccessor(expected, raw) {
 
 function pin(root, expected, code) {
   const bytes = read(root, expected.path);
-  if (m15ResourcePackageSuccessor(expected, bytes) || m14EnginePackageSuccessor(expected, bytes) || ss1AtlasPackageSuccessor(expected, bytes) || ss1ImageResidencySuccessor(expected, bytes)) return;
+  if (m3PointerPackageSuccessor(expected, bytes) || m15ResourcePackageSuccessor(expected, bytes) || m14EnginePackageSuccessor(expected, bytes) || ss1AtlasPackageSuccessor(expected, bytes) || ss1ImageResidencySuccessor(expected, bytes)) return;
   if (bytes.length !== expected.bytes || hash(bytes) !== expected.sha256) failure(code, 'Identity changed: ' + expected.path);
 }
 
@@ -325,12 +353,45 @@ function m12PreparationHotPathGraph(root,base,actualNames) {
     ||rows.some(row=>!same(Object.keys(row).sort(),['bytes','path','sha256'])||!Number.isSafeInteger(row.bytes)||row.bytes<=0||!/^[a-f0-9]{64}$/.test(row.sha256))
     ||replacements.some(file=>!paths.has(file))){failure('SS1_BOUNDARY_SOURCE_OWNER','Invalid finite M1.2 hotpath successor declaration');}
   const selected=new Map(rows.map(row=>[row.path,row])),graph=base.map(row=>selected.get(row.path)??row);
+  const pointer=m3PointerGraph(root,graph,actualNames);
+  if(pointer!==undefined)return pointer;
   for(const row of graph){
     if(!present.has(row.path)){failure('SS1_BOUNDARY_SOURCE_OWNER','Incomplete M1.2 hotpath successor: '+row.path);}
     const bytes=read(root,row.path);if(bytes.length!==row.bytes||createHash('sha256').update(bytes).digest('hex')!==row.sha256){failure('SS1_BOUNDARY_SOURCE_OWNER','M1.2 hotpath whole-group raw identity differs: '+row.path);}
   }
   return graph;
 }
+// M3-POINTER-GRAPH-BEGIN
+// One finite group follows the complete retained preparation graph.
+const m3PointerGraphSuccessor = [{"path":"packages/engine/dist/input.d.ts","bytes":429,"sha256":"bc994dad542569bdb2fca049ad73eb6a4310d4c1dfeb541cd124f71e4ff9e498"},{"path":"packages/engine/dist/input.js","bytes":210,"sha256":"834623a834ac38d8b4c537c613a7d4a8e54100661631b0d11b09f49f6a459f50"},{"path":"packages/engine/dist/mouseInput.d.ts","bytes":4505,"sha256":"04c38e9fec56d089f56a4fafb2bd02c47313856dd83ce3bc3ed139ab18706b85"},{"path":"packages/engine/dist/mouseInput.js","bytes":19479,"sha256":"6ec0b9d091c8d10a9e033e19575704795bb3636fd0fac1fd01960f43bd18476e"},{"path":"packages/engine/dist/pointerInput.d.ts","bytes":776,"sha256":"ab3a656b97b20d6e756cddbe51e4a395186e7d498c1566a679fbac518e6178b5"},{"path":"packages/engine/dist/pointerInput.js","bytes":8610,"sha256":"e6036da474fcfd7725ea133bf49f238574e67c0ddb0a2d26d64c6d152e9ca656"},{"path":"packages/engine/dist/pointerInputTypes.d.ts","bytes":1415,"sha256":"3d3264de9b0fa1f4515bc830992c043629d4cfaf350bc92211d77e8c9723fcd5"},{"path":"packages/engine/dist/pointerInputTypes.js","bytes":56,"sha256":"f101370beda8c63e0d3af81c1cb724fb4818692077b6815281b217008a2b763f"},{"path":"packages/engine/dist/web/BrowserPointerInput.d.ts","bytes":311,"sha256":"a04d7e2ad5219826df7f0a6a89b8da031b591f6b07dd62bf72c1101b715129a6"},{"path":"packages/engine/dist/web/BrowserPointerInput.js","bytes":20216,"sha256":"0fd5ef63c9053833adad3b67b18d5c7f40901431966f4ae7a685de296d2273ac"},{"path":"packages/engine/dist/web/pointer.d.ts","bytes":186,"sha256":"bb7f8eec2388614d7f044bd80e7461117ae2a1171748b8ffcdff57b747d21774"},{"path":"packages/engine/dist/web/pointer.js","bytes":191,"sha256":"1823f6dcc495e1a630268c233e1b22a616d64cd917a1b2c3396aa94c98abc287"},{"path":"packages/engine/src/input.ts","bytes":418,"sha256":"c6be2e7fe994333ea745add616eaaa125be1600c93cafda95cd5e1a4bd1ca35b"},{"path":"packages/engine/src/mouseInput.ts","bytes":22563,"sha256":"83ca7db6c00c65b88c093b787c82093984c98bfa1b6053643527f8adb7e7e5bd"},{"path":"packages/engine/src/pointerInput.ts","bytes":8380,"sha256":"fefd9e3856bc101a76a455e04cb1eacdcaddaff85ae5c19a70d4a41cc4918f1d"},{"path":"packages/engine/src/pointerInputTypes.ts","bytes":1353,"sha256":"064c482673e8609801041b1f0183b7ef683e97657af08b66d28f617167cce447"},{"path":"packages/engine/web/BrowserPointerInput.ts","bytes":17991,"sha256":"03ce6f72524e814f7c0f6949670e238f69988fe3826bb1b070430da1eb03adca"},{"path":"packages/engine/web/pointer.ts","bytes":235,"sha256":"ee0372b3f7a681db810bb40e8083fb3d51ae1571be68198c89ee0c326c9b2610"},{"path":"packages/runtime/dist/input/PointerRouter.d.ts","bytes":318,"sha256":"6ea7edeb1d0f0ae281e6cec410856ddf9b52b6f78ca6a31110168a0209076b48"},{"path":"packages/runtime/dist/input/PointerRouter.js","bytes":15561,"sha256":"c11a2916394fe30ca15b1b21c5032e9412a4808c8779ff280cb8e293efca5f43"},{"path":"packages/runtime/dist/input/index.d.ts","bytes":299,"sha256":"d709e21739380e099c1af7e7447d03b0236c540e77aec416384644c5b84097a3"},{"path":"packages/runtime/dist/input/index.js","bytes":130,"sha256":"6620cbb501812b1704bc0fb93ae253918c47dab107fce4d154cfeda2008ae1b2"},{"path":"packages/runtime/dist/input/types.d.ts","bytes":2562,"sha256":"8f2bfe7bcee4feb80496a55b06b3071670c2caba144688ca13926fc8983aa587"},{"path":"packages/runtime/dist/input/types.js","bytes":83,"sha256":"0d79596168c1ea39f1ac974199b7924636ca83d17db8e892f6599091df3c0152"},{"path":"packages/runtime/src/input/PointerRouter.ts","bytes":14129,"sha256":"3664f2e0fc81446761cf3436025c6eca4c8f18fa44777a93f0290236171f4c03"},{"path":"packages/runtime/src/input/index.ts","bytes":307,"sha256":"e44a730d131d9545107a39fe75063b868ad2ba6d7d7c82964d9e8e4f06dcdc9a"},{"path":"packages/runtime/src/input/types.ts","bytes":2493,"sha256":"5ae6ee9a1c3ca1e802b81f53fa8e0cfa3afa7114329d41f4f9e72d5ccd052119"}];
+const m3PointerReplacementPaths = ["packages/engine/dist/mouseInput.d.ts","packages/engine/dist/mouseInput.js","packages/engine/src/mouseInput.ts"];
+const m3PointerAdditionPaths = ["packages/engine/dist/input.d.ts","packages/engine/dist/input.js","packages/engine/dist/pointerInput.d.ts","packages/engine/dist/pointerInput.js","packages/engine/dist/pointerInputTypes.d.ts","packages/engine/dist/pointerInputTypes.js","packages/engine/dist/web/BrowserPointerInput.d.ts","packages/engine/dist/web/BrowserPointerInput.js","packages/engine/dist/web/pointer.d.ts","packages/engine/dist/web/pointer.js","packages/engine/src/input.ts","packages/engine/src/pointerInput.ts","packages/engine/src/pointerInputTypes.ts","packages/engine/web/BrowserPointerInput.ts","packages/engine/web/pointer.ts","packages/runtime/dist/input/PointerRouter.d.ts","packages/runtime/dist/input/PointerRouter.js","packages/runtime/dist/input/index.d.ts","packages/runtime/dist/input/index.js","packages/runtime/dist/input/types.d.ts","packages/runtime/dist/input/types.js","packages/runtime/src/input/PointerRouter.ts","packages/runtime/src/input/index.ts","packages/runtime/src/input/types.ts"];
+const m3PointerPredecessor = {"members":669,"sha256":"746498b41ec4ef628619ea28744dcd7737afcd4db4a68744eefca462e263f130"};
+function m3PointerGraph(root,base,actual) {
+  const present=new Map(actual.map(row=>typeof row==='string'?[row,undefined]:[row.path,row]));
+  const digest=bytes=>createHash('sha256').update(bytes).digest('hex'),same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+  const packages=m3PointerPackageSuccessors.map(pair=>{const raw=readFileSync(path.join(root,pair.current.path));return raw.length===pair.current.bytes&&digest(raw)===pair.current.sha256;});
+  if(!m3PointerAdditionPaths.some(file=>present.has(file))&&!packages.some(Boolean))return undefined;
+  const reject=message=>{ failure('SS1_BOUNDARY_SOURCE_OWNER',message); };
+  if(!packages.every(Boolean))return reject('M3 pointer packages must form one complete current group');
+  const serialized=JSON.stringify([...base].sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0).map(row=>[row.path,row.bytes,row.sha256]));
+  if(base.length!==m3PointerPredecessor.members||digest(serialized)!==m3PointerPredecessor.sha256)return reject('M3 pointer retained predecessor digest differs');
+  const rows=m3PointerGraphSuccessor,replacements=m3PointerReplacementPaths,additions=m3PointerAdditionPaths;
+  const paths=new Set(base.map(row=>row.path)),selected=[...replacements,...additions];
+  if(rows.length!==27||replacements.length!==3||additions.length!==24||new Set(selected).size!==27||paths.size!==base.length
+    ||!same(rows.map(row=>row.path).sort(),[...selected].sort())
+    ||rows.some(row=>!same(Object.keys(row).sort(),['bytes','path','sha256'])||!Number.isSafeInteger(row.bytes)||row.bytes<=0||!/^[a-f0-9]{64}$/.test(row.sha256))
+    ||replacements.some(file=>!paths.has(file))||additions.some(file=>paths.has(file)))return reject('Invalid finite M3 pointer successor declaration');
+  const chosen=new Map(rows.map(row=>[row.path,row]));
+  const graph=[...base.map(row=>chosen.get(row.path)??row),...additions.map(file=>chosen.get(file))];
+  for(const row of graph){
+    if(!present.has(row.path))return reject('Incomplete M3 pointer successor: '+row.path);
+    const raw=readFileSync(path.join(root,row.path));if(raw.length!==row.bytes||digest(raw)!==row.sha256)return reject('M3 pointer whole-group raw identity differs: '+row.path);
+  }
+  return graph;
+}
+// M3-POINTER-GRAPH-END
+
 // M12-PREPARATION-HOTPATH-END
 function m15ResourceRecoveryGraph(root, base, actualNames) {
   const present=new Set(actualNames);

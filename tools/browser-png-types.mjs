@@ -45,12 +45,34 @@ function m14EnginePackagePin(owner, expected) {
 // complete reviewed package/provider source, emission and declaration group may
 // select this finite raw-input successor; this is not a new full compiler closure.
 const m15PngProductPairs = [{"path":"packages/engine/package.json","base":{"bytes":1567,"sha256":"e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"},"current":{"bytes":2167,"sha256":"be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143"}},{"path":"packages/engine/web/BrowserTextureProvider.ts","base":{"bytes":26925,"sha256":"f3653ea77a29979f43f18c95405223ad1d2a72a647d40391705668f9ea504993"},"current":{"bytes":38735,"sha256":"19a7a5c531372a93a88d52bd1885ccfc77054ca21821ac93a301ed5cfff2ef39"}},{"path":"packages/engine/dist/web/BrowserTextureProvider.js","base":{"bytes":26201,"sha256":"06f49a72039f95d0fd3c23bb409db658672bb10b512b4ca9b256064b419e1d90"},"current":{"bytes":37211,"sha256":"4daad43034281f0038220a4c1fa5238b1a67c8fe09870ef0717b53b50c5a15dd"}},{"path":"packages/engine/dist/web/BrowserTextureProvider.d.ts","base":{"bytes":1130,"sha256":"44418045d02c256a6814b74abdda44b5ed1f1433618479a4aade9ddc08f30257"},"current":{"bytes":2366,"sha256":"5304af807252f688b48b3b0bd4864bc3b7a020803fff375367fa4f172c0f45d2"}}];
+// M33-PNG-PACKAGE-BEGIN
+// Only the reviewed optional input exports/private alias extend the retained
+// M1.5 package. Provider identities, original tuples and lane inputs stay exact.
+const m33PngEnginePackage = {base:{path:'packages/engine/package.json',bytes:2167,sha256:'be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143'},current:{path:'packages/engine/package.json',bytes:2494,sha256:'65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951'}};
+const m33PngPackageSelected = equal(fingerprintFile(root,m33PngEnginePackage.current.path),m33PngEnginePackage.current);
+function m33PngPackagePredecessor(raw) {
+  if(!m33PngPackageSelected)return raw;
+  const {base,current}=m33PngEnginePackage;
+  if(raw.length!==current.bytes||hash(raw)!==current.sha256)failure('M3 PNG engine package changed during replay');
+  const value=JSON.parse(raw);
+  delete value.exports['./input'];delete value.exports['./web/pointer'];delete value.imports['#egret-pointer-input'];
+  const previous=Buffer.from(JSON.stringify(value,null,2)+'\n');
+  if(previous.length!==base.bytes||hash(previous)!==base.sha256)failure('M3 PNG engine package predecessor differs');
+  return previous;
+}
+// M33-PNG-PACKAGE-END
+
 function m15ProductIdentityBranch() {
   const actual = m15PngProductPairs.map(row => fingerprintFile(root, row.path));
+  if(m33PngPackageSelected){
+    if(!equal({path:m15PngProductPairs[0].path,...m15PngProductPairs[0].current},m33PngEnginePackage.base)
+      ||!equal(actual[0],m33PngEnginePackage.current))failure('M3 PNG engine package identity changed');
+    actual[0]=m33PngEnginePackage.base;
+  }
   const matches = actual.map((row, index) => equal(row, { path: m15PngProductPairs[index].path, ...m15PngProductPairs[index].current }));
   if (!matches.some(Boolean)) return 'historical';
   if (!matches.every(Boolean)) failure('unregistered or mixed M1.5 PNG product identity');
-  const row = m15PngProductPairs[0], raw = readFileSync(path.join(root, row.path));
+  const row = m15PngProductPairs[0], raw = m33PngPackagePredecessor(readFileSync(path.join(root, row.path)));
   if (raw.length !== row.current.bytes || hash(raw) !== row.current.sha256) failure('M1.5 engine package changed during read');
   const value = JSON.parse(raw);
   delete value.exports['./resources']; delete value.exports['./web/resources'];
@@ -68,6 +90,7 @@ function m15ProductPin(expected) {
 function checkPin(pin) {
   pin = m15ProductPin(pin);
   pin = m14EnginePackagePin(root, pin);
+  if(m33PngPackageSelected&&equal(pin,m33PngEnginePackage.base))pin=m33PngEnginePackage.current;
   logicalPath(pin.path);
   if (!Number.isSafeInteger(pin.bytes) || pin.bytes < 0 || !/^[0-9a-f]{64}$/.test(pin.sha256)) failure('malformed raw pin');
   const actual = fingerprintFile(root, pin.path);

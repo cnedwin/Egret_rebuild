@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Egret multi-pointer / 白鹭多指针</title>
+  <link rel="icon" href="data:,">
+  <script type="importmap">{"imports":{"#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-pointer-input":"/packages/engine/dist/pointerInput.js","@egret/engine":"/packages/engine/dist/index.js","@egret/engine/input":"/packages/engine/dist/input.js","@egret/engine/web":"/packages/engine/dist/web/index.js","@egret/engine/web/pointer":"/packages/engine/dist/web/pointer.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/runtime/input":"/packages/runtime/dist/input/index.js","@egret/contracts":"/packages/contracts/dist/index.js","@egret/contracts/resources":"/packages/contracts/dist/resources/index.js"}}</script>
+  <style>
+    body { margin: 24px auto; padding: 0 20px; max-width: 800px; color: #182339; background: #edf2f7; font: 16px/1.5 system-ui, sans-serif; }
+    h1 { margin-bottom: 8px; font-size: 28px; }
+    .surface { max-width: 640px; outline: 2px solid #344458; margin: 24px 0; }
+    canvas { display: block; width: 100%; height: auto; border: 0; padding: 0; object-fit: fill; }
+    .regions { display: flex; gap: 16px; max-width: 640px; }
+    .regions p { flex: 1; margin: 0; padding: 12px; background: white; border-radius: 8px; }
+    button { margin: 16px 8px 0 0; padding: 9px 14px; }
+    #contacts { min-height: 32px; padding-left: 20px; }
+    #status { font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>Two independent regions / 两个独立区域</h1>
+  <p>Hold one finger in each colored region, then move either finger outside the canvas. Each contact keeps its own target until it ends or is cancelled.<br>分别按住两个色块，再将任意触点移出画布。每个触点在结束或取消之前保留自己的目标。</p>
+  <div class="surface"><canvas id="scene" width="640" height="320" aria-label="Two independent pointer regions / 两个独立指针区域"></canvas></div>
+  <div class="regions"><p id="left-state">Left / 左：0</p><p id="right-state">Right / 右：0</p></div>
+  <p id="status" role="status">Starting / 正在启动</p>
+  <ul id="contacts" aria-label="Active contacts / 活跃触点"></ul>
+  <button id="interactive" disabled>Suspend / 暂停</button><button id="close">Close / 关闭</button>
+  <p>Mouse, touch and pen use Pointer Events. Resizing, scrolling, hiding the page or losing focus cancels held contacts. Only the canvas disables touch scrolling.<br>鼠标、触摸和笔统一使用 Pointer Events。尺寸变化、滚动、页面隐藏或失焦会取消按住的触点。只有画布禁用触摸滚动。</p>
+  <script type="module" src="./main.mjs"></script>
+</body>
+</html>

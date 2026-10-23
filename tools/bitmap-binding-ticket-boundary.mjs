@@ -38,6 +38,34 @@ function read(file){logicalPath(file);const pin=fingerprintFile(root,file),raw=r
 // Exact M1.5 package successors; all retained package tuples/inverses remain below.
 const m15ResourcePackageSuccessors = [{"base":{"path":"packages/contracts/package.json","bytes":179,"sha256":"fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"},"current":{"path":"packages/contracts/package.json","bytes":319,"sha256":"f40591968003b235cddf38a576c1250a28ef965726750d377f0691a8e6f48e9e"}},{"base":{"path":"packages/engine/package.json","bytes":1567,"sha256":"e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"},"current":{"path":"packages/engine/package.json","bytes":2167,"sha256":"be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143"}},{"base":{"path":"packages/project/package.json","bytes":397,"sha256":"295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945"},"current":{"path":"packages/project/package.json","bytes":621,"sha256":"e6ec9743041ee5489297861ad5ed810021875dae7c041011a0f6d4e754eb6462"}}];
 const m15ResourceAtlasPackageSuccessor = [{"base":{"path":"packages/project/package.json","bytes":503,"sha256":"4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af"},"current":{"path":"packages/project/package.json","bytes":621,"sha256":"e6ec9743041ee5489297861ad5ed810021875dae7c041011a0f6d4e754eb6462"}}];
+// M3-POINTER-PACKAGE-BEGIN
+// Two exact current packages invert to their retained predecessors; no old row changes.
+const m3PointerPackageSuccessors = [{"base":{"path":"packages/engine/package.json","bytes":2167,"sha256":"be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143"},"current":{"path":"packages/engine/package.json","bytes":2494,"sha256":"65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951"}},{"base":{"path":"packages/runtime/package.json","bytes":327,"sha256":"b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"},"current":{"path":"packages/runtime/package.json","bytes":471,"sha256":"97b2d4678df4fd137b681a54511ce625935accfc3014da4800902f4a241c8db1"}}];
+const m3RuntimePackagePredecessor = "{\n  \"name\": \"@egret/runtime\",\n  \"version\": \"0.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"exports\": {\n    \".\": { \"types\": \"./dist/index.d.ts\", \"import\": \"./dist/index.js\" },\n    \"./text\": { \"types\": \"./dist/text/index.d.ts\", \"import\": \"./dist/text/index.js\" }\n  },\n  \"dependencies\": { \"@egret/contracts\": \"workspace:*\" }\n}\n";
+function m3PointerPackageSuccessor(expected, raw) {
+  const pair=m3PointerPackageSuccessors.find(row=>row.base.path===expected?.path);
+  const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+  if(!pair||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;
+  const value=JSON.parse(raw.toString('utf8'));
+  const remove=(key,mapping)=>{if(JSON.stringify(value.exports[key])!==JSON.stringify(mapping))return false;delete value.exports[key];return true;};
+  let predecessor;
+  if(expected.path==='packages/engine/package.json') {
+    if(!remove('./input',{types:'./dist/input.d.ts',import:'./dist/input.js'})
+      ||!remove('./web/pointer',{types:'./dist/web/pointer.d.ts',import:'./dist/web/pointer.js'})
+      ||JSON.stringify(value.imports['#egret-pointer-input'])!==JSON.stringify({types:'./dist/pointerInput.d.ts',import:'./dist/pointerInput.js'}))return false;
+    delete value.imports['#egret-pointer-input'];
+    predecessor=Buffer.from(JSON.stringify(value,null,2)+String.fromCharCode(10));
+  } else {
+    if(!remove('./input',{types:'./dist/input/index.d.ts',import:'./dist/input/index.js'})
+      ||JSON.stringify(value)!==JSON.stringify(JSON.parse(m3RuntimePackagePredecessor)))return false;
+    predecessor=Buffer.from(m3RuntimePackagePredecessor);
+  }
+  if(predecessor.length!==pair.base.bytes||digest(predecessor)!==pair.base.sha256)return false;
+  return expected.bytes===pair.base.bytes&&expected.sha256===pair.base.sha256
+    ||m15ResourcePackageSuccessor(expected,predecessor);
+}
+// M3-POINTER-PACKAGE-END
+
 function m15ResourcePackageSuccessor(expected, raw) {
   const pair=[...m15ResourcePackageSuccessors,...m15ResourceAtlasPackageSuccessor].find(row=>row.base.path===expected?.path
     &&row.base.bytes===expected.bytes&&row.base.sha256===expected.sha256);
@@ -91,7 +119,7 @@ function bbtbAtlasPackageSuccessor(expected, raw) {
     && raw.length === 503 && hash(raw) === '4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af';
 }
 
-function pinCheck(pin,code){const raw=read(pin.path);if(m15ResourcePackageSuccessor(pin,raw)||m14EnginePackageSuccessor(pin,raw)||bbtbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
+function pinCheck(pin,code){const raw=read(pin.path);if(m3PointerPackageSuccessor(pin,raw)||m15ResourcePackageSuccessor(pin,raw)||m14EnginePackageSuccessor(pin,raw)||bbtbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
 const policyPin={"path":"tools/bitmap-binding-ticket-policy.json","bytes":17762,"sha256":"81fb8a30379ae85782fb4eff61c25a890ab1f4a79404b4ea9bb8b3f1468de6e5"};
 pinCheck(policyPin,'BBT_BOUNDARY_POLICY_IDENTITY');
 const policy=JSON.parse(read(policyPin.path));

@@ -15,7 +15,8 @@ export function createExampleServer(repository=root){
   let relative;
   try{relative=decodeURIComponent(new URL(request.url,'http://127.0.0.1').pathname).slice(1);if(!relative)relative='examples/resource-scene/index.html';logicalPath(relative);}catch{return finish(400,'Invalid path');}
   const dependency='packages/engine/node_modules/robust-predicates/';
-  const allowed=/^examples\/resource-scene\/(?:[\w-]+\.(?:html|mjs)|assets\/[\w.-]+\.(?:png|woff2))$/.test(relative)
+  const allowed=/^examples\/multi-pointer\/(?:index\.html|main\.mjs)$/.test(relative)
+   ||/^examples\/resource-scene\/(?:[\w-]+\.(?:html|mjs)|assets\/[\w.-]+\.(?:png|woff2))$/.test(relative)
    ||/^packages\/(?:engine|runtime|contracts)\/dist\/[\w/.-]+\.js$/.test(relative)
    ||relative==='examples/canvas-text/assets/ahem.ttf'||relative==='tools/browser-png/assets/rgb-red-green.png'
    ||relative.startsWith(dependency)&&/^[\w/-]+\.js$/.test(relative.slice(dependency.length));

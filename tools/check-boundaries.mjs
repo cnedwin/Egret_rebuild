@@ -45,7 +45,7 @@ for (const [name, allowed] of Object.entries(expected)) {
   const dir = path.join(root, "packages", name);
   const pkg = JSON.parse(readFileSync(path.join(dir, "package.json"), "utf8"));
   const dependencies = Object.keys(pkg.dependencies ?? {}).sort();
-  const registryImports = { '#egret-textured-frame-state': { types: './dist/internal/texturedFrameState.d.ts', import: './dist/internal/texturedFrameState.js' }, '#egret-mouse-input': {types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'}, '#egret-manifest-resources': {types:'./dist/manifestResourceState.d.ts',import:'./dist/manifestResourceState.js'} };
+  const registryImports = { '#egret-textured-frame-state': { types: './dist/internal/texturedFrameState.d.ts', import: './dist/internal/texturedFrameState.js' }, '#egret-mouse-input': {types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'}, '#egret-manifest-resources': {types:'./dist/manifestResourceState.d.ts',import:'./dist/manifestResourceState.js'}, '#egret-pointer-input': {types:'./dist/pointerInput.d.ts',import:'./dist/pointerInput.js'} };
   if (name === 'engine') {
     if (JSON.stringify(pkg.imports) !== JSON.stringify(registryImports)) throw new Error('engine: private textured registry mapping mismatch');
   } else if (pkg.imports !== undefined) throw new Error(`${name}: unexpected private import mapping`);
@@ -60,6 +60,7 @@ for (const [name, allowed] of Object.entries(expected)) {
     const textExports = name === 'runtime' ? {
       '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
       './text': {types:'./dist/text/index.d.ts',import:'./dist/text/index.js'},
+      './input': {types:'./dist/input/index.d.ts',import:'./dist/input/index.js'},
     } : {
       '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
       './webgpu': {types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'},
@@ -70,6 +71,8 @@ for (const [name, allowed] of Object.entries(expected)) {
       './layout': {types:'./dist/layout.d.ts',import:'./dist/layout.js'},
       './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
       './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
+      './input': {types:'./dist/input.d.ts',import:'./dist/input.js'},
+      './web/pointer': {types:'./dist/web/pointer.d.ts',import:'./dist/web/pointer.js'},
       './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
       './resources': {types:'./dist/resources.d.ts',import:'./dist/resources.js'},
       './web/resources': {types:'./dist/web/resources.d.ts',import:'./dist/web/resources.js'},
@@ -128,6 +131,14 @@ for (const [name, allowed] of Object.entries(expected)) {
         const row=clause && {operation:clause[1],kind:clause[2]?'type':'value',members:clause[3].split(',').map(member=>member.trim().replace(/\s+/g,' ')).filter(Boolean),target:imported};
         if (!row || !(m15DeepClauses[relative]??[]).some(expected=>m15ClauseKey(expected)===m15ClauseKey(row)))
           throw new Error('M15: unapproved named resource dependency: '+relative+'/'+imported);
+      } else if (imported === '@egret/runtime/input') {
+        const relative=path.relative(dir,file).split(path.sep).join('/');
+        if(name!=='engine'||!['src/pointerInput.ts','src/pointerInputTypes.ts','dist/pointerInput.js','dist/pointerInput.d.ts','dist/pointerInputTypes.d.ts'].includes(relative))
+          throw new Error('M3: pointer runtime import outside the named core modules: '+relative);
+      } else if (imported === '#egret-pointer-input') {
+        const relative=path.relative(dir,file).split(path.sep).join('/');
+        if(name!=='engine'||!['web/pointer.ts','web/BrowserPointerInput.ts','dist/web/pointer.js','dist/web/pointer.d.ts','dist/web/BrowserPointerInput.js','dist/web/BrowserPointerInput.d.ts'].includes(relative))
+          throw new Error('M3: pointer assembly import outside the named browser modules: '+relative);
       } else if (imported === '#egret-mouse-input') {
         const relative=path.relative(dir,file).split(path.sep).join('/');
         if(name!=='engine'||!['web/input.ts','web/MouseInput.ts','dist/web/input.js','dist/web/input.d.ts','dist/web/MouseInput.js','dist/web/MouseInput.d.ts'].includes(relative))
@@ -3998,7 +4009,7 @@ for(const file of ['packages/runtime/src/displayInputOperations.ts','packages/ru
 // Exact new target ownership; unrelated files never acquire input authority by
 // importing a dormant value, an erased type, or a dynamic relative edge.
 const mouseApprovedTargets={
-  'src/mouseInput.js':['src/Engine.ts','src/internal/mouseInputFactoryState.ts','src/bitmapButton.ts'],
+  'src/mouseInput.js':['src/Engine.ts','src/internal/mouseInputFactoryState.ts','src/bitmapButton.ts','src/pointerInput.ts'],
   'dist/mouseInput.js':['dist/Engine.js','dist/Engine.d.ts','dist/internal/mouseInputFactoryState.js','dist/internal/mouseInputFactoryState.d.ts','dist/bitmapButton.js','dist/bitmapButton.d.ts'],
   'src/mouseInputTypes.js':['src/mouseInput.ts','src/bitmapButton.ts','src/bitmapButtonTypes.ts','src/internal/mouseInputFactoryState.ts'],
   'dist/mouseInputTypes.js':['dist/mouseInput.js','dist/mouseInput.d.ts','dist/bitmapButton.js','dist/bitmapButton.d.ts','dist/bitmapButtonTypes.d.ts','dist/internal/mouseInputFactoryState.d.ts'],
@@ -4006,8 +4017,8 @@ const mouseApprovedTargets={
   'dist/bitmapButton.js':['dist/mouseInput.js','dist/mouseInput.d.ts'],
   'src/bitmapButtonTypes.js':['src/mouseInput.ts','src/bitmapButton.ts'],
   'dist/bitmapButtonTypes.js':['dist/mouseInput.d.ts','dist/bitmapButton.d.ts'],
-  'src/internal/mouseInputFactoryState.js':['src/mouseInput.ts','src/startEngine.ts','src/bitmapButton.ts'],
-  'dist/internal/mouseInputFactoryState.js':['dist/mouseInput.js','dist/mouseInput.d.ts','dist/startEngine.js','dist/bitmapButton.js'],
+  'src/internal/mouseInputFactoryState.js':['src/mouseInput.ts','src/startEngine.ts','src/bitmapButton.ts','src/pointerInput.ts'],
+  'dist/internal/mouseInputFactoryState.js':['dist/mouseInput.js','dist/mouseInput.d.ts','dist/startEngine.js','dist/bitmapButton.js','dist/pointerInput.js'],
 };
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/dist'))]) {
   if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/'),code=assetGroupStrip(readFileSync(file,'utf8'));

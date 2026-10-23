@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## M3.3 multi-contact foundation — 2026-10-23
+
+M3.3 provides an optional DOM-free contact router and Engine/browser entries for independent multi-touch sessions, capture, cancellation and viewport/lifetime cleanup. The two-region example and reproducible desktop collector are included. Focused regression passes 176 tests. Read the [contract and evidence](docs/multi-pointer-input.md). Full M3.3 focus/IME, M3.4 gestures and physical Android/iPhone acceptance remain open.
+
 ## M1.2 preparation follow-up — 2026-10-21
 
 Bounded clip validation and rectangle reuse, same-slot cache lookup, fewer temporary corner arrays and contained-edge handling reduce repeated preparation work while retaining original work budgets and failure order. Public APIs are unchanged. Native preflight, pixels and operation counts passed for the candidate; the fixed count remains 991 baseline and 155 candidate draws per frame. The historical formal timing batch missed its targets. The latest diagnostic was interrupted by foreground-window changes, so no valid candidate timing pair or new formal timing batch is available. M1.2 acceptance remains open; see the [evidence and limits](docs/incremental-frame-preparation-evidence.md).

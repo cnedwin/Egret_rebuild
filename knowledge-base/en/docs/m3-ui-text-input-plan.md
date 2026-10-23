@@ -230,3 +230,7 @@ Third-party text algorithms, Unicode data and fonts require exact source/version
 Growing the explicit-line/mouse/planner APIs into a complete UI in place would erase their narrow compatibility contracts. A separate DOM application would split application state, clipping and mixed rendering. The recommended design is the layered optional UI owner above the existing scene/resource system, with native editing and semantic adapters at the browser boundary.
 
 This plan does not add another framework, promise arbitrary CSS, rebuild an entire browser text engine without provenance, implement a full rich-text editor, or claim complete EUI/EXML compatibility. None of the design, source inspection or referenced standards establishes native acceptance by itself.
+
+## Implementation slices
+
+The raw multi-contact scene input contract and evidence boundaries are maintained in [Multi-contact scene input](multi-pointer-input.md). This first slice preserves all remaining M3.3 focus/keyboard/IME and physical-device obligations.

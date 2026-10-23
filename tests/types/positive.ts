@@ -433,3 +433,15 @@ const tweenConsumerDisposable: TweenDisposable = tweenConsumer;
 const tweenConsumerState: TweenState = tweenConsumer.state;
 tweenConsumer.start(); tweenConsumer.pause(); tweenConsumer.resume(); tweenConsumer.stop(); tweenConsumer.dispose();
 void tweenConsumerOwned; void tweenConsumerDisposable; void tweenConsumerState;
+
+// Multi-contact consumers use the optional public Engine contract without DOM types.
+import {createPointerInput} from '@egret/engine/input';
+import type {PointerInput,PointerInputOptions,PointerContact,PointerSession} from '@egret/engine/input';
+function pointerConsumer(options:PointerInputOptions):PointerInput {
+ const input=createPointerInput(options);
+ const id:PointerSession|undefined=input.begin({pointerId:1,pointerType:'touch',globalX:0,globalY:0,buttons:1,timestamp:0});
+ input.events.begin satisfies import('@egret/engine').EventType<PointerContact>;
+ if(id)input.cancel(id,'pointercancel');
+ return input;
+}
+void pointerConsumer;

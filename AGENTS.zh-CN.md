@@ -204,3 +204,9 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/web
 
 任何替换之前检查全部描述符。压力记录最多 16,384 行、4,096 个对象身份；PNG 记录最多 8,192 行、四个原始 promise；GPU 获取最多十六个请求／设备／适配器身份和 256 个事件。超出上限或观察失败不得替换原始调用结果；继续转发调用、保留不完整状态，不声称已全部排空。只有实际原始工作已结束且 Host 已关闭后，才恢复原始描述符全部字段。结算未知或采集器期限到达时，明确记录清理不完整及 realm 释放，不据此证明原生资源已退役。上述权限不增加私有产品导入、SDK 导出、通用拦截权限，也不扩大既有受控单元测试权限。
 <!-- M15-NATIVE-RECOVERY-POLICY-END -->
+
+## M3 多触点输入切片
+
+可选入口 @egret/engine/input 和 @egret/engine/web/pointer 遵循[多触点契约](knowledge-base/Cns/docs/multi-pointer-input.md)。保留旧 MI1 入口与真实 Engine/Scope/Stage 权限，核心状态位于无 DOM 的 runtime 输入模块。运行时端口单元序列、真实公共 Engine 行为及实际浏览器证据须分别报告。
+
+仅 tests/browser-pointer.test.mjs 可以将其明确声明、由测试拥有的 WebIDL/Window/Document/Canvas/EventTarget/PointerEvent/CSS/矩形端口安装为对应的完整全局属性描述符，串行执行，并在真实 Engine 清理后精确恢复。指定监听/捕获失败与重入仅发生在这些测试拥有的端口上。不允许替换真实原生原型、导入私有 SDK、增加产品测试导出或据此证明物理设备能力。浏览器示例与实际采集使用普通公共 SDK 入口且不拦截原生操作。

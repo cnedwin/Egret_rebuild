@@ -62,6 +62,24 @@ function m12CaptureSourcePin(root,selected,row){
 }
 // M12-CAPTURE-SOURCE-END
 
+// M33-POINTER-INPUT-CURRENT-BEGIN
+// The approved optional input entries and private close port preserve every
+// recorded consumer diagnostic and complete compiler closure. Historical rows
+// stay immutable; only an exact reviewed owner/path/base/current pair can map.
+const m33PointerInputCurrent = [
+ {base:{path:'packages/runtime/package.json',bytes:327,sha256:'b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032'},current:{path:'packages/runtime/package.json',bytes:471,sha256:'97b2d4678df4fd137b681a54511ce625935accfc3014da4800902f4a241c8db1'},owners:IDS.slice(0,10)},
+ {base:{path:'packages/engine/package.json',bytes:2167,sha256:'be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143'},current:{path:'packages/engine/package.json',bytes:2494,sha256:'65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951'},owners:IDS.slice(0,10)},
+ {base:{path:'packages/engine/src/mouseInput.ts',bytes:21978,sha256:'b8ada0f5e3a2a5f22e53e8dec494d612818404463dfe112c737504ee5e840fe0'},current:{path:'packages/engine/src/mouseInput.ts',bytes:22563,sha256:'83ca7db6c00c65b88c093b787c82093984c98bfa1b6053643527f8adb7e7e5bd'},owners:['linear-layout','bitmap-button']},
+ {base:{path:'packages/engine/dist/mouseInput.d.ts',bytes:4458,sha256:'453cab6df05b0baf3e42d11f158ec13706e5c963231930f7f43b80b8cf46e44d'},current:{path:'packages/engine/dist/mouseInput.d.ts',bytes:4505,sha256:'04c38e9fec56d089f56a4fafb2bd02c47313856dd83ce3bc3ed139ab18706b85'},owners:['linear-layout','bitmap-button']},
+];
+function m33PointerInputPin(root,selected,id,row){
+ if(selected!==M15_DATA)return row;
+ const revision=m33PointerInputCurrent.find(pair=>pair.owners.includes(id)&&equal(pair.base,row));
+ if(!revision)return row;
+ return equal(fingerprintFile(root,row.path),revision.current)?revision.current:row;
+}
+// M33-POINTER-INPUT-CURRENT-END
+
 /** Old inventories remain immutable; only a complete recorded group selects new rows. */
 export function selectM13StrictSuccessor(root,id,inventory){
  if(!IDS.includes(id))fail('unknown owner');
@@ -82,7 +100,7 @@ export function selectM13StrictSuccessor(root,id,inventory){
  if(!data.selectionPaths.some(file=>existsSync(path.join(root,file))))return null;
  const pins=new Map(data.inputs.map(row=>[row.path,row]));
  const nativePins=new Map(data.nativeLibraries.map(row=>[row.path,row]));
- const pin=file=>{const row=pins.get(file);if(!row)fail('unregistered selected input '+file);return row;};
+ const pin=file=>{const row=pins.get(file);if(!row)fail('unregistered selected input '+file);return m33PointerInputPin(root,selected,id,row);};
  // Only these two predecessor inventories included their own gate bytes.
  // Their immutable historical rows remain provenance. The outer compiler
  // maintenance closure pins the current gate; this snapshot also rejects
@@ -94,7 +112,7 @@ export function selectM13StrictSuccessor(root,id,inventory){
  if(historicalGate&&!equal(inventory.inputPins.find(row=>row.path===historicalGate.path),historicalGate))fail('historical self-gate row changed');
  const currentGate=historicalGate?fingerprintFile(root,historicalGate.path):undefined;
  let inputPins=(inventory.inputPins??[]).map(row=>row.path===historicalGate?.path?currentGate
-  :owner.replacementPaths.includes(row.path)?pin(row.path):row).map(row=>m14EnginePackagePin(root,row));
+  :owner.replacementPaths.includes(row.path)?pin(row.path):row).map(row=>m14EnginePackagePin(root,row)).map(row=>m33PointerInputPin(root,selected,id,row));
  for(const file of new Set(owner.groups.flatMap(group=>group.repositoryClosure.filter(file=>file.endsWith('.d.ts')))))
   if(!inputPins.some(row=>row.path===file))inputPins.push(pin(file));
  const wrapperOwner=realpathSync(path.join(root,'node_modules/typescript'));

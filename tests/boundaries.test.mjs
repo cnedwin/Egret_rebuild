@@ -34,6 +34,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       const packageExports = name === 'runtime' ? {
         '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
         './text': {types:'./dist/text/index.d.ts',import:'./dist/text/index.js'},
+        './input': {types:'./dist/input/index.d.ts',import:'./dist/input/index.js'},
       } : name === 'engine' ? {
         '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
         './webgpu': gpuExport,
@@ -44,6 +45,8 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         './layout': {types:'./dist/layout.d.ts',import:'./dist/layout.js'},
         './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
         './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
+        './input': {types:'./dist/input.d.ts',import:'./dist/input.js'},
+        './web/pointer': {types:'./dist/web/pointer.d.ts',import:'./dist/web/pointer.js'},
         './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
         './resources': {types:'./dist/resources.d.ts',import:'./dist/resources.js'},
         './web/resources': {types:'./dist/web/resources.d.ts',import:'./dist/web/resources.js'},
@@ -120,7 +123,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('packages/runtime/dist/index.d.ts','interface CapturedContent2D {}\nexport type {CapturedContent2D};\n' + (missingMesh === 'runtime' ? '' : "export {Mesh2D} from './Mesh2D.js';\n"));
     // Profile Task 5: complete valid executable/declaration surfaces first.
     const engineFixturePackage = JSON.parse(readFileSync(path.join(root,'packages/engine/package.json'),'utf8'));
-    write('packages/engine/package.json', {...engineFixturePackage, imports:{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'},'#egret-mouse-input':{types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'},'#egret-manifest-resources':{types:'./dist/manifestResourceState.d.ts',import:'./dist/manifestResourceState.js'}}});
+    write('packages/engine/package.json', {...engineFixturePackage, imports:{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'},'#egret-mouse-input':{types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'},'#egret-manifest-resources':{types:'./dist/manifestResourceState.d.ts',import:'./dist/manifestResourceState.js'},'#egret-pointer-input':{types:'./dist/pointerInput.d.ts',import:'./dist/pointerInput.js'}}});
     const profileTypes = ['TexturedFrameProfile2D','TexturedMeshCommand2D','TexturedRenderCommand2D','TexturedRenderFrame2D','TexturedRenderHostAdapter'];
     const profileRootValues = ['Engine','createEngine','createEngineForProfile','CancellationController','EgretError','Event','createEventType','EventDispatcher','DisplayObject','DisplayObjectContainer','Scope','Stage','AssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','Texture','createTexture','isTexture','Bitmap','createSequenceClip','SequencePlayer'];
     const profileRootFile = 'node_modules/@egret/engine/index.js';

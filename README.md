@@ -22,6 +22,10 @@ Report problems through [Issues](https://github.com/cnedwin/Egret_rebuild/issues
 
 The [M2–M4 roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md) connects complete Spine/content, UI/text/input and mixed core acceptance. Choose a complete work package from [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) or [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58); each lists code entry points, dependencies and reviewable acceptance.
 
+## M3.3 multi-contact foundation
+
+M3.3 provides an optional DOM-free contact router and Engine/browser entries for independent multi-touch sessions, capture, cancellation and viewport/lifetime cleanup. The two-region example and reproducible desktop collector are included. Focused regression passes 176 tests. Read the [contract and evidence](knowledge-base/en/docs/multi-pointer-input.md). Full M3.3 focus/IME, M3.4 gestures and physical Android/iPhone acceptance remain open.
+
 ## What we are building
 
 Egret Engine is an open-source game-engine rebuild for creators working with AI and for developers bringing mobile-game experience to the Web. The product centers on complex 2D interfaces and lightweight 3D, with a small rendering/runtime foundation, explicit resource ownership and a shared project model for code, visual tools and agents.
