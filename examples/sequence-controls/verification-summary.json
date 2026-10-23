@@ -1,0 +1,568 @@
+{
+  "format": "egret.sequence-controls-browser-summary/1",
+  "scope": "Derived public projection of an actual finite default Edge collection; the original receipt and artifacts remain separate execution evidence.",
+  "status": "PASS",
+  "rawReceipt": {
+    "path": "result.json",
+    "bytes": 1338264,
+    "sha256": "fd2bce113252fa2417cac2fa398906c20cd08fa6cbea2b39796f6f1b59e4438f"
+  },
+  "startedAt": "2026-10-23T18:12:53.931Z",
+  "endedAt": "2026-10-23T18:12:59.094Z",
+  "environment": {
+    "node": "v26.7.0",
+    "os": "Windows_NT",
+    "release": "10.0.26300",
+    "platform": "win32",
+    "playwright": "1.62.1",
+    "channel": "msedge",
+    "headless": true,
+    "extraFlags": [],
+    "viewport": {
+      "width": 900,
+      "height": 700
+    },
+    "deviceScaleFactor": 1,
+    "physicalDevice": false,
+    "browser": "155.0.4283.62"
+  },
+  "sourceFreeze": {
+    "files": 677,
+    "bytes": 3663046,
+    "sha256": "4a3c3d83f5033e5e0c9116cf7abbac4fb0acba3768510e9c3f94379f06876c61"
+  },
+  "generation": {
+    "config": {
+      "format": "egret.sequence-controls-content/1",
+      "projectBaseUrl": "./",
+      "snapshotPath": "candidate.json",
+      "snapshot": {
+        "sha256": "5f3ca3349ab4431a54d16093cfc30daaf11f27a719f8e0fe383e0fae76bc66b7",
+        "byteLength": 10494
+      },
+      "selectorId": "e_generation",
+      "generationId": "b956823f4a2e19cfc6981eade72776131fc271984e7a4e64953c30377acf4d10",
+      "manifestPath": "build/generations/b956823f4a2e19cfc6981eade72776131fc271984e7a4e64953c30377acf4d10/manifest.json",
+      "manifest": {
+        "sha256": "915402adf98d2d207988fc3de2a5f088a928c97825c2f7dfd64b751955314fb7",
+        "byteLength": 6621
+      }
+    },
+    "files": [
+      {
+        "path": "browser-config.json",
+        "bytes": 603,
+        "sha256": "12bd2210ed6f03caa2783a1145f80413664878d1848450e9c50a535cb2bf20fa"
+      },
+      {
+        "path": "candidate.json",
+        "bytes": 10494,
+        "sha256": "5f3ca3349ab4431a54d16093cfc30daaf11f27a719f8e0fe383e0fae76bc66b7"
+      },
+      {
+        "path": "receipt.json",
+        "bytes": 22239,
+        "sha256": "56ea5b646d3f639915c130003392901f2d38675458de2b8b5c4b83507f59ae2a"
+      },
+      {
+        "path": "project.json",
+        "bytes": 1080,
+        "sha256": "c04f9658accbf6b058fa8d83a28febe1b381be9f4d73919bf1198717c8f670fe"
+      },
+      {
+        "path": "recipe.json",
+        "bytes": 2707,
+        "sha256": "d63b258f8e64c9babf1de2ba987e15d6c946455d0ed8f5733118294e9824244f"
+      },
+      {
+        "path": "sources/page.png",
+        "bytes": 77,
+        "sha256": "93dbeb3c32fd10af3fdc12de5991dab542534b64adbe5d6cb2919a16adfff0b6"
+      },
+      {
+        "path": "sources/atlas.json",
+        "bytes": 1663,
+        "sha256": "ce13b9e8db12a6ad7334b8352329cab48c10dee304a79d52fd7e1d617d2f0dcd"
+      },
+      {
+        "path": "sources/decimal-atlas.json",
+        "bytes": 941,
+        "sha256": "ffa8f33d36b7b4d792394f1159a4db0860a2e2ff1465da5d6ce16dd1d1e7d568"
+      },
+      {
+        "path": "build/generations/b956823f4a2e19cfc6981eade72776131fc271984e7a4e64953c30377acf4d10/manifest.json",
+        "bytes": 6621,
+        "sha256": "915402adf98d2d207988fc3de2a5f088a928c97825c2f7dfd64b751955314fb7"
+      },
+      {
+        "path": "build/blobs/sha256/a36d9bb86a874d780876fdd46c6c1ce31f4d4e98e0e15677be22c159ee1cda27",
+        "bytes": 1231,
+        "sha256": "a36d9bb86a874d780876fdd46c6c1ce31f4d4e98e0e15677be22c159ee1cda27"
+      },
+      {
+        "path": "build/blobs/sha256/d3d84135138c319889658aa20a3d5dd08486cb8fb717a7a175f37959216488f3",
+        "bytes": 681,
+        "sha256": "d3d84135138c319889658aa20a3d5dd08486cb8fb717a7a175f37959216488f3"
+      },
+      {
+        "path": "build/blobs/sha256/204f8b33c794483ed98952adc4f8fb9c2246578ea2ee9221ec8995b8a2dfdd68",
+        "bytes": 389,
+        "sha256": "204f8b33c794483ed98952adc4f8fb9c2246578ea2ee9221ec8995b8a2dfdd68"
+      },
+      {
+        "path": "build/blobs/sha256/93dbeb3c32fd10af3fdc12de5991dab542534b64adbe5d6cb2919a16adfff0b6",
+        "bytes": 77,
+        "sha256": "93dbeb3c32fd10af3fdc12de5991dab542534b64adbe5d6cb2919a16adfff0b6"
+      },
+      {
+        "path": "build/blobs/sha256/200b703c78276fb8d75606b2ce2d95147b3afa1c3e5389c713deb8fdd0304cca",
+        "bytes": 673,
+        "sha256": "200b703c78276fb8d75606b2ce2d95147b3afa1c3e5389c713deb8fdd0304cca"
+      }
+    ]
+  },
+  "backends": [
+    {
+      "backend": "webgpu",
+      "status": "PASS",
+      "checks": 15,
+      "literalScheduleRows": 11,
+      "distinctScheduleEvents": {
+        "A": 9,
+        "B": 13
+      },
+      "exactPixelComparisons": 185,
+      "retainedReplayBytes": 96000,
+      "rawFrames": [
+        {
+          "path": "webgpu-initial.rgba",
+          "bytes": 96000,
+          "sha256": "79da9ecafab244ddba2f73e7b9e0c419095663d1b2b2f51c65ce0e8170bd2590"
+        },
+        {
+          "path": "webgpu-quarter.rgba",
+          "bytes": 96000,
+          "sha256": "646e79ea0b26fc5f8ca84e09750fa8f9a6ad356a05a2358635b0c8944b0051a9"
+        },
+        {
+          "path": "webgpu-half.rgba",
+          "bytes": 96000,
+          "sha256": "448d82cf8907708a9f83c93ca8e267bbb59ebfe46d4c0e8e8ae03624e497b97c"
+        },
+        {
+          "path": "webgpu-three-quarter.rgba",
+          "bytes": 96000,
+          "sha256": "e5c5b9066392d17287b819a7520b9f4dbb497fe79984ee67c53aa795fd2e1b9e"
+        },
+        {
+          "path": "webgpu-one.rgba",
+          "bytes": 96000,
+          "sha256": "79da9ecafab244ddba2f73e7b9e0c419095663d1b2b2f51c65ce0e8170bd2590"
+        },
+        {
+          "path": "webgpu-pause-rate.rgba",
+          "bytes": 96000,
+          "sha256": "79da9ecafab244ddba2f73e7b9e0c419095663d1b2b2f51c65ce0e8170bd2590"
+        },
+        {
+          "path": "webgpu-one-quarter.rgba",
+          "bytes": 96000,
+          "sha256": "448d82cf8907708a9f83c93ca8e267bbb59ebfe46d4c0e8e8ae03624e497b97c"
+        },
+        {
+          "path": "webgpu-complete.rgba",
+          "bytes": 96000,
+          "sha256": "83a7d5690447836236d44fb0b6d8fdeb8befc599a380d63804eb391344bbaef3"
+        },
+        {
+          "path": "webgpu-seek-resume.rgba",
+          "bytes": 96000,
+          "sha256": "e5760dac3def187699ab551ca59a7d401d8b3aa97d9e9e44e7f345ebb5cd348f"
+        },
+        {
+          "path": "webgpu-one-three-quarter.rgba",
+          "bytes": 96000,
+          "sha256": "c5a373ecdcaa581474acb713b6b8af524e163b459293f45fa79aa73bd888e111"
+        },
+        {
+          "path": "webgpu-two.rgba",
+          "bytes": 96000,
+          "sha256": "e5760dac3def187699ab551ca59a7d401d8b3aa97d9e9e44e7f345ebb5cd348f"
+        },
+        {
+          "path": "webgpu-retained-replay.rgba",
+          "bytes": 96000,
+          "sha256": "79da9ecafab244ddba2f73e7b9e0c419095663d1b2b2f51c65ce0e8170bd2590"
+        },
+        {
+          "path": "webgpu-isolation.rgba",
+          "bytes": 96000,
+          "sha256": "55bdf98cedbfe443c85a68ade3fde435fe9c3e0f48f1325d1dc1e77bb982ce77"
+        },
+        {
+          "path": "webgpu-decimal-literal-0.rgba",
+          "bytes": 96000,
+          "sha256": "50c6c57ad075b3bf779ca81848db4b304d8fee778fd59a91fde56707e8531c51"
+        },
+        {
+          "path": "webgpu-decimal-literal-1.rgba",
+          "bytes": 96000,
+          "sha256": "b7adac7a82b1443f62931cdd7cd142a1a7ec34178dd23a78500f9260429555e4"
+        },
+        {
+          "path": "webgpu-decimal-literal-2.rgba",
+          "bytes": 96000,
+          "sha256": "b7adac7a82b1443f62931cdd7cd142a1a7ec34178dd23a78500f9260429555e4"
+        },
+        {
+          "path": "webgpu-decimal-literal-3.rgba",
+          "bytes": 96000,
+          "sha256": "50c6c57ad075b3bf779ca81848db4b304d8fee778fd59a91fde56707e8531c51"
+        },
+        {
+          "path": "webgpu-decimal-literal-4.rgba",
+          "bytes": 96000,
+          "sha256": "b7adac7a82b1443f62931cdd7cd142a1a7ec34178dd23a78500f9260429555e4"
+        },
+        {
+          "path": "webgpu-decimal-clock-boundary.rgba",
+          "bytes": 96000,
+          "sha256": "b7adac7a82b1443f62931cdd7cd142a1a7ec34178dd23a78500f9260429555e4"
+        },
+        {
+          "path": "webgpu-decimal-replay.rgba",
+          "bytes": 96000,
+          "sha256": "b7adac7a82b1443f62931cdd7cd142a1a7ec34178dd23a78500f9260429555e4"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ANIMATION_CALLBACK_FAILED",
+          "phase": "engine"
+        },
+        {
+          "code": "ANIMATION_BINDING_INVALID",
+          "phase": "engine"
+        }
+      ],
+      "errors": [],
+      "cleanup": {
+        "state": "closed",
+        "clock": "closed",
+        "instances": {
+          "A": {
+            "scope": "closed",
+            "bitmapDisposed": true,
+            "controllerDisposed": true,
+            "pendingCommands": 0
+          },
+          "B": {
+            "scope": "closed",
+            "bitmapDisposed": true,
+            "controllerDisposed": true,
+            "pendingCommands": 0
+          },
+          "C": {
+            "scope": "closed",
+            "bitmapDisposed": true,
+            "controllerDisposed": true,
+            "pendingCommands": 0
+          },
+          "D": {
+            "scope": "closed",
+            "bitmapDisposed": true,
+            "controllerDisposed": true,
+            "pendingCommands": 0
+          },
+          "E": {
+            "scope": "closed",
+            "bitmapDisposed": true,
+            "controllerDisposed": true,
+            "pendingCommands": 0
+          }
+        },
+        "subscriptionCapacityAndLeases": {
+          "acquired": 256,
+          "refusal": "CLOCK_CALLBACK_LIMIT",
+          "probeSubscriptionsDisposed": true,
+          "leasesReleased": [
+            true,
+            true,
+            true,
+            true,
+            true
+          ]
+        },
+        "retirement": {
+          "dataScope": "closed",
+          "displayScope": "closed",
+          "sheet": true,
+          "textures": [
+            true
+          ],
+          "sourceClosed": true,
+          "providerClosed": true
+        },
+        "sourceCurrent": {
+          "jobs": 0,
+          "queuedNetwork": 0,
+          "queuedDecode": 0,
+          "retryWaiting": 0,
+          "activeNetwork": 0,
+          "activeDecode": 0,
+          "encodedCreditBytes": 0,
+          "ownedEncodedBytes": 0,
+          "borrowedChunkBytes": 0,
+          "quarantinedJobs": 0
+        },
+        "providerCurrent": {
+          "jobs": 0,
+          "encodedCreditBytes": 0,
+          "ownedEncodedBytes": 0,
+          "blobLogicalBytes": 0,
+          "activeDecodes": 0,
+          "bitmapLogicalBytes": 0,
+          "rasterLogicalBytes": 0,
+          "readbackCpuBytes": 0,
+          "materializedCpuBytes": 0,
+          "quarantinedJobs": 0,
+          "unknownNativeObjects": 0
+        }
+      }
+    },
+    {
+      "backend": "webgl2",
+      "status": "PASS",
+      "checks": 15,
+      "literalScheduleRows": 11,
+      "distinctScheduleEvents": {
+        "A": 9,
+        "B": 13
+      },
+      "exactPixelComparisons": 185,
+      "retainedReplayBytes": 96000,
+      "rawFrames": [
+        {
+          "path": "webgl2-initial.rgba",
+          "bytes": 96000,
+          "sha256": "79da9ecafab244ddba2f73e7b9e0c419095663d1b2b2f51c65ce0e8170bd2590"
+        },
+        {
+          "path": "webgl2-quarter.rgba",
+          "bytes": 96000,
+          "sha256": "646e79ea0b26fc5f8ca84e09750fa8f9a6ad356a05a2358635b0c8944b0051a9"
+        },
+        {
+          "path": "webgl2-half.rgba",
+          "bytes": 96000,
+          "sha256": "448d82cf8907708a9f83c93ca8e267bbb59ebfe46d4c0e8e8ae03624e497b97c"
+        },
+        {
+          "path": "webgl2-three-quarter.rgba",
+          "bytes": 96000,
+          "sha256": "e5c5b9066392d17287b819a7520b9f4dbb497fe79984ee67c53aa795fd2e1b9e"
+        },
+        {
+          "path": "webgl2-one.rgba",
+          "bytes": 96000,
+          "sha256": "79da9ecafab244ddba2f73e7b9e0c419095663d1b2b2f51c65ce0e8170bd2590"
+        },
+        {
+          "path": "webgl2-pause-rate.rgba",
+          "bytes": 96000,
+          "sha256": "79da9ecafab244ddba2f73e7b9e0c419095663d1b2b2f51c65ce0e8170bd2590"
+        },
+        {
+          "path": "webgl2-one-quarter.rgba",
+          "bytes": 96000,
+          "sha256": "448d82cf8907708a9f83c93ca8e267bbb59ebfe46d4c0e8e8ae03624e497b97c"
+        },
+        {
+          "path": "webgl2-complete.rgba",
+          "bytes": 96000,
+          "sha256": "83a7d5690447836236d44fb0b6d8fdeb8befc599a380d63804eb391344bbaef3"
+        },
+        {
+          "path": "webgl2-seek-resume.rgba",
+          "bytes": 96000,
+          "sha256": "e5760dac3def187699ab551ca59a7d401d8b3aa97d9e9e44e7f345ebb5cd348f"
+        },
+        {
+          "path": "webgl2-one-three-quarter.rgba",
+          "bytes": 96000,
+          "sha256": "c5a373ecdcaa581474acb713b6b8af524e163b459293f45fa79aa73bd888e111"
+        },
+        {
+          "path": "webgl2-two.rgba",
+          "bytes": 96000,
+          "sha256": "e5760dac3def187699ab551ca59a7d401d8b3aa97d9e9e44e7f345ebb5cd348f"
+        },
+        {
+          "path": "webgl2-retained-replay.rgba",
+          "bytes": 96000,
+          "sha256": "79da9ecafab244ddba2f73e7b9e0c419095663d1b2b2f51c65ce0e8170bd2590"
+        },
+        {
+          "path": "webgl2-isolation.rgba",
+          "bytes": 96000,
+          "sha256": "55bdf98cedbfe443c85a68ade3fde435fe9c3e0f48f1325d1dc1e77bb982ce77"
+        },
+        {
+          "path": "webgl2-decimal-literal-0.rgba",
+          "bytes": 96000,
+          "sha256": "50c6c57ad075b3bf779ca81848db4b304d8fee778fd59a91fde56707e8531c51"
+        },
+        {
+          "path": "webgl2-decimal-literal-1.rgba",
+          "bytes": 96000,
+          "sha256": "b7adac7a82b1443f62931cdd7cd142a1a7ec34178dd23a78500f9260429555e4"
+        },
+        {
+          "path": "webgl2-decimal-literal-2.rgba",
+          "bytes": 96000,
+          "sha256": "b7adac7a82b1443f62931cdd7cd142a1a7ec34178dd23a78500f9260429555e4"
+        },
+        {
+          "path": "webgl2-decimal-literal-3.rgba",
+          "bytes": 96000,
+          "sha256": "50c6c57ad075b3bf779ca81848db4b304d8fee778fd59a91fde56707e8531c51"
+        },
+        {
+          "path": "webgl2-decimal-literal-4.rgba",
+          "bytes": 96000,
+          "sha256": "b7adac7a82b1443f62931cdd7cd142a1a7ec34178dd23a78500f9260429555e4"
+        },
+        {
+          "path": "webgl2-decimal-clock-boundary.rgba",
+          "bytes": 96000,
+          "sha256": "b7adac7a82b1443f62931cdd7cd142a1a7ec34178dd23a78500f9260429555e4"
+        },
+        {
+          "path": "webgl2-decimal-replay.rgba",
+          "bytes": 96000,
+          "sha256": "b7adac7a82b1443f62931cdd7cd142a1a7ec34178dd23a78500f9260429555e4"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ANIMATION_CALLBACK_FAILED",
+          "phase": "engine"
+        },
+        {
+          "code": "ANIMATION_BINDING_INVALID",
+          "phase": "engine"
+        }
+      ],
+      "errors": [],
+      "cleanup": {
+        "state": "closed",
+        "clock": "closed",
+        "instances": {
+          "A": {
+            "scope": "closed",
+            "bitmapDisposed": true,
+            "controllerDisposed": true,
+            "pendingCommands": 0
+          },
+          "B": {
+            "scope": "closed",
+            "bitmapDisposed": true,
+            "controllerDisposed": true,
+            "pendingCommands": 0
+          },
+          "C": {
+            "scope": "closed",
+            "bitmapDisposed": true,
+            "controllerDisposed": true,
+            "pendingCommands": 0
+          },
+          "D": {
+            "scope": "closed",
+            "bitmapDisposed": true,
+            "controllerDisposed": true,
+            "pendingCommands": 0
+          },
+          "E": {
+            "scope": "closed",
+            "bitmapDisposed": true,
+            "controllerDisposed": true,
+            "pendingCommands": 0
+          }
+        },
+        "subscriptionCapacityAndLeases": {
+          "acquired": 256,
+          "refusal": "CLOCK_CALLBACK_LIMIT",
+          "probeSubscriptionsDisposed": true,
+          "leasesReleased": [
+            true,
+            true,
+            true,
+            true,
+            true
+          ]
+        },
+        "retirement": {
+          "dataScope": "closed",
+          "displayScope": "closed",
+          "sheet": true,
+          "textures": [
+            true
+          ],
+          "sourceClosed": true,
+          "providerClosed": true
+        },
+        "sourceCurrent": {
+          "jobs": 0,
+          "queuedNetwork": 0,
+          "queuedDecode": 0,
+          "retryWaiting": 0,
+          "activeNetwork": 0,
+          "activeDecode": 0,
+          "encodedCreditBytes": 0,
+          "ownedEncodedBytes": 0,
+          "borrowedChunkBytes": 0,
+          "quarantinedJobs": 0
+        },
+        "providerCurrent": {
+          "jobs": 0,
+          "encodedCreditBytes": 0,
+          "ownedEncodedBytes": 0,
+          "blobLogicalBytes": 0,
+          "activeDecodes": 0,
+          "bitmapLogicalBytes": 0,
+          "rasterLogicalBytes": 0,
+          "readbackCpuBytes": 0,
+          "materializedCpuBytes": 0,
+          "quarantinedJobs": 0,
+          "unknownNativeObjects": 0
+        }
+      }
+    }
+  ],
+  "snapshotIntegrity": true,
+  "sourceIntegrity": true,
+  "cleanup": {
+    "contexts": true,
+    "browser": true,
+    "server": true
+  },
+  "qualification": {
+    "desktopFunctional": true,
+    "physicalDevice": false,
+    "physicalMemory": false,
+    "performance": false,
+    "fullM2_1": false,
+    "spine": false,
+    "longRun": false,
+    "migration": false
+  },
+  "priorAttempts": {
+    "browserFailures": 0,
+    "preBrowserFailures": [
+      "Ambient Node 24.19.0 producer identity refusal",
+      "Sandbox ancestor directory EPERM before approved rerun",
+      "Closure-reader preparation failures; repaired before first browser launch"
+    ],
+    "sourceContractPrerequisite": "Initial main.mjs absence was an expected source-presence failure, not an SDK behavioral RED."
+  }
+}

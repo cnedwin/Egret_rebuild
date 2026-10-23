@@ -29,6 +29,8 @@
 
 开发时使用 `node tools/check-incremental.mjs --base origin/main` 获取受影响行为反馈。推送前审阅来源、两种阅读版本和关键英文注释。提交钩子检查文本字节，推送钩子对干净已提交快照运行 `node tools/check-push.mjs --committed`。合并前仍需完整 `pnpm check:merge` / 集成 CI、独立评审及受影响的实际浏览器证据，详见[工程计划](knowledge-base/Cns/docs/architecture-and-engineering-plan.md)的交付分层。
 
+Windows 集成 CI 作业的执行时限为 60 分钟，以便托管运行器完成全部检查。这是执行预算，不是开发迭代耗时目标，也不豁免任何检查；合并前所有必需检查仍须完整通过。
+
 ## 工程与 API 规范
 
 遵循[工程结构](knowledge-base/Cns/docs/工程技术架构与项目结构.md)、[API 规范](knowledge-base/Cns/docs/公共API设计与命名规范.md)和[质量要求](knowledge-base/Cns/docs/代码规范与质量门禁.md)，保持包边界、明确的资源所有权和不依赖 DOM/Node 的核心。文件身份及第一方文本使用[路径与原始字节规范](knowledge-base/Cns/docs/仓库路径身份与换行规范.md)。

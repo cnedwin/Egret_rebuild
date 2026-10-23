@@ -45,10 +45,23 @@ function m14EnginePackagePin(owner, expected) {
 // complete reviewed package/provider source, emission and declaration group may
 // select this finite raw-input successor; this is not a new full compiler closure.
 const m15PngProductPairs = [{"path":"packages/engine/package.json","base":{"bytes":1567,"sha256":"e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"},"current":{"bytes":2167,"sha256":"be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143"}},{"path":"packages/engine/web/BrowserTextureProvider.ts","base":{"bytes":26925,"sha256":"f3653ea77a29979f43f18c95405223ad1d2a72a647d40391705668f9ea504993"},"current":{"bytes":38735,"sha256":"19a7a5c531372a93a88d52bd1885ccfc77054ca21821ac93a301ed5cfff2ef39"}},{"path":"packages/engine/dist/web/BrowserTextureProvider.js","base":{"bytes":26201,"sha256":"06f49a72039f95d0fd3c23bb409db658672bb10b512b4ca9b256064b419e1d90"},"current":{"bytes":37211,"sha256":"4daad43034281f0038220a4c1fa5238b1a67c8fe09870ef0717b53b50c5a15dd"}},{"path":"packages/engine/dist/web/BrowserTextureProvider.d.ts","base":{"bytes":1130,"sha256":"44418045d02c256a6814b74abdda44b5ed1f1433618479a4aade9ddc08f30257"},"current":{"bytes":2366,"sha256":"5304af807252f688b48b3b0bd4864bc3b7a020803fff375367fa4f172c0f45d2"}}];
+// M2.2 adds only the exact optional animation entry before retained inverses.
+const m22PngEnginePackage = {base:{path:'packages/engine/package.json',bytes:2591,sha256:'817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5'},current:{path:'packages/engine/package.json',bytes:2709,sha256:'3fba4431f23b5ccb6da6f13a023ecd5229550f1ca8ead591521e69eeb3960fa9'}};
+const m22PngPackageSelected = equal(fingerprintFile(root,m22PngEnginePackage.current.path),m22PngEnginePackage.current);
+function m22PngPackagePredecessor(raw){
+ if(!m22PngPackageSelected)return raw;
+ const {base,current}=m22PngEnginePackage;
+ if(raw.length!==current.bytes||hash(raw)!==current.sha256)failure('M2.2 PNG engine package changed during replay');
+ const value=JSON.parse(raw);
+ if(!equal(value.exports?.['./animation'],{types:'./dist/animation/index.d.ts',import:'./dist/animation/index.js'}))failure('M2.2 PNG animation export shape differs');
+ delete value.exports['./animation'];const previous=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ if(previous.length!==base.bytes||hash(previous)!==base.sha256)failure('M2.2 PNG engine package predecessor differs');return previous;
+}
 // M3.1 adds only the exact optional UI route before the retained pointer inverse.
 const m31PngEnginePackage = {"base":{"path":"packages/engine/package.json","bytes":2494,"sha256":"65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951"},"current":{"path":"packages/engine/package.json","bytes":2591,"sha256":"817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5"}};
-const m31PngPackageSelected = equal(fingerprintFile(root,m31PngEnginePackage.current.path),m31PngEnginePackage.current);
+const m31PngPackageSelected = equal(fingerprintFile(root,m31PngEnginePackage.current.path),m31PngEnginePackage.current)||m22PngPackageSelected;
 function m31PngPackagePredecessor(raw){
+ raw=m22PngPackagePredecessor(raw);
  if(!m31PngPackageSelected)return raw;
  const {base,current}=m31PngEnginePackage;
  if(raw.length!==current.bytes||hash(raw)!==current.sha256)failure('M3.1 PNG engine package changed during replay');
@@ -75,6 +88,7 @@ function m33PngPackagePredecessor(raw) {
 
 function m15ProductIdentityBranch() {
   const actual = m15PngProductPairs.map(row => fingerprintFile(root, row.path));
+  if(m22PngPackageSelected)actual[0]=m22PngEnginePackage.base;
   if(m31PngPackageSelected)actual[0]=m31PngEnginePackage.base;
   if(m33PngPackageSelected){
     if(!equal({path:m15PngProductPairs[0].path,...m15PngProductPairs[0].current},m33PngEnginePackage.base)
@@ -107,6 +121,7 @@ function checkPin(pin) {
   pin = m14EnginePackagePin(root, pin);
   if(m33PngPackageSelected&&equal(pin,m33PngEnginePackage.base))pin=m33PngEnginePackage.current;
   if(m31PngPackageSelected&&equal(pin,m31PngEnginePackage.base))pin=m31PngEnginePackage.current;
+  if(m22PngPackageSelected&&equal(pin,m22PngEnginePackage.base))pin=m22PngEnginePackage.current;
   logicalPath(pin.path);
   if (!Number.isSafeInteger(pin.bytes) || pin.bytes < 0 || !/^[0-9a-f]{64}$/.test(pin.sha256)) failure('malformed raw pin');
   const actual = fingerprintFile(root, pin.path);

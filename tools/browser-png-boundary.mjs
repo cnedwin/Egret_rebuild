@@ -67,6 +67,30 @@ function m3PointerPackageSuccessor(expected, raw) {
 }
 // M3-POINTER-PACKAGE-END
 
+// M22-SEQUENCE-SUCCESSOR-BEGIN
+// Exact optional sequence profile; preceding source/package groups remain immutable.
+const m22SequencePackagePairs = [{"base":{"path":"packages/engine/package.json","bytes":2591,"sha256":"817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5"},"current":{"path":"packages/engine/package.json","bytes":2709,"sha256":"3fba4431f23b5ccb6da6f13a023ecd5229550f1ca8ead591521e69eeb3960fa9"}}];
+const m22SequenceSourcePairs = [{"base":{"path":"packages/engine/src/Engine.ts","bytes":25315,"sha256":"ad13f34fd2229c081dd185322918a0043624eed36a8a06f69d7915991aa2110d"},"current":{"path":"packages/engine/src/Engine.ts","bytes":26196,"sha256":"8a97531660d2d7d748574492b14fdd53e3a1a49af65fa6003cf4d3bfdb8e9653"}},{"base":{"path":"packages/engine/dist/Engine.js","bytes":22046,"sha256":"42ea7f41b79061115a2ed3ac9312163201ca0a942627c8279b3484bf5a9b5239"},"current":{"path":"packages/engine/dist/Engine.js","bytes":22833,"sha256":"115934363fe32ef2ed8f8279a4c04595155c2f664d8cc62dd54fff10ecebe822"}},{"base":{"path":"packages/engine/src/sequencePlayback.ts","bytes":13644,"sha256":"dd72d68e12037cbfe4fb47d20e3133ed07ec1af14f88cb76bab1d3241a35c4f6"},"current":{"path":"packages/engine/src/sequencePlayback.ts","bytes":13879,"sha256":"8673bd380e3c0b4e2b535dc11f4698867d42bb6331788d37b65bf81f8754c4d6"}},{"base":{"path":"packages/engine/dist/sequencePlayback.js","bytes":12959,"sha256":"d608693c9d2a6219feba89fe5e357e2a4325331417a6e66fa41692896ad3980d"},"current":{"path":"packages/engine/dist/sequencePlayback.js","bytes":13139,"sha256":"2ff3c2561326a8d101720becf3a9444448e22c698f8c342222dd96335fbabe6e"}},{"base":{"path":"packages/engine/dist/sequencePlayback.d.ts","bytes":819,"sha256":"acca205bef6b10938ea7ab0e6e3c8e193a161bfe8cc42efc5ace0e4476b007d7"},"current":{"path":"packages/engine/dist/sequencePlayback.d.ts","bytes":933,"sha256":"4297f7a6267b3ff97aa61e0001321f9f20352334ab2862ca4bfb5fe1c08f853d"}}];
+const m22SequenceAdditionPins = [{"path":"packages/engine/src/sequenceTargetClaims.ts","bytes":1247,"sha256":"77b7c2e73e1a4d8177607b3f63cac2f9414973ef46b327b0fd441a3f0a2a77e8"},{"path":"packages/engine/dist/sequenceTargetClaims.js","bytes":993,"sha256":"de59c8d9d4057d7755da0756f835d316c64149330a8c7359cb6f9ec01d18b6ab"},{"path":"packages/engine/dist/sequenceTargetClaims.d.ts","bytes":465,"sha256":"e05aab88aee6e174ae1f1d6dce46c76beaa8ae91dd18460e88b190089687550f"},{"path":"packages/engine/src/internal/sequenceControllerFactoryState.ts","bytes":4605,"sha256":"a35c4bad63e15b8cd598f36836232dab8eeec87f65da2ebf1c9cbd972d073003"},{"path":"packages/engine/dist/internal/sequenceControllerFactoryState.js","bytes":3344,"sha256":"cdd2354efcfa58e4fcfe83705c123494b0a358a518a8c47f646f7becc8f63aa9"},{"path":"packages/engine/dist/internal/sequenceControllerFactoryState.d.ts","bytes":1744,"sha256":"d39891b4bbe7a78b221e780d83235880d4ea9c294002d421dc3e56fe74e5117e"},{"path":"packages/engine/src/animation/index.ts","bytes":425,"sha256":"351f9bbdaa0f8d88accc0425fa1d6a4e330cd403b196026661e712d089ce3121"},{"path":"packages/engine/dist/animation/index.js","bytes":243,"sha256":"a719aaf4422166978d12d9502a0a785582b675bc5629aec1c0bcad00282158d0"},{"path":"packages/engine/dist/animation/index.d.ts","bytes":421,"sha256":"0ced976c4ae8f130974c7444135a8047fa98e3d908746fcf9c5a7ccf4ca33c33"},{"path":"packages/engine/src/animation/sequenceController.ts","bytes":20858,"sha256":"e32359222216a0ff7592bbc0077249eaa38ded2330c38b4aed781835fe81e7d2"},{"path":"packages/engine/dist/animation/sequenceController.js","bytes":19724,"sha256":"8735c09f8cef7de32738eedbb80f1df4774b39811e73b265a96130e4bcd42d85"},{"path":"packages/engine/dist/animation/sequenceController.d.ts","bytes":500,"sha256":"81238f93ac7ddc3b73a783a05fb3a3493d806f2087a7957c9f865fecf5fc0433"},{"path":"packages/engine/src/animation/sequenceCoordinator.ts","bytes":4855,"sha256":"d9c9c921f2280b0185a2621937a6f1862e0aea2a57d2a86301fabd409663b030"},{"path":"packages/engine/dist/animation/sequenceCoordinator.js","bytes":4402,"sha256":"1dd7ef1e24009ef3b824a8533d41c3b72a2e9f9da7e9b57e1849a840f6084242"},{"path":"packages/engine/dist/animation/sequenceCoordinator.d.ts","bytes":1430,"sha256":"e11b32113719de6259017004b7d0397dc0b4fafcef6ed057e98b2a3c8ef54180"},{"path":"packages/engine/src/animation/sequenceInput.ts","bytes":5039,"sha256":"21f95b6bf8c67f931a0d5c94203e3e1d1e20c3e10c7d4304e01dfb96a75f8759"},{"path":"packages/engine/dist/animation/sequenceInput.js","bytes":4489,"sha256":"dab5a07146c918d3d5eae6af91987f769dd242426e1218718ac7db9de5814c71"},{"path":"packages/engine/dist/animation/sequenceInput.d.ts","bytes":941,"sha256":"26a62e81531745b2f3cbcdd505e4b381730495320857587d3cdb5efba2ab0f13"},{"path":"packages/engine/src/animation/sequenceMath.ts","bytes":7794,"sha256":"1d74ee94266db45f27ce1e8e9bd24126a52a66a463e2f7c6a0817474471cbdde"},{"path":"packages/engine/dist/animation/sequenceMath.js","bytes":6947,"sha256":"25055c262dbc31ded844c872063ebb979f4847921363645a6bb1f388f90cc43d"},{"path":"packages/engine/dist/animation/sequenceMath.d.ts","bytes":1433,"sha256":"a48443c71b853dc719ca1ef93c5b21d1f3fe3beb176009dac0ec7927585cce65"},{"path":"packages/engine/src/animation/types.ts","bytes":2169,"sha256":"122b1131210ecba97ff41f1c9520afe0be9c26d4ae2b95207270c21dd4687a20"},{"path":"packages/engine/dist/animation/types.js","bytes":44,"sha256":"01ae2a5b120382f9a648ced7ee8507493a134f216d100fc61600c6c9738235d2"},{"path":"packages/engine/dist/animation/types.d.ts","bytes":2318,"sha256":"4c5c89a2959326bdf35fd897aae7dd91181a79fd2e8ca4d1e17c27285d25db6e"}];
+function m22SequenceGraph(base,present){
+ if(!m22SequenceAdditionPins.some(row=>present.has(row.path)))return base;
+ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b),paths=new Set(base.map(row=>row.path));
+ if(base.length!==729||m22SequenceSourcePairs.length!==5||m22SequenceAdditionPins.length!==24
+  ||m22SequenceSourcePairs.some(pair=>pair.base.path!==pair.current.path||!base.some(row=>same(row,pair.base)))
+  ||m22SequenceAdditionPins.some(row=>paths.has(row.path))||new Set([...paths,...m22SequenceAdditionPins.map(row=>row.path)]).size!==base.length+24)throw Error('Invalid finite M2.2 sequence source group');
+ return [...base.map(row=>m22SequenceSourcePairs.find(pair=>same(pair.base,row))?.current??row),...m22SequenceAdditionPins];
+}
+function m22SequencePackageSuccessor(expected,raw){
+ const pair=m22SequencePackagePairs.find(pair=>pair.base.path===expected?.path),digest=raw=>createHash('sha256').update(raw).digest('hex');
+ if(!pair||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;
+ const value=JSON.parse(raw.toString('utf8'));
+ if(JSON.stringify(value.exports['./animation'])!==JSON.stringify({types:'./dist/animation/index.d.ts',import:'./dist/animation/index.js'}))return false;
+ delete value.exports['./animation'];const previous=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ if(previous.length!==pair.base.bytes||digest(previous)!==pair.base.sha256)return false;
+ return JSON.stringify(expected)===JSON.stringify(pair.base)||m31UiPackageSuccessor(expected,previous);
+}
+// M22-SEQUENCE-SUCCESSOR-END
+
 // M31-UI-SUCCESSOR-BEGIN
 // Exact current UI identities preserve all preceding package and source groups.
 const m31UiPackagePairs = [{"base":{"path":"packages/engine/package.json","bytes":2494,"sha256":"65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951"},"current":{"path":"packages/engine/package.json","bytes":2591,"sha256":"817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5"}},{"base":{"path":"packages/runtime/package.json","bytes":471,"sha256":"97b2d4678df4fd137b681a54511ce625935accfc3014da4800902f4a241c8db1"},"current":{"path":"packages/runtime/package.json","bytes":568,"sha256":"cb9822d5bbc457edf1256a98d2a7437ee8e13bc58caffe9914afdaa9345ef8c3"}}];
@@ -85,6 +109,7 @@ function m31UiGraph(base,present){
  return [...base.map(row=>m31UiSourcePairs.find(pair=>same(pair.base,row))?.current??row),...m31UiAdditionPins];
 }
 function m31UiPackageSuccessor(expected,raw){
+ if(m22SequencePackageSuccessor(expected,raw))return true;
  const pair=m31UiPackagePairs.find(pair=>pair.base.path===expected?.path),digest=raw=>createHash('sha256').update(raw).digest('hex');
  if(!pair||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;
  const value=JSON.parse(raw.toString('utf8'));
@@ -445,6 +470,7 @@ function m3PointerGraph(root,base,actual) {
   const content=m21ContentAdditionPins.some(row=>present.has(row.path));
   let graph=content?[...historical.map(row=>m21ContentSourcePairs.find(pair=>same(pair.base,row))?.current??row),...m21ContentAdditionPins]:historical;
   graph=m31UiGraph(graph,present);
+  graph=m22SequenceGraph(graph,present);
   for(const row of graph){
     if(!present.has(row.path))return {failure:issue('BIP_BOUNDARY_SOURCE_INVENTORY',row.path,'Incomplete M3 pointer successor: '+row.path)};
     if(!same(present.get(row.path),row))return {failure:issue('BIP_BOUNDARY_FINGERPRINT',row.path,'M3 pointer whole-group raw identity differs: '+row.path)};
@@ -637,6 +663,8 @@ function surfaceRules(root, id, snapshot) {
   let admittedAtlasSuccessor = false;
   for (const name of packages) {
     const file = 'packages/' + name + '/package.json', value = JSON.parse(read(root, file, id)), expectedPackage = snapshot.packages[name];
+    // Exact semantic projection preserves the original export/DAG refusal order.
+    if(name==='engine'&&equal(value.exports?.['./animation'],{types:'./dist/animation/index.d.ts',import:'./dist/animation/index.js'}))delete value.exports['./animation'];
     // Preserve assigned export/DAG refusal precedence; complete raw package admission stays below.
     if(m31UiPackagePairs.some(pair=>pair.current.path===file)
       &&equal(value.exports?.['./ui'],{types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'})){

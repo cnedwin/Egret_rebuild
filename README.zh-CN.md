@@ -23,6 +23,10 @@ Years later, as times change and technology advances, many developers continue t
 
 [M2–M4 路线](knowledge-base/Cns/docs/m2-m4-delivery-plan.md)衔接完整 Spine／内容、UI／文字／输入及混合核心验收。从 [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56)、[M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) 或 [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58) 选择完整工作包，每项说明代码入口、依赖和可评审验收。
 
+## M2.2 序列帧控制
+
+可选动画入口增加倍率、有限总播放次数、有序标记以及显式静默／重放跳转，共享既有时钟和资源所有权。新旧播放不能同时占用同一个 Bitmap。参见[序列帧控制契约](knowledge-base/Cns/docs/sequence-controls.md)。完整 Spine 与 M2.2 验收仍然开放。
+
 ## M3.1 完整提交的 UI 面板
 
 M3.1 增加托管 UI 根、显式 prepare/commit、自动行列布局、稳定键变高列表和有界异步行复用。多个面板复用现有渲染器、输入路由和资源所有者。详见[UI 面板契约](knowledge-base/Cns/docs/ui-data-panel.md)。完整控件、段落文字、焦点／IME、手势、移动端资格与性能验收继续开放。

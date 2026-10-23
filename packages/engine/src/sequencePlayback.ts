@@ -3,11 +3,13 @@ import { EgretError, Scope, SequencePlayer } from '@egret/runtime';
 import type { Bitmap, SequenceClip, SequencePlaybackMode, SequenceSample } from '@egret/runtime';
 import type { GameClock, GameClockHandler, GameClockSubscription, GameClockTick } from './gameClockTypes.js';
 import type { SequencePlayback, SequencePlaybackState } from './sequencePlaybackTypes.js';
+import type {SequenceTargetClaims} from './sequenceTargetClaims.js';
 
 export interface SequencePlaybackContext {
   assertOpen(): void;
   isEngineScope(scope: unknown): scope is Scope;
   readonly clock: GameClock;
+  readonly claims: SequenceTargetClaims;
   captureCleanup(cause: unknown): void;
 }
 export interface SequencePlaybackOwner {
@@ -37,7 +39,7 @@ interface PlaybackRecord {
   target: Bitmap | undefined;
   clip: SequenceClip | undefined;
   owner: Set<PlaybackRecord> | undefined;
-  claims: WeakMap<Bitmap, PlaybackRecord> | undefined;
+  claims: SequenceTargetClaims | undefined;
   subscription: GameClockSubscription | undefined;
   state: SequencePlaybackState;
   elapsedSeconds: number;
@@ -112,7 +114,7 @@ function retire(record: PlaybackRecord, terminal: 'completed' | 'stopped' | 'fai
   }
   if (target !== undefined && claims !== undefined) attempt((): void => {
     // An old Scope's historical handle must never remove a newer target claim.
-    if (claims.get(target) === record) claims.delete(target);
+    claims.release(target, record);
   });
   if (owner !== undefined) attempt((): void => { owner.delete(record); });
   if (subscription !== undefined) attempt((): void => { subscription.dispose(); });
@@ -255,13 +257,13 @@ function makeHandle(record: PlaybackRecord): SequencePlayback {
 /** Only private Engine assembly owns inventory and authentic-clock subscriptions. */
 export function createSequencePlaybackOwner(context: SequencePlaybackContext): SequencePlaybackOwner {
   const records = new Set<PlaybackRecord>();
-  const claims = new WeakMap<Bitmap, PlaybackRecord>();
+  const claims = context.claims;
   let creating = false;
   return Object.freeze({
     create(scope: unknown, bitmap: Bitmap, clip: SequenceClip, options: unknown): SequencePlayback {
       assertLifetime(context, scope);
       if (creating) throw new EgretError('SEQ_PLAYBACK_CREATION_REENTRANT');
-      if (records.size >= MAX_PLAYBACKS) throw new EgretError('SEQ_PLAYBACK_LIMIT');
+      if (claims.size >= MAX_PLAYBACKS) throw new EgretError('SEQ_PLAYBACK_LIMIT');
       creating = true;
       let player: SequencePlayer | undefined;
       let record: PlaybackRecord | undefined;
@@ -273,6 +275,8 @@ export function createSequencePlaybackOwner(context: SequencePlaybackContext): S
           value: disposeOwnedPlayer, enumerable: false, writable: false, configurable: false,
         });
         assertLifetime(context, scope);
+        // An option getter may have admitted the other profile after the first capacity check.
+        if (claims.size >= MAX_PLAYBACKS) throw new EgretError('SEQ_PLAYBACK_LIMIT');
         if (claims.has(bitmap)) throw new EgretError('SEQ_PLAYBACK_TARGET_BUSY');
         record = {
           context, scope, mode, durationSeconds: clip.durationSeconds,
@@ -289,7 +293,7 @@ export function createSequencePlaybackOwner(context: SequencePlaybackContext): S
         // Store rollback authority before callback-free claim/inventory publication.
         record.claims = claims;
         record.owner = records;
-        claims.set(bitmap, record);
+        claims.acquire(bitmap, record);
         records.add(record);
         return handle;
       } catch (cause) {

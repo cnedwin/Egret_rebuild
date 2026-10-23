@@ -415,8 +415,45 @@ const m31UiModuleAdditions = new Map([
 assert.equal(m31UiModuleAdditions.size, 2);
 for (const name of m31UiModuleAdditions.keys()) assert.ok(!m15ModuleIdentities.has(name), 'UI addition must be a new exact dependency');
 const m31SourceModuleLimit = 135;
-const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors, ...m33MouseCompatibilityModuleSuccessor, ...m21ContentModuleSuccessors, ...m31UiModuleSuccessors, ...m31UiModuleAdditions]);
-assert.equal(currentModuleIdentities.size, m31SourceModuleLimit, 'M3.1 current closure table is incomplete');
+const m22SequenceModuleSuccessors = new Map([
+  [
+    "packages/engine/dist/Engine.js",
+    {
+      "bytes": 22833,
+      "sha256": "115934363fe32ef2ed8f8279a4c04595155c2f664d8cc62dd54fff10ecebe822"
+    }
+  ],
+  [
+    "packages/engine/dist/sequencePlayback.js",
+    {
+      "bytes": 13139,
+      "sha256": "2ff3c2561326a8d101720becf3a9444448e22c698f8c342222dd96335fbabe6e"
+    }
+  ]
+]);
+const m22SequenceModuleAdditions = new Map([
+  [
+    "packages/engine/dist/sequenceTargetClaims.js",
+    {
+      "bytes": 993,
+      "sha256": "de59c8d9d4057d7755da0756f835d316c64149330a8c7359cb6f9ec01d18b6ab"
+    }
+  ],
+  [
+    "packages/engine/dist/internal/sequenceControllerFactoryState.js",
+    {
+      "bytes": 3344,
+      "sha256": "cdd2354efcfa58e4fcfe83705c123494b0a358a518a8c47f646f7becc8f63aa9"
+    }
+  ]
+]);
+assert.equal(m22SequenceModuleSuccessors.size,2);
+assert.equal(m22SequenceModuleAdditions.size,2);
+for(const name of m22SequenceModuleSuccessors.keys())assert.ok(m15ModuleIdentities.has(name));
+for(const name of m22SequenceModuleAdditions.keys())assert.ok(!m15ModuleIdentities.has(name));
+const m22SourceModuleLimit = 137;
+const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors, ...m33MouseCompatibilityModuleSuccessor, ...m21ContentModuleSuccessors, ...m31UiModuleSuccessors, ...m31UiModuleAdditions, ...m22SequenceModuleSuccessors, ...m22SequenceModuleAdditions]);
+assert.equal(currentModuleIdentities.size, m22SourceModuleLimit, 'M3.1 current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {
   assert.deepEqual([...served.keys()].map(url => url.slice(1)).sort(), [...currentModuleIdentities.keys()].sort(),
@@ -477,7 +514,7 @@ async function collect(name) {
   const url = '/' + name; if (served.has(url)) return;
   assert.ok(allowedModules.has(name), `Unapproved public native dependency: ${name}`);
   assert.ok(currentModuleIdentities.has(name), `Unapproved current native dependency: ${name}`);
-  assert.ok(served.size < m31SourceModuleLimit, 'Finite emitted closure exceeded');
+  assert.ok(served.size < m22SourceModuleLimit, 'Finite emitted closure exceeded');
   const path = resolve(repository, name), physical = await realpath(path);
   assert.ok(physical.startsWith(repository + sep), 'Selected dependency escaped repository');
   const body = await readFile(physical); assert.ok(body.length <= 1024 * 1024);
@@ -573,7 +610,7 @@ try {
   assert.equal(currentHost.sha256, m12PerformanceHostSourceSuccessor.sha256);
   report.publicRoute = { entries: entryNames.slice(0, 3), packageExports: { './scene3d': packageExports['./scene3d'], './webgpu/scene3d': packageExports['./webgpu/scene3d'] },
     hostSource: currentHost, historicalM12HostSource, m13HostSourceSuccessor, m15HostSourceSuccessor, m12PerformanceHostSourceSuccessor,
-    sourceCollection: { historicalModuleLimit: historicalSourceModuleLimit, m15ModuleLimit: m15SourceModuleLimit, currentModuleLimit: m31SourceModuleLimit, exactModules: [...currentModuleIdentities].map(([path, value]) => ({ path, ...value })) }, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
+    sourceCollection: { historicalModuleLimit: historicalSourceModuleLimit, m15ModuleLimit: m15SourceModuleLimit, currentModuleLimit: m22SourceModuleLimit, exactModules: [...currentModuleIdentities].map(([path, value]) => ({ path, ...value })) }, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
   const emitted = [...served.values()].reduce((sum, value) => sum + value.body.length, 0); assert.ok(emitted <= 4 * 1024 * 1024);
   // Bind matching first-party source files without scanning unrelated repository files.
   for (const url of served.keys()) {

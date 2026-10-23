@@ -33,6 +33,9 @@ import type { SequencePlayback, SequencePlaybackOptions } from './sequencePlayba
 import type { Bitmap, SequenceClip } from '@egret/runtime';
 import {registerUiEngine} from './internal/uiFactoryState.js';
 import type {UiEngineOwner} from './internal/uiFactoryState.js';
+import {createSequenceTargetClaims} from './sequenceTargetClaims.js';
+import {registerSequenceControllerEngine} from './internal/sequenceControllerFactoryState.js';
+import type {SequenceControllerEngineOwner} from './internal/sequenceControllerFactoryState.js';
 
 export interface EngineOptions {
   readonly host: HostAdapter;
@@ -71,6 +74,7 @@ export class Engine {
   readonly #gameClockOwner: GameClockOwner;
   readonly #tweenOwner: TweenOwner;
   readonly #sequencePlaybackOwner: SequencePlaybackOwner;
+  readonly #sequenceControllerOwner: SequenceControllerEngineOwner;
   readonly #assetGroupOwner: AssetGroupOwner;
   readonly #manifestAssetGroupOwner: ManifestAssetGroupOwner;
   readonly #bitmapResourceSlotOwner: BitmapResourceSlotOwner;
@@ -146,12 +150,19 @@ export class Engine {
       isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
       clock: this.#gameClockOwner.clock,
     });
+    const sequenceClaims = createSequenceTargetClaims();
     // Sequence playback borrows the private clock and authentic Scope authority.
     this.#sequencePlaybackOwner = createSequencePlaybackOwner({
       assertOpen: this.#context.assertOpen,
       isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
       clock: this.#gameClockOwner.clock,
+      claims: sequenceClaims,
       captureCleanup: this.#context.captureCleanup,
+    });
+    this.#sequenceControllerOwner = registerSequenceControllerEngine(this, {
+      assertOpen: this.#context.assertOpen, createScope: (): Scope => this.#createScope(),
+      clock: this.#gameClockOwner.clock, isClockBusy: this.#gameClockOwner.isBusy,
+      claims: sequenceClaims, report: this.#context.report, captureCleanup: this.#context.captureCleanup,
     });
     this.clock = this.#gameClockOwner.clock;
     const stage = createStage(this.#context);
@@ -384,6 +395,7 @@ export class Engine {
     const scope = createScope(this.#context, (closed): void => { this.scopes.delete(closed); });
     this.scopes.add(scope);
     this.#engineScopes.add(scope);
+    this.#sequenceControllerOwner.registerScope(scope);
     this.#mouseInputOwner.registerScope(scope);
     this.#uiOwner.registerScope(scope);
     return scope;
@@ -436,6 +448,7 @@ export class Engine {
     // Terminal observations change now, before the existing idle barriers wait.
     this.#assetGroupOwner.close();
     this.#tweenOwner.close();
+    this.#sequenceControllerOwner.close();
     this.#sequencePlaybackOwner.close();
     this.#gameClockOwner.close();
     void this.runClose().then(resolveClose, rejectClose);
