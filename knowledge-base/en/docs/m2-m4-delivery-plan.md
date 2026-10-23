@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/m2-m4-delivery-plan.md)
 
-2026-10-21 · Design baseline 1 · Engineering preview 0.61.0
+2026-10-23 · Design baseline 2 · Engineering preview 0.61.0
 
 ## Purpose and current baseline
 
@@ -40,6 +40,23 @@ Retain the existing four core packages. A separately enabled Spine package may i
 The target frame sequence is input/game changes → explicit animation advancement and queued events → style/measure/layout → transforms/clips → ordered capture/preparation → staged uploads → submission. User callbacks triggered during a stage are processed at a documented safe boundary, with bounded work and a diagnostic on cycles. Saved frames remain stable.
 
 A replacement builds and validates a candidate while the prior generation remains usable, acquires the new dependencies, then commits at one frame boundary. Failure or cancellation retains the prior generation. Older requests cannot overwrite newer intent. GPU loss rebuilds device-derived state from retained or reacquired sources; it does not replay already consumed gameplay events. M2 replacement and M3 font/skin/layout invalidation test this same protocol.
+
+### Responsibility and commitment boundaries
+
+Keep the existing eleven work packages and their parent Issues. The role accountable for each boundary records the decision and acceptance cases in the existing package plan and Issue before a dependent implementation consumes it; no additional global freeze phase, contract registry or approval tier is introduced. A contributor may own a bounded PR within a package without owning the whole subsystem. Maintainers confirm the contributor and reviewer; the roles below do not assign volunteers.
+
+| Boundary | Accountable package / supporting owner | Required handoff |
+| --- | --- | --- |
+| Animation advance, seek and event commitment | M2.2 animation maintainer; M2.1 qualifies upstream behavior | Ordinary-update failure state, replayable history and publication rules; do not assume mutable upstream state can be rolled back cheaply. |
+| Spine geometry and color compatibility | M2.3 rendering maintainer with M2.2 | Ordered owned geometry and exact color/alpha semantics; extend capabilities first and version the shared protocol only for a demonstrated representation or semantic incompatibility. |
+| Resource replacement | M2.4 resource/animation maintainer | Candidate readiness, resource/device generations and preserve/reset policy; no global game-clock wait for GPU recovery. |
+| UI committed revision | M3.1 UI maintainer with M3.2 text and M3.3 input | Smallest coherent update domain covering layout, painting, hit geometry, focus and semantics; stale work cannot publish. |
+| Alpha-mask and offscreen effects | M3.4 rendering owner with UI maintainer | Shared target/pass execution, lifetime and dual-backend references; this is an explicit renderer deliverable within M3.4. |
+| Mixed scenario and measurements | M4.1 integration owner; M4.2 performance owner | One growing executable reference, exact mutation schedule and whole-engine timing; M4.3 reports only qualified scope. |
+
+M4.1 adds animation, virtualized UI, multilingual text/input, replacement and recovery to the same example as their real interfaces become available. Early subsets expose integration and budget risks; they do not qualify the final combined profile. M1.2 retains its original failed measurements and final performance gate, without becoming a prerequisite for independent M2/M3 work or the first integration.
+
+Authored content needs stable IDs, declarative intent and an explicit edit boundary over the existing project transaction authority. Runtime caches, native objects and transient playback state stay outside saved project data. A complete editor-wide command/undo schema is not an M3 entry requirement. Do not add arbitrary executable callbacks to persisted UI declarations.
 
 ## Delivery order and concurrency
 
@@ -91,17 +108,17 @@ Retain the D60 engine CPU p95 ≤ 8 ms and preparation ≤ 4 ms targets, frame-i
 | Spine version, entitlement and redistribution | Animation maintainer + release maintainer | Exact supported export/runtime identity, authorized fixtures and applicable notices; blocks unqualified complete-Spine/support claims |
 | Fonts, IME, accessibility and target devices | UI/host maintainer + volunteer device testers | Licensed font corpus and real keyboard/IME/screen-reader/device runs; synthetic events cannot close those rows |
 | Independent newcomer/fork | Community maintainer + a new contributor | Keep #52 open until an uninvolved person performs the public contribution flow |
-| Projects board access | Repository owner | Current Git credential can maintain repository Issues/Milestones but lacks Projects scopes; retain Issues/Milestones as the complete task index until access is available |
+| Projects board coordination | Repository/community maintainer | Access was restored on 2026-10-21; reuse the existing board and eleven Issues. Preserve history and record interface-ready separately from accepted implementation. |
 
 ## Community task structure
 
-Keep the existing parent Issues [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) and [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58). Add one child Issue per complete work package in the three plans. Parent Issues retain prior discussion, track dependencies and link acceptance; they are not competing implementation tasks. M0 #52/#54 and M1 #55 remain open with their real gaps.
+Keep the existing parent Issues [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) and [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58). Maintain the existing eleven child Issues, one per complete work package in the three plans. Parent Issues retain prior discussion, track dependencies and link acceptance; they are not competing implementation tasks. M0 #52/#54 and M1 #55 remain open with their real gaps.
 
 Each child Issue contains English followed by Chinese: outcome, scope/non-goals, actual code entry points, dependencies, target interfaces, acceptance cases, current limitations and the review role. A contributor claims a task by commenting with scope and approach; maintainers confirm ownership and conflicts. Do not assign people without agreement. `help wanted` invites participation; it does not mean the architecture work is a good first issue. A newcomer can contribute an authorized fixture, a reproduction or documentation within the same package before owning the whole feature.
 
 Use a small set of capability areas and ready/blocked labels. Ready means no unmet predecessor for the stated first deliverable; blocked names the exact predecessor or external condition. Review begins with a draft PR and concrete evidence. Done requires integrated code and that package's stated acceptance, not merely a closed PR. Dependencies in the Issue body remain readable without a Projects account.
 
-GitHub update order: preserve current Issues/milestones → publish reviewed plans and entry links → update three parent Issues → create/link the complete child packages and milestones → mark ready/blocked from real dependencies → verify readback and consistency. Do not close historical tasks or rewrite contributor discussions to make the roadmap look simpler. When Projects access is restored, mirror these same Issues and statuses into the existing board, rather than creating another project.
+GitHub update order: preserve current Issues/milestones → publish reviewed plans and entry links → update three parent Issues → maintain the existing eleven child packages and milestone links → mark ready/blocked from real dependencies → verify readback and consistency. Do not close historical tasks or rewrite contributor discussions to make the roadmap look simpler. Projects access was restored on 2026-10-21; maintain these same Issues and statuses in the existing board rather than creating another project.
 
 Start from `pnpm setup:dev`, `pnpm check:quick`, and `pnpm example:browser`. Use `node tools/check-incremental.mjs --base origin/main` during work; maintainers handle current metadata integration. Final publication keeps bilingual/source checks, independent review, relevant real-browser evidence and required full merge CI. Long-run and performance evidence is required for the affected acceptance claims; documentation-only changes do not rerun graphics benchmarks. No new maintenance-automation program is part of M2–M4.
 

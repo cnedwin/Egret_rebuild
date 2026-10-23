@@ -2,7 +2,7 @@
 
 English | [中文](../../Cns/docs/m3-ui-text-input-plan.md)
 
-Design proposal, 2026-10-21. Parent tracking issue: #57. This document proposes four contribution packages; it reports no new implementation, benchmark, browser, IME or assistive-technology result.
+Design proposal, 2026-10-23. Parent tracking issue: #57. This document proposes four contribution packages; it reports no new implementation, benchmark, browser, IME or assistive-technology result.
 
 M3 delivers a usable UI system on the existing Engine, display tree, Scope and resource owners. It includes automatic layout, variable-height virtual lists, styled paragraph text, pointer/keyboard input, focus, basic native text editing and browser accessibility. It does not complete legacy EUI/EXML migration, all platform integrations or M4 production acceptance.
 
@@ -78,6 +78,14 @@ Hit testing uses the control's explicit committed geometry and clips. An alpha i
 
 Accept nested popup/modal ordering, scrollbar drag, clipping and hit behavior, theme/font changes, effect invalidation and recovery using fixed layer/pixel/interaction references. Later scope includes arbitrary shader/filter graphs, general vector-mask authoring, unrestricted CSS, theme editors, docking/tree-grid controls and legacy EUI skins; none is hidden inside the first control-set claim.
 
+### Coherent asynchronous updates and shared effects
+
+M3.1 owns a committed UI update domain: the smallest subtree plus dependent ancestors, popup anchors, focus/editor and semantic projections that must change together. An asynchronous font/skin result stages its complete affected layout, paint bindings and interaction geometry; it cannot publish one of them alone. While pending or failed, that domain keeps its prior committed presentation and geometry; unrelated domains remain interactive. If a size change affects parent/sibling layout, enlarge the domain before commitment. For an initial domain with no prior version, publish an explicit placeholder with matching hit/semantic behavior. Do not wait for GPU recovery on the global animation clock.
+
+M3.2 supplies readiness, cancellation and revision identity; M3.3 consumes only committed geometry. M3.1 commits through its UI owner at a documented frame boundary without invoking user callbacks between partial writes. Reentrant changes queue for the next revision. Direct scene setters outside the UI owner must either be rejected for managed geometry or enter an explicit invalidation path; they cannot silently bypass the transaction. Test a late font result changing a focused virtual row's height while a newer skin arrives, cancellation/disposal, and an unaffected sibling. Assert scroll anchor, hit target, editor position and semantic revision together. The retained focused/composition row counts toward the scenario's declared live-container cap.
+
+M3.4 contains an explicit shared-renderer deliverable, reviewed by the rendering maintainer before the UI integrates it. Specify effect inputs/outputs, pass order, target extent/format, alpha/color convention, parent clipping and nested-effect admission. The renderer owns pooled targets, overlapping-generation and scratch budgets, completion-based retirement and loss/recovery. M2.3 owns Spine color conversion and reviews the common color boundary; it does not inherit UI effect implementation. Qualify the selected mask and blur kernel on both WebGPU and WebGL2, including nested clipping, budget refusal and device loss. Reuse existing execution paths; neither a general render graph nor a new shared-frame version is a prerequisite. An incompatible representation requires a specific reviewed extension before consumers merge.
+
 ## 3. M3.1 — automatic layout and variable-height virtualization
 
 **Outcome:** a resizable, scrollable data panel with stable variable-height recycling, not a collection of disconnected layout helpers. Difficulty: high. Start: ready for bounded implementation; final text integration joins M3.2.
@@ -121,6 +129,10 @@ Paint ranges that bisect one shaped cluster use that cluster's leading-source pa
 Deliver a paragraph example and independent fixed font references covering CJK/Latin, RTL with numbers, combining marks, ligatures, emoji/ZWJ, fallback, style boundaries, trailing spaces, overhang, wrap/truncate and density. Use Unicode conformance data, authored glyph/cluster/line expectations and a separately captured native browser reference with declared metric/pixel differences; an upstream HarfBuzz run alone is a dependency-integration check, not an independent shaping oracle. Include third-party bundle/startup/CPU-memory costs in the M4 handoff.
 
 Acceptance includes exact source/cluster/line mappings, recorded metric/pixel tolerances per qualified font/backend, failed-font and stale-generation controls, eviction under live leases, recovery and absence of repeat static layout/raster. Every advertised script/style combination needs real provider evidence; missing combinations remain OPEN.
+
+M3.2 qualifies the proposed ICU/HarfBuzz/FreeType combination before making it a fixed implementation dependency: retain exact build/data/font identities and measure required transfer, initialization and owned CPU/Wasm storage in the early M4.1 slice. Compare those observations to M4's proposed budgets before completing all controls. A failed budget requires an explicit implementation/design decision and preserved results, not removal of required languages or delayed loading past a claimed ready marker. Keep the existing native whole-line route and optional package boundary; the proposal itself is not evidence of feasibility.
+
+M3.3 owns the native-editor handoff contract with M3.2. While editing, the native editor is authoritative for composition/selection and its visible editing geometry; prevent a duplicate engine-painted editable value or duplicate semantic node. On activation retain source selection and a stable control/scroll anchor while adopting native caret/line geometry. On deactivation, commit the final text only after composition settles under the declared policy, then publish matching paragraph/layout geometry. Preserve the source caret/selection for later activation. Declare and test font-specific allowed reflow and anchor displacement before acceptance; do not promise pixel-identical line breaks. Cover CJK/RTL/emoji, delayed fonts, keyboard viewport resizing, scrolling and stale composition callbacks. Synthetic input does not qualify actual IME usability.
 
 ## 5. M3.3 — pointer routing, focus and native text editing
 
@@ -179,7 +191,7 @@ M4 receives the qualified capability matrix, exact font/provider/host inputs, fi
 
 ## 8. Community contribution boundaries
 
-Keep #57 as the parent and create four linked work-package issues, M3.1–M3.4. Each issue owns the complete outcome above, proposed paths, dependencies, acceptance and evidence limits; it is not a list of unowned microtasks.
+Keep #57 as the parent and retain the four linked work-package issues #87–#90, M3.1–M3.4. Each issue owns the complete outcome above, proposed paths, dependencies, acceptance and evidence limits; it is not a list of unowned microtasks.
 
 M3.1 and M3.2 can start independently. M3.3 can develop its state machine and browser bridge against the declared layout/text contracts while those implementations proceed. M3.4 joins their executable slices; final acceptance is integrated rather than four unrelated demos.
 
