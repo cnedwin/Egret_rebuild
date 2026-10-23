@@ -67,6 +67,10 @@
     "./web/pointer": {
       "types": "./dist/web/pointer.d.ts",
       "import": "./dist/web/pointer.js"
+    },
+    "./ui": {
+      "types": "./dist/ui/index.d.ts",
+      "import": "./dist/ui/index.js"
     }
   },
   "dependencies": {

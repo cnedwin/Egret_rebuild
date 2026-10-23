@@ -22,6 +22,10 @@ Report problems through [Issues](https://github.com/cnedwin/Egret_rebuild/issues
 
 The [M2–M4 roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md) connects complete Spine/content, UI/text/input and mixed core acceptance. Choose a complete work package from [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) or [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58); each lists code entry points, dependencies and reviewable acceptance.
 
+## M3.1 committed UI panels
+
+M3.1 adds an owned UI root with explicit prepare/commit, automatic row/column layout, stable-key variable-height lists and bounded asynchronous row recycling. Multiple panels share the existing renderer, input router and resource owners. Read the [UI panel contract](knowledge-base/en/docs/ui-data-panel.md). Full controls, paragraphs, focus/IME, gestures, mobile qualification and performance acceptance remain open.
+
 ## M2.1 content build foundation
 
 M2.1 adds verified PNG/atlas/sequence source builds, persistent cache reuse, dependency invalidation and immutable generations adopted through the existing project transaction. Sources and old generations remain intact. See the [content build contract](knowledge-base/en/docs/content-build-pipeline.md). Complete Spine, fonts and target variants remain open.

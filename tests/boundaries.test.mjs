@@ -35,6 +35,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
         './text': {types:'./dist/text/index.d.ts',import:'./dist/text/index.js'},
         './input': {types:'./dist/input/index.d.ts',import:'./dist/input/index.js'},
+        './ui': {types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'},
       } : name === 'engine' ? {
         '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
         './webgpu': gpuExport,
@@ -46,6 +47,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
         './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
         './input': {types:'./dist/input.d.ts',import:'./dist/input.js'},
+        './ui': {types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'},
         './web/pointer': {types:'./dist/web/pointer.d.ts',import:'./dist/web/pointer.js'},
         './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
         './resources': {types:'./dist/resources.d.ts',import:'./dist/resources.js'},
@@ -59,8 +61,8 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
       write(`packages/${name}/dist/index.js`, 'export {};\n');
-      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './webgl2':'./webgl2.js', './webgl2/scene3d':'./webgl2-scene3d.js', './text':'./text.js', './layout':'./layout.js', './web/text':'./web-text.js', './web/image':'./web-image.js', './resources':'./resources.js', './web/resources':'./web-resources.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
-        : name === 'runtime' ? { '.': './index.js', './text':'./text.js' } : name === 'project' ? {'.':'./index.js','./spine':'./spine.js','./resources':'./resources.js'} : {'.':'./index.js','./resources':'./resources.js'};
+      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './webgl2':'./webgl2.js', './webgl2/scene3d':'./webgl2-scene3d.js', './text':'./text.js', './layout':'./layout.js', './web/text':'./web-text.js', './web/image':'./web-image.js', './resources':'./resources.js', './web/resources':'./web-resources.js', './ui':'./ui.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
+        : name === 'runtime' ? { '.': './index.js', './text':'./text.js', './ui':'./ui.js' } : name === 'project' ? {'.':'./index.js','./spine':'./spine.js','./resources':'./resources.js'} : {'.':'./index.js','./resources':'./resources.js'};
       write(`node_modules/@egret/${name}/package.json`, { name: `@egret/${name}`, type: 'module', exports });
       write(`node_modules/@egret/${name}/index.js`, 'export {};\n');
       if (name === 'project') {
@@ -745,6 +747,96 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       for(const target of present) {const index=needed.findIndex(edge=>edge[1]===target);if(index>=0)needed.splice(index,1);}
       const imports=needed.map(([kind,target],index)=>kind==='dynamic'?`const m15Dynamic${index}=()=>import(${JSON.stringify(target)});`:`import ${JSON.stringify(target)};`).join('\n');
       write(file,original+'\n'+imports+'\n');
+    }
+
+    // M3.1 fixed independent inert UI surfaces and literal scaffold. No product execution.
+    const m31FixtureGraph = {
+      "packages/engine/src/Engine.ts": [["static","./assetGroup.js"],["static","./assetGroup.js"],["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./gameClock.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./internal/uiFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./manifestAssetGroup.js"],["static","./manifestAssetGroup.js"],["static","./manifestResourceTypes.js"],["static","./mouseInput.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./sequencePlayback.js"],["static","./sequencePlaybackTypes.js"],["static","./tween.js"],["static","./tween.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"]],
+      "packages/engine/dist/Engine.js": [["static","./assetGroup.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./gameClock.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./internal/uiFactoryState.js"],["static","./manifestAssetGroup.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./tween.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"]],
+      "packages/engine/dist/Engine.d.ts": [["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./manifestResourceTypes.js"],["static","./sequencePlaybackTypes.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
+      "packages/runtime/src/DisplayObject.ts": [["static","./displayBounds.js"],["static","./displayBounds.js"],["static","./displayCoordinates.js"],["static","./displayCoordinates.js"],["static","./displayHitState.js"],["static","./DisplayObjectContainer.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./EventDispatcher.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"],["static","@egret/contracts"]],
+      "packages/runtime/dist/DisplayObject.js": [["static","./displayBounds.js"],["static","./displayCoordinates.js"],["static","./displayHitState.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./EventDispatcher.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"]],
+      "packages/runtime/dist/DisplayObject.d.ts": [["static","./displayBounds.js"],["static","./displayCoordinates.js"],["static","./DisplayObjectContainer.js"],["static","./EventDispatcher.js"],["static","./ownership.js"],["static","@egret/contracts"]],
+      "packages/runtime/src/DisplayObjectContainer.ts": [["static","./displayHitState.js"],["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
+      "packages/runtime/dist/DisplayObjectContainer.js": [["static","./displayHitState.js"],["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
+      "packages/runtime/dist/DisplayObjectContainer.d.ts": [["static","./DisplayObject.js"],["static","./ownership.js"]],
+      "packages/runtime/src/Scope.ts": [["static","./CancellationController.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"]],
+      "packages/runtime/dist/Scope.js": [["static","./CancellationController.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
+      "packages/runtime/dist/Scope.d.ts": [["static","./ownership.js"],["static","@egret/contracts"]],
+      "packages/runtime/src/displayHitState.ts": [["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"]],
+      "packages/runtime/dist/displayHitState.js": [["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
+      "packages/runtime/dist/displayHitState.d.ts": [["static","./DisplayObject.js"],["static","@egret/contracts"]],
+      "packages/runtime/src/displayTreeState.ts": [["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"],["static","./Stage.js"]],
+      "packages/runtime/dist/displayTreeState.js": [["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"]],
+      "packages/runtime/dist/displayTreeState.d.ts": [["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./Stage.js"]],
+      "packages/runtime/src/displayVisualState.ts": [["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"]],
+      "packages/runtime/dist/displayVisualState.js": [["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
+      "packages/runtime/dist/displayVisualState.d.ts": [["static","./DisplayObject.js"],["static","@egret/contracts"]],
+      "packages/engine/src/pointerInput.ts": [["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./mouseInput.js"],["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/input"],["static","@egret/runtime/input"]],
+      "packages/engine/dist/pointerInput.js": [["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","@egret/runtime"],["static","@egret/runtime/input"]],
+      "packages/engine/dist/pointerInput.d.ts": [["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"]],
+      "packages/engine/src/internal/uiFactoryState.ts": [["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+      "packages/engine/dist/internal/uiFactoryState.js": [["static","@egret/runtime"]],
+      "packages/engine/dist/internal/uiFactoryState.d.ts": [["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+      "packages/runtime/src/ui/index.ts": [["static","./displayCommit.js"],["static","./displayCommit.js"],["static","./heightIndex.js"],["static","./layout.js"],["static","./types.js"]],
+      "packages/runtime/dist/ui/index.js": [["static","./displayCommit.js"],["static","./heightIndex.js"],["static","./layout.js"]],
+      "packages/runtime/dist/ui/index.d.ts": [["static","./displayCommit.js"],["static","./displayCommit.js"],["static","./heightIndex.js"],["static","./layout.js"],["static","./types.js"]],
+      "packages/runtime/src/ui/managedState.ts": [["static","../DisplayObject.js"],["static","../displayTreeState.js"],["static","../EgretError.js"]],
+      "packages/runtime/dist/ui/managedState.js": [["static","../displayTreeState.js"],["static","../EgretError.js"]],
+      "packages/runtime/dist/ui/managedState.d.ts": [["static","../DisplayObject.js"]],
+      "packages/runtime/src/ui/displayCommit.ts": [["static","../displayHitState.js"],["static","../DisplayObject.js"],["static","../DisplayObjectContainer.js"],["static","../displayTreeState.js"],["static","../displayTreeState.js"],["static","../displayVisualState.js"],["static","../EgretError.js"],["static","../ownership.js"],["static","../Scope.js"],["static","../Stage.js"],["static","./managedState.js"],["static","@egret/contracts"]],
+      "packages/runtime/dist/ui/displayCommit.js": [["static","../displayHitState.js"],["static","../DisplayObjectContainer.js"],["static","../displayTreeState.js"],["static","../displayVisualState.js"],["static","../EgretError.js"],["static","../ownership.js"],["static","../Scope.js"],["static","./managedState.js"]],
+      "packages/runtime/dist/ui/displayCommit.d.ts": [["static","../DisplayObject.js"],["static","../DisplayObjectContainer.js"],["static","../Scope.js"],["static","../Stage.js"],["static","@egret/contracts"]],
+      "packages/runtime/src/ui/layout.ts": [["static","../EgretError.js"],["static","./types.js"]],
+      "packages/runtime/dist/ui/layout.js": [["static","../EgretError.js"]],
+      "packages/runtime/dist/ui/layout.d.ts": [["static","./types.js"]],
+      "packages/runtime/src/ui/heightIndex.ts": [["static","../EgretError.js"],["static","./types.js"]],
+      "packages/runtime/dist/ui/heightIndex.js": [["static","../EgretError.js"]],
+      "packages/runtime/dist/ui/heightIndex.d.ts": [["static","./types.js"]],
+      "packages/runtime/src/ui/types.ts": [],
+      "packages/runtime/dist/ui/types.js": [],
+      "packages/runtime/dist/ui/types.d.ts": [],
+      "packages/engine/src/ui/index.ts": [["static","./types.js"],["static","./uiRoot.js"]],
+      "packages/engine/dist/ui/index.js": [["static","./uiRoot.js"]],
+      "packages/engine/dist/ui/index.d.ts": [["static","./types.js"],["static","./uiRoot.js"]],
+      "packages/engine/src/ui/types.ts": [["static","../Engine.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+      "packages/engine/dist/ui/types.js": [],
+      "packages/engine/dist/ui/types.d.ts": [["static","../Engine.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+      "packages/engine/src/ui/uiRoot.ts": [["static","../internal/uiFactoryState.js"],["static","../pointerInputTypes.js"],["static","./types.js"],["static","./virtualList.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"],["static","@egret/runtime/ui"]],
+      "packages/engine/dist/ui/uiRoot.js": [["static","../internal/uiFactoryState.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+      "packages/engine/dist/ui/uiRoot.d.ts": [["static","./types.js"]],
+      "packages/engine/src/ui/virtualList.ts": [["static","./types.js"],["static","@egret/runtime"]],
+      "packages/engine/dist/ui/virtualList.js": [["static","@egret/runtime"]],
+      "packages/engine/dist/ui/virtualList.d.ts": [["static","./types.js"]],
+    };
+    const m31UiSeeds = {
+  "packages/engine/src/ui/index.ts": "// SPDX-License-Identifier: Apache-2.0\nexport { createUiRoot } from './uiRoot.js';\nexport type { LayoutNode, UiInvalidationKind, UiLimits, VirtualRecord, VirtualDataSource, RowBindContext, RowBinding, RowUnbindInfo, RowRetention, UiRowPointerNotification, UiRootOptions, UiPreparation, UiCommitResult, UiRowSnapshot, UiCounters, VirtualListSnapshot, UiSnapshot, VirtualListHandle, UiRoot } from './types.js';\n",
+  "packages/engine/dist/ui/index.d.ts": "// SPDX-License-Identifier: Apache-2.0\nexport { createUiRoot } from './uiRoot.js';\nexport type { LayoutNode, UiInvalidationKind, UiLimits, VirtualRecord, VirtualDataSource, RowBindContext, RowBinding, RowUnbindInfo, RowRetention, UiRowPointerNotification, UiRootOptions, UiPreparation, UiCommitResult, UiRowSnapshot, UiCounters, VirtualListSnapshot, UiSnapshot, VirtualListHandle, UiRoot } from './types.js';\n",
+  "packages/engine/dist/ui/index.js": "export {createUiRoot} from './uiRoot.js';\n",
+  "packages/engine/dist/ui/uiRoot.js": "export function createUiRoot() {}\nimport {captureUiLayout,planUiLayout,UiHeightIndex,createUiDisplayOperations} from \"@egret/runtime/ui\";\n",
+  "packages/engine/dist/internal/uiFactoryState.js": "export function requireUiEngine() {}\n",
+  "packages/runtime/dist/ui/index.js": "export {createUiDisplayOperations} from './displayCommit.js';\nexport {captureUiLayout,planUiLayout} from './layout.js';\nexport {UiHeightIndex} from './heightIndex.js';\n",
+  "packages/runtime/dist/ui/displayCommit.js": "export function createUiDisplayOperations() {}\n",
+  "packages/runtime/dist/ui/layout.js": "export function captureUiLayout() {}\nexport function planUiLayout() {}\n",
+  "packages/runtime/dist/ui/heightIndex.js": "export class UiHeightIndex {}\n",
+  "packages/engine/src/internal/uiFactoryState.ts": "import type {createUiDisplayOperations,UiDisplayOperations} from \"@egret/runtime/ui\";\n",
+  "packages/engine/dist/internal/uiFactoryState.d.ts": "import type {createUiDisplayOperations,UiDisplayOperations} from \"@egret/runtime/ui\";\n",
+  "packages/engine/src/ui/types.ts": "import type {UiLayoutNode,UiDirtyKind,UiLayoutBox} from \"@egret/runtime/ui\";\n",
+  "packages/engine/dist/ui/types.d.ts": "import type {UiLayoutNode,UiDirtyKind,UiLayoutBox} from \"@egret/runtime/ui\";\n",
+  "packages/engine/src/ui/uiRoot.ts": "import {captureUiLayout,planUiLayout,UiHeightIndex,createUiDisplayOperations} from \"@egret/runtime/ui\";\nimport type {UiLayoutTree,UiLayoutNode,UiLayoutPlan,UiLayoutBox,UiDisplayUpdate} from \"@egret/runtime/ui\";\n"
+};
+    for(const [file,body]of Object.entries(m31UiSeeds))write(file,body);
+    for(const file of ['packages/runtime/dist/displayBounds.js','packages/runtime/dist/displayCoordinates.js',
+      'packages/runtime/dist/EgretError.js','packages/runtime/dist/CancellationController.js','packages/runtime/dist/frameCaptureCache.js'])
+      if(!existsSync(path.join(root,file)))write(file,'export {};\n');
+    write('node_modules/@egret/engine/ui.js',"export * from '../../../packages/engine/dist/ui/index.js';\n");
+    write('node_modules/@egret/runtime/ui.js',"export * from '../../../packages/runtime/dist/ui/index.js';\n");
+    for(const [file,edges]of Object.entries(m31FixtureGraph)){
+      const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
+      const present=[...original.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>match[1]);
+      const needed=[...edges];
+      for(const target of present){const index=needed.findIndex(edge=>edge[1]===target);if(index>=0)needed.splice(index,1);}
+      write(file,original+'\n'+needed.map(([,target])=>'import '+(file.endsWith('.ts')?'type {UiFixtureType} from ':'')+JSON.stringify(target)+';').join('\n')+'\n');
     }
     // M15_FIXTURE_SCAFFOLD_END
     if(sharedMutation) {

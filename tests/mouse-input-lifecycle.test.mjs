@@ -403,3 +403,15 @@ test('CR08 Scope retains listener/owner failures while observer throws and reent
       assert.equal(observerCalls, 2);
     }, [listenerFailure, ownerFailure], () => { observerCalls++; throw observerFailure; }, expectedClose);
   });
+
+test('MI1 routed delivery excludes same-Engine optional UI publication',async()=>{
+ const {createUiRoot}=await import('@egret/engine/ui');
+ await withInputFixture(async f=>{
+  const root=createUiRoot({engine:f.engine,scope:f.scope,id:'ui',viewport:{width:20,height:20},origin:{x:70,y:40},density:1,
+   tree:{id:'spacer',kind:'leaf',explicitWidth:20,explicitHeight:20}});
+  const token=await root.prepare();let attempts=0;
+  f.upper.on(f.input.events.begin,()=>{attempts++;assertCode(()=>root.commit(token),'UI_BUSY');});
+  down(f);assert.equal(attempts,1);assert.equal(root.snapshot().committedRevision,0);
+  assert.equal(root.commit(token).kind,'committed');root.dispose();
+ });
+});

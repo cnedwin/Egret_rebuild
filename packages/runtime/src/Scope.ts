@@ -1,3 +1,4 @@
+import { cleanupManagedWrapper } from './ui/managedState.js';
 import type { CancellationSignal, ScopeValue } from "@egret/contracts";
 import { CancellationController } from "./CancellationController.js";
 import { EgretError } from "./EgretError.js";
@@ -11,6 +12,7 @@ const CREATION_TOKEN: unique symbol = Symbol("egret.scopeFactory");
 const activeRegistrations = new WeakSet<object>();
 
 function cleanup(value: ScopeValue): void {
+  if (cleanupManagedWrapper(value)) return;
   if ("dispose" in value) value.dispose();
   else value.release();
 }

@@ -445,3 +445,25 @@ function pointerConsumer(options:PointerInputOptions):PointerInput {
  return input;
 }
 void pointerConsumer;
+
+// Owned UI consumers remain DOM-free and use only the optional public entry.
+import {createUiRoot} from '@egret/engine/ui';
+import {Sprite as UiConsumerSprite} from '@egret/engine';
+import type {UiRootOptions,UiPreparation,UiCommitResult,VirtualDataSource,LayoutNode,UiSnapshot} from '@egret/engine/ui';
+declare const uiOptions: UiRootOptions;
+const ownedUi = createUiRoot(uiOptions);
+const uiPreparing: Promise<UiPreparation> = ownedUi.prepare();
+uiPreparing.then(token => { const result: UiCommitResult = ownedUi.commit(token); return result.revision; });
+const uiSnapshot: UiSnapshot = ownedUi.snapshot();
+const uiResourceDemands: number | undefined = uiSnapshot.counters.resourceDemands;
+const uiRows: VirtualDataSource<{label: string}> = {
+ revision: 1, records: [{key: 'first', contentVersion: 1, estimatedHeight: 24, value: {label: 'First'}}],
+ bind(context) { const label: string = context.value.label; void label; return {content: context.scope.use(new UiConsumerSprite()), measuredHeight: 24}; },
+ unbind(info) { const key: string = info.key; void key; }
+};
+ownedUi.list<{label:string}>('rows').setSource(uiRows);
+const uiTree: LayoutNode = {id:'rows',kind:'virtualList',source:uiRows};
+ownedUi.setTree(uiTree);
+const uiRetention = ownedUi.list('rows').retain('first','composition');
+uiRetention.release();
+void uiResourceDemands;

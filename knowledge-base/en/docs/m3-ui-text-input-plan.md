@@ -2,7 +2,7 @@
 
 English | [中文](../../Cns/docs/m3-ui-text-input-plan.md)
 
-Design proposal, 2026-10-23. Parent tracking issue: #57. This document proposes four contribution packages; it reports no new implementation, benchmark, browser, IME or assistive-technology result.
+Architecture and delivery plan, 2026-10-23. Parent tracking issue: #57. The four work packages are retained. Implemented input and UI foundations have separate contracts and evidence; this plan does not establish whole-package, performance, IME or assistive-technology acceptance.
 
 M3 delivers a usable UI system on the existing Engine, display tree, Scope and resource owners. It includes automatic layout, variable-height virtual lists, styled paragraph text, pointer/keyboard input, focus, basic native text editing and browser accessibility. It does not complete legacy EUI/EXML migration, all platform integrations or M4 production acceptance.
 
@@ -20,7 +20,7 @@ The following is source inspection, not a claim that every platform behavior has
 | Mouse/button | `packages/engine/web/MouseInput.ts` admits primary mouse input on a restricted ordinary Canvas CSS profile; `bitmapButton.ts` implements up/pressed/disabled skins and guarded activation. | Keep these compatibility entries. New shared pointer input and UI focus/control behavior use separate optional Engine surfaces, with explicitly qualified host coordinates. |
 | Text display | TF1 is a noneditable explicit-line leaf with desired/committed revisions, explicit asynchronous preparation and genuine texture leases. | Keep `createTextField`, requests, limits, old-visible-until-success behavior and source ownership. Paragraph/editable text is a distinct target profile. |
 | Text cache/provider | T1 has bounded jobs, demand, generations and leases; WC1 measures and paints complete explicit lines through Canvas and checks font readiness. | Retain the ownership machinery; add font identity, paragraph plans and separate layout/raster keys. Readiness is not font identity, coverage or shaping proof. |
-| Missing coordinated UI | No automatic layout owner, virtual-list component, general focus manager, IME editor or semantic DOM bridge was found in the inspected implementation. | Implement these as cooperating modules rather than reinterpret the existing limited entries as complete UI. |
+| Coordinated UI | `@egret/engine/ui` provides an owned root, measure/arrange, stable-key variable-height rows and complete prepared publication; see the [UI panel contract](ui-data-panel.md). | Preserve this bounded profile. General controls, paragraph integration, focus/IME and semantic DOM projection remain subsequent work within the existing packages. |
 
 The current text contracts explicitly exclude automatic wrapping, rich text, editing, caret/selection/IME and shaping guarantees. `packages/project/src/text-input.ts` parses project JSON; it is not an IME implementation.
 

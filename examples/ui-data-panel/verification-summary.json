@@ -1,0 +1,241 @@
+{
+  "format": "egret.ui-data-panel-browser-summary/1",
+  "rawReceiptSha256": "0c42334f58a3f24e5272e1d5404b6c75c59f7dd14f67c2a73d0ff5e3663a74b2",
+  "startedAt": "2026-10-23T16:20:41.465Z",
+  "endedAt": "2026-10-23T16:20:47.509Z",
+  "environment": {
+    "node": "v26.7.0",
+    "os": "Windows_NT",
+    "release": "10.0.26300",
+    "platform": "win32",
+    "playwright": "1.62.1",
+    "channel": "msedge",
+    "headless": true,
+    "extraFlags": [],
+    "viewport": {
+      "width": 960,
+      "height": 640
+    },
+    "deviceScaleFactor": 1,
+    "physicalDevice": false,
+    "browser": "155.0.4283.62"
+  },
+  "backends": [
+    {
+      "backend": "webgpu",
+      "status": "PASS",
+      "checks": 21,
+      "exactPixelComparisons": 177,
+      "actualMousePositions": 35,
+      "rawFrames": [
+        {
+          "path": "webgpu-initial.rgba",
+          "bytes": 2457600,
+          "sha256": "f24426784b492e3ac791f53dbda66476c25974d3489ee2b0bd66a611b5da3278"
+        },
+        {
+          "path": "webgpu-scroll.rgba",
+          "bytes": 2457600,
+          "sha256": "e22358ddc3919ca0642d2282d9e7a09b44b6af0614fcb2675111233d3e8904c1"
+        },
+        {
+          "path": "webgpu-resize.rgba",
+          "bytes": 2457600,
+          "sha256": "aeef39fa2dbbf9a48b726f2cc3bce84cce005ee5fdc45ff57b4f8a7aa301c090"
+        },
+        {
+          "path": "webgpu-move.rgba",
+          "bytes": 2457600,
+          "sha256": "a8c54b052c7a1d1527228e9a206f8b3d9edb6d046ff0140a09f0d19fa0a7a5e4"
+        },
+        {
+          "path": "webgpu-recycle.rgba",
+          "bytes": 2457600,
+          "sha256": "92ab87b9bb22cea7d184c6f87f7498f5d188c5f8ca469b4122c230f1652a347f"
+        },
+        {
+          "path": "webgpu-return.rgba",
+          "bytes": 2457600,
+          "sha256": "a8c54b052c7a1d1527228e9a206f8b3d9edb6d046ff0140a09f0d19fa0a7a5e4"
+        },
+        {
+          "path": "webgpu-pending.rgba",
+          "bytes": 2457600,
+          "sha256": "a8c54b052c7a1d1527228e9a206f8b3d9edb6d046ff0140a09f0d19fa0a7a5e4"
+        },
+        {
+          "path": "webgpu-complete.rgba",
+          "bytes": 2457600,
+          "sha256": "5ce1ad5531522560b6f0205cec3ef206955ffd8677a62cc65cc6dc1d7aecf64c"
+        },
+        {
+          "path": "webgpu-replay.rgba",
+          "bytes": 2457600,
+          "sha256": "f24426784b492e3ac791f53dbda66476c25974d3489ee2b0bd66a611b5da3278"
+        },
+        {
+          "path": "webgpu-dispose-a.rgba",
+          "bytes": 2457600,
+          "sha256": "e32b7ad4d6d89cfc24d9c9332e69d1d50d94097cd6b41bc87f29f21010dd5a0e"
+        }
+      ],
+      "enteredBindings": 52,
+      "terminalBindings": 52,
+      "errors": [],
+      "diagnostics": [],
+      "cleanup": {
+        "state": "closed",
+        "inputState": "closed",
+        "scopeState": "closed",
+        "textCache": {
+          "closed": true,
+          "fontGeneration": 1,
+          "occupiedSlots": 0,
+          "currentGenerations": 0,
+          "retiredGenerations": 0,
+          "quarantinedGenerations": 0,
+          "pendingJobs": 0,
+          "pendingWaiters": 0,
+          "callerLeaseSlots": 0,
+          "activeCallerLeases": 0,
+          "residentEntries": 0,
+          "residentBytes": 0,
+          "liveImageBytes": 0,
+          "reservedImageBytes": 0,
+          "pendingRasterBytes": 0,
+          "quarantinedImageBytes": 0,
+          "quarantinedRasterBytes": 0,
+          "metadataBytes": 4096,
+          "idleWaiters": 0,
+          "cleanupFailureCount": 0,
+          "lateProviderFailureCount": 0
+        },
+        "observations": {
+          "fontSelected": true,
+          "fontRemoved": true,
+          "bitmapClosed": true,
+          "textureDisposals": 1,
+          "pendingReadbacks": 0
+        }
+      }
+    },
+    {
+      "backend": "webgl2",
+      "status": "PASS",
+      "checks": 21,
+      "exactPixelComparisons": 177,
+      "actualMousePositions": 35,
+      "rawFrames": [
+        {
+          "path": "webgl2-initial.rgba",
+          "bytes": 2457600,
+          "sha256": "f24426784b492e3ac791f53dbda66476c25974d3489ee2b0bd66a611b5da3278"
+        },
+        {
+          "path": "webgl2-scroll.rgba",
+          "bytes": 2457600,
+          "sha256": "e22358ddc3919ca0642d2282d9e7a09b44b6af0614fcb2675111233d3e8904c1"
+        },
+        {
+          "path": "webgl2-resize.rgba",
+          "bytes": 2457600,
+          "sha256": "aeef39fa2dbbf9a48b726f2cc3bce84cce005ee5fdc45ff57b4f8a7aa301c090"
+        },
+        {
+          "path": "webgl2-move.rgba",
+          "bytes": 2457600,
+          "sha256": "a614428b176cb9e61edbe645d05eacfd6d05f4619783cffe8905d82af90165c6"
+        },
+        {
+          "path": "webgl2-recycle.rgba",
+          "bytes": 2457600,
+          "sha256": "92ab87b9bb22cea7d184c6f87f7498f5d188c5f8ca469b4122c230f1652a347f"
+        },
+        {
+          "path": "webgl2-return.rgba",
+          "bytes": 2457600,
+          "sha256": "a614428b176cb9e61edbe645d05eacfd6d05f4619783cffe8905d82af90165c6"
+        },
+        {
+          "path": "webgl2-pending.rgba",
+          "bytes": 2457600,
+          "sha256": "a614428b176cb9e61edbe645d05eacfd6d05f4619783cffe8905d82af90165c6"
+        },
+        {
+          "path": "webgl2-complete.rgba",
+          "bytes": 2457600,
+          "sha256": "11b09991a3e1a8be438fe79ef084b42bcecd4d98d58032984c41f3d911de540b"
+        },
+        {
+          "path": "webgl2-replay.rgba",
+          "bytes": 2457600,
+          "sha256": "f24426784b492e3ac791f53dbda66476c25974d3489ee2b0bd66a611b5da3278"
+        },
+        {
+          "path": "webgl2-dispose-a.rgba",
+          "bytes": 2457600,
+          "sha256": "e32b7ad4d6d89cfc24d9c9332e69d1d50d94097cd6b41bc87f29f21010dd5a0e"
+        }
+      ],
+      "enteredBindings": 52,
+      "terminalBindings": 52,
+      "errors": [],
+      "diagnostics": [],
+      "cleanup": {
+        "state": "closed",
+        "inputState": "closed",
+        "scopeState": "closed",
+        "textCache": {
+          "closed": true,
+          "fontGeneration": 1,
+          "occupiedSlots": 0,
+          "currentGenerations": 0,
+          "retiredGenerations": 0,
+          "quarantinedGenerations": 0,
+          "pendingJobs": 0,
+          "pendingWaiters": 0,
+          "callerLeaseSlots": 0,
+          "activeCallerLeases": 0,
+          "residentEntries": 0,
+          "residentBytes": 0,
+          "liveImageBytes": 0,
+          "reservedImageBytes": 0,
+          "pendingRasterBytes": 0,
+          "quarantinedImageBytes": 0,
+          "quarantinedRasterBytes": 0,
+          "metadataBytes": 4096,
+          "idleWaiters": 0,
+          "cleanupFailureCount": 0,
+          "lateProviderFailureCount": 0
+        },
+        "observations": {
+          "fontSelected": true,
+          "fontRemoved": true,
+          "bitmapClosed": true,
+          "textureDisposals": 1,
+          "pendingReadbacks": 0
+        }
+      }
+    }
+  ],
+  "sourceFreeze": {
+    "files": 555,
+    "bytes": 3313985,
+    "sha256": "a23c444ed6224132eeadadd3b869a1eff314d7c09987d4ddfee0c47c809f9e5a"
+  },
+  "snapshotIntegrity": true,
+  "cleanup": {
+    "contexts": true,
+    "browser": true,
+    "server": true
+  },
+  "qualification": {
+    "desktopFunctional": true,
+    "physicalDevice": false,
+    "physicalMemory": false,
+    "performance": false,
+    "paragraphs": false,
+    "ime": false,
+    "fullM3": false
+  }
+}

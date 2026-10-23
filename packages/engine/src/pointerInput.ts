@@ -5,6 +5,7 @@ import type {PointerRouter,PointerContact,PointerSession,PointerSample,PointerUp
 import type {MouseInputEnginePort} from './mouseInput.js';
 import type {Diagnostic} from '@egret/contracts';
 import {requireMouseInputEngine} from './internal/mouseInputFactoryState.js';
+import {captureUiInputDelivery,registerUiPointerInput} from './internal/uiFactoryState.js';
 import type {PointerInput,PointerInputOptions,PointerInputEvents} from './pointerInputTypes.js';
 export type {PointerInput,PointerInputOptions,PointerInputEvents,PointerNotification,PointerCancelReason,PointerContact,PointerEventKind,PointerSample,PointerSession,PointerType,PointerUpdate,PointerRouterState} from './pointerInputTypes.js';
 
@@ -27,7 +28,9 @@ export function bindPointerSurface(input:PointerInput):SurfaceBinding {
 
 export function createPointerInput(options:PointerInputOptions):PointerInput {
   if(options===null||typeof options!=='object'||Array.isArray(options))throw new EgretError('POINTER_INPUT_OPTIONS_INVALID');
-  let owner:MouseInputEnginePort|undefined=requireMouseInputEngine(options.engine);
+  const engine=options.engine;
+  let owner:MouseInputEnginePort|undefined=requireMouseInputEngine(engine);
+  const deliver=captureUiInputDelivery(engine);
   let scope:ReturnType<MouseInputEnginePort['scope']>|undefined=owner.scope(options.scope);
   const width=options.width,height=options.height,maxNodes=options.maxNodes??4096;
   let observer=options.onContact;
@@ -84,7 +87,7 @@ export function createPointerInput(options:PointerInputOptions):PointerInput {
   router=createPointerRouter<DisplayObject>({
     ...(options.capacity===undefined?{}:{capacity:options.capacity}),
     pick:(x,y)=>{owner!.assertReady();scope!.assertOpen();return operations!.pick(x,y,maxNodes);},eligible,
-    dispatch:(kind,contact,target,reason)=>{
+    dispatch:(kind,contact,target,reason)=>deliver(()=>{
       // Termination during capture/target callbacks must stop the older route.
       if(kind==='cancel')activeEvents.get(contact.session)?.stopImmediatePropagation();
       // Observer receives terminal cleanup even when its display target no longer exists.
@@ -100,7 +103,7 @@ export function createPointerInput(options:PointerInputOptions):PointerInput {
         try{operations!.dispatch(target,event,maxNodes);}
         finally{if(activeEvents.get(contact.session)===event)activeEvents.delete(contact.session);}
       }
-    },
+    }),
   });
   input=Object.freeze({
     get state(){return router.state;},get contacts(){return router.contacts;},get viewportRevision(){return router.viewportRevision;},events,
@@ -114,6 +117,7 @@ export function createPointerInput(options:PointerInputOptions):PointerInput {
     sync:()=>invoke(()=>router.sync()),setViewportRevision:(revision:number)=>invoke(()=>router.setViewportRevision(revision)),
     setInteractive:(value:boolean)=>invoke(()=>router.setInteractive(value)),dispose:retire,
   });
+  registerUiPointerInput(input,engine,Object.freeze({events,state:()=>router.state,activeContacts:()=>router.contacts.length,sync:input.sync}));
   try{
     releaseEngine=owner.onClose(retire);scope.add(retire);scope.use(input);
     bindings.set(input,surfaceBinding(owner.surface,owner.report,

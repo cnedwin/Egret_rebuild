@@ -450,3 +450,31 @@ TweenNegativePublic.TweenOptions;
 // @ts-expect-error TWEEN_CASE easing-type-only TS2339
 TweenNegativePublic.TweenEasing;
 void negativeTweenForgery;
+
+// Invalid UI consumers must fail in the existing unsuppressed diagnostic lane.
+import * as UiNegativeDefault from '@egret/engine';
+import * as UiNegativePublic from '@egret/engine/ui';
+import type {UiRoot as UiNegativeRoot,UiPreparation as UiNegativePreparation,LayoutNode as UiNegativeNode,UiSnapshot as UiNegativeSnapshot} from '@egret/engine/ui';
+declare const uiNegativeRoot: UiNegativeRoot;
+declare const uiNegativeSnapshot: UiNegativeSnapshot;
+// @ts-expect-error UI_CASE optional-entry-only
+UiNegativeDefault.createUiRoot;
+// @ts-expect-error UI_CASE preparation-type-only
+UiNegativePublic.UiPreparation;
+// @ts-expect-error UI_CASE nonforgeable-preparation
+const uiNegativePreparation: UiNegativePreparation = {status:'ready',desiredRevision:1,baseCommittedRevision:0};
+// @ts-expect-error UI_CASE required-list-source
+const uiNegativeNoSource: UiNegativeNode = {id:'rows',kind:'virtualList'};
+// @ts-expect-error UI_CASE unsupported-layout-kind
+const uiNegativeGrid: UiNegativeNode = {id:'grid',kind:'grid'};
+// @ts-expect-error UI_CASE asynchronous-measure
+const uiNegativeMeasure: UiNegativeNode = {id:'leaf',kind:'leaf',measure: async () => ({width:1,height:1})};
+// @ts-expect-error UI_CASE immutable-snapshot
+uiNegativeSnapshot.committedRevision = 4;
+// @ts-expect-error UI_CASE immutable-rows
+uiNegativeSnapshot.rows.push({});
+// @ts-expect-error UI_CASE invalid-retention-reason
+uiNegativeRoot.list('rows').retain('key','selection');
+// @ts-expect-error UI_CASE unavailable-resource-total
+const uiNegativeDemand: number = uiNegativeSnapshot.counters.resourceDemands;
+void uiNegativePreparation; void uiNegativeNoSource; void uiNegativeGrid; void uiNegativeMeasure; void uiNegativeDemand;

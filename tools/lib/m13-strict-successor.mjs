@@ -165,6 +165,15 @@ function m21ResourcePin(root,selected,id,row){
  return equal(fingerprintFile(root,row.path),revision.current)?revision.current:row;
 }
 
+// M3.1 adds only the exact UI packages and cooperating display/Engine identities.
+// All historical diagnostic tuples and complete compiler closures remain intact.
+const m31UiCurrent = [{"base":{"path":"packages/runtime/package.json","bytes":327,"sha256":"b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"},"current":{"path":"packages/runtime/package.json","bytes":568,"sha256":"cb9822d5bbc457edf1256a98d2a7437ee8e13bc58caffe9914afdaa9345ef8c3"}},{"base":{"path":"packages/engine/package.json","bytes":2167,"sha256":"be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143"},"current":{"path":"packages/engine/package.json","bytes":2591,"sha256":"817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5"}},{"base":{"path":"packages/engine/src/Engine.ts","bytes":24333,"sha256":"ee2e61e0e038ae425e26bc9913da38b80cfe9117b782f0712c3ebeca51f92cfd"},"current":{"path":"packages/engine/src/Engine.ts","bytes":25315,"sha256":"ad13f34fd2229c081dd185322918a0043624eed36a8a06f69d7915991aa2110d"}},{"base":{"path":"packages/runtime/src/DisplayObject.ts","bytes":8159,"sha256":"9802809b6b183f9e25ed73166d62cde09cfee0a5348a3f4fdb26c7a84bac8064"},"current":{"path":"packages/runtime/src/DisplayObject.ts","bytes":8252,"sha256":"8f10e9d7fa0359ad55ad89d70c4d710314f73413065473b6f78dd1ee008e5373"}},{"base":{"path":"packages/runtime/src/DisplayObjectContainer.ts","bytes":8088,"sha256":"3b77ccc45a6cd1d84598ed24f73df5f17cb5818acba09fa26b691324591f11be"},"current":{"path":"packages/runtime/src/DisplayObjectContainer.ts","bytes":8667,"sha256":"340e353940c995c3f3a67d384cff0624e0b0202acaa035c74d7be01bedd09b88"}},{"base":{"path":"packages/runtime/src/Scope.ts","bytes":4765,"sha256":"c369db2b08df36e22553859c6ec7ccc110550bf32e5cbd3ffca1925f201f3044"},"current":{"path":"packages/runtime/src/Scope.ts","bytes":4871,"sha256":"4119ad9d9dcbb96039c22aa54af0a761ae747c16c233cb3e2857d9b9fee4581e"}},{"base":{"path":"packages/runtime/src/displayTreeState.ts","bytes":18261,"sha256":"f3d0dd262d872f52fc8235b1df876cb54af6c0718bc0116525f64804b1a06f32"},"current":{"path":"packages/runtime/src/displayTreeState.ts","bytes":19883,"sha256":"e6f87a10f1fc437925c8a941a583faf6231ade1ea97b9035f8782b59f384fca2"}},{"base":{"path":"packages/runtime/dist/displayTreeState.d.ts","bytes":5304,"sha256":"687b4fd56cc46ab3ec170179496291e1c1c1f1e1a56f689ffe692c65210c82fd"},"current":{"path":"packages/runtime/dist/displayTreeState.d.ts","bytes":5856,"sha256":"ff47fc399e00d4715ca519354083aa44e812ffae9c8bafe96f2e48b651bfccff"}}];
+function m31UiPin(root,selected,id,row){
+ if(selected!==M15_DATA||!IDS.includes(id))return row;
+ const revision=m31UiCurrent.find(pair=>equal(pair.base,row));
+ return revision&&equal(fingerprintFile(root,row.path),revision.current)?revision.current:row;
+}
+
 /** Old inventories remain immutable; only a complete recorded group selects new rows. */
 export function selectM13StrictSuccessor(root,id,inventory){
  if(!IDS.includes(id))fail('unknown owner');
@@ -185,7 +194,7 @@ export function selectM13StrictSuccessor(root,id,inventory){
  if(!data.selectionPaths.some(file=>existsSync(path.join(root,file))))return null;
  const pins=new Map(data.inputs.map(row=>[row.path,row]));
  const nativePins=new Map(data.nativeLibraries.map(row=>[row.path,row]));
- const pin=file=>{const row=pins.get(file);if(!row)fail('unregistered selected input '+file);return m21ResourcePin(root,selected,id,m33PointerInputPin(root,selected,id,row));};
+ const pin=file=>{const row=pins.get(file);if(!row)fail('unregistered selected input '+file);return m31UiPin(root,selected,id,m21ResourcePin(root,selected,id,m33PointerInputPin(root,selected,id,row)));};
  // Only these two predecessor inventories included their own gate bytes.
  // Their immutable historical rows remain provenance. The outer compiler
  // maintenance closure pins the current gate; this snapshot also rejects
@@ -197,7 +206,7 @@ export function selectM13StrictSuccessor(root,id,inventory){
  if(historicalGate&&!equal(inventory.inputPins.find(row=>row.path===historicalGate.path),historicalGate))fail('historical self-gate row changed');
  const currentGate=historicalGate?fingerprintFile(root,historicalGate.path):undefined;
  let inputPins=(inventory.inputPins??[]).map(row=>row.path===historicalGate?.path?currentGate
-  :owner.replacementPaths.includes(row.path)?pin(row.path):row).map(row=>m14EnginePackagePin(root,row)).map(row=>m33PointerInputPin(root,selected,id,row)).map(row=>m21ResourcePin(root,selected,id,row));
+  :owner.replacementPaths.includes(row.path)?pin(row.path):row).map(row=>m14EnginePackagePin(root,row)).map(row=>m33PointerInputPin(root,selected,id,row)).map(row=>m21ResourcePin(root,selected,id,row)).map(row=>m31UiPin(root,selected,id,row));
  for(const file of new Set(owner.groups.flatMap(group=>group.repositoryClosure.filter(file=>file.endsWith('.d.ts')))))
   if(!inputPins.some(row=>row.path===file))inputPins.push(pin(file));
  const wrapperOwner=realpathSync(path.join(root,'node_modules/typescript'));

@@ -23,6 +23,10 @@ Years later, as times change and technology advances, many developers continue t
 
 [M2–M4 路线](knowledge-base/Cns/docs/m2-m4-delivery-plan.md)衔接完整 Spine／内容、UI／文字／输入及混合核心验收。从 [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56)、[M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) 或 [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58) 选择完整工作包，每项说明代码入口、依赖和可评审验收。
 
+## M3.1 完整提交的 UI 面板
+
+M3.1 增加托管 UI 根、显式 prepare/commit、自动行列布局、稳定键变高列表和有界异步行复用。多个面板复用现有渲染器、输入路由和资源所有者。详见[UI 面板契约](knowledge-base/Cns/docs/ui-data-panel.md)。完整控件、段落文字、焦点／IME、手势、移动端资格与性能验收继续开放。
+
 ## M2.1 内容构建基础
 
 M2.1 增加经过字节验证的 PNG／图集／序列帧构建、持久缓存复用、依赖失效和通过现有项目事务采用的不可变代次，保留源文件与旧代次。参阅[内容构建契约](knowledge-base/Cns/docs/content-build-pipeline.md)。完整 Spine、字体和目标变体继续开放。

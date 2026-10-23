@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Egret data panel / Egret 数据面板</title>
+  <link rel="icon" href="data:,">
+  <script type="importmap">{"imports":{"@egret/engine":"/packages/engine/dist/index.js","@egret/engine/ui":"/packages/engine/dist/ui/index.js","@egret/engine/text":"/packages/engine/dist/text.js","@egret/engine/web/text":"/packages/engine/dist/web/text.js","@egret/engine/web/pointer":"/packages/engine/dist/web/pointer.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/engine/webgl2":"/packages/engine/dist/web/webgl2.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/runtime/ui":"/packages/runtime/dist/ui/index.js","@egret/runtime/text":"/packages/runtime/dist/text/index.js","@egret/runtime/input":"/packages/runtime/dist/input/index.js","@egret/contracts":"/packages/contracts/dist/index.js","@egret/contracts/resources":"/packages/contracts/dist/resources/index.js","#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-pointer-input":"/packages/engine/dist/pointerInput.js","robust-predicates":"/vendor/robust-predicates/index.js"}}</script>
+  <style>
+    body {margin:0;background:#edf2f7;color:#172033;font:15px/1.5 system-ui,sans-serif;}
+    canvas {display:block;width:960px;height:640px;border:0;padding:0;object-fit:fill;}
+    main {padding:16px;max-width:920px;}
+    h1 {font-size:22px;margin:0 0 8px;}
+    button {font:inherit;margin:4px;padding:7px 10px;}
+    pre {white-space:pre-wrap;}
+  </style>
+</head>
+<body>
+  <canvas id="scene" width="960" height="640" aria-label="Engine bitmap and explicit text data rows / Engine 位图与显式文字列表行"></canvas>
+  <main>
+    <h1>Two Engine data panels / 两个 Engine 数据面板</h1>
+    <p>Click colored rows to observe genuine Engine pointer hits. The controls below are example DOM controls driving public UiRoot operations. Choose <a href="?backend=webgpu">WebGPU</a> or <a href="?backend=webgl2">WebGL2</a>.<br>点击色块行查看真实 Engine 指针命中。下方是调用公开 UiRoot 操作的示例 DOM 控件。</p>
+    <button data-action="scroll">Scroll 92 / 滚动 92</button>
+    <button data-action="resize">600×480, density 2 / 调整尺寸与密度</button>
+    <button data-action="move">Move to (48,64) / 移动</button>
+    <button data-action="recycle">Scroll 640 / 滚动并回收</button>
+    <button data-action="return">Return to 92 / 返回 92</button>
+    <button data-action="delay">Delay replacement / 延迟替换</button>
+    <button id="finish">Finish replacement / 完成替换</button>
+    <button data-action="dispose-a">Dispose A / 释放 A</button>
+    <button data-action="close">Close / 关闭</button>
+    <pre id="status" role="status">Starting / 启动中</pre>
+    <p>Ahem X/space explicit lines only. No automatic paragraphs, shaping, native text input, reusable wheel policy, touch-device or performance acceptance.<br>仅展示 Ahem X/空格显式行；不代表自动段落、文字塑形、原生输入、通用滚轮策略、实体触屏或性能验收。</p>
+  </main>
+  <script type="module" src="./main.mjs"></script>
+</body>
+</html>

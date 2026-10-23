@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/ui-data-panel/PROVENANCE.md",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-data-panel/PROVENANCE.zh-CN.md",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-data-panel/README.md",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-data-panel/README.zh-CN.md",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-data-panel/fixture.mjs",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-data-panel/index.html",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-data-panel/main.mjs",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-data-panel/verification-summary.json",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-data-panel/verify.mjs",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/ui-data-panel.md",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/ui-data-panel.md",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/src/internal/uiFactoryState.ts",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/ui/index.ts",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/ui/types.ts",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/ui/uiRoot.ts",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/ui/virtualList.ts",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/ui/displayCommit.ts",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/ui/heightIndex.ts",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/ui/index.ts",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/ui/layout.ts",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/ui/managedState.ts",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/ui/types.ts",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-data-panel-example.test.mjs",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/ui-display-commit.test.mjs",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/ui-engine-integration.test.mjs",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/ui-height-index-unit.test.mjs",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/ui-layout-unit.test.mjs",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/ui-layout.test.mjs",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/ui-lifecycle.test.mjs",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/ui-virtual-list.test.mjs",
+      "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/ui-data-panel.md",
+      "zh": "knowledge-base/Cns/docs/ui-data-panel.md"
+    },
+    {
+      "en": "examples/ui-data-panel/README.md",
+      "zh": "examples/ui-data-panel/README.zh-CN.md"
+    },
+    {
+      "en": "examples/ui-data-panel/PROVENANCE.md",
+      "zh": "examples/ui-data-panel/PROVENANCE.zh-CN.md"
+    }
+  ]
+}

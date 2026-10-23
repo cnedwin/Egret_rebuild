@@ -31,6 +31,8 @@ import { createSequencePlaybackOwner } from './sequencePlayback.js';
 import type { SequencePlaybackOwner } from './sequencePlayback.js';
 import type { SequencePlayback, SequencePlaybackOptions } from './sequencePlaybackTypes.js';
 import type { Bitmap, SequenceClip } from '@egret/runtime';
+import {registerUiEngine} from './internal/uiFactoryState.js';
+import type {UiEngineOwner} from './internal/uiFactoryState.js';
 
 export interface EngineOptions {
   readonly host: HostAdapter;
@@ -75,6 +77,7 @@ export class Engine {
   readonly #bitmapBindingOwner: BitmapBindingOwner;
   readonly #bitmapResourceTargets = new WeakMap<Bitmap, Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1]>();
   readonly #mouseInputOwner: MouseInputOwner;
+  readonly #uiOwner: UiEngineOwner;
   readonly #engineScopes = new WeakSet<Scope>();
   private frameBusy = false;
   private nextFrameId = 1;
@@ -152,9 +155,21 @@ export class Engine {
     });
     this.clock = this.#gameClockOwner.clock;
     const stage = createStage(this.#context);
+    this.#uiOwner = registerUiEngine(this, {
+      stage, assertOpen: this.#context.assertOpen, isFrameBusy: (): boolean => this.frameBusy,
+      createScope: (): Scope => this.#createScope(), report: this.#context.report,
+      captureCleanup: this.#context.captureCleanup,
+    });
+    const rawInput = createDisplayInputOperations(stage);
+    const deliverInput = this.#uiOwner.deliver;
+    const inputOperations = Object.freeze({
+      pick: rawInput.pick, isAttached: rawInput.isAttached,
+      dispatch: <T>(...args: Parameters<typeof rawInput.dispatch<T>>): boolean =>
+        deliverInput(() => rawInput.dispatch<T>(...args)),
+    });
     // Capture original startup and Stage authority before publishing replaceable readonly fields.
     this.#mouseInputOwner = createMouseInputOwner(this, {
-      surface, operations: createDisplayInputOperations(stage), assertOpen: this.#context.assertOpen,
+      surface, operations: inputOperations, assertOpen: this.#context.assertOpen,
       report: this.#context.report, captureCleanup: this.#context.captureCleanup,
     });
     this.stage = stage;
@@ -362,12 +377,15 @@ export class Engine {
     }
   }
 
-  public createScope(): Scope {
+  public createScope(): Scope { return this.#createScope(); }
+
+  #createScope(): Scope {
     this.#context.assertOpen();
     const scope = createScope(this.#context, (closed): void => { this.scopes.delete(closed); });
     this.scopes.add(scope);
     this.#engineScopes.add(scope);
     this.#mouseInputOwner.registerScope(scope);
+    this.#uiOwner.registerScope(scope);
     return scope;
   }
 
@@ -407,6 +425,8 @@ export class Engine {
     this.closePromise = new Promise<void>((resolve, reject) => { resolveClose = resolve; rejectClose = reject; });
     // Cache the result before abort/cleanup/diagnostic callbacks can reenter.
     this.#currentState = "closing";
+    // Detach managed UI before input and ordinary Scope/Stage cleanup.
+    this.#uiOwner.close();
     // Revoke every manifest group before cleanup callbacks can reenter.
     this.#manifestAssetGroupOwner.close();
     this.#bitmapBindingOwner.close();
