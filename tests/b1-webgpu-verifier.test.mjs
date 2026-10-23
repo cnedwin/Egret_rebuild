@@ -574,7 +574,7 @@ test('S14 content-build successors retain exact historical membership and curren
   const entries = runInNewContext(declaration[1], {}, { timeout: 1000 });
   assert.deepEqual(JSON.parse(JSON.stringify(entries)), [
     ['packages/contracts/dist/resources/index.js', { bytes: 348, sha256: '33e0fd9874ac06a2455af14a36b36e4caec75e318718c03755195961340d0ff2' }],
-    ['packages/contracts/dist/resources/manifestAdmission.js', { bytes: 18139, sha256: '552bdb9c52612744614943667322b73892e7dbcb1b506a2f102d758da335e0f5' }],
+    ['packages/contracts/dist/resources/manifestAdmission.js', { bytes: 18139, sha256: '552bdb9c52612564614943667322b73892e7dbcb1b506a2f102d758da335e0f5' }],
   ]);
   const policy = await completeCurrentClosure();
   assert.deepEqual(JSON.parse(JSON.stringify(policy.m15ModuleIdentities.get(entries[0][0]))),

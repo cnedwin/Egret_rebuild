@@ -2475,7 +2475,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "ea3154b22cb7e700f8cfa48382aad2d16474b207dc4bb731ac8335f1f8609917"
+      "sha256": "0f557d72ee954708b07d11edf9217885231d7416afce2808aadca74c6a669121"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -2885,7 +2885,7 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "a51b609c0d30e3f05741503970fe409b121f509463437136faffeee21d5efdd8"
+      "sha256": "75f622b9a0030e24d8f62a6ee7e8caf9474fffe8aca6c94d75cb1fd0d7bef382"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3029,7 +3029,7 @@
     },
     {
       "path": "tools/browser-png-types.mjs",
-      "sha256": "479df9ce15f6ae58e1cfd6fad93316bae28e1dc69b4689d7d5bc46871743f920"
+      "sha256": "23bbb78e567b27cee07ba3cb46d8d1d710f5ea2e3d519553db5ab66a34e38499"
     },
     {
       "path": "tools/browser-png/native-observer.mjs",

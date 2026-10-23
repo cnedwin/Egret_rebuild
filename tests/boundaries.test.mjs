@@ -1609,10 +1609,17 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       const comparatorSource=checker.toString('utf8');
       for(const marker of ['// M15_RESOURCE_RECOVERY_BOUNDARY_BEGIN','// M15_RESOURCE_RECOVERY_BOUNDARY_END'])
         assert.equal(comparatorSource.split(marker).length,2,'one exact M15 comparator marker');
-      const predecessor=comparatorSource.replace(/\/\/ S3D1_BOUNDARY_BEGIN[\s\S]*?\/\/ S3D1_BOUNDARY_END\r?\n/,'')
+      for(const marker of ['// S3D1_BOUNDARY_BEGIN','// S3D1_BOUNDARY_END'])
+        assert.equal(comparatorSource.split(marker).length,2,'one exact S3D1 comparator marker');
+      const sequenceClosureDeclarations=[...comparatorSource.matchAll(/^const m22SequenceLiteralClosure = (\{[\s\S]*?^\});$/gm)];
+      assert.equal(sequenceClosureDeclarations.length,1,'one exact current sequence closure declaration');
+      assert.doesNotThrow(()=>JSON.parse(sequenceClosureDeclarations[0][1]),'retained current sequence closure is pure JSON');
+      const sequenceClosureDeclaration=sequenceClosureDeclarations[0][0];
+      const predecessor=comparatorSource.replace(/\/\/ S3D1_BOUNDARY_BEGIN[\s\S]*?\/\/ S3D1_BOUNDARY_END\r?\n/,sequenceClosureDeclaration+'\n')
         .replace(/\/\/ M15_RESOURCE_RECOVERY_BOUNDARY_BEGIN[\s\S]*?\/\/ M15_RESOURCE_RECOVERY_BOUNDARY_END\r?\n/,'');
       assert.equal(predecessor.includes('M15_RESOURCE_RECOVERY_BOUNDARY_BEGIN'),false);
       assert.equal(predecessor.includes('S3D1_BOUNDARY_BEGIN'),false);
+      assert.equal(predecessor.split(sequenceClosureDeclaration).length,2,'exact current sequence closure retained once');
       assert.match(predecessor,/['"]\.\/scene3d['"]:/,'map-adapted predecessor retains new maps');
       const execute=program=>{write('tools/check-boundaries.mjs',program);const value=spawnSync(process.execPath,['tools/check-boundaries.mjs'],{cwd:root,encoding:'utf8'});assert.ifError(value.error);return value;};
       for(const [label,program]of [['amended',checker],['map-adapted predecessor',predecessor]]) {
