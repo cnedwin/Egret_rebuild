@@ -3307,7 +3307,7 @@
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
-      "sha256": "f6b5f7f4cae9c7eff328f5e7e6f53de7db23c977a587bfd0b76c9ee2e1112146"
+      "sha256": "a03103fe528dda7292b80292e4a559f11ff54985de768ed49fdeb3d27aa3dc14"
     },
     {
       "path": "tools/verify-bitmap-resource-slot.mjs",
@@ -3443,7 +3443,7 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-boundary.mjs",
-      "sha256": "2b85a5206b2cfad092ecb42d1200b3e87d9a916a38529087862a94933bdbc4a6"
+      "sha256": "04e760910bee4ce84e4285a3ce9eae9eced72ecc1381c8c59fe0679762c2b0b1"
     },
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
@@ -3603,7 +3603,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "615ac83bb0826b2988db63732ec0f2910c41a1e1cbb9a8bb3b7e3e6e43398bba"
+      "sha256": "4e08fc24f1ebfff34fdcefde2a50ff94fd757465569300cb7403cf0f69aeb7fc"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3631,7 +3631,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "49ee8033a7a60ec73726795932fef8f89f8a15994ab8fb30cbaeb04ec29901fc"
+      "sha256": "0c30f5523a75bd12a2236e3f29f6b0a52963787c2624082b0cf15dee7904aacd"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",

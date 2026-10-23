@@ -98,6 +98,10 @@ for(const [name,relative,code,mutate]of controls)test('BBT-M12 '+name,()=>isolat
 }));
 
 for(const [family,relative,code]of [
+ ['bitmap-binding-ticket','package.json','BBT_BOUNDARY_PACKAGE_DAG'],
+ ['bitmap-binding-ticket','pnpm-lock.yaml','BBT_BOUNDARY_PACKAGE_DAG'],
+ ['bitmap-resource-slot','package.json','BRS_BOUNDARY_PACKAGE_DAG'],
+ ['bitmap-resource-slot','pnpm-lock.yaml','BRS_BOUNDARY_PACKAGE_DAG'],
  ['bitmap-binding-ticket','packages/engine/src/Engine.ts','BBT_BOUNDARY_SELECTED_PRODUCT_IDENTITY'],
  ['bitmap-binding-ticket','packages/engine/dist/Engine.d.ts','BBT_BOUNDARY_ENGINE_PUBLIC_DECLARATION'],
  ['bitmap-resource-slot','packages/engine/src/Engine.ts','BRS_BOUNDARY_DEFAULT_ENTRY_IDENTITY'],

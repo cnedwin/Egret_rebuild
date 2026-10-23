@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "89ceb5b63d0cb5ad7598f9a54782ee7bbe0e5302001b31e2f458d36a178deef5",
+      "sha256": "c48d32c9a53355e23d06ac785b4712052ff9a29b87c95bd11f9ab9d663901486",
       "bytes": 355784,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -10087,14 +10087,14 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-boundary.mjs",
-      "bytes": 47556,
-      "sha256": "2b85a5206b2cfad092ecb42d1200b3e87d9a916a38529087862a94933bdbc4a6",
+      "bytes": 48357,
+      "sha256": "04e760910bee4ce84e4285a3ce9eae9eced72ecc1381c8c59fe0679762c2b0b1",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
-      "bytes": 40977,
-      "sha256": "f6b5f7f4cae9c7eff328f5e7e6f53de7db23c977a587bfd0b76c9ee2e1112146",
+      "bytes": 41778,
+      "sha256": "a03103fe528dda7292b80292e4a559f11ff54985de768ed49fdeb3d27aa3dc14",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
     },
     {
@@ -10161,8 +10161,8 @@
     },
     {
       "path": "tools/atlas-import-boundary.mjs",
-      "bytes": 107421,
-      "sha256": "6c670e346640165395fd0019b4fa7edd259fa844da70f8a04a9dabbdb597ae8f",
+      "bytes": 112375,
+      "sha256": "88283e42d8081c407ff9cc0238a5eb8557c6f964a529549fac0df10f582a8e9b",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 143787,
-      "sha256": "615ac83bb0826b2988db63732ec0f2910c41a1e1cbb9a8bb3b7e3e6e43398bba"
+      "bytes": 145393,
+      "sha256": "4e08fc24f1ebfff34fdcefde2a50ff94fd757465569300cb7403cf0f69aeb7fc"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10688,8 +10688,8 @@
     {
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 33366,
-      "sha256": "49ee8033a7a60ec73726795932fef8f89f8a15994ab8fb30cbaeb04ec29901fc"
+      "bytes": 33781,
+      "sha256": "0c30f5523a75bd12a2236e3f29f6b0a52963787c2624082b0cf15dee7904aacd"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -10778,8 +10778,8 @@
     {
       "path": "tests/atlas-import-boundary.test.mjs",
       "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
-      "bytes": 14415,
-      "sha256": "5d66239f8e9c66873c5842a9e86117012810d0a845e97892f3882565fcac4155"
+      "bytes": 14863,
+      "sha256": "e6917da877686083eda18e9544dc0960fee4a7cdb9aa2f2d11fc1cfd94a6fdea"
     },
     {
       "path": "tests/webgpu-submission-binding-private.test.mjs",
@@ -10904,8 +10904,8 @@
     {
       "path": "tests/bitmap-binding-ticket-boundaries.test.mjs",
       "originRole": "First-party complete-owner source-admission controls, independently authored and reviewed with AI assistance; Apache-2.0.",
-      "bytes": 9384,
-      "sha256": "eb83d02787e39b741976d5177e70518ba9f74e103d27fe8d1769c1d230424287"
+      "bytes": 9666,
+      "sha256": "cb4a6741a4272ac65865b0217760005b76160324f18bddd78bda2fe6bbac2c16"
     },
     {
       "path": "tests/incremental-batch-private.test.mjs",

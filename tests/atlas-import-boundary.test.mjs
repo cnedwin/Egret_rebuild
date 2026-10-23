@@ -82,6 +82,9 @@ function isolated(action){
 
 test('ATLAS-M11 full genuine owner copy satisfies source actor',()=>isolated(({root,run,baseline})=>{assert.deepEqual(inventory(root),baseline);accepted(run());}));
 const controls=[
+ ['M2.1 content source rejects unknown bytes','packages/project/src/resources/content.ts','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('// unknown content source\n')])],
+ ['M2.1 content package rejects unknown bytes','package.json','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('\n')])],
+ ['M2.1 content lock rejects unknown bytes','pnpm-lock.yaml','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('\n')])],
  ['M1.2 runtime source with unchanged emission','packages/runtime/src/frameCapture.ts','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('// unaccepted incremental capture source\n')])],
  ['M1.2 equal-size new helper emission','packages/engine/dist/rendering/preparedFrameCache2D.js','ATLAS_SOURCE_IDENTITY',raw=>{const changed=Buffer.from(raw);changed[0]^=1;assert.equal(changed.length,raw.length);return changed;}],
  ...["packages/engine/dist/rendering/preparedBatches2D.d.ts","packages/engine/dist/rendering/preparedBatches2D.js","packages/engine/dist/rendering/preparedFrameCache2D.d.ts","packages/engine/dist/rendering/preparedFrameCache2D.js","packages/engine/rendering/preparedBatches2D.ts","packages/engine/rendering/preparedFrameCache2D.ts","packages/runtime/dist/frameCaptureCache.d.ts","packages/runtime/dist/frameCaptureCache.js","packages/runtime/src/frameCaptureCache.ts"].map(file=>['M1.2 missing exact new path '+file,file,'ATLAS_SOURCE_FILES',undefined]),
