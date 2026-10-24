@@ -2,7 +2,7 @@
 
 English | [简体中文](PUBLICATION.zh-CN.md)
 
-The public repository is [cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild), with main as the integration branch. Engineering preview 0.54.0 is integrated through PR #42. Workspace packages remain private at 0.0.0 and the host protocol remains 1.0. Source publication and a production engine release have separate acceptance criteria.
+The public repository is [cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild), with main as the integration branch. Engineering preview 0.61.0 is integrated through PR #50. Workspace packages remain private at 0.0.0 and the host protocol remains 1.0. Source publication and a production engine release have separate acceptance criteria.
 
 ## Prepare a contribution
 

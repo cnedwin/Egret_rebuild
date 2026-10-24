@@ -10,17 +10,19 @@ The **0.61.0 engineering preview** adds an internal image cache with per-Host ow
 
 Read the [contract](gpu-image-residency-contract.md) and [evidence and limits](gpu-image-residency-evidence.md). Controlled specification/ownership results and any current desktop regression results have separate scopes. The new dedicated cache browser matrix remains deferred and OPEN. Physical GPU memory, performance, target devices and actual device-loss recovery remain unverified. Workspace packages remain private 0.0.0; Host protocol remains 1.0.
 
-## Atlas import planning — 0.60.0 candidate
+The 0.61 increment was delivered through [PR #50](https://github.com/cnedwin/Egret_rebuild/pull/50), Main `030a34646774dea6c46cc947b55186da9265a6c8`.
+
+## Atlas import planning — 0.60.0
 
 The **0.60.0 engineering preview** adds the optional `@egret/project/atlas` entry: strict single-page Aseprite stable-marker JSON-array planning with one explicit PNG binding. Its two runtime values and sixteen erased types produce owned, frozen inputs for the existing SpriteSheet and SequenceClip factories. The exact profile is `aseprite-json-array-1.3.18.6-v1`; exporter output compatibility, declared hashes and entitlement remain unverified.
 
 Read the [contract](atlas-import-plan-contract.md) and [evidence and limits](atlas-import-plan-evidence.md).
 
-Independently accepted saved results are focused planner 47/47, the earlier normal SDK run with core 3625/3625 and separate F2 160/160, and the distinct CPU firstGREEN 5/5. These overlapping scopes are not added together. Independent review also accepts the selected new Native Canvas/WebGPU four-readback result. Final integrated gates/prepush and 0.60 Git/remote delivery remain pending. Workspace packages remain private 0.0.0; Host protocol remains 1.0.
+Independently accepted saved results are focused planner 47/47, the earlier normal SDK run with core 3625/3625 and separate F2 160/160, and the distinct CPU firstGREEN 5/5. These overlapping scopes are not added together. Independent review also accepts the selected new Native Canvas/WebGPU four-readback result. At that authoring cutoff, final integrated gates/prepush and 0.60 Git/remote delivery remained pending; the 0.60 increment was later delivered through [PR #49](https://github.com/cnedwin/Egret_rebuild/pull/49), Main `8d94620d1134d347bf4cc08d2ef8d76c46c6b308`. Workspace packages remain private 0.0.0; Host protocol remains 1.0.
 
 The preceding 0.59 increment was delivered through [PR #48](https://github.com/cnedwin/Egret_rebuild/pull/48), Main `44f49f9d97a7baebc400fd4940541529dc33d147`. Earlier 0.59 readings and evidence retain their original authoring cutoffs; the new delivery statement does not rewrite them. No remote statuses or check runs were reported, so no CI pass is inferred.
 
-## Normalized atlas frames — 0.59.0 candidate
+## Normalized atlas frames — 0.59.0
 
 The explicit `'trim-rotation-v1'` profile extends the existing SpriteSheet and SequenceClip factories with one erased readonly `AtlasFrameLayout` type. Trimmed and clockwise90-packed crops retain their original logical canvas through Bitmap, SequencePlayer and SequencePlayback. Both frame collectors compose image placement as `M * S` while parent clips, anchors and child coordinates retain their display matrix. Default/undefined profiles keep the existing rectangle path. The [contract](atlas-frame-layout-contract.md), [evidence](atlas-frame-layout-evidence.md) and [example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.md) define the complete input, exact-lease and ownership rules.
 
