@@ -132,6 +132,27 @@ M3.4 包含明确的共享渲染交付，由渲染维护者在 UI 集成前评�
 
 M3.2 在将 ICU／HarfBuzz／FreeType 组合确定为实现依赖之前完成资格验证：保留准确构建／数据／字体身份，在早期 M4.1 子集中测量必需传输、初始化及自有 CPU／Wasm 存储。在全部控件完成前，对照 M4 拟议预算检查结果。预算失败需要明确的实现／设计决定并保留结果，不能删除必需语言或把必需加载推迟到所声称的就绪时点之后。保留既有原生完整行路径和可选包边界，方案本身不证明可行。
 
+### 私有段落与 Unicode 资格检查点 — 2026-10-28
+
+已基于 [Skia/SkParagraph 固定提交 e2def78](https://github.com/google/skia/tree/e2def78fa232884d4aedcf3ad92d4a0dd673b898) 构建并观察一个有界 Node CPU 原型；其选定的 [ICU 源码](https://chromium.googlesource.com/chromium/deps/icu/+/d578f2e8b7bd5938e21cfb6bf15c079e0aa5b738/) 实际报告 ICU78.2 与 Unicode17。这仍属于私有 provider 资格检查，没有实现公开 Egret 段落 API，也没有采用新的运行时依赖。
+
+该观察版本保留 ICU/HarfBuzz/FreeType，包含两项本地 bidi override 修正，并使用明确声明、依赖闭合的24成员 ICU 数据包。默认 line 选择 strict 资源；显式 normal 保留此前的 generic normal 资源。这是预先声明的 profile 变更，原结果和期望保留，没有按失败筛选测试。
+
+| 已观察范围 | 记录结果 | 解释边界 |
+| --- | --- | --- |
+| 聚焦 API 与 bidi 控制 | 18/18通过 | 仅对应记录中的私有产物和有限控制，不代表完整 M3.2 验收。 |
+| Unicode17 grapheme 与 line 边界 | 三个声明 profile 各自均为零差异：en UTF16 iterator、en UTF8 iterator、段落默认 locale flags | 每个 profile 完整比较766条 grapheme、19,338条 line 记录。line flags 比较 soft-or-hard 机会的并集，不证明各 status 含义、整形、光标几何或其他 locale。 |
+| 严格 BidiTest class 比较 | 770,241次 record×mode 尝试中105,785次失败 | 继续标为矛盾。不能称为105,785个已证渲染错误，保留样本也不能说明全部失败的性质。 |
+| 严格 BidiCharacterTest／固定方向 adapter | 分别为11/91,707与11/91,679项不符；28条官方 auto 案例不在固定0/1 adapter 能力内 | 两个范围相互重叠。剩余案例涉及 nonspacing marks、括号栈溢出及一项仅 levels 差异。原始索引顺序差异本身不是像素证据。 |
+
+段落采集保留原文／行／合成附件和同实例 paint 的观察，以及既有53 captures／38 invariants、有限独立参考、条件性 parity 和未观察边界。不能据此声称每份采集都有独立整形或像素 oracle。原失败及缺少参考的组合继续保留。
+
+按记录的 Node26.7.0 gzip9 方法，glue+Wasm 压缩贡献合计4,199,446字节，已嵌入的 Unicode 数据只计一次。在最大64MiB不变的条件下，实际线性内存容量从32增长到38.4375MiB。这些只是产物和容量贡献，不代表总X传输／启动验收、物理内存峰值、成功回收或堆余量合格；其他压缩实现单独记录。
+
+下一项私有比较已准备 [SheenBidi v3.0.0 固定提交 cfe430e](https://github.com/Tehreer/SheenBidi/tree/cfe430e7375a7845b679adae9d51dac6deaa8858) 的源码，许可为 Apache-2.0，其数据源声明 Unicode17。拟议 adapter 应接入真实 SkUnicode/SkParagraph bidi 路径，保留 ICU 边界／flags 服务，并明确标识 linked ICU 的纯L2排序。既有 ICU 诊断和失败记录保持独立。本次准备没有建立 Sheen adapter 实现、构建、运行结果或采用结论；生成表等价、所有权、段落／行行为及成本仍需各自证据。
+
+来源角色分别记录：Skia/SkParagraph 是所检视的原型源码；ICU 是选定的边界／bidi 服务；[Unicode 17 标准测试数据](https://www.unicode.org/Public/17.0.0/ucd/) 与 [UAX #9 修订 51](https://www.unicode.org/reports/tr9/tr9-51.html) 提供独立标准参考；SheenBidi 是拟比较的实现。各材料保留适用的上游许可和 notices。本次文档不加入 vendor 代码、字体载荷或公开 provider。Provider 资格、宣传支持的脚本／样式组合、浏览器合成、原生 IME／无障碍、内存及完整 M4 验收继续 OPEN。
+
 M3.3 与 M3.2 共同确定原生编辑器交接契约，由 M3.3 负责。编辑期间，原生编辑器负责组合输入／选区及其可见编辑几何，避免引擎重复绘制可编辑值或产生重复语义节点。激活时保留源选区及稳定控件／滚动锚点，同时采用原生光标／行几何。退出时先按声明策略结束组合输入，再提交最终文字并发布匹配的段落／布局几何；保存源光标／选区供再次激活。验收前声明并测试各字体允许的重排和锚点位移，不承诺逐像素一致换行。覆盖 CJK／RTL／emoji、迟到字体、键盘视口变化、滚动及过时组合输入回调。合成输入不代表真实 IME 可用性验收。
 
 ## 5. M3.3——跨设备输入、多点触摸、焦点与原生文字编辑

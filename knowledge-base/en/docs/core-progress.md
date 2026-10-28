@@ -4,6 +4,10 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## M3.2 private paragraph qualification — 2026-10-28
+
+The bounded private CPU checkpoint records 18 focused controls passed and zero grapheme/line-boundary disagreements across the three declared full-input profiles. Strict bidi comparisons retain 105,785 class attempt failures and 11 character / 11 fixed-adapter mismatches. Observed linear-memory capacity grew 32→38.4375 MiB under a 64 MiB maximum; this is not memory qualification. SheenBidi v3.0.0 has source-only comparison preparation, with no adapter or runtime result. No public paragraph API or provider adoption is delivered. See the [M3.2 checkpoint, source credits and remaining limits](m3-ui-text-input-plan.md).
+
 ## Experimental WebGPU image residency — 0.61.0
 
 The **0.61.0 engineering preview** adds an internal image cache with per-Host ownership, reusing exact cropped GPU images after safe completion. Its LRU mechanism keeps a 32 MiB logical image pool and at most 256 ready entries, preserving existing public admission, rendering profiles and lifecycle management. It adds no public API or dependency.

@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 12338,
-      "sha256": "ad30f56fddef12abbaaff422495175399bb439bc270d80da7dfc37d2a538a797",
+      "bytes": 12948,
+      "sha256": "1a38ddf689e2a22aeeee07bf48eab964559ba11292abc7b1db45a7d95862cc1e",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "302e0279d2f421a4f12493b3578401c8446c465a33194f61d33bd1480c2a59d5",
+      "sha256": "08001ce0b0d07e5ef64a61e00719372b2190bf85fc2322ec04b38be2d7ccccad",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 14041,
-      "sha256": "503576a5cbb378a8d8db65a725f5124e5aca6fabe8fa5d9e63028037cfd795bd",
+      "bytes": 14724,
+      "sha256": "185a74d0264a3f6806db447eaf697f684c05cabb427658b145d9af3bc97ddc29",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "9cb5b5cc331da4650f9274061590ca62fc7e095a0779c8ae9425ffb92c814d29",
+      "sha256": "6e2015dd507739d3c380f5810278c683698c54fe096a7b3c911e58fdcd19287e",
       "bytes": 360682,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -12782,14 +12782,14 @@
     {
       "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 44842,
-      "sha256": "412b313bf1cb81ac5eed2fff055a60f0bbe42da3f22dcb893b24cc262f081346"
+      "bytes": 49081,
+      "sha256": "09ec9a9e69587f3ffe5149c660a02d27095e2e2deacba569dd443c3d6c7f8eaa"
     },
     {
       "path": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 37702,
-      "sha256": "f2e3508afc1103b12fefab765107b36e085d1c44d7e3b18de1fd1c5abb3b67c7"
+      "bytes": 41451,
+      "sha256": "ac0e807b1fc08323452906cd41502a42b6f972026d770b123ac3c7ed565c5bb0"
     },
     {
       "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
