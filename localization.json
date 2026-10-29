@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "def9386f183a8aec0df8924962840e3bd6112dce7b8246b143c44fb172b2c734",
-      "zhSha256": "9146c6b7fb8a31ca0546a774567535375cd7d783ffc63d8fc00f5049cb7e19ac"
+      "enSha256": "60b1a430ff9e090c72ef82fc429431b3257bab09647fcac449d3025c35c4188c",
+      "zhSha256": "8edf80bacb36f458204f91ca79eaeabaabf5db070bc91e82dac20d209a21aa38"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "263876d2fe39bb47176365906b4d0c132b474b9ed7eeab29f49c270bb50b477b",
-      "zhSha256": "fc8721b53103f47171e1f3de63135ceaf829b8ca3832616dc6e7115c3de29553"
+      "enSha256": "5304bb6c0ccdd4cf4aa7bf77a1b6c0221f0373c2ea31abcc2747425ca4e22c01",
+      "zhSha256": "41c62a9e0fa2565c5f9fbdcabd281b6ea3e2ee45d19640af4ef9d7e813e03ae2"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1970,8 +1970,8 @@
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "640025cc7920a7ad80de6927d3bb976878ac568e9726737005a20af9755fb9de",
-      "zhSha256": "efb9d993feae6caf0a2bac6b81bdc30e248ea5558f0a5418cabe13a33ca6e50a"
+      "enSha256": "964310c4d1a8eb7bda3679d5f0b879176668f633038775a88b930a6b3351befc",
+      "zhSha256": "94d1d76bcd0c7261f9ae3ba7ed99c1c38268d68952da80bfbe8bb2806b144a2b"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -2103,8 +2103,8 @@
       "en": "examples/mobile/README.md",
       "zh": "examples/mobile/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "88d651319f04e7a1e7c1b1e30e37be83d3d178d11e580a7e1b2b1d926e4ded79",
-      "zhSha256": "39b9244920d69378931da211fc6158c09cfdde642df4e214d89e7392f95ea181"
+      "enSha256": "8b2898cc05b03cf340f1d2d907d899d45ced21089cce7f4ff0f200ffa57c6e07",
+      "zhSha256": "4e1a9d446d94050604eade0ce2de4250a428692a7917c6fb4f3bf08e270f4f3b"
     },
     {
       "en": "knowledge-base/en/docs/mobile-examples.md",
@@ -2112,6 +2112,13 @@
       "kind": "public_reading",
       "enSha256": "81c08ff4685d79c3c63059fc5c30844b6fa674bcf00528a050d5b36c0146d46b",
       "zhSha256": "11447b65021021e6f6212eb765b6c58615ccc8d4ce7a07839553ea89d6dcdceb"
+    },
+    {
+      "en": "knowledge-base/en/docs/keyboard-focus-input.md",
+      "zh": "knowledge-base/Cns/docs/keyboard-focus-input.md",
+      "kind": "public_reading",
+      "enSha256": "e81bef2c53781e2d3b9bd4ee40ade14313a7640c4b2c4c8306141636627572de",
+      "zhSha256": "87b3c4a31678f7d2760eaa16d71e18a623979513aeea42fc6f1bc06e57c7867a"
     }
   ],
   "registries": [
@@ -2825,7 +2832,7 @@
     },
     {
       "path": "packages/engine/src/internal/mouseInputFactoryState.ts",
-      "sha256": "ef3d075050fc7f29c9dd7d94f7542cf23e11e6c9b59a037f5f0f41afa738142f"
+      "sha256": "6fef55c1cc4aad67a5fa8f113e022742d6beb95b4faafcc2c03e7e346c83d16a"
     },
     {
       "path": "packages/engine/web/MouseInput.ts",
@@ -2937,11 +2944,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "8b1289ee5ba1b310183172f2ce4f2126dc7c159c2fc9cca0aa1a71a6b45182b0"
+      "sha256": "344a72054df1369c90e0b2d86c10b962a11339c444330ce938969b3cc8fd7637"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "7932b52544839baf24f3bb0bdf6c062aa75b3cfbf550641db40ace2d26e6ebaa"
+      "sha256": "f7a5a178f723ff4627934e9df1d705bbec466446dbe7d0a2ab6b20b1d9a8fe06"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3053,7 +3060,7 @@
     },
     {
       "path": "tools/sequence-playback-types.mjs",
-      "sha256": "51f19c10715097fc265462ceacdfc2b9214430d46344751234c39e4c26a79979"
+      "sha256": "6f16bdf88be1138e819985db4787812bfeb991d0b0f9dcfffa4312a8e70fb415"
     },
     {
       "path": "tools/check-repository-hygiene.mjs",
@@ -3081,11 +3088,11 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "09e8d982f346eeaef6d3a84fc216fb418b07b1fcafd42a4f7e31383010546d19"
+      "sha256": "b5a5dd325306f35c66f9e06d05c258f1bcfa3f4a57ae07aa38c2623c013f44a5"
     },
     {
       "path": "tools/browser-png-types.mjs",
-      "sha256": "d4fbe077c290a0aba2e980965486c3adcd91872e2920937b065d317fb9160ca0"
+      "sha256": "1a017e26a4d9ec74ca1d2a2405c13075b761b46b96ee4e194f63cb33dd7d2752"
     },
     {
       "path": "tools/browser-png/native-observer.mjs",
@@ -3217,7 +3224,7 @@
     },
     {
       "path": "tools/nine-slice-bitmap-types.mjs",
-      "sha256": "233a46ae16cc607d260c2b93829153c4aacf3457972a0f083b809192994a6207"
+      "sha256": "f6110c5d55b3abe7b38722bc82dc0fcf87f638f5c8ff84b219949c5af6eb0122"
     },
     {
       "path": "tools/nine-slice-bitmap-native/fixture.mjs",
@@ -3229,11 +3236,11 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "15ffe5e1548c2b674b11f839a47f3ca5563ac22be36c584fb24af645b8d44728"
+      "sha256": "bfc1862dab42cd58a81d08ca7943568245163bba7d42522af7bfccd8c56a8bd1"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
-      "sha256": "fb7ce03ac1a70923006fc815f3f08ed0bb63a67f53b62b6119dd704c82c652cb"
+      "sha256": "020bad0d78ef8bdc4091cf1ed86e5e566a16ba2246cbf1620b516304d39e7b69"
     },
     {
       "path": "tests/display-container-remove-children-api.test.mjs",
@@ -3245,7 +3252,7 @@
     },
     {
       "path": "tools/display-container-remove-children-types.mjs",
-      "sha256": "f2d0c64c3fa01c1f9a9564aab0727a60bf3ecbeadc8f6989cf6854fff7bdc441"
+      "sha256": "b01b3d667dd95d0209b8dbe3e28d2ba1e411d00118b7d371068769bce8b987b2"
     },
     {
       "path": "tools/display-container-remove-children-native/fixture.mjs",
@@ -3273,7 +3280,7 @@
     },
     {
       "path": "tools/display-container-child-index-types.mjs",
-      "sha256": "2e4f612a35785487c7c661300f3c88322a69afbf24ffc2985b9b95dac6f15221"
+      "sha256": "a5f868233510f3273c9d5e3477f555dca3a4614b300e483b6ba2788fd7897d73"
     },
     {
       "path": "tools/display-container-child-index-native/fixture.mjs",
@@ -3317,11 +3324,11 @@
     },
     {
       "path": "tools/display-anchor-offsets-types.mjs",
-      "sha256": "d97129bb0b0e6152611571e4c5257d65c5e563d563216cb0feee33c091163733"
+      "sha256": "afc1858e50ec3173a4c7b83066d86129b1e4f752dee06a8ea2b5ad0f19727e53"
     },
     {
       "path": "tools/display-container-add-child-at-types.mjs",
-      "sha256": "558cdb8392b0aa9c18025484242846cbae19d217bb659229d4290066f1aed6a0"
+      "sha256": "efdaec33134cbc59fe146b93176c9dafedf40c63c5512e8a33698bf29703e739"
     },
     {
       "path": "tools/display-anchor-offsets-native/fixture.mjs",
@@ -3373,7 +3380,7 @@
     },
     {
       "path": "tools/bitmap-button-types.mjs",
-      "sha256": "90b003391bb1431389e5e784782e0812ce2a2d0d66327cc0817e68c8e7b0619b"
+      "sha256": "119f6ee469afb2c92d8890fbc87b910f7f60618c06505d319d4e60a06212182f"
     },
     {
       "path": "packages/engine/src/layout.ts",
@@ -3385,7 +3392,7 @@
     },
     {
       "path": "tools/linear-layout-types.mjs",
-      "sha256": "3c0935e18d702b831a7989fd0ba08ba88034608a3275fc45a40f31bd1ef96703"
+      "sha256": "6d829ded098556c75554bcba05b91e0a79fee0b23e362319e58a7089187efd18"
     },
     {
       "path": "examples/linear-layout/main.mjs",
@@ -3401,11 +3408,11 @@
     },
     {
       "path": "tools/bitmap-resource-slot-types.mjs",
-      "sha256": "297b6318c70509751eae3370ce63c66a01ac9aba9e1a752e55f9b3f07e73969a"
+      "sha256": "876443b52bf7c9925c28d28258c51d2f0c3feb26ea9c74b615366e0292a4e0ec"
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
-      "sha256": "6cb0dc65aac03afd5f78663c3d89b444b915d5c8eca082f031a51d5495e5459c"
+      "sha256": "1f9bb66ab42c4aee7eb933ff83890e4692314fa3f219462f42836878bd05ea95"
     },
     {
       "path": "tools/verify-bitmap-resource-slot.mjs",
@@ -3541,11 +3548,11 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-boundary.mjs",
-      "sha256": "0fe58e68d8434f6941d3500b5bc39e61d9b9e6dd4a125e4e62b0005ddbae105d"
+      "sha256": "5b559526987fe4fc2f3b9d90c5d90999e5ef79c5c9b7630b0e5f55526fe9aa97"
     },
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
-      "sha256": "d466ab99909c7d6fb725136cdcf73e7423365f316caabbf000abe1fc81f0ee67"
+      "sha256": "d293c7ef91c126ef1c958beb27d32f61ba68f2092dcb1881e936ea4596ced946"
     },
     {
       "path": "tools/prepared-resource-groups/native-fixture.mjs",
@@ -3629,7 +3636,7 @@
     },
     {
       "path": "tools/atlas-frame-types.mjs",
-      "sha256": "7126a7ab88fca3f575901877be50d372b99b1364621f1b3b514af3fdd44e8aae"
+      "sha256": "b70d8b3178aae91a99a76e1d21af188d6c090a2a512519220fa254bd1e30a6a9"
     },
     {
       "path": "tools/atlas-frame/author-assets.mjs",
@@ -3701,7 +3708,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "92d5cbdb5f2d8ee53c49b13895b4b718ff245a317ed956f00c654db6acf857c7"
+      "sha256": "6f23b088df81f4786b869ba8175004a7ca6051aca1224f6f0756471c36fce9e5"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3729,7 +3736,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "e06fd9503045789731a31ab4780b1a0f32984db80b64aa814d7305b34ba601fc"
+      "sha256": "1ea0e95c6a7b9a4f89c39db8c0467e1a3250bd4ec701de653f04c96d40c4e3b3"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -3737,7 +3744,7 @@
     },
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
-      "sha256": "9f7a0b33984923fd9bae281ddf72e4b36445d4708c8247ce617c12fcb44a430d"
+      "sha256": "cf81aef8dff2449768cf8458e9808b04e40d3d0525596f54b381ba679cfaca92"
     },
     {
       "path": "packages/engine/web/webgpuBindingCache.ts",
@@ -3961,7 +3968,7 @@
     },
     {
       "path": "packages/engine/src/input.ts",
-      "sha256": "c6be2e7fe994333ea745add616eaaa125be1600c93cafda95cd5e1a4bd1ca35b"
+      "sha256": "769543b5e34181e2bd23ecc7ba7c0a70ccd16826495c9ef9261410f51a95b9e2"
     },
     {
       "path": "packages/engine/src/pointerInput.ts",
@@ -4158,6 +4165,22 @@
     {
       "path": "examples/paragraph-panel/verify-line-bidi.mjs",
       "sha256": "2aa464bbefaa79aee881cbf0bc388478ec198db818dc7642fe10175a61f8b69e"
+    },
+    {
+      "path": "packages/engine/src/keyboardInput.ts",
+      "sha256": "2fca2a3d826480f6b837024343e885b06f4891783ed6222adc82008fcf131508"
+    },
+    {
+      "path": "packages/engine/src/keyboardInputTypes.ts",
+      "sha256": "cc6b3ad20e6b6831a1a2464b3d97f7333e40eb7fe0f753125e8480286dbf8329"
+    },
+    {
+      "path": "packages/engine/web/BrowserKeyboardInput.ts",
+      "sha256": "ecf97d3dbc6e412e8c7f17881bd6ac6dfae502d290872b99197cf6319fb88b86"
+    },
+    {
+      "path": "packages/engine/web/keyboard.ts",
+      "sha256": "b45f5b288cecd5daa05d95ba69e007b7cc29c0808a513ae7caf0317c7927edba"
     }
   ],
   "historicalSemanticReview": {

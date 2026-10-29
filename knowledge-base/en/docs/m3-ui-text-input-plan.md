@@ -277,3 +277,6 @@ This plan does not add another framework, promise arbitrary CSS, rebuild an enti
 ## Implementation slices
 
 The raw multi-contact scene input contract and evidence boundaries are maintained in [Multi-contact scene input](multi-pointer-input.md). This first slice preserves all remaining M3.3 focus/keyboard/IME and physical-device obligations.
+
+
+The [keyboard/focus increment](keyboard-focus-input.md) now provides opt-in registered display targets, typed key events, traversal, cancellation and a Canvas-native bridge under existing ownership. It does not close the remaining native editor/IME, managed-control registration, modal/composite or semantic-projection rows.

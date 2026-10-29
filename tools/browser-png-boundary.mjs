@@ -39,6 +39,29 @@ const atlasGraphSuccessor = [{"path":"packages/project/dist/atlas/index.d.ts","b
 // Exact M1.5 package successors; all retained package tuples/inverses remain below.
 const m15ResourcePackageSuccessors = [{"base":{"path":"packages/contracts/package.json","bytes":179,"sha256":"fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"},"current":{"path":"packages/contracts/package.json","bytes":319,"sha256":"f40591968003b235cddf38a576c1250a28ef965726750d377f0691a8e6f48e9e"}},{"base":{"path":"packages/engine/package.json","bytes":1567,"sha256":"e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"},"current":{"path":"packages/engine/package.json","bytes":2167,"sha256":"be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143"}},{"base":{"path":"packages/project/package.json","bytes":397,"sha256":"295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945"},"current":{"path":"packages/project/package.json","bytes":621,"sha256":"e6ec9743041ee5489297861ad5ed810021875dae7c041011a0f6d4e754eb6462"}}];
 const m15ResourceAtlasPackageSuccessor = [{"base":{"path":"packages/project/package.json","bytes":503,"sha256":"4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af"},"current":{"path":"packages/project/package.json","bytes":621,"sha256":"e6ec9743041ee5489297861ad5ed810021875dae7c041011a0f6d4e754eb6462"}}];
+// M33-KEYBOARD-CURRENT-BEGIN
+// Exact current keyboard additions invert to the unchanged retained package.
+const m33KeyboardPackagePairs = [{"base":{"path":"packages/engine/package.json","bytes":2933,"sha256":"afcc7ed24ddd5e73f0ebed1f60b1c1b31d1bac59d2127e0b061c499cfe8e93fe"},"current":{"path":"packages/engine/package.json","bytes":3172,"sha256":"93aa97c85bf7c58d9ff462851f1f63aa101aa3a73bf07d2b0518dc14189cec61"}}];
+const m33KeyboardSourcePairs = [{"base":{"path":"packages/engine/src/input.ts","bytes":418,"sha256":"c6be2e7fe994333ea745add616eaaa125be1600c93cafda95cd5e1a4bd1ca35b"},"current":{"path":"packages/engine/src/input.ts","bytes":521,"sha256":"769543b5e34181e2bd23ecc7ba7c0a70ccd16826495c9ef9261410f51a95b9e2"}},{"base":{"path":"packages/engine/dist/input.js","bytes":210,"sha256":"834623a834ac38d8b4c537c613a7d4a8e54100661631b0d11b09f49f6a459f50"},"current":{"path":"packages/engine/dist/input.js","bytes":268,"sha256":"552829011c6e5022b042e9d6acab1cbd4fda112d815f69b201e0a22161e89c5e"}},{"base":{"path":"packages/engine/dist/input.d.ts","bytes":429,"sha256":"bc994dad542569bdb2fca049ad73eb6a4310d4c1dfeb541cd124f71e4ff9e498"},"current":{"path":"packages/engine/dist/input.d.ts","bytes":533,"sha256":"6db9202a2cb5261207254648f83227b510a9d5ebdcea1d82623b7154dc7b8051"}},{"base":{"path":"packages/engine/src/internal/mouseInputFactoryState.ts","bytes":5963,"sha256":"ef3d075050fc7f29c9dd7d94f7542cf23e11e6c9b59a037f5f0f41afa738142f"},"current":{"path":"packages/engine/src/internal/mouseInputFactoryState.ts","bytes":6739,"sha256":"6fef55c1cc4aad67a5fa8f113e022742d6beb95b4faafcc2c03e7e346c83d16a"}},{"base":{"path":"packages/engine/dist/internal/mouseInputFactoryState.js","bytes":4356,"sha256":"bfb0f749f658c2365e8d8a3605f0de8269e2d27cb978a689ef6f3af0b149bbe9"},"current":{"path":"packages/engine/dist/internal/mouseInputFactoryState.js","bytes":4961,"sha256":"82e9331c803fd5cfcfd24cfe7edf10ca20eaded2342cdfd66f4caa48d9a70435"}},{"base":{"path":"packages/engine/dist/internal/mouseInputFactoryState.d.ts","bytes":2847,"sha256":"ee0f110477892343ec32e895c303ca2f81854dcdb7914367a633c0531f12f7bc"},"current":{"path":"packages/engine/dist/internal/mouseInputFactoryState.d.ts","bytes":3258,"sha256":"6e4d93da3abe7b5cfb3f7c32888a2214ff47ff90b5a932de0ba91beec09d2836"}}];
+function m33KeyboardPackageSuccessor(expected,raw){
+ const pair=m33KeyboardPackagePairs[0],digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+ if(expected?.path!==pair.base.path||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;
+ const value=JSON.parse(raw.toString('utf8'));
+ if(JSON.stringify(value.exports['./web/keyboard'])!==JSON.stringify({types:'./dist/web/keyboard.d.ts',import:'./dist/web/keyboard.js'})||JSON.stringify(value.imports['#egret-keyboard-input'])!==JSON.stringify({types:'./dist/keyboardInput.d.ts',import:'./dist/keyboardInput.js'}))return false;
+ delete value.exports['./web/keyboard'];delete value.imports['#egret-keyboard-input'];
+ const previous=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ if(previous.length!==pair.base.bytes||digest(previous)!==pair.base.sha256)return false;
+ return JSON.stringify(expected)===JSON.stringify(pair.base)||m31UiPackageSuccessor(expected,previous);
+}
+const m33KeyboardAdditionPins = [{"path":"packages/engine/src/keyboardInput.ts","bytes":16209,"sha256":"2fca2a3d826480f6b837024343e885b06f4891783ed6222adc82008fcf131508"},{"path":"packages/engine/src/keyboardInputTypes.ts","bytes":2701,"sha256":"cc6b3ad20e6b6831a1a2464b3d97f7333e40eb7fe0f753125e8480286dbf8329"},{"path":"packages/engine/web/BrowserKeyboardInput.ts","bytes":7432,"sha256":"ecf97d3dbc6e412e8c7f17881bd6ac6dfae502d290872b99197cf6319fb88b86"},{"path":"packages/engine/web/keyboard.ts","bytes":418,"sha256":"b45f5b288cecd5daa05d95ba69e007b7cc29c0808a513ae7caf0317c7927edba"},{"path":"packages/engine/dist/keyboardInput.js","bytes":19002,"sha256":"d7598630772ea5e259cfe6225b20319d70650c4adfc09ec9aa55d0b8c3e270de"},{"path":"packages/engine/dist/keyboardInput.d.ts","bytes":615,"sha256":"4aeea826bf8c8b60d38b4e341dbe3e36c22ee76197c0fa01a1c15c5a0a4ca1a7"},{"path":"packages/engine/dist/keyboardInputTypes.js","bytes":57,"sha256":"2c25e6ddb37ae7a2a55b1576019b453bddbb97f9b976e2e5ef6e71a39303d993"},{"path":"packages/engine/dist/keyboardInputTypes.d.ts","bytes":3083,"sha256":"5d60de1196041d01e7ea6f28220961ad87db20d231208f4d698f7623e02d4349"},{"path":"packages/engine/dist/web/BrowserKeyboardInput.js","bytes":9142,"sha256":"94bfa3a9c9bfb1f406ad369f4180b29e72cb527f938aeebc2fb2a2941d4c4410"},{"path":"packages/engine/dist/web/BrowserKeyboardInput.d.ts","bytes":314,"sha256":"81dae594e90e6c6e904c73b01c24c3d6250a8af558718112e8dce677d14de3fe"},{"path":"packages/engine/dist/web/keyboard.js","bytes":147,"sha256":"86bac2c7d6f20d95ee456950dcdce9e0704f6bf0b4a829f0ce15b99789c37cae"},{"path":"packages/engine/dist/web/keyboard.d.ts","bytes":433,"sha256":"d10e418f5b14b4ab62e8ef9a5c6401db7773b8bc0397fb5b73967491162fb673"}];
+function m33KeyboardGraph(base,present){
+ if(!m33KeyboardAdditionPins.some(row=>present.has(row.path)))return base;
+ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b),paths=new Set(base.map(row=>row.path));
+ if(m33KeyboardSourcePairs.length!==6||m33KeyboardAdditionPins.length!==12||m33KeyboardSourcePairs.some(pair=>!base.some(row=>same(row,pair.base)))||m33KeyboardAdditionPins.some(row=>paths.has(row.path))||new Set([...paths,...m33KeyboardAdditionPins.map(row=>row.path)]).size!==base.length+12)throw Error('Invalid finite M3.3 keyboard source successor');
+ return [...base.map(row=>m33KeyboardSourcePairs.find(pair=>same(pair.base,row))?.current??row),...m33KeyboardAdditionPins];
+}
+// M33-KEYBOARD-CURRENT-END
+
 // M3-POINTER-PACKAGE-BEGIN
 // Two exact current packages invert to their retained predecessors; no old row changes.
 const m3PointerPackageSuccessors = [{"base":{"path":"packages/engine/package.json","bytes":2167,"sha256":"be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143"},"current":{"path":"packages/engine/package.json","bytes":2494,"sha256":"65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951"}},{"base":{"path":"packages/runtime/package.json","bytes":327,"sha256":"b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"},"current":{"path":"packages/runtime/package.json","bytes":471,"sha256":"97b2d4678df4fd137b681a54511ce625935accfc3014da4800902f4a241c8db1"}}];
@@ -81,6 +104,7 @@ function m22SequenceGraph(base,present){
  return [...base.map(row=>m22SequenceSourcePairs.find(pair=>same(pair.base,row))?.current??row),...m22SequenceAdditionPins];
 }
 function m22SequencePackageSuccessor(expected,raw){
+ if(m33KeyboardPackageSuccessor(expected,raw))return true;
  const pair=m22SequencePackagePairs.find(pair=>pair.base.path===expected?.path),digest=raw=>createHash('sha256').update(raw).digest('hex');
  if(!pair||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;
  const value=JSON.parse(raw.toString('utf8'));
@@ -474,6 +498,7 @@ function m3PointerGraph(root,base,actual) {
   let graph=content?[...historical.map(row=>m21ContentSourcePairs.find(pair=>same(pair.base,row))?.current??row),...m21ContentAdditionPins]:historical;
   graph=m31UiGraph(graph,present);
   graph=m22SequenceGraph(graph,present);
+  graph=m33KeyboardGraph(graph,present);
   for(const row of graph){
     if(!present.has(row.path))return {failure:issue('BIP_BOUNDARY_SOURCE_INVENTORY',row.path,'Incomplete M3 pointer successor: '+row.path)};
     if(!same(present.get(row.path),row))return {failure:issue('BIP_BOUNDARY_FINGERPRINT',row.path,'M3 pointer whole-group raw identity differs: '+row.path)};
@@ -677,6 +702,8 @@ function surfaceRules(root, id, snapshot) {
       &&equal(value.exports?.['./ui'],{types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'})){
       delete value.exports['./ui'];
     }
+    // Strip only the two exact optional keyboard mappings before retained route checks.
+    if(name==='engine'&&equal(value.exports?.['./web/keyboard'],{types:'./dist/web/keyboard.d.ts',import:'./dist/web/keyboard.js'})&&equal(value.imports?.['#egret-keyboard-input'],{types:'./dist/keyboardInput.d.ts',import:'./dist/keyboardInput.js'})){delete value.exports['./web/keyboard'];delete value.imports['#egret-keyboard-input'];}
     let projectedExports = value.exports, projectedImports = value.imports;
     if (name === 'project' && atlasPackageSuccessor(id.fingerprintFile(root, file), snapshot.stablePins.find(pin => pin.path === file))) {
       const selected = {types:'./dist/atlas/index.d.ts', import:'./dist/atlas/index.js'};

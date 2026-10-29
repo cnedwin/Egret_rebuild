@@ -102,3 +102,13 @@ export const bitmapButtonOperations = Object.freeze({
   disposeDisplay(bitmap: Bitmap): void { APPLY(DISPOSE_DISPLAY, bitmap, []); },
   invoke(callback: (payload: MouseInputPayload) => void, payload: MouseInputPayload): unknown { return APPLY(callback, undefined, [payload]); },
 });
+
+const INPUT_PARENT = Object.getOwnPropertyDescriptor(DisplayObject.prototype, 'parent')!.get!;
+const INPUT_VISIBLE = Object.getOwnPropertyDescriptor(DisplayObject.prototype, 'visible')!.get!;
+const inputRuntimePrimitives = Object.freeze({
+  parent(target: DisplayObject): DisplayObject | undefined { return APPLY(INPUT_PARENT, target, []) as DisplayObject | undefined; },
+  visible(target: DisplayObject): boolean { return APPLY(INPUT_VISIBLE, target, []) as boolean; },
+  disposed(target: DisplayObject): boolean { return APPLY(DISPOSED, target, []) as boolean; },
+});
+/** Optional keyboard admission reuses getters captured before Engine publication. */
+export function captureMouseInputRuntimePrimitives(): typeof inputRuntimePrimitives { return inputRuntimePrimitives; }
