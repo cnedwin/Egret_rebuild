@@ -3057,7 +3057,7 @@
     },
     {
       "path": "tools/browser-png-types.mjs",
-      "sha256": "23bbb78e567b27cee07ba3cb46d8d1d710f5ea2e3d519553db5ab66a34e38499"
+      "sha256": "d4fbe077c290a0aba2e980965486c3adcd91872e2920937b065d317fb9160ca0"
     },
     {
       "path": "tools/browser-png/native-observer.mjs",

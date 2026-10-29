@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "c9f0f04bd6cbac9eaee085d2ccfb0647bbc053ab7ccb378b92dfcf53d942e21d",
+      "sha256": "3912aff22ff4449ccafee1ff115a3e508a1f4f23b8e2b6dbd06742b97e37f00f",
       "bytes": 364039,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -11198,8 +11198,8 @@
     {
       "path": "tools/browser-png-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 23484,
-      "sha256": "23bbb78e567b27cee07ba3cb46d8d1d710f5ea2e3d519553db5ab66a34e38499"
+      "bytes": 24832,
+      "sha256": "d4fbe077c290a0aba2e980965486c3adcd91872e2920937b065d317fb9160ca0"
     },
     {
       "path": "tools/display-anchor-offsets-types.mjs",
