@@ -30,6 +30,8 @@ interface NativeParagraph extends NativeOwned {
     getHeight(): number;
     getShapedLines(): readonly NativeShapedLine[];
     unresolvedCodepoints(): readonly number[];
+    didExceedMaxLines?(): boolean;
+    hasLineEllipsis?(index: number): boolean;
 }
 interface NativeBuilder extends NativeOwned { addText(text: string): void; build(): NativeParagraph | null; }
 interface NativeFont extends NativeOwned {
@@ -55,9 +57,11 @@ export interface CanvasKitParagraphModule {
     readonly TypefaceFontProvider: { Make(): NativeFontProvider | null };
     readonly ParagraphBuilder: { MakeFromFontProvider(style: object, fonts: NativeFontProvider): NativeBuilder | null };
     readonly ParagraphStyle: new (style: object) => object;
+    readonly Paragraph?: { readonly prototype: { readonly didExceedMaxLines?: unknown; readonly hasLineEllipsis?: unknown } };
+    readonly EgretParagraphLayoutVersion?: number;
     readonly Font: new (face: NativeTypeface, size: number, scaleX: number, skewX: number) => NativeFont;
     readonly TextDirection: { readonly LTR: unknown; readonly RTL: unknown };
-    readonly TextAlign: { readonly Left: unknown };
+    readonly TextAlign: { readonly Left: unknown; readonly Right?: unknown; readonly Center?: unknown; readonly Justify?: unknown };
     readonly FontHinting: { readonly Slight: unknown };
     readonly FontEdging: { readonly AntiAlias: unknown };
     readonly ColorType: { readonly RGBA_8888: unknown };
@@ -112,9 +116,23 @@ function token(value: string, limit: number, label: string): void {
     }
 }
 
+/** Transcode CR/CRLF only for layout; keep exact authored UTF16 boundaries. */
+function nativeLayoutSource(source: string): { text: string; boundaries: Uint32Array | undefined } {
+    if (!source.includes('\r')) return {text: source, boundaries: undefined};
+    const units: string[] = [], boundaries = [0];
+    for (let index = 0; index < source.length; index++) {
+        if (source.charCodeAt(index) === 13) {
+            if (source.charCodeAt(index + 1) === 10) index++;
+            units.push('\n');
+        } else units.push(source.charAt(index));
+        boundaries.push(index + 1);
+    }
+    return {text: units.join(''), boundaries: Uint32Array.from(boundaries)};
+}
+
 /**
  * CPU raster adapter using standard CanvasKit paragraph APIs and explicit font bytes.
- * The bundled candidate retains an OPEN final soft-wrapped-line L1 boundary.
+ * Hosts select a qualified native build; final-line and layout controls share its glyph plan.
  * No private qualification snapshot or its 1024-byte/16-line envelope is used.
  */
 export function createCanvasKitParagraphProvider(options: CanvasKitParagraphProviderOptions): CanvasKitParagraphProvider {
@@ -137,7 +155,15 @@ export function createCanvasKitParagraphProvider(options: CanvasKitParagraphProv
     let moduleIdentity = moduleIdentities.get(ck);
     if (moduleIdentity === undefined) { moduleIdentity = nextModuleIdentity++; moduleIdentities.set(ck, moduleIdentity); }
     if (options.buildIdentity !== undefined) token(options.buildIdentity, 512, 'build identity');
-    const identity = 'egret.canvaskit-paragraph.v1:' + JSON.stringify([options.buildIdentity ?? 'host-module-' + moduleIdentity, inputs.map(font => [font.family, font.identity])]);
+    // Capture enum ports before publication; prepare never invokes late enum getters.
+    const alignments = Object.freeze({left: ck.TextAlign.Left, right: ck.TextAlign.Right,
+        center: ck.TextAlign.Center, justify: ck.TextAlign.Justify});
+    const capabilities = Object.freeze({
+        textAlign: alignments.right !== undefined && alignments.center !== undefined && alignments.justify !== undefined,
+        maxLines: ck.EgretParagraphLayoutVersion === 1 && typeof ck.Paragraph?.prototype?.didExceedMaxLines === 'function'
+            && typeof ck.Paragraph?.prototype?.hasLineEllipsis === 'function',
+    });
+    const identity = 'egret.canvaskit-paragraph.v2:' + JSON.stringify([options.buildIdentity ?? 'host-module-' + moduleIdentity, inputs.map(font => [font.family, font.identity]), capabilities.textAlign, capabilities.maxLines]);
     if (identity.length > 8192) throw new RangeError('Paragraph combined provider identity limit exceeded');
     const roots: NativeOwned[] = [];
     let closed = false;
@@ -200,11 +226,13 @@ export function createCanvasKitParagraphProvider(options: CanvasKitParagraphProv
         if (signal.aborted) throw new EgretError('PARAGRAPH_PREPARE_CANCELLED', { cause: signal.reason });
     };
     const provider: CanvasKitParagraphProvider = Object.freeze({
-        identity,
+        identity, capabilities,
         async prepare(this: CanvasKitParagraphProvider, request: ParagraphRequest, context: { signal: CancellationSignal }): Promise<ParagraphRaster> {
             if (this !== provider || busy) throw new EgretError('PARAGRAPH_PROVIDER_BUSY');
             check(context.signal);
-            scalarText(request.text);
+            const sourceText = request.text;
+            scalarText(sourceText);
+            const layoutSource = nativeLayoutSource(sourceText);
             bounded(request.width, 0.25, 4096, 'width');
             bounded(request.fontSize, 1, 512, 'font size');
             bounded(request.density, 0.25, 4, 'density');
@@ -215,6 +243,13 @@ export function createCanvasKitParagraphProvider(options: CanvasKitParagraphProv
             if (!Array.isArray(request.fontFamilies) || request.fontFamilies.length < 1 || request.fontFamilies.some(family => !families.has(family))) {
                 throw new EgretError('PARAGRAPH_FONT_NOT_REGISTERED');
             }
+            const textAlign = request.textAlign ?? 'left', maxLines = request.maxLines;
+            if (!['left','right','center','start','end','justify'].includes(textAlign)) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+            if (maxLines !== undefined && (!Number.isSafeInteger(maxLines) || maxLines < 1 || maxLines > 8193)) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+            if ((textAlign !== 'left' && !capabilities.textAlign) || (maxLines !== undefined && !capabilities.maxLines)) throw new EgretError('PARAGRAPH_FEATURE_UNSUPPORTED');
+            const physicalAlign = textAlign === 'start' ? (request.direction === 'rtl' ? 'right' : 'left')
+                : textAlign === 'end' ? (request.direction === 'rtl' ? 'left' : 'right') : textAlign;
+            const alignment = alignments[physicalAlign];
             busy = true;
             const owned: NativeOwned[] = [];
             let surface: NativeSurface | undefined;
@@ -224,7 +259,8 @@ export function createCanvasKitParagraphProvider(options: CanvasKitParagraphProv
                 const style = new ck.ParagraphStyle({
                     textStyle: { color, fontFamilies: [...request.fontFamilies], fontSize: request.fontSize, locale: request.locale },
                     textDirection: request.direction === 'rtl' ? ck.TextDirection.RTL : ck.TextDirection.LTR,
-                    textAlign: ck.TextAlign.Left, applyRoundingHack: false,
+                    textAlign: alignment, applyRoundingHack: false,
+                    ...(maxLines === undefined ? {} : {maxLines, ellipsis: '\u2026'}),
                     ...(request.lineHeight === undefined ? {} : { strutStyle: {
                         strutEnabled: true, fontFamilies: [...request.fontFamilies], fontSize: request.fontSize,
                         heightMultiplier: request.lineHeight / request.fontSize, halfLeading: true, forceStrutHeight: false,
@@ -233,24 +269,35 @@ export function createCanvasKitParagraphProvider(options: CanvasKitParagraphProv
                 const builder = native(() => ck.ParagraphBuilder.MakeFromFontProvider(style, fontProvider));
                 if (builder === null) throw new EgretError('PARAGRAPH_BUILD_REFUSED');
                 owned.push(builder);
-                native(() => builder.addText(request.text));
+                native(() => builder.addText(layoutSource.text));
                 const paragraph = native(() => builder.build());
                 if (paragraph === null) throw new EgretError('PARAGRAPH_BUILD_REFUSED');
                 owned.push(paragraph);
                 native(() => paragraph.layout(request.width));
                 if (native(() => paragraph.unresolvedCodepoints()).length) throw new EgretError('PARAGRAPH_GLYPH_UNRESOLVED');
                 const lines = native(() => paragraph.getLineMetrics()).map(line => {
-                    if (!Number.isInteger(line.startIndex) || !Number.isInteger(line.endIndex) || line.startIndex < 0 || line.endIndex < line.startIndex || line.endIndex > request.text.length) {
+                    if (!Number.isInteger(line.startIndex) || !Number.isInteger(line.endIndex) || line.startIndex < 0 || line.endIndex < line.startIndex || line.endIndex > layoutSource.text.length) {
                         throw new EgretError('PARAGRAPH_NATIVE_RANGE_INVALID');
                     }
-                    return Object.freeze({ start: line.startIndex, end: line.endIndex,
+                    const start = layoutSource.boundaries?.[line.startIndex] ?? line.startIndex;
+                    const end = layoutSource.boundaries?.[line.endIndex] ?? line.endIndex;
+                    return Object.freeze({ start, end,
                         baseline: bounded(line.baseline, -1048576, 1048576, 'baseline'),
                         ascent: bounded(line.ascent, 0, 1048576, 'ascent'), descent: bounded(line.descent, 0, 1048576, 'descent'),
                         height: bounded(line.height, 0, 1048576, 'line height'), width: bounded(line.width, 0, 1048576, 'line width') });
                 });
                 const height = bounded(native(() => paragraph.getHeight()), 0, 1048576, 'height');
                 if (request.lineHeight !== undefined && lines.some(line => line.height + 0.0001 < request.lineHeight!)) throw new EgretError('PARAGRAPH_MINIMUM_LINE_HEIGHT_UNSUPPORTED');
-                const metrics = Object.freeze({ width: request.width, height, lines: Object.freeze(lines) });
+                // Use actual native overflow state, including a fully fitting last line.
+                // The visible line count alone cannot distinguish fit from truncation.
+                if (maxLines !== undefined && (typeof paragraph.didExceedMaxLines !== 'function' || typeof paragraph.hasLineEllipsis !== 'function')) throw new EgretError('PARAGRAPH_FEATURE_UNSUPPORTED');
+                const truncated = maxLines === undefined ? undefined : native(() => paragraph.didExceedMaxLines!());
+                if (maxLines !== undefined && (lines.length > maxLines || typeof truncated !== 'boolean')) throw new EgretError('PARAGRAPH_NATIVE_RANGE_INVALID');
+                // The native marker query distinguishes real truncation from a
+                // blank last line when the marker cannot fit. Refuse that result
+                // before touching committed UI or terminally poisoning the backend.
+                if (truncated === true && native(() => paragraph.hasLineEllipsis!(lines.length - 1)) !== true) throw new EgretError('PARAGRAPH_ELLIPSIS_DOES_NOT_FIT');
+                const metrics = Object.freeze({ width: request.width, height, lines: Object.freeze(lines), ...(truncated === undefined ? {} : {truncated}) });
                 const shaped = native(() => paragraph.getShapedLines());
                 // getShapedLines returns owned temporary face wrappers, including
                 // repeats. Register every wrapper before inspecting any glyph data.
@@ -266,6 +313,9 @@ export function createCanvasKitParagraphProvider(options: CanvasKitParagraphProv
                     const bounds = native(() => font.getGlyphBounds(run.glyphs));
                     if (bounds.length !== run.glyphs.length * 4 || run.positions.length < run.glyphs.length * 2) throw new EgretError('PARAGRAPH_NATIVE_GLYPH_INVALID');
                     for (let index = 0; index < run.glyphs.length; index++) {
+                        // Synthetic ellipsis glyphs are not covered by source-only
+                        // unresolvedCodepoints; refuse visible missing glyphs as well.
+                        if (truncated === true && run.glyphs[index] === 0) throw new EgretError('PARAGRAPH_GLYPH_UNRESOLVED');
                         const x = bounded(run.positions[index * 2]!, -1048576, 1048576, 'glyph x');
                         const y = bounded(run.positions[index * 2 + 1]!, -1048576, 1048576, 'glyph y');
                         const l = bounded(bounds[index * 4]!, -1048576, 1048576, 'glyph left');

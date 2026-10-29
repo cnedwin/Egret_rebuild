@@ -400,8 +400,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "6f38665b0ca59cfedf4dafc1c94bac807c6fb8c599a273832a677894f259feab",
-      "zhSha256": "fd05f9d813d4beb7f9a52cd94e07c040b1011c8b22e3f94d0d02ce770929494f"
+      "enSha256": "e774ae18a69e15ac34ce7d9a0c0cb46538b782bf285e1196fc1dcb4839953e0e",
+      "zhSha256": "987bb032aacae11c41eee5da83c92899a39d487ec68dc0e6ae5291d1d8d766ea"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "d6dd2be1f87ecc00a3d46ed27949020a98522066d3e889d7bfda961378293917",
-      "zhSha256": "24aba99a0d405285111805100d2d2d170de2ed0f5877ddeb5027c942e86299f2"
+      "enSha256": "e1ef992b4313eb8cc9a94eb45422207830905e83f33ece1d003ab35c1e480555",
+      "zhSha256": "f463f666484a97c4a045dd52a413d2ffbba0782aeeaec76d23d9d82ad629692f"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1100,15 +1100,15 @@
       "zh": "PUBLICATION.zh-CN.md",
       "en": "PUBLICATION.md",
       "kind": "public_reading",
-      "enSha256": "b198c817b41ac12d3b929d2ec292f66925bf53c41e8078e3dc91bd269e49011e",
-      "zhSha256": "422caae01161d81f7ad31d71e66e51a9f7c8904250573ab12c0da95e11c80fba"
+      "enSha256": "27044054cb9363daa298dc959b6b59265a26f23dccfdb0149612fd117db81b2e",
+      "zhSha256": "a164ceaeb731da068989bfe1a684c8330749b639a781194a3d748dba649f0409"
     },
     {
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "20134db947da65fef10518af9168d539e65d38f71c7122eae481b115d9b52312",
-      "zhSha256": "3521e16ec1bc5a1c924b7d4cbaa496fc09208923eb34fa9f07497d2a9176f1ca"
+      "enSha256": "493eaff0a046f18d2357cc8df0b8dae2ce11b56cede57f8ee0b1155150f1d17d",
+      "zhSha256": "49014f99eb77563210260b781c6856272ee02e368e2649aecf0a86222bbb8487"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1970,8 +1970,8 @@
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "be91e6ef81765ddbe05168c28da2ef50782b40132f8c63fbfcb73589dc3ab30b",
-      "zhSha256": "3f8682ff6ba479ca55e48d08675ce6790ca3f9e469c02bb7f8338934cc51683d"
+      "enSha256": "640025cc7920a7ad80de6927d3bb976878ac568e9726737005a20af9755fb9de",
+      "zhSha256": "efb9d993feae6caf0a2bac6b81bdc30e248ea5558f0a5418cabe13a33ca6e50a"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -2068,29 +2068,36 @@
       "en": "knowledge-base/en/docs/readonly-paragraph-sdk.md",
       "zh": "knowledge-base/Cns/docs/readonly-paragraph-sdk.md",
       "kind": "public_reading",
-      "enSha256": "b6050fd6e2fe4a1161b369dd1cdfb2bdcab6957b309b380540f8c7cc022ff5db",
-      "zhSha256": "451d1f0768c972c659263ac7338cffb69586ee2cf11d39cfb5a474a937f361c9"
+      "enSha256": "19ed1abb4116ca202cfc148998c7112163ae9a19ca3ebabd80eb47ebc186dd20",
+      "zhSha256": "066201050c352d9eb7ee837cd6b5eb300a9a46a309d1b214bf1ffa55b2145900"
     },
     {
       "en": "examples/paragraph-panel/README.md",
       "zh": "examples/paragraph-panel/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "c943eacd0c28e08f511ae67c8fe5bb0c665bb51c44c29dc77c9de6aa19f546b2",
-      "zhSha256": "7314c28a0096a1de2049f46d05bd1d94b98b96c7806aa725a885bf1d820f8ed8"
+      "enSha256": "7525222b968d56ec912fa868d13d07a1444827360950ac6685cdadfab4115af6",
+      "zhSha256": "812cc66ea3fc554dac71e1bcd37b0f636e9c813eabe960f1f4cb9663c37641cb"
     },
     {
       "en": "examples/paragraph-panel/vendor/README.md",
       "zh": "examples/paragraph-panel/vendor/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "7fa83d6ceab6a28fd72ceef4cb2a0457fe7bd2e2a35d73c53f88e3f4c3c79dc1",
-      "zhSha256": "d906409ec50e3dd17db315b25dd70ae6f3e81eac3ec32ee78d97abc16f198fdc"
+      "enSha256": "fe77924dc15e51a8ad78f8162030ee8e0414e4fa1fe3234f2b99fc9699e7feac",
+      "zhSha256": "989a901c697e557683518ef9a3787b3c786e1001a8db7cd7fee82cd275880dde"
     },
     {
       "en": "knowledge-base/en/docs/paragraph-line-bidi.md",
       "zh": "knowledge-base/Cns/docs/paragraph-line-bidi.md",
       "kind": "public_reading",
-      "enSha256": "177c189119888f69e0936831dc4a38f11028b36aa3363357e6b6674c1ff5259a",
-      "zhSha256": "adbab5e5bfae532abce82237e4e4eee2d7d0f3e5364221fcbc53d99cf445b380"
+      "enSha256": "9cba7a46f8e578487d2030ee5ce04b9d3d6ef9a6fde2abaf679f233200072f80",
+      "zhSha256": "b036a6511e0b53d2c8c047d665da24eb358b26722d5f89d753acd858e0303d0b"
+    },
+    {
+      "en": "knowledge-base/en/docs/paragraph-layout-controls.md",
+      "zh": "knowledge-base/Cns/docs/paragraph-layout-controls.md",
+      "kind": "public_reading",
+      "enSha256": "6e4af94c8377ae2ca6ae9466cace84dfcd4040cfd980e8556c0202bb4fc8c0a2",
+      "zhSha256": "38c701dc9a20e49e41b99f6f9385bd48255caa6bc62b897236392411d3e7d76c"
     }
   ],
   "registries": [
@@ -3060,7 +3067,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "7a479a3a4edd3360186d93e54b719ab13ab5aba1886deaf64dd89d12d76866e6"
+      "sha256": "09e8d982f346eeaef6d3a84fc216fb418b07b1fcafd42a4f7e31383010546d19"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3208,7 +3215,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "4bf857f498aca6f07d050b5fb22f134d3dd76282a3037c537f59cadddd655780"
+      "sha256": "15ffe5e1548c2b674b11f839a47f3ca5563ac22be36c584fb24af645b8d44728"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3680,7 +3687,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "90c109b20a37d991128eeabd5a5cca798d1e1801b521c23c7ac2437209040d29"
+      "sha256": "92d5cbdb5f2d8ee53c49b13895b4b718ff245a317ed956f00c654db6acf857c7"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3708,7 +3715,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "68f07fc7dda1667a9488f2306d1f0897ff39063b09c0cec1c97a30c3707a53b6"
+      "sha256": "e06fd9503045789731a31ab4780b1a0f32984db80b64aa814d7305b34ba601fc"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4108,7 +4115,7 @@
     },
     {
       "path": "packages/engine/web/CanvasKitParagraphProvider.ts",
-      "sha256": "b2216cd871759b3429b0285dada28757b997380a7b06843e1a4ab51ffe5764ea"
+      "sha256": "64c6a18fccc957951e4fe8f73888f877dacf20249e77a91b865d5ebb8ad4ae3d"
     },
     {
       "path": "packages/engine/web/paragraph.ts",
@@ -4120,7 +4127,7 @@
     },
     {
       "path": "packages/runtime/src/paragraph/ParagraphCache.ts",
-      "sha256": "8da682bc5276867e5e0efe79eab45fbe391b561b5114dbd5ea7596d328517782"
+      "sha256": "4dc1329b314aa75a2436f0e93abb8873d58c893d19e081fa6a4cc7876e4a4124"
     },
     {
       "path": "packages/runtime/src/paragraph/index.ts",
@@ -4128,11 +4135,11 @@
     },
     {
       "path": "packages/runtime/src/paragraph/request.ts",
-      "sha256": "f746efef09d063768fcfc7faa3082b7e873c073471b6e44cda9c816f157fbb01"
+      "sha256": "58456420497b58649dfda8e56a0e880bdb1fe0f368e73c2c50ce778766f3e68d"
     },
     {
       "path": "packages/runtime/src/paragraph/types.ts",
-      "sha256": "b26373795b7f0a8e23dfed0e9ea962b9ccd7615b966b8ceecc60c27dc3d0cc60"
+      "sha256": "f2d6c7adcdf40a018e319f51b0656da0a14386f22863e952f949a917be422fe4"
     },
     {
       "path": "examples/paragraph-panel/verify-line-bidi.mjs",

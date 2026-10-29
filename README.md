@@ -24,9 +24,9 @@ The [M2–M4 roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md) connects co
 
 ## Readonly paragraph SDK in Engine UI
 
-The optional [readonly paragraph SDK](knowledge-base/en/docs/readonly-paragraph-sdk.md) wraps Latin, Chinese and Arabic text from explicit font bytes and feeds natural/minimum line height into ordinary UI and virtual lists. Run [the integrated example](examples/paragraph-panel/README.md) to resize, change type size/density, and observe atomic content replacement. Final-line bidi L1/L2 is integrated with finite native/browser checks; full M3.2, editing/IME, physical devices and performance remain open.
+The optional [readonly paragraph SDK](knowledge-base/en/docs/readonly-paragraph-sdk.md) wraps Latin, Chinese and Arabic text from explicit font bytes and feeds natural/minimum line height into ordinary UI and virtual lists. Run [the integrated example](examples/paragraph-panel/README.md) to resize, align, limit lines, change type size/density, and observe atomic content replacement. Final-line bidi L1/L2 is integrated with finite native/browser checks; full M3.2, editing/IME, physical devices and performance remain open.
 
-可选[只读段落 SDK](knowledge-base/Cns/docs/readonly-paragraph-sdk.md)已接入普通 UI 与虚拟列表，支持明确字体下的中英阿文字换行及真实/最小行高。最终行双向 L1／L2 已集成并通过有限原生／浏览器检查；M3.2 完整验收、编辑与输入法、真机及性能仍未完成。
+可选[只读段落 SDK](knowledge-base/Cns/docs/readonly-paragraph-sdk.md)已接入普通 UI 与虚拟列表，支持明确字体下的中英阿文字换行、对齐、行数限制及真实/最小行高。最终行双向 L1／L2 已集成并通过有限原生／浏览器检查；M3.2 完整验收、编辑与输入法、真机及性能仍未完成。
 
 ## M2.2 sequence controls
 
@@ -124,6 +124,7 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| Paragraph layout / 段落布局 · 2026-10-29 | Six alignments, maxLines and truthful overflow; hard-break marker and recoverable no-fit refusal | 六种对齐、maxLines 与真实溢出；硬换行省略号及过窄拒绝／恢复 |
 | Final-line bidi / 最终行双向排版 · 2026-10-29 | Native line L1/L2 after wrapping; shared glyph/rect/hit order and sequential trailing-space geometry | 换行后原生行 L1／L2，字形／矩形／命中共享顺序，尾空格依次定位 |
 | Readonly paragraphs / 只读段落 · 2026-10-29 | Width-based Latin/CJK/Arabic paragraph layout, natural/minimum line height, ordinary UI and variable-height list integration | 明确字体的中英阿文字自动换行、自然/最小行高，接入普通 UI 与动态高度列表 |
 | M2.1 runtime integration / 运行时接入 · 2026-10-29 | Typed PNG/atlas/sequence groups reuse existing resources and lifetimes; complete readiness, cancellation and explicit generation replacement | PNG／图集／序列帧类型化组复用原资源与生命周期，支持完整就绪、取消及显式代际替换 |

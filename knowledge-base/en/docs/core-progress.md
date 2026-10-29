@@ -4,6 +4,10 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## M3.2 paragraph alignment and line limits — 2026-10-29
+
+Readonly paragraphs now support left/right/center/start/end/justify alignment and optional maxLines with a fixed ellipsis. Hard-break/blank-line overflow shows the marker; an impossibly narrow field rejects without replacing committed content. Existing UI geometry and resource ownership remain authoritative. See the [layout contract](paragraph-layout-controls.md). The focused 36 cases and 20 actual browser checks per backend are finite functional evidence; full M3.2, devices, IME and performance remain OPEN.
+
 ## M3.2 readonly UI paragraphs and final-line bidi — 2026-10-29
 
 The optional readonly SDK now drives ordinary UI and virtual lists using explicit font bytes, width-aware wrapping, natural/minimum line height and existing resource leases. Its selected native backend resolves actual final lines with retained P1 context, keeping glyph storage, rectangles and hit queries consistent. Finite native controls and 14 actual Edge checks on each of WebGL2/WebGPU passed. The [SDK contract](readonly-paragraph-sdk.md) and [final-line record](paragraph-line-bidi.md) state the precise scope. Full M3.2, independent glyph/ink references, editing/IME, phones, performance and memory/OOM remain OPEN. The checkpoints below retain their original artifact and adoption boundaries.

@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-This directory makes the paragraph-panel example runnable from the repository. The SDK adapter itself performs no network access and does not import these assets automatically. The application loads `runtime/line-bidi-r1/canvaskit.js`, initializes `CanvasKitInit` with a `locateFile` route for `runtime/line-bidi-r1/canvaskit.wasm`, reads the selected fonts, and supplies the initialized module and font bytes to `createCanvasKitParagraphProvider`. Use `manifest.runtime.buildIdentity` as the adapter's explicit `buildIdentity`. Its identity also includes every registered family and caller-declared font identity; that declaration does not itself recompute a hash.
+This directory makes the paragraph-panel example runnable from the repository. The SDK adapter itself performs no network access and does not import these assets automatically. The application loads `runtime/layout-r1/canvaskit.js`, initializes `CanvasKitInit` with a `locateFile` route for `runtime/layout-r1/canvaskit.wasm`, reads the selected fonts, and supplies the initialized module and font bytes to `createCanvasKitParagraphProvider`. Use `manifest.runtime.buildIdentity` as the adapter's explicit `buildIdentity`. Its identity also includes every registered family and caller-declared font identity; that declaration does not itself recompute a hash.
 
 ## Runtime and font identities
 
@@ -11,11 +11,11 @@ This directory makes the paragraph-panel example runnable from the repository. T
 | Optional browser payload | Raw bytes |
 | --- | ---: |
 | CanvasKit glue | 96,090 |
-| CPU Wasm | 8,600,088 |
+| CPU Wasm | 8,600,298 |
 | Noto Sans Regular | 569,208 |
 | Noto Sans Arabic Regular | 142,140 |
 | Noto Sans CJK SC Regular | 16,437,364 |
-| Runtime and three fonts | 25,844,890 |
+| Runtime and three fonts | 25,845,100 |
 
 These are original full fonts, without subsetting. Transfer compression, startup, live/physical memory and device performance are not established by the raw totals. `source/icudtl.dat` is an additional 3,089,888-byte rebuild input; it is already embedded in Wasm and is not loaded separately by the browser. The Wasm declaration is 32 MiB initial and 64 MiB maximum linear memory, which is not a live-allocation or physical-memory measurement.
 
@@ -45,4 +45,6 @@ The preserved patch sequence is `source/patches/00-canvaskit-memory.diff`, then 
 
 `source/args.gn` is a portable projection of the frozen CPU configuration; set the build host's `EMSDK` to its Emscripten SDK directory. The recorded toolchain was Emscripten 4.0.7 / clang and LLD revision `57025b42c43b2f14f7e58692bc19cd53d1b8a45e`, GN `b2afae122eeb`, Ninja 1.12.1, SDK Node 20.18.0, and Closure Compiler v20240317. Keep the selected dependencies, CPU-only options, embedded ICU services and 32/64 MiB declaration. Configure the CanvasKit target with the selected args, then build `canvaskit.js` through Ninja. The included patch/data/config identities make the source changes reviewable; a clean-machine build replay and bit-identical reconstruction have not been performed for this package. A rebuilt artifact requires its own hashes and runtime/browser checks before replacing this manifest's exact payloads.
 
-The selected runtime adds `source/patches/08-final-line-bidi.patch` after 00–07 and loads only `runtime/line-bidi-r1/`. Earlier runtime/patch bytes are retained unchanged for provenance and regression comparison.
+The selected runtime applies `source/patches/08-final-line-bidi.patch` after 00–07, then `09-paragraph-layout.patch` and loads only `runtime/layout-r1/`. Earlier runtime/patch bytes are retained unchanged for provenance and regression comparison.
+
+Layout-r1 exposes native layout version1 and an actual-line marker query. The adapter admits maxLines only with these and the actual overflow method. Patch09 preserves source/cluster positions while excluding the invisible hard-break advance; it changes three Skia source files under their retained BSD notices. The SDK environment remains Node26.7.0; Node20 above belongs only to the separately pinned native build toolchain. See the [layout contract](../../../knowledge-base/en/docs/paragraph-layout-controls.md).

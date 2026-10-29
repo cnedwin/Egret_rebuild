@@ -18,7 +18,7 @@ import type { ParagraphCache, ParagraphCacheOptions, ParagraphProvider, Paragrap
 type Owner = ReturnType<typeof requireAssetManagerOwner>;
 interface Result { readonly texture: Texture; readonly prepared: Omit<PreparedParagraph, 'lease'>; readonly bytes: number; }
 interface Slot { readonly ref: AssetRef<Texture>; key: string | undefined; request: ParagraphRequest | undefined; result: Result | undefined; callers: number; resident: AssetLease<Texture> | undefined; residentPending: boolean; used: number; }
-interface State { readonly owner: Owner; readonly provider: ParagraphProvider; readonly prepare: ParagraphProvider['prepare']; readonly slots: readonly Slot[]; readonly maxBytes: number; readonly maxJobs: number; readonly textures: Map<Texture, Result>; closed: boolean; generation: number; clock: number; jobs: number; bytes: number; }
+interface State { readonly owner: Owner; readonly provider: ParagraphProvider; readonly prepare: ParagraphProvider['prepare']; readonly supportsTextAlign: boolean; readonly supportsMaxLines: boolean; readonly slots: readonly Slot[]; readonly maxBytes: number; readonly maxJobs: number; readonly textures: Map<Texture, Result>; closed: boolean; generation: number; clock: number; jobs: number; bytes: number; }
 const states = new WeakMap<object, State>();
 const releaseLease = (lease: AssetLease<Texture> | undefined): void => { lease?.release(); };
 function stateOf(cache: unknown): State { const s=states.get(cache as object); if (!s) throw new EgretError('PARAGRAPH_CACHE_INVALID'); return s; }
@@ -57,6 +57,8 @@ async function acquire(this: ParagraphCache, input: ParagraphRequestInput, optio
   const s=stateOf(this);live(s);
   const request=snapshotParagraphRequest(input), signal=options.signal;
   live(s); if(signal?.aborted) throw new EgretError('PARAGRAPH_CANCELLED',{cause:signal.reason});
+  // Feature refusal happens before reserving a slot or invoking an older provider.
+  if ((request.textAlign !== undefined && !s.supportsTextAlign) || (request.maxLines !== undefined && !s.supportsMaxLines)) throw new EgretError('PARAGRAPH_FEATURE_UNSUPPORTED');
   if(s.slots.reduce((total,slot)=>total+slot.callers,0)>=256)throw new EgretError('PARAGRAPH_CACHE_BUDGET');
   const key=JSON.stringify(request);
   let slot=s.slots.find(slot=>slot.key===key);
@@ -110,12 +112,17 @@ export function createParagraphCache(assets: AssetManager, options: ParagraphCac
   const owner=requireAssetManagerOwner(assets),finish=beginParagraphCacheCreation(assets);
   try {
     const provider=options.provider,identity=provider.identity,prepare=provider.prepare;
+    const capabilities=provider.capabilities;
+    if (capabilities !== undefined && (capabilities === null || typeof capabilities !== 'object' || Array.isArray(capabilities))) throw new EgretError('PARAGRAPH_PROVIDER_INVALID');
+    const textAlign=capabilities?.textAlign, maxLines=capabilities?.maxLines;
+    if ((textAlign !== undefined && typeof textAlign !== 'boolean') || (maxLines !== undefined && typeof maxLines !== 'boolean')) throw new EgretError('PARAGRAPH_PROVIDER_INVALID');
+    const supportsTextAlign=textAlign === true, supportsMaxLines=maxLines === true;
     const count=limit(options.maxEntries,32,1,32),maxBytes=limit(options.maxImageBytes,16777216,4,67108864),maxJobs=limit(options.maxPendingJobs,32,1,32);
     if(typeof identity!=='string' || identity.length<1 || identity.length>8192 || typeof prepare!=='function')throw new EgretError('PARAGRAPH_PROVIDER_INVALID');
     owner.assertOpen();
     const type=createAssetType<Texture>('egret.paragraph.v1.texture',isTexture);
     const slots=Object.freeze(Array.from({length:count},(_,index):Slot=>({ref:createAssetRef(type,'egret.paragraph.v1.slot.'+index),key:undefined,request:undefined,result:undefined,callers:0,resident:undefined,residentPending:false,used:0})));
-    const s:State={owner,provider,prepare,slots,maxBytes,maxJobs,textures:new Map(),closed:false,generation:1,clock:0,jobs:0,bytes:0};
+    const s:State={owner,provider,prepare,supportsTextAlign,supportsMaxLines,slots,maxBytes,maxJobs,textures:new Map(),closed:false,generation:1,clock:0,jobs:0,bytes:0};
     const cache=Object.freeze({profile:'readonly-paragraph-v1',acquire,invalidate,getStatus,dispose}) as ParagraphCache;
     states.set(cache,s);commitBinding([cache],owner.context);
     commitParagraphCacheLifetime(assets,()=>close(s));

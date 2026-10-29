@@ -6,7 +6,7 @@
   <title>Egret paragraphs and UI / 白鹭段落与界面</title>
   <link rel="icon" href="data:,">
   <script type="importmap">{"imports":{"@egret/engine":"/packages/engine/dist/index.js","@egret/engine/ui":"/packages/engine/dist/ui/index.js","@egret/engine/paragraph":"/packages/engine/dist/paragraph.js","@egret/engine/web/paragraph":"/packages/engine/dist/web/paragraph.js","@egret/engine/web/pointer":"/packages/engine/dist/web/pointer.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/engine/webgl2":"/packages/engine/dist/web/webgl2.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/runtime/ui":"/packages/runtime/dist/ui/index.js","@egret/runtime/text":"/packages/runtime/dist/text/index.js","@egret/runtime/paragraph":"/packages/runtime/dist/paragraph/index.js","@egret/runtime/input":"/packages/runtime/dist/input/index.js","@egret/contracts":"/packages/contracts/dist/index.js","@egret/contracts/resources":"/packages/contracts/dist/resources/index.js","#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-pointer-input":"/packages/engine/dist/pointerInput.js","robust-predicates":"/vendor/robust-predicates/index.js"}}</script>
-  <script src="./vendor/runtime/line-bidi-r1/canvaskit.js"></script>
+  <script src="./vendor/runtime/layout-r1/canvaskit.js"></script>
   <style>
     * {box-sizing:border-box;}
     body {margin:0;background:#eef3f8;color:#172a43;font:15px/1.5 system-ui,sans-serif;}
@@ -33,6 +33,8 @@
       <button data-action="larger">Larger type / 大字号</button>
       <button data-action="line-height">44px minimum line height / 最小行高</button>
       <button data-action="density">Toggle density / 切换密度</button>
+      <button data-action="align">Change text alignment / 切换对齐</button>
+      <button data-action="clamp">Toggle two-line limit / 两行限制</button>
       <button data-action="static">Prepare unchanged / 重复准备</button>
       <button data-action="scroll">Scroll list / 滚动列表</button>
       <button data-action="delay">Delay update / 延迟更新</button>

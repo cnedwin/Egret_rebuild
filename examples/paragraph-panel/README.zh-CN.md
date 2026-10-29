@@ -17,3 +17,7 @@
 只读段落不实现编辑、选择或原生输入法。所选后端已集成最终行 L1／L2，并完成有限[原生／浏览器验证](../../knowledge-base/Cns/docs/paragraph-line-bidi.md)。本示例不能证明完整 Unicode 正确性、未列出文字/字体的覆盖、GPU 计时、物理内存、移动设备表现或剩余 M3/M4 验收。浏览器观察与受控生命周期测试应分别记录。
 
 构建后，使用已安装的 Playwright 1.62.1 和 Edge，执行 `node examples/paragraph-panel/verify-browser.mjs <playwright-root> <new-output-directory>`，可一次运行两个后端的完整行为检查。[实际观察记录](../../verification/paragraph-sdk/verification.json)将有限功能结果与性能、手机、IME 和独立字形／墨迹验收区分。
+
+## 段落布局控制
+
+Align 按左／居中／右／start／end／两端顺序切换普通段落和虚拟行。两行限制在 maxLines=2 与不限行之间切换，后续几何使用同一准备结果更新。失败或不支持的更新保留旧画面。当前 layout-r1 运行库提供经验证的硬换行省略号及可恢复的过窄拒绝。见[契约与最新证据](../../knowledge-base/Cns/docs/paragraph-layout-controls.md)。
