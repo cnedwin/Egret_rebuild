@@ -1,0 +1,21 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Egret interactive examples / 白鹭交互示例</title><link rel="icon" href="data:,">
+<script type="importmap">{"imports":{"@egret/engine":"/packages/engine/dist/index.js","@egret/engine/ui":"/packages/engine/dist/ui/index.js","@egret/engine/text":"/packages/engine/dist/text.js","@egret/engine/web/text":"/packages/engine/dist/web/text.js","@egret/engine/web/pointer":"/packages/engine/dist/web/pointer.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/engine/webgl2":"/packages/engine/dist/web/webgl2.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/runtime/ui":"/packages/runtime/dist/ui/index.js","@egret/runtime/text":"/packages/runtime/dist/text/index.js","@egret/runtime/input":"/packages/runtime/dist/input/index.js","@egret/contracts":"/packages/contracts/dist/index.js","@egret/contracts/resources":"/packages/contracts/dist/resources/index.js","#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-pointer-input":"/packages/engine/dist/pointerInput.js","robust-predicates":"/vendor/robust-predicates/index.js","@egret/engine/web":"/packages/engine/dist/web/index.js","@egret/engine/web/image":"/packages/engine/dist/web/image.js","@egret/engine/paragraph":"/packages/engine/dist/paragraph.js","@egret/engine/web/paragraph":"/packages/engine/dist/web/paragraph.js","@egret/runtime/paragraph":"/packages/runtime/dist/paragraph/index.js"}}</script>
+<link rel="stylesheet" href="./style.css"></head><body><main>
+<header><h1>Egret interactive examples<br><span lang="zh-CN">白鹭交互示例</span></h1>
+<p>Touch, mouse and pen; responsive panels and bounded pixel density.<br><span lang="zh-CN">触摸、鼠标与笔；自适应面板和有界像素密度。</span></p></header>
+<nav aria-label="Examples / 示例">
+<a href="?scene=resources">Actors / 角色</a><a href="?scene=pointers">Two contacts / 双触点</a><a href="?scene=ui">UI rows / UI 列表</a><a href="?scene=paragraph">Paragraphs / 多语言段落</a></nav>
+<p id="backend">Panel backend / 面板后端：<a href="?scene=ui&backend=webgl2">WebGL2</a> · <a href="?scene=ui&backend=webgpu">WebGPU</a></p>
+<p id="instructions">Tap a character or hold each region. Scroll outside the canvas to move the page.<br><span lang="zh-CN">点按角色或按住各个区域。在画布外滑动可滚动页面。</span></p>
+<div id="surface"><canvas id="scene" aria-label="Interactive Egret scene / 白鹭交互场景"></canvas></div>
+<div id="controls" aria-label="Scene controls / 场景控件"></div>
+<button id="close">Close example / 关闭示例</button>
+<p id="phase" role="status" aria-live="polite">Starting / 启动中</p>
+<details><summary>Viewport and observations / 视口与观察记录</summary><pre id="status"></pre></details>
+<p><a id="fixed">Fixed qualification entry / 固定验收入口</a> · <a href="../sequence-controls/index.html">Sequence controls (fixed) / 序列帧控件（固定）</a></p>
+<p>Density is capped at 2 for this preview. These examples do not establish physical-phone, IME or performance acceptance.<br><span lang="zh-CN">本预览的密度上限为 2。示例不代表手机真机、输入法或性能验收。</span></p>
+</main><script type="module" src="./main.mjs"></script></body></html>

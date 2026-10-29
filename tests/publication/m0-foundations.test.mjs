@@ -37,7 +37,9 @@ test('example server exposes only allowlisted files and handles missing/bad requ
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const url='http://127.0.0.1:'+server.address().port;
  try {
-  assert.equal(await (await fetch(url+'/')).text(),'<h1>example</h1>');
+  const landing=await fetch(url+'/?scene=pointers',{redirect:'manual'});
+  assert.equal(landing.status,302);assert.equal(landing.headers.get('location'),'/examples/mobile/index.html?scene=pointers');
+  assert.equal(await (await fetch(url+'/examples/resource-scene/index.html')).text(),'<h1>example</h1>');
     for (const name of ['index.html','main.mjs','fixture.mjs']) assert.equal(await (await fetch(url+'/examples/ui-data-panel/'+name)).text(),name);
     assert.equal((await fetch(url+'/examples/ui-data-panel/verify.mjs')).status,404);
     assert.equal((await fetch(url+'/vendor/robust-predicates/package.json')).status,404);
@@ -200,5 +202,20 @@ test('sequence example serves bounded generated artifacts without exposing other
   for(const file of refused)assert.equal((await fetch(url+'/'+file)).status,404,file);
   assert.equal((await fetch(url+'/'+prefix+'/candidate.json',{method:'HEAD'})).status,200);
   assert.equal((await fetch(url+'/'+prefix+'/candidate.json',{method:'POST'})).status,405);
+ }finally{await new Promise(resolve=>server.close(resolve));fs.rmSync(root,{recursive:true,force:true});}
+});
+
+
+test('mobile example serves a finite public module set and preserves the fixed entry',async()=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'egret mobile server '));
+ const files=['index.html','style.css','main.mjs','viewport.mjs','resources.mjs','pointers.mjs','panels.mjs'];
+ fs.mkdirSync(path.join(root,'examples/mobile'),{recursive:true});
+ for(const file of [...files,'verify.mjs','private.json'])fs.writeFileSync(path.join(root,'examples/mobile',file),file);
+ const server=createExampleServer(root);await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+ const url='http://127.0.0.1:'+server.address().port;
+ try{
+  for(const file of files){const response=await fetch(url+'/examples/mobile/'+file);assert.equal(response.status,200,file);assert.equal(await response.text(),file);}
+  const css=await fetch(url+'/examples/mobile/style.css',{method:'HEAD'});assert.equal(css.status,200);assert.ok(css.headers.get('content-type').startsWith('text/css'));assert.equal(await css.text(),'');
+  for(const file of ['verify.mjs','private.json','../mobile-more/main.mjs'])assert.equal((await fetch(url+'/examples/mobile/'+file)).status,404,file);
  }finally{await new Promise(resolve=>server.close(resolve));fs.rmSync(root,{recursive:true,force:true});}
 });
