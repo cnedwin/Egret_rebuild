@@ -1,0 +1,734 @@
+diff --git a/modules/skunicode/src/SkUnicode_sheen_private.h b/modules/skunicode/src/SkUnicode_sheen_private.h
+index a26a2fc..106e6a0 100644
+--- a/modules/skunicode/src/SkUnicode_sheen_private.h
++++ b/modules/skunicode/src/SkUnicode_sheen_private.h
+@@ -21,6 +21,14 @@ EgretSheenCResult EgretSheenObserve(const uint16_t* text, int32_t inputLength,
+         uint8_t* rawLevels, uint8_t* levels, int32_t* visualToLogical,
+         int32_t* paragraphEnds, uint8_t* paragraphLevels);
+ const char* EgretSheenLibraryVersion(void);
++
++// Opaque retained P1 state: each actual line is resolved by the stock native library.
++typedef struct EgretSheenLineContext EgretSheenLineContext;
++typedef struct EgretSheenLineRun { int32_t start; int32_t end; uint8_t level; } EgretSheenLineRun;
++EgretSheenLineContext* EgretSheenCreateLineContext(const uint16_t*, int32_t, int32_t);
++void EgretSheenReleaseLineContext(EgretSheenLineContext*);
++int32_t EgretSheenReadLine(EgretSheenLineContext*, int32_t, int32_t, EgretSheenLineRun*, int32_t);
++int32_t EgretSheenLogicalControlAt(EgretSheenLineContext*, int32_t);
+ #ifdef __cplusplus
+ }
+ 
+@@ -50,6 +58,20 @@ std::unique_ptr<SkBidiIterator> MakeIterator(const uint16_t*, int, SkBidiIterato
+ std::unique_ptr<SkBidiIterator> MakeIterator(const char*, int, SkBidiIterator::Direction);
+ bool GetBidiRegions(const char*, int, SkUnicode::TextDirection,
+                    std::vector<SkUnicode::BidiRegion>*);
++struct LineAtom { size_t start; size_t end; uint8_t level; bool logicalControl; };
++class LineContext {
++public:
++    static std::unique_ptr<LineContext> Make(const char*, int, SkUnicode::TextDirection);
++    ~LineContext();
++    bool atoms(size_t, size_t, std::vector<LineAtom>*) const;
++    bool controlAt(size_t byte) const { return byte < fControlBytes.size() && fControlBytes[byte]; }
++private:
++    std::u16string fText;
++    std::vector<int32_t> fByteAt;
++    std::vector<int32_t> fUnitAt;
++    std::vector<uint8_t> fControlBytes;
++    EgretSheenLineContext* fNative = nullptr;
++};
+ sk_sp<SkUnicode> MakeForPrivateSheenComparison();
+ }  // namespace SkUnicodes::SheenPrivate
+ #endif
+diff --git a/modules/skunicode/src/SkUnicode_sheen_private_c.c b/modules/skunicode/src/SkUnicode_sheen_private_c.c
+index 850ebbb..e362b37 100644
+--- a/modules/skunicode/src/SkUnicode_sheen_private_c.c
++++ b/modules/skunicode/src/SkUnicode_sheen_private_c.c
+@@ -125,3 +125,94 @@ done:
+     free(types);
+     return out;
+ }
++
++// A context owns every solved P1 paragraph while borrowing the C++ owner's immutable UTF16.
++typedef struct EgretSheenP1 {
++    SBParagraphRef paragraph;
++    int32_t start, end;
++    struct EgretSheenP1* next;
++} EgretSheenP1;
++struct EgretSheenLineContext {
++    SBAlgorithmRef algorithm;
++    const uint16_t* text;
++    int32_t length;
++    EgretSheenP1* first;
++};
++void EgretSheenReleaseLineContext(EgretSheenLineContext* context) {
++    if (context) {
++        EgretSheenP1* p = context->first;
++        while (p) { EgretSheenP1* next=p->next; SBParagraphRelease(p->paragraph); free(p); p=next; }
++        if (context->algorithm) SBAlgorithmRelease(context->algorithm);
++        free(context);
++    }
++}
++EgretSheenLineContext* EgretSheenCreateLineContext(const uint16_t* text, int32_t length, int32_t rtl) {
++    EgretSheenLineContext* context;
++    SBCodepointSequence sequence;
++    EgretSheenP1** tail;
++    int32_t offset=0;
++    if (length<0 || (length && !text) || (rtl!=0 && rtl!=1)) return NULL;
++    context=(EgretSheenLineContext*)calloc(1,sizeof(*context));
++    if (!context) return NULL;
++    context->text=text; context->length=length;
++    if (!length) return context;
++    sequence.stringEncoding=SBStringEncodingUTF16; sequence.stringBuffer=text; sequence.stringLength=(SBUInteger)length;
++    context->algorithm=SBAlgorithmCreate(&sequence);
++    if (!context->algorithm) { EgretSheenReleaseLineContext(context); return NULL; }
++    tail=&context->first;
++    while (offset<length) {
++        SBParagraphRef paragraph=SBAlgorithmCreateParagraph(context->algorithm,(SBUInteger)offset,(SBUInteger)(length-offset),rtl?1:0);
++        SBUInteger count;
++        EgretSheenP1* entry;
++        if (!paragraph) { EgretSheenReleaseLineContext(context); return NULL; }
++        count=SBParagraphGetLength(paragraph);
++        if (!count || count>(SBUInteger)(length-offset) || SBParagraphGetOffset(paragraph)!=(SBUInteger)offset) {
++            SBParagraphRelease(paragraph); EgretSheenReleaseLineContext(context); return NULL;
++        }
++        entry=(EgretSheenP1*)calloc(1,sizeof(*entry));
++        if (!entry) { SBParagraphRelease(paragraph); EgretSheenReleaseLineContext(context); return NULL; }
++        entry->paragraph=paragraph; entry->start=offset; entry->end=offset+(int32_t)count;
++        *tail=entry; tail=&entry->next; offset=entry->end;
++    }
++    return context;
++}
++int32_t EgretSheenReadLine(EgretSheenLineContext* context, int32_t start, int32_t end,
++                          EgretSheenLineRun* output, int32_t capacity) {
++    EgretSheenP1* paragraph;
++    int32_t count=0,covered=start;
++    if (!context || start<0 || start>end || end>context->length || capacity<0 || (capacity && !output)) return -1;
++    if (start==end) return 0;
++    for (paragraph=context->first; paragraph && covered<end; paragraph=paragraph->next) {
++        int32_t first=start>paragraph->start?start:paragraph->start;
++        int32_t last=end<paragraph->end?end:paragraph->end;
++        SBLineRef line; const SBRun* runs; SBUInteger n,i;
++        if (first>=last) continue;
++        if (first!=covered) return -1;
++        line=SBParagraphCreateLine(paragraph->paragraph,(SBUInteger)first,(SBUInteger)(last-first));
++        if (!line) return -1;
++        runs=SBLineGetRunsPtr(line);n=SBLineGetRunCount(line);
++        if (!runs || !n || n>(SBUInteger)(capacity-count)) { SBLineRelease(line); return -1; }
++        for (i=0;i<n;++i) {
++            if (!runs[i].length || runs[i].offset<(SBUInteger)first || runs[i].offset>(SBUInteger)last ||
++                runs[i].length>(SBUInteger)last-runs[i].offset || runs[i].level>126) { SBLineRelease(line); return -1; }
++            output[count].start=(int32_t)runs[i].offset; output[count].end=(int32_t)(runs[i].offset+runs[i].length);
++            output[count++].level=runs[i].level;
++        }
++        SBLineRelease(line);covered=last;
++    }
++    return covered==end?count:-1;
++}
++int32_t EgretSheenLogicalControlAt(EgretSheenLineContext* context, int32_t index) {
++    const SBBidiType* types; uint16_t unit;
++    if (!context || !context->algorithm || index<0 || index>=context->length) return 0;
++    unit=context->text[index];
++    if (unit==0x061C || unit==0x200E || unit==0x200F) return 1;
++    types=SBAlgorithmGetBidiTypesPtr(context->algorithm);
++    switch(types[index]) {
++        case SBBidiTypeBN: case SBBidiTypeLRE: case SBBidiTypeRLE:
++        case SBBidiTypeLRO: case SBBidiTypeRLO: case SBBidiTypePDF:
++        case SBBidiTypeLRI: case SBBidiTypeRLI: case SBBidiTypeFSI:
++        case SBBidiTypePDI: case SBBidiTypeB: return 1;
++        default: return 0;
++    }
++}
+diff --git a/modules/skunicode/src/SkUnicode_sheen_private.cpp b/modules/skunicode/src/SkUnicode_sheen_private.cpp
+index 4d0640d..3cdb901 100644
+--- a/modules/skunicode/src/SkUnicode_sheen_private.cpp
++++ b/modules/skunicode/src/SkUnicode_sheen_private.cpp
+@@ -3,6 +3,7 @@
+ // Skia integration retains its BSD notices; stock SheenBidi retains Apache-2.0.
+ #include "modules/skunicode/src/SkUnicode_sheen_private.h"
+ #include "src/core/SkUTF.h"
++#include <algorithm>
+ #include <climits>
+ #include <new>
+ #include <utility>
+@@ -149,3 +150,53 @@ bool GetBidiRegions(const char* text, int count, SkUnicode::TextDirection dir,
+     return true;
+ }
+ }  // namespace SkUnicodes::SheenPrivate
++
++namespace SkUnicodes::SheenPrivate {
++LineContext::~LineContext() { EgretSheenReleaseLineContext(fNative); }
++std::unique_ptr<LineContext> LineContext::Make(const char* text, int bytes, SkUnicode::TextDirection dir) {
++    if (bytes<0 || (bytes && !text)) return nullptr;
++    auto context=std::unique_ptr<LineContext>(new(std::nothrow) LineContext());
++    if (!context || !FromUtf8(text,bytes,&context->fText)) return nullptr;
++    context->fByteAt.assign(context->fText.size()+1,-1);
++    context->fUnitAt.assign(static_cast<size_t>(bytes)+1,-1);
++    context->fControlBytes.assign(static_cast<size_t>(bytes),0);
++    context->fNative=EgretSheenCreateLineContext(reinterpret_cast<const uint16_t*>(context->fText.data()),
++        static_cast<int32_t>(context->fText.size()),dir==SkUnicode::TextDirection::kRTL?1:0);
++    if (!context->fNative) return nullptr;
++    const char* cursor=text; const char* end=bytes?text+bytes:text; size_t unit=0;
++    context->fByteAt[0]=0;context->fUnitAt[0]=0;
++    while (cursor!=end) {
++        size_t byte=static_cast<size_t>(cursor-text);
++        auto cp=SkUTF::NextUTF8(&cursor,end);if(cp<0)return nullptr;
++        size_t next=static_cast<size_t>(cursor-text);
++        if (EgretSheenLogicalControlAt(context->fNative,static_cast<int32_t>(unit)))
++            std::fill(context->fControlBytes.begin()+byte,context->fControlBytes.begin()+next,1);
++        unit+=cp>0xFFFF?2:1;
++        context->fByteAt[unit]=static_cast<int32_t>(next);context->fUnitAt[next]=static_cast<int32_t>(unit);
++    }
++    if(unit!=context->fText.size())return nullptr;
++    return context;
++}
++bool LineContext::atoms(size_t start, size_t end, std::vector<LineAtom>* output) const {
++    if (!output || start>end || end>=fUnitAt.size() || fUnitAt[start]<0 || fUnitAt[end]<0) return false;
++    const int32_t first=fUnitAt[start],last=fUnitAt[end];
++    std::vector<EgretSheenLineRun> runs(static_cast<size_t>(last-first));
++    const int32_t count=EgretSheenReadLine(fNative,first,last,runs.data(),static_cast<int32_t>(runs.size()));
++    if(count<0)return false;
++    std::vector<LineAtom> complete;
++    for(int32_t r=0;r<count;++r){
++        const auto& run=runs[r];
++        if(run.start<first || run.end>last || fByteAt[run.start]<0 || fByteAt[run.end]<0)return false;
++        if((run.level&1)==0){
++            for(int32_t i=run.start;i<run.end;){int32_t next=i+1;while(next<run.end&&fByteAt[next]<0)++next;
++                if(fByteAt[next]<0)return false;
++                size_t byte=static_cast<size_t>(fByteAt[i]);complete.push_back({byte,static_cast<size_t>(fByteAt[next]),run.level,controlAt(byte)});i=next;}
++        }else{
++            for(int32_t i=run.end;i>run.start;){int32_t previous=i-1;while(previous>run.start&&fByteAt[previous]<0)--previous;
++                if(fByteAt[previous]<0)return false;
++                size_t byte=static_cast<size_t>(fByteAt[previous]);complete.push_back({byte,static_cast<size_t>(fByteAt[i]),run.level,controlAt(byte)});i=previous;}
++        }
++    }
++    output->swap(complete);return true;
++}
++} // namespace SkUnicodes::SheenPrivate
+diff --git a/modules/skparagraph/src/ParagraphImpl.h b/modules/skparagraph/src/ParagraphImpl.h
+index 950c26f..eb65542 100644
+--- a/modules/skparagraph/src/ParagraphImpl.h
++++ b/modules/skparagraph/src/ParagraphImpl.h
+@@ -25,6 +25,7 @@
+ #include "modules/skparagraph/src/Run.h"
+ #include "modules/skparagraph/src/TextLine.h"
+ #include "modules/skunicode/include/SkUnicode.h"
++#include "modules/skunicode/src/SkUnicode_sheen_private.h"
+ #include "src/core/SkBitmaskEnum.h"
+ #include "src/core/SkTHash.h"
+ 
+@@ -262,6 +263,7 @@ private:
+     friend class ParagraphCache;
+ 
+     friend class TextWrapper;
++    friend class TextLine;
+     friend class OneLineShaper;
+ 
+     void computeEmptyMetrics();
+@@ -285,6 +287,7 @@ private:
+     skia_private::TArray<size_t, true> fClustersIndexFromCodeUnit;
+     std::vector<size_t> fWords;
+     std::vector<SkUnicode::BidiRegion> fBidiRegions;
++    std::unique_ptr<SkUnicodes::SheenPrivate::LineContext> fFinalLineBidi;
+     // These two arrays are used in measuring methods (getRectsForRange, getGlyphPositionAtCoordinate)
+     // They are filled lazily whenever they need and cached
+     skia_private::TArray<TextIndex, true> fUTF8IndexForUTF16Index;
+diff --git a/modules/skparagraph/src/ParagraphImpl.cpp b/modules/skparagraph/src/ParagraphImpl.cpp
+index 510049f..5ed84a2 100644
+--- a/modules/skparagraph/src/ParagraphImpl.cpp
++++ b/modules/skparagraph/src/ParagraphImpl.cpp
+@@ -281,6 +281,13 @@ bool ParagraphImpl::computeCodeUnitProperties() {
+         return false;
+     }
+ 
++    // Preserve the original bidi types before the whitespace service replaces tabs.
++    if (!fFinalLineBidi) {
++        fFinalLineBidi = SkUnicodes::SheenPrivate::LineContext::Make(
++            fText.c_str(), static_cast<int>(fText.size()), textDirection);
++        if (!fFinalLineBidi) return false;
++    }
++
+     // Collect all spaces and some extra information
+     // (and also substitute \t with a space while we are at it)
+     if (!fUnicode->computeCodeUnitFlags(&fText[0],
+@@ -705,7 +712,13 @@ void ParagraphImpl::formatLines(SkScalar maxWidth) {
+         return;
+     }
+ 
++    if (!fFinalLineBidi) {
++        fFinalLineBidi=SkUnicodes::SheenPrivate::LineContext::Make(fText.c_str(),static_cast<int>(fText.size()),
++            fParagraphStyle.getTextDirection()==TextDirection::kLtr?SkUnicode::TextDirection::kLTR:SkUnicode::TextDirection::kRTL);
++        if(!fFinalLineBidi)SK_ABORT("Egret final-line bidi context refused");
++    }
+     for (auto& line : fLines) {
++        line.prepareFinalBidi();
+         line.format(effectiveAlign, maxWidth);
+     }
+ }
+@@ -1532,7 +1545,8 @@ void ParagraphImpl::extendedVisit(const ExtendedVisitor& visitor) {
+             [&](const Run* run,
+                 SkScalar runOffsetInLine,
+                 TextRange textRange,
+-                SkScalar* runWidthInLine) {
++                SkScalar* runWidthInLine,
++                const TextLine::BidiFragment* fragment) {
+                 *runWidthInLine = line.iterateThroughSingleRunByStyles(
+                 TextLine::TextAdjustment::GlyphCluster,
+                 run,
+@@ -1590,7 +1604,8 @@ int ParagraphImpl::getPath(int lineNumber, SkPath* dest) {
+               [&](const Run* run,
+                   SkScalar runOffsetInLine,
+                   TextRange textRange,
+-                  SkScalar* runWidthInLine) {
++                  SkScalar* runWidthInLine,
++                const TextLine::BidiFragment* fragment) {
+           *runWidthInLine = line.iterateThroughSingleRunByStyles(
+           TextLine::TextAdjustment::GlyphCluster,
+           run,
+diff --git a/modules/skparagraph/src/TextLine.h b/modules/skparagraph/src/TextLine.h
+index d83eba8..47d3b9b 100644
+--- a/modules/skparagraph/src/TextLine.h
++++ b/modules/skparagraph/src/TextLine.h
+@@ -118,9 +118,28 @@ public:
+     SkScalar ideographicBaseline() const { return fSizes.ideographicBaseline(); }
+     SkScalar baseline() const { return fSizes.baseline(); }
+ 
++    // Canonical glyph storage remains shared; effective line direction is independent.
++    struct BidiFragment {
++        RunIndex run;
++        TextRange text;
++        ClusterRange clusters;
++        uint8_t level;
++        bool logicalOnly;
++        bool hasControls;
++    };
++    void prepareFinalBidi();
+     using RunVisitor = std::function<bool(
+-            const Run* run, SkScalar runOffset, TextRange textRange, SkScalar* width)>;
++            const Run* run, SkScalar runOffset, TextRange textRange, SkScalar* width,
++            const BidiFragment* fragment)>;
+     void iterateThroughVisualRuns(bool includingGhostSpaces, const RunVisitor& runVisitor) const;
++    // Existing native diagnostics retain their canonical-run visitor contract.
++    using LegacyRunVisitor = std::function<bool(const Run*, SkScalar, TextRange, SkScalar*)>;
++    void iterateThroughVisualRuns(bool ghosts, const LegacyRunVisitor& visitor) const {
++        iterateThroughVisualRuns(ghosts, RunVisitor([&](const Run* run, SkScalar offset,
++            TextRange text, SkScalar* width, const BidiFragment*) {
++                return visitor(run, offset, text, width);
++            }));
++    }
+     using RunStyleVisitor = std::function<void(
+             TextRange textRange, const TextStyle& style, const ClipContext& context)>;
+     SkScalar iterateThroughSingleRunByStyles(TextAdjustment textAdjustment,
+@@ -211,6 +230,10 @@ private:
+                           const ClipContext& context) const;
+ 
+     void shiftCluster(const Cluster* cluster, SkScalar shift, SkScalar prevShift);
++    void iterateFinalFragments(bool, const RunVisitor&) const;
++    bool finalClusterLeftToRight(const Cluster*) const;
++    TextRange logicalVisibleRange(TextRange) const;
++    bool hasLogicalVisibleText(TextRange) const;
+ 
+     ParagraphImpl* fOwner;
+     BlockRange fBlockRange;
+@@ -223,6 +246,9 @@ private:
+     EgretQualificationSourceDecision fEgretQualificationSourceDecision;
+     // Avoid the malloc/free in the common case of one run per line
+     skia_private::STArray<1, size_t, true> fRunsInVisualOrder;
++    std::vector<BidiFragment> fFinalFragments;
++    std::vector<int> fFinalClusterLevels;
++    bool fFinalBidiReady = false;
+     SkVector fAdvance;                  // Text size
+     SkVector fOffset;                   // Text position
+     SkScalar fShift;                    // Let right
+diff --git a/modules/skparagraph/src/TextLine.cpp b/modules/skparagraph/src/TextLine.cpp
+index d73161b..3c0e41e 100644
+--- a/modules/skparagraph/src/TextLine.cpp
++++ b/modules/skparagraph/src/TextLine.cpp
+@@ -191,7 +191,7 @@ void TextLine::paint(ParagraphPainter* painter, SkScalar x, SkScalar y) {
+     if (fHasBackground) {
+         this->iterateThroughVisualRuns(false,
+             [painter, x, y, this]
+-            (const Run* run, SkScalar runOffsetInLine, TextRange textRange, SkScalar* runWidthInLine) {
++            (const Run* run, SkScalar runOffsetInLine, TextRange textRange, SkScalar* runWidthInLine, const BidiFragment* fragment) {
+                 *runWidthInLine = this->iterateThroughSingleRunByStyles(
+                 TextAdjustment::GlyphCluster, run, runOffsetInLine, textRange, StyleType::kBackground,
+                 [painter, x, y, this](TextRange textRange, const TextStyle& style, const ClipContext& context) {
+@@ -204,7 +204,7 @@ void TextLine::paint(ParagraphPainter* painter, SkScalar x, SkScalar y) {
+     if (fHasShadows) {
+         this->iterateThroughVisualRuns(false,
+             [painter, x, y, this]
+-            (const Run* run, SkScalar runOffsetInLine, TextRange textRange, SkScalar* runWidthInLine) {
++            (const Run* run, SkScalar runOffsetInLine, TextRange textRange, SkScalar* runWidthInLine, const BidiFragment* fragment) {
+             *runWidthInLine = this->iterateThroughSingleRunByStyles(
+                 TextAdjustment::GlyphCluster, run, runOffsetInLine, textRange, StyleType::kShadow,
+                 [painter, x, y, this]
+@@ -224,7 +224,7 @@ void TextLine::paint(ParagraphPainter* painter, SkScalar x, SkScalar y) {
+     if (fHasDecorations) {
+         this->iterateThroughVisualRuns(false,
+             [painter, x, y, this]
+-            (const Run* run, SkScalar runOffsetInLine, TextRange textRange, SkScalar* runWidthInLine) {
++            (const Run* run, SkScalar runOffsetInLine, TextRange textRange, SkScalar* runWidthInLine, const BidiFragment* fragment) {
+                 *runWidthInLine = this->iterateThroughSingleRunByStyles(
+                 TextAdjustment::GlyphCluster, run, runOffsetInLine, textRange, StyleType::kDecorations,
+                 [painter, x, y, this]
+@@ -241,7 +241,7 @@ const char* TextLine::egretQualificationWalkForeground(bool build, size_t* glyph
+     const char* failure = nullptr;
+     const bool clusterPaint = fOwner->egretQualificationClusterPaint();
+     this->iterateThroughVisualRuns(false,
+-        [&](const Run* run, SkScalar runOffset, TextRange text, SkScalar* width) {
++        [&](const Run* run, SkScalar runOffset, TextRange text, SkScalar* width, const BidiFragment* fragment) {
+             *width = 0;
+             if (failure) { return false; }
+             if (!run || run->isPlaceholder()) {
+@@ -355,7 +355,9 @@ void TextLine::ensureTextBlobCachePopulated() {
+         fTextBlobCachePopulated = true;
+         return;
+     }
+-    if (fBlockRange.width() == 1 && fRunsInVisualOrder.size() == 1 && fEllipsis == nullptr &&
++    if ((!fFinalBidiReady || (fFinalFragments.size()==1 && !fFinalFragments[0].logicalOnly &&
++        !fFinalFragments[0].hasControls && fFinalFragments[0].level==fOwner->run(fFinalFragments[0].run).fBidiLevel)) &&
++        fBlockRange.width() == 1 && fRunsInVisualOrder.size() == 1 && fEllipsis == nullptr &&
+         fHyphen == nullptr && fOwner->run(fRunsInVisualOrder[0]).placeholderStyle() == nullptr) {
+         if (fClusterRange.width() == 0) {
+             return;
+@@ -391,7 +393,7 @@ void TextLine::ensureTextBlobCachePopulated() {
+            [this](const Run* run,
+                   SkScalar runOffsetInLine,
+                   TextRange textRange,
+-                  SkScalar* runWidthInLine) {
++                  SkScalar* runWidthInLine, const BidiFragment* fragment) {
+                if (run->placeholderStyle() != nullptr) {
+                    *runWidthInLine = run->advance().fX;
+                    return true;
+@@ -440,7 +442,7 @@ void TextLine::scanStyles(StyleType styleType, const RunStyleVisitor& visitor) {
+     this->iterateThroughVisualRuns(
+             false,
+             [this, visitor, styleType](
+-                    const Run* run, SkScalar runOffset, TextRange textRange, SkScalar* width) {
++                    const Run* run, SkScalar runOffset, TextRange textRange, SkScalar* width, const BidiFragment* fragment) {
+                 *width = this->iterateThroughSingleRunByStyles(
+                         TextAdjustment::GlyphCluster,
+                         run,
+@@ -623,7 +625,7 @@ void TextLine::justify(SkScalar maxWidth) {
+     this->iterateThroughClustersInGlyphsOrder(false, true, [&](const Cluster* cluster, ClusterIndex index, bool ghost) {
+ 
+         if (ghost) {
+-            if (cluster->run().leftToRight()) {
++            if (finalClusterLeftToRight(cluster)) {
+                 this->shiftCluster(cluster, ghostShift, ghostShift);
+             }
+             return true;
+@@ -1068,6 +1070,22 @@ TextLine::ClipContext TextLine::measureTextInsideOneRun(TextRange textRange,
+ void TextLine::iterateThroughClustersInGlyphsOrder(bool reversed,
+                                                    bool includeGhosts,
+                                                    const ClustersVisitor& visitor) const {
++    if(fFinalBidiReady){
++        ClusterIndex index=0;bool stop=false;
++        auto visitFragment=[&](const BidiFragment& fragment){
++            if(stop || fragment.logicalOnly)return;
++            auto values=fOwner->clusters(fragment.clusters);
++            directional_for_each(values,reversed!=((fragment.level&1)==0),[&](Cluster& cluster){
++                if(stop)return;
++                bool ghost=cluster.textRange().start>=fTextExcludingSpaces.end;
++                if(ghost&&!includeGhosts)return;
++                if(!visitor(&cluster,index++,ghost))stop=true;
++            });
++        };
++        if(reversed){for(auto i=fFinalFragments.rbegin();i!=fFinalFragments.rend();++i)visitFragment(*i);}
++        else for(const auto& fragment:fFinalFragments)visitFragment(fragment);
++        return;
++    }
+     // Walk through the clusters in the logical order (or reverse)
+     SkSpan<const size_t> runs(fRunsInVisualOrder.data(), fRunsInVisualOrder.size());
+     bool ignore = false;
+@@ -1206,6 +1224,7 @@ SkScalar TextLine::iterateThroughSingleRunByStyles(TextAdjustment textAdjustment
+ }
+ 
+ void TextLine::iterateThroughVisualRuns(bool includingGhostSpaces, const RunVisitor& visitor) const {
++    if(fFinalBidiReady){iterateFinalFragments(includingGhostSpaces,visitor);return;}
+ 
+     // Walk through all the runs that intersect with the line in visual order
+     SkScalar width = 0;
+@@ -1215,14 +1234,14 @@ void TextLine::iterateThroughVisualRuns(bool includingGhostSpaces, const RunVisi
+ 
+     if (this->ellipsis() != nullptr && fOwner->paragraphStyle().getTextDirection() == TextDirection::kRtl) {
+         runOffset = this->ellipsis()->offset().fX;
+-        if (visitor(ellipsis(), runOffset, ellipsis()->textRange(), &width)) {
++        if (visitor(ellipsis(), runOffset, ellipsis()->textRange(), &width, nullptr)) {
+         }
+     }
+ 
+     if (this->hyphen() != nullptr &&
+         fOwner->paragraphStyle().getTextDirection() == TextDirection::kRtl) {
+         runOffset = this->hyphen()->offset().fX;
+-        if (visitor(hyphen(), runOffset, hyphen()->textRange(), &width)) {
++        if (visitor(hyphen(), runOffset, hyphen()->textRange(), &width, nullptr)) {
+         }
+     }
+ 
+@@ -1247,7 +1266,7 @@ void TextLine::iterateThroughVisualRuns(bool includingGhostSpaces, const RunVisi
+         }
+         runOffset += width;
+         totalWidth += width;
+-        if (!visitor(run, runOffset, lineIntersection, &width)) {
++        if (!visitor(run, runOffset, lineIntersection, &width, nullptr)) {
+             return;
+         }
+     }
+@@ -1256,14 +1275,14 @@ void TextLine::iterateThroughVisualRuns(bool includingGhostSpaces, const RunVisi
+     totalWidth += width;
+ 
+     if (this->ellipsis() != nullptr && fOwner->paragraphStyle().getTextDirection() == TextDirection::kLtr) {
+-        if (visitor(ellipsis(), runOffset, ellipsis()->textRange(), &width)) {
++        if (visitor(ellipsis(), runOffset, ellipsis()->textRange(), &width, nullptr)) {
+             totalWidth += width;
+         }
+     }
+ 
+     if (this->hyphen() != nullptr &&
+         fOwner->paragraphStyle().getTextDirection() == TextDirection::kLtr) {
+-        if (visitor(hyphen(), runOffset, hyphen()->textRange(), &width)) {
++        if (visitor(hyphen(), runOffset, hyphen()->textRange(), &width, nullptr)) {
+             totalWidth += width;
+         }
+     }
+@@ -1307,7 +1326,7 @@ LineMetrics TextLine::getMetrics() const {
+     // Fill out the style parts
+     this->iterateThroughVisualRuns(false,
+         [this, &result]
+-        (const Run* run, SkScalar runOffsetInLine, TextRange textRange, SkScalar* runWidthInLine) {
++        (const Run* run, SkScalar runOffsetInLine, TextRange textRange, SkScalar* runWidthInLine, const BidiFragment* fragment) {
+         if (run->placeholderStyle() != nullptr) {
+             *runWidthInLine = run->advance().fX;
+             return true;
+@@ -1348,10 +1367,20 @@ void TextLine::getRectsForRange(TextRange textRange0,
+                                 std::vector<TextBox>& boxes) const
+ {
+     const Run* lastRun = nullptr;
++    TextDirection lastDirection=TextDirection::kLtr;
+     auto startBox = boxes.size();
+     this->iterateThroughVisualRuns(true,
+-        [textRange0, rectHeightStyle, rectWidthStyle, &boxes, &lastRun, startBox, this]
+-        (const Run* run, SkScalar runOffsetInLine, TextRange textRange, SkScalar* runWidthInLine) {
++        [textRange0, rectHeightStyle, rectWidthStyle, &boxes, &lastRun, &lastDirection, startBox, this]
++        (const Run* run, SkScalar runOffsetInLine, TextRange textRange, SkScalar* runWidthInLine, const BidiFragment* fragment) {
++        const auto effectiveDirection=fragment?((fragment->level&1)?TextDirection::kRtl:TextDirection::kLtr):run->getTextDirection();
++        if(fragment&&fragment->logicalOnly){
++            *runWidthInLine=0;
++            if(!(fragment->text*textRange0).empty()){
++                auto box=SkRect::MakeXYWH(runOffsetInLine,sizes().runTop(run,fAscentStyle),0,run->calculateHeight(fAscentStyle,fDescentStyle));
++                box.offset(offset());boxes.emplace_back(box,effectiveDirection);
++            }
++            return true;
++        }
+         // The rendered soft hyphen is a synthetic glyph run that does not correspond
+         // to any source text. Its synthetic textRange (offsets into the "-" string)
+         // would falsely intersect caller-supplied source ranges and produce a
+@@ -1361,14 +1390,19 @@ void TextLine::getRectsForRange(TextRange textRange0,
+         }
+         *runWidthInLine = this->iterateThroughSingleRunByStyles(
+         TextAdjustment::GraphemeGluster, run, runOffsetInLine, textRange, StyleType::kNone,
+-        [run, runOffsetInLine, textRange0, rectHeightStyle, rectWidthStyle, &boxes, &lastRun, startBox, this]
++        [run, runOffsetInLine, textRange0, rectHeightStyle, rectWidthStyle, &boxes, &lastRun, &lastDirection, effectiveDirection, fragment, startBox, this]
+         (TextRange textRange, const TextStyle& style, const TextLine::ClipContext& lineContext) {
+ 
+             auto intersect = textRange * textRange0;
+-            if (intersect.empty()) {
++            if (intersect.empty() || (fragment&&!hasLogicalVisibleText(intersect))) {
+                 return true;
+             }
+-
++            if(fragment&&fragment->hasControls){
++                // Formatting source has zero advance; never apportion the visible
++                // cluster by its UTF8 byte count when selecting its visible part.
++                while(intersect.start>textRange.start&&fOwner->fFinalLineBidi->controlAt(intersect.start-1))--intersect.start;
++                while(intersect.end<textRange.end&&fOwner->fFinalLineBidi->controlAt(intersect.end))++intersect.end;
++            }
+             auto paragraphStyle = fOwner->paragraphStyle();
+ 
+             // Found a run that intersects with the text
+@@ -1444,7 +1478,7 @@ void TextLine::getRectsForRange(TextRange textRange0,
+             // Separate trailing spaces and move them in the default order of the paragraph
+             // in case the run order and the paragraph order don't match
+             SkRect trailingSpaces = SkRect::MakeEmpty();
+-            if (this->trimmedText().end <this->textWithNewlines().end && // Line has trailing space
++            if (!fragment && this->trimmedText().end <this->textWithNewlines().end && // Line has trailing space
+                 this->textWithNewlines().end == intersect.end &&         // Range is at the end of the line
+                 this->trimmedText().end > intersect.start)               // Range has more than just spaces
+             {
+@@ -1487,11 +1521,11 @@ void TextLine::getRectsForRange(TextRange textRange0,
+             }
+ 
+             // Check if we can merge two boxes instead of adding a new one
+-            auto merge = [&lastRun, &context, &boxes](SkRect clip) {
++            auto merge = [&lastRun, &lastDirection, effectiveDirection, &context, &boxes](SkRect clip) {
+                 bool mergedBoxes = false;
+                 if (!boxes.empty() &&
+                     lastRun != nullptr &&
+-                    context.run->leftToRight() == lastRun->leftToRight() &&
++                    effectiveDirection == lastDirection &&
+                     lastRun->placeholderStyle() == nullptr &&
+                     context.run->placeholderStyle() == nullptr &&
+                     nearlyEqual(lastRun->heightMultiplier(),
+@@ -1509,12 +1543,12 @@ void TextLine::getRectsForRange(TextRange textRange0,
+                         mergedBoxes = true;
+                     }
+                 }
+-                lastRun = context.run;
++                lastRun = context.run;lastDirection=effectiveDirection;
+                 return mergedBoxes;
+             };
+ 
+             if (!merge(clip)) {
+-                boxes.emplace_back(clip, context.run->getTextDirection());
++                boxes.emplace_back(clip, effectiveDirection);
+             }
+             if (!nearlyZero(trailingSpaces.width()) && !merge(trailingSpaces)) {
+                 boxes.emplace_back(trailingSpaces, paragraphStyle.getTextDirection());
+@@ -1566,7 +1600,19 @@ PositionWithAffinity TextLine::getGlyphPositionAtCoordinate(SkScalar dx) {
+     PositionWithAffinity result(0, Affinity::kDownstream);
+     this->iterateThroughVisualRuns(true,
+         [this, dx, &result]
+-        (const Run* run, SkScalar runOffsetInLine, TextRange textRange, SkScalar* runWidthInLine) {
++        (const Run* run, SkScalar runOffsetInLine, TextRange textRange, SkScalar* runWidthInLine, const BidiFragment* fragment) {
++            if(fragment&&fragment->logicalOnly){*runWidthInLine=0;return true;}
++            if(fragment&&(((fragment->level&1)==0)!=run->leftToRight()||fragment->hasControls)){
++                const auto context=measureTextInsideOneRun(textRange,run,runOffsetInLine,0,true,TextAdjustment::GlyphCluster);
++                *runWidthInLine=context.clip.width();
++                const auto logical=logicalVisibleRange(textRange);
++                if(logical.start >= logical.end)return true;
++                const bool ltr=(fragment->level&1)==0;
++                const auto first=fOwner->getUTF16Index(logical.start),last=fOwner->getUTF16Index(logical.end);
++                const bool before=dx<context.clip.centerX()+offset().fX;
++                result={(int)((before==ltr)?first:last),(before==ltr)?kDownstream:kUpstream};
++                return dx>=context.clip.fRight+offset().fX;
++            }
+             if (run->isEllipsis()) {
+                 auto utf16Index = fOwner->getUTF16Index(this->fText.end);
+                 result = { SkToS32(utf16Index) , kDownstream };
+@@ -1693,7 +1739,8 @@ void TextLine::getRectsForPlaceholders(std::vector<TextBox>& boxes) {
+     this->iterateThroughVisualRuns(
+         true,
+         [&boxes, this](const Run* run, SkScalar runOffset, TextRange textRange,
+-                        SkScalar* width) {
++                        SkScalar* width, const BidiFragment* fragment) {
++                if(fragment&&fragment->logicalOnly){*width=0;return true;}
+                 auto context = this->measureTextInsideOneRun(
+                         textRange, run, runOffset, 0, true, TextAdjustment::GraphemeGluster);
+                 *width = context.clip.width();
+@@ -1718,5 +1765,117 @@ void TextLine::getRectsForPlaceholders(std::vector<TextBox>& boxes) {
+             return true;
+         });
+ }
++
++// Each line uses native Sheen L1/L2 over its actual range and complete P1 context.
++// Drawable clusters are referenced once; zero-advance formatting source slots do
++// not expand through the global cluster finder and repaint a neighboring glyph.
++void TextLine::prepareFinalBidi() {
++    fFinalFragments.clear();
++    std::vector<SkUnicodes::SheenPrivate::LineAtom> atoms;
++    if(!fOwner->fFinalLineBidi || !fOwner->fFinalLineBidi->atoms(fTextIncludingNewlines.start,fTextIncludingNewlines.end,&atoms))
++        SK_ABORT("Egret final-line bidi range refused");
++    std::vector<uint8_t> seen(fGhostClusterRange.width(),0);
++    fFinalClusterLevels.assign(fGhostClusterRange.width(),-1);
++    auto& levels = fFinalClusterLevels;
++    // A shaping cluster may include default-ignorable controls. Only its
++    // drawable source determines ownership; controls get independent zero slots.
++    for(const auto& atom:atoms){
++        if(atom.logicalControl)continue;
++        auto cluster=fOwner->clusterIndex(atom.start);
++        if(cluster<fGhostClusterRange.start||cluster>=fGhostClusterRange.end)SK_ABORT("Egret final-line cluster range refused");
++        auto& level=levels[cluster-fGhostClusterRange.start];
++        if(level>=0&&level!=atom.level)SK_ABORT("Egret final-line mixed drawable cluster levels");
++        level=atom.level;
++    }
++    for(const auto& atom:atoms){
++        const auto index=fOwner->clusterIndex(atom.start);
++        if(index<fGhostClusterRange.start||index>=fGhostClusterRange.end)SK_ABORT("Egret final-line source outside clusters");
++        const auto& cluster=fOwner->cluster(index);
++        const auto source=cluster.runIndex();
++        if(atom.logicalControl){
++            fFinalFragments.push_back({source,{atom.start,atom.end},{index,index},atom.level,true,true});
++            continue;
++        }
++        if(seen[index-fGhostClusterRange.start])continue;
++        seen[index-fGhostClusterRange.start]=1;
++        auto text=intersected(cluster.textRange(), fTextIncludingNewlines);
++        bool controls=false;for(auto byte=text.start;byte<text.end;++byte)controls|=fOwner->fFinalLineBidi->controlAt(byte);
++        BidiFragment next{source,text,{index,index+1},atom.level,false,controls};
++        auto& run=fOwner->run(source);
++        // Merge only unchanged storage direction. Reset-direction spaces remain
++        // one cluster each, so canonical glyph order is never falsely reversed.
++        if(!fFinalFragments.empty()&&!controls&&run.fBidiLevel==atom.level){
++            auto& previous=fFinalFragments.back();
++            bool adjacent=(atom.level&1)?next.text.end==previous.text.start:previous.text.end==next.text.start;
++            if(!previous.logicalOnly&&!previous.hasControls&&previous.run==source&&previous.level==atom.level&&adjacent){
++                previous.text={std::min(previous.text.start,next.text.start),std::max(previous.text.end,next.text.end)};
++                previous.clusters={std::min(previous.clusters.start,next.clusters.start),std::max(previous.clusters.end,next.clusters.end)};
++                continue;
++            }
++        }
++        fFinalFragments.push_back(next);
++    }
++    // Placeholders retain the original API's source-order assignment.
++    std::vector<RunIndex> placeholders;
++    for(auto run:fRunsInVisualOrder)if(fOwner->run(run).isPlaceholder())placeholders.push_back(run);
++    std::sort(placeholders.begin(),placeholders.end());size_t p=0;
++    for(auto& fragment:fFinalFragments)if(!fragment.logicalOnly&&fOwner->run(fragment.run).isPlaceholder()){
++        if(p>=placeholders.size())SK_ABORT("Egret final-line placeholder range refused");
++        fragment.run=placeholders[p++];fragment.text=fOwner->run(fragment.run).textRange();fragment.clusters=fOwner->run(fragment.run).clusterRange();
++    }
++    fFinalBidiReady=true;
++    fTextBlobCache.clear();fTextBlobCachePopulated=false;
++}
++TextRange TextLine::logicalVisibleRange(TextRange text) const {
++    if(!fOwner->fFinalLineBidi)return text;
++    while(text.start<text.end&&fOwner->fFinalLineBidi->controlAt(text.start))++text.start;
++    while(text.end>text.start&&fOwner->fFinalLineBidi->controlAt(text.end-1))--text.end;
++    return text;
++}
++bool TextLine::hasLogicalVisibleText(TextRange text) const {
++    for(auto byte=text.start;byte<text.end;++byte)if(!fOwner->fFinalLineBidi->controlAt(byte))return true;
++    return false;
++}
++bool TextLine::finalClusterLeftToRight(const Cluster* cluster) const {
++    if (fFinalBidiReady) {
++        const auto index = fOwner->clusterIndex(cluster->textRange().start);
++        if (index >= fGhostClusterRange.start && index < fGhostClusterRange.end) {
++            const int level = fFinalClusterLevels[index - fGhostClusterRange.start];
++            if (level >= 0) return (level & 1) == 0;
++        }
++    }
++    return cluster->run().leftToRight();
++}
++void TextLine::iterateFinalFragments(bool ghosts,const RunVisitor& visitor) const {
++    SkScalar width=0,offset=0,total=0;
++    if(fEllipsis&&fOwner->paragraphStyle().getTextDirection()==TextDirection::kRtl){offset=fEllipsis->offset().fX;visitor(fEllipsis.get(),offset,fEllipsis->textRange(),&width,nullptr);offset+=width;total+=width;}
++    if(fHyphen&&fOwner->paragraphStyle().getTextDirection()==TextDirection::kRtl){visitor(fHyphen.get(),offset,fHyphen->textRange(),&width,nullptr);offset+=width;total+=width;}
++    if(ghosts&&fOwner->paragraphStyle().getTextDirection()==TextDirection::kRtl){
++        SkScalar trailing=0;
++        for(const auto& fragment:fFinalFragments){
++            if(fragment.logicalOnly)continue;
++            auto text=intersected(fragment.text, {fTextExcludingSpaces.end,fTextIncludingNewlines.end});
++            if(text.start < text.end)trailing+=measureTextInsideOneRun(text,&fOwner->run(fragment.run),0,0,true,TextAdjustment::GlyphCluster).clip.width();
++        }
++        offset-=trailing;
++    }
++    const auto accepted=ghosts?fTextIncludingNewlines:fTextExcludingSpaces;
++    for(const auto& fragment:fFinalFragments){
++        auto text=intersected(fragment.text, accepted);
++        if(text.start >= text.end||(!ghosts&&fragment.logicalOnly))continue;
++        width=0;
++        if(!visitor(&fOwner->run(fragment.run),offset,text,&width,&fragment))return;
++        // Selection visitors clip ghost glyphs to the ink width. Layout offsets
++        // must still advance by the complete source fragment's canonical width.
++        if (fragment.logicalOnly) width = 0;
++        else if (ghosts) width = measureTextInsideOneRun(text, &fOwner->run(fragment.run),
++            offset, 0, true, TextAdjustment::GlyphCluster).clip.width();
++        offset+=width;total+=width;
++    }
++    if(fEllipsis&&fOwner->paragraphStyle().getTextDirection()==TextDirection::kLtr){visitor(fEllipsis.get(),offset,fEllipsis->textRange(),&width,nullptr);offset+=width;total+=width;}
++    if(fHyphen&&fOwner->paragraphStyle().getTextDirection()==TextDirection::kLtr){visitor(fHyphen.get(),offset,fHyphen->textRange(),&width,nullptr);total+=width;}
++    if(!ghosts&&compareRound(total,this->width(),fOwner->getApplyRoundingHack())!=0)SkDEBUGFAILF("Final bidi width: %f != %f",total,this->width());
++}
++
+ }  // namespace textlayout
+ }  // namespace skia

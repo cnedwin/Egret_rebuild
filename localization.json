@@ -400,8 +400,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "45197e4e1dcb1fa7b7cbb90eb76bbe30dbf570d8844ee61f5e723c4dc042f02e",
-      "zhSha256": "88100c898c25c9f310770d2f2f9bb1f8da0d7c20b529b3497577d8d4b3900924"
+      "enSha256": "6f38665b0ca59cfedf4dafc1c94bac807c6fb8c599a273832a677894f259feab",
+      "zhSha256": "fd05f9d813d4beb7f9a52cd94e07c040b1011c8b22e3f94d0d02ce770929494f"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "7263d0ccd07b3a78b446c1f5bd24364fafe90e96fb221109b77217d6c78e5a8b",
-      "zhSha256": "534b2474f2ea53e90974ecd35f4a4da7995417e2116728879b841ac3cef63902"
+      "enSha256": "20134db947da65fef10518af9168d539e65d38f71c7122eae481b115d9b52312",
+      "zhSha256": "3521e16ec1bc5a1c924b7d4cbaa496fc09208923eb34fa9f07497d2a9176f1ca"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -2068,22 +2068,29 @@
       "en": "knowledge-base/en/docs/readonly-paragraph-sdk.md",
       "zh": "knowledge-base/Cns/docs/readonly-paragraph-sdk.md",
       "kind": "public_reading",
-      "enSha256": "8c0cb2b605022604d9e7349660d2f1fcdad3cdb8c8846895a54722f27e222a2a",
-      "zhSha256": "cd5a6ebe9b4cc5052259934c875453c0be9f0bedb4f37810e161ab76993770b6"
+      "enSha256": "b6050fd6e2fe4a1161b369dd1cdfb2bdcab6957b309b380540f8c7cc022ff5db",
+      "zhSha256": "451d1f0768c972c659263ac7338cffb69586ee2cf11d39cfb5a474a937f361c9"
     },
     {
       "en": "examples/paragraph-panel/README.md",
       "zh": "examples/paragraph-panel/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "6e136470b94057d2ea5bf97d6e63ec7f7ebf261fb950d4c0724536e73efbe090",
-      "zhSha256": "07fc69da3d45140d606a095fd79c22f6efc719b5163bf070b646eecabb4bb2be"
+      "enSha256": "c943eacd0c28e08f511ae67c8fe5bb0c665bb51c44c29dc77c9de6aa19f546b2",
+      "zhSha256": "7314c28a0096a1de2049f46d05bd1d94b98b96c7806aa725a885bf1d820f8ed8"
     },
     {
       "en": "examples/paragraph-panel/vendor/README.md",
       "zh": "examples/paragraph-panel/vendor/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "e251c6cf8b1c340b6d5609f7b01f5dba5a8f3da847e8c58ce844fd8beed8ced2",
-      "zhSha256": "c85fb2e78211c2e4aa31174bcec8270758ac191283b65d64a9d3681248807925"
+      "enSha256": "7fa83d6ceab6a28fd72ceef4cb2a0457fe7bd2e2a35d73c53f88e3f4c3c79dc1",
+      "zhSha256": "d906409ec50e3dd17db315b25dd70ae6f3e81eac3ec32ee78d97abc16f198fdc"
+    },
+    {
+      "en": "knowledge-base/en/docs/paragraph-line-bidi.md",
+      "zh": "knowledge-base/Cns/docs/paragraph-line-bidi.md",
+      "kind": "public_reading",
+      "enSha256": "177c189119888f69e0936831dc4a38f11028b36aa3363357e6b6674c1ff5259a",
+      "zhSha256": "adbab5e5bfae532abce82237e4e4eee2d7d0f3e5364221fcbc53d99cf445b380"
     }
   ],
   "registries": [
@@ -4126,6 +4133,10 @@
     {
       "path": "packages/runtime/src/paragraph/types.ts",
       "sha256": "b26373795b7f0a8e23dfed0e9ea962b9ccd7615b966b8ceecc60c27dc3d0cc60"
+    },
+    {
+      "path": "examples/paragraph-panel/verify-line-bidi.mjs",
+      "sha256": "2aa464bbefaa79aee881cbf0bc388478ec198db818dc7642fe10175a61f8b69e"
     }
   ],
   "historicalSemanticReview": {
