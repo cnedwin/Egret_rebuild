@@ -4,9 +4,13 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
-## M3.2 private paragraph qualification — 2026-10-28
+## M3.2 private bidi backend comparison — 2026-10-29
 
-The bounded private CPU checkpoint records 18 focused controls passed and zero grapheme/line-boundary disagreements across the three declared full-input profiles. Strict bidi comparisons retain 105,785 class attempt failures and 11 character / 11 fixed-adapter mismatches. Observed linear-memory capacity grew 32→38.4375 MiB under a 64 MiB maximum; this is not memory qualification. SheenBidi v3.0.0 has source-only comparison preparation, with no adapter or runtime result. No public paragraph API or provider adoption is delivered. See the [M3.2 checkpoint, source credits and remaining limits](m3-ui-text-input-plan.md).
+A built private SheenBidi comparison now serves all four real paragraph builder paths. The declared full bidi schedule records 953,627 observed attempts with zero strict mismatches and 28 fixed-adapter auto cases NOT_OBSERVED; old ICU failures remain preserved. Real paragraph finite checks and a bounded desktop CPU-raster/browser check passed within their stated scopes. This adds no public SDK/provider or product runtime dependency. Final soft-wrapped-line L1, independent glyph/ink references, live-memory/physical-memory acceptance, IME/mobile and M4 remain OPEN. Read the [comparison, source package and evidence boundaries](paragraph-bidi-comparison.md).
+
+## Prior M3.2 private paragraph checkpoint — 2026-10-28
+
+The prior bounded private CPU checkpoint recorded 18 focused controls passed and zero grapheme/line-boundary disagreements across the three declared full-input profiles. Strict bidi comparisons retain 105,785 class attempt failures and 11 character / 11 fixed-adapter mismatches. Observed linear-memory capacity grew 32→38.4375 MiB under a 64 MiB maximum; this is not memory qualification. At that cutoff SheenBidi v3.0.0 had source-only comparison preparation, with no adapter or runtime result. No public paragraph API or provider adoption is delivered. See the [M3.2 checkpoint, source credits and remaining limits](m3-ui-text-input-plan.md).
 
 ## Experimental WebGPU image residency — 0.61.0
 

@@ -4,9 +4,13 @@
 
 核心工程通过可运行增量连接显示、资源、动画、输入与宿主执行。本页概述当前接口及后续产品工作，链接的契约说明精确行为与验证范围。
 
-## M3.2 私有段落资格检查 — 2026-10-28
+## M3.2 私有 bidi 后端比较 — 2026-10-29
 
-有界私有 CPU 检查点记录18项聚焦控制通过，三个声明 profile 的完整 grapheme／line 边界输入均零差异。严格 bidi 比较仍保留105,785次 class 尝试失败，以及11项 character／11项固定 adapter 不符。在最大64MiB下，实际线性内存容量从32增长到38.4375MiB，不代表内存合格。SheenBidi v3.0.0 仅完成源码比较准备，没有 adapter 或运行结果；没有交付公开段落 API，也没有采用 provider。详见 [M3.2 检查点、来源标注与剩余限制](m3-ui-text-input-plan.md)。
+已构建的私有 SheenBidi 比较版本接入全部四个真实段落 builder 路径。声明的完整 bidi schedule 记录 953,627 次已观察尝试，严格比较零差异，另有 28 项固定 adapter 的 auto 案例为 NOT_OBSERVED；原 ICU 失败继续保留。真实段落 finite 检查及有界桌面 CPU raster／浏览器检查在各自范围内通过。本次不增加公开 SDK／provider 或产品运行时依赖。最终软换行 L1、独立 glyph／ink 参考、live／physical memory 验收、IME／移动端及 M4 仍为 OPEN。详见[比较结果、源码包与证据边界](paragraph-bidi-comparison.md)。
+
+## 历史 M3.2 私有段落检查点 — 2026-10-28
+
+此前有界私有 CPU 检查点记录18项聚焦控制通过，三个声明 profile 的完整 grapheme／line 边界输入均零差异。严格 bidi 比较仍保留105,785次 class 尝试失败，以及11项 character／11项固定 adapter 不符。在最大64MiB下，实际线性内存容量从32增长到38.4375MiB，不代表内存合格。截至该检查点，SheenBidi v3.0.0 仅完成源码比较准备，没有 adapter 或运行结果；没有交付公开段落 API，也没有采用 provider。详见 [M3.2 检查点、来源标注与剩余限制](m3-ui-text-input-plan.md)。
 
 ## 实验性 WebGPU 图像驻留 — 0.61.0
 
