@@ -2526,7 +2526,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "c569567bb1a3bc4f211c2cb0e4ab01515a2d98f6c753e7ea700450b932c0ba6e"
+      "sha256": "04d30ddb7df9c0388ad7f6348543d99cc6e021333f3bb3feed12582df61c23c2"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2538,7 +2538,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "79162a0670ca3343a08be7608c1824e7b58207df9bdc22db6473b7d2f5d07574"
+      "sha256": "d48221f09dc03c844dd926211cb4ac5c09c355df2f85d24270d0c8a539976d4d"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -2860,7 +2860,7 @@
     },
     {
       "path": "tests/webgpu-mesh-host.test.mjs",
-      "sha256": "1887ac7b5c41408048a21d37bcdf6fea5b97f519dd5615258845229b918e4035"
+      "sha256": "e52627968fd7f4140d804a6ea3709f7b0a1af521af84b85ceda2d2cd87ecd584"
     },
     {
       "path": "packages/project/src/spine/index.ts",
