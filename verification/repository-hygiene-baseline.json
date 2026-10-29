@@ -945,6 +945,21 @@
       "path": "examples/paragraph-panel/vendor/runtime/line-bidi-r1/canvaskit.wasm",
       "bytes": 8600088,
       "sha256": "f8663379ec64595cfa5a2ecb2cc3a8cc4637dcfba6209172da65a05c7ba24151"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/runtime/layout-r1/canvaskit.js",
+      "bytes": 96090,
+      "sha256": "bad20cb1b1eb5c8ffc3d744f3aebdfa68af4ee756d68853459f6155594b66ea9"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/runtime/layout-r1/canvaskit.wasm",
+      "bytes": 8600298,
+      "sha256": "156593fd1411ffc41a3707ac74cbea72b76b4d04dd1eff9be4fab98c26530329"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/09-paragraph-layout.patch",
+      "bytes": 4430,
+      "sha256": "11db846bc327e14187496f25dd801acd7781fdb6b5c25c4b82ecac47ca4dbc5c"
     }
   ]
 }

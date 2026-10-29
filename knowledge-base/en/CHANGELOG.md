@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Paragraph alignment and line limits — 2026-10-29
+
+Readonly paragraphs now support left/right/center/start/end/justify alignment and optional maxLines with a fixed ellipsis. Hard-break/blank-line overflow shows the marker; an impossibly narrow field rejects without replacing committed content. Existing UI geometry and resource ownership remain authoritative. See the [layout contract](docs/paragraph-layout-controls.md). The focused 36 cases and 20 actual browser checks per backend are finite functional evidence; full M3.2, devices, IME and performance remain OPEN.
+
 ## Final-line bidirectional layout — 2026-10-29
 
 The optional paragraph runtime now applies native line-specific L1/L2 after wrapping, with canonical glyph storage shared by paint, geometry and hit queries. Finite native and actual-browser checks cover reset spaces, control slots and width restoration; full M3.2 and device/performance acceptance remain open. See the [line contract](docs/paragraph-line-bidi.md).

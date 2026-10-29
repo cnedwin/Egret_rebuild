@@ -17,3 +17,7 @@ The optional resources in `vendor/` contain the identified backend and original 
 Readonly paragraphs do not implement editing, selection or native IME. The selected backend integrates final-line L1/L2 with finite [native/browser qualification](../../knowledge-base/en/docs/paragraph-line-bidi.md). This example does not establish full Unicode correctness, unlisted script/font coverage, GPU timing, physical memory, mobile-device behavior or the remaining M3/M4 acceptance gates. Browser observations and controlled lifecycle tests must be reported separately.
 
 The integrated optional browser check is `node examples/paragraph-panel/verify-browser.mjs <playwright-root> <new-output-directory>` after building, with installed Playwright 1.62.1 and Edge. It runs both backends in one pass. [Recorded observations](../../verification/paragraph-sdk/verification.json) distinguish finite behavior from performance, phone, IME and independent glyph/ink acceptance.
+
+## Paragraph layout controls
+
+Align cycles left/center/right/start/end/justify for the article and virtual rows. The two-line control toggles maxLines=2 and unrestricted wrapping. Following geometry updates from the same prepared metrics. A failed or unsupported update keeps the old frame. The selected layout-r1 runtime provides qualified hard-break ellipsis and recoverable narrow-field refusal. See the [contract and latest evidence](../../knowledge-base/en/docs/paragraph-layout-controls.md).
