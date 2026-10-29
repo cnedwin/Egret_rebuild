@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "8a8623119efc9a5e08d5755354044855b33b3e4b65b66b93a74de73fb3b7b2b4",
-      "zhSha256": "13c9bdd975b62ca5cf3733e9cc123b4f192c2c5137942f54ee79b0740d687b8e"
+      "enSha256": "d6dd2be1f87ecc00a3d46ed27949020a98522066d3e889d7bfda961378293917",
+      "zhSha256": "24aba99a0d405285111805100d2d2d170de2ed0f5877ddeb5027c942e86299f2"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1970,8 +1970,8 @@
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "1371dbca7e8e8d6c7f2d5cd7bb73b3f58098326d992d67f1f0bf382d349ded05",
-      "zhSha256": "028d8e9a957f976a076d97d7d39d50123fb7f82d4ae2912e90adbbb25e275004"
+      "enSha256": "be91e6ef81765ddbe05168c28da2ef50782b40132f8c63fbfcb73589dc3ab30b",
+      "zhSha256": "3f8682ff6ba479ca55e48d08675ce6790ca3f9e469c02bb7f8338934cc51683d"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",

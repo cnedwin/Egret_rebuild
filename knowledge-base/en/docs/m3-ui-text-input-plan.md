@@ -132,7 +132,11 @@ Acceptance includes exact source/cluster/line mappings, recorded metric/pixel to
 
 M3.2 qualifies the proposed ICU/HarfBuzz/FreeType combination before making it a fixed implementation dependency: retain exact build/data/font identities and measure required transfer, initialization and owned CPU/Wasm storage in the early M4.1 slice. Compare those observations to M4's proposed budgets before completing all controls. A failed budget requires an explicit implementation/design decision and preserved results, not removal of required languages or delayed loading past a claimed ready marker. Keep the existing native whole-line route and optional package boundary; the proposal itself is not evidence of feasibility.
 
-### Current readonly paragraph SDK adoption — 2026-10-29
+### Current final-line bidi integration — 2026-10-29
+
+The selected optional backend now applies native L1/L2 to actual wrapped line ranges with full P1 context. Canonical glyph storage and separate effective line levels serve paint, geometry, hit queries and justification. Ninety reflow cases, eight alignment cases, two explicit line/ghost oracles, eight prior-runtime raster comparisons and 14 actual Edge checks per WebGL2/WebGPU passed. Current optional payload: 8,696,178 runtime bytes plus 17,148,712 font bytes, totaling 25,844,890 raw bytes. See the [line contract, source patch and finite evidence](paragraph-line-bidi.md). Full M3.2, independent glyph/ink references, public editing geometry, IME, phones, performance and memory/OOM remain OPEN. Earlier checkpoints below retain their original status.
+
+### Initial readonly paragraph SDK adoption — 2026-10-29
 
 The optional `@egret/engine/paragraph` and `@egret/engine/web/paragraph` entries now implement a bounded readonly profile: width-based wrapping, immutable line metrics, font-driven logical height and owned raster leases. Ordinary UI leaves prepare through `leaf.content`; existing virtual-row `bind` uses the same actual width, density and Scope. Content, measured layout, hit geometry and list height/anchor state publish through the existing UI revision owner. The default SDK does not load the provider, Wasm or fonts.
 
@@ -140,7 +144,7 @@ The selected host-injected CanvasKit/SkParagraph provider uses explicit immutabl
 
 This cohesive package implemented the SDK, UI and provider before consolidated verification and bilingual review. The targeted SDK/UI/T1 regression passed 118 cases. Actual desktop Edge 156.0.4314.50 passed 13 behavior checks on WebGL2 and 13 on WebGPU, including wrapping, text-driven geometry, minimum line height, density, reuse, failed/pending/late replacement, scrolling/hits and logical resource retirement. The [recorded finite results](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/paragraph-sdk/verification.json) preserve earlier failures and exact boundaries; they do not establish performance or independent glyph/ink correctness. Complete protected CI and PR/Main delivery remain separate publication evidence.
 
-This adopts the bounded readonly SDK and its optional provider; it does not complete M3.2. Final soft-wrapped-line bidi L1, independent glyph/ink references, public cluster/selection/caret mapping, editing/IME, phones, performance, memory/OOM and M4 remain OPEN. The private comparison and prototype checkpoints below describe their historical artifacts and adoption status at the recorded dates; their original results are not rewritten by this later adoption.
+That initial checkpoint adopted the bounded readonly SDK and optional provider, without completing M3.2. At that cutoff, final soft-wrapped-line bidi L1, independent glyph/ink references, public cluster/selection/caret mapping, editing/IME, phones, performance, memory/OOM and M4 remain OPEN. The private comparison and prototype checkpoints below describe their historical artifacts and adoption status at the recorded dates; their original results are not rewritten by this later adoption.
 
 ### Private bidi backend comparison — 2026-10-29
 
