@@ -1,0 +1,545 @@
+--- a/modules/skunicode/src/SkUnicode_icu.cpp
++++ b/modules/skunicode/src/SkUnicode_icu.cpp
+@@ -18,11 +18,14 @@
+ #include "modules/skunicode/src/SkBidiFactory_icu_full.h"
+ #include "modules/skunicode/src/SkUnicode_icu_bidi.h"
+ #include "modules/skunicode/src/SkUnicode_icupriv.h"
++#include "modules/skunicode/src/SkUnicode_egret_qualification.h"
+ #include "src/core/SkBitmaskEnum.h"
+ #include "src/core/SkChecksum.h"
+ #include "src/core/SkTHash.h"
+ #include "src/core/SkUTF.h"
+ 
++#include <unicode/icudataver.h>
++#include <unicode/uversion.h>
+ #include <unicode/ubrk.h>
+ #include <unicode/uchar.h>
+ #include <unicode/uloc.h>
+@@ -706,3 +709,147 @@
+     return nullptr;
+ }
+ }  // namespace SkUnicodes::ICU
++
++// LOCAL MODIFICATION: value-only private observations of the selected linked ICU.
++// This lives in the existing ICU-configured TU; no new build target/configuration.
++namespace SkUnicodes::ICU::EgretQualification {
++
++Identity ObserveIdentity() {
++    Identity out;
++    u_getVersion(out.codeVersion.data());
++    u_getUnicodeVersion(out.unicodeVersion.data());
++    UErrorCode error = U_ZERO_ERROR;
++    u_getDataVersion(out.dataVersion.data(), &error);
++    out.dataErrorCode = static_cast<int32_t>(error);
++    const char* locale = uloc_getDefault();
++    out.defaultLocale = locale ? locale : "";
++    out.declaredCodeVersion = U_ICU_VERSION;
++    out.declaredUnicodeVersion = U_UNICODE_VERSION;
++    return out;
++}
++
++namespace {
++bool EgretClass(const std::string& name, UCharDirection* direction) {
++    struct Entry { const char* name; UCharDirection direction; };
++    static constexpr Entry entries[] = {
++        {"L", U_LEFT_TO_RIGHT}, {"R", U_RIGHT_TO_LEFT},
++        {"AL", U_RIGHT_TO_LEFT_ARABIC}, {"EN", U_EUROPEAN_NUMBER},
++        {"ES", U_EUROPEAN_NUMBER_SEPARATOR}, {"ET", U_EUROPEAN_NUMBER_TERMINATOR},
++        {"AN", U_ARABIC_NUMBER}, {"CS", U_COMMON_NUMBER_SEPARATOR},
++        {"NSM", U_DIR_NON_SPACING_MARK}, {"BN", U_BOUNDARY_NEUTRAL},
++        {"B", U_BLOCK_SEPARATOR}, {"S", U_SEGMENT_SEPARATOR},
++        {"WS", U_WHITE_SPACE_NEUTRAL}, {"ON", U_OTHER_NEUTRAL},
++        {"LRE", U_LEFT_TO_RIGHT_EMBEDDING}, {"LRO", U_LEFT_TO_RIGHT_OVERRIDE},
++        {"RLE", U_RIGHT_TO_LEFT_EMBEDDING}, {"RLO", U_RIGHT_TO_LEFT_OVERRIDE},
++        {"PDF", U_POP_DIRECTIONAL_FORMAT}, {"LRI", U_LEFT_TO_RIGHT_ISOLATE},
++        {"RLI", U_RIGHT_TO_LEFT_ISOLATE}, {"FSI", U_FIRST_STRONG_ISOLATE},
++        {"PDI", U_POP_DIRECTIONAL_ISOLATE},
++    };
++    for (const auto& entry : entries) {
++        if (name == entry.name) { *direction = entry.direction; return true; }
++    }
++    return false;
++}
++
++UCharDirection U_CALLCONV EgretClassCallback(const void* context, UChar32 value) {
++    const auto& classes = *static_cast<const std::vector<UCharDirection>*>(context);
++    const int32_t index = value - 0xE000;
++    return index >= 0 && static_cast<size_t>(index) < classes.size()
++        ? classes[index] : static_cast<UCharDirection>(U_BIDI_CLASS_DEFAULT);
++}
++}  // namespace
++
++BidiObservation ObserveBidi(const std::u16string& text,
++                            const std::vector<std::string>& classes,
++                            bool classesMode,
++                            ParagraphMode mode) {
++    BidiObservation out;
++    // Declare buffers/context before UBiDi: its stored pointers remain valid
++    // until the RAII UBiDi is destroyed, including all early return paths.
++    std::u16string nativeText = text;
++    std::vector<UCharDirection> nativeClasses;
++    if (text.size() > 512 || classes.size() > 256) {
++        out.refusalReason = "BIDI_INPUT_LIMIT";
++        return out;
++    }
++    if (classesMode) {
++        nativeText.clear();
++        nativeClasses.reserve(classes.size());
++        for (size_t i = 0; i < classes.size(); ++i) {
++            UCharDirection direction;
++            if (!EgretClass(classes[i], &direction)) {
++                out.refusalReason = "INVALID_BIDI_CLASS";
++                return out;
++            }
++            nativeClasses.push_back(direction);
++            // Private one-unit carriers, with each class assigned by ICU's
++            // callback. They are not representative original characters.
++            nativeText.push_back(static_cast<char16_t>(0xE000 + i));
++        }
++    }
++    UBiDiLevel level;
++    switch (mode) {
++        case ParagraphMode::kLtr: level = UBIDI_LTR; break;
++        case ParagraphMode::kRtl: level = UBIDI_RTL; break;
++        case ParagraphMode::kAutoLtr: level = UBIDI_DEFAULT_LTR; break;
++        case ParagraphMode::kAutoRtl: level = UBIDI_DEFAULT_RTL; break;
++        default: out.refusalReason = "INVALID_PARAGRAPH_MODE"; return out;
++    }
++    UErrorCode error = U_ZERO_ERROR;
++    std::unique_ptr<UBiDi, decltype(&ubidi_close)> bidi(
++        ubidi_openSized(static_cast<int32_t>(nativeText.size()), 0, &error), &ubidi_close);
++    auto failed = [&]() {
++        out.errorCode = static_cast<int32_t>(error);
++        if (!U_FAILURE(error)) { return false; }
++        out.refusalReason = "ICU_BIDI_ERROR";
++        return true;
++    };
++    if (failed() || !bidi) {
++        if (out.refusalReason.empty()) { out.refusalReason = "ICU_BIDI_ALLOCATION"; }
++        return out;
++    }
++    if (classesMode) {
++        ubidi_setClassCallback(bidi.get(), &EgretClassCallback, &nativeClasses,
++                              nullptr, nullptr, &error);
++        if (failed()) { return out; }
++    }
++    // c_str() is non-null even for length zero, as required by ubidi_setPara.
++    ubidi_setPara(bidi.get(), reinterpret_cast<const UChar*>(nativeText.c_str()),
++                  static_cast<int32_t>(nativeText.size()), level, nullptr, &error);
++    if (failed()) { return out; }
++    out.nativeInputLength = ubidi_getLength(bidi.get());
++    out.nativeResultLength = ubidi_getResultLength(bidi.get());
++    out.paragraphLevel = ubidi_getParaLevel(bidi.get());
++    out.reorderingMode = static_cast<int32_t>(ubidi_getReorderingMode(bidi.get()));
++    out.reorderingOptions = ubidi_getReorderingOptions(bidi.get());
++    if (out.nativeInputLength != static_cast<int32_t>(nativeText.size()) ||
++        out.nativeResultLength < 0 || out.nativeResultLength > 512) {
++        out.refusalReason = "BIDI_OUTPUT_LENGTH";
++        return out;
++    }
++    if (nativeText.empty()) {
++        // ICU getLevels explicitly rejects empty text. This successful setPara
++        // observation does not claim that getLevels was called/succeeded.
++        return out;
++    }
++    const UBiDiLevel* levels = ubidi_getLevels(bidi.get(), &error);
++    if (failed() || !levels) {
++        if (out.refusalReason.empty()) { out.refusalReason = "ICU_BIDI_LEVELS"; }
++        return out;
++    }
++    out.levels.assign(levels, levels + nativeText.size());
++    out.levelsRead = true;
++    out.visualToLogical.reserve(out.nativeResultLength);
++    for (int32_t i = 0; i < out.nativeResultLength; ++i) {
++        const int32_t logical = ubidi_getLogicalIndex(bidi.get(), i, &error);
++        if (failed()) { return out; }
++        if (logical < 0 || logical >= out.nativeInputLength) {
++            out.refusalReason = "BIDI_OUTPUT_INDEX";
++            return out;
++        }
++        out.visualToLogical.push_back(logical);
++    }
++    return out;
++}
++
++}  // namespace SkUnicodes::ICU::EgretQualification
+--- a/modules/canvaskit/paragraph_bindings.cpp
++++ b/modules/canvaskit/paragraph_bindings.cpp
+@@ -522,8 +522,10 @@
+ 
+ // LOCAL MODIFICATION: exact-source, private qualification methods only.
+ #include "modules/canvaskit/paragraph_qualification_bindings.inc"
++#include "modules/canvaskit/unicode_qualification_bindings.inc"
+ 
+ EMSCRIPTEN_BINDINGS(Paragraph) {
++    function("_getEgretUnicodeQualification", &GetEgretUnicodeQualification);
+ 
+     class_<para::Paragraph>("Paragraph")
+         .function("didExceedMaxLines", &para::Paragraph::didExceedMaxLines)
+--- /dev/null
++++ b/modules/skunicode/src/SkUnicode_egret_qualification.h
+@@ -0,0 +1,45 @@
++// Local private qualification extension to the pinned Skia tree.
++// Governed by the BSD license retained as LICENSE.skia; not a public API.
++#ifndef SkUnicode_egret_qualification_DEFINED
++#define SkUnicode_egret_qualification_DEFINED
++
++#include <array>
++#include <cstdint>
++#include <string>
++#include <vector>
++
++namespace SkUnicodes::ICU::EgretQualification {
++
++struct Identity {
++    std::array<uint8_t, 4> codeVersion{};
++    std::array<uint8_t, 4> unicodeVersion{};
++    std::array<uint8_t, 4> dataVersion{};
++    int32_t dataErrorCode = 0;
++    std::string defaultLocale;
++    std::string declaredCodeVersion;
++    std::string declaredUnicodeVersion;
++};
++Identity ObserveIdentity();
++
++enum class ParagraphMode { kLtr, kRtl, kAutoLtr, kAutoRtl };
++struct BidiObservation {
++    std::vector<uint8_t> levels;
++    std::vector<int32_t> visualToLogical;
++    int32_t paragraphLevel = -1;
++    int32_t errorCode = 0;
++    int32_t nativeInputLength = -1;
++    int32_t nativeResultLength = -1;
++    int32_t reorderingMode = -1;
++    uint32_t reorderingOptions = 0;
++    bool levelsRead = false;
++    std::string refusalReason;
++};
++// classesMode is explicit even for an empty class list; neither representation
++// is guessed from content. The caller validates well-formed UTF-16 first.
++BidiObservation ObserveBidi(const std::u16string& text,
++                            const std::vector<std::string>& classes,
++                            bool classesMode,
++                            ParagraphMode mode);
++
++}  // namespace SkUnicodes::ICU::EgretQualification
++#endif
+--- /dev/null
++++ b/modules/canvaskit/unicode_qualification_bindings.inc
+@@ -0,0 +1,316 @@
++// Local private qualification extension to pinned Skia. Not a public API.
++// Governed by the retained LICENSE.skia and linked ICU's original notices.
++#include "modules/skunicode/src/SkUnicode_egret_qualification.h"
++#include <cmath>
++#include <cstdint>
++#include <string>
++#include <vector>
++
++namespace {
++namespace EgretUnicode = SkUnicodes::ICU::EgretQualification;
++
++JSObject EgretUStatus(const char* status, const std::string& operation) {
++    auto out = val::object();
++    out.set("status", std::string(status));
++    out.set("operation", operation);
++    return out;
++}
++JSObject EgretURefused(const std::string& operation, const char* reason) {
++    auto out = EgretUStatus("REFUSED", operation);
++    out.set("reason", std::string(reason));
++    return out;
++}
++bool EgretUString(const val& value, size_t bound, std::string* copied) {
++    if (value.typeOf().as<std::string>() != "string" ||
++        value["length"].as<double>() > static_cast<double>(bound)) { return false; }
++    *copied = value.as<std::string>();
++    return true;
++}
++bool EgretUArrayLength(const val& value, size_t bound, size_t* length) {
++    if (!val::global("Array").call<bool>("isArray", value)) { return false; }
++    const double count = value["length"].as<double>();
++    if (!std::isfinite(count) || count < 0 || std::floor(count) != count ||
++        count > static_cast<double>(bound)) { return false; }
++    *length = static_cast<size_t>(count);
++    return true;
++}
++template <typename Values> JSArray EgretUNumbers(const Values& values) {
++    auto out = val::array();
++    for (auto value : values) { out.call<void>("push", static_cast<int32_t>(value)); }
++    return out;
++}
++JSArray EgretUBytes(const char* bytes, size_t size) {
++    auto out = val::array();
++    for (size_t i = 0; i < size; ++i) {
++        out.call<void>("push", static_cast<uint32_t>(static_cast<uint8_t>(bytes[i])));
++    }
++    return out;
++}
++const char* EgretUText(const val& value, std::u16string* text, SkString* utf8) {
++    if (!val::global("Array").call<bool>("isArray", value)) { return "INVALID_TEXT_UTF16"; }
++    size_t count = 0;
++    if (!EgretUArrayLength(value, 512, &count)) { return "UTF16_LIMIT"; }
++    text->reserve(count);
++    for (size_t i = 0; i < count; ++i) {
++        const val unit = value[static_cast<unsigned>(i)];
++        if (unit.typeOf().as<std::string>() != "number") { return "INVALID_TEXT_UTF16"; }
++        const double number = unit.as<double>();
++        if (!std::isfinite(number) || number < 0 || number > 65535 ||
++            std::floor(number) != number) { return "INVALID_TEXT_UTF16"; }
++        text->push_back(static_cast<char16_t>(number));
++    }
++    for (size_t i = 0; i < count; ++i) {
++        const uint16_t unit = (*text)[i];
++        if (unit >= 0xD800 && unit <= 0xDBFF) {
++            if (i + 1 == count || (*text)[i + 1] < 0xDC00 || (*text)[i + 1] > 0xDFFF) {
++                return "MALFORMED_UTF16";
++            }
++            ++i;
++        } else if (unit >= 0xDC00 && unit <= 0xDFFF) { return "MALFORMED_UTF16"; }
++    }
++    // Explicit length conversion preserves NUL. Malformed units never reach it.
++    *utf8 = SkUnicode::convertUtf16ToUtf8(text->c_str(), static_cast<int>(text->size()));
++    if (utf8->size() > 2048) { return "UTF8_LIMIT"; }
++    return nullptr;
++}
++JSObject EgretUObservedText(const std::string& operation, const std::u16string& text,
++                           const SkString& utf8) {
++    auto out = EgretUStatus("OBSERVED", operation);
++    out.set("textUtf16", EgretUNumbers(text));
++    out.set("inputUtf8", EgretUBytes(utf8.c_str(), utf8.size()));
++    return out;
++}
++JSObject EgretUIdentity(const std::string& operation) {
++    const auto identity = EgretUnicode::ObserveIdentity();
++    auto out = EgretUStatus("OBSERVED", operation);
++    out.set("codeVersion", EgretUNumbers(identity.codeVersion));
++    out.set("unicodeVersion", EgretUNumbers(identity.unicodeVersion));
++    out.set("dataVersion", EgretUNumbers(identity.dataVersion));
++    out.set("dataErrorCode", identity.dataErrorCode);
++    out.set("defaultLocale", identity.defaultLocale);
++    auto source = val::object();
++    source.set("codeVersion", identity.declaredCodeVersion);
++    source.set("unicodeVersion", identity.declaredUnicodeVersion);
++    out.set("sourceDeclared", source);
++    auto embedded = val::object();
++    embedded.set("bytes", 864880);
++    embedded.set("sha256", std::string("325a86063d26334c2eabe1743cea073b612540fbf3d8fc2ef0b5708e3763a8c7"));
++    embedded.set("sourcePath", std::string("third_party/externals/icu/flutter/icudtl.dat"));
++    embedded.set("identityKind", std::string("reviewed-build-input-sha256-not-runtime-computed"));
++    out.set("embeddedData", embedded);
++    auto runtime = val::object();
++    runtime.set("codeVersion", EgretUNumbers(identity.codeVersion));
++    runtime.set("unicodeVersion", EgretUNumbers(identity.unicodeVersion));
++    runtime.set("dataVersion", EgretUNumbers(identity.dataVersion));
++    runtime.set("dataErrorCode", identity.dataErrorCode);
++    runtime.set("defaultLocale", identity.defaultLocale);
++    out.set("runtimeReported", runtime);
++    return out;
++}
++
++JSObject GetEgretUnicodeQualification(val request) {
++    std::string operation;
++    if (request.isNull() || request.isUndefined() ||
++        request.typeOf().as<std::string>() != "object" ||
++        val::global("Array").call<bool>("isArray", request)) {
++        return EgretURefused(operation, "INVALID_REQUEST");
++    }
++    if (!EgretUString(request["operation"], 32, &operation)) {
++        return EgretURefused(operation, "INVALID_OPERATION");
++    }
++    if (operation == "identity") { return EgretUIdentity(operation); }
++    if (operation != "breaks" && operation != "paragraphFlags" &&
++        operation != "bidiAdapter" && operation != "bidiBackend") {
++        return EgretURefused(operation, "UNKNOWN_OPERATION");
++    }
++    std::u16string text;
++    SkString utf8;
++
++    if (operation == "bidiBackend") {
++        const bool classesMode = !request["classes"].isUndefined();
++        const bool textMode = !request["textUtf16"].isUndefined();
++        if (classesMode == textMode) { return EgretURefused(operation, "AMBIGUOUS_BIDI_INPUT"); }
++        std::vector<std::string> classes;
++        if (classesMode) {
++            if (!val::global("Array").call<bool>("isArray", request["classes"])) {
++                return EgretURefused(operation, "INVALID_CLASSES");
++            }
++            size_t count = 0;
++            if (!EgretUArrayLength(request["classes"], 256, &count)) {
++                return EgretURefused(operation, "CLASS_LIMIT");
++            }
++            classes.reserve(count);
++            for (size_t i = 0; i < count; ++i) {
++                std::string token;
++                if (!EgretUString(request["classes"][static_cast<unsigned>(i)], 3, &token)) {
++                    return EgretURefused(operation, "INVALID_BIDI_CLASS");
++                }
++                classes.push_back(std::move(token));
++            }
++        } else if (const char* reason = EgretUText(request["textUtf16"], &text, &utf8)) {
++            return EgretURefused(operation, reason);
++        }
++        std::string mode;
++        if (!EgretUString(request["paragraphMode"], 16, &mode)) {
++            return EgretURefused(operation, "INVALID_PARAGRAPH_MODE");
++        }
++        EgretUnicode::ParagraphMode paragraphMode;
++        if (mode == "ltr") { paragraphMode = EgretUnicode::ParagraphMode::kLtr; }
++        else if (mode == "rtl") { paragraphMode = EgretUnicode::ParagraphMode::kRtl; }
++        else if (mode == "auto-ltr") { paragraphMode = EgretUnicode::ParagraphMode::kAutoLtr; }
++        else if (mode == "auto-rtl") { paragraphMode = EgretUnicode::ParagraphMode::kAutoRtl; }
++        else { return EgretURefused(operation, "INVALID_PARAGRAPH_MODE"); }
++        const auto result = EgretUnicode::ObserveBidi(text, classes, classesMode, paragraphMode);
++        if (!result.refusalReason.empty()) {
++            auto out = EgretURefused(operation, result.refusalReason.c_str());
++            out.set("errorCode", result.errorCode);
++            out.set("error", result.errorCode);
++            return out;
++        }
++        auto out = classesMode ? EgretUStatus("OBSERVED", operation)
++                               : EgretUObservedText(operation, text, utf8);
++        out.set("inputKind", std::string(classesMode ? "classes" : "characters"));
++        if (classesMode) {
++            auto copied = val::array();
++            for (const auto& token : classes) { copied.call<void>("push", token); }
++            out.set("classes", copied);
++            out.set("classAssignment", std::string("ICU per-token class callback; private one-UTF16-unit carriers, not original characters"));
++        }
++        out.set("paragraphMode", mode);
++        out.set("offsetDomain", std::string("utf16-code-units"));
++        out.set("levels", EgretUNumbers(result.levels));
++        out.set("visualToLogical", EgretUNumbers(result.visualToLogical));
++        out.set("paragraphLevel", result.paragraphLevel);
++        out.set("errorCode", result.errorCode);
++        out.set("error", result.errorCode);
++        out.set("nativeInputLength", result.nativeInputLength);
++        out.set("nativeResultLength", result.nativeResultLength);
++        out.set("levelsRead", result.levelsRead);
++        out.set("reorderingMode", result.reorderingMode);
++        out.set("reorderingOptions", result.reorderingOptions);
++        return out;
++    }
++
++    if (const char* reason = EgretUText(request["textUtf16"], &text, &utf8)) {
++        return EgretURefused(operation, reason);
++    }
++    if (operation == "breaks") {
++        std::string kind, encoding, locale;
++        if (!EgretUString(request["kind"], 16, &kind) ||
++            (kind != "graphemes" && kind != "lines")) { return EgretURefused(operation, "INVALID_BREAK_KIND"); }
++        if (!EgretUString(request["encoding"], 16, &encoding) ||
++            (encoding != "utf16" && encoding != "utf8")) { return EgretURefused(operation, "INVALID_ENCODING"); }
++        const val requestedLocale = request["locale"];
++        const bool defaultLocale = requestedLocale.isNull();
++        if (!defaultLocale && (!EgretUString(requestedLocale, 2, &locale) || locale != "en")) {
++            return EgretURefused(operation, "INVALID_LOCALE");
++        }
++        auto unicode = get_unicode();
++        if (!unicode) { return EgretURefused(operation, "UNICODE_UNAVAILABLE"); }
++        auto iterator = unicode->makeBreakIterator(defaultLocale ? nullptr : locale.c_str(),
++            kind == "graphemes" ? SkUnicode::BreakType::kGraphemes : SkUnicode::BreakType::kLines);
++        if (!iterator) { return EgretURefused(operation, "BREAK_ITERATOR_UNAVAILABLE"); }
++        const bool accepted = encoding == "utf16"
++            ? iterator->setText(text.c_str(), static_cast<int>(text.size()))
++            : iterator->setText(utf8.c_str(), static_cast<int>(utf8.size()));
++        if (!accepted) { return EgretURefused(operation, "BREAK_TEXT_REFUSED"); }
++        const int32_t units = encoding == "utf16" ? static_cast<int32_t>(text.size())
++                                                    : static_cast<int32_t>(utf8.size());
++        std::vector<int32_t> positions, statuses;
++        int32_t position = iterator->first();
++        while (!iterator->isDone()) {
++            if (position < 0 || position > units || positions.size() >= static_cast<size_t>(units) + 1 ||
++                (!positions.empty() && position <= positions.back())) {
++                return EgretURefused(operation, "BREAK_OUTPUT_BOUND_OR_ORDER");
++            }
++            positions.push_back(position);
++            statuses.push_back(iterator->status());
++            position = iterator->next();
++        }
++        auto out = EgretUObservedText(operation, text, utf8);
++        out.set("kind", kind);
++        out.set("encoding", encoding);
++        out.set("offsetDomain", std::string(encoding == "utf16" ? "utf16-code-units" : "utf8-bytes"));
++        out.set("positions", EgretUNumbers(positions));
++        out.set("statuses", EgretUNumbers(statuses));
++        out.set("localeRequested", defaultLocale ? val::null() : val(locale));
++        out.set("defaultLocale", EgretUnicode::ObserveIdentity().defaultLocale);
++        out.set("effectiveLocale", val::null());
++        out.set("effectiveLocaleNote", std::string("SkBreakIterator exposes no effective-locale getter; not inferred"));
++        return out;
++    }
++    if (operation == "paragraphFlags") {
++        if (request["replaceTabs"].typeOf().as<std::string>() != "boolean") {
++            return EgretURefused(operation, "INVALID_REPLACE_TABS");
++        }
++        const bool replaceTabs = request["replaceTabs"].as<bool>();
++        auto unicode = get_unicode();
++        if (!unicode) { return EgretURefused(operation, "UNICODE_UNAVAILABLE"); }
++        std::string bytes(utf8.c_str(), utf8.size());
++        skia_private::TArray<SkUnicode::CodeUnitFlags, true> flags;
++        const bool returned = unicode->computeCodeUnitFlags(bytes.data(), static_cast<int>(bytes.size()), replaceTabs, &flags);
++        if (!returned) { return EgretURefused(operation, "PARAGRAPH_FLAGS_REFUSED"); }
++        if (static_cast<size_t>(flags.size()) != bytes.size() + 1 || flags.size() > 2049) {
++            return EgretURefused(operation, "PARAGRAPH_FLAGS_LENGTH");
++        }
++        auto out = EgretUObservedText(operation, text, utf8);
++        out.set("beforeUtf8", EgretUBytes(utf8.c_str(), utf8.size()));
++        out.set("afterUtf8", EgretUBytes(bytes.data(), bytes.size()));
++        out.set("flags", EgretUNumbers(flags));
++        auto constants = val::object();
++        constants.set("graphemeStart", static_cast<int>(SkUnicode::kGraphemeStart));
++        constants.set("softLineBreakBefore", static_cast<int>(SkUnicode::kSoftLineBreakBefore));
++        constants.set("hardLineBreakBefore", static_cast<int>(SkUnicode::kHardLineBreakBefore));
++        out.set("flagConstants", constants);
++        out.set("offsetDomain", std::string("utf8-bytes"));
++        out.set("terminalSlot", bytes.size());
++        out.set("replaceTabs", replaceTabs);
++        out.set("localeRequested", val::null());
++        out.set("defaultLocale", EgretUnicode::ObserveIdentity().defaultLocale);
++        out.set("effectiveLocale", val::null());
++        out.set("nativeReturned", returned);
++        out.set("scope", std::string("Raw pre-shaping SkUnicode flags; internal extraction failures are not propagated by this native method"));
++        return out;
++    }
++    const val directionValue = request["direction"];
++    if (directionValue.typeOf().as<std::string>() != "number") { return EgretURefused(operation, "INVALID_DIRECTION"); }
++    const double direction = directionValue.as<double>();
++    if (direction != 0 && direction != 1) { return EgretURefused(operation, "INVALID_DIRECTION"); }
++    auto unicode = get_unicode();
++    if (!unicode) { return EgretURefused(operation, "UNICODE_UNAVAILABLE"); }
++    auto iterator = unicode->makeBidiIterator(reinterpret_cast<const uint16_t*>(text.c_str()),
++        static_cast<int>(text.size()), direction == 0 ? SkBidiIterator::kLTR : SkBidiIterator::kRTL);
++    if (!iterator) { return EgretURefused(operation, "BIDI_ADAPTER_UNAVAILABLE"); }
++    if (iterator->getLength() != static_cast<int32_t>(text.size())) { return EgretURefused(operation, "BIDI_ADAPTER_LENGTH"); }
++    std::vector<SkUnicode::BidiLevel> levels;
++    levels.reserve(text.size());
++    for (size_t i = 0; i < text.size(); ++i) { levels.push_back(iterator->getLevelAt(static_cast<int32_t>(i))); }
++    std::vector<int32_t> order(levels.size());
++    unicode->reorderVisual(levels.data(), static_cast<int>(levels.size()), order.data());
++    std::vector<SkUnicode::BidiRegion> regions;
++    if (!unicode->getBidiRegions(utf8.c_str(), static_cast<int>(utf8.size()),
++            direction == 0 ? SkUnicode::TextDirection::kLTR : SkUnicode::TextDirection::kRTL, &regions)) {
++        return EgretURefused(operation, "BIDI_REGIONS_REFUSED");
++    }
++    if (regions.size() > text.size() + 1) { return EgretURefused(operation, "BIDI_REGIONS_BOUND"); }
++    auto copied = val::array();
++    for (const auto& region : regions) {
++        if (region.start > region.end || region.end > utf8.size()) { return EgretURefused(operation, "BIDI_REGION_RANGE"); }
++        auto record = val::object();
++        record.set("start", region.start);
++        record.set("end", region.end);
++        record.set("level", static_cast<uint32_t>(region.level));
++        copied.call<void>("push", record);
++    }
++    auto out = EgretUObservedText(operation, text, utf8);
++    out.set("inputKind", std::string("characters"));
++    out.set("direction", static_cast<int32_t>(direction));
++    out.set("levels", EgretUNumbers(levels));
++    out.set("visualToLogical", EgretUNumbers(order));
++    out.set("offsetDomain", std::string("utf16-code-units"));
++    out.set("regions", copied);
++    out.set("regionOffsetDomain", std::string("utf8-bytes"));
++    out.set("permutationInputDomain", std::string("UTF16 level slots, not final paragraph visual runs"));
++    return out;
++}
++}  // namespace

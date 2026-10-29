@@ -15,6 +15,7 @@ const sealedVendor=new Map([
 ]);
 // Retain this upstream original at its historical path, separately from reading copies.
 const sealedOriginal=new Map([
+ ['examples/paragraph-panel/vendor/licenses/libjpeg-turbo-LICENSE.md','96f5b328adbb78eeaaec6980d73fd558cb1e4d62560ed615646bc3cf5e532430'],
  ['knowledge-base/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md','4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb']
 ]);
 const validPath=p=>{try{logicalPath(p);return true;}catch{return false;}};

@@ -1,0 +1,214 @@
+--- a/modules/skparagraph/src/TextWrapper.h
++++ b/modules/skparagraph/src/TextWrapper.h
+@@ -178,7 +178,8 @@
+                                                   SkVector offset,
+                                                   SkVector advance,
+                                                   InternalLineMetrics metrics,
+-                                                  bool addEllipsis)>;
++                                                  bool addEllipsis,
++                                                  TextLine::EgretQualificationLineCause sourceCause)>;
+     void breakTextIntoLines(ParagraphImpl* parent,
+                             SkScalar maxWidth,
+                             const AddLineToParagraph& addLine);
+--- a/modules/skparagraph/src/TextWrapper.cpp
++++ b/modules/skparagraph/src/TextWrapper.cpp
+@@ -395,7 +395,9 @@
+                 SkVector::Make(0, fHeight),
+                 SkVector::Make(fEndLine.width(), lineHeight),
+                 fEndLine.metrics(),
+-                needEllipsis && !fHardLineBreak);
++                needEllipsis && !fHardLineBreak,
++                {TextLine::EgretQualificationLineOrigin::kTextWrapper,
++                 fHardLineBreak, false, lastLine, needEllipsis && !fHardLineBreak});
+ 
+         softLineMaxIntrinsicWidth += widthWithSpaces;
+ 
+@@ -496,7 +498,9 @@
+                 SkVector::Make(0, fHeight),
+                 SkVector::Make(0, fEndLine.metrics().height()),
+                 fEndLine.metrics(),
+-                needEllipsis);
++                needEllipsis,
++                {TextLine::EgretQualificationLineOrigin::kTerminalAfterHardBreak,
++                 true, true, false, needEllipsis});
+         fHeight += fEndLine.metrics().height();
+         parent->lines().back().setMaxRunMetrics(maxRunMetrics);
+     }
+--- a/modules/skparagraph/src/TextLine.h
++++ b/modules/skparagraph/src/TextLine.h
+@@ -38,6 +38,32 @@
+       bool clippingNeeded;
+     };
+ 
++    // LOCAL MODIFICATION: creation-only source evidence for the private bridge.
++    // Values belong to this line and retire with it; no native handle/cache is added.
++    enum class EgretQualificationLineOrigin {
++        kSingleRunFastPath,
++        kTextWrapper,
++        kTerminalAfterHardBreak,
++    };
++    struct EgretQualificationLineCause {
++        EgretQualificationLineOrigin origin;
++        bool actualHardBreak;
++        bool terminalEmpty;
++        bool lastLine;
++        bool ellipsisAttempted;
++    };
++    struct EgretQualificationSourceDecision {
++        TextRange textRange;
++        TextRange trimmedTextRange;
++        TextRange textWithNewlinesRange;
++        ClusterRange clusterRange;
++        ClusterRange ghostClusterRange;
++        EgretQualificationLineCause cause;
++    };
++    const EgretQualificationSourceDecision& egretQualificationSourceDecision() const {
++        return fEgretQualificationSourceDecision;
++    }
++
+     enum TextAdjustment {
+         GlyphCluster = 0x01,    // All text producing glyphs pointing to the same ClusterIndex
+         GlyphemeCluster = 0x02, // base glyph + all attached diacritics
+@@ -62,7 +88,8 @@
+              ClusterRange clusters,
+              ClusterRange clustersWithGhosts,
+              SkScalar widthWithSpaces,
+-             InternalLineMetrics sizes);
++             InternalLineMetrics sizes,
++             EgretQualificationLineCause sourceCause);
+ 
+     TextRange trimmedText() const { return fTextExcludingSpaces; }
+     TextRange textWithNewlines() const { return fTextIncludingNewlines; }
+@@ -192,6 +219,8 @@
+     TextRange fTextIncludingNewlines;
+     ClusterRange fClusterRange;
+     ClusterRange fGhostClusterRange;
++    // Written only by construction, before ellipsis mutates the ordinary ranges.
++    EgretQualificationSourceDecision fEgretQualificationSourceDecision;
+     // Avoid the malloc/free in the common case of one run per line
+     skia_private::STArray<1, size_t, true> fRunsInVisualOrder;
+     SkVector fAdvance;                  // Text size
+--- a/modules/skparagraph/src/TextLine.cpp
++++ b/modules/skparagraph/src/TextLine.cpp
+@@ -100,7 +100,8 @@
+                    ClusterRange clusters,
+                    ClusterRange clustersWithGhosts,
+                    SkScalar widthWithSpaces,
+-                   InternalLineMetrics sizes)
++                   InternalLineMetrics sizes,
++                   EgretQualificationLineCause sourceCause)
+         : fOwner(owner)
+         , fBlockRange(blocks)
+         , fTextExcludingSpaces(textExcludingSpaces)
+@@ -108,6 +109,8 @@
+         , fTextIncludingNewlines(textIncludingNewlines)
+         , fClusterRange(clusters)
+         , fGhostClusterRange(clustersWithGhosts)
++        , fEgretQualificationSourceDecision{text, textExcludingSpaces, textIncludingNewlines,
++                                           clusters, clustersWithGhosts, sourceCause}
+         , fRunsInVisualOrder()
+         , fAdvance(advance)
+         , fOffset(offset)
+--- a/modules/skparagraph/src/ParagraphImpl.h
++++ b/modules/skparagraph/src/ParagraphImpl.h
+@@ -124,7 +124,7 @@
+     TextLine& addLine(SkVector offset, SkVector advance,
+                       TextRange textExcludingSpaces, TextRange text, TextRange textIncludingNewlines,
+                       ClusterRange clusters, ClusterRange clustersWithGhosts, SkScalar widthWithSpaces,
+-                      InternalLineMetrics sizes);
++                      InternalLineMetrics sizes, TextLine::EgretQualificationLineCause sourceCause);
+ 
+     SkSpan<const char> text() const { return SkSpan<const char>(fText.c_str(), fText.size()); }
+     InternalState state() const { return fState; }
+--- a/modules/skparagraph/src/ParagraphImpl.cpp
++++ b/modules/skparagraph/src/ParagraphImpl.cpp
+@@ -641,7 +641,9 @@
+         this->addLine(SkPoint::Make(0, 0), advance,
+                       textExcludingSpaces, textRange, textRange,
+                       clusterRange, clusterRangeWithGhosts, run.advance().x(),
+-                      metrics);
++                      metrics,
++                      {TextLine::EgretQualificationLineOrigin::kSingleRunFastPath,
++                       false, false, false, false});
+ 
+         fLongestLine = nearlyZero(advance.fX) ? run.advance().fX : advance.fX;
+         fHeight = advance.fY;
+@@ -669,9 +671,10 @@
+                 SkVector offset,
+                 SkVector advance,
+                 InternalLineMetrics metrics,
+-                bool addEllipsis) {
++                bool addEllipsis,
++                TextLine::EgretQualificationLineCause sourceCause) {
+                 // TODO: Take in account clipped edges
+-                auto& line = this->addLine(offset, advance, textExcludingSpaces, text, textWithNewlines, clusters, clustersWithGhosts, widthWithSpaces, metrics);
++                auto& line = this->addLine(offset, advance, textExcludingSpaces, text, textWithNewlines, clusters, clustersWithGhosts, widthWithSpaces, metrics, sourceCause);
+                 if (addEllipsis) {
+                     line.createEllipsis(maxWidth, this->getEllipsis(), true);
+                 }
+@@ -791,12 +794,13 @@
+                                  ClusterRange clusters,
+                                  ClusterRange clustersWithGhosts,
+                                  SkScalar widthWithSpaces,
+-                                 InternalLineMetrics sizes) {
++                                 InternalLineMetrics sizes,
++                                 TextLine::EgretQualificationLineCause sourceCause) {
+     // Define a list of styles that covers the line
+     auto blocks = findAllBlocks(textExcludingSpaces);
+     return fLines.emplace_back(this, offset, advance, blocks,
+                                textExcludingSpaces, text, textIncludingNewLines,
+-                               clusters, clustersWithGhosts, widthWithSpaces, sizes);
++                               clusters, clustersWithGhosts, widthWithSpaces, sizes, sourceCause);
+ }
+ 
+ // Returns a vector of bounding boxes that enclose all text between
+@@ -1203,6 +1207,18 @@
+             line.clusters().end > static_cast<size_t>(fClusters.size()) ||
+             line.clustersWithSpaces().end > static_cast<size_t>(fClusters.size())) {
+             return refuse("line-cluster-range");
++        }
++        const auto& decision = line.egretQualificationSourceDecision();
++        const auto textRangeValid = [&](TextRange range) {
++            return range.start <= range.end && range.end <= fText.size();
++        };
++        const auto clusterRangeValid = [&](ClusterRange range) {
++            return range.start <= range.end && range.end <= static_cast<size_t>(fClusters.size());
++        };
++        if (!textRangeValid(decision.textRange) || !textRangeValid(decision.trimmedTextRange) ||
++            !textRangeValid(decision.textWithNewlinesRange) ||
++            !clusterRangeValid(decision.clusterRange) || !clusterRangeValid(decision.ghostClusterRange)) {
++            return refuse("line-source-decision-range");
+         }
+     }
+     // Validate every line and count draw occurrences BEFORE creating any new blobs.
+--- a/modules/canvaskit/paragraph_qualification_bindings.inc
++++ b/modules/canvaskit/paragraph_qualification_bindings.inc
+@@ -297,6 +297,28 @@
+         out.set("textWithNewlinesRange", EgretQRange(line.textWithNewlines()));
+         out.set("clusterRange", EgretQRange(line.clusters()));
+         out.set("ghostClusterRange", EgretQRange(line.clustersWithSpaces()));
++        // LOCAL MODIFICATION: append creation evidence; ordinary raw fields above stay raw.
++        const auto& sourceDecision = line.egretQualificationSourceDecision();
++        const auto& cause = sourceDecision.cause;
++        using Origin = para::TextLine::EgretQualificationLineOrigin;
++        const bool wrapper = cause.origin == Origin::kTextWrapper;
++        const bool fast = cause.origin == Origin::kSingleRunFastPath;
++        auto decision = val::object();
++        decision.set("origin", std::string(fast ? "single-run-fast-path" :
++            (wrapper ? "text-wrapper" : "terminal-after-hard-break")));
++        auto preTruncation = val::object();
++        preTruncation.set("textRange", EgretQRange(sourceDecision.textRange));
++        preTruncation.set("trimmedTextRange", EgretQRange(sourceDecision.trimmedTextRange));
++        preTruncation.set("textWithNewlinesRange", EgretQRange(sourceDecision.textWithNewlinesRange));
++        preTruncation.set("clusterRange", EgretQRange(sourceDecision.clusterRange));
++        preTruncation.set("ghostClusterRange", EgretQRange(sourceDecision.ghostClusterRange));
++        decision.set("preTruncation", preTruncation);
++        decision.set("wrapperActualHardBreak", fast ? val::null() : val(cause.actualHardBreak));
++        decision.set("wrapperLastLine", wrapper ? val(cause.lastLine) : val::null());
++        decision.set("terminalEmpty", cause.terminalEmpty);
++        decision.set("ellipsisAttempted", cause.ellipsisAttempted);
++        decision.set("ellipsisProduced", line.ellipsis() != nullptr);
++        out.set("sourceDecision", decision);
+         out.set("offset", EgretQPoint(line.offset()));
+         out.set("height", line.height());
+         out.set("width", line.width());

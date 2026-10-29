@@ -1,0 +1,24 @@
+--- a/third_party/externals/icu/source/common/ubidi.cpp
++++ b/third_party/externals/icu/source/common/ubidi.cpp
+@@ -1219,7 +1219,9 @@
+             case LRI:
+             case RLI:
+                 flags|=(DIRPROP_FLAG(ON)|DIRPROP_FLAG_LR(embeddingLevel));
+-                levels[i]=NO_OVERRIDE(embeddingLevel);
++                // LOCAL MODIFICATION: X5a/X5b retain the active override for the
++                // existing implicit-level bypass; keep isolate structure intact.
++                levels[i]=embeddingLevel;
+                 if(NO_OVERRIDE(embeddingLevel)!=NO_OVERRIDE(previousLevel)) {
+                     bracketProcessBoundary(&bracketData, lastCcPos,
+                                            previousLevel, embeddingLevel);
+@@ -1279,7 +1281,9 @@
+                 embeddingLevel = static_cast<UBiDiLevel>(stack[stackLast]) & ~ISOLATE;
+                 flags|=(DIRPROP_FLAG(ON)|DIRPROP_FLAG_LR(embeddingLevel));
+                 previousLevel=embeddingLevel;
+-                levels[i]=NO_OVERRIDE(embeddingLevel);
++                // LOCAL MODIFICATION: X6a preserve the resumed outer override
++                // until the existing implicit-level bypass clears its marker.
++                levels[i]=embeddingLevel;
+                 break;
+             case B:
+                 flags|=DIRPROP_FLAG(B);

@@ -1,0 +1,13 @@
+--- a/third_party/externals/icu/source/common/ubidi.cpp
++++ b/third_party/externals/icu/source/common/ubidi.cpp
+@@ -880,7 +880,9 @@
+     UBiDiLevel level;
+     dirProps=bd->pBiDi->dirProps;
+     dirProp=dirProps[position];
+-    if(dirProp==ON) {
++    // LOCAL MODIFICATION: X6 changes overridden ON to L/R before
++    // BD14/BD15/N0, so it is not eligible for bracket detection.
++    if(dirProp==ON && !(bd->pBiDi->levels[position]&UBIDI_LEVEL_OVERRIDE)) {
+         char16_t c, match;
+         int32_t idx;
+         /* First see if it is a matching closing bracket. Hopefully, this is

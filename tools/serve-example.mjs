@@ -7,7 +7,7 @@ import {fileURLToPath} from 'node:url';
 import {localPackage} from './lib/local-package.mjs';
 import {logicalPath,samePhysicalPath,fingerprintFile,ownerRelativePath} from './lib/file-identity.mjs';
 const root=fileURLToPath(new URL('..',import.meta.url));
-const types={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.json':'application/json; charset=utf-8','.ttf':'font/ttf','.woff2':'font/woff2'};
+const types={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.json':'application/json; charset=utf-8','.ttf':'font/ttf','.woff2':'font/woff2','.otf':'font/otf','.md':'text/plain; charset=utf-8','.wasm':'application/wasm'};
 export function createExampleServer(repository=root){
  return http.createServer((request,response)=>{
   const finish=(status,text)=>{response.writeHead(status,{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'});response.end(text);};
@@ -21,6 +21,7 @@ export function createExampleServer(repository=root){
   const allowed=/^examples\/sequence-controls\/(?:index\.html|main\.mjs|selection\.mjs|fixture\.mjs)$/.test(relative)
    ||/^work\/sequence-controls\/run-[A-Za-z0-9]{6}\/(?:browser-config\.json|candidate\.json|build\/generations\/[a-f0-9]{64}\/manifest\.json|build\/blobs\/sha256\/[a-f0-9]{64})$/.test(relative)
    ||/^examples\/ui-data-panel\/(?:index\.html|main\.mjs|fixture\.mjs)$/.test(relative)
+   ||/^examples\/paragraph-panel\/(?:index\.html|main\.mjs|README(?:\.zh-CN)?\.md|vendor\/(?:manifest\.json|runtime\/canvaskit\.(?:js|wasm)|fonts\/[A-Za-z0-9_.-]+\.(?:ttf|otf)))$/.test(relative)
    ||/^examples\/multi-pointer\/(?:index\.html|main\.mjs)$/.test(relative)
    ||/^examples\/resource-scene\/(?:[\w-]+\.(?:html|mjs)|assets\/[\w.-]+\.(?:png|woff2))$/.test(relative)
    ||/^packages\/(?:engine|runtime|contracts)\/dist\/[\w/.-]+\.js$/.test(relative)

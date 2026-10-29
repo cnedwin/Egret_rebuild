@@ -34,6 +34,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       const packageExports = name === 'runtime' ? {
         '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
         './text': {types:'./dist/text/index.d.ts',import:'./dist/text/index.js'},
+        './paragraph': {types:'./dist/paragraph/index.d.ts',import:'./dist/paragraph/index.js'},
         './input': {types:'./dist/input/index.d.ts',import:'./dist/input/index.js'},
         './ui': {types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'},
       } : name === 'engine' ? {
@@ -43,6 +44,8 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         './webgl2/scene3d': {types:'./dist/web/webgl2Scene3d.d.ts',import:'./dist/web/webgl2Scene3d.js'},
         './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
         './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
+        './paragraph': {types:'./dist/paragraph.d.ts',import:'./dist/paragraph.js'},
+        './web/paragraph': {types:'./dist/web/paragraph.d.ts',import:'./dist/web/paragraph.js'},
         './layout': {types:'./dist/layout.d.ts',import:'./dist/layout.js'},
         './animation': {types:'./dist/animation/index.d.ts',import:'./dist/animation/index.js'},
         './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
@@ -62,8 +65,8 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
       write(`packages/${name}/dist/index.js`, 'export {};\n');
-      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './webgl2':'./webgl2.js', './webgl2/scene3d':'./webgl2-scene3d.js', './text':'./text.js', './layout':'./layout.js', './animation':'./animation.js', './web/text':'./web-text.js', './web/image':'./web-image.js', './resources':'./resources.js', './web/resources':'./web-resources.js', './ui':'./ui.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
-        : name === 'runtime' ? { '.': './index.js', './text':'./text.js', './ui':'./ui.js' } : name === 'project' ? {'.':'./index.js','./spine':'./spine.js','./resources':'./resources.js'} : {'.':'./index.js','./resources':'./resources.js'};
+      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './webgl2':'./webgl2.js', './webgl2/scene3d':'./webgl2-scene3d.js', './text':'./text.js', './paragraph':'./paragraph.js', './web/paragraph':'./web-paragraph.js', './layout':'./layout.js', './animation':'./animation.js', './web/text':'./web-text.js', './web/image':'./web-image.js', './resources':'./resources.js', './web/resources':'./web-resources.js', './ui':'./ui.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
+        : name === 'runtime' ? { '.': './index.js', './text':'./text.js', './paragraph':'./paragraph.js', './ui':'./ui.js' } : name === 'project' ? {'.':'./index.js','./spine':'./spine.js','./resources':'./resources.js'} : {'.':'./index.js','./resources':'./resources.js'};
       write(`node_modules/@egret/${name}/package.json`, { name: `@egret/${name}`, type: 'module', exports });
       write(`node_modules/@egret/${name}/index.js`, 'export {};\n');
       if (name === 'project') {
@@ -1461,6 +1464,54 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('packages/engine/dist/contentLoader.js',"import {isAdmittedResourceManifest} from '@egret/contracts/resources';\nimport '@egret/runtime';\nimport {createManifestAssetBinding} from './manifestResourceState.js';\nimport {requireContentEngine} from './internal/contentFactoryState.js';\nimport {contentFault,parseAtlasArtifact,parseSequenceArtifact} from './contentArtifacts.js';\nexport function createContentLoader() {}\n");
     for (const file of ['packages/engine/src/Engine.ts','packages/engine/dist/Engine.js'])
       append(file,"import {registerContentEngine} from './internal/contentFactoryState.js';\n");
+    // M3.2 source/declaration inspection with inert executable edges. These
+    // fixtures establish retained policy resolution only, never paragraph/UI behavior.
+    const m32PolicyOwners = [
+  "packages/engine/dist/paragraph.d.ts",
+  "packages/engine/dist/paragraph.js",
+  "packages/engine/dist/ui/leafContent.d.ts",
+  "packages/engine/dist/ui/leafContent.js",
+  "packages/engine/dist/ui/uiRoot.d.ts",
+  "packages/engine/dist/ui/uiRoot.js",
+  "packages/engine/dist/web/CanvasKitParagraphProvider.d.ts",
+  "packages/engine/dist/web/CanvasKitParagraphProvider.js",
+  "packages/engine/dist/web/paragraph.d.ts",
+  "packages/engine/dist/web/paragraph.js",
+  "packages/engine/src/paragraph.ts",
+  "packages/engine/src/ui/leafContent.ts",
+  "packages/engine/src/ui/uiRoot.ts",
+  "packages/engine/web/CanvasKitParagraphProvider.ts",
+  "packages/engine/web/paragraph.ts",
+  "packages/runtime/dist/paragraph/Paragraph.d.ts",
+  "packages/runtime/dist/paragraph/Paragraph.js",
+  "packages/runtime/dist/paragraph/ParagraphCache.d.ts",
+  "packages/runtime/dist/paragraph/ParagraphCache.js",
+  "packages/runtime/dist/paragraph/index.d.ts",
+  "packages/runtime/dist/paragraph/index.js",
+  "packages/runtime/dist/paragraph/request.d.ts",
+  "packages/runtime/dist/paragraph/request.js",
+  "packages/runtime/dist/paragraph/types.d.ts",
+  "packages/runtime/dist/paragraph/types.js",
+  "packages/runtime/src/paragraph/Paragraph.ts",
+  "packages/runtime/src/paragraph/ParagraphCache.ts",
+  "packages/runtime/src/paragraph/index.ts",
+  "packages/runtime/src/paragraph/request.ts",
+  "packages/runtime/src/paragraph/types.ts"
+];
+    for (const file of m32PolicyOwners) {
+      const original=readFileSync(path.join(repository,file),'utf8');
+      if (!file.endsWith('.js')) { write(file,original); continue; }
+      const clean=original.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
+      const clauses=[...clean.matchAll(/\b(import|export)\s*(?:\{[^}]+\}\s*from\s*|\*\s*from\s*)?['"]([^'"]+)['"]\s*;?/g)];
+      const ports=clauses.map(match=>match[1]==='export'||match[2]==='@egret/runtime/ui'?match[0]:'import '+JSON.stringify(match[2])+';');
+      const functions=[...clean.matchAll(/\bexport\s+(?:async\s+)?function\s+(\w+)/g)].map(match=>'export function '+match[1]+"() { throw new Error('Synthetic policy fixture only'); }");
+      write(file,ports.join('\n')+'\n'+functions.join('\n')+'\n');
+    }
+    for(const file of ['packages/engine/src/ui/index.ts','packages/engine/dist/ui/index.d.ts'])
+      write(file,readFileSync(path.join(repository,file)));
+    write('node_modules/@egret/runtime/paragraph.js',"export * from '../../../packages/runtime/dist/paragraph/index.js';\n");
+    write('node_modules/@egret/engine/paragraph.js',"export * from '../../../packages/engine/dist/paragraph.js';\n");
+    write('node_modules/@egret/engine/web-paragraph.js',"export * from '../../../packages/engine/dist/web/paragraph.js';\n");
     if(sequenceMutation){
       const baseline=spawnSync(process.execPath,['tools/check-boundaries.mjs'],{cwd:root,encoding:'utf8'});
       assert.equal(baseline.status,0,'fresh sequence policy baseline: '+baseline.stdout+baseline.stderr);

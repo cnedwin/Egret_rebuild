@@ -20,9 +20,9 @@ sequence-6 正式计时得出有效失败后，M1.2/D60 继续 OPEN。现有渲�
 | 鼠标/按钮 | `packages/engine/web/MouseInput.ts` 在受限普通 Canvas CSS 条件下接收主鼠标；`bitmapButton.ts` 提供 up/pressed/disabled 皮肤和受保护激活。 | 保留兼容入口。新增共享指针输入与 UI 焦点/控件行为分别进入可选 Engine 入口，宿主坐标支持范围单独验收。 |
 | 文字显示 | TF1 是非编辑的显式行叶节点，有目标/已提交版本、显式异步准备和真实纹理租约。 | 保留 `createTextField`、请求、限制、成功前保持旧内容及来源所有权。段落/可编辑文字使用独立目标 profile。 |
 | 文字缓存/提供器 | T1 限定任务、需求、代次和租约；WC1 使用 Canvas 测量/绘制完整显式行，并检查字体就绪。 | 保留所有权机制，增加字体身份、段落计划及独立布局/栅格键。就绪不等于字体身份、字形覆盖或整形证明。 |
-| 协同 UI | `@egret/engine/ui` 提供托管根、测量／排列、稳定键变高列表及完整准备后的发布；详见 [UI 面板契约](ui-data-panel.md)。 | 保留当前有界能力。通用控件、段落接入、焦点／IME 和语义 DOM 投影继续在既有工作包内推进。 |
+| 协同 UI | `@egret/engine/ui` 提供托管根、测量／排列、稳定键变高列表及完整准备后的发布；详见 [UI 面板契约](ui-data-panel.md)。 | 保留当前有界能力。只读段落已通过可选能力接入；通用控件、焦点／IME 和语义 DOM 投影继续在既有工作包内推进。 |
 
-现有文字契约明确排除自动换行、富文本、编辑、光标/选区/IME 及整形保证。`packages/project/src/text-input.ts` 用于解析工程 JSON，不是 IME 实现。
+保留的 T1/TF1/WC1 文字契约明确排除自动换行、富文本、编辑、光标/选区/IME 及整形保证。另行采用的只读段落 profile 增加有界换行和行指标，当前范围见下文。`packages/project/src/text-input.ts` 用于解析工程 JSON，不是 IME 实现。
 
 关联契约：[架构与阶段验收](architecture-and-engineering-plan.md)、[线性布局](local-linear-layout-spec.md)、[T1](文字栅格T1契约.md)、[TF1](文字显示TF1契约.md)、[WC1](Canvas文字WC1.md)、[主鼠标输入](主鼠标输入契约.md)、[共享渲染](shared-render-profile-contract.md)、[资源恢复](resource-recovery-contract.md)。
 
@@ -131,6 +131,16 @@ M3.4 包含明确的共享渲染交付，由渲染维护者在 UI 集成前评�
 验收包含精确源码/簇/行映射、按已验收字体/backend 记录的度量/像素容差、字体失败与过时代次反例、活跃租约下淘汰、恢复及静态不重复布局/栅格。每个宣传支持的脚本/样式组合都要有真实 provider 证据；缺失组合保持 OPEN。
 
 M3.2 在将 ICU／HarfBuzz／FreeType 组合确定为实现依赖之前完成资格验证：保留准确构建／数据／字体身份，在早期 M4.1 子集中测量必需传输、初始化及自有 CPU／Wasm 存储。在全部控件完成前，对照 M4 拟议预算检查结果。预算失败需要明确的实现／设计决定并保留结果，不能删除必需语言或把必需加载推迟到所声称的就绪时点之后。保留既有原生完整行路径和可选包边界，方案本身不证明可行。
+
+### 当前只读段落 SDK 采用 — 2026-10-29
+
+可选入口 `@egret/engine/paragraph` 和 `@egret/engine/web/paragraph` 已实现有界只读 profile：按宽度换行、不可变行指标、字体驱动的逻辑高度及受管栅格租约。普通 UI 叶节点通过 `leaf.content` 准备；既有虚拟行 `bind` 使用相同的实际宽度、密度和 Scope。内容、实测布局、命中几何及列表高度／锚点状态通过既有 UI 版本所有者发布。默认 SDK 不加载 provider、Wasm 或字体。
+
+所选的 host 注入 CanvasKit/SkParagraph provider 使用明确、不可变的字体字节，复用既有 AssetManager。可选示例随附 8,680,652 原始 runtime 字节和 17,148,712 字体字节，总计 25,829,364；重建源码数据不增加浏览器加载。来源身份、notices、公开 API／限制及所有权见 [只读段落 SDK 契约](readonly-paragraph-sdk.md) 与其中链接的示例／vendor 说明。
+
+本功能包先集中完成 SDK、UI 和提供器，再统一验证与双语审查。SDK／UI／T1 的针对性回归共 118 项通过。真实桌面 Edge 156.0.4314.50 在 WebGL2 与 WebGPU 上各通过 13 项行为检查，包含换行、文字驱动几何、最小行高、密度、复用、失败／待定／晚替换、滚动／命中及逻辑资源退役。[有限结果记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/paragraph-sdk/verification.json)保留早期失败与准确范围；不证明性能或独立字形／墨迹正确性。完整受保护 CI 和 PR/Main 交付仍是独立发布证据。
+
+本次采用有界只读 SDK 及其可选 provider，不代表 M3.2 完成。最终软换行后的 bidi L1、独立 glyph/ink 参考、公开 cluster／选区／光标映射、编辑／IME、手机、性能、内存／OOM 及 M4 继续 OPEN。下列私有比较与原型检查点描述对应历史产物和当时的采用状态；后续采用不改写原始结果。
 
 ### 私有 bidi 后端比较 — 2026-10-29
 

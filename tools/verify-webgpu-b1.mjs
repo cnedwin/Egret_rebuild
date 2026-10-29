@@ -429,6 +429,20 @@ const m22SequenceModuleSuccessors = new Map([
       "bytes": 13139,
       "sha256": "2ff3c2561326a8d101720becf3a9444448e22c698f8c342222dd96335fbabe6e"
     }
+  ],
+  [
+    "packages/engine/dist/internal/textFieldFactoryState.js",
+    {
+      "bytes": 1209,
+      "sha256": "320085d19f32fdf1957b356709b114897364d0bd48f10fbe4c57da6d0d06468e"
+    }
+  ],
+  [
+    "packages/runtime/dist/assetManagerOwnerState.js",
+    {
+      "bytes": 4102,
+      "sha256": "864a608dccaf23b7df91758416c229dc7f19afce1529214893648a6d6827608e"
+    }
   ]
 ]);
 const m22SequenceModuleAdditions = new Map([
@@ -454,7 +468,7 @@ const m22SequenceModuleAdditions = new Map([
     }
   ]
 ]);
-assert.equal(m22SequenceModuleSuccessors.size,2);
+assert.equal(m22SequenceModuleSuccessors.size,4);
 assert.equal(m22SequenceModuleAdditions.size,3);
 for(const name of m22SequenceModuleSuccessors.keys())assert.ok(m15ModuleIdentities.has(name));
 for(const name of m22SequenceModuleAdditions.keys())assert.ok(!m15ModuleIdentities.has(name));

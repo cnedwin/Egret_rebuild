@@ -728,6 +728,20 @@ const sequenceSuccessors=[
       "bytes": 13139,
       "sha256": "2ff3c2561326a8d101720becf3a9444448e22c698f8c342222dd96335fbabe6e"
     }
+  ],
+  [
+    "packages/engine/dist/internal/textFieldFactoryState.js",
+    {
+      "bytes": 1209,
+      "sha256": "320085d19f32fdf1957b356709b114897364d0bd48f10fbe4c57da6d0d06468e"
+    }
+  ],
+  [
+    "packages/runtime/dist/assetManagerOwnerState.js",
+    {
+      "bytes": 4102,
+      "sha256": "864a608dccaf23b7df91758416c229dc7f19afce1529214893648a6d6827608e"
+    }
   ]
 ];
 const sequenceAdditions=[
@@ -753,7 +767,7 @@ const sequenceAdditions=[
     }
   ]
 ];
-test('S18 sequence collector admits only two exact successors and three private eager dependencies',async()=>{
+test('S18 sequence collector admits only four exact successors and three private eager dependencies',async()=>{
  const policy=await completeCurrentClosure();
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m22SequenceModuleSuccessors])),sequenceSuccessors);
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m22SequenceModuleAdditions])),sequenceAdditions);

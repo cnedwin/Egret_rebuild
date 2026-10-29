@@ -27,6 +27,8 @@ interface OwnerState {
   creationBusy: boolean;
   lifetimeCommitted: boolean;
   closeCache: (() => void) | undefined;
+  paragraphLifetimeCommitted: boolean;
+  closeParagraphCache: (() => void) | undefined;
 }
 
 const APPLY = Reflect.apply;
@@ -54,7 +56,7 @@ export function registerAssetManagerOwner(manager: object, owner: AssetManagerOw
   if (APPLY(WEAK_HAS, states, [manager])) throw new EgretError("TEXT_ASSETS_INVALID");
   APPLY(WEAK_SET, states, [manager, {
     owner: FREEZE(owner), closed: false, creationBusy: false,
-    lifetimeCommitted: false, closeCache: undefined,
+    lifetimeCommitted: false, closeCache: undefined, paragraphLifetimeCommitted: false, closeParagraphCache: undefined,
   } satisfies OwnerState]);
 }
 
@@ -98,5 +100,26 @@ export function closeOwnedTextCache(manager: object): void {
   const state = requireState(manager);
   const closeCache = state.closeCache;
   state.closeCache = undefined;
-  closeCache?.();
+  const closeParagraphCache = state.closeParagraphCache;
+  state.closeParagraphCache = undefined;
+  try { closeCache?.(); } finally { closeParagraphCache?.(); }
+}
+
+/** One additional fixed paragraph profile shares the same manager and shutdown boundary. */
+export function beginParagraphCacheCreation(manager: object): () => void {
+  const state = requireState(manager);
+  assertOwnerOpen(state);
+  if (state.paragraphLifetimeCommitted) throw new EgretError('PARAGRAPH_CACHE_ALREADY_CREATED');
+  if (state.creationBusy) throw new EgretError('TEXT_CACHE_REENTRANT');
+  state.creationBusy = true;
+  let active = true;
+  return (): void => { if (active) { active = false; state.creationBusy = false; } };
+}
+export function commitParagraphCacheLifetime(manager: object, close: () => void): void {
+  const state = requireState(manager);
+  assertOwnerOpen(state);
+  if (state.paragraphLifetimeCommitted) throw new EgretError('PARAGRAPH_CACHE_ALREADY_CREATED');
+  if (!state.creationBusy) throw new EgretError('TEXT_CACHE_REENTRANT');
+  state.paragraphLifetimeCommitted = true;
+  state.closeParagraphCache = close;
 }

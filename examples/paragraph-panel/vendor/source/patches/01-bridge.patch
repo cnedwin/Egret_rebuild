@@ -1,0 +1,724 @@
+--- a/modules/skparagraph/src/Run.h
++++ b/modules/skparagraph/src/Run.h
+@@ -169,6 +169,19 @@
+     }
+ 
+     bool isResolved() const;
++
++    // LOCAL MODIFICATION: private qualification observations, not an Egret API.
++    uint8_t egretQualificationBidiLevel() const { return fBidiLevel; }
++    SkVector egretQualificationRawAdvance() const { return fAdvance; }
++    TextIndex egretQualificationClusterStart() const { return fClusterStart; }
++    TextRange egretQualificationLocalUtf8Range() const {
++        return {fUtf8Range.begin(), fUtf8Range.end()};
++    }
++    SkFourByteTag egretQualificationScript() const { return fScript; }
++    const SkString& egretQualificationLanguage() const { return fLanguage; }
++    SkSpan<const SkPoint> egretQualificationJustification() const {
++        return {fJustificationShifts.data(), fJustificationShifts.size()};
++    }
+ private:
+     friend class ParagraphImpl;
+     friend class TextLine;
+--- a/modules/skparagraph/src/TextLine.h
++++ b/modules/skparagraph/src/TextLine.h
+@@ -112,6 +112,14 @@
+     void paint(ParagraphPainter* painter, SkScalar x, SkScalar y);
+     void visit(SkScalar x, SkScalar y);
+     void ensureTextBlobCachePopulated();
++
++    // LOCAL MODIFICATION: same-instance private foreground qualification.
++    void egretQualificationRetireBlobs() {
++        fTextBlobCache.clear();
++        fTextBlobCachePopulated = false;
++    }
++    bool egretQualificationCachePopulated() const { return fTextBlobCachePopulated; }
++    const char* egretQualificationWalkForeground(bool build, size_t* glyphOccurrences);
+ 
+     void createEllipsis(SkScalar maxWidth, const SkString& ellipsis, bool ltr);
+     void createSoftHyphen();
+--- a/modules/skparagraph/src/ParagraphImpl.h
++++ b/modules/skparagraph/src/ParagraphImpl.h
+@@ -138,6 +138,15 @@
+     SkSpan<TextLine> lines() { return SkSpan<TextLine>(fLines.data(), fLines.size()); }
+     const ParagraphStyle& paragraphStyle() const { return fParagraphStyle; }
+     SkSpan<Cluster> clusters() { return SkSpan<Cluster>(fClusters.begin(), fClusters.size()); }
++
++    // LOCAL MODIFICATION: bounded private bridge; no public Paragraph API change.
++    bool egretQualificationClusterPaint() const { return fEgretQualificationClusterPaint; }
++    const char* egretQualificationRefusal() const { return fEgretQualificationRefusal; }
++    void egretQualificationRefuse(const char* reason) {
++        if (!fEgretQualificationRefusal) { fEgretQualificationRefusal = reason; }
++    }
++    void egretQualificationSetClusterPaint(bool enabled);
++    bool egretQualificationPrepare();
+     sk_sp<FontCollection> fontCollection() const { return fFontCollection; }
+     void formatLines(SkScalar maxWidth);
+     void ensureUTF16Mapping();
+@@ -300,6 +309,9 @@
+     bool fHasLineBreaks;
+     bool fHasWhitespacesInside;
+     TextIndex fTrailingSpaces;
++
++    bool fEgretQualificationClusterPaint = false;
++    const char* fEgretQualificationRefusal = nullptr; // Static reason; never a borrowed JS string.
+ };
+ }  // namespace textlayout
+ }  // namespace skia
+--- a/modules/skparagraph/src/ParagraphImpl.cpp
++++ b/modules/skparagraph/src/ParagraphImpl.cpp
+@@ -247,6 +247,8 @@
+ }
+ 
+ void ParagraphImpl::paint(ParagraphPainter* painter, SkScalar x, SkScalar y) {
++    // LOCAL MODIFICATION: validate every line before any draw in private mode.
++    if (fEgretQualificationClusterPaint && !this->egretQualificationPrepare()) { return; }
+     for (auto& line : fLines) {
+         line.paint(painter, x, y);
+     }
+@@ -1117,6 +1119,104 @@
+     if (fState >= kLineBroken) {
+         fState = kLineBroken;
+     }
++}
++
++// LOCAL MODIFICATION: bounded private foreground/observation experiment.
++void ParagraphImpl::egretQualificationSetClusterPaint(bool enabled) {
++    if (fEgretQualificationClusterPaint == enabled) { return; }
++    for (auto& line : fLines) { line.egretQualificationRetireBlobs(); }
++    fEgretQualificationClusterPaint = enabled;
++    fEgretQualificationRefusal = nullptr;
++}
++
++bool ParagraphImpl::egretQualificationPrepare() {
++    if (fEgretQualificationRefusal) { return false; }
++    auto refuse = [this](const char* reason) {
++        this->egretQualificationRefuse(reason);
++        for (auto& line : fLines) { line.egretQualificationRetireBlobs(); }
++        return false;
++    };
++    // Private refusal bounds, never truncation or public product limits.
++    if (fText.size() > 1024 || fRuns.size() > 256 || fLines.size() > 16 ||
++        fTextStyles.size() > 1024 || fClusters.size() > 1025) {
++        return refuse("native-structure-count-bound");
++    }
++    // Empty/failed-shape native states can legitimately have no lines; report them raw.
++    if (!fLines.empty() && fState < kFormatted) { return refuse("lines-not-formatted"); }
++    size_t runs = fRuns.size();
++    size_t glyphs = 0;
++    auto checkRun = [&](const Run& run) {
++        if (run.isPlaceholder()) { return false; }
++        if (run.size() > 1024 || glyphs > 1024 - run.size()) { return false; }
++        glyphs += run.size();
++        const auto shifts = run.egretQualificationJustification();
++        return run.positions().size() == run.size() + 1 &&
++               run.offsets().size() == run.size() + 1 &&
++               run.clusterIndexes().size() == run.size() + 1 &&
++               (shifts.empty() || shifts.size() == run.size() + 1);
++    };
++    for (size_t i = 0; i < static_cast<size_t>(fRuns.size()); ++i) {
++        const auto& run = fRuns[i];
++        if (!checkRun(run) || run.index() != i || run.owner() != this ||
++            run.textRange().start > run.textRange().end || run.textRange().end > fText.size() ||
++            run.clusterRange().start > run.clusterRange().end ||
++            run.clusterRange().end > static_cast<size_t>(fClusters.size())) {
++            return refuse("source-run-shape-owner-or-copy-bound");
++        }
++    }
++    size_t sourceClusters = 0;
++    size_t sentinels = 0;
++    for (size_t i = 0; i < static_cast<size_t>(fClusters.size()); ++i) {
++        const auto& cluster = fClusters[i];
++        // EMPTY_RUN is the terminal sentinel: never inspect its per-cluster flags.
++        if (cluster.runIndex() == EMPTY_RUN) {
++            ++sentinels;
++            if (i + 1 != static_cast<size_t>(fClusters.size()) ||
++                cluster.textRange().start != fText.size() || cluster.textRange().end != fText.size()) {
++                return refuse("unexpected-terminal-sentinel");
++            }
++            continue;
++        }
++        ++sourceClusters;
++        if (cluster.runIndex() >= static_cast<size_t>(fRuns.size())) {
++            return refuse("cluster-owner-out-of-range");
++        }
++        const auto& run = fRuns[cluster.runIndex()];
++        if (i < run.clusterRange().start || i >= run.clusterRange().end ||
++            cluster.startPos() > cluster.endPos() || cluster.endPos() > run.size() ||
++            cluster.textRange().start > cluster.textRange().end ||
++            cluster.textRange().start < run.textRange().start ||
++            cluster.textRange().end > run.textRange().end) {
++            return refuse("cluster-span-out-of-range");
++        }
++    }
++    if (sourceClusters > 1024 || sentinels > 1) { return refuse("cluster-count-bound"); }
++    for (const auto& line : fLines) {
++        for (const Run* synthetic : {line.ellipsis(), line.hyphen()}) {
++            if (!synthetic) { continue; }
++            if (++runs > 256 || !checkRun(*synthetic) || !synthetic->isEllipsis()) {
++                return refuse("synthetic-run-shape-or-copy-bound");
++            }
++        }
++        if (line.clusters().start > line.clusters().end ||
++            line.clustersWithSpaces().start > line.clustersWithSpaces().end ||
++            line.clusters().end > static_cast<size_t>(fClusters.size()) ||
++            line.clustersWithSpaces().end > static_cast<size_t>(fClusters.size())) {
++            return refuse("line-cluster-range");
++        }
++    }
++    // Validate every line and count draw occurrences BEFORE creating any new blobs.
++    size_t occurrences = 0;
++    for (auto& line : fLines) {
++        if (const char* reason = line.egretQualificationWalkForeground(false, &occurrences)) {
++            return refuse(reason);
++        }
++    }
++    for (auto& line : fLines) {
++        line.ensureTextBlobCachePopulated();
++        if (fEgretQualificationRefusal) { return refuse(fEgretQualificationRefusal); }
++    }
++    return true;
+ }
+ 
+ void ParagraphImpl::updateForegroundPaint(size_t from, size_t to, SkPaint paint) {
+--- a/modules/skparagraph/src/TextLine.cpp
++++ b/modules/skparagraph/src/TextLine.cpp
+@@ -233,8 +233,123 @@
+     }
+ }
+ 
++// LOCAL MODIFICATION: use the original visual order, ClipContext and blob path.
++const char* TextLine::egretQualificationWalkForeground(bool build, size_t* glyphOccurrences) {
++    const char* failure = nullptr;
++    const bool clusterPaint = fOwner->egretQualificationClusterPaint();
++    this->iterateThroughVisualRuns(false,
++        [&](const Run* run, SkScalar runOffset, TextRange text, SkScalar* width) {
++            *width = 0;
++            if (failure) { return false; }
++            if (!run || run->isPlaceholder()) {
++                failure = "placeholder-outside-private-corpus";
++                return false;
++            }
++            // Synthetic dispatch precedes ordinary source mapping. Upstream marks
++            // visible hyphens as ellipsis-like too; their local domain stays local.
++            const bool synthetic = run->isEllipsis() || run->isHyphen();
++            const auto type = clusterPaint ? StyleType::kNone : StyleType::kForeground;
++            *width = this->iterateThroughSingleRunByStyles(TextAdjustment::GlyphCluster,
++                run, runOffset, text, type,
++                [&](TextRange nativeText, const TextStyle& nativeStyle, const ClipContext& parent) {
++                    if (failure) { return; }
++                    if (parent.run != run || parent.pos > run->size() ||
++                        parent.size > run->size() - parent.pos) {
++                        failure = "clip-context-glyph-range";
++                        return;
++                    }
++                    if (parent.size > 1024 || *glyphOccurrences > 1024 - parent.size) {
++                        failure = "drawable-glyph-occurrence-bound";
++                        return;
++                    }
++                    *glyphOccurrences += parent.size;
++                    if (!clusterPaint || synthetic) {
++                        if (run->baselineShift() != nativeStyle.getBaselineShift()) {
++                            failure = "native-style-baseline-mismatch";
++                            return;
++                        }
++                        // Synthetic foreground is unchanged native selection and
++                        // remains explicitly unqualified as a future source rule.
++                        if (build && parent.size) { this->buildTextBlob(nativeText, nativeStyle, parent); }
++                        return;
++                    }
++                    if (run->index() >= fOwner->runs().size() ||
++                        &fOwner->run(run->index()) != run) {
++                        failure = "source-run-identity";
++                        return;
++                    }
++                    size_t cursor = parent.pos;
++                    const size_t end = parent.pos + parent.size;
++                    while (cursor < end) {
++                        const Cluster* owner = nullptr;
++                        // Native clusters are in source order, not necessarily
++                        // glyph order. Search containment, never sort/dedupe GIDs.
++                        for (size_t i = run->clusterRange().start; i < run->clusterRange().end; ++i) {
++                            const auto& cluster = fOwner->cluster(i);
++                            if (cluster.runIndex() != run->index()) {
++                                failure = "cluster-owner-mismatch";
++                                return;
++                            }
++                            if (cluster.startPos() <= cursor && cursor < cluster.endPos()) {
++                                if (owner) { failure = "overlapping-native-glyph-clusters"; return; }
++                                owner = &cluster;
++                            }
++                        }
++                        if (!owner) { failure = "uncovered-native-glyph-occurrence"; return; }
++                        const size_t next = std::min(owner->endPos(), end);
++                        // Reject any second cluster intersecting this admitted span,
++                        // including one that begins after cursor (no hidden overlap).
++                        for (size_t i = run->clusterRange().start; i < run->clusterRange().end; ++i) {
++                            const auto& other = fOwner->cluster(i);
++                            if (&other != owner && other.startPos() < next && other.endPos() > cursor) {
++                                failure = "overlapping-native-glyph-clusters";
++                                return;
++                            }
++                        }
++                        const auto source = owner->textRange();
++                        if (source.start >= source.end || source.end > fOwner->text().size()) {
++                            failure = "cluster-has-no-admissible-original-source";
++                            return;
++                        }
++                        const TextStyle* style = nullptr;
++                        for (const auto& block : fOwner->styles()) {
++                            if (block.fRange.start <= source.start && source.start < block.fRange.end) {
++                                if (style) { failure = "ambiguous-original-style"; return; }
++                                style = &block.fStyle;
++                            }
++                        }
++                        if (!style || run->baselineShift() != style->getBaselineShift()) {
++                            failure = "original-style-or-baseline-mismatch";
++                            return;
++                        }
++                        ClipContext child = parent;
++                        child.pos = cursor;
++                        child.size = next - cursor;
++                        // All placement fields remain the parent's. No new color
++                        // measurement, text shift, pen accumulation or color clip.
++                        if (build) { this->buildTextBlob(source, *style, child); }
++                        cursor = next;
++                    }
++                });
++            // Preserve the full original context width for the following run.
++            return failure == nullptr;
++        });
++    return failure;
++}
++
+ void TextLine::ensureTextBlobCachePopulated() {
+     if (fTextBlobCachePopulated) {
++        return;
++    }
++    // LOCAL MODIFICATION: before BOTH original fast and general paths.
++    if (fOwner->egretQualificationClusterPaint()) {
++        size_t occurrences = 0;
++        if (const char* reason = this->egretQualificationWalkForeground(true, &occurrences)) {
++            this->egretQualificationRetireBlobs();
++            fOwner->egretQualificationRefuse(reason);
++            return;
++        }
++        fTextBlobCachePopulated = true;
+         return;
+     }
+     if (fBlockRange.width() == 1 && fRunsInVisualOrder.size() == 1 && fEllipsis == nullptr &&
+--- a/modules/canvaskit/paragraph_bindings.cpp
++++ b/modules/canvaskit/paragraph_bindings.cpp
+@@ -519,6 +519,9 @@
+     }
+     return result;
+ }
++
++// LOCAL MODIFICATION: exact-source, private qualification methods only.
++#include "modules/canvaskit/paragraph_qualification_bindings.inc"
+ 
+ EMSCRIPTEN_BINDINGS(Paragraph) {
+ 
+@@ -541,6 +544,8 @@
+         .function("_getRectsForPlaceholders", &GetRectsForPlaceholders)
+         .function("_getRectsForRange", &GetRectsForRange)
+         .function("getShapedLines", &GetShapedLines)
++        .function("_getEgretQualificationSnapshot", &GetEgretQualificationSnapshot)
++        .function("_setEgretQualificationClusterPaint", &SetEgretQualificationClusterPaint)
+         .function("getWordBoundary", &para::Paragraph::getWordBoundary)
+         .function("layout", &para::Paragraph::layout)
+         .function("unresolvedCodepoints", &UnresolvedCodepoints);
+--- /dev/null
++++ b/modules/canvaskit/paragraph_qualification_bindings.inc
+@@ -0,0 +1,391 @@
++/*
++ * Copyright 2019 Google LLC
++ *
++ * Use of this source code is governed by a BSD-style license that can be
++ * found in the LICENSE file.
++ *
++ * LOCAL MODIFICATION: private exact-source qualification bridge for the pinned
++ * Skia tree. Unbuilt/unqualified prototype; not a public Egret API. Existing
++ * native shaping, font, blob-copy and drawing routines remain authoritative
++ * observations, not independent semantic oracles.
++ */
++#include "include/core/SkTextBlob.h"
++#include <array>
++
++namespace {
++
++JSObject EgretQRange(para::TextRange range) {
++    auto out = val::object();
++    out.set("start", range.start);
++    out.set("end", range.end);
++    return out;
++}
++
++JSArray EgretQPoint(SkPoint point) {
++    auto out = val::array();
++    out.call<void>("push", point.x());
++    out.call<void>("push", point.y());
++    return out;
++}
++
++JSArray EgretQRect(SkRect rect) {
++    auto out = val::array();
++    out.call<void>("push", rect.left());
++    out.call<void>("push", rect.top());
++    out.call<void>("push", rect.right());
++    out.call<void>("push", rect.bottom());
++    return out;
++}
++
++JSObject EgretQFont(const SkFont& font) {
++    auto out = val::object();
++    out.set("size", font.getSize());
++    out.set("scaleX", font.getScaleX());
++    out.set("skewX", font.getSkewX());
++    out.set("edging", static_cast<int>(font.getEdging()));
++    out.set("hinting", static_cast<int>(font.getHinting()));
++    out.set("forceAutoHinting", font.isForceAutoHinting());
++    out.set("embeddedBitmaps", font.isEmbeddedBitmaps());
++    out.set("subpixel", font.isSubpixel());
++    out.set("linearMetrics", font.isLinearMetrics());
++    out.set("embolden", font.isEmbolden());
++    out.set("baselineSnap", font.isBaselineSnap());
++    // Owned temporary typeface wrappers are attached only after all copied data.
++    return out;
++}
++
++JSObject EgretQPaint(const para::ParagraphPainter::SkPaintOrID& paint) {
++    auto out = val::object();
++    if (std::holds_alternative<para::ParagraphPainter::PaintID>(paint)) {
++        out.set("kind", std::string("native-paint-id"));
++        out.set("value", std::get<para::ParagraphPainter::PaintID>(paint));
++        return out;
++    }
++    const auto& p = std::get<SkPaint>(paint);
++    out.set("kind", std::string("SkPaint"));
++    const auto rgba = p.getColor4f();
++    const float values[] = {rgba.fR, rgba.fG, rgba.fB, rgba.fA};
++    out.set("rgba", MakeTypedArray(4, values));
++    out.set("antiAlias", p.isAntiAlias());
++    out.set("dither", p.isDither());
++    out.set("style", static_cast<int>(p.getStyle()));
++    out.set("strokeWidth", p.getStrokeWidth());
++    out.set("strokeMiter", p.getStrokeMiter());
++    out.set("strokeCap", static_cast<int>(p.getStrokeCap()));
++    out.set("strokeJoin", static_cast<int>(p.getStrokeJoin()));
++    const auto blend = p.asBlendMode();
++    out.set("blendMode", blend ? val(static_cast<int>(*blend)) : val::null());
++    out.set("hasShader", p.getShader() != nullptr);
++    out.set("hasColorFilter", p.getColorFilter() != nullptr);
++    out.set("hasPathEffect", p.getPathEffect() != nullptr);
++    out.set("hasMaskFilter", p.getMaskFilter() != nullptr);
++    out.set("hasImageFilter", p.getImageFilter() != nullptr);
++    return out;
++}
++
++JSObject EgretQStatus(para::ParagraphImpl& paragraph, const char* status) {
++    auto out = val::object();
++    out.set("status", std::string(status));
++    out.set("nativeState", static_cast<int>(paragraph.state()));
++    out.set("clusterPaintEnabled", paragraph.egretQualificationClusterPaint());
++    if (const char* reason = paragraph.egretQualificationRefusal()) {
++        out.set("reason", std::string(reason));
++    }
++    return out;
++}
++
++struct EgretQRunRef {
++    const para::Run* run;
++    int sourceIndex; // -1 for synthetic; never a persistent native pointer/ID.
++    int lineIndex;   // -1 for original source run.
++    const char* role;
++};
++
++int EgretQRunIndex(const std::array<EgretQRunRef, 256>& refs, size_t count,
++                   const para::Run* run) {
++    for (size_t i = 0; i < count; ++i) {
++        if (refs[i].run == run) { return static_cast<int>(i); }
++    }
++    return -1;
++}
++
++JSObject EgretQContext(const para::TextLine::ClipContext& c, int runIndex) {
++    auto out = val::object();
++    out.set("runId", runIndex);
++    out.set("glyphStart", c.pos);
++    out.set("glyphCount", c.size);
++    out.set("textShift", c.fTextShift);
++    out.set("clip", EgretQRect(c.clip));
++    out.set("excludedTrailingSpaces", c.fExcludedTrailingSpaces);
++    out.set("clippingNeeded", c.clippingNeeded);
++    return out;
++}
++
++} // namespace
++
++JSObject SetEgretQualificationClusterPaint(para::Paragraph& self, bool enabled) {
++    // All CanvasKit Paragraph instances are constructed by ParagraphBuilderImpl.
++    auto& paragraph = static_cast<para::ParagraphImpl&>(self);
++    const bool changed = paragraph.egretQualificationClusterPaint() != enabled;
++    paragraph.egretQualificationSetClusterPaint(enabled);
++    auto result = EgretQStatus(paragraph,
++        paragraph.egretQualificationPrepare() ? "MODE_READY" : "REFUSED");
++    result.set("modeChanged", changed);
++    result.set("sameModeKeepsExistingCache", !changed);
++    return result;
++}
++
++JSObject GetEgretQualificationSnapshot(para::Paragraph& self) {
++    auto& paragraph = static_cast<para::ParagraphImpl&>(self);
++    std::array<bool, 16> previouslyPopulated{};
++    if (paragraph.lines().size() <= previouslyPopulated.size()) {
++        for (size_t i = 0; i < paragraph.lines().size(); ++i) {
++            previouslyPopulated[i] = paragraph.lines()[i].egretQualificationCachePopulated();
++        }
++    }
++    if (!paragraph.egretQualificationPrepare()) { return EgretQStatus(paragraph, "REFUSED"); }
++
++    std::array<EgretQRunRef, 256> refs{};
++    size_t runCount = 0;
++    for (size_t i = 0; i < paragraph.runs().size(); ++i) {
++        refs[runCount++] = {&paragraph.runs()[i], static_cast<int>(i), -1, "source"};
++    }
++    for (size_t i = 0; i < paragraph.lines().size(); ++i) {
++        auto& line = paragraph.lines()[i];
++        if (line.ellipsis()) {
++            refs[runCount++] = {line.ellipsis(), -1, static_cast<int>(i), "ellipsis"};
++        }
++        if (line.hyphen()) {
++            refs[runCount++] = {line.hyphen(), -1, static_cast<int>(i), "visible-hyphen"};
++        }
++    }
++    // Validate all dynamic counts/identities before allocating copied JS data or
++    // temporary typeface wrappers. No partial/truncated snapshot is returned.
++    const char* failure = nullptr;
++    size_t drawGlyphs = 0, drawRecords = 0, contextRecords = 0;
++    for (size_t i = 0; i < runCount; ++i) {
++        if (refs[i].run->egretQualificationLanguage().size() > 1024) {
++            failure = "language-copy-bound";
++        }
++    }
++    for (auto& line : paragraph.lines()) {
++        line.iterateThroughVisualRuns(false,
++            [&](const para::Run* run, SkScalar offset, para::TextRange text, SkScalar* width) {
++                const int id = EgretQRunIndex(refs, runCount, run);
++                if (id < 0) { failure = "visual-run-identity"; *width = 0; return false; }
++                *width = line.iterateThroughSingleRunByStyles(para::TextLine::GlyphCluster,
++                    run, offset, text, para::StyleType::kNone,
++                    [&](para::TextRange, const para::TextStyle&, const para::TextLine::ClipContext& c) {
++                        if (++contextRecords > 1024 || c.pos > run->size() ||
++                            c.size > run->size() - c.pos) { failure = "visual-context-copy-bound"; }
++                    });
++                return failure == nullptr;
++            });
++        for (const auto& rec : line.fTextBlobCache) {
++            if (++drawRecords > 1024) { failure = "blob-record-copy-bound"; break; }
++            const int id = EgretQRunIndex(refs, runCount, rec.fVisitor_Run);
++            if (id < 0) { failure = "blob-run-identity"; break; }
++            if (!rec.fBlob) { continue; }
++            size_t pos = rec.fVisitor_Pos;
++            SkTextBlob::Iter iterator(*rec.fBlob);
++            SkTextBlob::Iter::ExperimentalRun blobRun;
++            while (iterator.experimentalNext(&blobRun)) {
++                if (blobRun.count < 0 || static_cast<size_t>(blobRun.count) > 1024 ||
++                    drawGlyphs > 1024 - static_cast<size_t>(blobRun.count) ||
++                    pos > refs[id].run->size() ||
++                    static_cast<size_t>(blobRun.count) > refs[id].run->size() - pos ||
++                    !(blobRun.font == refs[id].run->font()) ||
++                    (blobRun.count && (!blobRun.glyphs || !blobRun.positions))) {
++                    failure = "blob-glyph-font-or-copy-bound";
++                    break;
++                }
++                drawGlyphs += blobRun.count;
++                pos += blobRun.count;
++            }
++        }
++    }
++    if (failure) {
++        paragraph.egretQualificationRefuse(failure);
++        return EgretQStatus(paragraph, "REFUSED");
++    }
++
++    auto result = EgretQStatus(paragraph, "OBSERVED");
++    result.set("schema", std::string("private-egret-native-paragraph-observation/1"));
++    result.set("sourceUtf8", MakeTypedArray(static_cast<int>(paragraph.text().size()),
++        reinterpret_cast<const uint8_t*>(paragraph.text().data())));
++    result.set("scope", std::string("raw native structure and current foreground draw occurrences; no semantic acceptance"));
++    result.set("nativeGraphemeFlagsAreOriginalUnicode", false);
++    result.set("sourceRunCount", paragraph.runs().size());
++    result.set("drawGlyphOccurrences", drawGlyphs);
++    result.set("drawRecordCount", drawRecords);
++    auto runs = val::array();
++    for (size_t i = 0; i < runCount; ++i) {
++        const auto& ref = refs[i];
++        const auto& run = *ref.run;
++        auto out = val::object();
++        out.set("id", i);
++        out.set("role", std::string(ref.role));
++        out.set("sourceArrayIndex", ref.sourceIndex < 0 ? val::null() : val(ref.sourceIndex));
++        out.set("syntheticLineIndex", ref.lineIndex < 0 ? val::null() : val(ref.lineIndex));
++        out.set("nativeIndex", run.index());
++        out.set("nativeTextRange", EgretQRange(run.textRange()));
++        out.set("textRangeDomain", std::string(ref.sourceIndex < 0 ? "synthetic-local-utf8" : "original-utf8"));
++        out.set("nativeClusterRange", EgretQRange(run.clusterRange()));
++        out.set("clusterRangeIsSourceTable", ref.sourceIndex >= 0);
++        out.set(ref.sourceIndex < 0 ? "nativeAttachmentByteOffset" : "sourceStartByteOffset",
++                run.egretQualificationClusterStart());
++        out.set("localUtf8Range", EgretQRange(run.egretQualificationLocalUtf8Range()));
++        out.set("bidiLevel", run.egretQualificationBidiLevel());
++        out.set("leftToRight", run.leftToRight());
++        out.set("scriptTag", run.egretQualificationScript());
++        out.set("language", std::string(run.egretQualificationLanguage().c_str(),
++                                         run.egretQualificationLanguage().size()));
++        out.set("nativeOffset", EgretQPoint(run.offset()));
++        out.set("rawAdvance", EgretQPoint(run.egretQualificationRawAdvance()));
++        out.set("metricsAdvance", EgretQPoint(run.advance()));
++        out.set("baselineShift", run.baselineShift());
++        out.set("heightMultiplier", run.heightMultiplier());
++        out.set("useHalfLeading", run.useHalfLeading());
++        out.set("font", EgretQFont(run.font()));
++        out.set("glyphs", MakeTypedArray(static_cast<int>(run.glyphs().size()), run.glyphs().data()));
++        out.set("positions", MakeTypedArray(static_cast<int>(run.positions().size() * 2),
++            reinterpret_cast<const float*>(run.positions().data())));
++        out.set("offsets", MakeTypedArray(static_cast<int>(run.offsets().size() * 2),
++            reinterpret_cast<const float*>(run.offsets().data())));
++        out.set("localClusterIndexes", MakeTypedArray(static_cast<int>(run.clusterIndexes().size()),
++            run.clusterIndexes().data()));
++        const auto shifts = run.egretQualificationJustification();
++        out.set("justificationShifts", MakeTypedArray(static_cast<int>(shifts.size() * 2),
++            reinterpret_cast<const float*>(shifts.data())));
++        out.set("terminalSlot", run.size());
++        out.set("terminalClusterConvention", std::string(run.leftToRight()
++            ? "local-utf8-range-end" : "local-utf8-range-begin"));
++        out.set("syntheticPaintRuleQualified", false);
++        runs.call<void>("push", out);
++    }
++    result.set("runs", runs);
++
++    auto clusters = val::array();
++    for (size_t i = 0; i < paragraph.clusters().size(); ++i) {
++        const auto& cluster = paragraph.clusters()[i];
++        auto out = val::object();
++        out.set("id", i);
++        out.set("textRange", EgretQRange(cluster.textRange()));
++        const bool terminal = cluster.runIndex() == para::EMPTY_RUN;
++        out.set("terminalNonRunSentinel", terminal);
++        out.set("nativeRunIndex", cluster.runIndex());
++        out.set("runId", terminal ? val::null() : val(cluster.runIndex()));
++        if (!terminal) {
++            out.set("glyphStart", cluster.startPos());
++            out.set("glyphEnd", cluster.endPos());
++            out.set("width", cluster.width());
++            out.set("height", cluster.height());
++            out.set("halfLetterSpacing", cluster.getHalfLetterSpacing());
++        }
++        // No per-cluster break flags, especially no sentinel's uninitialized flags.
++        clusters.call<void>("push", out);
++    }
++    result.set("clusters", clusters);
++
++    auto lines = val::array();
++    for (size_t i = 0; i < paragraph.lines().size(); ++i) {
++        auto& line = paragraph.lines()[i];
++        auto out = val::object();
++        out.set("id", i);
++        out.set("textRange", EgretQRange(line.text()));
++        out.set("trimmedTextRange", EgretQRange(line.trimmedText()));
++        out.set("textWithNewlinesRange", EgretQRange(line.textWithNewlines()));
++        out.set("clusterRange", EgretQRange(line.clusters()));
++        out.set("ghostClusterRange", EgretQRange(line.clustersWithSpaces()));
++        out.set("offset", EgretQPoint(line.offset()));
++        out.set("height", line.height());
++        out.set("width", line.width());
++        out.set("sourceAdvanceWidth", line.widthWithoutEllipsis());
++        out.set("spacesWidth", line.spacesWidth());
++        out.set("alphabeticBaseline", line.alphabeticBaseline());
++        out.set("ideographicBaseline", line.ideographicBaseline());
++        out.set("baseline", line.baseline());
++        const auto sizes = line.sizes();
++        out.set("ascent", sizes.ascent());
++        out.set("descent", sizes.descent());
++        out.set("leading", sizes.leading());
++        out.set("rawAscent", sizes.rawAscent());
++        out.set("rawDescent", sizes.rawDescent());
++        out.set("cacheWasPopulated", previouslyPopulated[i]);
++        out.set("cacheIsPopulated", line.egretQualificationCachePopulated());
++        auto visits = val::array();
++        line.iterateThroughVisualRuns(false,
++            [&](const para::Run* run, SkScalar offset, para::TextRange text, SkScalar* width) {
++                const int id = EgretQRunIndex(refs, runCount, run);
++                auto visit = val::object();
++                visit.set("runId", id);
++                visit.set("runOffset", offset);
++                visit.set("nativeVisualTextRange", EgretQRange(text));
++                auto contexts = val::array();
++                *width = line.iterateThroughSingleRunByStyles(para::TextLine::GlyphCluster,
++                    run, offset, text, para::StyleType::kNone,
++                    [&](para::TextRange nativeText, const para::TextStyle&,
++                        const para::TextLine::ClipContext& context) {
++                        auto copied = EgretQContext(context, id);
++                        copied.set("nativeCallbackTextRange", EgretQRange(nativeText));
++                        copied.set("callbackRangeDomain", std::string(refs[id].sourceIndex < 0
++                            ? "upstream-synthetic-style-test-range-not-source" : "original-utf8"));
++                        contexts.call<void>("push", copied);
++                    });
++                visit.set("nativeWidthReturned", *width);
++                visit.set("contexts", contexts);
++                visits.call<void>("push", visit);
++                return true;
++            });
++        out.set("visualVisits", visits);
++        auto records = val::array();
++        for (const auto& rec : line.fTextBlobCache) {
++            auto record = val::object();
++            const int id = EgretQRunIndex(refs, runCount, rec.fVisitor_Run);
++            record.set("runId", id);
++            record.set("glyphStart", rec.fVisitor_Pos);
++            record.set("drawOrigin", EgretQPoint(rec.fOffset));
++            record.set("clip", EgretQRect(rec.fClipRect));
++            record.set("clippingNeeded", rec.fClippingNeeded);
++            record.set("bounds", EgretQRect(rec.fBounds));
++            record.set("foreground", EgretQPaint(rec.fPaint));
++            record.set("hasBlob", rec.fBlob != nullptr);
++            auto blobRuns = val::array();
++            size_t count = 0;
++            if (rec.fBlob) {
++                SkTextBlob::Iter iterator(*rec.fBlob);
++                SkTextBlob::Iter::ExperimentalRun blobRun;
++                while (iterator.experimentalNext(&blobRun)) {
++                    auto draw = val::object();
++                    draw.set("glyphStart", rec.fVisitor_Pos + count);
++                    draw.set("glyphCount", blobRun.count);
++                    draw.set("font", EgretQFont(blobRun.font));
++                    draw.set("typefaceIdentityFromRunId", id);
++                    draw.set("glyphs", MakeTypedArray(blobRun.count, blobRun.glyphs));
++                    draw.set("positions", MakeTypedArray(blobRun.count * 2,
++                        reinterpret_cast<const float*>(blobRun.positions)));
++                    blobRuns.call<void>("push", draw);
++                    count += blobRun.count;
++                }
++            }
++            record.set("glyphCount", count);
++            record.set("blobRuns", blobRuns);
++            records.call<void>("push", record);
++        }
++        out.set("drawRecords", records);
++        lines.call<void>("push", out);
++    }
++    result.set("lines", lines);
++    // Exactly one owned temporary wrapper per non-null run face. The collector
++    // must resolve against its owned known faces and delete each wrapper before
++    // serialization; arrays/objects above are copies, not Wasm views. Fatal OOM
++    // while creating wrappers invalidates the generation, not a cleanup success.
++    size_t wrappers = 0;
++    for (size_t i = 0; i < runCount; ++i) {
++        const auto face = refs[i].run->font().refTypeface();
++        runs[i]["font"].set("typeface", face ? val(face) : val::null());
++        if (face) { ++wrappers; }
++    }
++    result.set("ownedTemporaryTypefaceWrappers", wrappers);
++    return result;
++}

@@ -75,6 +75,14 @@
     "./animation": {
       "types": "./dist/animation/index.d.ts",
       "import": "./dist/animation/index.js"
+    },
+    "./paragraph": {
+      "types": "./dist/paragraph.d.ts",
+      "import": "./dist/paragraph.js"
+    },
+    "./web/paragraph": {
+      "types": "./dist/web/paragraph.d.ts",
+      "import": "./dist/web/paragraph.js"
     }
   },
   "dependencies": {
