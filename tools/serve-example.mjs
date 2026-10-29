@@ -7,18 +7,19 @@ import {fileURLToPath} from 'node:url';
 import {localPackage} from './lib/local-package.mjs';
 import {logicalPath,samePhysicalPath,fingerprintFile,ownerRelativePath} from './lib/file-identity.mjs';
 const root=fileURLToPath(new URL('..',import.meta.url));
-const types={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.json':'application/json; charset=utf-8','.ttf':'font/ttf','.woff2':'font/woff2','.otf':'font/otf','.md':'text/plain; charset=utf-8','.wasm':'application/wasm'};
+const types={'.css':'text/css; charset=utf-8','.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.json':'application/json; charset=utf-8','.ttf':'font/ttf','.woff2':'font/woff2','.otf':'font/otf','.md':'text/plain; charset=utf-8','.wasm':'application/wasm'};
 export function createExampleServer(repository=root){
  return http.createServer((request,response)=>{
   const finish=(status,text)=>{response.writeHead(status,{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'});response.end(text);};
   if(!['GET','HEAD'].includes(request.method))return finish(405,'GET or HEAD required');
   let relative;
-  try{relative=decodeURIComponent(new URL(request.url,'http://127.0.0.1').pathname).slice(1);if(!relative)relative='examples/resource-scene/index.html';logicalPath(relative);}catch{return finish(400,'Invalid path');}
+  try{relative=decodeURIComponent(new URL(request.url,'http://127.0.0.1').pathname).slice(1);if(!relative){response.writeHead(302,{Location:'/examples/mobile/index.html'+new URL(request.url,'http://127.0.0.1').search,'Cache-Control':'no-store'});response.end();return;}logicalPath(relative);}catch{return finish(400,'Invalid path');}
   const dependency='packages/engine/node_modules/robust-predicates/';
   // The public example uses the same pinned owner through a short import-map alias.
   if(relative.startsWith('vendor/robust-predicates/'))relative=dependency+relative.slice('vendor/robust-predicates/'.length);
   // Only this example's generated manifest/artifact layout is exposed under work.
-  const allowed=/^examples\/sequence-controls\/(?:index\.html|main\.mjs|selection\.mjs|fixture\.mjs)$/.test(relative)
+  const allowed=/^examples\/mobile\/(?:index\.html|style\.css|main\.mjs|viewport\.mjs|resources\.mjs|pointers\.mjs|panels\.mjs)$/.test(relative)
+   ||/^examples\/sequence-controls\/(?:index\.html|main\.mjs|selection\.mjs|fixture\.mjs)$/.test(relative)
    ||/^work\/sequence-controls\/run-[A-Za-z0-9]{6}\/(?:browser-config\.json|candidate\.json|build\/generations\/[a-f0-9]{64}\/manifest\.json|build\/blobs\/sha256\/[a-f0-9]{64})$/.test(relative)
    ||/^examples\/ui-data-panel\/(?:index\.html|main\.mjs|fixture\.mjs)$/.test(relative)
    ||/^examples\/paragraph-panel\/(?:index\.html|main\.mjs|verify-line-bidi\.mjs|README(?:\.zh-CN)?\.md|vendor\/(?:manifest\.json|runtime\/(?:(?:line-bidi-r1|layout-r1)\/)?canvaskit\.(?:js|wasm)|fonts\/[A-Za-z0-9_.-]+\.(?:ttf|otf)))$/.test(relative)
@@ -50,5 +51,5 @@ if(process.argv[1]&&samePhysicalPath(path.resolve(process.argv[1]),fileURLToPath
  const port=args.length?Number(args[1]):4173;if(port<0||port>65535)throw Error('Invalid port');
  if(!fs.existsSync(path.join(root,'packages/engine/dist/index.js')))throw Error('Run pnpm setup:dev before opening the example.');
  const server=createExampleServer();server.on('error',error=>{console.error(error.message);process.exitCode=1;});
- server.listen(port,'127.0.0.1',()=>console.log('Open http://127.0.0.1:'+server.address().port+'/examples/resource-scene/index.html (Ctrl+C to stop)'));
+ server.listen(port,'127.0.0.1',()=>console.log('Open http://127.0.0.1:'+server.address().port+'/examples/mobile/index.html (Ctrl+C to stop)'));
 }

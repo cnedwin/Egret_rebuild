@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 15099,
-      "sha256": "f463f666484a97c4a045dd52a413d2ffbba0782aeeaec76d23d9d82ad629692f",
+      "bytes": 15426,
+      "sha256": "9146c6b7fb8a31ca0546a774567535375cd7d783ffc63d8fc00f5049cb7e19ac",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "148dd6e0f62e90ac73fbada6ffaa2479fcc7bc5491af710e0f7f2c80a1d069d6",
+      "sha256": "7b4c8cb0cd23f40a3e3ea14ffc4e914173fa64350e7a679b33704b365d5bcb1c",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 17130,
-      "sha256": "e1ef992b4313eb8cc9a94eb45422207830905e83f33ece1d003ab35c1e480555",
+      "bytes": 17531,
+      "sha256": "def9386f183a8aec0df8924962840e3bd6112dce7b8246b143c44fb172b2c734",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "547937ad95517441c88031e606e96132c46b0a768dc30d9ce584b9421427a576",
-      "bytes": 364888,
+      "sha256": "88d5bfca493292e96fed945c7bf706a06c2e5b97c92c091781318554c5414817",
+      "bytes": 365523,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4860,8 +4860,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "493eaff0a046f18d2357cc8df0b8dae2ce11b56cede57f8ee0b1155150f1d17d",
-      "bytes": 21231,
+      "sha256": "263876d2fe39bb47176365906b4d0c132b474b9ed7eeab29f49c270bb50b477b",
+      "bytes": 21745,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -5003,8 +5003,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "49014f99eb77563210260b781c6856272ee02e368e2649aecf0a86222bbb8487",
-      "bytes": 19625,
+      "sha256": "fc8721b53103f47171e1f3de63135ceaf829b8ca3832616dc6e7115c3de29553",
+      "bytes": 20096,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -10454,8 +10454,8 @@
     {
       "path": "knowledge-base/Cns/docs/getting-started.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 12942,
-      "sha256": "60175c787f06f5c4f55956c51fc973a5825ddf8c91c274da7c2f37b279364125"
+      "bytes": 13136,
+      "sha256": "f15e2f6d67aeb51332502a90fce1bedf41d39d6fbb1e08b564ecbc8dd3064757"
     },
     {
       "path": "knowledge-base/Cns/docs/m0-community-foundations.md",
@@ -10466,8 +10466,8 @@
     {
       "path": "knowledge-base/en/docs/getting-started.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 14925,
-      "sha256": "7d2508456bbf82742399b93a73f7c06469bdc967cb0f1fa8db66d0bdfef4141a"
+      "bytes": 15136,
+      "sha256": "a5972d8dc27377b93e97a0df74654a06e0b4de09f23d6362e22c150cbaa51ccc"
     },
     {
       "path": "knowledge-base/en/docs/m0-community-foundations.md",
@@ -10478,8 +10478,8 @@
     {
       "path": "tests/publication/m0-foundations.test.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 13540,
-      "sha256": "3bfd5c9d79ab8a71b2f29bbc50c8bee901f5451e47547e2a9aa3ca78c1ba126e"
+      "bytes": 15044,
+      "sha256": "d23b77b1024a25003c749621061cf8fe815dc58579791e5f3240ba09a95b9d6b"
     },
     {
       "path": "tools/check-quick.mjs",
@@ -10496,8 +10496,8 @@
     {
       "path": "tools/serve-example.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 4545,
-      "sha256": "6f6bbbf31e491a2fcb024dc5d309b943705978a721c223f4a682ca5f7ac3163c"
+      "bytes": 4821,
+      "sha256": "37221d5bdae317dd89fe960486540301aba6dcdd65b2fc6f4ee3b416d3f2233c"
     },
     {
       "path": "tools/setup-dev.mjs",
@@ -14218,6 +14218,90 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 2890,
       "sha256": "57ee9a6d341d42dd08139c736d5f2992a086a1232926d2aff1c85650d65c658b"
+    },
+    {
+      "path": "examples/mobile/index.html",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 3477,
+      "sha256": "d4f79e302f583d275cf42b4397bbd55b04924ba3df605f3f8867a8af54df8c82"
+    },
+    {
+      "path": "examples/mobile/style.css",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 1273,
+      "sha256": "2129487731dc54856cf029f98bf0e5865adc4fb0bf80080a868eecd36eef5b96"
+    },
+    {
+      "path": "examples/mobile/main.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 3753,
+      "sha256": "1c85d3167915833bfefb9e911d656781f794af7d501eb3a7227e28a5a2d58115"
+    },
+    {
+      "path": "examples/mobile/viewport.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 3615,
+      "sha256": "5881293e0c175242598834dc2986d4a29a2e7a434c3288fd090ee472bd84f701"
+    },
+    {
+      "path": "examples/mobile/resources.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 17243,
+      "sha256": "3efa66bbdacbeef7ee82d638a08ecbb40736f7b4a261c566599a839dbd5f6f27"
+    },
+    {
+      "path": "examples/mobile/pointers.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 7658,
+      "sha256": "ee06cf631a664b3015823b78a415104e713653f348d3f43fdc45da32a1cbba13"
+    },
+    {
+      "path": "examples/mobile/panels.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 30557,
+      "sha256": "11b795807662b9ab9aecde1360192dc6bc3a7fae1cb0fb35d5f7c6677c36ad02"
+    },
+    {
+      "path": "examples/mobile/verify-browser.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 16198,
+      "sha256": "f83873002ee7073cc1722241fb8fd0bd8546f9dd80d2131455689798a1fd9107"
+    },
+    {
+      "path": "examples/mobile/README.md",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 1227,
+      "sha256": "88d651319f04e7a1e7c1b1e30e37be83d3d178d11e580a7e1b2b1d926e4ded79"
+    },
+    {
+      "path": "examples/mobile/README.zh-CN.md",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 1070,
+      "sha256": "39b9244920d69378931da211fc6158c09cfdde642df4e214d89e7392f95ea181"
+    },
+    {
+      "path": "tests/mobile-examples.test.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 6315,
+      "sha256": "6f3b65d1e7076ff826d5d95b6aa05e4b0068768e33df91e59b04a6c7279ee38c"
+    },
+    {
+      "path": "knowledge-base/en/docs/mobile-examples.md",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 6288,
+      "sha256": "81c08ff4685d79c3c63059fc5c30844b6fa674bcf00528a050d5b36c0146d46b"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/mobile-examples.md",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 5514,
+      "sha256": "11447b65021021e6f6212eb765b6c58615ccc8d4ce7a07839553ea89d6dcdceb"
+    },
+    {
+      "path": "contributions/mobile-examples.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 4384,
+      "sha256": "e46bbaa318a4b840d4918ad76547f216bc54be45e471ed517e616724783f8cba"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

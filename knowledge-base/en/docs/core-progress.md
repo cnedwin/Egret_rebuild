@@ -4,6 +4,10 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## Responsive examples — 2026-10-30
+
+The phone-facing preview composes existing actor, multi-pointer, UI and paragraph SDKs with responsive columns, bounded DPR and ordered session replacement. Fixed qualification files and the legacy mouse API remain unchanged. See the [example contract](mobile-examples.md); desktop emulation does not close physical-device, IME, performance or M4 requirements.
+
 ## M3.2 paragraph alignment and line limits — 2026-10-29
 
 Readonly paragraphs now support left/right/center/start/end/justify alignment and optional maxLines with a fixed ellipsis. Hard-break/blank-line overflow shows the marker; an impossibly narrow field rejects without replacing committed content. Existing UI geometry and resource ownership remain authoritative. See the [layout contract](paragraph-layout-controls.md). The focused 36 cases and 20 actual browser checks per backend are finite functional evidence; full M3.2, devices, IME and performance remain OPEN.

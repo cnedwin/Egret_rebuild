@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/mobile/index.html",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "examples/mobile/style.css",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "examples/mobile/main.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "examples/mobile/viewport.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "examples/mobile/resources.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "examples/mobile/pointers.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "examples/mobile/panels.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "examples/mobile/verify-browser.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "examples/mobile/README.md",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "examples/mobile/README.zh-CN.md",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "tests/mobile-examples.test.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "knowledge-base/en/docs/mobile-examples.md",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/mobile-examples.md",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/mobile/README.md",
+      "zh": "examples/mobile/README.zh-CN.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/mobile-examples.md",
+      "zh": "knowledge-base/Cns/docs/mobile-examples.md"
+    }
+  ]
+}

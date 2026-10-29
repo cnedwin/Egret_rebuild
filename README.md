@@ -22,6 +22,10 @@ Report problems through [Issues](https://github.com/cnedwin/Egret_rebuild/issues
 
 The [M2–M4 roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md) connects complete Spine/content, UI/text/input and mixed core acceptance. Choose a complete work package from [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) or [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58); each lists code entry points, dependencies and reviewable acceptance.
 
+## Responsive touch examples
+
+The [interactive preview](examples/mobile/README.md) supports touch, mouse and pen, narrow/wide UI layout and bounded DPR using existing SDKs. Fixed qualification entries and the legacy mouse API remain unchanged. Run `pnpm example:browser`; physical-device and performance acceptance remain open.
+
 ## Readonly paragraph SDK in Engine UI
 
 The optional [readonly paragraph SDK](knowledge-base/en/docs/readonly-paragraph-sdk.md) wraps Latin, Chinese and Arabic text from explicit font bytes and feeds natural/minimum line height into ordinary UI and virtual lists. Run [the integrated example](examples/paragraph-panel/README.md) to resize, align, limit lines, change type size/density, and observe atomic content replacement. Final-line bidi L1/L2 is integrated with finite native/browser checks; full M3.2, editing/IME, physical devices and performance remain open.
@@ -124,6 +128,7 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| Mobile examples / 移动示例 · 2026-10-30 | Touch input, responsive UI and bounded DPR; preserved fixed fixtures | 触摸输入、响应式 UI 与有界 DPR，保留固定夹具 |
 | Paragraph layout / 段落布局 · 2026-10-29 | Six alignments, maxLines and truthful overflow; hard-break marker and recoverable no-fit refusal | 六种对齐、maxLines 与真实溢出；硬换行省略号及过窄拒绝／恢复 |
 | Final-line bidi / 最终行双向排版 · 2026-10-29 | Native line L1/L2 after wrapping; shared glyph/rect/hit order and sequential trailing-space geometry | 换行后原生行 L1／L2，字形／矩形／命中共享顺序，尾空格依次定位 |
 | Readonly paragraphs / 只读段落 · 2026-10-29 | Width-based Latin/CJK/Arabic paragraph layout, natural/minimum line height, ordinary UI and variable-height list integration | 明确字体的中英阿文字自动换行、自然/最小行高，接入普通 UI 与动态高度列表 |

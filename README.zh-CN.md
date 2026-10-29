@@ -12,6 +12,10 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+## 响应式触摸示例
+
+[交互预览](examples/mobile/README.zh-CN.md)使用已有 SDK，支持触摸、鼠标与笔、窄屏／宽屏 UI 布局和有界 DPR。固定验收入口和旧鼠标 API 保持不变。运行 `pnpm example:browser`；真机和性能验收继续未完成。
+
 ## 快速开始与参与
 
 先阅读[上手指南](knowledge-base/Cns/docs/getting-started.md)，使用固定 Node 26.7.0 和 pnpm 11.25.0 运行 `pnpm setup:dev`、`pnpm check:quick`、`pnpm example:browser`。完整工具要求、预期画面及故障处理都在同一指南中。
@@ -125,6 +129,7 @@ M1.1 已通过 [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) 合并
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| Mobile examples / 移动示例 · 2026-10-30 | Touch input, responsive UI and bounded DPR; preserved fixed fixtures | 触摸输入、响应式 UI 与有界 DPR，保留固定夹具 |
 | Paragraph layout / 段落布局 · 2026-10-29 | Six alignments, maxLines and truthful overflow; hard-break marker and recoverable no-fit refusal | 六种对齐、maxLines 与真实溢出；硬换行省略号及过窄拒绝／恢复 |
 | Final-line bidi / 最终行双向排版 · 2026-10-29 | Native line L1/L2 after wrapping; shared glyph/rect/hit order and sequential trailing-space geometry | 换行后原生行 L1／L2，字形／矩形／命中共享顺序，尾空格依次定位 |
 | Readonly paragraphs / 只读段落 · 2026-10-29 | Width-based Latin/CJK/Arabic paragraph layout, natural/minimum line height, ordinary UI and variable-height list integration | 明确字体的中英阿文字自动换行、自然/最小行高，接入普通 UI 与动态高度列表 |

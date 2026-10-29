@@ -25,9 +25,9 @@ Doctor is read-only. It reports the actual parent/child Node versions, required 
 
 ## First visible result
 
-The existing resource scene shows two animated pilots, clothing, labels and selection controls. Choose Canvas 2D first; WebGPU remains an explicit experimental profile. Select a pilot, change clothing, pause playback, step time or change rotation and observe the corresponding change. The example uses fixed font subsets; it does not establish general Chinese typography or mobile performance.
+The default responsive preview offers resource actors, independent pointer regions, managed UI and multilingual paragraphs. Tap a character, change its outfit, pause or step the animation; panel controls select WebGL2 or WebGPU. Narrow panels reflow and pixel density is bounded. Explicit fixed-entry links retain the original qualification pages. Desktop emulation does not establish phone performance.
 
-For a first code edit, change a displayed heading in `examples/resource-scene/index.html`, reload and verify only the heading changed. Submit a useful, focused improvement rather than an arbitrary demonstration edit. Keep English/Chinese reading documentation in the paired directories and critical code comments in English.
+For a first code edit, change a displayed heading in `examples/mobile/index.html`, reload and verify only the heading changed. Submit a useful, focused improvement rather than an arbitrary demonstration edit. Keep English/Chinese reading documentation in the paired directories and critical code comments in English.
 
 ## First contribution
 
@@ -115,3 +115,5 @@ If an example never becomes Ready, report backend, failed step and sanitized dia
 Texture, frame-animation and SpriteSheet changes use the [current historical-domain workflow](historical-browser-workflow.md). Start with setup/headless results; ask maintainers to prepare original review evidence and external process-retirement validation.
 
 Maintainers can prepare raw baseline differences and conservative catalog candidates with the [check maintenance workflow](check-maintenance.md). Proposals remain review-required and do not replace current source admission or full gates.
+
+The default [responsive preview](mobile-examples.md) includes actor selection, multi-touch regions, narrow/wide panels and DPR adaptation. Fixed qualification entries remain available through explicit links.
