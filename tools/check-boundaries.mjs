@@ -160,7 +160,7 @@ for (const [name, allowed] of Object.entries(expected)) {
   const dir = path.join(root, "packages", name);
   const pkg = JSON.parse(readFileSync(path.join(dir, "package.json"), "utf8"));
   const dependencies = Object.keys(pkg.dependencies ?? {}).sort();
-  const registryImports = { '#egret-textured-frame-state': { types: './dist/internal/texturedFrameState.d.ts', import: './dist/internal/texturedFrameState.js' }, '#egret-mouse-input': {types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'}, '#egret-manifest-resources': {types:'./dist/manifestResourceState.d.ts',import:'./dist/manifestResourceState.js'}, '#egret-pointer-input': {types:'./dist/pointerInput.d.ts',import:'./dist/pointerInput.js'} };
+  const registryImports = { '#egret-textured-frame-state': { types: './dist/internal/texturedFrameState.d.ts', import: './dist/internal/texturedFrameState.js' }, '#egret-mouse-input': {types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'}, '#egret-manifest-resources': {types:'./dist/manifestResourceState.d.ts',import:'./dist/manifestResourceState.js'}, '#egret-pointer-input': {types:'./dist/pointerInput.d.ts',import:'./dist/pointerInput.js'}, '#egret-keyboard-input': {types:'./dist/keyboardInput.d.ts',import:'./dist/keyboardInput.js'} };
   if (name === 'engine') {
     if (JSON.stringify(pkg.imports) !== JSON.stringify(registryImports)) throw new Error('engine: private textured registry mapping mismatch');
   } else if (pkg.imports !== undefined) throw new Error(`${name}: unexpected private import mapping`);
@@ -194,6 +194,7 @@ for (const [name, allowed] of Object.entries(expected)) {
       './input': {types:'./dist/input.d.ts',import:'./dist/input.js'},
       './ui': {types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'},
       './web/pointer': {types:'./dist/web/pointer.d.ts',import:'./dist/web/pointer.js'},
+      './web/keyboard': {types:'./dist/web/keyboard.d.ts',import:'./dist/web/keyboard.js'},
       './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
       './resources': {types:'./dist/resources.d.ts',import:'./dist/resources.js'},
       './web/resources': {types:'./dist/web/resources.d.ts',import:'./dist/web/resources.js'},
@@ -258,6 +259,10 @@ for (const [name, allowed] of Object.entries(expected)) {
         const relative=path.relative(dir,file).split(path.sep).join('/');
         if(name!=='engine'||!['src/pointerInput.ts','src/pointerInputTypes.ts','dist/pointerInput.js','dist/pointerInput.d.ts','dist/pointerInputTypes.d.ts'].includes(relative))
           throw new Error('M3: pointer runtime import outside the named core modules: '+relative);
+      } else if (imported === '#egret-keyboard-input') {
+        const relative=path.relative(dir,file).split(path.sep).join('/');
+        if(name!=='engine'||!['web/keyboard.ts','web/BrowserKeyboardInput.ts','dist/web/keyboard.js','dist/web/keyboard.d.ts','dist/web/BrowserKeyboardInput.js','dist/web/BrowserKeyboardInput.d.ts'].includes(relative))
+          throw new Error('M3.3: keyboard assembly import outside the named browser modules: '+relative);
       } else if (imported === '#egret-pointer-input') {
         const relative=path.relative(dir,file).split(path.sep).join('/');
         if(name!=='engine'||!['web/pointer.ts','web/BrowserPointerInput.ts','dist/web/pointer.js','dist/web/pointer.d.ts','dist/web/BrowserPointerInput.js','dist/web/BrowserPointerInput.d.ts'].includes(relative))
@@ -5378,7 +5383,7 @@ for(const file of ['packages/runtime/src/displayInputOperations.ts','packages/ru
 // Exact new target ownership; unrelated files never acquire input authority by
 // importing a dormant value, an erased type, or a dynamic relative edge.
 const mouseApprovedTargets={
-  'src/mouseInput.js':['src/Engine.ts','src/internal/mouseInputFactoryState.ts','src/bitmapButton.ts','src/pointerInput.ts'],
+  'src/mouseInput.js':['src/Engine.ts','src/internal/mouseInputFactoryState.ts','src/bitmapButton.ts','src/pointerInput.ts','src/keyboardInput.ts'],
   'dist/mouseInput.js':['dist/Engine.js','dist/Engine.d.ts','dist/internal/mouseInputFactoryState.js','dist/internal/mouseInputFactoryState.d.ts','dist/bitmapButton.js','dist/bitmapButton.d.ts'],
   'src/mouseInputTypes.js':['src/mouseInput.ts','src/bitmapButton.ts','src/bitmapButtonTypes.ts','src/internal/mouseInputFactoryState.ts'],
   'dist/mouseInputTypes.js':['dist/mouseInput.js','dist/mouseInput.d.ts','dist/bitmapButton.js','dist/bitmapButton.d.ts','dist/bitmapButtonTypes.d.ts','dist/internal/mouseInputFactoryState.d.ts'],
@@ -5386,8 +5391,8 @@ const mouseApprovedTargets={
   'dist/bitmapButton.js':['dist/mouseInput.js','dist/mouseInput.d.ts'],
   'src/bitmapButtonTypes.js':['src/mouseInput.ts','src/bitmapButton.ts'],
   'dist/bitmapButtonTypes.js':['dist/mouseInput.d.ts','dist/bitmapButton.d.ts'],
-  'src/internal/mouseInputFactoryState.js':['src/mouseInput.ts','src/startEngine.ts','src/bitmapButton.ts','src/pointerInput.ts'],
-  'dist/internal/mouseInputFactoryState.js':['dist/mouseInput.js','dist/mouseInput.d.ts','dist/startEngine.js','dist/bitmapButton.js','dist/pointerInput.js'],
+  'src/internal/mouseInputFactoryState.js':['src/mouseInput.ts','src/startEngine.ts','src/bitmapButton.ts','src/pointerInput.ts','src/keyboardInput.ts'],
+  'dist/internal/mouseInputFactoryState.js':['dist/mouseInput.js','dist/mouseInput.d.ts','dist/startEngine.js','dist/bitmapButton.js','dist/pointerInput.js','dist/keyboardInput.js'],
 };
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/dist'))]) {
   if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/'),code=assetGroupStrip(readFileSync(file,'utf8'));
@@ -5763,8 +5768,8 @@ for(const [label,values,stem]of textEntries){
     if(name in values||new RegExp('\\b'+name+'\\b').test(declaration))throw new Error('M3.1: optional UI leaked outside its entry: '+label+'/'+name);
 }
 const uiFactoryAllowed={
-  'src/Engine.ts':1,'src/pointerInput.ts':1,'src/ui/uiRoot.ts':1,
-  'dist/Engine.js':1,'dist/pointerInput.js':1,'dist/ui/uiRoot.js':1,
+  'src/Engine.ts':1,'src/pointerInput.ts':1,'src/keyboardInput.ts':1,'src/ui/uiRoot.ts':1,
+  'dist/Engine.js':1,'dist/pointerInput.js':1,'dist/keyboardInput.js':1,'dist/ui/uiRoot.js':1,
 };
 const managedStateAllowed=['DisplayObject','DisplayObjectContainer','Scope','displayHitState','displayVisualState','paragraph/Paragraph'];
 for(const pkg of ['runtime','engine'])for(const file of [...files(path.join(root,'packages',pkg,'src')),...files(path.join(root,'packages',pkg,'dist'))]){
@@ -5822,4 +5827,50 @@ for(const file of ['packages/engine/src/sequenceTargetClaims.ts','packages/engin
  if(/\b(?:setTimeout|setInterval|queueMicrotask|requestAnimationFrame|fetch|Worker|Date|performance)\b/.test(uiRead(file))||/\bimport\s*\(/.test(uiRead(file)))throw new Error('M2.2: sequence controller acquired automatic host work: '+file);
 }
 
+// M3.3 keyboard is an exact opt-in graph sharing the eagerly authenticated
+// Engine/Scope and UI delivery authorities; default entries never load it.
+const keyboardGraph={
+ 'src/keyboardInput.ts':['./internal/mouseInputFactoryState.js','./internal/uiFactoryState.js','./keyboardInputTypes.js','./keyboardInputTypes.js','./mouseInput.js','@egret/runtime','@egret/runtime'],
+ 'src/keyboardInputTypes.ts':['./Engine.js','@egret/runtime'],
+ 'src/input.ts':['./keyboardInput.js','./keyboardInputTypes.js','./pointerInput.js','./pointerInputTypes.js'],
+ 'web/BrowserKeyboardInput.ts':['#egret-keyboard-input','#egret-keyboard-input','@egret/runtime'],
+ 'web/keyboard.ts':['#egret-keyboard-input','./BrowserKeyboardInput.js'],
+ 'dist/keyboardInput.js':['./internal/mouseInputFactoryState.js','./internal/uiFactoryState.js','@egret/runtime'],
+ 'dist/keyboardInput.d.ts':['./keyboardInputTypes.js','./keyboardInputTypes.js'],
+ 'dist/keyboardInputTypes.d.ts':['./Engine.js','@egret/runtime'],
+ 'dist/input.js':['./keyboardInput.js','./pointerInput.js'],
+ 'dist/input.d.ts':['./keyboardInput.js','./keyboardInputTypes.js','./pointerInput.js','./pointerInputTypes.js'],
+ 'dist/web/BrowserKeyboardInput.js':['#egret-keyboard-input','@egret/runtime'],
+ 'dist/web/BrowserKeyboardInput.d.ts':['#egret-keyboard-input'],
+ 'dist/web/keyboard.js':['./BrowserKeyboardInput.js'],
+ 'dist/web/keyboard.d.ts':['#egret-keyboard-input','./BrowserKeyboardInput.js'],
+};
+for(const [file,expected] of Object.entries(keyboardGraph)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target).sort();
+ if(JSON.stringify(observed)!==JSON.stringify(expected)||/\bimport\s*\(/.test(body))throw new Error('M3.3: exact keyboard graph mismatch: '+file);
+ if(/\b(?:setTimeout|setInterval|queueMicrotask|requestAnimationFrame|fetch|Worker|Date|performance)\b/.test(body))throw new Error('M3.3: keyboard acquired automatic host work: '+file);
+}
+const keyboardTypes=['KeyboardSample','KeyboardCancelReason','KeyboardKeyPayload','KeyboardCancelPayload','KeyboardFocusPayload','KeyboardFocusChange','KeyboardInputOptions','KeyboardTargetOptions','KeyboardTargetRegistration','KeyboardInputSnapshot','KeyboardInputEvents','KeyboardFocusOptions','KeyboardInput'];
+for(const [file,typed] of [['packages/engine/web/keyboard.ts',true],['packages/engine/dist/web/keyboard.js',false],['packages/engine/dist/web/keyboard.d.ts',true]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,['createBrowserKeyboardInput'])||!mouseSame(surface.types,typed?keyboardTypes:[]))throw new Error('M3.3: exact browser keyboard exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/input')),['createPointerInput','createKeyboardInput'])||!mouseSame(Object.keys(await import('@egret/engine/web/keyboard')),['createBrowserKeyboardInput']))throw new Error('M3.3: optional keyboard runtime values mismatch');
+for(const [label,values,stem] of textEntries){
+ const body=uiRead(stem+'.d.ts');
+ for(const name of [...keyboardTypes,'createKeyboardInput','createBrowserKeyboardInput','bindKeyboardSurface','captureMouseInputRuntimePrimitives'])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('M3.3: keyboard leaked to default/other entry: '+label+'/'+name);
+}
+const keyboardAllowed={
+ 'src/keyboardInput.js':['src/input.ts'],'dist/keyboardInput.js':['dist/input.js','dist/input.d.ts'],
+ 'src/keyboardInputTypes.js':['src/keyboardInput.ts','src/input.ts'],'dist/keyboardInputTypes.js':['dist/keyboardInput.d.ts','dist/input.d.ts'],
+ 'web/BrowserKeyboardInput.js':['web/keyboard.ts'],'dist/web/BrowserKeyboardInput.js':['dist/web/keyboard.js','dist/web/keyboard.d.ts'],
+};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/dist'))]){
+ if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
+ for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
+  const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+  if(Object.hasOwn(keyboardAllowed,resolved)&&!keyboardAllowed[resolved].includes(relative))throw new Error('M3.3: keyboard private target escaped its exact optional owners: '+relative);
+ }
+}
+if(!/const primitives=captureMouseInputRuntimePrimitives\(\)/.test(uiRead('packages/engine/src/keyboardInput.ts'))||!/const INPUT_PARENT = Object.getOwnPropertyDescriptor\(DisplayObject.prototype, 'parent'\)/.test(uiRead('packages/engine/src/internal/mouseInputFactoryState.ts')))throw new Error('M3.3: original eager display admission capture missing');
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);

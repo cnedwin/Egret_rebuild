@@ -12,6 +12,10 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+## 键盘与逻辑焦点
+
+可选[键盘／焦点通道](knowledge-base/Cns/docs/keyboard-focus-input.md)提供稳定控件 ID、Tab 遍历、类型按键和 Scope 所有的取消。双区域预览可同时接收指针与键盘。原生编辑／输入法、托管 UI 自动焦点和完整 M3.3 继续未完成。
+
 ## 响应式触摸示例
 
 [交互预览](examples/mobile/README.zh-CN.md)使用已有 SDK，支持触摸、鼠标与笔、窄屏／宽屏 UI 布局和有界 DPR。固定验收入口和旧鼠标 API 保持不变。运行 `pnpm example:browser`；真机和性能验收继续未完成。
@@ -129,6 +133,7 @@ M1.1 已通过 [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) 合并
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| Keyboard focus / 键盘焦点 · 2026-10-30 | Stable logical targets, typed keys and native Canvas focus lifetime | 稳定逻辑目标、类型按键与原生 Canvas 焦点生命周期 |
 | Mobile examples / 移动示例 · 2026-10-30 | Touch input, responsive UI and bounded DPR; preserved fixed fixtures | 触摸输入、响应式 UI 与有界 DPR，保留固定夹具 |
 | Paragraph layout / 段落布局 · 2026-10-29 | Six alignments, maxLines and truthful overflow; hard-break marker and recoverable no-fit refusal | 六种对齐、maxLines 与真实溢出；硬换行省略号及过窄拒绝／恢复 |
 | Final-line bidi / 最终行双向排版 · 2026-10-29 | Native line L1/L2 after wrapping; shared glyph/rect/hit order and sequential trailing-space geometry | 换行后原生行 L1／L2，字形／矩形／命中共享顺序，尾空格依次定位 |

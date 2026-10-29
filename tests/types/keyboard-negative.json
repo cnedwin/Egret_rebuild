@@ -1,0 +1,4 @@
+{
+  "extends": "./keyboard-positive.json",
+  "include": ["keyboard-negative.ts"]
+}

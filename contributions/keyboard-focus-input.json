@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/keyboardInput.ts",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/keyboardInputTypes.ts",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/BrowserKeyboardInput.ts",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/keyboard.ts",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/keyboard-input.test.mjs",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset."
+    },
+    {
+      "path": "tests/keyboard-package.test.mjs",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset."
+    },
+    {
+      "path": "tests/types/keyboard-browser-negative.json",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset."
+    },
+    {
+      "path": "tests/types/keyboard-browser-negative.ts",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset."
+    },
+    {
+      "path": "tests/types/keyboard-negative.json",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset."
+    },
+    {
+      "path": "tests/types/keyboard-negative.ts",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset."
+    },
+    {
+      "path": "tests/types/keyboard-positive.json",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset."
+    },
+    {
+      "path": "tests/types/keyboard-positive.ts",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset."
+    },
+    {
+      "path": "knowledge-base/en/docs/keyboard-focus-input.md",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/keyboard-focus-input.md",
+      "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/keyboard-focus-input.md",
+      "zh": "knowledge-base/Cns/docs/keyboard-focus-input.md"
+    }
+  ]
+}

@@ -23,7 +23,7 @@ const sources=new Map(),sha=b=>createHash('sha256').update(b).digest('hex');
 const checks=[],failures=[],contexts=[];let browser;
 const server=createExampleServer();await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const origin='http://127.0.0.1:'+server.address().port;
-function check(name,actual,expected=true){assert.deepEqual(actual,expected,name);checks.push(name);}
+function check(name,actual,...expected){assert.deepEqual(actual,expected.length?expected[0]:true,name);checks.push(name);}
 async function settle(page,width=page.viewportSize().width,density){
  await page.waitForFunction(({width,density})=>{
   const s=globalThis.__egretMobileRead(),c=document.querySelector('canvas'),rect=c.getBoundingClientRect();
@@ -59,6 +59,94 @@ async function geometry(page,label,state,targetWidth=page.viewportSize().width){
  check(label+': page can scroll',observation.pageTouchAction,'auto');
  return box;
 }
+
+async function verifyKeyboard(page,context,label,mobile){
+ await page.locator('canvas').focus();
+ await page.keyboard.press('Tab');let state=await read(page);
+ check(label+': first logical keyboard target',state.application.keyboard.focusedId,'left');
+ check(label+': keyboard focus-visible',state.application.keyboard.focusVisible,true);
+ await page.keyboard.press('Tab');state=await read(page);
+ check(label+': next logical keyboard target',state.application.keyboard.focusedId,'right');
+ await page.keyboard.press('ArrowLeft');state=await read(page);
+ check(label+': routed arrow navigation',state.application.keyboard.focusedId,'left');
+ check(label+': arrow target recorded',state.application.keyboardEvents.some(e=>e.code==='ArrowLeft'&&e.targetId==='right'));
+ const gold=await page.locator('canvas').evaluate((canvas,region)=>{
+  const rect=canvas.getBoundingClientRect(),x=Math.floor((region.x-2)*canvas.width/rect.width),y=Math.floor((region.y+12)*canvas.height/rect.height);
+  return [...canvas.getContext('2d').getImageData(x,y,1,1).data];
+ },state.application.regions[0]);
+ check(label+': genuine rendered logical focus border',gold,[255,209,102,255]);
+ const before=state.application.activations.left,scroll=await page.evaluate(()=>scrollY);
+ await page.keyboard.down('Space');await page.keyboard.down('Space');state=await read(page);
+ check(label+': held/repeat activates once',state.application.activations.left,before+1);
+ check(label+': held physical code',state.application.keyboard.pressedKeys,['Space']);
+ check(label+': prevented Space does not scroll',await page.evaluate(()=>scrollY),scroll);
+ await page.keyboard.up('Space');state=await read(page);check(label+': keyup releases hold',state.application.keyboard.pressedKeys,[]);
+ await page.keyboard.down('Enter');state=await read(page);check(label+': Enter accepted',state.application.keyboard.pressedKeys,['Enter']);
+ const activated=state.application.activations.left,cancels=state.application.keyboardCancels;
+ await page.locator('[data-action="pointer-toggle"]').click();state=await read(page);
+ check(label+': suspend keyboard with pointer',state.application.keyboard.state,'suspended');
+ check(label+': suspend cancels held keys',state.application.keyboard.pressedKeys,[]);
+ check(label+': cancel notification delivered',state.application.keyboardCancels>cancels);
+ await page.keyboard.up('Enter');await page.locator('[data-action="pointer-toggle"]').click();state=await read(page);
+ check(label+': stale native keyup does not activate',state.application.activations.left,activated);
+ check(label+': native listeners resume',state.application.keyboard.state,'active');
+ await page.locator('canvas').focus();await page.keyboard.press('Tab');await page.keyboard.press('Shift+Tab');state=await read(page);
+ check(label+': reverse traversal can leave canvas',state.application.keyboard.focusedId,undefined);
+ check(label+': native Tab boundary respected',await page.locator('canvas').evaluate(c=>document.activeElement===c),false);
+ await page.evaluate(()=>{const editor=document.createElement('input');editor.id='keyboard-native-editor';editor.setAttribute('aria-label','Authored native editor fixture');document.querySelector('#controls').append(editor);});
+ const beforeEditor=JSON.stringify(state.application.activations);
+ await page.locator('#keyboard-native-editor').focus();await page.keyboard.type('fixture');await page.keyboard.press('Space');
+ state=await read(page);check(label+': unrelated editor receives native text',await page.locator('#keyboard-native-editor').inputValue(),'fixture ');
+ check(label+': unrelated editor never activates game',JSON.stringify(state.application.activations),beforeEditor);
+ await page.locator('#keyboard-native-editor').evaluate(e=>e.remove());
+ await page.locator('canvas').scrollIntoViewIfNeeded();const box=await page.locator('canvas').boundingBox(),right=state.application.regions[1];
+ if(mobile)await page.touchscreen.tap(box.x+right.x+24,box.y+right.y+24);else await page.mouse.click(box.x+right.x+24,box.y+right.y+24);
+ state=await read(page);check(label+': pointer transfers logical focus',state.application.keyboard.focusedId,'right');
+ check(label+': pointer hides keyboard focus indicator',state.application.keyboard.focusVisible,false);
+ check(label+': keyboard example has no diagnostic',state.application.diagnostics,[]);
+ if(!mobile)await verifyKeyboardLab(page,label);
+}
+async function verifyKeyboardLab(page,label){
+ try{
+ await page.evaluate(async()=>{
+  const {createEngine,Sprite}=await import('@egret/engine'),{createCanvasHost}=await import('@egret/engine/web'),{createBrowserKeyboardInput}=await import('@egret/engine/web/keyboard');
+  const canvas=document.createElement('canvas');canvas.id='keyboard-lab';canvas.width=200;canvas.height=80;canvas.style.width='200px';canvas.style.height='80px';
+  const editor=document.createElement('input');editor.id='keyboard-lab-editor';document.querySelector('#controls').append(canvas,editor);
+  const diagnostics=[],engine=await createEngine({host:createCanvasHost({canvas}),onDiagnostic:d=>diagnostics.push({code:d.code,cause:d.cause?.code??null})}),scope=engine.createScope();
+  const target=scope.use(new Sprite());target.graphics.beginFill(0x087e8b).drawRect(0,0,180,60).endFill();engine.stage.addChild(target);
+  const input=createBrowserKeyboardInput({engine,scope});input.registerTarget({id:'lab',target});
+  const events=[],nativeResults=[];let lab;
+  const observeNative=event=>{if(event.target===canvas)nativeResults.push({code:event.code,prevented:event.defaultPrevented});};
+  window.addEventListener('keydown',observeNative);
+  engine.stage.on(input.events.keyDown,event=>{events.push({kind:'down',code:event.payload.code});if(event.payload.code==='Tab'||event.payload.code==='Enter')event.preventDefault();if(event.payload.code==='KeyE'){event.preventDefault();editor.focus();}if(event.payload.code==='Space'){event.preventDefault();if(lab.action==='suspend')input.setInteractive(false);if(lab.action==='dispose')input.dispose();}},{signal:scope.signal});
+  engine.stage.on(input.events.cancel,event=>events.push({kind:'cancel',code:event.payload.code,reason:event.payload.reason}),{signal:scope.signal});
+  engine.renderFrame({width:200,height:80,clearColor:0x172033,clearAlpha:1});
+  let duplicate;try{createBrowserKeyboardInput({engine,scope});}catch(error){duplicate=error.code;}
+  lab=globalThis.__egretKeyboardLab={input,engine,scope,canvas,editor,target,events,diagnostics,duplicate,nativeResults,observeNative,action:null};
+  input.focus('lab',{visible:true});canvas.focus();
+ });
+ const lab=()=>page.evaluate(()=>{const l=globalThis.__egretKeyboardLab;return {snapshot:l.input.getSnapshot(),events:l.events.slice(),diagnostics:l.diagnostics.slice(),active:document.activeElement?.id,duplicate:l.duplicate,tabindex:l.canvas.getAttribute('tabindex'),nativeResults:l.nativeResults.slice()};});
+ let state=await lab();check(label+': duplicate native bridge refused',state.duplicate,'KEYBOARD_INPUT_IN_USE');
+ await page.keyboard.press('Tab');state=await lab();check(label+': prevented Tab remains caller-owned',state.snapshot.focusedId,'lab');check(label+': prevented Tab keeps native focus',state.active,'keyboard-lab');
+ await page.keyboard.press('e');state=await lab();check(label+': key handler native-editor handoff',state.active,'keyboard-lab-editor');
+ check(label+': native blur cancels handed-off keys',state.snapshot.pressedKeys,[]);
+ check(label+': native handoff clears logical focus',state.snapshot.focusedId,undefined);
+ check(label+': nested native blur is not a host failure',state.diagnostics,[]);
+ await page.evaluate(()=>{const l=globalThis.__egretKeyboardLab;l.canvas.focus();l.input.focus('lab');l.canvas.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyQ',key:'Process',isComposing:true,bubbles:true}));});
+ state=await lab();check(label+': synthetic composing exclusion only',state.events.some(e=>e.code==='KeyQ'),false);
+ check(label+': composing probe creates no held state',state.snapshot.pressedKeys,[]);
+ await page.evaluate(()=>{globalThis.__egretKeyboardLab.action='suspend';});
+ await page.keyboard.down('Space');state=await lab();check(label+': prevent plus suspend reaches original DOM',state.nativeResults.at(-1),{code:'Space',prevented:true});check(label+': handler suspended keyboard',state.snapshot.state,'suspended');await page.keyboard.up('Space');
+ await page.evaluate(()=>{const l=globalThis.__egretKeyboardLab;l.input.setInteractive(true);l.input.focus('lab');l.canvas.focus();l.action='dispose';});
+ await page.keyboard.down('Space');state=await lab();check(label+': prevent plus dispose reaches original DOM',state.nativeResults.at(-1),{code:'Space',prevented:true});check(label+': handler disposed keyboard',state.snapshot.state,'closed');check(label+': first bridge tabindex restored',state.tabindex,null);await page.keyboard.up('Space');
+ await page.evaluate(async()=>{const l=globalThis.__egretKeyboardLab,{createBrowserKeyboardInput}=await import('@egret/engine/web/keyboard');l.input=createBrowserKeyboardInput({engine:l.engine,scope:l.scope});l.input.registerTarget({id:'lab',target:l.target});l.engine.stage.on(l.input.events.keyDown,e=>{e.preventDefault();l.events.push({kind:'down',code:e.payload.code});},{signal:l.scope.signal});l.input.focus('lab');l.canvas.focus();l.canvas.setAttribute('tabindex','7');});
+ await page.keyboard.down('Enter');state=await lab();check(label+': lab genuine held key',state.snapshot.pressedKeys,['Enter']);
+ await page.evaluate(()=>globalThis.__egretKeyboardLab.scope.dispose());state=await lab();check(label+': Scope close retires keyboard',state.snapshot.state,'closed');
+ check(label+': Scope close drains keys',state.snapshot.pressedKeys,[]);check(label+': external tabindex change preserved',state.tabindex,'7');
+ const count=state.events.length;await page.keyboard.up('Enter');state=await lab();check(label+': closed owner ignores native tail',state.events.length,count);
+ }finally{await page.evaluate(async()=>{const l=globalThis.__egretKeyboardLab;if(!l)return;try{await l.engine.dispose();}finally{window.removeEventListener('keydown',l.observeNative);l.canvas.remove();l.editor.remove();delete globalThis.__egretKeyboardLab;}});}
+}
+
 async function runCase(scene,mobile,backend='webgl2'){
  const label=scene+'/'+backend+'/'+(mobile?'touch-dpr3':'mouse-dpr1');
  const context=await browser.newContext({viewport:{width:mobile?390:1280,height:mobile?844:1000},deviceScaleFactor:mobile?3:1,isMobile:mobile,hasTouch:mobile});
@@ -116,6 +204,7 @@ async function runCase(scene,mobile,backend='webgl2'){
    }
    await page.locator('[data-action="pointer-toggle"]').click();state=await read(page);check(label+': suspend',state.application.inputState,'suspended');
    await page.locator('[data-action="pointer-toggle"]').click();
+   await verifyKeyboard(page,context,label,mobile);state=await read(page);
   }else{
    check(label+': real reflow',state.application.columns,mobile?1:2);
    const list=state.application.listBounds;
@@ -173,7 +262,7 @@ async function runCase(scene,mobile,backend='webgl2'){
   await page.evaluate(async()=>{await(await import('/examples/mobile/main.mjs')).close();});state=await read(page);
   check(label+': close settled',state.state,'closed');check(label+': no error',errors,[]);check(label+': lifecycle errors',state.errors,[]);
   if(scene==='resources'){check(label+': font cleanup',state.retired.fontCount,0);check(label+': resource cleanup',state.retired.pendingSources+state.retired.pendingTasks,0);check(label+': contacts cleanup',state.retired.contacts,0);check(label+': no cleanup failures',state.retired.cleanupFailures,0);}
-  if(scene==='pointers')check(label+': contact cleanup',state.retired.active.length,0);
+  if(scene==='pointers'){check(label+': contact cleanup',state.retired.active.length,0);check(label+': keyboard cleanup',state.retired.keyboard.state,'closed');check(label+': no held keyboard state',state.retired.keyboard.pressedKeys,[]);check(label+': keyboard tabindex cleanup',await page.locator('canvas').getAttribute('tabindex'),null);}
   if(scene==='ui'||scene==='paragraph'){check(label+': input cleanup',state.retired.inputState,'closed');check(label+': text cache cleanup',state.retired.cache.closed);check(label+': no content errors',state.retired.errors,[]);check(label+': no cleanup failures',state.retired.cleanupFailureCount,0);}
   check(label+': canvas touch policy restored',await page.locator('canvas').evaluate(c=>c.style.touchAction),'');
  }catch(error){failures.push({label,error:String(error.stack??error),state:await read(page).catch(()=>null),errors});}

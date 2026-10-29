@@ -4,6 +4,10 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## M3.3 keyboard and logical focus — 2026-10-30
+
+The optional keyboard channel connects genuine Engine/Scope ownership, stable registered display IDs, traversal and per-key cancellation to a Canvas-native bridge. The [contract](keyboard-focus-input.md) separates this usable foundation from automatic managed-UI registration, modal/composite controls, editing/IME and accessibility qualification; full M3.3/M4 remain OPEN.
+
 ## Responsive examples — 2026-10-30
 
 The phone-facing preview composes existing actor, multi-pointer, UI and paragraph SDKs with responsive columns, bounded DPR and ordered session replacement. Fixed qualification files and the legacy mouse API remain unchanged. See the [example contract](mobile-examples.md); desktop emulation does not close physical-device, IME, performance or M4 requirements.

@@ -83,6 +83,10 @@
     "./web/paragraph": {
       "types": "./dist/web/paragraph.d.ts",
       "import": "./dist/web/paragraph.js"
+    },
+    "./web/keyboard": {
+      "types": "./dist/web/keyboard.d.ts",
+      "import": "./dist/web/keyboard.js"
     }
   },
   "dependencies": {
@@ -106,6 +110,10 @@
     "#egret-pointer-input": {
       "types": "./dist/pointerInput.d.ts",
       "import": "./dist/pointerInput.js"
+    },
+    "#egret-keyboard-input": {
+      "types": "./dist/keyboardInput.d.ts",
+      "import": "./dist/keyboardInput.js"
     }
   }
 }

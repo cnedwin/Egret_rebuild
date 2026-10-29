@@ -53,6 +53,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         './input': {types:'./dist/input.d.ts',import:'./dist/input.js'},
         './ui': {types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'},
         './web/pointer': {types:'./dist/web/pointer.d.ts',import:'./dist/web/pointer.js'},
+        './web/keyboard': {types:'./dist/web/keyboard.d.ts',import:'./dist/web/keyboard.js'},
         './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
         './resources': {types:'./dist/resources.d.ts',import:'./dist/resources.js'},
         './web/resources': {types:'./dist/web/resources.d.ts',import:'./dist/web/resources.js'},
@@ -129,7 +130,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('packages/runtime/dist/index.d.ts','interface CapturedContent2D {}\nexport type {CapturedContent2D};\n' + (missingMesh === 'runtime' ? '' : "export {Mesh2D} from './Mesh2D.js';\n"));
     // Profile Task 5: complete valid executable/declaration surfaces first.
     const engineFixturePackage = JSON.parse(readFileSync(path.join(root,'packages/engine/package.json'),'utf8'));
-    write('packages/engine/package.json', {...engineFixturePackage, imports:{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'},'#egret-mouse-input':{types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'},'#egret-manifest-resources':{types:'./dist/manifestResourceState.d.ts',import:'./dist/manifestResourceState.js'},'#egret-pointer-input':{types:'./dist/pointerInput.d.ts',import:'./dist/pointerInput.js'}}});
+    write('packages/engine/package.json', {...engineFixturePackage, imports:{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'},'#egret-mouse-input':{types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'},'#egret-manifest-resources':{types:'./dist/manifestResourceState.d.ts',import:'./dist/manifestResourceState.js'},'#egret-pointer-input':{types:'./dist/pointerInput.d.ts',import:'./dist/pointerInput.js'},'#egret-keyboard-input':{types:'./dist/keyboardInput.d.ts',import:'./dist/keyboardInput.js'}}});
     const profileTypes = ['TexturedFrameProfile2D','TexturedMeshCommand2D','TexturedRenderCommand2D','TexturedRenderFrame2D','TexturedRenderHostAdapter'];
     const profileRootValues = ['Engine','createEngine','createEngineForProfile','CancellationController','EgretError','Event','createEventType','EventDispatcher','DisplayObject','DisplayObjectContainer','Scope','Stage','AssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','Texture','createTexture','isTexture','Bitmap','createSequenceClip','SequencePlayer'];
     const profileRootFile = 'node_modules/@egret/engine/index.js';
@@ -1512,6 +1513,26 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('node_modules/@egret/runtime/paragraph.js',"export * from '../../../packages/runtime/dist/paragraph/index.js';\n");
     write('node_modules/@egret/engine/paragraph.js',"export * from '../../../packages/engine/dist/paragraph.js';\n");
     write('node_modules/@egret/engine/web-paragraph.js',"export * from '../../../packages/engine/dist/web/paragraph.js';\n");
+    // M3.3 policy fixtures remain inert while retaining the exact optional graph.
+    const keyboardGraphFiles=[
+      'src/keyboardInput.ts','src/keyboardInputTypes.ts','src/input.ts',
+      'web/BrowserKeyboardInput.ts','web/keyboard.ts','src/internal/mouseInputFactoryState.ts',
+      'dist/keyboardInput.js','dist/keyboardInput.d.ts','dist/keyboardInputTypes.js','dist/keyboardInputTypes.d.ts',
+      'dist/input.js','dist/input.d.ts','dist/web/BrowserKeyboardInput.js','dist/web/BrowserKeyboardInput.d.ts','dist/web/keyboard.js','dist/web/keyboard.d.ts',
+    ];
+    for(const relative of keyboardGraphFiles){
+      const file='packages/engine/'+relative,original=readFileSync(path.join(repository,file),'utf8');
+      if(!file.endsWith('.js')){write(file,original);continue;}
+      const clean=original.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
+      const clauses=[...clean.matchAll(/\b(import|export)\s*(?:\{[^}]+\}\s*from\s*|\*\s*from\s*)?['"]([^'"]+)['"]\s*;?/g)];
+      const ports=clauses.map(match=>match[1]==='export'?match[0]:'import '+JSON.stringify(match[2])+';');
+      const functions=[...clean.matchAll(/\bexport\s+(?:async\s+)?function\s+(\w+)/g)].map(match=>'export function '+match[1]+"() { throw new Error('Synthetic keyboard policy fixture only'); }");
+      write(file,ports.join('\n')+'\n'+functions.join('\n')+'\n');
+    }
+    const keyboardResolverFile='node_modules/@egret/engine/package.json',keyboardResolver=JSON.parse(readFileSync(path.join(root,keyboardResolverFile),'utf8'));
+    write(keyboardResolverFile,{...keyboardResolver,exports:{...keyboardResolver.exports,'./input':'./keyboard-input.js','./web/keyboard':'./keyboard-browser.js'}});
+    write('node_modules/@egret/engine/keyboard-input.js','export function createPointerInput() {}\nexport function createKeyboardInput() {}\n');
+    write('node_modules/@egret/engine/keyboard-browser.js','export function createBrowserKeyboardInput() {}\n');
     if(sequenceMutation){
       const baseline=spawnSync(process.execPath,['tools/check-boundaries.mjs'],{cwd:root,encoding:'utf8'});
       assert.equal(baseline.status,0,'fresh sequence policy baseline: '+baseline.stdout+baseline.stderr);
