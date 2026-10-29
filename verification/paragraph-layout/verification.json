@@ -2107,5 +2107,24 @@
     "Live/physical memory and OOM recovery",
     "Clean-machine and bit-identical native rebuild"
   ],
-  "publication": "Normal hooks, independent review, required protected CI and PR/Main readback are separate delivery evidence."
+  "publication": "Normal hooks, independent review, required protected CI and PR/Main readback are separate delivery evidence.",
+  "mergeGateRepair": {
+    "failedRun": 40897607453,
+    "head": "92e06a073ea7b31ad18c2d4e2df17106968ade05",
+    "failure": "SS1_BOUNDARY_SOURCE_OWNER: current paragraph declaration identity changed while its existing successor pin remained old.",
+    "scope": "Nine actual paragraph source/emission pins in each of three existing current M22 groups; no gate logic, historical predecessor, source/browser result or acceptance threshold changed.",
+    "owners": [
+      "tools/spritesheet-boundary.mjs",
+      "tools/browser-png-boundary.mjs",
+      "tools/atlas-import-boundary.mjs"
+    ],
+    "affectedSourceBoundaryChecks": {
+      "pass": 8,
+      "fail": 0
+    },
+    "publicationBeforeFailure": {
+      "pass": 300,
+      "fail": 0
+    }
+  }
 }

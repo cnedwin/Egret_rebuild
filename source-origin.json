@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "f61e37eef5f304d38ecbeebc54f6b5096aa77f02774851a91251d0a70a7cd015",
+      "sha256": "34fb60f7ea891e11417d02a29cf16cbbf01bdd636ee7bd24c486fa5c94d468c1",
       "bytes": 364888,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -9877,7 +9877,7 @@
     {
       "path": "tools/spritesheet-boundary.mjs",
       "bytes": 239447,
-      "sha256": "4bf857f498aca6f07d050b5fb22f134d3dd76282a3037c537f59cadddd655780",
+      "sha256": "15ffe5e1548c2b674b11f839a47f3ca5563ac22be36c584fb24af645b8d44728",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10100,7 +10100,7 @@
     {
       "path": "tools/browser-png-boundary.mjs",
       "bytes": 247895,
-      "sha256": "7a479a3a4edd3360186d93e54b719ab13ab5aba1886deaf64dd89d12d76866e6",
+      "sha256": "09e8d982f346eeaef6d3a84fc216fb418b07b1fcafd42a4f7e31383010546d19",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10162,7 +10162,7 @@
     {
       "path": "tools/atlas-import-boundary.mjs",
       "bytes": 144201,
-      "sha256": "69bfb9ca7dc03fe252652a3f003964c8fad8e4f92ce1906d362474372b3ec9d6",
+      "sha256": "e5a540140fa7a9557ffb131d564f8df75300ad5fab5781a1c49c84e024b35f5a",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -14180,20 +14180,20 @@
     {
       "path": "knowledge-base/en/docs/paragraph-layout-controls.md",
       "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5953,
-      "sha256": "2a7c88ba15909fe5991e0cb60fb8992db46582e81febedef770275c13879c743"
+      "bytes": 6321,
+      "sha256": "5f7144a713ca7961ec8c8f0feafcafd60073ffa878d3d979c8a59f1df7d22810"
     },
     {
       "path": "knowledge-base/Cns/docs/paragraph-layout-controls.md",
       "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5201,
-      "sha256": "f6590ad19e972bbd0969514664eb758851f27fa6359653c658e5df7f23ce8a02"
+      "bytes": 5491,
+      "sha256": "978d63b0b1fa4fe82e975e5c7736da49987efb42f70ef5f8c0e0f1bf352f5531"
     },
     {
       "path": "verification/paragraph-layout/verification.json",
       "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 76797,
-      "sha256": "ce09d383693b455cb8b2c72fa670ec57d6f68ad961dd864a4f0e05a026bef469"
+      "bytes": 77545,
+      "sha256": "da6088a6ae53ad2ccda29b29bc61b127f7a8e4ae5746b8427a3e7fb2132ebe97"
     },
     {
       "path": "examples/paragraph-panel/vendor/source/patches/09-paragraph-layout.patch",

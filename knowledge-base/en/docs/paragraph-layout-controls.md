@@ -41,4 +41,6 @@ The consolidated focused suite passes 36 cases, including public strict positive
 
 The optional runtime is 8,696,388 raw bytes; three unchanged fonts total 17,148,712 bytes, 25,845,100 combined. Patch09 follows00–08; original licenses, fonts and earlier artifacts remain byte-exact. See the [vendor manifest](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/vendor/manifest.json). The incremental native build and exact patch replay were observed; clean-machine/bit-identical reconstruction was not.
 
+Existing source-boundary gates retain their full admission logic. Their current paragraph successor groups track the nine actual changed source/declaration/emission identities in each of three owners; historical predecessor pins are preserved. The initial protected run rejected an omitted declaration-pin update, which was repaired before final merge qualification.
+
 Full M3.2, independent glyph/ink references, unlisted scripts/fonts, styled spans, selection/caret mapping, IME, Android/iPhone, performance, physical memory and OOM recovery remain OPEN. Protected CI and PR/Main publication are separate delivery evidence.
