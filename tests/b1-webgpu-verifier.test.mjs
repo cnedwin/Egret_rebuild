@@ -395,8 +395,8 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   assert.equal(policy.m15SourceModuleLimit, 133);
   assert.equal(policy.m15ModuleIdentities.size, 133);
   assert.equal(policy.m31SourceModuleLimit, 135);
-  assert.equal(policy.m22SourceModuleLimit, 137);
-  assert.equal(policy.currentModuleIdentities.size, 137);
+  assert.equal(policy.m22SourceModuleLimit, 138);
+  assert.equal(policy.currentModuleIdentities.size, 138);
   assert.deepEqual([...policy.m12PerformanceModuleSuccessors.keys()].sort(), ["packages/engine/dist/rendering/admitTexturedFrame2D.js","packages/engine/dist/rendering/prepareImages2D.js","packages/engine/dist/rendering/prepareRectangles2D.js","packages/engine/dist/rendering/prepareTexturedDraws2D.js","packages/engine/dist/rendering/prepareTexturedMesh2D.js","packages/engine/dist/rendering/preparedFrameCache2D.js","packages/engine/dist/web/WebGPUHost.js","packages/runtime/dist/texturedFrameCapture.js"]);
   for (const [name, successor] of policy.m12PerformanceModuleSuccessors) {
     assert.ok(policy.m15ModuleIdentities.has(name), 'A successor cannot add a module');
@@ -415,7 +415,7 @@ test('S07 the finite native collector admits the actual current emitted public c
   for (const entry of policy.entryNames) await policy.collect(entry);
   const bytes = [...policy.served.values()].reduce((sum, value) => sum + value.body.length, 0);
   policy.assertCurrentClosure();
-  assert.equal(policy.served.size, 137); assert.ok(bytes <= 4 * 1024 * 1024);
+  assert.equal(policy.served.size, 138); assert.ok(bytes <= 4 * 1024 * 1024);
   t.diagnostic(`Actual emitted closure: ${policy.served.size} modules, ${bytes} bytes; SDK code was read, never evaluated`);
 });
 
@@ -434,11 +434,11 @@ async function completeCurrentClosure(policy = undefined) {
   const current = policy ?? await emittedClosurePolicy();
   for (const entry of current.entryNames) await current.collect(entry);
   current.assertCurrentClosure();
-  assert.equal(current.served.size, 137);
+  assert.equal(current.served.size, 138);
   return current;
 }
 
-test('S09 the actual 137-module closure cannot admit a 138th real file even after a local allowlist mutation', async () => {
+test('S09 the actual 138-module closure cannot admit a 139th real file even after a local allowlist mutation', async () => {
   const policy = await completeCurrentClosure();
   const extra = 'packages/engine/dist/web/BrowserTextureProvider.js';
   const body = await readFile(join(repository, extra));
@@ -450,7 +450,7 @@ test('S09 the actual 137-module closure cannot admit a 138th real file even afte
     policy.allowedModules.add(extra);
     policy.currentModuleIdentities.set(extra, { bytes: body.length, sha256: createHash('sha256').update(body).digest('hex') });
     await assert.rejects(policy.collect(extra), error => error.message === 'Finite emitted closure exceeded');
-    assert.equal(policy.served.size, 137);
+    assert.equal(policy.served.size, 138);
     assert.equal(policy.served.has('/' + extra), false);
   } catch (cause) {
     failures.push(cause);
@@ -546,24 +546,24 @@ async function requestQuotaFixture() {
 }
 test('S12 actual selected route closures include both original and copied SDK URLs in all nine request budgets',async t=>{
   const value=await requestQuotaFixture();
-  assert.ok(value.limit>=1274,'The fixed nine complete windows require 1274 requests before optional favicon allowances');
-  assert.equal(value.limit,1283);assert.equal(value.report.requestCapacity.historical,1051);assert.equal(value.report.requestCapacity.previous,1197);
+  assert.ok(value.limit>=1283,'The fixed nine complete windows require 1283 requests before optional favicon allowances');
+  assert.equal(value.limit,1292);assert.equal(value.report.requestCapacity.historical,1051);assert.equal(value.report.requestCapacity.previous,1197);
   const rows=value.report.requestCapacity.perWindow;assert.deepEqual(Array.from(rows,row=>row.mode),['baseline','N1','N2','N3','N4','N5','S1','S2','SN1']);
-  assert.deepEqual(Array.from(rows,row=>row.modules),[137,138,138,138,138,138,137,137,137]);
-  assert.equal(rows.reduce((sum,row)=>sum+row.routes.length,0),1274);
+  assert.deepEqual(Array.from(rows,row=>row.modules),[138,139,139,139,139,139,138,138,138]);
+  assert.equal(rows.reduce((sum,row)=>sum+row.routes.length,0),1283);
   for(const row of rows){assert.equal(new Set(row.routes).size,row.routes.length);assert.equal(row.companions,3);assert.equal(row.html,1);assert.equal(row.favicon,1);}
-  value.policy.served.set('/unused-metadata.mjs',{body:Buffer.from(''),contentType:'text/javascript'});assert.equal(value.calculate(),1283,'Unreachable served routes cannot inflate the budget');
+  value.policy.served.set('/unused-metadata.mjs',{body:Buffer.from(''),contentType:'text/javascript'});assert.equal(value.calculate(),1292,'Unreachable served routes cannot inflate the budget');
   t.diagnostic('Selected-map closure is filesystem metadata, not observed browser requests or rendering acceptance');
 });
 test('S13 actual request handler accepts every necessary route and retains finite overflow refusal',async()=>{
-  const value=await requestQuotaFixture();assert.ok(value.limit>=1274);
+  const value=await requestQuotaFixture();assert.ok(value.limit>=1283);
   value.report.requests=[];
   const request=pathname=>{let code;value.handler({url:pathname,method:'GET'},{writeHead(status){code=status;},end(){}});return code;};
   for(const row of value.report.requestCapacity.perWindow)for(const route of row.routes)assert.equal(request(route),200);
-  assert.equal(value.report.requests.length,1274);assert.notEqual(value.report.requestOverflow,true);
-  for(let index=0;index<9;index++)assert.equal(request('/favicon.ico'),404);
   assert.equal(value.report.requests.length,1283);assert.notEqual(value.report.requestOverflow,true);
-  assert.equal(request('/index.html'),429);assert.equal(value.report.requestOverflow,true);assert.equal(value.report.requests.length,1283);
+  for(let index=0;index<9;index++)assert.equal(request('/favicon.ico'),404);
+  assert.equal(value.report.requests.length,1292);assert.notEqual(value.report.requestOverflow,true);
+  assert.equal(request('/index.html'),429);assert.equal(value.report.requestOverflow,true);assert.equal(value.report.requests.length,1292);
 });
 
 
@@ -718,8 +718,8 @@ const sequenceSuccessors=[
   [
     "packages/engine/dist/Engine.js",
     {
-      "bytes": 22833,
-      "sha256": "115934363fe32ef2ed8f8279a4c04595155c2f664d8cc62dd54fff10ecebe822"
+      "bytes": 23756,
+      "sha256": "83050b49d34c654f94e887d676419cb43fa4653dff4d2105f3ba9cfd5744a6b9"
     }
   ],
   [
@@ -744,9 +744,16 @@ const sequenceAdditions=[
       "bytes": 3344,
       "sha256": "cdd2354efcfa58e4fcfe83705c123494b0a358a518a8c47f646f7becc8f63aa9"
     }
+  ],
+  [
+    "packages/engine/dist/internal/contentFactoryState.js",
+    {
+      "bytes": 574,
+      "sha256": "4c38c5b38105459e829be1398ff29d157b9ff8e942857b9194cef0830cc25fb1"
+    }
   ]
 ];
-test('S18 sequence collector admits only two exact successors and two private eager dependencies',async()=>{
+test('S18 sequence collector admits only two exact successors and three private eager dependencies',async()=>{
  const policy=await completeCurrentClosure();
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m22SequenceModuleSuccessors])),sequenceSuccessors);
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m22SequenceModuleAdditions])),sequenceAdditions);

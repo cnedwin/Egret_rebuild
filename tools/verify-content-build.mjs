@@ -9,6 +9,14 @@ import {createRequire} from 'node:module';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {canonicalTextBytes,fingerprintFile,logicalPath,ownerRelativePath,physicalPathKey,samePhysicalPath} from './lib/file-identity.mjs';
 
+/** Fixed authored pixel oracle; it never reads decoded pixels or SDK metadata. */
+export function contentPixelOracle(color){
+ assert.ok(color==='red'||color==='green','Fixed authored colour required.');
+ const animated=color==='red'?[255,0,0,255]:[0,255,0,255],expected=Buffer.alloc(12*6*4);
+ for(let y=0;y<6;y++)for(let x=0;x<12;x++)expected.set(x>=2&&x<4&&y>=2&&y<4?animated:x>=8&&x<10&&y>=2&&y<4?[0,0,255,255]:[17,24,39,255],(y*12+x)*4);
+ return expected;
+}
+async function collect(){
 const root=path.resolve(fileURLToPath(new URL('..',import.meta.url)));
 const args=new Map();
 for(let index=2;index<process.argv.length;index+=2){
@@ -159,21 +167,45 @@ for(const file of ['tools/verify-content-build.mjs','tools/lib/file-identity.mjs
 // Only the finite author tool is executed; no shell command, cache reuse or test fixture fabrication.
 fs.mkdirSync(output);const work=path.join(output,'generation');fs.mkdirSync(work);
 let generated;
-const report={format:'egret.content-build-browser/1',status:'RUNNING',startedAt:new Date().toISOString(),environment:{node:process.version,nodeExecutable:process.execPath,platform:process.platform,architecture:process.arch,playwright:'1.62.1',channel:'msedge',headless:true,extraFlags:[],viewport:{width:900,height:700},deviceScaleFactor:1,physicalDevice:false},toolkit,checks:[],errors:[],cleanup:{application:false,context:false,browser:false,server:false},snapshotIntegrity:false,sourceIntegrity:false,rawFrames:[],negativeBrowserCase:false};
+const report={format:'egret.content-build-browser/1',status:'RUNNING',startedAt:new Date().toISOString(),environment:{node:process.version,nodeExecutable:process.execPath,platform:process.platform,architecture:process.arch,playwright:'1.62.1',channel:'msedge',headless:true,extraFlags:[],viewport:{width:900,height:700},deviceScaleFactor:1,physicalDevice:false},toolkit,checks:[],errors:[],cleanup:{application:false,context:false,browser:false,server:false},snapshotIntegrity:false,sourceIntegrity:false,rawFrames:[],negativeBrowserCase:false,scope:'Canvas desktop correctness and logical lifecycle only; no shared GPU, physical device, memory or timing acceptance',replacements:[]};
 const snapshot=path.join(output,'snapshot'),sourceSnapshot=path.join(output,'source');fs.mkdirSync(snapshot);fs.mkdirSync(sourceSnapshot);
 const publicRow=({bytesRaw,...row})=>row;
 function save(owner,relative,row){logicalPath(relative);const destination=path.join(owner,relative);assert.equal(ownerRelativePath(owner,destination),relative);fs.mkdirSync(path.dirname(destination),{recursive:true});fs.writeFileSync(destination,row.bytesRaw,{flag:'wx'});const actual=fingerprintFile(owner,relative);assert.equal(actual.bytes,row.bytes);assert.equal(actual.sha256,row.sha256);}
 function jsonAt(owner,file){return JSON.parse(pin(owner,file).bytesRaw.toString('utf8'));}
 const record=(name,details={})=>report.checks.push({name,pass:true,...details});
 async function bounded(task,label){let timer;try{return await Promise.race([task,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Deadline: '+label)),15000);})]);}finally{clearTimeout(timer);}}
-function assertClosed(closed){
- assert.equal(closed.state,'closed');assert.deepEqual(closed.diagnostics,[]);
- assert.deepEqual(closed.retirement,{animationScope:'closed',displayScope:'closed',dataScope:'closed',controller:true,sheet:true,bitmap:true,other:true,textures:[true,true],sourceClosed:true,providerClosed:true,clock:'closed'});
- for(const status of [closed.source,closed.provider]){assert.equal(status.saturated,false);assert.ok(Object.values(status.current).every(value=>value===0),'Native public counters must drain.');}
+function assertRetired(row){
+ assert.equal(row.dataScope,'closed');assert.equal(row.loaderDisposed,true);
+ for(const key of ['animationScope','displayScope'])assert.ok(row[key]===null||row[key]==='closed');
+ for(const key of ['controller','sheet','bitmap','other'])assert.ok(row[key]===null||row[key]===true);
+ assert.ok(row.textures.every(Boolean));
+ for(const status of [row.status.source,row.status.provider]){assert.equal(status.saturated,false);assert.ok(Object.values(status.current).every(value=>value===0),'Native public counters must drain.');}
 }
-let browser,context,page,server;
+function assertClosed(closed){
+ assert.equal(closed.state,'closed');assert.equal(closed.clock,'closed');assert.deepEqual(closed.diagnostics,[]);assert.equal(closed.pending,null);
+ assert.equal(closed.retirement.animationScope,'closed');assert.equal(closed.retirement.displayScope,'closed');
+ for(const key of ['controller','sheet','bitmap','other'])assert.equal(closed.retirement[key],true);
+ assert.deepEqual(closed.retirement.textures,[true,true]);assertRetired(closed.retirement);for(const row of closed.retired)assertRetired(row);
+}
+let browser,context,page,server,heldResponse;let resolveHeld;const heldEntered=new Promise(resolve=>{resolveHeld=resolve;});
+const finiteVariants=new Map();
 try{
  const {authorContentExample}=await import('./content/author-example.mjs');generated=await authorContentExample(work);assert.equal(generated.status,'adopted');
+ const replacement=await authorContentExample(work);assert.equal(replacement.status,'adopted');
+ const variantAtlas=JSON.parse(fs.readFileSync(path.join(replacement.runRoot,'sources/atlas.json'),'utf8'));variantAtlas.frames.reverse();
+ const atlasBytes=canonicalTextBytes(JSON.stringify(variantAtlas,null,2));fs.writeFileSync(path.join(replacement.runRoot,'sources/reversed-atlas.json'),atlasBytes,{flag:'wx'});
+ const variantProject=JSON.parse(fs.readFileSync(path.join(replacement.runRoot,'project.json'),'utf8')),atlasFile=variantProject.files.find(row=>row.id==='f_atlas');atlasFile.path='sources/reversed-atlas.json';atlasFile.byteLength=atlasBytes.length;atlasFile.sha256=sha(atlasBytes);
+ fs.writeFileSync(path.join(replacement.runRoot,'variant-project.json'),canonicalTextBytes(JSON.stringify(variantProject,null,2)),{flag:'wx'});
+ const {runContentCLI}=await import('./build-content.mjs');
+ const rebuilt=await runContentCLI(['--root',replacement.runRoot,'--project','variant-project.json','--recipe','recipe.json','--cache',path.join(replacement.runRoot,'cache'),'--output',path.join(replacement.runRoot,'build'),'--snapshot-out','candidate-2.json','--receipt','receipt-2.json','--selector','e_generation','--transaction','t_replacement']);assert.equal(rebuilt.status,'adopted');
+ const replacementReceipt=JSON.parse(fs.readFileSync(path.join(replacement.runRoot,'receipt-2.json'),'utf8')),replacementCandidate=fs.readFileSync(path.join(replacement.runRoot,'candidate-2.json'));
+ const replacementConfig={format:'egret.content-example/1',projectBaseUrl:'./',snapshotPath:'candidate-2.json',snapshot:{sha256:sha(replacementCandidate),byteLength:replacementCandidate.length},selectorId:'e_generation',manifestPath:replacementReceipt.manifestPath,manifest:replacementReceipt.receipt.manifest,generationId:replacementReceipt.generationId};
+ fs.writeFileSync(path.join(replacement.runRoot,'browser-config-2.json'),canonicalTextBytes(JSON.stringify(replacementConfig,null,2)),{flag:'wx'});
+ const replacementManifest=JSON.parse(fs.readFileSync(path.join(replacement.runRoot,replacementConfig.manifestPath),'utf8'));
+ const replacementFiles=new Set(['browser-config-2.json','candidate-2.json','receipt-2.json','variant-project.json','recipe.json','sources/page.png','sources/other.png','sources/reversed-atlas.json',replacementConfig.manifestPath,...replacementManifest.entries.map(row=>row.artifact.path)]);
+ report.replacementGeneration={generationId:replacementConfig.generationId,configuration:replacementConfig,files:[]};
+ for(const file of replacementFiles){const row=pin(replacement.runRoot,file);save(snapshot,'replacement/'+file,row);routes.set('/replacement/'+file,{row,type:file.endsWith('.png')?'image/png':'application/json; charset=utf-8'});report.replacementGeneration.files.push(publicRow(row));}
+
  const config=jsonAt(generated.runRoot,'browser-config.json');assert.equal(config.projectBaseUrl,'./');assert.equal(config.snapshotPath,'candidate.json');
  const candidate=pin(generated.runRoot,'candidate.json');assert.equal(candidate.bytes,config.snapshot.byteLength);assert.equal(candidate.sha256,config.snapshot.sha256);
  const manifestRow=pin(generated.runRoot,config.manifestPath);assert.equal(manifestRow.bytes,config.manifest.byteLength);assert.equal(manifestRow.sha256,config.manifest.sha256);
@@ -182,12 +214,19 @@ try{
  assert.deepEqual(byId.get('e_page').dependencies,[]);assert.deepEqual(byId.get('e_other').dependencies,[]);assert.deepEqual(byId.get('e_atlas').dependencies,['e_page']);assert.deepEqual(byId.get('e_sequence').dependencies,['e_atlas']);
  const generatedFiles=new Set(['browser-config.json','candidate.json','receipt.json','project.json','recipe.json',config.manifestPath,'sources/page.png','sources/other.png','sources/atlas.json']);
  for(const entry of manifest.entries){logicalPath(entry.artifact.path);const row=pin(generated.runRoot,entry.artifact.path);assert.equal(row.sha256,entry.artifact.sha256);assert.equal(row.bytes,entry.artifact.byteLength);generatedFiles.add(entry.artifact.path);}
+ assert.notEqual(replacementConfig.generationId,config.generationId);
  report.generation={runRoot:generated.runRoot,config,files:[...generatedFiles].map(file=>publicRow(pin(generated.runRoot,file)))};
  for(const file of generatedFiles){const row=pin(generated.runRoot,file);save(snapshot,'content/'+file,row);routes.set('/content/'+file,{row,type:file.endsWith('.png')?'image/png':'application/json; charset=utf-8'});}
+ for(const label of ['bad','held'])for(const file of generatedFiles){
+  let row=pin(generated.runRoot,file);
+  if(label==='bad'&&file===byId.get('e_sequence').artifact.path){const changed=Buffer.from(row.bytesRaw);changed[0]^=1;row={owner:'finite-negative-response',path:file,bytes:changed.length,sha256:sha(changed),bytesRaw:changed};report.badResponse={path:label+'/'+file,bytes:row.bytes,sha256:row.sha256,manifestSha256:byId.get('e_sequence').artifact.sha256};assert.notEqual(row.sha256,report.badResponse.manifestSha256);}
+  save(snapshot,label+'/'+file,row);routes.set('/'+label+'/'+file,{row,type:file.endsWith('.png')?'image/png':'application/json; charset=utf-8'});finiteVariants.set(label+'/'+file,row);
+ }
  for(const [file,row]of files)save(snapshot,file,row);
  for(const [file,row]of sources)save(sourceSnapshot,file,row);
+ report.variantResponses=[...finiteVariants].map(([route,row])=>({route,...publicRow(row)}));
  report.files=[...files].map(([route,row])=>({route,...publicRow(row)}));report.source=[...sources].map(([snapshotPath,row])=>({snapshotPath,...publicRow(row)}));report.sourceFreeze={beforeBrowserLaunch:true,files:inputs.size,bytes:totalBytes};
- fs.writeFileSync(path.join(output,'source-freeze.json'),canonicalTextBytes(JSON.stringify({files:report.files,source:report.source,generation:report.generation,toolkit},null,2)),{flag:'wx'});
+ fs.writeFileSync(path.join(output,'source-freeze.json'),canonicalTextBytes(JSON.stringify({files:report.files,source:report.source,generation:report.generation,replacementGeneration:report.replacementGeneration,variantResponses:report.variantResponses,toolkit},null,2)),{flag:'wx'});
  record('real generated candidate, exact four resources and pinned bytes',{generationId:config.generationId});
  const served=new Set();report.served=[];
  server=http.createServer((req,res)=>{
@@ -196,7 +235,9 @@ try{
    const selected=['GET','HEAD'].includes(req.method)&&req.url?.length<=2048?routes.get(route):undefined;
    if(!selected){res.writeHead(404);res.end();return;}
    const {row,type}=selected;const disk=fs.readFileSync(path.join(snapshot,route.slice(1)));assert.equal(disk.length,row.bytes);assert.equal(sha(disk),row.sha256);
-   served.add(req.url);res.writeHead(200,{'content-type':type,'cache-control':'no-store'});res.end(req.method==='HEAD'?undefined:disk);
+   served.add(req.url);
+   if(route==='/held/'+byId.get('e_sequence').artifact.path){assert.equal(heldResponse,undefined);heldResponse={res,bytes:disk,closed:false,responded:false};res.once('close',()=>{heldResponse.closed=true;});resolveHeld();return;}
+   res.writeHead(200,{'content-type':type,'cache-control':'no-store'});res.end(req.method==='HEAD'?undefined:disk);
   }catch(error){report.errors.push('server: '+String(error));res.writeHead(500);res.end();}
  });
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
@@ -210,17 +251,26 @@ try{
   const read=await page.locator('#scene').evaluate(canvas=>({width:canvas.width,height:canvas.height,rgba:Array.from(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data),png:canvas.toDataURL('image/png').split(',')[1]}));
   const bytes=Buffer.from(read.rgba),name=label+'.rgba';fs.writeFileSync(path.join(output,name),bytes,{flag:'wx'});fs.writeFileSync(path.join(output,label+'-canvas.png'),Buffer.from(read.png,'base64'),{flag:'wx'});await page.screenshot({path:path.join(output,label+'-page.png')});
   const row={label,width:read.width,height:read.height,path:name,bytes:bytes.length,sha256:sha(bytes)};report.rawFrames.push(row);const saved=fs.readFileSync(path.join(output,name));assert.equal(sha(saved),row.sha256);assert.equal(read.width,12);assert.equal(read.height,6);
-  const expected=Buffer.alloc(12*6*4);for(let y=0;y<6;y++)for(let x=0;x<12;x++)expected.set(x>=2&&x<4&&y>=2&&y<4?color:x>=8&&x<10&&y>=2&&y<4?[0,0,255,255]:[17,24,39,255],(y*12+x)*4);
+  const expected=contentPixelOracle(color[0]===255?'red':'green');
   assert.deepEqual(saved,expected,'All 72 independent authored pixel values: '+label);record(label+' all 72 native Canvas pixels',{rgba:row});
  }
  assert.equal(report.startup.state,'ready');assert.deepEqual(report.startup.diagnostics,[]);assert.equal(report.startup.generationId,config.generationId);await frame('startup-red',[255,0,0,255]);
  report.advanced=await call('advance',0.125);assert.equal(report.advanced.state,'ready');await frame('advanced-green',[0,255,0,255]);
  report.completed=await call('advance',0.375);assert.equal(report.completed.playbackState,'completed');await frame('completed-green',[0,255,0,255]);
+ const oldGeneration=config.generationId;
+ report.failedReplacement=await call('replace','/bad/browser-config.json');assert.equal(report.failedReplacement.state,'ready');assert.equal(report.failedReplacement.generationId,oldGeneration);assert.equal(report.failedReplacement.attempts.at(-1).status,'failed');assert.ok(report.failedReplacement.attempts.at(-1).error.code);for(const row of report.failedReplacement.retired)assertRetired(row);await frame('failed-replacement-keeps-green',[0,255,0,255]);report.negativeBrowserCase=true;record('actual bad metadata bytes refuse without replacing usable generation',{error:report.failedReplacement.attempts.at(-1).error,response:report.badResponse});
+ await page.evaluate(()=>{window.pendingContentReplacement=window.contentBuildExample.replace('/held/browser-config.json');return true;});await bounded(heldEntered,'actual held metadata request');
+ report.beforeCancellation=await call('cancelReplacement');assert.equal(report.beforeCancellation.pending.cancelled,true);
+ heldResponse.responded=true;heldResponse.res.writeHead(200,{'content-type':'application/json; charset=utf-8','cache-control':'no-store'});heldResponse.res.end(heldResponse.bytes);
+ report.cancelledReplacement=await bounded(page.evaluate(()=>window.pendingContentReplacement),'cancelled replacement settlement');assert.equal(report.cancelledReplacement.generationId,oldGeneration);assert.equal(report.cancelledReplacement.attempts.at(-1).status,'cancelled');for(const row of report.cancelledReplacement.retired)assertRetired(row);await frame('cancelled-replacement-keeps-green',[0,255,0,255]);report.heldRequest={actualRequestEntered:true,cancelIssued:true,lateResponseIssued:heldResponse.responded,transportClosed:heldResponse.closed};record('actual pending HTTP cancellation rejects late generation and drains',{heldRequest:report.heldRequest});
+ report.replaced=await call('replace','/replacement/browser-config-2.json');assert.equal(report.replaced.state,'ready');assert.equal(report.replaced.generationId,replacementConfig.generationId);assert.equal(report.replaced.attempts.at(-1).status,'ready');for(const row of report.replaced.retired)assertRetired(row);await frame('replacement-starts-green',[0,255,0,255]);
+ report.replacementAdvanced=await call('advance',0.625);await frame('replacement-advances-red',[255,0,0,255]);report.replacementCompleted=await call('advance',0.75);assert.equal(report.replacementCompleted.playbackState,'completed');await frame('replacement-completes-red',[255,0,0,255]);record('same logical IDs select coherent newly built generation',{previousGeneration:oldGeneration,nextGeneration:replacementConfig.generationId});
  report.closed=await call('close');const closed=report.closed;assertClosed(closed);
  report.cleanup.application=true;record('native public ownership cleanup and zero outstanding counters',{retirement:closed.retirement,source:closed.source,provider:closed.provider});
  report.served=[...served].sort();assert.deepEqual(report.errors,[]);report.status='PASS';
 }catch(error){report.status='FAIL';report.failure={name:error?.name??'Error',message:String(error?.message??error),stack:error?.stack};}
 finally{
+ if(heldResponse&&!heldResponse.responded){heldResponse.responded=true;heldResponse.res.end(heldResponse.bytes);}
  if(page&&!report.cleanup.application)try{report.failedRunClose=await bounded(page.evaluate(()=>window.contentBuildExample?.close()),'failed run close');assertClosed(report.failedRunClose);report.cleanup.application=true;}catch(error){report.errors.push('application close: '+String(error));}
  try{await context?.close();report.cleanup.context=true;}catch(error){report.errors.push('context: '+String(error));}
  try{await browser?.close();report.cleanup.browser=true;}catch(error){report.errors.push('browser: '+String(error));}
@@ -228,6 +278,8 @@ finally{
  try{
   for(const [file,row]of files){const actual=fingerprintFile(snapshot,file);assert.equal(actual.bytes,row.bytes);assert.equal(actual.sha256,row.sha256);}
   for(const [file,row]of sources){const actual=fingerprintFile(sourceSnapshot,file);assert.equal(actual.bytes,row.bytes);assert.equal(actual.sha256,row.sha256);}
+  for(const [file,row]of finiteVariants){const actual=fingerprintFile(snapshot,file);assert.equal(actual.bytes,row.bytes);assert.equal(actual.sha256,row.sha256);}
+  if(report.replacementGeneration)for(const row of report.replacementGeneration.files){const actual=fingerprintFile(snapshot,'replacement/'+row.path);assert.equal(actual.bytes,row.bytes);assert.equal(actual.sha256,row.sha256);}
   if(report.generation)for(const row of report.generation.files){const actual=fingerprintFile(snapshot,'content/'+row.path);assert.equal(actual.bytes,row.bytes);assert.equal(actual.sha256,row.sha256);}
   report.snapshotIntegrity=!!report.sourceFreeze;
   for(const row of inputs.values()){const actual=fingerprintFile(row.owner,row.path);assert.equal(actual.bytes,row.bytes);assert.equal(actual.sha256,row.sha256);}
@@ -238,3 +290,6 @@ finally{
  report.endedAt=new Date().toISOString();fs.writeFileSync(path.join(output,'result.json'),canonicalTextBytes(JSON.stringify(report,null,2)),{flag:'wx'});
  console.log(JSON.stringify({output,status:report.status,checks:report.checks.length,rawFrames:report.rawFrames.length,failure:report.failure,errors:report.errors,cleanup:report.cleanup,snapshotIntegrity:report.snapshotIntegrity,sourceIntegrity:report.sourceIntegrity}));if(report.status!=='PASS')process.exitCode=1;
 }
+
+}
+if(process.argv[1]&&samePhysicalPath(fileURLToPath(import.meta.url),path.resolve(process.argv[1])))await collect();

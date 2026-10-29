@@ -36,6 +36,7 @@ import type {UiEngineOwner} from './internal/uiFactoryState.js';
 import {createSequenceTargetClaims} from './sequenceTargetClaims.js';
 import {registerSequenceControllerEngine} from './internal/sequenceControllerFactoryState.js';
 import type {SequenceControllerEngineOwner} from './internal/sequenceControllerFactoryState.js';
+import { registerContentEngine } from './internal/contentFactoryState.js';
 
 export interface EngineOptions {
   readonly host: HostAdapter;
@@ -71,6 +72,7 @@ function observeRejectedRenderResult(result: unknown): void {
 }
 /** One headless run. Construct with createEngine(), not directly. */
 export class Engine {
+  readonly #contentLoaders = new Set<() => void>();
   readonly #gameClockOwner: GameClockOwner;
   readonly #tweenOwner: TweenOwner;
   readonly #sequencePlaybackOwner: SequencePlaybackOwner;
@@ -207,6 +209,15 @@ export class Engine {
       report: this.#context.report,
       captureCleanup: this.#context.captureCleanup,
     }, assetGroupOperations!);
+    const assets = this.assets;
+    const register = assets.register;
+    registerContentEngine(this, {
+      assertOpen,
+      isScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+      register: (type, provider): void => { Reflect.apply(register, assets, [type, provider]); },
+      group: (scope, manifest, roots, bindings, options) => this.#manifestAssetGroupOwner.create(scope, manifest, roots, bindings, options),
+      own: (dispose): (() => void) => { assertOpen(); this.#contentLoaders.add(dispose); return (): void => { this.#contentLoaders.delete(dispose); }; },
+    });
   }
 
   static {
@@ -437,6 +448,8 @@ export class Engine {
     this.closePromise = new Promise<void>((resolve, reject) => { resolveClose = resolve; rejectClose = reject; });
     // Cache the result before abort/cleanup/diagnostic callbacks can reenter.
     this.#currentState = "closing";
+    // Revoke content wrappers before manifest leases and callback-capable cleanup.
+    for (const dispose of [...this.#contentLoaders]) dispose();
     // Detach managed UI before input and ordinary Scope/Stage cleanup.
     this.#uiOwner.close();
     // Revoke every manifest group before cleanup callbacks can reenter.

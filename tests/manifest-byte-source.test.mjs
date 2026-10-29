@@ -28,7 +28,7 @@ async function controlled(body) {
 function check(name, body) { test(name, { timeout: 10000, concurrency: false }, () => controlled(body)); }
 
 check('MBS01 exact optional public exports, genuine source profile and independent close', async f => {
-  assert.deepEqual(Object.keys(api().browser).sort(), ['createManifestByteSource', 'createManifestTextureProvider']);
+  assert.deepEqual(Object.keys(api().browser).sort(), ['createManifestByteSource', 'createManifestContentLoader', 'createManifestTextureProvider']);
   const chosen = selection(), source = f.source(chosen), request = context();
   assert.equal(source.profile, 'manifest-sha256-browser-v1'); assert.equal(source.isClosed, false);
   assert.deepEqual([...await source.readBytes(chosen.bindings[0].ref, request.value)], [...bytes]);

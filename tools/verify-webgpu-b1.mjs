@@ -419,8 +419,8 @@ const m22SequenceModuleSuccessors = new Map([
   [
     "packages/engine/dist/Engine.js",
     {
-      "bytes": 22833,
-      "sha256": "115934363fe32ef2ed8f8279a4c04595155c2f664d8cc62dd54fff10ecebe822"
+      "bytes": 23756,
+      "sha256": "83050b49d34c654f94e887d676419cb43fa4653dff4d2105f3ba9cfd5744a6b9"
     }
   ],
   [
@@ -445,13 +445,20 @@ const m22SequenceModuleAdditions = new Map([
       "bytes": 3344,
       "sha256": "cdd2354efcfa58e4fcfe83705c123494b0a358a518a8c47f646f7becc8f63aa9"
     }
+  ],
+  [
+    "packages/engine/dist/internal/contentFactoryState.js",
+    {
+      "bytes": 574,
+      "sha256": "4c38c5b38105459e829be1398ff29d157b9ff8e942857b9194cef0830cc25fb1"
+    }
   ]
 ]);
 assert.equal(m22SequenceModuleSuccessors.size,2);
-assert.equal(m22SequenceModuleAdditions.size,2);
+assert.equal(m22SequenceModuleAdditions.size,3);
 for(const name of m22SequenceModuleSuccessors.keys())assert.ok(m15ModuleIdentities.has(name));
 for(const name of m22SequenceModuleAdditions.keys())assert.ok(!m15ModuleIdentities.has(name));
-const m22SourceModuleLimit = 137;
+const m22SourceModuleLimit = 138;
 const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors, ...m33MouseCompatibilityModuleSuccessor, ...m21ContentModuleSuccessors, ...m31UiModuleSuccessors, ...m31UiModuleAdditions, ...m22SequenceModuleSuccessors, ...m22SequenceModuleAdditions]);
 assert.equal(currentModuleIdentities.size, m22SourceModuleLimit, 'M3.1 current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);

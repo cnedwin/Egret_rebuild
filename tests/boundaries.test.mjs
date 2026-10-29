@@ -1446,6 +1446,21 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     for(const [file,typed]of [['packages/engine/src/animation/index.ts',true],['packages/engine/dist/animation/index.js',false],['packages/engine/dist/animation/index.d.ts',true]])write(file,"export {createSequenceController} from './sequenceController.js';\n"+(typed?"export type {"+sequenceTypes.join(',')+"} from './types.js';\n":''));
     write('packages/engine/dist/animation/types.js','export {};\n');
     write('node_modules/@egret/engine/animation.js','export function createSequenceController() {}\n');
+    // Current content closure is copied only for policy/resolution inspection.
+    // The fixture remains inert: no loader, parser, assets or native work is run.
+    for (const file of [
+      'packages/engine/src/contentTypes.ts','packages/engine/dist/contentTypes.js','packages/engine/dist/contentTypes.d.ts',
+      'packages/engine/src/contentArtifacts.ts','packages/engine/dist/contentArtifacts.js','packages/engine/dist/contentArtifacts.d.ts',
+      'packages/engine/src/contentLoader.ts','packages/engine/dist/contentLoader.js','packages/engine/dist/contentLoader.d.ts',
+      'packages/engine/src/internal/contentFactoryState.ts','packages/engine/dist/internal/contentFactoryState.js','packages/engine/dist/internal/contentFactoryState.d.ts',
+      'packages/engine/src/resources.ts','packages/engine/dist/resources.js','packages/engine/dist/resources.d.ts',
+      'packages/engine/web/resources.ts','packages/engine/dist/web/resources.js','packages/engine/dist/web/resources.d.ts',
+    ]) write(file,readFileSync(path.join(repository,file)));
+    // Keep the executable facade inert while preserving every admitted edge and
+    // the exact resource clause. Genuine loader/Scope behavior is tested apart.
+    write('packages/engine/dist/contentLoader.js',"import {isAdmittedResourceManifest} from '@egret/contracts/resources';\nimport '@egret/runtime';\nimport {createManifestAssetBinding} from './manifestResourceState.js';\nimport {requireContentEngine} from './internal/contentFactoryState.js';\nimport {contentFault,parseAtlasArtifact,parseSequenceArtifact} from './contentArtifacts.js';\nexport function createContentLoader() {}\n");
+    for (const file of ['packages/engine/src/Engine.ts','packages/engine/dist/Engine.js'])
+      append(file,"import {registerContentEngine} from './internal/contentFactoryState.js';\n");
     if(sequenceMutation){
       const baseline=spawnSync(process.execPath,['tools/check-boundaries.mjs'],{cwd:root,encoding:'utf8'});
       assert.equal(baseline.status,0,'fresh sequence policy baseline: '+baseline.stdout+baseline.stderr);

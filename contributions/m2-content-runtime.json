@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/contentTypes.ts",
+      "originRole": "First-party finite content artifact admission, public runtime assembly and original behavior tests, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/contentArtifacts.ts",
+      "originRole": "First-party finite content artifact admission, public runtime assembly and original behavior tests, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/contentLoader.ts",
+      "originRole": "First-party finite content artifact admission, public runtime assembly and original behavior tests, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/internal/contentFactoryState.ts",
+      "originRole": "First-party finite content artifact admission, public runtime assembly and original behavior tests, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/content-runtime.test.mjs",
+      "originRole": "First-party finite content artifact admission, public runtime assembly and original behavior tests, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/verification/failed-replacement-keeps-green.rgba",
+      "originRole": "Original first-party actual Canvas readback evidence for finite content replacement cases; copied byte-exact from the retained browser result; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/verification/cancelled-replacement-keeps-green.rgba",
+      "originRole": "Original first-party actual Canvas readback evidence for finite content replacement cases; copied byte-exact from the retained browser result; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/verification/replacement-starts-green.rgba",
+      "originRole": "Original first-party actual Canvas readback evidence for finite content replacement cases; copied byte-exact from the retained browser result; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/verification/replacement-advances-red.rgba",
+      "originRole": "Original first-party actual Canvas readback evidence for finite content replacement cases; copied byte-exact from the retained browser result; Apache-2.0."
+    },
+    {
+      "path": "examples/content-build/verification/replacement-completes-red.rgba",
+      "originRole": "Original first-party actual Canvas readback evidence for finite content replacement cases; copied byte-exact from the retained browser result; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

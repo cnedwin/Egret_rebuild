@@ -54,7 +54,7 @@ test('native import reader refuses malformed regexes in the two added expression
 
 
 // Current source-closure controls; SDK modules are inert bytes, never evaluated.
-test('textured source profile admits the genuine current 136 while historical 128, 132 and 134 still refuse', async () => {
+test('textured source profile admits the genuine current 137 while historical 128, 132 and 134 still refuse', async () => {
   const fs = await import('node:fs');
   const { fileURLToPath } = await import('node:url');
   const { collectPublicGraph, LIMITS, sourceCounterpart } = await import('../tools/textured-webgpu/native-files.mjs');
@@ -67,7 +67,7 @@ test('textured source profile admits the genuine current 136 while historical 12
     return {graph,pins};
   };
   const before = await capture('m22-sequence-textured');
-  assert.equal(before.graph.modules.size, 136);
+  assert.equal(before.graph.modules.size, 137);
   assert.ok(before.graph.modules.has('packages/contracts/dist/resources/index.js'));
   assert.ok(before.graph.modules.has('packages/runtime/dist/ui/managedState.js'));
   assert.ok(before.graph.modules.has('packages/engine/dist/internal/uiFactoryState.js'));
@@ -189,7 +189,7 @@ test('textured 134/135 UI successor source boundary rejects an actual extra modu
   if (failures.length) throw new AggregateError(failures, '134/135 refusal, local restoration and complete baseline');
 });
 
-test('textured 136/137 sequence successor source boundary rejects an actual extra module and restores the complete fixture', async t => {
+test('textured 137/138 sequence successor source boundary rejects an actual extra module and restores the complete fixture', async t => {
   const fs = await import('node:fs'), os = await import('node:os'), path = await import('node:path');
   const { collectPublicGraph } = await import('../tools/textured-webgpu/native-files.mjs');
   const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'egret-textured-source-cap-')));
@@ -207,25 +207,25 @@ test('textured 136/137 sequence successor source boundary rejects an actual extr
   module('internal/texturedFrameState', 'export const registry = {};\n');
   module('web/webgpu', "export * from './WebGPUHost.js';\n");
   module('web/WebGPUHost', "import '#egret-textured-frame-state';\n");
-  for (let index = 0; index < 132; index++) module('r' + index,
-    index < 130 ? "import './r" + (index + 1) + ".js';\n" : 'export const end = true;\n');
+  for (let index = 0; index < 133; index++) module('r' + index,
+    index < 131 ? "import './r" + (index + 1) + ".js';\n" : 'export const end = true;\n');
   const collect = async () => {
     const pins = [];
     const graph = await collectPublicGraph(root, (row, role) => pins.push({path:row.path,bytes:row.bytes,sha256:row.sha256,role}), 'm22-sequence-textured');
     return {graph,pins};
   };
   const summary = value => ({modules:[...value.graph.modules.values()].map(row => [row.relative, row.bytes, row.sha256, row.edges]),inputs:value.pins});
-  const before = await collect(); assert.equal(before.graph.modules.size, 136);
-  const last = path.join(root, 'packages/engine/dist/r130.js'), original = fs.readFileSync(last);
+  const before = await collect(); assert.equal(before.graph.modules.size, 137);
+  const last = path.join(root, 'packages/engine/dist/r131.js'), original = fs.readFileSync(last);
   const failures = [];
   try { assert.deepEqual(summary(await collect()), summary(before)); } catch (error) { failures.push(error); }
   if (failures.length === 0) {
     try {
-      fs.writeFileSync(last, "import './r131.js';\n");
+      fs.writeFileSync(last, "import './r132.js';\n");
       await assert.rejects(collect(), error => error.reason === 'GRAPH_MODULE_COUNT');
     } catch (error) { failures.push(error); }
   }
   try { fs.writeFileSync(last, original); } catch (error) { failures.push(error); }
   try { assert.deepEqual(summary(await collect()), summary(before)); } catch (error) { failures.push(error); }
-  if (failures.length) throw new AggregateError(failures, '136/137 refusal, local restoration and complete baseline');
+  if (failures.length) throw new AggregateError(failures, '137/138 refusal, local restoration and complete baseline');
 });

@@ -38,8 +38,18 @@ const snapshot=[inventoryPath,'tools/resource-recovery-types.mjs','tools/lib/fil
 const compilerRoot=realpathSync(path.join(root,'node_modules/typescript'));
 const compilerSnapshot=['package.json','bin/tsc'].map(file=>fingerprintFile(compilerRoot,file));
 
+// The historical input receipt stays unchanged. This exact current positive
+// adds only optional content-loader consumers, compiled freshly in the same lane.
+const contentPositiveInput={
+  base:{path:'tests/types/resources-group-positive.ts',bytes:1227,sha256:'a7fca32ac1ae4ae64755eba012b4bc90150b478a572d28dc44ee21935335a5c4'},
+  current:{path:'tests/types/resources-group-positive.ts',bytes:2642,sha256:'d9755ac66717e206f023b5b878e253a891a8ae03344a7aef0e1f2d3dc01d457b'},
+};
+function currentInput(pin){
+  return JSON.stringify(pin)===JSON.stringify(contentPositiveInput.base)?contentPositiveInput.current:pin;
+}
+
 function verify(){
-  for(const pin of [...snapshot,...inventory.inputPins])
+  for(const pin of [...snapshot,...inventory.inputPins].map(currentInput))
     assert.deepEqual(fingerprintFile(root,pin.path),pin,'M1.5 strict input changed: '+pin.path);
   assert.ok(samePhysicalPath(realpathSync(path.join(root,'node_modules/typescript')),compilerRoot),'changed compiler owner');
   for(const pin of compilerSnapshot)

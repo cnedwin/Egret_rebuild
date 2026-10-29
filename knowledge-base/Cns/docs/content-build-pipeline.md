@@ -2,7 +2,7 @@
 
 [English](../../en/docs/content-build-pipeline.md) | 简体中文
 
-M2.1 首批实现 · 2026-10-23 · PNG、单页图集与序列帧配置。完整 M2.1 仍未验收。
+M2.1 构建／运行时配置 · 更新于 2026-10-29 · PNG、单页图集与序列帧。完整 M2.1 仍未验收。
 
 ## 从源文件到可播放资源
 
@@ -27,6 +27,46 @@ M2.1 首批实现 · 2026-10-23 · PNG、单页图集与序列帧配置。完整
 配方格式为 `egret.content-build-recipe/1`，包含一个 `targetProfile` 和若干配方，每项有 `resourceId`、`sourceFileId`、`importer`、`settings`、`artifactFormatVersion`、有序 `dependencies` 与 `provenance`。固定导入器为 `egret.png@1.0.0`、`egret.aseprite-atlas@1.0.0` 和 `egret.sequence@1.0.0`。图集配置为 `aseprite-json-array-1.3.18.6-v1`，拒绝旋转和多页。输出格式分别为 `png/1`、`egret.atlas/1`、`egret.sequence/1`。
 
 新配方使用受保护的设置封装，纳入配方、输出和参考格式版本、选项以及实际 Node/pngjs/zlib 生产者身份。配方不能指定可执行代码；构建工具在查询缓存前核实已安装版本。目标标签参与现有键算法，但首批导入器生成共享产物；更换标签不代表某个平台或专用纹理转换已经验收。
+
+## 在运行时加载构建产物
+
+可选 `@egret/engine/web/resources` 入口提供 `createManifestContentLoader(engine, manifest, options)`，接收已准入清单和资源基础 URL，复用 ManifestByteSource 检查字节数与 SHA-256、严格解码 UTF-8 元数据，并使用现有浏览器 PNG provider。应用无需再为这些固定格式自行创建资源类型和绑定、解析图集 JSON，或手工装配 SpriteSheet/SequenceClip。
+
+`loader.load(scope, roots, options?)` 选择声明的依赖闭包，返回归 Scope 管理的资源组。只有选中资源全部加载、精确产物格式及相互关系检查通过、图集和序列对象完整装配后，`ready` 才会成功。此后通过 `getImage(id)`、`getAtlas(id)` 和 `getSequence(id)` 取得对应类型的资源。类型不符、未选中 ID、尚未就绪或已退出的资源组都会被拒绝。加载不会自动挂载显示对象、启动播放或推进时钟。
+
+```js
+import { createManifestContentLoader } from '@egret/engine/web/resources';
+
+// engine is genuine; manifest has already passed public manifest admission.
+const loader = createManifestContentLoader(engine, manifest, { baseUrl });
+const dataScope = engine.createScope();
+const group = loader.load(dataScope, ['e_sequence', 'e_other']);
+await group.ready;
+
+const displayScope = engine.createScope();
+const animationScope = engine.createScope();
+const sheet = group.getAtlas('e_atlas');
+const bitmap = displayScope.use(sheet.createBitmap(sheet.names[0]));
+engine.stage.addChild(bitmap);
+const playback = engine.createSequencePlayback(
+  animationScope, bitmap, group.getSequence('e_sequence'), { mode: 'once' }
+);
+// The application explicitly starts playback and advances its game clock.
+```
+
+非浏览器宿主通过 `@egret/engine/resources` 的 `createContentLoader` 显式接入。provider 工厂接收不可变的 ID、类型和绑定记录，以自身数据方法提供纹理与元数据字符串 provider。该宿主负责字节完整性、解码和 provider 关闭；共享核心验证产物语义，不依赖 DOM、Node 或项目／构建工具。两个工厂均复用原资源管理、播放器及身份算法。
+
+### 所有权、失败和版本替换
+
+一个 loader 对应一份完整的已准入清单和来源目录。它只创建一次类型和绑定；同一 loader 的重叠加载组通过现有 AssetManager 共享资源值，各组独立拥有租约。当前仅接纳三种固定导入器／格式组合。每次加载闭包最多 128 个资源，沿用既有清单组限额与优先级。来源或清单变化时使用新 loader；逻辑资源 ID 相同不能授权跨 loader 或跨代际共享。
+
+组返回的图片租约与 SpriteSheet 均为借用值，不应自行释放租约、销毁图集，或将它们登记到另一个 Scope。应用创建的 Bitmap 和播放控制器归应用 Scope 管理。退出时先清理动画、显示使用者，再清理数据组／Scope。资源组先撤销已装配图集，再释放底层租约。序列 clip 是不可变元数据，不增加资源所有权。
+
+调用 `group.dispose()`、释放组的 Scope、销毁 loader 或关闭 Engine 都会撤销组并取消未完成需求。部分加载或装配失败会清理所有已获得的资源，迟到结果不能使组重新可用。浏览器 loader 的 `loader.close()` 会销毁各组并等待原字节源与 PNG provider 关闭；同步 `dispose()` 不等于原生工作已经结算。`getStatus()` 分开呈现字节源和 provider 的观察，逻辑计数归零不证明物理内存或 GPU 耗时。
+
+替换时，保留当前显示和旧数据组，先准备新资源组。候选完整 `ready` 后，由应用显式切换显示／播放对象，并先退出旧使用者再释放旧数据。候选失败或取消时，当前代际仍可使用。这是应用控制的准备与切换流程，不新增全局热更新事务，也不承诺保持动画播放位置；示例明确重置替换后的播放。
+
+运行时准入检查有界规范化 `egret.atlas/1` 与 `egret.sequence/1` 数据、依赖序号与类型、PNG 实际尺寸、图集和序列输入一致性，以及元数据来源 ID／摘要／长度。元数据上限为 4 MiB；保留原图像限额、1,024 帧上限、名称限额和毫秒时长规则。产物和关系错误在 cause 记录中携带资源 ID 与阶段，原传输／provider 失败保留在错误链中。哈希校验不等于素材权利或生产者签名验证。
 
 ## 缓存与失效范围
 
@@ -57,6 +97,8 @@ M2.1 首批实现 · 2026-10-23 · PNG、单页图集与序列帧配置。完整
 
 专项测试覆盖实际源字节、冷暖构建、反向依赖失效、重新绑定项目、参考产物缺失或损坏、源文件漂移、取消及修订冲突。PNG 测试包含独立编写的像素、滤波预期和畸形流。存储测试使用真实临时目录，不替换文件系统；无法创建符号链接的环境限制与实际目录联接、路径测试分别记录。独立评审检查源码和结果证据，不只检查测试数量。
 
-2026-10-23 的实际生成产物浏览器运行在 Windows x64、Node 26.7.0、Playwright 1.62.1 和无头 Microsoft Edge 155.0.4283.62 下通过五项检查：加载已提交的四资源候选快照，对初始、推进及结束帧逐一比较全部 72 个原生 Canvas 像素，并验证清理后的所有权计数归零。公开结果摘要（仓库中的 `examples/content-build/verification-summary.json`）记录环境、检查和原始回执哈希；它是公开投影，不替代保留的原始记录。这是浏览器功能证据，不是真机或性能验收。完整合并门禁及 GitHub 集成另行记录。
+类型化内容 loader 接入之前，2026-10-23 的历史生成产物浏览器运行在 Windows x64、Node 26.7.0、Playwright 1.62.1 和无头 Microsoft Edge 155.0.4283.62 下通过五项检查：加载已提交的四资源候选快照，对初始、推进及结束帧逐一比较全部 72 个原生 Canvas 像素，并验证清理后的所有权计数归零。公开结果摘要（仓库中的 `examples/content-build/verification-summary.json`）记录环境、检查和原始回执哈希；它是公开投影，不替代保留的原始记录。该历史结果不证明新 loader 及其失败、取消、替换路径已经通过。当前采集器补充这些有限 Canvas 场景，每次新运行单独记录结果。浏览器功能证据不等于真机、WebGPU/WebGL2 或性能验收；完整合并门禁及 GitHub 集成另行记录。
 
 M2.1 仍需完成授权 Spine JSON/二进制/多页导入、字体产物、选定目标变体、mip/旋转/压缩验收和完整功能清单。M2.2–M2.4、复杂 UI、IME 与 Android/iPhone 真机验收仍按各自工作包推进。M1.2 全脏场景实测 10.3 ms 对比 8 ms 目标的缺口保持开放。
+
+2026-10-29 的类型化加载器浏览器验证在 Windows x64、Node 26.7.0、Playwright 1.62.1 和无界面 Microsoft Edge 156.0.4314.50 中通过全部 13 项有限检查。保存的 8 份完整帧读回各自匹配全部 72 个独立指定的 Canvas 像素。真实哈希不符响应被拒绝；真实 HTTP 请求挂起后取消，迟到结果不会发布；失败或取消的替换保留当前版本，同一逻辑 ID 的第二次真实构建能够切换到自身逆序的动画帧。所有版本加载器的 source/provider 当前计数归零，应用、上下文、浏览器和服务器均完成清理。当前验证摘要保留原始结果哈希及历史摘要。本次不构成 GPU 后端、手机、物理内存、性能或完整 M2.1 验收。

@@ -18,3 +18,25 @@ const imageLease: AssetLease<Texture> = group.get(image);
 const textLease: AssetLease<string> = group.get(text);
 void done; void imageLease; void textLease;
 group.dispose();
+
+// Content materialization is optional and preserves the borrowed typed values.
+import { createContentLoader } from '@egret/engine/resources';
+import type { ContentLoader, ContentGroup, ContentProviders } from '@egret/engine/resources';
+import type { SequenceClip, SpriteSheet, AssetProvider } from '@egret/engine';
+declare const textureProvider: AssetProvider<Texture>;
+declare const metadataProvider: AssetProvider<string>;
+const content: ContentLoader = createContentLoader(engine, manifest, bindings => {
+  const binding: ManifestBinding | undefined = bindings[0]?.binding;
+  void binding;
+  const ports: ContentProviders = { textures: textureProvider, metadata: metadataProvider };
+  return ports;
+});
+const materialized: ContentGroup = content.load(scope, ['e_sequence'], options);
+const borrowedImage: AssetLease<Texture> = materialized.getImage('e_image');
+const borrowedAtlas: SpriteSheet = materialized.getAtlas('e_atlas');
+const immutableClip: SequenceClip = materialized.getSequence('e_sequence');
+// Positive type constraints also require incompatible providers/leases to stay rejected.
+type AssertFalse<T extends false> = T;
+type TextureMetadataRejected = AssertFalse<AssetProvider<Texture> extends ContentProviders['metadata'] ? true : false>;
+type ClipLeaseRejected = AssertFalse<SequenceClip extends AssetLease<Texture> ? true : false>;
+void borrowedImage; void borrowedAtlas; void immutableClip;

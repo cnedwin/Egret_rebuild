@@ -2,9 +2,9 @@
 
 简体中文 | [English](../../en/docs/m2-spine-content-plan.md)
 
-计划及实施状态 · 2026-10-23 · 完整里程碑验收继续开放。
+计划及实施状态 · 更新于 2026-10-29 · 完整里程碑验收继续开放。
 
-M2.1 已有首批从源文件到构建产物的实现，覆盖 PNG、有限单页图集配置和序列帧，并接入持久缓存与项目采用。当前范围和证据参阅[内容构建契约](content-build-pipeline.md)。完整 Spine、字体和目标变体验收继续开放，保留既有十一个工作包。
+M2.1 将 PNG、有限单页图集配置和序列帧从源构建，经持久缓存和项目采用，接入类型化运行时资源组。装配过程复用 AssetManager、ManifestAssetGroup、Scope、SpriteSheet 和 SequenceClip；完整校验、装配成功后才开放读取，候选失败或取消保留应用当前代际。当前范围和证据参阅[内容构建契约](content-build-pipeline.md)。完整 Spine、字体和目标变体验收继续开放，保留既有十一个工作包。
 
 M2.2 序列帧控制已有有限行为测试和桌面 WebGPU／WebGL2 结果：可选动画入口基于真实 Engine 时钟，增加实例级倍率、总播放次数、编写标记和显式跳转；新旧目标占用共享规则保留原有播放 API。参见[序列帧控制契约](sequence-controls.md)。完整 Spine 与 M2.2 验收仍然开放。
 

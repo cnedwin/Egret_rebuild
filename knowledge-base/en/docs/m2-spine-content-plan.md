@@ -2,9 +2,9 @@
 
 English | [简体中文](../../Cns/docs/m2-spine-content-plan.md)
 
-Plan with implementation status · 2026-10-23 · Complete milestone acceptance remains open.
+Plan with implementation status · updated 2026-10-29 · Complete milestone acceptance remains open.
 
-M2.1 now has a first source-to-build implementation for PNG, a finite single-page atlas profile and sequences, with persistent cache and project adoption. See the [content build contract](content-build-pipeline.md) for current scope and evidence. Full Spine/font/variant acceptance remains open; the existing eleven work packages are retained.
+M2.1 connects PNG, the finite single-page atlas profile and sequences from source builds through persistent cache/project adoption to typed runtime groups. The runtime assembly reuses AssetManager, ManifestAssetGroup, Scope, SpriteSheet and SequenceClip. A group becomes readable only after complete validation and assembly; failed/cancelled candidates leave the application's active generation intact. See the [content build contract](content-build-pipeline.md) for current scope and evidence. Full Spine/font/variant acceptance remains open; the existing eleven work packages are retained.
 
 M2.2 sequence controls have bounded behavior and desktop WebGPU/WebGL2 results: the optional animation entry adds per-instance rate, total plays, authored markers and explicit seek over the genuine Engine clock. Shared legacy/new target claims retain the original playback API. See the [sequence-control contract](sequence-controls.md). Complete Spine and M2.2 acceptance remain open.
 
