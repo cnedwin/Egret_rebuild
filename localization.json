@@ -2096,8 +2096,8 @@
       "en": "knowledge-base/en/docs/paragraph-layout-controls.md",
       "zh": "knowledge-base/Cns/docs/paragraph-layout-controls.md",
       "kind": "public_reading",
-      "enSha256": "5f7144a713ca7961ec8c8f0feafcafd60073ffa878d3d979c8a59f1df7d22810",
-      "zhSha256": "978d63b0b1fa4fe82e975e5c7736da49987efb42f70ef5f8c0e0f1bf352f5531"
+      "enSha256": "6e4af94c8377ae2ca6ae9466cace84dfcd4040cfd980e8556c0202bb4fc8c0a2",
+      "zhSha256": "38c701dc9a20e49e41b99f6f9385bd48255caa6bc62b897236392411d3e7d76c"
     }
   ],
   "registries": [
@@ -3687,7 +3687,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "90c109b20a37d991128eeabd5a5cca798d1e1801b521c23c7ac2437209040d29"
+      "sha256": "92d5cbdb5f2d8ee53c49b13895b4b718ff245a317ed956f00c654db6acf857c7"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3715,7 +3715,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "68f07fc7dda1667a9488f2306d1f0897ff39063b09c0cec1c97a30c3707a53b6"
+      "sha256": "e06fd9503045789731a31ab4780b1a0f32984db80b64aa814d7305b34ba601fc"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",

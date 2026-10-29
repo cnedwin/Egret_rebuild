@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "34fb60f7ea891e11417d02a29cf16cbbf01bdd636ee7bd24c486fa5c94d468c1",
+      "sha256": "9d7b2b3d13fb582c34a6049b744b4845b0f6d51a318e7674b83cd1b9a0475d93",
       "bytes": 364888,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -10575,7 +10575,7 @@
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
       "bytes": 271806,
-      "sha256": "90c109b20a37d991128eeabd5a5cca798d1e1801b521c23c7ac2437209040d29"
+      "sha256": "92d5cbdb5f2d8ee53c49b13895b4b718ff245a317ed956f00c654db6acf857c7"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10689,7 +10689,7 @@
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
       "bytes": 39309,
-      "sha256": "68f07fc7dda1667a9488f2306d1f0897ff39063b09c0cec1c97a30c3707a53b6"
+      "sha256": "e06fd9503045789731a31ab4780b1a0f32984db80b64aa814d7305b34ba601fc"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -14180,20 +14180,20 @@
     {
       "path": "knowledge-base/en/docs/paragraph-layout-controls.md",
       "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 6321,
-      "sha256": "5f7144a713ca7961ec8c8f0feafcafd60073ffa878d3d979c8a59f1df7d22810"
+      "bytes": 6371,
+      "sha256": "6e4af94c8377ae2ca6ae9466cace84dfcd4040cfd980e8556c0202bb4fc8c0a2"
     },
     {
       "path": "knowledge-base/Cns/docs/paragraph-layout-controls.md",
       "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5491,
-      "sha256": "978d63b0b1fa4fe82e975e5c7736da49987efb42f70ef5f8c0e0f1bf352f5531"
+      "bytes": 5546,
+      "sha256": "38c701dc9a20e49e41b99f6f9385bd48255caa6bc62b897236392411d3e7d76c"
     },
     {
       "path": "verification/paragraph-layout/verification.json",
       "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 77545,
-      "sha256": "da6088a6ae53ad2ccda29b29bc61b127f7a8e4ae5746b8427a3e7fb2132ebe97"
+      "bytes": 78376,
+      "sha256": "2945dcea83b2efb2323eea1334fc83b1a9ce6cedd650226e5a29ffc5365b0cea"
     },
     {
       "path": "examples/paragraph-panel/vendor/source/patches/09-paragraph-layout.patch",

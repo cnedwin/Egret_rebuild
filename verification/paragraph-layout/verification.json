@@ -2125,6 +2125,27 @@
     "publicationBeforeFailure": {
       "pass": 300,
       "fail": 0
+    },
+    "historyReplay": {
+      "failedRun": 40900062795,
+      "head": "fc3f88b866b01b13ff68318ca1c8861d07d8180a",
+      "publication": {
+        "tests": 300,
+        "pass": 296,
+        "fail": 4,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      "failure": "Current boundary owner registry and exact inverse-block copies had not followed the declaration-pin change.",
+      "resolution": "Update only three current owner pins and the same three current inverse-block copies; historical predecessor hashes and inverse operations remain unchanged.",
+      "affectedReplayControls": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      "finalIntegrated": "Still required on the final PR head; no core or Spine pass is claimed for this failed run."
     }
   }
 }
