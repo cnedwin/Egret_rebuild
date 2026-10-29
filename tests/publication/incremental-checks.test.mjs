@@ -1270,6 +1270,13 @@ function m33BoundaryFixtureInput(file){
  let raw=fs.readFileSync(new URL('../../'+file,import.meta.url));if(file!=='packages/engine/package.json')return raw;
  let current={path:file,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')};
  const sequencePackage={"base":{"path":"packages/engine/package.json","bytes":2591,"sha256":"817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5"},"current":{"path":"packages/engine/package.json","bytes":2709,"sha256":"3fba4431f23b5ccb6da6f13a023ecd5229550f1ca8ead591521e69eeb3960fa9"}};
+ // Invert only the reviewed optional paragraph exports before historical fixture projection.
+ const paragraphPackage={path:file,bytes:2933,sha256:'afcc7ed24ddd5e73f0ebed1f60b1c1b31d1bac59d2127e0b061c499cfe8e93fe'};
+ if(JSON.stringify(current)===JSON.stringify(paragraphPackage)){
+  const value=JSON.parse(raw.toString());delete value.exports['./paragraph'];delete value.exports['./web/paragraph'];raw=Buffer.from(JSON.stringify(value,null,2)+'\n');
+  assert.deepEqual({path:file,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')},sequencePackage.current);
+  current=sequencePackage.current;
+ }
  if(JSON.stringify(current)===JSON.stringify(sequencePackage.current)){
   const value=JSON.parse(raw.toString());delete value.exports['./animation'];raw=Buffer.from(JSON.stringify(value,null,2)+'\n');
   assert.deepEqual({path:file,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')},sequencePackage.base);

@@ -3673,7 +3673,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "3f3c8f8d91b65319502b2762ac8128aa09c13caeb2c00fd5ae1735c133e3a259"
+      "sha256": "90c109b20a37d991128eeabd5a5cca798d1e1801b521c23c7ac2437209040d29"
     },
     {
       "path": "tools/browser-resources.mjs",
