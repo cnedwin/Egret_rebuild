@@ -1,0 +1,82 @@
+diff --git a/modules/skparagraph/src/TextWrapper.cpp b/modules/skparagraph/src/TextWrapper.cpp
+index adeb8c3..c3735af 100644
+--- a/modules/skparagraph/src/TextWrapper.cpp
++++ b/modules/skparagraph/src/TextWrapper.cpp
+@@ -320,12 +320,21 @@ void TextWrapper::breakTextIntoLines(ParagraphImpl* parent,
+         SkScalar widthWithSpaces;
+         std::tie(startLine, pos, widthWithSpaces) = this->trimStartSpaces(end);
+ 
+-        if (needEllipsis && !fHardLineBreak) {
++        // A finite line cap also truncates at an authored hard break. Preserve
++        // the source spaces before the fixed marker, just as for a soft wrap.
++        const bool addLineEllipsis = needEllipsis && (!fHardLineBreak || !unlimitedLines);
++        if (addLineEllipsis) {
+             // This is what we need to do to preserve a space before the ellipsis
+             fEndLine.restoreBreak();
+             widthWithSpaces = fEndLine.widthWithGhostSpaces();
+         }
+ 
++        // Preserve source/cluster positions, including a newline-only line's
++        // style range; only its invisible terminating advance is excluded.
++        const SkScalar hardBreakAdvance = addLineEllipsis && fHardLineBreak
++            ? fEndLine.endCluster()->width() : 0;
++        widthWithSpaces -= hardBreakAdvance;
++
+         // If the line is empty with the hard line break, let's take the paragraph font (flutter???)
+         if (fEndLine.metrics().isClean()) {
+             fEndLine.setMetrics(parent->getEmptyMetrics());
+@@ -393,11 +402,11 @@ void TextWrapper::breakTextIntoLines(ParagraphImpl* parent,
+                 fEndLine.startPos(),
+                 fEndLine.endPos(),
+                 SkVector::Make(0, fHeight),
+-                SkVector::Make(fEndLine.width(), lineHeight),
++                SkVector::Make(fEndLine.width() - hardBreakAdvance, lineHeight),
+                 fEndLine.metrics(),
+-                needEllipsis && !fHardLineBreak,
++                addLineEllipsis,
+                 {TextLine::EgretQualificationLineOrigin::kTextWrapper,
+-                 fHardLineBreak, false, lastLine, needEllipsis && !fHardLineBreak});
++                 fHardLineBreak, false, lastLine, addLineEllipsis});
+ 
+         softLineMaxIntrinsicWidth += widthWithSpaces;
+ 
+diff --git a/modules/skparagraph/src/TextLine.cpp b/modules/skparagraph/src/TextLine.cpp
+index 3c0e41e..25b30e2 100644
+--- a/modules/skparagraph/src/TextLine.cpp
++++ b/modules/skparagraph/src/TextLine.cpp
+@@ -719,7 +719,11 @@ void TextLine::createEllipsis(SkScalar maxWidth, const SkString& ellipsis, bool)
+         }
+         // See if it fits
+         if (width + ellipsisRun->advance().fX > maxWidth) {
+-            width -= cluster.width();
++            // Hard breaks are logical source slots, already excluded from the
++            // visible line advance. Removing one must not subtract it twice.
++            if (!cluster.isHardBreak()) {
++                width -= cluster.width();
++            }
+             // Continue if the ellipsis does not fit
+             continue;
+         }
+diff --git a/modules/canvaskit/paragraph_bindings.cpp b/modules/canvaskit/paragraph_bindings.cpp
+index be41c33..e9ea446 100644
+--- a/modules/canvaskit/paragraph_bindings.cpp
++++ b/modules/canvaskit/paragraph_bindings.cpp
+@@ -537,11 +537,18 @@ JSArray UnresolvedCodepoints(para::Paragraph& self) {
+ #include "modules/canvaskit/sheen_bidi_comparison_bindings.inc"
+ 
+ EMSCRIPTEN_BINDINGS(Paragraph) {
++    // Product capability metadata for the exact final-line marker semantics.
++    // Older modules expose neither this version nor the observed marker query.
++    constant("EgretParagraphLayoutVersion", 1);
+     function("_getEgretUnicodeQualification", &GetEgretUnicodeQualification);
+     function("_getEgretSheenBidiComparison", &GetEgretSheenBidiComparison);
+ 
+     class_<para::Paragraph>("Paragraph")
+         .function("didExceedMaxLines", &para::Paragraph::didExceedMaxLines)
++        .function("hasLineEllipsis", optional_override([](para::Paragraph& self, size_t index) {
++            auto lines = static_cast<para::ParagraphImpl&>(self).lines();
++            return index < lines.size() && lines[index].ellipsis() != nullptr;
++        }))
+         .function("getAlphabeticBaseline", &para::Paragraph::getAlphabeticBaseline)
+         .function("getGlyphPositionAtCoordinate", &para::Paragraph::getGlyphPositionAtCoordinate)
+         .function("getHeight", &para::Paragraph::getHeight)

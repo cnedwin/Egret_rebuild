@@ -1,10 +1,10 @@
 {
   "schema": "egret.optional-paragraph-vendor/1",
-  "profile": "readonly-paragraph-line-bidi-v2",
+  "profile": "readonly-paragraph-layout-v1",
   "defaultSdkRuntimeDependency": false,
   "automaticNetworkAccess": false,
   "runtime": {
-    "buildIdentity": "skia-e2def78-sheen-cfe430e-icu78.2-32-64-r0-line-bidi-r1",
+    "buildIdentity": "skia-e2def78-sheen-cfe430e-icu78.2-32-64-r0-line-bidi-r1-layout-r1",
     "upstream": {
       "repository": "https://skia.googlesource.com/skia",
       "revision": "e2def78fa232884d4aedcf3ad92d4a0dd673b898"
@@ -24,9 +24,11 @@
     "loader": "CanvasKitInit({ locateFile })",
     "sourceRebuildFromCleanCheckoutObserved": false,
     "finalSoftWrappedLineL1Integrated": true,
-    "glue": "runtime/line-bidi-r1/canvaskit.js",
-    "wasm": "runtime/line-bidi-r1/canvaskit.wasm",
-    "lineBidiImplementation": "Stock SheenBidi actual-line API over retained complete P1 context; canonical SkParagraph glyph storage with separate final-line levels."
+    "glue": "runtime/layout-r1/canvaskit.js",
+    "wasm": "runtime/layout-r1/canvaskit.wasm",
+    "lineBidiImplementation": "Stock SheenBidi actual-line API over retained complete P1 context; canonical SkParagraph glyph storage with separate final-line levels.",
+    "nativeLayoutVersion": 1,
+    "actualEllipsisQuery": true
   },
   "fonts": [
     {
@@ -121,7 +123,7 @@
     }
   ],
   "payloadBytes": {
-    "runtime": 8696178,
+    "runtime": 8696388,
     "fonts": 17148712,
     "sourceData": 3089888
   },
@@ -137,7 +139,8 @@
     "independentGlyphAndInkAcceptance": "OPEN",
     "finalWrappedLineL1": "IMPLEMENTED_FINITE_QUALIFICATION",
     "nativeEditing": "OUT_OF_PROFILE",
-    "mobileAndPerformance": "OPEN"
+    "mobileAndPerformance": "OPEN",
+    "alignmentAndLineClamp": "IMPLEMENTED_FINITE_QUALIFICATION"
   },
   "files": [
     {
@@ -504,6 +507,21 @@
       "path": "source/patches/08-final-line-bidi.patch",
       "bytes": 41214,
       "sha256": "b8d69809bc97f8224c3a9720cc5bb086ad9ce275b974dca391decccd53036b24"
+    },
+    {
+      "path": "runtime/layout-r1/canvaskit.js",
+      "bytes": 96090,
+      "sha256": "bad20cb1b1eb5c8ffc3d744f3aebdfa68af4ee756d68853459f6155594b66ea9"
+    },
+    {
+      "path": "runtime/layout-r1/canvaskit.wasm",
+      "bytes": 8600298,
+      "sha256": "156593fd1411ffc41a3707ac74cbea72b76b4d04dd1eff9be4fab98c26530329"
+    },
+    {
+      "path": "source/patches/09-paragraph-layout.patch",
+      "bytes": 4430,
+      "sha256": "11db846bc327e14187496f25dd801acd7781fdb6b5c25c4b82ecac47ca4dbc5c"
     }
   ]
 }

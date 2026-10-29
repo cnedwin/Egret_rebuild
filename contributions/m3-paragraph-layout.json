@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/paragraph-layout.test.mjs",
+      "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/paragraph-layout-types.test.mjs",
+      "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/paragraph-layout-positive.ts",
+      "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/paragraph-layout-negative.ts",
+      "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/paragraph-layout-controls.md",
+      "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/paragraph-layout-controls.md",
+      "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "verification/paragraph-layout/verification.json",
+      "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/09-paragraph-layout.patch",
+      "originRole": "Egret integration delta on three pinned Skia source files after patches00-08; original Skia BSD copyright and third-party notices retained; no claim of first-party upstream algorithm authorship."
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/runtime/layout-r1/canvaskit.js",
+      "originRole": "Exact derived optional native build from the manifest-pinned Skia/SheenBidi/ICU source chain and patches00-09; original applicable licenses and attribution retained."
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/runtime/layout-r1/canvaskit.wasm",
+      "originRole": "Exact derived optional native build from the manifest-pinned Skia/SheenBidi/ICU source chain and patches00-09; original applicable licenses and attribution retained."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/paragraph-layout-controls.md",
+      "zh": "knowledge-base/Cns/docs/paragraph-layout-controls.md"
+    }
+  ]
+}

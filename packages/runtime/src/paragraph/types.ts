@@ -4,6 +4,12 @@ import type { AssetLease } from '../AssetLease.js';
 import type { Texture } from '../Texture.js';
 import type { DisplayObjectContainer } from '../DisplayObjectContainer.js';
 
+export type ParagraphTextAlign = 'left' | 'right' | 'center' | 'start' | 'end' | 'justify';
+/** Explicit opt-in: older providers continue to accept the original requests. */
+export interface ParagraphProviderCapabilities {
+  readonly textAlign?: boolean;
+  readonly maxLines?: boolean;
+}
 export interface ParagraphRequestInput {
   readonly text: string;
   readonly width: number;
@@ -15,6 +21,10 @@ export interface ParagraphRequestInput {
   readonly direction: 'ltr' | 'rtl';
   readonly fillColor: number;
   readonly density: number;
+  /** Omission preserves physical left alignment; start/end follow base direction. */
+  readonly textAlign?: ParagraphTextAlign;
+  /** At most this many lines; overflowing text uses the fixed U+2026 marker. */
+  readonly maxLines?: number;
 }
 export interface ParagraphRequest extends ParagraphRequestInput {}
 /** Source ranges are UTF16 [start, end), never glyph or UTF8 byte indices. */
@@ -32,6 +42,8 @@ export interface ParagraphMetrics {
   readonly width: number;
   readonly height: number;
   readonly lines: readonly ParagraphLine[];
+  /** Present for a maxLines request; observed from the prepared native layout. */
+  readonly truncated?: boolean;
 }
 export interface ParagraphRaster {
   readonly metrics: ParagraphMetrics;
@@ -43,6 +55,7 @@ export interface ParagraphRaster {
 export interface ParagraphProvider {
   /** Immutable backend/build/font identity. Changing fonts requires a new provider. */
   readonly identity: string;
+  readonly capabilities?: ParagraphProviderCapabilities;
   prepare(request: ParagraphRequest, context: Readonly<{ signal: CancellationSignal }>): Promise<ParagraphRaster>;
 }
 export interface ParagraphCacheOptions {

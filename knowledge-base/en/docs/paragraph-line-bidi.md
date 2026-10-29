@@ -4,6 +4,8 @@ English | [简体中文](../../Cns/docs/paragraph-line-bidi.md)
 
 The optional readonly paragraph backend now resolves bidirectional order for each actual wrapped line. Latin/Arabic/numeric content, embeddings and isolates use their complete paragraph context, while line endings receive the line-specific reset required by Unicode. The SDK API, cache ownership and UI publication protocol are unchanged. This is a bounded M3.2 integration, not completion of M3.2.
 
+The later [layout controls](paragraph-layout-controls.md) add alignment and line caps. Their adapter translates CRLF/CR only in its private layout buffer and maps public indices back to authored UTF-16; the native bidi algorithm and this historical qualification retain their original scope.
+
 ## Why line resolution follows wrapping
 
 A paragraph's resolved shaping levels cannot be reused unchanged for every final line. For example, with the pinned fonts at size 20 and width 95, the source below wraps into UTF-16 ranges [0,11), [11,21), [21,24):
