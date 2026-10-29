@@ -33,7 +33,7 @@ M3.1 增加托管 UI 根、显式 prepare/commit、自动行列布局、稳定�
 
 ## M2.1 内容构建基础
 
-M2.1 增加经过字节验证的 PNG／图集／序列帧构建、持久缓存复用、依赖失效和通过现有项目事务采用的不可变代次，保留源文件与旧代次。参阅[内容构建契约](knowledge-base/Cns/docs/content-build-pipeline.md)。完整 Spine、字体和目标变体继续开放。
+M2.1 将经过字节验证的 PNG／图集／序列帧构建接入类型化运行时资源组，包含持久缓存复用、依赖失效和通过现有项目事务采用的不可变代次。应用按 ID 加载选中资源，无需手工装配元数据；完整就绪、取消和显式代际替换复用原资源所有权。源文件和旧代次保持不变。参阅[内容构建契约](knowledge-base/Cns/docs/content-build-pipeline.md)。完整 Spine、字体和目标变体继续开放。
 
 ## M3.3 多触点基础
 
@@ -119,6 +119,7 @@ M1.1 已通过 [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) 合并
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| M2.1 runtime integration / 运行时接入 · 2026-10-29 | Typed PNG/atlas/sequence groups reuse existing resources and lifetimes; complete readiness, cancellation and explicit generation replacement | PNG／图集／序列帧类型化组复用原资源与生命周期，支持完整就绪、取消及显式代际替换 |
 | M1.5 delivered / 已交付 · 2026-10-21 | Resource manifests, shared resource loading and device recovery delivered through [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79); formal M1.2 performance remains open | 资源清单、共享资源加载与设备恢复通过 [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) 交付；M1.2 正式性能仍开放 |
 | M1.5 recovery verification / 资源恢复验证 · 2026-10-20 | Seven fixed desktop recovery cases verified; [scope and remaining work](knowledge-base/en/docs/resource-recovery-evidence.md) | 七项固定桌面恢复验证完成；[范围与剩余工作](knowledge-base/Cns/docs/resource-recovery-evidence.md) |
 | M1.4 | Implemented optional shared WebGL2 executor with finite desktop verification | 已实现可选共享 WebGL2 执行器，具有有限桌面验证 |

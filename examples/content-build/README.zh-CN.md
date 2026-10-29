@@ -20,9 +20,11 @@ node tools/verify-content-build.mjs --playwright ABSOLUTE_PLAYWRIGHT_PACKAGE --o
 
 采集器创建自己的运行目录，仅通过本地回环服务提供捕获的示例及声明依赖，记录完整画面像素和清理结果，结束后关闭页面及服务。标准示例服务目前不提供该生成内容示例；本检查不需要开放整个仓库目录。
 
-生成配置同时固定 candidate.json 与清单的内容。页面先核对已提交候选快照的字节，再沿 e_generation 选择器检查目标、代次、资源引用和清单文件记录。仅加载该快照选中的清单，核对 SHA-256 与字节数后使用公共 contracts 接口接纳。本示例的有限校验器只针对该首次提交快照，并非通用项目解析器。四个主产物均通过 ManifestByteSource 读取；清单绑定、原生 PNG 资源提供器、图集和序列播放均使用现有公共 SDK。依赖序号 0 必须对应生成页面和图集。初始红色方块在 0.125 秒时变绿，蓝色方块保持不变。
+生成配置同时固定 candidate.json 与清单的内容。页面先核对已提交候选快照的字节，再沿 e_generation 选择器检查目标、代次、资源引用和清单文件记录。仅加载该快照选中的清单，核对 SHA-256 与字节数后使用公共 contracts 接口接纳。本示例的有限校验器只针对该首次提交快照，并非通用项目解析器。公共 createManifestContentLoader 工厂复用原校验字节源和 PNG provider，读取四个主产物。归 Scope 管理的组完成依赖校验和装配后才 ready，再通过 getImage/getAtlas/getSequence 提供资源。页面不再注册自定义元数据加载器、解析产物 JSON 或手工构造图集／clip；显示、播放对象和显式时钟仍由应用管理。不使用手写运行时清单。初始红色方块在 0.125 秒时变绿，蓝色方块保持不变。
 
-有限浏览器采集入口 `window.contentBuildExample` 提供 `ready`、`advance(seconds)`、`readSnapshot()`、可重复调用的 `close()`。时间必须单调递增且不超过十秒。快照包括实际 Canvas 像素、资源计数、诊断及释放证据。源码和语法检查本身不代表真实浏览器验证通过；实际结果由独立采集记录。
+有限浏览器采集入口 `window.contentBuildExample` 提供 `ready`、`advance(seconds)`、`readSnapshot()`、`replace(configUrl)`、`cancelReplacement()` 和可重复调用的 `close()`。时间必须单调递增且不超过十秒。替换先准备独立准入的新代际，整组就绪后才切换；失败或取消记录在快照中并保留当前显示。夹具明确从新代际第一帧开始播放。关闭会立即取消未完成工作，先退出显示／播放，再清理数据组并等待 loader 关闭。快照包括实际 Canvas 像素、分开的字节源／provider 计数、诊断及释放证据。
+
+现有采集器使用相同资源 ID、反转后的创作帧顺序构建第二代。有限 Canvas 时序覆盖正常播放、损坏字节、实际 HTTP 响应挂起后取消及迟到结算、失败／取消替换保留旧像素、成功替换和完整清理。早期快照与失败运行保留。该采集不验收 WebGPU/WebGL2、手机、物理内存或性能。源码和语法检查本身不代表浏览器通过，每次独立运行单独记录结果。参阅[运行时所有权契约](../../knowledge-base/Cns/docs/content-build-pipeline.md#在运行时加载构建产物)。
 
 ## 显式 CLI
 

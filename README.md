@@ -32,7 +32,7 @@ M3.1 adds an owned UI root with explicit prepare/commit, automatic row/column la
 
 ## M2.1 content build foundation
 
-M2.1 adds verified PNG/atlas/sequence source builds, persistent cache reuse, dependency invalidation and immutable generations adopted through the existing project transaction. Sources and old generations remain intact. See the [content build contract](knowledge-base/en/docs/content-build-pipeline.md). Complete Spine, fonts and target variants remain open.
+M2.1 connects verified PNG/atlas/sequence builds to typed runtime resource groups, with persistent cache reuse, dependency invalidation and immutable generations adopted through the existing project transaction. Applications load selected resources by ID without handwritten metadata assembly; complete readiness, cancellation and explicit generation replacement reuse existing asset ownership. Sources and old generations remain intact. See the [content build contract](knowledge-base/en/docs/content-build-pipeline.md). Complete Spine, fonts and target variants remain open.
 
 ## M3.3 multi-contact foundation
 
@@ -118,6 +118,7 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| M2.1 runtime integration / 运行时接入 · 2026-10-29 | Typed PNG/atlas/sequence groups reuse existing resources and lifetimes; complete readiness, cancellation and explicit generation replacement | PNG／图集／序列帧类型化组复用原资源与生命周期，支持完整就绪、取消及显式代际替换 |
 | M1.5 delivered / 已交付 · 2026-10-21 | Resource manifests, shared resource loading and device recovery delivered through [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79); formal M1.2 performance remains open | 资源清单、共享资源加载与设备恢复通过 [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) 交付；M1.2 正式性能仍开放 |
 | M1.5 recovery verification / 资源恢复验证 · 2026-10-20 | Seven fixed desktop recovery cases verified; [scope and remaining work](knowledge-base/en/docs/resource-recovery-evidence.md) | 七项固定桌面恢复验证完成；[范围与剩余工作](knowledge-base/Cns/docs/resource-recovery-evidence.md) |
 | M1.4 | Implemented optional shared WebGL2 executor with finite desktop verification | 已实现可选共享 WebGL2 执行器，具有有限桌面验证 |

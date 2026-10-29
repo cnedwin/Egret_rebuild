@@ -100,7 +100,7 @@ test('M15-G01 genuine Engine explicitly reports missing manifest-group capabilit
     const lease = await pending; assert.ok(lease instanceof egret.AssetLease); lease.release();
     assert.equal(typeof engine.createManifestGroup, 'function', 'M15_GROUP_FACTORY_MISSING');
     api(engine);
-    assert.deepEqual(Object.keys(resources).sort(), ['createManifestAssetBinding']);
+    assert.deepEqual(Object.keys(resources).sort(), ['createContentLoader', 'createManifestAssetBinding']);
     assert.equal(Object.hasOwn(egret, 'createManifestAssetBinding'), false, 'factory stays in optional entry');
   });
 });

@@ -1,8 +1,10 @@
 {
   "format": "egret.content-build-browser-summary/1",
-  "scope": "Public projection of an actual local browser collection; not its raw receipt. No physical-device, exporter, performance or full M2.1 qualification.",
-  "rawReceiptSha256": "813f50931a5c7965886ebe57af2be91ce1970b800e7fbd2721c0d9df6fb96bb2",
-  "startedAt": "2026-10-23T13:32:56.498Z",
+  "status": "PASS",
+  "scope": "Typed PNG/atlas/sequence runtime loading and explicit generation replacement; finite desktop Canvas pixels and logical lifecycle only. No WebGPU/WebGL2, phone, physical-memory, performance or full M2.1 qualification.",
+  "rawReceiptSha256": "c288409f83c7ddcf765847c36f8d0cfcac0f436e703b7beed0d532e47779482a",
+  "startedAt": "2026-10-29T03:19:36.461Z",
+  "endedAt": "2026-10-29T03:19:40.447Z",
   "environment": {
     "node": "v26.7.0",
     "platform": "win32",
@@ -17,125 +19,126 @@
     },
     "deviceScaleFactor": 1,
     "physicalDevice": false,
-    "browser": "155.0.4283.62"
+    "browser": "156.0.4314.50"
   },
   "checks": [
     {
       "name": "real generated candidate, exact four resources and pinned bytes",
-      "pass": true,
-      "generationId": "40b706036f511e37d51674292daca3ab2dfa54c8eb0ba91dfd773ed62fec998e"
+      "pass": true
     },
     {
       "name": "startup-red all 72 native Canvas pixels",
-      "pass": true,
-      "rgba": {
-        "label": "startup-red",
-        "width": 12,
-        "height": 6,
-        "path": "verification/startup-red.rgba",
-        "bytes": 288,
-        "sha256": "1f385bab970a91686d941b6f5cddaa7b4bcdee23aa479a9627c37c225e393810"
-      }
+      "pass": true
     },
     {
       "name": "advanced-green all 72 native Canvas pixels",
-      "pass": true,
-      "rgba": {
-        "label": "advanced-green",
-        "width": 12,
-        "height": 6,
-        "path": "verification/advanced-green.rgba",
-        "bytes": 288,
-        "sha256": "1de153a02e482afcc31f17434feaf66a29e0016620c04dd4297eec95cf34c791"
-      }
+      "pass": true
     },
     {
       "name": "completed-green all 72 native Canvas pixels",
-      "pass": true,
-      "rgba": {
-        "label": "completed-green",
-        "width": 12,
-        "height": 6,
-        "path": "verification/completed-green.rgba",
-        "bytes": 288,
-        "sha256": "1de153a02e482afcc31f17434feaf66a29e0016620c04dd4297eec95cf34c791"
-      }
+      "pass": true
+    },
+    {
+      "name": "failed-replacement-keeps-green all 72 native Canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "actual bad metadata bytes refuse without replacing usable generation",
+      "pass": true
+    },
+    {
+      "name": "cancelled-replacement-keeps-green all 72 native Canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "actual pending HTTP cancellation rejects late generation and drains",
+      "pass": true
+    },
+    {
+      "name": "replacement-starts-green all 72 native Canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "replacement-advances-red all 72 native Canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "replacement-completes-red all 72 native Canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "same logical IDs select coherent newly built generation",
+      "pass": true
     },
     {
       "name": "native public ownership cleanup and zero outstanding counters",
-      "pass": true,
-      "retirement": {
-        "animationScope": "closed",
-        "displayScope": "closed",
-        "dataScope": "closed",
-        "controller": true,
-        "sheet": true,
-        "bitmap": true,
-        "other": true,
-        "textures": [
-          true,
-          true
-        ],
-        "sourceClosed": true,
-        "providerClosed": true,
-        "clock": "closed"
-      },
-      "source": {
-        "current": {
-          "jobs": 0,
-          "queuedNetwork": 0,
-          "queuedDecode": 0,
-          "retryWaiting": 0,
-          "activeNetwork": 0,
-          "activeDecode": 0,
-          "encodedCreditBytes": 0,
-          "ownedEncodedBytes": 0,
-          "borrowedChunkBytes": 0,
-          "quarantinedJobs": 0
-        },
-        "highWater": {
-          "jobs": 2,
-          "queuedNetwork": 1,
-          "queuedDecode": 1,
-          "retryWaiting": 0,
-          "activeNetwork": 2,
-          "activeDecode": 2,
-          "encodedCreditBytes": 1508,
-          "ownedEncodedBytes": 684,
-          "borrowedChunkBytes": 684,
-          "quarantinedJobs": 0
-        },
-        "saturated": false
-      },
-      "provider": {
-        "current": {
-          "jobs": 0,
-          "encodedCreditBytes": 0,
-          "ownedEncodedBytes": 0,
-          "blobLogicalBytes": 0,
-          "activeDecodes": 0,
-          "bitmapLogicalBytes": 0,
-          "rasterLogicalBytes": 0,
-          "readbackCpuBytes": 0,
-          "materializedCpuBytes": 0,
-          "quarantinedJobs": 0,
-          "unknownNativeObjects": 0
-        },
-        "highWater": {
-          "jobs": 2,
-          "encodedCreditBytes": 144,
-          "ownedEncodedBytes": 144,
-          "blobLogicalBytes": 144,
-          "activeDecodes": 2,
-          "bitmapLogicalBytes": 8,
-          "rasterLogicalBytes": 8,
-          "readbackCpuBytes": 8,
-          "materializedCpuBytes": 8,
-          "quarantinedJobs": 0,
-          "unknownNativeObjects": 0
-        },
-        "saturated": false
-      }
+      "pass": true
+    }
+  ],
+  "rawFrames": [
+    {
+      "label": "startup-red",
+      "width": 12,
+      "height": 6,
+      "bytes": 288,
+      "sha256": "1f385bab970a91686d941b6f5cddaa7b4bcdee23aa479a9627c37c225e393810",
+      "path": "verification/startup-red.rgba"
+    },
+    {
+      "label": "advanced-green",
+      "width": 12,
+      "height": 6,
+      "bytes": 288,
+      "sha256": "1de153a02e482afcc31f17434feaf66a29e0016620c04dd4297eec95cf34c791",
+      "path": "verification/advanced-green.rgba"
+    },
+    {
+      "label": "completed-green",
+      "width": 12,
+      "height": 6,
+      "bytes": 288,
+      "sha256": "1de153a02e482afcc31f17434feaf66a29e0016620c04dd4297eec95cf34c791",
+      "path": "verification/completed-green.rgba"
+    },
+    {
+      "label": "failed-replacement-keeps-green",
+      "width": 12,
+      "height": 6,
+      "bytes": 288,
+      "sha256": "1de153a02e482afcc31f17434feaf66a29e0016620c04dd4297eec95cf34c791",
+      "path": "verification/failed-replacement-keeps-green.rgba"
+    },
+    {
+      "label": "cancelled-replacement-keeps-green",
+      "width": 12,
+      "height": 6,
+      "bytes": 288,
+      "sha256": "1de153a02e482afcc31f17434feaf66a29e0016620c04dd4297eec95cf34c791",
+      "path": "verification/cancelled-replacement-keeps-green.rgba"
+    },
+    {
+      "label": "replacement-starts-green",
+      "width": 12,
+      "height": 6,
+      "bytes": 288,
+      "sha256": "1de153a02e482afcc31f17434feaf66a29e0016620c04dd4297eec95cf34c791",
+      "path": "verification/replacement-starts-green.rgba"
+    },
+    {
+      "label": "replacement-advances-red",
+      "width": 12,
+      "height": 6,
+      "bytes": 288,
+      "sha256": "1f385bab970a91686d941b6f5cddaa7b4bcdee23aa479a9627c37c225e393810",
+      "path": "verification/replacement-advances-red.rgba"
+    },
+    {
+      "label": "replacement-completes-red",
+      "width": 12,
+      "height": 6,
+      "bytes": 288,
+      "sha256": "1f385bab970a91686d941b6f5cddaa7b4bcdee23aa479a9627c37c225e393810",
+      "path": "verification/replacement-completes-red.rgba"
     }
   ],
   "cleanup": {
@@ -144,5 +147,161 @@
     "browser": true,
     "server": true
   },
-  "errors": []
+  "snapshotIntegrity": true,
+  "sourceIntegrity": true,
+  "negativeBrowserCase": true,
+  "sourceFreeze": {
+    "files": 246,
+    "bytes": 1538008
+  },
+  "historicalSummaries": [
+    {
+      "format": "egret.content-build-browser-summary/1",
+      "scope": "Public projection of an actual local browser collection; not its raw receipt. No physical-device, exporter, performance or full M2.1 qualification.",
+      "rawReceiptSha256": "813f50931a5c7965886ebe57af2be91ce1970b800e7fbd2721c0d9df6fb96bb2",
+      "startedAt": "2026-10-23T13:32:56.498Z",
+      "environment": {
+        "node": "v26.7.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "playwright": "1.62.1",
+        "channel": "msedge",
+        "headless": true,
+        "extraFlags": [],
+        "viewport": {
+          "width": 900,
+          "height": 700
+        },
+        "deviceScaleFactor": 1,
+        "physicalDevice": false,
+        "browser": "155.0.4283.62"
+      },
+      "checks": [
+        {
+          "name": "real generated candidate, exact four resources and pinned bytes",
+          "pass": true,
+          "generationId": "40b706036f511e37d51674292daca3ab2dfa54c8eb0ba91dfd773ed62fec998e"
+        },
+        {
+          "name": "startup-red all 72 native Canvas pixels",
+          "pass": true,
+          "rgba": {
+            "label": "startup-red",
+            "width": 12,
+            "height": 6,
+            "path": "verification/startup-red.rgba",
+            "bytes": 288,
+            "sha256": "1f385bab970a91686d941b6f5cddaa7b4bcdee23aa479a9627c37c225e393810"
+          }
+        },
+        {
+          "name": "advanced-green all 72 native Canvas pixels",
+          "pass": true,
+          "rgba": {
+            "label": "advanced-green",
+            "width": 12,
+            "height": 6,
+            "path": "verification/advanced-green.rgba",
+            "bytes": 288,
+            "sha256": "1de153a02e482afcc31f17434feaf66a29e0016620c04dd4297eec95cf34c791"
+          }
+        },
+        {
+          "name": "completed-green all 72 native Canvas pixels",
+          "pass": true,
+          "rgba": {
+            "label": "completed-green",
+            "width": 12,
+            "height": 6,
+            "path": "verification/completed-green.rgba",
+            "bytes": 288,
+            "sha256": "1de153a02e482afcc31f17434feaf66a29e0016620c04dd4297eec95cf34c791"
+          }
+        },
+        {
+          "name": "native public ownership cleanup and zero outstanding counters",
+          "pass": true,
+          "retirement": {
+            "animationScope": "closed",
+            "displayScope": "closed",
+            "dataScope": "closed",
+            "controller": true,
+            "sheet": true,
+            "bitmap": true,
+            "other": true,
+            "textures": [
+              true,
+              true
+            ],
+            "sourceClosed": true,
+            "providerClosed": true,
+            "clock": "closed"
+          },
+          "source": {
+            "current": {
+              "jobs": 0,
+              "queuedNetwork": 0,
+              "queuedDecode": 0,
+              "retryWaiting": 0,
+              "activeNetwork": 0,
+              "activeDecode": 0,
+              "encodedCreditBytes": 0,
+              "ownedEncodedBytes": 0,
+              "borrowedChunkBytes": 0,
+              "quarantinedJobs": 0
+            },
+            "highWater": {
+              "jobs": 2,
+              "queuedNetwork": 1,
+              "queuedDecode": 1,
+              "retryWaiting": 0,
+              "activeNetwork": 2,
+              "activeDecode": 2,
+              "encodedCreditBytes": 1508,
+              "ownedEncodedBytes": 684,
+              "borrowedChunkBytes": 684,
+              "quarantinedJobs": 0
+            },
+            "saturated": false
+          },
+          "provider": {
+            "current": {
+              "jobs": 0,
+              "encodedCreditBytes": 0,
+              "ownedEncodedBytes": 0,
+              "blobLogicalBytes": 0,
+              "activeDecodes": 0,
+              "bitmapLogicalBytes": 0,
+              "rasterLogicalBytes": 0,
+              "readbackCpuBytes": 0,
+              "materializedCpuBytes": 0,
+              "quarantinedJobs": 0,
+              "unknownNativeObjects": 0
+            },
+            "highWater": {
+              "jobs": 2,
+              "encodedCreditBytes": 144,
+              "ownedEncodedBytes": 144,
+              "blobLogicalBytes": 144,
+              "activeDecodes": 2,
+              "bitmapLogicalBytes": 8,
+              "rasterLogicalBytes": 8,
+              "readbackCpuBytes": 8,
+              "materializedCpuBytes": 8,
+              "quarantinedJobs": 0,
+              "unknownNativeObjects": 0
+            },
+            "saturated": false
+          }
+        }
+      ],
+      "cleanup": {
+        "application": true,
+        "context": true,
+        "browser": true,
+        "server": true
+      },
+      "errors": []
+    }
+  ]
 }

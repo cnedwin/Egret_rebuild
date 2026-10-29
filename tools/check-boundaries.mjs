@@ -22,6 +22,15 @@ function files(dir) {
 }
 // M15: exact named metadata port and one private browser bridge. No deep-path wildcard.
 const m15DeepClauses = {
+  // M2.1: bounded content assembly and public, explicit browser composition only.
+  "packages/engine/src/contentLoader.ts": [{operation:'import',kind:'value',members:['isAdmittedResourceManifest'],target:'@egret/contracts/resources'},{operation:'import',kind:'type',members:['AdmittedResourceManifest','ResourceManifestEntry'],target:'@egret/contracts/resources'}],
+  "packages/engine/dist/contentLoader.js": [{operation:'import',kind:'value',members:['isAdmittedResourceManifest'],target:'@egret/contracts/resources'}],
+  "packages/engine/dist/contentLoader.d.ts": [{operation:'import',kind:'type',members:['AdmittedResourceManifest'],target:'@egret/contracts/resources'}],
+  "packages/engine/src/internal/contentFactoryState.ts": [{operation:'import',kind:'type',members:['AdmittedResourceManifest'],target:'@egret/contracts/resources'}],
+  "packages/engine/dist/internal/contentFactoryState.d.ts": [{operation:'import',kind:'type',members:['AdmittedResourceManifest'],target:'@egret/contracts/resources'}],
+  "packages/engine/web/resources.ts": [{operation:'import',kind:'type',members:['Engine'],target:'@egret/engine'},{operation:'import',kind:'value',members:['createContentLoader'],target:'@egret/engine/resources'},{operation:'import',kind:'type',members:['ContentGroup','ContentLoader','ManifestGroupOptions'],target:'@egret/engine/resources'},{operation:'import',kind:'type',members:['AdmittedResourceManifest'],target:'@egret/contracts/resources'}],
+  "packages/engine/dist/web/resources.js": [{operation:'import',kind:'value',members:['createContentLoader'],target:'@egret/engine/resources'}],
+  "packages/engine/dist/web/resources.d.ts": [{operation:'import',kind:'type',members:['Engine'],target:'@egret/engine'},{operation:'import',kind:'type',members:['ContentLoader'],target:'@egret/engine/resources'},{operation:'import',kind:'type',members:['AdmittedResourceManifest'],target:'@egret/contracts/resources'}],
   // M3.1: exact optional UI value and erased assembly clauses only.
   "packages/engine/src/internal/uiFactoryState.ts": [{"operation":"import","kind":"type","members":["createUiDisplayOperations","UiDisplayOperations"],"target":"@egret/runtime/ui"}],
   "packages/engine/dist/internal/uiFactoryState.d.ts": [{"operation":"import","kind":"type","members":["createUiDisplayOperations","UiDisplayOperations"],"target":"@egret/runtime/ui"}],
@@ -33,13 +42,31 @@ const m15DeepClauses = {
   "packages/project/src/resources/content.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceBuildPlanDescription","ResourceBuildSourceEntry","ResourceManifestResult"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["buildResourceManifest","evaluateResourceBuildKeys","validateResourceBuildPlanDescription"],"target":"@egret/contracts/resources"}],
   "packages/project/dist/resources/content.js": [{"operation":"import","kind":"value","members":["buildResourceManifest","evaluateResourceBuildKeys","validateResourceBuildPlanDescription"],"target":"@egret/contracts/resources"}],
   "packages/project/dist/resources/content.d.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceBuildPlanDescription"],"target":"@egret/contracts/resources"}],
-  "packages/engine/dist/Engine.d.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+  "packages/engine/dist/Engine.d.ts": [
+    {
+      "operation": "import",
+      "kind": "type",
+      "members": [
+        "AdmittedResourceManifest"
+      ],
+      "target": "@egret/contracts/resources"
+    }
+  ],
   "packages/engine/dist/manifestAssetGroup.js": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
   "packages/engine/dist/manifestResourceState.d.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"}],
   "packages/engine/dist/manifestResourceState.js": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
   "packages/engine/dist/web/ManifestByteSource.d.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["ManifestBinding"],"target":"#egret-manifest-resources"}],
   "packages/engine/dist/web/ManifestByteSource.js": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["requireManifestBinding","requireManifestAssetRef"],"target":"#egret-manifest-resources"}],
-  "packages/engine/src/Engine.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+  "packages/engine/src/Engine.ts": [
+    {
+      "operation": "import",
+      "kind": "type",
+      "members": [
+        "AdmittedResourceManifest"
+      ],
+      "target": "@egret/contracts/resources"
+    }
+  ],
   "packages/engine/src/manifestAssetGroup.ts": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"}],
   "packages/engine/src/manifestResourceState.ts": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"}],
   "packages/engine/web/ManifestByteSource.ts": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["requireManifestBinding","requireManifestAssetRef"],"target":"#egret-manifest-resources"},{"operation":"import","kind":"type","members":["ManifestBinding"],"target":"#egret-manifest-resources"}],
@@ -139,7 +166,7 @@ for (const [name, allowed] of Object.entries(expected)) {
           const providerBarrel=['web/text.ts','dist/web/text.js','dist/web/text.d.ts'].includes(relative);
           if ((providerTarget && !providerBarrel) || ['web/text.js','dist/web/text.js'].includes(target)) throw new Error(`${file}: Canvas text opt-in module imported outside its barrel`);
         }
-      } else if (imported === '@egret/contracts/resources' || imported === '#egret-manifest-resources' || imported === '@egret/runtime/ui') {
+      } else if (['@egret/contracts/resources','#egret-manifest-resources','@egret/runtime/ui','@egret/engine/resources','@egret/engine'].includes(imported)) {
         const relative=path.relative(root,file).split(path.sep).join('/');
         const clause=code.slice(0,match.index).match(/\b(import|export)(\s+type)?\s*\{([^{}]+)\}\s*$/);
         const row=clause && {operation:clause[1],kind:clause[2]?'type':'value',members:clause[3].split(',').map(member=>member.trim().replace(/\s+/g,' ')).filter(Boolean),target:imported};
@@ -3806,6 +3833,18 @@ const m13SharedRenderingLiteralClosure = {
 // M15 semantic successor: named source/emission/declaration import multisets only.
 // Historical S3D1/M13/M14 tables above remain byte-identical; no raw whole-graph pin is renewed.
 const m15ResourceRecoveryLiteralClosure = {
+  "packages/engine/src/contentTypes.ts": [["static","./manifestResourceTypes.js"],["static","@egret/runtime"]],
+  "packages/engine/dist/contentTypes.js": [],
+  "packages/engine/dist/contentTypes.d.ts": [["static","./manifestResourceTypes.js"],["static","@egret/runtime"]],
+  "packages/engine/src/contentArtifacts.ts": [["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/contentArtifacts.js": [["static","@egret/runtime"]],
+  "packages/engine/dist/contentArtifacts.d.ts": [["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/src/contentLoader.ts": [["static","./contentArtifacts.js"],["static","./contentArtifacts.js"],["static","./contentTypes.js"],["static","./Engine.js"],["static","./internal/contentFactoryState.js"],["static","./manifestResourceState.js"],["static","./manifestResourceTypes.js"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/contentLoader.js": [["static","./contentArtifacts.js"],["static","./internal/contentFactoryState.js"],["static","./manifestResourceState.js"],["static","@egret/contracts/resources"],["static","@egret/runtime"]],
+  "packages/engine/dist/contentLoader.d.ts": [["static","./contentTypes.js"],["static","./Engine.js"],["static","@egret/contracts/resources"]],
+  "packages/engine/src/internal/contentFactoryState.ts": [["static","../manifestResourceTypes.js"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/internal/contentFactoryState.js": [["static","@egret/runtime"]],
+  "packages/engine/dist/internal/contentFactoryState.d.ts": [["static","../manifestResourceTypes.js"],["static","@egret/contracts/resources"],["static","@egret/runtime"]],
   "packages/contracts/src/ResourceManifest.ts": [["static","./ProjectFormat.generated.js"]],
   "packages/contracts/dist/ResourceManifest.js": [],
   "packages/contracts/dist/ResourceManifest.d.ts": [["static","./ProjectFormat.generated.js"]],
@@ -3827,9 +3866,9 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/project/src/resources/manifest.ts": [["static","../api.js"],["static","../diagnostics.js"],["static","../limits.js"],["static","../public.js"],["static","../text-input.js"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"]],
   "packages/project/dist/resources/manifest.js": [["static","../api.js"],["static","../diagnostics.js"],["static","../limits.js"],["static","../text-input.js"],["static","@egret/contracts/resources"]],
   "packages/project/dist/resources/manifest.d.ts": [["static","../public.js"],["static","@egret/contracts"],["static","@egret/contracts/resources"]],
-  "packages/engine/src/resources.ts": [["static","./manifestResourceState.js"],["static","./manifestResourceTypes.js"]],
-  "packages/engine/dist/resources.js": [["static","./manifestResourceState.js"]],
-  "packages/engine/dist/resources.d.ts": [["static","./manifestResourceState.js"],["static","./manifestResourceTypes.js"]],
+  "packages/engine/src/resources.ts": [["static","./contentLoader.js"],["static","./contentTypes.js"],["static","./manifestResourceState.js"],["static","./manifestResourceTypes.js"]],
+  "packages/engine/dist/resources.js": [["static","./contentLoader.js"],["static","./manifestResourceState.js"]],
+  "packages/engine/dist/resources.d.ts": [["static","./contentLoader.js"],["static","./contentTypes.js"],["static","./manifestResourceState.js"],["static","./manifestResourceTypes.js"]],
   "packages/engine/src/manifestResourceTypes.ts": [["static","@egret/runtime"]],
   "packages/engine/dist/manifestResourceTypes.js": [],
   "packages/engine/dist/manifestResourceTypes.d.ts": [["static","@egret/runtime"]],
@@ -3845,9 +3884,9 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/engine/src/bitmapBindingTicket.ts": [["static","@egret/runtime"],["static","@egret/runtime"]],
   "packages/engine/dist/bitmapBindingTicket.js": [["static","@egret/runtime"]],
   "packages/engine/dist/bitmapBindingTicket.d.ts": [["static","@egret/runtime"],["static","@egret/runtime"]],
-  "packages/engine/web/resources.ts": [["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","@egret/runtime"]],
-  "packages/engine/dist/web/resources.js": [["static","./BrowserTextureProvider.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","@egret/runtime"]],
-  "packages/engine/dist/web/resources.d.ts": [["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"]],
+  "packages/engine/web/resources.ts": [["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","@egret/contracts/resources"],["static","@egret/engine"],["static","@egret/engine/resources"],["static","@egret/engine/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/web/resources.js": [["static","./BrowserTextureProvider.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","@egret/engine/resources"],["static","@egret/runtime"]],
+  "packages/engine/dist/web/resources.d.ts": [["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","@egret/contracts/resources"],["static","@egret/engine"],["static","@egret/engine/resources"]],
   "packages/engine/web/ManifestByteSource.ts": [["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","#egret-manifest-resources"],["static","#egret-manifest-resources"]],
   "packages/engine/dist/web/ManifestByteSource.js": [["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","#egret-manifest-resources"]],
   "packages/engine/dist/web/ManifestByteSource.d.ts": [["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","#egret-manifest-resources"]],
@@ -4036,6 +4075,10 @@ const m22SequenceLiteralClosure = {
     ],
     [
       "static",
+      "./internal/contentFactoryState.js"
+    ],
+    [
+      "static",
       "./internal/sequenceControllerFactoryState.js"
     ],
     [
@@ -4163,6 +4206,10 @@ const m22SequenceLiteralClosure = {
     [
       "static",
       "./gameClock.js"
+    ],
+    [
+      "static",
+      "./internal/contentFactoryState.js"
     ],
     [
       "static",
@@ -4900,14 +4947,19 @@ const m15ResourceSurfaces = [
       './content.js':{value:['describeContentRecipes','bindContentArtifacts','createContentAdoption'],type:['ContentProducer','ContentOutputFile','ContentOutput','ContentBoundOutput','ContentArtifactBinding','ContentAdoptionOptions']},
       '@egret/contracts/resources':{type:['ResourceBuildPlanDescription','ResourceBuildDescription','ResourceBuildEntry','ResourceManifestEntry','AdmittedResourceManifest']}}],
   ['engine/resources','packages/engine/src/resources.ts','packages/engine/dist/resources',
-    ['createManifestAssetBinding'],['ManifestBinding','ManifestAssetBinding','ManifestAssetGroup','ManifestGroupOptions'],
+    ['createManifestAssetBinding','createContentLoader'],['ManifestBinding','ManifestAssetBinding','ManifestAssetGroup','ManifestGroupOptions','ContentBinding','ContentProviders','ContentProviderFactory','ContentGroup','ContentLoader'],
     {'./manifestResourceState.js':{value:['createManifestAssetBinding']},
+      './contentLoader.js':{value:['createContentLoader']},
+      './contentTypes.js':{type:['ContentBinding','ContentProviders','ContentProviderFactory','ContentGroup','ContentLoader']},
       './manifestResourceTypes.js':{type:['ManifestBinding','ManifestAssetBinding','ManifestAssetGroup','ManifestGroupOptions']}}],
   ['engine/web/resources','packages/engine/web/resources.ts','packages/engine/dist/web/resources',
-    ['createManifestByteSource','createManifestTextureProvider'],['ManifestByteSource','ManifestByteSourceOptions','ManifestByteSourceStatus','ManifestTextureProvider','ManifestTextureProviderStatus','ManifestTextureProviderOptions'],
+    ['createManifestByteSource','createManifestTextureProvider','createManifestContentLoader'],['ManifestByteSource','ManifestByteSourceOptions','ManifestByteSourceStatus','ManifestTextureProvider','ManifestTextureProviderStatus','ManifestTextureProviderOptions','ManifestContentLoader'],
     {'./ManifestByteSource.js':{value:['requireManifestByteSource','createManifestByteSource'],type:['ManifestByteSource','ManifestByteSourceOptions','ManifestByteSourceStatus']},
       './BrowserTextureProvider.js':{value:['createManifestPngTextureProvider'],type:['BrowserPngPorts','ManifestTextureProvider','ManifestTextureProviderStatus']},
-      '@egret/runtime':{value:['EgretError']}}],
+      '@egret/runtime':{value:['EgretError'],type:['Scope']},
+      '@egret/engine':{type:['Engine']},
+      '@egret/engine/resources':{value:['createContentLoader'],type:['ContentGroup','ContentLoader','ManifestGroupOptions']},
+      '@egret/contracts/resources':{type:['AdmittedResourceManifest']}}],
 ];
 for (const [entry,source,stem,values,types,rules] of m15ResourceSurfaces) {
   const namespace=m15ResourceEntries.find(row=>row[0]===entry)[1];
@@ -4938,7 +4990,7 @@ for (const [entry,source,stem,values,types,rules] of m15ResourceSurfaces) {
 // Whole-clause multiplicity is independent of the generic per-edge admission.
 for (const [file,expectedClauses] of Object.entries(m15DeepClauses)) {
   const code=sceneRead(file);
-  const actual=[...code.matchAll(/\b(import|export)(\s+type)?\s*\{([^}]+)\}\s*from\s*['"](@egret\/contracts\/resources|#egret-manifest-resources|@egret\/runtime\/ui)['"]/g)]
+  const actual=[...code.matchAll(/\b(import|export)(\s+type)?\s*\{([^}]+)\}\s*from\s*['"](@egret\/contracts\/resources|#egret-manifest-resources|@egret\/runtime\/ui|@egret\/engine\/resources|@egret\/engine)['"]/g)]
     .map(match=>({operation:match[1],kind:match[2]?'type':'value',members:match[3].split(',').map(member=>member.trim().replace(/\s+/g,' ')).filter(Boolean),target:match[4]}));
   if (!sceneEqual(actual.map(m15ClauseKey),expectedClauses.map(m15ClauseKey)))
     throw new Error('M15: exact named resource clause mismatch: '+file);
@@ -4953,7 +5005,8 @@ for (const file of Object.keys(m15ResourceRecoveryLiteralClosure).filter(file=>
 }
 const m15ErasedLeaves = [
   ['packages/contracts/src/ResourceManifest.ts','packages/contracts/dist/ResourceManifest',m15ResourceSurfaces[0][4]],
-  ['packages/engine/src/manifestResourceTypes.ts','packages/engine/dist/manifestResourceTypes',m15ResourceSurfaces[2][4]],
+  ['packages/engine/src/manifestResourceTypes.ts','packages/engine/dist/manifestResourceTypes',['ManifestBinding','ManifestAssetBinding','ManifestAssetGroup','ManifestGroupOptions']],
+  ['packages/engine/src/contentTypes.ts','packages/engine/dist/contentTypes',['ContentBinding','ContentProviders','ContentProviderFactory','ContentGroup','ContentLoader']],
   ['packages/engine/web/sharedDeviceSession.ts','packages/engine/dist/web/sharedDeviceSession',m15SessionTypes],
   ['packages/engine/web/sharedFrameUpload.ts','packages/engine/dist/web/sharedFrameUpload',m15UploadTypes],
 ];
