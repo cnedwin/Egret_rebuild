@@ -25,9 +25,9 @@ Years later, as times change and technology advances, many developers continue t
 
 ## UI 中的只读段落 SDK
 
-可选[只读段落 SDK](knowledge-base/Cns/docs/readonly-paragraph-sdk.md)根据明确字体字节排版中英阿文字，将自然/最小行高用于普通 UI 和虚拟列表。运行[集成示例](examples/paragraph-panel/README.zh-CN.md)，可观察宽度、字号、显示密度以及原子内容替换。M3.2 完整验收、软换行最终双向 L1、编辑与输入法、真机和性能仍未完成。
+可选[只读段落 SDK](knowledge-base/Cns/docs/readonly-paragraph-sdk.md)根据明确字体字节排版中英阿文字，将自然/最小行高用于普通 UI 和虚拟列表。运行[集成示例](examples/paragraph-panel/README.zh-CN.md)，可观察宽度、字号、显示密度以及原子内容替换。最终行双向 L1／L2 已集成并通过有限原生／浏览器检查；M3.2 完整验收、编辑与输入法、真机和性能仍未完成。
 
-The optional [readonly paragraph SDK](knowledge-base/en/docs/readonly-paragraph-sdk.md) now drives wrapping and line height inside ordinary UI and virtual lists. Full M3.2, final soft-line bidi L1, editing/IME, physical devices and performance remain open.
+The optional [readonly paragraph SDK](knowledge-base/en/docs/readonly-paragraph-sdk.md) now drives wrapping and line height inside ordinary UI and virtual lists. Final-line bidi L1/L2 is integrated with finite native/browser checks; full M3.2, editing/IME, physical devices and performance remain open.
 
 ## M2.2 序列帧控制
 
@@ -125,6 +125,7 @@ M1.1 已通过 [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) 合并
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| Final-line bidi / 最终行双向排版 · 2026-10-29 | Native line L1/L2 after wrapping; shared glyph/rect/hit order and sequential trailing-space geometry | 换行后原生行 L1／L2，字形／矩形／命中共享顺序，尾空格依次定位 |
 | Readonly paragraphs / 只读段落 · 2026-10-29 | Width-based Latin/CJK/Arabic paragraph layout, natural/minimum line height, ordinary UI and variable-height list integration | 明确字体的中英阿文字自动换行、自然/最小行高，接入普通 UI 与动态高度列表 |
 | M2.1 runtime integration / 运行时接入 · 2026-10-29 | Typed PNG/atlas/sequence groups reuse existing resources and lifetimes; complete readiness, cancellation and explicit generation replacement | PNG／图集／序列帧类型化组复用原资源与生命周期，支持完整就绪、取消及显式代际替换 |
 | M1.5 delivered / 已交付 · 2026-10-21 | Resource manifests, shared resource loading and device recovery delivered through [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79); formal M1.2 performance remains open | 资源清单、共享资源加载与设备恢复通过 [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) 交付；M1.2 正式性能仍开放 |

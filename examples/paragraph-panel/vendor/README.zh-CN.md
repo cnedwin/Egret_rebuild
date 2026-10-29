@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-本目录使仓库中的 paragraph-panel 示例具备可直接运行的资源。SDK 提供器自身不会联网，也不会自动导入这些资源。应用显式加载 `runtime/canvaskit.js`，通过 `locateFile` 指向 `runtime/canvaskit.wasm` 后调用 `CanvasKitInit`，读取选定字体，再把模块实例和字体字节交给 `createCanvasKitParagraphProvider`。适配器的 `buildIdentity` 应使用 `manifest.runtime.buildIdentity`。提供器身份还包含全部已注册 family 和宿主声明的字体身份；该身份声明本身不等于重新计算哈希。
+本目录使仓库中的 paragraph-panel 示例具备可直接运行的资源。SDK 提供器自身不会联网，也不会自动导入这些资源。应用显式加载 `runtime/line-bidi-r1/canvaskit.js`，通过 `locateFile` 指向 `runtime/line-bidi-r1/canvaskit.wasm` 后调用 `CanvasKitInit`，读取选定字体，再把模块实例和字体字节交给 `createCanvasKitParagraphProvider`。适配器的 `buildIdentity` 应使用 `manifest.runtime.buildIdentity`。提供器身份还包含全部已注册 family 和宿主声明的字体身份；该身份声明本身不等于重新计算哈希。
 
 ## 运行时与字体身份
 
@@ -11,11 +11,11 @@
 | 可选浏览器资源 | 原始字节 |
 | --- | ---: |
 | CanvasKit glue | 96,090 |
-| CPU Wasm | 8,584,562 |
+| CPU Wasm | 8,600,088 |
 | Noto Sans Regular | 569,208 |
 | Noto Sans Arabic Regular | 142,140 |
 | Noto Sans CJK SC Regular | 16,437,364 |
-| 运行时与三个字体合计 | 25,829,364 |
+| 运行时与三个字体合计 | 25,844,890 |
 
 三个字体都是未经子集化的完整原件。以上原始字节数不证明压缩传输量、启动速度、存活/物理内存或设备性能。`source/icudtl.dat` 是额外的 3,089,888 字节重建输入；它已经嵌入 Wasm，浏览器不会单独加载。Wasm 声明初始线性内存 32 MiB、最大 64 MiB，该声明不等于存活分配或物理内存测量。
 
@@ -25,7 +25,7 @@
 
 合并后的 provider identity 最多为 8,192 code units。提供器限制为最多 16 个注册 family、合计 32 MiB 原始字体字节；family 名称最多 256 code units，宿主字体/build 身份最多 512 code units，locale 最多 64 code units；逻辑宽度为 0.25 至 4,096，字号为 1 至 512，最小行高为 1 至 1,024，density 为 0.25 至 4。栅格继续遵守既有 ImageData2D 上限：单边最多 4,096 像素，总计最多 1,048,576 像素。超大图像、非法文本、请求未注册字体或缺失字形均会拒绝。本例不宣称系统字体发现、原生编辑、富文本 spans、emoji、Indic、可变字体或字体集合范围。locale 会传给固定实现，但嵌入的数据子集不证明完整 ICU locale 服务。
 
-**最终软换行的逐行 L1 仍为 OPEN。** 固定候选在塑形前调用 Sheen 的完整 P1 行接口，而 SkParagraph 的真实最终行排序仍使用 run levels。因此，混合方向软换行的逐行 reset/order 与尾随空白几何仍存在未解决边界。本例的 Latin、Han 与 Arabic 文本只是有限演示，不代表完整 Unicode 段落验收。独立字形/墨迹参考、浏览器/设备覆盖、内存/OOM 恢复和性能保持单独验收。提供器属于应用；应用应在借用它的缓存与显示资源退场后显式 dispose。
+**最终软换行后的 L1／L2 已集成。** 原生行接口使用完整 P1 上下文及实际行范围，绘制、几何与命中共享 canonical 最终片段。有限验证与剩余边界见[行契约](../../../knowledge-base/Cns/docs/paragraph-line-bidi.md)。完整 Unicode、独立字形／墨迹参考、未列出文字及字体、IME、设备、内存／OOM 和性能仍需分别验收。应用在借用缓存及显示资源退役后负责释放 provider。
 
 ## 第三方归属与原始通知
 
@@ -44,3 +44,5 @@ Noto Sans、Noto Sans Arabic 与 Noto Sans CJK SC 保留原始 OFL、字体内�
 保留的补丁依次为 `source/patches/00-canvaskit-memory.diff`，再按顺序应用 `01-bridge.patch` 至 `07-sheen-comparison.patch`。每个补丁都依赖前一个准确源状态，不能把最终 Sheen 补丁单独用于干净上游 Skia。将准确的 `source/icudtl.dat` 放在 `third_party/externals/icu/flutter/icudtl.dat`。该 strict 数据子集保留 ICU 原始 payload，并修改 root/ja 的 break-resource 映射；其 SHA-256 表示经审查的构建输入身份，不是新增运行时 getter。
 
 `source/args.gn` 是冻结 CPU 配置的可移植投影；构建宿主须把 `EMSDK` 指向本机 Emscripten SDK 目录。记录的工具链为 Emscripten 4.0.7、clang/LLD revision `57025b42c43b2f14f7e58692bc19cd53d1b8a45e`、GN `b2afae122eeb`、Ninja 1.12.1、SDK Node 20.18.0 和 Closure Compiler v20240317。保留选定依赖、CPU-only 选项、嵌入 ICU 服务及 32/64 MiB 声明；使用所列 args 配置 CanvasKit target，再由 Ninja 构建 `canvaskit.js`。本包提供补丁、数据与配置身份供审查，尚未进行干净机器重放或逐字节一致重建。任何重建产物都须经过独立哈希与运行时/浏览器检查，再替换 manifest 固定的资源。
+
+当前运行库在 00–07 之后追加 `source/patches/08-final-line-bidi.patch`，仅加载 `runtime/line-bidi-r1/`。旧运行库与补丁字节保持不变，用于来源记录及回归比较。

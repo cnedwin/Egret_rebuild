@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Final-line bidirectional layout — 2026-10-29
+
+The optional paragraph runtime now applies native line-specific L1/L2 after wrapping, with canonical glyph storage shared by paint, geometry and hit queries. Finite native and actual-browser checks cover reset spaces, control slots and width restoration; full M3.2 and device/performance acceptance remain open. See the [line contract](docs/paragraph-line-bidi.md).
+
 ## M2.2 sequence controls — 2026-10-23
 
 The optional animation entry adds rate, finite total plays, ordered markers and explicit silent/replaying seek, sharing the existing clock and resource ownership. Legacy and new playback cannot simultaneously claim the same Bitmap. See the [sequence-control contract](docs/sequence-controls.md). Complete Spine and M2.2 acceptance remain open.

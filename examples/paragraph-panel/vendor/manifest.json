@@ -1,10 +1,10 @@
 {
   "schema": "egret.optional-paragraph-vendor/1",
-  "profile": "readonly-paragraph-v1",
+  "profile": "readonly-paragraph-line-bidi-v2",
   "defaultSdkRuntimeDependency": false,
   "automaticNetworkAccess": false,
   "runtime": {
-    "buildIdentity": "skia-e2def78-sheen-cfe430e-icu78.2-32-64-r0",
+    "buildIdentity": "skia-e2def78-sheen-cfe430e-icu78.2-32-64-r0-line-bidi-r1",
     "upstream": {
       "repository": "https://skia.googlesource.com/skia",
       "revision": "e2def78fa232884d4aedcf3ad92d4a0dd673b898"
@@ -23,7 +23,10 @@
     "maximumLinearMemoryBytes": 67108864,
     "loader": "CanvasKitInit({ locateFile })",
     "sourceRebuildFromCleanCheckoutObserved": false,
-    "finalSoftWrappedLineL1Integrated": false
+    "finalSoftWrappedLineL1Integrated": true,
+    "glue": "runtime/line-bidi-r1/canvaskit.js",
+    "wasm": "runtime/line-bidi-r1/canvaskit.wasm",
+    "lineBidiImplementation": "Stock SheenBidi actual-line API over retained complete P1 context; canonical SkParagraph glyph storage with separate final-line levels."
   },
   "fonts": [
     {
@@ -118,7 +121,7 @@
     }
   ],
   "payloadBytes": {
-    "runtime": 8680652,
+    "runtime": 8696178,
     "fonts": 17148712,
     "sourceData": 3089888
   },
@@ -132,7 +135,7 @@
     "indicNotAdvertised": true,
     "fontsAreUnmodifiedOriginals": true,
     "independentGlyphAndInkAcceptance": "OPEN",
-    "finalWrappedLineL1": "OPEN",
+    "finalWrappedLineL1": "IMPLEMENTED_FINITE_QUALIFICATION",
     "nativeEditing": "OUT_OF_PROFILE",
     "mobileAndPerformance": "OPEN"
   },
@@ -486,6 +489,21 @@
       "bytes": 35949,
       "sha256": "0273da289fbac4d2a1c71a42d175f4ee32c658c0e2c8458f008eed1f747e8181",
       "origin": "Ordered patch on pinned Skia source; Skia BSD notices and first-party Apache wrappers retained"
+    },
+    {
+      "path": "runtime/line-bidi-r1/canvaskit.js",
+      "bytes": 96090,
+      "sha256": "bad20cb1b1eb5c8ffc3d744f3aebdfa68af4ee756d68853459f6155594b66ea9"
+    },
+    {
+      "path": "runtime/line-bidi-r1/canvaskit.wasm",
+      "bytes": 8600088,
+      "sha256": "f8663379ec64595cfa5a2ecb2cc3a8cc4637dcfba6209172da65a05c7ba24151"
+    },
+    {
+      "path": "source/patches/08-final-line-bidi.patch",
+      "bytes": 41214,
+      "sha256": "b8d69809bc97f8224c3a9720cc5bb086ad9ce275b974dca391decccd53036b24"
     }
   ]
 }

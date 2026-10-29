@@ -930,6 +930,21 @@
       "path": "examples/paragraph-panel/vendor/source/patches/07-sheen-comparison.patch",
       "bytes": 35949,
       "sha256": "0273da289fbac4d2a1c71a42d175f4ee32c658c0e2c8458f008eed1f747e8181"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/08-final-line-bidi.patch",
+      "bytes": 41214,
+      "sha256": "b8d69809bc97f8224c3a9720cc5bb086ad9ce275b974dca391decccd53036b24"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/runtime/line-bidi-r1/canvaskit.js",
+      "bytes": 96090,
+      "sha256": "bad20cb1b1eb5c8ffc3d744f3aebdfa68af4ee756d68853459f6155594b66ea9"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/runtime/line-bidi-r1/canvaskit.wasm",
+      "bytes": 8600088,
+      "sha256": "f8663379ec64595cfa5a2ecb2cc3a8cc4637dcfba6209172da65a05c7ba24151"
     }
   ]
 }

@@ -14,6 +14,6 @@
 
 `vendor/` 中的可选资源包含具有明确身份的后端和原始 Noto 字体，并附许可与来源。字体注册前校验原始字节，不静默替换为系统字体。为了复现，示例主动加载选定的拉丁、阿拉伯与中日韩字形；实际应用应按需选择字体。示例传输量不代表引擎核心体积或启动性能。
 
-只读段落不实现编辑、选择或原生输入法。后端的软换行后最终行双向 L1 仍有未完成边界。本示例不能证明完整 Unicode 正确性、未列出文字/字体的覆盖、GPU 计时、物理内存、移动设备表现或剩余 M3/M4 验收。浏览器观察与受控生命周期测试应分别记录。
+只读段落不实现编辑、选择或原生输入法。所选后端已集成最终行 L1／L2，并完成有限[原生／浏览器验证](../../knowledge-base/Cns/docs/paragraph-line-bidi.md)。本示例不能证明完整 Unicode 正确性、未列出文字/字体的覆盖、GPU 计时、物理内存、移动设备表现或剩余 M3/M4 验收。浏览器观察与受控生命周期测试应分别记录。
 
 构建后，使用已安装的 Playwright 1.62.1 和 Edge，执行 `node examples/paragraph-panel/verify-browser.mjs <playwright-root> <new-output-directory>`，可一次运行两个后端的完整行为检查。[实际观察记录](../../verification/paragraph-sdk/verification.json)将有限功能结果与性能、手机、IME 和独立字形／墨迹验收区分。

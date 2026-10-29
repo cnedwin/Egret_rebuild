@@ -18,7 +18,7 @@ const fontInputs=Object.freeze([
 ]);
 const fontFamilies=Object.freeze(fontInputs.map(font=>font.family));
 const copy={
-  introduction:'Paragraphs wrap to the available width. Their measured height positions the next UI element.\n段落按宽度换行，真实行高驱动布局。密度只影响栅格。',
+  introduction:'Mixed direction after wrapping: abc \u202Bمرحبا 123     \u202C xyz.\nParagraphs wrap to the available width. Their measured height positions the next UI element.\n段落按宽度换行，真实行高驱动布局。密度只影响栅格。',
   arabic:'تُعرض الفقرات باستخدام الخطوط المحددة. يتغير ارتفاع النص عند تغيير عرض اللوحة مع الحفاظ على مقاييس الخط الفعلية.',
   rows:[
     'Build a reusable game interface with paragraphs whose natural line metrics determine each row height.',
@@ -161,7 +161,7 @@ export function close(){
 export const ready=(async()=>{
   const manifestResponse=await fetch(new URL('./vendor/manifest.json',import.meta.url));if(!manifestResponse.ok)throw Error('EXAMPLE_RUNTIME_MANIFEST_HTTP');const manifest=await manifestResponse.json();runtimeBytes=manifest.payloadBytes.runtime;if(!Number.isSafeInteger(runtimeBytes)||runtimeBytes<1)throw Error('EXAMPLE_RUNTIME_MANIFEST');
   const fonts=await Promise.all(fontInputs.map(checkedFont));
-  const canvasKit=await globalThis.CanvasKitInit({locateFile:()=>new URL('./vendor/runtime/canvaskit.wasm',import.meta.url).href});
+  const canvasKit=await globalThis.CanvasKitInit({locateFile:()=>new URL('./vendor/runtime/line-bidi-r1/canvaskit.wasm',import.meta.url).href});
   nativeProvider=createCanvasKitParagraphProvider({canvasKit,fonts,buildIdentity:manifest.runtime.buildIdentity});
   // Example-only gates test real paragraph completion, not a synthetic text renderer.
   const provider={identity:nativeProvider.identity,async prepare(request,context){

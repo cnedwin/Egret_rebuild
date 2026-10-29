@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/08-final-line-bidi.patch",
+      "originRole": "Independent Egret line integration changes to the pinned Skia source; Skia BSD copyright retained, original first-party Sheen bridge Apache-2.0; upstream bidi algorithm remains unmodified."
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/runtime/line-bidi-r1/canvaskit.js",
+      "originRole": "Exact derived optional native build from the preserved pinned Skia/SheenBidi/ICU source chain plus patch08; original licenses and attribution retained; no first-party upstream algorithm claim."
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/runtime/line-bidi-r1/canvaskit.wasm",
+      "originRole": "Exact derived optional native build from the preserved pinned Skia/SheenBidi/ICU source chain plus patch08; original licenses and attribution retained; no first-party upstream algorithm claim."
+    },
+    {
+      "path": "examples/paragraph-panel/verify-line-bidi.mjs",
+      "originRole": "First-party finite native line/geometry/raster regression fixture; public standard native APIs, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/paragraph-line-bidi.test.mjs",
+      "originRole": "First-party optional native runtime regressions; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/paragraph-line-bidi.md",
+      "originRole": "First-party final-line bidi integration design and bounded verification record; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/paragraph-line-bidi.md",
+      "originRole": "First-party final-line bidi integration design and bounded verification record; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/paragraph-line-bidi.md",
+      "zh": "knowledge-base/Cns/docs/paragraph-line-bidi.md"
+    }
+  ]
+}

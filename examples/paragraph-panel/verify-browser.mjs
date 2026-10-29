@@ -30,7 +30,7 @@ try{
   });
   await page.goto('http://127.0.0.1:'+server.address().port+'/examples/paragraph-panel/index.html?backend='+backend);
   await page.waitForFunction(()=>globalThis.__egretParagraphPanel!==undefined);
-  await page.evaluate(()=>globalThis.__egretParagraphPanel.ready);let initial=await evaluate(page,'inspect');assert.equal(initial.state,'ready');assert.equal(initial.fontBytes,17148712);assert.equal(initial.runtimeBytes,8680652);
+  await page.evaluate(()=>globalThis.__egretParagraphPanel.ready);let initial=await evaluate(page,'inspect');assert.equal(initial.state,'ready');assert.equal(initial.fontBytes,17148712);assert.equal(initial.runtimeBytes,8696178);
   async function capture(name,snapshot,screenshot=false){const raw=await evaluate(page,'readback'),bytes=Buffer.from(raw.base64,'base64');assert.equal(bytes.length,1100*760*4);const record={name,sha256:sha(bytes),byteLength:bytes.length,articleRevision:snapshot.article.committedRevision,listRevision:snapshot.list.committedRevision,providerCalls:snapshot.providerCalls,paragraphHeight:box(snapshot,'introduction').height,footerY:box(snapshot,'article-footer').y,density:snapshot.density,cache:snapshot.cache};row.states.push(record);if(screenshot)await page.locator('#scene').screenshot({path:path.join(out,backend+'-'+name+'.png')});return record;}
   const original=await capture('initial',initial,true);row.checks.push('real-fonts-Latin-CJK-Arabic-rendered');
   let current=await evaluate(page,'action','static'),state=await capture('unchanged',current);assert.equal(state.sha256,original.sha256);assert.equal(current.providerCalls,initial.providerCalls);row.checks.push('unchanged-no-shape-or-raster');
@@ -44,6 +44,15 @@ try{
   await evaluate(page,'beginDelayedUpdate');await page.waitForFunction(()=>globalThis.__egretParagraphPanel.inspect().gateEntered);const replaced=await evaluate(page,'supersedeDelayedUpdate');await capture('superseded-update',replaced);assert.equal(replaced.width,300);assert.equal(replaced.article.committedRevision,replaced.article.desiredRevision);row.supersededUpdates=replaced.supersededUpdates;assert.equal(row.supersededUpdates.at(-1).oldProviderSettled,true);row.checks.push('stale-update-cannot-overwrite-new-width');
   const scrolled=await evaluate(page,'action','scroll');await capture('scrolled',scrolled);assert.ok(scrolled.list.scrollOffset>0);assert.ok(scrolled.unbinds.length>replaced.unbinds.length);row.checks.push('paragraph-height-virtualization-recycles');
   const rowHit=scrolled.list.rows.find(r=>r.visible);assert.ok(rowHit);const rect=await page.locator('#scene').boundingBox();await page.mouse.click(rect.x+646+Math.min(100,rowHit.box.width/2),rect.y+28+Math.max(1,rowHit.box.y+rowHit.box.height/2));await page.waitForTimeout(10);const clicked=await evaluate(page,'inspect');assert.ok(clicked.events.some(e=>e.kind==='begin'));row.checks.push('committed-row-hit-through-browser-pointer');
+  row.lineBidi=await page.evaluate(async()=>{
+   const manifest=await(await fetch('./vendor/manifest.json')).json();
+   const ck=await globalThis.CanvasKitInit({locateFile:()=>new URL('./vendor/'+manifest.runtime.wasm,location.href).href});
+   const fonts=ck.TypefaceFontProvider.Make();
+   try { for(const font of manifest.fonts.slice(0,2))fonts.registerFont(await(await fetch('./vendor/'+font.path)).arrayBuffer(),font.family);
+    const {verifyLineBidi}=await import('./verify-line-bidi.mjs');return verifyLineBidi(ck,fonts);
+   } finally {fonts.delete();}
+  });
+  assert.equal(row.lineBidi.reflows,90);row.checks.push('native-final-line-bidi-glyph-rect-hit-reflow');
   const closed=await evaluate(page,'close');assert.equal(closed.state,'closed');assert.equal(closed.cache.callerLeases,0);assert.equal(closed.cache.imageBytes,0);assert.equal(closed.scopeState,'closed');assert.deepEqual(closed.errors,[]);assert.deepEqual(errors,[]);row.checks.push('close-releases-owned-images-and-leases');row.closed=closed.cache;row.browserErrors=errors;row.status='PASS';await context.close();context=undefined;
  }
  for(const entry of source.values())assert.equal(sha(fs.readFileSync(physical(entry.path))),entry.sha256,'Actual dependency changed after capture');result.sources=[...source.values()].sort((a,b)=>a.path.localeCompare(b.path));result.requested=[...new Set(requested)].sort();result.status='PASS';

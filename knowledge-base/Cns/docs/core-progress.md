@@ -4,6 +4,10 @@
 
 核心工程通过可运行增量连接显示、资源、动画、输入与宿主执行。本页概述当前接口及后续产品工作，链接的契约说明精确行为与验证范围。
 
+## M3.2 只读 UI 段落与最终行双向排版 — 2026-10-29
+
+可选只读 SDK 已用明确字体字节、按宽换行、自然／最小行高及现有资源租约驱动普通 UI 与虚拟列表。当前所选原生后端保留 P1 上下文并解析实际最终行，统一字形存储、矩形与命中查询。有限原生检查及 WebGL2／WebGPU 各 14 项真实 Edge 检查通过。[SDK 契约](readonly-paragraph-sdk.md)与[最终行记录](paragraph-line-bidi.md)给出精确范围。完整 M3.2、独立字形／墨迹、编辑／输入法、手机、性能和内存／OOM 继续 OPEN。以下检查点保留原有产物与采用边界。
+
 ## M3.2 私有 bidi 后端比较 — 2026-10-29
 
 已构建的私有 SheenBidi 比较版本接入全部四个真实段落 builder 路径。声明的完整 bidi schedule 记录 953,627 次已观察尝试，严格比较零差异，另有 28 项固定 adapter 的 auto 案例为 NOT_OBSERVED；原 ICU 失败继续保留。真实段落 finite 检查及有界桌面 CPU raster／浏览器检查在各自范围内通过。本次不增加公开 SDK／provider 或产品运行时依赖。最终软换行 L1、独立 glyph／ink 参考、live／physical memory 验收、IME／移动端及 M4 仍为 OPEN。详见[比较结果、源码包与证据边界](paragraph-bidi-comparison.md)。

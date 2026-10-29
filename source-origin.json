@@ -622,8 +622,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 22932,
-      "sha256": "88100c898c25c9f310770d2f2f9bb1f8da0d7c20b529b3497577d8d4b3900924",
+      "bytes": 23279,
+      "sha256": "fd05f9d813d4beb7f9a52cd94e07c040b1011c8b22e3f94d0d02ce770929494f",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 13658,
-      "sha256": "13c9bdd975b62ca5cf3733e9cc123b4f192c2c5137942f54ee79b0740d687b8e",
+      "bytes": 14309,
+      "sha256": "24aba99a0d405285111805100d2d2d170de2ed0f5877ddeb5027c942e86299f2",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "ee2f8ef0c41d4802ef22f12c1b7fc21e5cd118db6ba6f718a947c388e5e06512",
+      "sha256": "4367aac77513277cad1113d073fca9ca9683a57485810669ffc12c940770f123",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2153,8 +2153,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 25892,
-      "sha256": "45197e4e1dcb1fa7b7cbb90eb76bbe30dbf570d8844ee61f5e723c4dc042f02e",
+      "bytes": 26310,
+      "sha256": "6f38665b0ca59cfedf4dafc1c94bac807c6fb8c599a273832a677894f259feab",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 15469,
-      "sha256": "8a8623119efc9a5e08d5755354044855b33b3e4b65b66b93a74de73fb3b7b2b4",
+      "bytes": 16240,
+      "sha256": "d6dd2be1f87ecc00a3d46ed27949020a98522066d3e889d7bfda961378293917",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "3912aff22ff4449ccafee1ff115a3e508a1f4f23b8e2b6dbd06742b97e37f00f",
-      "bytes": 364039,
+      "sha256": "d45bbab666e33de83d8906b1d1db8a551903a8fdf6560f8f4cee4a9fafe7de0c",
+      "bytes": 364537,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4860,8 +4860,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "7263d0ccd07b3a78b446c1f5bd24364fafe90e96fb221109b77217d6c78e5a8b",
-      "bytes": 20604,
+      "sha256": "20134db947da65fef10518af9168d539e65d38f71c7122eae481b115d9b52312",
+      "bytes": 20951,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -5003,8 +5003,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "534b2474f2ea53e90974ecd35f4a4da7995417e2116728879b841ac3cef63902",
-      "bytes": 19018,
+      "sha256": "3521e16ec1bc5a1c924b7d4cbaa496fc09208923eb34fa9f07497d2a9176f1ca",
+      "bytes": 19365,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -10010,8 +10010,8 @@
     {
       "path": "verification/repository-hygiene-baseline.json",
       "originRole": "Independent first-party repository identity tooling or paired publication material",
-      "bytes": 29389,
-      "sha256": "9fd0db3347e8a39643bc9769dad7d6f93f8c67a6f98d81207d157c71ed017dd4"
+      "bytes": 30002,
+      "sha256": "43e386fb388acc161ef6766cdfb8371ac6a84373fb5d20db591f429d766a63e1"
     },
     {
       "path": "knowledge-base/en/docs/repository-identity-and-line-endings.md",
@@ -10496,8 +10496,8 @@
     {
       "path": "tools/serve-example.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 4490,
-      "sha256": "991df2dc78fdf63c8ca025456d1b781906de93b30c2b6742b54c715e43172557"
+      "bytes": 4531,
+      "sha256": "b546bb4b24bf1410458f1a5b68323a8e6ce9400cb9adda17c09d5a0931e752ef"
     },
     {
       "path": "tools/setup-dev.mjs",
@@ -12782,14 +12782,14 @@
     {
       "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 52350,
-      "sha256": "1371dbca7e8e8d6c7f2d5cd7bb73b3f58098326d992d67f1f0bf382d349ded05"
+      "bytes": 53196,
+      "sha256": "be91e6ef81765ddbe05168c28da2ef50782b40132f8c63fbfcb73589dc3ab30b"
     },
     {
       "path": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 44297,
-      "sha256": "028d8e9a957f976a076d97d7d39d50123fb7f82d4ae2912e90adbbb25e275004"
+      "bytes": 45042,
+      "sha256": "3f8682ff6ba479ca55e48d08675ce6790ca3f9e469c02bb7f8338934cc51683d"
     },
     {
       "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -13640,38 +13640,38 @@
     {
       "path": "examples/paragraph-panel/README.md",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 3276,
-      "sha256": "6e136470b94057d2ea5bf97d6e63ec7f7ebf261fb950d4c0724536e73efbe090"
+      "bytes": 3340,
+      "sha256": "c943eacd0c28e08f511ae67c8fe5bb0c665bb51c44c29dc77c9de6aa19f546b2"
     },
     {
       "path": "examples/paragraph-panel/README.zh-CN.md",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 2878,
-      "sha256": "07fc69da3d45140d606a095fd79c22f6efc719b5163bf070b646eecabb4bb2be"
+      "bytes": 2953,
+      "sha256": "7314c28a0096a1de2049f46d05bd1d94b98b96c7806aa725a885bf1d820f8ed8"
     },
     {
       "path": "examples/paragraph-panel/index.html",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 4868,
-      "sha256": "afeac23cd513da0d77355f54deee3e0c11d7953a27a654535d13fe241a354771"
+      "bytes": 4950,
+      "sha256": "60270bc134d12bbbd1d46fffa1de97123698305d1591483eb55a01a3c7912fe0"
     },
     {
       "path": "examples/paragraph-panel/main.mjs",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 15779,
-      "sha256": "86549897e6decb5d8efe4a374b38fa1bd9b377341fcfb69888a5a0a0c09a2643"
+      "bytes": 15866,
+      "sha256": "da056cb68f93e0a2de5fc03ad6ed2827478fe2afbd1cbf2595cc85ddc4e16bc7"
     },
     {
       "path": "examples/paragraph-panel/vendor/README.md",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 7328,
-      "sha256": "e251c6cf8b1c340b6d5609f7b01f5dba5a8f3da847e8c58ce844fd8beed8ced2"
+      "bytes": 7475,
+      "sha256": "7fa83d6ceab6a28fd72ceef4cb2a0457fe7bd2e2a35d73c53f88e3f4c3c79dc1"
     },
     {
       "path": "examples/paragraph-panel/vendor/README.zh-CN.md",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 6365,
-      "sha256": "c85fb2e78211c2e4aa31174bcec8270758ac191283b65d64a9d3681248807925"
+      "bytes": 6491,
+      "sha256": "d906409ec50e3dd17db315b25dd70ae6f3e81eac3ec32ee78d97abc16f198fdc"
     },
     {
       "path": "examples/paragraph-panel/vendor/fonts/NotoSans-Regular.ttf",
@@ -13694,8 +13694,8 @@
     {
       "path": "examples/paragraph-panel/vendor/manifest.json",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 19995,
-      "sha256": "e345c2f9e21b587a45a6823f94ce4ae6a44d65eecae2b863ebbd630df7e5057f"
+      "bytes": 20831,
+      "sha256": "535121609d4b8efd9d30f024016d498c3b38a2ac435f397a05b0adaf877652fe"
     },
     {
       "path": "examples/paragraph-panel/vendor/runtime/canvaskit.js",
@@ -13772,20 +13772,20 @@
     {
       "path": "examples/paragraph-panel/verify-browser.mjs",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 9652,
-      "sha256": "1872d667151033a62ce482c1c1b43a169c721073e4100fec3d310ef64915b4a1"
+      "bytes": 10323,
+      "sha256": "d2768902b8080c4089cd278c61622b82957b6b77765f77c40446232c982da866"
     },
     {
       "path": "knowledge-base/Cns/docs/readonly-paragraph-sdk.md",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 11066,
-      "sha256": "cd5a6ebe9b4cc5052259934c875453c0be9f0bedb4f37810e161ab76993770b6"
+      "bytes": 11072,
+      "sha256": "451d1f0768c972c659263ac7338cffb69586ee2cf11d39cfb5a474a937f361c9"
     },
     {
       "path": "knowledge-base/en/docs/readonly-paragraph-sdk.md",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 12134,
-      "sha256": "8c0cb2b605022604d9e7349660d2f1fcdad3cdb8c8846895a54722f27e222a2a"
+      "bytes": 12120,
+      "sha256": "b6050fd6e2fe4a1161b369dd1cdfb2bdcab6957b309b380540f8c7cc022ff5db"
     },
     {
       "path": "packages/engine/src/paragraph.ts",
@@ -13850,8 +13850,8 @@
     {
       "path": "tests/paragraph-vendor.test.mjs",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1373,
-      "sha256": "12411a956a62bdc3145a07996bd32615f27f6ccb0a305181582ade3942e7046b"
+      "bytes": 1514,
+      "sha256": "d0ebe641566055148b8abeceb12d68f2fe7e7c21fc457d0c497b6a44e6b098d9"
     },
     {
       "path": "tests/ui-leaf-content.test.mjs",
@@ -14104,6 +14104,54 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 26177,
       "sha256": "b12ccc70eaf3c9fc03ca73623ccb846524c0aae6f86949c261442feff03868ab"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/08-final-line-bidi.patch",
+      "originRole": "Independent Egret line integration changes to the pinned Skia source; Skia BSD copyright retained, original first-party Sheen bridge Apache-2.0; upstream bidi algorithm remains unmodified.",
+      "bytes": 41214,
+      "sha256": "b8d69809bc97f8224c3a9720cc5bb086ad9ce275b974dca391decccd53036b24"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/runtime/line-bidi-r1/canvaskit.js",
+      "originRole": "Exact derived optional native build from the preserved pinned Skia/SheenBidi/ICU source chain plus patch08; original licenses and attribution retained; no first-party upstream algorithm claim.",
+      "bytes": 96090,
+      "sha256": "bad20cb1b1eb5c8ffc3d744f3aebdfa68af4ee756d68853459f6155594b66ea9"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/runtime/line-bidi-r1/canvaskit.wasm",
+      "originRole": "Exact derived optional native build from the preserved pinned Skia/SheenBidi/ICU source chain plus patch08; original licenses and attribution retained; no first-party upstream algorithm claim.",
+      "bytes": 8600088,
+      "sha256": "f8663379ec64595cfa5a2ecb2cc3a8cc4637dcfba6209172da65a05c7ba24151"
+    },
+    {
+      "path": "examples/paragraph-panel/verify-line-bidi.mjs",
+      "originRole": "First-party finite native line/geometry/raster regression fixture; public standard native APIs, independently authored with AI assistance; Apache-2.0.",
+      "bytes": 5858,
+      "sha256": "2aa464bbefaa79aee881cbf0bc388478ec198db818dc7642fe10175a61f8b69e"
+    },
+    {
+      "path": "tests/paragraph-line-bidi.test.mjs",
+      "originRole": "First-party optional native runtime regressions; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 2397,
+      "sha256": "c3dcfcfc8fc2478675de63dab540212532795ef1b55d57c5509840245842f33e"
+    },
+    {
+      "path": "knowledge-base/en/docs/paragraph-line-bidi.md",
+      "originRole": "First-party final-line bidi integration design and bounded verification record; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 7106,
+      "sha256": "177c189119888f69e0936831dc4a38f11028b36aa3363357e6b6674c1ff5259a"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/paragraph-line-bidi.md",
+      "originRole": "First-party final-line bidi integration design and bounded verification record; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 6189,
+      "sha256": "adbab5e5bfae532abce82237e4e4eee2d7d0f3e5364221fcbc53d99cf445b380"
+    },
+    {
+      "path": "contributions/m3-paragraph-line-bidi.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 2073,
+      "sha256": "e07c34c5e92e7d1bb567e0db819af548cc2e59c45a8ab2311bb19622dbfb8178"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

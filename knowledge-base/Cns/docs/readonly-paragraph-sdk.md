@@ -120,10 +120,10 @@ async function bind(context) {
 
 ## 可选资源、观察结果与剩余范围
 
-示例的可选 runtime 为 **8,680,652 原始字节**，三个原始字体合计 **17,148,712 字节**，总计 **25,829,364 字节**。`source/icudtl.dat` 是已嵌入 Wasm 的重建输入，浏览器不单独加载。默认 SDK 导入不加载这些资源。原始字节数不证明压缩传输、启动、活动内存或性能。精确版本、哈希、patch、源码重建边界与保留的第三方／字体 notices 见 [vendor 说明](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/vendor/README.zh-CN.md) 和 [manifest](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/vendor/manifest.json)。
+示例的可选 runtime 为 **8,696,178 原始字节**，三个原始字体合计 **17,148,712 字节**，总计 **25,844,890 字节**。`source/icudtl.dat` 是已嵌入 Wasm 的重建输入，浏览器不单独加载。默认 SDK 导入不加载这些资源。原始字节数不证明压缩传输、启动、活动内存或性能。精确版本、哈希、patch、源码重建边界与保留的第三方／字体 notices 见 [vendor 说明](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/vendor/README.zh-CN.md) 和 [manifest](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/vendor/manifest.json)。
 
 集中桌面验证使用 Edge 156.0.4314.50、默认 headless 配置和 Playwright 1.62.1。WebGL2 与 WebGPU 各通过 13 项行为检查：换行及后续几何、字体／最小行高、密度不改变逻辑布局、静态复用、失败／待定／完成替换、取消后晚 settlement、滚动／命中，以及关闭后的图像与租约退役。实际请求的 161 个依赖路径（包含固定的 robust-predicates 虚拟别名）在捕获期间保持原身份。SDK／UI／T1 的针对性回归共 118 项通过。见[实际结果与截图](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/paragraph-sdk/verification.json)；这些是有限功能观察，不是计时或独立字形／墨迹验收。
 
 构建后，使用已安装的 Playwright 1.62.1 与 Edge，执行 `node examples/paragraph-panel/verify-browser.mjs <playwright-root> <new-output-directory>`。采集器对每个后端运行一次完整行为序列，输出目录必须是新目录。浏览器延迟用例在进入 native 前阻塞提供器，证明晚 settlement 不覆盖已提交版本，不证明运行中的 Wasm 可被抢占。密度为二时，不断言两个后端逐像素相同。原始失败观察保留，并在结果范围中说明。受保护 CI 与 PR/Main 交付仍是独立发布证据。
 
-**最终软换行后的 bidi L1 继续 OPEN。** 所选后端的 full-P1 比较不证明最终断行后的逐行 reset/order。完整 M3.2、独立 glyph/ink 参考、公开 glyph-cluster／选区／光标映射、编辑／IME、手机／浏览器覆盖、性能、活动／物理内存验收及 OOM 恢复继续 OPEN。首个 profile 不宣传属性分段、任意对齐／截断、emoji/ZWJ、Indic 或可变字体／字体集合覆盖。历史 [私有 bidi 结果](paragraph-bidi-comparison.md) 保留原证据范围；采用这个有界的可选 SDK 不改写历史结果。
+**最终行 L1／L2 已集成，并完成有限原生及浏览器验证。** 见[共享行契约与结果](paragraph-line-bidi.md)。完整 M3.2、独立 glyph/ink 参考、公开 glyph-cluster／选区／光标映射、编辑／IME、手机／浏览器覆盖、性能、活动／物理内存验收及 OOM 恢复继续 OPEN。首个 profile 不宣传属性分段、任意对齐／截断、emoji/ZWJ、Indic 或可变字体／字体集合覆盖。历史 [私有 bidi 结果](paragraph-bidi-comparison.md) 保留原证据范围；采用这个有界的可选 SDK 不改写历史结果。
