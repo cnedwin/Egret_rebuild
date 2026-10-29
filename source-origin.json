@@ -14264,8 +14264,8 @@
     {
       "path": "examples/mobile/verify-browser.mjs",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 16198,
-      "sha256": "f83873002ee7073cc1722241fb8fd0bd8546f9dd80d2131455689798a1fd9107"
+      "bytes": 16746,
+      "sha256": "ef56cb90514ac90969f1590e5d7635af8fe53fb171c9f627ef26e3880bedea36"
     },
     {
       "path": "examples/mobile/README.md",

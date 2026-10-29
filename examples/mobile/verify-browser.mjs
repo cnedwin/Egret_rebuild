@@ -6,13 +6,19 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {createExampleServer} from '../../tools/serve-example.mjs';
+import {samePhysicalPath,ownerRelativePath} from '../../tools/lib/file-identity.mjs';
 const [playwrightRoot,output,...extra]=process.argv.slice(2);
 if(!playwrightRoot||!output||extra.length)throw Error('Usage: node examples/mobile/verify-browser.mjs <playwright-root> <new-output-directory>');
 assert.equal(JSON.parse(fs.readFileSync(path.resolve(playwrightRoot,'package.json'),'utf8')).version,'1.62.1');
 const {chromium}=await import(pathToFileURL(path.resolve(playwrightRoot,'index.mjs')));
 const root=path.resolve(import.meta.dirname,'../..'),out=path.resolve(output),run='browser';
-if(out===root||out.startsWith(root+path.sep))throw Error('Evidence output must be outside the repository');
-fs.mkdirSync(out);
+// Resolve the existing parent before containment checks, including Windows case and junction aliases.
+const parent=fs.realpathSync(path.dirname(out)),physicalOutput=path.join(parent,path.basename(out));
+let contained=samePhysicalPath(root,physicalOutput);
+try{ownerRelativePath(root,physicalOutput);contained=true;}catch(error){if(!(error instanceof RangeError))throw error;}
+if(contained)throw Error('Evidence output must be outside the repository');
+fs.mkdirSync(physicalOutput);
+if(!samePhysicalPath(out,fs.realpathSync(out)))throw Error('Evidence output has another physical owner');
 const sources=new Map(),sha=b=>createHash('sha256').update(b).digest('hex');
 const checks=[],failures=[],contexts=[];let browser;
 const server=createExampleServer();await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
