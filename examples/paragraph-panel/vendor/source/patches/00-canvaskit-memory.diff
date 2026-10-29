@@ -1,0 +1,12 @@
+--- upstream/modules/canvaskit/BUILD.gn
++++ private-cpu/modules/canvaskit/BUILD.gn
+@@ -346,7 +346,8 @@
+     "-sFILESYSTEM=0",
+     "-sMODULARIZE",
+     "-sNO_EXIT_RUNTIME=1",
+-    "-sINITIAL_MEMORY=128MB",
++    "-sINITIAL_MEMORY=32MB",
++    "-sMAXIMUM_MEMORY=64MB",
+     "-sWASM",
+     "-sSTRICT=1",
+     "-sEXPORTED_RUNTIME_METHODS=HEAP32,HEAPU8,HEAPU16,HEAPU32,HEAPF32",

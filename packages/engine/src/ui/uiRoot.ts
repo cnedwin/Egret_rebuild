@@ -7,6 +7,8 @@ import { requireUiEngine } from '../internal/uiFactoryState.js';
 import type { PointerInput } from '../pointerInputTypes.js';
 import { captureSource } from './virtualList.js';
 import type { CapturedSource } from './virtualList.js';
+import { captureUiTree, leafConstraintTree, leafMeasuredTree, fixedLeafMeasurement } from './leafContent.js';
+import type { CapturedLeafContent } from './leafContent.js';
 import type { UiRoot, UiRootOptions, UiSnapshot, UiPreparation, UiCommitResult, UiRowSnapshot, UiCounters, UiInvalidationKind, VirtualDataSource, VirtualListHandle, RowUnbindInfo, UiRowPointerNotification } from './types.js';
 type ScopePort = ReturnType<ReturnType<typeof requireUiEngine>['scope']>;
 type InputPort = ReturnType<ReturnType<typeof requireUiEngine>['requireInput']>;
@@ -24,6 +26,18 @@ interface Binding {
     entered: boolean;
     terminal: boolean;
     subscriptions: (() => void)[];
+}
+interface LeafBinding {
+    readonly id: string;
+    readonly width: number;
+    readonly density: number;
+    readonly scope: ScopePort;
+    readonly wrapper: DisplayObjectContainer;
+    source: CapturedLeafContent | undefined;
+    content?: DisplayObjectContainer;
+    height?: number;
+    measure?: NonNullable<UiLayoutNode['measure']>;
+    terminal: boolean;
 }
 interface Shell {
     scope: ScopePort;
@@ -46,6 +60,7 @@ interface WindowState {
         contentVersion: number;
     }>;
     bindings: Map<string, Binding>;
+    leafBindings: Map<string, LeafBinding>;
 }
 interface Candidate {
     nextPool: Shell[];
@@ -55,6 +70,7 @@ interface Candidate {
         reason: RowUnbindInfo['reason'];
     }[];
     oldFills: ScopePort[];
+    retiringLeaves: readonly LeafBinding[];
     preparedWindow: WindowState;
     rows: readonly UiRowSnapshot[];
     bindings: Map<string, Binding>;
@@ -150,7 +166,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         x: 0,
         y: 0
     }, size);
-    let tree = captureUiLayout(options.tree);
+    const capturedTree = captureUiTree(options.tree);
+    let tree = capturedTree.tree, leafContents = capturedTree.contents;
     const initialNodes = [...tree.nodes.values()];
     const listNodes = initialNodes.filter(n => n.kind === 'virtualList');
     if (listNodes.length > 1)
@@ -180,6 +197,9 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
     let closed = false, desired = 1, committed = 0, inputGeneration = 0, generation = 0, busy = false, committing = false;
     let cancelFlight: ((error: unknown) => void) | undefined, preparedWindow: WindowState | undefined, plan: UiLayoutPlan | undefined, committedIndex: UiHeightIndex | undefined, committedSource: CapturedSource | undefined;
     let bindings = new Map<string, Binding>(), shells = new Map<string, Shell>(), pool: Shell[] = [], fills: ScopePort[] = [];
+    let leafBindings = new Map<string, LeafBinding>();
+    const allLeafBindings = new Set<LeafBinding>();
+    let outstandingLeaves = 0;
     const allBindings = new Set<Binding>(), retentions = new Map<string, Set<object>>(), dirty = new Map<string, UiInvalidationKind>(), heightUpdates = new Map<string, {
         key: string;
         height: number;
@@ -297,11 +317,16 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         // Ignored provider promises may retain this small settlement object. Clear
         // full data/index/layout references before any terminal user callback.
         previous.bindings.clear();
+        const retiringLeaves = [...previous.leafBindings.values()];
+        previous.leafBindings.clear();
         previous.heights.clear();
         previous.source = undefined;
         previous.index = undefined;
         previous.plan = undefined;
         previous.box = undefined;
+        for (const leaf of retiringLeaves)
+            if (leafBindings.get(leaf.id) !== leaf)
+                retireLeaf(leaf, errors ?? previous.cleanupErrors);
         for (const binding of retiring) {
             if (bindings.get(binding.key) !== binding)
                 retire(binding, reason, errors ?? previous.cleanupErrors);
@@ -482,33 +507,102 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             fail('UI_LIMIT');
         return selected;
     }
+    function retireLeaf(binding: LeafBinding, errors: unknown[] = []) {
+        if (binding.terminal) return;
+        binding.terminal = true;
+        binding.source = undefined;
+        delete binding.content;
+        delete binding.measure;
+        allLeafBindings.delete(binding);
+        try { binding.scope.dispose(); }
+        catch (cause) { errors.push(cause); }
+    }
+    function makeLeafBinding(w: WindowState, name: string, captured: CapturedLeafContent, width: number): Promise<LeafBinding> {
+        if (outstandingLeaves >= 4096) fail('UI_PENDING_LIMIT');
+        if (allLeafBindings.size - leafBindings.size >= 4096) fail('UI_LIMIT');
+        const scope = port.scope(port.createScope());
+        let wrapper: DisplayObjectContainer;
+        try { wrapper = display.createWrapper(scope.scope); }
+        catch (cause) { scope.dispose(); throw cause; }
+        const binding: LeafBinding = { id: name, width, density, scope, wrapper, source: captured, terminal: false };
+        allLeafBindings.add(binding);
+        w.leafBindings.set(name, binding);
+        const context = freeze({ scope: scope.scope, width, density, signal: scope.signal });
+        outstandingLeaves++;
+        let returned: ReturnType<CapturedLeafContent['prepare']>;
+        try { returned = captured.prepare.call(captured.identity, context); }
+        catch (cause) { outstandingLeaves--; retireLeaf(binding, w.cleanupErrors); return Promise.reject(cause); }
+        return Promise.resolve(returned).then(value => {
+            if (binding.terminal || closed || desired !== w.revision) {
+                retireLeaf(binding, w.cleanupErrors);
+                fail('UI_STALE');
+            }
+            const content = value.content, height = number(value.measuredHeight, 0, 1048576);
+            display.validateContent(content, scope.scope);
+            check(w.revision);
+            binding.content = content;
+            binding.height = height;
+            binding.measure = fixedLeafMeasurement(width, height, binding.source!.revision);
+            return binding;
+        }).catch(cause => {
+            retireLeaf(binding, w.cleanupErrors);
+            throw cause;
+        }).finally(() => { outstandingLeaves--; });
+    }
     function makeWindow(revision: number): WindowState {
-        const nextPlan = planUiLayout(tree, size, density, plan, dirty);
-        check(revision);
+        return { cleanupErrors: [], revision, source, index: undefined, plan: undefined, box: undefined,
+            width: 0, height: 0, scroll: 0, round: 0, heights: new Map(heightUpdates),
+            bindings: new Map(), leafBindings: new Map() };
+    }
+    function initializeWindow(w: WindowState): void | Promise<void> {
+        const baseTree = tree, sources = leafContents, widths = new Map<string, number>();
+        if (sources.size !== 0) {
+            planUiLayout(leafConstraintTree(baseTree, sources, widths), size, density);
+            check(w.revision);
+            const work: Promise<LeafBinding>[] = [], force = new Set<string>();
+            function collectMeasureDirty(node: UiLayoutNode, ancestorDirty: boolean): void {
+                const measureDirty = ancestorDirty || dirty.get(node.id) === 'measure';
+                if (node.kind === 'leaf' && measureDirty) force.add(node.id);
+                for (const child of node.children ?? []) collectMeasureDirty(child, measureDirty);
+            }
+            collectMeasureDirty(baseTree.root, false);
+            for (const [name, captured] of sources) {
+                const width = number(widths.get(name)!, Number.MIN_VALUE, 16384), prior = leafBindings.get(name);
+                if (!force.has(name) && prior !== undefined && !prior.terminal && prior.source?.identity === captured.identity
+                    && prior.source.revision === captured.revision && prior.source.prepare === captured.prepare
+                    && prior.width === width && prior.density === density) {
+                    w.leafBindings.set(name, prior);
+                    continue;
+                }
+                const promise = makeLeafBinding(w, name, captured, width);
+                void promise.catch(() => {});
+                work.push(promise);
+                check(w.revision);
+            }
+            return Promise.all(work).then(() => {
+                check(w.revision);
+                completeWindow(w, baseTree);
+            });
+        }
+        completeWindow(w, baseTree);
+    }
+    function completeWindow(w: WindowState, baseTree: UiLayoutTree): void {
+        const measures = new Map<string, NonNullable<UiLayoutNode['measure']>>();
+        for (const [name, binding] of w.leafBindings) measures.set(name, binding.measure!);
+        const nextPlan = planUiLayout(measures.size === 0 ? baseTree : leafMeasuredTree(baseTree, measures), size, density, plan, dirty);
+        check(w.revision);
         const box = nextPlan.boxes.find(b => b.id === listId), width = box?.innerWidth ?? 0, height = box?.innerHeight ?? 0;
-        if (box !== undefined && (width <= 0 || height <= 0))
-            fail('UI_VALUE_INVALID');
-        const index = source === undefined ? undefined : source === committedSource && committedIndex !== undefined && snapshot.boxes.find(b => b.id === listId)?.innerWidth === width && snapshot.density === density ? committedIndex : new UiHeightIndex(source.records, width, density, committedIndex);
+        if (box !== undefined && (width <= 0 || height <= 0)) fail('UI_VALUE_INVALID');
+        const index = w.source === undefined ? undefined : w.source === committedSource && committedIndex !== undefined
+            && snapshot.boxes.find(b => b.id === listId)?.innerWidth === width && snapshot.density === density
+            ? committedIndex : new UiHeightIndex(w.source.records, width, density, committedIndex);
         for (const key of retentions.keys()) {
             const b = bindings.get(key);
-            if (b !== undefined && (source?.byKey.get(key)?.contentVersion !== b.version || width !== b.width || density !== b.density))
-                fail('UI_ROW_RETAINED');
+            if (b !== undefined && (w.source?.byKey.get(key)?.contentVersion !== b.version || width !== b.width || density !== b.density)) fail('UI_ROW_RETAINED');
         }
-        const scroll = index === undefined ? 0 : explicitScroll !== undefined ? index.clampScroll(explicitScroll, height) : committedIndex === undefined ? 0 : index.preserveAnchor(snapshot.anchor, committedIndex, height);
-        return {
-            cleanupErrors: [],
-            revision,
-            source,
-            index,
-            plan: nextPlan,
-            box,
-            width,
-            height,
-            scroll,
-            round: 0,
-            heights: new Map(heightUpdates),
-            bindings: new Map()
-        };
+        const scroll = index === undefined ? 0 : explicitScroll !== undefined ? index.clampScroll(explicitScroll, height)
+            : committedIndex === undefined ? 0 : index.preserveAnchor(snapshot.anchor, committedIndex, height);
+        w.plan = nextPlan; w.box = box; w.width = width; w.height = height; w.index = index; w.scroll = scroll;
     }
     function token(status: UiPreparation['status'], candidate?: Candidate): UiPreparation {
         const result = freeze({
@@ -537,6 +631,11 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         if (preparedWindow === undefined || preparedWindow.revision !== revision)
             preparedWindow = makeWindow(revision);
         const w = preparedWindow;
+        if (w.plan === undefined) {
+            const initialization = initializeWindow(w);
+            if (initialization !== undefined) await initialization;
+        }
+        check(revision);
         w.round++;
         if (w.round > 8) {
             discardWindow();
@@ -661,6 +760,15 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                     paintOrder.set(wrapper, paintIndex);
                 }
             }
+            for (const [paintIndex, box] of (w.plan!).boxes.entries()) {
+                const binding = w.leafBindings.get(box.id);
+                if (binding === undefined) continue;
+                updates.push({ wrapper: binding.wrapper, x: box.innerX, y: box.innerY, children: [binding.content!],
+                    hitArea: { x: 0, y: 0, width: box.innerWidth, height: box.innerHeight },
+                    touchEnabled: false, touchChildren: true });
+                rootChildren.push(binding.wrapper);
+                paintOrder.set(binding.wrapper, paintIndex);
+            }
             if (w.box !== undefined && listWrapper !== undefined) {
                 rootChildren.push(listWrapper);
                 paintOrder.set(listWrapper, (w.plan!).boxes.findIndex(box => box.id === listId));
@@ -733,6 +841,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 discardedShells,
                 retiring,
                 oldFills: fills,
+                retiringLeaves: [...leafBindings.values()].filter(binding => w.leafBindings.get(binding.id) !== binding),
                 preparedWindow: w,
                 rows: nextSnapshot.rows,
                 bindings: nextBindings,
@@ -908,7 +1017,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         },
         setTree(value) {
             admit('tree', () => {
-                const revision = desired, t = captureUiLayout(value);
+                const revision = desired, captured = captureUiTree(value), t = captured.tree;
                 check(revision);
                 if (t.nodes.size !== tree.nodes.size || [...t.nodes].some(([key, node]) => tree.nodes.get(key)?.kind !== node.kind))
                     fail('UI_TREE_SHAPE');
@@ -919,7 +1028,13 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 for (const key of retentions.keys())
                     if (s?.byKey.get(key)?.contentVersion !== bindings.get(key)?.version)
                         fail('UI_ROW_RETAINED');
+                for (const [name, content] of captured.contents) {
+                    const previous = leafContents.get(name);
+                    if (previous?.identity === content.identity && (content.revision < previous.revision
+                        || content.revision === previous.revision && content.prepare !== previous.prepare)) fail('UI_SOURCE_REVISION');
+                }
                 tree = withoutSources(t);
+                leafContents = captured.contents;
                 if (s !== undefined)
                     source = s;
                 change();
@@ -1059,6 +1174,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 bindings = c.bindings;
                 shells = c.shells;
                 fills = c.fillScopes;
+                leafBindings = c.preparedWindow.leafBindings;
                 committed = desired;
                 committedIndex = c.preparedWindow.index;
                 committedSource = c.preparedWindow.source;
@@ -1070,6 +1186,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 dirty.clear();
                 // Observers see the new complete revision before any old binding is retired.
                 sync(errors);
+                for (const leaf of c.retiringLeaves)
+                    retireLeaf(leaf, errors);
                 for (const item of c.retiring)
                     retire(item.binding, item.reason, errors);
                 for (const s of c.discardedShells) {
@@ -1119,6 +1237,9 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             if (input?.state() === 'active')
                 sync(errors);
             discardWindow(errors, 'dispose');
+            for (const leaf of [...allLeafBindings])
+                retireLeaf(leaf, errors);
+            leafBindings.clear();
             for (const b of [...allBindings])
                 retire(b, 'dispose', errors);
             for (const s of [...shells.values(), ...pool]) {
@@ -1159,6 +1280,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             committedIndex = undefined;
             plan = undefined;
             tree = emptyTree;
+            leafContents = new Map();
             input = undefined;
             inputIdentity = undefined;
             unsubscribeClose();

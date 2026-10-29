@@ -680,6 +680,256 @@
       "path": "third-party/robust-predicates-3.0.3.LICENSE",
       "bytes": 1210,
       "sha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/fonts/NotoSans-Regular.ttf",
+      "bytes": 569208,
+      "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/fonts/NotoSansArabic-Regular.ttf",
+      "bytes": 142140,
+      "sha256": "bd86ca02f087d7f3c3788ba458fb6b73744c7639ed276b8d870dba6def6c40d0"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/fonts/NotoSansCJKsc-Regular.otf",
+      "bytes": 16437364,
+      "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/brotli-LICENSE.txt",
+      "bytes": 1084,
+      "sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/chromium-BSD-3-Clause.txt",
+      "bytes": 1536,
+      "sha256": "368cca1106be99d39ecd32a38d8305585d802a475effb66380b91ffc9bcf709b"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/compiler-rt-LICENSE.TXT",
+      "bytes": 16708,
+      "sha256": "1a8f1058753f1ba890de984e48f0242a3a5c29a6a8f2ed9fd813f36985387e8d"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/dlmalloc-original.c.txt",
+      "bytes": 236568,
+      "sha256": "c008dc3c2b005ba822efb1bf6187a9d7a6aecd096826c6f28c6f5ee62885053d"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/emscripten-AUTHORS.txt",
+      "bytes": 28933,
+      "sha256": "56f7df65203d4858dac19cafe3a84a8c49abaff56b67d32d2d463d5fef6e440b"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/emscripten-LICENSE.txt",
+      "bytes": 5093,
+      "sha256": "620a78084fc7ca97c0b5dea9abf891f3ffcadfdbf305276f099c9c4e12fc1d86"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/fonts/noto-arabic/OFL-archive.txt",
+      "bytes": 4382,
+      "sha256": "a7a5a25eb188bf1cd96982030d53e23c33485c69b1044a562254226857ee13af"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/fonts/noto-arabic/OFL-upstream.txt",
+      "bytes": 4382,
+      "sha256": "a7a5a25eb188bf1cd96982030d53e23c33485c69b1044a562254226857ee13af"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/fonts/noto-cjk/LICENSE",
+      "bytes": 4301,
+      "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/fonts/noto-sans/LICENSE",
+      "bytes": 4377,
+      "sha256": "0dab92d0544f7b233403f14b84a663bdbfa746982eda629e7f4f9ffe1b036feb"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/freetype-bdf-README.txt",
+      "bytes": 5972,
+      "sha256": "7984455e7e5a9faba3797c8bf095fbe10cc846316b7320aff8c58402e22b82fe"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/freetype-fthash.c.txt",
+      "bytes": 8406,
+      "sha256": "693e5a54b3ce30140975a94a3369dbe706eb1f280c69e80da426d39cc45b94ef"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/freetype-fthash.h.txt",
+      "bytes": 4055,
+      "sha256": "023d88d49d29ecf3833db7717a3f7ae223c17ec2012bdb5bf33bb67abaf616c4"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/freetype-FTL.TXT",
+      "bytes": 6743,
+      "sha256": "5a5ee54c5001bbad1cdc1a57cc3dd4c42199b2da09d39c7ee41fab002d02967f"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/freetype-LICENSE.TXT",
+      "bytes": 2149,
+      "sha256": "bd36c8b474855fa294c2ec5c184544478ef3720aad37d65a6296a4f264fd2d3b"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/freetype-pcf-README.txt",
+      "bytes": 3311,
+      "sha256": "18d9782898d9eac04476e2f744678137b2a889689ed3e923e052fc396a86f86b"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/harfbuzz-COPYING.txt",
+      "bytes": 1971,
+      "sha256": "ba8f810f2455c2f08e2d56bb49b72f37fcf68f1f4fade38977cfd7372050ad64"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/harfbuzz-ms-use-COPYING.txt",
+      "bytes": 1141,
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/icu-license.html",
+      "bytes": 622,
+      "sha256": "c62d7697c03979f5056d28b338fafc7a1152820f7b379adf4a9d88cd37160f96"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/icu-LICENSE.txt",
+      "bytes": 27718,
+      "sha256": "e55522d81edc687a341a4411e0776e54ca654e90147f354a90458aaced4116af"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/libcxx-LICENSE.TXT",
+      "bytes": 16703,
+      "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/libcxxabi-LICENSE.TXT",
+      "bytes": 16706,
+      "sha256": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/libjpeg-turbo-LICENSE.md",
+      "bytes": 5620,
+      "sha256": "96f5b328adbb78eeaaec6980d73fd558cb1e4d62560ed615646bc3cf5e532430"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/libjpeg-turbo-README.ijg",
+      "bytes": 12799,
+      "sha256": "75815e3bf6484201a3c3d17a1bbf10f2e8e3237f84df10a2357ea896db2a81d6"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/libpng-LICENSE.txt",
+      "bytes": 5345,
+      "sha256": "bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/libunwind-LICENSE.TXT",
+      "bytes": 16706,
+      "sha256": "b5efebcaca80879234098e52d1725e6d9eb8fb96a19fce625d39184b705f7b6d"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/libwebp-COPYING.txt",
+      "bytes": 1496,
+      "sha256": "5aec868f669e384a22372a4e8a1a6cd7d44c64cd451f960ca69cc170d1e13acf"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/libwebp-PATENTS.txt",
+      "bytes": 1436,
+      "sha256": "cc3273e0694ea5896145e0677699b53471b03ea43021ddc50e7923fbb9f5023c"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/musl-COPYRIGHT.txt",
+      "bytes": 6204,
+      "sha256": "f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/sheen-Apache-2.0.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/skcms-BSD-3-Clause.txt",
+      "bytes": 1635,
+      "sha256": "e59bb5c5c6ba426a9ac4ba9fe667ad14c5166b12aa25be8af1d122b14fbe2e36"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/skia-BSD-3-Clause.txt",
+      "bytes": 1507,
+      "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/UNICODE-LICENSE-V3.txt",
+      "bytes": 1995,
+      "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/wuffs-LICENSE.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/licenses/zlib-LICENSE.txt",
+      "bytes": 910,
+      "sha256": "e1cfcc55c325b3f78cf55df9664abaa066e2271dffe8213347d9fccdfbac8f2c"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/runtime/canvaskit.js",
+      "bytes": 96090,
+      "sha256": "bad20cb1b1eb5c8ffc3d744f3aebdfa68af4ee756d68853459f6155594b66ea9"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/runtime/canvaskit.wasm",
+      "bytes": 8584562,
+      "sha256": "0bead90e2f57b6da3874e87461bbc08a4d54693395916d4837634e9c4014f452"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/args.gn",
+      "bytes": 2216,
+      "sha256": "845e43bec372ebab6261024030b88962495e422f62972e3058afe3053019eee8"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/icudtl.dat",
+      "bytes": 3089888,
+      "sha256": "1b49a1abf09cf9a5cbd750ec84a9d5946b0e167dc4892068470a93e86473c2a5"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/00-canvaskit-memory.diff",
+      "bytes": 373,
+      "sha256": "52b8caebcb6be2b7012f5d1c8bc7d024c2371139485200068a47783efc3a94be"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/01-bridge.patch",
+      "bytes": 35609,
+      "sha256": "7eb6babb5346a01f83c1d90313b9c99147bd0ecc344ff1ea546d43d472dd3af9"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/02-source-decision.patch",
+      "bytes": 11179,
+      "sha256": "62e5762a0640f7c30d8b12d80c9d8df38f66006d856b1c6cc833e753b9c58058"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/03-unicode-qualification.patch",
+      "bytes": 26901,
+      "sha256": "bacdc9c3899fed3ebe4a6e8879038b317d20a67d70ab854148b6c33087bd37e3"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/04-bidi-override-repair.patch",
+      "bytes": 1323,
+      "sha256": "d80ab0a7f87ddb8a614379752fa12903227ede081af154f9787c578c20d40c5d"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/05-bidi-bracket-guard.patch",
+      "bytes": 586,
+      "sha256": "3a5892d69b39ee6b2a621bad0683312f721c3d971ff4e4cd398d7424dffe65f5"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/06-strict-data-metadata.patch",
+      "bytes": 807,
+      "sha256": "d04bb8d902638f2c65e5aba5301e99b3186d57a49b75ba910e89d2c21108a5fd"
+    },
+    {
+      "path": "examples/paragraph-panel/vendor/source/patches/07-sheen-comparison.patch",
+      "bytes": 35949,
+      "sha256": "0273da289fbac4d2a1c71a42d175f4ee32c658c0e2c8458f008eed1f747e8181"
     }
   ]
 }

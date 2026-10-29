@@ -19,6 +19,10 @@
     "./ui": {
       "types": "./dist/ui/index.d.ts",
       "import": "./dist/ui/index.js"
+    },
+    "./paragraph": {
+      "types": "./dist/paragraph/index.d.ts",
+      "import": "./dist/paragraph/index.js"
     }
   },
   "dependencies": {

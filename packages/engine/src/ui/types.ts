@@ -7,9 +7,14 @@ import type { PointerInput, PointerContact, PointerCancelReason } from '../point
 type LayoutDimensions = Omit<UiLayoutNode, 'kind' | 'children' | 'source' | 'initialScrollOffset' | 'measure' | 'fill'>;
 export type LayoutNode = (LayoutDimensions & {
     readonly kind: 'leaf';
-    readonly measure?: NonNullable<UiLayoutNode['measure']>;
     readonly fill?: NonNullable<UiLayoutNode['fill']>;
-}) | (LayoutDimensions & {
+} & ({
+    readonly measure?: NonNullable<UiLayoutNode['measure']>;
+    readonly content?: never;
+} | {
+    readonly measure?: never;
+    readonly content: UiLeafContent;
+})) | (LayoutDimensions & {
     readonly kind: 'row' | 'column';
     readonly children: readonly LayoutNode[];
 }) | (LayoutDimensions & {
@@ -45,6 +50,17 @@ export interface RowBindContext<T> {
     readonly density: number;
     readonly scope: Scope;
     readonly signal: CancellationSignal;
+}
+/** Detached content is prepared at the leaf's available inner width. */
+export interface UiLeafPrepareContext {
+    readonly scope: Scope;
+    readonly width: number;
+    readonly density: number;
+    readonly signal: CancellationSignal;
+}
+export interface UiLeafContent {
+    readonly revision: number;
+    prepare(context: UiLeafPrepareContext): RowBinding | Promise<RowBinding>;
 }
 export interface RowBinding {
     readonly content: DisplayObjectContainer;

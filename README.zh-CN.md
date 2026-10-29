@@ -23,6 +23,12 @@ Years later, as times change and technology advances, many developers continue t
 
 [M2–M4 路线](knowledge-base/Cns/docs/m2-m4-delivery-plan.md)衔接完整 Spine／内容、UI／文字／输入及混合核心验收。从 [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56)、[M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) 或 [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58) 选择完整工作包，每项说明代码入口、依赖和可评审验收。
 
+## UI 中的只读段落 SDK
+
+可选[只读段落 SDK](knowledge-base/Cns/docs/readonly-paragraph-sdk.md)根据明确字体字节排版中英阿文字，将自然/最小行高用于普通 UI 和虚拟列表。运行[集成示例](examples/paragraph-panel/README.zh-CN.md)，可观察宽度、字号、显示密度以及原子内容替换。M3.2 完整验收、软换行最终双向 L1、编辑与输入法、真机和性能仍未完成。
+
+The optional [readonly paragraph SDK](knowledge-base/en/docs/readonly-paragraph-sdk.md) now drives wrapping and line height inside ordinary UI and virtual lists. Full M3.2, final soft-line bidi L1, editing/IME, physical devices and performance remain open.
+
 ## M2.2 序列帧控制
 
 可选动画入口增加倍率、有限总播放次数、有序标记以及显式静默／重放跳转，共享既有时钟和资源所有权。新旧播放不能同时占用同一个 Bitmap。参见[序列帧控制契约](knowledge-base/Cns/docs/sequence-controls.md)。完整 Spine 与 M2.2 验收仍然开放。
@@ -119,6 +125,7 @@ M1.1 已通过 [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) 合并
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| Readonly paragraphs / 只读段落 · 2026-10-29 | Width-based Latin/CJK/Arabic paragraph layout, natural/minimum line height, ordinary UI and variable-height list integration | 明确字体的中英阿文字自动换行、自然/最小行高，接入普通 UI 与动态高度列表 |
 | M2.1 runtime integration / 运行时接入 · 2026-10-29 | Typed PNG/atlas/sequence groups reuse existing resources and lifetimes; complete readiness, cancellation and explicit generation replacement | PNG／图集／序列帧类型化组复用原资源与生命周期，支持完整就绪、取消及显式代际替换 |
 | M1.5 delivered / 已交付 · 2026-10-21 | Resource manifests, shared resource loading and device recovery delivered through [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79); formal M1.2 performance remains open | 资源清单、共享资源加载与设备恢复通过 [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) 交付；M1.2 正式性能仍开放 |
 | M1.5 recovery verification / 资源恢复验证 · 2026-10-20 | Seven fixed desktop recovery cases verified; [scope and remaining work](knowledge-base/en/docs/resource-recovery-evidence.md) | 七项固定桌面恢复验证完成；[范围与剩余工作](knowledge-base/Cns/docs/resource-recovery-evidence.md) |

@@ -22,6 +22,12 @@ Report problems through [Issues](https://github.com/cnedwin/Egret_rebuild/issues
 
 The [M2–M4 roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md) connects complete Spine/content, UI/text/input and mixed core acceptance. Choose a complete work package from [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) or [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58); each lists code entry points, dependencies and reviewable acceptance.
 
+## Readonly paragraph SDK in Engine UI
+
+The optional [readonly paragraph SDK](knowledge-base/en/docs/readonly-paragraph-sdk.md) wraps Latin, Chinese and Arabic text from explicit font bytes and feeds natural/minimum line height into ordinary UI and virtual lists. Run [the integrated example](examples/paragraph-panel/README.md) to resize, change type size/density, and observe atomic content replacement. Full M3.2, final soft-line bidi L1, editing/IME, physical devices and performance remain open.
+
+可选[只读段落 SDK](knowledge-base/Cns/docs/readonly-paragraph-sdk.md)已接入普通 UI 与虚拟列表，支持明确字体下的中英阿文字换行及真实/最小行高。M3.2 完整验收、软换行最终双向 L1、编辑与输入法、真机及性能仍未完成。
+
 ## M2.2 sequence controls
 
 The optional animation entry adds rate, finite total plays, ordered markers and explicit silent/replaying seek, sharing the existing clock and resource ownership. Legacy and new playback cannot simultaneously claim the same Bitmap. See the [sequence-control contract](knowledge-base/en/docs/sequence-controls.md). Complete Spine and M2.2 acceptance remain open.
@@ -118,6 +124,7 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| Readonly paragraphs / 只读段落 · 2026-10-29 | Width-based Latin/CJK/Arabic paragraph layout, natural/minimum line height, ordinary UI and variable-height list integration | 明确字体的中英阿文字自动换行、自然/最小行高，接入普通 UI 与动态高度列表 |
 | M2.1 runtime integration / 运行时接入 · 2026-10-29 | Typed PNG/atlas/sequence groups reuse existing resources and lifetimes; complete readiness, cancellation and explicit generation replacement | PNG／图集／序列帧类型化组复用原资源与生命周期，支持完整就绪、取消及显式代际替换 |
 | M1.5 delivered / 已交付 · 2026-10-21 | Resource manifests, shared resource loading and device recovery delivered through [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79); formal M1.2 performance remains open | 资源清单、共享资源加载与设备恢复通过 [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) 交付；M1.2 正式性能仍开放 |
 | M1.5 recovery verification / 资源恢复验证 · 2026-10-20 | Seven fixed desktop recovery cases verified; [scope and remaining work](knowledge-base/en/docs/resource-recovery-evidence.md) | 七项固定桌面恢复验证完成；[范围与剩余工作](knowledge-base/Cns/docs/resource-recovery-evidence.md) |

@@ -1,0 +1,13 @@
+--- a/modules/canvaskit/unicode_qualification_bindings.inc
++++ b/modules/canvaskit/unicode_qualification_bindings.inc
+@@ -93,8 +93,8 @@
+     source.set("unicodeVersion", identity.declaredUnicodeVersion);
+     out.set("sourceDeclared", source);
+     auto embedded = val::object();
+-    embedded.set("bytes", 864880);
+-    embedded.set("sha256", std::string("325a86063d26334c2eabe1743cea073b612540fbf3d8fc2ef0b5708e3763a8c7"));
++    embedded.set("bytes", 3089888);
++    embedded.set("sha256", std::string("1b49a1abf09cf9a5cbd750ec84a9d5946b0e167dc4892068470a93e86473c2a5"));
+     embedded.set("sourcePath", std::string("third_party/externals/icu/flutter/icudtl.dat"));
+     embedded.set("identityKind", std::string("reviewed-build-input-sha256-not-runtime-computed"));
+     out.set("embeddedData", embedded);

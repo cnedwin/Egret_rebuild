@@ -31,6 +31,10 @@ const m15DeepClauses = {
   "packages/engine/web/resources.ts": [{operation:'import',kind:'type',members:['Engine'],target:'@egret/engine'},{operation:'import',kind:'value',members:['createContentLoader'],target:'@egret/engine/resources'},{operation:'import',kind:'type',members:['ContentGroup','ContentLoader','ManifestGroupOptions'],target:'@egret/engine/resources'},{operation:'import',kind:'type',members:['AdmittedResourceManifest'],target:'@egret/contracts/resources'}],
   "packages/engine/dist/web/resources.js": [{operation:'import',kind:'value',members:['createContentLoader'],target:'@egret/engine/resources'}],
   "packages/engine/dist/web/resources.d.ts": [{operation:'import',kind:'type',members:['Engine'],target:'@egret/engine'},{operation:'import',kind:'type',members:['ContentLoader'],target:'@egret/engine/resources'},{operation:'import',kind:'type',members:['AdmittedResourceManifest'],target:'@egret/contracts/resources'}],
+  // M3.2: ordinary UI content keeps exact numeric runtime imports.
+  "packages/engine/src/ui/leafContent.ts": [{operation:'import',kind:'value',members:['captureUiLayout'],target:'@egret/runtime/ui'},{operation:'import',kind:'type',members:['UiLayoutNode','UiLayoutTree','UiMeasurement'],target:'@egret/runtime/ui'}],
+  "packages/engine/dist/ui/leafContent.js": [{operation:'import',kind:'value',members:['captureUiLayout'],target:'@egret/runtime/ui'}],
+  "packages/engine/dist/ui/leafContent.d.ts": [{operation:'import',kind:'type',members:['UiLayoutNode','UiLayoutTree'],target:'@egret/runtime/ui'}],
   // M3.1: exact optional UI value and erased assembly clauses only.
   "packages/engine/src/internal/uiFactoryState.ts": [{"operation":"import","kind":"type","members":["createUiDisplayOperations","UiDisplayOperations"],"target":"@egret/runtime/ui"}],
   "packages/engine/dist/internal/uiFactoryState.d.ts": [{"operation":"import","kind":"type","members":["createUiDisplayOperations","UiDisplayOperations"],"target":"@egret/runtime/ui"}],
@@ -77,6 +81,79 @@ const m15DeepClauses = {
   "packages/project/src/resources/manifest.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceBuildDescription","ResourceBuildEntry","ResourceManifestResult"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["admitResourceManifest","serializeResourceManifest as encodeManifest","validateResourceBuildDescription"],"target":"@egret/contracts/resources"}],
 };
 const m15ClauseKey = row => JSON.stringify([row.operation,row.kind,row.target,[...row.members].sort()]);
+// M3.2: exact optional protocol clauses; no same-package value/deep-import wildcard.
+const m32ParagraphDeepClauses = {
+  "packages/engine/src/paragraph.ts": [
+    {
+      "operation": "import",
+      "kind": "type",
+      "members": [
+        "Paragraph",
+        "ParagraphCache"
+      ],
+      "target": "@egret/runtime/paragraph"
+    },
+    {
+      "operation": "export",
+      "kind": "value",
+      "members": [
+        "createParagraphCache"
+      ],
+      "target": "@egret/runtime/paragraph"
+    }
+  ],
+  "packages/engine/dist/paragraph.d.ts": [
+    {
+      "operation": "import",
+      "kind": "type",
+      "members": [
+        "Paragraph",
+        "ParagraphCache"
+      ],
+      "target": "@egret/runtime/paragraph"
+    },
+    {
+      "operation": "export",
+      "kind": "value",
+      "members": [
+        "createParagraphCache"
+      ],
+      "target": "@egret/runtime/paragraph"
+    }
+  ],
+  "packages/engine/dist/paragraph.js": [
+    {
+      "operation": "export",
+      "kind": "value",
+      "members": [
+        "createParagraphCache"
+      ],
+      "target": "@egret/runtime/paragraph"
+    }
+  ],
+  "packages/engine/web/CanvasKitParagraphProvider.ts": [
+    {
+      "operation": "import",
+      "kind": "type",
+      "members": [
+        "ParagraphProvider",
+        "ParagraphRaster",
+        "ParagraphRequest"
+      ],
+      "target": "@egret/engine/paragraph"
+    }
+  ],
+  "packages/engine/dist/web/CanvasKitParagraphProvider.d.ts": [
+    {
+      "operation": "import",
+      "kind": "type",
+      "members": [
+        "ParagraphProvider"
+      ],
+      "target": "@egret/engine/paragraph"
+    }
+  ]
+};
 let inspected = 0;
 const forbidden = /\b(?:document|window|HTMLCanvasElement|GPUDevice|process|Buffer|require)\b|["']node:/;
 for (const [name, allowed] of Object.entries(expected)) {
@@ -98,6 +175,7 @@ for (const [name, allowed] of Object.entries(expected)) {
     const textExports = name === 'runtime' ? {
       '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
       './text': {types:'./dist/text/index.d.ts',import:'./dist/text/index.js'},
+      './paragraph': {types:'./dist/paragraph/index.d.ts',import:'./dist/paragraph/index.js'},
       './input': {types:'./dist/input/index.d.ts',import:'./dist/input/index.js'},
       './ui': {types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'},
     } : {
@@ -107,6 +185,8 @@ for (const [name, allowed] of Object.entries(expected)) {
       './webgl2/scene3d': {types:'./dist/web/webgl2Scene3d.d.ts',import:'./dist/web/webgl2Scene3d.js'},
       './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
       './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
+      './paragraph': {types:'./dist/paragraph.d.ts',import:'./dist/paragraph.js'},
+      './web/paragraph': {types:'./dist/web/paragraph.d.ts',import:'./dist/web/paragraph.js'},
       './layout': {types:'./dist/layout.d.ts',import:'./dist/layout.js'},
       './animation': {types:'./dist/animation/index.d.ts',import:'./dist/animation/index.js'},
       './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
@@ -165,6 +245,8 @@ for (const [name, allowed] of Object.entries(expected)) {
           const providerTarget=['web/CanvasTextRasterProvider.js','dist/web/CanvasTextRasterProvider.js'].includes(target);
           const providerBarrel=['web/text.ts','dist/web/text.js','dist/web/text.d.ts'].includes(relative);
           if ((providerTarget && !providerBarrel) || ['web/text.js','dist/web/text.js'].includes(target)) throw new Error(`${file}: Canvas text opt-in module imported outside its barrel`);
+          const paragraphProviderTarget=['web/CanvasKitParagraphProvider.js','dist/web/CanvasKitParagraphProvider.js'].includes(target);
+          if (paragraphProviderTarget && !['web/paragraph.ts','dist/web/paragraph.js','dist/web/paragraph.d.ts'].includes(relative)) throw new Error(`${file}: paragraph provider imported outside its optional barrel`);
         }
       } else if (['@egret/contracts/resources','#egret-manifest-resources','@egret/runtime/ui','@egret/engine/resources','@egret/engine'].includes(imported)) {
         const relative=path.relative(root,file).split(path.sep).join('/');
@@ -188,6 +270,15 @@ for (const [name, allowed] of Object.entries(expected)) {
         // Only these three first-party adapters may share the Engine-owned registry.
         const relative = path.relative(dir, file).split(path.sep).join('/');
         if (name !== 'engine' || !['web/CanvasHost.ts', 'web/WebGPUHost.ts', 'web/WebGL2Host.ts', 'dist/web/CanvasHost.js', 'dist/web/WebGPUHost.js', 'dist/web/WebGL2Host.js'].includes(relative)) throw new Error(`${file}: private textured registry import outside approved adapters`);
+      } else if (imported === '@egret/runtime/paragraph' || imported === '@egret/engine/paragraph') {
+        const relative=path.relative(root,file).split(path.sep).join('/');
+        const clause=code.slice(0,match.index).match(/\b(import|export)(\s+type)?\s*\{([^{}]+)\}\s*$/);
+        const row=clause && {operation:clause[1],kind:clause[2]?'type':'value',members:clause[3].split(',').map(member=>member.trim().replace(/\s+/g,' ')).filter(Boolean),target:imported};
+        const retainedTypeForward=imported==='@egret/runtime/paragraph'
+          && ['packages/engine/src/paragraph.ts','packages/engine/dist/paragraph.d.ts'].includes(relative)
+          && /\bexport\s+type\s*\*\s*$/.test(code.slice(0,match.index));
+        if (!retainedTypeForward && (!row || !(m32ParagraphDeepClauses[relative]??[]).some(expected=>m15ClauseKey(expected)===m15ClauseKey(row))))
+          throw new Error('M3.2: unapproved paragraph protocol dependency: '+relative+'/'+imported);
       } else if (imported === '@egret/runtime/text') {
         const relative = path.relative(dir, file).split(path.sep).join('/');
         if (name !== 'engine' || !['src/text.ts', 'dist/text.js', 'dist/text.d.ts'].includes(relative)) throw new Error(`${file}: unapproved/deep package import ${imported}`);
@@ -4632,12 +4723,567 @@ const m22SequenceLiteralClosure = {
   ]
 };
 
+// M3.2: reviewed optional paragraph/UI owners; predecessor maps remain unchanged.
+const m32ParagraphLiteralClosure = {
+  "packages/engine/dist/paragraph.d.ts": [
+    [
+      "static",
+      "./Engine.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/paragraph"
+    ],
+    [
+      "static",
+      "@egret/runtime/paragraph"
+    ],
+    [
+      "static",
+      "@egret/runtime/paragraph"
+    ]
+  ],
+  "packages/engine/dist/paragraph.js": [
+    [
+      "static",
+      "./internal/textFieldFactoryState.js"
+    ],
+    [
+      "static",
+      "@egret/runtime/paragraph"
+    ]
+  ],
+  "packages/engine/dist/ui/leafContent.d.ts": [
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/dist/ui/leafContent.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/dist/ui/uiRoot.d.ts": [
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/engine/dist/ui/uiRoot.js": [
+    [
+      "static",
+      "../internal/uiFactoryState.js"
+    ],
+    [
+      "static",
+      "./leafContent.js"
+    ],
+    [
+      "static",
+      "./virtualList.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/dist/web/CanvasKitParagraphProvider.d.ts": [
+    [
+      "static",
+      "@egret/engine/paragraph"
+    ]
+  ],
+  "packages/engine/dist/web/CanvasKitParagraphProvider.js": [
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/web/paragraph.d.ts": [
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ],
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ]
+  ],
+  "packages/engine/dist/web/paragraph.js": [
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ]
+  ],
+  "packages/engine/src/paragraph.ts": [
+    [
+      "static",
+      "./Engine.js"
+    ],
+    [
+      "static",
+      "./internal/textFieldFactoryState.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/paragraph"
+    ],
+    [
+      "static",
+      "@egret/runtime/paragraph"
+    ],
+    [
+      "static",
+      "@egret/runtime/paragraph"
+    ]
+  ],
+  "packages/engine/src/ui/leafContent.ts": [
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/src/ui/uiRoot.ts": [
+    [
+      "static",
+      "../internal/uiFactoryState.js"
+    ],
+    [
+      "static",
+      "../pointerInputTypes.js"
+    ],
+    [
+      "static",
+      "./leafContent.js"
+    ],
+    [
+      "static",
+      "./leafContent.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "./virtualList.js"
+    ],
+    [
+      "static",
+      "./virtualList.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/web/CanvasKitParagraphProvider.ts": [
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/engine/paragraph"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/web/paragraph.ts": [
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ],
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ]
+  ],
+  "packages/runtime/dist/paragraph/Paragraph.d.ts": [
+    [
+      "static",
+      "../DisplayObjectContainer.js"
+    ],
+    [
+      "static",
+      "../ownership.js"
+    ],
+    [
+      "static",
+      "../Scope.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/runtime/dist/paragraph/Paragraph.js": [
+    [
+      "static",
+      "../Bitmap.js"
+    ],
+    [
+      "static",
+      "../CancellationController.js"
+    ],
+    [
+      "static",
+      "../DisplayObjectContainer.js"
+    ],
+    [
+      "static",
+      "../displayTreeState.js"
+    ],
+    [
+      "static",
+      "../EgretError.js"
+    ],
+    [
+      "static",
+      "../ownership.js"
+    ],
+    [
+      "static",
+      "../Scope.js"
+    ],
+    [
+      "static",
+      "../textDisplayState.js"
+    ],
+    [
+      "static",
+      "../ui/managedState.js"
+    ],
+    [
+      "static",
+      "./request.js"
+    ]
+  ],
+  "packages/runtime/dist/paragraph/ParagraphCache.d.ts": [
+    [
+      "static",
+      "../AssetManager.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/runtime/dist/paragraph/ParagraphCache.js": [
+    [
+      "static",
+      "../AssetLease.js"
+    ],
+    [
+      "static",
+      "../assetManagerOwnerState.js"
+    ],
+    [
+      "static",
+      "../AssetRef.js"
+    ],
+    [
+      "static",
+      "../EgretError.js"
+    ],
+    [
+      "static",
+      "../ownership.js"
+    ],
+    [
+      "static",
+      "../Texture.js"
+    ],
+    [
+      "static",
+      "./Paragraph.js"
+    ],
+    [
+      "static",
+      "./request.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/runtime/dist/paragraph/index.d.ts": [
+    [
+      "static",
+      "./ParagraphCache.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/runtime/dist/paragraph/index.js": [
+    [
+      "static",
+      "./ParagraphCache.js"
+    ]
+  ],
+  "packages/runtime/dist/paragraph/request.d.ts": [
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/runtime/dist/paragraph/request.js": [
+    [
+      "static",
+      "../EgretError.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/runtime/dist/paragraph/types.d.ts": [
+    [
+      "static",
+      "../AssetLease.js"
+    ],
+    [
+      "static",
+      "../DisplayObjectContainer.js"
+    ],
+    [
+      "static",
+      "../Texture.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/runtime/dist/paragraph/types.js": [],
+  "packages/runtime/src/paragraph/Paragraph.ts": [
+    [
+      "static",
+      "../Bitmap.js"
+    ],
+    [
+      "static",
+      "../CancellationController.js"
+    ],
+    [
+      "static",
+      "../DisplayObjectContainer.js"
+    ],
+    [
+      "static",
+      "../displayTreeState.js"
+    ],
+    [
+      "static",
+      "../EgretError.js"
+    ],
+    [
+      "static",
+      "../ownership.js"
+    ],
+    [
+      "static",
+      "../ownership.js"
+    ],
+    [
+      "static",
+      "../Scope.js"
+    ],
+    [
+      "static",
+      "../textDisplayState.js"
+    ],
+    [
+      "static",
+      "../ui/managedState.js"
+    ],
+    [
+      "static",
+      "./request.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/runtime/src/paragraph/ParagraphCache.ts": [
+    [
+      "static",
+      "../AssetLease.js"
+    ],
+    [
+      "static",
+      "../AssetLease.js"
+    ],
+    [
+      "static",
+      "../AssetManager.js"
+    ],
+    [
+      "static",
+      "../assetManagerOwnerState.js"
+    ],
+    [
+      "static",
+      "../AssetRef.js"
+    ],
+    [
+      "static",
+      "../AssetRef.js"
+    ],
+    [
+      "static",
+      "../EgretError.js"
+    ],
+    [
+      "static",
+      "../ownership.js"
+    ],
+    [
+      "static",
+      "../Texture.js"
+    ],
+    [
+      "static",
+      "../Texture.js"
+    ],
+    [
+      "static",
+      "./Paragraph.js"
+    ],
+    [
+      "static",
+      "./request.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/runtime/src/paragraph/index.ts": [
+    [
+      "static",
+      "./ParagraphCache.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/runtime/src/paragraph/request.ts": [
+    [
+      "static",
+      "../EgretError.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/runtime/src/paragraph/types.ts": [
+    [
+      "static",
+      "../AssetLease.js"
+    ],
+    [
+      "static",
+      "../DisplayObjectContainer.js"
+    ],
+    [
+      "static",
+      "../Texture.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ]
+};
+
 function sceneGraphEdges(code) {
   return [...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)]
     .map(match=>[/^import\s*\(/.test(match[0])?'dynamic':'static',match[1]])
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
-for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure})) {
+for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure})) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
   // Non-literal dynamic imports cannot hide an additional dependency edge.
@@ -5103,7 +5749,7 @@ const uiRead=file=>readFileSync(path.join(root,file),'utf8').replace(/\/\*[\s\S]
 const uiSame=(a,b)=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
 const uiGraphEdges=code=>[...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>['literal',match[1]]);
 const uiValues=['createUiRoot'];
-const uiTypes=['LayoutNode','UiInvalidationKind','UiLimits','VirtualRecord','VirtualDataSource','RowBindContext','RowBinding','RowUnbindInfo','RowRetention','UiRowPointerNotification','UiRootOptions','UiPreparation','UiCommitResult','UiRowSnapshot','UiCounters','VirtualListSnapshot','UiSnapshot','VirtualListHandle','UiRoot'];
+const uiTypes=['LayoutNode','UiInvalidationKind','UiLimits','VirtualRecord','VirtualDataSource','RowBindContext','UiLeafPrepareContext','UiLeafContent','RowBinding','RowUnbindInfo','RowRetention','UiRowPointerNotification','UiRootOptions','UiPreparation','UiCommitResult','UiRowSnapshot','UiCounters','VirtualListSnapshot','UiSnapshot','VirtualListHandle','UiRoot'];
 const runtimeUiValues=['UiHeightIndex','captureUiLayout','createUiDisplayOperations','planUiLayout'];
 for(const [entry,values]of [['engine',await import('@egret/engine/ui')],['runtime',await import('@egret/runtime/ui')]])
   if(!uiSame(Object.keys(values),entry==='engine'?uiValues:runtimeUiValues))throw new Error('M3.1: exact optional UI values mismatch: '+entry);
@@ -5120,7 +5766,7 @@ const uiFactoryAllowed={
   'src/Engine.ts':1,'src/pointerInput.ts':1,'src/ui/uiRoot.ts':1,
   'dist/Engine.js':1,'dist/pointerInput.js':1,'dist/ui/uiRoot.js':1,
 };
-const managedStateAllowed=['DisplayObject','DisplayObjectContainer','Scope','displayHitState','displayVisualState'];
+const managedStateAllowed=['DisplayObject','DisplayObjectContainer','Scope','displayHitState','displayVisualState','paragraph/Paragraph'];
 for(const pkg of ['runtime','engine'])for(const file of [...files(path.join(root,'packages',pkg,'src')),...files(path.join(root,'packages',pkg,'dist'))]){
   if(!/\.(?:ts|js)$/.test(file))continue;
   const relative=path.relative(path.join(root,'packages',pkg),file).split(path.sep).join('/'),body=uiRead('packages/'+pkg+'/'+relative);

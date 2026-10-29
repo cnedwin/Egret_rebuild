@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Egret paragraphs and UI / 白鹭段落与界面</title>
+  <link rel="icon" href="data:,">
+  <script type="importmap">{"imports":{"@egret/engine":"/packages/engine/dist/index.js","@egret/engine/ui":"/packages/engine/dist/ui/index.js","@egret/engine/paragraph":"/packages/engine/dist/paragraph.js","@egret/engine/web/paragraph":"/packages/engine/dist/web/paragraph.js","@egret/engine/web/pointer":"/packages/engine/dist/web/pointer.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/engine/webgl2":"/packages/engine/dist/web/webgl2.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/runtime/ui":"/packages/runtime/dist/ui/index.js","@egret/runtime/text":"/packages/runtime/dist/text/index.js","@egret/runtime/paragraph":"/packages/runtime/dist/paragraph/index.js","@egret/runtime/input":"/packages/runtime/dist/input/index.js","@egret/contracts":"/packages/contracts/dist/index.js","@egret/contracts/resources":"/packages/contracts/dist/resources/index.js","#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-pointer-input":"/packages/engine/dist/pointerInput.js","robust-predicates":"/vendor/robust-predicates/index.js"}}</script>
+  <script src="./vendor/runtime/canvaskit.js"></script>
+  <style>
+    * {box-sizing:border-box;}
+    body {margin:0;background:#eef3f8;color:#172a43;font:15px/1.5 system-ui,sans-serif;}
+    main {max-width:1148px;margin:auto;padding:24px;}
+    h1 {font-size:26px;margin:0 0 8px;}
+    p {margin:0 0 14px;max-width:960px;}
+    .scene {overflow:auto;border-radius:12px;background:#142033;}
+    canvas {display:block;width:1100px;height:760px;max-width:none;}
+    .controls {display:flex;flex-wrap:wrap;gap:8px;margin:16px 0;}
+    button {font:inherit;color:inherit;background:white;border:1px solid #c6d4e2;border-radius:7px;padding:7px 10px;cursor:pointer;}
+    button:hover {background:#dcebf6;}
+    pre {font-size:13px;line-height:1.45;white-space:pre-wrap;background:#dfe8f1;padding:14px;border-radius:8px;}
+    .boundary {font-size:13px;color:#4a6078;}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Paragraphs inside Engine UI / Engine UI 中的真实段落</h1>
+    <p>The left column and right virtual list use the same readonly paragraph SDK. Wrapping and font metrics determine their heights. Narrow the column, enlarge the type or increase minimum line height to observe committed layout changes.<br>左侧普通布局与右侧虚拟列表使用同一个只读段落 SDK。换行与字体度量决定实际高度，可调整宽度、字号和最小行高。</p>
+    <div class="scene"><canvas id="scene" width="1100" height="760" aria-label="Engine-rendered multilingual paragraphs and variable-height list / Engine 渲染的多语言段落与可变高度列表"></canvas></div>
+    <div class="controls">
+      <button data-action="narrow">Narrow / 窄列</button>
+      <button data-action="wide">Wide / 宽列</button>
+      <button data-action="larger">Larger type / 大字号</button>
+      <button data-action="line-height">44px minimum line height / 最小行高</button>
+      <button data-action="density">Toggle density / 切换密度</button>
+      <button data-action="static">Prepare unchanged / 重复准备</button>
+      <button data-action="scroll">Scroll list / 滚动列表</button>
+      <button data-action="delay">Delay update / 延迟更新</button>
+      <button data-action="finish">Finish update / 完成更新</button>
+      <button data-action="supersede">Replace pending width / 替换待定宽度</button>
+      <button data-action="fail">Fail update / 更新失败</button>
+      <button data-action="close">Close / 关闭</button>
+    </div>
+    <pre id="status" role="status">Loading the optional paragraph backend and explicit fonts / 加载可选段落后端与指定字体</pre>
+    <p class="boundary">Uses bundled, identified Noto Latin, Arabic and CJK fonts. The backend and these fonts are optional example resources, not a default engine download. Final soft-wrapped-line bidi L1, untested scripts, native IME, physical touch devices and performance acceptance remain open. DOM buttons are example controls.<br>示例携带具有明确身份的 Noto 拉丁、阿拉伯与中日韩字体，后端与字体属于可选示例资源，并非引擎默认下载。软换行后双向文本的最终行 L1、未验证文字、原生输入法、实体触屏及性能验收仍未完成。DOM 按钮仅用于驱动示例。</p>
+    <p><a href="?backend=webgl2">WebGL2</a> · <a href="?backend=webgpu">WebGPU</a> · <a href="./README.md">English guide</a> · <a href="./README.zh-CN.md">中文说明</a></p>
+  </main>
+  <script type="module" src="./main.mjs"></script>
+</body>
+</html>

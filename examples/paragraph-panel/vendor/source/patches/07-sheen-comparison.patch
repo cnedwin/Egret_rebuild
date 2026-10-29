@@ -1,0 +1,759 @@
+--- /dev/null
++++ b/modules/skunicode/src/SkUnicode_sheen_private.h
+@@ -0,0 +1,56 @@
++// SPDX-License-Identifier: Apache-2.0
++// First-party private comparison glue; not a public API.
++// Skia integration retains its BSD notices; stock SheenBidi retains Apache-2.0.
++#ifndef SkUnicode_sheen_private_DEFINED
++#define SkUnicode_sheen_private_DEFINED
++#include <stdint.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++typedef struct EgretSheenCResult {
++    int32_t error;
++    int32_t paragraphCount;
++    int32_t paragraphLevel;
++    int32_t nativeParagraphsCreated;
++} EgretSheenCResult;
++// All output arrays have inputLength slots, are caller-owned, and are ignored
++// on failure. Classes use the original typed native seam, never guessed chars.
++EgretSheenCResult EgretSheenObserve(const uint16_t* text, int32_t inputLength,
++        const char* const* classes, int32_t classesMode, int32_t paragraphMode,
++        uint8_t* rawLevels, uint8_t* levels, int32_t* visualToLogical,
++        int32_t* paragraphEnds, uint8_t* paragraphLevels);
++const char* EgretSheenLibraryVersion(void);
++#ifdef __cplusplus
++}
++
++#include "modules/skunicode/include/SkUnicode.h"
++#include <memory>
++#include <string>
++#include <vector>
++namespace SkUnicodes::SheenPrivate {
++enum class ParagraphMode { kLtr, kRtl, kAutoLtr, kAutoRtl };
++struct Paragraph { int32_t start; int32_t end; int32_t level; };
++struct Observation {
++    std::vector<uint8_t> rawParagraphLevels;
++    std::vector<uint8_t> levels;
++    std::vector<int32_t> visualToLogical;
++    std::vector<Paragraph> paragraphs;
++    int32_t paragraphLevel = -1;
++    int32_t errorCode = 0;
++    int32_t nativeInputLength = 0;
++    int32_t nativeResultLength = 0;
++    int32_t nativeParagraphsCreated = 0;
++    bool levelsRead = false;
++    std::string refusalReason;
++};
++Observation Observe(const std::u16string&, const std::vector<std::string>&,
++                    bool classesMode, ParagraphMode);
++std::unique_ptr<SkBidiIterator> MakeIterator(const uint16_t*, int, SkBidiIterator::Direction);
++std::unique_ptr<SkBidiIterator> MakeIterator(const char*, int, SkBidiIterator::Direction);
++bool GetBidiRegions(const char*, int, SkUnicode::TextDirection,
++                   std::vector<SkUnicode::BidiRegion>*);
++sk_sp<SkUnicode> MakeForPrivateSheenComparison();
++}  // namespace SkUnicodes::SheenPrivate
++#endif
++#endif
+--- /dev/null
++++ b/modules/skunicode/src/SkUnicode_sheen_private.cpp
+@@ -0,0 +1,151 @@
++// SPDX-License-Identifier: Apache-2.0
++// First-party private comparison glue; no upstream algorithm replacement.
++// Skia integration retains its BSD notices; stock SheenBidi retains Apache-2.0.
++#include "modules/skunicode/src/SkUnicode_sheen_private.h"
++#include "src/core/SkUTF.h"
++#include <climits>
++#include <new>
++#include <utility>
++
++namespace SkUnicodes::SheenPrivate {
++namespace {
++bool WellFormed(const std::u16string& text) {
++    for (size_t i=0; i<text.size(); ++i) {
++        const uint16_t u=text[i];
++        if (u>=0xD800 && u<=0xDBFF) {
++            if (++i==text.size() || text[i]<0xDC00 || text[i]>0xDFFF) { return false; }
++        } else if (u>=0xDC00 && u<=0xDFFF) { return false; }
++    }
++    return true;
++}
++bool FromUtf8(const char* text, int count, std::u16string* copied) {
++    if (count<0 || (count && !text)) { return false; }
++    if (!count) { copied->clear(); return true; }
++    const int units=SkUTF::UTF8ToUTF16(nullptr,0,text,count);
++    if (units<0) { return false; }
++    copied->resize(units);
++    return SkUTF::UTF8ToUTF16(reinterpret_cast<uint16_t*>(copied->data()),units,text,count)==units
++           && WellFormed(*copied);
++}
++class OwnedIterator final : public SkBidiIterator {
++public:
++    explicit OwnedIterator(std::vector<uint8_t>&& levels) : fLevels(std::move(levels)) {}
++    Position getLength() override { return static_cast<Position>(fLevels.size()); }
++    Level getLevelAt(Position pos) override {
++        return pos>=0 && static_cast<size_t>(pos)<fLevels.size() ? fLevels[pos] : 0;
++    }
++private:
++    std::vector<uint8_t> fLevels;
++};
++ParagraphMode FixedMode(SkBidiIterator::Direction dir) {
++    return dir==SkBidiIterator::kLTR ? ParagraphMode::kLtr : ParagraphMode::kRtl;
++}
++}  // namespace
++
++Observation Observe(const std::u16string& text, const std::vector<std::string>& classes,
++                    bool classesMode, ParagraphMode mode) {
++    Observation out;
++    std::u16string carriers;
++    std::vector<const char*> names;
++    const std::u16string* input=&text;
++    if (classesMode) {
++        if (classes.size()>256) { out.refusalReason="CLASS_LIMIT"; return out; }
++        carriers.reserve(classes.size()); names.reserve(classes.size());
++        for (size_t i=0; i<classes.size(); ++i) {
++            if (classes[i].find('\0')!=std::string::npos) {
++                out.refusalReason="INVALID_BIDI_CLASS"; return out;
++            }
++            carriers.push_back(static_cast<char16_t>(0xE000+i));
++            names.push_back(classes[i].c_str());
++        }
++        input=&carriers;
++    }
++    if (input->size()>INT32_MAX || !WellFormed(*input)) {
++        out.refusalReason="MALFORMED_UTF16_OR_LENGTH"; return out;
++    }
++    const int32_t n=static_cast<int32_t>(input->size());
++    out.nativeInputLength=n;
++    // Standard containers share the existing Wasm allocation-fatal boundary.
++    // The native library's nullable allocation failures below are ordinary
++    // refusals; no claim is made that JS/C++ allocation exhaustion is recoverable.
++    out.rawParagraphLevels.resize(n); out.levels.resize(n); out.visualToLogical.resize(n);
++    std::vector<int32_t> ends(n);
++    std::vector<uint8_t> paragraphLevels(n);
++    const auto native=EgretSheenObserve(reinterpret_cast<const uint16_t*>(input->c_str()),n,
++        classesMode ? names.data() : nullptr,classesMode ? 1 : 0,static_cast<int32_t>(mode),
++        out.rawParagraphLevels.data(),out.levels.data(),out.visualToLogical.data(),
++        ends.data(),paragraphLevels.data());
++    out.errorCode=native.error;
++    out.nativeParagraphsCreated=native.nativeParagraphsCreated;
++    out.paragraphLevel=native.paragraphLevel;
++    if (native.error) {
++        out.refusalReason=native.error==2 ? "SHEEN_ALLOCATION_FAILED" :
++                          native.error==4 ? "INVALID_BIDI_CLASS" :
++                          native.error==1 ? "INVALID_NATIVE_ARGUMENT" : "SHEEN_OUTPUT_RANGE";
++        out.rawParagraphLevels.clear(); out.levels.clear(); out.visualToLogical.clear();
++        return out;
++    }
++    int32_t start=0;
++    for (int32_t i=0; i<native.paragraphCount; ++i) {
++        out.paragraphs.push_back({start,ends[i],paragraphLevels[i]}); start=ends[i];
++    }
++    out.nativeResultLength=n;
++    out.levelsRead=n>0;
++    return out;
++}
++
++std::unique_ptr<SkBidiIterator> MakeIterator(const uint16_t* text, int count,
++                                          SkBidiIterator::Direction dir) {
++    if (count<0 || (count && !text)) { return nullptr; }
++    const std::u16string copied(count ? reinterpret_cast<const char16_t*>(text) : u"",
++                                static_cast<size_t>(count));
++    auto result=Observe(copied,{},false,FixedMode(dir));
++    if (!result.refusalReason.empty()) { return nullptr; }
++    return std::unique_ptr<SkBidiIterator>(new (std::nothrow) OwnedIterator(std::move(result.levels)));
++}
++std::unique_ptr<SkBidiIterator> MakeIterator(const char* text, int count,
++                                          SkBidiIterator::Direction dir) {
++    std::u16string copied;
++    if (!FromUtf8(text,count,&copied)) { return nullptr; }
++    return MakeIterator(reinterpret_cast<const uint16_t*>(copied.c_str()),
++                        static_cast<int>(copied.size()),dir);
++}
++bool GetBidiRegions(const char* text, int count, SkUnicode::TextDirection dir,
++                   std::vector<SkUnicode::BidiRegion>* results) {
++    if (!results) { return false; }
++    std::u16string copied;
++    if (!FromUtf8(text,count,&copied)) { return false; }
++    auto result=Observe(copied,{},false,dir==SkUnicode::TextDirection::kLTR
++        ? ParagraphMode::kLtr : ParagraphMode::kRtl);
++    if (!result.refusalReason.empty()) { return false; }
++    std::vector<SkUnicode::BidiRegion> complete;
++    std::vector<int32_t> byteAt(copied.size()+1,-1);
++    const char* cursor=text;
++    const char* end=count ? text+count : text;
++    size_t unit=0;
++    byteAt[0]=0;
++    while (cursor!=end) {
++        const SkUnichar cp=SkUTF::NextUTF8(&cursor,end);
++        if (cp<0) { return false; }
++        unit+=cp>0xFFFF ? 2 : 1;
++        if (unit>copied.size()) { return false; }
++        byteAt[unit]=static_cast<int32_t>(cursor-text);
++    }
++    if (unit!=copied.size()) { return false; }
++    size_t start=0;
++    for (size_t i=0; i<copied.size();) {
++        const size_t width=copied[i]>=0xD800 && copied[i]<=0xDBFF ? 2 : 1;
++        const auto level=result.levels[i];
++        if (width==2 && result.levels[i+1]!=level) { return false; }
++        if (i && level!=result.levels[start]) {
++            complete.emplace_back(byteAt[start],byteAt[i],result.levels[start]); start=i;
++        }
++        i+=width;
++    }
++    if (!copied.empty()) { complete.emplace_back(byteAt[start],count,result.levels[start]); }
++    // Failure above preserves the caller's old result. No failed iterator is
++    // passed to SkUnicode::forEachBidiRegion (which assumes non-null).
++    results->swap(complete);
++    return true;
++}
++}  // namespace SkUnicodes::SheenPrivate
+--- /dev/null
++++ b/modules/skunicode/src/SkUnicode_sheen_private_c.c
+@@ -0,0 +1,127 @@
++// SPDX-License-Identifier: Apache-2.0
++// First-party private C shim. Included stock vendor remains unmodified Apache-2.0.
++// Skia integration retains its original BSD notices.
++// UNITY keeps SB_INTERNAL static: the typed seam is called in this same TU.
++#include "SkUnicode_sheen_private.h"
++#include "../../../third_party/externals/sheenbidi/Source/SheenBidi.c"
++#include <limits.h>
++#include <stdlib.h>
++#include <string.h>
++
++static int EgretSheenClass(const char* name, SBBidiType* value) {
++#define EGRET_CLASS(x) if (strcmp(name, #x) == 0) { *value = SBBidiType##x; return 1; }
++    EGRET_CLASS(L) EGRET_CLASS(R) EGRET_CLASS(AL) EGRET_CLASS(EN)
++    EGRET_CLASS(ES) EGRET_CLASS(ET) EGRET_CLASS(AN) EGRET_CLASS(CS)
++    EGRET_CLASS(B) EGRET_CLASS(S) EGRET_CLASS(WS) EGRET_CLASS(ON)
++    EGRET_CLASS(LRE) EGRET_CLASS(LRO) EGRET_CLASS(RLE) EGRET_CLASS(RLO)
++    EGRET_CLASS(PDF) EGRET_CLASS(NSM) EGRET_CLASS(BN) EGRET_CLASS(FSI)
++    EGRET_CLASS(LRI) EGRET_CLASS(RLI) EGRET_CLASS(PDI)
++#undef EGRET_CLASS
++    return 0;
++}
++
++const char* EgretSheenLibraryVersion(void) { return SBVersionGetString(); }
++
++EgretSheenCResult EgretSheenObserve(const uint16_t* text, int32_t inputLength,
++        const char* const* classes, int32_t classesMode, int32_t paragraphMode,
++        uint8_t* rawLevels, uint8_t* levels, int32_t* visualToLogical,
++        int32_t* paragraphEnds, uint8_t* paragraphLevels) {
++    EgretSheenCResult out = {0, 0, -1, 0};
++    SBCodepointSequence sequence;
++    SBAlgorithmRef algorithm = NULL;
++    SBParagraphRef paragraph = NULL;
++    SBLineRef line = NULL;
++    SBBidiType* types = NULL;
++    SBLevel base;
++    int32_t offset = 0;
++    int32_t i;
++    if (inputLength < 0 || paragraphMode < 0 || paragraphMode > 3 ||
++            (inputLength && (!text || !rawLevels || !levels || !visualToLogical ||
++                             !paragraphEnds || !paragraphLevels || (classesMode && !classes)))) {
++        out.error = 1; return out;
++    }
++    base = paragraphMode == 0 ? 0 : paragraphMode == 1 ? 1 :
++           paragraphMode == 2 ? SBLevelDefaultLTR : SBLevelDefaultRTL;
++    // SBParagraph's private entry asserts suggestedLength>0. An empty source
++    // has no P1 paragraph; report this explicit bypass, not native success.
++    out.paragraphLevel = (paragraphMode == 1 || paragraphMode == 3) ? 1 : 0;
++    if (!inputLength) { return out; }
++    for (i = 0; i < inputLength; ++i) {
++        rawLevels[i] = levels[i] = 255;
++        visualToLogical[i] = -1;
++    }
++    sequence.stringEncoding = SBStringEncodingUTF16;
++    sequence.stringBuffer = text;
++    sequence.stringLength = (SBUInteger)inputLength;
++    if (classesMode) {
++        types = (SBBidiType*)malloc((size_t)inputLength * sizeof(SBBidiType));
++        if (!types) { out.error = 2; goto done; }
++        for (i = 0; i < inputLength; ++i) {
++            if (!classes[i] || !EgretSheenClass(classes[i], &types[i])) {
++                out.error = 4; goto done;
++            }
++        }
++    } else {
++        algorithm = SBAlgorithmCreate(&sequence);
++        if (!algorithm) { out.error = 2; goto done; }
++    }
++    while (offset < inputLength) {
++        SBUInteger count, runCount, r;
++        int32_t end, visual;
++        const SBRun* runs;
++        const SBLevel* raw;
++        // The original type array drives P1 for classes. Public creation on
++        // PUA carriers would incorrectly classify paragraph separators.
++        paragraph = classesMode
++            ? SBParagraphCreateWithCodepointSequence(&sequence, types,
++                    (SBUInteger)offset, (SBUInteger)(inputLength-offset), base)
++            : SBAlgorithmCreateParagraph(algorithm, (SBUInteger)offset,
++                    (SBUInteger)(inputLength-offset), base);
++        if (!paragraph) { out.error = 2; goto done; }
++        ++out.nativeParagraphsCreated;
++        count = SBParagraphGetLength(paragraph);
++        if (!count || count > (SBUInteger)(inputLength-offset) ||
++                SBParagraphGetOffset(paragraph) != (SBUInteger)offset) {
++            out.error = 3; goto done;
++        }
++        end = offset + (int32_t)count;
++        paragraphEnds[out.paragraphCount] = end;
++        paragraphLevels[out.paragraphCount] = SBParagraphGetBaseLevel(paragraph);
++        if (!out.paragraphCount) { out.paragraphLevel = paragraphLevels[0]; }
++        ++out.paragraphCount;
++        raw = SBParagraphGetLevelsPtr(paragraph);
++        if (!raw) { out.error = 3; goto done; }
++        memcpy(rawLevels + offset, raw, (size_t)count);
++        line = SBParagraphCreateLine(paragraph, (SBUInteger)offset, count);
++        if (!line) { out.error = 2; goto done; }
++        runs = SBLineGetRunsPtr(line);
++        runCount = SBLineGetRunCount(line);
++        if (!runs || !runCount || runCount > count) { out.error = 3; goto done; }
++        visual = offset;
++        for (r = 0; r < runCount; ++r) {
++            SBUInteger start = runs[r].offset, length = runs[r].length, j;
++            if (!length || start < (SBUInteger)offset || start > (SBUInteger)end ||
++                    length > (SBUInteger)end-start || runs[r].level > 126) {
++                out.error = 3; goto done;
++            }
++            for (j = 0; j < length; ++j) {
++                int32_t logical = (int32_t)(start+j);
++                if (levels[logical] != 255 || visual >= end) { out.error = 3; goto done; }
++                levels[logical] = runs[r].level;
++                // Expand already reordered native runs, without solving UBA/L2.
++                visualToLogical[visual++] = (int32_t)(start +
++                        ((runs[r].level & 1) ? length-1-j : j));
++            }
++        }
++        if (visual != end) { out.error = 3; goto done; }
++        SBLineRelease(line); line = NULL;
++        SBParagraphRelease(paragraph); paragraph = NULL;
++        offset = end;
++    }
++done:
++    if (line) { SBLineRelease(line); }
++    if (paragraph) { SBParagraphRelease(paragraph); }
++    if (algorithm) { SBAlgorithmRelease(algorithm); }
++    free(types);
++    return out;
++}
+--- a/modules/skunicode/src/SkUnicode_icu.cpp
++++ b/modules/skunicode/src/SkUnicode_icu.cpp
+@@ -15,6 +15,7 @@
+ #include "include/private/SkTo.h"
+ #include "modules/skunicode/include/SkUnicode.h"
+ #include "modules/skunicode/include/SkUnicode_icu.h"
++#include "modules/skunicode/src/SkUnicode_sheen_private.h"
+ #include "modules/skunicode/src/SkBidiFactory_icu_full.h"
+ #include "modules/skunicode/src/SkUnicode_icu_bidi.h"
+ #include "modules/skunicode/src/SkUnicode_icupriv.h"
+@@ -472,14 +473,17 @@
+     }
+ 
+ public:
++    explicit SkUnicode_icu(bool privateSheen = false) : fPrivateSheen(privateSheen) {}
+     ~SkUnicode_icu() override { }
+     std::unique_ptr<SkBidiIterator> makeBidiIterator(const uint16_t text[], int count,
+                                                      SkBidiIterator::Direction dir) override {
++        if (fPrivateSheen) { return SkUnicodes::SheenPrivate::MakeIterator(text, count, dir); }
+         return fBidiFact->MakeIterator(text, count, dir);
+     }
+     std::unique_ptr<SkBidiIterator> makeBidiIterator(const char text[],
+                                                      int count,
+                                                      SkBidiIterator::Direction dir) override {
++        if (fPrivateSheen) { return SkUnicodes::SheenPrivate::MakeIterator(text, count, dir); }
+         return fBidiFact->MakeIterator(text, count, dir);
+     }
+     std::unique_ptr<SkBreakIterator> makeBreakIterator(const char locale[],
+@@ -526,6 +530,9 @@
+                         int utf8Units,
+                         TextDirection dir,
+                         std::vector<BidiRegion>* results) override {
++        if (fPrivateSheen) {
++            return SkUnicodes::SheenPrivate::GetBidiRegions(utf8, utf8Units, dir, results);
++        }
+         return fBidiFact->ExtractBidi(utf8, utf8Units, dir, results);
+     }
+ 
+@@ -689,6 +696,7 @@
+     }
+ 
+ private:
++    const bool fPrivateSheen;
+     sk_sp<SkBidiFactory> fBidiFact = sk_make_sp<SkBidiICUFactory>();
+ };
+ 
+@@ -709,6 +717,16 @@
+     return nullptr;
+ }
+ }  // namespace SkUnicodes::ICU
++
++namespace SkUnicodes::SheenPrivate {
++sk_sp<SkUnicode> MakeForPrivateSheenComparison() {
++    // Preserve ICU's availability/load guard for all shared services. Its
++    // default factory and original qualification export keep ICU bidi.
++    auto common = SkUnicodes::ICU::Make();
++    if (!common) { return nullptr; }
++    return sk_make_sp<SkUnicode_icu>(true);
++}
++}  // namespace SkUnicodes::SheenPrivate
+ 
+ // LOCAL MODIFICATION: value-only private observations of the selected linked ICU.
+ // This lives in the existing ICU-configured TU; no new build target/configuration.
+--- a/modules/skunicode/BUILD.gn
++++ b/modules/skunicode/BUILD.gn
+@@ -52,10 +52,24 @@
+   }
+ 
+   if (skia_use_icu) {
++    # Fixed private comparison; the reviewed stock vendor is never generated here.
++    source_set("sheen_bidi_comparison") {
++      sources = [ "src/SkUnicode_sheen_private_c.c" ]
++      include_dirs = [
++        "../../third_party/externals/sheenbidi/Headers",
++        "../../third_party/externals/sheenbidi/Source",
++      ]
++      defines = [
++        "SB_CONFIG_UNITY",
++        "SB_CONFIG_DISABLE_SCRATCH_MEMORY",
++      ]
++    }
++
+     skia_component("skunicode_icu") {
+       check_includes = false
+       deps = [
+         ":skunicode_core",
++        ":sheen_bidi_comparison",
+         "../..:skia",
+       ]
+       configs = [
+@@ -74,6 +88,10 @@
+       sources = skia_unicode_icu_bidi_sources
+       sources += skia_unicode_bidi_full_sources
+       sources += skia_unicode_icu_sources
++      sources += [
++        "src/SkUnicode_sheen_private.h",
++        "src/SkUnicode_sheen_private.cpp",
++      ]
+ 
+       # only available for Android at the moment
+       if (skia_use_runtime_icu && (is_android || is_linux)) {
+--- a/modules/canvaskit/paragraph_bindings.cpp
++++ b/modules/canvaskit/paragraph_bindings.cpp
+@@ -19,6 +19,7 @@
+ 
+ #if defined(SK_UNICODE_ICU_IMPLEMENTATION)
+ #include "modules/skunicode/include/SkUnicode_icu.h"
++#include "modules/skunicode/src/SkUnicode_sheen_private.h"
+ #endif
+ #if defined(SK_UNICODE_CLIENT_IMPLEMENTATION)
+ #include "modules/skunicode/include/SkUnicode_client.h"
+@@ -56,6 +57,16 @@
+     // over the full ICU version.
+ #if defined(SK_UNICODE_ICU_IMPLEMENTATION)
+     return SkUnicodes::ICU::Make();
++#else
++    return nullptr;
++#endif
++}
++
++// Private comparison builders and their diagnostic adapter share this factory.
++// get_unicode() above is deliberately retained for every old ICU observation.
++static sk_sp<SkUnicode> get_paragraph_unicode() {
++#if defined(SK_UNICODE_ICU_IMPLEMENTATION)
++    return SkUnicodes::SheenPrivate::MakeForPrivateSheenComparison();
+ #else
+     return nullptr;
+ #endif
+@@ -523,9 +534,11 @@
+ // LOCAL MODIFICATION: exact-source, private qualification methods only.
+ #include "modules/canvaskit/paragraph_qualification_bindings.inc"
+ #include "modules/canvaskit/unicode_qualification_bindings.inc"
++#include "modules/canvaskit/sheen_bidi_comparison_bindings.inc"
+ 
+ EMSCRIPTEN_BINDINGS(Paragraph) {
+     function("_getEgretUnicodeQualification", &GetEgretUnicodeQualification);
++    function("_getEgretSheenBidiComparison", &GetEgretSheenBidiComparison);
+ 
+     class_<para::Paragraph>("Paragraph")
+         .function("didExceedMaxLines", &para::Paragraph::didExceedMaxLines)
+@@ -561,7 +574,7 @@
+                         fc->setDefaultFontManager(fontMgr);
+                         fc->enableFontFallback();
+                         auto ps = toParagraphStyle(style);
+-                        auto pb = para::ParagraphBuilderImpl::make(ps, fc, get_unicode());
++                        auto pb = para::ParagraphBuilderImpl::make(ps, fc, get_paragraph_unicode());
+                         return std::unique_ptr<para::ParagraphBuilderImpl>(
+                                 static_cast<para::ParagraphBuilderImpl*>(pb.release()));
+                     }),
+@@ -575,7 +588,7 @@
+                         fc->setDefaultFontManager(fontProvider);
+                         fc->enableFontFallback();
+                         auto ps = toParagraphStyle(style);
+-                        auto pb = para::ParagraphBuilderImpl::make(ps, fc, get_unicode());
++                        auto pb = para::ParagraphBuilderImpl::make(ps, fc, get_paragraph_unicode());
+                         return std::unique_ptr<para::ParagraphBuilderImpl>(
+                                 static_cast<para::ParagraphBuilderImpl*>(pb.release()));
+                     }),
+@@ -586,7 +599,7 @@
+                                          sk_sp<para::FontCollection> fontCollection)
+                                               -> std::unique_ptr<para::ParagraphBuilderImpl> {
+                         auto ps = toParagraphStyle(style);
+-                        auto pb = para::ParagraphBuilderImpl::make(ps, fontCollection, get_unicode());
++                        auto pb = para::ParagraphBuilderImpl::make(ps, fontCollection, get_paragraph_unicode());
+                         return std::unique_ptr<para::ParagraphBuilderImpl>(
+                                 static_cast<para::ParagraphBuilderImpl*>(pb.release()));
+                     }),
+@@ -612,7 +625,7 @@
+                     pstyle.setTextStyle(style);
+                 }
+ 
+-                auto pb = para::ParagraphBuilder::make(pstyle, fc, get_unicode());
++                auto pb = para::ParagraphBuilder::make(pstyle, fc, get_paragraph_unicode());
+ 
+                 // tease apart the FontBlock runs
+                 size_t runCount = jruns["length"].as<size_t>();
+--- /dev/null
++++ b/modules/canvaskit/sheen_bidi_comparison_bindings.inc
+@@ -0,0 +1,237 @@
++// SPDX-License-Identifier: Apache-2.0
++// First-party private comparison observation. Original ICU export stays intact.
++// Skia integration retains its BSD notices; stock SheenBidi retains Apache-2.0.
++#include "modules/skunicode/src/SkUnicode_sheen_private.h"
++
++namespace {
++namespace EgretSheen = SkUnicodes::SheenPrivate;
++
++JSObject EgretSheenIdentity() {
++    auto id=val::object();
++    id.set("library",std::string("SheenBidi"));
++    id.set("profile",std::string("sheen3-icu-boundaries-l2-private-r0"));
++    id.set("sourceCommit",std::string("cfe430e7375a7845b679adae9d51dac6deaa8858"));
++    const char* version=EgretSheenLibraryVersion();
++    id.set("libraryVersion",std::string(version ? version : ""));
++    auto declared=val::object();
++    declared.set("libraryVersion",std::string("3.0.0"));
++    declared.set("unicodeVersion",std::string("17.0.0"));
++    declared.set("bidiTypeTableGitBlob",std::string("9b058f634903dfc6b58401b03598e61d11c17c8e"));
++    declared.set("pairingTableGitBlob",std::string("9cd70637298031dbdfa2cf8c2f7e537380470186"));
++    declared.set("tableEquivalenceQualified",false);
++    id.set("sourceDeclared",declared);
++    auto runtime=val::object();
++    runtime.set("libraryVersion",std::string(version ? version : ""));
++    runtime.set("unicodeVersion",val::null());
++    runtime.set("unicodeVersionNote",std::string("No public runtime Unicode-table-version getter; source declaration is not a runtime report"));
++    id.set("runtimeReported",runtime);
++    id.set("hybridL2",std::string("Sheen X1-I2 + full-paragraph L1; linked ICU pure reorderVisual L2 for paragraph runs"));
++    id.set("wrapLineL1Integrated",false);
++    id.set("scratchMemoryDisabled",true);
++    return id;
++}
++JSObject EgretSheenAttach(JSObject out) {
++    out.set("candidateIdentity",EgretSheenIdentity());
++    out.set("wrapLineL1Integrated",false);
++    return out;
++}
++JSObject EgretSheenRefused(const std::string& operation,const char* reason,int32_t error=0) {
++    auto out=EgretURefused(operation,reason);
++    out.set("errorCode",error); out.set("error",error);
++    out.set("errorDomain",std::string("private-sheen-adapter"));
++    return EgretSheenAttach(out);
++}
++JSArray EgretSheenParagraphs(const EgretSheen::Observation& result) {
++    auto out=val::array();
++    for (const auto& p:result.paragraphs) {
++        auto r=val::object(); r.set("start",p.start); r.set("end",p.end); r.set("level",p.level);
++        out.call<void>("push",r);
++    }
++    return out;
++}
++void EgretSheenFields(JSObject& out,const EgretSheen::Observation& result) {
++    out.set("levels",EgretUNumbers(result.levels));
++    out.set("rawParagraphLevels",EgretUNumbers(result.rawParagraphLevels));
++    out.set("visualToLogical",EgretUNumbers(result.visualToLogical));
++    out.set("paragraphs",EgretSheenParagraphs(result));
++    out.set("paragraphLevel",result.paragraphLevel);
++    out.set("offsetDomain",std::string("utf16-code-units"));
++    out.set("errorCode",result.errorCode); out.set("error",result.errorCode);
++    out.set("errorDomain",std::string("private-sheen-adapter"));
++    out.set("nativeInputLength",result.nativeInputLength);
++    out.set("nativeResultLength",result.nativeResultLength);
++    out.set("nativeParagraphCount",result.paragraphs.size());
++    out.set("nativeParagraphsCreated",result.nativeParagraphsCreated);
++    out.set("nativeParagraphCreationScope",std::string("Primary resolver only; factory iterator/regions subqueries are not counted; not total allocation or disposal evidence"));
++    out.set("nativeParagraphCreated",result.nativeParagraphsCreated>0);
++    out.set("emptyInput",result.nativeInputLength==0);
++    out.set("levelsRead",result.levelsRead);
++    out.set("reorderingMode",0); out.set("reorderingOptions",0);
++    out.set("reorderingModeBasis",std::string("Fixed default-UBA profile identifiers; not Sheen runtime getters"));
++    out.set("levelsScope",std::string("Per-P1 full-paragraph L1; rawParagraphLevels precede L1; no wrapped-line L1 integration"));
++    out.set("permutationInputDomain",std::string("Per-P1 UTF16 level slots, concatenated in source paragraph order; not final wrapped-line glyph runs"));
++}
++bool EgretSheenDirection(const val& value,int32_t* direction) {
++    if (value.typeOf().as<std::string>()!="number") { return false; }
++    const double d=value.as<double>();
++    if (d!=0 && d!=1) { return false; }
++    *direction=static_cast<int32_t>(d); return true;
++}
++
++JSObject GetEgretSheenBidiComparison(val request) {
++    std::string operation;
++    if (request.isNull() || request.isUndefined() ||
++        request.typeOf().as<std::string>()!="object" ||
++        val::global("Array").call<bool>("isArray",request)) {
++        return EgretSheenRefused(operation,"INVALID_REQUEST");
++    }
++    if (!EgretUString(request["operation"],32,&operation)) {
++        return EgretSheenRefused(operation,"INVALID_OPERATION");
++    }
++    if (operation=="identity") {
++        auto out=EgretUStatus("OBSERVED",operation);
++        out.set("commonIcuIdentity",EgretUIdentity(operation));
++        return EgretSheenAttach(out);
++    }
++    if (operation=="breaks" || operation=="paragraphFlags") {
++        auto out=GetEgretUnicodeQualification(request);
++        out.set("serviceBackend",std::string("Unchanged common ICU service"));
++        return EgretSheenAttach(out);
++    }
++    if (operation!="bidiBackend" && operation!="bidiAdapter" && operation!="iteratorProbe") {
++        return EgretSheenRefused(operation,"UNKNOWN_OPERATION");
++    }
++    const bool classesMode=!request["classes"].isUndefined();
++    const bool textMode=!request["textUtf16"].isUndefined();
++    std::u16string text;
++    SkString utf8;
++    std::vector<std::string> classes;
++    EgretSheen::ParagraphMode mode=EgretSheen::ParagraphMode::kLtr;
++    std::string modeName;
++    int32_t direction=0;
++    std::vector<int32_t> probeIndices;
++    if (operation=="bidiBackend") {
++        if (classesMode==textMode) { return EgretSheenRefused(operation,"AMBIGUOUS_BIDI_INPUT"); }
++        if (classesMode) {
++            if (!val::global("Array").call<bool>("isArray",request["classes"])) {
++                return EgretSheenRefused(operation,"INVALID_CLASSES");
++            }
++            size_t count=0;
++            if (!EgretUArrayLength(request["classes"],256,&count)) {
++                return EgretSheenRefused(operation,"CLASS_LIMIT");
++            }
++            for (size_t i=0;i<count;++i) {
++                std::string token;
++                if (!EgretUString(request["classes"][static_cast<unsigned>(i)],3,&token)) {
++                    return EgretSheenRefused(operation,"INVALID_BIDI_CLASS");
++                }
++                classes.push_back(std::move(token));
++            }
++        } else if (const char* reason=EgretUText(request["textUtf16"],&text,&utf8)) {
++            return EgretSheenRefused(operation,reason);
++        }
++        if (!EgretUString(request["paragraphMode"],16,&modeName)) {
++            return EgretSheenRefused(operation,"INVALID_PARAGRAPH_MODE");
++        }
++        if (modeName=="ltr") { mode=EgretSheen::ParagraphMode::kLtr; }
++        else if (modeName=="rtl") { mode=EgretSheen::ParagraphMode::kRtl; }
++        else if (modeName=="auto-ltr") { mode=EgretSheen::ParagraphMode::kAutoLtr; }
++        else if (modeName=="auto-rtl") { mode=EgretSheen::ParagraphMode::kAutoRtl; }
++        else { return EgretSheenRefused(operation,"INVALID_PARAGRAPH_MODE"); }
++    } else {
++        if (classesMode) { return EgretSheenRefused(operation,"INVALID_CLASSES_FOR_ADAPTER"); }
++        if (const char* reason=EgretUText(request["textUtf16"],&text,&utf8)) {
++            return EgretSheenRefused(operation,reason);
++        }
++        if (!EgretSheenDirection(request["direction"],&direction)) {
++            return EgretSheenRefused(operation,"INVALID_DIRECTION");
++        }
++        mode=direction==0 ? EgretSheen::ParagraphMode::kLtr : EgretSheen::ParagraphMode::kRtl;
++    }
++    if (operation=="iteratorProbe") {
++        size_t count=0;
++        if (!EgretUArrayLength(request["probeIndices"],513,&count)) {
++            return EgretSheenRefused(operation,"INVALID_PROBE_INDEX");
++        }
++        for (size_t i=0;i<count;++i) {
++            const val v=request["probeIndices"][static_cast<unsigned>(i)];
++            if (v.typeOf().as<std::string>()!="number") {
++                return EgretSheenRefused(operation,"INVALID_PROBE_INDEX");
++            }
++            const double index=v.as<double>();
++            if (!std::isfinite(index) || std::floor(index)!=index || index<0 || index>text.size()) {
++                return EgretSheenRefused(operation,"INVALID_PROBE_INDEX");
++            }
++            probeIndices.push_back(static_cast<int32_t>(index));
++        }
++    }
++    const auto observed=EgretSheen::Observe(text,classes,classesMode,mode);
++    if (!observed.refusalReason.empty()) {
++        return EgretSheenRefused(operation,observed.refusalReason.c_str(),observed.errorCode);
++    }
++    auto result=observed;
++    auto out=classesMode ? EgretUStatus("OBSERVED",operation)
++                         : EgretUObservedText(operation,text,utf8);
++    out.set("inputKind",std::string(classesMode ? "classes" : "characters"));
++    if (classesMode) {
++        auto copied=val::array();
++        for (const auto& token:classes) { copied.call<void>("push",token); }
++        out.set("classes",copied);
++        out.set("classAssignment",std::string("Original native refBidiTypes in same-unity shim; one non-bracket PUA carrier per token, not representative characters"));
++    }
++    if (operation=="bidiBackend") {
++        out.set("paragraphMode",modeName);
++        out.set("visualMapBackend",std::string("Sheen SBLine L1-L2 native runs"));
++    } else {
++        auto unicode=get_paragraph_unicode();
++        if (!unicode) { return EgretSheenRefused(operation,"UNICODE_UNAVAILABLE"); }
++        // Exercise the actual factory's UTF8 overload. Its temporary UTF16
++        // buffer is retired before these iterator reads; ownedLevels persist.
++        auto iterator=unicode->makeBidiIterator(utf8.c_str(),static_cast<int>(utf8.size()),
++            direction==0 ? SkBidiIterator::kLTR : SkBidiIterator::kRTL);
++        if (!iterator || iterator->getLength()!=static_cast<int32_t>(text.size())) {
++            return EgretSheenRefused(operation,"BIDI_ADAPTER_UNAVAILABLE_OR_LENGTH");
++        }
++        std::vector<uint8_t> ownedLevels;
++        for (size_t i=0;i<text.size();++i) {
++            ownedLevels.push_back(iterator->getLevelAt(static_cast<int32_t>(i)));
++        }
++        if (ownedLevels!=result.levels) { return EgretSheenRefused(operation,"FACTORY_LEVEL_MISMATCH"); }
++        out.set("direction",direction);
++        if (operation=="iteratorProbe") {
++            auto probes=val::array();
++            for (int32_t index:probeIndices) {
++                auto p=val::object(); p.set("index",index);
++                p.set("level",static_cast<int32_t>(iterator->getLevelAt(index)));
++                probes.call<void>("push",p);
++            }
++            out.set("length",iterator->getLength());
++            out.set("ownedLevels",EgretUNumbers(ownedLevels));
++            out.set("probes",probes);
++        }
++        // L2 is applied separately within each P1 range. This is a native
++        // level-slot diagnostic, never a final soft-wrapped glyph map.
++        for (const auto& p:result.paragraphs) {
++            const int32_t count=p.end-p.start;
++            std::vector<int32_t> local(count);
++            unicode->reorderVisual(result.levels.data()+p.start,count,local.data());
++            for (int32_t i=0;i<count;++i) { result.visualToLogical[p.start+i]=p.start+local[i]; }
++        }
++        std::vector<SkUnicode::BidiRegion> regions;
++        if (!unicode->getBidiRegions(utf8.c_str(),static_cast<int>(utf8.size()),
++            direction==0 ? SkUnicode::TextDirection::kLTR : SkUnicode::TextDirection::kRTL,&regions)) {
++            return EgretSheenRefused(operation,"BIDI_REGIONS_REFUSED");
++        }
++        auto copied=val::array();
++        for (const auto& region:regions) {
++            auto p=val::object(); p.set("start",region.start); p.set("end",region.end);
++            p.set("level",static_cast<int32_t>(region.level)); copied.call<void>("push",p);
++        }
++        out.set("regions",copied);
++        out.set("regionOffsetDomain",std::string("utf8-bytes"));
++        out.set("visualMapBackend",std::string("Same paragraph factory; linked ICU pure reorderVisual per P1"));
++    }
++    EgretSheenFields(out,result);
++    return EgretSheenAttach(out);
++}
++}  // namespace

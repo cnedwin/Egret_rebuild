@@ -135,3 +135,15 @@ test('first pngjs license registration preserves its exact reviewed upstream byt
   assert.throws(()=>planMetadata(f.root,{base:f.base}),/frozen|reviewed|license/i);
  }finally{f.close();}
 });
+
+test('reviewed optional paragraph legal originals register once and cannot be rehashed',()=>{
+ const f=fixture();try{
+  const relative='examples/paragraph-panel/vendor/licenses/fonts/noto-sans/LICENSE';
+  const bytes=fs.readFileSync(new URL('../../'+relative,import.meta.url));
+  f.put(relative,bytes);const declaration={schemaVersion:1,files:[],documents:[],frozenInputs:[{path:relative,bytes:bytes.length,sha256:hash(bytes),originRole:'Unmodified reviewed original Noto font license bytes.'}]};
+  f.put('contributions/paragraph-legal.json',JSON.stringify(declaration));
+  const plan=planMetadata(f.root,{base:f.base});writeMetadata(f.root,plan);checkIntegrated(f.root,planMetadata(f.root,{base:f.base}));
+  f.put(relative,Buffer.concat([bytes,Buffer.from('changed')]));declaration.frozenInputs[0].bytes+=7;declaration.frozenInputs[0].sha256=hash(fs.readFileSync(path.join(f.root,relative)));f.put('contributions/paragraph-legal.json',JSON.stringify(declaration));
+  assert.throws(()=>planMetadata(f.root,{base:f.base}),/Reviewed paragraph legal identity differs/);
+ }finally{f.close();}
+});

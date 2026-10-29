@@ -33,7 +33,7 @@ export interface EngineContext {
   report(diagnostic: Diagnostic): void;
   captureCleanup(cause: unknown): void;
   /** @internal Optional explicit-text assembly; ordinary runtime contexts need not supply it. */
-  readonly registerTextFieldCache?: (cache: object, construct: (scope: Scope) => DisplayObject) => void;
+  readonly registerTextFieldCache?: (cache: object, construct: (scope: Scope) => DisplayObject, kind?: 'explicit-lines' | 'paragraph') => void;
   /** @internal Optional group assembly; ordinary runtime contexts remain unchanged. */
   readonly registerAssetGroupOperations?: (operations: AssetGroupOperations) => void;
 }
