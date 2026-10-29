@@ -2892,7 +2892,7 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "75f622b9a0030e24d8f62a6ee7e8caf9474fffe8aca6c94d75cb1fd0d7bef382"
+      "sha256": "e9ac43b34c421baa6301611d44e4ba2af76bddf08ba91cab4a24097fb31e4411"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
