@@ -1,0 +1,340 @@
+{
+  "schema": "paragraph-bidi-comparison-verification-summary/v1",
+  "date": "2026-10-29",
+  "scope": "Experimental source projection and finite qualification evidence; production SDK/provider integration remains open.",
+  "sourcePatchSha256": "0273da289fbac4d2a1c71a42d175f4ee32c658c0e2c8458f008eed1f747e8181",
+  "runtime": {
+    "receiptSha256": "f4b6977515fffbc3db51d6ef1f09fef13280b8d6318ab740cc7259532f5d0f88",
+    "artifacts": {
+      "glue": {
+        "bytes": 96090,
+        "sha256": "bad20cb1b1eb5c8ffc3d744f3aebdfa68af4ee756d68853459f6155594b66ea9"
+      },
+      "wasm": {
+        "bytes": 8584562,
+        "sha256": "0bead90e2f57b6da3874e87461bbc08a4d54693395916d4837634e9c4014f452"
+      }
+    },
+    "wasmDeclaredMemory": {
+      "flags": 1,
+      "initialPages": 512,
+      "maximumPages": 1024,
+      "initialBytes": 33554432,
+      "maximumBytes": 67108864
+    },
+    "identity": {
+      "status": "OBSERVED",
+      "operation": "identity",
+      "commonIcuIdentity": {
+        "status": "OBSERVED",
+        "operation": "identity",
+        "codeVersion": [
+          78,
+          2,
+          0,
+          0
+        ],
+        "unicodeVersion": [
+          17,
+          0,
+          0,
+          0
+        ],
+        "dataVersion": [
+          78,
+          2,
+          0,
+          0
+        ],
+        "dataErrorCode": 0,
+        "defaultLocale": "zh_CN",
+        "sourceDeclared": {
+          "codeVersion": "78.2",
+          "unicodeVersion": "17.0"
+        },
+        "embeddedData": {
+          "bytes": 3089888,
+          "sha256": "1b49a1abf09cf9a5cbd750ec84a9d5946b0e167dc4892068470a93e86473c2a5",
+          "sourcePath": "third_party/externals/icu/flutter/icudtl.dat",
+          "identityKind": "reviewed-build-input-sha256-not-runtime-computed"
+        },
+        "runtimeReported": {
+          "codeVersion": [
+            78,
+            2,
+            0,
+            0
+          ],
+          "unicodeVersion": [
+            17,
+            0,
+            0,
+            0
+          ],
+          "dataVersion": [
+            78,
+            2,
+            0,
+            0
+          ],
+          "dataErrorCode": 0,
+          "defaultLocale": "zh_CN"
+        }
+      },
+      "candidateIdentity": {
+        "library": "SheenBidi",
+        "profile": "sheen3-icu-boundaries-l2-private-r0",
+        "sourceCommit": "cfe430e7375a7845b679adae9d51dac6deaa8858",
+        "libraryVersion": "3.0.0",
+        "sourceDeclared": {
+          "libraryVersion": "3.0.0",
+          "unicodeVersion": "17.0.0",
+          "bidiTypeTableGitBlob": "9b058f634903dfc6b58401b03598e61d11c17c8e",
+          "pairingTableGitBlob": "9cd70637298031dbdfa2cf8c2f7e537380470186",
+          "tableEquivalenceQualified": false
+        },
+        "runtimeReported": {
+          "libraryVersion": "3.0.0",
+          "unicodeVersion": null,
+          "unicodeVersionNote": "No public runtime Unicode-table-version getter; source declaration is not a runtime report"
+        },
+        "hybridL2": "Sheen X1-I2 + full-paragraph L1; linked ICU pure reorderVisual L2 for paragraph runs",
+        "wrapLineL1Integrated": false,
+        "scratchMemoryDisabled": true
+      },
+      "wrapLineL1Integrated": false
+    }
+  },
+  "focused": [
+    {
+      "job": "n0-order",
+      "tests": 24,
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0,
+      "inputsUnchanged": true,
+      "receiptSha256": "9fc90151d5c978a26193eab4a72b916ac30adf416bafdd3951c4fc350903df4f"
+    },
+    {
+      "job": "boundary-contract",
+      "tests": 56,
+      "passed": 54,
+      "failed": 0,
+      "skipped": 2,
+      "inputsUnchanged": true,
+      "receiptSha256": "3e6bf8a11b997fe89362529ec813da527045c404098f8d216cb0ababe4a2a9fb"
+    },
+    {
+      "job": "typed-controls",
+      "tests": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "inputsUnchanged": true,
+      "receiptSha256": "33967a25100564971f69e626ba425e23fe4d01532cd7484dd39cadc41b8afbed"
+    }
+  ],
+  "fullBidi": {
+    "receiptSha256": "59fe420f0631e12498986b887cfbd9e85b16a8824024b1583ba1ac48d5415770",
+    "startedUtc": "2026-10-29T00:10:08.907Z",
+    "endedUtc": "2026-10-29T00:12:16.705Z",
+    "scheduledAttempts": 953655,
+    "observedComparisons": 953627,
+    "capabilityUnobserved": 28,
+    "suites": {
+      "BidiTest": {
+        "physicalLines": 497591,
+        "parsedRecords": 490846,
+        "directiveLines": 2656,
+        "parseErrors": 0,
+        "profiles": {
+          "class-backend": {
+            "parsedRecords": 490846,
+            "expandedAttempts": 770241,
+            "executed": 770241,
+            "refused": 0,
+            "skipped": 0,
+            "capacitySkipped": 0,
+            "capabilitySkipped": 0,
+            "error": 0,
+            "responseErrors": 0,
+            "comparisonErrors": 0,
+            "fatalErrors": 0,
+            "mismatch": 0,
+            "startConvention": 0
+          }
+        }
+      },
+      "BidiCharacterTest": {
+        "physicalLines": 96465,
+        "parsedRecords": 91707,
+        "directiveLines": 0,
+        "parseErrors": 0,
+        "profiles": {
+          "character-backend": {
+            "parsedRecords": 91707,
+            "expandedAttempts": 91707,
+            "executed": 91707,
+            "refused": 0,
+            "skipped": 0,
+            "capacitySkipped": 0,
+            "capabilitySkipped": 0,
+            "error": 0,
+            "responseErrors": 0,
+            "comparisonErrors": 0,
+            "fatalErrors": 0,
+            "mismatch": 0,
+            "startConvention": 0
+          },
+          "paragraph-bidi-adapter": {
+            "parsedRecords": 91707,
+            "expandedAttempts": 91707,
+            "executed": 91679,
+            "refused": 0,
+            "skipped": 28,
+            "capacitySkipped": 0,
+            "capabilitySkipped": 28,
+            "error": 0,
+            "responseErrors": 0,
+            "comparisonErrors": 0,
+            "fatalErrors": 0,
+            "mismatch": 0,
+            "startConvention": 0
+          }
+        }
+      }
+    },
+    "recordAccounting": {
+      "BidiTest": {
+        "expected": 490846,
+        "parsed": 490846,
+        "fullRead": true
+      },
+      "BidiCharacterTest": {
+        "expected": 91707,
+        "parsed": 91707,
+        "fullRead": true
+      }
+    },
+    "fullTraversal": true,
+    "postExecutionPins": 21,
+    "postExecutionIdentity": "UNCHANGED",
+    "scope": "Unicode 17 official BidiTest typed-class profile and BidiCharacterTest character/fixed-adapter profiles only. The fixed adapter has no auto-direction rewrite."
+  },
+  "paragraphs": {
+    "original": {
+      "OBSERVED": 49,
+      "REFUSED_BEFORE_PROVIDER": 1
+    },
+    "companions": {
+      "OBSERVED": 3
+    },
+    "unattempted": 0,
+    "originalOwnedCopies": 294,
+    "companionOwnedCopies": 18,
+    "rootsRetired": true,
+    "finiteComparisons": 844,
+    "mismatches": 0,
+    "inputFiles": 494,
+    "inputsUnchanged": true,
+    "finiteReceiptSha256": "8893b08bfbbf7f64a2a685d772382dd02f817b8a1b0af7e8abc08a68adea4eb8",
+    "observedLinearCapacityBytes": 40304640,
+    "scope": "Existing finite independent references and conditional canonical/raster parity; not independent shaping or pixel oracles for all 53 cases."
+  },
+  "browser": {
+    "receiptSha256": "f96b94b195d079cb26d9c6b7bbb0a028efb6ff561156d630fcec5f6cd1125d12",
+    "environment": {
+      "node": "v26.7.0",
+      "playwright": "1.62.1",
+      "channel": "msedge",
+      "headless": true,
+      "extraFlags": [],
+      "physicalDevice": false,
+      "browser": "156.0.4314.50"
+    },
+    "status": "PASS",
+    "orderComparisons": 24,
+    "rawRgba": {
+      "bytes": 524288,
+      "sha256": "21971f642ff528577e039eee6dac3cccfa2995a5f7bbbf671ef232d9bd6f3fb5",
+      "format": "RGBA_8888/Unpremul/SRGB",
+      "width": 512,
+      "height": 256
+    },
+    "sameArtifactNodePixelParity": {
+      "matches": true,
+      "sha256": "21971f642ff528577e039eee6dac3cccfa2995a5f7bbbf671ef232d9bd6f3fb5",
+      "independentGolden": false
+    },
+    "inputsUnchanged": true,
+    "inputFiles": 13,
+    "cleanup": {
+      "browserClosed": true,
+      "serverClosed": true
+    },
+    "scope": "Desktop CPU Wasm, 24 literal service-order checks and one genuine Ahem paragraph; not GPU, all-script browser pixels, mobile, IME or performance qualification."
+  },
+  "fileTransfer": {
+    "node": "v26.7.0",
+    "zlib": "1.3.2.1-motley-42c2f19",
+    "method": "Node gzipSync level9; embedded ICU data counted once inside Wasm",
+    "files": {
+      "glue": {
+        "rawBytes": 96090,
+        "sha256": "bad20cb1b1eb5c8ffc3d744f3aebdfa68af4ee756d68853459f6155594b66ea9",
+        "gzip9Bytes": 29909,
+        "gzip9Sha256": "109a757f7a8abd742b61d8924b674dc9ece30c6cc18e4887fabb4d881c2253fd"
+      },
+      "wasm": {
+        "rawBytes": 8584562,
+        "sha256": "0bead90e2f57b6da3874e87461bbc08a4d54693395916d4837634e9c4014f452",
+        "gzip9Bytes": 4184563,
+        "gzip9Sha256": "64cd23c089ef58981b0444a6babea9e69874ed4589db5c34ea3661b66ca422fd"
+      }
+    },
+    "combinedGzip9Bytes": 4214472,
+    "wasmPlusEmbeddedDataCeilingBytes": 4718592
+  },
+  "preservedFailures": [
+    {
+      "record": "Original ICU strict comparison",
+      "classMismatches": 105785,
+      "characterMismatches": 11,
+      "fixedAdapterMismatches": 11,
+      "scope": "Historical original artifact; not relabeled by candidate results or equated to proven rendering defects."
+    },
+    {
+      "record": "Candidate boundary r0",
+      "passed": 53,
+      "failed": 1,
+      "skipped": 2,
+      "cause": "Test addressed unchanged embeddedData identity fields at the wrong object depth. Only accesses were corrected; all expected values and native bytes retained."
+    },
+    {
+      "record": "Browser r0",
+      "status": "FAIL",
+      "stage": "BEFORE_CANDIDATE_INITIALIZATION",
+      "cause": "Fixed glue accepts locateFile; ignored wasmBinary configuration left the default URL outside the exact allowlist. R1 supplied explicit locateFile; native bytes and assertions retained."
+    }
+  ],
+  "independentReview": {
+    "sourceSha256": "ab3de5f868fb27a20db3d16eefda2fc518f8cd668ef41078dbf09162746082df",
+    "buildSha256": "f951754ca170d3647bcfbd752635afe90aaa73a87f233b012c2f244e94b5f6fa",
+    "resultSha256": "3d3b28f35e93636e7df4edcb833c98487ffce39914b4ce1847e6f9f398e7d80a",
+    "browserSha256": "c22a51cf0163fb7b9502b00c79a2ccaadfbf4217bed55f005ee7218dadfc244b",
+    "openCritical": 0,
+    "openImportant": 0
+  },
+  "open": [
+    "Soft-wrapped final-line L1 integration and wrapped caret/selection correctness.",
+    "Complete advertised script/style shaping, glyph/cluster/ink and font-subset references.",
+    "Live/physical memory, allocator exhaustion, fatal-generation and OOM recovery.",
+    "Full browser composition, Android/iPhone input, native IME and accessibility.",
+    "Provider adoption and complete M3.2/M4 acceptance.",
+    "M1.2 full-dirty CPU timing remains 10.3 ms versus its 8 ms target."
+  ],
+  "productionProviderQualified": false,
+  "publicSdkApiAdded": false,
+  "distributedSdkRuntimeDependencyChanged": false,
+  "reproducibility": "Read public-source-manifest.json for the derived baseline hashes and six prerequisite patches/data. This source-review projection is not a clean-upstream single-patch or one-command reproduction package."
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "verification/paragraph-sheen-comparison/native.patch",
+      "originRole": "First-party Apache-2.0 API/value adapters and BSD-3-Clause Skia integration changes in an exact source-relative experimental patch; upstream notices retained, no UBA/L2 algorithm redistribution or SDK provider adoption."
+    },
+    {
+      "path": "verification/paragraph-sheen-comparison/public-source-manifest.json",
+      "originRole": "First-party experimental source identities, prerequisite derived-baseline patches and distinct license ownership; source-review projection only."
+    },
+    {
+      "path": "verification/paragraph-sheen-comparison/verification-summary.json",
+      "originRole": "First-party public projection of independently reviewed actual source/build/Unicode/paragraph/browser observations, preserved failures and unresolved acceptance boundaries; authored with AI assistance."
+    },
+    {
+      "path": "verification/paragraph-sheen-comparison/sheen-Apache-2.0.txt",
+      "originRole": "Unmodified original Apache-2.0 license from fixed SheenBidi cfe430e7375a7845b679adae9d51dac6deaa8858; original bytes preserved."
+    },
+    {
+      "path": "verification/paragraph-sheen-comparison/skia-BSD-3-Clause.txt",
+      "originRole": "Unmodified original BSD-3-Clause license from fixed Skia e2def78fa232884d4aedcf3ad92d4a0dd673b898; original copyright and bytes preserved."
+    },
+    {
+      "path": "knowledge-base/en/docs/paragraph-bidi-comparison.md",
+      "originRole": "First-party bilingual experimental paragraph bidi adapter design, source credits, actual finite verification and product acceptance boundaries; authored with AI assistance and separately reviewed."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/paragraph-bidi-comparison.md",
+      "originRole": "First-party bilingual experimental paragraph bidi adapter design, source credits, actual finite verification and product acceptance boundaries; authored with AI assistance and separately reviewed."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/paragraph-bidi-comparison.md",
+      "zh": "knowledge-base/Cns/docs/paragraph-bidi-comparison.md"
+    }
+  ]
+}

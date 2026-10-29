@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 12948,
-      "sha256": "1a38ddf689e2a22aeeee07bf48eab964559ba11292abc7b1db45a7d95862cc1e",
+      "bytes": 13658,
+      "sha256": "13c9bdd975b62ca5cf3733e9cc123b4f192c2c5137942f54ee79b0740d687b8e",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "08001ce0b0d07e5ef64a61e00719372b2190bf85fc2322ec04b38be2d7ccccad",
+      "sha256": "10255fa835e319dc1ac52573f378907e0873e51ff41897b134317bfcdfbd7f31",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 14724,
-      "sha256": "185a74d0264a3f6806db447eaf697f684c05cabb427658b145d9af3bc97ddc29",
+      "bytes": 15469,
+      "sha256": "8a8623119efc9a5e08d5755354044855b33b3e4b65b66b93a74de73fb3b7b2b4",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "6e2015dd507739d3c380f5810278c683698c54fe096a7b3c911e58fdcd19287e",
-      "bytes": 360682,
+      "sha256": "b4403a4d482bae2697c0e8eca3fe9caf01dc3ee1abb3d44d13a54ea2a6eb6c3f",
+      "bytes": 361033,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -12782,14 +12782,14 @@
     {
       "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 49081,
-      "sha256": "09ec9a9e69587f3ffe5149c660a02d27095e2e2deacba569dd443c3d6c7f8eaa"
+      "bytes": 49946,
+      "sha256": "b2f0e60aef4e0e128c5acd13fe430a546bfa876ae94bcbaf6e6fac106cd11293"
     },
     {
       "path": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 41451,
-      "sha256": "ac0e807b1fc08323452906cd41502a42b6f972026d770b123ac3c7ed565c5bb0"
+      "bytes": 42212,
+      "sha256": "84adb62fce290ebac0b27868b899db6776aac207d305ce1ba141f45a981cd458"
     },
     {
       "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -13522,6 +13522,54 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 9137,
       "sha256": "07fe073a1f24cdb9631f08e1068577af50817aab63c614c3009df015c1dab9ad"
+    },
+    {
+      "path": "verification/paragraph-sheen-comparison/native.patch",
+      "originRole": "First-party Apache-2.0 API/value adapters and BSD-3-Clause Skia integration changes in an exact source-relative experimental patch; upstream notices retained, no UBA/L2 algorithm redistribution or SDK provider adoption.",
+      "bytes": 35949,
+      "sha256": "0273da289fbac4d2a1c71a42d175f4ee32c658c0e2c8458f008eed1f747e8181"
+    },
+    {
+      "path": "verification/paragraph-sheen-comparison/public-source-manifest.json",
+      "originRole": "First-party experimental source identities, prerequisite derived-baseline patches and distinct license ownership; source-review projection only.",
+      "bytes": 5879,
+      "sha256": "297ac0a6540f5293affadd4d11bf157c08381983d8b431d394ddc30b4de9427f"
+    },
+    {
+      "path": "verification/paragraph-sheen-comparison/verification-summary.json",
+      "originRole": "First-party public projection of independently reviewed actual source/build/Unicode/paragraph/browser observations, preserved failures and unresolved acceptance boundaries; authored with AI assistance.",
+      "bytes": 11296,
+      "sha256": "3307221db13807bbed09b9653116a8a6d14b9cbe6c68229658bfe8e3c9ba31ba"
+    },
+    {
+      "path": "verification/paragraph-sheen-comparison/sheen-Apache-2.0.txt",
+      "originRole": "Unmodified original Apache-2.0 license from fixed SheenBidi cfe430e7375a7845b679adae9d51dac6deaa8858; original bytes preserved.",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "verification/paragraph-sheen-comparison/skia-BSD-3-Clause.txt",
+      "originRole": "Unmodified original BSD-3-Clause license from fixed Skia e2def78fa232884d4aedcf3ad92d4a0dd673b898; original copyright and bytes preserved.",
+      "bytes": 1507,
+      "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+    },
+    {
+      "path": "knowledge-base/en/docs/paragraph-bidi-comparison.md",
+      "originRole": "First-party bilingual experimental paragraph bidi adapter design, source credits, actual finite verification and product acceptance boundaries; authored with AI assistance and separately reviewed.",
+      "bytes": 8235,
+      "sha256": "a03560ea16d415a0b690818b0f1f7fb00e5ae4f2462e3087cb40def69773d3b3"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/paragraph-bidi-comparison.md",
+      "originRole": "First-party bilingual experimental paragraph bidi adapter design, source credits, actual finite verification and product acceptance boundaries; authored with AI assistance and separately reviewed.",
+      "bytes": 7374,
+      "sha256": "5202db887d9d9c4f44e807697573a33391c6e7088d19e213ad5d63bd072d4bb7"
+    },
+    {
+      "path": "contributions/paragraph-bidi-comparison.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 2217,
+      "sha256": "307d457fc4120be6eba204ea167ca8182c1339f392ece77d32d2c865cfb805bd"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

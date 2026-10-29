@@ -1,0 +1,150 @@
+{
+  "schema": "paragraph-sheen-comparison-public-source/v1",
+  "sourceProjectionOnly": true,
+  "productionProviderQualified": false,
+  "cleanUpstreamSinglePatchReplay": false,
+  "upstreamSkia": {
+    "repository": "https://skia.googlesource.com/skia",
+    "commit": "e2def78fa232884d4aedcf3ad92d4a0dd673b898"
+  },
+  "sheenBidi": {
+    "repository": "https://github.com/Tehreer/SheenBidi",
+    "tag": "v3.0.0",
+    "annotatedTag": "c0aa79da5b5ff44bd2cbd9ce92963f81e4de6b1e",
+    "commit": "cfe430e7375a7845b679adae9d51dac6deaa8858",
+    "tree": "23c55816695bd815a6c77148b47b9bbe842fa08e",
+    "placement": "third_party/externals/sheenbidi",
+    "license": "Apache-2.0",
+    "sourceRedistributed": false
+  },
+  "patch": {
+    "path": "native.patch",
+    "bytes": 35949,
+    "sha256": "0273da289fbac4d2a1c71a42d175f4ee32c658c0e2c8458f008eed1f747e8181",
+    "sourceFileCount": 7
+  },
+  "sourceFiles": [
+    {
+      "path": "modules/skunicode/src/SkUnicode_sheen_private.h",
+      "bytes": 2223,
+      "sha256": "87aea1865807abfd448fad731d8ff2b4ac0153267dfae36c338c3e44c7777d16",
+      "baseBeforeExists": false,
+      "baseBeforeSha256": null,
+      "license": "Apache-2.0",
+      "attribution": "New independently owned API/value wrapper; SPDX Apache-2.0."
+    },
+    {
+      "path": "modules/skunicode/src/SkUnicode_sheen_private.cpp",
+      "bytes": 6904,
+      "sha256": "0f0d17f2bc79ff59de61b9f86392c7e775751a5c8266c056f5169b7980b0fd87",
+      "baseBeforeExists": false,
+      "baseBeforeSha256": null,
+      "license": "Apache-2.0",
+      "attribution": "New independently owned API/value wrapper; SPDX Apache-2.0."
+    },
+    {
+      "path": "modules/skunicode/src/SkUnicode_sheen_private_c.c",
+      "bytes": 5928,
+      "sha256": "8cdd6ff915d872224503ddc838a65e29817e2bda4c9f7b8a78a794b3aefc132f",
+      "baseBeforeExists": false,
+      "baseBeforeSha256": null,
+      "license": "Apache-2.0",
+      "attribution": "New independently owned API/value wrapper; SPDX Apache-2.0."
+    },
+    {
+      "path": "modules/skunicode/src/SkUnicode_icu.cpp",
+      "bytes": 34463,
+      "sha256": "9c08393bb8633413c1159a7d2986bcfe2ca957b75de284717f97a32d85d15e21",
+      "baseBeforeExists": true,
+      "baseBeforeSha256": "674e5cccae1d41edcf2682a95842772852804b9a088dfa53830c015f1463ac3f",
+      "license": "BSD-3-Clause",
+      "attribution": "Original Skia copyright and BSD notice retained; not relicensed."
+    },
+    {
+      "path": "modules/skunicode/BUILD.gn",
+      "bytes": 7708,
+      "sha256": "ccebf5230dad13f95b13d408c4367b051c31ceabef9190a752edf6ce28aa9941",
+      "baseBeforeExists": true,
+      "baseBeforeSha256": "03e03c55d6fa97d56f328ace328f808d5189dc68e3ef1697ad4d973aaa414d08",
+      "license": "BSD-3-Clause",
+      "attribution": "Original Skia copyright and BSD notice retained; not relicensed."
+    },
+    {
+      "path": "modules/canvaskit/paragraph_bindings.cpp",
+      "bytes": 38294,
+      "sha256": "049e45d8389dcc45b1a3e9df72612e7c40e09f2cf8b613addc8b7a1236650e63",
+      "baseBeforeExists": true,
+      "baseBeforeSha256": "a75c15dce78720c8d1452e4c0a3581c37b4cb67adb79417d29cd1e67b2084c4e",
+      "license": "BSD-3-Clause",
+      "attribution": "Original Skia copyright and BSD notice retained; not relicensed."
+    },
+    {
+      "path": "modules/canvaskit/sheen_bidi_comparison_bindings.inc",
+      "bytes": 12424,
+      "sha256": "d2ec258f997e91c2520422ce0a5263c9d39dc6dde080734e2182921cd6f229b1",
+      "baseBeforeExists": false,
+      "baseBeforeSha256": null,
+      "license": "Apache-2.0",
+      "attribution": "New independently owned API/value wrapper; SPDX Apache-2.0."
+    }
+  ],
+  "requiredBasePatchChain": [
+    {
+      "order": 1,
+      "name": "bridge",
+      "sha256": "7eb6babb5346a01f83c1d90313b9c99147bd0ecc344ff1ea546d43d472dd3af9"
+    },
+    {
+      "order": 2,
+      "name": "sourceDecision",
+      "sha256": "62e5762a0640f7c30d8b12d80c9d8df38f66006d856b1c6cc833e753b9c58058"
+    },
+    {
+      "order": 3,
+      "name": "unicodeQualification",
+      "sha256": "bacdc9c3899fed3ebe4a6e8879038b317d20a67d70ab854148b6c33087bd37e3"
+    },
+    {
+      "order": 4,
+      "name": "bidiOverrideRepair",
+      "sha256": "d80ab0a7f87ddb8a614379752fa12903227ede081af154f9787c578c20d40c5d"
+    },
+    {
+      "order": 5,
+      "name": "bidiBracketGuard",
+      "sha256": "3a5892d69b39ee6b2a621bad0683312f721c3d971ff4e4cd398d7424dffe65f5"
+    },
+    {
+      "order": 6,
+      "name": "strictDataMetadata",
+      "sha256": "d04bb8d902638f2c65e5aba5301e99b3186d57a49b75ba910e89d2c21108a5fd"
+    }
+  ],
+  "requiredBaseData": {
+    "path": "third_party/externals/icu/flutter/icudtl.dat",
+    "bytes": 3089888,
+    "sha256": "1b49a1abf09cf9a5cbd750ec84a9d5946b0e167dc4892068470a93e86473c2a5",
+    "recipeIdentitySha256": "8239df95f68cc266d4b42bf747ec30679703cd56642e08271f7ba9ed9d1c0cf4",
+    "redistributed": false
+  },
+  "licenses": [
+    {
+      "path": "skia-BSD-3-Clause.txt",
+      "bytes": 1507,
+      "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd",
+      "license": "BSD-3-Clause",
+      "scope": "Three modified Skia files retain their original notices."
+    },
+    {
+      "path": "sheen-Apache-2.0.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "license": "Apache-2.0",
+      "scope": "Unmodified stock SheenBidi license; four new owned wrappers independently carry Apache-2.0 SPDX."
+    }
+  ],
+  "reproductionBase": {
+    "modifiedFileBase": "The three existing files must match the exact baseBeforeSha256 values; the four new files must be absent.",
+    "scope": "This patch is a source review projection on a previously patched Skia baseline. The listed earlier patches, strict data and stock vendor placement are separate prerequisites; this is not a clean-upstream single-patch reproduction package or a production provider."
+  }
+}
