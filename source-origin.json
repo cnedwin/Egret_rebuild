@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "b4403a4d482bae2697c0e8eca3fe9caf01dc3ee1abb3d44d13a54ea2a6eb6c3f",
+      "sha256": "c7c034414a6119910160d7db6443e908b92a517ebcb499fd59e45fb1bb078218",
       "bytes": 361033,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -13556,14 +13556,14 @@
     {
       "path": "knowledge-base/en/docs/paragraph-bidi-comparison.md",
       "originRole": "First-party bilingual experimental paragraph bidi adapter design, source credits, actual finite verification and product acceptance boundaries; authored with AI assistance and separately reviewed.",
-      "bytes": 8235,
-      "sha256": "a03560ea16d415a0b690818b0f1f7fb00e5ae4f2462e3087cb40def69773d3b3"
+      "bytes": 8445,
+      "sha256": "5405758ae0da3683c4c74d8d13cbc57bedb75eec249541c9d56047cee683b647"
     },
     {
       "path": "knowledge-base/Cns/docs/paragraph-bidi-comparison.md",
       "originRole": "First-party bilingual experimental paragraph bidi adapter design, source credits, actual finite verification and product acceptance boundaries; authored with AI assistance and separately reviewed.",
-      "bytes": 7374,
-      "sha256": "5202db887d9d9c4f44e807697573a33391c6e7088d19e213ad5d63bd072d4bb7"
+      "bytes": 7584,
+      "sha256": "eeb56910c139bb2d55fe75e9dac5d91914deebddc4d3fef42de73087154d4d74"
     },
     {
       "path": "contributions/paragraph-bidi-comparison.json",

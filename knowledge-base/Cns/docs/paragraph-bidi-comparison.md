@@ -12,11 +12,11 @@ Sheen 对每个 P1 段执行 X1–I2，再通过完整段落的 line API 取得 
 
 **最终软换行后的逐行 L1 尚未接入。** 完整 P1 的 line 结果不能替代实际换行后的逐行 reset。候选明确报告 `wrapLineL1Integrated=false`，标准输入比较通过不能关闭此边界。借用的 native 值在释放前复制；普通 nullable allocation 拒绝及保留的 plain arrays，不证明原生 OOM 恢复或物理回收。
 
-[源码清单](../../../verification/paragraph-sheen-comparison/public-source-manifest.json)与 [native patch](../../../verification/paragraph-sheen-comparison/native.patch)固定七个文件改动：四个新增自有 wrapper 采用 Apache-2.0，三个修改过的 Skia 文件保留 BSD 归属。Native source receipt `23e1c33e…` 与 patch `0273da28…`标识已审源码。清单列出精确派生基线身份、六个前序 patch 及 strict-data 前置。这不是在 clean upstream Skia 上一键重放的完整配方。公开包不加入原版 vendor 源码、字体或可执行载荷；本次没有公开 SDK 或产品运行时依赖变更。
+[源码清单](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/paragraph-sheen-comparison/public-source-manifest.json)与 [native patch](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/paragraph-sheen-comparison/native.patch)固定七个文件改动：四个新增自有 wrapper 采用 Apache-2.0，三个修改过的 Skia 文件保留 BSD 归属。Native source receipt `23e1c33e…` 与 patch `0273da28…`标识已审源码。清单列出精确派生基线身份、六个前序 patch 及 strict-data 前置。这不是在 clean upstream Skia 上一键重放的完整配方。公开包不加入原版 vendor 源码、字体或可执行载荷；本次没有公开 SDK 或产品运行时依赖变更。
 
 ## 已观察比较与保留的失败
 
-[验证摘要](../../../verification/paragraph-sheen-comparison/verification-summary.json)记录精确产物与证据身份。完整比较 receipt 为 `59fe420f0631e12498986b887cfbd9e85b16a8824024b1583ba1ac48d5415770`。
+[验证摘要](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/paragraph-sheen-comparison/verification-summary.json)记录精确产物与证据身份。完整比较 receipt 为 `59fe420f0631e12498986b887cfbd9e85b16a8824024b1583ba1ac48d5415770`。
 
 | 声明 profile | 已观察次数 | 结果 |
 | --- | ---: | --- |
@@ -47,4 +47,4 @@ Focused 结果为 24/24 项 N0 order 控制、54 项边界控制通过及两项�
 
 ## 来源与许可
 
-各来源角色保持独立：[选定 ICU 源码](https://chromium.googlesource.com/chromium/deps/icu/+/d578f2e8b7bd5938e21cfb6bf15c079e0aa5b738/)提供共享服务；[Unicode 17 BidiTest](https://www.unicode.org/Public/17.0.0/ucd/BidiTest.txt)、[BidiCharacterTest](https://www.unicode.org/Public/17.0.0/ucd/BidiCharacterTest.txt) 与 [UAX #9 修订 51](https://www.unicode.org/reports/tr9/tr9-51.html)提供独立标准期望。Sheen 源数据声明 Unicode 17.0.0；实际库版本与表的声明来源分别记录，不虚构运行时 Unicode-version getter，也不声称生成表已完成全量等价验证。保留 [Skia 原 BSD 许可](../../../verification/paragraph-sheen-comparison/skia-BSD-3-Clause.txt)、[Sheen 原 Apache-2.0 许可](../../../verification/paragraph-sheen-comparison/sheen-Apache-2.0.txt)及适用的 Unicode／ICU notices。新增 wrapper 调用固定原版库，不移植算法片段另造 UBA 实现。
+各来源角色保持独立：[选定 ICU 源码](https://chromium.googlesource.com/chromium/deps/icu/+/d578f2e8b7bd5938e21cfb6bf15c079e0aa5b738/)提供共享服务；[Unicode 17 BidiTest](https://www.unicode.org/Public/17.0.0/ucd/BidiTest.txt)、[BidiCharacterTest](https://www.unicode.org/Public/17.0.0/ucd/BidiCharacterTest.txt) 与 [UAX #9 修订 51](https://www.unicode.org/reports/tr9/tr9-51.html)提供独立标准期望。Sheen 源数据声明 Unicode 17.0.0；实际库版本与表的声明来源分别记录，不虚构运行时 Unicode-version getter，也不声称生成表已完成全量等价验证。保留 [Skia 原 BSD 许可](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/paragraph-sheen-comparison/skia-BSD-3-Clause.txt)、[Sheen 原 Apache-2.0 许可](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/paragraph-sheen-comparison/sheen-Apache-2.0.txt)及适用的 Unicode／ICU notices。新增 wrapper 调用固定原版库，不移植算法片段另造 UBA 实现。
