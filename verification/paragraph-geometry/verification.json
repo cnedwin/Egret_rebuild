@@ -903,6 +903,11 @@
       "cancelled": 0,
       "skipped": 0,
       "scope": "Complete affected incremental-checks publication file after correcting active-layer history selection; overlaps the earlier303publication attempts and is not added to them."
+    },
+    "policyFixtureRepair": {
+      "tests": 2,
+      "pass": 2,
+      "scope": "Existing healthy synthetic policy baseline and one assigned original refusal after repairing its finite copy inventory; not a complete262-check replacement."
     }
   },
   "sourceReview": {
@@ -951,6 +956,38 @@
         "todo": 0
       },
       "reason": "The current-owner refresh selected an older historical layer. Both original M22 metadata arrays were restored exactly; only the three affected latest M33 source-history records gained exact geometry inverses, with all three unchanged predecessor targets verified. The complete affected publication file subsequently passes91/91; the original failed run remains failed."
+    },
+    {
+      "scope": "first final-head Windows PR CI",
+      "head": "ae668f8f3fcbc164ed4957195bdcbb0689f1c8b8",
+      "run": 40988687224,
+      "job": 123845593369,
+      "result": "FAIL",
+      "groups": [
+        {
+          "tests": 303,
+          "pass": 303,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        {
+          "tests": 5180,
+          "pass": 4918,
+          "fail": 262,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        }
+      ],
+      "decodedLogIdentity": {
+        "file": "ci-windows-r0-failed.log",
+        "bytes": 1980259,
+        "sha256": "fda579a704d79294054aec670702b918e62db59d05dcabd254de051071195bf5"
+      },
+      "missingModuleOccurrences": 260,
+      "reason": "The retained synthetic boundaries fixture did not copy the six new source/JS/declaration geometry modules. Its260 logged ENOENT occurrences name canvasKitParagraphGeometry.ts. Added only the six module paths to the existing m32PolicyOwners copy inventory; fixture code, assigned mutations, refusal assertions and product source remain unchanged. Focused healthy baseline and original type-leak refusal now pass2/2. Full next-head CI is still required."
     }
   ],
   "nativeVendorChanged": false,

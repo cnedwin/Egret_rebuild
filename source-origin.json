@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "58ad4acf705ebb7748566a1f08b492949b6607b85aac396bf584420c14533cad",
+      "sha256": "5b3879fec77c346296392208f1d22c966cf1ecce554d12b4a05bb325b6d9642e",
       "bytes": 367465,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -5171,8 +5171,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 238384,
-      "sha256": "f7a5a178f723ff4627934e9df1d705bbec466446dbe7d0a2ab6b20b1d9a8fe06",
+      "bytes": 238709,
+      "sha256": "7b83ecb519047765cd384aa53cdafdaed3c8f95d71bcf886122cca34e31f039c",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -14432,8 +14432,8 @@
     {
       "path": "verification/paragraph-geometry/verification.json",
       "originRole": "Independently authored first-party paragraph text geometry, ownership, public behavior and example integration; AI-assisted; Apache-2.0. Existing native backend and font notices remain unchanged.",
-      "bytes": 39636,
-      "sha256": "8773b509bedcdfd0384ffdcf83e563f6e061f99b52d1264fbb5f2d83ff4bf916"
+      "bytes": 41129,
+      "sha256": "5db8428e330000f0c9056e4d48def99e2eee83bd2d821408e6755535498eaf55"
     },
     {
       "path": "tests/paragraph-geometry-types.test.mjs",
