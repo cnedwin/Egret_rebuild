@@ -43,6 +43,6 @@ const selection = geometry?.getSelectionRects(2, 8);
 
 运行 `pnpm example:browser`，打开 `/examples/paragraph-geometry/index.html`。示例通过既有共享渲染器绘制选区与光标，通过受管 UI 根准备段落内容。DOM 表单查询局部坐标，不安装场景触摸监听器，可观察 WebGL2/WebGPU 的选区、对齐和重新排版。原段落面板夹具保持原样，其测试仅更新真实后端能力的断言。
 
-查询、复制、所有权与示例代码为独立实现，使用 Apache-2.0 并有 AI 辅助。原生整形与字素框来自现有已标识 Skia/SheenBidi/ICU 构建和 Noto 字体，原始声明与字节不变。见[供应清单](../../../examples/paragraph-panel/vendor/manifest.json)与[行布局契约](paragraph-layout-controls.md)。
+查询、复制、所有权与示例代码为独立实现，使用 Apache-2.0 并有 AI 辅助。原生整形与字素框来自现有已标识 Skia/SheenBidi/ICU 构建和 Noto 字体，原始声明与字节不变。见[供应清单](https://github.com/cnedwin/Egret_rebuild/blob/91f5e222e68a4bcdf8583b3ac9d1e51a91362f5f/examples/paragraph-panel/vendor/manifest.json)与[行布局契约](paragraph-layout-controls.md)。
 
-实际执行结果在采集后记入 [verification/paragraph-geometry](../../../verification/paragraph-geometry/verification.json)。类型／行为测试、指定原生后端集成与实际浏览器结果分别陈述。合成几何测试不能代表字体或 Unicode 验收；自带字体缺少的 Emoji 字形继续明确拒绝。完整字体／文字覆盖、独立字形／墨迹参考、原生编辑／输入法、实体手机、无障碍、性能及完整 M3/M4 验收保持开放。
+实际执行结果在采集后记入 [verification/paragraph-geometry](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/paragraph-geometry/verification.json)。类型／行为测试、指定原生后端集成与实际浏览器结果分别陈述。合成几何测试不能代表字体或 Unicode 验收；自带字体缺少的 Emoji 字形继续明确拒绝。完整字体／文字覆盖、独立字形／墨迹参考、原生编辑／输入法、实体手机、无障碍、性能及完整 M3/M4 验收保持开放。

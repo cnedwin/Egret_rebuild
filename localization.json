@@ -2124,8 +2124,8 @@
       "en": "knowledge-base/en/docs/paragraph-text-geometry.md",
       "zh": "knowledge-base/Cns/docs/paragraph-text-geometry.md",
       "kind": "public_reading",
-      "enSha256": "f1073b9745bb9f0d9a7edda104230fc69b70749081693efe7fd5a904c3ada3a1",
-      "zhSha256": "90b7617106824c860568de0db01b746f598bff39a04600d4d01024d35d0f2f9d"
+      "enSha256": "4ff314db6a1a3a56e35bd2f56b0028b8194317333dd5d8180dc05eccb70f17e4",
+      "zhSha256": "eccefffbb7341e1999689a178f4d26b95add2fc03eea97c74b3bf7722ce8cd08"
     },
     {
       "en": "examples/paragraph-geometry/README.md",

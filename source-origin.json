@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "0009c6f236734bb071213de7407f364ccaf9226157611cfeb7a864f2a5a7eedf",
+      "sha256": "58ad4acf705ebb7748566a1f08b492949b6607b85aac396bf584420c14533cad",
       "bytes": 367465,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -14462,14 +14462,14 @@
     {
       "path": "knowledge-base/en/docs/paragraph-text-geometry.md",
       "originRole": "Independently authored first-party paragraph geometry contract, public types, scoped browser integration or bilingual example; AI-assisted; Apache-2.0.",
-      "bytes": 6095,
-      "sha256": "f1073b9745bb9f0d9a7edda104230fc69b70749081693efe7fd5a904c3ada3a1"
+      "bytes": 6215,
+      "sha256": "4ff314db6a1a3a56e35bd2f56b0028b8194317333dd5d8180dc05eccb70f17e4"
     },
     {
       "path": "knowledge-base/Cns/docs/paragraph-text-geometry.md",
       "originRole": "Independently authored first-party paragraph geometry contract, public types, scoped browser integration or bilingual example; AI-assisted; Apache-2.0.",
-      "bytes": 5277,
-      "sha256": "90b7617106824c860568de0db01b746f598bff39a04600d4d01024d35d0f2f9d"
+      "bytes": 5397,
+      "sha256": "eccefffbb7341e1999689a178f4d26b95add2fc03eea97c74b3bf7722ce8cd08"
     },
     {
       "path": "examples/paragraph-geometry/README.md",
