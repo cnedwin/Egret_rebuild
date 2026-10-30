@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "1ab162b2ccd95fc88fea1734ac1b078a412461a927833a9eedd6fe18f5236955",
+      "sha256": "2b1aca7016b7d62a2ff37770e9a7a8a430eb573e854c99b11ca2ef8dab7bdc2f",
       "bytes": 366471,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -14270,14 +14270,14 @@
     {
       "path": "examples/mobile/README.md",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 1584,
-      "sha256": "8b2898cc05b03cf340f1d2d907d899d45ced21089cce7f4ff0f200ffa57c6e07"
+      "bytes": 1714,
+      "sha256": "8b9d891d34b4b2adbd2c2c548e6f8f51542018ccdd83c710b8285f63feebb9c5"
     },
     {
       "path": "examples/mobile/README.zh-CN.md",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 1408,
-      "sha256": "4e1a9d446d94050604eade0ce2de4250a428692a7917c6fb4f3bf08e270f4f3b"
+      "bytes": 1530,
+      "sha256": "1929ff26fa0f99d5949cf192ab03a9157e4cbf621bb162d997099192213d4eb7"
     },
     {
       "path": "tests/mobile-examples.test.mjs",
@@ -14288,20 +14288,20 @@
     {
       "path": "knowledge-base/en/docs/mobile-examples.md",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 6288,
-      "sha256": "81c08ff4685d79c3c63059fc5c30844b6fa674bcf00528a050d5b36c0146d46b"
+      "bytes": 7636,
+      "sha256": "a889ec4b4c746eaf7ddf648143c2888fa01f085cc0f661aca3e5301911ccc539"
     },
     {
       "path": "knowledge-base/Cns/docs/mobile-examples.md",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 5514,
-      "sha256": "11447b65021021e6f6212eb765b6c58615ccc8d4ce7a07839553ea89d6dcdceb"
+      "bytes": 6684,
+      "sha256": "c25b2727f4babd6898e070149bd48fe9deaf9c7faa2d92ab6024c8d7d5aeaf43"
     },
     {
       "path": "contributions/mobile-examples.json",
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
-      "bytes": 4384,
-      "sha256": "e46bbaa318a4b840d4918ad76547f216bc54be45e471ed517e616724783f8cba"
+      "bytes": 4702,
+      "sha256": "01448775050185bb675b3f9ca704dfe615293cabef430d65acbb2fca3311bf21"
     },
     {
       "path": "packages/engine/src/keyboardInput.ts",
@@ -14392,6 +14392,12 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 5196,
       "sha256": "9ada1ec60e72eb0245c12b6f5c0aca996d80accda66eefb9dc6af8069ca7ea40"
+    },
+    {
+      "path": "examples/mobile/verify-device.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
+      "bytes": 20499,
+      "sha256": "5ed1dae716f78df84ccfb37fe5f5ab5399c5990ac98940541975eca8f36e0e74"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
