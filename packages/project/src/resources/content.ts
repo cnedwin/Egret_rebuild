@@ -53,6 +53,7 @@ function profile(importer:JsonValue|undefined,format:JsonValue|undefined,setting
   const i=object(importer,['id','version']);if(i.version!=='1.0.0')fail('Unsupported content importer version.');
   if(i.id==='egret.png'&&format==='png/1')return {kind:'image',options:object(settings,[])};
   if(i.id==='egret.sequence'&&format==='egret.sequence/1')return {kind:'sequence',options:object(settings,[])};
+  if(i.id==='egret.atlas-pages'&&format==='egret.atlas-pages/1')return {kind:'atlas',options:object(settings,[])};
   if(i.id==='egret.aseprite-atlas'&&format==='egret.atlas/1') {const options=object(settings,['pageName']),name=text(options.pageName);if(!isPortablePath(name)||name.includes('/')||!name.endsWith('.png')||name.length>255)fail('Atlas pageName must be a portable PNG basename.');return {kind:'atlas',options};}
   return fail('Unsupported content importer or artifact format.');
 }
@@ -77,7 +78,13 @@ function describe(snapshot:ProjectSnapshot,recipeData:JsonValue,producer:JsonObj
   const byId=new Map(plan.entries.map(e=>[e.id,e]));
   for(const e of plan.entries){
     if(e.resourceKind==='image'){if(e.dependencies.length!==0)fail('PNG recipes cannot have dependencies.');}
-    else {const dependency=byId.get(e.dependencies[0]!);if(e.dependencies.length!==1||dependency?.resourceKind!==(e.resourceKind==='atlas'?'image':'atlas'))fail('Atlas and sequence recipes need one dependency of their registered kind.');if(e.resourceKind==='sequence'&&e.source.id!==dependency.source.id)fail('A sequence and its atlas must use the same metadata source.');}
+    else if(e.importer.id==='egret.atlas-pages') {
+      if(e.dependencies.length<1||e.dependencies.length>16||e.dependencies.some(id=>byId.get(id)?.resourceKind!=='image'))fail('Multipage atlas recipes need one to sixteen image dependencies.');
+    } else {
+      const dependency=byId.get(e.dependencies[0]!);
+      if(e.dependencies.length!==1||dependency?.resourceKind!==(e.resourceKind==='atlas'?'image':'atlas'))fail('Atlas and sequence recipes need one dependency of their registered kind.');
+      if(e.resourceKind==='sequence'&&(dependency.importer.id!=='egret.aseprite-atlas'||e.source.id!==dependency.source.id))fail('A sequence requires its single-page atlas and the same metadata source.');
+    }
   }
   return plan;
 }

@@ -111,6 +111,10 @@
 
 GitHub 未为 PR #42 返回状态或检查运行，以上本地验证与远端 CI 分别记录。桌面像素结果未完成目标手机性能、能耗、字体范围或完整宿主验收。
 
+## 多页图集内容
+
+可选第一方配置通过既有不可变构建及运行时资源组支持一至十六个具名页面，裁剪／旋转帧沿用 SpriteSheet。十四项新增行为／类型测试（含既有内容回归共 75 项）和桌面 Edge WebGL2/WebGPU 固定像素验证通过，另采集 HTTP 失败及待定取消。受保护发布仍在等待，见[验证记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/atlas-pages/verification.json)。完整 M2.1／Spine、手机和性能仍保持开放。
+
 ## 后续工作与贡献
 
 - 在显式本地规划器之外继续完善 UI 组合，以及触摸、键盘、焦点、无障碍和编辑。

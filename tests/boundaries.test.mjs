@@ -1455,6 +1455,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     for (const file of [
       'packages/engine/src/contentTypes.ts','packages/engine/dist/contentTypes.js','packages/engine/dist/contentTypes.d.ts',
       'packages/engine/src/contentArtifacts.ts','packages/engine/dist/contentArtifacts.js','packages/engine/dist/contentArtifacts.d.ts',
+      'packages/engine/src/contentAtlasPages.ts','packages/engine/dist/contentAtlasPages.js','packages/engine/dist/contentAtlasPages.d.ts',
       'packages/engine/src/contentLoader.ts','packages/engine/dist/contentLoader.js','packages/engine/dist/contentLoader.d.ts',
       'packages/engine/src/internal/contentFactoryState.ts','packages/engine/dist/internal/contentFactoryState.js','packages/engine/dist/internal/contentFactoryState.d.ts',
       'packages/engine/src/resources.ts','packages/engine/dist/resources.js','packages/engine/dist/resources.d.ts',
@@ -1462,7 +1463,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     ]) write(file,readFileSync(path.join(repository,file)));
     // Keep the executable facade inert while preserving every admitted edge and
     // the exact resource clause. Genuine loader/Scope behavior is tested apart.
-    write('packages/engine/dist/contentLoader.js',"import {isAdmittedResourceManifest} from '@egret/contracts/resources';\nimport '@egret/runtime';\nimport {createManifestAssetBinding} from './manifestResourceState.js';\nimport {requireContentEngine} from './internal/contentFactoryState.js';\nimport {contentFault,parseAtlasArtifact,parseSequenceArtifact} from './contentArtifacts.js';\nexport function createContentLoader() {}\n");
+    write('packages/engine/dist/contentLoader.js',"import {isAdmittedResourceManifest} from '@egret/contracts/resources';\nimport '@egret/runtime';\nimport {createManifestAssetBinding} from './manifestResourceState.js';\nimport {requireContentEngine} from './internal/contentFactoryState.js';\nimport {contentFault,parseAtlasArtifact,parseSequenceArtifact} from './contentArtifacts.js';\nimport {parseAtlasPagesArtifact} from './contentAtlasPages.js';\nexport function createContentLoader() {}\n");
     for (const file of ['packages/engine/src/Engine.ts','packages/engine/dist/Engine.js'])
       append(file,"import {registerContentEngine} from './internal/contentFactoryState.js';\n");
     // M3.2 source/declaration inspection with inert executable edges. These

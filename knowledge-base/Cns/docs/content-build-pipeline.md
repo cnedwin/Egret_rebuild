@@ -2,11 +2,11 @@
 
 [English](../../en/docs/content-build-pipeline.md) | 简体中文
 
-M2.1 构建／运行时配置 · 更新于 2026-10-29 · PNG、单页图集与序列帧。完整 M2.1 仍未验收。
+M2.1 构建／运行时配置 · 更新于 2026-10-30 · PNG、单页图集、序列帧及独立的第一方[多页图集配置](multipage-atlas-content.md)。完整 M2.1 仍未验收。
 
 ## 从源文件到可播放资源
 
-内容配方把项目中已经登记的源文件交给三种固定导入器。构建过程验证源文件字节、计算依赖键，复用完整缓存或重新导入变化的资源，再将产物绑定到当前项目。图集与序列帧产物沿用现有 SpriteSheet 和 SequenceClip 表示，不增加另一套动画播放器。
+内容配方把项目中已经登记的源文件交给四种固定导入器。构建过程验证源文件字节、计算依赖键，复用完整缓存或重新导入变化的资源，再将产物绑定到当前项目。图集与序列帧产物沿用现有 SpriteSheet 和 SequenceClip 表示，不增加另一套动画播放器。
 
 首批配置保留准入 PNG 作为主分发产物，并生成按行紧密排列、左上原点、直通 Alpha 的 RGBA8 参考产物。图集元数据生成具名规范帧和序列输入。序列通过依赖序号零引用图集，图集通过序号零引用页面。独立产物中不包含所属项目 ID、资源 ID、文件 ID 或物理路径；这些依赖由准入后的资源清单解析。
 
@@ -24,7 +24,7 @@ M2.1 构建／运行时配置 · 更新于 2026-10-29 · PNG、单页图集与�
 
 旧资源描述仍要求真实产物。已有构建键、运行时身份、清单字节和默认包入口保持原有含义，不使用占位哈希，也不增加平行的键算法。
 
-配方格式为 `egret.content-build-recipe/1`，包含一个 `targetProfile` 和若干配方，每项有 `resourceId`、`sourceFileId`、`importer`、`settings`、`artifactFormatVersion`、有序 `dependencies` 与 `provenance`。固定导入器为 `egret.png@1.0.0`、`egret.aseprite-atlas@1.0.0` 和 `egret.sequence@1.0.0`。图集配置为 `aseprite-json-array-1.3.18.6-v1`，拒绝旋转和多页。输出格式分别为 `png/1`、`egret.atlas/1`、`egret.sequence/1`。
+配方格式为 `egret.content-build-recipe/1`，包含一个 `targetProfile` 和若干配方，每项有 `resourceId`、`sourceFileId`、`importer`、`settings`、`artifactFormatVersion`、有序 `dependencies` 与 `provenance`。固定导入器为 `egret.png@1.0.0`、`egret.aseprite-atlas@1.0.0`、`egret.sequence@1.0.0` 和 `egret.atlas-pages@1.0.0`。Aseprite 单页配置为 `aseprite-json-array-1.3.18.6-v1`，拒绝旋转和多页。输出格式分别为 `png/1`、`egret.atlas/1`、`egret.sequence/1` 和独立的 `egret.atlas-pages/1`。
 
 新配方使用受保护的设置封装，纳入配方、输出和参考格式版本、选项以及实际 Node/pngjs/zlib 生产者身份。配方不能指定可执行代码；构建工具在查询缓存前核实已安装版本。目标标签参与现有键算法，但首批导入器生成共享产物；更换标签不代表某个平台或专用纹理转换已经验收。
 
@@ -58,7 +58,7 @@ const playback = engine.createSequencePlayback(
 
 ### 所有权、失败和版本替换
 
-一个 loader 对应一份完整的已准入清单和来源目录。它只创建一次类型和绑定；同一 loader 的重叠加载组通过现有 AssetManager 共享资源值，各组独立拥有租约。当前仅接纳三种固定导入器／格式组合。每次加载闭包最多 128 个资源，沿用既有清单组限额与优先级。来源或清单变化时使用新 loader；逻辑资源 ID 相同不能授权跨 loader 或跨代际共享。
+一个 loader 对应一份完整的已准入清单和来源目录。它只创建一次类型和绑定；同一 loader 的重叠加载组通过现有 AssetManager 共享资源值，各组独立拥有租约。当前仅接纳四种固定导入器／格式组合。每次加载闭包最多 128 个资源，沿用既有清单组限额与优先级。来源或清单变化时使用新 loader；逻辑资源 ID 相同不能授权跨 loader 或跨代际共享。
 
 组返回的图片租约与 SpriteSheet 均为借用值，不应自行释放租约、销毁图集，或将它们登记到另一个 Scope。应用创建的 Bitmap 和播放控制器归应用 Scope 管理。退出时先清理动画、显示使用者，再清理数据组／Scope。资源组先撤销已装配图集，再释放底层租约。序列 clip 是不可变元数据，不增加资源所有权。
 
@@ -102,3 +102,5 @@ const playback = engine.createSequencePlayback(
 M2.1 仍需完成授权 Spine JSON/二进制/多页导入、字体产物、选定目标变体、mip/旋转/压缩验收和完整功能清单。M2.2–M2.4、复杂 UI、IME 与 Android/iPhone 真机验收仍按各自工作包推进。M1.2 全脏场景实测 10.3 ms 对比 8 ms 目标的缺口保持开放。
 
 2026-10-29 的类型化加载器浏览器验证在 Windows x64、Node 26.7.0、Playwright 1.62.1 和无界面 Microsoft Edge 156.0.4314.50 中通过全部 13 项有限检查。保存的 8 份完整帧读回各自匹配全部 72 个独立指定的 Canvas 像素。真实哈希不符响应被拒绝；真实 HTTP 请求挂起后取消，迟到结果不会发布；失败或取消的替换保留当前版本，同一逻辑 ID 的第二次真实构建能够切换到自身逆序的动画帧。所有版本加载器的 source/provider 当前计数归零，应用、上下文、浏览器和服务器均完成清理。当前验证摘要保留原始结果哈希及历史摘要。本次不构成 GPU 后端、手机、物理内存、性能或完整 M2.1 验收。
+
+新增第一方 `egret.atlas-pages@1.0.0` 使用 `egret.atlas-pages/1`、空设置及一至十六个有序 PNG 依赖；资源组通过 `getAtlasPages` 和 `getAtlasPage` 读取。页面命名、上限和裁剪／旋转由独立的[多页契约](multipage-atlas-content.md)规定；既有 Aseprite／序列帧格式与所有权不变。

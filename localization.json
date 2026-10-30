@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "00b1400027316bea1cfc14779b06f4115972b7c9efbf2f907cc6b5a18fbfbe56",
-      "zhSha256": "74030c5acf96490b48c881ae40786ca445d63e7300e121534b109c8d5693cefb"
+      "enSha256": "e6a55273305696e37bd53be9df291540a232fa0ccfe1fcc63c05692067502b47",
+      "zhSha256": "b5f8bd8f2a0f63103c61607d06e878c887534bd680b80b1042a45e6672cc68d5"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1963,8 +1963,8 @@
       "en": "knowledge-base/en/docs/m2-spine-content-plan.md",
       "zh": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
       "kind": "public_reading",
-      "enSha256": "3bd73b811c4dc9f6eb6141be5870d03e2aa34463df4a2b5e282eea3b42e3c8cd",
-      "zhSha256": "d9ebf02094f57bd72547bfbceb7a891f18f088a2c3dc6ff50a31b2c13885f44c"
+      "enSha256": "b683e01cf7dde5248cd6d0b2097c4032723b04d48d9ba2a27d37432297cdfbb4",
+      "zhSha256": "fbce815b3ccfc2d4ec158afabd5d118e33c8c9884d6f2cb43301374337c99b37"
     },
     {
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
@@ -1998,8 +1998,8 @@
       "en": "knowledge-base/en/docs/content-build-pipeline.md",
       "zh": "knowledge-base/Cns/docs/content-build-pipeline.md",
       "kind": "public_reading",
-      "enSha256": "0bbd429bdbf23a074aa276dcda247df74ef51447bb78ca08714d8e8a3cb1f5b1",
-      "zhSha256": "69556f5d529645067e3e95fecb801052cad2ffd572d270ebce4bc02e9eb9f8c3"
+      "enSha256": "235bc6a64c27e36eaf25e85423e89018e8a58f344bc8d76529eab8f7b48727b3",
+      "zhSha256": "1d4373b5d6c85e46c56faa158eea4a09b4ef0190f22d52415c98b59c3930668a"
     },
     {
       "en": "examples/content-build/README.md",
@@ -2133,6 +2133,20 @@
       "kind": "public_reading",
       "enSha256": "36583ca6201150246a42bd718a17fff1677f23c2aea00e6deaac8fdc832078d4",
       "zhSha256": "8a1c30bf64f21508efb77e65337373c874c52907c66e88e6907521099cc85201"
+    },
+    {
+      "en": "knowledge-base/en/docs/multipage-atlas-content.md",
+      "zh": "knowledge-base/Cns/docs/multipage-atlas-content.md",
+      "kind": "public_reading",
+      "enSha256": "504c6cc7592ea7e0a552c092ca011c2e35987ff1b48a22e4216d74cafea202e6",
+      "zhSha256": "2c2b232b80754c2189f337d4a7903ebdb331b1e559958b33975831dcb20e1ce8"
+    },
+    {
+      "en": "examples/atlas-pages/README.md",
+      "zh": "examples/atlas-pages/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "c340d4c2d35d34815e828bcf47d66a9ce4ca2c38825f1e10718557fa9cdc02f7",
+      "zhSha256": "3b09b719debf9a03c59b94287f16497b6a1b9a70017391068f4f4d66ff16fff8"
     }
   ],
   "registries": [
@@ -2958,11 +2972,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "f8dd20318bd2123a578025002faf9c3f8e98b21f6e98ce4d1aa9bad544fefbf3"
+      "sha256": "2e2befabb31c718b37e3a246ed9d5fa82b09e50b26c1745d8f1415d9d83deb89"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "7b83ecb519047765cd384aa53cdafdaed3c8f95d71bcf886122cca34e31f039c"
+      "sha256": "d26cb16f8135025bf1bd2dc81c37d796ab49e1001c25dffbf3f83b4b2b7e0098"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3102,7 +3116,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "6919210cc8c39ec92062fa9fdeab00bd2a8defc52f4ea0ae7f3721b85c7b5756"
+      "sha256": "e24147f062de94df397c53dbff4e28217a96a609a0cbe11711a47d54692ba1f0"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3250,7 +3264,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "5afc35ae03d79ddfdb3726b278131df28a5216f2268b24fc354e14d0ed069178"
+      "sha256": "33110eecf52f6c2b260d7e407027c748a21507b6742ae731ea94033b193f885e"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3722,7 +3736,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "a830a5c3bf020b143dad15502f7cd16fa60d52e514d26131b4c10f2330872dbc"
+      "sha256": "6ea685235da858828f6b5e047e2114f2d59d05d077a59a0bacc9cfe2b6734afe"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3750,7 +3764,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "8911057fd93cb25bb97a4f8b21c5509b09b6d31faa0284099431bc82602852e6"
+      "sha256": "5a63967579943a6fa79109c7bffbdd01aea373e8bebd081016d55f50f46922f2"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4014,7 +4028,7 @@
     },
     {
       "path": "packages/project/src/resources/content.ts",
-      "sha256": "deed93b1ccbbfa274fc8faa7166e7e842a662b41402d7009a33065a83a671919"
+      "sha256": "4bc0e31546713f786503f17b645e6850709e02d3455ce6d08e43e0523988d570"
     },
     {
       "path": "tools/build-content.mjs",
@@ -4030,7 +4044,7 @@
     },
     {
       "path": "tools/content/importers.mjs",
-      "sha256": "3fe594f21cb5dbe33e58dbd9ec2ca4bc7a0140c5630638c43ed299e1c438406f"
+      "sha256": "c2d5b43c4779856ad00e2022cfab418e864fe01c87d39892360c65fb47de2c84"
     },
     {
       "path": "tools/content/input.mjs",
@@ -4126,7 +4140,7 @@
     },
     {
       "path": "packages/engine/src/contentTypes.ts",
-      "sha256": "2551b03716f2af2cfcca6154803503831c48e2b209dc7d68af440f46258aca75"
+      "sha256": "151bd110bdf4fa9c03f8cdee9b1f2537b011c82be1b66d96703709a70ab92250"
     },
     {
       "path": "packages/engine/src/contentArtifacts.ts",
@@ -4134,7 +4148,7 @@
     },
     {
       "path": "packages/engine/src/contentLoader.ts",
-      "sha256": "156c12f3cc723dd3cfbd4bc7aacad20a35777a3e36246658ffebb95f32591885"
+      "sha256": "7c7384f989d978591fc400536a6cd0958eb4175a4237989c44bd0a2841fb60cd"
     },
     {
       "path": "packages/engine/src/internal/contentFactoryState.ts",
@@ -4203,6 +4217,10 @@
     {
       "path": "packages/engine/web/canvasKitParagraphGeometry.ts",
       "sha256": "5e4003492f0938209b1ecf4d839a194251b0fd875879d8b681c2deb2a00488ce"
+    },
+    {
+      "path": "packages/engine/src/contentAtlasPages.ts",
+      "sha256": "f7550e1cf04e26f082a17c1058d72a8a04a4ef8e897cde264610f38d4740955f"
     }
   ],
   "historicalSemanticReview": {

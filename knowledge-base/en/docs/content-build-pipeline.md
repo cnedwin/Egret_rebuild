@@ -2,13 +2,13 @@
 
 English | [简体中文](../../Cns/docs/content-build-pipeline.md)
 
-M2.1 build/runtime profile · updated 2026-10-29 · PNG, single-page atlas and sequence. Complete M2.1 remains open.
+M2.1 build/runtime profile · updated 2026-10-30 · PNG, single-page atlas, sequence and a separate first-party [multipage atlas profile](multipage-atlas-content.md). Complete M2.1 remains open.
 
 ## From authored files to playable resources
 
-A content recipe joins source files already recorded in a project to three fixed importers. The build verifies source bytes, evaluates dependency keys, reuses complete cached outputs or imports changed resources, then binds the results back to that project. Atlas and sequence outputs use the existing SpriteSheet and SequenceClip representation; they do not introduce a second animation player.
+A content recipe joins source files already recorded in a project to four fixed importers. The build verifies source bytes, evaluates dependency keys, reuses complete cached outputs or imports changed resources, then binds the results back to that project. Atlas and sequence outputs use the existing SpriteSheet and SequenceClip representation; they do not introduce a second animation player.
 
-The first profile preserves an admitted PNG as the primary distribution artifact and produces a tightly packed, top-left, straight-alpha RGBA8 reference. Atlas metadata produces named normalized frames and sequence inputs. A sequence references its atlas through dependency ordinal zero; an atlas references its page through ordinal zero. Intrinsic artifacts contain no owning project ID, resource ID, file ID or physical path. The admitted resource manifest resolves those dependencies.
+The first profile preserves an admitted PNG as the primary distribution artifact and produces a tightly packed, top-left, straight-alpha RGBA8 reference. Atlas metadata produces named normalized frames and sequence inputs. A sequence references its atlas through dependency ordinal zero; a single-page atlas references its page through ordinal zero. Intrinsic artifacts contain no owning project ID, resource ID, file ID or physical path. The admitted resource manifest resolves those dependencies.
 
 The sample pixels and metadata are original synthetic fixtures under Apache-2.0. A successful fixture build does not certify a real Aseprite export, other exporters, licensed assets or target devices.
 
@@ -24,7 +24,7 @@ The sample pixels and metadata are original synthetic fixtures under Apache-2.0.
 
 The old resource description still requires an actual artifact. Existing keys, runtime identities, manifest bytes and default package entries retain their meaning. There is no placeholder hash and no parallel key implementation.
 
-A recipe has format `egret.content-build-recipe/1`, one `targetProfile`, and recipes with `resourceId`, `sourceFileId`, `importer`, `settings`, `artifactFormatVersion`, ordered `dependencies` and `provenance`. The finite importer identities are `egret.png@1.0.0`, `egret.aseprite-atlas@1.0.0` and `egret.sequence@1.0.0`. The atlas profile is `aseprite-json-array-1.3.18.6-v1`; rotations and multiple pages are refused. The output schemas are `png/1`, `egret.atlas/1` and `egret.sequence/1`.
+A recipe has format `egret.content-build-recipe/1`, one `targetProfile`, and recipes with `resourceId`, `sourceFileId`, `importer`, `settings`, `artifactFormatVersion`, ordered `dependencies` and `provenance`. The finite importer identities are `egret.png@1.0.0`, `egret.aseprite-atlas@1.0.0`, `egret.sequence@1.0.0` and `egret.atlas-pages@1.0.0`. The Aseprite single-page profile is `aseprite-json-array-1.3.18.6-v1`; rotations and multiple pages are refused. The output schemas are `png/1`, `egret.atlas/1`, `egret.sequence/1` and the separate `egret.atlas-pages/1`.
 
 New recipes receive a reserved settings envelope containing recipe/output/reference versions, their options and the actual Node/pngjs/zlib producer identity. Recipes cannot select executable code. Build tools enforce the installed versions before lookup. Target labels participate in the existing key algorithm, but this first importer set emits shared artifacts; a different label does not qualify a platform or target-specific texture conversion.
 
@@ -58,7 +58,7 @@ For a non-browser host, `createContentLoader` in `@egret/engine/resources` is th
 
 ### Ownership, failure and replacement
 
-A loader represents one complete admitted manifest/source catalog. Its types and bindings are created once; overlapping groups in that loader share the existing AssetManager values while owning independent group leases. The current profile admits only the three fixed importer/format pairs. Each loaded closure is limited to 128 resources, preserving the existing manifest-group limits and priorities. A new source or manifest uses a new loader; logical resource IDs alone never authorize sharing across loaders or generations.
+A loader represents one complete admitted manifest/source catalog. Its types and bindings are created once; overlapping groups in that loader share the existing AssetManager values while owning independent group leases. The current profile admits only the four fixed importer/format pairs. Each loaded closure is limited to 128 resources, preserving the existing manifest-group limits and priorities. A new source or manifest uses a new loader; logical resource IDs alone never authorize sharing across loaders or generations.
 
 Image leases and SpriteSheets returned by a group are borrowed. Do not release the leases, dispose the sheets or register them with another Scope. Application-created Bitmaps and playback controllers belong to application Scopes. Retire animation and display consumers first, then the data group/Scope. A group retires its assembled sheets before releasing its underlying leases. Clips are immutable metadata and grant no additional resource ownership.
 
@@ -102,3 +102,5 @@ The historical generated-output browser run on 2026-10-23, before the typed cont
 The typed-loader browser run on 2026-10-29 passed all 13 finite checks in headless Microsoft Edge 156.0.4314.50, Windows x64, Node 26.7.0 and Playwright 1.62.1. Eight saved full-frame readbacks each matched all 72 independently specified Canvas pixels. Real hash-invalid responses were refused; cancellation of an actual held HTTP request prevented late publication; failed/cancelled replacements preserved the current generation, and a second actual build with the same logical IDs switched to its own reversed frame sequence. All generation loaders drained their current source/provider counters to zero and application/context/browser/server cleanup completed. The current verification summary retains the raw-result hash and the historical summary. This is not GPU-backend, phone, physical-memory, performance or complete M2.1 acceptance.
 
 Remaining M2.1 includes licensed Spine JSON/binary/multipage import, font artifacts, selected target variants, mip/rotation/compression qualification and complete feature inventories. M2.2–M2.4, complex UI, IME and physical Android/iPhone acceptance remain separate packages. M1.2's measured full-dirty 10.3 ms against 8 ms remains open.
+
+The additional first-party `egret.atlas-pages@1.0.0` profile uses `egret.atlas-pages/1`, empty options and one to sixteen ordered PNG dependencies. `getAtlasPages` and `getAtlasPage` are the multipage-specific group getters. The separate [multipage contract](multipage-atlas-content.md) defines page names, bounds, trim and rotation. Existing Aseprite/sequence formats and ownership stay unchanged.

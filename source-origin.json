@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 16380,
-      "sha256": "74030c5acf96490b48c881ae40786ca445d63e7300e121534b109c8d5693cefb",
+      "bytes": 16917,
+      "sha256": "b5f8bd8f2a0f63103c61607d06e878c887534bd680b80b1042a45e6672cc68d5",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "a7f4b179d795b9687d7af9ed754bccf36b7d56c79a92b280e91c6ef0337f23de",
+      "sha256": "f3d37628cf22ac20ee2bede368a2a54c1f4cb4a2758356428a4bbdadf2a4fe05",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 18611,
-      "sha256": "00b1400027316bea1cfc14779b06f4115972b7c9efbf2f907cc6b5a18fbfbe56",
+      "bytes": 19247,
+      "sha256": "e6a55273305696e37bd53be9df291540a232fa0ccfe1fcc63c05692067502b47",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "5b3879fec77c346296392208f1d22c966cf1ecce554d12b4a05bb325b6d9642e",
-      "bytes": 367465,
+      "sha256": "2100e24c74b1f4311e14656f2afb4502fd43600996999babe127774eb553f5c1",
+      "bytes": 368280,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -5171,8 +5171,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 238709,
-      "sha256": "7b83ecb519047765cd384aa53cdafdaed3c8f95d71bcf886122cca34e31f039c",
+      "bytes": 238914,
+      "sha256": "d26cb16f8135025bf1bd2dc81c37d796ab49e1001c25dffbf3f83b4b2b7e0098",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -5478,8 +5478,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 303535,
-      "sha256": "f8dd20318bd2123a578025002faf9c3f8e98b21f6e98ce4d1aa9bad544fefbf3",
+      "bytes": 303884,
+      "sha256": "2e2befabb31c718b37e3a246ed9d5fa82b09e50b26c1745d8f1415d9d83deb89",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -9876,8 +9876,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 246134,
-      "sha256": "5afc35ae03d79ddfdb3726b278131df28a5216f2268b24fc354e14d0ed069178",
+      "bytes": 247172,
+      "sha256": "33110eecf52f6c2b260d7e407027c748a21507b6742ae731ea94033b193f885e",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10099,8 +10099,8 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 255009,
-      "sha256": "6919210cc8c39ec92062fa9fdeab00bd2a8defc52f4ea0ae7f3721b85c7b5756",
+      "bytes": 256047,
+      "sha256": "e24147f062de94df397c53dbff4e28217a96a609a0cbe11711a47d54692ba1f0",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10161,8 +10161,8 @@
     },
     {
       "path": "tools/atlas-import-boundary.mjs",
-      "bytes": 150888,
-      "sha256": "4b27d7ae923d48af8ec31b2d87c1ebdef4fa98384802fc2d7b6ef63139bac746",
+      "bytes": 151926,
+      "sha256": "cc3893969cf369d40f1090d27b4fa784f1ba7bd5bc6dd86b7eadcc1859b7b3ce",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10496,8 +10496,8 @@
     {
       "path": "tools/serve-example.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 4924,
-      "sha256": "e90227aeabdf4436193a52622ab2c211e48c024040aacf63f84b24440c9c7db0"
+      "bytes": 5236,
+      "sha256": "9191d5be400f954edf73a160c2397e346391a1c29b4d3c21dfa16ab97803f17c"
     },
     {
       "path": "tools/setup-dev.mjs",
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 382076,
-      "sha256": "a830a5c3bf020b143dad15502f7cd16fa60d52e514d26131b4c10f2330872dbc"
+      "bytes": 499244,
+      "sha256": "6ea685235da858828f6b5e047e2114f2d59d05d077a59a0bacc9cfe2b6734afe"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10689,7 +10689,7 @@
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
       "bytes": 42267,
-      "sha256": "8911057fd93cb25bb97a4f8b21c5509b09b6d31faa0284099431bc82602852e6"
+      "sha256": "5a63967579943a6fa79109c7bffbdd01aea373e8bebd081016d55f50f46922f2"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -12770,14 +12770,14 @@
     {
       "path": "knowledge-base/en/docs/m2-spine-content-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 27204,
-      "sha256": "3bd73b811c4dc9f6eb6141be5870d03e2aa34463df4a2b5e282eea3b42e3c8cd"
+      "bytes": 27491,
+      "sha256": "b683e01cf7dde5248cd6d0b2097c4032723b04d48d9ba2a27d37432297cdfbb4"
     },
     {
       "path": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 22741,
-      "sha256": "d9ebf02094f57bd72547bfbceb7a891f18f088a2c3dc6ff50a31b2c13885f44c"
+      "bytes": 22986,
+      "sha256": "fbce815b3ccfc2d4ec158afabd5d118e33c8c9884d6f2cb43301374337c99b37"
     },
     {
       "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
@@ -13016,20 +13016,20 @@
     {
       "path": "knowledge-base/Cns/docs/content-build-pipeline.md",
       "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 13677,
-      "sha256": "69556f5d529645067e3e95fecb801052cad2ffd572d270ebce4bc02e9eb9f8c3"
+      "bytes": 14156,
+      "sha256": "1d4373b5d6c85e46c56faa158eea4a09b4ef0190f22d52415c98b59c3930668a"
     },
     {
       "path": "knowledge-base/en/docs/content-build-pipeline.md",
       "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 15756,
-      "sha256": "0bbd429bdbf23a074aa276dcda247df74ef51447bb78ca08714d8e8a3cb1f5b1"
+      "bytes": 16321,
+      "sha256": "235bc6a64c27e36eaf25e85423e89018e8a58f344bc8d76529eab8f7b48727b3"
     },
     {
       "path": "packages/project/src/resources/content.ts",
       "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 21296,
-      "sha256": "deed93b1ccbbfa274fc8faa7166e7e842a662b41402d7009a33065a83a671919"
+      "bytes": 21748,
+      "sha256": "4bc0e31546713f786503f17b645e6850709e02d3455ce6d08e43e0523988d570"
     },
     {
       "path": "tests/content-browser-collector.test.mjs",
@@ -13106,8 +13106,8 @@
     {
       "path": "tools/content/importers.mjs",
       "originRole": "First-party content-build integration, synthetic fixtures, tests and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 13897,
-      "sha256": "3fe594f21cb5dbe33e58dbd9ec2ca4bc7a0140c5630638c43ed299e1c438406f"
+      "bytes": 18465,
+      "sha256": "c2d5b43c4779856ad00e2022cfab418e864fe01c87d39892360c65fb47de2c84"
     },
     {
       "path": "tools/content/input.mjs",
@@ -13574,8 +13574,8 @@
     {
       "path": "packages/engine/src/contentTypes.ts",
       "originRole": "First-party finite content artifact admission, public runtime assembly and original behavior tests, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1295,
-      "sha256": "2551b03716f2af2cfcca6154803503831c48e2b209dc7d68af440f46258aca75"
+      "bytes": 1567,
+      "sha256": "151bd110bdf4fa9c03f8cdee9b1f2537b011c82be1b66d96703709a70ab92250"
     },
     {
       "path": "packages/engine/src/contentArtifacts.ts",
@@ -13586,8 +13586,8 @@
     {
       "path": "packages/engine/src/contentLoader.ts",
       "originRole": "First-party finite content artifact admission, public runtime assembly and original behavior tests, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 11155,
-      "sha256": "156c12f3cc723dd3cfbd4bc7aacad20a35777a3e36246658ffebb95f32591885"
+      "bytes": 13314,
+      "sha256": "7c7384f989d978591fc400536a6cd0958eb4175a4237989c44bd0a2841fb60cd"
     },
     {
       "path": "packages/engine/src/internal/contentFactoryState.ts",
@@ -14488,6 +14488,108 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 4410,
       "sha256": "14a2b133ad481abafa71f0681ca1dd13481c210aad86c1acef444d50aae54524"
+    },
+    {
+      "path": "packages/engine/src/contentAtlasPages.ts",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 4647,
+      "sha256": "f7550e1cf04e26f082a17c1058d72a8a04a4ef8e897cde264610f38d4740955f"
+    },
+    {
+      "path": "tests/atlas-pages-content.test.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 12558,
+      "sha256": "3309e1a44d5633ceb117ce191a52e0d7cb4840a51a6902bb74c57d7f834f50c8"
+    },
+    {
+      "path": "tests/atlas-pages-types.test.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 1684,
+      "sha256": "17e174387799315b9016ae3969328a77615eedf6433e02a0aa2e2fb2fbcc21f9"
+    },
+    {
+      "path": "tests/types/atlas-pages-positive.ts",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 540,
+      "sha256": "c46e4e3bbfb597e5d98068776ff4ae5cc64d9077ec0cc8bf728201ecf85a9001"
+    },
+    {
+      "path": "tests/types/atlas-pages-negative.ts",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 208,
+      "sha256": "7dead15f8802b7462c79548870ce519fa4f9cc1a0f901baeed08f93a6906894d"
+    },
+    {
+      "path": "examples/atlas-pages/index.html",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 2725,
+      "sha256": "57551a82be0ee391a48edcf0faffa93ba5591840a07ecec975d76f5b4dacd791"
+    },
+    {
+      "path": "examples/atlas-pages/main.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 5878,
+      "sha256": "8f9c61b761a0fe167db83560517c74310caea04df00597124a2eca15893ec722"
+    },
+    {
+      "path": "examples/atlas-pages/selection.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 3919,
+      "sha256": "0bd3720ca6984e634f1ea31e0e02851db9e1fc6a7abc66c18652f8a1889a49ed"
+    },
+    {
+      "path": "examples/atlas-pages/fixture.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 1659,
+      "sha256": "b164694ba56a0d6049575babb00a28c613c899b5d6b3e6acb360e69992b1d279"
+    },
+    {
+      "path": "examples/atlas-pages/author.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 4068,
+      "sha256": "384731354b10d20bbb2c4575a017425da1fd66b222acf1e405a976f2e0892210"
+    },
+    {
+      "path": "examples/atlas-pages/verify-browser.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 6649,
+      "sha256": "71359191dcb2698e1278a1fb97f1343e642b9b0a88ba8891547e7760810a562b"
+    },
+    {
+      "path": "examples/atlas-pages/README.md",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 1289,
+      "sha256": "c340d4c2d35d34815e828bcf47d66a9ce4ca2c38825f1e10718557fa9cdc02f7"
+    },
+    {
+      "path": "examples/atlas-pages/README.zh-CN.md",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 1138,
+      "sha256": "3b09b719debf9a03c59b94287f16497b6a1b9a70017391068f4f4d66ff16fff8"
+    },
+    {
+      "path": "knowledge-base/en/docs/multipage-atlas-content.md",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 6789,
+      "sha256": "504c6cc7592ea7e0a552c092ca011c2e35987ff1b48a22e4216d74cafea202e6"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/multipage-atlas-content.md",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 6031,
+      "sha256": "2c2b232b80754c2189f337d4a7903ebdb331b1e559958b33975831dcb20e1ce8"
+    },
+    {
+      "path": "verification/atlas-pages/verification.json",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "bytes": 47391,
+      "sha256": "6a68d646632e23c153f54f0699b7f11f49e87d6ed1ac5f69f3974313be00eb57"
+    },
+    {
+      "path": "contributions/m2-atlas-pages.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 6046,
+      "sha256": "bdf255f1ff316e7b096c3d38dcecf3f13fdb58cd859b3d467f709cb1cbef2561"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
