@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/contentAtlasPages.ts",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/atlas-pages-content.test.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "tests/atlas-pages-types.test.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "tests/types/atlas-pages-positive.ts",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "tests/types/atlas-pages-negative.ts",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "examples/atlas-pages/index.html",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "examples/atlas-pages/main.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "examples/atlas-pages/selection.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "examples/atlas-pages/fixture.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "examples/atlas-pages/author.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "examples/atlas-pages/verify-browser.mjs",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "examples/atlas-pages/README.md",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "examples/atlas-pages/README.zh-CN.md",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "knowledge-base/en/docs/multipage-atlas-content.md",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/multipage-atlas-content.md",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    },
+    {
+      "path": "verification/atlas-pages/verification.json",
+      "originRole": "Independently authored first-party multipage content profile, public API, original fixture or documentation; AI-assisted; Apache-2.0. Reuses first-party content build, resource ownership and SpriteSheet; existing pngjs/jsonc-parser dependencies retain their notices."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/multipage-atlas-content.md",
+      "zh": "knowledge-base/Cns/docs/multipage-atlas-content.md"
+    },
+    {
+      "en": "examples/atlas-pages/README.md",
+      "zh": "examples/atlas-pages/README.zh-CN.md"
+    }
+  ]
+}

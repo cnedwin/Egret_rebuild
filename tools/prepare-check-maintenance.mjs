@@ -64,18 +64,18 @@ const m21ContentSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes"
 const m22SequenceSourceOwners = [
   {
     "path": "tools/spritesheet-boundary.mjs",
-    "bytes": 246134,
-    "sha256": "5afc35ae03d79ddfdb3726b278131df28a5216f2268b24fc354e14d0ed069178"
+    "bytes": 247172,
+    "sha256": "33110eecf52f6c2b260d7e407027c748a21507b6742ae731ea94033b193f885e"
   },
   {
     "path": "tools/browser-png-boundary.mjs",
-    "bytes": 255009,
-    "sha256": "6919210cc8c39ec92062fa9fdeab00bd2a8defc52f4ea0ae7f3721b85c7b5756"
+    "bytes": 256047,
+    "sha256": "e24147f062de94df397c53dbff4e28217a96a609a0cbe11711a47d54692ba1f0"
   },
   {
     "path": "tools/atlas-import-boundary.mjs",
-    "bytes": 150888,
-    "sha256": "4b27d7ae923d48af8ec31b2d87c1ebdef4fa98384802fc2d7b6ef63139bac746"
+    "bytes": 151926,
+    "sha256": "cc3893969cf369d40f1090d27b4fa784f1ba7bd5bc6dd86b7eadcc1859b7b3ce"
   },
   {
     "path": "tools/bitmap-resource-slot-boundary.mjs",

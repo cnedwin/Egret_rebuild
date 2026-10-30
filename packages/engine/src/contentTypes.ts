@@ -19,6 +19,10 @@ export interface ContentGroup {
   readonly isDisposed: boolean;
   getImage(id: string): AssetLease<Texture>;
   getAtlas(id: string): SpriteSheet;
+  /** Exact logical page names of an admitted multipage atlas; borrowed metadata. */
+  getAtlasPages(id: string): readonly string[];
+  /** The page borrows the same resource-group lifetime as legacy single sheets. */
+  getAtlasPage(id: string, page: string): SpriteSheet;
   getSequence(id: string): SequenceClip;
   dispose(): void;
 }

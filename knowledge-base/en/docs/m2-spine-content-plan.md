@@ -163,3 +163,5 @@ Checked 2026-10-21; upstream descriptions are not Egret test results.
 Remaining qualification belongs to the responsible package: exact release/export corpus and distribution basis (M2.1); licensed source fixtures and independent references (M2.1–M2.3); compressed-format/encoder profiles and reproducibility boundary (M2.1/M2.3); the specified playback/seek profile against the selected Core (M2.2); exact Spine color equivalence in the shared profile (M2.3); declared hardware and equivalent-workload budgets (M2.4/M4). Contributors can advance unrelated qualified work without inventing these answers.
 
 The existing [complete Spine requirement](spine-animation-support-and-acceptance.md) remains the product scope reference.
+
+The first-party [multipage atlas content](multipage-atlas-content.md) increment extends M2.1 through the existing pipeline and runtime group. It adds named SpriteSheet pages with trim/rotation and whole-group ownership; it does not qualify Spine, an external exporter or complete M2.1.

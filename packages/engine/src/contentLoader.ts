@@ -10,6 +10,7 @@ import { createManifestAssetBinding } from './manifestResourceState.js';
 import { requireContentEngine } from './internal/contentFactoryState.js';
 import { contentFault, parseAtlasArtifact, parseSequenceArtifact } from './contentArtifacts.js';
 import type { AtlasArtifact } from './contentArtifacts.js';
+import { parseAtlasPagesArtifact } from './contentAtlasPages.js';
 
 const SCOPE_STATE = Object.getOwnPropertyDescriptor(Scope.prototype,'state')!.get!;
 const SCOPE_USE = Scope.prototype.use;
@@ -36,10 +37,12 @@ export function createContentLoader(engine: Engine, manifest: AdmittedResourceMa
   const bindings = new Map<string,ManifestBinding>();
   const descriptions: ContentBinding[] = [];
   for (const e of entries.values()) {
-    const profile = e.resourceKind === 'image' ? ['egret.png','png/1','image/png',0] : e.resourceKind === 'atlas' ? ['egret.aseprite-atlas','egret.atlas/1','application/json',1] : e.resourceKind === 'sequence' ? ['egret.sequence','egret.sequence/1','application/json',1] : undefined;
-    if (!profile || e.importer.id !== profile[0] || e.importer.version !== '1.0.0' || e.artifactFormatVersion !== profile[1] || e.artifact.mediaType !== profile[2] || e.dependencies.length !== profile[3]
+    const multi=e.resourceKind==='atlas'&&e.importer.id==='egret.atlas-pages';
+    const profile = multi ? ['egret.atlas-pages','egret.atlas-pages/1','application/json',e.dependencies.length] : e.resourceKind === 'image' ? ['egret.png','png/1','image/png',0] : e.resourceKind === 'atlas' ? ['egret.aseprite-atlas','egret.atlas/1','application/json',1] : e.resourceKind === 'sequence' ? ['egret.sequence','egret.sequence/1','application/json',1] : undefined;
+    if ((multi&&(e.dependencies.length<1||e.dependencies.length>16)) || !profile || e.importer.id !== profile[0] || e.importer.version !== '1.0.0' || e.artifactFormatVersion !== profile[1] || e.artifact.mediaType !== profile[2] || e.dependencies.length !== profile[3]
       || e.artifact.byteLength > (e.resourceKind === 'image' ? 8388608 : 4194304)) throw contentFault('PROFILE',e.id);
     const dependency = entries.get(e.dependencies[0] ?? '');
+    if (multi&&e.dependencies.some(id=>entries.get(id)?.resourceKind!=='image'))throw contentFault('DEPENDENCY',e.id);
     if (e.resourceKind === 'atlas' && dependency?.resourceKind !== 'image' || e.resourceKind === 'sequence' && dependency?.resourceKind !== 'atlas') throw contentFault('DEPENDENCY',e.id);
     if (e.resourceKind === 'sequence' && (e.source.id !== dependency!.source.id || e.source.sha256 !== dependency!.source.sha256 || e.source.byteLength !== dependency!.source.byteLength)) throw contentFault('SOURCE',e.id);
     const binding = e.resourceKind === 'image' ? createManifestAssetBinding(manifest,e.id,imageType) : createManifestAssetBinding(manifest,e.id,metadataType);
@@ -97,6 +100,7 @@ export function createContentLoader(engine: Engine, manifest: AdmittedResourceMa
       }
       const raw = owner.group(scope,manifest,FREEZE(captured),ordered.map(e => bindings.get(e.id)!),options);
       const images = new Map<string,AssetLease<Texture>>(), sheets = new Map<string,SpriteSheet>(), clips = new Map<string,SequenceClip>();
+      const atlasPages=new Map<string,ReadonlyMap<string,SpriteSheet>>(),atlasPageNames=new Map<string,readonly string[]>();
       let state: 'pending' | 'ready' | 'failed' | 'disposed' = 'pending';
       let resolve!: () => void, reject!: (cause: unknown) => void;
       const ready = new Promise<void>((yes,no) => {resolve=yes;reject=no;}); void ready.catch(() => {});
@@ -107,7 +111,8 @@ export function createContentLoader(engine: Engine, manifest: AdmittedResourceMa
         if (pending) reject(cause ?? new EgretError('CONTENT_GROUP_DISPOSED'));
         // Sheets borrow raw group leases; revoke the wrappers before releasing leases.
         for (const sheet of sheets.values()) sheet.dispose();
-        sheets.clear(); images.clear(); clips.clear(); raw.dispose();
+        for(const pages of atlasPages.values())for(const page of pages.values())page.dispose();
+        sheets.clear();atlasPages.clear();atlasPageNames.clear();images.clear();clips.clear();raw.dispose();
       }
       function read<T>(map: Map<string,T>,id: string): T {
         assertScope(scope);
@@ -120,6 +125,11 @@ export function createContentLoader(engine: Engine, manifest: AdmittedResourceMa
         get isDisposed(): boolean { if (this !== group) throw new EgretError('CONTENT_GROUP_INVALID'); return state === 'disposed' || state === 'failed'; },
         getImage(id: string): AssetLease<Texture> { if (this !== group) throw new EgretError('CONTENT_GROUP_INVALID'); return read(images,id); },
         getAtlas(id: string): SpriteSheet { if (this !== group) throw new EgretError('CONTENT_GROUP_INVALID'); return read(sheets,id); },
+        getAtlasPages(id: string): readonly string[] {if(this!==group)throw new EgretError('CONTENT_GROUP_INVALID');return read(atlasPageNames,id);},
+        getAtlasPage(id: string,page: string): SpriteSheet {
+          if(this!==group)throw new EgretError('CONTENT_GROUP_INVALID');const pages=read(atlasPages,id);
+          if(typeof page!=='string'||!pages.has(page))throw new EgretError('CONTENT_RESOURCE_INVALID');return pages.get(page)!;
+        },
         getSequence(id: string): SequenceClip { if (this !== group) throw new EgretError('CONTENT_GROUP_INVALID'); return read(clips,id); },
         dispose(): void { if (this !== group) throw new EgretError('CONTENT_GROUP_INVALID'); retire('disposed'); },
       });
@@ -138,11 +148,25 @@ export function createContentLoader(engine: Engine, manifest: AdmittedResourceMa
               images.set(e.id,lease);
             } else {
               const text = raw.get(bindings.get(e.id) as ManifestAssetBinding<string>).value;
-              if (e.resourceKind === 'atlas') {
+              if(e.resourceKind==='atlas'&&e.importer.id==='egret.atlas-pages'){
+                const artifact=parseAtlasPagesArtifact(text,e.id,e.dependencies.length),pages=new Map<string,SpriteSheet>();
+                // Register page wrappers before construction so partial failure
+                // revokes every successful borrow before raw leases are released.
+                atlasPages.set(e.id,pages);
+                for(let index=0;index<artifact.pages.length;index++){
+                  const page=artifact.pages[index]!,lease=images.get(e.dependencies[index]!)!;
+                  if(lease.value.width!==page.width||lease.value.height!==page.height)throw contentFault('DIMENSIONS',e.id);
+                  pages.set(page.name,createSpriteSheet(lease,page.frames,'trim-rotation-v1'));
+                }
+                atlasPageNames.set(e.id,FREEZE(artifact.pages.map(p=>p.name)));
+              } else if (e.resourceKind === 'atlas') {
                 const atlas = parseAtlasArtifact(text,e.id), page = images.get(e.dependencies[0]!)!;
                 if (page.value.width !== atlas.width || page.value.height !== atlas.height) throw contentFault('DIMENSIONS',e.id);
                 atlases.set(e.id,atlas); sheets.set(e.id,createSpriteSheet(page,atlas.frames,'trim-rotation-v1'));
-              } else clips.set(e.id,createSequenceClip(parseSequenceArtifact(text,e.id,atlases.get(e.dependencies[0]!)!),'trim-rotation-v1'));
+              } else {
+                const atlas=atlases.get(e.dependencies[0]!);if(!atlas)throw contentFault('DEPENDENCY',e.id);
+                clips.set(e.id,createSequenceClip(parseSequenceArtifact(text,e.id,atlas),'trim-rotation-v1'));
+              }
             }
           }
           assertScope(scope); state = 'ready'; resolve();

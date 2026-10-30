@@ -111,6 +111,10 @@ Desktop Edge **155.0.4283.45** Canvas/WebGPU verification completed **38** main 
 
 GitHub reported no statuses or check runs for PR #42. The local verification above is recorded separately from remote CI. Desktop pixels do not establish target-phone performance, energy use, font coverage or complete host support.
 
+## Multipage atlas content
+
+The optional first-party content profile adds one to sixteen named pages through the existing immutable build and runtime resource group. Trimmed/rotated frames use the existing SpriteSheet. Fourteen new behavior/type cases (75 cases including affected content regressions) and desktop Edge WebGL2/WebGPU fixed pixels passed; HTTP failure and pending cancellation were collected separately. Protected publication remains pending in the [verification record](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/atlas-pages/verification.json). Full M2.1/Spine, phones and performance remain open.
+
 ## Next work and contributions
 
 - Extend UI composition beyond explicit local planning, followed by touch, keyboard, focus, accessibility and editing.

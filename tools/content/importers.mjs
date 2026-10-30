@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
-// Three finite Node producers; source/cache verification remains the runner's authority.
+// Four finite Node producers; source/cache verification remains the runner's authority.
 import {createRequire} from 'node:module';
 import {readFileSync} from 'node:fs';
 import {types} from 'node:util';
 import {createAtlasImportPlan} from '@egret/project/atlas';
 import {decodeContentPng} from './png.mjs';
 const require=createRequire(import.meta.url);
+const {parseTree:parseJsonTree}=require('jsonc-parser');
 const PNGJS_VERSION=JSON.parse(readFileSync(require.resolve('pngjs/package.json'),'utf8')).version;
 const SOURCE_LIMIT=8388608,ARTIFACT_LIMIT=4194304,WORK_LIMIT=67108864,OUTPUT_LIMIT=134217728;
 const signature=[137,80,78,71,13,10,26,10];
@@ -13,6 +14,7 @@ const mappings=Object.freeze({
   'egret.png':Object.freeze({kind:'image',format:'png/1',reference:'rgba8/1',dependency:undefined}),
   'egret.aseprite-atlas':Object.freeze({kind:'atlas',format:'egret.atlas/1',reference:'none',dependency:'image'}),
   'egret.sequence':Object.freeze({kind:'sequence',format:'egret.sequence/1',reference:'none',dependency:'atlas'}),
+  'egret.atlas-pages':Object.freeze({kind:'atlas',format:'egret.atlas-pages/1',reference:'none',dependency:'images'}),
 });
 function fault(code,message,cause){const error=new Error(message,cause===undefined?undefined:{cause});error.code='CONTENT_IMPORT_'+code;return error;}
 function exact(value,keys){
@@ -34,11 +36,11 @@ export function getContentProducer(){
 }
 function admitEntry(entry){
   const actual=getContentProducer();
-  if(!entry||!exact(entry.importer,['id','version'])||entry.importer.version!=='1.0.0'||!Object.hasOwn(mappings,entry.importer.id))throw fault('INPUT','Content importer must be one of the three registered 1.0.0 producers.');
+  if(!entry||!exact(entry.importer,['id','version'])||entry.importer.version!=='1.0.0'||!Object.hasOwn(mappings,entry.importer.id))throw fault('INPUT','Content importer must be one of the four registered 1.0.0 producers.');
   const mapping=mappings[entry.importer.id],settings=entry.settings;
   if(entry.resourceKind!==mapping.kind||entry.artifactFormatVersion!==mapping.format||!exact(settings,['recipeSchemaVersion','options','producer','outputFormatVersion','referenceFormatVersion'])||settings.recipeSchemaVersion!==1||settings.outputFormatVersion!==mapping.format||settings.referenceFormatVersion!==mapping.reference||!exact(settings.producer,['nodeVersion','pngjsVersion','zlibVersion'])||Object.keys(actual).some(key=>settings.producer[key]!==actual[key]))throw fault('INPUT','Content kind, artifact format, settings envelope and actual producer identity must match the selected finite importer.');
-  if(mapping.kind==='atlas'?!exact(settings.options,['pageName'])||!text(settings.options.pageName)||!settings.options.pageName:!exact(settings.options,[]))throw fault('INPUT','Only the finite importer options are supported.');
-  if(!Array.isArray(entry.dependencies)||entry.dependencies.length!==(mapping.dependency?1:0))throw fault('INPUT','Content importer requires its exact declared dependency count.');
+  if(mapping.dependency==='images'?!exact(settings.options,[]):mapping.kind==='atlas'?!exact(settings.options,['pageName'])||!text(settings.options.pageName)||!settings.options.pageName:!exact(settings.options,[]))throw fault('INPUT','Only the finite importer options are supported.');
+  if(!Array.isArray(entry.dependencies)||(mapping.dependency==='images'?!integer(entry.dependencies.length,1,16):entry.dependencies.length!==(mapping.dependency?1:0)))throw fault('INPUT','Content importer requires its exact declared dependency count.');
   return mapping;
 }
 const typedPrototype=Object.getPrototypeOf(Uint8Array.prototype);
@@ -112,10 +114,49 @@ function parseAtlas(bytes){
   if(canonical(value)!==source)invalid();
   return value;
 }
+
+/** Strict authored JSON with duplicate-key refusal; no source normalization. */
+function authoredAtlasPages(source){
+  const textValue=decodeText(source),errors=[];let tree,value;
+  try{tree=parseJsonTree(textValue,errors,{allowTrailingComma:false,disallowComments:true});value=JSON.parse(textValue);}catch(cause){throw fault('PROFILE','Invalid authored atlas-pages JSON.',cause);}
+  if(!tree||errors.length)throw fault('PROFILE','Invalid authored atlas-pages JSON.');
+  let nodes=0;function visit(node,depth){if(++nodes>524288||depth>64)throw fault('LIMIT','Atlas-pages source structure exceeds limits.');if(node.type==='object'){const keys=new Set();for(const property of node.children??[]){const key=property.children?.[0]?.value;if(keys.has(key))throw fault('PROFILE','Duplicate JSON property in atlas-pages source.');keys.add(key);}}for(const child of node.children??[])visit(child,depth+1);}visit(tree,0);return value;
+}
+function buildAtlasPages(entry,source,dependencies,remainingOutputBytes){
+  if(source.length>ARTIFACT_LIMIT)throw fault('LIMIT','Atlas-pages source exceeds4MiB.');
+  const value=authoredAtlasPages(source),invalid=()=>{throw fault('PROFILE','Atlas-pages requires bounded named pages and trimmed/rotated frame metadata.');};
+  if(!exact(value,['format','pages'])||value.format!=='egret.atlas-pages-source/1'||!Array.isArray(value.pages)||value.pages.length!==entry.dependencies.length
+    ||!Array.isArray(dependencies)||dependencies.length!==entry.dependencies.length)invalid();
+  const pages=[],pageNames=new Set();let total=0,units=0;
+  const validName=name=>text(name)&&name.length>0&&name.length<=128&&!/[\u0000-\u001f\u007f]/u.test(name);
+  for(let index=0;index<value.pages.length;index++){
+    const page=value.pages[index];if(!exact(page,['name','frames'])||!validName(page.name)||pageNames.has(page.name)||!Array.isArray(page.frames)||!integer(page.frames.length,1,1024))invalid();
+    pageNames.add(page.name);total+=page.frames.length;units+=page.name.length;if(total>8192)invalid();
+    const dependency=dependencyFor({...entry,dependencies:[entry.dependencies[index]]},[dependencies[index]],{dependency:'image'});
+    const primary=view(dependency.outputs.find(output=>output.name==='primary').bytes),rgba=view(dependency.outputs.find(output=>output.name==='rgba').bytes),dimensions=header(primary);
+    if(primary.length>SOURCE_LIMIT||!dimensions||rgba.length!==dimensions.rgbaBytes)throw fault('INPUT','Atlas page must be the exact verified PNG/RGBA dependency.');
+    const names=new Set(),frames=[];let pageNameUnits=0;
+    for(const frame of page.frames){
+      if(!exact(frame,['name','x','y','width','height','layout'])||!validName(frame.name)||names.has(frame.name)||!integer(frame.x,0,dimensions.width)||!integer(frame.y,0,dimensions.height)
+        ||!integer(frame.width,1,dimensions.width)||!integer(frame.height,1,dimensions.height)||frame.x+frame.width>dimensions.width||frame.y+frame.height>dimensions.height)invalid();
+      names.add(frame.name);units+=frame.name.length;pageNameUnits+=frame.name.length;if(units>262144||pageNameUnits>32768)invalid();const layout=frame.layout;
+      if(!exact(layout,['sourceWidth','sourceHeight','trimX','trimY','packedRotation'])||!integer(layout.sourceWidth,1,65535)||!integer(layout.sourceHeight,1,65535)||!integer(layout.trimX,0,65535)||!integer(layout.trimY,0,65535)||(layout.packedRotation!==0&&layout.packedRotation!==90))invalid();
+      if(layout.trimX+(layout.packedRotation===90?frame.height:frame.width)>layout.sourceWidth||layout.trimY+(layout.packedRotation===90?frame.width:frame.height)>layout.sourceHeight)invalid();
+      frames.push({name:frame.name,x:frame.x,y:frame.y,width:frame.width,height:frame.height,layout:{...layout}});
+    }
+    pages.push({name:page.name,pageDependency:index,width:dimensions.width,height:dimensions.height,frames});
+  }
+  return artifact({format:'egret.atlas-pages/1',pages},remainingOutputBytes);
+}
+
 /** Synchronous owned intrinsic bytes; PNG work charges both bounded decompressions. */
 export function buildContentResource(entry,sourceBytes,dependencies,{remainingScanlineBytes=WORK_LIMIT,remainingOutputBytes=OUTPUT_LIMIT}={}){
   const mapping=admitEntry(entry),source=view(sourceBytes);
   if(!integer(remainingScanlineBytes,0,WORK_LIMIT)||!integer(remainingOutputBytes,0,OUTPUT_LIMIT))throw fault('LIMIT','Remaining content work/output budgets must be bounded nonnegative safe integers.');
+  if(mapping.dependency==='images'){
+    if(new Set(entry.dependencies).size!==entry.dependencies.length||entry.dependencies.some(id=>typeof id!=='string'||!id))throw fault('INPUT','Atlas page dependencies must be distinct resource IDs.');
+    return buildAtlasPages(entry,source,dependencies,remainingOutputBytes);
+  }
   const dependency=dependencyFor(entry,dependencies,mapping);
   if(mapping.kind==='image'){
     if(source.length>SOURCE_LIMIT)throw fault('LIMIT','PNG encoded source exceeds 8 MiB.');
