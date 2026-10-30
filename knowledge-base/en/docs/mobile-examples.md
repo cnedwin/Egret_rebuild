@@ -29,9 +29,12 @@ Focused Node checks cover geometry/density policy, owner replacement, initializa
 ```text
 node --test tests/mobile-examples.test.mjs tests/publication/m0-foundations.test.mjs
 node examples/mobile/verify-browser.mjs <playwright-root> <new-output-directory>
+node examples/mobile/verify-device.mjs <new-output-directory> [--adb <adb-prefix>] [--port 9222]
 ```
 
 The finite matrix runs actual default-headless Microsoft Edge: four desktop mouse contexts at DPR 1, four touch-enabled mobile viewport contexts at DPR 3 (effective 2), plus UI/paragraph WebGPU mobile contexts. It checks input, reflow, portrait/landscape and small widths, live DPR changes, ownership cleanup, served source identities and actual GPU readback for the panels. Screenshots and raw results are separate from the fixed collectors. Desktop touch emulation does not establish Android/iPhone hardware behavior, human IME, sustained thermal/power, GPU timing, independent glyph correctness or M4 acceptance. Those requirements remain open. Source identity and CI do not substitute for those results.
+
+The device command uses only Node built-ins. It requires exactly one device visible to `adb` and the host port reversed into it, drives the four scenes over the existing DevTools endpoint, and records ready state, bounded effective density, backing dimensions, canvas touch policy, a routed synthetic touch per scene, logical-focus transfer and focus movement from keys on the Two contacts page, cancellation of two held contacts, a failed session when a texture is blocked and its recovery, and a rebuilt session on rotation and on a density change with the selection preserved. It restores every Android setting it changes before exit and writes `summary.json` plus one record per scene. Synthetic DevTools key samples are unreliable on Android — the channel sometimes rejects them as invalid and sometimes delivers them late — so key focus and activation are recorded rather than asserted, and a physical keyboard remains required for key acceptance. A panel scene also needs a real navigation before synthetic touch is admitted, which the command performs. This is a reproducible physical-device observation, not a hardware qualification: native IME, pen input, palm rejection, thermal and power behavior, sustained runs and iOS remain open.
 
 ## Sources
 

@@ -29,9 +29,12 @@ Host 比例和输入逻辑尺寸是构造参数。内容宽度或 DPR 变化时�
 ```text
 node --test tests/mobile-examples.test.mjs tests/publication/m0-foundations.test.mjs
 node examples/mobile/verify-browser.mjs <playwright-root> <new-output-directory>
+node examples/mobile/verify-device.mjs <new-output-directory> [--adb <adb-prefix>] [--port 9222]
 ```
 
 有限矩阵使用默认无头模式的真实 Microsoft Edge：四个 DPR 1 桌面鼠标上下文、四个 DPR 3（有效 2）的移动视口触摸上下文，以及 UI／段落的 WebGPU 移动上下文。检查输入、重排、横竖屏和小尺寸、运行中 DPR 变化、所有权清理、实际服务源码身份和面板 GPU 读回。截图与原始结果独立于固定采集器。桌面触摸模拟不能证明 Android／iPhone 真机、人类输入法、持续温度／功耗、GPU 耗时、独立字形正确性或 M4 验收；这些要求继续未完成。源码身份与 CI 不能替代这些结果。
+
+设备命令只使用 Node 内置模块。它要求 `adb` 恰好可见一台设备且主机端口已反向转发到该设备，通过既有 DevTools 端点驱动四个场景，并记录就绪状态、有界有效密度、后备尺寸、画布触摸策略、每个场景一次实际路由的合成触摸、双触点页面上的逻辑焦点转移与按键焦点移动、两个按住触点的取消、纹理被阻断时的失败会话与其恢复，以及旋转与密度变化后的会话重建与选择保留。退出前恢复它改动过的每一项 Android 设置，输出 `summary.json` 与每场景一份记录。合成 DevTools 按键样本在 Android 上并不可靠——通道有时将其判为无效，有时延迟投递——因此按键焦点与激活只记录不断言，按键验收仍需实体键盘。面板场景还需要一次真实导航后才会接受合成触摸，命令中已包含该步骤。这是可复现的真机观察，不是硬件资格验证：原生输入法、笔输入、手掌误触、温度与功耗、持续运行与 iOS 仍未完成。
 
 ## 来源
 
