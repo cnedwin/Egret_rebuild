@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/runtime/src/paragraph/geometry.ts",
+      "originRole": "Independently authored first-party paragraph text geometry, ownership, public behavior and example integration; AI-assisted; Apache-2.0. Existing native backend and font notices remain unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/canvasKitParagraphGeometry.ts",
+      "originRole": "Independently authored first-party paragraph text geometry, ownership, public behavior and example integration; AI-assisted; Apache-2.0. Existing native backend and font notices remain unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/paragraph-geometry.test.mjs",
+      "originRole": "Independently authored first-party paragraph text geometry, ownership, public behavior and example integration; AI-assisted; Apache-2.0. Existing native backend and font notices remain unchanged."
+    },
+    {
+      "path": "tests/paragraph-geometry-native.test.mjs",
+      "originRole": "Independently authored first-party paragraph text geometry, ownership, public behavior and example integration; AI-assisted; Apache-2.0. Existing native backend and font notices remain unchanged."
+    },
+    {
+      "path": "examples/paragraph-geometry/index.html",
+      "originRole": "Independently authored first-party paragraph text geometry, ownership, public behavior and example integration; AI-assisted; Apache-2.0. Existing native backend and font notices remain unchanged."
+    },
+    {
+      "path": "examples/paragraph-geometry/main.mjs",
+      "originRole": "Independently authored first-party paragraph text geometry, ownership, public behavior and example integration; AI-assisted; Apache-2.0. Existing native backend and font notices remain unchanged."
+    },
+    {
+      "path": "verification/paragraph-geometry/verification.json",
+      "originRole": "Independently authored first-party paragraph text geometry, ownership, public behavior and example integration; AI-assisted; Apache-2.0. Existing native backend and font notices remain unchanged."
+    },
+    {
+      "path": "tests/paragraph-geometry-types.test.mjs",
+      "originRole": "Independently authored first-party paragraph geometry contract, public types, scoped browser integration or bilingual example; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/types/paragraph-geometry-positive.ts",
+      "originRole": "Independently authored first-party paragraph geometry contract, public types, scoped browser integration or bilingual example; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/types/paragraph-geometry-negative.ts",
+      "originRole": "Independently authored first-party paragraph geometry contract, public types, scoped browser integration or bilingual example; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/paragraph-geometry/verify-browser.mjs",
+      "originRole": "Independently authored first-party paragraph geometry contract, public types, scoped browser integration or bilingual example; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/paragraph-text-geometry.md",
+      "originRole": "Independently authored first-party paragraph geometry contract, public types, scoped browser integration or bilingual example; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/paragraph-text-geometry.md",
+      "originRole": "Independently authored first-party paragraph geometry contract, public types, scoped browser integration or bilingual example; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/paragraph-geometry/README.md",
+      "originRole": "Independently authored first-party paragraph geometry contract, public types, scoped browser integration or bilingual example; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/paragraph-geometry/README.zh-CN.md",
+      "originRole": "Independently authored first-party paragraph geometry contract, public types, scoped browser integration or bilingual example; AI-assisted; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/paragraph-text-geometry.md",
+      "zh": "knowledge-base/Cns/docs/paragraph-text-geometry.md"
+    },
+    {
+      "en": "examples/paragraph-geometry/README.md",
+      "zh": "examples/paragraph-geometry/README.zh-CN.md"
+    }
+  ]
+}

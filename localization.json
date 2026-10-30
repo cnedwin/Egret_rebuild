@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "60b1a430ff9e090c72ef82fc429431b3257bab09647fcac449d3025c35c4188c",
-      "zhSha256": "8edf80bacb36f458204f91ca79eaeabaabf5db070bc91e82dac20d209a21aa38"
+      "enSha256": "00b1400027316bea1cfc14779b06f4115972b7c9efbf2f907cc6b5a18fbfbe56",
+      "zhSha256": "74030c5acf96490b48c881ae40786ca445d63e7300e121534b109c8d5693cefb"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1970,8 +1970,8 @@
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "964310c4d1a8eb7bda3679d5f0b879176668f633038775a88b930a6b3351befc",
-      "zhSha256": "94d1d76bcd0c7261f9ae3ba7ed99c1c38268d68952da80bfbe8bb2806b144a2b"
+      "enSha256": "827518b4d7ef48e3523ade44fc9c8639614b9b5d047fcc3a21cac6f582b14d4d",
+      "zhSha256": "664c36ef8f12e57c811424f906cfffb473befeb02fc26e110d94a08b86cb29a4"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -2119,6 +2119,20 @@
       "kind": "public_reading",
       "enSha256": "e81bef2c53781e2d3b9bd4ee40ade14313a7640c4b2c4c8306141636627572de",
       "zhSha256": "87b3c4a31678f7d2760eaa16d71e18a623979513aeea42fc6f1bc06e57c7867a"
+    },
+    {
+      "en": "knowledge-base/en/docs/paragraph-text-geometry.md",
+      "zh": "knowledge-base/Cns/docs/paragraph-text-geometry.md",
+      "kind": "public_reading",
+      "enSha256": "f1073b9745bb9f0d9a7edda104230fc69b70749081693efe7fd5a904c3ada3a1",
+      "zhSha256": "90b7617106824c860568de0db01b746f598bff39a04600d4d01024d35d0f2f9d"
+    },
+    {
+      "en": "examples/paragraph-geometry/README.md",
+      "zh": "examples/paragraph-geometry/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "36583ca6201150246a42bd718a17fff1677f23c2aea00e6deaac8fdc832078d4",
+      "zhSha256": "8a1c30bf64f21508efb77e65337373c874c52907c66e88e6907521099cc85201"
     }
   ],
   "registries": [
@@ -2944,7 +2958,7 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "344a72054df1369c90e0b2d86c10b962a11339c444330ce938969b3cc8fd7637"
+      "sha256": "f8dd20318bd2123a578025002faf9c3f8e98b21f6e98ce4d1aa9bad544fefbf3"
     },
     {
       "path": "tests/boundaries.test.mjs",
@@ -3088,7 +3102,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "b5a5dd325306f35c66f9e06d05c258f1bcfa3f4a57ae07aa38c2623c013f44a5"
+      "sha256": "6919210cc8c39ec92062fa9fdeab00bd2a8defc52f4ea0ae7f3721b85c7b5756"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3236,7 +3250,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "bfc1862dab42cd58a81d08ca7943568245163bba7d42522af7bfccd8c56a8bd1"
+      "sha256": "5afc35ae03d79ddfdb3726b278131df28a5216f2268b24fc354e14d0ed069178"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3708,7 +3722,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "6f23b088df81f4786b869ba8175004a7ca6051aca1224f6f0756471c36fce9e5"
+      "sha256": "a830a5c3bf020b143dad15502f7cd16fa60d52e514d26131b4c10f2330872dbc"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3736,7 +3750,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "1ea0e95c6a7b9a4f89c39db8c0467e1a3250bd4ec701de653f04c96d40c4e3b3"
+      "sha256": "8911057fd93cb25bb97a4f8b21c5509b09b6d31faa0284099431bc82602852e6"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4136,7 +4150,7 @@
     },
     {
       "path": "packages/engine/web/CanvasKitParagraphProvider.ts",
-      "sha256": "64c6a18fccc957951e4fe8f73888f877dacf20249e77a91b865d5ebb8ad4ae3d"
+      "sha256": "80b8b37e4bf7abffdb7ecbb85ccb79c41814a365d6d16a381710157204e70bee"
     },
     {
       "path": "packages/engine/web/paragraph.ts",
@@ -4144,11 +4158,11 @@
     },
     {
       "path": "packages/runtime/src/paragraph/Paragraph.ts",
-      "sha256": "0362a21fb6ab30ac79ea7d4c767cfec57c0a574faaf472fac1c253ca19c019f0"
+      "sha256": "7b1eb817cda16aee6ec487056e3db79774ebc40f411ebec4a65b8a97cbb4471e"
     },
     {
       "path": "packages/runtime/src/paragraph/ParagraphCache.ts",
-      "sha256": "4dc1329b314aa75a2436f0e93abb8873d58c893d19e081fa6a4cc7876e4a4124"
+      "sha256": "ae794ba078fd2adde57983ccb85c9684b8e0ce4116d5036eb5fe53f0a99bb85e"
     },
     {
       "path": "packages/runtime/src/paragraph/index.ts",
@@ -4156,11 +4170,11 @@
     },
     {
       "path": "packages/runtime/src/paragraph/request.ts",
-      "sha256": "58456420497b58649dfda8e56a0e880bdb1fe0f368e73c2c50ce778766f3e68d"
+      "sha256": "36f62da71690afe5f85d798bee40670dc47f8610d36b0133d37af7f5f4e1ae92"
     },
     {
       "path": "packages/runtime/src/paragraph/types.ts",
-      "sha256": "f2d6c7adcdf40a018e319f51b0656da0a14386f22863e952f949a917be422fe4"
+      "sha256": "525c69e3ccf36164c7c70a4a5aaf8801df956df197f5d88a11be81c7e5e5e7c4"
     },
     {
       "path": "examples/paragraph-panel/verify-line-bidi.mjs",
@@ -4181,6 +4195,14 @@
     {
       "path": "packages/engine/web/keyboard.ts",
       "sha256": "b45f5b288cecd5daa05d95ba69e007b7cc29c0808a513ae7caf0317c7927edba"
+    },
+    {
+      "path": "packages/runtime/src/paragraph/geometry.ts",
+      "sha256": "ab597152c22f4d9255e77d1463fe5f5e58a2f1207f74cd7718fb3b0ec2a88af7"
+    },
+    {
+      "path": "packages/engine/web/canvasKitParagraphGeometry.ts",
+      "sha256": "5e4003492f0938209b1ecf4d839a194251b0fd875879d8b681c2deb2a00488ce"
     }
   ],
   "historicalSemanticReview": {

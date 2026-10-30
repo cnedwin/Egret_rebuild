@@ -83,6 +83,32 @@ const m15DeepClauses = {
 const m15ClauseKey = row => JSON.stringify([row.operation,row.kind,row.target,[...row.members].sort()]);
 // M3.2: exact optional protocol clauses; no same-package value/deep-import wildcard.
 const m32ParagraphDeepClauses = {
+  "packages/engine/web/canvasKitParagraphGeometry.ts": [
+    {
+      "operation": "import",
+      "kind": "type",
+      "members": [
+        "ParagraphMetrics",
+        "ParagraphRequest",
+        "ParagraphTextCluster",
+        "ParagraphTextGeometryData",
+        "ParagraphTextLine"
+      ],
+      "target": "@egret/engine/paragraph"
+    }
+  ],
+  "packages/engine/dist/web/canvasKitParagraphGeometry.d.ts": [
+    {
+      "operation": "import",
+      "kind": "type",
+      "members": [
+        "ParagraphMetrics",
+        "ParagraphRequest",
+        "ParagraphTextGeometryData"
+      ],
+      "target": "@egret/engine/paragraph"
+    }
+  ],
   "packages/engine/src/paragraph.ts": [
     {
       "operation": "import",
@@ -4813,10 +4839,18 @@ const m32ParagraphLiteralClosure = {
   "packages/engine/dist/web/CanvasKitParagraphProvider.d.ts": [
     [
       "static",
+      "./canvasKitParagraphGeometry.js"
+    ],
+    [
+      "static",
       "@egret/engine/paragraph"
     ]
   ],
   "packages/engine/dist/web/CanvasKitParagraphProvider.js": [
+    [
+      "static",
+      "./canvasKitParagraphGeometry.js"
+    ],
     [
       "static",
       "@egret/contracts"
@@ -4933,6 +4967,14 @@ const m32ParagraphLiteralClosure = {
     ]
   ],
   "packages/engine/web/CanvasKitParagraphProvider.ts": [
+    [
+      "static",
+      "./canvasKitParagraphGeometry.js"
+    ],
+    [
+      "static",
+      "./canvasKitParagraphGeometry.js"
+    ],
     [
       "static",
       "@egret/contracts"
@@ -5058,6 +5100,10 @@ const m32ParagraphLiteralClosure = {
     [
       "static",
       "../Texture.js"
+    ],
+    [
+      "static",
+      "./geometry.js"
     ],
     [
       "static",
@@ -5220,6 +5266,10 @@ const m32ParagraphLiteralClosure = {
     ],
     [
       "static",
+      "./geometry.js"
+    ],
+    [
+      "static",
       "./Paragraph.js"
     ],
     [
@@ -5279,6 +5329,50 @@ const m32ParagraphLiteralClosure = {
     [
       "static",
       "@egret/contracts"
+    ]
+  ],
+  "packages/engine/web/canvasKitParagraphGeometry.ts": [
+    [
+      "static",
+      "@egret/engine/paragraph"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/web/canvasKitParagraphGeometry.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/web/canvasKitParagraphGeometry.d.ts": [
+    [
+      "static",
+      "@egret/engine/paragraph"
+    ]
+  ],
+  "packages/runtime/src/paragraph/geometry.ts": [
+    [
+      "static",
+      "../EgretError.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/runtime/dist/paragraph/geometry.js": [
+    [
+      "static",
+      "../EgretError.js"
+    ]
+  ],
+  "packages/runtime/dist/paragraph/geometry.d.ts": [
+    [
+      "static",
+      "./types.js"
     ]
   ]
 };

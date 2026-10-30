@@ -280,3 +280,5 @@ The raw multi-contact scene input contract and evidence boundaries are maintaine
 
 
 The [keyboard/focus increment](keyboard-focus-input.md) now provides opt-in registered display targets, typed key events, traversal, cancellation and a Canvas-native bridge under existing ownership. It does not close the remaining native editor/IME, managed-control registration, modal/composite or semantic-projection rows.
+
+The optional [paragraph text geometry](paragraph-text-geometry.md) increment publishes source ranges, hit/selection/caret coordinates with the same committed raster and bounded cache ownership. It supplies M3.3 consumers; it does not implement native editing or alter touch routing.

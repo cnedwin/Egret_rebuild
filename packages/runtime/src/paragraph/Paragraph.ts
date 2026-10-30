@@ -82,7 +82,7 @@ class ParagraphNode extends DisplayObjectContainer {
     }catch(cause){return Promise.reject(cause);}
   }
   public getStatus(): ParagraphStatus {
-    const s=stateOf(this);return Object.freeze({state:s.disposed?'disposed':s.metrics?'ready':'unprepared',desiredRevision:s.revision,committedRevision:s.committedRevision,pending:s.pending!==undefined,metrics:s.metrics});
+    const s=stateOf(this);return Object.freeze({state:s.disposed?'disposed':s.metrics?'ready':'unprepared',desiredRevision:s.revision,committedRevision:s.committedRevision,pending:s.pending!==undefined,metrics:s.metrics,...(s.committed?.geometry?{geometry:s.committed.geometry}:{})});
   }
   public override dispose(): void {
     const s=stateOf(this);if(s.disposed)return;s.disposed=true;
