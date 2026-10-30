@@ -29,6 +29,9 @@ export function snapshotParagraphRequest(input: ParagraphRequestInput): Paragrap
   if (authoredAlign !== undefined && !['left','right','center','start','end','justify'].includes(authoredAlign)) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
   // Keep the original canonical request and cache key for an explicit left default.
   const textAlign = authoredAlign === 'left' ? undefined : authoredAlign;
+  const geometryInput=input.textGeometry;
+  if(geometryInput!==undefined&&typeof geometryInput!=='boolean')throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+  const textGeometry=geometryInput===true;
   const authoredMaxLines = input.maxLines;
   const maxLines = authoredMaxLines === undefined ? undefined : number(authoredMaxLines, 1, 8193);
   if (maxLines !== undefined && !Number.isSafeInteger(maxLines)) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
@@ -40,7 +43,7 @@ export function snapshotParagraphRequest(input: ParagraphRequestInput): Paragrap
     if (unit >= 0xd800 && unit <= 0xdbff) { const low = source.charCodeAt(++i); if (!(low >= 0xdc00 && low <= 0xdfff)) throw new EgretError('PARAGRAPH_REQUEST_INVALID'); }
     else if (unit >= 0xdc00 && unit <= 0xdfff) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
   }
-  return Object.freeze({text: source, width, fontFamilies, fontSize, ...(lineHeight === undefined ? {} : {lineHeight}), locale, direction, fillColor, density, ...(textAlign === undefined ? {} : {textAlign}), ...(maxLines === undefined ? {} : {maxLines})});
+  return Object.freeze({text: source, width, fontFamilies, fontSize, ...(lineHeight === undefined ? {} : {lineHeight}), locale, direction, fillColor, density, ...(textAlign === undefined ? {} : {textAlign}), ...(maxLines === undefined ? {} : {maxLines}), ...(textGeometry?{textGeometry:true}:{})});
 }
 /** Own public metrics; provider memory or mutable arrays never become committed UI state. */
 export function snapshotParagraphRaster(value: ParagraphRaster, request: ParagraphRequest): ParagraphRaster {
@@ -68,6 +71,6 @@ export function snapshotParagraphRaster(value: ParagraphRaster, request: Paragra
     const image = value.image;
     if (image !== undefined && !isImageData2D(image)) throw new Error('Invalid paragraph image');
     const offsetX = number(value.offsetX, -1048576, 1048576), offsetY = number(value.offsetY, -1048576, 1048576);
-    return Object.freeze({metrics: owned, image, offsetX, offsetY});
+    return Object.freeze({metrics: owned, image, offsetX, offsetY, ...(request.textGeometry?{geometry:value.geometry}: {})});
   } catch (cause) { throw new EgretError('PARAGRAPH_PROVIDER_RESULT_INVALID', {cause}); }
 }

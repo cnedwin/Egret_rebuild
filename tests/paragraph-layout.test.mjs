@@ -124,7 +124,7 @@ async function actualProvider(t) {
 }
 const pixels = value => value.image === undefined ? new Uint8Array() : copyImageData2DPixels(value.image);
 test('actual native provider aligns ink and resolves start/end using the paragraph base direction', async t => {
-    const {provider, prepare} = await actualProvider(t); assert.deepEqual(provider.capabilities, {textAlign: true, maxLines: true});
+    const {provider, prepare} = await actualProvider(t); assert.deepEqual(provider.capabilities,{textAlign:true,maxLines:true,textGeometry:true});
     for (const direction of ['ltr', 'rtl']) {
         const common = {text: 'ABC', width: 200, direction}, left = await prepare({...common, textAlign: 'left'}), right = await prepare({...common, textAlign: 'right'}), center = await prepare({...common, textAlign: 'center'});
         assert.ok(right.offsetX > left.offsetX + 100); assert.ok(center.offsetX > left.offsetX + 40); assert.ok(center.offsetX < right.offsetX);

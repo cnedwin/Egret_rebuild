@@ -4,6 +4,10 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## M3.2 source, selection and caret geometry — 2026-10-30
+
+The optional paragraph SDK now publishes immutable UTF-16 hit, selection and caret geometry from the same native paragraph and committed raster. Bounded metadata fees share existing asset leases and latest-intent/UI ownership. Current focused verification passes 35 cases; actual Edge WebGL2 and WebGPU each pass 10 checks. The [contract](paragraph-text-geometry.md) and standalone UI example define source affinity, grapheme/CRLF boundaries and hidden-ellipsis behavior. Native editing/IME, full script/font/ink, phones, performance and full M3/M4 remain OPEN; PR/Main delivery is separate.
+
 ## M3.3 keyboard and logical focus — 2026-10-30
 
 The optional keyboard channel connects genuine Engine/Scope ownership, stable registered display IDs, traversal and per-key cancellation to a Canvas-native bridge. The [contract](keyboard-focus-input.md) separates this usable foundation from automatic managed-UI registration, modal/composite controls, editing/IME and accessibility qualification; full M3.3/M4 remain OPEN.

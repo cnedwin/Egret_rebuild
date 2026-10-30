@@ -1468,6 +1468,12 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     // M3.2 source/declaration inspection with inert executable edges. These
     // fixtures establish retained policy resolution only, never paragraph/UI behavior.
     const m32PolicyOwners = [
+  "packages/engine/web/canvasKitParagraphGeometry.ts",
+  "packages/engine/dist/web/canvasKitParagraphGeometry.js",
+  "packages/engine/dist/web/canvasKitParagraphGeometry.d.ts",
+  "packages/runtime/src/paragraph/geometry.ts",
+  "packages/runtime/dist/paragraph/geometry.js",
+  "packages/runtime/dist/paragraph/geometry.d.ts",
   "packages/engine/dist/paragraph.d.ts",
   "packages/engine/dist/paragraph.js",
   "packages/engine/dist/ui/leafContent.d.ts",
