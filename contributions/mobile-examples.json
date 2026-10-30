@@ -52,6 +52,10 @@
     {
       "path": "knowledge-base/Cns/docs/mobile-examples.md",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
+    },
+    {
+      "path": "examples/mobile/verify-device.mjs",
+      "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses."
     }
   ],
   "documents": [
