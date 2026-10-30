@@ -2152,8 +2152,8 @@
       "en": "knowledge-base/en/docs/spine-content-ingress.md",
       "zh": "knowledge-base/Cns/docs/spine-content-ingress.md",
       "kind": "public_reading",
-      "enSha256": "845bc2cc90341e6dbdc3feaf791e75d896a7b8d127a58030f016ae2976cf7e69",
-      "zhSha256": "3b4e1d7a90f632382fb9d0c41e2cf023d776d9150dcd5b36e5c4fb76e172901f"
+      "enSha256": "2e8fe8277a4fb43dd3ae5f93ca131e42209b41a7e8c24e32b9951bb48f516257",
+      "zhSha256": "54cc6c3ff77d3e25577c7dda3de3cad33200a0d76292f85e0775bcc250094703"
     },
     {
       "en": "packages/spine/README.md",

@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "6b4d647b5366598d0cd6104918b152e527de4e9a4a35e3347af2b9fc557b0905",
+      "sha256": "301ddac5718ee2c8254c548585aa8edaa2939652e34c1547898d3c4f39a1a5bd",
       "bytes": 369921,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -14594,14 +14594,14 @@
     {
       "path": "knowledge-base/Cns/docs/spine-content-ingress.md",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 8866,
-      "sha256": "3b4e1d7a90f632382fb9d0c41e2cf023d776d9150dcd5b36e5c4fb76e172901f"
+      "bytes": 8991,
+      "sha256": "54cc6c3ff77d3e25577c7dda3de3cad33200a0d76292f85e0775bcc250094703"
     },
     {
       "path": "knowledge-base/en/docs/spine-content-ingress.md",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 10019,
-      "sha256": "845bc2cc90341e6dbdc3feaf791e75d896a7b8d127a58030f016ae2976cf7e69"
+      "bytes": 10171,
+      "sha256": "2e8fe8277a4fb43dd3ae5f93ca131e42209b41a7e8c24e32b9951bb48f516257"
     },
     {
       "path": "packages/spine/README.md",
@@ -14702,14 +14702,14 @@
     {
       "path": "packages/spine/tsconfig.json",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 304,
-      "sha256": "3b37bdb5eb014e186430817bf1f35112874c95b41c9312ff3b7bc1e475bdef3a"
+      "bytes": 361,
+      "sha256": "e0c912fc4b45f466142bf08d0293f5c840f1cbe35ed296e984f5c2882bac307d"
     },
     {
       "path": "tools/check-spine-content.mjs",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 3417,
-      "sha256": "4c538645c7e0abe89d12eb2ada95496d0671e8e466068a1de5e27a6ede8d632c"
+      "bytes": 3454,
+      "sha256": "d340b2a9599e4992a7d5faf553bc9f7deb99425eea374e4629477366a1f89590"
     },
     {
       "path": "tools/verify-spine-content.mjs",
@@ -14720,8 +14720,8 @@
     {
       "path": "verification/spine-content/verification.json",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 21448,
-      "sha256": "f2be6fdf64b83d1a158a86ec46c1a9ee92f4bdc0e1a55b063c5b4ff457191b45"
+      "bytes": 22913,
+      "sha256": "112b9502067774202508de52369fc46b8bf9806e2b6632c6c85c2ab91d31f66a"
     },
     {
       "path": "third-party/spine-core-4.3.13.LICENSE",

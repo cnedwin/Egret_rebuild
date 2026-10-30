@@ -51,3 +51,5 @@ The [verification record](https://github.com/cnedwin/Egret_rebuild/blob/main/ver
 Full selected-version Spine support, independently authored pose/event/pixel references, stable authorized export provenance, playback, shared graphics/color variants, Android/iPhone, native hosts and performance remain open. M1.2 remains 10.3 ms against the 8 ms target. This increment advances M2.1 within issue #83; the existing eleven M2–M4 work packages remain intact.
 
 Binary ingress requires a separately bounded parser before admission; this is an explicit remaining M2.1 obligation.
+
+The optional leaf declares its browser-resource project dependency explicitly, so a clean checkout builds without relying on previously emitted files.

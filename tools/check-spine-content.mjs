@@ -10,7 +10,7 @@ const pkg=json(path.join(base,'package.json'));
 assert.deepEqual(pkg.dependencies,{'@egret/contracts':'workspace:*','@egret/engine':'workspace:*','@esotericsoftware/spine-core':'4.3.13'});
 assert.deepEqual(pkg.exports,{'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./web':{types:'./dist/web.d.ts',import:'./dist/web.js'}});
 const config=json(path.join(base,'tsconfig.json'));
-assert.equal(config.extends,'../../tsconfig.base.json');assert.deepEqual(config.references,[{path:'../contracts'},{path:'../engine'}]);
+assert.equal(config.extends,'../../tsconfig.base.json');assert.deepEqual(config.references,[{path:'../contracts'},{path:'../engine'},{path:'../engine/tsconfig.web.json'}]);
 const require=createRequire(path.join(base,'package.json'));
 const owner=localPackage(root,path.resolve(path.dirname(require.resolve('@esotericsoftware/spine-core')),'..'),'@esotericsoftware/spine-core','4.3.13');
 const legal=fs.readFileSync(path.join(root,'third-party/spine-core-4.3.13.LICENSE'));

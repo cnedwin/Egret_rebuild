@@ -666,5 +666,43 @@
     "Physical Android/iPhone, native hosts and physical memory/GPU timing",
     "M1.2 full-dirty10.3ms versus8ms remainsOPEN"
   ],
-  "delivery": "Source/focused/browser cutoff only. Independent review, full merge checks, remote CI and PR/main are recorded separately with the actual final Git tree."
+  "delivery": "Source/focused/browser cutoff only. Independent review, full merge checks, remote CI and PR/main are recorded separately with the actual final Git tree.",
+  "originalSourceCutoffCommit": "b7b4ba88edac60c280a3df140c3bc918f81fd352",
+  "cleanBuildRepair": {
+    "status": "PASS_NODE26_COLD_OUTPUT_BUILD",
+    "reason": "Original Linux/macOS CI correctly refused missing @egret/engine/web/resources declarations. The optional leaf now declares the actual engine web project reference; no prior emit is needed.",
+    "changes": [
+      "packages/spine/tsconfig.json",
+      "tools/check-spine-content.mjs"
+    ],
+    "source": [
+      {
+        "path": "packages/spine/tsconfig.json",
+        "bytes": 361,
+        "sha256": "e0c912fc4b45f466142bf08d0293f5c840f1cbe35ed296e984f5c2882bac307d"
+      },
+      {
+        "path": "tools/check-spine-content.mjs",
+        "bytes": 3454,
+        "sha256": "d340b2a9599e4992a7d5faf553bc9f7deb99425eea374e4629477366a1f89590"
+      }
+    ],
+    "environment": {
+      "node": "v26.7.0",
+      "pnpm": "11.25.0",
+      "frozenInstall": true,
+      "ignoredInstallScripts": true
+    },
+    "previousFiveOutputDirectoriesAbsent": true,
+    "build": {
+      "bytes": 45,
+      "sha256": "55d1e8e3d02dc377705c0da5f9280b2dfd6c08bdf8ff878f6a9af07e9a02e75d"
+    },
+    "boundary": {
+      "bytes": 111,
+      "sha256": "7c66e3f66d51cd57d32102e210ef1abe8b86d26eef3d9e813753c1d61d09a568"
+    },
+    "originalCiFailuresRetained": true,
+    "originalFocusedAndBrowserScope": "Unchanged runtime source/emission; original source cutoffs remain above. Canonical final remote CI still required."
+  }
 }
