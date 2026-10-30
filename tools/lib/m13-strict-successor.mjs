@@ -84,7 +84,7 @@ function m33PointerInputPin(root,selected,id,row){
 // Historical inputs, compiler closures and diagnostic observations remain intact.
 const m21ResourceCurrent = [
  {"base":{"path":"package.json","bytes":1108,"sha256":"16a969b9a50653b1733893c59ee4cd1d29845208c11bd182036bc585372834d0"},"current":{"path":"package.json","bytes":1130,"sha256":"716cda606f58987f784aee2a64e46cf0c2e0130e84157d2a869879b4c3ae7c40"}},
- {"base":{"path":"pnpm-lock.yaml","bytes":9017,"sha256":"79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"},"current":{"path":"pnpm-lock.yaml","bytes":9271,"sha256":"061742afdc492e6e1721798dcc1b1539f8e4fd9d0274fa7c5fd9091917e57338"}},
+ {"base":{"path":"pnpm-lock.yaml","bytes":9017,"sha256":"79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"},"current":{"path":"pnpm-lock.yaml","bytes":9786,"sha256":"96847ab1b5dae779a687cf91bc8f03afdb45b7dec8e2b69e84bf13608d49e7ad"}},
  {
   "base": {
    "path": "packages/contracts/dist/ResourceManifest.d.ts",

@@ -1,0 +1,670 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-30",
+  "scope": "Optional JSON setup-asset ingress and existing resource ownership; no complete Spine or M2.1 acceptance",
+  "product": {
+    "entry": "@egret/spine",
+    "browserEntry": "@egret/spine/web",
+    "format": "json",
+    "binary": "REFUSED_BEFORE_FACTORY_PENDING_BOUNDED_PARSER",
+    "alpha": "straight PNG only; PMA refused",
+    "publicUpstreamObjects": false,
+    "newResourceManager": false
+  },
+  "dependency": {
+    "name": "@esotericsoftware/spine-core",
+    "version": "4.3.13",
+    "gitHead": "b7beb2ccbbce667a12c02f44d070644f59b04968",
+    "archiveBytes": 1154900,
+    "archiveSha256": "761d0f03f84ea073e66a55b11758afb7416cd1494ed20d70c534c324225f52b9",
+    "registrySha512Verified": true,
+    "licenseFile": "third-party/spine-core-4.3.13.LICENSE",
+    "licenseRoute": "Conditional licensed-user SDK/library route; no actual individual entitlement or unrestricted redistribution claim"
+  },
+  "qualification": {
+    "privateOfficialFormatRead": {
+      "core": "4.3.13",
+      "exportHeader": "4.3.75-beta",
+      "formats": [
+        "json",
+        "binary"
+      ],
+      "bones": 67,
+      "slots": 52,
+      "animations": 11,
+      "scope": "Actual same-Core format reads only; not product binary admission, stable corpus or independent animation reference"
+    },
+    "selectedOfficialJsonCandidateBetaHeaders": 7,
+    "publicFixture": "Independently authored programmatic source/pixels; not a certified Editor export; no official artwork distributed"
+  },
+  "controlled": {
+    "status": "PASS",
+    "tests": 33,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "rawReceipt": {
+      "bytes": 3033,
+      "sha256": "ddbb6c270c34d7dded51750abf27cd7654ed9f094c3d746790cfe59809777d33"
+    },
+    "strictPublicConsumer": "TypeScript7.0.2 strict ES2022-only public asset API; vendor DOM types do not escape",
+    "drawOrderChild": {
+      "refusals": 6,
+      "boundedParentTimeoutMs": 5000,
+      "scope": "Regression containment in test process; not product parser isolation"
+    }
+  },
+  "browser": {
+    "status": "PASS",
+    "startedAt": "2026-10-30T05:22:43.615Z",
+    "endedAt": "2026-10-30T05:22:44.935Z",
+    "environment": {
+      "node": "v26.7.0",
+      "playwright": "1.62.1",
+      "channel": "msedge",
+      "headless": true,
+      "extraFlags": [],
+      "device": false,
+      "browser": "156.0.4314.50"
+    },
+    "sourceFiles": 359,
+    "sourceIntegrity": true,
+    "checks": [
+      "genuine Core JSON, native PNG decode, multipage binding and shared setup",
+      "actual HTTP503 rejects candidate and preserves old group",
+      "actual pending request cancellation refuses late candidate and drains"
+    ],
+    "cancelIssued": {
+      "cancelIssued": true,
+      "scopeState": "closed"
+    },
+    "held": {
+      "entered": true,
+      "lateResponseIssued": true,
+      "transportClosed": true
+    },
+    "ordinary": {
+      "info": {
+        "coreVersion": "4.3.13",
+        "exportVersion": "4.3.13",
+        "format": "json",
+        "prerelease": false,
+        "boneCount": 2,
+        "slotCount": 2,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "idle",
+            "duration": 0
+          }
+        ],
+        "pages": [
+          {
+            "name": "a.png",
+            "imageId": "e_a",
+            "width": 2,
+            "height": 2,
+            "sourcePremultiplied": false
+          },
+          {
+            "name": "b.png",
+            "imageId": "e_b",
+            "width": 2,
+            "height": 2,
+            "sourcePremultiplied": false
+          }
+        ]
+      },
+      "shared": true,
+      "status": {
+        "loader": {
+          "isDisposed": false,
+          "groups": 2,
+          "activeSourceLoads": 0,
+          "liveSourceValues": 2,
+          "pendingSetups": 0,
+          "liveSetups": 1,
+          "setupBytes": 1464
+        },
+        "transport": {
+          "source": {
+            "current": {
+              "jobs": 0,
+              "queuedNetwork": 0,
+              "queuedDecode": 0,
+              "retryWaiting": 0,
+              "activeNetwork": 0,
+              "activeDecode": 0,
+              "encodedCreditBytes": 0,
+              "ownedEncodedBytes": 0,
+              "borrowedChunkBytes": 0,
+              "quarantinedJobs": 0
+            },
+            "highWater": {
+              "jobs": 2,
+              "queuedNetwork": 1,
+              "queuedDecode": 1,
+              "retryWaiting": 0,
+              "activeNetwork": 2,
+              "activeDecode": 2,
+              "encodedCreditBytes": 718,
+              "ownedEncodedBytes": 359,
+              "borrowedChunkBytes": 359,
+              "quarantinedJobs": 0
+            },
+            "saturated": false
+          },
+          "provider": {
+            "current": {
+              "jobs": 0,
+              "encodedCreditBytes": 0,
+              "ownedEncodedBytes": 0,
+              "blobLogicalBytes": 0,
+              "activeDecodes": 0,
+              "bitmapLogicalBytes": 0,
+              "rasterLogicalBytes": 0,
+              "readbackCpuBytes": 0,
+              "materializedCpuBytes": 0,
+              "quarantinedJobs": 0,
+              "unknownNativeObjects": 0
+            },
+            "highWater": {
+              "jobs": 2,
+              "encodedCreditBytes": 152,
+              "ownedEncodedBytes": 152,
+              "blobLogicalBytes": 152,
+              "activeDecodes": 2,
+              "bitmapLogicalBytes": 16,
+              "rasterLogicalBytes": 16,
+              "readbackCpuBytes": 16,
+              "materializedCpuBytes": 16,
+              "quarantinedJobs": 0,
+              "unknownNativeObjects": 0
+            },
+            "saturated": false
+          }
+        }
+      }
+    },
+    "transportFailure": {
+      "refused": true,
+      "retired": true,
+      "originalLive": true,
+      "status": {
+        "loader": {
+          "isDisposed": true,
+          "groups": 0,
+          "activeSourceLoads": 0,
+          "liveSourceValues": 0,
+          "pendingSetups": 0,
+          "liveSetups": 0,
+          "setupBytes": 0
+        },
+        "transport": {
+          "source": {
+            "current": {
+              "jobs": 0,
+              "queuedNetwork": 0,
+              "queuedDecode": 0,
+              "retryWaiting": 0,
+              "activeNetwork": 0,
+              "activeDecode": 0,
+              "encodedCreditBytes": 0,
+              "ownedEncodedBytes": 0,
+              "borrowedChunkBytes": 0,
+              "quarantinedJobs": 0
+            },
+            "highWater": {
+              "jobs": 2,
+              "queuedNetwork": 1,
+              "queuedDecode": 0,
+              "retryWaiting": 0,
+              "activeNetwork": 2,
+              "activeDecode": 0,
+              "encodedCreditBytes": 304,
+              "ownedEncodedBytes": 76,
+              "borrowedChunkBytes": 0,
+              "quarantinedJobs": 0
+            },
+            "saturated": false
+          },
+          "provider": {
+            "current": {
+              "jobs": 0,
+              "encodedCreditBytes": 0,
+              "ownedEncodedBytes": 0,
+              "blobLogicalBytes": 0,
+              "activeDecodes": 0,
+              "bitmapLogicalBytes": 0,
+              "rasterLogicalBytes": 0,
+              "readbackCpuBytes": 0,
+              "materializedCpuBytes": 0,
+              "quarantinedJobs": 0,
+              "unknownNativeObjects": 0
+            },
+            "highWater": {
+              "jobs": 2,
+              "encodedCreditBytes": 0,
+              "ownedEncodedBytes": 0,
+              "blobLogicalBytes": 0,
+              "activeDecodes": 0,
+              "bitmapLogicalBytes": 0,
+              "rasterLogicalBytes": 0,
+              "readbackCpuBytes": 0,
+              "materializedCpuBytes": 0,
+              "quarantinedJobs": 0,
+              "unknownNativeObjects": 0
+            },
+            "saturated": false
+          }
+        }
+      }
+    },
+    "cancelled": {
+      "refused": true,
+      "retired": true,
+      "status": {
+        "loader": {
+          "isDisposed": true,
+          "groups": 0,
+          "activeSourceLoads": 0,
+          "liveSourceValues": 0,
+          "pendingSetups": 0,
+          "liveSetups": 0,
+          "setupBytes": 0
+        },
+        "transport": {
+          "source": {
+            "current": {
+              "jobs": 0,
+              "queuedNetwork": 0,
+              "queuedDecode": 0,
+              "retryWaiting": 0,
+              "activeNetwork": 0,
+              "activeDecode": 0,
+              "encodedCreditBytes": 0,
+              "ownedEncodedBytes": 0,
+              "borrowedChunkBytes": 0,
+              "quarantinedJobs": 0
+            },
+            "highWater": {
+              "jobs": 2,
+              "queuedNetwork": 1,
+              "queuedDecode": 1,
+              "retryWaiting": 0,
+              "activeNetwork": 2,
+              "activeDecode": 1,
+              "encodedCreditBytes": 304,
+              "ownedEncodedBytes": 76,
+              "borrowedChunkBytes": 76,
+              "quarantinedJobs": 0
+            },
+            "saturated": false
+          },
+          "provider": {
+            "current": {
+              "jobs": 0,
+              "encodedCreditBytes": 0,
+              "ownedEncodedBytes": 0,
+              "blobLogicalBytes": 0,
+              "activeDecodes": 0,
+              "bitmapLogicalBytes": 0,
+              "rasterLogicalBytes": 0,
+              "readbackCpuBytes": 0,
+              "materializedCpuBytes": 0,
+              "quarantinedJobs": 0,
+              "unknownNativeObjects": 0
+            },
+            "highWater": {
+              "jobs": 2,
+              "encodedCreditBytes": 76,
+              "ownedEncodedBytes": 76,
+              "blobLogicalBytes": 76,
+              "activeDecodes": 1,
+              "bitmapLogicalBytes": 0,
+              "rasterLogicalBytes": 0,
+              "readbackCpuBytes": 0,
+              "materializedCpuBytes": 0,
+              "quarantinedJobs": 0,
+              "unknownNativeObjects": 0
+            },
+            "saturated": false
+          }
+        }
+      },
+      "originalLive": true
+    },
+    "closed": {
+      "loaders": [
+        {
+          "loader": {
+            "isDisposed": true,
+            "groups": 0,
+            "activeSourceLoads": 0,
+            "liveSourceValues": 0,
+            "pendingSetups": 0,
+            "liveSetups": 0,
+            "setupBytes": 0
+          },
+          "transport": {
+            "source": {
+              "current": {
+                "jobs": 0,
+                "queuedNetwork": 0,
+                "queuedDecode": 0,
+                "retryWaiting": 0,
+                "activeNetwork": 0,
+                "activeDecode": 0,
+                "encodedCreditBytes": 0,
+                "ownedEncodedBytes": 0,
+                "borrowedChunkBytes": 0,
+                "quarantinedJobs": 0
+              },
+              "highWater": {
+                "jobs": 2,
+                "queuedNetwork": 1,
+                "queuedDecode": 1,
+                "retryWaiting": 0,
+                "activeNetwork": 2,
+                "activeDecode": 2,
+                "encodedCreditBytes": 718,
+                "ownedEncodedBytes": 359,
+                "borrowedChunkBytes": 359,
+                "quarantinedJobs": 0
+              },
+              "saturated": false
+            },
+            "provider": {
+              "current": {
+                "jobs": 0,
+                "encodedCreditBytes": 0,
+                "ownedEncodedBytes": 0,
+                "blobLogicalBytes": 0,
+                "activeDecodes": 0,
+                "bitmapLogicalBytes": 0,
+                "rasterLogicalBytes": 0,
+                "readbackCpuBytes": 0,
+                "materializedCpuBytes": 0,
+                "quarantinedJobs": 0,
+                "unknownNativeObjects": 0
+              },
+              "highWater": {
+                "jobs": 2,
+                "encodedCreditBytes": 152,
+                "ownedEncodedBytes": 152,
+                "blobLogicalBytes": 152,
+                "activeDecodes": 2,
+                "bitmapLogicalBytes": 16,
+                "rasterLogicalBytes": 16,
+                "readbackCpuBytes": 16,
+                "materializedCpuBytes": 16,
+                "quarantinedJobs": 0,
+                "unknownNativeObjects": 0
+              },
+              "saturated": false
+            }
+          }
+        },
+        {
+          "loader": {
+            "isDisposed": true,
+            "groups": 0,
+            "activeSourceLoads": 0,
+            "liveSourceValues": 0,
+            "pendingSetups": 0,
+            "liveSetups": 0,
+            "setupBytes": 0
+          },
+          "transport": {
+            "source": {
+              "current": {
+                "jobs": 0,
+                "queuedNetwork": 0,
+                "queuedDecode": 0,
+                "retryWaiting": 0,
+                "activeNetwork": 0,
+                "activeDecode": 0,
+                "encodedCreditBytes": 0,
+                "ownedEncodedBytes": 0,
+                "borrowedChunkBytes": 0,
+                "quarantinedJobs": 0
+              },
+              "highWater": {
+                "jobs": 2,
+                "queuedNetwork": 1,
+                "queuedDecode": 0,
+                "retryWaiting": 0,
+                "activeNetwork": 2,
+                "activeDecode": 0,
+                "encodedCreditBytes": 304,
+                "ownedEncodedBytes": 76,
+                "borrowedChunkBytes": 0,
+                "quarantinedJobs": 0
+              },
+              "saturated": false
+            },
+            "provider": {
+              "current": {
+                "jobs": 0,
+                "encodedCreditBytes": 0,
+                "ownedEncodedBytes": 0,
+                "blobLogicalBytes": 0,
+                "activeDecodes": 0,
+                "bitmapLogicalBytes": 0,
+                "rasterLogicalBytes": 0,
+                "readbackCpuBytes": 0,
+                "materializedCpuBytes": 0,
+                "quarantinedJobs": 0,
+                "unknownNativeObjects": 0
+              },
+              "highWater": {
+                "jobs": 2,
+                "encodedCreditBytes": 0,
+                "ownedEncodedBytes": 0,
+                "blobLogicalBytes": 0,
+                "activeDecodes": 0,
+                "bitmapLogicalBytes": 0,
+                "rasterLogicalBytes": 0,
+                "readbackCpuBytes": 0,
+                "materializedCpuBytes": 0,
+                "quarantinedJobs": 0,
+                "unknownNativeObjects": 0
+              },
+              "saturated": false
+            }
+          }
+        },
+        {
+          "loader": {
+            "isDisposed": true,
+            "groups": 0,
+            "activeSourceLoads": 0,
+            "liveSourceValues": 0,
+            "pendingSetups": 0,
+            "liveSetups": 0,
+            "setupBytes": 0
+          },
+          "transport": {
+            "source": {
+              "current": {
+                "jobs": 0,
+                "queuedNetwork": 0,
+                "queuedDecode": 0,
+                "retryWaiting": 0,
+                "activeNetwork": 0,
+                "activeDecode": 0,
+                "encodedCreditBytes": 0,
+                "ownedEncodedBytes": 0,
+                "borrowedChunkBytes": 0,
+                "quarantinedJobs": 0
+              },
+              "highWater": {
+                "jobs": 2,
+                "queuedNetwork": 1,
+                "queuedDecode": 1,
+                "retryWaiting": 0,
+                "activeNetwork": 2,
+                "activeDecode": 1,
+                "encodedCreditBytes": 304,
+                "ownedEncodedBytes": 76,
+                "borrowedChunkBytes": 76,
+                "quarantinedJobs": 0
+              },
+              "saturated": false
+            },
+            "provider": {
+              "current": {
+                "jobs": 0,
+                "encodedCreditBytes": 0,
+                "ownedEncodedBytes": 0,
+                "blobLogicalBytes": 0,
+                "activeDecodes": 0,
+                "bitmapLogicalBytes": 0,
+                "rasterLogicalBytes": 0,
+                "readbackCpuBytes": 0,
+                "materializedCpuBytes": 0,
+                "quarantinedJobs": 0,
+                "unknownNativeObjects": 0
+              },
+              "highWater": {
+                "jobs": 2,
+                "encodedCreditBytes": 76,
+                "ownedEncodedBytes": 76,
+                "blobLogicalBytes": 76,
+                "activeDecodes": 1,
+                "bitmapLogicalBytes": 0,
+                "rasterLogicalBytes": 0,
+                "readbackCpuBytes": 0,
+                "materializedCpuBytes": 0,
+                "quarantinedJobs": 0,
+                "unknownNativeObjects": 0
+              },
+              "saturated": false
+            }
+          }
+        }
+      ],
+      "groups": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "diagnostics": []
+    },
+    "cleanup": {
+      "application": true,
+      "context": true,
+      "browser": true,
+      "server": true
+    },
+    "errors": [],
+    "rawReceipt": {
+      "bytes": 78758,
+      "sha256": "5ce43a4801e185f774c783e1c941794c58414f7d4100c20c756108f02d72bbb1"
+    },
+    "scope": "Public resource ingress, native PNG decoding and logical lifecycle only; no Spine pose, graphics, physical memory or timing acceptance"
+  },
+  "repairs": [
+    "Exact requested dependency closure replaces whole-catalog bindings",
+    "Private setup IDs reuse genuine manifest type-token namespaces across simultaneous loaders",
+    "Ready setup leases take page ownership before metadata staging retires; cancellation cannot restore readiness",
+    "Only genuine live full-image page textures are admitted",
+    "Pre-Core cumulative JSON allocation/weighted-payload/draw-order admission; binary is deferred rather than parsed without a count boundary",
+    "Owner lifetime is rechecked after zero-key caller option capture"
+  ],
+  "priorResultsRetained": [
+    {
+      "scope": "Original binding failure:2pass11fail",
+      "bytes": 15722,
+      "sha256": "740241dca81f5b4ea1cf581669b2ba43710deaade0d892c0793a76912d5cc9a9",
+      "retention": "Original local receipt retained; not rewritten or distributed"
+    },
+    {
+      "scope": "Original cross-loader identity failure and incorrect cleanup-test expectation:17pass2fail",
+      "bytes": 3351,
+      "sha256": "cbafdbb28cb8417aa3b3f130411af49513658c4bf46b3c2d7cb4c3d5b9349a86",
+      "retention": "Original local receipt retained; not rewritten or distributed"
+    },
+    {
+      "scope": "Earlier binary prototype browser run; superseded by final JSON-only product evidence",
+      "bytes": 78820,
+      "sha256": "7fc63d808735cffa35d520f2cb5dbfa85b7940452b3c1e8fdd2a73458a47ccce",
+      "retention": "Original local receipt retained; not rewritten or distributed"
+    }
+  ],
+  "source": [
+    {
+      "path": "packages/spine/src/catalog.ts",
+      "bytes": 3723,
+      "sha256": "e27d2cd0ddea67dc684e4d33ea0fcd5aac0d78e21c8c6e6e1bc671782e4c83f4"
+    },
+    {
+      "path": "packages/spine/src/index.ts",
+      "bytes": 419,
+      "sha256": "8dce9c178e972d4ae5f30fd0077d5e336cffbc6be8548bb42d462d90d5abf5f0"
+    },
+    {
+      "path": "packages/spine/src/jsonAdmission.ts",
+      "bytes": 8073,
+      "sha256": "c1df1fbc98f6d27a1c443e53e1a86bd383221f229a87cd360d760651ff7a3daf"
+    },
+    {
+      "path": "packages/spine/src/loader.ts",
+      "bytes": 15752,
+      "sha256": "be3f0d4fa03fcfb16342f19b1d7f8c1fd5d6a0c85fe47a69b940cc149f31555a"
+    },
+    {
+      "path": "packages/spine/src/parse.ts",
+      "bytes": 4444,
+      "sha256": "4a7d8815e1d6452f9f74757a33550e5e6c9fcaf1bc90bc0a09ebd26583fcacbf"
+    },
+    {
+      "path": "packages/spine/src/types.ts",
+      "bytes": 2370,
+      "sha256": "946e1cbffac1fa1eb56a9685e3297ba4a24c688cc94781729374cb3860bdcdc2"
+    },
+    {
+      "path": "packages/spine/src/web.ts",
+      "bytes": 2808,
+      "sha256": "24711e4f8415963b856a1dbca41815b0a2b8e34f07e4beddc676ff333fb9c4db"
+    },
+    {
+      "path": "tools/check-spine-content.mjs",
+      "bytes": 3417,
+      "sha256": "4c538645c7e0abe89d12eb2ada95496d0671e8e466068a1de5e27a6ede8d632c"
+    },
+    {
+      "path": "tools/verify-spine-content.mjs",
+      "bytes": 14069,
+      "sha256": "cfff0406e40f1a95b97cbb5160796d0603c2390232bcc50e972dbcd2621fac14"
+    },
+    {
+      "path": "tools/build.mjs",
+      "bytes": 726,
+      "sha256": "95c195ccc4b10d29abb75430a16fa262b90291523f0435c815dadcd69d86eded"
+    },
+    {
+      "path": "tools/test.mjs",
+      "bytes": 769,
+      "sha256": "a3f2114fee235aad8f8d5d22967bac9e4454597b298bfe9812bab125174f5c31"
+    },
+    {
+      "path": "tools/verify.mjs",
+      "bytes": 1118,
+      "sha256": "15e848e6cdd4e0686bc6c0098a9725009f7efaf4b52729229c0c12869f7f9050"
+    }
+  ],
+  "remaining": [
+    "Bounded binary admission in existing M2.1",
+    "Stable authorized export provenance and independent pose/event/pixel references",
+    "Spine Node producer and target variants",
+    "M2.2 playback/instances and M2.3 ordered graphics/color/PMA/mips",
+    "Physical Android/iPhone, native hosts and physical memory/GPU timing",
+    "M1.2 full-dirty10.3ms versus8ms remainsOPEN"
+  ],
+  "delivery": "Source/focused/browser cutoff only. Independent review, full merge checks, remote CI and PR/main are recorded separately with the actual final Git tree."
+}

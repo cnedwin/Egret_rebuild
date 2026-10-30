@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Optional Spine assets — 2026-10-30
+
+Pinned official Core4.3.13 reads JSON setup assets and original multipage atlases through existing resources and Scope. The optional SDK preserves explicit license conditions and immutable information; complete playback, graphics, stable corpus and independent references remain open. [SDK](docs/spine-content-ingress.md).
+
 ## Paragraph alignment and line limits — 2026-10-29
 
 Readonly paragraphs now support left/right/center/start/end/justify alignment and optional maxLines with a fixed ellipsis. Hard-break/blank-line overflow shows the marker; an impossibly narrow field rejects without replacing committed content. Existing UI geometry and resource ownership remain authoritative. See the [layout contract](docs/paragraph-layout-controls.md). The focused 36 cases and 20 actual browser checks per backend are finite functional evidence; full M3.2, devices, IME and performance remain OPEN.

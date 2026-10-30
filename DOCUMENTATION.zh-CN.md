@@ -147,3 +147,5 @@
 ## 来源与维护
 
 [localization.json](localization.json)登记双语阅读文档及当前文件身份，[source-origin.json](source-origin.json)记录实现来源。原始实验证据与上游法律原件共用，解释性文档提供双语版本。文件组织与更新方式见[目录规范](knowledge-base/Cns/docs/documentation-layout.md)和[维护规范](knowledge-base/Cns/docs/知识库维护.md)。
+
+- [Spine content SDK / Spine 内容 SDK](knowledge-base/Cns/docs/spine-content-ingress.md)

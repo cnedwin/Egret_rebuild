@@ -147,3 +147,5 @@ The 0.56 resource-slot increment combines recoverable binding replacement with a
 ## Sources and maintenance
 
 [localization.json](localization.json) lists the paired readings and their current file identities. [source-origin.json](source-origin.json) records implementation provenance. Raw experimental evidence and upstream legal originals are shared; explanatory readings are bilingual. See the [layout policy](knowledge-base/en/docs/documentation-layout.md) and [maintenance policy](knowledge-base/en/docs/knowledge-base-maintenance.md).
+
+- [Spine content SDK / Spine 内容 SDK](knowledge-base/en/docs/spine-content-ingress.md)

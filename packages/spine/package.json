@@ -1,0 +1,22 @@
+{
+  "name": "@egret/spine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./web": {
+      "types": "./dist/web.d.ts",
+      "import": "./dist/web.js"
+    }
+  },
+  "dependencies": {
+    "@egret/contracts": "workspace:*",
+    "@egret/engine": "workspace:*",
+    "@esotericsoftware/spine-core": "4.3.13"
+  }
+}

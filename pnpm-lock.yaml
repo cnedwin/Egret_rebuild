@@ -60,7 +60,22 @@ importers:
         specifier: workspace:*
         version: link:../contracts
 
+  packages/spine:
+    dependencies:
+      '@egret/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@egret/engine':
+        specifier: workspace:*
+        version: link:../engine
+      '@esotericsoftware/spine-core':
+        specifier: 4.3.13
+        version: 4.3.13
+
 packages:
+
+  '@esotericsoftware/spine-core@4.3.13':
+    resolution: {integrity: sha512-iGs/40qOWSQYicABebDzFSwFOS1Nsm0dCCS8sGqbpVuThRKdLYeI1cVJpmATSpEmtcetEABTmh97NoBnt7XLDw==}
 
   '@typescript/typescript-aix-ppc64@7.0.2':
     resolution: {integrity: sha512-MTKKkWB7p/0E9xi1d1tHtZ5PiLkGEMIq88pK2CubZjOsLtYTLqhgIgi6zepFa+9GHZ6h05NMCkQxGKiPXMxXtQ==}
@@ -198,6 +213,8 @@ packages:
     hasBin: true
 
 snapshots:
+
+  '@esotericsoftware/spine-core@4.3.13': {}
 
   '@typescript/typescript-aix-ppc64@7.0.2':
     optional: true

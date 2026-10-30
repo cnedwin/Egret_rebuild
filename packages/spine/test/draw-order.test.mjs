@@ -1,0 +1,3 @@
+// SPDX-License-Identifier: Apache-2.0
+import test from 'node:test';import assert from 'node:assert/strict';import {spawnSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
+test('draw-order inputs that could stop vendor progress are refused in a bounded public-SDK child',()=>{const result=spawnSync(process.execPath,[fileURLToPath(new URL('./draw-order-child.mjs',import.meta.url))],{encoding:'utf8',windowsHide:true,timeout:5000});assert.equal(result.error,undefined);assert.equal(result.status,0,result.stdout+result.stderr);assert.equal(result.stderr,'');assert.deepEqual(JSON.parse(result.stdout),{status:'PASS',refused:6});});

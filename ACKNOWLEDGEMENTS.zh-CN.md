@@ -39,3 +39,7 @@ Three.js r186研究链实际运行WebGLRenderer、GLTFLoader、AnimationMixer与
 Vladimir Agafonkin的[robust-predicates](https://github.com/mourner/robust-predicates/tree/v3.0.3) 3.0.3通过公共 `orient2d` 提供已表示binary64坐标的方向判断；它保持明确归属的外部依赖并适用[Unlicense](third-party/robust-predicates-3.0.3.LICENSE)，其源码未移植入第一方模块。精确40820字节npm产物、SRI、已安装manifest/类型/许可及6模块73171字节安装ESM图分别记录，与浏览器实际请求区分；这些数字不是实际传输或tree-shaken包体。
 
 GPUWeb的canvas配置/current texture、queue、buffer及device错误API资料和W3C WGSL文献，为独立编写的pass与生命周期合同提供依据。读取日期、实际URL、完整规范获取限制及此前类型/latest抓取失败保留于[来源证据](knowledge-base/evidence/webgpu-source-evidence.json)。真实浏览器门禁另列；鸣谢不表示上游背书或手机/性能/Native SDK验收。
+
+## 可选 Spine Core 接入
+
+Esoteric Software 的 [Spine Runtimes](https://github.com/EsotericSoftware/spine-runtimes/tree/b7beb2ccbbce667a12c02f44d070644f59b04968)提供 `@egret/spine` 单独许可的 `@esotericsoftware/spine-core` 4.3.13 依赖，保留[包内原始声明](third-party/spine-core-4.3.13.LICENSE)及[附带条件的许可路径／参考边界](knowledge-base/Cns/docs/spine-content-ingress.md)。白鹭独立实现资产所有权、配置准入和公共 API，不将上游运行库实现或官方美术复制到第一方源码；上游运行库不属于 Apache-2.0。

@@ -140,3 +140,5 @@ All-in-one 创作平台仍是后续产品线：Coding／调试、主画布、UI�
 ## 证据与来源原则
 
 当前事实来自 [M1 计划](m1-rendering-resource-plan.md)、[渲染证据](incremental-frame-preparation-evidence.md)、[资源恢复证据](resource-recovery-evidence.md)、[产品组成](产品组成.md)及各子计划列出的实际源码入口。外部机制／格式参考放在相关决策旁，鸣谢技术来源；除明确合规的依赖外坚持独立实现。本设计由 AI 协助整理，遵循与其他架构贡献相同的评审要求。
+
+[可选 Spine 内容接入](spine-content-ingress.md)在 M2.1 内增加固定 Core4.3.13 的资产 SDK：原始 JSON／图集绑定、共享设置与页面租约、显式生命周期。附带条件的运行库许可及原创程序化夹具与稳定导出／独立参考验收分别记录。本次不交付 Spine Node producer、播放器或图形；M2.1–M2.4 及既有 Issues 按各自剩余验收继续开放。

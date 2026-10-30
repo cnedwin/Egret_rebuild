@@ -11,7 +11,7 @@ const file='tests/types/atlas-frame-diagnostic-expectations.json';
 const inventory=JSON.parse(readFileSync(path.join(root,file),'utf8'));
 // Preserve the immutable predecessor and authenticate the complete M1.3 successor.
 const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
-if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '0f6fecab6a25c7f7b1965463494fc144276d2b94416e25884cf2fb08a23c88ec') throw Error('M1.3 strict helper changed before import');
+if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');
 const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
 const m13 = selectM13StrictSuccessor(root, 'atlas-frame', inventory);
 

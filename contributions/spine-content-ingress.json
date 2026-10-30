@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/Cns/docs/spine-content-ingress.md",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "knowledge-base/en/docs/spine-content-ingress.md",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "packages/spine/README.md",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "packages/spine/README.zh-CN.md",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "packages/spine/package.json",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "packages/spine/src/catalog.ts",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/index.ts",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/jsonAdmission.ts",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/loader.ts",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/parse.ts",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/types.ts",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/web.ts",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/test/content.test.mjs",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "packages/spine/test/draw-order-child.mjs",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "packages/spine/test/draw-order.test.mjs",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "packages/spine/test/fixtures.mjs",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "packages/spine/test/public-api.ts",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "packages/spine/test/types.test.mjs",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "packages/spine/tsconfig.json",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "tools/check-spine-content.mjs",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "tools/verify-spine-content.mjs",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "verification/spine-content/verification.json",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/spine-content-ingress.md",
+      "zh": "knowledge-base/Cns/docs/spine-content-ingress.md"
+    },
+    {
+      "en": "packages/spine/README.md",
+      "zh": "packages/spine/README.zh-CN.md"
+    }
+  ],
+  "frozenInputs": [
+    {
+      "path": "third-party/spine-core-4.3.13.LICENSE",
+      "bytes": 1468,
+      "sha256": "435774fb793b0f67892899fc934f98009e64fd90ad3ab964117274e279a0f50e",
+      "originRole": "Unmodified official Spine Core4.3.13 package license/copyright notice; conditional runtime terms retained verbatim; not Apache-2.0 first-party code."
+    }
+  ]
+}

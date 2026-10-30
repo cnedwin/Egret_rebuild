@@ -165,3 +165,5 @@ Remaining qualification belongs to the responsible package: exact release/export
 The existing [complete Spine requirement](spine-animation-support-and-acceptance.md) remains the product scope reference.
 
 The first-party [multipage atlas content](multipage-atlas-content.md) increment extends M2.1 through the existing pipeline and runtime group. It adds named SpriteSheet pages with trim/rotation and whole-group ownership; it does not qualify Spine, an external exporter or complete M2.1.
+
+The [optional Spine content ingress](spine-content-ingress.md) adds a pinned Core4.3.13 asset SDK under M2.1: original JSON/atlas binding, shared setup/page leases and explicit lifetime. Conditional runtime licensing and original programmatic fixtures are recorded separately from stable export/independent-reference qualification. No Spine Node producer, player or graphics is delivered by this increment; M2.1–M2.4 and their existing Issues remain open to their remaining acceptance.
