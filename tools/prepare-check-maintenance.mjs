@@ -64,33 +64,33 @@ const m21ContentSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes"
 const m22SequenceSourceOwners = [
   {
     "path": "tools/spritesheet-boundary.mjs",
-    "bytes": 247172,
-    "sha256": "33110eecf52f6c2b260d7e407027c748a21507b6742ae731ea94033b193f885e"
+    "bytes": 247421,
+    "sha256": "55756fe02f8c6bfcdb8924e70199902168a830d9fa231637f3a339f914c271cb"
   },
   {
     "path": "tools/browser-png-boundary.mjs",
-    "bytes": 256047,
-    "sha256": "e24147f062de94df397c53dbff4e28217a96a609a0cbe11711a47d54692ba1f0"
+    "bytes": 256296,
+    "sha256": "d15791d46b5314875a3d0dfe65e78bb9327cbc719a30876bfbb52552a38cb4f0"
   },
   {
     "path": "tools/atlas-import-boundary.mjs",
-    "bytes": 151926,
-    "sha256": "cc3893969cf369d40f1090d27b4fa784f1ba7bd5bc6dd86b7eadcc1859b7b3ce"
+    "bytes": 152134,
+    "sha256": "9e8741eaeaa9d14fa31f2fafcbf7ef522567cffba2654dba468d57679439bb43"
   },
   {
     "path": "tools/bitmap-resource-slot-boundary.mjs",
     "bytes": 56840,
-    "sha256": "1f9bb66ab42c4aee7eb933ff83890e4692314fa3f219462f42836878bd05ea95"
+    "sha256": "e34d89d62e91dbeeb028446414b2da3b4b9a62f18bfb8521c6bcf94c5c247e85"
   },
   {
     "path": "tools/bitmap-binding-ticket-boundary.mjs",
     "bytes": 63419,
-    "sha256": "5b559526987fe4fc2f3b9d90c5d90999e5ef79c5c9b7630b0e5f55526fe9aa97"
+    "sha256": "4ce0782193bf3d311ab841130e33497ceb52bba0f26daf8cf7d8f764066b5e50"
   },
   {
     "path": "tools/sequence-playback-boundary.mjs",
     "bytes": 61921,
-    "sha256": "020bad0d78ef8bdc4091cf1ed86e5e566a16ba2246cbf1620b516304d39e7b69"
+    "sha256": "f8b3ef13e2a7ef356703574592862bfa57adb071947f715cf156c4949c201657"
   }
 ];
 const m22SequenceGraphRegistrations = [["tools/spritesheet-boundary.mjs","m22SequenceAdditionPins"],["tools/browser-png-boundary.mjs","m22SequenceAdditionPins"],["tools/atlas-import-boundary.mjs","m22SequenceAdditionPins"]];

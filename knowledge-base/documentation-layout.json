@@ -12,8 +12,8 @@
       "action": "move-pair",
       "previousZhSha256": "c2eace3a18292062c40c9a2aa517a83f3ce3943943ba53f47266f390f8e12d87",
       "previousEnSha256": "5d6d5be4b0a4f2cebc9cd5f019ec8c56fd45ba34104a4cbe392c74c2443261f2",
-      "currentZhSha256": "0f2e16216bc7efa86a3317184aa37a8ba2ddf94b46579aab4a7a71d07cbf7713",
-      "currentEnSha256": "9b9264df0b5d2160e4192b65cca804306d3ab0f4a6ab35e807d781fc16433828"
+      "currentZhSha256": "cf528191219a48faa223a6f2f2bfb86ed4ad7016a419466dd0281fb25f303f16",
+      "currentEnSha256": "94bd2f4df877f80c674fdfacd4de2b20ddb203fcabf8494d336e12e97407fe7e"
     },
     {
       "oldZh": "AGENTS.md",
@@ -48,8 +48,8 @@
       "action": "move-pair",
       "previousZhSha256": "307647eb71a1d1da7fa2423937b32459c5c22b4e355698d149fb7bca23cda053",
       "previousEnSha256": "8c112cb88f191a32591c76cbf0cc497486cf19efa1bc2fce0438a0be08e99d13",
-      "currentZhSha256": "743f609bc6afadc0e738aa0bafbdf4f3e8e478d4d5a9bc8ef73bf55e44b5bc7a",
-      "currentEnSha256": "4c096fc37a32e97ec505465efc219c46bde5865865413398d1fa5b99e32bab51",
+      "currentZhSha256": "5d2e6c960fb2487e9676843ed81560e10ba90338612a6cf2cac170993cda6246",
+      "currentEnSha256": "033fa766e469d621809fdad3a9686dc76eb42f494b51a7cd58790633e4c41072",
       "currentEngineeringPreview": "0.61.0"
     },
     {
@@ -85,8 +85,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "987bb032aacae11c41eee5da83c92899a39d487ec68dc0e6ae5291d1d8d766ea",
-      "currentEnSha256": "e774ae18a69e15ac34ce7d9a0c0cb46538b782bf285e1196fc1dcb4839953e0e",
+      "currentZhSha256": "7b0e1520d5cba422e28b6525d6c73f76b650c6f3b9f104993df61a582538d9df",
+      "currentEnSha256": "e66cd10b745b862c7d95f601078f716657826ec3c5d3f93df99661e720c9ad1f",
       "currentEngineeringPreview": "0.61.0"
     },
     {
@@ -964,8 +964,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "41c62a9e0fa2565c5f9fbdcabd281b6ea3e2ee45d19640af4ef9d7e813e03ae2",
-      "currentEnSha256": "5304bb6c0ccdd4cf4aa7bf77a1b6c0221f0373c2ea31abcc2747425ca4e22c01",
+      "currentZhSha256": "1e269aa51dcc5c70c85e3afa9a52bc26a2ad8050eb1bd0ead3ea1fd852260fd1",
+      "currentEnSha256": "2edb3ff7cc817f53f8d6c1f9404b834d132ba03295fa5c7846c5f2b9856fd66e",
       "currentEngineeringPreview": "0.61.0"
     },
     {

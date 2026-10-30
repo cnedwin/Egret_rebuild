@@ -10,6 +10,8 @@ import {logicalPath,fingerprintFile,canonicalTextBytes,samePhysicalPath} from '.
 const LEDGERS=['localization.json','knowledge-base/documentation-layout.json','source-origin.json'];
 // One reviewed new legal original; historical legal files still cannot be refreshed.
 const PNGJS_LICENSE={path:'third-party/pngjs-7.0.0.LICENSE',bytes:1150,sha256:'be75ef59c5cf59715588a17a82dff7dd3e83c4dba3c458676bb9311e05fbedc5'};
+// Exact pinned Core notice; historical legal originals cannot be refreshed.
+const SPINE_LEGAL={"path":"third-party/spine-core-4.3.13.LICENSE","bytes":1468,"sha256":"435774fb793b0f67892899fc934f98009e64fd90ad3ab964117274e279a0f50e"};
 // Exact new paragraph-distribution legal originals reviewed with this package.
 const PARAGRAPH_LEGAL=new Map([
   [
@@ -318,9 +320,9 @@ export function planMetadata(root,{base}={}){
   // New compiler observations have an explicit first-registration path. Their
   // reviewed raw tuple is immutable thereafter; old files cannot be relabelled.
   for(const row of d.frozenInputs??[]){
-   if(!row||typeof row.path!=='string'||!( /^tests\/types\/[a-z0-9-]+-diagnostic-expectations\.json$/.test(row.path)||row.path===PNGJS_LICENSE.path||PARAGRAPH_LEGAL.has(row.path)))throw Error('Invalid frozen compiler or reviewed license path');
+   if(!row||typeof row.path!=='string'||!( /^tests\/types\/[a-z0-9-]+-diagnostic-expectations\.json$/.test(row.path)||row.path===PNGJS_LICENSE.path||row.path===SPINE_LEGAL.path||PARAGRAPH_LEGAL.has(row.path)))throw Error('Invalid frozen compiler or reviewed license path');
    if(row.path===PNGJS_LICENSE.path&&(row.bytes!==PNGJS_LICENSE.bytes||row.sha256!==PNGJS_LICENSE.sha256))throw Error('Reviewed license identity differs');
-   const legal=PARAGRAPH_LEGAL.get(row.path);
+   const legal=row.path===SPINE_LEGAL.path?SPINE_LEGAL:PARAGRAPH_LEGAL.get(row.path);
    if(legal&&(row.bytes!==legal.bytes||row.sha256!==legal.sha256))throw Error('Reviewed paragraph legal identity differs');
    logicalPath(row.path);
    if(declared.has(row.path))throw Error('Duplicate frozen compiler declaration: '+row.path);
