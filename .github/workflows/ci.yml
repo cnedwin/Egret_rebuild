@@ -37,6 +37,7 @@ jobs:
           import {createHash} from 'node:crypto';
           import assert from 'node:assert/strict';
           const old='9620283c06f010f959c3b1638ce3db5f7c5eac9c', base='668d0a6c75bca6f77b637594b4cc5b7ce3c06411';
+          const prior='1f5e79173375e5a86f097f264939227f13efecbb';
           const tree='97c7c43a6c7641e8669aceb6b5f4bc9be2270f7b', tested='5f09ea3501a8ee797308f9a2a66749f90e9b6771';
           const repo='cnedwin/Egret_rebuild', workflow='.github/workflows/ci.yml', ledger='source-origin.json';
           const event=JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH,'utf8')), pr=event.pull_request;
@@ -50,7 +51,8 @@ jobs:
           const git=(...args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:8*1024*1024}).trim();
           const raw=(ref,file)=>execFileSync('git',['show',ref+':'+file],{maxBuffer:8*1024*1024});
           const hash=b=>createHash('sha256').update(b).digest('hex');
-          assert.equal(git('show','-s','--format=%P',pr.head.sha),old);
+          assert.equal(git('show','-s','--format=%P',pr.head.sha),prior);
+          assert.equal(git('show','-s','--format=%P',prior),old);
           assert.equal(git('show','-s','--format=%P','HEAD'),base+' '+pr.head.sha);
           assert.equal(git('rev-parse','HEAD'),process.env.GITHUB_SHA);
           assert.equal(git('rev-parse','HEAD^{tree}'),git('rev-parse',pr.head.sha+'^{tree}'));
@@ -96,7 +98,8 @@ jobs:
           assert.equal(run.head_sha,old);
           assert.equal(run.head_repository.full_name,repo);
           const retained=[];
-          for(const [id,name,digest] of [[126677391898,'windows','15e93b7b897e6f774b865ff605aef04bbdca1ec840e3842700bf58f32050dcf8'],[126677392440,'cpu (ubuntu-latest)','df51bc85ba1b877cbad465bd6f958a9accc92980873bb8f0c8b50894c076a8cc']]){
+          // Hash exact transport bytes, including the observed UTF-8 BOM; do not normalize logs.
+          for(const [id,name,digest] of [[126677391898,'windows','21801f3499ecaa6d29bfb8830c539e07a8fe1430ef166fc10fe1b561d6ae1fca'],[126677392440,'cpu (ubuntu-latest)','dcc779f70c1e8be4c749785ae08dbf34503651232ebe02d565f1ba025672d18e']]){
             const job=await request('/actions/jobs/'+id), check=await request('/check-runs/'+id);
             assert.equal(job.id,id);
             assert.equal(job.run_id,run.id);
