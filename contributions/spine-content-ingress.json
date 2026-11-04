@@ -118,6 +118,42 @@
     {
       "path": "packages/spine/test/playbackFixture.mjs",
       "originRole": "Independently authored Egret Spine playback adapter, bounded ownership/time publication or original numerical tests; AI-assisted; Apache-2.0. Official Core4.3.13 remains a separately licensed dependency."
+    },
+    {
+      "path": "packages/spine/src/renderAuthority.ts",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/displayTypes.ts",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/drawGeometry.ts",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/display.ts",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/test/renderingFixture.mjs",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted."
+    },
+    {
+      "path": "packages/spine/test/renderingBrowser.mjs",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted."
+    },
+    {
+      "path": "packages/spine/test/rendering.test.mjs",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted."
+    },
+    {
+      "path": "tools/verify-spine-rendering.mjs",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted."
     }
   ],
   "documents": [

@@ -4,6 +4,10 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## M2.3 Spine shared rendering connection — 2026-11-04
+
+Spine instances now publish copied ordered geometry through existing Mesh2D/materials and page leases on WebGPU/WebGL2. The explicit `egret-shared-linear/1` profile prevents silent gamma-space equivalence claims. Stable topology reuses nodes; failed drawing preserves the prior visual without faulting committed animation or suppressing its events, and disposal precedes page release. See [the shared rendering contract](spine-content-ingress.md#shared-rendering-display). This bounded connection does not close full Spine, M2.4 recovery, physical devices or performance acceptance.
+
 ## M2.2 independent Spine playback — 2026-11-04
 
 The optional Spine SDK now creates independent instances over existing shared setup/page leases. Explicit ticks drive tracks, queues, mixing, named skins, pause/rate and copied pose/event snapshots; bounded faults retain the last published snapshot, and group/Scope closure disposes players before resources. See [the playback contract](spine-content-ingress.md#independent-playback-instances). Shared graphics, seek/replay, full constraint/physics references, authorized exports, phones and performance remain OPEN.

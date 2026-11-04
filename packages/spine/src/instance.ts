@@ -6,6 +6,8 @@ import type { GameClockTick, Scope } from '@egret/engine';
 import type { SpineAsset } from './types.js';
 import type { SpineInstance, SpineInstanceOptions, SpineInstanceSnapshot, SpinePlaybackEvent, SpinePlaybackEventKind, SpineAnimationOptions, SpineQueuedAnimationOptions } from './instanceTypes.js';
 import { requireSpineAsset } from './assetAuthority.js';
+import { registerSpineRender } from './renderAuthority.js';
+import type { SpineDrawSink, SpineDrawCandidate } from './renderAuthority.js';
 
 const freeze = Object.freeze;
 const MAX_COMMANDS = 256, MAX_ENTRIES = 128, MAX_TRACKS = 16;
@@ -48,6 +50,7 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
   let disposed = false, faulted = false, busy = false, admitting = false, dispatching = false, paused = false, rate = 1;
   let revision = 0, tickId = 0, elapsedSeconds = 0, clockElapsed = 0;
   let unown: (() => void) | undefined;
+  let drawSink: SpineDrawSink | undefined;
   let commands: Command[] = [], events: SpinePlaybackEvent[] = [];
   const entries = new Set<Core.TrackEntry>();
   function assertOpen(): void { if (disposed) throw fault('DISPOSED'); if (faulted) throw fault('FAULTED'); port.assertOpen(); }
@@ -120,7 +123,7 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
     if (disposed) return;
     disposed = true; commands.length = 0; events.length = 0; listener = undefined;
     // No upstream disposal events are exposed after the instance lifetime ends.
-    try { state?.clearListeners(); state?.clearTracks(); }
+    try { const sink=drawSink; drawSink=undefined; try { sink?.dispose(); } finally { state?.clearListeners(); state?.clearTracks(); } }
     finally { entries.clear(); state = undefined; skeleton = undefined; const release = unown; unown = undefined; release?.(); }
   }
   const instance: SpineInstance = freeze({
@@ -147,6 +150,7 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
       // Prevalidation above leaves both the pending commands and committed state intact.
       busy = true;
       const pending = commands; commands = []; events = [];
+      let candidate: SpineDrawCandidate | undefined;
       try {
         for (const command of pending) apply(command);
         const current = skeleton!, animation = state!;
@@ -163,14 +167,30 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
       }
       // Only committed transitions reach callers. Reentrant commands wait until the next tick.
       const delivered = committed.events; events = []; const errors: unknown[] = [];
+      // Graphics is a separate commit domain: keep semantic time/events after a draw refusal.
+      let renderingFailed = false;
+      try { candidate = drawSink?.prepare(skeleton!); candidate?.commit(); }
+      catch (cause) {
+        renderingFailed = true; errors.push(cause);
+        try { candidate?.abort(); } catch (cleanup) { errors.push(cleanup); }
+        candidate = undefined;
+      }
       dispatching = true;
-      try { for (const event of delivered) { if (disposed) break; try { listener?.(event); } catch (cause) { errors.push(cause); } } }
+      let cleanupFailed = false;
+      try { try { candidate?.retire?.(); } catch (cause) { cleanupFailed = true; errors.push(cause); }
+        for (const event of delivered) { if (disposed) break; try { listener?.(event); } catch (cause) { errors.push(cause); } } }
       finally { dispatching = false; busy = false; }
-      if (errors.length) throw new EgretError('SPINE_INSTANCE_LISTENER_FAILED', { cause: errors[0], cleanupErrors: errors.slice(1) });
+      if (errors.length) throw new EgretError(renderingFailed ? 'SPINE_INSTANCE_RENDER_FAILED' : cleanupFailed ? 'SPINE_INSTANCE_POSTCOMMIT_FAILED' : 'SPINE_INSTANCE_LISTENER_FAILED', { cause: errors[0], cleanupErrors: errors.slice(1) });
       return instance.getSnapshot();
     },
   });
   try { unown = port.own(scope, instance); port.assertOpen(); }
   catch (cause) { dispose(); throw cause; }
+  registerSpineRender(instance,{asset:port,attach(displayScope,sink){
+    assertOpen();if(busy||admitting||drawSink)throw fault('DISPLAY_ACTIVE');port.authenticate(displayScope,false);
+    const candidate=sink.prepare(skeleton!);
+    try{assertOpen();candidate.commit();drawSink=sink;candidate.retire?.();}catch(cause){candidate.abort();throw cause;}
+    return ()=>{if(drawSink===sink)drawSink=undefined;};
+  }});
   return instance;
 }

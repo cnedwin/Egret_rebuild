@@ -167,3 +167,5 @@ M2.1 固定产物/诊断接口。M2.2、M2.3 在并行实现前共同固定绘�
 第一方[多页图集内容管线](multipage-atlas-content.md)通过既有管线与运行时资源组推进 M2.1，增加具名 SpriteSheet 页面、裁剪／旋转及整组所有权；不代表 Spine、外部导出器或完整 M2.1 验收。
 
 [可选 Spine 内容接入](spine-content-ingress.md)在 M2.1 内增加固定 Core4.3.13 的资产 SDK：原始 JSON／图集绑定、共享设置与页面租约、显式生命周期。附带条件的运行库许可及原创程序化夹具与稳定导出／独立参考验收分别记录。本次不交付 Spine Node producer、播放器或图形；M2.1–M2.4 及既有 Issues 按各自剩余验收继续开放。
+
+[Spine 共享显示](spine-content-ingress.md#共享渲染显示) 现将真实播放实例接入既有 WebGPU／WebGL2 共享渲染，须显式选择 `egret-shared-linear/1`。这是有限的 M2.3 交付，完整所选版本图形及 M2.4 资格仍开放。

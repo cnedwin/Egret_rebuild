@@ -797,5 +797,3151 @@
       "Android/iPhone/native host qualification",
       "Physical memory and performance; M1.2 remains 10.3ms against8ms"
     ]
+  },
+  "sharedRendering": {
+    "date": "2026-11-04",
+    "scope": "Bounded M2.3 shared rendering connection, not complete Spine or M2 acceptance",
+    "colorProfile": "egret-shared-linear/1",
+    "core": "4.3.13",
+    "controlled": {
+      "status": "PASS",
+      "tests": 95,
+      "newRenderingTests": 35,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "raw": {
+        "bytes": 8545,
+        "sha256": "3b8493683bfacd8da9e56eff3332c695fec1b0f6a38aa9b82d82c6cbee4f1088"
+      }
+    },
+    "browser": {
+      "status": "PASS",
+      "environment": {
+        "node": "v26.7.0",
+        "playwright": "1.62.1",
+        "channel": "msedge",
+        "headless": true,
+        "extraFlags": [],
+        "device": false,
+        "browser": "156.0.4314.58"
+      },
+      "startedAt": "2026-11-04T03:59:04.065Z",
+      "endedAt": "2026-11-04T03:59:07.567Z",
+      "sourceFiles": 551,
+      "sourceIntegrity": true,
+      "cleanup": {
+        "context": true,
+        "browser": true,
+        "server": true
+      },
+      "errors": [],
+      "cases": [
+        {
+          "name": "normal",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "mesh",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "weighted",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "clip",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "rect-clip",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "negative",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 6,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "dpr2",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "linear",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "linear-pattern",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 15,
+              "y": 11,
+              "expected": [
+                227,
+                239,
+                205,
+                255
+              ],
+              "actual": [
+                227,
+                239,
+                205,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "wrong-filter",
+          "backend": "webgl2",
+          "status": "CONTROL_REJECTED",
+          "samples": [
+            {
+              "x": 15,
+              "y": 11,
+              "expected": [
+                227,
+                239,
+                205,
+                255
+              ],
+              "actual": [
+                255,
+                255,
+                0,
+                255
+              ],
+              "pass": false
+            }
+          ]
+        },
+        {
+          "name": "trim",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 13,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 17,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 19,
+              "y": 12,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 17,
+              "y": 9,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "transparent",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                94,
+                69,
+                94,
+                128
+              ],
+              "actual": [
+                95,
+                69,
+                95,
+                128
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "actual": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "tint-normal",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                224,
+                99,
+                137,
+                255
+              ],
+              "actual": [
+                225,
+                100,
+                138,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                139,
+                109,
+                151,
+                255
+              ],
+              "actual": [
+                140,
+                109,
+                152,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "tint-additive",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                255,
+                99,
+                137,
+                255
+              ],
+              "actual": [
+                255,
+                100,
+                138,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                141,
+                117,
+                164,
+                255
+              ],
+              "actual": [
+                141,
+                117,
+                164,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "tint-multiply",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                224,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                225,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                27,
+                50,
+                84,
+                255
+              ],
+              "actual": [
+                27,
+                50,
+                84,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "tint-screen",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                255,
+                99,
+                137,
+                255
+              ],
+              "actual": [
+                255,
+                100,
+                138,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                140,
+                115,
+                157,
+                255
+              ],
+              "actual": [
+                141,
+                115,
+                158,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "rotation",
+          "backend": "webgl2",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 13,
+              "y": 9,
+              "expected": [
+                255,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 19,
+              "y": 9,
+              "expected": [
+                0,
+                255,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 13,
+              "y": 15,
+              "expected": [
+                255,
+                255,
+                255,
+                255
+              ],
+              "actual": [
+                255,
+                255,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 19,
+              "y": 15,
+              "expected": [
+                255,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "wrong-page",
+          "backend": "webgl2",
+          "status": "CONTROL_REJECTED",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "wrong-order",
+          "backend": "webgl2",
+          "status": "CONTROL_REJECTED",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "wrong-tint",
+          "backend": "webgl2",
+          "status": "CONTROL_REJECTED",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                225,
+                100,
+                138,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                140,
+                109,
+                152,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "wrong-blend",
+          "backend": "webgl2",
+          "status": "CONTROL_REJECTED",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                255,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                255,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "wrong-clip",
+          "backend": "webgl2",
+          "status": "CONTROL_REJECTED",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "normal",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "mesh",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "weighted",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "clip",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "rect-clip",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "negative",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 6,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "dpr2",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "linear",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "linear-pattern",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 15,
+              "y": 11,
+              "expected": [
+                227,
+                239,
+                205,
+                255
+              ],
+              "actual": [
+                227,
+                239,
+                205,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "wrong-filter",
+          "backend": "webgpu",
+          "status": "CONTROL_REJECTED",
+          "samples": [
+            {
+              "x": 15,
+              "y": 11,
+              "expected": [
+                227,
+                239,
+                205,
+                255
+              ],
+              "actual": [
+                255,
+                255,
+                0,
+                255
+              ],
+              "pass": false
+            }
+          ]
+        },
+        {
+          "name": "trim",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 13,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 17,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 19,
+              "y": 12,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 17,
+              "y": 9,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "transparent",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                94,
+                69,
+                94,
+                128
+              ],
+              "actual": [
+                95,
+                69,
+                95,
+                128
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "actual": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "tint-normal",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                224,
+                99,
+                137,
+                255
+              ],
+              "actual": [
+                225,
+                100,
+                138,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                139,
+                109,
+                151,
+                255
+              ],
+              "actual": [
+                140,
+                109,
+                152,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "tint-additive",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                255,
+                99,
+                137,
+                255
+              ],
+              "actual": [
+                255,
+                100,
+                138,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                141,
+                117,
+                164,
+                255
+              ],
+              "actual": [
+                141,
+                117,
+                164,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "tint-multiply",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                224,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                225,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                27,
+                50,
+                84,
+                255
+              ],
+              "actual": [
+                27,
+                50,
+                84,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "tint-screen",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                255,
+                99,
+                137,
+                255
+              ],
+              "actual": [
+                255,
+                100,
+                138,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                140,
+                115,
+                157,
+                255
+              ],
+              "actual": [
+                141,
+                115,
+                158,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "rotation",
+          "backend": "webgpu",
+          "status": "PASS",
+          "samples": [
+            {
+              "x": 13,
+              "y": 9,
+              "expected": [
+                255,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 19,
+              "y": 9,
+              "expected": [
+                0,
+                255,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 13,
+              "y": 15,
+              "expected": [
+                255,
+                255,
+                255,
+                255
+              ],
+              "actual": [
+                255,
+                255,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 19,
+              "y": 15,
+              "expected": [
+                255,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "wrong-page",
+          "backend": "webgpu",
+          "status": "CONTROL_REJECTED",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "wrong-order",
+          "backend": "webgpu",
+          "status": "CONTROL_REJECTED",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "wrong-tint",
+          "backend": "webgpu",
+          "status": "CONTROL_REJECTED",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                225,
+                100,
+                138,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                140,
+                109,
+                152,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "wrong-blend",
+          "backend": "webgpu",
+          "status": "CONTROL_REJECTED",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                255,
+                0,
+                255,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                255,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        },
+        {
+          "name": "wrong-clip",
+          "backend": "webgpu",
+          "status": "CONTROL_REJECTED",
+          "samples": [
+            {
+              "x": 10,
+              "y": 12,
+              "expected": [
+                255,
+                0,
+                0,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 14,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 18,
+              "y": 12,
+              "expected": [
+                0,
+                0,
+                255,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": false
+            },
+            {
+              "x": 24,
+              "y": 24,
+              "expected": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "actual": [
+                32,
+                64,
+                96,
+                255
+              ],
+              "pass": true
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "expected": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "actual": [
+                0,
+                255,
+                0,
+                255
+              ],
+              "pass": true
+            }
+          ]
+        }
+      ],
+      "raw": {
+        "bytes": 3480881,
+        "sha256": "6f40b8e02272bc16ae92570ef60a73b5d63ce1225362d1ac2c7058f41febc584"
+      }
+    },
+    "priorResultsRetained": [
+      {
+        "scope": "Initial unit run:77pass5fail; exact floating-point expectations corrected to1e-5, display-only disposal correctly leaves semantic callbacks active",
+        "raw": {
+          "bytes": 13198,
+          "sha256": "8e5cfef00121aec16bae405826121afc45a336fcf05bf10590521e0870f37548"
+        }
+      },
+      {
+        "scope": "Initial browser closure refused existing host literal lazy imports before launch; exact targets added to frozen closure",
+        "raw": {
+          "bytes": 967,
+          "sha256": "5cb58fb927ab833d548098621b521968d5ef830b491777a090d6f78ce2cd9966"
+        }
+      },
+      {
+        "scope": "Initial browser tint oracle assumed gamma-space arithmetic; retained shared-linear equations made explicit and required in public options",
+        "raw": {
+          "bytes": 899336,
+          "sha256": "bbb21f205e616866c5e3e94550ab6a62b4b88217cd048b52a326dd2a5111acbc"
+        }
+      },
+      {
+        "scope": "Review reproduced borrowed lease escape, partial reuse and detached-node cleanup:three regressions failed before opaque binding repair",
+        "raw": {
+          "bytes": 4092,
+          "sha256": "70d696158f4b1cea81ceab24ece70e1b041fd6b982e19bc2d0bfc4d9380b5d7f"
+        }
+      },
+      {
+        "scope": "Review reproduced cleanup callback publication ordering and detached container retirement; three regressions failed before postcommit retirement repair",
+        "raw": {
+          "bytes": 2600,
+          "sha256": "52ed0f0bce967371f8ec0d9ed7edaa82ecc37b193cfa3719a37498b4739b2b05"
+        }
+      },
+      {
+        "scope": "Intermediate91pass1fail:owned listener cleanup reports through Engine diagnostics rather than throwing; corrected the expectation without changing that Engine behavior",
+        "raw": {
+          "bytes": 8973,
+          "sha256": "7b75d4512b9deda607da706509b132388c4a66cc6a65b4c32864563b9e523882"
+        }
+      },
+      {
+        "scope": "Two recursive group-disposal regressions failed before callback-free terminal marking of all tracked drawing leaves; both topology retirement and manual view disposal are now covered",
+        "raw": {
+          "bytes": 2001,
+          "sha256": "50028d2c599bc2d9ded9124fd3dc991e768fa16f93adab63cfd5ae23c4c8248f"
+        }
+      },
+      {
+        "scope": "Two failures reproduced divergence from the approved separate semantic/render commit domains; repaired by retaining committed animation/events on drawing refusal and permitting later draw recovery",
+        "raw": {
+          "bytes": 3826,
+          "sha256": "8a5a8b796545e8059327537198391c2e6f9a47a5ce76e98ba0c602ac0ff52713"
+        }
+      },
+      {
+        "scope": "Intermediate94pass1fail:an earlier page-retirement assertion still expected semantic rollback; aligned to the original separate-domain contract while retaining geometry atomicity",
+        "raw": {
+          "bytes": 9282,
+          "sha256": "58512c6d9f30065d5c19fc02539b0e1883a5ad001d34da2d6b06570b633133eb"
+        }
+      }
+    ],
+    "remaining": [
+      "Complete version-specific feature and independent reference corpus",
+      "Legacy gamma renderer parity; PMA pages/mips/other sampler profiles",
+      "M2.4 asset replacement and device recovery scenarios",
+      "Physical phones, native hosts and performance; M1.2 remains10.3ms vs8ms"
+    ]
   }
 }
