@@ -285,7 +285,19 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
   });
   try { unown = port.own(scope, instance); port.assertOpen(); }
   catch (cause) { dispose(); throw cause; }
-  registerSpineRender(instance,{asset:port,attach(displayScope,sink){
+  registerSpineRender(instance,{asset:port,initializeReset(){
+    // Private fresh-candidate initialization: no synthetic clock identity, listener or
+    // history replay. Core consumes its time-zero cursor before any public advance.
+    assertOpen();if(busy||admitting||revision!==0||tickId!==0||drawSink)throw fault('RESET_NOT_PRISTINE');
+    busy=true;
+    try{
+      const pending=commands;commands=[];events=[];
+      for(const command of pending)apply(command);
+      state!.update(0);state!.apply(skeleton!);skeleton!.updateWorldTransform(Core.Physics.reset);
+      events=[];revision++;committed=publish();
+    }catch(cause){faulted=true;commands=[];events=[];throw fault('RESET_FAILED',cause);}
+    finally{busy=false;}
+  },attach(displayScope,sink){
     assertOpen();if(busy||admitting||drawSink)throw fault('DISPLAY_ACTIVE');port.authenticate(displayScope,false);
     const candidate=sink.prepare(skeleton!);
     try{assertOpen();candidate.commit();drawSink=sink;candidate.retire?.();}catch(cause){candidate.abort();throw cause;}

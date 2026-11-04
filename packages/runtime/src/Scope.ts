@@ -9,6 +9,9 @@ export type ScopeState = "open" | "closing" | "closed";
 
 export let createScope: (engine: EngineContext, onClosed: (scope: Scope) => void) => Scope;
 const CREATION_TOKEN: unique symbol = Symbol("egret.scopeFactory");
+const scopes = new WeakSet<object>();
+/** Runtime-private identity for owner-chain lifetime validation. */
+export function isScope(value: object): value is Scope { return scopes.has(value); }
 const activeRegistrations = new WeakSet<object>();
 
 function cleanup(value: ScopeValue): void {
@@ -29,6 +32,7 @@ export class Scope {
 
   private constructor(engine: EngineContext, onClosed: (scope: Scope) => void, token: typeof CREATION_TOKEN) {
     if (token !== CREATION_TOKEN) throw new EgretError("SCOPE_FACTORY_REQUIRED");
+    scopes.add(this);
     this.#engine = engine;
     this.#onClosed = onClosed;
     this.#controller = new CancellationController((diagnostic) => {

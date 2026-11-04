@@ -173,3 +173,5 @@ The [shared Spine display](spine-content-ingress.md#shared-rendering-display) no
 The optional player now supports ordered outfit composition with `setSkins(names)`, immutable `snapshot.skins`, and unchanged `setSkin` compatibility. See the [combined skin contract](spine-content-ingress.md#combined-outfit-skins). This completes a bounded M2.2 capability; asset-version replacement and complete M2 acceptance remain open.
 
 The optional player also admits bounded finite total plays with `plays`, committed progress and residual-time queue transitions. See [finite playback](spine-content-ingress.md#finite-total-plays). This is a bounded M2.2 increment; complete selected-version semantics, seek and M2.4 replacement/recovery remain open.
+
+The [prepared display subtree](prepared-display-subtree.md) supplies the bounded M2.4 CPU prerequisite: genuine candidate capture without changing the live Stage and callback-free child publication. Host upload/submit and device generation remain separate. The Spine RESET wrapper, event/clock policy, state-preserving replacement and full M2.4 acceptance remain open.

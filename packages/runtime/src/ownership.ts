@@ -15,6 +15,14 @@ import type { AssetGroupOperations } from './assetManagerOwnerState.js';
 
 /** Internal instance port; runtime never imports the Engine implementation. */
 export interface EngineContext {
+  /** @internal Registered once by the genuine Stage; never a caller scene callback. */
+  readonly registerPreparedDisplayOperations?: (operations: Readonly<{
+    prepare(target: DisplayObjectContainer, candidate: DisplayObject): object;
+    validate(token: object): void;
+    capture(token: object): CapturedSharedContent2D;
+    commit(token: object): void;
+    dispose(token: object): void;
+  }>) => void;
   /** @internal Genuine Bitmap assembly; no runtime root forwards these operations. */
   readonly registerBitmapResourceTarget?: (bitmap: Bitmap, operations: Readonly<{
     capture(bitmap: Bitmap, expected?: object): object;

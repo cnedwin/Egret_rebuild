@@ -100,19 +100,26 @@ class CaptureBudget {
   }
 }
 
-function checkNode(node: DisplayObject, parent: DisplayObjectContainer | undefined, engine: EngineContext, seen: Set<DisplayObject>): void {
-  if (!isDisplayNode(node) || seen.has(node) || parentOf(node) !== parent) throw new EgretError('DISPLAY_TREE_INVARIANT');
+interface TreeView {
+  count(node: DisplayObject): number;
+  child(node: DisplayObject, index: number): DisplayObject | undefined;
+  parent(node: DisplayObject): DisplayObjectContainer | undefined;
+}
+const liveTree: TreeView = {count:childCountOf,child:childAtOf,parent:parentOf};
+
+function checkNode(node: DisplayObject, parent: DisplayObjectContainer | undefined, engine: EngineContext, seen: Set<DisplayObject>, tree: TreeView): void {
+  if (!isDisplayNode(node) || seen.has(node) || tree.parent(node) !== parent) throw new EgretError('DISPLAY_TREE_INVARIANT');
   assertLive(node);
   if (engineOf(node) !== engine) throw new EgretError('ENGINE_MISMATCH');
   seen.add(node);
 }
 
 /** All-tree metadata and geometry admission precedes any visible resource use. */
-function admitTree(stage: Stage, engine: EngineContext, budget: CaptureBudget, readBitmap: BitmapCaptureView['read']): Map<DisplayObject, AdmittedNode> {
+function admitTree(stage: Stage, engine: EngineContext, budget: CaptureBudget, readBitmap: BitmapCaptureView['read'], tree: TreeView): Map<DisplayObject, AdmittedNode> {
   const admitted = new Map<DisplayObject, AdmittedNode>(), seen = new Set<DisplayObject>(), stack: Cursor[] = [];
   function enter(node: DisplayObject, parent: DisplayObjectContainer | undefined): void {
     budget.node();
-    checkNode(node, parent, engine, seen);
+    checkNode(node, parent, engine, seen, tree);
     const primitives = visualOf(node).primitives;
     budget.authoring(primitives.length);
     const bitmap = readBitmap(node), mesh = readMeshState(node), text = readTextFieldState(node);
@@ -120,13 +127,13 @@ function admitTree(stage: Stage, engine: EngineContext, budget: CaptureBudget, r
     if (mesh !== undefined) { budget.authoring(1); budget.geometry(mesh.geometry); }
     if (text?.committed !== undefined) budget.authoring(1);
     admitted.set(node, { primitives, primitiveCount: primitives.length, bitmap, mesh, text });
-    stack.push({ node, children: childCountOf(node), nextChild: 0 });
+    stack.push({ node, children: tree.count(node), nextChild: 0 });
   }
   enter(stage, undefined);
   while (stack.length !== 0) {
     const cursor = stack[stack.length - 1]!;
     if (cursor.nextChild === cursor.children) { stack.pop(); continue; }
-    const child = childAtOf(cursor.node, cursor.nextChild++);
+    const child = tree.child(cursor.node, cursor.nextChild++);
     if (child === undefined) throw new EgretError('DISPLAY_TREE_INVARIANT');
     enter(child, cursor.node as DisplayObjectContainer);
   }
@@ -217,11 +224,19 @@ export function collectPreparedSharedFrameContent(stage: Stage, view: BitmapCapt
   return captureSharedContent(stage, view.read);
 }
 
-function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read']): CapturedSharedContent2D {
+/** Private single-edge overlay; ordinary capture always uses the unchanged live readers. */
+export function collectSubtreeSharedFrameContent(stage: Stage, target: DisplayObjectContainer, candidate: DisplayObject): CapturedSharedContent2D {
+  const tree:TreeView={count:node=>node===target?1:childCountOf(node),
+    child:(node,index)=>node===target?(index===0?candidate:undefined):childAtOf(node,index),
+    parent:node=>node===candidate?target:parentOf(node)};
+  return captureSharedContent(stage,bitmapCaptureState,tree);
+}
+
+function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'], tree: TreeView = liveTree): CapturedSharedContent2D {
   if (!isStageRoot(stage)) throw new EgretError('FRAME_STAGE_INVALID');
   const engine = engineOf(stage)!;
   engine.assertOpen();
-  const budget = new CaptureBudget(), admitted = admitTree(stage, engine, budget, readBitmap);
+  const budget = new CaptureBudget(), admitted = admitTree(stage, engine, budget, readBitmap, tree);
   engine.assertOpen();
   const commands: SharedRenderCommand2D[] = [], pages: SharedPage2D[] = [], regions: SharedRegion2D[] = [];
   const materials: SharedMaterial2D[] = [], geometries: Geometry[] = [];
@@ -289,7 +304,7 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
   }
   function enter(node: DisplayObject, parent: DisplayObjectContainer | undefined, parentMatrix: Matrix2D,
     parentAlpha: number, inheritedClips: ClipChain | undefined, inheritedMaterial: SharedMaterial2D): void {
-    checkNode(node, parent, engine, seen);
+    checkNode(node, parent, engine, seen, tree);
     const metadata = admitted.get(node), state = visualOf(node);
     if (metadata === undefined || state.primitives !== metadata.primitives || state.primitives.length !== metadata.primitiveCount
       || readBitmap(node) !== metadata.bitmap || readMeshState(node) !== metadata.mesh || readTextFieldState(node) !== metadata.text) {
@@ -357,14 +372,14 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
         }
       }
     }
-    stack.push({ node, children: childCountOf(node), nextChild: 0, matrix, alpha, clips, material, explicit, clip });
+    stack.push({ node, children: tree.count(node), nextChild: 0, matrix, alpha, clips, material, explicit, clip });
   }
 
   enter(stage, undefined, identity, 1, undefined, defaultMaterial);
   while (stack.length !== 0) {
     const cursor = stack[stack.length - 1]!;
     if (cursor.nextChild === cursor.children) { close(cursor.explicit, cursor.clip); stack.pop(); continue; }
-    const child = childAtOf(cursor.node, cursor.nextChild++);
+    const child = tree.child(cursor.node, cursor.nextChild++);
     if (child === undefined) throw new EgretError('DISPLAY_TREE_INVARIANT');
     enter(child, cursor.node as DisplayObjectContainer, cursor.matrix, cursor.alpha, cursor.clips, cursor.material);
   }

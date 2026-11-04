@@ -574,7 +574,9 @@ class WebGPUHostImplementation {
         const refused=error('WEBGPU_DEVICE_LOST',cause);
         for(const record of this.ledger)if(record.owner===owner){record.failure??=refused;record.stage?.native.reject(refused);}
         if(!terminal&&!this.recoveryAttempt){this.readiness=deferred<void>();this.readinessPending=true;}
-        this.revokeStages(refused);this.cancelTicket(refused);this.invalidateImageResidency();this.diagnose(failure);
+        // Confirmed generation loss invalidates CPU retention before ready stages retire.
+        // Otherwise context-invalidated settlement reaches a still-active ledger.
+        this.invalidateImageResidency();this.revokeStages(refused);this.cancelTicket(refused);this.diagnose(failure);
         if(!terminal&&!this.recoveryAttempt&&SHARED_OPTIONS.get(this)?.recovery?.mode==='automatic'){
             // Publication was revoked synchronously; the one automatic attempt begins in a later microtask.
             queueMicrotask(()=>{if(this.state==='lost'&&!this.recoveryAttempt&&this.episodeAttempts===0)observed(this.recoverShared());});

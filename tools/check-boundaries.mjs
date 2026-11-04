@@ -4061,7 +4061,7 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/runtime/dist/Bitmap.d.ts": [["static","./AssetLease.js"],["static","./bitmapDisplayState.js"],["static","./bitmapDisplayState.js"],["static","./DisplayObject.js"],["static","./sequenceClip.js"],["static","./Texture.js"],["static","@egret/contracts"]],
   "packages/runtime/src/sharedFrameCapture.ts": [["static","./Bitmap.js"],["static","./bitmapDisplayState.js"],["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayTransform.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./meshCaptureSnapshot.js"],["static","./meshDisplayState.js"],["static","./meshDisplayState.js"],["static","./ownership.js"],["static","./ownership.js"],["static","./Stage.js"],["static","./textDisplayState.js"],["static","./textDisplayState.js"],["static","@egret/contracts"],["static","@egret/contracts"]],
   "packages/runtime/dist/sharedFrameCapture.js": [["static","./Bitmap.js"],["static","./displayTransform.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./meshCaptureSnapshot.js"],["static","./meshDisplayState.js"],["static","./ownership.js"],["static","./textDisplayState.js"],["static","@egret/contracts"]],
-  "packages/runtime/dist/sharedFrameCapture.d.ts": [["static","./bitmapDisplayState.js"],["static","./Stage.js"],["static","@egret/contracts"]],
+  "packages/runtime/dist/sharedFrameCapture.d.ts": [["static","./bitmapDisplayState.js"],["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./Stage.js"],["static","@egret/contracts"]],
   "packages/runtime/src/bitmapDisplayState.ts": [["static","./AssetLease.js"],["static","./atlasFrameLayout.js"],["static","./DisplayObject.js"],["static","./displayVisualState.js"],["static","./Texture.js"],["static","@egret/contracts"]],
   "packages/runtime/dist/bitmapDisplayState.js": [["static","./displayVisualState.js"]],
   "packages/runtime/dist/bitmapDisplayState.d.ts": [["static","./AssetLease.js"],["static","./atlasFrameLayout.js"],["static","./DisplayObject.js"],["static","./Texture.js"],["static","@egret/contracts"]],
@@ -5398,12 +5398,28 @@ const m32ParagraphLiteralClosure = {
   ]
 };
 
+// Prepared subtree assembly adds exact literal edges, without public private-module access.
+const preparedSubtreeLiteralClosure = {
+  "packages/engine/src/Engine.ts": [["static","./assetGroup.js"],["static","./assetGroup.js"],["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./displaySubtreeTicket.js"],["static","./displaySubtreeTicket.js"],["static","./gameClock.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./internal/contentFactoryState.js"],["static","./internal/sequenceControllerFactoryState.js"],["static","./internal/sequenceControllerFactoryState.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./internal/uiFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./manifestAssetGroup.js"],["static","./manifestAssetGroup.js"],["static","./manifestResourceTypes.js"],["static","./mouseInput.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./sequencePlayback.js"],["static","./sequencePlaybackTypes.js"],["static","./sequenceTargetClaims.js"],["static","./tween.js"],["static","./tween.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/Engine.js": [["static","./assetGroup.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./displaySubtreeTicket.js"],["static","./gameClock.js"],["static","./internal/contentFactoryState.js"],["static","./internal/sequenceControllerFactoryState.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./internal/uiFactoryState.js"],["static","./manifestAssetGroup.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./sequenceTargetClaims.js"],["static","./tween.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/Engine.d.ts": [["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./displaySubtreeTicket.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./manifestResourceTypes.js"],["static","./sequencePlaybackTypes.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/src/displaySubtreeTicket.ts": [["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/displaySubtreeTicket.js": [["static","@egret/runtime"]],
+  "packages/engine/dist/displaySubtreeTicket.d.ts": [["dynamic","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/runtime/src/preparedDisplaySubtree.ts": [["static","./Bitmap.js"],["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./meshCaptureSnapshot.js"],["static","./meshDisplayState.js"],["static","./ownership.js"],["static","./ownership.js"],["static","./Scope.js"],["static","./sharedFrameCapture.js"],["static","./Stage.js"],["static","./textDisplayState.js"],["static","./ui/managedState.js"]],
+  "packages/runtime/dist/preparedDisplaySubtree.js": [["static","./Bitmap.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./meshCaptureSnapshot.js"],["static","./meshDisplayState.js"],["static","./ownership.js"],["static","./Scope.js"],["static","./sharedFrameCapture.js"],["static","./textDisplayState.js"],["static","./ui/managedState.js"]],
+  "packages/runtime/dist/preparedDisplaySubtree.d.ts": [["static","./ownership.js"],["static","./Stage.js"]],
+  "packages/runtime/src/Stage.ts": [["static","./displayHitTest.js"],["static","./displayHitTest.js"],["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ownership.js"],["static","./preparedDisplaySubtree.js"]],
+  "packages/runtime/dist/Stage.js": [["static","./displayHitTest.js"],["static","./DisplayObjectContainer.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./preparedDisplaySubtree.js"]],
+  "packages/runtime/dist/Stage.d.ts": [["static","./displayHitTest.js"],["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./ownership.js"],["static","./ownership.js"]]
+};
+
 function sceneGraphEdges(code) {
   return [...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)]
     .map(match=>[/^import\s*\(/.test(match[0])?'dynamic':'static',match[1]])
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
-for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure})) {
+for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure})) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
   // Non-literal dynamic imports cannot hide an additional dependency edge.
@@ -5886,7 +5902,7 @@ const uiFactoryAllowed={
   'src/Engine.ts':1,'src/pointerInput.ts':1,'src/keyboardInput.ts':1,'src/ui/uiRoot.ts':1,
   'dist/Engine.js':1,'dist/pointerInput.js':1,'dist/keyboardInput.js':1,'dist/ui/uiRoot.js':1,
 };
-const managedStateAllowed=['DisplayObject','DisplayObjectContainer','Scope','displayHitState','displayVisualState','paragraph/Paragraph'];
+const managedStateAllowed=['DisplayObject','DisplayObjectContainer','Scope','displayHitState','displayVisualState','preparedDisplaySubtree','paragraph/Paragraph'];
 for(const pkg of ['runtime','engine'])for(const file of [...files(path.join(root,'packages',pkg,'src')),...files(path.join(root,'packages',pkg,'dist'))]){
   if(!/\.(?:ts|js)$/.test(file))continue;
   const relative=path.relative(path.join(root,'packages',pkg),file).split(path.sep).join('/'),body=uiRead('packages/'+pkg+'/'+relative);

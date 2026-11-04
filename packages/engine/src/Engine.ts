@@ -1,3 +1,6 @@
+import { createDisplaySubtreeTickets } from './displaySubtreeTicket.js';
+import type { DisplaySubtreeTicket } from './displaySubtreeTicket.js';
+import type { DisplayObject, DisplayObjectContainer } from '@egret/runtime';
 import { TEXTURED_FRAME_PROFILE_2D, SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
 import type { FrameOptions2D, RenderFrame2D, TexturedFrameProfile2D, TexturedRenderFrame2D, SharedFrameProfile2D, SharedFrameOptions2D, SharedRenderFrame2D } from '@egret/contracts';
 import { collectFrameContent, collectTexturedFrameContent, collectSharedFrameContent } from '@egret/runtime';
@@ -72,6 +75,7 @@ function observeRejectedRenderResult(result: unknown): void {
 }
 /** One headless run. Construct with createEngine(), not directly. */
 export class Engine {
+  readonly #displaySubtreeTickets: ReturnType<typeof createDisplaySubtreeTickets>;
   readonly #contentLoaders = new Set<() => void>();
   readonly #gameClockOwner: GameClockOwner;
   readonly #tweenOwner: TweenOwner;
@@ -123,6 +127,7 @@ export class Engine {
     };
     const textFields = registerTextFieldEngine(this, assertOpen,
       (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope));
+    let preparedDisplayOperations: Parameters<NonNullable<EngineContext['registerPreparedDisplayOperations']>>[0] | undefined;
     let assetGroupOperations: AssetGroupOperations | undefined;
     // The context is never retained in a named public property by its consumers.
     this.#context = Object.freeze({
@@ -134,6 +139,7 @@ export class Engine {
         if (this.#currentState === "closing") this.cleanupErrors.push(cause);
       },
       registerTextFieldCache: textFields.registerCache,
+      registerPreparedDisplayOperations: (operations: Parameters<NonNullable<EngineContext['registerPreparedDisplayOperations']>>[0]) => { preparedDisplayOperations = operations; },
       registerBitmapResourceTarget: (bitmap: Bitmap, operations: Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1]): void => {
         this.#bitmapResourceTargets.set(bitmap, operations);
       },
@@ -186,6 +192,11 @@ export class Engine {
       report: this.#context.report, captureCleanup: this.#context.captureCleanup,
     });
     this.stage = stage;
+    this.#displaySubtreeTickets = createDisplaySubtreeTickets({
+      assertOpen: this.#context.assertOpen,
+      isEngineScope: (scope: unknown): scope is Scope => this.#engineScopes.has(scope as Scope),
+      isBusy: () => this.frameBusy || this.#gameClockOwner.isBusy(),
+    }, preparedDisplayOperations!);
     this.assets = createAssetManager(this.#context);
     this.#bitmapBindingOwner = createBitmapBindingOwner({
       assertOpen: this.#context.assertOpen,
@@ -253,12 +264,26 @@ export class Engine {
     return this.executeSharedFrame(options, false, [ticket]);
   }
 
+  /**
+   * Prepare one borrowed detached root as the target container's new sole child.
+   * Uses authenticated already-bound private state, not fresh subclass hooks/getters.
+   * Run application semantic guards before preparation; Scope ownership is not their approval.
+   */
+  public prepareDisplaySubtree(scope: Scope, target: DisplayObjectContainer, candidate: DisplayObject): DisplaySubtreeTicket {
+    return this.#displaySubtreeTickets.prepare(scope, target, candidate);
+  }
+
+  /** Immutable candidate snapshot; the live Stage remains unchanged. */
+  public capturePreparedDisplaySharedFrame(ticket: DisplaySubtreeTicket, options: SharedFrameOptions2D): SharedRenderFrame2D {
+    return this.executeSharedFrame(options, false, undefined, [ticket]);
+  }
+
   public renderSharedFrame(options: SharedFrameOptions2D): SharedRenderFrame2D {
     return this.executeSharedFrame(options, true);
   }
 
   /** Share the existing lifecycle barrier and ID sequence without changing old options. */
-  private executeSharedFrame(options: SharedFrameOptions2D, render: boolean, candidate?: readonly [BitmapBindingTicket]): SharedRenderFrame2D {
+  private executeSharedFrame(options: SharedFrameOptions2D, render: boolean, candidate?: readonly [BitmapBindingTicket], displayCandidate?: readonly [DisplaySubtreeTicket]): SharedRenderFrame2D {
     this.#context.assertOpen();
     if (this.frameBusy) throw new EgretError('FRAME_REENTRANT');
     if (this.#gameClockOwner.isBusy()) throw new EgretError('CLOCK_REENTRANT');
@@ -267,7 +292,7 @@ export class Engine {
     try {
       const renderer = this.sharedRenderer;
       if (render && renderer === undefined) throw new EgretError('RENDERER_REQUIRED');
-      const prepared = candidate === undefined ? undefined : this.#bitmapBindingOwner.readPreparedForCapture(candidate[0]);
+      const prepared = displayCandidate !== undefined ? this.#displaySubtreeTickets.read(displayCandidate[0]) : candidate === undefined ? undefined : this.#bitmapBindingOwner.readPreparedForCapture(candidate[0]);
       let width: unknown, height: unknown, colorInput: unknown, alphaInput: unknown, outputInput: unknown;
       let optionsFailed = false, optionsCause: unknown;
       try {

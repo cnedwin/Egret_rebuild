@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/spine/src/resetAuthority.ts",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/resetSlot.ts",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/resetTypes.ts",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/test/reset.test.mjs",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "packages/spine/test/reset-types.test.mjs",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "knowledge-base/en/docs/spine-reset-slot.md",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/spine-reset-slot.md",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "examples/spine-reset/author.mjs",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "examples/spine-reset/content.mjs",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "examples/spine-reset/index.html",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "examples/spine-reset/main.mjs",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "examples/spine-reset/README.md",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "examples/spine-reset/README.zh-CN.md",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "examples/spine-reset/verification-summary.json",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "examples/spine-reset/verify.mjs",
+      "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/spine-reset-slot.md",
+      "zh": "knowledge-base/Cns/docs/spine-reset-slot.md"
+    },
+    {
+      "en": "examples/spine-reset/README.md",
+      "zh": "examples/spine-reset/README.zh-CN.md"
+    }
+  ]
+}

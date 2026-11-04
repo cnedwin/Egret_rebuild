@@ -5,6 +5,7 @@ import type { AdmittedResourceManifest } from '@egret/contracts/resources';
 import { createManifestByteSource, createManifestTextureProvider } from '@egret/engine/web/resources';
 import type { ManifestByteSourceOptions, ManifestByteSourceStatus, ManifestTextureProviderStatus } from '@egret/engine/web/resources';
 import { createSpineContentLoader } from './loader.js';
+import { registerResetLoader, authenticateResetLoader } from './resetAuthority.js';
 import type { SpineContentLoader, SpineContentOptions } from './types.js';
 export interface ManifestSpineContentLoader extends SpineContentLoader {
   getTransportStatus():Readonly<{source:ManifestByteSourceStatus;provider:ManifestTextureProviderStatus}>;
@@ -19,5 +20,6 @@ export function createManifestSpineContentLoader(engine:Engine,ownerScope:Scope,
   },options);}catch(cause){void textures?.close().catch(()=>{});void source?.close().catch(()=>{});throw cause;}
   const byteSource=source!,png=textures!;let closing:Promise<void>|undefined;
   const facade:ManifestSpineContentLoader=Object.freeze({get isDisposed(){if(this!==facade)throw Error('SPINE_LOADER_RECEIVER');return core.isDisposed;},load(scope:Scope,roots:readonly string[],groupOptions?:ManifestGroupOptions){if(this!==facade)throw Error('SPINE_LOADER_RECEIVER');return core.load(scope,roots,groupOptions);},getStatus(){if(this!==facade)throw Error('SPINE_LOADER_RECEIVER');return core.getStatus();},getTransportStatus(){if(this!==facade)throw Error('SPINE_LOADER_RECEIVER');return Object.freeze({source:byteSource.getStatus(),provider:png.getStatus()});},dispose(){if(this!==facade)throw Error('SPINE_LOADER_RECEIVER');core.dispose();},close(){if(this!==facade)throw Error('SPINE_LOADER_RECEIVER');if(!closing){core.dispose();closing=Promise.all([png.close(),byteSource.close(),core.close()]).then(()=>{});}return closing;}});
+  registerResetLoader(facade,scope=>authenticateResetLoader(core,scope));
   return facade;
 }

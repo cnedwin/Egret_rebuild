@@ -43,3 +43,15 @@ void [totalPlays,consumedCompletions];
 player.setAnimation(0,'walk',{plays:'2'});
 // @ts-expect-error Snapshot progress is immutable.
 pose.tracks[0]!.completedPlays=99;
+
+import {createSpineResetSlot} from '@egret/spine';
+import type {SpineResetInitial,SpineResetRequest,SpineResetActive,SpineResetState,SpineResetTicket,SpineResetSlot} from '@egret/spine';
+import type {DisplayObjectContainer,SharedRenderFrame2D} from '@egret/engine';
+declare const resetTarget:DisplayObjectContainer;
+const initialReset:SpineResetInitial={version:'v1',instance:player,display};
+const resetSlot:SpineResetSlot=createSpineResetSlot(engine,scope,resetTarget,initialReset);
+const resetRequest:SpineResetRequest={policy:'reset',version:'v2',loader,assetId:'e_json',animation:'walk',skins:['default'],plays:2};
+const resetTicket:SpineResetTicket=resetSlot.request(resetRequest);
+const resetState:SpineResetState=resetTicket.state,resetFrame:SharedRenderFrame2D=resetTicket.capture({width:64,height:64});
+const resetActive:SpineResetActive=resetTicket.commit();resetSlot.getActive().instance.advance({tickId:90,elapsedSeconds:10,deltaSeconds:0.05});
+void [resetState,resetFrame,resetActive,resetTicket.ready,resetSlot.isDisposed];resetSlot.dispose();

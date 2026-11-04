@@ -18,7 +18,7 @@ const {fingerprintFile,logicalPath,ownerRelativePath,samePhysicalPath}=await imp
 const inventory=JSON.parse(readFileSync(path.join(root,'tests/types/linear-layout-diagnostic-expectations.json'),'utf8'));
 // Preserve the immutable predecessor and authenticate the complete M1.3 successor.
 const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
-if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793') throw Error('M1.3 strict helper changed before import');
+if (m13HelperPin.bytes !== 37745 || m13HelperPin.sha256 !== 'ae3c3ef986ea90411038b23a4ba7ba884ba5797f41921ad202b33194b5e8a026') throw Error('M1.3 strict helper changed before import');
 const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
 const m13 = selectM13StrictSuccessor(root, 'linear-layout', inventory);
 

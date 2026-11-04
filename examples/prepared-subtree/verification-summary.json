@@ -1,0 +1,338 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-04",
+  "scope": "Prepared single display subtree CPU publication prerequisite, not complete M2.4 or Spine replacement",
+  "environment": {
+    "browser": "156.0.4314.58",
+    "node": "26.7.0",
+    "playwright": "1.62.1",
+    "headed": true,
+    "channel": "msedge",
+    "additionalFlags": []
+  },
+  "focused": {
+    "tests": 139,
+    "pass": 139,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "newBehavior": 28,
+    "typeSuites": 1
+  },
+  "nativeCases": [
+    {
+      "backend": "webgpu",
+      "passed": true,
+      "checks": [
+        "initial",
+        "staged-old-visible",
+        "cancel-old-visible",
+        "cancelled-candidate-replay",
+        "cancelled-old-replay",
+        "conflict-old-visible",
+        "cpu-commit-old-visible",
+        "submitted",
+        "committed-old-replay",
+        "committed-candidate-replay"
+      ],
+      "pointsPerImage": 6,
+      "channelsPerImage": 24,
+      "readyGeneration": 1,
+      "closedTextures": 2,
+      "closedPendingFrames": 0,
+      "closedHost": "closed"
+    },
+    {
+      "backend": "webgl2",
+      "passed": true,
+      "checks": [
+        "initial",
+        "staged-old-visible",
+        "cancel-old-visible",
+        "cancelled-candidate-replay",
+        "cancelled-old-replay",
+        "conflict-old-visible",
+        "cpu-commit-old-visible",
+        "submitted",
+        "committed-old-replay",
+        "committed-candidate-replay"
+      ],
+      "pointsPerImage": 6,
+      "channelsPerImage": 24,
+      "readyGeneration": 1,
+      "closedTextures": 2,
+      "closedPendingFrames": 0,
+      "closedHost": "closed"
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "inputs.json",
+      "bytes": 25699,
+      "sha256": "142325496e3f09b0cf99f5f3da4adaf2552b6aebca4621e28915674a26c3317a"
+    },
+    {
+      "name": "result.json",
+      "bytes": 66213,
+      "sha256": "0f5aed989094fc4425c8783f4706060cbddddf3956c197d09bddc3881f5b288c"
+    },
+    {
+      "name": "webgl2-cancel-old-visible.png",
+      "bytes": 209,
+      "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+    },
+    {
+      "name": "webgl2-cancelled-candidate-replay.rgba",
+      "bytes": 16384,
+      "sha256": "cf5f89d3705462ce2aff3f2b25bc8ab3f0459cb9cf85bd49add163f3057972f2"
+    },
+    {
+      "name": "webgl2-cancelled-old-replay.rgba",
+      "bytes": 16384,
+      "sha256": "ee8271dbef02f47eb7b8d8d502bf34c5c746af737832a382ef7b011a97bf9120"
+    },
+    {
+      "name": "webgl2-committed-candidate-replay.rgba",
+      "bytes": 16384,
+      "sha256": "cf5f89d3705462ce2aff3f2b25bc8ab3f0459cb9cf85bd49add163f3057972f2"
+    },
+    {
+      "name": "webgl2-committed-old-replay.rgba",
+      "bytes": 16384,
+      "sha256": "ee8271dbef02f47eb7b8d8d502bf34c5c746af737832a382ef7b011a97bf9120"
+    },
+    {
+      "name": "webgl2-conflict-old-visible.png",
+      "bytes": 209,
+      "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+    },
+    {
+      "name": "webgl2-cpu-commit-old-visible.png",
+      "bytes": 209,
+      "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+    },
+    {
+      "name": "webgl2-initial.rgba",
+      "bytes": 16384,
+      "sha256": "ee8271dbef02f47eb7b8d8d502bf34c5c746af737832a382ef7b011a97bf9120"
+    },
+    {
+      "name": "webgl2-staged-old-visible.png",
+      "bytes": 209,
+      "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+    },
+    {
+      "name": "webgl2-submitted.rgba",
+      "bytes": 16384,
+      "sha256": "cf5f89d3705462ce2aff3f2b25bc8ab3f0459cb9cf85bd49add163f3057972f2"
+    },
+    {
+      "name": "webgpu-cancel-old-visible.png",
+      "bytes": 209,
+      "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+    },
+    {
+      "name": "webgpu-cancelled-candidate-replay.rgba",
+      "bytes": 16384,
+      "sha256": "cf5f89d3705462ce2aff3f2b25bc8ab3f0459cb9cf85bd49add163f3057972f2"
+    },
+    {
+      "name": "webgpu-cancelled-old-replay.rgba",
+      "bytes": 16384,
+      "sha256": "ee8271dbef02f47eb7b8d8d502bf34c5c746af737832a382ef7b011a97bf9120"
+    },
+    {
+      "name": "webgpu-committed-candidate-replay.rgba",
+      "bytes": 16384,
+      "sha256": "cf5f89d3705462ce2aff3f2b25bc8ab3f0459cb9cf85bd49add163f3057972f2"
+    },
+    {
+      "name": "webgpu-committed-old-replay.rgba",
+      "bytes": 16384,
+      "sha256": "ee8271dbef02f47eb7b8d8d502bf34c5c746af737832a382ef7b011a97bf9120"
+    },
+    {
+      "name": "webgpu-conflict-old-visible.png",
+      "bytes": 209,
+      "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+    },
+    {
+      "name": "webgpu-cpu-commit-old-visible.png",
+      "bytes": 209,
+      "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+    },
+    {
+      "name": "webgpu-initial.rgba",
+      "bytes": 16384,
+      "sha256": "ee8271dbef02f47eb7b8d8d502bf34c5c746af737832a382ef7b011a97bf9120"
+    },
+    {
+      "name": "webgpu-staged-old-visible.png",
+      "bytes": 209,
+      "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+    },
+    {
+      "name": "webgpu-submitted.rgba",
+      "bytes": 16384,
+      "sha256": "cf5f89d3705462ce2aff3f2b25bc8ab3f0459cb9cf85bd49add163f3057972f2"
+    }
+  ],
+  "earlierFailures": [
+    "Initial mixed fixture Scope-owned binding-owned Mesh node: OWNERSHIP_CONFLICT; corrected real ownership chain.",
+    "Post-preparation added descendant escaped overlap check; current ancestry is now checked.",
+    "Native attempt 1: missing contracts/resources import-map alias, no rendering claim.",
+    "Native attempt 2: fractional CSS canvas origin produced a 65px screenshot, integer layout fixed.",
+    "Native attempt 3: per-draw alpha reference incorrectly used group alpha; independent composition corrected.",
+    "Types expected TS2345; actual TS2740/TS2739 tuples retained and fixed.",
+    "Boundary checks refused new private edges until exact closure entries were declared.",
+    "An intermediate collector input-list edit removed unused lockfile preflight but retained its final key, causing an incomplete evidence seal; both unused references removed, final native-sealed rerun passed."
+  ],
+  "limits": [
+    "CPU commit and native submit are separate",
+    "No Spine RESET player coordinator or state-preserving hot replacement",
+    "No recovery, phone, input/focus transaction, physical-memory or performance acceptance",
+    "Independent review and protected complete CI/merge are separate"
+  ],
+  "executionIdentity": "Only actual browser requests and executed first-party collector/server helpers plus runtime dependency admission metadata; unused lockfile and generated reports excluded. External Playwright/pngjs version qualification is recorded separately.",
+  "reviewRepairs": [
+    "O(1) target direct-child quota before managed child-list copying; exact4094/4095 boundary regressions.",
+    "Intersect all affected candidate/target nodes across different pending tickets; nested candidate regression.",
+    "Explicit fixed already-bound API hook/getter contract and public subclass regression; old addChild/addChildAt unchanged."
+  ],
+  "integratedDelivery": {
+    "date": "2026-11-04",
+    "base": "668d0a6c75bca6f77b637594b4cc5b7ce3c06411",
+    "sourceUnion": "Exact reviewed prepared-subtree + CPU RESET + recovery product chain; merged UI product bytes retained",
+    "evidenceMode": "Current integrated dual-backend rerun of the unchanged fixed prepared-subtree schedule",
+    "originalExecutedInputs": 144,
+    "matchingOriginalInputs": 142,
+    "changedOriginalInputs": [
+      "packages/engine/dist/web/WebGPUHost.js",
+      "tools/serve-example.mjs"
+    ],
+    "currentExecutedInputs": 144,
+    "currentInputFreezeMatched": true,
+    "backends": [
+      "webgpu",
+      "webgl2"
+    ],
+    "artifacts": [
+      {
+        "name": "inputs.json",
+        "bytes": 25699,
+        "sha256": "23bcda990051c1a62f125c83afc857d3b91dee56c6ae975286c08070dde319f4"
+      },
+      {
+        "name": "result.json",
+        "bytes": 66213,
+        "sha256": "5f31224bf42ed1370154dc7fb99bf794c7091740daa39c68c8488775bfc9cc3d"
+      },
+      {
+        "name": "webgl2-cancel-old-visible.png",
+        "bytes": 209,
+        "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+      },
+      {
+        "name": "webgl2-cancelled-candidate-replay.rgba",
+        "bytes": 16384,
+        "sha256": "cf5f89d3705462ce2aff3f2b25bc8ab3f0459cb9cf85bd49add163f3057972f2"
+      },
+      {
+        "name": "webgl2-cancelled-old-replay.rgba",
+        "bytes": 16384,
+        "sha256": "ee8271dbef02f47eb7b8d8d502bf34c5c746af737832a382ef7b011a97bf9120"
+      },
+      {
+        "name": "webgl2-committed-candidate-replay.rgba",
+        "bytes": 16384,
+        "sha256": "cf5f89d3705462ce2aff3f2b25bc8ab3f0459cb9cf85bd49add163f3057972f2"
+      },
+      {
+        "name": "webgl2-committed-old-replay.rgba",
+        "bytes": 16384,
+        "sha256": "ee8271dbef02f47eb7b8d8d502bf34c5c746af737832a382ef7b011a97bf9120"
+      },
+      {
+        "name": "webgl2-conflict-old-visible.png",
+        "bytes": 209,
+        "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+      },
+      {
+        "name": "webgl2-cpu-commit-old-visible.png",
+        "bytes": 209,
+        "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+      },
+      {
+        "name": "webgl2-initial.rgba",
+        "bytes": 16384,
+        "sha256": "ee8271dbef02f47eb7b8d8d502bf34c5c746af737832a382ef7b011a97bf9120"
+      },
+      {
+        "name": "webgl2-staged-old-visible.png",
+        "bytes": 209,
+        "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+      },
+      {
+        "name": "webgl2-submitted.rgba",
+        "bytes": 16384,
+        "sha256": "cf5f89d3705462ce2aff3f2b25bc8ab3f0459cb9cf85bd49add163f3057972f2"
+      },
+      {
+        "name": "webgpu-cancel-old-visible.png",
+        "bytes": 209,
+        "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+      },
+      {
+        "name": "webgpu-cancelled-candidate-replay.rgba",
+        "bytes": 16384,
+        "sha256": "cf5f89d3705462ce2aff3f2b25bc8ab3f0459cb9cf85bd49add163f3057972f2"
+      },
+      {
+        "name": "webgpu-cancelled-old-replay.rgba",
+        "bytes": 16384,
+        "sha256": "ee8271dbef02f47eb7b8d8d502bf34c5c746af737832a382ef7b011a97bf9120"
+      },
+      {
+        "name": "webgpu-committed-candidate-replay.rgba",
+        "bytes": 16384,
+        "sha256": "cf5f89d3705462ce2aff3f2b25bc8ab3f0459cb9cf85bd49add163f3057972f2"
+      },
+      {
+        "name": "webgpu-committed-old-replay.rgba",
+        "bytes": 16384,
+        "sha256": "ee8271dbef02f47eb7b8d8d502bf34c5c746af737832a382ef7b011a97bf9120"
+      },
+      {
+        "name": "webgpu-conflict-old-visible.png",
+        "bytes": 209,
+        "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+      },
+      {
+        "name": "webgpu-cpu-commit-old-visible.png",
+        "bytes": 209,
+        "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+      },
+      {
+        "name": "webgpu-initial.rgba",
+        "bytes": 16384,
+        "sha256": "ee8271dbef02f47eb7b8d8d502bf34c5c746af737832a382ef7b011a97bf9120"
+      },
+      {
+        "name": "webgpu-staged-old-visible.png",
+        "bytes": 209,
+        "sha256": "57fce9fc03d088deb948486f4e30090a1e215342e25674b0f9e52a68eb69a19e"
+      },
+      {
+        "name": "webgpu-submitted.rgba",
+        "bytes": 16384,
+        "sha256": "cf5f89d3705462ce2aff3f2b25bc8ab3f0459cb9cf85bd49add163f3057972f2"
+      }
+    ],
+    "limitations": [
+      "Original histories, dates and raw failed/native receipts remain separate and unchanged",
+      "CPU publication, native submission and settlement are separate",
+      "Complete M2.4, state-preserving cross-version replacement, OS/driver/phone recovery and performance remain OPEN",
+      "Protected full integrated CI and merge are separate delivery steps"
+    ]
+  }
+}

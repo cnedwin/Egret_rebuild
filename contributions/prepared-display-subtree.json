@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/displaySubtreeTicket.ts",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/preparedDisplaySubtree.ts",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/prepared-display-subtree.test.mjs",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "tests/prepared-display-subtree-types.test.mjs",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-subtree/index.html",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-subtree/main.mjs",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-subtree/README.md",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-subtree/README.zh-CN.md",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-subtree/scene.mjs",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-subtree/verification-summary.json",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-subtree/verify.mjs",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/prepared-display-subtree.md",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/prepared-display-subtree.md",
+      "originRole": "First-party authenticated prepared display-subtree implementation, original mixed rendering fixture, checks and bilingual documentation; independently authored with AI assistance under Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/prepared-display-subtree.md",
+      "zh": "knowledge-base/Cns/docs/prepared-display-subtree.md"
+    },
+    {
+      "en": "examples/prepared-subtree/README.md",
+      "zh": "examples/prepared-subtree/README.zh-CN.md"
+    }
+  ]
+}

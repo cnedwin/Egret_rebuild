@@ -32,7 +32,7 @@ for(const folder of ['src','dist'])for(const file of fs.readdirSync(path.join(ba
  }
  inspected++;
 }
-assert.deepEqual(Object.keys(await import(new URL('../packages/spine/dist/index.js',import.meta.url))),['createSpineContentLoader','createSpineDisplay','createSpineInstance']);
+assert.deepEqual(Object.keys(await import(new URL('../packages/spine/dist/index.js',import.meta.url))),['createSpineContentLoader','createSpineDisplay','createSpineInstance','createSpineResetSlot']);
 assert.deepEqual(Object.keys(await import(new URL('../packages/spine/dist/web.js',import.meta.url))),['createManifestSpineContentLoader']);
 for(const name of ['contracts','runtime','engine','project'])assert.ok(!Object.hasOwn(json(path.join(root,'packages',name,'package.json')).dependencies??{},'@esotericsoftware/spine-core'));
 console.log('Optional Spine dependency, exact original notice and public/source boundaries PASS: '+inspected+' source/emission files.');

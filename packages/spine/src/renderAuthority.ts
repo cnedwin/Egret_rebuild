@@ -6,7 +6,7 @@ import type { SpineInstance } from './instanceTypes.js';
 import type { SpineAssetPort } from './assetAuthority.js';
 export interface SpineDrawCandidate { commit(): void; abort(): void; retire?(): void; }
 export interface SpineDrawSink { prepare(skeleton: Skeleton): SpineDrawCandidate; dispose(): void; }
-export interface SpineRenderPort { readonly asset: SpineAssetPort; attach(scope: Scope, sink: SpineDrawSink): () => void; }
+export interface SpineRenderPort { readonly asset: SpineAssetPort; initializeReset(): void; attach(scope: Scope, sink: SpineDrawSink): () => void; }
 const ports = new WeakMap<object, SpineRenderPort>();
 /** Private genuine-instance capability; copied snapshots never authorize rendering. */
 export function registerSpineRender(instance: SpineInstance, port: SpineRenderPort): void { ports.set(instance, port); }

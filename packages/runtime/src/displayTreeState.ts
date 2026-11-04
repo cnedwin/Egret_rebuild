@@ -403,3 +403,12 @@ export function publishUiTree(replacements: readonly UiTreeReplacement[]): void 
     }
   }
 }
+
+/** One validated borrowed-child replacement; all storage was allocated in preparation. */
+export function publishPreparedChildren(parent: DisplayObjectContainer, previous: readonly DisplayObject[], next: DisplayObject[]): void {
+  for (let i=0;i<previous.length;i++) { deleteParent(previous[i]!); recordVisualChange(previous[i]!,VISUAL_STRUCTURE); }
+  insertionWriteChildren(parent,next);
+  insertionWriteParent(next[0]!,parent);
+  recordVisualChange(parent,VISUAL_STRUCTURE);
+  recordVisualChange(next[0]!,VISUAL_STRUCTURE);
+}
