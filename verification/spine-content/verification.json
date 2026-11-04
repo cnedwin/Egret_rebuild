@@ -704,5 +704,98 @@
     },
     "originalCiFailuresRetained": true,
     "originalFocusedAndBrowserScope": "Unchanged runtime source/emission; original source cutoffs remain above. Canonical final remote CI still required."
+  },
+  "independentPlayback": {
+    "date": "2026-11-04",
+    "scope": "M2.2 independent explicit-tick numerical playback over existing JSON group ownership; not complete M2.2 or Spine acceptance",
+    "core": "4.3.13",
+    "controlled": {
+      "status": "PASS",
+      "tests": 60,
+      "passed": 60,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "newPlaybackTests": 27,
+      "raw": {
+        "bytes": 5599,
+        "sha256": "2ebd4bdc2ee863f06d0d51c3ea6fa1159b593379099129455f393559b32ecd24"
+      },
+      "includes": "Existing ingress, draw-order containment, new public playback behavior and strict ES-only public consumers"
+    },
+    "browser": {
+      "status": "PASS",
+      "startedAt": "2026-11-04T02:45:32.119Z",
+      "endedAt": "2026-11-04T02:45:33.233Z",
+      "environment": {
+        "node": "v26.7.0",
+        "playwright": "1.62.1",
+        "channel": "msedge",
+        "headless": true,
+        "extraFlags": [],
+        "device": false,
+        "browser": "156.0.4314.58"
+      },
+      "sourceFiles": 369,
+      "sourceIntegrity": true,
+      "checks": [
+        "genuine Core JSON, native PNG decode, multipage binding and shared setup",
+        "independent genuine Core tracks produce analytic poses from shared setup",
+        "bounded time refusal, pause, mixing and copied event order",
+        "failed instance isolation, group-owned player retirement and final resource drain",
+        "actual HTTP503 rejects candidate and preserves old group",
+        "actual pending request cancellation refuses late candidate and drains"
+      ],
+      "cleanup": {
+        "application": true,
+        "context": true,
+        "browser": true,
+        "server": true
+      },
+      "errors": [],
+      "raw": {
+        "bytes": 98107,
+        "sha256": "1ecec8520ce4f186213d2b9b7d28a8ae4c2894e2deac2170414cb9545e138188"
+      }
+    },
+    "priorResultsRetained": [
+      {
+        "scope": "Initial playback expectations:19pass2fail; Float32 event tolerance and actual Engine clock API corrected",
+        "raw": {
+          "bytes": 3866,
+          "sha256": "44b870c2f2f4ffcab6b21b25aa3207addbea494e78de4d5426abea8a2920977e"
+        }
+      },
+      {
+        "scope": "Admission reentry regression before guard:2pass1fail; inner advance consumed tick during outer input inspection",
+        "raw": {
+          "bytes": 1339,
+          "sha256": "d7a6d9eaafb460e2e9ce5c5b92b2fcfd301af5a7cf9abd9df7446b13f3556248"
+        }
+      },
+      {
+        "scope": "Earlier genuine browser before final reentry guard:PASS, superseded for final source binding",
+        "raw": {
+          "bytes": 98107,
+          "sha256": "31b6c6e4f69280ad236ada9fb579f800dffbce1f5dee4524519685c77dea490d"
+        }
+      },
+      {
+        "scope": "Independent review found mutable malformed event payload escape; three public regressions failed before primitive output validation, all pass after repair",
+        "raw": {
+          "bytes": 2387,
+          "sha256": "1da6f757147f822ccac916802495b08bd9a07e3c6ae91a0114f80dcf795675e4"
+        }
+      }
+    ],
+    "remaining": [
+      "Seek/replay history and checkpoints",
+      "Combined skins",
+      "Complete independently authored constraint/physics/timeline corpus and stable authorized Editor exports",
+      "Shared renderer graphics and pixels",
+      "Android/iPhone/native host qualification",
+      "Physical memory and performance; M1.2 remains 10.3ms against8ms"
+    ]
   }
 }

@@ -7,6 +7,7 @@ import type { AdmittedResourceManifest, ResourceManifestEntry } from '@egret/con
 import type { SpineContentOptions, SpineContentProviderFactory, SpineContentProviders, SpineContentBinding, SpineContentLoader, SpineContentGroup, SpineAsset, SpineContentStatus } from './types.js';
 import { admitSpineCatalog, selectSpineDependencies, spineFault } from './catalog.js';
 import { parseSpineSetup } from './parse.js';
+import { registerSpineAsset } from './assetAuthority.js';
 import type { ParsedSpineSetup } from './parse.js';
 
 const APPLY=Reflect.apply,FREEZE=Object.freeze;
@@ -50,6 +51,7 @@ export function createSpineContentLoader(engine:Engine,ownerScope:Scope,manifest
   const port=(key:PortKind):unknown=>{const row=Object.getOwnPropertyDescriptor(result,key);if(!row||!Object.hasOwn(row,'value'))throw spineFault('PROVIDERS','');return row.value;};
   let ports:SpineContentProviders|undefined={textures:provider<Texture>(port('textures')),metadata:provider<string>(port('metadata'))};scopeOpen();
   const managerDescriptor=Object.getOwnPropertyDescriptor(engine,'assets');if(!managerDescriptor||!Object.hasOwn(managerDescriptor,'value'))throw spineFault('MANAGER','');const manager=managerDescriptor.value as AssetManager;
+  let liveInstances=0;
   let disposed=false,activeSourceLoads=0,liveSourceValues=0,pendingSetups=0,liveSetups=0,setupBytes=0,closePromise:Promise<void>|undefined;
   const groups=new Set<SpineContentGroup>(),stages=new Map<string,Set<Stage>>(),work=new Set<Promise<unknown>>();
   function assertOpen():void{if(disposed)throw spineFault('LOADER_DISPOSED','');scopeOpen();}
@@ -88,7 +90,7 @@ export function createSpineContentLoader(engine:Engine,ownerScope:Scope,manifest
   function dispose():void{if(disposed)return;disposed=true;const owned=[...groups];groups.clear();try{cleanup(owned.map(group=>()=>group.dispose()),'SPINE_LOADER_RELEASE_FAILED');}finally{stages.clear();dropPorts();}}
   const loader:SpineContentLoader=FREEZE({
     get isDisposed(){if(this!==loader)throw spineFault('LOADER_RECEIVER','');return disposed;},
-    getStatus():SpineContentStatus{if(this!==loader)throw spineFault('LOADER_RECEIVER','');return FREEZE({isDisposed:disposed,groups:groups.size,activeSourceLoads,liveSourceValues,pendingSetups,liveSetups,setupBytes});},
+    getStatus():SpineContentStatus{if(this!==loader)throw spineFault('LOADER_RECEIVER','');return FREEZE({isDisposed:disposed,groups:groups.size,liveInstances,activeSourceLoads,liveSourceValues,pendingSetups,liveSetups,setupBytes});},
     dispose(){if(this!==loader)throw spineFault('LOADER_RECEIVER','');dispose();},
     close(){if(this!==loader)throw spineFault('LOADER_RECEIVER','');if(!closePromise){closePromise=(async()=>{let failed=false,cause:unknown;try{dispose();}catch(error){failed=true;cause=error;}while(work.size)await Promise.allSettled([...work]);await Promise.resolve();dropPorts();if(failed)throw cause;})();}return closePromise;},
     load(scope:Scope,roots:readonly string[],options?:ManifestGroupOptions):SpineContentGroup{
@@ -98,15 +100,22 @@ export function createSpineContentLoader(engine:Engine,ownerScope:Scope,manifest
       const selected=selectSpineDependencies(catalog!,ids);
       let raw:ManifestAssetGroup|undefined=APPLY(GROUP,engine,[scope,admitted!,FREEZE(ids),selected.map(id=>bindings.get(id)!),options]) as ManifestAssetGroup;
       const abort=new CancellationController(),leases:AssetLease<SetupValue>[]=[],assets=new Map<string,SpineAsset>(),ownedStages:Stage[]=[];let state:'pending'|'ready'|'failed'|'disposed'='pending';
+      const instances=new Set<{dispose():void}>();
       let resolve!:()=>void,reject!:(cause:unknown)=>void;const ready=new Promise<void>((yes,no)=>{resolve=yes;reject=no;});void ready.catch(()=>{});
-      function retire(next:'failed'|'disposed',cause?:unknown):void{if(state==='failed'||state==='disposed')return;const pending=state==='pending';state=next;groups.delete(group);if(pending)reject(cause??spineFault('GROUP_DISPOSED',''));for(const staged of ownedStages){const set=stages.get(staged.id);set?.delete(staged);if(!set?.size)stages.delete(staged.id);}ownedStages.length=0;assets.clear();abort.abort(cause);const ownedRaw=raw;raw=undefined;cleanup([...leases.splice(0).map(lease=>()=>release(lease)),()=>ownedRaw?.dispose()],'SPINE_GROUP_RELEASE_FAILED');}
+      function retire(next:'failed'|'disposed',cause?:unknown):void{if(state==='failed'||state==='disposed')return;const pending=state==='pending';state=next;groups.delete(group);if(pending)reject(cause??spineFault('GROUP_DISPOSED',''));for(const staged of ownedStages){const set=stages.get(staged.id);set?.delete(staged);if(!set?.size)stages.delete(staged.id);}ownedStages.length=0;assets.clear();abort.abort(cause);const ownedRaw=raw;raw=undefined;cleanup([...instances].map(instance=>()=>instance.dispose()).concat([...leases.splice(0).map(lease=>()=>release(lease)),()=>ownedRaw?.dispose()]),'SPINE_GROUP_RELEASE_FAILED');}
       const group:SpineContentGroup=FREEZE({get ready(){if(this!==group)throw spineFault('GROUP_RECEIVER','');return ready;},get isDisposed(){if(this!==group)throw spineFault('GROUP_RECEIVER','');return state==='disposed'||state==='failed';},dispose(){if(this!==group)throw spineFault('GROUP_RECEIVER','');retire('disposed');},getSpine(id:string):SpineAsset{if(this!==group)throw spineFault('GROUP_RECEIVER','');assertOpen();if(state!=='ready')throw spineFault('GROUP_NOT_READY',id);const asset=assets.get(id);if(!asset)throw spineFault('ASSET',id);return asset;}});
       groups.add(group);try{APPLY(USE,scope,[group]);assertOpen();}catch(cause){retire('disposed',cause);throw cause;}
       void raw!.ready.then(async()=>{try{
         if(state!=='pending')return;assertOpen();
         for(const id of ids){const staged:Stage={id,active:()=>state==='pending'};let set=stages.get(id);if(!set){set=new Set();stages.set(id,set);}set.add(staged);ownedStages.push(staged);
           const lease=await APPLY(ACQUIRE,manager,[cacheRefs.get(id)!,{signal:abort.signal}]) as AssetLease<SetupValue>;if(state!=='pending'){release(lease);return;}leases.push(lease);assertOpen();const info=leaseValue(lease).parsed!.info;
-          assets.set(id,FREEZE({info,get isDisposed(){return state!=='ready';}}) as SpineAsset);
+          const asset=FREEZE({info,get isDisposed(){return state!=='ready';}}) as SpineAsset;
+          const live=()=>{assertOpen();if(state!=='ready')throw spineFault('ASSET_DISPOSED',id);};
+          const authenticate=(instanceScope:Scope)=>{live();const check=APPLY(GROUP,engine,[instanceScope,admitted!,[],[]]) as ManifestAssetGroup;check.dispose();live();if(liveInstances>=128)throw spineFault('INSTANCE_LIMIT',id);};
+          registerSpineAsset(asset,{assertOpen:live,getSetup(){live();return leaseValue(lease).parsed!;},authenticate,
+            own(instanceScope,instance){authenticate(instanceScope);instances.add(instance);liveInstances++;let owned=true;const unown=()=>{if(!owned)return;owned=false;instances.delete(instance);liveInstances--;};
+              try{APPLY(USE,instanceScope,[instance]);live();}catch(cause){unown();throw cause;}return unown;}});
+          assets.set(id,asset);
         }
         // All setup values now own their page leases. Retire staging metadata before
         // readiness; a cleanup callback may cancel the consumer during transfer.
