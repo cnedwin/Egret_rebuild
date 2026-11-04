@@ -3992,5 +3992,57 @@
         }
       }
     }
+  },
+  "combinedSkins": {
+    "status": "PASS_BOUNDED_SCOPE",
+    "scope": "M2.2 ordered existing-asset outfit composition; not resource-version replacement or complete Spine",
+    "runtime": "4.3.13",
+    "focused": {
+      "tests": 107,
+      "newCases": 12,
+      "raw": {
+        "bytes": 9663,
+        "sha256": "af0752771502b6fcb16d124cfbc9a9c09e4571175e665979e843e6257b671255"
+      }
+    },
+    "browser": {
+      "environment": {
+        "node": "v26.7.0",
+        "playwright": "1.62.1",
+        "channel": "msedge",
+        "headless": true,
+        "extraFlags": [],
+        "device": false,
+        "browser": "156.0.4314.58"
+      },
+      "cases": 54,
+      "positivePerBackend": 20,
+      "wrongControlsPerBackend": 7,
+      "newPositivePerBackend": 4,
+      "newControlsPerBackend": 1,
+      "sourceFiles": 551,
+      "raw": {
+        "bytes": 4353133,
+        "sha256": "a3112baa8d3d962c5c6498f21021347c4316350c8969e0bb54e07b197f5da0b7"
+      },
+      "sourceFreeze": {
+        "bytes": 101867,
+        "sha256": "02ea27562d53a63341e8ec6ab1a42b45d0b9f76484ed66e4eaeace5dd0c6a6e8"
+      },
+      "sourceIntegrity": true,
+      "cleanup": {
+        "context": true,
+        "browser": true,
+        "server": true
+      }
+    },
+    "sources": [
+      "https://esotericsoftware.com/spine-runtime-skins"
+    ],
+    "remaining": [
+      "Full selected-version constraint/reference coverage",
+      "M2.4 version replacement and recovery",
+      "Authorized stable Editor exports, physical devices and performance; M1.2 10.3ms/8ms remains OPEN"
+    ]
   }
 }

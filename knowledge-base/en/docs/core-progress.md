@@ -147,3 +147,5 @@ The historical A2 Task5a oracle uses tools/texture-oracle.mjs. expectedUploadRGB
 The [Changelog](../CHANGELOG.md) records the purpose of each increment. Detailed earlier results, failures and preparation cutoffs are preserved in subsystem evidence and the [versioned progress record](https://github.com/cnedwin/Egret_rebuild/blob/efd2a9c91fb6cfe633214b50b82cf7952941452a/knowledge-base/en/docs/core-progress.md). Historical counts and hashes continue to identify their original source; a later reading edit does not rerun or expand them.
 
 The [contribution guide](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md) describes reproducible changes and review. First-party implementation, external dependencies and research references retain their own attribution and licenses.
+
+The optional player now supports ordered outfit composition with `setSkins(names)`, immutable `snapshot.skins`, and unchanged `setSkin` compatibility. See the [combined skin contract](spine-content-ingress.md#combined-outfit-skins). This completes a bounded M2.2 capability; asset-version replacement and complete M2 acceptance remain open.

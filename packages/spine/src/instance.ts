@@ -12,7 +12,7 @@ import type { SpineDrawSink, SpineDrawCandidate } from './renderAuthority.js';
 const freeze = Object.freeze;
 const MAX_COMMANDS = 256, MAX_ENTRIES = 128, MAX_TRACKS = 16;
 type Command = { kind: 'animation'; track: number; name: string; loop: boolean; mix: number; delay: number; append: boolean }
-  | { kind: 'clear'; track: number } | { kind: 'skin'; name: string }
+  | { kind: 'clear'; track: number } | { kind: 'skin'; names: readonly string[] }
   | { kind: 'transform'; x: number; y: number; scaleX: number; scaleY: number }
   | { kind: 'rate'; value: number } | { kind: 'paused'; value: boolean };
 function fault(code: string, cause?: unknown): EgretError { return new EgretError('SPINE_INSTANCE_' + code, { cause }); }
@@ -52,6 +52,7 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
   let unown: (() => void) | undefined;
   let drawSink: SpineDrawSink | undefined;
   let commands: Command[] = [], events: SpinePlaybackEvent[] = [];
+  let skins: readonly string[] = freeze([]);
   const entries = new Set<Core.TrackEntry>();
   function assertOpen(): void { if (disposed) throw fault('DISPOSED'); if (faulted) throw fault('FAULTED'); port.assertOpen(); }
   function admit(): void { assertOpen(); if (admitting || busy && !dispatching) throw fault('REENTRANT'); }
@@ -88,7 +89,7 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
       let queued = 0; for (let next = entry.next; next; next = next.next) if (++queued > MAX_ENTRIES) throw fault('ENTRY_LIMIT');
       return [freeze({ index, animation: text(entry.animation?.name ?? ''), trackTime: finite(entry.trackTime), animationTime: finite(entry.getAnimationTime()), loop: entry.loop, queued })];
     });
-    return freeze({ state: paused ? 'paused' : 'running', revision, tickId, elapsedSeconds, rate, skin: current.skin ? text(current.skin.name) : null, pendingCommands: commands.length,
+    return freeze({ state: paused ? 'paused' : 'running', revision, tickId, elapsedSeconds, rate, skin: skins.length === 1 ? skins[0]! : null, skins, pendingCommands: commands.length,
       bones: freeze(bones), slots: freeze(current.slots.map(slot => freeze({ name: text(slot.data.name), attachment: slot.appliedPose.attachment ? text(slot.appliedPose.attachment.name) : null }))), tracks: freeze(tracks), events: freeze([...events]) });
   }
   let committed = publish();
@@ -113,7 +114,18 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
         break;
       }
       case 'clear': animation.clearTrack(command.track); break;
-      case 'skin': current.setSkin(command.name); current.setupPoseSlots(); break;
+      case 'skin': {
+        // Composition owns its map, while Core retains authored attachment/bone/constraint
+        // references. Never add entries to a shared setup skin or restart track state.
+        let selected: Core.Skin;
+        if (command.names.length === 1) selected = current.data.findSkin(command.names[0]!)!;
+        else {
+          selected = new Core.Skin('egret-composite');
+          for (const name of command.names) selected.addSkin(current.data.findSkin(name)!);
+        }
+        current.setSkin(selected); current.setupPoseSlots(); skins = command.names;
+        break;
+      }
       case 'transform': current.setPosition(command.x, command.y); current.setScale(command.scaleX, command.scaleY); break;
       case 'rate': rate = command.value; break;
       case 'paused': paused = command.value; break;
@@ -131,7 +143,26 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
     setAnimation(trackIndex: number, name: string, options?: SpineAnimationOptions) { animation(trackIndex, name, options, false); },
     addAnimation(trackIndex: number, name: string, options?: SpineQueuedAnimationOptions) { animation(trackIndex, name, options, true); },
     clearTrack(trackIndex: number) { admit(); track(trackIndex); enqueue({ kind: 'clear', track: trackIndex }); },
-    setSkin(name: string) { admit(); if (typeof name !== 'string' || !info.skins.includes(name)) throw fault('SKIN_INVALID'); enqueue({ kind: 'skin', name }); },
+    setSkin(name: string) { admit(); if (typeof name !== 'string' || !info.skins.includes(name)) throw fault('SKIN_INVALID'); enqueue({ kind: 'skin', names: freeze([name]) }); },
+    setSkins(names: readonly string[]) {
+      admit();
+      const selected: string[] = [];
+      admitting = true;
+      try {
+        if (!Array.isArray(names)) throw fault('SKINS_INVALID');
+        // Read own data descriptors, not an overridable iterator or accessor. Every
+        // proxy boundary rechecks ownership before any command can be published.
+        const size = Object.getOwnPropertyDescriptor(names, 'length'); assertOpen();
+        const count: unknown = size?.value;
+        if (!size || !Object.hasOwn(size, 'value') || !Number.isSafeInteger(count) || !number(count, 1, 32)) throw fault('SKINS_INVALID');
+        for (let index = 0; index < count; index++) {
+          const row = Object.getOwnPropertyDescriptor(names, String(index)); assertOpen();
+          if (!row || !Object.hasOwn(row, 'value') || typeof row.value !== 'string' || !info.skins.includes(row.value) || selected.includes(row.value)) throw fault('SKINS_INVALID');
+          selected.push(row.value);
+        }
+      } finally { admitting = false; }
+      enqueue({ kind: 'skin', names: freeze(selected) });
+    },
     setTransform(x: number, y: number, scaleX = 1, scaleY = 1) { admit(); if (![x, y, scaleX, scaleY].every(value => number(value, -1000000, 1000000))) throw fault('TRANSFORM_INVALID'); enqueue({ kind: 'transform', x, y, scaleX, scaleY }); },
     setRate(value: number) { admit(); if (!number(value, 0, 16)) throw fault('RATE_INVALID'); enqueue({ kind: 'rate', value }); },
     setPaused(value: boolean) { admit(); if (typeof value !== 'boolean') throw fault('PAUSED_INVALID'); enqueue({ kind: 'paused', value }); },

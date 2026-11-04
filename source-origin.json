@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 18486,
-      "sha256": "dd73b77dc89e8a054516c94dbb15f3fbf66145d647ae14c193430947aa7fc71a",
+      "bytes": 18778,
+      "sha256": "c334d63f29a3bec8b39279bd77a6daa6583ab271715126e0142b68430e54dee0",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "c62d54fec2e42ca1cd78b09090d540f8b8a7cc1889e92cb23b4a9ce3faa771ee",
+      "sha256": "d5c5f54d04f04beb9bdf55c7477e75cdf4f2522d43357edffc4d2db8b6c6a861",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 21104,
-      "sha256": "2d04dea495c6d45ceedb91f7974bc069b853999d19e6d728011339a14813b2f1",
+      "bytes": 21446,
+      "sha256": "635ce15a717ca9aa70bad5543702a4736f70b22017714c163193c27a3259e15e",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "d314eef74ee0c7cc55b2d2aac3eacfe54eeb5f8a399455aa4fa18edebb3759fd",
+      "sha256": "40ccc1915252c8a5c9bdf6b061b9db3c56c5957ef1db82fa703fd33a4bd8f4ea",
       "bytes": 371107,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -12770,14 +12770,14 @@
     {
       "path": "knowledge-base/en/docs/m2-spine-content-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 28286,
-      "sha256": "2605201927f349fe6fb6abd87c7869df2781a11046383b039d411532352e464d"
+      "bytes": 28628,
+      "sha256": "d620ccacb7f82c59df8cb13a574b57d5626a35422fdf49e15ea9e4caa4208fa4"
     },
     {
       "path": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 23661,
-      "sha256": "495068213b1b6890253b969978ac1638f6d158a92664da758e115b86f3665757"
+      "bytes": 23953,
+      "sha256": "ac744fd312ce035552152e3d7a8a39b8d24e31323554c84f09c576e77891b2c4"
     },
     {
       "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
@@ -14594,26 +14594,26 @@
     {
       "path": "knowledge-base/Cns/docs/spine-content-ingress.md",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 21986,
-      "sha256": "2b91e9cdb20d10bb4290c229555f1e24f9099a08b2b47c9c5b487d320a631473"
+      "bytes": 24959,
+      "sha256": "9ea2061b66710b3b3486a40800ee3a7fa56563044da3dce0ea457e71424ccd33"
     },
     {
       "path": "knowledge-base/en/docs/spine-content-ingress.md",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 24690,
-      "sha256": "89369a83b034b35997b52f8819c1087f91adb99e39f5ff7c81da544723c0ce38"
+      "bytes": 28093,
+      "sha256": "2fce576c722a69b11810f33d81bdce02db0fd24736295ab0a48d0077d46af08b"
     },
     {
       "path": "packages/spine/README.md",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 2966,
-      "sha256": "ca37519c1aa88aff917506bb3c90dd5025c3e937b958b178c68cd70612b71fea"
+      "bytes": 3338,
+      "sha256": "43e9f073317db74c668af9e21d5d2d8d61b4d655c00c95a0953efc954e4822ae"
     },
     {
       "path": "packages/spine/README.zh-CN.md",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 2814,
-      "sha256": "b5adde09a14fb165126a20972bc7f6d918f566407e200f0a827b0d85a937ccfd"
+      "bytes": 3147,
+      "sha256": "5f87a6d78f4f9c821cce16035602b0f37084ed72ae71113fd17aeb7777007428"
     },
     {
       "path": "packages/spine/package.json",
@@ -14690,8 +14690,8 @@
     {
       "path": "packages/spine/test/public-api.ts",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 3375,
-      "sha256": "aa1424cbc83dfa02acad7fe34b74dfc4eb03832bcfdf816bc0e07a4c5efb52a5"
+      "bytes": 3491,
+      "sha256": "328051e6db97427aa30ce611aa96c32fdb89a7043d569d1abbeadae802d39895"
     },
     {
       "path": "packages/spine/test/types.test.mjs",
@@ -14720,8 +14720,8 @@
     {
       "path": "verification/spine-content/verification.json",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 95852,
-      "sha256": "de8dc1e0e5853c3589ec263c2484f07c37d7444fdd684cee514a65e390d9dd9b"
+      "bytes": 97416,
+      "sha256": "335aba60da3e753237c177f31714f0dfdbe463bb8697dfe67556ae19f674eef3"
     },
     {
       "path": "third-party/spine-core-4.3.13.LICENSE",
@@ -14732,8 +14732,8 @@
     {
       "path": "contributions/spine-content-ingress.json",
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
-      "bytes": 13591,
-      "sha256": "068c73a204a28870bc9037da47d1f3bc306422752e9bee5c678f20fcc519fd6a"
+      "bytes": 13969,
+      "sha256": "e32c1f17bcca56e927122cbb6de7e0048ffdae6a35c681e46ce8328749aa811d"
     },
     {
       "path": "packages/engine/src/ui/keyboardFocus.ts",
@@ -14756,14 +14756,14 @@
     {
       "path": "packages/spine/src/instance.ts",
       "originRole": "Independently authored Egret Spine playback adapter, bounded ownership/time publication or original numerical tests; AI-assisted; Apache-2.0. Official Core4.3.13 remains a separately licensed dependency.",
-      "bytes": 14622,
-      "sha256": "24dad31d7c1aab0a714110a730cc5c2f4f388e366a4e8d85ae235ca57002dba1"
+      "bytes": 16325,
+      "sha256": "8e2ec67bc01186526e411bfac474346a526b116bfee603d433e310ae72b462d8"
     },
     {
       "path": "packages/spine/src/instanceTypes.ts",
       "originRole": "Independently authored Egret Spine playback adapter, bounded ownership/time publication or original numerical tests; AI-assisted; Apache-2.0. Official Core4.3.13 remains a separately licensed dependency.",
-      "bytes": 2455,
-      "sha256": "581e6cfa824d1a67bebcf24e93c383696683b778a4790d3ed8f27642ea283d9b"
+      "bytes": 2785,
+      "sha256": "a32c18ccfb353a87ac4062f4c9667a1aa709f4d7bb60514cb6edc4d9367f31b5"
     },
     {
       "path": "packages/spine/test/playback.test.mjs",
@@ -14804,14 +14804,14 @@
     {
       "path": "packages/spine/test/renderingFixture.mjs",
       "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
-      "bytes": 1194,
-      "sha256": "9b6d5c3474cfecbf59540cadf4b51407ba488494fc587a6b124faaf35e1c8908"
+      "bytes": 1527,
+      "sha256": "cc0747c3343434fb1e90a48a8c5576cfad8bd1b4b50464c3b9b770cdcd625595"
     },
     {
       "path": "packages/spine/test/renderingBrowser.mjs",
       "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
-      "bytes": 3830,
-      "sha256": "ebaf80165ae741447d021178ffe6b398d6c804d7e3bf7adf65c2c8147af43dc7"
+      "bytes": 4143,
+      "sha256": "9d5b8856892992c54f361cecfe2d7077d92de4f315f085f3fe4d152bc414a003"
     },
     {
       "path": "packages/spine/test/rendering.test.mjs",
@@ -14822,8 +14822,14 @@
     {
       "path": "tools/verify-spine-rendering.mjs",
       "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
-      "bytes": 13145,
-      "sha256": "69b97866434168f13035b7039335e11a1a29499f3cf8d9ff27179d9d76578beb"
+      "bytes": 14087,
+      "sha256": "01796e96b3203e66323361516bee467556fd3f1c2614a0936bebbb02878db6c1"
+    },
+    {
+      "path": "packages/spine/test/skins.test.mjs",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
+      "bytes": 8177,
+      "sha256": "fd235a6d965aec496c708275ec8f43c13474adce6b010ef223d59cba1f03c4df"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

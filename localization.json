@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "2d04dea495c6d45ceedb91f7974bc069b853999d19e6d728011339a14813b2f1",
-      "zhSha256": "dd73b77dc89e8a054516c94dbb15f3fbf66145d647ae14c193430947aa7fc71a"
+      "enSha256": "635ce15a717ca9aa70bad5543702a4736f70b22017714c163193c27a3259e15e",
+      "zhSha256": "c334d63f29a3bec8b39279bd77a6daa6583ab271715126e0142b68430e54dee0"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1963,8 +1963,8 @@
       "en": "knowledge-base/en/docs/m2-spine-content-plan.md",
       "zh": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
       "kind": "public_reading",
-      "enSha256": "2605201927f349fe6fb6abd87c7869df2781a11046383b039d411532352e464d",
-      "zhSha256": "495068213b1b6890253b969978ac1638f6d158a92664da758e115b86f3665757"
+      "enSha256": "d620ccacb7f82c59df8cb13a574b57d5626a35422fdf49e15ea9e4caa4208fa4",
+      "zhSha256": "ac744fd312ce035552152e3d7a8a39b8d24e31323554c84f09c576e77891b2c4"
     },
     {
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
@@ -2152,15 +2152,15 @@
       "en": "knowledge-base/en/docs/spine-content-ingress.md",
       "zh": "knowledge-base/Cns/docs/spine-content-ingress.md",
       "kind": "public_reading",
-      "enSha256": "89369a83b034b35997b52f8819c1087f91adb99e39f5ff7c81da544723c0ce38",
-      "zhSha256": "2b91e9cdb20d10bb4290c229555f1e24f9099a08b2b47c9c5b487d320a631473"
+      "enSha256": "2fce576c722a69b11810f33d81bdce02db0fd24736295ab0a48d0077d46af08b",
+      "zhSha256": "9ea2061b66710b3b3486a40800ee3a7fa56563044da3dce0ea457e71424ccd33"
     },
     {
       "en": "packages/spine/README.md",
       "zh": "packages/spine/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "ca37519c1aa88aff917506bb3c90dd5025c3e937b958b178c68cd70612b71fea",
-      "zhSha256": "b5adde09a14fb165126a20972bc7f6d918f566407e200f0a827b0d85a937ccfd"
+      "enSha256": "43e9f073317db74c668af9e21d5d2d8d61b4d655c00c95a0953efc954e4822ae",
+      "zhSha256": "5f87a6d78f4f9c821cce16035602b0f37084ed72ae71113fd17aeb7777007428"
     }
   ],
   "registries": [
@@ -4274,11 +4274,11 @@
     },
     {
       "path": "packages/spine/src/instance.ts",
-      "sha256": "24dad31d7c1aab0a714110a730cc5c2f4f388e366a4e8d85ae235ca57002dba1"
+      "sha256": "8e2ec67bc01186526e411bfac474346a526b116bfee603d433e310ae72b462d8"
     },
     {
       "path": "packages/spine/src/instanceTypes.ts",
-      "sha256": "581e6cfa824d1a67bebcf24e93c383696683b778a4790d3ed8f27642ea283d9b"
+      "sha256": "a32c18ccfb353a87ac4062f4c9667a1aa709f4d7bb60514cb6edc4d9367f31b5"
     },
     {
       "path": "packages/spine/src/renderAuthority.ts",

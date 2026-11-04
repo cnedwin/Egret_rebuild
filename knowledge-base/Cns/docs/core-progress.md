@@ -147,3 +147,5 @@ GitHub 未为 PR #42 返回状态或检查运行，以上本地验证与远端 C
 [变更记录](../CHANGELOG.md)说明各增量的主要作用。早期详细结果、失败与准备截点保存在子系统证据及[固定版本进展记录](https://github.com/cnedwin/Egret_rebuild/blob/efd2a9c91fb6cfe633214b50b82cf7952941452a/knowledge-base/en/docs/core-progress.md)中。历史计数和哈希继续标识原始源码，后续阅读整理不重新执行或扩大其结论。
 
 可复现改动与审阅流程见[贡献指南](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md)。第一方实现、外部依赖和研究参考分别保留来源及许可。
+
+可选播放器现支持 `setSkins(names)` 有序组合换装和不可变 `snapshot.skins`，保留 `setSkin` 兼容行为。参见[组合皮肤契约](spine-content-ingress.md#组合皮肤换装)。本项仅交付 M2.2 的有界能力，资源版本替换和完整 M2 验收仍未完成。
