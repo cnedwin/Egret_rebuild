@@ -6,6 +6,7 @@ import {createCanvasTextRasterProvider} from '@egret/engine/web/text';
 import {createParagraph, createParagraphCache} from '@egret/engine/paragraph';
 import {createCanvasKitParagraphProvider} from '@egret/engine/web/paragraph';
 import {createBrowserPointerInput} from '@egret/engine/web/pointer';
+import {createBrowserKeyboardInput} from '@egret/engine/web/keyboard';
 import {createSharedWebGPUHost} from '@egret/engine/webgpu';
 import {createSharedWebGL2Host} from '@egret/engine/webgl2';
 
@@ -61,7 +62,7 @@ export async function mount({canvas, controls, viewport, signal, report, model =
   let selectedKey = typeof restored.selectedKey === 'string' ? restored.selectedKey : null;
   let requestedScroll = Math.max(0, finite(restored.scrollOffset, 0));
   let scrollOffset = requestedScroll, revision = 1, state = 'starting';
-  let engine, host, scope, input, cache, nativeProvider, detailRoot, listRoot;
+  let engine, host, scope, input, keyboard, focusMarker, focusList, cache, nativeProvider, detailRoot, listRoot;
   let fontFace, fontFamily, texture, badgeLease, unclaimedTexture;
   let initialization, closePromise, stopped = false, queue = Promise.resolve();
   let scrollQueued = false, listBounds, drag, lastReadback = null, lastRootSnapshots = [];
@@ -98,7 +99,7 @@ export async function mount({canvas, controls, viewport, signal, report, model =
       textPreparationConcurrency: activeTextPreparations, pendingTextPreparations: pendingTextPreparations.length,
       hitCount, pointerEvents, selectionCount, dragCount, events: [...events], preparations: [...preparations],
       errors: [...errors], diagnostics: [...diagnostics], readback: lastReadback ? {...lastReadback} : null,
-      inputState: input?.state ?? null, scopeState: scope?.state ?? null,
+      inputState: input?.state ?? null, keyboard: keyboard?.getSnapshot() ?? null, rowFocus: focusList?.getFocus() ?? null, scopeState: scope?.state ?? null,
       cache: cache?.getStatus() ?? null, textureDisposals, bitmapClosed, cleanupFailureCount: cleanupFailures.length,
     };
   }
@@ -144,6 +145,17 @@ export async function mount({canvas, controls, viewport, signal, report, model =
   }
   async function draw() {
     checkOpen();
+    if (focusMarker && listRoot) {
+      focusMarker.graphics.clear();
+      const focus = listRoot.list('rows').getFocus(), row = listRoot.snapshot().rows.find(row => row.key === focus.key && row.visible);
+      if (row && focus.focusVisible) {
+        const x = listBounds.x + row.box.x, y = listBounds.y + row.box.y;
+        const top = Math.max(listBounds.y, y), bottom = Math.min(listBounds.y + listBounds.height, y + row.box.height);
+        focusMarker.graphics.beginFill(0xffd166)
+          .drawRect(x, top, row.box.width, 2).drawRect(x, bottom - 2, row.box.width, 2)
+          .drawRect(x, top, 2, bottom - top).drawRect(x + row.box.width - 2, top, 2, bottom - top).endFill();
+      }
+    }
     host.renderSharedFrame(engine.captureSharedFrame(frameOptions));
     await host.whenIdle();
     checkOpen();
@@ -255,6 +267,11 @@ export async function mount({canvas, controls, viewport, signal, report, model =
   }
   function onRowPointer(notification) {
     const contact = notification.event.payload;
+    if (notification.kind === 'begin' && keyboard?.getSnapshot().state === 'active') {
+      canvas.focus({preventScroll: true});
+      listRoot.list('rows').focus(notification.key, {reason: 'pointer'});
+      void enqueue(draw).catch(() => {});
+    }
     hitCount++;
     remember(events, {kind: notification.kind, key: notification.key, index: notification.index, pointerId: contact.session.pointerId, pointerType: contact.session.pointerType, globalX: contact.globalX, globalY: contact.globalY, layoutRevision: notification.layoutRevision, ...(contact.reason ? {reason: contact.reason} : {})});
     if (notification.kind === 'begin' && drag?.session === contact.session) {
@@ -343,6 +360,7 @@ export async function mount({canvas, controls, viewport, signal, report, model =
     if (!controls) return;
     controlRoot = document.createElement('div');
     controlRoot.className = 'panel-controls';
+    const hint = document.createElement('p'); hint.textContent = 'Focus a row, then Tab / Shift+Tab to navigate and Enter / Space to select. Scrolling a focused row out clears focus. / 聚焦列表后，用 Tab／Shift+Tab 切换、回车／空格选择；焦点行滚出视口时释放焦点。'; controlRoot.append(hint);
     const button = (label, operation) => {
       const node = document.createElement('button'); node.type = 'button'; node.textContent = label;
       listen(node, 'click', operation); controlRoot.append(node);
@@ -393,6 +411,7 @@ export async function mount({canvas, controls, viewport, signal, report, model =
     attemptSync(() => controlRoot?.remove());
     // Stop native contact delivery before waiting for in-flight application operations.
     attemptSync(() => input?.dispose());
+    attemptSync(() => keyboard?.dispose());
     closePromise = (async () => {
       await initialization?.catch(() => {});
       await queue.catch(() => {});
@@ -467,6 +486,21 @@ export async function mount({canvas, controls, viewport, signal, report, model =
       cache = createTextRasterCache(engine.assets, {provider: createCanvasTextRasterProvider(), maxPendingJobs: 4, maxWaiters: 16, maxCallerLeases: 128, maxResidentEntries: 24});
     }
     input = createBrowserPointerInput({engine, scope, width, height, capacity: 10, onContact});
+    keyboard = createBrowserKeyboardInput({engine, scope, onFocusChange() {
+      if (state === 'ready' && !stopped) void enqueue(draw).catch(() => {});
+    }});
+    scope.use({dispose: engine.stage.on(keyboard.events.keyDown, event => {
+      if (!['Enter', 'Space'].includes(event.payload.code) || !listRoot) return;
+      const key = listRoot.list('rows').getFocus().key;
+      if (key === undefined) return;
+      event.preventDefault();
+      if (event.payload.repeat) return;
+      selectedKey = key; selectionCount++;
+      void enqueue(async () => {
+        if (kind === 'ui') { revision++; detailRoot.setTree(uiDetails()); await publish(detailRoot); }
+        await draw();
+      }).catch(() => {});
+    })});
     if (kind === 'ui') {
       const listWidth = columns === 2 ? Math.floor((width - 36) * 0.64) : width - 24;
       listBounds = {x: 12, y: columns === 2 ? 12 : 108, width: listWidth, height: height - (columns === 2 ? 24 : 120)};
@@ -478,8 +512,10 @@ export async function mount({canvas, controls, viewport, signal, report, model =
       detailRoot = createUiRoot({engine, scope, id: 'mobile-paragraph-detail', viewport: {width: detailWidth, height: height - 24}, origin: {x: 12, y: 12}, density, tree: paragraphDetails(detailWidth)});
       await publish(detailRoot); await positionParagraphList();
     }
-    listRoot = createUiRoot({engine, scope, id: 'mobile-' + kind + '-list', viewport: {width: listBounds.width, height: listBounds.height}, origin: {x: listBounds.x, y: listBounds.y}, density, tree: listTree(kind === 'ui' ? uiSource() : paragraphSource()), input, onRowPointer, limits: {overscan: 1, residentCap: 32, retainedCap: 0}});
+    listRoot = createUiRoot({engine, scope, id: 'mobile-' + kind + '-list', viewport: {width: listBounds.width, height: listBounds.height}, origin: {x: listBounds.x, y: listBounds.y}, density, tree: listTree(kind === 'ui' ? uiSource() : paragraphSource()), input, keyboard: {input: keyboard, idPrefix: 'mobile-' + kind}, onRowPointer, limits: {overscan: 1, residentCap: 32, retainedCap: 0}});
+    focusList = listRoot.list('rows');
     await publish(listRoot);
+    focusMarker = scope.use(new Sprite()); engine.stage.addChild(focusMarker);
     state = 'ready'; installControls(); await draw();
   })();
   try {

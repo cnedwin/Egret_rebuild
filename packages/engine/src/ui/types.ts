@@ -3,6 +3,7 @@ import type { CancellationSignal } from '@egret/contracts';
 import type { DisplayObject, DisplayObjectContainer, Event, Scope } from '@egret/runtime';
 import type { UiLayoutNode, UiDirtyKind, UiLayoutBox } from '@egret/runtime/ui';
 import type { Engine } from '../Engine.js';
+import type { KeyboardInput, KeyboardFocusOptions } from '../keyboardInputTypes.js';
 import type { PointerInput, PointerContact, PointerCancelReason } from '../pointerInputTypes.js';
 type LayoutDimensions = Omit<UiLayoutNode, 'kind' | 'children' | 'source' | 'initialScrollOffset' | 'measure' | 'fill'>;
 export type LayoutNode = (LayoutDimensions & {
@@ -98,6 +99,11 @@ export type UiRowPointerNotification = Readonly<{
         readonly reason: PointerCancelReason;
     }>;
 }>;
+/** Explicit namespace prevents independently authored panels from sharing focus IDs. */
+export interface UiKeyboardOptions {
+    readonly input: KeyboardInput;
+    readonly idPrefix: string;
+}
 export interface UiRootOptions {
     readonly engine: Engine;
     readonly scope: Scope;
@@ -113,6 +119,7 @@ export interface UiRootOptions {
     readonly density: number;
     readonly tree: LayoutNode;
     readonly input?: PointerInput;
+    readonly keyboard?: UiKeyboardOptions;
     readonly onRowPointer?: (notification: UiRowPointerNotification) => void;
     readonly limits?: UiLimits;
 }
@@ -196,6 +203,8 @@ export interface VirtualListHandle<T> {
         readonly contentVersion: number;
     }[]): void;
     retain(key: string, reason: 'focus' | 'composition'): RowRetention;
+    focus(key: string | undefined, options?: KeyboardFocusOptions): void;
+    getFocus(): Readonly<{ key: string | undefined; focusVisible: boolean }>;
     snapshot(): VirtualListSnapshot;
 }
 export interface UiRoot {

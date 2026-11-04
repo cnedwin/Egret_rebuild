@@ -131,6 +131,15 @@
     {
       "path": "tests/ui-virtual-list.test.mjs",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/src/ui/keyboardFocus.ts",
+      "originRole": "First-party managed UI keyboard lifetime integration and public behavior tests, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-keyboard-focus.test.mjs",
+      "originRole": "First-party managed UI keyboard lifetime integration and public behavior tests, independently authored with AI assistance; Apache-2.0."
     }
   ],
   "documents": [

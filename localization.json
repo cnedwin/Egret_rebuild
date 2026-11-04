@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "e6a55273305696e37bd53be9df291540a232fa0ccfe1fcc63c05692067502b47",
-      "zhSha256": "b5f8bd8f2a0f63103c61607d06e878c887534bd680b80b1042a45e6672cc68d5"
+      "enSha256": "9c2276b70b5d5a0d224184e4939467d4e385043a89d13ac94a37d479b4e02063",
+      "zhSha256": "573e04c583dc44ebf13adf30523546ffda3ee53277b657be6bd9a87939cb7343"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -2019,8 +2019,8 @@
       "en": "knowledge-base/en/docs/ui-data-panel.md",
       "zh": "knowledge-base/Cns/docs/ui-data-panel.md",
       "kind": "public_reading",
-      "enSha256": "688984b35c4cdf96a2d40d793929fc5250fd322e9a48dc9b4b0e74f58672967c",
-      "zhSha256": "b26c0b24177c7b72612035eced7443a35fb21f84b9b3d8cf5dafafbd22a0d426"
+      "enSha256": "c99416930fde509f984ac4bf75bc462a8a8419c4eba977268754c645588933ce",
+      "zhSha256": "d07f899e34f4492d38cbec7405e08d49298a2f40feb16f693a212fc6162d0f6b"
     },
     {
       "en": "examples/ui-data-panel/README.md",
@@ -2103,8 +2103,8 @@
       "en": "examples/mobile/README.md",
       "zh": "examples/mobile/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "8b2898cc05b03cf340f1d2d907d899d45ced21089cce7f4ff0f200ffa57c6e07",
-      "zhSha256": "4e1a9d446d94050604eade0ce2de4250a428692a7917c6fb4f3bf08e270f4f3b"
+      "enSha256": "1deb45edef32ae107d5e99050e139b6bac33d93708faef87783d94b0915e5a5b",
+      "zhSha256": "e319a7cea177380e46a9c3d51519cc0f1a49b8ef67d068cf3bda0f1ab8acaf5d"
     },
     {
       "en": "knowledge-base/en/docs/mobile-examples.md",
@@ -2117,8 +2117,8 @@
       "en": "knowledge-base/en/docs/keyboard-focus-input.md",
       "zh": "knowledge-base/Cns/docs/keyboard-focus-input.md",
       "kind": "public_reading",
-      "enSha256": "e81bef2c53781e2d3b9bd4ee40ade14313a7640c4b2c4c8306141636627572de",
-      "zhSha256": "87b3c4a31678f7d2760eaa16d71e18a623979513aeea42fc6f1bc06e57c7867a"
+      "enSha256": "7afd38cdba3b7e789a163b10ce33a5084e29af2048c578611dcdfddc0fdc97a7",
+      "zhSha256": "32472ddf5b7e5ec78be5b220c2d6c742674bbc1e1c98dcac5a2b1994ff0644f3"
     },
     {
       "en": "knowledge-base/en/docs/paragraph-text-geometry.md",
@@ -2986,7 +2986,7 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "2e2befabb31c718b37e3a246ed9d5fa82b09e50b26c1745d8f1415d9d83deb89"
+      "sha256": "f1404ee46750275202a8c62cb5bf076850b04b6ef93ca4327a40192c2bd5055c"
     },
     {
       "path": "tests/boundaries.test.mjs",
@@ -4078,19 +4078,19 @@
     },
     {
       "path": "packages/engine/src/internal/uiFactoryState.ts",
-      "sha256": "d4cb81cb33e5ce8fba05f1d027421b9789093e35e2cdf89a81cc86bb08019487"
+      "sha256": "9124bcbc025f9aa000f78cc52ef8b89844b48955383ac4887dde3ab64cd02022"
     },
     {
       "path": "packages/engine/src/ui/index.ts",
-      "sha256": "6c2d2918abe6f4090a88fbed67950255ad987c48d2f3f0169cc2342a73357959"
+      "sha256": "857f0598a77748b9a588ff74e5895009605ca30637ac589bf3aaf62d920ba070"
     },
     {
       "path": "packages/engine/src/ui/types.ts",
-      "sha256": "d9af4b4876a47f36547ece782a55b8aa86d3574663a83207ebdbb3658e4c58eb"
+      "sha256": "823dc856df89e18de945faff65f23e858b10a1c47dce9d19dc9da4097209fb31"
     },
     {
       "path": "packages/engine/src/ui/uiRoot.ts",
-      "sha256": "2996e1293e544771adbd62888b555a980dc1012ff947954772f6a85854a8df27"
+      "sha256": "6d07eecd9bcafc228224f10c29a4e278085f266f47bd4bbd1a6e9155afa69352"
     },
     {
       "path": "packages/engine/src/ui/virtualList.ts",
@@ -4210,7 +4210,7 @@
     },
     {
       "path": "packages/engine/src/keyboardInput.ts",
-      "sha256": "2fca2a3d826480f6b837024343e885b06f4891783ed6222adc82008fcf131508"
+      "sha256": "0462c2020c05e56ae4eb3441f4c1981fc2ae11ba3f824fe617a438d6790202ce"
     },
     {
       "path": "packages/engine/src/keyboardInputTypes.ts",
@@ -4263,6 +4263,10 @@
     {
       "path": "packages/spine/src/web.ts",
       "sha256": "24711e4f8415963b856a1dbca41815b0a2b8e34f07e4beddc676ff333fb9c4db"
+    },
+    {
+      "path": "packages/engine/src/ui/keyboardFocus.ts",
+      "sha256": "c30fbea2c43cf9b2da39abd9b613e43339c28ae5de30e9765a862b7160d8eeec"
     }
   ],
   "historicalSemanticReview": {

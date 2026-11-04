@@ -4,6 +4,7 @@ import type {Stage} from '@egret/runtime';
 import type {CancellationSignal,Diagnostic,ScopeValue} from '@egret/contracts';
 import type {createUiDisplayOperations,UiDisplayOperations} from '@egret/runtime/ui';
 import type {PointerInputEvents,PointerRouterState} from '../pointerInputTypes.js';
+import type {KeyboardInput} from '../keyboardInputTypes.js';
 
 export interface UiScopePort {
   readonly scope:Scope;
@@ -28,6 +29,7 @@ export interface UiEnginePort {
   scope(value:unknown):UiScopePort;
   display(factory:typeof createUiDisplayOperations):UiDisplayOperations;
   requireInput(value:unknown):UiInputPort;
+  requireKeyboard(value:unknown):KeyboardInput;
   onClose(callback:()=>void):()=>void;
 }
 interface UiAssembly {
@@ -46,6 +48,7 @@ export interface UiEngineOwner {
 interface Identity {readonly token:object;readonly port:UiEnginePort;readonly deliver:UiEngineOwner['deliver'];}
 const engines=new WeakMap<object,Identity>();
 const inputs=new WeakMap<object,{readonly token:object;readonly port:UiInputPort}>();
+const keyboards=new WeakMap<object,{readonly token:object;readonly input:KeyboardInput}>();
 const apply=Reflect.apply;
 const state=Object.getOwnPropertyDescriptor(Scope.prototype,'state')!.get!;
 const use=Scope.prototype.use,dispose=Scope.prototype.dispose;
@@ -86,6 +89,11 @@ export function registerUiEngine(engine:object,assembly:UiAssembly):UiEngineOwne
       if(identity===undefined||identity.token!==token)throw new EgretError('UI_INPUT_INVALID');
       return identity.port;
     },
+    requireKeyboard(value:unknown):KeyboardInput {
+      assembly.assertOpen();const identity=keyboards.get(value as object);
+      if(identity===undefined||identity.token!==token||identity.input.getSnapshot().state==='closed')throw new EgretError('UI_KEYBOARD_INVALID');
+      return identity.input;
+    },
     onClose(callback:()=>void):()=>void {assembly.assertOpen();closers.add(callback);return()=>{closers.delete(callback);};},
   });
   engines.set(engine,{token,port,deliver});
@@ -112,4 +120,10 @@ export function captureUiInputDelivery(engine:object):UiEngineOwner['deliver'] {
 export function registerUiPointerInput(input:object,engine:object,port:UiInputPort):void {
   const identity=engines.get(engine);if(identity===undefined)throw new EgretError('UI_ENGINE_INVALID');
   inputs.set(input,{token:identity.token,port});
+}
+
+/** Register only an authentic channel assembled against this Engine. */
+export function registerUiKeyboardInput(input:KeyboardInput,engine:object):void {
+  const identity=engines.get(engine);if(identity===undefined)throw new EgretError('UI_ENGINE_INVALID');
+  keyboards.set(input,{token:identity.token,input});
 }

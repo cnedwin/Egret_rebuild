@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 16917,
-      "sha256": "b5f8bd8f2a0f63103c61607d06e878c887534bd680b80b1042a45e6672cc68d5",
+      "bytes": 17431,
+      "sha256": "573e04c583dc44ebf13adf30523546ffda3ee53277b657be6bd9a87939cb7343",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "300b7ad398d61999b7c14836678787f4fab8b99299938f06f1d62ecf7bad3c81",
+      "sha256": "92b9709b64d17ba9915f422f6734d724d017673fd36dd3fe8e1c7095e06086f3",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 19247,
-      "sha256": "e6a55273305696e37bd53be9df291540a232fa0ccfe1fcc63c05692067502b47",
+      "bytes": 19893,
+      "sha256": "9c2276b70b5d5a0d224184e4939467d4e385043a89d13ac94a37d479b4e02063",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "be7b98a3c5d21d5a7ec0f6b25eb465b47fa8998032e592a2e2ef4e4b2565dbf9",
-      "bytes": 369921,
+      "sha256": "202726edd4b26bdbd5aad9ff02446c2058da7f275dfff1c791b644aefbf4ea26",
+      "bytes": 370074,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -5478,8 +5478,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 303884,
-      "sha256": "2e2befabb31c718b37e3a246ed9d5fa82b09e50b26c1745d8f1415d9d83deb89",
+      "bytes": 304692,
+      "sha256": "f1404ee46750275202a8c62cb5bf076850b04b6ef93ca4327a40192c2bd5055c",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -13202,38 +13202,38 @@
     {
       "path": "knowledge-base/Cns/docs/ui-data-panel.md",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 6869,
-      "sha256": "b26c0b24177c7b72612035eced7443a35fb21f84b9b3d8cf5dafafbd22a0d426"
+      "bytes": 9166,
+      "sha256": "d07f899e34f4492d38cbec7405e08d49298a2f40feb16f693a212fc6162d0f6b"
     },
     {
       "path": "knowledge-base/en/docs/ui-data-panel.md",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 7827,
-      "sha256": "688984b35c4cdf96a2d40d793929fc5250fd322e9a48dc9b4b0e74f58672967c"
+      "bytes": 10615,
+      "sha256": "c99416930fde509f984ac4bf75bc462a8a8419c4eba977268754c645588933ce"
     },
     {
       "path": "packages/engine/src/internal/uiFactoryState.ts",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5653,
-      "sha256": "d4cb81cb33e5ce8fba05f1d027421b9789093e35e2cdf89a81cc86bb08019487"
+      "bytes": 6477,
+      "sha256": "9124bcbc025f9aa000f78cc52ef8b89844b48955383ac4887dde3ab64cd02022"
     },
     {
       "path": "packages/engine/src/ui/index.ts",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 446,
-      "sha256": "6c2d2918abe6f4090a88fbed67950255ad987c48d2f3f0169cc2342a73357959"
+      "bytes": 465,
+      "sha256": "857f0598a77748b9a588ff74e5895009605ca30637ac589bf3aaf62d920ba070"
     },
     {
       "path": "packages/engine/src/ui/types.ts",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 7178,
-      "sha256": "d9af4b4876a47f36547ece782a55b8aa86d3574663a83207ebdbb3658e4c58eb"
+      "bytes": 7652,
+      "sha256": "823dc856df89e18de945faff65f23e858b10a1c47dce9d19dc9da4097209fb31"
     },
     {
       "path": "packages/engine/src/ui/uiRoot.ts",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 56855,
-      "sha256": "2996e1293e544771adbd62888b555a980dc1012ff947954772f6a85854a8df27"
+      "bytes": 58517,
+      "sha256": "6d07eecd9bcafc228224f10c29a4e278085f266f47bd4bbd1a6e9155afa69352"
     },
     {
       "path": "packages/engine/src/ui/virtualList.ts",
@@ -13328,8 +13328,8 @@
     {
       "path": "contributions/m3-ui-data-panel.json",
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
-      "bytes": 7929,
-      "sha256": "f7b36e813e093b0742c8c7283ec7cf1fac9bb3a4f39d155e05e92643b7500d76"
+      "bytes": 8407,
+      "sha256": "1de93ea157cf034a8521e93f42de4cf87447ebccbd974036dcec9a80de96e6f2"
     },
     {
       "path": "examples/sequence-controls/PROVENANCE.md",
@@ -14258,26 +14258,26 @@
     {
       "path": "examples/mobile/panels.mjs",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 30557,
-      "sha256": "11b795807662b9ab9aecde1360192dc6bc3a7fae1cb0fb35d5f7c6677c36ad02"
+      "bytes": 32961,
+      "sha256": "a2cf4c3f4641f47bbf7be63be534f3b19091ead2b80115204e6b99ed9fad82bd"
     },
     {
       "path": "examples/mobile/verify-browser.mjs",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 30623,
-      "sha256": "3004e3fc2cfef4482cb52b5fae78335f56beeafdcb658b2517f568d83fcd213b"
+      "bytes": 33367,
+      "sha256": "af0c79ab506642fa929d9e01fba2d3a4d0fdfd99e62a03e5a88367166ff381ab"
     },
     {
       "path": "examples/mobile/README.md",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 1584,
-      "sha256": "8b2898cc05b03cf340f1d2d907d899d45ced21089cce7f4ff0f200ffa57c6e07"
+      "bytes": 1798,
+      "sha256": "1deb45edef32ae107d5e99050e139b6bac33d93708faef87783d94b0915e5a5b"
     },
     {
       "path": "examples/mobile/README.zh-CN.md",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 1408,
-      "sha256": "4e1a9d446d94050604eade0ce2de4250a428692a7917c6fb4f3bf08e270f4f3b"
+      "bytes": 1588,
+      "sha256": "e319a7cea177380e46a9c3d51519cc0f1a49b8ef67d068cf3bda0f1ab8acaf5d"
     },
     {
       "path": "tests/mobile-examples.test.mjs",
@@ -14306,8 +14306,8 @@
     {
       "path": "packages/engine/src/keyboardInput.ts",
       "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset.",
-      "bytes": 16209,
-      "sha256": "2fca2a3d826480f6b837024343e885b06f4891783ed6222adc82008fcf131508"
+      "bytes": 16485,
+      "sha256": "0462c2020c05e56ae4eb3441f4c1981fc2ae11ba3f824fe617a438d6790202ce"
     },
     {
       "path": "packages/engine/src/keyboardInputTypes.ts",
@@ -14372,20 +14372,20 @@
     {
       "path": "tests/types/keyboard-positive.ts",
       "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset.",
-      "bytes": 1499,
-      "sha256": "9d41102528b2d34e2d81add3adc2209ccc194ef758159605651ff80396766886"
+      "bytes": 2021,
+      "sha256": "15ca81082e47d3b4886fae92d7ae78c5ec3894d595d0516373bd732a73e2dbe1"
     },
     {
       "path": "knowledge-base/en/docs/keyboard-focus-input.md",
       "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset.",
-      "bytes": 8082,
-      "sha256": "e81bef2c53781e2d3b9bd4ee40ade14313a7640c4b2c4c8306141636627572de"
+      "bytes": 8421,
+      "sha256": "7afd38cdba3b7e789a163b10ce33a5084e29af2048c578611dcdfddc0fdc97a7"
     },
     {
       "path": "knowledge-base/Cns/docs/keyboard-focus-input.md",
       "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset.",
-      "bytes": 6961,
-      "sha256": "87b3c4a31678f7d2760eaa16d71e18a623979513aeea42fc6f1bc06e57c7867a"
+      "bytes": 7216,
+      "sha256": "32472ddf5b7e5ec78be5b220c2d6c742674bbc1e1c98dcac5a2b1994ff0644f3"
     },
     {
       "path": "contributions/keyboard-focus-input.json",
@@ -14734,6 +14734,18 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 9172,
       "sha256": "f2ce249ef75d60ff223a5b15ac963dbf5e29fc408065cda8fcf6b866af9fc156"
+    },
+    {
+      "path": "packages/engine/src/ui/keyboardFocus.ts",
+      "originRole": "First-party managed UI keyboard lifetime integration and public behavior tests, independently authored with AI assistance; Apache-2.0.",
+      "bytes": 4731,
+      "sha256": "c30fbea2c43cf9b2da39abd9b613e43339c28ae5de30e9765a862b7160d8eeec"
+    },
+    {
+      "path": "tests/ui-keyboard-focus.test.mjs",
+      "originRole": "First-party managed UI keyboard lifetime integration and public behavior tests, independently authored with AI assistance; Apache-2.0.",
+      "bytes": 10145,
+      "sha256": "7b1162d009279e24e070d7102481de2c5c1d967cb9249c1926ff86fd6b4a69b9"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

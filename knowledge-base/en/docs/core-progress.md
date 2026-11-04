@@ -4,6 +4,10 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## M3.1/M3.3 managed row focus — 2026-11-04
+
+Managed virtual lists can borrow the existing keyboard channel. Committed visible rows receive stable IDs, visual-order traversal and explicit focus; replacement cancels old held keys before detachment and restores only an eligible same-key target. Scrolling out explicitly releases focus, without hidden-row retention. See [ownership and API details](ui-data-panel.md#managed-virtual-row-keyboard-focus). The responsive UI/paragraph pages include keyboard selection and a visible outline. Native editing, offscreen navigation, modal controls and full M3/device/performance acceptance remain OPEN.
+
 ## M3.2 source, selection and caret geometry — 2026-10-30
 
 The optional paragraph SDK now publishes immutable UTF-16 hit, selection and caret geometry from the same native paragraph and committed raster. Bounded metadata fees share existing asset leases and latest-intent/UI ownership. Current focused verification passes 35 cases; actual Edge WebGL2 and WebGPU each pass 10 checks. The [contract](paragraph-text-geometry.md) and standalone UI example define source affinity, grapheme/CRLF boundaries and hidden-ellipsis behavior. Native editing/IME, full script/font/ink, phones, performance and full M3/M4 remain OPEN; PR/Main delivery is separate.

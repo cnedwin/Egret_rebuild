@@ -12,3 +12,11 @@ target.on(input.events.cancel,event=>{const reason:string=event.payload.reason;v
 input.focus('control',{reason:'pointer',visible:false});const id:string|undefined=input.moveFocus('next',true);const prevented:boolean=input.keyDown({code:'Space',key:' '});
 const snapshot:KeyboardInputSnapshot=input.getSnapshot();const keys:readonly string[]=snapshot.pressedKeys;
 const browser:KeyboardInput=createBrowserKeyboardInput({engine,scope});void browser;void id;void prevented;void keys;
+
+import {createUiRoot} from '@egret/engine/ui';
+import type {UiKeyboardOptions, VirtualDataSource} from '@egret/engine/ui';
+declare const source:VirtualDataSource<unknown>;
+const keyboard:UiKeyboardOptions={input,idPrefix:'panel'};
+const panel=createUiRoot({engine,scope,id:'panel',viewport:{width:100,height:100},density:1,tree:{kind:'virtualList',id:'rows',source},keyboard});
+panel.list('rows').focus('row',{reason:'keyboard',visible:true});
+const rowKey:string|undefined=panel.list('rows').getFocus().key;void rowKey;

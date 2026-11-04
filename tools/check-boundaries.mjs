@@ -4116,9 +4116,9 @@ const m31UiLiteralClosure = {
   "packages/engine/src/pointerInput.ts": [["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./mouseInput.js"],["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/input"],["static","@egret/runtime/input"]],
   "packages/engine/dist/pointerInput.js": [["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","@egret/runtime"],["static","@egret/runtime/input"]],
   "packages/engine/dist/pointerInput.d.ts": [["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"]],
-  "packages/engine/src/internal/uiFactoryState.ts": [["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+  "packages/engine/src/internal/uiFactoryState.ts": [["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
   "packages/engine/dist/internal/uiFactoryState.js": [["static","@egret/runtime"]],
-  "packages/engine/dist/internal/uiFactoryState.d.ts": [["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+  "packages/engine/dist/internal/uiFactoryState.d.ts": [["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
   "packages/runtime/src/ui/index.ts": [["static","./displayCommit.js"],["static","./displayCommit.js"],["static","./heightIndex.js"],["static","./layout.js"],["static","./types.js"]],
   "packages/runtime/dist/ui/index.js": [["static","./displayCommit.js"],["static","./heightIndex.js"],["static","./layout.js"]],
   "packages/runtime/dist/ui/index.d.ts": [["static","./displayCommit.js"],["static","./displayCommit.js"],["static","./heightIndex.js"],["static","./layout.js"],["static","./types.js"]],
@@ -4140,11 +4140,11 @@ const m31UiLiteralClosure = {
   "packages/engine/src/ui/index.ts": [["static","./types.js"],["static","./uiRoot.js"]],
   "packages/engine/dist/ui/index.js": [["static","./uiRoot.js"]],
   "packages/engine/dist/ui/index.d.ts": [["static","./types.js"],["static","./uiRoot.js"]],
-  "packages/engine/src/ui/types.ts": [["static","../Engine.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+  "packages/engine/src/ui/types.ts": [["static","../Engine.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
   "packages/engine/dist/ui/types.js": [],
-  "packages/engine/dist/ui/types.d.ts": [["static","../Engine.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
-  "packages/engine/src/ui/uiRoot.ts": [["static","../internal/uiFactoryState.js"],["static","../pointerInputTypes.js"],["static","./types.js"],["static","./virtualList.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"],["static","@egret/runtime/ui"]],
-  "packages/engine/dist/ui/uiRoot.js": [["static","../internal/uiFactoryState.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+  "packages/engine/dist/ui/types.d.ts": [["static","../Engine.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+  "packages/engine/src/ui/uiRoot.ts": [["static","../internal/uiFactoryState.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","./keyboardFocus.js"],["static","./keyboardFocus.js"],["static","./leafContent.js"],["static","./leafContent.js"],["static","./types.js"],["static","./virtualList.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"],["static","@egret/runtime/ui"]],
+  "packages/engine/dist/ui/uiRoot.js": [["static","../internal/uiFactoryState.js"],["static","./keyboardFocus.js"],["static","./leafContent.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
   "packages/engine/dist/ui/uiRoot.d.ts": [["static","./types.js"]],
   "packages/engine/src/ui/virtualList.ts": [["static","./types.js"],["static","@egret/runtime"]],
   "packages/engine/dist/ui/virtualList.js": [["static","@egret/runtime"]],
@@ -4824,6 +4824,10 @@ const m32ParagraphLiteralClosure = {
     ],
     [
       "static",
+      "./keyboardFocus.js"
+    ],
+    [
+      "static",
       "./leafContent.js"
     ],
     [
@@ -4930,7 +4934,19 @@ const m32ParagraphLiteralClosure = {
     ],
     [
       "static",
+      "../keyboardInputTypes.js"
+    ],
+    [
+      "static",
       "../pointerInputTypes.js"
+    ],
+    [
+      "static",
+      "./keyboardFocus.js"
+    ],
+    [
+      "static",
+      "./keyboardFocus.js"
     ],
     [
       "static",
@@ -5851,7 +5867,7 @@ const uiRead=file=>readFileSync(path.join(root,file),'utf8').replace(/\/\*[\s\S]
 const uiSame=(a,b)=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
 const uiGraphEdges=code=>[...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>['literal',match[1]]);
 const uiValues=['createUiRoot'];
-const uiTypes=['LayoutNode','UiInvalidationKind','UiLimits','VirtualRecord','VirtualDataSource','RowBindContext','UiLeafPrepareContext','UiLeafContent','RowBinding','RowUnbindInfo','RowRetention','UiRowPointerNotification','UiRootOptions','UiPreparation','UiCommitResult','UiRowSnapshot','UiCounters','VirtualListSnapshot','UiSnapshot','VirtualListHandle','UiRoot'];
+const uiTypes=['LayoutNode','UiInvalidationKind','UiLimits','VirtualRecord','VirtualDataSource','RowBindContext','UiLeafPrepareContext','UiLeafContent','RowBinding','RowUnbindInfo','RowRetention','UiRowPointerNotification','UiRootOptions','UiKeyboardOptions','UiPreparation','UiCommitResult','UiRowSnapshot','UiCounters','VirtualListSnapshot','UiSnapshot','VirtualListHandle','UiRoot'];
 const runtimeUiValues=['UiHeightIndex','captureUiLayout','createUiDisplayOperations','planUiLayout'];
 for(const [entry,values]of [['engine',await import('@egret/engine/ui')],['runtime',await import('@egret/runtime/ui')]])
   if(!uiSame(Object.keys(values),entry==='engine'?uiValues:runtimeUiValues))throw new Error('M3.1: exact optional UI values mismatch: '+entry);
@@ -5959,7 +5975,7 @@ for(const [label,values,stem] of textEntries){
 }
 const keyboardAllowed={
  'src/keyboardInput.js':['src/input.ts'],'dist/keyboardInput.js':['dist/input.js','dist/input.d.ts'],
- 'src/keyboardInputTypes.js':['src/keyboardInput.ts','src/input.ts'],'dist/keyboardInputTypes.js':['dist/keyboardInput.d.ts','dist/input.d.ts'],
+ 'src/keyboardInputTypes.js':['src/keyboardInput.ts','src/input.ts','src/internal/uiFactoryState.ts','src/ui/types.ts','src/ui/uiRoot.ts','src/ui/keyboardFocus.ts'],'dist/keyboardInputTypes.js':['dist/keyboardInput.d.ts','dist/input.d.ts','dist/internal/uiFactoryState.d.ts','dist/ui/types.d.ts','dist/ui/keyboardFocus.d.ts'],
  'web/BrowserKeyboardInput.js':['web/keyboard.ts'],'dist/web/BrowserKeyboardInput.js':['dist/web/keyboard.js','dist/web/keyboard.d.ts'],
 };
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/dist'))]){

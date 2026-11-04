@@ -5,7 +5,10 @@ import { captureUiLayout, planUiLayout, UiHeightIndex, createUiDisplayOperations
 import type { UiLayoutTree, UiLayoutNode, UiLayoutPlan, UiLayoutBox, UiDisplayUpdate } from '@egret/runtime/ui';
 import { requireUiEngine } from '../internal/uiFactoryState.js';
 import type { PointerInput } from '../pointerInputTypes.js';
+import type { KeyboardFocusOptions } from '../keyboardInputTypes.js';
 import { captureSource } from './virtualList.js';
+import { createUiKeyboardFocus } from './keyboardFocus.js';
+import type { KeyboardRow } from './keyboardFocus.js';
 import type { CapturedSource } from './virtualList.js';
 import { captureUiTree, leafConstraintTree, leafMeasuredTree, fixedLeafMeasurement } from './leafContent.js';
 import type { CapturedLeafContent } from './leafContent.js';
@@ -194,6 +197,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             fail('UI_INPUT_BUSY');
     }
     validateNewInput(input);
+    const keyboard = options.keyboard === undefined ? undefined : createUiKeyboardFocus(port.requireKeyboard(options.keyboard.input), options.keyboard.idPrefix);
+    keyboard?.validate(source?.byKey.keys() ?? []);
     let closed = false, desired = 1, committed = 0, inputGeneration = 0, generation = 0, busy = false, committing = false;
     let cancelFlight: ((error: unknown) => void) | undefined, preparedWindow: WindowState | undefined, plan: UiLayoutPlan | undefined, committedIndex: UiHeightIndex | undefined, committedSource: CapturedSource | undefined;
     let bindings = new Map<string, Binding>(), shells = new Map<string, Shell>(), pool: Shell[] = [], fills: ScopePort[] = [];
@@ -893,6 +898,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             admit('source', () => {
                 const revision = desired;
                 const captured = captureSource(value);
+                keyboard?.validate(captured.byKey.keys());
                 check(revision);
                 if (source?.identity === value && source.revision === captured.revision) {
                     if (source.bind !== captured.bind || source.unbind !== captured.unbind || source.records.length !== captured.records.length || source.records.some((r, i) => {
@@ -951,6 +957,12 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 change();
             });
         },
+        focus(key: string | undefined, options?: KeyboardFocusOptions) {
+            open();
+            if (keyboard === undefined) fail('UI_KEYBOARD_UNAVAILABLE');
+            keyboard.focus(key, options);
+        },
+        getFocus() { return keyboard?.getFocus() ?? freeze({ key: undefined, focusVisible: false }); },
         retain(key: string, reason: 'focus' | 'composition') {
             return admit('retain', () => {
                 if (reason !== 'focus' && reason !== 'composition')
@@ -1022,6 +1034,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 if (t.nodes.size !== tree.nodes.size || [...t.nodes].some(([key, node]) => tree.nodes.get(key)?.kind !== node.kind))
                     fail('UI_TREE_SHAPE');
                 const list = listId === undefined ? undefined : t.nodes.get(listId), s = list === undefined ? undefined : captureSource(list.source as VirtualDataSource<unknown>);
+                keyboard?.validate(s?.byKey.keys() ?? []);
                 if (s !== undefined && source !== undefined && s.revision <= source.revision && (s.revision !== source.revision || s.identity !== source.identity || s.bind !== source.bind || s.unbind !== source.unbind || s.records.length !== source.records.length || s.records.some((record, index) => { const old = (source!).records[index]!; return record.key !== old.key || record.contentVersion !== old.contentVersion || record.estimatedHeight !== old.estimatedHeight || record.value !== old.value; })))
                     fail('UI_SOURCE_REVISION');
                 check(revision);
@@ -1164,6 +1177,14 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             // All child arrays, pool membership, retire lists and the snapshot already exist.
             // Runtime publication and index/reference assignment contain no user callbacks.
             try {
+                const keyboardRows: KeyboardRow[] = c.rows.map(row => ({ key: row.key, content: c.bindings.get(row.key)!.content!, visible: row.visible }));
+                const restoreFocus = keyboard?.before(keyboardRows);
+                // Cancellation callbacks may change or close the UI. Never publish their obsolete proposal.
+                if (closed || desired !== preparation.desiredRevision || committed !== preparation.baseCommittedRevision) {
+                    entry.used = true;
+                    clearCandidate(c, errors);
+                    return result(closed ? 'closed' : 'stale', errors);
+                }
                 display.commit(c.displayToken);
                 c.indexJournal?.apply();
                 candidates.delete(c);
@@ -1184,6 +1205,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 explicitScroll = undefined;
                 heightUpdates.clear();
                 dirty.clear();
+                try { keyboard?.commit(keyboardRows, restoreFocus); } catch (cause) { errors.push(cause); }
                 // Observers see the new complete revision before any old binding is retired.
                 sync(errors);
                 for (const leaf of c.retiringLeaves)
@@ -1228,6 +1250,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             cancelFlight?.(new EgretError('UI_CLOSED'));
             for (const candidate of [...candidates])
                 clearCandidate(candidate, errors);
+            try { keyboard?.dispose(); } catch (cause) { errors.push(cause); }
             try {
                 display.detach(rootWrapper);
             }
