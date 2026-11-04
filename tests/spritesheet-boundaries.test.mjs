@@ -143,6 +143,8 @@ test('SS1-P00 current complete built graph satisfies SpriteSheet source/emission
   accepted(check(['--root', repository]));
 });
 const controls = [
+  { name: 'SS1 key-reveal source cannot drift with unchanged emissions', file: 'packages/engine/src/ui/index.ts', code: 'SS1_BOUNDARY_SOURCE_OWNER', mutate: bytes => Buffer.concat([bytes, Buffer.from('// unreviewed key-reveal source\n')]) },
+  { name: 'SS1 key-reveal emission cannot drift within the admitted group', file: 'packages/engine/dist/ui/virtualList.js', code: 'SS1_BOUNDARY_SOURCE_OWNER', mutate: bytes => { const changed = Buffer.from(bytes); changed[0] ^= 1; return changed; } },
   { name: 'SS1-M21 content source rejects unreviewed bytes', file: 'packages/project/src/resources/content.ts', code: 'SS1_BOUNDARY_SOURCE_OWNER',
     mutate: bytes => Buffer.concat([bytes, Buffer.from('// unreviewed content source\n')]) },
   { name: 'SS1-M12 runtime source cannot mix with unchanged emission', file: 'packages/runtime/src/frameCapture.ts', code: 'SS1_BOUNDARY_SOURCE_OWNER',

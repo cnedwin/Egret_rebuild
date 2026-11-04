@@ -82,6 +82,8 @@ function isolated(action){
 
 test('ATLAS-M11 full genuine owner copy satisfies source actor',()=>isolated(({root,run,baseline})=>{assert.deepEqual(inventory(root),baseline);accepted(run());}));
 const controls=[
+ ['key-reveal source cannot drift with unchanged emissions','packages/engine/src/ui/index.ts','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('// unreviewed key-reveal source\n')])],
+ ['key-reveal emission cannot drift within the admitted group','packages/engine/dist/ui/virtualList.js','ATLAS_SOURCE_IDENTITY',raw=>{const changed=Buffer.from(raw);changed[0]^=1;return changed;}],
  ['M2.1 content source rejects unknown bytes','packages/project/src/resources/content.ts','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('// unknown content source\n')])],
  ['M2.1 content package rejects unknown bytes','package.json','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('\n')])],
  ['M2.1 content lock rejects unknown bytes','pnpm-lock.yaml','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('\n')])],

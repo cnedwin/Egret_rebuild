@@ -32,6 +32,8 @@ const m15DeepClauses = {
   "packages/engine/dist/web/resources.js": [{operation:'import',kind:'value',members:['createContentLoader'],target:'@egret/engine/resources'}],
   "packages/engine/dist/web/resources.d.ts": [{operation:'import',kind:'type',members:['Engine'],target:'@egret/engine'},{operation:'import',kind:'type',members:['ContentLoader'],target:'@egret/engine/resources'},{operation:'import',kind:'type',members:['AdmittedResourceManifest'],target:'@egret/contracts/resources'}],
   // M3.2: ordinary UI content keeps exact numeric runtime imports.
+  "packages/engine/src/ui/virtualList.ts": [{operation:'import',kind:'type',members:['UiHeightView'],target:'@egret/runtime/ui'}],
+  "packages/engine/dist/ui/virtualList.d.ts": [{operation:'import',kind:'type',members:['UiHeightView'],target:'@egret/runtime/ui'}],
   "packages/engine/src/ui/leafContent.ts": [{operation:'import',kind:'value',members:['captureUiLayout'],target:'@egret/runtime/ui'},{operation:'import',kind:'type',members:['UiLayoutNode','UiLayoutTree','UiMeasurement'],target:'@egret/runtime/ui'}],
   "packages/engine/dist/ui/leafContent.js": [{operation:'import',kind:'value',members:['captureUiLayout'],target:'@egret/runtime/ui'}],
   "packages/engine/dist/ui/leafContent.d.ts": [{operation:'import',kind:'type',members:['UiLayoutNode','UiLayoutTree'],target:'@egret/runtime/ui'}],
@@ -4146,9 +4148,9 @@ const m31UiLiteralClosure = {
   "packages/engine/src/ui/uiRoot.ts": [["static","../internal/uiFactoryState.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","./keyboardFocus.js"],["static","./keyboardFocus.js"],["static","./leafContent.js"],["static","./leafContent.js"],["static","./types.js"],["static","./virtualList.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"],["static","@egret/runtime/ui"]],
   "packages/engine/dist/ui/uiRoot.js": [["static","../internal/uiFactoryState.js"],["static","./keyboardFocus.js"],["static","./leafContent.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
   "packages/engine/dist/ui/uiRoot.d.ts": [["static","./types.js"]],
-  "packages/engine/src/ui/virtualList.ts": [["static","./types.js"],["static","@egret/runtime"]],
+  "packages/engine/src/ui/virtualList.ts": [["static","./types.js"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
   "packages/engine/dist/ui/virtualList.js": [["static","@egret/runtime"]],
-  "packages/engine/dist/ui/virtualList.d.ts": [["static","./types.js"]],
+  "packages/engine/dist/ui/virtualList.d.ts": [["static","./types.js"],["static","@egret/runtime/ui"]],
 };
 
 // Exact reviewed sequence edges override only their current cooperating owners.
@@ -5867,7 +5869,7 @@ const uiRead=file=>readFileSync(path.join(root,file),'utf8').replace(/\/\*[\s\S]
 const uiSame=(a,b)=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
 const uiGraphEdges=code=>[...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>['literal',match[1]]);
 const uiValues=['createUiRoot'];
-const uiTypes=['LayoutNode','UiInvalidationKind','UiLimits','VirtualRecord','VirtualDataSource','RowBindContext','UiLeafPrepareContext','UiLeafContent','RowBinding','RowUnbindInfo','RowRetention','UiRowPointerNotification','UiRootOptions','UiKeyboardOptions','UiPreparation','UiCommitResult','UiRowSnapshot','UiCounters','VirtualListSnapshot','UiSnapshot','VirtualListHandle','UiRoot'];
+const uiTypes=['LayoutNode','UiInvalidationKind','UiLimits','VirtualRecord','VirtualDataSource','RowBindContext','UiLeafPrepareContext','UiLeafContent','RowBinding','RowUnbindInfo','RowRetention','UiRowPointerNotification','UiRootOptions','UiKeyboardOptions','UiPreparation','UiCommitResult','UiRowSnapshot','UiCounters','VirtualListSnapshot','UiSnapshot','VirtualListHandle','VirtualListRevealOptions','UiRoot'];
 const runtimeUiValues=['UiHeightIndex','captureUiLayout','createUiDisplayOperations','planUiLayout'];
 for(const [entry,values]of [['engine',await import('@egret/engine/ui')],['runtime',await import('@egret/runtime/ui')]])
   if(!uiSame(Object.keys(values),entry==='engine'?uiValues:runtimeUiValues))throw new Error('M3.1: exact optional UI values mismatch: '+entry);

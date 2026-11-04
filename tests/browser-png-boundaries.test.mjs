@@ -128,6 +128,8 @@ function append(text) { return bytes => Buffer.concat([bytes, Buffer.from(text, 
 function jsonEdit(change) { return bytes => { const value = JSON.parse(bytes); change(value); return Buffer.from(JSON.stringify(value, null, 2) + '\n'); }; }
 const adapter = 'packages/engine/web/BrowserTextureProvider.ts';
 const cases = [
+  ['key-reveal source cannot drift with unchanged emissions', 'packages/engine/src/ui/index.ts', 'BIP_BOUNDARY_FINGERPRINT', append('// unreviewed key-reveal source\n')],
+  ['key-reveal emission cannot drift within the admitted group', 'packages/engine/dist/ui/virtualList.js', 'BIP_BOUNDARY_FINGERPRINT', bytes => { const changed = Buffer.from(bytes); changed[0] ^= 1; return changed; }],
   ['M2.1 content source rejects unreviewed bytes', 'packages/project/src/resources/content.ts', 'BIP_BOUNDARY_FINGERPRINT', append('// unreviewed content source\n')],
   ['M2.1 pngjs version drift', 'package.json', 'BIP_BOUNDARY_DAG', jsonEdit(value => { value.devDependencies.pngjs = '7.0.1'; })],
   ['M1.2 runtime source with unchanged emission', 'packages/runtime/src/frameCapture.ts', 'BIP_BOUNDARY_FINGERPRINT', append('// unaccepted incremental capture source\n')],

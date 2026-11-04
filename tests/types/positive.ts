@@ -497,3 +497,12 @@ const sequenceControlIssue: string | undefined = sequenceControlStatus.lastIssue
 sequenceControl.stop();
 sequenceControl.dispose();
 void sequenceControlIssue;
+
+import type { VirtualListRevealOptions } from '@egret/engine/ui';
+declare const navigationList: import('@egret/engine/ui').VirtualListHandle<number>;
+const navigationOptions: VirtualListRevealOptions = {align: 'nearest'};
+navigationList.reveal('record', navigationOptions);
+navigationList.reveal('record', {align: 'start'});
+navigationList.reveal('record', {align: 'center'});
+navigationList.reveal('record', {align: 'end'});
+navigationList.reveal(undefined);

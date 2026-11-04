@@ -810,14 +810,17 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       "packages/engine/src/ui/uiRoot.ts": [["static","../internal/uiFactoryState.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","./keyboardFocus.js"],["static","./keyboardFocus.js"],["static","./leafContent.js"],["static","./leafContent.js"],["static","./types.js"],["static","./virtualList.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"],["static","@egret/runtime/ui"]],
       "packages/engine/dist/ui/uiRoot.js": [["static","../internal/uiFactoryState.js"],["static","./keyboardFocus.js"],["static","./leafContent.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
       "packages/engine/dist/ui/uiRoot.d.ts": [["static","./types.js"]],
-      "packages/engine/src/ui/virtualList.ts": [["static","./types.js"],["static","@egret/runtime"]],
+      "packages/engine/src/ui/virtualList.ts": [["static","./types.js"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
       "packages/engine/dist/ui/virtualList.js": [["static","@egret/runtime"]],
-      "packages/engine/dist/ui/virtualList.d.ts": [["static","./types.js"]],
+      "packages/engine/dist/ui/virtualList.d.ts": [["static","./types.js"],["static","@egret/runtime/ui"]],
       "packages/engine/src/ui/keyboardFocus.ts": [["static","../keyboardInputTypes.js"],["static","@egret/runtime"],["static","@egret/runtime"]],
       "packages/engine/dist/ui/keyboardFocus.js": [["static","@egret/runtime"]],
       "packages/engine/dist/ui/keyboardFocus.d.ts": [["static","../keyboardInputTypes.js"],["static","@egret/runtime"]],
     };
     const m31UiSeeds = {
+  // Preserve the exact erased height-view port without evaluating layout logic.
+  "packages/engine/src/ui/virtualList.ts": "import type { UiHeightView } from '@egret/runtime/ui';\n",
+  "packages/engine/dist/ui/virtualList.d.ts": "import type { UiHeightView } from '@egret/runtime/ui';\n",
   "packages/engine/src/ui/index.ts": "// SPDX-License-Identifier: Apache-2.0\nexport { createUiRoot } from './uiRoot.js';\nexport type { LayoutNode, UiInvalidationKind, UiLimits, VirtualRecord, VirtualDataSource, RowBindContext, RowBinding, RowUnbindInfo, RowRetention, UiRowPointerNotification, UiRootOptions, UiPreparation, UiCommitResult, UiRowSnapshot, UiCounters, VirtualListSnapshot, UiSnapshot, VirtualListHandle, UiRoot } from './types.js';\n",
   "packages/engine/dist/ui/index.d.ts": "// SPDX-License-Identifier: Apache-2.0\nexport { createUiRoot } from './uiRoot.js';\nexport type { LayoutNode, UiInvalidationKind, UiLimits, VirtualRecord, VirtualDataSource, RowBindContext, RowBinding, RowUnbindInfo, RowRetention, UiRowPointerNotification, UiRootOptions, UiPreparation, UiCommitResult, UiRowSnapshot, UiCounters, VirtualListSnapshot, UiSnapshot, VirtualListHandle, UiRoot } from './types.js';\n",
   "packages/engine/dist/ui/index.js": "export {createUiRoot} from './uiRoot.js';\n",
