@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "45a1ee2cbc1dd5501a73e4ce55141962c80eaa7f15df9144ba7871dfc73bbca6",
+      "sha256": "3e02a7a8ed0d8d0ae1aea9d6100e805d21023eb43354fb1a091217cb104efcf9",
       "bytes": 372539,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -5171,8 +5171,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 239638,
-      "sha256": "c52732f001f0a696e7500123b17afaa6fdb7697837ed9bfebb2038903077f36a",
+      "bytes": 239990,
+      "sha256": "c41105f0f5fd0d36ea54a90203817745ef71308fc95f1fc9bd25eadc20e729c1",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -13202,14 +13202,14 @@
     {
       "path": "knowledge-base/Cns/docs/ui-data-panel.md",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 13450,
-      "sha256": "11fcb19e0b8d5e1fce6a71044653f7864a55ddc76ef0699f708082d997b3ef56"
+      "bytes": 13669,
+      "sha256": "476dad61062ff8fd83962991807c53f0a616d785d2ce504daa9e0aaf72c1ea15"
     },
     {
       "path": "knowledge-base/en/docs/ui-data-panel.md",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 15602,
-      "sha256": "1883cce451548f632bea45a3b1a0dd52508d16257d6d2c09bb60cbc655bc4595"
+      "bytes": 15850,
+      "sha256": "aa9a7c66f7ead09b9625abe94cf1b779424cf9201a605a4c3817e5459ecc5ea6"
     },
     {
       "path": "packages/engine/src/internal/uiFactoryState.ts",

@@ -2019,8 +2019,8 @@
       "en": "knowledge-base/en/docs/ui-data-panel.md",
       "zh": "knowledge-base/Cns/docs/ui-data-panel.md",
       "kind": "public_reading",
-      "enSha256": "1883cce451548f632bea45a3b1a0dd52508d16257d6d2c09bb60cbc655bc4595",
-      "zhSha256": "11fcb19e0b8d5e1fce6a71044653f7864a55ddc76ef0699f708082d997b3ef56"
+      "enSha256": "aa9a7c66f7ead09b9625abe94cf1b779424cf9201a605a4c3817e5459ecc5ea6",
+      "zhSha256": "476dad61062ff8fd83962991807c53f0a616d785d2ce504daa9e0aaf72c1ea15"
     },
     {
       "en": "examples/ui-data-panel/README.md",
@@ -3011,7 +3011,7 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "c52732f001f0a696e7500123b17afaa6fdb7697837ed9bfebb2038903077f36a"
+      "sha256": "c41105f0f5fd0d36ea54a90203817745ef71308fc95f1fc9bd25eadc20e729c1"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
