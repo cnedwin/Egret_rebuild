@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "48eb942a346c2f325d6bbdd458e1b3c3f11232ea348422fdcd1e4c26ce1d2f8f",
+      "sha256": "0c48cf526c830642cf724c9c00d0782f84fa27a2e27bac3ea2b2eede6f87c69b",
       "bytes": 372539,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 700101,
-      "sha256": "afb72eb68f80f1088fa75544d814ad4c8dca4ecccad520beb70b46222947e197"
+      "bytes": 704475,
+      "sha256": "207bcf2d6708e262f5f2ccfbe186526a40fae80daf345fd6be03e7f4d9666215"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10718,8 +10718,8 @@
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
       "originRole": "First-party M0 registered compiler input review workflow; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 93421,
-      "sha256": "0317d77a59d0d5c25cb52688fb090eed0a0972aa84584b29a4bc1fcede8cf786"
+      "bytes": 96155,
+      "sha256": "f56b2930e3724c142138dc5ded31a3bc7fb81e3d30558e40dd6e68c3a64236c4"
     },
     {
       "path": "knowledge-base/en/docs/m1-rendering-resource-plan.md",

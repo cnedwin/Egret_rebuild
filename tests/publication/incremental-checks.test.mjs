@@ -1418,7 +1418,18 @@ const m31UiStrictHistory = [{"path":"tools/atlas-frame-types.mjs","kind":"strict
 const m31UiStrictBootstrap = {"before":"m13HelperPin.bytes !== 19535 || m13HelperPin.sha256 !== '7e458ff6c264079df2db6178014b4cea65b2067906484d2bf794c41e0e28c074'","after":"m13HelperPin.bytes !== 22381 || m13HelperPin.sha256 !== '9fa5b6d1b5fa4702090dbf50b932596c9fdd6a21aba3471be89dd0a91b5fcfeb'"};
 const m31UiReceiptBlock = "  // M3.1 retains each observed unsuppressed misuse tuple in the existing lane.\n  const uiCases = [{\"name\":\"optional-entry-only\",\"line\":461,\"column\":19,\"code\":2339},{\"name\":\"preparation-type-only\",\"line\":463,\"column\":18,\"code\":2339},{\"name\":\"nonforgeable-preparation\",\"line\":465,\"column\":7,\"code\":2741},{\"name\":\"required-list-source\",\"line\":467,\"column\":7,\"code\":2322},{\"name\":\"unsupported-layout-kind\",\"line\":469,\"column\":51,\"code\":2322},{\"name\":\"asynchronous-measure\",\"line\":471,\"column\":66,\"code\":2322},{\"name\":\"immutable-snapshot\",\"line\":473,\"column\":20,\"code\":2540},{\"name\":\"immutable-rows\",\"line\":475,\"column\":25,\"code\":2339},{\"name\":\"invalid-retention-reason\",\"line\":477,\"column\":42,\"code\":2345},{\"name\":\"unavailable-resource-total\",\"line\":479,\"column\":7,\"code\":2322}];\n  const uiMarkers=raw.split(/\\r?\\n/).flatMap((line,index)=>{const match=line.match(/@ts-expect-error UI_CASE ([\\w-]+)/);return match?[{name:match[1],line:index+2}]:[];});\n  if(JSON.stringify(uiMarkers)!==JSON.stringify(uiCases.map(({name,line})=>({name,line})))||(raw.match(/UI_CASE/g)??[]).length!==10)throw Error('UI exact negative membership changed');\n  const uiReceipts=uiCases.map(expected=>{\n    const found=observedGeometry.filter(actual=>actual.file==='tests/types/invalid.generated.ts'&&actual.line===expected.line);\n    if(found.length!==1||found[0].column!==expected.column||found[0].code!==expected.code)throw Error('UI unsuppressed exact diagnostic changed: '+expected.name);\n    return {name:expected.name,actual:found[0]};\n  });\n  console.log('UI individual unsuppressed diagnostic receipts: '+JSON.stringify(uiReceipts));\n\n";
 const m31UiFixtureEnginePackage = {"base":{"path":"packages/engine/package.json","bytes":2494,"sha256":"65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951"},"current":{"path":"packages/engine/package.json","bytes":2591,"sha256":"817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5"}};
+// Independent raw-byte inverse for the four key-navigation type receipts only.
+const m31NavigationFixtureSource = {"path":"tools/check-types.mjs","predecessor":{"path":"tools/check-types.mjs","bytes":144684,"sha256":"d78f5701d559aa7935a32027afc619b0a4e121a6e57825f4f3ff07c3be90adcf"},"current":{"path":"tools/check-types.mjs","bytes":145869,"sha256":"9e88f2d41ede87250ebd6d1d38f1cd8351091dd9f441b813cf2938cc9000cd38"}};
+const m31NavigationFixtureInsertion = "  // Key reveal remains synchronous and does not introduce a queued focus contract.\n  const navigationCases = [{name:'numeric-key',line:517,column:23,code:2345},{name:'unknown-alignment',line:519,column:34,code:2322},{name:'no-implicit-focus',line:521,column:34,code:2353},{name:'synchronous-intent',line:523,column:7,code:2322}];\n  const navigationMarkers=raw.split(/\\r?\\n/).flatMap((line,index)=>{const match=line.match(/@ts-expect-error UI_NAVIGATION_CASE ([\\w-]+)/);return match?[{name:match[1],line:index+2}]:[];});\n  if(JSON.stringify(navigationMarkers)!==JSON.stringify(navigationCases.map(({name,line})=>({name,line}))))throw Error('UI navigation negative membership changed');\n  const navigationReceipts=navigationCases.map(expected=>{const found=observedGeometry.filter(actual=>actual.file==='tests/types/invalid.generated.ts'&&actual.line===expected.line);if(found.length!==1||found[0].column!==expected.column||found[0].code!==expected.code)throw Error('UI navigation exact diagnostic changed: '+expected.name);return {name:expected.name,actual:found[0]};});\n  console.log('UI navigation individual unsuppressed diagnostic receipts: '+JSON.stringify(navigationReceipts));\n\n";
+function m31NavigationFixturePrevious(file,raw){
+ const selected=m31NavigationFixtureSource,identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
+ if(file!==selected.path||JSON.stringify(identity(raw))!==JSON.stringify(selected.current))return raw;
+ const text=raw.toString('utf8');assert.equal(text.split(m31NavigationFixtureInsertion).length,2);
+ const previous=Buffer.from(text.replace(m31NavigationFixtureInsertion,''));assert.deepEqual(identity(previous),selected.predecessor);return previous;
+}
+
 function m31UiStrictPredecessor(file,raw){
+ raw=m31NavigationFixturePrevious(file,raw);
  raw=m22SequencePrevious(raw,m22SequenceSourceHistory.find(row=>row.path===file));
  const row=m31UiStrictHistory.find(row=>row.path===file),identity=raw=>({path:file,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')});
  if(!row||JSON.stringify(identity(raw))!==JSON.stringify(row.current))return raw;
@@ -2273,5 +2284,26 @@ test('M3.3 keyboard strict preparation authenticates nine current wrappers befor
   const current=m.prepareCompilerReview(f.root,{inlinePolicies:true});assert.equal(current.inlinePolicies.sourceRevisions.filter(row=>row.m33KeyboardSuccessor).length,9);
   assert(current.inlinePolicies.sourceRevisions.filter(row=>row.m33KeyboardSuccessor).every(row=>row.extractionRevision.sha256!==row.current.sha256));
   assert.equal(m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}).status,'current-inputs');
+ }finally{f.close();}
+});
+
+test('M3.1 key-navigation compiler successor restores exact history and refuses inserted or unrelated drift',async()=>{
+ const m=await compilerTool(),f=inlineCompilerFixture({m12:true}),file='tools/check-types.mjs';try{
+  const collect=()=>m.prepareCompilerReview(f.root,{inlinePolicies:true});
+  const raw=fs.readFileSync(new URL('../../'+file,import.meta.url)),previous=m31NavigationFixturePrevious(file,raw);
+  assert.equal(previous.length,m31NavigationFixtureSource.predecessor.bytes);assert.equal(createHash('sha256').update(previous).digest('hex'),m31NavigationFixtureSource.predecessor.sha256);
+  f.put(file,previous);const historical=collect();
+  f.put(file,raw);const current=collect(),row=current.inlinePolicies.sourceRevisions.find(row=>row.base.path===file);
+  assert.deepEqual(row.m31NavigationSuccessor,m31NavigationFixtureSource.current);assert.deepEqual(row.extractionRevision,m31NavigationFixtureSource.predecessor);
+  assert.equal(row.selection,'m31-ui-current');assert.equal(m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}).status,'current-inputs');
+  assert.deepEqual(current.inlinePolicies.literals,historical.inlinePolicies.literals);
+  assert.deepEqual(current.inlinePolicies.conditions,historical.inlinePolicies.conditions);
+  assert.deepEqual(current.inlinePolicies.observations,historical.inlinePolicies.observations);
+  for(const altered of [Buffer.from(raw.toString().replace("name:'numeric-key',line:517","name:'numeric-key',line:518")),Buffer.concat([raw,Buffer.from('// unreviewed navigation checker drift\n')]),Buffer.concat([raw,Buffer.from(m31NavigationFixtureInsertion)])]){
+   // Each assigned mutation starts from a fresh complete accepted proposal.
+   f.put(file,raw);const baseline=collect();assert.equal(m.verifyCompilerProposal(f.root,baseline,{inlinePolicies:true}).status,'current-inputs');
+   assert.equal(altered.equals(raw),false);f.put(file,altered);assert.throws(collect,/Unreviewed inline policy source/);
+  }
+  f.put(file,raw);assert.equal(m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}).status,'current-inputs');
  }finally{f.close();}
 });
