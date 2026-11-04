@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "cb706fefbcb58abfd3f10708ec15731ca415f1988c71cec879d171540ab6fde6",
+      "sha256": "4db854154293dfcfd57e68c2b91c3b335eb58304a5867a15d5957ca85b460922",
       "bytes": 371767,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -3990,8 +3990,8 @@
     },
     {
       "path": "package.json",
-      "sha256": "716cda606f58987f784aee2a64e46cf0c2e0130e84157d2a869879b4c3ae7c40",
-      "bytes": 1130,
+      "sha256": "6e9855e62a56dafb463a293b2a5955fc70d552fe0c658cd3f99e6034dd983ced",
+      "bytes": 1165,
       "originalSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousRevisionSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
@@ -4801,8 +4801,8 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "sha256": "96847ab1b5dae779a687cf91bc8f03afdb45b7dec8e2b69e84bf13608d49e7ad",
-      "bytes": 9786,
+      "sha256": "7bf20612bfb56d834d35106fa29b0684314e60e3dbc6f83d04aef36bb44549e9",
+      "bytes": 9876,
       "originalSha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousRevisionSha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
@@ -9641,7 +9641,7 @@
     {
       "path": "tools/sequence-playback-boundary.mjs",
       "bytes": 61921,
-      "sha256": "f8b3ef13e2a7ef356703574592862bfa57adb071947f715cf156c4949c201657",
+      "sha256": "da160818cab7b5d5c1a5231a416d9ba9617ffd0d7d7a735faac3adf4d3d48b99",
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review.",
       "identityHistory": [
         {
@@ -9877,7 +9877,7 @@
     {
       "path": "tools/spritesheet-boundary.mjs",
       "bytes": 252663,
-      "sha256": "d98c02b95175b333f130191af6169f85e705962be450b02dafd7bb910fc4fe4f",
+      "sha256": "8f19ac2f77414d2815fc56b33910cbbbb21cd823c3e6dd0f9e8aafb6fc73de26",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10088,19 +10088,19 @@
     {
       "path": "tools/bitmap-binding-ticket-boundary.mjs",
       "bytes": 63419,
-      "sha256": "4ce0782193bf3d311ab841130e33497ceb52bba0f26daf8cf7d8f764066b5e50",
+      "sha256": "bc88cf0b2efe56dc76a83dd26f834c7eca91d1467f82531d2e8f45593413ecbc",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
       "bytes": 56840,
-      "sha256": "e34d89d62e91dbeeb028446414b2da3b4b9a62f18bfb8521c6bcf94c5c247e85",
+      "sha256": "98b5f0d8a24017014d7fa8729453519c1b7ae8c0c52242547cb775c01e549b1e",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 261538,
-      "sha256": "b2ada8153ddda8f2d39d99eaaba4310a2bb5c9bb30ef8c3fb14bcd2d5d8f4f6e",
+      "bytes": 261636,
+      "sha256": "5d4ec3fc991c2de3fd272c2a563f40f2103ee2896df510cdc73bdd2f6ba29678",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10162,7 +10162,7 @@
     {
       "path": "tools/atlas-import-boundary.mjs",
       "bytes": 157376,
-      "sha256": "f52b6720cbf7744e1d88f502f0e7b16014b05b9e8abe2be3d98eb75a831994c7",
+      "sha256": "e8f63cd530c81b47153317a798a02f10a85960291016e5929faf374b67bb4ca7",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 688117,
-      "sha256": "44a8c83b0f348750a848765438c5feb8bb47c32a3354135c1888dec9c89f7135"
+      "bytes": 696525,
+      "sha256": "05857b3e4422efe8b56514db840c50868692338e906de5e2ae04ca94bfa33978"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10689,7 +10689,7 @@
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
       "bytes": 42267,
-      "sha256": "fbdc2039eaa5db60c042dd45e27dee2d1f322c31f7b3a01a37981a9a00725502"
+      "sha256": "00cbef745d1bda4f597aff4875e764a1729ab7630e23a57b9b063872169810ad"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -14882,14 +14882,14 @@
     {
       "path": "examples/animation-outfits/README.md",
       "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 4441,
-      "sha256": "13735215cc703d13829c2e73bd0e6b64fb3b49c3dae5a37cb37ea263c34150b7"
+      "bytes": 4736,
+      "sha256": "9475bd86c1345f2dded16b2df937bb11c4852e6db6b99a09a3fbbf80a54f2c42"
     },
     {
       "path": "examples/animation-outfits/README.zh-CN.md",
       "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 4196,
-      "sha256": "1c86040b587009f81016f7be01b8ce9dac59c0448093598897ad76cf5e79d287"
+      "bytes": 4422,
+      "sha256": "1acf109753364fe446cae396afc1a34a641781bf58adb284d8882dd431b1a798"
     },
     {
       "path": "examples/animation-outfits/scene.mjs",
@@ -14924,8 +14924,8 @@
     {
       "path": "examples/animation-outfits/verification-summary.json",
       "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 6882,
-      "sha256": "c9d1ee445618af740b28cd2e70b1748ed398d5f0799d71ef896fa8da91ba55a8"
+      "bytes": 8608,
+      "sha256": "f463b7e1465510e278fe38051f66f1bf54255478014cda5299075bfb408e2c79"
     },
     {
       "path": "contributions/m2-animation-outfits.json",

@@ -21,6 +21,9 @@ importers:
       '@egret/runtime':
         specifier: workspace:*
         version: link:packages/runtime
+      '@egret/spine':
+        specifier: workspace:*
+        version: link:packages/spine
       jsonc-parser:
         specifier: 3.3.1
         version: 3.3.1

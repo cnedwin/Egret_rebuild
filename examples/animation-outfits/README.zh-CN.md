@@ -8,6 +8,8 @@
 
 准备仓库固定的 Node 26.7.0、pnpm 11.25.0 和 TypeScript 7.0.2 依赖后执行：
 
+根目录的开发依赖 @egret/spine 让 pnpm 安装本示例及测试使用的公开入口链接，不会将 Spine 加入默认 Engine 依赖图。手工创建本地链接不是安装要求，也不能代替依赖声明。
+
     node tools/build.mjs
     node examples/animation-outfits/author.mjs
     node tools/serve-example.mjs --port 4173

@@ -2166,8 +2166,8 @@
       "en": "examples/animation-outfits/README.md",
       "zh": "examples/animation-outfits/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "13735215cc703d13829c2e73bd0e6b64fb3b49c3dae5a37cb37ea263c34150b7",
-      "zhSha256": "1c86040b587009f81016f7be01b8ce9dac59c0448093598897ad76cf5e79d287"
+      "enSha256": "9475bd86c1345f2dded16b2df937bb11c4852e6db6b99a09a3fbbf80a54f2c42",
+      "zhSha256": "1acf109753364fe446cae396afc1a34a641781bf58adb284d8882dd431b1a798"
     },
     {
       "en": "examples/animation-outfits/PROVENANCE.md",
@@ -3144,7 +3144,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "b2ada8153ddda8f2d39d99eaaba4310a2bb5c9bb30ef8c3fb14bcd2d5d8f4f6e"
+      "sha256": "5d4ec3fc991c2de3fd272c2a563f40f2103ee2896df510cdc73bdd2f6ba29678"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3292,11 +3292,11 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "d98c02b95175b333f130191af6169f85e705962be450b02dafd7bb910fc4fe4f"
+      "sha256": "8f19ac2f77414d2815fc56b33910cbbbb21cd823c3e6dd0f9e8aafb6fc73de26"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
-      "sha256": "f8b3ef13e2a7ef356703574592862bfa57adb071947f715cf156c4949c201657"
+      "sha256": "da160818cab7b5d5c1a5231a416d9ba9617ffd0d7d7a735faac3adf4d3d48b99"
     },
     {
       "path": "tests/display-container-remove-children-api.test.mjs",
@@ -3468,7 +3468,7 @@
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
-      "sha256": "e34d89d62e91dbeeb028446414b2da3b4b9a62f18bfb8521c6bcf94c5c247e85"
+      "sha256": "98b5f0d8a24017014d7fa8729453519c1b7ae8c0c52242547cb775c01e549b1e"
     },
     {
       "path": "tools/verify-bitmap-resource-slot.mjs",
@@ -3604,7 +3604,7 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-boundary.mjs",
-      "sha256": "4ce0782193bf3d311ab841130e33497ceb52bba0f26daf8cf7d8f764066b5e50"
+      "sha256": "bc88cf0b2efe56dc76a83dd26f834c7eca91d1467f82531d2e8f45593413ecbc"
     },
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
@@ -3764,7 +3764,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "44a8c83b0f348750a848765438c5feb8bb47c32a3354135c1888dec9c89f7135"
+      "sha256": "05857b3e4422efe8b56514db840c50868692338e906de5e2ae04ca94bfa33978"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3792,7 +3792,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "fbdc2039eaa5db60c042dd45e27dee2d1f322c31f7b3a01a37981a9a00725502"
+      "sha256": "00cbef745d1bda4f597aff4875e764a1729ab7630e23a57b9b063872169810ad"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",

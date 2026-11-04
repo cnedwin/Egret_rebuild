@@ -8,6 +8,8 @@ One Engine renders 20 independent Spine players sharing one parsed setup and two
 
 With the repository's pinned Node 26.7.0, pnpm 11.25.0 and TypeScript 7.0.2 dependencies prepared:
 
+The root development dependency on @egret/spine lets pnpm install the public-entry link used by this example and its tests. It does not add Spine to the default Engine dependency graph; a manually created local link is not an installation requirement or substitute for the declared dependency.
+
     node tools/build.mjs
     node examples/animation-outfits/author.mjs
     node tools/serve-example.mjs --port 4173
