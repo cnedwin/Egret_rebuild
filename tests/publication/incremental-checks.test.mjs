@@ -1031,9 +1031,13 @@ const m33KeyboardSourceHistory = [
     "current": {
       "path": "tools/atlas-frame-types.mjs",
       "bytes": 3707,
-      "sha256": "84952d2fac3b7ed59da1e8b76a3322e0c35f33f6108580ec9933176c1a8fde50"
+      "sha256": "74b5d1961bd4bfa650ec03c40cb4b281987ceb7307df25027da35fa0dfd1c3ce"
     },
     "inverse": [
+      {
+        "from": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793'",
+        "to": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17'"
+      },
       {
         "from": "if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17') throw Error('M1.3 strict helper changed before import');",
         "to": "if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');"
@@ -1058,9 +1062,13 @@ const m33KeyboardSourceHistory = [
     "current": {
       "path": "tools/atlas-import-types.mjs",
       "bytes": 6689,
-      "sha256": "87453eaecbaa2a141fa0e0ee4b56a26e5d3ac8e50d4492b6791a5a5d476481e4"
+      "sha256": "8f4096fe9e9046b993bd1646b1cd2d9ab48f1005ac81faadd6d718977e0dfc02"
     },
     "inverse": [
+      {
+        "from": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793'",
+        "to": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17'"
+      },
       {
         "from": "if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17') throw Error('M1.3 strict helper changed before import');",
         "to": "if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');"
@@ -1085,9 +1093,13 @@ const m33KeyboardSourceHistory = [
     "current": {
       "path": "tools/bitmap-resource-slot-types.mjs",
       "bytes": 11184,
-      "sha256": "156ce7a51dbe98bd49d4479c0abd9d4cb3ba90a91256dfe71e8a623e9a327ead"
+      "sha256": "6b83199127313011a8f966226accb8d210a2c90b4a5758519f49eb6b830e2adb"
     },
     "inverse": [
+      {
+        "from": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793'",
+        "to": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17'"
+      },
       {
         "from": "if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17') throw Error('M1.3 strict helper changed before import');",
         "to": "if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');"
@@ -1112,9 +1124,13 @@ const m33KeyboardSourceHistory = [
     "current": {
       "path": "tools/bitmap-binding-ticket-types.mjs",
       "bytes": 13887,
-      "sha256": "e2af3d3b31c350575119c7c2d01e5e82493ac74eae57cbfca72bd5f23ae7b2b6"
+      "sha256": "feabce6e6914c1a7a8a8b7772c66737af86798ee479ab7858fa2dc662648c0d7"
     },
     "inverse": [
+      {
+        "from": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793'",
+        "to": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17'"
+      },
       {
         "from": "if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17') throw Error('M1.3 strict helper changed before import');",
         "to": "if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');"
@@ -1139,9 +1155,13 @@ const m33KeyboardSourceHistory = [
     "current": {
       "path": "tools/linear-layout-types.mjs",
       "bytes": 11073,
-      "sha256": "d62cd6ee04ffc4e9e6478adff282fe345b470da51f3510cafb2a716987c5a9b3"
+      "sha256": "e05b0b72c553bdd64a7ad873f3a6bdd456ef38d9e8b3a5b1e850b7d11895533a"
     },
     "inverse": [
+      {
+        "from": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793'",
+        "to": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17'"
+      },
       {
         "from": "if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17') throw Error('M1.3 strict helper changed before import');",
         "to": "if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');"
@@ -1166,9 +1186,13 @@ const m33KeyboardSourceHistory = [
     "current": {
       "path": "tools/bitmap-button-types.mjs",
       "bytes": 17175,
-      "sha256": "4a9b871d563f1beca20277c5ee05bceb64d296e97e7fa3261341c2cc3ed5a6fc"
+      "sha256": "b16b8fcf26e5a2eccfae91ed7328a05a33063237e2e0bfc76cbe1ed42c13aa30"
     },
     "inverse": [
+      {
+        "from": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793'",
+        "to": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17'"
+      },
       {
         "from": "if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17') throw Error('M1.3 strict helper changed before import');",
         "to": "if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');"
@@ -1193,9 +1217,13 @@ const m33KeyboardSourceHistory = [
     "current": {
       "path": "tools/display-anchor-offsets-types.mjs",
       "bytes": 16526,
-      "sha256": "411a6b1f80d1f4a5e954efbf453159a882e21a4809878e0b60bfa6f56f3ae794"
+      "sha256": "ea27a356f61361b82b02a8aa02130213525f4c3b83ecad3c5a7db8c53fe0550d"
     },
     "inverse": [
+      {
+        "from": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793'",
+        "to": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17'"
+      },
       {
         "from": "if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17') throw Error('M1.3 strict helper changed before import');",
         "to": "if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');"
@@ -1220,9 +1248,13 @@ const m33KeyboardSourceHistory = [
     "current": {
       "path": "tools/display-container-add-child-at-types.mjs",
       "bytes": 18718,
-      "sha256": "3ec423836e1490f287e5c516ed5e2513bf9da382f524bebacef0d208f6d581eb"
+      "sha256": "6c682ea23ddf45c1b08bd517a861c5814cad510430b24f47662ebba5a0f5f318"
     },
     "inverse": [
+      {
+        "from": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793'",
+        "to": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17'"
+      },
       {
         "from": "if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17') throw Error('M1.3 strict helper changed before import');",
         "to": "if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');"
@@ -1247,9 +1279,13 @@ const m33KeyboardSourceHistory = [
     "current": {
       "path": "tools/display-container-child-index-types.mjs",
       "bytes": 17112,
-      "sha256": "d59953e966bb4e522035e5e8cc1efd5faa6eea5ea9ce8aa80f92b19c2088598b"
+      "sha256": "b8e5792596c4d9cb6c27a7c2447290c10dfbe929fdbd1340c2aa2b8070a16922"
     },
     "inverse": [
+      {
+        "from": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793'",
+        "to": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17'"
+      },
       {
         "from": "if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17') throw Error('M1.3 strict helper changed before import');",
         "to": "if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');"
@@ -1274,9 +1310,13 @@ const m33KeyboardSourceHistory = [
     "current": {
       "path": "tools/display-container-remove-children-types.mjs",
       "bytes": 15268,
-      "sha256": "e788c9defc63e6246946c578ff09d3db15127d0307276b8b277a3d566a5186a5"
+      "sha256": "3ad8a032a664d4ce8b2dd126f96cff7f95557268afe17b4f66db27cbd7d80141"
     },
     "inverse": [
+      {
+        "from": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793'",
+        "to": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17'"
+      },
       {
         "from": "if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17') throw Error('M1.3 strict helper changed before import');",
         "to": "if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');"
@@ -1301,9 +1341,13 @@ const m33KeyboardSourceHistory = [
     "current": {
       "path": "tools/nine-slice-bitmap-types.mjs",
       "bytes": 6543,
-      "sha256": "0f8860f7d3975cfe530243bd8577c3cd7190553ad8832be35fcd140fcebb16cc"
+      "sha256": "8bd1d3cddb7ab55ce30a449451ae495c44d79df15b86102bef38e134a3402d76"
     },
     "inverse": [
+      {
+        "from": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793'",
+        "to": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17'"
+      },
       {
         "from": "if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17') throw Error('M1.3 strict helper changed before import');",
         "to": "if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');"
@@ -1328,9 +1372,13 @@ const m33KeyboardSourceHistory = [
     "current": {
       "path": "tools/sequence-playback-types.mjs",
       "bytes": 19297,
-      "sha256": "c00f10723d5e509c1a3797c19bd0b71f6a052db1175d1071052b1f6fdb170fdf"
+      "sha256": "724c7b370b18feb751f602a94be580b93cba59f350b84e0c34fa4ebab6e43681"
     },
     "inverse": [
+      {
+        "from": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== '0679f40da8a6e9c2ee69ac34a975db68ccc70858cfbf6a7af46b695a4de17793'",
+        "to": "m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17'"
+      },
       {
         "from": "if (m13HelperPin.bytes !== 32478 || m13HelperPin.sha256 !== 'f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17') throw Error('M1.3 strict helper changed before import');",
         "to": "if (m13HelperPin.bytes !== 31911 || m13HelperPin.sha256 !== '2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4') throw Error('M1.3 strict helper changed before import');"

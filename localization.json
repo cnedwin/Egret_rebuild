@@ -3112,11 +3112,11 @@
     },
     {
       "path": "tools/spritesheet-types.mjs",
-      "sha256": "9338621a6373fbc08ed9d2efb1990d86d942cbcf1d68507377a8df10bb487341"
+      "sha256": "ab8b80f71ec08b5eaa1848f6c56e449b6c5682f44ac05b99edb41606f51eccd7"
     },
     {
       "path": "tools/sequence-playback-types.mjs",
-      "sha256": "c00f10723d5e509c1a3797c19bd0b71f6a052db1175d1071052b1f6fdb170fdf"
+      "sha256": "724c7b370b18feb751f602a94be580b93cba59f350b84e0c34fa4ebab6e43681"
     },
     {
       "path": "tools/check-repository-hygiene.mjs",
@@ -3148,7 +3148,7 @@
     },
     {
       "path": "tools/browser-png-types.mjs",
-      "sha256": "0d1230a4e3f6953cfef21c03b665d03b3d39b7ad37696b294cc867cf8719c3af"
+      "sha256": "3f12682b032e8eb9999ab4aea7d1bc3a36235dff3704c755c85735a617823b83"
     },
     {
       "path": "tools/browser-png/native-observer.mjs",
@@ -3280,7 +3280,7 @@
     },
     {
       "path": "tools/nine-slice-bitmap-types.mjs",
-      "sha256": "0f8860f7d3975cfe530243bd8577c3cd7190553ad8832be35fcd140fcebb16cc"
+      "sha256": "8bd1d3cddb7ab55ce30a449451ae495c44d79df15b86102bef38e134a3402d76"
     },
     {
       "path": "tools/nine-slice-bitmap-native/fixture.mjs",
@@ -3308,7 +3308,7 @@
     },
     {
       "path": "tools/display-container-remove-children-types.mjs",
-      "sha256": "e788c9defc63e6246946c578ff09d3db15127d0307276b8b277a3d566a5186a5"
+      "sha256": "3ad8a032a664d4ce8b2dd126f96cff7f95557268afe17b4f66db27cbd7d80141"
     },
     {
       "path": "tools/display-container-remove-children-native/fixture.mjs",
@@ -3336,7 +3336,7 @@
     },
     {
       "path": "tools/display-container-child-index-types.mjs",
-      "sha256": "d59953e966bb4e522035e5e8cc1efd5faa6eea5ea9ce8aa80f92b19c2088598b"
+      "sha256": "b8e5792596c4d9cb6c27a7c2447290c10dfbe929fdbd1340c2aa2b8070a16922"
     },
     {
       "path": "tools/display-container-child-index-native/fixture.mjs",
@@ -3380,11 +3380,11 @@
     },
     {
       "path": "tools/display-anchor-offsets-types.mjs",
-      "sha256": "411a6b1f80d1f4a5e954efbf453159a882e21a4809878e0b60bfa6f56f3ae794"
+      "sha256": "ea27a356f61361b82b02a8aa02130213525f4c3b83ecad3c5a7db8c53fe0550d"
     },
     {
       "path": "tools/display-container-add-child-at-types.mjs",
-      "sha256": "3ec423836e1490f287e5c516ed5e2513bf9da382f524bebacef0d208f6d581eb"
+      "sha256": "6c682ea23ddf45c1b08bd517a861c5814cad510430b24f47662ebba5a0f5f318"
     },
     {
       "path": "tools/display-anchor-offsets-native/fixture.mjs",
@@ -3436,7 +3436,7 @@
     },
     {
       "path": "tools/bitmap-button-types.mjs",
-      "sha256": "4a9b871d563f1beca20277c5ee05bceb64d296e97e7fa3261341c2cc3ed5a6fc"
+      "sha256": "b16b8fcf26e5a2eccfae91ed7328a05a33063237e2e0bfc76cbe1ed42c13aa30"
     },
     {
       "path": "packages/engine/src/layout.ts",
@@ -3448,7 +3448,7 @@
     },
     {
       "path": "tools/linear-layout-types.mjs",
-      "sha256": "d62cd6ee04ffc4e9e6478adff282fe345b470da51f3510cafb2a716987c5a9b3"
+      "sha256": "e05b0b72c553bdd64a7ad873f3a6bdd456ef38d9e8b3a5b1e850b7d11895533a"
     },
     {
       "path": "examples/linear-layout/main.mjs",
@@ -3464,7 +3464,7 @@
     },
     {
       "path": "tools/bitmap-resource-slot-types.mjs",
-      "sha256": "156ce7a51dbe98bd49d4479c0abd9d4cb3ba90a91256dfe71e8a623e9a327ead"
+      "sha256": "6b83199127313011a8f966226accb8d210a2c90b4a5758519f49eb6b830e2adb"
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
@@ -3608,7 +3608,7 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
-      "sha256": "e2af3d3b31c350575119c7c2d01e5e82493ac74eae57cbfca72bd5f23ae7b2b6"
+      "sha256": "feabce6e6914c1a7a8a8b7772c66737af86798ee479ab7858fa2dc662648c0d7"
     },
     {
       "path": "tools/prepared-resource-groups/native-fixture.mjs",
@@ -3692,7 +3692,7 @@
     },
     {
       "path": "tools/atlas-frame-types.mjs",
-      "sha256": "84952d2fac3b7ed59da1e8b76a3322e0c35f33f6108580ec9933176c1a8fde50"
+      "sha256": "74b5d1961bd4bfa650ec03c40cb4b281987ceb7307df25027da35fa0dfd1c3ce"
     },
     {
       "path": "tools/atlas-frame/author-assets.mjs",
@@ -3764,7 +3764,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "05857b3e4422efe8b56514db840c50868692338e906de5e2ae04ca94bfa33978"
+      "sha256": "afb72eb68f80f1088fa75544d814ad4c8dca4ecccad520beb70b46222947e197"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3800,7 +3800,7 @@
     },
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
-      "sha256": "2b374972f705298d8a30314e01a0be4a5fbe3c24704c24f48ec25457cd13910b"
+      "sha256": "0317d77a59d0d5c25cb52688fb090eed0a0972aa84584b29a4bc1fcede8cf786"
     },
     {
       "path": "packages/engine/web/webgpuBindingCache.ts",

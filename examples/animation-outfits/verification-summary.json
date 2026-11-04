@@ -234,5 +234,18 @@
     "currentNativeCollection": "native-8",
     "recollectionReason": "The declared lockfile is part of the frozen input inventory. Recollect once with final dependency and lock bytes, without rewriting earlier evidence.",
     "publication": "Local repair and bounded evidence only; remote retry and CI acceptance are separate."
+  },
+  "typePolicyRepair": {
+    "failedCiRun": "41810113784",
+    "failedHead": "b1c336fe010049e4f40c058a1d2c14438d6df964",
+    "failure": "The complete type lane stopped at the sequence compiler configuration check because current type-policy selectors still recorded the predecessor lockfile. The earlier dependency repair had updated source-boundary owners but omitted active type selectors.",
+    "scope": "Refresh only current package/lock selectors in the shared strict successor and SpriteSheet/PNG type gates, authenticate the shared helper in twelve wrappers, and preserve complete historical wrapper inverses. Product files, package/lock bytes and historical diagnostic inventories remain unchanged.",
+    "validation": [
+      "Complete tools/check-types.mjs chain and tools/browser-png-types.mjs pass after the repair",
+      "All ten source-boundary entries from tools/verify.mjs pass",
+      "Four focused current-owner and missing-input maintenance tests pass",
+      "All 1159 native-8 frozen inputs remain byte-identical; no browser recollection needed"
+    ],
+    "remoteCi": "Pending root-owned retry; the prior failed run remains retained"
   }
 }
