@@ -473,13 +473,16 @@ assert.equal(m22SequenceModuleAdditions.size,3);
 for(const name of m22SequenceModuleSuccessors.keys())assert.ok(m15ModuleIdentities.has(name));
 for(const name of m22SequenceModuleAdditions.keys())assert.ok(!m15ModuleIdentities.has(name));
 const m22SourceModuleLimit = 138;
-// M3.3 adds only eager captured display admission primitives to this existing
-// Engine dependency. Retain historical bytes, closure membership and all budgets.
+// M3.3 updates existing eager display admission and UI association dependencies.
+// Retain historical bytes, closure membership and all budgets.
 const m33KeyboardAdmissionModuleSuccessor = new Map([
   ["packages/engine/dist/internal/mouseInputFactoryState.js", { bytes: 4961, sha256: "82e9331c803fd5cfcfd24cfe7edf10ca20eaded2342cdfd66f4caa48d9a70435" }],
+  ["packages/engine/dist/internal/uiFactoryState.js", {"bytes":5115,"sha256":"79777e8e276c941ab203344738eb781686fcbc7694e4c4fcaf67bd32e46c3ba9"}],
 ]);
-assert.equal(m33KeyboardAdmissionModuleSuccessor.size, 1);
-for (const name of m33KeyboardAdmissionModuleSuccessor.keys()) assert.ok(m15ModuleIdentities.has(name), 'Keyboard admission successor must retain historical membership');
+assert.equal(m33KeyboardAdmissionModuleSuccessor.size, 2);
+assert.deepEqual([...m33KeyboardAdmissionModuleSuccessor.keys()], ['packages/engine/dist/internal/mouseInputFactoryState.js', 'packages/engine/dist/internal/uiFactoryState.js']);
+assert.ok(m15ModuleIdentities.has('packages/engine/dist/internal/mouseInputFactoryState.js'), 'Mouse admission retains M1.5 membership');
+assert.ok(m31UiModuleAdditions.has('packages/engine/dist/internal/uiFactoryState.js'), 'UI association retains M3.1 membership');
 const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors, ...m33MouseCompatibilityModuleSuccessor, ...m21ContentModuleSuccessors, ...m31UiModuleSuccessors, ...m31UiModuleAdditions, ...m22SequenceModuleSuccessors, ...m22SequenceModuleAdditions, ...m33KeyboardAdmissionModuleSuccessor]);
 assert.equal(currentModuleIdentities.size, m22SourceModuleLimit, 'M3.1 current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);

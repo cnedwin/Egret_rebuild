@@ -3,7 +3,7 @@ import {EgretError,Event,createEventType} from '@egret/runtime';
 import type {DisplayObject,EventType} from '@egret/runtime';
 import type {MouseInputEnginePort} from './mouseInput.js';
 import {captureMouseInputRuntimePrimitives,requireMouseInputEngine} from './internal/mouseInputFactoryState.js';
-import {captureUiInputDelivery} from './internal/uiFactoryState.js';
+import {captureUiInputDelivery,registerUiKeyboardInput} from './internal/uiFactoryState.js';
 import type {KeyboardInput,KeyboardInputOptions,KeyboardInputEvents,KeyboardSample,KeyboardKeyPayload,KeyboardCancelPayload,KeyboardFocusPayload,KeyboardTargetOptions,KeyboardTargetRegistration,KeyboardFocusOptions,KeyboardCancelReason} from './keyboardInputTypes.js';
 export type * from './keyboardInputTypes.js';
 const primitives=captureMouseInputRuntimePrimitives();
@@ -140,7 +140,11 @@ export function createKeyboardInput(options:KeyboardInputOptions):KeyboardInput 
     record.target=nextTarget;record.tabIndex=nextIndex;record.disabled=nextDisabled;
     if(was){if(!eligible(record))transition(undefined,false,'owner','owner');else if(rebind)transition({record,target:nextTarget},focusVisible,'rebind','rebind');}
    }),dispose:():void=>invoke(()=>{
-    if(records.get(id)!==record)return;if(state!=='closed')assertMutation();records.delete(id);if(focused?.record===record)transition(undefined,false,'removed','removed');
+    if(records.get(id)!==record)return;
+    // Retirement remains legal during owner shutdown and cancellation callbacks.
+    // Removing identity first makes recursive disposal harmless; no new target is admitted.
+    records.delete(id);
+    if(focused?.record===record){for(const event of activeFocus)event.stopImmediatePropagation();transition(undefined,false,'removed','removed');}
    })});
   }),
   focus:(id:string|undefined,configuration?:KeyboardFocusOptions)=>invoke(()=>focus(id,configuration)),
@@ -158,6 +162,6 @@ export function createKeyboardInput(options:KeyboardInputOptions):KeyboardInput 
   getSnapshot:()=>Object.freeze({state,focusedId:focused?.record.id,focusVisible,pressedKeys:Object.freeze([...held.keys()]),targetCount:records.size}),
   dispose:()=>invoke(()=>close('dispose')),
  });
- try{releaseEngine=owner.onClose(retire);scope.add(retire);scope.use(input);bindings.set(input,Object.freeze({surface:owner.surface,onInteractive:(callback:(active:boolean)=>void)=>{interactive.add(callback);return()=>{interactive.delete(callback);};},report:(cause:unknown)=>report({code:'KEYBOARD_INPUT_HOST_FAILED',phase:'engine',severity:'error',cause}),onClose:(callback:()=>void)=>{if(state==='closed'){callback();return()=>{};}closers.add(callback);return()=>{closers.delete(callback);};}}));owner.assertReady();scope.assertOpen();return input;}
+ try{releaseEngine=owner.onClose(retire);scope.add(retire);scope.use(input);bindings.set(input,Object.freeze({surface:owner.surface,onInteractive:(callback:(active:boolean)=>void)=>{interactive.add(callback);return()=>{interactive.delete(callback);};},report:(cause:unknown)=>report({code:'KEYBOARD_INPUT_HOST_FAILED',phase:'engine',severity:'error',cause}),onClose:(callback:()=>void)=>{if(state==='closed'){callback();return()=>{};}closers.add(callback);return()=>{closers.delete(callback);};}}));owner.assertReady();scope.assertOpen();registerUiKeyboardInput(input,engine);return input;}
  catch(cause){try{close('error');}catch{/* Preserve setup failure. */}throw cause;}
 }

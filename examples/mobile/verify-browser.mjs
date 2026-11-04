@@ -147,6 +147,30 @@ async function verifyKeyboardLab(page,label){
  }finally{await page.evaluate(async()=>{const l=globalThis.__egretKeyboardLab;if(!l)return;try{await l.engine.dispose();}finally{window.removeEventListener('keydown',l.observeNative);l.canvas.remove();l.editor.remove();delete globalThis.__egretKeyboardLab;}});}
 }
 
+async function verifyPanelKeyboard(page,label,scene) {
+ await page.getByRole('button',{name:'Top / 回顶部',exact:true}).click();await read(page);
+ await page.locator('canvas').focus();await page.keyboard.press('Tab');
+ let state=await read(page),app=state.application,first=app.rows.find(row=>row.visible);
+ check(label+': managed Tab first row',app.rowFocus.key,first.key);
+ check(label+': managed visible focus',app.rowFocus.focusVisible,true);
+ check(label+': visible rows only',app.keyboard.targetCount,app.rows.filter(row=>row.visible).length);
+ const pixels=await page.evaluate(async()=>{const m=await import('/examples/mobile/main.mjs');return m.readback();});
+ const bytes=Buffer.from(pixels.base64,'base64'),x=Math.floor((app.listBounds.x+first.box.x+5)*app.density),y=Math.floor((app.listBounds.y+first.box.y+1)*app.density);
+ check(label+': focus border pixels',[...bytes.subarray((y*pixels.width+x)*4,(y*pixels.width+x)*4+4)],[255,209,102,255]);
+ const before=app.selectionCount;await page.keyboard.down('Space');await page.keyboard.down('Space');await page.keyboard.up('Space');state=await read(page);
+ check(label+': keyboard selects once',state.application.selectionCount,before+1);check(label+': selected focused row',state.application.selectedKey,first.key);
+ if(scene==='paragraph'){
+  const id=state.application.keyboard.focusedId;await page.keyboard.down('KeyA');
+  await page.getByRole('button',{name:'Type size / 字号',exact:true}).evaluate(button=>button.click());state=await read(page);
+  check(label+': font rebind keeps logical focus',state.application.keyboard.focusedId,id);check(label+': font rebind cancels held key',state.application.keyboard.pressedKeys,[]);await page.keyboard.up('KeyA');
+ }
+ await page.keyboard.down('KeyA');
+ await page.locator('input[type=range]').evaluate(input=>{input.value=input.max;input.dispatchEvent(new Event('input',{bubbles:true}));});state=await read(page);
+ check(label+': scrolling out clears focus',state.application.rowFocus.key,undefined);check(label+': scrolling out cancels held key',state.application.keyboard.pressedKeys,[]);await page.keyboard.up('KeyA');
+ await page.getByRole('button',{name:'Top / 回顶部',exact:true}).click();await read(page);await page.locator('canvas').focus();await page.keyboard.press('Tab');
+ await page.getByRole('button',{name:'Top / 回顶部',exact:true}).focus();state=await read(page);check(label+': native blur clears managed focus',state.application.rowFocus.key,undefined);
+}
+
 async function runCase(scene,mobile,backend='webgl2'){
  const label=scene+'/'+backend+'/'+(mobile?'touch-dpr3':'mouse-dpr1');
  const context=await browser.newContext({viewport:{width:mobile?390:1280,height:mobile?844:1000},deviceScaleFactor:mobile?3:1,isMobile:mobile,hasTouch:mobile});
@@ -251,6 +275,7 @@ async function runCase(scene,mobile,backend='webgl2'){
    check(label+': screenshot ready state',shotBefore.state,'ready');
    check(label+': screenshot stable owner',shotAfter.revision,shotBefore.revision);
   }
+  if(scene==='ui'||scene==='paragraph')await verifyPanelKeyboard(page,label,scene);
   if(mobile){
    const cdp=await context.newCDPSession(page),before=state.revision;
    await cdp.send('Emulation.setDeviceMetricsOverride',{width:391,height:844,deviceScaleFactor:1.25,mobile:true});
@@ -263,7 +288,7 @@ async function runCase(scene,mobile,backend='webgl2'){
   check(label+': close settled',state.state,'closed');check(label+': no error',errors,[]);check(label+': lifecycle errors',state.errors,[]);
   if(scene==='resources'){check(label+': font cleanup',state.retired.fontCount,0);check(label+': resource cleanup',state.retired.pendingSources+state.retired.pendingTasks,0);check(label+': contacts cleanup',state.retired.contacts,0);check(label+': no cleanup failures',state.retired.cleanupFailures,0);}
   if(scene==='pointers'){check(label+': contact cleanup',state.retired.active.length,0);check(label+': keyboard cleanup',state.retired.keyboard.state,'closed');check(label+': no held keyboard state',state.retired.keyboard.pressedKeys,[]);check(label+': keyboard tabindex cleanup',await page.locator('canvas').getAttribute('tabindex'),null);}
-  if(scene==='ui'||scene==='paragraph'){check(label+': input cleanup',state.retired.inputState,'closed');check(label+': text cache cleanup',state.retired.cache.closed);check(label+': no content errors',state.retired.errors,[]);check(label+': no cleanup failures',state.retired.cleanupFailureCount,0);}
+  if(scene==='ui'||scene==='paragraph'){check(label+': input cleanup',state.retired.inputState,'closed');check(label+': managed keyboard cleanup',state.retired.keyboard.state,'closed');check(label+': managed keyboard targets retired',state.retired.keyboard.targetCount,0);check(label+': text cache cleanup',state.retired.cache.closed);check(label+': no content errors',state.retired.errors,[]);check(label+': no cleanup failures',state.retired.cleanupFailureCount,0);}
   check(label+': canvas touch policy restored',await page.locator('canvas').evaluate(c=>c.style.touchAction),'');
  }catch(error){failures.push({label,error:String(error.stack??error),state:await read(page).catch(()=>null),errors});}
  finally{await context.close();}

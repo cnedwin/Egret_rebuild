@@ -684,11 +684,11 @@ test('S16 UI cooperation admits only seven exact successors and two eager depend
   for (const [name, expected] of uiSuccessors) {
     assert.ok(policy.m15ModuleIdentities.has(name), 'A successor must retain historical membership');
     assert.notEqual(policy.m15ModuleIdentities.get(name).sha256, expected.sha256);
-    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.m22SequenceModuleSuccessors.get(name)??expected)));
+    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.m33KeyboardAdmissionModuleSuccessor.get(name)??policy.m22SequenceModuleSuccessors.get(name)??expected)));
   }
   for (const [name, expected] of uiAdditions) {
     assert.equal(policy.m15ModuleIdentities.has(name), false);
-    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.m22SequenceModuleSuccessors.get(name)??expected)));
+    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.m33KeyboardAdmissionModuleSuccessor.get(name)??policy.m22SequenceModuleSuccessors.get(name)??expected)));
   }
   for (const name of ['packages/engine/dist/ui/index.js', 'packages/runtime/dist/ui/index.js']) {
     assert.equal(policy.allowedModules.has(name), false, 'Optional UI assembly cannot enter this default closure');
@@ -795,15 +795,15 @@ for (const [target] of [...sequenceSuccessors, ...sequenceAdditions]) {
 }
 
 
-test('S20 keyboard eager admission changes one exact existing module without expanding closure',async()=>{
+test('S20 keyboard eager admission changes two exact existing modules without expanding closure',async()=>{
  const policy=await completeCurrentClosure(),target="packages/engine/dist/internal/mouseInputFactoryState.js";
- assert.deepEqual(JSON.parse(JSON.stringify([...policy.m33KeyboardAdmissionModuleSuccessor])),[[target,{bytes:4961,sha256:"82e9331c803fd5cfcfd24cfe7edf10ca20eaded2342cdfd66f4caa48d9a70435"}]]);
+ assert.deepEqual(JSON.parse(JSON.stringify([...policy.m33KeyboardAdmissionModuleSuccessor])),[[target,{bytes:4961,sha256:"82e9331c803fd5cfcfd24cfe7edf10ca20eaded2342cdfd66f4caa48d9a70435"}],["packages/engine/dist/internal/uiFactoryState.js",{"bytes":5115,"sha256":"79777e8e276c941ab203344738eb781686fcbc7694e4c4fcaf67bd32e46c3ba9"}]]);
  assert.deepEqual(JSON.parse(JSON.stringify(policy.m15ModuleIdentities.get(target))),{bytes:4356,sha256:'bfb0f749f658c2365e8d8a3605f0de8269e2d27cb978a689ef6f3af0b149bbe9'});
  assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(target))),JSON.parse(JSON.stringify(policy.m33KeyboardAdmissionModuleSuccessor.get(target))));
  assert.equal(policy.served.size,138);assert.equal(policy.allowedModules.has('packages/engine/dist/keyboardInput.js'),false);assert.equal(policy.aliases['#egret-keyboard-input'],undefined);
 });
-test('S21 keyboard admission successor refuses an unknown same-length emitted byte',async()=>{
- await completeCurrentClosure();const target="packages/engine/dist/internal/mouseInputFactoryState.js",original=await readFile(join(repository,target));
+for(const target of ['packages/engine/dist/internal/mouseInputFactoryState.js','packages/engine/dist/internal/uiFactoryState.js'])test('S21 keyboard admission successor refuses an unknown same-length emitted byte: '+target,async()=>{
+ await completeCurrentClosure();const original=await readFile(join(repository,target));
  const policy=await emittedClosurePolicy({selectedReadFile:async(...args)=>{const value=await readFile(...args);if(resolve(args[0])!==resolve(repository,target))return value;const changed=Buffer.from(value);changed[0]^=1;assert.equal(changed.length,original.length);return changed;}});
  await assert.rejects(policy.collect(target),error=>error.code==='ERR_ASSERTION'&&error.message.startsWith('Current emitted raw identity changed: '+target));assert.equal(policy.served.size,0);assert.deepEqual(await readFile(join(repository,target)),original);await completeCurrentClosure();
 });

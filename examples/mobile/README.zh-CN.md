@@ -8,4 +8,4 @@
 
 参阅[布局、所有权、输入和验证契约](../../knowledge-base/Cns/docs/mobile-examples.md)。安装 Playwright 1.62.1 和 Microsoft Edge 后，可运行 `node examples/mobile/verify-browser.mjs <playwright-root> <new-output-directory>` 复现有限桌面浏览器模拟，输出必须位于仓库之外尚不存在的目录。Android／iPhone 真机、输入法和性能验收继续未完成。
 
-双触点页同时演示[键盘／焦点 SDK](../../knowledge-base/Cns/docs/keyboard-focus-input.md)：聚焦 Canvas 后使用 Tab／Shift+Tab、方向键和回车／空格。逻辑焦点、按住状态与原生默认操作遵守声明的生命周期；原生输入法与托管 UI 自动集成仍为独立后续工作。
+双触点页同时演示[键盘／焦点 SDK](../../knowledge-base/Cns/docs/keyboard-focus-input.md)：聚焦 Canvas 后使用 Tab／Shift+Tab、方向键和回车／空格。逻辑焦点、按住状态与原生默认操作遵守声明的生命周期；原生输入法仍为独立后续工作。UI 和段落页现通过同一键盘通道注册已提交可见行：Tab／Shift+Tab 遍历，回车／空格选择，金色边框显示键盘焦点；焦点行滚出视口时，在回收前释放焦点。
