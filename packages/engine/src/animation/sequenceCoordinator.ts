@@ -83,7 +83,7 @@ export function requireCoordinator(port: SequenceControllerEnginePort): Sequence
     get size(): number { return drivers.size; },
     add(driver: SequenceDriver): void {
       if (closed) throw new EgretError('ANIMATION_COORDINATOR_CLOSED');
-      if (drivers.size >= 64) throw new EgretError('ANIMATION_CONTROLLER_LIMIT');
+      if (drivers.size >= 256) throw new EgretError('ANIMATION_CONTROLLER_LIMIT');
       drivers.add(driver);
     },
     remove(driver: SequenceDriver): void { drivers.delete(driver); if (drivers.size === 0) release(); },

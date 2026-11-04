@@ -4,6 +4,10 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## M2.4 editable animation/outfit reference — 2026-11-04
+
+The reference scene (examples/animation-outfits) now composes 20 independent Spine players sharing one setup/two pages and 200 independent sequence controllers sharing one clip/texture in one Engine. It supports selected outfit/animation, finite or loop playback, pause/rate, cancellation, complete close and retry through existing public SDK ownership. The new-controller capacity grows to the existing combined 256-target bound, without changing per-controller budgets or exports. Focused behavior and default Edge WebGPU/WebGL2 checks cover exact counts, literal pixels and logical cleanup. Full replacement/recovery, cache/performance measurement, complete Spine/export and physical-device acceptance remain open; M2.4/Issue #86 and M1.2's performance failure are unchanged.
+
 ## M2.3 Spine shared rendering connection — 2026-11-04
 
 Spine instances now publish copied ordered geometry through existing Mesh2D/materials and page leases on WebGPU/WebGL2. The explicit `egret-shared-linear/1` profile prevents silent gamma-space equivalence claims. Stable topology reuses nodes; failed drawing preserves the prior visual without faulting committed animation or suppressing its events, and disposal precedes page release. See [the shared rendering contract](spine-content-ingress.md#shared-rendering-display). This bounded connection does not close full Spine, M2.4 recovery, physical devices or performance acceptance.

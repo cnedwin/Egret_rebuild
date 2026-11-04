@@ -15,10 +15,15 @@ export function createExampleServer(repository=root){
   let relative;
   try{relative=decodeURIComponent(new URL(request.url,'http://127.0.0.1').pathname).slice(1);if(!relative){response.writeHead(302,{Location:'/examples/mobile/index.html'+new URL(request.url,'http://127.0.0.1').search,'Cache-Control':'no-store'});response.end();return;}logicalPath(relative);}catch{return finish(400,'Invalid path');}
   const dependency='packages/engine/node_modules/robust-predicates/';
+  const spineDependency='node_modules/@esotericsoftware/spine-core/dist/';
+  if(relative.startsWith('vendor/spine-core/'))relative=spineDependency+relative.slice('vendor/spine-core/'.length);
   // The public example uses the same pinned owner through a short import-map alias.
   if(relative.startsWith('vendor/robust-predicates/'))relative=dependency+relative.slice('vendor/robust-predicates/'.length);
   // Only this example's generated manifest/artifact layout is exposed under work.
   const allowed=/^examples\/mobile\/(?:index\.html|style\.css|main\.mjs|viewport\.mjs|resources\.mjs|pointers\.mjs|panels\.mjs)$/.test(relative)
+   ||/^examples\/animation-outfits\/(?:index\.html|main\.mjs|scene\.mjs|content\.mjs)$/.test(relative)
+   ||/^work\/animation-outfits\/(?:manifest\.json|assets\/(?:warm|cool|atlas|character|sparks|sequence))$/.test(relative)
+   ||relative.startsWith(spineDependency)&&/^[\w/-]+\.js$/.test(relative.slice(spineDependency.length))
    ||/^examples\/sequence-controls\/(?:index\.html|main\.mjs|selection\.mjs|fixture\.mjs)$/.test(relative)
    ||/^work\/sequence-controls\/run-[A-Za-z0-9]{6}\/(?:browser-config\.json|candidate\.json|build\/generations\/[a-f0-9]{64}\/manifest\.json|build\/blobs\/sha256\/[a-f0-9]{64})$/.test(relative)
    ||/^examples\/ui-data-panel\/(?:index\.html|main\.mjs|fixture\.mjs)$/.test(relative)
@@ -28,13 +33,16 @@ export function createExampleServer(repository=root){
    ||/^work\/atlas-pages\/run-[A-Za-z0-9]{6}\/(?:browser-config\.json|candidate\.json|build\/generations\/[a-f0-9]{64}\/manifest\.json|build\/blobs\/sha256\/[a-f0-9]{64})$/.test(relative)
    ||/^examples\/multi-pointer\/(?:index\.html|main\.mjs)$/.test(relative)
    ||/^examples\/resource-scene\/(?:[\w-]+\.(?:html|mjs)|assets\/[\w.-]+\.(?:png|woff2))$/.test(relative)
-   ||/^packages\/(?:engine|runtime|contracts)\/dist\/[\w/.-]+\.js$/.test(relative)
+   ||/^packages\/(?:engine|runtime|contracts|spine)\/dist\/[\w/.-]+\.js$/.test(relative)
    ||relative==='examples/canvas-text/assets/ahem.ttf'||relative==='tools/browser-png/assets/rgb-red-green.png'
    ||relative.startsWith(dependency)&&/^[\w/-]+\.js$/.test(relative.slice(dependency.length));
   if(!allowed)return finish(404,'Not served');
   try{
    let file;
-   if(relative.startsWith(dependency)){
+   if(relative.startsWith(spineDependency)){
+    const owner=localPackage(repository,path.join(repository,'node_modules/@esotericsoftware/spine-core'),'@esotericsoftware/spine-core','4.3.13');
+    file=path.join(owner,'dist',relative.slice(spineDependency.length));fingerprintFile(repository,ownerRelativePath(repository,file));
+   }else if(relative.startsWith(dependency)){
     const owner=localPackage(repository,path.join(repository,'node_modules/robust-predicates'),'robust-predicates','3.0.3');
     if(!samePhysicalPath(fs.realpathSync(path.join(repository,dependency)),owner))return finish(404,'Not served');
     file=path.join(owner,relative.slice(dependency.length));

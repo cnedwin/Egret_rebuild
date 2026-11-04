@@ -195,7 +195,7 @@ function m13SequenceComplete(root){
  for(const row of rows){const pin=m15SequencePin(root,row.current),bytes=seqpbRead(root,pin.path);if(bytes.length!==pin.bytes||seqpbHash(bytes)!==pin.sha256)seqpbFail('SEQP_BOUNDARY_DEFAULT_ENTRY_IDENTITY','Complete M1.3 interface group differs: '+pin.path);}
 }
 // M2.1 dev-only dependency identities; historical package and lock pins remain intact.
-const m21ContentConfigurationPairs = [{"base":{"path":"package.json","bytes":1108,"sha256":"16a969b9a50653b1733893c59ee4cd1d29845208c11bd182036bc585372834d0"},"current":{"path":"package.json","bytes":1130,"sha256":"716cda606f58987f784aee2a64e46cf0c2e0130e84157d2a869879b4c3ae7c40"}},{"base":{"path":"pnpm-lock.yaml","bytes":9017,"sha256":"79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"},"current":{"path":"pnpm-lock.yaml","bytes":9786,"sha256":"96847ab1b5dae779a687cf91bc8f03afdb45b7dec8e2b69e84bf13608d49e7ad"}}];
+const m21ContentConfigurationPairs = [{"base":{"path":"package.json","bytes":1108,"sha256":"16a969b9a50653b1733893c59ee4cd1d29845208c11bd182036bc585372834d0"},"current":{"path":"package.json","bytes":1165,"sha256":"6e9855e62a56dafb463a293b2a5955fc70d552fe0c658cd3f99e6034dd983ced"}},{"base":{"path":"pnpm-lock.yaml","bytes":9017,"sha256":"79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"},"current":{"path":"pnpm-lock.yaml","bytes":9876,"sha256":"7bf20612bfb56d834d35106fa29b0684314e60e3dbc6f83d04aef36bb44549e9"}}];
 function seqpbPin(root, pin, code) {
   pin = m13SequencePin(root, pin);
   pin = m31UiSourcePairs.find(pair=>JSON.stringify(pair.base)===JSON.stringify(pin))?.current??pin;

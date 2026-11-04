@@ -21,7 +21,7 @@ const selfBytes = readFileSync(fileURLToPath(import.meta.url));
 const selfPin = { path: 'tools/spritesheet-types.mjs', bytes: selfBytes.length, sha256: hash(selfBytes) };
 
 // The pngjs dev-only addition preserves the frozen compiler and consumer observations.
-const m21ContentLock = {base:{path:'pnpm-lock.yaml',bytes:9017,sha256:'79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084'},current:{path:'pnpm-lock.yaml',bytes:9786,sha256:'96847ab1b5dae779a687cf91bc8f03afdb45b7dec8e2b69e84bf13608d49e7ad'}};
+const m21ContentLock = {base:{path:'pnpm-lock.yaml',bytes:9017,sha256:'79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084'},current:{path:'pnpm-lock.yaml',bytes:9876,sha256:'7bf20612bfb56d834d35106fa29b0684314e60e3dbc6f83d04aef36bb44549e9'}};
 function readPin(pin, owner = root) {
   if (owner === root && equal(pin,m21ContentLock.base)) {
     const raw=readFileSync(path.join(root,pin.path));

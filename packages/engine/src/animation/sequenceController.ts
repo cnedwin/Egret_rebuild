@@ -351,7 +351,7 @@ export function createSequenceController(engine: Engine, scope: Scope, bitmap: B
   const port = requireSequenceControllerEngine(engine);
   const owned = port.scope(scope);
   assertNotCapturing(port);
-  if (coordinatorSize(port) >= 64) throw new EgretError('ANIMATION_CONTROLLER_LIMIT');
+  if (coordinatorSize(port) >= 256) throw new EgretError('ANIMATION_CONTROLLER_LIMIT');
   if (port.claims.size >= 256) throw new EgretError('ANIMATION_LIMIT');
   let player: SequencePlayer | undefined, coordinator: SequenceCoordinator | undefined, record: RecordState | undefined;
   try {
