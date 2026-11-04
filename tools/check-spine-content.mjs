@@ -21,18 +21,18 @@ let inspected=0;
 for(const folder of ['src','dist'])for(const file of fs.readdirSync(path.join(base,folder))){
  if(!/\.(?:ts|js)$/.test(file))continue;
  const raw=fs.readFileSync(path.join(base,folder,file),'utf8'),code=raw.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
- const isWeb=file.startsWith('web.'),isParser=file.startsWith('parse.');
+ const isWeb=file.startsWith('web.'),isParser=file.startsWith('parse.')||file.startsWith('instance.');
  assert.ok(!/\b(?:require|process|Buffer|eval)\b|["']node:|\bimport\s*\(/.test(code),folder+'/'+file+': forbidden host/dynamic import');
  if(!isWeb)assert.ok(!/\b(?:window|document|HTML\w*Element|GPUDevice|ImageBitmap|TextDecoder)\b/.test(code),folder+'/'+file+': core host access');
  for(const m of code.matchAll(/\b(?:import|export)\s+[\s\S]*?\s+from\s+['"]([^'"]+)['"]/g)){
   const target=m[1];
   if(target.startsWith('.'))assert.match(target,/^\.\/[A-Za-z][A-Za-z0-9]*\.js$/);
-  else if(target==='@esotericsoftware/spine-core')assert.ok(isParser,'Core is private to the format adapter');
+  else if(target==='@esotericsoftware/spine-core')assert.ok(isParser,'Core is private to the format/playback adapters');
   else {assert.ok(allowed.has(target),'unreviewed import '+target);assert.ok(isWeb||target!=='@egret/engine/web/resources');}
  }
  inspected++;
 }
-assert.deepEqual(Object.keys(await import(new URL('../packages/spine/dist/index.js',import.meta.url))),['createSpineContentLoader']);
+assert.deepEqual(Object.keys(await import(new URL('../packages/spine/dist/index.js',import.meta.url))),['createSpineContentLoader','createSpineInstance']);
 assert.deepEqual(Object.keys(await import(new URL('../packages/spine/dist/web.js',import.meta.url))),['createManifestSpineContentLoader']);
 for(const name of ['contracts','runtime','engine','project'])assert.ok(!Object.hasOwn(json(path.join(root,'packages',name,'package.json')).dependencies??{},'@esotericsoftware/spine-core'));
 console.log('Optional Spine dependency, exact original notice and public/source boundaries PASS: '+inspected+' source/emission files.');

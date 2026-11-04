@@ -4,6 +4,10 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## M2.2 independent Spine playback — 2026-11-04
+
+The optional Spine SDK now creates independent instances over existing shared setup/page leases. Explicit ticks drive tracks, queues, mixing, named skins, pause/rate and copied pose/event snapshots; bounded faults retain the last published snapshot, and group/Scope closure disposes players before resources. See [the playback contract](spine-content-ingress.md#independent-playback-instances). Shared graphics, seek/replay, full constraint/physics references, authorized exports, phones and performance remain OPEN.
+
 ## M3.1/M3.3 managed row focus — 2026-11-04
 
 Managed virtual lists can borrow the existing keyboard channel. Committed visible rows receive stable IDs, visual-order traversal and explicit focus; replacement cancels old held keys before detachment and restores only an eligible same-key target. Scrolling out explicitly releases focus, without hidden-row retention. See [ownership and API details](ui-data-panel.md#managed-virtual-row-keyboard-focus). The responsive UI/paragraph pages include keyboard selection and a visible outline. Native editing, offscreen navigation, modal controls and full M3/device/performance acceptance remain OPEN.

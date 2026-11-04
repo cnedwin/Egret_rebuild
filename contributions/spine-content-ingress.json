@@ -95,6 +95,29 @@
     {
       "path": "verification/spine-content/verification.json",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
+    },
+    {
+      "path": "packages/spine/src/assetAuthority.ts",
+      "originRole": "Independently authored Egret Spine playback adapter, bounded ownership/time publication or original numerical tests; AI-assisted; Apache-2.0. Official Core4.3.13 remains a separately licensed dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/instance.ts",
+      "originRole": "Independently authored Egret Spine playback adapter, bounded ownership/time publication or original numerical tests; AI-assisted; Apache-2.0. Official Core4.3.13 remains a separately licensed dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/src/instanceTypes.ts",
+      "originRole": "Independently authored Egret Spine playback adapter, bounded ownership/time publication or original numerical tests; AI-assisted; Apache-2.0. Official Core4.3.13 remains a separately licensed dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/spine/test/playback.test.mjs",
+      "originRole": "Independently authored Egret Spine playback adapter, bounded ownership/time publication or original numerical tests; AI-assisted; Apache-2.0. Official Core4.3.13 remains a separately licensed dependency."
+    },
+    {
+      "path": "packages/spine/test/playbackFixture.mjs",
+      "originRole": "Independently authored Egret Spine playback adapter, bounded ownership/time publication or original numerical tests; AI-assisted; Apache-2.0. Official Core4.3.13 remains a separately licensed dependency."
     }
   ],
   "documents": [

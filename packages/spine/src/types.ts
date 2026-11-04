@@ -51,6 +51,7 @@ export interface SpineContentGroup {
 export interface SpineContentStatus {
   readonly isDisposed: boolean;
   readonly groups: number;
+  readonly liveInstances: number;
   readonly activeSourceLoads: number;
   readonly liveSourceValues: number;
   readonly pendingSetups: number;

@@ -20,6 +20,8 @@ await loader.close();
 owner.dispose();
 ```
 
-根入口的 `createSpineContentLoader` 支持自定义真实 Texture／字符串 provider，全部需求沿用既有资源租约与 Scope。这些是设置资产，不是可播放实例。`test/fixtures.mjs` 的原创夹具演示清单构建，不是经过认证的 Editor 导出。
+根入口的 `createSpineContentLoader` 支持自定义真实 Texture／字符串 provider，全部需求沿用既有资源租约与 Scope。设置资产可通过下述独立工厂创建播放实例。`test/fixtures.mjs` 的原创夹具演示清单构建，不是经过认证的 Editor 导出。
 
-定向验证：`node --test packages/spine/test/content.test.mjs packages/spine/test/draw-order.test.mjs packages/spine/test/types.test.mjs` 及 `node tools/check-spine-content.mjs`，常规 `pnpm test` 与合并检查包含相同义务。可选实际浏览器命令为 `node tools/verify-spine-content.mjs --playwright <absolute-installed-playwright-1.62.1-package> --output <new-absolute-directory-outside-repository>`，需要已安装 Edge，并保留全新的源码快照／结果；只验证传输、原生 PNG 和逻辑清理。
+定向验证：`node --test packages/spine/test/content.test.mjs packages/spine/test/draw-order.test.mjs packages/spine/test/playback.test.mjs packages/spine/test/types.test.mjs` 及 `node tools/check-spine-content.mjs`，常规 `pnpm test` 与合并检查包含相同义务。可选实际浏览器命令为 `node tools/verify-spine-content.mjs --playwright <absolute-installed-playwright-1.62.1-package> --output <new-absolute-directory-outside-repository>`，需要已安装 Edge，并保留全新的源码快照／结果；验证传输、原生 PNG、独立数值播放和逻辑清理，不构成渲染像素或实体设备验收。
+
+使用 `createSpineInstance(asset, scope)` 创建独立实例，以 `setAnimation(0, name, {loop: true})` 排队动画，再由既有 Engine 时钟调用 `advance(tick)`。实例借用源资源组生命周期。参阅[播放控制与边界](../../knowledge-base/Cns/docs/spine-content-ingress.md#独立播放实例)；共享图形与完整 Spine 资格验收仍分开处理。

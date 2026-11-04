@@ -2,7 +2,7 @@
 
 [English](../../en/docs/spine-content-ingress.md) | 简体中文
 
-M2.1 提供显式启用的 `@egret/spine` 资产 SDK，通过官方 Core 4.3.13 读取 JSON 设置数据，将原始 Spine 图集页面绑定到既有 Egret 纹理，并提供具有资源组生命周期的不可变信息。默认 Engine 入口保持原样。实例、播放与图形由 M2.2／M2.3 负责。
+M2.1 提供显式启用的 `@egret/spine` 资产 SDK，通过官方 Core 4.3.13 读取 JSON 设置数据，将原始 Spine 图集页面绑定到既有 Egret 纹理，并提供具有资源组生命周期的不可变信息。默认 Engine 入口保持原样。独立播放实例见下文；共享图形仍由 M2.3 负责。
 
 ## 版本、权利与参考基础
 
@@ -30,7 +30,7 @@ Spine／图集只接受上述精确设置。产品二进制配置在目录准入
 
 `createSpineContentLoader(engine, ownerScope, manifest, factory, options?)` 捕获显式数据提供器工厂。工厂收到不可变资源 ID／种类及真实清单绑定，提供纹理、元数据字符串 provider。自定义 provider 负责源验证与解码；浏览器门面复用既有 SHA256 传输与原生 PNG 端口。
 
-`loader.load(scope, roots, options?)` 验证同一 Engine 的消费者 Scope，精确选择所请求骨架的依赖闭包，返回具有 `ready`、`getSpine(id)` 和 `dispose()` 的资源组。所有请求根节点整体就绪。`getSpine` 返回资源组生命周期视图，含复制的不可变版本／格式、骨骼／插槽数量、皮肤／动画名称和时长以及页面元数据，不暴露可变 Core 对象、姿态、纹理、绘制指令或播放器。
+`loader.load(scope, roots, options?)` 验证同一 Engine 的消费者 Scope，精确选择所请求骨架的依赖闭包，返回具有 `ready`、`getSpine(id)` 和 `dispose()` 的资源组。所有请求根节点整体就绪。`getSpine` 返回资源组生命周期视图，含复制的不可变版本／格式、骨骼／插槽数量、皮肤／动画名称和时长以及页面元数据，资产视图不暴露可变 Core 对象、姿态、纹理或绘制指令；下述独立身份校验工厂可创建播放实例。
 
 既有 AssetManager 是唯一缓存与租约权威。原始 ManifestGroup 暂存已验证源；设置数据通过同一管理器保留独立页面租约，重叠资源组共享解析结果，并在就绪前释放暂存元数据。最后一份设置租约释放私有 Core 图集／数据及页面需求。源引用身份隔离同时存在的加载器代际，不建立第二套资源管理器。其他目录失败或取消时，旧就绪组仍可用，由应用决定何时释放旧代际。
 
@@ -48,8 +48,39 @@ Spine／图集只接受上述精确设置。产品二进制配置在目录准入
 
 [验证记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/spine-content/verification.json)区分源码、受控行为、严格 ES-only 公共消费者及实际桌面浏览器资源检查。程序化夹具为原创数据，不是经过认证的 Editor 导出。浏览器采集器使用默认 Edge、Playwright 1.62.1、真实公共 Engine／Scope、普通 fetch、SHA256 和原生 PNG 解码，检查共享 JSON 设置、真实存活完整图像纹理的精确两页绑定、HTTP503 替换拒绝、确认取消后才发送迟到响应，以及关闭后自身逻辑计数归零。不拦截解码器／密码算法／构造器／原型，不声称渲染或像素验收。
 
-完整所选版本 Spine 支持、独立姿态／事件／像素参考、稳定且有权使用的导出素材来源、播放、共享图形／颜色变体、Android／iPhone、原生宿主和性能仍未完成。M1.2 仍为 10.3 ms，未达 8 ms 目标。本次在 issue #83 内推进 M2.1，保留既有十一个 M2–M4 工作包。
+完整所选版本 Spine 支持、独立姿态／事件／像素参考、稳定且有权使用的导出素材来源、完整播放资格验收、共享图形／颜色变体、Android／iPhone、原生宿主和性能仍未完成。M1.2 仍为 10.3 ms，未达 8 ms 目标。资源接入在 issue #83 内推进 M2.1，下述播放增量在 issue #84 内推进 M2.2，保留既有十一个 M2–M4 工作包。
 
 二进制接入须先具备单独受约束的解析边界，这是 M2.1 明确保留的未完成事项。
 
 可选叶子包明确声明浏览器资源工程依赖，干净检出即可构建，不依赖以前残留的生成文件。
+
+## 独立播放实例
+
+可选根入口新增 `createSpineInstance(asset, scope, options?)`，只接受真实已就绪资源及同一 Engine 的开放 Scope。每个实例拥有私有 Core Skeleton 和 AnimationState，设置数据与页面租约仍由既有资源组共享。实例借用资源组生命周期：实例 Scope 关闭时销毁自身，资源组／加载器／Engine 关闭时先销毁关联实例，再释放设置数据和页面。关闭单个实例或资源组不影响其他资源组的实例。`loader.getStatus().liveInstances` 给出逻辑数量，每个加载器最多 128 个；它不是物理内存测量。
+
+以下控制排队到下一次 `advance(tick)`：`setAnimation(track,name,{loop?,mixSeconds?})`、`addAnimation(track,name,{loop?,mixSeconds?,delaySeconds?})`、`clearTrack`、`setSkin`、`setTransform(x,y,scaleX=1,scaleY=1)`、`setRate` 和 `setPaused`。轨道为 0–15，每实例最多 256 条待处理命令及 128 个仍保留的 Core 轨道条目。命名皮肤独立选择，不暴露任意上游对象修改或组合皮肤构造。清除轨道遵循 Core 语义，不自动恢复设置姿态。混合时长为 0–3,600 秒，排队延迟为 0–86,400 秒，速度为 0–16，变换各分量须为 ±1,000,000 内的有限值。延迟零使用 Core 的前序条目／混合边界，不表示立即覆盖当前轨道。
+
+时间显式推进。传入既有 GameClockTick 或同等自身数据属性记录：tickId 为严格递增的正安全整数，elapsedSeconds 为不下降的非负有限值，deltaSeconds 为非负有限值。不创建 RAF 或计时器。每次接受的推进消耗一个 tick；暂停或零速度不累积墙钟追赶时间。有效增量按命令顺序采用本次排队的速度／暂停值。默认最多八段，每段不超过 1/60 秒；maxSegments 可设为 1–120。过大增量在消耗命令或改变已提交状态前拒绝。应用须匹配 Engine 时钟上限，或显式分批追赶。适配器调用所选 Core 的物理更新，但本数值夹具不构成完整约束／物理资格验收。
+
+`getSnapshot()` 返回冻结复制的骨骼、插槽附件名、轨道、事件、时间和状态。骨骼世界矩阵来自 Core 最终应用姿态，包含其约束结果，不猜测变换。坐标遵循 Spine 设置／世界约定；它们是数值观察结果，不是白鹭绘制命令、纹理或渲染权威。后续更新或销毁不会改变已取得的快照；不暴露 Core 对象或池化 TrackEntry。发布的名称与事件字符串须为经过验证的原始值；非有限数值或格式异常的事件载荷在发布前使实例进入故障，防止可变 JSON 字段通过共享设置数据泄漏。
+
+事件保留 Core 队列的 start、interrupt、end、dispose、complete 和作者事件载荷顺序。maxEvents 每次推进默认 1,024，上限可设为 1–8,192。新数值快照提交后才调用监听器；监听器发出的命令延至下一次推进。销毁立即停止后续回调。监听器异常会完成其余符合条件的回调，再抛出 SPINE_INSTANCE_LISTENER_FAILED；保留已提交时间和姿态，不重放事件。事件时间保留 Core 数值表示，作者的十进制时间可能舍入至 Float32 精度。
+
+无效输入和过大增量属于预校验拒绝。推进中的非预期语义错误、轨道条目超限、事件超限或非有限姿态会使该实例进入 faulted，抑制未发布事件并保留最后成功快照。可变 Core 状态未回滚；故障实例拒绝继续控制／推进，需销毁后重建，其他实例继续工作。这与提交后的监听器异常分开。适配器复制有界快照字段，不在每次更新克隆完整实例；输入属性描述处理不可重入推进。
+
+资源组就绪后的示例：
+
+```js
+import {createSpineInstance} from '@egret/spine';
+const instanceScope = engine.createScope();
+const player = createSpineInstance(group.getSpine('e_skeleton'), instanceScope);
+player.setAnimation(0, 'walk', {loop: true});
+engine.clock.onTick(instanceScope, tick => { player.advance(tick); });
+// Drive engine.advanceTime(sourceSeconds) from the existing application loop.
+// Use clock.maxDeltaSeconds <= 8 / 60, or select a matching maxSegments.
+instanceScope.dispose();
+```
+
+本 M2.2 增量交付独立语义播放，不含共享渲染接入。定位／重放历史及检查点、组合皮肤、完整独立约束／时间线参考集、所选版本完整支持和 M2.3 图形仍开放。上文运行库版本、许可和原始出处保持不变。原始数值夹具提供作者定义的位移、分层、切换和事件预期，不是经认证的 Editor 导出。
+
+本增量验证：60 项针对性测试通过，其中新增 27 项播放用例，并包含严格 ES-only 公共消费者。实际默认桌面 Edge 156.0.4314.58、Playwright 1.62.1 在 369 个冻结源码文件上通过六组检查：真实传输／PNG、独立数值姿态、时间拒绝／暂停／混合／事件、故障隔离和清理。源码完整性和全部清理检查通过。最初失败预期与输入检查重入回归单独保留于[验证记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/spine-content/verification.json)；这些检查不代表像素、手机、完整动画参考集或性能验收。

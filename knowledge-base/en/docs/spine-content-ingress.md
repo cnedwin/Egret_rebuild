@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/spine-content-ingress.md)
 
-M2.1 provides an explicit `@egret/spine` asset SDK. It reads JSON setup data through official Core 4.3.13, binds original Spine atlas pages to existing Egret textures, and exposes immutable information with group lifetime. Default Engine entries stay unchanged. Playback, instances and graphics remain M2.2/M2.3 responsibilities.
+M2.1 provides an explicit `@egret/spine` asset SDK. It reads JSON setup data through official Core 4.3.13, binds original Spine atlas pages to existing Egret textures, and exposes immutable information with group lifetime. Default Engine entries stay unchanged. Independent playback instances are described below; shared graphics remain M2.3 work.
 
 ## Version, rights and reference basis
 
@@ -30,7 +30,7 @@ The original atlas is parsed by Core. Its 90-degree rotation means counterclockw
 
 `createSpineContentLoader(engine, ownerScope, manifest, factory, options?)` captures an explicit source-provider factory. The factory receives immutable resource IDs/kinds and genuine manifest bindings; it supplies texture and metadata-string providers. Custom providers own source verification and decoding; the browser facade reuses existing SHA256 transport and native PNG ports.
 
-`loader.load(scope, roots, options?)` authenticates an Engine-owned consumer Scope and selects exactly the requested skeleton dependency closure. It returns `SpineContentGroup` with `ready`, `getSpine(id)` and `dispose()`. Readiness is atomic for all requested roots. `getSpine` returns a group-lifetime view containing copied immutable version/format, bone/slot counts, skin/animation names and durations, and page metadata. No mutable Core object, pose, texture, draw command or player escapes.
+`loader.load(scope, roots, options?)` authenticates an Engine-owned consumer Scope and selects exactly the requested skeleton dependency closure. It returns `SpineContentGroup` with `ready`, `getSpine(id)` and `dispose()`. Readiness is atomic for all requested roots. `getSpine` returns a group-lifetime view containing copied immutable version/format, bone/slot counts, skin/animation names and durations, and page metadata. The asset view exposes no mutable Core object, pose, texture or draw command; a separate authenticated factory creates instances below.
 
 The existing AssetManager is the only cache and lease authority. A raw ManifestGroup stages verified sources. Setup acquisition retains independent page leases through that same manager, parses once for overlapping groups, and retires staging metadata before readiness. The last setup lease releases the private Core atlas/data and page demand. Source ref identities separate simultaneous loader generations without a second resource manager. Old ready groups remain usable when another catalog fails or is cancelled; applications choose when to retire an old generation.
 
@@ -48,8 +48,39 @@ See the [package guide](https://github.com/cnedwin/Egret_rebuild/blob/main/packa
 
 The [verification record](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/spine-content/verification.json) separates source, controlled behavior, strict ES-only public consumers and actual desktop browser resource checks. Programmatic fixtures are original data, not certified Editor exports. The browser collector uses default Edge with Playwright 1.62.1, genuine public Engine/Scope objects, ordinary fetch, SHA256 and native PNG decoding. It checks shared JSON setups, exact two-page binding of live full-image textures, HTTP503 replacement refusal, acknowledged cancellation before a late response, and zero owned logical counters after close. It installs no decoder/crypto/constructor/prototype interceptors and makes no renderer/pixel claim.
 
-Full selected-version Spine support, independently authored pose/event/pixel references, stable authorized export provenance, playback, shared graphics/color variants, Android/iPhone, native hosts and performance remain open. M1.2 remains 10.3 ms against the 8 ms target. This increment advances M2.1 within issue #83; the existing eleven M2–M4 work packages remain intact.
+Full selected-version Spine support, independently authored pose/event/pixel references, stable authorized export provenance, full playback qualification, shared graphics/color variants, Android/iPhone, native hosts and performance remain open. M1.2 remains 10.3 ms against the 8 ms target. Asset ingress advances M2.1 within issue #83; the playback increment below advances M2.2 within issue #84; the existing eleven M2–M4 work packages remain intact.
 
 Binary ingress requires a separately bounded parser before admission; this is an explicit remaining M2.1 obligation.
 
 The optional leaf declares its browser-resource project dependency explicitly, so a clean checkout builds without relying on previously emitted files.
+
+## Independent playback instances
+
+The optional root also exports `createSpineInstance(asset, scope, options?)`. It accepts only a genuine ready asset and an open Scope from the same Engine. Each instance owns a private Core Skeleton and AnimationState; setup data and page leases stay shared in the existing group. An instance borrows that group lifetime: Scope disposal closes its instance, while group/loader/Engine closure closes associated instances before releasing setup/pages. Closing one instance or group cannot close a sibling group's instance. `loader.getStatus().liveInstances` reports the logical count, capped at 128 per loader. This is not a physical-memory measurement.
+
+Controls are queued for the next `advance(tick)`: `setAnimation(track,name,{loop?,mixSeconds?})`, `addAnimation(track,name,{loop?,mixSeconds?,delaySeconds?})`, `clearTrack`, `setSkin`, `setTransform(x,y,scaleX=1,scaleY=1)`, `setRate` and `setPaused`. Tracks are 0–15; there are at most 256 pending commands and 128 retained Core track entries per instance. Named skins are selected independently; arbitrary upstream mutation and combined-skin construction are not exposed. Clearing a track follows Core semantics and does not automatically restore the setup pose. Mix is 0–3,600 seconds, queue delay is 0–86,400, rate is 0–16, and each transform component is finite within ±1,000,000. Queue delay zero uses Core's previous-entry/mix boundary; it does not mean immediately override the active track.
+
+Time is explicit. Supply the existing GameClockTick or an equivalent own-data record with increasing positive safe-integer tickId, nondecreasing finite nonnegative elapsedSeconds and finite nonnegative deltaSeconds. No RAF or timer is created. Each accepted advance consumes one tick; pause/rate zero does not accumulate wall-time catch-up. The effective delta uses the queued rate/pause controls, in command order. Advances split into at most eight segments of at most 1/60 second by default; maxSegments can be 1–120. An oversized advance rejects before consuming commands or changing committed state. Configure the Engine clock clamp consistently, or provide explicit bounded catch-up. The adapter invokes Core's selected physics update but does not claim full constraint/physics qualification from these numerical fixtures.
+
+`getSnapshot()` returns frozen copied bones, slot attachment names, tracks, event records, time and status. Bone world matrices come from Core's final applied pose, including its constraints, not guessed transforms. Snapshot coordinates follow Spine's setup/world convention; they are numerical inspection data, not Egret draw commands, textures or renderer authority. Snapshots remain detached and readable after later updates or disposal. No Core object or pooled TrackEntry escapes. Published names and event strings are validated primitives; nonfinite numbers or malformed event payloads fault the instance before publication, preventing mutable JSON fields from leaking across shared setups.
+
+Events preserve Core queue order for start, interrupt, end, dispose, complete and authored event payloads. maxEvents defaults to 1,024 and accepts 1–8,192 per advance. Events are dispatched only after the new numerical snapshot commits; listener-issued commands wait for the next advance. Disposal immediately suppresses remaining callbacks. Listener errors finish eligible callbacks, then throw SPINE_INSTANCE_LISTENER_FAILED; committed time and pose are retained and events are not replayed. Event times retain Core's numeric representation; authored decimal timestamps may be rounded to Float32 precision.
+
+Invalid inputs and excessive delta are prevalidation refusals. An unexpected semantic error, retained-entry overflow, event overflow or nonfinite pose during advancement faults that instance, suppresses its unpublished event batch and preserves the last published snapshot. Mutable Core state is not rolled back; the faulted instance refuses more controls/advances and must be disposed and reconstructed. Other instances continue. This is separate from listener failure after commitment. The adapter copies bounded snapshot fields; it does not clone an entire instance for each update. Input descriptors cannot reenter advancement.
+
+Example, after a ready group:
+
+```js
+import {createSpineInstance} from '@egret/spine';
+const instanceScope = engine.createScope();
+const player = createSpineInstance(group.getSpine('e_skeleton'), instanceScope);
+player.setAnimation(0, 'walk', {loop: true});
+engine.clock.onTick(instanceScope, tick => { player.advance(tick); });
+// Drive engine.advanceTime(sourceSeconds) from the existing application loop.
+// Use clock.maxDeltaSeconds <= 8 / 60, or select a matching maxSegments.
+instanceScope.dispose();
+```
+
+This M2.2 increment covers independent semantic playback, not shared-renderer integration. Seek/replay history and checkpoints, combined skins, a complete independently authored constraint/timeline corpus, full selected-version support and M2.3 graphics remain open. Runtime/license and original source attribution above are unchanged. The original numerical fixture adds authored translation, layering, switching and event expectations; it is not a certified Editor export.
+
+Validation for this increment: 60 focused tests passed, including 27 new playback cases and strict ES-only consumers. Actual default desktop Edge 156.0.4314.58 with Playwright 1.62.1 passed six check groups over 369 frozen source files: genuine transport/PNG, independent numerical poses, time refusal/pause/mixing/events, fault isolation and cleanup. Source integrity and all cleanup checks passed. Original failed expectations and the input-inspection reentry regression are retained separately in the [verification record](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/spine-content/verification.json); these checks do not qualify pixels, phones, the full animation corpus or performance.
