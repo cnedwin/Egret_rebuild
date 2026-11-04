@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "0c48cf526c830642cf724c9c00d0782f84fa27a2e27bac3ea2b2eede6f87c69b",
+      "sha256": "45a1ee2cbc1dd5501a73e4ce55141962c80eaa7f15df9144ba7871dfc73bbca6",
       "bytes": 372539,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -9797,8 +9797,8 @@
     },
     {
       "path": "tests/spritesheet-boundaries.test.mjs",
-      "bytes": 19368,
-      "sha256": "8338462be64f384fd7ec6c298c42ec6107a0a8894fb8cce7cfb3d1acfaa8269b",
+      "bytes": 19862,
+      "sha256": "939d388f165c3a02a2d0964e8958f65d272424509e9e9a4d805a8c7309bb3aa8",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -9876,8 +9876,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 252663,
-      "sha256": "8f19ac2f77414d2815fc56b33910cbbbb21cd823c3e6dd0f9e8aafb6fc73de26",
+      "bytes": 256239,
+      "sha256": "9fe4430a07a41f9a553a5302c67404ff01e1eb59d8b91e11e07bebc324a849b5",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10099,8 +10099,8 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 261636,
-      "sha256": "5d4ec3fc991c2de3fd272c2a563f40f2103ee2896df510cdc73bdd2f6ba29678",
+      "bytes": 265212,
+      "sha256": "5418e1727c4b635847986ddea1b21761f448861cb4e46c9149993d1b5e91d929",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10161,8 +10161,8 @@
     },
     {
       "path": "tools/atlas-import-boundary.mjs",
-      "bytes": 157376,
-      "sha256": "e8f63cd530c81b47153317a798a02f10a85960291016e5929faf374b67bb4ca7",
+      "bytes": 160952,
+      "sha256": "914639e2fd0d8b424b0be12f84ed3639e5bd1b8541d538ac1bca6d62d16bb1e6",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10321,8 +10321,8 @@
     },
     {
       "path": "tests/browser-png-boundaries.test.mjs",
-      "bytes": 20838,
-      "sha256": "72b0c8f4247a4177abe4940b377a847d75151ca56301bdac5eafd0a3f9a16ccc",
+      "bytes": 21228,
+      "sha256": "39f7052f36d9b3aedb858e5e4e074e7acf78f43025f974b4405ad80b4c04b64a",
       "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
     },
     {
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 704475,
-      "sha256": "207bcf2d6708e262f5f2ccfbe186526a40fae80daf345fd6be03e7f4d9666215"
+      "bytes": 719747,
+      "sha256": "6d7d6f0d2672c8ba8e3f567a8e46616140e5f4f8afcbc5e20e1f78de2d5f3ef6"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10688,8 +10688,8 @@
     {
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 42267,
-      "sha256": "00cbef745d1bda4f597aff4875e764a1729ab7630e23a57b9b063872169810ad"
+      "bytes": 43243,
+      "sha256": "a620dd9736ac6bcf5e291867989b62f71093a2a71770f822bf39da36265544b9"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -10778,8 +10778,8 @@
     {
       "path": "tests/atlas-import-boundary.test.mjs",
       "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
-      "bytes": 14863,
-      "sha256": "e6917da877686083eda18e9544dc0960fee4a7cdb9aa2f2d11fc1cfd94a6fdea"
+      "bytes": 15256,
+      "sha256": "6d6a1bef2be96a796436b15744370f0cb92894e0d6613eaaf54cd4a745b7b5b6"
     },
     {
       "path": "tests/webgpu-submission-binding-private.test.mjs",
@@ -13202,14 +13202,14 @@
     {
       "path": "knowledge-base/Cns/docs/ui-data-panel.md",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 13108,
-      "sha256": "b11a70410748fd2ae7ef2b297dc75a583362b1ab32a21b7176f86bb0d1e235c1"
+      "bytes": 13450,
+      "sha256": "11fcb19e0b8d5e1fce6a71044653f7864a55ddc76ef0699f708082d997b3ef56"
     },
     {
       "path": "knowledge-base/en/docs/ui-data-panel.md",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 15224,
-      "sha256": "f96fce3931f0891c807777e6e3b5a8186d08c034f88e668be4a98bac191cfb41"
+      "bytes": 15602,
+      "sha256": "1883cce451548f632bea45a3b1a0dd52508d16257d6d2c09bb60cbc655bc4595"
     },
     {
       "path": "packages/engine/src/internal/uiFactoryState.ts",
