@@ -10436,8 +10436,8 @@
     {
       "path": ".github/workflows/ci.yml",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 3761,
-      "sha256": "61ed7aa86bca9ee2005f6df7cdb8ca8aabaffe1dd3505463c577d9c8ea14e97d"
+      "bytes": 11747,
+      "sha256": "72286a39dbed91f3a8aa45bac993fb2c9c58a932820f89d65f7e7499324fe02f"
     },
     {
       "path": ".node-version",

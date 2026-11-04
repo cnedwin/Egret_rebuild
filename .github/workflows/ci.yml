@@ -6,11 +6,122 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
+  checks: read
 concurrency:
   group: m0-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  # PR120 alone substitutes Intel macOS after hosted ARM64 capacity cancellations.
+  # 仅 PR120 更换 Intel macOS；精确复用成功记录，其他提交仍执行完整检查。
+  retained:
+    name: PR120 / retained Windows and Linux evidence
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 120 }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Verify unchanged inputs and original successful executions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import {execFileSync} from 'node:child_process';
+          import {createHash} from 'node:crypto';
+          import assert from 'node:assert/strict';
+          const old='9620283c06f010f959c3b1638ce3db5f7c5eac9c', base='668d0a6c75bca6f77b637594b4cc5b7ce3c06411';
+          const tree='97c7c43a6c7641e8669aceb6b5f4bc9be2270f7b', tested='5f09ea3501a8ee797308f9a2a66749f90e9b6771';
+          const repo='cnedwin/Egret_rebuild', workflow='.github/workflows/ci.yml', ledger='source-origin.json';
+          const event=JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH,'utf8')), pr=event.pull_request;
+          assert.equal(process.env.GITHUB_EVENT_NAME,'pull_request');
+          assert.equal(process.env.GITHUB_REPOSITORY,repo);
+          assert.equal(pr?.number,120);
+          assert.equal(pr.head.repo.full_name,repo);
+          assert.equal(pr.base.repo.full_name,repo);
+          assert.equal(pr.base.sha,base);
+          assert.match(pr.head.sha,/^[0-9a-f]{40}$/);
+          const git=(...args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:8*1024*1024}).trim();
+          const raw=(ref,file)=>execFileSync('git',['show',ref+':'+file],{maxBuffer:8*1024*1024});
+          const hash=b=>createHash('sha256').update(b).digest('hex');
+          assert.equal(git('show','-s','--format=%P',pr.head.sha),old);
+          assert.equal(git('show','-s','--format=%P','HEAD'),base+' '+pr.head.sha);
+          assert.equal(git('rev-parse','HEAD'),process.env.GITHUB_SHA);
+          assert.equal(git('rev-parse','HEAD^{tree}'),git('rev-parse',pr.head.sha+'^{tree}'));
+          assert.equal(git('rev-parse',old+'^{tree}'),tree);
+          const excluded=new Set([workflow,ledger]);
+          const entries=ref=>git('ls-tree','-rz',ref).split('\0').filter(Boolean);
+          const rest=ref=>entries(ref).filter(row=>!excluded.has(row.split('\t')[1]));
+          assert.deepEqual(rest(pr.head.sha),rest(old));
+          assert.deepEqual(rest('HEAD'),rest(old));
+          for(const file of excluded){
+            for(const ref of [old,pr.head.sha,'HEAD'])assert.match(git('ls-tree',ref,'--',file),/^100644 blob /);
+          }
+          assert.deepEqual(git('diff','--name-status','--no-renames',old,pr.head.sha).split('\n'),['M\t'+workflow,'M\t'+ledger]);
+          // The only ledger delta is the new workflow fingerprint, never arbitrary metadata.
+          const expected=JSON.parse(raw(old,ledger)), bytes=raw(pr.head.sha,workflow);
+          const rows=expected.files.filter(row=>row.path===workflow);
+          assert.equal(rows.length,1);
+          Object.assign(rows[0],{bytes:bytes.length,sha256:hash(bytes)});
+          assert.deepEqual(raw(pr.head.sha,ledger),Buffer.from(JSON.stringify(expected,null,2)+'\n'));
+          async function request(path,log=false){
+            const response=await fetch('https://api.github.com/repos/'+repo+path,{headers:{Authorization:'Bearer '+process.env.GH_TOKEN,Accept:'application/vnd.github+json'},redirect:'manual',signal:AbortSignal.timeout(30000)});
+            if(log&&response.status===302){
+              const location=new URL(response.headers.get('location'));
+              assert.equal(location.protocol,'https:');
+              // Do not forward the GitHub credential to the signed log archive URL.
+              const archive=await fetch(location,{signal:AbortSignal.timeout(30000)});
+              assert.equal(archive.status,200);
+              return Buffer.from(await archive.arrayBuffer());
+            }
+            assert.equal(response.status,200,'GitHub evidence response '+path);
+            return log?Buffer.from(await response.arrayBuffer()):response.json();
+          }
+          const run=await request('/actions/runs/41859588505');
+          const originalMerge=await request('/git/commits/'+tested);
+          assert.equal(originalMerge.sha,tested);
+          assert.equal(originalMerge.tree.sha,tree);
+          assert.deepEqual(originalMerge.parents.map(parent=>parent.sha),[base,old]);
+          assert.equal(run.id,41859588505);
+          assert.equal(run.workflow_id,387330091);
+          assert.equal(run.path,workflow);
+          assert.equal(run.event,'pull_request');
+          assert.equal(run.status,'completed');
+          assert.equal(run.head_sha,old);
+          assert.equal(run.head_repository.full_name,repo);
+          const retained=[];
+          for(const [id,name,digest] of [[126677391898,'windows','15e93b7b897e6f774b865ff605aef04bbdca1ec840e3842700bf58f32050dcf8'],[126677392440,'cpu (ubuntu-latest)','df51bc85ba1b877cbad465bd6f958a9accc92980873bb8f0c8b50894c076a8cc']]){
+            const job=await request('/actions/jobs/'+id), check=await request('/check-runs/'+id);
+            assert.equal(job.id,id);
+            assert.equal(job.run_id,run.id);
+            assert.equal(job.head_sha,old);
+            assert.equal(job.name,name);
+            assert.equal(job.status,'completed');
+            assert.equal(job.conclusion,'success');
+            assert.ok(job.steps.length>0&&job.steps.every(step=>step.conclusion==='success'));
+            assert.equal(check.id,id);
+            assert.equal(check.name,name);
+            assert.equal(check.app.id,15368);
+            assert.equal(check.head_sha,old);
+            assert.equal(check.conclusion,'success');
+            const log=await request('/actions/jobs/'+id+'/logs',true);
+            assert.equal(hash(log),digest);
+            const text=log.toString('utf8');
+            assert.ok(text.includes('HEAD is now at '+tested.slice(0,7)+' Merge '+old+' into '+base));
+            assert.ok(text.includes(tested));
+            retained.push({id,name,sha256:digest,conclusion:job.conclusion});
+          }
+          console.log(JSON.stringify({status:'RETAINED_EVIDENCE_VERIFIED',head:pr.head.sha,base,tree:git('rev-parse','HEAD^{tree}'),previousHead:old,previousTree:tree,testedMerge:tested,run:run.id,retained}));
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'Windows and Linux: reused exact successful executions; not rerun. Only PR120 workflow and its fingerprint changed. Intel macOS CPU validation is still required; ARM64/GPU acceptance is not claimed.\n\nWindows/Linux：复用原成功执行，未重跑。仅工作流及其指纹变化；仍需 Intel macOS CPU 实测，不代表 ARM64/GPU 验收。\n');
+          NODE
   windows:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.number != 120 }}
     runs-on: windows-latest
     # Allow the complete suite to finish on hosted Windows without omitting checks.
     timeout-minutes: 60
@@ -54,10 +165,12 @@ jobs:
           EGRET_METADATA_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: node tools/prepush.mjs --integrated
   cpu:
+    needs: [retained]
+    if: ${{ always() && !cancelled() && (needs.retained.result == 'success' || needs.retained.result == 'skipped') }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: ${{ fromJSON(github.event_name == 'pull_request' && github.event.pull_request.number == 120 && '["macos-15-intel"]' || '["ubuntu-latest","macos-latest"]') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     steps:
@@ -76,13 +189,21 @@ jobs:
   merge-ready:
     name: M0 / merge-ready
     if: ${{ always() }}
-    needs: [windows, cpu]
+    needs: [retained, windows, cpu]
     runs-on: ubuntu-latest
     steps:
       - name: Require all declared jobs
         env:
+          PR120: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 120 }}
+          RETAINED_RESULT: ${{ needs.retained.result }}
           WINDOWS_RESULT: ${{ needs.windows.result }}
           CPU_RESULT: ${{ needs.cpu.result }}
         run: |
-          test "$WINDOWS_RESULT" = success
+          if [ "$PR120" = true ]; then
+            test "$RETAINED_RESULT" = success
+            test "$WINDOWS_RESULT" = skipped
+          else
+            test "$RETAINED_RESULT" = skipped
+            test "$WINDOWS_RESULT" = success
+          fi
           test "$CPU_RESULT" = success
