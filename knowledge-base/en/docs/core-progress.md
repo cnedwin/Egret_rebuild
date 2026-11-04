@@ -4,6 +4,10 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## M3.1 key-directed virtual-list reveal — 2026-11-04
+
+Virtual lists now stage explicit nearest/start/center/end navigation by stable record key, recomputing against measured heights through existing prepare/commit. Cancellation, replacement and stale tokens preserve the committed image. Existing visible-only focus remains an explicit checked post-commit action. See [the contract](ui-data-panel.md#key-directed-reveal) and the 50,000-record public fixture. Fourteen focused behavior cases and default Edge WebGPU/WebGL2 checks cover alignment, supersession, held keys and cleanup; full CI/delivery is separate. Automatic offscreen traversal, IME, accessibility, physical devices and performance remain OPEN, including the historical M1.2 budget failure.
+
 ## M2.4 editable animation/outfit reference — 2026-11-04
 
 The reference scene (examples/animation-outfits) now composes 20 independent Spine players sharing one setup/two pages and 200 independent sequence controllers sharing one clip/texture in one Engine. It supports selected outfit/animation, finite or loop playback, pause/rate, cancellation, complete close and retry through existing public SDK ownership. The new-controller capacity grows to the existing combined 256-target bound, without changing per-controller budgets or exports. Focused behavior and default Edge WebGPU/WebGL2 checks cover exact counts, literal pixels and logical cleanup. Full replacement/recovery, cache/performance measurement, complete Spine/export and physical-device acceptance remain open; M2.4/Issue #86 and M1.2's performance failure are unchanged.
@@ -18,7 +22,7 @@ The optional Spine SDK now creates independent instances over existing shared se
 
 ## M3.1/M3.3 managed row focus — 2026-11-04
 
-Managed virtual lists can borrow the existing keyboard channel. Committed visible rows receive stable IDs, visual-order traversal and explicit focus; replacement cancels old held keys before detachment and restores only an eligible same-key target. Scrolling out explicitly releases focus, without hidden-row retention. See [ownership and API details](ui-data-panel.md#managed-virtual-row-keyboard-focus). The responsive UI/paragraph pages include keyboard selection and a visible outline. Native editing, offscreen navigation, modal controls and full M3/device/performance acceptance remain OPEN.
+Managed virtual lists can borrow the existing keyboard channel. Committed visible rows receive stable IDs, visual-order traversal and explicit focus; replacement cancels old held keys before detachment and restores only an eligible same-key target. Scrolling out explicitly releases focus, without hidden-row retention. See [ownership and API details](ui-data-panel.md#managed-virtual-row-keyboard-focus). The responsive UI/paragraph pages include keyboard selection and a visible outline. Native editing, automatic offscreen traversal, modal controls and full M3/device/performance acceptance remain OPEN.
 
 ## M3.2 source, selection and caret geometry — 2026-10-30
 

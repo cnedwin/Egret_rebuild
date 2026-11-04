@@ -511,3 +511,13 @@ function negativeSequenceNarrow(event: NegativeSequenceEvent): void {
 }
 void negativeSequenceProfile; void negativeSequenceRepeat; void negativeSequenceMarker;
 void negativeSequenceCallback; void negativeSequenceFake; void negativeSequenceNarrow;
+
+declare const navigationList: import('@egret/engine/ui').VirtualListHandle<number>;
+// @ts-expect-error UI_NAVIGATION_CASE numeric-key
+navigationList.reveal(42);
+// @ts-expect-error UI_NAVIGATION_CASE unknown-alignment
+navigationList.reveal('record', {align: 'smooth'});
+// @ts-expect-error UI_NAVIGATION_CASE no-implicit-focus
+navigationList.reveal('record', {focus: true});
+// @ts-expect-error UI_NAVIGATION_CASE synchronous-intent
+const navigationPromise: Promise<void> = navigationList.reveal('record');

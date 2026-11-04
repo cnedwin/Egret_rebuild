@@ -1,0 +1,173 @@
+{
+  "schema": "egret.ui-key-navigation-public-projection/1",
+  "date": "2026-11-04",
+  "scope": "M3.1 key reveal and explicit post-commit focus; no new keyboard behavior.",
+  "publicBehavior": {
+    "navigationCases": 14,
+    "combinedCases": 30,
+    "passed": 30,
+    "failed": 0,
+    "raw": {
+      "bytes": 2927,
+      "sha256": "dae2cd09f7a5576ae0a6d3f1740af117d567080148e008d4c51e79e2f4f1fb7b"
+    },
+    "finalAffectedUi": {
+      "cases": 119,
+      "passed": 119,
+      "failed": 0,
+      "raw": {
+        "bytes": 11602,
+        "sha256": "e15fbbfee0160b31617a308d6c52068824848372c2841857ecb5027855840b3b"
+      }
+    }
+  },
+  "types": {
+    "cases": [
+      {
+        "line": 517,
+        "column": 23,
+        "code": 2345
+      },
+      {
+        "line": 519,
+        "column": 34,
+        "code": 2322
+      },
+      {
+        "line": 521,
+        "column": 34,
+        "code": 2353
+      },
+      {
+        "line": 523,
+        "column": 7,
+        "code": 2322
+      }
+    ],
+    "raw": {
+      "bytes": 364510,
+      "sha256": "0084a9de33bbaf3d2f519b3098fcff582807b183a857f472c7ef8a83f9a10a69"
+    },
+    "finalOrdinaryLane": {
+      "status": "PASS",
+      "negativeAssertions": 187,
+      "raw": {
+        "bytes": 59185,
+        "sha256": "2479a8a21905172b7067bb421f05c15c4f709b6b39185de8dbd216b5d25bf5e5"
+      }
+    }
+  },
+  "browser": {
+    "status": "PASS",
+    "environment": {
+      "node": "v26.7.0",
+      "platform": "win32",
+      "playwright": "1.62.1",
+      "channel": "msedge",
+      "headless": true,
+      "extraFlags": [],
+      "physicalDevice": false,
+      "browser": "156.0.4314.58"
+    },
+    "backends": [
+      {
+        "backend": "webgpu",
+        "checks": [
+          "50000-key-measured-center-and-explicit-focus",
+          "literal-pixels-and-focus-outline",
+          "native-held-key-cancellation-before-reveal-commit",
+          "native-key-delivery-to-new-visible-target",
+          "owned-registration-and-held-state-cleanup"
+        ],
+        "closed": {
+          "closed": true,
+          "keyboard": {
+            "state": "active",
+            "focusVisible": false,
+            "pressedKeys": [],
+            "targetCount": 0
+          },
+          "errors": []
+        },
+        "status": "PASS"
+      },
+      {
+        "backend": "webgl2",
+        "checks": [
+          "50000-key-measured-center-and-explicit-focus",
+          "literal-pixels-and-focus-outline",
+          "native-held-key-cancellation-before-reveal-commit",
+          "native-key-delivery-to-new-visible-target",
+          "owned-registration-and-held-state-cleanup"
+        ],
+        "closed": {
+          "closed": true,
+          "keyboard": {
+            "state": "active",
+            "focusVisible": false,
+            "pressedKeys": [],
+            "targetCount": 0
+          },
+          "errors": []
+        },
+        "status": "PASS"
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "webgpu.rgba",
+        "bytes": 256000,
+        "sha256": "9e25528ae1151ad29f64543ec47799497056099fef5a9abf7724d5de8bf56695"
+      },
+      {
+        "path": "webgpu.png",
+        "bytes": 879,
+        "sha256": "c2591eef1582438040ffb59a800d3a972cb2987f1d3d3e402b6e093e83873f0e"
+      },
+      {
+        "path": "webgl2.rgba",
+        "bytes": 256000,
+        "sha256": "9e25528ae1151ad29f64543ec47799497056099fef5a9abf7724d5de8bf56695"
+      },
+      {
+        "path": "webgl2.png",
+        "bytes": 879,
+        "sha256": "c2591eef1582438040ffb59a800d3a972cb2987f1d3d3e402b6e093e83873f0e"
+      }
+    ],
+    "snapshotIntegrity": true,
+    "raw": {
+      "bytes": 90453,
+      "sha256": "e1037444b6e51bd2448376adfbb755a0fd05239e67ca1a26cc4c844085d95a2c"
+    },
+    "sourceFreeze": {
+      "bytes": 88651,
+      "sha256": "f9723b48bad112f5e8e335d638686b5efa979de1a03eb074ab818c51e6aed8d8"
+    },
+    "finalInputIdentity": {
+      "status": "PASS",
+      "files": 470,
+      "raw": {
+        "bytes": 83351,
+        "sha256": "3142cf1a481307f9c37da5f907c6129a2161ae0bc0efb64be945d18927b91d1b"
+      }
+    }
+  },
+  "limits": [
+    "Full integrated checks, independent review, CI and main delivery are separately recorded.",
+    "Desktop logical ownership and pixels are not physical-memory, performance, IME, accessibility or phone acceptance."
+  ],
+  "priorFailures": [
+    "Initial test fixture omitted mandatory list dimensions; corrected before missing-API red test.",
+    "Fresh binding measured height superseded manual fixture update; assertion repaired to use the actual measured target height.",
+    "New erased UiHeightView import required exact source/declaration boundary admissions; fixed without broadening runtime access.",
+    "Knowledge-base links to outside examples are unsupported by the existing validator; changed to portable code paths."
+  ],
+  "authorship": "Independent first-party AI-assisted implementation and original fixtures; Apache-2.0. Existing pinned renderer and native keyboard bridge reused; no new third-party code or assets.",
+  "localChecks": {
+    "boundary": "PASS",
+    "environment": "PASS",
+    "publicationAndKnowledgeBase": "PASS",
+    "completeMergeGate": "Not claimed locally; initial integrated run interrupted before historical suites, final protected CI belongs to delivery."
+  }
+}

@@ -6,13 +6,13 @@ import type { UiLayoutTree, UiLayoutNode, UiLayoutPlan, UiLayoutBox, UiDisplayUp
 import { requireUiEngine } from '../internal/uiFactoryState.js';
 import type { PointerInput } from '../pointerInputTypes.js';
 import type { KeyboardFocusOptions } from '../keyboardInputTypes.js';
-import { captureSource } from './virtualList.js';
+import { captureSource, captureReveal, revealScroll } from './virtualList.js';
 import { createUiKeyboardFocus } from './keyboardFocus.js';
 import type { KeyboardRow } from './keyboardFocus.js';
-import type { CapturedSource } from './virtualList.js';
+import type { CapturedSource, RevealIntent } from './virtualList.js';
 import { captureUiTree, leafConstraintTree, leafMeasuredTree, fixedLeafMeasurement } from './leafContent.js';
 import type { CapturedLeafContent } from './leafContent.js';
-import type { UiRoot, UiRootOptions, UiSnapshot, UiPreparation, UiCommitResult, UiRowSnapshot, UiCounters, UiInvalidationKind, VirtualDataSource, VirtualListHandle, RowUnbindInfo, UiRowPointerNotification } from './types.js';
+import type { UiRoot, UiRootOptions, UiSnapshot, UiPreparation, UiCommitResult, UiRowSnapshot, UiCounters, UiInvalidationKind, VirtualDataSource, VirtualListHandle, VirtualListRevealOptions, RowUnbindInfo, UiRowPointerNotification } from './types.js';
 type ScopePort = ReturnType<ReturnType<typeof requireUiEngine>['scope']>;
 type InputPort = ReturnType<ReturnType<typeof requireUiEngine>['requireInput']>;
 interface Binding {
@@ -178,6 +178,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
     const listId = listNodes[0]?.id;
     let source = listNodes[0] === undefined ? undefined : captureSource(listNodes[0].source as VirtualDataSource<unknown>);
     let explicitScroll = listNodes[0] === undefined ? undefined : number(listNodes[0].initialScrollOffset ?? 0, -Number.MAX_VALUE, Number.MAX_VALUE);
+    let revealIntent: RevealIntent | undefined;
     tree = withoutSources(tree);
     const emptyTree = captureUiLayout({
         id,
@@ -649,7 +650,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         let journal = w.index?.stageHeights([...w.heights.values()]);
         let view = journal ?? w.index;
         if (view !== undefined)
-            w.scroll = explicitScroll !== undefined ? view.clampScroll(explicitScroll, w.height) : committedIndex === undefined ? view.clampScroll(w.scroll, w.height) : view.preserveAnchor(snapshot.anchor, committedIndex, w.height);
+            w.scroll = revealIntent !== undefined ? revealScroll(view, revealIntent, snapshot.scrollOffset, w.height)
+                : explicitScroll !== undefined ? view.clampScroll(explicitScroll, w.height) : committedIndex === undefined ? view.clampScroll(w.scroll, w.height) : view.preserveAnchor(snapshot.anchor, committedIndex, w.height);
         const keys = view === undefined ? [] : selected(view, w.scroll, w.height);
         const work: Promise<Binding>[] = [];
         for (const key of keys) {
@@ -674,7 +676,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         journal = w.index?.stageHeights([...w.heights.values()]);
         view = journal ?? w.index;
         if (view !== undefined)
-            w.scroll = explicitScroll !== undefined ? view.clampScroll(explicitScroll, w.height) : committedIndex === undefined ? view.clampScroll(w.scroll, w.height) : view.preserveAnchor(snapshot.anchor, committedIndex, w.height);
+            w.scroll = revealIntent !== undefined ? revealScroll(view, revealIntent, snapshot.scrollOffset, w.height)
+                : explicitScroll !== undefined ? view.clampScroll(explicitScroll, w.height) : committedIndex === undefined ? view.clampScroll(w.scroll, w.height) : view.preserveAnchor(snapshot.anchor, committedIndex, w.height);
         const finalKeys = view === undefined ? [] : selected(view, w.scroll, w.height);
         if (finalKeys.some(key => !compatible(w.bindings.get(key), w, key))) {
             if (w.round >= 8) {
@@ -914,14 +917,28 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                     if (captured.byKey.get(key)?.contentVersion !== bindings.get(key)?.version)
                         fail('UI_ROW_RETAINED');
                 source = captured;
+                revealIntent = undefined;
+                change();
+            });
+        },
+        reveal(key: string | undefined, options?: VirtualListRevealOptions) {
+            admit('reveal', () => {
+                const revision = desired, intent = captureReveal(key, options);
+                check(revision);
+                if (intent !== undefined && !source?.byKey.has(intent.key)) fail('UI_UNKNOWN_KEY');
+                if (intent === undefined && revealIntent === undefined) return;
+                revealIntent = intent;
+                // Cancelling restores ordinary committed-anchor preservation, never a staged offset.
+                explicitScroll = undefined;
                 change();
             });
         },
         setScrollOffset(value: number) {
             admit('scroll', () => {
                 const scroll = number(value, -Number.MAX_VALUE, Number.MAX_VALUE);
-                if (explicitScroll === scroll || explicitScroll === undefined && snapshot.scrollOffset === scroll)
+                if (revealIntent === undefined && (explicitScroll === scroll || explicitScroll === undefined && snapshot.scrollOffset === scroll))
                     return;
+                revealIntent = undefined;
                 explicitScroll = scroll;
                 change();
             });
@@ -1048,8 +1065,10 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 }
                 tree = withoutSources(t);
                 leafContents = captured.contents;
-                if (s !== undefined)
+                if (s !== undefined) {
+                    if (s.identity !== source?.identity || s.revision !== source?.revision) revealIntent = undefined;
                     source = s;
+                }
                 change();
             });
         },
@@ -1203,6 +1222,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 snapshot = c.snapshot;
                 preparedWindow = undefined;
                 explicitScroll = undefined;
+                revealIntent = undefined;
                 heightUpdates.clear();
                 dirty.clear();
                 try { keyboard?.commit(keyboardRows, restoreFocus); } catch (cause) { errors.push(cause); }
@@ -1299,6 +1319,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             heightUpdates.clear();
             dirty.clear();
             source = undefined;
+            revealIntent = undefined;
             committedSource = undefined;
             committedIndex = undefined;
             plan = undefined;

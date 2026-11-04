@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/ui-key-navigation/README.md",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets."
+    },
+    {
+      "path": "examples/ui-key-navigation/README.zh-CN.md",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets."
+    },
+    {
+      "path": "examples/ui-key-navigation/index.html",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets."
+    },
+    {
+      "path": "examples/ui-key-navigation/main.mjs",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-key-navigation/verify.mjs",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-key-navigation/verification-summary.json",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets."
+    },
+    {
+      "path": "tests/ui-key-navigation.test.mjs",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets.",
+      "criticalComment": true
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/ui-key-navigation/README.md",
+      "zh": "examples/ui-key-navigation/README.zh-CN.md"
+    }
+  ]
+}

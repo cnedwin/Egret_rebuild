@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 20195,
-      "sha256": "cd2d54dc96592ebcbc98ad5600209d2077b39e9c657ef2bd682094e482ba4a78",
+      "bytes": 20849,
+      "sha256": "665e90f43c7e98b0e2fb4366c3e5d4c0be8b1aedace9adf4d69fdd5c5fc3208c",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "03558da4bdffbcfff8866ff711201fa02b23f893de6c333c62858b0408507e65",
+      "sha256": "2386fb1b3edc004ecffbc99849e62601a266ce5a65a8fb1e0efc90f96c662229",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 22985,
-      "sha256": "8c67a1398a2e20e9098c8b48922c8cb9c75f44f7f2d2c614c157b8dafedf1bc3",
+      "bytes": 23754,
+      "sha256": "58265be8eab4026fb6d9402f3e098d618dc2ad26149745f19c1d320f8ea3052a",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "4d8b0a964877383e5d8e69122795448d8161276e3d61def0152625cb71dc9828",
-      "bytes": 371767,
+      "sha256": "1db8e184eedda7706f5b649d2c6050ac25013ab12c11b1a7b5cdcc7731eca887",
+      "bytes": 372539,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -5356,8 +5356,8 @@
     },
     {
       "path": "tests/types/negative.ts",
-      "sha256": "32722c4f9215e88601c7973503e4878652680f155ecd2c6407dd62a97931723b",
-      "bytes": 32469,
+      "sha256": "bf4626c0f40d81482822befc966fc6c9dac7d650eed7044c2f45718f906057a3",
+      "bytes": 32978,
       "originalSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
@@ -5373,8 +5373,8 @@
     },
     {
       "path": "tests/types/positive.ts",
-      "sha256": "36c86744050291dc2e81d1bf03222bfd384c6296b06f7162b39be004615e14a2",
-      "bytes": 37361,
+      "sha256": "4bdcb2f8f1e290a102b9a110125737c324787e3f5f0f3c7a8bccf92bf8005099",
+      "bytes": 37822,
       "originalSha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
@@ -5478,8 +5478,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 304692,
-      "sha256": "f1404ee46750275202a8c62cb5bf076850b04b6ef93ca4327a40192c2bd5055c",
+      "bytes": 305046,
+      "sha256": "75f7790d46b7f8fa951764913b949f4cbdfd22e103e6604ec35f5502ee7e2087",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -5537,8 +5537,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "bytes": 144684,
-      "sha256": "d78f5701d559aa7935a32027afc619b0a4e121a6e57825f4f3ff07c3be90adcf",
+      "bytes": 145869,
+      "sha256": "9e88f2d41ede87250ebd6d1d38f1cd8351091dd9f441b813cf2938cc9000cd38",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -13202,14 +13202,14 @@
     {
       "path": "knowledge-base/Cns/docs/ui-data-panel.md",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 9166,
-      "sha256": "d07f899e34f4492d38cbec7405e08d49298a2f40feb16f693a212fc6162d0f6b"
+      "bytes": 12636,
+      "sha256": "d0e733cbf947f3a05376c3ebda6eb6bf7b94d8ff0943dde2b8b964438378b21e"
     },
     {
       "path": "knowledge-base/en/docs/ui-data-panel.md",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 10615,
-      "sha256": "c99416930fde509f984ac4bf75bc462a8a8419c4eba977268754c645588933ce"
+      "bytes": 14690,
+      "sha256": "a73f94d54afea85b02ccc3d439b2dfc2052963d7cea0ba73dabf5b62d58b2008"
     },
     {
       "path": "packages/engine/src/internal/uiFactoryState.ts",
@@ -13220,26 +13220,26 @@
     {
       "path": "packages/engine/src/ui/index.ts",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 465,
-      "sha256": "857f0598a77748b9a588ff74e5895009605ca30637ac589bf3aaf62d920ba070"
+      "bytes": 491,
+      "sha256": "c24618c7a77faca61bd1b0ed73b97eaf0ea8b3e8a28ddd113af846fa570a6a30"
     },
     {
       "path": "packages/engine/src/ui/types.ts",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 7652,
-      "sha256": "823dc856df89e18de945faff65f23e858b10a1c47dce9d19dc9da4097209fb31"
+      "bytes": 8004,
+      "sha256": "0a5860538e1091efaab6cce90a87f21e6be96b90443b061fead9011de2169f83"
     },
     {
       "path": "packages/engine/src/ui/uiRoot.ts",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 58517,
-      "sha256": "6d07eecd9bcafc228224f10c29a4e278085f266f47bd4bbd1a6e9155afa69352"
+      "bytes": 59839,
+      "sha256": "8e89834e2f004eef7e04613738d298dfec30ee4db867ccb112be6b487d706a6e"
     },
     {
       "path": "packages/engine/src/ui/virtualList.ts",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 2326,
-      "sha256": "3b6ee9285a0b1ee2e25098e664466e6f4c7e1aecbb8e0404789821a087934811"
+      "bytes": 4808,
+      "sha256": "d1383b8f192b545b28cd31c4a5474a5af23af4b85d5062931e6505a987793421"
     },
     {
       "path": "packages/runtime/src/ui/displayCommit.ts",
@@ -14932,6 +14932,54 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 3817,
       "sha256": "0ea7871f56b165448b783d6bd63b2346386d77ffdea1c2a0fd72c3ae61d7133f"
+    },
+    {
+      "path": "examples/ui-key-navigation/README.md",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets.",
+      "bytes": 1335,
+      "sha256": "c968dbe54f7fa59fac677a2ce4c3771e2b9aabfea05175a23e5d1dcaa28365ae"
+    },
+    {
+      "path": "examples/ui-key-navigation/README.zh-CN.md",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets.",
+      "bytes": 1231,
+      "sha256": "9d131d513d8abd36b7a3966393c5e314f56d36353a57d06a3fc9018fefbab630"
+    },
+    {
+      "path": "examples/ui-key-navigation/index.html",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets.",
+      "bytes": 1497,
+      "sha256": "a571cd84f11465cc72751742357b2c0e97ca8ec2c9ab9149122db5e20674a845"
+    },
+    {
+      "path": "examples/ui-key-navigation/main.mjs",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets.",
+      "bytes": 3812,
+      "sha256": "8085fb0c812fe3e492665487f4168ff9d3bc6efd6483f4b0e0132f1ecab7b4db"
+    },
+    {
+      "path": "examples/ui-key-navigation/verify.mjs",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets.",
+      "bytes": 12215,
+      "sha256": "0d8d2f8fc29eaff39d8ef40258f3c9a68b77d495b4030b1fe81f926a44559607"
+    },
+    {
+      "path": "examples/ui-key-navigation/verification-summary.json",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets.",
+      "bytes": 5271,
+      "sha256": "5d1b2f3f35265f228a7fa9183f1ccdd64462b222e297e0190d39ed89c6eb3784"
+    },
+    {
+      "path": "tests/ui-key-navigation.test.mjs",
+      "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets.",
+      "bytes": 10341,
+      "sha256": "662f6753b5310226558d2fcf27135034d3e459fee2dede70df270b9f92fcccf2"
+    },
+    {
+      "path": "contributions/ui-key-navigation.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 2467,
+      "sha256": "78db90b9e2418358e42caca0f4c92bf58e16048e8c0decaf6b028692f4c4d87b"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

@@ -194,7 +194,13 @@ export interface UiSnapshot extends VirtualListSnapshot {
     readonly density: number;
     readonly boxes: readonly UiLayoutBox[];
 }
+/** Alignment within the list's authored viewport; tall rows can remain clipped. */
+export interface VirtualListRevealOptions {
+    readonly align?: 'nearest' | 'start' | 'center' | 'end';
+}
 export interface VirtualListHandle<T> {
+    /** Stage key-directed scrolling. Undefined cancels an uncommitted reveal. */
+    reveal(key: string | undefined, options?: VirtualListRevealOptions): void;
     setSource(source: VirtualDataSource<T>): void;
     setScrollOffset(offset: number): void;
     updateHeights(updates: readonly {

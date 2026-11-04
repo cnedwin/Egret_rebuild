@@ -154,6 +154,13 @@ try {
   });
   console.log('UI individual unsuppressed diagnostic receipts: '+JSON.stringify(uiReceipts));
 
+  // Key reveal remains synchronous and does not introduce a queued focus contract.
+  const navigationCases = [{name:'numeric-key',line:517,column:23,code:2345},{name:'unknown-alignment',line:519,column:34,code:2322},{name:'no-implicit-focus',line:521,column:34,code:2353},{name:'synchronous-intent',line:523,column:7,code:2322}];
+  const navigationMarkers=raw.split(/\r?\n/).flatMap((line,index)=>{const match=line.match(/@ts-expect-error UI_NAVIGATION_CASE ([\w-]+)/);return match?[{name:match[1],line:index+2}]:[];});
+  if(JSON.stringify(navigationMarkers)!==JSON.stringify(navigationCases.map(({name,line})=>({name,line}))))throw Error('UI navigation negative membership changed');
+  const navigationReceipts=navigationCases.map(expected=>{const found=observedGeometry.filter(actual=>actual.file==='tests/types/invalid.generated.ts'&&actual.line===expected.line);if(found.length!==1||found[0].column!==expected.column||found[0].code!==expected.code)throw Error('UI navigation exact diagnostic changed: '+expected.name);return {name:expected.name,actual:found[0]};});
+  console.log('UI navigation individual unsuppressed diagnostic receipts: '+JSON.stringify(navigationReceipts));
+
   // Match every optional sequence-control misuse to its actual compiler tuple.
   const sequenceControlCases = [{"name":"optional-entry-only","line":489,"column":21,"code":2339},{"name":"controller-type-only","line":491,"column":23,"code":2551},{"name":"unknown-profile","line":493,"column":59,"code":2322},{"name":"invalid-repeat-kind","line":495,"column":95,"code":2322},{"name":"numeric-marker-id","line":497,"column":106,"code":2322},{"name":"invalid-callback-return","line":499,"column":97,"code":2322},{"name":"invalid-seek-replay","line":501,"column":42,"code":2322},{"name":"immutable-state","line":503,"column":24,"code":2540},{"name":"nonforgeable-controller","line":505,"column":7,"code":2741},{"name":"discriminated-completion","line":509,"column":11,"code":2339}];
   const sequenceControlMarkers=raw.split(/\r?\n/).flatMap((line,index)=>{const match=line.match(/@ts-expect-error SEQUENCE_CONTROL_CASE ([\w-]+)/);return match?[{name:match[1],line:index+2}]:[];});
