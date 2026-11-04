@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 20849,
-      "sha256": "665e90f43c7e98b0e2fb4366c3e5d4c0be8b1aedace9adf4d69fdd5c5fc3208c",
+      "bytes": 20855,
+      "sha256": "de733a20de9df6e0aa726f418151dbf12837d5e07b18d5b58c40320338363ad2",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "2386fb1b3edc004ecffbc99849e62601a266ce5a65a8fb1e0efc90f96c662229",
+      "sha256": "d5354e2ec7d5dedc66da8b3c15109e5a379815cc7c091d810d7cc9d701435bb5",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "1db8e184eedda7706f5b649d2c6050ac25013ab12c11b1a7b5cdcc7731eca887",
+      "sha256": "d3af6e2b41c4fc5e6170140d4a592724b3acff6fdc3e8fcfb918ebf670d55656",
       "bytes": 372539,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
