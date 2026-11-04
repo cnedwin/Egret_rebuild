@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "cbd8ef17b66bb4c1756357896b98428fd02fbc4d4a866a955380d1139fbe85ca",
+      "sha256": "2f76dbc75c215f6d9cb5a419f5c09c8a66c39b8e69ed7dddeaf3b1dda708b774",
       "bytes": 370074,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -5171,8 +5171,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 238914,
-      "sha256": "d26cb16f8135025bf1bd2dc81c37d796ab49e1001c25dffbf3f83b4b2b7e0098",
+      "bytes": 239638,
+      "sha256": "c52732f001f0a696e7500123b17afaa6fdb7697837ed9bfebb2038903077f36a",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -6382,8 +6382,8 @@
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 48773,
-      "sha256": "d48221f09dc03c844dd926211cb4ac5c09c355df2f85d24270d0c8a539976d4d",
+      "bytes": 49099,
+      "sha256": "a5c17c3f44f039bda785e8b80e9f4bdcc3390c0a289bd821b9eebfe7c900c848",
       "identityHistory": [
         {
           "bytes": 17519,
@@ -7033,8 +7033,8 @@
     {
       "path": "tools/verify-webgpu-b1.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 81811,
-      "sha256": "04d30ddb7df9c0388ad7f6348543d99cc6e021333f3bb3feed12582df61c23c2",
+      "bytes": 82218,
+      "sha256": "1ff8cf2c84933bfde04ea988ecafd6bc4829cef7b01bffd446bdd3ae257ca7d4",
       "identityHistory": [
         {
           "bytes": 38603,
