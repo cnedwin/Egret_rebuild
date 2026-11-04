@@ -10,8 +10,14 @@ export function measureViewport(cssWidth, deviceDensity, kind) {
 
 /** One owner at a time. A stale initialization must close before another starts. */
 export function createMountQueue(mount, changed = () => {}) {
-  let pending, active, abort, pump, stopped = false, revision = 0, state = 'starting', model, retired, blocked;
+  let pending, active, abort, pump, stopped = false, revision = 0, state = 'starting', model, retired, blocked, failureCode;
   const errors = [];
+  // Only a clean Engine startup refusal may expose its direct host classification.
+  function recordFailure(error) {
+    failureCode = error?.code === 'ENGINE_START_FAILED' && error.cleanupErrors?.length === 0
+      ? error.cause?.code : error?.code;
+    errors.push(String(error?.code ?? error?.message ?? error));
+  }
   function notify() { changed({state, revision, errors: errors.slice()}); }
   async function retire() {
     if (!active) return;
@@ -41,13 +47,13 @@ export function createMountQueue(mount, changed = () => {}) {
           // Cancellation is a specific outcome. A cleanup failure during abort is still a failure.
           if (abort.signal.aborted && error?.name === 'AbortError') continue;
           if (abort.signal.aborted || candidate) throw error;
-          errors.push(String(error?.code ?? error?.message ?? error)); state = 'failed'; notify();
+          recordFailure(error); state = 'failed'; notify();
         }
       }
       if (stopped) { await retire(); state = 'closed'; notify(); }
     })().catch(error => {
       blocked = error; pending = undefined;
-      errors.push(String(error?.code ?? error?.message ?? error)); state = 'failed'; notify(); throw error;
+      recordFailure(error); state = 'failed'; notify(); throw error;
     }).finally(() => {
       pump = undefined;
       if ((pending && !stopped) || (stopped && active)) void run().catch(() => {});
@@ -70,7 +76,23 @@ export function createMountQueue(mount, changed = () => {}) {
       }
     },
     async close() { stopped = true; pending = undefined; abort?.abort(); await run(); while (pump) await pump; },
-    inspect() { return {state, revision, blocked: blocked !== undefined, errors: errors.slice(), application: active?.inspect() ?? null, retired: retired ?? null}; },
+    inspect() { return {state, revision, blocked: blocked !== undefined, failureCode, errors: errors.slice(), application: active?.inspect() ?? null, retired: retired ?? null}; },
     async readback() { await this.whenIdle(); return active?.readback?.(); },
   });
+}
+
+/** Presentation only: queue ownership and diagnostics retain their original meaning. */
+export function describePreview(snapshot, cancelled = false) {
+  const diagnostics = snapshot.errors.slice(-8).map(value => String(value).slice(0, 256));
+  const unsupported = ['WEBGPU_UNAVAILABLE', 'WEBGPU_ADAPTER_UNAVAILABLE', 'WEBGL2_CONTEXT_UNAVAILABLE', 'WEBGL2_CONTEXT_ATTRIBUTES_UNSUPPORTED', 'WEBGL2_FORMAT_UNSUPPORTED'];
+  let state = snapshot.state;
+  if (state === 'failed' && unsupported.includes(snapshot.failureCode ?? snapshot.errors.at(-1))) state = 'unsupported';
+  if (state === 'closed' && cancelled) state = 'cancelled';
+  const copy = {
+    starting: 'Loading example / 正在加载示例', resizing: 'Preparing scene / 正在准备场景',
+    ready: 'Ready / 就绪', failed: 'Could not load the example. Restore the connection and reload. / 示例加载失败，请恢复网络后重新加载。',
+    unsupported: 'This backend is unavailable. Choose another backend or browser. / 当前后端不可用，请选择其他后端或浏览器。',
+    cancelled: 'Loading cancelled / 加载已取消', closed: 'Example closed / 示例已关闭',
+  };
+  return {state, text: copy[state] ?? copy.failed, diagnostics};
 }

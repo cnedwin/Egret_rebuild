@@ -89,3 +89,28 @@ test('close in the completion microtask awaits terminal retirement',async()=>{
  await queue.request({width:100});await closing;
  assert.equal(closed,1);assert.equal(queue.inspect().state,'closed');
 });
+
+ test('preview distinguishes terminal outcomes and bounds displayed diagnostics', async()=>{
+ const {describePreview}=await import('../examples/mobile/viewport.mjs');
+ for(const state of ['starting','resizing','ready','failed','closed'])assert.equal(describePreview({state,errors:[]}).state,state);
+ assert.equal(describePreview({state:'closed',errors:[]},true).state,'cancelled');
+ assert.equal(describePreview({state:'failed',errors:['WEBGPU_UNAVAILABLE']}).state,'unsupported');
+ assert.equal(describePreview({state:'failed',errors:['CLEANUP_FAILED']},true).state,'failed');
+ const errors=Array(30).fill('x'.repeat(900)),before=errors.slice();const view=describePreview({state:'failed',errors});
+ assert.equal(view.diagnostics.length,8);assert.equal(view.diagnostics[0].length,256);assert.deepEqual(errors,before);
+ });
+ test('same viewport can recover a failed load with exactly one active owner',async()=>{
+ let attempt=0,live=0;const queue=createMountQueue(async()=>{if(++attempt===1)throw Error('HTTP503');live++;return {inspect(){return {};},close(){live--;}};});
+ const viewport={width:200};await queue.request(viewport);assert.equal(queue.inspect().state,'failed');
+ await queue.request(viewport);assert.equal(queue.inspect().state,'ready');assert.equal(live,1);await queue.close();assert.equal(live,0);
+ });
+
+ test('real Engine startup preserves cause classification only after successful cleanup',async()=>{
+ const {createEngineForProfile,EgretError}=await import('@egret/engine');const {host}=await import('./helpers.mjs');const {describePreview}=await import('../examples/mobile/viewport.mjs');
+ for(const cleanupFails of [false,true]){
+ const h=host({texturedFrameProfile:'egret.textured-frame2d/1',renderTexturedFrame(){},start(){throw new EgretError('WEBGPU_UNAVAILABLE');},close(){if(cleanupFails)throw Error('CLEANUP_FAILED');}});
+ const queue=createMountQueue(()=>createEngineForProfile({host:h.adapter},'egret.textured-frame2d/1'));
+ await queue.request({width:200});const snapshot=queue.inspect();assert.deepEqual(snapshot.errors,['ENGINE_START_FAILED']);
+ assert.equal(describePreview(snapshot).state,cleanupFails?'failed':'unsupported');await queue.close();
+ }
+ });

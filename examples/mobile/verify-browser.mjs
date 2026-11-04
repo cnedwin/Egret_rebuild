@@ -256,7 +256,7 @@ async function runCase(scene,mobile,backend='webgl2'){
    await cdp.send('Emulation.setDeviceMetricsOverride',{width:391,height:844,deviceScaleFactor:1.25,mobile:true});
    await page.waitForFunction((before)=>globalThis.__egretMobileRead().revision>before,before);
    await page.waitForFunction(()=>devicePixelRatio===1.25&&globalThis.__egretMobileRead().viewport.density===1.25);
-   await settle(page,391,1.25);state=await read(page);check(label+': viewport and DPR change without reload',state.viewport.density,1.25);await geometry(page,label+'/DPR-change',state,391);await cdp.detach();
+   await settle(page,391,1.25);state=await read(page);check(label+': viewport and DPR change without reload',state.viewport.density,1.25);await geometry(page,label+'/DPR-change',state,391);// Keep the measured mapping until owner cleanup; context.close also detaches this session.
   }
   contexts.push({label,final:state,errors});
   await page.evaluate(async()=>{await(await import('/examples/mobile/main.mjs')).close();});state=await read(page);
@@ -268,8 +268,51 @@ async function runCase(scene,mobile,backend='webgl2'){
  }catch(error){failures.push({label,error:String(error.stack??error),state:await read(page).catch(()=>null),errors});}
  finally{await context.close();}
 }
+
+async function verifyRecovery(mode) {
+ const context=await browser.newContext(),page=await context.newPage();
+ let inject=true,release, heldRequests=0;const held=new Promise(resolve=>{release=resolve;});
+ const target=pathname=>mode==='main'?pathname.endsWith('/mobile/main.mjs'):mode==='module'?pathname.endsWith('/mobile/resources.mjs'):mode==='font'?/\.(ttf|otf)$/.test(pathname):pathname.endsWith('.png');
+ const errors=[];page.on('pageerror',error=>errors.push(String(error)));
+ await page.route('**/*',async route=>{
+  const url=new URL(route.request().url());assert.equal(url.origin,origin);
+  if(inject&&target(url.pathname)){
+   if(mode==='slow'){heldRequests++;await held;try{await route.continue();}catch{}return;}
+   await route.fulfill({status:mode==='corrupt'?200:503,contentType:mode==='corrupt'?'image/png':'text/plain',body:mode==='corrupt'?'invalid PNG':'temporarily unavailable'});return;
+  }
+  const response=await route.fetch();
+  if(response.status()===200){const body=await response.body(),relative=decodeURIComponent(url.pathname).slice(1),identity={bytes:body.length,sha256:sha(body)};if(sources.has(relative))assert.deepEqual(sources.get(relative),identity);else sources.set(relative,identity);}
+  await route.fulfill({response});
+ });
+ try{
+  await page.goto(origin+'/examples/mobile/index.html?scene=resources');
+  if(mode==='slow'){
+   await page.waitForFunction(()=>!document.querySelector('#close').disabled&&document.querySelector('#phase').dataset.state==='resizing');
+   for(let wait=0;heldRequests===0&&wait<300;wait++)await new Promise(resolve=>setTimeout(resolve,100));
+   check('recovery/slow: real PNG request held',heldRequests>0);
+   await page.locator('#close').click();release();
+   await page.waitForFunction(()=>document.querySelector('#phase').dataset.state==='cancelled');
+   const closed=await read(page);check('recovery/slow: no published owner',closed.application,null);check('recovery/slow: closed',closed.state,'closed');
+  }else{
+   await page.waitForFunction(()=>document.querySelector('#phase').dataset.state==='failed');
+   check('recovery/'+mode+': visible failure detail',(await page.locator('#failure-details').textContent()).length>0);
+  }
+  inject=false;
+  for(let i=0;i<2;i++){
+   await page.locator('#reload').click();await page.waitForFunction(()=>document.querySelector('#phase').dataset.state==='ready',undefined,{timeout:60000});
+   check('recovery/'+mode+': query preserved '+i,new URL(page.url()).search,'?scene=resources');
+   await page.locator('#close').click();await page.waitForFunction(()=>document.querySelector('#phase').dataset.state==='closed');
+   const closed=await read(page);check('recovery/'+mode+': fonts released '+i,closed.retired.fontCount,0);check('recovery/'+mode+': tasks released '+i,closed.retired.pendingSources+closed.retired.pendingTasks,0);
+  }
+  check('recovery/'+mode+': no uncaught application errors',errors,[]);
+  contexts.push({label:'recovery/'+mode,final:await read(page),errors});
+ }catch(error){failures.push({label:'recovery/'+mode,error:String(error.stack??error)});}
+ finally{release();await context.close();}
+}
+
 try{
  browser=await chromium.launch({channel:'msedge',headless:true});
+ for(const mode of ['main','module','corrupt','font','slow'])await verifyRecovery(mode);
  const scenes=['resources','pointers','ui','paragraph'];
  for(const scene of scenes){await runCase(scene,false);await runCase(scene,true);if(['ui','paragraph'].includes(scene))await runCase(scene,true,'webgpu');}
 }finally{
