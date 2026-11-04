@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "202726edd4b26bdbd5aad9ff02446c2058da7f275dfff1c791b644aefbf4ea26",
+      "sha256": "cbd8ef17b66bb4c1756357896b98428fd02fbc4d4a866a955380d1139fbe85ca",
       "bytes": 370074,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -9876,8 +9876,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 247421,
-      "sha256": "55756fe02f8c6bfcdb8924e70199902168a830d9fa231637f3a339f914c271cb",
+      "bytes": 250509,
+      "sha256": "e5d2f02ff27c53cebe85d829399f9c70efbd2715bb176c0f47d1dcab8fd1a35c",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10099,8 +10099,8 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 256296,
-      "sha256": "d15791d46b5314875a3d0dfe65e78bb9327cbc719a30876bfbb52552a38cb4f0",
+      "bytes": 259384,
+      "sha256": "dd2abde6919f6eb6db5a4a7fcda67b6e0f060a35af07b226b67e60e004c5f28a",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10161,8 +10161,8 @@
     },
     {
       "path": "tools/atlas-import-boundary.mjs",
-      "bytes": 152134,
-      "sha256": "9e8741eaeaa9d14fa31f2fafcbf7ef522567cffba2654dba468d57679439bb43",
+      "bytes": 155222,
+      "sha256": "c95914431a1943b8d6a8bfa4326f7d7efc6b4f8e53bf74c2c199d647dc75a1b9",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 511036,
-      "sha256": "e6bcc365f5452fe66c157390bb5096be667301f109b5117258a997e6c3777f35"
+      "bytes": 557578,
+      "sha256": "c0aaa17ec441a926f1b1cb0cfb45508dea06138dad39a0d17e51796c3c1ba5c0"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10689,7 +10689,7 @@
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
       "bytes": 42267,
-      "sha256": "ffe82ba499df7f97845e9497dceb4160b2fa0711a1b0202e3858baed4f53ef77"
+      "sha256": "a79c4eff46552f1c063da01cff6c5921ec0d51efb83d09e1f4c985ac2112b0c7"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
