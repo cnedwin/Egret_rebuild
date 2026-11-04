@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Original numerical regions/mesh/clip, not licensed Editor-export qualification.
 import {playbackSource} from './playbackFixture.mjs';
-export function renderingSource({blend='normal',mesh=false,weighted=false,clip=false,tint=false}={}){
+export function renderingSource({blend='normal',mesh=false,weighted=false,clip=false,tint=false,outfit=false}={}){
  const s=playbackSource();s.bones[1].x=4;s.slots[1].blend=blend;
  for(const skin of s.skins){skin.attachments.first.red.width=8;skin.attachments.first.red.height=8;skin.attachments.second.blue.width=8;skin.attachments.second.blue.height=8;}
  if(tint){s.slots[1].color='80ff8080';s.slots[1].dark='804020';}
@@ -9,5 +9,10 @@ export function renderingSource({blend='normal',mesh=false,weighted=false,clip=f
  if(clip){s.slots.unshift({name:'clip',bone:'root',attachment:'cut'});s.skins[0].attachments.clip={cut:{type:'clipping',end:'second',vertexCount:4,vertices:[0,4,0,-4,4,-4,4,4]}};}
  s.animations.swap={drawOrder:[{time:0,offsets:[{slot:'first',offset:1}]}]};
  s.animations.hide={slots:{first:{attachment:[{time:0,name:null}]},second:{attachment:[{time:0,name:null}]}}};
+ if(outfit)s.skins.push(
+  {name:'blue-first',attachments:{first:{red:{name:'first-blue',path:'blue',width:8,height:8}}}},
+  {name:'red-second',attachments:{second:{blue:{name:'second-red',path:'red',width:8,height:8}}}},
+  {name:'red-first',attachments:{first:{red:{name:'first-red',path:'red',width:8,height:8}}}}
+ );
  return s;
 }

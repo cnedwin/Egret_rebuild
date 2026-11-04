@@ -22,7 +22,10 @@ export interface SpineInstanceSnapshot {
   readonly tickId: number;
   readonly elapsedSeconds: number;
   readonly rate: number;
+  /** Single selected skin; null for a composite or the initial implicit default. */
   readonly skin: string | null;
+  /** Ordered selection; later skins override matching slot/placeholder entries. */
+  readonly skins: readonly string[];
   readonly pendingCommands: number;
   readonly bones: readonly SpineBonePose[];
   readonly slots: readonly Readonly<{ name: string; attachment: string | null }>[];
@@ -43,6 +46,8 @@ export interface SpineInstance {
   addAnimation(track: number, name: string, options?: SpineQueuedAnimationOptions): void;
   clearTrack(track: number): void;
   setSkin(name: string): void;
+  /** Queue 1..32 distinct known skins; commit on the next explicit advance. */
+  setSkins(names: readonly string[]): void;
   setTransform(x: number, y: number, scaleX?: number, scaleY?: number): void;
   setRate(rate: number): void;
   setPaused(paused: boolean): void;

@@ -18,8 +18,9 @@ import type {SpineInstance,SpineInstanceOptions,SpineInstanceSnapshot,SpinePlayb
 const playerOptions:SpineInstanceOptions={maxSegments:8,maxEvents:1024,onEvent:(event:SpinePlaybackEvent)=>{const kind:SpinePlaybackEventKind=event.kind;void kind;}};
 const player:SpineInstance=createSpineInstance(asset,scope,playerOptions);
 const animation:SpineAnimationOptions={loop:true,mixSeconds:0.1},queued:SpineQueuedAnimationOptions={...animation,delaySeconds:0};
-player.setAnimation(0,'walk',animation);player.addAnimation(0,'idle',queued);player.setSkin('default');player.setTransform(0,0);player.setRate(1);player.setPaused(false);player.clearTrack(1);
+player.setAnimation(0,'walk',animation);player.addAnimation(0,'idle',queued);player.setSkin('default');player.setSkins(['default','outfit'] as const);player.setTransform(0,0);player.setRate(1);player.setPaused(false);player.clearTrack(1);
 const pose:SpineInstanceSnapshot=player.advance({tickId:1,elapsedSeconds:0.05,deltaSeconds:0.05}),bone:SpineBonePose=pose.bones[0]!,state:SpineInstanceState=pose.state;
+const selectedSkins:readonly string[]=pose.skins;void selectedSkins;
 void [bone,state,player.isDisposed,player.getSnapshot()];player.dispose();
 
 import {createSpineDisplay} from '@egret/spine';

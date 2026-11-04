@@ -154,6 +154,10 @@
     {
       "path": "tools/verify-spine-rendering.mjs",
       "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted."
+    },
+    {
+      "path": "packages/spine/test/skins.test.mjs",
+      "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted."
     }
   ],
   "documents": [

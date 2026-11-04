@@ -169,3 +169,5 @@ M2.1 固定产物/诊断接口。M2.2、M2.3 在并行实现前共同固定绘�
 [可选 Spine 内容接入](spine-content-ingress.md)在 M2.1 内增加固定 Core4.3.13 的资产 SDK：原始 JSON／图集绑定、共享设置与页面租约、显式生命周期。附带条件的运行库许可及原创程序化夹具与稳定导出／独立参考验收分别记录。本次不交付 Spine Node producer、播放器或图形；M2.1–M2.4 及既有 Issues 按各自剩余验收继续开放。
 
 [Spine 共享显示](spine-content-ingress.md#共享渲染显示) 现将真实播放实例接入既有 WebGPU／WebGL2 共享渲染，须显式选择 `egret-shared-linear/1`。这是有限的 M2.3 交付，完整所选版本图形及 M2.4 资格仍开放。
+
+可选播放器现支持 `setSkins(names)` 有序组合换装和不可变 `snapshot.skins`，保留 `setSkin` 兼容行为。参见[组合皮肤契约](spine-content-ingress.md#组合皮肤换装)。本项仅交付 M2.2 的有界能力，资源版本替换和完整 M2 验收仍未完成。

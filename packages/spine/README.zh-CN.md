@@ -27,3 +27,5 @@ owner.dispose();
 使用 `createSpineInstance(asset, scope)` 创建独立实例，以 `setAnimation(0, name, {loop: true})` 排队动画，再由既有 Engine 时钟调用 `advance(tick)`。实例借用源资源组生命周期。参阅[播放控制与边界](../../knowledge-base/Cns/docs/spine-content-ingress.md#独立播放实例)；共享图形与完整 Spine 资格验收仍分开处理。
 
 共享显示：调用 `createSpineDisplay(player, displayScope, {colorProfile: 'egret-shared-linear/1'})`，将其 `node` 添加到 Stage。显式播放器 tick 在回调前发布复制几何，渲染沿用既有 Mesh2D、材质、页面租约及 WebGPU／WebGL2 宿主。参阅[配置方程、限制及证据](../../knowledge-base/Cns/docs/spine-content-ingress.md#共享渲染显示)，不默认宣称与其他 Spine 渲染器的 gamma 配置一致或完整功能通过。
+
+使用 `player.setSkins(['body/base', 'clothes/coat'])` 组合已有装扮部件；后面的部件在下一次显式更新时覆盖同名占位，不重启动画。`snapshot.skins` 记录有序选择，`setSkin` 保持兼容。参见[组合皮肤契约](../../knowledge-base/Cns/docs/spine-content-ingress.md#组合皮肤换装)。
