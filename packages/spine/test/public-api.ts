@@ -33,3 +33,13 @@ import {Mesh2D} from '@egret/engine';
 import type {AssetLease,Texture,SharedGeometry2D,DisplayObject} from '@egret/engine';
 declare const borrowed:AssetLease<Texture>,ownedGeometry:SharedGeometry2D;
 const binding=Mesh2D.createBinding(borrowed,ownedGeometry);const opaqueNode:DisplayObject=binding.node;scope.use(binding);engine.stage.addChild(opaqueNode);const candidate=binding.prepare(borrowed,ownedGeometry);candidate.commit();binding.dispose();
+
+const finiteAnimation:SpineAnimationOptions={plays:3,mixSeconds:0.1};
+const finiteQueue:SpineQueuedAnimationOptions={plays:2,delaySeconds:0};
+player.setAnimation(0,'walk',finiteAnimation);player.addAnimation(0,'walk',finiteQueue);
+const totalPlays:number|null=pose.tracks[0]!.plays,consumedCompletions:number=pose.tracks[0]!.completedPlays;
+void [totalPlays,consumedCompletions];
+// @ts-expect-error Plays is numeric, never an upstream runtime object or a string.
+player.setAnimation(0,'walk',{plays:'2'});
+// @ts-expect-error Snapshot progress is immutable.
+pose.tracks[0]!.completedPlays=99;

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/spine/test/finite-playback.test.mjs",
+      "originRole": "Independently authored finite Spine playback public-SDK behavior tests; original programmatic fixtures and AI-assisted implementation; Apache-2.0. Pinned Core4.3.13 remains separately licensed."
+    }
+  ],
+  "documents": []
+}

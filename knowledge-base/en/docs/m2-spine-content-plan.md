@@ -171,3 +171,5 @@ The [optional Spine content ingress](spine-content-ingress.md) adds a pinned Cor
 The [shared Spine display](spine-content-ingress.md#shared-rendering-display) now connects genuine playback instances to existing WebGPU/WebGL2 shared rendering under explicit `egret-shared-linear/1`. This is a bounded M2.3 delivery; complete selected-version graphics and M2.4 qualification remain open.
 
 The optional player now supports ordered outfit composition with `setSkins(names)`, immutable `snapshot.skins`, and unchanged `setSkin` compatibility. See the [combined skin contract](spine-content-ingress.md#combined-outfit-skins). This completes a bounded M2.2 capability; asset-version replacement and complete M2 acceptance remain open.
+
+The optional player also admits bounded finite total plays with `plays`, committed progress and residual-time queue transitions. See [finite playback](spine-content-ingress.md#finite-total-plays). This is a bounded M2.2 increment; complete selected-version semantics, seek and M2.4 replacement/recovery remain open.

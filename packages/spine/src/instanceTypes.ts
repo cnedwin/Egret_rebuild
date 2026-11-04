@@ -29,7 +29,7 @@ export interface SpineInstanceSnapshot {
   readonly pendingCommands: number;
   readonly bones: readonly SpineBonePose[];
   readonly slots: readonly Readonly<{ name: string; attachment: string | null }>[];
-  readonly tracks: readonly Readonly<{ index: number; animation: string; trackTime: number; animationTime: number; loop: boolean; queued: number }>[];
+  readonly tracks: readonly Readonly<{ index: number; animation: string; trackTime: number; animationTime: number; loop: boolean; plays: number | null; completedPlays: number; queued: number }>[];
   readonly events: readonly SpinePlaybackEvent[];
 }
 export interface SpineInstanceOptions {
@@ -37,7 +37,12 @@ export interface SpineInstanceOptions {
   readonly maxEvents?: number;
   readonly onEvent?: (event: SpinePlaybackEvent) => void;
 }
-export interface SpineAnimationOptions { readonly loop?: boolean; readonly mixSeconds?: number; }
+export interface SpineAnimationOptions {
+  readonly loop?: boolean;
+  /** Total plays, 1..1024; cannot be combined with loop. Zero duration admits only 1. */
+  readonly plays?: number;
+  readonly mixSeconds?: number;
+}
 export interface SpineQueuedAnimationOptions extends SpineAnimationOptions { readonly delaySeconds?: number; }
 export interface SpineInstance {
   readonly isDisposed: boolean;

@@ -1963,8 +1963,8 @@
       "en": "knowledge-base/en/docs/m2-spine-content-plan.md",
       "zh": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
       "kind": "public_reading",
-      "enSha256": "d620ccacb7f82c59df8cb13a574b57d5626a35422fdf49e15ea9e4caa4208fa4",
-      "zhSha256": "ac744fd312ce035552152e3d7a8a39b8d24e31323554c84f09c576e77891b2c4"
+      "enSha256": "e4b871589e165ce4d36ab9dea7825132be2bad01689afd9f6be8d6e866523663",
+      "zhSha256": "852a0343e8a48aa0b4587a34e90bae93643fc50c1a29cffa2399622d8874fc51"
     },
     {
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
@@ -2152,15 +2152,15 @@
       "en": "knowledge-base/en/docs/spine-content-ingress.md",
       "zh": "knowledge-base/Cns/docs/spine-content-ingress.md",
       "kind": "public_reading",
-      "enSha256": "2fce576c722a69b11810f33d81bdce02db0fd24736295ab0a48d0077d46af08b",
-      "zhSha256": "9ea2061b66710b3b3486a40800ee3a7fa56563044da3dce0ea457e71424ccd33"
+      "enSha256": "fa504b084e3dc3a79f31f395a9f2d02091a5b7eaa35ce1b02575d31a567168c6",
+      "zhSha256": "4353026f307732f34147dbde325c4fea38121db170cb6d8e06fea53a12879b3d"
     },
     {
       "en": "packages/spine/README.md",
       "zh": "packages/spine/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "43e9f073317db74c668af9e21d5d2d8d61b4d655c00c95a0953efc954e4822ae",
-      "zhSha256": "5f87a6d78f4f9c821cce16035602b0f37084ed72ae71113fd17aeb7777007428"
+      "enSha256": "a33888b25a40e92a566a0a09dda08e4095b104ec9ac9c6846b1300f089b2b24c",
+      "zhSha256": "1a8ead9d7ef261260ff4a82d6769bf3100a397466b998aa048ba33cfea58a3dd"
     }
   ],
   "registries": [
@@ -4274,11 +4274,11 @@
     },
     {
       "path": "packages/spine/src/instance.ts",
-      "sha256": "8e2ec67bc01186526e411bfac474346a526b116bfee603d433e310ae72b462d8"
+      "sha256": "2a2b27e24b4f9853e1e42aebde0d1d707dd78d68008d7c6da66061d7b3be871b"
     },
     {
       "path": "packages/spine/src/instanceTypes.ts",
-      "sha256": "a32c18ccfb353a87ac4062f4c9667a1aa709f4d7bb60514cb6edc4d9367f31b5"
+      "sha256": "d9251c5fd3abcfe582b93a471046f1990b22ead6618ac5795e56fae593ad5aed"
     },
     {
       "path": "packages/spine/src/renderAuthority.ts",
