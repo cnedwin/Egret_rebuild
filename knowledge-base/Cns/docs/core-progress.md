@@ -149,3 +149,5 @@ GitHub 未为 PR #42 返回状态或检查运行，以上本地验证与远端 C
 可复现改动与审阅流程见[贡献指南](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md)。第一方实现、外部依赖和研究参考分别保留来源及许可。
 
 可选播放器现支持 `setSkins(names)` 有序组合换装和不可变 `snapshot.skins`，保留 `setSkin` 兼容行为。参见[组合皮肤契约](spine-content-ingress.md#组合皮肤换装)。本项仅交付 M2.2 的有界能力，资源版本替换和完整 M2 验收仍未完成。
+
+可选 Spine 播放器现通过 `plays` 支持有界总播放次数、不可变的已提交完成计数、末帧保留及保持 tick 剩余时间的队列衔接。122 项可选 SDK 用例（15 项新增有限播放用例）通过，桌面 WebGL2／WebGPU 每后端通过 22 个正例并拒绝八个对照。参阅[有限播放语义与边界](spine-content-ingress.md#有限总播放次数)及[验证记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/spine-content/verification.json)。这项 M2.2 有界能力不关闭选定版本完整播放、seek、M2.4 替换／恢复、手机或性能验收。

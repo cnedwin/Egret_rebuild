@@ -17,8 +17,15 @@ export async function runCase(backend,def){
   const manifest=(await (await fetch('/'+def.name+'/manifest.json')).json()),admitted=admitResourceManifest(manifest);if(!admitted.ok)throw Error('Manifest refused');
   loader=createManifestSpineContentLoader(engine,engine.createScope(),admitted.value,{baseUrl:new URL('/'+def.name+'/',location.href).href});group=loader.load(engine.createScope(),['e_json']);await group.ready;
   if(!def.transparent){const background=new Sprite();background.graphics.beginFill(0x204060).drawRect(0,0,32,32);engine.stage.addChild(background);}
-  player=createSpineInstance(group.getSpine('e_json'),engine.createScope());view=createSpineDisplay(player,engine.createScope(),{colorProfile:'egret-shared-linear/1'});view.node.x=12;view.node.y=12;if(def.flip)view.node.scaleX=-1;if(def.rectClip)view.node.clipRect={x:-4,y:-4,width:4,height:8};engine.stage.addChild(view.node);
+  player=createSpineInstance(group.getSpine('e_json'),engine.createScope(),def.finite?{maxSegments:120}:undefined);view=createSpineDisplay(player,engine.createScope(),{colorProfile:'egret-shared-linear/1'});view.node.x=12;view.node.y=12;if(def.flip)view.node.scaleX=-1;if(def.rectClip)view.node.clipRect={x:-4,y:-4,width:4,height:8};engine.stage.addChild(view.node);
   if(def.skins){player.setSkins(def.skins);player.advance({tickId:1,elapsedSeconds:0,deltaSeconds:0});report.selection=player.getSnapshot().skins;}
+  if(def.finite){
+   const duration=group.getSpine('e_json').info.animations.find(a=>a.name==='move').duration;
+   player.setAnimation(0,'move',def.finite==='wrong-loop'?{loop:true}:{plays:2});
+   if(def.finite==='queue')player.addAnimation(0,'move',{plays:1});
+   report.finite=player.advance({tickId:1,elapsedSeconds:1,deltaSeconds:2*duration+.06});
+   report.finiteHeld=player.advance({tickId:2,elapsedSeconds:2,deltaSeconds:0});
+  }
   if(def.swap){player.setAnimation(0,'swap');player.advance({tickId:1,elapsedSeconds:0,deltaSeconds:0});}
   const overlay=new Sprite();overlay.graphics.beginFill(0x00ff00).drawRect(0,0,2,2);engine.stage.addChild(overlay);
   const frameOptions={width:32,height:32,outputAlpha:'premultiplied',clearColor:0,clearAlpha:0};

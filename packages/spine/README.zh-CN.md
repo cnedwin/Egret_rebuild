@@ -29,3 +29,5 @@ owner.dispose();
 共享显示：调用 `createSpineDisplay(player, displayScope, {colorProfile: 'egret-shared-linear/1'})`，将其 `node` 添加到 Stage。显式播放器 tick 在回调前发布复制几何，渲染沿用既有 Mesh2D、材质、页面租约及 WebGPU／WebGL2 宿主。参阅[配置方程、限制及证据](../../knowledge-base/Cns/docs/spine-content-ingress.md#共享渲染显示)，不默认宣称与其他 Spine 渲染器的 gamma 配置一致或完整功能通过。
 
 使用 `player.setSkins(['body/base', 'clothes/coat'])` 组合已有装扮部件；后面的部件在下一次显式更新时覆盖同名占位，不重启动画。`snapshot.skins` 记录有序选择，`setSkin` 保持兼容。参见[组合皮肤契约](../../knowledge-base/Cns/docs/spine-content-ingress.md#组合皮肤换装)。
+
+固定总次数使用 `player.setAnimation(0, 'walk', {plays: 3})`；`addAnimation` 也支持该次数。范围为 1–1024，不能与 `loop` 混用，零时长动画仅允许一次。最终姿态保留，排队后继继续消费 tick 剩余时间。快照轨道提供 `plays` 与已提交的 `completedPlays`。参阅[有限播放语义与工作量边界](../../knowledge-base/Cns/docs/spine-content-ingress.md#有限总播放次数)。

@@ -4044,5 +4044,140 @@
       "M2.4 version replacement and recovery",
       "Authorized stable Editor exports, physical devices and performance; M1.2 10.3ms/8ms remains OPEN"
     ]
+  },
+  "finitePlayback": {
+    "status": "PASS_BOUNDED_SCOPE",
+    "date": "2026-11-04",
+    "scope": "M2.2 bounded finite total plays, final pose and residual-time queue transitions; not complete Spine playback or performance qualification",
+    "runtime": "4.3.13",
+    "sourceCutoffCommit": "54e9319bf186a4bbd794c63750446b61fc756de7",
+    "focused": {
+      "tests": 122,
+      "newCases": 15,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "raw": {
+        "bytes": 11066,
+        "sha256": "b9ac3048e576edec9ba6980fc394c9710f5fbdfd694751d2d58a8ae35fd501e8"
+      }
+    },
+    "browser": {
+      "environment": {
+        "node": "v26.7.0",
+        "playwright": "1.62.1",
+        "channel": "msedge",
+        "headless": true,
+        "extraFlags": [],
+        "device": false,
+        "browser": "156.0.4314.58"
+      },
+      "cases": 60,
+      "positivePerBackend": 22,
+      "wrongControlsPerBackend": 8,
+      "newPositivePerBackend": 2,
+      "newControlsPerBackend": 1,
+      "sourceFiles": 551,
+      "raw": {
+        "bytes": 4767779,
+        "sha256": "35db72a98a04e9166aedfe6f0d4074f3461539e2fa3c7d549f6d19af26dde70d"
+      },
+      "sourceFreeze": {
+        "bytes": 101867,
+        "sha256": "8cc2beff5abdefce52310028555817489e399813ae9b062ec1eb0118aa6b52ad"
+      },
+      "sourceIntegrity": true,
+      "cleanup": {
+        "context": true,
+        "browser": true,
+        "server": true
+      },
+      "errors": []
+    },
+    "retainedFailures": [
+      {
+        "kind": "initial-new-option-refusal",
+        "raw": {
+          "bytes": 11901,
+          "sha256": "5538bf519b83a6630e07da6bb4551259dc38d160eefa6bd6cb7099ace5f0868f"
+        },
+        "description": "New plays cases refused by the unchanged pre-feature option contract; expected red baseline."
+      },
+      {
+        "kind": "short-loop-event-loss",
+        "raw": {
+          "bytes": 1622,
+          "sha256": "92549108d4f0ae64a8d71107cc75460948705d082d64e470c71c532982ef058a"
+        },
+        "description": "Exact modulo-equal loop samples lost authored events. Repaired by applying the finite endpoint before restoring the next loop cursor on positive elapsed time."
+      },
+      {
+        "kind": "rounding-tail-extra-loop",
+        "raw": {
+          "bytes": 1922,
+          "sha256": "704991e141b0b418fe27083231545dac4423909d61ff0cbf39d0f40fe464a655"
+        },
+        "description": "Accumulated subtraction left a rounding-only tail that began another loop at the requested endpoint. Repaired with a delta-relative accumulated rounding bound."
+      },
+      {
+        "kind": "test-harness-corrections",
+        "raw": {
+          "bytes": 3180,
+          "sha256": "5d392c6da0315e4cf0be1448911f2b457dec1ff5c2a1672fd6dc614eecb9dc4d"
+        },
+        "description": "Initial capture test called rendering without a renderer; changed to genuine captureSharedFrame. The legacy-loop cleanup check now advances beyond the floating-point endpoint instead of assuming an exact completion there."
+      },
+      {
+        "kind": "non-discriminating-browser-control",
+        "raw": {
+          "bytes": 307671,
+          "sha256": "2fcc99e6d181e5c09efc6a2106161d561f7e5eb248eae9225a3e8ae1a5a0b85a"
+        },
+        "sourceFreeze": {
+          "bytes": 101867,
+          "sha256": "a257a521770886c8a9f7d9ec068a76d522b2fc907269efb2f3a7990178484583"
+        },
+        "failure": "webgl2 wrong-finite-loop: [{\"x\":22,\"y\":12,\"expected\":[255,0,0,255],\"actual\":[255,0,0,255],\"pass\":true},{\"x\":26,\"y\":12,\"expected\":[0,0,255,255],\"actual\":[0,0,255,255],\"pass\":true},{\"x\":30,\"y\":12,\"expected\":[0,0,255,255],\"actual\":[0,0,255,255],\"pass\":true}]",
+        "cleanup": {
+          "context": true,
+          "browser": true,
+          "server": true
+        },
+        "description": "Positive finite hold and queue cases passed, but the indefinite-loop control sampled an exact boundary and matched the last pose. Repaired by advancing 0.06 seconds beyond finite completion; the original failing run is retained."
+      }
+    ],
+    "repairedSource": [
+      {
+        "path": "packages/spine/src/instance.ts",
+        "bytes": 21013,
+        "sha256": "2a2b27e24b4f9853e1e42aebde0d1d707dd78d68008d7c6da66061d7b3be871b"
+      },
+      {
+        "path": "packages/spine/src/instanceTypes.ts",
+        "bytes": 2952,
+        "sha256": "d9251c5fd3abcfe582b93a471046f1990b22ead6618ac5795e56fae593ad5aed"
+      },
+      {
+        "path": "packages/spine/test/finite-playback.test.mjs",
+        "bytes": 11465,
+        "sha256": "c65f750e8f9b582e8df065c748e2f92170393a7b2ea8d98ad84d86d4aec6cfb8"
+      },
+      {
+        "path": "packages/spine/test/renderingBrowser.mjs",
+        "bytes": 4619,
+        "sha256": "d822e967c5326b6807e51071fa2c3c5333dc232eaa221cc2342dcc0efaf6792b"
+      },
+      {
+        "path": "tools/verify-spine-rendering.mjs",
+        "bytes": 14797,
+        "sha256": "0b0b8fdf12beee03abc1104a51b616f0ad9c82b05f73f475c6505541bb797a5d"
+      }
+    ],
+    "remaining": [
+      "Independent source/result and bilingual review, complete integrated merge gate and protected publication were pending at this evidence cutoff.",
+      "Full selected-version constraints/physics, seek and M2.4 replacement/recovery remain OPEN.",
+      "Authorized stable Editor exports, physical devices and performance remain separate; M1.2 10.3 ms / 8 ms remains OPEN."
+    ]
   }
 }
