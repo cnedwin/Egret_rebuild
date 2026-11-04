@@ -14906,8 +14906,8 @@
     {
       "path": "examples/animation-outfits/verify.mjs",
       "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 9670,
-      "sha256": "934360bf10ee319e7b22ca47d3c32042d187ca472463ad9c92be0f23ff956fcf"
+      "bytes": 10293,
+      "sha256": "638098ff18b89e6f47220150dcd5449f509bafdfeec0f7f2d6f0269d3228a384"
     },
     {
       "path": "tests/animation-outfits.test.mjs",
@@ -14924,8 +14924,8 @@
     {
       "path": "examples/animation-outfits/verification-summary.json",
       "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5490,
-      "sha256": "3ff8622ca2462fe35413f62deb803e68d0ac05bc1167fbc4bc71cfdec672e899"
+      "bytes": 6882,
+      "sha256": "c9d1ee445618af740b28cd2e70b1748ed398d5f0799d71ef896fa8da91ba55a8"
     },
     {
       "path": "contributions/m2-animation-outfits.json",

@@ -48,6 +48,7 @@
         "setupBytes": 0
       },
       "immediateCancelState": "closed",
+      "domControlsPassed": true,
       "consoleErrors": []
     },
     {
@@ -87,6 +88,7 @@
         "setupBytes": 0
       },
       "immediateCancelState": "closed",
+      "domControlsPassed": true,
       "consoleErrors": []
     }
   ],
@@ -124,13 +126,13 @@
   "artifacts": [
     {
       "file": "inputs.json",
-      "bytes": 209781,
-      "sha256": "99d9c30913e5fd0e3d1be0892b562be6584436ae5a3c91a083836a5321920913"
+      "bytes": 210508,
+      "sha256": "1abc652456d80c01cbafd36b672ca4e3c5657b6fa25c75f114ecbe1429c0b69a"
     },
     {
       "file": "result.json",
-      "bytes": 3618756,
-      "sha256": "78a3d95142221ac315261476c7918cc65b921a22360e76f8991fcb8a91456753"
+      "bytes": 3657386,
+      "sha256": "62bc74f9e88f9e1b0f14368fd1b6a10da93384c8559cb32ca31922ae01f2712c"
     },
     {
       "file": "webgl2-initial.rgba",
@@ -163,7 +165,7 @@
       "sha256": "381dc12827c3c5e1db96f8bb77a925580fa923223dfb52f6fbf438ee2a6bbed0"
     }
   ],
-  "sourceBoundary": "inputs.json records complete captured example/content/emitted runtime/vendor bytes; source and native evidence remain separate from PR/Main delivery",
+  "sourceBoundary": "Browser runtime and first-party collector/server helper bytes plus runtime vendor admission metadata are frozen in inputs.json. Generated content is captured after authoring. Node, pngjs and Playwright are the pinned external tool environment; no complete external-tool source closure is asserted. This non-executable summary is refreshed after collection and excluded from execution pins. Source, native evidence and PR/Main delivery remain separate.",
   "limits": [
     "Desktop default Edge only",
     "Original geometry, not Editor export qualification",
@@ -172,5 +174,27 @@
     "No complete Spine/Core semantics or Editor-export rights qualification",
     "M1.2 10.3 ms versus 8 ms remains open",
     "No PR, CI or Main completion asserted by this record"
-  ]
+  ],
+  "collection": "native-7",
+  "freezeRepair": {
+    "priorCollection": "native-6",
+    "priorExecution": "passed within its observed behavior scope",
+    "priorInputClosure": "incomplete",
+    "missingInputs": [
+      "tools/lib/local-package.mjs",
+      "tools/lib/file-identity.mjs",
+      "node_modules/@esotericsoftware/spine-core/package.json"
+    ],
+    "priorArtifactsPreserved": true,
+    "repair": "Freeze the three actually used inputs and rerun the unchanged native schedule once; exclude the non-executable summary from execution inputs.",
+    "currentCollection": "native-7",
+    "currentInputScope": {
+      "execution": "Browser runtime and first-party collector/server helpers, including vendor admission metadata",
+      "generatedContent": "Exact outputs after authoring",
+      "externalTools": "Pinned Node, pngjs and Playwright environment; not a source-closure assertion for external tools",
+      "excludedReports": [
+        "examples/animation-outfits/verification-summary.json"
+      ]
+    }
+  }
 }
