@@ -2152,8 +2152,8 @@
       "en": "knowledge-base/en/docs/spine-content-ingress.md",
       "zh": "knowledge-base/Cns/docs/spine-content-ingress.md",
       "kind": "public_reading",
-      "enSha256": "898602a1366cbd22b242077e5ae848aec2b2fe4bd07e8e2b46d00b420ad0e0f3",
-      "zhSha256": "ac3daaa41211afdc727125bfc89a29f39cf0a146d7762e52563681d6e2e80a91"
+      "enSha256": "ec9eea1e4fc5ff2ba7de143b90823167e2a0a62201defb8437361033ec38911a",
+      "zhSha256": "16581f0b37059d15cd3d56ac762333b7f7ebdb4fbfbc916a80834d5d6cd1b9da"
     },
     {
       "en": "packages/spine/README.md",
@@ -3130,7 +3130,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "dd2abde6919f6eb6db5a4a7fcda67b6e0f060a35af07b226b67e60e004c5f28a"
+      "sha256": "7b0de838267d498d47cb0aedfb5397384e15547e0de8321b5182f29efee2a5bc"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3278,7 +3278,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "e5d2f02ff27c53cebe85d829399f9c70efbd2715bb176c0f47d1dcab8fd1a35c"
+      "sha256": "4ed5d34819ae2b931f055d6b18d5f0e9c9272f8a9fc9c249f5233875a48c8050"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3750,7 +3750,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "c0aaa17ec441a926f1b1cb0cfb45508dea06138dad39a0d17e51796c3c1ba5c0"
+      "sha256": "bc7250b179d8947354e84185666e989a50d675a122f091607b662ee2c6a49f91"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3778,7 +3778,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "a79c4eff46552f1c063da01cff6c5921ec0d51efb83d09e1f4c985ac2112b0c7"
+      "sha256": "65ed2ae539c0c81a7f54cb1fe6c3144ddbf8e44b2b6a1df7c59a16ed2af39e81"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",

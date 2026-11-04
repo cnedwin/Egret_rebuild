@@ -3935,6 +3935,13 @@
           "bytes": 9282,
           "sha256": "58512c6d9f30065d5c19fc02539b0e1883a5ad001d34da2d6b06570b633133eb"
         }
+      },
+      {
+        "scope": "PR115 first full CI failed on current Mesh2D declaration identity in spritesheet-boundary; Linux/macOS CPU and303 publication tests passed. Existing finite current successor rows repaired without changing historical pins or product/browser inputs.",
+        "raw": {
+          "bytes": 78672,
+          "sha256": "86d6d2c44ef8dbe9ad807b8005c72db27e22621b7e8f80622fac9e2b1672fd29"
+        }
       }
     ],
     "remaining": [
