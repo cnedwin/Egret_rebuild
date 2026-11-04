@@ -119,13 +119,14 @@ export function resolveSelected(specifier,parent,mode,map){const selectedPrefix=
     requirePolicy(url.startsWith(prefix)&&!url.includes('%'),'RELATIVE_MODULE_ESCAPE',{parent,specifier,url});return url;}
   requirePolicy(Object.hasOwn(effective,specifier),'BARE_IMPORT_UNKNOWN',{parent,specifier});return effective[specifier];
 }
+// The M2.4 source profile adds two eager prepared-subtree modules; old caps remain unchanged.
 export async function collectPublicGraph(repository,retain,sourceProfile='historical'){
   // Named consumers opt into bounded source successors; the historical default
   // and every byte, import, registry and containment check remain unchanged.
-  requirePolicy(['historical','m15-textured','m12-recipe5','m31-textured','m22-sequence-textured'].includes(sourceProfile),'GRAPH_SOURCE_PROFILE');
+  requirePolicy(['historical','m15-textured','m12-recipe5','m31-textured','m22-sequence-textured','m24-spine-textured'].includes(sourceProfile),'GRAPH_SOURCE_PROFILE');
   // The UI successor adds only the eager ownership bridge and managed markers.
   // Historical profiles retain their original finite admission budgets.
-  const moduleLimit=sourceProfile==='historical'?LIMITS.modules:sourceProfile==='m22-sequence-textured'?137:sourceProfile==='m31-textured'?134:132;
+  const moduleLimit=sourceProfile==='historical'?LIMITS.modules:sourceProfile==='m24-spine-textured'?139:sourceProfile==='m22-sequence-textured'?137:sourceProfile==='m31-textured'?134:132;
   const root=await realpath(repository),modules=new Map();let total=0,sourceRegistry;
   const map=chosenMap('baseline'),robustRoot=await realpath(path.join(root,'packages/engine/node_modules/robust-predicates'));
   async function visit(relative){const logical=path.join(root,relative),physical=await realpath(logical);
@@ -133,7 +134,8 @@ export async function collectPublicGraph(repository,retain,sourceProfile='histor
     if(/^packages\/(engine|runtime|contracts)\/dist\//.test(relative))requirePolicy(samePath(physical,logical),'EMISSION_EXACT_PATH',{relative,physical});
     requirePolicy(!/(?:^|\/)CanvasHost\.js$|(?:^|\/)canvas\.js$/.test(relative),'TEXTURED_CANVAS_MODULE',{relative});
     if(modules.has(relative))return;requirePolicy(modules.size<moduleLimit,'GRAPH_MODULE_COUNT');
-    const item=await readIdentity(logical);total+=item.bytes;requirePolicy(total<=LIMITS.graphBytes,'GRAPH_TOTAL_BYTES');
+    const item=await readIdentity(logical);
+    total+=item.bytes;requirePolicy(total<=LIMITS.graphBytes,'GRAPH_TOTAL_BYTES');
     const text=new TextDecoder('utf-8',{fatal:true}).decode(item.body),record={relative,url:'/'+relative,...item,edges:[]};modules.set(relative,record);retain(item,'original-emission');
     const source=sourceCounterpart(relative);if(source!==null){
       let sourceIdentity;try{sourceIdentity=await readIdentity(path.join(root,source));}catch(error){

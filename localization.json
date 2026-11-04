@@ -2624,7 +2624,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "1ce56261898c84a1d7695a5916343aaa80dbd4e920d529ed89e62b9895bc5b6d"
+      "sha256": "1e28baaf56aa9720dde225cec5a3c445252294bf406adfe2886908eb6f3dba1b"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2636,7 +2636,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "2572bcbc8916a26ee803523bfa80a32f9e034f1873933904a79d5ac51581adb8"
+      "sha256": "6c3a4c63bfbe1337aa5e51060a16d091cf416043a0fd91e303682075eb059880"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
