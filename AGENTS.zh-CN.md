@@ -180,6 +180,7 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/web
 仅由 `tests/resource-manifest-builder-io-unit.test.mjs` 启动的专用子进程 `tests/resource-manifest-builder-io-child.mjs`，可临时替换 Node `fs.readFileSync`、`readSync`、`openSync`、`closeSync`、`fstatSync` 的精确自有属性描述符，并同步内置 ESM 导出。观察与指定拒绝仅限子进程自有、明确列出的临时夹具路径及已捕获的文件描述符；其他调用原样转交。通过普通模块导入执行一次真实构建工具 CLI，保留真实文件字节与独立 Node crypto；在 `finally` 中恢复所有原始描述符及同步导出，并关闭自有句柄。仅限这些子进程自有夹具文件，可在真实大小观察后立即使用未经替换的 ftruncateSync/writeSync 截断或追加实际字节，以验证真实短读／增长拒绝；不得伪造文件系统返回值。该工具 I/O 单元验证读取前限额与有限分块，不授予私有 SDK 导入、预加载、loader 钩子、原型拦截或原生验收权限。
 
 仅 `tests/manifest-byte-source.test.mjs`、`tests/manifest-texture-provider.test.mjs` 与 `tests/manifest-resource-diagnostics.test.mjs` 可在串行用例中，将 `globalThis.fetch` 的完整自有属性描述符临时替换为测试自有传输。纯夹具辅助文件 `tests/manifest-browser-fixtures.mjs` 提供自有 response/body/reader 对象和受控异步操作，但不修改全局对象。自有工作实际结束后恢复原始描述符全部字段。用例保持真实已构建公开 SDK 对象、未经替换的实际 Web Crypto 与既有 PNG ports；不增加 crypto、时钟、构造器或原型拦截、私有 SDK 导入、模块钩子或公开测试权限。受控传输／解码结果仅证明完整性、顺序、逻辑容量与清理；实际浏览器解码、性能与设备恢复需单独验证。
+仅 `tests/manifest-texture-provider.test.mjs` 的 MTP06 可在构造真实 source 时，临时观察 `globalThis.setTimeout` 的完整自有数据属性描述符。每次原始计时调用均以原 receiver 与参数转发一次，保持原返回值或抛出；不得替换 callback、delay 或时钟。在 source 构造后立即通过 `finally` 恢复原描述符全部字段。source 捕获的观察器最多保留四条注册记录，直到自有工作结束；这些记录仅证明整项任务的注册及清理顺序，不证明计时精度或性能。不得拦截其他 timer、全局对象或原型。
 <!-- M15-FOCUSED-IO-END -->
 
 <!-- M15-HOST-CONTROLS-BEGIN -->

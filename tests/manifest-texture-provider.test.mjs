@@ -110,20 +110,52 @@ check('MTP05 shared source decode permits apply across two providers while provi
 });
 
 check('MTP06 whole-job deadline includes queued fetch time and is not reset at decode admission', async f => {
-  const { chosen, provider, png } = await setup(f, { deadlineMs: 220 });
-  let originalRead, originalDecode, enteredAt;
+  const chosen = selection(), saved = Object.getOwnPropertyDescriptor(globalThis, 'setTimeout');
+  assert.ok(saved && Object.hasOwn(saved, 'value') && typeof saved.value === 'function' && saved.configurable);
+  const registrations = []; let source, overflow = false;
+  // Observe only the timer captured by this source. Forward the native call
+  // unchanged; neither callbacks nor the real clock are replaced.
+  Object.defineProperty(globalThis, 'setTimeout', { ...saved, value: function (...args) {
+    const handle = Reflect.apply(saved.value, this, args);
+    if (registrations.length < 4) registrations.push({ handle, delay: args[1], receiver: this });
+    else overflow = true;
+    return handle;
+  } });
+  try { source = f.source(chosen, { deadlineMs: 220 }); }
+  finally { Object.defineProperty(globalThis, 'setTimeout', saved); }
+  assert.deepEqual(Object.getOwnPropertyDescriptor(globalThis, 'setTimeout'), saved);
+  const png = controlledFixture(), provider = f.provider(source, png);
+  const baseline = await f.load(provider, chosen.bindings[0].ref, context().value);
+  assert.equal(egret.isTexture(baseline), true); provider.dispose(baseline);
+  assert.equal(baseline.isDisposed, true); assert.equal(registrations.length, 1);
+  const before = registrations.length;
+  let originalRead, originalDecode, late;
   f.route = call => { originalRead = f.hold(f.response(call.url)); return originalRead.promise; };
-  png.controls.decode = () => { originalDecode = f.hold(png.makeBitmap()); enteredAt = performance.now(); return originalDecode.promise; };
-  const started = performance.now(), loading = f.watch(f.load(provider, chosen.bindings[0].ref, context().value));
-  await new Promise(resolve => setTimeout(resolve, 130));
+  png.controls.decode = () => { late = png.makeBitmap(); originalDecode = f.hold(late); return originalDecode.promise; };
+  const loading = f.watch(f.load(provider, chosen.bindings[0].ref, context().value));
+  await until(() => originalRead !== undefined);
+  await pending(loading, 'the original fetch remains pending under its already registered deadline');
+  assert.equal(registrations.length, before + 1);
+  const deadline = registrations[before];
+  assert.equal(deadline.receiver, globalThis);
+  assert.ok(deadline.delay >= 0 && deadline.delay <= 220, 'the timer uses the remaining whole-job budget');
   originalRead.resolve();
-  await until(() => enteredAt !== undefined);
-  const result = await loading, refusedAt = performance.now();
+  await until(() => originalDecode !== undefined);
+  assert.equal(registrations.length, before + 1, 'decode admission does not register a fresh deadline');
+  assert.equal(registrations[before], deadline);
+  assert.equal(originalDecode.settled, false);
+  const result = await loading;
   assert.equal(result.fulfilled, false); assert.equal(result.cause?.code, 'WEB_RESOURCE_DEADLINE_EXCEEDED');
-  assert.ok(refusedAt - started >= 219, 'whole deadline does not fire early');
-  assert.ok(refusedAt - enteredAt < 200, 'decode must not receive a new 220 ms budget');
+  assert.equal(registrations.length, before + 1, 'the original timer remains the only job deadline');
+  assert.equal(overflow, false); assert.equal(originalDecode.settled, false);
+  // Node 26.7 truncates fractional delays and promises no exact callback time:
+  // https://github.com/nodejs/node/blob/v26.7.0/doc/api/timers.md#settimeoutcallback-delay-args
+  // Registration/lifecycle evidence proves the protocol without a millisecond oracle.
+  const closing = provider.close();
+  await pending(closing, 'deadline publication does not settle the original decoder');
+  assert.equal(late.closed, 0);
   originalDecode.resolve();
-  await provider.close(); assert.equal(png.bitmaps.at(-1).closed, 1);
+  await closing; assert.equal(late.closed, 1);
 });
 
 check('MTP07 late unknown bitmap cleanup remains quarantined with its undefined cause', async f => {

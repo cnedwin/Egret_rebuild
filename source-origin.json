@@ -295,8 +295,8 @@
     {
       "path": "AGENTS.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "1f7e09ad9981178946b2861eaa93d2e3554c19518a7a40fff5003b287f3d373c",
-      "bytes": 42880,
+      "sha256": "e8d12e1f8a5f6fbeb6d90075d9c3cd995d1bbcc7207c3ea9a3264d4ef78366e2",
+      "bytes": 43576,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
       "previousLayoutPath": "AGENTS.en.md",
       "previousLayoutSha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5",
@@ -325,8 +325,8 @@
     },
     {
       "path": "AGENTS.zh-CN.md",
-      "sha256": "c56b3a5acc6d4896d410658efc19d02156c7b928feaeabefab2487c9281722f9",
-      "bytes": 38504,
+      "sha256": "20843b0b68f8074a3acde618210c07991b9fce975cefa7c1221f262ace6e8941",
+      "bytes": 39114,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "239cfaf350c0f735050298c802ba4facfd9b42ed2597955d8f20e353c5013a06",
+      "sha256": "4386bdc6a22f5ac9242d081fb2ef5ba4b184fffc068cc1c0ca0e801c672b48de",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "40d7762681004b20304e924a14b33ad06f745e628934ef925dc3fa77fa201304",
+      "sha256": "5bc05e8705cb8a2b26efdc02cf9779edc7d597ac51c504edfe53c21f51ef2403",
       "bytes": 375578,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -11828,8 +11828,8 @@
     {
       "path": "tests/manifest-texture-provider.test.mjs",
       "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
-      "bytes": 18739,
-      "sha256": "68ee93955b0d41f085c103871ffcec82e0746f863b95c8a5332527ddc48734e2"
+      "bytes": 20815,
+      "sha256": "dba5607124bf4cb3c2263064b3d548753a98d9e9effe2317375be8784eabb46a"
     },
     {
       "path": "tests/native-import-lexer.test.mjs",
