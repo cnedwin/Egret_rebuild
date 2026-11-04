@@ -7,6 +7,8 @@ import type { EngineContext } from "./ownership.js";
 import { EgretError } from "./EgretError.js";
 import { markStageRoot } from "./displayTreeState.js";
 
+import { createPreparedDisplayOperations } from './preparedDisplaySubtree.js';
+
 export let createStage: (engine: EngineContext) => Stage;
 const CREATION_TOKEN: unique symbol = Symbol("egret.stageFactory");
 
@@ -17,6 +19,7 @@ export class Stage extends DisplayObjectContainer {
     if (token !== CREATION_TOKEN) throw new EgretError("STAGE_FACTORY_REQUIRED");
     markStageRoot(this);
     bind(this, engine);
+    engine.registerPreparedDisplayOperations?.(createPreparedDisplayOperations(this));
   }
 
   static {

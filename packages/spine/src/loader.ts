@@ -8,6 +8,7 @@ import type { SpineContentOptions, SpineContentProviderFactory, SpineContentProv
 import { admitSpineCatalog, selectSpineDependencies, spineFault } from './catalog.js';
 import { parseSpineSetup } from './parse.js';
 import { registerSpineAsset } from './assetAuthority.js';
+import { registerResetLoader } from './resetAuthority.js';
 import type { ParsedSpineSetup } from './parse.js';
 
 const APPLY=Reflect.apply,FREEZE=Object.freeze;
@@ -124,5 +125,5 @@ export function createSpineContentLoader(engine:Engine,ownerScope:Scope,manifest
       return group;
     },
   });
-  try{APPLY(USE,ownerScope,[loader]);scopeOpen();}catch(cause){dispose();throw cause;}return loader;
+  try{APPLY(USE,ownerScope,[loader]);scopeOpen();}catch(cause){dispose();throw cause;}registerResetLoader(loader,scope=>{assertOpen();const validation=APPLY(GROUP,engine,[scope,admitted!,[],[]]) as ManifestAssetGroup;validation.dispose();assertOpen();});return loader;
 }

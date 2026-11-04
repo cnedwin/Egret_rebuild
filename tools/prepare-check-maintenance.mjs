@@ -104,6 +104,12 @@ const m33KeyboardSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes
 const m33KeyboardPairRegistrations = [["tools/spritesheet-boundary.mjs","m33KeyboardPackagePairs","raw-pair-observation-only"],["tools/spritesheet-boundary.mjs","m33KeyboardSourcePairs","raw-pair-observation-only"],["tools/sequence-playback-boundary.mjs","m33KeyboardPackagePairs","raw-pair-observation-only"],["tools/sequence-playback-boundary.mjs","m33KeyboardSourcePairs","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","m33KeyboardPackagePairs","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","m33KeyboardSourcePairs","raw-pair-observation-only"],["tools/bitmap-resource-slot-boundary.mjs","m33KeyboardPackagePairs","raw-pair-observation-only"],["tools/bitmap-resource-slot-boundary.mjs","m33KeyboardSourcePairs","raw-pair-observation-only"],["tools/bitmap-binding-ticket-boundary.mjs","m33KeyboardPackagePairs","raw-pair-observation-only"],["tools/bitmap-binding-ticket-boundary.mjs","m33KeyboardSourcePairs","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","m33KeyboardPackagePairs","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","m33KeyboardSourcePairs","raw-pair-observation-only"]];
 const m33KeyboardGraphRegistrations = [["tools/spritesheet-boundary.mjs","m33KeyboardAdditionPins"],["tools/browser-png-boundary.mjs","m33KeyboardAdditionPins"],["tools/atlas-import-boundary.mjs","m33KeyboardAdditionPins"]];
 // Exact current key-reveal owners retain all earlier source authorities.
+// M24-SPINE-CURRENT-BEGIN
+const m24SpineSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":263885,"sha256":"994f218a0ec9f136d6e5d779cbe2128194408252bb393b923142f97dc30ccf8c"},{"path":"tools/browser-png-boundary.mjs","bytes":272858,"sha256":"37523fea501391ec69ce933c9d73fbdfe517dcda8638c74995535218996ac76c"},{"path":"tools/atlas-import-boundary.mjs","bytes":168598,"sha256":"d02b5805f58f130179bb311aa19f841e238a7ab4648961f8f5a0c808c547b42c"},{"path":"tools/sequence-playback-boundary.mjs","bytes":68136,"sha256":"32f538846879cfd254f08f6833313706155dce051bfa2fb14803b6a6fa23d75f"},{"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":63903,"sha256":"e5bc1397330e20399027195b7d9137ba94911649ba71f81473b6c57684008cc3"},{"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":70482,"sha256":"0345b078617aad07fa2ee7660b08c78204e37ea27cfc3d4d0588a0ecea125b4c"}];
+const m24SpinePairRegistrations = [["tools/spritesheet-boundary.mjs","m24SpineSourcePairs","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","m24SpineSourcePairs","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","m24SpineSourcePairs","raw-pair-observation-only"],["tools/sequence-playback-boundary.mjs","m24SpineSourcePairs","raw-pair-observation-only"],["tools/bitmap-resource-slot-boundary.mjs","m24SpineSourcePairs","raw-pair-observation-only"],["tools/bitmap-binding-ticket-boundary.mjs","m24SpineSourcePairs","raw-pair-observation-only"],["tools/bitmap-resource-slot-boundary.mjs","m24SpineProjectedPairs","transformed-baseline-raw-observation"],["tools/bitmap-binding-ticket-boundary.mjs","m24SpineProjectedPairs","transformed-baseline-raw-observation"]];
+const m24SpineGraphRegistrations = [["tools/spritesheet-boundary.mjs","m24SpineAdditionPins"],["tools/browser-png-boundary.mjs","m24SpineAdditionPins"],["tools/atlas-import-boundary.mjs","m24SpineAdditionPins"]];
+// M24-SPINE-CURRENT-END
+
 const m3KeyRevealSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":256239,"sha256":"9fe4430a07a41f9a553a5302c67404ff01e1eb59d8b91e11e07bebc324a849b5"},{"path":"tools/browser-png-boundary.mjs","bytes":265212,"sha256":"5418e1727c4b635847986ddea1b21761f448861cb4e46c9149993d1b5e91d929"},{"path":"tools/atlas-import-boundary.mjs","bytes":160952,"sha256":"914639e2fd0d8b424b0be12f84ed3639e5bd1b8541d538ac1bca6d62d16bb1e6"}];
 const m3KeyRevealPairRegistrations = [["tools/spritesheet-boundary.mjs","m3KeyRevealSourcePairs","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","m3KeyRevealSourcePairs","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","m3KeyRevealSourcePairs","raw-pair-observation-only"]];
 // Explicit selectors keep historical transforms and third-party owners separate.
@@ -239,8 +245,8 @@ export function prepareBaselineReview(root){
     || m31UiPairRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || m3PointerGraphRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || m3PointerPairRegistrations.some(row=>row[0]===owner&&row[1]===binding)
-    || [...m3KeyRevealPairRegistrations,...m33KeyboardPairRegistrations,...m33KeyboardGraphRegistrations].some(row=>row[0]===owner&&row[1]===binding);
-   const reviewed=[...m13SourceOwners,...m14SourceOwners,...m15SourceOwners,...m15CancellationSourceOwners,...m15DiagnosticSourceOwners,...m12PreparationSourceOwners,...m3PointerSourceOwners,...m21ContentSourceOwners,...m31UiSourceOwners,...m22SequenceSourceOwners,...m33KeyboardSourceOwners,...m3KeyRevealSourceOwners].filter(row=>row.path===owner);
+    || [...m24SpinePairRegistrations,...m24SpineGraphRegistrations,...m3KeyRevealPairRegistrations,...m33KeyboardPairRegistrations,...m33KeyboardGraphRegistrations].some(row=>row[0]===owner&&row[1]===binding);
+   const reviewed=[...m13SourceOwners,...m14SourceOwners,...m15SourceOwners,...m15CancellationSourceOwners,...m15DiagnosticSourceOwners,...m12PreparationSourceOwners,...m3PointerSourceOwners,...m21ContentSourceOwners,...m31UiSourceOwners,...m22SequenceSourceOwners,...m33KeyboardSourceOwners,...m3KeyRevealSourceOwners,...m24SpineSourceOwners].filter(row=>row.path===owner);
    if(!allowed||!reviewed.some(row=>samePin(read.pin(owner),row)))throw cause;
    // Raw source authority precedes extraction; no caller-selected parser fallback.
    const lines=text.split(/\r?\n/).filter(line=>line.startsWith('const '+binding+' = '));
@@ -290,7 +296,7 @@ export function prepareBaselineReview(root){
   });
   successorPairs.push({owner,binding,comparison:'raw-pair-observation-only',rows});
  }
- for(const [owner,binding,comparison]of [...m13PairRegistrations,...m3KeyRevealPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m33KeyboardPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m22SequencePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m31UiPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m3PointerPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m15PairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding))]){
+ for(const [owner,binding,comparison]of [...m13PairRegistrations,...m24SpinePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m3KeyRevealPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m33KeyboardPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m22SequencePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m31UiPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m3PointerPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m15PairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding))]){
   const pairs=registeredDeclaration(owner,binding),seen=new Set();
   if(!Array.isArray(pairs))throw Error('Expected registered M1.3 pair array');
   const rows=pairs.map(pair=>{
@@ -304,7 +310,7 @@ export function prepareBaselineReview(root){
  }
  // Historical owners without this later declaration remain readable as history.
  // Current post-preamble extraction still requires one exact reviewed raw owner.
- for(const [owner,binding]of [...m14GraphRegistrations,...m15GraphRegistrations,...m12PreparationGraphRegistrations,...m3PointerGraphRegistrations,...m31UiGraphRegistrations,...m22SequenceGraphRegistrations,...m33KeyboardGraphRegistrations]){
+ for(const [owner,binding]of [...m24SpineGraphRegistrations,...m14GraphRegistrations,...m15GraphRegistrations,...m12PreparationGraphRegistrations,...m3PointerGraphRegistrations,...m31UiGraphRegistrations,...m22SequenceGraphRegistrations,...m33KeyboardGraphRegistrations]){
   if(!ownerText(owner).includes('const '+binding))continue;
   add(owner,binding,registeredDeclaration(owner,binding));
  }
@@ -323,6 +329,7 @@ export function prepareBaselineReview(root){
    const pointerSuccessor={owner:warmOwner,binding:'m3PointerGraphSuccessor'};
    const sequenceSuccessor=ownerText(warmOwner).includes('const m22SequenceAdditionPins')?{owner:warmOwner,binding:'m22SequenceAdditionPins'}:undefined;
    const uiSuccessor=ownerText(warmOwner).includes('const m31UiAdditionPins')?{owner:warmOwner,binding:'m31UiAdditionPins'}:undefined;
+   const spineSuccessor=ownerText(warmOwner).includes('const m24SpineAdditionPins')?{owner:warmOwner,binding:'m24SpineAdditionPins'}:undefined;
    const keyboardSuccessor=ownerText(warmOwner).includes('const m33KeyboardAdditionPins')?{owner:warmOwner,binding:'m33KeyboardAdditionPins'}:undefined;
   const declared=new Set(declarations.filter(x=>x.owner===owner&&(x.binding===baseBinding||x.binding===successorBinding)
    || x.owner===warmSuccessor.owner&&x.binding===warmSuccessor.binding
@@ -334,8 +341,9 @@ export function prepareBaselineReview(root){
     || x.owner===pointerSuccessor.owner&&x.binding===pointerSuccessor.binding
     || sequenceSuccessor&&x.owner===sequenceSuccessor.owner&&x.binding===sequenceSuccessor.binding
     || uiSuccessor&&x.owner===uiSuccessor.owner&&x.binding===uiSuccessor.binding
+   || spineSuccessor&&x.owner===spineSuccessor.owner&&x.binding===spineSuccessor.binding
    || keyboardSuccessor&&x.owner===keyboardSuccessor.owner&&x.binding===keyboardSuccessor.binding).flatMap(x=>x.rows.map(row=>row.expected.path)));
-  return {owner,baseBinding,successorBinding,warmSuccessor,incrementalSuccessor,sharedSuccessor,webglSuccessor,resourceRecoverySuccessor,preparationHotPathSuccessor,pointerSuccessor,...(uiSuccessor?{uiSuccessor}:{}),...(sequenceSuccessor?{sequenceSuccessor}:{}),...(keyboardSuccessor?{keyboardSuccessor}:{}),unlisted:inventory.filter(file=>!declared.has(file)).map(file=>read.pin(file))};
+  return {owner,baseBinding,successorBinding,warmSuccessor,incrementalSuccessor,sharedSuccessor,webglSuccessor,resourceRecoverySuccessor,preparationHotPathSuccessor,pointerSuccessor,...(uiSuccessor?{uiSuccessor}:{}),...(sequenceSuccessor?{sequenceSuccessor}:{}),...(keyboardSuccessor?{keyboardSuccessor}:{}),...(spineSuccessor?{spineSuccessor}:{}),unlisted:inventory.filter(file=>!declared.has(file)).map(file=>read.pin(file))};
  });
  // Many declarations can reference one path; retain every selector and pair arm.
  const byPath=new Map();

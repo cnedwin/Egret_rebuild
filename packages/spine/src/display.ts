@@ -6,6 +6,7 @@ import type { DisplayObject, SharedGeometry2D, SharedMaterial2D } from '@egret/e
 import type { SpineInstance } from './instanceTypes.js';
 import type { SpineDisplay, SpineDisplayOptions, SpineDisplayStatus } from './displayTypes.js';
 import { requireSpineRender } from './renderAuthority.js';
+import { registerResetDisplay } from './resetAuthority.js';
 import type { SpineDrawCandidate, SpineDrawSink } from './renderAuthority.js';
 import { copySpineDraws, drawFault } from './drawGeometry.js';
 import type { SpineDrawRow } from './drawGeometry.js';
@@ -78,5 +79,6 @@ export function createSpineDisplay(instance: SpineInstance, scope: Scope, option
   const display:SpineDisplay=Object.freeze({node:root,dispose,getStatus(){return disposed?Object.freeze({...status,isDisposed:true}):status;}});
   try{apply(use,scope,[root]);detach=port.attach(scope,sink);apply(use,scope,[display]);assertOpen();}
   catch(cause){dispose();throw cause;}
+  registerResetDisplay(display,instance);
   return display;
 }

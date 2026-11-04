@@ -31,3 +31,5 @@ owner.dispose();
 使用 `player.setSkins(['body/base', 'clothes/coat'])` 组合已有装扮部件；后面的部件在下一次显式更新时覆盖同名占位，不重启动画。`snapshot.skins` 记录有序选择，`setSkin` 保持兼容。参见[组合皮肤契约](../../knowledge-base/Cns/docs/spine-content-ingress.md#组合皮肤换装)。
 
 固定总次数使用 `player.setAnimation(0, 'walk', {plays: 3})`；`addAnimation` 也支持该次数。范围为 1–1024，不能与 `loop` 混用，零时长动画仅允许一次。最终姿态保留，排队后继继续消费 tick 剩余时间。快照轨道提供 `plays` 与已提交的 `completedPlays`。参阅[有限播放语义与工作量边界](../../knowledge-base/Cns/docs/spine-content-ingress.md#有限总播放次数)。
+
+可通过显式、仅 CPU 的重置槽替换单个资源版本：`createSpineResetSlot(engine, scope, target, initial)`。新候选拥有其组，初始玩家和所有传入 loader 仍为借用。参见 [RESET 契约](../../knowledge-base/Cns/docs/spine-reset-slot.md)与[普通双版本例子](../../examples/spine-reset/README.zh-CN.md)。GPU 原子替换和完整 M2.4 仍未完成。

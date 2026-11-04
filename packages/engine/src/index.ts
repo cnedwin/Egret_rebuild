@@ -43,3 +43,5 @@ export type { BitmapResourceSlot, BitmapResourceSlotState } from './bitmapResour
 export type { BitmapBindingTicket } from './bitmapBindingTicket.js';
 
 export type { AtlasFrameLayout } from '@egret/runtime';
+
+export type { DisplaySubtreeTicket } from './displaySubtreeTicket.js';

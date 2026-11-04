@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/spine-reset/recovery-flow.mjs",
+      "originRole": "First-party Spine application recovery integration, original controlled tests/native verification and confirmed-loss Host retention ordering repair; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/spine-reset/recovery-native.mjs",
+      "originRole": "First-party Spine application recovery integration, original controlled tests/native verification and confirmed-loss Host retention ordering repair; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/spine-reset/verify-recovery.mjs",
+      "originRole": "First-party Spine application recovery integration, original controlled tests/native verification and confirmed-loss Host retention ordering repair; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/spine-reset/recovery-verification-summary.json",
+      "originRole": "First-party Spine application recovery integration, original controlled tests/native verification and confirmed-loss Host retention ordering repair; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "knowledge-base/en/docs/spine-recovery-integration.md",
+      "originRole": "First-party Spine application recovery integration, original controlled tests/native verification and confirmed-loss Host retention ordering repair; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/spine-recovery-integration.md",
+      "originRole": "First-party Spine application recovery integration, original controlled tests/native verification and confirmed-loss Host retention ordering repair; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained."
+    },
+    {
+      "path": "tests/spine-recovery-flow.test.mjs",
+      "originRole": "First-party Spine application recovery integration, original controlled tests/native verification and confirmed-loss Host retention ordering repair; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained.",
+      "criticalComment": true
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/spine-recovery-integration.md",
+      "zh": "knowledge-base/Cns/docs/spine-recovery-integration.md"
+    }
+  ]
+}

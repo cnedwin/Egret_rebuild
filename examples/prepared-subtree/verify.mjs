@@ -1,0 +1,38 @@
+// SPDX-License-Identifier: Apache-2.0
+// Literal finite native checks. Public SDK only; no native or SDK interception.
+import fs from 'node:fs';import path from 'node:path';import {fileURLToPath,pathToFileURL} from 'node:url';import {createHash} from 'node:crypto';import assert from 'node:assert/strict';import {createRequire} from 'node:module';
+import {createExampleServer} from '../../tools/serve-example.mjs';import {fingerprintFile} from '../../tools/lib/file-identity.mjs';
+const root=fileURLToPath(new URL('../..',import.meta.url)),require=createRequire(import.meta.url),{PNG}=require('pngjs');
+export async function verify({playwrightPath,out}){
+ if(process.env.NODE_OPTIONS||process.env.NODE_PATH)throw Error('Inherited module injection is not accepted');
+ assert.equal(JSON.parse(fs.readFileSync(path.join(path.dirname(playwrightPath),'package.json'),'utf8')).version,'1.62.1');assert.equal(require('pngjs/package.json').version,'7.0.0');
+ fs.mkdirSync(out,{recursive:true});const initial=new Map(),used=new Set(),requests=[];
+ function collect(dir){for(const item of fs.readdirSync(path.join(root,dir),{withFileTypes:true})){const file=dir+'/'+item.name;if(item.isDirectory())collect(file);else if(item.isFile())initial.set(file,fingerprintFile(root,file));}}
+ for(const dir of ['packages/engine/dist','packages/runtime/dist','packages/contracts/dist','examples/prepared-subtree','node_modules/robust-predicates'])collect(dir);
+ for(const file of ['tools/serve-example.mjs','tools/lib/local-package.mjs','tools/lib/file-identity.mjs','node_modules/pngjs/package.json'])initial.set(file,fingerprintFile(root,file));
+ const fixed=['examples/prepared-subtree/verify.mjs','tools/serve-example.mjs','tools/lib/local-package.mjs','tools/lib/file-identity.mjs','node_modules/robust-predicates/package.json','node_modules/pngjs/package.json'];for(const file of fixed)used.add(file);
+ const {chromium}=await import(pathToFileURL(playwrightPath).href),server=createExampleServer(root);server.on('request',request=>{let file=new URL(request.url,'http://localhost').pathname.slice(1);if(file.startsWith('vendor/robust-predicates/'))file='node_modules/robust-predicates/'+file.slice('vendor/robust-predicates/'.length);if(initial.has(file))used.add(file);requests.push(file);});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+ const origin='http://127.0.0.1:'+server.address().port,report={profile:'prepared-subtree-native/1',node:process.version,launch:{channel:'msedge',headless:false,additionalFlags:[]},cases:[],failures:[],limits:['CPU commit and Host submit are separate','No device loss, physical-memory or performance acceptance']};let browser;
+ const points=[[14,14],[18,16],[25,18],[25,24],[34,34],[40,40]];
+ // Flattened per-draw alpha: cyan .5 over green .5 gives linear G=.75, B=.5; sRGB rounds to 225/226 and 188.
+ const expected={old:[[188,0,0,255],[188,0,0,255],[137,0,188,255],[188,0,0,255],[188,0,0,255],[0,0,0,255]],candidate:[[0,0,0,255],[0,188,0,255],[0,137,188,255],[0,225,188,255],[0,0,0,255],[0,0,0,255]]};
+ const check=(bytes,kind)=>{assert.equal(bytes.length,64*64*4);for(let i=0;i<points.length;i++){const [x,y]=points[i],actual=bytes.slice((y*64+x)*4,(y*64+x)*4+4);for(let c=0;c<4;c++)assert.ok(Math.abs(actual[c]-expected[kind][i][c])<=1,kind+' point '+i+' channel '+c+': '+actual+' expected '+expected[kind][i]);}};
+ try{browser=await chromium.launch({channel:'msedge',headless:false});report.browser=browser.version();
+  for(const backend of ['webgpu','webgl2']){const context=await browser.newContext({viewport:{width:900,height:700},deviceScaleFactor:1}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(String(e)));const row={backend,errors,checks:[]};report.cases.push(row);
+   try{await page.goto(origin+'/examples/prepared-subtree/index.html?backend='+backend);const initialPixels=await page.evaluate(async()=>{window.api=await import('./main.mjs');return window.api.ready;});
+    const save=(label,p,kind)=>{fs.writeFileSync(path.join(out,backend+'-'+label+'.rgba'),Buffer.from(p.bytes));check(p.bytes,kind);row.checks.push(label);};save('initial',initialPixels,'old');
+    const screenshot=async(label,kind)=>{const b=await page.locator('canvas').screenshot();fs.writeFileSync(path.join(out,backend+'-'+label+'.png'),b);const p=PNG.sync.read(b);assert.equal(p.width,64);assert.equal(p.height,64);check(p.data,kind);row.checks.push(label);};
+    row.staged=await page.evaluate(()=>window.api.prepare());assert.equal(row.staged.scene.oldAttached,true);assert.equal(row.staged.scene.candidateAttached,false);assert.equal(row.staged.ready.generation,row.staged.session.generation);await screenshot('staged-old-visible','old');
+    row.cancelled=await page.evaluate(()=>window.api.abort());assert.equal(row.cancelled.scene.oldAttached,true);assert.equal(row.cancelled.scene.disposedTextures,0);await screenshot('cancel-old-visible','old');
+    save('cancelled-candidate-replay',await page.evaluate(()=>window.api.replayCandidate()),'candidate');save('cancelled-old-replay',await page.evaluate(()=>window.api.replayOld()),'old');
+    await page.evaluate(()=>window.api.prepare());row.conflict=await page.evaluate(()=>window.api.conflict());assert.equal(row.conflict.code,'DISPLAY_SUBTREE_STALE');assert.equal(row.conflict.scene.oldAttached,true);await screenshot('conflict-old-visible','old');
+    await page.evaluate(()=>window.api.prepare());row.committed=await page.evaluate(()=>window.api.commit());assert.equal(row.committed.scene.oldAttached,false);assert.equal(row.committed.scene.candidateAttached,true);assert.equal(row.committed.scene.oldDisposed,false);assert.equal(row.committed.scene.disposedTextures,0);await screenshot('cpu-commit-old-visible','old');
+    save('submitted',await page.evaluate(()=>window.api.submit()),'candidate');save('committed-old-replay',await page.evaluate(()=>window.api.replayOld()),'old');save('committed-candidate-replay',await page.evaluate(()=>window.api.replayCandidate()),'candidate');
+    row.closingStage=await page.evaluate(()=>window.api.stageBeforeClose());assert.equal(row.closingStage.host.host.pendingFrames,1);row.closed=await page.evaluate(()=>window.api.close());assert.equal(row.closed.phase,'closed');assert.equal(row.closed.scene.disposedTextures,2);assert.equal(row.closed.host.host.pendingFrames,0);assert.equal(row.closed.host.host.state,'closed');assert.deepEqual(row.closed.diagnostics,[]);assert.deepEqual(errors,[]);row.passed=true;
+   }catch(error){row.failure=String(error.stack??error);report.failures.push({backend,error:row.failure});}finally{await context.close();}
+  }
+ }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));report.browserClosed=true;report.serverClosed=true;report.requests=requests;report.status=report.failures.length?'FAIL':'PASS';
+  const pins=[...used].sort().map(file=>{const before=initial.get(file),after=fingerprintFile(root,file);assert.deepEqual(after,before,'Executed input changed: '+file);return before;});fs.writeFileSync(path.join(out,'inputs.json'),JSON.stringify({profile:'prepared-subtree-executed-inputs/1',externalTools:{playwright:'1.62.1',pngjs:'7.0.0'},pins},null,2));fs.writeFileSync(path.join(out,'result.json'),JSON.stringify(report,null,2));}
+ if(report.failures.length)throw Error('Native check failed: '+out);return report;
+}
+if(process.argv[1]===fileURLToPath(import.meta.url)){if(process.argv.length!==4)throw Error('Usage: node verify.mjs <Playwright index.mjs> <absolute output directory>');await verify({playwrightPath:path.resolve(process.argv[2]),out:path.resolve(process.argv[3])});console.log('Prepared subtree native PASS');}

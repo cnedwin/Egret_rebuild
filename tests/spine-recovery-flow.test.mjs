@@ -1,0 +1,32 @@
+// SPDX-License-Identifier: Apache-2.0
+// Application UNIT controls: owned ports do not establish native recovery.
+import test from 'node:test';import assert from 'node:assert/strict';
+import {createRecoveryFlow} from '../examples/spine-reset/recovery-flow.mjs';
+const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
+function setup(){
+ const done=deferred(),ready=deferred(),control={generation:1,state:'ready',captures:0,submitted:0,disposed:0,commits:0};
+ let ticket,upload;
+ const host={getSessionStatus:()=>{control.onStatus?.();return {generation:control.generation,state:control.state};},whenReady:()=>control.wait??Promise.resolve(),stageSharedFrame(frame){const generation=control.generation;upload={ready:control.uploadWait??Promise.resolve({generation,frameId:1}),dispose(){control.disposed++;},submit(){control.submitted++;control.onSubmit?.();return {generation,completed:control.done??Promise.resolve()};}};return upload;}};
+ const slot={request(){control.onRequest?.();ticket={state:'ready',ready:control.cpuWait??Promise.resolve(),capture:()=>({genuineFixtureMarker:true}),commit(){control.commits++;ticket.state='committed';control.onCommit?.();},dispose(){if(ticket.state!=='committed')ticket.state='cancelled';}};return ticket;}};
+ const engine={captureSharedFrame(){control.captures++;return {};}};
+ const flow=createRecoveryFlow({engine,host,slot,frameOptions:{}});return {flow,control,done,ready,ticket:()=>ticket};
+}
+test('ready generation invalidation refuses before CPU publication; explicit retry works',async()=>{const {flow,control}=setup();await flow.prepare({});control.generation++;assert.throws(()=>flow.commit(),{code:'FLOW_STALE_GENERATION'});assert.equal(control.commits,0);assert.equal(flow.inspect().cpuPublished,false);await flow.replace({});assert.equal(flow.inspect().nativeSettled,true);});
+test('CPU committed then cleanup closes flow: no native submit and publication is retained',async()=>{const {flow,control}=setup();await flow.prepare({});control.onCommit=()=>flow.close();assert.throws(()=>flow.commit(),{code:'FLOW_CANCELLED'});assert.equal(flow.inspect().cpuPublished,true);assert.equal(control.submitted,0);});
+test('CPU cleanup throws after publication: retain committed truth and explicit replay',async()=>{const {flow,control}=setup();await flow.prepare({});control.onCommit=()=>{throw Error('cleanup');};assert.throws(()=>flow.commit(),/cleanup/);assert.equal(flow.inspect().cpuPublished,true);assert.equal(control.submitted,0);await flow.replay();assert.equal(control.captures,1);assert.equal(control.commits,1);});
+test('CPU cleanup changes actual generation: no stale native submit',async()=>{const {flow,control}=setup();await flow.prepare({});control.onCommit=()=>{control.generation++;};assert.throws(()=>flow.commit(),{code:'FLOW_STALE_GENERATION'});assert.equal(flow.inspect().cpuPublished,true);assert.equal(control.submitted,0);});
+test('native issue then throw remains unknown, CPU remains published',async()=>{const {flow,control}=setup();await flow.prepare({});flow.commit();control.onSubmit=()=>{throw Error('may have issued');};assert.throws(()=>flow.submit(),/may have issued/);assert.equal(flow.inspect().nativeSubmitted,'unknown');assert.equal(flow.inspect().nativeSettled,false);assert.equal(flow.inspect().cpuPublished,true);});
+test('submitted work later rejects: submitted and failed settlement are distinct',async()=>{const {flow,control,done}=setup();control.done=done.promise;await flow.prepare({});flow.commit();const pending=flow.submit();assert.equal(flow.inspect().nativeSubmitted,true);assert.equal(flow.inspect().nativeSettled,false);done.reject(Error('native completion'));await assert.rejects(pending,/native completion/);assert.equal(flow.inspect().nativeSettled,'failed');});
+for(const action of ['cancel','close'])test(action+' rejects recovery immediately without waiting for native readiness',async()=>{const {flow,control,ready}=setup();control.wait=ready.promise;const pending=flow.replay();flow[action]();await assert.rejects(pending,{code:'FLOW_CANCELLED'});ready.resolve();await Promise.resolve();assert.equal(control.captures,0);assert.equal(control.submitted,0);});
+test('new intent supersedes waiting recovery and late readiness cannot overwrite it',async()=>{const {flow,control,ready}=setup();control.wait=ready.promise;const recovery=flow.replay();const replacement=flow.prepare({});await assert.rejects(recovery,{code:'FLOW_CANCELLED'});await replacement;ready.resolve();await Promise.resolve();assert.equal(flow.inspect().kind,'reset');assert.equal(flow.inspect().phase,'staged');assert.equal(control.captures,0);flow.commit();await flow.submit();});
+test('second loss during replay upload refuses, no implicit retry',async()=>{const {flow,control,ready}=setup();control.uploadWait=ready.promise;const pending=flow.replay();await Promise.resolve();await Promise.resolve();control.generation=2;ready.resolve({generation:1});await assert.rejects(pending,{code:'FLOW_STALE_GENERATION'});assert.equal(control.submitted,0);assert.equal(control.captures,1);});
+test('cancel during CPU load prevents eventual capture/submit',async()=>{const {flow,control,ready}=setup();control.cpuWait=ready.promise;const pending=flow.prepare({});flow.cancel();await assert.rejects(pending,{code:'FLOW_CANCELLED'});ready.resolve();await Promise.resolve();assert.equal(control.submitted,0);assert.equal(control.commits,0);});
+test('invalid request leaves a staged intent valid',async()=>{const {flow,control}=setup();await flow.prepare({});control.onRequest=()=>{throw Error('invalid');};await assert.rejects(flow.prepare({}),/invalid/);flow.commit();await flow.submit();assert.equal(flow.inspect().nativeSettled,true);});
+
+for(const operation of ['replace','replay'])test(operation+' outer ready continuation keeps its original intent after a newer prepare',async()=>{
+ const {flow,control}=setup();let newer;
+ control.onStatus=()=>{control.onStatus=undefined;queueMicrotask(()=>{newer=flow.prepare({});});};
+ const older=flow[operation]({});await assert.rejects(older,{code:'FLOW_CANCELLED'});await newer;
+ assert.equal(flow.inspect().kind,'reset');assert.equal(flow.inspect().phase,'staged');assert.equal(control.commits,0);assert.equal(control.submitted,0);
+ flow.commit();await flow.submit();assert.equal(control.commits,1);assert.equal(control.submitted,1);
+});

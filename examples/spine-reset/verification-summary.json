@@ -1,0 +1,324 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-04",
+  "scope": "One explicit CPU RESET Spine slot; not complete M2.4, state preservation, coordinated GPU failure or recovery",
+  "environment": {
+    "browser": "156.0.4314.58",
+    "node": "26.7.0",
+    "playwright": "1.62.1",
+    "headed": true,
+    "channel": "msedge",
+    "additionalFlags": []
+  },
+  "focused": {
+    "tests": 174,
+    "pass": 174,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "newBehavior": 22,
+    "newTypeSuites": 1
+  },
+  "nativeCases": [
+    {
+      "backend": "webgpu",
+      "passed": true,
+      "checks": [
+        "initial",
+        "failed-old",
+        "staged-old",
+        "cancelled-old",
+        "cancelled-candidate-replay",
+        "old-replay",
+        "stale-old",
+        "cpu-only-old",
+        "submit-direct-v2",
+        "submitted-v2",
+        "owned-retired-before-submit",
+        "submit-direct-v1",
+        "second-version-v1",
+        "wrong-version-control-rejected",
+        "retired-v2-replay",
+        "initial-borrowed-replay"
+      ],
+      "pointsPerImage": 5,
+      "channelsPerImage": 20,
+      "readyGeneration": 1,
+      "closedPendingFrames": 0,
+      "closedHost": "closed",
+      "closedLoaders": {
+        "v1": {
+          "isDisposed": true,
+          "groups": 0,
+          "liveInstances": 0,
+          "activeSourceLoads": 0,
+          "liveSourceValues": 0,
+          "pendingSetups": 0,
+          "liveSetups": 0,
+          "setupBytes": 0
+        },
+        "v2": {
+          "isDisposed": true,
+          "groups": 0,
+          "liveInstances": 0,
+          "activeSourceLoads": 0,
+          "liveSourceValues": 0,
+          "pendingSetups": 0,
+          "liveSetups": 0,
+          "setupBytes": 0
+        }
+      }
+    },
+    {
+      "backend": "webgl2",
+      "passed": true,
+      "checks": [
+        "initial",
+        "failed-old",
+        "staged-old",
+        "cancelled-old",
+        "cancelled-candidate-replay",
+        "old-replay",
+        "stale-old",
+        "cpu-only-old",
+        "submit-direct-v2",
+        "submitted-v2",
+        "owned-retired-before-submit",
+        "submit-direct-v1",
+        "second-version-v1",
+        "wrong-version-control-rejected",
+        "retired-v2-replay",
+        "initial-borrowed-replay"
+      ],
+      "pointsPerImage": 5,
+      "channelsPerImage": 20,
+      "readyGeneration": 1,
+      "closedPendingFrames": 0,
+      "closedHost": "closed",
+      "closedLoaders": {
+        "v1": {
+          "isDisposed": true,
+          "groups": 0,
+          "liveInstances": 0,
+          "activeSourceLoads": 0,
+          "liveSourceValues": 0,
+          "pendingSetups": 0,
+          "liveSetups": 0,
+          "setupBytes": 0
+        },
+        "v2": {
+          "isDisposed": true,
+          "groups": 0,
+          "liveInstances": 0,
+          "activeSourceLoads": 0,
+          "liveSourceValues": 0,
+          "pendingSetups": 0,
+          "liveSetups": 0,
+          "setupBytes": 0
+        }
+      }
+    }
+  ],
+  "executedInputs": 242,
+  "artifacts": [
+    {
+      "name": "inputs.json",
+      "bytes": 44144,
+      "sha256": "822c6e0853b6f0128f81e19802baa25a3f29b8b4a457b0871371f2607564b242"
+    },
+    {
+      "name": "result.json",
+      "bytes": 196836,
+      "sha256": "6c4fa38a90f7af89ff684c9fde32be3c9fefafe042db68a9318cea22ec5bf4dc"
+    },
+    {
+      "name": "webgl2-cancelled-candidate-replay.rgba",
+      "bytes": 12288,
+      "sha256": "41a7ab3b9ea92fb21af3ce8edffef50a1fa041e25863d7730d70088569db3071"
+    },
+    {
+      "name": "webgl2-cancelled-old.png",
+      "bytes": 185,
+      "sha256": "5e979e92422dc3ec951fe741da81b34788acc45b0fe394d427024aa1d8f7218c"
+    },
+    {
+      "name": "webgl2-cpu-only-old.png",
+      "bytes": 185,
+      "sha256": "1c317e95071173b7f9a10aa1420d4f7b4d9e85cc1ebcdab09af02835bf7ff214"
+    },
+    {
+      "name": "webgl2-failed-old.png",
+      "bytes": 185,
+      "sha256": "5e979e92422dc3ec951fe741da81b34788acc45b0fe394d427024aa1d8f7218c"
+    },
+    {
+      "name": "webgl2-initial-borrowed-replay.rgba",
+      "bytes": 12288,
+      "sha256": "c3343c761ead538b6147ebd9185912a15489c5e705e06058db08c5ac349f7502"
+    },
+    {
+      "name": "webgl2-initial.rgba",
+      "bytes": 12288,
+      "sha256": "c3343c761ead538b6147ebd9185912a15489c5e705e06058db08c5ac349f7502"
+    },
+    {
+      "name": "webgl2-old-replay.rgba",
+      "bytes": 12288,
+      "sha256": "c3343c761ead538b6147ebd9185912a15489c5e705e06058db08c5ac349f7502"
+    },
+    {
+      "name": "webgl2-owned-retired-before-submit.png",
+      "bytes": 193,
+      "sha256": "02a4563116e23da8ebb2c0b9be501aa7c45f341eea769cd335b2b3bacfea2cda"
+    },
+    {
+      "name": "webgl2-retired-v2-replay.rgba",
+      "bytes": 12288,
+      "sha256": "41a7ab3b9ea92fb21af3ce8edffef50a1fa041e25863d7730d70088569db3071"
+    },
+    {
+      "name": "webgl2-second-version-v1.rgba",
+      "bytes": 12288,
+      "sha256": "c3343c761ead538b6147ebd9185912a15489c5e705e06058db08c5ac349f7502"
+    },
+    {
+      "name": "webgl2-staged-old.png",
+      "bytes": 185,
+      "sha256": "5e979e92422dc3ec951fe741da81b34788acc45b0fe394d427024aa1d8f7218c"
+    },
+    {
+      "name": "webgl2-stale-old.png",
+      "bytes": 185,
+      "sha256": "1c317e95071173b7f9a10aa1420d4f7b4d9e85cc1ebcdab09af02835bf7ff214"
+    },
+    {
+      "name": "webgl2-submit-direct-v1.png",
+      "bytes": 185,
+      "sha256": "5e979e92422dc3ec951fe741da81b34788acc45b0fe394d427024aa1d8f7218c"
+    },
+    {
+      "name": "webgl2-submit-direct-v2.png",
+      "bytes": 193,
+      "sha256": "02a4563116e23da8ebb2c0b9be501aa7c45f341eea769cd335b2b3bacfea2cda"
+    },
+    {
+      "name": "webgl2-submitted-v2.rgba",
+      "bytes": 12288,
+      "sha256": "41a7ab3b9ea92fb21af3ce8edffef50a1fa041e25863d7730d70088569db3071"
+    },
+    {
+      "name": "webgpu-cancelled-candidate-replay.rgba",
+      "bytes": 12288,
+      "sha256": "41a7ab3b9ea92fb21af3ce8edffef50a1fa041e25863d7730d70088569db3071"
+    },
+    {
+      "name": "webgpu-cancelled-old.png",
+      "bytes": 185,
+      "sha256": "5e979e92422dc3ec951fe741da81b34788acc45b0fe394d427024aa1d8f7218c"
+    },
+    {
+      "name": "webgpu-cpu-only-old.png",
+      "bytes": 185,
+      "sha256": "1c317e95071173b7f9a10aa1420d4f7b4d9e85cc1ebcdab09af02835bf7ff214"
+    },
+    {
+      "name": "webgpu-failed-old.png",
+      "bytes": 185,
+      "sha256": "5e979e92422dc3ec951fe741da81b34788acc45b0fe394d427024aa1d8f7218c"
+    },
+    {
+      "name": "webgpu-initial-borrowed-replay.rgba",
+      "bytes": 12288,
+      "sha256": "c3343c761ead538b6147ebd9185912a15489c5e705e06058db08c5ac349f7502"
+    },
+    {
+      "name": "webgpu-initial.rgba",
+      "bytes": 12288,
+      "sha256": "c3343c761ead538b6147ebd9185912a15489c5e705e06058db08c5ac349f7502"
+    },
+    {
+      "name": "webgpu-old-replay.rgba",
+      "bytes": 12288,
+      "sha256": "c3343c761ead538b6147ebd9185912a15489c5e705e06058db08c5ac349f7502"
+    },
+    {
+      "name": "webgpu-owned-retired-before-submit.png",
+      "bytes": 193,
+      "sha256": "02a4563116e23da8ebb2c0b9be501aa7c45f341eea769cd335b2b3bacfea2cda"
+    },
+    {
+      "name": "webgpu-retired-v2-replay.rgba",
+      "bytes": 12288,
+      "sha256": "41a7ab3b9ea92fb21af3ce8edffef50a1fa041e25863d7730d70088569db3071"
+    },
+    {
+      "name": "webgpu-second-version-v1.rgba",
+      "bytes": 12288,
+      "sha256": "c3343c761ead538b6147ebd9185912a15489c5e705e06058db08c5ac349f7502"
+    },
+    {
+      "name": "webgpu-staged-old.png",
+      "bytes": 185,
+      "sha256": "5e979e92422dc3ec951fe741da81b34788acc45b0fe394d427024aa1d8f7218c"
+    },
+    {
+      "name": "webgpu-stale-old.png",
+      "bytes": 185,
+      "sha256": "1c317e95071173b7f9a10aa1420d4f7b4d9e85cc1ebcdab09af02835bf7ff214"
+    },
+    {
+      "name": "webgpu-submit-direct-v1.png",
+      "bytes": 185,
+      "sha256": "5e979e92422dc3ec951fe741da81b34788acc45b0fe394d427024aa1d8f7218c"
+    },
+    {
+      "name": "webgpu-submit-direct-v2.png",
+      "bytes": 193,
+      "sha256": "02a4563116e23da8ebb2c0b9be501aa7c45f341eea769cd335b2b3bacfea2cda"
+    },
+    {
+      "name": "webgpu-submitted-v2.rgba",
+      "bytes": 12288,
+      "sha256": "41a7ab3b9ea92fb21af3ce8edffef50a1fa041e25863d7730d70088569db3071"
+    }
+  ],
+  "failedEarlierAttempts": [
+    {
+      "name": "native-01",
+      "status": "FAIL",
+      "cause": "Fractional canvas origin produced 49 rather than 48 screenshot rows; fixed explicit heading layout."
+    },
+    {
+      "name": "native-02",
+      "status": "FAIL",
+      "cause": "Stale demo waited for Host idle while holding upload; genuine 10-second expiry. Repaired CPU-only mutation followed by upload disposal before presentation."
+    }
+  ],
+  "externalTools": {
+    "playwright": "1.62.1",
+    "pngjs": "7.0.0",
+    "scope": "Installed Playwright/PNG authoring and screenshot decoder are external tools; package versions are checked, not every tool implementation byte."
+  },
+  "review": "Pending independent source/result/bilingual review",
+  "delivery": "No claim of complete protected CI, push, merge or release",
+  "limits": [
+    "One CPU RESET slot",
+    "Host submit may fail after draw issue; no CPU/GPU rollback",
+    "No device recovery, Editor export, phone or performance acceptance"
+  ],
+  "integratedDelivery": {
+    "date": "2026-11-04",
+    "base": "668d0a6c75bca6f77b637594b4cc5b7ce3c06411",
+    "sourceUnion": "Exact reviewed prepared-subtree + CPU RESET + recovery product chain; merged UI product bytes retained",
+    "evidenceMode": "Reuse of original executed inputs by complete raw identity equality; no new native run",
+    "originalExecutedInputs": 243,
+    "matchingOriginalInputs": 243,
+    "changedOriginalInputs": [],
+    "limitations": [
+      "Original histories, dates and raw failed/native receipts remain separate and unchanged",
+      "CPU publication, native submission and settlement are separate",
+      "Complete M2.4, state-preserving cross-version replacement, OS/driver/phone recovery and performance remain OPEN",
+      "Protected full integrated CI and merge are separate delivery steps"
+    ]
+  }
+}

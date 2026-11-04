@@ -180,6 +180,7 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/web
 仅由 `tests/resource-manifest-builder-io-unit.test.mjs` 启动的专用子进程 `tests/resource-manifest-builder-io-child.mjs`，可临时替换 Node `fs.readFileSync`、`readSync`、`openSync`、`closeSync`、`fstatSync` 的精确自有属性描述符，并同步内置 ESM 导出。观察与指定拒绝仅限子进程自有、明确列出的临时夹具路径及已捕获的文件描述符；其他调用原样转交。通过普通模块导入执行一次真实构建工具 CLI，保留真实文件字节与独立 Node crypto；在 `finally` 中恢复所有原始描述符及同步导出，并关闭自有句柄。仅限这些子进程自有夹具文件，可在真实大小观察后立即使用未经替换的 ftruncateSync/writeSync 截断或追加实际字节，以验证真实短读／增长拒绝；不得伪造文件系统返回值。该工具 I/O 单元验证读取前限额与有限分块，不授予私有 SDK 导入、预加载、loader 钩子、原型拦截或原生验收权限。
 
 仅 `tests/manifest-byte-source.test.mjs`、`tests/manifest-texture-provider.test.mjs` 与 `tests/manifest-resource-diagnostics.test.mjs` 可在串行用例中，将 `globalThis.fetch` 的完整自有属性描述符临时替换为测试自有传输。纯夹具辅助文件 `tests/manifest-browser-fixtures.mjs` 提供自有 response/body/reader 对象和受控异步操作，但不修改全局对象。自有工作实际结束后恢复原始描述符全部字段。用例保持真实已构建公开 SDK 对象、未经替换的实际 Web Crypto 与既有 PNG ports；不增加 crypto、时钟、构造器或原型拦截、私有 SDK 导入、模块钩子或公开测试权限。受控传输／解码结果仅证明完整性、顺序、逻辑容量与清理；实际浏览器解码、性能与设备恢复需单独验证。
+仅 `tests/manifest-texture-provider.test.mjs` 的 MTP06 可在构造真实 source 时，临时观察 `globalThis.setTimeout` 的完整自有数据属性描述符。每次原始计时调用均以原 receiver 与参数转发一次，保持原返回值或抛出；不得替换 callback、delay 或时钟。在 source 构造后立即通过 `finally` 恢复原描述符全部字段。source 捕获的观察器最多保留四条注册记录，直到自有工作结束；这些记录仅证明整项任务的注册及清理顺序，不证明计时精度或性能。不得拦截其他 timer、全局对象或原型。
 <!-- M15-FOCUSED-IO-END -->
 
 <!-- M15-HOST-CONTROLS-BEGIN -->
@@ -203,6 +204,8 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/web
 - 上传观察仅可通过捕获的内建访问器保留实际 Uint8Array 视图长度和前四个字节，不保留参数数组或底层缓冲区。固定暂存取消仅可在原始上传返回之后，中止捕获的夹具 AbortController。不允许任意注入回调、修改调度器／fence 或新增产品观察钩子。
 
 任何替换之前检查全部描述符。压力记录最多 16,384 行、4,096 个对象身份；PNG 记录最多 8,192 行、四个原始 promise；GPU 获取最多十六个请求／设备／适配器身份和 256 个事件。超出上限或观察失败不得替换原始调用结果；继续转发调用、保留不完整状态，不声称已全部排空。只有实际原始工作已结束且 Host 已关闭后，才恢复原始描述符全部字段。结算未知或采集器期限到达时，明确记录清理不完整及 realm 释放，不据此证明原生资源已退役。上述权限不增加私有产品导入、SDK 导出、通用拦截权限，也不扩大既有受控单元测试权限。
+固定 examples/spine-reset/verify-recovery.mjs 收集器可在隔离上下文中仅复用本模块 installOwnedRequestDeviceObservation，执行声明的四次自有设备丢失循环；也可在自身画布调用真实 WEBGL_lose_context 扩展并记录可信原生事件。同样遵守原始调用、有界记录、排空及完整描述符恢复义务，不新增 PNG／压力拦截。这些入口仅证明受控真实设备销毁／上下文丢失，不证明自发驱动或手机恢复。
+
 <!-- M15-NATIVE-RECOVERY-POLICY-END -->
 
 ## M3 多触点输入切片
