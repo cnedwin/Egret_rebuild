@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "d3af6e2b41c4fc5e6170140d4a592724b3acff6fdc3e8fcfb918ebf670d55656",
+      "sha256": "48eb942a346c2f325d6bbdd458e1b3c3f11232ea348422fdcd1e4c26ce1d2f8f",
       "bytes": 372539,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -13202,14 +13202,14 @@
     {
       "path": "knowledge-base/Cns/docs/ui-data-panel.md",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 12636,
-      "sha256": "d0e733cbf947f3a05376c3ebda6eb6bf7b94d8ff0943dde2b8b964438378b21e"
+      "bytes": 13108,
+      "sha256": "b11a70410748fd2ae7ef2b297dc75a583362b1ab32a21b7176f86bb0d1e235c1"
     },
     {
       "path": "knowledge-base/en/docs/ui-data-panel.md",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 14690,
-      "sha256": "a73f94d54afea85b02ccc3d439b2dfc2052963d7cea0ba73dabf5b62d58b2008"
+      "bytes": 15224,
+      "sha256": "f96fce3931f0891c807777e6e3b5a8186d08c034f88e668be4a98bac191cfb41"
     },
     {
       "path": "packages/engine/src/internal/uiFactoryState.ts",
@@ -14966,8 +14966,8 @@
     {
       "path": "examples/ui-key-navigation/verification-summary.json",
       "originRole": "Independently authored first-party key-directed UI reveal fixture, public SDK behavior or scoped evidence; AI-assisted; Apache-2.0. Reuses existing renderer and keyboard ownership, with no new third-party code or assets.",
-      "bytes": 5271,
-      "sha256": "5d1b2f3f35265f228a7fa9183f1ccdd64462b222e297e0190d39ed89c6eb3784"
+      "bytes": 7006,
+      "sha256": "9f61b8546f41b2c4110e09260419dadbd1e0f46fa1f80d2516ecde0d571620b2"
     },
     {
       "path": "tests/ui-key-navigation.test.mjs",

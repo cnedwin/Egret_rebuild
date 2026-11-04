@@ -151,6 +151,44 @@
         "bytes": 83351,
         "sha256": "3142cf1a481307f9c37da5f907c6129a2161ae0bc0efb64be945d18927b91d1b"
       }
+    },
+    "reuseAfterParentRepair": {
+      "originalEvidenceHead": "b98e750aa6038b081d8ae73cc770b4440b63aadb",
+      "repairedParent": "b1c336fe010049e4f40c058a1d2c14438d6df964",
+      "originalFinalInputIdentityScope": "The retained finalInputIdentity receipt applies to the original reviewed source before the parent dependency repair; it is not a claim that all 470 inputs equal the successor.",
+      "savedInputs": 470,
+      "unchangedInputs": 468,
+      "unchangedExecutableJavaScriptFiles": 160,
+      "declarationOnlyChanges": [
+        {
+          "path": "package.json",
+          "status": "INHERITED_DECLARATION_ONLY",
+          "before": {
+            "bytes": 1130,
+            "sha256": "716cda606f58987f784aee2a64e46cf0c2e0130e84157d2a869879b4c3ae7c40"
+          },
+          "after": {
+            "path": "package.json",
+            "bytes": 1165,
+            "sha256": "6e9855e62a56dafb463a293b2a5955fc70d552fe0c658cd3f99e6034dd983ced"
+          }
+        },
+        {
+          "path": "pnpm-lock.yaml",
+          "status": "INHERITED_DECLARATION_ONLY",
+          "before": {
+            "bytes": 9786,
+            "sha256": "96847ab1b5dae779a687cf91bc8f03afdb45b7dec8e2b69e84bf13608d49e7ad"
+          },
+          "after": {
+            "path": "pnpm-lock.yaml",
+            "bytes": 9876,
+            "sha256": "7bf20612bfb56d834d35106fa29b0684314e60e3dbc6f83d04aef36bb44549e9"
+          }
+        }
+      ],
+      "browserRerun": false,
+      "reason": "Only the root development declaration and lock entry for optional @egret/spine changed. Spine is absent from this UI browser closure. All executable runtime, collector and fixture files are unchanged; original saved inputs and raw results remain intact."
     }
   },
   "limits": [
