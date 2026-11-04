@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "341f6f1387d065089efe50dc6f8247026940bfb56d6e4ffaf5f3712c59202f96",
-      "zhSha256": "7c8cda6cfd3228a3e5ca4cb9582fdbda69e05145fd0333ed3e07832cfa6c7c0f"
+      "enSha256": "8c67a1398a2e20e9098c8b48922c8cb9c75f44f7f2d2c614c157b8dafedf1bc3",
+      "zhSha256": "cd2d54dc96592ebcbc98ad5600209d2077b39e9c657ef2bd682094e482ba4a78"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -2040,8 +2040,8 @@
       "en": "knowledge-base/en/docs/sequence-controls.md",
       "zh": "knowledge-base/Cns/docs/sequence-controls.md",
       "kind": "public_reading",
-      "enSha256": "39c6c440d52995f71828e96b869f6c686c0cb909922226f4c42df165254ab934",
-      "zhSha256": "e56faebdf6cb6efbe486e889808636c90c156424cbe7fe19020ee503332187e5"
+      "enSha256": "81cfcbd3f2bb52a3ab2af0461af29a596e70bdb636e35398eb3d7fbaa8b24308",
+      "zhSha256": "8b243333fe951efcf2d438b428723edb2b22370aa6d5bb6a00aff5b7f7f0f8f5"
     },
     {
       "en": "examples/sequence-controls/README.md",
@@ -2161,6 +2161,20 @@
       "kind": "public_reading",
       "enSha256": "a33888b25a40e92a566a0a09dda08e4095b104ec9ac9c6846b1300f089b2b24c",
       "zhSha256": "1a8ead9d7ef261260ff4a82d6769bf3100a397466b998aa048ba33cfea58a3dd"
+    },
+    {
+      "en": "examples/animation-outfits/README.md",
+      "zh": "examples/animation-outfits/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "13735215cc703d13829c2e73bd0e6b64fb3b49c3dae5a37cb37ea263c34150b7",
+      "zhSha256": "1c86040b587009f81016f7be01b8ce9dac59c0448093598897ad76cf5e79d287"
+    },
+    {
+      "en": "examples/animation-outfits/PROVENANCE.md",
+      "zh": "examples/animation-outfits/PROVENANCE.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "f1c379561b929b24f1c25f044970e1c782820052aa7b737eaf4c509ff20e6279",
+      "zhSha256": "a955774c58682ccb94e936fdcfe93ccfd84cad31f8aa481d2d93bb2f01fd58ea"
     }
   ],
   "registries": [
@@ -3130,7 +3144,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "7b0de838267d498d47cb0aedfb5397384e15547e0de8321b5182f29efee2a5bc"
+      "sha256": "b2ada8153ddda8f2d39d99eaaba4310a2bb5c9bb30ef8c3fb14bcd2d5d8f4f6e"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3278,7 +3292,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "4ed5d34819ae2b931f055d6b18d5f0e9c9272f8a9fc9c249f5233875a48c8050"
+      "sha256": "d98c02b95175b333f130191af6169f85e705962be450b02dafd7bb910fc4fe4f"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3750,7 +3764,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "7881d906f26f6743f68cfa56b63bf876d6244bad9d61e9e0e99aa1999d92a5fb"
+      "sha256": "44a8c83b0f348750a848765438c5feb8bb47c32a3354135c1888dec9c89f7135"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3778,7 +3792,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "65ed2ae539c0c81a7f54cb1fe6c3144ddbf8e44b2b6a1df7c59a16ed2af39e81"
+      "sha256": "fbdc2039eaa5db60c042dd45e27dee2d1f322c31f7b3a01a37981a9a00725502"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4126,11 +4140,11 @@
     },
     {
       "path": "packages/engine/src/animation/sequenceController.ts",
-      "sha256": "e32359222216a0ff7592bbc0077249eaa38ded2330c38b4aed781835fe81e7d2"
+      "sha256": "0861f7683ec29eb44ef31a3baf2489b9a1fdf655bf83ec89aad4df9d1a0427cc"
     },
     {
       "path": "packages/engine/src/animation/sequenceCoordinator.ts",
-      "sha256": "d9c9c921f2280b0185a2621937a6f1862e0aea2a57d2a86301fabd409663b030"
+      "sha256": "901ef601a0edfd2593e5099fbba950faaa8ccdc45d6ceb32fc0dba0e3676aa30"
     },
     {
       "path": "packages/engine/src/animation/sequenceInput.ts",

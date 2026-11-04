@@ -55,10 +55,10 @@ test('SCL08 closing first application Scope leaves other controller clock alive 
     const slots=[];for(let i=0;i<256;i++)slots.push(f.engine.clock.onTick(second,()=>undefined));for(const sub of slots)sub.dispose();
   }finally{await f.close();}
 });
-test('SCL09 clock exhaustion rolls back creation; 64 controller limit releases on terminal retirement',async()=>{
+test('SCL09 clock exhaustion rolls back creation; 256 controller limit releases on terminal retirement',async()=>{
   const f=await scene();try{const subs=Array.from({length:256},()=>f.engine.clock.onTick(f.scope,()=>undefined));
     expectCode(()=>f.controller(),'CLOCK_CALLBACK_LIMIT');for(const s of subs)s.dispose();
-    const cs=[f.controller({totalPlays:'infinite'})];for(let i=1;i<64;i++)cs.push(f.controller({totalPlays:'infinite'},f.target()));
+    const cs=[f.controller({totalPlays:'infinite'})];for(let i=1;i<256;i++)cs.push(f.controller({totalPlays:'infinite'},f.target()));
     const spare=f.target();expectCode(()=>f.controller({},spare),'ANIMATION_CONTROLLER_LIMIT');cs[0].stop();const replacement=f.controller({},spare);
     for(const c of cs)c.dispose();replacement.dispose();
     const full=Array.from({length:256},()=>f.engine.clock.onTick(f.scope,()=>undefined));full.forEach(s=>s.dispose());

@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "scope": "Original editable 20-Spine/200-sequence scene; bounded functional evidence, not complete M2.4 acceptance",
+  "date": "2026-11-04",
+  "environment": {
+    "browser": "156.0.4314.58",
+    "channel": "msedge",
+    "headed": true,
+    "extraLaunchFlags": [],
+    "playwright": "1.62.1",
+    "node": "26.7.0"
+  },
+  "cases": [
+    {
+      "backend": "webgpu",
+      "passed": true,
+      "initialCounts": {
+        "spine": 20,
+        "sequences": 200
+      },
+      "sharedSetups": 1,
+      "liveSpineInstances": 20,
+      "literalInitialPixelChecks": 242,
+      "wrongDefaultOutfitRefused": true,
+      "finitePlays": 2,
+      "closedCounts": {
+        "spine": 0,
+        "sequences": 0
+      },
+      "closedLoader": {
+        "isDisposed": true,
+        "groups": 0,
+        "liveInstances": 0,
+        "activeSourceLoads": 0,
+        "liveSourceValues": 0,
+        "pendingSetups": 0,
+        "liveSetups": 0,
+        "setupBytes": 0
+      },
+      "cancelledLoader": {
+        "isDisposed": true,
+        "groups": 0,
+        "liveInstances": 0,
+        "activeSourceLoads": 0,
+        "liveSourceValues": 0,
+        "pendingSetups": 0,
+        "liveSetups": 0,
+        "setupBytes": 0
+      },
+      "immediateCancelState": "closed",
+      "consoleErrors": []
+    },
+    {
+      "backend": "webgl2",
+      "passed": true,
+      "initialCounts": {
+        "spine": 20,
+        "sequences": 200
+      },
+      "sharedSetups": 1,
+      "liveSpineInstances": 20,
+      "literalInitialPixelChecks": 242,
+      "wrongDefaultOutfitRefused": true,
+      "finitePlays": 2,
+      "closedCounts": {
+        "spine": 0,
+        "sequences": 0
+      },
+      "closedLoader": {
+        "isDisposed": true,
+        "groups": 0,
+        "liveInstances": 0,
+        "activeSourceLoads": 0,
+        "liveSourceValues": 0,
+        "pendingSetups": 0,
+        "liveSetups": 0,
+        "setupBytes": 0
+      },
+      "cancelledLoader": {
+        "isDisposed": true,
+        "groups": 0,
+        "liveInstances": 0,
+        "activeSourceLoads": 0,
+        "liveSourceValues": 0,
+        "pendingSetups": 0,
+        "liveSetups": 0,
+        "setupBytes": 0
+      },
+      "immediateCancelState": "closed",
+      "consoleErrors": []
+    }
+  ],
+  "behavior": {
+    "command": "node --test tests/animation-outfits.test.mjs tests/sequence-controller.test.mjs tests/sequence-controller-lifecycle.test.mjs tests/sequence-controller-integration.test.mjs",
+    "passed": 42,
+    "failed": 0
+  },
+  "server": {
+    "passed": 14,
+    "failed": 0
+  },
+  "repairs": [
+    {
+      "observation": "The 65th new sequence controller was refused.",
+      "repair": "Raise both admission sites to existing combined 256-target ceiling; exact 256/257/reuse regression and bounded-work documentation."
+    },
+    {
+      "observation": "Double-rate 0.1-second step exceeded the default eight Spine segments.",
+      "repair": "Scene explicitly requests sixteen segments; public controls remain bounded at 0.1 seconds and rate two."
+    },
+    {
+      "observation": "Authored head was below the body on both backends.",
+      "repair": "Use positive Spine Y for the authored head/rise; preserve independently selected expected screen coordinates."
+    },
+    {
+      "observation": "Applying an outfit with a zero-delta clock did not commit queued commands.",
+      "repair": "Apply advances one real shared 1/60-second tick."
+    },
+    {
+      "observation": "Burst render requests exceeded native Host admission.",
+      "repair": "Serialize pending steps through existing Host completion; await them in the collector."
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "inputs.json",
+      "bytes": 209781,
+      "sha256": "99d9c30913e5fd0e3d1be0892b562be6584436ae5a3c91a083836a5321920913"
+    },
+    {
+      "file": "result.json",
+      "bytes": 3618756,
+      "sha256": "78a3d95142221ac315261476c7918cc65b921a22360e76f8991fcb8a91456753"
+    },
+    {
+      "file": "webgl2-initial.rgba",
+      "bytes": 1024000,
+      "sha256": "350621405ca301a84c594f986bc57a141c8f4751a764a2dccc368350ac925e1d"
+    },
+    {
+      "file": "webgl2-outfit.rgba",
+      "bytes": 1024000,
+      "sha256": "d38916d3bb0d75ebfae635d40621be402de68dfa948f3fc8883a184986625dce"
+    },
+    {
+      "file": "webgl2-scene.png",
+      "bytes": 62711,
+      "sha256": "40ef748f735c0ad35efc13d3516c4b4c2eb5ae8fed33ab115d322e51beec0457"
+    },
+    {
+      "file": "webgpu-initial.rgba",
+      "bytes": 1024000,
+      "sha256": "350621405ca301a84c594f986bc57a141c8f4751a764a2dccc368350ac925e1d"
+    },
+    {
+      "file": "webgpu-outfit.rgba",
+      "bytes": 1024000,
+      "sha256": "d38916d3bb0d75ebfae635d40621be402de68dfa948f3fc8883a184986625dce"
+    },
+    {
+      "file": "webgpu-scene.png",
+      "bytes": 62695,
+      "sha256": "381dc12827c3c5e1db96f8bb77a925580fa923223dfb52f6fbf438ee2a6bbed0"
+    }
+  ],
+  "sourceBoundary": "inputs.json records complete captured example/content/emitted runtime/vendor bytes; source and native evidence remain separate from PR/Main delivery",
+  "limits": [
+    "Desktop default Edge only",
+    "Original geometry, not Editor export qualification",
+    "No physical-memory, device-recovery, hot-replacement or performance acceptance",
+    "No cold/warm cache or incremental build qualification",
+    "No complete Spine/Core semantics or Editor-export rights qualification",
+    "M1.2 10.3 ms versus 8 ms remains open",
+    "No PR, CI or Main completion asserted by this record"
+  ]
+}

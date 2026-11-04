@@ -10,7 +10,7 @@ The optional `@egret/engine/animation` entry exports `createSequenceController` 
 
 Each controller owns playback state and borrows its exact target binding. Creation is idle and does not alter the Bitmap. New and legacy playback profiles share target claims: one live claim per Bitmap and at most 256 combined claims per Engine. A historical stopped handle cannot release a later claim. Direct Bitmap writes and independent SequencePlayer instances remain possible; the shared claims govern the two cooperating playback profiles only.
 
-One lazy coordinator uses the genuine Engine clock for at most 64 new controllers. Its internal Scope belongs to the Engine, independently of application Scopes. Closing one application's Scope cannot remove another controller's clock registration. The last live controller releases that registration and internal Scope. Scope cancellation and Engine shutdown revoke pending delivery before ordinary reverse cleanup.
+One lazy coordinator uses the genuine Engine clock for at most 256 new controllers. Its internal Scope belongs to the Engine, independently of application Scopes. Closing one application's Scope cannot remove another controller's clock registration. The last live controller releases that registration and internal Scope. Scope cancellation and Engine shutdown revoke pending delivery before ordinary reverse cleanup.
 
 Terminal cleanup releases the claim, player borrow, callback, markers, queue and active owner references. The Bitmap and texture remain application-owned. Terminal handles retain only inert status and sample data. Scope may retain historical adopted handles until it closes; logical release does not prove physical garbage collection.
 
@@ -49,7 +49,7 @@ For example, with D = 0.2, time 1 is B(5) and selects play 5 at local zero. Lite
 
 | Bound | Value |
 | --- | --- |
-| New controllers / combined target claims per Engine | 64 / 256 |
+| New controllers / combined target claims per Engine | 256 / 256 |
 | Markers / copied ID bytes per controller | 64 / 4,096 |
 | Rate | Finite 0–16 |
 | Finite total plays | 1–1,000,000 |
@@ -57,9 +57,9 @@ For example, with D = 0.2, time 1 is B(5) and selects play 5 at local zero. Lite
 | Nonfinal cycle index | Less than 1,000,000 |
 | Queued scalar commands per controller | 16 |
 | Events per whole transition, including completion | 1,024 |
-| Controllers / events per coordinator boundary | 64 / 65,536 |
+| Controllers / events per coordinator boundary | 256 / 262,144 |
 
-Finite total duration must be positive, representable and within the time bound. Preflight safe event-sequence arithmetic even when no listener exists. Event counts are checked before allocation or target writes. The extreme admitted compound transition can perform 43,520 marker-search and 340 cycle-search iterations per controller, or 2,807,040 combined iterations across 64 controllers. These are finite work limits, not measured performance guarantees.
+Finite total duration must be positive, representable and within the time bound. Preflight safe event-sequence arithmetic even when no listener exists. Event counts are checked before allocation or target writes. The extreme admitted compound transition can perform 43,520 marker-search and 340 cycle-search iterations per controller, or 11,228,160 combined iterations across 256 controllers. These are finite work limits, not measured performance guarantees.
 
 ## Failure and publication
 

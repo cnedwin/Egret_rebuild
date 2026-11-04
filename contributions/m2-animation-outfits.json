@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/animation-outfits/author.mjs",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/animation-outfits/content.mjs",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/animation-outfits/index.html",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/animation-outfits/main.mjs",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/animation-outfits/PROVENANCE.md",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/animation-outfits/PROVENANCE.zh-CN.md",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/animation-outfits/README.md",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/animation-outfits/README.zh-CN.md",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/animation-outfits/scene.mjs",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/animation-outfits/scene.test.mjs",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/animation-outfits/verify.mjs",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/animation-outfits.test.mjs",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/animation-outfits-server.test.mjs",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/animation-outfits/verification-summary.json",
+      "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/animation-outfits/README.md",
+      "zh": "examples/animation-outfits/README.zh-CN.md"
+    },
+    {
+      "en": "examples/animation-outfits/PROVENANCE.md",
+      "zh": "examples/animation-outfits/PROVENANCE.zh-CN.md"
+    }
+  ]
+}
