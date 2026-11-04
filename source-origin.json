@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "301ddac5718ee2c8254c548585aa8edaa2939652e34c1547898d3c4f39a1a5bd",
+      "sha256": "be7b98a3c5d21d5a7ec0f6b25eb465b47fa8998032e592a2e2ef4e4b2565dbf9",
       "bytes": 369921,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -14222,8 +14222,8 @@
     {
       "path": "examples/mobile/index.html",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 3611,
-      "sha256": "9b7971879838930da1c2f37f78a3276308216dcc57cf5703219de5306a95b7ca"
+      "bytes": 4711,
+      "sha256": "dd8373408392f1e010bb3b9f977849355c3c9006c0128abb0a4738aac1056579"
     },
     {
       "path": "examples/mobile/style.css",
@@ -14234,14 +14234,14 @@
     {
       "path": "examples/mobile/main.mjs",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 3753,
-      "sha256": "1c85d3167915833bfefb9e911d656781f794af7d501eb3a7227e28a5a2d58115"
+      "bytes": 4107,
+      "sha256": "137d944efa6ea526d21074d89847e660fea6233085e133dba5b17c87f6a23c05"
     },
     {
       "path": "examples/mobile/viewport.mjs",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 3615,
-      "sha256": "5881293e0c175242598834dc2986d4a29a2e7a434c3288fd090ee472bd84f701"
+      "bytes": 5113,
+      "sha256": "a1b59bc919677f45552040aea38ce88177700a08e8f7acf1634123cc869d7b6b"
     },
     {
       "path": "examples/mobile/resources.mjs",
@@ -14264,8 +14264,8 @@
     {
       "path": "examples/mobile/verify-browser.mjs",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 27338,
-      "sha256": "22c529030f80cf04e0cd5bef11c9b9bb1c4ff573846490b8917d694e40e793ad"
+      "bytes": 30623,
+      "sha256": "3004e3fc2cfef4482cb52b5fae78335f56beeafdcb658b2517f568d83fcd213b"
     },
     {
       "path": "examples/mobile/README.md",
@@ -14282,20 +14282,20 @@
     {
       "path": "tests/mobile-examples.test.mjs",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 6315,
-      "sha256": "6f3b65d1e7076ff826d5d95b6aa05e4b0068768e33df91e59b04a6c7279ee38c"
+      "bytes": 8506,
+      "sha256": "01549560c1d523f8ea68576f45284eca2a96ad02261046388fff3df1aa85ae92"
     },
     {
       "path": "knowledge-base/en/docs/mobile-examples.md",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 6288,
-      "sha256": "81c08ff4685d79c3c63059fc5c30844b6fa674bcf00528a050d5b36c0146d46b"
+      "bytes": 7068,
+      "sha256": "e5e43332fc1900f7140987084686dc08e638c603bbebaf4575870de439674c50"
     },
     {
       "path": "knowledge-base/Cns/docs/mobile-examples.md",
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
-      "bytes": 5514,
-      "sha256": "11447b65021021e6f6212eb765b6c58615ccc8d4ce7a07839553ea89d6dcdceb"
+      "bytes": 6208,
+      "sha256": "88dc51952813ec4719aa0aceca179528a49d64320523fe2b026e59b5c6ff4ee3"
     },
     {
       "path": "contributions/mobile-examples.json",
