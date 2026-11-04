@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 17949,
-      "sha256": "1e04a5f35a5ed4fd9561b4b8378f09568191fa1b6cb3bb1a61d16f82efd74ec8",
+      "bytes": 18486,
+      "sha256": "dd73b77dc89e8a054516c94dbb15f3fbf66145d647ae14c193430947aa7fc71a",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "60c17a910f6c8b244c70477d90e537efa01d9ce524225b99c90ff67facc41061",
+      "sha256": "c62d54fec2e42ca1cd78b09090d540f8b8a7cc1889e92cb23b4a9ce3faa771ee",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 20462,
-      "sha256": "6e40c137be4279534c8f26fb6aea6a1e6ce4778206883ff1c48432562c004441",
+      "bytes": 21104,
+      "sha256": "2d04dea495c6d45ceedb91f7974bc069b853999d19e6d728011339a14813b2f1",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "b5a48364e26f902b562196cef0c2f403ede2ba60bdc6cba983dea37a587cd2e9",
-      "bytes": 370517,
+      "sha256": "d314eef74ee0c7cc55b2d2aac3eacfe54eeb5f8a399455aa4fa18edebb3759fd",
+      "bytes": 371107,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -5537,8 +5537,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "bytes": 144395,
-      "sha256": "2ca30bd7ebf5a761042e9d661f0ae3bc608153fd4947680c5b2ed348ced1b596",
+      "bytes": 144684,
+      "sha256": "d78f5701d559aa7935a32027afc619b0a4e121a6e57825f4f3ff07c3be90adcf",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -6346,8 +6346,8 @@
     {
       "path": "packages/runtime/src/Mesh2D.ts",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 5179,
-      "sha256": "aa0c2277fd7b2b251595675a634015fd6c1e6cb175a137f5c9ef2592916ad56f"
+      "bytes": 8333,
+      "sha256": "b7593dd78bf1f2255a529f7ce84811f49329cebf84d7904e28c605dafc6bd40e"
     },
     {
       "path": "packages/runtime/src/meshCaptureSnapshot.ts",
@@ -6382,8 +6382,8 @@
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 49099,
-      "sha256": "a5c17c3f44f039bda785e8b80e9f4bdcc3390c0a289bd821b9eebfe7c900c848",
+      "bytes": 50582,
+      "sha256": "2572bcbc8916a26ee803523bfa80a32f9e034f1873933904a79d5ac51581adb8",
       "identityHistory": [
         {
           "bytes": 17519,
@@ -7033,8 +7033,8 @@
     {
       "path": "tools/verify-webgpu-b1.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 82218,
-      "sha256": "1ff8cf2c84933bfde04ea988ecafd6bc4829cef7b01bffd446bdd3ae257ca7d4",
+      "bytes": 82676,
+      "sha256": "1ce56261898c84a1d7695a5916343aaa80dbd4e920d529ed89e62b9895bc5b6d",
       "identityHistory": [
         {
           "bytes": 38603,
@@ -9635,7 +9635,7 @@
     {
       "path": "tools/sequence-playback-types.mjs",
       "bytes": 19297,
-      "sha256": "dc674be93441db9d7a62537634fc71681bd8cc1e36b06b775db717abd525c065",
+      "sha256": "c00f10723d5e509c1a3797c19bd0b71f6a052db1175d1071052b1f6fdb170fdf",
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review."
     },
     {
@@ -9876,8 +9876,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 250509,
-      "sha256": "e5d2f02ff27c53cebe85d829399f9c70efbd2715bb176c0f47d1dcab8fd1a35c",
+      "bytes": 251359,
+      "sha256": "4ed5d34819ae2b931f055d6b18d5f0e9c9272f8a9fc9c249f5233875a48c8050",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10099,8 +10099,8 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 259384,
-      "sha256": "dd2abde6919f6eb6db5a4a7fcda67b6e0f060a35af07b226b67e60e004c5f28a",
+      "bytes": 260234,
+      "sha256": "7b0de838267d498d47cb0aedfb5397384e15547e0de8321b5182f29efee2a5bc",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10161,8 +10161,8 @@
     },
     {
       "path": "tools/atlas-import-boundary.mjs",
-      "bytes": 155222,
-      "sha256": "c95914431a1943b8d6a8bfa4326f7d7efc6b4f8e53bf74c2c199d647dc75a1b9",
+      "bytes": 156072,
+      "sha256": "859fa23c9016b921bc8ba8f74d08ff7e1059d396ce427f212ff290849dbca0ab",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10175,7 +10175,7 @@
     {
       "path": "tools/atlas-import-types.mjs",
       "bytes": 6689,
-      "sha256": "e34f13e641a491c418ec8403d4f3079a10749d4cf9ab6a01c5b9b66a7bb25254",
+      "sha256": "87453eaecbaa2a141fa0e0ee4b56a26e5d3ac8e50d4492b6791a5a5d476481e4",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10383,7 +10383,7 @@
       "path": "tools/bitmap-binding-ticket-types.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
       "bytes": 13887,
-      "sha256": "2a2913277dda490a47877fd94cb3d60e901e6e83f3e2cdaca9c9bc24e4026211"
+      "sha256": "e2af3d3b31c350575119c7c2d01e5e82493ac74eae57cbfca72bd5f23ae7b2b6"
     },
     {
       "path": "tools/bitmap-resource-slot-policy.json",
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 557578,
-      "sha256": "c0aaa17ec441a926f1b1cb0cfb45508dea06138dad39a0d17e51796c3c1ba5c0"
+      "bytes": 622213,
+      "sha256": "7881d906f26f6743f68cfa56b63bf876d6244bad9d61e9e0e99aa1999d92a5fb"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10689,7 +10689,7 @@
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
       "bytes": 42267,
-      "sha256": "a79c4eff46552f1c063da01cff6c5921ec0d51efb83d09e1f4c985ac2112b0c7"
+      "sha256": "65ed2ae539c0c81a7f54cb1fe6c3144ddbf8e44b2b6a1df7c59a16ed2af39e81"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -10718,8 +10718,8 @@
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
       "originRole": "First-party M0 registered compiler input review workflow; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 84964,
-      "sha256": "04809148e556ef5293ea63bab0a4466706973fd45924df70266f653b480daf4b"
+      "bytes": 90253,
+      "sha256": "2b374972f705298d8a30314e01a0be4a5fbe3c24704c24f48ec25457cd13910b"
     },
     {
       "path": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
@@ -11181,19 +11181,19 @@
       "path": "tools/atlas-frame-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 3707,
-      "sha256": "bfba641400b3844bc5402549184ecfc49587720a8b6a340e103f43df85d5cbd3"
+      "sha256": "84952d2fac3b7ed59da1e8b76a3322e0c35f33f6108580ec9933176c1a8fde50"
     },
     {
       "path": "tools/bitmap-button-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 17175,
-      "sha256": "9a2e79a4f031bf81fe07d88e69760dff7d177dba3b7693f45bdaa215af02a627"
+      "sha256": "4a9b871d563f1beca20277c5ee05bceb64d296e97e7fa3261341c2cc3ed5a6fc"
     },
     {
       "path": "tools/bitmap-resource-slot-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 11184,
-      "sha256": "5e3c40b75ef2b1efbe95e661609a16fee916465e90804b25ce274dfd24fd0d50"
+      "sha256": "156ce7a51dbe98bd49d4479c0abd9d4cb3ba90a91256dfe71e8a623e9a327ead"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -11205,37 +11205,37 @@
       "path": "tools/display-anchor-offsets-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 16526,
-      "sha256": "ac6715b6d82d28d6b9e9d72eb4806bda5f459385515a97d8ba92a9a7bc130479"
+      "sha256": "411a6b1f80d1f4a5e954efbf453159a882e21a4809878e0b60bfa6f56f3ae794"
     },
     {
       "path": "tools/display-container-add-child-at-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 18718,
-      "sha256": "ed609256b813f04e2fa1b4bfb6e53d96d6a2d7a84bdf02c270b513dce49ddd89"
+      "sha256": "3ec423836e1490f287e5c516ed5e2513bf9da382f524bebacef0d208f6d581eb"
     },
     {
       "path": "tools/display-container-child-index-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 17112,
-      "sha256": "79ad99b91944261c543a09e1df6bafe15fc15b3ee3f71562941f5a4d99fc8227"
+      "sha256": "d59953e966bb4e522035e5e8cc1efd5faa6eea5ea9ce8aa80f92b19c2088598b"
     },
     {
       "path": "tools/display-container-remove-children-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 15268,
-      "sha256": "cecb2ba38e1a8ff1039602590c2e745f1d1f12b05ec7a6acc8fc331c51722347"
+      "sha256": "e788c9defc63e6246946c578ff09d3db15127d0307276b8b277a3d566a5186a5"
     },
     {
       "path": "tools/lib/m13-strict-successor.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 31911,
-      "sha256": "2b1be308a831c85f2c75f32b3b959998ad363af2b6c26544af82fc4803d16ee4"
+      "bytes": 32478,
+      "sha256": "f9d0b4e6d85f65a954f545d818e0290e9bc48d8f1d39cb308152fb523ac17a17"
     },
     {
       "path": "tools/linear-layout-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 11073,
-      "sha256": "e67948cfbeda1ee2de92f13d17d27c8b1dc24a291f24edb35ed75a08530c52fa"
+      "sha256": "d62cd6ee04ffc4e9e6478adff282fe345b470da51f3510cafb2a716987c5a9b3"
     },
     {
       "path": "tools/m13-strict-successors.json",
@@ -11247,7 +11247,7 @@
       "path": "tools/nine-slice-bitmap-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 6543,
-      "sha256": "729e5408ffc3fdcdee7e333f3bb376ab95898f8376e42096132782426e36a933"
+      "sha256": "0f8860f7d3975cfe530243bd8577c3cd7190553ad8832be35fcd140fcebb16cc"
     },
     {
       "path": "tools/resource-scene-boundary.mjs",
@@ -12770,14 +12770,14 @@
     {
       "path": "knowledge-base/en/docs/m2-spine-content-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 27980,
-      "sha256": "f583abbe8e2dcfeec4ab189d751241471573b4a2029e0f6610dd16a253380344"
+      "bytes": 28286,
+      "sha256": "2605201927f349fe6fb6abd87c7869df2781a11046383b039d411532352e464d"
     },
     {
       "path": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 23402,
-      "sha256": "2eaeef0c6f164bbed639f146d74918f28968b12954f4e998105ce5e60329a290"
+      "bytes": 23661,
+      "sha256": "495068213b1b6890253b969978ac1638f6d158a92664da758e115b86f3665757"
     },
     {
       "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
@@ -14594,26 +14594,26 @@
     {
       "path": "knowledge-base/Cns/docs/spine-content-ingress.md",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 14418,
-      "sha256": "9a1be094ab1fe6cef57ed9e08b8de53af861814c2e7931d8eedeb469c132f7ed"
+      "bytes": 21986,
+      "sha256": "2b91e9cdb20d10bb4290c229555f1e24f9099a08b2b47c9c5b487d320a631473"
     },
     {
       "path": "knowledge-base/en/docs/spine-content-ingress.md",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 16303,
-      "sha256": "914f0dfbda9ca69060e4e91c4fc647dbd68c3ffa2458d1f73ff2ccc89a6c7b98"
+      "bytes": 24690,
+      "sha256": "89369a83b034b35997b52f8819c1087f91adb99e39f5ff7c81da544723c0ce38"
     },
     {
       "path": "packages/spine/README.md",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 2463,
-      "sha256": "8952f39ad5099b4f3af05cd5910b7533171e05d749a0fb06f10fcf245db03cc1"
+      "bytes": 2966,
+      "sha256": "ca37519c1aa88aff917506bb3c90dd5025c3e937b958b178c68cd70612b71fea"
     },
     {
       "path": "packages/spine/README.zh-CN.md",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 2338,
-      "sha256": "7477d13c97e35e30e8e7b4b33cf51790afed0a470171356aa6ee1444e494cf86"
+      "bytes": 2814,
+      "sha256": "b5adde09a14fb165126a20972bc7f6d918f566407e200f0a827b0d85a937ccfd"
     },
     {
       "path": "packages/spine/package.json",
@@ -14630,8 +14630,8 @@
     {
       "path": "packages/spine/src/index.ts",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 706,
-      "sha256": "145d5901473828b8a49ce5fcef6bae242c354e0b629321f5159e14c93dc9c42f"
+      "bytes": 854,
+      "sha256": "3ba948f98b75c6d10230638dc3dd525b3b543b778cb89fe2dddf0dbb803bc587"
     },
     {
       "path": "packages/spine/src/jsonAdmission.ts",
@@ -14642,8 +14642,8 @@
     {
       "path": "packages/spine/src/loader.ts",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 16767,
-      "sha256": "bb971aae52bf51b1f416df27b2039ddae1cd41077f099bf194d174c96c60b1c7"
+      "bytes": 16842,
+      "sha256": "4b06ddbe27bf911694f045181048cdfeab93099cceec5790bb8d6d8d4fdf3da7"
     },
     {
       "path": "packages/spine/src/parse.ts",
@@ -14684,14 +14684,14 @@
     {
       "path": "packages/spine/test/fixtures.mjs",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 4703,
-      "sha256": "4958ce6a0f35226fce6e1e5337af63ee7dcc54fa2e56c81587c0bb60c2e6cb08"
+      "bytes": 4789,
+      "sha256": "a758f3dcb1aca92bc3848b46430a0f74480291028bc09d7971bbffeeb6cd0ce6"
     },
     {
       "path": "packages/spine/test/public-api.ts",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 2407,
-      "sha256": "ceb507cd02acf413c5d46173be0b5d0acca8e5a83e069982ef281640f6334df8"
+      "bytes": 3375,
+      "sha256": "aa1424cbc83dfa02acad7fe34b74dfc4eb03832bcfdf816bc0e07a4c5efb52a5"
     },
     {
       "path": "packages/spine/test/types.test.mjs",
@@ -14708,8 +14708,8 @@
     {
       "path": "tools/check-spine-content.mjs",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 3516,
-      "sha256": "a8fae6d5b8cbfacbc451605a0d35147ec778b924f0d8f249916b15a9e4687827"
+      "bytes": 3588,
+      "sha256": "a5f2f5da3b3ec1c087358b3bfee5d700a9ee9473de7c45bc08808294a5eeed7b"
     },
     {
       "path": "tools/verify-spine-content.mjs",
@@ -14720,8 +14720,8 @@
     {
       "path": "verification/spine-content/verification.json",
       "originRole": "Independently authored first-party optional Spine asset adapter, admission/lifetime API, original fixture, scoped verification or documentation; AI-assisted; Apache-2.0. Official Core4.3.13 remains an exact separately licensed dependency; no runtime source or official artwork transplanted.",
-      "bytes": 26387,
-      "sha256": "7034c18e5ae5b3f4ffadfd778abcc38ca9232344fbe98e1894c2deb65c59745a"
+      "bytes": 95852,
+      "sha256": "de8dc1e0e5853c3589ec263c2484f07c37d7444fdd684cee514a65e390d9dd9b"
     },
     {
       "path": "third-party/spine-core-4.3.13.LICENSE",
@@ -14732,8 +14732,8 @@
     {
       "path": "contributions/spine-content-ingress.json",
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
-      "bytes": 10727,
-      "sha256": "cfaf799917c0bf321e2a02ffc05cba115e31d3f8ba977474a5c226bf24c06aad"
+      "bytes": 13591,
+      "sha256": "068c73a204a28870bc9037da47d1f3bc306422752e9bee5c678f20fcc519fd6a"
     },
     {
       "path": "packages/engine/src/ui/keyboardFocus.ts",
@@ -14750,14 +14750,14 @@
     {
       "path": "packages/spine/src/assetAuthority.ts",
       "originRole": "Independently authored Egret Spine playback adapter, bounded ownership/time publication or original numerical tests; AI-assisted; Apache-2.0. Official Core4.3.13 remains a separately licensed dependency.",
-      "bytes": 867,
-      "sha256": "91a7b8a2348300849f1a764c6c30a96b1ead19fe183a1a7068be04665c39c587"
+      "bytes": 954,
+      "sha256": "ab3c006f318f6e840bb072808c52f9ae3aba32c1fbf8fff8c2024c159a4e3967"
     },
     {
       "path": "packages/spine/src/instance.ts",
       "originRole": "Independently authored Egret Spine playback adapter, bounded ownership/time publication or original numerical tests; AI-assisted; Apache-2.0. Official Core4.3.13 remains a separately licensed dependency.",
-      "bytes": 13260,
-      "sha256": "9b221a960cecff33f90689628377d7331abc8392fd85033f39306deaa3a09169"
+      "bytes": 14622,
+      "sha256": "24dad31d7c1aab0a714110a730cc5c2f4f388e366a4e8d85ae235ca57002dba1"
     },
     {
       "path": "packages/spine/src/instanceTypes.ts",
@@ -14776,6 +14776,54 @@
       "originRole": "Independently authored Egret Spine playback adapter, bounded ownership/time publication or original numerical tests; AI-assisted; Apache-2.0. Official Core4.3.13 remains a separately licensed dependency.",
       "bytes": 717,
       "sha256": "2a0351bd7bb9ad9d8521383a628ec06c697944adf1735d27e6736994843f85d2"
+    },
+    {
+      "path": "packages/spine/src/renderAuthority.ts",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
+      "bytes": 1078,
+      "sha256": "0eb021b0ca7722b0becb084667fb6b0357aa910322bfaa3c67d2d41b8aee4ab0"
+    },
+    {
+      "path": "packages/spine/src/displayTypes.ts",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
+      "bytes": 735,
+      "sha256": "c9d6233817b753245e83a0f33821244ab4c7d99fd483e3ad24193423631f1a8c"
+    },
+    {
+      "path": "packages/spine/src/drawGeometry.ts",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
+      "bytes": 3823,
+      "sha256": "3cfb21d936622f16508ad0309cbb4f3dd8a305b06f2528736fe8565ae431f8a9"
+    },
+    {
+      "path": "packages/spine/src/display.ts",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
+      "bytes": 7311,
+      "sha256": "f85e52a28b5c7a77936c7e5f5faf59788c2bd45e2b22a1b9ecdaa978121c22f6"
+    },
+    {
+      "path": "packages/spine/test/renderingFixture.mjs",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
+      "bytes": 1194,
+      "sha256": "9b6d5c3474cfecbf59540cadf4b51407ba488494fc587a6b124faaf35e1c8908"
+    },
+    {
+      "path": "packages/spine/test/renderingBrowser.mjs",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
+      "bytes": 3830,
+      "sha256": "ebaf80165ae741447d021178ffe6b398d6c804d7e3bf7adf65c2c8147af43dc7"
+    },
+    {
+      "path": "packages/spine/test/rendering.test.mjs",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
+      "bytes": 17043,
+      "sha256": "b38a99e9a26896bc998c5d93632943881500dc6054e78990112053a3cadf772e"
+    },
+    {
+      "path": "tools/verify-spine-rendering.mjs",
+      "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
+      "bytes": 13145,
+      "sha256": "69b97866434168f13035b7039335e11a1a29499f3cf8d9ff27179d9d76578beb"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

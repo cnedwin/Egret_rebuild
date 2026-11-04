@@ -2,7 +2,7 @@
 
 [English](../../en/docs/spine-content-ingress.md) | 简体中文
 
-M2.1 提供显式启用的 `@egret/spine` 资产 SDK，通过官方 Core 4.3.13 读取 JSON 设置数据，将原始 Spine 图集页面绑定到既有 Egret 纹理，并提供具有资源组生命周期的不可变信息。默认 Engine 入口保持原样。独立播放实例见下文；共享图形仍由 M2.3 负责。
+M2.1 提供显式启用的 `@egret/spine` 资产 SDK，通过官方 Core 4.3.13 读取 JSON 设置数据，将原始 Spine 图集页面绑定到既有 Egret 纹理，并提供具有资源组生命周期的不可变信息。默认 Engine 入口保持原样。独立播放实例见下文；有界共享渲染接入及剩余 M2.3 资格见下文。
 
 ## 版本、权利与参考基础
 
@@ -84,3 +84,41 @@ instanceScope.dispose();
 本 M2.2 增量交付独立语义播放，不含共享渲染接入。定位／重放历史及检查点、组合皮肤、完整独立约束／时间线参考集、所选版本完整支持和 M2.3 图形仍开放。上文运行库版本、许可和原始出处保持不变。原始数值夹具提供作者定义的位移、分层、切换和事件预期，不是经认证的 Editor 导出。
 
 本增量验证：60 项针对性测试通过，其中新增 27 项播放用例，并包含严格 ES-only 公共消费者。实际默认桌面 Edge 156.0.4314.58、Playwright 1.62.1 在 369 个冻结源码文件上通过六组检查：真实传输／PNG、独立数值姿态、时间拒绝／暂停／混合／事件、故障隔离和清理。源码完整性和全部清理检查通过。最初失败预期与输入检查重入回归单独保留于[验证记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/spine-content/verification.json)；这些检查不代表像素、手机、完整动画参考集或性能验收。
+
+## 共享渲染显示
+
+M2.3 通过 `createSpineDisplay(player, scope, {colorProfile: 'egret-shared-linear/1'})` 将真实播放器接入既有有序显示链路。每个播放器最多关联一个存活显示对象。返回的 `node` 支持原有位置、缩放、透明度、可见性和矩形裁剪，子节点由适配器拥有。将它放在其他显示对象之间即可保留场景顺序；不支持的子树拓扑修改会在下一次发布前拒绝。销毁节点或显示 Scope 只关闭显示对象，独立播放器仍可推进并重新关联显示。播放器或源资源组销毁时，先退役显示对象，再释放共享页面租约。不引入第二资源管理器、计时器、Canvas 覆盖层或 GPU 所有权链路。
+
+`advance(tick)` 先提交成功的数值姿态，再准备并发布复制的绘制几何，最后交付回调。绘制属于独立提交域：转换、上限或发布失败保留旧画面，但已提交动画时间与事件仍然有效。该批事件仍会交付，随后 `advance` 通过 `SPINE_INSTANCE_RENDER_FAILED` 报告原因。语义实例保持运行或暂停状态，后续有效 tick 可以恢复绘制，不重放已经交付的事件。意外语义推进错误仍采用独立的整实例故障规则。有序页面／材质拓扑不变时复用不暴露资源的 Mesh2D 生产者绑定；拓扑变化时暂存脱离显示树的候选子树。既有帧捕获保留不可变几何与页面数据，因此在 Engine／Host 仍存活时，旧帧可在播放器／资源组退役后回放。这些是逻辑生命周期性质，不代表物理内存测量或资源替换／设备恢复验收。
+
+Core 4.3.13 提供有序区域／网格和裁剪输出。白鹭只转换缓冲的实际使用范围，通过 SharedGeometry2D 身份校验工厂复制，翻转一次 Y 坐标，并绑定原页面租约。ARGB8 明暗颜色转换为复制的系数，不暴露 Core 指令或池。每显示对象默认及硬上限为 256 条指令、65,536 个顶点和 196,608 个索引；`maxCommands`、`maxVertices`、`maxIndices` 可将各项正上限调低。这些限制约束发布，不约束 Core 内部峰值分配。页面支持最近邻或线性采样，要求 min／mag 过滤相同且使用 clamp 寻址；PMA 页面、mip 过滤及其他采样组合仍拒绝。
+
+颜色配置必须显式选择，不默认承诺与所有 Spine 渲染器一致。它保留 shared-frame/1：纹理经过既有规范页面转换，着色／合成使用线性工作值，输出采用既有 sRGB 转换。设 `p`、`a` 为规范采样的预乘 RGB 和透明度，`L` 为明色 RGB，`D` 为暗色 RGB，`f` 为明色透明度与显示透明度之积，则源 RGB 为 `S=f*(p*L+(a-p)*D)`，源透明度为 `A=f*a`。目标预乘 RGB 为 `B` 时，normal 为 `S+B*(1-A)`，additive 为 `S+B`，multiply 为 `S*B+B*(1-A)`，screen 为 `S+B*(1-S)`。normal／multiply／screen 透明度使用 source-over，additive 累加透明度；既有目标量化／截断和输出转换保持不变。分别映射到 normal／add-accumulate／multiply-factor／screen，无需修改着色器。旧 gamma 空间渲染器的一致性需要另行验证的配置，本次结果不证明该一致性。
+
+`getStatus()` 返回显式配置、发布修订号、实际指令／顶点／索引数和销毁状态。渲染不驱动动画时间：隐藏显示仍按显式 tick 推进并发送事件。公共契约保持 DOM／Node-free，WebGPU 与 WebGL2 消费同一准入 Engine 帧；Canvas 不在本网格／共享配置范围。
+
+```js
+import {createSpineDisplay} from '@egret/spine';
+const displayScope = engine.createScope();
+const display = createSpineDisplay(player, displayScope, {
+  colorProfile: 'egret-shared-linear/1',
+});
+engine.stage.addChild(display.node);
+display.node.x = 120;
+display.node.y = 200;
+// Existing player.advance(tick) commits the pose, then drawing, then dispatches events.
+engine.renderSharedFrame({width: 640, height: 360});
+displayScope.dispose(); // The independent player remains available.
+```
+
+验证：95 项针对性公共行为／类型测试通过，其中新增 35 项渲染／绑定用例。默认桌面 Edge 156.0.4314.58、Playwright 1.62.1 在 WebGL2 和 WebGPU 上分别通过 16 个正向像素用例，并拒绝六个有意错误的页面／顺序／着色／混合／裁剪／过滤对照。冻结闭包含 551 个文件，包含宿主固定延迟模块依赖。原创用例覆盖多页顺序、区域、加权／非加权网格、多边形与矩形裁剪、负缩放、DPR 2、最近邻／线性采样、裁切／旋转区域、双色着色、四种混合、透明输出，以及退役后完整保留帧回放。数值位置容差为 1e-5，采样 RGBA 容差为两个编码值，均不是性能测试。最初严格浮点断言及 gamma 空间预期不匹配结果单独保留。复验命令为 `node tools/verify-spine-rendering.mjs --playwright <absolute-installed-playwright-1.62.1-package> --output <new-absolute-directory-outside-repository>`。
+
+本次在 issue #85 内交付有界共享渲染接入。完整所选版本附件／约束／物理覆盖、嵌套／反向裁剪参考、授权稳定 Editor 导出、gamma 等价或 PMA／mip 配置、原生／手机资格及 M2.4 替换／恢复场景仍开放。M1.2 原性能失败保持 10.3 ms，目标为 8 ms。运行库原始许可与来源不变。
+
+新增的 `Mesh2D.createBinding(lease, geometry)` 沿用既有捕获链路，返回不暴露资源的 DisplayObject 与独立生产者句柄。节点不具有 Mesh2D 身份，不能读取租约或取得内容写入器，通过 Mesh2D 原型方法也不行。句柄可交给同一 Engine 的真实 Scope 管理；节点具有永久私有清理所有者，不能被其他 Scope 接管。`prepare` 先验证内容，再产生可取消、一次性提交；被覆盖、资源已释放或目标已销毁的候选不能发布。Spine 在提交任何绑定前先准备全部绑定，并显式退役包括已脱离子树在内的全部句柄。原 Mesh2D 构造／内容 API 保持兼容，显示树遍历不能释放共享设置租约或造成部分网格更新。
+
+旧子树在几何与数值姿态均提交后退役。取消监听器的清理回调可以观察新姿态、发出延后控制或销毁播放器，但不能恢复已经退役的显示对象。已有所有者的监听器清理错误沿用 Engine 诊断路径；意外向外抛出的提交后清理错误使用 `SPINE_INSTANCE_POSTCOMMIT_FAILED`，不回滚语义状态。适配器显式退役所跟踪的内部容器，包括已经脱离的容器。这些情况与发布前故障分别处理。
+
+绑定退役分为两阶段：`beginDispose()` 清除捕获状态并终止节点，不调用清理回调，再返回幂等的监听器清理函数；`dispose()` 执行两个阶段。适配器必须完成每次已经开始的退役。Spine 先将所有活动及退役中的叶节点标记为终态，再允许清理回调递归销毁资源组，并持续跟踪退役记录直到清理结束。因此页面提供者释放资源时不会观察到仍然有效的受管绘制叶节点。
+
+首次完整 PR 检查发现，增加生产者 API 后 Mesh2D 当前声明指纹尚未更新。修复仅在既有有限后继组中更新该文件的源码、生成 JavaScript 与声明身份，历史前驱字节和拒绝规则保持不变。严格编译器消费者也选择精确的新声明与源码，同时保留原诊断位置／错误码、完整闭包和历史观察。这是兼容门禁修复，不增加浏览器或产品验收结论。

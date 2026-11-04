@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
 import { EgretError } from '@egret/engine';
-import type { Scope } from '@egret/engine';
+import type { Scope, AssetLease, Texture } from '@egret/engine';
 import type { ParsedSpineSetup } from './parse.js';
 import type { SpineAsset } from './types.js';
 
 export interface SpineAssetPort {
   getSetup(): ParsedSpineSetup;
   assertOpen(): void;
-  authenticate(scope: Scope): void;
+  authenticate(scope: Scope, capacity?: boolean): void;
+  getPages(): readonly AssetLease<Texture>[];
   own(scope: Scope, instance: { dispose(): void }): () => void;
 }
 const assets = new WeakMap<object, SpineAssetPort>();

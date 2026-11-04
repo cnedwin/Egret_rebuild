@@ -21,3 +21,14 @@ const animation:SpineAnimationOptions={loop:true,mixSeconds:0.1},queued:SpineQue
 player.setAnimation(0,'walk',animation);player.addAnimation(0,'idle',queued);player.setSkin('default');player.setTransform(0,0);player.setRate(1);player.setPaused(false);player.clearTrack(1);
 const pose:SpineInstanceSnapshot=player.advance({tickId:1,elapsedSeconds:0.05,deltaSeconds:0.05}),bone:SpineBonePose=pose.bones[0]!,state:SpineInstanceState=pose.state;
 void [bone,state,player.isDisposed,player.getSnapshot()];player.dispose();
+
+import {createSpineDisplay} from '@egret/spine';
+import type {SpineDisplay,SpineDisplayOptions,SpineDisplayStatus} from '@egret/spine';
+const displayOptions:SpineDisplayOptions={colorProfile:'egret-shared-linear/1',maxCommands:256,maxVertices:65536,maxIndices:196608};
+const display:SpineDisplay=createSpineDisplay(player,scope,displayOptions),displayStatus:SpineDisplayStatus=display.getStatus();
+engine.stage.addChild(display.node);display.node.x=10;display.node.visible=false;void displayStatus;display.dispose();
+
+import {Mesh2D} from '@egret/engine';
+import type {AssetLease,Texture,SharedGeometry2D,DisplayObject} from '@egret/engine';
+declare const borrowed:AssetLease<Texture>,ownedGeometry:SharedGeometry2D;
+const binding=Mesh2D.createBinding(borrowed,ownedGeometry);const opaqueNode:DisplayObject=binding.node;scope.use(binding);engine.stage.addChild(opaqueNode);const candidate=binding.prepare(borrowed,ownedGeometry);candidate.commit();binding.dispose();

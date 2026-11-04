@@ -5,3 +5,6 @@ export type { SpineContentOptions, SpineContentBinding, SpineContentProviders, S
 
 export { createSpineInstance } from './instance.js';
 export type { SpineInstanceState, SpinePlaybackEventKind, SpinePlaybackEvent, SpineBonePose, SpineInstanceSnapshot, SpineInstanceOptions, SpineAnimationOptions, SpineQueuedAnimationOptions, SpineInstance } from './instanceTypes.js';
+
+export { createSpineDisplay } from './display.js';
+export type { SpineDisplayOptions, SpineDisplayStatus, SpineDisplay } from './displayTypes.js';

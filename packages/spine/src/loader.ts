@@ -111,8 +111,8 @@ export function createSpineContentLoader(engine:Engine,ownerScope:Scope,manifest
           const lease=await APPLY(ACQUIRE,manager,[cacheRefs.get(id)!,{signal:abort.signal}]) as AssetLease<SetupValue>;if(state!=='pending'){release(lease);return;}leases.push(lease);assertOpen();const info=leaseValue(lease).parsed!.info;
           const asset=FREEZE({info,get isDisposed(){return state!=='ready';}}) as SpineAsset;
           const live=()=>{assertOpen();if(state!=='ready')throw spineFault('ASSET_DISPOSED',id);};
-          const authenticate=(instanceScope:Scope)=>{live();const check=APPLY(GROUP,engine,[instanceScope,admitted!,[],[]]) as ManifestAssetGroup;check.dispose();live();if(liveInstances>=128)throw spineFault('INSTANCE_LIMIT',id);};
-          registerSpineAsset(asset,{assertOpen:live,getSetup(){live();return leaseValue(lease).parsed!;},authenticate,
+          const authenticate=(instanceScope:Scope,capacity=true)=>{live();const check=APPLY(GROUP,engine,[instanceScope,admitted!,[],[]]) as ManifestAssetGroup;check.dispose();live();if(capacity&&liveInstances>=128)throw spineFault('INSTANCE_LIMIT',id);};
+          registerSpineAsset(asset,{assertOpen:live,getSetup(){live();return leaseValue(lease).parsed!;},getPages(){live();return leaseValue(lease).pages;},authenticate,
             own(instanceScope,instance){authenticate(instanceScope);instances.add(instance);liveInstances++;let owned=true;const unown=()=>{if(!owned)return;owned=false;instances.delete(instance);liveInstances--;};
               try{APPLY(USE,instanceScope,[instance]);live();}catch(cause){unown();throw cause;}return unown;}});
           assets.set(id,asset);

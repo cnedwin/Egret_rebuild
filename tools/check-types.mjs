@@ -90,7 +90,9 @@ try {
   // succeeds it at the same genuine consumer expression and exact column.
   const m13MeshDeclaration = {"path":"packages/runtime/dist/Mesh2D.d.ts","bytes":995,"sha256":"97f47566b1e2239f3eebf09e4510e6c97008d65bd35c07ce2a8c6ad480590ef0"};
   const m13MeshBytes = readFileSync(path.join(root, m13MeshDeclaration.path));
-  const m13Mesh = m13MeshBytes.length === m13MeshDeclaration.bytes && createHash('sha256').update(m13MeshBytes).digest('hex') === m13MeshDeclaration.sha256;
+  // The additive opaque producer preserves the same exact forged-geometry diagnostic.
+  const m23MeshBindingDeclaration = {"path":"packages/runtime/dist/Mesh2D.d.ts","bytes":1461,"sha256":"e004d9805c2a543275c746bd0fd3c75fff54379a4d80c36baaa4d2813c3c392b"};
+  const m13Mesh = [m13MeshDeclaration, m23MeshBindingDeclaration].some(row => m13MeshBytes.length === row.bytes && createHash('sha256').update(m13MeshBytes).digest('hex') === row.sha256);
   const m13ForgedMesh = {name:'forged-geometry',file:'tests/types/invalid.generated.ts',line:296,column:37,historicalCode:2741,code:2345};
   const meshReceipts = expectedMesh.map(expectedCase => {
     const atLocation = observedGeometry.filter(actual => actual.file === expectedCase.file && actual.line === expectedCase.line);
