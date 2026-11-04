@@ -376,7 +376,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   const { resolveB1Dependency } = await import(pathToFileURL(join(repository, 'tools/b1-webgpu/registryProvenance.mjs')).href);
   const served = new Map();
   // Evaluate only the verifier's policy declarations and collector, never emitted SDK code or main().
-  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
+  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
     repository: await realpath(repository), sep, assert, resolve, readFile: selectedReadFile, realpath, resolveB1Dependency, URL,
     served, identities: new Map(), hash: body => createHash('sha256').update(body).digest('hex'),
   }, { timeout: 1000 });
@@ -806,4 +806,17 @@ for(const target of ['packages/engine/dist/internal/mouseInputFactoryState.js','
  await completeCurrentClosure();const original=await readFile(join(repository,target));
  const policy=await emittedClosurePolicy({selectedReadFile:async(...args)=>{const value=await readFile(...args);if(resolve(args[0])!==resolve(repository,target))return value;const changed=Buffer.from(value);changed[0]^=1;assert.equal(changed.length,original.length);return changed;}});
  await assert.rejects(policy.collect(target),error=>error.code==='ERR_ASSERTION'&&error.message.startsWith('Current emitted raw identity changed: '+target));assert.equal(policy.served.size,0);assert.deepEqual(await readFile(join(repository,target)),original);await completeCurrentClosure();
+});
+
+test('S22 opaque Spine binding changes one exact existing mesh module without expanding closure',async()=>{
+ const policy=await completeCurrentClosure(),target="packages/runtime/dist/Mesh2D.js";
+ assert.deepEqual(JSON.parse(JSON.stringify([...policy.m23SpineModuleSuccessor])),[[target,{"bytes":8016,"sha256":"d645535e28f17d23d10fb7bcda14ff7a7519e4261acc321d55d2def924456a56"}]]);
+ assert.ok(policy.m15ModuleIdentities.has(target));assert.equal(policy.currentModuleIdentities.size,138);
+ assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(target))),{"bytes":8016,"sha256":"d645535e28f17d23d10fb7bcda14ff7a7519e4261acc321d55d2def924456a56"});
+});
+test('S23 opaque Spine mesh refuses an unknown same-length emitted byte',async()=>{
+ await completeCurrentClosure();const target="packages/runtime/dist/Mesh2D.js",original=await readFile(join(repository,target));
+ const policy=await emittedClosurePolicy({selectedReadFile:async(...args)=>{const value=await readFile(...args);if(resolve(args[0])!==resolve(repository,target))return value;const copy=Buffer.from(value);copy[0]^=1;assert.equal(copy.length,original.length);return copy;}});
+ await assert.rejects(policy.collect(target),error=>error.code==='ERR_ASSERTION'&&error.message.startsWith('Current emitted raw identity changed: '+target));
+ assert.equal(policy.served.size,0);assert.deepEqual(await readFile(join(repository,target)),original);await completeCurrentClosure();
 });

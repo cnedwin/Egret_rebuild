@@ -483,7 +483,11 @@ assert.equal(m33KeyboardAdmissionModuleSuccessor.size, 2);
 assert.deepEqual([...m33KeyboardAdmissionModuleSuccessor.keys()], ['packages/engine/dist/internal/mouseInputFactoryState.js', 'packages/engine/dist/internal/uiFactoryState.js']);
 assert.ok(m15ModuleIdentities.has('packages/engine/dist/internal/mouseInputFactoryState.js'), 'Mouse admission retains M1.5 membership');
 assert.ok(m31UiModuleAdditions.has('packages/engine/dist/internal/uiFactoryState.js'), 'UI association retains M3.1 membership');
-const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors, ...m33MouseCompatibilityModuleSuccessor, ...m21ContentModuleSuccessors, ...m31UiModuleSuccessors, ...m31UiModuleAdditions, ...m22SequenceModuleSuccessors, ...m22SequenceModuleAdditions, ...m33KeyboardAdmissionModuleSuccessor]);
+// The opaque Spine producer changes one existing module, without expanding collector authority.
+const m23SpineModuleSuccessor = new Map([["packages/runtime/dist/Mesh2D.js",{"bytes":8016,"sha256":"d645535e28f17d23d10fb7bcda14ff7a7519e4261acc321d55d2def924456a56"}]]);
+assert.equal(m23SpineModuleSuccessor.size, 1);
+assert.ok(m15ModuleIdentities.has("packages/runtime/dist/Mesh2D.js"), 'Spine mesh retains historical membership');
+const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors, ...m33MouseCompatibilityModuleSuccessor, ...m21ContentModuleSuccessors, ...m31UiModuleSuccessors, ...m31UiModuleAdditions, ...m22SequenceModuleSuccessors, ...m22SequenceModuleAdditions, ...m33KeyboardAdmissionModuleSuccessor, ...m23SpineModuleSuccessor]);
 assert.equal(currentModuleIdentities.size, m22SourceModuleLimit, 'M3.1 current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {

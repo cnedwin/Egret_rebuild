@@ -3942,6 +3942,27 @@
           "bytes": 78672,
           "sha256": "86d6d2c44ef8dbe9ad807b8005c72db27e22621b7e8f80622fac9e2b1672fd29"
         }
+      },
+      {
+        "scope": "PR115 second CI passed303 publication tests and source boundaries, then an old Mesh2D declaration selector expected the historical forged-geometry code. Exact current declaration selection and central strict source/declaration identities were updated; diagnostic positions/codes, compiler closure and historical observations remain unchanged.",
+        "raw": {
+          "bytes": 129689,
+          "sha256": "0e7f82e18c99d009e0d91e96f9f2ee9a1968d195255e91979f655e871a7eb341"
+        }
+      },
+      {
+        "scope": "Incomplete local whole-behavior diagnostic: old B1 Mesh emission identity refused baseline cases; stopped the remaining owned long-running PNG source diagnostic after targeted repairs. This run is neither a complete pass nor final-candidate qualification; final protected CI remains mandatory.",
+        "raw": {
+          "bytes": 96428,
+          "sha256": "56e498a8b0e6244d63cb1676bd1e75f8b844b04569ebca7fa3687ebbb935756c"
+        }
+      },
+      {
+        "scope": "B1 source identity repair passed69 cases, including exact existing138-module closure and same-length Mesh emission drift refusal. Product/browser inputs unchanged.",
+        "raw": {
+          "bytes": 7166,
+          "sha256": "35e6cea01b0289430463f4cf12740706b5b232e5b86ddce04e17c8e81a33582e"
+        }
       }
     ],
     "remaining": [
@@ -3949,6 +3970,27 @@
       "Legacy gamma renderer parity; PMA pages/mips/other sampler profiles",
       "M2.4 asset replacement and device recovery scenarios",
       "Physical phones, native hosts and performance; M1.2 remains10.3ms vs8ms"
-    ]
+    ],
+    "compatibilityChecks": {
+      "scope": "Current source/declaration/collector identity compatibility only; no expansion of product or browser acceptance",
+      "strictTypes": {
+        "bytes": 363970,
+        "sha256": "fe2e7aa1689717e70c99b9fea681b4662aba8e88aa9febc232e17683a40c7452"
+      },
+      "maintenance": {
+        "tests": 4,
+        "raw": {
+          "bytes": 575,
+          "sha256": "f7631f2ebbf1b98375d2bda928713c9e9d0d126f62ded7189d32d9130d0b6a2b"
+        }
+      },
+      "b1Collector": {
+        "tests": 69,
+        "raw": {
+          "bytes": 7166,
+          "sha256": "35e6cea01b0289430463f4cf12740706b5b232e5b86ddce04e17c8e81a33582e"
+        }
+      }
+    }
   }
 }
