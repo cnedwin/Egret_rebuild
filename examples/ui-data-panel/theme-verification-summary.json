@@ -1,0 +1,533 @@
+{
+  "schema": "egret.ui-theme-generations-public-projection/1",
+  "date": "2026-11-05",
+  "scope": "M3.4 immutable theme generations and Scope-owned skin preparation on existing UiRoot; no complete control, input/editor, accessibility or physical-device acceptance.",
+  "integrationBase": "33e082e04ae64296effa847ca90bf7b6bc956092",
+  "behavior": {
+    "themeCases": 13,
+    "combinedCases": 76,
+    "passed": 76,
+    "failed": 0,
+    "raw": {
+      "bytes": 7691,
+      "sha256": "a21ab27d770f7233a2235293c5907d09bccdd3ee198866b6c304884e27b859e8"
+    }
+  },
+  "strict": {
+    "status": "PASS",
+    "ordinaryNegativeAssertions": 194,
+    "themeNegativeCases": 7,
+    "cases": [
+      {
+        "name": "nonforgeable-theme",
+        "line": 529,
+        "column": 7,
+        "code": 2741
+      },
+      {
+        "name": "immutable-color",
+        "line": 531,
+        "column": 1,
+        "code": 2542
+      },
+      {
+        "name": "immutable-font",
+        "line": 533,
+        "column": 32,
+        "code": 2540
+      },
+      {
+        "name": "no-implicit-url",
+        "line": 535,
+        "column": 50,
+        "code": 2322
+      },
+      {
+        "name": "no-implicit-loader",
+        "line": 537,
+        "column": 32,
+        "code": 2353
+      },
+      {
+        "name": "type-only-theme",
+        "line": 539,
+        "column": 18,
+        "code": 2339
+      },
+      {
+        "name": "root-entry-remains-separate",
+        "line": 541,
+        "column": 19,
+        "code": 2339
+      }
+    ],
+    "raw": {
+      "bytes": 367596,
+      "sha256": "b8cb1df073e694cd05f243e2e86b17e15ab33fa25c55afd51cf1aa606de2e27c"
+    }
+  },
+  "source": {
+    "normalBoundary": {
+      "status": "PASS",
+      "files": 849,
+      "raw": {
+        "bytes": 193,
+        "sha256": "7163699069a5a9a050c3c1de844cba0c1bd80c90000d19fd7657242b11c59984"
+      }
+    },
+    "inertCanonicalFixture": {
+      "cases": 28,
+      "passed": 28,
+      "failed": 0,
+      "raw": {
+        "bytes": 2812,
+        "sha256": "642e58738d512436b3595c9d8149d942ae66a11504d39c243dd7d8cf3acf8046"
+      }
+    },
+    "finiteSuccessors": [
+      {
+        "owner": "tools/spritesheet-boundary.mjs",
+        "replacedUiIdentities": 10,
+        "addedThemeIdentities": 3,
+        "status": "PASS",
+        "raw": {
+          "bytes": 30,
+          "sha256": "3c04b10d5241f806a812aae5612920c57b3e13f0e007542b0c26f489761359b8"
+        }
+      },
+      {
+        "owner": "tools/atlas-import-boundary.mjs",
+        "replacedUiIdentities": 10,
+        "addedThemeIdentities": 3,
+        "status": "PASS",
+        "raw": {
+          "bytes": 183,
+          "sha256": "43a5670f9dc009befb1fff4ef5b32d511ec16d49c93a2ee326b71f1601f712ca"
+        }
+      },
+      {
+        "owner": "tools/browser-png-boundary.mjs",
+        "replacedUiIdentities": 10,
+        "addedThemeIdentities": 3,
+        "status": "PASS",
+        "raw": {
+          "bytes": 79,
+          "sha256": "3d861ae069f936dd3839a32c8de8143fa61a2d593e5554614888a0b19aa4e429"
+        }
+      }
+    ]
+  },
+  "browser": {
+    "status": "PASS",
+    "rawReceipt": {
+      "bytes": 2482945,
+      "sha256": "63cda1b2c889e150b1e3052366a4db687d6deed8a97683ebde294578fb796e43"
+    },
+    "sourceFreeze": {
+      "bytes": 201545,
+      "sha256": "512ef35b89ea90b41ffa857d41e255abf9094ba7a65ecf578163bcc807a37c9c"
+    },
+    "startedAt": "2026-11-05T09:10:06.376Z",
+    "endedAt": "2026-11-05T09:10:15.790Z",
+    "environment": {
+      "node": "v26.7.0",
+      "os": "Windows_NT",
+      "release": "10.0.26300",
+      "platform": "win32",
+      "playwright": "1.62.1",
+      "channel": "msedge",
+      "headless": true,
+      "extraFlags": [],
+      "viewport": {
+        "width": 960,
+        "height": 640
+      },
+      "deviceScaleFactor": 1,
+      "physicalDevice": false,
+      "browser": "156.0.4314.58"
+    },
+    "backends": [
+      {
+        "backend": "webgpu",
+        "status": "PASS",
+        "checks": 29,
+        "exactPixelComparisons": 225,
+        "rawFrameCount": 18,
+        "actualMousePositions": 35,
+        "rawFrames": [
+          {
+            "path": "webgpu-initial.rgba",
+            "bytes": 2457600,
+            "sha256": "f24426784b492e3ac791f53dbda66476c25974d3489ee2b0bd66a611b5da3278"
+          },
+          {
+            "path": "webgpu-scroll.rgba",
+            "bytes": 2457600,
+            "sha256": "e22358ddc3919ca0642d2282d9e7a09b44b6af0614fcb2675111233d3e8904c1"
+          },
+          {
+            "path": "webgpu-resize.rgba",
+            "bytes": 2457600,
+            "sha256": "aeef39fa2dbbf9a48b726f2cc3bce84cce005ee5fdc45ff57b4f8a7aa301c090"
+          },
+          {
+            "path": "webgpu-move.rgba",
+            "bytes": 2457600,
+            "sha256": "a8c54b052c7a1d1527228e9a206f8b3d9edb6d046ff0140a09f0d19fa0a7a5e4"
+          },
+          {
+            "path": "webgpu-recycle.rgba",
+            "bytes": 2457600,
+            "sha256": "92ab87b9bb22cea7d184c6f87f7498f5d188c5f8ca469b4122c230f1652a347f"
+          },
+          {
+            "path": "webgpu-return.rgba",
+            "bytes": 2457600,
+            "sha256": "a8c54b052c7a1d1527228e9a206f8b3d9edb6d046ff0140a09f0d19fa0a7a5e4"
+          },
+          {
+            "path": "webgpu-pending.rgba",
+            "bytes": 2457600,
+            "sha256": "a8c54b052c7a1d1527228e9a206f8b3d9edb6d046ff0140a09f0d19fa0a7a5e4"
+          },
+          {
+            "path": "webgpu-complete.rgba",
+            "bytes": 2457600,
+            "sha256": "5ce1ad5531522560b6f0205cec3ef206955ffd8677a62cc65cc6dc1d7aecf64c"
+          },
+          {
+            "path": "webgpu-replay.rgba",
+            "bytes": 2457600,
+            "sha256": "f24426784b492e3ac791f53dbda66476c25974d3489ee2b0bd66a611b5da3278"
+          },
+          {
+            "path": "webgpu-theme-dark.rgba",
+            "bytes": 2457600,
+            "sha256": "3c98aadbd628351971859d6cfaf62906292408b88838685579b0749fbc164b5d"
+          },
+          {
+            "path": "webgpu-theme-light.rgba",
+            "bytes": 2457600,
+            "sha256": "af6a37dc2697b9d72fd81ce8c474330400a51e8eec0553ead5c2372933d2711b"
+          },
+          {
+            "path": "webgpu-theme-large.rgba",
+            "bytes": 2457600,
+            "sha256": "b4896c971a5f579aa7da64e4f1fadc61205586a1dd2d199f0a0258b4836e9d9b"
+          },
+          {
+            "path": "webgpu-theme-pending.rgba",
+            "bytes": 2457600,
+            "sha256": "b4896c971a5f579aa7da64e4f1fadc61205586a1dd2d199f0a0258b4836e9d9b"
+          },
+          {
+            "path": "webgpu-theme-cancel.rgba",
+            "bytes": 2457600,
+            "sha256": "b4896c971a5f579aa7da64e4f1fadc61205586a1dd2d199f0a0258b4836e9d9b"
+          },
+          {
+            "path": "webgpu-theme-finished.rgba",
+            "bytes": 2457600,
+            "sha256": "4872ee7fce68c83b1f0de92aff0ce8834905ff00327274906b52caccad8f49c7"
+          },
+          {
+            "path": "webgpu-theme-failed.rgba",
+            "bytes": 2457600,
+            "sha256": "b4896c971a5f579aa7da64e4f1fadc61205586a1dd2d199f0a0258b4836e9d9b"
+          },
+          {
+            "path": "webgpu-theme-superseded.rgba",
+            "bytes": 2457600,
+            "sha256": "af6a37dc2697b9d72fd81ce8c474330400a51e8eec0553ead5c2372933d2711b"
+          },
+          {
+            "path": "webgpu-dispose-a.rgba",
+            "bytes": 2457600,
+            "sha256": "e32b7ad4d6d89cfc24d9c9332e69d1d50d94097cd6b41bc87f29f21010dd5a0e"
+          }
+        ]
+      },
+      {
+        "backend": "webgl2",
+        "status": "PASS",
+        "checks": 29,
+        "exactPixelComparisons": 225,
+        "rawFrameCount": 18,
+        "actualMousePositions": 35,
+        "rawFrames": [
+          {
+            "path": "webgl2-initial.rgba",
+            "bytes": 2457600,
+            "sha256": "f24426784b492e3ac791f53dbda66476c25974d3489ee2b0bd66a611b5da3278"
+          },
+          {
+            "path": "webgl2-scroll.rgba",
+            "bytes": 2457600,
+            "sha256": "e22358ddc3919ca0642d2282d9e7a09b44b6af0614fcb2675111233d3e8904c1"
+          },
+          {
+            "path": "webgl2-resize.rgba",
+            "bytes": 2457600,
+            "sha256": "aeef39fa2dbbf9a48b726f2cc3bce84cce005ee5fdc45ff57b4f8a7aa301c090"
+          },
+          {
+            "path": "webgl2-move.rgba",
+            "bytes": 2457600,
+            "sha256": "a614428b176cb9e61edbe645d05eacfd6d05f4619783cffe8905d82af90165c6"
+          },
+          {
+            "path": "webgl2-recycle.rgba",
+            "bytes": 2457600,
+            "sha256": "92ab87b9bb22cea7d184c6f87f7498f5d188c5f8ca469b4122c230f1652a347f"
+          },
+          {
+            "path": "webgl2-return.rgba",
+            "bytes": 2457600,
+            "sha256": "a614428b176cb9e61edbe645d05eacfd6d05f4619783cffe8905d82af90165c6"
+          },
+          {
+            "path": "webgl2-pending.rgba",
+            "bytes": 2457600,
+            "sha256": "a614428b176cb9e61edbe645d05eacfd6d05f4619783cffe8905d82af90165c6"
+          },
+          {
+            "path": "webgl2-complete.rgba",
+            "bytes": 2457600,
+            "sha256": "11b09991a3e1a8be438fe79ef084b42bcecd4d98d58032984c41f3d911de540b"
+          },
+          {
+            "path": "webgl2-replay.rgba",
+            "bytes": 2457600,
+            "sha256": "f24426784b492e3ac791f53dbda66476c25974d3489ee2b0bd66a611b5da3278"
+          },
+          {
+            "path": "webgl2-theme-dark.rgba",
+            "bytes": 2457600,
+            "sha256": "c66011ec000bbe51934dd99bc702bb95a6cdeeea4a1072f64d88c655fa70c027"
+          },
+          {
+            "path": "webgl2-theme-light.rgba",
+            "bytes": 2457600,
+            "sha256": "eb588d17fe59141837e2def8fe9faaa924d107076db3ecd51f49def21703cc96"
+          },
+          {
+            "path": "webgl2-theme-large.rgba",
+            "bytes": 2457600,
+            "sha256": "6551776935572f00821343ebc39f00bd8a9c005289c0f8f4e27461385d8f2aac"
+          },
+          {
+            "path": "webgl2-theme-pending.rgba",
+            "bytes": 2457600,
+            "sha256": "6551776935572f00821343ebc39f00bd8a9c005289c0f8f4e27461385d8f2aac"
+          },
+          {
+            "path": "webgl2-theme-cancel.rgba",
+            "bytes": 2457600,
+            "sha256": "6551776935572f00821343ebc39f00bd8a9c005289c0f8f4e27461385d8f2aac"
+          },
+          {
+            "path": "webgl2-theme-finished.rgba",
+            "bytes": 2457600,
+            "sha256": "57285bb13ddfaccd5ddc9b2545fd5975e5461b7ae8c8c133ffc11396dbea404c"
+          },
+          {
+            "path": "webgl2-theme-failed.rgba",
+            "bytes": 2457600,
+            "sha256": "6551776935572f00821343ebc39f00bd8a9c005289c0f8f4e27461385d8f2aac"
+          },
+          {
+            "path": "webgl2-theme-superseded.rgba",
+            "bytes": 2457600,
+            "sha256": "eb588d17fe59141837e2def8fe9faaa924d107076db3ecd51f49def21703cc96"
+          },
+          {
+            "path": "webgl2-dispose-a.rgba",
+            "bytes": 2457600,
+            "sha256": "e32b7ad4d6d89cfc24d9c9332e69d1d50d94097cd6b41bc87f29f21010dd5a0e"
+          }
+        ]
+      }
+    ],
+    "cleanup": {
+      "contexts": true,
+      "browser": true,
+      "server": true
+    },
+    "snapshotIntegrity": true,
+    "unchangedNonVendorInputs": 611,
+    "inputPins": [
+      {
+        "path": "examples/ui-data-panel/index.html",
+        "bytes": 3825,
+        "sha256": "10f5dca0af24188258cfc5d64b71f00a79d7161248ef90d075d4c45a13881d67",
+        "owner": "repository",
+        "ownerPath": "examples/ui-data-panel/index.html"
+      },
+      {
+        "path": "examples/ui-data-panel/main.mjs",
+        "bytes": 14597,
+        "sha256": "361bd243427720b2665cecb278e23914cf83f87392e940fcd8336b3015e96062",
+        "owner": "repository",
+        "ownerPath": "examples/ui-data-panel/main.mjs"
+      },
+      {
+        "path": "packages/engine/dist/ui/index.js",
+        "bytes": 160,
+        "sha256": "d0ffafd089209329aee1442f5bfc001e1b588d056a43398bddb1609c30eea4d0",
+        "owner": "repository",
+        "ownerPath": "packages/engine/dist/ui/index.js"
+      },
+      {
+        "path": "packages/engine/dist/ui/uiRoot.js",
+        "bytes": 57628,
+        "sha256": "f4f538a7da7da61387a4c08361b7b41c1ef6344a741e1d1876cca445b8c7de46",
+        "owner": "repository",
+        "ownerPath": "packages/engine/dist/ui/uiRoot.js"
+      },
+      {
+        "path": "packages/engine/dist/ui/theme.js",
+        "bytes": 4609,
+        "sha256": "23f3bc727186e1cd063d3d91138e66ffc3121f7f59ff6b9511f31883e1475d1d",
+        "owner": "repository",
+        "ownerPath": "packages/engine/dist/ui/theme.js"
+      },
+      {
+        "path": "packages/engine/dist/ui/leafContent.js",
+        "bytes": 5392,
+        "sha256": "a0a1d37de6c154b5343a69326c402f0a9db65995962869a9e0920b6261375f20",
+        "owner": "repository",
+        "ownerPath": "packages/engine/dist/ui/leafContent.js"
+      },
+      {
+        "path": "examples/ui-data-panel/fixture.mjs",
+        "bytes": 3460,
+        "sha256": "871b1ea5f2b616b5d1db8e964b011c821262f04e29a387175c36f628a0d3f9a0",
+        "owner": "repository",
+        "ownerPath": "examples/ui-data-panel/fixture.mjs"
+      },
+      {
+        "path": "examples/ui-data-panel/verify.mjs",
+        "bytes": 23775,
+        "sha256": "cf48e310d8feb546cdb31da563fd3a1c37456bc73bf4cf5c6bcc5f424412bc4b",
+        "owner": "repository",
+        "ownerPath": "examples/ui-data-panel/verify.mjs"
+      },
+      {
+        "path": "packages/engine/src/ui/index.ts",
+        "bytes": 643,
+        "sha256": "281dc0eeb68642580b8e9982431266123c1267d8b40099aed083bc1fdd505034",
+        "owner": "repository",
+        "ownerPath": "packages/engine/src/ui/index.ts"
+      },
+      {
+        "path": "packages/engine/src/ui/leafContent.ts",
+        "bytes": 6209,
+        "sha256": "851450b4849b0e5d9565785863dcbb0f1f9b6a4f9764b702375df8ced817e736",
+        "owner": "repository",
+        "ownerPath": "packages/engine/src/ui/leafContent.ts"
+      },
+      {
+        "path": "packages/engine/src/ui/theme.ts",
+        "bytes": 6555,
+        "sha256": "2755736752ab847425e61fb213c9c1225f77df0e3eff83c3e3d9346202b6fc90",
+        "owner": "repository",
+        "ownerPath": "packages/engine/src/ui/theme.ts"
+      },
+      {
+        "path": "packages/engine/src/ui/types.ts",
+        "bytes": 8499,
+        "sha256": "db2f9f812281184b6c66be9ba2b4ae54fbce005fcdff978610cb0185223586cf",
+        "owner": "repository",
+        "ownerPath": "packages/engine/src/ui/types.ts"
+      },
+      {
+        "path": "packages/engine/src/ui/uiRoot.ts",
+        "bytes": 63000,
+        "sha256": "84fbfd634ce0ca6911d38a6e0d97d529a6f3544734af5b5c420c442352e84dca",
+        "owner": "repository",
+        "ownerPath": "packages/engine/src/ui/uiRoot.ts"
+      },
+      {
+        "path": "packages/engine/dist/ui/index.d.ts",
+        "bytes": 638,
+        "sha256": "566a78af28afd0f09a83d3c3c1edbbc19d57842dc1b3c5e8fea136ee9074b4fa",
+        "owner": "repository",
+        "ownerPath": "packages/engine/dist/ui/index.d.ts"
+      },
+      {
+        "path": "packages/engine/dist/ui/uiRoot.d.ts",
+        "bytes": 247,
+        "sha256": "c026f0b702114bf66677a40af8bb123b5c2e5f10efeb96f352ba60ce3904e1ff",
+        "owner": "repository",
+        "ownerPath": "packages/engine/dist/ui/uiRoot.d.ts"
+      },
+      {
+        "path": "packages/engine/dist/ui/theme.d.ts",
+        "bytes": 2042,
+        "sha256": "ae7c63fdcafdcec1f67a949ec5ee06da3b4f447e6b0e189d1066ff2ef19e6b40",
+        "owner": "repository",
+        "ownerPath": "packages/engine/dist/ui/theme.d.ts"
+      },
+      {
+        "path": "packages/engine/dist/ui/leafContent.d.ts",
+        "bytes": 1368,
+        "sha256": "308cebdfbe9e12fb00be6253f9f4a50ba392f39d7770161aa5ec378f836bec75",
+        "owner": "repository",
+        "ownerPath": "packages/engine/dist/ui/leafContent.d.ts"
+      }
+    ]
+  },
+  "reviewedRepairs": [
+    {
+      "issue": "Explicit focus/composition retention must forbid theme-driven rebinding.",
+      "result": "UI_ROW_RETAINED before new intent acceptance and a second preparation check; release then retry.",
+      "regression": "Observed failure before repair and pass afterward."
+    },
+    {
+      "issue": "Paint-only row validation must use committed heights after updateHeights.",
+      "result": "Compare against committed height index; reject stale original measurement and accept current height.",
+      "regression": "Observed failure before repair and pass afterward."
+    }
+  ],
+  "failureHistory": {
+    "reviewRegressionBeforeRepair": {
+      "cases": 2,
+      "passed": 0,
+      "failed": 2,
+      "raw": {
+        "bytes": 1687,
+        "sha256": "0a851d8eea7f662f8de7e6a5329baa6ab4fe3bac5dac02c1202d13eba168c95a"
+      }
+    },
+    "earlierNativeReceipts": [
+      {
+        "status": "PASS",
+        "rawReceipt": {
+          "bytes": 2480838,
+          "sha256": "9e6af96af81e95ae7d423b1f3ee9d5a38e25229d607d9b7840c8a47ccf39738f"
+        },
+        "meaning": "Preserved earlier candidate observation; superseded for current merged-input qualification."
+      },
+      {
+        "status": "PASS",
+        "rawReceipt": {
+          "bytes": 2480838,
+          "sha256": "7c69902d31a4421895da7d0fb5c37b17acc2f1fc4277c7158b8b66051a0da8d1"
+        },
+        "meaning": "Preserved earlier candidate observation; superseded for current merged-input qualification."
+      }
+    ],
+    "initialSourceAdmission": "Old finite source pins refused new UI identities; exact reviewed successors preserve original pins and the existing nine-file key-reveal transformation."
+  },
+  "delivery": {
+    "independentProductSourceResultBilingualReview": "Accepted after two reproduced repairs; subsequent integration metadata/source admission is reviewed separately.",
+    "fullIntegratedGate": "Not claimed by this local projection; protected candidate CI remains required.",
+    "remotePublication": "Not established by these local observations.",
+    "open": [
+      "Complete M3.4 controls and semantic projection",
+      "Physical touch/native IME/accessibility qualification",
+      "Full font/script matrix",
+      "Sustained recovery and performance qualification"
+    ]
+  }
+}

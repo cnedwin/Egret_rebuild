@@ -30,6 +30,8 @@
 
 ## 示例与验证边界
 
-已有 [UI 数据面板](../../../examples/ui-data-panel/README.zh-CN.md) 加入深/浅色绘制变体、较大字号与行高、图像皮肤选择、延迟成功、拒绝、取消和新意图取代。第二面板保持独立，继续使用同一份核验 PNG、字体、类型化资源加载器、指针通道及共享渲染宿主。
+已有 [UI 数据面板](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-data-panel/README.zh-CN.md) 加入深/浅色绘制变体、较大字号与行高、图像皮肤选择、延迟成功、拒绝、取消和新意图取代。第二面板保持独立，继续使用同一份核验 PNG、字体、类型化资源加载器、指针通道及共享渲染宿主。
 
 聚焦公开行为测试覆盖不可变准入、真实身份、无布局绘制发布、变高拒绝、失败/过期/晚到所有权、普通编辑、锚点及清理诊断。严格正例和七个未抑制编译负例覆盖可选入口及只读品牌合同。示例采集器冻结完整输入闭包，在两个共享后端检查字面像素、几何、planner 计数、真实鼠标行为及关闭。局部结果、完整门禁、独立评审和 PR/main 交付分别记录；物理触摸、无障碍、完整控件状态及字体/文字体系验收仍开放。
+
+[主题验证摘要](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-data-panel/theme-verification-summary.json)记录实际输入、聚焦与严格检查、双浏览器后端及剩余交付边界。

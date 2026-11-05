@@ -33,3 +33,7 @@ The example sets a 32 MiB paragraph image-cache budget for overlapping old/new U
 ## Optional shared effects
 
 Open `?content=equipment&effects=1&backend=webgl2` or `backend=webgpu` to inspect the same UI with masks and box blur. Cycle all four modes with the effects button; both article and virtual rows republish together. Default content and input routing remain unchanged. See the [effect contract](https://github.com/cnedwin/Egret_rebuild/blob/main/knowledge-base/en/docs/shared-ui-effects.md) for limits, ownership, recovery and qualification.
+
+## Font resources
+
+After building, run node tools/content/author-font-example.mjs. Add its configPath to the example URL as ?fontConfig=<configPath>&backend=webgl2 (or webgpu). The new button changes article fonts while the list keeps its own generation. Failed/cancelled/superseded replacements preserve committed UI; unused font sets retire. Run node examples/paragraph-panel/verify-fonts.mjs <playwright-1.62.1-root> <new-output-directory>. See [font ownership and limits](https://github.com/cnedwin/Egret_rebuild/blob/main/knowledge-base/en/docs/font-resource-generations.md).

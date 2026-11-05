@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+import {openFontResources} from './font-resources.mjs';
 import {equipmentCopy} from './styled-copy.mjs';
 import {createEngineForProfile, Sprite, Bitmap, createImageData2D, createTexture, isTexture, createAssetType, createAssetRef} from '@egret/engine';
 import {createUiRoot} from '@egret/engine/ui';
@@ -10,6 +11,14 @@ import {createSharedWebGL2Host} from '@egret/engine/webgl2';
 
 const canvas=document.querySelector('#scene'),status=document.querySelector('#status');
 const backend=new URL(location.href).searchParams.get('backend')??'webgl2';
+const fontConfig=new URL(location.href).searchParams.get('fontConfig');
+let fontResources,currentFontSet,alternateFont=false,articleRequestedFontSet,listRequestedFontSet;
+let pendingFont;
+const fontScopes=new Map(),committedFontSets=new Map();
+function retireUnusedFonts(){
+  const keep=new Set([currentFontSet?.key,...[...committedFontSets.values()].map(set=>set?.key)]);
+  for(const [key,record]of fontScopes)if(!keep.has(key)){record.set.dispose();record.scope?.dispose();fontScopes.delete(key);}
+}
 const effectsEnabled=new URL(location.href).searchParams.get('effects')==='1';
 let effectMode=effectsEnabled?'both':'off',effectMask;
 function applyEffect(content,width,height){
@@ -50,15 +59,16 @@ async function checkedFont(font){
   fontBytes+=data.length;return {family:font.family,identity:sha,data};
 }
 function request(text,availableWidth,direction='ltr'){
-  return {text,width:availableWidth,fontFamilies,fontSize,...(minLineHeight===undefined?{}:{lineHeight:minLineHeight}),locale:direction==='rtl'?'ar':'en',direction,fillColor:0xe9f2ff,density,...(textAlign==='left'?{}:{textAlign}),...(maxLines===undefined?{}:{maxLines})};
+  return {text,width:availableWidth,fontFamilies:currentFontSet?.fontFamilies??fontFamilies,...(currentFontSet?{fontSet:currentFontSet.key}:{}),fontSize,...(minLineHeight===undefined?{}:{lineHeight:minLineHeight}),locale:direction==='rtl'?'ar':'en',direction,fillColor:0xe9f2ff,density,...(textAlign==='left'?{}:{textAlign}),...(maxLines===undefined?{}:{maxLines})};
 }
 function articleTree(version=revision,marker=''){
-  const localSize=fontSize,localHeight=minLineHeight,localAlign=textAlign,localMaxLines=maxLines,localMode=contentMode;
+  articleRequestedFontSet=currentFontSet;
+  const localSize=fontSize,localHeight=minLineHeight,localAlign=textAlign,localMaxLines=maxLines,localMode=contentMode,localFontSet=currentFontSet;
   const equipment=localMode==='equipment'?equipmentCopy(localSize):undefined;
   const content=(id,text,direction='ltr',runs)=>({revision:version,prepare(context){
     // A detached binding owns its exact request values even if controls change later.
     const node=createParagraph(engine,context.scope,cache);
-    node.setRequest({...request(text+marker,context.width,direction),...(runs?{runs}:{}),fontSize:localSize,...(localHeight===undefined?{lineHeight:undefined}:{lineHeight:localHeight}),density:context.density,textAlign:localAlign,maxLines:localMaxLines});
+    node.setRequest({...request(text+marker,context.width,direction),...(runs?{runs}:{}),fontSet:localFontSet?.key,fontFamilies:localFontSet?.fontFamilies??fontFamilies,fontSize:localSize,...(localHeight===undefined?{lineHeight:undefined}:{lineHeight:localHeight}),density:context.density,textAlign:localAlign,maxLines:localMaxLines});
     return node.prepare().then(metrics=>{if(context.signal.aborted)throw Error('EXAMPLE_CONTENT_CANCELLED');preparations.push({id,version,width:context.width,density:context.density,styleRanges:runs?.length??0,metrics});if(!effectsEnabled)return {content:node,measuredHeight:metrics.height};const content=context.scope.use(new Sprite());content.addChild(node);applyEffect(content,context.width,metrics.height);return {content,measuredHeight:metrics.height};});
   }});
   return {kind:'column',id:'article-column',explicitWidth:width,gap:18,crossAlign:'stretch',children:[
@@ -69,14 +79,15 @@ function articleTree(version=revision,marker=''){
   ]};
 }
 function rowSource(version){
-  const localSize=fontSize,localHeight=minLineHeight,localAlign=textAlign,localMaxLines=maxLines,localMode=contentMode;
+  listRequestedFontSet=currentFontSet;
+  const localSize=fontSize,localHeight=minLineHeight,localAlign=textAlign,localMaxLines=maxLines,localMode=contentMode,localFontSet=currentFontSet;
   const records=Array.from({length:24},(_,index)=>({key:'paragraph-'+String(index).padStart(2,'0'),contentVersion:version,estimatedHeight:localMode==='equipment'?540:120,value:{effectEligible:index<6,text:copy.rows[index%3].repeat(index%4===3?2:1),direction:index%3===2?'rtl':'ltr',color:index%2?0x253f5e:0x1c3452}}));
   // A conservative content estimate bounds simultaneous preparation; committed heights still come from native metrics.
   if(localMode==='equipment')for(let index=0;index<records.length;index++){const copy=equipmentCopy(localSize,index);records[index].value={...records[index].value,...copy,direction:'ltr'};}
   return {revision:version,records,async bind(context){
     binds.push({key:context.key,generation:context.bindingGeneration,version:context.contentVersion});
     const node=createParagraph(engine,context.scope,cache);
-    node.setRequest({...request(context.value.text,context.width-20,context.value.direction),...(context.value.runs?{runs:context.value.runs}:{}),fontSize:localSize,lineHeight:localHeight,density:context.density,textAlign:localAlign,maxLines:localMaxLines});
+    node.setRequest({...request(context.value.text,context.width-20,context.value.direction),...(context.value.runs?{runs:context.value.runs}:{}),fontSet:localFontSet?.key,fontFamilies:localFontSet?.fontFamilies??fontFamilies,fontSize:localSize,lineHeight:localHeight,density:context.density,textAlign:localAlign,maxLines:localMaxLines});
     const metrics=await node.prepare();
     if(context.signal.aborted)throw Error('EXAMPLE_ROW_CANCELLED');
     const content=context.scope.use(new Sprite());
@@ -89,13 +100,15 @@ function rowSource(version){
     return {content,measuredHeight:metrics.height+20};
   },unbind(info){unbinds.push({...info});}};
 }
-async function publish(root){
+async function publish(root,guard){
   for(let attempt=0;attempt<32;attempt++){
     const preparation=await root.prepare();
     if(preparation.status==='pending'){await new Promise(resolve=>setTimeout(resolve,0));continue;}
+    if(guard&&!guard())throw Error('EXAMPLE_FONT_CANCELLED');
     const result=root.commit(preparation);
     if(result.kind==='stale')continue;
     if(!['committed','unchanged'].includes(result.kind)||result.postCommitErrors.length)throw Error('EXAMPLE_UI_COMMIT');
+    if(fontResources){committedFontSets.set(root,root===article?articleRequestedFontSet:listRequestedFontSet);retireUnusedFonts();}
     return result;
   }
   throw Error('EXAMPLE_UI_PREPARATION_LIMIT');
@@ -109,11 +122,12 @@ async function draw(name){
   readbacks.push({label:name,frameId:result.frameId,serial:result.serial,width:result.width,height:result.height});
   describe();return inspect();
 }
-export function inspect(){return {state,backend,label,contentMode,effectMode,effectsEnabled,width,fontSize,minLineHeight:minLineHeight??null,density,revision,textAlign,maxLines:maxLines??null,providerCalls:calls,runtimeBytes,fontBytes,article:article?.snapshot(),list:list?.snapshot(),cache:cache?.getStatus(),preparations:[...preparations],binds:[...binds],unbinds:[...unbinds],events:[...events],readbacks:[...readbacks],expectedFailures:[...expectedFailures],supersededUpdates:[...supersededUpdates],errors:[...errors],gateEntered,scopeState:scope?.state,inputState:input?.state};}
+export function inspect(){return {fontSet:currentFontSet?.key??null,fontSets:fontResources?.provider.getStatus(),fontSource:fontResources?.transport.source.getStatus(),fontLoader:fontResources?.transport.loader.getStatus(),state,backend,label,contentMode,effectMode,effectsEnabled,width,fontSize,minLineHeight:minLineHeight??null,density,revision,textAlign,maxLines:maxLines??null,providerCalls:calls,runtimeBytes,fontBytes,article:article?.snapshot(),list:list?.snapshot(),cache:cache?.getStatus(),preparations:[...preparations],binds:[...binds],unbinds:[...unbinds],events:[...events],readbacks:[...readbacks],expectedFailures:[...expectedFailures],supersededUpdates:[...supersededUpdates],errors:[...errors],gateEntered,scopeState:scope?.state,inputState:input?.state};}
 export function readback(){if(!lastPixels)throw Error('EXAMPLE_NO_READBACK');let bytes='';for(let i=0;i<lastPixels.length;i+=16384)bytes+=String.fromCharCode(...lastPixels.subarray(i,i+16384));return {width:1100,height:760,base64:btoa(bytes),label};}
 function assertReady(){if(state!=='ready')throw Error('EXAMPLE_NOT_READY');}
 export async function action(kind){
-  assertReady();if(pendingUpdate)throw Error('EXAMPLE_UPDATE_PENDING');
+  assertReady();if(pendingUpdate||pendingFont)throw Error('EXAMPLE_UPDATE_PENDING');
+  if(kind==='fonts'){await replaceFonts();return draw('fonts-replaced');}
   if(kind==='effects'){if(!effectsEnabled)throw Error('EXAMPLE_EFFECTS_DISABLED');const modes=['both','mask','blur','off'];effectMode=modes[(modes.indexOf(effectMode)+1)%modes.length];}
   else if(kind==='equipment')contentMode=contentMode==='equipment'?'plain':'equipment';
   else if(kind==='narrow')width=300;
@@ -164,8 +178,32 @@ export async function supersedeDelayedUpdate(){
   supersededUpdates.push({cancellation,committedRevision,afterLateRevision:afterLateResult.committedRevision,oldProviderSettled:true});
   return draw('new-width-supersedes-delayed-content');
 }
+/** Each replacement stages one root; other roots retain their independently selected set. */
+export function cancelFontReplacement(){
+  const record=pendingFont;if(!record)return;
+  pendingFont=undefined;record.cancelled=true;
+  if(record.staged){currentFontSet=record.previous;revision++;article.setTree(articleTree());}
+  record.scope.dispose();retireUnusedFonts();
+}
+export async function replaceFonts(){
+  assertReady();if(!fontResources||pendingUpdate)throw Error('EXAMPLE_FONT_REPLACEMENT');
+  cancelFontReplacement();retireUnusedFonts();
+  const record={scope:engine.createScope(),previous:currentFontSet,cancelled:false,staged:false};pendingFont=record;
+  const current=()=>pendingFont===record&&!record.cancelled&&state==='ready';
+  try{
+    const candidate=await fontResources.load(record.scope,!alternateFont);
+    if(!current())throw Error('EXAMPLE_FONT_CANCELLED');
+    fontScopes.set(candidate.key,{set:candidate,scope:record.scope});currentFontSet=candidate;record.staged=true;
+    revision++;article.setTree(articleTree());await publish(article,current);
+    alternateFont=!alternateFont;pendingFont=undefined;retireUnusedFonts();return inspect();
+  }catch(cause){
+    if(pendingFont===record)cancelFontReplacement();else record.scope.dispose();
+    throw cause;
+  }
+}
+
 export function close(){
-  if(closePromise)return closePromise;state='closing';delayGate?.resolve();
+  if(closePromise)return closePromise;cancelFontReplacement();state='closing';delayGate?.resolve();
   closePromise=(async()=>{
     const attempt=async action=>{try{await action();}catch(cause){errors.push(errorInfo(cause));}};
     window.removeEventListener('pagehide',onPageHide);
@@ -174,17 +212,20 @@ export function close(){
     await attempt(()=>article?.dispose());await attempt(()=>list?.dispose());
     await attempt(()=>pendingUpdate?.catch(cause=>{if(!['UI_CLOSED','UI_STALE','PARAGRAPH_CANCELLED','PARAGRAPH_STALE'].includes(cause?.code))throw cause;}));
     await attempt(()=>scope?.dispose());await attempt(()=>cache?.dispose());
-    await attempt(()=>host?.whenIdle());await attempt(()=>engine?.dispose());await attempt(()=>nativeProvider?.dispose());
+    await attempt(()=>host?.whenIdle());await attempt(()=>engine?.dispose());await attempt(()=>nativeProvider?.dispose?.());await attempt(()=>fontResources?.close());for(const record of fontScopes.values())await attempt(()=>record.scope?.dispose());fontScopes.clear();
     state='closed';describe();return inspect();
   })();return closePromise;
 }
 export const ready=(async()=>{
   const manifestResponse=await fetch(new URL('./vendor/manifest.json',import.meta.url));if(!manifestResponse.ok)throw Error('EXAMPLE_RUNTIME_MANIFEST_HTTP');const manifest=await manifestResponse.json();runtimeBytes=manifest.payloadBytes.runtime;if(!Number.isSafeInteger(runtimeBytes)||runtimeBytes<1)throw Error('EXAMPLE_RUNTIME_MANIFEST');
-  const fonts=await Promise.all(fontInputs.map(checkedFont));
+  const fonts=fontConfig?undefined:await Promise.all(fontInputs.map(checkedFont));
   const canvasKit=await globalThis.CanvasKitInit({locateFile:()=>new URL('./vendor/runtime/layout-r1/canvaskit.wasm',import.meta.url).href});
-  nativeProvider=createCanvasKitParagraphProvider({canvasKit,fonts,buildIdentity:manifest.runtime.buildIdentity});
+  host=(backend==='webgpu'?createSharedWebGPUHost:createSharedWebGL2Host)({canvas,pixelRatio:1,outputAlpha:'opaque',enableReadback:true,enableEffects:effectsEnabled});
+  engine=await createEngineForProfile({host},'egret.shared-frame2d/1');scope=engine.createScope();
+  if(fontConfig){fontResources=await openFontResources(engine,scope,canvasKit,manifest.runtime.buildIdentity,fontConfig);currentFontSet=fontResources.current;fontScopes.set(currentFontSet.key,{set:currentFontSet});nativeProvider=fontResources.provider;}
+  else nativeProvider=createCanvasKitParagraphProvider({canvasKit,fonts,buildIdentity:manifest.runtime.buildIdentity});
   // Example-only gates test real paragraph completion, not a synthetic text renderer.
-  const provider={identity:nativeProvider.identity,capabilities:nativeProvider.capabilities,async prepare(request,context){
+  const provider={identity:nativeProvider.identity,capabilities:nativeProvider.capabilities,...(fontConfig?{hasFontSet:key=>nativeProvider.hasFontSet(key)}:{}),async prepare(request,context){
     calls++;
     const delayed=delayGate&&!delayGate.claimed&&request.text.includes(delayGate.token)?delayGate:undefined;
     if(delayed){delayed.claimed=true;gateEntered=true;await delayed.promise;}
@@ -193,13 +234,13 @@ export const ready=(async()=>{
       return await nativeProvider.prepare(request,context);
     }finally{delayed?.complete();}
   }};
-  host=(backend==='webgpu'?createSharedWebGPUHost:createSharedWebGL2Host)({canvas,pixelRatio:1,outputAlpha:'opaque',enableReadback:true,enableEffects:effectsEnabled});
-  engine=await createEngineForProfile({host},'egret.shared-frame2d/1');scope=engine.createScope();
+
   if(effectsEnabled){
     const type=createAssetType('paragraph-effect-mask',isTexture);
     engine.assets.register(type,{async load(){const pixels=new Uint8Array(64*4);for(let i=0;i<64;i++)pixels.set([255,255,255,Math.min(255,Math.round((63-i)*255/16))],i*4);return createTexture(createImageData2D({width:64,height:1,pixels}));},dispose(texture){texture.dispose();}});
     const lease=scope.use(await engine.assets.acquire(createAssetRef(type,'fade-right'),{signal:scope.signal}));effectMask=scope.use(new Bitmap(lease));
   }
+  document.querySelector('[data-action="fonts"]').hidden=!fontConfig;
   const effectButton=document.querySelector('[data-action="effects"]');if(effectButton)effectButton.hidden=!effectsEnabled;
   // The demo keeps old and replacement article/list rasters together at DPR 2. Product defaults stay unchanged.
   cache=createParagraphCache(engine.assets,{provider,maxImageBytes:33554432});
@@ -215,4 +256,4 @@ for(const button of document.querySelectorAll('[data-action]')){
 }
 function onPageHide(){void close();}
 window.addEventListener('pagehide',onPageHide,{once:true});
-globalThis.__egretParagraphPanel=Object.freeze({ready,inspect,readback,action,beginDelayedUpdate,pendingFrame,finishDelayedUpdate,supersedeDelayedUpdate,close});
+globalThis.__egretParagraphPanel=Object.freeze({ready,inspect,readback,action,beginDelayedUpdate,pendingFrame,finishDelayedUpdate,supersedeDelayedUpdate,replaceFonts,cancelFontReplacement,close});

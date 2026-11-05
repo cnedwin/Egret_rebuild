@@ -51,6 +51,7 @@ function producerValue(value:JsonValue|undefined):JsonObject {const p=object(val
 function reserved(options:JsonObject,producer:JsonObject,format:string,kind:string):JsonObject {return {recipeSchemaVersion:1,options,producer,outputFormatVersion:format,referenceFormatVersion:kind==='image'?'rgba8/1':'none'};}
 function profile(importer:JsonValue|undefined,format:JsonValue|undefined,settings:JsonValue|undefined):{kind:string;options:JsonObject} {
   const i=object(importer,['id','version']);if(i.version!=='1.0.0')fail('Unsupported content importer version.');
+  if(i.id==='egret.font'&&format==='egret.font/1'){const options=object(settings,['family','flavor']);const family=text(options.family);if(family.length>256||/[\u0000-\u001f\u007f]/u.test(family)||!['truetype','opentype'].includes(text(options.flavor)))fail('Font family or standalone SFNT flavor is invalid.');return {kind:'font',options};}
   if(i.id==='egret.png'&&format==='png/1')return {kind:'image',options:object(settings,[])};
   if(i.id==='egret.sequence'&&format==='egret.sequence/1')return {kind:'sequence',options:object(settings,[])};
   if(i.id==='egret.atlas-pages'&&format==='egret.atlas-pages/1')return {kind:'atlas',options:object(settings,[])};
@@ -77,7 +78,7 @@ function describe(snapshot:ProjectSnapshot,recipeData:JsonValue,producer:JsonObj
   const plan=shared(validateResourceBuildPlanDescription({format:'egret.resource-build-plan/1',projectId:snapshot.projectId,targetProfile:target,versions:snapshot.versions,entries}));
   const byId=new Map(plan.entries.map(e=>[e.id,e]));
   for(const e of plan.entries){
-    if(e.resourceKind==='image'){if(e.dependencies.length!==0)fail('PNG recipes cannot have dependencies.');}
+    if(e.resourceKind==='image'||e.resourceKind==='font'){if(e.dependencies.length!==0)fail('Image/font recipes cannot have dependencies.');}
     else if(e.importer.id==='egret.atlas-pages') {
       if(e.dependencies.length<1||e.dependencies.length>16||e.dependencies.some(id=>byId.get(id)?.resourceKind!=='image'))fail('Multipage atlas recipes need one to sixteen image dependencies.');
     } else {
@@ -121,7 +122,7 @@ function bind(snapshot:ProjectSnapshot,plan:ResourceBuildPlanDescription,raw:Jso
   const files=new Map<string,ProjectFile>(),bound:ContentBoundOutput[]=[],entities:ProjectEntity[]=[];
   const entries=keys.entries.map(e=>{
     const output=byId.get(e.id);if(!output||output.buildKey!==e.buildKey)fail('Output resource or build key does not match the shared evaluated plan.');
-    const wanted=e.resourceKind==='image'?{primary:'image/png',rgba:'application/octet-stream'}:{primary:'application/json'};
+    const wanted=e.resourceKind==='image'?{primary:'image/png',rgba:'application/octet-stream'}:e.resourceKind==='font'?{primary:(e.settings.options as JsonObject).flavor==='truetype'?'font/ttf':'font/otf'}:{primary:'application/json'};
     const actual=list(output.files);if(actual.length!==Object.keys(wanted).length)fail('The complete registered output set is required.');
     const named=new Map<string,ProjectFile>();
     for(const rawFile of actual){const f=object(rawFile,['name','mediaType','sha256','byteLength']),name=text(f.name);if(named.has(name)||!Object.hasOwn(wanted,name)||f.mediaType!==wanted[name as keyof typeof wanted])fail('Content output role or media type is unsupported.');byteDescriptor(f);outputBytes+=f.byteLength as number;if(outputBytes>134217728)fail('Complete content outputs exceed 128 MiB.');

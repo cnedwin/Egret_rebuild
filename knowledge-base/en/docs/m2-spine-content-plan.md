@@ -175,3 +175,5 @@ The optional player now supports ordered outfit composition with `setSkins(names
 The optional player also admits bounded finite total plays with `plays`, committed progress and residual-time queue transitions. See [finite playback](spine-content-ingress.md#finite-total-plays). This is a bounded M2.2 increment; complete selected-version semantics, seek and M2.4 replacement/recovery remain open.
 
 The [prepared display subtree](prepared-display-subtree.md) supplies the bounded M2.4 CPU prerequisite: genuine candidate capture without changing the live Stage and callback-free child publication. Host upload/submit and device generation remain separate. The Spine RESET wrapper, event/clock policy, state-preserving replacement and full M2.4 acceptance remain open.
+
+The [font resource and generation contract](font-resource-generations.md) connects M2.1 font artifacts to M3.2 readonly UI through the existing manager, cache and Scope. Fixed-font APIs remain supported; failed or cancelled replacement preserves committed content. This bounded increment does not close the remaining M2.1/M3.2 qualifications.

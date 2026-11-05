@@ -7,7 +7,7 @@ import type { NativeGeometryParagraph } from './canvasKitParagraphGeometry.js';
 import type { ParagraphProvider, ParagraphRaster, ParagraphRequest } from '@egret/engine/paragraph';
 
 interface NativeOwned { delete(): void; }
-interface NativeTypeface extends NativeOwned {}
+export interface NativeTypeface extends NativeOwned {}
 interface NativeFontProvider extends NativeOwned { _registerFont(face: NativeTypeface, alias: number): void; }
 interface NativeLine {
     readonly left?: number;
@@ -60,7 +60,7 @@ interface NativeSurface { getCanvas(): NativeCanvas; flush(): void; dispose(): v
 
 /** Minimal host-injected CanvasKit port. The adapter performs no module loading. */
 export interface CanvasKitParagraphModule {
-    readonly Typeface: { MakeTypefaceFromData(bytes: Uint8Array): NativeTypeface | null };
+    readonly Typeface: { MakeTypefaceFromData(bytes: Uint8Array): NativeTypeface | null; _MakeTypefaceFromData?(pointer:number,length:number): NativeTypeface | null };
     readonly TypefaceFontProvider: { Make(): NativeFontProvider | null };
     readonly ParagraphBuilder: { readonly prototype?: {readonly pushStyle?: unknown; readonly pop?: unknown}; MakeFromFontProvider(style: object, fonts: NativeFontProvider): NativeBuilder | null };
     readonly ParagraphStyle: new (style: object) => object;
@@ -233,7 +233,36 @@ function clusterPaint(source: StyledSource, shaped: readonly NativeShapedLine[])
  * Hosts select a qualified native build; final-line and layout controls share its glyph plan.
  * No private qualification snapshot or its 1024-byte/16-line envelope is used.
  */
+/** Internal capability port shared by fixed and generation-aware adapters. */
+export function canvasKitParagraphCapabilities(ck:CanvasKitParagraphModule) {
+    const alignments={right:ck.TextAlign.Right,center:ck.TextAlign.Center,justify:ck.TextAlign.Justify};
+    return Object.freeze({
+        styledRuns: typeof ck.TextStyle === 'function' && typeof ck.ParagraphBuilder.prototype?.pushStyle === 'function' && typeof ck.ParagraphBuilder.prototype?.pop === 'function'
+            && typeof ck.Paragraph?.prototype?.getShapedLines === 'function',
+        textGeometry: typeof ck.Paragraph?.prototype?.getGlyphInfoAt === 'function',
+        textAlign: alignments.right !== undefined && alignments.center !== undefined && alignments.justify !== undefined,
+        maxLines: ck.EgretParagraphLayoutVersion === 1 && typeof ck.Paragraph?.prototype?.didExceedMaxLines === 'function'
+            && typeof ck.Paragraph?.prototype?.hasLineEllipsis === 'function',
+    });
+}
+
 export function createCanvasKitParagraphProvider(options: CanvasKitParagraphProviderOptions): CanvasKitParagraphProvider {
+    return createCanvasKitParagraphProviderOwned(options);
+}
+/** Internal native ownership port; the public fixed-font API is unchanged. */
+export interface NativeFontBorrow {readonly face:NativeTypeface;release():void;}
+/** CanvasKit's raw binding takes ownership of the allocation, including a null decode result. */
+export function decodeCanvasKitFont(ck:CanvasKitParagraphModule,data:Uint8Array):NativeTypeface|null {
+    const decode=ck.Typeface._MakeTypefaceFromData;
+    if(typeof decode!=='function')return ck.Typeface.MakeTypefaceFromData(data);
+    const pointer=ck._malloc(data.byteLength);
+    // The bundled convenience wrapper writes at zero on malloc failure. Never call it on this path.
+    if(!Number.isSafeInteger(pointer)||pointer<=0)throw new EgretError('PARAGRAPH_FONT_ALLOCATION_REFUSED');
+    try{if(pointer+data.byteLength>ck.HEAPU8.byteLength)throw new EgretError('PARAGRAPH_FONT_ALLOCATION_REFUSED');ck.HEAPU8.set(data,pointer);}
+    catch(cause){ck._free(pointer);throw cause;}
+    return decode.call(ck.Typeface,pointer,data.byteLength);
+}
+export function createCanvasKitParagraphProviderOwned(options:CanvasKitParagraphProviderOptions,borrowFont?:(font:CanvasKitParagraphFont)=>NativeFontBorrow):CanvasKitParagraphProvider {
     const ck = options.canvasKit;
     const supplied = options.fonts;
     if (!Array.isArray(supplied) || supplied.length < 1 || supplied.length > 16) throw new RangeError('Paragraph font count');
@@ -256,14 +285,7 @@ export function createCanvasKitParagraphProvider(options: CanvasKitParagraphProv
     // Capture enum ports before publication; prepare never invokes late enum getters.
     const alignments = Object.freeze({left: ck.TextAlign.Left, right: ck.TextAlign.Right,
         center: ck.TextAlign.Center, justify: ck.TextAlign.Justify});
-    const capabilities = Object.freeze({
-        styledRuns: typeof ck.TextStyle === 'function' && typeof ck.ParagraphBuilder.prototype?.pushStyle === 'function' && typeof ck.ParagraphBuilder.prototype?.pop === 'function'
-            && typeof ck.Paragraph?.prototype?.getShapedLines === 'function',
-        textGeometry: typeof ck.Paragraph?.prototype?.getGlyphInfoAt === 'function',
-        textAlign: alignments.right !== undefined && alignments.center !== undefined && alignments.justify !== undefined,
-        maxLines: ck.EgretParagraphLayoutVersion === 1 && typeof ck.Paragraph?.prototype?.didExceedMaxLines === 'function'
-            && typeof ck.Paragraph?.prototype?.hasLineEllipsis === 'function',
-    });
+    const capabilities = canvasKitParagraphCapabilities(ck);
     const identity = 'egret.canvaskit-paragraph.v4:' + JSON.stringify([options.buildIdentity ?? 'host-module-' + moduleIdentity, inputs.map(font => [font.family, font.identity]), capabilities.textAlign, capabilities.maxLines, capabilities.textGeometry, capabilities.styledRuns]);
     if (identity.length > 8192) throw new RangeError('Paragraph combined provider identity limit exceeded');
     const roots: NativeOwned[] = [];
@@ -300,12 +322,14 @@ export function createCanvasKitParagraphProvider(options: CanvasKitParagraphProv
         if (created === null) throw new EgretError('PARAGRAPH_FONT_PROVIDER_REFUSED');
         fontProvider = created; roots.push(created);
         for (const font of inputs) {
-            const face = native(() => ck.Typeface.MakeTypefaceFromData(font.data));
+            const borrowed=borrowFont===undefined?undefined:native(()=>borrowFont(font));
+            const face = borrowed===undefined?native(() => decodeCanvasKitFont(ck,font.data)):borrowed.face;
             if (face === null) throw new EgretError('PARAGRAPH_FONT_DECODE_REFUSED');
-            roots.push(face);
+            roots.push(borrowed===undefined?face:{delete:()=>borrowed.release()});
             const alias = new TextEncoder().encode(font.family + '\0');
             const pointer = native(() => ck._malloc(alias.byteLength));
-            if (!Number.isSafeInteger(pointer) || pointer <= 0 || pointer + alias.byteLength > ck.HEAPU8.byteLength) {
+            if(pointer===0)throw new EgretError('PARAGRAPH_FONT_ALLOCATION_REFUSED');
+            if (!Number.isSafeInteger(pointer) || pointer < 0 || pointer + alias.byteLength > ck.HEAPU8.byteLength) {
                 fatal = true;
                 throw new EgretError('PARAGRAPH_FONT_ALLOCATION_TERMINAL');
             }
@@ -318,8 +342,8 @@ export function createCanvasKitParagraphProvider(options: CanvasKitParagraphProv
         try { retire(roots); } catch { /* Keep the original initialization refusal. */ }
         throw cause;
     }
-    // Native streams now own the decoded font copies. No input byte arrays are
-    // retained by the returned provider; the face roots remain explicitly owned.
+    // Native streams own decoded bytes. A shared owner may retain a comparison
+    // copy; this provider owns only its native face borrows and releases them.
     inputs.length = 0;
     const check = (signal: CancellationSignal): void => {
         if (closed) throw new EgretError('PARAGRAPH_PROVIDER_DISPOSED');

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Egret paragraphs and UI / 白鹭段落与界面</title>
   <link rel="icon" href="data:,">
-  <script type="importmap">{"imports":{"@egret/engine":"/packages/engine/dist/index.js","@egret/engine/ui":"/packages/engine/dist/ui/index.js","@egret/engine/paragraph":"/packages/engine/dist/paragraph.js","@egret/engine/web/paragraph":"/packages/engine/dist/web/paragraph.js","@egret/engine/web/pointer":"/packages/engine/dist/web/pointer.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/engine/webgl2":"/packages/engine/dist/web/webgl2.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/runtime/ui":"/packages/runtime/dist/ui/index.js","@egret/runtime/text":"/packages/runtime/dist/text/index.js","@egret/runtime/paragraph":"/packages/runtime/dist/paragraph/index.js","@egret/runtime/input":"/packages/runtime/dist/input/index.js","@egret/contracts":"/packages/contracts/dist/index.js","@egret/contracts/resources":"/packages/contracts/dist/resources/index.js","#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-pointer-input":"/packages/engine/dist/pointerInput.js","robust-predicates":"/vendor/robust-predicates/index.js"}}</script>
+  <script type="importmap">{"imports":{"@egret/engine":"/packages/engine/dist/index.js","@egret/engine/resources":"/packages/engine/dist/resources.js","@egret/engine/web/resources":"/packages/engine/dist/web/resources.js","#egret-manifest-resources":"/packages/engine/dist/manifestResourceState.js","@egret/engine/ui":"/packages/engine/dist/ui/index.js","@egret/engine/paragraph":"/packages/engine/dist/paragraph.js","@egret/engine/web/paragraph":"/packages/engine/dist/web/paragraph.js","@egret/engine/web/pointer":"/packages/engine/dist/web/pointer.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/engine/webgl2":"/packages/engine/dist/web/webgl2.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/runtime/ui":"/packages/runtime/dist/ui/index.js","@egret/runtime/text":"/packages/runtime/dist/text/index.js","@egret/runtime/paragraph":"/packages/runtime/dist/paragraph/index.js","@egret/runtime/input":"/packages/runtime/dist/input/index.js","@egret/contracts":"/packages/contracts/dist/index.js","@egret/contracts/resources":"/packages/contracts/dist/resources/index.js","#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-pointer-input":"/packages/engine/dist/pointerInput.js","robust-predicates":"/vendor/robust-predicates/index.js"}}</script>
   <script src="./vendor/runtime/layout-r1/canvaskit.js"></script>
   <style>
     * {box-sizing:border-box;}
@@ -29,6 +29,7 @@
     <div class="scene"><canvas id="scene" width="1100" height="760" aria-label="Engine-rendered multilingual paragraphs and variable-height list / Engine 渲染的多语言段落与可变高度列表"></canvas></div>
     <p><a href="?content=equipment&amp;effects=1">Equipment masks and blur / 装备遮罩与模糊</a></p>
     <div class="controls">
+      <button data-action="fonts" hidden>Replace article fonts / 替换文章字体</button>
       <button data-action="effects" hidden>Mask / blur / off · 遮罩／模糊／关闭</button>
       <button data-action="equipment">Equipment styles / 装备说明样式</button>
       <button data-action="narrow">Narrow / 窄列</button>

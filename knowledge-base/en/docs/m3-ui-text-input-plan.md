@@ -289,4 +289,6 @@ The styled-run increment now includes an equipment-description example in the ex
 
 The [shared UI effect increment](shared-ui-effects.md) adds opt-in Alpha masks and bounded separable blur on both shared backends, with existing paragraph/UI integration and pooled lifetime. It advances M3.4 / #90 without altering touch work or closing the remaining control, device and performance rows.
 
+The [font resource and generation contract](font-resource-generations.md) connects M2.1 font artifacts to M3.2 readonly UI through the existing manager, cache and Scope. Fixed-font APIs remain supported; failed or cancelled replacement preserves committed content. This bounded increment does not close the remaining M2.1/M3.2 qualifications.
+
 The [UI theme generation slice](ui-theme-generations.md) now composes bounded immutable colors, spacing, typography and skin names with the genuine UiRoot prepare/commit domain. It preserves latest intent, old presentation on failure and stable scroll anchors; paint-only switches reuse committed layout. This does not close the remaining controls, semantic, font/script, touch, accessibility or device rows.

@@ -30,6 +30,8 @@ Callback reentry is governed by the existing revision and ownership checks. Dire
 
 ## Example and verification boundaries
 
-The existing [UI data panel](../../../examples/ui-data-panel/README.md) adds dark/light paint variants, larger typography/row metrics, image-skin selection, delayed success, rejection, cancellation and supersession. The second panel stays independent. The same checked PNG, font, typed asset loader, pointer channel and shared rendering hosts are retained.
+The existing [UI data panel](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-data-panel/README.md) adds dark/light paint variants, larger typography/row metrics, image-skin selection, delayed success, rejection, cancellation and supersession. The second panel stays independent. The same checked PNG, font, typed asset loader, pointer channel and shared rendering hosts are retained.
 
 Focused public behavior tests cover immutable admission, genuine identity, no-layout paint publication, changed-height refusal, failure/stale/late ownership, ordinary edits, anchor preservation and cleanup diagnostics. Strict positive and seven unsuppressed negative cases cover the optional entry and readonly branded contract. The example collector freezes its full input closure and checks literal pixels, geometry, planner counters, actual mouse behavior and shutdown on both shared backends. Local results, complete gates, independent review and PR/main delivery are separate statuses; physical touch, accessibility, full control states and font/script qualification remain open.
+
+The [theme verification summary](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-data-panel/theme-verification-summary.json) records observed inputs, focused and strict checks, both browser backends and the remaining delivery boundaries.

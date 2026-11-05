@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/ui/theme.ts",
+      "originRole": "Independently authored first-party bounded UI theme generations, existing Scope-based skin preparation, public behavior controls and bilingual evidence projection; AI-assisted; Apache-2.0. Reuses existing attributed assets and adds no dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-theme.test.mjs",
+      "originRole": "Independently authored first-party bounded UI theme generations, existing Scope-based skin preparation, public behavior controls and bilingual evidence projection; AI-assisted; Apache-2.0. Reuses existing attributed assets and adds no dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/ui-theme-generations.md",
+      "originRole": "Independently authored first-party bounded UI theme generations, existing Scope-based skin preparation, public behavior controls and bilingual evidence projection; AI-assisted; Apache-2.0. Reuses existing attributed assets and adds no dependency."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/ui-theme-generations.md",
+      "originRole": "Independently authored first-party bounded UI theme generations, existing Scope-based skin preparation, public behavior controls and bilingual evidence projection; AI-assisted; Apache-2.0. Reuses existing attributed assets and adds no dependency."
+    },
+    {
+      "path": "examples/ui-data-panel/theme-verification-summary.json",
+      "originRole": "Independently authored first-party bounded UI theme generations, existing Scope-based skin preparation, public behavior controls and bilingual evidence projection; AI-assisted; Apache-2.0. Reuses existing attributed assets and adds no dependency."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/ui-theme-generations.md",
+      "zh": "knowledge-base/Cns/docs/ui-theme-generations.md"
+    }
+  ]
+}
