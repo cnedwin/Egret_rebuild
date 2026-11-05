@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "f3a6f3707ed119d9903440b4a5539dd3a9a7a2c96e29055cdc5a8c11fac34f8f",
+      "sha256": "79828044dfc5cf705da2accc5a5ff34e5d2d6262519880c1682e889543a81dd3",
       "bytes": 380778,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1146034,
-      "sha256": "5d0f281377ca7a3c12d689037ad4ebeb0977d5c72e8f6a18891aca56a0958326"
+      "bytes": 1169134,
+      "sha256": "54adcd2e8b389603dc0223f3664b7a4d054a2ac747e9d3df57e4940c9e80b159"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10688,8 +10688,8 @@
     {
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 45638,
-      "sha256": "15d1de28e272b40a712d6a275badfce7ba4f02ec3a558fb2706956a3915a7a6f"
+      "bytes": 46864,
+      "sha256": "d50c8eeb528449f18a731b9d0f4b3855666589aa3b68b0fbe57aef70fc1a755f"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -10718,8 +10718,8 @@
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
       "originRole": "First-party M0 registered compiler input review workflow; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 235611,
-      "sha256": "8d00cbabc94e436d9cb1941b5bfb6981cd0986f2dceaa99b97d4fc24bc62400d"
+      "bytes": 239473,
+      "sha256": "10b73e76d90f19aa3cdb0c56c5b9ed7cfeafeb1fc65e90848a773ce064092356"
     },
     {
       "path": "knowledge-base/en/docs/m1-rendering-resource-plan.md",

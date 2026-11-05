@@ -3834,7 +3834,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "5d0f281377ca7a3c12d689037ad4ebeb0977d5c72e8f6a18891aca56a0958326"
+      "sha256": "54adcd2e8b389603dc0223f3664b7a4d054a2ac747e9d3df57e4940c9e80b159"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3862,7 +3862,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "15d1de28e272b40a712d6a275badfce7ba4f02ec3a558fb2706956a3915a7a6f"
+      "sha256": "d50c8eeb528449f18a731b9d0f4b3855666589aa3b68b0fbe57aef70fc1a755f"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -3870,7 +3870,7 @@
     },
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
-      "sha256": "8d00cbabc94e436d9cb1941b5bfb6981cd0986f2dceaa99b97d4fc24bc62400d"
+      "sha256": "10b73e76d90f19aa3cdb0c56c5b9ed7cfeafeb1fc65e90848a773ce064092356"
     },
     {
       "path": "packages/engine/web/webgpuBindingCache.ts",
