@@ -2645,7 +2645,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "76748e4098bf9ed9d460570e460d5d8a05cf7378b470aab2a1c093c9606be93b"
+      "sha256": "e41d8caf770118af622ea403f2e49507f5ad5eb46522b65a0d610b002290c9f4"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2657,7 +2657,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "b4a93172c5ea872aeaad20b48b10642d32108d5fdc48284aa71b0637c1baef3b"
+      "sha256": "bc0504588982d77a97323b1ab875916f58db71f23fe6e565329c03a5d329e61b"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -3067,7 +3067,7 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "900b00d891d0b0ec3db2da80974ea131c82a067e9d9f64947ba6b741b0821470"
+      "sha256": "bccf5909b0feb2430d74f3fe4222c0baa8205705de4085524bd825cf9a01121e"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
