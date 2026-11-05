@@ -38,11 +38,11 @@ export async function buildContentProject({projectStore,projectRoot,recipe,cache
     checkCancellation(signal);
     if(file.path===outputPrefix||file.path.startsWith(outputPrefix+'/'))throw failure('CONTENT_BUILD_INPUT','Generated output cannot own source files.');
     sourceBytes=boundedSum(sourceBytes,file.byteLength,SOURCE_BUDGET,'Verified source bytes');
-    const bytes=readContentInput(projectRoot,file.path,{expectedLength:file.byteLength,expectedSha256:file.sha256,maximum:8388608});
+    const bytes=readContentInput(projectRoot,file.path,{expectedLength:file.byteLength,expectedSha256:file.sha256,maximum:plan.entries.filter(entry=>entry.source.id===file.id).every(entry=>entry.resourceKind==='font')?33554432:8388608});
     sources.set(id,bytes);await yieldTask();
   }
   try{
-    checkCancellation(signal);cache=openContentStore(cacheRoot);output=samePhysicalPath(cacheRoot,outputRoot)?cache:openContentStore(outputRoot);
+    checkCancellation(signal);const storeOptions=plan.entries.some(entry=>entry.resourceKind==='font')?{profile:'font-sfnt/1'}:{};cache=openContentStore(cacheRoot,storeOptions);output=samePhysicalPath(cacheRoot,outputRoot)?cache:openContentStore(outputRoot,storeOptions);
     const ordered=[],seen=new Set();
     function visit(entry){if(seen.has(entry.id))return;seen.add(entry.id);for(const id of entry.dependencies)visit(byId.get(id));ordered.push(entry);}
     for(const entry of keys.entries)visit(entry);
@@ -77,7 +77,7 @@ export async function buildContentProject({projectStore,projectRoot,recipe,cache
     const transaction=checked(createContentAdoption(snapshot,binding,{generationId,manifest:manifestDescriptor,outputPrefix,selectorId,transactionId}));
     for(const file of sourceFiles.values()){
       checkCancellation(signal);
-      readContentInput(projectRoot,file.path,{expectedLength:file.byteLength,expectedSha256:file.sha256,maximum:8388608});
+      readContentInput(projectRoot,file.path,{expectedLength:file.byteLength,expectedSha256:file.sha256,maximum:plan.entries.filter(entry=>entry.source.id===file.id).every(entry=>entry.resourceKind==='font')?33554432:8388608});
     }
     checkCancellation(signal);
     ready=output.publishGeneration(generation,manifestBytes);

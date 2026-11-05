@@ -607,8 +607,21 @@ const m34SourceModuleLimit = 143;
 assert.equal(m34EffectModuleSuccessors.size,9);assert.equal(m34EffectModuleAdditions.size,3);
 for(const name of m34EffectModuleSuccessors.keys())assert.ok(m24ModuleIdentities.has(name));
 for(const name of m34EffectModuleAdditions.keys())assert.ok(!m24ModuleIdentities.has(name));
-const currentModuleIdentities = new Map([...m24ModuleIdentities,...m34EffectModuleSuccessors,...m34EffectModuleAdditions]);
-assert.equal(currentModuleIdentities.size,m34SourceModuleLimit,'M3.4 current closure table is incomplete');
+const m34ModuleIdentities = new Map([...m24ModuleIdentities,...m34EffectModuleSuccessors,...m34EffectModuleAdditions]);
+assert.equal(m34ModuleIdentities.size,m34SourceModuleLimit,'M3.4 retained closure table is incomplete');
+// Font resource admission adds one explicit contract dependency; earlier pins remain provenance.
+const m3FontModuleSuccessors = new Map([
+  ["packages/contracts/dist/resources/index.js", { bytes: 405, sha256: "8e59e4f9bd0e2e6cb2acb6b10cfb075191eb646a1187a313ebc793f18a0690e5" }],
+]);
+const m3FontModuleAdditions = new Map([
+  ["packages/contracts/dist/resources/fontArtifact.js", { bytes: 2491, sha256: "b590b2d7dec7a167709205187dea34b0358f2d39186884f924f2ccbfa4eea306" }],
+]);
+const m3FontSourceModuleLimit = 144;
+assert.equal(m3FontModuleSuccessors.size,1);assert.equal(m3FontModuleAdditions.size,1);
+for(const name of m3FontModuleSuccessors.keys())assert.ok(m34ModuleIdentities.has(name));
+for(const name of m3FontModuleAdditions.keys())assert.ok(!m34ModuleIdentities.has(name));
+const currentModuleIdentities = new Map([...m34ModuleIdentities,...m3FontModuleSuccessors,...m3FontModuleAdditions]);
+assert.equal(currentModuleIdentities.size,m3FontSourceModuleLimit,'Font resources current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {
   assert.deepEqual([...served.keys()].map(url => url.slice(1)).sort(), [...currentModuleIdentities.keys()].sort(),
@@ -669,7 +682,7 @@ async function collect(name) {
   const url = '/' + name; if (served.has(url)) return;
   assert.ok(allowedModules.has(name), `Unapproved public native dependency: ${name}`);
   assert.ok(currentModuleIdentities.has(name), `Unapproved current native dependency: ${name}`);
-  assert.ok(served.size < m34SourceModuleLimit, 'Finite emitted closure exceeded');
+  assert.ok(served.size < m3FontSourceModuleLimit, 'Finite emitted closure exceeded');
   const path = resolve(repository, name), physical = await realpath(path);
   assert.ok(physical.startsWith(repository + sep), 'Selected dependency escaped repository');
   const body = await readFile(physical); assert.ok(body.length <= 1024 * 1024);
@@ -767,7 +780,7 @@ try {
   assert.equal(currentHost.sha256, m34EffectHostSourceSuccessor.sha256);
   report.publicRoute = { entries: entryNames.slice(0, 3), packageExports: { './scene3d': packageExports['./scene3d'], './webgpu/scene3d': packageExports['./webgpu/scene3d'] },
     hostSource: currentHost, historicalM12HostSource, m13HostSourceSuccessor, m15HostSourceSuccessor, m12PerformanceHostSourceSuccessor, m24RecoveryHostSourceSuccessor, m34EffectHostSourceSuccessor,
-    sourceCollection: { historicalModuleLimit: historicalSourceModuleLimit, m15ModuleLimit: m15SourceModuleLimit, m31ModuleLimit: m31SourceModuleLimit, m22ModuleLimit: m22SourceModuleLimit, currentModuleLimit: m34SourceModuleLimit, exactModules: [...currentModuleIdentities].map(([path, value]) => ({ path, ...value })) }, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
+    sourceCollection: { historicalModuleLimit: historicalSourceModuleLimit, m15ModuleLimit: m15SourceModuleLimit, m31ModuleLimit: m31SourceModuleLimit, m22ModuleLimit: m22SourceModuleLimit, m34ModuleLimit: m34SourceModuleLimit, currentModuleLimit: m3FontSourceModuleLimit, exactModules: [...currentModuleIdentities].map(([path, value]) => ({ path, ...value })) }, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
   const emitted = [...served.values()].reduce((sum, value) => sum + value.body.length, 0); assert.ok(emitted <= 4 * 1024 * 1024);
   // Bind matching first-party source files without scanning unrelated repository files.
   for (const url of served.keys()) {

@@ -90,3 +90,6 @@ export function createManifestContentLoader(engine: Engine, manifest: AdmittedRe
     });
     return facade;
 }
+
+export {createManifestFontContentLoader} from './ManifestFontContentLoader.js';
+export type {ManifestFontContentLoader} from './ManifestFontContentLoader.js';

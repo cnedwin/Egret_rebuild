@@ -77,7 +77,9 @@ export function snapshotParagraphRequest(input: ParagraphRequestInput): Paragrap
     else if (unit >= 0xdc00 && unit <= 0xdfff) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
   }
   const styled = runs(input.runs, source);
-  return Object.freeze({text: source, width, fontFamilies, fontSize, ...(lineHeight === undefined ? {} : {lineHeight}), locale, direction, fillColor, density, ...(textAlign === undefined ? {} : {textAlign}), ...(maxLines === undefined ? {} : {maxLines}), ...(textGeometry?{textGeometry:true}:{}), ...(styled === undefined ? {} : {runs: styled})});
+  const authoredFontSet=input.fontSet;
+  const fontSet=authoredFontSet===undefined?undefined:text(authoredFontSet,256);
+  return Object.freeze({...(fontSet===undefined?{}:{fontSet}),text: source, width, fontFamilies, fontSize, ...(lineHeight === undefined ? {} : {lineHeight}), locale, direction, fillColor, density, ...(textAlign === undefined ? {} : {textAlign}), ...(maxLines === undefined ? {} : {maxLines}), ...(textGeometry?{textGeometry:true}:{}), ...(styled === undefined ? {} : {runs: styled})});
 }
 /** Own public metrics; provider memory or mutable arrays never become committed UI state. */
 export function snapshotParagraphRaster(value: ParagraphRaster, request: ParagraphRequest): ParagraphRaster {

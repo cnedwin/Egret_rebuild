@@ -4,3 +4,6 @@ export type {
     CanvasKitParagraphModule, CanvasKitParagraphFont, CanvasKitParagraphProvider,
     CanvasKitParagraphProviderOptions,
 } from './CanvasKitParagraphProvider.js';
+
+export {createCanvasKitFontSetProvider} from './CanvasKitFontSetProvider.js';
+export type {CanvasKitFontSetProvider,CanvasKitFontSetProviderOptions,ParagraphFontSet} from './CanvasKitFontSetProvider.js';

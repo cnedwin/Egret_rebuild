@@ -20,7 +20,8 @@ export function createExampleServer(repository=root){
   // The public example uses the same pinned owner through a short import-map alias.
   if(relative.startsWith('vendor/robust-predicates/'))relative=dependency+relative.slice('vendor/robust-predicates/'.length);
   // Only this example's generated manifest/artifact layout is exposed under work.
-  const allowed=relative==='tools/shared-rendering/resource-recovery-observations.mjs'
+  const allowed=/^work\/font-resources\/run-[A-Za-z0-9]{6}\/(?:browser-config\.json|build\/generations\/[a-f0-9]{64}\/manifest\.json|build\/blobs\/sha256\/[a-f0-9]{64})$/.test(relative)
+   ||relative==='tools/shared-rendering/resource-recovery-observations.mjs'
    ||/^examples\/spine-reset\/(?:index\.html|main\.mjs|recovery-flow\.mjs|recovery-native\.mjs)$/.test(relative)
    ||/^work\/spine-reset\/(?:v1|v2)\/(?:manifest\.json|assets\/(?:body|head|atlas|character))$/.test(relative)
    ||/^examples\/prepared-subtree\/(?:index\.html|main\.mjs|scene\.mjs)$/.test(relative)
@@ -31,7 +32,7 @@ export function createExampleServer(repository=root){
    ||/^examples\/sequence-controls\/(?:index\.html|main\.mjs|selection\.mjs|fixture\.mjs)$/.test(relative)
    ||/^work\/sequence-controls\/run-[A-Za-z0-9]{6}\/(?:browser-config\.json|candidate\.json|build\/generations\/[a-f0-9]{64}\/manifest\.json|build\/blobs\/sha256\/[a-f0-9]{64})$/.test(relative)
    ||/^examples\/ui-data-panel\/(?:index\.html|main\.mjs|fixture\.mjs)$/.test(relative)
-   ||/^examples\/paragraph-panel\/(?:index\.html|main\.mjs|styled-copy\.mjs|effects-fixture\.(?:mjs|html)|verify-line-bidi\.mjs|README(?:\.zh-CN)?\.md|vendor\/(?:manifest\.json|runtime\/(?:(?:line-bidi-r1|layout-r1)\/)?canvaskit\.(?:js|wasm)|fonts\/[A-Za-z0-9_.-]+\.(?:ttf|otf)))$/.test(relative)
+   ||/^examples\/paragraph-panel\/(?:index\.html|main\.mjs|font-resources\.mjs|styled-copy\.mjs|effects-fixture\.(?:mjs|html)|verify-line-bidi\.mjs|README(?:\.zh-CN)?\.md|vendor\/(?:manifest\.json|runtime\/(?:(?:line-bidi-r1|layout-r1)\/)?canvaskit\.(?:js|wasm)|fonts\/[A-Za-z0-9_.-]+\.(?:ttf|otf)))$/.test(relative)
    ||/^examples\/paragraph-geometry\/(?:index\.html|main\.mjs|README(?:\.zh-CN)?\.md)$/.test(relative)
    ||/^examples\/atlas-pages\/(?:index\.html|main\.mjs|selection\.mjs|fixture\.mjs|README(?:\.zh-CN)?\.md)$/.test(relative)
    ||/^work\/atlas-pages\/run-[A-Za-z0-9]{6}\/(?:browser-config\.json|candidate\.json|build\/generations\/[a-f0-9]{64}\/manifest\.json|build\/blobs\/sha256\/[a-f0-9]{64})$/.test(relative)

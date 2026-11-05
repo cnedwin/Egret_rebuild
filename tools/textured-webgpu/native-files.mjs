@@ -119,14 +119,14 @@ export function resolveSelected(specifier,parent,mode,map){const selectedPrefix=
     requirePolicy(url.startsWith(prefix)&&!url.includes('%'),'RELATIVE_MODULE_ESCAPE',{parent,specifier,url});return url;}
   requirePolicy(Object.hasOwn(effective,specifier),'BARE_IMPORT_UNKNOWN',{parent,specifier});return effective[specifier];
 }
-// M3.4 adds three eager effect modules to the M2.4 closure; all old caps remain unchanged.
+// Font resources add one explicit contract module to the M3.4 closure; all old caps remain unchanged.
 export async function collectPublicGraph(repository,retain,sourceProfile='historical'){
   // Named consumers opt into bounded source successors; the historical default
   // and every byte, import, registry and containment check remain unchanged.
-  requirePolicy(['historical','m15-textured','m12-recipe5','m31-textured','m22-sequence-textured','m24-spine-textured','m34-effects-textured'].includes(sourceProfile),'GRAPH_SOURCE_PROFILE');
+  requirePolicy(['historical','m15-textured','m12-recipe5','m31-textured','m22-sequence-textured','m24-spine-textured','m34-effects-textured','m3-font-resources-textured'].includes(sourceProfile),'GRAPH_SOURCE_PROFILE');
   // The UI successor adds only the eager ownership bridge and managed markers.
   // Historical profiles retain their original finite admission budgets.
-  const moduleLimit=sourceProfile==='historical'?LIMITS.modules:sourceProfile==='m34-effects-textured'?142:sourceProfile==='m24-spine-textured'?139:sourceProfile==='m22-sequence-textured'?137:sourceProfile==='m31-textured'?134:132;
+  const moduleLimit=sourceProfile==='historical'?LIMITS.modules:sourceProfile==='m3-font-resources-textured'?143:sourceProfile==='m34-effects-textured'?142:sourceProfile==='m24-spine-textured'?139:sourceProfile==='m22-sequence-textured'?137:sourceProfile==='m31-textured'?134:132;
   const root=await realpath(repository),modules=new Map();let total=0,sourceRegistry;
   const map=chosenMap('baseline'),robustRoot=await realpath(path.join(root,'packages/engine/node_modules/robust-predicates'));
   async function visit(relative){const logical=path.join(root,relative),physical=await realpath(logical);

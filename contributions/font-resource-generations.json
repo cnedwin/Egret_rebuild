@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/paragraph-panel/font-resources.mjs",
+      "originRole": "First-party independently authored font artifact, ownership, runtime generation, example or verification implementation.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/paragraph-panel/font-verification-summary.json",
+      "originRole": "First-party actual font integration verification summary; original failures and qualification limits retained."
+    },
+    {
+      "path": "examples/paragraph-panel/verify-fonts.mjs",
+      "originRole": "First-party independently authored font artifact, ownership, runtime generation, example or verification implementation.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/Cns/docs/font-resource-generations.md",
+      "originRole": "First-party bilingual font resource and runtime generation contract, independently authored."
+    },
+    {
+      "path": "knowledge-base/en/docs/font-resource-generations.md",
+      "originRole": "First-party bilingual font resource and runtime generation contract, independently authored."
+    },
+    {
+      "path": "packages/contracts/src/resources/fontArtifact.ts",
+      "originRole": "First-party independently authored font artifact, ownership, runtime generation, example or verification implementation.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/fontContentLoader.ts",
+      "originRole": "First-party independently authored font artifact, ownership, runtime generation, example or verification implementation.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/fontContentTypes.ts",
+      "originRole": "First-party independently authored font artifact, ownership, runtime generation, example or verification implementation.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/CanvasKitFontSetProvider.ts",
+      "originRole": "First-party independently authored font artifact, ownership, runtime generation, example or verification implementation.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/ManifestFontContentLoader.ts",
+      "originRole": "First-party independently authored font artifact, ownership, runtime generation, example or verification implementation.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/font-resources.test.mjs",
+      "originRole": "First-party independently authored font artifact, ownership, runtime generation, example or verification implementation.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/content/author-font-example.mjs",
+      "originRole": "First-party independently authored font artifact, ownership, runtime generation, example or verification implementation.",
+      "criticalComment": true
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/font-resource-generations.md",
+      "zh": "knowledge-base/Cns/docs/font-resource-generations.md"
+    }
+  ]
+}

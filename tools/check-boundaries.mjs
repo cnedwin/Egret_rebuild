@@ -22,6 +22,14 @@ function files(dir) {
 }
 // M15: exact named metadata port and one private browser bridge. No deep-path wildcard.
 const m15DeepClauses = {
+"packages/engine/src/fontContentLoader.ts":[{"operation":"import","kind":"value","members":["isAdmittedResourceManifest","inspectFontArtifact"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"}],
+"packages/engine/dist/fontContentLoader.js":[{"operation":"import","kind":"value","members":["isAdmittedResourceManifest","inspectFontArtifact"],"target":"@egret/contracts/resources"}],
+"packages/engine/dist/fontContentLoader.d.ts":[{"operation":"import","kind":"type","members":["AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+"packages/engine/web/ManifestFontContentLoader.ts":[{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"},{"operation":"import","kind":"value","members":["createFontContentLoader"],"target":"@egret/engine/resources"},{"operation":"import","kind":"type","members":["FontContentLoader"],"target":"@egret/engine/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+"packages/engine/dist/web/ManifestFontContentLoader.js":[{"operation":"import","kind":"value","members":["createFontContentLoader"],"target":"@egret/engine/resources"}],
+"packages/engine/dist/web/ManifestFontContentLoader.d.ts":[{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["FontContentLoader"],"target":"@egret/engine/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+"packages/engine/web/CanvasKitFontSetProvider.ts":[{"operation":"import","kind":"type","members":["FontContentLoader","FontContentGroup"],"target":"@egret/engine/resources"}],
+"packages/engine/dist/web/CanvasKitFontSetProvider.d.ts":[{"operation":"import","kind":"type","members":["FontContentLoader"],"target":"@egret/engine/resources"}],
   // M2.1: bounded content assembly and public, explicit browser composition only.
   "packages/engine/src/contentLoader.ts": [{operation:'import',kind:'value',members:['isAdmittedResourceManifest'],target:'@egret/contracts/resources'},{operation:'import',kind:'type',members:['AdmittedResourceManifest','ResourceManifestEntry'],target:'@egret/contracts/resources'}],
   "packages/engine/dist/contentLoader.js": [{operation:'import',kind:'value',members:['isAdmittedResourceManifest'],target:'@egret/contracts/resources'}],
@@ -85,6 +93,8 @@ const m15DeepClauses = {
 const m15ClauseKey = row => JSON.stringify([row.operation,row.kind,row.target,[...row.members].sort()]);
 // M3.2: exact optional protocol clauses; no same-package value/deep-import wildcard.
 const m32ParagraphDeepClauses = {
+"packages/engine/web/CanvasKitFontSetProvider.ts":[{"operation":"import","kind":"type","members":["ParagraphProvider","ParagraphRequest"],"target":"@egret/engine/paragraph"}],
+"packages/engine/dist/web/CanvasKitFontSetProvider.d.ts":[{"operation":"import","kind":"type","members":["ParagraphProvider"],"target":"@egret/engine/paragraph"}],
   "packages/engine/web/canvasKitParagraphGeometry.ts": [
     {
       "operation": "import",
@@ -275,7 +285,7 @@ for (const [name, allowed] of Object.entries(expected)) {
           const providerBarrel=['web/text.ts','dist/web/text.js','dist/web/text.d.ts'].includes(relative);
           if ((providerTarget && !providerBarrel) || ['web/text.js','dist/web/text.js'].includes(target)) throw new Error(`${file}: Canvas text opt-in module imported outside its barrel`);
           const paragraphProviderTarget=['web/CanvasKitParagraphProvider.js','dist/web/CanvasKitParagraphProvider.js'].includes(target);
-          if (paragraphProviderTarget && !['web/paragraph.ts','dist/web/paragraph.js','dist/web/paragraph.d.ts'].includes(relative)) throw new Error(`${file}: paragraph provider imported outside its optional barrel`);
+          if (paragraphProviderTarget && !['web/paragraph.ts','dist/web/paragraph.js','dist/web/paragraph.d.ts','web/CanvasKitFontSetProvider.ts','dist/web/CanvasKitFontSetProvider.js','dist/web/CanvasKitFontSetProvider.d.ts'].includes(relative)) throw new Error(`${file}: paragraph provider imported outside its optional barrel`);
         }
       } else if (['@egret/contracts/resources','#egret-manifest-resources','@egret/runtime/ui','@egret/engine/resources','@egret/engine'].includes(imported)) {
         const relative=path.relative(root,file).split(path.sep).join('/');
@@ -7010,12 +7020,524 @@ const m34EffectLiteralClosure = {
   ]
 };
 
+const fontResourceLiteralClosure = {
+  "packages/engine/src/fontContentLoader.ts": [
+    [
+      "static",
+      "./Engine.js"
+    ],
+    [
+      "static",
+      "./fontContentTypes.js"
+    ],
+    [
+      "static",
+      "./internal/contentFactoryState.js"
+    ],
+    [
+      "static",
+      "./manifestResourceState.js"
+    ],
+    [
+      "static",
+      "./manifestResourceTypes.js"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/fontContentLoader.js": [
+    [
+      "static",
+      "./internal/contentFactoryState.js"
+    ],
+    [
+      "static",
+      "./manifestResourceState.js"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/fontContentLoader.d.ts": [
+    [
+      "static",
+      "./Engine.js"
+    ],
+    [
+      "static",
+      "./fontContentTypes.js"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ]
+  ],
+  "packages/engine/web/ManifestFontContentLoader.ts": [
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/engine"
+    ],
+    [
+      "static",
+      "@egret/engine/resources"
+    ],
+    [
+      "static",
+      "@egret/engine/resources"
+    ]
+  ],
+  "packages/engine/dist/web/ManifestFontContentLoader.js": [
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "@egret/engine/resources"
+    ]
+  ],
+  "packages/engine/dist/web/ManifestFontContentLoader.d.ts": [
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/engine"
+    ],
+    [
+      "static",
+      "@egret/engine/resources"
+    ]
+  ],
+  "packages/engine/web/CanvasKitFontSetProvider.ts": [
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ],
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/engine/paragraph"
+    ],
+    [
+      "static",
+      "@egret/engine/resources"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/web/CanvasKitFontSetProvider.js": [
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/web/CanvasKitFontSetProvider.d.ts": [
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ],
+    [
+      "static",
+      "@egret/engine/paragraph"
+    ],
+    [
+      "static",
+      "@egret/engine/resources"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/src/resources.ts": [
+    [
+      "static",
+      "./contentLoader.js"
+    ],
+    [
+      "static",
+      "./contentTypes.js"
+    ],
+    [
+      "static",
+      "./fontContentLoader.js"
+    ],
+    [
+      "static",
+      "./fontContentTypes.js"
+    ],
+    [
+      "static",
+      "./manifestResourceState.js"
+    ],
+    [
+      "static",
+      "./manifestResourceTypes.js"
+    ]
+  ],
+  "packages/engine/dist/resources.js": [
+    [
+      "static",
+      "./contentLoader.js"
+    ],
+    [
+      "static",
+      "./fontContentLoader.js"
+    ],
+    [
+      "static",
+      "./manifestResourceState.js"
+    ]
+  ],
+  "packages/engine/dist/resources.d.ts": [
+    [
+      "static",
+      "./contentLoader.js"
+    ],
+    [
+      "static",
+      "./contentTypes.js"
+    ],
+    [
+      "static",
+      "./fontContentLoader.js"
+    ],
+    [
+      "static",
+      "./fontContentTypes.js"
+    ],
+    [
+      "static",
+      "./manifestResourceState.js"
+    ],
+    [
+      "static",
+      "./manifestResourceTypes.js"
+    ]
+  ],
+  "packages/engine/web/resources.ts": [
+    [
+      "static",
+      "./BrowserTextureProvider.js"
+    ],
+    [
+      "static",
+      "./BrowserTextureProvider.js"
+    ],
+    [
+      "static",
+      "./BrowserTextureProvider.js"
+    ],
+    [
+      "static",
+      "./BrowserTextureProvider.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestFontContentLoader.js"
+    ],
+    [
+      "static",
+      "./ManifestFontContentLoader.js"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/engine"
+    ],
+    [
+      "static",
+      "@egret/engine/resources"
+    ],
+    [
+      "static",
+      "@egret/engine/resources"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/web/resources.js": [
+    [
+      "static",
+      "./BrowserTextureProvider.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestFontContentLoader.js"
+    ],
+    [
+      "static",
+      "@egret/engine/resources"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/web/resources.d.ts": [
+    [
+      "static",
+      "./BrowserTextureProvider.js"
+    ],
+    [
+      "static",
+      "./BrowserTextureProvider.js"
+    ],
+    [
+      "static",
+      "./BrowserTextureProvider.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestByteSource.js"
+    ],
+    [
+      "static",
+      "./ManifestFontContentLoader.js"
+    ],
+    [
+      "static",
+      "./ManifestFontContentLoader.js"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/engine"
+    ],
+    [
+      "static",
+      "@egret/engine/resources"
+    ]
+  ],
+  "packages/engine/src/fontContentTypes.ts": [
+    [
+      "static",
+      "./manifestResourceTypes.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/fontContentTypes.js": [],
+  "packages/engine/dist/fontContentTypes.d.ts": [
+    [
+      "static",
+      "./manifestResourceTypes.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/web/paragraph.ts": [
+    [
+      "static",
+      "./CanvasKitFontSetProvider.js"
+    ],
+    [
+      "static",
+      "./CanvasKitFontSetProvider.js"
+    ],
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ],
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ]
+  ],
+  "packages/engine/dist/web/paragraph.js": [
+    [
+      "static",
+      "./CanvasKitFontSetProvider.js"
+    ],
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ]
+  ],
+  "packages/engine/dist/web/paragraph.d.ts": [
+    [
+      "static",
+      "./CanvasKitFontSetProvider.js"
+    ],
+    [
+      "static",
+      "./CanvasKitFontSetProvider.js"
+    ],
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ],
+    [
+      "static",
+      "./CanvasKitParagraphProvider.js"
+    ]
+  ],
+  "packages/contracts/src/resources/index.ts": [
+    [
+      "static",
+      "../ResourceManifest.js"
+    ],
+    [
+      "static",
+      "./fontArtifact.js"
+    ],
+    [
+      "static",
+      "./manifestAdmission.js"
+    ]
+  ],
+  "packages/contracts/dist/resources/index.js": [
+    [
+      "static",
+      "./fontArtifact.js"
+    ],
+    [
+      "static",
+      "./manifestAdmission.js"
+    ]
+  ],
+  "packages/contracts/dist/resources/index.d.ts": [
+    [
+      "static",
+      "../ResourceManifest.js"
+    ],
+    [
+      "static",
+      "./fontArtifact.js"
+    ],
+    [
+      "static",
+      "./manifestAdmission.js"
+    ]
+  ],
+  "packages/contracts/src/resources/fontArtifact.ts": [],
+  "packages/contracts/dist/resources/fontArtifact.js": [],
+  "packages/contracts/dist/resources/fontArtifact.d.ts": []
+};
 function sceneGraphEdges(code) {
   return [...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)]
     .map(match=>[/^import\s*\(/.test(match[0])?'dynamic':'static',match[1]])
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
-for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure,...m34EffectLiteralClosure})) {
+for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure,...m34EffectLiteralClosure,...fontResourceLiteralClosure})) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
   // Non-literal dynamic imports cannot hide an additional dependency edge.
@@ -7314,9 +7836,9 @@ for (const [label, specifier, source, stem] of ns1OptionalEntries) {
 // Values continue through public entries; private product units are read as text.
 const m15ResourceSurfaces = [
   ['contracts/resources','packages/contracts/src/resources/index.ts','packages/contracts/dist/resources/index',
-    ['validateResourceBuildPlanDescription','evaluateResourceBuildKeys','validateResourceBuildDescription','admitResourceManifest','buildResourceManifest','serializeResourceManifest','isAdmittedResourceManifest','getResourceManifestIdentityInputs'],
+    ['validateResourceBuildPlanDescription','evaluateResourceBuildKeys','validateResourceBuildDescription','admitResourceManifest','buildResourceManifest','serializeResourceManifest','isAdmittedResourceManifest','getResourceManifestIdentityInputs','inspectFontArtifact'],
     ['ResourceBuildSourceEntry','ResourceBuildPlanDescription','ResourceBuildKeyEntry','ResourceBuildKeyPlan','ResourceBuildEntry','ResourceBuildDescription','ResourceManifestEntry','AdmittedResourceManifest','ResourceManifestDiagnosticCode','ResourceManifestDiagnostic','ResourceManifestResult','ResourceManifestIdentityInputs'],
-    {'./manifestAdmission.js':{value:['validateResourceBuildPlanDescription','evaluateResourceBuildKeys','validateResourceBuildDescription','admitResourceManifest','buildResourceManifest','serializeResourceManifest','isAdmittedResourceManifest','getResourceManifestIdentityInputs']},
+    {'./fontArtifact.js':{value:['inspectFontArtifact']},'./manifestAdmission.js':{value:['validateResourceBuildPlanDescription','evaluateResourceBuildKeys','validateResourceBuildDescription','admitResourceManifest','buildResourceManifest','serializeResourceManifest','isAdmittedResourceManifest','getResourceManifestIdentityInputs']},
       '../ResourceManifest.js':{type:['ResourceBuildSourceEntry','ResourceBuildPlanDescription','ResourceBuildKeyEntry','ResourceBuildKeyPlan','ResourceBuildEntry','ResourceBuildDescription','ResourceManifestEntry','AdmittedResourceManifest','ResourceManifestDiagnosticCode','ResourceManifestDiagnostic','ResourceManifestResult','ResourceManifestIdentityInputs']}}],
   ['project/resources','packages/project/src/resources/index.ts','packages/project/dist/resources/index',
     ['describeResourceBuild','parseResourceManifest','serializeResourceManifest','describeContentRecipes','bindContentArtifacts','createContentAdoption'],
@@ -7325,14 +7847,14 @@ const m15ResourceSurfaces = [
       './content.js':{value:['describeContentRecipes','bindContentArtifacts','createContentAdoption'],type:['ContentProducer','ContentOutputFile','ContentOutput','ContentBoundOutput','ContentArtifactBinding','ContentAdoptionOptions']},
       '@egret/contracts/resources':{type:['ResourceBuildPlanDescription','ResourceBuildDescription','ResourceBuildEntry','ResourceManifestEntry','AdmittedResourceManifest']}}],
   ['engine/resources','packages/engine/src/resources.ts','packages/engine/dist/resources',
-    ['createManifestAssetBinding','createContentLoader'],['ManifestBinding','ManifestAssetBinding','ManifestAssetGroup','ManifestGroupOptions','ContentBinding','ContentProviders','ContentProviderFactory','ContentGroup','ContentLoader'],
-    {'./manifestResourceState.js':{value:['createManifestAssetBinding']},
+    ['createManifestAssetBinding','createContentLoader','createFontContentLoader'],['FontContentBinding','FontContentAsset','FontContentGroup','FontContentLoader','FontContentProviderFactory','ManifestBinding','ManifestAssetBinding','ManifestAssetGroup','ManifestGroupOptions','ContentBinding','ContentProviders','ContentProviderFactory','ContentGroup','ContentLoader'],
+    {'./fontContentLoader.js':{value:['createFontContentLoader']},'./fontContentTypes.js':{type:['FontContentBinding','FontContentAsset','FontContentGroup','FontContentLoader','FontContentProviderFactory']},'./manifestResourceState.js':{value:['createManifestAssetBinding']},
       './contentLoader.js':{value:['createContentLoader']},
       './contentTypes.js':{type:['ContentBinding','ContentProviders','ContentProviderFactory','ContentGroup','ContentLoader']},
       './manifestResourceTypes.js':{type:['ManifestBinding','ManifestAssetBinding','ManifestAssetGroup','ManifestGroupOptions']}}],
   ['engine/web/resources','packages/engine/web/resources.ts','packages/engine/dist/web/resources',
-    ['createManifestByteSource','createManifestTextureProvider','createManifestContentLoader'],['ManifestByteSource','ManifestByteSourceOptions','ManifestByteSourceStatus','ManifestTextureProvider','ManifestTextureProviderStatus','ManifestTextureProviderOptions','ManifestContentLoader'],
-    {'./ManifestByteSource.js':{value:['requireManifestByteSource','createManifestByteSource'],type:['ManifestByteSource','ManifestByteSourceOptions','ManifestByteSourceStatus']},
+    ['createManifestByteSource','createManifestTextureProvider','createManifestContentLoader','createManifestFontContentLoader'],['ManifestFontContentLoader','ManifestByteSource','ManifestByteSourceOptions','ManifestByteSourceStatus','ManifestTextureProvider','ManifestTextureProviderStatus','ManifestTextureProviderOptions','ManifestContentLoader'],
+    {'./ManifestFontContentLoader.js':{value:['createManifestFontContentLoader'],type:['ManifestFontContentLoader']},'./ManifestByteSource.js':{value:['requireManifestByteSource','createManifestByteSource'],type:['ManifestByteSource','ManifestByteSourceOptions','ManifestByteSourceStatus']},
       './BrowserTextureProvider.js':{value:['createManifestPngTextureProvider'],type:['BrowserPngPorts','ManifestTextureProvider','ManifestTextureProviderStatus']},
       '@egret/runtime':{value:['EgretError'],type:['Scope']},
       '@egret/engine':{type:['Engine']},

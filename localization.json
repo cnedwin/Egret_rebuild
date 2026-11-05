@@ -1963,15 +1963,15 @@
       "en": "knowledge-base/en/docs/m2-spine-content-plan.md",
       "zh": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
       "kind": "public_reading",
-      "enSha256": "a02e3c0f96c1df551746650b1d7b3b54f8f41d0492244689fa848306d977c702",
-      "zhSha256": "6f857f658680362f945018a3e033f5e9e71761d2c48182b21e1c2e17dbe8faba"
+      "enSha256": "786259f8d712c68769b69d5959a64a975a2b1f351b0b37e1f4b78f68000eae63",
+      "zhSha256": "cb4312796087ac04e1a33083d972fe42030d494f555ffe60b7ded53af1bb7edd"
     },
     {
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "361d3825ae08d6057aa3e0cf7a914b3672b2716e3c9229cf320e7f082ec5ff55",
-      "zhSha256": "c8bcdebe705481b88209e6abccecf7b9be6e62e49c0b3f72c5d940e792781601"
+      "enSha256": "57cca0d01e1bf7396144eb0926c2e1f285c28fa837c9fd3486b2fd32af0ad026",
+      "zhSha256": "64eca540c6d6777a79309bc1a290f6182b75a998f1d37ad3ac88ef39fb20442a"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -2075,8 +2075,8 @@
       "en": "examples/paragraph-panel/README.md",
       "zh": "examples/paragraph-panel/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "2e321745ba0bc2b403022609f0b6224d23bb8483e80964b5b4a1f46cf22d5fb5",
-      "zhSha256": "39c3d09d238d5802dfd32961ee145eec2a3da19843fe67ef3ed58c4862c70a84"
+      "enSha256": "fe6b0e71f36cde41bb3f465cf72f79e4429ee24a58bccecc10a2f9a00d0124f7",
+      "zhSha256": "ecb31b5ddd63106d9d1415b0148d5e4ff16325e6d92050e81d5c1794d122b4ba"
     },
     {
       "en": "examples/paragraph-panel/vendor/README.md",
@@ -2231,6 +2231,13 @@
       "kind": "public_reading",
       "enSha256": "4b6c5c84e4e32d278f75977dc11f8eaac932aad8139cc166dff1e8c257c830bd",
       "zhSha256": "8f0fea8dec44bf48e9587738a173c2cf0ec4f7c78981ac38355534f3e4124c29"
+    },
+    {
+      "en": "knowledge-base/en/docs/font-resource-generations.md",
+      "zh": "knowledge-base/Cns/docs/font-resource-generations.md",
+      "kind": "public_reading",
+      "enSha256": "a330a3d3a3f4603a64e279229740be670d267e5b9a965c3f4b86b88458d5f083",
+      "zhSha256": "620c0319cec395de877911f7968f04f91ca0f93fc1eecc00cce31df8ea5161cb"
     }
   ],
   "registries": [
@@ -2638,7 +2645,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "76748e4098bf9ed9d460570e460d5d8a05cf7378b470aab2a1c093c9606be93b"
+      "sha256": "e41d8caf770118af622ea403f2e49507f5ad5eb46522b65a0d610b002290c9f4"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2650,7 +2657,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "b4a93172c5ea872aeaad20b48b10642d32108d5fdc48284aa71b0637c1baef3b"
+      "sha256": "bc0504588982d77a97323b1ab875916f58db71f23fe6e565329c03a5d329e61b"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -3056,11 +3063,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "15933bebb2f1ece17040d6c1023190be721ffb40d56ccafd5aad066e3f0a15c3"
+      "sha256": "0f57ff7eeaca7699b3d9e57799adf6a656a7b70a9f3b5c1242d16caa9d0d9c75"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "900b00d891d0b0ec3db2da80974ea131c82a067e9d9f64947ba6b741b0821470"
+      "sha256": "bccf5909b0feb2430d74f3fe4222c0baa8205705de4085524bd825cf9a01121e"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3172,7 +3179,7 @@
     },
     {
       "path": "tools/sequence-playback-types.mjs",
-      "sha256": "b58c87eb26a79dba3dadc151c82d879dfce6be6a3d4f64a50dd041321b5e13c9"
+      "sha256": "580a5978af5d1fa35e213f02702c481d87dc25092cd3078fd7e3f39d673fc4ab"
     },
     {
       "path": "tools/check-repository-hygiene.mjs",
@@ -3200,7 +3207,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "2dbbee958790e45656661802886b27f65a6562702f818110b221dd440a677e73"
+      "sha256": "79ab1afc19f226fd99962985ce2a25f6f96fe9308d3a46b9bc56046f7772dc9d"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3336,7 +3343,7 @@
     },
     {
       "path": "tools/nine-slice-bitmap-types.mjs",
-      "sha256": "149e4bbe1b31355a9c510d6f3280aaa465ba110eda61470e9a66b547f441ceed"
+      "sha256": "fe3033a7a4ae446706bd0bf48fdbb6c007ba9c83e2b624e4e9b4a07baf00bdd2"
     },
     {
       "path": "tools/nine-slice-bitmap-native/fixture.mjs",
@@ -3348,7 +3355,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "27d5aefbf717e2627dc51594b659a5e16611c08fbcc63615cf87630c5a45c37c"
+      "sha256": "9b6007c32c23d3207c2ec92382924ecdb1b8a69eecd48e6f324a95363c1704d4"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3364,7 +3371,7 @@
     },
     {
       "path": "tools/display-container-remove-children-types.mjs",
-      "sha256": "c6e7633745e6f3da74f0c6d9fb198424e60c3f5b4f5a32d33227e3918ee5a508"
+      "sha256": "ecbb3f3a25be3684eb993e71b093d6d4ac728f436ff2dfb84171c0b35ec29bb4"
     },
     {
       "path": "tools/display-container-remove-children-native/fixture.mjs",
@@ -3392,7 +3399,7 @@
     },
     {
       "path": "tools/display-container-child-index-types.mjs",
-      "sha256": "464c8ed74711783ef0230ba47cf62b97ca52d57d6cbf195a8ced5d43563c61b2"
+      "sha256": "8ea70ac9f5ae26a4f49edbbadb7270229d8d0e7704f962e0a69d71f59742281f"
     },
     {
       "path": "tools/display-container-child-index-native/fixture.mjs",
@@ -3436,11 +3443,11 @@
     },
     {
       "path": "tools/display-anchor-offsets-types.mjs",
-      "sha256": "32f6509e2cacee9bf4cdc73e7ef145a843bb254c655979a2b7d1e9d23ab051c7"
+      "sha256": "dcebcb645a56187d35a812c97c3ea71fbf9a3b4e4997d1f397da1e8d6d62117e"
     },
     {
       "path": "tools/display-container-add-child-at-types.mjs",
-      "sha256": "91156286b65fb4dbc4f87357e80a79746fc33fae408f7ef7358ea6ecbce55542"
+      "sha256": "12e1d0c5c221ed5fc917f051ab754aaca7a859e3014cc73532fc5d792f60e3c5"
     },
     {
       "path": "tools/display-anchor-offsets-native/fixture.mjs",
@@ -3492,7 +3499,7 @@
     },
     {
       "path": "tools/bitmap-button-types.mjs",
-      "sha256": "8a3c3c0c7aef173e51cb4521f83d11f15361b1948b8619aa002e720749f9c9ea"
+      "sha256": "8980ed183239e969f57fa4bcf795d6ab63394dfeea46d61e57def7159570b822"
     },
     {
       "path": "packages/engine/src/layout.ts",
@@ -3504,7 +3511,7 @@
     },
     {
       "path": "tools/linear-layout-types.mjs",
-      "sha256": "e4fcbe041aaf35a09aa76a826e15b29ddf37086ccef06fa85e509cf3d2c75c7c"
+      "sha256": "0f9c50ff57d006218d9bd01c84c26f6865f8c77451cd43d67fb1d05629fa6118"
     },
     {
       "path": "examples/linear-layout/main.mjs",
@@ -3520,7 +3527,7 @@
     },
     {
       "path": "tools/bitmap-resource-slot-types.mjs",
-      "sha256": "520fd932e206a80245b7bd63d9611feebaa52520d237af17118222de41aed27e"
+      "sha256": "211d384ab8faa3c7a7fe11108c72dc0f0999a1c7d7aff6de42f1b8cbbf8e2190"
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
@@ -3664,7 +3671,7 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
-      "sha256": "c2eaea1ada4feb972567d0395ca5ad18ae371d8359d275f8f65c8213b0196bc9"
+      "sha256": "9a23c5e5abb0c0d1d22e3b21a4c92d32a7bde547c54cdefb1c4a255cd4cb156f"
     },
     {
       "path": "tools/prepared-resource-groups/native-fixture.mjs",
@@ -3748,7 +3755,7 @@
     },
     {
       "path": "tools/atlas-frame-types.mjs",
-      "sha256": "aaee1328762da15e868b1adca57e1053c86dd18d984bea6354062e9ad823c35a"
+      "sha256": "e7048bf65f57d62e4807b386bf6ff80270d317871cae41d3a7365cbd83f8fbfd"
     },
     {
       "path": "tools/atlas-frame/author-assets.mjs",
@@ -3820,7 +3827,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "b59b438962139e37824a1675f5395dcfad3427fb5ae777c55c5a567a2e564750"
+      "sha256": "5d0f281377ca7a3c12d689037ad4ebeb0977d5c72e8f6a18891aca56a0958326"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3848,7 +3855,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "98d11de32067d61ba62ef8d75e421fbfbb311080057c1b85e0d1bce82e10244d"
+      "sha256": "15d1de28e272b40a712d6a275badfce7ba4f02ec3a558fb2706956a3915a7a6f"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -3856,7 +3863,7 @@
     },
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
-      "sha256": "79c669ac2e9f65a81fd928b7102ea8b07e731c8a45379c1e29950d14914ddd94"
+      "sha256": "8d00cbabc94e436d9cb1941b5bfb6981cd0986f2dceaa99b97d4fc24bc62400d"
     },
     {
       "path": "packages/engine/web/webgpuBindingCache.ts",
@@ -4044,15 +4051,15 @@
     },
     {
       "path": "packages/engine/src/resources.ts",
-      "sha256": "90c1864d75bffd32a02c20319e32e8c156f030cd7ada4c729ca2c4fa0fe6256a"
+      "sha256": "09ba04482fab77b6a2072affddc40c109b7857ff1b5f1500b55c304390d19ac4"
     },
     {
       "path": "packages/engine/web/ManifestByteSource.ts",
-      "sha256": "7a2e05f1523ad89adf1ab46f5f6b902795fb6ff053439d8d4cb7a425f1ea0e32"
+      "sha256": "8c38dd3b24028d84fce44b14dd633bcff2b4e81cc13d53a0ffea636bfbb0a34c"
     },
     {
       "path": "packages/engine/web/resources.ts",
-      "sha256": "a562f3774e27b79a472d1940b9dca57940c63364a4695516488e94dfd1e1d0e2"
+      "sha256": "09401b93ad6b5abe2ed5e54e969d18a19a424976932e1deb543ab392c30eff10"
     },
     {
       "path": "packages/engine/web/sharedDeviceSession.ts",
@@ -4112,7 +4119,7 @@
     },
     {
       "path": "packages/project/src/resources/content.ts",
-      "sha256": "4bc0e31546713f786503f17b645e6850709e02d3455ce6d08e43e0523988d570"
+      "sha256": "a89bf3f15f3538a10ca0e6dc066fd899d06bb6ab90edcb7a2e9d76f4ded1c3c8"
     },
     {
       "path": "tools/build-content.mjs",
@@ -4124,11 +4131,11 @@
     },
     {
       "path": "tools/content/build.mjs",
-      "sha256": "ed12f99529e466770ba4088edd766bf2f94e5699e8701f97b12b5a3b8aabb15f"
+      "sha256": "283003519626abaf1a764fe98f121bcdd735df061798b0c203a6ed2a8577c935"
     },
     {
       "path": "tools/content/importers.mjs",
-      "sha256": "c2d5b43c4779856ad00e2022cfab418e864fe01c87d39892360c65fb47de2c84"
+      "sha256": "d2d6bed93dcf1f71c2ba1754b81cc0a8448bf8377b87a9c2312ada82a32bfa5c"
     },
     {
       "path": "tools/content/input.mjs",
@@ -4140,7 +4147,7 @@
     },
     {
       "path": "tools/content/store.mjs",
-      "sha256": "c228b15534e481a16eb1e37f966eb6f0114e0884e3c0d5a9247046c9722eba3b"
+      "sha256": "9051d35b752429750b4dd2def0995aad59b50f3fae05ab6c2d8c8a2738e6ce15"
     },
     {
       "path": "tools/verify-content-build.mjs",
@@ -4248,11 +4255,11 @@
     },
     {
       "path": "packages/engine/web/CanvasKitParagraphProvider.ts",
-      "sha256": "ac6d6d0b9d2fcbe9052254b17b49db108230cf2942e832d0bef43f3bf9284457"
+      "sha256": "ec0c5e67df49384c8fe9a65bd89ddfc134a93a7cb585e0b8ce81c6093fdbe953"
     },
     {
       "path": "packages/engine/web/paragraph.ts",
-      "sha256": "03117402ce1515a85e9f3ac2f7c0738a1be26c38038128d25159e2399534b20b"
+      "sha256": "fee53d73ff03ee7dfbbc6d06130677b3e27145a10a3b10673c851bea392affa2"
     },
     {
       "path": "packages/runtime/src/paragraph/Paragraph.ts",
@@ -4260,7 +4267,7 @@
     },
     {
       "path": "packages/runtime/src/paragraph/ParagraphCache.ts",
-      "sha256": "8e9f094adc5a1d66ab90875d1c5da575c6aeccbf53ea0ce7670ad6aef24a6ed5"
+      "sha256": "c7d5c6287aadb145d2911031e56ed51ec71f4d53d14c721c08da50f8b68e2749"
     },
     {
       "path": "packages/runtime/src/paragraph/index.ts",
@@ -4268,11 +4275,11 @@
     },
     {
       "path": "packages/runtime/src/paragraph/request.ts",
-      "sha256": "8a3f2a6f1e39abebaf5af45d95987bdaeea74836cf4d71cb4eef23254bd0432c"
+      "sha256": "56af7ad4bc99704dfb7c8f6916bfc0091a9226f73262b0836858e053a2203bab"
     },
     {
       "path": "packages/runtime/src/paragraph/types.ts",
-      "sha256": "3981e3fabe5d7616e8e5f675b3059a680c4758121a56bc927c6ba48e622deafe"
+      "sha256": "81bdfc097768d2d65b968b847810bbbe6a767fb64f6afd5a739883bdc5ddcd24"
     },
     {
       "path": "examples/paragraph-panel/verify-line-bidi.mjs",
@@ -4469,6 +4476,42 @@
     {
       "path": "examples/paragraph-panel/verify-effects.mjs",
       "sha256": "165b078cf1a6933b6813e02ae2d13cbb63db18c716c41b9a476fdd4e03e9d252"
+    },
+    {
+      "path": "examples/paragraph-panel/font-resources.mjs",
+      "sha256": "e27b047dfabf5bc6bce06187a8f260d097ba156a781d0ae1bb29c74d22ee6591"
+    },
+    {
+      "path": "examples/paragraph-panel/verify-fonts.mjs",
+      "sha256": "f29e362de55c04496612acc58df24b55b9ac2bfc79e83e5206daf3a2aaf58550"
+    },
+    {
+      "path": "packages/contracts/src/resources/fontArtifact.ts",
+      "sha256": "2b124d395064057f73098359ba93d7454dd68bf3941033a668c5756bb71ad8cb"
+    },
+    {
+      "path": "packages/engine/src/fontContentLoader.ts",
+      "sha256": "4d98f62075096f8756d8be490bf079366c954af3a0c2c4b92ce4c85ccda27cd0"
+    },
+    {
+      "path": "packages/engine/src/fontContentTypes.ts",
+      "sha256": "daeb72b3e3293e29e3fcc90789695741f9e5f9037d2e64e177d6004ab2de4947"
+    },
+    {
+      "path": "packages/engine/web/CanvasKitFontSetProvider.ts",
+      "sha256": "b8e0a7c5401c4d40410e4b18e977dc74ded5c972eeff79bdf531d2dafdefb65a"
+    },
+    {
+      "path": "packages/engine/web/ManifestFontContentLoader.ts",
+      "sha256": "64b3f09a383380182a0049b0fb9c1b99b3d8ffbfab1b9ef4735d8cdfdf8f8987"
+    },
+    {
+      "path": "tests/font-resources.test.mjs",
+      "sha256": "93fb61226a8dc2ca0920e8a5ffbbc3170cc0835fd12ab6287924e45d202afdb8"
+    },
+    {
+      "path": "tools/content/author-font-example.mjs",
+      "sha256": "c1849ae5a6b9eb067f1fa3c6d7f6a4ff8447276ad04fff211db73361a867a442"
     }
   ],
   "historicalSemanticReview": {
