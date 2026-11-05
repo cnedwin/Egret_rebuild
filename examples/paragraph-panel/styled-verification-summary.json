@@ -4756,5 +4756,19 @@
     "No physical phone, IME, accessibility, OOM or performance acceptance.",
     "M1.2 remains OPEN at 10.3 ms against 8 ms.",
     "Full M3.2 remains OPEN."
-  ]
+  ],
+  "initialProtectedCi": {
+    "run": 41941452714,
+    "head": "f96c38e8124253f2d6bf5960aec732f5d49a7805",
+    "windowsJob": 126963015525,
+    "conclusion": "failure",
+    "publicationTests": {
+      "passed": 306,
+      "failed": 0
+    },
+    "stoppedAt": "spritesheet-boundary: stale current CanvasKitParagraphProvider declaration identity",
+    "decodedLogSha256": "50a99901a0d5e7c4af6f829db49806800b0c89cb5a45a524c34df5695dd67e10",
+    "repair": "Update nine current paragraph source/emission pins in each of three existing boundary owners. Refresh current owner authority and prepend an exact reversible pin-declaration inverse to the existing history data. Historical predecessors, graph transforms and admission logic remain unchanged.",
+    "browserInputsUnchanged": true
+  }
 }

@@ -62,3 +62,5 @@ const metrics = await paragraph.prepare();
 当前主干整合验证通过 76 项相关行为／类型／原生／UI 测试；WebGL2、WebGPU 各通过 19 项装备示例检查、17 项样式几何检查和 20 项原段落面板检查。[整合汇总](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/styled-verification-summary.json)绑定实际输入并保留先前失败。已保存的样式浏览器记录有七项输入随主干变化，因此重新执行浏览器验证；未变源码的既有评审及原记录仍作为历史证据。固定视口可能裁掉末尾追加的标记，完成时必须发布新修订及其对应的准备布局，而不要求可见像素任意发生变化。
 
 构建后运行有限整合检查：node examples/paragraph-panel/verify-equipment.mjs <playwright-root> <new-output-directory>。受保护 CI 和独立评审属于另行执行的交付门禁。当前主干的 macos-latest 作业未启动即取消，macOS CPU 作业因此改用 macos-15-intel；检查内容、Windows／Linux 检查及必需汇总不变，不代表 ARM64 验收。
+
+首轮受保护 Windows 检查（41941452714）通过全部 306 项发布检查，随后被过时的当前段落声明身份拦住。修复仅更新三个既有检查所有者各九项当前源码／编译产物身份，以及当前授权和精确逆向记录。原前置版本及门禁逻辑不变，浏览器输入未变。失败记录保留在整合汇总中，仍须完成新提交的最终受保护检查。
