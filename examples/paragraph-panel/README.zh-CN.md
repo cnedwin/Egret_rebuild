@@ -29,3 +29,7 @@ Align 按左／居中／右／start／end／两端顺序切换普通段落和虚
 纯数据模块 styled-copy.mjs 同时构造原文和不可变 UTF-16 样式区间。UI 内容修订拥有请求快照，延迟、失败及过期请求保留前一份已发布图像和几何。本示例只展示只读样式，不代表富文本编辑、任意 HTML/CSS、触摸控件或字体／性能验收。参阅[多样式段落契约](../../knowledge-base/Cns/docs/paragraph-styled-runs.md)。
 
 示例为双倍密度下新旧 UI 事务重叠配置 32 MiB 段落图像缓存；引擎默认值和栅格上限不变。装备条目从 540 单位的保守估计开始，最终采用实测高度。运行 node examples/paragraph-panel/verify-equipment.mjs <playwright-root> <new-output-directory> 可执行有限的样式 UI 检查。[结果与边界](styled-verification-summary.json)。
+
+## 可选共享效果
+
+打开 `?content=equipment&effects=1&backend=webgl2` 或 `backend=webgpu`，查看同一 UI 的遮罩和方框模糊。效果按钮循环四种模式，普通列和虚拟列表同时重新发布；默认内容与输入路由保持原样。[效果契约](https://github.com/cnedwin/Egret_rebuild/blob/main/knowledge-base/Cns/docs/shared-ui-effects.md) 说明限制、所有权、恢复与验证范围。

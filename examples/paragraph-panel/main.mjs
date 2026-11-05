@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import {equipmentCopy} from './styled-copy.mjs';
-import {createEngineForProfile, Sprite} from '@egret/engine';
+import {createEngineForProfile, Sprite, Bitmap, createImageData2D, createTexture, isTexture, createAssetType, createAssetRef} from '@egret/engine';
 import {createUiRoot} from '@egret/engine/ui';
 import {createParagraph, createParagraphCache} from '@egret/engine/paragraph';
 import {createCanvasKitParagraphProvider} from '@egret/engine/web/paragraph';
@@ -10,6 +10,12 @@ import {createSharedWebGL2Host} from '@egret/engine/webgl2';
 
 const canvas=document.querySelector('#scene'),status=document.querySelector('#status');
 const backend=new URL(location.href).searchParams.get('backend')??'webgl2';
+const effectsEnabled=new URL(location.href).searchParams.get('effects')==='1';
+let effectMode=effectsEnabled?'both':'off',effectMask;
+function applyEffect(content,width,height){
+  if(effectMode==='off')return;
+  content.renderEffect={blurRadius:effectMode==='mask'?0:2,...(effectMode==='blur'?{}:{alphaMask:effectMask,maskRect:{x:0,y:0,width,height}})};
+}
 if(!['webgl2','webgpu'].includes(backend))throw Error('EXAMPLE_BACKEND');
 const frameOptions=Object.freeze({width:1100,height:760,clearColor:0x142033,clearAlpha:1,outputAlpha:'opaque'});
 const fontInputs=Object.freeze([
@@ -53,7 +59,7 @@ function articleTree(version=revision,marker=''){
     // A detached binding owns its exact request values even if controls change later.
     const node=createParagraph(engine,context.scope,cache);
     node.setRequest({...request(text+marker,context.width,direction),...(runs?{runs}:{}),fontSize:localSize,...(localHeight===undefined?{lineHeight:undefined}:{lineHeight:localHeight}),density:context.density,textAlign:localAlign,maxLines:localMaxLines});
-    return node.prepare().then(metrics=>{if(context.signal.aborted)throw Error('EXAMPLE_CONTENT_CANCELLED');preparations.push({id,version,width:context.width,density:context.density,styleRanges:runs?.length??0,metrics});return {content:node,measuredHeight:metrics.height};});
+    return node.prepare().then(metrics=>{if(context.signal.aborted)throw Error('EXAMPLE_CONTENT_CANCELLED');preparations.push({id,version,width:context.width,density:context.density,styleRanges:runs?.length??0,metrics});if(!effectsEnabled)return {content:node,measuredHeight:metrics.height};const content=context.scope.use(new Sprite());content.addChild(node);applyEffect(content,context.width,metrics.height);return {content,measuredHeight:metrics.height};});
   }});
   return {kind:'column',id:'article-column',explicitWidth:width,gap:18,crossAlign:'stretch',children:[
     {kind:'leaf',id:'article-heading',explicitHeight:8,fill:{color:0x4dd7b7}},
@@ -64,7 +70,7 @@ function articleTree(version=revision,marker=''){
 }
 function rowSource(version){
   const localSize=fontSize,localHeight=minLineHeight,localAlign=textAlign,localMaxLines=maxLines,localMode=contentMode;
-  const records=Array.from({length:24},(_,index)=>({key:'paragraph-'+String(index).padStart(2,'0'),contentVersion:version,estimatedHeight:localMode==='equipment'?540:120,value:{text:copy.rows[index%3].repeat(index%4===3?2:1),direction:index%3===2?'rtl':'ltr',color:index%2?0x253f5e:0x1c3452}}));
+  const records=Array.from({length:24},(_,index)=>({key:'paragraph-'+String(index).padStart(2,'0'),contentVersion:version,estimatedHeight:localMode==='equipment'?540:120,value:{effectEligible:index<6,text:copy.rows[index%3].repeat(index%4===3?2:1),direction:index%3===2?'rtl':'ltr',color:index%2?0x253f5e:0x1c3452}}));
   // A conservative content estimate bounds simultaneous preparation; committed heights still come from native metrics.
   if(localMode==='equipment')for(let index=0;index<records.length;index++){const copy=equipmentCopy(localSize,index);records[index].value={...records[index].value,...copy,direction:'ltr'};}
   return {revision:version,records,async bind(context){
@@ -76,6 +82,9 @@ function rowSource(version){
     const content=context.scope.use(new Sprite());
     content.graphics.beginFill(context.value.color).drawRect(0,0,context.width,metrics.height+20).endFill();
     node.x=10;node.y=10;content.addChild(node);
+    // Reserve two groups for the article and decorate at most six stable row keys.
+    // Virtualization can then admit short rows without exceeding the shared eight-group budget.
+    if(context.value.effectEligible)applyEffect(content,context.width,metrics.height+20);
     preparations.push({id:context.key,version:context.contentVersion,width:context.width-20,density:context.density,metrics});
     return {content,measuredHeight:metrics.height+20};
   },unbind(info){unbinds.push({...info});}};
@@ -100,12 +109,13 @@ async function draw(name){
   readbacks.push({label:name,frameId:result.frameId,serial:result.serial,width:result.width,height:result.height});
   describe();return inspect();
 }
-export function inspect(){return {state,backend,label,contentMode,width,fontSize,minLineHeight:minLineHeight??null,density,revision,textAlign,maxLines:maxLines??null,providerCalls:calls,runtimeBytes,fontBytes,article:article?.snapshot(),list:list?.snapshot(),cache:cache?.getStatus(),preparations:[...preparations],binds:[...binds],unbinds:[...unbinds],events:[...events],readbacks:[...readbacks],expectedFailures:[...expectedFailures],supersededUpdates:[...supersededUpdates],errors:[...errors],gateEntered,scopeState:scope?.state,inputState:input?.state};}
+export function inspect(){return {state,backend,label,contentMode,effectMode,effectsEnabled,width,fontSize,minLineHeight:minLineHeight??null,density,revision,textAlign,maxLines:maxLines??null,providerCalls:calls,runtimeBytes,fontBytes,article:article?.snapshot(),list:list?.snapshot(),cache:cache?.getStatus(),preparations:[...preparations],binds:[...binds],unbinds:[...unbinds],events:[...events],readbacks:[...readbacks],expectedFailures:[...expectedFailures],supersededUpdates:[...supersededUpdates],errors:[...errors],gateEntered,scopeState:scope?.state,inputState:input?.state};}
 export function readback(){if(!lastPixels)throw Error('EXAMPLE_NO_READBACK');let bytes='';for(let i=0;i<lastPixels.length;i+=16384)bytes+=String.fromCharCode(...lastPixels.subarray(i,i+16384));return {width:1100,height:760,base64:btoa(bytes),label};}
 function assertReady(){if(state!=='ready')throw Error('EXAMPLE_NOT_READY');}
 export async function action(kind){
   assertReady();if(pendingUpdate)throw Error('EXAMPLE_UPDATE_PENDING');
-  if(kind==='equipment')contentMode=contentMode==='equipment'?'plain':'equipment';
+  if(kind==='effects'){if(!effectsEnabled)throw Error('EXAMPLE_EFFECTS_DISABLED');const modes=['both','mask','blur','off'];effectMode=modes[(modes.indexOf(effectMode)+1)%modes.length];}
+  else if(kind==='equipment')contentMode=contentMode==='equipment'?'plain':'equipment';
   else if(kind==='narrow')width=300;
   else if(kind==='wide')width=530;
   else if(kind==='larger'){fontSize=26;minLineHeight=undefined;}
@@ -124,7 +134,7 @@ export async function action(kind){
   }else throw Error('EXAMPLE_ACTION');
   revision++;article.setViewport({width,height:704},density);article.setTree(articleTree());
   await publish(article);
-  if(kind==='equipment'||kind==='larger'||kind==='line-height'||kind==='density'||kind==='align'||kind==='clamp'){list.setViewport({width:420,height:704},density);list.list('paragraph-rows').setSource(rowSource(revision));await publish(list);}
+  if(kind==='effects'||kind==='equipment'||kind==='larger'||kind==='line-height'||kind==='density'||kind==='align'||kind==='clamp'){list.setViewport({width:420,height:704},density);list.list('paragraph-rows').setSource(rowSource(revision));await publish(list);}
   return draw(kind);
 }
 export function beginDelayedUpdate(){
@@ -183,8 +193,14 @@ export const ready=(async()=>{
       return await nativeProvider.prepare(request,context);
     }finally{delayed?.complete();}
   }};
-  host=(backend==='webgpu'?createSharedWebGPUHost:createSharedWebGL2Host)({canvas,pixelRatio:1,outputAlpha:'opaque',enableReadback:true});
+  host=(backend==='webgpu'?createSharedWebGPUHost:createSharedWebGL2Host)({canvas,pixelRatio:1,outputAlpha:'opaque',enableReadback:true,enableEffects:effectsEnabled});
   engine=await createEngineForProfile({host},'egret.shared-frame2d/1');scope=engine.createScope();
+  if(effectsEnabled){
+    const type=createAssetType('paragraph-effect-mask',isTexture);
+    engine.assets.register(type,{async load(){const pixels=new Uint8Array(64*4);for(let i=0;i<64;i++)pixels.set([255,255,255,Math.min(255,Math.round((63-i)*255/16))],i*4);return createTexture(createImageData2D({width:64,height:1,pixels}));},dispose(texture){texture.dispose();}});
+    const lease=scope.use(await engine.assets.acquire(createAssetRef(type,'fade-right'),{signal:scope.signal}));effectMask=scope.use(new Bitmap(lease));
+  }
+  const effectButton=document.querySelector('[data-action="effects"]');if(effectButton)effectButton.hidden=!effectsEnabled;
   // The demo keeps old and replacement article/list rasters together at DPR 2. Product defaults stay unchanged.
   cache=createParagraphCache(engine.assets,{provider,maxImageBytes:33554432});
   input=createBrowserPointerInput({engine,scope,width:1100,height:760,capacity:10});

@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
+import { sharedEffectGLSL, EFFECT_PASSES } from './sharedEffectShaders.js';
+import type { SharedEffectPass } from './sharedEffectShaders.js';
+import type { PreparedEffect2D } from '../rendering/sharedEffects2D.js';
 import { SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
 import type { CancellationSignal, ImageData2D, SharedRenderFrame2D } from '@egret/contracts';
 import type { SharedDeviceSessionStatus, SharedHostResourceStatus } from './sharedDeviceSession.js';
@@ -49,7 +52,7 @@ interface PreparedRecord {
     hits:Map<number,Page>;scene:PreparedSharedGLScene|undefined;
 }
 interface RecordLayout {
-    vertex:number;uniform:number;color:number;depth:number;
+    vertex:number;uniform:number;color:number;depth:number;effectTargets:number[];effectUniforms:number[];
     meshes:{mesh:PreparedSharedGLScene['meshes'][number];vertex:number;index:number}[];
     pageTextures:Map<number,Page>;
 }
@@ -135,6 +138,7 @@ class SharedGLHost implements SharedWebGL2Host {
     private limits:Limits|undefined;
     private framebuffer:WebGLFramebuffer|undefined;
     private program:WebGLProgram|undefined;
+    private effectPrograms=new Map<SharedEffectPass,WebGLProgram>();
     private resolveProgram:WebGLProgram|undefined;
     private drawVAO:WebGLVertexArrayObject|undefined;
     private resolveVAO:WebGLVertexArrayObject|undefined;
@@ -335,7 +339,7 @@ class SharedGLHost implements SharedWebGL2Host {
             if(this.generation>=Number.MAX_SAFE_INTEGER||(restoring&&this.attempt>=Number.MAX_SAFE_INTEGER))throw glFailure('WEBGL2_GENERATION_EXHAUSTED');
             if(restoring)this.attempt++;
             // Fixed native handles never cross a context generation, including partial startup.
-            this.framebuffer=undefined;this.program=undefined;this.resolveProgram=undefined;
+            this.framebuffer=undefined;this.program=undefined;this.resolveProgram=undefined;this.effectPrograms.clear();
             this.drawVAO=undefined;this.resolveVAO=undefined;this.sceneVAO=undefined;this.sceneProgram=undefined;
             this.limits=undefined;this.native=undefined;
             this.generation++;this.token={};const token=this.token;
@@ -354,7 +358,7 @@ class SharedGLHost implements SharedWebGL2Host {
             if('drawingBufferColorSpace' in context){context.drawingBufferColorSpace='srgb';this.generationGate(token);if(context.drawingBufferColorSpace!=='srgb')throw glFailure('WEBGL2_FORMAT_UNSUPPORTED');}
             const integer=(name:number,min:number):number=>{const value:unknown=gl.getParameter(name);if(typeof value!=='number'||!Number.isSafeInteger(value)||value<min)throw glFailure('WEBGL2_CONTEXT_LIMIT');return value;};
             const alignment=integer(gl.UNIFORM_BUFFER_OFFSET_ALIGNMENT,4);try{qualifySharedWebGL2Alignment(alignment);}catch(cause){throw glFailure('WEBGL2_CONTEXT_LIMIT',cause);}
-            integer(gl.MAX_UNIFORM_BLOCK_SIZE,128);integer(gl.MAX_UNIFORM_BUFFER_BINDINGS,1);integer(gl.MAX_VERTEX_UNIFORM_BLOCKS,1);integer(gl.MAX_FRAGMENT_UNIFORM_BLOCKS,1);integer(gl.MAX_TEXTURE_IMAGE_UNITS,1);integer(gl.MAX_VERTEX_ATTRIBS,4);
+            integer(gl.MAX_UNIFORM_BLOCK_SIZE,this.options.enableEffects?448:128);integer(gl.MAX_UNIFORM_BUFFER_BINDINGS,1);integer(gl.MAX_VERTEX_UNIFORM_BLOCKS,1);integer(gl.MAX_FRAGMENT_UNIFORM_BLOCKS,1);integer(gl.MAX_TEXTURE_IMAGE_UNITS,this.options.enableEffects?2:1);integer(gl.MAX_VERTEX_ATTRIBS,4);
             const dims=gl.getParameter(gl.MAX_VIEWPORT_DIMS) as Int32Array;
             if(!dims||dims.length!==2||![dims[0],dims[1]].every(n=>n!==undefined&&Number.isSafeInteger(n)&&n>0))throw glFailure('WEBGL2_CONTEXT_LIMIT');
             this.limits={alignment,texture:integer(gl.MAX_TEXTURE_SIZE,1),renderbuffer:integer(gl.MAX_RENDERBUFFER_SIZE,1),viewportWidth:dims[0]!,viewportHeight:dims[1]!};
@@ -368,6 +372,11 @@ class SharedGLHost implements SharedWebGL2Host {
             this.program=native.program(sharedWebGL2VertexSource,sharedWebGL2FragmentSource);
             native.block(this.program,'DrawUniform',['viewportOpacity','materialLight','materialDark','logicalTrim','contentOrigin','packedTurnDomain','samplerPolicy','pageExecution'],128);
             this.resolveProgram=native.program(sharedWebGL2ResolveVertexSource,sharedWebGL2ResolveFragmentSource);
+            if(this.options.enableEffects)for(const mode of EFFECT_PASSES){
+                const program=native.program(sharedWebGL2ResolveVertexSource,sharedEffectGLSL(mode));
+                const index=gl.getUniformBlockIndex(program,'Effect');if(index===gl.INVALID_INDEX)throw glFailure('WEBGL2_CONTEXT_LIMIT');
+                gl.uniformBlockBinding(program,index,0);this.effectPrograms.set(mode,program);
+            }
             this.drawVAO=native.create('VertexArray').value as WebGLVertexArrayObject;
             this.resolveVAO=native.create('VertexArray').value as WebGLVertexArrayObject;
             if(this.sceneFunctions){
@@ -394,7 +403,7 @@ class SharedGLHost implements SharedWebGL2Host {
         // At most two accepted records; counters derive from their still-owned immutable fees.
         const mutable=owner as {-readonly [K in keyof SharedOwnerSnapshot2D]:SharedOwnerSnapshot2D[K]};
         for(const r of this.records){mutable.pendingUploadBytes+=r.storage.upload;mutable.pendingReadbackBytes+=r.storage.staging+r.storage.output;mutable.pendingTextureBytes+=r.storage.prepared.pageBytes;
-            mutable.pendingGeometryBytes+=r.storage.prepared.geometryBytes;mutable.pendingColorBytes+=r.storage.colorBytes;mutable.pendingCanonicalBytes+=r.canonicalBytes;
+            mutable.pendingGeometryBytes+=r.storage.prepared.geometryBytes;mutable.pendingColorBytes+=r.storage.colorBytes+r.storage.effectBytes;mutable.pendingCanonicalBytes+=r.canonicalBytes;
             mutable.pendingSceneBytes+=r.scene?.sceneBytes??0;mutable.pendingUniformBytes+=r.scene?.uniformBytes??0;mutable.pendingDepthBytes+=r.scene?.depthBytes??0;}
         return owner;
     }
@@ -444,6 +453,9 @@ class SharedGLHost implements SharedWebGL2Host {
                 for(const draw of packed){if('barrier' in draw||!draw.vertexCount||draw.prepared.pageIndex===undefined)continue;
                     const index=draw.prepared.pageIndex,source=frame.pages[index]!.source,hit=this.pages.get(source);
                     if(hit?.ready&&hit.generation===this.generation&&hit.native.outcome==='owned')hits.set(index,hit);else cold.add(index);}
+                for(const group of prepared.effects.groups){const index=group.maskPageIndex;if(index===undefined)continue;
+                    const source=frame.pages[index]!.source,hit=this.pages.get(source);
+                    if(hit?.ready&&hit.generation===this.generation&&hit.native.outcome==='owned')hits.set(index,hit);else cold.add(index);}
                 const pages=materializeSharedPages2D(storage,cold,this.snapshot(),this.resourceCpu);materialized=pages.canonicalBytes;this.active();
                 checkSharedCapacity2D(storage,this.snapshot(),pages.canonicalBytes);
                 batch=prepareSharedBatches2D(packed,options.maxUploadBytes,this.scratch);this.active();
@@ -473,12 +485,14 @@ class SharedGLHost implements SharedWebGL2Host {
             const request=Object.freeze({id,role,byteLength,width:target?width:0,height:target?height:0});
             requests.push({request,key:role+':'+byteLength+':'+request.width+':'+request.height});return id;};
         const vertex=p.arena.vertexBytes?add('vertex',p.arena.vertexBytes):-1,uniform=p.arena.uniformBytes?add('uniform',p.arena.uniformBytes):-1,color=add('color',p.storage.colorBytes);
+        const effectTargets=Array.from({length:p.storage.prepared.effects.targetCount},()=>add('color',p.storage.colorBytes));
+        const effectUniforms=p.storage.prepared.effects.groups.map(group=>add('uniform',group.uniform.byteLength));
         const depth=p.scene?add('depth',p.scene.depthBytes):-1;
         const meshes=p.scene?.meshes.map(mesh=>({mesh,vertex:mesh.vertexBytes?add('vertex',mesh.vertexBytes):-1,index:mesh.indexBytes?add('index',mesh.indexBytes):-1}))??[];
         const plan=this.pool.plan(requests);
         this.active();checkSharedCapacity2D(p.storage,this.snapshot(),p.canonicalBytes);checkSharedWebGL2ArenaCapacity(p.arena,this.arenaOwner());
         for(const [index,hit] of p.hits)if(this.pages.get(frame.pages[index]!.source)!==hit||!hit.ready)throw glFailure('WEBGL2_FRAME_INVALID');
-        return {requests,plan,layout:{vertex,uniform,color,depth,meshes,pageTextures:new Map()}};
+        return {requests,plan,layout:{vertex,uniform,color,depth,meshes,effectTargets,effectUniforms,pageTextures:new Map()}};
     }
     private stageLife(token:object):void {
         this.active();if(token!==this.token)throw glFailure('WEBGL2_UPLOAD_STALE');
@@ -624,6 +638,7 @@ class SharedGLHost implements SharedWebGL2Host {
         for(const range of record.arena.sharedRanges){buffer(gl.ARRAY_BUFFER,vertex,range.vertexOffset,range.draw.data,44);buffer(gl.UNIFORM_BUFFER,uniform,range.uniformOffset,range.draw.uniform,128);}
         for(const range of record.arena.sceneRanges)buffer(gl.UNIFORM_BUFFER,uniform,range.uniformOffset,range.uniform,64);
         for(const item of meshes){if(item.vertex>=0)buffer(gl.ARRAY_BUFFER,item.vertex,0,item.mesh.vertices,24);if(item.index>=0)buffer(gl.ELEMENT_ARRAY_BUFFER,item.index,0,item.mesh.indices,4);}
+        for(let i=0;i<record.storage.prepared.effects.groups.length;i++)buffer(gl.UNIFORM_BUFFER,work.layout.effectUniforms[i]!,0,record.storage.prepared.effects.groups[i]!.uniform,16);
         work.allocated=true;
     }
     private uploadChunk(record:Record2D):void {
@@ -744,6 +759,7 @@ class SharedGLHost implements SharedWebGL2Host {
                 if(item.vertex>=0){gl.bindBuffer(gl.ARRAY_BUFFER,record.leases[item.vertex]!.handle.resource.value as WebGLBuffer);gl.bufferSubData(gl.ARRAY_BUFFER,0,item.mesh.vertices);}
                 if(item.index>=0){gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,record.leases[item.index]!.handle.resource.value as WebGLBuffer);gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER,0,item.mesh.indices);}
             }
+            for(let i=0;i<record.storage.prepared.effects.groups.length;i++){gl.bindBuffer(gl.UNIFORM_BUFFER,record.leases[layout.effectUniforms[i]!]!.handle.resource.value as WebGLBuffer);gl.bufferSubData(gl.UNIFORM_BUFFER,0,record.storage.prepared.effects.groups[i]!.uniform);}
             this.drawRecord(record,layout);
         }catch(cause){
             record.failure=this.note(isGLFailure(cause)?cause.code as WebGL2HostErrorCode:'WEBGL2_RENDER_FAILED',isGLFailure(cause)?cause.cause:cause,'frame',record.serial);
@@ -788,14 +804,39 @@ class SharedGLHost implements SharedWebGL2Host {
                 }
                 gl.disable(gl.DEPTH_TEST);gl.depthMask(false);
             }
-            gl.useProgram(this.program!);gl.bindVertexArray(this.drawVAO!);
-            if(vertex>=0){gl.bindBuffer(gl.ARRAY_BUFFER,record.leases[vertex]!.handle.resource.value as WebGLBuffer);
-                for(const [index,size,offset] of [[0,2,0],[1,2,8],[2,4,16],[3,3,32]]){gl.enableVertexAttribArray(index!);gl.vertexAttribPointer(index!,size!,gl.FLOAT,false,44,offset!);gl.vertexAttribDivisor(index!,0);}}
-            gl.uniform1i(gl.getUniformLocation(this.program!,'page'),0);gl.enable(gl.BLEND);
-            for(const range of record.arena.sharedRanges){const draw=range.draw,page=draw.prepared.pageIndex;
+            const bindDraw=():void=>{
+                gl.activeTexture(gl.TEXTURE0);gl.useProgram(this.program!);gl.bindVertexArray(this.drawVAO!);
+                if(vertex>=0){gl.bindBuffer(gl.ARRAY_BUFFER,record.leases[vertex]!.handle.resource.value as WebGLBuffer);
+                    for(const [index,size,offset] of [[0,2,0],[1,2,8],[2,4,16],[3,3,32]]){gl.enableVertexAttribArray(index!);gl.vertexAttribPointer(index!,size!,gl.FLOAT,false,44,offset!);gl.vertexAttribDivisor(index!,0);}}
+                gl.uniform1i(gl.getUniformLocation(this.program!,'page'),0);gl.enable(gl.BLEND);
+            };
+            const drawOne=(range:SharedWebGL2ArenaPlan['sharedRanges'][number]):void=>{const draw=range.draw,page=draw.prepared.pageIndex;
                 gl.bindTexture(gl.TEXTURE_2D,page===undefined?null:pageTextures.get(page)!.native.value as WebGLTexture);
                 gl.bindBufferRange(gl.UNIFORM_BUFFER,0,record.leases[uniform]!.handle.resource.value as WebGLBuffer,range.uniformOffset,128);
-                const blend=sharedWebGL2BlendFactors(draw.prepared.material.blend);gl.blendFuncSeparate(...blend);gl.drawArrays(gl.TRIANGLES,range.firstVertex,draw.vertexCount);}
+                const blend=sharedWebGL2BlendFactors(draw.prepared.material.blend);gl.blendFuncSeparate(...blend);gl.drawArrays(gl.TRIANGLES,range.firstVertex,draw.vertexCount);};
+            bindDraw();
+            if(record.storage.prepared.effects.groups.length===0){for(const range of record.arena.sharedRanges)drawOne(range);}
+            else{
+                const targets=layout.effectTargets.map(id=>record.leases[id]!.handle.resource.value as WebGLTexture);
+                const setTarget=(target:WebGLTexture,clear:boolean):void=>{gl.bindFramebuffer(gl.FRAMEBUFFER,this.framebuffer!);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,target,0);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,null);native.attachment(true);if(clear){gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);}};
+                const groups=record.storage.prepared.effects.groups,enters=new Map(groups.map(g=>[g.enter,g])),exits=new Map(groups.map(g=>[g.exit,g]));
+                const ranges=new Map(record.arena.sharedRanges.map(range=>[range.draw.prepared.command.ordinal,range]));
+                const effectPass=(group:PreparedEffect2D,mode:SharedEffectPass,target:WebGLTexture,source:WebGLTexture):void=>{
+                    setTarget(target,mode!=='composite');const program=this.effectPrograms.get(mode)!;
+                    gl.useProgram(program);gl.bindVertexArray(this.resolveVAO!);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,source);gl.uniform1i(gl.getUniformLocation(program,'sourceTexture'),0);
+                    if(mode==='composite'){gl.activeTexture(gl.TEXTURE1);gl.bindSampler(1,null);gl.bindTexture(gl.TEXTURE_2D,group.maskPageIndex===undefined?source:pageTextures.get(group.maskPageIndex)!.native.value as WebGLTexture);gl.uniform1i(gl.getUniformLocation(program,'maskTexture'),1);gl.activeTexture(gl.TEXTURE0);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.ONE,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);}else gl.disable(gl.BLEND);
+                    gl.bindBufferRange(gl.UNIFORM_BUFFER,0,record.leases[layout.effectUniforms[groups.indexOf(group)]!]!.handle.resource.value as WebGLBuffer,0,448);gl.drawArrays(gl.TRIANGLES,0,3);
+                    gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,null);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,null);
+                };
+                for(const command of frame.commands){const enter=enters.get(command.ordinal),exit=exits.get(command.ordinal);
+                    if(enter){setTarget(targets[(enter.depth-1)*2]!,true);bindDraw();}
+                    else if(exit){const source=targets[(exit.depth-1)*2]!,scratch=targets[(exit.depth-1)*2+1]!;
+                        if(exit.radius>0){effectPass(exit,'horizontal',scratch,source);effectPass(exit,'vertical',source,scratch);}
+                        const parent=exit.depth===1?record.leases[color]!.handle.resource.value as WebGLTexture:targets[(exit.depth-2)*2]!;
+                        effectPass(exit,'composite',parent,source);bindDraw();
+                    }else{const range=ranges.get(command.ordinal);if(range)drawOne(range);}
+                }
+            }
             gl.disable(gl.BLEND);gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.drawBuffers([gl.BACK]);native.attachment(false);
             gl.useProgram(this.resolveProgram!);gl.bindVertexArray(this.resolveVAO!);gl.bindTexture(gl.TEXTURE_2D,record.leases[color]!.handle.resource.value as WebGLTexture);
             gl.uniform1i(gl.getUniformLocation(this.resolveProgram!,'workingTexture'),0);gl.uniform1i(gl.getUniformLocation(this.resolveProgram!,'opaque'),this.options.outputAlpha==='opaque'?1:0);gl.drawArrays(gl.TRIANGLES,0,3);
@@ -825,6 +866,7 @@ class SharedGLHost implements SharedWebGL2Host {
         }
         gl.bindVertexArray(null);gl.bindBuffer(gl.ARRAY_BUFFER,null);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,null);
         gl.bindBufferRange(gl.UNIFORM_BUFFER,0,null,0,128);gl.bindBuffer(gl.UNIFORM_BUFFER,null);
+        if(this.options.enableEffects){gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,null);}
         gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,null);gl.bindRenderbuffer(gl.RENDERBUFFER,null);
         if(this.framebuffer){gl.bindFramebuffer(gl.FRAMEBUFFER,this.framebuffer);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,null,0);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,null);}
         gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.useProgram(null);

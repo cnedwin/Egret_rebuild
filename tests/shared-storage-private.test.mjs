@@ -19,7 +19,7 @@ const owner=()=>({pendingFrames:0,pendingUploadBytes:0,pendingReadbackBytes:0,
   pendingCanonicalBytes:0,pendingSceneBytes:0,pendingUniformBytes:0,
   pendingDepthBytes:0,serial:0});
 const prepared=(changes={})=>({width:65,height:2,upload:8,pageBytes:8,
-  geometryBytes:44,entries:[],frame:{pages:[]},...changes});
+  geometryBytes:44,entries:[],frame:{pages:[]},effects:{groups:[],depth:0,targetCount:0,uniformBytes:0},...changes});
 const hardware=(changes={})=>({maxTextureDimension2D:16384,maxBufferSize:128*MiB,...changes});
 const reason=expected=>error=>error instanceof SharedStorageError2D&&error.reason===expected;
 const tight=(p=prepared(),options=limits,scene)=>{

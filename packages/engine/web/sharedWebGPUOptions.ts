@@ -1,9 +1,9 @@
 import type { WebGPUHostDiagnostic } from './WebGPUHost.js';
 
 import type { TexturedWebGPUHostOptions, TexturedWebGPUConfiguration } from './texturedWebGPUOptions.js';
-export interface SharedWebGPUHostOptions extends TexturedWebGPUHostOptions { readonly outputAlpha?: 'premultiplied' | 'opaque'; readonly recovery?: { readonly mode: 'manual' | 'automatic'; readonly timeoutMs?: number }; }
+export interface SharedWebGPUHostOptions extends TexturedWebGPUHostOptions { readonly enableEffects?: boolean; readonly outputAlpha?: 'premultiplied' | 'opaque'; readonly recovery?: { readonly mode: 'manual' | 'automatic'; readonly timeoutMs?: number }; }
 export type SharedSceneWebGPUHostOptions = Omit<SharedWebGPUHostOptions, 'outputAlpha'> & { readonly outputAlpha: 'opaque' };
-export type SharedWebGPUConfiguration = TexturedWebGPUConfiguration & { readonly outputAlpha: 'premultiplied' | 'opaque'; readonly recovery: { readonly mode: 'manual' | 'automatic'; readonly timeoutMs: number } | undefined };
+export type SharedWebGPUConfiguration = TexturedWebGPUConfiguration & { readonly enableEffects:boolean; readonly outputAlpha: 'premultiplied' | 'opaque'; readonly recovery: { readonly mode: 'manual' | 'automatic'; readonly timeoutMs: number } | undefined };
 const DEFAULTS: TexturedWebGPUConfiguration = Object.freeze({
     pixelRatio: 1, maxBackingPixels: 16777216, maxCommands: 65536, maxClipRectangles: 262144,
     maxPreparedVertices: 1048576, maxClipEdgeTests: 4194304, maxUploadBytes: 33554432,
@@ -12,7 +12,7 @@ const DEFAULTS: TexturedWebGPUConfiguration = Object.freeze({
 });
 const KEYS = ['canvas', 'device', 'onDiagnostic', 'pixelRatio', 'maxBackingPixels', 'maxCommands', 'maxClipRectangles',
     'maxPreparedVertices', 'maxClipEdgeTests', 'maxUploadBytes', 'maxPendingUploadBytes', 'maxPendingFrames',
-    'maxReadbackBytes', 'enableReadback', 'maxSourceTriangles', 'maxFrameGeometryBytes', 'maxPendingGeometryBytes', 'maxTupleComparisons', 'outputAlpha', 'recovery'] as const;
+    'maxReadbackBytes', 'enableReadback', 'maxSourceTriangles', 'maxFrameGeometryBytes', 'maxPendingGeometryBytes', 'maxTupleComparisons', 'outputAlpha', 'recovery', 'enableEffects'] as const;
 function object(value: unknown): value is Record<string, unknown> { return typeof value === 'object' && value !== null; }
 
 /** Snapshot every top-level read, then the selected policy reads, before any semantic refusal. */
@@ -49,9 +49,10 @@ export function admitSharedWebGPUOptions(input: SharedWebGPUHostOptions, scene: 
         }
         Object.defineProperty(configuration, key, { value, enumerable: true });
     }
+    const enableEffects=captured.enableEffects??false;if(typeof enableEffects!=='boolean')throw new TypeError('enableEffects');
     const outputAlpha = captured.outputAlpha === undefined && !scene ? 'premultiplied' : captured.outputAlpha;
     if ((outputAlpha !== 'premultiplied' && outputAlpha !== 'opaque') || (scene && outputAlpha !== 'opaque')) throw new TypeError('outputAlpha');
-    return { surface: captured.canvas as unknown as HTMLCanvasElement, configuration: Object.freeze({ ...configuration, outputAlpha, recovery }),
+    return { surface: captured.canvas as unknown as HTMLCanvasElement, configuration: Object.freeze({ ...configuration, enableEffects, outputAlpha, recovery }),
         borrowed: kind === 'borrow' ? borrowed as GPUDevice : undefined,
         callback: captured.onDiagnostic as ((diagnostic: WebGPUHostDiagnostic) => unknown) | undefined };
 }

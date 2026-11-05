@@ -49,3 +49,5 @@ export { createSpriteSheet } from "./spriteSheet.js";
 export type { SpriteSheet, SpriteSheetFrameInput } from "./spriteSheet.js";
 
 export type { AtlasFrameLayout } from './atlasFrameLayout.js';
+
+export type { RenderEffect2D } from './renderEffect.js';

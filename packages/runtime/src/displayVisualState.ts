@@ -6,6 +6,8 @@ import { engineOf } from "./ownership.js";
 import { EgretError } from "./EgretError.js";
 import { invalidateCaptureNode } from "./frameCaptureCache.js";
 
+import type { RenderEffect2D } from './renderEffect.js';
+
 export interface Primitive {
   readonly rect: Rectangle2D;
   readonly color: number;
@@ -29,6 +31,7 @@ export interface VisualState {
   visible: boolean;
   sharedMaterial: SharedMaterial2D | null;
   renderBoundary: 'none' | 'isolate';
+  renderEffect: RenderEffect2D | undefined;
   clipRect: Rectangle2D | undefined;
   primitives: Primitive[];
 }
@@ -78,7 +81,7 @@ export function registerVisual(node: DisplayObject): void {
     structureRevision: 0, transformRevision: 0, appearanceRevision: 0, contentRevision: 0, bindingRevision: 0,
     x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, alpha: 1,
     anchorOffsetX: 0, anchorOffsetY: 0,
-    visible: true, sharedMaterial: null, renderBoundary: 'none', clipRect: undefined, primitives: [],
+    visible: true, renderEffect: undefined, sharedMaterial: null, renderBoundary: 'none', clipRect: undefined, primitives: [],
   });
 }
 

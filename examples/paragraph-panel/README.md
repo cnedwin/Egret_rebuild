@@ -29,3 +29,7 @@ Select **Equipment styles** to switch the ordinary column and virtual list to an
 The pure styled-copy.mjs module builds source text and immutable UTF-16 ranges together. UI content revisions own the request snapshot; delayed, failed or superseded requests retain the previous committed image and geometry. This is readonly styling, not rich-text editing, arbitrary HTML/CSS, touch controls or a font/performance qualification. See the [styled paragraph contract](../../knowledge-base/en/docs/paragraph-styled-runs.md).
 
 The example sets a 32 MiB paragraph image-cache budget for overlapping old/new UI transactions at density 2; engine defaults and raster limits are unchanged. Equipment rows start from a conservative 540-unit estimate and settle to measured height. Run node examples/paragraph-panel/verify-equipment.mjs <playwright-root> <new-output-directory> for the finite styled UI checks. [Recorded results and limits](styled-verification-summary.json).
+
+## Optional shared effects
+
+Open `?content=equipment&effects=1&backend=webgl2` or `backend=webgpu` to inspect the same UI with masks and box blur. Cycle all four modes with the effects button; both article and virtual rows republish together. Default content and input routing remain unchanged. See the [effect contract](https://github.com/cnedwin/Egret_rebuild/blob/main/knowledge-base/en/docs/shared-ui-effects.md) for limits, ownership, recovery and qualification.
