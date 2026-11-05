@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "559e04b9540710c4b375bf4638758d332764dd5c48050a57872fda31ba441dd6",
+      "sha256": "44f07d275b0baeaff08a998f752e88bc6b223bcb27d7589170656b244e7b5d9b",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "857c8bd9a43c24955b6e038bbaaeb2dee92d39d0936367796edd51cbdee0b7df",
+      "sha256": "d86785d93fa2bac3b90f8ed628b7d2d2005521b354a80eac779b0e139e482b8f",
       "bytes": 383237,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -4860,8 +4860,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "2edb3ff7cc817f53f8d6c1f9404b834d132ba03295fa5c7846c5f2b9856fd66e",
-      "bytes": 22559,
+      "sha256": "e24c6be63958adc4d652a286809bff82cae1f4b5778ac885ebf2572ec8e60e5e",
+      "bytes": 13104,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -5003,8 +5003,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "1e269aa51dcc5c70c85e3afa9a52bc26a2ad8050eb1bd0ead3ea1fd852260fd1",
-      "bytes": 20886,
+      "sha256": "9db45daf5b4562b24f4db8ab105833680286f1b5cf5fc1d0708a36884081ea7a",
+      "bytes": 12669,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
