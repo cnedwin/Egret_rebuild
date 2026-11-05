@@ -598,8 +598,17 @@ assert.equal(precedingModuleIdentities.size,m22SourceModuleLimit);
 assert.equal(m24SpineModuleSuccessors.size,6);assert.equal(m24SpineModuleAdditions.size,2);
 for(const [name,previous]of m24SpineModulePredecessors)assert.deepEqual(precedingModuleIdentities.get(name),previous,'Exact M2.4 predecessor required');
 for(const name of m24SpineModuleAdditions.keys())assert.ok(!precedingModuleIdentities.has(name),'M2.4 additions must be new');
-const currentModuleIdentities = new Map([...precedingModuleIdentities,...m24SpineModuleSuccessors,...m24SpineModuleAdditions]);
-assert.equal(currentModuleIdentities.size, m24SourceModuleLimit, 'M2.4 current closure table is incomplete');
+const m24ModuleIdentities = new Map([...precedingModuleIdentities,...m24SpineModuleSuccessors,...m24SpineModuleAdditions]);
+assert.equal(m24ModuleIdentities.size, m24SourceModuleLimit, 'M2.4 retained closure table is incomplete');
+// Exact independently reviewed emitted effects; earlier identities remain provenance.
+const m34EffectModuleSuccessors = new Map([["packages/engine/dist/rendering/prepareSharedDraws2D.js",{"bytes":13916,"sha256":"55cd7ed455dcbf9f8417dcc0324e19cc1609ef3bbd89dd7e40f519937a6122d5"}],["packages/engine/dist/web/sharedWebGPUOptions.js",{"bytes":4034,"sha256":"c6fab0c7669825d3f7666367c48ec6d28f10b2cd85e51b6c190ef322bf355775"}],["packages/runtime/dist/displayVisualState.js",{"bytes":4154,"sha256":"8eef508a215bb6239c4558a4ccf92d43f27380d028c8be871456019c1ed71dc8"}],["packages/engine/dist/web/sharedSubmissionStorage2D.js",{"bytes":3884,"sha256":"03fe3db2d0a018269cf11e5970bfb539a24a770c4d42db1e6b62efe2400154d1"}],["packages/runtime/dist/DisplayObject.js",{"bytes":8017,"sha256":"469dc4ba94441681c247cd91869c2385550073168738fd8e954188e3352dc446"}],["packages/engine/dist/web/WebGPUHost.js",{"bytes":194045,"sha256":"719568799281dc35ae3d5ed2b9e503d276b43d6995f694ee8229b57e33f3e12f"}],["packages/runtime/dist/sharedFrameCapture.js",{"bytes":21675,"sha256":"be6f4ef6ac9a98e2937279749e1fd70a98eadc9fcae836d2009a43f0bcb30e54"}],["packages/runtime/dist/texturedFrameCapture.js",{"bytes":15312,"sha256":"c24d52a9fc718807f5acc33555dd9b22c3bedef681cfe56545b3ddcb2e9d49ac"}],["packages/runtime/dist/frameCapture.js",{"bytes":8499,"sha256":"349bba5d51caeee4e18f710a527c60b39b1d1434d120ae0563d60191a919870e"}]]);
+const m34EffectModuleAdditions = new Map([["packages/runtime/dist/renderEffect.js",{"bytes":1884,"sha256":"1427330ed36f1ee5c32cf581364356b1725d8fdf0b531d30924f9ae6bb4b0b14"}],["packages/engine/dist/rendering/sharedEffects2D.js",{"bytes":2839,"sha256":"ca0fc69f466aeccea9648ba202e73bd42222eda1b78da17889f0c3f0f188e105"}],["packages/engine/dist/web/sharedEffectShaders.js",{"bytes":4086,"sha256":"7d5c3be9646a8430dc9c86c40de3da6d07e8e5d0220229b99f5332ed59f423f6"}]]);
+const m34SourceModuleLimit = 143;
+assert.equal(m34EffectModuleSuccessors.size,9);assert.equal(m34EffectModuleAdditions.size,3);
+for(const name of m34EffectModuleSuccessors.keys())assert.ok(m24ModuleIdentities.has(name));
+for(const name of m34EffectModuleAdditions.keys())assert.ok(!m24ModuleIdentities.has(name));
+const currentModuleIdentities = new Map([...m24ModuleIdentities,...m34EffectModuleSuccessors,...m34EffectModuleAdditions]);
+assert.equal(currentModuleIdentities.size,m34SourceModuleLimit,'M3.4 current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {
   assert.deepEqual([...served.keys()].map(url => url.slice(1)).sort(), [...currentModuleIdentities.keys()].sort(),
@@ -660,7 +669,7 @@ async function collect(name) {
   const url = '/' + name; if (served.has(url)) return;
   assert.ok(allowedModules.has(name), `Unapproved public native dependency: ${name}`);
   assert.ok(currentModuleIdentities.has(name), `Unapproved current native dependency: ${name}`);
-  assert.ok(served.size < m24SourceModuleLimit, 'Finite emitted closure exceeded');
+  assert.ok(served.size < m34SourceModuleLimit, 'Finite emitted closure exceeded');
   const path = resolve(repository, name), physical = await realpath(path);
   assert.ok(physical.startsWith(repository + sep), 'Selected dependency escaped repository');
   const body = await readFile(physical); assert.ok(body.length <= 1024 * 1024);
@@ -753,11 +762,12 @@ try {
   const m15HostSourceSuccessor = {"bytes":189815,"sha256":"f84a1de242e8b3efefc1bb4ccb344cb02b659d355b512c071cfccf7c1943bf10"};
   const m12PerformanceHostSourceSuccessor = {"bytes":190117,"sha256":"f3d324c1357ecce0f2f4067d017d2ae88886c5e26fe7458df0b5d16e59fdfb93"};
   const m24RecoveryHostSourceSuccessor = {"bytes":190291,"sha256":"4ee6437d165dac8a76279be42d87054075cc722ba0063f7f76048d7b3ba9441c"};
-  assert.equal(currentHost.bytes, m24RecoveryHostSourceSuccessor.bytes, 'Native acceptance binds the reviewed confirmed-loss Host successor');
-  assert.equal(currentHost.sha256, m24RecoveryHostSourceSuccessor.sha256);
+  const m34EffectHostSourceSuccessor = {"bytes":195968,"sha256":"cdcaef7f728507e3407e7ffd3e827ee164d9cd5f1597458fefc3685bde0e75ac"};
+  assert.equal(currentHost.bytes, m34EffectHostSourceSuccessor.bytes, 'Native acceptance binds the reviewed confirmed-loss Host successor');
+  assert.equal(currentHost.sha256, m34EffectHostSourceSuccessor.sha256);
   report.publicRoute = { entries: entryNames.slice(0, 3), packageExports: { './scene3d': packageExports['./scene3d'], './webgpu/scene3d': packageExports['./webgpu/scene3d'] },
-    hostSource: currentHost, historicalM12HostSource, m13HostSourceSuccessor, m15HostSourceSuccessor, m12PerformanceHostSourceSuccessor, m24RecoveryHostSourceSuccessor,
-    sourceCollection: { historicalModuleLimit: historicalSourceModuleLimit, m15ModuleLimit: m15SourceModuleLimit, m31ModuleLimit: m31SourceModuleLimit, m22ModuleLimit: m22SourceModuleLimit, currentModuleLimit: m24SourceModuleLimit, exactModules: [...currentModuleIdentities].map(([path, value]) => ({ path, ...value })) }, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
+    hostSource: currentHost, historicalM12HostSource, m13HostSourceSuccessor, m15HostSourceSuccessor, m12PerformanceHostSourceSuccessor, m24RecoveryHostSourceSuccessor, m34EffectHostSourceSuccessor,
+    sourceCollection: { historicalModuleLimit: historicalSourceModuleLimit, m15ModuleLimit: m15SourceModuleLimit, m31ModuleLimit: m31SourceModuleLimit, m22ModuleLimit: m22SourceModuleLimit, currentModuleLimit: m34SourceModuleLimit, exactModules: [...currentModuleIdentities].map(([path, value]) => ({ path, ...value })) }, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
   const emitted = [...served.values()].reduce((sum, value) => sum + value.body.length, 0); assert.ok(emitted <= 4 * 1024 * 1024);
   // Bind matching first-party source files without scanning unrelated repository files.
   for (const url of served.keys()) {

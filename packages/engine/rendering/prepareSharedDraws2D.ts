@@ -1,4 +1,6 @@
 import { isImageData2D, isSharedGeometry2D, isSharedMaterial2D, isTexturedGeometry2D } from '@egret/contracts';
+import { prepareEffects2D } from './sharedEffects2D.js';
+import type { PreparedEffects2D } from './sharedEffects2D.js';
 import type { SharedRenderFrame2D, SharedRenderCommand2D, SharedMaterial2D, SharedRegion2D, Matrix2D } from '@egret/contracts';
 import { Preparation, coordinate, clipPolygon2D, finishPolygonWinding2D } from './prepareRectangles2D.js';
 import type { PolygonClipPolicy2D, CrossingAttributes } from './prepareRectangles2D.js';
@@ -15,8 +17,8 @@ export type SharedDrawCommand2D = Exclude<SharedRenderCommand2D, { kind: 'barrie
 export interface PreparedSharedDraw2D { readonly kind:'draw'; readonly command:SharedDrawCommand2D; readonly material:SharedMaterial2D; readonly region:SharedRegion2D|undefined; readonly pageIndex:number|undefined; readonly polygons:readonly (readonly SharedPoint2D[])[]; readonly vertexReservation:number; }
 export interface PreparedSharedBarrier2D { readonly kind:'barrier'; readonly ordinal:number; readonly occurrenceId:number; }
 export type PreparedSharedEntry2D = PreparedSharedDraw2D | PreparedSharedBarrier2D;
-export interface SharedPreparationOptions2D extends TexturedPreparationLimits2D { readonly pixelRatio:number; readonly maxCommands:number; readonly maxClipRectangles:number; readonly maxFrameGeometryBytes:number; }
-export interface PreparedSharedFrame2D { readonly frame:SharedRenderFrame2D; readonly width:number; readonly height:number; readonly entries:readonly PreparedSharedEntry2D[]; readonly budget:TexturedPreparationBudget2D; readonly geometryBytes:number; readonly pageBytes:number; readonly upload:number; }
+export interface SharedPreparationOptions2D extends TexturedPreparationLimits2D { readonly enableEffects?:boolean; readonly pixelRatio:number; readonly maxCommands:number; readonly maxClipRectangles:number; readonly maxFrameGeometryBytes:number; }
+export interface PreparedSharedFrame2D { readonly effects:PreparedEffects2D; readonly frame:SharedRenderFrame2D; readonly width:number; readonly height:number; readonly entries:readonly PreparedSharedEntry2D[]; readonly budget:TexturedPreparationBudget2D; readonly geometryBytes:number; readonly pageBytes:number; readonly upload:number; }
 const ATTRS = ['u','v','r','g','b','a','dr','dg','db'] as const;
 function unit(value:number):number { if(!Number.isFinite(value)||value<0||value>1) sharedFailure('precision'); return value===0?0:value; }
 function uv(value:number):number { if(!Number.isFinite(value))sharedFailure('precision'); return value===0?0:value; }
@@ -60,7 +62,9 @@ function transform(p:SharedPoint2D,m:Matrix2D,ratio:number):SharedPoint2D {
 export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,height:number,options:SharedPreparationOptions2D):PreparedSharedFrame2D {
     if(frame.profile!=='egret.shared-frame2d/1'||frame.colorRecipe!=='egret.linear-srgb-pma/1'||frame.targetRepresentation!=='egret.srgb-pma8-target/1')sharedFailure('profile');
     if(frame.commands.length>options.maxCommands||frame.commands.length>65536||frame.pages.length>64||frame.regions.length>128||frame.materials.length>256||frame.geometries.length>128)sharedFailure('budget');
+    const effects=prepareEffects2D(frame,options.pixelRatio,options.enableEffects===true);
     const budget=new TexturedPreparationBudget2D(options);let geometryBytes=0,pageBytes=0,clipsCount=0;
+    for(const command of frame.commands)if(command.kind==='barrier'&&command.effect)clipsCount=add(clipsCount,command.effect.clips.length,options.maxClipRectangles);
     for(const page of frame.pages){if(!isImageData2D(page.source)||page.sourceRepresentation!=='egret.srgb-straight-rgba8/1'||page.canonicalRepresentation!=='egret.alpha8-capped-srgb-pma8/1')sharedFailure('frame');pageBytes=add(pageBytes,page.source.byteLength,16777216);}
     for(const material of frame.materials){if(!isSharedMaterial2D(material))sharedFailure('frame');if(material.blend==='add-preserve'&&frame.outputAlpha!=='opaque')sharedFailure('profile');}
     for(const geometry of frame.geometries){if(!isTexturedGeometry2D(geometry)&&!isSharedGeometry2D(geometry))sharedFailure('frame');geometryBytes=add(geometryBytes,geometry.logicalByteLength,options.maxFrameGeometryBytes);}
@@ -113,5 +117,5 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
         upload=add(upload,44*vertexReservation+128,Number.MAX_SAFE_INTEGER);
         entries.push({kind:'draw',command,material,region,pageIndex,polygons,vertexReservation});
     }
-    return {frame,width,height,entries,budget,geometryBytes,pageBytes,upload};
+    return {effects,frame,width,height,entries,budget,geometryBytes,pageBytes,upload:upload+effects.uniformBytes};
 }

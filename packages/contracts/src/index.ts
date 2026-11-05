@@ -19,3 +19,5 @@ export type { TexturedFrameProfile2D, TexturedMeshCommand2D, TexturedRenderComma
 export { SHARED_FRAME_PROFILE_2D } from './SharedRenderFrame2D.js';
 export type { SharedFrameProfile2D, SharedOutputAlpha2D, SharedFrameOptions2D, SharedPage2D, SharedRegion2D, SharedDrawState2D, SharedRectangleCommand2D, SharedImageCommand2D, SharedMeshCommand2D, SharedBarrierCommand2D, SharedRenderCommand2D, SharedRenderFrame2D, SharedRenderHostAdapter } from './SharedRenderFrame2D.js';
 export type { ProjectId, EntityId, FileId, TransactionId, ProjectRevision, Sha256, JsonValue, JsonObject, ProjectVersionPins, ProjectReference, ProjectEntity, ProjectFileRole, ProjectFile, ProjectSnapshot, ProjectTransactionSource, ProjectTransactionScope, ProjectOperation, ProjectEditTransaction, ProjectRestoreTransaction, ProjectTransaction, ProjectHistory } from "./ProjectFormat.generated.js";
+
+export type { SharedEffect2D } from './SharedRenderFrame2D.js';

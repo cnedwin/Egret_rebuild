@@ -1,3 +1,5 @@
+import { setRenderEffect } from './renderEffect.js';
+import type { RenderEffect2D } from './renderEffect.js';
 import { assertManagedMutable } from './ui/managedState.js';
 import { isSharedMaterial2D } from '@egret/contracts';
 import type { Point2D, Rectangle2D, SharedMaterial2D } from '@egret/contracts';
@@ -98,6 +100,10 @@ export class DisplayObject extends EventDispatcher {
     state.sharedMaterial = value;
     if (changed) recordVisualChange(this, VISUAL_APPEARANCE);
   }
+  /** Shared backends execute effects; legacy captures explicitly refuse them. */
+  public get renderEffect(): RenderEffect2D | undefined { return visualOf(this).renderEffect; }
+  public set renderEffect(value: RenderEffect2D | undefined) { setRenderEffect(this,value); }
+
   /** An ordering boundary is metadata, not another display or resource owner. */
   public get renderBoundary(): 'none' | 'isolate' { return visualOf(this).renderBoundary; }
   public set renderBoundary(value: 'none' | 'isolate') {

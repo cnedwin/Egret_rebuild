@@ -62,6 +62,7 @@ function admitTree(stage: Stage, engine: EngineContext, budget: TexturedCaptureB
   function enter(node: DisplayObject, parent: DisplayObjectContainer | undefined): void {
     budget.admitNode();
     checkNode(node, parent, engine, metadata, false);
+    if(visualOf(node).renderEffect!==undefined)throw new EgretError('DISPLAY_EFFECT_UNSUPPORTED');
     const primitives = visualOf(node).primitives;
     budget.admitAuthoringUnits(primitives.length);
     const bitmapOccupied = bitmapCaptureState(node) !== undefined;

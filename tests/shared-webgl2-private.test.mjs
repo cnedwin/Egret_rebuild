@@ -11,12 +11,12 @@ const TOP = ['canvas', 'onDiagnostic', 'pixelRatio', 'maxBackingPixels', 'maxCom
   'maxClipRectangles', 'maxPreparedVertices', 'maxClipEdgeTests', 'maxUploadBytes',
   'maxPendingUploadBytes', 'maxPendingFrames', 'maxReadbackBytes', 'enableReadback',
   'maxSourceTriangles', 'maxFrameGeometryBytes', 'maxPendingGeometryBytes',
-  'maxTupleComparisons', 'outputAlpha', 'restoreTimeoutMs'];
+  'maxTupleComparisons', 'enableEffects', 'outputAlpha', 'restoreTimeoutMs'];
 const DEFAULTS = Object.freeze({
   pixelRatio: 1, maxBackingPixels: 16777216, maxCommands: 65536, maxClipRectangles: 262144,
   maxPreparedVertices: 1048576, maxClipEdgeTests: 4194304, maxUploadBytes: 33554432,
   maxPendingUploadBytes: 67108864, maxPendingFrames: 2, maxReadbackBytes: 67108864,
-  enableReadback: false, maxSourceTriangles: 65536, maxFrameGeometryBytes: 16777216,
+  enableReadback: false, enableEffects: false, maxSourceTriangles: 65536, maxFrameGeometryBytes: 16777216,
   maxPendingGeometryBytes: 33554432, maxTupleComparisons: 1048576,
   outputAlpha: 'premultiplied', restoreTimeoutMs: 10000,
 });

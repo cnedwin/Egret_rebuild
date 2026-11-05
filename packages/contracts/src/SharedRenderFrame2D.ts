@@ -58,12 +58,22 @@ export interface SharedMeshCommand2D extends SharedDrawState2D {
   readonly geometryIndex: number;
 }
 
+/** Frozen effect inputs captured with the same frame and image ownership. */
+export interface SharedEffect2D {
+  readonly blurRadius:number;
+  readonly maskPageIndex:number|undefined;
+  readonly maskRect:Rectangle2D|undefined;
+  readonly matrix:Matrix2D;
+  readonly clips:readonly ClipRectangle2D[];
+}
 export interface SharedBarrierCommand2D {
+  readonly effect?:SharedEffect2D;
+
   readonly kind: 'barrier';
   readonly ordinal: number;
   readonly occurrenceId: number;
   readonly boundaryId: number;
-  readonly reason: 'explicit-enter' | 'explicit-exit' | 'clip-enter' | 'clip-exit' | 'empty';
+  readonly reason: 'explicit-enter' | 'explicit-exit' | 'clip-enter' | 'clip-exit' | 'empty' | 'effect-enter' | 'effect-exit';
 }
 
 export type SharedRenderCommand2D = SharedRectangleCommand2D | SharedImageCommand2D

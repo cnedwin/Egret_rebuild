@@ -41,7 +41,7 @@ interface ClipChain { readonly previous: ClipChain | undefined; readonly clip: C
 interface Boundary { readonly occurrenceId: number; readonly boundaryId: number; }
 interface VisibleCursor extends Cursor {
   readonly matrix: Matrix2D; readonly alpha: number; readonly clips: ClipChain | undefined;
-  readonly material: SharedMaterial2D; readonly explicit: Boundary | undefined; readonly clip: Boundary | undefined;
+  readonly material: SharedMaterial2D; readonly explicit: Boundary | undefined; readonly clip: Boundary | undefined; readonly effect: Boundary | undefined;
 }
 const freeze = Object.freeze;
 const defaultMaterial = createSharedMaterial2D({});
@@ -293,7 +293,8 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
     barrier(reason, pair);
     return pair;
   }
-  function close(explicit: Boundary | undefined, clip: Boundary | undefined): void {
+  function close(explicit: Boundary | undefined, clip: Boundary | undefined, effect?: Boundary): void {
+    if(effect!==undefined)barrier('effect-exit',effect);
     if (clip !== undefined) barrier('clip-exit', clip);
     if (explicit !== undefined) barrier('explicit-exit', explicit);
   }
@@ -322,6 +323,23 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
       clip = open('clip-enter');
       if (rect.width === 0 || rect.height === 0) { close(explicit, clip); return; }
       clips = { previous: clips, clip: freeze({ matrix, rect }), depth: (clips?.depth ?? 0) + 1 };
+    }
+    let effect:Boundary|undefined;
+    if(state.renderEffect!==undefined){
+      const settings=state.renderEffect,mask=settings.alphaMask;
+      let maskPageIndex:number|undefined;
+      if(mask!==undefined){
+        assertLive(mask);if(engineOf(mask)!==engine)throw new EgretError('ENGINE_MISMATCH');
+        const binding=readBitmap(mask);if(!binding)throw new EgretError('DISPLAY_EFFECT_MASK_INVALID');
+        const image=readBitmapImage(binding.lease).image,region=bitmapRegion(binding),packed=region.packed;
+        if(packed.x!==0||packed.y!==0||packed.width!==image.width||packed.height!==image.height||region.quarterTurn!==0||region.trimX!==0||region.trimY!==0||region.logicalWidth!==image.width||region.logicalHeight!==image.height)throw new EgretError('DISPLAY_EFFECT_MASK_UNSUPPORTED');
+        budget.source(image);maskPageIndex=regions[regionIndex(image,region)]!.pageIndex;
+      }
+      effect={occurrenceId:nextOccurrence++,boundaryId:nextBoundary++};
+      budget.emission(undefined,true);budget.metadataBytes(128+80*(clips?.depth??0));
+      commands.push(freeze({kind:'barrier',ordinal:commands.length,...effect,reason:'effect-enter',effect:freeze({blurRadius:settings.blurRadius??0,maskPageIndex,maskRect:settings.maskRect,matrix,clips:flattenClips(clips)})}));
+      // Parent clips apply to the composited result, not intermediate blur taps.
+      clips=undefined;
     }
     for (let index = 0; index < metadata.primitiveCount; index++) {
       const primitive = metadata.primitives[index]!, occurrenceId = nextOccurrence++;
@@ -372,13 +390,13 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
         }
       }
     }
-    stack.push({ node, children: tree.count(node), nextChild: 0, matrix, alpha, clips, material, explicit, clip });
+    stack.push({ node, children: tree.count(node), nextChild: 0, matrix, alpha, clips, material, explicit, clip, effect });
   }
 
   enter(stage, undefined, identity, 1, undefined, defaultMaterial);
   while (stack.length !== 0) {
     const cursor = stack[stack.length - 1]!;
-    if (cursor.nextChild === cursor.children) { close(cursor.explicit, cursor.clip); stack.pop(); continue; }
+    if (cursor.nextChild === cursor.children) { close(cursor.explicit, cursor.clip, cursor.effect); stack.pop(); continue; }
     const child = tree.child(cursor.node, cursor.nextChild++);
     if (child === undefined) throw new EgretError('DISPLAY_TREE_INVARIANT');
     enter(child, cursor.node as DisplayObjectContainer, cursor.matrix, cursor.alpha, cursor.clips, cursor.material);

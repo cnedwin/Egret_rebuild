@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/runtime/src/renderEffect.ts",
+      "originRole": "Independently authored first-party shared Alpha masks, bounded box blur, existing UI integration and procedural references; Apache-2.0. Existing attributed font/runtime assets unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/sharedEffects2D.ts",
+      "originRole": "Independently authored first-party shared Alpha masks, bounded box blur, existing UI integration and procedural references; Apache-2.0. Existing attributed font/runtime assets unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/sharedEffectShaders.ts",
+      "originRole": "Independently authored first-party shared Alpha masks, bounded box blur, existing UI integration and procedural references; Apache-2.0. Existing attributed font/runtime assets unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/shared-effects.test.mjs",
+      "originRole": "Independently authored first-party shared Alpha masks, bounded box blur, existing UI integration and procedural references; Apache-2.0. Existing attributed font/runtime assets unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/paragraph-panel/effects-fixture.html",
+      "originRole": "Independently authored first-party shared Alpha masks, bounded box blur, existing UI integration and procedural references; Apache-2.0. Existing attributed font/runtime assets unchanged."
+    },
+    {
+      "path": "examples/paragraph-panel/effects-fixture.mjs",
+      "originRole": "Independently authored first-party shared Alpha masks, bounded box blur, existing UI integration and procedural references; Apache-2.0. Existing attributed font/runtime assets unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/paragraph-panel/verify-effects.mjs",
+      "originRole": "Independently authored first-party shared Alpha masks, bounded box blur, existing UI integration and procedural references; Apache-2.0. Existing attributed font/runtime assets unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/paragraph-panel/effects-verification-summary.json",
+      "originRole": "Independently authored first-party shared Alpha masks, bounded box blur, existing UI integration and procedural references; Apache-2.0. Existing attributed font/runtime assets unchanged."
+    },
+    {
+      "path": "knowledge-base/en/docs/shared-ui-effects.md",
+      "originRole": "Independently authored first-party shared Alpha masks, bounded box blur, existing UI integration and procedural references; Apache-2.0. Existing attributed font/runtime assets unchanged."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/shared-ui-effects.md",
+      "originRole": "Independently authored first-party shared Alpha masks, bounded box blur, existing UI integration and procedural references; Apache-2.0. Existing attributed font/runtime assets unchanged."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/shared-ui-effects.md",
+      "zh": "knowledge-base/Cns/docs/shared-ui-effects.md"
+    }
+  ]
+}

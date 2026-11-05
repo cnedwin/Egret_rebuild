@@ -15,6 +15,9 @@ import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js'
 import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatches2D.js';
 import { decodeSharedSRGB } from '../rendering/sharedColor2D.js';
 import { createSharedWebGPUPipeline, SHARED_BLENDS } from './webgpuSharedPass.js';
+import { createSharedEffectPipeline, EFFECT_PASSES } from './sharedEffectShaders.js';
+import type { SharedEffectPass } from './sharedEffectShaders.js';
+import type { PreparedEffect2D } from '../rendering/sharedEffects2D.js';
 import { createSharedResolvePipeline } from './webgpuSharedResolvePass.js';
 import { createWebGPURetentionPool } from './webgpuRetentionPool.js';
 import type { RetentionHandle, RetentionLease, RetentionPlan, RetentionReturnPlan, RetentionRequest } from './webgpuRetentionPool.js';
@@ -148,6 +151,9 @@ interface GenerationOwner {
 }
 type SharedPlan={storage:SharedSubmissionStorage2D;imagePlan:ImageResidencyPlan;projections:(Uint8Array<ArrayBuffer>|undefined)[];canonicalBytes:number;scene:SceneAdmission|undefined;ticket:Ticket|undefined;batch:PreparedSharedBatchPlan2D};
 interface SharedRecipe {
+    effectTargets:{resource:OwnedWebGPUTexture;view:GPUTextureView}[];
+    effects:Map<PreparedEffect2D,Map<SharedEffectPass,GPUBindGroup>>;
+
     vertices:Map<PackedSharedDraw2D,OwnedWebGPUBuffer>; bindings:Map<PackedSharedDraw2D,GPUBindGroup>;
     meshes:Map<PackedMesh,{vertex:OwnedWebGPUBuffer|undefined;index:OwnedWebGPUBuffer|undefined}>;
     sceneBindings:Map<SceneUploadDraw,GPUBindGroup>;
@@ -299,6 +305,7 @@ class WebGPUHostImplementation {
     private sampler: GPUSampler | undefined;
     private readonly sharedPipelines=new Map<string,{pipeline:GPURenderPipeline;layout:GPUBindGroupLayout}>();
     private readonly sharedSamplers=new Map<string,GPUSampler>();
+    private effectPipelines=new Map<SharedEffectPass,{pipeline:GPURenderPipeline;layout:GPUBindGroupLayout}>();
     private resolvePipeline:GPURenderPipeline|undefined;
     private resolveLayout:GPUBindGroupLayout|undefined;
     private push: ((filter: GPUErrorFilter) => void) | undefined;
@@ -662,7 +669,7 @@ class WebGPUHostImplementation {
         this.push=undefined;this.pop=undefined;this.write=undefined;this.writeTexture=undefined;this.submit=undefined;this.fence=undefined;
         this.buffer=undefined;this.texture=undefined;this.bindGroup=undefined;this.encoder=undefined;
         this.pipeline=undefined;this.imagePipeline=undefined;this.imageLayout=undefined;this.texturedPipeline=undefined;this.texturedLayout=undefined;
-        this.meshPipeline=undefined;this.meshLayout=undefined;this.sampler=undefined;this.resolvePipeline=undefined;this.resolveLayout=undefined;
+        this.meshPipeline=undefined;this.meshLayout=undefined;this.sampler=undefined;this.resolvePipeline=undefined;this.resolveLayout=undefined;this.effectPipelines.clear();
         this.sharedPipelines.clear();this.sharedSamplers.clear();
     }
 
@@ -771,6 +778,7 @@ class WebGPUHostImplementation {
             const listener=(event:Event):void=>{if(observedOwner&&this.owner!==observedOwner)return;this.fail('WEBGPU_UNCAPTURED_ERROR',(event as GPUUncapturedErrorEvent).error,'device',null);};
             this.removeListener=()=>remove('uncapturederror',listener);add('uncapturederror',listener);gate();
             if (captured['maxVertexBuffers']! < 1 || captured['maxVertexAttributes']! < (SHARED_OPTIONS.has(this)?4:TEXTURED_OWNERS.has(this)?3:2) || captured['maxVertexBufferArrayStride']! < (SHARED_OPTIONS.has(this)?44:TEXTURED_OWNERS.has(this)?32:24) || captured['maxColorAttachments']! < 1 || captured['maxColorAttachmentBytesPerSample']! < 4 || captured['maxBindGroups']! < 1 || captured['maxBindingsPerBindGroup']! < 3 || captured['maxSampledTexturesPerShaderStage']! < 1 || captured['maxSamplersPerShaderStage']! < 1 || captured['maxUniformBuffersPerShaderStage']! < 1 || captured['maxUniformBufferBindingSize']! < (SHARED_OPTIONS.has(this)?128:B1_OWNERS.has(this)?64:16) || captured['maxBindGroupsPlusVertexBuffers']! < 2 || captured['maxInterStageShaderVariables']! < (SHARED_OPTIONS.has(this)?3:TEXTURED_OWNERS.has(this)?2:1)) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
+            if(SHARED_OPTIONS.get(this)?.enableEffects&&(captured['maxUniformBufferBindingSize']!<448||captured['maxSampledTexturesPerShaderStage']!<2))throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
             this.limits = { maxTextureDimension2D: captured['maxTextureDimension2D']!, maxBufferSize: captured['maxBufferSize']! };
             const scopes: Promise<void>[] = [];
             const pipelines: Promise<GPURenderPipeline>[] = [];
@@ -790,6 +798,7 @@ class WebGPUHostImplementation {
                         for(const sampled of [false,true])for(const blend of SHARED_BLENDS)createSharedWebGPUPipeline(capturedShader,capturedPipeline,sampled,blend);
                         createSharedResolvePipeline(capturedShader,capturedPipeline,this.format,SHARED_OPTIONS.get(this)!.outputAlpha==='opaque');
                         if(builtin)builtin.createWebGPUMeshPipeline(capturedShader,capturedPipeline,'rgba8unorm-srgb');
+                        if(SHARED_OPTIONS.get(this)!.enableEffects)for(const mode of EFFECT_PASSES)createSharedEffectPipeline(capturedShader,capturedPipeline,mode);
                         for(const filter of ['nearest','linear'] as const)for(const u of ['clamp-to-edge','repeat','mirror-repeat'] as const)for(const v of ['clamp-to-edge','repeat','mirror-repeat'] as const){
                             const value=sampler({addressModeU:u,addressModeV:v,addressModeW:'clamp-to-edge',minFilter:filter,magFilter:filter,mipmapFilter:'nearest',lodMinClamp:0,lodMaxClamp:0,maxAnisotropy:1});
                             this.sharedSamplers.set(filter+':'+u+':'+v,value);gate();}
@@ -821,7 +830,8 @@ class WebGPUHostImplementation {
             if(SHARED_OPTIONS.has(this)){
                 let index=0;for(const sampled of [false,true])for(const blend of SHARED_BLENDS){const value=roles[index++]!.value;const layout=this.method(value,'getBindGroupLayout',gate)(0);gate();this.sharedPipelines.set((sampled?'sampled:':'solid:')+blend,{pipeline:value,layout});}
                 this.resolvePipeline=roles[index++]!.value;this.resolveLayout=this.method(this.resolvePipeline,'getBindGroupLayout',gate)(0);gate();
-                if(builtin){this.meshPipeline=roles[index]!.value;this.meshLayout=this.method(this.meshPipeline,'getBindGroupLayout',gate)(0);gate();}
+                if(builtin){this.meshPipeline=roles[index++]!.value;this.meshLayout=this.method(this.meshPipeline,'getBindGroupLayout',gate)(0);gate();}
+                if(SHARED_OPTIONS.get(this)!.enableEffects)for(const mode of EFFECT_PASSES){const pipeline=roles[index++]!.value,layout=this.method(pipeline,'getBindGroupLayout',gate)(0);gate();this.effectPipelines.set(mode,{pipeline,layout});}
             }else{
             this.pipeline = roles[0]!.value;
             this.imagePipeline = roles[1]!.value;
@@ -1498,6 +1508,7 @@ class WebGPUHostImplementation {
                 for(const entry of packed){if('barrier' in entry)continue;const viewIndex=entry.prepared.pageIndex;
                     if(viewIndex===undefined)demands.push({kind:'rect'});
                     else demands.push({kind:entry.prepared.command.kind==='mesh'?'mesh':'image',packed:{vertexCount:entry.vertexCount},viewIndex});}
+                for(const group of prepared.effects.groups)if(group.maskPageIndex!==undefined)demands.push({kind:'image',packed:{vertexCount:3},viewIndex:group.maskPageIndex});
                 const imagePlan=this.planImageResidency(storage.projectionPlan,demands,true);
                 const pages=materializeSharedPages2D(storage,new Set(imagePlan.use.candidates.keys()),this.sharedOwnerSnapshot(),this.resourceCpu);materialized=pages.canonicalBytes;this.active();
                 checkSharedCapacity2D(storage,this.sharedOwnerSnapshot(),pages.canonicalBytes);
@@ -1778,13 +1789,16 @@ class WebGPUHostImplementation {
         const buffer=(role:SubmissionBufferRequest['role'],usage:SubmissionBufferRequest['usage'],byteLength:number):void=>{if(byteLength>0)requests.push({kind:'buffer',id:requests.length,role,usage,byteLength});};
         for(const draw of batch.draws){buffer('vertex',40,draw.data.byteLength);buffer('uniform',72,128);}
         if(scene){for(const mesh of scene.meshes){buffer('vertex',40,mesh.vertexBytes);buffer('index',24,mesh.indexBytes);}for(const draw of scene.draws)buffer('uniform',72,draw.uniform.byteLength);}
+        for(const group of prepared.effects.groups)buffer('uniform',72,group.uniform.byteLength);
         const colorId=requests.length;
         requests.push({kind:'color',id:colorId,width,height,format:'rgba8unorm-srgb',usage:20,byteLength:storage.colorBytes,sampleCount:1,mipLevelCount:1,depthOrArrayLayers:1,recipe:'egret.srgb-pma8-target/1'});
+        for(let i=0;i<prepared.effects.targetCount;i++)requests.push({kind:'color',id:requests.length,width,height,format:'rgba8unorm-srgb',usage:20,byteLength:storage.colorBytes,sampleCount:1,mipLevelCount:1,depthOrArrayLayers:1,recipe:'egret.srgb-pma8-target/1'});
         const depthId=scene?requests.length:undefined;
         if(scene)requests.push({kind:'depth',id:depthId!,width,height,format:'depth32float',usage:16,byteLength:scene.depthBytes,sampleCount:1,mipLevelCount:1,depthOrArrayLayers:1,recipe:'egret.shared-reverse-depth/1'});
         const bufferPlan=this.bufferPool.plan(requests),bufferLeases:(RetentionLease|undefined)[]=new Array(requests.length).fill(undefined);
         for(const lease of bufferPlan.leases)bufferLeases[lease.requestId]=lease;
         const rawTargets:RawTargetSlot[]=[{requestId:colorId,texture:undefined,destroy:undefined,cleanupAttempted:false}];
+        for(let i=0;i<prepared.effects.targetCount;i++)rawTargets.push({requestId:colorId+1+i,texture:undefined,destroy:undefined,cleanupAttempted:false});
         if(depthId!==undefined)rawTargets.push({requestId:depthId,texture:undefined,destroy:undefined,cleanupAttempted:false});
         this.assertImagePlanCurrent(imagePlan);checkSharedCapacity2D(storage,this.sharedOwnerSnapshot(),p.canonicalBytes);
         const stageDeadline=stageInput?this.now()+10000:0;
@@ -1794,7 +1808,7 @@ class WebGPUHostImplementation {
         if(!owner||owner.invalidated||owner.number!==this.generation||owner.device!==this.device
             ||owner.epoch!==imagePlan.epoch||owner.pool!==this.bufferPool)throw error('WEBGPU_DEVICE_LOST',this.generationFailure?.cause);
         const serial=stageInput?0:++this.lastSerial,done=deferred<void>();
-        const record:Submission={owner,batchPlan:batch,shared:{frame,draws:batch.draws,colorBytes:storage.colorBytes,canonicalBytes:p.canonicalBytes,rawTargets},
+        const record:Submission={owner,batchPlan:batch,shared:{frame,draws:batch.draws,colorBytes:storage.colorBytes+storage.effectBytes,canonicalBytes:p.canonicalBytes,rawTargets},
             serial,upload:storage.upload,readback:storage.staging+storage.output,textureBytes:prepared.pageBytes,geometryBytes:prepared.geometryBytes,
             sceneBytes:scene?.sceneBytes??0,uniformBytes:scene?.uniformBytes??0,depthBytes:scene?.depthBytes??0,
             resources:[],textures:[],views:[],bindings:[],frame:undefined,projectionPlan:storage.projectionPlan,projections:p.projections,draws:[],imageUse:undefined,
@@ -1805,7 +1819,7 @@ class WebGPUHostImplementation {
         this.pendingSceneBytes+=record.sceneBytes;this.pendingUniformBytes+=record.uniformBytes;this.pendingDepthBytes+=record.depthBytes;
         // Active targets and retained canonical CPU arrays have separate ledgers.
         // Neither is an upload byte or a second idle retention allowance.
-        this.pendingColorBytes+=storage.colorBytes;this.pendingCanonicalBytes+=p.canonicalBytes;this.sampleResourcePending();
+        this.pendingColorBytes+=storage.colorBytes+storage.effectBytes;this.pendingCanonicalBytes+=p.canonicalBytes;this.sampleResourcePending();
         if(stageInput)return this.admitStageRecord(record,p,done,stageInput.signal,stageDeadline);
         const ticket=p.ticket;if(ticket)ticket.bound=true;
         const outcomes:Promise<unknown>[]=[];let touchedQueue=false,synchronous:EgretError|undefined,staging:OwnedWebGPUBuffer|undefined,submitted=false;
@@ -1833,6 +1847,7 @@ class WebGPUHostImplementation {
         const {batch,scene}=p,imageUse=record.imageUse!;
                 const realized=new Map<number,{texture:GPUTexture;view:GPUTextureView}>();
                 for(const draw of batch.draws){const index=draw.prepared.pageIndex;if(index!==undefined&&!realized.has(index))realized.set(index,this.realizeImageResidency(record,imageUse,index,gate));}
+                for(const group of p.storage.prepared.effects.groups){const index=group.maskPageIndex;if(index!==undefined&&!realized.has(index))realized.set(index,this.realizeImageResidency(record,imageUse,index,gate));}
                 let requestId=0;const vertices=new Map<PackedSharedDraw2D,OwnedWebGPUBuffer>(),bindings=new Map<PackedSharedDraw2D,GPUBindGroup>();
                 for(const draw of batch.draws){const vertex=this.submissionBuffer(record,requestId++,gate).handle.resource,lease=this.submissionBuffer(record,requestId++,gate),uniform=lease.handle.resource;
                     vertices.set(draw,vertex);this.sharedWrite(record,vertex.buffer,draw.data,44);gate();this.sharedWrite(record,uniform.buffer,draw.uniform,128);gate();
@@ -1849,10 +1864,21 @@ class WebGPUHostImplementation {
                     for(const draw of scene.draws){const lease=this.submissionBuffer(record,requestId++,gate);this.sharedWrite(record,lease.handle.resource.buffer,draw.uniform,64);gate();
                         const key:DrawBindingKey={session:this.imageEpoch,layout:this.meshLayout!,texture:undefined,view:undefined,sampler:undefined,uniform:lease.handle,offset:0,size:64};
                         sceneBindings.set(draw,this.submissionBinding(record,key,[{binding:0,resource:{buffer:lease.handle.resource.buffer,offset:0,size:64}}],undefined,gate));}}
+                const effectUniforms=new Map<PreparedEffect2D,OwnedWebGPUBuffer>();
+                for(const group of p.storage.prepared.effects.groups){const uniform=this.submissionBuffer(record,requestId++,gate).handle.resource;this.sharedWrite(record,uniform.buffer,group.uniform,16);gate();effectUniforms.set(group,uniform);}
+                const effectTargets=[];for(let i=0;i<p.storage.prepared.effects.targetCount;i++)effectTargets.push(this.submissionTarget(record,colorId+1+i,gate));
+                const effects=new Map<PreparedEffect2D,Map<SharedEffectPass,GPUBindGroup>>();
+                for(const group of p.storage.prepared.effects.groups){
+                    const bindings=new Map<SharedEffectPass,GPUBindGroup>(),source=effectTargets[(group.depth-1)*2]!,scratch=effectTargets[(group.depth-1)*2+1]!;
+                    for(const mode of EFFECT_PASSES){const role=this.effectPipelines.get(mode)!;const entries:GPUBindGroupEntry[]=[{binding:0,resource:{buffer:effectUniforms.get(group)!.buffer,offset:0,size:448}},{binding:1,resource:(mode==='vertical'?scratch:source).view}];
+                        if(mode==='composite')entries.push({binding:2,resource:group.maskPageIndex===undefined?source.view:realized.get(group.maskPageIndex)!.view});
+                        const binding=record.owner!.native.bindGroup({layout:role.layout,entries});record.bindings.push(binding);gate();bindings.set(mode,binding);}
+                    effects.set(group,bindings);
+                }
                 const color=this.submissionTarget(record,colorId,gate),depth=depthId===undefined?undefined:this.submissionTarget(record,depthId,gate);
                 const resolveBinding=record.owner!.native.bindGroup({layout:this.resolveLayout!,entries:[{binding:0,resource:color.view}]});record.bindings.push(resolveBinding);gate();
 
-        return {vertices,bindings,meshes,sceneBindings,color,depth,resolveBinding};
+        return {vertices,bindings,meshes,sceneBindings,color,depth,resolveBinding,effectTargets,effects};
     }
     private drawSharedGPU(record:Submission,p:SharedPlan,recipe:SharedRecipe,staging:OwnedWebGPUBuffer|undefined,ticket:Ticket|undefined,gate:()=>void):true {
         const {storage,scene,batch}=p,{frame,width,height}=storage.prepared,serial=record.serial;
@@ -1865,11 +1891,29 @@ class WebGPUHostImplementation {
                 if(scene){const raw=begin({colorAttachments:[attachment],depthStencilAttachment:{view:depth!.view,depthClearValue:0,depthLoadOp:'clear',depthStoreOp:'store'}});gate();
                     const pass=capture(raw,scene.draws.some(draw=>draw.mesh.indexCount>0)?['setPipeline','setViewport','setScissorRect','setVertexBuffer','setIndexBuffer','setBindGroup','drawIndexed']:[]),end=this.method(raw,'end',gate);
                     for(const draw of scene.draws)if(draw.mesh.indexCount>0){const mesh=meshes.get(draw.mesh)!;scene.functions.encodeWebGPUMesh(pass,this.meshPipeline!,mesh.vertex!.buffer,mesh.index!.buffer,sceneBindings.get(draw)!,draw.mesh.indexCount,width,height);}end();gate();}
-                const raw=begin({colorAttachments:[scene?{view:color.view,loadOp:'load',storeOp:'store'}:attachment]});gate();
-                const pass=capture(raw,batch.draws.length?['setPipeline','setViewport','setScissorRect','setVertexBuffer','setBindGroup','draw']:[]),end=this.method(raw,'end',gate);
-                for(const draw of batch.draws){const role=this.sharedPipelines.get((draw.prepared.pageIndex===undefined?'solid:':'sampled:')+draw.prepared.material.blend)!;
-                    pass.setPipeline(role.pipeline);pass.setViewport(0,0,width,height,0,1);pass.setScissorRect(0,0,width,height);pass.setVertexBuffer(0,vertices.get(draw)!.buffer);pass.setBindGroup(0,bindings.get(draw)!);pass.draw(draw.vertexCount);}
-                end();gate();
+                const openPass=(view:GPUTextureView,clear:boolean,initial=false)=>{
+                    const colors:GPURenderPassColorAttachment=initial?attachment:{view,loadOp:clear?'clear':'load',storeOp:'store',...(clear?{clearValue:{r:0,g:0,b:0,a:0}}:{})};
+                    const raw=begin({colorAttachments:[colors]});gate();
+                    return {pass:capture(raw,['setPipeline','setViewport','setScissorRect','setVertexBuffer','setBindGroup','draw']),end:this.method(raw,'end',gate)};
+                };
+                let active=openPass(color.view,false,!scene);
+                const drawOne=(draw:PackedSharedDraw2D):void=>{const role=this.sharedPipelines.get((draw.prepared.pageIndex===undefined?'solid:':'sampled:')+draw.prepared.material.blend)!;
+                    active.pass.setPipeline(role.pipeline);active.pass.setViewport(0,0,width,height,0,1);active.pass.setScissorRect(0,0,width,height);active.pass.setVertexBuffer(0,vertices.get(draw)!.buffer);active.pass.setBindGroup(0,bindings.get(draw)!);active.pass.draw(draw.vertexCount);};
+                if(storage.prepared.effects.groups.length===0){for(const draw of batch.draws)drawOne(draw);}
+                else{
+                    const byOrdinal=new Map(batch.draws.map(draw=>[draw.prepared.command.ordinal,draw]));
+                    const enters=new Map(storage.prepared.effects.groups.map(group=>[group.enter,group])),exits=new Map(storage.prepared.effects.groups.map(group=>[group.exit,group]));
+                    const effectPass=(group:PreparedEffect2D,mode:SharedEffectPass,view:GPUTextureView,clear:boolean):void=>{
+                        const run=openPass(view,clear);run.pass.setPipeline(this.effectPipelines.get(mode)!.pipeline);run.pass.setViewport(0,0,width,height,0,1);run.pass.setScissorRect(0,0,width,height);run.pass.setBindGroup(0,recipe.effects.get(group)!.get(mode)!);run.pass.draw(3);run.end();gate();};
+                    for(const command of frame.commands){const enter=enters.get(command.ordinal),exit=exits.get(command.ordinal);
+                        if(enter){active.end();gate();active=openPass(recipe.effectTargets[(enter.depth-1)*2]!.view,true);}
+                        else if(exit){active.end();gate();const source=recipe.effectTargets[(exit.depth-1)*2]!,scratch=recipe.effectTargets[(exit.depth-1)*2+1]!;
+                            if(exit.radius>0){effectPass(exit,'horizontal',scratch.view,true);effectPass(exit,'vertical',source.view,true);}
+                            const parent=exit.depth===1?color:recipe.effectTargets[(exit.depth-2)*2]!;effectPass(exit,'composite',parent.view,false);active=openPass(parent.view,false);
+                        }else{const draw=byOrdinal.get(command.ordinal);if(draw)drawOne(draw);}
+                    }
+                }
+                active.end();gate();
                 const resolveRaw=begin({colorAttachments:[{view:canvasView,loadOp:'clear',storeOp:'store',clearValue:{r:0,g:0,b:0,a:0}}]});gate();
                 const resolve=capture(resolveRaw,['setPipeline','setViewport','setScissorRect','setBindGroup','draw']),endResolve=this.method(resolveRaw,'end',gate);
                 resolve.setPipeline(this.resolvePipeline!);resolve.setViewport(0,0,width,height,0,1);resolve.setScissorRect(0,0,width,height);resolve.setBindGroup(0,resolveBinding);resolve.draw(3);endResolve();gate();

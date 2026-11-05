@@ -286,3 +286,5 @@ The optional [paragraph text geometry](paragraph-text-geometry.md) increment pub
 The optional [styled readonly runs](paragraph-styled-runs.md) increment adds bounded font-family, size and foreground ranges through the existing paragraph/UI transaction. It remains part of M3.2 / #88 and preserves the eleven work-package structure and all remaining editor, script, device and performance obligations.
 
 The styled-run increment now includes an equipment-description example in the existing column and virtual list, with measured-height updates, whole-content replacement and WebGL2/WebGPU evidence. This delivers the bounded readonly integration slice; the remaining M3.2 font/script, editing, accessibility, device and performance requirements remain open. See the styled paragraph contract for budgets and evidence.
+
+The [shared UI effect increment](shared-ui-effects.md) adds opt-in Alpha masks and bounded separable blur on both shared backends, with existing paragraph/UI integration and pooled lifetime. It advances M3.4 / #90 without altering touch work or closing the remaining control, device and performance rows.

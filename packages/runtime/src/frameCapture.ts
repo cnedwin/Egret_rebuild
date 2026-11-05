@@ -59,6 +59,7 @@ function capture(stage: Stage, mode: "content" | "rectangles", session?: Capture
   while (pending.length) {
     const entry = pending.pop()!;
     const s = visualOf(entry.node);
+    if(s.renderEffect!==undefined)throw new EgretError('DISPLAY_EFFECT_UNSUPPORTED');
     if (!s.visible || s.alpha === 0) continue;
     const cached = readCaptureDerived(session, entry.node, s, entry.matrix, entry.alpha, entry.clips, undefined);
     const draft = cached === undefined ? beginCaptureNode(session, entry.node, s, entry.matrix, entry.alpha, entry.clips, undefined) : undefined;
