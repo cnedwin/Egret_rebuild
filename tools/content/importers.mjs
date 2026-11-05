@@ -5,12 +5,14 @@ import {readFileSync} from 'node:fs';
 import {types} from 'node:util';
 import {createAtlasImportPlan} from '@egret/project/atlas';
 import {decodeContentPng} from './png.mjs';
+import {inspectFontArtifact} from '@egret/contracts/resources';
 const require=createRequire(import.meta.url);
 const {parseTree:parseJsonTree}=require('jsonc-parser');
 const PNGJS_VERSION=JSON.parse(readFileSync(require.resolve('pngjs/package.json'),'utf8')).version;
 const SOURCE_LIMIT=8388608,ARTIFACT_LIMIT=4194304,WORK_LIMIT=67108864,OUTPUT_LIMIT=134217728;
 const signature=[137,80,78,71,13,10,26,10];
 const mappings=Object.freeze({
+  'egret.font':Object.freeze({kind:'font',format:'egret.font/1',reference:'none',dependency:undefined}),
   'egret.png':Object.freeze({kind:'image',format:'png/1',reference:'rgba8/1',dependency:undefined}),
   'egret.aseprite-atlas':Object.freeze({kind:'atlas',format:'egret.atlas/1',reference:'none',dependency:'image'}),
   'egret.sequence':Object.freeze({kind:'sequence',format:'egret.sequence/1',reference:'none',dependency:'atlas'}),
@@ -39,7 +41,7 @@ function admitEntry(entry){
   if(!entry||!exact(entry.importer,['id','version'])||entry.importer.version!=='1.0.0'||!Object.hasOwn(mappings,entry.importer.id))throw fault('INPUT','Content importer must be one of the four registered 1.0.0 producers.');
   const mapping=mappings[entry.importer.id],settings=entry.settings;
   if(entry.resourceKind!==mapping.kind||entry.artifactFormatVersion!==mapping.format||!exact(settings,['recipeSchemaVersion','options','producer','outputFormatVersion','referenceFormatVersion'])||settings.recipeSchemaVersion!==1||settings.outputFormatVersion!==mapping.format||settings.referenceFormatVersion!==mapping.reference||!exact(settings.producer,['nodeVersion','pngjsVersion','zlibVersion'])||Object.keys(actual).some(key=>settings.producer[key]!==actual[key]))throw fault('INPUT','Content kind, artifact format, settings envelope and actual producer identity must match the selected finite importer.');
-  if(mapping.dependency==='images'?!exact(settings.options,[]):mapping.kind==='atlas'?!exact(settings.options,['pageName'])||!text(settings.options.pageName)||!settings.options.pageName:!exact(settings.options,[]))throw fault('INPUT','Only the finite importer options are supported.');
+  if(mapping.kind==='font'?(!exact(settings.options,['family','flavor'])||!text(settings.options.family)||!settings.options.family.length||settings.options.family.length>256||/[\u0000-\u001f\u007f]/u.test(settings.options.family)||!['truetype','opentype'].includes(settings.options.flavor)):mapping.dependency==='images'?!exact(settings.options,[]):mapping.kind==='atlas'?!exact(settings.options,['pageName'])||!text(settings.options.pageName)||!settings.options.pageName:!exact(settings.options,[]))throw fault('INPUT','Only the finite importer options are supported.');
   if(!Array.isArray(entry.dependencies)||(mapping.dependency==='images'?!integer(entry.dependencies.length,1,16):entry.dependencies.length!==(mapping.dependency?1:0)))throw fault('INPUT','Content importer requires its exact declared dependency count.');
   return mapping;
 }
@@ -158,7 +160,14 @@ export function buildContentResource(entry,sourceBytes,dependencies,{remainingSc
     return buildAtlasPages(entry,source,dependencies,remainingOutputBytes);
   }
   const dependency=dependencyFor(entry,dependencies,mapping);
+  if(mapping.kind==='font'){
+    if(source.length>33554432||source.length>remainingOutputBytes)throw fault('LIMIT','Font source/output exceeds the declared budget.');
+    let info;try{info=inspectFontArtifact(source);}catch(cause){throw fault('FONT','Standalone SFNT admission refused.',cause);}
+    if(info.format!==entry.settings.options.flavor)throw fault('FONT','Declared SFNT flavor differs.');
+    return {outputs:[{name:'primary',mediaType:info.format==='truetype'?'font/ttf':'font/otf',bytes:new Uint8Array(source)}],scanlineBytes:0};
+  }
   if(mapping.kind==='image'){
+
     if(source.length>SOURCE_LIMIT)throw fault('LIMIT','PNG encoded source exceeds 8 MiB.');
     const reserved=header(source);
     if(reserved&&(2*reserved.scanlineBytes>remainingScanlineBytes||source.length+reserved.rgbaBytes>remainingOutputBytes))throw fault('LIMIT','PNG two-pass scanline work or complete primary/RGBA output exceeds the remaining budget.');

@@ -9,6 +9,8 @@ import type { ManifestBinding } from '#egret-manifest-resources';
 
 declare const MANIFEST_BYTE_SOURCE: unique symbol;
 export interface ManifestByteSourceOptions {
+    /** Explicit SFNT-only admission; the original image/metadata limits stay unchanged. */
+    readonly profile?: 'font-sfnt/1';
     readonly baseUrl: string;
     readonly deadlineMs?: number;
     readonly networkRetries?: 0 | 1;
@@ -187,6 +189,8 @@ export class ManifestPngOwner {
     private closed = false;
     private pumping = false;
     private closeResult: Deferred<void> | undefined;
+    private readonly inputLimit: number;
+    private readonly byteLimit: number;
     private readonly deadlineMs: number;
     private readonly retries: 0 | 1;
     private readonly highWater: MutableSourceCounters = { jobs: 0, queuedNetwork: 0, queuedDecode: 0, retryWaiting: 0,
@@ -208,7 +212,11 @@ export class ManifestPngOwner {
                 ids.add(item.entry.id); admitted.push(item);
             }
         } catch (cause) { throw fault('BINDINGS_INVALID', cause); }
-        const input = strict(options, ['baseUrl', 'deadlineMs', 'networkRetries']);
+        const input = strict(options, ['baseUrl', 'deadlineMs', 'networkRetries', 'profile']);
+        if(input.profile!==undefined&&input.profile!=='font-sfnt/1')throw fault('OPTIONS_INVALID');
+        if(input.profile==='font-sfnt/1'&&admitted.some(item=>item.entry.resourceKind!=='font'||item.entry.artifactFormatVersion!=='egret.font/1'))throw fault('BINDINGS_INVALID');
+        this.inputLimit=input.profile==='font-sfnt/1'?33_554_432:MAX_INPUT;
+        this.byteLimit=input.profile==='font-sfnt/1'?67_108_864:MAX_BYTES;
         const deadline = input.deadlineMs ?? 10_000, retries = input.networkRetries ?? 0;
         if (typeof input.baseUrl !== 'string' || typeof deadline !== 'number' || !Number.isSafeInteger(deadline)
             || deadline < 1 || deadline > 30_000 || (retries !== 0 && retries !== 1)) throw fault('OPTIONS_INVALID');
@@ -270,7 +278,7 @@ export class ManifestPngOwner {
         let selected: { entry: ResourceManifestEntry; type: object; url: string } | undefined;
         try { const state = requireManifestAssetRef(ref); selected = this.selected.get(state.entry.runtimeIdentity); if (!selected || selected.type !== state.ref.type) throw new TypeError('Selected genuine ref required'); }
         catch (cause) { throw fault('REF_INVALID', cause); }
-        if (selected.entry.artifact.byteLength > MAX_INPUT) throw fault('INPUT_LIMIT');
+        if (selected.entry.artifact.byteLength > this.inputLimit) throw fault('INPUT_LIMIT');
         if (this.jobs.size + this.admissions >= MAX_RECORDS || this.waitingCount() >= MAX_QUEUE) throw fault('QUEUE_LIMIT');
         let signal: CancellationSignal, add: Operation, remove: Operation, generation: number, taskId: number;
         try {
@@ -365,7 +373,7 @@ export class ManifestPngOwner {
                 const job = this.networkQueue[0]!;
                 if (job.terminal) { this.networkQueue.shift(); job.queuedNetwork?.reject(job.terminal); job.queuedNetwork = undefined; continue; }
                 const credit = job.reserved === 0 ? job.entry.artifact.byteLength * 2 : 0;
-                if (this.byteCount + credit > MAX_BYTES) break;
+                if (this.byteCount + credit > this.byteLimit) break;
                 this.networkQueue.shift(); this.networkCount++; job.network = true;
                 if (credit) { job.reserved = credit; this.byteCount += credit; }
                 const waiting = job.queuedNetwork; job.queuedNetwork = undefined; this.sampleStatus(); waiting!.resolve();
@@ -449,7 +457,7 @@ export class ManifestPngOwner {
                 if (done) break;
                 let item: ReturnType<typeof chunk>;
                 try { item = chunk((part as RecordValue).value); } catch (cause) { throw fault('BODY_FAILED', cause); }
-                if (item.length > expected - count || item.length > MAX_INPUT - count) throw fault('INPUT_LIMIT');
+                if (item.length > expected - count || item.length > this.inputLimit - count) throw fault('INPUT_LIMIT');
                 job.borrowedChunkBytes = item.length; this.sampleStatus();
                 try { apply(set, output, [new Bytes(item.backing, item.offset, item.length), count]); count += item.length; }
                 finally { job.borrowedChunkBytes = 0; this.sampleStatus(); }

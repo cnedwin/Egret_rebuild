@@ -288,3 +288,5 @@ The optional [styled readonly runs](paragraph-styled-runs.md) increment adds bou
 The styled-run increment now includes an equipment-description example in the existing column and virtual list, with measured-height updates, whole-content replacement and WebGL2/WebGPU evidence. This delivers the bounded readonly integration slice; the remaining M3.2 font/script, editing, accessibility, device and performance requirements remain open. See the styled paragraph contract for budgets and evidence.
 
 The [shared UI effect increment](shared-ui-effects.md) adds opt-in Alpha masks and bounded separable blur on both shared backends, with existing paragraph/UI integration and pooled lifetime. It advances M3.4 / #90 without altering touch work or closing the remaining control, device and performance rows.
+
+The [font resource and generation contract](font-resource-generations.md) connects M2.1 font artifacts to M3.2 readonly UI through the existing manager, cache and Scope. Fixed-font APIs remain supported; failed or cancelled replacement preserves committed content. This bounded increment does not close the remaining M2.1/M3.2 qualifications.

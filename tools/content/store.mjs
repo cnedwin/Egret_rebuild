@@ -52,22 +52,22 @@ function blobDescription(input,limit=BLOB_LIMIT){
   const value=exact(input,['sha256','byteLength']);sha(value.sha256);
   if(!Number.isSafeInteger(value.byteLength)||value.byteLength<0||value.byteLength>limit)invalid('Blob length exceeds its bound.');return value;
 }
-function outputsDescription(input){
+function outputsDescription(input,limit=BLOB_LIMIT){
   if(!Array.isArray(input)||input.length<1||input.length>2)invalid('One primary and at most one RGBA output required.');
   let previous='';
   for(const item of input){
     exact(item,['name','mediaType','sha256','byteLength']);
     if(!['primary','rgba'].includes(item.name)||item.name<=previous)invalid('Unique sorted output roles required.');previous=item.name;
     text(item.mediaType,127);if(!/^[a-zA-Z0-9!#$&^_.+-]+\/[a-zA-Z0-9!#$&^_.+-]+$/.test(item.mediaType))invalid('A finite MIME type required.');
-    blobDescription({sha256:item.sha256,byteLength:item.byteLength});
+    blobDescription({sha256:item.sha256,byteLength:item.byteLength},['font/ttf','font/otf'].includes(item.mediaType)?limit:BLOB_LIMIT);
   }
   if(input[0].name!=='primary')invalid('Primary output required.');return input;
 }
-function generationDescription(value){
+function generationDescription(value,limit=BLOB_LIMIT){
   exact(value,['format','manifest','outputs']);if(value.format!=='egret.content-generation/1')invalid('Generation format refused.');
   blobDescription(value.manifest,METADATA_LIMIT);
   if(!Array.isArray(value.outputs)||value.outputs.length>4096)invalid('Bounded generation outputs required.');
-  let previous='';for(const resource of value.outputs){exact(resource,['resourceId','buildKey','files']);text(resource.resourceId);if(!/^e_[A-Za-z0-9][A-Za-z0-9_-]*$/.test(resource.resourceId))invalid('Admitted resource ID required.');sha(resource.buildKey);if(resource.resourceId<=previous)invalid('Unique sorted resource IDs required.');previous=resource.resourceId;outputsDescription(resource.files);}return value;
+  let previous='';for(const resource of value.outputs){exact(resource,['resourceId','buildKey','files']);text(resource.resourceId);if(!/^e_[A-Za-z0-9][A-Za-z0-9_-]*$/.test(resource.resourceId))invalid('Admitted resource ID required.');sha(resource.buildKey);if(resource.resourceId<=previous)invalid('Unique sorted resource IDs required.');previous=resource.resourceId;outputsDescription(resource.files,limit);}return value;
 }
 const typedPrototype=Object.getPrototypeOf(Uint8Array.prototype);
 const viewBuffer=Object.getOwnPropertyDescriptor(typedPrototype,'buffer').get;
@@ -98,7 +98,9 @@ function ownerDirectory(root){
   const state=lstatSync(root);if(!state.isDirectory()||state.isSymbolicLink()||!samePhysicalPath(root,realpathSync(root)))invalid('Canonical physical owner required.');return state;
 }
 
-export function openContentStore(root){
+export function openContentStore(root,options={}){
+  const selected=capture(options);if(Object.keys(selected).some(key=>key!=='profile')||selected.profile!==undefined&&selected.profile!=='font-sfnt/1')invalid('Unknown content-store profile.');
+  const blobLimit=selected.profile==='font-sfnt/1'?33554432:BLOB_LIMIT;
   const owner=ownerDirectory(root),lockRelative='.content-writer.lock',token=randomUUID();
   let closed=false,lockHandle,lockIdentity,stageCounter=0;
   function checkOwner(){const current=ownerDirectory(root);if(!sameFile(current,owner))integrity('Store owner identity changed.');}
@@ -136,12 +138,12 @@ export function openContentStore(root){
   }
   function blobDescriptor(input){
     const value=capture(input,RECORD_LIMIT),keys=Object.keys(value);
-    if(keys.includes('name')){outputsDescription(value.name==='primary'?[value]:[{name:'primary',mediaType:value.mediaType,sha256:value.sha256,byteLength:value.byteLength},value]);}
+    if(keys.includes('name')){outputsDescription(value.name==='primary'?[value]:[{name:'primary',mediaType:value.mediaType,sha256:value.sha256,byteLength:value.byteLength},value],blobLimit);}
     else if(keys.includes('path')){exact(value,['sha256','byteLength','path']);if(value.path!=='blobs/sha256/'+value.sha256)invalid('Blob path differs from its digest.');}
     else exact(value,['sha256','byteLength']);
-    return blobDescription({sha256:value.sha256,byteLength:value.byteLength});
+    return blobDescription({sha256:value.sha256,byteLength:value.byteLength},blobLimit);
   }
-  function blobRead(description){const relative='blobs/sha256/'+description.sha256,bytes=readFile(relative,BLOB_LIMIT,description.byteLength);if(bytes!==null&&digest(bytes)!==description.sha256)integrity('Stored blob SHA-256 mismatch: '+relative);return bytes;}
+  function blobRead(description){const relative='blobs/sha256/'+description.sha256,bytes=readFile(relative,blobLimit,description.byteLength);if(bytes!==null&&digest(bytes)!==description.sha256)integrity('Stored blob SHA-256 mismatch: '+relative);return bytes;}
   function complete(outputs,required){let complete=true;for(const output of outputs){const bytes=blobRead(output);if(bytes===null){complete=false;if(required)integrity('Required generation/cache blob is missing.');}}return complete;}
   const staging='.staging/session-'+token;
   function stageFile(relative,bytes){
@@ -166,7 +168,7 @@ export function openContentStore(root){
     const relative='generations/'+sha(id),directory=locate(relative,{directory:true,missing:true});if(directory===null)return null;
     const entries=readdirSync(directory.absolute).sort();if(entries.length!==2||entries[0]!=='descriptor.json'||entries[1]!=='manifest.json')integrity('Generation is partial or has unexpected files.');
     const metadata=readMetadata(relative+'/descriptor.json',METADATA_LIMIT);let descriptor;
-    try{descriptor=generationDescription(metadata.value);}catch{integrity('Stored generation descriptor is invalid.');}
+    try{descriptor=generationDescription(metadata.value,blobLimit);}catch{integrity('Stored generation descriptor is invalid.');}
     if(digest(metadata.bytes)!==id)integrity('Generation ID differs from its descriptor.');
     const manifestBytes=readFile(relative+'/manifest.json',METADATA_LIMIT,descriptor.manifest.byteLength);
     if(!manifestBytes||digest(manifestBytes)!==descriptor.manifest.sha256)integrity('Generation manifest bytes differ from its description.');
@@ -174,22 +176,22 @@ export function openContentStore(root){
     return {id,path:relative+'/manifest.json',descriptor:JSON.parse(canonical(descriptor)),descriptorBytes:new Uint8Array(metadata.bytes),manifestBytes:new Uint8Array(manifestBytes)};
   }
   function validateRecord(record,buildKey){
-    try{exact(record.value,['format','buildKey','outputs']);if(record.value.format!=='egret.content-cache/1'||record.value.buildKey!==buildKey)invalid('Cache record identity mismatch.');outputsDescription(record.value.outputs);}catch{integrity('Stored cache record is invalid.');}
+    try{exact(record.value,['format','buildKey','outputs']);if(record.value.format!=='egret.content-cache/1'||record.value.buildKey!==buildKey)invalid('Cache record identity mismatch.');outputsDescription(record.value.outputs,blobLimit);}catch{integrity('Stored cache record is invalid.');}
   }
   return Object.freeze({
     readBlob(input){active();const bytes=blobRead(blobDescriptor(input));return bytes===null?null:new Uint8Array(bytes);},
-    putBlob(input){active();const bytes=ownedBytes(input,BLOB_LIMIT),description={sha256:digest(bytes),byteLength:bytes.length},relative='blobs/sha256/'+description.sha256;
+    putBlob(input){active();const bytes=ownedBytes(input,blobLimit),description={sha256:digest(bytes),byteLength:bytes.length},relative='blobs/sha256/'+description.sha256;
       if(blobRead(description)===null){publishFile(relative,bytes);if(blobRead(description)===null)integrity('Published blob is absent.');}return {...description,path:relative};},
     readRecord(buildKey){active();sha(buildKey);const record=readMetadata('records/'+buildKey+'.json',RECORD_LIMIT);if(record===null)return null;
       validateRecord(record,buildKey);
       return {outputs:JSON.parse(canonical(record.value.outputs)),complete:complete(record.value.outputs,false)};},
     // Caller publishes records only after its complete ready generation exists.
-    publishRecord(buildKey,input){active();sha(buildKey);const outputs=outputsDescription(capture(input,RECORD_LIMIT)),bytes=Buffer.from(canonical({format:'egret.content-cache/1',buildKey,outputs}));
+    publishRecord(buildKey,input){active();sha(buildKey);const outputs=outputsDescription(capture(input,RECORD_LIMIT),blobLimit),bytes=Buffer.from(canonical({format:'egret.content-cache/1',buildKey,outputs}));
       const relative='records/'+buildKey+'.json',existing=readMetadata(relative,RECORD_LIMIT);
       if(existing){validateRecord(existing,buildKey);complete(existing.value.outputs,false);}
       if(existing&&!existing.bytes.equals(bytes))fail('CONTENT_CACHE_DETERMINISM','An existing build key has different complete output descriptions.');
       complete(outputs,true);if(!existing){publishFile(relative,bytes);const written=readMetadata(relative,RECORD_LIMIT);if(!written||!written.bytes.equals(bytes))integrity('Published cache record differs.');}},
-    publishGeneration(input,manifestInput){active();const descriptor=generationDescription(capture(input)),descriptorBytes=Buffer.from(canonical(descriptor)),manifestBytes=ownedBytes(manifestInput,METADATA_LIMIT);
+    publishGeneration(input,manifestInput){active();const descriptor=generationDescription(capture(input),blobLimit),descriptorBytes=Buffer.from(canonical(descriptor)),manifestBytes=ownedBytes(manifestInput,METADATA_LIMIT);
       if(descriptorBytes.length>METADATA_LIMIT)invalid('Generation descriptor exceeds its byte bound.');
       if(manifestBytes.length!==descriptor.manifest.byteLength||digest(manifestBytes)!==descriptor.manifest.sha256)integrity('Manifest does not match its descriptor.');
       for(const resource of descriptor.outputs)complete(resource.files,true);

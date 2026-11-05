@@ -1,3 +1,4 @@
 // SPDX-License-Identifier: Apache-2.0
 export { validateResourceBuildPlanDescription, evaluateResourceBuildKeys, validateResourceBuildDescription, admitResourceManifest, buildResourceManifest, serializeResourceManifest, isAdmittedResourceManifest, getResourceManifestIdentityInputs } from './manifestAdmission.js';
 export type { ResourceBuildSourceEntry, ResourceBuildPlanDescription, ResourceBuildKeyEntry, ResourceBuildKeyPlan, ResourceBuildEntry, ResourceBuildDescription, ResourceManifestEntry, AdmittedResourceManifest, ResourceManifestDiagnosticCode, ResourceManifestDiagnostic, ResourceManifestResult, ResourceManifestIdentityInputs } from '../ResourceManifest.js';
+export { inspectFontArtifact } from './fontArtifact.js';

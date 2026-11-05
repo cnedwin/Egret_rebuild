@@ -33,3 +33,7 @@ Align 按左／居中／右／start／end／两端顺序切换普通段落和虚
 ## 可选共享效果
 
 打开 `?content=equipment&effects=1&backend=webgl2` 或 `backend=webgpu`，查看同一 UI 的遮罩和方框模糊。效果按钮循环四种模式，普通列和虚拟列表同时重新发布；默认内容与输入路由保持原样。[效果契约](https://github.com/cnedwin/Egret_rebuild/blob/main/knowledge-base/Cns/docs/shared-ui-effects.md) 说明限制、所有权、恢复与验证范围。
+
+## 字体资源
+
+构建后运行 node tools/content/author-font-example.mjs，将输出的 configPath 作为 ?fontConfig=<configPath>&backend=webgl2（或 webgpu）附到示例 URL。新增按钮替换文章字体，列表保留自己的代际；失败、取消或被更新替代的请求保留已提交 UI，未使用字体集合会退役。运行 node examples/paragraph-panel/verify-fonts.mjs <playwright-1.62.1-root> <new-output-directory> 验证。参见[字体所有权与限制](https://github.com/cnedwin/Egret_rebuild/blob/main/knowledge-base/Cns/docs/font-resource-generations.md)。

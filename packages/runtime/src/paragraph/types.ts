@@ -41,6 +41,7 @@ export interface ParagraphTextGeometry extends ParagraphTextGeometryData {
 export type ParagraphTextAlign = 'left' | 'right' | 'center' | 'start' | 'end' | 'justify';
 /** Explicit opt-in: older providers continue to accept the original requests. */
 export interface ParagraphProviderCapabilities {
+  readonly fontSets?: boolean;
   readonly styledRuns?: boolean;
   readonly textAlign?: boolean;
   readonly textGeometry?: boolean;
@@ -55,6 +56,8 @@ export interface ParagraphStyleRun {
   readonly fillColor?: number;
 }
 export interface ParagraphRequestInput {
+  /** Immutable session key from a font-set provider; omission preserves fixed-font APIs. */
+  readonly fontSet?: string;
   /** At most 256 nonempty ranges; gaps use paragraph defaults. Empty arrays are omitted. */
   readonly runs?: readonly ParagraphStyleRun[];
   readonly text: string;
@@ -102,9 +105,11 @@ export interface ParagraphRaster {
   readonly offsetY: number;
 }
 export interface ParagraphProvider {
-  /** Immutable backend/build/font identity. Changing fonts requires a new provider. */
+  /** Immutable backend identity. Fixed providers also include their immutable fonts. */
   readonly identity: string;
   readonly capabilities?: ParagraphProviderCapabilities;
+  /** Required with fontSets; retired keys refuse even warm-cache demand. */
+  hasFontSet?(key: string): boolean;
   prepare(request: ParagraphRequest, context: Readonly<{ signal: CancellationSignal }>): Promise<ParagraphRaster>;
 }
 export interface ParagraphCacheOptions {
