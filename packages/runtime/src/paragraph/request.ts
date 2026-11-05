@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { EgretError } from '../EgretError.js';
-import type { ParagraphRequestInput, ParagraphRequest, ParagraphRaster, ParagraphMetrics } from './types.js';
+import type { ParagraphRequestInput, ParagraphRequest, ParagraphRaster, ParagraphMetrics, ParagraphStyleRun } from './types.js';
 import { isImageData2D } from '@egret/contracts';
 
 function number(value: unknown, min: number, max: number): number {
@@ -11,17 +11,50 @@ function text(value: unknown, max: number, empty = false): string {
   if (typeof value !== 'string' || value.length > max || (!empty && !value.length)) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
   return value;
 }
+function families(value: unknown): readonly string[] {
+  if (!Array.isArray(value)) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+  const count = value.length;
+  if (!Number.isSafeInteger(count) || count < 1 || count > 16) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+  const result: string[] = [];
+  for (let index = 0; index < count; index++) result.push(text(value[index], 256));
+  return Object.freeze(result);
+}
+function runs(value: unknown, source: string): readonly ParagraphStyleRun[] | undefined {
+  if (value === undefined) return undefined;
+  if (!Array.isArray(value)) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+  const count = value.length;
+  // Bound caller-controlled counts before allocating or reading any element.
+  if (!Number.isSafeInteger(count) || count < 0 || count > 256) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+  if (count === 0) return undefined;
+  const result: ParagraphStyleRun[] = [];
+  let previous = 0;
+  const boundary = (offset: number): boolean => {
+    const before = source.charCodeAt(offset - 1), after = source.charCodeAt(offset);
+    return !(before >= 0xd800 && before <= 0xdbff && after >= 0xdc00 && after <= 0xdfff)
+      && !(before === 13 && after === 10);
+  };
+  for (let index = 0; index < count; index++) {
+    const row = value[index];
+    if (row === null || typeof row !== 'object' || Array.isArray(row)) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+    const start = number(row.start, previous, source.length), end = number(row.end, start, source.length);
+    if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start === end || !boundary(start) || !boundary(end)) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+    const familyInput = row.fontFamilies, sizeInput = row.fontSize, colorInput = row.fillColor;
+    if (familyInput === undefined && sizeInput === undefined && colorInput === undefined) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+    const fontFamilies = familyInput === undefined ? undefined : families(familyInput);
+    const fontSize = sizeInput === undefined ? undefined : number(sizeInput, 1, 512);
+    const fillColor = colorInput === undefined ? undefined : number(colorInput, 0, 0xffffff);
+    if (fillColor !== undefined && !Number.isInteger(fillColor)) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+    result.push(Object.freeze({start, end, ...(fontFamilies === undefined ? {} : {fontFamilies}),
+      ...(fontSize === undefined ? {} : {fontSize}), ...(fillColor === undefined ? {} : {fillColor})}));
+    previous = end;
+  }
+  return Object.freeze(result);
+}
 /** Snapshot caller values before queueing: later request/style mutations have no authority. */
 export function snapshotParagraphRequest(input: ParagraphRequestInput): ParagraphRequest {
   if (input === null || typeof input !== 'object') throw new EgretError('PARAGRAPH_REQUEST_INVALID');
   const source = text(input.text, 8192, true), width = number(input.width, 0.25, 4096);
-  const authored = input.fontFamilies;
-  if (!Array.isArray(authored)) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
-  const count = authored.length;
-  if (!Array.isArray(authored) || !Number.isSafeInteger(count) || count < 1 || count > 16) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
-  const copied: string[] = [];
-  for (let index = 0; index < count; index++) copied.push(text(authored[index], 256));
-  const fontFamilies = Object.freeze(copied);
+  const fontFamilies = families(input.fontFamilies);
   const fontSize = number(input.fontSize, 1, 512), lineHeightInput = input.lineHeight;
   const lineHeight = lineHeightInput === undefined ? undefined : number(lineHeightInput, 1, 1024);
   const locale = text(input.locale, 64), direction = input.direction;
@@ -43,7 +76,8 @@ export function snapshotParagraphRequest(input: ParagraphRequestInput): Paragrap
     if (unit >= 0xd800 && unit <= 0xdbff) { const low = source.charCodeAt(++i); if (!(low >= 0xdc00 && low <= 0xdfff)) throw new EgretError('PARAGRAPH_REQUEST_INVALID'); }
     else if (unit >= 0xdc00 && unit <= 0xdfff) throw new EgretError('PARAGRAPH_REQUEST_INVALID');
   }
-  return Object.freeze({text: source, width, fontFamilies, fontSize, ...(lineHeight === undefined ? {} : {lineHeight}), locale, direction, fillColor, density, ...(textAlign === undefined ? {} : {textAlign}), ...(maxLines === undefined ? {} : {maxLines}), ...(textGeometry?{textGeometry:true}:{})});
+  const styled = runs(input.runs, source);
+  return Object.freeze({text: source, width, fontFamilies, fontSize, ...(lineHeight === undefined ? {} : {lineHeight}), locale, direction, fillColor, density, ...(textAlign === undefined ? {} : {textAlign}), ...(maxLines === undefined ? {} : {maxLines}), ...(textGeometry?{textGeometry:true}:{}), ...(styled === undefined ? {} : {runs: styled})});
 }
 /** Own public metrics; provider memory or mutable arrays never become committed UI state. */
 export function snapshotParagraphRaster(value: ParagraphRaster, request: ParagraphRequest): ParagraphRaster {

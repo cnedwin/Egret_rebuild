@@ -1970,8 +1970,8 @@
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "827518b4d7ef48e3523ade44fc9c8639614b9b5d047fcc3a21cac6f582b14d4d",
-      "zhSha256": "664c36ef8f12e57c811424f906cfffb473befeb02fc26e110d94a08b86cb29a4"
+      "enSha256": "f563e2783ecb77b7c96c69d55cecca8308e9b41ac26667b4b03a879aaf175894",
+      "zhSha256": "a591eaa7237668af625e719916e8df1e6edace6e105816f0be5c5a984af426c9"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -2068,15 +2068,15 @@
       "en": "knowledge-base/en/docs/readonly-paragraph-sdk.md",
       "zh": "knowledge-base/Cns/docs/readonly-paragraph-sdk.md",
       "kind": "public_reading",
-      "enSha256": "19ed1abb4116ca202cfc148998c7112163ae9a19ca3ebabd80eb47ebc186dd20",
-      "zhSha256": "066201050c352d9eb7ee837cd6b5eb300a9a46a309d1b214bf1ffa55b2145900"
+      "enSha256": "d845a38ca78a29f227d7820f1201e0ec297341634fc80f88c2372f6bd21b5e0b",
+      "zhSha256": "25ebcd8d60ee7edbcac510976b4ee4cddc989f081d26aa7ab04b304b992486d2"
     },
     {
       "en": "examples/paragraph-panel/README.md",
       "zh": "examples/paragraph-panel/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "7525222b968d56ec912fa868d13d07a1444827360950ac6685cdadfab4115af6",
-      "zhSha256": "812cc66ea3fc554dac71e1bcd37b0f636e9c813eabe960f1f4cb9663c37641cb"
+      "enSha256": "8756e49ded4ba69c51f3a2f00553d738f4cede074c25213ce625a2555b7762a7",
+      "zhSha256": "0f403536490b044df59dc98daf40c5c2239d4c9cf46bedaec3c4eaf9b933b211"
     },
     {
       "en": "examples/paragraph-panel/vendor/README.md",
@@ -2217,6 +2217,13 @@
       "kind": "public_reading",
       "enSha256": "7fe65b51e948c2645efedd4148b022f86580d569c26e135a297cbee8fe2b1bbd",
       "zhSha256": "45b0568b78f5d3730af9c352d73fc8bf6d436233b19c881be1234e912b6efd9f"
+    },
+    {
+      "en": "knowledge-base/en/docs/paragraph-styled-runs.md",
+      "zh": "knowledge-base/Cns/docs/paragraph-styled-runs.md",
+      "kind": "public_reading",
+      "enSha256": "17bffaca95cc228ea3078587094a68011a921a05ab8c01695470da3c53af5e80",
+      "zhSha256": "403b4751d47cfd14338b60e872c17da8cb7809e76bfdd99ac489f82acb530132"
     }
   ],
   "registries": [
@@ -3186,7 +3193,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "37523fea501391ec69ce933c9d73fbdfe517dcda8638c74995535218996ac76c"
+      "sha256": "5be6518c645764f1d563402a144a54119d9fd3c36669987cd5a6ab9a2551cea4"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3334,7 +3341,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "994f218a0ec9f136d6e5d779cbe2128194408252bb393b923142f97dc30ccf8c"
+      "sha256": "a5a5ea5a54b8f72c72a7c9f44df973df54a4e722cec76205856135ba414daea9"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3806,7 +3813,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "aa1d83737e81428b3890ad4634146f8f12a8d3fc86d878db11be2f2360b1bf88"
+      "sha256": "31807a77a4ba922bb4e4c5057cf19a988dec161036e8d6ca91371f7314351abc"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3834,7 +3841,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "ce3653fda2f30e63ed458f15b09d6ea188c44fb3deb879e2cf1774d1677a3278"
+      "sha256": "df265f3c990f917f9431de6c37b75871b2b0b9a594468fc33010212a17e42f70"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4234,7 +4241,7 @@
     },
     {
       "path": "packages/engine/web/CanvasKitParagraphProvider.ts",
-      "sha256": "80b8b37e4bf7abffdb7ecbb85ccb79c41814a365d6d16a381710157204e70bee"
+      "sha256": "ac6d6d0b9d2fcbe9052254b17b49db108230cf2942e832d0bef43f3bf9284457"
     },
     {
       "path": "packages/engine/web/paragraph.ts",
@@ -4246,7 +4253,7 @@
     },
     {
       "path": "packages/runtime/src/paragraph/ParagraphCache.ts",
-      "sha256": "ae794ba078fd2adde57983ccb85c9684b8e0ce4116d5036eb5fe53f0a99bb85e"
+      "sha256": "8e9f094adc5a1d66ab90875d1c5da575c6aeccbf53ea0ce7670ad6aef24a6ed5"
     },
     {
       "path": "packages/runtime/src/paragraph/index.ts",
@@ -4254,11 +4261,11 @@
     },
     {
       "path": "packages/runtime/src/paragraph/request.ts",
-      "sha256": "36f62da71690afe5f85d798bee40670dc47f8610d36b0133d37af7f5f4e1ae92"
+      "sha256": "8a3f2a6f1e39abebaf5af45d95987bdaeea74836cf4d71cb4eef23254bd0432c"
     },
     {
       "path": "packages/runtime/src/paragraph/types.ts",
-      "sha256": "525c69e3ccf36164c7c70a4a5aaf8801df956df197f5d88a11be81c7e5e5e7c4"
+      "sha256": "3981e3fabe5d7616e8e5f675b3059a680c4758121a56bc927c6ba48e622deafe"
     },
     {
       "path": "examples/paragraph-panel/verify-line-bidi.mjs",
@@ -4399,6 +4406,38 @@
     {
       "path": "packages/spine/src/resetTypes.ts",
       "sha256": "724c841d8c5e1ed9c4f0e98068921239e8de1fdee22096448e56c8227dbbe4a1"
+    },
+    {
+      "path": "tests/paragraph-styles.test.mjs",
+      "sha256": "cfd1bdd4b5c9ad0e98c509d8f681bf89d7828bf33f3109015fac122ed7b84696"
+    },
+    {
+      "path": "tests/paragraph-styles-native.test.mjs",
+      "sha256": "94f172cb8fa682feb206e4c404f55d795644c7e5900759343ea80a9c287da513"
+    },
+    {
+      "path": "tests/paragraph-styles-types.test.mjs",
+      "sha256": "349d110d20d2d7ac7caa7de925743582f3f98d41905a85b5c80e01dc97bab46b"
+    },
+    {
+      "path": "tests/types/paragraph-styles-positive.ts",
+      "sha256": "f5721da79d93585ca67bf74c82a197f987699a3b6a2fa19c02cd0ce7c76da3bb"
+    },
+    {
+      "path": "tests/types/paragraph-styles-negative.ts",
+      "sha256": "68c19f810083f52f88424cac643b153ff2bf641c4f79aecb1886157770a2c626"
+    },
+    {
+      "path": "examples/paragraph-geometry/verify-styles.mjs",
+      "sha256": "348a08660949907720caba0a85713c680ee285090b5f46d3494cf0601163b007"
+    },
+    {
+      "path": "examples/paragraph-panel/styled-copy.mjs",
+      "sha256": "a6f7085fe89cd7d22d89846f27f26db1eb4741d950e899c154e77d01b63d1fd6"
+    },
+    {
+      "path": "examples/paragraph-panel/verify-equipment.mjs",
+      "sha256": "6c44ecf914b243b73dcdf4c09a57451a216831d5e5ff1561ea7400c3ed334adf"
     }
   ],
   "historicalSemanticReview": {

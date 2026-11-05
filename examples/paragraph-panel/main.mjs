@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+import {equipmentCopy} from './styled-copy.mjs';
 import {createEngineForProfile, Sprite} from '@egret/engine';
 import {createUiRoot} from '@egret/engine/ui';
 import {createParagraph, createParagraphCache} from '@egret/engine/paragraph';
@@ -29,9 +30,11 @@ const copy={
 const errors=[],expectedFailures=[],events=[],binds=[],unbinds=[],preparations=[],readbacks=[],supersededUpdates=[];
 let engine,host,scope,input,cache,nativeProvider,article,list;
 let state='starting',label='initial',width=530,fontSize=20,minLineHeight=undefined,density=1,revision=1,textAlign='left',maxLines=undefined;
+let contentMode=new URL(location.href).searchParams.get('content')??'plain';
+if(!['plain','equipment'].includes(contentMode))throw Error('EXAMPLE_CONTENT_MODE');
 let calls=0,runtimeBytes,fontBytes=0,lastPixels,closePromise,pendingUpdate,delayGate,gateEntered=false,failToken;
 const errorInfo=cause=>({code:cause?.code??null,message:String(cause?.message??cause)});
-function describe(){status.textContent=JSON.stringify({state,backend,label,width,fontSize,minLineHeight:minLineHeight??null,density,textAlign,maxLines:maxLines??null,providerCalls:calls,cache:cache?.getStatus(),latestFailure:expectedFailures.at(-1)??null},null,2);}
+function describe(){status.textContent=JSON.stringify({state,backend,label,contentMode,width,fontSize,minLineHeight:minLineHeight??null,density,textAlign,maxLines:maxLines??null,providerCalls:calls,cache:cache?.getStatus(),latestFailure:expectedFailures.at(-1)??null},null,2);}
 async function checkedFont(font){
   const response=await fetch(new URL('./vendor/fonts/'+font.file,import.meta.url));
   if(!response.ok)throw Error('EXAMPLE_FONT_HTTP');
@@ -44,27 +47,30 @@ function request(text,availableWidth,direction='ltr'){
   return {text,width:availableWidth,fontFamilies,fontSize,...(minLineHeight===undefined?{}:{lineHeight:minLineHeight}),locale:direction==='rtl'?'ar':'en',direction,fillColor:0xe9f2ff,density,...(textAlign==='left'?{}:{textAlign}),...(maxLines===undefined?{}:{maxLines})};
 }
 function articleTree(version=revision,marker=''){
-  const localSize=fontSize,localHeight=minLineHeight,localAlign=textAlign,localMaxLines=maxLines;
-  const content=(id,text,direction='ltr')=>({revision:version,prepare(context){
+  const localSize=fontSize,localHeight=minLineHeight,localAlign=textAlign,localMaxLines=maxLines,localMode=contentMode;
+  const equipment=localMode==='equipment'?equipmentCopy(localSize):undefined;
+  const content=(id,text,direction='ltr',runs)=>({revision:version,prepare(context){
     // A detached binding owns its exact request values even if controls change later.
     const node=createParagraph(engine,context.scope,cache);
-    node.setRequest({...request(text+marker,context.width,direction),fontSize:localSize,...(localHeight===undefined?{lineHeight:undefined}:{lineHeight:localHeight}),density:context.density,textAlign:localAlign,maxLines:localMaxLines});
-    return node.prepare().then(metrics=>{if(context.signal.aborted)throw Error('EXAMPLE_CONTENT_CANCELLED');preparations.push({id,version,width:context.width,density:context.density,metrics});return {content:node,measuredHeight:metrics.height};});
+    node.setRequest({...request(text+marker,context.width,direction),...(runs?{runs}:{}),fontSize:localSize,...(localHeight===undefined?{lineHeight:undefined}:{lineHeight:localHeight}),density:context.density,textAlign:localAlign,maxLines:localMaxLines});
+    return node.prepare().then(metrics=>{if(context.signal.aborted)throw Error('EXAMPLE_CONTENT_CANCELLED');preparations.push({id,version,width:context.width,density:context.density,styleRanges:runs?.length??0,metrics});return {content:node,measuredHeight:metrics.height};});
   }});
   return {kind:'column',id:'article-column',explicitWidth:width,gap:18,crossAlign:'stretch',children:[
     {kind:'leaf',id:'article-heading',explicitHeight:8,fill:{color:0x4dd7b7}},
-    {kind:'leaf',id:'introduction',content:content('introduction',copy.introduction)},
+    {kind:'leaf',id:'introduction',content:content('introduction',equipment?.text??copy.introduction,'ltr',equipment?.runs)},
     {kind:'leaf',id:'arabic',content:content('arabic',copy.arabic,'rtl')},
     {kind:'leaf',id:'article-footer',explicitHeight:12,fill:{color:0xe9a66e}},
   ]};
 }
 function rowSource(version){
-  const localSize=fontSize,localHeight=minLineHeight,localAlign=textAlign,localMaxLines=maxLines;
-  const records=Array.from({length:24},(_,index)=>({key:'paragraph-'+String(index).padStart(2,'0'),contentVersion:version,estimatedHeight:120,value:{text:copy.rows[index%3].repeat(index%4===3?2:1),direction:index%3===2?'rtl':'ltr',color:index%2?0x253f5e:0x1c3452}}));
+  const localSize=fontSize,localHeight=minLineHeight,localAlign=textAlign,localMaxLines=maxLines,localMode=contentMode;
+  const records=Array.from({length:24},(_,index)=>({key:'paragraph-'+String(index).padStart(2,'0'),contentVersion:version,estimatedHeight:localMode==='equipment'?540:120,value:{text:copy.rows[index%3].repeat(index%4===3?2:1),direction:index%3===2?'rtl':'ltr',color:index%2?0x253f5e:0x1c3452}}));
+  // A conservative content estimate bounds simultaneous preparation; committed heights still come from native metrics.
+  if(localMode==='equipment')for(let index=0;index<records.length;index++){const copy=equipmentCopy(localSize,index);records[index].value={...records[index].value,...copy,direction:'ltr'};}
   return {revision:version,records,async bind(context){
     binds.push({key:context.key,generation:context.bindingGeneration,version:context.contentVersion});
     const node=createParagraph(engine,context.scope,cache);
-    node.setRequest({...request(context.value.text,context.width-20,context.value.direction),fontSize:localSize,lineHeight:localHeight,density:context.density,textAlign:localAlign,maxLines:localMaxLines});
+    node.setRequest({...request(context.value.text,context.width-20,context.value.direction),...(context.value.runs?{runs:context.value.runs}:{}),fontSize:localSize,lineHeight:localHeight,density:context.density,textAlign:localAlign,maxLines:localMaxLines});
     const metrics=await node.prepare();
     if(context.signal.aborted)throw Error('EXAMPLE_ROW_CANCELLED');
     const content=context.scope.use(new Sprite());
@@ -94,19 +100,20 @@ async function draw(name){
   readbacks.push({label:name,frameId:result.frameId,serial:result.serial,width:result.width,height:result.height});
   describe();return inspect();
 }
-export function inspect(){return {state,backend,label,width,fontSize,minLineHeight:minLineHeight??null,density,revision,textAlign,maxLines:maxLines??null,providerCalls:calls,runtimeBytes,fontBytes,article:article?.snapshot(),list:list?.snapshot(),cache:cache?.getStatus(),preparations:[...preparations],binds:[...binds],unbinds:[...unbinds],events:[...events],readbacks:[...readbacks],expectedFailures:[...expectedFailures],supersededUpdates:[...supersededUpdates],errors:[...errors],gateEntered,scopeState:scope?.state,inputState:input?.state};}
+export function inspect(){return {state,backend,label,contentMode,width,fontSize,minLineHeight:minLineHeight??null,density,revision,textAlign,maxLines:maxLines??null,providerCalls:calls,runtimeBytes,fontBytes,article:article?.snapshot(),list:list?.snapshot(),cache:cache?.getStatus(),preparations:[...preparations],binds:[...binds],unbinds:[...unbinds],events:[...events],readbacks:[...readbacks],expectedFailures:[...expectedFailures],supersededUpdates:[...supersededUpdates],errors:[...errors],gateEntered,scopeState:scope?.state,inputState:input?.state};}
 export function readback(){if(!lastPixels)throw Error('EXAMPLE_NO_READBACK');let bytes='';for(let i=0;i<lastPixels.length;i+=16384)bytes+=String.fromCharCode(...lastPixels.subarray(i,i+16384));return {width:1100,height:760,base64:btoa(bytes),label};}
 function assertReady(){if(state!=='ready')throw Error('EXAMPLE_NOT_READY');}
 export async function action(kind){
   assertReady();if(pendingUpdate)throw Error('EXAMPLE_UPDATE_PENDING');
-  if(kind==='narrow')width=300;
+  if(kind==='equipment')contentMode=contentMode==='equipment'?'plain':'equipment';
+  else if(kind==='narrow')width=300;
   else if(kind==='wide')width=530;
   else if(kind==='larger'){fontSize=26;minLineHeight=undefined;}
   else if(kind==='line-height')minLineHeight=44;
   else if(kind==='density'){density=density===1?2:1;}
   else if(kind==='align'){const values=['left','center','right','start','end','justify'];textAlign=values[(values.indexOf(textAlign)+1)%values.length];}
   else if(kind==='clamp'){maxLines=maxLines===undefined?2:undefined;}
-  else if(kind==='scroll'){list.list('paragraph-rows').setScrollOffset(380);await publish(list);return draw(kind);}
+  else if(kind==='scroll'){list.list('paragraph-rows').setScrollOffset(contentMode==='equipment'?1140:380);await publish(list);return draw(kind);}
   else if(kind==='static'){await publish(article);await publish(list);return draw(kind);}
   else if(kind==='fail'){
     const marker=' [failed-request-'+(++revision)+']';failToken=marker;
@@ -117,7 +124,7 @@ export async function action(kind){
   }else throw Error('EXAMPLE_ACTION');
   revision++;article.setViewport({width,height:704},density);article.setTree(articleTree());
   await publish(article);
-  if(kind==='larger'||kind==='line-height'||kind==='density'||kind==='align'||kind==='clamp'){list.setViewport({width:420,height:704},density);list.list('paragraph-rows').setSource(rowSource(revision));await publish(list);}
+  if(kind==='equipment'||kind==='larger'||kind==='line-height'||kind==='density'||kind==='align'||kind==='clamp'){list.setViewport({width:420,height:704},density);list.list('paragraph-rows').setSource(rowSource(revision));await publish(list);}
   return draw(kind);
 }
 export function beginDelayedUpdate(){
@@ -177,7 +184,9 @@ export const ready=(async()=>{
     }finally{delayed?.complete();}
   }};
   host=(backend==='webgpu'?createSharedWebGPUHost:createSharedWebGL2Host)({canvas,pixelRatio:1,outputAlpha:'opaque',enableReadback:true});
-  engine=await createEngineForProfile({host},'egret.shared-frame2d/1');scope=engine.createScope();cache=createParagraphCache(engine.assets,{provider});
+  engine=await createEngineForProfile({host},'egret.shared-frame2d/1');scope=engine.createScope();
+  // The demo keeps old and replacement article/list rasters together at DPR 2. Product defaults stay unchanged.
+  cache=createParagraphCache(engine.assets,{provider,maxImageBytes:33554432});
   input=createBrowserPointerInput({engine,scope,width:1100,height:760,capacity:10});
   article=createUiRoot({engine,scope,id:'paragraph-article',viewport:{width,height:704},origin:{x:24,y:28},density,tree:articleTree()});
   list=createUiRoot({engine,scope,id:'paragraph-list',viewport:{width:420,height:704},origin:{x:646,y:28},density,input,onRowPointer:notification=>{events.push({kind:notification.kind,key:notification.key,layoutRevision:notification.layoutRevision,globalX:notification.event.payload.globalX,globalY:notification.event.payload.globalY});describe();},tree:{kind:'virtualList',id:'paragraph-rows',explicitWidth:420,explicitHeight:704,source:rowSource(revision)},limits:{overscan:0,residentCap:24,retainedCap:0}});

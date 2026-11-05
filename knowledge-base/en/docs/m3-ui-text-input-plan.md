@@ -282,3 +282,7 @@ The raw multi-contact scene input contract and evidence boundaries are maintaine
 The [keyboard/focus increment](keyboard-focus-input.md) now provides opt-in registered display targets, typed key events, traversal, cancellation and a Canvas-native bridge under existing ownership. It does not close the remaining native editor/IME, managed-control registration, modal/composite or semantic-projection rows.
 
 The optional [paragraph text geometry](paragraph-text-geometry.md) increment publishes source ranges, hit/selection/caret coordinates with the same committed raster and bounded cache ownership. It supplies M3.3 consumers; it does not implement native editing or alter touch routing.
+
+The optional [styled readonly runs](paragraph-styled-runs.md) increment adds bounded font-family, size and foreground ranges through the existing paragraph/UI transaction. It remains part of M3.2 / #88 and preserves the eleven work-package structure and all remaining editor, script, device and performance obligations.
+
+The styled-run increment now includes an equipment-description example in the existing column and virtual list, with measured-height updates, whole-content replacement and WebGL2/WebGPU evidence. This delivers the bounded readonly integration slice; the remaining M3.2 font/script, editing, accessibility, device and performance requirements remain open. See the styled paragraph contract for budgets and evidence.

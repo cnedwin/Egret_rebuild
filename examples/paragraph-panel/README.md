@@ -21,3 +21,11 @@ The integrated optional browser check is `node examples/paragraph-panel/verify-b
 ## Paragraph layout controls
 
 Align cycles left/center/right/start/end/justify for the article and virtual rows. The two-line control toggles maxLines=2 and unrestricted wrapping. Following geometry updates from the same prepared metrics. A failed or unsupported update keeps the old frame. The selected layout-r1 runtime provides qualified hard-break ellipsis and recoverable narrow-field refusal. See the [contract and latest evidence](../../knowledge-base/en/docs/paragraph-layout-controls.md).
+
+## Styled equipment descriptions
+
+Select **Equipment styles** to switch the ordinary column and virtual list to an authored equipment description, or open ?content=equipment (combine with backend=webgpu when needed). Gold headings, smaller rarity text, colored statistics and an explicit CJK font range share one complete paragraph layout. Narrow/Wide, larger type, alignment, two-line truncation and density keep using the existing controls. The footer and recycled rows use the same final measured height; the example adds no separate text renderer or input behavior. Select Equipment styles again to restore the original plain content. The default URL retains the original fixed fixture.
+
+The pure styled-copy.mjs module builds source text and immutable UTF-16 ranges together. UI content revisions own the request snapshot; delayed, failed or superseded requests retain the previous committed image and geometry. This is readonly styling, not rich-text editing, arbitrary HTML/CSS, touch controls or a font/performance qualification. See the [styled paragraph contract](../../knowledge-base/en/docs/paragraph-styled-runs.md).
+
+The example sets a 32 MiB paragraph image-cache budget for overlapping old/new UI transactions at density 2; engine defaults and raster limits are unchanged. Equipment rows start from a conservative 540-unit estimate and settle to measured height. Run node examples/paragraph-panel/verify-equipment.mjs <playwright-root> <new-output-directory> for the finite styled UI checks. [Recorded results and limits](styled-verification-summary.json).
