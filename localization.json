@@ -3214,7 +3214,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "821a4a694fb5ee2a6065e4e19e663414551959d01b83e4cbae1f6d1c26697720"
+      "sha256": "47539bdf0a7db1ca9ccca6d8d1fd8ea5702f696b9a266f0408d7d56349c41244"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3362,7 +3362,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "8c27e63d1242e57d6c37e3a63ca1f6a040c81dd708b1b7a756628bbdcb7d6ab5"
+      "sha256": "4820df162a859727c32c5d2c312114d26af4e6aea202084ff24048b75019e909"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3834,7 +3834,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "54adcd2e8b389603dc0223f3664b7a4d054a2ac747e9d3df57e4940c9e80b159"
+      "sha256": "1cef522f6017358c77dff5ef764c8cf7cb88c32801c794b90247edfb29eb35d3"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3862,7 +3862,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "d50c8eeb528449f18a731b9d0f4b3855666589aa3b68b0fbe57aef70fc1a755f"
+      "sha256": "fe3c647f26f0132f8209938ba6e3e60b5e76ec8db788ea24ce90dacc9e73eaea"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",

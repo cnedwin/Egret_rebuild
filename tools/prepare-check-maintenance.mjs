@@ -116,6 +116,8 @@ const m3KeyRevealPairRegistrations = [["tools/spritesheet-boundary.mjs","m3KeyRe
 const m34ThemeSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":292702,"sha256":"8c27e63d1242e57d6c37e3a63ca1f6a040c81dd708b1b7a756628bbdcb7d6ab5"},{"path":"tools/browser-png-boundary.mjs","bytes":301675,"sha256":"821a4a694fb5ee2a6065e4e19e663414551959d01b83e4cbae1f6d1c26697720"},{"path":"tools/atlas-import-boundary.mjs","bytes":197415,"sha256":"26f44c498b995fe51e070f1bc74484819209109ba25df272ebd055b0379f4538"}];
 const m34ThemePairRegistrations = [["tools/spritesheet-boundary.mjs","uiThemeGraphPairs","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","uiThemeGraphPairs","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","uiThemeGraphPairs","raw-pair-observation-only"]];
 const m34ThemeGraphRegistrations = [["tools/spritesheet-boundary.mjs","uiThemeGraphAdditions"],["tools/browser-png-boundary.mjs","uiThemeGraphAdditions"],["tools/atlas-import-boundary.mjs","uiThemeGraphAdditions"]];
+// Exact selector-repair successors retain the earlier theme owners above.
+const m34ThemeSelectionSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":292808,"sha256":"4820df162a859727c32c5d2c312114d26af4e6aea202084ff24048b75019e909"},{"path":"tools/browser-png-boundary.mjs","bytes":301781,"sha256":"47539bdf0a7db1ca9ccca6d8d1fd8ea5702f696b9a266f0408d7d56349c41244"},{"path":"tools/atlas-import-boundary.mjs","bytes":197521,"sha256":"014c7b880f0bf0649f71298ec7bfa089b8a747a89817d1ce28227bd0ea60a1e2"}];
 // Explicit selectors keep historical transforms and third-party owners separate.
 const policyRegistrations=[
  {owner:'tools/bitmap-resource-slot-boundary.mjs',binding:'policyPin',target:'tools/bitmap-resource-slot-policy.json',kind:'BITMAP_RESOURCE_SLOT_FINITE_INTERFACE_POLICY',selectors:['packages','configurations','stableEntries','oldRootPins','oldEngineDeclarationPin','workspacePins']},
@@ -250,7 +252,7 @@ export function prepareBaselineReview(root){
     || m3PointerGraphRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || m3PointerPairRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || [...m34ThemePairRegistrations,...m34ThemeGraphRegistrations,...m24SpinePairRegistrations,...m24SpineGraphRegistrations,...m3KeyRevealPairRegistrations,...m33KeyboardPairRegistrations,...m33KeyboardGraphRegistrations].some(row=>row[0]===owner&&row[1]===binding);
-   const reviewed=[...m13SourceOwners,...m14SourceOwners,...m15SourceOwners,...m15CancellationSourceOwners,...m15DiagnosticSourceOwners,...m12PreparationSourceOwners,...m3PointerSourceOwners,...m21ContentSourceOwners,...m31UiSourceOwners,...m22SequenceSourceOwners,...m33KeyboardSourceOwners,...m3KeyRevealSourceOwners,...m24SpineSourceOwners,...m34ThemeSourceOwners].filter(row=>row.path===owner);
+   const reviewed=[...m13SourceOwners,...m14SourceOwners,...m15SourceOwners,...m15CancellationSourceOwners,...m15DiagnosticSourceOwners,...m12PreparationSourceOwners,...m3PointerSourceOwners,...m21ContentSourceOwners,...m31UiSourceOwners,...m22SequenceSourceOwners,...m33KeyboardSourceOwners,...m3KeyRevealSourceOwners,...m24SpineSourceOwners,...m34ThemeSourceOwners,...m34ThemeSelectionSourceOwners].filter(row=>row.path===owner);
    if(!allowed||!reviewed.some(row=>samePin(read.pin(owner),row)))throw cause;
    // Raw source authority precedes extraction; no caller-selected parser fallback.
    const lines=text.split(/\r?\n/).filter(line=>line.startsWith('const '+binding+' = '));

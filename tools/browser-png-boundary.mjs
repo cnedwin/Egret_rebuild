@@ -86,12 +86,12 @@ function m24SpineGraph(base,present){
 // M3-KEY-REVEAL-SOURCE-BEGIN
 // The exact nine-file UI revision follows the retained keyboard graph as one group.
 const m3KeyRevealSourcePairs = [{"base":{"path":"packages/engine/src/ui/index.ts","bytes":465,"sha256":"857f0598a77748b9a588ff74e5895009605ca30637ac589bf3aaf62d920ba070"},"current":{"path":"packages/engine/src/ui/index.ts","bytes":491,"sha256":"c24618c7a77faca61bd1b0ed73b97eaf0ea8b3e8a28ddd113af846fa570a6a30"}},{"base":{"path":"packages/engine/dist/ui/index.d.ts","bytes":461,"sha256":"2e64d5be82ad33934db2bc552c09215ab7e3a512b5b1325938b6d717cfb837fe"},"current":{"path":"packages/engine/dist/ui/index.d.ts","bytes":487,"sha256":"ab01ca220e1fce767f8c09b3ad007a72a5d3f8d8aae54a9df751ede0fc5bedd2"}},{"base":{"path":"packages/engine/src/ui/types.ts","bytes":7652,"sha256":"823dc856df89e18de945faff65f23e858b10a1c47dce9d19dc9da4097209fb31"},"current":{"path":"packages/engine/src/ui/types.ts","bytes":8004,"sha256":"0a5860538e1091efaab6cce90a87f21e6be96b90443b061fead9011de2169f83"}},{"base":{"path":"packages/engine/dist/ui/types.d.ts","bytes":7680,"sha256":"20bd561195fc4ff0b860f35280995ca3316fde07fcf836251dca8fe67008e3ae"},"current":{"path":"packages/engine/dist/ui/types.d.ts","bytes":8032,"sha256":"2caa1650754282fb68a2498431092dd9cc1380386f579f53f8b178044053c4ca"}},{"base":{"path":"packages/engine/src/ui/uiRoot.ts","bytes":58517,"sha256":"6d07eecd9bcafc228224f10c29a4e278085f266f47bd4bbd1a6e9155afa69352"},"current":{"path":"packages/engine/src/ui/uiRoot.ts","bytes":59839,"sha256":"8e89834e2f004eef7e04613738d298dfec30ee4db867ccb112be6b487d706a6e"}},{"base":{"path":"packages/engine/dist/ui/uiRoot.js","bytes":53289,"sha256":"5f77d15acd317194655d8a91c96ebc4a1ef7253b1140229fdfc61da3a7cb9138"},"current":{"path":"packages/engine/dist/ui/uiRoot.js","bytes":54562,"sha256":"10951a9484628f65e636c369102e864bd08a35a1feb7754d1bcaaeeef518d70c"}},{"base":{"path":"packages/engine/src/ui/virtualList.ts","bytes":2326,"sha256":"3b6ee9285a0b1ee2e25098e664466e6f4c7e1aecbb8e0404789821a087934811"},"current":{"path":"packages/engine/src/ui/virtualList.ts","bytes":4808,"sha256":"d1383b8f192b545b28cd31c4a5474a5af23af4b85d5062931e6505a987793421"}},{"base":{"path":"packages/engine/dist/ui/virtualList.js","bytes":1861,"sha256":"6ef2a63c2e5b078c46840aad52bc2bffdba183c4c41b55b37bf6297db69a1560"},"current":{"path":"packages/engine/dist/ui/virtualList.js","bytes":4177,"sha256":"5b48eecb8279d5af4320c6197b6877a15a6853e738c16fb6d3bf2ecf09a44bee"}},{"base":{"path":"packages/engine/dist/ui/virtualList.d.ts","bytes":534,"sha256":"1f9d01d4caecfdc72f2e24b18b3fe8c7a84358cd6ccf8e3830e0b363bd94cd23"},"current":{"path":"packages/engine/dist/ui/virtualList.d.ts","bytes":1172,"sha256":"000f5e78be9d1a8a93061b2428d96ace8d3b22c0dc0a92dc3a85c8ed762a63f4"}}];
-function m3KeyRevealGraph(root,base){
+function m3KeyRevealGraph(root,base,present){
  const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b),selected=m3KeyRevealSourcePairs[0].current;
  if(!base.some(row=>row.path===selected.path))return base;
  const raw=readFileSync(path.join(root,selected.path));
- // The exact newer theme entry preserves the preceding key-reveal revision.
- if(![selected,{"path":"packages/engine/src/ui/index.ts","bytes":643,"sha256":"281dc0eeb68642580b8e9982431266123c1267d8b40099aed083bc1fdd505034"}].some(pin=>raw.length===pin.bytes&&createHash('sha256').update(raw).digest('hex')===pin.sha256))return base;
+ // Registered theme presence selects its required predecessor; final graph hashes still reject source drift.
+ if(!uiThemeGraphAdditions.some(row=>present.has(row.path))&&![selected,{"path":"packages/engine/src/ui/index.ts","bytes":643,"sha256":"281dc0eeb68642580b8e9982431266123c1267d8b40099aed083bc1fdd505034"}].some(pin=>raw.length===pin.bytes&&createHash('sha256').update(raw).digest('hex')===pin.sha256))return base;
  if(base.length!==816||m3KeyRevealSourcePairs.length!==9||new Set(m3KeyRevealSourcePairs.map(pair=>pair.base.path)).size!==9
   ||m3KeyRevealSourcePairs.some(pair=>pair.base.path!==pair.current.path||!base.some(row=>same(row,pair.base))))throw Error('Invalid finite key-reveal source group');
  return base.map(row=>m3KeyRevealSourcePairs.find(pair=>same(pair.base,row))?.current??row);
@@ -558,7 +558,7 @@ function m3PointerGraph(root,base,actual) {
   graph=m31UiGraph(graph,present);
   graph=m22SequenceGraph(graph,present);
   graph=m33KeyboardGraph(graph,present);
-  graph=m3KeyRevealGraph(root,graph);
+  graph=m3KeyRevealGraph(root,graph,present);
   graph=m24SpineGraph(graph,present);
   graph=m34EffectGraph(graph,present);
   graph=fontResourceGraph(graph,present);
