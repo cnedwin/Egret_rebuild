@@ -55,10 +55,10 @@ const metrics = await paragraph.prepare();
 
 ## 现有 UI 整合
 
-[段落面板](../../../examples/paragraph-panel/README.zh-CN.md)新增可选的装备说明模式。不可变源范围描述更大的金色标题、较小的品质文字、彩色属性及 CJK 字体范围。普通列布局叶节点和变高虚拟列表复用同一准备结果、实测高度及 Scope 持有的图像。宽度、字号、对齐、行数上限和密度变化沿用现有 UI 修订事务。原默认文字、控件和输入路由保留，不包含触摸改动。
+[段落面板](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/README.zh-CN.md)新增可选的装备说明模式。不可变源范围描述更大的金色标题、较小的品质文字、彩色属性及 CJK 字体范围。普通列布局叶节点和变高虚拟列表复用同一准备结果、实测高度及 Scope 持有的图像。宽度、字号、对齐、行数上限和密度变化沿用现有 UI 修订事务。原默认文字、控件和输入路由保留，不包含触摸改动。
 
 示例显式为段落图像缓存配置 32 MiB，使双倍密度事务中的新旧列布局／列表内容可以共存；产品默认的 16 MiB 和单张图片一百万像素量级的上限（1,048,576 像素）均未改变。装备条目使用 540 单位的保守初始高度估计，限制预先准备的数量；最终几何始终采用原生实测高度。示例文案保持在栅格上限内，不放宽上限。这是有限示例的预算，不代表手机内存验收。
 
-当前主干整合验证通过 76 项相关行为／类型／原生／UI 测试；WebGL2、WebGPU 各通过 19 项装备示例检查、17 项样式几何检查和 20 项原段落面板检查。[整合汇总](../../../examples/paragraph-panel/styled-verification-summary.json)绑定实际输入并保留先前失败。已保存的样式浏览器记录有七项输入随主干变化，因此重新执行浏览器验证；未变源码的既有评审及原记录仍作为历史证据。固定视口可能裁掉末尾追加的标记，完成时必须发布新修订及其对应的准备布局，而不要求可见像素任意发生变化。
+当前主干整合验证通过 76 项相关行为／类型／原生／UI 测试；WebGL2、WebGPU 各通过 19 项装备示例检查、17 项样式几何检查和 20 项原段落面板检查。[整合汇总](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/styled-verification-summary.json)绑定实际输入并保留先前失败。已保存的样式浏览器记录有七项输入随主干变化，因此重新执行浏览器验证；未变源码的既有评审及原记录仍作为历史证据。固定视口可能裁掉末尾追加的标记，完成时必须发布新修订及其对应的准备布局，而不要求可见像素任意发生变化。
 
 构建后运行有限整合检查：node examples/paragraph-panel/verify-equipment.mjs <playwright-root> <new-output-directory>。受保护 CI 和独立评审属于另行执行的交付门禁。当前主干的 macos-latest 作业未启动即取消，macOS CPU 作业因此改用 macos-15-intel；检查内容、Windows／Linux 检查及必需汇总不变，不代表 ARM64 验收。

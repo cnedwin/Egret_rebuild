@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "dd4789b057719aa94bc22c6b80be2ad64fc98299bee7e6d5859b23d8d11bacda",
+      "sha256": "a9d64f6e63728cedfdb92b01bba3a9d2fe97172e24bd30e85d0420970d8857b5",
       "bytes": 377149,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -15254,14 +15254,14 @@
     {
       "path": "knowledge-base/en/docs/paragraph-styled-runs.md",
       "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
-      "bytes": 9546,
-      "sha256": "515cfce8286335a137cc746dd1ffed8c17ecab872cebadcef92d9305ce5a6daf"
+      "bytes": 9630,
+      "sha256": "02e105fedda420c1fb92464843b2bfe37fef65e14d2b4f4e36773a3572072a5d"
     },
     {
       "path": "knowledge-base/Cns/docs/paragraph-styled-runs.md",
       "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
-      "bytes": 8473,
-      "sha256": "a71b5531f57c946e8e914ee3408322e5627acbb84d14f2d78dc240c143ea958e"
+      "bytes": 8557,
+      "sha256": "9e971a5e98344e0165d8151026c3a853919e04612fb3f3d269cfa90c949d8547"
     },
     {
       "path": "examples/paragraph-panel/styled-copy.mjs",
