@@ -1844,8 +1844,8 @@
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "ce042a52d4ecd7b38f0a2358a1ff062f390034e86a80665f8949acdc54ecc951",
-      "zhSha256": "0d96336e65b37818caa9ede32c15c6104e5351bea42b3fb244e98681e0a1435c"
+      "enSha256": "3a0c9fd0a3f9b776fc7f30f91a5f34e5340794a9dbddb6c1081b59c3124b93ea",
+      "zhSha256": "0b6da33b64b645658cfecd93ff1d34b77bd4ab404fb194aae7d1bd399e14b476"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -1970,8 +1970,8 @@
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "57cca0d01e1bf7396144eb0926c2e1f285c28fa837c9fd3486b2fd32af0ad026",
-      "zhSha256": "64eca540c6d6777a79309bc1a290f6182b75a998f1d37ad3ac88ef39fb20442a"
+      "enSha256": "8c0f11353132ccfeb82a58939e9d3237fac91b30f9649bce5ca886fc0ee86b01",
+      "zhSha256": "212648ac0ec8b7ea5b3b262e5603aae829cb406285674cc98087f4b4c14317ec"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -2026,8 +2026,8 @@
       "en": "examples/ui-data-panel/README.md",
       "zh": "examples/ui-data-panel/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "8824212a6acddb8066fc478c93417e5082c0f791db9894bd52073870b25cd749",
-      "zhSha256": "28ad0dfbc825deb9aee0615992bd37e4326e5ac9ce295a9ca6b9fe3769a99845"
+      "enSha256": "35a854fdd1d342f3a6ced9d9a4dbbf381c617b351c35442481628b12663bba08",
+      "zhSha256": "97ff1fe30c7a4d4d347673f3891cdd9c94af8cdad4e7c233f9caa5ed4a30824e"
     },
     {
       "en": "examples/ui-data-panel/PROVENANCE.md",
@@ -2238,6 +2238,13 @@
       "kind": "public_reading",
       "enSha256": "a330a3d3a3f4603a64e279229740be670d267e5b9a965c3f4b86b88458d5f083",
       "zhSha256": "620c0319cec395de877911f7968f04f91ca0f93fc1eecc00cce31df8ea5161cb"
+    },
+    {
+      "en": "knowledge-base/en/docs/ui-theme-generations.md",
+      "zh": "knowledge-base/Cns/docs/ui-theme-generations.md",
+      "kind": "public_reading",
+      "enSha256": "64b9f3a12a5f97edec02ae5e8c41daf262bb2b834bffe64b9fea8e824118da2f",
+      "zhSha256": "9e3b8dc629cfd57536f309b757e86c20062c3a764bac525197839a98dc7b2c62"
     },
     {
       "en": "examples/sequence-reset/README.md",
@@ -3077,11 +3084,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "6d3b165a7df01a4ef2c027f80f6fe047c9091471d6fb07dae1b1112d9d967ef1"
+      "sha256": "c0c73160bbca23a5d4a0f9f4f3d8dd67df2bcab8fbe6aeb844103d576d979c94"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "bccf5909b0feb2430d74f3fe4222c0baa8205705de4085524bd825cf9a01121e"
+      "sha256": "e1768bd3aa86d5d5b8cebe7e29e1190c1abc2004aca10a61b73a3667d49a98e1"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3089,7 +3096,7 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "9db2c1fe10876b6eabc5c00b91da40bd2df0a0f8371d9f1888091110c0a8a323"
+      "sha256": "2efee69ad02e6dcbac415dfdd252d115fa02e183c425a367452ae13abc9657a8"
     },
     {
       "path": "packages/runtime/src/NineSliceGeometry2D.ts",
@@ -3221,7 +3228,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "79ab1afc19f226fd99962985ce2a25f6f96fe9308d3a46b9bc56046f7772dc9d"
+      "sha256": "821a4a694fb5ee2a6065e4e19e663414551959d01b83e4cbae1f6d1c26697720"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3369,7 +3376,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "1286dece9f90f7b002e050675910d67fc059eb2323586a18f0c1ce59c72cb76d"
+      "sha256": "0885dceb2bf6d7ce155549c1bb964bc6268db5d86274eb06734a64f1a5439324"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3841,7 +3848,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "5d0f281377ca7a3c12d689037ad4ebeb0977d5c72e8f6a18891aca56a0958326"
+      "sha256": "54adcd2e8b389603dc0223f3664b7a4d054a2ac747e9d3df57e4940c9e80b159"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3869,7 +3876,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "15d1de28e272b40a712d6a275badfce7ba4f02ec3a558fb2706956a3915a7a6f"
+      "sha256": "d50c8eeb528449f18a731b9d0f4b3855666589aa3b68b0fbe57aef70fc1a755f"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -3877,7 +3884,7 @@
     },
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
-      "sha256": "8d00cbabc94e436d9cb1941b5bfb6981cd0986f2dceaa99b97d4fc24bc62400d"
+      "sha256": "10b73e76d90f19aa3cdb0c56c5b9ed7cfeafeb1fc65e90848a773ce064092356"
     },
     {
       "path": "packages/engine/web/webgpuBindingCache.ts",
@@ -4173,15 +4180,15 @@
     },
     {
       "path": "packages/engine/src/ui/index.ts",
-      "sha256": "c24618c7a77faca61bd1b0ed73b97eaf0ea8b3e8a28ddd113af846fa570a6a30"
+      "sha256": "281dc0eeb68642580b8e9982431266123c1267d8b40099aed083bc1fdd505034"
     },
     {
       "path": "packages/engine/src/ui/types.ts",
-      "sha256": "0a5860538e1091efaab6cce90a87f21e6be96b90443b061fead9011de2169f83"
+      "sha256": "db2f9f812281184b6c66be9ba2b4ae54fbce005fcdff978610cb0185223586cf"
     },
     {
       "path": "packages/engine/src/ui/uiRoot.ts",
-      "sha256": "8e89834e2f004eef7e04613738d298dfec30ee4db867ccb112be6b487d706a6e"
+      "sha256": "84fbfd634ce0ca6911d38a6e0d97d529a6f3544734af5b5c420c442352e84dca"
     },
     {
       "path": "packages/engine/src/ui/virtualList.ts",
@@ -4265,7 +4272,7 @@
     },
     {
       "path": "packages/engine/src/ui/leafContent.ts",
-      "sha256": "39f7faddaa04314d87c20aa4e71e725e0e4ba93dfb0980719cd0a29d023e058f"
+      "sha256": "851450b4849b0e5d9565785863dcbb0f1f9b6a4f9764b702375df8ced817e736"
     },
     {
       "path": "packages/engine/web/CanvasKitParagraphProvider.ts",
@@ -4526,6 +4533,14 @@
     {
       "path": "tools/content/author-font-example.mjs",
       "sha256": "c1849ae5a6b9eb067f1fa3c6d7f6a4ff8447276ad04fff211db73361a867a442"
+    },
+    {
+      "path": "packages/engine/src/ui/theme.ts",
+      "sha256": "2755736752ab847425e61fb213c9c1225f77df0e3eff83c3e3d9346202b6fc90"
+    },
+    {
+      "path": "tests/ui-theme.test.mjs",
+      "sha256": "5db0a26b2e94331cde98ea00355ae8cdc46d7c8dec16b31719927e939a3f3c9b"
     },
     {
       "path": "packages/engine/src/animation/sequenceResetSlot.ts",

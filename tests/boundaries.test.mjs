@@ -1474,7 +1474,15 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       append(file,"import {registerContentEngine} from './internal/contentFactoryState.js';\n");
     // M3.2 source/declaration inspection with inert executable edges. These
     // fixtures establish retained policy resolution only, never paragraph/UI behavior.
+    // M3.4 extends the same finite inert fixture, never executes a theme or UI owner.
     const m32PolicyOwners = [
+  "packages/engine/src/ui/theme.ts",
+  "packages/engine/dist/ui/theme.js",
+  "packages/engine/dist/ui/theme.d.ts",
+  "packages/engine/src/ui/types.ts",
+  "packages/engine/dist/ui/types.js",
+  "packages/engine/dist/ui/types.d.ts",
+  "packages/engine/dist/ui/index.js",
   "packages/engine/web/canvasKitParagraphGeometry.ts",
   "packages/engine/dist/web/canvasKitParagraphGeometry.js",
   "packages/engine/dist/web/canvasKitParagraphGeometry.d.ts",

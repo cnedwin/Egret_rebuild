@@ -45,6 +45,10 @@ const m15DeepClauses = {
   "packages/engine/src/ui/leafContent.ts": [{operation:'import',kind:'value',members:['captureUiLayout'],target:'@egret/runtime/ui'},{operation:'import',kind:'type',members:['UiLayoutNode','UiLayoutTree','UiMeasurement'],target:'@egret/runtime/ui'}],
   "packages/engine/dist/ui/leafContent.js": [{operation:'import',kind:'value',members:['captureUiLayout'],target:'@egret/runtime/ui'}],
   "packages/engine/dist/ui/leafContent.d.ts": [{operation:'import',kind:'type',members:['UiLayoutNode','UiLayoutTree'],target:'@egret/runtime/ui'}],
+  // M3.4: explicit pure theme numeric imports; no resource or host authority.
+  "packages/engine/src/ui/theme.ts": [{operation:'import',kind:'value',members:['captureUiLayout'],target:'@egret/runtime/ui'},{operation:'import',kind:'type',members:['UiLayoutTree','UiLayoutNode'],target:'@egret/runtime/ui'}],
+  "packages/engine/dist/ui/theme.js": [{operation:'import',kind:'value',members:['captureUiLayout'],target:'@egret/runtime/ui'}],
+  "packages/engine/dist/ui/theme.d.ts": [{operation:'import',kind:'type',members:['UiLayoutTree'],target:'@egret/runtime/ui'}],
   // M3.1: exact optional UI value and erased assembly clauses only.
   "packages/engine/src/internal/uiFactoryState.ts": [{"operation":"import","kind":"type","members":["createUiDisplayOperations","UiDisplayOperations"],"target":"@egret/runtime/ui"}],
   "packages/engine/dist/internal/uiFactoryState.d.ts": [{"operation":"import","kind":"type","members":["createUiDisplayOperations","UiDisplayOperations"],"target":"@egret/runtime/ui"}],
@@ -7977,7 +7981,303 @@ function sceneGraphEdges(code) {
     .map(match=>[/^import\s*\(/.test(match[0])?'dynamic':'static',match[1]])
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
-for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure,...m34EffectLiteralClosure,...fontResourceLiteralClosure,...sequenceResetLiteralClosure})) {
+// M3.4 reviewed successor edges retain all predecessor closure records.
+const m34ThemeLiteralClosure = {
+  "packages/engine/src/ui/index.ts": [
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "./uiRoot.js"
+    ]
+  ],
+  "packages/engine/dist/ui/index.js": [
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./uiRoot.js"
+    ]
+  ],
+  "packages/engine/dist/ui/index.d.ts": [
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "./uiRoot.js"
+    ]
+  ],
+  "packages/engine/src/ui/types.ts": [
+    [
+      "static",
+      "../Engine.js"
+    ],
+    [
+      "static",
+      "../keyboardInputTypes.js"
+    ],
+    [
+      "static",
+      "../pointerInputTypes.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/dist/ui/types.js": [],
+  "packages/engine/dist/ui/types.d.ts": [
+    [
+      "static",
+      "../Engine.js"
+    ],
+    [
+      "static",
+      "../keyboardInputTypes.js"
+    ],
+    [
+      "static",
+      "../pointerInputTypes.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/src/ui/leafContent.ts": [
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/dist/ui/leafContent.js": [
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/dist/ui/leafContent.d.ts": [
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/src/ui/uiRoot.ts": [
+    [
+      "static",
+      "../internal/uiFactoryState.js"
+    ],
+    [
+      "static",
+      "../keyboardInputTypes.js"
+    ],
+    [
+      "static",
+      "../pointerInputTypes.js"
+    ],
+    [
+      "static",
+      "./keyboardFocus.js"
+    ],
+    [
+      "static",
+      "./keyboardFocus.js"
+    ],
+    [
+      "static",
+      "./leafContent.js"
+    ],
+    [
+      "static",
+      "./leafContent.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "./virtualList.js"
+    ],
+    [
+      "static",
+      "./virtualList.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/dist/ui/uiRoot.js": [
+    [
+      "static",
+      "../internal/uiFactoryState.js"
+    ],
+    [
+      "static",
+      "./keyboardFocus.js"
+    ],
+    [
+      "static",
+      "./leafContent.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./virtualList.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/dist/ui/uiRoot.d.ts": [
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/engine/src/ui/theme.ts": [
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/dist/ui/theme.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ],
+  "packages/engine/dist/ui/theme.d.ts": [
+    [
+      "static",
+      "@egret/runtime/ui"
+    ]
+  ]
+};
+for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure,...m34EffectLiteralClosure,...fontResourceLiteralClosure,...m34ThemeLiteralClosure,...sequenceResetLiteralClosure})) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
   // Non-literal dynamic imports cannot hide an additional dependency edge.
@@ -8442,18 +8742,19 @@ for (const file of ['packages/runtime/src/sharedFrameCapture.ts','packages/runti
 const uiRead=file=>readFileSync(path.join(root,file),'utf8').replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'').trim();
 const uiSame=(a,b)=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
 const uiGraphEdges=code=>[...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>['literal',match[1]]);
-const uiValues=['createUiRoot'];
+const uiValues=['createUiRoot','createUiTheme'];
+const uiThemeTypes=['UiTheme','UiThemeDescriptor','UiThemeTypography','UiThemeSkin','UiThemeNode'];
 const uiTypes=['LayoutNode','UiInvalidationKind','UiLimits','VirtualRecord','VirtualDataSource','RowBindContext','UiLeafPrepareContext','UiLeafContent','RowBinding','RowUnbindInfo','RowRetention','UiRowPointerNotification','UiRootOptions','UiKeyboardOptions','UiPreparation','UiCommitResult','UiRowSnapshot','UiCounters','VirtualListSnapshot','UiSnapshot','VirtualListHandle','VirtualListRevealOptions','UiRoot'];
 const runtimeUiValues=['UiHeightIndex','captureUiLayout','createUiDisplayOperations','planUiLayout'];
 for(const [entry,values]of [['engine',await import('@egret/engine/ui')],['runtime',await import('@egret/runtime/ui')]])
   if(!uiSame(Object.keys(values),entry==='engine'?uiValues:runtimeUiValues))throw new Error('M3.1: exact optional UI values mismatch: '+entry);
 for(const [file,typed]of [['packages/engine/src/ui/index.ts',true],['packages/engine/dist/ui/index.js',false],['packages/engine/dist/ui/index.d.ts',true]]){
-  const expected="export{createUiRoot}from'./uiRoot.js';"+(typed?"exporttype{"+uiTypes.join(',')+"}from'./types.js';":'');
+  const expected="export{createUiRoot}from'./uiRoot.js';"+(typed?"exporttype{"+uiTypes.join(',')+"}from'./types.js';":'')+"export{createUiTheme}from'./theme.js';"+(typed?"exporttype{"+uiThemeTypes.join(',')+"}from'./theme.js';":'');
   if(uiRead(file).replace(/\s+/g,'').replaceAll('"',"'")!==expected)throw new Error('M3.1: exact optional UI facade mismatch: '+file);
 }
 for(const [label,values,stem]of textEntries){
   const declaration=uiRead(stem+'.d.ts');
-  for(const name of [...uiValues,...uiTypes,...runtimeUiValues])
+  for(const name of [...uiValues,...uiTypes,...uiThemeTypes,...runtimeUiValues])
     if(name in values||new RegExp('\\b'+name+'\\b').test(declaration))throw new Error('M3.1: optional UI leaked outside its entry: '+label+'/'+name);
 }
 const uiFactoryAllowed={

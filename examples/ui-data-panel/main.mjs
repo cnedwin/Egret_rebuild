@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import {createEngineForProfile, Sprite, Bitmap, createTexture, createImageData2D, createAssetType, createAssetRef, isTexture} from '@egret/engine';
-import {createUiRoot} from '@egret/engine/ui';
+import {createUiRoot, createUiTheme} from '@egret/engine/ui';
 import {createTextField, createTextRasterCache} from '@egret/engine/text';
 import {createCanvasTextRasterProvider} from '@egret/engine/web/text';
 import {createBrowserPointerInput} from '@egret/engine/web/pointer';
@@ -14,7 +14,7 @@ const frameOptions=Object.freeze({width:960,height:640,clearColor:0x172033,clear
 const heights=[24,40,64],colors=[0x286450,0x345c9c,0xa05030];
 const events=[],binds=[],unbinds=[],errors=[],diagnostics=[],readbacks=[];
 let engine,host,owner,input,cache,rootA,rootB,face,family,texture,lease,savedFrame,lastPixels;
-let sourceA;
+let sourceA,badgeRef,themes,themeGate,themePending,themeFailure=false;
 const panelATree=(width,height)=>({kind:'virtualList',id:'rows',explicitWidth:width,explicitHeight:height,source:sourceA});
 let state='starting',label=null,pendingReplacement,gate,gateEntered=false,closePromise;
 const checks={fontSelected:false,fontRemoved:false,bitmapClosed:false,textureDisposals:0,pendingReadbacks:0};
@@ -28,14 +28,17 @@ function source(revision,data,delayed=false,ownerId='panel-a'){return {revision,
   // Observe entry separately from cleanup so missing unbind callbacks cannot pass.
   binds.push({ownerId,key:context.key,bindingGeneration:context.bindingGeneration,contentVersion:context.contentVersion});
   if(delayed&&context.key==='row-02'){gateEntered=true;await gate.promise;}
+  if(context.theme?.id==='delayed'){await themeGate.promise;if(themeFailure)throw Error('EXAMPLE_THEME_FAILURE');}
   if(context.signal.aborted)throw Error('EXAMPLE_BIND_ABORTED');
+  const rowHeight=context.value.height*(context.theme?.spacing.rowScale??1);
   const content=context.scope.use(new Sprite());
-  content.graphics.beginFill(context.value.color).drawRect(0,0,context.width,context.value.height).endFill();
-  const badge=context.scope.use(new Bitmap(lease));badge.x=8;badge.y=4;badge.scaleX=8;badge.scaleY=8;content.addChild(badge);
+  content.graphics.beginFill(context.theme?.colors.background??context.value.color).drawRect(0,0,context.width,rowHeight).endFill();
+  const ownedLease=context.scope.use(await engine.assets.acquire(badgeRef,{signal:context.signal}));
+  const badge=context.scope.use(new Bitmap(ownedLease));if(context.theme)badge.sourceRect={x:context.theme.skins.badge.default==='green'?1:0,y:0,width:1,height:1};badge.x=8;badge.y=4;badge.scaleX=8;badge.scaleY=8;content.addChild(badge);
   const text=createTextField(engine,context.scope,cache);text.x=40;text.y=4;
-  text.setRequest({text:context.index%2?'X X':'XX',fontFamily:family,fontSize:8,lineHeight:12,fontWeight:400,fontStyle:'normal',locale:'en',direction:'ltr',density:context.density,fillColor:0xffffff});
+  text.setRequest({text:context.index%2?'X X':'XX',fontFamily:family,fontSize:context.theme?.typography.body.fontSize??8,lineHeight:context.theme?.typography.body.lineHeight??12,fontWeight:400,fontStyle:'normal',locale:'en',direction:'ltr',density:context.density,fillColor:0xffffff});
   await text.prepare();if(context.signal.aborted)throw Error('EXAMPLE_BIND_ABORTED');content.addChild(text);
-  return {content,measuredHeight:context.value.height};
+  return {content,measuredHeight:rowHeight};
  },unbind(info){unbinds.push({ownerId,...info});}};}
 function onRowPointer(n){const p=n.event.payload;events.push({kind:n.kind,key:n.key,index:n.index,bindingGeneration:n.bindingGeneration,contentVersion:n.contentVersion,layoutRevision:n.layoutRevision,globalX:p.globalX,globalY:p.globalY,pointerType:p.session.pointerType,...(p.reason===undefined?{}:{reason:p.reason})});describe();}
 async function publish(root){for(let i=0;i<8;i++){const p=await root.prepare();if(p.status==='pending')continue;const result=root.commit(p);if(!['committed','unchanged'].includes(result.kind)||result.postCommitErrors.length)throw Error('EXAMPLE_COMMIT');return;}throw Error('EXAMPLE_PREPARATION_LIMIT');}
@@ -44,6 +47,7 @@ async function draw(name,replay=false){const ticket=host.requestReadback();check
 export function inspect(){return {state,backend,label,rootA:rootA?.snapshot(),rootB:rootB?.snapshot(),events:[...events],binds:[...binds],unbinds:[...unbinds],errors:[...errors],diagnostics:[...diagnostics],checks:{...checks},gateEntered,inputState:input?.state,scopeState:owner?.state,textCacheStatus:cache?.getStatus(),readbacks:[...readbacks],hostStatus:host?.getSharedStatus()};}
 export function readback(){if(!lastPixels)throw Error('EXAMPLE_NO_READBACK');let binary='';for(let i=0;i<lastPixels.length;i+=16384)binary+=String.fromCharCode(...lastPixels.subarray(i,i+16384));return {width:960,height:640,label,base64:btoa(binary)};}
 export async function action(kind){if(state!=='ready')throw Error('EXAMPLE_NOT_READY');
+  if(kind.startsWith('theme-'))return themeAction(kind.slice(6));
   if(kind==='scroll')rootA.list('rows').setScrollOffset(92);
   else if(kind==='resize'){rootA.setViewport({width:600,height:480},2);rootA.setTree(panelATree(600,480));}
   else if(kind==='move')rootA.setOrigin({x:48,y:64});
@@ -54,6 +58,28 @@ export async function action(kind){if(state!=='ready')throw Error('EXAMPLE_NOT_R
   else throw Error('EXAMPLE_ACTION');
   await publish(rootA);return draw(kind);
 }
+// Theme preparation shares the existing root transaction and typed image demand.
+export async function themeAction(kind){
+  if(state!=='ready')throw Error('EXAMPLE_NOT_READY');
+  if(kind==='pending'||kind==='failure'){
+    if(themePending)throw Error('EXAMPLE_THEME_PENDING');
+    let resolve;themeGate={promise:new Promise(yes=>{resolve=yes;}),resolve};themeFailure=kind==='failure';
+    rootA.setTheme(themes.delayed);themePending=publish(rootA);void themePending.catch(()=>{});
+    await Promise.resolve();return draw('theme-pending');
+  }
+  if(kind==='finish'){
+    if(!themePending)throw Error('EXAMPLE_THEME_NOT_PENDING');themeGate.resolve();
+    let failure;try{await themePending;}catch(cause){failure=viewError(cause);}finally{themePending=undefined;}
+    if(failure){if(!themeFailure)throw Error('EXAMPLE_THEME_UNEXPECTED');errors.push(failure);return draw('theme-failed');}
+    return draw('theme-finished');
+  }
+  if(kind==='cancel'||kind==='supersede'){
+    if(!themePending)throw Error('EXAMPLE_THEME_NOT_PENDING');
+    rootA.setTheme(kind==='cancel'?rootA.snapshot().theme:themes.light);themeGate.resolve();
+    await themePending.catch(cause=>{if(cause?.code!=='UI_STALE')throw cause;});themePending=undefined;
+  }else {const selected=themes[kind];if(!selected)throw Error('EXAMPLE_THEME');rootA.setTheme(selected);}
+  await publish(rootA);return draw('theme-'+kind);
+}
 export function beginReplacement(){if(state!=='ready'||pendingReplacement)throw Error('EXAMPLE_REPLACEMENT');let resolve;gate={promise:new Promise(yes=>{resolve=yes;}),resolve};gateEntered=false;
   const next=records.map(r=>r.key==='row-02'?{...r,contentVersion:2,estimatedHeight:80,value:{height:80,color:0xa03090}}:r);
   sourceA=source(2,next,true);rootA.list('rows').setSource(sourceA);pendingReplacement=publish(rootA);void pendingReplacement.catch(()=>{});return inspect();}
@@ -61,7 +87,7 @@ export async function pendingFrame(){if(!gateEntered)throw Error('EXAMPLE_GATE_N
 export async function finishReplacement(){gate.resolve();await pendingReplacement;pendingReplacement=undefined;return draw('complete');}
 export function close(){if(closePromise)return closePromise;state='closing';closePromise=(async()=>{const failures=[];const attempt=async fn=>{try{await fn();}catch(e){failures.push(viewError(e));}};
   for(const [button,fn]of handlers)button.removeEventListener('click',fn);document.querySelector('#finish').removeEventListener('click',onFinish);window.removeEventListener('pagehide',onPageHide);
-  await attempt(()=>ready);await attempt(()=>rootA?.dispose());await attempt(()=>rootB?.dispose());gate?.resolve();await attempt(()=>pendingReplacement?.catch(e=>{if(!['UI_CLOSED','UI_STALE'].includes(e?.code))throw e;}));
+  await attempt(()=>ready);await attempt(()=>rootA?.dispose());await attempt(()=>rootB?.dispose());gate?.resolve();themeGate?.resolve();await attempt(()=>themePending?.catch(cause=>{if(!['UI_CLOSED','UI_STALE'].includes(cause?.code))throw cause;}));await attempt(()=>pendingReplacement?.catch(e=>{if(!['UI_CLOSED','UI_STALE'].includes(e?.code))throw e;}));
   await attempt(()=>owner?.dispose());await attempt(()=>cache?.dispose());await attempt(()=>cache?.whenIdle());await attempt(()=>host?.whenIdle());await attempt(()=>engine?.dispose());
   await attempt(()=>{if(face)document.fonts.delete(face);checks.fontRemoved=!face||!document.fonts.has(face);});errors.push(...failures);state='closed';describe();return inspect();})();return closePromise;}
 export const ready=(async()=>{
@@ -70,7 +96,9 @@ export const ready=(async()=>{
   try{if(image.width!==2||image.height!==1)throw Error('EXAMPLE_IMAGE_SIZE');const decoder=document.createElement('canvas');decoder.width=2;decoder.height=1;const ctx=decoder.getContext('2d',{willReadFrequently:true});ctx.drawImage(image,0,0);const pixels=ctx.getImageData(0,0,2,1).data;texture=createTexture(createImageData2D({width:2,height:1,pixels:new Uint8Array(pixels)}));}finally{image.close();checks.bitmapClosed=true;}
   host=(backend==='webgpu'?createSharedWebGPUHost:createSharedWebGL2Host)({canvas,pixelRatio:1,outputAlpha:'opaque',enableReadback:true,onDiagnostic:n=>diagnostics.push({code:n.code,phase:n.phase})});
   engine=await createEngineForProfile({host,onDiagnostic:n=>diagnostics.push({code:n.code,phase:n.phase})},'egret.shared-frame2d/1');owner=engine.createScope();
-  const type=createAssetType('ui-panel-badge',isTexture),ref=createAssetRef(type,'checked-badge');engine.assets.register(type,{load:async()=>texture,dispose:value=>{checks.textureDisposals++;value.dispose();}});lease=owner.use(await engine.assets.acquire(ref));
+  const type=createAssetType('ui-panel-badge',isTexture),ref=createAssetRef(type,'checked-badge');engine.assets.register(type,{load:async()=>texture,dispose:value=>{checks.textureDisposals++;value.dispose();}});badgeRef=ref;lease=owner.use(await engine.assets.acquire(ref));
+  const theme=(id,color,rowScale=1,fontSize=8,skin='red')=>createUiTheme({id,colors:{background:color},spacing:{rowScale},typography:{body:{fontFamily:family,fontSize,lineHeight:12}},skins:{badge:{default:skin,hover:skin,pressed:skin,disabled:skin,focus:skin}}});
+  themes={dark:theme('dark',0x203050),light:theme('light',0xc0d0e0,1,8,'green'),large:theme('large',0x203050,1.5,12),delayed:theme('delayed',0x503020,1.5,12,'green')};
   cache=createTextRasterCache(engine.assets,{provider:createCanvasTextRasterProvider()});input=createBrowserPointerInput({engine,scope:owner,width:960,height:640,capacity:10});
   sourceA=source(1,records);
   rootA=createUiRoot({engine,scope:owner,id:'panel-a',viewport:{width:420,height:360},origin:{x:24,y:32},density:1,tree:panelATree(420,360),input,onRowPointer,limits:{overscan:0,residentCap:32,retainedCap:0}});
