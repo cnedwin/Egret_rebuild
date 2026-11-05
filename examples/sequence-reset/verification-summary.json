@@ -95,14 +95,14 @@
   ],
   "evidence": {
     "result": {
-      "path": "browser-03/result.json",
+      "path": "browser-04/result.json",
       "bytes": 170009,
-      "sha256": "dd79de5672774c95b012ec3cd413cdbdf9eef6637bad9376524db5719af965b5"
+      "sha256": "915265bd1061323815d643c34129de57f06c85ac7f8f7a88da51f963b2c91fe4"
     },
     "inputs": {
-      "path": "browser-03/inputs.json",
-      "bytes": 122854,
-      "sha256": "469d6cbeecbcfdc7dba89fa5f1341ec63404da3893fc7b12a928ad73c9d3eb19"
+      "path": "browser-04/inputs.json",
+      "bytes": 123038,
+      "sha256": "ebc698dd0a95ccda4815ce8e50f945d52e49623c467b9b9233fd58cb80963248"
     }
   },
   "limits": [
@@ -120,7 +120,12 @@
       "run": "browser-02",
       "status": "PASS",
       "scope": "Pre-final terminal-controller provenance and pause-revision refinement; retained separately."
+    },
+    {
+      "run": "browser-03",
+      "status": "PASS",
+      "scope": "Before independent-review repairs for orchestration-only Scope close and refused reentrant stop/dispose; retained as historical evidence."
     }
   ],
-  "sourceAndPublication": "Current source requires independent review and normal protected publication; local results do not establish a merged PR."
+  "sourceAndPublication": "Collected on the combined sequence RESET and reviewed theme candidate sources after both lifecycle repairs. Independent final review and normal protected publication remain separate; local results do not establish a merged PR."
 }

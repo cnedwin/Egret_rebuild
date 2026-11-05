@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "af74878c096cc7a5eebb863ce3e8363463009100745fb044ee71a4eddc35d80a",
+      "sha256": "609f2d8eb62ee146bd76523c203cff0d02ca9f68a54300b94f30ccf1ca8f3a96",
       "bytes": 383093,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1169134,
-      "sha256": "54adcd2e8b389603dc0223f3664b7a4d054a2ac747e9d3df57e4940c9e80b159"
+      "bytes": 1181412,
+      "sha256": "d97467afc55914c2c0efdbb9c6897452ddc8619bba3053c00d5ba08f5da38fb0"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10688,8 +10688,8 @@
     {
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 46864,
-      "sha256": "d50c8eeb528449f18a731b9d0f4b3855666589aa3b68b0fbe57aef70fc1a755f"
+      "bytes": 47471,
+      "sha256": "d2364099ecf35b7748ffbb95435e5eef8215363000f06c676c61ecdf39291132"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -10718,8 +10718,8 @@
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
       "originRole": "First-party M0 registered compiler input review workflow; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 239473,
-      "sha256": "10b73e76d90f19aa3cdb0c56c5b9ed7cfeafeb1fc65e90848a773ce064092356"
+      "bytes": 241065,
+      "sha256": "ab089381cf5ce962cdbbe24f4a38b6d89456fbc2855b29819d7f90f5ea7bac2d"
     },
     {
       "path": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
@@ -15560,8 +15560,8 @@
     {
       "path": "examples/sequence-reset/verification-summary.json",
       "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
-      "bytes": 3686,
-      "sha256": "187f34d4e6c71ee6635bb589df526c792715f822ff0fcfffb883d24a01c9d38c"
+      "bytes": 4011,
+      "sha256": "7089d55b399f3308446c3671bd1b30f22f644e3f418303e05b31a161bf91f665"
     },
     {
       "path": "knowledge-base/en/docs/sequence-reset.md",
