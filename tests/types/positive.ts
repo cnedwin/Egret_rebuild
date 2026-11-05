@@ -506,3 +506,15 @@ navigationList.reveal('record', {align: 'start'});
 navigationList.reveal('record', {align: 'center'});
 navigationList.reveal('record', {align: 'end'});
 navigationList.reveal(undefined);
+
+import { createUiTheme } from '@egret/engine/ui';
+import type { UiTheme, UiThemeDescriptor, UiLeafPrepareContext, RowBindContext } from '@egret/engine/ui';
+const themeDescription: UiThemeDescriptor = { id: 'day', colors: { background: 0xffffff }, spacing: { gap: 4 }, typography: { body: { fontFamily: 'A', fontSize: 12, lineHeight: 20 } }, skins: { badge: { default: 'red', focus: 'green' } } };
+const uiTheme: UiTheme = createUiTheme(themeDescription);
+ownedUi.setTheme(uiTheme);
+ownedUi.setTheme(ownedUi.snapshot().theme);
+const themedNode: LayoutNode = { id: 'body', kind: 'leaf', theme: { fill: 'background', padding: 'gap' } };
+declare const themeLeaf: UiLeafPrepareContext, themeRow: RowBindContext<string>;
+const contextTheme: UiTheme | undefined = themeLeaf.theme ?? themeRow.theme;
+const plannerCalls: number = ownedUi.snapshot().counters.layoutPasses;
+void themedNode; void contextTheme; void plannerCalls;

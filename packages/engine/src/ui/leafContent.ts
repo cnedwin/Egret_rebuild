@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
+import { captureThemeNode } from './theme.js';
+import type { UiThemeNode } from './theme.js';
 import { EgretError } from '@egret/runtime';
 import { captureUiLayout } from '@egret/runtime/ui';
 import type { UiLayoutNode, UiLayoutTree, UiMeasurement } from '@egret/runtime/ui';
 import type { LayoutNode, UiLeafContent } from './types.js';
 const fields = ['id', 'kind', 'explicitWidth', 'explicitHeight', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight',
-    'padding', 'gap', 'crossAlign', 'children', 'measure', 'fill', 'source', 'initialScrollOffset', 'content'];
+    'padding', 'gap', 'crossAlign', 'children', 'measure', 'fill', 'source', 'initialScrollOffset', 'content', 'theme'];
 
 export interface CapturedLeafContent {
     readonly identity: UiLeafContent;
@@ -12,11 +14,13 @@ export interface CapturedLeafContent {
     readonly prepare: UiLeafContent['prepare'];
 }
 export interface CapturedUiTree {
+    readonly themes: ReadonlyMap<string, UiThemeNode>;
     readonly tree: UiLayoutTree;
     readonly contents: ReadonlyMap<string, CapturedLeafContent>;
 }
 /** Content authority remains in Engine; the runtime tree contains numbers and callbacks only. */
 export function captureUiTree(input: LayoutNode): CapturedUiTree {
+    const themes = new Map<string, UiThemeNode>();
     const contents = new Map<string, CapturedLeafContent>(), seen = new Set<object>(), ids = new Set<string>();
     let lists = 0;
     function copy(value: unknown, depth: number): UiLayoutNode {
@@ -27,11 +31,13 @@ export function captureUiTree(input: LayoutNode): CapturedUiTree {
         if (seen.has(value)) throw new EgretError('UI_LAYOUT_CYCLE');
         seen.add(value);
         const raw = Object.create(null) as Record<string, unknown>;
-        let content: unknown;
+        let content: unknown, theme: UiThemeNode | undefined;
         for (const key of Reflect.ownKeys(value)) {
             if (typeof key !== 'string' || !fields.includes(key)) throw new EgretError('UI_INVALID');
             const captured = (value as Record<string, unknown>)[key];
             if (key === 'content') content = captured;
+            else if (key === 'theme' && captured !== undefined) theme = captureThemeNode(captured);
+            else if (key === 'theme') continue;
             else raw[key] = captured;
         }
         // Validate the parent before reading descendants. The frozen shallow result
@@ -41,6 +47,10 @@ export function captureUiTree(input: LayoutNode): CapturedUiTree {
             ? { ...raw, children: [] } : raw) as unknown as UiLayoutNode).root;
         if (ids.has(shallow.id)) throw new EgretError('UI_DUPLICATE_ID');
         ids.add(shallow.id);
+        if (theme !== undefined) {
+            if (theme.fill !== undefined && shallow.kind !== 'leaf' || (theme.padding !== undefined || theme.gap !== undefined) && shallow.kind === 'virtualList') throw new EgretError('UI_THEME_INVALID');
+            themes.set(shallow.id, theme);
+        }
         if (shallow.kind === 'virtualList' && ++lists > 1) throw new EgretError('UI_LIMIT');
         if (content !== undefined) {
             if (raw.kind !== 'leaf' || raw.measure !== undefined || typeof raw.id !== 'string'
@@ -59,7 +69,7 @@ export function captureUiTree(input: LayoutNode): CapturedUiTree {
         }
         return shallow;
     }
-    return Object.freeze({ tree: captureUiLayout(copy(input, 1)), contents });
+    return Object.freeze({ tree: captureUiLayout(copy(input, 1)), contents, themes });
 }
 
 /** Constraint discovery never invokes an authored measure or publishes provisional geometry. */

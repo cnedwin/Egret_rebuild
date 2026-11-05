@@ -2046,8 +2046,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "ce042a52d4ecd7b38f0a2358a1ff062f390034e86a80665f8949acdc54ecc951",
-      "currentZhSha256": "0d96336e65b37818caa9ede32c15c6104e5351bea42b3fb244e98681e0a1435c"
+      "currentEnSha256": "3a0c9fd0a3f9b776fc7f30f91a5f34e5340794a9dbddb6c1081b59c3124b93ea",
+      "currentZhSha256": "0b6da33b64b645658cfecd93ff1d34b77bd4ab404fb194aae7d1bd399e14b476"
     }
   ],
   "registries": [

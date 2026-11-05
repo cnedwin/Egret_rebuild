@@ -521,3 +521,22 @@ navigationList.reveal('record', {align: 'smooth'});
 navigationList.reveal('record', {focus: true});
 // @ts-expect-error UI_NAVIGATION_CASE synchronous-intent
 const navigationPromise: Promise<void> = navigationList.reveal('record');
+
+import type { UiTheme as NegativeUiTheme } from '@egret/engine/ui';
+import { createUiTheme as negativeCreateTheme } from '@egret/engine/ui';
+declare const negativeTheme: NegativeUiTheme;
+// @ts-expect-error UI_THEME_CASE nonforgeable-theme
+const forgedTheme: NegativeUiTheme = { id: 'a', colors: {}, spacing: {}, typography: {}, skins: {} };
+// @ts-expect-error UI_THEME_CASE immutable-color
+negativeTheme.colors.background = 1;
+// @ts-expect-error UI_THEME_CASE immutable-font
+negativeTheme.typography.body!.fontSize = 20;
+// @ts-expect-error UI_THEME_CASE no-implicit-url
+negativeCreateTheme({ id: 'a', skins: { badge: { default: { url: 'a.png' } } } });
+// @ts-expect-error UI_THEME_CASE no-implicit-loader
+negativeCreateTheme({ id: 'a', load: async () => undefined });
+// @ts-expect-error UI_THEME_CASE type-only-theme
+UiNegativePublic.UiTheme;
+// @ts-expect-error UI_THEME_CASE root-entry-remains-separate
+UiNegativeDefault.createUiTheme;
+void forgedTheme;

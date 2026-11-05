@@ -436,3 +436,5 @@ Keep one capability specification, acceptance table and bilingual result summary
 GitHub work items describe a contributor-visible outcome, dependencies, entry files, acceptance and review responsibility. Update existing M1/community items and keep community PRs distinct; do not close unfinished human/device acceptance to simplify the board.
 
 Development feedback within 1–2 minutes and ordinary PR feedback within 5–10 minutes are optimization targets, not measured results or permission to skip checks. Record actual duration separately.
+
+While a submitted candidate waits for CI, freeze that candidate and develop the next independently ready package in a separate branch/worktree. Assign one author per file and continue the preceding candidate's CI repair, review and merge. Before submitting the next candidate, reconcile it with current main and run the normal required gates. Avoid competing local work during measured performance runs; this scheduling policy adds no task framework or acceptance exception.

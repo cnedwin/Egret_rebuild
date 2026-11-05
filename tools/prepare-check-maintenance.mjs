@@ -112,6 +112,12 @@ const m24SpineGraphRegistrations = [["tools/spritesheet-boundary.mjs","m24SpineA
 
 const m3KeyRevealSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":256239,"sha256":"9fe4430a07a41f9a553a5302c67404ff01e1eb59d8b91e11e07bebc324a849b5"},{"path":"tools/browser-png-boundary.mjs","bytes":265212,"sha256":"5418e1727c4b635847986ddea1b21761f448861cb4e46c9149993d1b5e91d929"},{"path":"tools/atlas-import-boundary.mjs","bytes":160952,"sha256":"914639e2fd0d8b424b0be12f84ed3639e5bd1b8541d538ac1bca6d62d16bb1e6"}];
 const m3KeyRevealPairRegistrations = [["tools/spritesheet-boundary.mjs","m3KeyRevealSourcePairs","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","m3KeyRevealSourcePairs","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","m3KeyRevealSourcePairs","raw-pair-observation-only"]];
+// M3.4 admits only three complete theme owners and their finite JSON groups.
+const m34ThemeSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":292702,"sha256":"8c27e63d1242e57d6c37e3a63ca1f6a040c81dd708b1b7a756628bbdcb7d6ab5"},{"path":"tools/browser-png-boundary.mjs","bytes":301675,"sha256":"821a4a694fb5ee2a6065e4e19e663414551959d01b83e4cbae1f6d1c26697720"},{"path":"tools/atlas-import-boundary.mjs","bytes":197415,"sha256":"26f44c498b995fe51e070f1bc74484819209109ba25df272ebd055b0379f4538"}];
+const m34ThemePairRegistrations = [["tools/spritesheet-boundary.mjs","uiThemeGraphPairs","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","uiThemeGraphPairs","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","uiThemeGraphPairs","raw-pair-observation-only"]];
+const m34ThemeGraphRegistrations = [["tools/spritesheet-boundary.mjs","uiThemeGraphAdditions"],["tools/browser-png-boundary.mjs","uiThemeGraphAdditions"],["tools/atlas-import-boundary.mjs","uiThemeGraphAdditions"]];
+// Exact selector-repair successors retain the earlier theme owners above.
+const m34ThemeSelectionSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":292808,"sha256":"4820df162a859727c32c5d2c312114d26af4e6aea202084ff24048b75019e909"},{"path":"tools/browser-png-boundary.mjs","bytes":301781,"sha256":"47539bdf0a7db1ca9ccca6d8d1fd8ea5702f696b9a266f0408d7d56349c41244"},{"path":"tools/atlas-import-boundary.mjs","bytes":197521,"sha256":"014c7b880f0bf0649f71298ec7bfa089b8a747a89817d1ce28227bd0ea60a1e2"}];
 // Explicit selectors keep historical transforms and third-party owners separate.
 const policyRegistrations=[
  {owner:'tools/bitmap-resource-slot-boundary.mjs',binding:'policyPin',target:'tools/bitmap-resource-slot-policy.json',kind:'BITMAP_RESOURCE_SLOT_FINITE_INTERFACE_POLICY',selectors:['packages','configurations','stableEntries','oldRootPins','oldEngineDeclarationPin','workspacePins']},
@@ -245,8 +251,8 @@ export function prepareBaselineReview(root){
     || m31UiPairRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || m3PointerGraphRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || m3PointerPairRegistrations.some(row=>row[0]===owner&&row[1]===binding)
-    || [...m24SpinePairRegistrations,...m24SpineGraphRegistrations,...m3KeyRevealPairRegistrations,...m33KeyboardPairRegistrations,...m33KeyboardGraphRegistrations].some(row=>row[0]===owner&&row[1]===binding);
-   const reviewed=[...m13SourceOwners,...m14SourceOwners,...m15SourceOwners,...m15CancellationSourceOwners,...m15DiagnosticSourceOwners,...m12PreparationSourceOwners,...m3PointerSourceOwners,...m21ContentSourceOwners,...m31UiSourceOwners,...m22SequenceSourceOwners,...m33KeyboardSourceOwners,...m3KeyRevealSourceOwners,...m24SpineSourceOwners].filter(row=>row.path===owner);
+    || [...m34ThemePairRegistrations,...m34ThemeGraphRegistrations,...m24SpinePairRegistrations,...m24SpineGraphRegistrations,...m3KeyRevealPairRegistrations,...m33KeyboardPairRegistrations,...m33KeyboardGraphRegistrations].some(row=>row[0]===owner&&row[1]===binding);
+   const reviewed=[...m13SourceOwners,...m14SourceOwners,...m15SourceOwners,...m15CancellationSourceOwners,...m15DiagnosticSourceOwners,...m12PreparationSourceOwners,...m3PointerSourceOwners,...m21ContentSourceOwners,...m31UiSourceOwners,...m22SequenceSourceOwners,...m33KeyboardSourceOwners,...m3KeyRevealSourceOwners,...m24SpineSourceOwners,...m34ThemeSourceOwners,...m34ThemeSelectionSourceOwners].filter(row=>row.path===owner);
    if(!allowed||!reviewed.some(row=>samePin(read.pin(owner),row)))throw cause;
    // Raw source authority precedes extraction; no caller-selected parser fallback.
    const lines=text.split(/\r?\n/).filter(line=>line.startsWith('const '+binding+' = '));
@@ -296,7 +302,7 @@ export function prepareBaselineReview(root){
   });
   successorPairs.push({owner,binding,comparison:'raw-pair-observation-only',rows});
  }
- for(const [owner,binding,comparison]of [...m13PairRegistrations,...m24SpinePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m3KeyRevealPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m33KeyboardPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m22SequencePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m31UiPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m3PointerPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m15PairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding))]){
+ for(const [owner,binding,comparison]of [...m13PairRegistrations,...m34ThemePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m24SpinePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m3KeyRevealPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m33KeyboardPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m22SequencePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m31UiPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m3PointerPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m15PairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding))]){
   const pairs=registeredDeclaration(owner,binding),seen=new Set();
   if(!Array.isArray(pairs))throw Error('Expected registered M1.3 pair array');
   const rows=pairs.map(pair=>{
@@ -310,7 +316,7 @@ export function prepareBaselineReview(root){
  }
  // Historical owners without this later declaration remain readable as history.
  // Current post-preamble extraction still requires one exact reviewed raw owner.
- for(const [owner,binding]of [...m24SpineGraphRegistrations,...m14GraphRegistrations,...m15GraphRegistrations,...m12PreparationGraphRegistrations,...m3PointerGraphRegistrations,...m31UiGraphRegistrations,...m22SequenceGraphRegistrations,...m33KeyboardGraphRegistrations]){
+ for(const [owner,binding]of [...m34ThemeGraphRegistrations,...m24SpineGraphRegistrations,...m14GraphRegistrations,...m15GraphRegistrations,...m12PreparationGraphRegistrations,...m3PointerGraphRegistrations,...m31UiGraphRegistrations,...m22SequenceGraphRegistrations,...m33KeyboardGraphRegistrations]){
   if(!ownerText(owner).includes('const '+binding))continue;
   add(owner,binding,registeredDeclaration(owner,binding));
  }

@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
+import type { UiTheme, UiThemeNode } from './theme.js';
 import type { CancellationSignal } from '@egret/contracts';
 import type { DisplayObject, DisplayObjectContainer, Event, Scope } from '@egret/runtime';
 import type { UiLayoutNode, UiDirtyKind, UiLayoutBox } from '@egret/runtime/ui';
 import type { Engine } from '../Engine.js';
 import type { KeyboardInput, KeyboardFocusOptions } from '../keyboardInputTypes.js';
 import type { PointerInput, PointerContact, PointerCancelReason } from '../pointerInputTypes.js';
-type LayoutDimensions = Omit<UiLayoutNode, 'kind' | 'children' | 'source' | 'initialScrollOffset' | 'measure' | 'fill'>;
+type LayoutDimensions = Omit<UiLayoutNode, 'kind' | 'children' | 'source' | 'initialScrollOffset' | 'measure' | 'fill'> & { readonly theme?: UiThemeNode };
 export type LayoutNode = (LayoutDimensions & {
     readonly kind: 'leaf';
     readonly fill?: NonNullable<UiLayoutNode['fill']>;
@@ -42,6 +43,7 @@ export interface VirtualDataSource<T> {
     unbind(info: RowUnbindInfo): void;
 }
 export interface RowBindContext<T> {
+    readonly theme: UiTheme | undefined;
     readonly key: string;
     readonly index: number;
     readonly value: T;
@@ -54,6 +56,7 @@ export interface RowBindContext<T> {
 }
 /** Detached content is prepared at the leaf's available inner width. */
 export interface UiLeafPrepareContext {
+    readonly theme: UiTheme | undefined;
     readonly scope: Scope;
     readonly width: number;
     readonly density: number;
@@ -105,6 +108,7 @@ export interface UiKeyboardOptions {
     readonly idPrefix: string;
 }
 export interface UiRootOptions {
+    readonly theme?: UiTheme;
     readonly engine: Engine;
     readonly scope: Scope;
     readonly id: string;
@@ -149,6 +153,8 @@ export interface UiRowSnapshot {
     readonly visible: boolean;
 }
 export interface UiCounters {
+    /** Cumulative planner calls, including detached constraint discovery. */
+    readonly layoutPasses: number;
     readonly recordCount: number;
     readonly heightIndexEntries: number;
     readonly heightIndexBytes: number;
@@ -180,6 +186,7 @@ export interface VirtualListSnapshot {
     readonly counters: UiCounters;
 }
 export interface UiSnapshot extends VirtualListSnapshot {
+    readonly theme: UiTheme | undefined;
     readonly rootId: string;
     readonly committedRevision: number;
     readonly desiredRevision: number;
@@ -225,6 +232,8 @@ export interface UiRoot {
         y: number;
     }>): void;
     setTree(tree: LayoutNode): void;
+    /** Stage a generation; restore snapshot().theme to cancel a pending theme switch. */
+    setTheme(theme: UiTheme | undefined): void;
     setInput(input: PointerInput | undefined): void;
     list<T>(id: string): VirtualListHandle<T>;
     invalidate(id: string, kind: UiInvalidationKind): void;

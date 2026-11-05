@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
+import { requireUiTheme, sameThemeMetrics, applyUiTheme } from './theme.js';
+import type { UiTheme } from './theme.js';
 import { EgretError, Sprite } from '@egret/runtime';
 import type { DisplayObjectContainer, Scope } from '@egret/runtime';
 import { captureUiLayout, planUiLayout, UiHeightIndex, createUiDisplayOperations } from '@egret/runtime/ui';
@@ -16,6 +18,7 @@ import type { UiRoot, UiRootOptions, UiSnapshot, UiPreparation, UiCommitResult, 
 type ScopePort = ReturnType<ReturnType<typeof requireUiEngine>['scope']>;
 type InputPort = ReturnType<ReturnType<typeof requireUiEngine>['requireInput']>;
 interface Binding {
+    theme: UiTheme | undefined;
     key: string;
     version: number;
     generation: number;
@@ -31,6 +34,7 @@ interface Binding {
     subscriptions: (() => void)[];
 }
 interface LeafBinding {
+    theme: UiTheme | undefined;
     readonly id: string;
     readonly width: number;
     readonly density: number;
@@ -47,6 +51,8 @@ interface Shell {
     wrapper: DisplayObjectContainer;
 }
 interface WindowState {
+    theme: UiTheme | undefined;
+    paintOnly: boolean;
     cleanupErrors: unknown[];
     revision: number;
     source: CapturedSource | undefined;
@@ -170,7 +176,10 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         y: 0
     }, size);
     const capturedTree = captureUiTree(options.tree);
-    let tree = capturedTree.tree, leafContents = capturedTree.contents;
+    let theme = options.theme;
+    requireUiTheme(theme);
+    let authoredTree = capturedTree.tree, themeBindings = capturedTree.themes;
+    let tree = applyUiTheme(authoredTree, themeBindings, theme), leafContents = capturedTree.contents;
     const initialNodes = [...tree.nodes.values()];
     const listNodes = initialNodes.filter(n => n.kind === 'virtualList');
     if (listNodes.length > 1)
@@ -180,6 +189,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
     let explicitScroll = listNodes[0] === undefined ? undefined : number(listNodes[0].initialScrollOffset ?? 0, -Number.MAX_VALUE, Number.MAX_VALUE);
     let revealIntent: RevealIntent | undefined;
     tree = withoutSources(tree);
+    authoredTree = withoutSources(authoredTree);
     const emptyTree = captureUiLayout({
         id,
         kind: 'leaf',
@@ -200,6 +210,11 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
     validateNewInput(input);
     const keyboard = options.keyboard === undefined ? undefined : createUiKeyboardFocus(port.requireKeyboard(options.keyboard.input), options.keyboard.idPrefix);
     keyboard?.validate(source?.byKey.keys() ?? []);
+    let committedTheme: UiTheme | undefined, paintThemeOnly = false, paintCommitted = false, layoutPasses = 0;
+    function layout(...args: Parameters<typeof planUiLayout>): UiLayoutPlan {
+        layoutPasses = next(layoutPasses);
+        return planUiLayout(...args);
+    }
     let closed = false, desired = 1, committed = 0, inputGeneration = 0, generation = 0, busy = false, committing = false;
     let cancelFlight: ((error: unknown) => void) | undefined, preparedWindow: WindowState | undefined, plan: UiLayoutPlan | undefined, committedIndex: UiHeightIndex | undefined, committedSource: CapturedSource | undefined;
     let bindings = new Map<string, Binding>(), shells = new Map<string, Shell>(), pool: Shell[] = [], fills: ScopePort[] = [];
@@ -224,6 +239,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         const range = index === undefined || listBox === undefined ? undefined : index.range(snapshot.scrollOffset, listBox.innerHeight, overscan);
         const overscanOnly = range === undefined ? 0 : rows.filter(row => !row.visible && row.index >= range.start && row.index < range.end).length;
         return freeze({
+            layoutPasses,
             recordCount: index?.size ?? 0,
             heightIndexEntries: index?.size ?? 0,
             heightIndexBytes: index?.logicalBytes ?? 0,
@@ -236,8 +252,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             activeBindings: bindings.size,
             stagedBindings: [...allBindings].filter(b => !b.terminal && bindings.get(b.key) !== b).length,
             unsettledBindCalls: outstanding,
-            measurementCalls: plan?.measurementCalls ?? 0,
-            reusedMeasurements: plan?.reusedMeasurements ?? 0,
+            measurementCalls: paintCommitted ? 0 : plan?.measurementCalls ?? 0,
+            reusedMeasurements: paintCommitted ? 0 : plan?.reusedMeasurements ?? 0,
             bindTotal,
             unbindTotal,
             resourceDemands: undefined,
@@ -245,6 +261,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         });
     }
     let snapshot: UiSnapshot = freeze({
+        theme: undefined,
         id: listId ?? id,
         rootId: id,
         committedRevision: 0,
@@ -340,7 +357,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
     }
     // Supersession accepts intent first, retires all staging, then reports direct
     // cleanup failures. The prior committed geometry is never partially changed.
-    function change() {
+    function change(onlyTheme = false) {
+        paintThemeOnly = onlyTheme && (desired === committed || paintThemeOnly) && sameThemeMetrics(committedTheme, theme);
         desired = next(desired);
         const errors = preparedWindow?.cleanupErrors ?? [];
         cancelFlight?.(new EgretError('UI_STALE'));
@@ -406,7 +424,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
     }
     function compatible(binding: Binding | undefined, w: WindowState, key: string): binding is Binding {
         const record = w.source?.byKey.get(key);
-        return binding !== undefined && !binding.terminal && record !== undefined && binding.version === record.contentVersion && binding.width === w.width && binding.density === density;
+        return binding !== undefined && !binding.terminal && record !== undefined && binding.theme === w.theme && binding.version === record.contentVersion && binding.width === w.width && binding.density === density;
     }
     function makeBinding(w: WindowState, key: string): Promise<Binding> {
         if (outstanding >= residentCap)
@@ -425,6 +443,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             throw e;
         }
         const binding: Binding = {
+            theme: w.theme,
             key,
             version: record.contentVersion,
             generation,
@@ -445,6 +464,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         allBindings.add(binding);
         w.bindings.set(key, binding);
         const context = freeze({
+            theme: w.theme,
             key,
             index: (w.index!).indexOf(key),
             value: record.value,
@@ -475,6 +495,9 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             const content = value.content, height = number(value.measuredHeight, 1, 1048576);
             display.validateContent(content, scope.scope);
             check(w.revision);
+            // Explicit height updates can supersede the measurement retained by a binding.
+            const committedPosition = committedIndex?.indexOf(key) ?? -1;
+            if (w.paintOnly && (committedPosition < 0 || height !== committedIndex!.heightAt(committedPosition))) fail('UI_THEME_METRICS_CHANGED');
             binding.content = content;
             binding.height = height;
             binding.subscriptions = subscriptions(binding, input);
@@ -530,10 +553,10 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         let wrapper: DisplayObjectContainer;
         try { wrapper = display.createWrapper(scope.scope); }
         catch (cause) { scope.dispose(); throw cause; }
-        const binding: LeafBinding = { id: name, width, density, scope, wrapper, source: captured, terminal: false };
+        const binding: LeafBinding = { theme: w.theme, id: name, width, density, scope, wrapper, source: captured, terminal: false };
         allLeafBindings.add(binding);
         w.leafBindings.set(name, binding);
-        const context = freeze({ scope: scope.scope, width, density, signal: scope.signal });
+        const context = freeze({ theme: w.theme, scope: scope.scope, width, density, signal: scope.signal });
         outstandingLeaves++;
         let returned: ReturnType<CapturedLeafContent['prepare']>;
         try { returned = captured.prepare.call(captured.identity, context); }
@@ -546,6 +569,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             const content = value.content, height = number(value.measuredHeight, 0, 1048576);
             display.validateContent(content, scope.scope);
             check(w.revision);
+            if (w.paintOnly && height !== leafBindings.get(name)?.height) fail('UI_THEME_METRICS_CHANGED');
             binding.content = content;
             binding.height = height;
             binding.measure = fixedLeafMeasurement(width, height, binding.source!.revision);
@@ -556,25 +580,27 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         }).finally(() => { outstandingLeaves--; });
     }
     function makeWindow(revision: number): WindowState {
-        return { cleanupErrors: [], revision, source, index: undefined, plan: undefined, box: undefined,
+        return { theme, paintOnly: paintThemeOnly && plan !== undefined, cleanupErrors: [], revision, source, index: undefined, plan: undefined, box: undefined,
             width: 0, height: 0, scroll: 0, round: 0, heights: new Map(heightUpdates),
             bindings: new Map(), leafBindings: new Map() };
     }
     function initializeWindow(w: WindowState): void | Promise<void> {
         const baseTree = tree, sources = leafContents, widths = new Map<string, number>();
         if (sources.size !== 0) {
-            planUiLayout(leafConstraintTree(baseTree, sources, widths), size, density);
+            if (w.paintOnly) {
+                for (const box of plan!.boxes) if (sources.has(box.id)) widths.set(box.id, box.innerWidth);
+            } else layout(leafConstraintTree(baseTree, sources, widths), size, density);
             check(w.revision);
             const work: Promise<LeafBinding>[] = [], force = new Set<string>();
             function collectMeasureDirty(node: UiLayoutNode, ancestorDirty: boolean): void {
-                const measureDirty = ancestorDirty || dirty.get(node.id) === 'measure';
+                const measureDirty = ancestorDirty || dirty.get(node.id) === 'measure' || !sameThemeMetrics(committedTheme, w.theme);
                 if (node.kind === 'leaf' && measureDirty) force.add(node.id);
                 for (const child of node.children ?? []) collectMeasureDirty(child, measureDirty);
             }
             collectMeasureDirty(baseTree.root, false);
             for (const [name, captured] of sources) {
                 const width = number(widths.get(name)!, Number.MIN_VALUE, 16384), prior = leafBindings.get(name);
-                if (!force.has(name) && prior !== undefined && !prior.terminal && prior.source?.identity === captured.identity
+                if (!force.has(name) && prior !== undefined && !prior.terminal && prior.theme === w.theme && prior.source?.identity === captured.identity
                     && prior.source.revision === captured.revision && prior.source.prepare === captured.prepare
                     && prior.width === width && prior.density === density) {
                     w.leafBindings.set(name, prior);
@@ -595,16 +621,17 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
     function completeWindow(w: WindowState, baseTree: UiLayoutTree): void {
         const measures = new Map<string, NonNullable<UiLayoutNode['measure']>>();
         for (const [name, binding] of w.leafBindings) measures.set(name, binding.measure!);
-        const nextPlan = planUiLayout(measures.size === 0 ? baseTree : leafMeasuredTree(baseTree, measures), size, density, plan, dirty);
+        const layoutDirty = !sameThemeMetrics(committedTheme, w.theme) ? new Map(dirty).set(baseTree.root.id, 'measure' as const) : dirty;
+        const nextPlan = w.paintOnly ? plan! : layout(measures.size === 0 ? baseTree : leafMeasuredTree(baseTree, measures), size, density, plan, layoutDirty);
         check(w.revision);
         const box = nextPlan.boxes.find(b => b.id === listId), width = box?.innerWidth ?? 0, height = box?.innerHeight ?? 0;
         if (box !== undefined && (width <= 0 || height <= 0)) fail('UI_VALUE_INVALID');
-        const index = w.source === undefined ? undefined : w.source === committedSource && committedIndex !== undefined
+        const index = w.source === undefined ? undefined : sameThemeMetrics(committedTheme, w.theme) && w.source === committedSource && committedIndex !== undefined
             && snapshot.boxes.find(b => b.id === listId)?.innerWidth === width && snapshot.density === density
-            ? committedIndex : new UiHeightIndex(w.source.records, width, density, committedIndex);
+            ? committedIndex : new UiHeightIndex(w.source.records, width, density, sameThemeMetrics(committedTheme, w.theme) ? committedIndex : undefined);
         for (const key of retentions.keys()) {
             const b = bindings.get(key);
-            if (b !== undefined && (w.source?.byKey.get(key)?.contentVersion !== b.version || width !== b.width || density !== b.density)) fail('UI_ROW_RETAINED');
+            if (b !== undefined && (b.theme !== w.theme || w.source?.byKey.get(key)?.contentVersion !== b.version || width !== b.width || density !== b.density)) fail('UI_ROW_RETAINED');
         }
         const scroll = index === undefined ? 0 : explicitScroll !== undefined ? index.clampScroll(explicitScroll, height)
             : committedIndex === undefined ? 0 : index.preserveAnchor(snapshot.anchor, committedIndex, height);
@@ -813,6 +840,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             const displayToken = display.prepare(rootWrapper, updates);
             check(revision);
             const nextSnapshot: UiSnapshot = freeze({
+                theme: w.theme,
                 id: listId ?? id,
                 rootId: id,
                 committedRevision: revision,
@@ -1046,7 +1074,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         },
         setTree(value) {
             admit('tree', () => {
-                const revision = desired, captured = captureUiTree(value), t = captured.tree;
+                const revision = desired, captured = captureUiTree(value), t = applyUiTheme(captured.tree, captured.themes, theme);
                 check(revision);
                 if (t.nodes.size !== tree.nodes.size || [...t.nodes].some(([key, node]) => tree.nodes.get(key)?.kind !== node.kind))
                     fail('UI_TREE_SHAPE');
@@ -1063,6 +1091,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                     if (previous?.identity === content.identity && (content.revision < previous.revision
                         || content.revision === previous.revision && content.prepare !== previous.prepare)) fail('UI_SOURCE_REVISION');
                 }
+                authoredTree = withoutSources(captured.tree);
+                themeBindings = captured.themes;
                 tree = withoutSources(t);
                 leafContents = captured.contents;
                 if (s !== undefined) {
@@ -1070,6 +1100,19 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                     source = s;
                 }
                 change();
+            });
+        },
+        setTheme(value) {
+            admit('theme', () => {
+                requireUiTheme(value);
+                if (value === theme) return;
+                // Explicit focus/composition retention forbids replacing its live content.
+                for (const key of retentions.keys())
+                    if (bindings.get(key)?.theme !== value) fail('UI_ROW_RETAINED');
+                const resolved = applyUiTheme(authoredTree, themeBindings, value);
+                theme = value;
+                tree = resolved;
+                change(true);
             });
         },
         setInput(value) {
@@ -1220,6 +1263,9 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 committedSource = c.preparedWindow.source;
                 plan = c.preparedWindow.plan;
                 snapshot = c.snapshot;
+                committedTheme = c.preparedWindow.theme;
+                paintCommitted = c.preparedWindow.paintOnly;
+                paintThemeOnly = false;
                 preparedWindow = undefined;
                 explicitScroll = undefined;
                 revealIntent = undefined;
@@ -1324,12 +1370,17 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             committedIndex = undefined;
             plan = undefined;
             tree = emptyTree;
+            authoredTree = emptyTree;
+            themeBindings = new Map();
+            theme = undefined;
+            committedTheme = undefined;
             leafContents = new Map();
             input = undefined;
             inputIdentity = undefined;
             unsubscribeClose();
             snapshot = freeze({
                 ...snapshot,
+                theme: undefined,
                 rows: freeze([]),
                 boxes: freeze([]),
                 scrollExtent: 0,
