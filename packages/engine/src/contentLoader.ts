@@ -7,7 +7,7 @@ import type { Engine } from './Engine.js';
 import type { ContentBinding, ContentGroup, ContentLoader, ContentProviderFactory, ContentProviders } from './contentTypes.js';
 import type { ManifestAssetBinding, ManifestBinding, ManifestGroupOptions } from './manifestResourceTypes.js';
 import { createManifestAssetBinding } from './manifestResourceState.js';
-import { requireContentEngine } from './internal/contentFactoryState.js';
+import { registerContentLoader, requireContentEngine } from './internal/contentFactoryState.js';
 import { contentFault, parseAtlasArtifact, parseSequenceArtifact } from './contentArtifacts.js';
 import type { AtlasArtifact } from './contentArtifacts.js';
 import { parseAtlasPagesArtifact } from './contentAtlasPages.js';
@@ -174,6 +174,13 @@ export function createContentLoader(engine: Engine, manifest: AdmittedResourceMa
       },cause => retire('failed',contentFault('LOAD',captured.join(','),cause)));
       return group;
     },
+  });
+  registerContentLoader(loader, (scope, imageId, sequenceId): void => {
+    assertScope(scope);
+    const sequence = entries.get(sequenceId), atlas = entries.get(sequence?.dependencies[0] ?? '');
+    if (sequence?.resourceKind !== 'sequence' || atlas?.resourceKind !== 'atlas'
+        || atlas.dependencies.length !== 1 || atlas.dependencies[0] !== imageId
+        || entries.get(imageId)?.resourceKind !== 'image') throw new EgretError('SEQUENCE_RESET_RESOURCE_MISMATCH');
   });
   disown = owner.own(dispose);
   return loader;

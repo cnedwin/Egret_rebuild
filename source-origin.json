@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "bb5bf966d47ed4c76e42980761c39268274beadcdedccb26dc426be64f09d94b",
-      "bytes": 380155,
+      "sha256": "5f98d20beb284ce63a48e0dc7cf270a57c65f9338d4639d70d8cc37395ac797d",
+      "bytes": 382470,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -5478,8 +5478,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 347318,
-      "sha256": "0f57ff7eeaca7699b3d9e57799adf6a656a7b70a9f3b5c1242d16caa9d0d9c75",
+      "bytes": 355266,
+      "sha256": "6d3b165a7df01a4ef2c027f80f6fe047c9091471d6fb07dae1b1112d9d967ef1",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -5537,8 +5537,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "bytes": 145869,
-      "sha256": "f183c438982a07f64d1b60391c36212f6bdc19b845578dc5babe4346866bf02c",
+      "bytes": 145992,
+      "sha256": "9db2c1fe10876b6eabc5c00b91da40bd2df0a0f8371d9f1888091110c0a8a323",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -9876,8 +9876,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 288443,
-      "sha256": "9b6007c32c23d3207c2ec92382924ecdb1b8a69eecd48e6f324a95363c1704d4",
+      "bytes": 294711,
+      "sha256": "1286dece9f90f7b002e050675910d67fc059eb2323586a18f0c1ce59c72cb76d",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10496,8 +10496,8 @@
     {
       "path": "tools/serve-example.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 6729,
-      "sha256": "0a66e84e5d4b03eae703bd6ffbda0111937e4247989f2ca001063d9d30b25251"
+      "bytes": 6980,
+      "sha256": "17bdd2715acd5b55e30cac6b2eb909bb2da3f027e5c25ce9727e10814125a5a2"
     },
     {
       "path": "tools/setup-dev.mjs",
@@ -12770,14 +12770,14 @@
     {
       "path": "knowledge-base/en/docs/m2-spine-content-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 29659,
-      "sha256": "786259f8d712c68769b69d5959a64a975a2b1f351b0b37e1f4b78f68000eae63"
+      "bytes": 30245,
+      "sha256": "262f7f24c9049f3e3dd694bfd61a36d31af6ecf8ed4f27d3a98cf3a4274ca186"
     },
     {
       "path": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 24853,
-      "sha256": "cb4312796087ac04e1a33083d972fe42030d494f555ffe60b7ded53af1bb7edd"
+      "bytes": 25367,
+      "sha256": "ebad15371e87087e31b45ee54a1d709c8a14e14979b072959c345008fb0cdf78"
     },
     {
       "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
@@ -13448,14 +13448,14 @@
     {
       "path": "packages/engine/src/animation/index.ts",
       "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 425,
-      "sha256": "351f9bbdaa0f8d88accc0425fa1d6a4e330cd403b196026661e712d089ce3121"
+      "bytes": 661,
+      "sha256": "0c3aa14fda74e361f46d1182c344231dca8db089bf3b01ce7acdfd9505aacc21"
     },
     {
       "path": "packages/engine/src/animation/sequenceController.ts",
       "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 20859,
-      "sha256": "0861f7683ec29eb44ef31a3baf2489b9a1fdf655bf83ec89aad4df9d1a0427cc"
+      "bytes": 21915,
+      "sha256": "ea476a5d41f62c0f5c9e1469efa9a8b2d124a01de53159af53984ff731a3a4e8"
     },
     {
       "path": "packages/engine/src/animation/sequenceCoordinator.ts",
@@ -13466,8 +13466,8 @@
     {
       "path": "packages/engine/src/animation/sequenceInput.ts",
       "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5039,
-      "sha256": "21f95b6bf8c67f931a0d5c94203e3e1d1e20c3e10c7d4304e01dfb96a75f8759"
+      "bytes": 5115,
+      "sha256": "96b3fc3d114c22b41f1a913ba886d01e2a2e310bd72407b33209675174951863"
     },
     {
       "path": "packages/engine/src/animation/sequenceMath.ts",
@@ -13514,8 +13514,8 @@
     {
       "path": "tests/sequence-controller.test.mjs",
       "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 11687,
-      "sha256": "44a781d4a954877324252b9f6993b6898cad56ba2569dfa9bbf2c5cd1de2beb0"
+      "bytes": 11721,
+      "sha256": "8cc594717afb877fce7e24091422f62c6b731eedcd5d233b71cecdc89ebf9cbd"
     },
     {
       "path": "contributions/m2-sequence-controls.json",
@@ -13586,14 +13586,14 @@
     {
       "path": "packages/engine/src/contentLoader.ts",
       "originRole": "First-party finite content artifact admission, public runtime assembly and original behavior tests, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 13314,
-      "sha256": "7c7384f989d978591fc400536a6cd0958eb4175a4237989c44bd0a2841fb60cd"
+      "bytes": 13817,
+      "sha256": "a1db93dad35f49dd9a55f2f492bbf8d0ded1788f6a1ce2e405d88436edddd5e7"
     },
     {
       "path": "packages/engine/src/internal/contentFactoryState.ts",
       "originRole": "First-party finite content artifact admission, public runtime assembly and original behavior tests, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1279,
-      "sha256": "99cf46638dca63be28550a114b212e04b7a461caa46951d0b12d322400c66106"
+      "bytes": 1967,
+      "sha256": "81a0d471ecf828289598239c5d68d32a3b2ced5d468380b95da3a019b5000d7c"
     },
     {
       "path": "tests/content-runtime.test.mjs",
@@ -15430,6 +15430,132 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 3041,
       "sha256": "275fbab77dd94d011d0e58f363daff580053c1390c60c1091951f88de2be1618"
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceResetSlot.ts",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 10893,
+      "sha256": "ad8cf7106cfd8b37bcdca9d92448e0339f019e71111f71d255ef676e22de8a09"
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceResetTypes.ts",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 1717,
+      "sha256": "3d40cd1cb3e1cdcff9a0020d8fec652e40c71381cc8e5ed3dd3e8c5d4403a45c"
+    },
+    {
+      "path": "tests/sequence-reset-fixture.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 3725,
+      "sha256": "5f5ee66a3b3cbeacdd09aa617ee5fe5bcb015e2a70fdae4a7901d060b594c788"
+    },
+    {
+      "path": "tests/sequence-reset-types.test.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 565,
+      "sha256": "91ae0bb29e2b0c006806449c3926798b0ea4d3b22949ac9c6dd55444761aa111"
+    },
+    {
+      "path": "tests/sequence-reset.test.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 17962,
+      "sha256": "fb0d5eb1e31ccec27346df1dc5e1b458894eb0d47276813679ba2825fe944e29"
+    },
+    {
+      "path": "tests/types/sequence-reset-negative.ts",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 545,
+      "sha256": "e45c8136b7ad21b1cbdd77761641e720fe4c19003a9710f40c2270d6dbebfc0f"
+    },
+    {
+      "path": "tests/types/sequence-reset-positive.ts",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 1130,
+      "sha256": "dbf2760dc9fa579535a2408adb7e86c6fac93dc659d5177345e5283afacd2e4f"
+    },
+    {
+      "path": "tests/types/tsconfig.sequence-reset-negative.json",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 579,
+      "sha256": "3080c9737d3f840b35f4ac9d3fde4337f83f80cc4d2e939b288f05f5df97faa0"
+    },
+    {
+      "path": "tests/types/tsconfig.sequence-reset-positive.json",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 579,
+      "sha256": "973d3eea4724e65deccaa336efc70d194f07efb2356ecbbf0c6e76052f74a00c"
+    },
+    {
+      "path": "examples/sequence-reset/author.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 3359,
+      "sha256": "a8e20bd10ee23df6cbe486280dc5c421bf4cb715d62aa5b3f2a5dd81aa24d267"
+    },
+    {
+      "path": "examples/sequence-reset/main.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 7661,
+      "sha256": "6ce78aa4d1153be93bbb51a703084828dc79df92013be32db1af682852181544"
+    },
+    {
+      "path": "examples/sequence-reset/index.html",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 2371,
+      "sha256": "2ac465bd2a70f8692dfff4f9531ed3cbd12e048271872053e15d0790131bba39"
+    },
+    {
+      "path": "examples/sequence-reset/verify.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 10081,
+      "sha256": "b3365c44241351925892f582ee900f48be44cacdf43f5bb89302ddc66960445c"
+    },
+    {
+      "path": "examples/sequence-reset/README.md",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 1946,
+      "sha256": "9acccd41f3c1b7ac7ceae35d62524e1f4ae7736899750f83fc93dbd32c2fb63c"
+    },
+    {
+      "path": "examples/sequence-reset/README.zh-CN.md",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 1765,
+      "sha256": "26cca13a9083890994d28e01fae49cc5ad244567daf5eaedc161b4c5a127b74a"
+    },
+    {
+      "path": "examples/sequence-reset/verification-summary.json",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 3686,
+      "sha256": "187f34d4e6c71ee6635bb589df526c792715f822ff0fcfffb883d24a01c9d38c"
+    },
+    {
+      "path": "knowledge-base/en/docs/sequence-reset.md",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 6092,
+      "sha256": "9c932e35e7660c4edf038f005402dc7d9941262217ca230614652025cd7fd028"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/序列动画RESET替换.md",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 5268,
+      "sha256": "1ef04354ff72813ce1d1ae1272aaad6059bea7f8a6b3dfc66a73b727d14b27f7"
+    },
+    {
+      "path": "tools/sequence-reset-types.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "bytes": 4274,
+      "sha256": "58aeeb64293b2d537a689dc2071a361c48ae52109bca4f646f61968a4a374a1c"
+    },
+    {
+      "path": "tests/types/sequence-reset-diagnostic-expectations.json",
+      "bytes": 43863,
+      "sha256": "ad21adbf614cc162976023b5db951055253b1cf1486208cec461f013a85bab51",
+      "originRole": "First-party immutable sequence RESET compiler diagnostic observations from the pinned compiler and built optional entry; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "contributions/sequence-reset.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 7609,
+      "sha256": "f8c00ef64318c0f5ba5ac07c1615878949985b1ac45b345dad0aa1bbbce35832"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

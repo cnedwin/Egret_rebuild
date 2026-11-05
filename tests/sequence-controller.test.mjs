@@ -3,10 +3,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {scene,summary,events,expectCode,MARKERS,egret} from './sequence-controller-fixture.mjs';
 
-test('SQC01 optional public profile exposes one controller factory',async()=>{
+test('SQC01 optional public profile exposes controller and RESET factories',async()=>{
   const result=await import('@egret/engine/animation').then(value=>({value}),error=>({error}));
   assert.equal(result.error,undefined,'SEQUENCE_CONTROL_PUBLIC_ENTRY_REQUIRED');
-  assert.deepEqual(Object.keys(result.value).sort(),['createSequenceController']);
+  assert.deepEqual(Object.keys(result.value).sort(),['createSequenceController','createSequenceResetSlot']);
 });
 test('SQC02 literal two-instance four-color schedule commits ordered events and finite final frame',async()=>{
   const f=await scene();try{

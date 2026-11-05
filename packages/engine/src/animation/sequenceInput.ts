@@ -36,7 +36,7 @@ export function admitRate(value: unknown): number {
   return value === 0 ? 0 : value;
 }
 /** Copy only bounded scalar descriptors, including one array-length observation. */
-export function captureOptions(value: unknown, duration: number): CapturedOptions {
+export function captureOptions(value: unknown, duration: number, durationKnown = true): CapturedOptions {
   const code = 'ANIMATION_OPTIONS_INVALID';
   const input = fields(value, ['profile','rate','totalPlays','markers','onEvent'], code);
   const profile = own(input, 'profile', code), rawRate = own(input, 'rate', code);
@@ -48,7 +48,7 @@ export function captureOptions(value: unknown, duration: number): CapturedOption
   const totalPlays = rawPlays === undefined ? 1 : rawPlays;
   if (totalPlays !== 'infinite' && (typeof totalPlays !== 'number' || !Number.isInteger(totalPlays) || totalPlays < 1 || totalPlays > 1_000_000)) throw new EgretError(code);
   if (typeof duration !== 'number' || duration <= 0 || !Number.isFinite(duration) || duration > 2 ** 32
-    || (totalPlays !== 'infinite' && (!Number.isFinite(duration * totalPlays) || duration * totalPlays <= 0 || duration * totalPlays > 2 ** 32))) throw new EgretError('ANIMATION_TIME_LIMIT');
+    || (durationKnown && totalPlays !== 'infinite' && (!Number.isFinite(duration * totalPlays) || duration * totalPlays <= 0 || duration * totalPlays > 2 ** 32))) throw new EgretError('ANIMATION_TIME_LIMIT');
   if (listener !== undefined && typeof listener !== 'function') throw new EgretError(code);
   const markers: CapturedSequenceMarker[] = [], ids = new Set<string>();
   if (rawMarkers !== undefined) {
@@ -61,7 +61,7 @@ export function captureOptions(value: unknown, duration: number): CapturedOption
       const marker = fields(external(code, (): unknown => array[index]), ['id','timeSeconds'], code);
       const id = own(marker, 'id', code), time = own(marker, 'timeSeconds', code);
       if (typeof id !== 'string' || !/^[A-Za-z][A-Za-z0-9_.-]{0,63}$/.test(id) || ids.has(id)
-        || typeof time !== 'number' || !Number.isFinite(time) || time < 0 || time > duration) throw new EgretError(code);
+        || typeof time !== 'number' || !Number.isFinite(time) || time < 0 || time > 2 ** 32 || (durationKnown && time > duration)) throw new EgretError(code);
       ids.add(id); markers.push(Object.freeze({id, timeSeconds: time === 0 ? 0 : time, markerIndex: index}));
     }
   }

@@ -1963,8 +1963,8 @@
       "en": "knowledge-base/en/docs/m2-spine-content-plan.md",
       "zh": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
       "kind": "public_reading",
-      "enSha256": "786259f8d712c68769b69d5959a64a975a2b1f351b0b37e1f4b78f68000eae63",
-      "zhSha256": "cb4312796087ac04e1a33083d972fe42030d494f555ffe60b7ded53af1bb7edd"
+      "enSha256": "262f7f24c9049f3e3dd694bfd61a36d31af6ecf8ed4f27d3a98cf3a4274ca186",
+      "zhSha256": "ebad15371e87087e31b45ee54a1d709c8a14e14979b072959c345008fb0cdf78"
     },
     {
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
@@ -2238,6 +2238,20 @@
       "kind": "public_reading",
       "enSha256": "a330a3d3a3f4603a64e279229740be670d267e5b9a965c3f4b86b88458d5f083",
       "zhSha256": "620c0319cec395de877911f7968f04f91ca0f93fc1eecc00cce31df8ea5161cb"
+    },
+    {
+      "en": "examples/sequence-reset/README.md",
+      "zh": "examples/sequence-reset/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "9acccd41f3c1b7ac7ceae35d62524e1f4ae7736899750f83fc93dbd32c2fb63c",
+      "zhSha256": "26cca13a9083890994d28e01fae49cc5ad244567daf5eaedc161b4c5a127b74a"
+    },
+    {
+      "en": "knowledge-base/en/docs/sequence-reset.md",
+      "zh": "knowledge-base/Cns/docs/序列动画RESET替换.md",
+      "kind": "public_reading",
+      "enSha256": "9c932e35e7660c4edf038f005402dc7d9941262217ca230614652025cd7fd028",
+      "zhSha256": "1ef04354ff72813ce1d1ae1272aaad6059bea7f8a6b3dfc66a73b727d14b27f7"
     }
   ],
   "registries": [
@@ -3063,7 +3077,7 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "0f57ff7eeaca7699b3d9e57799adf6a656a7b70a9f3b5c1242d16caa9d0d9c75"
+      "sha256": "6d3b165a7df01a4ef2c027f80f6fe047c9091471d6fb07dae1b1112d9d967ef1"
     },
     {
       "path": "tests/boundaries.test.mjs",
@@ -3075,7 +3089,7 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "f183c438982a07f64d1b60391c36212f6bdc19b845578dc5babe4346866bf02c"
+      "sha256": "9db2c1fe10876b6eabc5c00b91da40bd2df0a0f8371d9f1888091110c0a8a323"
     },
     {
       "path": "packages/runtime/src/NineSliceGeometry2D.ts",
@@ -3355,7 +3369,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "9b6007c32c23d3207c2ec92382924ecdb1b8a69eecd48e6f324a95363c1704d4"
+      "sha256": "1286dece9f90f7b002e050675910d67fc059eb2323586a18f0c1ce59c72cb76d"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -4199,11 +4213,11 @@
     },
     {
       "path": "packages/engine/src/animation/index.ts",
-      "sha256": "351f9bbdaa0f8d88accc0425fa1d6a4e330cd403b196026661e712d089ce3121"
+      "sha256": "0c3aa14fda74e361f46d1182c344231dca8db089bf3b01ce7acdfd9505aacc21"
     },
     {
       "path": "packages/engine/src/animation/sequenceController.ts",
-      "sha256": "0861f7683ec29eb44ef31a3baf2489b9a1fdf655bf83ec89aad4df9d1a0427cc"
+      "sha256": "ea476a5d41f62c0f5c9e1469efa9a8b2d124a01de53159af53984ff731a3a4e8"
     },
     {
       "path": "packages/engine/src/animation/sequenceCoordinator.ts",
@@ -4211,7 +4225,7 @@
     },
     {
       "path": "packages/engine/src/animation/sequenceInput.ts",
-      "sha256": "21f95b6bf8c67f931a0d5c94203e3e1d1e20c3e10c7d4304e01dfb96a75f8759"
+      "sha256": "96b3fc3d114c22b41f1a913ba886d01e2a2e310bd72407b33209675174951863"
     },
     {
       "path": "packages/engine/src/animation/sequenceMath.ts",
@@ -4239,11 +4253,11 @@
     },
     {
       "path": "packages/engine/src/contentLoader.ts",
-      "sha256": "7c7384f989d978591fc400536a6cd0958eb4175a4237989c44bd0a2841fb60cd"
+      "sha256": "a1db93dad35f49dd9a55f2f492bbf8d0ded1788f6a1ce2e405d88436edddd5e7"
     },
     {
       "path": "packages/engine/src/internal/contentFactoryState.ts",
-      "sha256": "99cf46638dca63be28550a114b212e04b7a461caa46951d0b12d322400c66106"
+      "sha256": "81a0d471ecf828289598239c5d68d32a3b2ced5d468380b95da3a019b5000d7c"
     },
     {
       "path": "packages/engine/src/paragraph.ts",
@@ -4512,6 +4526,50 @@
     {
       "path": "tools/content/author-font-example.mjs",
       "sha256": "c1849ae5a6b9eb067f1fa3c6d7f6a4ff8447276ad04fff211db73361a867a442"
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceResetSlot.ts",
+      "sha256": "ad8cf7106cfd8b37bcdca9d92448e0339f019e71111f71d255ef676e22de8a09"
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceResetTypes.ts",
+      "sha256": "3d40cd1cb3e1cdcff9a0020d8fec652e40c71381cc8e5ed3dd3e8c5d4403a45c"
+    },
+    {
+      "path": "tests/sequence-reset-fixture.mjs",
+      "sha256": "5f5ee66a3b3cbeacdd09aa617ee5fe5bcb015e2a70fdae4a7901d060b594c788"
+    },
+    {
+      "path": "tests/sequence-reset-types.test.mjs",
+      "sha256": "91ae0bb29e2b0c006806449c3926798b0ea4d3b22949ac9c6dd55444761aa111"
+    },
+    {
+      "path": "tests/sequence-reset.test.mjs",
+      "sha256": "fb0d5eb1e31ccec27346df1dc5e1b458894eb0d47276813679ba2825fe944e29"
+    },
+    {
+      "path": "tests/types/sequence-reset-negative.ts",
+      "sha256": "e45c8136b7ad21b1cbdd77761641e720fe4c19003a9710f40c2270d6dbebfc0f"
+    },
+    {
+      "path": "tests/types/sequence-reset-positive.ts",
+      "sha256": "dbf2760dc9fa579535a2408adb7e86c6fac93dc659d5177345e5283afacd2e4f"
+    },
+    {
+      "path": "examples/sequence-reset/author.mjs",
+      "sha256": "a8e20bd10ee23df6cbe486280dc5c421bf4cb715d62aa5b3f2a5dd81aa24d267"
+    },
+    {
+      "path": "examples/sequence-reset/main.mjs",
+      "sha256": "6ce78aa4d1153be93bbb51a703084828dc79df92013be32db1af682852181544"
+    },
+    {
+      "path": "examples/sequence-reset/verify.mjs",
+      "sha256": "b3365c44241351925892f582ee900f48be44cacdf43f5bb89302ddc66960445c"
+    },
+    {
+      "path": "tools/sequence-reset-types.mjs",
+      "sha256": "58aeeb64293b2d537a689dc2071a361c48ae52109bca4f646f61968a4a374a1c"
     }
   ],
   "historicalSemanticReview": {

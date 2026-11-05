@@ -4,3 +4,6 @@ export {createSequenceController} from './sequenceController.js';
 export type {SequenceMarker, SequenceControllerOptions, SequenceControllerState,
   SequenceEventSource, SequenceControllerEvent, SequenceSeekRequest,
   SequenceControllerStatus, SequenceController} from './types.js';
+export {createSequenceResetSlot} from './sequenceResetSlot.js';
+export type {SequenceResetInitial, SequenceResetActive, SequenceResetRequest, SequenceResetState,
+  SequenceResetTicket, SequenceResetSlot} from './sequenceResetTypes.js';

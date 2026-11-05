@@ -7532,12 +7532,452 @@ const fontResourceLiteralClosure = {
   "packages/contracts/dist/resources/fontArtifact.js": [],
   "packages/contracts/dist/resources/fontArtifact.d.ts": []
 };
+// One reviewed M2.4 optional RESET composition; prior closures remain unchanged.
+const sequenceResetLiteralClosure = {
+  "packages/engine/src/animation/index.ts": [
+    [
+      "static",
+      "./sequenceController.js"
+    ],
+    [
+      "static",
+      "./sequenceResetSlot.js"
+    ],
+    [
+      "static",
+      "./sequenceResetTypes.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/engine/dist/animation/index.js": [
+    [
+      "static",
+      "./sequenceController.js"
+    ],
+    [
+      "static",
+      "./sequenceResetSlot.js"
+    ]
+  ],
+  "packages/engine/dist/animation/index.d.ts": [
+    [
+      "static",
+      "./sequenceController.js"
+    ],
+    [
+      "static",
+      "./sequenceResetSlot.js"
+    ],
+    [
+      "static",
+      "./sequenceResetTypes.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/engine/src/animation/sequenceController.ts": [
+    [
+      "static",
+      "../Engine.js"
+    ],
+    [
+      "static",
+      "../gameClockTypes.js"
+    ],
+    [
+      "static",
+      "../internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "../internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "./sequenceCoordinator.js"
+    ],
+    [
+      "static",
+      "./sequenceCoordinator.js"
+    ],
+    [
+      "static",
+      "./sequenceInput.js"
+    ],
+    [
+      "static",
+      "./sequenceInput.js"
+    ],
+    [
+      "static",
+      "./sequenceMath.js"
+    ],
+    [
+      "static",
+      "./sequenceMath.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceController.js": [
+    [
+      "static",
+      "../internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "./sequenceCoordinator.js"
+    ],
+    [
+      "static",
+      "./sequenceInput.js"
+    ],
+    [
+      "static",
+      "./sequenceMath.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceController.d.ts": [
+    [
+      "static",
+      "../Engine.js"
+    ],
+    [
+      "static",
+      "../internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/src/animation/sequenceInput.ts": [
+    [
+      "static",
+      "./sequenceMath.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceInput.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceInput.d.ts": [
+    [
+      "static",
+      "./sequenceMath.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/engine/src/contentLoader.ts": [
+    [
+      "static",
+      "./contentArtifacts.js"
+    ],
+    [
+      "static",
+      "./contentArtifacts.js"
+    ],
+    [
+      "static",
+      "./contentAtlasPages.js"
+    ],
+    [
+      "static",
+      "./contentTypes.js"
+    ],
+    [
+      "static",
+      "./Engine.js"
+    ],
+    [
+      "static",
+      "./internal/contentFactoryState.js"
+    ],
+    [
+      "static",
+      "./manifestResourceState.js"
+    ],
+    [
+      "static",
+      "./manifestResourceTypes.js"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/contentLoader.js": [
+    [
+      "static",
+      "./contentArtifacts.js"
+    ],
+    [
+      "static",
+      "./contentAtlasPages.js"
+    ],
+    [
+      "static",
+      "./internal/contentFactoryState.js"
+    ],
+    [
+      "static",
+      "./manifestResourceState.js"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/contentLoader.d.ts": [
+    [
+      "static",
+      "./contentTypes.js"
+    ],
+    [
+      "static",
+      "./Engine.js"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ]
+  ],
+  "packages/engine/src/internal/contentFactoryState.ts": [
+    [
+      "static",
+      "../manifestResourceTypes.js"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/internal/contentFactoryState.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/internal/contentFactoryState.d.ts": [
+    [
+      "static",
+      "../manifestResourceTypes.js"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/src/animation/sequenceResetSlot.ts": [
+    [
+      "static",
+      "../contentTypes.js"
+    ],
+    [
+      "static",
+      "../displaySubtreeTicket.js"
+    ],
+    [
+      "static",
+      "../Engine.js"
+    ],
+    [
+      "static",
+      "../internal/contentFactoryState.js"
+    ],
+    [
+      "static",
+      "../internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "../internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "./sequenceController.js"
+    ],
+    [
+      "static",
+      "./sequenceCoordinator.js"
+    ],
+    [
+      "static",
+      "./sequenceInput.js"
+    ],
+    [
+      "static",
+      "./sequenceResetTypes.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceResetSlot.js": [
+    [
+      "static",
+      "../Engine.js"
+    ],
+    [
+      "static",
+      "../internal/contentFactoryState.js"
+    ],
+    [
+      "static",
+      "../internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "./sequenceController.js"
+    ],
+    [
+      "static",
+      "./sequenceCoordinator.js"
+    ],
+    [
+      "static",
+      "./sequenceInput.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceResetSlot.d.ts": [
+    [
+      "static",
+      "../Engine.js"
+    ],
+    [
+      "static",
+      "./sequenceResetTypes.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/src/animation/sequenceResetTypes.ts": [
+    [
+      "static",
+      "../contentTypes.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceResetTypes.js": [],
+  "packages/engine/dist/animation/sequenceResetTypes.d.ts": [
+    [
+      "static",
+      "../contentTypes.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ]
+};
 function sceneGraphEdges(code) {
   return [...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)]
     .map(match=>[/^import\s*\(/.test(match[0])?'dynamic':'static',match[1]])
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
-for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure,...m34EffectLiteralClosure,...fontResourceLiteralClosure})) {
+for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure,...m34EffectLiteralClosure,...fontResourceLiteralClosure,...sequenceResetLiteralClosure})) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
   // Non-literal dynamic imports cannot hide an additional dependency edge.
@@ -8045,22 +8485,24 @@ for(const file of ['packages/runtime/src/ui/managedState.ts','packages/runtime/d
 
 
 // Optional sequence controls preserve the default entries and eager private bridge.
-const sequenceValues=['createSequenceController'];
+const sequenceValues=['createSequenceController','createSequenceResetSlot'];
+const sequenceResetTypes=['SequenceResetInitial','SequenceResetActive','SequenceResetRequest','SequenceResetState','SequenceResetTicket','SequenceResetSlot'];
 const sequenceTypes=["SequenceMarker","SequenceControllerOptions","SequenceControllerState","SequenceEventSource","SequenceControllerEvent","SequenceSeekRequest","SequenceControllerStatus","SequenceController"];
 const sequenceFacade=await import('@egret/engine/animation');
 if(!uiSame(Object.keys(sequenceFacade),sequenceValues))throw new Error('M2.2: exact optional sequence values mismatch');
 for(const [file,typed]of [['packages/engine/src/animation/index.ts',true],['packages/engine/dist/animation/index.js',false],['packages/engine/dist/animation/index.d.ts',true]]){
- const expected="export{createSequenceController}from'./sequenceController.js';"+(typed?"exporttype{"+sequenceTypes.join(',')+"}from'./types.js';":'');
+ const expected="export{createSequenceController}from'./sequenceController.js';"+(typed?"exporttype{"+sequenceTypes.join(',')+"}from'./types.js';":'')+"export{createSequenceResetSlot}from'./sequenceResetSlot.js';"+(typed?"exporttype{"+sequenceResetTypes.join(',')+"}from'./sequenceResetTypes.js';":'');
  if(uiRead(file).replace(/\s+/g,'').replaceAll('"',"'")!==expected)throw new Error('M2.2: exact optional sequence facade mismatch: '+file);
 }
+if(Object.keys(await import('./../packages/engine/dist/animation/sequenceResetTypes.js')).length!==0)throw new Error('M2.4: RESET types acquired runtime values');
 if(Object.keys(await import('./../packages/engine/dist/animation/types.js')).length!==0)throw new Error('M2.2: sequence types acquired runtime values');
-const sequencePrivate=['SequenceTargetClaims','createSequenceTargetClaims','SequenceScopePort','SequenceControllerEnginePort','SequenceControllerEngineOwner','registerSequenceControllerEngine','requireSequenceControllerEngine','SequenceCoordinator','getSequenceCoordinator'];
+const sequencePrivate=['requireResetController','authenticateContentLoader','registerContentLoader','SequenceTargetClaims','createSequenceTargetClaims','SequenceScopePort','SequenceControllerEnginePort','SequenceControllerEngineOwner','registerSequenceControllerEngine','requireSequenceControllerEngine','SequenceCoordinator','getSequenceCoordinator'];
 for(const [label,values,stem]of [...textEntries,['engine/ui',await import('@egret/engine/ui'),'packages/engine/dist/ui/index']]){
  const declaration=uiRead(stem+'.d.ts');
- for(const name of [...sequenceValues,...sequenceTypes,...sequencePrivate])if(name in values||new RegExp('\\b'+name+'\\b').test(declaration))throw new Error('M2.2: sequence authority leaked outside optional entry: '+label+'/'+name);
+ for(const name of [...sequenceValues,...sequenceTypes,...sequenceResetTypes,...sequencePrivate])if(name in values||new RegExp('\\b'+name+'\\b').test(declaration))throw new Error('M2.2: sequence authority leaked outside optional entry: '+label+'/'+name);
 }
 for(const name of sequencePrivate)if(name in sequenceFacade||new RegExp('\\b'+name+'\\b').test(uiRead('packages/engine/dist/animation/index.d.ts')))throw new Error('M2.2: private sequence authority leaked: '+name);
-const sequenceFactoryImporters=new Set(['src/Engine.ts','dist/Engine.js','src/animation/sequenceController.ts','dist/animation/sequenceController.js','src/animation/sequenceCoordinator.ts','dist/animation/sequenceCoordinator.js','dist/animation/sequenceCoordinator.d.ts']);
+const sequenceFactoryImporters=new Set(['src/Engine.ts','dist/Engine.js','src/animation/sequenceController.ts','dist/animation/sequenceController.js','src/animation/sequenceCoordinator.ts','dist/animation/sequenceCoordinator.js','dist/animation/sequenceCoordinator.d.ts','dist/animation/sequenceController.d.ts','src/animation/sequenceResetSlot.ts','dist/animation/sequenceResetSlot.js']);
 const sequenceClaimImporters=new Set(['src/Engine.ts','dist/Engine.js','src/sequencePlayback.ts','dist/sequencePlayback.d.ts','src/internal/sequenceControllerFactoryState.ts','dist/internal/sequenceControllerFactoryState.d.ts']);
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/dist'))]){
  if(!/\.(?:ts|js)$/.test(file))continue;
@@ -8072,7 +8514,7 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
   if(/^(?:src|dist)\/sequenceTargetClaims\.js$/.test(resolved)&&!sequenceClaimImporters.has(relative))throw new Error('M2.2: private sequence claims imported outside named modules: '+relative);
  }
 }
-for(const file of ['packages/engine/src/sequenceTargetClaims.ts','packages/engine/dist/sequenceTargetClaims.js','packages/engine/src/internal/sequenceControllerFactoryState.ts','packages/engine/dist/internal/sequenceControllerFactoryState.js',...Object.keys(m22SequenceLiteralClosure).filter(file=>file.includes('/animation/'))]){
+for(const file of ['packages/engine/src/sequenceTargetClaims.ts','packages/engine/dist/sequenceTargetClaims.js','packages/engine/src/internal/sequenceControllerFactoryState.ts','packages/engine/dist/internal/sequenceControllerFactoryState.js',...Object.keys({...m22SequenceLiteralClosure,...sequenceResetLiteralClosure}).filter(file=>file.includes('/animation/'))]){
  if(/\b(?:setTimeout|setInterval|queueMicrotask|requestAnimationFrame|fetch|Worker|Date|performance)\b/.test(uiRead(file))||/\bimport\s*\(/.test(uiRead(file)))throw new Error('M2.2: sequence controller acquired automatic host work: '+file);
 }
 

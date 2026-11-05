@@ -1129,3 +1129,6 @@ await import('./shared-webgl2-types.mjs');
 
 // Preserve every retained strict lane before the seven M1.5 public consumer pairs.
 await import('./resource-recovery-types.mjs');
+
+// Preserve every retained lane before the optional sequence RESET consumers.
+await import('./sequence-reset-types.mjs');

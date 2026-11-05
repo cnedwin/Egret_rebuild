@@ -1,0 +1,126 @@
+{
+  "format": "egret.sequence-reset-verification/1",
+  "date": "2026-11-05",
+  "status": "PASS",
+  "environment": {
+    "node": "v26.7.0",
+    "playwright": "1.62.1",
+    "browser": "156.0.4314.58",
+    "channel": "msedge",
+    "headless": true,
+    "additionalFlags": [],
+    "physicalDevice": false
+  },
+  "generations": {
+    "v1": {
+      "base": "v1/",
+      "manifestPath": "build/generations/54a31af9c9a10bc3f841c2f6043d6a556e2afaad8fbc79d032a36bae6f7984b3/manifest.json",
+      "manifest": {
+        "sha256": "530168e6ad0aa4ef9b6a1ed51acdbe861f82c706dffd5315c53cc3dff65b81ec",
+        "byteLength": 4002
+      },
+      "generationId": "54a31af9c9a10bc3f841c2f6043d6a556e2afaad8fbc79d032a36bae6f7984b3"
+    },
+    "v2": {
+      "base": "v2/",
+      "manifestPath": "build/generations/ff051d4536f10eb26a1247c21367d2b0504d54c9a3b1adcc827bd87b763c8f24/manifest.json",
+      "manifest": {
+        "sha256": "e28774dd8f572ce0c48af68502e19cf4b883e62a0054e1bdbab1402f97697980",
+        "byteLength": 4002
+      },
+      "generationId": "ff051d4536f10eb26a1247c21367d2b0504d54c9a3b1adcc827bd87b763c8f24"
+    }
+  },
+  "backends": [
+    {
+      "backend": "webgpu",
+      "passed": true,
+      "checks": [
+        "initial",
+        "old-while-loading",
+        "cancelled-old",
+        "old-second-load",
+        "staged-old",
+        "cancelled-candidate-retained",
+        "initial-retained",
+        "old-restored",
+        "cpu-only-old",
+        "submitted-cyan",
+        "submitted",
+        "resumed-quarter",
+        "resumed-half",
+        "retired-before-submit",
+        "replacement-back",
+        "owned-retained-replay",
+        "borrowed-retained-replay"
+      ],
+      "errors": [],
+      "closed": {
+        "host": "closed",
+        "pendingFrames": 0,
+        "textures": true,
+        "context": true
+      }
+    },
+    {
+      "backend": "webgl2",
+      "passed": true,
+      "checks": [
+        "initial",
+        "old-while-loading",
+        "cancelled-old",
+        "old-second-load",
+        "staged-old",
+        "cancelled-candidate-retained",
+        "initial-retained",
+        "old-restored",
+        "cpu-only-old",
+        "submitted-cyan",
+        "submitted",
+        "resumed-quarter",
+        "resumed-half",
+        "retired-before-submit",
+        "replacement-back",
+        "owned-retained-replay",
+        "borrowed-retained-replay"
+      ],
+      "errors": [],
+      "closed": {
+        "host": "closed",
+        "pendingFrames": 0,
+        "textures": true,
+        "context": true
+      }
+    }
+  ],
+  "evidence": {
+    "result": {
+      "path": "browser-03/result.json",
+      "bytes": 170009,
+      "sha256": "dd79de5672774c95b012ec3cd413cdbdf9eef6637bad9376524db5719af965b5"
+    },
+    "inputs": {
+      "path": "browser-03/inputs.json",
+      "bytes": 122854,
+      "sha256": "469d6cbeecbcfdc7dba89fa5f1341ec63404da3893fc7b12a928ad73c9d3eb19"
+    }
+  },
+  "limits": [
+    "Finite two-instance CPU RESET and actual shared Host pixels",
+    "CPU publication has no post-submit rollback",
+    "No device recovery, phone, performance or complete M2.4 acceptance"
+  ],
+  "previousRuns": [
+    {
+      "run": "browser-01",
+      "status": "FAIL",
+      "reason": "Fractional canvas origin produced a 33-row screenshot instead of 32; native readbacks had passed. Integral heading layout repaired the example."
+    },
+    {
+      "run": "browser-02",
+      "status": "PASS",
+      "scope": "Pre-final terminal-controller provenance and pause-revision refinement; retained separately."
+    }
+  ],
+  "sourceAndPublication": "Current source requires independent review and normal protected publication; local results do not establish a merged PR."
+}
