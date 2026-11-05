@@ -21,3 +21,11 @@
 ## 段落布局控制
 
 Align 按左／居中／右／start／end／两端顺序切换普通段落和虚拟行。两行限制在 maxLines=2 与不限行之间切换，后续几何使用同一准备结果更新。失败或不支持的更新保留旧画面。当前 layout-r1 运行库提供经验证的硬换行省略号及可恢复的过窄拒绝。见[契约与最新证据](../../knowledge-base/Cns/docs/paragraph-layout-controls.md)。
+
+## 多样式装备说明
+
+选择 **装备说明样式**，将普通栏目和虚拟列表切换到预设装备描述；也可使用 ?content=equipment，需要 WebGPU 时同时添加 backend=webgpu。金色标题、小号品质文字、彩色属性和明确的中文字体区间由同一完整段落排版。窄版／宽版、字号、对齐、两行省略和密度继续使用现有控件；页脚及回收列表行使用最终真实行高，不增加另一套文字渲染或输入机制。再次选择该按钮恢复原普通内容，默认地址仍保留原固定夹具。
+
+纯数据模块 styled-copy.mjs 同时构造原文和不可变 UTF-16 样式区间。UI 内容修订拥有请求快照，延迟、失败及过期请求保留前一份已发布图像和几何。本示例只展示只读样式，不代表富文本编辑、任意 HTML/CSS、触摸控件或字体／性能验收。参阅[多样式段落契约](../../knowledge-base/Cns/docs/paragraph-styled-runs.md)。
+
+示例为双倍密度下新旧 UI 事务重叠配置 32 MiB 段落图像缓存；引擎默认值和栅格上限不变。装备条目从 540 单位的保守估计开始，最终采用实测高度。运行 node examples/paragraph-panel/verify-equipment.mjs <playwright-root> <new-output-directory> 可执行有限的样式 UI 检查。[结果与边界](styled-verification-summary.json)。

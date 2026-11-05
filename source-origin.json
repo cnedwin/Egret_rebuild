@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "5bc05e8705cb8a2b26efdc02cf9779edc7d597ac51c504edfe53c21f51ef2403",
-      "bytes": 375578,
+      "sha256": "dd4789b057719aa94bc22c6b80be2ad64fc98299bee7e6d5859b23d8d11bacda",
+      "bytes": 377149,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -10436,8 +10436,8 @@
     {
       "path": ".github/workflows/ci.yml",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 11979,
-      "sha256": "230b357596ab99b23d61adb9e16d8161c4effb92584142fbf7bdae9c377e72b9"
+      "bytes": 12172,
+      "sha256": "341f96ecc8053f4aaa0f081edca8886a15355de911cc181db8442f651add5532"
     },
     {
       "path": ".node-version",
@@ -10496,8 +10496,8 @@
     {
       "path": "tools/serve-example.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 6487,
-      "sha256": "36123343c661fe16c6315f61c30dd6a50bc24f46d459717fc05d77f8a5124bdc"
+      "bytes": 6504,
+      "sha256": "0e478e2036da428a5c48054f874aecb27f39690184313bc9e4fe4d83fe57b54b"
     },
     {
       "path": "tools/setup-dev.mjs",
@@ -12782,14 +12782,14 @@
     {
       "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 54536,
-      "sha256": "827518b4d7ef48e3523ade44fc9c8639614b9b5d047fcc3a21cac6f582b14d4d"
+      "bytes": 55273,
+      "sha256": "f563e2783ecb77b7c96c69d55cecca8308e9b41ac26667b4b03a879aaf175894"
     },
     {
       "path": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 46163,
-      "sha256": "664c36ef8f12e57c811424f906cfffb473befeb02fc26e110d94a08b86cb29a4"
+      "bytes": 46765,
+      "sha256": "a591eaa7237668af625e719916e8df1e6edace6e105816f0be5c5a984af426c9"
     },
     {
       "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -13640,26 +13640,26 @@
     {
       "path": "examples/paragraph-panel/README.md",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 3839,
-      "sha256": "7525222b968d56ec912fa868d13d07a1444827360950ac6685cdadfab4115af6"
+      "bytes": 5413,
+      "sha256": "8756e49ded4ba69c51f3a2f00553d738f4cede074c25213ce625a2555b7762a7"
     },
     {
       "path": "examples/paragraph-panel/README.zh-CN.md",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 3392,
-      "sha256": "812cc66ea3fc554dac71e1bcd37b0f636e9c813eabe960f1f4cb9663c37641cb"
+      "bytes": 4757,
+      "sha256": "0f403536490b044df59dc98daf40c5c2239d4c9cf46bedaec3c4eaf9b933b211"
     },
     {
       "path": "examples/paragraph-panel/index.html",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5107,
-      "sha256": "f28621de1aa98737f7da397e42059c1e4adac346af0a77daaa73f0a3e2b354da"
+      "bytes": 5192,
+      "sha256": "fd4a5308613a92535d08d687e840956d9322e03a657b489da8fa1014d1b16d0e"
     },
     {
       "path": "examples/paragraph-panel/main.mjs",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 16643,
-      "sha256": "9b5c9605fc69d3e281ec644e60efbb218af919d592c433dfe1e44744fffc7e4f"
+      "bytes": 17761,
+      "sha256": "02253f8cd5ace1278d781b13d4c9f3d35e2046149d4c2a5504d8b0ca7824d1f6"
     },
     {
       "path": "examples/paragraph-panel/vendor/README.md",
@@ -13778,14 +13778,14 @@
     {
       "path": "knowledge-base/Cns/docs/readonly-paragraph-sdk.md",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 11386,
-      "sha256": "066201050c352d9eb7ee837cd6b5eb300a9a46a309d1b214bf1ffa55b2145900"
+      "bytes": 11787,
+      "sha256": "25ebcd8d60ee7edbcac510976b4ee4cddc989f081d26aa7ab04b304b992486d2"
     },
     {
       "path": "knowledge-base/en/docs/readonly-paragraph-sdk.md",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 12495,
-      "sha256": "19ed1abb4116ca202cfc148998c7112163ae9a19ca3ebabd80eb47ebc186dd20"
+      "bytes": 12973,
+      "sha256": "d845a38ca78a29f227d7820f1201e0ec297341634fc80f88c2372f6bd21b5e0b"
     },
     {
       "path": "packages/engine/src/paragraph.ts",
@@ -13802,8 +13802,8 @@
     {
       "path": "packages/engine/web/CanvasKitParagraphProvider.ts",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 24827,
-      "sha256": "80b8b37e4bf7abffdb7ecbb85ccb79c41814a365d6d16a381710157204e70bee"
+      "bytes": 34837,
+      "sha256": "ac6d6d0b9d2fcbe9052254b17b49db108230cf2942e832d0bef43f3bf9284457"
     },
     {
       "path": "packages/engine/web/paragraph.ts",
@@ -13820,8 +13820,8 @@
     {
       "path": "packages/runtime/src/paragraph/ParagraphCache.ts",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 12128,
-      "sha256": "ae794ba078fd2adde57983ccb85c9684b8e0ce4116d5036eb5fe53f0a99bb85e"
+      "bytes": 12384,
+      "sha256": "8e9f094adc5a1d66ab90875d1c5da575c6aeccbf53ea0ce7670ad6aef24a6ed5"
     },
     {
       "path": "packages/runtime/src/paragraph/index.ts",
@@ -13832,14 +13832,14 @@
     {
       "path": "packages/runtime/src/paragraph/request.ts",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5908,
-      "sha256": "36f62da71690afe5f85d798bee40670dc47f8610d36b0133d37af7f5f4e1ae92"
+      "bytes": 8211,
+      "sha256": "8a3f2a6f1e39abebaf5af45d95987bdaeea74836cf4d71cb4eef23254bd0432c"
     },
     {
       "path": "packages/runtime/src/paragraph/types.ts",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 6240,
-      "sha256": "525c69e3ccf36164c7c70a4a5aaf8801df956df197f5d88a11be81c7e5e5e7c4"
+      "bytes": 6703,
+      "sha256": "3981e3fabe5d7616e8e5f675b3059a680c4758121a56bc927c6ba48e622deafe"
     },
     {
       "path": "tests/paragraph-sdk.test.mjs",
@@ -14156,8 +14156,8 @@
     {
       "path": "tests/paragraph-layout.test.mjs",
       "originRole": "First-party paragraph layout contract, public behavior/type regressions and bounded verification summary; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 18151,
-      "sha256": "33482a1a721ab0c37d2eccbbba63dfd63343ef30a1f5637ae6b90d93c140aba0"
+      "bytes": 18167,
+      "sha256": "4c58d22d99e80d25636e4b869ffb59ba99c92bc76b8a9f97bcbc6fa5e2d96e9e"
     },
     {
       "path": "tests/paragraph-layout-types.test.mjs",
@@ -15208,6 +15208,84 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 5254,
       "sha256": "b9eacea866c906b8f00b3199585e5ff73bda4427d1ea8440311f8ea1af83a914"
+    },
+    {
+      "path": "tests/paragraph-styles.test.mjs",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "bytes": 6025,
+      "sha256": "cfd1bdd4b5c9ad0e98c509d8f681bf89d7828bf33f3109015fac122ed7b84696"
+    },
+    {
+      "path": "tests/paragraph-styles-native.test.mjs",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "bytes": 11659,
+      "sha256": "94f172cb8fa682feb206e4c404f55d795644c7e5900759343ea80a9c287da513"
+    },
+    {
+      "path": "tests/paragraph-styles-types.test.mjs",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "bytes": 3303,
+      "sha256": "349d110d20d2d7ac7caa7de925743582f3f98d41905a85b5c80e01dc97bab46b"
+    },
+    {
+      "path": "tests/types/paragraph-styles-positive.ts",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "bytes": 545,
+      "sha256": "f5721da79d93585ca67bf74c82a197f987699a3b6a2fa19c02cd0ce7c76da3bb"
+    },
+    {
+      "path": "tests/types/paragraph-styles-negative.ts",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "bytes": 500,
+      "sha256": "68c19f810083f52f88424cac643b153ff2bf641c4f79aecb1886157770a2c626"
+    },
+    {
+      "path": "examples/paragraph-geometry/verify-styles.mjs",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "bytes": 11420,
+      "sha256": "348a08660949907720caba0a85713c680ee285090b5f46d3494cf0601163b007"
+    },
+    {
+      "path": "examples/paragraph-geometry/styled-verification-summary.json",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "bytes": 51779,
+      "sha256": "2bdd78633c7f45f6a16b5f6bc639398fa455e0b7660a3380452eb08ef09d2e37"
+    },
+    {
+      "path": "knowledge-base/en/docs/paragraph-styled-runs.md",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "bytes": 9546,
+      "sha256": "515cfce8286335a137cc746dd1ffed8c17ecab872cebadcef92d9305ce5a6daf"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/paragraph-styled-runs.md",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "bytes": 8473,
+      "sha256": "a71b5531f57c946e8e914ee3408322e5627acbb84d14f2d78dc240c143ea958e"
+    },
+    {
+      "path": "examples/paragraph-panel/styled-copy.mjs",
+      "originRole": "First-party authored equipment paragraph content and immutable style ranges; AI-assisted; Apache-2.0.",
+      "bytes": 1505,
+      "sha256": "a6f7085fe89cd7d22d89846f27f26db1eb4741d950e899c154e77d01b63d1fd6"
+    },
+    {
+      "path": "examples/paragraph-panel/verify-equipment.mjs",
+      "originRole": "First-party finite styled paragraph UI integration browser acceptance; AI-assisted; Apache-2.0.",
+      "bytes": 12731,
+      "sha256": "6c44ecf914b243b73dcdf4c09a57451a216831d5e5ff1561ea7400c3ed334adf"
+    },
+    {
+      "path": "examples/paragraph-panel/styled-verification-summary.json",
+      "originRole": "First-party current-main styled paragraph UI integration evidence summary; AI-assisted; Apache-2.0. Raw failed observations remain retained.",
+      "bytes": 182878,
+      "sha256": "5a54d686c81387ce892a610383d99b0a1ddbebe26b914fcf2cc87f7d0073b3ba"
+    },
+    {
+      "path": "contributions/paragraph-styled-runs.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 4203,
+      "sha256": "ea4c01dbcc4fce6763dad7034492a6a3b42921932a1327fc8fce2f6cbb5c993c"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

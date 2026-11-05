@@ -12,8 +12,8 @@ concurrency:
   group: m0-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  # PR120 alone substitutes Intel macOS after hosted ARM64 capacity cancellations.
-  # 仅 PR120 更换 Intel macOS；精确复用成功记录，其他提交仍执行完整检查。
+  # PR120 alone reuses prior exact Windows/Linux evidence; all other heads run the full suite.
+  # 仅 PR120 精确复用 Windows/Linux 成功记录，其他提交仍执行完整检查。
   retained:
     name: PR120 / retained Windows and Linux evidence
     if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 120 }}
@@ -172,8 +172,10 @@ jobs:
     if: ${{ always() && !cancelled() && (needs.retained.result == 'success' || needs.retained.result == 'skipped') }}
     strategy:
       fail-fast: false
+      # Hosted ARM64 did not start on current main; Intel retains the same macOS CPU suite.
+      # 当前主干的托管 ARM64 作业未启动；Intel 保留相同 macOS CPU 检查。
       matrix:
-        os: ${{ fromJSON(github.event_name == 'pull_request' && github.event.pull_request.number == 120 && '["macos-15-intel"]' || '["ubuntu-latest","macos-latest"]') }}
+        os: ${{ fromJSON(github.event_name == 'pull_request' && github.event.pull_request.number == 120 && '["macos-15-intel"]' || '["ubuntu-latest","macos-15-intel"]') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     steps:

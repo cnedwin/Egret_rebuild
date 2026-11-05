@@ -41,11 +41,22 @@ export interface ParagraphTextGeometry extends ParagraphTextGeometryData {
 export type ParagraphTextAlign = 'left' | 'right' | 'center' | 'start' | 'end' | 'justify';
 /** Explicit opt-in: older providers continue to accept the original requests. */
 export interface ParagraphProviderCapabilities {
+  readonly styledRuns?: boolean;
   readonly textAlign?: boolean;
   readonly textGeometry?: boolean;
   readonly maxLines?: boolean;
 }
+/** Sorted, nonoverlapping UTF-16 [start, end); omitted fields inherit paragraph defaults. */
+export interface ParagraphStyleRun {
+  readonly start: number;
+  readonly end: number;
+  readonly fontFamilies?: readonly string[];
+  readonly fontSize?: number;
+  readonly fillColor?: number;
+}
 export interface ParagraphRequestInput {
+  /** At most 256 nonempty ranges; gaps use paragraph defaults. Empty arrays are omitted. */
+  readonly runs?: readonly ParagraphStyleRun[];
   readonly text: string;
   readonly width: number;
   readonly fontFamilies: readonly string[];

@@ -50,7 +50,7 @@ engine.stage.addChild(paragraph);
 // metrics.width、metrics.height 和 metrics.lines 对应这次已提交结果。
 ```
 
-首个 profile 对整段使用一组字号、颜色、语言和基础方向，采用明确注册的 fallback 字体顺序，支持自动换行和可选的最小 `lineHeight`。字体自然 ascent/descent 与 leading 可能使实际行高超过请求的最小值。请求未注册字体或存在未解析字形时会拒绝。
+兼容的无 runs 请求对整段使用一组字号、颜色、语言和基础方向，采用明确注册的 fallback 字体顺序，支持自动换行和可选的最小 `lineHeight`。字体自然 ascent/descent 与 leading 可能使实际行高超过请求的最小值。请求未注册字体或存在未解析字形时会拒绝。
 
 `setRequest` 快照请求。`prepare()` 返回不可变的 `{ width, height, lines }`；每行提供 UTF-16 `start/end`、`baseline`、`ascent`、`descent`、`height` 和 `width`。`getStatus()` 区分目标／已提交版本和 pending 状态。请求及代次不变时复用已提交结果。替换失败或被新请求取代时，保持上一份已提交图像及指标。Scope 销毁会取消 pending demand 并退役显示租约，迟到结果不能恢复已关闭节点。
 
@@ -130,4 +130,8 @@ async function bind(context) {
 
 构建后，使用已安装的 Playwright 1.62.1 与 Edge，执行 `node examples/paragraph-panel/verify-browser.mjs <playwright-root> <new-output-directory>`。采集器对每个后端运行一次完整行为序列，输出目录必须是新目录。浏览器延迟用例在进入 native 前阻塞提供器，证明晚 settlement 不覆盖已提交版本，不证明运行中的 Wasm 可被抢占。密度为二时，不断言两个后端逐像素相同。原始失败观察保留，并在结果范围中说明。受保护 CI 与 PR/Main 交付仍是独立发布证据。
 
-**最终行 L1／L2 已集成，并完成有限原生及浏览器验证。** 见[共享行契约与结果](paragraph-line-bidi.md)。完整 M3.2、独立 glyph/ink 参考、公开 glyph-cluster／选区／光标映射、编辑／IME、手机／浏览器覆盖、性能、活动／物理内存验收及 OOM 恢复继续 OPEN。首个 profile 不宣传属性分段、自定义省略标记或垂直对齐、emoji/ZWJ、Indic 或可变字体／字体集合覆盖。历史 [私有 bidi 结果](paragraph-bidi-comparison.md) 保留原证据范围；采用这个有界的可选 SDK 不改写历史结果。
+**最终行 L1／L2 已集成，并完成有限原生及浏览器验证。** 见[共享行契约与结果](paragraph-line-bidi.md)。完整 M3.2、独立 glyph/ink 参考、完整 glyph-cluster 映射、编辑／IME、手机／浏览器覆盖、性能、活动／物理内存验收及 OOM 恢复继续 OPEN。有界[样式范围](paragraph-styled-runs.md)及[字素选区／光标几何](paragraph-text-geometry.md)已有独立契约。首个 profile 不宣传自定义省略标记或垂直对齐、emoji/ZWJ、Indic 或可变字体／字体集合覆盖。历史 [私有 bidi 结果](paragraph-bidi-comparison.md) 保留原证据范围；采用这个有界的可选 SDK 不改写历史结果。
+
+## 只读样式范围
+
+可选[样式范围契约](paragraph-styled-runs.md)通过同一提供者、缓存和 UI 所有权增加有界字体族、字号与前景色范围。上文原单样式配置仍是兼容基线；链接的增量契约记录当前准入、整簇颜色与合成内容限制。

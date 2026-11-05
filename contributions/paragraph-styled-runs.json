@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/paragraph-styles.test.mjs",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/paragraph-styles-native.test.mjs",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/paragraph-styles-types.test.mjs",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/paragraph-styles-positive.ts",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/paragraph-styles-negative.ts",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/paragraph-geometry/verify-styles.mjs",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/paragraph-geometry/styled-verification-summary.json",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership."
+    },
+    {
+      "path": "knowledge-base/en/docs/paragraph-styled-runs.md",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/paragraph-styled-runs.md",
+      "originRole": "Independently authored first-party readonly paragraph styled-run admission, native adapter integration, public SDK tests and bilingual contract; AI-assisted; Apache-2.0. Reuses unchanged attributed native/font assets and existing resource ownership."
+    },
+    {
+      "path": "examples/paragraph-panel/styled-copy.mjs",
+      "originRole": "First-party authored equipment paragraph content and immutable style ranges; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/paragraph-panel/verify-equipment.mjs",
+      "originRole": "First-party finite styled paragraph UI integration browser acceptance; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/paragraph-panel/styled-verification-summary.json",
+      "originRole": "First-party current-main styled paragraph UI integration evidence summary; AI-assisted; Apache-2.0. Raw failed observations remain retained."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/paragraph-styled-runs.md",
+      "zh": "knowledge-base/Cns/docs/paragraph-styled-runs.md"
+    }
+  ]
+}
