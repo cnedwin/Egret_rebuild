@@ -12,123 +12,62 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
-## Run and contribute
+## Egret today
 
-Start with the [getting-started guide](knowledge-base/en/docs/getting-started.md). With pinned Node 26.7.0 and pnpm 11.25.0, run `pnpm setup:dev`, `pnpm check:quick`, then `pnpm example:browser`. The same guide covers complete prerequisites, expected visuals and troubleshooting.
+Egret is a community rebuild of the game engine for Web and lightweight games, with complex 2D interfaces, animation and an architecture that can support AI-assisted creation. Familiar TypeScript APIs, explicit resource ownership and shared rendering are the foundation. The integrated AI creation platform, broader 3D and additional native/mini-game hosts are longer-term product work.
 
-Report problems through [Issues](https://github.com/cnedwin/Egret_rebuild/issues), ask and discuss in [Discussions](https://github.com/cnedwin/Egret_rebuild/discussions), and follow the [public M0–M4 board](https://github.com/users/cnedwin/projects/2) and [Milestones](https://github.com/cnedwin/Egret_rebuild/milestones). [First contribution: newcomer rehearsal](https://github.com/cnedwin/Egret_rebuild/issues/52) includes scope, verification and the review contact. M0 improves environment and collaboration without new engine capabilities.
+**Engineering preview:** main contains reviewed, runnable increments. It is not a complete engine release or a claim of universal platform, Spine, accessibility or performance support. Use each capability's contract and measured scope.
 
-## M2–M4 architecture and community delivery
+| Area | Available on main | Remaining work |
+| --- | --- | --- |
+| Rendering and resources | Shared WebGPU/WebGL2 rendering, ordered preparation, resource groups and selected device recovery | Broader host/device qualification; the fixed M1.2 full-dirty Engine median-p95 remains [10.3 ms against an 8 ms target](https://github.com/cnedwin/Egret_rebuild/issues/55) |
+| Content and animation | PNG/atlas/sequence builds, multipage atlases, font artifacts; optional Spine playback/display and selected replacement paths | Complete selected-version Spine references, texture variants, state-preserving replacement and final lifecycle/performance acceptance |
+| UI and text | Variable-height lists, focus/navigation, multilingual styled paragraphs, committed text geometry, font/theme switching, masks and blur | Native editing/IME, complete controls/modal/semantic integration and broader script/device qualification |
+| Integration | Editable resource, UI and animation examples; responsive preview | Complete mixed reference game and qualified core handoff |
 
-The [M2–M4 roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md) connects complete Spine/content, UI/text/input and mixed core acceptance. Choose a complete work package from [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) or [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58); each lists code entry points, dependencies and reviewable acceptance.
+## Run an example
 
-## Keyboard and logical focus
+Use **Node.js 26.7.0** and **pnpm 11.25.0**. From the repository root:
 
-The optional [keyboard/focus channel](knowledge-base/en/docs/keyboard-focus-input.md) adds stable control IDs, Tab traversal, typed keys and Scope-owned cancellation. The two-region preview accepts both pointer and keyboard input. Native editing/IME, automatic managed-UI focus and full M3.3 remain open.
+    pnpm setup:dev
+    pnpm check:quick
+    pnpm example:browser
 
-## Responsive touch examples
+The [getting-started guide](knowledge-base/en/docs/getting-started.md) explains prerequisites, expected results and troubleshooting. Explore [responsive examples](examples/mobile/README.md), [paragraphs in UI](examples/paragraph-panel/README.md) and [sequence replacement](examples/sequence-reset/README.md). Fixed qualification fixtures remain separate from the responsive preview.
 
-The [interactive preview](examples/mobile/README.md) supports touch, mouse and pen, narrow/wide UI layout and bounded DPR using existing SDKs. Fixed qualification entries and the legacy mouse API remain unchanged. Run `pnpm example:browser`; physical-device and performance acceptance remain open.
+## Development and community
 
-## Readonly paragraph SDK in Engine UI
+The [M2–M4 roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md), [Issues](https://github.com/cnedwin/Egret_rebuild/issues), [milestones](https://github.com/cnedwin/Egret_rebuild/milestones) and [community board](https://github.com/users/cnedwin/projects/2) describe delivered work, dependencies and remaining acceptance.
 
-The optional [readonly paragraph SDK](knowledge-base/en/docs/readonly-paragraph-sdk.md) wraps Latin, Chinese and Arabic text from explicit font bytes and feeds natural/minimum line height into ordinary UI and virtual lists. Run [the integrated example](examples/paragraph-panel/README.md) to resize, align, limit lines, change type size/density, and observe atomic content replacement. Final-line bidi L1/L2 is integrated with finite native/browser checks; full M3.2, editing/IME, physical devices and performance remain open.
+- **Next proposed core package:** [native plain-text editing with managed UI (#89)](https://github.com/cnedwin/Egret_rebuild/issues/89), reusing paragraph geometry, focus and resource lifetimes. This is a scoped next step, not an implementation claim or an automatic assignment.
+- **Contribute independently:** authorized content/reference fixtures, documented reproduction cases, targeted code, translation and [independent newcomer rehearsal (#52)](https://github.com/cnedwin/Egret_rebuild/issues/52). Coordinate touch/gesture work with its existing contributor before editing shared inputs.
+- **Work in complete packages:** [M2 content/animation](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 UI/text/input](https://github.com/cnedwin/Egret_rebuild/issues/57) and [M4 integration](https://github.com/cnedwin/Egret_rebuild/issues/58). A merged increment does not close all acceptance for its package.
 
-可选[只读段落 SDK](knowledge-base/Cns/docs/readonly-paragraph-sdk.md)已接入普通 UI 与虚拟列表，支持明确字体下的中英阿文字换行、对齐、行数限制及真实/最小行高。最终行双向 L1／L2 已集成并通过有限原生／浏览器检查；M3.2 完整验收、编辑与输入法、真机及性能仍未完成。
+Read [CONTRIBUTING](CONTRIBUTING.md), discuss proposals in [Discussions](https://github.com/cnedwin/Egret_rebuild/discussions), and identify a bounded scope before starting. Develop with focused checks; publish with independent review, English/Chinese documentation, relevant browser evidence and complete protected merge checks. Reuse unchanged evidence and preserve failures. Repository and knowledge-base reading editions are English-first, with Chinese under Cns/ or companion files.
 
-## M2.2 sequence controls
+## Recent deliveries / 最近交付
 
-The optional animation entry adds rate, finite total plays, ordered markers and explicit silent/replaying seek, sharing the existing clock and resource ownership. Legacy and new playback cannot simultaneously claim the same Bitmap. See the [sequence-control contract](knowledge-base/en/docs/sequence-controls.md). Complete Spine and M2.2 acceptance remain open.
+These are merged engineering increments, not new package-version or full-support announcements. 下列记录为已合并工程增量，不代表发布新包版本或完整支持声明。
 
-## M3.1 committed UI panels
+| Delivery / 交付 | Main change | 主要变化 |
+| --- | --- | --- |
+| [#125](https://github.com/cnedwin/Egret_rebuild/pull/125) | Managed sequence RESET replacement; early shared validation before complete merge checks | 受管理序列 RESET 替换；完整合并检查前增加公共基线预检 |
+| [#124](https://github.com/cnedwin/Egret_rebuild/pull/124) | Transactional UI theme/skin switching, paint-only layout reuse and metric-change anchor preservation | UI 主题／皮肤事务切换、纯绘制布局复用及度量变化时锚点保留 |
+| [#123](https://github.com/cnedwin/Egret_rebuild/pull/123) | Font build artifacts and runtime font-set replacement through existing resource owners | 字体构建产物与运行时字体集合替换，复用既有资源所有权 |
+| [#122](https://github.com/cnedwin/Egret_rebuild/pull/122) | Shared Alpha masks, bounded offscreen blur and UI integration | 共享 Alpha 遮罩、有界离屏模糊与 UI 整合 |
+| [#121](https://github.com/cnedwin/Egret_rebuild/pull/121) | Styled paragraphs integrated into managed UI | 多样式段落接入托管 UI |
+| [#120](https://github.com/cnedwin/Egret_rebuild/pull/120) | Selected Spine RESET, shared rendering and device-recovery integration | 选定 Spine RESET、共享渲染与设备恢复整合 |
+| [#119](https://github.com/cnedwin/Egret_rebuild/pull/119) | Stable-key reveal and navigation in virtual lists | 虚拟列表按稳定键定位与导航 |
+| [#118](https://github.com/cnedwin/Egret_rebuild/pull/118) | Editable reference with 20 independent Spine and 200 sequence instances | 20 个独立 Spine 与 200 个序列实例的可编辑参考场景 |
+| [#114](https://github.com/cnedwin/Egret_rebuild/pull/114)–[#117](https://github.com/cnedwin/Egret_rebuild/pull/117) | Spine playback, shared display, combined skins and finite play counts | Spine 播放、共享显示、组合皮肤与有限播放次数 |
+| [#113](https://github.com/cnedwin/Egret_rebuild/pull/113) | Managed-row keyboard and logical-focus integration | 托管行键盘与逻辑焦点整合 |
+| [#112](https://github.com/cnedwin/Egret_rebuild/pull/112) | Observable preview loading/failure, cancellation and reload recovery | 预览加载／失败提示、取消及重新加载恢复 |
+| [#109](https://github.com/cnedwin/Egret_rebuild/pull/109)–[#111](https://github.com/cnedwin/Egret_rebuild/pull/111) | Paragraph geometry, multipage atlas content and optional Spine JSON ingress | 段落几何、多页图集内容与可选 Spine JSON 接入 |
 
-M3.1 adds an owned UI root with explicit prepare/commit, automatic row/column layout, stable-key variable-height lists and bounded asynchronous row recycling. Multiple panels share the existing renderer, input router and resource owners. Read the [UI panel contract](knowledge-base/en/docs/ui-data-panel.md). Full controls, paragraphs, focus/IME, gestures, mobile qualification and performance acceptance remain open.
+<details>
+<summary>Earlier engineering checkpoints / 早期工程记录</summary>
 
-## M2.1 content build foundation
-
-M2.1 connects verified PNG/atlas/sequence builds to typed runtime resource groups, with persistent cache reuse, dependency invalidation and immutable generations adopted through the existing project transaction. Applications load selected resources by ID without handwritten metadata assembly; complete readiness, cancellation and explicit generation replacement reuse existing asset ownership. Sources and old generations remain intact. See the [content build contract](knowledge-base/en/docs/content-build-pipeline.md). Complete Spine, fonts and target variants remain open.
-
-## M3.3 multi-contact foundation
-
-M3.3 provides an optional DOM-free contact router and Engine/browser entries for independent multi-touch sessions, capture, cancellation and viewport/lifetime cleanup. The two-region example and reproducible desktop collector are included. Focused regression passes 176 tests. Read the [contract and evidence](knowledge-base/en/docs/multi-pointer-input.md). Full M3.3 focus/IME, M3.4 gestures and physical Android/iPhone acceptance remain open.
-
-## What we are building
-
-Egret Engine is an open-source game-engine rebuild for creators working with AI and for developers bringing mobile-game experience to the Web. The product centers on complex 2D interfaces and lightweight 3D, with a small rendering/runtime foundation, explicit resource ownership and a shared project model for code, visual tools and agents.
-
-The repository contains an executable engineering preview. Display trees, resource leases, animation, browser input and selected Canvas/WebGPU/WebGL2 rendering paths are available within their documented contracts. Full UI tooling, complete Spine support, target-platform SDKs and automated legacy-project migration remain in development.
-
-## Delivered — M1.5 resource manifests and recovery
-
-M1.5 connects resource manifests and dependency-aware groups to shared resource ownership, bounded loading with integrity checks, staged uploads and unified WebGL2/WebGPU device recovery. Seven fixed desktop recovery cases passed on Windows / Chrome for Testing 157.0.8103.6; WebGL2 and WebGPU each completed 100 resource cycles, ten native loss/recovery cycles and a 30-minute foreground run. Both the fixed recovery results and the affected browser regression have passed independent review.
-
-Delivery follow-up — 2026-10-21: [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) is merged into main `4924b471b52927184252191055f902c30c29af52`. [CI run 39455045264](https://github.com/cnedwin/Egret_rebuild/actions/runs/39455045264) completed all four jobs successfully; the Windows integrated gate passed 290 publication, 4,528 core and 160 Spine F2 tests, with zero failures, cancellations or skips in each group. M1.2 formal paired performance acceptance remains open.
-
-The [verification scope and evidence](knowledge-base/en/docs/resource-recovery-evidence.md) preserves earlier failed and incomplete attempts alongside the completed delivery.
-
-## Implemented — M1.4 WebGL2 executor
-
-M1.4 implements the optional `@egret/engine/webgl2` and `@egret/engine/webgl2/scene3d` entries over the shared render profile. Recorded desktop verification covers the fixed pixel matrix and finite lifetime/depth/state scenarios. These results do not establish mobile support, frame-time performance or sustained recovery. Read the [contract](knowledge-base/en/docs/webgl2-executor-contract.md), [observed results and limits](knowledge-base/en/docs/webgl2-executor-evidence.md), and [M1 plan](knowledge-base/en/docs/m1-rendering-resource-plan.md).
-
-## Delivered — M1.3 shared rendering
-
-M1.3 shared texture pages, linear color and ordered scene/UI composition were delivered through [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75), main `10a37d9dfdeb8762eced73577282127d1c4e4bde`. The [dated evidence follow-up](knowledge-base/en/docs/shared-rendering-evidence.md#m13-delivery-follow-up) preserves the earlier authoring cutoffs and their original pending states.
-
-## Functional delivery — M1.2 incremental rendering
-
-The functional changes were merged through [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74), main `9f899dbe92c5e4d448d3408c3dca2f4c9ade847f`. Formal performance acceptance remains open.
-
-M1.2 adds bounded reuse of display capture and rendering preparation, with adjacent compatible batching that preserves painter order. Recorded correctness and native operation counts have separate acceptance from frame-time performance, which remains open. See the [evidence and limits](knowledge-base/en/docs/incremental-frame-preparation-evidence.md). See the [contract](knowledge-base/en/docs/incremental-frame-preparation-contract.md) and [M1 plan](knowledge-base/en/docs/m1-rendering-resource-plan.md).
-
-Current delivery — 2026-10-21: [PR #81](https://github.com/cnedwin/Egret_rebuild/pull/81) is merged at `f9801b7`, with all required CI jobs passed. Six browser regression suites and the complete fixed 30-trial timing batch were independently reviewed. Static/sparse/full-dirty Engine median-p95 is 5.0/6.4/10.3 ms; full-dirty still exceeds 8 ms. M1.2 performance remains OPEN; GPU time is unmeasured.
-
-## Delivered — M1.1 warm submission
-
-M1.1 was merged through [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73), main `fa88111f5e73503e1804f92a9f444207110b773c`. It reduces repeated image preparation, buffer creation and binding creation. Public APIs and original admission remain unchanged. See the [contract](knowledge-base/en/docs/warm-submission-contract.md) and [verification status](knowledge-base/en/docs/warm-submission-evidence.md); no frame-time or mobile performance improvement is claimed.
-
-## Current version — 0.61.0
-
-The **0.61.0 engineering preview** adds an internal image cache with per-Host ownership, reusing exact cropped GPU images after safe completion. Its LRU mechanism keeps a 32 MiB logical image pool and at most 256 ready entries, preserving existing public admission, rendering profiles and lifecycle management. It adds no public API or dependency.
-
-Read the [contract](knowledge-base/en/docs/gpu-image-residency-contract.md) and [evidence and limits](knowledge-base/en/docs/gpu-image-residency-evidence.md). Controlled specification/ownership results and any current desktop regression results have separate scopes. The new dedicated cache browser matrix remains deferred and OPEN. Physical GPU memory, performance, target devices and actual device-loss recovery remain unverified. Workspace packages remain private 0.0.0; Host protocol remains 1.0.
-
-## Atlas import planning — 0.60.0
-
-The **0.60.0 engineering preview** converts supported single-page atlas metadata with an explicit PNG binding into standard SpriteSheet and SequenceClip inputs. The optional `@egret/project/atlas` entry reuses the existing animation and resource-ownership model, so the resulting plan can be composed through the public Engine factories.
-
-Read the [contract](knowledge-base/en/docs/atlas-import-plan-contract.md), [evidence and limits](knowledge-base/en/docs/atlas-import-plan-evidence.md) and [composition example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/atlas-import-playback/README.md). The supported profile is `aseprite-json-array-1.3.18.6-v1`; real exporter compatibility and entitlement remain unverified.
-
-The recorded desktop Canvas/WebGPU composition passed its bounded four-readback verification. Workspace packages remain private 0.0.0; Host protocol remains 1.0.
-
-## Delivered normalized atlas frames — 0.59.0
-
-The preceding 0.59 increment was delivered through [PR #48](https://github.com/cnedwin/Egret_rebuild/pull/48), Main `44f49f9d97a7baebc400fd4940541529dc33d147`.
-
-Normalized trim/clockwise90 runtime behavior follows the [layout contract](knowledge-base/en/docs/atlas-frame-layout-contract.md); the original 30 browser readbacks remain a separate accepted domain.
-
-## Prepared resource groups — 0.58.0
-
-Engineering preview **0.58.0** adds `Engine.captureBitmapBindings(scope, targets)` and the erased `BitmapBindingTicket` type. The prepared-outfit example waits for both clothing textures and commits their bindings together. Pending, failed, cancelled and obsolete changes preserve the working outfit; a ticket refuses to overwrite a later caller binding.
-
-Recorded desktop Canvas and WebGPU checks passed six fresh contexts with 54 original RGBA readbacks, including separate old-layer controls, genuine mouse selection, animation boundaries and shutdown with original reads still pending. This is finite desktop evidence. General dependency manifests, additional content types, full UI, Spine, production hosts, mobile performance and physical-memory acceptance remain open.
-
-Read the [contract](knowledge-base/en/docs/prepared-resource-groups-spec.md), [evidence and limits](knowledge-base/en/docs/prepared-resource-groups-evidence.md) and [example guide](examples/prepared-resource-groups/README.md).
-
-## Real-resource scene — 0.57.0
-
-Engineering preview **0.57.0** combines real PNG resources, shared atlas playback, text and mouse input through existing public Engine APIs. Canvas is the default; the textured WebGPU scene is an explicit experimental choice. Resource preparation, presentation readiness, input readiness and safe shutdown have separate boundaries. Read the [integration record](knowledge-base/en/docs/resource-scene-integration.md) and [example guide](examples/resource-scene/README.md).
-
-The recorded desktop Canvas/WebGPU workflow completed seven fresh contexts and retained 64 original RGBA frames. Fixed-point and font-region comparisons, negative controls and retirement passed in the documented environment. Phone, cross-environment font, performance and energy acceptance remain open.
-
-## Delivered resource replacement — 0.56.0
-
-The 0.56 resource-replacement increment was delivered through [PR #45](https://github.com/cnedwin/Egret_rebuild/pull/45), Main `19c308af4d7c9590f886c8105d5d678e708184c5`. Earlier verification records retain their original cutoffs.
-
-Engineering preview **0.56.0** focuses on recoverable resource replacement. `Engine.createBitmapResourceSlot(scope, bitmap)` provides explicit Texture replacement for one persistent Bitmap, with the erased `BitmapResourceSlot` and `BitmapResourceSlotState` types. The initial lease remains borrowed; the slot owns only fresh replacement leases. The prior usable binding survives pending, failed or cancelled requests, and only the latest accepted intent may commit. Cancellation and supersession reject their request Promises; detailed validation, conflict and lifetime errors follow the [specification](knowledge-base/en/docs/bitmap-resource-slot-spec.md). Read the [evidence](knowledge-base/en/docs/bitmap-resource-slot-evidence.md), [example guide](examples/bitmap-resource-slot/README.md) and [version history](knowledge-base/en/CHANGELOG.md).
-
-Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU composition have passed their bounded checks. Full local/public gates and repository delivery are recorded separately in the linked evidence. The previous 0.55 layout increment was delivered through [PR #44](https://github.com/cnedwin/Egret_rebuild/pull/44). Workspace packages remain private 0.0.0; the host protocol remains 1.0.
-
-## Recent changes
+The entries below describe their original delivery scope; later capabilities are summarized above. 以下条目保留当时的交付范围，后续能力以上表为准。
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
@@ -156,22 +95,12 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 | 0.53.0 | Runnable atlas/animation playground with explicit pivots and saved/live frames | 图集与动画可运行示例、显式锚点和保存／实时画面 |
 | 0.52.0 | Display anchor offsets shared by rendering, coordinates and picking | 渲染、坐标转换与拾取共用显示对象锚点 |
 
-[Full Changelog](knowledge-base/en/CHANGELOG.md) · [Engineering plan](knowledge-base/en/docs/engineering-plan.md)
+</details>
 
-## Build and try the current playground
+[Full changelog](knowledge-base/en/CHANGELOG.md) · [中文更新日志](knowledge-base/Cns/CHANGELOG.md) · [Architecture](knowledge-base/en/docs/architecture-and-engineering-plan.md)
 
-The selected development Node.js version is **26.7.0**, pinned exactly in `package.json`, `.node-version` and `.nvmrc`. Keep pnpm 11.25.0 and TypeScript 7.0.2 unchanged. Select Node 26.7.0 in your terminal and verify `node --version` before running the commands below.
+The [documentation index](DOCUMENTATION.md) links subsystem contracts and the knowledge base.
 
-Current contributor and migrated browser workflows use Node 26.7.0. Historical Node 24.19.0 receipts retain their original environment. Each browser family still requires its own current inputs and actual execution; changing a version pin alone establishes no compatibility. From the repository root:
+## License and sources
 
-    pnpm setup:dev
-    pnpm check:quick
-    pnpm example:browser
-
-The [resource replacement example](examples/bitmap-resource-slot/README.md) composes a persistent Bitmap, transformed clipping and independent Buttons; its bounded desktop Canvas/WebGPU checks are recorded in the linked evidence. Try the [layout example](examples/linear-layout/README.md) for explicit planning and Button composition, the [two-button example](examples/bitmap-button/README.md) for Canvas/WebGPU interaction, or the [atlas playground](examples/anchored-atlas-playback/README.md) for resources and animation. Their guides describe the local HTTP server and supported browser paths.
-
-## Read and contribute
-
-Start with [product direction](knowledge-base/en/docs/design-philosophy-and-positioning.md), [requirements](knowledge-base/en/docs/product-requirements.md) and the [technical white paper](knowledge-base/en/docs/technical-white-paper.md). Use the [documentation guide](DOCUMENTATION.md) to find API contracts and verification records.
-
-Contributions follow the [contribution guide](CONTRIBUTING.md). First-party code and documentation use [Apache-2.0](LICENSE); dependencies and research assets retain their own notices. [Acknowledgements](ACKNOWLEDGEMENTS.md) and [source records](source-origin.json) describe their roles and AI-assisted work.
+First-party code and documentation use [Apache-2.0](LICENSE). Third-party libraries, fonts, animation runtimes and sample assets retain their own notices and conditions. Read [NOTICE](NOTICE) and [acknowledgements](ACKNOWLEDGEMENTS.md) and the relevant capability's source record before redistribution; Spine runtime/content conditions are separate from the engine's license.
