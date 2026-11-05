@@ -620,7 +620,15 @@ const m3FontSourceModuleLimit = 144;
 assert.equal(m3FontModuleSuccessors.size,1);assert.equal(m3FontModuleAdditions.size,1);
 for(const name of m3FontModuleSuccessors.keys())assert.ok(m34ModuleIdentities.has(name));
 for(const name of m3FontModuleAdditions.keys())assert.ok(!m34ModuleIdentities.has(name));
-const currentModuleIdentities = new Map([...m34ModuleIdentities,...m3FontModuleSuccessors,...m3FontModuleAdditions]);
+// RESET changes one already-reachable private content authority; membership and budgets stay fixed.
+const m24ResetModuleSuccessor = new Map([
+  ["packages/engine/dist/internal/contentFactoryState.js", { bytes: 1085, sha256: "1e9f75627a4a24593da30a77ba23f8814092484cbeaa969ef23ecc56a18f1ff3" }],
+]);
+assert.equal(m24ResetModuleSuccessor.size,1);
+assert.deepEqual([...m24ResetModuleSuccessor.keys()],['packages/engine/dist/internal/contentFactoryState.js']);
+assert.deepEqual(m22SequenceModuleAdditions.get('packages/engine/dist/internal/contentFactoryState.js'),{bytes:574,sha256:'4c38c5b38105459e829be1398ff29d157b9ff8e942857b9194cef0830cc25fb1'});
+const m3FontModuleIdentities = new Map([...m34ModuleIdentities,...m3FontModuleSuccessors,...m3FontModuleAdditions]);
+const currentModuleIdentities = new Map([...m3FontModuleIdentities,...m24ResetModuleSuccessor]);
 assert.equal(currentModuleIdentities.size,m3FontSourceModuleLimit,'Font resources current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {

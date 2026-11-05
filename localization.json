@@ -323,15 +323,15 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "e8d12e1f8a5f6fbeb6d90075d9c3cd995d1bbcc7207c3ea9a3264d4ef78366e2",
-      "zhSha256": "20843b0b68f8074a3acde618210c07991b9fce975cefa7c1221f262ace6e8941"
+      "enSha256": "9c298148cc8c3221143d620847353539b36ba54d5ac2686e638abcc549f3998c",
+      "zhSha256": "677db438d55590f1cb0bfdc14e2028f5d75453d8af8e02bb59b919f5f33a189b"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
       "en": "CONTRIBUTING.md",
       "kind": "public_reading",
-      "enSha256": "c9cc0c4b53828547a1df7c72bcff00ab27391e3be67aa23401d7999f3b216dbf",
-      "zhSha256": "73149c598d6a1875c86c8dbfc3622f9be4ad69bd69bc51fa02e7e55c03b045fa"
+      "enSha256": "c32ed45a532a0f6b7ff84a8fe7e29b6cbe37e2cb07aaacde47b437f4e447d9bb",
+      "zhSha256": "320feaece2c1a8b6f0fac3749e2ef71e273c680b8210a373e8ea52490fc3e386"
     },
     {
       "zh": "docs/evidence/texture-a1.zh-CN.md",
@@ -477,8 +477,8 @@
       "zh": "knowledge-base/Cns/docs/双语文档与推送前检查.md",
       "en": "knowledge-base/en/docs/bilingual-documentation-and-prepush-checks.md",
       "kind": "public_reading",
-      "enSha256": "b6be6eb8f949ea6feee7522f06b00336ad109cb3cae16416470011ee3e4d98bc",
-      "zhSha256": "42b187e00dca7e721ee67f8a67718265098d49f3e149fc12085d4acf668db818"
+      "enSha256": "addbf6017e0b96d8c6d0525458642c0b3078c08672ed336a6a0daa9e6f0ef7e7",
+      "zhSha256": "c06a3972e1a05fd4e1756d5197e639049ecf3c1c4387eb69e0acedf17b15fe79"
     },
     {
       "zh": "knowledge-base/Cns/docs/bitmap-region-contract.md",
@@ -1844,8 +1844,8 @@
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "3a0c9fd0a3f9b776fc7f30f91a5f34e5340794a9dbddb6c1081b59c3124b93ea",
-      "zhSha256": "0b6da33b64b645658cfecd93ff1d34b77bd4ab404fb194aae7d1bd399e14b476"
+      "enSha256": "987acc2ea01e99b7c7e9d4e41d6531c9e0887351cb1476c7fc892b87f7af3948",
+      "zhSha256": "45fbe007714a84394d426208639aca6ec274db5e08561e7423fb271038920016"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -1963,8 +1963,8 @@
       "en": "knowledge-base/en/docs/m2-spine-content-plan.md",
       "zh": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
       "kind": "public_reading",
-      "enSha256": "786259f8d712c68769b69d5959a64a975a2b1f351b0b37e1f4b78f68000eae63",
-      "zhSha256": "cb4312796087ac04e1a33083d972fe42030d494f555ffe60b7ded53af1bb7edd"
+      "enSha256": "262f7f24c9049f3e3dd694bfd61a36d31af6ecf8ed4f27d3a98cf3a4274ca186",
+      "zhSha256": "ebad15371e87087e31b45ee54a1d709c8a14e14979b072959c345008fb0cdf78"
     },
     {
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
@@ -2245,6 +2245,20 @@
       "kind": "public_reading",
       "enSha256": "64b9f3a12a5f97edec02ae5e8c41daf262bb2b834bffe64b9fea8e824118da2f",
       "zhSha256": "9e3b8dc629cfd57536f309b757e86c20062c3a764bac525197839a98dc7b2c62"
+    },
+    {
+      "en": "examples/sequence-reset/README.md",
+      "zh": "examples/sequence-reset/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "9acccd41f3c1b7ac7ceae35d62524e1f4ae7736899750f83fc93dbd32c2fb63c",
+      "zhSha256": "26cca13a9083890994d28e01fae49cc5ad244567daf5eaedc161b4c5a127b74a"
+    },
+    {
+      "en": "knowledge-base/en/docs/sequence-reset.md",
+      "zh": "knowledge-base/Cns/docs/序列动画RESET替换.md",
+      "kind": "public_reading",
+      "enSha256": "9c932e35e7660c4edf038f005402dc7d9941262217ca230614652025cd7fd028",
+      "zhSha256": "1ef04354ff72813ce1d1ae1272aaad6059bea7f8a6b3dfc66a73b727d14b27f7"
     }
   ],
   "registries": [
@@ -2652,7 +2666,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "e41d8caf770118af622ea403f2e49507f5ad5eb46522b65a0d610b002290c9f4"
+      "sha256": "c71631c5bc3f15fe956ad050741f70873f493335d798f2ec217d372c85666fc7"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2664,7 +2678,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "bc0504588982d77a97323b1ab875916f58db71f23fe6e565329c03a5d329e61b"
+      "sha256": "77eea9cc30312ddf80edb312273c9da1b4a13fc7e66504089f749d62ef67a7cf"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -3070,11 +3084,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "8bbe0bd52734c813495fa91c4f52dd4245cf5548514f9f2cf0eb64ddd88afc4f"
+      "sha256": "c0c73160bbca23a5d4a0f9f4f3d8dd67df2bcab8fbe6aeb844103d576d979c94"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "e1768bd3aa86d5d5b8cebe7e29e1190c1abc2004aca10a61b73a3667d49a98e1"
+      "sha256": "851e5ca49fd455f9f7526f1e962eb1fb7c846570ac2c731d18bffc2179d1f2a2"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3082,7 +3096,7 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "302ddec9f90a73fa9e4ab5ff415a2103052ab530ee70cd3c3d5f87e9651b3e1c"
+      "sha256": "2efee69ad02e6dcbac415dfdd252d115fa02e183c425a367452ae13abc9657a8"
     },
     {
       "path": "packages/runtime/src/NineSliceGeometry2D.ts",
@@ -3202,7 +3216,7 @@
     },
     {
       "path": "tools/prepush.mjs",
-      "sha256": "3361ad25ffb8eaefe1e2fb649a4527f596a04c4cd0fb0915991d277515dac5ab"
+      "sha256": "3daec108ff13e102857e2ffcd2364a65cf27bccb7c782bd0d5f5c9746ebd9745"
     },
     {
       "path": "packages/engine/web/image.ts",
@@ -3214,7 +3228,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "47539bdf0a7db1ca9ccca6d8d1fd8ea5702f696b9a266f0408d7d56349c41244"
+      "sha256": "b3b8a5871ebea6eb1550baa3902c1ea5cc009300c0bd1505639804020e5e69e7"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3246,7 +3260,7 @@
     },
     {
       "path": "tests/project-boundaries.test.mjs",
-      "sha256": "eca3426c4c2e5bb5a6097683dffcbf74b780ccacc27514d787c13c6de7ed04d2"
+      "sha256": "5e5a98353e90999880ae1d9091c5bafb65c4230bed12f43a0cff937663a3c153"
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/src/types.ts",
@@ -3362,7 +3376,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "4820df162a859727c32c5d2c312114d26af4e6aea202084ff24048b75019e909"
+      "sha256": "221d0cb33d4972ec3226a16acdc27052af270b4f4766a0e0bcea5536de3ca83e"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3834,7 +3848,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "1cef522f6017358c77dff5ef764c8cf7cb88c32801c794b90247edfb29eb35d3"
+      "sha256": "824693fcb13e450f7b3ee5e3faa941661b67a010cfe281732c6abb44a2da4298"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3862,7 +3876,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "fe3c647f26f0132f8209938ba6e3e60b5e76ec8db788ea24ce90dacc9e73eaea"
+      "sha256": "bf13305864a3a73f6964ee240c6812420460f64c7656f5b1adbc44c904e5c275"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -3870,7 +3884,7 @@
     },
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
-      "sha256": "10b73e76d90f19aa3cdb0c56c5b9ed7cfeafeb1fc65e90848a773ce064092356"
+      "sha256": "ab089381cf5ce962cdbbe24f4a38b6d89456fbc2855b29819d7f90f5ea7bac2d"
     },
     {
       "path": "packages/engine/web/webgpuBindingCache.ts",
@@ -4030,7 +4044,7 @@
     },
     {
       "path": "tools/check-push.mjs",
-      "sha256": "28b201d43bd84b7eb05b2b770a044a9a7d57e72416cd971452f08579736ca3dd"
+      "sha256": "4da973dee7d4e3f48d51288f3c296d602a09a3f5f8865b6f739b4a826c049400"
     },
     {
       "path": "packages/contracts/src/ResourceManifest.ts",
@@ -4206,11 +4220,11 @@
     },
     {
       "path": "packages/engine/src/animation/index.ts",
-      "sha256": "351f9bbdaa0f8d88accc0425fa1d6a4e330cd403b196026661e712d089ce3121"
+      "sha256": "0c3aa14fda74e361f46d1182c344231dca8db089bf3b01ce7acdfd9505aacc21"
     },
     {
       "path": "packages/engine/src/animation/sequenceController.ts",
-      "sha256": "0861f7683ec29eb44ef31a3baf2489b9a1fdf655bf83ec89aad4df9d1a0427cc"
+      "sha256": "ea476a5d41f62c0f5c9e1469efa9a8b2d124a01de53159af53984ff731a3a4e8"
     },
     {
       "path": "packages/engine/src/animation/sequenceCoordinator.ts",
@@ -4218,7 +4232,7 @@
     },
     {
       "path": "packages/engine/src/animation/sequenceInput.ts",
-      "sha256": "21f95b6bf8c67f931a0d5c94203e3e1d1e20c3e10c7d4304e01dfb96a75f8759"
+      "sha256": "96b3fc3d114c22b41f1a913ba886d01e2a2e310bd72407b33209675174951863"
     },
     {
       "path": "packages/engine/src/animation/sequenceMath.ts",
@@ -4246,11 +4260,11 @@
     },
     {
       "path": "packages/engine/src/contentLoader.ts",
-      "sha256": "7c7384f989d978591fc400536a6cd0958eb4175a4237989c44bd0a2841fb60cd"
+      "sha256": "a1db93dad35f49dd9a55f2f492bbf8d0ded1788f6a1ce2e405d88436edddd5e7"
     },
     {
       "path": "packages/engine/src/internal/contentFactoryState.ts",
-      "sha256": "99cf46638dca63be28550a114b212e04b7a461caa46951d0b12d322400c66106"
+      "sha256": "81a0d471ecf828289598239c5d68d32a3b2ced5d468380b95da3a019b5000d7c"
     },
     {
       "path": "packages/engine/src/paragraph.ts",
@@ -4527,6 +4541,54 @@
     {
       "path": "tests/ui-theme.test.mjs",
       "sha256": "5db0a26b2e94331cde98ea00355ae8cdc46d7c8dec16b31719927e939a3f3c9b"
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceResetSlot.ts",
+      "sha256": "ad8cf7106cfd8b37bcdca9d92448e0339f019e71111f71d255ef676e22de8a09"
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceResetTypes.ts",
+      "sha256": "3d40cd1cb3e1cdcff9a0020d8fec652e40c71381cc8e5ed3dd3e8c5d4403a45c"
+    },
+    {
+      "path": "tests/sequence-reset-fixture.mjs",
+      "sha256": "5f5ee66a3b3cbeacdd09aa617ee5fe5bcb015e2a70fdae4a7901d060b594c788"
+    },
+    {
+      "path": "tests/sequence-reset-types.test.mjs",
+      "sha256": "91ae0bb29e2b0c006806449c3926798b0ea4d3b22949ac9c6dd55444761aa111"
+    },
+    {
+      "path": "tests/sequence-reset.test.mjs",
+      "sha256": "fb0d5eb1e31ccec27346df1dc5e1b458894eb0d47276813679ba2825fe944e29"
+    },
+    {
+      "path": "tests/types/sequence-reset-negative.ts",
+      "sha256": "e45c8136b7ad21b1cbdd77761641e720fe4c19003a9710f40c2270d6dbebfc0f"
+    },
+    {
+      "path": "tests/types/sequence-reset-positive.ts",
+      "sha256": "dbf2760dc9fa579535a2408adb7e86c6fac93dc659d5177345e5283afacd2e4f"
+    },
+    {
+      "path": "examples/sequence-reset/author.mjs",
+      "sha256": "a8e20bd10ee23df6cbe486280dc5c421bf4cb715d62aa5b3f2a5dd81aa24d267"
+    },
+    {
+      "path": "examples/sequence-reset/main.mjs",
+      "sha256": "6ce78aa4d1153be93bbb51a703084828dc79df92013be32db1af682852181544"
+    },
+    {
+      "path": "examples/sequence-reset/verify.mjs",
+      "sha256": "b3365c44241351925892f582ee900f48be44cacdf43f5bb89302ddc66960445c"
+    },
+    {
+      "path": "tools/sequence-reset-types.mjs",
+      "sha256": "58aeeb64293b2d537a689dc2071a361c48ae52109bca4f646f61968a4a374a1c"
+    },
+    {
+      "path": "tools/check-test-baselines.mjs",
+      "sha256": "c53cbb86b68144e027b1b985860d2554d7471415f2c2c286bc131d27fa4f20b8"
     }
   ],
   "historicalSemanticReview": {

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, rmSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, rmSync, existsSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
@@ -1242,208 +1242,6 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       "static",
       "@egret/runtime"
     ]
-  ],
-  "packages/engine/src/animation/index.ts": [
-    [
-      "static",
-      "./sequenceController.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ]
-  ],
-  "packages/engine/dist/animation/index.js": [
-    [
-      "static",
-      "./sequenceController.js"
-    ]
-  ],
-  "packages/engine/dist/animation/index.d.ts": [
-    [
-      "static",
-      "./sequenceController.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ]
-  ],
-  "packages/engine/src/animation/sequenceController.ts": [
-    [
-      "static",
-      "../Engine.js"
-    ],
-    [
-      "static",
-      "../gameClockTypes.js"
-    ],
-    [
-      "static",
-      "../internal/sequenceControllerFactoryState.js"
-    ],
-    [
-      "static",
-      "../internal/sequenceControllerFactoryState.js"
-    ],
-    [
-      "static",
-      "./sequenceCoordinator.js"
-    ],
-    [
-      "static",
-      "./sequenceCoordinator.js"
-    ],
-    [
-      "static",
-      "./sequenceInput.js"
-    ],
-    [
-      "static",
-      "./sequenceInput.js"
-    ],
-    [
-      "static",
-      "./sequenceMath.js"
-    ],
-    [
-      "static",
-      "./sequenceMath.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/sequenceController.js": [
-    [
-      "static",
-      "../internal/sequenceControllerFactoryState.js"
-    ],
-    [
-      "static",
-      "./sequenceCoordinator.js"
-    ],
-    [
-      "static",
-      "./sequenceInput.js"
-    ],
-    [
-      "static",
-      "./sequenceMath.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/sequenceController.d.ts": [
-    [
-      "static",
-      "../Engine.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/src/animation/sequenceCoordinator.ts": [
-    [
-      "static",
-      "../gameClockTypes.js"
-    ],
-    [
-      "static",
-      "../internal/sequenceControllerFactoryState.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/sequenceCoordinator.js": [
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/sequenceCoordinator.d.ts": [
-    [
-      "static",
-      "../gameClockTypes.js"
-    ],
-    [
-      "static",
-      "../internal/sequenceControllerFactoryState.js"
-    ]
-  ],
-  "packages/engine/src/animation/sequenceInput.ts": [
-    [
-      "static",
-      "./sequenceMath.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/sequenceInput.js": [
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/sequenceInput.d.ts": [
-    [
-      "static",
-      "./sequenceMath.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ]
-  ],
-  "packages/engine/src/animation/sequenceMath.ts": [
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/sequenceMath.js": [
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/sequenceMath.d.ts": [],
-  "packages/engine/src/animation/types.ts": [
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/types.js": [],
-  "packages/engine/dist/animation/types.d.ts": [
-    [
-      "static",
-      "@egret/runtime"
-    ]
   ]
 };
     for(const [file,edges]of Object.entries(m22FixtureGraph)){
@@ -1452,10 +1250,6 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       const needed=[...edges];for(const target of present){const index=needed.findIndex(edge=>edge[1]===target);if(index>=0)needed.splice(index,1);}
       write(file,existing+'\n'+needed.map(([,target])=>'import '+(file.endsWith('.ts')?'type {SequenceFixtureType} from ':'')+JSON.stringify(target)+';').join('\n')+'\n');
     }
-    const sequenceTypes=["SequenceMarker","SequenceControllerOptions","SequenceControllerState","SequenceEventSource","SequenceControllerEvent","SequenceSeekRequest","SequenceControllerStatus","SequenceController"];
-    for(const [file,typed]of [['packages/engine/src/animation/index.ts',true],['packages/engine/dist/animation/index.js',false],['packages/engine/dist/animation/index.d.ts',true]])write(file,"export {createSequenceController} from './sequenceController.js';\n"+(typed?"export type {"+sequenceTypes.join(',')+"} from './types.js';\n":''));
-    write('packages/engine/dist/animation/types.js','export {};\n');
-    write('node_modules/@egret/engine/animation.js','export function createSequenceController() {}\n');
     // Current content closure is copied only for policy/resolution inspection.
     // The fixture remains inert: no loader, parser, assets or native work is run.
     for (const file of [
@@ -2133,12 +1927,32 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       const needed=[...edges];for(const target of present){const index=needed.findIndex(edge=>edge[1]===target);if(index>=0)needed.splice(index,1);}
       write(file,original+'\n'+needed.map(([kind,target],index)=>kind==='dynamic'?'const effectDynamic'+index+'=()=>import('+JSON.stringify(target)+');':'import '+JSON.stringify(target)+';').join('\n')+'\n');
     }
+    // Current sequence prerequisites are fixture inputs, never the approval oracle.
+    // Copy source/declarations and project only inert imports/exports from emissions.
+    // The unchanged checker and fixed negative cases independently enforce names and edges.
+    function currentSequencePolicyOwner(file){
+      const original=readFileSync(path.join(repository,file),'utf8');
+      if(!file.endsWith('.js')){write(file,original);return;}
+      const clean=original.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
+      for(const match of clean.matchAll(/\bexport\s+([^\n]+)/g))assert.match(match[1],/^(?:\{|\*|(?:async\s+)?function\b)/,'Unsupported inert sequence export: '+file);
+      const clauses=[...clean.matchAll(/\b(import|export)\s*(?:\{[^}]+\}\s*from\s*|\*\s*from\s*)?['"]([^'"]+)['"]\s*;?/g)];
+      const ports=clauses.map(match=>match[1]==='export'||match[2]==='@egret/contracts/resources'?match[0]:'import '+JSON.stringify(match[2])+';');
+      const functions=[...clean.matchAll(/\bexport\s+(?:async\s+)?function\s+(\w+)/g)].map(match=>'export function '+match[1]+"() { throw new Error('Synthetic policy fixture only'); }");
+      write(file,ports.join('\n')+'\n'+functions.join('\n')+'\n');
+    }
+    for(const entry of readdirSync(path.join(repository,'packages/engine/src/animation'),{withFileTypes:true})){
+      assert.equal(entry.isFile(),true,'Only regular optional sequence inputs are projected');assert.ok(entry.name.endsWith('.ts'));
+      const name=entry.name.slice(0,-3);
+      for(const file of ['packages/engine/src/animation/'+name+'.ts','packages/engine/dist/animation/'+name+'.js','packages/engine/dist/animation/'+name+'.d.ts'])currentSequencePolicyOwner(file);
+    }
+    for(const name of ['contentLoader','internal/contentFactoryState'])for(const file of ['packages/engine/src/'+name+'.ts','packages/engine/dist/'+name+'.js','packages/engine/dist/'+name+'.d.ts'])currentSequencePolicyOwner(file);
+    write('node_modules/@egret/engine/animation.js',"export * from '../../../packages/engine/dist/animation/index.js';\n");
     if(sequenceMutation){
       const baseline=spawnSync(process.execPath,['tools/check-boundaries.mjs'],{cwd:root,encoding:'utf8'});
       assert.equal(baseline.status,0,'fresh sequence policy baseline: '+baseline.stdout+baseline.stderr);
       const edits={
         'extra-value':['node_modules/@egret/engine/animation.js','export const extraSequence=1;\n'],
-        'extra-type':['packages/engine/dist/animation/index.d.ts','export interface ExtraSequence {}\n'],
+        'extra-type':['packages/engine/dist/animation/index.d.ts','\nexport interface ExtraSequence {}\n'],
         'types-value':['packages/engine/dist/animation/types.js','export const badSequenceType=1;\n'],
         'root-type':['packages/engine/dist/index.d.ts','export interface SequenceController {}\n'],
         'root-edge':['packages/engine/src/ProbeSequence.ts',"import './animation/sequenceController.js';\n"],
@@ -2298,10 +2112,10 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         assert.equal(comparatorSource.split(marker).length,2,'one exact M15 comparator marker');
       for(const marker of ['// S3D1_BOUNDARY_BEGIN','// S3D1_BOUNDARY_END'])
         assert.equal(comparatorSource.split(marker).length,2,'one exact S3D1 comparator marker');
-      const sequenceClosureDeclarations=[...comparatorSource.matchAll(/^const m22SequenceLiteralClosure = (\{[\s\S]*?^\});$/gm)];
-      assert.equal(sequenceClosureDeclarations.length,1,'one exact current sequence closure declaration');
-      assert.doesNotThrow(()=>JSON.parse(sequenceClosureDeclarations[0][1]),'retained current sequence closure is pure JSON');
-      const sequenceClosureDeclaration=sequenceClosureDeclarations[0][0];
+      const sequenceClosureDeclarations=[...comparatorSource.matchAll(/^const (m22SequenceLiteralClosure|sequenceResetLiteralClosure) = (\{[\s\S]*?^\});$/gm)];
+      assert.deepEqual(sequenceClosureDeclarations.map(match=>match[1]).sort(),['m22SequenceLiteralClosure','sequenceResetLiteralClosure'],'both exact current sequence closure declarations');
+      for(const match of sequenceClosureDeclarations)assert.doesNotThrow(()=>JSON.parse(match[2]),'retained sequence closure is pure JSON');
+      const sequenceClosureDeclaration=sequenceClosureDeclarations.map(match=>match[0]).join('\n');
       const predecessor=comparatorSource.replace(/\/\/ S3D1_BOUNDARY_BEGIN[\s\S]*?\/\/ S3D1_BOUNDARY_END\r?\n/,sequenceClosureDeclaration+'\n')
         .replace(/\/\/ M15_RESOURCE_RECOVERY_BOUNDARY_BEGIN[\s\S]*?\/\/ M15_RESOURCE_RECOVERY_BOUNDARY_END\r?\n/,'');
       assert.equal(predecessor.includes('M15_RESOURCE_RECOVERY_BOUNDARY_BEGIN'),false);

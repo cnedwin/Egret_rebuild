@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/animation/sequenceResetSlot.ts",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceResetTypes.ts",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/sequence-reset-fixture.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/sequence-reset-types.test.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/sequence-reset.test.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/sequence-reset-negative.ts",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/sequence-reset-positive.ts",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/tsconfig.sequence-reset-negative.json",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency."
+    },
+    {
+      "path": "tests/types/tsconfig.sequence-reset-positive.json",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency."
+    },
+    {
+      "path": "examples/sequence-reset/author.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/sequence-reset/main.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/sequence-reset/index.html",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency."
+    },
+    {
+      "path": "examples/sequence-reset/verify.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/sequence-reset/README.md",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency."
+    },
+    {
+      "path": "examples/sequence-reset/README.zh-CN.md",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency."
+    },
+    {
+      "path": "examples/sequence-reset/verification-summary.json",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency."
+    },
+    {
+      "path": "knowledge-base/en/docs/sequence-reset.md",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/序列动画RESET替换.md",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency."
+    },
+    {
+      "path": "tools/sequence-reset-types.mjs",
+      "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/check-test-baselines.mjs",
+      "originRole": "Independently authored first-party bounded shared test prerequisite runner for current sequence delivery; AI-assisted; Apache-2.0. Reuses existing positive controls and preserves complete protected gates. No new dependency.",
+      "criticalComment": true
+    }
+  ],
+  "frozenInputs": [
+    {
+      "path": "tests/types/sequence-reset-diagnostic-expectations.json",
+      "bytes": 43863,
+      "sha256": "ad21adbf614cc162976023b5db951055253b1cf1486208cec461f013a85bab51",
+      "originRole": "First-party immutable sequence RESET compiler diagnostic observations from the pinned compiler and built optional entry; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/sequence-reset/README.md",
+      "zh": "examples/sequence-reset/README.zh-CN.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/sequence-reset.md",
+      "zh": "knowledge-base/Cns/docs/序列动画RESET替换.md"
+    }
+  ]
+}

@@ -217,3 +217,5 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/web
 ## M3.1 托管 UI 单元验证
 
 仅 `tests/ui-display-commit.test.mjs`、`tests/ui-layout-unit.test.mjs` 和 `tests/ui-height-index-unit.test.mjs` 可直接使用构建后的可选 `@egret/runtime/ui` 组合入口，验证有界数值与托管发布单元。运行时身份测试使用真实公共运行时对象和测试自有上下文；输入数组 getter/Proxy 仅用于准入控制，不作为被接受的 Engine 外观。不得引入私有模块导入、原型或全局拦截及新增测试 API。公共生命周期、布局和列表测试使用真实 Engine/Scope 及 `@egret/engine/ui`。单元结果不能证明浏览器像素、物理内存、手机输入或性能通过。
+
+共享源码／API／工具变更沿正常推送入口构建，并在发布前执行三个公共基线正例。整合合并入口复用其构建执行同一检查，完整门禁保持。夹具前置条件缺失／失效不等于目标变异断言失败；保留原结果并修复所有者／依赖，不放宽预期拒绝。参见工程计划的交付分层。

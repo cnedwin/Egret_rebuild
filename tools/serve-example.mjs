@@ -21,6 +21,8 @@ export function createExampleServer(repository=root){
   if(relative.startsWith('vendor/robust-predicates/'))relative=dependency+relative.slice('vendor/robust-predicates/'.length);
   // Only this example's generated manifest/artifact layout is exposed under work.
   const allowed=/^work\/font-resources\/run-[A-Za-z0-9]{6}\/(?:browser-config\.json|build\/generations\/[a-f0-9]{64}\/manifest\.json|build\/blobs\/sha256\/[a-f0-9]{64})$/.test(relative)
+   ||/^examples\/sequence-reset\/(?:index\.html|main\.mjs)$/.test(relative)
+   ||/^work\/sequence-reset\/run-[A-Za-z0-9]{6}\/(?:config\.json|(?:v1|v2)\/build\/(?:generations\/[a-f0-9]{64}\/manifest\.json|blobs\/sha256\/[a-f0-9]{64}))$/.test(relative)
    ||relative==='tools/shared-rendering/resource-recovery-observations.mjs'
    ||/^examples\/spine-reset\/(?:index\.html|main\.mjs|recovery-flow\.mjs|recovery-native\.mjs)$/.test(relative)
    ||/^work\/spine-reset\/(?:v1|v2)\/(?:manifest\.json|assets\/(?:body|head|atlas|character))$/.test(relative)

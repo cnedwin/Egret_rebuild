@@ -1,0 +1,1182 @@
+{
+  "format": "egret.sequence-reset-strict/1",
+  "compiler": {
+    "version": "7.0.2",
+    "platform": "win32",
+    "arch": "x64",
+    "wrapper": [
+      {
+        "path": "package.json",
+        "bytes": 3087,
+        "sha256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+      },
+      {
+        "path": "bin/tsc",
+        "bytes": 44,
+        "sha256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
+      },
+      {
+        "path": "lib/tsc.js",
+        "bytes": 609,
+        "sha256": "cbdfbf11c26ed00dfc073155e316a42d6d6d8a387be61006b82fa9aa93ac572e"
+      },
+      {
+        "path": "lib/getExePath.js",
+        "bytes": 3051,
+        "sha256": "96c10fd3a18e165d7323de8e314ac8d755ad96811f9fbc304a5b3ba4e05285cc"
+      }
+    ],
+    "native": [
+      {
+        "path": "package.json",
+        "bytes": 1042,
+        "sha256": "6d8ec7623880a902bb225c53571112e2bbf0273412b2c534070b1193d2be0f6b"
+      },
+      {
+        "path": "lib/tsc.exe",
+        "bytes": 24520544,
+        "sha256": "f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7"
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "path": "packages/contracts/dist/CancellationSignal.d.ts",
+      "bytes": 558,
+      "sha256": "879eb0ae6c8b5b305930f8770298f286259992a69b6653a25ea24b1944fe0a45"
+    },
+    {
+      "path": "packages/contracts/dist/Diagnostic.d.ts",
+      "bytes": 532,
+      "sha256": "6f1d73cb7d31a3bf11427f6b856eb1b2ea0cb28eefbc9b67c0518652ee612c59"
+    },
+    {
+      "path": "packages/contracts/dist/Disposable.d.ts",
+      "bytes": 441,
+      "sha256": "989546b49c6a87bfc04487d6fe166aeea81650049efbbd7615476d36021b88c5"
+    },
+    {
+      "path": "packages/contracts/dist/HostAdapter.d.ts",
+      "bytes": 907,
+      "sha256": "2830519734a7957ffa6aa70998f01f87f1d00f80bafcc4fc114133b5c38d5458"
+    },
+    {
+      "path": "packages/contracts/dist/ImageData2D.d.ts",
+      "bytes": 1563,
+      "sha256": "48984b068c63562aae1abb3c2561573aeeb31e1f390595ec357dbd87a61673a7"
+    },
+    {
+      "path": "packages/contracts/dist/Point2D.d.ts",
+      "bytes": 193,
+      "sha256": "f0d8ca89c643a80fd96031ef8267969fd12c212a319ce8ddb3f8b81e0f8c76e5"
+    },
+    {
+      "path": "packages/contracts/dist/ProjectFormat.generated.d.ts",
+      "bytes": 4161,
+      "sha256": "6feed3c80a4ceb9d9c6b2c299ee5e5d11a2f5c0b145b58e855ce8443e3b2de11"
+    },
+    {
+      "path": "packages/contracts/dist/RenderFrame2D.d.ts",
+      "bytes": 1799,
+      "sha256": "a1bceb2e8135c3fea5fb981c661ac45244ed792899c7fb3f2cf7ff9934e83492"
+    },
+    {
+      "path": "packages/contracts/dist/ResourceManifest.d.ts",
+      "bytes": 2890,
+      "sha256": "8e8ab318a772ffc6be3a04cead885f5f3f625de0d6b87088a2a9b32b4031e8d4"
+    },
+    {
+      "path": "packages/contracts/dist/SharedGeometry2D.d.ts",
+      "bytes": 1243,
+      "sha256": "6ebfdcfb29d99199360b2754e9f3c67090aacf7d7bb32b36fb44985c45ecae10"
+    },
+    {
+      "path": "packages/contracts/dist/SharedMaterial2D.d.ts",
+      "bytes": 1674,
+      "sha256": "d74f46a568cc7b67878bbe57b2365d5b3c1bb70e90ac6e963448cacb1b4f3974"
+    },
+    {
+      "path": "packages/contracts/dist/SharedRenderFrame2D.d.ts",
+      "bytes": 3862,
+      "sha256": "5fda1dd213babadcc6545494ab8a63e8081c4269ae01553fc590b2a1c54c9ccf"
+    },
+    {
+      "path": "packages/contracts/dist/TextureViewRegion2D.d.ts",
+      "bytes": 765,
+      "sha256": "7ce875bc19801847f9b7bfe28586c06a305a0f44491fbba785bc828d158de030"
+    },
+    {
+      "path": "packages/contracts/dist/TexturedGeometry2D.d.ts",
+      "bytes": 1186,
+      "sha256": "dbc403a70e6ebdd39346260c3a965b1ac8dbb3e5bfcad21c402d34d4ae0f500e"
+    },
+    {
+      "path": "packages/contracts/dist/TexturedRenderFrame2D.d.ts",
+      "bytes": 1634,
+      "sha256": "11f7c7967e2142906717c2c2a744611cff6e435b3021e9d537ba61a3cd0ab351"
+    },
+    {
+      "path": "packages/contracts/dist/index.d.ts",
+      "bytes": 2550,
+      "sha256": "119a1bcc358036b23cf868676eaff6ea236ab6aeb87fa8681cd8c70546e8f62e"
+    },
+    {
+      "path": "packages/contracts/dist/resources/fontArtifact.d.ts",
+      "bytes": 292,
+      "sha256": "a9dbd1b40727ccb99733c058fbd12574c87c3d3ae193ac67edc4cc0232040969"
+    },
+    {
+      "path": "packages/contracts/dist/resources/index.d.ts",
+      "bytes": 726,
+      "sha256": "e0d9168eac88cfe713334a0fe874dd9a0ab92003859cdee0295550001810bbe1"
+    },
+    {
+      "path": "packages/contracts/dist/resources/manifestAdmission.d.ts",
+      "bytes": 1259,
+      "sha256": "880db4a26ec673f0704dfe68378d8ecead13fe08d09bf11307879df4794e9e57"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "bytes": 319,
+      "sha256": "f40591968003b235cddf38a576c1250a28ef965726750d377f0691a8e6f48e9e"
+    },
+    {
+      "path": "packages/engine/dist/Engine.d.ts",
+      "bytes": 5576,
+      "sha256": "77a535493e1224c3df9364cbf7578d041a3f35bf882ef748407e2286291bbabd"
+    },
+    {
+      "path": "packages/engine/dist/animation/index.d.ts",
+      "bytes": 659,
+      "sha256": "b2ea868936a3a59dcd6809b2eb83cabd1c3dee928a33eaeba031f1cb39149c02"
+    },
+    {
+      "path": "packages/engine/dist/animation/index.js",
+      "bytes": 309,
+      "sha256": "bb550143ab0c4fd79899fd4e9a61df5facabc41e4c66fd84dada1e2ee8a3263f"
+    },
+    {
+      "path": "packages/engine/dist/animation/sequenceController.d.ts",
+      "bytes": 823,
+      "sha256": "661a778583e81a6ce6b80c54717292c5ca9d7fecaafcb73c7bd3cd9ef2d53655"
+    },
+    {
+      "path": "packages/engine/dist/animation/sequenceController.js",
+      "bytes": 20640,
+      "sha256": "19da7eb93a39ca8ae5cc785efc4bdc9cfd598b3e23f2ff62f7ccfb966760efc5"
+    },
+    {
+      "path": "packages/engine/dist/animation/sequenceInput.d.ts",
+      "bytes": 966,
+      "sha256": "930abcd5eaa13c87defb07252ca0bb3eb8669f947c5d61085c38f3f3aebc57b1"
+    },
+    {
+      "path": "packages/engine/dist/animation/sequenceInput.js",
+      "bytes": 4565,
+      "sha256": "2678e8aa2cc78e91e725f679688cadeaa1e008d91a91c4580461ca4efe71304a"
+    },
+    {
+      "path": "packages/engine/dist/animation/sequenceResetSlot.d.ts",
+      "bytes": 536,
+      "sha256": "0bd61a716499b0b195100b8c354545d77e171b1d26ae2e4fe3ad648a9211e531"
+    },
+    {
+      "path": "packages/engine/dist/animation/sequenceResetSlot.js",
+      "bytes": 13497,
+      "sha256": "2a7dfe8767b6db5acf99f18f2bab7549a31e3d3e958936cde552d0a03215238b"
+    },
+    {
+      "path": "packages/engine/dist/animation/sequenceResetTypes.d.ts",
+      "bytes": 1783,
+      "sha256": "277f71a5106cf2d56fc9d95237c88349b26dfe72ba80c41441a9bd62a6209cd5"
+    },
+    {
+      "path": "packages/engine/dist/animation/sequenceResetTypes.js",
+      "bytes": 57,
+      "sha256": "da8ac3ec5c360688bc5cd02c760a818b202cbd1d3eaedc029fe8f33d66fba6c7"
+    },
+    {
+      "path": "packages/engine/dist/animation/types.d.ts",
+      "bytes": 2318,
+      "sha256": "4c5c89a2959326bdf35fd897aae7dd91181a79fd2e8ca4d1e17c27285d25db6e"
+    },
+    {
+      "path": "packages/engine/dist/assetGroupTypes.d.ts",
+      "bytes": 570,
+      "sha256": "79152aa2f2e6e401c20370d029cdc9317aeeacd98cff785e5b62f5f9c530412a"
+    },
+    {
+      "path": "packages/engine/dist/bitmapBindingTicket.d.ts",
+      "bytes": 1067,
+      "sha256": "226ee4bd1371fa8e77d3e07d79b1ae26260c762f617d4a1352500abd5a023799"
+    },
+    {
+      "path": "packages/engine/dist/bitmapResourceSlot.d.ts",
+      "bytes": 1260,
+      "sha256": "3432f949713060763588c44e983002c64ea96cdc63b9b2c09e21fbcc63ff489d"
+    },
+    {
+      "path": "packages/engine/dist/contentLoader.d.ts",
+      "bytes": 471,
+      "sha256": "521a64dc5722200d641862a8d22db54a44238338942d3b8bcddb7d46935bd65a"
+    },
+    {
+      "path": "packages/engine/dist/contentLoader.js",
+      "bytes": 14835,
+      "sha256": "86e04ef4e3188ca5b49b1e86c1fa222ebc5491c95051f275434142e34b58fff9"
+    },
+    {
+      "path": "packages/engine/dist/contentTypes.d.ts",
+      "bytes": 1605,
+      "sha256": "76b9ee93052d430f17ce3888e31765878f1198966ad38e1bca6af71e586457f5"
+    },
+    {
+      "path": "packages/engine/dist/createEngine.d.ts",
+      "bytes": 265,
+      "sha256": "52df9ef4a105e19b7d2927e76015d6e759c15f44c63d9e662217a067e1085ea4"
+    },
+    {
+      "path": "packages/engine/dist/createEngineForProfile.d.ts",
+      "bytes": 420,
+      "sha256": "73e49757ebd1aad07b5e37be6f64d46f911e27079baf406ad14fd3bdc5468547"
+    },
+    {
+      "path": "packages/engine/dist/displaySubtreeTicket.d.ts",
+      "bytes": 1128,
+      "sha256": "378e77f6c08b7f733e1df335ab42b14d96e6c5b8e49b214b6e35ee946b4278da"
+    },
+    {
+      "path": "packages/engine/dist/fontContentLoader.d.ts",
+      "bytes": 502,
+      "sha256": "a8a28e395c54926955bb5eeaac516fcb40f8c8da0c8e80844d60fb544e2b1452"
+    },
+    {
+      "path": "packages/engine/dist/fontContentTypes.d.ts",
+      "bytes": 1270,
+      "sha256": "d635969adaecbdcec280c826b35a450a5178d8a063ee57d6585147c6a3ef138d"
+    },
+    {
+      "path": "packages/engine/dist/gameClock.d.ts",
+      "bytes": 1051,
+      "sha256": "6570f41ff138b59aae0d0b53ad70d36dd14ecc96a805440bb3d1f9a6d23b63a2"
+    },
+    {
+      "path": "packages/engine/dist/gameClockTypes.d.ts",
+      "bytes": 1059,
+      "sha256": "e582e2aa4aa3e80a2907db49dc5e3fd54c1008241530e8dc8c97ee6c411061a0"
+    },
+    {
+      "path": "packages/engine/dist/index.d.ts",
+      "bytes": 4337,
+      "sha256": "7668be2213f241d88278761845f1b253d75461d61988d8ce791deb33aaa94166"
+    },
+    {
+      "path": "packages/engine/dist/internal/contentFactoryState.d.ts",
+      "bytes": 1260,
+      "sha256": "fc09fc76429000e7d6e51cf37d15a221003814832b218f5412706e201aca14c0"
+    },
+    {
+      "path": "packages/engine/dist/internal/contentFactoryState.js",
+      "bytes": 1085,
+      "sha256": "1e9f75627a4a24593da30a77ba23f8814092484cbeaa969ef23ecc56a18f1ff3"
+    },
+    {
+      "path": "packages/engine/dist/internal/sequenceControllerFactoryState.d.ts",
+      "bytes": 1744,
+      "sha256": "d39891b4bbe7a78b221e780d83235880d4ea9c294002d421dc3e56fe74e5117e"
+    },
+    {
+      "path": "packages/engine/dist/manifestResourceState.d.ts",
+      "bytes": 1085,
+      "sha256": "a028ede85a654bf12c5a06cd9dfc63d5b004feef4d7b2669e5ebf3b943b10220"
+    },
+    {
+      "path": "packages/engine/dist/manifestResourceTypes.d.ts",
+      "bytes": 1046,
+      "sha256": "fa13b4a57c8df55b6bd14647168d43d667add5c4fa1a9fe3204ae22693dde39c"
+    },
+    {
+      "path": "packages/engine/dist/resources.d.ts",
+      "bytes": 725,
+      "sha256": "0feaab28b80fdd22023c6764a296b40a6af9b37c5708bced08ac4ca9a25e54f8"
+    },
+    {
+      "path": "packages/engine/dist/sequencePlaybackTypes.d.ts",
+      "bytes": 798,
+      "sha256": "7670a7b455167beca3aab6729261ac0ad1eb980327e67d13f12132570e67c5cf"
+    },
+    {
+      "path": "packages/engine/dist/sequenceTargetClaims.d.ts",
+      "bytes": 465,
+      "sha256": "e05aab88aee6e174ae1f1d6dce46c76beaa8ae91dd18460e88b190089687550f"
+    },
+    {
+      "path": "packages/engine/dist/tweenTypes.d.ts",
+      "bytes": 903,
+      "sha256": "398c52fa8e854640a9aeac542610a87c7ce1f856e9cb1d88eab4eb000c1821b9"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "bytes": 3172,
+      "sha256": "93aa97c85bf7c58d9ff462851f1f63aa101aa3a73bf07d2b0518dc14189cec61"
+    },
+    {
+      "path": "packages/engine/src/animation/index.ts",
+      "bytes": 661,
+      "sha256": "0c3aa14fda74e361f46d1182c344231dca8db089bf3b01ce7acdfd9505aacc21"
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceController.ts",
+      "bytes": 21915,
+      "sha256": "ea476a5d41f62c0f5c9e1469efa9a8b2d124a01de53159af53984ff731a3a4e8"
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceInput.ts",
+      "bytes": 5115,
+      "sha256": "96b3fc3d114c22b41f1a913ba886d01e2a2e310bd72407b33209675174951863"
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceResetSlot.ts",
+      "bytes": 10893,
+      "sha256": "ad8cf7106cfd8b37bcdca9d92448e0339f019e71111f71d255ef676e22de8a09"
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceResetTypes.ts",
+      "bytes": 1717,
+      "sha256": "3d40cd1cb3e1cdcff9a0020d8fec652e40c71381cc8e5ed3dd3e8c5d4403a45c"
+    },
+    {
+      "path": "packages/engine/src/contentLoader.ts",
+      "bytes": 13817,
+      "sha256": "a1db93dad35f49dd9a55f2f492bbf8d0ded1788f6a1ce2e405d88436edddd5e7"
+    },
+    {
+      "path": "packages/engine/src/internal/contentFactoryState.ts",
+      "bytes": 1967,
+      "sha256": "81a0d471ecf828289598239c5d68d32a3b2ced5d468380b95da3a019b5000d7c"
+    },
+    {
+      "path": "packages/runtime/dist/AssetLease.d.ts",
+      "bytes": 1384,
+      "sha256": "2885d23e59a1480e14b938e821f36b6d88d656c579c3b3d5c2ea1232c21d02d2"
+    },
+    {
+      "path": "packages/runtime/dist/AssetManager.d.ts",
+      "bytes": 2431,
+      "sha256": "09a4874125059aa2cd2cce4783356e40682aa3f1b14f663f366974e00d3e6cdf"
+    },
+    {
+      "path": "packages/runtime/dist/AssetRef.d.ts",
+      "bytes": 1045,
+      "sha256": "70269fb27fab57ef723cbf110b319b6eaf25cb6fafea6a4f7298b502da74f038"
+    },
+    {
+      "path": "packages/runtime/dist/Bitmap.d.ts",
+      "bytes": 2135,
+      "sha256": "f0b750c75909d8a5ebab613f7dbfdead941e0c33b22a3c2e8bdb054bbd0b959b"
+    },
+    {
+      "path": "packages/runtime/dist/ByteReader.d.ts",
+      "bytes": 1113,
+      "sha256": "cb1d6ea88a6b328d8743586de2b3227695ec465d791287b6324cfc51ebccc1f1"
+    },
+    {
+      "path": "packages/runtime/dist/ByteWriter.d.ts",
+      "bytes": 1176,
+      "sha256": "9635d492462ee280cdf10f04cf9cbd8bb324f00d61b5da463e37fef4baceec6e"
+    },
+    {
+      "path": "packages/runtime/dist/CancellationController.d.ts",
+      "bytes": 460,
+      "sha256": "3830c9f09cfcf3e65045ec15d15e40ec0c135643094052de87a391ab9e2c39d3"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObject.d.ts",
+      "bytes": 3187,
+      "sha256": "db62503de2961701af2af2bb4c08105058328ba69710eee3c0e58366bf277214"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObjectContainer.d.ts",
+      "bytes": 1398,
+      "sha256": "25efac66478e4d27b2499fc8e235df14b7c58b654b9a437c5e38ec9e6683e1a8"
+    },
+    {
+      "path": "packages/runtime/dist/EgretError.d.ts",
+      "bytes": 429,
+      "sha256": "64a9381cf216c798abb4edbfa2297920a772d98da3d6e6c252d5b6b53d77beb6"
+    },
+    {
+      "path": "packages/runtime/dist/Event.d.ts",
+      "bytes": 1932,
+      "sha256": "07783b2abf657e3f04642a169bd85f2738335023fa1fa0223039a17e8a2633c0"
+    },
+    {
+      "path": "packages/runtime/dist/EventDispatcher.d.ts",
+      "bytes": 1315,
+      "sha256": "33f2fc85b97cd9ef9e3992088d48e8dcfe7b645fc5be8fb7dcb9dd39904e8832"
+    },
+    {
+      "path": "packages/runtime/dist/Graphics.d.ts",
+      "bytes": 457,
+      "sha256": "7a85b42e6dddedbb38f5386f5770abfd3200b2df9e06c3ccad8fa7a9afcda1b9"
+    },
+    {
+      "path": "packages/runtime/dist/Mesh2D.d.ts",
+      "bytes": 1461,
+      "sha256": "e004d9805c2a543275c746bd0fd3c75fff54379a4d80c36baaa4d2813c3c392b"
+    },
+    {
+      "path": "packages/runtime/dist/NineSliceBitmap.d.ts",
+      "bytes": 1137,
+      "sha256": "3b416fea7ed69624c1e5d3ff4ee33897f985d0bee05dcd5709be0549ed90820e"
+    },
+    {
+      "path": "packages/runtime/dist/NineSliceGeometry2D.d.ts",
+      "bytes": 745,
+      "sha256": "938e8d24e7975d85d002b1ae6cd67a13a32354f568edab60f310ce86408a0bfc"
+    },
+    {
+      "path": "packages/runtime/dist/Scope.d.ts",
+      "bytes": 909,
+      "sha256": "09895cf2631b648e5f7a13b28fd44f6d2cb34b5782055d7099c899d84b37cc8a"
+    },
+    {
+      "path": "packages/runtime/dist/SequencePlayer.d.ts",
+      "bytes": 621,
+      "sha256": "eaeacc493b410347e8a8b0e213124e76671025654bfb3548a9930a55b9155562"
+    },
+    {
+      "path": "packages/runtime/dist/Sprite.d.ts",
+      "bytes": 340,
+      "sha256": "441f96533f1c2ba3922b4fcce500ea57210481b04583cae06ee2f257f37a98bc"
+    },
+    {
+      "path": "packages/runtime/dist/Stage.d.ts",
+      "bytes": 773,
+      "sha256": "a17ef53c3acfd5c24562775d833982267f8935756d1e7e2cc826e65e29949af7"
+    },
+    {
+      "path": "packages/runtime/dist/Texture.d.ts",
+      "bytes": 1388,
+      "sha256": "04aebb73bf1c3001edab3ec5f20bf2e66fef582dd3b1f57ecf560f4895ed83a2"
+    },
+    {
+      "path": "packages/runtime/dist/assetManagerOwnerState.d.ts",
+      "bytes": 2453,
+      "sha256": "b5f503523de0c2601bcb7f799f703a6b8b94d0ef7628e57d1b087bc3b7719435"
+    },
+    {
+      "path": "packages/runtime/dist/assetState.d.ts",
+      "bytes": 1604,
+      "sha256": "daa71107f0cd3f24d4cb33ac8c2fcf5eff15c18955c84d0262cafaa0c3335b69"
+    },
+    {
+      "path": "packages/runtime/dist/atlasFrameLayout.d.ts",
+      "bytes": 983,
+      "sha256": "d3aa9317e01e8038819d1e3bf577ff144378915baeee986c8407643d419c6c5a"
+    },
+    {
+      "path": "packages/runtime/dist/bitmapDisplayState.d.ts",
+      "bytes": 1314,
+      "sha256": "1109c3117858f742655c70dbd361ea6cfeba567914f5edc6fa719575ad232715"
+    },
+    {
+      "path": "packages/runtime/dist/diagnostics.d.ts",
+      "bytes": 305,
+      "sha256": "85d3079ff62e0bf3df95281a5a2917e021310c52acc7d662ee859986e5d86a03"
+    },
+    {
+      "path": "packages/runtime/dist/displayBounds.d.ts",
+      "bytes": 471,
+      "sha256": "ce01298209c912f1da370e604289c2e48cc100f20f7dfefcf1758c3b42965d1b"
+    },
+    {
+      "path": "packages/runtime/dist/displayCoordinates.d.ts",
+      "bytes": 459,
+      "sha256": "4a686f27518c2702d7a3382fcbe31cf9ae652be5a06527579d7e4f5a63707326"
+    },
+    {
+      "path": "packages/runtime/dist/displayHitTest.d.ts",
+      "bytes": 459,
+      "sha256": "f188955114496a0f76b79afb17e2f205519db53405f25606c8c0649c591899d5"
+    },
+    {
+      "path": "packages/runtime/dist/displayInputOperations.d.ts",
+      "bytes": 709,
+      "sha256": "5b8b2729d9b3c10efccce66d5715762f8a9465f92718e779695e3db1337326cd"
+    },
+    {
+      "path": "packages/runtime/dist/displayTreeState.d.ts",
+      "bytes": 6093,
+      "sha256": "8a226f508c3a29e6368dd876debc26c12225719d135a2bcbd46d31618541f159"
+    },
+    {
+      "path": "packages/runtime/dist/frameCapture.d.ts",
+      "bytes": 643,
+      "sha256": "65e1557f23d4d32f1103d81705ad0eda79c30e7c0c907a5fb5758d1eafd3b8bb"
+    },
+    {
+      "path": "packages/runtime/dist/index.d.ts",
+      "bytes": 3266,
+      "sha256": "f89d477fe5e053cdfd03ec0c530695811a7bdabc334dbe075f068341e008a9ff"
+    },
+    {
+      "path": "packages/runtime/dist/ownership.d.ts",
+      "bytes": 4799,
+      "sha256": "1472f3f383aca0955159e839c50d0674ca122a708078b84b058b33b3aa0ff776"
+    },
+    {
+      "path": "packages/runtime/dist/renderEffect.d.ts",
+      "bytes": 688,
+      "sha256": "bc13e6d9f7cc725322103e7d844aab4484e34b8667360c9a203952ec917b362f"
+    },
+    {
+      "path": "packages/runtime/dist/sequenceClip.d.ts",
+      "bytes": 1480,
+      "sha256": "09c7e3e0d5c6fb0f24dfb5848c57b581e71f7df8c507d608a99de7982c8fea9b"
+    },
+    {
+      "path": "packages/runtime/dist/sharedFrameCapture.d.ts",
+      "bytes": 1384,
+      "sha256": "f8d16044fc809f5e0e13e58a2b431d1d77b25f61a526b87912ffd922e3f0d61a"
+    },
+    {
+      "path": "packages/runtime/dist/spriteSheet.d.ts",
+      "bytes": 1457,
+      "sha256": "eee14d3ca6d5d162742d3367e5b68a34407cd2eb2ee2b20ee4c188bc134f2cfa"
+    },
+    {
+      "path": "packages/runtime/dist/texturedFrameCapture.d.ts",
+      "bytes": 581,
+      "sha256": "e2854fa47aa7cbf865e488f8e46ed617b558c69bdfc5bd5239338e6a04a21bb1"
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "bytes": 686,
+      "sha256": "4d420a3f9896562972c959a1aeaeb5a7cb3e6e74e0fd47595a011f08665741c0"
+    },
+    {
+      "path": "tests/types/sequence-reset-negative.ts",
+      "bytes": 545,
+      "sha256": "e45c8136b7ad21b1cbdd77761641e720fe4c19003a9710f40c2270d6dbebfc0f"
+    },
+    {
+      "path": "tests/types/sequence-reset-positive.ts",
+      "bytes": 1130,
+      "sha256": "dbf2760dc9fa579535a2408adb7e86c6fac93dc659d5177345e5283afacd2e4f"
+    },
+    {
+      "path": "tests/types/tsconfig.dom-free.json",
+      "bytes": 56,
+      "sha256": "24bc13fae1f9d98b5d2dc212c9fb4f1f926aeb956f706d8269acbd617c900b49"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "bytes": 224,
+      "sha256": "e378996174db2020f9c416fb0599ea1182b3ca3265b3dc56012a688fd3252ad9"
+    },
+    {
+      "path": "tests/types/tsconfig.sequence-reset-negative.json",
+      "bytes": 579,
+      "sha256": "3080c9737d3f840b35f4ac9d3fde4337f83f80cc4d2e939b288f05f5df97faa0"
+    },
+    {
+      "path": "tests/types/tsconfig.sequence-reset-positive.json",
+      "bytes": 579,
+      "sha256": "973d3eea4724e65deccaa336efc70d194f07efb2356ecbbf0c6e76052f74a00c"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "bytes": 446,
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    }
+  ],
+  "nativeLibraries": [
+    {
+      "path": "lib/lib.decorators.d.ts",
+      "bytes": 13153,
+      "sha256": "1ce14b81c5cc821994aa8ec1d42b220dd41b27fcc06373bce3958af7421b77d4"
+    },
+    {
+      "path": "lib/lib.decorators.legacy.d.ts",
+      "bytes": 1287,
+      "sha256": "b3a048b3e9302ef9a34ef4ebb9aecfb28b66abb3bce577206a79fee559c230da"
+    },
+    {
+      "path": "lib/lib.es2015.collection.d.ts",
+      "bytes": 5627,
+      "sha256": "f0b6b1d3624fb143656dd86a8dd3e1950b7e65f218319b47bde52f65d47e2e4b"
+    },
+    {
+      "path": "lib/lib.es2015.core.d.ts",
+      "bytes": 22821,
+      "sha256": "770011bd32a52f929fc98fbf9976c1fa9d80b6445171c02b08627fdba9778933"
+    },
+    {
+      "path": "lib/lib.es2015.d.ts",
+      "bytes": 1202,
+      "sha256": "3f88bedbeb09c6f5a6645cb24c7c55f1aa22d19ae96c8e6959cbd8b85a707bc6"
+    },
+    {
+      "path": "lib/lib.es2015.generator.d.ts",
+      "bytes": 2518,
+      "sha256": "00343ca5b2e3d48fa5df1db6e32ea2a59afab09590274a6cccb1dbae82e60c7c"
+    },
+    {
+      "path": "lib/lib.es2015.iterable.d.ts",
+      "bytes": 18185,
+      "sha256": "ebd9f816d4002697cb2864bea1f0b70a103124e18a8cd9645eeccc09bdf80ab4"
+    },
+    {
+      "path": "lib/lib.es2015.promise.d.ts",
+      "bytes": 3161,
+      "sha256": "2c1afac30a01772cd2a9a298a7ce7706b5892e447bb46bdbeef720f7b5da77ad"
+    },
+    {
+      "path": "lib/lib.es2015.proxy.d.ts",
+      "bytes": 5212,
+      "sha256": "7b0225f483e4fa685625ebe43dd584bb7973bbd84e66a6ba7bbe175ee1048b4f"
+    },
+    {
+      "path": "lib/lib.es2015.reflect.d.ts",
+      "bytes": 6454,
+      "sha256": "c0a4b8ac6ce74679c1da2b3795296f5896e31c38e888469a8e0f99dc3305de60"
+    },
+    {
+      "path": "lib/lib.es2015.symbol.d.ts",
+      "bytes": 1608,
+      "sha256": "83e3871cda2abd4421970fa923cca51a9ce8cdbece6f898285643ab030cb80f3"
+    },
+    {
+      "path": "lib/lib.es2015.symbol.wellknown.d.ts",
+      "bytes": 10971,
+      "sha256": "c5079c53f0f141a0698faa903e76cb41cd664e3efb01cc17a5c46ec2eb0bef42"
+    },
+    {
+      "path": "lib/lib.es2016.array.include.d.ts",
+      "bytes": 5165,
+      "sha256": "32cafbc484dea6b0ab62cf8473182bbcb23020d70845b406f80b7526f38ae862"
+    },
+    {
+      "path": "lib/lib.es2016.d.ts",
+      "bytes": 926,
+      "sha256": "7fe93b39b810eadd916be8db880dd7f0f7012a5cc6ffb62de8f62a2117fa6f1f"
+    },
+    {
+      "path": "lib/lib.es2016.intl.d.ts",
+      "bytes": 1445,
+      "sha256": "fca4cdcb6d6c5ef18a869003d02c9f0fd95df8cfaf6eb431cd3376bc034cad36"
+    },
+    {
+      "path": "lib/lib.es2017.arraybuffer.d.ts",
+      "bytes": 876,
+      "sha256": "b93ec88115de9a9dc1b602291b85baf825c85666bf25985cc5f698073892b467"
+    },
+    {
+      "path": "lib/lib.es2017.d.ts",
+      "bytes": 1123,
+      "sha256": "bb0074cc08b84a2374af33d8bf044b80851ccc9e719a5e202eacf40db2c31600"
+    },
+    {
+      "path": "lib/lib.es2017.date.d.ts",
+      "bytes": 1877,
+      "sha256": "f5c06dcc3fe849fcb297c247865a161f995cc29de7aa823afdd75aaaddc1419b"
+    },
+    {
+      "path": "lib/lib.es2017.intl.d.ts",
+      "bytes": 1410,
+      "sha256": "c7b3542146734342e440a84b213384bfa188835537ddbda50d30766f0593aff9"
+    },
+    {
+      "path": "lib/lib.es2017.object.d.ts",
+      "bytes": 2434,
+      "sha256": "b77e16112127a4b169ef0b8c3a4d730edf459c5f25fe52d5e436a6919206c4d7"
+    },
+    {
+      "path": "lib/lib.es2017.sharedmemory.d.ts",
+      "bytes": 7170,
+      "sha256": "fbffd9337146eff822c7c00acbb78b01ea7ea23987f6c961eba689349e744f8c"
+    },
+    {
+      "path": "lib/lib.es2017.string.d.ts",
+      "bytes": 2540,
+      "sha256": "6aaeba1e4f228fda4e9175e34d96807e2c6dc984d0b37a772b3af9365a456681"
+    },
+    {
+      "path": "lib/lib.es2017.typedarrays.d.ts",
+      "bytes": 1503,
+      "sha256": "ce6180fa19b1cccd07ee7f7dbb9a367ac19c0ed160573e4686425060b6df7f57"
+    },
+    {
+      "path": "lib/lib.es2018.asyncgenerator.d.ts",
+      "bytes": 2653,
+      "sha256": "3f02e2476bccb9dbe21280d6090f0df17d2f66b74711489415a8aa4df73c9675"
+    },
+    {
+      "path": "lib/lib.es2018.asynciterable.d.ts",
+      "bytes": 2218,
+      "sha256": "45e3ab34c1c013c8ab2dc1ba4c80c780744b13b5676800ae2e3be27ae862c40c"
+    },
+    {
+      "path": "lib/lib.es2018.d.ts",
+      "bytes": 1049,
+      "sha256": "1a7daebe4f45fb03d9ec53d60008fbf9ac45a697fdc89e4ce218bc94b94f94d6"
+    },
+    {
+      "path": "lib/lib.es2018.intl.d.ts",
+      "bytes": 2982,
+      "sha256": "805c86f6cca8d7702a62a844856dbaa2a3fd2abef0536e65d48732441dde5b5b"
+    },
+    {
+      "path": "lib/lib.es2018.promise.d.ts",
+      "bytes": 1314,
+      "sha256": "e42e397f1a5a77994f0185fd1466520691456c772d06bf843e5084ceb879a0ad"
+    },
+    {
+      "path": "lib/lib.es2018.regexp.d.ts",
+      "bytes": 1193,
+      "sha256": "f4c2b41f90c95b1c532ecc874bd3c111865793b23aebcc1c3cbbabcd5d76ffb0"
+    },
+    {
+      "path": "lib/lib.es2019.array.d.ts",
+      "bytes": 3124,
+      "sha256": "ab26191cfad5b66afa11b8bf935ef1cd88fabfcb28d30b2dfa6fad877d050332"
+    },
+    {
+      "path": "lib/lib.es2019.d.ts",
+      "bytes": 1032,
+      "sha256": "f94b133a3cb14a288803be545ac2683e0d0ff6661bcd37e31aaaec54fc382aed"
+    },
+    {
+      "path": "lib/lib.es2019.intl.d.ts",
+      "bytes": 919,
+      "sha256": "689da16f46e647cef0d64b0def88910e818a5877ca5379ede156ca3afb780ac3"
+    },
+    {
+      "path": "lib/lib.es2019.object.d.ts",
+      "bytes": 1434,
+      "sha256": "2088bc26531e38fb05eedac2951480db5309f6be3fa4a08d2221abb0f5b4200d"
+    },
+    {
+      "path": "lib/lib.es2019.string.d.ts",
+      "bytes": 1489,
+      "sha256": "cb9d366c425fea79716a8fb3af0d78e6b22ebbab3bd64d25063b42dc9f531c1e"
+    },
+    {
+      "path": "lib/lib.es2019.symbol.d.ts",
+      "bytes": 967,
+      "sha256": "500934a8089c26d57ebdb688fc9757389bb6207a3c8f0674d68efa900d2abb34"
+    },
+    {
+      "path": "lib/lib.es2020.bigint.d.ts",
+      "bytes": 38258,
+      "sha256": "bc21cc8b6fee4f4c2440d08035b7ea3c06b3511314c8bab6bef7a92de58a2593"
+    },
+    {
+      "path": "lib/lib.es2020.d.ts",
+      "bytes": 1162,
+      "sha256": "f59d0650799f8782fd74cf73c19223730c6d1b9198671b1c5b3a38e1188b5953"
+    },
+    {
+      "path": "lib/lib.es2020.date.d.ts",
+      "bytes": 2917,
+      "sha256": "7ca53d13d2957003abb47922a71866ba7cb2068f8d154877c596d63c359fed25"
+    },
+    {
+      "path": "lib/lib.es2020.intl.d.ts",
+      "bytes": 22394,
+      "sha256": "db839fa0625981ae6e20a55e079c3613184310ca246879245b294573e7cc6926"
+    },
+    {
+      "path": "lib/lib.es2020.number.d.ts",
+      "bytes": 1548,
+      "sha256": "b7bf9377723203b5a6a4b920164df22d56a43f593269ba6ae1fdc97774b68855"
+    },
+    {
+      "path": "lib/lib.es2020.promise.d.ts",
+      "bytes": 1764,
+      "sha256": "54725f8c4df3d900cb4dac84b64689ce29548da0b4e9b7c2de61d41c79293611"
+    },
+    {
+      "path": "lib/lib.es2020.sharedmemory.d.ts",
+      "bytes": 5089,
+      "sha256": "e5594bc3076ac29e6c1ebda77939bc4c8833de72f654b6e376862c0473199323"
+    },
+    {
+      "path": "lib/lib.es2020.string.d.ts",
+      "bytes": 2451,
+      "sha256": "2f3eb332c2d73e729f3364fcc0c2b375e72a121e8157d25a82d67a138c83a95c"
+    },
+    {
+      "path": "lib/lib.es2020.symbol.wellknown.d.ts",
+      "bytes": 1566,
+      "sha256": "6f4427f9642ce8d500970e4e69d1397f64072ab73b97e476b4002a646ac743b1"
+    },
+    {
+      "path": "lib/lib.es2021.d.ts",
+      "bytes": 997,
+      "sha256": "8a15b4607d9a499e2dbeed9ec0d3c0d7372c850b2d5f1fb259e8f6d41d468a84"
+    },
+    {
+      "path": "lib/lib.es2021.intl.d.ts",
+      "bytes": 8206,
+      "sha256": "a917a49ac94cd26b754ab84e113369a75d1a47a710661d7cd25e961cc797065f"
+    },
+    {
+      "path": "lib/lib.es2021.promise.d.ts",
+      "bytes": 2223,
+      "sha256": "db9709688f82c9e5f65a119c64d835f906efe5f559d08b11642d56eb85b79357"
+    },
+    {
+      "path": "lib/lib.es2021.string.d.ts",
+      "bytes": 1553,
+      "sha256": "4b25b8c874acd1a4cf8444c3617e037d444d19080ac9f634b405583fd10ce1f7"
+    },
+    {
+      "path": "lib/lib.es2021.weakref.d.ts",
+      "bytes": 3132,
+      "sha256": "37be57d7c90cf1f8112ee2636a068d8fd181289f82b744160ec56a7dc158a9f5"
+    },
+    {
+      "path": "lib/lib.es2022.array.d.ts",
+      "bytes": 4637,
+      "sha256": "6d3261badeb7843d157ef3e6f5d1427d0eeb0af0cf9df84a62cfd29fd47ac86e"
+    },
+    {
+      "path": "lib/lib.es2022.d.ts",
+      "bytes": 1069,
+      "sha256": "26e0fe14baee4e127f4365d1ae0b276f400562e45e19e35fd2d4c296684715e6"
+    },
+    {
+      "path": "lib/lib.es2022.error.d.ts",
+      "bytes": 2340,
+      "sha256": "195daca651dde22f2167ac0d0a05e215308119a3100f5e6268e8317d05a92526"
+    },
+    {
+      "path": "lib/lib.es2022.intl.d.ts",
+      "bytes": 7653,
+      "sha256": "8b11e4285cd2bb164a4dc09248bdec69e9842517db4ca47c1ba913011e44ff2f"
+    },
+    {
+      "path": "lib/lib.es2022.object.d.ts",
+      "bytes": 1046,
+      "sha256": "0508571a52475e245b02bc50fa1394065a0a3d05277fbf5120c3784b85651799"
+    },
+    {
+      "path": "lib/lib.es2022.regexp.d.ts",
+      "bytes": 1304,
+      "sha256": "fc611fea8d30ea72c6bbfb599c9b4d393ce22e2f5bfef2172534781e7d138104"
+    },
+    {
+      "path": "lib/lib.es2022.string.d.ts",
+      "bytes": 1116,
+      "sha256": "8f9af488f510c3015af3cc8c267a9e9d96c4dd38a1fdff0e11dc5a544711415b"
+    },
+    {
+      "path": "lib/lib.es5.d.ts",
+      "bytes": 218947,
+      "sha256": "6388847232654d7fcbed7fe89ea511a65ad1f5104b41e905c43f90910e1408b6"
+    }
+  ],
+  "groups": [
+    {
+      "lane": "positive",
+      "config": "tests/types/tsconfig.sequence-reset-positive.json",
+      "exit": 0,
+      "stdout": "",
+      "repository": [
+        "packages/contracts/dist/CancellationSignal.d.ts",
+        "packages/contracts/dist/Diagnostic.d.ts",
+        "packages/contracts/dist/Disposable.d.ts",
+        "packages/contracts/dist/HostAdapter.d.ts",
+        "packages/contracts/dist/ImageData2D.d.ts",
+        "packages/contracts/dist/Point2D.d.ts",
+        "packages/contracts/dist/ProjectFormat.generated.d.ts",
+        "packages/contracts/dist/RenderFrame2D.d.ts",
+        "packages/contracts/dist/ResourceManifest.d.ts",
+        "packages/contracts/dist/SharedGeometry2D.d.ts",
+        "packages/contracts/dist/SharedMaterial2D.d.ts",
+        "packages/contracts/dist/SharedRenderFrame2D.d.ts",
+        "packages/contracts/dist/TextureViewRegion2D.d.ts",
+        "packages/contracts/dist/TexturedGeometry2D.d.ts",
+        "packages/contracts/dist/TexturedRenderFrame2D.d.ts",
+        "packages/contracts/dist/index.d.ts",
+        "packages/contracts/dist/resources/fontArtifact.d.ts",
+        "packages/contracts/dist/resources/index.d.ts",
+        "packages/contracts/dist/resources/manifestAdmission.d.ts",
+        "packages/engine/dist/Engine.d.ts",
+        "packages/engine/dist/animation/index.d.ts",
+        "packages/engine/dist/animation/sequenceController.d.ts",
+        "packages/engine/dist/animation/sequenceResetSlot.d.ts",
+        "packages/engine/dist/animation/sequenceResetTypes.d.ts",
+        "packages/engine/dist/animation/types.d.ts",
+        "packages/engine/dist/assetGroupTypes.d.ts",
+        "packages/engine/dist/bitmapBindingTicket.d.ts",
+        "packages/engine/dist/bitmapResourceSlot.d.ts",
+        "packages/engine/dist/contentLoader.d.ts",
+        "packages/engine/dist/contentTypes.d.ts",
+        "packages/engine/dist/createEngine.d.ts",
+        "packages/engine/dist/createEngineForProfile.d.ts",
+        "packages/engine/dist/displaySubtreeTicket.d.ts",
+        "packages/engine/dist/fontContentLoader.d.ts",
+        "packages/engine/dist/fontContentTypes.d.ts",
+        "packages/engine/dist/gameClock.d.ts",
+        "packages/engine/dist/gameClockTypes.d.ts",
+        "packages/engine/dist/index.d.ts",
+        "packages/engine/dist/internal/sequenceControllerFactoryState.d.ts",
+        "packages/engine/dist/manifestResourceState.d.ts",
+        "packages/engine/dist/manifestResourceTypes.d.ts",
+        "packages/engine/dist/resources.d.ts",
+        "packages/engine/dist/sequencePlaybackTypes.d.ts",
+        "packages/engine/dist/sequenceTargetClaims.d.ts",
+        "packages/engine/dist/tweenTypes.d.ts",
+        "packages/runtime/dist/AssetLease.d.ts",
+        "packages/runtime/dist/AssetManager.d.ts",
+        "packages/runtime/dist/AssetRef.d.ts",
+        "packages/runtime/dist/Bitmap.d.ts",
+        "packages/runtime/dist/ByteReader.d.ts",
+        "packages/runtime/dist/ByteWriter.d.ts",
+        "packages/runtime/dist/CancellationController.d.ts",
+        "packages/runtime/dist/DisplayObject.d.ts",
+        "packages/runtime/dist/DisplayObjectContainer.d.ts",
+        "packages/runtime/dist/EgretError.d.ts",
+        "packages/runtime/dist/Event.d.ts",
+        "packages/runtime/dist/EventDispatcher.d.ts",
+        "packages/runtime/dist/Graphics.d.ts",
+        "packages/runtime/dist/Mesh2D.d.ts",
+        "packages/runtime/dist/NineSliceBitmap.d.ts",
+        "packages/runtime/dist/NineSliceGeometry2D.d.ts",
+        "packages/runtime/dist/Scope.d.ts",
+        "packages/runtime/dist/SequencePlayer.d.ts",
+        "packages/runtime/dist/Sprite.d.ts",
+        "packages/runtime/dist/Stage.d.ts",
+        "packages/runtime/dist/Texture.d.ts",
+        "packages/runtime/dist/assetManagerOwnerState.d.ts",
+        "packages/runtime/dist/assetState.d.ts",
+        "packages/runtime/dist/atlasFrameLayout.d.ts",
+        "packages/runtime/dist/bitmapDisplayState.d.ts",
+        "packages/runtime/dist/diagnostics.d.ts",
+        "packages/runtime/dist/displayBounds.d.ts",
+        "packages/runtime/dist/displayCoordinates.d.ts",
+        "packages/runtime/dist/displayHitTest.d.ts",
+        "packages/runtime/dist/displayInputOperations.d.ts",
+        "packages/runtime/dist/displayTreeState.d.ts",
+        "packages/runtime/dist/frameCapture.d.ts",
+        "packages/runtime/dist/index.d.ts",
+        "packages/runtime/dist/ownership.d.ts",
+        "packages/runtime/dist/renderEffect.d.ts",
+        "packages/runtime/dist/sequenceClip.d.ts",
+        "packages/runtime/dist/sharedFrameCapture.d.ts",
+        "packages/runtime/dist/spriteSheet.d.ts",
+        "packages/runtime/dist/texturedFrameCapture.d.ts",
+        "tests/types/sequence-reset-positive.ts"
+      ],
+      "libraries": [
+        "lib/lib.decorators.d.ts",
+        "lib/lib.decorators.legacy.d.ts",
+        "lib/lib.es2015.collection.d.ts",
+        "lib/lib.es2015.core.d.ts",
+        "lib/lib.es2015.d.ts",
+        "lib/lib.es2015.generator.d.ts",
+        "lib/lib.es2015.iterable.d.ts",
+        "lib/lib.es2015.promise.d.ts",
+        "lib/lib.es2015.proxy.d.ts",
+        "lib/lib.es2015.reflect.d.ts",
+        "lib/lib.es2015.symbol.d.ts",
+        "lib/lib.es2015.symbol.wellknown.d.ts",
+        "lib/lib.es2016.array.include.d.ts",
+        "lib/lib.es2016.d.ts",
+        "lib/lib.es2016.intl.d.ts",
+        "lib/lib.es2017.arraybuffer.d.ts",
+        "lib/lib.es2017.d.ts",
+        "lib/lib.es2017.date.d.ts",
+        "lib/lib.es2017.intl.d.ts",
+        "lib/lib.es2017.object.d.ts",
+        "lib/lib.es2017.sharedmemory.d.ts",
+        "lib/lib.es2017.string.d.ts",
+        "lib/lib.es2017.typedarrays.d.ts",
+        "lib/lib.es2018.asyncgenerator.d.ts",
+        "lib/lib.es2018.asynciterable.d.ts",
+        "lib/lib.es2018.d.ts",
+        "lib/lib.es2018.intl.d.ts",
+        "lib/lib.es2018.promise.d.ts",
+        "lib/lib.es2018.regexp.d.ts",
+        "lib/lib.es2019.array.d.ts",
+        "lib/lib.es2019.d.ts",
+        "lib/lib.es2019.intl.d.ts",
+        "lib/lib.es2019.object.d.ts",
+        "lib/lib.es2019.string.d.ts",
+        "lib/lib.es2019.symbol.d.ts",
+        "lib/lib.es2020.bigint.d.ts",
+        "lib/lib.es2020.d.ts",
+        "lib/lib.es2020.date.d.ts",
+        "lib/lib.es2020.intl.d.ts",
+        "lib/lib.es2020.number.d.ts",
+        "lib/lib.es2020.promise.d.ts",
+        "lib/lib.es2020.sharedmemory.d.ts",
+        "lib/lib.es2020.string.d.ts",
+        "lib/lib.es2020.symbol.wellknown.d.ts",
+        "lib/lib.es2021.d.ts",
+        "lib/lib.es2021.intl.d.ts",
+        "lib/lib.es2021.promise.d.ts",
+        "lib/lib.es2021.string.d.ts",
+        "lib/lib.es2021.weakref.d.ts",
+        "lib/lib.es2022.array.d.ts",
+        "lib/lib.es2022.d.ts",
+        "lib/lib.es2022.error.d.ts",
+        "lib/lib.es2022.intl.d.ts",
+        "lib/lib.es2022.object.d.ts",
+        "lib/lib.es2022.regexp.d.ts",
+        "lib/lib.es2022.string.d.ts",
+        "lib/lib.es5.d.ts"
+      ]
+    },
+    {
+      "lane": "negative",
+      "config": "tests/types/tsconfig.sequence-reset-negative.json",
+      "exit": 1,
+      "stdout": "tests/types/sequence-reset-negative.ts(3,9): error TS2305: Module '\"@egret/engine\"' has no exported member 'createSequenceResetSlot'.\ntests/types/sequence-reset-negative.ts(5,54): error TS2322: Type '\"preserve\"' is not assignable to type '\"reset\"'.\ntests/types/sequence-reset-negative.ts(6,97): error TS2322: Type 'string' is not assignable to type 'number'.\ntests/types/sequence-reset-negative.ts(7,8): error TS2540: Cannot assign to 'ownership' because it is a read-only property.\n",
+      "repository": [
+        "packages/contracts/dist/CancellationSignal.d.ts",
+        "packages/contracts/dist/Diagnostic.d.ts",
+        "packages/contracts/dist/Disposable.d.ts",
+        "packages/contracts/dist/HostAdapter.d.ts",
+        "packages/contracts/dist/ImageData2D.d.ts",
+        "packages/contracts/dist/Point2D.d.ts",
+        "packages/contracts/dist/ProjectFormat.generated.d.ts",
+        "packages/contracts/dist/RenderFrame2D.d.ts",
+        "packages/contracts/dist/ResourceManifest.d.ts",
+        "packages/contracts/dist/SharedGeometry2D.d.ts",
+        "packages/contracts/dist/SharedMaterial2D.d.ts",
+        "packages/contracts/dist/SharedRenderFrame2D.d.ts",
+        "packages/contracts/dist/TextureViewRegion2D.d.ts",
+        "packages/contracts/dist/TexturedGeometry2D.d.ts",
+        "packages/contracts/dist/TexturedRenderFrame2D.d.ts",
+        "packages/contracts/dist/index.d.ts",
+        "packages/contracts/dist/resources/fontArtifact.d.ts",
+        "packages/contracts/dist/resources/index.d.ts",
+        "packages/contracts/dist/resources/manifestAdmission.d.ts",
+        "packages/engine/dist/Engine.d.ts",
+        "packages/engine/dist/animation/index.d.ts",
+        "packages/engine/dist/animation/sequenceController.d.ts",
+        "packages/engine/dist/animation/sequenceResetSlot.d.ts",
+        "packages/engine/dist/animation/sequenceResetTypes.d.ts",
+        "packages/engine/dist/animation/types.d.ts",
+        "packages/engine/dist/assetGroupTypes.d.ts",
+        "packages/engine/dist/bitmapBindingTicket.d.ts",
+        "packages/engine/dist/bitmapResourceSlot.d.ts",
+        "packages/engine/dist/contentTypes.d.ts",
+        "packages/engine/dist/createEngine.d.ts",
+        "packages/engine/dist/createEngineForProfile.d.ts",
+        "packages/engine/dist/displaySubtreeTicket.d.ts",
+        "packages/engine/dist/gameClock.d.ts",
+        "packages/engine/dist/gameClockTypes.d.ts",
+        "packages/engine/dist/index.d.ts",
+        "packages/engine/dist/internal/sequenceControllerFactoryState.d.ts",
+        "packages/engine/dist/manifestResourceTypes.d.ts",
+        "packages/engine/dist/sequencePlaybackTypes.d.ts",
+        "packages/engine/dist/sequenceTargetClaims.d.ts",
+        "packages/engine/dist/tweenTypes.d.ts",
+        "packages/runtime/dist/AssetLease.d.ts",
+        "packages/runtime/dist/AssetManager.d.ts",
+        "packages/runtime/dist/AssetRef.d.ts",
+        "packages/runtime/dist/Bitmap.d.ts",
+        "packages/runtime/dist/ByteReader.d.ts",
+        "packages/runtime/dist/ByteWriter.d.ts",
+        "packages/runtime/dist/CancellationController.d.ts",
+        "packages/runtime/dist/DisplayObject.d.ts",
+        "packages/runtime/dist/DisplayObjectContainer.d.ts",
+        "packages/runtime/dist/EgretError.d.ts",
+        "packages/runtime/dist/Event.d.ts",
+        "packages/runtime/dist/EventDispatcher.d.ts",
+        "packages/runtime/dist/Graphics.d.ts",
+        "packages/runtime/dist/Mesh2D.d.ts",
+        "packages/runtime/dist/NineSliceBitmap.d.ts",
+        "packages/runtime/dist/NineSliceGeometry2D.d.ts",
+        "packages/runtime/dist/Scope.d.ts",
+        "packages/runtime/dist/SequencePlayer.d.ts",
+        "packages/runtime/dist/Sprite.d.ts",
+        "packages/runtime/dist/Stage.d.ts",
+        "packages/runtime/dist/Texture.d.ts",
+        "packages/runtime/dist/assetManagerOwnerState.d.ts",
+        "packages/runtime/dist/assetState.d.ts",
+        "packages/runtime/dist/atlasFrameLayout.d.ts",
+        "packages/runtime/dist/bitmapDisplayState.d.ts",
+        "packages/runtime/dist/diagnostics.d.ts",
+        "packages/runtime/dist/displayBounds.d.ts",
+        "packages/runtime/dist/displayCoordinates.d.ts",
+        "packages/runtime/dist/displayHitTest.d.ts",
+        "packages/runtime/dist/displayInputOperations.d.ts",
+        "packages/runtime/dist/displayTreeState.d.ts",
+        "packages/runtime/dist/frameCapture.d.ts",
+        "packages/runtime/dist/index.d.ts",
+        "packages/runtime/dist/ownership.d.ts",
+        "packages/runtime/dist/renderEffect.d.ts",
+        "packages/runtime/dist/sequenceClip.d.ts",
+        "packages/runtime/dist/sharedFrameCapture.d.ts",
+        "packages/runtime/dist/spriteSheet.d.ts",
+        "packages/runtime/dist/texturedFrameCapture.d.ts",
+        "tests/types/sequence-reset-negative.ts"
+      ],
+      "libraries": [
+        "lib/lib.decorators.d.ts",
+        "lib/lib.decorators.legacy.d.ts",
+        "lib/lib.es2015.collection.d.ts",
+        "lib/lib.es2015.core.d.ts",
+        "lib/lib.es2015.d.ts",
+        "lib/lib.es2015.generator.d.ts",
+        "lib/lib.es2015.iterable.d.ts",
+        "lib/lib.es2015.promise.d.ts",
+        "lib/lib.es2015.proxy.d.ts",
+        "lib/lib.es2015.reflect.d.ts",
+        "lib/lib.es2015.symbol.d.ts",
+        "lib/lib.es2015.symbol.wellknown.d.ts",
+        "lib/lib.es2016.array.include.d.ts",
+        "lib/lib.es2016.d.ts",
+        "lib/lib.es2016.intl.d.ts",
+        "lib/lib.es2017.arraybuffer.d.ts",
+        "lib/lib.es2017.d.ts",
+        "lib/lib.es2017.date.d.ts",
+        "lib/lib.es2017.intl.d.ts",
+        "lib/lib.es2017.object.d.ts",
+        "lib/lib.es2017.sharedmemory.d.ts",
+        "lib/lib.es2017.string.d.ts",
+        "lib/lib.es2017.typedarrays.d.ts",
+        "lib/lib.es2018.asyncgenerator.d.ts",
+        "lib/lib.es2018.asynciterable.d.ts",
+        "lib/lib.es2018.d.ts",
+        "lib/lib.es2018.intl.d.ts",
+        "lib/lib.es2018.promise.d.ts",
+        "lib/lib.es2018.regexp.d.ts",
+        "lib/lib.es2019.array.d.ts",
+        "lib/lib.es2019.d.ts",
+        "lib/lib.es2019.intl.d.ts",
+        "lib/lib.es2019.object.d.ts",
+        "lib/lib.es2019.string.d.ts",
+        "lib/lib.es2019.symbol.d.ts",
+        "lib/lib.es2020.bigint.d.ts",
+        "lib/lib.es2020.d.ts",
+        "lib/lib.es2020.date.d.ts",
+        "lib/lib.es2020.intl.d.ts",
+        "lib/lib.es2020.number.d.ts",
+        "lib/lib.es2020.promise.d.ts",
+        "lib/lib.es2020.sharedmemory.d.ts",
+        "lib/lib.es2020.string.d.ts",
+        "lib/lib.es2020.symbol.wellknown.d.ts",
+        "lib/lib.es2021.d.ts",
+        "lib/lib.es2021.intl.d.ts",
+        "lib/lib.es2021.promise.d.ts",
+        "lib/lib.es2021.string.d.ts",
+        "lib/lib.es2021.weakref.d.ts",
+        "lib/lib.es2022.array.d.ts",
+        "lib/lib.es2022.d.ts",
+        "lib/lib.es2022.error.d.ts",
+        "lib/lib.es2022.intl.d.ts",
+        "lib/lib.es2022.object.d.ts",
+        "lib/lib.es2022.regexp.d.ts",
+        "lib/lib.es2022.string.d.ts",
+        "lib/lib.es5.d.ts"
+      ]
+    }
+  ]
+}

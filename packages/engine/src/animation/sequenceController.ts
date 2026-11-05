@@ -47,6 +47,7 @@ interface RecordState {
   lastIssue: SequenceControllerStatus['lastIssue'];
   pending: Pending[];
   busy: boolean;
+  revision: object;
   delivery: DeliveryToken | undefined;
 }
 interface StagedEvent {readonly event: PlannedSequenceEvent; readonly source: SequenceEventSource;}
@@ -293,6 +294,7 @@ function advance(record: RecordState, tick: GameClockTick): SequenceDelivery | u
 }
 function execute(record: RecordState, command: Command): void {
   const port = assertControl(record), scope = record.scope!;
+  record.revision = {};
   const tick = port.clock.tickId;
   if (mustQueue(port)) {
     if (record.pending.length >= 16) throw new EgretError('ANIMATION_COMMAND_LIMIT');
@@ -319,6 +321,8 @@ function execute(record: RecordState, command: Command): void {
 function stop(record: RecordState, ownedCancellation = false): void {
   const port = record.port, scope = record.scope;
   if (port !== undefined && !ownedCancellation) assertNotCapturing(port);
+  // A refused reentrant command cannot invalidate an otherwise prepared RESET.
+  record.revision = {};
   const issue = retire(record, terminal(record.state) ? record.state as 'completed' | 'stopped' | 'faulted' : 'stopped');
   if (issue !== undefined && port !== undefined && scope !== undefined) deliver(port,
     makeDelivery(record, port, scope, undefined, [], {active: false}, issue));
@@ -342,7 +346,21 @@ function handleFor(record: RecordState): SequenceController {
     dispose(): void { receiver(this); stop(record); },
     getStatus(): SequenceControllerStatus { receiver(this); return snapshot(record); },
   }) as SequenceController;
+  resetControllers.set(handle, record);
+  let targets = resetTargets.get(record.target!);
+  if (!targets) { targets = new WeakMap(); resetTargets.set(record.target!, targets); }
+  targets.set(handle, record.port!);
   return handle;
+}
+
+const resetControllers = new WeakMap<object, RecordState>();
+// Neither a terminal handle nor this registry retains its former Bitmap borrow.
+const resetTargets = new WeakMap<Bitmap, WeakMap<object, SequenceControllerEnginePort>>();
+/** Optional assembly only: authenticate the exact Engine, original controller and Bitmap. */
+export function requireResetController(value: unknown, port: SequenceControllerEnginePort, bitmap: Bitmap): () => object {
+  const record = resetControllers.get(value as object);
+  if (!record || resetTargets.get(bitmap)?.get(value as object) !== port) throw new EgretError('SEQUENCE_RESET_INITIAL_INVALID');
+  return (): object => record.revision;
 }
 
 /** Opt-in sequence controls share Engine ownership but never create a second timer. */
@@ -367,7 +385,7 @@ export function createSequenceController(engine: Engine, scope: Scope, bitmap: B
       totalPlays: admitted.totalPlays, markers: admitted.markers, listener: admitted.listener,
       state: 'idle', elapsed: 0, position: 0, play: 0, rate: admitted.rate,
       baseline: port.clock.elapsedSeconds, lastSample: undefined, eventCount: 0,
-      lastIssue: undefined, pending: [], busy: false, delivery: undefined};
+      lastIssue: undefined, pending: [], busy: false, revision: {}, delivery: undefined};
     player = undefined;
     const current = record;
     const handle = handleFor(current);

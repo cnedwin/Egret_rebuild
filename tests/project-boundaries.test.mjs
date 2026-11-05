@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync,writeFileSync,mkdirSync,mkdtempSync,cpSync,symlinkSync,rmSync,realpathSync,existsSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,mkdtempSync,cpSync,symlinkSync,rmSync,realpathSync,existsSync,readdirSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
@@ -93,15 +93,20 @@ function prepareTypeFixture({root}) {
     cpSync(path.join(repository,relative),target,{recursive:true});
   };
   copy('tests/types');
-  for(const relative of [
-    'packages/engine/tests/geometry-contract-types.ts',
-    'packages/engine/tests/profile-contract-types.ts',
-    'package.json','pnpm-lock.yaml','tsconfig.base.json',
-    'tools/shared-render-types.mjs','tools/shared-webgl2-types.mjs','tools/lib/m13-strict-successor.mjs','tools/m13-strict-successors.json','tools/m15-strict-successors.json',
-    'tools/resource-recovery-types.mjs','tests/types/resource-recovery-diagnostic-expectations.json',
-    'tools/check-types.mjs','tools/atlas-import-types.mjs','tools/atlas-frame-types.mjs','tools/sequence-playback-types.mjs','tools/bitmap-resource-slot-types.mjs','tools/bitmap-binding-ticket-types.mjs',
-    'tools/spritesheet-types.mjs','tools/nine-slice-bitmap-types.mjs','tools/display-container-remove-children-types.mjs','tools/display-container-child-index-types.mjs','tools/display-container-add-child-at-types.mjs','tools/display-anchor-offsets-types.mjs','tools/bitmap-button-types.mjs','tools/linear-layout-types.mjs','tools/lib/file-identity.mjs',
-  ]) copy(relative);
+  for(const relative of ['packages/engine/tests/geometry-contract-types.ts','packages/engine/tests/profile-contract-types.ts','package.json','pnpm-lock.yaml','tsconfig.base.json'])copy(relative);
+  // Preserve the real tool dependency tree instead of predicting individual helper imports.
+  // Every source entry is regular and owned; no external link becomes fixture authority.
+  assert.equal(ownerRelativePath(realpathSync(repository),realpathSync(path.join(repository,'tools'))),'tools');
+  const toolFiles=[];
+  function inspectTools(relative){
+    for(const entry of readdirSync(path.join(repository,relative),{withFileTypes:true})){
+      assert.equal(entry.isSymbolicLink(),false,'Tool fixture input must not be a link: '+relative+'/'+entry.name);
+      const file=relative+'/'+entry.name;
+      if(entry.isDirectory())inspectTools(file);else{assert.equal(entry.isFile(),true,'Regular tool fixture input required: '+file);toolFiles.push(file);}
+    }
+  }
+  inspectTools('tools');copy('tools');
+  for(const file of toolFiles)assert.deepEqual(readFileSync(path.join(root,file)),readFileSync(path.join(repository,file)),file);
 
   // Read-only stock compiler inputs are copied, never mocked or linked outside the owner.
   const compilerOwner=realpathSync(path.join(repository,'node_modules/typescript'));
@@ -211,6 +216,7 @@ test('strict public project consumers and unsuppressed diagnostic locations run 
   const result=run(['tools/check-types.mjs'],fixture.root);assert.ifError(result.error);assert.equal(result.status,0,result.stdout+result.stderr);assert.match(result.stdout,/Project type fixtures PASS: 29 type-only exports/);
   assert.match(result.stdout,/Sequence playback types PASS/);
   assert.match(result.stdout,/SpriteSheet types PASS/);
+  assert.ok(result.stdout.includes('Sequence RESET strict PASS: complete positive/negative compiler closures and four exact unsuppressed diagnostics'));
 }));
 
 test('real compiler negatives with unchanged error count reject incorrect expected code and location',t=>isolated(({root,write})=>{

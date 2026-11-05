@@ -20,3 +20,14 @@ export function requireContentEngine(engine: unknown): ContentEngineOperations {
   value.assertOpen();
   return value;
 }
+
+/** Private loader identity and catalog relationship; no structural loader grants authority. */
+const contentLoaders = new WeakMap<object, (scope: Scope, imageId: string, sequenceId: string) => void>();
+export function registerContentLoader(loader: object, authenticate: (scope: Scope, imageId: string, sequenceId: string) => void): void {
+  contentLoaders.set(loader, authenticate);
+}
+export function authenticateContentLoader(loader: unknown, scope: Scope, imageId: string, sequenceId: string): void {
+  const authenticate = contentLoaders.get(loader as object);
+  if (!authenticate) throw new EgretError('SEQUENCE_RESET_LOADER_INVALID');
+  authenticate(scope, imageId, sequenceId);
+}

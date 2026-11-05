@@ -421,7 +421,7 @@ Maintainers can prepare raw baseline differences and conservative catalog candid
 | Tier | Required work | Meaning |
 | --- | --- | --- |
 | Development | Environment, text hygiene, build and package boundaries, selected behavioral tests; unknown or stale selection runs all top-level behavior tests | Feedback on the current working tree; no reusable acceptance receipt |
-| Push | Clean committed snapshot, environment, source/publication and bilingual structure, knowledge-base checks | Safe review submission; does not qualify engine behavior |
+| Push | Clean committed snapshot, environment, one build and three shared test baselines, source/publication and bilingual structure, knowledge-base checks | Early fixture/dependency feedback and safe review submission; does not replace complete behavior qualification |
 | Merge | Complete integrated publication, build, source/type/boundary and behavior checks, examples and independent source/results/bilingual review; affected real-browser correctness evidence | Qualification of the actual candidate under existing branch protection |
 | Milestone/release | Sustained recovery, paired performance and required target-device qualification | Separate acceptance rows; missing or failed rows remain OPEN |
 
@@ -438,3 +438,11 @@ GitHub work items describe a contributor-visible outcome, dependencies, entry fi
 Development feedback within 1–2 minutes and ordinary PR feedback within 5–10 minutes are optimization targets, not measured results or permission to skip checks. Record actual duration separately.
 
 While a submitted candidate waits for CI, freeze that candidate and develop the next independently ready package in a separate branch/worktree. Assign one author per file and continue the preceding candidate's CI repair, review and merge. Before submitting the next candidate, reconcile it with current main and run the normal required gates. Avoid competing local work during measured performance runs; this scheduling policy adds no task framework or acceptance exception.
+
+### Shared test prerequisites before long checks
+
+The push entry now runs one build followed by three existing positive controls through `node tools/check-test-baselines.mjs`: the exact B1 emitted closure, the canonical inert boundary fixture and the real isolated public type gate. The merge entry runs the same controls immediately after its existing build using `--no-build`. This small prerequisite lane checks the exact three executed names and successful summary, and fails on missing/renamed controls. A failed prerequisite stops publication and the subsequent mutation matrix; success never replaces the full protected gate. The additional local build/prerequisite time is measured separately, not claimed as a fixed performance target.
+
+Real isolated type fixtures copy the owned tools directory rather than maintain a second helper list; stock compiler ownership, public aliases and diagnostics remain independently checked. Synthetic policy fixtures use current source/declaration prerequisites with inert executable projections, while exact public names, forbidden edges and refusal reasons remain independent test expectations. Collector permissions still require explicitly reviewed current identities and preserve historical pins. Do not derive expected fingerprints automatically from the files being checked.
+
+When a shared baseline fails, report its cause before interpreting downstream mutation counts; keep original failures in the associated delivery evidence. Windows hosts the complete suite, while the smaller Linux/macOS lanes are not an equivalent workload comparison. Attribute platform defects only with relevant evidence, and retain separate device/performance acceptance.
