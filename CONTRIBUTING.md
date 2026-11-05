@@ -27,7 +27,7 @@ Use Node.js 26.7.0, pnpm 11.25.0 and TypeScript 7.0.2. From the repository root:
     pnpm check:quick
     pnpm example:browser
 
-During development, use `node tools/check-incremental.mjs --base origin/main` for affected behavioral feedback. Before pushing, review sources, both reading editions and critical English comments. The commit hook checks text bytes; the push hook runs `node tools/check-push.mjs --committed` on the clean committed snapshot. Complete `pnpm check:merge` / integrated CI, independent review and affected actual-browser evidence remain required before merge. See the delivery tiers in the [engineering plan](knowledge-base/en/docs/architecture-and-engineering-plan.md).
+During development, use `node tools/check-incremental.mjs --base origin/main` for affected behavioral feedback. Before pushing, review sources, both reading editions and critical English comments. The commit hook checks text bytes; the push hook runs `node tools/check-push.mjs --committed` on the clean committed snapshot, including one build and three shared fixture/type baseline controls before publication checks. For early local feedback on those prerequisites, run `node tools/check-test-baselines.mjs`. Complete `pnpm check:merge` / integrated CI, independent review and affected actual-browser evidence remain required before merge. See the delivery tiers in the [engineering plan](knowledge-base/en/docs/architecture-and-engineering-plan.md).
 
 The Windows integrated CI job has a 60-minute execution limit to accommodate the complete suite on hosted runners. This is an execution budget, not a development iteration target or a waiver: every required check must finish successfully before merge.
 

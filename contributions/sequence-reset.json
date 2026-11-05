@@ -87,6 +87,11 @@
       "path": "tools/sequence-reset-types.mjs",
       "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
       "criticalComment": true
+    },
+    {
+      "path": "tools/check-test-baselines.mjs",
+      "originRole": "Independently authored first-party bounded shared test prerequisite runner for current sequence delivery; AI-assisted; Apache-2.0. Reuses existing positive controls and preserves complete protected gates. No new dependency.",
+      "criticalComment": true
     }
   ],
   "frozenInputs": [

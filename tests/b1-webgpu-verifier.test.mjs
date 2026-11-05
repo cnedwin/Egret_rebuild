@@ -379,7 +379,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   const { resolveB1Dependency } = await import(pathToFileURL(join(repository, 'tools/b1-webgpu/registryProvenance.mjs')).href);
   const served = new Map();
   // Evaluate only the verifier's policy declarations and collector, never emitted SDK code or main().
-  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
+  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
     repository: await realpath(repository), sep, assert, resolve, readFile: selectedReadFile, realpath, resolveB1Dependency, URL,
     served, identities: new Map(), hash: body => createHash('sha256').update(body).digest('hex'),
   }, { timeout: 1000 });
@@ -775,10 +775,21 @@ test('S18 sequence collector admits only four exact successors and three private
  const policy=await completeCurrentClosure();
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m22SequenceModuleSuccessors])),sequenceSuccessors);
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m22SequenceModuleAdditions])),sequenceAdditions);
- for(const [name,expected]of [...sequenceSuccessors,...sequenceAdditions])assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))),JSON.parse(JSON.stringify(policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??expected)));
+ for(const [name,expected]of [...sequenceSuccessors,...sequenceAdditions])assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))),JSON.parse(JSON.stringify(policy.m24ResetModuleSuccessor.get(name)??policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??expected)));
  for(const name of ['packages/engine/dist/animation/index.js','packages/engine/dist/animation/sequenceController.js','packages/engine/dist/animation/sequenceCoordinator.js']){assert.equal(policy.allowedModules.has(name),false);await assert.rejects(policy.collect(name),error=>error.message==='Unapproved public native dependency: '+name);}
 });
 
+
+test('S18 RESET collector keeps the historical content identity and admits only its exact reachable successor',async()=>{
+ const policy=await completeCurrentClosure(),target='packages/engine/dist/internal/contentFactoryState.js';
+ assert.deepEqual(JSON.parse(JSON.stringify(policy.m22SequenceModuleAdditions.get(target))),{bytes:574,sha256:'4c38c5b38105459e829be1398ff29d157b9ff8e942857b9194cef0830cc25fb1'});
+ assert.deepEqual(JSON.parse(JSON.stringify([...policy.m24ResetModuleSuccessor])),[[target,{bytes:1085,sha256:'1e9f75627a4a24593da30a77ba23f8814092484cbeaa969ef23ecc56a18f1ff3'}]]);
+ assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(target))),{bytes:1085,sha256:'1e9f75627a4a24593da30a77ba23f8814092484cbeaa969ef23ecc56a18f1ff3'});
+ assert.equal(policy.served.size,144);assert.equal(policy.currentModuleIdentities.size,144);
+ for(const name of ['packages/engine/dist/animation/sequenceResetSlot.js','packages/engine/dist/animation/sequenceResetTypes.js']){assert.equal(policy.allowedModules.has(name),false);await assert.rejects(policy.collect(name),error=>error.message==='Unapproved public native dependency: '+name);}
+});
+
+// The existing same-length refusal controls include the current RESET content authority.
 for (const [target] of [...sequenceSuccessors, ...sequenceAdditions]) {
   test('S19 sequence identity refuses an unknown same-length byte: ' + target, async () => {
     await completeCurrentClosure();
@@ -842,14 +853,14 @@ for(const target of ["packages/engine/dist/Engine.js","packages/engine/dist/web/
 test('S26 font resources admit one exact index successor and one artifact dependency while preserving M3.4',async()=>{
  const policy=await completeCurrentClosure();
  assert.equal(policy.m34SourceModuleLimit,143);assert.equal(policy.m34ModuleIdentities.size,143);
- assert.equal(policy.m3FontSourceModuleLimit,144);
+ assert.equal(policy.m3FontSourceModuleLimit,144);assert.equal(policy.m3FontModuleIdentities.size,144);
  const index='packages/contracts/dist/resources/index.js',artifact='packages/contracts/dist/resources/fontArtifact.js';
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m3FontModuleSuccessors])),[[index,{bytes:405,sha256:'8e59e4f9bd0e2e6cb2acb6b10cfb075191eb646a1187a313ebc793f18a0690e5'}]]);
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m3FontModuleAdditions])),[[artifact,{bytes:2491,sha256:'b590b2d7dec7a167709205187dea34b0358f2d39186884f924f2ccbfa4eea306'}]]);
  assert.deepEqual(JSON.parse(JSON.stringify(policy.m34ModuleIdentities.get(index))),{bytes:348,sha256:'33e0fd9874ac06a2455af14a36b36e4caec75e318718c03755195961340d0ff2'});
  assert.equal(policy.m34ModuleIdentities.has(artifact),false);
- for(const [name,pin]of policy.m34ModuleIdentities)if(name!==index)assert.deepEqual(policy.currentModuleIdentities.get(name),pin);
- for(const [name,pin]of [...policy.m3FontModuleSuccessors,...policy.m3FontModuleAdditions])assert.deepEqual(policy.currentModuleIdentities.get(name),pin);
+ for(const [name,pin]of policy.m34ModuleIdentities)if(name!==index)assert.deepEqual(policy.m3FontModuleIdentities.get(name),pin);
+ for(const [name,pin]of [...policy.m3FontModuleSuccessors,...policy.m3FontModuleAdditions])assert.deepEqual(policy.m3FontModuleIdentities.get(name),pin);
 });
 test('S27 font artifact refuses an unknown same-length emitted byte before capture',async()=>{
  await completeCurrentClosure();const target='packages/contracts/dist/resources/fontArtifact.js',original=await readFile(join(repository,target));

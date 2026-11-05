@@ -1809,7 +1809,7 @@ function withPushFixture(body){
  try{
   fs.mkdirSync(path.join(root,'tools'));
   fs.copyFileSync(new URL('../../tools/check-push.mjs',import.meta.url),path.join(root,'tools/check-push.mjs'));
-  for(const gate of ['doctor','check-repository-hygiene','check-publication']){
+  for(const gate of ['doctor','check-repository-hygiene','check-test-baselines','check-publication']){
    fs.writeFileSync(path.join(root,'tools',gate+'.mjs'),
     "import fs from 'node:fs'; fs.appendFileSync('calls.jsonl',JSON.stringify({gate:"+JSON.stringify(gate)+",args:process.argv.slice(2)})+String.fromCharCode(10)); if(process.env.EGRET_FIXTURE_FAILURE==="+JSON.stringify(gate)+")process.exit(23);\n");
   }
@@ -1821,13 +1821,13 @@ function withPushFixture(body){
   body({run,calls});
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 }
-test('push checks inspect the committed snapshot and publication without building',()=>withPushFixture(({run,calls})=>{
+test('push checks qualify shared prerequisites before committed publication',()=>withPushFixture(({run,calls})=>{
  const r=run(['--committed']);assert.equal(r.status,0,r.stderr);
- assert.deepEqual(calls(),[{gate:'doctor',args:[]},{gate:'check-repository-hygiene',args:['--committed']},{gate:'check-publication',args:['--contribution']},{gate:'knowledge-base',args:['-CheckOnly']}]);
+ assert.deepEqual(calls(),[{gate:'doctor',args:[]},{gate:'check-repository-hygiene',args:['--committed']},{gate:'check-test-baselines',args:[]},{gate:'check-publication',args:['--contribution']},{gate:'knowledge-base',args:['-CheckOnly']}]);
  assert.match(r.stdout,/not.*merge|merge.*required/i);
 }));
 test('every push gate failure stops publication and propagates its exit status',()=>{
- for(const [i,gate]of ['doctor','check-repository-hygiene','check-publication','knowledge-base'].entries())withPushFixture(({run,calls})=>{
+ for(const [i,gate]of ['doctor','check-repository-hygiene','check-test-baselines','check-publication','knowledge-base'].entries())withPushFixture(({run,calls})=>{
   const r=run(['--committed'],gate);assert.equal(r.status,23,r.stderr);assert.equal(calls().length,i+1);
  });
 });
@@ -1882,7 +1882,7 @@ function withMergeRunner(body){
   const prepush=fs.readFileSync(new URL('../../tools/prepush.mjs',import.meta.url),'utf8');
   put('tools/prepush.mjs',prepush);
   put('tools/verify.mjs',fs.readFileSync(new URL('../../tools/verify.mjs',import.meta.url),'utf8'));
-  const gates=['check-repository-hygiene','contribution-metadata','check-publication','build','check-boundaries','check-spine-content','spritesheet-boundary','sequence-playback-boundary','browser-png-boundary','bitmap-resource-slot-boundary','bitmap-binding-ticket-boundary','resource-scene-boundary','atlas-frame/boundary','atlas-import-boundary','check-types','browser-png-types','test','verify-spine-f2-source'];
+  const gates=['check-repository-hygiene','contribution-metadata','check-publication','build','check-test-baselines','check-boundaries','check-spine-content','spritesheet-boundary','sequence-playback-boundary','browser-png-boundary','bitmap-resource-slot-boundary','bitmap-binding-ticket-boundary','resource-scene-boundary','atlas-frame/boundary','atlas-import-boundary','check-types','browser-png-types','test','verify-spine-f2-source'];
   function child(gate){
    const setup="import fs from 'node:fs';fs.appendFileSync('calls.jsonl',JSON.stringify({gate:"+JSON.stringify(gate)+",args:process.argv.slice(2)})+String.fromCharCode(10));if(process.env.EGRET_FIXTURE_FAILURE==="+JSON.stringify(gate)+")process.exit(23);";
    if(gate==='build')return setup+"fs.mkdirSync('dist',{recursive:true});fs.writeFileSync('dist/ready','controlled runner output');\n";
@@ -1909,6 +1909,8 @@ test('complete merge checks build once before publication from an empty output t
   const rows=calls(),build=rows.findIndex(v=>v.gate==='build'),publication=rows.findIndex(v=>v.gate==='check-publication');
   assert.equal(rows.filter(v=>v.gate==='build').length,1);
   assert.ok(build>=0&&build<publication);
+  const baseline=rows.findIndex(v=>v.gate==='check-test-baselines');assert.ok(build<baseline&&baseline<publication);
+  assert.deepEqual(rows[baseline].args,['--no-build']);
   assert.ok(rows.some(v=>v.gate==='publication-test'),r.stdout+'\n'+JSON.stringify(rows));
   for(const gate of ['check-types','browser-png-types','test','verify-spine-f2-source','headless','nine-slice-bitmap-headless','knowledge-base'])assert.ok(rows.some(v=>v.gate===gate),gate);
   assert.deepEqual(rows.find(v=>v.gate==='check-repository-hygiene').args,args.includes('--committed')?['--committed']:[]);
@@ -2496,3 +2498,43 @@ test('M3.4 theme selector repair preserves both reviewed source generations and 
   }
  }finally{f.close();}
 });
+
+test('failed shared baseline stops the merge runner before publication and mutation matrices',()=>withMergeRunner(({run,calls})=>{
+ const r=run('prepush',[],'check-test-baselines');assert.equal(r.status,23,r.stderr);
+ assert.deepEqual(calls().map(v=>v.gate),['check-repository-hygiene','build','check-test-baselines']);
+}));
+
+// Run the actual small selector with owned Node test files; no SDK or device work.
+function withBaselineRunner(action){
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'egret shared baselines '));
+ const put=(name,body)=>{fs.mkdirSync(path.dirname(path.join(root,name)),{recursive:true});fs.writeFileSync(path.join(root,name),body);};
+ try{
+  put('tools/check-test-baselines.mjs',fs.readFileSync(new URL('../../tools/check-test-baselines.mjs',import.meta.url)));
+  put('tools/build.mjs',"import fs from 'node:fs';fs.writeFileSync('built','once');if(process.env.EGRET_BASELINE_BUILD_FAIL)process.exit(23);\n");
+  const definitions=[
+   ['tests/b1-webgpu-verifier.test.mjs','S07 the finite native collector admits the actual current emitted public closure'],
+   ['tests/boundaries.test.mjs','S3D1 canonical boundary policy baseline admits every retained surface'],
+   ['tests/project-boundaries.test.mjs','strict public project consumers and unsuppressed diagnostic locations run through the actual type gate'],
+  ];
+  for(const[name,title]of definitions)put(name,"import test from 'node:test';import fs from 'node:fs';test("+JSON.stringify(title)+",()=>{if(!fs.existsSync('built'))throw Error('BUILD_REQUIRED');if(process.env.EGRET_BASELINE_TEST_FAIL)throw Error('ASSIGNED_BASELINE_FAILURE');});test('unselected expensive matrix',()=>{throw Error('MATRIX_MUST_NOT_RUN');});\n");
+  const environment={...process.env};delete environment.NODE_TEST_CONTEXT;
+  const run=(args=[],extra={})=>spawnSync(process.execPath,['tools/check-test-baselines.mjs',...args],{cwd:root,encoding:'utf8',env:{...environment,...extra}});
+  action({root,put,definitions,run});
+ }finally{fs.rmSync(root,{recursive:true,force:true});}
+}
+test('shared baseline selector builds once and executes only its three required controls',()=>withBaselineRunner(({run})=>{
+ const r=run();assert.equal(r.status,0,r.stdout+r.stderr);assert.match(r.stdout,/Shared test baselines PASS \(3\/3\)/);
+ assert.doesNotMatch(r.stdout+r.stderr,/MATRIX_MUST_NOT_RUN/);
+}));
+test('shared baseline no-build path requires actual prepared output and reuses it',()=>withBaselineRunner(({run,put,root})=>{
+ const missing=run(['--no-build']);assert.notEqual(missing.status,0);assert.match(missing.stdout,/BUILD_REQUIRED/);assert.equal(fs.existsSync(path.join(root,'built')),false);
+ put('built','prepared');const ready=run(['--no-build'],{EGRET_BASELINE_BUILD_FAIL:'1'});assert.equal(ready.status,0,ready.stdout+ready.stderr);assert.equal(fs.readFileSync(path.join(root,'built'),'utf8'),'prepared');
+}));
+test('shared baseline selector rejects a missing test and propagates build or assertion failure',()=>{
+ withBaselineRunner(({run,put,definitions})=>{put(definitions[0][0],"import test from 'node:test';test('renamed control',()=>{});\n");const r=run();assert.notEqual(r.status,0);assert.match(r.stderr,/BASELINE_SELECTION_INCOMPLETE/);});
+ withBaselineRunner(({run})=>{const r=run([],{EGRET_BASELINE_BUILD_FAIL:'1'});assert.equal(r.status,23);});
+ withBaselineRunner(({run})=>{const r=run([],{EGRET_BASELINE_TEST_FAIL:'1'});assert.notEqual(r.status,0);assert.match(r.stdout,/ASSIGNED_BASELINE_FAILURE/);});
+});
+test('shared baseline selector refuses unsupported or repeated options before building',()=>withBaselineRunner(({run,root})=>{
+ for(const args of [['--skip-tests'],['--no-build','--no-build']]){const r=run(args);assert.notEqual(r.status,0);assert.equal(fs.existsSync(path.join(root,'built')),false);}
+}));

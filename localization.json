@@ -323,15 +323,15 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "e8d12e1f8a5f6fbeb6d90075d9c3cd995d1bbcc7207c3ea9a3264d4ef78366e2",
-      "zhSha256": "20843b0b68f8074a3acde618210c07991b9fce975cefa7c1221f262ace6e8941"
+      "enSha256": "9c298148cc8c3221143d620847353539b36ba54d5ac2686e638abcc549f3998c",
+      "zhSha256": "677db438d55590f1cb0bfdc14e2028f5d75453d8af8e02bb59b919f5f33a189b"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
       "en": "CONTRIBUTING.md",
       "kind": "public_reading",
-      "enSha256": "c9cc0c4b53828547a1df7c72bcff00ab27391e3be67aa23401d7999f3b216dbf",
-      "zhSha256": "73149c598d6a1875c86c8dbfc3622f9be4ad69bd69bc51fa02e7e55c03b045fa"
+      "enSha256": "c32ed45a532a0f6b7ff84a8fe7e29b6cbe37e2cb07aaacde47b437f4e447d9bb",
+      "zhSha256": "320feaece2c1a8b6f0fac3749e2ef71e273c680b8210a373e8ea52490fc3e386"
     },
     {
       "zh": "docs/evidence/texture-a1.zh-CN.md",
@@ -477,8 +477,8 @@
       "zh": "knowledge-base/Cns/docs/双语文档与推送前检查.md",
       "en": "knowledge-base/en/docs/bilingual-documentation-and-prepush-checks.md",
       "kind": "public_reading",
-      "enSha256": "b6be6eb8f949ea6feee7522f06b00336ad109cb3cae16416470011ee3e4d98bc",
-      "zhSha256": "42b187e00dca7e721ee67f8a67718265098d49f3e149fc12085d4acf668db818"
+      "enSha256": "addbf6017e0b96d8c6d0525458642c0b3078c08672ed336a6a0daa9e6f0ef7e7",
+      "zhSha256": "c06a3972e1a05fd4e1756d5197e639049ecf3c1c4387eb69e0acedf17b15fe79"
     },
     {
       "zh": "knowledge-base/Cns/docs/bitmap-region-contract.md",
@@ -1844,8 +1844,8 @@
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "3a0c9fd0a3f9b776fc7f30f91a5f34e5340794a9dbddb6c1081b59c3124b93ea",
-      "zhSha256": "0b6da33b64b645658cfecd93ff1d34b77bd4ab404fb194aae7d1bd399e14b476"
+      "enSha256": "987acc2ea01e99b7c7e9d4e41d6531c9e0887351cb1476c7fc892b87f7af3948",
+      "zhSha256": "45fbe007714a84394d426208639aca6ec274db5e08561e7423fb271038920016"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -2666,7 +2666,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "e41d8caf770118af622ea403f2e49507f5ad5eb46522b65a0d610b002290c9f4"
+      "sha256": "c71631c5bc3f15fe956ad050741f70873f493335d798f2ec217d372c85666fc7"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2678,7 +2678,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "bc0504588982d77a97323b1ab875916f58db71f23fe6e565329c03a5d329e61b"
+      "sha256": "77eea9cc30312ddf80edb312273c9da1b4a13fc7e66504089f749d62ef67a7cf"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -3088,7 +3088,7 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "e1768bd3aa86d5d5b8cebe7e29e1190c1abc2004aca10a61b73a3667d49a98e1"
+      "sha256": "851e5ca49fd455f9f7526f1e962eb1fb7c846570ac2c731d18bffc2179d1f2a2"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3216,7 +3216,7 @@
     },
     {
       "path": "tools/prepush.mjs",
-      "sha256": "3361ad25ffb8eaefe1e2fb649a4527f596a04c4cd0fb0915991d277515dac5ab"
+      "sha256": "3daec108ff13e102857e2ffcd2364a65cf27bccb7c782bd0d5f5c9746ebd9745"
     },
     {
       "path": "packages/engine/web/image.ts",
@@ -3260,7 +3260,7 @@
     },
     {
       "path": "tests/project-boundaries.test.mjs",
-      "sha256": "eca3426c4c2e5bb5a6097683dffcbf74b780ccacc27514d787c13c6de7ed04d2"
+      "sha256": "5e5a98353e90999880ae1d9091c5bafb65c4230bed12f43a0cff937663a3c153"
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/src/types.ts",
@@ -3848,7 +3848,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "dbcd96e7f11282668b2349fec8bfc5f69985de5c00830af172897771932e667f"
+      "sha256": "824693fcb13e450f7b3ee5e3faa941661b67a010cfe281732c6abb44a2da4298"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -4044,7 +4044,7 @@
     },
     {
       "path": "tools/check-push.mjs",
-      "sha256": "28b201d43bd84b7eb05b2b770a044a9a7d57e72416cd971452f08579736ca3dd"
+      "sha256": "4da973dee7d4e3f48d51288f3c296d602a09a3f5f8865b6f739b4a826c049400"
     },
     {
       "path": "packages/contracts/src/ResourceManifest.ts",
@@ -4585,6 +4585,10 @@
     {
       "path": "tools/sequence-reset-types.mjs",
       "sha256": "58aeeb64293b2d537a689dc2071a361c48ae52109bca4f646f61968a4a374a1c"
+    },
+    {
+      "path": "tools/check-test-baselines.mjs",
+      "sha256": "c53cbb86b68144e027b1b985860d2554d7471415f2c2c286bc131d27fa4f20b8"
     }
   ],
   "historicalSemanticReview": {
