@@ -2103,15 +2103,15 @@
       "en": "examples/mobile/README.md",
       "zh": "examples/mobile/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "1deb45edef32ae107d5e99050e139b6bac33d93708faef87783d94b0915e5a5b",
-      "zhSha256": "e319a7cea177380e46a9c3d51519cc0f1a49b8ef67d068cf3bda0f1ab8acaf5d"
+      "enSha256": "04424c9bf9fc096799da467f2ac8f5039c2b3240c82c8e4a4d666abeb78f90f4",
+      "zhSha256": "8da3623dac4444e2aebb4e4cd8ccf81f539e3ffd8db78863fb7d689462e735b5"
     },
     {
       "en": "knowledge-base/en/docs/mobile-examples.md",
       "zh": "knowledge-base/Cns/docs/mobile-examples.md",
       "kind": "public_reading",
-      "enSha256": "e5e43332fc1900f7140987084686dc08e638c603bbebaf4575870de439674c50",
-      "zhSha256": "88dc51952813ec4719aa0aceca179528a49d64320523fe2b026e59b5c6ff4ee3"
+      "enSha256": "5026e3b2c8195052fd926708013341e038d808faebc75b4c7e14dd31fde501ff",
+      "zhSha256": "326ee196de423f029db3f99e60d04cb880254f7fc76dfe7dd95bd2a0caf608dd"
     },
     {
       "en": "knowledge-base/en/docs/keyboard-focus-input.md",
