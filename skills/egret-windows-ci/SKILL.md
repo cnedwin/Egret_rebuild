@@ -38,6 +38,8 @@ Use the actual terminal refusal, not expected negative-test text. A signature id
 
 Record identity, stopping point, verified cause/owner, changed inputs, focused result, reused evidence, required remaining checks and prevention. Reuse unchanged successful evidence; rerun only the affected work plus the final candidate's mandatory protected checks. A confirmed infrastructure retry keeps successful jobs from the same candidate. A new head/base/tree requires a fresh applicability decision, not an automatic full historical replay.
 
+When extending a source-owner file, check bounded readers and inverse fixtures that consume the prefix before historical markers. Keep additions within the existing reader's admitted syntax or outside that prefix; do not expand reader authority to accept an incidental syntax change.
+
 For state-machine repairs, review the admitted terminal/ownership/error boundaries together, including existing bubbling and callback failure, rather than patching one scalar example per review. Keep browser/device/performance acceptance separate.
 
 Update the existing cause family and work package. Add a regression, clearer owner/admission or a narrow skill correction when it changes future decisions; do not create another maintenance framework for each occurrence. Require normal hooks, independent review, paired public documentation and branch protection. Never rehash sealed history, waive a real failure, bypass hooks or treat manual subset passes as complete CI.

@@ -4153,36 +4153,6 @@ const m31UiLiteralClosure = {
   "packages/runtime/src/ui/types.ts": [],
   "packages/runtime/dist/ui/types.js": [],
   "packages/runtime/dist/ui/types.d.ts": [],
-  "packages/engine/src/ui/controls.ts": [
-    [
-      "static",
-      "../pointerInputTypes.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/ui/controls.js": [
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/ui/controls.d.ts": [
-    [
-      "static",
-      "../pointerInputTypes.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
   "packages/engine/src/ui/index.ts": [["static","./types.js"],["static","./uiRoot.js"]],
   "packages/engine/dist/ui/index.js": [["static","./uiRoot.js"]],
   "packages/engine/dist/ui/index.d.ts": [["static","./types.js"],["static","./uiRoot.js"]],
@@ -8016,14 +7986,6 @@ const m34ThemeLiteralClosure = {
   "packages/engine/src/ui/index.ts": [
     [
       "static",
-      "./controls.js"
-    ],
-    [
-      "static",
-      "./controls.js"
-    ],
-    [
-      "static",
       "./theme.js"
     ],
     [
@@ -8042,10 +8004,6 @@ const m34ThemeLiteralClosure = {
   "packages/engine/dist/ui/index.js": [
     [
       "static",
-      "./controls.js"
-    ],
-    [
-      "static",
       "./theme.js"
     ],
     [
@@ -8054,14 +8012,6 @@ const m34ThemeLiteralClosure = {
     ]
   ],
   "packages/engine/dist/ui/index.d.ts": [
-    [
-      "static",
-      "./controls.js"
-    ],
-    [
-      "static",
-      "./controls.js"
-    ],
     [
       "static",
       "./theme.js"
@@ -8327,7 +8277,107 @@ const m34ThemeLiteralClosure = {
     ]
   ]
 };
-for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure,...m34EffectLiteralClosure,...fontResourceLiteralClosure,...m34ThemeLiteralClosure,...sequenceResetLiteralClosure})) {
+// Current controls edges overlay the retained UI and theme closure records.
+const uiControlsLiteralClosure = {
+  "packages/engine/src/ui/controls.ts": [
+    [
+      "static",
+      "../pointerInputTypes.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/ui/controls.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/ui/controls.d.ts": [
+    [
+      "static",
+      "../pointerInputTypes.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/src/ui/index.ts": [
+    [
+      "static",
+      "./controls.js"
+    ],
+    [
+      "static",
+      "./controls.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "./uiRoot.js"
+    ]
+  ],
+  "packages/engine/dist/ui/index.js": [
+    [
+      "static",
+      "./controls.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./uiRoot.js"
+    ]
+  ],
+  "packages/engine/dist/ui/index.d.ts": [
+    [
+      "static",
+      "./controls.js"
+    ],
+    [
+      "static",
+      "./controls.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./theme.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "./uiRoot.js"
+    ]
+  ]
+};
+
+for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure,...m34EffectLiteralClosure,...fontResourceLiteralClosure,...m34ThemeLiteralClosure,...sequenceResetLiteralClosure,...uiControlsLiteralClosure})) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
   // Non-literal dynamic imports cannot hide an additional dependency edge.

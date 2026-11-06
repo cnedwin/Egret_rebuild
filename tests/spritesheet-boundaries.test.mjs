@@ -266,3 +266,17 @@ for (const [relative,mode] of [["packages/engine/dist/web/webgl2.d.ts","missing"
    rejected(verify(),mode==='extra-export'?'SS1_BOUNDARY_CONFIGURATION_DAG':'SS1_BOUNDARY_SOURCE_OWNER');
   }finally{writeFileSync(file,before);assert.deepEqual(inventory(fixture),baseline);accepted(verify());}
  }));
+
+// Controls admission is tested only after the genuine complete owner baseline.
+for (const [relative, mode] of [['packages/engine/dist/ui/controls.d.ts','missing'],['packages/engine/dist/ui/controls.js','same-length'],['packages/engine/src/pointerInput.ts','stale-emission']])
+ test('SS1 controls successor refuses '+mode,()=>isolated(({fixture,verify,baseline})=>{
+  const file=path.join(fixture,relative),before=readFileSync(file);
+  try{
+   if(mode==='missing')rmSync(file);
+   else if(mode==='same-length'){const changed=Buffer.from(before);changed[0]^=1;assert.equal(changed.length,before.length);writeFileSync(file,changed);}
+   else writeFileSync(file,Buffer.concat([before,Buffer.from('// unreviewed controls source\n')]));
+   const current=inventory(fixture),prior=new Map(baseline.map(row=>[row.path,row]));
+   assert.deepEqual([...current.filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),...baseline.filter(row=>!current.some(now=>now.path===row.path)).map(row=>row.path)],[relative]);
+   const result=verify();rejected(result,'SS1_BOUNDARY_SOURCE_OWNER');assert.ok(result.stderr.includes(relative),result.stderr);
+  }finally{writeFileSync(file,before);assert.deepEqual(inventory(fixture),baseline);accepted(verify());}
+ }));

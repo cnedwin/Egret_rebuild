@@ -1970,8 +1970,8 @@
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "8f8c01e0858409d3a8b35828f285a84b4d3e6b78332de1387004db6af043a01e",
-      "zhSha256": "c3b31764092d4f3c547d19efc06b9266a5fdb0bc38e6fa92f16e8b143f2ed490"
+      "enSha256": "38af4cdc200e771d64bea8851ad2221b1f4151d2ab3c3c29d54b9807fe724b0e",
+      "zhSha256": "628e2c9630307802ef0b7b5351de405ad9a3ff9b693c08199af4621f1173ff6d"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -2264,8 +2264,8 @@
       "en": "skills/egret-windows-ci/SKILL.md",
       "zh": "skills/egret-windows-ci/SKILL.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "8636de194743fc472adfdca1aca461bec1abc3b8d017e1e2093f9e60e821e005",
-      "zhSha256": "15c78f57eb37eb1304106ec0bb9245a41e22b21d6fb51a055fc66067c2f2ce62"
+      "enSha256": "87672e526a2e34ee9b40088019dbd1568ab77f6e395c32de38a9cd92f16945fc",
+      "zhSha256": "a2964640ebd9b8a801bd4535ce43daa7a2bb173c93b109dbc41d7fb82c8fb14e"
     },
     {
       "en": "knowledge-base/en/docs/windows-ci-governance.md",
@@ -3098,7 +3098,7 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "3800838b9524b87446f248065303bb09c0b639d5933018eddad288b6b9759fe9"
+      "sha256": "71b9ef989a251f2c460d1eb039dfd9be3d4b49ed7d50a31ee23ca1095c1a0ef4"
     },
     {
       "path": "tests/boundaries.test.mjs",
@@ -3242,7 +3242,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "b3b8a5871ebea6eb1550baa3902c1ea5cc009300c0bd1505639804020e5e69e7"
+      "sha256": "e0066263c919ed63d89ca8dd73d35b032c582f6b677ee8f1b4ecb830db7ce44d"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3390,7 +3390,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "221d0cb33d4972ec3226a16acdc27052af270b4f4766a0e0bcea5536de3ca83e"
+      "sha256": "7229c33d238d1d1cb8683682bdc1982319bd17e61ceaaa9b3e537245fc552467"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3862,7 +3862,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "824693fcb13e450f7b3ee5e3faa941661b67a010cfe281732c6abb44a2da4298"
+      "sha256": "a303e92ab601e4d7dde9101cf7dd1083516db8baa2e63a91adf00dfd8e7bb86b"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3890,7 +3890,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "bf13305864a3a73f6964ee240c6812420460f64c7656f5b1adbc44c904e5c275"
+      "sha256": "e6e88fab18df60bfcbbde4189c414591ffe13e2a271d212eb49780f9df0ab2b0"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",

@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "240151020f286b7c379d767aaa2a9d1b4a8d8599296ca9aa52ad60f40cb25289",
+      "sha256": "930e9e05e9e517cb3285c82fc320a32819086b28a865957e4e44d87d93e72e27",
       "bytes": 384516,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -5478,8 +5478,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 361426,
-      "sha256": "3800838b9524b87446f248065303bb09c0b639d5933018eddad288b6b9759fe9",
+      "bytes": 362185,
+      "sha256": "71b9ef989a251f2c460d1eb039dfd9be3d4b49ed7d50a31ee23ca1095c1a0ef4",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -9797,8 +9797,8 @@
     },
     {
       "path": "tests/spritesheet-boundaries.test.mjs",
-      "bytes": 19862,
-      "sha256": "939d388f165c3a02a2d0964e8958f65d272424509e9e9a4d805a8c7309bb3aa8",
+      "bytes": 21141,
+      "sha256": "1e9ea0cfb2f0392aecfcc95442c8a57b8e3b30d5171dc3d27fd46ad23d41e868",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -9876,8 +9876,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 299076,
-      "sha256": "221d0cb33d4972ec3226a16acdc27052af270b4f4766a0e0bcea5536de3ca83e",
+      "bytes": 302795,
+      "sha256": "7229c33d238d1d1cb8683682bdc1982319bd17e61ceaaa9b3e537245fc552467",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10099,8 +10099,8 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 308049,
-      "sha256": "b3b8a5871ebea6eb1550baa3902c1ea5cc009300c0bd1505639804020e5e69e7",
+      "bytes": 311768,
+      "sha256": "e0066263c919ed63d89ca8dd73d35b032c582f6b677ee8f1b4ecb830db7ce44d",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10161,8 +10161,8 @@
     },
     {
       "path": "tools/atlas-import-boundary.mjs",
-      "bytes": 203789,
-      "sha256": "666a85b7f59f71d43af888763a7fd8dec3f083550d71f19ab695dc7ff93b0c43",
+      "bytes": 207508,
+      "sha256": "8bcaff020588334bcb470f341fa7d8656f4782522483af63c51b8b722b57a27d",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10321,8 +10321,8 @@
     },
     {
       "path": "tests/browser-png-boundaries.test.mjs",
-      "bytes": 21228,
-      "sha256": "39f7052f36d9b3aedb858e5e4e074e7acf78f43025f974b4405ad80b4c04b64a",
+      "bytes": 22623,
+      "sha256": "a46ae20d7cad60e94b5c76409ff004d4e18daf51d9d9b2684bf785c5122f5331",
       "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
     },
     {
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1205450,
-      "sha256": "824693fcb13e450f7b3ee5e3faa941661b67a010cfe281732c6abb44a2da4298"
+      "bytes": 1222572,
+      "sha256": "a303e92ab601e4d7dde9101cf7dd1083516db8baa2e63a91adf00dfd8e7bb86b"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10688,8 +10688,8 @@
     {
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 48597,
-      "sha256": "bf13305864a3a73f6964ee240c6812420460f64c7656f5b1adbc44c904e5c275"
+      "bytes": 49862,
+      "sha256": "e6e88fab18df60bfcbbde4189c414591ffe13e2a271d212eb49780f9df0ab2b0"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -10778,8 +10778,8 @@
     {
       "path": "tests/atlas-import-boundary.test.mjs",
       "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
-      "bytes": 15256,
-      "sha256": "6d6a1bef2be96a796436b15744370f0cb92894e0d6613eaaf54cd4a745b7b5b6"
+      "bytes": 16547,
+      "sha256": "9be0e54a4b7fa391ff0934e6727ab3e5c08d5c485e98266d8e7a88faa2310941"
     },
     {
       "path": "tests/webgpu-submission-binding-private.test.mjs",
@@ -12782,14 +12782,14 @@
     {
       "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 57089,
-      "sha256": "8f8c01e0858409d3a8b35828f285a84b4d3e6b78332de1387004db6af043a01e"
+      "bytes": 58116,
+      "sha256": "38af4cdc200e771d64bea8851ad2221b1f4151d2ab3c3c29d54b9807fe724b0e"
     },
     {
       "path": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 48385,
-      "sha256": "c3b31764092d4f3c547d19efc06b9266a5fdb0bc38e6fa92f16e8b143f2ed490"
+      "bytes": 49295,
+      "sha256": "628e2c9630307802ef0b7b5351de405ad9a3ff9b693c08199af4621f1173ff6d"
     },
     {
       "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -15608,14 +15608,14 @@
     {
       "path": "skills/egret-windows-ci/SKILL.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 4066,
-      "sha256": "8636de194743fc472adfdca1aca461bec1abc3b8d017e1e2093f9e60e821e005"
+      "bytes": 4351,
+      "sha256": "87672e526a2e34ee9b40088019dbd1568ab77f6e395c32de38a9cd92f16945fc"
     },
     {
       "path": "skills/egret-windows-ci/SKILL.zh-CN.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 3600,
-      "sha256": "15c78f57eb37eb1304106ec0bb9245a41e22b21d6fb51a055fc66067c2f2ce62"
+      "bytes": 3836,
+      "sha256": "a2964640ebd9b8a801bd4535ce43daa7a2bb173c93b109dbc41d7fb82c8fb14e"
     },
     {
       "path": "skills/egret-windows-ci/scripts/summarize-windows-failure.mjs",

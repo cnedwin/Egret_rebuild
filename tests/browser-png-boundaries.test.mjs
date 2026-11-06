@@ -274,3 +274,19 @@ for (const [relative,mode] of [["packages/engine/dist/web/webgl2.d.ts","missing"
   }finally{writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);assert.deepEqual((await run()).issues,[]);}
  });
  });
+
+// Each assigned controls refusal follows a fresh genuine complete owner baseline.
+for(const [relative,mode] of [['packages/engine/dist/ui/controls.d.ts','missing'],['packages/engine/dist/ui/controls.js','same-length'],['packages/engine/src/pointerInput.ts','stale-emission']])
+ test('BIP controls successor refuses '+mode,async()=>{
+  const check=await checker();await isolated(check,async({root,run,baseline})=>{
+   const file=path.join(root,relative),before=readFileSync(file);
+   try{
+    if(mode==='missing')rmSync(file);
+    else if(mode==='same-length'){const changed=Buffer.from(before);changed[0]^=1;assert.equal(changed.length,before.length);writeFileSync(file,changed);}
+    else writeFileSync(file,Buffer.concat([before,Buffer.from('// unreviewed controls source\n')]));
+    const current=inventory(root),prior=new Map(baseline.map(row=>[row.path,row]));
+    assert.deepEqual([...current.filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),...baseline.filter(row=>!current.some(now=>now.path===row.path)).map(row=>row.path)],[relative]);
+    assert.deepEqual((await run()).issues.map(issue=>[issue.code,issue.path]),[[mode==='missing'?'BIP_BOUNDARY_SOURCE_INVENTORY':'BIP_BOUNDARY_FINGERPRINT',relative]]);
+   }finally{writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);assert.deepEqual((await run()).issues,[]);}
+  });
+ });
