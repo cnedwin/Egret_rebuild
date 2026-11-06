@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Product/core roadmap reconciliation — 2026-11-07
+
+Reconcile current capabilities with all product requirements and the existing M2–M4 packages. Consolidate the white paper, engineering/delivery plans and navigation; prioritize native editing, one mixed reference and remaining content/animation work while retaining touch ownership, M1.2 failure and device/material limits. Current optional Spine/CanvasKit implementations replace stale no-player/no-provider descriptions. No engine behavior, acceptance target, dependency or historical receipt changes. See [the engineering plan](docs/engineering-plan.md).
+
 ## Android memory accounting and lifecycle — 2026-11-07
 
 Precise target diagnostics distinguish cached performance.memory readings from live JS and backing storage. Existing paragraph, sequence and Spine examples add finite Android lifecycle/recovery evidence on both backends; the old41.4ms trigger remains unreproduced. No engine repair or full M4/M1.2 acceptance is claimed. See [the follow-up](docs/android-device-validation.md#cadence-memory-and-lifecycle-follow-up--2026-11-07).
@@ -14,7 +18,7 @@ The paragraph example now builds equipment style ranges from its captured font g
 
 ## Optional Spine assets — 2026-10-30
 
-Pinned official Core4.3.13 reads JSON setup assets and original multipage atlases through existing resources and Scope. The optional SDK preserves explicit license conditions and immutable information; complete playback, graphics, stable corpus and independent references remain open. [SDK](docs/spine-content-ingress.md).
+Pinned official Core 4.3.13 reads JSON setup assets and original multipage atlases through existing resources and Scope. The optional SDK preserves explicit license conditions and immutable information; complete playback, graphics, stable corpus and independent references remain open. [SDK](docs/spine-content-ingress.md).
 
 ## Paragraph alignment and line limits — 2026-10-29
 

@@ -25,6 +25,8 @@ Egret is a community rebuild of the game engine for Web and lightweight games, w
 | UI and text | Variable-height lists, focus/navigation, multilingual styled paragraphs, committed text geometry, font/theme switching, masks and blur | Native editing/IME, complete controls/modal/semantic integration and broader script/device qualification |
 | Integration | Editable resource, UI and animation examples; responsive preview | Complete mixed reference game and qualified core handoff |
 
+[Android observations and remaining device limits](knowledge-base/en/docs/android-device-validation.md) cover exact component profiles; they do not establish universal phone support or close the M1.2 performance target.
+
 ## Run an example
 
 Use **Node.js 26.7.0** and **pnpm 11.25.0**. From the repository root:
@@ -37,9 +39,12 @@ The [getting-started guide](knowledge-base/en/docs/getting-started.md) explains 
 
 ## Development and community
 
+Read the [current capability map](knowledge-base/en/docs/core-progress.md) and [next-phase engineering plan](knowledge-base/en/docs/engineering-plan.md) before choosing work. The 2026-11-07 review reconciles the implemented core, remaining requirements and the same eleven M2–M4 packages.
+
 The [M2–M4 roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md), [Issues](https://github.com/cnedwin/Egret_rebuild/issues), [milestones](https://github.com/cnedwin/Egret_rebuild/milestones) and [community board](https://github.com/users/cnedwin/projects/2) describe delivered work, dependencies and remaining acceptance.
 
 - **Next proposed core package:** [native plain-text editing with managed UI (#89)](https://github.com/cnedwin/Egret_rebuild/issues/89), reusing paragraph geometry, focus and resource lifetimes. This is a scoped next step, not an implementation claim or an automatic assignment.
+- **Parallel integration:** [one editable mixed reference (#91)](https://github.com/cnedwin/Egret_rebuild/issues/91) can start from current assets/UI/animation; [remaining M2 work](https://github.com/cnedwin/Egret_rebuild/issues/56) keeps binary/reference/seek/preservation outcomes distinct. These are bounded contribution entries, not full acceptance.
 - **Contribute independently:** authorized content/reference fixtures, documented reproduction cases, targeted code, translation and [independent newcomer rehearsal (#52)](https://github.com/cnedwin/Egret_rebuild/issues/52). Coordinate touch/gesture work with its existing contributor before editing shared inputs.
 - **Work in complete packages:** [M2 content/animation](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 UI/text/input](https://github.com/cnedwin/Egret_rebuild/issues/57) and [M4 integration](https://github.com/cnedwin/Egret_rebuild/issues/58). A merged increment does not close all acceptance for its package.
 
@@ -51,6 +56,12 @@ These are merged engineering increments, not new package-version or full-support
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#130](https://github.com/cnedwin/Egret_rebuild/pull/130) | Precise Android heap accounting and finite lifecycle/recovery follow-up; historical callback trigger remains unresolved | Android 精确内存口径及有限生命周期／恢复补充；历史回调触发原因仍待查 |
+| [#129](https://github.com/cnedwin/Egret_rebuild/pull/129) | Registered-font selection retained across equipment changes in the paragraph example | 段落示例换装后保持已注册字体选择 |
+| [#127](https://github.com/cnedwin/Egret_rebuild/pull/127) | Contributed movement/action state controls over existing contact routing | 社区移动／动作状态控件复用既有触点路由 |
+| [#128](https://github.com/cnedwin/Egret_rebuild/pull/128) | Windows CI failure governance and reusable Skill | Windows CI 失败治理与可复用 Skill |
+| [#108](https://github.com/cnedwin/Egret_rebuild/pull/108) | Contributed bounded Android collector with exact-setting restoration | 社区有界 Android 采集器及原设置恢复 |
+| [#126](https://github.com/cnedwin/Egret_rebuild/pull/126) | Public overview, roadmap and community entry refresh | 公开简介、路线图与社区入口整理 |
 | [#125](https://github.com/cnedwin/Egret_rebuild/pull/125) | Managed sequence RESET replacement; early shared validation before complete merge checks | 受管理序列 RESET 替换；完整合并检查前增加公共基线预检 |
 | [#124](https://github.com/cnedwin/Egret_rebuild/pull/124) | Transactional UI theme/skin switching, paint-only layout reuse and metric-change anchor preservation | UI 主题／皮肤事务切换、纯绘制布局复用及度量变化时锚点保留 |
 | [#123](https://github.com/cnedwin/Egret_rebuild/pull/123) | Font build artifacts and runtime font-set replacement through existing resource owners | 字体构建产物与运行时字体集合替换，复用既有资源所有权 |
@@ -71,7 +82,7 @@ The entries below describe their original delivery scope; later capabilities are
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
-| Optional Spine assets / 可选 Spine 资产 · 2026-10-30 | Core4.3.13 JSON and original atlas pages share existing resource ownership; playback/graphics qualification remains open | Core4.3.13 JSON 与原始图集页面复用既有资源所有权；播放／图形验收继续开放 |
+| Optional Spine assets / 可选 Spine 资产 · 2026-10-30 | Core 4.3.13 JSON and original atlas pages share existing resource ownership; playback/graphics qualification remains open | Core 4.3.13 JSON 与原始图集页面复用既有资源所有权；播放／图形验收继续开放 |
 | Keyboard focus / 键盘焦点 · 2026-10-30 | Stable logical targets, typed keys and native Canvas focus lifetime | 稳定逻辑目标、类型按键与原生 Canvas 焦点生命周期 |
 | Mobile examples / 移动示例 · 2026-10-30 | Touch input, responsive UI and bounded DPR; preserved fixed fixtures | 触摸输入、响应式 UI 与有界 DPR，保留固定夹具 |
 | Paragraph layout / 段落布局 · 2026-10-29 | Six alignments, maxLines and truthful overflow; hard-break marker and recoverable no-fit refusal | 六种对齐、maxLines 与真实溢出；硬换行省略号及过窄拒绝／恢复 |

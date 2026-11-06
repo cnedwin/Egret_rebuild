@@ -2,17 +2,27 @@
 
 English | [简体中文](../../Cns/docs/m2-m4-delivery-plan.md)
 
-2026-10-23 · Design baseline 3 · Engineering preview 0.61.0
+2026-11-07 · Current implementation and next-phase alignment
 
 ## Purpose and current baseline
 
-Make the existing core usable for animation-rich, complex-interface games through three outcomes: complete versioned Spine/content support, a coherent UI/text/input system, and an integrated core release with explicit evidence. This is a design and implementation roadmap, not a claim that these capabilities exist. The audience includes contributors joining without the project's conversation history.
+2026-11-07 · Reconciled roadmap · Audited main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1).
 
-[PR #81](https://github.com/cnedwin/Egret_rebuild/pull/81) delivered capture-record reuse and ordered preparation-key scanning at main `f9801b7bbad807c424a1ce8866487034f08706c3`. Four required CI jobs passed; the merged tree matched the reviewed candidate. M1.4 WebGL2 and M1.5 resource manifests/recovery are integrated within their documented desktop scope. The fixed M1.2 formal batch remains a valid failure: static/sparse/full-dirty Engine median-p95 is 5.0/6.4/10.3 ms against the 8 ms target. Full-dirty preparation ≤ 4 ms is not established; GPU time is unmeasured. Keep [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) open.
+Make the current shared core usable for animation-rich, complex-interface games, then qualify its complete declared scope. The eleven existing packages remain unchanged. [Current capabilities](core-progress.md) provides the as-built map; [engineering](engineering-plan.md) gives the next complete increments; [M2](m2-spine-content-plan.md), [M3](m3-ui-text-input-plan.md) and [M4](m4-core-acceptance-plan.md) own their detailed contracts.
 
-The authoritative subsystem plans are [M2 Spine/content](m2-spine-content-plan.md), [M3 UI/text/input](m3-ui-text-input-plan.md) and [M4 core acceptance](m4-core-acceptance-plan.md). They extend the [architecture plan](architecture-and-engineering-plan.md); original contracts and failed measurements remain preserved.
+M1 rendering, WebGL2, manifests and selected recovery are integrated. M1.2 formal static/sparse/full-dirty Engine median-p95 remains 5.0/6.4/10.3 ms against 8 ms; full-dirty preparation coverage is unestablished and GPU time is unmeasured. Keep #55 open.
 
-M2.1 now has a first source-to-build implementation for PNG, a finite single-page atlas profile and sequences, with persistent cache and project adoption. See the [content build contract](content-build-pipeline.md) for current scope and evidence. Full Spine/font/variant acceptance remains open; the existing eleven work packages are retained.
+M2 has build-to-runtime PNG/atlas/multipage/sequence/font paths, optional Core 4.3.13 JSON assets, independent players/shared display, skins/finite plays, RESET and selected recovery. M3 has managed UI/navigation, readonly styled paragraphs/geometry, font/theme generations, shared masks/blur, contact/keyboard foundations and contributed movement/action state. Their complete package acceptance remains open. Bounded Android evidence is in the [device report](android-device-validation.md).
+
+### Next complete increments
+
+| Entry | First outcome | Remaining dependency |
+| --- | --- | --- |
+| M3.3 #89 with #87/#88 | Native plain-text editing in existing UI, consuming committed paragraph geometry and focus | Actual editor/IME and bounded row-retention implementation; no duplicate text engine or touch ownership |
+| M4.1 #91 | One growing mixed reference built from available public interfaces; early actual provider/content budget intake | Full form/controls and selected content before final X qualification |
+| M2.1–M2.4 #83–#86 | Remaining content/binary/variants, seek/replay and compatible state preservation | Version/rights/reference rows qualify their advertised scope |
+
+Existing M3.4 touch contributions continue under their coordinated owner. Full M4 closure still needs all required functionality, unchanged performance targets and actual required device/material evidence. These priorities do not start new engine work through this documentation change.
 
 ## Architectural choice
 
@@ -35,7 +45,7 @@ The renderers remain WebGPU plus WebGL2 with explicit capabilities; Canvas retai
 | Host to game/UI | Host pointer/keyboard/composition/fonts/semantics → shared input and UI controllers | Host-specific DOM/native behavior stays in optional adapters. Core layout and events remain host-free. Late host callbacks cannot revive disposed scopes. M3 owns the input/focus/IME contract. |
 | Content to tools | Stable project IDs, commands, diagnostics and build artifacts → future code/visual/Agent tools | Expose serializable intent and precise diagnostics, not native objects. Apply edits through existing transactional project authority; no model calls in frame execution. |
 
-Retain the existing four core packages. A separately enabled Spine package may isolate the qualified third-party runtime, license and bundle boundary described in M2; it does not become a default-engine dependency. Proposed types and optional entries in subsystem plans are design targets, not current exports. A work package freezes its cross-module signature, error semantics and compatibility mapping before dependent implementation starts. Review these in the capability Issue and its plan; do not create a second global contract registry.
+Retain the four foundation packages and the implemented optional @egret/spine package. The latter isolates official Core 4.3.13, license and bundle boundaries and is not a default-engine dependency. Current entries are listed in core-progress; remaining design concepts are not new exports. A work package freezes its cross-module signature, error semantics and compatibility mapping before dependent implementation starts. Review these in the capability Issue and its plan; do not create a second global contract registry.
 
 ### Frame and replacement semantics
 
@@ -92,7 +102,7 @@ Mobile touch and independent simultaneous contacts are mandatory M3 functionalit
 
 M3.3 can deliver raw game multi-touch against existing display/Scope contracts before automatic UI layout or IME is finished. UI integration then consumes M3.1/M3.2; all existing focus/editing requirements remain in that package. Input is an optional core capability shared by scenes and UI, not a dependency on the full UI/text system. Keep old mouse-only APIs compatible and desktop regressions separate. Use the detailed contact contract and gesture ownership in the M3 plan, and the device/actions/budget matrix in M4; no new registry, task family or acceptance framework is needed.
 
-Both required phone rows start OPEN. Real touch, cancellation, simultaneous controls, scrolling, rotation and keyboard behavior need actual devices; CI and desktop emulation cannot close them. X-D60/1 and the original M1.2 failed timing stay unchanged. A limited desktop preview may precede mobile qualification, but cannot close M3/M4 or claim mobile support. Mini-game/native host delivery remains separately scoped; the shared input contract preserves that extension boundary without certifying those hosts.
+Both complete required phone-profile rows remain OPEN despite the bounded Android component evidence. Real touch, cancellation, simultaneous controls, scrolling, rotation and keyboard behavior need actual devices; CI and desktop emulation cannot close them. X-D60/1 and the original M1.2 failed timing stay unchanged. A limited desktop preview may precede mobile qualification, but cannot close M3/M4 or claim mobile support. Mini-game/native host delivery remains separately scoped; the shared input contract preserves that extension boundary without certifying those hosts.
 
 ## Existing code: retain, refactor, retire
 
@@ -127,7 +137,7 @@ Keep the existing parent Issues [M2 #56](https://github.com/cnedwin/Egret_rebuil
 
 Each child Issue contains English followed by Chinese: outcome, scope/non-goals, actual code entry points, dependencies, target interfaces, acceptance cases, current limitations and the review role. A contributor claims a task by commenting with scope and approach; maintainers confirm ownership and conflicts. Do not assign people without agreement. `help wanted` invites participation; it does not mean the architecture work is a good first issue. A newcomer can contribute an authorized fixture, a reproduction or documentation within the same package before owning the whole feature.
 
-Use a small set of capability areas and ready/blocked labels. Ready means no unmet predecessor for the stated first deliverable; blocked names the exact predecessor or external condition. Review begins with a draft PR and concrete evidence. Done requires integrated code and that package's stated acceptance, not merely a closed PR. Dependencies in the Issue body remain readable without a Projects account.
+Use a small set of capability/contribution labels; the existing Project status is the workflow authority. Ready means no unmet predecessor for the stated first deliverable; blocked names the exact predecessor or external condition. Review begins with a draft PR and concrete evidence. Done requires integrated code and that package's stated acceptance, not merely a closed PR. Dependencies in the Issue body remain readable without a Projects account.
 
 GitHub update order: preserve current Issues/milestones → publish reviewed plans and entry links → update three parent Issues → maintain the existing eleven child packages and milestone links → mark ready/blocked from real dependencies → verify readback and consistency. Do not close historical tasks or rewrite contributor discussions to make the roadmap look simpler. Projects access was restored on 2026-10-21; maintain these same Issues and statuses in the existing board rather than creating another project.
 
@@ -140,5 +150,3 @@ The all-in-one creation platform remains a later product line: coding/debugging,
 ## Evidence and source practice
 
 Current claims derive from the [M1 plan](m1-rendering-resource-plan.md), [rendering evidence](incremental-frame-preparation-evidence.md), [resource recovery evidence](resource-recovery-evidence.md), [product components](product-components.md) and the actual source entries listed in subsystem plans. External mechanism/format references belong beside the relevant decision in those plans. References acknowledge technical origins; implementation remains independent except for explicitly licensed dependencies. This design was prepared with AI assistance and requires the same contributor review as other architecture changes.
-
-The [optional Spine content ingress](spine-content-ingress.md) adds a pinned Core4.3.13 asset SDK under M2.1: original JSON/atlas binding, shared setup/page leases and explicit lifetime. Conditional runtime licensing and original programmatic fixtures are recorded separately from stable export/independent-reference qualification. No Spine Node producer, player or graphics is delivered by this increment; M2.1–M2.4 and their existing Issues remain open to their remaining acceptance.

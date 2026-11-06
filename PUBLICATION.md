@@ -2,13 +2,13 @@
 
 English | [简体中文](PUBLICATION.zh-CN.md)
 
-The public repository is [cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild), with main as the integration branch. Engineering preview 0.61.0 is integrated through PR #50. Workspace packages remain private at 0.0.0 and the host protocol remains 1.0. Source publication and a production engine release have separate acceptance criteria.
+The public repository is [cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild), with main as integration branch. The 2026-11-07 review uses main f869b37; [current capabilities](knowledge-base/en/docs/core-progress.md) and the changelog describe later delivery than the historical 0.61 checkpoint. Workspace packages remain private 0.0.0 and Host protocol 1.0. Source publication, clean-consumer distribution and a complete product release have separate acceptance.
 
 ## Prepare a contribution
 
 1. Describe the problem, behavior, affected contracts and verification. Follow the [contribution guide](CONTRIBUTING.md) and [repository collaboration policy](AGENTS.md).
 2. Complete both reading editions, source attribution and critical English code comments. Update current document identities after the text is final.
-3. Run node tools/prepush.mjs. Rendering changes also require the affected real-browser checks described in AGENTS. Record the actual environment, result and remaining limits.
+3. Use affected local feedback during editing and the normal committed push hook before review submission. Before merge, the final candidate must pass the complete integrated gate, independent source/results/bilingual review and affected real-browser checks described in AGENTS. Reuse unchanged evidence by exact input comparison; record actual environments and open limits.
 4. Push the reviewed branch and open a PR under the repository's contribution permissions. Verify the remote commit and, after an authorized merge, the content on main.
 
 Enable the local hooks with git config --local core.hooksPath .githooks. Resolve failures through the normal checks.

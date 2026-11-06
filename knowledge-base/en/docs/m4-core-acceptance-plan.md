@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/m4-core-acceptance-plan.md)
 
-Design proposal · 2026-10-23 · Parent: [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58)
+Plan and current implementation · 2026-11-07 · Parent: [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58)
 
 ## 1. Outcome and scope
 
@@ -16,6 +16,10 @@ M4.3 must name its delivered scope as a complex 2D UI/animation/resource core pr
 
 ## 2. Starting point and dependencies
 
+Audited main f869b37 already supplies independent Spine/sequence examples (#118), RESET/recovery (#120/#125), styled paragraphs (#121), effects (#122), fonts (#123), themes (#124), contributed control state (#127) and bounded Android follow-ups (#129/#130). M4.1 is ready for a first public-interface integration. Full X-D60/1/X-MTouch/1, complete selected Spine, native editing/controls and formal budgets remain open.
+
+M3.2's adopted provider is CanvasKit/SkParagraph. The earlier ICU/HarfBuzz/FreeType wording names its paragraph services, not another implementation to build. M4.1 and M3.2 must bind actual provider/font artifacts and measure cold transfer, initialization and separate residence early; M4.2 owns final measurement. Retain every published numeric ceiling. An incompatible scenario/provider change requires a reasoned versioned successor before collection, with the original profile/failures retained.
+
 | Existing evidence | Consequence for M4 |
 | --- | --- |
 | [Architecture plan](architecture-and-engineering-plan.md), milestone table and section 12 | M4 is mixed scenarios/core acceptance; wider 3D, hosts and creator tools follow separately. |
@@ -24,7 +28,7 @@ M4.3 must name its delivered scope as a complex 2D UI/animation/resource core pr
 | [Scene example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/scene3d/README.md) and [resource example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md) | Existing procedural opaque 3D and editable resource interactions are integration starting points, not complete 3D or UI products. Historical example environment statements are not current installation instructions. |
 | [Project transactions](project-transaction-core-contract.md) | Stable IDs, revision checks and recoverable edits exist as a bounded project kernel. An editor, model adapter or complete project-to-runtime compiler does not follow automatically. |
 
-M2 and M3 first agree their runtime interfaces and acceptance fixtures. M4.1 integration can then start while individual M2/M3 features finish. Closing M4 requires the complete selected M2/M3 feature rows, not merely interface stubs.
+M4.1 consumes the already delivered M2/M3 public interfaces while their remaining features finish. Only changed boundaries need a new agreement in the owning package. Closing M4 requires the complete selected M2/M3 feature rows, not merely interface stubs.
 
 M1.2's performance gap does not block independent M2/M3 correctness work, example authoring, fixture licensing, interface review or documentation. It blocks claims that the current core meets D60, and blocks M4 stable acceptance until the required performance rows are established. A bounded experimental increment may still merge after its applicable functional, browser and complete merge gates.
 
@@ -49,7 +53,7 @@ Retain current public entries, ownership boundaries, shared execution and source
 
 **Result:** one reproducible project demonstrating the complete selected interaction loop, with source assets, editable code/data, expected state transitions and an English/Chinese guide.
 
-**Start:** after the M2 content/instance and M3 layout/input interfaces are reviewed. Scenario design, provenance inventory and contributor feedback can start earlier. Implementation currently depends on those interfaces.
+**Start:** ready for a bounded mixed-example increment using current M2/M3 public interfaces. The complete selected scene still depends on remaining content, editor/control and qualification rows.
 
 **Scope:** select a bounded outfit/character-management scene with complex UI, independent Spine tracks/skins, sequence effects, resource replacement and the existing opaque 3D background. Agree a subset of the U/A scenarios; do not silently add all their individual maximum loads together.
 
@@ -118,7 +122,7 @@ This is a concrete proposed design freeze for implementation and qualification, 
 | Update states | Static freezes animation and UI; sparse changes exactly 60 of the 6,000 authored UI nodes per admitted frame while the eight Spine and 80 sequence instances advance; full-dirty changes all 6,000 while the same animations advance. Predeclare changed properties and input sequence. These X states are separate from the unchanged original M1 U workload. |
 | CPU and frame targets | Engine p95 ≤ 8 ms; preparation p95 ≤ 4 ms; frame interval p95/p99 ≤ 16.7/33.4 ms, with complete-window gap coverage. Record animation, layout and workload update separately; they are not hidden in a render-only number. GPU p95 ≤ 8 ms applies when actual timing is available; otherwise record UNMEASURED. Unavailable GPU timing alone does not block a scoped core preview unless the reviewed selected profile explicitly makes that measurement a required row. |
 | Logical memory | Retained decoded/source data ≤ 128 MiB; ready image residence ≤ 32 MiB and 256 entries, including applicable glyph images and committed/staged replacements; reusable buffers/targets ≤ 32 MiB; in-flight upload ≤ 64 MiB; temporary CPU upload ≤ 32 MiB. These are separately accounted classes, not a claim of total physical RAM/VRAM. Existing stricter API limits remain unchanged. |
-| Download and first interaction | All JavaScript required by X, including Spine and text-provider glue, ≤ 1.5 MiB gzip; required text-provider WASM and Unicode data ≤ 4.5 MiB compressed transfer; other first-interaction assets, including fonts, ≤ 6 MiB transferred. Total mandatory first-interaction transfer is ≤ 12 MiB. Cold-cache first interaction ≤ 15 s at 10 Mbit/s and 80 ms RTT; 12 MiB alone takes roughly 10.1 s at that rate. X uses the M3 ICU/HarfBuzz/FreeType paragraph provider for its declared multilingual UI, so its required modules/data/font initialization must complete before this marker. Optional loading separates this provider from basic applications; it does not remove required X bytes or work from measurement. These are proposed ceilings, not measured provider sizes. |
+| Download and first interaction | All JavaScript required by X, including Spine and text-provider glue, ≤ 1.5 MiB gzip; required text-provider WASM and Unicode data ≤ 4.5 MiB compressed transfer; other first-interaction assets, including fonts, ≤ 6 MiB transferred. Total mandatory first-interaction transfer is ≤ 12 MiB. Cold-cache first interaction ≤ 15 s at 10 Mbit/s and 80 ms RTT; 12 MiB alone takes roughly 10.1 s at that rate. X must bind the adopted M3 CanvasKit/SkParagraph provider and its declared multilingual font profile, so its required modules/data/font initialization must complete before this marker. Optional loading separates this provider from basic applications; it does not remove required X bytes or work from measurement. These are proposed ceilings, not measured provider sizes. |
 | Recovery and response | From observed loss to the correct fresh-generation frame: ≤ 2 s with retained CPU sources, ≤ 15 s for the same shaped reload. For the fixed 100-action input replay, event dispatch to the corresponding completed/read-back frame p95 ≤ 100 ms. This is software-observed response, not physical touch-to-photon or IME usability evidence. |
 
 Freeze the source/build/content and two backend configurations before a qualification campaign. For each static/sparse/full-dirty state, use the established 30-second warm-up and five 60-second measured runs; report median per-run p95 and retain every run. Use identical inputs for any comparative baseline; do not compare against an older build missing Spine/UI features. The M1 relative-regression check remains on its original equivalent workload.
@@ -152,7 +156,7 @@ Mobile touch is a required M3/M4 deliverable. X-D60/1 remains unchanged and cann
 
 The action fixture declares its expected game/control state, cancellation reason and viewport/layout revision per step; avoid storing personal text or persistent device identifiers. Reuse the existing event, frame, lifecycle and evidence interfaces. Keep human execution, controlled state-machine results, real browser outcomes and timing samples separate. Physical touch-to-photon, energy, thermal sensor and GPU timing results stay UNMEASURED without a suitable instrument/API; they cannot be inferred from software timings. The declared whole-engine CPU, frame and software-response rows remain required.
 
-At this design baseline, both phone rows and all new touch/gesture results are OPEN: no physical-device result was collected by this documentation change. Missing devices, licensed content or actual keyboard evidence block the corresponding required qualification and M3/M4 closure; they do not block independent code contributions or a clearly scoped desktop experimental preview. M4.3 may claim only the exact host/device/backend combinations actually qualified. Native SDK, WeChat/Douyin/Instant Games/Discord/Telegram adapters remain separately scoped future host deliveries; this core touch contract creates no support claim for them.
+Both complete phone-profile rows remain OPEN. The bounded Android component/lifecycle observations in the [device report](android-device-validation.md) are credited separately; they do not complete this mixed profile or the required human-input/IME/iPhone rows. Missing devices, licensed content or actual keyboard evidence block the corresponding required qualification and M3/M4 closure; they do not block independent code contributions or a clearly scoped desktop experimental preview. M4.3 may claim only the exact host/device/backend combinations actually qualified. Native SDK, WeChat/Douyin/Instant Games/Discord/Telegram adapters remain separately scoped future host deliveries; this core touch contract creates no support claim for them.
 
 ## 6. Performance and external boundaries
 

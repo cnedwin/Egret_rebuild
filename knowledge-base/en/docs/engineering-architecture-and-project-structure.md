@@ -8,6 +8,22 @@ R016 and D016 connect familiar object semantics to explicit engineering boundari
 
 [Public APIs and naming](public-api-design-and-naming.md) · [Code standards and gates](code-standards-and-quality-gates.md) · [Runtime architecture](technical-architecture.md) · [Rendering design](rendering-engine-and-runtime.md) · [First core record](core-framework-implementation-record.md)
 
+## Implemented workspace — 2026-11-07
+
+Main f869b37 has four foundation packages plus the separately enabled Spine package. All remain private 0.0.0 workspace packages.
+
+| Package | Actual dependency/responsibility |
+| --- | --- |
+| contracts | No product-package dependency; shared value contracts |
+| runtime | contracts; host-free state, display/events/Scope/assets/text/UI/input |
+| engine | runtime/contracts plus its declared robust-predicates boundary; public assembly and internal rendering/web modules |
+| project | contracts plus declared jsonc-parser; transactions and current import/build tools |
+| spine | public engine/contracts and official Core 4.3.13; optional assets/player/display/RESET |
+
+The current @egret/engine/web entry is Canvas-only. WebGPU and WebGL2 use explicit /webgpu and /webgl2 entries; scene3d, UI, paragraph/resources/animation/input and browser adapters use their actual package exports. No default entry initializes optional Spine, paragraph WASM, 3D or native VM.
+
+The nine-package tree and DAG below are a future responsibility model, not the current directory authority or a mandate to split the core now. CLI/editor/MCP/native crates and /eui or /compat targets are not existing exports. Use package manifests and [core capabilities](core-progress.md) before consuming a name.
+
 ## 1. Recommended direction and design rationale
 
 The proposed long-term structure is a TS/Rust monorepo with “layered packages + familiar object APIs + a data-oriented execution core.” Familiarity stays in game semantics: display objects, display lists, events, stages, resources, and animation. Modernization appears in modules, ownership, project contracts, tool feedback, and target-specific builds. There is no need to convert all scenes to ECS or make every browser work carry complete Rust/WASM or a native VM.
@@ -84,7 +100,7 @@ runtime/graphics/hosts must not depend on project, toolchain, editor, CLI, Agent
 
 Pure contracts trigger no DOM, GPU, files, networking, threads, timers, VM initialization, or global registration. Export type contracts separately from executable validators; public type imports must not automatically include all project-schema validators in bundles. Persistent JSON schemas, protocol schemas, and generated TS/Rust types have one authoritative source file. Generated artifacts are rebuildable; do not manually edit two separate copies of a contract.
 
-The package dependency graph does not mean every export imports whole packages. The intended root boundary exposes instance assembly and basic 2D APIs; exact implemented exports are frozen by the current package inventory. Access stage through an Engine instance, without automatically importing native, 3D, or EUI. `/web` assembles browser hosts and WebGPU/WebGL executors; `/scene3d`, `/eui`, and `/animation` are explicit build exits/capability boundaries. Later consumers and version cadence determine actual independent release packages. Public names/subpaths await registry availability checks and API review.
+The future dependency graph does not make every export import whole packages. Current roots assemble instances/basic2D; explicit current backend/UI/text/animation entries follow package manifests, including the Canvas-only /web boundary above. Future /eui, /compat, host/graphics packages and independent release identities require their own implementation and consumer qualification.
 
 Inject host capabilities through ports rather than asking “is this WeChat/Android?” in every layer. Performance hotspots may use explicit internal extension points, but arbitrary `internal` imports cannot bypass resource generations, device owners, or persistence-format versions.
 
@@ -164,9 +180,9 @@ Verification includes dependency DAGs/prohibited reverse references, public-expo
 Related contracts: technical architecture; rendering engine and runtime; AI creation and engineering interfaces; graphics backends, compilation, and native Runtime selection; independent implementation and third-party dependency rules; current version; requirements/decision/source registers.
 
 - D006 and D014 jointly express TS public state and narrow native-module contracts. Evaluate Rust/C++, WASM movement down the stack, the primary graphics library, and VMs against their respective evidence; no specific selection is accepted yet.
-- Graphics and hosts both need low-level interfaces but must not become one package: graphics manages device execution, hosts manage platform surfaces/services, and engine assembles them; native borrowed devices are explicit adapter boundaries.
+- Graphics and hosts retain distinct responsibilities even while currently implemented inside engine: graphics manages device execution, hosts manage platform surfaces/services, and engine assembles them; native borrowed devices are explicit adapter boundaries.
 - project's edit-state authority and runtime's game-state authority are two lifecycles, not synchronized duplicate business state.
-- “Complete specification” is a design-document deliverable. The first three responsibility-based packages are implemented and have passed bounded verification; see the [core framework implementation record](core-framework-implementation-record.md). Complete APIs, graphics, hosts, and CI still await implementation/acceptance; D/H and complete-product acceptance statuses remain.
+- “Complete specification” is a design-document deliverable. The historical first slice implemented three responsibility-based packages with bounded verification; see the [core framework implementation record](core-framework-implementation-record.md). Broader API/host/product acceptance remains separate from current implemented packages and passing CI; D/H and complete-product acceptance statuses remain.
 
 ## Implemented 0.13 boundaries
 

@@ -1,161 +1,85 @@
-# 核心工程进展
+# 核心能力与剩余工作
 
 [English](../../en/docs/core-progress.md) | 简体中文
 
-核心工程通过可运行增量连接显示、资源、动画、输入与宿主执行。本页概述当前接口及后续产品工作，链接的契约说明精确行为与验证范围。
+复盘基线：2026-11-07，main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1)。当前是提供可运行公共示例的工程预览。工作区包仍为 private、版本 0.0.0；源码公开不等于可安装的稳定引擎发布。
 
-## M3.1 按 key 定位虚拟列表——2026-11-04
+本页说明当前能力，[工程计划](工程规划.md)说明接下来的工作，子系统契约给出准确 API 和证据范围。历史预览记录不再作为并行的“当前版本”。
 
-虚拟列表现可按稳定记录 key 暂存 nearest/start/center/end 定位，通过现有 prepare/commit 根据实测高度重新计算。取消、替换和过期令牌保留已提交画面；既有仅可见行焦点仍在检查提交结果后显式调用。参见[约定](ui-data-panel.md#按-key-定位)和 50,000 条记录的公开示例。十四项针对性行为测试及默认 Edge WebGPU／WebGL2 检查覆盖对齐、替代、按键保持及清理；完整 CI／交付单独记录。自动跨屏遍历、IME、无障碍、真机和性能继续 OPEN，历史 M1.2 预算失败保持不变。
+## 产品目标与当前实现
 
-## M2.4 可编辑动画／换装参考场景——2026-11-04
+白鹭的产品目标包括动画丰富的 2D 游戏、复杂界面、轻量 3D、一体化 AI 创作平台、目标平台发布和旧工程迁移。当前实现提供运行时基础，尚未交付完整的创作、原生／小游戏或迁移产品。
 
-参考场景（examples/animation-outfits） 在同一个 Engine 中组合 20 个独立 Spine 播放实例，共享一份设置／两张图集页，并组合 200 个独立序列控制器，共享片段／纹理。通过现有公开 SDK 所有权支持选中角色换装与动作、有限或循环播放、暂停／速率、取消、完整关闭与重试。新控制器容量提升到既有的 256 个合并目标边界，不改变每控制器预算或导出。针对性行为测试与默认 Edge WebGPU／WebGL2 检查覆盖精确数量、固定像素和逻辑清理。完整替换／恢复、缓存／性能测量、完整 Spine／导出和物理设备验收仍未完成；M2.4／Issue #86 与 M1.2 的性能失败状态不变。
-
-## M2.3 Spine 共享渲染接入——2026-11-04
-
-Spine 实例现通过既有 Mesh2D／材质和页面租约，在 WebGPU／WebGL2 发布复制的有序几何。`egret-shared-linear/1` 配置必须显式选择，不默认宣称 gamma 空间一致性。稳定拓扑复用节点，绘制失败保留旧画面，不使已提交动画故障或抑制其事件，销毁先于页面释放。参阅[共享渲染契约](spine-content-ingress.md#共享渲染显示)。本有限接入不关闭完整 Spine、M2.4 恢复、真机或性能验收。
-
-## M2.2 Spine 独立播放——2026-11-04
-
-可选 Spine SDK 基于既有共享设置数据／页面租约创建独立实例。显式 tick 推进轨道、队列、混合、命名皮肤、暂停／速度与复制的姿态／事件快照；有界故障保留最后成功快照，资源组／Scope 关闭时先销毁实例再释放资源。参阅[播放契约](spine-content-ingress.md#独立播放实例)。共享图形、定位／重放、完整约束／物理参考、授权导出素材、手机和性能仍开放。
-
-## M3.1／M3.3 托管行焦点——2026-11-04
-
-托管虚拟列表可借用既有键盘通道，为已提交可见行提供稳定 ID、显示顺序遍历和显式焦点。替换时先在脱离前取消旧按键，仅恢复同键且符合资格的新目标；滚出视口时明确释放焦点，不保留隐藏行。参阅[所有权与 API](ui-data-panel.md)。响应式 UI／段落页提供键盘选择和可见边框。原生编辑、自动跨屏遍历、模态控件及完整 M3／真机／性能验收继续 OPEN。
-
-## M3.2 源文本、选区与光标几何 — 2026-10-30
-
-可选段落 SDK 从同一原生段落及已提交栅格结果提供不可变 UTF-16 命中、选区与光标几何。有界元数据计费沿用资源租约及最新意图／UI 所有权。当前针对性验证35项通过，实际 Edge 的 WebGL2、WebGPU 各10项通过。[契约](paragraph-text-geometry.md)与独立 UI 示例定义亲和方向、字素／CRLF 边界及隐藏省略文本行为。原生编辑／输入法、完整文字／字体／墨迹、手机、性能和完整 M3/M4 仍为 OPEN，PR/Main 交付另行记录。
-
-## M3.3 键盘与逻辑焦点——2026-10-30
-
-可选键盘通道将真实 Engine／Scope 所有权、稳定显示目标 ID、遍历和逐键取消接入原生 Canvas 桥。[契约](keyboard-focus-input.md)明确区分本基础能力与托管 UI 自动注册、模态／复合控件、编辑／输入法和辅助技术验收；完整 M3.3／M4 继续 OPEN。
-
-## 响应式示例——2026-10-30
-
-手机预览使用现有角色、多指针、UI 和段落 SDK，补齐响应式列布局、有界 DPR 和有序会话替换。固定验收文件与旧鼠标 API 保持不变。参阅[示例契约](mobile-examples.md)；桌面模拟不代表真机、输入法、性能或 M4 验收完成。
-
-## M3.2 段落对齐与行数限制 — 2026-10-29
-
-只读段落新增左／右／居中／start／end／两端对齐及固定省略号的 maxLines。硬换行／空白行溢出显示省略号，过窄时明确拒绝且保留已提交内容；继续复用既有 UI 几何与资源所有权。见[布局契约](paragraph-layout-controls.md)。针对性 36 项及每后端 20 项实际浏览器检查属于有限功能证据；完整 M3.2、设备、IME 和性能继续 OPEN。
-
-## M3.2 只读 UI 段落与最终行双向排版 — 2026-10-29
-
-可选只读 SDK 已用明确字体字节、按宽换行、自然／最小行高及现有资源租约驱动普通 UI 与虚拟列表。当前所选原生后端保留 P1 上下文并解析实际最终行，统一字形存储、矩形与命中查询。有限原生检查及 WebGL2／WebGPU 各 14 项真实 Edge 检查通过。[SDK 契约](readonly-paragraph-sdk.md)与[最终行记录](paragraph-line-bidi.md)给出精确范围。完整 M3.2、独立字形／墨迹、编辑／输入法、手机、性能和内存／OOM 继续 OPEN。以下检查点保留原有产物与采用边界。
-
-## M3.2 私有 bidi 后端比较 — 2026-10-29
-
-已构建的私有 SheenBidi 比较版本接入全部四个真实段落 builder 路径。声明的完整 bidi schedule 记录 953,627 次已观察尝试，严格比较零差异，另有 28 项固定 adapter 的 auto 案例为 NOT_OBSERVED；原 ICU 失败继续保留。真实段落 finite 检查及有界桌面 CPU raster／浏览器检查在各自范围内通过。本次不增加公开 SDK／provider 或产品运行时依赖。最终软换行 L1、独立 glyph／ink 参考、live／physical memory 验收、IME／移动端及 M4 仍为 OPEN。详见[比较结果、源码包与证据边界](paragraph-bidi-comparison.md)。
-
-## 历史 M3.2 私有段落检查点 — 2026-10-28
-
-此前有界私有 CPU 检查点记录18项聚焦控制通过，三个声明 profile 的完整 grapheme／line 边界输入均零差异。严格 bidi 比较仍保留105,785次 class 尝试失败，以及11项 character／11项固定 adapter 不符。在最大64MiB下，实际线性内存容量从32增长到38.4375MiB，不代表内存合格。截至该检查点，SheenBidi v3.0.0 仅完成源码比较准备，没有 adapter 或运行结果；没有交付公开段落 API，也没有采用 provider。详见 [M3.2 检查点、来源标注与剩余限制](m3-ui-text-input-plan.md)。
-
-## 实验性 WebGPU 图像驻留 — 0.61.0
-
-**0.61.0 工程预览**增加由各 WebGPU Host 独立管理的内部图像缓存，复用已安全完成的精确裁剪 GPU 图像。LRU 机制维持 32 MiB 逻辑图像池和最多 256 个可复用条目，保留原公开准入、渲染模式与生命周期管理，不增加公开 API 或依赖。
-
-参阅[契约](gpu-image-residency-contract.md)及[证据与限制](gpu-image-residency-evidence.md)。受控规格/所有权结果和实际当前桌面回归结果具有各自范围。新增缓存专用浏览器矩阵延期并保持 OPEN。物理 GPU 内存、性能、目标设备与实际 device-loss 恢复仍未验证。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
-
-0.61 增量已通过 [PR #50](https://github.com/cnedwin/Egret_rebuild/pull/50) 交付，Main 为 `030a34646774dea6c46cc947b55186da9265a6c8`。
-
-## 图集导入规划 — 0.60.0
-
-**0.60.0 工程预览**增加可选 `@egret/project/atlas` 入口，以一个显式 PNG 绑定规划严格单页 Aseprite stable-marker JSON-array。两个运行时值与十六个擦除类型为既有 SpriteSheet、SequenceClip 工厂生成自有、冻结的输入。精确 profile 为 `aseprite-json-array-1.3.18.6-v1`；exporter 输出兼容性、声明 hash 与许可资格仍未验证。
-
-参阅[契约](atlas-import-plan-contract.md)及[证据与限制](atlas-import-plan-evidence.md)。
-
-已独立接受的保存结果分别为聚焦 planner 47/47、较早正常 SDK 核心 3625/3625 与单独 F2 160/160，以及独立 CPU firstGREEN 5/5；这些重叠范围不相加。独立审查还接受所选新增 Native Canvas/WebGPU 四次读回结果。截至当时的编写截止点，最终集成门禁/prepush 及 0.60 Git/远端交付仍待完成；0.60 增量随后已通过 [PR #49](https://github.com/cnedwin/Egret_rebuild/pull/49) 交付，Main 为 `8d94620d1134d347bf4cc08d2ef8d76c46c6b308`。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
-
-前一 0.59 增量已通过 [PR #48](https://github.com/cnedwin/Egret_rebuild/pull/48) 交付，Main 为 `44f49f9d97a7baebc400fd4940541529dc33d147`。较早 0.59 读物和证据保留原编写截止点，新增交付说明不改写它们。未报告远端 status 或 check run，不据此推断 CI 通过。
-
-## 标准化图集帧 — 0.59.0
-
-显式 `'trim-rotation-v1'` profile 通过一个擦除的 readonly `AtlasFrameLayout` 类型扩展现有 SpriteSheet 和 SequenceClip 工厂。带透明裁边及顺时针90度打包的 crop 通过 Bitmap、SequencePlayer 和 SequencePlayback 保留原始逻辑画布。两个 frame collector 均以 `M * S` 合成图像放置，parent clip、anchor 和 child 坐标仍使用原 display matrix。默认/undefined profile 保留原矩形路径。完整输入、精确 lease 与所有权规则见[契约](atlas-frame-layout-contract.md)、[证据](atlas-frame-layout-evidence.md)和[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.md)。
-
-经独立审查的十二阶段 SDK `node tools/verify.mjs` 运行通过 **3559/3559 项核心测试**及单独的 **160/160 项 Spine 实验测试**，两套的 failed/cancelled/skipped/todo 均为 **0**。该次运行完成构建、严格消费者和源码边界阶段。另经独立审查的桌面 Canvas 与纹理 WebGPU 运行通过六个全新上下文、30 次零容差完整 RGBA 读回，覆盖 once/loop 时间、持有时间恢复、anchor、parent clip、每后端两个指定突变对照，以及原资源退役后的保存帧重放。当前验证器增加了第十三个图集源码边界阶段；截至本次编写，完整重跑、最终公开内容/prepush、0.59 Git 交付及远端 CI 仍待完成。
-
-此有限增量不关闭更广泛的 P03/P04/P05 工作范围。exporter 导入、多页、pivot/nine-slice 导入、动画资源事务与恢复、controller seek/rate/events、完整 UI、完整 Spine R020/V020、迁移 R008/V006、物理 GPU/移动端行为、内存和性能保持 OPEN。工作区包仍为 private、版本 0.0.0，Host 协议为 1.0。
-
-## 资源组合准备 — 0.58.0
-
-工程预览 **0.58.0** 增加 `Engine.captureBitmapBindings(scope, targets)` 及擦除类型 `BitmapBindingTicket`。组合换装示例等待两张服装纹理全部就绪，再同时提交两个图层的绑定。请求等待、失败、取消或被后续请求替代时保留可用服装；票据拒绝覆盖调用方之后设置的绑定。
-
-已记录的桌面 Canvas 与 WebGPU 检查通过六个独立上下文，保留 54 份原始 RGBA 读回，覆盖独立的旧图层对照、真实鼠标选择、动画边界，以及原始读取尚未结束时关闭。该结果只适用于有限桌面范围；通用依赖清单、更多内容类型、完整 UI、Spine、生产宿主、移动性能和物理内存验收仍保持开放。
-
-参阅[规格](prepared-resource-groups-spec.md)、[证据与边界](prepared-resource-groups-evidence.md)及[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/prepared-resource-groups/README.md)。
-
-## 真实资源场景集成 — 0.57.0
-
-工程预览 **0.57.0** 通过既有公开 Engine API，组合真实 PNG 资源、共享图集播放、文本与鼠标输入。默认使用 Canvas，纹理 WebGPU 场景作为显式选择的实验路径。资源准备、画面就绪、输入就绪及安全关闭具有各自边界。参阅[集成记录](resource-scene-integration.md)和[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md)。
-
-桌面 Canvas/WebGPU 流程已完成七个独立上下文，保留 64 份原始 RGBA 画面；在记录的环境中，固定点与字体区域比较、错误对照和完整关闭均通过。手机、跨环境字体、性能与能耗验收仍保持开放。
-
-## 可恢复位图资源替换 — 0.56.0
-
-`Engine.createBitmapResourceSlot(scope, bitmap)` 在替换 Texture 时保持同一 Bitmap 身份，根入口仅新增擦除类型名称 `BitmapResourceSlot` 与 `BitmapResourceSlotState`。初始绑定继续借用，槽仅拥有新获取的替换租约；请求等待、失败或取消时保留先前可用绑定，只有最新已接受意图可以提交。拒绝、绑定冲突及生命周期细节遵循[规格](位图资源槽规格.md)，参阅[证据](位图资源槽核验.md)和[组合示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md)。聚焦行为、严格消费者及记录的桌面 Canvas/WebGPU 组合已通过各自限定检查；完整本地／公开门禁及仓库交付在所链接证据中分别记录。
-
-0.56 资源替换增量已通过 [PR #45](https://github.com/cnedwin/Egret_rebuild/pull/45) 交付，Main 为 `19c308af4d7c9590f886c8105d5d678e708184c5`；早期核验记录保留各自原有截止点。
-
-## 显式本地布局 — 0.55.0
-
-`@egret/engine/layout` 的纯函数 `planLinearLayout` 生成冻结矩形计划。调用方选择成员，再通过既有 display API 应用坐标；双 Button 示例展示布局、共享输入及保存/实时帧的组合。已记录的桌面 Canvas/WebGPU 检查覆盖固定双 Button 流程；环境及边界见证据记录。 参阅[规格](local-linear-layout-spec.md)和[证据](local-linear-layout-evidence.md)。
-
-0.55 增量已通过 [PR #44](https://github.com/cnedwin/Egret_rebuild/pull/44) 合并，Main 为 `f6b7968db89febfdbe00fb1322f208ab2135f68f`，tree 为 `86e9d3da4831f4bbbc6a20545c4434ecc9a5b791`。该已交付截止点与 0.56 证据分别保留。
-
-## 前次集成 — 0.54.0
-
-工程预览 **0.54.0** 已通过 [PR #42](https://github.com/cnedwin/Egret_rebuild/pull/42) 合并。Main 为 efd2a9c91fb6cfe633214b50b82cf7952941452a，tree 为 2b39b8439a5b30ce3572edc162e8a7a916a76185。工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。
-
-## 已实现范围与边界
-
-| 领域 | 当前工程能力 | 参考 |
+| 领域 | 已有实现 | 仍缺失的能力或验收 |
 | --- | --- | --- |
-| 显示与输入 | DisplayObject/Container、变换与锚点、坐标／bounds、显式命中区域、主鼠标路由与位图按钮。 | [契约与范围](位图按钮契约.md) |
-| 资源 | 类型化引用、共享获取、租约、Scope 释放、获取组、纹理、命名 SpriteSheet 裁剪及可选 PNG Provider；0.56 的可恢复单 Bitmap 替换已有受限行为、类型及桌面渲染证据。 | [获取范围](资源批量获取.md)、[替换规格](位图资源槽规格.md) |
-| 动画 | 显式游戏时间、标量 Tween、图集序列采样及 Engine 时钟序列播放；标准化 trim/顺时针90度帧已有 SDK 及有限桌面 Canvas/WebGPU 证据。 | [播放](时钟驱动序列动画契约.md)、[帧布局](atlas-frame-layout-contract.md) |
-| 二维呈现 | 不可变画面捕获、Canvas/WebGPU 路径、纹理几何／Mesh2D 及各自规格中的 NineSliceBitmap。 | [契约与范围](自有纹理几何与Mesh2D契约.md) |
-| 文字 | 文字栅格编排、非编辑 TextField 及选定 Canvas 文字集成。 | [契约与范围](文字显示TF1契约.md) |
-| 三维 | CPU 几何／矩阵、自有场景画面及选定的显式浏览器网格／场景路径。 | [契约与范围](公共3D场景契约.md) |
-| Spine | 导入与网格源规划、线性动画源规格及实验性官方 Core 手动桥接。 | [契约与范围](SpineCore手动网格桥接.md) |
-| 工程与迁移 | 自有二进制读写器、工程事务契约及受限旧 RES／MovieClip 分析。 | [契约与范围](旧工程迁移.md) |
+| 显示与渲染 | 熟悉的显示对象、坐标、显式命中几何和不可变捕获；有序 WebGPU／WebGL2 共享路径、相邻准备／合批、纹理页、有界缓冲／目标复用、Alpha 遮罩及可分离模糊 | 原全脏 CPU／准备目标、更广泛设备与宿主、完整功能参考；Canvas 保留较小的声明范围 |
+| 资源与构建 | 清单准入、共享获取／租约、Scope 清理、取消及迟到结果处理；选定 PNG／图集／序列／字体的可复现构建、缓存／工程采用及类型化运行时组 | Spine 二进制产物、选定纹理／mip／压缩变体、更广泛格式／导出器资格与完整场景验收 |
+| 动画 | 显式 Engine 时间、Tween、序列播放／控制；可选 Spine JSON 资产、独立播放器、组合皮肤、有限播放及共享显示；Spine／序列各有 RESET 槽 | 有界 Spine 跳转／重放、完整选定版本语义／参考，以及兼容的保留状态资源替换 |
+| UI | 托管根、测量／排列、变高稳定键列表、锚点、行焦点与定位；不可变主题／皮肤代次及共享特效 | 完整控件、弹出／模态所有权、编辑行保留、语义投影及完整大场景资格 |
+| 文字与字体 | 只读 CanvasKit／SkParagraph 段落、最终行双向排版、换行、对齐／行数限制、多样式、已提交命中／选区／插入点几何及受管字体集合切换 | 原生编辑／IME、必需文字／字体／墨迹的独立参考、传输／启动及 CPU／Wasm／内存资格 |
+| 输入 | 兼容旧鼠标 API、可选多触点路由、键盘／逻辑焦点、响应式示例及已合并的移动／动作控件状态 | 其余控件／示例／键盘接线、手势仲裁、模态整合和必需真实手机／IME／无障碍记录 |
+| 3D | 自有几何／矩阵、固定不透明场景路径及声明后端上的有序 2D 叠层 | 模型导入、可用场景／相机／材质创作、3D 角色动画、光照和通用特效 |
+| 工程与工具 | 版本化工程快照／事务、结构化诊断、有界旧 RES／MovieClip 分析；固定环境、评审及公开 CI | 工程到运行游戏的创作闭环、集成可视化工具、Agent／Skill／MCP 应用、发布／更新适配和完整迁移 |
 
-默认核心不依赖 DOM/Node，Canvas 和 WebGPU 通过显式浏览器入口使用。显示组装、时间推进、捕获和提交分别定义契约。资源租约及 Scope/Engine 所有权明确取消与释放行为。
+## 已实现包与入口
 
-## 已集成 0.54 的验证
+仓库有四个基础包和一个显式可选 Spine 包。这是实际工作区，不是远期目录提案。
 
-已记录的 0.54 工作完成全部九个本地代码阶段，核心 **3218/3218**、保留 Spine 源码 **160/160**、按钮聚焦检查 **163/163**。按钮类型正例产生 **0** 诊断，负例匹配 **19** 项诊断。正常 prepush、必需的提交／推送钩子均完成，合并代码树与已审阅文件核对一致。
+| 包 | 当前责任与入口 |
+| --- | --- |
+| @egret/contracts | 不依赖其他产品包的共享契约与资源记录 |
+| @egret/runtime | 无宿主依赖的显示、事件、Scope、资源及文字／输入／UI 状态；仅依赖 contracts |
+| @egret/engine | 公开装配、时钟、资源、UI／动画协调及显式浏览器后端；依赖 runtime／contracts |
+| @egret/project | 工程事务及选定内容／导入工具；依赖 contracts 和已声明解析器 |
+| @egret/spine | 可选第一方资产／播放器／显示／RESET 整合，采用官方 Core 4.3.13；依赖公共白鹭边界及单独许可的运行库 |
 
-桌面 Edge **155.0.4283.45** 的 Canvas/WebGPU 验证完成 **38** 次主读回及 **87552** 通道比较，容差 **0**、差异 **0**。另一个全新 Canvas 对照记录 **2** 次读回，故意错误的预期相差 **48** 像素和 **96** 通道，不计入主案例。详见[按钮验证记录](位图按钮核验.md)。这些计数对应不同范围，不能相加。
+默认 Engine 导入不初始化 Spine、3D、段落 WASM 或原生虚拟机。[实际包结构](工程技术架构与项目结构.md)、包清单和公共入口契约定义可用名称。计划中的 CLI／编辑器／原生包不是已安装产品。
 
-GitHub 未为 PR #42 返回状态或检查运行，以上本地验证与远端 CI 分别记录。桌面像素结果未完成目标手机性能、能耗、字体范围或完整宿主验收。
+当前使用契约：
 
-## 多页图集内容
+- [共享渲染](shared-render-profile-contract.md)、[WebGL2](webgl2-executor-contract.md)、[资源恢复](resource-recovery-contract.md)和[共享 UI 特效](shared-ui-effects.md)。
+- [构建到运行时内容](content-build-pipeline.md)、[多页图集](multipage-atlas-content.md)和[字体资源／代次](font-resource-generations.md)。
+- [Spine 资产／播放／显示](spine-content-ingress.md)、[Spine RESET](spine-reset-slot.md)、[序列控制](sequence-controls.md)和[序列 RESET](序列动画RESET替换.md)。
+- [托管 UI](ui-data-panel.md)、[多样式段落](paragraph-styled-runs.md)、[已提交文字几何](paragraph-text-geometry.md)、[字体／布局控制](paragraph-layout-controls.md)和[主题](ui-theme-generations.md)。
+- [多触点输入](multi-pointer-input.md)、[键盘／焦点](keyboard-focus-input.md)、[移动／动作控件范围](m3-ui-text-input-plan.md)和[响应式示例](mobile-examples.md)。
+- [有界 3D](公共3D场景契约.md)、[工程事务](工程事务核心合同.md)和[旧工程迁移范围](旧工程迁移.md)。
 
-可选第一方配置通过既有不可变构建及运行时资源组支持一至十六个具名页面，裁剪／旋转帧沿用 SpriteSheet。十四项新增行为／类型测试（含既有内容回归共 75 项）和桌面 Edge WebGL2/WebGPU 固定像素验证通过，另采集 HTTP 失败及待定取消。受保护发布仍在等待，见[验证记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/atlas-pages/verification.json)。完整 M2.1／Spine、手机和性能仍保持开放。
+## 现有工作包
 
-## 后续工作与贡献
+M2–M4 的十一个工作包均保留完整验收要求。下表确认已合并能力，不据此宣布整个工作包完成。
 
-- 在显式本地规划器之外继续完善 UI 组合，以及触摸、键盘、焦点、无障碍和编辑。
-- 继续核验并扩展真实资源示例，推进多资源换装、恢复及动画重定向，明确所有权与宿主边界。
-- 按 **R020/V020** 完成版本化 Spine 支持及功能／后端／宿主矩阵。
-- 扩展三维场景、角色和特效，连接资产及生命周期。
-- 生产浏览器／小游戏／原生宿主，以及目标设备文字与性能。
-- 创作工具、Agent／工程接口及 **R008/V006** 完整旧工程迁移。
+| 工作包／Issue | 已交付基础 | 剩余结果／协调责任 |
+| --- | --- | --- |
+| M2.1／[#83](https://github.com/cnedwin/Egret_rebuild/issues/83) | PNG、图集、多页、序列、字体构建／运行时及可选 Spine JSON 接入 | 二进制／变体构建、授权选定版本参考清单／内容维护者 |
+| M2.2／[#84](https://github.com/cnedwin/Egret_rebuild/issues/84) | 独立 Spine 实例、轨道／队列、皮肤、有限播放及序列控制 | 完整合格语义和有界跳转／重放／动画维护者 |
+| M2.3／[#85](https://github.com/cnedwin/Egret_rebuild/issues/85) | 显式 egret-shared-linear/1 下的共享 Spine 几何 | 完整附件／裁剪／双色／混合／采样参考／渲染维护者 |
+| M2.4／[#86](https://github.com/cnedwin/Egret_rebuild/issues/86) | 可编辑 20-Spine／200-序列示例、RESET 及选定恢复 | 兼容状态保留、最终动画生命周期／预算／资源动画维护者 |
+| M3.1／[#87](https://github.com/cnedwin/Egret_rebuild/issues/87) | 托管布局、稳定键虚拟化、锚点、焦点／定位和字体／主题整合 | 活动编辑行保留及完整一致 UI 场景／UI 维护者 |
+| M3.2／[#88](https://github.com/cnedwin/Egret_rebuild/issues/88) | 只读多样式文字、几何和字体代次 | 必需独立参考及 provider 成本／恢复资格／文字维护者 |
+| M3.3／[#89](https://github.com/cnedwin/Egret_rebuild/issues/89) | 触点路由、键盘／焦点及行整合 | 原生单／多行纯文本编辑与 IME 交接／输入宿主维护者 |
+| M3.4／[#90](https://github.com/cnedwin/Egret_rebuild/issues/90) | 遮罩／模糊、主题及社区移动／动作状态 | 其余控件、层级、手势和语义／UI 维护者与现有触摸贡献者 |
+| M4.1／[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) | 可运行组件示例和公共接口 | 同一个可编辑混合参考工程，可开始有界首轮整合／集成维护者 |
+| M4.2／[#92](https://github.com/cnedwin/Egret_rebuild/issues/92) | 固定桌面恢复及有界 Android 组件证据 | 完整混合生命周期、性能和必需设备验收／性能平台维护者 |
+| M4.3／[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) | 可观察预览失败／取消／重载及公开贡献入口 | 干净消费者分发物与合格交接／发布维护者 |
 
-以上均保留工程与验收义务，范围由[工程规划](工程规划.md)、[交付计划](交付计划.md)和登记册跟踪。
+角色表示责任，不代表人员配置或自动分派志愿者。保留既有触摸／控件贡献边界，其余工作消费对应接口。
 
-## CPU 参考公式
+## 继续开放的证据
 
-历史 A2 Task5a 使用 tools/texture-oracle.mjs。expectedUploadRGBA 对整数 straight 通道计算 floor((C*A+127)/255)。expectedEncodedOver 在 premultiplied encoded 域内，按显式 opacity 计算 binary64 source-over，不进行 UNORM 量化或颜色传递转换。assertTexturePixel 要求调用方提供四个明确的绝对通道界限。设备校准单独进行。
+M1.1–M1.5 工程已集成。M1.2 正式静态／稀疏／全脏 Engine p95 中位数仍为 **5.0／6.4／10.3 ms**，全脏未达到 **8 ms**。全脏 Host 7.7 ms 不能建立 4 ms 准备上界，也不能分离纯准备时间。GPU 时间未测。[#55](https://github.com/cnedwin/Egret_rebuild/issues/55)及[原始记录](incremental-frame-preparation-evidence.md)继续开放。
 
-## 历史工程证据
+[Android 报告](android-device-validation.md)记录了有限 WebGPU／WebGL2 组件、生命周期与受控恢复，包括 #129 字体注册示例修正和 #130 新增十二个诊断／生命周期用例。历史约 41.4 ms 回调触发条件未复现；精确堆／后备存储观察不能证明物理内存或通用零泄漏验收。已撤回的错误目标启动报告不是 Engine 回归。
 
-[变更记录](../CHANGELOG.md)说明各增量的主要作用。早期详细结果、失败与准备截点保存在子系统证据及[固定版本进展记录](https://github.com/cnedwin/Egret_rebuild/blob/efd2a9c91fb6cfe633214b50b82cf7952941452a/knowledge-base/en/docs/core-progress.md)中。历史计数和哈希继续标识原始源码，后续阅读整理不重新执行或扩大其结论。
+这些手机证据不等于完整 X-MTouch/1、混合百次生命周期／十次恢复、必需 iPhone／IME／无障碍记录或完整授权 Spine 素材。API 探测、模拟输入、CI 或短时回调采样不能关闭这些项目。
 
-可复现改动与审阅流程见[贡献指南](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md)。第一方实现、外部依赖和研究参考分别保留来源及许可。
+M0 的[独立新贡献者演练 #52](https://github.com/cnedwin/Egret_rebuild/issues/52)及[剩余场景／权利／设备资格 #54](https://github.com/cnedwin/Egret_rebuild/issues/54)同样保持开放。它们阻塞相应声明，不阻塞无关实现。
 
-可选播放器现支持 `setSkins(names)` 有序组合换装和不可变 `snapshot.skins`，保留 `setSkin` 兼容行为。参见[组合皮肤契约](spine-content-ingress.md#组合皮肤换装)。本项仅交付 M2.2 的有界能力，资源版本替换和完整 M2 验收仍未完成。
+## 下一开发阶段
 
-可选 Spine 播放器现通过 `plays` 支持有界总播放次数、不可变的已提交完成计数、末帧保留及保持 tick 剩余时间的队列衔接。122 项可选 SDK 用例（15 项新增有限播放用例）通过，桌面 WebGL2／WebGPU 每后端通过 22 个正例并拒绝八个对照。参阅[有限播放语义与边界](spine-content-ingress.md#有限总播放次数)及[验证记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/spine-content/verification.json)。这项 M2.2 有界能力不关闭选定版本完整播放、seek、M2.4 替换／恢复、手机或性能验收。
+优先在 M3.3 实现原生纯文本编辑，消费既有段落几何与托管 UI。在独立负责的分支中，M4.1 可将已有动画／UI／资源组合成同一示例，及早暴露 provider 传输／启动和完整引擎成本。M2 贡献者可沿现有所有者补齐二进制／内容资格、跳转／重放或保留状态替换。M3.4 已协调的触摸工作独立继续。
+
+随后完成其余控件和完整混合场景，解决原 M1 性能缺口，并以冻结输入执行必需 M4 验收。有界工程预览可以先于完整资格交付，但必须标明实际限制。[工程计划](工程规划.md)给出依赖和退出标准，不增加工作包编号或承诺日期。
+
+## 历史记录
+
+[更新日志](../CHANGELOG.md)、子系统证据及[复盘基线中的旧进度页](https://github.com/cnedwin/Egret_rebuild/blob/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1/knowledge-base/Cns/docs/core-progress.md)保留原预览截止、计数、失败、散列及后续修复。本次整理改变呈现方式，不改变执行结果；来源、上游许可和贡献署名留在原记录中。

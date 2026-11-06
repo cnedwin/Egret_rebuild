@@ -25,6 +25,8 @@ Years later, as times change and technology advances, many developers continue t
 | UI 与文字 | 变高列表、焦点／导航、多语言多样式段落、已提交文字几何、字体／主题切换、遮罩及模糊 | 原生编辑／IME、完整控件／模态／语义整合，以及更多文字／设备验收 |
 | 集成 | 可编辑资源、UI 与动画示例，响应式预览 | 完整混合参考游戏与经资格验证的核心交付 |
 
+[Android 观察与剩余设备限制](knowledge-base/Cns/docs/android-device-validation.md)只覆盖准确组件档位，不代表通用手机支持或关闭 M1.2 性能目标。
+
 ## 运行示例
 
 使用 **Node.js 26.7.0** 和 **pnpm 11.25.0**，在仓库根目录运行：
@@ -37,9 +39,12 @@ Years later, as times change and technology advances, many developers continue t
 
 ## 开发与社区参与
 
+选定工作前先读[当前能力图](knowledge-base/Cns/docs/core-progress.md)和[下一阶段工程计划](knowledge-base/Cns/docs/工程规划.md)。2026-11-07 复盘统一已实现核心、剩余需求及原十一个 M2–M4 工作包。
+
 [M2–M4 路线图](knowledge-base/Cns/docs/m2-m4-delivery-plan.md)、[Issues](https://github.com/cnedwin/Egret_rebuild/issues)、[里程碑](https://github.com/cnedwin/Egret_rebuild/milestones)和[社区看板](https://github.com/users/cnedwin/projects/2)统一记录交付、依赖与验收缺口。
 
 - **下一项核心工作建议：**[原生纯文本编辑与托管 UI 整合（#89）](https://github.com/cnedwin/Egret_rebuild/issues/89)，复用段落几何、焦点与资源生命周期。这是范围明确的下一步，不代表已经实现或自动向他人分派任务。
+- **并行整合入口：**[同一可编辑混合参考（#91）](https://github.com/cnedwin/Egret_rebuild/issues/91)可使用已有资产／UI／动画开始；[剩余 M2 工作](https://github.com/cnedwin/Egret_rebuild/issues/56)分别补齐二进制／参考／跳转／保留状态。这些是有界贡献入口，不代表完整验收。
 - **可独立参与：**授权素材／参考夹具、可复现问题、聚焦代码、翻译和[独立新贡献者演练（#52）](https://github.com/cnedwin/Egret_rebuild/issues/52)。触摸／手势相关修改先与现有贡献者协调，避免争用共享输入代码。
 - **按完整工作包推进：**[M2 内容／动画](https://github.com/cnedwin/Egret_rebuild/issues/56)、[M3 UI／文字／输入](https://github.com/cnedwin/Egret_rebuild/issues/57)和[M4 集成](https://github.com/cnedwin/Egret_rebuild/issues/58)。增量合并不会自动关闭整个工作包的验收要求。
 
@@ -51,6 +56,12 @@ Years later, as times change and technology advances, many developers continue t
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#130](https://github.com/cnedwin/Egret_rebuild/pull/130) | Precise Android heap accounting and finite lifecycle/recovery follow-up; historical callback trigger remains unresolved | Android 精确内存口径及有限生命周期／恢复补充；历史回调触发原因仍待查 |
+| [#129](https://github.com/cnedwin/Egret_rebuild/pull/129) | Registered-font selection retained across equipment changes in the paragraph example | 段落示例换装后保持已注册字体选择 |
+| [#127](https://github.com/cnedwin/Egret_rebuild/pull/127) | Contributed movement/action state controls over existing contact routing | 社区移动／动作状态控件复用既有触点路由 |
+| [#128](https://github.com/cnedwin/Egret_rebuild/pull/128) | Windows CI failure governance and reusable Skill | Windows CI 失败治理与可复用 Skill |
+| [#108](https://github.com/cnedwin/Egret_rebuild/pull/108) | Contributed bounded Android collector with exact-setting restoration | 社区有界 Android 采集器及原设置恢复 |
+| [#126](https://github.com/cnedwin/Egret_rebuild/pull/126) | Public overview, roadmap and community entry refresh | 公开简介、路线图与社区入口整理 |
 | [#125](https://github.com/cnedwin/Egret_rebuild/pull/125) | Managed sequence RESET replacement; early shared validation before complete merge checks | 受管理序列 RESET 替换；完整合并检查前增加公共基线预检 |
 | [#124](https://github.com/cnedwin/Egret_rebuild/pull/124) | Transactional UI theme/skin switching, paint-only layout reuse and metric-change anchor preservation | UI 主题／皮肤事务切换、纯绘制布局复用及度量变化时锚点保留 |
 | [#123](https://github.com/cnedwin/Egret_rebuild/pull/123) | Font build artifacts and runtime font-set replacement through existing resource owners | 字体构建产物与运行时字体集合替换，复用既有资源所有权 |
@@ -71,7 +82,7 @@ Years later, as times change and technology advances, many developers continue t
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
-| Optional Spine assets / 可选 Spine 资产 · 2026-10-30 | Core4.3.13 JSON and original atlas pages share existing resource ownership; playback/graphics qualification remains open | Core4.3.13 JSON 与原始图集页面复用既有资源所有权；播放／图形验收继续开放 |
+| Optional Spine assets / 可选 Spine 资产 · 2026-10-30 | Core 4.3.13 JSON and original atlas pages share existing resource ownership; playback/graphics qualification remains open | Core 4.3.13 JSON 与原始图集页面复用既有资源所有权；播放／图形验收继续开放 |
 | Keyboard focus / 键盘焦点 · 2026-10-30 | Stable logical targets, typed keys and native Canvas focus lifetime | 稳定逻辑目标、类型按键与原生 Canvas 焦点生命周期 |
 | Mobile examples / 移动示例 · 2026-10-30 | Touch input, responsive UI and bounded DPR; preserved fixed fixtures | 触摸输入、响应式 UI 与有界 DPR，保留固定夹具 |
 | Paragraph layout / 段落布局 · 2026-10-29 | Six alignments, maxLines and truthful overflow; hard-break marker and recoverable no-fit refusal | 六种对齐、maxLines 与真实溢出；硬换行省略号及过窄拒绝／恢复 |

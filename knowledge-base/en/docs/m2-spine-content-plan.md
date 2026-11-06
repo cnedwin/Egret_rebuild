@@ -2,17 +2,22 @@
 
 English | [简体中文](../../Cns/docs/m2-spine-content-plan.md)
 
-Plan with implementation status · updated 2026-10-29 · Complete milestone acceptance remains open.
+Plan and current status · 2026-11-07 · Audited main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1). Complete M2 remains open.
 
-M2.1 connects PNG, the finite single-page atlas profile and sequences from source builds through persistent cache/project adoption to typed runtime groups. The runtime assembly reuses AssetManager, ManifestAssetGroup, Scope, SpriteSheet and SequenceClip. A group becomes readable only after complete validation and assembly; failed/cancelled candidates leave the application's active generation intact. See the [content build contract](content-build-pipeline.md) for current scope and evidence. Full Spine/font/variant acceptance remains open; the existing eleven work packages are retained.
+| Package | Implemented | Remaining |
+| --- | --- | --- |
+| M2.1 #83 | PNG/atlas/sequence build/runtime groups, multipage and font artifacts/sets; optional Spine JSON assets | Binary/variant products and selected-version rights/export/reference qualification |
+| M2.2 #84 | Independent Spine players, tracks/queues, combined skins and finite plays; sequence controls | Complete selected-version semantics and bounded seek/replay |
+| M2.3 #85 | Copied ordered shared display under egret-shared-linear/1 on WebGPU/WebGL2 | Complete attachment/clip/tint/blend/sampling references |
+| M2.4 #86 | Editable 20-Spine/200-sequence example; Spine/sequence RESET; selected desktop/Android recovery | Compatible state-preserving replacement and final lifecycle/performance qualification |
 
-M2.2 sequence controls have bounded behavior and desktop WebGPU/WebGL2 results: the optional animation entry adds per-instance rate, total plays, authored markers and explicit seek over the genuine Engine clock. Shared legacy/new target claims retain the original playback API. See the [sequence-control contract](sequence-controls.md). Complete Spine and M2.2 acceptance remain open.
+Reuse [current assets/players/display](spine-content-ingress.md), [content builds](content-build-pipeline.md), [font generations](font-resource-generations.md), [Spine RESET](spine-reset-slot.md), [sequence RESET](sequence-reset.md) and the [Android record](android-device-validation.md). These slices do not close complete Spine or M4.
 
 ## Outcome and entry conditions
 
 M2 delivers reusable content builds and a separately enabled Spine integration: import authorized JSON/binary exports and multipage atlases, create independent animated instances, compose them with Egret graphics, and replace/recover their resources without losing gameplay state. Complete support means all applicable features of an explicitly selected version, on explicitly verified backends and hosts.
 
-The first qualification target is the stable 4.3 series. Existing Core 4.3.13 is the first reproducible candidate, not an assertion of the latest published package or an accepted product dependency. Freeze the exact editor/export version, runtime package/commit/digest and fixture rights in M2.1. A 4.2 adapter and older legacy versions receive their own later compatibility rows; changing a version string is never migration.
+The implemented optional integration uses official Core 4.3.13 in the selected 4.3 series, under its separate runtime conditions. This is an actual pinned dependency, not a latest-package or complete-version-qualification claim. Freeze the exact editor/export version, runtime package/commit/digest and fixture rights in M2.1. A 4.2 adapter and older legacy versions receive their own later compatibility rows; changing a version string is never migration.
 
 M1 provides functional rendering, leases, manifests and recovery. Its valid formal performance failure remains open; merging M2 functionality cannot turn that result green. Interface design, importer work and focused implementation can advance independently, while M1 performance and M2's own scenario budgets remain explicit integration/release conditions.
 
@@ -20,20 +25,19 @@ M2 does not implement the complete visual workbench, AI agent platform, legacy-p
 
 ## What exists and what changes
 
-These are source observations, not newly executed tests.
+These are current source observations, not new test executions.
 
-| Existing implementation | Keep | Required change |
+| Source / existing contract | Retain | Extend or qualify |
 | --- | --- | --- |
-| `packages/project/src/spine/preflight.ts:831` and `packages/project/src/spine/types.ts:22` | Original strict JSON/atlas planning, spans and declared provenance | A separately versioned product importer adds binary and complete feature qualification. Preserve the old planner's partial/not-run semantics. |
-| `knowledge-base/experiments/spine-f2-core/src/resources.ts:409`, `knowledge-base/experiments/spine-f2-core/src/instance.ts:128`, `knowledge-base/experiments/spine-f2-core/src/geometry.ts:26` | Ownership, rollback, copied geometry and original reference fixtures | Replace the experimental product boundary: two instances, one page/command, white tint, manual absolute sampling and `Physics.none` are not product limits. Do not promote the experiment by renaming it. |
-| `packages/contracts/src/ResourceManifest.ts:5` and `packages/project/src/resources/manifest.ts:40` | IDs, dependency keys, versions, canonical settings and provenance | Produce real import artifacts, reverse dependencies, target variants and an incremental build cache. Metadata description alone is not an asset build. |
-| `packages/runtime/src/AssetManager.ts:15`, `packages/runtime/src/AssetLease.ts`, `packages/runtime/src/Scope.ts`; `packages/engine/src/manifestAssetGroup.ts:167` | Shared acquisition, lease/Scope ownership, dependency expansion and fair priority queues | Add typed skeleton/atlas providers and stage-specific capacity accounting; extend existing scheduling rather than adding a second asset manager. |
-| `packages/engine/web/ManifestByteSource.ts:11`, `packages/engine/web/BrowserTextureProvider.ts:231` | Byte verification, cancellation ordering, late settlement and current PNG behavior | Generalize transport/decoder registration for admitted artifacts. The concrete PNG implementation remains a supported provider. |
-| `packages/contracts/src/SharedMaterial2D.ts:5`, `packages/contracts/src/SharedRenderFrame2D.ts:12`; `packages/runtime/src/sharedFrameCapture.ts` | Ordered shared commands, two-color data, page references and backend ownership | Qualify Spine color/blend semantics explicitly; add only missing versioned representation. Current rectangular clips and mip level zero are not complete Spine/texture acceptance. |
-| `packages/engine/src/Engine.ts:215,389`, `packages/engine/src/bitmapBindingTicket.ts`, `packages/engine/web/sharedDeviceSession.ts` | Existing Bitmap ticket semantics and generation recovery | Add animation-aware replacement participants without changing the existing synchronous Bitmap commit contract. |
-| `packages/engine/src/gameClockTypes.ts:23`, `packages/runtime/src/SequencePlayer.ts` | Explicit clock and existing absolute sequence sampling | Add player controls, finite repeats, markers and orchestration without one shared sampling algorithm for Spine/Tween/sequences. |
+| packages/project/src/resources/, atlas/ and spine/ | Actual immutable builds/cache/project adoption and strict legacy planners | Binary Spine artifacts, selected target variants and exporter/reference qualification |
+| packages/spine/src/loader.ts, instance.ts, display.ts, resetSlot.ts | Optional licensed Core integration, genuine groups/leases, independent copied state and shared display | Complete feature semantics, seek/replay, compatible preserve-mode and references |
+| AssetManager, AssetLease, Scope and manifestAssetGroup | Shared acquisition, dependency expansion, cancellation and scheduling | New admitted providers/artifacts; no second asset manager |
+| SharedMaterial2D/SharedRenderFrame2D, sharedFrameCapture and backend Hosts | Owned ordered geometry, complete color/page/clip identity and completion authority | Demonstrated graphics gaps only; no silent legacy color reinterpretation |
+| Current prepared subtrees, resource/sequence/Spine RESET slots and shared device session | Explicit candidate capture/CPU publication, separate Host staging and device generations | State-preserving replacement and complete lifecycle qualification |
+| Explicit game clock, SequencePlayer/controller and Spine instance | Current time, events, finite plays and failure isolation | Remaining bounded seek/replay policy and selected-version references |
+| knowledge-base/experiments/spine-* | Immutable historical fixtures, sources, licenses and original limits | Reference only; implemented product integration lives in packages/spine, not renamed experiments |
 
-The four-package dependency direction remains intact. A proposed optional `@egret/spine` package depends on public Egret contracts/engine interfaces and the explicitly selected official Core; the default engine never depends on it. Project/build tools do not enter the runtime dependency graph. Package separation is justified here by the third-party license, bundle and version boundary.
+The four foundation packages retain their dependency direction. The implemented optional @egret/spine depends on public Egret boundaries and official Core 4.3.13; default Engine imports do not depend on it. Project/build tools remain outside runtime dependencies.
 
 ## Architecture and decisions
 
@@ -93,20 +97,19 @@ An animation replacement stages resources and semantic state, validates required
 
 Device recovery reconstructs only device-owned state. Preserve instance clocks, tracks, skin choices and consumed event positions. Old-generation work cannot publish into a new generation. Asset replacement and device recovery use different generation tokens, and both must match at commit. GPU residency alone never authorizes a CPU scene update.
 
-## Target interfaces — proposed, not existing exports
+## Implemented entries and remaining target contracts
 
-Names below define collaboration boundaries; implementation may refine type details through the normal review. No executable scaffold is introduced.
+| Current entry | Actual responsibilities |
+| --- | --- |
+| @egret/engine/resources and @egret/engine/web/resources | Typed content/font groups over the existing manifest/resource owners |
+| @egret/spine: createSpineContentLoader | Shared JSON setup/page assets with genuine Scope/lease lifetime |
+| @egret/spine: createSpineInstance / createSpineDisplay | Independent semantic state/events and copied ordered graphics; explicit admitted options |
+| @egret/spine: createSpineResetSlot | Reset-policy candidate preparation and CPU publication; Host staging/submission remain separate |
+| @egret/engine/animation | Existing sequence controller and RESET slot; old sampling APIs retained |
 
-| Target interface | Input and output | Ownership/error rule |
-| --- | --- | --- |
-| `ContentImporter.analyze` / `build` | Typed source set, target/settings, pinned tools → diagnostics, dependency graph and artifact descriptors | Build environment owns source access/output storage. Runtime receives data, never filesystem handles or compiler callbacks. |
-| `SpineCompatibilityProfile` | Export series/patch, runtime identity, supported feature inventory, render requirements and asset references | A data record is not proof of license, successful parsing or frame authority. Exact qualification produces the admitted artifact. |
-| `SpineAsset` / `SpineInstance` | `AssetRef<SpineAsset>` plus Scope → independent instance with display facade, playback and event controls | Asset manager owns shared data/page leases; instance Scope owns state/subscriptions. Disposing one instance cannot unload another's pages. |
-| `advance(tick)` / `seek(request)` | Clock tick or explicit seek policy → committed pose/event transition | Reject reentry and invalid time before mutation; dispatch queued events with documented failure/disposal semantics. |
-| Version-adapter draw conversion | Qualified instance output → bounded Egret-owned ordered draw data | No renderer/runtime pool references escape; limits fail before partial geometry publication. This is private integration, not a structural public-frame constructor. |
-| `AnimationReplacement` participant | Candidate asset/instance state plus existing resource transaction → ready/commit/abort | Engine validates genuine owner and both resource/device generations. Existing Bitmap tickets keep their meaning. |
+See their contracts for exact signatures and limits. Future binary/variant, seek/replay and preserve-mode interfaces are not exported by this plan. M2.1 owns artifact/diagnostic admission; M2.2 owns replay/history/failure; M2.3 owns draw/color publication; M2.4 owns compatible replacement. Freeze only a changed boundary in its existing Issue/PR before a dependent consumer merges; no second registry or whole-core freeze.
 
-M2.1 freezes artifact/diagnostic interfaces. M2.2 and M2.3 agree the draw/instance boundary before parallel implementation. M3 consumes asset IDs, intrinsic bounds, explicit hit shapes, clocks/events and replacement notifications; it does not inspect Spine internals. M4 consumes the same real examples and support matrix, not a new demo implementation.
+M3 consumes asset identities, bounds, explicit hit shapes, clocks/events and replacement notifications. M4 reuses real consumers and the support matrix, not a separate demo implementation.
 
 ## Four collaborative work packages
 
@@ -146,7 +149,7 @@ M2.1 freezes artifact/diagnostic interfaces. M2.2 and M2.3 agree the draw/instan
 
 Keep issue #56 as the M2 parent and retain its existing four child work packages (#83–#86). Each issue has a behavior deliverable, interface dependencies, source areas, reference assets, focused reproduction, reviewer and explicit external blockers. A contributor can own pipeline tooling, playback, rendering or fixture authoring without maintaining global ledgers. Subtasks inside an issue are checklists, not a proliferation of standalone tickets.
 
-Use the existing entry commands: `pnpm setup:dev`, `pnpm check:quick`, then `node tools/check-incremental.mjs --base origin/main`. The proposed importer/player APIs above are not available commands. Final merge retains independent review, the existing complete merge checks, bilingual documentation, source/asset notices and affected real-browser evidence. Do not repeat unrelated C7/legacy suites merely because a barrel transitively imports an unchanged helper.
+Use the existing entry commands: `pnpm setup:dev`, `pnpm check:quick`, then `node tools/check-incremental.mjs --base origin/main`. Current public APIs are listed above; remaining target concepts are not available commands. Final merge retains independent review, the existing complete merge checks, bilingual documentation, source/asset notices and affected real-browser evidence. Do not repeat unrelated C7/legacy suites merely because a barrel transitively imports an unchanged helper.
 
 Separate feature correctness, measured performance, host qualification and publication. Share one immutable actual build/result across the work package's dependent checks; do not manufacture role-specific successes or require each contributor to reproduce a full milestone. Evidence against the same semantic runtime is not independent proof of that runtime's animation algorithms: authored event/pose expectations and external reference images remain necessary.
 
@@ -164,18 +167,5 @@ Remaining qualification belongs to the responsible package: exact release/export
 
 The existing [complete Spine requirement](spine-animation-support-and-acceptance.md) remains the product scope reference.
 
-The first-party [multipage atlas content](multipage-atlas-content.md) increment extends M2.1 through the existing pipeline and runtime group. It adds named SpriteSheet pages with trim/rotation and whole-group ownership; it does not qualify Spine, an external exporter or complete M2.1.
 
-The [optional Spine content ingress](spine-content-ingress.md) adds a pinned Core4.3.13 asset SDK under M2.1: original JSON/atlas binding, shared setup/page leases and explicit lifetime. Conditional runtime licensing and original programmatic fixtures are recorded separately from stable export/independent-reference qualification. No Spine Node producer, player or graphics is delivered by this increment; M2.1–M2.4 and their existing Issues remain open to their remaining acceptance.
-
-The [shared Spine display](spine-content-ingress.md#shared-rendering-display) now connects genuine playback instances to existing WebGPU/WebGL2 shared rendering under explicit `egret-shared-linear/1`. This is a bounded M2.3 delivery; complete selected-version graphics and M2.4 qualification remain open.
-
-The optional player now supports ordered outfit composition with `setSkins(names)`, immutable `snapshot.skins`, and unchanged `setSkin` compatibility. See the [combined skin contract](spine-content-ingress.md#combined-outfit-skins). This completes a bounded M2.2 capability; asset-version replacement and complete M2 acceptance remain open.
-
-The optional player also admits bounded finite total plays with `plays`, committed progress and residual-time queue transitions. See [finite playback](spine-content-ingress.md#finite-total-plays). This is a bounded M2.2 increment; complete selected-version semantics, seek and M2.4 replacement/recovery remain open.
-
-The [prepared display subtree](prepared-display-subtree.md) supplies the bounded M2.4 CPU prerequisite: genuine candidate capture without changing the live Stage and callback-free child publication. Host upload/submit and device generation remain separate. The Spine RESET wrapper, event/clock policy, state-preserving replacement and full M2.4 acceptance remain open.
-
-The [font resource and generation contract](font-resource-generations.md) connects M2.1 font artifacts to M3.2 readonly UI through the existing manager, cache and Scope. Fixed-font APIs remain supported; failed or cancelled replacement preserves committed content. This bounded increment does not close the remaining M2.1/M3.2 qualifications.
-
-The [managed sequence RESET slot](sequence-reset.md) adds one bounded M2.4 replacement path using genuine content generations and existing prepared subtrees. Loading preserves the active sequence and independent siblings; explicit CPU commit publishes a paused zero-time successor, with separate Host submission and explicit resume. Initial content stays borrowed, owned predecessors retire, and cancelled/failed/late candidates cannot publish. Existing controller binding/capacity limits remain. State-preserving replacement, device recovery and complete M2.4 acceptance remain open.
+Current delivered slices are summarized at the top; the original checkpoints remain in their contracts, verification records and the [previous plan](https://github.com/cnedwin/Egret_rebuild/blob/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1/knowledge-base/en/docs/m2-spine-content-plan.md). No original receipt or source pin is rewritten.

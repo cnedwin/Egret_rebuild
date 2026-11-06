@@ -4,7 +4,13 @@
 
 建议按下列顺序了解产品与工程，再查阅所需子系统的接口契约。知识库提供完整 [English](knowledge-base/en/README.md) 和[简体中文](knowledge-base/Cns/README.md)版本。
 
-0.56 资源槽增量组合了可恢复绑定替换及已记录的桌面 Canvas/WebGPU 示例，所链接规格、证据与示例限定当前行为及核验范围。
+当前源码复盘：2026-11-07。先了解已有能力和下一工程阶段；历史契约／证据保留原截止。
+
+## 当前项目入口
+
+[已有能力](knowledge-base/Cns/docs/core-progress.md) → [需求](knowledge-base/Cns/docs/产品需求说明书.md) → [白皮书](knowledge-base/Cns/docs/技术白皮书.md) → [工程顺序](knowledge-base/Cns/docs/工程规划.md) → [交付](knowledge-base/Cns/docs/交付计划.md)。
+
+[运行／贡献](knowledge-base/Cns/docs/getting-started.md) · [Android 证据](knowledge-base/Cns/docs/android-device-validation.md) · [原工作包](https://github.com/users/cnedwin/projects/2)
 
 ## M2–M4 架构与社区交付
 

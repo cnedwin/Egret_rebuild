@@ -1,281 +1,97 @@
-# Engineering Plan
+# Engineering plan
 
 English | [简体中文](../../Cns/docs/工程规划.md)
 
-The current M0–M4 architecture and delivery sequence is defined in the [architecture and engineering plan](architecture-and-engineering-plan.md). The [M0 foundation increment](m0-community-foundations.md) records execution and remaining acceptance. The work-package mapping below preserves existing requirement and delivery IDs; it does not authorize new engine work before M0 decisions are frozen.
+2026-11-07 · Audited implementation baseline: main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1).
 
-The engineering plan turns Egret's product scope into dependent, reviewable work packages. A package establishes an observable capability, fixes its ownership and failure contract, demonstrates it through public consumers, and records the evidence needed for the next package. The sequence connects runnable rendering, resources and animation, UI and hosts, project tools and complete migration.
+The next phase turns existing components into a usable core workflow. Preserve the eleven M2–M4 packages, their public contracts and current contributor ownership. [Core capabilities](core-progress.md) states what exists; the [architecture plan](architecture-and-engineering-plan.md) defines authority and gates; the [M2–M4 roadmap](m2-m4-delivery-plan.md) retains complete milestone acceptance.
 
-## Current baseline and remaining delivery
+## Current position
 
-The [current preview](core-progress.md) supplies independently authored display, resource, animation and desktop interaction foundations. The next packages extend useful runnable workflows toward complete UI, mixed content and project tools. EUI, mobile input, full Spine/3D, native SDKs, the creator workbench and migration retain their own gates; the [delivery register](../../Cns/registry/交付.json) tracks their scope.
+M0's engineering foundation is available; independent human onboarding and remaining scenario/rights/device qualification stay in #52/#54. M1's rendering/resource engineering is integrated, while formal M1.2 remains OPEN at 10.3 ms full-dirty Engine median-p95 against 8 ms. M2/M3 have runnable assets, players, UI, paragraphs, fonts, themes and shared effects. M4 has usable ingredients but no complete mixed reference game or qualified core release.
 
-Work-package scope and dependencies determine estimates. Staffing, labor, budget, dates and deployment remain uncommitted until samples, hosts and responsibilities are concrete. Historical evidence follows the roadmap and does not dictate current package status.
+The priority is to connect missing user behavior and expose integrated costs, not to rebuild delivered components or add another maintenance-automation phase. Package versions remain private 0.0.0; engineering-document numbers and merged PRs are not product release versions.
 
-[Home](../README.md) · [White paper](technical-white-paper.md) · [Product requirements](product-requirements.md)
+## Next capability batch
 
-## Full Spine work package
+These are coherent increments within existing Issues, not new work-package IDs, personnel assignments or automatic authorization to implement them.
 
-R020/V020 remains mandatory and open. SP1 establishes versions, rights and feature inventory; SP2 covers resources, instances and events; SP3 covers ordered WebGPU/WebGL composition and recovery; SP4 covers creator, migration and host acceptance. Version-correct semantic/visual fixtures enter before animation interfaces freeze. No schedule or performance budget is committed. Partial import and F1 experiments do not close it. [Spine work packages](spine-animation-support-and-acceptance.md) retain the complete contract and existing product dependencies.
+| Order / existing owner | Deliverable and actual entry points | Dependencies | Exit for the increment |
+| --- | --- | --- | --- |
+| First: M3.3 #89, input/host with M3.1/#87 and M3.2/#88 | Native single/multiline plain-text editing in managed UI. Reuse packages/runtime/src/input/, packages/runtime/src/ui/, packages/engine/src/ui/, packages/engine/web/keyboard.ts, the paragraph entries and existing committed geometry. | Delivered UI, focus, paragraph geometry and font sets. Does not wait for complete Spine or the unrelated touch implementation. | Editable scrolling form; revisioned values/selection/composition; bounded row/focus lifetime; old-visible-on-failure and clean disposal. Consolidated controlled and real-browser results; actual IME/device rows reported separately. |
+| Parallel first integration: M4.1 #91, integration owner | One evolving editable mixed example, reusing examples/animation-outfits/, paragraph-panel/, ui-data-panel/, spine-reset/, sequence-reset/ and the existing scene3d contracts. | Current public interfaces for the first subset; #89 and remaining controls for its complete form. | One Engine/shared resource authority, stable authored IDs, independent animation/UI state, visible loading/failure/retry, replacement/recovery and precise declared subset. Record provider/content size and cost before the final campaign. |
+| Parallel content/animation: M2.1–M2.4 #83–#86 | Binary/content and selected texture profiles; complete feature/reference inventory; bounded Spine seek/replay; compatible state-preserving replacement. Reuse packages/project/src/resources/, packages/spine/src/ and engine resource/animation owners. | Exact current artifact/instance contracts. Authorized Editor exports and independent references block their corresponding qualification, not all programmatic implementation. | Each chosen increment has one end-to-end public consumer, clear compatibility/failure semantics and required affected checks. Full selected-version acceptance stays open until every required row has evidence. |
+| Join: M3.4 #90, UI/control owner | Complete the remaining control/layer/semantic set using existing themes/effects and #89's editor. | Usable UI/text/input slices; existing coordinated touch contribution. | One coherent form/list/popup/modal example with keyboard/semantic behavior and controlled cleanup; declared assistive-technology and phone rows remain explicit. |
+| Qualification: M1 #55 and M4.2 #92 | Measured full-dirty improvement on the unchanged original M1 fixture, then complete mixed performance/lifecycle/device campaign. | Short correctness/recovery path; final actual source/content/device/profile frozen for formal collection. | Original CPU/preparation targets and required X/L/phone rows pass, with all original failures and unmeasured physical domains retained. |
+| Handoff: M4.3 #93 | Clean-consumer preview distribution, example/contract matrix, compatibility notes and contribution path. | Early documentation can proceed now; complete qualification depends on #91/#92. | Actual distribution/public entries/notices verified; English/Chinese guide; exact supported combinations and open rows. No stable-engine or full-product claim from a source archive alone. |
 
-## Delivery boundaries and order
+The table gives dependency order, not calendar duration. One public interface/file has one active writer; separate branches/worktrees allow independent packages to advance while CI checks a frozen candidate. Integrate the next candidate with current main before its own delivery. Formal performance runs remain free of competing local load.
 
-The product serves new creators and supports AI-assisted game creation. Content covers complex 2D UI and lightweight 3D, including scenes, characters, VFX, 2D skeletal animation, and frame animation. Rendering/runtime is central. R008 retains complete one-click AI migration, continued editing, and real publication as a final formal deliverable, without shrinking to an importer. Q001–Q004 still determine lightweight-3D scale, hosts/minimum devices, numerical budgets, and migration versions.
+## Contracts that the next batch must preserve
 
-Egret-specific project-model, invalidation-propagation, and bridge contracts have bounded counterexample evidence. First understand mature rendering, import, text, and animation mechanisms through source research; implement Egret's core independently with explicit general-purpose dependencies. New programs focus on adaptation differences, correctness, and failure boundaries, then connect complete UI/3D/loading/recovery and real-host devices. Round two partly advanced this research through bounded models and procedural scenes, not a complete engine. Real resource animation, AI editing, the workbench, publication, and migration loops remain. Resource/migration semantic samples must enter early, avoiding discovery after interfaces are fixed that old behavior cannot be expressed.
+### Native editing and committed UI
 
-| Work package and mapping | Inputs → reviewable outputs | Exit conditions and counterexample gates |
-| --- | --- | --- |
-| Samples and measurement boundaries; V001 | Authorized projects, requirements, candidate hosts → version/rights/dependency manifests, runnable legacy baselines, equivalent-function/image-quality scenes, test environments | Reproducible samples, fixed inputs/image quality. Unrunnable old versions, missing authorization, and undecided device budgets retain blockers rather than inferred acceptance results. |
-| Contract research; prerequisite to V002/V003/V006 | Sample semantics, authority boundaries → versioned project models, object/reference rules, invalidation stages, order rules, bridge state machines, minimal independent verification programs | Incremental/full references agree; late callbacks do not revive objects; bounded queues; rebuild does not replay consumed events. Return to contract design if recovery requires unrecorded state or many synchronous queries. |
-| UI, mixed rendering, and recovery; V002 | Contracts, fixed content/profiles → runnable P1/P2/P3 prototypes, correctness regressions, end-to-end measurements, fault-injection reports | Static/sparse/fully dirty, transparency/mask/skeletal order, load/unload/background/device loss meet agreed criteria. DrawCall reduction, attractive average FPS, or one startup cannot satisfy exit. |
-| Resources and animation; V004 | Source assets, semantic references, backend capabilities → deterministic build manifests, target resources, text/skeletal/frame import and diagnostics | Traceable dependencies; consistent constraints, attachments, animation events, clipping, pause/recovery. Count initial compilation, transcoding, uploads, and release costs. Failures cannot silently substitute inequivalent materials. |
-| AI engineering interfaces; V003 | Project contracts, build/runtime diagnostics → versioned commands, transactions, diffs, preview, undo, bounded repair records | Multiple changes locate objects and preserve gameplay. Reference conflicts, exhausted budgets, and uncertain semantics explicitly fail. Rollback actually restores projects/resources. LLMs stay outside per-frame loops. |
-| Workbench and real publication; V005 | V002/V003/V004 → creation, editing, playtest, repair, undo, packaging, updates, host support matrices | Target creators complete key tasks; declared hosts complete real-device publication/lifecycle regression. Browser probes do not certify mini-game/native hosts. |
-| Final one-click migration loop; V006 | V001–V005 → independent new projects, runnable builds, old/new comparisons, difference/cost/intervention reports, recovery entry points | Behavior, visuals, animation, resources, state, platform, and performance comparisons pass within declared scope; continued editing/platform publication complete. Import/build success is intermediate only. |
-| Evidence maintenance and collaboration; V007 | Versions, raw results, and reviews from each package → register pointers, rules, regression indexes, contribution/authorization boundaries | Public documents, knowledge base, and design discussions from day one; continuous structural checks. Q007 registers public repository/license/release information. First document release is not product capability. |
+The engine model owns committed value/revision and UTF-16 source selection. A real focusable native input/textarea owns active composition, selection and editing geometry; there must not be a duplicate visible editable value or semantic node. beforeinput/input/composition events enter one ordered stream, with no double commit or mid-composition rewrite.
 
-In the register, V002/V003/V004 depend on V001; V005 depends on those three; V006 ultimately depends on V001–V005. Prerequisite contract research and cross-integration in the table express engineering collaboration order without changing registered delivery dependencies or marking research programs as complete product implementation.
+Activation retains source selection and a stable control/scroll anchor. Deactivation settles composition according to an explicit policy, prepares matching paragraph/layout, then commits the affected UI domain. Native and CanvasKit line breaks may differ: declare font-specific reflow/anchor tolerances. Do not guess character widths.
 
-## Research baseline and independent implementation tasks
+M3.3 also owns browser font registration/readiness and cleanup for the active native editor. CanvasKit registration does not register a CSS FontFace. Reuse the admitted font resource identity and leases, declare fallback and reflow behavior, and retire superseded registrations when their sessions drain; do not create another asset manager or assume identical native/CanvasKit line breaks.
 
-Execute [open-source implementation priority and verification roles](open-source-research-and-validation-roles.md) under R012; adopted items are in [pinned-version source and proposals](open-source-reference-implementations-and-adoption.md). Existing research baselines can remain comparisons. R015 requires independent core implementation and public dependency registration without waiting to rediscover every mature principle. Production D decisions and product acceptance retain separate gates. The first Three r186 real-asset reference chain has run and currently passes 17/17 bounded checks. Upstream test suites have not run, and product acceptance is incomplete. The [round-three record](../archive/round-3-research.md#execution) retains failures and reproduction entry points.
+Virtual-list retention counts the active/focused/composing row within the existing live-container cap. Retain it within a bound or transfer focus before recycling. Late fonts, superseded programmatic values, viewport/keyboard changes, blur, cancellation, disposal and callback errors cannot revive old sessions or mix layout revisions. Mouse/touch routing remains with its existing owner.
 
-| Order | Reviewable output | Integration exit conditions |
-| --- | --- | --- |
-| 1 Source and dependency wrappers | Retain r180 historical research; the first chain pins full r186 SHA, 9 source files, licensing, and dependency closure. Next form target-build, dependency, and release manifests. | Real cylinder asset is reproducible; research diagnostics expose upstream objects, so production interfaces must use stable Egret handles. Historical tags are not future release promises. |
-| 2 Text providers | Mature whole-run Canvas path + fixed numeric atlas; original text, font readiness, atlasGeneration; replaceable provider per host | Font loading invalidates caches; correct missing-glyph diagnostics, wrapping, recovery. Identify untested CJK/IME/phone performance separately. |
-| 3 Mixed frames and shared state | FrameScheduler, SharedDeviceState handoff protocol, UI order/3D lists; capability/pass descriptions | Alternating executors do not misuse blend/depth/stencil/VAO/viewport/texture state; same-quality pixel/lifecycle regressions pass. |
-| 4 Resource/animation ownership | ResourceRegistry wraps mature loaders; separately manage sources/generators, containers/instances, decoders/textures, mixers/roots | Correct required-extension rejection, last-reference release, cancellation/late results/recovery disposal; independently check 3D and old 2D skeletal golden samples. |
-| 5 Product/device acceptance | Initial phones/hosts, complex UI + character + text samples; raw reports for cold load, tail frame time, memory, input, sustained load | Equivalent functionality/image quality, failures/retries included; AI editing and complete R008 migration/continued editing/publication remain formal delivery. |
+The complete first increment includes ordinary single/multiline editing, selection, paste, emoji deletion, undo/redo and programmatic conflict behavior. Test representative CJK, RTL and combining text; distinguish controlled event schedules, actual browser operations and true IME/hardware observations. Unsupported native transforms/clips are explicit capability restrictions.
 
-Do not reexplore mature ordinary transparency sorting or interpolation/matrices. Write the independent core to specifications; evaluate glTF parsing, transcoding, and font libraries as explicit dependencies. Retain existing counterexample regressions; add experiments only when sources fail to cover Egret semantics, adaptation defects are found, or differentiating benefits need proof. Missing mobile devices limits only their measurements, without leaving other engineering prerequisites suspended.
+### One mixed reference and early budget intake
 
-## Current reference chain and next tasks
+M4.1 grows one project from current public APIs. It does not create a second asset manager, renderer or time loop per subsystem. Reuse existing content and independent fixtures; persist authored stable IDs/declarations through project transactions where applicable, keeping native objects and transient playback out of saved data.
 
-The [round-three plan](../archive/round-3-research.md#research), [actual integration](../archive/round-3-research.md#execution), and [independent audit](../archive/round-3-research.md#audit) register fixed assets, main regressions, failure snapshots, and the last rerun. Code here is a third-party research reference chain, retaining original researchProgress/acceptance boundaries. Separately see the [first independent core slice](core-framework-implementation-record.md): V002 has local independent implementation, while complete rendering/formal acceptance is unfinished. The final main report has 17 checks; historical reruns, fault mutations, and example smoke checks do not accumulate into main cases.
+The first integration can use a declared development subset. Final X-D60/1 and X-MTouch/1 still require their original full scene semantics, quantities, devices and targets. A 20-Spine/200-sequence component example does not prove the mixed eight-Spine/80-sequence profile with complex UI.
 
-| Next group | Reviewable artifacts and exit conditions |
+Before expanding the full scene, identify actual required JS, provider WASM/Unicode data, fonts and other assets; measure the cold ready path and separately account source, provider, raster, Host and in-flight residence. Current paragraphs use CanvasKit/SkParagraph, not a second standalone ICU/HarfBuzz/FreeType implementation. Existing raw payload figures are not compressed transfer results.
+
+M3.2 and M4.1 own this intake; M4.2 owns formal measurement. Preserve the published X ceilings and original failures. If a real provider/content constraint requires a changed profile, publish a reasoned versioned successor before collecting its acceptance; keep the original target record. Do not remove languages, postpone required initialization past first-interactive, or enlarge limits merely to obtain a pass.
+
+### Animation compatibility and publication
+
+M2.1 owns exact artifact/source/runtime identities, fixture rights and variant admission. M2.2 owns semantic advancement, independent instance state, failure and bounded seek/replay. Retain the planned physics segment, history, seek/event budgets and refusal rules until an explicitly reviewed compatible contract supersedes them.
+
+M2.3 owns copied ordered geometry and exact alpha/color/sampling. Failed drawing preserves its last owned visual without pretending committed animation events were rolled back. M2.4 owns resource/instance candidate preparation, compatibility policy, CPU commit and Host-generation integration.
+
+Current RESET does not preserve arbitrary tracks/time. A preserve-mode increment first declares compatible asset IDs/names/tracks/skins/event history, stages a candidate and refuses unsupported mappings without silently resetting. Independent instances and the global game clock do not wait for a surface recovery. Source/instance and device generations remain distinct.
+
+## Retain, change and defer
+
+| Decision | Concrete scope |
 | --- | --- |
-| 2D skeletal/migration semantics | Pin the actual DragonBones adapter version/license and authorized old golden samples. Independently verify slots/attachments/constraints/events/pause and old/new comparisons; 3D skinning cannot substitute. |
-| Complete 3D characters and complex UI | Same-screen characters, text/scrolling/masks/frame animation, input, outfit changes; displayable resources and interaction regression after recovery, repeated load/unload and cancel races. |
-| Readiness and interface isolation | Distinguish device, upload, frame, and interaction readiness. Production exposes stable handles only; research diagnostics cannot directly become public APIs. |
-| Capability builds and package size | 2D profiles have no 3D dependencies; trim 3D by target, record actual release files/initial/split packages/cold start. Local compression estimates are not acceptance values. |
-| Device and creation loop | Advance consecutive AI editing, undo, publication, and full R008 migration alongside host-sample convergence; measure performance/text quality once real devices arrive. |
+| Retain | Scope/events, AssetManager/leases, display semantics, explicit clocks, current public entries, shared backend executors and completion/generation authority; current paragraph/font/theme/layout results; independent references and failed records |
+| Extend | Native edit state/host bridge and UI retention; current content producer/provider profiles; Spine replay/compatible replacement; complete controls/semantics; one mixed example |
+| Refactor only for a demonstrated need | Shared frame preparation, provider/raster keys or native/storage paths required by a selected capability or measured bottleneck. Keep ordinary old-API consumers and saved-frame behavior. |
+| Keep historical | Spine/3D/text research programs and original evidence. They inform mechanisms but do not replace current product adapters or full-feature references. |
+| Defer as separate product lines | Imported 3D scenes/characters/materials/VFX, mini-game/native/desktop hosts, integrated visual/Agent platform and complete migration. Their requirements remain mandatory in the larger product scope. |
 
-## Input/output contracts
+## Larger product sequence
 
-Projects, scenes, components, resources, and logic files are the persistence authority; runtime logic owns state, clocks, and events; execution mirrors are rebuildable. Candidate contracts define types/state transitions without freezing ABIs or specific function signatures:
-
-- **Project contract:** schemaVersion, stable objectID, resource references, input-project version, change origins/diffs. Creation, reference checks, save/reload, and version migration need decidable outcomes.
-- **Bridge contract:** packet protocol version, objectID/generation, frame/sequence, resource-readiness dependencies, buffer ownership. Submit at defined frame boundaries; reuse buffers after acknowledgement. Sequence gaps, protocol conflicts, or device loss stop submission and enter snapshot recovery.
-- **Execution contract:** Separate ordered UI/2D and 3D lists; invalidation distinguishes layout, measurement, transform, drawing, and hit tests. Overwritable state can coalesce; old-generation results after destruction are discarded. Gameplay events remain in the logical authority layer. Cross-boundary events independently define IDs, unacknowledged outboxes, contiguous consumption watermarks, ACK identity, retransmission/deduplication; graphics epochs cannot clear event state. Round two verified only effects/watermarks updated together within one living instance, providing ordered single in-memory consumption under fair retries. Persistent transactions are unimplemented; there is no crash-safe exactly-once guarantee. A reproducible counterexample resets state in a new consumer within the same Node process and duplicates side effects; actual OS process crashes were not simulated.
-- **Resource and host contract:** Separate CPU data, decoded results, GPU handles, and leases, distinguishing `resourceGeneration`, `leaseId`, `taskId`, and `deviceEpoch`. Each acquisition has an independent lease; CPU/GPU upload tasks are separate. Fences must explicitly carry the device epoch captured at submission/registration; late callbacks cannot fill it from the current epoch. Device recovery itself does not create GPU residency. Cancellation, readiness, failures, and completed release are explicit. Round two ran manually interleaved callbacks/injected fences only, without establishing real decode/upload/driver release/thread safety. Profiles declare capabilities/fallback. Unsupported necessary effects block export without silent gameplay changes.
-- **Tool contract:** Builds, Agents, editors, and migration consume one project version and diagnostic origins. Transactions output new versions or recovery results, retaining rule/model versions, cost, and unresolved items.
-
-The current candidate directory authority is [engineering technical architecture and project structure](engineering-architecture-and-project-structure.md): nine responsibility-based packages—contracts/runtime/graphics/hosts/engine/project/toolchain/cli/legacy—with three initial public identities engine/project/cli. editor/mcp-server/preview belong in apps, samples in tests/fixtures, and native crates arise from actual responsibilities. This refines earlier role names such as runtime-core/renderer; they are not parallel current directory proposals. contracts/runtime/engine have been created in the independent core prototype artifact under the [first-slice plan](core-framework-first-slice-plan.md); at that October 8, 2026 first-slice checkpoint, the other proposed packages had not been created. Later repository growth is described by current package records. Each subsequent work package continues to form short task lists with explicit paths, types, commands, and independent acceptance.
-
-## Executed research and evidence gates
-
-Contract-verification methods and complete-prototype gates use reference judgments different from optimized paths. Compare invalidation propagation to simple full recomputation, checking reparenting, ancestor-size changes, removal, and fully dirty states. Compare order to explicit expected sequences, checking transparency overlap, mask boundaries, and skeletal slots. Inject missing sequences, late callbacks, destroy/reuse, backpressure, and recovery in bridges. Research programs cover only their declared bounded semantics, not complete masking or skeletal animation. Fix inputs/random seeds and retain minimal failure replays. Node visits, allocations, packet counts/bytes, and peak queues describe program behavior only and cannot extrapolate GPU benefits.
-
-Round two executed the bounded research below. Current results have not completed overall P1/P2/P3 exit conditions or upgraded V002–V006 to product implementation. Preserve original round-one results/failures; current source does not overwrite historical reports. The 71 checks count current cases below only, without duplicating audit/mutation self-checks, historical red/green reports, or repeated reruns.
-
-| Current research evidence | Executed bounded scope | Still required before complete prototypes |
+| Product line | Entry supplied by this core | Next complete outcome and acceptance |
 | --- | --- | --- |
-| [13 event checks](../../evidence/reliable-event-probe-results.json) | Actual in-memory effects, lost deliveries/ACKs, retransmission, contiguous watermarks, identity, backpressure; state reset explicitly duplicates side effects | Persistent outboxes/side-effect transactions, external execution exceptions, process/session recovery, real networking/IPC/audio, WASM bridges |
-| [25 resource checks](../../evidence/async-resource-probe-results.json) | Multiple leases per owner, separate decode/upload, task/device identity, late completion, failure retries, explicit epoch fences | Real assets/decode, driver uploads/reclamation, real fences/OOM, scheduling/thread boundaries, byte budgets, background policies |
-| [18 nested UI checks](../../evidence/nested-ui-probe-results.json) | Bounded vertical layout, ancestor/sibling dependencies, structural changes, rectangular clipping/hit tests, glyph-width fixtures | Complete EUI semantics, real fonts/shaping/IME, list reuse, out-of-budget scale/numerics, actual rendering, end-to-end measurements |
-| [8 independent batch checks](../../evidence/batch-state-probe-results.json) | Independent consumers read texture/pipeline/clip, ordered adjacent batching/capacity boundaries, counterexamples for wrong strategies | Arbitrary masks/filters/stencil, complete materials, skeletal attachments, cross-backend quality/performance |
-| [7 mixed-graphics checks](../../evidence/mixed-scene-probe-results.json) | Actual local WebGL2: 6 UI commands → 3 draws; independent per-command CPU pixel reference, perspective cube, two rigid bone segments, frame atlas, fixed-frame context recovery | Real 3D characters, complete 2D skeletal/skinning constraints/attachments, real font quality, event recovery, WebGPU scene backends, real phones/hosts |
+| Lightweight 3D | Existing scene/resource/clock/Host boundaries and 2D overlay composition | Editable model-to-scene import and camera/materials, then animated characters and bounded VFX, sharing UI/resources/recovery. Actual import/pixels/events/device budgets, not procedural quads, qualify this line. |
+| Platform Runtime and publishing | Explicit host/capability/input/resource contracts | Select actual browser/mini-game/native priorities, then one complete startup/play/pause/storage/update/debug/package loop per chosen host. Native language/VM/graphics selection has its own measured boundary. |
+| Creation and Agent platform | Stable project transactions, artifacts, diagnostics and editable examples | Shared code/visual/natural-language changes, preview, conflict/undo, user-selected model APIs, Skill/MCP/plugins, visible token costs/limits and real target publication. Validate actual new-creator task completion. |
+| Legacy migration | Preserved display/event/resource semantics and bounded RES/MovieClip planners | Authorized old baseline → deterministic conversion → bounded Agent repair → equivalent old/new replay → continued editing/publication/update within a declared support matrix. Compilation/startup alone cannot pass. |
 
-Nested-UI transactions still copy and validate the complete source tree/dependency graph. Changed frames still compute world coordinates/visibility/clipping over the full tree, and static frames still copy snapshots. Local size-cache recomputation cannot directly be called overall acceleration. 128 nodes, scalar 1e6, reference factor8, and 4096 dense glyph widths are model-experiment budgets, not product performance budgets. The final graphics reference now computes per pixel/per command on CPU without sharing the batch builder/executor; historical shared-builder passing reports remain weaker evidence. Six commands → three draws and pixel tolerances describe execution/correctness for that scene only, not FPS, energy, or cross-host advantages.
+Inventory, rights and interface work can proceed before full M4 external qualification. New implementation in these product lines requires a separately selected complete scope; this review does not start them or rename the M2–M4 program.
 
-Next, extend P1/P2/P3 to real assets, complete paths, and host experiments. First pin code commits, build mode, resource hashes, host/driver versions, devices, networking, image quality, and thermal state. Then collect correctness, CPU/GPU frame-time distributions, peak memory, cold load/first interaction, first shader use, and sustained execution. Unavailable GPU time/energy/thermal data is recorded as unmeasurable or explicitly labeled proxies. Initially, 100 load/unload cycles and 20–30 minutes of sustained execution may be suggested exploration samples. These are experimental recommendations, not substitutes for device-approved product budgets.
+## Development and delivery rhythm
 
-Every package retains requirement/decision/delivery mappings, source/artifact hashes, tool versions, actual commands, raw logs, screenshots/replays, environments, tolerances, failures, and reproduction entry points. Verify external behavior, lifecycle, and comparative differences; tests merely repeating implementation logic cannot prove correctness. Success logs must come from corresponding actual execution, and failures remain. [Round-one verification](../archive/round-1-research.md#execution), [round-one audit](../archive/round-1-research.md#audit), [round-two verification](../archive/round-2-research.md#execution), and [round-two audit](../archive/round-2-research.md#audit) separately record evidence, versions, counterexamples, and fixes. Round two's Khronos page with `editorDraft` is an editor's draft reference only, not a final approved standard or proof of product conformance.
+Concentrate implementation and example integration for one coherent behavior increment. Then run the affected type/behavior tests and required real-browser checks together, fix actual failures and obtain one independent source/results/bilingual review. Avoid repeated unrelated historical matrices.
 
-Code, documents, and registers share one candidate version. Contract changes synchronize interface descriptions, regressions, and migration rules; backend/resource-version changes rerun affected scenes. Source rights, third-party licenses, equivalent comparisons, version consistency, and reproducible results are quality gates to the next package. If a gate fails, add evidence or replace the candidate; rewriting documents cannot declare completion.
+Normal commit/push hooks and the complete final merge gate remain mandatory. Use focused local feedback; the unchanged final-candidate Windows integrated gate and portable CPU jobs qualify merge under the existing GitHub Actions-bound rule. Exact input comparison permits reuse of earlier browser/device evidence; code changes invalidate their affected scope.
 
-Round one's “fixed-region layout, batch-expansion redraw, combined terminal callbacks, and synchronous rebuild” limits remain historical. Round two partly added nested dependencies, independent batch consumption, separate decode/upload, and independent leases per acquisition. Further work now targets real assets/fonts, complete 2D skeletal/3D characters, actual asynchronous executors/driver fences, real phone hosts, and complete product pipelines. Passing bounded models/procedural scenes cannot replace these exit conditions, nor can old limits be presented as current state without explanation.
+Milestone performance, sustained lifecycle and real-device/IME/accessibility campaigns are separate from ordinary merge feedback. They run when their actual prerequisites and claims exist, not after every wording edit. A failed required row stays open. For each Windows failure, use the existing [governance and Skill](windows-ci-governance.md); no new maintenance project is introduced.
 
-## Parallel boundaries, estimates, and risks
+## Community handoff
 
-V001 authorization/sample inventory and host exploration can run in parallel. After contracts form, UI/3D prototypes, resource semantic references, AI transactions, and migration inventory can run in parallel. Shared contract changes integrate into one version, and consumers integrate by version; they must not create same-named objects/events/resource states with different meanings. V006 conversion prototypes begin early in parallel, but final acceptance awaits V005's workbench/real-publication loop. This deliverable always remains mandatory project scope.
+Issues #83–#93 retain outcomes, entry files, dependencies, responsibility and full acceptance. Project 2 is the workflow status; labels describe capability/contribution type. In Progress includes delivered slices with remaining work, Ready refers to a stated startable contribution, and Blocked identifies the missing prerequisite. None assigns a volunteer.
 
-Each package first estimates low/medium/high effort for exploration, implementation, tests, integration, and failed-work rework. Preconditions include sample counts/differences, host/device matrices, license availability, personnel capabilities, selections, and reuse extent. Count comparative/real-platform tests separately; record AI calls, tools, active human time, and waits separately. The longest dependency path determines calendar duration; do not add parallel work directly. Before Q006 is settled, report estimation bases/ranges only, without person-month, cost, or date commitments.
+Contributors can take a bounded PR inside a package, supply lawful reference assets, reproduce a bug, improve translations or perform the independent newcomer flow. Maintainers coordinate shared interfaces and derived current metadata. Preserve contributor attribution, comments and original evidence.
 
-| Audit high risk | Trigger and response |
-| --- | --- |
-| Misleading failure recovery | Packet loss, OOM, device loss, or background recovery creates duplicate events/old handles. Prioritize blocking optimization and locate state authority through fault injection/recovery replay. |
-| Weakened CPU comparison | Only full-tree scans or per-property bridge calls are opponents, omitting reasonable optimization. Add mature equal-quality implementations and total bridging/preparation/transcoding costs. |
-| Inferred GPU/host capability | API existence or browser success becomes cross-host support/power advantage. Bound conclusions to environments and require real publication, devices, and measurement evidence. |
-| Source authorization gaps | Historical directory existence is treated as reuse/publication permission. Check rights per file/dependency; unclear material remains research leads only, and estimates include replacements. |
-| Silent AI semantic changes | Effects deleted, events swallowed, or manual repairs hidden before migration success is reported. Require diffs, budgets, rollback, fixed old/new replay; failed items remain in report denominators. |
-
-This plan updates with verification. Accepting, rejecting, or replacing D001–D016 retains evidence, applicability scope, and fallback. Research findings can advance another verification round; formal closure requires product artifacts, acceptance evidence, and the complete V006 migration loop together.
-
-## Backend, toolchain, and native comparison tasks
-
-The dated [low-level selection study](graphics-backends-and-native-runtime-selection.md) supplies source research for these comparisons. Below are directions for reviewable outputs, not approved complete-implementation task lists.
-
-| Work | Outputs and exit conditions |
-| --- | --- |
-| WebGPU/WebGL | Pin device capabilities, material subsets, shader origins. Correct display order/masks/color/recovery/feature fallback on the same work. Retain complete 3D characters and old 2D skeletal golden samples. |
-| TS development pipeline | Pin stable TS7.0.2 candidate/platform configurations; evaluate Vite8 for Web preview. Time cold preview, warm feedback, diagnostics, resources/shaders, and release separately; preserve old semantics/source maps. Do not wait for full checks before viewing every change. |
-| Native Runtime | Pin private dependencies and actual VM build authority. Wrap C++ first; compare Rust by module. Choose one primary wgpu/Dawn implementation; verify D3D11 by SDK need. Explicit owned/borrowed, external import, state/fence/threads/shutdown, copy costs. |
-| Optional GPU AI | Pin model operators/SDKs/hardware APIs; declare device/IO ownership/fallback. Draw clear UI after 3D super-resolution; enable only with net frame-time/memory/energy/quality/latency benefits. |
-
-Upstream release numbers or mainline directories cannot establish passing tasks. Continue existing 2D golden samples, complex UI/complete characters, capability-based package sizing, and complete R008 migration.
-
-## Implementation-origin work items
-
-R015 applies to every product work package. Before implementation, form independent specifications/design rationale. During implementation, distinguish self-written modules, public dependencies, and third-party patches. Submissions attach an [origin record](../templates/implementation-origin-record.md); review implementation basis, third-party attribution, and applicable licenses. Unresolved origin/attribution issues cannot enter the core. Estimates include comparisons, dependency maintenance, package size, and release notices; do not hide additional independent-implementation effort under “reuse.”
-
-Execute the [independent implementation and third-party dependency rules](independent-implementation-and-dependency-policy.md) without rewriting historical experiments. Current rules are determined; actual production-code origins/performance await corresponding implementation/acceptance. R008/V006 and final dependencies are unchanged.
-
-## Engineering structure and public code contracts
-
-R016 defines modern engineering with familiar Egret domain interfaces. D016's [engineering structure](engineering-architecture-and-project-structure.md), [API and naming](public-api-design-and-naming.md), and [code standards and gates](code-standards-and-quality-gates.md) refine package dependencies, public entry points, Scope/leases, events, native boundaries, Agent transactions, and quality checks. Unimplemented names/APIs remain candidates. The [first independent core slice](core-framework-implementation-record.md) has been strictly compiled and verified for the headless subset/package boundaries. Complete API, platform, CI and migration acceptance remain separate from bounded delivered packages.
-
-## Historical implementation checkpoints
-
-The [CPU asset contract](resource-core-contract.md) and [record](resource-core-implementation-record.md) retain V010's shared acquisition, independent leases, cancellation, generations and Scope/Engine shutdown. That checkpoint did not complete V004 production resources/animation or GPU/decoder/performance choices.
-
-The [0.12 display/frame contract](display-and-frame-execution-contract.md), [plan](display-and-frame-implementation-plan.md), [record](display-and-frame-implementation-record.md) and [verification](../../evidence/display-frame-verification.json) preserve 97/97 core checks, 25 negative diagnostics and desktop Canvas/pointer observations after cross-realm correction. The [0.13 rectangle record](webgpu-rectangle-implementation-evidence.md) remains separate. Neither checkpoint accepted the later complete UI/3D/device/editor/Agent/migration scope.
-
-### Reading the dated previews
-
-The following records preserve the facts, failures and PENDING states known at each original cutoff. They are historical engineering checkpoints. Later deliveries, including current 0.54, are read through their own records; they do not rewrite earlier observations or imply remote CI acceptance.
-
-<!-- BIP1-0.46.0-BEGIN -->
-## Engineering preview 0.46.0 — Optional browser PNG textures
-
-**R004 / R012 / R015 / R016 / R019 / R021 · S100 / V051.** The optional browser PNG adapter has independently accepted source, 4/4 terminal regressions, 95/95 public CPU/cold cases, five strict lanes (0/32/54/0/6 diagnostics), the public type gate, 17/17 new policy cases with 272/272 retained boundary cases, and 39/39 observer UNIT cases. Counts describe separate scopes and are not added together. Native collector R2 source, adoption/syntax and input preparation are accepted. Independent saved-result review accepted the bounded default-browser Canvas/WebGPU PNG subset as PASS_ACTUAL_BOUNDED_NATIVE_PNG_BROWSER_SUBSET_ONLY, with 6 submissions / 192 pixels / 768 channels at tolerance 0. Complete current repository/prepush gates, this increment's push/PR/Main and remote CI acceptance remain PENDING.
-
-Support is bounded to 8-bit RGB/RGBA noninterlaced still PNG, with browser-normalized straight sRGB RGBA8 output. This is not lossless decoding of every PNG: Canvas may lose hidden RGB and translucent precision. The adapter preserves existing engine.assets lease, Texture, SpriteSheet, Bitmap and clock ownership. Application shutdown retires Engine/manager demand and separately awaits provider.close(). Default core entries remain DOM-free; the sole optional factory and four erased interfaces add no runtime dependency. Four occupied jobs, 8 MiB per input and 32 MiB occupied encoded-byte budget remain the explicit limits. Full Spine R020/V020 and legacy migration R008/V006 remain OPEN.
-
-Read the [contract](browser-png-contract.md) · [implementation plan](browser-png-implementation-plan.md) · [native schedule and CLI](browser-png-native-plan.md) · [evidence and retained repairs](browser-png-evidence.md).
-
-Previous completed delivery: [PR #33](https://github.com/cnedwin/Egret_rebuild/pull/33) merged 0.45.1 into Main `8fb5384a8517f20318ead797ce031c6a321a7b9e`, tree `56e49e879d93fae351c948375e0ec12f21c739ab`. Its separate mandatory-hook suites passed 137/137 publication, 2,909/2,909 core and 160/160 experimental tests; knowledge-base issues were 0. This successor does not rewrite earlier PENDING cutoffs or claim remote CI acceptance.
-<!-- BIP1-0.46.0-END -->
-
-<!-- HYGIENE-0.45.1-BEGIN -->
-## Engineering preview 0.45.1 — Repository path and byte hygiene
-
-**R016 / R019 / R021 · S099 / V050.** Repository tooling now separates complete, case-preserving logical paths from platform-aware physical path comparisons and keeps every file fingerprint bound to raw bytes. The focused independent review accepted 111/111 regressions, the build and separate strict SpriteSheet/Sequence diagnostics. The actual pre-fix case-alias RED (0 passed / 2 assigned failures) remains preserved.
-
-Separate real Node/PowerShell writer execution passed 3/3 with independent acceptance. Saved isolated Git fixtures passed 12/12; a separate related collection passed 123/123, including 9 knowledge-base cases. Those overlapping runs are not added together, and independent Gate saved-result review accepted the finite data as **PASS_ACTUAL_REPOSITORY_HYGIENE_DATA**. Complete local publication gates, committed-snapshot qualification, the mandatory push hook and current PR/Main delivery remain **PENDING at this curation cutoff**. Packages stay private `0.0.0`, host protocol `1.0`; full Spine **R020/V020** and legacy migration **R008/V006** remain **OPEN**.
-
-Previous actual delivery: [PR #32](https://github.com/cnedwin/Egret_rebuild/pull/32) merged 0.45.0 into Main `863b29c90b92b62e37ce77cf32e02c4294135a16`, tree `1c7b706163ab58e41916bdaa8a6d45f74743a4f9`. Its mandatory hook passed 63 publication, 2,909 core and 160 experimental tests as separate suites; knowledge-base issues were 0. Remote CI PASS is not claimed. Earlier PENDING sections retain their original cutoffs.
-
-Next, enforce the full publication/commit boundary, deliver the reviewed patch and resume browser PNG work from the delivered Main. Retain each earlier failed or pending cutoff.
-
-[Policy](repository-identity-and-line-endings.md) / [Evidence](repository-hygiene-evidence.md).
-<!-- HYGIENE-0.45.1-END -->
-
-<!-- SS1-0.45.0-BEGIN -->
-## Engineering preview 0.45.0 — Named SpriteSheet
-
-**S098 / V049.** Named `createSpriteSheet` shares one full-image lease between immutable named crops, static icons and the existing Engine-clock sequence controller. Runtime/Engine roots add one factory and two erased types, `SpriteSheet` / `SpriteSheetFrameInput`; package version stays private `0.0.0` and host protocol `1.0`. No new dependency, public subpath or animation clock is added.
-
-Saved public CPU passed 100/100, with retained CPU 133/133 counted separately. SS01–SS10 are specification families. SpriteSheet positive types produced 0 diagnostics; ordinary/import negatives contained 22/14, totaling 36 precise tuples and 6 continuation lines. Original-operation units passed 10/10; policy passed 5/5 including 4 assigned controls, and retained generic policy passed 272/272 separately. The recording example has 8 rows, 6 explicit ticks, 1 load and 1 disposal. Independently accepted Canvas/WebGPU observations completed 18 submissions (16 new captures + 2 saved-frame replays), 576 pixels and 2304 channels at tolerance 0, with bounded cleanup. Final publication gates, mandatory push hook and 0.45 PR/Main remain PENDING.
-
-Recorded 0.44 delivery: PR #31 merged; Main `1dce76a62cd0a4180969949939041f889eb1d923`, tree `b10ccbc11e9a2db5bacbf913858c8f4dd73f9d26`. Its hook separately passed 63 publication, 2794 core and 160 experimental tests; KB issues were 0. Remote status/check-run counts 0/0 do not establish remote CI PASS. Earlier PENDING cutoffs remain historical.
-
-The first-party Apache-2.0 increment establishes finite named-crop composition. Full Spine R020/V020 and legacy migration R008/V006 remain OPEN; complete UI/EUI, packed atlas import, phone/native SDK and comparative performance remain future work.
-
-[Contract](spritesheet-contract.md) / [Evidence](spritesheet-evidence.md). Native tool: `tools/spritesheet/README.md`.
-<!-- SS1-0.45.0-END -->
-
-<!-- F1C-DOC-0.37.0-BEGIN -->
-## Engineering preview 0.37.0 — opt-in F1 Clock candidate
-
-**S090 / V041** records the original F1 Clock experiment; **D017 remains proposed** and concerns only its trusted session and explicit opt-in provenance. Saved private CPU execution passed **10/10** Clock cases, including the named after-advance fault, and **3** assigned wrong-copy controls with fresh baselines. The original manual **12/12** remains unchanged. Saved private desktop WebGPU execution passed **10** positive readbacks and **1** separate double-update control: **30** original positive samples, **120** channels, tolerance **0**, with full-byte repeats and bounded cleanup. Counts are not added to historical runs.
-
-**Portable public Clock source/replay, current full gates, final bilingual review, mandatory push and 0.37.0 delivery are PENDING at this curation cutoff.** Private results do not substitute for them. The former 0.36.0 blocks below retain their historical pending cutoff; 0.36.0 was subsequently delivered through [PR #23](https://github.com/cnedwin/Egret_rebuild/pull/23), Main `36909c3c1b2b9ef9784cb71d949ef6eba142fc0a`.
-
-Official external `@esotericsoftware/spine-core@4.3.13` is attributed, neither bundled nor relicensed. Integration/distribution qualification remains unverified. Complete Spine **R020/V020 remains OPEN**; these observations establish no phone/Native SDK, physical GPU, OS process retirement, performance/energy or complete-product acceptance.
-
-Next: complete public Clock replay and gates before adoption; then continue resources/animation/UI, 3D integration, browser and mini-game/native hosts, utilities and AI creator tools. Full legacy migration R008/V006 remains open.
-
-Read [Clock guide](../experiments/spine-f1/README.md), [saved verification](../../evidence/spine-f1-clock-verification.json) and [pending public projection](../../evidence/spine-f1-clock-public-projection.json).
-A subsequent actual replay of the public source in an independent clone passed manual **12/12** with **6** original controls and full Clock **10/10** with **3** assigned controls; the named fault actually executed, with **0** skipped accepted cases. Separate default-headless WebGPU execution passed **10+1** readbacks, **30** positive samples and **120** channels at tolerance **0**, retaining original full-byte relations and bounded cleanup. Cold import/help observed **280** modules and **0** Core/GPU/host accesses. The saved CPU collection retains its earlier native-pending cutoff; the separate native receipt is the actual successor. Original source and input identities remained unchanged. Independent saved-result review, final repository gates and delivery remain PENDING here; full Spine **R020/V020 remains OPEN**. See the current successor in the linked Clock verification/projection records.
-<!-- F1C-DOC-0.37.0-END -->
-
-<!-- SP1B-DOC-0.36.0-BEGIN -->
-## Engineering preview 0.36.0 — original F1 Spine experiment
-
-An opt-in original two-region manual bridge connects real resources and owned Mesh2D geometry. Portable CPU execution passed **12/12** original tests and **6** assigned controls, each with a fresh baseline. Complete Spine **R020/V020 remains OPEN**.
-
-Separate browser WebGPU validation recorded **8** positive submissions and **1** assigned double-update error control; a separate **3**-read classification actor verified `PIXEL_FAIL`. These results are not combined. The prepared public CPU/browser reproduction tool also passed in a new clone with the same **8+1** profile; these are repeated observations, not additional feature coverage. Its finite independent review has **0** open findings. The public checkout also passed the same CPU/browser profile. **Final publication gates and 0.36.0 delivery remain PENDING at this cutoff.** Read [the experiment guide](../experiments/spine-f1/README.md), [verification](../../evidence/spine-f1-manual-verification.json) and [projection provenance](../../evidence/spine-f1-public-projection.json) for exact profiles, original oracles, source terms and remaining UI/runtime/creator/migration work.
-
-The preceding **0.35.0** was actually delivered through [PR #22](https://github.com/cnedwin/Egret_rebuild/pull/22). Its recorded gates and Main identities are in the guide/evidence; **0** remote statuses and **0** check runs establish no remote CI PASS. Earlier PENDING cutoffs below remain history.
-<!-- SP1B-DOC-0.36.0-END -->
-### Next packages after the F1 checkpoint
-
-Complete the prepared public browser reproduction review, public-checkout execution and final provenance/bilingual/delivery gates. Then advance genuine source-art import and diagnostics, resource/event/track lifetime and version-correct feature fixtures before extending the animation contract. Validate complex ordered UI and lightweight 3D composition with those actual assets; Canvas/WebGL/fallback and phone/SDK qualification remain explicit work packages. Continue useful runtime/engineering utilities before AI creation interfaces and complete legacy migration, with a finite specification, independent review, actual verification and paired knowledge-base update for each package. No staffing, date, budget or performance commitment is added.
-
-
-<!-- SPH-DOC-0.35.0-BEGIN -->
-## Engineering preview 0.35.0 — Scope ownership repair
-
-Four internal Scope members now use JavaScript private storage/dispatch. Explicit same-name properties cannot bypass registration, replace owned cleanup values or cancellation, or retain closed Scopes in shutdown tracking. Public API and error/cleanup order remain intact. See the [contract and evidence](scope-private-ownership.md).
-
-Original baseline passed; the unchanged six-test suite produced 1 pass / 5 assigned failures. After repair: **6/6** new and **183/183** retained lifecycle tests, build, strict types and boundaries passed. Independent implementation review has zero open findings. Final full publication checks and **0.35.0** delivery are **PENDING** at this cutoff.
-
-The preceding **0.34.0** was delivered through [PR #21](https://github.com/cnedwin/Egret_rebuild/pull/21), Main `74ca6c3293167d8d3eb253074c0596bd1922db21`, tree `94e6a96f17b656cb8cd28cd65a75f48575cb0c38`. Its mandatory push gate passed **2672/2672** core and **63/63** publication tests, checking **147** document pairs and **177** critical comment records. GitHub returned **0** statuses and **0** check runs; no remote CI PASS is claimed. Earlier pending cutoffs remain history.
-
-This covers four explicit named shadows; it makes no claim about all internals, arbitrary public overrides, security isolation, GC or device performance. The next Spine step connects original manual animation fixtures to owned Mesh2D frames; full Spine, UI, 3D, platform, AI workflow and legacy migration acceptance remain in the engineering plan.
-<!-- SPH-DOC-0.35.0-END -->
-
-<!-- SP1A-DOC-0.34.0-BEGIN -->
-## Engineering preview 0.34.0 — Spine import planning
-
-The optional built `@egret/project/spine` entry provides `createSpineImportPlan` and frozen `SPINE_IMPORT_LIMITS`. It prepares an immutable bounded plan from stable 4.3 skeleton JSON, a modern atlas and explicit page-to-asset bindings. Precise diagnostics identify original source locations. Read the [contract](spine-import-plan-contract.md) and [verification record](../../evidence/spine-import-plan-verification.json). Successful planning keeps animation semantics and rendering **not_run**, entitlement **unverified** and feature inventory **partial**.
-
-<!-- SP1A-READING-ACTUAL-BEGIN -->
-Current build and production boundary scan passed (465 files). Public planning behavior passed **32/32**; TypeScript **7.0.2** passed one DOM-free positive and **22 + 6** exact unsuppressed negative diagnostics. Focused policy passed **9/9**, and **5** separate owned-copy controls each passed a genuine baseline before failing its assigned mutant witness. Independent finite implementation review has zero open findings. Initial **30/32** exposed a test-helper source-ID assumption; the retained production boundary refusal exposed message wording and exact forwarding punctuation. Narrow repairs preserve the API and guard rules. Final complete publication checks, the mandatory push hook and **0.34.0** remote delivery remain **PENDING** at this cutoff.
-<!-- SP1A-READING-ACTUAL-END -->
-
-The preceding **0.33.0** package was delivered through [PR #20](https://github.com/cnedwin/Egret_rebuild/pull/20), merged to Main `4ae7e71ee72e5f2c46e7dbccd28b27f482294a0c`, tree `f340e46f0d88783b268b732dcacbfcf7c45a363a`. Its complete mandatory push gate passed **2,631/2,631** core and **63/63** publication tests, **145** document pairs and **174** critical comment records. Local/remote Main identity and a clean checkout were verified at **2026-10-11 23:31:37 UTC**. GitHub returned zero statuses and check runs; no remote CI PASS is claimed. Earlier pending cutoffs below remain historical.
-
-Full Spine **R020/V020** remains open. A separately prepared official core artifact and original animation fixture recipe establish research inputs, not executed playback, redistribution rights or product acceptance. Next work connects per-instance animation state and owned mesh frames to the genuine clock, asset leases and renderers. Complete UI, target phones/SDKs, performance, editor/Agent workflows and legacy migration remain in the engineering plan.
-<!-- SP1A-DOC-0.34.0-END -->
-
-<!-- MI1-DOC-0.33.0-BEGIN -->
-## Bounded input work package: 0.33.0 (MI1)
-
-Development preview **0.33.0 (MI1)** introduces Scope-owned primary mouse input through the optional `@egret/engine/web/input` entry. It connects existing logical hit testing and typed display events while rendering remains explicit. Read the [primary mouse contract](primary-mouse-input-contract.md) and designated [verification record](../../evidence/primary-mouse-input-verification.json) for the exact profile, ownership, failure handling and gate scopes.
-
-At the documentation cutoff **2026-10-11 22:52:43 UTC**, the final Engine build and genuine public interface check passed. Public MI1 behavior/lifecycle passed **98/98**. TypeScript **7.0.2** passed one public positive and matched **26 + 15 + 5** exact unsuppressed negative diagnostics; the public type gate exited **0**. Focused MI1 policy passed **21/21** after correcting one expected diagnostic to retain the existing guard order. Public cancellation **8/8** and earlier retained CPU checks keep their separately recorded scopes. These overlapping checks are not added.
-
-Default headless Edge **154.0.4258.62** with Playwright **1.62.1** passed the fixed desktop Canvas mouse subset: **1** genuine native baseline and **6** assigned controls cover literal events, logical points, RGBA witnesses and observed physical listener cleanup. The ordinary HTTP example passed, and collector policy/grammar units passed **13/13**. All **7** retained desktop gates—Canvas, WebGPU, B1, textured rendering, sequence animation, Canvas text and picking—passed their existing bounded profiles. This establishes neither phones, arbitrary UI/3D, OS reclamation nor a performance lead.
-
-**The complete 259-case boundary rerun, final publication/bilingual checks, mandatory pre-push gate and current 0.33.0 remote delivery remain PENDING.** The earlier timeout and full **258/259** result retain their original artifacts; the latter exposed one expected-message mismatch. Focused **21/21** is its finite successor, not a complete rerun. Other earlier failures retain their recorded identities and cutoffs in the verification record.
-
-The delivered baseline **0.32.0 (S3D1)** was merged through [PR #19](https://github.com/cnedwin/Egret_rebuild/pull/19) to Main `a240bc1e6ee218c63fc1511d715d01d1358d908f`. Earlier scene/preview sections retain their original sources, results and pending/failure cutoffs as history; their earlier pending labels do not undo this delivery.
-
-This bounded interaction foundation requires genuine public behavior/lifecycle controls, exact unsuppressed type diagnostics, a fresh complete canonical baseline before each policy mutant, the six assigned native controls, affected retained native regressions and final provenance/bilingual/pre-push checks. Continue the existing display/rendering, resources/animation/UI and Host priorities before expanding AI engineering interfaces and legacy migration.
-
-Full Spine support **R020/V020** remains planned, implementation **not_started**, acceptance **not_run**. Complete UI, touch/pen, phones, Native SDKs, target-device performance, editor/Agent tools and complete legacy migration retain their separate implementation and acceptance obligations.
-<!-- MI1-DOC-0.33.0-END -->
-
-<!-- S3D1-DOC-0.32.0-BEGIN -->
-## Bounded public scene checkpoint: 0.32.0 (S3D1)
-
-Verified implementation: public behavior **35/35**, boundaries **238/238**, **2** positive type consumers and **10 + 3 + 11 + 15** exact negative diagnostics pass. Retained integration checks **161/161** and fresh fixed headless Edge composition pass after independently reviewed repairs. Full final publication and current delivery remain pending at this curation cutoff; the linked scene contract records exact scopes and successors.
-
-**Initial source/API observation (historical cutoff):**
-
-The [public scene contract](public-scene3d-contract.md) bounds this increment to authenticated immutable procedural geometry, camera-space scene capture and explicit browser scene/ordered screen-UI composition. Independently designed interfaces reuse current first-party algorithms; there is no new mutable scene graph, asset importer, material/lighting system, character or Spine implementation. Three-file adoption, build and interface GREEN at **2026-10-11 19:54:25–19:54:26 UTC** confirm source/API reachability only. Behavior, types, policy, native and final acceptance/delivery are **PENDING**. Full UI/3D, animation, creator/editor/migration/publishing, phones, Native SDKs and performance keep their existing separate exit gates.
-
-The delivered **0.31.0** successor was merged through [PR #18](https://github.com/cnedwin/Egret_rebuild/pull/18) to Main `b4062e134af7b923ab6c2c16381004bc1c62ee3c`, tree `5bf7e05cf88e15ca66d1b8b6e26e2c442cbfcf7a`. Historical design, implementation and verification cutoffs below remain intact; this bounded public-interface increment neither accepts nor removes the complete engineering-plan obligations.
-<!-- S3D1-DOC-0.32.0-END -->
-
-
-## Plan baseline notes
-
-The broader plan originated as October 8, 2026 candidate 0.7. Original D001–D016 proposed, H001–H008 untested and V002–V006 cutoffs remain dated register facts. The October 10 V020 registration was planned / implementation not_started / acceptance not_run; partial later work has not closed full Spine acceptance.
-
-At that October 8, 2026 research cutoff, the third round had passed 17 adaptation checks and a separate example smoke check. The earlier second-round 64 CPU and 7 WebGL2 checks retained their scope, without reruns or expanded coverage. These results did not establish acceptance of a complete engine, performance, real hosts or migration.
+The [delivery plan](delivery-plan.md) maps this engineering sequence to the full product obligations. Earlier task estimates, research comparisons and preview cutoffs remain in the [previous engineering plan](https://github.com/cnedwin/Egret_rebuild/blob/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1/knowledge-base/en/docs/engineering-plan.md) and subsystem records. This plan commits no staffing, cost, dates, platform entitlement or measured performance.
