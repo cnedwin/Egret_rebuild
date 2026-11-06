@@ -9,6 +9,8 @@ export interface PointerNotification {
   readonly contact: PointerContact;
   readonly target: DisplayObject | undefined;
   readonly reason?: PointerCancelReason;
+  /** Present on a terminal `end`: whether the event was actually dispatched to a target path. */
+  readonly delivered?: boolean;
 }
 export interface PointerInputOptions {
   readonly engine: Engine;
@@ -28,4 +30,6 @@ export interface PointerInputEvents {
 /** Scope-owned input for an explicitly supplied logical host stream. */
 export interface PointerInput extends PointerRouter<DisplayObject> {
   readonly events: PointerInputEvents;
+  /** Terminal and contact observations after creation, without adding a host input path. */
+  observe(listener: (notification: PointerNotification) => void): () => void;
 }

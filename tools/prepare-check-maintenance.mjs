@@ -121,6 +121,10 @@ const m34ThemePairRegistrations = [["tools/spritesheet-boundary.mjs","uiThemeGra
 const m34ThemeGraphRegistrations = [["tools/spritesheet-boundary.mjs","uiThemeGraphAdditions"],["tools/browser-png-boundary.mjs","uiThemeGraphAdditions"],["tools/atlas-import-boundary.mjs","uiThemeGraphAdditions"]];
 // Exact selector-repair successors retain the earlier theme owners above.
 const m34ThemeSelectionSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":292808,"sha256":"4820df162a859727c32c5d2c312114d26af4e6aea202084ff24048b75019e909"},{"path":"tools/browser-png-boundary.mjs","bytes":301781,"sha256":"47539bdf0a7db1ca9ccca6d8d1fd8ea5702f696b9a266f0408d7d56349c41244"},{"path":"tools/atlas-import-boundary.mjs","bytes":197521,"sha256":"014c7b880f0bf0649f71298ec7bfa089b8a747a89817d1ce28227bd0ea60a1e2"}];
+// Controls observations register only these three complete current source owners.
+const uiControlsSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":302795,"sha256":"7229c33d238d1d1cb8683682bdc1982319bd17e61ceaaa9b3e537245fc552467"},{"path":"tools/browser-png-boundary.mjs","bytes":311768,"sha256":"e0066263c919ed63d89ca8dd73d35b032c582f6b677ee8f1b4ecb830db7ce44d"},{"path":"tools/atlas-import-boundary.mjs","bytes":207508,"sha256":"8bcaff020588334bcb470f341fa7d8656f4782522483af63c51b8b722b57a27d"}];
+const uiControlsPairRegistrations = [["tools/spritesheet-boundary.mjs","uiControlsGraphPairs","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","uiControlsGraphPairs","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","uiControlsGraphPairs","raw-pair-observation-only"]];
+const uiControlsGraphRegistrations = [["tools/spritesheet-boundary.mjs","uiControlsGraphAdditions"],["tools/browser-png-boundary.mjs","uiControlsGraphAdditions"],["tools/atlas-import-boundary.mjs","uiControlsGraphAdditions"]];
 // Explicit selectors keep historical transforms and third-party owners separate.
 const policyRegistrations=[
  {owner:'tools/bitmap-resource-slot-boundary.mjs',binding:'policyPin',target:'tools/bitmap-resource-slot-policy.json',kind:'BITMAP_RESOURCE_SLOT_FINITE_INTERFACE_POLICY',selectors:['packages','configurations','stableEntries','oldRootPins','oldEngineDeclarationPin','workspacePins']},
@@ -254,8 +258,8 @@ export function prepareBaselineReview(root){
     || m31UiPairRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || m3PointerGraphRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || m3PointerPairRegistrations.some(row=>row[0]===owner&&row[1]===binding)
-    || [...m24ResetPairRegistrations,...m24ResetGraphRegistrations,...m34ThemePairRegistrations,...m34ThemeGraphRegistrations,...m24SpinePairRegistrations,...m24SpineGraphRegistrations,...m3KeyRevealPairRegistrations,...m33KeyboardPairRegistrations,...m33KeyboardGraphRegistrations].some(row=>row[0]===owner&&row[1]===binding);
-   const reviewed=[...m13SourceOwners,...m14SourceOwners,...m15SourceOwners,...m15CancellationSourceOwners,...m15DiagnosticSourceOwners,...m12PreparationSourceOwners,...m3PointerSourceOwners,...m21ContentSourceOwners,...m31UiSourceOwners,...m22SequenceSourceOwners,...m33KeyboardSourceOwners,...m3KeyRevealSourceOwners,...m24SpineSourceOwners,...m34ThemeSourceOwners,...m34ThemeSelectionSourceOwners,...m24ResetSourceOwners].filter(row=>row.path===owner);
+    || [...uiControlsPairRegistrations,...uiControlsGraphRegistrations,...m24ResetPairRegistrations,...m24ResetGraphRegistrations,...m34ThemePairRegistrations,...m34ThemeGraphRegistrations,...m24SpinePairRegistrations,...m24SpineGraphRegistrations,...m3KeyRevealPairRegistrations,...m33KeyboardPairRegistrations,...m33KeyboardGraphRegistrations].some(row=>row[0]===owner&&row[1]===binding);
+   const reviewed=[...m13SourceOwners,...m14SourceOwners,...m15SourceOwners,...m15CancellationSourceOwners,...m15DiagnosticSourceOwners,...m12PreparationSourceOwners,...m3PointerSourceOwners,...m21ContentSourceOwners,...m31UiSourceOwners,...m22SequenceSourceOwners,...m33KeyboardSourceOwners,...m3KeyRevealSourceOwners,...m24SpineSourceOwners,...m34ThemeSourceOwners,...m34ThemeSelectionSourceOwners,...m24ResetSourceOwners,...uiControlsSourceOwners].filter(row=>row.path===owner);
    if(!allowed||!reviewed.some(row=>samePin(read.pin(owner),row)))throw cause;
    // Raw source authority precedes extraction; no caller-selected parser fallback.
    const lines=text.split(/\r?\n/).filter(line=>line.startsWith('const '+binding+' = '));
@@ -305,7 +309,7 @@ export function prepareBaselineReview(root){
   });
   successorPairs.push({owner,binding,comparison:'raw-pair-observation-only',rows});
  }
- for(const [owner,binding,comparison]of [...m13PairRegistrations,...m24ResetPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m34ThemePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m24SpinePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m3KeyRevealPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m33KeyboardPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m22SequencePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m31UiPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m3PointerPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m15PairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding))]){
+ for(const [owner,binding,comparison]of [...m13PairRegistrations,...uiControlsPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m24ResetPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m34ThemePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m24SpinePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m3KeyRevealPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m33KeyboardPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m22SequencePairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m31UiPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m3PointerPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m15PairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding))]){
   const pairs=registeredDeclaration(owner,binding),seen=new Set();
   if(!Array.isArray(pairs))throw Error('Expected registered M1.3 pair array');
   const rows=pairs.map(pair=>{
@@ -319,7 +323,7 @@ export function prepareBaselineReview(root){
  }
  // Historical owners without this later declaration remain readable as history.
  // Current post-preamble extraction still requires one exact reviewed raw owner.
- for(const [owner,binding]of [...m24ResetGraphRegistrations,...m34ThemeGraphRegistrations,...m24SpineGraphRegistrations,...m14GraphRegistrations,...m15GraphRegistrations,...m12PreparationGraphRegistrations,...m3PointerGraphRegistrations,...m31UiGraphRegistrations,...m22SequenceGraphRegistrations,...m33KeyboardGraphRegistrations]){
+ for(const [owner,binding]of [...uiControlsGraphRegistrations,...m24ResetGraphRegistrations,...m34ThemeGraphRegistrations,...m24SpineGraphRegistrations,...m14GraphRegistrations,...m15GraphRegistrations,...m12PreparationGraphRegistrations,...m3PointerGraphRegistrations,...m31UiGraphRegistrations,...m22SequenceGraphRegistrations,...m33KeyboardGraphRegistrations]){
   if(!ownerText(owner).includes('const '+binding))continue;
   add(owner,binding,registeredDeclaration(owner,binding));
  }

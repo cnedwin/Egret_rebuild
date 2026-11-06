@@ -1970,8 +1970,8 @@
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "8c0f11353132ccfeb82a58939e9d3237fac91b30f9649bce5ca886fc0ee86b01",
-      "zhSha256": "212648ac0ec8b7ea5b3b262e5603aae829cb406285674cc98087f4b4c14317ec"
+      "enSha256": "38af4cdc200e771d64bea8851ad2221b1f4151d2ab3c3c29d54b9807fe724b0e",
+      "zhSha256": "628e2c9630307802ef0b7b5351de405ad9a3ff9b693c08199af4621f1173ff6d"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -2264,8 +2264,8 @@
       "en": "skills/egret-windows-ci/SKILL.md",
       "zh": "skills/egret-windows-ci/SKILL.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "8636de194743fc472adfdca1aca461bec1abc3b8d017e1e2093f9e60e821e005",
-      "zhSha256": "15c78f57eb37eb1304106ec0bb9245a41e22b21d6fb51a055fc66067c2f2ce62"
+      "enSha256": "87672e526a2e34ee9b40088019dbd1568ab77f6e395c32de38a9cd92f16945fc",
+      "zhSha256": "a2964640ebd9b8a801bd4535ce43daa7a2bb173c93b109dbc41d7fb82c8fb14e"
     },
     {
       "en": "knowledge-base/en/docs/windows-ci-governance.md",
@@ -3098,11 +3098,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "c0c73160bbca23a5d4a0f9f4f3d8dd67df2bcab8fbe6aeb844103d576d979c94"
+      "sha256": "71b9ef989a251f2c460d1eb039dfd9be3d4b49ed7d50a31ee23ca1095c1a0ef4"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "851e5ca49fd455f9f7526f1e962eb1fb7c846570ac2c731d18bffc2179d1f2a2"
+      "sha256": "540c901dbfe3d1f08821e53e6aacf038254fa41f33a61856863b07c317b74bf6"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3242,7 +3242,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "b3b8a5871ebea6eb1550baa3902c1ea5cc009300c0bd1505639804020e5e69e7"
+      "sha256": "e0066263c919ed63d89ca8dd73d35b032c582f6b677ee8f1b4ecb830db7ce44d"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3390,7 +3390,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "221d0cb33d4972ec3226a16acdc27052af270b4f4766a0e0bcea5536de3ca83e"
+      "sha256": "7229c33d238d1d1cb8683682bdc1982319bd17e61ceaaa9b3e537245fc552467"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3862,7 +3862,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "824693fcb13e450f7b3ee5e3faa941661b67a010cfe281732c6abb44a2da4298"
+      "sha256": "a303e92ab601e4d7dde9101cf7dd1083516db8baa2e63a91adf00dfd8e7bb86b"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3890,7 +3890,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "bf13305864a3a73f6964ee240c6812420460f64c7656f5b1adbc44c904e5c275"
+      "sha256": "e6e88fab18df60bfcbbde4189c414591ffe13e2a271d212eb49780f9df0ab2b0"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4126,11 +4126,11 @@
     },
     {
       "path": "packages/engine/src/pointerInput.ts",
-      "sha256": "242796406496e45aa8008aec11821576e60926ca68572a862616cb855eaa54b7"
+      "sha256": "220e8ba79cd17fc5c20314a1d04164177e60d247656d8745ebcff7a99297daf6"
     },
     {
       "path": "packages/engine/src/pointerInputTypes.ts",
-      "sha256": "064c482673e8609801041b1f0183b7ef683e97657af08b66d28f617167cce447"
+      "sha256": "745803ff3f07642d35b66e5940e0eade6b2594ccae6a151b1521c08cfe7b13d7"
     },
     {
       "path": "packages/engine/web/BrowserPointerInput.ts",
@@ -4194,7 +4194,7 @@
     },
     {
       "path": "packages/engine/src/ui/index.ts",
-      "sha256": "281dc0eeb68642580b8e9982431266123c1267d8b40099aed083bc1fdd505034"
+      "sha256": "aed43d150dba981dc23e2b455f857cca9b10a4e14050009f6a5040d531c7efaa"
     },
     {
       "path": "packages/engine/src/ui/types.ts",
@@ -4611,6 +4611,14 @@
     {
       "path": "tests/windows-ci-failure-summary.test.mjs",
       "sha256": "d0efebee7997bbe3767fdcd30d6ebe4db2f7bf6f8c2683cea330e0addff55d3c"
+    },
+    {
+      "path": "packages/engine/src/ui/controls.ts",
+      "sha256": "e2613946bd9ea5f01781352f09e7c8e40f6fff953cd90e67e23a4bdb1c3d9bac"
+    },
+    {
+      "path": "tests/ui-controls.test.mjs",
+      "sha256": "c3c98de37ec656e6ece4478ad70b11fae1f86d25d7415f597bca3eba19b44466"
     }
   ],
   "historicalSemanticReview": {

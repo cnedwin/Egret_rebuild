@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/ui/controls.ts",
+      "originRole": "Independently authored first-party movement and action control state over the existing M3.3 contact stream; AI-assisted; Apache-2.0. Reuses the pointer router, display ownership and event subscriptions, with no new third-party code, assets, host listener, scheduler or gesture framework.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-controls.test.mjs",
+      "originRole": "Independently authored first-party control state checks; AI-assisted; Apache-2.0. Uses the existing pointer-input fixture and adds no new test harness.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
