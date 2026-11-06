@@ -16,11 +16,23 @@ Egret connects creation, execution and publication through a shared project mode
 | Sample and quality infrastructure | Performance baselines, behavioral replay, visual comparisons, device matrices, and regression assets | Test-sample authorization, versions, and repeatability are explicit | V001 |
 | Knowledge base and community collaboration | Shared entry point for requirements, proposals, evidence, deliverables, and changes | Documents, the knowledge base, and design discussions are public from day one; restricted assets retain authorization boundaries | V007 |
 
+## Current component delivery
+
+At the 2026-11-07 source review, four foundation packages plus optional Spine implement bounded runtime, content and project services. Rendering/resources, animation, UI/text, input and existing utilities are usable through public examples. Byte readers/writers, events, Scope, coordinates and explicit time are reusable core tools; they do not imply complete production coverage.
+
+No integrated editor application, Agent/MCP service, plugin marketplace, native Runtime SDK or complete migrator is delivered. The current native-looking @egret/runtime name denotes the host-free TypeScript core. The [capability overview](core-progress.md) and [engineering plan](engineering-plan.md) separate current interfaces from future tool products.
+
+## One integrated tool platform
+
+The creation workbench joins coding/debugging, main canvas, UI/animation, 3D scene/effect, world/character editing and target packaging/publication. These are cooperating views over one project, not independent document/resource systems. Shared surfaces are chosen around editing workflows.
+
+Its Agent harness accepts selected model APIs, Skills, MCP and plugins, with a plugin marketplace, visible token/cost accounting and configurable limits. Natural-language generation/editing and advanced manual editing share commands, version preconditions, diffs, preview and undo. Runtime remains independent of model credentials, inference and billing. These platform components are requirements awaiting their own complete implementation/creator acceptance.
+
 ## How a change passes through these components
 
 Replacing a character while preserving its outfit interface starts with stable references to the character, animation, materials and UI rules. Project services check resources and target capabilities, prepare a local diff, then apply import and edits to a known version. The real Runtime previews the result and replays outfit interactions. Rendering, events and relevant budgets are checked before export; failure returns to an editable version.
 
-AI, visual tools and publishing use the same location, version and diagnostic contracts. Components can arrive incrementally without committing in advance to an editor framework, cloud service, commercial model or marketplace.
+AI, visual tools and publishing use the same location, version and diagnostic contracts. Components can arrive incrementally while editor-framework, cloud-service and commercial-model choices remain open. The plugin marketplace remains a required future platform component; its operation and commercial terms require separate decisions.
 
 ## Boundaries between independent development and integration
 

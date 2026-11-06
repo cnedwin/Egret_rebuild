@@ -4,7 +4,13 @@ English | [简体中文](DOCUMENTATION.zh-CN.md)
 
 Read the product documents in the order below, then follow the relevant subsystem contracts. Complete editions are available in the [English knowledge base](knowledge-base/en/README.md) and [中文知识库](knowledge-base/Cns/README.md).
 
-The 0.56 resource-slot increment combines recoverable binding replacement with a recorded desktop Canvas/WebGPU example. The specification, evidence and example define its current behavior and verification scope.
+Current-source review: 2026-11-07. Start with present capabilities and the next engineering phase; historical contract/evidence pages retain their original cutoffs.
+
+## Current project entry
+
+[Capabilities](knowledge-base/en/docs/core-progress.md) → [Requirements](knowledge-base/en/docs/product-requirements.md) → [White paper](knowledge-base/en/docs/technical-white-paper.md) → [Engineering sequence](knowledge-base/en/docs/engineering-plan.md) → [Delivery](knowledge-base/en/docs/delivery-plan.md).
+
+[Run/contribute](knowledge-base/en/docs/getting-started.md) · [Android evidence](knowledge-base/en/docs/android-device-validation.md) · [Existing work packages](https://github.com/users/cnedwin/projects/2)
 
 ## M2–M4 architecture and community delivery
 

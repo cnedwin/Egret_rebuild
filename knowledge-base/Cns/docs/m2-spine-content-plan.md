@@ -2,17 +2,22 @@
 
 简体中文 | [English](../../en/docs/m2-spine-content-plan.md)
 
-计划及实施状态 · 更新于 2026-10-29 · 完整里程碑验收继续开放。
+计划与当前状态 · 2026-11-07 · 复盘 main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1)。完整 M2 仍开放。
 
-M2.1 将 PNG、有限单页图集配置和序列帧从源构建，经持久缓存和项目采用，接入类型化运行时资源组。装配过程复用 AssetManager、ManifestAssetGroup、Scope、SpriteSheet 和 SequenceClip；完整校验、装配成功后才开放读取，候选失败或取消保留应用当前代际。当前范围和证据参阅[内容构建契约](content-build-pipeline.md)。完整 Spine、字体和目标变体验收继续开放，保留既有十一个工作包。
+| 工作包 | 已实现 | 剩余 |
+| --- | --- | --- |
+| M2.1 #83 | PNG／图集／序列构建与运行时组、多页及字体产物／集合、可选 Spine JSON 资产 | 二进制／变体产物及选定版本权利／导出／参考资格 |
+| M2.2 #84 | 独立 Spine 播放器、轨道／队列、组合皮肤、有限播放及序列控制 | 完整选定版本语义与有界跳转／重放 |
+| M2.3 #85 | WebGPU／WebGL2 下 egret-shared-linear/1 的复制有序共享显示 | 完整附件／裁剪／双色／混合／采样参考 |
+| M2.4 #86 | 可编辑 20-Spine／200-序列示例、Spine／序列 RESET 及选定桌面／Android 恢复 | 兼容保留状态替换及最终生命周期／性能资格 |
 
-M2.2 序列帧控制已有有限行为测试和桌面 WebGPU／WebGL2 结果：可选动画入口基于真实 Engine 时钟，增加实例级倍率、总播放次数、编写标记和显式跳转；新旧目标占用共享规则保留原有播放 API。参见[序列帧控制契约](sequence-controls.md)。完整 Spine 与 M2.2 验收仍然开放。
+复用[现有资产／播放器／显示](spine-content-ingress.md)、[内容构建](content-build-pipeline.md)、[字体代次](font-resource-generations.md)、[Spine RESET](spine-reset-slot.md)、[序列 RESET](序列动画RESET替换.md)及[Android 记录](android-device-validation.md)，这些切片不关闭完整 Spine 或 M4。
 
 ## 交付结果与进入条件
 
 M2 交付可复用的内容构建和独立启用的 Spine 集成：导入获准使用的 JSON/binary 导出与多页图集，创建状态独立的动画实例，与白鹭图形共同合成，并在替换、恢复资源时保留游戏状态。完整支持指明确选定版本的全部适用功能，以及明确验证的后端和宿主。
 
-首个资格验证目标是稳定 4.3 系列。已有 Core 4.3.13 是第一个可复现候选，不表示它是最新发布包，也不表示产品依赖已获验收。M2.1 固定 Editor/导出版本、runtime 包/提交/摘要和样例权利。4.2 适配及更早旧版各自增加后续兼容记录；修改版本字符串不构成迁移。
+已实现的可选整合在选定 4.3 系列中使用官方 Core 4.3.13，适用单独运行库条件。这是实际固定依赖，不代表最新包或完整版本资格。M2.1 固定 Editor/导出版本、runtime 包/提交/摘要和样例权利。4.2 适配及更早旧版各自增加后续兼容记录；修改版本字符串不构成迁移。
 
 M1 已提供功能性的渲染、租约、清单和恢复基础。其有效的正式性能失败仍未关闭；合并 M2 功能不能使该结果自动通过。接口设计、导入器和聚焦实现可以独立推进，同时明确保留 M1 性能及 M2 场景预算的集成、发布条件。
 
@@ -20,20 +25,19 @@ M2 不实现完整可视化工作台、AI Agent 平台、旧工程迁移、原�
 
 ## 已有能力与调整范围
 
-下表来自源码核对，不是本次新增执行的测试。
+以下是当前源码观察，不是新增测试执行。
 
-| 现有实现 | 保留 | 必要调整 |
+| 源码／既有契约 | 保留 | 扩展或验收 |
 | --- | --- | --- |
-| `packages/project/src/spine/preflight.ts:831` 和 `packages/project/src/spine/types.ts:22` | 原严格 JSON/atlas 规划、定位信息和声明来源 | 独立版本的产品导入器增加 binary 与完整功能资格验证。原规划器仍保留 partial/not-run 的含义。 |
-| `knowledge-base/experiments/spine-f2-core/src/resources.ts:409`、`knowledge-base/experiments/spine-f2-core/src/instance.ts:128`、`knowledge-base/experiments/spine-f2-core/src/geometry.ts:26` | 所有权、回滚、几何复制及原参考样例 | 重建实验性的产品边界：两个实例、单页单命令、白色 tint、手动绝对时间采样和 `Physics.none` 不能成为产品限制。不能只改名就把实验升级为产品。 |
-| `packages/contracts/src/ResourceManifest.ts:5` 和 `packages/project/src/resources/manifest.ts:40` | ID、依赖键、版本、规范化设置和来源 | 生成真实导入产物、反向依赖、目标变体和增量构建缓存。元数据描述不等于资源构建。 |
-| `packages/runtime/src/AssetManager.ts:15`、`packages/runtime/src/AssetLease.ts`、`packages/runtime/src/Scope.ts`；`packages/engine/src/manifestAssetGroup.ts:167` | 共享获取、租约/Scope 所有权、依赖展开和公平优先级队列 | 增加骨骼/图集类型化 provider 和阶段容量核算；扩展既有调度，不另建资源管理器。 |
-| `packages/engine/web/ManifestByteSource.ts:11`、`packages/engine/web/BrowserTextureProvider.ts:231` | 字节校验、取消顺序、迟到结算及当前 PNG 行为 | 为已准入产物扩展传输/解码器注册；具体 PNG 实现继续作为支持的 provider。 |
-| `packages/contracts/src/SharedMaterial2D.ts:5`、`packages/contracts/src/SharedRenderFrame2D.ts:12`；`packages/runtime/src/sharedFrameCapture.ts` | 有序共享命令、双色数据、页引用和后端所有权 | 明确验证 Spine 的颜色/混合语义，仅补缺失的版本化表示。当前矩形裁剪和固定零级 mip 不等于完整 Spine/纹理验收。 |
-| `packages/engine/src/Engine.ts:215,389`、`packages/engine/src/bitmapBindingTicket.ts`、`packages/engine/web/sharedDeviceSession.ts` | 原 Bitmap ticket 语义及设备代际恢复 | 增加动画替换参与者，不改变 Bitmap 原同步提交契约。 |
-| `packages/engine/src/gameClockTypes.ts:23`、`packages/runtime/src/SequencePlayer.ts` | 显式时钟及原绝对时间序列采样 | 补播放控制、有限重复、标记和组合编排，不强迫 Spine/Tween/序列共用采样算法。 |
+| packages/project/src/resources/、atlas/、spine/ | 真实不可变构建／缓存／工程采用和严格历史规划器 | Spine 二进制产物、选定目标变体及导出／参考资格 |
+| packages/spine/src/loader.ts、instance.ts、display.ts、resetSlot.ts | 可选合规 Core 整合、真实组／租约、独立复制状态及共享显示 | 完整语义、跳转／重放、兼容保留模式及参考 |
+| AssetManager、AssetLease、Scope 与 manifestAssetGroup | 共享获取、依赖扩展、取消与调度 | 新准入 provider／产物，不另建资源管理器 |
+| SharedMaterial2D／SharedRenderFrame2D、sharedFrameCapture 与后端 Host | 自有有序几何、完整颜色／页／裁剪身份及完成权威 | 仅补已证实图形缺口，不静默重解释旧颜色 |
+| 既有候选子树、资源／序列／Spine RESET 槽及共享设备会话 | 显式候选捕获／CPU 发布、独立 Host 暂存和设备代次 | 保留状态替换及完整生命周期资格 |
+| 显式游戏时钟、SequencePlayer／controller 和 Spine 实例 | 当前时间、事件、有限播放及故障隔离 | 剩余有界跳转／重放策略和选定版本参考 |
+| knowledge-base/experiments/spine-* | 不可变历史夹具、来源、许可及原限制 | 仅作参考，产品整合位于 packages/spine，不重命名实验冒充产品 |
 
-保持现有四包的依赖方向。拟议可选包 `@egret/spine` 依赖白鹭公开契约/引擎接口和明确选定的官方 Core；默认引擎不反向依赖它。项目/构建工具不能进入运行时依赖图。此处独立包有明确依据：第三方许可、包体和版本边界。
+四个基础包保持依赖方向。已实现可选 @egret/spine 依赖公共白鹭边界及官方 Core 4.3.13，默认 Engine 导入不依赖它；工程／构建工具不进入运行时依赖。
 
 ## 架构与关键取舍
 
@@ -93,20 +97,19 @@ WebGPU 与 WebGL2 使用同一准入绘制数据并保持相同参考结果。Ca
 
 设备恢复只重建设备状态，保留实例时钟、轨道、皮肤选择和已消费事件位置。旧代际工作不得向新代际发布。资源替换与设备恢复使用不同代际标记，提交时两者都必须匹配。GPU 驻留本身不授权 CPU 场景修改。
 
-## 目标接口——拟议，并非已有导出
+## 已实现入口与剩余目标契约
 
-以下名称规定协作边界，类型细节由正常实现评审细化；本文不创建可执行脚手架。
+| 当前入口 | 实际责任 |
+| --- | --- |
+| @egret/engine/resources、@egret/engine/web/resources | 既有清单／资源所有者上的类型化内容／字体组 |
+| @egret/spine：createSpineContentLoader | 共享 JSON 设置／页面资产及真实 Scope／租约生命周期 |
+| @egret/spine：createSpineInstance／createSpineDisplay | 独立语义状态／事件、复制有序图形及显式准入选项 |
+| @egret/spine：createSpineResetSlot | reset 候选准备及 CPU 发布，Host 暂存／提交独立 |
+| @egret/engine/animation | 已有序列控制器与 RESET 槽，旧采样 API 保留 |
 
-| 目标接口 | 输入与输出 | 所有权/错误规则 |
-| --- | --- | --- |
-| `ContentImporter.analyze` / `build` | 类型化源集合、目标/设置、固定工具 → 诊断、依赖图及产物描述 | 构建环境拥有源访问和输出存储；运行时只接收数据，不接收文件句柄或编译器回调。 |
-| `SpineCompatibilityProfile` | 导出系列/补丁、runtime 身份、功能清单、渲染要求和资源引用 | 数据记录不等于许可、解析成功或帧权限；准确资格验证后生成准入产物。 |
-| `SpineAsset` / `SpineInstance` | `AssetRef<SpineAsset>` 与 Scope → 拥有显示入口、播放和事件控制的独立实例 | 资源管理器拥有共享数据/页租约；实例 Scope 拥有状态和订阅。销毁一个实例不能卸载其他实例的页。 |
-| `advance(tick)` / `seek(request)` | 时钟 tick 或显式 seek 策略 → 已提交的姿态/事件变化 | 修改前拒绝重入和非法时间；事件队列遵守规定的失败/销毁语义。 |
-| 版本适配器绘制转换 | 已准入实例输出 → 有界、白鹭拥有的有序绘制数据 | 不泄漏 renderer/runtime 池引用；超限在发布部分几何之前失败。这是私有集成，不是结构化公开帧构造器。 |
-| `AnimationReplacement` 参与者 | 候选资源/实例状态及现有资源事务 → ready/commit/abort | Engine 验证真实 owner 及资源/设备双代际；原 Bitmap ticket 含义不变。 |
+准确签名与限制见各自契约。本计划不导出未来二进制／变体、跳转／重放或保留模式接口。M2.1 负责产物／诊断准入，M2.2 负责重放／历史／失败，M2.3 负责绘制／颜色发布，M2.4 负责兼容替换。依赖消费者合并前，仅在所属 Issue／PR 确定发生变化的边界，不新增登记册或全局核心冻结。
 
-M2.1 固定产物/诊断接口。M2.2、M2.3 在并行实现前共同固定绘制/实例边界。M3 使用资源 ID、固有边界、显式命中形状、时钟/事件和替换通知，不访问 Spine 内部对象。M4 复用相同真实样例与支持矩阵，不另建 demo 实现。
+M3 消费资产身份、边界、显式命中形状、时钟／事件及替换通知；M4 复用真实消费者和支持矩阵，不另做演示实现。
 
 ## 四个可协作工作包
 
@@ -146,7 +149,7 @@ M2.1 固定产物/诊断接口。M2.2、M2.3 在并行实现前共同固定绘�
 
 保留 issue #56 为 M2 父项，保留既有四个完整子工作包（#83–#86）。每项写清行为交付、接口依赖、代码区域、参考素材、聚焦复现、评审人及外部阻碍。贡献者可以负责管线、播放、图形或素材，不承担全局台账维护；包内细节写成清单，不扩成大量独立任务。
 
-沿用实际入口：`pnpm setup:dev`、`pnpm check:quick`，开发反馈使用 `node tools/check-incremental.mjs --base origin/main`。上文目标导入器/播放器 API 不是现有命令。合并仍保留独立评审、现有完整门禁、双语文档、来源/素材告知及受影响的真实浏览器证据。不能仅因 barrel 间接引用未变化 helper 就重跑无关 C7/历史套件。
+沿用实际入口：`pnpm setup:dev`、`pnpm check:quick`，开发反馈使用 `node tools/check-incremental.mjs --base origin/main`。当前公共 API 已列于上文，剩余目标概念不是可用命令。合并仍保留独立评审、现有完整门禁、双语文档、来源/素材告知及受影响的真实浏览器证据。不能仅因 barrel 间接引用未变化 helper 就重跑无关 C7/历史套件。
 
 区分功能正确性、实测性能、宿主资格和发布。同一不可变真实构建/结果可供包内依赖检查共同使用，不制造按角色分配的成功记录，也不要求每位贡献者复现整个里程碑。使用同一语义 runtime 的两条路径，不能独立证明该 runtime 的动画算法；仍需创作的事件/姿态预期及外部参考图像。
 
@@ -164,18 +167,5 @@ M2.1 固定产物/诊断接口。M2.2、M2.3 在并行实现前共同固定绘�
 
 现有[完整 Spine 要求](Spine动画支持需求与验收.md)仍是产品范围依据。
 
-第一方[多页图集内容管线](multipage-atlas-content.md)通过既有管线与运行时资源组推进 M2.1，增加具名 SpriteSheet 页面、裁剪／旋转及整组所有权；不代表 Spine、外部导出器或完整 M2.1 验收。
 
-[可选 Spine 内容接入](spine-content-ingress.md)在 M2.1 内增加固定 Core4.3.13 的资产 SDK：原始 JSON／图集绑定、共享设置与页面租约、显式生命周期。附带条件的运行库许可及原创程序化夹具与稳定导出／独立参考验收分别记录。本次不交付 Spine Node producer、播放器或图形；M2.1–M2.4 及既有 Issues 按各自剩余验收继续开放。
-
-[Spine 共享显示](spine-content-ingress.md#共享渲染显示) 现将真实播放实例接入既有 WebGPU／WebGL2 共享渲染，须显式选择 `egret-shared-linear/1`。这是有限的 M2.3 交付，完整所选版本图形及 M2.4 资格仍开放。
-
-可选播放器现支持 `setSkins(names)` 有序组合换装和不可变 `snapshot.skins`，保留 `setSkin` 兼容行为。参见[组合皮肤契约](spine-content-ingress.md#组合皮肤换装)。本项仅交付 M2.2 的有界能力，资源版本替换和完整 M2 验收仍未完成。
-
-可选播放器也已接入有界的 `plays` 有限总播放次数、已提交进度及保留剩余时间的队列衔接。参阅[有限播放](spine-content-ingress.md#有限总播放次数)。这是 M2.2 的有限增量；选定版本完整语义、seek 与 M2.4 替换／恢复仍未完成。
-
-[候选显示子树](prepared-display-subtree.md)提供有限的 M2.4 CPU 前置能力：不改变可见 Stage 的真实候选捕获，以及无回调的子节点发布。Host 上传／提交与设备代际仍相互独立。Spine RESET 封装、事件／时钟策略、保状态替换及 M2.4 完整验收仍未完成。
-
-[字体资源与代际契约](font-resource-generations.md)通过既有管理器、缓存与 Scope，将 M2.1 字体产物接入 M3.2 只读 UI。固定字体 API 保持支持，替换失败或取消时保留已提交内容。本有界增量不关闭 M2.1/M3.2 的其他验收。
-
-[托管序列 RESET 槽](序列动画RESET替换.md)通过真实内容代次和既有候选子树，增加一条有界的 M2.4 替换路径。加载期间活动序列及独立兄弟实例继续推进；显式 CPU 提交将新代次发布为零时刻暂停，Host 提交与显式恢复分别进行。初始内容保持借用，自有前任被回收，取消、失败或迟到候选不能发布。既有控制器绑定与容量上限保持不变。保留状态替换、设备恢复与完整 M2.4 验收仍开放。
+当前已交付切片统一见文首；原检查点保留在各自契约、验证记录和[旧计划](https://github.com/cnedwin/Egret_rebuild/blob/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1/knowledge-base/Cns/docs/m2-spine-content-plan.md)，不改写原回执或来源散列。

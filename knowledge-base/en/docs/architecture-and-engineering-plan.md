@@ -2,15 +2,15 @@
 
 English | [中文](../../Cns/docs/architecture-and-engineering-plan.md)
 
-2026-10-21 · Plan version 13 · M0–M4
+2026-11-07 · Current architecture and delivery alignment · M0–M4.
 
-The product baseline remains engineering preview 0.61.0. M0 infrastructure through [PR #71](https://github.com/cnedwin/Egret_rebuild/pull/71) is integrated at main ca62c980f372683dcb156bc5c284f4036a60f4cc. This plan defines target architecture and acceptance, not completed product capabilities. The [M0 record](m0-community-foundations.md) separates delivered engineering from independent human/fork and target-device obligations.
+Audited main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1) contains the four foundation packages and optional Spine, M1 rendering/resources, selected M2 content/animation, managed M3 UI/text/input and bounded Android follow-up. [Core capabilities](core-progress.md) is the current implementation map; [engineering](engineering-plan.md) gives the next coherent increments. Workspace packages remain private 0.0.0.
 
-The environment pins Node 26.7.0, pnpm 11.25.0, TypeScript 7.0.2 and PowerShell 7.6.5. Current-ledger generation, dependency-aware local feedback and current/resource/historical browser-tool workflows are available within their documented scope. Historical evidence keeps its original bytes and environment. Push checks protect committed publication structure; merge CI retains the complete gate; changed rendering additionally needs independent real-browser evidence.
+The environment remains Node 26.7.0, pnpm 11.25.0, TypeScript 7.0.2 and PowerShell 7.6.5. Current metadata generation, scoped development feedback, normal hooks and complete final-candidate merge CI are implemented. No new maintenance-automation program is required to start the next core feature.
 
-The [M1 implementation plan](m1-rendering-resource-plan.md) defines the engineering entry, five complete work packages, shared contracts, desktop measurement targets and remaining external rows. This revision permits M1 after reviewed engineering entry while keeping complete M0 community acceptance open. Maintenance automation grows only to resolve a concrete contribution or planned product defect; exhaustive automation is not an entry condition.
+M0 human/fork and remaining rights/device qualification stay in #52/#54. M1.2 retains its valid full-dirty 10.3 ms versus 8 ms failure, preparation coverage and unmeasured GPU time. These limit their claims and final M4 qualification, not independent M2/M3 implementation or first mixed integration.
 
-The [M2–M4 detailed roadmap](m2-m4-delivery-plan.md) now defines shared contracts, subsystem work packages, community entry points and acceptance dependencies. M1 interfaces are delivered through PR #81; M1.2 formal performance remains OPEN. M2/M3 design and independent work may proceed on reviewed delivered interfaces while M4 performance closure still requires M1.2. This distinction supersedes any blanket requirement below to wait for complete M1 closure before design. New plans do not authorize new engine implementation in this documentation increment.
+Keep the [M2–M4 roadmap](m2-m4-delivery-plan.md), its existing eleven packages and unchanged acceptance targets. Native editing, one mixed reference and remaining Spine/content work are the next proposed batch; current documentation work does not implement them.
 
 ## 1. Objectives, scope and tradeoffs
 
@@ -32,11 +32,11 @@ This program does not implement the complete editor, Agent workbench, native SDK
 
 ## 2. Baseline and engineering assessment
 
-The baseline includes the display tree, coordinates and bounds, basic Canvas/WebGPU, textured meshes, nine-slice, shared resource acquisition and leases, Scope, explicit time, frame animation, basic text, mouse input and resource replacement. Finite desktop browser workflows have run. Spine remains a bounded experiment; 3D remains bounded geometry and scene composition. `@egret/runtime` is the TypeScript core, not a new native Runtime SDK.
+Current source includes display/coordinates, shared WebGPU/WebGL2, incremental capture/preparation, completion-safe reuse, manifests/recovery, typed content/fonts, optional Spine assets/players/shared display/RESET, sequences, managed UI, styled paragraphs/geometry, themes/effects and input foundations. Current 3D is bounded geometry/opaque composition; @egret/runtime is the TypeScript core, not a native SDK.
 
-Source inspection shows tree traversal and object construction during frame capture, two traversals in the textured route, per-draw buffer allocation/upload in WebGPU submission, and image residency keyed by image and crop. The 0.61.0 cache is not a complete performance system; its new dedicated cache browser matrix remains unfinished. These observations motivate optimization candidates, not measured performance conclusions.
+The previous per-draw-allocation and whole-tree observations motivated already delivered M1 work. Do not treat that old inspection as an instruction to repeat the same refactor. Future changes require a missing contract or a measured current bottleneck, retaining saved-frame, ordering, admission and lifetime semantics.
 
-Existing lifetime behavior, drawing order and original evidence remain regression foundations. New scale, platform, recovery and performance acceptance must be established separately. Historical passes do not certify the proposed architecture.
+Finite desktop and Android evidence retain exact versions and limits. Full selected Spine, native editing/semantics, mixed scenarios and formal performance remain open in their owning packages.
 
 ## 3. Architecture and responsibilities
 
@@ -72,7 +72,7 @@ flowchart TD
 
 ### 3.2 Module organization
 
-Initially retain the four existing packages and reorganize internal responsibilities without creating many public packages:
+Retain the four implemented foundation packages and the separate optional @egret/spine. Graphics and browser-host modules currently live inside engine; further package splits require an actual consumer or measured need:
 
 | Location | Intended responsibility |
 | --- | --- |
@@ -80,9 +80,9 @@ Initially retain the four existing packages and reorganize internal responsibili
 | `packages/runtime` | Display state, events, Scope, resource leases and basic animation data; depends only on contracts |
 | `packages/engine` | Clock, UI/animation coordination, incremental preparation and frame plans; optional browser executor entries |
 | `packages/project` | Project transactions, import/build manifests, dependency diagnostics and migration planning; no game loop |
-| Optional Spine adapter | Explicit third-party semantic runtime plus Egret resource, instance and graphics integration; no implicit default-entry loading |
+| Implemented optional packages/spine | Explicit third-party semantic runtime plus Egret resource, instance and graphics integration; no implicit default-entry loading |
 
-Logical modules do not automatically become public exports. Retain engine → runtime/contracts and runtime → contracts. Project import products reach runtime through data contracts; runtime must not depend on build tools. Split UI or Spine into separate packages only after boundaries, bundle size and consumption justify it.
+Logical modules do not automatically become public exports. Retain engine → runtime/contracts and runtime → contracts. Project import products reach runtime through data contracts; runtime must not depend on build tools. UI remains optional entries; the existing Spine package already isolates the third-party boundary.
 
 ## 4. Rendering performance architecture
 
@@ -126,7 +126,7 @@ Unify mouse and touch through pointer semantics, including capture, cancellation
 
 ## 6. Complete Spine and animation architecture
 
-Accept complete Spine against exact export version × matching runtime × features × backend × host. Core 4.3.13 in the 0.61.0 experiment is an existing input, not automatically the official product version. M0 freezes the first stable version and exact inputs; subsequent versions receive separate records. Every applicable feature within the first selected version must be completed; a limited profile cannot be called complete support.
+Complete Spine is accepted against exact export version × matching runtime × features × backend × host. Current optional integration pins Core 4.3.13; this establishes an actual dependency, not latest-version status, complete feature qualification or entitlement. M2.1 owns exact export/reference/rights rows, and every applicable selected-version feature remains required.
 
 Continue using an explicitly attributed official semantic runtime. Egret independently implements loading, instances, time/events, rendering, UI integration, diagnostics and recovery. Record runtime/asset origins, versions and distribution conditions during integration. This proposal adds or relicenses no third-party code.
 
@@ -158,32 +158,20 @@ Device loss closes old submission → invalidates the old device generation → 
 
 ## 8. Existing code disposition
 
-Retain means preferentially reuse semantics and implementation assets, subject to integration regressions. Refactor does not authorize immediate implementation.
+| Current code | Disposition and boundary |
+| --- | --- |
+| Scope/events, assets/leases and display semantics | Retain genuine ownership, cancellation, routing and old API behavior |
+| Incremental capture/preparation and shared retention | Retain delivered M1 implementation; refactor only for measured current cost or a required contract, with full-path references |
+| WebGPUHost/WebGL2Host, page/storage/device-session helpers | Reuse one generation/completion authority and bounded pools; no duplicate UI/Spine GPU manager |
+| CanvasHost and explicit-line text/mouse/layout entries | Keep compatible limited profiles; no silent mesh/filter/full-Spine fallback |
+| Managed UI, paragraph/geometry, font/theme providers and effects | Extend with native editing, coherent bounded row retention, controls/layers/semantics; preserve ready/commit and resource authority |
+| Optional packages/spine and sequence controllers/RESET | Retain implemented assets/instances/graphics/time; add binary/seek/replay/preserve with explicit compatibility and failure contracts |
+| Project transactions, content builds and strict legacy planners | Reuse stable IDs, immutable artifacts and diagnostics; broader formats/project compilation/migration remain complete new outcomes |
+| Bounded scene3d/matrices | Keep regression/composition foundation; imported 3D characters/materials/effects are a later selected line |
+| Historical experiments, raw receipts, source/licensing and public regressions | Preserve original bytes/identities and attribution; consolidate present-tense documentation through immutable history links |
+| Setup, feedback, metadata, hooks and CI | Already implemented M0 foundations; maintain only for concrete contribution/feature failures, without a new automation backlog |
 
-| Current location or capability | Disposition | Rationale and migration boundary |
-| --- | --- | --- |
-| Runtime `Scope`, `Event`, `EventDispatcher`, cancellation/errors | Retain | Sound lifetime/event foundations; avoid a second cleanup system |
-| `AssetManager`, `AssetLease`, `AssetRef` | Retain semantics; extend scheduling/dependencies | Preserve independent cancellation, shared acquisition, generations and final release; caches have explicit owners |
-| `DisplayObject`, containers, Stage, coordinates/bounds | Retain public concepts; refactor invalidation | New layout/render caches must preserve hierarchy, transforms and coordinates |
-| `Texture`, `Bitmap`, `Mesh2D`, SpriteSheet, AtlasFrameLayout, NineSliceBitmap | Retain semantics; extend data references | Preserve crop/trim/rotation and ownership; page residency does not alter authored coordinates |
-| `frameCapture.ts`, `texturedFrameCapture.ts`, preparation/packing modules | Major refactor | Separate validation, incremental state and execution data; retain bounded full-path comparisons during migration |
-| `WebGPUHost.ts`, image/mesh/pass and projection modules | Separate responsibilities and refactor | Isolate session lifetime, residency, uploads, buffers, frame execution and diagnostics; eliminate routine per-item allocations |
-| 0.61 image-residency cache | Retain proven retirement principles; replace concrete cache model | Move from crop residency to page/independent texture management; 32 MiB/256 entries are not permanent universal device specifications |
-| `CanvasHost` | Retain limited backend | Do not expand claimed support through silent mesh approximation |
-| `TextRasterCache`, TextField, CanvasTextRasterProvider | Retain ownership/async replacement; refactor layout integration | Explicit-line interface remains usable; new layout cannot reuse incomplete old cache keys |
-| `planLinearLayout`, MouseInput, BitmapButton | Retain utilities/compatibility entries; add full UI | Pure planning is not automatic layout; adapt mouse entry to pointer semantics |
-| gameClock, Tween, SequencePlayer/Playback | Retain time semantics; extend control/orchestration | Capture does not advance time; version new seek/event behavior explicitly |
-| BitmapResourceSlot, AssetGroup, BitmapBindingTicket | Retain as higher-level transaction foundations | New orchestration handles GPU readiness and scene transactions without changing synchronous promises |
-| Project atlas/spine preflight and transactions | Retain strict inputs/diagnostics; integrate full builds | Planning success does not certify pixels, animation or distribution |
-| `knowledge-base/experiments/spine-*` | Preserve historical references/fixtures; replace experimental adapter entries | Redesign product instances/coverage; removing experimental limits alone is not complete support |
-| Matrix4, bounded scene3d and mixed composition | Retain; freeze unnecessary expansion | Mixed-rendering regressions; full models/materials/characters have a later stage |
-| Public behavior tests, reference images, original evidence/provenance | Retain | Explicit inherited/new/retired relationships when interfaces change; never rewrite historical passes/hashes |
-| Tiny experiment entries, duplicate protocol branches, historical status fragments in current docs | Consolidate with migration notes | Do not bulk-delete APIs or attribution; simplify organization without weakening verification |
-| Toolchain entry points, environment checks, version declarations and setup guides | Unify in M0 | Node 26.7.0 installation/basic checks do not qualify every tool; remove undocumented local paths and dependency aliases |
-| Cross-feature whole-repository fingerprints and module inventories | Separate responsibilities in M0 | Development checks contracts and actual impact closures; centralize global structure checks; execution evidence still binds actual inputs |
-| Central source-origin/localization, version and registry maintenance | Establish controlled generation/integration in M0 | Contributors provide sources and necessary explanations; maintainers generate and verify current ledgers without rehashing historical records |
-
-Maintain one API migration table with old/new entries, semantic changes, automatic replacement coverage and fixtures. Necessary preview-stage breaking changes are allowed with explicit versioning. Keep dual paths only until the agreed migration gate passes, rather than permanently maintaining duplicate executors. Changes to repository rules or boundary checks require review with the actual refactor; this proposal does not waive them.
+Old APIs retire only with an explicit mapping, semantic differences, migration fixture and removal point. Necessary internal changes do not authorize weakening existing source/boundary or acceptance rules.
 
 ## 9. Stages, dependencies and exit criteria
 
@@ -214,6 +202,8 @@ M0 engineering entry and complete M0 closure are separate. M1 may start after th
 Working roles cover rendering/performance, resources/builds, UI/text, animation/Spine and independent acceptance. One maintainer may cover several roles; this does not assume staffing or commit to parallel schedules. Each shared interface has one maintenance owner. Review cross-module changes together rather than duplicating implementation to avoid dependencies.
 
 ### 9.1 Complete M0 delivery and acceptance
+
+The engineering packages below are implemented; retain this foundation specification for maintenance and the remaining #52/#54 acceptance. They are not a fresh prerequisite implementation backlog for M2/M3.
 
 These are acceptance dimensions of one milestone, not new experiment projects. M0 uses one specification and result report; environment, CI, documentation and gate changes may form reviewable PRs organized around complete behavior.
 
@@ -398,7 +388,7 @@ Implementation status is maintained in the [M0 delivery record](m0-community-fou
 
 ## 13. Baseline sources
 
-These sources are pinned to one Main commit. They establish existing implementation and historical requirements, not implementation of this proposal.
+The links below preserve the original architecture-design baseline. Current implementation is the reviewed f869b37 source and core-progress; these older links are not a competing current baseline.
 
 - [Current core progress](https://github.com/cnedwin/Egret_rebuild/blob/030a34646774dea6c46cc947b55186da9265a6c8/knowledge-base/en/docs/core-progress.md)
 - [Existing architecture](https://github.com/cnedwin/Egret_rebuild/blob/030a34646774dea6c46cc947b55186da9265a6c8/knowledge-base/en/docs/technical-architecture.md)
@@ -427,7 +417,7 @@ Maintainers can prepare raw baseline differences and conservative catalog candid
 
 The push hook calls `node tools/check-push.mjs --committed`. `pnpm check:merge` / `node tools/prepush.mjs --integrated` remain complete checks. CI keeps all required job names and PR/main coverage, and uses `pnpm setup:dev --no-build` to avoid the duplicate setup build. Default contributor setup still builds. No hook bypass or branch-protection reduction is part of this change.
 
-A rendering/resource change must provide relevant actual-browser correctness and lifecycle evidence before merge. Failures in drawing, cancellation, ownership or recovery block the affected capability. Long-run/performance failures block their corresponding milestone and stable-release claims. Risk in shared lifetime/recovery code may require sustained tests before merge as well. This revision does not declare the unfinished M1.5 or M1.2 acceptance complete.
+A rendering/resource change must provide relevant actual-browser correctness and lifecycle evidence before merge. Failures in drawing, cancellation, ownership or recovery block the affected capability. Long-run/performance failures block their corresponding milestone and stable-release claims. Risk in shared lifetime/recovery code may require sustained tests before merge as well. M1.5 is delivered within its recorded scope; M1.2 performance and required mixed/device rows remain open.
 
 Before sustained runs, verify startup, loading/cancellation, one loss/recovery, shutdown and report persistence in a short real-browser path. Bind each result to its product/tool snapshot and environment. Freeze that snapshot, not unrelated workspaces; formal performance measurements require an environment free of competing workloads. Reuse a result only after checking its actual dependencies and environment; never join interrupted runs into one qualified duration.
 

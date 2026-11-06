@@ -6,7 +6,7 @@ Egret is an open-source game-engine project for creating, running and maintainin
 
 This document defines product obligations and acceptance scenarios. The [current core preview](core-progress.md) provides runnable prerequisites; complete creator tools, host coverage, performance, market validation and migration remain open.
 
-The 0.60 [atlas import planner](atlas-import-plan-contract.md) is a bounded prerequisite for R004 resource/animation import: strict selected metadata plus an explicit PNG binding becomes normalized factory input. Its [evidence](atlas-import-plan-evidence.md) separates metadata, SDK/CPU, Native and delivery acceptance. It does not close V004, full P04, general asset discovery, exporter compatibility, full Spine R020/V020 or migration R008/V006.
+The current source-to-runtime pipeline, optional Spine, UI and text capabilities are summarized in [core progress](core-progress.md). The [M2–M4 plans](m2-m4-delivery-plan.md) define the next core acceptance; they do not replace the complete product requirements below.
 
 ## Objectives, audiences, and confirmation boundaries
 
@@ -16,7 +16,7 @@ New creators need to express gameplay, identify objects, understand changes, dia
 
 R011 requires research verification and audit, R012 requires careful evaluation of established mechanisms, R015 requires independent core implementation and accurate dependency attribution, and R016 governs modern engineering with familiar Egret APIs. Development proceeds in verifiable increments with explicit gap review (R017); each increment keeps the full product obligations in view. Proposed D-series decisions remain proposals until their own acceptance conditions are met.
 
-Scale, image quality, minimum devices, initial host order, staffing, budget, dates, business model and numerical performance thresholds need separate decisions. Browsers, WeChat, Douyin and other hosts have no launch order implied by this document.
+Full-product scale, image quality, minimum devices, initial host order, staffing, budget, dates and business model need their own decisions. Existing M1/M4 numerical profiles remain binding; broader product targets require separate definition. Browsers, WeChat, Douyin and other hosts have no launch order implied by this document.
 
 ## Scope and priorities
 
@@ -27,6 +27,32 @@ Scale, image quality, minimum devices, initial host order, staffing, budget, dat
 | Further expansion | Extend devices, hosts, legacy versions, collaboration, commercial services, plugin ecosystems and larger 3D workloads as their requirements and costs become clear. | R002, R006–R010; V001, V005–V007 |
 
 R008/V006 is a complete migration obligation. Compilation or an isolated example cannot close it. V006 ultimately depends on V001–V005. R020, added on 2026-10-10, requires complete Spine support for the selected version: import, its feature set, playback/events, complex UI/3D composition, resource recovery, creation tools and applicable migration. Complete Spine acceptance remains unfinished. The [Spine support matrix](spine-animation-support-and-acceptance.md) must expose unsupported and unverified features, backends and hosts.
+
+## Requirement-to-delivery map
+
+Current-source review: 2026-11-07 at main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1). Requirement IDs and their confirmed scope are retained; this table does not upgrade historical registry acceptance.
+
+| Requirements | Implemented basis | Remaining product outcome / existing owner |
+| --- | --- | --- |
+| R001, R006 | Project transactions, diagnostics and editable runtime examples | Actual AI-new-creator creation/change/undo/publication journey; later creator platform, consuming V003/V005 |
+| R002, R004, R020 | Shared 2D/UI rendering, sequences, optional Spine and bounded opaque 3D | Complete M2/M3/M4, then imported 3D scenes/characters/VFX; R020 keeps its full selected-version scope |
+| R003, R005 | M1 rendering/resources/recovery plus later integration | Original full-dirty 10.3 ms versus 8 ms remains open in #55; whole mixed/device/loading/memory/energy claims need actual results |
+| R007 | Reproducible selected content builds and public browser examples | Complete resource/3D variants and real host packaging/publication/update loops; M2, M4 and later host work |
+| R008 | Bounded legacy RES/MovieClip analysis and preserved familiar semantics | Complete old/new equivalence, Agent repair, continued editing and actual publication under V006 |
+| R009, R018, R019, R021 | Open repository/knowledge base, English/Cns, canonical text/identity, contribution and CI flows | Ongoing maintenance and independent human newcomer rehearsal #52; no inferred community/adoption outcome |
+| R010, R011, R012, R015 | Versioned sources, independent implementation/dependency policy, review and retained evidence | Apply these obligations to every new feature, reference corpus and product comparison |
+| R013, R016, R017 | Fixed Node 26.7.0/pnpm 11.25.0/TS 7.0.2/PowerShell 7.6.5, typed optional SDKs, focused feedback and delivered core | Complete user-facing compile/debug/project tooling; record actual latency rather than importing historical speed claims |
+| R014 | Explicit host/device/ownership extension boundaries | Selected native App/embedded SDK and later desktop/platform qualification; Rust/VM/graphics choices remain separate |
+
+The [current capability overview](core-progress.md), [engineering sequence](engineering-plan.md) and existing eleven M2–M4 Issues carry implementation gaps. No completion percentage or release date is inferred from merged increments.
+
+## Integrated creation platform
+
+The full tool product is an all-in-one visual game-creation platform. Retain coding, debugging, main canvas, UI and animation editing and one-step target packaging/publication; add 3D scene/effect, world and character editing. Combine compatible surfaces when a real workflow benefits, while keeping original editable sources and advanced manual control.
+
+One sentence can initiate a bounded creation task; natural-language conversation, visual changes and manual code editing operate on the same project/revision. The Agent harness accepts user-selected model APIs and Skill/MCP tools, supports plugins/a plugin marketplace, shows token consumption and configurable spending limits, and reports failed/retried work in those limits. Generated changes remain inspectable, cancellable, conflict-aware and undoable.
+
+These are creator-platform requirements under R006/R007/V003/V005. Current engine/transaction components are foundations, not delivered editor, model connections, marketplace or billing. Choose their implementation after the core/project boundary supports a complete editable workflow; validate ease of use, visual clarity and real creator completion separately.
 
 ## Product requirements for low-level reuse
 
