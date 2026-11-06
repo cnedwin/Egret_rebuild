@@ -64,7 +64,7 @@ function request(text,availableWidth,direction='ltr'){
 function articleTree(version=revision,marker=''){
   articleRequestedFontSet=currentFontSet;
   const localSize=fontSize,localHeight=minLineHeight,localAlign=textAlign,localMaxLines=maxLines,localMode=contentMode,localFontSet=currentFontSet;
-  const equipment=localMode==='equipment'?equipmentCopy(localSize):undefined;
+  const equipment=localMode==='equipment'?equipmentCopy(localSize,undefined,localFontSet?.fontFamilies):undefined;
   const content=(id,text,direction='ltr',runs)=>({revision:version,prepare(context){
     // A detached binding owns its exact request values even if controls change later.
     const node=createParagraph(engine,context.scope,cache);
@@ -83,7 +83,7 @@ function rowSource(version){
   const localSize=fontSize,localHeight=minLineHeight,localAlign=textAlign,localMaxLines=maxLines,localMode=contentMode,localFontSet=currentFontSet;
   const records=Array.from({length:24},(_,index)=>({key:'paragraph-'+String(index).padStart(2,'0'),contentVersion:version,estimatedHeight:localMode==='equipment'?540:120,value:{effectEligible:index<6,text:copy.rows[index%3].repeat(index%4===3?2:1),direction:index%3===2?'rtl':'ltr',color:index%2?0x253f5e:0x1c3452}}));
   // A conservative content estimate bounds simultaneous preparation; committed heights still come from native metrics.
-  if(localMode==='equipment')for(let index=0;index<records.length;index++){const copy=equipmentCopy(localSize,index);records[index].value={...records[index].value,...copy,direction:'ltr'};}
+  if(localMode==='equipment')for(let index=0;index<records.length;index++){const copy=equipmentCopy(localSize,index,localFontSet?.fontFamilies);records[index].value={...records[index].value,...copy,direction:'ltr'};}
   return {revision:version,records,async bind(context){
     binds.push({key:context.key,generation:context.bindingGeneration,version:context.contentVersion});
     const node=createParagraph(engine,context.scope,cache);

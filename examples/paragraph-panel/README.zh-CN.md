@@ -37,3 +37,5 @@ Align 按左／居中／右／start／end／两端顺序切换普通段落和虚
 ## 字体资源
 
 构建后运行 node tools/content/author-font-example.mjs，将输出的 configPath 作为 ?fontConfig=<configPath>&backend=webgl2（或 webgpu）附到示例 URL。新增按钮替换文章字体，列表保留自己的代际；失败、取消或被更新替代的请求保留已提交 UI，未使用字体集合会退役。运行 node examples/paragraph-panel/verify-fonts.mjs <playwright-1.62.1-root> <new-output-directory> 验证。参见[字体所有权与限制](https://github.com/cnedwin/Egret_rebuild/blob/main/knowledge-base/Cns/docs/font-resource-generations.md)。
+
+装备样式范围使用该次 UI 修订已捕获的字体组。所选组包含 Noto Sans CJK SC 时保留命名选择，否则使用该组已注册的 fallback 栈。同一字体以另一个别名注册，不等于旧名字也已注册。未注册字体请求仍被拒绝，失败候选保留已提交内容；默认／固定字体夹具、Provider 准入、字体及既有字节限制不变。 真机复现及边界见 [Android 组件记录](../../knowledge-base/Cns/docs/android-device-validation.md)。

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/paragraph-equipment-fonts.test.mjs",
+      "originRole": "First-party example-unit regression for immutable equipment style fonts; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/android-device-validation.md",
+      "originRole": "First-party scoped Android component observations and limitations, independently reviewed; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/android-device-validation.md",
+      "originRole": "First-party Chinese reading of the scoped Android component observations and limitations; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "verification/android-device/2026-11-06.json",
+      "originRole": "First-party sanitized projection of actual Android component receipts, retained failures and source identities; AI-assisted; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/android-device-validation.md",
+      "zh": "knowledge-base/Cns/docs/android-device-validation.md"
+    }
+  ]
+}

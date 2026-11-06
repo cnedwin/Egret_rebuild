@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: Apache-2.0
 // Authored source ranges share the paragraph's layout, raster and UI lifetime.
-export function equipmentCopy(fontSize, index) {
+export function equipmentCopy(fontSize, index, availableFamilies) {
+  // Resource generations can register the same face under a different runtime alias.
+  // Preserve the named CJK choice when present; otherwise use the captured set's stack.
+  const cjkFamilies = availableFamilies && !availableFamilies.includes('Noto Sans CJK SC')
+    ? [...availableFamilies] : ['Noto Sans CJK SC'];
   const number = index === undefined ? '' : ' ' + String(index + 1).padStart(2, '0');
   const segments = [
     { text: 'Dawnblade' + number + ' / 晨曦之刃', style: { fontSize: fontSize * 1.5, fillColor: 0xffc46b } },
     { text: '\nLegendary equipment / 传说装备', style: { fontSize: fontSize * 0.8, fillColor: 0xb5c7dd } },
     { text: '\nAttack +128', style: { fillColor: 0x74e4a2 } },
     { text: ' · Critical +12%', style: { fillColor: 0x76c9ff } },
-    { text: '\n攻击 +128 · 暴击 +12%', style: { fontFamilies: ['Noto Sans CJK SC'], fillColor: 0x74e4a2 } },
+    { text: '\n攻击 +128 · 暴击 +12%', style: { fontFamilies: cjkFamilies, fillColor: 0x74e4a2 } },
     { text: '\nEquip effect: light the path ahead. The complete description wraps with the available panel width.' },
     { text: '\n装备效果：照亮前路。说明按面板宽度自然换行，后续内容的位置由真实文字高度决定。' },
   ];
