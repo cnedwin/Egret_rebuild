@@ -26,6 +26,7 @@ It preserves saved-input hashes, refuses overwrite and produces diagnostic candi
 | Observation | Investigate first | Durable response |
 | --- | --- | --- |
 | `SS1_BOUNDARY_SOURCE_OWNER` / raw group drift | Actual changed source/emission versus the owned record | One reviewed current successor after correct source freezes; retain historical pins |
+| Missing workspace package after branch/dependency changes | Declared dependencies, installed workspace links and the actual import origin | Restore the pinned frozen-lockfile setup before expensive checks; do not hand-create aliases or alter source pins |
 | Module resolution / stale copied fixture | The real dependency closure and file owner | Repair the fixture/closure and its focused control |
 | Raw-byte/path hygiene | Actual bytes and explicit Windows physical-path semantics | Canonical authoring and shared identity helpers; never normalize hashes |
 | Assertion / compiler diagnostic | Product, policy and fixture separately | Minimal reproducer and the affected regression |

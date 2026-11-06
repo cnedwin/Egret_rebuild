@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "5b1e436de1628c1d79bde0d7bd34c1dfbf59a0d4fa28d5d2364dd006bcd9e34d",
+      "sha256": "da1bbe7f9222bc5f0aa424f0881609f7d2fc1e0ce6ace46fcafdf5cf4f3c77d5",
       "bytes": 384228,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -15608,14 +15608,14 @@
     {
       "path": "skills/egret-windows-ci/SKILL.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 3808,
-      "sha256": "edf6ce7445b713f15026c48559f3ba59c6659462803cffc3acce45e3175c0e39"
+      "bytes": 4066,
+      "sha256": "8636de194743fc472adfdca1aca461bec1abc3b8d017e1e2093f9e60e821e005"
     },
     {
       "path": "skills/egret-windows-ci/SKILL.zh-CN.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 3394,
-      "sha256": "f404d67707b10e9d5534559b6af14cf7ee5a65e21e21a6a9db55a7c1575087c6"
+      "bytes": 3600,
+      "sha256": "15c78f57eb37eb1304106ec0bb9245a41e22b21d6fb51a055fc66067c2f2ce62"
     },
     {
       "path": "skills/egret-windows-ci/scripts/summarize-windows-failure.mjs",
@@ -15632,14 +15632,14 @@
     {
       "path": "knowledge-base/en/docs/windows-ci-governance.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 4405,
-      "sha256": "139b3aab7d3fdf8705601ca90913eb31fe5aab1656e332c648a5658af3440b9e"
+      "bytes": 4733,
+      "sha256": "1a4393c56324e400703bf2f246d882f8b865339cd7a5d05a572771a3726c63d0"
     },
     {
       "path": "knowledge-base/Cns/docs/windows-ci-governance.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 3791,
-      "sha256": "e34d12945d26656f80aacc4956a374b683a5f5a1f6c65f6b9cc8cdfe894ffed9"
+      "bytes": 4072,
+      "sha256": "af230db45a7b80205bd2f33ef81da1ca76961f3c30e3a95079ee97db9f72bf3c"
     },
     {
       "path": "contributions/windows-ci-governance.json",

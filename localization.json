@@ -2264,15 +2264,15 @@
       "en": "skills/egret-windows-ci/SKILL.md",
       "zh": "skills/egret-windows-ci/SKILL.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "edf6ce7445b713f15026c48559f3ba59c6659462803cffc3acce45e3175c0e39",
-      "zhSha256": "f404d67707b10e9d5534559b6af14cf7ee5a65e21e21a6a9db55a7c1575087c6"
+      "enSha256": "8636de194743fc472adfdca1aca461bec1abc3b8d017e1e2093f9e60e821e005",
+      "zhSha256": "15c78f57eb37eb1304106ec0bb9245a41e22b21d6fb51a055fc66067c2f2ce62"
     },
     {
       "en": "knowledge-base/en/docs/windows-ci-governance.md",
       "zh": "knowledge-base/Cns/docs/windows-ci-governance.md",
       "kind": "public_reading",
-      "enSha256": "139b3aab7d3fdf8705601ca90913eb31fe5aab1656e332c648a5658af3440b9e",
-      "zhSha256": "e34d12945d26656f80aacc4956a374b683a5f5a1f6c65f6b9cc8cdfe894ffed9"
+      "enSha256": "1a4393c56324e400703bf2f246d882f8b865339cd7a5d05a572771a3726c63d0",
+      "zhSha256": "af230db45a7b80205bd2f33ef81da1ca76961f3c30e3a95079ee97db9f72bf3c"
     }
   ],
   "registries": [
