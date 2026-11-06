@@ -1,0 +1,1539 @@
+{
+  "schema": "egret.android-lifecycle-diagnostics/1",
+  "dateLocal": "2026-11-07",
+  "timezone": "Asia/Kuala_Lumpur",
+  "generatedAt": "2026-11-06T16:39:57.180Z",
+  "status": "BOUNDED_DIAGNOSTICS_AND_EXISTING_FEATURE_LIFECYCLE",
+  "environment": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "browser": "Chrome/156.0.8078.79",
+    "hardwareDpr": 2.625,
+    "connection": "USB",
+    "previousBrowserTargets": 21,
+    "backends": [
+      "webgpu",
+      "webgl2"
+    ]
+  },
+  "source": {
+    "testedPublishedBase": "0d1bce5f3cf2c1a355e3bd3e6d3f395458de7a16",
+    "selectedFrozenFiles": 468,
+    "sourceFreezeSha256": "a1bc18758d13d07c1fb1c91273a0eb8d389d3f9dfdb323f218c9aba0d13b49c0",
+    "priorSdkAndAuthorIdentitiesRechecked": true,
+    "priorComponentEvidence": {
+      "path": "verification/android-device/2026-11-06.json",
+      "sha256": "55544fd8e2a1893834e4b10114c6f61eebe4d47c7d3fb3c0ec99632d164c7464",
+      "reusedWithoutRerunningMatrices": true
+    },
+    "collectorRevisions": [
+      {
+        "name": "context.mjs",
+        "sha256": "f016392af644751654b57df5828340d094209c07a6fc7d222fc9c602a9252f76",
+        "identityScope": "Final saved collector revision, not a retroactive claim of immutable earlier bootstrap revisions"
+      },
+      {
+        "name": "bootstrap.mjs",
+        "sha256": "0369b6e9752cdd1c6d27f1f85c6865b2dd2e399d0d0ff8fdd630c6fd7364f804",
+        "identityScope": "Final saved collector revision, not a retroactive claim of immutable earlier bootstrap revisions"
+      },
+      {
+        "name": "freeze.mjs",
+        "sha256": "2463bebf1880f42c8b697c69c1fea5a1cc35a3e6a7d444acda89b6521a6dc113",
+        "identityScope": "Final saved collector revision, not a retroactive claim of immutable earlier bootstrap revisions"
+      },
+      {
+        "name": "diagnose.mjs",
+        "sha256": "5b36e1930918dd02bfbab5d588e4ab098e51c4715733a19ba8849e5300279cce",
+        "identityScope": "Final saved collector revision, not a retroactive claim of immutable earlier bootstrap revisions"
+      },
+      {
+        "name": "focused.mjs",
+        "sha256": "424539dc9419fd13e0525540c47d47395649dbfe3907781bfb475c9eb9199721",
+        "identityScope": "Final saved collector revision, not a retroactive claim of immutable earlier bootstrap revisions"
+      },
+      {
+        "name": "retention-cap.mjs",
+        "sha256": "1e38ebe8974ca858fa1478cb68eb5a80906956dd9c99bd41e516a732b231d0ca",
+        "identityScope": "Final saved collector revision, not a retroactive claim of immutable earlier bootstrap revisions"
+      },
+      {
+        "name": "lifecycle.mjs",
+        "sha256": "df6704ec0fd3587cf6ad2f7fcba0406aa03ec771cc545e407e8ee9521c863022",
+        "identityScope": "Final saved collector revision, not a retroactive claim of immutable earlier bootstrap revisions"
+      },
+      {
+        "name": "analyze-heaps.mjs",
+        "sha256": "9e9042c07f06ecf0dd20bbb13d6e7a3478217cdc6ce7996c45f1c8cacbb64260",
+        "identityScope": "Final saved collector revision, not a retroactive claim of immutable earlier bootstrap revisions"
+      },
+      {
+        "name": "restore-phone.mjs",
+        "sha256": "5c9c6ca3c7ae658608f3ac7efdd2f7d14a34f3b34fd57a4e67f35dc12b6ab76d",
+        "identityScope": "Final saved collector revision, not a retroactive claim of immutable earlier bootstrap revisions"
+      }
+    ],
+    "sdkOrExampleSourceChanged": false
+  },
+  "findings": {
+    "memoryIndicator": "The old performance.memory reading is cached/bucketized and not a live pure-JS-heap curve. Device precise counters change while the old field stays fixed, including after close. Chromium source corroborates external-inclusive accounting and a 20-minute bucketized cache; the exact installed156 source tag was not retrieved.",
+    "memoryOwnership": "Private snapshot paths identify live AssetManager font bytes, native provider borrows, a shared-face comparison buffer, raster/Host residence, saved readback and CanvasKit WASM storage. Twenty matched replacement cycles show bounded values in this profile; retirement/close and physical memory remain different claims.",
+    "cadence": "Historical41.4ms trigger was not reproduced in either backend, including the exact original45-action warm-up. The historical sample and uncertainty remain; no renderer or refresh-rate workaround was introduced.",
+    "correction": "Measurement interpretation and evidence documentation; no confirmed engine defect was patched"
+  },
+  "memory": [
+    {
+      "backend": "webgpu",
+      "beforeDiagnosticGc": {
+        "gc": false,
+        "usedSize": 4534404,
+        "totalSize": 5242880,
+        "embedderHeapUsedSize": 4264104,
+        "backingStorageSize": 41407960,
+        "coarseUsedJSHeapSize": 47400000,
+        "fontSets": 1,
+        "fontSourceBytes": 17148712,
+        "paragraphCache": {
+          "closed": false,
+          "generation": 1,
+          "entries": 5,
+          "imageBytes": 1902480,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 5
+        },
+        "history": {
+          "preparations": 5,
+          "readbacks": 1,
+          "payloadCharacters": 6315
+        }
+      },
+      "baselineAfterGc": {
+        "gc": true,
+        "usedSize": 4291156,
+        "totalSize": 4980736,
+        "embedderHeapUsedSize": 774976,
+        "backingStorageSize": 41407837,
+        "coarseUsedJSHeapSize": 47400000,
+        "fontSets": 1,
+        "fontSourceBytes": 17148712,
+        "paragraphCache": {
+          "closed": false,
+          "generation": 1,
+          "entries": 5,
+          "imageBytes": 1902480,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 5
+        },
+        "history": {
+          "preparations": 5,
+          "readbacks": 1,
+          "payloadCharacters": 6315
+        }
+      },
+      "after123ActionsAndGc": {
+        "gc": true,
+        "usedSize": 5703044,
+        "totalSize": 6553600,
+        "embedderHeapUsedSize": 783832,
+        "backingStorageSize": 98997868,
+        "coarseUsedJSHeapSize": 47400000,
+        "fontSets": 2,
+        "fontSourceBytes": 33586076,
+        "paragraphCache": {
+          "closed": false,
+          "generation": 1,
+          "entries": 27,
+          "imageBytes": 9896112,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 5
+        },
+        "history": {
+          "preparations": 185,
+          "readbacks": 124,
+          "payloadCharacters": 231947
+        }
+      },
+      "afterNetworkDisabledAndGc": {
+        "gc": true,
+        "usedSize": 5703044,
+        "totalSize": 6029312,
+        "embedderHeapUsedSize": 720912,
+        "backingStorageSize": 98997868,
+        "coarseUsedJSHeapSize": 47400000,
+        "fontSets": 2,
+        "fontSourceBytes": 33586076,
+        "paragraphCache": {
+          "closed": false,
+          "generation": 1,
+          "entries": 27,
+          "imageBytes": 9896112,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 5
+        },
+        "history": {
+          "preparations": 185,
+          "readbacks": 124,
+          "payloadCharacters": 231947
+        }
+      },
+      "afterConsoleReleaseAndGc": {
+        "gc": true,
+        "usedSize": 5703044,
+        "totalSize": 6029312,
+        "embedderHeapUsedSize": 720912,
+        "backingStorageSize": 98997868,
+        "coarseUsedJSHeapSize": 47400000,
+        "fontSets": 2,
+        "fontSourceBytes": 33586076,
+        "paragraphCache": {
+          "closed": false,
+          "generation": 1,
+          "entries": 27,
+          "imageBytes": 9896112,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 5
+        },
+        "history": {
+          "preparations": 185,
+          "readbacks": 124,
+          "payloadCharacters": 231947
+        }
+      },
+      "closedAfterGc": {
+        "gc": true,
+        "usedSize": 5503780,
+        "totalSize": 6291456,
+        "embedderHeapUsedSize": 696560,
+        "backingStorageSize": 5207241,
+        "coarseUsedJSHeapSize": 47400000,
+        "fontSets": 0,
+        "fontSourceBytes": 0,
+        "paragraphCache": {
+          "closed": true,
+          "generation": 1,
+          "entries": 0,
+          "imageBytes": 0,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 0
+        },
+        "history": {
+          "preparations": 185,
+          "readbacks": 124,
+          "payloadCharacters": 232202
+        }
+      },
+      "matchedReplacementCycles": 20,
+      "capRows": [
+        {
+          "cycle": 0,
+          "precise": {
+            "usedSize": 4255308,
+            "totalSize": 4456448,
+            "embedderHeapUsedSize": 773856,
+            "backingStorageSize": 41407795
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 5,
+          "imageBytes": 1902480,
+          "history": {
+            "readbacks": 1,
+            "preparations": 5
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 2,
+          "precise": {
+            "usedSize": 5026904,
+            "totalSize": 5505024,
+            "embedderHeapUsedSize": 773064,
+            "backingStorageSize": 61838131
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 15,
+          "imageBytes": 5753312,
+          "history": {
+            "readbacks": 7,
+            "preparations": 23
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 4,
+          "precise": {
+            "usedSize": 5302228,
+            "totalSize": 5767168,
+            "embedderHeapUsedSize": 778104,
+            "backingStorageSize": 65688963
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 25,
+          "imageBytes": 9604144,
+          "history": {
+            "readbacks": 13,
+            "preparations": 41
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 6,
+          "precise": {
+            "usedSize": 5419208,
+            "totalSize": 5767168,
+            "embedderHeapUsedSize": 780432,
+            "backingStorageSize": 68503491
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12418672,
+          "history": {
+            "readbacks": 19,
+            "preparations": 59
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 8,
+          "precise": {
+            "usedSize": 5507616,
+            "totalSize": 6029312,
+            "embedderHeapUsedSize": 785792,
+            "backingStorageSize": 68263155
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 25,
+            "preparations": 77
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 10,
+          "precise": {
+            "usedSize": 5589196,
+            "totalSize": 6029312,
+            "embedderHeapUsedSize": 791560,
+            "backingStorageSize": 68263155
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 31,
+            "preparations": 95
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 12,
+          "precise": {
+            "usedSize": 5631468,
+            "totalSize": 6029312,
+            "embedderHeapUsedSize": 796920,
+            "backingStorageSize": 68263155
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 37,
+            "preparations": 113
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 14,
+          "precise": {
+            "usedSize": 5674420,
+            "totalSize": 6029312,
+            "embedderHeapUsedSize": 802216,
+            "backingStorageSize": 68263155
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 43,
+            "preparations": 131
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 16,
+          "precise": {
+            "usedSize": 5709500,
+            "totalSize": 6291456,
+            "embedderHeapUsedSize": 807608,
+            "backingStorageSize": 68263155
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 49,
+            "preparations": 149
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 18,
+          "precise": {
+            "usedSize": 5755856,
+            "totalSize": 6291456,
+            "embedderHeapUsedSize": 810552,
+            "backingStorageSize": 68263155
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 55,
+            "preparations": 167
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 20,
+          "precise": {
+            "usedSize": 5867072,
+            "totalSize": 6553600,
+            "embedderHeapUsedSize": 1057688,
+            "backingStorageSize": 68263155
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 61,
+            "preparations": 185
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        }
+      ],
+      "capClosed": {
+        "usedSize": 5586504,
+        "totalSize": 6291456,
+        "embedderHeapUsedSize": 780704,
+        "backingStorageSize": 5207199
+      },
+      "capSnapshot": {
+        "sha256": "b9e7214965e4e6ac202c7894ab0c2ec0023cad2cf1632f7b13cb57fbbec8b38d",
+        "nativeBufferSizeMatchingBundledCjk": 16437364,
+        "matchingBuffers": 3,
+        "native32MiBStores": 1,
+        "scope": "Private target heap snapshot attribution; sizes are not a physical RAM/VRAM sum"
+      },
+      "scope": "Diagnostic GC is outside timing; small live-JS growth includes compilation/example histories. Cache/source/native borrows and backing storage are separate retained classes; no universal no-leak conclusion."
+    },
+    {
+      "backend": "webgl2",
+      "beforeDiagnosticGc": {
+        "gc": false,
+        "usedSize": 4614568,
+        "totalSize": 5242880,
+        "embedderHeapUsedSize": 4265496,
+        "backingStorageSize": 41414821,
+        "coarseUsedJSHeapSize": 47400000,
+        "fontSets": 1,
+        "fontSourceBytes": 17148712,
+        "paragraphCache": {
+          "closed": false,
+          "generation": 1,
+          "entries": 5,
+          "imageBytes": 1902480,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 5
+        },
+        "history": {
+          "preparations": 5,
+          "readbacks": 1,
+          "payloadCharacters": 6315
+        }
+      },
+      "baselineAfterGc": {
+        "gc": true,
+        "usedSize": 4368316,
+        "totalSize": 4980736,
+        "embedderHeapUsedSize": 771704,
+        "backingStorageSize": 41414698,
+        "coarseUsedJSHeapSize": 47400000,
+        "fontSets": 1,
+        "fontSourceBytes": 17148712,
+        "paragraphCache": {
+          "closed": false,
+          "generation": 1,
+          "entries": 5,
+          "imageBytes": 1902480,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 5
+        },
+        "history": {
+          "preparations": 5,
+          "readbacks": 1,
+          "payloadCharacters": 6315
+        }
+      },
+      "after123ActionsAndGc": {
+        "gc": true,
+        "usedSize": 5650136,
+        "totalSize": 6553600,
+        "embedderHeapUsedSize": 880712,
+        "backingStorageSize": 99004729,
+        "coarseUsedJSHeapSize": 47400000,
+        "fontSets": 2,
+        "fontSourceBytes": 33586076,
+        "paragraphCache": {
+          "closed": false,
+          "generation": 1,
+          "entries": 27,
+          "imageBytes": 9896112,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 5
+        },
+        "history": {
+          "preparations": 185,
+          "readbacks": 124,
+          "payloadCharacters": 231947
+        }
+      },
+      "afterNetworkDisabledAndGc": {
+        "gc": true,
+        "usedSize": 5650136,
+        "totalSize": 6029312,
+        "embedderHeapUsedSize": 754560,
+        "backingStorageSize": 99004729,
+        "coarseUsedJSHeapSize": 47400000,
+        "fontSets": 2,
+        "fontSourceBytes": 33586076,
+        "paragraphCache": {
+          "closed": false,
+          "generation": 1,
+          "entries": 27,
+          "imageBytes": 9896112,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 5
+        },
+        "history": {
+          "preparations": 185,
+          "readbacks": 124,
+          "payloadCharacters": 231947
+        }
+      },
+      "afterConsoleReleaseAndGc": {
+        "gc": true,
+        "usedSize": 5650136,
+        "totalSize": 6029312,
+        "embedderHeapUsedSize": 754560,
+        "backingStorageSize": 99004729,
+        "coarseUsedJSHeapSize": 47400000,
+        "fontSets": 2,
+        "fontSourceBytes": 33586076,
+        "paragraphCache": {
+          "closed": false,
+          "generation": 1,
+          "entries": 27,
+          "imageBytes": 9896112,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 5
+        },
+        "history": {
+          "preparations": 185,
+          "readbacks": 124,
+          "payloadCharacters": 231947
+        }
+      },
+      "closedAfterGc": {
+        "gc": true,
+        "usedSize": 5504480,
+        "totalSize": 6029312,
+        "embedderHeapUsedSize": 746200,
+        "backingStorageSize": 5214102,
+        "coarseUsedJSHeapSize": 47400000,
+        "fontSets": 0,
+        "fontSourceBytes": 0,
+        "paragraphCache": {
+          "closed": true,
+          "generation": 1,
+          "entries": 0,
+          "imageBytes": 0,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 0
+        },
+        "history": {
+          "preparations": 185,
+          "readbacks": 124,
+          "payloadCharacters": 232202
+        }
+      },
+      "matchedReplacementCycles": 20,
+      "capRows": [
+        {
+          "cycle": 0,
+          "precise": {
+            "usedSize": 4344804,
+            "totalSize": 4718592,
+            "embedderHeapUsedSize": 770128,
+            "backingStorageSize": 41414656
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 5,
+          "imageBytes": 1902480,
+          "history": {
+            "readbacks": 1,
+            "preparations": 5
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 2,
+          "precise": {
+            "usedSize": 5057896,
+            "totalSize": 5505024,
+            "embedderHeapUsedSize": 768400,
+            "backingStorageSize": 61844992
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 15,
+          "imageBytes": 5753312,
+          "history": {
+            "readbacks": 7,
+            "preparations": 23
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 4,
+          "precise": {
+            "usedSize": 5311896,
+            "totalSize": 6029312,
+            "embedderHeapUsedSize": 1080040,
+            "backingStorageSize": 65695824
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 25,
+          "imageBytes": 9604144,
+          "history": {
+            "readbacks": 13,
+            "preparations": 41
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 6,
+          "precise": {
+            "usedSize": 5438408,
+            "totalSize": 6029312,
+            "embedderHeapUsedSize": 827928,
+            "backingStorageSize": 69546656
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12418672,
+          "history": {
+            "readbacks": 19,
+            "preparations": 59
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 8,
+          "precise": {
+            "usedSize": 5526320,
+            "totalSize": 6291456,
+            "embedderHeapUsedSize": 1048416,
+            "backingStorageSize": 73397488
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 25,
+            "preparations": 77
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 10,
+          "precise": {
+            "usedSize": 5602092,
+            "totalSize": 6029312,
+            "embedderHeapUsedSize": 1128480,
+            "backingStorageSize": 77248320
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 31,
+            "preparations": 95
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 12,
+          "precise": {
+            "usedSize": 5638788,
+            "totalSize": 6553600,
+            "embedderHeapUsedSize": 793240,
+            "backingStorageSize": 81099152
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 37,
+            "preparations": 113
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 14,
+          "precise": {
+            "usedSize": 5664148,
+            "totalSize": 6553600,
+            "embedderHeapUsedSize": 798456,
+            "backingStorageSize": 84949984
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 43,
+            "preparations": 131
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 16,
+          "precise": {
+            "usedSize": 5715448,
+            "totalSize": 6291456,
+            "embedderHeapUsedSize": 803880,
+            "backingStorageSize": 88800816
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 49,
+            "preparations": 149
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 18,
+          "precise": {
+            "usedSize": 5726584,
+            "totalSize": 6291456,
+            "embedderHeapUsedSize": 972048,
+            "backingStorageSize": 89271072
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 55,
+            "preparations": 167
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        },
+        {
+          "cycle": 20,
+          "precise": {
+            "usedSize": 5837976,
+            "totalSize": 6553600,
+            "embedderHeapUsedSize": 814744,
+            "backingStorageSize": 89271072
+          },
+          "fontSets": 1,
+          "sourceBytes": 17148712,
+          "cacheEntries": 32,
+          "imageBytes": 12178336,
+          "history": {
+            "readbacks": 61,
+            "preparations": 185
+          },
+          "coarse": {
+            "usedJSHeapSize": 47400000,
+            "totalJSHeapSize": 47400000
+          }
+        }
+      ],
+      "capClosed": {
+        "usedSize": 5621928,
+        "totalSize": 6553600,
+        "embedderHeapUsedSize": 803696,
+        "backingStorageSize": 5214060
+      },
+      "capSnapshot": {
+        "sha256": "634bfef0363839b2619ce0905f4c83f5ee68fb95c3669f00aa7e99fdb7468eeb",
+        "nativeBufferSizeMatchingBundledCjk": 16437364,
+        "matchingBuffers": 3,
+        "native32MiBStores": 1,
+        "scope": "Private target heap snapshot attribution; sizes are not a physical RAM/VRAM sum"
+      },
+      "scope": "Diagnostic GC is outside timing; small live-JS growth includes compilation/example histories. Cache/source/native borrows and backing storage are separate retained classes; no universal no-leak conclusion."
+    }
+  ],
+  "cadence": [
+    {
+      "backend": "webgpu",
+      "diagnosticWindows": [
+        {
+          "name": "passive-initial",
+          "intervals": 1206,
+          "p50": 16.599999999999454,
+          "p95": 16.700000000000728,
+          "max": 16.700000000000728,
+          "applicationRevisionUnchanged": true
+        },
+        {
+          "name": "passive-after-owned-tap",
+          "intervals": 1205,
+          "p50": 16.599999999998545,
+          "p95": 16.69999999999709,
+          "max": 29.900000000001455,
+          "applicationRevisionUnchanged": true
+        },
+        {
+          "name": "native-transform-animation",
+          "intervals": 1206,
+          "p50": 16.599999999998545,
+          "p95": 16.69999999999709,
+          "max": 19.80000000000291,
+          "applicationRevisionUnchanged": true
+        },
+        {
+          "name": "passive-after-animation",
+          "intervals": 1205,
+          "p50": 16.59999999999127,
+          "p95": 16.69999999999709,
+          "max": 16.70000000001164,
+          "applicationRevisionUnchanged": true
+        }
+      ],
+      "originalWarmup": [
+        {
+          "name": "before-original-warmup",
+          "n": 602,
+          "p50": 16.59999999999991,
+          "p95": 16.699999999999818,
+          "max": 16.700000000000728
+        },
+        {
+          "name": "after-original-warmup",
+          "n": 3616,
+          "p50": 16.599999999998545,
+          "p95": 16.700000000000728,
+          "max": 29.799999999999272
+        }
+      ],
+      "post20Cycles": {
+        "n": 603,
+        "p50": 16.599999999998545,
+        "p95": 16.69999999999709,
+        "scope": "Post-cycle passive diagnostic; previous diagnostic GC is outside this window, not formal timing qualification"
+      },
+      "classification": "HISTORICAL_TRIGGER_UNRESOLVED_NOT_REPRODUCED",
+      "scope": "Foreground passive rAF intervals, not animation FPS, render CPU, GPU time or physical presentation. No refresh/brightness setting was forced."
+    },
+    {
+      "backend": "webgl2",
+      "diagnosticWindows": [
+        {
+          "name": "passive-initial",
+          "intervals": 1206,
+          "p50": 16.599999999999454,
+          "p95": 16.699999999999818,
+          "max": 16.700000000000728,
+          "applicationRevisionUnchanged": true
+        },
+        {
+          "name": "passive-after-owned-tap",
+          "intervals": 1204,
+          "p50": 16.599999999998545,
+          "p95": 16.69999999999709,
+          "max": 32,
+          "applicationRevisionUnchanged": true
+        },
+        {
+          "name": "native-transform-animation",
+          "intervals": 1205,
+          "p50": 16.599999999998545,
+          "p95": 16.69999999999709,
+          "max": 16.700000000004366,
+          "applicationRevisionUnchanged": true
+        },
+        {
+          "name": "passive-after-animation",
+          "intervals": 1205,
+          "p50": 16.59999999999127,
+          "p95": 16.69999999999709,
+          "max": 27.19999999999709,
+          "applicationRevisionUnchanged": true
+        }
+      ],
+      "originalWarmup": [
+        {
+          "name": "before-original-warmup",
+          "n": 602,
+          "p50": 16.59999999999991,
+          "p95": 16.699999999999818,
+          "max": 16.700000000000728
+        },
+        {
+          "name": "after-original-warmup",
+          "n": 3607,
+          "p50": 16.600000000002183,
+          "p95": 16.700000000004366,
+          "max": 16.80000000000291
+        }
+      ],
+      "post20Cycles": {
+        "n": 602,
+        "p50": 16.599999999998545,
+        "p95": 16.69999999999709,
+        "scope": "Post-cycle passive diagnostic; previous diagnostic GC is outside this window, not formal timing qualification"
+      },
+      "classification": "HISTORICAL_TRIGGER_UNRESOLVED_NOT_REPRODUCED",
+      "scope": "Foreground passive rAF intervals, not animation FPS, render CPU, GPU time or physical presentation. No refresh/brightness setting was forced."
+    }
+  ],
+  "lifecycle": [
+    {
+      "backend": "webgpu",
+      "kind": "paragraph",
+      "assertions": [
+        "ready-home leaves Chrome foreground",
+        "ready-return resumes visible page",
+        "ready background keeps submitted pixels",
+        "actual sleep is observed",
+        "wake-resume resumes visible page",
+        "sleep/wake keeps submitted pixels",
+        "rotation settings and original viewport restore",
+        "native viewport rotation observed",
+        "restored rotation keeps authored canvas pixels",
+        "pending-home leaves Chrome foreground",
+        "pending-return resumes visible page",
+        "pending provider retains old submitted pixels",
+        "resumed latest intent defeats old provider",
+        "independent list pixels survive resumed replacement",
+        "close with pending provider drains logical owners",
+        "real page reload creates healthy initial pixels",
+        "reopened instance closes cleanly"
+      ],
+      "rotation": {
+        "settingsRestored": true,
+        "before": {
+          "width": 411,
+          "height": 813,
+          "angle": 0
+        },
+        "rotated": {
+          "width": 873,
+          "height": 325,
+          "angle": 90
+        },
+        "after": {
+          "width": 411,
+          "height": 813,
+          "angle": 0
+        },
+        "actualViewportChange": true
+      },
+      "scope": "Actual Home, sleep/wake, OS-requested viewport rotation, pending update, close/reload of the same fixed logical-canvas example"
+    },
+    {
+      "backend": "webgpu",
+      "kind": "sequence",
+      "assertions": [
+        "sequence-pending-home leaves Chrome foreground",
+        "sequence-pending-return resumes visible page",
+        "background cancellation preserves old animation pixels",
+        "sequence-staged-home leaves Chrome foreground",
+        "sequence-staged-return resumes visible page",
+        "resumed RESET publishes fresh paused zero state",
+        "resumed native submission changes only intended instance",
+        "sequence lifecycle closes controllers and transport"
+      ],
+      "scope": "Native Home while delayed/staged replacement; cancellation and fresh paused RESET preserve the sibling"
+    },
+    {
+      "backend": "webgpu",
+      "kind": "spine",
+      "assertions": [
+        "nonzero player and consumed event before interruption",
+        "spine-running-home leaves Chrome foreground",
+        "controlled native loss requested while actual page hidden",
+        "spine-loss-return resumes visible page",
+        "new native generation replays current CPU state",
+        "background recovery preserves all authored RGBA within original tolerance",
+        "spine-staged-home leaves Chrome foreground",
+        "spine-staged-return resumes visible page",
+        "resumed cancellation cannot publish replacement",
+        "Spine/native observation closes cleanly",
+        "owned native observation drains and restores descriptors"
+      ],
+      "lossRequestedWhileHidden": true,
+      "sourceGeneration": 1,
+      "freshGeneration": 2,
+      "recoveredPixelChannelDeltaMax": 0,
+      "nativeObserverRestored": true,
+      "scope": "One actual controlled loss requested in a hidden page; recovery after foreground preserves the existing nonzero CPU player and consumed events"
+    },
+    {
+      "backend": "webgl2",
+      "kind": "paragraph",
+      "assertions": [
+        "ready-home leaves Chrome foreground",
+        "ready-return resumes visible page",
+        "ready background keeps submitted pixels",
+        "actual sleep is observed",
+        "wake-resume resumes visible page",
+        "sleep/wake keeps submitted pixels",
+        "rotation settings and original viewport restore",
+        "native viewport rotation observed",
+        "restored rotation keeps authored canvas pixels",
+        "pending-home leaves Chrome foreground",
+        "pending-return resumes visible page",
+        "pending provider retains old submitted pixels",
+        "resumed latest intent defeats old provider",
+        "independent list pixels survive resumed replacement",
+        "close with pending provider drains logical owners",
+        "real page reload creates healthy initial pixels",
+        "reopened instance closes cleanly"
+      ],
+      "rotation": {
+        "settingsRestored": true,
+        "before": {
+          "width": 411,
+          "height": 813,
+          "angle": 0
+        },
+        "rotated": {
+          "width": 873,
+          "height": 325,
+          "angle": 90
+        },
+        "after": {
+          "width": 411,
+          "height": 813,
+          "angle": 0
+        },
+        "actualViewportChange": true
+      },
+      "scope": "Actual Home, sleep/wake, OS-requested viewport rotation, pending update, close/reload of the same fixed logical-canvas example"
+    },
+    {
+      "backend": "webgl2",
+      "kind": "sequence",
+      "assertions": [
+        "sequence-pending-home leaves Chrome foreground",
+        "sequence-pending-return resumes visible page",
+        "background cancellation preserves old animation pixels",
+        "sequence-staged-home leaves Chrome foreground",
+        "sequence-staged-return resumes visible page",
+        "resumed RESET publishes fresh paused zero state",
+        "resumed native submission changes only intended instance",
+        "sequence lifecycle closes controllers and transport"
+      ],
+      "scope": "Native Home while delayed/staged replacement; cancellation and fresh paused RESET preserve the sibling"
+    },
+    {
+      "backend": "webgl2",
+      "kind": "spine",
+      "assertions": [
+        "nonzero player and consumed event before interruption",
+        "spine-running-home leaves Chrome foreground",
+        "controlled native loss requested while actual page hidden",
+        "spine-loss-return resumes visible page",
+        "new native generation replays current CPU state",
+        "background recovery preserves all authored RGBA within original tolerance",
+        "spine-staged-home leaves Chrome foreground",
+        "spine-staged-return resumes visible page",
+        "resumed cancellation cannot publish replacement",
+        "Spine/native observation closes cleanly"
+      ],
+      "lossRequestedWhileHidden": true,
+      "sourceGeneration": 1,
+      "freshGeneration": 2,
+      "recoveredPixelChannelDeltaMax": 0,
+      "scope": "One actual controlled loss requested in a hidden page; recovery after foreground preserves the existing nonzero CPU player and consumed events"
+    }
+  ],
+  "cases": [
+    {
+      "id": "heap-cadence-r3-webgpu",
+      "backend": "webgpu",
+      "kind": "heap-cadence-r3",
+      "status": "OBSERVED",
+      "assertions": 5,
+      "startedAt": "2026-11-06T16:02:13.838Z",
+      "finishedAt": "2026-11-06T16:03:53.054Z",
+      "receiptSha256": "28947ee1e1bda1c7b39f842c4dbf9d35981ab6df5ff339366cb151b6eccfc429",
+      "source": {
+        "comparedDecodedBodies": 186,
+        "bodyUnavailable": [],
+        "transformations": [],
+        "mismatches": 0
+      },
+      "cleanup": {
+        "applicationError": false,
+        "ownedTargetClosed": true,
+        "previousTargetsPreserved": true,
+        "previousMappingsPreserved": true,
+        "ownedMappingRemoved": true,
+        "serverClosed": true,
+        "stayOnRestored": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "id": "stationary-r1-webgpu",
+      "backend": "webgpu",
+      "kind": "stationary-r1",
+      "status": "OBSERVED",
+      "assertions": 13,
+      "startedAt": "2026-11-06T16:14:31.061Z",
+      "finishedAt": "2026-11-06T16:16:04.985Z",
+      "receiptSha256": "824bf63e592173933f1915f3d963d4ef3284cbe8dc0a1ece0d25c37489cb2d6f",
+      "source": {
+        "comparedDecodedBodies": 190,
+        "bodyUnavailable": [],
+        "transformations": [],
+        "mismatches": 0
+      },
+      "cleanup": {
+        "applicationError": false,
+        "ownedTargetClosed": true,
+        "previousTargetsPreserved": true,
+        "previousMappingsPreserved": true,
+        "ownedMappingRemoved": true,
+        "serverClosed": true,
+        "stayOnRestored": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "id": "retention-cap-r1-webgpu",
+      "backend": "webgpu",
+      "kind": "retention-cap-r1",
+      "status": "OBSERVED",
+      "assertions": 13,
+      "startedAt": "2026-11-06T16:28:53.125Z",
+      "finishedAt": "2026-11-06T16:29:37.225Z",
+      "receiptSha256": "f953482e722d5b0623edf4d1a95887ec139416930121ae22a710e6e5ffc953d7",
+      "source": {
+        "comparedDecodedBodies": 196,
+        "bodyUnavailable": [],
+        "transformations": [],
+        "mismatches": 0
+      },
+      "cleanup": {
+        "applicationError": false,
+        "ownedTargetClosed": true,
+        "previousTargetsPreserved": true,
+        "previousMappingsPreserved": true,
+        "ownedMappingRemoved": true,
+        "serverClosed": true,
+        "stayOnRestored": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "id": "lifecycle-r1-paragraph-webgpu",
+      "backend": "webgpu",
+      "kind": "lifecycle-r1-paragraph",
+      "status": "OBSERVED",
+      "assertions": 17,
+      "startedAt": "2026-11-06T16:24:48.988Z",
+      "finishedAt": "2026-11-06T16:25:18.860Z",
+      "receiptSha256": "57b6e9640f51346b34b6519fe3e513cc0900724850d17e5a4aef271388bfd7cb",
+      "source": {
+        "comparedDecodedBodies": 367,
+        "bodyUnavailable": [],
+        "transformations": [],
+        "mismatches": 0
+      },
+      "cleanup": {
+        "applicationError": false,
+        "ownedTargetClosed": true,
+        "previousTargetsPreserved": true,
+        "previousMappingsPreserved": true,
+        "ownedMappingRemoved": true,
+        "serverClosed": true,
+        "stayOnRestored": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "id": "lifecycle-r1-sequence-webgpu",
+      "backend": "webgpu",
+      "kind": "lifecycle-r1-sequence",
+      "status": "OBSERVED",
+      "assertions": 8,
+      "startedAt": "2026-11-06T16:25:18.909Z",
+      "finishedAt": "2026-11-06T16:25:34.108Z",
+      "receiptSha256": "6a996294e61b96282cf717ef5529490538dc3707c77c486a2a4e16ad704bfdc6",
+      "source": {
+        "comparedDecodedBodies": 165,
+        "bodyUnavailable": [],
+        "transformations": [],
+        "mismatches": 0
+      },
+      "cleanup": {
+        "applicationError": false,
+        "ownedTargetClosed": true,
+        "previousTargetsPreserved": true,
+        "previousMappingsPreserved": true,
+        "ownedMappingRemoved": true,
+        "serverClosed": true,
+        "stayOnRestored": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "id": "lifecycle-r1-spine-webgpu",
+      "backend": "webgpu",
+      "kind": "lifecycle-r1-spine",
+      "status": "OBSERVED",
+      "assertions": 11,
+      "startedAt": "2026-11-06T16:25:34.156Z",
+      "finishedAt": "2026-11-06T16:25:49.351Z",
+      "receiptSha256": "c52a2c6501d223b1eb274a5488a73c733600178ce007c9975d76649c477326e0",
+      "source": {
+        "comparedDecodedBodies": 240,
+        "bodyUnavailable": [],
+        "transformations": [
+          {
+            "path": "examples/spine-reset/index.html",
+            "originalSha256": "9071d07733707d74580c6737b9a2f907932dbd82fec629584c7ab4d79f275482",
+            "executedSha256": "59192747462aa2ac9245300f4223dd470627bf6cc7e45bed2b2379bac3becd33"
+          }
+        ],
+        "mismatches": 0
+      },
+      "cleanup": {
+        "applicationError": false,
+        "ownedTargetClosed": true,
+        "previousTargetsPreserved": true,
+        "previousMappingsPreserved": true,
+        "ownedMappingRemoved": true,
+        "serverClosed": true,
+        "stayOnRestored": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "id": "heap-cadence-r3-webgl2",
+      "backend": "webgl2",
+      "kind": "heap-cadence-r3",
+      "status": "OBSERVED",
+      "assertions": 5,
+      "startedAt": "2026-11-06T16:03:53.108Z",
+      "finishedAt": "2026-11-06T16:05:36.414Z",
+      "receiptSha256": "90f1b901a8cabe2f0618df9a215b69a1ff18c79cde90c9738a326be2fd18d8d5",
+      "source": {
+        "comparedDecodedBodies": 187,
+        "bodyUnavailable": [],
+        "transformations": [],
+        "mismatches": 0
+      },
+      "cleanup": {
+        "applicationError": false,
+        "ownedTargetClosed": true,
+        "previousTargetsPreserved": true,
+        "previousMappingsPreserved": true,
+        "ownedMappingRemoved": true,
+        "serverClosed": true,
+        "stayOnRestored": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "id": "stationary-r1-webgl2",
+      "backend": "webgl2",
+      "kind": "stationary-r1",
+      "status": "OBSERVED",
+      "assertions": 13,
+      "startedAt": "2026-11-06T16:16:05.036Z",
+      "finishedAt": "2026-11-06T16:17:36.674Z",
+      "receiptSha256": "dada72b99f0a5789a90410cd10c3d5abe4d238acb46e62562953aa2b7e4c1393",
+      "source": {
+        "comparedDecodedBodies": 189,
+        "bodyUnavailable": [],
+        "transformations": [],
+        "mismatches": 0
+      },
+      "cleanup": {
+        "applicationError": false,
+        "ownedTargetClosed": true,
+        "previousTargetsPreserved": true,
+        "previousMappingsPreserved": true,
+        "ownedMappingRemoved": true,
+        "serverClosed": true,
+        "stayOnRestored": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "id": "retention-cap-r1-webgl2",
+      "backend": "webgl2",
+      "kind": "retention-cap-r1",
+      "status": "OBSERVED",
+      "assertions": 13,
+      "startedAt": "2026-11-06T16:29:37.279Z",
+      "finishedAt": "2026-11-06T16:30:25.868Z",
+      "receiptSha256": "34893ce597a8e12ff7985f12e7dc8d320cad3da3290bd4a4f9f440a083fdf459",
+      "source": {
+        "comparedDecodedBodies": 201,
+        "bodyUnavailable": [],
+        "transformations": [],
+        "mismatches": 0
+      },
+      "cleanup": {
+        "applicationError": false,
+        "ownedTargetClosed": true,
+        "previousTargetsPreserved": true,
+        "previousMappingsPreserved": true,
+        "ownedMappingRemoved": true,
+        "serverClosed": true,
+        "stayOnRestored": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "id": "lifecycle-r1-paragraph-webgl2",
+      "backend": "webgl2",
+      "kind": "lifecycle-r1-paragraph",
+      "status": "OBSERVED",
+      "assertions": 17,
+      "startedAt": "2026-11-06T16:25:49.402Z",
+      "finishedAt": "2026-11-06T16:26:20.082Z",
+      "receiptSha256": "c112e29573955bd4c3318ff397d613af4c33f658994632d7a2323d173f6e26c1",
+      "source": {
+        "comparedDecodedBodies": 370,
+        "bodyUnavailable": [],
+        "transformations": [],
+        "mismatches": 0
+      },
+      "cleanup": {
+        "applicationError": false,
+        "ownedTargetClosed": true,
+        "previousTargetsPreserved": true,
+        "previousMappingsPreserved": true,
+        "ownedMappingRemoved": true,
+        "serverClosed": true,
+        "stayOnRestored": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "id": "lifecycle-r1-sequence-webgl2",
+      "backend": "webgl2",
+      "kind": "lifecycle-r1-sequence",
+      "status": "OBSERVED",
+      "assertions": 8,
+      "startedAt": "2026-11-06T16:26:20.134Z",
+      "finishedAt": "2026-11-06T16:26:35.078Z",
+      "receiptSha256": "7ed86657ac1638bcdb11226633dacd613587f7e1a2cc66d7f51c190f096dafe5",
+      "source": {
+        "comparedDecodedBodies": 165,
+        "bodyUnavailable": [],
+        "transformations": [],
+        "mismatches": 0
+      },
+      "cleanup": {
+        "applicationError": false,
+        "ownedTargetClosed": true,
+        "previousTargetsPreserved": true,
+        "previousMappingsPreserved": true,
+        "ownedMappingRemoved": true,
+        "serverClosed": true,
+        "stayOnRestored": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "id": "lifecycle-r1-spine-webgl2",
+      "backend": "webgl2",
+      "kind": "lifecycle-r1-spine",
+      "status": "OBSERVED",
+      "assertions": 10,
+      "startedAt": "2026-11-06T16:26:35.221Z",
+      "finishedAt": "2026-11-06T16:26:50.581Z",
+      "receiptSha256": "891235d4c7ff296d8c7fcf775700d0fcd1b32c1a490016c761db4d3619430da5",
+      "source": {
+        "comparedDecodedBodies": 240,
+        "bodyUnavailable": [],
+        "transformations": [
+          {
+            "path": "examples/spine-reset/index.html",
+            "originalSha256": "9071d07733707d74580c6737b9a2f907932dbd82fec629584c7ab4d79f275482",
+            "executedSha256": "59192747462aa2ac9245300f4223dd470627bf6cc7e45bed2b2379bac3becd33"
+          }
+        ],
+        "mismatches": 0
+      },
+      "cleanup": {
+        "applicationError": false,
+        "ownedTargetClosed": true,
+        "previousTargetsPreserved": true,
+        "previousMappingsPreserved": true,
+        "ownedMappingRemoved": true,
+        "serverClosed": true,
+        "stayOnRestored": true,
+        "leaseReleased": true
+      }
+    }
+  ],
+  "retainedFailures": [
+    {
+      "kind": "optional-debug-protocol-discovery",
+      "status": "NATIVE_BROWSER_FAILURE_RETAINED",
+      "observation": "Optional /json/protocol discovery coincided with Chrome SIGTRAP/PID changes before test cases. It was omitted afterwards and later bootstrap records kept the PID. Native fault cause was not isolated; no force-stop, browser reset or cache clear was used.",
+      "scope": "Browser-native bootstrap failure, not an engine regression or a claim that every read-only debugging endpoint is safe"
+    }
+  ],
+  "restoration": {
+    "criticalSettingsUnchanged": true,
+    "brightnessUnchanged": true,
+    "brightnessCommandIssued": false,
+    "previousTargetsPreserved": true,
+    "finalTargetCount": 21,
+    "previousForwardsPreserved": true,
+    "previousReverseMappingsPreserved": true,
+    "lastObservedPriorComponentRestored": true,
+    "screenAsleepAtEnd": true,
+    "leaseReleased": true,
+    "scope": "Observed settings, IDs, mappings and last component; exact internal activity/tab state is not certified"
+  },
+  "sources": [
+    {
+      "url": "https://chromium.googlesource.com/chromium/src/+/abe0507666c40/third_party/blink/renderer/core/timing/memory_info.cc",
+      "role": "Versioned mechanism corroboration, not exact installed Chrome156 source verification"
+    },
+    {
+      "url": "https://chromedevtools.github.io/devtools-protocol/tot/Runtime/",
+      "role": "Target Runtime heap counters; actual returned fields retained separately"
+    },
+    {
+      "url": "https://chromedevtools.github.io/devtools-protocol/tot/HeapProfiler/",
+      "role": "Target diagnostic garbage collection and private heap snapshot collection"
+    },
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/a42e14ce6379/services/core/java/com/android/server/wm/WindowManagerShellCommand.java",
+      "role": "Ordinary keyguard dismissal request; platform authentication remains enforced"
+    }
+  ],
+  "unqualified": [
+    "Historical41.4ms scheduling trigger",
+    "Universal zero leak, physical RAM/VRAM, GPU or touch-to-photon timing and energy",
+    "Original M1.2 10.3ms versus8ms target remains OPEN",
+    "Full mixed M4 and X-MTouch/1 work/100 lifecycle/10 recovery campaign",
+    "Engine native editor/IME, Chinese candidate composition, accessibility and human hardware input",
+    "iPhone and the complete required device matrix",
+    "Licensed complete selected-version Spine Editor-export/reference corpus",
+    "Spontaneous driver/OS termination; shared browser was not killed because previous tabs must be preserved",
+    "Physical fold/hinge/sensor and radio-network interruption; programmatic OS rotation and controlled transport are separate"
+  ],
+  "licensing": "First-party AI-assisted evidence projection; Apache-2.0. Existing programmatic fixtures and Noto/CanvasKit/Spine notices unchanged; no new dependency or asset distribution."
+}

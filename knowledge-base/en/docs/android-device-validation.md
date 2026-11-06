@@ -40,7 +40,7 @@ A separate engine-free HTML target ran passive/CSS-animation/passive phases for 
 
 Reported diagnostic quantiles use the upper-order index floor(n × p), capped to the sample. Brightness was not held fixed: readback changed from 64 to 46 without a brightness command. No display-power or comparative thermal qualification follows.
 
-The sustained schedule uses one UI action every five seconds, font replacement every five minutes and density changes every two minutes, with continuous passive rAF timestamps and named thermal samples. It exercises a changing readonly UI, not a continuous 60 fps game or heavy-GPU workload. Reported JS heap increased from approximately 56.8 MB to 103 MB. Engine allocations, example histories, collection buffers and garbage awaiting collection were not isolated, so the increase is retained without attributing a leak or declaring zero growth. USB charging and thermal sensors do not establish whole-device energy use. GPU timestamps, physical memory and display presentation timing were unavailable; no zero-leak or universal thermal claim follows.
+The sustained schedule uses one UI action every five seconds, font replacement every five minutes and density changes every two minutes, with continuous passive rAF timestamps and named thermal samples. It exercises a changing readonly UI, not a continuous 60 fps game or heavy-GPU workload. The historical performance.memory reading increased from approximately 56.8 MB to 103 MB; the follow-up below qualifies that cached, bucketized indicator. Engine allocations, example histories, collection buffers and garbage awaiting collection were not isolated, so the increase is retained without attributing a leak or declaring zero growth. USB charging and thermal sensors do not establish whole-device energy use. GPU timestamps, physical memory and display presentation timing were unavailable; no zero-leak or universal thermal claim follows.
 
 ## Device control and evidence boundaries
 
@@ -50,4 +50,50 @@ Only newly owned targets/mappings were removed, and the original USB stay-awake 
 
 Successful decoded browser responses for frozen paths match their recorded files. The Spine recovery collector changes only the HTML main-script launch order to install the existing native observer before Host startup; original/executed hashes are distinct. Favicon 404s, controlled HTTP 503s and intentionally aborted requests are not successful frozen-body observations. CDP decoded bodies are not compressed wire bytes. SDK inputs, the example correction, evolving local collector revisions, cleanup counters and independent review are recorded separately.
 
-Remaining acceptance includes the selected complete Spine Editor-export/reference corpus and license conditions, Android/iPhone hardware and human-input coverage, native editor/IME and accessibility, spontaneous driver/OS termination, mixed M4 workloads, and physical performance/energy budgets. M1.2 remains OPEN at 10.3 ms against 8 ms. Original programmatic Spine fixtures and bundled Noto/CanvasKit sources retain their existing notices; no competitor source was incorporated.
+Remaining acceptance includes the selected complete Spine Editor-export/reference corpus and license conditions, Android/iPhone hardware and human-input coverage, native editor/IME and accessibility, spontaneous driver/OS termination, mixed M4 workloads, and physical performance/energy budgets. M1.2 remains OPEN at 10.3 ms against 8 ms. Original programmatic Spine fixtures and bundled Noto/CanvasKit sources retain their existing notices.
+
+## Cadence, memory and lifecycle follow-up — 2026-11-07
+
+This follow-up uses the same phone and Chrome version with published application base `0d1bce5`. All selected SDK, third-party and authoring inputs were rechecked against the preceding snapshot; only PR #129's already-reviewed example source/guides differ from the original base. The fixed pixel/functional matrices and original 30-minute receipts are reused. No engine, example, dependency, budget or touch implementation changed in this follow-up. [Sanitized observations](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/android-device/2026-11-07.json) preserve each scope and source identity.
+
+### Callback cadence
+
+On each backend, four 20-second windows cover passive callbacks, an owned injected tap, a browser-native transform animation, and passive callbacks after cancellation. All have approximately 16.6/16.7 ms p50/p95. A separate paired probe repeats the original five warm-up actions and twenty interleaved static/reflow pairs, then samples for 60 seconds: both backends again have approximately 16.6/16.7 ms. The post-replacement sample is retained separately.
+
+The old approximately 41.4 ms observation is **not reproduced** in these current runs. Browser processes had restarted during bootstrap, so their prior scheduling state was not preserved. The historical trigger remains unresolved; these results establish neither its cause nor a renderer fix. No refresh rate or brightness was forced. Passive callback intervals still do not measure animation FPS, Engine CPU, GPU time or physical presentation.
+
+### Memory accounting
+
+The old field came from `performance.memory`; it was not a live pure-JavaScript-heap curve. In the new target, it remains at 47.4 MB while precise counters change substantially, including after application close. At [Chromium commit abe0507666c40](https://chromium.googlesource.com/chromium/src/+/abe0507666c40/third_party/blink/renderer/core/timing/memory_info.cc), bucketized readings have a 20-minute cache and the underlying calculation includes V8 external memory. This corroborates the measurement limitation; the exact installed Chrome 156 source tag was not retrieved. The original 56.8→103 MB values remain in the historical receipt and cannot by themselves establish a leak.
+
+Target-local diagnostic garbage collection separates `Runtime.getHeapUsage`'s JS-used, embedder and backing-storage fields. It runs outside timing windows. After 123 public actions with independently retained article/list font sets, JS used is approximately 4.29→5.70 MB on WebGPU and 4.37→5.65 MB on WebGL2. Private heap paths identify managed font source bytes, native font borrows and shared-face comparison bytes, alongside raster/Host residence and saved readback. Native snapshots also list a 32 MiB CanvasKit WASM backing store. These observations are separate accounting domains, not a physical-memory sum.
+
+A second probe synchronizes both roots to the selected font generation after every replacement and performs twenty matched replacement cycles:
+
+| Observation | WebGPU | WebGL2 |
+| --- | --- | --- |
+| Live font set at recorded checkpoints | 1 | 1 |
+| Paragraph cache at cycles 8–20 | 32 entries; 12,178,336 image bytes | 32 entries; 12,178,336 image bytes |
+| Backing storage at recorded late checkpoints | 68,263,155 bytes at cycles 8–20 | 89,271,072 bytes at cycles 18 and 20 |
+| JS used after cycle 20 | 5,867,072 bytes | 5,837,976 bytes |
+| Backing storage after close and diagnostic GC | 5,207,199 bytes | 5,214,060 bytes |
+
+WebGL2 separately retains ready source pages under the existing 32 MiB/256-page Host limit; that policy is consistent with its larger backing-storage plateau and is not the paragraph-cache ledger. Final font/source/cache logical owners drain. Small JS changes also include warm compilation and growing example diagnostic histories. Network-domain disable and console-result release do not reduce the retained backing counter in the first probe. None of this proves universal zero leakage, normal-workload GC timing, physical RAM/VRAM return or full M4 memory acceptance; no Engine memory repair was justified by this bounded investigation.
+
+### Existing-feature lifecycle and recovery
+
+| Example | Added actual-device coverage on each backend | Recorded assertions |
+| --- | --- | --- |
+| Paragraph/UI | Android Home/foreground; screen sleep/wake; OS-requested viewport rotation and exact setting restoration; pending provider across background, supersession and independent-list pixels; close with pending work; actual document reload and clean second close | 17 each |
+| Sequence RESET | Delayed and staged replacement across Home/foreground; cancellation retains old/sibling playback; resumed RESET publishes paused time zero and changes only the intended instance; transport/controller cleanup | 8 each |
+| Spine recovery | Controlled native loss requested while the page is hidden; restore after foreground preserves nonzero player/sibling/clock/consumed events and RGBA within the original tolerance; staged cancellation; native observer/Host cleanup | WebGPU 11; WebGL2 10 |
+
+These are finite extensions of the existing examples. The Spine request is deliberately controlled native device destruction/context loss, not spontaneous driver failure; its completion is checked after foreground. The fixed logical paragraph canvas does not qualify the complete responsive touch/hit matrix. All twelve diagnostic/lifecycle cases preserve their fresh prior target sets and mappings, close owned targets and release the phone lease.
+
+### Retained failures and remaining qualification
+
+Optional HTTP protocol discovery during bootstrap coincided with native Chrome SIGTRAP/PID changes. Its native cause was not isolated. The endpoint was omitted from subsequent collection; later bootstrap records kept the browser PID. No browser force-stop, reset or cache clear was used. This remains a browser-native collection failure, not an engine regression. Ordinary non-credential keyguard dismissal was requested only with explicit unlocked credential state; platform authentication remained enforced.
+
+At final readback, the original 21 target IDs, forward/reverse mappings, rotation, refresh, stay-awake and brightness values are retained. The last observed prior component was restored and the screen returned to sleep. Exact internal tab/activity state is not certified. Raw heap snapshots, screen/account/device identifiers and native dumps remain private.
+
+The historical cadence trigger, full mixed M4/X-MTouch/1 campaign, native editing/CJK IME/accessibility, iPhone/device matrix, complete authorized Spine corpus and unavailable physical GPU/presentation/energy rows remain open. Actual OS termination of the shared browser was not attempted because existing tabs must be preserved; physical fold/sensor and radio-network interruption are separate from programmatic rotation and controlled transport. M1.2 remains **10.3 ms against 8 ms**, OPEN.

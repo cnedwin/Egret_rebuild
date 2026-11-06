@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## Android 内存口径与生命周期 — 2026-11-07
+
+精确目标诊断区分缓存的 performance.memory 读数、活跃 JS 和 backing storage；段落、序列与 Spine 示例补充两后端有限 Android 生命周期／恢复证据，历史 41.4 ms 触发条件仍未复现。不宣称引擎修复或完整 M4／M1.2 验收。见[补充验证](docs/android-device-validation.md#回调内存与生命周期补充验证--2026-11-07)。
+
 ## Android 装备字体选择 — 2026-11-06
 
 段落示例按捕获的字体组生成装备样式范围，保留默认夹具，并支持候选组实际注册的 CJK 别名。真机失败、短路径复现和指定后端检查分别记录；核心准入和预算不变。见 [Android 组件验证](docs/android-device-validation.md)。完整 M4 与 M1.2 验收保持 OPEN。

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "verification/android-device/2026-11-07.json",
+      "originRole": "First-party sanitized Android cadence/heap/lifecycle observation projection with retained failures and explicit limits; AI-assisted; Apache-2.0."
+    }
+  ],
+  "documents": []
+}
