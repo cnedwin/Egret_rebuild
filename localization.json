@@ -323,8 +323,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "9c298148cc8c3221143d620847353539b36ba54d5ac2686e638abcc549f3998c",
-      "zhSha256": "677db438d55590f1cb0bfdc14e2028f5d75453d8af8e02bb59b919f5f33a189b"
+      "enSha256": "472698a712c1fefb95053e5e32209062695c5597a8ba8127acea67f4a50c6a58",
+      "zhSha256": "7899258c3a6555d9151f9ad5567922a2a48190998b508e30a256ed67cc673ad9"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -1830,8 +1830,8 @@
       "en": "knowledge-base/en/docs/getting-started.md",
       "zh": "knowledge-base/Cns/docs/getting-started.md",
       "kind": "public_reading",
-      "enSha256": "a5972d8dc27377b93e97a0df74654a06e0b4de09f23d6362e22c150cbaa51ccc",
-      "zhSha256": "f15e2f6d67aeb51332502a90fce1bedf41d39d6fbb1e08b564ecbc8dd3064757"
+      "enSha256": "dbfa25a752f5e9e42d70bbcb1066e302869ad3d3d3875812c802426666f5774b",
+      "zhSha256": "71eef9702b999bd9b2d4020afe0bb19e02cee321e80e5092c80db536a1b62080"
     },
     {
       "en": "knowledge-base/en/docs/m0-community-foundations.md",
@@ -2259,6 +2259,20 @@
       "kind": "public_reading",
       "enSha256": "9c932e35e7660c4edf038f005402dc7d9941262217ca230614652025cd7fd028",
       "zhSha256": "1ef04354ff72813ce1d1ae1272aaad6059bea7f8a6b3dfc66a73b727d14b27f7"
+    },
+    {
+      "en": "skills/egret-windows-ci/SKILL.md",
+      "zh": "skills/egret-windows-ci/SKILL.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "edf6ce7445b713f15026c48559f3ba59c6659462803cffc3acce45e3175c0e39",
+      "zhSha256": "f404d67707b10e9d5534559b6af14cf7ee5a65e21e21a6a9db55a7c1575087c6"
+    },
+    {
+      "en": "knowledge-base/en/docs/windows-ci-governance.md",
+      "zh": "knowledge-base/Cns/docs/windows-ci-governance.md",
+      "kind": "public_reading",
+      "enSha256": "139b3aab7d3fdf8705601ca90913eb31fe5aab1656e332c648a5658af3440b9e",
+      "zhSha256": "6e88923332e54aacdeacccf914c12f9778d0a0d7abe00659ede16d1c8ef0db2b"
     }
   ],
   "registries": [
@@ -4589,6 +4603,14 @@
     {
       "path": "tools/check-test-baselines.mjs",
       "sha256": "c53cbb86b68144e027b1b985860d2554d7471415f2c2c286bc131d27fa4f20b8"
+    },
+    {
+      "path": "skills/egret-windows-ci/scripts/summarize-windows-failure.mjs",
+      "sha256": "8db5fa5c4c585fabbb17e143fc24c1af04de8672fa2c4b2777c003f9a4a623ab"
+    },
+    {
+      "path": "tests/windows-ci-failure-summary.test.mjs",
+      "sha256": "d0efebee7997bbe3767fdcd30d6ebe4db2f7bf6f8c2683cea330e0addff55d3c"
     }
   ],
   "historicalSemanticReview": {

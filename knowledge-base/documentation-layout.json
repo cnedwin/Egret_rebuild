@@ -24,8 +24,8 @@
       "action": "move-pair",
       "previousZhSha256": "ca2be6243c614a900ed12f1b46649155f215a4827e04818e025bad8d03f8af9e",
       "previousEnSha256": "7e72f6245d7c86551dc2640356416b8b06a2d80872f262daf227f98142eac7ae",
-      "currentZhSha256": "677db438d55590f1cb0bfdc14e2028f5d75453d8af8e02bb59b919f5f33a189b",
-      "currentEnSha256": "9c298148cc8c3221143d620847353539b36ba54d5ac2686e638abcc549f3998c"
+      "currentZhSha256": "7899258c3a6555d9151f9ad5567922a2a48190998b508e30a256ed67cc673ad9",
+      "currentEnSha256": "472698a712c1fefb95053e5e32209062695c5597a8ba8127acea67f4a50c6a58"
     },
     {
       "oldZh": "CONTRIBUTING.md",
@@ -2028,8 +2028,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "a5972d8dc27377b93e97a0df74654a06e0b4de09f23d6362e22c150cbaa51ccc",
-      "currentZhSha256": "f15e2f6d67aeb51332502a90fce1bedf41d39d6fbb1e08b564ecbc8dd3064757"
+      "currentEnSha256": "dbfa25a752f5e9e42d70bbcb1066e302869ad3d3d3875812c802426666f5774b",
+      "currentZhSha256": "71eef9702b999bd9b2d4020afe0bb19e02cee321e80e5092c80db536a1b62080"
     },
     {
       "newEn": "knowledge-base/en/docs/m0-community-foundations.md",
