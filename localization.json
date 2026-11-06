@@ -400,8 +400,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "e66cd10b745b862c7d95f601078f716657826ec3c5d3f93df99661e720c9ad1f",
-      "zhSha256": "7b0e1520d5cba422e28b6525d6c73f76b650c6f3b9f104993df61a582538d9df"
+      "enSha256": "e287ffd8ddff56cf4a740e042921d28d5070921bcff064462f98fa7ce90774ee",
+      "zhSha256": "342df7b34463f2a97914f82e3b5c9f41a25eb24936a42076ded8f328007bad27"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -2075,8 +2075,8 @@
       "en": "examples/paragraph-panel/README.md",
       "zh": "examples/paragraph-panel/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "fe6b0e71f36cde41bb3f465cf72f79e4429ee24a58bccecc10a2f9a00d0124f7",
-      "zhSha256": "ecb31b5ddd63106d9d1415b0148d5e4ff16325e6d92050e81d5c1794d122b4ba"
+      "enSha256": "006a2e32fe2f8e174a4ca2170e8955d75472c81d0013d32d006bb4395bbd8a17",
+      "zhSha256": "72c2fc9faeae1085929b2c8bfe0d85fa411ab9a691255b1c3773a750a8c95c4b"
     },
     {
       "en": "examples/paragraph-panel/vendor/README.md",
@@ -2236,8 +2236,8 @@
       "en": "knowledge-base/en/docs/font-resource-generations.md",
       "zh": "knowledge-base/Cns/docs/font-resource-generations.md",
       "kind": "public_reading",
-      "enSha256": "a330a3d3a3f4603a64e279229740be670d267e5b9a965c3f4b86b88458d5f083",
-      "zhSha256": "620c0319cec395de877911f7968f04f91ca0f93fc1eecc00cce31df8ea5161cb"
+      "enSha256": "f06dd3c70159ac36852c1e31bf16ac9f9f7fedf3c9bcb39fee77a660ceb0b9ca",
+      "zhSha256": "e51a5bb02be4315e6febd97b237798ad910448ec687103d01c065dabe74c1419"
     },
     {
       "en": "knowledge-base/en/docs/ui-theme-generations.md",
@@ -2273,6 +2273,13 @@
       "kind": "public_reading",
       "enSha256": "1a4393c56324e400703bf2f246d882f8b865339cd7a5d05a572771a3726c63d0",
       "zhSha256": "af230db45a7b80205bd2f33ef81da1ca76961f3c30e3a95079ee97db9f72bf3c"
+    },
+    {
+      "en": "knowledge-base/en/docs/android-device-validation.md",
+      "zh": "knowledge-base/Cns/docs/android-device-validation.md",
+      "kind": "public_reading",
+      "enSha256": "bd0424475a174b2412b25259fe82c3d19f7af96e07d37076603db37cc2a26729",
+      "zhSha256": "ba034f5eebb11a36c2ef3235d747f57f05fff8f283ddc339c3975782bb3c5832"
     }
   ],
   "registries": [
@@ -4482,7 +4489,7 @@
     },
     {
       "path": "examples/paragraph-panel/styled-copy.mjs",
-      "sha256": "a6f7085fe89cd7d22d89846f27f26db1eb4741d950e899c154e77d01b63d1fd6"
+      "sha256": "c4a962537d833b75b878a72c2e4cc95933753c0ce5a9b7186152fb6af81bd0e5"
     },
     {
       "path": "examples/paragraph-panel/verify-equipment.mjs",
@@ -4619,6 +4626,10 @@
     {
       "path": "tests/ui-controls.test.mjs",
       "sha256": "c3c98de37ec656e6ece4478ad70b11fae1f86d25d7415f597bca3eba19b44466"
+    },
+    {
+      "path": "tests/paragraph-equipment-fonts.test.mjs",
+      "sha256": "eff0866196d99643afafa80e3ac18016f7f55de59852322aeffb1ce02bdbf45a"
     }
   ],
   "historicalSemanticReview": {

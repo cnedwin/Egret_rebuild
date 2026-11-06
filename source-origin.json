@@ -622,8 +622,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 24062,
-      "sha256": "7b0e1520d5cba422e28b6525d6c73f76b650c6f3b9f104993df61a582538d9df",
+      "bytes": 24437,
+      "sha256": "342df7b34463f2a97914f82e3b5c9f41a25eb24936a42076ded8f328007bad27",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "b0ce6645deef2c03308f24f40c63fe2d96a1d63aea73e23635e67b0e6428db88",
+      "sha256": "070bd927c9f47a6b496f7e5945c3330ebdceed2ae7aecaa67b547b4b10e94b55",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2153,8 +2153,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 27250,
-      "sha256": "e66cd10b745b862c7d95f601078f716657826ec3c5d3f93df99661e720c9ad1f",
+      "bytes": 27721,
+      "sha256": "e287ffd8ddff56cf4a740e042921d28d5070921bcff064462f98fa7ce90774ee",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "930e9e05e9e517cb3285c82fc320a32819086b28a865957e4e44d87d93e72e27",
-      "bytes": 384516,
+      "sha256": "9077b1d082809fab1cfa7305a5ac395885980aa97f90719c7ee623ad26b2c689",
+      "bytes": 385021,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -13640,14 +13640,14 @@
     {
       "path": "examples/paragraph-panel/README.md",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 6464,
-      "sha256": "fe6b0e71f36cde41bb3f465cf72f79e4429ee24a58bccecc10a2f9a00d0124f7"
+      "bytes": 7085,
+      "sha256": "006a2e32fe2f8e174a4ca2170e8955d75472c81d0013d32d006bb4395bbd8a17"
     },
     {
       "path": "examples/paragraph-panel/README.zh-CN.md",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5779,
-      "sha256": "ecb31b5ddd63106d9d1415b0148d5e4ff16325e6d92050e81d5c1794d122b4ba"
+      "bytes": 6287,
+      "sha256": "72c2fc9faeae1085929b2c8bfe0d85fa411ab9a691255b1c3773a750a8c95c4b"
     },
     {
       "path": "examples/paragraph-panel/index.html",
@@ -13658,8 +13658,8 @@
     {
       "path": "examples/paragraph-panel/main.mjs",
       "originRole": "First-party readonly paragraph SDK, UI integration, integrated functional verification and bilingual documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 22934,
-      "sha256": "da045816e9f4adac5e7b2fa0f3c52173682e416c86e95d039f567ce9d7117eb3"
+      "bytes": 22998,
+      "sha256": "2a8ac63f0b99ab9b89f234cd7de188c0788374e057e3785bbd37b1d53ccef518"
     },
     {
       "path": "examples/paragraph-panel/vendor/README.md",
@@ -15266,8 +15266,8 @@
     {
       "path": "examples/paragraph-panel/styled-copy.mjs",
       "originRole": "First-party authored equipment paragraph content and immutable style ranges; AI-assisted; Apache-2.0.",
-      "bytes": 1505,
-      "sha256": "a6f7085fe89cd7d22d89846f27f26db1eb4741d950e899c154e77d01b63d1fd6"
+      "bytes": 1834,
+      "sha256": "c4a962537d833b75b878a72c2e4cc95933753c0ce5a9b7186152fb6af81bd0e5"
     },
     {
       "path": "examples/paragraph-panel/verify-equipment.mjs",
@@ -15374,14 +15374,14 @@
     {
       "path": "knowledge-base/Cns/docs/font-resource-generations.md",
       "originRole": "First-party bilingual font resource and runtime generation contract, independently authored.",
-      "bytes": 6589,
-      "sha256": "620c0319cec395de877911f7968f04f91ca0f93fc1eecc00cce31df8ea5161cb"
+      "bytes": 7150,
+      "sha256": "e51a5bb02be4315e6febd97b237798ad910448ec687103d01c065dabe74c1419"
     },
     {
       "path": "knowledge-base/en/docs/font-resource-generations.md",
       "originRole": "First-party bilingual font resource and runtime generation contract, independently authored.",
-      "bytes": 7400,
-      "sha256": "a330a3d3a3f4603a64e279229740be670d267e5b9a965c3f4b86b88458d5f083"
+      "bytes": 8076,
+      "sha256": "f06dd3c70159ac36852c1e31bf16ac9f9f7fedf3c9bcb39fee77a660ceb0b9ca"
     },
     {
       "path": "packages/contracts/src/resources/fontArtifact.ts",
@@ -15664,6 +15664,36 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 729,
       "sha256": "e30caf298f39f54eb0969df159bd8aa37d554b74ed9576c168267b422716093b"
+    },
+    {
+      "path": "tests/paragraph-equipment-fonts.test.mjs",
+      "originRole": "First-party example-unit regression for immutable equipment style fonts; AI-assisted; Apache-2.0.",
+      "bytes": 1286,
+      "sha256": "eff0866196d99643afafa80e3ac18016f7f55de59852322aeffb1ce02bdbf45a"
+    },
+    {
+      "path": "knowledge-base/en/docs/android-device-validation.md",
+      "originRole": "First-party scoped Android component observations and limitations, independently reviewed; AI-assisted; Apache-2.0.",
+      "bytes": 9849,
+      "sha256": "bd0424475a174b2412b25259fe82c3d19f7af96e07d37076603db37cc2a26729"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/android-device-validation.md",
+      "originRole": "First-party Chinese reading of the scoped Android component observations and limitations; AI-assisted; Apache-2.0.",
+      "bytes": 8613,
+      "sha256": "ba034f5eebb11a36c2ef3235d747f57f05fff8f283ddc339c3975782bb3c5832"
+    },
+    {
+      "path": "verification/android-device/2026-11-06.json",
+      "originRole": "First-party sanitized projection of actual Android component receipts, retained failures and source identities; AI-assisted; Apache-2.0.",
+      "bytes": 66270,
+      "sha256": "55544fd8e2a1893834e4b10114c6f61eebe4d47c7d3fb3c0ec99632d164c7464"
+    },
+    {
+      "path": "contributions/android-equipment-font-validation.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 1105,
+      "sha256": "2b3b2740ba216c6db12c41400e79eb33c832a92a3d7fb74edeb58cb7c22e3e6d"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

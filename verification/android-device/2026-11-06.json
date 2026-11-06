@@ -1,0 +1,1787 @@
+{
+  "schema": "egret.android-component-observations/1",
+  "date": "2026-11-06",
+  "status": "FINITE_COMPONENT_EVIDENCE_NOT_FULL_M4_ACCEPTANCE",
+  "environment": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "browser": "Chrome/156.0.8078.79",
+    "hardwareDpr": 2.625,
+    "priorBrowserTargets": 21,
+    "connection": "USB",
+    "sourceBase": "081b98ef81154730a87bdf38decddc153ced786b",
+    "foreground": "Explicit native awake/unlocked/Chrome foreground observations; own page focus emulation also enabled",
+    "refreshSettings": "No brightness, refresh, rotation or density setting commands were issued. Scoped USB stay-awake restored. Brightness was not held fixed; readback changed64 to46, cause not established."
+  },
+  "source": {
+    "originalFreezeFiles": 468,
+    "originalFreezeBytes": 49209034,
+    "candidateFiles": [
+      {
+        "path": "examples/paragraph-panel/main.mjs",
+        "bytes": 22998,
+        "sha256": "2a8ac63f0b99ab9b89f234cd7de188c0788374e057e3785bbd37b1d53ccef518"
+      },
+      {
+        "path": "examples/paragraph-panel/styled-copy.mjs",
+        "bytes": 1834,
+        "sha256": "c4a962537d833b75b878a72c2e4cc95933753c0ce5a9b7186152fb6af81bd0e5"
+      },
+      {
+        "path": "tests/paragraph-equipment-fonts.test.mjs",
+        "bytes": 1286,
+        "sha256": "eff0866196d99643afafa80e3ac18016f7f55de59852322aeffb1ce02bdbf45a"
+      }
+    ],
+    "sourceFreezeSha256": "fd7630f67632cb8c7da60f2dbdde836897bafff6a1de37a4db38e46d5bf3b160",
+    "candidateFreezeSha256": "d4f69ff3cb46419054fd4eb96e41b4e953d6afcb1a95d694e5f99a40a8ae5acd",
+    "representation": "Frozen-path decoded CDP response bodies, not compressed network transport. Original source and candidate override identities are separate."
+  },
+  "cases": [
+    {
+      "id": "paragraph-webgl2",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:44:16.223Z",
+      "finishedAt": "2026-11-06T12:44:33.500Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "ready with managed fonts",
+        "touch-operated width commits natural wrapping",
+        "committed 0 wide",
+        "committed 1 larger",
+        "committed 2 line-height",
+        "committed 3 align",
+        "committed 4 align",
+        "committed 5 align",
+        "committed 6 align",
+        "committed 7 align",
+        "committed 8 clamp",
+        "committed 9 density",
+        "committed 10 scroll",
+        "font generation changes",
+        "font/layout and rendered pixels change",
+        "independent list keeps its committed font pixels",
+        "unused font generations retire",
+        "failed paragraph preserves committed image",
+        "delayed provider actually entered",
+        "pending paragraph preserves old image",
+        "late result cannot overwrite latest layout",
+        "font/cache scope closes without errors"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 185,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Finite original CJK/Arabic/Latin fixtures on one Android Chrome156 profile; not all scripts/fonts",
+        "Readonly paragraph SDK; no native editor/IME acceptance",
+        "Wall-clock action latency includes automation/serialization and is not a rendering-performance benchmark"
+      ]
+    },
+    {
+      "id": "paragraph-webgpu",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:45:23.576Z",
+      "finishedAt": "2026-11-06T12:45:40.863Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "ready with managed fonts",
+        "touch-operated width commits natural wrapping",
+        "committed 0 wide",
+        "committed 1 larger",
+        "committed 2 line-height",
+        "committed 3 align",
+        "committed 4 align",
+        "committed 5 align",
+        "committed 6 align",
+        "committed 7 align",
+        "committed 8 clamp",
+        "committed 9 density",
+        "committed 10 scroll",
+        "font generation changes",
+        "font/layout and rendered pixels change",
+        "independent list keeps its committed font pixels",
+        "unused font generations retire",
+        "failed paragraph preserves committed image",
+        "delayed provider actually entered",
+        "pending paragraph preserves old image",
+        "late result cannot overwrite latest layout",
+        "font/cache scope closes without errors"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 186,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Finite original CJK/Arabic/Latin fixtures on one Android Chrome156 profile; not all scripts/fonts",
+        "Readonly paragraph SDK; no native editor/IME acceptance",
+        "Wall-clock action latency includes automation/serialization and is not a rendering-performance benchmark"
+      ]
+    },
+    {
+      "id": "ui-webgl2",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:47:15.322Z",
+      "finishedAt": "2026-11-06T12:47:26.800Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "initial independent pixel/geometry anchors",
+        "scroll independent pixel/geometry anchors",
+        "resize independent pixel/geometry anchors",
+        "move independent pixel/geometry anchors",
+        "recycle independent pixel/geometry anchors",
+        "return independent pixel/geometry anchors",
+        "recycled binding gets fresh generation",
+        "real pending row binding entered",
+        "pending independent pixel/geometry anchors",
+        "pending retains full old frame",
+        "complete independent pixel/geometry anchors",
+        "replay independent pixel/geometry anchors",
+        "retained initial frame replay",
+        "theme-dark independent pixel/geometry anchors",
+        "theme-light independent pixel/geometry anchors",
+        "paint-only theme leaves layout stable",
+        "theme-large independent pixel/geometry anchors",
+        "theme-pending independent pixel/geometry anchors",
+        "pending theme retains old full image",
+        "theme-cancel independent pixel/geometry anchors",
+        "theme-finished independent pixel/geometry anchors",
+        "theme-failed independent pixel/geometry anchors",
+        "failed theme preserves complete old image",
+        "theme-superseded independent pixel/geometry anchors",
+        "dispose-a independent pixel/geometry anchors",
+        "UI scopes/input/cache closed",
+        "each entered binding retires once"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 169,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "No engine touch implementation or new contributor-owned control changes",
+        "Authored logical layout/density1/2 with hardware DPR2.625; fixed fixture retained",
+        "Theme failure is intentionally induced and exactly one expected UI_PREPARE_FAILED is required"
+      ]
+    },
+    {
+      "id": "ui-webgpu",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:48:30.153Z",
+      "finishedAt": "2026-11-06T12:48:41.579Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "initial independent pixel/geometry anchors",
+        "scroll independent pixel/geometry anchors",
+        "resize independent pixel/geometry anchors",
+        "move independent pixel/geometry anchors",
+        "recycle independent pixel/geometry anchors",
+        "return independent pixel/geometry anchors",
+        "recycled binding gets fresh generation",
+        "real pending row binding entered",
+        "pending independent pixel/geometry anchors",
+        "pending retains full old frame",
+        "complete independent pixel/geometry anchors",
+        "replay independent pixel/geometry anchors",
+        "retained initial frame replay",
+        "theme-dark independent pixel/geometry anchors",
+        "theme-light independent pixel/geometry anchors",
+        "paint-only theme leaves layout stable",
+        "theme-large independent pixel/geometry anchors",
+        "theme-pending independent pixel/geometry anchors",
+        "pending theme retains old full image",
+        "theme-cancel independent pixel/geometry anchors",
+        "theme-finished independent pixel/geometry anchors",
+        "theme-failed independent pixel/geometry anchors",
+        "failed theme preserves complete old image",
+        "theme-superseded independent pixel/geometry anchors",
+        "dispose-a independent pixel/geometry anchors",
+        "UI scopes/input/cache closed",
+        "each entered binding retires once"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 169,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "No engine touch implementation or new contributor-owned control changes",
+        "Authored logical layout/density1/2 with hardware DPR2.625; fixed fixture retained",
+        "Theme failure is intentionally induced and exactly one expected UI_PREPARE_FAILED is required"
+      ]
+    },
+    {
+      "id": "sequence-webgl2",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:49:39.131Z",
+      "finishedAt": "2026-11-06T12:49:46.718Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "initial literal pixels",
+        "old-loading literal pixels",
+        "pending load does not stop old sequence",
+        "cancelled-old literal pixels",
+        "second-loading literal pixels",
+        "ready candidate not CPU published",
+        "staged-old compositor retained image",
+        "cancelled-candidate-replay literal pixels",
+        "initial-retained literal pixels",
+        "old-restored literal pixels",
+        "RESET publishes paused at time zero without events",
+        "cpu-only-old compositor retained image",
+        "submitted-cyan compositor retained image",
+        "submitted literal pixels",
+        "resumed-quarter literal pixels",
+        "resumed-half literal pixels",
+        "authored marker emitted once",
+        "owned previous version retires while shared original stays",
+        "retired-before-submit compositor retained image",
+        "replacement-back literal pixels",
+        "owned-retained literal pixels",
+        "borrowed-retained literal pixels",
+        "groups/controllers/Host close",
+        "transport drains and closes",
+        "transport drains and closes"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 168,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Original programmatic two-generation PNG/sequence content through existing builder and manifest runtime",
+        "No second resource manager; controlled delayed v2 fetch provider exercises cancellation",
+        "Compositor crop scaled to physical raster for literal samples; not frame-presentation timing"
+      ]
+    },
+    {
+      "id": "sequence-webgpu",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:50:41.941Z",
+      "finishedAt": "2026-11-06T12:50:49.485Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "initial literal pixels",
+        "old-loading literal pixels",
+        "pending load does not stop old sequence",
+        "cancelled-old literal pixels",
+        "second-loading literal pixels",
+        "ready candidate not CPU published",
+        "staged-old compositor retained image",
+        "cancelled-candidate-replay literal pixels",
+        "initial-retained literal pixels",
+        "old-restored literal pixels",
+        "RESET publishes paused at time zero without events",
+        "cpu-only-old compositor retained image",
+        "submitted-cyan compositor retained image",
+        "submitted literal pixels",
+        "resumed-quarter literal pixels",
+        "resumed-half literal pixels",
+        "authored marker emitted once",
+        "owned previous version retires while shared original stays",
+        "retired-before-submit compositor retained image",
+        "replacement-back literal pixels",
+        "owned-retained literal pixels",
+        "borrowed-retained literal pixels",
+        "groups/controllers/Host close",
+        "transport drains and closes",
+        "transport drains and closes"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 167,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Original programmatic two-generation PNG/sequence content through existing builder and manifest runtime",
+        "No second resource manager; controlled delayed v2 fetch provider exercises cancellation",
+        "Compositor crop scaled to physical raster for literal samples; not frame-presentation timing"
+      ]
+    },
+    {
+      "id": "spine-webgl2",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:50:49.653Z",
+      "finishedAt": "2026-11-06T12:50:57.241Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "initial independent literal pixels",
+        "nonzero track/skin/authored event before recovery",
+        "running-before independent literal pixels",
+        "borrowed recovery CPU state preserved",
+        "Host generation increments and native settles",
+        "running-restored independent literal pixels",
+        "same Engine clock continues without duplicate event",
+        "old GPU generation cannot authorize CPU reset",
+        "precommit loss keeps active version/events",
+        "precommit-restored independent literal pixels",
+        "owned-running independent literal pixels",
+        "owned recovery CPU state preserved",
+        "owned-restored independent literal pixels",
+        "CPU boundary precedes native submit",
+        "stale native submit refuses without CPU rollback",
+        "postcommit recovery CPU state preserved",
+        "postcommit-restored independent literal pixels",
+        "invalid animation failure keeps live instance",
+        "invalid-animation-kept-old independent literal pixels",
+        "candidate cancellation keeps old version",
+        "Host/loader owners close",
+        "closed Spine loader values drained",
+        "closed Spine loader values drained"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 258,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [
+        {
+          "path": "examples/spine-reset/index.html",
+          "originalSha": "9071d07733707d74580c6737b9a2f907932dbd82fec629584c7ab4d79f275482",
+          "executedSha": "59192747462aa2ac9245300f4223dd470627bf6cc7e45bed2b2379bac3becd33",
+          "bytes": 3545
+        }
+      ],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Pinned Spine Core4.3.13 with original programmatic geometry, not licensed Editor-export feature-matrix qualification",
+        "Unmodified existing native observer, controlled actual WEBGL_lose_context or owned device.destroy; not spontaneous driver/OS kill",
+        "RESET starts fresh; current player state is preserved only during device replay, not full cross-version seek/state mapping"
+      ],
+      "losses": [
+        {
+          "generation": 1,
+          "contextEvents": [
+            {
+              "type": "webglcontextlost",
+              "trusted": true
+            }
+          ]
+        },
+        {
+          "generation": 2,
+          "contextEvents": [
+            {
+              "type": "webglcontextlost",
+              "trusted": true
+            },
+            {
+              "type": "webglcontextrestored",
+              "trusted": true
+            },
+            {
+              "type": "webglcontextlost",
+              "trusted": true
+            }
+          ]
+        },
+        {
+          "generation": 3,
+          "contextEvents": [
+            {
+              "type": "webglcontextlost",
+              "trusted": true
+            },
+            {
+              "type": "webglcontextrestored",
+              "trusted": true
+            },
+            {
+              "type": "webglcontextlost",
+              "trusted": true
+            },
+            {
+              "type": "webglcontextrestored",
+              "trusted": true
+            },
+            {
+              "type": "webglcontextlost",
+              "trusted": true
+            }
+          ]
+        },
+        {
+          "generation": 4,
+          "contextEvents": [
+            {
+              "type": "webglcontextlost",
+              "trusted": true
+            },
+            {
+              "type": "webglcontextrestored",
+              "trusted": true
+            },
+            {
+              "type": "webglcontextlost",
+              "trusted": true
+            },
+            {
+              "type": "webglcontextrestored",
+              "trusted": true
+            },
+            {
+              "type": "webglcontextlost",
+              "trusted": true
+            },
+            {
+              "type": "webglcontextrestored",
+              "trusted": true
+            },
+            {
+              "type": "webglcontextlost",
+              "trusted": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "spine-webgpu",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:50:57.441Z",
+      "finishedAt": "2026-11-06T12:51:04.958Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "initial independent literal pixels",
+        "nonzero track/skin/authored event before recovery",
+        "running-before independent literal pixels",
+        "borrowed recovery CPU state preserved",
+        "Host generation increments and native settles",
+        "running-restored independent literal pixels",
+        "same Engine clock continues without duplicate event",
+        "old GPU generation cannot authorize CPU reset",
+        "precommit loss keeps active version/events",
+        "precommit-restored independent literal pixels",
+        "owned-running independent literal pixels",
+        "owned recovery CPU state preserved",
+        "owned-restored independent literal pixels",
+        "CPU boundary precedes native submit",
+        "stale native submit refuses without CPU rollback",
+        "postcommit recovery CPU state preserved",
+        "postcommit-restored independent literal pixels",
+        "invalid animation failure keeps live instance",
+        "invalid-animation-kept-old independent literal pixels",
+        "candidate cancellation keeps old version",
+        "Host/loader owners close",
+        "closed Spine loader values drained",
+        "closed Spine loader values drained",
+        "owned requestDevice observation restored and drains"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 258,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [
+        {
+          "path": "examples/spine-reset/index.html",
+          "originalSha": "9071d07733707d74580c6737b9a2f907932dbd82fec629584c7ab4d79f275482",
+          "executedSha": "59192747462aa2ac9245300f4223dd470627bf6cc7e45bed2b2379bac3becd33",
+          "bytes": 3545
+        }
+      ],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Pinned Spine Core4.3.13 with original programmatic geometry, not licensed Editor-export feature-matrix qualification",
+        "Unmodified existing native observer, controlled actual WEBGL_lose_context or owned device.destroy; not spontaneous driver/OS kill",
+        "RESET starts fresh; current player state is preserved only during device replay, not full cross-version seek/state mapping"
+      ],
+      "losses": [
+        {
+          "generation": 1,
+          "contextEvents": [],
+          "gpuDeviceCount": 2
+        },
+        {
+          "generation": 2,
+          "contextEvents": [],
+          "gpuDeviceCount": 3
+        },
+        {
+          "generation": 3,
+          "contextEvents": [],
+          "gpuDeviceCount": 4
+        },
+        {
+          "generation": 4,
+          "contextEvents": [],
+          "gpuDeviceCount": 5
+        }
+      ]
+    },
+    {
+      "id": "effects-webgl2-1",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:51:05.126Z",
+      "finishedAt": "2026-11-06T12:51:12.633Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "plain independent RGBA <=4",
+        "mask independent RGBA <=4",
+        "blur independent RGBA <=4",
+        "both independent RGBA <=4",
+        "clip independent RGBA <=4",
+        "nested independent RGBA <=4",
+        "translated independent RGBA <=4",
+        "rotated independent RGBA <=4",
+        "old-frame independent RGBA <=4",
+        "staged independent RGBA <=4",
+        "cap independent RGBA <=4",
+        "warm frame pixels and page writes stable",
+        "upload cancellation drains pending frames",
+        "recovery independent RGBA <=4",
+        "controlled actual GPU generation advances",
+        "logical native owners drained"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 141,
+        "bodyUnavailable": 0,
+        "non200": [
+          {
+            "path": "favicon.ico",
+            "status": 404
+          }
+        ]
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": null,
+        "firstCloseScope": "closed",
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": "WEBGL2_CLOSED after successful first close; collector defect"
+      },
+      "scope": [
+        "Controlled WEBGL_lose_context / owned borrowed-device destroy and reacquire, not spontaneous driver fault",
+        "DPR ratios1/3 are authored Host pixel ratios; hardware display DPR remains2.625",
+        "Literal rectangle effect pixels do not prove arbitrary UI content, physical memory, touch, or formal performance"
+      ]
+    },
+    {
+      "id": "effects-webgl2-3",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:51:12.849Z",
+      "finishedAt": "2026-11-06T12:51:20.880Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "plain independent RGBA <=4",
+        "mask independent RGBA <=4",
+        "blur independent RGBA <=4",
+        "both independent RGBA <=4",
+        "clip independent RGBA <=4",
+        "nested independent RGBA <=4",
+        "translated independent RGBA <=4",
+        "rotated independent RGBA <=4",
+        "old-frame independent RGBA <=4",
+        "staged independent RGBA <=4",
+        "cap independent RGBA <=4",
+        "warm frame pixels and page writes stable",
+        "upload cancellation drains pending frames",
+        "recovery independent RGBA <=4",
+        "controlled actual GPU generation advances",
+        "logical native owners drained"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 141,
+        "bodyUnavailable": 0,
+        "non200": [
+          {
+            "path": "favicon.ico",
+            "status": 404
+          }
+        ]
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": null,
+        "firstCloseScope": "closed",
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": "WEBGL2_CLOSED after successful first close; collector defect"
+      },
+      "scope": [
+        "Controlled WEBGL_lose_context / owned borrowed-device destroy and reacquire, not spontaneous driver fault",
+        "DPR ratios1/3 are authored Host pixel ratios; hardware display DPR remains2.625",
+        "Literal rectangle effect pixels do not prove arbitrary UI content, physical memory, touch, or formal performance"
+      ]
+    },
+    {
+      "id": "effects-webgpu-1",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:51:21.052Z",
+      "finishedAt": "2026-11-06T12:51:28.165Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "plain independent RGBA <=4",
+        "mask independent RGBA <=4",
+        "blur independent RGBA <=4",
+        "both independent RGBA <=4",
+        "clip independent RGBA <=4",
+        "nested independent RGBA <=4",
+        "translated independent RGBA <=4",
+        "rotated independent RGBA <=4",
+        "old-frame independent RGBA <=4",
+        "staged independent RGBA <=4",
+        "cap independent RGBA <=4",
+        "warm frame pixels and page writes stable",
+        "upload cancellation drains pending frames",
+        "recovery independent RGBA <=4",
+        "controlled actual GPU generation advances",
+        "logical native owners drained"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 141,
+        "bodyUnavailable": 0,
+        "non200": [
+          {
+            "path": "favicon.ico",
+            "status": 404
+          }
+        ]
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": null,
+        "firstCloseScope": "closed",
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Controlled WEBGL_lose_context / owned borrowed-device destroy and reacquire, not spontaneous driver fault",
+        "DPR ratios1/3 are authored Host pixel ratios; hardware display DPR remains2.625",
+        "Literal rectangle effect pixels do not prove arbitrary UI content, physical memory, touch, or formal performance"
+      ]
+    },
+    {
+      "id": "effects-webgpu-3",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:51:28.459Z",
+      "finishedAt": "2026-11-06T12:51:36.252Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "plain independent RGBA <=4",
+        "mask independent RGBA <=4",
+        "blur independent RGBA <=4",
+        "both independent RGBA <=4",
+        "clip independent RGBA <=4",
+        "nested independent RGBA <=4",
+        "translated independent RGBA <=4",
+        "rotated independent RGBA <=4",
+        "old-frame independent RGBA <=4",
+        "staged independent RGBA <=4",
+        "cap independent RGBA <=4",
+        "warm frame pixels and page writes stable",
+        "upload cancellation drains pending frames",
+        "recovery independent RGBA <=4",
+        "controlled actual GPU generation advances",
+        "logical native owners drained"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 141,
+        "bodyUnavailable": 0,
+        "non200": [
+          {
+            "path": "favicon.ico",
+            "status": 404
+          }
+        ]
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": null,
+        "firstCloseScope": "closed",
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Controlled WEBGL_lose_context / owned borrowed-device destroy and reacquire, not spontaneous driver fault",
+        "DPR ratios1/3 are authored Host pixel ratios; hardware display DPR remains2.625",
+        "Literal rectangle effect pixels do not prove arbitrary UI content, physical memory, touch, or formal performance"
+      ]
+    },
+    {
+      "id": "fonts-webgl2-fail",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:52:29.951Z",
+      "finishedAt": "2026-11-06T12:52:38.915Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "actual alternate resource request intercepted",
+        "uncommitted font candidate retains old boxes",
+        "failed/cancelled/stale candidate rejects",
+        "only accepted font set publishes",
+        "font transport closes/drains after fault"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 185,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Target-local HTTP503 or held request is a controlled transport fault, not real radio failure",
+        "No global browser cache clearing; each case owns a fresh loopback-origin page"
+      ]
+    },
+    {
+      "id": "fonts-webgl2-cancel",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:52:39.082Z",
+      "finishedAt": "2026-11-06T12:52:46.861Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "actual alternate resource request intercepted",
+        "uncommitted font candidate retains old boxes",
+        "failed/cancelled/stale candidate rejects",
+        "only accepted font set publishes",
+        "font transport closes/drains after fault"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 184,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Target-local HTTP503 or held request is a controlled transport fault, not real radio failure",
+        "No global browser cache clearing; each case owns a fresh loopback-origin page"
+      ]
+    },
+    {
+      "id": "fonts-webgl2-supersede",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:52:47.029Z",
+      "finishedAt": "2026-11-06T12:52:56.746Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "actual alternate resource request intercepted",
+        "uncommitted font candidate retains old boxes",
+        "failed/cancelled/stale candidate rejects",
+        "only accepted font set publishes",
+        "font transport closes/drains after fault"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 185,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Target-local HTTP503 or held request is a controlled transport fault, not real radio failure",
+        "No global browser cache clearing; each case owns a fresh loopback-origin page"
+      ]
+    },
+    {
+      "id": "fonts-webgpu-fail",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:52:56.926Z",
+      "finishedAt": "2026-11-06T12:53:04.447Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "actual alternate resource request intercepted",
+        "uncommitted font candidate retains old boxes",
+        "failed/cancelled/stale candidate rejects",
+        "only accepted font set publishes",
+        "font transport closes/drains after fault"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 183,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Target-local HTTP503 or held request is a controlled transport fault, not real radio failure",
+        "No global browser cache clearing; each case owns a fresh loopback-origin page"
+      ]
+    },
+    {
+      "id": "fonts-webgpu-cancel",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:53:04.622Z",
+      "finishedAt": "2026-11-06T12:53:13.496Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "actual alternate resource request intercepted",
+        "uncommitted font candidate retains old boxes",
+        "failed/cancelled/stale candidate rejects",
+        "only accepted font set publishes",
+        "font transport closes/drains after fault"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 184,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Target-local HTTP503 or held request is a controlled transport fault, not real radio failure",
+        "No global browser cache clearing; each case owns a fresh loopback-origin page"
+      ]
+    },
+    {
+      "id": "fonts-webgpu-supersede",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:53:13.671Z",
+      "finishedAt": "2026-11-06T12:53:23.485Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "actual alternate resource request intercepted",
+        "uncommitted font candidate retains old boxes",
+        "failed/cancelled/stale candidate rejects",
+        "only accepted font set publishes",
+        "font transport closes/drains after fault"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 185,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Target-local HTTP503 or held request is a controlled transport fault, not real radio failure",
+        "No global browser cache clearing; each case owns a fresh loopback-origin page"
+      ]
+    },
+    {
+      "id": "cadence-foreground-webgl2",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:55:19.101Z",
+      "finishedAt": "2026-11-06T12:56:04.337Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "initial actual foreground samples",
+        "initial passive samples do not advance the explicit Engine clock",
+        "after-reported-order actual foreground samples",
+        "after-reported-order passive samples do not advance the explicit Engine clock",
+        "after-replay-initial actual foreground samples",
+        "after-replay-initial passive samples do not advance the explicit Engine clock",
+        "Host closes and drains after cadence capture"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 240,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Current Chrome156 multi-tab profile, not historical155/single-tab",
+        "Raw passive rAF measures browser scheduling, not Engine update/render FPS or display presentation",
+        "Reported button order calls stale outside its required staged phase; refusal is retained rather than silently repaired",
+        "No GPU timestamp, power or formal M1.2 acceptance"
+      ],
+      "cadence": {
+        "initial": {
+          "frames": 483,
+          "elapsedMs": 8001.100000023842,
+          "p50": 16.599999999998545,
+          "p95": 16.69999999999891,
+          "max": 19.899999999999636,
+          "engineClockUnchanged": true,
+          "activeUnchanged": true,
+          "hostUnchanged": true,
+          "inputReady": true,
+          "visibility": "visible"
+        },
+        "afterReportedOrder": {
+          "frames": 482,
+          "elapsedMs": 8000.799999952316,
+          "p50": 16.599999999998545,
+          "p95": 16.700000000000728,
+          "max": 28.799999999999272,
+          "engineClockUnchanged": true,
+          "activeUnchanged": true,
+          "hostUnchanged": true,
+          "inputReady": true,
+          "visibility": "visible"
+        },
+        "afterReplay": {
+          "frames": 483,
+          "elapsedMs": 8000.599999964237,
+          "p50": 16.599999999998545,
+          "p95": 16.69999999999709,
+          "max": 16.700000000004366,
+          "engineClockUnchanged": true,
+          "activeUnchanged": true,
+          "hostUnchanged": true,
+          "inputReady": true,
+          "visibility": "visible"
+        },
+        "refusals": [
+          {
+            "action": "move-old-then-reject-reported-order",
+            "code": "STAGE_FIRST"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cadence-foreground-webgpu",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T12:56:47.202Z",
+      "finishedAt": "2026-11-06T12:57:32.399Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "original frozen example",
+      "assertions": [
+        "initial actual foreground samples",
+        "initial passive samples do not advance the explicit Engine clock",
+        "after-reported-order actual foreground samples",
+        "after-reported-order passive samples do not advance the explicit Engine clock",
+        "after-replay-initial actual foreground samples",
+        "after-replay-initial passive samples do not advance the explicit Engine clock",
+        "Host closes and drains after cadence capture"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 240,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Current Chrome156 multi-tab profile, not historical155/single-tab",
+        "Raw passive rAF measures browser scheduling, not Engine update/render FPS or display presentation",
+        "Reported button order calls stale outside its required staged phase; refusal is retained rather than silently repaired",
+        "No GPU timestamp, power or formal M1.2 acceptance"
+      ],
+      "cadence": {
+        "initial": {
+          "frames": 483,
+          "elapsedMs": 8000.800000011921,
+          "p50": 16.599999999998545,
+          "p95": 16.700000000000728,
+          "max": 16.700000000000728,
+          "engineClockUnchanged": true,
+          "activeUnchanged": true,
+          "hostUnchanged": true,
+          "inputReady": true,
+          "visibility": "visible"
+        },
+        "afterReportedOrder": {
+          "frames": 482,
+          "elapsedMs": 8000.599999964237,
+          "p50": 16.599999999998545,
+          "p95": 16.700000000000728,
+          "max": 23.399999999997817,
+          "engineClockUnchanged": true,
+          "activeUnchanged": true,
+          "hostUnchanged": true,
+          "inputReady": true,
+          "visibility": "visible"
+        },
+        "afterReplay": {
+          "frames": 482,
+          "elapsedMs": 8000.5,
+          "p50": 16.599999999998545,
+          "p95": 16.700000000000728,
+          "max": 16.700000000004366,
+          "engineClockUnchanged": true,
+          "activeUnchanged": true,
+          "hostUnchanged": true,
+          "inputReady": true,
+          "visibility": "visible"
+        },
+        "refusals": [
+          {
+            "action": "move-old-then-reject-reported-order",
+            "code": "STAGE_FIRST"
+          }
+        ]
+      }
+    },
+    {
+      "id": "font-candidate-webgl2",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T13:12:49.925Z",
+      "finishedAt": "2026-11-06T13:13:09.731Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "candidate-freeze.json",
+      "assertions": [
+        "equipment font replacement succeeds in exact formerly failed state",
+        "article font switch changes pixels while list keeps old font",
+        "repeat font switches remain within unchanged limits",
+        "virtual rows can adopt alternate fonts",
+        "font owners close after short replay"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 185,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Short exact-state action replay after a preserved5min failure; not a sustained acceptance run"
+      ]
+    },
+    {
+      "id": "font-candidate-webgpu",
+      "status": "RECORDED_FINITE_COMPONENT_OBSERVATIONS",
+      "startedAt": "2026-11-06T13:11:49.207Z",
+      "finishedAt": "2026-11-06T13:12:09.222Z",
+      "baseHead": "081b98ef81154730a87bdf38decddc153ced786b",
+      "exampleVariant": "candidate-freeze.json",
+      "assertions": [
+        "equipment font replacement succeeds in exact formerly failed state",
+        "article font switch changes pixels while list keeps old font",
+        "repeat font switches remain within unchanged limits",
+        "virtual rows can adopt alternate fonts",
+        "font owners close after short replay"
+      ],
+      "decodedResponses": {
+        "matchedSuccessful": 188,
+        "bodyUnavailable": 0,
+        "non200": []
+      },
+      "htmlTransform": [],
+      "cleanup": {
+        "reportedApplicationPhase": "closed",
+        "firstCloseScope": null,
+        "priorTargetIdsPreserved": true,
+        "ownedTargetAbsent": true,
+        "priorMappingsPreserved": true,
+        "stayOnRestored": true,
+        "leaseReleased": true,
+        "redundantSecondCloseRefusal": null
+      },
+      "scope": [
+        "Short exact-state action replay after a preserved5min failure; not a sustained acceptance run"
+      ]
+    }
+  ],
+  "retainedFailures": [
+    {
+      "id": "initial-dozing-cadence",
+      "status": "UNAVAILABLE",
+      "observed": "No rAF callbacks despite page visibility/focus emulation; explicit Engine/Host operations returned. WebGL2 screenshot reached deadline; its realm closed without application-drain proof.",
+      "interpretation": "Not0fps, no renderer regression proven"
+    },
+    {
+      "id": "suspended-debug-discovery",
+      "status": "INCOMPLETE",
+      "observed": "ADB/forward/Chrome process remained available; browser discovery deadline after sleep. Normal authorized Chrome activity foreground restored discovery.",
+      "interpretation": "Not an authentication reset or product fix"
+    },
+    {
+      "id": "premature-tap-observation",
+      "status": "COLLECTOR_REPAIRED",
+      "observed": "Immediate click assertion ran before compositor/action settling. Await actual result, not protocol acknowledgement."
+    },
+    {
+      "id": "foldable-unqualified-capture",
+      "status": "CONTROLLER_REPAIRED",
+      "observed": "screencap without display selection emitted a multiple-display warning before PNG and could select inactive panel; bind active default physical display ID as64-bit string."
+    },
+    {
+      "id": "original-sustained-font-failure",
+      "status": "FAIL",
+      "startedAt": "2026-11-06T12:57:59.300Z",
+      "finishedAt": "2026-11-06T13:03:17.219Z",
+      "complete30sSamples": 10,
+      "displayedElapsedMs": 300095,
+      "errorChain": [
+        "ASSET_LOAD_FAILED",
+        "PARAGRAPH_FONT_NOT_REGISTERED"
+      ],
+      "interpretation": "Example explicit font alias absent from alternate set; core admission correctly rejects. Short replay confirms root, no budget increase."
+    },
+    {
+      "id": "effects-redundant-close",
+      "status": "COLLECTOR_REPAIRED",
+      "observed": "Original first close succeeded with drained reported owners; a redundant second close refused WEBGL2_CLOSED. Raw records preserved."
+    }
+  ],
+  "sustained": {
+    "scope": {
+      "durationSeconds": 1800,
+      "backend": "webgpu",
+      "logicalCanvas": [
+        1100,
+        760
+      ],
+      "hardwareDpr": 2.625,
+      "hostPixelRatio": 1,
+      "content": "Original equipment paragraphs + measured virtual list + alpha mask/blur + managed Noto fonts",
+      "schedule": "One public UI action every5s; six-action static/scroll/width/effects cycle; accepted font switch every5min; density toggle every2min",
+      "cadence": "Continuous passive rAF timestamp capture; not60fps game rendering",
+      "limitations": "Readonly original example; occasional UI changes rather than sustained heavy GPU/game workload. Example histories and collector buffers add known observer memory."
+    },
+    "startedAt": "2026-11-06T13:14:14.585Z",
+    "elapsedMs": 1801135,
+    "samples": 60,
+    "uiActions": 359,
+    "continuousPassiveRaf": {
+      "frames": 47451,
+      "intervals": 47450,
+      "p50": 41.40000000002328,
+      "p95": 41.5,
+      "max": 165.80000000004657,
+      "dropped": 0,
+      "firstToLastBrowserTimestampMs": 1799961.8
+    },
+    "fontSets": {
+      "min": 1,
+      "max": 1
+    },
+    "fontGroups": {
+      "max": 1
+    },
+    "jsHeap": {
+      "first": {
+        "usedJSHeapSize": 56800000,
+        "totalJSHeapSize": 60300000,
+        "jsHeapSizeLimit": 3140000000
+      },
+      "last": {
+        "usedJSHeapSize": 103000000,
+        "totalJSHeapSize": 109000000,
+        "jsHeapSizeLimit": 3140000000
+      },
+      "scope": "Includes original example histories and collector buffers; not physical memory or zero-leak proof"
+    },
+    "thermal": [
+      {
+        "name": "AP",
+        "type": 0,
+        "min": 30.4,
+        "max": 31.3,
+        "maxStatus": 0,
+        "samples": 60,
+        "scope": "Current HAL section only; cached temperature entries excluded"
+      },
+      {
+        "name": "BAT",
+        "type": 2,
+        "min": 30,
+        "max": 30.3,
+        "maxStatus": 0,
+        "samples": 60,
+        "scope": "Current HAL section only; cached temperature entries excluded"
+      },
+      {
+        "name": "CP",
+        "type": 12,
+        "min": 30.6,
+        "max": 31.4,
+        "maxStatus": 0,
+        "samples": 60,
+        "scope": "Current HAL section only; cached temperature entries excluded"
+      },
+      {
+        "name": "PA",
+        "type": 5,
+        "min": 30.9,
+        "max": 31.7,
+        "maxStatus": 0,
+        "samples": 60,
+        "scope": "Current HAL section only; cached temperature entries excluded"
+      },
+      {
+        "name": "SKIN",
+        "type": 3,
+        "min": 32.7,
+        "max": 33.4,
+        "maxStatus": 0,
+        "samples": 60,
+        "scope": "Current HAL section only; cached temperature entries excluded"
+      },
+      {
+        "name": "SUBBAT",
+        "type": 2,
+        "min": 30,
+        "max": 30.3,
+        "maxStatus": 0,
+        "samples": 60,
+        "scope": "Current HAL section only; cached temperature entries excluded"
+      },
+      {
+        "name": "USB",
+        "type": 4,
+        "min": 29.8,
+        "max": 29.9,
+        "maxStatus": 0,
+        "samples": 60,
+        "scope": "Current HAL section only; cached temperature entries excluded"
+      }
+    ],
+    "finalCleanup": {
+      "paragraphState": "closed",
+      "input": "closed",
+      "scope": "closed",
+      "fontSets": 0,
+      "fontSourceBytes": 0,
+      "fontJobs": 0,
+      "errors": [],
+      "paragraphCache": {
+        "closed": true,
+        "generation": 1,
+        "entries": 0,
+        "imageBytes": 0,
+        "geometryBytes": 0,
+        "pendingJobs": 0,
+        "callerLeases": 0
+      }
+    },
+    "limits": [
+      "One physical Android17/Chrome156 foreground USB-powered device,21 retained prior tabs",
+      "Passive rAF callback cadence and public UI completion latency are not game/render FPS, presentation or pure GPU timing",
+      "Named thermal readings plus charging battery telemetry do not measure whole-device energy or establish universal thermal limits",
+      "Example and collector JS heap are diagnostic; physical memory/GC/GPU residency or zero-leak qualification are not established",
+      "No touch control implementation, native editor IME, authorized Editor-export Spine matrix, iPhone or formal M1.2/M4 qualification"
+    ]
+  },
+  "diagnosticLatency": {
+    "profile": "20 interleaved warm public UI completions after5 warmups; includes GPU readback and example diagnostics, not M1.2 timing",
+    "staticCompletionMs": {
+      "n": 20,
+      "p50": 45.5,
+      "p95": 51.60000002384186,
+      "min": 33,
+      "max": 51.60000002384186
+    },
+    "reflowCompletionMs": {
+      "n": 20,
+      "p50": 48.80000001192093,
+      "p95": 79.30000001192093,
+      "min": 35.10000002384186,
+      "max": 79.30000001192093
+    },
+    "rawStaticMs": [
+      46.700000047683716,
+      33,
+      45.799999952316284,
+      41.90000003576279,
+      47.19999998807907,
+      36.299999952316284,
+      45.5,
+      45.5,
+      33.19999998807907,
+      42.59999996423721,
+      50.10000002384186,
+      38.80000001192093,
+      46.5,
+      44.69999998807907,
+      45.39999997615814,
+      47.5,
+      47.80000001192093,
+      41.10000002384186,
+      51.60000002384186,
+      47.5
+    ],
+    "rawReflowMs": [
+      79.30000001192093,
+      49.10000002384186,
+      42.5,
+      48.80000001192093,
+      41.30000001192093,
+      48.80000001192093,
+      47.09999996423721,
+      37.60000002384186,
+      35.10000002384186,
+      55,
+      45.89999997615814,
+      46.40000003576279,
+      46.09999996423721,
+      50.10000002384186,
+      51.700000047683716,
+      49.299999952316284,
+      41.80000001192093,
+      50.799999952316284,
+      54.69999998807907,
+      48.5
+    ],
+    "limits": "End-to-end public UI/readback/example-diagnostics completion, not pure rendering CPU/GPU, display response or formal M1.2",
+    "quantileEstimator": "sorted[min(n-1,floor(n*p))]; upper-order diagnostic estimator, not an inferred population percentile"
+  },
+  "controller": {
+    "fixture": "Original local DOM probe; not Egret native editor",
+    "observations": [
+      "real injected tap reaches click handler",
+      "two simultaneous touch points observed",
+      "native browser pointer route receives touch",
+      "all contacts released",
+      "editable focused by touch",
+      "actual software key produces expected text",
+      "Unicode committed text inserted"
+    ],
+    "softwareKey": "Actual Samsung software key produced A with composition events; CDP Unicode insertion replaced composition, not append",
+    "inputLayers": [
+      "CDP Input touch on physical Chrome",
+      "Android shell native key/tap",
+      "CDP committed text insertion"
+    ],
+    "finalSourceAndFocusedNativeSmoke": {
+      "source": [
+        {
+          "path": "SKILL.md",
+          "bytes": 8779,
+          "sha256": "0bd301aeb07752a8be3596e54060b63128d14ab1794dd9997c5708866caa4ef4"
+        },
+        {
+          "path": "agents/openai.yaml",
+          "bytes": 294,
+          "sha256": "6211c7d6b16ef6ed2d1536aaba121f79dacc563e85ede451c14bac71c2763d64"
+        },
+        {
+          "path": "scripts/controller.mjs",
+          "bytes": 16784,
+          "sha256": "b533342656cfbe02daf7cb6b1ef780b90e3449810794dd4b23f2b9af5fced8f3"
+        },
+        {
+          "path": "scripts/controller.test.mjs",
+          "bytes": 4013,
+          "sha256": "d87fef81237dde2827a552bfc34cb5b496a5bd4fd5cc682d7b1f1879be9c76ed"
+        }
+      ],
+      "unitTests": {
+        "tests": 9,
+        "pass": 9,
+        "scope": "Pure bounded protocol/ownership/security units; no phone"
+      },
+      "device": {
+        "scenarioAssertions": [
+          "real injected tap reaches click handler",
+          "two simultaneous touch points observed",
+          "native browser pointer route receives touch",
+          "all contacts released",
+          "editable focused by touch",
+          "native hierarchy collector returns XML",
+          "actual software key produces expected text",
+          "Unicode committed text inserted"
+        ],
+        "softwareKeyValue": "A",
+        "imeBefore": [
+          "mImeWindowVis=3",
+          "mInputShown=true",
+          "mIsInputViewShown=true mStatusIcon=0"
+        ],
+        "imeAfter": [
+          "mImeWindowVis=0",
+          "mInputShown=false",
+          "mIsInputViewShown=true mStatusIcon=0"
+        ],
+        "expectedTextOutcome": "Native composing A is replaced by CDP Unicode insertion",
+        "nativeUiTreeObserved": true,
+        "cleanup": {
+          "priorTargetIdsPreserved": true,
+          "stayOnRestored": true,
+          "leaseReleased": true
+        }
+      }
+    },
+    "limits": [
+      "Controller input smoke only; no Egret native editor, Chinese IME candidate composition or human-finger acceptance",
+      "Two-finger input uses CDP on this physical browser; software key uses Android shell tap"
+    ]
+  },
+  "unqualified": [
+    "FullM4 mixed workload/lifecycle/budget acceptance",
+    "M1.2 formal full-dirty10.3ms vs8ms",
+    "Spine complete selected-version Editor-export/reference corpus and entitlement",
+    "Native engine editor/IME, Chinese candidate selection, accessibility and human hardware input matrix",
+    "iPhone Safari and wider Android fleet",
+    "Spontaneous driver/OS termination",
+    "GPU timestamps, display presentation, physical memory, whole-device energy"
+  ],
+  "sources": [
+    "https://developer.android.com/tools/adb",
+    "https://chromedevtools.github.io/devtools-protocol/tot/Input/",
+    "https://developer.android.com/develop/ui/views/animations/adaptive-refresh-rate"
+  ],
+  "licensing": "Original programmatic first-party fixtures and existing bundled Noto/CanvasKit notices; Spine Core4.3.13 retains its conditional license. No third-party code newly incorporated.",
+  "collectorCleanupControl": {
+    "assertions": [
+      "one actual close drains first-owner resources"
+    ],
+    "applicationScope": "closed",
+    "reportedPendingFrames": 0,
+    "reportedIdleBytes": 0,
+    "reportedLeasedBytes": 0,
+    "redundantCloseSkipped": true
+  },
+  "displayMetadataObservation": {
+    "at": "2026-11-06T13:02:14.704Z",
+    "layers": [
+      {
+        "layer": "physicalDevice",
+        "renderFrameRate": "24.000002",
+        "hasArrSupport": "false",
+        "found": true
+      },
+      {
+        "layer": "baseDisplayInfo",
+        "renderFrameRate": "24.000002",
+        "hasArrSupport": "false",
+        "found": true
+      },
+      {
+        "layer": "appOverrideDisplayInfo",
+        "renderFrameRate": "60.000004",
+        "hasArrSupport": "false",
+        "found": true
+      }
+    ],
+    "scope": "System-reported metadata at one time. Not physical scan rate, causality, GPU time or the original Chrome155 profile."
+  },
+  "noEngineSchedulingControl": {
+    "profile": "Owned single HTML, no Engine/RESET/fonts/dependencies",
+    "phases": {
+      "passiveBefore": {
+        "elapsedMs": 90000.69999998808,
+        "frames": 5428,
+        "p50": 16.599999999998545,
+        "p95": 16.69999999999709,
+        "last240": {
+          "n": 240,
+          "p50": 16.59999999999127,
+          "p95": 16.69999999999709
+        },
+        "mode": "Passive"
+      },
+      "activeCss": {
+        "elapsedMs": 30000.599999964237,
+        "frames": 1810,
+        "p50": 16.59999999999127,
+        "p95": 16.69999999999709,
+        "last240": {
+          "n": 240,
+          "p50": 16.59999999999127,
+          "p95": 16.69999999999709
+        },
+        "mode": "CSS animation"
+      },
+      "passiveAfter": {
+        "elapsedMs": 90000.20000004768,
+        "frames": 5430,
+        "p50": 16.60000000000582,
+        "p95": 16.699999999982538,
+        "last240": {
+          "n": 240,
+          "p50": 16.60000000000582,
+          "p95": 16.60000000000582
+        },
+        "mode": "Passive"
+      }
+    },
+    "source": [
+      {
+        "path": "device-control/cadence.html",
+        "bytes": 1041,
+        "sha256": "9d959f1c4fd094703fa9b7894ed9d4336772ca654ab2865aa68759cf86778f5d"
+      }
+    ],
+    "assertions": [
+      "passive-before live foreground samples",
+      "actual injected tap starts CSS animation",
+      "active-css live foreground samples",
+      "passive-after live foreground samples"
+    ],
+    "scope": [
+      "No Egret modules, Engine time, RESET or fonts in this standalone control",
+      "CSS-driven change versus passive rAF within one target; source/control DOM change is intentional",
+      "Association with native display votes, not attribution of Chrome155 history or formal renderer/power acceptance"
+    ]
+  },
+  "batchRestoration": {
+    "priorTargetCount": 21,
+    "priorTargetIdsPreserved": true,
+    "priorMappingsPreserved": true,
+    "stayOnRestored": true,
+    "rotationAndRefreshReadbackUnchanged": true,
+    "brightness": {
+      "initial": 64,
+      "final": 46,
+      "commandIssued": false,
+      "cause": "Not established; not manually overridden during cleanup"
+    },
+    "screenStateAfter": "mWakefulness=Dozing",
+    "scope": "Returned last observed pretest Settings component and ordinary sleep; exact internal activity/tab state is not certified"
+  },
+  "collectorSources": [
+    {
+      "path": "harness.mjs",
+      "bytes": 11589,
+      "sha256": "3da8f00923f9cca3fa157865e12b68fbfc09bd2659b6a277d111cfeed91bad59",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    },
+    {
+      "path": "paragraph.mjs",
+      "bytes": 4950,
+      "sha256": "7a77b802c1fde23eafd81f9bfbb11886208800101e960d1affa8f5d196df3c89",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    },
+    {
+      "path": "ui.mjs",
+      "bytes": 4949,
+      "sha256": "4933118b01d31c7ecf8de0e710b594b4c524603182dcbd7ff15641446d2910d4",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    },
+    {
+      "path": "effects.mjs",
+      "bytes": 2957,
+      "sha256": "b5a008b9239ee201e17f79cf0df9ff4d6325ea47978d502213e1d23ae068db26",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    },
+    {
+      "path": "sequence.mjs",
+      "bytes": 5248,
+      "sha256": "3d59f1e15046252f8b7b2f83552b8d2527455c5f6c82ab533a7087d14782851a",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    },
+    {
+      "path": "spine.mjs",
+      "bytes": 6366,
+      "sha256": "6855e5550acb8c15b875b1636ceaec7ab5c72505a482c8134c673fa3e652496b",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    },
+    {
+      "path": "font-faults.mjs",
+      "bytes": 3473,
+      "sha256": "28ed60f9164ba37c48689982b0e3e5b114c012e882a0aad40bd4e6114af8ecad",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    },
+    {
+      "path": "cadence-foreground.mjs",
+      "bytes": 3411,
+      "sha256": "16b4545c63f22ed454cde7c56afd17b33ef4cd1d88292e69e209006d87680764",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    },
+    {
+      "path": "stability.mjs",
+      "bytes": 7262,
+      "sha256": "5814062dfea133b412438c3e37383cab00baf59ead4e0e3caccb1350babbc218",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    },
+    {
+      "path": "controller-live.mjs",
+      "bytes": 3534,
+      "sha256": "0bbb4d7d0152ab256ab61528d6dc762396d18569f8a772b722ae5b75fe4a56f2",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    },
+    {
+      "path": "cadence-control.mjs",
+      "bytes": 3327,
+      "sha256": "84850cd5c6befda99b4f5aede207c7eed2c66723ebefac5d1d0644adae016042",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    },
+    {
+      "path": "generate-public-evidence.mjs",
+      "bytes": 9973,
+      "sha256": "6c0a11cb2e0ce180b20df13f2c125fbc10eadd3be759bf0a72eff3399585acf3",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    },
+    {
+      "path": "complete-public-evidence.mjs",
+      "bytes": 3170,
+      "sha256": "b74fc9449e6666ca2340e6cb45c5f0aad8e4141ea2429ec52627d09ee8a8a1c8",
+      "scope": "Final saved collector source; this does not imply every historical case ran this revision"
+    }
+  ]
+}

@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Equipment font selection on Android — 2026-11-06
+
+The paragraph example now builds equipment style ranges from its captured font group, preserving default fixtures while allowing the alternate registered CJK alias. A real-device failure, short reproduction and selected-backend checks are recorded separately; core admission and budgets stay unchanged. See [Android component validation](docs/android-device-validation.md). Full M4 and M1.2 acceptance remain OPEN.
+
 ## Optional Spine assets — 2026-10-30
 
 Pinned official Core4.3.13 reads JSON setup assets and original multipage atlases through existing resources and Scope. The optional SDK preserves explicit license conditions and immutable information; complete playback, graphics, stable corpus and independent references remain open. [SDK](docs/spine-content-ingress.md).

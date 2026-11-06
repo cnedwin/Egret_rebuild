@@ -45,10 +45,12 @@ await set.closed;
 
 既有 paragraph-panel 示例接受生成的 fontConfig 查询参数。按钮替换文章字体，独立列表保留旧选择；后续普通 UI 操作可以采纳新集合。反复替换会释放未使用集合。默认示例继续使用固定字体模式，触摸及其他输入实现未改变。
 
+装备样式范围使用该次 UI 修订已捕获的字体组。所选组包含 Noto Sans CJK SC 时保留命名选择，否则使用该组已注册的 fallback 栈。同一字体以另一个别名注册，不等于旧名字也已注册。未注册字体请求仍被拒绝，失败候选保留已提交内容；默认／固定字体夹具、Provider 准入、字体及既有字节限制不变。
+
 ## 验证与边界
 
 先构建，再运行 node tools/content/author-font-example.mjs，将输出的 configPath 作为 fontConfig 附到 paragraph-panel URL。运行 node examples/paragraph-panel/verify-fonts.mjs <playwright-1.62.1-root> <new-output-directory> 可执行真实 Edge WebGL2／WebGPU 检查。采集器记录实际提供的输入身份、输出散列、反复替换、传输失败、取消、更新替代及清理。原生单元测试将真实字体的排版／栅格与保留的固定 Provider 对照；这是接入参考，不是独立字体算法参考。
 
-[验证摘要](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/font-verification-summary.json) 将早期原生分配失败、修复和通过结果分别记录。不宣称手机、IME、无障碍、完整文字／字体集合、物理内存或性能通过。M1.2 的 10.3 ms 对 8 ms 目标仍未完成，M2.1 和 M3.2 的其他工作继续保留。
+[验证摘要](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/font-verification-summary.json) 将早期原生分配失败、修复和通过结果分别记录。较早摘要仍属于桌面证据。[2026-11-06 Android 组件报告](android-device-validation.md)单独记录有限手机观测及装备／字体接入修正。完整手机、IME、无障碍、文字／字体集合、物理内存和性能验收保持 OPEN。M1.2 的 10.3 ms 对 8 ms 目标仍未完成，M2.1 和 M3.2 的其他工作继续保留。
 
 来源：既有 Noto／OFL 记录和 CanvasKit 来源声明不变。原生内存所有权依据固定版本 [Skia 绑定](https://github.com/google/skia/blob/e2def78fa232884d4aedcf3ad92d4a0dd673b898/modules/canvaskit/canvaskit_bindings.cpp#L3020)及[字体包装接口](https://github.com/google/skia/blob/e2def78fa232884d4aedcf3ad92d4a0dd673b898/modules/canvaskit/font.js#L145)确认。新增引擎组织、准入和生命周期逻辑为独立实现。
