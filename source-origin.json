@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "da1bbe7f9222bc5f0aa424f0881609f7d2fc1e0ce6ace46fcafdf5cf4f3c77d5",
-      "bytes": 384228,
+      "sha256": "240151020f286b7c379d767aaa2a9d1b4a8d8599296ca9aa52ad60f40cb25289",
+      "bytes": 384516,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -5171,8 +5171,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 265109,
-      "sha256": "851e5ca49fd455f9f7526f1e962eb1fb7c846570ac2c731d18bffc2179d1f2a2",
+      "bytes": 265408,
+      "sha256": "540c901dbfe3d1f08821e53e6aacf038254fa41f33a61856863b07c317b74bf6",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -5478,8 +5478,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 360385,
-      "sha256": "c0c73160bbca23a5d4a0f9f4f3d8dd67df2bcab8fbe6aeb844103d576d979c94",
+      "bytes": 361426,
+      "sha256": "3800838b9524b87446f248065303bb09c0b639d5933018eddad288b6b9759fe9",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -12782,14 +12782,14 @@
     {
       "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 56333,
-      "sha256": "8c0f11353132ccfeb82a58939e9d3237fac91b30f9649bce5ca886fc0ee86b01"
+      "bytes": 57089,
+      "sha256": "8f8c01e0858409d3a8b35828f285a84b4d3e6b78332de1387004db6af043a01e"
     },
     {
       "path": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 47678,
-      "sha256": "212648ac0ec8b7ea5b3b262e5603aae829cb406285674cc98087f4b4c14317ec"
+      "bytes": 48385,
+      "sha256": "c3b31764092d4f3c547d19efc06b9266a5fdb0bc38e6fa92f16e8b143f2ed490"
     },
     {
       "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -12860,14 +12860,14 @@
     {
       "path": "packages/engine/src/pointerInput.ts",
       "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0.",
-      "bytes": 8701,
-      "sha256": "242796406496e45aa8008aec11821576e60926ca68572a862616cb855eaa54b7"
+      "bytes": 10125,
+      "sha256": "220e8ba79cd17fc5c20314a1d04164177e60d247656d8745ebcff7a99297daf6"
     },
     {
       "path": "packages/engine/src/pointerInputTypes.ts",
       "originRole": "First-party multi-contact input implementation, tests, example and documentation, authored with AI assistance; Apache-2.0.",
-      "bytes": 1353,
-      "sha256": "064c482673e8609801041b1f0183b7ef683e97657af08b66d28f617167cce447"
+      "bytes": 1654,
+      "sha256": "745803ff3f07642d35b66e5940e0eade6b2594ccae6a151b1521c08cfe7b13d7"
     },
     {
       "path": "packages/engine/web/BrowserPointerInput.ts",
@@ -13220,8 +13220,8 @@
     {
       "path": "packages/engine/src/ui/index.ts",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 643,
-      "sha256": "281dc0eeb68642580b8e9982431266123c1267d8b40099aed083bc1fdd505034"
+      "bytes": 849,
+      "sha256": "aed43d150dba981dc23e2b455f857cca9b10a4e14050009f6a5040d531c7efaa"
     },
     {
       "path": "packages/engine/src/ui/types.ts",
@@ -15646,6 +15646,24 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 2487,
       "sha256": "c08d77f0c188badd26cd11db6606ee9a1b4fdb71d326c613d2737af9c49a2341"
+    },
+    {
+      "path": "packages/engine/src/ui/controls.ts",
+      "originRole": "Independently authored first-party movement and action control state over the existing M3.3 contact stream; AI-assisted; Apache-2.0. Reuses the pointer router, display ownership and event subscriptions, with no new third-party code, assets, host listener, scheduler or gesture framework.",
+      "bytes": 11289,
+      "sha256": "e2613946bd9ea5f01781352f09e7c8e40f6fff953cd90e67e23a4bdb1c3d9bac"
+    },
+    {
+      "path": "tests/ui-controls.test.mjs",
+      "originRole": "Independently authored first-party control state checks; AI-assisted; Apache-2.0. Uses the existing pointer-input fixture and adds no new test harness.",
+      "bytes": 14223,
+      "sha256": "c3c98de37ec656e6ece4478ad70b11fae1f86d25d7415f597bca3eba19b44466"
+    },
+    {
+      "path": "contributions/m3-controls.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 729,
+      "sha256": "e30caf298f39f54eb0969df159bd8aa37d554b74ed9576c168267b422716093b"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

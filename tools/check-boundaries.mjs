@@ -4153,6 +4153,36 @@ const m31UiLiteralClosure = {
   "packages/runtime/src/ui/types.ts": [],
   "packages/runtime/dist/ui/types.js": [],
   "packages/runtime/dist/ui/types.d.ts": [],
+  "packages/engine/src/ui/controls.ts": [
+    [
+      "static",
+      "../pointerInputTypes.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/ui/controls.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/ui/controls.d.ts": [
+    [
+      "static",
+      "../pointerInputTypes.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
   "packages/engine/src/ui/index.ts": [["static","./types.js"],["static","./uiRoot.js"]],
   "packages/engine/dist/ui/index.js": [["static","./uiRoot.js"]],
   "packages/engine/dist/ui/index.d.ts": [["static","./types.js"],["static","./uiRoot.js"]],
@@ -7986,6 +8016,14 @@ const m34ThemeLiteralClosure = {
   "packages/engine/src/ui/index.ts": [
     [
       "static",
+      "./controls.js"
+    ],
+    [
+      "static",
+      "./controls.js"
+    ],
+    [
+      "static",
       "./theme.js"
     ],
     [
@@ -8004,6 +8042,10 @@ const m34ThemeLiteralClosure = {
   "packages/engine/dist/ui/index.js": [
     [
       "static",
+      "./controls.js"
+    ],
+    [
+      "static",
       "./theme.js"
     ],
     [
@@ -8012,6 +8054,14 @@ const m34ThemeLiteralClosure = {
     ]
   ],
   "packages/engine/dist/ui/index.d.ts": [
+    [
+      "static",
+      "./controls.js"
+    ],
+    [
+      "static",
+      "./controls.js"
+    ],
     [
       "static",
       "./theme.js"
@@ -8742,14 +8792,15 @@ for (const file of ['packages/runtime/src/sharedFrameCapture.ts','packages/runti
 const uiRead=file=>readFileSync(path.join(root,file),'utf8').replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'').trim();
 const uiSame=(a,b)=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
 const uiGraphEdges=code=>[...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>['literal',match[1]]);
-const uiValues=['createUiRoot','createUiTheme'];
+const uiValues=['createUiRoot','createUiTheme','createMovementControl','createActionControl'];
 const uiThemeTypes=['UiTheme','UiThemeDescriptor','UiThemeTypography','UiThemeSkin','UiThemeNode'];
+const uiControlTypes=['MovementValue','MovementControl','MovementControlOptions','ActionControl','ActionControlOptions'];
 const uiTypes=['LayoutNode','UiInvalidationKind','UiLimits','VirtualRecord','VirtualDataSource','RowBindContext','UiLeafPrepareContext','UiLeafContent','RowBinding','RowUnbindInfo','RowRetention','UiRowPointerNotification','UiRootOptions','UiKeyboardOptions','UiPreparation','UiCommitResult','UiRowSnapshot','UiCounters','VirtualListSnapshot','UiSnapshot','VirtualListHandle','VirtualListRevealOptions','UiRoot'];
 const runtimeUiValues=['UiHeightIndex','captureUiLayout','createUiDisplayOperations','planUiLayout'];
 for(const [entry,values]of [['engine',await import('@egret/engine/ui')],['runtime',await import('@egret/runtime/ui')]])
   if(!uiSame(Object.keys(values),entry==='engine'?uiValues:runtimeUiValues))throw new Error('M3.1: exact optional UI values mismatch: '+entry);
 for(const [file,typed]of [['packages/engine/src/ui/index.ts',true],['packages/engine/dist/ui/index.js',false],['packages/engine/dist/ui/index.d.ts',true]]){
-  const expected="export{createUiRoot}from'./uiRoot.js';"+(typed?"exporttype{"+uiTypes.join(',')+"}from'./types.js';":'')+"export{createUiTheme}from'./theme.js';"+(typed?"exporttype{"+uiThemeTypes.join(',')+"}from'./theme.js';":'');
+  const expected="export{createUiRoot}from'./uiRoot.js';"+(typed?"exporttype{"+uiTypes.join(',')+"}from'./types.js';":'')+"export{createUiTheme}from'./theme.js';"+(typed?"exporttype{"+uiThemeTypes.join(',')+"}from'./theme.js';":'')+"export{createMovementControl,createActionControl}from'./controls.js';"+(typed?"exporttype{"+uiControlTypes.join(',')+"}from'./controls.js';":'');
   if(uiRead(file).replace(/\s+/g,'').replaceAll('"',"'")!==expected)throw new Error('M3.1: exact optional UI facade mismatch: '+file);
 }
 for(const [label,values,stem]of textEntries){
