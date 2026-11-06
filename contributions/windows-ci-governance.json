@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "skills/egret-windows-ci/SKILL.md",
+      "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added."
+    },
+    {
+      "path": "skills/egret-windows-ci/SKILL.zh-CN.md",
+      "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added."
+    },
+    {
+      "path": "skills/egret-windows-ci/scripts/summarize-windows-failure.mjs",
+      "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/windows-ci-failure-summary.test.mjs",
+      "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/windows-ci-governance.md",
+      "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/windows-ci-governance.md",
+      "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added."
+    }
+  ],
+  "documents": [
+    {
+      "en": "skills/egret-windows-ci/SKILL.md",
+      "zh": "skills/egret-windows-ci/SKILL.zh-CN.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/windows-ci-governance.md",
+      "zh": "knowledge-base/Cns/docs/windows-ci-governance.md"
+    }
+  ]
+}

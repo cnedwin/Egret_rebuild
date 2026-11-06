@@ -117,3 +117,7 @@ Texture, frame-animation and SpriteSheet changes use the [current historical-dom
 Maintainers can prepare raw baseline differences and conservative catalog candidates with the [check maintenance workflow](check-maintenance.md). Proposals remain review-required and do not replace current source admission or full gates.
 
 The default [responsive preview](mobile-examples.md) includes actor selection, multi-touch regions, narrow/wide panels and DPR adaptation. Fixed qualification entries remain available through explicit links.
+
+## Windows CI failures
+
+Follow the [failure governance protocol](windows-ci-governance.md) for a stopped Windows job. Keep the raw recordings private, identify the actual candidate and stopping point, reuse unchanged successful evidence and record one prevention decision for the existing cause family. The linked Skill provides an offline receipt helper; it does not retry or authorize publication.

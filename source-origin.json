@@ -295,8 +295,8 @@
     {
       "path": "AGENTS.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "9c298148cc8c3221143d620847353539b36ba54d5ac2686e638abcc549f3998c",
-      "bytes": 44026,
+      "sha256": "472698a712c1fefb95053e5e32209062695c5597a8ba8127acea67f4a50c6a58",
+      "bytes": 44691,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
       "previousLayoutPath": "AGENTS.en.md",
       "previousLayoutSha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5",
@@ -325,8 +325,8 @@
     },
     {
       "path": "AGENTS.zh-CN.md",
-      "sha256": "677db438d55590f1cb0bfdc14e2028f5d75453d8af8e02bb59b919f5f33a189b",
-      "bytes": 39476,
+      "sha256": "7899258c3a6555d9151f9ad5567922a2a48190998b508e30a256ed67cc673ad9",
+      "bytes": 40070,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "44f07d275b0baeaff08a998f752e88bc6b223bcb27d7589170656b244e7b5d9b",
+      "sha256": "b0ce6645deef2c03308f24f40c63fe2d96a1d63aea73e23635e67b0e6428db88",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "122f9053c4a73beba3cac2d791c884b7cc0e95b0c8c47b6543310ed529bc282a",
-      "bytes": 383237,
+      "sha256": "da1bbe7f9222bc5f0aa424f0881609f7d2fc1e0ce6ace46fcafdf5cf4f3c77d5",
+      "bytes": 384228,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -10454,8 +10454,8 @@
     {
       "path": "knowledge-base/Cns/docs/getting-started.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 13136,
-      "sha256": "f15e2f6d67aeb51332502a90fce1bedf41d39d6fbb1e08b564ecbc8dd3064757"
+      "bytes": 13461,
+      "sha256": "71eef9702b999bd9b2d4020afe0bb19e02cee321e80e5092c80db536a1b62080"
     },
     {
       "path": "knowledge-base/Cns/docs/m0-community-foundations.md",
@@ -10466,8 +10466,8 @@
     {
       "path": "knowledge-base/en/docs/getting-started.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 15136,
-      "sha256": "a5972d8dc27377b93e97a0df74654a06e0b4de09f23d6362e22c150cbaa51ccc"
+      "bytes": 15537,
+      "sha256": "dbfa25a752f5e9e42d70bbcb1066e302869ad3d3d3875812c802426666f5774b"
     },
     {
       "path": "knowledge-base/en/docs/m0-community-foundations.md",
@@ -15604,6 +15604,48 @@
       "originRole": "First-party responsive example composition, bounded verification and documentation, independently authored with AI assistance using existing Egret public SDKs; Apache-2.0. Existing third-party assets retain their recorded licenses.",
       "bytes": 27522,
       "sha256": "f488c86ec2af0a8890b62dd905765b9b661039662f8fd6d7919cea593be9174b"
+    },
+    {
+      "path": "skills/egret-windows-ci/SKILL.md",
+      "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
+      "bytes": 4066,
+      "sha256": "8636de194743fc472adfdca1aca461bec1abc3b8d017e1e2093f9e60e821e005"
+    },
+    {
+      "path": "skills/egret-windows-ci/SKILL.zh-CN.md",
+      "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
+      "bytes": 3600,
+      "sha256": "15c78f57eb37eb1304106ec0bb9245a41e22b21d6fb51a055fc66067c2f2ce62"
+    },
+    {
+      "path": "skills/egret-windows-ci/scripts/summarize-windows-failure.mjs",
+      "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
+      "bytes": 5538,
+      "sha256": "8db5fa5c4c585fabbb17e143fc24c1af04de8672fa2c4b2777c003f9a4a623ab"
+    },
+    {
+      "path": "tests/windows-ci-failure-summary.test.mjs",
+      "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
+      "bytes": 4513,
+      "sha256": "d0efebee7997bbe3767fdcd30d6ebe4db2f7bf6f8c2683cea330e0addff55d3c"
+    },
+    {
+      "path": "knowledge-base/en/docs/windows-ci-governance.md",
+      "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
+      "bytes": 4733,
+      "sha256": "1a4393c56324e400703bf2f246d882f8b865339cd7a5d05a572771a3726c63d0"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/windows-ci-governance.md",
+      "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
+      "bytes": 4072,
+      "sha256": "af230db45a7b80205bd2f33ef81da1ca76961f3c30e3a95079ee97db9f72bf3c"
+    },
+    {
+      "path": "contributions/windows-ci-governance.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 2487,
+      "sha256": "c08d77f0c188badd26cd11db6606ee9a1b4fdb71d326c613d2737af9c49a2341"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
