@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Android memory accounting and lifecycle — 2026-11-07
+
+Precise target diagnostics distinguish cached performance.memory readings from live JS and backing storage. Existing paragraph, sequence and Spine examples add finite Android lifecycle/recovery evidence on both backends; the old41.4ms trigger remains unreproduced. No engine repair or full M4/M1.2 acceptance is claimed. See [the follow-up](docs/android-device-validation.md#cadence-memory-and-lifecycle-follow-up--2026-11-07).
+
 ## Equipment font selection on Android — 2026-11-06
 
 The paragraph example now builds equipment style ranges from its captured font group, preserving default fixtures while allowing the alternate registered CJK alias. A real-device failure, short reproduction and selected-backend checks are recorded separately; core admission and budgets stay unchanged. See [Android component validation](docs/android-device-validation.md). Full M4 and M1.2 acceptance remain OPEN.

@@ -622,8 +622,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 24437,
-      "sha256": "342df7b34463f2a97914f82e3b5c9f41a25eb24936a42076ded8f328007bad27",
+      "bytes": 24878,
+      "sha256": "a3a7fe6545b13f5d5a8b21bd43ce17ec567ba3c2489a316eb779ab737f9f55ea",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "070bd927c9f47a6b496f7e5945c3330ebdceed2ae7aecaa67b547b4b10e94b55",
+      "sha256": "f5bb14b2ed2183fb8a2f06966242b321df4fcbaad375b8e00e9c9f3e9fbb109c",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2153,8 +2153,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 27721,
-      "sha256": "e287ffd8ddff56cf4a740e042921d28d5070921bcff064462f98fa7ce90774ee",
+      "bytes": 28209,
+      "sha256": "bef5efcd5f8fa7610eaef5b5190f253cd9cae0377bb3645ca21028cf49497fb0",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "9077b1d082809fab1cfa7305a5ac395885980aa97f90719c7ee623ad26b2c689",
+      "sha256": "88b5dfa3e0bacf081a19bc81373e0b662ac3192585acfd5a2e3196a58d077fc5",
       "bytes": 385021,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -15674,14 +15674,14 @@
     {
       "path": "knowledge-base/en/docs/android-device-validation.md",
       "originRole": "First-party scoped Android component observations and limitations, independently reviewed; AI-assisted; Apache-2.0.",
-      "bytes": 9849,
-      "sha256": "bd0424475a174b2412b25259fe82c3d19f7af96e07d37076603db37cc2a26729"
+      "bytes": 16911,
+      "sha256": "0fb099fe698e520d666bf18802fba12d5868337afc8376e3a5920341a32ce673"
     },
     {
       "path": "knowledge-base/Cns/docs/android-device-validation.md",
       "originRole": "First-party Chinese reading of the scoped Android component observations and limitations; AI-assisted; Apache-2.0.",
-      "bytes": 8613,
-      "sha256": "ba034f5eebb11a36c2ef3235d747f57f05fff8f283ddc339c3975782bb3c5832"
+      "bytes": 14799,
+      "sha256": "aadc0a00cf1046c2175b91a479466f74d7f43254be4fddf17a64b336da350faa"
     },
     {
       "path": "verification/android-device/2026-11-06.json",
@@ -15694,6 +15694,18 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 1105,
       "sha256": "2b3b2740ba216c6db12c41400e79eb33c832a92a3d7fb74edeb58cb7c22e3e6d"
+    },
+    {
+      "path": "verification/android-device/2026-11-07.json",
+      "originRole": "First-party sanitized Android cadence/heap/lifecycle observation projection with retained failures and explicit limits; AI-assisted; Apache-2.0.",
+      "bytes": 50339,
+      "sha256": "8092fcfd645f91841ba944c0d31aa1c3bb0d53b19a2a974323da1f0117b6855a"
+    },
+    {
+      "path": "contributions/android-lifecycle-diagnostics.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 302,
+      "sha256": "6451201655dfb915c34da3904dc2cdac7c9851cc252b95b8f3707c43569fca4a"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

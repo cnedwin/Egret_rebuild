@@ -400,8 +400,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "e287ffd8ddff56cf4a740e042921d28d5070921bcff064462f98fa7ce90774ee",
-      "zhSha256": "342df7b34463f2a97914f82e3b5c9f41a25eb24936a42076ded8f328007bad27"
+      "enSha256": "bef5efcd5f8fa7610eaef5b5190f253cd9cae0377bb3645ca21028cf49497fb0",
+      "zhSha256": "a3a7fe6545b13f5d5a8b21bd43ce17ec567ba3c2489a316eb779ab737f9f55ea"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -2278,8 +2278,8 @@
       "en": "knowledge-base/en/docs/android-device-validation.md",
       "zh": "knowledge-base/Cns/docs/android-device-validation.md",
       "kind": "public_reading",
-      "enSha256": "bd0424475a174b2412b25259fe82c3d19f7af96e07d37076603db37cc2a26729",
-      "zhSha256": "ba034f5eebb11a36c2ef3235d747f57f05fff8f283ddc339c3975782bb3c5832"
+      "enSha256": "0fb099fe698e520d666bf18802fba12d5868337afc8376e3a5920341a32ce673",
+      "zhSha256": "aadc0a00cf1046c2175b91a479466f74d7f43254be4fddf17a64b336da350faa"
     }
   ],
   "registries": [
