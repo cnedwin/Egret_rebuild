@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "9718309fa9347a7cf8506387bcac50532330adb5f8152ae126eab02fbe27a1cb",
+      "sha256": "5b1e436de1628c1d79bde0d7bd34c1dfbf59a0d4fa28d5d2364dd006bcd9e34d",
       "bytes": 384228,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -15638,8 +15638,8 @@
     {
       "path": "knowledge-base/Cns/docs/windows-ci-governance.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 3794,
-      "sha256": "6e88923332e54aacdeacccf914c12f9778d0a0d7abe00659ede16d1c8ef0db2b"
+      "bytes": 3791,
+      "sha256": "e34d12945d26656f80aacc4956a374b683a5f5a1f6c65f6b9cc8cdfe894ffed9"
     },
     {
       "path": "contributions/windows-ci-governance.json",
