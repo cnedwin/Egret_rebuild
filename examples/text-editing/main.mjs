@@ -15,6 +15,7 @@ import {createSharedWebGL2Host} from '@egret/engine/webgl2';
 const canvas=document.querySelector('#scene'),status=document.querySelector('#status'),query=new URL(location.href).searchParams;
 const backend=query.get('backend')??'webgl2',configPath=query.get('fontConfig'),preset=query.get('preset')??'preview';
 if(!['preview','verification'].includes(preset))throw Error('EXAMPLE_OPTIONS');
+const layered=query.get('layers')==='1';
 const verification=preset==='verification',scene=canvas.parentElement;document.documentElement.dataset.preset=preset;
 const pixelRatio=verification?1:Math.min(3,Math.max(1,globalThis.devicePixelRatio||1));
 const sceneWidth=()=>verification?800:Math.max(240,Math.min(800,scene.clientWidth));
@@ -23,19 +24,19 @@ for(const link of document.querySelectorAll('[data-backend]')){const url=new URL
 const errors=[],changes=[],fields=new Map(),bindings=new Map(),ownedSets=new Set(),fontScopes=new Set(),setOwners=new WeakMap();
 let host,engine,scope,viewScope,cache,root,input,keyboard,transport,paragraphs,fontProvider,fonts,config,alternate=false;
 let state='loading',width=680,density=verification?1:pixelRatio,revision=0,queue=Promise.resolve(),queued=false,closed=false,closePromise,lastPixels,pendingFonts,nextNativeEnd;
-let resizeObserver,resizeQueued=false,rebuilding=false,viewRebuilds=0,narrow=false;
+let resizeObserver,resizeQueued=false,rebuilding=false,viewRebuilds=0,narrow=false,layerExample;
 const origin=verification?{x:36,y:36}:{x:16,y:16};
 const frameOptions={width:sceneWidth(),height:480,clearColor:0x142033,clearAlpha:1,outputAlpha:'opaque'};
 width=verification?680:frameOptions.width-origin.x*2;
 const availableWidth=()=>frameOptions.width-origin.x*2;
 const errorInfo=cause=>({name:cause?.name??'Error',code:cause?.code??'EXAMPLE_FAILURE'});
 const target=key=>({kind:'row',listId:'fields',key});
-function inspect(){return {state,backend,preset,width,density,revision,viewRebuilds,logicalSize:{width:frameOptions.width,height:frameOptions.height},pixelRatio,backingSize:{width:canvas.width,height:canvas.height},errors:[...errors],changes:[...changes],ui:root?.snapshot(),fontStatus:fontProvider?.getStatus(),paragraphStatus:cache?.getStatus(),fields:Object.fromEntries([...fields].map(([key,value])=>[key,value.snapshot()])),bindings:Object.fromEntries([...bindings].map(([key,value])=>[key,value.snapshot()]))};}
+function inspect(){return {state,backend,preset,width,density,revision,viewRebuilds,logicalSize:{width:frameOptions.width,height:frameOptions.height},pixelRatio,backingSize:{width:canvas.width,height:canvas.height},errors:[...errors],changes:[...changes],ui:root?.snapshot(),keyboard:keyboard?.getSnapshot(),layers:layerExample?.inspect(),fontStatus:fontProvider?.getStatus(),paragraphStatus:cache?.getStatus(),fields:Object.fromEntries([...fields].map(([key,value])=>[key,value.snapshot()])),bindings:Object.fromEntries([...bindings].map(([key,value])=>[key,value.snapshot()]))};}
 function describe(){status.textContent=JSON.stringify(inspect(),null,2);}
 function enqueue(action){const next=queue.then(action);queue=next.catch(cause=>{errors.push(errorInfo(cause));describe();});return next;}
 function changed(change){changes.push({kind:change.kind,source:change.source,revision:change.revision,contentRevision:change.contentRevision});if(changes.length>128)changes.shift();if(change.source==='native'&&nextNativeEnd){const terminal=nextNativeEnd;nextNativeEnd=undefined;if(terminal==='blur')document.querySelector('[data-egret-text-editor]')?.blur();else for(const item of bindings.values())item[terminal]();}if(!queued&&!closed){queued=true;void enqueue(async()=>{queued=false;revision++;root.list('fields').setSource(source());await publish();}).catch(()=>{});}}
 function source(){return {revision,records:Array.from({length:10},(_,index)=>{const key=index===0?'name':index===1?'description':'note-'+index,field=fields.get(key);return {key,contentVersion:field?.content.revision??1,estimatedHeight:key==='description'?120:48,value:key};}),async bind(context){const field=fields.get(context.key);if(field)return field.prepare(context);const content=context.scope.use(new Sprite());content.graphics.beginFill(0x243950).drawRect(0,0,context.width,40).endFill();return {content,measuredHeight:48};},unbind(){}};}
-async function publish(){for(let i=0;i<40;i++){const preparation=await root.prepare();if(preparation.status==='pending'){await new Promise(resolve=>setTimeout(resolve,0));continue;}const result=root.commit(preparation);if(!['committed','unchanged'].includes(result.kind))throw Error('EXAMPLE_COMMIT');for(const binding of bindings.values())binding.sync();await draw();return;}throw Error('EXAMPLE_UI_PENDING');}
+async function publish(){for(let i=0;i<40;i++){const preparation=await root.prepare();if(preparation.status==='pending'){await new Promise(resolve=>setTimeout(resolve,0));continue;}const result=root.commit(preparation);if(!['committed','unchanged'].includes(result.kind))throw Error('EXAMPLE_COMMIT');if(layerExample)await layerExample.prepare();for(const binding of bindings.values())binding.sync();await draw();return;}throw Error('EXAMPLE_UI_PENDING');}
 async function draw(){if(closed)return;const pending=host.requestReadback();void pending.catch(()=>{});host.renderSharedFrame(engine.captureSharedFrame(frameOptions));const result=await pending;await host.whenIdle();lastPixels={width:result.width,height:result.height,bytes:new Uint8Array(result.bytes)};describe();}
 async function openFonts(){
  const url=new URL('/'+configPath,location.origin),response=await fetch(url);if(!response.ok)throw Error('EXAMPLE_FONT_CONFIG_HTTP');config=await response.json();
@@ -52,9 +53,10 @@ async function openFonts(){
 }
 async function loadFonts(roots){const owner=engine.createScope();fontScopes.add(owner);pendingFonts=owner;try{const set=await fontProvider.load(owner,transport.loader,roots);ownedSets.add(set);setOwners.set(set,owner);return set;}catch(cause){owner.dispose();fontScopes.delete(owner);throw cause;}finally{if(pendingFonts===owner)pendingFonts=undefined;}}
 async function retireFonts(set){set.dispose();await set.closed;ownedSets.delete(set);const owner=setOwners.get(set);owner?.dispose();fontScopes.delete(owner);}
-async function replaceFonts(roots){if(pendingFonts)throw Error('EXAMPLE_FONTS_BUSY');if([...fields.values()].some(field=>field.snapshot().state==='composing'))throw Error('EXAMPLE_COMPOSING');const candidate=await loadFonts(roots),previous=fonts;try{for(const binding of bindings.values())binding.setFontSet(candidate);fonts=candidate;await queue;await publish();await retireFonts(previous);return inspect();}catch(cause){await retireFonts(candidate);throw cause;}}
+async function replaceFonts(roots){if(pendingFonts)throw Error('EXAMPLE_FONTS_BUSY');if([...fields.values()].some(field=>field.snapshot().state==='composing'))throw Error('EXAMPLE_COMPOSING');const candidate=await loadFonts(roots),previous=fonts;try{for(const binding of bindings.values())binding.setFontSet(candidate);layerExample?.replaceFonts(candidate);fonts=candidate;await queue;await publish();await retireFonts(previous);return inspect();}catch(cause){await retireFonts(candidate);throw cause;}}
 function active(key){const binding=bindings.get(key);if(!binding)throw Error('EXAMPLE_FIELD');for(const [other,item]of bindings)if(other!==key)item.finish();root.list('fields').focus(key);binding.activate();describe();}
 async function action(kind){await ready;if(closed)throw Error('EXAMPLE_CLOSED');
+ if(layerExample&&['details','rename','save','dismiss','list','edit-rename','layer-cancel'].includes(kind)){await enqueue(async()=>{if(kind==='edit-rename')layerExample.activate();else{layerExample.action(kind==='layer-cancel'?'cancel':kind);await publish();}});return inspect();}
  if(fields.has(kind)){active(kind);return inspect();}
  if(kind==='finish'||kind==='cancel'){for(const binding of bindings.values())binding[kind]();await queue;return inspect();}
  if(kind==='replace')fields.get('description').setValue('Programmatic replacement — 中文与 العربية\nThe same UI and resource owners remain in use.');
@@ -67,7 +69,7 @@ async function action(kind){await ready;if(closed)throw Error('EXAMPLE_CLOSED');
  await enqueue(publish);return inspect();
 }
 function tree(){return {kind:'virtualList',id:'fields',explicitWidth:width,explicitHeight:360,source:source()};}
-async function close(){if(closePromise)return closePromise;closed=true;resizeObserver?.disconnect();window.removeEventListener('resize',resized);closePromise=(async()=>{const failures=[];const attempt=async operation=>{try{await operation();}catch(cause){failures.push(errorInfo(cause));}};await attempt(()=>root?.dispose());for(const binding of bindings.values())await attempt(()=>binding.dispose());await attempt(()=>queue);await attempt(()=>viewScope?.dispose());await attempt(()=>scope?.dispose());await attempt(()=>cache?.dispose());await attempt(()=>fontProvider?.close());await attempt(()=>paragraphs?.close());await attempt(()=>transport?.close());for(const owner of fontScopes)await attempt(()=>owner.dispose());fontScopes.clear();await attempt(()=>host?.whenIdle());await attempt(()=>engine?.dispose());errors.push(...failures);state='closed';describe();return inspect();})();return closePromise;}
+async function close(){if(closePromise)return closePromise;closed=true;resizeObserver?.disconnect();window.removeEventListener('resize',resized);closePromise=(async()=>{const failures=[];const attempt=async operation=>{try{await operation();}catch(cause){failures.push(errorInfo(cause));}};await attempt(()=>layerExample?.dispose());layerExample=undefined;await attempt(()=>root?.dispose());for(const binding of bindings.values())await attempt(()=>binding.dispose());await attempt(()=>queue);await attempt(()=>viewScope?.dispose());await attempt(()=>scope?.dispose());await attempt(()=>cache?.dispose());await attempt(()=>fontProvider?.close());await attempt(()=>paragraphs?.close());await attempt(()=>transport?.close());for(const owner of fontScopes)await attempt(()=>owner.dispose());fontScopes.clear();await attempt(()=>host?.whenIdle());await attempt(()=>engine?.dispose());errors.push(...failures);state='closed';describe();return inspect();})();return closePromise;}
 // The pointer viewport is immutable. Rebuild only the existing view adapters on a true width change.
 // Field models, Engine, paragraph cache and font/resource owners outlive this presentation.
 async function createView(previous){
@@ -90,6 +92,7 @@ async function createView(previous){
   if(row){list.setScrollOffset(snapshot.scrollOffset+row.box.y+Math.min(previous.anchor.offset,row.box.height));await publish();if(closed)return;}
  }
  for(const [key,editor]of fields)bindings.set(key,createBrowserTextEditor({editor,root,target:target(key),canvas,fonts,logicalWidth:frameOptions.width,logicalHeight:frameOptions.height,label:key==='name'?'Profile name':'Profile description',keyboard,onInvalidate(){if(!closed)void enqueue(draw).catch(()=>{});},onError:cause=>{errors.push(errorInfo(cause));describe();}}));
+ if(layered){const {createFormLayers}=await import('./layers.mjs');layerExample=await createFormLayers({engine,scope:viewScope,base:root,input,keyboard,canvas,cache,fonts,viewport:{x:0,y:0,width:frameOptions.width,height:frameOptions.height},density,getName:()=>fields.get('name').snapshot().value,setName:value=>fields.get('name').setValue(value),request(){if(!queued&&!closed&&!rebuilding){queued=true;void enqueue(async()=>{queued=false;await publish();}).catch(()=>{});}},onError:cause=>{errors.push(errorInfo(cause));describe();},previous:previous?.layers});await publish();}
  viewRebuilds++;describe();
 }
 function resized(){
@@ -99,8 +102,8 @@ function resized(){
   rebuilding=true;
   try{
    for(const binding of bindings.values())binding.finish();
-   const previous={scrollOffset:root.list('fields').snapshot().scrollOffset,anchor:root.list('fields').snapshot().anchor,focus:root.list('fields').getFocus()};
-   for(const binding of bindings.values())binding.dispose();bindings.clear();root.dispose();viewScope.dispose();
+   const previous={scrollOffset:root.list('fields').snapshot().scrollOffset,anchor:root.list('fields').snapshot().anchor,focus:root.list('fields').getFocus(),layers:layerExample?.saveView()};
+   layerExample?.dispose();layerExample=undefined;for(const binding of bindings.values())binding.dispose();bindings.clear();root.dispose();viewScope.dispose();
    frameOptions.width=sceneWidth();width=narrow?Math.max(80,Math.round(availableWidth()*.75)):availableWidth();revision++;
    await createView(previous);
   }finally{rebuilding=false;}
@@ -116,6 +119,7 @@ export const ready=(async()=>{
  keyboard=createBrowserKeyboardInput({engine,scope,onFocusChange(change){if(state==='ready'&&!rebuilding&&change.reason==='keyboard'&&change.previousId!==change.focusedId){const key=root.list('fields').getFocus().key;if(bindings.has(key))void enqueue(()=>active(key)).catch(()=>{});}}});
  await createView();
  if(!verification){resizeObserver=new ResizeObserver(resized);resizeObserver.observe(scene);window.addEventListener('resize',resized);}
+ for(const button of document.querySelectorAll('[data-layer-control]'))button.hidden=!layered;
  state='ready';describe();return inspect();
 })().catch(cause=>{state='failed';errors.push(errorInfo(cause));describe();throw cause;});void ready.catch(()=>{});
 for(const button of document.querySelectorAll('[data-action]'))button.addEventListener('click',()=>{void action(button.dataset.action).catch(cause=>{errors.push(errorInfo(cause));describe();});});

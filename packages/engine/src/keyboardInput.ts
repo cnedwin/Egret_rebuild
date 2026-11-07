@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import {EgretError,Event,createEventType} from '@egret/runtime';
-import type {DisplayObject,EventType} from '@egret/runtime';
+import type {DisplayObject,DisplayObjectContainer,EventType} from '@egret/runtime';
 import type {MouseInputEnginePort} from './mouseInput.js';
 import {captureMouseInputRuntimePrimitives,requireMouseInputEngine} from './internal/mouseInputFactoryState.js';
 import {captureUiInputDelivery,registerUiKeyboardInput} from './internal/uiFactoryState.js';
@@ -47,14 +47,15 @@ export function createKeyboardInput(options:KeyboardInputOptions):KeyboardInput 
  let state:'active'|'suspended'|'closed'='active',focused:Focus|undefined,focusVisible=false,notifying=0,revision=0,calls=0,callbackFailed=false;
  let releaseEngine:(()=>void)|undefined,input:KeyboardInput,keyBusy=false;
  const report=owner.report;
+ let focusOwner:object|undefined,focusRoots:readonly DisplayObjectContainer[]|undefined;
  function assertOpen():void {if(state==='closed')fail('KEYBOARD_INPUT_CLOSED');owner!.assertReady();scope!.assertOpen();}
  function assertMutation():void {assertOpen();if(notifying!==0)fail('KEYBOARD_INPUT_REENTRANT');}
  function eligible(value:RecordValue):boolean {
   if(value.disabled||operations===undefined)return false;
   if(primitives.disposed(value.target)===true||!operations.isAttached(value.target,maxNodes))return false;
-  let node:DisplayObject|undefined=value.target,count=0;
-  while(node!==undefined){if(++count>maxNodes)fail('HIT_TEST_TREE_LIMIT');if(primitives.visible(node)!==true)return false;node=primitives.parent(node);}
-  return true;
+  let node:DisplayObject|undefined=value.target,count=0,contained=focusRoots===undefined;
+  while(node!==undefined){if(++count>maxNodes)fail('HIT_TEST_TREE_LIMIT');if(primitives.visible(node)!==true)return false;if(focusRoots?.includes(node as DisplayObjectContainer))contained=true;node=primitives.parent(node);}
+  return contained;
  }
  function callout<T>(action:()=>T):T {try{return deliver(action);}catch(cause){callbackFailed=true;throw cause;}}
  function route<T>(target:DisplayObject,type:EventType<T>,payload:T,active?:Set<Event<T>>):boolean {
@@ -95,7 +96,7 @@ export function createKeyboardInput(options:KeyboardInputOptions):KeyboardInput 
   if(state==='closed')return;
   state='closed';for(const event of activeFocus)event.stopImmediatePropagation();
   let failure:unknown,failed=false;const attempt=(action:()=>void)=>{try{action();}catch(cause){if(!failed){failed=true;failure=cause;}}};
-  attempt(()=>transition(undefined,false,reason,reason));attempt(()=>drain(reason));records.clear();bindings.delete(input);
+  attempt(()=>transition(undefined,false,reason,reason));attempt(()=>drain(reason));records.clear();focusRoots=undefined;focusOwner=undefined;bindings.delete(input);
   attempt(()=>releaseEngine?.());releaseEngine=undefined;attempt(()=>scope?.remove(retire));
   const callbacks=[...closers];closers.clear();for(const callback of callbacks)attempt(callback);
   interactive.clear();if(calls===0)release();
@@ -153,7 +154,9 @@ export function createKeyboardInput(options:KeyboardInputOptions):KeyboardInput 
    const values=[...records.values()].filter(v=>v.tabIndex>=0&&eligible(v)).sort((a,b)=>{if(a.tabIndex===0)return b.tabIndex===0?0:1;if(b.tabIndex===0)return -1;return a.tabIndex-b.tabIndex;});
    const current=values.findIndex(v=>v===focused?.record),delta=direction==='next'?1:-1;
    let index=current===-1?(delta===1?0:values.length-1):current+delta;
-   if(wrap&&values.length>0)index=(index+values.length)%values.length;
+   if((wrap||focusRoots!==undefined)&&values.length>0)index=(index+values.length)%values.length;
+   // A scope with no tabbable children retains its Escape sentinel.
+   if(focusRoots!==undefined&&values.length===0)return focused?.record.id;
    const next=values[index];focus(next?.id,{reason:'keyboard'});return focused?.record.id;
   }),
   keyDown:(raw:KeyboardSample)=>invoke(()=>key('keyDown',raw)),keyUp:(raw:KeyboardSample)=>invoke(()=>key('keyUp',raw)),
@@ -162,6 +165,13 @@ export function createKeyboardInput(options:KeyboardInputOptions):KeyboardInput 
   getSnapshot:()=>Object.freeze({state,focusedId:focused?.record.id,focusVisible,pressedKeys:Object.freeze([...held.keys()]),targetCount:records.size}),
   dispose:()=>invoke(()=>close('dispose')),
  });
- try{releaseEngine=owner.onClose(retire);scope.add(retire);scope.use(input);bindings.set(input,Object.freeze({surface:owner.surface,onInteractive:(callback:(active:boolean)=>void)=>{interactive.add(callback);return()=>{interactive.delete(callback);};},report:(cause:unknown)=>report({code:'KEYBOARD_INPUT_HOST_FAILED',phase:'engine',severity:'error',cause}),onClose:(callback:()=>void)=>{if(state==='closed'){callback();return()=>{};}closers.add(callback);return()=>{closers.delete(callback);};}}));owner.assertReady();scope.assertOpen();registerUiKeyboardInput(input,engine);return input;}
+ try{releaseEngine=owner.onClose(retire);scope.add(retire);scope.use(input);bindings.set(input,Object.freeze({surface:owner.surface,onInteractive:(callback:(active:boolean)=>void)=>{interactive.add(callback);return()=>{interactive.delete(callback);};},report:(cause:unknown)=>report({code:'KEYBOARD_INPUT_HOST_FAILED',phase:'engine',severity:'error',cause}),onClose:(callback:()=>void)=>{if(state==='closed'){callback();return()=>{};}closers.add(callback);return()=>{closers.delete(callback);};}}));owner.assertReady();scope.assertOpen();registerUiKeyboardInput(input,engine,(claimant:object)=>{
+   assertMutation();if(focusOwner!==undefined&&focusOwner!==claimant)fail('KEYBOARD_FOCUS_SCOPE_ACTIVE');focusOwner=claimant;let released=false;
+   return Object.freeze({setRoots:(roots:readonly DisplayObjectContainer[]|undefined):void=>invoke(()=>{
+    assertMutation();if(released||focusOwner!==claimant)fail('KEYBOARD_FOCUS_SCOPE_CLOSED');
+    if(roots!==undefined){if(!Array.isArray(roots)||roots.length<1||roots.length>32)fail('KEYBOARD_FOCUS_SCOPE_INVALID');for(const root of roots)validateTarget(root);}
+    focusRoots=roots===undefined?undefined:Object.freeze([...roots]);sync();
+   }),release:():void=>{if(released)return;released=true;if(focusOwner!==claimant)return;focusRoots=undefined;focusOwner=undefined;}});
+  });return input;}
  catch(cause){try{close('error');}catch{/* Preserve setup failure. */}throw cause;}
 }

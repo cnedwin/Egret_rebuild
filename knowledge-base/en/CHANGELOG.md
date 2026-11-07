@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## UI popup/modal composition — 2026-11-07
+
+Add optional root-owned popup/modal composition, staged publication, clipped anchors, pointer barriers and contained/restored keyboard/native-editor eligibility. Integrate the existing form with draft rename and shared font/lifecycle owners. Desktop evidence and the unavailable locked-phone attempt are distinguished. Complete M3.4, semantics, touch contribution and M1.2 remain open. [Contract](docs/ui-layers.md).
+
 ## Android native editing and responsive form — 2026-11-07
 
 Repair terminal composition callbacks after cancellation without weakening active-session reentry. The existing form gains responsive width/startup DPR and separately scoped view retirement, retaining the fixed fixture. Actual Samsung keyboard observations, final-source lifecycle on both backends and desktop checks are documented with predecessor/failure boundaries. [Evidence and remaining qualification](docs/android-native-text-editing.md).

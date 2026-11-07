@@ -628,7 +628,11 @@ assert.equal(m24ResetModuleSuccessor.size,1);
 assert.deepEqual([...m24ResetModuleSuccessor.keys()],['packages/engine/dist/internal/contentFactoryState.js']);
 assert.deepEqual(m22SequenceModuleAdditions.get('packages/engine/dist/internal/contentFactoryState.js'),{bytes:574,sha256:'4c38c5b38105459e829be1398ff29d157b9ff8e942857b9194cef0830cc25fb1'});
 const m3FontModuleIdentities = new Map([...m34ModuleIdentities,...m3FontModuleSuccessors,...m3FontModuleAdditions]);
-const currentModuleIdentities = new Map([...m3FontModuleIdentities,...m24ResetModuleSuccessor]);
+// Layer ownership changes exactly one already-reachable authority; no native collector membership/budget change.
+const uiLayerAuthorityModuleSuccessors = new Map([["packages/engine/dist/internal/uiFactoryState.js",{"bytes":5463,"sha256":"e8ee30245ab4ad8693cc82a4f6ded832675038f759291ea54efba2232db1f992"}]]);
+assert.deepEqual([...uiLayerAuthorityModuleSuccessors.keys()],["packages/engine/dist/internal/uiFactoryState.js"]);
+assert.deepEqual(m3FontModuleIdentities.get("packages/engine/dist/internal/uiFactoryState.js"),{"bytes":5115,"sha256":"79777e8e276c941ab203344738eb781686fcbc7694e4c4fcaf67bd32e46c3ba9"});
+const currentModuleIdentities = new Map([...m3FontModuleIdentities,...m24ResetModuleSuccessor,...uiLayerAuthorityModuleSuccessors]);
 assert.equal(currentModuleIdentities.size,m3FontSourceModuleLimit,'Font resources current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {

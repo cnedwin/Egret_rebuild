@@ -74,7 +74,7 @@ export function createBrowserTextEditor(options: BrowserTextEditorOptions): Brow
     let port!: TextEditorHostPort, root: ReturnType<TextEditorHostPort['root']>, fonts = options.fonts;
     let token: ReturnType<TextEditorHostPort['begin']> | undefined, nativeRevision = 0;
     let node: HTMLInputElement | HTMLTextAreaElement | undefined, overlay: HTMLDivElement | undefined, lease: EditorFontLease | undefined;
-    let removeRoot = () => {}, observer: ResizeObserver | undefined, mutation: MutationObserver | undefined;
+    let removeRoot = () => {}, removeLayer = () => {}, observer: ResizeObserver | undefined, mutation: MutationObserver | undefined;
     let retained: { release(): void } | undefined;
     let keyboardId: string | undefined;
     let width = scalar(options.logicalWidth, 0.25, 16384), height = scalar(options.logicalHeight, 0.25, 16384);
@@ -187,6 +187,7 @@ export function createBrowserTextEditor(options: BrowserTextEditorOptions): Brow
         finally {
             retireNative(); detach(permanent);
             try { observer?.disconnect(); } catch (cause) { report(cause); }
+            try { removeLayer(); } catch (cause) { report(cause); }
             try { removeRoot(); } catch (cause) { report(cause); }
             port?.release();
         }
@@ -199,7 +200,7 @@ export function createBrowserTextEditor(options: BrowserTextEditorOptions): Brow
         if (state.state === 'closed' || root.state() !== 'open') { dispose(); return; }
         if (token && state.session !== token) { token = undefined; settling = true; node.readOnly = true; apply(nativeBlur, node, []); }
         const presentation = port.presentation(root, target);
-        if (!presentation || !interactive || !presentation.rowVisible || !presentation.clip.width || !presentation.clip.height) { end('cancel', true); retireNative(); return; }
+        if (!presentation || !interactive || !root.editorInteractive() || !presentation.rowVisible || !presentation.clip.width || !presentation.clip.height) { end('cancel', true); retireNative(); return; }
         if (settling && presentation.contentRevision === port.contentRevision() && presentation.source === state.value) { retireNative(); return; }
         const style = port.style();
         if (!lease || lease.isDisposed || style.fontSet !== lease.key) throw fault('FONT_GENERATION');
@@ -288,6 +289,11 @@ export function createBrowserTextEditor(options: BrowserTextEditorOptions): Brow
         };
         authentic();
         removeRoot = root.onClose(dispose);
+        removeLayer = root.onInteractionChange((active, policy) => {
+            if (active) return; // Resumption never fabricates native focus or an edit session.
+            if (busy) { requestEnd(policy); pending = true; }
+            else perform(() => end(policy, true));
+        });
         listen(permanent, window, 'resize', () => {}); listen(permanent, window, 'scroll', () => {}, true);
         if (window.visualViewport) { listen(permanent, window.visualViewport, 'resize', () => {}); listen(permanent, window.visualViewport, 'scroll', () => {}); }
         listen(permanent, window, 'pagehide', () => end('cancel'));
@@ -295,7 +301,7 @@ export function createBrowserTextEditor(options: BrowserTextEditorOptions): Brow
         listen(permanent, document, 'visibilitychange', () => { if (apply(visibility, document, []) !== 'visible') end('cancel'); });
         if (typeof globalThis.ResizeObserver === 'function') { observer = new ResizeObserver(() => perform(() => {})); observer.observe(canvas); }
         function activate(point?: Readonly<{ x: number; y: number }>): void {
-            if (closed || !interactive) throw fault('INACTIVE');
+            if (closed || !interactive || !root.editorInteractive()) throw fault('INACTIVE');
             if (busy) throw fault('BUSY');
             if (token) { synchronize(); return; }
             if (settling) throw fault('PRESENTATION_PENDING');
@@ -340,6 +346,7 @@ export function createBrowserTextEditor(options: BrowserTextEditorOptions): Brow
                     if (key.key === 'Escape' || key.key === 'Enter' && port.mode === 'single-line' || tab) {
                         apply(prevent, event, []); end(key.key === 'Escape' ? 'cancel' : 'commit');
                         apply(nativeFocus, canvas, [{ preventScroll: true }]);
+                        if (key.key === 'Escape') root.requestDismiss();
                         if (tab) {
                             // The existing canvas keyboard bridge cancels focus on native blur.
                             // Restore only the genuine logical target captured at activation.
@@ -389,7 +396,7 @@ export function createBrowserTextEditor(options: BrowserTextEditorOptions): Brow
                 finally { previous?.release(); busy = false; drain(); }
             },
             setInteractive(value: boolean) { if (typeof value !== 'boolean') throw fault('OPTIONS'); interactive = value; if (!value) perform(() => end('cancel', true)); },
-            snapshot(): BrowserTextEditorSnapshot { return Object.freeze({ state: closed ? 'closed' : settling ? 'settling' : token ? port.snapshot().state === 'composing' ? 'composing' : 'editing' : 'inactive', interactive, contentRevision: port.contentRevision(), layoutRevision, nativeElement: node !== undefined, fontKey: fonts.key }); },
+            snapshot(): BrowserTextEditorSnapshot { return Object.freeze({ state: closed ? 'closed' : settling ? 'settling' : token ? port.snapshot().state === 'composing' ? 'composing' : 'editing' : 'inactive', interactive: interactive && root.editorInteractive(), contentRevision: port.contentRevision(), layoutRevision, nativeElement: node !== undefined, fontKey: fonts.key }); },
             dispose,
         });
     } catch (cause) { dispose(); throw cause; }

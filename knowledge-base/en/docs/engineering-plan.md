@@ -6,6 +6,10 @@ English | [简体中文](../../Cns/docs/工程规划.md)
 
 The next phase turns existing components into a usable core workflow. Preserve the eleven M2–M4 packages, their public contracts and current contributor ownership. [Core capabilities](core-progress.md) states what exists; the [architecture plan](architecture-and-engineering-plan.md) defines authority and gates; the [M2–M4 roadmap](m2-m4-delivery-plan.md) retains complete milestone acceptance.
 
+## M3.4 layer implementation checkpoint
+
+The next coherent UI increment supplies [popup/modal ownership and focus](ui-layers.md), consuming the delivered native editor and the existing paragraph/font/root lifetime. The form now connects details, draft rename and return. Use concentrated implementation followed by affected checks and one independent source/results/bilingual review. Complete controls/semantics remain in #90; M4.1 and the touch contributor retain their scopes.
+
 ## M3.3 implementation checkpoint
 
 The native single/multiline increment uses the existing optional editing entries and [form](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.md). The [contract](native-text-editing.md) retains source/session, row-retention, paired-font and publication authority. Final desktop checks cover 21 fixed plus eight responsive cases per shared backend; the [Android report](android-native-text-editing.md) separates actual keyboard observations, predecessor reuse and final-source lifecycle. Terminal composition teardown and responsive view-Scope retirement are corrected. Other IMEs/devices, clipboard, accessibility and full #89 acceptance remain OPEN; no new work package or touch assignment. Later batches retain their dependencies and are not started by this increment.
