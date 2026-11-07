@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 11905,
-      "sha256": "5d01ad3975372f336bb46896c4c257047583b7759870a7f555836516d434ea60",
+      "bytes": 12748,
+      "sha256": "b976ab83d17fe5a402e4d7cd4ff6759532d02997a330bb6345ea9e8d33764a64",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "304449f69bdbe5abe4f810eaf41f4b0f0c4b45f926a65edc8f598bd72ce07e3e",
+      "sha256": "0efbe74388041d90559dcd2127e00cd61d1e2bd40b1cb1d5be6455271271dfbc",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 13579,
-      "sha256": "db62cddb2780500539698b3ca7fa5079cf24ea471ce7a727d262b00377846b39",
+      "bytes": 14531,
+      "sha256": "e815c6414550a5c6bb17f7f0b74d915d1d1fbd1ec8d4660fffae33d7e879c89c",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "18640188ac1d76b83a6a8ae33f0b00d573bbaeb386d0f745cb9644346b6b2261",
-      "bytes": 389785,
+      "sha256": "64a6b0dc5302c03f54e6875fe01a1f7a2e7bf3acf2630a1bf896dd14330c8a34",
+      "bytes": 390978,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -12794,14 +12794,14 @@
     {
       "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 33620,
-      "sha256": "bbe3dc002c2e4ad192a2794a48e999180ae9ec13937bd9fe661b84d235ce9a93"
+      "bytes": 33869,
+      "sha256": "a94dc4b96a8df780b1a499c79314f9b36eeca6726f5c44c4118e27d3cd88c4d2"
     },
     {
       "path": "knowledge-base/Cns/docs/m4-core-acceptance-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 28009,
-      "sha256": "863ae30bdfae4ea27877ed2c0ba3a5cdd70824c235ff16887a3a08ab2f1b0af7"
+      "bytes": 28254,
+      "sha256": "23ff4c339bc667583f3ba8a53bba2af12ddbca08684c5b9d990f8c2def8bf5d4"
     },
     {
       "path": "contributions/m2-m4-design.json",
@@ -15934,6 +15934,96 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 2460,
       "sha256": "f28f25b549351929471817fc037a6da8c9912d54178cd55eebf2bd51f616cebb"
+    },
+    {
+      "path": "tests/outfit-studio-project.test.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 1416,
+      "sha256": "9642430f48ac07222272cd42f285f40844bf931602be29bfec79681bcebb4ed8"
+    },
+    {
+      "path": "examples/outfit-studio/project.json",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 788,
+      "sha256": "d1404fcf3295077f35bb957af8e6ef279d0dcd4d0df2eb7548c4a597cadc31f5"
+    },
+    {
+      "path": "examples/outfit-studio/project.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 3250,
+      "sha256": "4070f0850cf4b545473e28b415364abb0a7a6fa0de6d9a0966a77f39be486d85"
+    },
+    {
+      "path": "examples/outfit-studio/serve.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 5660,
+      "sha256": "01fc0c12fd99b4dba7e64c3f6dab1f9a169ee63bc5e5881a871d852528024003"
+    },
+    {
+      "path": "examples/outfit-studio/assets.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 5789,
+      "sha256": "06077b69b641e5001bd09da67edad7205915f0d1c8a131fcdfdbdd44f6086ded"
+    },
+    {
+      "path": "examples/outfit-studio/scene.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 3453,
+      "sha256": "1d8c6c1de67d91fd008de75c1cfbe2358f6bd451f60b34a70d647f158f88bca3"
+    },
+    {
+      "path": "examples/outfit-studio/ui.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 9653,
+      "sha256": "2527328e374433a17da4b1cbfa8b94e5582f8c48ad2c096417c323f4756234c9"
+    },
+    {
+      "path": "examples/outfit-studio/main.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 12289,
+      "sha256": "838d0ca37ffee3019dd4e0679c4699e5cfd0f3db2a1a5daa5795c7704d491ddf"
+    },
+    {
+      "path": "examples/outfit-studio/index.html",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 4102,
+      "sha256": "d6a54288ec603b841d582c330954a3b6505d2935bdd5d4f564d79f554e2abb90"
+    },
+    {
+      "path": "examples/outfit-studio/style.css",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 1262,
+      "sha256": "d4d6536f188986df2ce4489942320d1055a1d632e5113e60eb88b83f7e3d852e"
+    },
+    {
+      "path": "examples/outfit-studio/verify.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 16805,
+      "sha256": "a546d13454d6591d289f4c54e2bd0c96a4608510fd193d766a01c68666c3597e"
+    },
+    {
+      "path": "examples/outfit-studio/README.md",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 3141,
+      "sha256": "106c77a2e459d6f31f5353b2a5d92777b755954775c256052a72cba97ebf8c32"
+    },
+    {
+      "path": "examples/outfit-studio/README.zh-CN.md",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 2835,
+      "sha256": "ce780f2605422a7e66ab9b3868d711c3268579607b5d84680768c169dc473ea2"
+    },
+    {
+      "path": "examples/outfit-studio/verification-summary.json",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "bytes": 9166,
+      "sha256": "02c79c1592ebc2b2f92d3ae9e78b97fb7a116a0ecde4d60761383a895e5d914d"
+    },
+    {
+      "path": "contributions/outfit-studio.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 4019,
+      "sha256": "105e5c42842e638fb3897b20d4dadef4396c7256b754047bd2f593a025f45624"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

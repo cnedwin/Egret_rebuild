@@ -1,0 +1,311 @@
+{
+  "schema": "egret.outfit-studio-verification/1",
+  "status": "PASS",
+  "base": "65974705fbb27967de1786d3bf41ec758c3e8131",
+  "scope": "960×520 desktop development scene, pixel ratio 1",
+  "environment": {
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "Intel(R) Core(TM) Ultra 9 275HX",
+    "node": "v26.7.0",
+    "playwright": "1.62.1",
+    "channel": "msedge",
+    "headless": true,
+    "transport": "loopback HTTP, cold browser cache, uncompressed, unshaped",
+    "browser": "157.0.4341.42"
+  },
+  "timing": "New Edge contexts with cache disabled. Navigation through completed readback and enabled controls. Resource Timing transferSize includes the browser header allowance. No traffic shaping or compression.",
+  "evidence": {
+    "bytes": 619488,
+    "sha256": "c60d099c1595d59f2fbad64c0dfb30d6da434f172e494d1b16ccdd68c8850809"
+  },
+  "backends": [
+    {
+      "backend": "webgpu",
+      "checks": [
+        "Actual 3D depth, foreground actors and sequence pixels share a frame",
+        "Selecting and changing one actor leaves the other actor independent",
+        "Drag-out Save preserves the draft and it can be edited again",
+        "Keyboard opens the dialog and Cancel discards native draft text",
+        "A name outside the Studio font coverage leaves the authored project and dialog usable",
+        "Save publishes one authored name and returns to details",
+        "A refused texture leaves the prior authored and visible outfit in use",
+        "Retry stages the replacement, publishes it and leaves the sibling unchanged",
+        "Export round-trips and closing retires the real Engine owners",
+        "Normal server reopens the exported project and uses its authored values"
+      ],
+      "coldMilliseconds": [
+        974,
+        885,
+        876
+      ],
+      "transferBytes": 30313452,
+      "categories": {
+        "javascript": {
+          "body": 4424660,
+          "transfer": 4517960,
+          "requests": 311
+        },
+        "wasm": {
+          "body": 8600298,
+          "transfer": 8600598,
+          "requests": 1
+        },
+        "fonts": {
+          "body": 17148712,
+          "transfer": 17149612,
+          "requests": 3
+        },
+        "scene": {
+          "body": 7296,
+          "transfer": 9396,
+          "requests": 7
+        },
+        "shell": {
+          "body": 33786,
+          "transfer": 35886,
+          "requests": 7
+        }
+      },
+      "firstRunSourceResponses": {
+        "count": 329,
+        "sha256": "cf0f9811261a9aa6a679286ab23001173582cbce3f0e3c6bc2fcff790b9db395"
+      },
+      "initialPixels": [
+        [
+          32,
+          48,
+          80,
+          255
+        ],
+        [
+          48,
+          80,
+          128,
+          255
+        ],
+        [
+          255,
+          128,
+          32,
+          255
+        ],
+        [
+          255,
+          128,
+          32,
+          255
+        ],
+        [
+          0,
+          255,
+          128,
+          255
+        ]
+      ],
+      "cleanup": {
+        "scope": "closed",
+        "fonts": {
+          "closed": true,
+          "sets": 0,
+          "fontBytes": 0,
+          "pendingJobs": 0,
+          "editorLeases": 0
+        },
+        "cache": {
+          "closed": true,
+          "generation": 1,
+          "entries": 0,
+          "imageBytes": 0,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 0
+        },
+        "host": {
+          "state": "closed",
+          "generation": 1,
+          "attempt": 0,
+          "firstFailure": null,
+          "generationFailure": null
+        },
+        "failures": []
+      },
+      "reopenedProjectCleanup": {
+        "scope": "closed",
+        "fonts": {
+          "closed": true,
+          "sets": 0,
+          "fontBytes": 0,
+          "pendingJobs": 0,
+          "editorLeases": 0
+        },
+        "cache": {
+          "closed": true,
+          "generation": 1,
+          "entries": 0,
+          "imageBytes": 0,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 0
+        },
+        "host": {
+          "state": "closed",
+          "generation": 1,
+          "attempt": 0,
+          "firstFailure": null,
+          "generationFailure": null
+        },
+        "failures": []
+      }
+    },
+    {
+      "backend": "webgl2",
+      "checks": [
+        "Actual 3D depth, foreground actors and sequence pixels share a frame",
+        "Selecting and changing one actor leaves the other actor independent",
+        "Drag-out Save preserves the draft and it can be edited again",
+        "Keyboard opens the dialog and Cancel discards native draft text",
+        "A name outside the Studio font coverage leaves the authored project and dialog usable",
+        "Save publishes one authored name and returns to details",
+        "A refused texture leaves the prior authored and visible outfit in use",
+        "Retry stages the replacement, publishes it and leaves the sibling unchanged",
+        "Export round-trips and closing retires the real Engine owners",
+        "Normal server reopens the exported project and uses its authored values"
+      ],
+      "coldMilliseconds": [
+        789,
+        744,
+        693
+      ],
+      "transferBytes": 30122266,
+      "categories": {
+        "javascript": {
+          "body": 4240674,
+          "transfer": 4326774,
+          "requests": 287
+        },
+        "wasm": {
+          "body": 8600298,
+          "transfer": 8600598,
+          "requests": 1
+        },
+        "fonts": {
+          "body": 17148712,
+          "transfer": 17149612,
+          "requests": 3
+        },
+        "scene": {
+          "body": 7296,
+          "transfer": 9396,
+          "requests": 7
+        },
+        "shell": {
+          "body": 33786,
+          "transfer": 35886,
+          "requests": 7
+        }
+      },
+      "firstRunSourceResponses": {
+        "count": 305,
+        "sha256": "0b51c4ed7e5635071e6b4a270cf2abc14f1354f0c053ead595225404c83a0b4e"
+      },
+      "initialPixels": [
+        [
+          32,
+          48,
+          80,
+          255
+        ],
+        [
+          48,
+          80,
+          128,
+          255
+        ],
+        [
+          255,
+          128,
+          32,
+          255
+        ],
+        [
+          255,
+          128,
+          32,
+          255
+        ],
+        [
+          0,
+          255,
+          128,
+          255
+        ]
+      ],
+      "cleanup": {
+        "scope": "closed",
+        "fonts": {
+          "closed": true,
+          "sets": 0,
+          "fontBytes": 0,
+          "pendingJobs": 0,
+          "editorLeases": 0
+        },
+        "cache": {
+          "closed": true,
+          "generation": 1,
+          "entries": 0,
+          "imageBytes": 0,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 0
+        },
+        "host": {
+          "state": "closed",
+          "generation": 1,
+          "attempt": 0,
+          "firstFailure": null,
+          "generationFailure": null
+        },
+        "failures": []
+      },
+      "reopenedProjectCleanup": {
+        "scope": "closed",
+        "fonts": {
+          "closed": true,
+          "sets": 0,
+          "fontBytes": 0,
+          "pendingJobs": 0,
+          "editorLeases": 0
+        },
+        "cache": {
+          "closed": true,
+          "generation": 1,
+          "entries": 0,
+          "imageBytes": 0,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 0
+        },
+        "host": {
+          "state": "closed",
+          "generation": 1,
+          "attempt": 0,
+          "firstFailure": null,
+          "generationFailure": null
+        },
+        "failures": []
+      }
+    }
+  ],
+  "retainedFailures": [
+    "The first launch used a pointer capacity below the admitted range. The example now uses the existing default.",
+    "The default 250-entry Resource Timing buffer omitted late WASM and font entries. A larger controlled buffer and overflow assertion cover the observed request sets.",
+    "Default inspector cache evicted large source response bodies. A bounded CDP buffer in the same session and path/length checks bind the cold response bytes.",
+    "Rounded clipping refused native placement. The rectangular clip admitted it, and activation on mouse release resolved the native mouse-down focus handoff.",
+    "A subsequent click could arrive while a previous draw was finishing. Bounded ordered actions now retain their originating layer.",
+    "Independent browser review reproduced an unsupported name that survived export but broke reopen. Save now prepares the name with the same font authority before committing it.",
+    "Independent browser review reproduced a captured mouse release that saved after dragging outside. A fresh committed hit test admits release only on the pressed row.",
+    "The first draft guard left a valid blurred value awaiting matching geometry. The serialized handoff now admits that draft and supports refocus without saving it."
+  ],
+  "remaining": "Complete M4.1 workloads and authorized content, M4.2 formal startup/performance/recovery/device qualification and M4.3 handoff remain open."
+}

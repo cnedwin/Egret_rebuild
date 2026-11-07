@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Egret Outfit Studio / 白鹭换装工作室</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "@egret/engine": "/packages/engine/dist/index.js",
+        "@egret/engine/animation": "/packages/engine/dist/animation/index.js",
+        "@egret/engine/resources": "/packages/engine/dist/resources.js",
+        "@egret/engine/scene3d": "/packages/engine/dist/rendering/scene3d.js",
+        "@egret/engine/ui": "/packages/engine/dist/ui/index.js",
+        "@egret/engine/ui/editing": "/packages/engine/dist/ui/editing.js",
+        "@egret/engine/paragraph": "/packages/engine/dist/paragraph.js",
+        "@egret/engine/web/paragraph": "/packages/engine/dist/web/paragraph.js",
+        "@egret/engine/web/editing": "/packages/engine/dist/web/editing.js",
+        "@egret/engine/web/resources": "/packages/engine/dist/web/resources.js",
+        "@egret/engine/web/pointer": "/packages/engine/dist/web/pointer.js",
+        "@egret/engine/web/keyboard": "/packages/engine/dist/web/keyboard.js",
+        "@egret/engine/webgpu/scene3d": "/packages/engine/dist/web/scene3d.js",
+        "@egret/engine/webgl2/scene3d": "/packages/engine/dist/web/webgl2Scene3d.js",
+        "@egret/project": "/packages/project/dist/index.js",
+        "@egret/runtime": "/packages/runtime/dist/index.js",
+        "@egret/runtime/ui": "/packages/runtime/dist/ui/index.js",
+        "@egret/runtime/ui/editing": "/packages/runtime/dist/ui/editing.js",
+        "@egret/runtime/text": "/packages/runtime/dist/text/index.js",
+        "@egret/runtime/paragraph": "/packages/runtime/dist/paragraph/index.js",
+        "@egret/runtime/input": "/packages/runtime/dist/input/index.js",
+        "@egret/contracts": "/packages/contracts/dist/index.js",
+        "@egret/contracts/resources": "/packages/contracts/dist/resources/index.js",
+        "@egret/spine": "/packages/spine/dist/index.js",
+        "@egret/spine/web": "/packages/spine/dist/web.js",
+        "@esotericsoftware/spine-core": "/vendor/spine-core/index.js",
+        "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js",
+        "#egret-manifest-resources": "/packages/engine/dist/manifestResourceState.js",
+        "#egret-pointer-input": "/packages/engine/dist/pointerInput.js",
+        "#egret-keyboard-input": "/packages/engine/dist/keyboardInput.js",
+        "#egret-text-editor": "/packages/engine/dist/ui/textEditor.js",
+        "jsonc-parser": "/studio-deps/jsonc-parser/main.js",
+        "robust-predicates": "/vendor/robust-predicates/index.js"
+      }
+    }
+  </script>
+  <script src="../paragraph-panel/vendor/runtime/layout-r1/canvaskit.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">EGRET ENGINE · M4.1</p>
+        <h1>Outfit Studio <span lang="zh-CN">换装工作室</span></h1>
+      </div>
+      <nav aria-label="Rendering backend / 渲染后端">
+        <a href="?backend=webgpu">WebGPU</a>
+        <a href="?backend=webgl2">WebGL2</a>
+      </nav>
+    </header>
+    <p>Choose a character, try an outfit, then open Details to rename them. Use the mouse or Tab and Enter.</p>
+    <p lang="zh-CN">选择角色并试穿装扮，在详情里重命名。可以使用鼠标，或按 Tab 和 Enter 操作。</p>
+    <div class="viewport">
+      <canvas width="960" height="520" tabindex="0" aria-label="Character roster and outfit preview / 角色列表与换装预览"></canvas>
+    </div>
+    <div class="toolbar">
+      <button id="pause" disabled>Pause preview / 暂停预览</button>
+      <button id="download" disabled>Export project / 导出工程</button>
+      <button id="close">Close studio / 关闭场景</button>
+      <a href="" id="reload">Reload / 重新载入</a>
+    </div>
+    <p id="status" role="status">Preparing the studio… / 正在准备场景…</p>
+  </main>
+  <script type="module" src="main.mjs"></script>
+</body>
+</html>

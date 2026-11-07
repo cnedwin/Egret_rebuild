@@ -1,0 +1,33 @@
+{
+  "projectSchemaVersion": "1.0",
+  "projectId": "p_outfit_studio",
+  "revision": 0,
+  "name": "Egret Outfit Studio",
+  "versions": {
+    "engineVersion": "0.0.0",
+    "resourceFormatVersion": "1.0",
+    "toolProtocolVersion": "1.0"
+  },
+  "roots": ["e_nova", "e_lumen"],
+  "entities": [
+    {
+      "id": "e_nova",
+      "kind": "outfit-character",
+      "dataSchemaVersion": "1.0",
+      "name": "Nova 星羽",
+      "data": {"outfit": "default", "palette": "studio"},
+      "references": []
+    },
+    {
+      "id": "e_lumen",
+      "kind": "outfit-character",
+      "dataSchemaVersion": "1.0",
+      "name": "Lumen 晨光",
+      "data": {"outfit": "warm-hat", "palette": "studio"},
+      "references": []
+    }
+  ],
+  "files": [],
+  "retiredEntityIds": [],
+  "retiredFileIds": []
+}

@@ -21,6 +21,12 @@ Egret's product direction combines animation-rich 2D games and complex interface
 | 3D | Owned geometry/matrices, fixed opaque scene routes and ordered 2D overlays on the declared backends | Model import, usable scene/camera/material authoring, animated 3D characters, lighting and general VFX |
 | Project and tools | Versioned project snapshots/transactions, structured diagnostics and bounded legacy RES/MovieClip analysis; pinned setup, review and public CI | Project-to-running-game authoring loop, integrated visual tools, Agent/Skill/MCP applications, publication/update adapters and complete migration |
 
+## Desktop mixed reference increment — 2026-11-08
+
+The Outfit Studio composes two independently controlled Spine actors, a sequence effect, managed UI with native rename and an opaque 3D background under one Engine. A palette candidate uses the existing Spine RESET and shared Host staging. Exported snapshots reopen with stable IDs and authored values. Ten checks passed per backend, including font refusal, mouse release outside the pressed row, replacement failure, retry and retirement. [Outfit Studio](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/outfit-studio)
+
+The six cold loopback observations include 28.91 MiB on WebGPU and 28.73 MiB on WebGL2. Three fonts account for 16.36 MiB and CanvasKit WASM for 8.20 MiB of browser-reported transfer. Median time through the first interactive frame was 885 ms and 744 ms respectively on the recorded desktop. The formal compressed, shaped and device profiles remain with #92.
+
 ## Popup/modal increment — 2026-11-07
 
 M3.4 now provides [owned popup/modal roots](ui-layers.md), staged publication, clipped anchors, nested retirement, pointer barriers, contained logical focus and native editor suspension. The existing form integrates details/rename/return with shared resources. Complete controls, gestures, semantic projection and device/accessibility qualification remain in #90; this increment does not implement the separately owned touch work.
@@ -68,7 +74,7 @@ All eleven M2–M4 packages remain open to their complete acceptance. A merged f
 | M3.2 / [#88](https://github.com/cnedwin/Egret_rebuild/issues/88) | Readonly styled text, geometry and font generations | Required independent references and provider cost/recovery qualification / text maintainer |
 | M3.3 / [#89](https://github.com/cnedwin/Egret_rebuild/issues/89) | Contact routing, keyboard/focus, row integration and native single/multiline plain-text editing | Actual IME/mobile keyboard, clipboard and accessibility qualification / input-host maintainer |
 | M3.4 / [#90](https://github.com/cnedwin/Egret_rebuild/issues/90) | Masks/blur, themes, owned popup/modals and contributed movement/action state | Remaining controls, gestures and semantics / UI maintainer with existing touch contributor |
-| M4.1 / [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) | Runnable component examples and public interfaces | One editable mixed reference project; ready for a bounded first integration / integration maintainer |
+| M4.1 / [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) | Editable desktop Outfit Studio and scoped WebGPU/WebGL2 evidence | Complete selected mixed scene and fixed X configurations / integration maintainer |
 | M4.2 / [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) | Fixed desktop recovery and bounded Android component evidence | Complete mixed lifecycle, performance and required device campaign / performance-platform maintainer |
 | M4.3 / [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) | Observable preview failure/cancel/reload and public contribution entry | Clean-consumer distribution and qualified handoff / release maintainer |
 
@@ -86,7 +92,7 @@ M0's [independent newcomer rehearsal #52](https://github.com/cnedwin/Egret_rebui
 
 ## Next development phase
 
-Native plain-text editing and the M3.4 popup/modal increment now consume current paragraph geometry, fonts and managed UI. Complete the remaining control/semantic set within #90. In an independently owned branch, M4.1 can assemble the existing animation/UI/resources into one example and expose provider transfer/startup and whole-engine costs early. M2 contributors can complete binary/content qualification, seek/replay or state-preserving replacement against existing owners. M3.4's coordinated touch work continues separately.
+Native plain-text editing and the M3.4 popup/modal increment now consume current paragraph geometry, fonts and managed UI. Complete the remaining control/semantic set within #90. M4.1 now supplies the first desktop mixed scene. Grow that project with the remaining selected capabilities and use the measured provider and font transfer to guide the full profile. M2 contributors can complete binary/content qualification, seek/replay or state-preserving replacement against existing owners. M3.4's coordinated touch work continues separately.
 
 Then finish the remaining controls and the complete mixed scenario, resolve the unchanged M1 performance gap, and execute the required M4 campaign on frozen inputs. A bounded engineering preview may precede complete qualification; it must carry its actual limits. The [engineering plan](engineering-plan.md) assigns dependencies and exit criteria without adding work-package IDs or promising dates.
 
