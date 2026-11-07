@@ -6,6 +6,7 @@ import type { DisplayObjectContainer, Scope } from '@egret/runtime';
 import { captureUiLayout, planUiLayout, UiHeightIndex, createUiDisplayOperations } from '@egret/runtime/ui';
 import type { UiLayoutTree, UiLayoutNode, UiLayoutPlan, UiLayoutBox, UiDisplayUpdate } from '@egret/runtime/ui';
 import { requireUiEngine } from '../internal/uiFactoryState.js';
+import { registerUiRoot } from '../internal/uiRootState.js';
 import type { PointerInput } from '../pointerInputTypes.js';
 import type { KeyboardFocusOptions } from '../keyboardInputTypes.js';
 import { captureSource, captureReveal, revealScroll } from './virtualList.js';
@@ -216,6 +217,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         return planUiLayout(...args);
     }
     let closed = false, desired = 1, committed = 0, inputGeneration = 0, generation = 0, busy = false, committing = false;
+    let closeEditorRoot: () => readonly unknown[] = () => [];
     let cancelFlight: ((error: unknown) => void) | undefined, preparedWindow: WindowState | undefined, plan: UiLayoutPlan | undefined, committedIndex: UiHeightIndex | undefined, committedSource: CapturedSource | undefined;
     let bindings = new Map<string, Binding>(), shells = new Map<string, Shell>(), pool: Shell[] = [], fills: ScopePort[] = [];
     let leafBindings = new Map<string, LeafBinding>();
@@ -226,6 +228,10 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         height: number;
         contentVersion: number;
     }>(), admissions = new Set<string>();
+    // Native editors retain row identity while permitting authenticated readonly re-publication.
+    // Public focus/composition retention continues to lock binding content and metrics.
+    const editorRetentions = new Set<object>();
+    const bindingLocked = (key: string): boolean => [...(retentions.get(key) ?? [])].some(token => !editorRetentions.has(token));
     const tokens = new WeakMap<object, TokenState>();
     const candidates = new Set<Candidate>();
     const candidateEntries = new Map<Candidate, TokenState>();
@@ -631,7 +637,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             ? committedIndex : new UiHeightIndex(w.source.records, width, density, sameThemeMetrics(committedTheme, w.theme) ? committedIndex : undefined);
         for (const key of retentions.keys()) {
             const b = bindings.get(key);
-            if (b !== undefined && (b.theme !== w.theme || w.source?.byKey.get(key)?.contentVersion !== b.version || width !== b.width || density !== b.density)) fail('UI_ROW_RETAINED');
+            if (!w.source?.byKey.has(key) || bindingLocked(key) && b !== undefined && (b.theme !== w.theme || w.source?.byKey.get(key)?.contentVersion !== b.version || width !== b.width || density !== b.density)) fail('UI_ROW_RETAINED');
         }
         const scroll = index === undefined ? 0 : explicitScroll !== undefined ? index.clampScroll(explicitScroll, height)
             : committedIndex === undefined ? 0 : index.preserveAnchor(snapshot.anchor, committedIndex, height);
@@ -924,6 +930,38 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             }
         }
     }
+    function retainRow(key: string, reason: 'focus' | 'composition', editor = false) {
+            return admit('retain', () => {
+                if (reason !== 'focus' && reason !== 'composition')
+                    fail('UI_VALUE_INVALID');
+                if (!bindings.has(key))
+                    fail('UI_ROW_NOT_REALIZED');
+                if (retentionCount >= 16)
+                    fail('UI_LIMIT');
+                const identity = {}, set = retentions.get(key) ?? new Set<object>();
+                set.add(identity);
+                if (editor) editorRetentions.add(identity);
+                retentions.set(key, set);
+                retentionCount++;
+                change();
+                let released = false;
+                return freeze({
+                    release() {
+                        if (released)
+                            return;
+                        released = true;
+                        if (closed)
+                            return;
+                        set.delete(identity);
+                        editorRetentions.delete(identity);
+                        retentionCount--;
+                        if (set.size === 0)
+                            retentions.delete(key);
+                        change();
+                    }
+                });
+            });
+    }
     const handle: VirtualListHandle<unknown> = freeze({
         setSource(value: VirtualDataSource<unknown>) {
             admit('source', () => {
@@ -942,7 +980,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 if (source !== undefined && captured.revision <= source.revision)
                     fail('UI_SOURCE_REVISION');
                 for (const key of retentions.keys())
-                    if (captured.byKey.get(key)?.contentVersion !== bindings.get(key)?.version)
+                    if (!captured.byKey.has(key) || bindingLocked(key) && captured.byKey.get(key)?.contentVersion !== bindings.get(key)?.version)
                         fail('UI_ROW_RETAINED');
                 source = captured;
                 revealIntent = undefined;
@@ -1008,36 +1046,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             keyboard.focus(key, options);
         },
         getFocus() { return keyboard?.getFocus() ?? freeze({ key: undefined, focusVisible: false }); },
-        retain(key: string, reason: 'focus' | 'composition') {
-            return admit('retain', () => {
-                if (reason !== 'focus' && reason !== 'composition')
-                    fail('UI_VALUE_INVALID');
-                if (!bindings.has(key))
-                    fail('UI_ROW_NOT_REALIZED');
-                if (retentionCount >= 16)
-                    fail('UI_LIMIT');
-                const identity = {}, set = retentions.get(key) ?? new Set<object>();
-                set.add(identity);
-                retentions.set(key, set);
-                retentionCount++;
-                change();
-                let released = false;
-                return freeze({
-                    release() {
-                        if (released)
-                            return;
-                        released = true;
-                        if (closed)
-                            return;
-                        set.delete(identity);
-                        retentionCount--;
-                        if (set.size === 0)
-                            retentions.delete(key);
-                        change();
-                    }
-                });
-            });
-        },
+        retain(key: string, reason: 'focus' | 'composition') { return retainRow(key, reason); },
         snapshot() {
             return api.snapshot();
         }
@@ -1055,7 +1064,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 if (newSize.width === size.width && newSize.height === size.height && d === density)
                     return;
                 for (const key of retentions.keys())
-                    if (d !== density || newSize.width !== size.width)
+                    if (bindingLocked(key) && (d !== density || newSize.width !== size.width))
                         fail('UI_ROW_RETAINED');
                 size = newSize;
                 density = d;
@@ -1084,7 +1093,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                     fail('UI_SOURCE_REVISION');
                 check(revision);
                 for (const key of retentions.keys())
-                    if (s?.byKey.get(key)?.contentVersion !== bindings.get(key)?.version)
+                    if (!s?.byKey.has(key) || bindingLocked(key) && s?.byKey.get(key)?.contentVersion !== bindings.get(key)?.version)
                         fail('UI_ROW_RETAINED');
                 for (const [name, content] of captured.contents) {
                     const previous = leafContents.get(name);
@@ -1108,7 +1117,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 if (value === theme) return;
                 // Explicit focus/composition retention forbids replacing its live content.
                 for (const key of retentions.keys())
-                    if (bindings.get(key)?.theme !== value) fail('UI_ROW_RETAINED');
+                    if (bindingLocked(key) && bindings.get(key)?.theme !== value) fail('UI_ROW_RETAINED');
                 const resolved = applyUiTheme(authoredTree, themeBindings, value);
                 theme = value;
                 tree = resolved;
@@ -1313,6 +1322,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             closed = true;
             owner.remove(onOwnerAbort);
             const errors: unknown[] = preparedWindow?.cleanupErrors ?? [];
+            errors.push(...closeEditorRoot());
             cancelFlight?.(new EgretError('UI_CLOSED'));
             for (const candidate of [...candidates])
                 clearCandidate(candidate, errors);
@@ -1361,6 +1371,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             fills = [];
             preparedWindow = undefined;
             retentions.clear();
+            editorRetentions.clear();
             retentionCount = 0;
             heightUpdates.clear();
             dirty.clear();
@@ -1428,6 +1439,23 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         });
         owner.add(onOwnerAbort);
         unsubscribeClose = port.onClose(() => api.dispose());
+        owner.assertOpen();
+        closeEditorRoot = registerUiRoot(api, options.engine, freeze({
+            wrapper: rootWrapper,
+            state: () => closed ? 'closed' as const : 'open' as const,
+            snapshot: () => api.snapshot(),
+            lookup(target) {
+                if (closed) return undefined;
+                if (target.kind === 'leaf') {
+                    const leaf = leafBindings.get(target.id);
+                    return leaf?.content === undefined ? undefined : freeze({ content: leaf.content, visible: true });
+                }
+                if (target.listId !== listId) return undefined;
+                const row = snapshot.rows.find(row => row.key === target.key), binding = bindings.get(target.key);
+                return row === undefined || binding?.content === undefined ? undefined : freeze({ content: binding.content, visible: row.visible, bindingGeneration: row.bindingGeneration, contentVersion: row.contentVersion });
+            },
+            retain(id, key) { if (id !== listId) fail('UI_UNKNOWN_LIST'); return retainRow(key, 'focus', true); },
+        }));
         return freeze(api);
     }
     catch (e) {

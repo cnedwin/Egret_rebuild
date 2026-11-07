@@ -224,7 +224,37 @@ function m31UiGraph(base,present){
    ||m31UiAdditionPins.some(row=>paths.has(row.path)))throw Error('Invalid finite M3.1 UI source group');
  return [...base.map(row=>m31UiSourcePairs.find(pair=>same(pair.base,row))?.current??row),...m31UiAdditionPins];
 }
+// M33-NATIVE-EDITING-BEGIN
+// Exact additive successor. Every retained predecessor declaration stays byte-identical.
+const nativeEditingSourcePairs = [{"base":{"path":"packages/engine/src/ui/uiRoot.ts","bytes":63000,"sha256":"84fbfd634ce0ca6911d38a6e0d97d529a6f3544734af5b5c420c442352e84dca"},"current":{"path":"packages/engine/src/ui/uiRoot.ts","bytes":65116,"sha256":"22001f2a45e4e8b3cc0009a0387faa243422db0b919a63a20e80ad5b92a38754"}},{"base":{"path":"packages/engine/dist/ui/uiRoot.js","bytes":57628,"sha256":"f4f538a7da7da61387a4c08361b7b41c1ef6344a741e1d1876cca445b8c7de46"},"current":{"path":"packages/engine/dist/ui/uiRoot.js","bytes":59594,"sha256":"5b6b506fcd45a88abe787839cfbe2412862bf141c1276e9d47eefd7db797f3b4"}}];
+const nativeEditingAdditionPins = [{"path":"packages/engine/src/internal/uiRootState.ts","bytes":2254,"sha256":"a2aeb7e325cb6e9fe80518b8c058623524f99cf64edeacf55a6962272ed9145a"},{"path":"packages/engine/dist/internal/uiRootState.js","bytes":1515,"sha256":"8229922b53504f5087c5d527fc1eb836654efc78c43e73a3fdcc671141293d19"},{"path":"packages/engine/dist/internal/uiRootState.d.ts","bytes":1127,"sha256":"28eb338f95c75c913476458faee12b0c52079b2de1d4360bede08efc0c626915"},{"path":"packages/engine/src/ui/editing.ts","bytes":296,"sha256":"411763278d0282687408bb8d8609e311a036093ecdc3292cac2a9bc8261f10af"},{"path":"packages/engine/dist/ui/editing.js","bytes":128,"sha256":"cc8fb0a4b7d0044c5e7c66162221b18813d3d3e470e4974756e29d7b092a3765"},{"path":"packages/engine/dist/ui/editing.d.ts","bytes":294,"sha256":"202017d50f4ca2e1ba939bb263a8509bef087932eb29e719a16088ce97841ec7"},{"path":"packages/engine/src/ui/textEditor.ts","bytes":16983,"sha256":"be728d319264f9396725dcb1ee4f36ed88ed307d54a936d7361f8a5f33422cc8"},{"path":"packages/engine/dist/ui/textEditor.js","bytes":14389,"sha256":"f358c0c8c1189f1816fdb43130f17f41008c0109276ef7d797888b907a533b8f"},{"path":"packages/engine/dist/ui/textEditor.d.ts","bytes":2521,"sha256":"003a11168137c620b782361b6b211bd76eea8344b63008760f99c644fbd50de7"},{"path":"packages/engine/src/ui/textEditorTypes.ts","bytes":3242,"sha256":"2bdab185ddbde98b48e49f88c54282202022c416a3f06e07ea571fdf4cb6c9e9"},{"path":"packages/engine/dist/ui/textEditorTypes.js","bytes":54,"sha256":"8a90429b55dbe208200d2222f0b0685245f073afde8d832868b3d98ca9500fa6"},{"path":"packages/engine/dist/ui/textEditorTypes.d.ts","bytes":3269,"sha256":"f0795da3aed88279f2189aeb625faf4fd7eb8ecdf75036177a0e89484c6c574c"},{"path":"packages/engine/web/BrowserTextEditor.ts","bytes":31202,"sha256":"48deabf6002a04ab3531d07157da67978f5d949970c640c2b80748c2ff45640d"},{"path":"packages/engine/dist/web/BrowserTextEditor.js","bytes":31941,"sha256":"1fc5cc3dedebdb38ad7692c0267660482383924a61b2442e4369997a085381ea"},{"path":"packages/engine/dist/web/BrowserTextEditor.d.ts","bytes":2103,"sha256":"c78230c95ddd3c6155fb6fbc041acf6584d633c067e812019356582180bd24e0"},{"path":"packages/engine/web/editing.ts","bytes":441,"sha256":"46c9730687107b945513daf0d323a81ee9fe74e906de77d90f0aaea9223c6f64"},{"path":"packages/engine/dist/web/editing.js","bytes":208,"sha256":"dc38db3eeb26f50f7e20b109f3de7b03c9c1295d37d7770b9f130a4e37e56e22"},{"path":"packages/engine/dist/web/editing.d.ts","bytes":439,"sha256":"a7cc1e1cdb38580ed36d774982f7281f764d8a697cfe1c6521ebd1b90836391f"},{"path":"packages/engine/web/editorFonts.ts","bytes":12499,"sha256":"5e5f0f9f45351ca3cb83342ffa98759fbbff43cfcbb7fc882c8669c352819b1e"},{"path":"packages/engine/dist/web/editorFonts.js","bytes":10827,"sha256":"d93c47a7527ed11cb149c3ea712fa179b47af113f27c4e6ff97addbfb0cb089d"},{"path":"packages/engine/dist/web/editorFonts.d.ts","bytes":2235,"sha256":"bcf5b4276aafb3bfe941881763195602ae5d0309fe027bea75f2854d85576621"},{"path":"packages/runtime/src/ui/editing.ts","bytes":262,"sha256":"98e7b1bdfdabf391f1e6678842898d50403d870d56b5228ed8c123a01a6a9e4e"},{"path":"packages/runtime/dist/ui/editing.js","bytes":132,"sha256":"6a224f905c5071ae4b409a5dc8ca785628c314a73a6e7be4ae6aeeea4166b178"},{"path":"packages/runtime/dist/ui/editing.d.ts","bytes":260,"sha256":"4b324f1349699ea58707669d0ee98665a39580a6640c6f6077622ec9846aeea7"},{"path":"packages/runtime/src/ui/textEditState.ts","bytes":8048,"sha256":"fef7aec56f411730d0c70574f67ee65080b665badab7e1e940af6932b44956c9"},{"path":"packages/runtime/dist/ui/textEditState.js","bytes":7894,"sha256":"b3a9a1a0f89658b7450943eae111beb40d895e101ee43ca05b1a1f56a16cf63c"},{"path":"packages/runtime/dist/ui/textEditState.d.ts","bytes":324,"sha256":"47574d718253ac4a7ce23d15f65c7e1ab2f1b70528c443e3331841a95d87fbdc"},{"path":"packages/runtime/src/ui/textEditTypes.ts","bytes":2257,"sha256":"de8d10e235f1eca50211220671020bbf58d35e3bf751042afcaa68df5471c17b"},{"path":"packages/runtime/dist/ui/textEditTypes.js","bytes":52,"sha256":"2a3f9a311db80b95040c95e3017751388d059f4cda6a3cc7c88579e75be9ff6a"},{"path":"packages/runtime/dist/ui/textEditTypes.d.ts","bytes":2276,"sha256":"47c515b29bab79f703c7283ad525f1ddd42fed83224d43299d1973b6f2d0c8cc"}];
+const nativeEditingPackagePairs = [{"base":{"path":"packages/engine/package.json","bytes":3172,"sha256":"93aa97c85bf7c58d9ff462851f1f63aa101aa3a73bf07d2b0518dc14189cec61"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}},{"base":{"path":"packages/runtime/package.json","bytes":686,"sha256":"4d420a3f9896562972c959a1aeaeb5a7cb3e6e74e0fd47595a011f08665741c0"},"current":{"path":"packages/runtime/package.json","bytes":795,"sha256":"2533e015708632dd8f536b54835021d62e34a2be535ecd97c07f47610f61aa8f"}}];
+function nativeEditingGraph(base,present){
+ if(!nativeEditingAdditionPins.some(row=>present.has(row.path)))return base;
+ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b),valid=row=>same(Object.keys(row).sort(),['bytes','path','sha256'])&&Number.isSafeInteger(row.bytes)&&row.bytes>0&&new RegExp('^[a-f0-9]{64}$').test(row.sha256);
+ if(base.length!==860||new Set(base.map(row=>row.path)).size!==860||nativeEditingSourcePairs.length!==2||nativeEditingAdditionPins.length!==30
+  ||nativeEditingSourcePairs.some(pair=>!valid(pair.base)||!valid(pair.current)||pair.base.path!==pair.current.path||!base.some(row=>same(row,pair.base)))
+  ||nativeEditingAdditionPins.some(row=>!valid(row)||base.some(old=>old.path===row.path))
+  ||new Set([...nativeEditingSourcePairs.map(pair=>pair.base.path),...nativeEditingAdditionPins.map(row=>row.path)]).size!==32)throw Error('Invalid finite native editing source group');
+ return [...base.map(row=>nativeEditingSourcePairs.find(pair=>same(pair.base,row))?.current??row),...nativeEditingAdditionPins];
+}
+function nativeEditingPackageSuccessor(expected,raw){
+ const pair=nativeEditingPackagePairs.find(pair=>pair.base.path===expected?.path),digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+ if(!pair||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;
+ const value=JSON.parse(raw.toString('utf8'));
+ if(JSON.stringify(value.exports['./ui/editing'])!==JSON.stringify({types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'}))return false;
+ delete value.exports['./ui/editing'];
+ if(expected.path==='packages/engine/package.json'){
+  if(JSON.stringify(value.exports['./web/editing'])!==JSON.stringify({types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'})||JSON.stringify(value.imports['#egret-text-editor'])!==JSON.stringify({types:'./dist/ui/textEditor.d.ts',import:'./dist/ui/textEditor.js'}))return false;
+  delete value.exports['./web/editing'];delete value.imports['#egret-text-editor'];
+ }
+ const previous=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ if(previous.length!==pair.base.bytes||digest(previous)!==pair.base.sha256)return false;
+ return JSON.stringify(expected)===JSON.stringify(pair.base)||m31UiPackageSuccessor(expected,previous);
+}
+// M33-NATIVE-EDITING-END
 function m31UiPackageSuccessor(expected,raw){
+ if(nativeEditingPackageSuccessor(expected,raw))return true;
  if(m22SequencePackageSuccessor(expected,raw))return true;
  const pair=m31UiPackagePairs.find(pair=>pair.base.path===expected?.path),digest=raw=>createHash('sha256').update(raw).digest('hex');
  if(!pair||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;
@@ -400,6 +430,7 @@ function m3PointerGraph(root,base,actual) {
   graph=uiThemeGraph(graph,present);
   graph=sequenceResetGraph(graph,present);
   graph=uiControlsGraph(graph,present);
+  graph=nativeEditingGraph(graph,present);
   for(const row of graph){
     if(!present.has(row.path))refuse('ATLAS_SOURCE_FILES','Incomplete M3 pointer successor: '+row.path);
     const raw=readFileSync(path.join(root,row.path));if(raw.length!==row.bytes||digest(raw)!==row.sha256)return reject('M3 pointer whole-group raw identity differs: '+row.path);

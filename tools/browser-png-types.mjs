@@ -49,10 +49,22 @@ const m15PngProductPairs = [{"path":"packages/engine/package.json","base":{"byte
 const m22PngEnginePackage = {base:{path:'packages/engine/package.json',bytes:2591,sha256:'817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5'},current:{path:'packages/engine/package.json',bytes:2709,sha256:'3fba4431f23b5ccb6da6f13a023ecd5229550f1ca8ead591521e69eeb3960fa9'}};
 // Only the exact readonly paragraph exports extend this unchanged PNG consumer.
 const m32PngEnginePackage = {base:m22PngEnginePackage.current,current:{path:'packages/engine/package.json',bytes:2933,sha256:'afcc7ed24ddd5e73f0ebed1f60b1c1b31d1bac59d2127e0b061c499cfe8e93fe'}};
+// Exact additive native editing package projection for unchanged PNG consumers.
+const nativeEditingPngPackage = {"base":{"path":"packages/engine/package.json","bytes":3172,"sha256":"93aa97c85bf7c58d9ff462851f1f63aa101aa3a73bf07d2b0518dc14189cec61"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}};
+const nativeEditingPngSelected=equal(fingerprintFile(root,nativeEditingPngPackage.current.path),nativeEditingPngPackage.current);
+function nativeEditingPngPredecessor(raw){
+ if(!nativeEditingPngSelected)return raw;const {base,current}=nativeEditingPngPackage;
+ if(raw.length!==current.bytes||hash(raw)!==current.sha256)failure('Native editing PNG package changed during replay');
+ const value=JSON.parse(raw);
+ if(!equal(value.exports['./ui/editing'],{types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'})||!equal(value.exports['./web/editing'],{types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'})||!equal(value.imports['#egret-text-editor'],{types:'./dist/ui/textEditor.d.ts',import:'./dist/ui/textEditor.js'}))failure('Native editing optional mapping differs');
+ delete value.exports['./ui/editing'];delete value.exports['./web/editing'];delete value.imports['#egret-text-editor'];
+ const before=Buffer.from(JSON.stringify(value,null,2)+'\n');if(before.length!==base.bytes||hash(before)!==base.sha256)failure('Native editing PNG predecessor differs');return before;
+}
 // M33-KEYBOARD-PNG-BEGIN
 const m33KeyboardPngEnginePackage = {"base":{"path":"packages/engine/package.json","bytes":2933,"sha256":"afcc7ed24ddd5e73f0ebed1f60b1c1b31d1bac59d2127e0b061c499cfe8e93fe"},"current":{"path":"packages/engine/package.json","bytes":3172,"sha256":"93aa97c85bf7c58d9ff462851f1f63aa101aa3a73bf07d2b0518dc14189cec61"}};
-const m33KeyboardPngPackageSelected=equal(fingerprintFile(root,m33KeyboardPngEnginePackage.current.path),m33KeyboardPngEnginePackage.current);
+const m33KeyboardPngPackageSelected=equal(fingerprintFile(root,m33KeyboardPngEnginePackage.current.path),m33KeyboardPngEnginePackage.current)||nativeEditingPngSelected;
 function m33KeyboardPngPredecessor(raw){
+ raw=nativeEditingPngPredecessor(raw);
  if(!m33KeyboardPngPackageSelected)return raw;const {base,current}=m33KeyboardPngEnginePackage;
  if(raw.length!==current.bytes||hash(raw)!==current.sha256)failure('M3.3 keyboard PNG package changed during replay');
  const value=JSON.parse(raw);if(!equal(value.exports?.['./web/keyboard'],{types:'./dist/web/keyboard.d.ts',import:'./dist/web/keyboard.js'})||!equal(value.imports?.['#egret-keyboard-input'],{types:'./dist/keyboardInput.d.ts',import:'./dist/keyboardInput.js'}))failure('M3.3 keyboard PNG optional mapping differs');
@@ -150,6 +162,7 @@ function checkPin(pin) {
   if(m22PngPackageSelected&&equal(pin,m22PngEnginePackage.base))pin=m22PngEnginePackage.current;
   if(m32PngPackageSelected&&equal(pin,m32PngEnginePackage.base))pin=m32PngEnginePackage.current;
   if(m33KeyboardPngPackageSelected&&equal(pin,m33KeyboardPngEnginePackage.base))pin=m33KeyboardPngEnginePackage.current;
+  if(nativeEditingPngSelected&&equal(pin,nativeEditingPngPackage.base))pin=nativeEditingPngPackage.current;
   logicalPath(pin.path);
   if (!Number.isSafeInteger(pin.bytes) || pin.bytes < 0 || !/^[0-9a-f]{64}$/.test(pin.sha256)) failure('malformed raw pin');
   const actual = fingerprintFile(root, pin.path);

@@ -62,6 +62,8 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         './webgpu/scene3d': {types:'./dist/web/scene3d.d.ts',import:'./dist/web/scene3d.js'},
         // S3D1_FIXTURE_MAP_END
       } : name === 'project' ? {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./spine':{types:'./dist/spine/index.d.ts',import:'./dist/spine/index.js'},'./atlas':{types:'./dist/atlas/index.d.ts',import:'./dist/atlas/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}} : {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}};
+      if(name==='runtime'||name==='engine')packageExports['./ui/editing']={types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'};
+      if(name==='engine')packageExports['./web/editing']={types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'};
       write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(packageExports === undefined ? {} : {exports:packageExports}) });
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
@@ -1369,6 +1371,25 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write(keyboardResolverFile,{...keyboardResolver,exports:{...keyboardResolver.exports,'./input':'./keyboard-input.js','./web/keyboard':'./keyboard-browser.js'}});
     write('node_modules/@egret/engine/keyboard-input.js','export function createPointerInput() {}\nexport function createKeyboardInput() {}\n');
     write('node_modules/@egret/engine/keyboard-browser.js','export function createBrowserKeyboardInput() {}\n');
+    // Native editing keeps an inert, exact policy graph; these are not behavior tests.
+    const nativeEditingGraphFiles=["packages/engine/src/internal/uiRootState.ts","packages/engine/dist/internal/uiRootState.js","packages/engine/dist/internal/uiRootState.d.ts","packages/engine/src/ui/editing.ts","packages/engine/dist/ui/editing.js","packages/engine/dist/ui/editing.d.ts","packages/engine/src/ui/textEditor.ts","packages/engine/dist/ui/textEditor.js","packages/engine/dist/ui/textEditor.d.ts","packages/engine/src/ui/textEditorTypes.ts","packages/engine/dist/ui/textEditorTypes.js","packages/engine/dist/ui/textEditorTypes.d.ts","packages/engine/web/BrowserTextEditor.ts","packages/engine/dist/web/BrowserTextEditor.js","packages/engine/dist/web/BrowserTextEditor.d.ts","packages/engine/web/editing.ts","packages/engine/dist/web/editing.js","packages/engine/dist/web/editing.d.ts","packages/engine/web/editorFonts.ts","packages/engine/dist/web/editorFonts.js","packages/engine/dist/web/editorFonts.d.ts","packages/runtime/src/ui/editing.ts","packages/runtime/dist/ui/editing.js","packages/runtime/dist/ui/editing.d.ts","packages/runtime/src/ui/textEditState.ts","packages/runtime/dist/ui/textEditState.js","packages/runtime/dist/ui/textEditState.d.ts","packages/runtime/src/ui/textEditTypes.ts","packages/runtime/dist/ui/textEditTypes.js","packages/runtime/dist/ui/textEditTypes.d.ts"];
+    const nativeEditingNamedTargets=new Set(['#egret-text-editor','@egret/runtime/ui/editing','@egret/engine/ui/editing','@egret/engine/ui','@egret/engine/web/keyboard','@egret/engine/resources','@egret/engine','@egret/runtime/paragraph']);
+    for(const file of nativeEditingGraphFiles){
+      const original=readFileSync(path.join(repository,file),'utf8');if(!file.endsWith('.js')){write(file,original);continue;}
+      const clean=original.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
+      const clauses=[...clean.matchAll(/\b(import|export)\s*(?:\{[^}]+\}\s*from\s*|\*\s*from\s*)?['"]([^'"]+)['"]\s*;?/g)];
+      const ports=clauses.map(match=>match[1]==='export'||nativeEditingNamedTargets.has(match[2])?match[0]:'import '+JSON.stringify(match[2])+';');
+      const functions=[...clean.matchAll(/\bexport\s+(?:async\s+)?function\s+(\w+)/g)].map(match=>'export function '+match[1]+"() { throw new Error('Synthetic native editing policy fixture only'); }");
+      write(file,ports.join('\n')+'\n'+functions.join('\n')+'\n');
+    }
+    const nativeEditingPackage=JSON.parse(readFileSync(path.join(root,'packages/engine/package.json'),'utf8'));
+    write('packages/engine/package.json',{...nativeEditingPackage,imports:{...nativeEditingPackage.imports,'#egret-text-editor':{types:'./dist/ui/textEditor.d.ts',import:'./dist/ui/textEditor.js'}}});
+    for(const name of ['runtime','engine']){
+      const file='node_modules/@egret/'+name+'/package.json',value=JSON.parse(readFileSync(path.join(root,file),'utf8'));
+      value.exports['./ui/editing']='./ui-editing.js';if(name==='engine')value.exports['./web/editing']='./web-editing.js';write(file,value);
+      write('node_modules/@egret/'+name+'/ui-editing.js',name==='runtime'?'export function createTextEditState() {}\n':'export function createUiTextEditor() {}\n');
+      if(name==='engine')write('node_modules/@egret/engine/web-editing.js','export function createBrowserEditorFontProvider() {}\nexport function createBrowserTextEditor() {}\n');
+    }
     // M2.4 synthetic literal closure; genuine publication behavior is tested separately.
     const preparedSubtreeFixtureGraph = {
   "packages/engine/src/Engine.ts": [

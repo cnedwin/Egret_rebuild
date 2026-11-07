@@ -23,6 +23,10 @@
     "./paragraph": {
       "types": "./dist/paragraph/index.d.ts",
       "import": "./dist/paragraph/index.js"
+    },
+    "./ui/editing": {
+      "types": "./dist/ui/editing.d.ts",
+      "import": "./dist/ui/editing.js"
     }
   },
   "dependencies": {

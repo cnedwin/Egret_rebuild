@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/internal/uiRootState.ts",
+      "originRole": "Independently authored first-party optional native plain-text editing, authenticated UI publication and paired browser font/resource lifetime; AI-assisted; Apache-2.0. Existing attributed providers/assets reused unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/ui/editing.ts",
+      "originRole": "Independently authored first-party optional native plain-text editing, authenticated UI publication and paired browser font/resource lifetime; AI-assisted; Apache-2.0. Existing attributed providers/assets reused unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/ui/textEditor.ts",
+      "originRole": "Independently authored first-party optional native plain-text editing, authenticated UI publication and paired browser font/resource lifetime; AI-assisted; Apache-2.0. Existing attributed providers/assets reused unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/ui/textEditorTypes.ts",
+      "originRole": "Independently authored first-party optional native plain-text editing, authenticated UI publication and paired browser font/resource lifetime; AI-assisted; Apache-2.0. Existing attributed providers/assets reused unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/BrowserTextEditor.ts",
+      "originRole": "Independently authored first-party optional native plain-text editing, authenticated UI publication and paired browser font/resource lifetime; AI-assisted; Apache-2.0. Existing attributed providers/assets reused unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/editing.ts",
+      "originRole": "Independently authored first-party optional native plain-text editing, authenticated UI publication and paired browser font/resource lifetime; AI-assisted; Apache-2.0. Existing attributed providers/assets reused unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/editorFonts.ts",
+      "originRole": "Independently authored first-party optional native plain-text editing, authenticated UI publication and paired browser font/resource lifetime; AI-assisted; Apache-2.0. Existing attributed providers/assets reused unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/ui/editing.ts",
+      "originRole": "Independently authored first-party optional native plain-text editing, authenticated UI publication and paired browser font/resource lifetime; AI-assisted; Apache-2.0. Existing attributed providers/assets reused unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/ui/textEditState.ts",
+      "originRole": "Independently authored first-party optional native plain-text editing, authenticated UI publication and paired browser font/resource lifetime; AI-assisted; Apache-2.0. Existing attributed providers/assets reused unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/ui/textEditTypes.ts",
+      "originRole": "Independently authored first-party optional native plain-text editing, authenticated UI publication and paired browser font/resource lifetime; AI-assisted; Apache-2.0. Existing attributed providers/assets reused unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/text-editing/index.html",
+      "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/text-editing/serve.mjs",
+      "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/text-editing/main.mjs",
+      "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-text-edit-state-unit.test.mjs",
+      "originRole": "First-party bounded native-editing checks and exact current admission; original historical identities, diagnostics and complete predecessor inverses preserved; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-text-editor.test.mjs",
+      "originRole": "First-party bounded native-editing checks and exact current admission; original historical identities, diagnostics and complete predecessor inverses preserved; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/text-editing/verify-browser.mjs",
+      "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/ui-text-editor-negative.ts",
+      "originRole": "First-party bounded native-editing checks and exact current admission; original historical identities, diagnostics and complete predecessor inverses preserved; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/ui-text-editor-positive.ts",
+      "originRole": "First-party bounded native-editing checks and exact current admission; original historical identities, diagnostics and complete predecessor inverses preserved; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-text-editor-types.test.mjs",
+      "originRole": "First-party bounded native-editing checks and exact current admission; original historical identities, diagnostics and complete predecessor inverses preserved; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/text-editing/verification-summary.json",
+      "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/native-text-editing.md",
+      "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/native-text-editing.md",
+      "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/text-editing/README.md",
+      "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/text-editing/README.zh-CN.md",
+      "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/native-text-editing.md",
+      "zh": "knowledge-base/Cns/docs/native-text-editing.md"
+    },
+    {
+      "en": "examples/text-editing/README.md",
+      "zh": "examples/text-editing/README.zh-CN.md"
+    }
+  ]
+}

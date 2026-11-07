@@ -40,6 +40,8 @@ Record identity, stopping point, verified cause/owner, changed inputs, focused r
 
 When extending a source-owner file, check bounded readers and inverse fixtures that consume the prefix before historical markers. Keep additions within the existing reader's admitted syntax or outside that prefix; do not expand reader authority to accept an incidental syntax change.
 
+When an optional SDK entry changes package exports or private aliases, inspect every existing standalone package/source owner as well as the shared gate. An exact current-byte check and an older semantic export projection can both need the same bounded addition. Prove each complete predecessor by an exact inverse; derive graph counts from that owner's actual closure rather than copying another inventory's count. Run the affected standalone checks together before the next candidate push, preserving all original pins and refusal assertions.
+
 For state-machine repairs, review the admitted terminal/ownership/error boundaries together, including existing bubbling and callback failure, rather than patching one scalar example per review. Keep browser/device/performance acceptance separate.
 
 Update the existing cause family and work package. Add a regression, clearer owner/admission or a narrow skill correction when it changes future decisions; do not create another maintenance framework for each occurrence. Require normal hooks, independent review, paired public documentation and branch protection. Never rehash sealed history, waive a real failure, bypass hooks or treat manual subset passes as complete CI.

@@ -101,7 +101,24 @@ function m22SequencePackageSuccessor(expected,raw){
 // Exact current UI identities preserve all preceding package and source groups.
 const m31UiPackagePairs = [{"base":{"path":"packages/engine/package.json","bytes":2494,"sha256":"65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951"},"current":{"path":"packages/engine/package.json","bytes":2591,"sha256":"817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5"}},{"base":{"path":"packages/runtime/package.json","bytes":471,"sha256":"97b2d4678df4fd137b681a54511ce625935accfc3014da4800902f4a241c8db1"},"current":{"path":"packages/runtime/package.json","bytes":568,"sha256":"cb9822d5bbc457edf1256a98d2a7437ee8e13bc58caffe9914afdaa9345ef8c3"}}];
 const m31UiSourcePairs = [{"base":{"path":"packages/engine/dist/Engine.js","bytes":21169,"sha256":"61e9613b37d886859d2f11ed23b889684b24a0aba39b4d8f324fb2d5a003f933"},"current":{"path":"packages/engine/dist/Engine.js","bytes":22046,"sha256":"42ea7f41b79061115a2ed3ac9312163201ca0a942627c8279b3484bf5a9b5239"}},{"base":{"path":"packages/engine/src/Engine.ts","bytes":24333,"sha256":"ee2e61e0e038ae425e26bc9913da38b80cfe9117b782f0712c3ebeca51f92cfd"},"current":{"path":"packages/engine/src/Engine.ts","bytes":25315,"sha256":"ad13f34fd2229c081dd185322918a0043624eed36a8a06f69d7915991aa2110d"}}];
+// Exact optional editing package inverses; retained package rows remain original.
+const nativeEditingPackagePairs = [{"base":{"path":"packages/engine/package.json","bytes":3172,"sha256":"93aa97c85bf7c58d9ff462851f1f63aa101aa3a73bf07d2b0518dc14189cec61"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}},{"base":{"path":"packages/runtime/package.json","bytes":686,"sha256":"4d420a3f9896562972c959a1aeaeb5a7cb3e6e74e0fd47595a011f08665741c0"},"current":{"path":"packages/runtime/package.json","bytes":795,"sha256":"2533e015708632dd8f536b54835021d62e34a2be535ecd97c07f47610f61aa8f"}}];
+function nativeEditingPackageSuccessor(expected,raw){
+ const pair=nativeEditingPackagePairs.find(pair=>pair.base.path===expected?.path),digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+ if(!pair||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;
+ const value=JSON.parse(raw.toString('utf8'));
+ if(JSON.stringify(value.exports['./ui/editing'])!==JSON.stringify({types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'}))return false;
+ delete value.exports['./ui/editing'];
+ if(expected.path==='packages/engine/package.json'){
+  if(JSON.stringify(value.exports['./web/editing'])!==JSON.stringify({types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'})||JSON.stringify(value.imports['#egret-text-editor'])!==JSON.stringify({types:'./dist/ui/textEditor.d.ts',import:'./dist/ui/textEditor.js'}))return false;
+  delete value.exports['./web/editing'];delete value.imports['#egret-text-editor'];
+ }
+ const previous=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ if(previous.length!==pair.base.bytes||digest(previous)!==pair.base.sha256)return false;
+ return JSON.stringify(expected)===JSON.stringify(pair.base)||m31UiPackageSuccessor(expected,previous);
+}
 function m31UiPackageSuccessor(expected,raw){
+ if(nativeEditingPackageSuccessor(expected,raw))return true;
  if(m22SequencePackageSuccessor(expected,raw))return true;
  const pair=m31UiPackagePairs.find(pair=>pair.base.path===expected?.path),digest=raw=>createHash('sha256').update(raw).digest('hex');
  if(!pair||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;

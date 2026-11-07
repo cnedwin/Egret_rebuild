@@ -6,6 +6,10 @@ English | [简体中文](../../Cns/docs/工程规划.md)
 
 The next phase turns existing components into a usable core workflow. Preserve the eleven M2–M4 packages, their public contracts and current contributor ownership. [Core capabilities](core-progress.md) states what exists; the [architecture plan](architecture-and-engineering-plan.md) defines authority and gates; the [M2–M4 roadmap](m2-m4-delivery-plan.md) retains complete milestone acceptance.
 
+## M3.3 implementation checkpoint
+
+The first editing increment is implemented through optional runtime/UI/browser editing entries and one [editable form](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.md). [Native editing](native-text-editing.md) defines the delivered source/session, row retention, paired-font and publication contracts. Its controlled cases and 20 checks on each desktop shared backend are recorded separately from real IME/device/accessibility qualification. Those rows remain open within #89; no new work package or touch assignment is introduced. The later batches below retain their original dependencies and are not started by this increment.
+
 ## Current position
 
 M0's engineering foundation is available; independent human onboarding and remaining scenario/rights/device qualification stay in #52/#54. M1's rendering/resource engineering is integrated, while formal M1.2 remains OPEN at 10.3 ms full-dirty Engine median-p95 against 8 ms. M2/M3 have runnable assets, players, UI, paragraphs, fonts, themes and shared effects. M4 has usable ingredients but no complete mixed reference game or qualified core release.

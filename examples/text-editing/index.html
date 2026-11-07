@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Egret native text editing / 白鹭原生文本编辑</title><link rel="icon" href="data:,">
+<script type="importmap">{"imports":{"@egret/engine":"/packages/engine/dist/index.js","@egret/engine/resources":"/packages/engine/dist/resources.js","@egret/engine/web/resources":"/packages/engine/dist/web/resources.js","#egret-manifest-resources":"/packages/engine/dist/manifestResourceState.js","@egret/engine/ui":"/packages/engine/dist/ui/index.js","@egret/engine/paragraph":"/packages/engine/dist/paragraph.js","@egret/engine/web/paragraph":"/packages/engine/dist/web/paragraph.js","@egret/engine/web/pointer":"/packages/engine/dist/web/pointer.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/engine/webgl2":"/packages/engine/dist/web/webgl2.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/runtime/ui":"/packages/runtime/dist/ui/index.js","@egret/runtime/text":"/packages/runtime/dist/text/index.js","@egret/runtime/paragraph":"/packages/runtime/dist/paragraph/index.js","@egret/runtime/input":"/packages/runtime/dist/input/index.js","@egret/contracts":"/packages/contracts/dist/index.js","@egret/contracts/resources":"/packages/contracts/dist/resources/index.js","#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-pointer-input":"/packages/engine/dist/pointerInput.js","robust-predicates":"/vendor/robust-predicates/index.js","@egret/engine/ui/editing":"/packages/engine/dist/ui/editing.js","@egret/engine/web/editing":"/packages/engine/dist/web/editing.js","@egret/runtime/ui/editing":"/packages/runtime/dist/ui/editing.js","@egret/engine/web/keyboard":"/packages/engine/dist/web/keyboard.js","#egret-keyboard-input":"/packages/engine/dist/keyboardInput.js","#egret-text-editor":"/packages/engine/dist/ui/textEditor.js"}}</script>
+<script src="../paragraph-panel/vendor/runtime/layout-r1/canvaskit.js"></script>
+<style>
+ *{box-sizing:border-box}body{margin:0;background:#eef3f8;color:#172a43;font:15px/1.5 system-ui,sans-serif}main{max-width:900px;margin:auto;padding:24px}h1{font-size:25px}p{max-width:820px}.scene{overflow:auto;background:#142033}canvas{display:block;width:800px;height:480px;max-width:none}.controls{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}button{font:inherit;background:white;border:1px solid #c6d4e2;border-radius:6px;padding:7px 10px;cursor:pointer}pre{font-size:12px;white-space:pre-wrap;background:#dfe8f1;padding:12px}a{color:#244d83}
+</style></head><body><main>
+<h1>Native single-line and multiline editing / 原生单行与多行编辑</h1>
+<p>The form is rendered by Engine UI. Activate a field to edit with a native input or textarea; committed text returns to the existing paragraph renderer. Keyboard Tab follows the existing UI focus order.<br>表单由 Engine UI 渲染；激活字段后使用原生输入控件编辑，提交后回到现有段落渲染。Tab 沿用现有 UI 焦点顺序。</p>
+<div class="scene"><canvas id="scene" width="800" height="480" tabindex="0" aria-label="Editable game profile / 可编辑的游戏资料"></canvas></div>
+<div class="controls">
+<button data-action="name">Edit name / 编辑名字</button><button data-action="description">Edit description / 编辑简介</button>
+<button data-action="finish">Finish / 完成</button><button data-action="cancel">Cancel composition / 取消组合输入</button>
+<button data-action="replace">Set value / 设置文本</button><button data-action="fonts">Replace fonts / 替换字体</button>
+<button data-action="width">Change width / 调整宽度</button><button data-action="density">Change density / 调整密度</button>
+<button data-action="scroll">Scroll / 滚动</button><button data-action="reset-scroll">Top / 回到顶部</button>
+<button data-action="close">Close / 关闭</button>
+</div><pre id="status" role="status">Loading / 加载中</pre>
+<p>Uses identified bundled Noto font resources. Browser/native wrapping can differ from readonly paragraph wrapping. Controlled composition events do not qualify a real IME; physical IME, mobile keyboard and accessibility qualification remain open.<br>复用具有明确身份的 Noto 字体资源。浏览器原生换行与只读段落可能不同；脚本组合事件不能代替真实输入法验收，实体输入法、移动键盘与无障碍验收仍待完成。</p>
+<p><a data-backend="webgl2">WebGL2</a> · <a data-backend="webgpu">WebGPU</a> · <a href="README.md">English guide</a> · <a href="README.zh-CN.md">中文说明</a></p>
+</main><script type="module" src="main.mjs"></script></body></html>
