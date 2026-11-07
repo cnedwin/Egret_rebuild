@@ -295,8 +295,8 @@
     {
       "path": "AGENTS.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "1a102b54ffe0bd04b2879790307749640009d6d22640e87d90121385ebe0a93d",
-      "bytes": 45257,
+      "sha256": "965ef219fc58f5bf8668a6cb6f879cf038528416cf12e03f7959d3893ff66aef",
+      "bytes": 46085,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
       "previousLayoutPath": "AGENTS.en.md",
       "previousLayoutSha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5",
@@ -325,8 +325,8 @@
     },
     {
       "path": "AGENTS.zh-CN.md",
-      "sha256": "07a3e3d94324ecb66af25551f2db27b1bec8a27518649b397c1b7f2b9c697752",
-      "bytes": 40592,
+      "sha256": "4df2e09bfd6ef8b23363f3ba6d2fe101f4341cd405173f460a0e427fc648236d",
+      "bytes": 41314,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
@@ -622,8 +622,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 25377,
-      "sha256": "228b8d75ec3423cd70cb754a7257e797e50f4f994cb12447e94a2a3954ffe6d7",
+      "bytes": 25790,
+      "sha256": "2603ec1846b6db828bb8753cc3af60915d0921ccd4895dd765d34556ebee95c7",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 11191,
-      "sha256": "1f8dddb4c1a9f974751f637598545f1de84a69e63069bcdb4f7dc3d9a7d78e12",
+      "bytes": 11180,
+      "sha256": "4687c142907eba64ea5376f3a2642ae47d8e792cc5db19d556cd3f9cb08753df",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -1084,8 +1084,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/工程规划.md",
-      "bytes": 12960,
-      "sha256": "5931d4d35f014783f16285adb6574c6364f26d1f6511d9667079d9a21857c4e8",
+      "bytes": 13097,
+      "sha256": "ff283f42f37b3d522d7128a79e3283b335b089ad5696d50a469a5388dda11dfc",
       "identityHistory": [
         {
           "bytes": 23962,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "2d2a6b302d018113a693f7a8ce81c0fc3d0d3f93ee6035a514794a62841247c8",
+      "sha256": "491daa2a6684265349a0b296378fe6d5939209038ab0744e2b342b8bb0fb706a",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2153,8 +2153,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 28826,
-      "sha256": "b30ef92890b8c40397af81140acae772923945f6870d6bccd6b176625d9dcdf0",
+      "bytes": 29335,
+      "sha256": "7cbddf9ab50ce8c21deac66c217f64ad319a109e6849729e4544c8f24b5b2b96",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 12659,
-      "sha256": "fde6878106d1e68cbdde3f7c18addf112d745a4bc6311ad74c96fbc8d22c9cc2",
+      "bytes": 12673,
+      "sha256": "245ee72afeb9dc6d0fd2c63f536fc33959d615d99fc2c253b7b5dd00fd3e5807",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -2684,8 +2684,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-plan.md",
-      "bytes": 15328,
-      "sha256": "3e93f0f3e58cb3361cd0cd231224d6813fc9f8377307d3ba31e653b12f6f7368",
+      "bytes": 15464,
+      "sha256": "104ec536a25176f5029ddfb03ebd628dbe1f75a8fe7f6b5a9f7a0bfcc2b3abe8",
       "identityHistory": [
         {
           "bytes": 29962,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "cff0746aa6e0627c0c13f3c9943b233ab351fedc49a5f9bd98e383fbc628dcd3",
-      "bytes": 388378,
+      "sha256": "a772cff7764dec322186590ff214e67c8b4d146fa9e27e71b8c4d650e7c14d26",
+      "bytes": 388733,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4860,8 +4860,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "90e96084d77ec502195c7865bfb28138ce0bfa65d74b5d5636fd1e10c9d3e0ce",
-      "bytes": 15322,
+      "sha256": "e523baada5474bf6a0c80908318ba271eed1992489470f775190bacd48152354",
+      "bytes": 15622,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -5003,8 +5003,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "0def02d54085a8462e8e18f367a5f29d7f39d36b67378ebfe28f7c2bbf848d9b",
-      "bytes": 14774,
+      "sha256": "2ef4d2e9a8e81d4d7bc89c00a73c647d2a8a7025ac928fb603c1dd14b76c7eeb",
+      "bytes": 15049,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -9876,8 +9876,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 310736,
-      "sha256": "f48693f46556d9e39805c82d9ec4b13e521c0b3b3b274d0aeb20490fafa6dfac",
+      "bytes": 312006,
+      "sha256": "ca00ce28d9f20c0dd80fb7d4959bcc04363379ca567aa41e2341937dc1985fc6",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10099,8 +10099,8 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 320321,
-      "sha256": "4d55fa607086440cf4b1259bbc1fc8c0228cb87b2f64a552eb5a81ec21bb3cc7",
+      "bytes": 321591,
+      "sha256": "4a3ffbf58ef2695279d6b8be6a78b98da7971d4fa785b82992b4e5126243c22c",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10161,8 +10161,8 @@
     },
     {
       "path": "tools/atlas-import-boundary.mjs",
-      "bytes": 215449,
-      "sha256": "7eebfe9b659dead9210eb9e4eee16fb112681d85bc99cf9952dfa399b234c654",
+      "bytes": 216719,
+      "sha256": "178a8961dd8158a172d0b2e4a6a8c0250736028ad987b46f640c4a7c6ee35243",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1389991,
-      "sha256": "08dda76fb25bb99e4107c1cc465358b79c2600b350b5f502d88c3a7d7d5cd670"
+      "bytes": 1394857,
+      "sha256": "f7df0b30c10f3fcde412b13dca202c6900c06190df73806d198897c042ac4f44"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10689,7 +10689,7 @@
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
       "bytes": 49862,
-      "sha256": "2e87e04eb32085789f677728a59da95511ad1e1536033d88e369a5b389d09fb6"
+      "sha256": "4523c8ad88103250d772fd66a1231a9112c8487fc6b4eeffe8986736a270e902"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -15674,14 +15674,14 @@
     {
       "path": "knowledge-base/en/docs/android-device-validation.md",
       "originRole": "First-party scoped Android component observations and limitations, independently reviewed; AI-assisted; Apache-2.0.",
-      "bytes": 16911,
-      "sha256": "0fb099fe698e520d666bf18802fba12d5868337afc8376e3a5920341a32ce673"
+      "bytes": 17143,
+      "sha256": "471f96462905311213947b28a188fd752f95ee842beb18d7a025d58bc2ec6ec4"
     },
     {
       "path": "knowledge-base/Cns/docs/android-device-validation.md",
       "originRole": "First-party Chinese reading of the scoped Android component observations and limitations; AI-assisted; Apache-2.0.",
-      "bytes": 14799,
-      "sha256": "aadc0a00cf1046c2175b91a479466f74d7f43254be4fddf17a64b336da350faa"
+      "bytes": 14988,
+      "sha256": "3bad5ef5f676f896b9262c846217e2ce7251b9d4f2c91186634641ac9bd89f40"
     },
     {
       "path": "verification/android-device/2026-11-06.json",
@@ -15734,8 +15734,8 @@
     {
       "path": "packages/engine/web/BrowserTextEditor.ts",
       "originRole": "Independently authored first-party optional native plain-text editing, authenticated UI publication and paired browser font/resource lifetime; AI-assisted; Apache-2.0. Existing attributed providers/assets reused unchanged.",
-      "bytes": 31202,
-      "sha256": "48deabf6002a04ab3531d07157da67978f5d949970c640c2b80748c2ff45640d"
+      "bytes": 31507,
+      "sha256": "59f538c1acfce832c3a9c7087c695dd78e36bd6347c0ea90269b884ba84daff7"
     },
     {
       "path": "packages/engine/web/editing.ts",
@@ -15770,8 +15770,8 @@
     {
       "path": "examples/text-editing/index.html",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 4702,
-      "sha256": "2b38f57de6b07d7f1052947805d0df1b2d67a7e0ac404ffa3bc991145461e653"
+      "bytes": 4847,
+      "sha256": "bdd5222194f7b733ef924e94d7ea680ac889cbda208d47749786ed219f42a27d"
     },
     {
       "path": "examples/text-editing/serve.mjs",
@@ -15782,8 +15782,8 @@
     {
       "path": "examples/text-editing/main.mjs",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 12762,
-      "sha256": "592adcf510559d8fbaf888d8c0561c254d58cd817aea1fdfa622d416c047054c"
+      "bytes": 16331,
+      "sha256": "00489259bab12b04a2633eca89df75a2cd4886652b6734dc286a706df168ac6e"
     },
     {
       "path": "tests/ui-text-edit-state-unit.test.mjs",
@@ -15800,8 +15800,8 @@
     {
       "path": "examples/text-editing/verify-browser.mjs",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 19310,
-      "sha256": "2dd1c5225d66f0822de69de4d2ca7119ad92a3ad80af27e709de70c449053099"
+      "bytes": 25787,
+      "sha256": "9bf4af8272fa7ad5cf8fa60db825e432ad61fe9fdd9add9cda0cce82ddaaf8f7"
     },
     {
       "path": "tests/types/ui-text-editor-negative.ts",
@@ -15830,32 +15830,56 @@
     {
       "path": "knowledge-base/en/docs/native-text-editing.md",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 9371,
-      "sha256": "dd2daec2aaed3e9279c875436263ed1cc62c20e5631ae950742bb7910735c4a2"
+      "bytes": 9486,
+      "sha256": "95d6071fff2f2bbcd4e932fa171ad06921730983eeb2e6d556afef5534bf9412"
     },
     {
       "path": "knowledge-base/Cns/docs/native-text-editing.md",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 8264,
-      "sha256": "420adc884bd7060f226d901b4416ab590462dd4c32d4464a7c2439e769cf071f"
+      "bytes": 8360,
+      "sha256": "5fa5926ff976337f867cdae15d5bc4bc65e58db2fedfac6fd9fd31e976bc805f"
     },
     {
       "path": "examples/text-editing/README.md",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 1926,
-      "sha256": "eb1a441e5de698da00ec2c8ea2cb8fee9976bfe9860fd593903ef8f700de8899"
+      "bytes": 2566,
+      "sha256": "c64fbc5051f2b6fd1f7cb6caef0a93bf633a107ae9bad9c61e2f633c809a02f0"
     },
     {
       "path": "examples/text-editing/README.zh-CN.md",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 1747,
-      "sha256": "41c306d77803424d554846e31f645a6c9b3d98a26bbefb3d9d6749638cf6a567"
+      "bytes": 2326,
+      "sha256": "9f67db3891e35942b9bbd10a8cfce7e899d1110223d4784a3d774feb33758f91"
     },
     {
       "path": "contributions/native-text-editing.json",
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 7335,
       "sha256": "55fc06ff11883d38e87e4ac104b911f459c3928d8112970c435778a834cafb5f"
+    },
+    {
+      "path": "knowledge-base/en/docs/android-native-text-editing.md",
+      "originRole": "First-party bounded Android native-editing evidence and bilingual integration guidance; independently authored, AI-assisted; Apache-2.0. Existing attributed font/runtime artifacts unchanged.",
+      "bytes": 5340,
+      "sha256": "2edf56003a750d7f12cc89253a7caf6210f83260add54276f6ab8549ce8602f9"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/android-native-text-editing.md",
+      "originRole": "First-party bounded Android native-editing evidence and bilingual integration guidance; independently authored, AI-assisted; Apache-2.0. Existing attributed font/runtime artifacts unchanged.",
+      "bytes": 4760,
+      "sha256": "1f91576747a0e2f7f545c7331435f89e033916cda8a474afc5df73fc8fabc01b"
+    },
+    {
+      "path": "verification/android-device/native-text-editing-2026-11-07.json",
+      "originRole": "First-party bounded Android native-editing evidence and bilingual integration guidance; independently authored, AI-assisted; Apache-2.0. Existing attributed font/runtime artifacts unchanged.",
+      "bytes": 24644,
+      "sha256": "49a921c2409e474840ed6940de86ffea0fdd6a991758e70342611ceba15c2d89"
+    },
+    {
+      "path": "contributions/android-native-editing.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 1116,
+      "sha256": "6af3a70d03b155f76cd6e40cf9fc5f66e2e2f6d4d090388cd34aab0e252a276b"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

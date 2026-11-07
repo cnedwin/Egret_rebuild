@@ -144,7 +144,11 @@ export function createBrowserTextEditor(options: BrowserTextEditorOptions): Brow
     }
     function listen(rows: typeof permanent, eventTarget: EventTarget, type: string, action: (event: Event) => void, capture = false): void {
         const listener: EventListener = event => {
-            if (busy && ['beforeinput', 'input', 'compositionstart', 'compositionupdate', 'compositionend'].includes(type)) { fail(fault('REENTRANT')); return; }
+            const inputEvent = ['beforeinput', 'input', 'compositionstart', 'compositionupdate', 'compositionend'].includes(type);
+            // Readonly/blur may synchronously flush a terminal IME event after end retired its token.
+            // Such events belong to the ended session; active-session reentry still refuses below.
+            if (inputEvent && token === undefined) return;
+            if (busy && inputEvent) { fail(fault('REENTRANT')); return; }
             if (busy && token !== undefined && type === 'blur') { requestEnd('commit'); return; }
             if (busy && token !== undefined && type === 'pagehide') { requestEnd('cancel'); return; }
             perform(() => action(event));

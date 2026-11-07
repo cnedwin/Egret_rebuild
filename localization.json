@@ -323,8 +323,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "1a102b54ffe0bd04b2879790307749640009d6d22640e87d90121385ebe0a93d",
-      "zhSha256": "07a3e3d94324ecb66af25551f2db27b1bec8a27518649b397c1b7f2b9c697752"
+      "enSha256": "965ef219fc58f5bf8668a6cb6f879cf038528416cf12e03f7959d3893ff66aef",
+      "zhSha256": "4df2e09bfd6ef8b23363f3ba6d2fe101f4341cd405173f460a0e427fc648236d"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -400,8 +400,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "b30ef92890b8c40397af81140acae772923945f6870d6bccd6b176625d9dcdf0",
-      "zhSha256": "228b8d75ec3423cd70cb754a7257e797e50f4f994cb12447e94a2a3954ffe6d7"
+      "enSha256": "7cbddf9ab50ce8c21deac66c217f64ad319a109e6849729e4544c8f24b5b2b96",
+      "zhSha256": "2603ec1846b6db828bb8753cc3af60915d0921ccd4895dd765d34556ebee95c7"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "fde6878106d1e68cbdde3f7c18addf112d745a4bc6311ad74c96fbc8d22c9cc2",
-      "zhSha256": "1f8dddb4c1a9f974751f637598545f1de84a69e63069bcdb4f7dc3d9a7d78e12"
+      "enSha256": "245ee72afeb9dc6d0fd2c63f536fc33959d615d99fc2c253b7b5dd00fd3e5807",
+      "zhSha256": "4687c142907eba64ea5376f3a2642ae47d8e792cc5db19d556cd3f9cb08753df"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -610,8 +610,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "3e93f0f3e58cb3361cd0cd231224d6813fc9f8377307d3ba31e653b12f6f7368",
-      "zhSha256": "5931d4d35f014783f16285adb6574c6364f26d1f6511d9667079d9a21857c4e8"
+      "enSha256": "104ec536a25176f5029ddfb03ebd628dbe1f75a8fe7f6b5a9f7a0bfcc2b3abe8",
+      "zhSha256": "ff283f42f37b3d522d7128a79e3283b335b089ad5696d50a469a5388dda11dfc"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "90e96084d77ec502195c7865bfb28138ce0bfa65d74b5d5636fd1e10c9d3e0ce",
-      "zhSha256": "0def02d54085a8462e8e18f367a5f29d7f39d36b67378ebfe28f7c2bbf848d9b"
+      "enSha256": "e523baada5474bf6a0c80908318ba271eed1992489470f775190bacd48152354",
+      "zhSha256": "2ef4d2e9a8e81d4d7bc89c00a73c647d2a8a7025ac928fb603c1dd14b76c7eeb"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -2278,22 +2278,29 @@
       "en": "knowledge-base/en/docs/android-device-validation.md",
       "zh": "knowledge-base/Cns/docs/android-device-validation.md",
       "kind": "public_reading",
-      "enSha256": "0fb099fe698e520d666bf18802fba12d5868337afc8376e3a5920341a32ce673",
-      "zhSha256": "aadc0a00cf1046c2175b91a479466f74d7f43254be4fddf17a64b336da350faa"
+      "enSha256": "471f96462905311213947b28a188fd752f95ee842beb18d7a025d58bc2ec6ec4",
+      "zhSha256": "3bad5ef5f676f896b9262c846217e2ce7251b9d4f2c91186634641ac9bd89f40"
     },
     {
       "en": "knowledge-base/en/docs/native-text-editing.md",
       "zh": "knowledge-base/Cns/docs/native-text-editing.md",
       "kind": "public_reading",
-      "enSha256": "dd2daec2aaed3e9279c875436263ed1cc62c20e5631ae950742bb7910735c4a2",
-      "zhSha256": "420adc884bd7060f226d901b4416ab590462dd4c32d4464a7c2439e769cf071f"
+      "enSha256": "95d6071fff2f2bbcd4e932fa171ad06921730983eeb2e6d556afef5534bf9412",
+      "zhSha256": "5fa5926ff976337f867cdae15d5bc4bc65e58db2fedfac6fd9fd31e976bc805f"
     },
     {
       "en": "examples/text-editing/README.md",
       "zh": "examples/text-editing/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "eb1a441e5de698da00ec2c8ea2cb8fee9976bfe9860fd593903ef8f700de8899",
-      "zhSha256": "41c306d77803424d554846e31f645a6c9b3d98a26bbefb3d9d6749638cf6a567"
+      "enSha256": "c64fbc5051f2b6fd1f7cb6caef0a93bf633a107ae9bad9c61e2f633c809a02f0",
+      "zhSha256": "9f67db3891e35942b9bbd10a8cfce7e899d1110223d4784a3d774feb33758f91"
+    },
+    {
+      "en": "knowledge-base/en/docs/android-native-text-editing.md",
+      "zh": "knowledge-base/Cns/docs/android-native-text-editing.md",
+      "kind": "public_reading",
+      "enSha256": "2edf56003a750d7f12cc89253a7caf6210f83260add54276f6ab8549ce8602f9",
+      "zhSha256": "1f91576747a0e2f7f545c7331435f89e033916cda8a474afc5df73fc8fabc01b"
     }
   ],
   "registries": [
@@ -3263,7 +3270,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "4d55fa607086440cf4b1259bbc1fc8c0228cb87b2f64a552eb5a81ec21bb3cc7"
+      "sha256": "4a3ffbf58ef2695279d6b8be6a78b98da7971d4fa785b82992b4e5126243c22c"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3411,7 +3418,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "f48693f46556d9e39805c82d9ec4b13e521c0b3b3b274d0aeb20490fafa6dfac"
+      "sha256": "ca00ce28d9f20c0dd80fb7d4959bcc04363379ca567aa41e2341937dc1985fc6"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3883,7 +3890,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "08dda76fb25bb99e4107c1cc465358b79c2600b350b5f502d88c3a7d7d5cd670"
+      "sha256": "f7df0b30c10f3fcde412b13dca202c6900c06190df73806d198897c042ac4f44"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3911,7 +3918,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "2e87e04eb32085789f677728a59da95511ad1e1536033d88e369a5b389d09fb6"
+      "sha256": "4523c8ad88103250d772fd66a1231a9112c8487fc6b4eeffe8986736a270e902"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4663,7 +4670,7 @@
     },
     {
       "path": "packages/engine/web/BrowserTextEditor.ts",
-      "sha256": "48deabf6002a04ab3531d07157da67978f5d949970c640c2b80748c2ff45640d"
+      "sha256": "59f538c1acfce832c3a9c7087c695dd78e36bd6347c0ea90269b884ba84daff7"
     },
     {
       "path": "packages/engine/web/editing.ts",
@@ -4691,7 +4698,7 @@
     },
     {
       "path": "examples/text-editing/main.mjs",
-      "sha256": "592adcf510559d8fbaf888d8c0561c254d58cd817aea1fdfa622d416c047054c"
+      "sha256": "00489259bab12b04a2633eca89df75a2cd4886652b6734dc286a706df168ac6e"
     },
     {
       "path": "tests/ui-text-edit-state-unit.test.mjs",
@@ -4703,7 +4710,7 @@
     },
     {
       "path": "examples/text-editing/verify-browser.mjs",
-      "sha256": "2dd1c5225d66f0822de69de4d2ca7119ad92a3ad80af27e709de70c449053099"
+      "sha256": "9bf4af8272fa7ad5cf8fa60db825e432ad61fe9fdd9add9cda0cce82ddaaf8f7"
     },
     {
       "path": "tests/types/ui-text-editor-negative.ts",

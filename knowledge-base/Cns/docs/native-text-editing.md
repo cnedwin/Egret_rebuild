@@ -20,7 +20,7 @@ M3.3 现已提供整合到现有托管 UI 的可选单行／多行编辑切片�
 
 一个不透明激活标识对应一次编辑会话。原生更新携带期望的已提交修订；过期会话／修订不能覆盖新意图。组合输入只保存一个临时草稿，根据最终观察到的原生值提交一次；相同的重复最终 input 不重复提交。组合输入期间拒绝程序化修改文本或选区。显式 setValue(..., {cancelComposition:true}) 取消旧会话、发布指定意图，并拒绝已脱离原生节点的迟到事件。避免写入相同 DOM 值以保留原生撤销历史；显式程序化替换不同文本可能重置宿主历史，不另设撤销栈。
 
-cancel() 丢弃临时组合状态，保留普通编辑已经提交的值。finish()、单行 Enter 和失焦提交观察到的原生文本；多行 Enter 留在 textarea 内。组合输入中的 Enter／Escape、Process／229 事件交给宿主。未配置 keyboard 时，Tab 遵循浏览器行为；配置真实键盘输入后，先恢复激活时捕获的逻辑目标，再使用既有正向／反向焦点顺序。恢复交互不会伪造焦点。
+cancel() 丢弃临时组合状态，保留普通编辑已经提交的值。finish()、单行 Enter 和失焦提交观察到的原生文本；多行 Enter 留在 textarea 内。组合输入中的 Enter／Escape、Process／229 事件交给宿主。未配置 keyboard 时，Tab 遵循浏览器行为；配置真实键盘输入后，先恢复激活时捕获的逻辑目标，再使用既有正向／反向焦点顺序。恢复交互不会伪造焦点。会话令牌退役后的输入／组合终止回调会被忽略；活动会话的重入继续拒绝。
 
 ## 托管 UI 与渲染
 
@@ -42,8 +42,10 @@ createBrowserEditorFontProvider 将同一不可变 FontContentLoader 根传给�
 
 ## 验证与剩余资格
 
-[可运行表单](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.zh-CN.md) 通过公开入口覆盖普通 UI 与虚拟行生命周期。[结果汇总](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/verification-summary.json) 区分纯状态单元、字面量宿主 SDK／类型用例，以及实际桌面 Edge 156.0.4314.58 浏览器运行。WebGL2、WebGPU 各通过 20 项整合检查，包含可信输入／撤销／重做、原生多行 Enter、反向选区、受控组合输入／粘贴、过期事件、布局／密度、字体失败／取消／替换、裁剪行返回、只读交接失败及自有资源归零。WebGPU 运行使用 deviceScaleFactor 2，属于浏览器模拟，不是手机结果。此前失败及修正原因均保留。
+[可运行表单](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.zh-CN.md)提供启动 DPR 有界的响应式预览，以及独立固定验收档。真实宽度改变时替换独立 Scope 界面，保留模型／字体和可见稳定键锚点；键盘引起的纯高度变化保持原生编辑。实际 DPR 变化后需重新打开预览。
 
-真实中日韩输入法／死键、实体 Android／iPhone 键盘与 Emoji 删除、系统剪贴板和辅助技术仍待验收。随附 Noto 集合没有合格的 Emoji fallback；受控 Emoji 用例验证只读准备失败和文本恢复。Native SDK／小游戏宿主需要各自的适配器和证据。M1.2 的 10.3 ms 对 8 ms 目标保持 OPEN。本功能不扩大上述结论或现有触摸贡献者的范围。
+原[结果汇总](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/verification-summary.json)保留每后端 20 项桌面记录。[Android 补充验证](android-native-text-editing.md)记录最终桌面每后端固定 21 项及响应式八项、核心与最终版本相同但示例为前序字节的三星实际软键盘观察，以及两后端最终准确源码的 Android 生命周期检查。明确区分源码复用、事件可信属性和受控注入。
+
+其他中日韩／死键输入法、iPhone、真人手指、系统剪贴板和辅助技术继续开放。随附 Noto 集合没有合格 Emoji fallback；删除／文本恢复不代表 Emoji 渲染资格。Native SDK／小游戏宿主需要各自适配器。M1.2 的 10.3 ms 对 8 ms 目标和完整 M3／M4 保持 OPEN。现有触摸贡献者的范围不变。
 
 协议依据 [Input Events Level 2](https://www.w3.org/TR/input-events-2/)、[UI Events](https://www.w3.org/TR/uievents/)、[HTML 文本控件选区](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#textFieldSelection) 和 [CSS Font Loading](https://drafts.csswg.org/css-font-loading/) 独立实现。现有已署名 CanvasKit／Noto 产物及许可未变；标准参考不等于浏览器／IME 验收。

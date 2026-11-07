@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Android native editing and responsive form — 2026-11-07
+
+Repair terminal composition callbacks after cancellation without weakening active-session reentry. The existing form gains responsive width/startup DPR and separately scoped view retirement, retaining the fixed fixture. Actual Samsung keyboard observations, final-source lifecycle on both backends and desktop checks are documented with predecessor/failure boundaries. [Evidence and remaining qualification](docs/android-native-text-editing.md).
+
 ## Product/core roadmap reconciliation — 2026-11-07
 
 Reconcile current capabilities with all product requirements and the existing M2–M4 packages. Consolidate the white paper, engineering/delivery plans and navigation; prioritize native editing, one mixed reference and remaining content/animation work while retaining touch ownership, M1.2 failure and device/material limits. Current optional Spine/CanvasKit implementations replace stale no-player/no-provider descriptions. No engine behavior, acceptance target, dependency or historical receipt changes. See [the engineering plan](docs/engineering-plan.md).
