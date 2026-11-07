@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "e523baada5474bf6a0c80908318ba271eed1992489470f775190bacd48152354",
-      "zhSha256": "2ef4d2e9a8e81d4d7bc89c00a73c647d2a8a7025ac928fb603c1dd14b76c7eeb"
+      "enSha256": "831a41b2b0187ca5f29762fecfea0b827f54db70f3596806962e63d67b51121c",
+      "zhSha256": "cc17fe5379304bca3316b4ebbfddedb7bfa69775f8448e52bd93c75e608de881"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -2315,6 +2315,13 @@
       "kind": "public_reading",
       "enSha256": "106c77a2e459d6f31f5353b2a5d92777b755954775c256052a72cba97ebf8c32",
       "zhSha256": "ce780f2605422a7e66ab9b3868d711c3268579607b5d84680768c169dc473ea2"
+    },
+    {
+      "en": "examples/isometric-map/README.md",
+      "zh": "examples/isometric-map/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "fd86f3f40ee2d4f0df9b58a0f5bc8fb5bf8b5e1a2827d0fa914c411cd09a9052",
+      "zhSha256": "915392a7c25f904167598ebab28b4fc9d0a98f7e93f42230037cf7903361af10"
     }
   ],
   "registries": [
@@ -4781,6 +4788,10 @@
     {
       "path": "examples/outfit-studio/verify.mjs",
       "sha256": "a546d13454d6591d289f4c54e2bd0c96a4608510fd193d766a01c68666c3597e"
+    },
+    {
+      "path": "examples/isometric-map/main.mjs",
+      "sha256": "562def05c40fc94311b71073fc25aad124eeb2b20a92f4d586f9829c58f0a3d9"
     }
   ],
   "historicalSemanticReview": {

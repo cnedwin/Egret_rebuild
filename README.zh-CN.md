@@ -37,6 +37,8 @@ Years later, as times change and technology advances, many developers continue t
 
 [上手指南](knowledge-base/Cns/docs/getting-started.md)说明环境、预期结果和排错方法。可体验[响应式示例](examples/mobile/README.zh-CN.md)、[UI 段落](examples/paragraph-panel/README.zh-CN.md)和[序列替换](examples/sequence-reset/README.zh-CN.md)。固定验收夹具与响应式预览分别保留。
 
+[WebGL2 等距地图示例](examples/isometric-map/README.zh-CN.md)展示小型网格场景的深度排序和帧提交。
+
 ## 开发与社区参与
 
 选定工作前先读[当前能力图](knowledge-base/Cns/docs/core-progress.md)和[下一阶段工程计划](knowledge-base/Cns/docs/工程规划.md)。2026-11-07 复盘统一已实现核心、剩余需求及原十一个 M2–M4 工作包。

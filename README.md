@@ -37,6 +37,8 @@ Use **Node.js 26.7.0** and **pnpm 11.25.0**. From the repository root:
 
 The [getting-started guide](knowledge-base/en/docs/getting-started.md) explains prerequisites, expected results and troubleshooting. Explore [responsive examples](examples/mobile/README.md), [paragraphs in UI](examples/paragraph-panel/README.md) and [sequence replacement](examples/sequence-reset/README.md). Fixed qualification fixtures remain separate from the responsive preview.
 
+See the [WebGL2 isometric map](examples/isometric-map/README.md) for depth ordering and frame submission in a small grid-based scene.
+
 ## Development and community
 
 Read the [current capability map](knowledge-base/en/docs/core-progress.md) and [next-phase engineering plan](knowledge-base/en/docs/engineering-plan.md) before choosing work. The 2026-11-07 review reconciles the implemented core, remaining requirements and the same eleven M2–M4 packages.
