@@ -106,6 +106,7 @@ export function createKeyboardInput(options:KeyboardInputOptions):KeyboardInput 
  function invoke<T>(action:()=>T):T {
   calls++;try{return action();}catch(cause){if(callbackFailed&&state!=='closed')try{close('error');}catch{/* Original callback failure remains authoritative. */}throw cause;}finally{if(--calls===0){callbackFailed=false;if(state==='closed')release();}}
  }
+ function orderedTargets():RecordValue[] {return [...records.values()].filter(v=>v.tabIndex>=0&&eligible(v)).sort((a,b)=>{if(a.tabIndex===0)return b.tabIndex===0?0:1;if(b.tabIndex===0)return -1;return a.tabIndex-b.tabIndex;});}
  function retire():void {invoke(()=>close('owner'));}
  function sync():void {if(state==='closed')return;assertMutation();if(focused!==undefined&&!eligible(focused.record))transition(undefined,false,'owner','owner');}
  function validateTarget(target:DisplayObject):void {if(operations===undefined||primitives.disposed(target)===true||!operations.isAttached(target,maxNodes))fail('KEYBOARD_TARGET_INVALID');}
@@ -151,7 +152,7 @@ export function createKeyboardInput(options:KeyboardInputOptions):KeyboardInput 
   focus:(id:string|undefined,configuration?:KeyboardFocusOptions)=>invoke(()=>focus(id,configuration)),
   moveFocus:(direction:'next'|'previous',wrap=false):string|undefined=>invoke(()=>{
    assertMutation();if(!['next','previous'].includes(direction)||typeof wrap!=='boolean')fail('KEYBOARD_INPUT_FOCUS_INVALID');if(state!=='active')return undefined;sync();
-   const values=[...records.values()].filter(v=>v.tabIndex>=0&&eligible(v)).sort((a,b)=>{if(a.tabIndex===0)return b.tabIndex===0?0:1;if(b.tabIndex===0)return -1;return a.tabIndex-b.tabIndex;});
+   const values=orderedTargets();
    const current=values.findIndex(v=>v===focused?.record),delta=direction==='next'?1:-1;
    let index=current===-1?(delta===1?0:values.length-1):current+delta;
    if((wrap||focusRoots!==undefined)&&values.length>0)index=(index+values.length)%values.length;
@@ -171,6 +172,9 @@ export function createKeyboardInput(options:KeyboardInputOptions):KeyboardInput 
     assertMutation();if(released||focusOwner!==claimant)fail('KEYBOARD_FOCUS_SCOPE_CLOSED');
     if(roots!==undefined){if(!Array.isArray(roots)||roots.length<1||roots.length>32)fail('KEYBOARD_FOCUS_SCOPE_INVALID');for(const root of roots)validateTarget(root);}
     focusRoots=roots===undefined?undefined:Object.freeze([...roots]);sync();
+   }),focusFirst:():void=>invoke(()=>{
+    assertMutation();if(released||focusOwner!==claimant)fail('KEYBOARD_FOCUS_SCOPE_CLOSED');if(state!=='active')return;sync();
+    focus(orderedTargets()[0]?.id,{reason:'programmatic'});
    }),release:():void=>{if(released)return;released=true;if(focusOwner!==claimant)return;focusRoots=undefined;focusOwner=undefined;}});
   });return input;}
  catch(cause){try{close('error');}catch{/* Preserve setup failure. */}throw cause;}

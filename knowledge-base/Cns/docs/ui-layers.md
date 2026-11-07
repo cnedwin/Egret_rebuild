@@ -38,6 +38,8 @@ open(id)、close(id) 和 setViewport(rect) 仅记录意图。关闭覆盖层也�
 
 ## 证据与剩余工作
 
-[有界结果摘要](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/layer-verification-summary.json)记录实际源码身份与检查。CPU SDK/类型结果、桌面 WebGL2/WebGPU、模拟响应式尺寸和实体设备结果分别标注。本轮 Android 唤醒后仍显示并限制于锁屏，自动化拒绝继续，没有手机层级或输入法通过结论；恢复原有休眠与设置，保留拒绝记录。
+[有界结果摘要](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/layer-verification-summary.json)记录实际源码身份与检查。CPU SDK/类型结果、桌面 WebGL2/WebGPU、模拟响应式尺寸和实体设备结果分别标注。首次 Android 验证受锁屏限制而拒绝，并恢复了原状态。设备解锁后，在 SM-F966U1／Android17 上通过注入接触及实际三星软键盘组合输入，分别观察 WebGPU、WebGL2，共32项断言，覆盖系统旋转、前后台、保存与取消、字体替换和活动会话关闭。两项源码问题已修复，原失败保留。这是当前设备的有限结果，不代表完整手机、输入法或辅助技术资格；开发会话结束时恢复临时 USB 唤醒设置的原值。
 
 完整控件、手势仲裁、语义投影、真实输入法、iPhone、辅助技术、完整 M3.4/#90 与 M4 验收继续 OPEN。M1.2 仍为10.3ms、目标8ms。原有11个工作包和贡献者范围不变。本增量按白鹭契约独立实现，没有引入第三方代码或新素材；既有字体、提供器和运行时声明及历史记录保持完整。
+
+手机补充验证区分程序化回退焦点和实际键盘遍历。真正改变宽度时，先结束重命名组合输入，再保存草稿与选区；结束会话不会将草稿保存到原始模型。

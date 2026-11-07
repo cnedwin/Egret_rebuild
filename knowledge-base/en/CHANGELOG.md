@@ -6,7 +6,7 @@ Version labels below identify engineering checkpoints; workspace packages remain
 
 ## UI popup/modal composition — 2026-11-07
 
-Add optional root-owned popup/modal composition, staged publication, clipped anchors, pointer barriers and contained/restored keyboard/native-editor eligibility. Integrate the existing form with draft rename and shared font/lifecycle owners. Desktop evidence and the unavailable locked-phone attempt are distinguished. Complete M3.4, semantics, touch contribution and M1.2 remain open. [Contract](docs/ui-layers.md).
+Add optional root-owned popup/modal composition, staged publication, clipped anchors, pointer barriers and contained/restored keyboard/native-editor eligibility. Integrate the existing form with draft rename and shared font/lifecycle owners. Desktop evidence, the initial locked attempt, two actual phone failures and final32 current-device observations are distinguished. Programmatic fallback no longer activates the base editor; width rebuild settles the rename preedit before saving its model. Complete M3.4, semantics, touch contribution and M1.2 remain open. [Contract](docs/ui-layers.md).
 
 ## Android native editing and responsive form — 2026-11-07
 

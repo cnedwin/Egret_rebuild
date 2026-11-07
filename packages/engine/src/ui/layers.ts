@@ -140,7 +140,7 @@ export function createUiLayerManager(options: UiLayerManagerOptions): UiLayerMan
         if (restore?.id !== undefined && accept(() => keyboard!.focus(restore.id, { visible: restore.visible }))) return;
         if (top?.initialFocus !== undefined && accept(() => top.root.list(top.initialFocus!.listId).focus(top.initialFocus!.key, { visible: true }))) return;
         if (keyboard.getSnapshot().focusedId !== undefined) return;
-        accept(() => { keyboard.moveFocus('next'); });
+        accept(() => { keyboardScope!.focusFirst(); });
         if (keyboard.getSnapshot().focusedId === undefined && top?.sentinel !== undefined) accept(() => keyboard.focus(top.sentinel));
     }
     function sync(): UiLayerCommitResult {

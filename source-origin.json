@@ -622,8 +622,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 26210,
-      "sha256": "6d00d82d78d852986a4f3061f63735abc61520c1fc7f1780184d56f91d1e7339",
+      "bytes": 26359,
+      "sha256": "a8f248a734a345afc4ea1e4231f2bf5acfef4b615ff1a7a49a9ef94007fd8401",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 11608,
-      "sha256": "54e52bab95ae352f38d839b67b9d944581be90c1113dab00441109edaa67275e",
+      "bytes": 11905,
+      "sha256": "5d01ad3975372f336bb46896c4c257047583b7759870a7f555836516d434ea60",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "d7b0c34c79dba46415f1d7de81256d1c0a7229e2b04dcc66935ac2972a9dc99d",
+      "sha256": "304449f69bdbe5abe4f810eaf41f4b0f0c4b45f926a65edc8f598bd72ce07e3e",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2153,8 +2153,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 29799,
-      "sha256": "bc8ee52357685b2df234187460c64593a87d4faadd489debe3d04ce15f609b1e",
+      "bytes": 29978,
+      "sha256": "a8c43f6028585b6c37c969ed54c08d5d2c4a2be918eec352f98345461fbe1279",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 13254,
-      "sha256": "c117873d84b2a83e832b302bbb061780a9e424765c9abc1eaef15807afa240ec",
+      "bytes": 13579,
+      "sha256": "db62cddb2780500539698b3ca7fa5079cf24ea471ce7a727d262b00377846b39",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "70c4b905ed8fa783185c51a54959293bccdc3e32457b2ca76b550707ad04a14c",
+      "sha256": "751f39151f0358b35dbaf282a61f0f0c527a0b18e7e124c0c286513b9af236d8",
       "bytes": 389785,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -9876,8 +9876,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 319933,
-      "sha256": "4f306337df9cdd44502f243583cff759ed6200f80b8dea31d59d9dd993aaec18",
+      "bytes": 319945,
+      "sha256": "4e8a13f8d1167d08280d3d910ba06a503d5d016f5076929450ff112fdcf3544e",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10099,8 +10099,8 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 329518,
-      "sha256": "f8fc5470c2b6789d238b1d7a3f73e24859ccff1eebeb68eecca9bbc3c42107cd",
+      "bytes": 329530,
+      "sha256": "4c46de36cb28ca3797634d74aa102b2b67692b8e2c1cf3d04fb4849f9c3c80f6",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10161,8 +10161,8 @@
     },
     {
       "path": "tools/atlas-import-boundary.mjs",
-      "bytes": 224646,
-      "sha256": "9a59ffde2d987ea186d09aab058a28c7f84c75c93cf835a5756bb0d5e61775f1",
+      "bytes": 224658,
+      "sha256": "7d978cf3d623232f97bbe96d20ae4df831475cf162bbfb26126c5f2afed1d0ab",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1420990,
-      "sha256": "f2b7a37471a33684cbeed10905e47a524276da9e13ee62691a0d73a8de26dc8d"
+      "bytes": 1421026,
+      "sha256": "73a99865bbc01a505631a0828b0f5d13ea6c9b0bbb83083a39e6aecee745c8d8"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10689,7 +10689,7 @@
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
       "bytes": 49862,
-      "sha256": "e50718f512b0abfbc626a1710a40a6e848d0f7abf611c9aaf713f06289890560"
+      "sha256": "6117488d2b0e6fa2e99b1d21ae386ee0fd535bae3d7464f5abf402629311e80d"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -12788,8 +12788,8 @@
     {
       "path": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 38561,
-      "sha256": "ae250d95d8b989c8d9fbdff391bea8f143b97c402b5eea69b1c80b4e55bc96e4"
+      "bytes": 38549,
+      "sha256": "3c4cad55e7d93ed17663e0e956aeb9c2b40fb1e9340ca51cc0334f1df547f616"
     },
     {
       "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -13214,8 +13214,8 @@
     {
       "path": "packages/engine/src/internal/uiFactoryState.ts",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 7133,
-      "sha256": "d7a0d8ba9b77ad7de15719988e3cf397ae8e711326dfaedef61909f3804840ad"
+      "bytes": 7231,
+      "sha256": "b2b26bd3ca393625952640eae7c1951e6863af1883d7771f9a39ab000186dd97"
     },
     {
       "path": "packages/engine/src/ui/index.ts",
@@ -14306,8 +14306,8 @@
     {
       "path": "packages/engine/src/keyboardInput.ts",
       "originRole": "First-party optional keyboard/focus state, native adapter, behavior/type/package coverage and documentation, independently authored with AI assistance using existing Egret ownership and display primitives; Apache-2.0. No new third-party dependency or asset.",
-      "bytes": 17667,
-      "sha256": "129c371c8e210c587e31e7399e3becab55ba119ce3b73355f2db3b3a9eb132e0"
+      "bytes": 17961,
+      "sha256": "2495927d046f536b4c3d75e671a623c7347c260834e26371d4e777a45504aaef"
     },
     {
       "path": "packages/engine/src/keyboardInputTypes.ts",
@@ -15608,14 +15608,14 @@
     {
       "path": "skills/egret-windows-ci/SKILL.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 4897,
-      "sha256": "31d727eb88e25f6539954148266d8a7eec123d70e4f93c9fff8a3341afe35173"
+      "bytes": 5183,
+      "sha256": "573297aa30dd03e15f4c43f3393a09b7e668942bab9a74d02c220cb21b841fd0"
     },
     {
       "path": "skills/egret-windows-ci/SKILL.zh-CN.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 4299,
-      "sha256": "b49b6e3a4b4fc5ea8af05dc7a125a19dd5f93c207cef36a289d42f5a1485b0f2"
+      "bytes": 4585,
+      "sha256": "e39c18a6863dec90749c417a777aff008939029cf27453bbf3789bc47eb47500"
     },
     {
       "path": "skills/egret-windows-ci/scripts/summarize-windows-failure.mjs",
@@ -15632,14 +15632,14 @@
     {
       "path": "knowledge-base/en/docs/windows-ci-governance.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 5813,
-      "sha256": "daeb97b1f4549e7ce65a365c71a653aada73952f5d600ee51e9b2f6ad7e02bcd"
+      "bytes": 6452,
+      "sha256": "90f126344b669841be8fc328b8dc4255dce668deb4b8656f86ef19c3a8c81819"
     },
     {
       "path": "knowledge-base/Cns/docs/windows-ci-governance.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 4933,
-      "sha256": "34a692877f63bad70b4ff1a830dd59ec11cb36501cde434150388ab0921750ec"
+      "bytes": 5481,
+      "sha256": "fbe1e44ea2883a7a4446516568da4bcdf84eebfaa09c8ae22b00749ee27eb6a6"
     },
     {
       "path": "contributions/windows-ci-governance.json",
@@ -15842,14 +15842,14 @@
     {
       "path": "examples/text-editing/README.md",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 3083,
-      "sha256": "6dc071cadacf9d03509e317d0135d1514e7f2266faff0b3d864abc8e7ca4074f"
+      "bytes": 3372,
+      "sha256": "d04e28752efee578562e3f577fc4bec997c55a9d5234a9aeac4926159f8ade1f"
     },
     {
       "path": "examples/text-editing/README.zh-CN.md",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 2792,
-      "sha256": "f71b63acc2dd438175e3cfc33d2620e702fbb3918dfeb9cbbd4d6d92a340dc86"
+      "bytes": 3058,
+      "sha256": "7fcccd5cb67679cda33d748a6efaaa193539dd74823a6d6d3ba8381c526c44c6"
     },
     {
       "path": "contributions/native-text-editing.json",
@@ -15884,8 +15884,8 @@
     {
       "path": "tests/ui-layers.test.mjs",
       "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged.",
-      "bytes": 13596,
-      "sha256": "da43aff7ca10e85732253e6818627b5f32c2a2c58a280dfa8575dc53adf254ac"
+      "bytes": 14240,
+      "sha256": "3359777d5085a20e7211df7919542363fa9366666493879d7ef94862b0803206"
     },
     {
       "path": "packages/engine/src/ui/layerTypes.ts",
@@ -15896,38 +15896,38 @@
     {
       "path": "packages/engine/src/ui/layers.ts",
       "originRole": "Independently authored first-party Egret root-layer composition and authenticated lifetime/input coordination; AI-assisted; Apache-2.0. No new third-party implementation.",
-      "bytes": 23572,
-      "sha256": "a71ed40cdee69cc2fc1aaf0bec10ba98752b17a5a594228b4e6b664230ddad87"
+      "bytes": 23573,
+      "sha256": "a5ceecc17b837b59d028bc05c6f95580c0d065b94d7d6b957f016439a7f90032"
     },
     {
       "path": "examples/text-editing/layers.mjs",
       "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged.",
-      "bytes": 5559,
-      "sha256": "b8211c96ab4063a9e16c016e19eb701b9b2bbdb709d6e9ae0b7cd12dfd387368"
+      "bytes": 5676,
+      "sha256": "c37b3505ffa852150f16790d58a26186fbf16f98ef477473dc8d1f9400fb5382"
     },
     {
       "path": "examples/text-editing/verify-layers.mjs",
       "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged.",
-      "bytes": 12157,
-      "sha256": "6375299117f545aaf4566a101a0754e4813ef2902fbdece7e6f444730d5c9eee"
+      "bytes": 12812,
+      "sha256": "2b4f50281bb9e28ff4d9b70131e916ac41a7417d0fa58444561b12b1aae11616"
     },
     {
       "path": "knowledge-base/en/docs/ui-layers.md",
       "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged.",
-      "bytes": 7636,
-      "sha256": "fb9ff043682408514d200c7a0040a604241f24b8db954c7639ec828beaa229fc"
+      "bytes": 8251,
+      "sha256": "6532443f5f82bffb7e21ec91e8ceaefda85d7811222c20836892f46682fed421"
     },
     {
       "path": "knowledge-base/Cns/docs/ui-layers.md",
       "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged.",
-      "bytes": 6769,
-      "sha256": "722989453840928ae56ed9c2dc424e710f5f7e72746ba94951157ea284901b51"
+      "bytes": 7315,
+      "sha256": "48fa49375bda33d2e29a01357b75846a9db8001ec919fb2032e922bf551853d4"
     },
     {
       "path": "examples/text-editing/layer-verification-summary.json",
       "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged.",
-      "bytes": 58834,
-      "sha256": "5791aca4bc82c302072962a09d80043e3275ee4e56a6015d13e9db8ec7ee5503"
+      "bytes": 65303,
+      "sha256": "4fcfd255eca06f8c22746a332258bab72af0440cc86e1bc1ccd9b8aeff8a8c89"
     },
     {
       "path": "contributions/ui-layer-composition.json",

@@ -25,6 +25,8 @@ Egret's product direction combines animation-rich 2D games and complex interface
 
 M3.4 now provides [owned popup/modal roots](ui-layers.md), staged publication, clipped anchors, nested retirement, pointer barriers, contained logical focus and native editor suspension. The existing form integrates details/rename/return with shared resources. Complete controls, gestures, semantic projection and device/accessibility qualification remain in #90; this increment does not implement the separately owned touch work.
 
+The M3.4 phone follow-up observed32 current-device assertions on the shared backends and corrected fallback-focus activation and provisional text loss during OS rotation. The [layer evidence](ui-layers.md) retains the initial locked attempt and real failures. Other devices/IMEs, semantics and complete M3.4/M4 remain OPEN.
+
 ## Native editing increment — 2026-11-07
 
 M3.3 provides optional native input/textarea editing with committed source/selection/composition, existing paragraph/UI publication, paired fonts and row/resource lifetime. The final desktop batch passes 21 fixed plus eight responsive checks per backend; actual Samsung keyboard observations and exact-final-source Android lifecycle checks are separated in the [Android follow-up](android-native-text-editing.md). The bridge now handles terminal composition callbacks after cancellation, and the responsive form retires each view Scope on width changes. Other IMEs/devices, system clipboard, accessibility, complete packages and M1.2 remain open. Touch ownership and fixed fixtures are unchanged.

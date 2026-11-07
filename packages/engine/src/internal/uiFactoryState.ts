@@ -23,6 +23,8 @@ export interface UiInputPort {
 }
 export interface UiKeyboardScope {
   setRoots(roots:readonly DisplayObjectContainer[]|undefined):void;
+  /** Default layer focus is programmatic, never a synthetic Tab gesture. */
+  focusFirst():void;
   release():void;
 }
 export interface UiEnginePort {

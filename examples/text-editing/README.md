@@ -15,3 +15,5 @@ Default preview fits the scene CSS width and caps startup DPR at 3. Add preset=v
 ## Popup and modal flow
 
 Append layers=1 to the existing URL to use profile details, a draft rename dialog and return to the list. Save changes the original name; Cancel leaves it intact. The same UI, fonts/cache and input channels are used. Overlay logical focus does not force a native keyboard; activate the dialog field explicitly. Default/fixed verification retains its separate profile. See the [layer contract](../../knowledge-base/en/docs/ui-layers.md) and [scoped summary](layer-verification-summary.json).
+
+The current Android follow-up includes actual Samsung software-key composition, OS rotation and background/return. Rebuilding a view settles preedit before saving it; programmatic fallback focus keeps the native keyboard closed. These finite observations do not qualify all IMEs/devices.

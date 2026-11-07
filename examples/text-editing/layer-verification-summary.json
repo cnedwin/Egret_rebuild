@@ -1,8 +1,8 @@
 {
   "schema": "egret.ui-layer-verification/1",
   "baseline": "067f4bb5384837e146240c2327c92daf27ca8894",
-  "collectedUtc": "2026-11-07T14:00:48.340Z",
-  "scope": "Root-owned popups/modals, native editing eligibility and the existing form. Not full M3.4, semantic/accessibility, mobile/IME or performance acceptance.",
+  "collectedUtc": "2026-11-07T14:41:29.539Z",
+  "scope": "Root-owned popups/modals, native editing eligibility and the existing form. Not complete M3.4, semantic/accessibility, phone/IME campaign or performance acceptance.",
   "environment": {
     "node": "v26.7.0",
     "playwright": "1.62.1",
@@ -13,19 +13,19 @@
   },
   "sdk": {
     "status": "PASS",
-    "tests": 139,
-    "layerTests": 21,
+    "tests": 140,
+    "layerTests": 22,
     "existingRelatedTests": 118,
     "failed": 0,
     "skipped": 0,
     "log": {
-      "bytes": 13338,
-      "sha256": "ebdb1466a2a80a9bbe03cdbd596c4c8ad4651ef88a142e4c3cc2d362bcb96e69"
+      "bytes": 13422,
+      "sha256": "0a241229f0e969edda11a82035546e3315ddeafd24dc2a2ecba429338e0099e7"
     }
   },
   "desktop": {
     "status": "PASS",
-    "layerChecks": 62,
+    "layerChecks": 64,
     "compatibilityChecks": 58,
     "layerProfiles": [
       {
@@ -67,7 +67,8 @@
           "canvas-Tab-and-ShiftTab-stay-in-top-modal",
           "outside-popup-click-is-consumed-before-base-activation",
           "fully-clipped-anchor-retires-popup-modal-and-native-session",
-          "width-rebuild-preserves-stack-draft-selection-and-reuses-fonts",
+          "width-rebuild-commits-controlled-preedit-preserves-stack-selection-and-fonts",
+          "rebuilt-stack-fallback-focus-never-reactivates-base-native-editor",
           "repeated-open-close-keeps-fixed-backdrops-one-draft-presentation",
           "shutdown-retires-active-native-modal-fonts-and-paragraph-ownership"
         ],
@@ -112,7 +113,8 @@
           "canvas-Tab-and-ShiftTab-stay-in-top-modal",
           "outside-popup-click-is-consumed-before-base-activation",
           "fully-clipped-anchor-retires-popup-modal-and-native-session",
-          "width-rebuild-preserves-stack-draft-selection-and-reuses-fonts",
+          "width-rebuild-commits-controlled-preedit-preserves-stack-selection-and-fonts",
+          "rebuilt-stack-fallback-focus-never-reactivates-base-native-editor",
           "repeated-open-close-keeps-fixed-backdrops-one-draft-presentation",
           "shutdown-retires-active-native-modal-fonts-and-paragraph-ownership"
         ],
@@ -208,12 +210,12 @@
       }
     ],
     "rawLayerResult": {
-      "bytes": 40666,
-      "sha256": "a9a3c3797e67650cf2dd8aab8ed612eb9967c8a06b3a773012fec3a61c50414d"
+      "bytes": 40848,
+      "sha256": "17d1fca8903c2084234322d994af9c040c52aefdd1ae8abda28d907b26596df5"
     },
     "rawCompatibilityResult": {
       "bytes": 43210,
-      "sha256": "4e8fd714fb603b9e2b3d4b3602fb95cf177a9c2cf6f213c1857f0557ff753323"
+      "sha256": "f82453a641657e6f474f57078d1c6768f7139fda7d967fb38cb77dbb60564478"
     },
     "actualServedSources": [
       {
@@ -238,8 +240,8 @@
       },
       {
         "path": "examples/text-editing/layers.mjs",
-        "bytes": 5559,
-        "sha256": "b8211c96ab4063a9e16c016e19eb701b9b2bbdb709d6e9ae0b7cd12dfd387368"
+        "bytes": 5676,
+        "sha256": "c37b3505ffa852150f16790d58a26186fbf16f98ef477473dc8d1f9400fb5382"
       },
       {
         "path": "examples/text-editing/main.mjs",
@@ -443,8 +445,8 @@
       },
       {
         "path": "packages/engine/dist/keyboardInput.js",
-        "bytes": 20907,
-        "sha256": "06dbd55e27fe78b7807844d9ea358d9dd4067c5b5bf9fdaa427a26fb7971f6dc"
+        "bytes": 21347,
+        "sha256": "514ed3c943ccac50477d42e993ec2fe8ef0cdc3f385a339d398d4f1927870414"
       },
       {
         "path": "packages/engine/dist/manifestAssetGroup.js",
@@ -634,7 +636,7 @@
       {
         "path": "packages/engine/dist/ui/layers.js",
         "bytes": 23728,
-        "sha256": "6281c9bba4aafa33f8b54bd09d2381e1d1b4b017f35ea1f1fd8130e07f5804dc"
+        "sha256": "3b94c7e6697d05ae5426fdeb97bd1d38a9615ba012234c141bcd15e32d56fddf"
       },
       {
         "path": "packages/engine/dist/ui/leafContent.js",
@@ -1177,27 +1179,27 @@
         "sha256": "b3a9a1a0f89658b7450943eae111beb40d895e101ee43ca05b1a1f56a16cf63c"
       },
       {
-        "path": "work/font-resources/run-UYIFCh/browser-config.json",
+        "path": "work/font-resources/run-2GyLyl/browser-config.json",
         "bytes": 364,
         "sha256": "b3dc2ddaee84cf1469884efdb1cfa1168eb5ffaadfed1d519dec8df95c1c5049"
       },
       {
-        "path": "work/font-resources/run-UYIFCh/build/blobs/sha256/2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
+        "path": "work/font-resources/run-2GyLyl/build/blobs/sha256/2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
         "bytes": 16437364,
         "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b"
       },
       {
-        "path": "work/font-resources/run-UYIFCh/build/blobs/sha256/b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5",
+        "path": "work/font-resources/run-2GyLyl/build/blobs/sha256/b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5",
         "bytes": 569208,
         "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5"
       },
       {
-        "path": "work/font-resources/run-UYIFCh/build/blobs/sha256/bd86ca02f087d7f3c3788ba458fb6b73744c7639ed276b8d870dba6def6c40d0",
+        "path": "work/font-resources/run-2GyLyl/build/blobs/sha256/bd86ca02f087d7f3c3788ba458fb6b73744c7639ed276b8d870dba6def6c40d0",
         "bytes": 142140,
         "sha256": "bd86ca02f087d7f3c3788ba458fb6b73744c7639ed276b8d870dba6def6c40d0"
       },
       {
-        "path": "work/font-resources/run-UYIFCh/build/generations/e7551030a9eb90c78ef0d336bb1edcb985d745d9c369b7f79a84e0db5d5c62bc/manifest.json",
+        "path": "work/font-resources/run-2GyLyl/build/generations/e7551030a9eb90c78ef0d336bb1edcb985d745d9c369b7f79a84e0db5d5c62bc/manifest.json",
         "bytes": 5919,
         "sha256": "03946e97d378e3b5f2d3276dc15e4fbb968af6b520cfb353948dd57299e3ff14"
       }
@@ -1249,8 +1251,8 @@
         },
         "current": {
           "path": "packages/engine/src/internal/uiFactoryState.ts",
-          "bytes": 7133,
-          "sha256": "d7a0d8ba9b77ad7de15719988e3cf397ae8e711326dfaedef61909f3804840ad"
+          "bytes": 7231,
+          "sha256": "b2b26bd3ca393625952640eae7c1951e6863af1883d7771f9a39ab000186dd97"
         }
       },
       {
@@ -1273,8 +1275,8 @@
         },
         "current": {
           "path": "packages/engine/dist/internal/uiFactoryState.d.ts",
-          "bytes": 2672,
-          "sha256": "5094900356eceb64641dd280cd26839d17dc224618b27d24debdd21ef560dfbe"
+          "bytes": 2775,
+          "sha256": "92e66e09f67d8c934642e5ae643a6ff1ea40ed45f89763f7b26fe53f35c20165"
         }
       },
       {
@@ -1285,8 +1287,8 @@
         },
         "current": {
           "path": "packages/engine/src/keyboardInput.ts",
-          "bytes": 17667,
-          "sha256": "129c371c8e210c587e31e7399e3becab55ba119ce3b73355f2db3b3a9eb132e0"
+          "bytes": 17961,
+          "sha256": "2495927d046f536b4c3d75e671a623c7347c260834e26371d4e777a45504aaef"
         }
       },
       {
@@ -1297,8 +1299,8 @@
         },
         "current": {
           "path": "packages/engine/dist/keyboardInput.js",
-          "bytes": 20907,
-          "sha256": "06dbd55e27fe78b7807844d9ea358d9dd4067c5b5bf9fdaa427a26fb7971f6dc"
+          "bytes": 21347,
+          "sha256": "514ed3c943ccac50477d42e993ec2fe8ef0cdc3f385a339d398d4f1927870414"
         }
       },
       {
@@ -1464,13 +1466,13 @@
       },
       {
         "path": "packages/engine/src/ui/layers.ts",
-        "bytes": 23572,
-        "sha256": "a71ed40cdee69cc2fc1aaf0bec10ba98752b17a5a594228b4e6b664230ddad87"
+        "bytes": 23573,
+        "sha256": "a5ceecc17b837b59d028bc05c6f95580c0d065b94d7d6b957f016439a7f90032"
       },
       {
         "path": "packages/engine/dist/ui/layers.js",
         "bytes": 23728,
-        "sha256": "6281c9bba4aafa33f8b54bd09d2381e1d1b4b017f35ea1f1fd8130e07f5804dc"
+        "sha256": "3b94c7e6697d05ae5426fdeb97bd1d38a9615ba012234c141bcd15e32d56fddf"
       },
       {
         "path": "packages/engine/dist/ui/layers.d.ts",
@@ -1482,23 +1484,166 @@
     "nativeCollectorMembership": 144
   },
   "phone": {
-    "status": "UNAVAILABLE_LOCKED",
-    "device": "SM-F966U1",
-    "android": "17",
-    "reason": "After wake, keyguard remained showing and input restricted. The controller refused before a test target or native editor session existed. No credential bypass or phone pass.",
-    "restoration": {
-      "originalStay": "0",
-      "currentStay": "0",
-      "originalSleepRestored": true,
-      "noActiveDeviceLease": true
-    }
+    "status": "OBSERVED_CURRENT_DEVICE",
+    "assertions": 32,
+    "runs": [
+      {
+        "backend": "webgpu",
+        "status": "OBSERVED",
+        "checks": [
+          "actual phone layer form ready",
+          "native base input activated by injected touch on physical phone",
+          "actual software keyboard changes native text",
+          "popup settles actual background preedit once",
+          "popup removes background native element",
+          "modal native editor owns one paired font lease",
+          "actual rename input commits only to its draft",
+          "Save publishes draft and retires native modal ownership",
+          "actual modal key changes only the temporary draft",
+          "Cancel discards modal edits with no late callback resurrection",
+          "actual width rotation preserves modal stack and provisional value",
+          "actual Home ends native modal session",
+          "foreground return preserves modal without replaying keyboard",
+          "return to list restores logical focus only",
+          "six phone layer cycles retain fixed resources",
+          "active phone modal font switch retains one editor owner"
+        ],
+        "startedUtc": "2026-11-07T14:34:59.183Z",
+        "endedUtc": "2026-11-07T14:37:10.821Z",
+        "model": "SM-F966U1",
+        "android": "17",
+        "browser": "Chrome/156.0.8078.79",
+        "input": "CDP-injected canvas contact, Android shell taps on observed software keys, real Samsung composition. Selection-to-end is an explicit control. Not human finger input.",
+        "composition": {
+          "base": "composing",
+          "modalCancel": "composing",
+          "rotation": "composing"
+        },
+        "actualOsRotation": {
+          "widthChanged": true,
+          "restored": true
+        },
+        "cleanup": {
+          "applicationClosed": true,
+          "fontSets": 0,
+          "editorLeases": 0,
+          "paragraphImageBytes": 0,
+          "paragraphGeometryBytes": 0,
+          "priorTargetsAndComponentRestored": true,
+          "ownedMappingsRemoved": true,
+          "phoneLeaseReleased": true
+        },
+        "rawResult": {
+          "bytes": 189781,
+          "sha256": "52fa2f761c173426a9669756050a586fc17b1b57720b9ebed7c31352efcac7a9"
+        },
+        "actualSourceManifest": {
+          "members": 197,
+          "bytes": 28555,
+          "sha256": "472912f885c8851122d5c3e8067e54d8384b3210134e36d0c11c7aaa57718ce2"
+        }
+      },
+      {
+        "backend": "webgl2",
+        "status": "OBSERVED",
+        "checks": [
+          "actual phone layer form ready",
+          "native base input activated by injected touch on physical phone",
+          "actual software keyboard changes native text",
+          "popup settles actual background preedit once",
+          "popup removes background native element",
+          "modal native editor owns one paired font lease",
+          "actual rename input commits only to its draft",
+          "Save publishes draft and retires native modal ownership",
+          "actual modal key changes only the temporary draft",
+          "Cancel discards modal edits with no late callback resurrection",
+          "actual width rotation preserves modal stack and provisional value",
+          "actual Home ends native modal session",
+          "foreground return preserves modal without replaying keyboard",
+          "return to list restores logical focus only",
+          "six phone layer cycles retain fixed resources",
+          "active phone modal font switch retains one editor owner"
+        ],
+        "startedUtc": "2026-11-07T14:38:56.546Z",
+        "endedUtc": "2026-11-07T14:41:29.539Z",
+        "model": "SM-F966U1",
+        "android": "17",
+        "browser": "Chrome/156.0.8078.79",
+        "input": "CDP-injected canvas contact, Android shell taps on observed software keys, real Samsung composition. Selection-to-end is an explicit control. Not human finger input.",
+        "composition": {
+          "base": "composing",
+          "modalCancel": "composing",
+          "rotation": "composing"
+        },
+        "actualOsRotation": {
+          "widthChanged": true,
+          "restored": true
+        },
+        "cleanup": {
+          "applicationClosed": true,
+          "fontSets": 0,
+          "editorLeases": 0,
+          "paragraphImageBytes": 0,
+          "paragraphGeometryBytes": 0,
+          "priorTargetsAndComponentRestored": true,
+          "ownedMappingsRemoved": true,
+          "phoneLeaseReleased": true
+        },
+        "rawResult": {
+          "bytes": 189746,
+          "sha256": "8a3408d7f56e49860c52e7f61f80230566a35d54a056d2a6241b702da5ba0d9a"
+        },
+        "actualSourceManifest": {
+          "members": 197,
+          "bytes": 28555,
+          "sha256": "6739e07cd9bd34a52edd9b1ae6bb4a53a2d70feee9700298afa4aa331be91eba"
+        }
+      }
+    ],
+    "priorLockedAttempt": {
+      "status": "UNAVAILABLE_LOCKED",
+      "device": "SM-F966U1",
+      "android": "17",
+      "reason": "After wake, keyguard remained showing and input restricted. The controller refused before a test target or native editor session existed. No credential bypass or phone pass.",
+      "restoration": {
+        "originalStay": "0",
+        "currentStay": "0",
+        "originalSleepRestored": true,
+        "noActiveDeviceLease": true
+      }
+    },
+    "limits": "Finite current-device software-key observations; not a complete phone/IME/accessibility or M4 qualification. Initial observer-assumption failure and two real product failures are retained separately."
   },
-  "regressions": "Independent review identified and corrected Engine/Scope/input-callback retirement, held-contact release, borrowed-root origin release, lifetime input-channel ownership and post-cancel painter order. A final registration-retirement variant has its own regression.",
+  "regressions": "Independent review identified and corrected Engine/Scope/input-callback retirement, held-contact release, borrowed-root origin release, lifetime input-channel ownership and post-cancel painter order. A final registration-retirement variant has its own regression. Actual phone rotation/Home revealed programmatic focus mislabelled as keyboard navigation and preedit captured before settlement; private focusFirst and finish-before-view-snapshot correct both.",
   "history": "Initial API RED, earlier callback-cleanup failure, source-policy positive failures, original browser successes and subsequent exact-final successors are retained separately; none relabeled as final evidence.",
   "remaining": [
     "Full M3.4 controls, gestures and semantic projection",
-    "Actual IME, phone and assistive-technology qualification",
+    "Complete IME/device matrix and assistive-technology qualification",
     "M4 mixed campaign",
     "M1.2 full-dirty10.3ms versus8ms target remains OPEN"
-  ]
+  ],
+  "windowsPriorFailure": {
+    "head": "bf9d948be131901fa36e8a1c03490f8252bca58e",
+    "run": 42380675945,
+    "job": 128427432629,
+    "url": "https://github.com/cnedwin/Egret_rebuild/actions/runs/42380675945/job/128427432629",
+    "tests": 318,
+    "passed": 309,
+    "failed": 9,
+    "cause": "The registered declaration reader deliberately rejects an unquoted slash in a prefix. A new regex literal violated that existing restricted grammar.",
+    "repair": "Equivalent RegExp constructor; reader authority and full original inverse history unchanged.",
+    "rawLog": {
+      "bytes": 97497,
+      "sha256": "741617114ee9ac17ebc10abd0b6213789fa21ba2172dda7b041c1830d16fc725"
+    },
+    "focusedRepair": {
+      "tests": 9,
+      "passed": 9,
+      "log": {
+        "bytes": 1101,
+        "sha256": "5c00f5d546de99e867131425ff36315db27c22a47d42b21158bb6a9421ac4565"
+      }
+    },
+    "finalCandidateCi": "required separately"
+  }
 }
