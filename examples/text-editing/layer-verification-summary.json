@@ -1645,5 +1645,30 @@
       }
     },
     "finalCandidateCi": "required separately"
+  },
+  "windowsCurrentOracleFailure": {
+    "head": "f646bb8df093163b65e32dd65c31a45e1e1bf763",
+    "run": 42384078650,
+    "job": 128437659889,
+    "url": "https://github.com/cnedwin/Egret_rebuild/actions/runs/42384078650/job/128437659889",
+    "tests": 5594,
+    "passed": 5593,
+    "failed": 1,
+    "cause": "S16 current-byte oracle selected the preceding UI authority instead of the already admitted single reviewed current successor.",
+    "repair": "Test-only exact-current selector, explicit current and predecessor tuples; immutable historical tables, optional-entry exclusion and unknown-byte refusal controls retained.",
+    "rawLog": {
+      "bytes": 1292608,
+      "sha256": "5e06fed8813d4167302eeadd13315cd72966202ae2fbe8fd30fac30609193814"
+    },
+    "focusedRepair": {
+      "tests": 11,
+      "passed": 11,
+      "log": {
+        "bytes": 1414,
+        "sha256": "9b39936444476d402d0ca23bd1f07064cb7bec937eacadf61c8c7493889050b4"
+      }
+    },
+    "reused": "Emitted SDK and actual browser/phone source bytes unchanged; reuse140 SDK,64+58 desktop and32 phone observations with their original identities.",
+    "finalCandidateCi": "required separately"
   }
 }

@@ -2264,15 +2264,15 @@
       "en": "skills/egret-windows-ci/SKILL.md",
       "zh": "skills/egret-windows-ci/SKILL.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "573297aa30dd03e15f4c43f3393a09b7e668942bab9a74d02c220cb21b841fd0",
-      "zhSha256": "e39c18a6863dec90749c417a777aff008939029cf27453bbf3789bc47eb47500"
+      "enSha256": "2a1b10f380e3e15a8b1075a1eaaa25697f92eb1af7070b8d4ab47bba11b7553a",
+      "zhSha256": "368810c017b2d084572adae859a89269cfd5b8ff1f1706841cd4eab687a905be"
     },
     {
       "en": "knowledge-base/en/docs/windows-ci-governance.md",
       "zh": "knowledge-base/Cns/docs/windows-ci-governance.md",
       "kind": "public_reading",
-      "enSha256": "90f126344b669841be8fc328b8dc4255dce668deb4b8656f86ef19c3a8c81819",
-      "zhSha256": "fbe1e44ea2883a7a4446516568da4bcdf84eebfaa09c8ae22b00749ee27eb6a6"
+      "enSha256": "e90bc4f0ddc99295293748e9edc46c828f603f70f17740c8b9f9c9586116bbf2",
+      "zhSha256": "3aa2011df1f345e14dfb35094a83aec159eb9172d0ed97d209d280c3f5aee8d2"
     },
     {
       "en": "knowledge-base/en/docs/android-device-validation.md",
@@ -2727,7 +2727,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "77eea9cc30312ddf80edb312273c9da1b4a13fc7e66504089f749d62ef67a7cf"
+      "sha256": "1cef47356f91cba412b2c7943d052e93010972834f8a290ffc54fd1b9548b934"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",

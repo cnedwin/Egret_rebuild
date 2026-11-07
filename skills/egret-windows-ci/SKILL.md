@@ -42,6 +42,8 @@ When extending a source-owner file, check bounded readers and inverse fixtures t
 
 When an optional SDK entry changes package exports or private aliases, inspect every existing standalone package/source owner as well as the shared gate. An exact current-byte check and an older semantic export projection can both need the same bounded addition. Prove each complete predecessor by an exact inverse; derive graph counts from that owner's actual closure rather than copying another inventory's count. Run the affected standalone checks together before the next candidate push, preserving all original pins and refusal assertions.
 
+When the collector admits a reviewed current successor, inspect all current-identity test consumers. Select the same finite current map, assert its exact membership and both current/predecessor tuples, and retain immutable historical tables and unknown-byte refusal controls. A stale current oracle is repaired in the test; it does not justify changing runtime bytes, collector membership or replaying unchanged browser/device evidence.
+
 For state-machine repairs, review the admitted terminal/ownership/error boundaries together, including existing bubbling and callback failure, rather than patching one scalar example per review. Keep browser/device/performance acceptance separate.
 
 Update the existing cause family and work package. Add a regression, clearer owner/admission or a narrow skill correction when it changes future decisions; do not create another maintenance framework for each occurrence. Require normal hooks, independent review, paired public documentation and branch protection. Never rehash sealed history, waive a real failure, bypass hooks or treat manual subset passes as complete CI.

@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "751f39151f0358b35dbaf282a61f0f0c527a0b18e7e124c0c286513b9af236d8",
+      "sha256": "18640188ac1d76b83a6a8ae33f0b00d573bbaeb386d0f745cb9644346b6b2261",
       "bytes": 389785,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -6382,8 +6382,8 @@
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 57298,
-      "sha256": "77eea9cc30312ddf80edb312273c9da1b4a13fc7e66504089f749d62ef67a7cf",
+      "bytes": 58076,
+      "sha256": "1cef47356f91cba412b2c7943d052e93010972834f8a290ffc54fd1b9548b934",
       "identityHistory": [
         {
           "bytes": 17519,
@@ -15608,14 +15608,14 @@
     {
       "path": "skills/egret-windows-ci/SKILL.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 5183,
-      "sha256": "573297aa30dd03e15f4c43f3393a09b7e668942bab9a74d02c220cb21b841fd0"
+      "bytes": 5621,
+      "sha256": "2a1b10f380e3e15a8b1075a1eaaa25697f92eb1af7070b8d4ab47bba11b7553a"
     },
     {
       "path": "skills/egret-windows-ci/SKILL.zh-CN.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 4585,
-      "sha256": "e39c18a6863dec90749c417a777aff008939029cf27453bbf3789bc47eb47500"
+      "bytes": 4938,
+      "sha256": "368810c017b2d084572adae859a89269cfd5b8ff1f1706841cd4eab687a905be"
     },
     {
       "path": "skills/egret-windows-ci/scripts/summarize-windows-failure.mjs",
@@ -15632,14 +15632,14 @@
     {
       "path": "knowledge-base/en/docs/windows-ci-governance.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 6452,
-      "sha256": "90f126344b669841be8fc328b8dc4255dce668deb4b8656f86ef19c3a8c81819"
+      "bytes": 7160,
+      "sha256": "e90bc4f0ddc99295293748e9edc46c828f603f70f17740c8b9f9c9586116bbf2"
     },
     {
       "path": "knowledge-base/Cns/docs/windows-ci-governance.md",
       "originRole": "Independently authored first-party Windows CI evidence diagnosis, bounded offline recording analysis or paired governance instructions; Apache-2.0. No third-party code, credentials, remote mutation, source-pin admission or test-retry authority is added.",
-      "bytes": 5481,
-      "sha256": "fbe1e44ea2883a7a4446516568da4bcdf84eebfaa09c8ae22b00749ee27eb6a6"
+      "bytes": 6063,
+      "sha256": "3aa2011df1f345e14dfb35094a83aec159eb9172d0ed97d209d280c3f5aee8d2"
     },
     {
       "path": "contributions/windows-ci-governance.json",
@@ -15926,8 +15926,8 @@
     {
       "path": "examples/text-editing/layer-verification-summary.json",
       "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged.",
-      "bytes": 65303,
-      "sha256": "4fcfd255eca06f8c22746a332258bab72af0440cc86e1bc1ccd9b8aeff8a8c89"
+      "bytes": 66472,
+      "sha256": "2044b1c2c22cc9a4c40cd1e2b7f014acc8a13d45f916d06a57ac0fa4ff579236"
     },
     {
       "path": "contributions/ui-layer-composition.json",
