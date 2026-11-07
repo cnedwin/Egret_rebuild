@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "db62cddb2780500539698b3ca7fa5079cf24ea471ce7a727d262b00377846b39",
-      "zhSha256": "5d01ad3975372f336bb46896c4c257047583b7759870a7f555836516d434ea60"
+      "enSha256": "e815c6414550a5c6bb17f7f0b74d915d1d1fbd1ec8d4660fffae33d7e879c89c",
+      "zhSha256": "b976ab83d17fe5a402e4d7cd4ff6759532d02997a330bb6345ea9e8d33764a64"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1977,8 +1977,8 @@
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
       "zh": "knowledge-base/Cns/docs/m4-core-acceptance-plan.md",
       "kind": "public_reading",
-      "enSha256": "bbe3dc002c2e4ad192a2794a48e999180ae9ec13937bd9fe661b84d235ce9a93",
-      "zhSha256": "863ae30bdfae4ea27877ed2c0ba3a5cdd70824c235ff16887a3a08ab2f1b0af7"
+      "enSha256": "a94dc4b96a8df780b1a499c79314f9b36eeca6726f5c44c4118e27d3cd88c4d2",
+      "zhSha256": "23ff4c339bc667583f3ba8a53bba2af12ddbca08684c5b9d990f8c2def8bf5d4"
     },
     {
       "en": "knowledge-base/en/docs/multi-pointer-input.md",
@@ -2308,6 +2308,13 @@
       "kind": "public_reading",
       "enSha256": "6532443f5f82bffb7e21ec91e8ceaefda85d7811222c20836892f46682fed421",
       "zhSha256": "48fa49375bda33d2e29a01357b75846a9db8001ec919fb2032e922bf551853d4"
+    },
+    {
+      "en": "examples/outfit-studio/README.md",
+      "zh": "examples/outfit-studio/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "106c77a2e459d6f31f5353b2a5d92777b755954775c256052a72cba97ebf8c32",
+      "zhSha256": "ce780f2605422a7e66ab9b3868d711c3268579607b5d84680768c169dc473ea2"
     }
   ],
   "registries": [
@@ -4750,6 +4757,30 @@
     {
       "path": "examples/text-editing/verify-layers.mjs",
       "sha256": "2b4f50281bb9e28ff4d9b70131e916ac41a7417d0fa58444561b12b1aae11616"
+    },
+    {
+      "path": "examples/outfit-studio/project.mjs",
+      "sha256": "4070f0850cf4b545473e28b415364abb0a7a6fa0de6d9a0966a77f39be486d85"
+    },
+    {
+      "path": "examples/outfit-studio/serve.mjs",
+      "sha256": "01fc0c12fd99b4dba7e64c3f6dab1f9a169ee63bc5e5881a871d852528024003"
+    },
+    {
+      "path": "examples/outfit-studio/scene.mjs",
+      "sha256": "1d8c6c1de67d91fd008de75c1cfbe2358f6bd451f60b34a70d647f158f88bca3"
+    },
+    {
+      "path": "examples/outfit-studio/ui.mjs",
+      "sha256": "2527328e374433a17da4b1cbfa8b94e5582f8c48ad2c096417c323f4756234c9"
+    },
+    {
+      "path": "examples/outfit-studio/main.mjs",
+      "sha256": "838d0ca37ffee3019dd4e0679c4699e5cfd0f3db2a1a5daa5795c7704d491ddf"
+    },
+    {
+      "path": "examples/outfit-studio/verify.mjs",
+      "sha256": "a546d13454d6591d289f4c54e2bd0c96a4608510fd193d766a01c68666c3597e"
     }
   ],
   "historicalSemanticReview": {

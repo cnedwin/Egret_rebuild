@@ -53,7 +53,7 @@ Retain current public entries, ownership boundaries, shared execution and source
 
 **Result:** one reproducible project demonstrating the complete selected interaction loop, with source assets, editable code/data, expected state transitions and an English/Chinese guide.
 
-**Start:** ready for a bounded mixed-example increment using current M2/M3 public interfaces. The complete selected scene still depends on remaining content, editor/control and qualification rows.
+The first desktop Outfit Studio uses the public M2/M3 interfaces for character selection, independent outfits, palette replacement and native rename. It contributes a scoped dual-backend result and an initial cold transfer intake. Continue from this editable project. Complete selected content, controls and the fixed X workloads before final acceptance. [Outfit Studio](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/outfit-studio)
 
 **Scope:** select a bounded outfit/character-management scene with complex UI, independent Spine tracks/skins, sequence effects, resource replacement and the existing opaque 3D background. Agree a subset of the U/A scenarios; do not silently add all their individual maximum loads together.
 

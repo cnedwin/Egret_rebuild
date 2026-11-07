@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/outfit-studio-project.test.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies."
+    },
+    {
+      "path": "examples/outfit-studio/project.json",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies."
+    },
+    {
+      "path": "examples/outfit-studio/project.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/outfit-studio/serve.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/outfit-studio/assets.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies."
+    },
+    {
+      "path": "examples/outfit-studio/scene.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/outfit-studio/ui.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/outfit-studio/main.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/outfit-studio/index.html",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies."
+    },
+    {
+      "path": "examples/outfit-studio/style.css",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies."
+    },
+    {
+      "path": "examples/outfit-studio/verify.mjs",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/outfit-studio/README.md",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies."
+    },
+    {
+      "path": "examples/outfit-studio/README.zh-CN.md",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies."
+    },
+    {
+      "path": "examples/outfit-studio/verification-summary.json",
+      "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/outfit-studio/README.md",
+      "zh": "examples/outfit-studio/README.zh-CN.md"
+    }
+  ]
+}
