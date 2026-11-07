@@ -814,6 +814,9 @@ function surfaceRules(root, id, snapshot) {
   let admittedAtlasSuccessor = false;
   for (const name of packages) {
     const file = 'packages/' + name + '/package.json', value = JSON.parse(read(root, file, id)), expectedPackage = snapshot.packages[name];
+    // Project only the exact optional editing routes; raw package identity is still checked below.
+    if(['runtime','engine'].includes(name)&&equal(value.exports?.['./ui/editing'],{types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'}))delete value.exports['./ui/editing'];
+    if(name==='engine'&&equal(value.exports?.['./web/editing'],{types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'})&&equal(value.imports?.['#egret-text-editor'],{types:'./dist/ui/textEditor.d.ts',import:'./dist/ui/textEditor.js'})){delete value.exports['./web/editing'];delete value.imports['#egret-text-editor'];}
     // Strip only the selected optional paragraph mappings before retained route checks.
     const paragraphEntry=name==='runtime'?{types:'./dist/paragraph/index.d.ts',import:'./dist/paragraph/index.js'}:{types:'./dist/paragraph.d.ts',import:'./dist/paragraph.js'};
     if(['runtime','engine'].includes(name)&&equal(value.exports?.['./paragraph'],paragraphEntry))delete value.exports['./paragraph'];

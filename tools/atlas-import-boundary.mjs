@@ -232,7 +232,7 @@ const nativeEditingPackagePairs = [{"base":{"path":"packages/engine/package.json
 function nativeEditingGraph(base,present){
  if(!nativeEditingAdditionPins.some(row=>present.has(row.path)))return base;
  const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b),valid=row=>same(Object.keys(row).sort(),['bytes','path','sha256'])&&Number.isSafeInteger(row.bytes)&&row.bytes>0&&new RegExp('^[a-f0-9]{64}$').test(row.sha256);
- if(base.length!==858||new Set(base.map(row=>row.path)).size!==858||nativeEditingSourcePairs.length!==2||nativeEditingAdditionPins.length!==30
+ if(base.length!==860||new Set(base.map(row=>row.path)).size!==860||nativeEditingSourcePairs.length!==2||nativeEditingAdditionPins.length!==30
   ||nativeEditingSourcePairs.some(pair=>!valid(pair.base)||!valid(pair.current)||pair.base.path!==pair.current.path||!base.some(row=>same(row,pair.base)))
   ||nativeEditingAdditionPins.some(row=>!valid(row)||base.some(old=>old.path===row.path))
   ||new Set([...nativeEditingSourcePairs.map(pair=>pair.base.path),...nativeEditingAdditionPins.map(row=>row.path)]).size!==32)throw Error('Invalid finite native editing source group');
