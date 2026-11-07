@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import {CancellationController,EgretError,Scope} from '@egret/runtime';
-import type {Stage} from '@egret/runtime';
+import type {Stage,DisplayObjectContainer} from '@egret/runtime';
 import type {CancellationSignal,Diagnostic,ScopeValue} from '@egret/contracts';
 import type {createUiDisplayOperations,UiDisplayOperations} from '@egret/runtime/ui';
 import type {PointerInputEvents,PointerRouterState} from '../pointerInputTypes.js';
@@ -21,7 +21,16 @@ export interface UiInputPort {
   activeContacts():number;
   sync():void;
 }
+export interface UiKeyboardScope {
+  setRoots(roots:readonly DisplayObjectContainer[]|undefined):void;
+  /** Default layer focus is programmatic, never a synthetic Tab gesture. */
+  focusFirst():void;
+  release():void;
+}
 export interface UiEnginePort {
+  readonly stage:Stage;
+  terminal():boolean;
+  keyboardScope(input:KeyboardInput,owner:object):UiKeyboardScope;
   assertOpen():void;
   assertIdle():void;
   isEngineScope(value:unknown):value is Scope;
@@ -48,7 +57,7 @@ export interface UiEngineOwner {
 interface Identity {readonly token:object;readonly port:UiEnginePort;readonly deliver:UiEngineOwner['deliver'];}
 const engines=new WeakMap<object,Identity>();
 const inputs=new WeakMap<object,{readonly token:object;readonly port:UiInputPort}>();
-const keyboards=new WeakMap<object,{readonly token:object;readonly input:KeyboardInput}>();
+const keyboards=new WeakMap<object,{readonly token:object;readonly input:KeyboardInput;readonly claim:(owner:object)=>UiKeyboardScope}>();
 const apply=Reflect.apply;
 const state=Object.getOwnPropertyDescriptor(Scope.prototype,'state')!.get!;
 const use=Scope.prototype.use,dispose=Scope.prototype.dispose;
@@ -65,6 +74,13 @@ export function registerUiEngine(engine:object,assembly:UiAssembly):UiEngineOwne
   const add=Object.getOwnPropertyDescriptor(signalPrototype,'addEventListener')!.value as CancellationSignal['addEventListener'];
   const remove=Object.getOwnPropertyDescriptor(signalPrototype,'removeEventListener')!.value as CancellationSignal['removeEventListener'];
   const port:UiEnginePort=Object.freeze({
+    stage:assembly.stage,
+    terminal:()=>closed,
+    keyboardScope(input:KeyboardInput,owner:object):UiKeyboardScope {
+      const identity=keyboards.get(input);
+      if(identity===undefined||identity.token!==token)throw new EgretError('UI_KEYBOARD_INVALID');
+      return identity.claim(owner);
+    },
     assertOpen:assembly.assertOpen,
     assertIdle():void {assembly.assertOpen();if(assembly.isFrameBusy()||delivery.depth!==0)throw new EgretError('UI_BUSY');},
     isEngineScope(value:unknown):value is Scope {return scopes.has(value as Scope);},
@@ -123,7 +139,7 @@ export function registerUiPointerInput(input:object,engine:object,port:UiInputPo
 }
 
 /** Register only an authentic channel assembled against this Engine. */
-export function registerUiKeyboardInput(input:KeyboardInput,engine:object):void {
+export function registerUiKeyboardInput(input:KeyboardInput,engine:object,claim:(owner:object)=>UiKeyboardScope):void {
   const identity=engines.get(engine);if(identity===undefined)throw new EgretError('UI_ENGINE_INVALID');
-  keyboards.set(input,{token:identity.token,input});
+  keyboards.set(input,{token:identity.token,input,claim});
 }

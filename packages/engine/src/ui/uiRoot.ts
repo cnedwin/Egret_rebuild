@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 import { requireUiTheme, sameThemeMetrics, applyUiTheme } from './theme.js';
 import type { UiTheme } from './theme.js';
-import { EgretError, Sprite } from '@egret/runtime';
+import { EgretError, Sprite, DisplayObject } from '@egret/runtime';
 import type { DisplayObjectContainer, Scope } from '@egret/runtime';
 import { captureUiLayout, planUiLayout, UiHeightIndex, createUiDisplayOperations } from '@egret/runtime/ui';
 import type { UiLayoutTree, UiLayoutNode, UiLayoutPlan, UiLayoutBox, UiDisplayUpdate } from '@egret/runtime/ui';
 import { requireUiEngine } from '../internal/uiFactoryState.js';
 import { registerUiRoot } from '../internal/uiRootState.js';
+import type { UiRootLayerPresentation, UiRootTarget } from '../internal/uiRootState.js';
 import type { PointerInput } from '../pointerInputTypes.js';
 import type { KeyboardFocusOptions } from '../keyboardInputTypes.js';
 import { captureSource, captureReveal, revealScroll } from './virtualList.js';
@@ -91,6 +92,7 @@ interface Candidate {
     indexJournal: ReturnType<UiHeightIndex['stageHeights']> | undefined;
     snapshot: UiSnapshot;
     inputGeneration: number;
+    layerGeneration: number;
 }
 interface TokenState {
     used: boolean;
@@ -209,7 +211,11 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             fail('UI_INPUT_BUSY');
     }
     validateNewInput(input);
-    const keyboard = options.keyboard === undefined ? undefined : createUiKeyboardFocus(port.requireKeyboard(options.keyboard.input), options.keyboard.idPrefix);
+    const keyboardOptions=options.keyboard;
+    const keyboardIdentity=keyboardOptions===undefined?undefined:port.requireKeyboard(keyboardOptions.input);
+    const keyboard=keyboardIdentity===undefined?undefined:createUiKeyboardFocus(keyboardIdentity,keyboardOptions!.idPrefix);
+    let layerVisible=true,layerPointer=true,layerKeyboard=true,layerGeneration=0,layerOwned=false;
+    let layerOrigin:Readonly<{x:number;y:number}>|undefined;
     keyboard?.validate(source?.byKey.keys() ?? []);
     let committedTheme: UiTheme | undefined, paintThemeOnly = false, paintCommitted = false, layoutPasses = 0;
     function layout(...args: Parameters<typeof planUiLayout>): UiLayoutPlan {
@@ -830,8 +836,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             }
             updates.push({
                 wrapper: rootWrapper,
-                x: position.x,
-                y: position.y,
+                x: layerOrigin?.x ?? position.x,
+                y: layerOrigin?.y ?? position.y,
                 clipRect: {
                     x: 0,
                     y: 0,
@@ -839,8 +845,9 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                     height: size.height
                 },
                 children: rootChildren,
+                visible: layerVisible,
                 touchEnabled: false,
-                touchChildren: true
+                touchChildren: layerPointer
             });
             rootChildren.sort((a, b) => paintOrder.get(a)! - paintOrder.get(b)!);
             const displayToken = display.prepare(rootWrapper, updates);
@@ -893,7 +900,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 displayToken,
                 indexJournal: journal,
                 snapshot: nextSnapshot,
-                inputGeneration
+                inputGeneration,
+                layerGeneration
             });
         }
         catch (e) {
@@ -1125,6 +1133,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             });
         },
         setInput(value) {
+            if(layerOwned&&value!==inputIdentity)fail('UI_LAYER_INPUT_MISMATCH');
             admit('input', () => {
                 if (value === inputIdentity)
                     return;
@@ -1232,7 +1241,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             if (busy || committing)
                 fail('UI_BUSY');
             display.assertStage();
-            if (entry.retired === true || entry.candidate !== undefined && !candidates.has(entry.candidate) || preparation.desiredRevision !== desired || preparation.baseCommittedRevision !== committed || entry.candidate !== undefined && entry.candidate.inputGeneration !== inputGeneration) {
+            if (entry.retired === true || entry.candidate !== undefined && !candidates.has(entry.candidate) || preparation.desiredRevision !== desired || preparation.baseCommittedRevision !== committed || entry.candidate !== undefined && (entry.candidate.inputGeneration !== inputGeneration || entry.candidate.layerGeneration !== layerGeneration)) {
                 entry.used = true;
                 if (entry.candidate !== undefined)
                     clearCandidate(entry.candidate);
@@ -1312,6 +1321,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         snapshot() {
             return freeze({
                 ...snapshot,
+                ...(layerOrigin===undefined?{}:{origin:layerOrigin,layerRevision:layerGeneration}),
                 desiredRevision: desired,
                 counters: counters(snapshot.rows)
             });
@@ -1406,6 +1416,34 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 });
         }
     };
+    // Layer publication has its own epoch: pending content can finish without resurrecting an old overlay.
+    function presentLayer(value:UiRootLayerPresentation):void {
+        open();port.assertIdle();if(committing)fail('UI_BUSY');
+        const p=origin({x:value.x,y:value.y},snapshot.viewport);
+        display.presentRoot(rootWrapper,{x:p.x,y:p.y,visible:value.visible,interactive:value.pointerEnabled,...(value.index===undefined?{}:{index:value.index})});
+        layerVisible=value.visible;layerPointer=value.pointerEnabled;layerKeyboard=value.keyboardEnabled;
+        layerOrigin=p;layerGeneration=next(layerGeneration);
+    }
+    // Revoke only the layer presentation domain. This must also work during routed callbacks and Scope close.
+    function releaseLayer(visible:boolean):void {
+        layerOrigin=undefined;layerVisible=visible;layerPointer=visible;layerKeyboard=visible;layerGeneration=next(layerGeneration);
+        if(!closed)display.releaseRoot(rootWrapper,{x:snapshot.origin.x,y:snapshot.origin.y,visible});
+    }
+    const rootVisible=Object.getOwnPropertyDescriptor(DisplayObject.prototype,'visible')!.get!;
+    const rootParent=Object.getOwnPropertyDescriptor(DisplayObject.prototype,'parent')!.get!;
+    function anchor(target:UiRootTarget){
+        if(closed||committed===0)return undefined;
+        let box:Readonly<{x:number;y:number;width:number;height:number}>|undefined,content:DisplayObjectContainer|undefined;
+        if(target.kind==='row'){
+            if(target.listId!==listId)return undefined;const row=snapshot.rows.find(r=>r.key===target.key&&r.visible);if(!row)return undefined;box=row.box;content=bindings.get(target.key)?.content;
+        }else{if(tree.nodes.get(target.id)?.kind!=='leaf')return undefined;box=snapshot.boxes.find(b=>b.id===target.id);content=leafBindings.get(target.id)?.content;}
+        if(!box)return undefined;
+        if(content){let node:DisplayObject|undefined=content,count=0;while(node!==undefined&&node!==rootWrapper){if(++count>64||Reflect.apply(rootVisible,node,[])!==true)return undefined;node=Reflect.apply(rootParent,node,[]) as DisplayObject|undefined;}if(node!==rootWrapper)return undefined;}
+        let left=Math.max(0,box.x),top=Math.max(0,box.y),right=Math.min(snapshot.viewport.width,box.x+box.width),bottom=Math.min(snapshot.viewport.height,box.y+box.height);
+        if(target.kind==='row'){const list=snapshot.boxes.find(b=>b.id===listId);if(!list)return undefined;left=Math.max(left,list.innerX);top=Math.max(top,list.innerY);right=Math.min(right,list.innerX+list.innerWidth);bottom=Math.min(bottom,list.innerY+list.innerHeight);}
+        if(right<=left||bottom<=top)return undefined;
+        return freeze({x:left,y:top,width:right-left,height:bottom-top});
+    }
     function onOwnerAbort() {
         api.dispose();
     }
@@ -1444,7 +1482,9 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             wrapper: rootWrapper,
             state: () => closed ? 'closed' as const : 'open' as const,
             snapshot: () => api.snapshot(),
-            lookup(target) {
+            layerState: () => freeze({snapshot,ready:!closed&&!busy&&!committing&&candidates.size===0&&desired===committed&&committed>0,mutable:!closed&&!committing,lifetimeOpen:!closed&&!owner.signal.aborted&&!port.terminal(),visible:layerVisible,pointerEnabled:layerPointer,keyboardEnabled:layerKeyboard,input:inputIdentity,keyboard:keyboardIdentity}),
+            presentLayer,releaseLayer,layerOwnership:(active:boolean)=>{layerOwned=active;},anchor,
+            lookup(target:UiRootTarget) {
                 if (closed) return undefined;
                 if (target.kind === 'leaf') {
                     const leaf = leafBindings.get(target.id);
@@ -1454,7 +1494,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
                 const row = snapshot.rows.find(row => row.key === target.key), binding = bindings.get(target.key);
                 return row === undefined || binding?.content === undefined ? undefined : freeze({ content: binding.content, visible: row.visible, bindingGeneration: row.bindingGeneration, contentVersion: row.contentVersion });
             },
-            retain(id, key) { if (id !== listId) fail('UI_UNKNOWN_LIST'); return retainRow(key, 'focus', true); },
+            retain(id:string, key:string) { if (id !== listId) fail('UI_UNKNOWN_LIST'); return retainRow(key, 'focus', true); },
         }));
         return freeze(api);
     }

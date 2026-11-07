@@ -379,7 +379,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   const { resolveB1Dependency } = await import(pathToFileURL(join(repository, 'tools/b1-webgpu/registryProvenance.mjs')).href);
   const served = new Map();
   // Evaluate only the verifier's policy declarations and collector, never emitted SDK code or main().
-  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
+  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, uiLayerAuthorityModuleSuccessors, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
     repository: await realpath(repository), sep, assert, resolve, readFile: selectedReadFile, realpath, resolveB1Dependency, URL,
     served, identities: new Map(), hash: body => createHash('sha256').update(body).digest('hex'),
   }, { timeout: 1000 });
@@ -685,14 +685,19 @@ test('S16 UI cooperation admits only seven exact successors and two eager depend
     assert.deepEqual(JSON.parse(JSON.stringify(runInNewContext(declaration[1], {}, { timeout: 1000 }))), expected);
   }
   const policy = await completeCurrentClosure();
+  // Historical UI tables stay fixed; exactly one reviewed current authority overrides its later pin.
+  const target='packages/engine/dist/internal/uiFactoryState.js',current=policy.uiLayerAuthorityModuleSuccessors;
+  assert.equal(current.size,1);assert.deepEqual([...current.keys()],[target]);
+  assert.deepEqual(JSON.parse(JSON.stringify(current.get(target))),{bytes:5463,sha256:'e8ee30245ab4ad8693cc82a4f6ded832675038f759291ea54efba2232db1f992'});
+  assert.deepEqual(JSON.parse(JSON.stringify(policy.m33KeyboardAdmissionModuleSuccessor.get(target))),{bytes:5115,sha256:'79777e8e276c941ab203344738eb781686fcbc7694e4c4fcaf67bd32e46c3ba9'});
   for (const [name, expected] of uiSuccessors) {
     assert.ok(policy.m15ModuleIdentities.has(name), 'A successor must retain historical membership');
     assert.notEqual(policy.m15ModuleIdentities.get(name).sha256, expected.sha256);
-    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??policy.m33KeyboardAdmissionModuleSuccessor.get(name)??policy.m22SequenceModuleSuccessors.get(name)??expected)));
+    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.uiLayerAuthorityModuleSuccessors.get(name)??policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??policy.m33KeyboardAdmissionModuleSuccessor.get(name)??policy.m22SequenceModuleSuccessors.get(name)??expected)));
   }
   for (const [name, expected] of uiAdditions) {
     assert.equal(policy.m15ModuleIdentities.has(name), false);
-    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??policy.m33KeyboardAdmissionModuleSuccessor.get(name)??policy.m22SequenceModuleSuccessors.get(name)??expected)));
+    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.uiLayerAuthorityModuleSuccessors.get(name)??policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??policy.m33KeyboardAdmissionModuleSuccessor.get(name)??policy.m22SequenceModuleSuccessors.get(name)??expected)));
   }
   for (const name of ['packages/engine/dist/ui/index.js', 'packages/runtime/dist/ui/index.js']) {
     assert.equal(policy.allowedModules.has(name), false, 'Optional UI assembly cannot enter this default closure');

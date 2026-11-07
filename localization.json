@@ -400,8 +400,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "7cbddf9ab50ce8c21deac66c217f64ad319a109e6849729e4544c8f24b5b2b96",
-      "zhSha256": "2603ec1846b6db828bb8753cc3af60915d0921ccd4895dd765d34556ebee95c7"
+      "enSha256": "a8c43f6028585b6c37c969ed54c08d5d2c4a2be918eec352f98345461fbe1279",
+      "zhSha256": "a8f248a734a345afc4ea1e4231f2bf5acfef4b615ff1a7a49a9ef94007fd8401"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "245ee72afeb9dc6d0fd2c63f536fc33959d615d99fc2c253b7b5dd00fd3e5807",
-      "zhSha256": "4687c142907eba64ea5376f3a2642ae47d8e792cc5db19d556cd3f9cb08753df"
+      "enSha256": "db62cddb2780500539698b3ca7fa5079cf24ea471ce7a727d262b00377846b39",
+      "zhSha256": "5d01ad3975372f336bb46896c4c257047583b7759870a7f555836516d434ea60"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -610,8 +610,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "104ec536a25176f5029ddfb03ebd628dbe1f75a8fe7f6b5a9f7a0bfcc2b3abe8",
-      "zhSha256": "ff283f42f37b3d522d7128a79e3283b335b089ad5696d50a469a5388dda11dfc"
+      "enSha256": "1ad542a6c6f20041f0e75946997000d838a43f5ea165e971f10f82683450345d",
+      "zhSha256": "71fd1779bd83bae455626ed08797a6e6997359089b6e440a6b433fc2c80d8698"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -1970,8 +1970,8 @@
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "1b452a183a033effe94b897445c218bfd9d3349c769e0dd75d5637a5830c5d02",
-      "zhSha256": "e6cacdccdac28ad31b664aaf02f98367be12370ae240c03172a63e3355d058d0"
+      "enSha256": "19e58c844d6f415b854715bb1614e51d57777c8b174d70a4184877382e41b82b",
+      "zhSha256": "3c4cad55e7d93ed17663e0e956aeb9c2b40fb1e9340ca51cc0334f1df547f616"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -2264,15 +2264,15 @@
       "en": "skills/egret-windows-ci/SKILL.md",
       "zh": "skills/egret-windows-ci/SKILL.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "31d727eb88e25f6539954148266d8a7eec123d70e4f93c9fff8a3341afe35173",
-      "zhSha256": "b49b6e3a4b4fc5ea8af05dc7a125a19dd5f93c207cef36a289d42f5a1485b0f2"
+      "enSha256": "2a1b10f380e3e15a8b1075a1eaaa25697f92eb1af7070b8d4ab47bba11b7553a",
+      "zhSha256": "368810c017b2d084572adae859a89269cfd5b8ff1f1706841cd4eab687a905be"
     },
     {
       "en": "knowledge-base/en/docs/windows-ci-governance.md",
       "zh": "knowledge-base/Cns/docs/windows-ci-governance.md",
       "kind": "public_reading",
-      "enSha256": "daeb97b1f4549e7ce65a365c71a653aada73952f5d600ee51e9b2f6ad7e02bcd",
-      "zhSha256": "34a692877f63bad70b4ff1a830dd59ec11cb36501cde434150388ab0921750ec"
+      "enSha256": "e90bc4f0ddc99295293748e9edc46c828f603f70f17740c8b9f9c9586116bbf2",
+      "zhSha256": "3aa2011df1f345e14dfb35094a83aec159eb9172d0ed97d209d280c3f5aee8d2"
     },
     {
       "en": "knowledge-base/en/docs/android-device-validation.md",
@@ -2292,8 +2292,8 @@
       "en": "examples/text-editing/README.md",
       "zh": "examples/text-editing/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "c64fbc5051f2b6fd1f7cb6caef0a93bf633a107ae9bad9c61e2f633c809a02f0",
-      "zhSha256": "9f67db3891e35942b9bbd10a8cfce7e899d1110223d4784a3d774feb33758f91"
+      "enSha256": "d04e28752efee578562e3f577fc4bec997c55a9d5234a9aeac4926159f8ade1f",
+      "zhSha256": "7fcccd5cb67679cda33d748a6efaaa193539dd74823a6d6d3ba8381c526c44c6"
     },
     {
       "en": "knowledge-base/en/docs/android-native-text-editing.md",
@@ -2301,6 +2301,13 @@
       "kind": "public_reading",
       "enSha256": "2edf56003a750d7f12cc89253a7caf6210f83260add54276f6ab8549ce8602f9",
       "zhSha256": "1f91576747a0e2f7f545c7331435f89e033916cda8a474afc5df73fc8fabc01b"
+    },
+    {
+      "en": "knowledge-base/en/docs/ui-layers.md",
+      "zh": "knowledge-base/Cns/docs/ui-layers.md",
+      "kind": "public_reading",
+      "enSha256": "6532443f5f82bffb7e21ec91e8ceaefda85d7811222c20836892f46682fed421",
+      "zhSha256": "48fa49375bda33d2e29a01357b75846a9db8001ec919fb2032e922bf551853d4"
     }
   ],
   "registries": [
@@ -2708,7 +2715,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "c71631c5bc3f15fe956ad050741f70873f493335d798f2ec217d372c85666fc7"
+      "sha256": "a12dd10884185c0d5aeb5aa69130da35ab501f0bdb175a8904d99735ebbd9c6c"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2720,7 +2727,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "77eea9cc30312ddf80edb312273c9da1b4a13fc7e66504089f749d62ef67a7cf"
+      "sha256": "1cef47356f91cba412b2c7943d052e93010972834f8a290ffc54fd1b9548b934"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -3126,11 +3133,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "b6f1e3b79ad02941f355f585d73823e085c430b44144fe881f39da6b929cb7fe"
+      "sha256": "fc5647435d4051eed0edb6079eed2619c9e69ca6c9c07381a3f2084b226cfca7"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "bfcb285a04564a7db69ae137dd20631524d09e1a1a158ef745771a8d2b9d0976"
+      "sha256": "436c71d64145ac85ad42a6dca9ceeb8e966fae85ee20503a0de731d58e6170fd"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3270,7 +3277,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "4a3ffbf58ef2695279d6b8be6a78b98da7971d4fa785b82992b4e5126243c22c"
+      "sha256": "4c46de36cb28ca3797634d74aa102b2b67692b8e2c1cf3d04fb4849f9c3c80f6"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3418,7 +3425,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "ca00ce28d9f20c0dd80fb7d4959bcc04363379ca567aa41e2341937dc1985fc6"
+      "sha256": "4e8a13f8d1167d08280d3d910ba06a503d5d016f5076929450ff112fdcf3544e"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3890,7 +3897,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "f7df0b30c10f3fcde412b13dca202c6900c06190df73806d198897c042ac4f44"
+      "sha256": "73a99865bbc01a505631a0828b0f5d13ea6c9b0bbb83083a39e6aecee745c8d8"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3918,7 +3925,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "4523c8ad88103250d772fd66a1231a9112c8487fc6b4eeffe8986736a270e902"
+      "sha256": "6117488d2b0e6fa2e99b1d21ae386ee0fd535bae3d7464f5abf402629311e80d"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4218,19 +4225,19 @@
     },
     {
       "path": "packages/engine/src/internal/uiFactoryState.ts",
-      "sha256": "9124bcbc025f9aa000f78cc52ef8b89844b48955383ac4887dde3ab64cd02022"
+      "sha256": "b2b26bd3ca393625952640eae7c1951e6863af1883d7771f9a39ab000186dd97"
     },
     {
       "path": "packages/engine/src/ui/index.ts",
-      "sha256": "aed43d150dba981dc23e2b455f857cca9b10a4e14050009f6a5040d531c7efaa"
+      "sha256": "2b79efa062ee359d6609c2909c99725eb9297a6f469382e0cd3222aa485fa47a"
     },
     {
       "path": "packages/engine/src/ui/types.ts",
-      "sha256": "db2f9f812281184b6c66be9ba2b4ae54fbce005fcdff978610cb0185223586cf"
+      "sha256": "4e8fdf8270846a57a6c01510105a68a35fd7f14a77270e9b419235771501f400"
     },
     {
       "path": "packages/engine/src/ui/uiRoot.ts",
-      "sha256": "22001f2a45e4e8b3cc0009a0387faa243422db0b919a63a20e80ad5b92a38754"
+      "sha256": "bb7b67c0c5be3ce104b41d0c74f7171a2024f4d1821378cf91b7aec1b7e233ea"
     },
     {
       "path": "packages/engine/src/ui/virtualList.ts",
@@ -4238,7 +4245,7 @@
     },
     {
       "path": "packages/runtime/src/ui/displayCommit.ts",
-      "sha256": "54ff7caa92ca714328008af3af55973144f7b1b38cc40539c17670bc0776c5bb"
+      "sha256": "4ab2bcacf8f161c28d3da37f481d05c86114e52a69aa48b024c593d5898e79f5"
     },
     {
       "path": "packages/runtime/src/ui/heightIndex.ts",
@@ -4350,7 +4357,7 @@
     },
     {
       "path": "packages/engine/src/keyboardInput.ts",
-      "sha256": "0462c2020c05e56ae4eb3441f4c1981fc2ae11ba3f824fe617a438d6790202ce"
+      "sha256": "2495927d046f536b4c3d75e671a623c7347c260834e26371d4e777a45504aaef"
     },
     {
       "path": "packages/engine/src/keyboardInputTypes.ts",
@@ -4654,7 +4661,7 @@
     },
     {
       "path": "packages/engine/src/internal/uiRootState.ts",
-      "sha256": "a2aeb7e325cb6e9fe80518b8c058623524f99cf64edeacf55a6962272ed9145a"
+      "sha256": "7a26432fc6d982b5daa665732a929ccfc2fa56c3d5672caf65162b7fe1498522"
     },
     {
       "path": "packages/engine/src/ui/editing.ts",
@@ -4670,7 +4677,7 @@
     },
     {
       "path": "packages/engine/web/BrowserTextEditor.ts",
-      "sha256": "59f538c1acfce832c3a9c7087c695dd78e36bd6347c0ea90269b884ba84daff7"
+      "sha256": "c241462d93eb6cb976ff59eb9a54b4bbea963f4821d1d4ff921faf07865c3566"
     },
     {
       "path": "packages/engine/web/editing.ts",
@@ -4698,7 +4705,7 @@
     },
     {
       "path": "examples/text-editing/main.mjs",
-      "sha256": "00489259bab12b04a2633eca89df75a2cd4886652b6734dc286a706df168ac6e"
+      "sha256": "e23372269014bcdba54c8ec3cb6e80c18bc177be0c24f37713385869edf35e7a"
     },
     {
       "path": "tests/ui-text-edit-state-unit.test.mjs",
@@ -4723,6 +4730,26 @@
     {
       "path": "tests/ui-text-editor-types.test.mjs",
       "sha256": "49ececa4bec737b0f3fdc5036a6c61dacf391407531fe99d4e74bccf9a667fec"
+    },
+    {
+      "path": "tests/ui-layers.test.mjs",
+      "sha256": "3359777d5085a20e7211df7919542363fa9366666493879d7ef94862b0803206"
+    },
+    {
+      "path": "packages/engine/src/ui/layerTypes.ts",
+      "sha256": "4ffd01a7bd7352eafb542923cf031fece0e1de6d7cfe0951ecf9b35e3d15adf3"
+    },
+    {
+      "path": "packages/engine/src/ui/layers.ts",
+      "sha256": "a5ceecc17b837b59d028bc05c6f95580c0d065b94d7d6b957f016439a7f90032"
+    },
+    {
+      "path": "examples/text-editing/layers.mjs",
+      "sha256": "c37b3505ffa852150f16790d58a26186fbf16f98ef477473dc8d1f9400fb5382"
+    },
+    {
+      "path": "examples/text-editing/verify-layers.mjs",
+      "sha256": "2b4f50281bb9e28ff4d9b70131e916ac41a7417d0fa58444561b12b1aae11616"
     }
   ],
   "historicalSemanticReview": {

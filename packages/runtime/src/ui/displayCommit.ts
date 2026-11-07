@@ -31,6 +31,10 @@ export interface UiDisplayOperations {
   detach(root: DisplayObjectContainer): void;
   disposeWrapper(wrapper: DisplayObjectContainer): void;
   assertStage(): void;
+  /** Authenticated root-only presentation; does not traverse/rebuild its content. */
+  presentRoot(root: DisplayObjectContainer, value: Readonly<{x:number;y:number;visible:boolean;interactive:boolean;index?:number}>): void;
+  /** Lifetime revocation, like detach: remains legal while the owning Scope/Engine closes. */
+  releaseRoot(root:DisplayObjectContainer,value:Readonly<{x:number;y:number;visible:boolean}>):void;
 }
 const scopeUse = Scope.prototype.use;
 const scopeState = Object.getOwnPropertyDescriptor(Scope.prototype, 'state')!.get!;
@@ -263,6 +267,33 @@ export function createUiDisplayOperations(stage: Stage): UiDisplayOperations {
         recordVisualChange(item.wrapper,VISUAL_TRANSFORM | VISUAL_APPEARANCE);
       }
       mountedRoot = plan.root; epoch++;
+    },
+    presentRoot(root:DisplayObjectContainer, value:Readonly<{x:number;y:number;visible:boolean;interactive:boolean;index?:number}>): void {
+      // Capture external descriptors before revalidating the genuine owned root/Stage.
+      const x=value.x,y=value.y,visible=value.visible,interactive=value.interactive,index=value.index;
+      if(!finite(x)||!finite(y)||typeof visible!=='boolean'||typeof interactive!=='boolean'
+          ||index!==undefined&&(!Number.isInteger(index)||index<0||index>=childCountOf(stage)))refuse('UI_VALUE_INVALID');
+      assertStage();assertWrapper(root);
+      if(detached||mountedRoot!==root||parentOf(root)!==stage)refuse('UI_OWNER_INVALID');
+      if(index!==undefined){
+        const previous=captureUiChildren(stage),next=previous.slice(),at=next.indexOf(root);
+        if(at<0)refuse('UI_OWNER_INVALID');
+        if(at!==index){next.splice(at,1);next.splice(index,0,root);publishUiTree([{parent:stage,previous,next}]);}
+      }
+      const visual=visualOf(root),hit=readDisplayHitState(root);
+      if(visual.x!==x||visual.y!==y||visual.visible!==visible||hit.touchChildren!==interactive){
+        visual.x=x;visual.y=y;visual.visible=visible;hit.touchEnabled=false;hit.touchChildren=interactive;
+        recordVisualChange(root,VISUAL_TRANSFORM|VISUAL_APPEARANCE);
+      }
+      epoch++;
+    },
+    releaseRoot(root:DisplayObjectContainer,value:Readonly<{x:number;y:number;visible:boolean}>):void {
+      const x=value.x,y=value.y,visible=value.visible;
+      if(!finite(x)||!finite(y)||typeof visible!=='boolean')refuse('UI_VALUE_INVALID');
+      if(!managedBy(root,authority)||isTerminated(root)||detached||mountedRoot!==root||parentOf(root)!==stage)refuse('UI_OWNER_INVALID');
+      const visual=visualOf(root),hit=readDisplayHitState(root);
+      visual.x=x;visual.y=y;visual.visible=visible;hit.touchEnabled=false;hit.touchChildren=visible;
+      recordVisualChange(root,VISUAL_TRANSFORM|VISUAL_APPEARANCE);epoch++;
     },
     detach(root: DisplayObjectContainer): void {
       if (detached) return;

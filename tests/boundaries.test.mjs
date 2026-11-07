@@ -1390,6 +1390,16 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       write('node_modules/@egret/'+name+'/ui-editing.js',name==='runtime'?'export function createTextEditState() {}\n':'export function createUiTextEditor() {}\n');
       if(name==='engine')write('node_modules/@egret/engine/web-editing.js','export function createBrowserEditorFontProvider() {}\nexport function createBrowserTextEditor() {}\n');
     }
+    // Layer policy uses complete current clauses and inert function bodies, not behavioral substitutes.
+    const uiLayerPolicyFiles=["packages/runtime/src/ui/displayCommit.ts","packages/runtime/dist/ui/displayCommit.js","packages/runtime/dist/ui/displayCommit.d.ts","packages/engine/src/internal/uiFactoryState.ts","packages/engine/dist/internal/uiFactoryState.js","packages/engine/dist/internal/uiFactoryState.d.ts","packages/engine/src/keyboardInput.ts","packages/engine/dist/keyboardInput.js","packages/engine/src/internal/uiRootState.ts","packages/engine/dist/internal/uiRootState.js","packages/engine/dist/internal/uiRootState.d.ts","packages/engine/src/ui/uiRoot.ts","packages/engine/dist/ui/uiRoot.js","packages/engine/web/BrowserTextEditor.ts","packages/engine/dist/web/BrowserTextEditor.js","packages/engine/src/ui/types.ts","packages/engine/dist/ui/types.d.ts","packages/engine/src/ui/index.ts","packages/engine/dist/ui/index.js","packages/engine/dist/ui/index.d.ts","packages/engine/src/ui/layerTypes.ts","packages/engine/dist/ui/layerTypes.js","packages/engine/dist/ui/layerTypes.d.ts","packages/engine/src/ui/layers.ts","packages/engine/dist/ui/layers.js","packages/engine/dist/ui/layers.d.ts"];
+    for(const file of uiLayerPolicyFiles){
+      const original=readFileSync(path.join(repository,file),'utf8');if(!file.endsWith('.js')){write(file,original);continue;}
+      const clean=original.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
+      const clauses=[...clean.matchAll(/\b(import|export)\s*(?:\{[^}]+\}\s*from\s*|\*\s*from\s*)?['"]([^'"]+)['"]\s*;?/g)];
+      const ports=clauses.map(match=>match[1]==='export'||nativeEditingNamedTargets.has(match[2])||['@egret/runtime/ui','@egret/contracts/resources'].includes(match[2])?match[0]:'import '+JSON.stringify(match[2])+';');
+      const functions=[...clean.matchAll(/\bexport\s+(?:async\s+)?function\s+(\w+)/g)].map(match=>'export function '+match[1]+"() { throw new Error('Synthetic UI layer policy fixture only'); }");
+      write(file,ports.join('\n')+'\n'+functions.join('\n')+'\n');
+    }
     // M2.4 synthetic literal closure; genuine publication behavior is tested separately.
     const preparedSubtreeFixtureGraph = {
   "packages/engine/src/Engine.ts": [

@@ -35,7 +35,7 @@ export function createExampleServer(repository=root){
    ||/^work\/sequence-controls\/run-[A-Za-z0-9]{6}\/(?:browser-config\.json|candidate\.json|build\/generations\/[a-f0-9]{64}\/manifest\.json|build\/blobs\/sha256\/[a-f0-9]{64})$/.test(relative)
    ||/^examples\/ui-data-panel\/(?:index\.html|main\.mjs|fixture\.mjs)$/.test(relative)
    ||/^examples\/paragraph-panel\/(?:index\.html|main\.mjs|font-resources\.mjs|styled-copy\.mjs|effects-fixture\.(?:mjs|html)|verify-line-bidi\.mjs|README(?:\.zh-CN)?\.md|vendor\/(?:manifest\.json|runtime\/(?:(?:line-bidi-r1|layout-r1)\/)?canvaskit\.(?:js|wasm)|fonts\/[A-Za-z0-9_.-]+\.(?:ttf|otf)))$/.test(relative)
-   ||/^examples\/text-editing\/(?:index\.html|main\.mjs|README(?:\.zh-CN)?\.md)$/.test(relative)
+   ||/^examples\/text-editing\/(?:index\.html|main\.mjs|layers\.mjs|README(?:\.zh-CN)?\.md)$/.test(relative)
    ||/^examples\/paragraph-geometry\/(?:index\.html|main\.mjs|README(?:\.zh-CN)?\.md)$/.test(relative)
    ||/^examples\/atlas-pages\/(?:index\.html|main\.mjs|selection\.mjs|fixture\.mjs|README(?:\.zh-CN)?\.md)$/.test(relative)
    ||/^work\/atlas-pages\/run-[A-Za-z0-9]{6}\/(?:browser-config\.json|candidate\.json|build\/generations\/[a-f0-9]{64}\/manifest\.json|build\/blobs\/sha256\/[a-f0-9]{64})$/.test(relative)

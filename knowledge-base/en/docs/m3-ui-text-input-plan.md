@@ -250,4 +250,9 @@ This plan does not add another framework, promise arbitrary CSS, rebuild an enti
 
 Current UI, paragraph, font/theme, shared-effect and input contracts are linked in [core capabilities](core-progress.md). PR #127's contributed movement/action state is exported through @egret/engine/ui; it owns at most one contact per control, has explicit logical radius/dead-zone and terminal/error cleanup, and does not add competing native listeners. Keep its [accepted source review](https://github.com/cnedwin/Egret_rebuild/pull/127#pullrequestreview-5796600093), exact closure/diagnostic history and contributor credit.
 
-Keyboard/example wiring, drag/pan/pinch, popup/modal arbitration, full native-editor qualification, semantic projection and full M3.4/device acceptance remain work in the existing packages. CPU/UNIT, browser, injected-device and human-input evidence stay distinct. Do not repeat the already merged controls or interpret their state-machine tests as full phone acceptance.
+Keyboard/example wiring, drag/pan/pinch, full native-editor qualification, semantic projection and full M3.4/device acceptance remain work in the existing packages. CPU/UNIT, browser, injected-device and human-input evidence stay distinct. Do not repeat the already merged controls or interpret their state-machine tests as full phone acceptance.
+
+
+### Delivered popup/modal slice
+
+The [UI layer contract](ui-layers.md) supplies owned roots, staged open/close/sync, bounded backdrop scopes, clipped anchors, logical focus containment/restoration and native editor suspension. The optional existing form exercises details → rename → return. Root layout and layer presentation epochs are separate; closing does not wait for pending content. Full controls, semantic projection, gestures and declared device/accessibility rows remain OPEN under the same #90.

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/ui-layers.test.mjs",
+      "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/ui/layerTypes.ts",
+      "originRole": "Independently authored first-party Egret root-layer composition and authenticated lifetime/input coordination; AI-assisted; Apache-2.0. No new third-party implementation.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/ui/layers.ts",
+      "originRole": "Independently authored first-party Egret root-layer composition and authenticated lifetime/input coordination; AI-assisted; Apache-2.0. No new third-party implementation.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/text-editing/layers.mjs",
+      "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/text-editing/verify-layers.mjs",
+      "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/ui-layers.md",
+      "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/ui-layers.md",
+      "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged."
+    },
+    {
+      "path": "examples/text-editing/layer-verification-summary.json",
+      "originRole": "Independently authored first-party UI layer integration, bounded verification and bilingual guidance; AI-assisted; Apache-2.0. Existing attributed font/provider assets unchanged."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/ui-layers.md",
+      "zh": "knowledge-base/Cns/docs/ui-layers.md"
+    }
+  ]
+}

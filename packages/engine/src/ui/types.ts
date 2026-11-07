@@ -189,6 +189,8 @@ export interface UiSnapshot extends VirtualListSnapshot {
     readonly theme: UiTheme | undefined;
     readonly rootId: string;
     readonly committedRevision: number;
+    /** Present only when a UI layer manager publishes root placement/interaction. */
+    readonly layerRevision?: number;
     readonly desiredRevision: number;
     readonly origin: Readonly<{
         x: number;
