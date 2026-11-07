@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/en/docs/android-native-text-editing.md",
+      "originRole": "First-party bounded Android native-editing evidence and bilingual integration guidance; independently authored, AI-assisted; Apache-2.0. Existing attributed font/runtime artifacts unchanged."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/android-native-text-editing.md",
+      "originRole": "First-party bounded Android native-editing evidence and bilingual integration guidance; independently authored, AI-assisted; Apache-2.0. Existing attributed font/runtime artifacts unchanged."
+    },
+    {
+      "path": "verification/android-device/native-text-editing-2026-11-07.json",
+      "originRole": "First-party bounded Android native-editing evidence and bilingual integration guidance; independently authored, AI-assisted; Apache-2.0. Existing attributed font/runtime artifacts unchanged."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/android-native-text-editing.md",
+      "zh": "knowledge-base/Cns/docs/android-native-text-editing.md"
+    }
+  ]
+}

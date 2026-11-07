@@ -43,7 +43,7 @@ Years later, as times change and technology advances, many developers continue t
 
 [M2–M4 路线图](knowledge-base/Cns/docs/m2-m4-delivery-plan.md)、[Issues](https://github.com/cnedwin/Egret_rebuild/issues)、[里程碑](https://github.com/cnedwin/Egret_rebuild/milestones)和[社区看板](https://github.com/users/cnedwin/projects/2)统一记录交付、依赖与验收缺口。
 
-- **原生编辑切片：**[单／多行编辑与托管 UI 整合（#89）](https://github.com/cnedwin/Egret_rebuild/issues/89)现已复用段落几何、焦点和资源生命周期。见[契约](knowledge-base/Cns/docs/native-text-editing.md)与[可运行表单](examples/text-editing/README.zh-CN.md)；真实 IME／移动键盘／剪贴板／无障碍及完整工作包验收保持未完成。
+- **原生编辑切片：**[单／多行编辑与托管 UI（#89）](https://github.com/cnedwin/Egret_rebuild/issues/89)复用段落几何、焦点及资源生命周期。见[契约](knowledge-base/Cns/docs/native-text-editing.md)、[响应式表单](examples/text-editing/README.zh-CN.md)和[三星 Android 键盘／生命周期观察](knowledge-base/Cns/docs/android-native-text-editing.md)；其他输入法／设备、剪贴板、无障碍及完整工作包继续开放。
 - **并行整合入口：**[同一可编辑混合参考（#91）](https://github.com/cnedwin/Egret_rebuild/issues/91)可使用已有资产／UI／动画开始；[剩余 M2 工作](https://github.com/cnedwin/Egret_rebuild/issues/56)分别补齐二进制／参考／跳转／保留状态。这些是有界贡献入口，不代表完整验收。
 - **可独立参与：**授权素材／参考夹具、可复现问题、聚焦代码、翻译和[独立新贡献者演练（#52）](https://github.com/cnedwin/Egret_rebuild/issues/52)。触摸／手势相关修改先与现有贡献者协调，避免争用共享输入代码。
 - **按完整工作包推进：**[M2 内容／动画](https://github.com/cnedwin/Egret_rebuild/issues/56)、[M3 UI／文字／输入](https://github.com/cnedwin/Egret_rebuild/issues/57)和[M4 集成](https://github.com/cnedwin/Egret_rebuild/issues/58)。增量合并不会自动关闭整个工作包的验收要求。
@@ -56,6 +56,7 @@ Years later, as times change and technology advances, many developers continue t
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#132](https://github.com/cnedwin/Egret_rebuild/pull/132) | Optional native single/multiline editing, managed UI and paired fonts | 可选原生单／多行编辑、托管 UI 与配对字体 |
 | [#130](https://github.com/cnedwin/Egret_rebuild/pull/130) | Precise Android heap accounting and finite lifecycle/recovery follow-up; historical callback trigger remains unresolved | Android 精确内存口径及有限生命周期／恢复补充；历史回调触发原因仍待查 |
 | [#129](https://github.com/cnedwin/Egret_rebuild/pull/129) | Registered-font selection retained across equipment changes in the paragraph example | 段落示例换装后保持已注册字体选择 |
 | [#127](https://github.com/cnedwin/Egret_rebuild/pull/127) | Contributed movement/action state controls over existing contact routing | 社区移动／动作状态控件复用既有触点路由 |

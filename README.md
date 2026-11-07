@@ -43,7 +43,7 @@ Read the [current capability map](knowledge-base/en/docs/core-progress.md) and [
 
 The [M2–M4 roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md), [Issues](https://github.com/cnedwin/Egret_rebuild/issues), [milestones](https://github.com/cnedwin/Egret_rebuild/milestones) and [community board](https://github.com/users/cnedwin/projects/2) describe delivered work, dependencies and remaining acceptance.
 
-- **Native editing slice:** [single/multiline editing with managed UI (#89)](https://github.com/cnedwin/Egret_rebuild/issues/89) now reuses paragraph geometry, focus and resource lifetimes. See the [contract](knowledge-base/en/docs/native-text-editing.md) and [runnable form](examples/text-editing/README.md); actual IME/mobile/clipboard/accessibility and full package acceptance remain open.
+- **Native editing slice:** [single/multiline editing in managed UI (#89)](https://github.com/cnedwin/Egret_rebuild/issues/89) reuses paragraph geometry, focus and resource lifetimes. See the [contract](knowledge-base/en/docs/native-text-editing.md), [responsive form](examples/text-editing/README.md) and [Samsung Android keyboard/lifecycle observations](knowledge-base/en/docs/android-native-text-editing.md); other IMEs/devices, clipboard, accessibility and full-package acceptance remain open.
 - **Parallel integration:** [one editable mixed reference (#91)](https://github.com/cnedwin/Egret_rebuild/issues/91) can start from current assets/UI/animation; [remaining M2 work](https://github.com/cnedwin/Egret_rebuild/issues/56) keeps binary/reference/seek/preservation outcomes distinct. These are bounded contribution entries, not full acceptance.
 - **Contribute independently:** authorized content/reference fixtures, documented reproduction cases, targeted code, translation and [independent newcomer rehearsal (#52)](https://github.com/cnedwin/Egret_rebuild/issues/52). Coordinate touch/gesture work with its existing contributor before editing shared inputs.
 - **Work in complete packages:** [M2 content/animation](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 UI/text/input](https://github.com/cnedwin/Egret_rebuild/issues/57) and [M4 integration](https://github.com/cnedwin/Egret_rebuild/issues/58). A merged increment does not close all acceptance for its package.
@@ -56,6 +56,7 @@ These are merged engineering increments, not new package-version or full-support
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#132](https://github.com/cnedwin/Egret_rebuild/pull/132) | Optional native single/multiline editing, managed UI and paired fonts | 可选原生单／多行编辑、托管 UI 与配对字体 |
 | [#130](https://github.com/cnedwin/Egret_rebuild/pull/130) | Precise Android heap accounting and finite lifecycle/recovery follow-up; historical callback trigger remains unresolved | Android 精确内存口径及有限生命周期／恢复补充；历史回调触发原因仍待查 |
 | [#129](https://github.com/cnedwin/Egret_rebuild/pull/129) | Registered-font selection retained across equipment changes in the paragraph example | 段落示例换装后保持已注册字体选择 |
 | [#127](https://github.com/cnedwin/Egret_rebuild/pull/127) | Contributed movement/action state controls over existing contact routing | 社区移动／动作状态控件复用既有触点路由 |

@@ -1,0 +1,635 @@
+{
+  "schema": "egret.android-native-text-editing/1",
+  "date": "2026-11-07",
+  "baseline": "ab7d2fcd560c0cd34dd5448e986a912dc46f145e",
+  "scope": "Bounded native editing on one Android profile. Android shell software-key taps, CDP focus/control and actual OS rotation are distinct; no human-finger, iPhone, full M3/M4 or performance acceptance.",
+  "device": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "browser": "Chrome 156.0.8078.79",
+    "keyboard": "Samsung Keyboard 5.9.40.75",
+    "startupDpr": 2.625,
+    "power": "USB charging"
+  },
+  "currentFiles": [
+    {
+      "path": "packages/engine/web/BrowserTextEditor.ts",
+      "bytes": 31507,
+      "sha256": "59f538c1acfce832c3a9c7087c695dd78e36bd6347c0ea90269b884ba84daff7"
+    },
+    {
+      "path": "packages/engine/dist/web/BrowserTextEditor.js",
+      "bytes": 32262,
+      "sha256": "35b449b8f6a1c0333190a9ae8e16a98dde783dcd501e001aad7e3ca24dfe974f"
+    },
+    {
+      "path": "examples/text-editing/main.mjs",
+      "bytes": 16331,
+      "sha256": "00489259bab12b04a2633eca89df75a2cd4886652b6734dc286a706df168ac6e"
+    },
+    {
+      "path": "examples/text-editing/index.html",
+      "bytes": 4847,
+      "sha256": "bdd5222194f7b733ef924e94d7ea680ac889cbda208d47749786ed219f42a27d"
+    },
+    {
+      "path": "examples/text-editing/verify-browser.mjs",
+      "bytes": 25787,
+      "sha256": "9bf4af8272fa7ad5cf8fa60db825e432ad61fe9fdd9add9cda0cce82ddaaf8f7"
+    }
+  ],
+  "phoneCases": [
+    {
+      "id": "phone-final-webgpu-r3",
+      "backend": "webgpu",
+      "status": "OBSERVED",
+      "startedAt": "2026-11-07T04:00:50.410Z",
+      "finishedAt": "2026-11-07T04:01:57.024Z",
+      "checks": [
+        "responsive actual phone ready without unexpected error",
+        "actual portrait canvas fits visible phone width",
+        "backing pixels match capped actual DPR",
+        "actual keyboard activation keeps width view",
+        "software multiline Enter commits actual newline",
+        "real software key has provisional native composition",
+        "programmatic write refuses actual composition",
+        "font replacement refuses actual composition",
+        "native cancel discards draft and late final callbacks",
+        "cancel removed native element",
+        "failed native font candidate keeps source and old generation",
+        "real phone paired font swap keeps one active owner",
+        "actual OS rotation rebuilds view with committed source",
+        "rotation preserves selection range",
+        "portrait restoration keeps font and content",
+        "actual Home retires native ownership",
+        "actual foreground return does not replay native session",
+        "active editor close releases fonts paragraphs and native owners",
+        "new responsive example has no unexpected SDK error"
+      ],
+      "reuse": "Reused actual-keyboard evidence: same core and index bytes; main.mjs precedes only the reviewed view-Scope ownership repair. Final lifecycle cases qualify that repair.",
+      "exampleMain": {
+        "path": "examples/text-editing/main.mjs",
+        "bytes": 16107,
+        "sha256": "cb080e483de863f1917d033622e3d49cff7c6294c3b5a9750d71128fa723778b"
+      },
+      "core": {
+        "path": "packages/engine/dist/web/BrowserTextEditor.js",
+        "bytes": 32262,
+        "sha256": "35b449b8f6a1c0333190a9ae8e16a98dde783dcd501e001aad7e3ca24dfe974f"
+      },
+      "rawReceipt": {
+        "bytes": 109381,
+        "sha256": "dffe417c86a4abdf492ce46c97f772233c67031144cfd034717d773324186e8b"
+      },
+      "capture": {
+        "servedFiles": 195,
+        "stableFiles": 190,
+        "decodedResponseRows": 196,
+        "unavailableResponseRows": 10,
+        "mismatches": 0,
+        "missingDecodedSourcePaths": [],
+        "completeDecodedCoverage": true,
+        "responseObservationRows": 206
+      },
+      "generatedFontInputs": [
+        {
+          "role": "example font configuration",
+          "bytes": 364,
+          "sha256": "b3dc2ddaee84cf1469884efdb1cfa1168eb5ffaadfed1d519dec8df95c1c5049"
+        },
+        {
+          "role": "immutable font content",
+          "bytes": 16437364,
+          "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b"
+        },
+        {
+          "role": "immutable font content",
+          "bytes": 569208,
+          "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5"
+        },
+        {
+          "role": "immutable font content",
+          "bytes": 142140,
+          "sha256": "bd86ca02f087d7f3c3788ba458fb6b73744c7639ed276b8d870dba6def6c40d0"
+        },
+        {
+          "role": "immutable font manifest",
+          "bytes": 5919,
+          "sha256": "03946e97d378e3b5f2d3276dc15e4fbb968af6b520cfb353948dd57299e3ff14"
+        }
+      ],
+      "restoration": {
+        "stayOn": true,
+        "priorComponentRestored": true,
+        "priorIdsPreserved": true,
+        "ownedAbsent": true,
+        "leaseReleased": true,
+        "mappingsPreserved": true,
+        "rotationRestored": true,
+        "caseStayAwakeBefore": "2",
+        "caseStayAwakeAfter": "2"
+      },
+      "closed": {
+        "fonts": {
+          "closed": true,
+          "sets": 0,
+          "fontBytes": 0,
+          "pendingJobs": 0,
+          "editorLeases": 0
+        },
+        "paragraphs": {
+          "closed": true,
+          "generation": 1,
+          "entries": 0,
+          "imageBytes": 0,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 0
+        }
+      }
+    },
+    {
+      "id": "phone-cjk-webgl2-r2",
+      "backend": "webgl2",
+      "status": "OBSERVED",
+      "startedAt": "2026-11-07T04:03:45.905Z",
+      "finishedAt": "2026-11-07T04:07:27.630Z",
+      "checks": [
+        "current source responsive native name editing ready",
+        "actual software Pinyin candidate commits authored Chinese",
+        "Chinese candidate commits only one value change",
+        "candidate leaves same native owner usable",
+        "actual single-line software Go finishes without reentry failure",
+        "same Chinese source returned to paragraph geometry"
+      ],
+      "reuse": "Reused actual-keyboard evidence: same core and index bytes; main.mjs precedes only the reviewed view-Scope ownership repair. Final lifecycle cases qualify that repair.",
+      "exampleMain": {
+        "path": "examples/text-editing/main.mjs",
+        "bytes": 16107,
+        "sha256": "cb080e483de863f1917d033622e3d49cff7c6294c3b5a9750d71128fa723778b"
+      },
+      "core": {
+        "path": "packages/engine/dist/web/BrowserTextEditor.js",
+        "bytes": 32262,
+        "sha256": "35b449b8f6a1c0333190a9ae8e16a98dde783dcd501e001aad7e3ca24dfe974f"
+      },
+      "rawReceipt": {
+        "bytes": 117241,
+        "sha256": "a33715ecd4b58cd17fd28ed505da14b8ea01e347b6d5c137c7d5f786d7c4ae5c"
+      },
+      "capture": {
+        "servedFiles": 195,
+        "stableFiles": 190,
+        "decodedResponseRows": 195,
+        "unavailableResponseRows": 29,
+        "mismatches": 0,
+        "missingDecodedSourcePaths": [],
+        "completeDecodedCoverage": true,
+        "responseObservationRows": 224
+      },
+      "generatedFontInputs": [
+        {
+          "role": "example font configuration",
+          "bytes": 364,
+          "sha256": "b3dc2ddaee84cf1469884efdb1cfa1168eb5ffaadfed1d519dec8df95c1c5049"
+        },
+        {
+          "role": "immutable font content",
+          "bytes": 16437364,
+          "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b"
+        },
+        {
+          "role": "immutable font content",
+          "bytes": 569208,
+          "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5"
+        },
+        {
+          "role": "immutable font content",
+          "bytes": 142140,
+          "sha256": "bd86ca02f087d7f3c3788ba458fb6b73744c7639ed276b8d870dba6def6c40d0"
+        },
+        {
+          "role": "immutable font manifest",
+          "bytes": 5919,
+          "sha256": "03946e97d378e3b5f2d3276dc15e4fbb968af6b520cfb353948dd57299e3ff14"
+        }
+      ],
+      "restoration": {
+        "stayOn": true,
+        "priorComponentRestored": true,
+        "priorIdsPreserved": true,
+        "ownedAbsent": true,
+        "leaseReleased": true,
+        "mappingsPreserved": true,
+        "rotationRestored": null,
+        "caseStayAwakeBefore": "2",
+        "caseStayAwakeAfter": "2"
+      },
+      "closed": {
+        "fonts": {
+          "closed": true,
+          "sets": 0,
+          "fontBytes": 0,
+          "pendingJobs": 0,
+          "editorLeases": 0
+        },
+        "paragraphs": {
+          "closed": true,
+          "generation": 1,
+          "entries": 0,
+          "imageBytes": 0,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 0
+        }
+      }
+    },
+    {
+      "id": "phone-lifecycle-webgpu-r2",
+      "backend": "webgpu",
+      "status": "OBSERVED",
+      "startedAt": "2026-11-07T04:08:43.090Z",
+      "finishedAt": "2026-11-07T04:09:07.167Z",
+      "checks": [
+        "current source responsive fixture ready",
+        "lifecycle precondition has same source and one native font lease",
+        "actual OS landscape rebuild preserves committed source",
+        "landscape retains source selection range",
+        "actual portrait return retains content and resource generation",
+        "actual Home ends native ownership",
+        "foreground retains committed source without replaying edit",
+        "active editor close releases native fonts paragraph bytes and leases",
+        "no SDK errors in lifecycle campaign"
+      ],
+      "reuse": "Final example and unchanged core bytes",
+      "exampleMain": {
+        "path": "examples/text-editing/main.mjs",
+        "bytes": 16331,
+        "sha256": "00489259bab12b04a2633eca89df75a2cd4886652b6734dc286a706df168ac6e"
+      },
+      "core": {
+        "path": "packages/engine/dist/web/BrowserTextEditor.js",
+        "bytes": 32262,
+        "sha256": "35b449b8f6a1c0333190a9ae8e16a98dde783dcd501e001aad7e3ca24dfe974f"
+      },
+      "rawReceipt": {
+        "bytes": 104127,
+        "sha256": "99c6968812e76ec2cc59586eb6f156b0454aab1571c09cb9ab901d0a4ed169ce"
+      },
+      "capture": {
+        "servedFiles": 195,
+        "stableFiles": 190,
+        "decodedResponseRows": 196,
+        "unavailableResponseRows": 11,
+        "mismatches": 0,
+        "missingDecodedSourcePaths": [],
+        "completeDecodedCoverage": true,
+        "responseObservationRows": 207
+      },
+      "generatedFontInputs": [
+        {
+          "role": "example font configuration",
+          "bytes": 364,
+          "sha256": "b3dc2ddaee84cf1469884efdb1cfa1168eb5ffaadfed1d519dec8df95c1c5049"
+        },
+        {
+          "role": "immutable font content",
+          "bytes": 16437364,
+          "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b"
+        },
+        {
+          "role": "immutable font content",
+          "bytes": 569208,
+          "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5"
+        },
+        {
+          "role": "immutable font content",
+          "bytes": 142140,
+          "sha256": "bd86ca02f087d7f3c3788ba458fb6b73744c7639ed276b8d870dba6def6c40d0"
+        },
+        {
+          "role": "immutable font manifest",
+          "bytes": 5919,
+          "sha256": "03946e97d378e3b5f2d3276dc15e4fbb968af6b520cfb353948dd57299e3ff14"
+        }
+      ],
+      "restoration": {
+        "stayOn": true,
+        "priorComponentRestored": true,
+        "priorIdsPreserved": true,
+        "ownedAbsent": true,
+        "leaseReleased": true,
+        "mappingsPreserved": true,
+        "rotationRestored": true,
+        "caseStayAwakeBefore": "2",
+        "caseStayAwakeAfter": "2"
+      },
+      "closed": {
+        "fonts": {
+          "closed": true,
+          "sets": 0,
+          "fontBytes": 0,
+          "pendingJobs": 0,
+          "editorLeases": 0
+        },
+        "paragraphs": {
+          "closed": true,
+          "generation": 1,
+          "entries": 0,
+          "imageBytes": 0,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 0
+        }
+      }
+    },
+    {
+      "id": "phone-lifecycle-webgl2-r3",
+      "backend": "webgl2",
+      "status": "OBSERVED",
+      "startedAt": "2026-11-07T04:09:26.869Z",
+      "finishedAt": "2026-11-07T04:09:46.615Z",
+      "checks": [
+        "current source responsive fixture ready",
+        "lifecycle precondition has same source and one native font lease",
+        "actual OS landscape rebuild preserves committed source",
+        "landscape retains source selection range",
+        "actual portrait return retains content and resource generation",
+        "actual Home ends native ownership",
+        "foreground retains committed source without replaying edit",
+        "active editor close releases native fonts paragraph bytes and leases",
+        "no SDK errors in lifecycle campaign"
+      ],
+      "reuse": "Final example and unchanged core bytes",
+      "exampleMain": {
+        "path": "examples/text-editing/main.mjs",
+        "bytes": 16331,
+        "sha256": "00489259bab12b04a2633eca89df75a2cd4886652b6734dc286a706df168ac6e"
+      },
+      "core": {
+        "path": "packages/engine/dist/web/BrowserTextEditor.js",
+        "bytes": 32262,
+        "sha256": "35b449b8f6a1c0333190a9ae8e16a98dde783dcd501e001aad7e3ca24dfe974f"
+      },
+      "rawReceipt": {
+        "bytes": 103833,
+        "sha256": "4fe6bf25fb896386eef0332bebe6a786e6a7ae9f3a9c7be220fee858923872d9"
+      },
+      "capture": {
+        "servedFiles": 195,
+        "stableFiles": 190,
+        "decodedResponseRows": 195,
+        "unavailableResponseRows": 11,
+        "mismatches": 0,
+        "missingDecodedSourcePaths": [],
+        "completeDecodedCoverage": true,
+        "responseObservationRows": 206
+      },
+      "generatedFontInputs": [
+        {
+          "role": "example font configuration",
+          "bytes": 364,
+          "sha256": "b3dc2ddaee84cf1469884efdb1cfa1168eb5ffaadfed1d519dec8df95c1c5049"
+        },
+        {
+          "role": "immutable font content",
+          "bytes": 16437364,
+          "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b"
+        },
+        {
+          "role": "immutable font content",
+          "bytes": 569208,
+          "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5"
+        },
+        {
+          "role": "immutable font content",
+          "bytes": 142140,
+          "sha256": "bd86ca02f087d7f3c3788ba458fb6b73744c7639ed276b8d870dba6def6c40d0"
+        },
+        {
+          "role": "immutable font manifest",
+          "bytes": 5919,
+          "sha256": "03946e97d378e3b5f2d3276dc15e4fbb968af6b520cfb353948dd57299e3ff14"
+        }
+      ],
+      "restoration": {
+        "stayOn": true,
+        "priorComponentRestored": true,
+        "priorIdsPreserved": true,
+        "ownedAbsent": true,
+        "leaseReleased": true,
+        "mappingsPreserved": true,
+        "rotationRestored": true,
+        "caseStayAwakeBefore": "2",
+        "caseStayAwakeAfter": "2"
+      },
+      "closed": {
+        "fonts": {
+          "closed": true,
+          "sets": 0,
+          "fontBytes": 0,
+          "pendingJobs": 0,
+          "editorLeases": 0
+        },
+        "paragraphs": {
+          "closed": true,
+          "generation": 1,
+          "entries": 0,
+          "imageBytes": 0,
+          "geometryBytes": 0,
+          "pendingJobs": 0,
+          "callerLeases": 0
+        }
+      }
+    }
+  ],
+  "desktop": {
+    "rawReceipt": {
+      "bytes": 43041,
+      "sha256": "4aa08a103c64aa8d75d6dcaee94c6bf06e8fb242e7aeb7df84af5f1f1da71fcc"
+    },
+    "environment": {
+      "node": "v26.7.0",
+      "playwright": "1.62.1",
+      "channel": "msedge",
+      "headless": true,
+      "extraFlags": [],
+      "browser": "156.0.4314.58"
+    },
+    "fixed": [
+      {
+        "backend": "webgl2",
+        "status": "PASS",
+        "checks": [
+          "actual-fonts-and-ui-bindings-ready",
+          "native-typing-undo-redo-keeps-one-retained-field",
+          "single-line-enter-matching-readonly-handoff",
+          "native-tab-and-shift-tab-use-existing-stable-ui-focus",
+          "native-multiline-enter-bidi-selection-and-paragraph-height",
+          "controlled-composition-provisional-once-and-duplicate-input",
+          "controlled-composition-cancel-keeps-ordinary-edits",
+          "controlled-terminal-ime-callbacks-during-blur-cannot-reenter-ended-session",
+          "programmatic-cancel-invalidates-detached-native-session",
+          "synchronous-onchange-finish-cancel-native-blur-settle-after-observation",
+          "controlled-paste-value-selection-protocol",
+          "active-width-density-reflow-keeps-source-selection",
+          "failed-font-candidate-keeps-active-paired-fonts",
+          "cancelled-font-candidate-keeps-active-generation",
+          "active-paired-font-swap-retires-old-css-and-source-leases",
+          "fully-clipped-row-ends-native-edit-and-releases-retention",
+          "axis-aligned-css-scale-is-independent-from-dpr",
+          "transformed-contained-rounded-and-shadow-css-profiles-refuse",
+          "controlled-window-blur-preserves-unmatched-readonly-handoff",
+          "unavailable-emoji-keeps-native-value-until-valid-readonly-recovery",
+          "root-scope-engine-close-removes-native-fonts-images-and-leases"
+        ]
+      },
+      {
+        "backend": "webgpu",
+        "status": "PASS",
+        "checks": [
+          "actual-fonts-and-ui-bindings-ready",
+          "native-typing-undo-redo-keeps-one-retained-field",
+          "single-line-enter-matching-readonly-handoff",
+          "native-tab-and-shift-tab-use-existing-stable-ui-focus",
+          "native-multiline-enter-bidi-selection-and-paragraph-height",
+          "controlled-composition-provisional-once-and-duplicate-input",
+          "controlled-composition-cancel-keeps-ordinary-edits",
+          "controlled-terminal-ime-callbacks-during-blur-cannot-reenter-ended-session",
+          "programmatic-cancel-invalidates-detached-native-session",
+          "synchronous-onchange-finish-cancel-native-blur-settle-after-observation",
+          "controlled-paste-value-selection-protocol",
+          "active-width-density-reflow-keeps-source-selection",
+          "failed-font-candidate-keeps-active-paired-fonts",
+          "cancelled-font-candidate-keeps-active-generation",
+          "active-paired-font-swap-retires-old-css-and-source-leases",
+          "fully-clipped-row-ends-native-edit-and-releases-retention",
+          "axis-aligned-css-scale-is-independent-from-dpr",
+          "transformed-contained-rounded-and-shadow-css-profiles-refuse",
+          "controlled-window-blur-preserves-unmatched-readonly-handoff",
+          "unavailable-emoji-keeps-native-value-until-valid-readonly-recovery",
+          "root-scope-engine-close-removes-native-fonts-images-and-leases"
+        ]
+      }
+    ],
+    "responsive": [
+      {
+        "backend": "webgl2",
+        "status": "PASS",
+        "profile": "desktop browser with emulated412px viewport/DPR3",
+        "checks": [
+          "responsive-scene-fits412px-and-native-DPR3-backing",
+          "true-width-change-rebuilds-existing-view-with-source-selection",
+          "view-rebuild-reuses-model-fonts-and-one-live-presentation",
+          "height-only-resize-preserves-native-edit-session",
+          "responsive-manual-width-change-retains-active-editor",
+          "second-width-change-preserves-narrow-mode-and-DPR",
+          "stable-visible-row-anchor-survives-width-change-with-logical-focus",
+          "responsive-view-observer-root-fonts-and-native-owners-close"
+        ]
+      },
+      {
+        "backend": "webgpu",
+        "status": "PASS",
+        "profile": "desktop browser with emulated412px viewport/DPR3",
+        "checks": [
+          "responsive-scene-fits412px-and-native-DPR3-backing",
+          "true-width-change-rebuilds-existing-view-with-source-selection",
+          "view-rebuild-reuses-model-fonts-and-one-live-presentation",
+          "height-only-resize-preserves-native-edit-session",
+          "responsive-manual-width-change-retains-active-editor",
+          "second-width-change-preserves-narrow-mode-and-DPR",
+          "stable-visible-row-anchor-survives-width-change-with-logical-focus",
+          "responsive-view-observer-root-fonts-and-native-owners-close"
+        ]
+      }
+    ]
+  },
+  "failureAndRepair": {
+    "rawReceipt": {
+      "bytes": 15394,
+      "sha256": "2461027e8d719093eb99c3d12a226642b2f5b3fe51e60af42ac76aa56339af2b"
+    },
+    "events": [
+      {
+        "type": "beforeinput",
+        "trusted": true
+      },
+      {
+        "type": "input",
+        "trusted": true
+      },
+      {
+        "type": "compositionstart",
+        "trusted": true
+      },
+      {
+        "type": "compositionupdate",
+        "trusted": true
+      },
+      {
+        "type": "beforeinput",
+        "trusted": true
+      },
+      {
+        "type": "input",
+        "trusted": true
+      },
+      {
+        "type": "compositionend",
+        "trusted": false
+      },
+      {
+        "type": "blur",
+        "trusted": true
+      }
+    ],
+    "cause": "Cancel retires the native session token; readonly/blur can synchronously flush a terminal composition event while the bridge is settling. The old busy guard disposed the bridge as reentrant.",
+    "repair": "Ignore input/composition events only after token retirement. Active-session reentry still refuses; public API and declarations remain unchanged.",
+    "exampleOwnership": "A fresh view Scope owns each recreated pointer/root. Dispose it on true-width rebuild and final close; retain field models, keyboard, fonts and Engine."
+  },
+  "preservedFailures": [
+    {
+      "id": "phone-final-webgpu-r1",
+      "kind": "Actual cancel/terminal-event product failure",
+      "receipt": {
+        "bytes": 96644,
+        "sha256": "bce072bdc16a95b7661c32886f9d55a2784e8dd2f89960d9f10615ce1d4181b5"
+      }
+    },
+    {
+      "id": "phone-final-webgpu-r2",
+      "kind": "Collector Promise expression failure after twelve checks; whole run remains FAIL, not a product acceptance",
+      "receipt": {
+        "bytes": 106719,
+        "sha256": "26f304c825d7e2d83c5cb3b283792dafac4df18dc1cde77a1c746aa4a58e94b3"
+      }
+    }
+  ],
+  "legacySupplement": {
+    "id": "native-session-r1",
+    "status": "OBSERVED",
+    "checks": 24,
+    "receipt": {
+      "bytes": 121920,
+      "sha256": "63140290d1d6e68c30696007fcf77197d27e5e82f212ccea712a55c2f475bbd6"
+    },
+    "scope": "Original pre-repair WebGL2 schedule includes real keyboard newline/backspace and surrogate-pair deletion from a CDP-provisioned emoji source. It is retained predecessor evidence, not final-source whole-run qualification or emoji font support."
+  },
+  "capturePolicy": "Owned server snapshots preserve every served raw file. responseObservationRows counts all observations; decodedResponseRows counts only available decoded bodies. Unavailable observations are retained alongside successful decoded responses, with explicit unique-path coverage and no recorded available-response hash mismatch. Raw serial, target IDs, screenshots, keyboard account context, unrelated URLs and local paths remain private.",
+  "wakePolicy": {
+    "scope": "One bounded task lease across development and test gaps; USB-only stay-awake value 2, observed awake/unlocked and checked again before input.",
+    "originalStayAwake": "0",
+    "restoration": "Each case restores inherited value 2. The outer task guard restores original value 0 at task exit; case cleanup is not evidence that the outer guard has ended.",
+    "security": "No credential/security-lock changes or bypass. Credential lock, disconnected power or unknown security state stops automated input."
+  },
+  "limits": [
+    "Only the stated Samsung/Android/Chrome/keyboard profile",
+    "Pinyin preedit was keyboard-internal; candidate selection emitted one native insertText. English software input exercised actual DOM composition. The cancel reproduction terminal compositionend was trusted=false.",
+    "Final view-Scope repair has exact-source lifecycle evidence; actual-keyboard cases explicitly reuse its predecessor main.mjs.",
+    "No native/CanvasKit pixel or wrap equivalence; bundled emoji fallback remains unqualified.",
+    "Other CJK/dead-key IMEs, iPhone, human fingers, clipboard, assistive technology, native/mini-game hosts and complete M4 remain open.",
+    "Logical ownership counters do not establish physical memory/GC, energy or GPU duration.",
+    "M1.2 full-dirty 10.3ms versus 8ms remains OPEN."
+  ]
+}

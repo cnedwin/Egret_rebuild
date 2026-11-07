@@ -6,6 +6,8 @@ English | [简体中文](../../Cns/docs/android-device-validation.md)
 
 The current rendering, UI, paragraph and animation examples were exercised on one USB-connected Android phone. The run retained 21 existing browser targets and used separately owned targets with exact URL/backend binding. Compiled SDK inputs matched main `081b98ef81154730a87bdf38decddc153ced786b`; the equipment-font correction is identified separately below. Hardware DPR was 2.625. Authored Host ratios and paragraph density are separate controls.
 
+Follow-up native single/multiline keyboard observations, cancellation repair and the responsive form are recorded in [Android native editing](android-native-text-editing.md); they do not rewrite the component results on this page.
+
 ## Results and comparison domains
 
 | Scenario | Observed scope | Result |

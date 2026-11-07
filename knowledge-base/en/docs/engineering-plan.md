@@ -8,7 +8,7 @@ The next phase turns existing components into a usable core workflow. Preserve t
 
 ## M3.3 implementation checkpoint
 
-The first editing increment is implemented through optional runtime/UI/browser editing entries and one [editable form](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.md). [Native editing](native-text-editing.md) defines the delivered source/session, row retention, paired-font and publication contracts. Its controlled cases and 20 checks on each desktop shared backend are recorded separately from real IME/device/accessibility qualification. Those rows remain open within #89; no new work package or touch assignment is introduced. The later batches below retain their original dependencies and are not started by this increment.
+The native single/multiline increment uses the existing optional editing entries and [form](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.md). The [contract](native-text-editing.md) retains source/session, row-retention, paired-font and publication authority. Final desktop checks cover 21 fixed plus eight responsive cases per shared backend; the [Android report](android-native-text-editing.md) separates actual keyboard observations, predecessor reuse and final-source lifecycle. Terminal composition teardown and responsive view-Scope retirement are corrected. Other IMEs/devices, clipboard, accessibility and full #89 acceptance remain OPEN; no new work package or touch assignment. Later batches retain their dependencies and are not started by this increment.
 
 ## Current position
 

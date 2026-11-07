@@ -227,3 +227,7 @@ For each distinct Windows CI failure, apply the repository [Egret Windows CI ski
 ## Native text editing units
 
 Only tests/ui-text-edit-state-unit.test.mjs consumes the built @egret/runtime/ui/editing entry as a labelled pure UNIT; ordinary UI behavior uses the built @egret/engine/ui/editing facade and genuine Engine/Scope/root values. Native browser cases use real input/textarea and admitted fonts. Controlled composition/paste events do not qualify physical IME or clipboard. No new private test import, native-prototype interception, touch implementation or default-entry expansion is permitted. See the paired native-text-editing contract.
+
+## Authorized Android development sessions
+
+When keeping an authorized phone awake is part of the task, hold one bounded USB-only wake lease across the entire development/test session, including coding gaps. Observe actual awake/unlocked state and recheck before every device input; page visibility is insufficient. Capture the exact original setting or absence, close owned phone cases before ending the outer lease, and restore the original setting at completion, cancellation or error while preserving unrelated external changes. Keep the existing shared phone lease and exact-target rules. Do not change security lock or bypass credentials; locked, disconnected or unknown state stops automated input. See the [device-session policy](knowledge-base/en/docs/android-native-text-editing.md#device-ownership-and-wake-policy).
