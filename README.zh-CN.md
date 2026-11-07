@@ -22,7 +22,7 @@ Years later, as times change and technology advances, many developers continue t
 | --- | --- | --- |
 | 渲染与资源 | WebGPU／WebGL2 共享渲染、有序准备、资源组及选定设备恢复路径 | 更广泛的宿主／设备验收；固定 M1.2 全脏 Engine p95 中位数仍为 [10.3 ms，目标 8 ms](https://github.com/cnedwin/Egret_rebuild/issues/55) |
 | 内容与动画 | PNG／图集／序列构建、多页图集、字体产物；可选 Spine 播放／显示和选定替换路径 | 选定版本完整 Spine 参考、纹理变体、保留状态替换及最终生命周期／性能验收 |
-| UI 与文字 | 变高列表、焦点／导航、多语言多样式段落、已提交文字几何、字体／主题切换、遮罩及模糊 | 原生编辑／IME、完整控件／模态／语义整合，以及更多文字／设备验收 |
+| UI 与文字 | 变高列表、焦点／导航、多语言多样式段落、已提交文字几何、字体／主题切换、遮罩／模糊及可选原生单／多行编辑 | 真实 IME 资格、完整控件／模态／语义整合，以及更多文字／设备验收 |
 | 集成 | 可编辑资源、UI 与动画示例，响应式预览 | 完整混合参考游戏与经资格验证的核心交付 |
 
 [Android 观察与剩余设备限制](knowledge-base/Cns/docs/android-device-validation.md)只覆盖准确组件档位，不代表通用手机支持或关闭 M1.2 性能目标。
@@ -43,7 +43,7 @@ Years later, as times change and technology advances, many developers continue t
 
 [M2–M4 路线图](knowledge-base/Cns/docs/m2-m4-delivery-plan.md)、[Issues](https://github.com/cnedwin/Egret_rebuild/issues)、[里程碑](https://github.com/cnedwin/Egret_rebuild/milestones)和[社区看板](https://github.com/users/cnedwin/projects/2)统一记录交付、依赖与验收缺口。
 
-- **下一项核心工作建议：**[原生纯文本编辑与托管 UI 整合（#89）](https://github.com/cnedwin/Egret_rebuild/issues/89)，复用段落几何、焦点与资源生命周期。这是范围明确的下一步，不代表已经实现或自动向他人分派任务。
+- **原生编辑切片：**[单／多行编辑与托管 UI 整合（#89）](https://github.com/cnedwin/Egret_rebuild/issues/89)现已复用段落几何、焦点和资源生命周期。见[契约](knowledge-base/Cns/docs/native-text-editing.md)与[可运行表单](examples/text-editing/README.zh-CN.md)；真实 IME／移动键盘／剪贴板／无障碍及完整工作包验收保持未完成。
 - **并行整合入口：**[同一可编辑混合参考（#91）](https://github.com/cnedwin/Egret_rebuild/issues/91)可使用已有资产／UI／动画开始；[剩余 M2 工作](https://github.com/cnedwin/Egret_rebuild/issues/56)分别补齐二进制／参考／跳转／保留状态。这些是有界贡献入口，不代表完整验收。
 - **可独立参与：**授权素材／参考夹具、可复现问题、聚焦代码、翻译和[独立新贡献者演练（#52）](https://github.com/cnedwin/Egret_rebuild/issues/52)。触摸／手势相关修改先与现有贡献者协调，避免争用共享输入代码。
 - **按完整工作包推进：**[M2 内容／动画](https://github.com/cnedwin/Egret_rebuild/issues/56)、[M3 UI／文字／输入](https://github.com/cnedwin/Egret_rebuild/issues/57)和[M4 集成](https://github.com/cnedwin/Egret_rebuild/issues/58)。增量合并不会自动关闭整个工作包的验收要求。

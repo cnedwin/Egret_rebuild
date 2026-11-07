@@ -223,3 +223,7 @@ For shared source/API/tool changes, the normal push entry builds and executes th
 ## Windows CI failure learning
 
 For each distinct Windows CI failure, apply the repository [Egret Windows CI skill](skills/egret-windows-ci/SKILL.md) and [governance protocol](knowledge-base/en/docs/windows-ci-governance.md) before retry or acceptance. Retain exact candidate/job/raw evidence, verify the cause and owner, choose the smallest durable repair, record reused and required checks, and update the existing cause family or Skill when the lesson changes future decisions. Diagnostic signatures are not verified causes. Preserve source history, normal hooks, independent review and protected merge checks; incomplete external observations remain explicit.
+
+## Native text editing units
+
+Only tests/ui-text-edit-state-unit.test.mjs consumes the built @egret/runtime/ui/editing entry as a labelled pure UNIT; ordinary UI behavior uses the built @egret/engine/ui/editing facade and genuine Engine/Scope/root values. Native browser cases use real input/textarea and admitted fonts. Controlled composition/paste events do not qualify physical IME or clipboard. No new private test import, native-prototype interception, touch implementation or default-entry expansion is permitted. See the paired native-text-editing contract.

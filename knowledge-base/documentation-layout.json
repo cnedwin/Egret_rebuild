@@ -24,8 +24,8 @@
       "action": "move-pair",
       "previousZhSha256": "ca2be6243c614a900ed12f1b46649155f215a4827e04818e025bad8d03f8af9e",
       "previousEnSha256": "7e72f6245d7c86551dc2640356416b8b06a2d80872f262daf227f98142eac7ae",
-      "currentZhSha256": "7899258c3a6555d9151f9ad5567922a2a48190998b508e30a256ed67cc673ad9",
-      "currentEnSha256": "472698a712c1fefb95053e5e32209062695c5597a8ba8127acea67f4a50c6a58"
+      "currentZhSha256": "07a3e3d94324ecb66af25551f2db27b1bec8a27518649b397c1b7f2b9c697752",
+      "currentEnSha256": "1a102b54ffe0bd04b2879790307749640009d6d22640e87d90121385ebe0a93d"
     },
     {
       "oldZh": "CONTRIBUTING.md",
@@ -159,8 +159,8 @@
       "action": "move-pair",
       "previousZhSha256": "96722b4dfc8e1ae6989c6b8956ffbbcdb8d6703400b4b1b8ba1ca443c9aed17e",
       "previousEnSha256": "b6fa739d6b9f1ba36e1cb329876be61487cccc38a4362bd08867d134934453b2",
-      "currentZhSha256": "23e53ef0a207ce891c29b1947c7eee84b41fde82f29365af519cefac5f45caf2",
-      "currentEnSha256": "c69256791b78f487ca4d9a731c3e10b88928bf0608d4740265430c3e1341d79a"
+      "currentZhSha256": "139a1c143062760ece4e9de6a193d8be16498a9952ba37e7d574dcb518d45cb0",
+      "currentEnSha256": "07f90705217355ea261d255f31b42a97fb5c4ce94dd12eed38c3b43ec5c7989d"
     },
     {
       "oldZh": "knowledge-base/docs/工程技术架构与项目结构.md",
@@ -964,8 +964,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "32b63ecebb60d68f98fa758489bdb957339f2788b0b1f0875bb64a384f862365",
-      "currentEnSha256": "6983e27e019780bee0d6600d438e0cad42d84890f95c0248e02cda5f08669dd1",
+      "currentZhSha256": "0def02d54085a8462e8e18f367a5f29d7f39d36b67378ebfe28f7c2bbf848d9b",
+      "currentEnSha256": "90e96084d77ec502195c7865bfb28138ce0bfa65d74b5d5636fd1e10c9d3e0ce",
       "currentEngineeringPreview": "0.61.0"
     },
     {
@@ -1086,8 +1086,8 @@
       "action": "move-pair",
       "previousZhSha256": "61639f120f4ed3aa77c4ffd41cf377e447dcac20e9562322c103e2e6b44c3990",
       "previousEnSha256": "60c77a11dc614191ba1d98fa488301a344839cc672df01e2c632048d85e8d376",
-      "currentZhSha256": "02b5ec531ed43b440808ca72d9ecae3e6657d097aec4d36d741307f89f08d8ad",
-      "currentEnSha256": "dce2b03325806103ce0b330717c9965440219219fda207828c1ee86690785169",
+      "currentZhSha256": "0caf4d6a6d42f50b566dbbe898fcf2d9a7cc18fb8814959786c8749147d6dc87",
+      "currentEnSha256": "74aad2d40bff849c75969c3a74463f5e0c650703954ae262e41bcf6ac87fae02",
       "currentEngineeringPreview": "0.61.0"
     },
     {

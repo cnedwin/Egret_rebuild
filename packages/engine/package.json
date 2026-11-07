@@ -87,6 +87,14 @@
     "./web/keyboard": {
       "types": "./dist/web/keyboard.d.ts",
       "import": "./dist/web/keyboard.js"
+    },
+    "./ui/editing": {
+      "types": "./dist/ui/editing.d.ts",
+      "import": "./dist/ui/editing.js"
+    },
+    "./web/editing": {
+      "types": "./dist/web/editing.d.ts",
+      "import": "./dist/web/editing.js"
     }
   },
   "dependencies": {
@@ -114,6 +122,10 @@
     "#egret-keyboard-input": {
       "types": "./dist/keyboardInput.d.ts",
       "import": "./dist/keyboardInput.js"
+    },
+    "#egret-text-editor": {
+      "types": "./dist/ui/textEditor.d.ts",
+      "import": "./dist/ui/textEditor.js"
     }
   }
 }

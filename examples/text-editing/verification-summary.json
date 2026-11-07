@@ -1,0 +1,1237 @@
+{
+  "schema": "egret.native-text-editing-verification/1",
+  "date": "2026-11-07",
+  "baseline": "255802ec20b29d05a48b3480dd98a2a56122c903",
+  "implementation": "Independent first-party native plain-text editing integrated with existing paragraph/UI/font/resource owners.",
+  "browser": {
+    "receiptSha256": "af59f7a75db7ebac6f61047493e21a2c907f59e4076c13a95809ffa590561cbc",
+    "status": "PASS",
+    "startedUtc": "2026-11-07T01:24:30.972Z",
+    "endedUtc": "2026-11-07T01:24:36.024Z",
+    "environment": {
+      "node": "v26.7.0",
+      "playwright": "1.62.1",
+      "channel": "msedge",
+      "headless": true,
+      "extraFlags": [],
+      "browser": "156.0.4314.58"
+    },
+    "reports": [
+      {
+        "backend": "webgl2",
+        "status": "PASS",
+        "checks": [
+          "actual-fonts-and-ui-bindings-ready",
+          "native-typing-undo-redo-keeps-one-retained-field",
+          "single-line-enter-matching-readonly-handoff",
+          "native-tab-and-shift-tab-use-existing-stable-ui-focus",
+          "native-multiline-enter-bidi-selection-and-paragraph-height",
+          "controlled-composition-provisional-once-and-duplicate-input",
+          "controlled-composition-cancel-keeps-ordinary-edits",
+          "programmatic-cancel-invalidates-detached-native-session",
+          "synchronous-onchange-finish-cancel-native-blur-settle-after-observation",
+          "controlled-paste-value-selection-protocol",
+          "active-width-density-reflow-keeps-source-selection",
+          "failed-font-candidate-keeps-active-paired-fonts",
+          "cancelled-font-candidate-keeps-active-generation",
+          "active-paired-font-swap-retires-old-css-and-source-leases",
+          "fully-clipped-row-ends-native-edit-and-releases-retention",
+          "axis-aligned-css-scale-is-independent-from-dpr",
+          "transformed-contained-rounded-and-shadow-css-profiles-refuse",
+          "controlled-window-blur-preserves-unmatched-readonly-handoff",
+          "unavailable-emoji-keeps-native-value-until-valid-readonly-recovery",
+          "root-scope-engine-close-removes-native-fonts-images-and-leases"
+        ],
+        "observations": [
+          {
+            "name": "trusted-input-history",
+            "events": [
+              {
+                "trusted": true,
+                "inputType": "insertText"
+              },
+              {
+                "trusted": true,
+                "inputType": "historyUndo"
+              },
+              {
+                "trusted": true,
+                "inputType": "historyRedo"
+              }
+            ]
+          },
+          {
+            "name": "controlled-paste",
+            "trusted": false,
+            "inputType": "insertFromPaste"
+          },
+          {
+            "name": "logical-css-placement",
+            "left": 168,
+            "top": 269.5,
+            "width": 374,
+            "height": 96,
+            "canvasLeft": 124,
+            "canvasTop": 177.5
+          },
+          {
+            "name": "canvas-screenshot",
+            "sha256": "0749e32da907c16ecc613df59fade9b11aa1c9cd7540c0cf35fe9c7c721a84e7"
+          }
+        ],
+        "expectedRefusals": [
+          {
+            "name": "EgretError",
+            "code": "ASSET_LOAD_FAILED"
+          }
+        ],
+        "closed": {
+          "fonts": {
+            "closed": true,
+            "sets": 0,
+            "fontBytes": 0,
+            "pendingJobs": 0,
+            "editorLeases": 0
+          },
+          "paragraph": {
+            "closed": true,
+            "generation": 1,
+            "entries": 0,
+            "imageBytes": 0,
+            "geometryBytes": 0,
+            "pendingJobs": 0,
+            "callerLeases": 0
+          }
+        }
+      },
+      {
+        "backend": "webgpu",
+        "status": "PASS",
+        "checks": [
+          "actual-fonts-and-ui-bindings-ready",
+          "native-typing-undo-redo-keeps-one-retained-field",
+          "single-line-enter-matching-readonly-handoff",
+          "native-tab-and-shift-tab-use-existing-stable-ui-focus",
+          "native-multiline-enter-bidi-selection-and-paragraph-height",
+          "controlled-composition-provisional-once-and-duplicate-input",
+          "controlled-composition-cancel-keeps-ordinary-edits",
+          "programmatic-cancel-invalidates-detached-native-session",
+          "synchronous-onchange-finish-cancel-native-blur-settle-after-observation",
+          "controlled-paste-value-selection-protocol",
+          "active-width-density-reflow-keeps-source-selection",
+          "failed-font-candidate-keeps-active-paired-fonts",
+          "cancelled-font-candidate-keeps-active-generation",
+          "active-paired-font-swap-retires-old-css-and-source-leases",
+          "fully-clipped-row-ends-native-edit-and-releases-retention",
+          "axis-aligned-css-scale-is-independent-from-dpr",
+          "transformed-contained-rounded-and-shadow-css-profiles-refuse",
+          "controlled-window-blur-preserves-unmatched-readonly-handoff",
+          "unavailable-emoji-keeps-native-value-until-valid-readonly-recovery",
+          "root-scope-engine-close-removes-native-fonts-images-and-leases"
+        ],
+        "observations": [
+          {
+            "name": "trusted-input-history",
+            "events": [
+              {
+                "trusted": true,
+                "inputType": "insertText"
+              },
+              {
+                "trusted": true,
+                "inputType": "historyUndo"
+              },
+              {
+                "trusted": true,
+                "inputType": "historyRedo"
+              }
+            ]
+          },
+          {
+            "name": "controlled-paste",
+            "trusted": false,
+            "inputType": "insertFromPaste"
+          },
+          {
+            "name": "logical-css-placement",
+            "left": 168,
+            "top": 269.5,
+            "width": 374,
+            "height": 96,
+            "canvasLeft": 124,
+            "canvasTop": 177.5
+          },
+          {
+            "name": "canvas-screenshot",
+            "sha256": "b31f4004ecbeb4b97aad3d36bc3ed6a043f24ad2ec8110031da8db1eb181b42e"
+          }
+        ],
+        "expectedRefusals": [
+          {
+            "name": "EgretError",
+            "code": "ASSET_LOAD_FAILED"
+          }
+        ],
+        "closed": {
+          "fonts": {
+            "closed": true,
+            "sets": 0,
+            "fontBytes": 0,
+            "pendingJobs": 0,
+            "editorLeases": 0
+          },
+          "paragraph": {
+            "closed": true,
+            "generation": 1,
+            "entries": 0,
+            "imageBytes": 0,
+            "geometryBytes": 0,
+            "pendingJobs": 0,
+            "callerLeases": 0
+          }
+        }
+      }
+    ],
+    "servedInputs": [
+      {
+        "path": "examples/paragraph-panel/vendor/manifest.json",
+        "bytes": 21471,
+        "sha256": "6416b157c9866ec84444cdae8efe9aab3e96163a4e7773b2a6626957c763836a"
+      },
+      {
+        "path": "examples/paragraph-panel/vendor/runtime/layout-r1/canvaskit.js",
+        "bytes": 96090,
+        "sha256": "bad20cb1b1eb5c8ffc3d744f3aebdfa68af4ee756d68853459f6155594b66ea9"
+      },
+      {
+        "path": "examples/paragraph-panel/vendor/runtime/layout-r1/canvaskit.wasm",
+        "bytes": 8600298,
+        "sha256": "156593fd1411ffc41a3707ac74cbea72b76b4d04dd1eff9be4fab98c26530329"
+      },
+      {
+        "path": "examples/text-editing/index.html",
+        "bytes": 4702,
+        "sha256": "2b38f57de6b07d7f1052947805d0df1b2d67a7e0ac404ffa3bc991145461e653"
+      },
+      {
+        "path": "examples/text-editing/main.mjs",
+        "bytes": 12762,
+        "sha256": "592adcf510559d8fbaf888d8c0561c254d58cd817aea1fdfa622d416c047054c"
+      },
+      {
+        "path": "node_modules/robust-predicates/esm/incircle.js",
+        "bytes": 26758,
+        "sha256": "784e4c897b00289869c9a9e51e0281ac550853e399a8df664afaf29494fe85b5"
+      },
+      {
+        "path": "node_modules/robust-predicates/esm/insphere.js",
+        "bytes": 23925,
+        "sha256": "6782ad663d713b0da8d0710d88123a89ad388a6359c4bc81ed89ac5f682a12ea"
+      },
+      {
+        "path": "node_modules/robust-predicates/esm/orient2d.js",
+        "bytes": 5281,
+        "sha256": "ba1af2b1ea71924fa2e0a3e50b8972d3a83ab9a9f406dd73e851c9763a8eb741"
+      },
+      {
+        "path": "node_modules/robust-predicates/esm/orient3d.js",
+        "bytes": 13368,
+        "sha256": "6e122bc0c0b461d0cdf37e2caa458a823556630a20b044069e57391641acd97a"
+      },
+      {
+        "path": "node_modules/robust-predicates/esm/util.js",
+        "bytes": 3606,
+        "sha256": "7b6ed8737cbee96fb413a312e6aaadd84ce9e9594847949f7b4bc8b3dac2cd14"
+      },
+      {
+        "path": "node_modules/robust-predicates/index.js",
+        "bytes": 233,
+        "sha256": "1e26fb2e616a0fa84dadb3a15633d9743671884d82f1abb124e20292fd0ab86d"
+      },
+      {
+        "path": "packages/contracts/dist/ImageData2D.js",
+        "bytes": 5361,
+        "sha256": "08bd03f81a5b789a37d4ac84c647b59945273dd22a70305b9440ae66321fdfcd"
+      },
+      {
+        "path": "packages/contracts/dist/index.js",
+        "bytes": 540,
+        "sha256": "f90933caf2643c0d4aa688eff5264160a7e931ee54b94c80163e1535e398ebce"
+      },
+      {
+        "path": "packages/contracts/dist/resources/fontArtifact.js",
+        "bytes": 2491,
+        "sha256": "b590b2d7dec7a167709205187dea34b0358f2d39186884f924f2ccbfa4eea306"
+      },
+      {
+        "path": "packages/contracts/dist/resources/index.js",
+        "bytes": 405,
+        "sha256": "8e59e4f9bd0e2e6cb2acb6b10cfb075191eb646a1187a313ebc793f18a0690e5"
+      },
+      {
+        "path": "packages/contracts/dist/resources/manifestAdmission.js",
+        "bytes": 18139,
+        "sha256": "552bdb9c52612564614943667322b73892e7dbcb1b506a2f102d758da335e0f5"
+      },
+      {
+        "path": "packages/contracts/dist/resources/sha256.js",
+        "bytes": 5264,
+        "sha256": "076bd16070e02ce539aacb2e420c665eb62655431fa208e1293d09e6a86a939f"
+      },
+      {
+        "path": "packages/contracts/dist/SharedGeometry2D.js",
+        "bytes": 8593,
+        "sha256": "0b5ba021999903be40c9ba97206e07cb9f633ea3248efc33f7f0e9dbc3e74302"
+      },
+      {
+        "path": "packages/contracts/dist/SharedMaterial2D.js",
+        "bytes": 7517,
+        "sha256": "5eed01974eb0856bec1628f542c5fa759c123f0b25446504b16bb57856dcc5f6"
+      },
+      {
+        "path": "packages/contracts/dist/SharedRenderFrame2D.js",
+        "bytes": 263,
+        "sha256": "73eb564457e0e23af0dbe6b0170c1707d52d4320706eb9e3b4dfee48c38aacf7"
+      },
+      {
+        "path": "packages/contracts/dist/TexturedGeometry2D.js",
+        "bytes": 7696,
+        "sha256": "b3cdb387cb84078bf67769b8f6861cec4c904d256e79f0be151fdc8d38cc98aa"
+      },
+      {
+        "path": "packages/contracts/dist/TexturedRenderFrame2D.js",
+        "bytes": 200,
+        "sha256": "735bcac8275f424e48829e167f0cebd21ab30817755650c24f4ffd88fa9620a8"
+      },
+      {
+        "path": "packages/engine/dist/assetGroup.js",
+        "bytes": 11120,
+        "sha256": "86627b3431b17f52b70877ef6d8e8e32713e61dfac9a930825e5b640c1a08a3c"
+      },
+      {
+        "path": "packages/engine/dist/bitmapBindingTicket.js",
+        "bytes": 7431,
+        "sha256": "3024b2d5e809b4e304796fd22ccc1bdaecad3a87080701d757bb64b822f81e42"
+      },
+      {
+        "path": "packages/engine/dist/bitmapButton.js",
+        "bytes": 13700,
+        "sha256": "1e6540a6ad9c25749dda3d404df2571fd16a053be13849b89b1dda4d44237b77"
+      },
+      {
+        "path": "packages/engine/dist/bitmapResourceSlot.js",
+        "bytes": 10956,
+        "sha256": "27a628aa27688f37f789455d4be4e802a7d7e46bd88bd6279304a2f9cfd2b73e"
+      },
+      {
+        "path": "packages/engine/dist/closeHost.js",
+        "bytes": 2440,
+        "sha256": "4a486e51396da8014487febfa29b465e8351023dd2169bd568f66f22383b83a7"
+      },
+      {
+        "path": "packages/engine/dist/contentArtifacts.js",
+        "bytes": 5798,
+        "sha256": "2b9b6f842dc35f9db725e2f3360eeeb5139bf9e95eccdbbc6051935876572b21"
+      },
+      {
+        "path": "packages/engine/dist/contentAtlasPages.js",
+        "bytes": 4684,
+        "sha256": "2feeb88702ef50c814c539097cbc149de968da49cf6b0773125bd2e609a91933"
+      },
+      {
+        "path": "packages/engine/dist/contentLoader.js",
+        "bytes": 14835,
+        "sha256": "86e04ef4e3188ca5b49b1e86c1fa222ebc5491c95051f275434142e34b58fff9"
+      },
+      {
+        "path": "packages/engine/dist/createEngine.js",
+        "bytes": 1347,
+        "sha256": "dcb5a5185202248ebd401799bfe5e1fec9e5d4e9f6ad6c9d836145db2ebd243c"
+      },
+      {
+        "path": "packages/engine/dist/createEngineForProfile.js",
+        "bytes": 3663,
+        "sha256": "f8ef8b3e4f154fa3da1ecab1d8253e83fe06f164f79709d6349d2c4821bcc4e7"
+      },
+      {
+        "path": "packages/engine/dist/displaySubtreeTicket.js",
+        "bytes": 2305,
+        "sha256": "2733d2cf3593befe511cbbbc5b7784ba595e55a53246c8ea12b917174e82836a"
+      },
+      {
+        "path": "packages/engine/dist/Engine.js",
+        "bytes": 25052,
+        "sha256": "5a9ab652df0cd369f062468174133f00c31dda7d135dd2dee8c02ea87509f46e"
+      },
+      {
+        "path": "packages/engine/dist/fontContentLoader.js",
+        "bytes": 10363,
+        "sha256": "86a53fc852436103ccd5cbe03a940a8f7276ef84965c271d86cf9b5eb1835fe8"
+      },
+      {
+        "path": "packages/engine/dist/gameClock.js",
+        "bytes": 9342,
+        "sha256": "fe76c89615b916f29e9287bff189d0d4b6da88936a94e3e9f058f9e19a4187ec"
+      },
+      {
+        "path": "packages/engine/dist/index.js",
+        "bytes": 1358,
+        "sha256": "96afca247999dc46d1321ce15138fbe01fffde0aafbb76fb48440a09b67ca082"
+      },
+      {
+        "path": "packages/engine/dist/internal/contentFactoryState.js",
+        "bytes": 1085,
+        "sha256": "1e9f75627a4a24593da30a77ba23f8814092484cbeaa969ef23ecc56a18f1ff3"
+      },
+      {
+        "path": "packages/engine/dist/internal/mouseInputFactoryState.js",
+        "bytes": 4961,
+        "sha256": "82e9331c803fd5cfcfd24cfe7edf10ca20eaded2342cdfd66f4caa48d9a70435"
+      },
+      {
+        "path": "packages/engine/dist/internal/sequenceControllerFactoryState.js",
+        "bytes": 3344,
+        "sha256": "cdd2354efcfa58e4fcfe83705c123494b0a358a518a8c47f646f7becc8f63aa9"
+      },
+      {
+        "path": "packages/engine/dist/internal/textFieldFactoryState.js",
+        "bytes": 1209,
+        "sha256": "320085d19f32fdf1957b356709b114897364d0bd48f10fbe4c57da6d0d06468e"
+      },
+      {
+        "path": "packages/engine/dist/internal/texturedFrameState.js",
+        "bytes": 975,
+        "sha256": "1fb9cc9e234a5bfe5a914f613fbb0dac8019840343f5df02fa4ec3d78b900300"
+      },
+      {
+        "path": "packages/engine/dist/internal/uiFactoryState.js",
+        "bytes": 5115,
+        "sha256": "79777e8e276c941ab203344738eb781686fcbc7694e4c4fcaf67bd32e46c3ba9"
+      },
+      {
+        "path": "packages/engine/dist/internal/uiRootState.js",
+        "bytes": 1515,
+        "sha256": "8229922b53504f5087c5d527fc1eb836654efc78c43e73a3fdcc671141293d19"
+      },
+      {
+        "path": "packages/engine/dist/keyboardInput.js",
+        "bytes": 19339,
+        "sha256": "be41afcbfc443c379c5fac497d66461962dd6e1f257b540202125fcb72d64c96"
+      },
+      {
+        "path": "packages/engine/dist/manifestAssetGroup.js",
+        "bytes": 16305,
+        "sha256": "d30b5f3233bc6022de5ed7a581ad1f651825470efb6e19b7875f62a8a4514d50"
+      },
+      {
+        "path": "packages/engine/dist/manifestResourceState.js",
+        "bytes": 2387,
+        "sha256": "46662790efbb2fb844034da7782df72213f1fe8a46a404d6ad54f1b4396a0417"
+      },
+      {
+        "path": "packages/engine/dist/mouseInput.js",
+        "bytes": 19479,
+        "sha256": "6ec0b9d091c8d10a9e033e19575704795bb3636fd0fac1fd01960f43bd18476e"
+      },
+      {
+        "path": "packages/engine/dist/paragraph.js",
+        "bytes": 406,
+        "sha256": "61c0b01de6a3bf75339481bae6797b7559d5890ee7b77d083dea4312c22b4baf"
+      },
+      {
+        "path": "packages/engine/dist/pointerInput.js",
+        "bytes": 10867,
+        "sha256": "aa87cc7f821134c952a4c3f73eba37603d05add291b09ecd7b91c4afbfd8e8c9"
+      },
+      {
+        "path": "packages/engine/dist/rendering/admitTexturedFrame2D.js",
+        "bytes": 8673,
+        "sha256": "9f021d73fd9ba1db2feceb92e360bfe1003f92a2cbda563401bb3b9ce740f8b0"
+      },
+      {
+        "path": "packages/engine/dist/rendering/copyFrame2D.js",
+        "bytes": 6229,
+        "sha256": "cea039426a697ebb5acd60b6c18d6d372299d339fce2cfe818caec6545dc5595"
+      },
+      {
+        "path": "packages/engine/dist/rendering/copyMixedFrame2D.js",
+        "bytes": 3818,
+        "sha256": "e7f1f60a683a5afe7e49fffa9294e53278c43910b1f0613ce1f50fa47f10468c"
+      },
+      {
+        "path": "packages/engine/dist/rendering/imageFrameBudget.js",
+        "bytes": 1625,
+        "sha256": "fc7e689d10b3827144609a8c8629e0d8e154f3e1ffaea2345efcf9241a76e6d9"
+      },
+      {
+        "path": "packages/engine/dist/rendering/ownedPreparationFailure2D.js",
+        "bytes": 1082,
+        "sha256": "2c762d5297f10925364d7ccffe77e654ddbc7238d48423c96675f1fa9fe6f338"
+      },
+      {
+        "path": "packages/engine/dist/rendering/packedOrientation.js",
+        "bytes": 340,
+        "sha256": "4f4b2c5125997952cf18cb5b4cfe655fe7d2ae4cb399a03bc633bf58261eae83"
+      },
+      {
+        "path": "packages/engine/dist/rendering/packedPosition2D.js",
+        "bytes": 573,
+        "sha256": "68258e7949e85b2b5c5771b1045e5261d63ff330e67c81e89e958a19773c0d16"
+      },
+      {
+        "path": "packages/engine/dist/rendering/packImageVertices2D.js",
+        "bytes": 3851,
+        "sha256": "d133289551bc3514cc3c5a42661abd32377371f480669bb13547fe7df9b0f30f"
+      },
+      {
+        "path": "packages/engine/dist/rendering/packSharedDraws2D.js",
+        "bytes": 3322,
+        "sha256": "2e10b9fc3defc1dad671a1540f99f8670852325bba4a080496a549c706068778"
+      },
+      {
+        "path": "packages/engine/dist/rendering/packTexturedMesh2D.js",
+        "bytes": 5253,
+        "sha256": "2b2812f97af50299451c2205dbe9acbdf169bb846dc41b4b964dc081039f8733"
+      },
+      {
+        "path": "packages/engine/dist/rendering/preparedBatches2D.js",
+        "bytes": 8234,
+        "sha256": "6f2ef1c01d8bef89ae3bc604ed961807532faf83010aee363edec6f8da5c5d48"
+      },
+      {
+        "path": "packages/engine/dist/rendering/preparedFrameCache2D.js",
+        "bytes": 23608,
+        "sha256": "b28b5313bbf1ace8d741d686b72a59d3385c5b56591dcd363e68ab92a0bae294"
+      },
+      {
+        "path": "packages/engine/dist/rendering/preparedSharedBatches2D.js",
+        "bytes": 3326,
+        "sha256": "6690664da548935ae8a9406436b5719ea6a8681b00c16d788914bba38c3eb036"
+      },
+      {
+        "path": "packages/engine/dist/rendering/prepareImages2D.js",
+        "bytes": 4821,
+        "sha256": "82f93f3c93665c0d69d300b19b4e673779cd450727e784fb17d21c9d5af36589"
+      },
+      {
+        "path": "packages/engine/dist/rendering/prepareMixedDraws2D.js",
+        "bytes": 3234,
+        "sha256": "b5925f98de56982a203a22529a45aa72604e18cb4083ce5e261a185594dc6feb"
+      },
+      {
+        "path": "packages/engine/dist/rendering/prepareRectangles2D.js",
+        "bytes": 20840,
+        "sha256": "401732bc01b2385b7aab673d518a4e44d3772beb77c57d63f9a6c46c0035841c"
+      },
+      {
+        "path": "packages/engine/dist/rendering/prepareSharedDraws2D.js",
+        "bytes": 13916,
+        "sha256": "55cd7ed455dcbf9f8417dcc0324e19cc1609ef3bbd89dd7e40f519937a6122d5"
+      },
+      {
+        "path": "packages/engine/dist/rendering/prepareTexturedDraws2D.js",
+        "bytes": 4612,
+        "sha256": "b81bcaa01006be0fe1eb3f18d5a93e51f354e5de79923f7d918e3f9976e085c4"
+      },
+      {
+        "path": "packages/engine/dist/rendering/prepareTexturedMesh2D.js",
+        "bytes": 7762,
+        "sha256": "28796314e7b0d1fc8acceaa6fbe6c8805040b531b4df0772c207acd0123429e3"
+      },
+      {
+        "path": "packages/engine/dist/rendering/sharedColor2D.js",
+        "bytes": 2455,
+        "sha256": "4e3c221cb075be46b90454719c04f3886bed2dd10fd048bdef5273ebda7962b0"
+      },
+      {
+        "path": "packages/engine/dist/rendering/sharedEffects2D.js",
+        "bytes": 2839,
+        "sha256": "ca0fc69f466aeccea9648ba202e73bd42222eda1b78da17889f0c3f0f188e105"
+      },
+      {
+        "path": "packages/engine/dist/rendering/texturedPreparationBudget2D.js",
+        "bytes": 5977,
+        "sha256": "eeb48a6701001b53159567a87a43bafbe1300810dc3ceee176a6b9e6c4090e9f"
+      },
+      {
+        "path": "packages/engine/dist/resources.js",
+        "bytes": 355,
+        "sha256": "e398d2efbedeb419789ce8619df0f6ed884f3d9d66d198e0133c0a4168e9cf1b"
+      },
+      {
+        "path": "packages/engine/dist/sequencePlayback.js",
+        "bytes": 13139,
+        "sha256": "2ff3c2561326a8d101720becf3a9444448e22c698f8c342222dd96335fbabe6e"
+      },
+      {
+        "path": "packages/engine/dist/sequenceTargetClaims.js",
+        "bytes": 993,
+        "sha256": "de59c8d9d4057d7755da0756f835d316c64149330a8c7359cb6f9ec01d18b6ab"
+      },
+      {
+        "path": "packages/engine/dist/startEngine.js",
+        "bytes": 1275,
+        "sha256": "e250a877eeb8523473963504646e1c80c16ceb2c326b3f10788c0ee4550c23bc"
+      },
+      {
+        "path": "packages/engine/dist/surfaceOwnership.js",
+        "bytes": 615,
+        "sha256": "e37243cf059c239fb8a56beddcd0020c2f9a0df80db1017012443e72748f75be"
+      },
+      {
+        "path": "packages/engine/dist/tween.js",
+        "bytes": 12172,
+        "sha256": "e9a1f3588e21fed0e49285a2c89eb8ea48557759242cb2a3128890399426444d"
+      },
+      {
+        "path": "packages/engine/dist/ui/controls.js",
+        "bytes": 9545,
+        "sha256": "2dbf123b185ea3bddde24f139b746439fa2640e3968d144974de9ea728e7dc09"
+      },
+      {
+        "path": "packages/engine/dist/ui/editing.js",
+        "bytes": 128,
+        "sha256": "cc8fb0a4b7d0044c5e7c66162221b18813d3d3e470e4974756e29d7b092a3765"
+      },
+      {
+        "path": "packages/engine/dist/ui/index.js",
+        "bytes": 236,
+        "sha256": "87e90cec8fb8c7dda24bb06b7f6c997c92c8959065c48dbcfb07ccdca1077056"
+      },
+      {
+        "path": "packages/engine/dist/ui/keyboardFocus.js",
+        "bytes": 4660,
+        "sha256": "fb739b4ca10e8d833692d76b62a2b2b2c3936ad77c314d5bb83c601eeab190d1"
+      },
+      {
+        "path": "packages/engine/dist/ui/leafContent.js",
+        "bytes": 5392,
+        "sha256": "a0a1d37de6c154b5343a69326c402f0a9db65995962869a9e0920b6261375f20"
+      },
+      {
+        "path": "packages/engine/dist/ui/textEditor.js",
+        "bytes": 14389,
+        "sha256": "f358c0c8c1189f1816fdb43130f17f41008c0109276ef7d797888b907a533b8f"
+      },
+      {
+        "path": "packages/engine/dist/ui/theme.js",
+        "bytes": 4609,
+        "sha256": "23f3bc727186e1cd063d3d91138e66ffc3121f7f59ff6b9511f31883e1475d1d"
+      },
+      {
+        "path": "packages/engine/dist/ui/uiRoot.js",
+        "bytes": 59594,
+        "sha256": "5b6b506fcd45a88abe787839cfbe2412862bf141c1276e9d47eefd7db797f3b4"
+      },
+      {
+        "path": "packages/engine/dist/ui/virtualList.js",
+        "bytes": 4177,
+        "sha256": "5b48eecb8279d5af4320c6197b6877a15a6853e738c16fb6d3bf2ecf09a44bee"
+      },
+      {
+        "path": "packages/engine/dist/web/BrowserKeyboardInput.js",
+        "bytes": 9142,
+        "sha256": "94bfa3a9c9bfb1f406ad369f4180b29e72cb527f938aeebc2fb2a2941d4c4410"
+      },
+      {
+        "path": "packages/engine/dist/web/BrowserPointerInput.js",
+        "bytes": 20216,
+        "sha256": "0fd5ef63c9053833adad3b67b18d5c7f40901431966f4ae7a685de296d2273ac"
+      },
+      {
+        "path": "packages/engine/dist/web/BrowserTextEditor.js",
+        "bytes": 31941,
+        "sha256": "1fc5cc3dedebdb38ad7692c0267660482383924a61b2442e4369997a085381ea"
+      },
+      {
+        "path": "packages/engine/dist/web/BrowserTextureProvider.js",
+        "bytes": 37211,
+        "sha256": "4daad43034281f0038220a4c1fa5238b1a67c8fe09870ef0717b53b50c5a15dd"
+      },
+      {
+        "path": "packages/engine/dist/web/CanvasKitFontSetProvider.js",
+        "bytes": 7268,
+        "sha256": "dbe1b924d87d82950cd7045ad1a7934a35a4d665cef8ea5f2fd09c69f527fc47"
+      },
+      {
+        "path": "packages/engine/dist/web/canvasKitParagraphGeometry.js",
+        "bytes": 3450,
+        "sha256": "dd22b0e86cd5231735abd9fc6bc353f84305f0d52b545498845a129549a6ab5c"
+      },
+      {
+        "path": "packages/engine/dist/web/CanvasKitParagraphProvider.js",
+        "bytes": 33027,
+        "sha256": "9d7ab81bce34270fc4e33f36c58b5cd65e47e7ba2d7c10f42f525c17172e90db"
+      },
+      {
+        "path": "packages/engine/dist/web/editing.js",
+        "bytes": 208,
+        "sha256": "dc38db3eeb26f50f7e20b109f3de7b03c9c1295d37d7770b9f130a4e37e56e22"
+      },
+      {
+        "path": "packages/engine/dist/web/editorFonts.js",
+        "bytes": 10827,
+        "sha256": "d93c47a7527ed11cb149c3ea712fa179b47af113f27c4e6ff97addbfb0cb089d"
+      },
+      {
+        "path": "packages/engine/dist/web/imageProjections2D.js",
+        "bytes": 6102,
+        "sha256": "f7e8ec0c7d13cef5050bfc087297ea02c893775ad1773603b7ca643d64c8f14c"
+      },
+      {
+        "path": "packages/engine/dist/web/keyboard.js",
+        "bytes": 147,
+        "sha256": "86bac2c7d6f20d95ee456950dcdce9e0704f6bf0b4a829f0ce15b99789c37cae"
+      },
+      {
+        "path": "packages/engine/dist/web/ManifestByteSource.js",
+        "bytes": 34069,
+        "sha256": "f4a2bbe9f24927712349b414487c53665ebe14cf36f99500ea7950576c565336"
+      },
+      {
+        "path": "packages/engine/dist/web/ManifestFontContentLoader.js",
+        "bytes": 1080,
+        "sha256": "d350271616f52e232ac898ec24d008fa06f33efc60a344a304dbae432e11656f"
+      },
+      {
+        "path": "packages/engine/dist/web/paragraph.js",
+        "bytes": 281,
+        "sha256": "5c9ff4f58e043196d5413b0b08b6f55fdfc7c47ac14591d2f272626e14d8fc5c"
+      },
+      {
+        "path": "packages/engine/dist/web/pointer.js",
+        "bytes": 191,
+        "sha256": "1823f6dcc495e1a630268c233e1b22a616d64cd917a1b2c3396aa94c98abc287"
+      },
+      {
+        "path": "packages/engine/dist/web/prepareSharedSubmission2D.js",
+        "bytes": 2433,
+        "sha256": "6c2952fa06328f3ed9cc34f1e3903e40168b5a43f0dbf19f40a5fc5764efdb19"
+      },
+      {
+        "path": "packages/engine/dist/web/prepareTexturedSubmission2D.js",
+        "bytes": 12690,
+        "sha256": "14c5baa8c8ac5bcb970173cea5e8094dd0ad3a5f4aa8b9650b252562d4a12434"
+      },
+      {
+        "path": "packages/engine/dist/web/resources.js",
+        "bytes": 4213,
+        "sha256": "258ed71ee3c9b749a4ce0ba55b20475caabcb9576144de64b3f3ea970a3e3e5d"
+      },
+      {
+        "path": "packages/engine/dist/web/sharedEffectShaders.js",
+        "bytes": 4086,
+        "sha256": "7d5c3be9646a8430dc9c86c40de3da6d07e8e5d0220229b99f5332ed59f423f6"
+      },
+      {
+        "path": "packages/engine/dist/web/sharedRetentionLedger.js",
+        "bytes": 17028,
+        "sha256": "ca080bdf2a99acc6a2485bd2df427b711d7f35913036702eac5103af80326858"
+      },
+      {
+        "path": "packages/engine/dist/web/sharedSubmissionStorage2D.js",
+        "bytes": 3884,
+        "sha256": "03fe3db2d0a018269cf11e5970bfb539a24a770c4d42db1e6b62efe2400154d1"
+      },
+      {
+        "path": "packages/engine/dist/web/sharedWebGL2Arena.js",
+        "bytes": 3304,
+        "sha256": "4e2c75ed21e078b40c94f44dc1c207fb88465e131d7a08b22b044c1053e0594b"
+      },
+      {
+        "path": "packages/engine/dist/web/sharedWebGL2Options.js",
+        "bytes": 2756,
+        "sha256": "3dedd11300425c7eb2766ec98b7923d3c4fabdfd8aad520f46ffcd3e8e3b7d31"
+      },
+      {
+        "path": "packages/engine/dist/web/sharedWebGL2Shaders.js",
+        "bytes": 7710,
+        "sha256": "023fd410c2da53495c3ec8c960718e51aeb9ea5f222b5f81ac8bdad134b0fb71"
+      },
+      {
+        "path": "packages/engine/dist/web/sharedWebGPUOptions.js",
+        "bytes": 4034,
+        "sha256": "c6fab0c7669825d3f7666367c48ec6d28f10b2cd85e51b6c190ef322bf355775"
+      },
+      {
+        "path": "packages/engine/dist/web/texturedWebGPUOptions.js",
+        "bytes": 2744,
+        "sha256": "7457fc91a6dd24946d92d05a3c3a43c77d1b3ba2bf12feed1488b358ce7be8f2"
+      },
+      {
+        "path": "packages/engine/dist/web/webgl2.js",
+        "bytes": 212,
+        "sha256": "9066a6f5484253907edd13708287dbedd26a98e1433fcfb42ec811d79384cba8"
+      },
+      {
+        "path": "packages/engine/dist/web/WebGL2Host.js",
+        "bytes": 97727,
+        "sha256": "735f0b9e28ebe10a005a13e43c11bd492ce6aac493cd84de798cb9232c0f7de2"
+      },
+      {
+        "path": "packages/engine/dist/web/webgl2Native.js",
+        "bytes": 16484,
+        "sha256": "6f63a1b816a12c9b2855712c735fa95436114b8d0c7e2958cecacab4b461217b"
+      },
+      {
+        "path": "packages/engine/dist/web/webgpu.js",
+        "bytes": 248,
+        "sha256": "59ff7e9981cbb680644404d113da72878f38e4a135de0c1301bc269cb8109450"
+      },
+      {
+        "path": "packages/engine/dist/web/webgpuBindingCache.js",
+        "bytes": 8374,
+        "sha256": "74bcda1b46f7ec63e46cb9a412c97ee353763d21e1375053663567ebdcfabea3"
+      },
+      {
+        "path": "packages/engine/dist/web/WebGPUHost.js",
+        "bytes": 194045,
+        "sha256": "719568799281dc35ae3d5ed2b9e503d276b43d6995f694ee8229b57e33f3e12f"
+      },
+      {
+        "path": "packages/engine/dist/web/webgpuImagePass.js",
+        "bytes": 2380,
+        "sha256": "1dd032650be95493d088f47cdc7b56e153ed7b4fb7410feef2420b1b74a88ffe"
+      },
+      {
+        "path": "packages/engine/dist/web/webgpuLifetime.js",
+        "bytes": 2256,
+        "sha256": "5e71a326c3cb4cb2cc76acd16ddf7b5c6390542e037364fd204fbcf041fdeb1f"
+      },
+      {
+        "path": "packages/engine/dist/web/webgpuPass.js",
+        "bytes": 6136,
+        "sha256": "07d77f142cc280b34eb85b7c0ab5c6f9f21b92e1be1696a6572436959f527bd2"
+      },
+      {
+        "path": "packages/engine/dist/web/webgpuRetentionPool.js",
+        "bytes": 3300,
+        "sha256": "72531b85727976d7de55a5a7cbd4a68d16ab28ca4ab5b13b26eaf4157f901c48"
+      },
+      {
+        "path": "packages/engine/dist/web/webgpuSharedPass.js",
+        "bytes": 6534,
+        "sha256": "efc042e1867ff8e052babdb9f5c1205761d8f9c25b6f4597a7175fbe91dec199"
+      },
+      {
+        "path": "packages/engine/dist/web/webgpuSharedResolvePass.js",
+        "bytes": 1522,
+        "sha256": "eb5c2334da94a6e71970ab99df7a07932ab631b92641535215b889f8833cb2ef"
+      },
+      {
+        "path": "packages/engine/dist/web/webgpuTexturedPass.js",
+        "bytes": 2090,
+        "sha256": "1afe7ae7e5162415d83c8f0dff55712ef19dc04192eab8bbf67f666f82718c47"
+      },
+      {
+        "path": "packages/runtime/dist/AssetLease.js",
+        "bytes": 2698,
+        "sha256": "db4e5a3f9c29554eca36480e9f4e42e4aa63008f0ada90b09a9302db5f097e0f"
+      },
+      {
+        "path": "packages/runtime/dist/AssetManager.js",
+        "bytes": 17534,
+        "sha256": "c84c30bf6487b95e176a20caec5f16828fb8a71374fc5428d123506913a46340"
+      },
+      {
+        "path": "packages/runtime/dist/assetManagerOwnerState.js",
+        "bytes": 4102,
+        "sha256": "864a608dccaf23b7df91758416c229dc7f19afce1529214893648a6d6827608e"
+      },
+      {
+        "path": "packages/runtime/dist/AssetRef.js",
+        "bytes": 1218,
+        "sha256": "71f8764d8e825d946a308f6d75528bff9e2622780fb0625a8c662e202e46f024"
+      },
+      {
+        "path": "packages/runtime/dist/atlasFrameLayout.js",
+        "bytes": 1991,
+        "sha256": "a1e35328e4f911087b80b268e0c82c71b620bc1837401fea0db8269febc95eee"
+      },
+      {
+        "path": "packages/runtime/dist/Bitmap.js",
+        "bytes": 23075,
+        "sha256": "075a6f146714c98fec748aeabe52e3cf38d0213eb6a4f868d7fb846bb59196b8"
+      },
+      {
+        "path": "packages/runtime/dist/bitmapAtlasPlacement.js",
+        "bytes": 1753,
+        "sha256": "55aa9193fd9cfa060e45b10ad02e7d60a3ee83fdafef9f67a80347de741e7cb2"
+      },
+      {
+        "path": "packages/runtime/dist/bitmapDisplayState.js",
+        "bytes": 1066,
+        "sha256": "fd50bff484322b93d54755698a1928edd46526a1f8a57816928499fc36b9bd73"
+      },
+      {
+        "path": "packages/runtime/dist/ByteReader.js",
+        "bytes": 6839,
+        "sha256": "c8fd39e01476ff6961925a70caa90749cb808713bd89f8066f6340f0fdf2092a"
+      },
+      {
+        "path": "packages/runtime/dist/ByteWriter.js",
+        "bytes": 7375,
+        "sha256": "19ab3ae8e6213fd83f915e5ea8dd4baf5e9d1960e021fcf4a12d39b934f2df76"
+      },
+      {
+        "path": "packages/runtime/dist/CancellationController.js",
+        "bytes": 2112,
+        "sha256": "f2a27aee08b35e3ca17b7feb3f8166c3efc388e38d70f3f0c9b0ef13455e24c7"
+      },
+      {
+        "path": "packages/runtime/dist/coordinateInverse.js",
+        "bytes": 4201,
+        "sha256": "7cc84087cf8d2d8e92b3c5f1f560d8feacc4cea4cfe1f6511248a7bda86cd69a"
+      },
+      {
+        "path": "packages/runtime/dist/diagnostics.js",
+        "bytes": 549,
+        "sha256": "32711ffa07c5bfcedc4775756d3180d1c6969086d082be623d6bd1a40eab796f"
+      },
+      {
+        "path": "packages/runtime/dist/displayBounds.js",
+        "bytes": 7900,
+        "sha256": "648a056edd70cbd8ffa2e6bb45f03e6e6c42f8f9a03708d52eaa227157786231"
+      },
+      {
+        "path": "packages/runtime/dist/displayCoordinates.js",
+        "bytes": 3352,
+        "sha256": "f2604e5359839916ae9cba2582ce896e069a69d013664b3e7ee95f85378df890"
+      },
+      {
+        "path": "packages/runtime/dist/displayHitState.js",
+        "bytes": 3481,
+        "sha256": "99cbbb70f8c223fbbdf59bf892c4a216f45effa38d22a50f7aa18c9b6adba4d6"
+      },
+      {
+        "path": "packages/runtime/dist/displayHitTest.js",
+        "bytes": 6873,
+        "sha256": "7ec9518b01bed802d0c254d13906c9920655b77d34626af17d0d87e0f5332196"
+      },
+      {
+        "path": "packages/runtime/dist/displayInputOperations.js",
+        "bytes": 3210,
+        "sha256": "650e7037c3024c2efefd39e32bbf2d946560fc0495a21db2797a762cd36992e4"
+      },
+      {
+        "path": "packages/runtime/dist/DisplayObject.js",
+        "bytes": 8017,
+        "sha256": "469dc4ba94441681c247cd91869c2385550073168738fd8e954188e3352dc446"
+      },
+      {
+        "path": "packages/runtime/dist/DisplayObjectContainer.js",
+        "bytes": 9277,
+        "sha256": "ec71cbae41ffda303f40ec404ede643e798c97bc3e421083873c5ad5ce15acc6"
+      },
+      {
+        "path": "packages/runtime/dist/displayTransform.js",
+        "bytes": 1258,
+        "sha256": "c508f3c99d02453c24ee705ec07af136ebb1591333fcab0be2537a27690a0e05"
+      },
+      {
+        "path": "packages/runtime/dist/displayTreeState.js",
+        "bytes": 17568,
+        "sha256": "95fd7624cf06ab8969d3864c33a468f835781880db8fab17f1972477858a8bbc"
+      },
+      {
+        "path": "packages/runtime/dist/displayVisualState.js",
+        "bytes": 4154,
+        "sha256": "8eef508a215bb6239c4558a4ccf92d43f27380d028c8be871456019c1ed71dc8"
+      },
+      {
+        "path": "packages/runtime/dist/EgretError.js",
+        "bytes": 508,
+        "sha256": "34693e8147cb8142260471f4f80897ebd59a409486026ab0931b6f7523cf2f9f"
+      },
+      {
+        "path": "packages/runtime/dist/Event.js",
+        "bytes": 2393,
+        "sha256": "d6b60b43d3768d67424d907410c832594b554d870185c6f9d871f62853edce7a"
+      },
+      {
+        "path": "packages/runtime/dist/EventDispatcher.js",
+        "bytes": 7218,
+        "sha256": "573e357a5018379b244f1cc1cd26e51951b7b7ad4421e5c840a82031868abcb7"
+      },
+      {
+        "path": "packages/runtime/dist/frameCapture.js",
+        "bytes": 8499,
+        "sha256": "349bba5d51caeee4e18f710a527c60b39b1d1434d120ae0563d60191a919870e"
+      },
+      {
+        "path": "packages/runtime/dist/frameCaptureCache.js",
+        "bytes": 15981,
+        "sha256": "b041688739321426600fb1ad1a2dfd005ebcdca93d3e5beb90d2dab8219757f0"
+      },
+      {
+        "path": "packages/runtime/dist/Graphics.js",
+        "bytes": 1448,
+        "sha256": "c4637f250e7059ca46a313898d5afbbf283b2a164cbcabb9b3fd729fd69afeff"
+      },
+      {
+        "path": "packages/runtime/dist/imageFrameBudget.js",
+        "bytes": 1802,
+        "sha256": "f7b61124a43c7b9621698c03efbd9e565b83977e839a0e737afe1827d1d54ac0"
+      },
+      {
+        "path": "packages/runtime/dist/index.js",
+        "bytes": 1708,
+        "sha256": "c8cbc112cd5597e0729c34368954d74a94511638d3efab1fec78603e2f7007f5"
+      },
+      {
+        "path": "packages/runtime/dist/input/index.js",
+        "bytes": 130,
+        "sha256": "6620cbb501812b1704bc0fb93ae253918c47dab107fce4d154cfeda2008ae1b2"
+      },
+      {
+        "path": "packages/runtime/dist/input/PointerRouter.js",
+        "bytes": 15561,
+        "sha256": "c11a2916394fe30ca15b1b21c5032e9412a4808c8779ff280cb8e293efca5f43"
+      },
+      {
+        "path": "packages/runtime/dist/Mesh2D.js",
+        "bytes": 8016,
+        "sha256": "d645535e28f17d23d10fb7bcda14ff7a7519e4261acc321d55d2def924456a56"
+      },
+      {
+        "path": "packages/runtime/dist/meshCaptureSnapshot.js",
+        "bytes": 610,
+        "sha256": "65a2523739ba5ec960290fe217cc7dcaad58729438ccbf77663d7306d5c3bd56"
+      },
+      {
+        "path": "packages/runtime/dist/meshDisplayState.js",
+        "bytes": 978,
+        "sha256": "867eeb0aed95cb6d28fafe3ab02560acaf428086c89df0d61da9313b2a63ef55"
+      },
+      {
+        "path": "packages/runtime/dist/NineSliceBitmap.js",
+        "bytes": 6749,
+        "sha256": "b30062f359b294fba6bf32421779f42c23c7bdc63b20df00d7f66379f56696f8"
+      },
+      {
+        "path": "packages/runtime/dist/NineSliceGeometry2D.js",
+        "bytes": 5487,
+        "sha256": "06373188c1f7abf86e593387c7ddc3c7ce745927be39bb06b6af840ddc404126"
+      },
+      {
+        "path": "packages/runtime/dist/ownership.js",
+        "bytes": 6711,
+        "sha256": "a26b1fcd8232dc000ed45fc522784668cb5c69b35d187cea21419cf6b3da7b52"
+      },
+      {
+        "path": "packages/runtime/dist/paragraph/geometry.js",
+        "bytes": 8889,
+        "sha256": "8151e28aff58ba882d42810155ebe0cbe0eedd86b35d50570d6d3665fe44364a"
+      },
+      {
+        "path": "packages/runtime/dist/paragraph/index.js",
+        "bytes": 132,
+        "sha256": "30f80dcb797b58a3cdca0b79f2caf9becc8ee77531316456e83b0c0a95893677"
+      },
+      {
+        "path": "packages/runtime/dist/paragraph/Paragraph.js",
+        "bytes": 7446,
+        "sha256": "91b0ae3ef684c5348191f099fa3006539c2535bb7989b03e29a51ab13794bc2b"
+      },
+      {
+        "path": "packages/runtime/dist/paragraph/ParagraphCache.js",
+        "bytes": 13500,
+        "sha256": "b57dbcfa36ae702e2b1eb25b57d27b6267b0b8922e0b7a5b852468cace77d134"
+      },
+      {
+        "path": "packages/runtime/dist/paragraph/request.js",
+        "bytes": 8645,
+        "sha256": "f7bf2caac984caab412bb1087d5d461cd44049823b22235cf01cc47a9da1b379"
+      },
+      {
+        "path": "packages/runtime/dist/preparedDisplaySubtree.js",
+        "bytes": 8334,
+        "sha256": "8d3638303edfd5283800f0cce2f664d4d3879ed24e0b004134b3b56aaed9cf14"
+      },
+      {
+        "path": "packages/runtime/dist/renderEffect.js",
+        "bytes": 1884,
+        "sha256": "1427330ed36f1ee5c32cf581364356b1725d8fdf0b531d30924f9ae6bb4b0b14"
+      },
+      {
+        "path": "packages/runtime/dist/Scope.js",
+        "bytes": 5113,
+        "sha256": "8565aadd35a4ebf6293e29a43ea9fa6079f7721e620895e577ebf47745476730"
+      },
+      {
+        "path": "packages/runtime/dist/sequenceClip.js",
+        "bytes": 8216,
+        "sha256": "87a1aaf749638e90f5ace7a01b8b604ad8994c1ece39593c963be678519b2925"
+      },
+      {
+        "path": "packages/runtime/dist/SequencePlayer.js",
+        "bytes": 3069,
+        "sha256": "1a5de3251dd6e98b63afa02b1a6e3105538c89671b27d32ba7a69c972c37715f"
+      },
+      {
+        "path": "packages/runtime/dist/sharedFrameCapture.js",
+        "bytes": 21675,
+        "sha256": "be6f4ef6ac9a98e2937279749e1fd70a98eadc9fcae836d2009a43f0bcb30e54"
+      },
+      {
+        "path": "packages/runtime/dist/Sprite.js",
+        "bytes": 464,
+        "sha256": "75d96bf10122f2371ee9dcb5369336bfc9295dba8a8d350f49af19745a67cd24"
+      },
+      {
+        "path": "packages/runtime/dist/spriteSheet.js",
+        "bytes": 11824,
+        "sha256": "5f15aca4af6961cfd65f0e4c5243f7f81ccac9267056815d2401226b4d8dd00d"
+      },
+      {
+        "path": "packages/runtime/dist/Stage.js",
+        "bytes": 1340,
+        "sha256": "a6709e5c3338ba4bcdb8afc06888a4ddb3056ab5408cfda32ffac8aba7cf82a9"
+      },
+      {
+        "path": "packages/runtime/dist/textDisplayState.js",
+        "bytes": 1185,
+        "sha256": "b61cab464a2c46a9bda0cec4d6dea3561c2588d675eef2bb8b80dab4bd332156"
+      },
+      {
+        "path": "packages/runtime/dist/Texture.js",
+        "bytes": 7579,
+        "sha256": "fc0b399b96874a836c899d1bdae2fb48e70e7ad831fdfa5aeb32ebcecd32e00e"
+      },
+      {
+        "path": "packages/runtime/dist/texturedFrameBudget.js",
+        "bytes": 1542,
+        "sha256": "f8287dcba0eeebcd898c055b62e1249754d2c121b09f8734a55aaf248c54f2c3"
+      },
+      {
+        "path": "packages/runtime/dist/texturedFrameCapture.js",
+        "bytes": 15312,
+        "sha256": "c24d52a9fc718807f5acc33555dd9b22c3bedef681cfe56545b3ddcb2e9d49ac"
+      },
+      {
+        "path": "packages/runtime/dist/ui/displayCommit.js",
+        "bytes": 14841,
+        "sha256": "2661d93357b9477e90b851c438992a4aafaf97baede60fb9ef6c1825ef93b6d7"
+      },
+      {
+        "path": "packages/runtime/dist/ui/editing.js",
+        "bytes": 132,
+        "sha256": "6a224f905c5071ae4b409a5dc8ca785628c314a73a6e7be4ae6aeeea4166b178"
+      },
+      {
+        "path": "packages/runtime/dist/ui/heightIndex.js",
+        "bytes": 10136,
+        "sha256": "6b40e2e32305f67c7896fd7f58d5970a5b564b2c4c101a9374fd1786efb97e8c"
+      },
+      {
+        "path": "packages/runtime/dist/ui/index.js",
+        "bytes": 333,
+        "sha256": "eb592072cb374cb69cfe1b960ab72c929d3139848e4255ba7c09422b2b12c110"
+      },
+      {
+        "path": "packages/runtime/dist/ui/layout.js",
+        "bytes": 13657,
+        "sha256": "ea878d71e50f1e832cb49ffc7aefa14ea6707555cdaad853fd88d8b05a971fc2"
+      },
+      {
+        "path": "packages/runtime/dist/ui/managedState.js",
+        "bytes": 1630,
+        "sha256": "40e519e12a711fde43556cf6f15d02214448dfc5e037eb070c215bd811e4ff62"
+      },
+      {
+        "path": "packages/runtime/dist/ui/textEditState.js",
+        "bytes": 7894,
+        "sha256": "b3a9a1a0f89658b7450943eae111beb40d895e101ee43ca05b1a1f56a16cf63c"
+      }
+    ]
+  },
+  "controlled": {
+    "stateCases": 5,
+    "uiCases": 4,
+    "affectedExistingUiCases": 30,
+    "publicTypeCases": 1,
+    "negativeTypeTuples": [
+      [
+        5,
+        2345
+      ],
+      [
+        6,
+        2322
+      ],
+      [
+        7,
+        2540
+      ],
+      [
+        8,
+        2741
+      ],
+      [
+        9,
+        2322
+      ],
+      [
+        10,
+        2741
+      ]
+    ],
+    "scope": "Literal host SDK tests and pure units are separate from actual browser font/render results."
+  },
+  "priorAttempts": [
+    {
+      "id": "browser-01",
+      "status": "FAIL",
+      "cause": "Example keyboard-focus observer reactivated a field during row rebinding; activation now follows explicit keyboard navigation only."
+    },
+    {
+      "id": "browser-02",
+      "status": "FAIL",
+      "cause": "Example width change recreated a source without incrementing its revision; source revision now advances."
+    },
+    {
+      "id": "browser-03",
+      "status": "FAIL",
+      "cause": "A normally hidden retained row was treated as unsupported placement; it now ends native editing without permanently closing the adapter."
+    },
+    {
+      "id": "browser-04",
+      "status": "FAIL",
+      "cause": "Both backend behavior sets passed; evidence collection refused dependency symlink aliases. The collector now resolves the complete actual owner-relative dependency path before raw fingerprinting."
+    }
+  ],
+  "open": [
+    "Actual CJK IME and dead-key sessions with named OS/browser/IME",
+    "Physical Android/iPhone keyboard, viewport interruption and emoji deletion",
+    "Actual system clipboard permissions and assistive-technology qualification",
+    "Native SDK/mini-game editor adapters",
+    "Arbitrary rotations, nonrectangular clips, CSS perspective/zoom and pinched visual viewports",
+    "Native/readonly pixel-equivalent wrapping is not promised; selected script/font references remain required",
+    "M1.2 full-dirty 10.3 ms versus 8 ms remains OPEN"
+  ],
+  "priorSuccessfulInputs": [
+    {
+      "receiptSha256": "d46568cd090a600fa725002937aebed75acac94d71bd1472c3384f72861ae079",
+      "status": "PASS",
+      "checks": [
+        17,
+        17
+      ],
+      "role": "Earlier passing input set, superseded by the reviewed final source; not current acceptance."
+    },
+    {
+      "receiptSha256": "7554a682342e592d0326b8632e6d0e5da694292042a0b804fc9d5bb9d01aaf85",
+      "status": "PASS",
+      "checks": [
+        20,
+        20
+      ],
+      "role": "Earlier passing input set, superseded by the reviewed final source; not current acceptance."
+    }
+  ],
+  "reviewRepairs": [
+    "Bounded terminal callback drain including synchronous native blur",
+    "Pending readonly handoff survives ordinary window blur",
+    "Transformed/contained roots, rounded clips and incomplete shadow ancestry refuse placement"
+  ]
+}

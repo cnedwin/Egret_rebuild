@@ -223,3 +223,7 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/web
 ## Windows CI 失败经验治理
 
 每种独立 Windows CI 失败，在重试或准入前使用仓库[白鹭 Windows CI Skill](skills/egret-windows-ci/SKILL.zh-CN.md)与[治理规范](knowledge-base/Cns/docs/windows-ci-governance.md)。保留准确候选／作业／原始证据，核实根因和所有者，选择最小有效的长期修复，记录复用及必需检查；仅在经验会改变后续决定时更新既有根因类别或 Skill。诊断签名不等于已确认根因。保留源码历史、正常钩子、独立评审和保护合并检查，外部未完成观察如实记录。
+
+## 原生文本编辑单元
+
+仅 tests/ui-text-edit-state-unit.test.mjs 可使用已构建 @egret/runtime/ui/editing 入口执行标明的纯 UNIT；普通 UI 行为通过已构建 @egret/engine/ui/editing 门面和真实 Engine／Scope／根验证。原生浏览器用例使用真实 input／textarea 和已准入字体；受控组合输入／粘贴不能代替实体 IME 或剪贴板资格。不新增私有测试导入、原生原型拦截、触摸实现或默认入口扩展，参见双语原生文本编辑契约。

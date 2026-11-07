@@ -9,7 +9,7 @@ import {fingerprintFile, samePhysicalPath, ownerRelativePath} from './lib/file-i
 const root = fileURLToPath(new URL('..', import.meta.url));
 // Preserve the immutable predecessor and authenticate the complete M1.3 successor.
 const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
-if (m13HelperPin.bytes !== 80484 || m13HelperPin.sha256 !== 'eceeafa9cdcca2b6f82871c7c8bfc61e1aa4cb9131f0ca3ff761047d9acfe0f3') throw Error('M1.3 strict helper changed before import');
+if (m13HelperPin.bytes !== 85316 || m13HelperPin.sha256 !== '8d9d3604ca43eefd1d13b63c24023a1bb7347e8248e9b4b7756e00205054ee93') throw Error('M1.3 strict helper changed before import');
 const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
 
 const inventoryPin = {"path":"tests/types/atlas-import-diagnostic-expectations.json","bytes":254943,"sha256":"3d59e24a78708bd0d85f06d6124bced00d5687afcc494d1e919dce1fc9a985c6"};
