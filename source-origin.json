@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 11149,
-      "sha256": "0caf4d6a6d42f50b566dbbe898fcf2d9a7cc18fb8814959786c8749147d6dc87",
+      "bytes": 11191,
+      "sha256": "1f8dddb4c1a9f974751f637598545f1de84a69e63069bcdb4f7dc3d9a7d78e12",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -1084,8 +1084,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/工程规划.md",
-      "bytes": 12918,
-      "sha256": "139a1c143062760ece4e9de6a193d8be16498a9952ba37e7d574dcb518d45cb0",
+      "bytes": 12960,
+      "sha256": "5931d4d35f014783f16285adb6574c6364f26d1f6511d9667079d9a21857c4e8",
       "identityHistory": [
         {
           "bytes": 23962,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "41a64aa20e581382b00823e2562cd7013bcc1c93bfc7d70d938c9aa93ce5c7dd",
+      "sha256": "2d2a6b302d018113a693f7a8ce81c0fc3d0d3f93ee6035a514794a62841247c8",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 12617,
-      "sha256": "74aad2d40bff849c75969c3a74463f5e0c650703954ae262e41bcf6ac87fae02",
+      "bytes": 12659,
+      "sha256": "fde6878106d1e68cbdde3f7c18addf112d745a4bc6311ad74c96fbc8d22c9cc2",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -2684,8 +2684,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-plan.md",
-      "bytes": 15286,
-      "sha256": "07f90705217355ea261d255f31b42a97fb5c4ce94dd12eed38c3b43ec5c7989d",
+      "bytes": 15328,
+      "sha256": "3e93f0f3e58cb3361cd0cd231224d6813fc9f8377307d3ba31e653b12f6f7368",
       "identityHistory": [
         {
           "bytes": 29962,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "0291f633430d960a50d3eed912a9a59655358a12a853cbc3143f7eb58ace18d2",
+      "sha256": "eb1844a17143fce3f8b26930665a5b04792be825acd1181342fc61f9811682c1",
       "bytes": 388378,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -12782,14 +12782,14 @@
     {
       "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 45246,
-      "sha256": "9a62a7145d8028eb1b5cc37ed714189aaa4b2ca389428cf04101e2aee00ce350"
+      "bytes": 45288,
+      "sha256": "1b452a183a033effe94b897445c218bfd9d3349c769e0dd75d5637a5830c5d02"
     },
     {
       "path": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 38056,
-      "sha256": "a9a5b09bff4fe87b992e11878491c236e5f1dfc615d107af4a0551c120d57852"
+      "bytes": 38098,
+      "sha256": "e6cacdccdac28ad31b664aaf02f98367be12370ae240c03172a63e3355d058d0"
     },
     {
       "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -15830,14 +15830,14 @@
     {
       "path": "knowledge-base/en/docs/native-text-editing.md",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 9287,
-      "sha256": "83b4ce956fbff6c45d2870dc1f8e1dd2d2c63558fa7ceb9c55f9e08e64b140e2"
+      "bytes": 9371,
+      "sha256": "dd2daec2aaed3e9279c875436263ed1cc62c20e5631ae950742bb7910735c4a2"
     },
     {
       "path": "knowledge-base/Cns/docs/native-text-editing.md",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 8180,
-      "sha256": "3011405443c17b930375597be7e221e7dc19325945c6d6308e4cf9785687d57f"
+      "bytes": 8264,
+      "sha256": "420adc884bd7060f226d901b4416ab590462dd4c32d4464a7c2439e769cf071f"
     },
     {
       "path": "examples/text-editing/README.md",

@@ -23,7 +23,7 @@ Egret's product direction combines animation-rich 2D games and complex interface
 
 ## Native editing increment — 2026-11-07
 
-M3.3 adds optional native input/textarea editing with committed source/selection/composition, existing paragraph geometry and UI-height publication, paired CSS/paragraph font resources, stable-row retention, failure recovery and complete cleanup. See the [contract](native-text-editing.md) and [form](../../../examples/text-editing/README.md). WebGL2/WebGPU each have 20 actual desktop browser integration checks. This extends the available text/input/UI basis in the tables; actual IME/mobile/system clipboard/semantic qualification, M1.2 performance and full packages remain open. Touch control ownership and fixed fixtures are unchanged.
+M3.3 adds optional native input/textarea editing with committed source/selection/composition, existing paragraph geometry and UI-height publication, paired CSS/paragraph font resources, stable-row retention, failure recovery and complete cleanup. See the [contract](native-text-editing.md) and [form](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.md). WebGL2/WebGPU each have 20 actual desktop browser integration checks. This extends the available text/input/UI basis in the tables; actual IME/mobile/system clipboard/semantic qualification, M1.2 performance and full packages remain open. Touch control ownership and fixed fixtures are unchanged.
 
 ## Implemented packages and entry points
 

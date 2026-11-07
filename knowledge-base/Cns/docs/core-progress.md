@@ -23,7 +23,7 @@
 
 ## 原生编辑增量 — 2026-11-07
 
-M3.3 新增可选原生 input／textarea 编辑，包含已提交文本／选区／组合状态、现有段落几何与 UI 高度发布、CSS／段落配对字体资源、稳定行保留、失败恢复和完整清理。见[契约](native-text-editing.md)与[表单](../../../examples/text-editing/README.zh-CN.md)。WebGL2／WebGPU 各有 20 项实际桌面浏览器整合检查。这扩展了表中已有文字／输入／UI 基础；真实 IME／移动键盘／系统剪贴板／语义资格、M1.2 性能及完整工作包保持未完成，触摸控件所有权和固定夹具不变。
+M3.3 新增可选原生 input／textarea 编辑，包含已提交文本／选区／组合状态、现有段落几何与 UI 高度发布、CSS／段落配对字体资源、稳定行保留、失败恢复和完整清理。见[契约](native-text-editing.md)与[表单](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.zh-CN.md)。WebGL2／WebGPU 各有 20 项实际桌面浏览器整合检查。这扩展了表中已有文字／输入／UI 基础；真实 IME／移动键盘／系统剪贴板／语义资格、M1.2 性能及完整工作包保持未完成，触摸控件所有权和固定夹具不变。
 
 ## 已实现包与入口
 

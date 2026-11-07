@@ -42,7 +42,7 @@ createBrowserEditorFontProvider 将同一不可变 FontContentLoader 根传给�
 
 ## 验证与剩余资格
 
-[可运行表单](../../../examples/text-editing/README.zh-CN.md) 通过公开入口覆盖普通 UI 与虚拟行生命周期。[结果汇总](../../../examples/text-editing/verification-summary.json) 区分纯状态单元、字面量宿主 SDK／类型用例，以及实际桌面 Edge 156.0.4314.58 浏览器运行。WebGL2、WebGPU 各通过 20 项整合检查，包含可信输入／撤销／重做、原生多行 Enter、反向选区、受控组合输入／粘贴、过期事件、布局／密度、字体失败／取消／替换、裁剪行返回、只读交接失败及自有资源归零。WebGPU 运行使用 deviceScaleFactor 2，属于浏览器模拟，不是手机结果。此前失败及修正原因均保留。
+[可运行表单](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.zh-CN.md) 通过公开入口覆盖普通 UI 与虚拟行生命周期。[结果汇总](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/verification-summary.json) 区分纯状态单元、字面量宿主 SDK／类型用例，以及实际桌面 Edge 156.0.4314.58 浏览器运行。WebGL2、WebGPU 各通过 20 项整合检查，包含可信输入／撤销／重做、原生多行 Enter、反向选区、受控组合输入／粘贴、过期事件、布局／密度、字体失败／取消／替换、裁剪行返回、只读交接失败及自有资源归零。WebGPU 运行使用 deviceScaleFactor 2，属于浏览器模拟，不是手机结果。此前失败及修正原因均保留。
 
 真实中日韩输入法／死键、实体 Android／iPhone 键盘与 Emoji 删除、系统剪贴板和辅助技术仍待验收。随附 Noto 集合没有合格的 Emoji fallback；受控 Emoji 用例验证只读准备失败和文本恢复。Native SDK／小游戏宿主需要各自的适配器和证据。M1.2 的 10.3 ms 对 8 ms 目标保持 OPEN。本功能不扩大上述结论或现有触摸贡献者的范围。
 

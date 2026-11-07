@@ -8,7 +8,7 @@ The next phase turns existing components into a usable core workflow. Preserve t
 
 ## M3.3 implementation checkpoint
 
-The first editing increment is implemented through optional runtime/UI/browser editing entries and one [editable form](../../../examples/text-editing/README.md). [Native editing](native-text-editing.md) defines the delivered source/session, row retention, paired-font and publication contracts. Its controlled cases and 20 checks on each desktop shared backend are recorded separately from real IME/device/accessibility qualification. Those rows remain open within #89; no new work package or touch assignment is introduced. The later batches below retain their original dependencies and are not started by this increment.
+The first editing increment is implemented through optional runtime/UI/browser editing entries and one [editable form](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.md). [Native editing](native-text-editing.md) defines the delivered source/session, row retention, paired-font and publication contracts. Its controlled cases and 20 checks on each desktop shared backend are recorded separately from real IME/device/accessibility qualification. Those rows remain open within #89; no new work package or touch assignment is introduced. The later batches below retain their original dependencies and are not started by this increment.
 
 ## Current position
 

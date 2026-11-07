@@ -184,7 +184,7 @@ M3.3 输入／宿主维护者负责此契约和浏览器桥接；M3.1 提供已�
 
 ### 已交付的原生纯文本切片
 
-可选 editing 入口及[原生编辑契约](native-text-editing.md)已实现单行／多行 input／textarea 与现有 UI 发布、段落源几何和字体资源的整合。编辑器专用行令牌在既有额度内允许只读呈现重新发布，公开保留令牌对绑定的锁定不变。桌面浏览器、状态／类型／SDK 及受控组合事件证据见[示例汇总](../../../examples/text-editing/verification-summary.json)。真实 IME／死键／移动键盘、系统剪贴板及无障碍行仍属于 #89／#92 的必需验收；本切片不增加触摸／手势／控件实现。
+可选 editing 入口及[原生编辑契约](native-text-editing.md)已实现单行／多行 input／textarea 与现有 UI 发布、段落源几何和字体资源的整合。编辑器专用行令牌在既有额度内允许只读呈现重新发布，公开保留令牌对绑定的锁定不变。桌面浏览器、状态／类型／SDK 及受控组合事件证据见[示例汇总](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/verification-summary.json)。真实 IME／死键／移动键盘、系统剪贴板及无障碍行仍属于 #89／#92 的必需验收；本切片不增加触摸／手势／控件实现。
 
 ## 6. M3.4——无障碍控件、皮肤与完整 UI 场景
 

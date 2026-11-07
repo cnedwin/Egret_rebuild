@@ -184,7 +184,7 @@ The [Pointer Events specification](https://www.w3.org/TR/pointerevents3/) inform
 
 ### Delivered native plain-text slice
 
-The optional editing entries and [native editing contract](native-text-editing.md) now implement single-line/multiline input/textarea integration with existing UI publication, paragraph source geometry and font resources. An editor-only row token permits readonly re-publication under the existing caps; public retained-binding locks remain unchanged. Desktop browser, state/type/SDK and controlled composition evidence are recorded in the [example summary](../../../examples/text-editing/verification-summary.json). Real IME/dead-key/mobile keyboard, system clipboard and accessibility rows remain required in #89/#92. This slice adds no touch/gesture/control implementation.
+The optional editing entries and [native editing contract](native-text-editing.md) now implement single-line/multiline input/textarea integration with existing UI publication, paragraph source geometry and font resources. An editor-only row token permits readonly re-publication under the existing caps; public retained-binding locks remain unchanged. Desktop browser, state/type/SDK and controlled composition evidence are recorded in the [example summary](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/verification-summary.json). Real IME/dead-key/mobile keyboard, system clipboard and accessibility rows remain required in #89/#92. This slice adds no touch/gesture/control implementation.
 
 ## 6. M3.4 — accessible controls, skins and the integrated UI scenario
 
