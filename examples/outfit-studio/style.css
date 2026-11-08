@@ -19,3 +19,17 @@ button:disabled { opacity: .58; }
 :focus-visible { outline: 3px solid #3285d7; outline-offset: 2px; }
 canvas:focus-visible { outline-offset: -3px; }
 #status { min-height: 24px; color: #315170; }
+
+.touch-hint { display: none; }
+.studio-fixed main { width: min(100% - 32px, 1024px); }
+.studio-phone main {
+  width: 100%; margin: 0;
+  padding: max(4px, env(safe-area-inset-top)) max(4px, env(safe-area-inset-right))
+    max(4px, env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left));
+}
+.studio-phone header, .studio-phone main > p:not(.touch-hint, #status) { display: none; }
+.studio-phone .viewport { display: grid; place-items: center; margin: 0; overflow: visible; }
+.studio-phone .touch-hint { display: block; margin: 2px 0; font-size: 11px; }
+.studio-phone .toolbar { gap: 4px; }
+.studio-phone .toolbar button { padding: 2px 4px; font-size: 11px; }
+.studio-phone #status { margin: 2px 0; min-height: 0; font-size: 11px; }

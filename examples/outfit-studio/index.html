@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Egret Outfit Studio / 白鹭换装工作室</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="style.css">
@@ -55,15 +55,18 @@
         <h1>Outfit Studio <span lang="zh-CN">换装工作室</span></h1>
       </div>
       <nav aria-label="Rendering backend / 渲染后端">
-        <a href="?backend=webgpu">WebGPU</a>
-        <a href="?backend=webgl2">WebGL2</a>
+        <a data-backend="webgpu" href="?backend=webgpu">WebGPU</a>
+        <a data-backend="webgl2" href="?backend=webgl2">WebGL2</a>
       </nav>
     </header>
     <p>Choose a character, try an outfit, then open Details to rename them. Use the mouse or Tab and Enter.</p>
     <p lang="zh-CN">选择角色并试穿装扮，在详情里重命名。可以使用鼠标，或按 Tab 和 Enter 操作。</p>
+    <p class="profile-links"><a href="?profile=x-d60">Fixed desktop / 固定桌面</a> ·
+      <a href="?profile=x-mtouch&amp;backend=webgl2">Mobile touch / 移动触摸</a></p>
     <div class="viewport">
       <canvas width="960" height="520" tabindex="0" aria-label="Character roster and outfit preview / 角色列表与换装预览"></canvas>
     </div>
+    <p class="touch-hint">Hold + to move, tap ■ to act, or use two fingers in the scene. / 按住 ＋ 移动，点 ■ 动作，双指操作场景。</p>
     <div class="toolbar">
       <button id="pause" disabled>Pause preview / 暂停预览</button>
       <button id="download" disabled>Export project / 导出工程</button>
