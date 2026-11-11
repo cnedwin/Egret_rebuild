@@ -1355,6 +1355,7 @@ for (const file of [...files(path.join(root,'packages/engine/src')),...files(pat
 // finite additions leave all retained WebGPU closure/capture policies intact.
 const glValues = ['createSharedWebGL2Host'];
 const glTypes = ['SharedWebGL2HostOptions','SharedWebGL2Host','SharedWebGL2HostStatus','SharedWebGL2Readback','WebGL2HostState','WebGL2HostErrorCode','WebGL2HostFailure','WebGL2HostDiagnostic','WebGL2HostStatus'];
+const glLayerTypes = ['SharedLayerWebGL2Host','SharedWebGL2Layer2D','SharedWebGL2LayerPlacement2D','SharedWebGL2LayerStatus'];
 const glSceneValues = ['createSharedSceneWebGL2Host'];
 const glSceneTypes = ['SharedSceneWebGL2Host','SharedSceneWebGL2HostOptions'];
 const glFacade = await import('@egret/engine/webgl2');
@@ -1371,14 +1372,15 @@ const glFacadeRules = [
 for (const [stem,valueClause,typeClauses] of glFacadeRules) {
   for (const [directory,suffix] of [['web','.ts'],['dist/web','.js'],['dist/web','.d.ts']]) {
     const file='packages/engine/'+directory+'/'+stem+suffix;
-    const expected=(valueClause+(suffix==='.js'?'':typeClauses+m15SharedHostTypeClauses)).replace(/\s+/g,'');
+    const currentTypes=stem==='webgl2'?typeClauses.replace('SharedWebGL2Host,','SharedWebGL2Host,'+glLayerTypes.join(',')+','):typeClauses;
+    const expected=(valueClause+(suffix==='.js'?'':currentTypes+m15SharedHostTypeClauses)).replace(/\s+/g,'');
     if (sceneRead(file).replace(/\s+/g,'')!==expected) throw new Error('M14: exact WebGL2 forwarding/type erasure mismatch: '+file);
   }
 }
 const glModuleNames = ['webgl2','webgl2Scene3d','WebGL2Host','webgl2Types','webgl2Native','sharedWebGL2Options','sharedWebGL2Arena','sharedWebGL2Shaders','sharedWebGL2Scene'];
 const glPrivateNames = ['createSharedSceneWebGL2HostInternal','SharedGLHost','GLNativeKind','GLNativeOwner','GLNativeSession','glFailure','isGLFailure',
   'SharedWebGL2Configuration','admitSharedWebGL2Options','SharedWebGL2ArenaStrides','SharedWebGL2ArenaPlan','SharedWebGL2ArenaOwner','qualifySharedWebGL2Alignment','planSharedWebGL2Arenas','checkSharedWebGL2ArenaCapacity',
-  'sharedWebGL2VertexSource','sharedWebGL2FragmentSource','sharedWebGL2ResolveVertexSource','sharedWebGL2ResolveFragmentSource','sharedWebGL2BlendFactors',
+  'sharedWebGL2VertexSource','sharedWebGL2FragmentSource','sharedWebGL2ResolveVertexSource','sharedWebGL2ResolveFragmentSource','sharedWebGL2BlendFactors','sharedWebGL2LayerVertexSource','sharedWebGL2LayerFragmentSource',
   'SharedGLScenePreparationReason','SharedGLScenePreparationError','SharedGLSceneAdmission','SharedGLSceneDraw','PreparedSharedGLScene','admitSharedGLScene','prepareSharedGLScene','SHARED_GL_SCENE_LAYOUT','SHARED_GL_SCENE_VERTEX','SHARED_GL_SCENE_FRAGMENT'];
 const glOtherEntryFiles = [
   ...Object.entries(assetGroupSourceEntries).map(([name,source])=>[name,source]),
@@ -1389,7 +1391,7 @@ const glOtherEntryFiles = [
 for (const [entry,source] of glOtherEntryFiles) {
   const emitted=source.replace('/src/','/dist/').replace('/web/','/dist/web/').replace('/rendering/','/dist/rendering/').replace(/\.ts$/,'');
   const text=[sceneRead(source),sceneRead(emitted+'.js'),sceneRead(emitted+'.d.ts')].join('\n');
-  for (const name of [...glValues,...glTypes,...glSceneValues,...glSceneTypes,...glPrivateNames,...glModuleNames])
+  for (const name of [...glValues,...glTypes,...glLayerTypes,...glSceneValues,...glSceneTypes,...glPrivateNames,...glModuleNames])
     if (new RegExp('\\b'+name+'\\b').test(text)) throw new Error('M14: explicit-only WebGL2 name leaked: '+entry+'/'+name);
 }
 for (const [entry,values,stem] of [['webgl2',glFacade,'packages/engine/dist/web/webgl2'],['webgl2/scene3d',glSceneFacade,'packages/engine/dist/web/webgl2Scene3d']]) {

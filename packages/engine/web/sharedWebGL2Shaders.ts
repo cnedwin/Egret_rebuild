@@ -1,5 +1,26 @@
 import type { SharedMaterial2D } from '@egret/contracts';
 
+// A framebuffer has its first row at the bottom; frame destinations start at the top.
+export const sharedWebGL2LayerVertexSource = `#version 300 es
+precision highp float;
+uniform vec2 origin, extent, viewportSize;
+out vec2 layerUV;
+const vec2 corners[6] = vec2[6](vec2(0,0), vec2(0,1), vec2(1,0), vec2(1,0), vec2(0,1), vec2(1,1));
+void main() {
+    vec2 corner = corners[gl_VertexID];
+    vec2 position = (origin + extent * corner) / viewportSize;
+    gl_Position = vec4(2.0 * position.x - 1.0, 1.0 - 2.0 * position.y, 0.0, 1.0);
+    layerUV = vec2(corner.x, 1.0 - corner.y);
+}`;
+
+// Sampling an sRGB attachment recovers its linear premultiplied values.
+export const sharedWebGL2LayerFragmentSource = `#version 300 es
+precision highp float;
+uniform sampler2D layerTexture;
+in vec2 layerUV;
+out vec4 color;
+void main() { color = texture(layerTexture, layerUV); }`;
+
 // The original 128-byte payload is three float vectors followed by five uint vectors.
 // Keep this identical in both stages; the Host verifies active offsets and block size.
 const DRAW_UNIFORM = `layout(std140) uniform DrawUniform {

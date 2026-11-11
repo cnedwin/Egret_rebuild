@@ -16,7 +16,7 @@ M1.4 includes actual WebGL context restoration. M1.5 separately owns unified dev
 
 | Entry | Sole runtime export | Erased exports |
 | --- | --- | --- |
-| `@egret/engine/webgl2` | `createSharedWebGL2Host(options): SharedWebGL2Host` | `SharedWebGL2Host`, `SharedWebGL2HostOptions`, `SharedWebGL2HostStatus`, `SharedWebGL2Readback`, `WebGL2HostState`, `WebGL2HostErrorCode`, `WebGL2HostFailure`, `WebGL2HostDiagnostic`, `WebGL2HostStatus` |
+| `@egret/engine/webgl2` | `createSharedWebGL2Host(options): SharedLayerWebGL2Host` | `SharedWebGL2Host`, `SharedLayerWebGL2Host`, `SharedWebGL2Layer2D`, `SharedWebGL2LayerPlacement2D`, `SharedWebGL2LayerStatus`, `SharedWebGL2HostOptions`, `SharedWebGL2HostStatus`, `SharedWebGL2Readback`, `WebGL2HostState`, `WebGL2HostErrorCode`, `WebGL2HostFailure`, `WebGL2HostDiagnostic`, `WebGL2HostStatus` |
 | `@egret/engine/webgl2/scene3d` | `createSharedSceneWebGL2Host(options): SharedSceneWebGL2Host` | `SharedSceneWebGL2Host`, `SharedSceneWebGL2HostOptions` |
 
 The default Engine, Canvas and existing WebGPU entries keep their interfaces. Ordinary GL does not load the optional scene assembly. Scene assembly is fixed first-party code, never a caller-provided protocol.
@@ -29,6 +29,18 @@ The default Engine, Canvas and existing WebGPU entries keep their interfaces. Or
 - `requestReadback(): Promise<SharedWebGL2Readback>`, `getStatus(): WebGL2HostStatus`, `getSharedStatus(): SharedWebGL2HostStatus`.
 
 It has no `renderFrame` or `renderTexturedFrame` compatibility method. Existing `createEngineForProfile` negotiates it without a new profile or core branch. The scene Host adds `renderSceneSharedFrame(scene: SceneFrame3D, overlay: SharedRenderFrame2D): undefined` and `getSceneStatus()`, returning immutable `{host, pendingSceneBytes, pendingUniformBytes, pendingDepthBytes}`. Both inputs must be genuine public values; scene output and overlay are opaque.
+
+## Cached 2D layers
+
+The WebGL2 factory returns `SharedLayerWebGL2Host`, which extends the existing host interface. Use one `SharedWebGL2Layer2D` per map chunk or static draw group. Each `update(frame)` accepts an immutable Engine capture with transparent clear, premultiplied output, integral pixel dimensions, normal source-over rectangles and images, and ordinary clipping. The host bakes at one texel per source unit using the shared painter and the same image-page residency as ordinary draws.
+
+Pass the visible layers in painter order to `renderSharedFrameWithLayers(frame, placements)`. Each placement has `layer`, `x`, `y`, `width` and `height`. Bounds use the ordinary frame's logical coordinates and scale with the host pixel ratio. The host samples the layer with nearest filtering, composites it over the frame's clear and paints the ordinary frame above it. Higher DPR scales the placement; source detail follows the bake dimensions. Keep interleaved occluders, actors and UI in the ordinary frame. A camera move changes placements. A map edit captures and updates the affected chunks. When a changed tile spans chunk edges, update each chunk touched by the old or new footprint.
+
+Await `update` before first placement. A replacement leaves the last ready revision available until the new bake completes. Submitted frames pin the revision they sampled. `dispose()` removes the layer from future submissions and releases its textures when those frames retire. The host admits at most 512 live handles, 512 placements per frame, 2,048 pixels per target edge and 32 MiB of cached RGBA8 targets including pending and pinned superseded revisions. The existing device, frame and backpressure limits also apply. `getSharedLayerStatus()` reports logical target bytes and counts of ready and pending handles. A disposed handle exits those counts immediately; its in-flight textures remain charged until retirement. Image uploads are tracked by the ordinary shared resource diagnostics.
+
+After context loss, previously ready layers become `stale`. Retain the application's recipes or source captures and update them after `whenReady()`. Choose the direct painter or CPU bake as an application fallback while the cache is unavailable. Host close disposes all layer handles. This first slice covers the explicit WebGL2 2D route. WebGPU layers, scene-layer effects and depth-aware world composition have separate acceptance.
+
+Run `node tools/verify-webgl2-layer-cache.mjs <playwright-root> <fresh-output>` for the native Edge reference. The fixture checks DPR 2 placement, painter order, transparency, asymmetric row orientation, camera reuse, actual context loss and explicit rebuild. The same synthetic reference on physical Android Chrome 157 (Samsung SM-F966U1, Adreno 830) produced two byte-identical cached/direct frames, zero additional uploads during placement and a byte-identical explicit rebuild after native loss. See [M4.2 qualification](m4-core-acceptance-plan.md) for performance and device acceptance.
 
 `SharedWebGL2HostOptions` requires `canvas: HTMLCanvasElement`; `onDiagnostic?: (diagnostic: WebGL2HostDiagnostic) => unknown` is optional. The remaining options are:
 

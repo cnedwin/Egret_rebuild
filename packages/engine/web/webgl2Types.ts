@@ -14,7 +14,8 @@ export type WebGL2HostErrorCode =
     'WEBGL2_RESTORE_FAILED' | 'WEBGL2_RESTORE_TIMEOUT' | 'WEBGL2_READBACK_DISABLED' | 'WEBGL2_READBACK_PENDING' | 'WEBGL2_READBACK_FAILED' |
     'WEBGL2_SYNC_FAILED' | 'WEBGL2_SYNC_TIMEOUT' | 'WEBGL2_DIAGNOSTIC_CALLBACK_FAILED' | 'WEBGL2_CLOSE_UNSAFE' |
     'WEBGL2_UPLOAD_INVALID' | 'WEBGL2_UPLOAD_OPTIONS_INVALID' | 'WEBGL2_UPLOAD_NOT_READY' | 'WEBGL2_UPLOAD_USED' |
-    'WEBGL2_UPLOAD_DISPOSED' | 'WEBGL2_UPLOAD_ABORTED' | 'WEBGL2_UPLOAD_EXPIRED' | 'WEBGL2_UPLOAD_STALE';
+    'WEBGL2_UPLOAD_DISPOSED' | 'WEBGL2_UPLOAD_ABORTED' | 'WEBGL2_UPLOAD_EXPIRED' | 'WEBGL2_UPLOAD_STALE' |
+    'WEBGL2_LAYER_INVALID' | 'WEBGL2_LAYER_BUDGET' | 'WEBGL2_LAYER_NOT_READY' | 'WEBGL2_LAYER_PENDING' | 'WEBGL2_LAYER_DISPOSED';
 export interface WebGL2HostFailure {
     readonly code: WebGL2HostErrorCode;
     readonly serial: number | null;
@@ -61,6 +62,26 @@ export interface SharedWebGL2HostStatus {
         readonly unknownNativeBytes: number; readonly unknownNativeObjects: number;
     };
 }
+export interface SharedWebGL2Layer2D {
+    readonly state: 'empty' | 'ready' | 'stale' | 'disposed';
+    /** Bake a transparent Engine capture. The current revision remains usable until the replacement completes. */
+    update(frame: SharedRenderFrame2D): Promise<void>;
+    dispose(): void;
+}
+export interface SharedWebGL2LayerPlacement2D {
+    readonly layer: SharedWebGL2Layer2D;
+    /** Destination bounds in logical frame coordinates, before the host pixel ratio. */
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+}
+export interface SharedWebGL2LayerStatus {
+    /** Logical RGBA8 bytes for live targets, including pending and pinned superseded revisions. */
+    readonly residentBytes: number;
+    readonly readyLayers: number;
+    readonly pendingLayers: number;
+}
 export interface SharedWebGL2Host extends SharedRenderHostAdapter {
     readonly surface: HTMLCanvasElement;
     start(): Promise<void>;
@@ -74,6 +95,11 @@ export interface SharedWebGL2Host extends SharedRenderHostAdapter {
     getSessionStatus(): SharedDeviceSessionStatus<WebGL2HostFailure>;
     stageSharedFrame(frame: SharedRenderFrame2D, options?: SharedFrameUploadOptions): SharedFrameUpload;
     setTimeout(callback: () => void, delayMs: number): () => void;
+}
+export interface SharedLayerWebGL2Host extends SharedWebGL2Host {
+    createSharedLayer2D(): SharedWebGL2Layer2D;
+    renderSharedFrameWithLayers(frame: SharedRenderFrame2D, layers: readonly SharedWebGL2LayerPlacement2D[]): undefined;
+    getSharedLayerStatus(): SharedWebGL2LayerStatus;
 }
 export interface SharedSceneWebGL2Host extends SharedWebGL2Host {
     renderSceneSharedFrame(scene: SceneFrame3D, overlay: SharedRenderFrame2D): undefined;

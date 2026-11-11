@@ -12,7 +12,7 @@ import type { SharedWebGL2HostOptions, SharedSceneWebGL2HostOptions, SharedWebGL
 import type { SharedSceneWebGL2Host } from './webgl2Types.js';
 import type { SceneFrame3D } from '../rendering/sceneFrame3D.js';
 import type { PreparedSharedGLScene } from './sharedWebGL2Scene.js';
-import type { SharedWebGL2Host, SharedWebGL2Readback, SharedWebGL2HostStatus, WebGL2HostState, WebGL2HostStatus, WebGL2HostFailure, WebGL2HostErrorCode, WebGL2HostDiagnostic } from './webgl2Types.js';
+import type { SharedLayerWebGL2Host, SharedWebGL2Layer2D, SharedWebGL2LayerPlacement2D, SharedWebGL2LayerStatus, SharedWebGL2Readback, SharedWebGL2HostStatus, WebGL2HostState, WebGL2HostStatus, WebGL2HostFailure, WebGL2HostErrorCode, WebGL2HostDiagnostic } from './webgl2Types.js';
 import { prepareSharedDraws2D, SharedPreparationError } from '../rendering/prepareSharedDraws2D.js';
 import { GeometryPreparationError } from '../rendering/prepareRectangles2D.js';
 import { packSharedDraws2D } from '../rendering/packSharedDraws2D.js';
@@ -30,7 +30,7 @@ import { createRetentionLedger } from './sharedRetentionLedger.js';
 import type { RetentionLedger, LedgerLease, LedgerHandle, LedgerPlan, KeyedRetentionRequest, RetentionLedgerDiagnostics, NativeUnknownDiagnostics } from './sharedRetentionLedger.js';
 import { GLNativeSession, glFailure, isGLFailure } from './webgl2Native.js';
 import type { GLNativeOwner, GLNativeResourceDiagnostics } from './webgl2Native.js';
-import { sharedWebGL2VertexSource, sharedWebGL2FragmentSource, sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragmentSource, sharedWebGL2BlendFactors } from './sharedWebGL2Shaders.js';
+import { sharedWebGL2VertexSource, sharedWebGL2FragmentSource, sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragmentSource, sharedWebGL2BlendFactors, sharedWebGL2LayerVertexSource, sharedWebGL2LayerFragmentSource } from './sharedWebGL2Shaders.js';
 
 function deferred<T>(): {promise:Promise<T>;resolve:(value:T)=>void;reject:(cause:unknown)=>void} {
     let resolve!:(value:T)=>void, reject!:(cause:unknown)=>void;
@@ -46,7 +46,33 @@ type Lease = LedgerLease<Request,GLNativeOwner>;
 type Handle = LedgerHandle<Request,GLNativeOwner>;
 type Ticket = ReturnType<typeof deferred<SharedWebGL2Readback>> & {bound:boolean};
 interface Page {readonly source:ImageData2D;readonly native:GLNativeOwner;readonly generation:number;ready:boolean;pins:number;}
+const MAX_LAYER_HANDLES=512;
+const MAX_LAYER_EXTENT=2048;
+const MAX_LAYER_BYTES=32*1024*1024;
+interface LayerRevision {
+    readonly owner:GLNativeOwner;
+    readonly native:GLNativeSession;
+    pins:number;
+    retained:boolean;
+}
+interface LayerSlot {ready:LayerRevision|undefined;pending:LayerWrite|undefined;wasReady:boolean;disposed:boolean;}
+interface LayerWrite {
+    readonly slot:LayerSlot;
+    readonly done:ReturnType<typeof deferred<void>>;
+    submitted:boolean;
+    revision:LayerRevision|undefined;
+}
+interface LayerRead {readonly revision:LayerRevision;readonly x:number;readonly y:number;readonly width:number;readonly height:number;}
+interface LayerProgram {
+    readonly program:WebGLProgram;
+    readonly origin:WebGLUniformLocation|null;
+    readonly extent:WebGLUniformLocation|null;
+    readonly viewport:WebGLUniformLocation|null;
+    readonly texture:WebGLUniformLocation|null;
+}
+type LayerInput={readonly write:LayerWrite}|{readonly placements:readonly SharedWebGL2LayerPlacement2D[]};
 interface PreparedRecord {
+    layerWrite:LayerWrite|undefined;layerReads:LayerRead[]|undefined;
     storage:SharedSubmissionStorage2D;arena:SharedWebGL2ArenaPlan;batch:PreparedSharedBatchPlan2D;
     canonicalBytes:number;projections:(Uint8Array<ArrayBuffer>|undefined)[];ticket:Ticket|undefined;
     hits:Map<number,Page>;scene:PreparedSharedGLScene|undefined;
@@ -86,12 +112,14 @@ interface Record2D {
     readback:SharedWebGL2Readback|undefined;
     ticket:Ticket|undefined;pbo:GLNativeOwner|undefined;sync:GLNativeOwner|undefined;
     failure:unknown;retired:boolean;deadline:number;
+    layerWrite?:LayerWrite;
+    layerReads?:LayerRead[];
     upload?:UploadWork;
     completion?:ReturnType<typeof deferred<void>>;
 }
 interface Limits {texture:number;renderbuffer:number;viewportWidth:number;viewportHeight:number;alignment:number;}
 
-class SharedGLHost implements SharedWebGL2Host {
+class SharedGLHost implements SharedLayerWebGL2Host {
     public readonly surface:HTMLCanvasElement;
     public readonly sharedFrameProfile = SHARED_FRAME_PROFILE_2D;
     private readonly options:SharedWebGL2Configuration;
@@ -134,6 +162,10 @@ class SharedGLHost implements SharedWebGL2Host {
     private readonly records = new Set<Record2D>();
     private readonly settledHandles = new WeakSet<object>();
     private readonly pages = new Map<ImageData2D,Page>();
+    private readonly layers=new Map<SharedWebGL2Layer2D,LayerSlot>();
+    private readonly layerGarbage=new Set<LayerRevision>();
+    private layerBytes=0;
+    private layerProgram:LayerProgram|undefined;
     private ticket:Ticket|undefined;
     private limits:Limits|undefined;
     private framebuffer:WebGLFramebuffer|undefined;
@@ -312,7 +344,9 @@ class SharedGLHost implements SharedWebGL2Host {
         const canRestore=this.state==='active'||this.state==='restoring';
         this.lossToken=this.token;
         const cause=this.note('WEBGL2_CONTEXT_LOST',undefined,'context');
-        this.native?.lose();this.pool.invalidate();this.pages.clear();this.resourceReadyBytes=0;this.resourcePinnedBytes=0;this.resourcePinnedEntries=0;this.sampleResourceImages();this.rejectUnbound(cause);
+        this.native?.lose();
+        for(const slot of this.layers.values())this.dropLayer(slot);
+        this.pool.invalidate();this.pages.clear();this.resourceReadyBytes=0;this.resourcePinnedBytes=0;this.resourcePinnedEntries=0;this.sampleResourceImages();this.rejectUnbound(cause);
         for(const handle of this.pool.detachIdleForClose())if(!this.settledHandles.has(handle)){
             this.pool.settled(handle,'context-invalidated');this.settledHandles.add(handle);
         }
@@ -327,7 +361,7 @@ class SharedGLHost implements SharedWebGL2Host {
             },this.options.restoreTimeoutMs);
         }else{this.state=wasClosing?'closing':wasStopped?'stopped':'failed';this.ready?.reject(cause);this.cancelRestore();}
         this.revokeUploads(cause);
-        if(!this.busy)this.retireLost();
+        if(!this.busy){this.retireLost();this.sweepLayers();}
     }
     private retireLost():void {for(const record of [...this.records])if(record.native.invalidated)this.retire(record);}
     private async initialize(restoring:boolean):Promise<void> {
@@ -339,7 +373,7 @@ class SharedGLHost implements SharedWebGL2Host {
             if(this.generation>=Number.MAX_SAFE_INTEGER||(restoring&&this.attempt>=Number.MAX_SAFE_INTEGER))throw glFailure('WEBGL2_GENERATION_EXHAUSTED');
             if(restoring)this.attempt++;
             // Fixed native handles never cross a context generation, including partial startup.
-            this.framebuffer=undefined;this.program=undefined;this.resolveProgram=undefined;this.effectPrograms.clear();
+            this.framebuffer=undefined;this.program=undefined;this.resolveProgram=undefined;this.layerProgram=undefined;this.effectPrograms.clear();
             this.drawVAO=undefined;this.resolveVAO=undefined;this.sceneVAO=undefined;this.sceneProgram=undefined;
             this.limits=undefined;this.native=undefined;
             this.generation++;this.token={};const token=this.token;
@@ -410,6 +444,137 @@ class SharedGLHost implements SharedWebGL2Host {
     private arenaOwner():{pendingVertexArenaBytes:number;pendingUniformArenaBytes:number} {
         let pendingVertexArenaBytes=0,pendingUniformArenaBytes=0;for(const r of this.records){pendingVertexArenaBytes+=r.arena.vertexBytes;pendingUniformArenaBytes+=r.arena.uniformBytes;}return {pendingVertexArenaBytes,pendingUniformArenaBytes};
     }
+
+    public createSharedLayer2D():SharedWebGL2Layer2D {
+        this.active();
+        if(this.busy)throw glFailure('WEBGL2_REENTRANT');
+        if(this.layers.size>=MAX_LAYER_HANDLES)throw glFailure('WEBGL2_LAYER_BUDGET');
+        const slot:LayerSlot={ready:undefined,pending:undefined,wasReady:false,disposed:false};
+        const host=this;
+        const handle:SharedWebGL2Layer2D=Object.freeze({
+            get state(){
+                if(slot.disposed||host.state==='closing'||host.state==='closed')return 'disposed';
+                if(host.state==='active'&&slot.ready?.owner.outcome==='owned')return 'ready';
+                return slot.wasReady?'stale':'empty';
+            },
+            update:(frame:SharedRenderFrame2D)=>this.updateLayer(slot,frame),
+            dispose:()=>this.disposeLayer(handle,slot),
+        });
+        this.layers.set(handle,slot);
+        return handle;
+    }
+    public getSharedLayerStatus():SharedWebGL2LayerStatus {
+        let readyLayers=0,pendingLayers=0;
+        for(const slot of this.layers.values()){
+            if(slot.ready?.owner.outcome==='owned')readyLayers++;
+            if(slot.pending)pendingLayers++;
+        }
+        return Object.freeze({readyLayers,pendingLayers,residentBytes:this.layerBytes});
+    }
+    public renderSharedFrameWithLayers(frame:SharedRenderFrame2D,layers:readonly SharedWebGL2LayerPlacement2D[]):undefined {
+        return this.renderOwned(frame,undefined,false,undefined,{placements:layers});
+    }
+    private updateLayer(slot:LayerSlot,frame:SharedRenderFrame2D):Promise<void> {
+        const done=deferred<void>();
+        const write:LayerWrite={slot,done,submitted:false,revision:undefined};
+        try{
+            if(slot.disposed)throw glFailure('WEBGL2_LAYER_DISPOSED');
+            this.active();
+            if(this.busy)throw glFailure('WEBGL2_REENTRANT');
+            if(slot.pending)throw glFailure('WEBGL2_LAYER_PENDING');
+            slot.pending=write;
+            this.renderOwned(frame,undefined,false,undefined,{write});
+        }catch(cause){
+            if(!write.submitted&&slot.pending===write)slot.pending=undefined;
+            done.reject(cause);
+        }
+        return done.promise;
+    }
+    private disposeLayer(handle:SharedWebGL2Layer2D,slot:LayerSlot):void {
+        if(slot.disposed)return;
+        slot.disposed=true;
+        this.layers.delete(handle);
+        slot.pending?.done.reject(glFailure('WEBGL2_LAYER_DISPOSED'));
+        this.dropLayer(slot);
+        if(!this.busy){
+            this.busy=true;this.cpu=deferred<void>();this.phase='poll';
+            try{this.sweepLayers();}
+            finally{this.phase=undefined;this.busy=false;this.retireLost();this.cpu.resolve();}
+        }
+    }
+    private dropLayer(slot:LayerSlot):void {
+        const revision=slot.ready;
+        slot.ready=undefined;
+        if(revision){
+            revision.retained=false;
+            if(revision.pins===0)this.layerGarbage.add(revision);
+        }
+    }
+    private sweepLayers():void {
+        for(const revision of this.layerGarbage){
+            this.layerGarbage.delete(revision);this.layerBytes-=revision.owner.bytes;
+            const native=revision.native;
+            if(!native.cleanup(revision.owner)){
+                this.unsafe=true;
+                const failure=this.note('WEBGL2_CLOSE_UNSAFE',native.cleanupFailure?.cause,'cleanup');
+                if(this.state==='active'){this.state='failed';this.revokeUploads(failure);}
+            }
+            if(native.invalidated&&native===this.native)this.onLoss();
+        }
+    }
+    private readLayers(input:readonly SharedWebGL2LayerPlacement2D[]):LayerRead[] {
+        if(!Array.isArray(input))throw glFailure('WEBGL2_LAYER_INVALID');
+        const count=input.length;
+        if(count>MAX_LAYER_HANDLES)throw glFailure('WEBGL2_LAYER_BUDGET');
+        if(!Number.isSafeInteger(count)||count<0)throw glFailure('WEBGL2_LAYER_INVALID');
+        const reads:LayerRead[]=[];
+        const ratio=this.options.pixelRatio;
+        for(let index=0;index<count;index++){
+            const item=input[index];
+            if(!item||typeof item!=='object')throw glFailure('WEBGL2_LAYER_INVALID');
+            const {layer,x,y,width,height}=item;
+            this.active();
+            const slot=this.layers.get(layer);
+            if(!slot)throw glFailure('WEBGL2_LAYER_INVALID');
+            const revision=slot.ready;
+            if(!revision||revision.native!==this.native||revision.owner.outcome!=='owned')throw glFailure('WEBGL2_LAYER_NOT_READY');
+            if(typeof x!=='number'||typeof y!=='number'||typeof width!=='number'||typeof height!=='number'||width<=0||height<=0)throw glFailure('WEBGL2_LAYER_INVALID');
+            const physicalX=x*ratio,physicalY=y*ratio,physicalWidth=width*ratio,physicalHeight=height*ratio;
+            if(![physicalX,physicalY,physicalWidth,physicalHeight,physicalX+physicalWidth,physicalY+physicalHeight]
+                .every(value=>Number.isFinite(value)&&Math.abs(value)<=8388608))throw glFailure('WEBGL2_LAYER_INVALID');
+            reads.push({revision,x:physicalX,y:physicalY,width:physicalWidth,height:physicalHeight});
+        }
+        // A later placement getter may have disposed an earlier revision.
+        if(reads.some(read=>!read.revision.retained))throw glFailure('WEBGL2_LAYER_NOT_READY');
+        return reads;
+    }
+    private finishLayerRecord(record:Record2D):void {
+        for(const read of record.layerReads??[])this.unpinLayer(read.revision);
+        const write=record.layerWrite;
+        if(!write){this.sweepLayers();return;}
+        const {slot,revision}=write;
+        let failure=record.failure;
+        if(!failure&&slot.disposed)failure=glFailure('WEBGL2_LAYER_DISPOSED');
+        if(!failure&&(this.state!=='active'||record.native.invalidated))failure=this.stateError();
+        if(!failure&&this.unsafe)failure=glFailure('WEBGL2_CLOSE_UNSAFE',record.native.cleanupFailure?.cause);
+        if(!failure&&revision?.owner.outcome!=='owned')failure=glFailure('WEBGL2_RENDER_FAILED');
+        if(!failure&&revision){
+            // Publish after the completion proof. Readers of the old revision keep their own pins.
+            this.dropLayer(slot);revision.retained=true;slot.ready=revision;slot.wasReady=true;
+        }
+        if(revision)this.unpinLayer(revision);
+        this.sweepLayers();
+        if(!failure&&this.unsafe)failure=glFailure('WEBGL2_CLOSE_UNSAFE',record.native.cleanupFailure?.cause);
+        if(!failure&&(this.state!=='active'||record.native.invalidated))failure=this.stateError();
+        slot.pending=undefined;
+        if(!failure&&slot.disposed)failure=glFailure('WEBGL2_LAYER_DISPOSED');
+        if(failure)write.done.reject(failure);else write.done.resolve();
+    }
+    private unpinLayer(revision:LayerRevision):void {
+        revision.pins--;
+        if(revision.pins===0&&!revision.retained)this.layerGarbage.add(revision);
+    }
+
     public renderSharedFrame(input:SharedRenderFrame2D):undefined {
         return this.renderOwned(input);
     }
@@ -420,9 +585,9 @@ class SharedGLHost implements SharedWebGL2Host {
         this.active();if(this.busy)throw glFailure('WEBGL2_REENTRANT');
         return this.renderOwned(input,scene,withScene,{options,token:this.token,end:clock()+10000,signal:undefined});
     }
-    private renderOwned(input:SharedRenderFrame2D,sceneInput?:SceneFrame3D,withScene?:boolean):undefined;
+    private renderOwned(input:SharedRenderFrame2D,sceneInput?:SceneFrame3D,withScene?:boolean,staging?:undefined,layerInput?:LayerInput):undefined;
     private renderOwned(input:SharedRenderFrame2D,sceneInput:SceneFrame3D|undefined,withScene:boolean,staging:StageInput):SharedFrameUpload;
-    private renderOwned(input:SharedRenderFrame2D,sceneInput?:SceneFrame3D,withScene=false,staging?:StageInput):undefined|SharedFrameUpload {
+    private renderOwned(input:SharedRenderFrame2D,sceneInput?:SceneFrame3D,withScene=false,staging?:StageInput,layerInput?:LayerInput):undefined|SharedFrameUpload {
         this.active();if(this.busy)throw glFailure('WEBGL2_REENTRANT');
         this.busy=true;this.cpu=deferred<void>();this.phase='render';let batch:PreparedSharedBatchPlan2D|undefined;let materialized=0;
         try{
@@ -432,13 +597,23 @@ class SharedGLHost implements SharedWebGL2Host {
                 const frame=readOwnedSharedFrame(input);if(!frame)throw glFailure('WEBGL2_FRAME_PROFILE_UNSUPPORTED');
                 if(withScene&&(!this.sceneFunctions||!this.sceneFunctions.isSceneFrame3D(sceneInput)))throw glFailure('WEBGL2_FRAME_INVALID');
                 if(staging)staging.signal=this.captureSignal(staging.options,staging.token);
-                const options=this.options;
-                if(frame.outputAlpha!==options.outputAlpha||frame.outputRepresentation!==(options.outputAlpha==='opaque'?'egret.srgb-opaque-unorm8/1':'egret.srgb-premultiplied-unorm8/1'))throw glFailure('WEBGL2_FRAME_PROFILE_UNSUPPORTED');
-                if(options.outputAlpha==='opaque'&&frame.clearAlpha!==1)throw glFailure('WEBGL2_FRAME_INVALID');
+                const layerWrite=layerInput&&'write' in layerInput?layerInput.write:undefined;
+                const layerReads=layerInput&&'placements' in layerInput?this.readLayers(layerInput.placements):undefined;
+                const options=layerWrite?{...this.options,pixelRatio:1}:this.options;
+                const alpha=layerWrite?'premultiplied':options.outputAlpha;
+                if(frame.outputAlpha!==alpha||frame.outputRepresentation!==(alpha==='opaque'?'egret.srgb-opaque-unorm8/1':'egret.srgb-premultiplied-unorm8/1'))throw glFailure('WEBGL2_FRAME_PROFILE_UNSUPPORTED');
+                if(alpha==='opaque'&&frame.clearAlpha!==1)throw glFailure('WEBGL2_FRAME_INVALID');
+                if(layerWrite){
+                    if(frame.clearAlpha!==0||!Number.isInteger(frame.width)||!Number.isInteger(frame.height)||
+                        frame.commands.some(command=>command.kind==='barrier'?command.effect!==undefined:
+                            command.kind==='mesh'||frame.materials[command.materialIndex]?.blend!=='normal'))throw glFailure('WEBGL2_LAYER_INVALID');
+                    if(frame.width>MAX_LAYER_EXTENT||frame.height>MAX_LAYER_EXTENT||
+                        this.layerBytes+frame.width*frame.height*4>MAX_LAYER_BYTES)throw glFailure('WEBGL2_LAYER_BUDGET');
+                }
                 const width=Math.ceil(frame.width*options.pixelRatio),height=Math.ceil(frame.height*options.pixelRatio);
                 if(!Number.isSafeInteger(width)||!Number.isSafeInteger(height)||width<=0||height<=0||width>4294967295||height>4294967295||width>Math.floor(options.maxBackingPixels/height))throw glFailure('WEBGL2_BACKING_LIMIT');
                 const sceneFees=withScene?this.sceneFunctions!.admitSharedGLScene(sceneInput,width,height):undefined;
-                const prepared=prepareSharedDraws2D(frame,width,height,options),ticket=!staging&&this.ticket&&!this.ticket.bound?this.ticket:undefined;
+                const prepared=prepareSharedDraws2D(frame,width,height,options),ticket=!layerWrite&&!staging&&this.ticket&&!this.ticket.bound?this.ticket:undefined;
                 const reserve=staging?options.enableReadback:!!ticket;
                 const fees=planSharedStorageFees2D(prepared,options,sceneFees),layout=withSharedReadbackLayout2D(fees,{rowPitch:reserve?4*width:0,staging:reserve?fees.colorBytes:0,output:reserve?fees.colorBytes:0});
                 const limits=this.limits!;
@@ -460,7 +635,7 @@ class SharedGLHost implements SharedWebGL2Host {
                 checkSharedCapacity2D(storage,this.snapshot(),pages.canonicalBytes);
                 batch=prepareSharedBatches2D(packed,options.maxUploadBytes,this.scratch);this.active();
                 const arena=planSharedWebGL2Arenas(batch.draws,scene?.uniforms??[],limits.alignment);checkSharedWebGL2ArenaCapacity(arena,this.arenaOwner());
-                return {storage,arena,batch,...pages,ticket,hits,scene};
+                return {storage,arena,batch,...pages,ticket,hits,scene,layerWrite,layerReads};
             },failure=>{owned=failure;});}
             catch(cause){
                 if(staging)this.stageLife(staging.token);
@@ -475,7 +650,7 @@ class SharedGLHost implements SharedWebGL2Host {
                 throw glFailure('WEBGL2_FRAME_INVALID',cause);
             }
             return staging?this.admitUpload(admitted,staging):this.submit(admitted);
-        }finally{if(!batch?.transferred)this.resourceCpu.canonicalBytes-=materialized;if(batch&&!batch.transferred)this.scratch.release(batch);this.phase=undefined;this.busy=false;this.retireLost();this.cpu.resolve();}
+        }finally{if(!batch?.transferred)this.resourceCpu.canonicalBytes-=materialized;if(batch&&!batch.transferred)this.scratch.release(batch);this.sweepLayers();this.phase=undefined;this.busy=false;this.retireLost();this.cpu.resolve();}
     }
     private planRecord(p:PreparedRecord):{requests:KeyedRetentionRequest<Request>[];plan:LedgerPlan<Request,GLNativeOwner>;layout:RecordLayout} {
         const {width,height,frame}=p.storage.prepared;
@@ -484,7 +659,7 @@ class SharedGLHost implements SharedWebGL2Host {
             const target=role==='color'||role==='depth';
             const request=Object.freeze({id,role,byteLength,width:target?width:0,height:target?height:0});
             requests.push({request,key:role+':'+byteLength+':'+request.width+':'+request.height});return id;};
-        const vertex=p.arena.vertexBytes?add('vertex',p.arena.vertexBytes):-1,uniform=p.arena.uniformBytes?add('uniform',p.arena.uniformBytes):-1,color=add('color',p.storage.colorBytes);
+        const vertex=p.arena.vertexBytes?add('vertex',p.arena.vertexBytes):-1,uniform=p.arena.uniformBytes?add('uniform',p.arena.uniformBytes):-1,color=p.layerWrite?-1:add('color',p.storage.colorBytes);
         const effectTargets=Array.from({length:p.storage.prepared.effects.targetCount},()=>add('color',p.storage.colorBytes));
         const effectUniforms=p.storage.prepared.effects.groups.map(group=>add('uniform',group.uniform.byteLength));
         const depth=p.scene?add('depth',p.scene.depthBytes):-1;
@@ -727,11 +902,16 @@ class SharedGLHost implements SharedWebGL2Host {
     }
     private submit(p:PreparedRecord):undefined {
         const native=this.native!,gl=native.gl,{width,height,frame}=p.storage.prepared;
-        const {requests,plan,layout}=this.planRecord(p),{vertex,uniform,color,depth,meshes}=layout;
+        const {requests,plan,layout}=this.planRecord(p),{vertex,uniform,depth,meshes}=layout;
         const record:Record2D={serial:this.serial+1,generation:this.generation,storage:p.storage,arena:p.arena,batch:p.batch,canonicalBytes:p.canonicalBytes,reservedPageBytes:p.canonicalBytes,projections:p.projections,done:deferred<void>(),leases:[],pages:[],native,pool:this.pool,scene:p.scene,rawOwners:[],readback:undefined,ticket:p.ticket,pbo:undefined,sync:undefined,failure:undefined,retired:false,deadline:clock()+30000};
         for(const lease of plan.leases)record.leases[lease.requestId]=lease;
         this.records.add(record);this.serial=record.serial;p.batch.transferred=true;this.reservePageDiagnostics(record);
         if(p.ticket)p.ticket.bound=true;
+        if(p.layerWrite){record.layerWrite=p.layerWrite;p.layerWrite.submitted=true;}
+        if(p.layerReads){
+            record.layerReads=p.layerReads;
+            for(const read of p.layerReads)read.revision.pins++;
+        }
         native.recordOwners=record.rawOwners;
         try{
             this.pool.claim(plan);
@@ -744,7 +924,12 @@ class SharedGLHost implements SharedWebGL2Host {
                 else if(entry.request.role==='depth'){gl.bindRenderbuffer(gl.RENDERBUFFER,owner.value as WebGLRenderbuffer);gl.renderbufferStorage(gl.RENDERBUFFER,gl.DEPTH_COMPONENT32F,width,height);}
                 else{const target=entry.request.role==='vertex'?gl.ARRAY_BUFFER:entry.request.role==='index'?gl.ELEMENT_ARRAY_BUFFER:gl.UNIFORM_BUFFER;gl.bindBuffer(target,owner.value as WebGLBuffer);gl.bufferData(target,entry.request.byteLength,gl.DYNAMIC_DRAW);}
             }
-            this.prepareSurface(record);
+            if(record.layerWrite){
+                const owner=native.create('Texture',p.storage.colorBytes);
+                const revision:LayerRevision={native,owner,pins:1,retained:false};
+                record.layerWrite.revision=revision;this.layerBytes+=owner.bytes;
+                native.reset(width,height);native.texture(owner,width,height,true);
+            }else this.prepareSurface(record);
             const pageTextures=layout.pageTextures;
             for(const [index,hit] of p.hits){this.pinPageDiagnostics(hit);hit.pins++;record.pages.push(hit);pageTextures.set(index,hit);}
             for(let index=0;index<p.projections.length;index++){
@@ -787,10 +972,33 @@ class SharedGLHost implements SharedWebGL2Host {
             this.generationGate(this.token);
             native.reset(width,height);
     }
+
+    private drawLayers(record:Record2D,width:number,height:number):void {
+        const reads=record.layerReads;
+        if(!reads?.length)return;
+        const native=record.native,gl=native.gl;
+        if(!this.layerProgram){
+            const program=native.program(sharedWebGL2LayerVertexSource,sharedWebGL2LayerFragmentSource);
+            this.layerProgram={program,origin:gl.getUniformLocation(program,'origin'),extent:gl.getUniformLocation(program,'extent'),
+                viewport:gl.getUniformLocation(program,'viewportSize'),texture:gl.getUniformLocation(program,'layerTexture')};
+        }
+        const {program,origin,extent,viewport,texture}=this.layerProgram;
+        gl.useProgram(program);gl.bindVertexArray(this.resolveVAO!);gl.activeTexture(gl.TEXTURE0);
+        gl.uniform1i(texture,0);gl.uniform2f(viewport,width,height);
+        gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.ONE,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
+        for(const read of reads){
+            gl.bindTexture(gl.TEXTURE_2D,read.revision.owner.value as WebGLTexture);
+            gl.uniform2f(origin,read.x,read.y);gl.uniform2f(extent,read.width,read.height);
+            gl.drawArrays(gl.TRIANGLES,0,6);
+        }
+        gl.bindTexture(gl.TEXTURE_2D,null);
+    }
+
     private drawRecord(record:Record2D,layout:RecordLayout):void {
         const native=record.native,gl=native.gl,{width,height,frame}=record.storage.prepared;
         const {vertex,uniform,color,depth,meshes,pageTextures}=layout;
-            gl.bindFramebuffer(gl.FRAMEBUFFER,this.framebuffer!);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,record.leases[color]!.handle.resource.value as WebGLTexture,0);
+            const colorTexture=(record.layerWrite?.revision?.owner??record.leases[color]!.handle.resource).value as WebGLTexture;
+            gl.bindFramebuffer(gl.FRAMEBUFFER,this.framebuffer!);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,colorTexture,0);
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,depth>=0?record.leases[depth]!.handle.resource.value as WebGLRenderbuffer:null);native.attachment(true);
             gl.drawBuffers([gl.COLOR_ATTACHMENT0]);const c=frame.clearColor,a=frame.clearAlpha;
             gl.clearColor(a*decodeSharedSRGB(((c>>>16)&255)/255),a*decodeSharedSRGB(((c>>>8)&255)/255),a*decodeSharedSRGB((c&255)/255),a);gl.clear(gl.COLOR_BUFFER_BIT);
@@ -814,6 +1022,7 @@ class SharedGLHost implements SharedWebGL2Host {
                 gl.bindTexture(gl.TEXTURE_2D,page===undefined?null:pageTextures.get(page)!.native.value as WebGLTexture);
                 gl.bindBufferRange(gl.UNIFORM_BUFFER,0,record.leases[uniform]!.handle.resource.value as WebGLBuffer,range.uniformOffset,128);
                 const blend=sharedWebGL2BlendFactors(draw.prepared.material.blend);gl.blendFuncSeparate(...blend);gl.drawArrays(gl.TRIANGLES,range.firstVertex,draw.vertexCount);};
+            this.drawLayers(record,width,height);
             bindDraw();
             if(record.storage.prepared.effects.groups.length===0){for(const range of record.arena.sharedRanges)drawOne(range);}
             else{
@@ -832,13 +1041,14 @@ class SharedGLHost implements SharedWebGL2Host {
                     if(enter){setTarget(targets[(enter.depth-1)*2]!,true);bindDraw();}
                     else if(exit){const source=targets[(exit.depth-1)*2]!,scratch=targets[(exit.depth-1)*2+1]!;
                         if(exit.radius>0){effectPass(exit,'horizontal',scratch,source);effectPass(exit,'vertical',source,scratch);}
-                        const parent=exit.depth===1?record.leases[color]!.handle.resource.value as WebGLTexture:targets[(exit.depth-2)*2]!;
+                        const parent=exit.depth===1?colorTexture:targets[(exit.depth-2)*2]!;
                         effectPass(exit,'composite',parent,source);bindDraw();
                     }else{const range=ranges.get(command.ordinal);if(range)drawOne(range);}
                 }
             }
+            if(record.layerWrite){native.check();return;}
             gl.disable(gl.BLEND);gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.drawBuffers([gl.BACK]);native.attachment(false);
-            gl.useProgram(this.resolveProgram!);gl.bindVertexArray(this.resolveVAO!);gl.bindTexture(gl.TEXTURE_2D,record.leases[color]!.handle.resource.value as WebGLTexture);
+            gl.useProgram(this.resolveProgram!);gl.bindVertexArray(this.resolveVAO!);gl.bindTexture(gl.TEXTURE_2D,colorTexture);
             gl.uniform1i(gl.getUniformLocation(this.resolveProgram!,'workingTexture'),0);gl.uniform1i(gl.getUniformLocation(this.resolveProgram!,'opaque'),this.options.outputAlpha==='opaque'?1:0);gl.drawArrays(gl.TRIANGLES,0,3);
             if(record.ticket){record.pbo=native.create('Buffer',record.storage.staging);gl.bindBuffer(gl.PIXEL_PACK_BUFFER,record.pbo.value as WebGLBuffer);gl.bufferData(gl.PIXEL_PACK_BUFFER,record.storage.staging,gl.STREAM_READ);
                 gl.readBuffer(gl.BACK);gl.readPixels(0,0,width,height,gl.RGBA,gl.UNSIGNED_BYTE,0);gl.bindBuffer(gl.PIXEL_PACK_BUFFER,null);}
@@ -924,6 +1134,9 @@ class SharedGLHost implements SharedWebGL2Host {
         for(const lease of record.leases)if(lease&&!this.settledHandles.has(lease.handle)){lease.handle.resource.outcome='unknown';record.native.observeResource(lease.handle.resource);record.pool.settled(lease.handle,'unknown');this.settledHandles.add(lease.handle);}
         for(const owner of record.rawOwners)if(owner.outcome==='owned'){owner.outcome='unknown';record.native.observeResource(owner);}
         for(const page of record.pages){page.native.outcome='unknown';record.native.observeResource(page.native);}
+        for(const read of record.layerReads??[]){
+            read.revision.owner.outcome='unknown';record.native.observeResource(read.revision.owner);
+        }
         if(record.pbo){record.pbo.outcome='unknown';record.native.observeResource(record.pbo);}if(record.sync){record.sync.outcome='unknown';record.native.observeResource(record.sync);}
     }
     private retire(record:Record2D):void {
@@ -954,15 +1167,16 @@ class SharedGLHost implements SharedWebGL2Host {
             }
             if(record.pbo&&!native.cleanup(record.pbo))this.unsafe=true;
             if(record.sync&&!native.cleanup(record.sync))this.unsafe=true;
-            if(work)for(const owner of record.rawOwners){
+            if(work||record.layerWrite)for(const owner of record.rawOwners){
                 // A native create may return an owner and then fail its gate before
                 // registration. This original record still owns that raw result.
-                if(owner.accounting==='retention'||record.pages.some(page=>page.native===owner&&(page.pins>0||this.pages.get(page.source)===page)))continue;
+                if(owner===record.layerWrite?.revision?.owner||owner.accounting==='retention'||record.pages.some(page=>page.native===owner&&(page.pins>0||this.pages.get(page.source)===page)))continue;
                 if(!native.cleanup(owner))this.unsafe=true;
             }
         }catch(cause){this.unsafe=true;record.failure??=this.note('WEBGL2_CLOSE_UNSAFE',cause,'cleanup',record.serial);}
         finally{
             if(native.cleanupFailure)this.unsafe=true;
+            this.finishLayerRecord(record);
             if(this.unsafe){record.failure??=this.note('WEBGL2_CLOSE_UNSAFE',native.cleanupFailure?.cause,'cleanup',record.serial);
                 if(this.state!=='closing'&&this.state!=='closed'&&this.state!=='stopped'){this.state='failed';this.revokeUploads(record.failure as Error);}}
             this.resourceCpu.canonicalBytes-=record.canonicalBytes;this.resourceNative.reservedPageBytes-=record.reservedPageBytes;record.reservedPageBytes=0;record.projections=[];this.scratch.release(record.batch);this.records.delete(record);
@@ -981,6 +1195,8 @@ class SharedGLHost implements SharedWebGL2Host {
         if(this.closing)return this.closing;
         const barrier=deferred<void>();this.closing=barrier.promise;this.state='closing';this.cleanupOutcome='pending';this.cancelRestore();
         const failure=glFailure('WEBGL2_CLOSED');this.ready?.reject(failure);this.rejectUnbound(failure);this.revokeUploads(failure);
+        for(const slot of this.layers.values())this.dropLayer(slot);
+        this.layers.clear();
         const cpu=this.cpu.promise;
         void cpu.then(async()=>{
             await Promise.allSettled([...this.records].map(record=>record.done.promise));
@@ -990,6 +1206,7 @@ class SharedGLHost implements SharedWebGL2Host {
             attempt(()=>{if(this.native&&!this.native.invalidated){try{this.detachContainers(this.native);this.native.check();}catch(cause){if(!this.native.invalidated)throw cause;}}});
             attempt(()=>{for(const handle of this.pool.detachIdleForClose())attempt(()=>this.disposeHandle(handle,this.native!,this.pool));});
             attempt(()=>this.pool.invalidate());this.pages.clear();this.resourceReadyBytes=0;this.resourcePinnedBytes=0;this.resourcePinnedEntries=0;this.sampleResourceImages();
+            attempt(()=>this.sweepLayers());
             attempt(()=>{if(this.native&&!this.native.cleanupAll())this.unsafe=true;});
             failure??=this.native?.cleanupFailure;
             attempt(()=>this.removeListeners?.());this.removeListeners=undefined;
@@ -1013,6 +1230,6 @@ class SharedGLHost implements SharedWebGL2Host {
 }
 
 /** Explicit compatibility backend; the Engine retains the original shared-frame contract. */
-export function createSharedWebGL2Host(options:SharedWebGL2HostOptions):SharedWebGL2Host {return new SharedGLHost(options);}
+export function createSharedWebGL2Host(options:SharedWebGL2HostOptions):SharedLayerWebGL2Host {return new SharedGLHost(options);}
 /** Internal fixed scene assembly, reached only from the separate package entry. */
 export function createSharedSceneWebGL2HostInternal(options:SharedSceneWebGL2HostOptions):SharedSceneWebGL2Host {return new SharedGLHost(options,true) as unknown as SharedSceneWebGL2Host;}
