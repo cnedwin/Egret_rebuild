@@ -3904,7 +3904,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "73a99865bbc01a505631a0828b0f5d13ea6c9b0bbb83083a39e6aecee745c8d8"
+      "sha256": "05a0b7bf8953aa89109810d4b2ec7e3bf5ad35a0e92488bc745e1a88dd4e0863"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3932,7 +3932,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "6117488d2b0e6fa2e99b1d21ae386ee0fd535bae3d7464f5abf402629311e80d"
+      "sha256": "95f0e18873e2a2c724a9f138f44a54000db01f319214b6572573cb26f94957e5"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",

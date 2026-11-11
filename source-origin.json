@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "928c59db00dc996f34c1e38da0a7a6c59570b7ac098c83491b229747bbfda631",
+      "sha256": "1d88651d3a58c094010ac682fe06c51d74a05cf4b2597596eb1dacd76325c2f5",
       "bytes": 391723,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1421026,
-      "sha256": "73a99865bbc01a505631a0828b0f5d13ea6c9b0bbb83083a39e6aecee745c8d8"
+      "bytes": 1435910,
+      "sha256": "05a0b7bf8953aa89109810d4b2ec7e3bf5ad35a0e92488bc745e1a88dd4e0863"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10688,8 +10688,8 @@
     {
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 49862,
-      "sha256": "6117488d2b0e6fa2e99b1d21ae386ee0fd535bae3d7464f5abf402629311e80d"
+      "bytes": 51604,
+      "sha256": "95f0e18873e2a2c724a9f138f44a54000db01f319214b6572573cb26f94957e5"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
