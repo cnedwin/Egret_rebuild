@@ -619,15 +619,29 @@ const sceneDomSuccessor = sceneDomM15Selected ? sceneDomM15Successor : sceneDomM
 const sceneDomLabel = sceneDomM15Selected ? 'S3D1 M1.5' : 'S3D1 M1.3';
 const sceneDomM13Selected = sceneDomM15Selected || existsSync(path.join(root,'packages/engine/dist/web/sharedB1.d.ts'));
 const sceneDomM13Native = sceneDomM13Compiler?.nativeOwner ?? null;
+// AUTHORED-SCENE-DECLARATION-BEGIN
+// The existing DOM-negative probe has the same closure except its scene-frame declaration.
+const authoredSceneDomDeclaration = {"base":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":1650,"sha256":"6eede4d7ca07375516bc746ad0ac70fef56cf7ab6dca532f46ef049339314a82"},"current":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":1737,"sha256":"81f9914f53b2d3fca293573bef45060d807abc9581ea5211731c758073592fd1"}};
+const authoredSceneDomMarker = {"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":525,"sha256":"07868163d41254a0376c5225d2fe160a2b1cf319ab2cff05422ef92e66926185"};
+// AUTHORED-SCENE-DECLARATION-END
 function verifySceneDomM13(){
   if(!sceneDomM13Selected)return;
   if(!sceneDomM13Compiler)throw Error(sceneDomLabel+' compiler input selection changed');
   if(sceneDomM15Selected&&!sceneDomM15Markers.every(file=>existsSync(path.join(root,file))))throw Error(sceneDomLabel+' incomplete declaration markers');
   sceneDomM13Compiler.verify();
   if(JSON.parse(readFileSync(path.join(sceneDomM13Native,'package.json'),'utf8')).version!==sceneDomSuccessor.compilerVersion)throw Error(sceneDomLabel+' actual native compiler version differs');
+  const authoredSceneSelected=sceneDomM15Selected&&existsSync(path.join(root,authoredSceneDomMarker.path));
+  if(authoredSceneSelected){
+    const marker=fingerprintFile(root,authoredSceneDomMarker.path);
+    if(marker.bytes!==authoredSceneDomMarker.bytes||marker.sha256!==authoredSceneDomMarker.sha256)
+      throw Error(sceneDomLabel+' authored scene declaration marker changed');
+  }
   for(const row of [...sceneDomSuccessor.inputs.map(pin=>({owner:'repository',...pin})),...sceneDomSuccessor.closure]){
     const owner=row.owner==='compiler-native'?sceneDomM13Native:root,actual=fingerprintFile(owner,row.path);
-    if(actual.bytes!==row.bytes||actual.sha256!==row.sha256)throw Error(sceneDomLabel+' complete input changed: '+row.path);
+    const expected=authoredSceneSelected&&row.owner==='repository'&&row.path===authoredSceneDomDeclaration.base.path&&
+      row.bytes===authoredSceneDomDeclaration.base.bytes&&row.sha256===authoredSceneDomDeclaration.base.sha256?
+      authoredSceneDomDeclaration.current:row;
+    if(actual.bytes!==expected.bytes||actual.sha256!==expected.sha256)throw Error(sceneDomLabel+' complete input changed: '+row.path);
   }
 }
 verifySceneDomM13();

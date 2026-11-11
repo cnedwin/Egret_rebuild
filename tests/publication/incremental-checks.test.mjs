@@ -1419,7 +1419,26 @@ const m42GeometryCanonicalSourceHistory = [{"path":"tools/atlas-import-boundary.
 const sharedLayerCacheSourceHistory = [{"path":"tools/atlas-import-boundary.mjs","predecessor":{"path":"tools/atlas-import-boundary.mjs","bytes":226475,"sha256":"b8f30d7e95a98029b8a02bce33a05867ef46d1d29f530287062b92ce4bf31247"},"current":{"path":"tools/atlas-import-boundary.mjs","bytes":230296,"sha256":"a8462f0c3aca5a7734baf9937d3f1cc29688cca8e0450626ef3f310c55159c85"}},{"path":"tools/browser-png-boundary.mjs","predecessor":{"path":"tools/browser-png-boundary.mjs","bytes":331387,"sha256":"6fdabeb2b29dbbf30e06bd63f39d93c443dd48f34641ff400d001e2a172808ce"},"current":{"path":"tools/browser-png-boundary.mjs","bytes":335208,"sha256":"3f1073fc59c0e53d813fbe04a6a3d7b9f5cccd53ed7cc36169f306db3f329c00"}},{"path":"tools/spritesheet-boundary.mjs","predecessor":{"path":"tools/spritesheet-boundary.mjs","bytes":321762,"sha256":"9bfeb94f02b0b3c2a1a0660c659880d51c0c0e58fda2f1306ddf69b73273cf32"},"current":{"path":"tools/spritesheet-boundary.mjs","bytes":325583,"sha256":"7bfd18156f007e0bba1b44b7c547005d197d1cb3872e749c028550831d45779e"}}];
 // Only an exact current light owner may restore the complete unlit predecessor.
 const sharedLayerLightSourceHistory = [{"path":"tools/atlas-import-boundary.mjs","predecessor":{"path":"tools/atlas-import-boundary.mjs","bytes":230296,"sha256":"a8462f0c3aca5a7734baf9937d3f1cc29688cca8e0450626ef3f310c55159c85"},"current":{"path":"tools/atlas-import-boundary.mjs","bytes":233799,"sha256":"9161dc1f6433f9f6c1d62d2574d13fd8db461f6bbcdfc7a2da04c3929a723434"}},{"path":"tools/browser-png-boundary.mjs","predecessor":{"path":"tools/browser-png-boundary.mjs","bytes":335208,"sha256":"3f1073fc59c0e53d813fbe04a6a3d7b9f5cccd53ed7cc36169f306db3f329c00"},"current":{"path":"tools/browser-png-boundary.mjs","bytes":338711,"sha256":"2424dd6f11aa8927c063ece1ebefc40e250ca7eff87d4cb66e64ab847ba5a6b2"}},{"path":"tools/spritesheet-boundary.mjs","predecessor":{"path":"tools/spritesheet-boundary.mjs","bytes":325583,"sha256":"7bfd18156f007e0bba1b44b7c547005d197d1cb3872e749c028550831d45779e"},"current":{"path":"tools/spritesheet-boundary.mjs","bytes":329086,"sha256":"83cd5b756eee3275507e5cd3e90ed75ed4181d77353acdec12232deae8b869bb"}}];
+// Restore exact predecessor owners, including the earlier package and layer history.
+const authoredSceneSourceHistory = [{"path":"tools/atlas-import-boundary.mjs","predecessor":{"path":"tools/atlas-import-boundary.mjs","bytes":233799,"sha256":"9161dc1f6433f9f6c1d62d2574d13fd8db461f6bbcdfc7a2da04c3929a723434"},"current":{"path":"tools/atlas-import-boundary.mjs","bytes":238311,"sha256":"7adbc20a0eee14fe5722305f87e9f1bd01878c21ec32206975ebd89166a43102"}},{"path":"tools/browser-png-boundary.mjs","predecessor":{"path":"tools/browser-png-boundary.mjs","bytes":338711,"sha256":"2424dd6f11aa8927c063ece1ebefc40e250ca7eff87d4cb66e64ab847ba5a6b2"},"current":{"path":"tools/browser-png-boundary.mjs","bytes":343437,"sha256":"c7b931679ac8756ec6987bc5218089082cbe56471e92a8a67e9484de909a8a88"}},{"path":"tools/spritesheet-boundary.mjs","predecessor":{"path":"tools/spritesheet-boundary.mjs","bytes":329086,"sha256":"83cd5b756eee3275507e5cd3e90ed75ed4181d77353acdec12232deae8b869bb"},"current":{"path":"tools/spritesheet-boundary.mjs","bytes":333598,"sha256":"b460877da8b8ca870db95de7ca8a9d236c2cc7d8781ff76c5f61902bbab975a7"}},{"path":"tools/bitmap-binding-ticket-boundary.mjs","predecessor":{"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":85039,"sha256":"265552943c2f0c241ebdecbf93a080e78804060da13b93a5f6cb9771d3f98f96"},"current":{"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":86228,"sha256":"cf84050013391fc3fdbe0aec44a3e4ca06440c3f0a0afe3551ec9b3d62a16027"}},{"path":"tools/bitmap-resource-slot-boundary.mjs","predecessor":{"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":78460,"sha256":"bdb5adcf984c30ec191f63dacac466966c4103bb392b528d8b9002bc6117db19"},"current":{"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":79649,"sha256":"4a398c73aa10808ab7dd8837c3862b39a05a3cf1bc157afa479102b26521cc29"}},{"path":"tools/sequence-playback-boundary.mjs","predecessor":{"path":"tools/sequence-playback-boundary.mjs","bytes":82982,"sha256":"d8827b5be210eb7e8f8acd648dbb5362b5981e6a88e2c32ff04f00d4df692947"},"current":{"path":"tools/sequence-playback-boundary.mjs","bytes":84171,"sha256":"41f79f11c0ca976b24db974efdf1d8d56ce81b3ddfc468a78633adef7a393903"}}];
+function authoredScenePrevious(raw,file){
+ const selected=authoredSceneSourceHistory.find(row=>row.path===file);if(!selected)return raw;
+ const identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
+ if(JSON.stringify(identity(raw))!==JSON.stringify(selected.current))return raw;
+ let text=raw.toString('utf8');
+ for(const [start,end] of [['// AUTHORED-SCENE-PACKAGE-BEGIN\n','// AUTHORED-SCENE-PACKAGE-END\n'],
+   ['  // AUTHORED-SCENE-GRAPH-BEGIN\n','  // AUTHORED-SCENE-GRAPH-END\n']]){
+  const first=text.indexOf(start);if(first<0)continue;
+  const last=text.indexOf(end,first+start.length);
+  assert.equal(text.split(start).length,2);assert.equal(text.split(end).length,2);assert.ok(last>first);
+  text=text.slice(0,first)+text.slice(last+end.length);
+ }
+ text=text.replace(" if(expected?.path==='packages/engine/package.json')raw=projectAuthoredScenePackage(raw);\n",'');
+ text=text.replace("    if(name==='engine'&&equal(value.exports?.['./scene3d/authoring'],{\"types\":\"./dist/rendering/scene3dAuthoring.d.ts\",\"import\":\"./dist/rendering/scene3dAuthoring.js\"}))delete value.exports['./scene3d/authoring'];\n",'');
+ const previous=Buffer.from(text);assert.deepEqual(identity(previous),selected.predecessor);return previous;
+}
 function sharedLayerLightPrevious(raw,file){
+ raw=authoredScenePrevious(raw,file);
  const selected=sharedLayerLightSourceHistory.find(row=>row.path===file);if(!selected)return raw;
  const identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
  if(JSON.stringify(identity(raw))!==JSON.stringify(selected.current))return raw;
@@ -1488,7 +1507,21 @@ function uiControlsPrevious(raw,file){
  const previous=Buffer.from(text);if(JSON.stringify(identity(previous))!==JSON.stringify(selected.predecessor))throw Error('Complete controls predecessor differs');return previous;
 }
 
+// Restore only the exact authored-scene compiler source before replaying the previous fixtures.
+const authoredSceneCompilerFixtureHistory = {"path":"tools/check-types.mjs","predecessor":{"path":"tools/check-types.mjs","bytes":148241,"sha256":"2efee69ad02e6dcbac415dfdd252d115fa02e183c425a367452ae13abc9657a8"},"current":{"path":"tools/check-types.mjs","bytes":149616,"sha256":"63e087a39952ce23cb556787ca0b3f4e672786277af50885031e96d692dbe363"},"inverse":[{"from":"// AUTHORED-SCENE-DECLARATION-BEGIN\n// The existing DOM-negative probe has the same closure except its scene-frame declaration.\nconst authoredSceneDomDeclaration = {\"base\":{\"path\":\"packages/engine/dist/rendering/sceneFrame3D.d.ts\",\"bytes\":1650,\"sha256\":\"6eede4d7ca07375516bc746ad0ac70fef56cf7ab6dca532f46ef049339314a82\"},\"current\":{\"path\":\"packages/engine/dist/rendering/sceneFrame3D.d.ts\",\"bytes\":1737,\"sha256\":\"81f9914f53b2d3fca293573bef45060d807abc9581ea5211731c758073592fd1\"}};\nconst authoredSceneDomMarker = {\"path\":\"packages/engine/dist/rendering/scene3dAuthoring.d.ts\",\"bytes\":525,\"sha256\":\"07868163d41254a0376c5225d2fe160a2b1cf319ab2cff05422ef92e66926185\"};\n// AUTHORED-SCENE-DECLARATION-END\n","to":""},{"from":"  const authoredSceneSelected=sceneDomM15Selected&&existsSync(path.join(root,authoredSceneDomMarker.path));\n  if(authoredSceneSelected){\n    const marker=fingerprintFile(root,authoredSceneDomMarker.path);\n    if(marker.bytes!==authoredSceneDomMarker.bytes||marker.sha256!==authoredSceneDomMarker.sha256)\n      throw Error(sceneDomLabel+' authored scene declaration marker changed');\n  }\n","to":""},{"from":"    const expected=authoredSceneSelected&&row.owner==='repository'&&row.path===authoredSceneDomDeclaration.base.path&&\n      row.bytes===authoredSceneDomDeclaration.base.bytes&&row.sha256===authoredSceneDomDeclaration.base.sha256?\n      authoredSceneDomDeclaration.current:row;\n    if(actual.bytes!==expected.bytes||actual.sha256!==expected.sha256)throw Error(sceneDomLabel+' complete input changed: '+row.path);\n","to":"    if(actual.bytes!==row.bytes||actual.sha256!==row.sha256)throw Error(sceneDomLabel+' complete input changed: '+row.path);\n"}]};
+const authoredSceneStrictCallerHistory = [{"path":"tools/atlas-frame-types.mjs","predecessor":{"path":"tools/atlas-frame-types.mjs","bytes":3837,"sha256":"dc4480b5b958607a0fc822ac8cdbe677e081dbe19adfb7093f94b7b957d4860b"},"current":{"path":"tools/atlas-frame-types.mjs","bytes":3965,"sha256":"cb282d17be6b0af0572755eb9435d2f66a56b32cb4b7dbf52f221f6c9e082edb"}},{"path":"tools/atlas-import-types.mjs","predecessor":{"path":"tools/atlas-import-types.mjs","bytes":6819,"sha256":"d41757be27b07ce70cf70642d4c60199c09f6c43489d21bae9c28c1cc04a5b36"},"current":{"path":"tools/atlas-import-types.mjs","bytes":6947,"sha256":"c17cba898c7b06ad8ff71fdb568bc5c733654c916d176e359cc103b28e67e8df"}},{"path":"tools/bitmap-resource-slot-types.mjs","predecessor":{"path":"tools/bitmap-resource-slot-types.mjs","bytes":11314,"sha256":"2e2cf5910692337f98cbb5957c0fe382b2d9262e520810c6e96712975712f821"},"current":{"path":"tools/bitmap-resource-slot-types.mjs","bytes":11442,"sha256":"6d4b7489e798ff293163e750a18d3b92283a4a2edc764539570cd7fcf3017778"}},{"path":"tools/bitmap-binding-ticket-types.mjs","predecessor":{"path":"tools/bitmap-binding-ticket-types.mjs","bytes":14017,"sha256":"c0b1aab299f24c32fda47fe5bc4bfc25da5157ecd5d2ad942bc5b3e5412a70ba"},"current":{"path":"tools/bitmap-binding-ticket-types.mjs","bytes":14145,"sha256":"aadb1145d259912e8d306bc6f959dd78c6ede3c10b15288d3e80a369e2013525"}},{"path":"tools/linear-layout-types.mjs","predecessor":{"path":"tools/linear-layout-types.mjs","bytes":11203,"sha256":"e48fccebcd70149879b0a8ace00c49dcc7447b00e4852ecc3695ca8e2f8b773d"},"current":{"path":"tools/linear-layout-types.mjs","bytes":11331,"sha256":"9324d86c366ebda0fb276fbababc2fa2fd40e03e20f70b47a4d92c603a8bdf35"}},{"path":"tools/bitmap-button-types.mjs","predecessor":{"path":"tools/bitmap-button-types.mjs","bytes":17305,"sha256":"33c6869ac4e2e141140bb12b2cbf224639b69c521395db8d2624242453de7df1"},"current":{"path":"tools/bitmap-button-types.mjs","bytes":17433,"sha256":"d9b7f155bc73a5a7ac61ad0edc74084f166e47085328e956253b8f6a59ba54a6"}},{"path":"tools/display-anchor-offsets-types.mjs","predecessor":{"path":"tools/display-anchor-offsets-types.mjs","bytes":16656,"sha256":"d24e8aa744aac222407476f8eb6d64b724614396964af682b65ed86d484eb4c7"},"current":{"path":"tools/display-anchor-offsets-types.mjs","bytes":16784,"sha256":"5c81fcded68e8be5d5813a0a000f0c7a468ad009b0a98834aacc7c715fdbf599"}},{"path":"tools/display-container-add-child-at-types.mjs","predecessor":{"path":"tools/display-container-add-child-at-types.mjs","bytes":18848,"sha256":"56d93ad2aa9ee1cf62264116daaf0c4c96a6b1527f7313cdc5f774491f1dfe6a"},"current":{"path":"tools/display-container-add-child-at-types.mjs","bytes":18976,"sha256":"280fc2cbb9fbdd1926be73d7a60a1f57086704b85da2e8a4e461305eae90aff8"}},{"path":"tools/display-container-child-index-types.mjs","predecessor":{"path":"tools/display-container-child-index-types.mjs","bytes":17242,"sha256":"29e8127f12fde9ea0fe37042fc0acf61b378047978ec61b137d165e73cdc5903"},"current":{"path":"tools/display-container-child-index-types.mjs","bytes":17370,"sha256":"75926a64039e735306aae18207395d15ae5fb02f60503770b2be72413088571e"}},{"path":"tools/display-container-remove-children-types.mjs","predecessor":{"path":"tools/display-container-remove-children-types.mjs","bytes":15398,"sha256":"dc32cc178f6f658f49b71d769222960f3671015d66d2af58ae0f669f601325c3"},"current":{"path":"tools/display-container-remove-children-types.mjs","bytes":15526,"sha256":"77c366316b4efe3b8a4028be15f4e01f8dd3bb426c6e3feae99eb6788f4f2693"}},{"path":"tools/nine-slice-bitmap-types.mjs","predecessor":{"path":"tools/nine-slice-bitmap-types.mjs","bytes":6673,"sha256":"68986c83c5059e19bd8d3d6c89a29a5d972bfecb562b733cb10f2b5d6057a596"},"current":{"path":"tools/nine-slice-bitmap-types.mjs","bytes":6801,"sha256":"d74653b8141c8133abef0a6c841629178921cb7e2461f50bf4381765def5b1e4"}},{"path":"tools/sequence-playback-types.mjs","predecessor":{"path":"tools/sequence-playback-types.mjs","bytes":19427,"sha256":"74c1fb403d9a294b5da35c41bf37bc5561f0ccdfc76647e03e29ca3292b41199"},"current":{"path":"tools/sequence-playback-types.mjs","bytes":19555,"sha256":"a1208aeb8d9dd78bb4a7deb0eeee3815d341313b5efbd090975d33f19db15af9"}}];
+const authoredSceneStrictCallerSuffix = " && (m13HelperPin.bytes !== 88195 || m13HelperPin.sha256 !== 'c71a650058f5995c9ac0c40b4087fad09c0241f5a6c6f35c5c56ee524ac21bf6')";
+function authoredSceneCompilerFixturePrevious(raw,file){
+ const selected=[authoredSceneCompilerFixtureHistory,...authoredSceneStrictCallerHistory].find(row=>row.path===file);
+ const identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
+ if(!selected||JSON.stringify(identity(raw))!==JSON.stringify(selected.current))return raw;
+ let text=raw.toString('utf8');
+ const inverse=selected.inverse??[{from:authoredSceneStrictCallerSuffix,to:''}];
+ for(const step of inverse){assert.equal(text.split(step.from).length,2);text=text.replace(step.from,()=>step.to);}
+ const previous=Buffer.from(text);assert.deepEqual(identity(previous),selected.predecessor);return previous;
+}
 function m24ResetPrevious(raw,file){
+ raw=authoredSceneCompilerFixturePrevious(raw,file);
  raw=uiControlsPrevious(raw,file);
  const selected=m24ResetSourceHistory.find(row=>row.path===file);if(!selected)return raw;
  const identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
@@ -1510,7 +1543,7 @@ function geometryStrictPrevious(raw,file){
 }
 
 function m34ThemePrevious(raw,file){
- raw=m24ResetPrevious(geometryStrictPrevious(raw,file),file);
+ raw=m24ResetPrevious(geometryStrictPrevious(authoredSceneCompilerFixturePrevious(raw,file),file),file);
  raw=m34ThemeSelectionPrevious(raw,file);
  const selected=m34ThemeSourceHistory.find(row=>row.path===file);if(!selected)return raw;
  const identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
@@ -2170,6 +2203,15 @@ function m33BoundaryHistory(raw,owner){
 function m33BoundaryFixtureInput(file){
  let raw=m24SpinePrevious(fs.readFileSync(new URL('../../'+file,import.meta.url)),file);if(file!=='packages/engine/package.json')return raw;
  const editing={"base":{"path":"packages/engine/package.json","bytes":3172,"sha256":"93aa97c85bf7c58d9ff462851f1f63aa101aa3a73bf07d2b0518dc14189cec61"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}};
+ const authoredScenePackage = {"base":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"},"current":{"path":"packages/engine/package.json","bytes":3662,"sha256":"32bdc997a04e80bc65fc014a174a46e874b565960703d005850be6120811beec"}};
+ const packageIdentity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
+ if(JSON.stringify(packageIdentity(raw))===JSON.stringify(authoredScenePackage.current)){
+  const value=JSON.parse(raw);
+  assert.deepEqual(value.exports['./scene3d/authoring'],{types:'./dist/rendering/scene3dAuthoring.d.ts',import:'./dist/rendering/scene3dAuthoring.js'});
+  delete value.exports['./scene3d/authoring'];
+  raw=Buffer.from(JSON.stringify(value,null,2)+'\n');
+  assert.deepEqual(packageIdentity(raw),authoredScenePackage.base);
+ }
  if(raw.length===editing.current.bytes&&createHash('sha256').update(raw).digest('hex')===editing.current.sha256){const value=JSON.parse(raw);delete value.exports['./ui/editing'];delete value.exports['./web/editing'];delete value.imports['#egret-text-editor'];raw=Buffer.from(JSON.stringify(value,null,2)+'\n');assert.deepEqual({path:file,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')},editing.base);}
  let current={path:file,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')};
  const keyboardPackage={"base":{"path":"packages/engine/package.json","bytes":2933,"sha256":"afcc7ed24ddd5e73f0ebed1f60b1c1b31d1bac59d2127e0b061c499cfe8e93fe"},"current":{"path":"packages/engine/package.json","bytes":3172,"sha256":"93aa97c85bf7c58d9ff462851f1f63aa101aa3a73bf07d2b0518dc14189cec61"}};
@@ -2538,7 +2580,7 @@ test('M3.4 theme maintenance exposes ten exact pairs and three additions while r
 // Current proposals observe RESET bytes; extraction remains the exact theme predecessor.
 test('M2.4 RESET compiler successor preserves theme history and rejects unrelated or duplicate drift',async()=>{
  const m=await compilerTool(),f=inlineCompilerFixture({m12:true}),file='tools/check-types.mjs',selected=m24ResetSourceHistory.find(row=>row.path===file);try{
-  const raw=fs.readFileSync(new URL('../../'+file,import.meta.url)),previous=m24ResetPrevious(raw,file),identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
+  const raw=authoredSceneCompilerFixturePrevious(fs.readFileSync(new URL('../../'+file,import.meta.url)),file),previous=m24ResetPrevious(raw,file),identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
   assert.deepEqual(identity(previous),selected.predecessor);const collect=()=>m.prepareCompilerReview(f.root,{inlinePolicies:true});
   f.put(file,previous);const historical=collect();f.put(file,raw);const current=collect(),row=current.inlinePolicies.sourceRevisions.find(row=>row.base.path===file);
   assert.deepEqual(row.current,selected.current);assert.deepEqual(row.m24ResetSuccessor,selected.current);assert.deepEqual(row.m24ResetPredecessor,selected.predecessor);
@@ -2549,6 +2591,24 @@ test('M2.4 RESET compiler successor preserves theme history and rejects unrelate
    f.put(file,raw);const baseline=collect();assert.equal(m.verifyCompilerProposal(f.root,baseline,{inlinePolicies:true}).status,'current-inputs');
    assert.equal(altered.equals(raw),false);assert.deepEqual(m24ResetPrevious(altered,file),altered);f.put(file,altered);assert.throws(collect,/Unreviewed inline policy source/);
   }
+ }finally{f.close();}
+});
+test('authored scene type input keeps the previous compiler observation and rejects altered owners',async()=>{
+ const m=await compilerTool(),f=inlineCompilerFixture({m12:true});try{
+ for(const selection of [authoredSceneCompilerFixtureHistory,authoredSceneStrictCallerHistory.find(row=>row.path==='tools/bitmap-resource-slot-types.mjs')]){
+  const file=selection.path;
+  const raw=fs.readFileSync(new URL('../../'+file,import.meta.url)),previous=authoredSceneCompilerFixturePrevious(raw,file);
+  const collect=()=>m.prepareCompilerReview(f.root,{inlinePolicies:true});
+  f.put(file,previous);const prior=collect();f.put(file,raw);const current=collect();
+  const row=current.inlinePolicies.sourceRevisions.find(row=>row.current.path===file);
+  assert.deepEqual(row.current,selection.current);
+  assert.deepEqual(row.authoredScenePredecessor,selection.predecessor);
+  for(const key of ['literals','conditions','observations'])assert.deepEqual(current.inlinePolicies[key],prior.inlinePolicies[key]);
+  assert.equal(m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}).status,'current-inputs');
+  const altered=Buffer.concat([raw,Buffer.from('// unreviewed authored scene type gate\n')]);
+  f.put(file,altered);assert.throws(collect,/Unreviewed inline policy source/);
+  f.put(file,previous);
+ }
  }finally{f.close();}
 });
 test('M2.4 RESET source maintenance exposes fourteen exact pairs and six additions per owner and refuses drift',async()=>{

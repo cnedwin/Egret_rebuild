@@ -641,7 +641,10 @@ assert.deepEqual(m34EffectModuleSuccessors.get("packages/engine/dist/rendering/p
 // Current canonical geometry changes one emitted module, with the original member retained.
 const m42GeometryCanonicalModuleSuccessor = new Map([["packages/contracts/dist/SharedGeometry2D.js",{"bytes":8391,"sha256":"04e24664a6d486c4bcc6ef07069fab1204d479f568cb0a5e08c2533b5884b348"}]]);
 assert.deepEqual(m3FontModuleIdentities.get("packages/contracts/dist/SharedGeometry2D.js"),{"bytes":8593,"sha256":"0b5ba021999903be40c9ba97206e07cb9f633ea3248efc33f7f0e9dbc3e74302"});
-const currentModuleIdentities = new Map([...m3FontModuleIdentities,...m24ResetModuleSuccessor,...m24CompatibleSequenceModuleSuccessor,...uiLayerAuthorityModuleSuccessors,...m42ContainedClipModuleSuccessor,...m42GeometryCanonicalModuleSuccessor]);
+// The authored-scene path advances one reachable scene-frame implementation. No authoring modules are served here.
+const authoredSceneFrameModuleSuccessor = new Map([["packages/engine/dist/rendering/sceneFrame3D.js",{"bytes":10736,"sha256":"ba1ea422860c571c2d41f0796d50883f8db102ab1dd31e955f28a655dcda2c2a"}]]);
+assert.deepEqual(m3FontModuleIdentities.get("packages/engine/dist/rendering/sceneFrame3D.js"),{"bytes":10022,"sha256":"c059e09ddf929c3f27c1bbe40fd3fba9237931b23ee2192bec66fb70d1a5bb80"});
+const currentModuleIdentities = new Map([...m3FontModuleIdentities,...m24ResetModuleSuccessor,...m24CompatibleSequenceModuleSuccessor,...uiLayerAuthorityModuleSuccessors,...m42ContainedClipModuleSuccessor,...m42GeometryCanonicalModuleSuccessor,...authoredSceneFrameModuleSuccessor]);
 assert.equal(currentModuleIdentities.size,m3FontSourceModuleLimit,'Font resources current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {
