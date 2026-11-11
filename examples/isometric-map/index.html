@@ -1,0 +1,49 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Isometric map / 等距地图</title>
+  <link rel="icon" href="data:,">
+  <script type="importmap">
+  {"imports":{
+    "@egret/engine":"/packages/engine/dist/index.js",
+    "@egret/engine/webgl2":"/packages/engine/dist/web/webgl2.js",
+    "@egret/engine/web/keyboard":"/packages/engine/dist/web/keyboard.js",
+    "@egret/runtime":"/packages/runtime/dist/index.js",
+    "@egret/runtime/text":"/packages/runtime/dist/text/index.js",
+    "@egret/runtime/input":"/packages/runtime/dist/input/index.js",
+    "@egret/contracts":"/packages/contracts/dist/index.js",
+    "@egret/contracts/resources":"/packages/contracts/dist/resources/index.js",
+    "#egret-keyboard-input":"/packages/engine/dist/keyboardInput.js",
+    "#egret-manifest-resources":"/packages/engine/dist/manifestResourceState.js",
+    "#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js",
+    "robust-predicates":"/vendor/robust-predicates/index.js"
+  }}
+  </script>
+  <style>
+    body { margin: 24px; color: #243c3c; background: #f3f6f3; font: 16px/1.55 system-ui, sans-serif; }
+    main { max-width: 640px; margin: auto; }
+    h1 { line-height: 1.2; }
+    canvas { display: block; max-width: 100%; height: auto; background: #203736; image-rendering: pixelated; }
+    canvas:focus-visible { outline: 2px solid #246b72; outline-offset: 3px; }
+    button { font: inherit; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Isometric map <span lang="zh-CN">/ 等距地图</span></h1>
+    <p>Focus the canvas and use the arrow keys. Move around the block to see the blue actor pass in front of and behind it.<br><span lang="zh-CN">聚焦画布后用方向键移动。绕过方块，观察蓝色角色经过方块前方和后方时的遮挡。</span></p>
+    <canvas id="map" width="384" height="232" tabindex="0" aria-label="Isometric map / 等距地图" data-phase="loading"></canvas>
+    <button id="stop" type="button" disabled>Close <span lang="zh-CN">/ 关闭</span></button>
+    <p id="status" role="status">Loading WebGL2 <span lang="zh-CN">/ 正在加载 WebGL2</span></p>
+  </main>
+  <script type="module">
+    import('./main.mjs').catch(error => {
+      document.querySelector('#map').dataset.phase = 'failed';
+      document.querySelector('#status').textContent = `Startup failed / 启动失败 · ${error.message}`;
+    });
+  </script>
+</body>
+</html>

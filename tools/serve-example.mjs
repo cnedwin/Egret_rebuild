@@ -27,6 +27,7 @@ export function createExampleServer(repository=root){
    ||/^examples\/spine-reset\/(?:index\.html|main\.mjs|recovery-flow\.mjs|recovery-native\.mjs)$/.test(relative)
    ||/^work\/spine-reset\/(?:v1|v2)\/(?:manifest\.json|assets\/(?:body|head|atlas|character))$/.test(relative)
    ||/^examples\/prepared-subtree\/(?:index\.html|main\.mjs|scene\.mjs)$/.test(relative)
+   ||/^examples\/isometric-map\/(?:index\.html|main\.mjs)$/.test(relative)
    ||/^examples\/mobile\/(?:index\.html|style\.css|main\.mjs|viewport\.mjs|resources\.mjs|pointers\.mjs|panels\.mjs)$/.test(relative)
    ||/^examples\/animation-outfits\/(?:index\.html|main\.mjs|scene\.mjs|content\.mjs)$/.test(relative)
    ||/^work\/animation-outfits\/(?:manifest\.json|assets\/(?:warm|cool|atlas|character|sparks|sequence))$/.test(relative)

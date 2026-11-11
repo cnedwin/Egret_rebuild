@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/isometric-map/index.html",
+      "originRole": "First-party Egret browser example authored with AI assistance under Apache-2.0. Uses existing public SDK entries."
+    },
+    {
+      "path": "examples/isometric-map/main.mjs",
+      "originRole": "First-party Egret browser example and programmatically generated art authored with AI assistance under Apache-2.0. Uses existing public SDK entries.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/isometric-map/README.md",
+      "originRole": "First-party paired Egret example guide authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "examples/isometric-map/README.zh-CN.md",
+      "originRole": "First-party paired Egret example guide authored with AI assistance under Apache-2.0."
+    }
+  ],
+  "documents": [
+    { "en": "examples/isometric-map/README.md", "zh": "examples/isometric-map/README.zh-CN.md" }
+  ]
+}

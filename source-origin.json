@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "dd9cbd702576fde0b1843fa16f9fa6b9829d901e29588535158d8fd91e5e2278",
+      "sha256": "6ca832a251e5f44a5386413b40472a01d9dd4e3fcfcf81bb9dc65ece26619ebb",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "596be083d3dc93cbddaa19d313b9f29342bba03acc2d49a7b892ebcc6cd0d9da",
-      "bytes": 391873,
+      "sha256": "f87de4dd35ea866eb0ee859863a7dcf03a50667767e7cb8f5b793ae98b087e11",
+      "bytes": 392336,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4860,8 +4860,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "e523baada5474bf6a0c80908318ba271eed1992489470f775190bacd48152354",
-      "bytes": 15622,
+      "sha256": "831a41b2b0187ca5f29762fecfea0b827f54db70f3596806962e63d67b51121c",
+      "bytes": 15757,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -5003,8 +5003,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "2ef4d2e9a8e81d4d7bc89c00a73c647d2a8a7025ac928fb603c1dd14b76c7eeb",
-      "bytes": 15049,
+      "sha256": "cc17fe5379304bca3316b4ebbfddedb7bfa69775f8448e52bd93c75e608de881",
+      "bytes": 15172,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -10496,8 +10496,8 @@
     {
       "path": "tools/serve-example.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 7089,
-      "sha256": "b82690880975f9006c1528f125597271d023ae630056ca8a2ac5d5ac7082b923"
+      "bytes": 7164,
+      "sha256": "b5fa2053ce4bfe6366e56d424620271105afc54425a45ca453e8d9b78c2ebbc6"
     },
     {
       "path": "tools/setup-dev.mjs",
@@ -16084,6 +16084,36 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 271,
       "sha256": "2a52d999b7f576b9b26735de7d37336737806f4cc78f11b3ae602e08327c8f94"
+    },
+    {
+      "path": "examples/isometric-map/index.html",
+      "originRole": "First-party Egret browser example authored with AI assistance under Apache-2.0. Uses existing public SDK entries.",
+      "bytes": 2553,
+      "sha256": "d092e766daf866f213ab3c9d9339fb8858fe75a9ef674bc39cdf4b486fa350aa"
+    },
+    {
+      "path": "examples/isometric-map/main.mjs",
+      "originRole": "First-party Egret browser example and programmatically generated art authored with AI assistance under Apache-2.0. Uses existing public SDK entries.",
+      "bytes": 7034,
+      "sha256": "562def05c40fc94311b71073fc25aad124eeb2b20a92f4d586f9829c58f0a3d9"
+    },
+    {
+      "path": "examples/isometric-map/README.md",
+      "originRole": "First-party paired Egret example guide authored with AI assistance under Apache-2.0.",
+      "bytes": 1520,
+      "sha256": "fd86f3f40ee2d4f0df9b58a0f5bc8fb5bf8b5e1a2827d0fa914c411cd09a9052"
+    },
+    {
+      "path": "examples/isometric-map/README.zh-CN.md",
+      "originRole": "First-party paired Egret example guide authored with AI assistance under Apache-2.0.",
+      "bytes": 1318,
+      "sha256": "915392a7c25f904167598ebab28b4fc9d0a98f7e93f42230037cf7903361af10"
+    },
+    {
+      "path": "contributions/isometric-map.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 971,
+      "sha256": "02689b5dadf92182cacedf3cbe4aaaed40eb27c4c07ca4467bdb882513c8aa1c"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
