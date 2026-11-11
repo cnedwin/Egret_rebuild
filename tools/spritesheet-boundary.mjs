@@ -286,7 +286,21 @@ function nativeEditingPackageSuccessor(expected,raw){
  return JSON.stringify(expected)===JSON.stringify(pair.base)||m31UiPackageSuccessor(expected,previous);
 }
 // M33-NATIVE-EDITING-END
+// AUTHORED-SCENE-PACKAGE-BEGIN
+// Only the exact authored-scene package may project to its complete predecessor.
+const authoredScenePackagePair = {"base":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"},"current":{"path":"packages/engine/package.json","bytes":3662,"sha256":"32bdc997a04e80bc65fc014a174a46e874b565960703d005850be6120811beec"}};
+function projectAuthoredScenePackage(raw){
+  const {base,current}=authoredScenePackagePair,digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+  if(raw.length!==current.bytes||digest(raw)!==current.sha256)return raw;
+  const value=JSON.parse(raw.toString('utf8'));
+  if(JSON.stringify(value.exports['./scene3d/authoring'])!=="{\"types\":\"./dist/rendering/scene3dAuthoring.d.ts\",\"import\":\"./dist/rendering/scene3dAuthoring.js\"}")return raw;
+  delete value.exports['./scene3d/authoring'];
+  const prior=Buffer.from(JSON.stringify(value,null,2)+'\n');
+  return prior.length===base.bytes&&digest(prior)===base.sha256?prior:raw;
+}
+// AUTHORED-SCENE-PACKAGE-END
 function m31UiPackageSuccessor(expected,raw){
+ if(expected?.path==='packages/engine/package.json')raw=projectAuthoredScenePackage(raw);
  if(nativeEditingPackageSuccessor(expected,raw))return true;
  if(m22SequencePackageSuccessor(expected,raw))return true;
  const pair=m31UiPackagePairs.find(pair=>pair.base.path===expected?.path),digest=raw=>createHash('sha256').update(raw).digest('hex');
@@ -654,6 +668,21 @@ function m3PointerGraph(root,base,actual) {
     graph=graph.map(row=>sharedLayerLightPairs.find(pair=>same(pair.base,row))?.current??row);
   }
   // SHARED-LAYER-LIGHT-GRAPH-END
+  // AUTHORED-SCENE-GRAPH-BEGIN
+  // Retain the exact cache/effect graph and append one bounded authored-scene closure.
+  const authoredScenePairs = [{"base":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":11442,"sha256":"c2ee3db171c8f88f821bfec28ca2d93474c60e6cd1a6d1dd2f7d400e4ff5c16e"},"current":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":12165,"sha256":"abc0a7ce5c4a11164756d043770dadbc9a38844220449988b33551ac5ffeae3d"}},{"base":{"path":"packages/engine/dist/rendering/sceneFrame3D.js","bytes":10022,"sha256":"c059e09ddf929c3f27c1bbe40fd3fba9237931b23ee2192bec66fb70d1a5bb80"},"current":{"path":"packages/engine/dist/rendering/sceneFrame3D.js","bytes":10736,"sha256":"ba1ea422860c571c2d41f0796d50883f8db102ab1dd31e955f28a655dcda2c2a"}},{"base":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":1650,"sha256":"6eede4d7ca07375516bc746ad0ac70fef56cf7ab6dca532f46ef049339314a82"},"current":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":1737,"sha256":"81f9914f53b2d3fca293573bef45060d807abc9581ea5211731c758073592fd1"}}];
+  const authoredSceneAdditions = [{"path":"packages/engine/rendering/scene3dAuthoring.ts","bytes":759,"sha256":"7442116e4b098faf25a930139a80a2d9f5ab2887431cf6f99bbaa0c64b52e5ac"},{"path":"packages/engine/dist/rendering/scene3dAuthoring.js","bytes":515,"sha256":"06421eb47009f8184fc8435926fc8158dafa5fe75bc225175582888a61f86c63"},{"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":525,"sha256":"07868163d41254a0376c5225d2fe160a2b1cf319ab2cff05422ef92e66926185"},{"path":"packages/engine/rendering/sceneWorld3D.ts","bytes":9405,"sha256":"ecc88942f0c44505d6a02627882ab6ffeae1e4da47d67a6a544521d246780182"},{"path":"packages/engine/dist/rendering/sceneWorld3D.js","bytes":8200,"sha256":"b38817baaee0689ae37370d624ec9469edec42b4ce7ef3ae97092a188f5f9f0b"},{"path":"packages/engine/dist/rendering/sceneWorld3D.d.ts","bytes":1511,"sha256":"2b9c2367426604f8a6e873ce1e5fb2386e6b53ca52ec67b6d3c12103b097021a"},{"path":"packages/engine/rendering/staticGlb3D.ts","bytes":19977,"sha256":"70ec45937752824dc9726eea94520cb2eb30a1ea5cac7472b61bb43c46e95fa2"},{"path":"packages/engine/dist/rendering/staticGlb3D.js","bytes":19090,"sha256":"be321742091fb1084ce0134c0440c873b7ff2d9f982e7e6c2c22f8b3a58a27e3"},{"path":"packages/engine/dist/rendering/staticGlb3D.d.ts","bytes":605,"sha256":"bf8c9c0cb165fa934ab2c4c9801a530f5f40782560978bf83320f3ef17afa0de"}];
+  const authoredPackage=readFileSync(path.join(root,'packages/engine/package.json'));
+  const authored=projectAuthoredScenePackage(authoredPackage)!==authoredPackage;
+  if(authored||authoredSceneAdditions.some(row=>present.has(row.path))){
+    if(!authored||authoredScenePairs.length!==3||authoredSceneAdditions.length!==9
+      ||new Set([...authoredScenePairs.map(pair=>pair.current.path),...authoredSceneAdditions.map(row=>row.path)]).size!==12
+      ||authoredScenePairs.some(pair=>pair.base.path!==pair.current.path||!graph.some(row=>same(row,pair.base)))
+      ||authoredSceneAdditions.some(row=>graph.some(previous=>previous.path===row.path)))
+      return reject('Authored scene predecessor identities differ');
+    graph=[...graph.map(row=>authoredScenePairs.find(pair=>same(pair.base,row))?.current??row),...authoredSceneAdditions];
+  }
+  // AUTHORED-SCENE-GRAPH-END
   for(const row of graph){
     if(!present.has(row.path))return reject('Incomplete M3 pointer successor: '+row.path);
     const raw=readFileSync(path.join(root,row.path));if(raw.length!==row.bytes||digest(raw)!==row.sha256)return reject('M3 pointer whole-group raw identity differs: '+row.path);

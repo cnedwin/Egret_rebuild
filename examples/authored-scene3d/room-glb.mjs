@@ -1,0 +1,65 @@
+// SPDX-License-Identifier: Apache-2.0
+// This original fixture generates a self-contained GLB rather than using external art.
+const panels = [
+  { width: .92, height: .72, color: [1, 0, 0, 1] },
+  { width: 1.85, height: 1.35, color: [0, 0, 1, 1] },
+];
+const quad = [0, 1, 2, 0, 2, 3];
+const positionBytes = 4 * 3 * Float32Array.BYTES_PER_ELEMENT;
+const indexBytes = quad.length * Uint16Array.BYTES_PER_ELEMENT;
+const panelBytes = positionBytes + indexBytes;
+const unlit = 'KHR_materials_unlit';
+
+export function createPanelGlb({ reverse = false } = {}) {
+  const bin = new Uint8Array(panels.length * panelBytes);
+  const payload = new DataView(bin.buffer);
+  const bufferViews = [], accessors = [], meshes = [], materials = [];
+  for (const [index, panel] of panels.entries()) {
+    const offset = index * panelBytes;
+    const w = Math.fround(panel.width), h = Math.fround(panel.height);
+    const position = [-w, -h, 0, w, -h, 0, w, h, 0, -w, h, 0];
+    position.forEach((value, i) => payload.setFloat32(offset + i * 4, value, true));
+    quad.forEach((value, i) => payload.setUint16(offset + positionBytes + i * 2, value, true));
+    const view = bufferViews.length;
+    bufferViews.push(
+      { buffer: 0, byteOffset: offset, byteLength: positionBytes, target: 34962 },
+      { buffer: 0, byteOffset: offset + positionBytes, byteLength: indexBytes, target: 34963 },
+    );
+    const accessor = accessors.length;
+    accessors.push(
+      { bufferView: view, componentType: 5126, count: 4, type: 'VEC3', min: [-w, -h, 0], max: [w, h, 0] },
+      { bufferView: view + 1, componentType: 5123, count: quad.length, type: 'SCALAR', min: [0], max: [3] },
+    );
+    materials.push({ doubleSided: true, alphaMode: 'OPAQUE',
+      extensions: { [unlit]: {} }, pbrMetallicRoughness: { baseColorFactor: panel.color },
+    });
+    meshes.push({ primitives: [{ attributes: { POSITION: accessor }, indices: accessor + 1, material: index, mode: 4 }] });
+  }
+
+  const model = {
+    asset: { version: '2.0' },
+    extensionsUsed: [unlit], extensionsRequired: [unlit],
+    scene: 0, scenes: [{ nodes: [0] }],
+    nodes: [
+      { translation: [.25, 0, 0], children: reverse ? [2, 1] : [1, 2] },
+      { mesh: 0, translation: [-.2, 0, 1] },
+      { mesh: 1, translation: [0, 0, -1] },
+    ],
+    buffers: [{ byteLength: bin.byteLength }], bufferViews, accessors, materials, meshes,
+  };
+  const json = new TextEncoder().encode(JSON.stringify(model));
+  const jsonSize = Math.ceil(json.byteLength / 4) * 4;
+  const out = new Uint8Array(12 + 8 + jsonSize + 8 + bin.byteLength);
+  const header = new DataView(out.buffer);
+  header.setUint32(0, 0x46546c67, true);
+  header.setUint32(4, 2, true);
+  header.setUint32(8, out.byteLength, true);
+  header.setUint32(12, jsonSize, true);
+  header.setUint32(16, 0x4e4f534a, true);
+  out.fill(0x20, 20, 20 + jsonSize);
+  out.set(json, 20);
+  header.setUint32(20 + jsonSize, bin.byteLength, true);
+  header.setUint32(24 + jsonSize, 0x004e4942, true);
+  out.set(bin, 28 + jsonSize);
+  return out;
+}

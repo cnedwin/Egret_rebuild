@@ -64,11 +64,12 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       } : name === 'project' ? {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./spine':{types:'./dist/spine/index.d.ts',import:'./dist/spine/index.js'},'./atlas':{types:'./dist/atlas/index.d.ts',import:'./dist/atlas/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}} : {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}};
       if(name==='runtime'||name==='engine')packageExports['./ui/editing']={types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'};
       if(name==='engine')packageExports['./web/editing']={types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'};
+      if(name==='engine')packageExports['./scene3d/authoring']={"types":"./dist/rendering/scene3dAuthoring.d.ts","import":"./dist/rendering/scene3dAuthoring.js"};
       write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(packageExports === undefined ? {} : {exports:packageExports}) });
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
       write(`packages/${name}/dist/index.js`, 'export {};\n');
-      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './webgl2':'./webgl2.js', './webgl2/scene3d':'./webgl2-scene3d.js', './text':'./text.js', './paragraph':'./paragraph.js', './web/paragraph':'./web-paragraph.js', './layout':'./layout.js', './animation':'./animation.js', './web/text':'./web-text.js', './web/image':'./web-image.js', './resources':'./resources.js', './web/resources':'./web-resources.js', './ui':'./ui.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
+      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './webgl2':'./webgl2.js', './webgl2/scene3d':'./webgl2-scene3d.js', './text':'./text.js', './paragraph':'./paragraph.js', './web/paragraph':'./web-paragraph.js', './layout':'./layout.js', './animation':'./animation.js', './web/text':'./web-text.js', './web/image':'./web-image.js', './resources':'./resources.js', './web/resources':'./web-resources.js', './ui':'./ui.js', './scene3d/authoring':'./scene3d-authoring.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
         : name === 'runtime' ? { '.': './index.js', './text':'./text.js', './paragraph':'./paragraph.js', './ui':'./ui.js' } : name === 'project' ? {'.':'./index.js','./spine':'./spine.js','./resources':'./resources.js'} : {'.':'./index.js','./resources':'./resources.js'};
       write(`node_modules/@egret/${name}/package.json`, { name: `@egret/${name}`, type: 'module', exports });
       write(`node_modules/@egret/${name}/index.js`, 'export {};\n');
@@ -590,6 +591,19 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     write('packages/engine/dist/web/scene3d.d.ts',browserTypes+'export declare function createSceneWebGPUHost(options: SceneWebGPUHostOptions): SceneWebGPUHost;\nexport declare function createTexturedSceneWebGPUHost(options: TexturedWebGPUHostOptions): TexturedSceneWebGPUHost;\n');
     write('node_modules/@egret/engine/scene3d.js',"export * from '../../../packages/engine/dist/rendering/scene3d.js';\n");
     write('node_modules/@egret/engine/scene3d-web.js',"export * from '../../../packages/engine/dist/web/scene3d.js';\n");
+    write('node_modules/@egret/engine/scene3d-authoring.js',"export * from '../../../packages/engine/dist/rendering/scene3dAuthoring.js';\n");
+    // The facade is projected onto inert dependencies for boundary checks only.
+    for(const name of ['scene3dAuthoring','sceneWorld3D','staticGlb3D'])
+      for(const file of ['packages/engine/rendering/'+name+'.ts','packages/engine/dist/rendering/'+name+'.d.ts'])
+        write(file,readFileSync(path.join(repository,file),'utf8'));
+    const authored='packages/engine/dist/rendering/';
+    write(authored+'scene3dAuthoring.js',readFileSync(path.join(repository,authored+'scene3dAuthoring.js'),'utf8'));
+    write(authored+'sceneWorld3D.js',"import './matrix4.js'; import './meshGeometry3D.js'; import './sceneFrame3D.js';\n"+
+      "export function createSceneWorld3D(){throw new Error('Synthetic policy fixture only');}\n"+
+      "export function createSceneCamera3D(){throw new Error('Synthetic policy fixture only');}\n");
+    write(authored+'staticGlb3D.js',"import './meshGeometry3D.js'; import './sharedColor2D.js';\n"+
+      "export class StaticGlb3DError extends Error {}\n"+
+      "export function readStaticGlbNodes3D(){throw new Error('Synthetic policy fixture only');}\n");
     // S3D1_FIXTURE_SCAFFOLD_END
     // Only these fixed inert runtime dependencies are reached by the shared capture stub.
     for(const name of ['Bitmap','displayTransform','displayTreeState','displayVisualState','EgretError','meshCaptureSnapshot','ownership','textDisplayState']) {
@@ -2188,6 +2202,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         'cpu-extra-module-work':['packages/engine/dist/rendering/scene3d.js','','const sceneExtraWork=Object.freeze({});\n'],
         'wrong-local-output-type':['packages/engine/dist/rendering/scene3d.d.ts',"export type {Matrix4} from './matrix4.js';\n",'export interface Matrix4 {}\n'],
         'old-entry-extra-facade-edge':['packages/engine/web/index.ts','',"import type {SceneFrame3D} from '../rendering/scene3d.js';\n"],
+        'authored-scene-private-edge':['packages/engine/web/index.ts','',"import '../rendering/sceneWorld3D.js';\n"],
       };
       const edit=edits[scene3dMutation];assert.ok(edit,'finite S3D1 mutation');const [file,before,after]=edit,original=readFileSync(path.join(root,file),'utf8');
       if(before!=='')assert.equal(original.split(before).length-1,1,'unique S3D1 mutation anchor');
@@ -2330,6 +2345,7 @@ for(const [name,reason]of [
   ['extra-cpu-static-edge','S3D1: scene entry imported outside approved closure'],['extra-cpu-dynamic-edge','S3D1: scene entry imported outside approved closure'],
   ['extra-transitive-dynamic-edge','S3D1: scene entry imported outside approved closure'],['cpu-extra-module-work','S3D1: facade contains non-forwarding module code'],
   ['wrong-local-output-type','scene3d: exact canonical type re-export mismatch: Matrix4'],['old-entry-extra-facade-edge','S3D1: scene entry imported outside approved closure'],
+  ['authored-scene-private-edge','S3D1: authored scene imported outside approved closure'],
 ])test('S3D1 new guard '+name+' defeats map-adapted predecessor',()=>{
   fixture({imported:'robust-predicates',scene3dMutation:name},result=>{
     assert.equal(result.mapAdaptedPredecessor.status,0,'explicit comparator assigned candidate PASS');

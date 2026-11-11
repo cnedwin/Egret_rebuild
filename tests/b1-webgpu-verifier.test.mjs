@@ -379,7 +379,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   const { resolveB1Dependency } = await import(pathToFileURL(join(repository, 'tools/b1-webgpu/registryProvenance.mjs')).href);
   const served = new Map();
   // Evaluate only the verifier's policy declarations and collector, never emitted SDK code or main().
-  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m24CompatibleSequenceModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, uiLayerAuthorityModuleSuccessors, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
+  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, authoredSceneFrameModuleSuccessor, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m24CompatibleSequenceModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, uiLayerAuthorityModuleSuccessors, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
     repository: await realpath(repository), sep, assert, resolve, readFile: selectedReadFile, realpath, resolveB1Dependency, URL,
     served, identities: new Map(), hash: body => createHash('sha256').update(body).digest('hex'),
   }, { timeout: 1000 });
@@ -420,6 +420,12 @@ test('S07 the finite native collector admits the actual current emitted public c
   const bytes = [...policy.served.values()].reduce((sum, value) => sum + value.body.length, 0);
   policy.assertCurrentClosure();
   assert.equal(policy.served.size, 144); assert.ok(bytes <= 4 * 1024 * 1024);
+  const sceneFrame = "packages/engine/dist/rendering/sceneFrame3D.js";
+  assert.deepEqual(Array.from(policy.authoredSceneFrameModuleSuccessor.keys()), [sceneFrame]);
+  assert.deepEqual(JSON.parse(JSON.stringify(policy.m15ModuleIdentities.get(sceneFrame))), {"bytes":10022,"sha256":"c059e09ddf929c3f27c1bbe40fd3fba9237931b23ee2192bec66fb70d1a5bb80"});
+  const body = await readFile(join(repository, sceneFrame));
+  assert.deepEqual(JSON.parse(JSON.stringify(policy.authoredSceneFrameModuleSuccessor.get(sceneFrame))), { bytes: body.length, sha256: createHash('sha256').update(body).digest('hex') });
+  assert.equal(policy.allowedModules.has('packages/engine/dist/rendering/scene3dAuthoring.js'), false);
   t.diagnostic(`Actual emitted closure: ${policy.served.size} modules, ${bytes} bytes; SDK code was read, never evaluated`);
 });
 

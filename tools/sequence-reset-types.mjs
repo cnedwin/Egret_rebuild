@@ -14,7 +14,15 @@ const selectedNative=['package.json','lib/tsc'+(process.platform==='win32'?'.exe
 if(process.platform===inventory.compiler.platform&&process.arch===inventory.compiler.arch)assert.deepEqual(selectedNative,inventory.compiler.native);
 // Native editing changes this package mapping only; the sealed RESET inventory stays intact.
 const nativeEditingPackage = [{"base":{"path":"packages/engine/package.json","bytes":3172,"sha256":"93aa97c85bf7c58d9ff462851f1f63aa101aa3a73bf07d2b0518dc14189cec61"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}},{"base":{"path":"packages/runtime/package.json","bytes":686,"sha256":"4d420a3f9896562972c959a1aeaeb5a7cb3e6e74e0fd47595a011f08665741c0"},"current":{"path":"packages/runtime/package.json","bytes":795,"sha256":"2533e015708632dd8f536b54835021d62e34a2be535ecd97c07f47610f61aa8f"}}];
-const packagePin=row=>nativeEditingPackage.find(pair=>JSON.stringify(row)===JSON.stringify(pair.base)&&JSON.stringify(fingerprintFile(root,row.path))===JSON.stringify(pair.current))?.current??row;
+const authoredScenePackage={"base":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"},"current":{"path":"packages/engine/package.json","bytes":3662,"sha256":"32bdc997a04e80bc65fc014a174a46e874b565960703d005850be6120811beec"}};
+const equal=(left,right)=>JSON.stringify(left)===JSON.stringify(right);
+function packagePin(row){
+ const pair=nativeEditingPackage.find(pair=>equal(row,pair.base));
+ if(!pair)return row;
+ const actual=fingerprintFile(root,row.path);
+ if(equal(actual,pair.current))return pair.current;
+ return equal(pair.current,authoredScenePackage.base)&&equal(actual,authoredScenePackage.current)?authoredScenePackage.current:row;
+}
 const toolPins=['tools/sequence-reset-types.mjs','tools/lib/sequence-preserve-pins.mjs'].map(path=>fingerprintFile(root,path));
 function verify(){assert.deepEqual(fingerprintFile(root,inventoryPin.path),inventoryPin);for(const pin of toolPins)assert.deepEqual(fingerprintFile(root,pin.path),pin);for(const row of selectSequencePreservePins(root,inventory.inputs.map(packagePin)))assert.deepEqual(fingerprintFile(root,row.path),row);for(const row of inventory.compiler.wrapper)assert.deepEqual(fingerprintFile(wrapper,row.path),row);for(const row of [...selectedNative,...inventory.nativeLibraries])assert.deepEqual(fingerprintFile(native,row.path),row);for(const pkg of ['engine','runtime','contracts'])assert.ok(samePhysicalPath(fs.realpathSync(path.join(root,'node_modules/@egret',pkg)),path.join(root,'packages',pkg)));}
 const env={...process.env};for(const key of Object.keys(env))if(/^(?:NODE_OPTIONS|NODE_PATH|NODE_V8_COVERAGE|NODE_COMPILE_CACHE|NODE_REPL_EXTERNAL_MODULE|NODE_TEST_CONTEXT|NODE_TEST_WORKER_ID|DOTNET_STARTUP_HOOKS|DOTNET_ADDITIONAL_DEPS|DOTNET_SHARED_STORE)$/i.test(key))delete env[key];

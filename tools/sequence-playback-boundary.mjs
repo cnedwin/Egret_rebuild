@@ -117,7 +117,21 @@ function nativeEditingPackageSuccessor(expected,raw){
  if(previous.length!==pair.base.bytes||digest(previous)!==pair.base.sha256)return false;
  return JSON.stringify(expected)===JSON.stringify(pair.base)||m31UiPackageSuccessor(expected,previous);
 }
+// AUTHORED-SCENE-PACKAGE-BEGIN
+// Only the exact authored-scene package may project to its complete predecessor.
+const authoredScenePackagePair = {"base":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"},"current":{"path":"packages/engine/package.json","bytes":3662,"sha256":"32bdc997a04e80bc65fc014a174a46e874b565960703d005850be6120811beec"}};
+function projectAuthoredScenePackage(raw){
+  const {base,current}=authoredScenePackagePair,digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+  if(raw.length!==current.bytes||digest(raw)!==current.sha256)return raw;
+  const value=JSON.parse(raw.toString('utf8'));
+  if(JSON.stringify(value.exports['./scene3d/authoring'])!=="{\"types\":\"./dist/rendering/scene3dAuthoring.d.ts\",\"import\":\"./dist/rendering/scene3dAuthoring.js\"}")return raw;
+  delete value.exports['./scene3d/authoring'];
+  const prior=Buffer.from(JSON.stringify(value,null,2)+'\n');
+  return prior.length===base.bytes&&digest(prior)===base.sha256?prior:raw;
+}
+// AUTHORED-SCENE-PACKAGE-END
 function m31UiPackageSuccessor(expected,raw){
+ if(expected?.path==='packages/engine/package.json')raw=projectAuthoredScenePackage(raw);
  if(nativeEditingPackageSuccessor(expected,raw))return true;
  if(m22SequencePackageSuccessor(expected,raw))return true;
  const pair=m31UiPackagePairs.find(pair=>pair.base.path===expected?.path),digest=raw=>createHash('sha256').update(raw).digest('hex');

@@ -124,6 +124,12 @@ function headroom(positions: readonly number[], mvp: Matrix4): void {
     }
 }
 export function createSceneFrame3D(input: unknown): SceneFrame3D {
+    return captureSceneFrame(input, false);
+}
+export function createAuthoredSceneFrame3D(input: SceneInput3D): SceneFrame3D {
+    return captureSceneFrame(input, true);
+}
+function captureSceneFrame(input: unknown, authored: boolean): SceneFrame3D {
     if (input === null || typeof input !== 'object') fail('SCENE3D_INPUT_INVALID', 'validation');
     const projection = own(input, 'projection'), draws = own(input, 'draws');
     if (projection === missing || draws === missing) fail('SCENE3D_INPUT_INVALID', 'validation');
@@ -185,7 +191,17 @@ export function createSceneFrame3D(input: unknown): SceneFrame3D {
     if (uniformBytes > 4096) fail('SCENE3D_BUDGET', 'budget');
     for (let index = 0; index < count; index++) {
         const geometry = geometries[index] as MeshGeometry3D;
-        const mvp = trustedMath(() => multiplyMatrix4(matrix, models[index]));
+        const exact = trustedMath(() => multiplyMatrix4(matrix, models[index]));
+        let mvp=exact;
+        if(authored){
+            // The authoring route rounds exactly once, at the final native MVP boundary.
+            const rounded=native(()=>exact.map(value=>Math.fround(value)));
+            for(let slot=0;slot<16;slot++){
+                if(exact[slot]!==0&&rounded[slot]===0)fail('SCENE3D_PRECISION_UNSUPPORTED','validation');
+            }
+            profile(rounded);
+            mvp=trustedMath(()=>createMatrix4(rounded));
+        }
         let seen = false;
         for (let item = 0; item < distinct.length; item++) if (distinct[item] === geometry) seen = true;
         if (!seen) {
