@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/rendering/scene3dAuthoring.ts",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/sceneWorld3D.ts",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/staticGlb3D.ts",
+      "originRole": "Independently authored first-party bounded GLB reader based on the Khronos glTF specification; AI-assisted; Apache-2.0. No borrowed implementation.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/scene-world3d.test.mjs",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/static-glb-scene3d.test.mjs",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/authored-scene3d/index.html",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/authored-scene3d/main.mjs",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/authored-scene3d/room-glb.mjs",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-authored-scene3d.mjs",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/authored-scene3d.md",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/authored-scene3d.md",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/scene-world-card3d.test.mjs",
+      "originRole": "Independently authored first-party Egret world-space card validation with generated assets; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-world-depth-cards.mjs",
+      "originRole": "Independently authored first-party Egret world-space card validation with generated assets; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/textured-scene3d/index.html",
+      "originRole": "Independently authored first-party Egret bounded textured GLB demonstration or verification using a generated RGB8 image; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/textured-scene3d/main.mjs",
+      "originRole": "Independently authored first-party Egret bounded textured GLB demonstration or verification using a generated RGB8 image; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/textured-scene3d/room-glb.mjs",
+      "originRole": "Independently authored first-party Egret bounded textured GLB demonstration or verification using a generated RGB8 image; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/static-textured-glb-scene3d.test.mjs",
+      "originRole": "Independently authored first-party Egret bounded textured GLB demonstration or verification using a generated RGB8 image; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-textured-glb-scene3d.mjs",
+      "originRole": "Independently authored first-party Egret bounded textured GLB demonstration or verification using a generated RGB8 image; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/scene-lambert-world3d.test.mjs",
+      "originRole": "Independently authored first-party Egret bounded Lambert rendering validation with generated models and textures; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-lambert-glb-scene3d.mjs",
+      "originRole": "Independently authored first-party Egret bounded Lambert rendering validation with generated models and textures; AI-assisted; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/authored-scene3d.md",
+      "zh": "knowledge-base/Cns/docs/authored-scene3d.md"
+    }
+  ]
+}

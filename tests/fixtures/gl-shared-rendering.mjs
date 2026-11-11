@@ -102,7 +102,7 @@ export function glPorts({ alignment = 256, colorEncoding = constants.LINEAR, att
   for (const kind of ['Buffer','Texture','Framebuffer','Renderbuffer','Shader','Program','VertexArray','Sync'])
     gl['delete'+kind] = object => { log('delete'+kind, object); if (object) { assert.equal(object.deleted, false, 'one cleanup attempt per native allocation'); object.deleted = true; } };
   for (const name of ['activeTexture','bindTexture','bindRenderbuffer','bindVertexArray','bindSampler','bindBufferRange',
-    'enable','disable','colorMask','depthMask','depthFunc','clearDepth','depthRange','clearColor','clear','viewport','scissor',
+    'enable','disable','colorMask','depthMask','depthFunc','frontFace','clearDepth','depthRange','clearColor','clear','viewport','scissor',
     'blendEquation','blendEquationSeparate','blendFuncSeparate','pixelStorei','texParameteri','texImage2D','texStorage2D','texSubImage2D',
     'renderbufferStorage','framebufferTexture2D','framebufferRenderbuffer','drawBuffers','readBuffer',
     'compileShader','linkProgram','detachShader','uniformBlockBinding','uniform1i','uniform1f','uniform2f',

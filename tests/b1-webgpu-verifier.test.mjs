@@ -362,11 +362,17 @@ test('S06 collector pins the current Host and retains both schedules separately'
   assert.deepEqual(JSON.parse(performance[1]), {bytes:190117,sha256:'f3d324c1357ecce0f2f4067d017d2ae88886c5e26fe7458df0b5d16e59fdfb93'});
   const recovery=source.match(/^  const m24RecoveryHostSourceSuccessor = (\{[^\n]+\});$/m);assert.ok(recovery);
   const effect=source.match(/^  const m34EffectHostSourceSuccessor = (\{[^\n]+\});$/m);assert.ok(effect);
-  const selected = JSON.parse(effect[1]);
+  const worldCard=source.match(/^  const worldCardHostSourceSuccessor = (\{[^\n]+\});$/m);assert.ok(worldCard);
+  assert.deepEqual(JSON.parse(effect[1]), {"bytes":195968,"sha256":"cdcaef7f728507e3407e7ffd3e827ee164d9cd5f1597458fefc3685bde0e75ac"});
+  const texturedGlb=source.match(/^  const texturedGlbHostSourceSuccessor = (\{[^\n]+\});$/m);assert.ok(texturedGlb);
+  assert.deepEqual(JSON.parse(worldCard[1]), {"bytes":200125,"sha256":"aa72fa15df521aaee5a34e73b61448d5207f346ec26301bae188901bad033882"});
+  const lambertGlb=source.match(/^  const lambertGlbHostSourceSuccessor = (\{[^\n]+\});$/m);assert.ok(lambertGlb);
+  assert.deepEqual(JSON.parse(texturedGlb[1]), {"bytes":203818,"sha256":"c673d33d7ac329724dc7f222bf8f14a3f26d2d90e940e74167303dd54a917c4c"});
+  const selected = JSON.parse(lambertGlb[1]);
   const currentHost = await readFile(join(repository, 'packages/engine/web/WebGPUHost.ts'));
   assert.deepEqual(selected, { bytes: currentHost.length, sha256: createHash('sha256').update(currentHost).digest('hex') });
-  assert.match(source, /assert\.equal\(currentHost\.bytes, m34EffectHostSourceSuccessor\.bytes,/);
-  assert.match(source, /assert\.equal\(currentHost\.sha256, m34EffectHostSourceSuccessor\.sha256\)/);
+  assert.match(source, /assert\.equal\(currentHost\.bytes, lambertGlbHostSourceSuccessor\.bytes,/);
+  assert.match(source, /assert\.equal\(currentHost\.sha256, lambertGlbHostSourceSuccessor\.sha256\)/);
   assert.match(source, /allowedModules\.has\(name\)/);
   assert.match(source, /maximumSubmittedFrames: 11/); assert.match(source, /maximumSubmittedFrames: 3/);
   assert.match(source, /baselinePixelComparisons !== 14/); assert.match(source, /window\.frames\.reduce\([^\n]*8214/);
@@ -379,7 +385,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   const { resolveB1Dependency } = await import(pathToFileURL(join(repository, 'tools/b1-webgpu/registryProvenance.mjs')).href);
   const served = new Map();
   // Evaluate only the verifier's policy declarations and collector, never emitted SDK code or main().
-  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m24CompatibleSequenceModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, uiLayerAuthorityModuleSuccessors, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
+  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, authoredSceneFrameModuleSuccessor, authoredSceneModuleIdentities, worldCardModuleSuccessors, worldCardModuleIdentities, texturedGlbModuleSuccessors, texturedGlbModuleIdentities, lambertGlbModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m24CompatibleSequenceModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, uiLayerAuthorityModuleSuccessors, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
     repository: await realpath(repository), sep, assert, resolve, readFile: selectedReadFile, realpath, resolveB1Dependency, URL,
     served, identities: new Map(), hash: body => createHash('sha256').update(body).digest('hex'),
   }, { timeout: 1000 });
@@ -405,7 +411,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   for (const [name, successor] of policy.m12PerformanceModuleSuccessors) {
     assert.ok(policy.m15ModuleIdentities.has(name), 'A successor cannot add a module');
     assert.notEqual(successor.sha256, policy.m15ModuleIdentities.get(name).sha256);
-    assert.deepEqual(policy.currentModuleIdentities.get(name), policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??successor);
+    assert.deepEqual(policy.authoredSceneModuleIdentities.get(name), policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??successor);
   }
   assert.equal(policy.m15ModuleIdentities.get('packages/engine/dist/web/WebGPUHost.js').sha256, 'edfd58cc7facae99f49541d906224bff1df9f32f49a26a630d2de70c5040752d');
   assert.match(source, /served\.size < m3FontSourceModuleLimit/);
@@ -420,6 +426,22 @@ test('S07 the finite native collector admits the actual current emitted public c
   const bytes = [...policy.served.values()].reduce((sum, value) => sum + value.body.length, 0);
   policy.assertCurrentClosure();
   assert.equal(policy.served.size, 144); assert.ok(bytes <= 4 * 1024 * 1024);
+  const sceneFrame = "packages/engine/dist/rendering/sceneFrame3D.js";
+  assert.deepEqual(Array.from(policy.authoredSceneFrameModuleSuccessor.keys()), [sceneFrame]);
+  assert.deepEqual(JSON.parse(JSON.stringify(policy.m15ModuleIdentities.get(sceneFrame))), {"bytes":10022,"sha256":"c059e09ddf929c3f27c1bbe40fd3fba9237931b23ee2192bec66fb70d1a5bb80"});
+  assert.deepEqual(JSON.parse(JSON.stringify(policy.authoredSceneFrameModuleSuccessor.get(sceneFrame))),{"bytes":10736,"sha256":"ba1ea422860c571c2d41f0796d50883f8db102ab1dd31e955f28a655dcda2c2a"});
+  assert.deepEqual([...policy.worldCardModuleSuccessors.keys()],["packages/engine/dist/rendering/sceneFrame3D.js","packages/engine/dist/web/WebGPUHost.js","packages/engine/dist/web/prepareSharedSubmission2D.js","packages/engine/dist/web/sharedB1.js","packages/engine/dist/web/sharedSubmissionStorage2D.js","packages/engine/dist/web/webgpuSharedMeshPass.js"]);
+  for(const [name,expected] of policy.worldCardModuleSuccessors)
+    assert.deepEqual(policy.worldCardModuleIdentities.get(name),expected);
+  assert.deepEqual([...policy.texturedGlbModuleSuccessors.keys()],["packages/engine/dist/rendering/packSharedMeshGeometry3D.js","packages/engine/dist/rendering/sceneFrame3D.js","packages/engine/dist/web/WebGPUHost.js","packages/engine/dist/web/sharedB1.js","packages/engine/dist/web/sharedSubmissionStorage2D.js","packages/engine/dist/web/webgpuSharedMeshPass.js"]);
+  for(const [name,expected] of policy.texturedGlbModuleSuccessors)
+    assert.deepEqual(policy.texturedGlbModuleIdentities.get(name),expected);
+  assert.deepEqual([...policy.lambertGlbModuleSuccessors.keys()],["packages/engine/dist/rendering/packSharedMeshGeometry3D.js","packages/engine/dist/rendering/sceneFrame3D.js","packages/engine/dist/web/WebGPUHost.js","packages/engine/dist/web/sharedB1.js","packages/engine/dist/web/sharedSubmissionStorage2D.js","packages/engine/dist/web/webgpuSharedMeshPass.js"]);
+  for(const [name,expected] of policy.lambertGlbModuleSuccessors){
+    const body=await readFile(join(repository,name));
+    assert.deepEqual(JSON.parse(JSON.stringify(expected)),{bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
+  }
+  assert.equal(policy.allowedModules.has('packages/engine/dist/rendering/scene3dAuthoring.js'), false);
   t.diagnostic(`Actual emitted closure: ${policy.served.size} modules, ${bytes} bytes; SDK code was read, never evaluated`);
 });
 
@@ -586,7 +608,7 @@ test('S14 content-build successors retain exact historical membership and curren
   assert.deepEqual(JSON.parse(JSON.stringify(policy.m15ModuleIdentities.get(entries[1][0]))),
     { bytes: 16232, sha256: '39604bb6f530d229e576f0122e53d90d1b05270b2ae229322fe0f402e3d7c715' });
   for (const [name, successor] of entries) {
-    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.m3FontModuleSuccessors.get(name)??successor)));
+    assert.deepEqual(JSON.parse(JSON.stringify(policy.authoredSceneModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.m3FontModuleSuccessors.get(name)??successor)));
   }
 });
 
@@ -693,11 +715,11 @@ test('S16 UI cooperation admits only seven exact successors and two eager depend
   for (const [name, expected] of uiSuccessors) {
     assert.ok(policy.m15ModuleIdentities.has(name), 'A successor must retain historical membership');
     assert.notEqual(policy.m15ModuleIdentities.get(name).sha256, expected.sha256);
-    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.uiLayerAuthorityModuleSuccessors.get(name)??policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??policy.m33KeyboardAdmissionModuleSuccessor.get(name)??policy.m22SequenceModuleSuccessors.get(name)??expected)));
+    assert.deepEqual(JSON.parse(JSON.stringify(policy.authoredSceneModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.uiLayerAuthorityModuleSuccessors.get(name)??policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??policy.m33KeyboardAdmissionModuleSuccessor.get(name)??policy.m22SequenceModuleSuccessors.get(name)??expected)));
   }
   for (const [name, expected] of uiAdditions) {
     assert.equal(policy.m15ModuleIdentities.has(name), false);
-    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.uiLayerAuthorityModuleSuccessors.get(name)??policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??policy.m33KeyboardAdmissionModuleSuccessor.get(name)??policy.m22SequenceModuleSuccessors.get(name)??expected)));
+    assert.deepEqual(JSON.parse(JSON.stringify(policy.authoredSceneModuleIdentities.get(name))), JSON.parse(JSON.stringify(policy.uiLayerAuthorityModuleSuccessors.get(name)??policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??policy.m33KeyboardAdmissionModuleSuccessor.get(name)??policy.m22SequenceModuleSuccessors.get(name)??expected)));
   }
   for (const name of ['packages/engine/dist/ui/index.js', 'packages/runtime/dist/ui/index.js']) {
     assert.equal(policy.allowedModules.has(name), false, 'Optional UI assembly cannot enter this default closure');
@@ -780,7 +802,7 @@ test('S18 sequence collector admits only four exact successors and three private
  const policy=await completeCurrentClosure();
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m22SequenceModuleSuccessors])),sequenceSuccessors);
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m22SequenceModuleAdditions])),sequenceAdditions);
- for(const [name,expected]of [...sequenceSuccessors,...sequenceAdditions])assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))),JSON.parse(JSON.stringify(policy.m24CompatibleSequenceModuleSuccessor.get(name)??policy.m24ResetModuleSuccessor.get(name)??policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??expected)));
+ for(const [name,expected]of [...sequenceSuccessors,...sequenceAdditions])assert.deepEqual(JSON.parse(JSON.stringify(policy.authoredSceneModuleIdentities.get(name))),JSON.parse(JSON.stringify(policy.m24CompatibleSequenceModuleSuccessor.get(name)??policy.m24ResetModuleSuccessor.get(name)??policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??expected)));
  for(const name of ['packages/engine/dist/animation/index.js','packages/engine/dist/animation/sequenceController.js','packages/engine/dist/animation/sequenceCoordinator.js']){assert.equal(policy.allowedModules.has(name),false);await assert.rejects(policy.collect(name),error=>error.message==='Unapproved public native dependency: '+name);}
 });
 

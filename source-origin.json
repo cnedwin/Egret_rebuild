@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 15246,
-      "sha256": "30673e8a33653598b6e0e1f52d7227fb0f0517bc422481712536bc5752c8b314",
+      "bytes": 15349,
+      "sha256": "bd4539ff968a86b7bc0dd249f84395fc99372a9703de685e4ca1f888c80f0a41",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -1084,8 +1084,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/工程规划.md",
-      "bytes": 12572,
-      "sha256": "a168ed86a8126dd761cbde1e7a9ddfa21ceb27fec62c35ca9061371b11d1545f",
+      "bytes": 12626,
+      "sha256": "f01f4a56be5b7a7bb713a441056930e40281b01e9dbbdf5a6e27bea38748269b",
       "identityHistory": [
         {
           "bytes": 23962,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "1041498525251d7c420ad3689dea0827c6b434ff7fab41b2d2b52b3f2a4b65ab",
+      "sha256": "2b5c705bd84d3389170e5f871db9c98a4e8d412e58f19c408d5acf1bbb907ef3",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 17214,
-      "sha256": "b5a8be0ea73de1c6f8e20cc266b3fe7946ece1a01a3e6ac26b288c49846c22ec",
+      "bytes": 17340,
+      "sha256": "b6241e324531a22419cb9bf86cc71cf9eac9a5c350d4d366db2afd4716ec7167",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -2684,8 +2684,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-plan.md",
-      "bytes": 14990,
-      "sha256": "9678a3480bd96310b66a9f4171c42290413c3ebea6e5f6f3e5f0e2c1a51e9b81",
+      "bytes": 15046,
+      "sha256": "d38aecc4039325f4633f2b6eaeedbb82537fe2deb1487e396443893f3a735579",
       "identityHistory": [
         {
           "bytes": 29962,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "ecd6cf3e864caa169d3594e52fb9daa6a67b04f35647ab4d5657a002c06685a9",
-      "bytes": 392942,
+      "sha256": "8e92b614dc6ee925f9292f092f6d01f235249b386ea1fefa31ec4bcf5459db55",
+      "bytes": 393743,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4123,8 +4123,8 @@
     },
     {
       "path": "packages/engine/package.json",
-      "bytes": 3514,
-      "sha256": "5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db",
+      "bytes": 3662,
+      "sha256": "32bdc997a04e80bc65fc014a174a46e874b565960703d005850be6120811beec",
       "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset.",
       "identityHistory": [
         {
@@ -4399,8 +4399,8 @@
     },
     {
       "path": "packages/engine/web/WebGPUHost.ts",
-      "sha256": "cdcaef7f728507e3407e7ffd3e827ee164d9cd5f1597458fefc3685bde0e75ac",
-      "bytes": 195968,
+      "sha256": "e91be7252e869987d0b2e4fc261fd3940521f1a28f916cbe1d8507cb892f7d73",
+      "bytes": 205694,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "packages/engine/web/WebGPUHost.ts",
       "previousLayoutSha256": "f07f59068f1c65f1247500ca8665747bb957d99e07286b16e3d6d08be3da51bc",
@@ -5171,8 +5171,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 273275,
-      "sha256": "090306f70ddfd3e87818fba83d2ce55fa755a4e0de2ca535fa8aaaba7a773ad7",
+      "bytes": 277221,
+      "sha256": "7982f7478ffa7d3fb4cf1451f1eda8f681b94f047121bb421442086707d6c2c3",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -5478,8 +5478,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 381249,
-      "sha256": "27c5f5117120b6818203c204daaf731248c4f252dbefa07789b6ba28b15630d8",
+      "bytes": 388705,
+      "sha256": "df241848784f41ca1db84faf701939f228caf1f5c5484bad756400f979f2cffa",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -5537,8 +5537,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "bytes": 148241,
-      "sha256": "2efee69ad02e6dcbac415dfdd252d115fa02e183c425a367452ae13abc9657a8",
+      "bytes": 153250,
+      "sha256": "5557e915b3a9d3e1c572a682b73ccf24532ca8bf9cab1ed9a49d8fb37f25f0a8",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -6024,8 +6024,8 @@
     {
       "path": "packages/engine/rendering/sceneFrame3D.ts",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 11442,
-      "sha256": "c2ee3db171c8f88f821bfec28ca2d93474c60e6cd1a6d1dd2f7d400e4ff5c16e"
+      "bytes": 18820,
+      "sha256": "31773b68d096eb210e56af7c81e121f2daaa7a045254a96ed64769509eeff377"
     },
     {
       "path": "packages/engine/rendering/texturedPreparationBudget2D.ts",
@@ -6382,8 +6382,8 @@
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 58420,
-      "sha256": "130c41af80b46317929ebcb055587b810075c2b0fc78cbf962fd894c37f80857",
+      "bytes": 61716,
+      "sha256": "438f6f58030939be4c881ea67b87b0a8572defb8b3937c11547bc00f078a265d",
       "identityHistory": [
         {
           "bytes": 17519,
@@ -6615,8 +6615,8 @@
     {
       "path": "tests/project-boundaries.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 42073,
-      "sha256": "5e5a98353e90999880ae1d9091c5bafb65c4230bed12f43a0cff937663a3c153",
+      "bytes": 42122,
+      "sha256": "5cfcc4e50d95e6a4909c64e9a7e71e0249532ead00cd11c64cc0db129496aebd",
       "identityHistory": [
         {
           "bytes": 13130,
@@ -7033,8 +7033,8 @@
     {
       "path": "tools/verify-webgpu-b1.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 92730,
-      "sha256": "29fdcf8efd90ba89cb9dcfc40ce3402c6a70636584869ee32203e0969ee0ea92",
+      "bytes": 99896,
+      "sha256": "c192def8d30988036508b851d8545c71f989001a661087a116af740927cbd20c",
       "identityHistory": [
         {
           "bytes": 38603,
@@ -9634,14 +9634,14 @@
     },
     {
       "path": "tools/sequence-playback-types.mjs",
-      "bytes": 19427,
-      "sha256": "74c1fb403d9a294b5da35c41bf37bc5561f0ccdfc76647e03e29ca3292b41199",
+      "bytes": 19939,
+      "sha256": "ebdc067514065fa7dc0d8e0667978eda3d32d59b646059a10be94ccdfc393e64",
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review."
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
-      "bytes": 82982,
-      "sha256": "d8827b5be210eb7e8f8acd648dbb5362b5981e6a88e2c32ff04f00d4df692947",
+      "bytes": 90691,
+      "sha256": "4b6bf9d671d2fe00deae1de3fbfecdee4789aeae660deb0d237f2137294d03a3",
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review.",
       "identityHistory": [
         {
@@ -9876,8 +9876,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 329086,
-      "sha256": "83cd5b756eee3275507e5cd3e90ed75ed4181d77353acdec12232deae8b869bb",
+      "bytes": 367775,
+      "sha256": "702623cff673d162e0fa53c90b4d30b6ad2171b90dcb778b8ddfd77928c6be98",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10087,20 +10087,20 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-boundary.mjs",
-      "bytes": 85039,
-      "sha256": "265552943c2f0c241ebdecbf93a080e78804060da13b93a5f6cb9771d3f98f96",
+      "bytes": 92622,
+      "sha256": "9357961e01c7ddb78d26aafe80ea77f3563de0fcba4b598f6120fb2afc061c6a",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
-      "bytes": 78460,
-      "sha256": "bdb5adcf984c30ec191f63dacac466966c4103bb392b528d8b9002bc6117db19",
+      "bytes": 86043,
+      "sha256": "71e981e06cc4344018d6c035ad2c825a73bce4a34fc6a8d7e59d2fbece18298d",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 338711,
-      "sha256": "2424dd6f11aa8927c063ece1ebefc40e250ca7eff87d4cb66e64ab847ba5a6b2",
+      "bytes": 377614,
+      "sha256": "0245f9776c5bd71b9bbb32d61161b5822755071fd2e3ee784dbee349346f9351",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10161,8 +10161,8 @@
     },
     {
       "path": "tools/atlas-import-boundary.mjs",
-      "bytes": 233799,
-      "sha256": "9161dc1f6433f9f6c1d62d2574d13fd8db461f6bbcdfc7a2da04c3929a723434",
+      "bytes": 272488,
+      "sha256": "6d5957edb26911bb616e3ba6c5c2cc2b42f9d490fc40b3677d584034a6e5f747",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10174,8 +10174,8 @@
     },
     {
       "path": "tools/atlas-import-types.mjs",
-      "bytes": 6819,
-      "sha256": "d41757be27b07ce70cf70642d4c60199c09f6c43489d21bae9c28c1cc04a5b36",
+      "bytes": 7331,
+      "sha256": "50064997cc85f8cc099be0260390a44239d8f5722b246dbf539407fd0d198d56",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10382,8 +10382,8 @@
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 14017,
-      "sha256": "c0b1aab299f24c32fda47fe5bc4bfc25da5157ecd5d2ad942bc5b3e5412a70ba"
+      "bytes": 14529,
+      "sha256": "1dd9c88eb8a8c6cfc0d067d04a6fd875358778e2a4b65a412a297d961a6e7faf"
     },
     {
       "path": "tools/bitmap-resource-slot-policy.json",
@@ -10496,8 +10496,8 @@
     {
       "path": "tools/serve-example.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 7164,
-      "sha256": "b5fa2053ce4bfe6366e56d424620271105afc54425a45ca453e8d9b78c2ebbc6"
+      "bytes": 7348,
+      "sha256": "24b9695e08c8c0f145d9ac18b3be120baa86c2f9eb810b3a33be5bbf22c70303"
     },
     {
       "path": "tools/setup-dev.mjs",
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1456231,
-      "sha256": "070f83bb6bf47a18f1c98c9a0444dde19795d04a80ba20ce89c8c84b39078d8f"
+      "bytes": 1609842,
+      "sha256": "62ef0d30ab14f16738b70f0a8fec66acba688d78ac5a544ee62a11c35a4615a4"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10688,8 +10688,8 @@
     {
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 53840,
-      "sha256": "6f708846007b2db23ea890778bede6777aeaa77dc8c9e8db25c687619673534f"
+      "bytes": 57680,
+      "sha256": "459ff3e73da1f14c1cd5555cae2c09a24219149824ead94fd87d2903d5878083"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -10718,8 +10718,8 @@
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
       "originRole": "First-party M0 registered compiler input review workflow; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 249724,
-      "sha256": "c9bdc81e0c110dfe803d4222eecef93f9be152459fbbcb39e34a292fb0e716fb"
+      "bytes": 284931,
+      "sha256": "7c78bf1cffba969dd9de36b4079dde414db2563004c813b73fbe8f665bd1d11b"
     },
     {
       "path": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
@@ -10766,8 +10766,8 @@
     {
       "path": "packages/engine/web/webgpuBindingCache.ts",
       "originRole": "First-party private WebGPU reuse implementation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 9988,
-      "sha256": "6edcff73a936c4ddfd748ca578adc98058bfbcfb86741ee4e0851af7d64c64ea"
+      "bytes": 9994,
+      "sha256": "f46d1428fa5556b88b68a99f76eb47d95d00793fe0f2914d4928b410128dc3c4"
     },
     {
       "path": "packages/engine/web/webgpuBufferPool.ts",
@@ -11024,8 +11024,8 @@
     {
       "path": "packages/engine/rendering/packSharedMeshGeometry3D.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5680,
-      "sha256": "2d7d2587464d38a0f98f1060c3ef99f2aab43bbb9910ba175a4079812991d1bd"
+      "bytes": 6726,
+      "sha256": "258ac6f2d4302636dbe8f6c6bf3755ded78110f90c138aab334ef03aa6048e26"
     },
     {
       "path": "packages/engine/rendering/preparedSharedBatches2D.ts",
@@ -11048,14 +11048,14 @@
     {
       "path": "packages/engine/web/prepareSharedSubmission2D.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 3440,
-      "sha256": "13bfc654208dde113c2bc6290a4d5a065c5555c82fd5e2bdd1ef1657af8024f5"
+      "bytes": 3681,
+      "sha256": "6888c44947cbce9411dbd156a332a3c0fa91818188bad3dac6427ae5f4eedde4"
     },
     {
       "path": "packages/engine/web/sharedB1.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1324,
-      "sha256": "a1d91beff1753059384b3ccee6b519c8aa77e5c60060436e36197ad1b17c1ec6"
+      "bytes": 1479,
+      "sha256": "3d00cab514b60d12eaeb94769c3e26c468182392ec23dfe2d1263b8ecd159b7a"
     },
     {
       "path": "packages/engine/web/sharedWebGPUOptions.ts",
@@ -11072,8 +11072,8 @@
     {
       "path": "packages/engine/web/webgpuSharedMeshPass.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 2992,
-      "sha256": "ebddd1002bc6de36a4c5cc50b51d16ed08f4c25228b73f76b14986272170dd5b"
+      "bytes": 11323,
+      "sha256": "a5b33fc061e60547b804fc554d41ac7296a8fc11003f493b4ef77915f4111928"
     },
     {
       "path": "packages/engine/web/webgpuSharedPass.ts",
@@ -11180,62 +11180,62 @@
     {
       "path": "tools/atlas-frame-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 3837,
-      "sha256": "dc4480b5b958607a0fc822ac8cdbe677e081dbe19adfb7093f94b7b957d4860b"
+      "bytes": 4349,
+      "sha256": "7d5ede8dbda52ec01c44143d44f4942a415aa60cccc8134f6301efe86693c661"
     },
     {
       "path": "tools/bitmap-button-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 17305,
-      "sha256": "33c6869ac4e2e141140bb12b2cbf224639b69c521395db8d2624242453de7df1"
+      "bytes": 17817,
+      "sha256": "db8bd6df7a1270d0e7f70a753d3c1c9ff02b2eab1835f5f208c6f8835fc87c86"
     },
     {
       "path": "tools/bitmap-resource-slot-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 11314,
-      "sha256": "2e2cf5910692337f98cbb5957c0fe382b2d9262e520810c6e96712975712f821"
+      "bytes": 11826,
+      "sha256": "26310ff8138971f65198d2c08ecff4cf837bdd9773d2bf0b9afb3e2973c6d209"
     },
     {
       "path": "tools/browser-png-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 28035,
-      "sha256": "70d646a3c15c8445f2e1bb40091e997361831928f28f2779c242d7cc4a74daba"
+      "bytes": 29317,
+      "sha256": "60a2ef29429b0337c1a30f6948e210d5061bbfd0d809fd9b352ab6cc6d7d9a0a"
     },
     {
       "path": "tools/display-anchor-offsets-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 16656,
-      "sha256": "d24e8aa744aac222407476f8eb6d64b724614396964af682b65ed86d484eb4c7"
+      "bytes": 17168,
+      "sha256": "893eebac78ae4c3a0ce2c8bff7de1a84d98e372960b9496ee0a4240f800aaa9d"
     },
     {
       "path": "tools/display-container-add-child-at-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 18848,
-      "sha256": "56d93ad2aa9ee1cf62264116daaf0c4c96a6b1527f7313cdc5f774491f1dfe6a"
+      "bytes": 19360,
+      "sha256": "aeeb77b5adbb2d07e448b9c4eb9b021adea7bdea0f295053ec9689f7009b9049"
     },
     {
       "path": "tools/display-container-child-index-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 17242,
-      "sha256": "29e8127f12fde9ea0fe37042fc0acf61b378047978ec61b137d165e73cdc5903"
+      "bytes": 17754,
+      "sha256": "236d29fcee944267c6cc775231c5d5cfdc88f94575fb09616193e3d7e49fcfba"
     },
     {
       "path": "tools/display-container-remove-children-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 15398,
-      "sha256": "dc32cc178f6f658f49b71d769222960f3671015d66d2af58ae0f669f601325c3"
+      "bytes": 15910,
+      "sha256": "8b991908a775f080ef89082d84a97f9201d498c7271626e6200075d60d9afa24"
     },
     {
       "path": "tools/lib/m13-strict-successor.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 85991,
-      "sha256": "c160e1d8cd83e131cac6f73953412e83e3331c320d3842e3af2913b99a2bd290"
+      "bytes": 93794,
+      "sha256": "34f0b589b334c95380f61ff73a01e4ddf50ba52d5a08864320e8f461cca92071"
     },
     {
       "path": "tools/linear-layout-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 11203,
-      "sha256": "e48fccebcd70149879b0a8ace00c49dcc7447b00e4852ecc3695ca8e2f8b773d"
+      "bytes": 11715,
+      "sha256": "f6ca6837351bcb0a053162199b3fcb455cba4e60937d8d1168ddaa85a5f80898"
     },
     {
       "path": "tools/m13-strict-successors.json",
@@ -11246,8 +11246,8 @@
     {
       "path": "tools/nine-slice-bitmap-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 6673,
-      "sha256": "68986c83c5059e19bd8d3d6c89a29a5d972bfecb562b733cb10f2b5d6057a596"
+      "bytes": 7185,
+      "sha256": "4119b641ae6a74ae001cd7a2603f3f7d48063707acf90358377419bf2cab7542"
     },
     {
       "path": "tools/resource-scene-boundary.mjs",
@@ -11360,8 +11360,8 @@
     {
       "path": "packages/engine/web/WebGL2Host.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 105804,
-      "sha256": "82a1d973fcd9c1d809b3e9b49f78381473a5051a66a4d111354534ffddefc31d"
+      "bytes": 114059,
+      "sha256": "33f663959b9608bc7b7cd365fa3816fcb30f246b059d6cc355297a59097946e2"
     },
     {
       "path": "packages/engine/web/sharedRetentionLedger.ts",
@@ -11372,14 +11372,14 @@
     {
       "path": "packages/engine/web/sharedSubmissionStorage2D.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 5683,
-      "sha256": "6732e63c0d14a5ff2270458de3cf57593285048ba5a4b079ce50717572b615b7"
+      "bytes": 8655,
+      "sha256": "6ea2c85a99188abc3b24d3a385443d0ce0cdef81950dd372bc9856178961358c"
     },
     {
       "path": "packages/engine/web/sharedWebGL2Arena.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 4422,
-      "sha256": "dc5af7f50245247524378f47fc72050874bcd768a2dc3793169c677ec21169b4"
+      "bytes": 4576,
+      "sha256": "1f609eb187a9772336c6ff03b7f0b4553c5a9074d53c2701271d004b07a35cb4"
     },
     {
       "path": "packages/engine/web/sharedWebGL2Options.ts",
@@ -11390,8 +11390,8 @@
     {
       "path": "packages/engine/web/sharedWebGL2Scene.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 7603,
-      "sha256": "f1876aa0a6b3a39585c11a536779f8ae3ecdbcb17125db0ef3a9e59fc4664af4"
+      "bytes": 14130,
+      "sha256": "43ec4260ab0d9b17ef000da62e4650337be9a4fc9bce71301ca63512fec64a15"
     },
     {
       "path": "packages/engine/web/sharedWebGL2Shaders.ts",
@@ -11408,8 +11408,8 @@
     {
       "path": "packages/engine/web/webgl2Native.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 16621,
-      "sha256": "990c1f4b991dfa42a163e97b5a618f74d7a7f8011412d4edb806a0aff51808e6"
+      "bytes": 16642,
+      "sha256": "2488fe3dba2225a7a6a195521a1e65fcf23d46cd6e707fc25b3e415e58496d73"
     },
     {
       "path": "packages/engine/web/webgl2Scene3d.ts",
@@ -11426,8 +11426,8 @@
     {
       "path": "tests/fixtures/gl-shared-rendering.mjs",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 10971,
-      "sha256": "6e2a6fe145b54342a9c960d18b0e3863ca9d081e679af7f7eaf7a13c4e2d0593"
+      "bytes": 10983,
+      "sha256": "2287ffaae8a6473347a0dd84c3121899c02607ee40cba2a9869f862b6c8b8a1f"
     },
     {
       "path": "tests/shared-retention-ledger-private.test.mjs",
@@ -11906,8 +11906,8 @@
     {
       "path": "tests/shared-frame-upload-webgpu.test.mjs",
       "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
-      "bytes": 29687,
-      "sha256": "01eec1a2f71bb0fbc879531836dbd4358958b0d8617bfeef77eff7a5cf9e8ee3"
+      "bytes": 32978,
+      "sha256": "d12b3424dbaf85e6a026a3b54eea457d99df113e60e81d819a08178f9905b649"
     },
     {
       "path": "tests/shared-host-resource-diagnostics.test.mjs",
@@ -15578,8 +15578,8 @@
     {
       "path": "tools/sequence-reset-types.mjs",
       "originRole": "Independently authored first-party bounded sequence RESET replacement, existing content and Scope ownership, public behavior controls, original programmatic example content and bilingual evidence projection; AI-assisted; Apache-2.0. No new dependency.",
-      "bytes": 5355,
-      "sha256": "7ef73a4a5ab95012355979b600834f9cf8a87662f8a8bf2230c775b5db55786e"
+      "bytes": 5882,
+      "sha256": "a126d690dea10f75df658727f2461c1bd846a5ee54fc5b4ebeed4060b7ca0cec"
     },
     {
       "path": "tools/check-test-baselines.mjs",
@@ -16150,6 +16150,132 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 601,
       "sha256": "f7c93ca6ecc5ae4922c4e3508b504e7dcd436877267b7e1c34cb09eff07d4527"
+    },
+    {
+      "path": "packages/engine/rendering/scene3dAuthoring.ts",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0.",
+      "bytes": 1109,
+      "sha256": "3c59f3664f5c6df7ce7cb77b51b80710702abe92057bb03acbf3188191cbb4ee"
+    },
+    {
+      "path": "packages/engine/rendering/sceneWorld3D.ts",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0.",
+      "bytes": 15565,
+      "sha256": "d18742acf3dc0031306fb7685ebab4e2f64520957c296b6fe0988a2734cc1f7b"
+    },
+    {
+      "path": "packages/engine/rendering/staticGlb3D.ts",
+      "originRole": "Independently authored first-party bounded GLB reader based on the Khronos glTF specification; AI-assisted; Apache-2.0. No borrowed implementation.",
+      "bytes": 39595,
+      "sha256": "f6d073bffcd7e4c39bdb6fb0e80f9e032d548a11d149547be48e13c477f32a3b"
+    },
+    {
+      "path": "tests/scene-world3d.test.mjs",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0.",
+      "bytes": 5413,
+      "sha256": "fceec549fc5acb6cb22e2ae7eefde95c1b3d83fa48cef0b41fded5b05271eee5"
+    },
+    {
+      "path": "tests/static-glb-scene3d.test.mjs",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0.",
+      "bytes": 7914,
+      "sha256": "f712509d21a7353d07c5e426f7230f77e8421d536838e8724d30737c2a4d43c0"
+    },
+    {
+      "path": "examples/authored-scene3d/index.html",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0.",
+      "bytes": 2943,
+      "sha256": "5ec286023f94ec09d8c13c23b1f1357cc50ecbadbd7ddf538198b7f650e991df"
+    },
+    {
+      "path": "examples/authored-scene3d/main.mjs",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0.",
+      "bytes": 4819,
+      "sha256": "404bd4812393b9e86a740054e2b23b3ec1efbf0fac6f7fcbc6a0be4a4a7f951c"
+    },
+    {
+      "path": "examples/authored-scene3d/room-glb.mjs",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0.",
+      "bytes": 3021,
+      "sha256": "ee97ca5e29bf4e3d50c9a79b75bea14bfca38fb32091453ced0cad65bd67a7bd"
+    },
+    {
+      "path": "tools/verify-authored-scene3d.mjs",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0.",
+      "bytes": 7334,
+      "sha256": "56ca246d8dd43338729cbb82fe1c0038d685651d6030d28b06bb3ac8bdc03cc6"
+    },
+    {
+      "path": "knowledge-base/en/docs/authored-scene3d.md",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0.",
+      "bytes": 12689,
+      "sha256": "c3ea3e3caccf697858db10ae211739aa1ae829bd55fb4fcaac2a1ce741ca70b5"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/authored-scene3d.md",
+      "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0.",
+      "bytes": 11309,
+      "sha256": "12c783469e4d55ab562ccafbd4c0a017863237d25a8bede7d501c7b441244ce0"
+    },
+    {
+      "path": "tests/scene-world-card3d.test.mjs",
+      "originRole": "Independently authored first-party Egret world-space card validation with generated assets; AI-assisted; Apache-2.0.",
+      "bytes": 3320,
+      "sha256": "a748514904ecf63a3618d93d27732c062ec2a1b6a0c80145b6f52b5abf92c191"
+    },
+    {
+      "path": "tools/verify-world-depth-cards.mjs",
+      "originRole": "Independently authored first-party Egret world-space card validation with generated assets; AI-assisted; Apache-2.0.",
+      "bytes": 18016,
+      "sha256": "2ab538ef4e94e6d9e30775950fcb328c55b0e4c61f27025c250d8dfeb9abcc14"
+    },
+    {
+      "path": "examples/textured-scene3d/index.html",
+      "originRole": "Independently authored first-party Egret bounded textured GLB demonstration or verification using a generated RGB8 image; AI-assisted; Apache-2.0.",
+      "bytes": 2896,
+      "sha256": "0d1367f0e7ef0529ca10eec7009745f6767053920013136795043727b5e69342"
+    },
+    {
+      "path": "examples/textured-scene3d/main.mjs",
+      "originRole": "Independently authored first-party Egret bounded textured GLB demonstration or verification using a generated RGB8 image; AI-assisted; Apache-2.0.",
+      "bytes": 6931,
+      "sha256": "3703f99646dca1e6eb7c3b83aed15c2074b05044ae1b5d57a4bfcaf70ebeb18f"
+    },
+    {
+      "path": "examples/textured-scene3d/room-glb.mjs",
+      "originRole": "Independently authored first-party Egret bounded textured GLB demonstration or verification using a generated RGB8 image; AI-assisted; Apache-2.0.",
+      "bytes": 2792,
+      "sha256": "684f1b813ed615bc6442916eaf7cd0e5db15d5a7061eb8b653ec7626b6ca174c"
+    },
+    {
+      "path": "tests/static-textured-glb-scene3d.test.mjs",
+      "originRole": "Independently authored first-party Egret bounded textured GLB demonstration or verification using a generated RGB8 image; AI-assisted; Apache-2.0.",
+      "bytes": 18471,
+      "sha256": "00ba43ec0b117adfd6595e17778ebd6cabe7e10206999ec98ffcca097d5e8c2f"
+    },
+    {
+      "path": "tools/verify-textured-glb-scene3d.mjs",
+      "originRole": "Independently authored first-party Egret bounded textured GLB demonstration or verification using a generated RGB8 image; AI-assisted; Apache-2.0.",
+      "bytes": 9474,
+      "sha256": "cce8ca5ee0e384b571a9e43988456858e91897a0b9e488ff67fc0216bc34d42f"
+    },
+    {
+      "path": "tests/scene-lambert-world3d.test.mjs",
+      "originRole": "Independently authored first-party Egret bounded Lambert rendering validation with generated models and textures; AI-assisted; Apache-2.0.",
+      "bytes": 3608,
+      "sha256": "34a9b3f27ffb910f2d383e83453256bf0d9ae40bd49b31beef59fd145a3804cb"
+    },
+    {
+      "path": "tools/verify-lambert-glb-scene3d.mjs",
+      "originRole": "Independently authored first-party Egret bounded Lambert rendering validation with generated models and textures; AI-assisted; Apache-2.0.",
+      "bytes": 20064,
+      "sha256": "ea620f56aa33fdb3e369ed3c5a28a8bf6ea76f0edcc7e30a3ffb80c202a6232b"
+    },
+    {
+      "path": "contributions/authored-scene3d.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 5019,
+      "sha256": "176e576a0cc1edeee797689de10149302eaab0a3fbe70d2b41ee143949d5b529"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

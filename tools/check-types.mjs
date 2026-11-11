@@ -619,15 +619,52 @@ const sceneDomSuccessor = sceneDomM15Selected ? sceneDomM15Successor : sceneDomM
 const sceneDomLabel = sceneDomM15Selected ? 'S3D1 M1.5' : 'S3D1 M1.3';
 const sceneDomM13Selected = sceneDomM15Selected || existsSync(path.join(root,'packages/engine/dist/web/sharedB1.d.ts'));
 const sceneDomM13Native = sceneDomM13Compiler?.nativeOwner ?? null;
+// AUTHORED-SCENE-DECLARATION-BEGIN
+// The existing DOM-negative probe has the same closure except its scene-frame declaration.
+const authoredSceneDomDeclaration = {"base":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":1650,"sha256":"6eede4d7ca07375516bc746ad0ac70fef56cf7ab6dca532f46ef049339314a82"},"current":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":1737,"sha256":"81f9914f53b2d3fca293573bef45060d807abc9581ea5211731c758073592fd1"}};
+const authoredSceneDomMarker = {"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":525,"sha256":"07868163d41254a0376c5225d2fe160a2b1cf319ab2cff05422ef92e66926185"};
+const worldCardSceneDom = {"marker":{"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":667,"sha256":"8a9843a90b00fc624c7cbb8f5cd9f1d1e0193846c0ac68f84b64b8adf88544cb"},"declaration":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":3137,"sha256":"d3d9317989f4d89b7e596e857c7ff999d8762741467f0f713b16f07f95b2709b"},
+  "sharedDeclarations":[
+    {"path":"packages/engine/dist/web/sharedB1.d.ts","baseBytes":1302,"baseSha256":"f2df25a1ba2a184731c240f8aef5b9b4c9a0af05d583f493cc9ba816ce91abd5","bytes":1367,"sha256":"bda202291c6d068a2b3bb5de055c660e127b680c6a9c00e2f84e4e076d960d63"},
+    {"path":"packages/engine/dist/web/webgpuSharedMeshPass.d.ts","baseBytes":743,"baseSha256":"7d1094342be884cfc1bf0850d8fc4cf8437d0bcc1b571b044791094be0b380c7","bytes":1068,"sha256":"1068c657e1051671f8a80366da0baf0048f193f3303838d122d2049ae9b90c31"}
+  ]};
+const texturedSceneDom = {"marker":{"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":779,"sha256":"e249f2a69ab4aec89152d698cfbd7e5f36b2d3107c0acd04d8d0dba02d966835"},"declaration":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":3357,"sha256":"03d2f4070133f51954ff990792fce04e83354b7f32f3f8f203918e9a5b9cc62f"},
+  "sharedDeclarations":[
+    {"path":"packages/engine/dist/rendering/packSharedMeshGeometry3D.d.ts","baseBytes":1086,"baseSha256":"f442f5cfe82626d887d8a2af294cd3e63c0a8b27eb026838a2f445a7a0435b9c","bytes":1117,"sha256":"7052dfbf39a40d6ccc6043d0a82c32688b543b3accfe3a8d2f713b27f42b29e4"},
+    {"path":"packages/engine/dist/web/sharedB1.d.ts","baseBytes":1302,"baseSha256":"f2df25a1ba2a184731c240f8aef5b9b4c9a0af05d583f493cc9ba816ce91abd5","bytes":1407,"sha256":"eeed1c020a474059965ddcd6b21c9cfac79cb30a03524b235264aeb61c267e1a"},
+    {"path":"packages/engine/dist/web/webgpuSharedMeshPass.d.ts","baseBytes":743,"baseSha256":"7d1094342be884cfc1bf0850d8fc4cf8437d0bcc1b571b044791094be0b380c7","bytes":1413,"sha256":"157dd14218985bdff9a167bac2d99e8998a0a1b99ac4154be648893238939beb"}
+  ]};
+const lambertSceneDom = {"marker":{"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":888,"sha256":"cfc884e784a269304bf1236e6fb7a9ae63cf1d023a1bcb969668cb98583201e4"},"declaration":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":4006,"sha256":"c4fc5adfe9acfc7b686d632cc39b90c1117a387d24b3b769cd5da22bbf4713d2"},
+  "sharedDeclarations":[
+    {"path":"packages/engine/dist/rendering/packSharedMeshGeometry3D.d.ts","baseBytes":1086,"baseSha256":"f442f5cfe82626d887d8a2af294cd3e63c0a8b27eb026838a2f445a7a0435b9c","bytes":1146,"sha256":"44d735b142c798075a49c281c83f47d814184ad375f26198d3c6ee02b1c6da02"},
+    {"path":"packages/engine/dist/web/sharedB1.d.ts","baseBytes":1302,"baseSha256":"f2df25a1ba2a184731c240f8aef5b9b4c9a0af05d583f493cc9ba816ce91abd5","bytes":1446,"sha256":"226036012fe92be805709b57311f9805dc53831491e7982cb81cd7750a5e80d8"},
+    {"path":"packages/engine/dist/web/webgpuSharedMeshPass.d.ts","baseBytes":743,"baseSha256":"7d1094342be884cfc1bf0850d8fc4cf8437d0bcc1b571b044791094be0b380c7","bytes":1737,"sha256":"67711a2a5c08da820df0764c71298c32d504fd5c4bb65747d5976281f03f08eb"}
+  ]};
+// AUTHORED-SCENE-DECLARATION-END
 function verifySceneDomM13(){
   if(!sceneDomM13Selected)return;
   if(!sceneDomM13Compiler)throw Error(sceneDomLabel+' compiler input selection changed');
   if(sceneDomM15Selected&&!sceneDomM15Markers.every(file=>existsSync(path.join(root,file))))throw Error(sceneDomLabel+' incomplete declaration markers');
   sceneDomM13Compiler.verify();
   if(JSON.parse(readFileSync(path.join(sceneDomM13Native,'package.json'),'utf8')).version!==sceneDomSuccessor.compilerVersion)throw Error(sceneDomLabel+' actual native compiler version differs');
+  const authoredSceneSelected=sceneDomM15Selected&&existsSync(path.join(root,authoredSceneDomMarker.path));
+  let authoredDeclaration=authoredSceneDomDeclaration.current;
+  let sharedDeclarations=[];
+  if(authoredSceneSelected){
+    const marker=fingerprintFile(root,authoredSceneDomMarker.path);
+    const matches=pin=>marker.bytes===pin.bytes&&marker.sha256===pin.sha256;
+    const successor=[worldCardSceneDom,texturedSceneDom,lambertSceneDom].find(value=>matches(value.marker));
+    if(successor){authoredDeclaration=successor.declaration;sharedDeclarations=successor.sharedDeclarations;}
+    else if(!matches(authoredSceneDomMarker))throw Error(sceneDomLabel+' authored scene declaration marker changed');
+  }
   for(const row of [...sceneDomSuccessor.inputs.map(pin=>({owner:'repository',...pin})),...sceneDomSuccessor.closure]){
     const owner=row.owner==='compiler-native'?sceneDomM13Native:root,actual=fingerprintFile(owner,row.path);
-    if(actual.bytes!==row.bytes||actual.sha256!==row.sha256)throw Error(sceneDomLabel+' complete input changed: '+row.path);
+    const shared=row.owner==='repository'
+      ?sharedDeclarations.find(pin=>row.path===pin.path&&row.bytes===pin.baseBytes&&row.sha256===pin.baseSha256):undefined;
+    const expected=authoredSceneSelected&&row.owner==='repository'&&row.path===authoredSceneDomDeclaration.base.path&&
+      row.bytes===authoredSceneDomDeclaration.base.bytes&&row.sha256===authoredSceneDomDeclaration.base.sha256?
+      authoredDeclaration:shared??row;
+    if(actual.bytes!==expected.bytes||actual.sha256!==expected.sha256)throw Error(sceneDomLabel+' complete input changed: '+row.path);
   }
 }
 verifySceneDomM13();

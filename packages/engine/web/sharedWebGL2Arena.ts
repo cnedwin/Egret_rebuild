@@ -14,7 +14,7 @@ interface SharedRange {
 interface SceneRange {
     readonly uniform: Float32Array<ArrayBuffer>;
     readonly uniformOffset: number;
-    readonly uniformSize: 64;
+    readonly uniformSize: 64 | 112 | 128;
 }
 export interface SharedWebGL2ArenaPlan {
     readonly vertexBytes: number;
@@ -47,8 +47,8 @@ export function planSharedWebGL2Arenas(
     const count = draws.length, scenes = sceneUniforms.length;
     if (!Number.isSafeInteger(count) || count < 0 || count > 65536
         || !Number.isSafeInteger(scenes) || scenes < 0 || scenes > 64) fail('budget');
-    const uniformBytes = count * sharedStride + scenes * sceneStride;
-    if (!Number.isSafeInteger(uniformBytes) || uniformBytes > RECORD_UNIFORM) fail('budget');
+    let uniformBytes = count * sharedStride;
+    const cardStride = Math.ceil(112 / alignment) * alignment;
     const sharedRanges: SharedRange[] = [], sceneRanges: SceneRange[] = [];
     let vertexBytes = 0;
     for (let i = 0; i < count; i++) {
@@ -62,11 +62,13 @@ export function planSharedWebGL2Arenas(
     }
     for (let j = 0; j < scenes; j++) {
         const uniform = sceneUniforms[j]!;
-        if (uniform.byteLength !== 64) fail('budget');
-        sceneRanges.push({ uniform, uniformOffset: count * sharedStride + j * sceneStride, uniformSize: 64 });
+        const uniformSize = uniform.byteLength;
+        if (uniformSize !== 64 && uniformSize !== 112 && uniformSize !== 128) fail('budget');
+        sceneRanges.push({ uniform, uniformOffset: uniformBytes, uniformSize });
+        uniformBytes += uniformSize === 64 ? sceneStride : uniformSize === 112 ? cardStride : sharedStride;
     }
     // Allocation includes final stride padding; range sizes above expose only original payloads.
-    if (uniformBytes > RECORD_TOTAL - vertexBytes) fail('budget');
+    if (uniformBytes > RECORD_UNIFORM || uniformBytes > RECORD_TOTAL - vertexBytes) fail('budget');
     return { vertexBytes, uniformBytes, sharedRanges, sceneRanges };
 }
 
