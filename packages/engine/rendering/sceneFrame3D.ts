@@ -24,10 +24,26 @@ export interface SceneMeshTexture3D {
     readonly source: ImageData2D;
     readonly texcoords: readonly number[];
 }
+export interface SceneDirectionalLighting3D {
+    /** World-space direction pointing toward the light. */
+    readonly direction: readonly [number, number, number];
+    readonly ambient: number;
+    readonly intensity: number;
+}
+export interface SceneLambertSurface3D extends SceneMeshTexture3D {
+    readonly normals: readonly number[];
+}
+export interface SceneLambertDraw3D {
+    readonly normals: readonly number[];
+    readonly normalMatrix: readonly number[];
+    readonly mirrored: boolean;
+    readonly lighting: SceneDirectionalLighting3D;
+}
 export interface SceneDraw3D {
     readonly geometry: MeshGeometry3D;
     readonly mvp: Matrix4;
     readonly texture?: SceneMeshTexture3D;
+    readonly lambert?: SceneLambertDraw3D;
 }
 type CardTuple=readonly [number,number,number,number];
 export interface SceneWorldCardInput3D {
@@ -217,11 +233,13 @@ export function createSceneFrame3D(input: unknown): SceneFrame3D {
     return captureSceneFrame(input, false);
 }
 export function createAuthoredSceneFrame3D(input: SceneInput3D, cards: readonly SceneCardCapture3D[] = noCards,
-    textures?: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D>): SceneFrame3D {
-    return captureSceneFrame(input, true, cards, textures);
+    textures?: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D>,
+    lambertDraws?: ReadonlyMap<number, SceneLambertDraw3D>): SceneFrame3D {
+    return captureSceneFrame(input, true, cards, textures, lambertDraws);
 }
 function captureSceneFrame(input: unknown, authored: boolean, cardInputs: readonly SceneCardCapture3D[] = noCards,
-    textures?: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D>): SceneFrame3D {
+    textures?: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D>,
+    lambertDraws?: ReadonlyMap<number, SceneLambertDraw3D>): SceneFrame3D {
     if (input === null || typeof input !== 'object') fail('SCENE3D_INPUT_INVALID', 'validation');
     const projection = own(input, 'projection'), draws = own(input, 'draws');
     if (projection === missing || draws === missing) fail('SCENE3D_INPUT_INVALID', 'validation');
@@ -281,18 +299,19 @@ function captureSceneFrame(input: unknown, authored: boolean, cardInputs: readon
     const ownedDraws = native(() => new Array<SceneDraw3D>(count));
     const distinct = native(() => new Array<MeshGeometry3D>());
     let cpuLogicalBytes = 0, sceneBytes = 0;
-    const uniformBytes = count * 64 + cardCount * 112;
+    const uniformBytes = count * 64 + (lambertDraws?.size ?? 0) * 64 + cardCount * 112;
     if (uniformBytes > 4096) fail('SCENE3D_BUDGET', 'budget');
     for (let index = 0; index < count; index++) {
         const geometry = geometries[index] as MeshGeometry3D;
         const texture = textures?.get(geometry);
+        const lambert = lambertDraws?.get(index);
         const exact = trustedMath(() => multiplyMatrix4(matrix, models[index]));
         const mvp=authored?authoredMatrix(exact):exact;
         let seen = false;
         for (let item = 0; item < distinct.length; item++) if (distinct[item] === geometry) seen = true;
         if (!seen) {
-            // Charge one UV stream per owned geometry. Image residency is charged by the host.
-            const components = texture ? 8 : 6;
+            // Charge UVs and normals once per owned geometry. The host charges image residency.
+            const components = lambert ? 11 : texture ? 8 : 6;
             const logical = 8 * (components * geometry.vertexCount + geometry.indexCount);
             const packed = 4 * (components * geometry.vertexCount + geometry.indexCount);
             cpuLogicalBytes += logical; sceneBytes += packed;
@@ -307,7 +326,8 @@ function captureSceneFrame(input: unknown, authored: boolean, cardInputs: readon
         }
         profile(geometry.positions); profile(geometry.colors); profile(mvp);
         headroom(geometry.positions, mvp);
-        write(ownedDraws, index, native(() => Object.freeze(texture ? {geometry, mvp, texture} : {geometry, mvp})));
+        write(ownedDraws, index, native(() => Object.freeze(lambert ? {geometry, mvp, texture: texture!, lambert}
+            : texture ? {geometry, mvp, texture} : {geometry, mvp})));
     }
     native(() => Object.freeze(ownedDraws));
     native(() => Object.freeze(distinct));

@@ -195,6 +195,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     private sceneProgram:WebGLProgram|undefined;
     private sceneCardProgram:{program:WebGLProgram;page:WebGLUniformLocation}|undefined;
     private sceneTextureProgram: {program: WebGLProgram; page: WebGLUniformLocation} | undefined;
+    private sceneLambertProgram: {program: WebGLProgram; page: WebGLUniformLocation} | undefined;
     private sceneFunctions:typeof import('./sharedWebGL2Scene.js')|undefined;
     private pump:ReturnType<typeof schedule>|undefined;
     private restoreTimer:ReturnType<typeof schedule>|undefined;
@@ -393,7 +394,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             if(restoring)this.attempt++;
             // Fixed native handles never cross a context generation, including partial startup.
             this.framebuffer=undefined;this.program=undefined;this.resolveProgram=undefined;this.layerProgram=undefined;this.layerEffectProgram=undefined;this.effectPrograms.clear();
-            this.drawVAO=undefined;this.resolveVAO=undefined;this.sceneVAO=undefined;this.sceneProgram=undefined;this.sceneCardProgram=undefined;this.sceneTextureProgram=undefined;
+            this.drawVAO=undefined;this.resolveVAO=undefined;this.sceneVAO=undefined;this.sceneProgram=undefined;this.sceneCardProgram=undefined;this.sceneTextureProgram=undefined;this.sceneLambertProgram=undefined;
             this.limits=undefined;this.native=undefined;
             this.generation++;this.token={};const token=this.token;
             this.pool=createRetentionLedger<Request,GLNativeOwner>(token,this.resourceReuse);
@@ -1094,23 +1095,40 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         }finally{native.recordOwners=owners;}
     }
 
-    private getSceneTextureProgram(native: GLNativeSession): NonNullable<SharedGLHost['sceneTextureProgram']> {
-        if (this.sceneTextureProgram) return this.sceneTextureProgram;
+    private getSceneTextureProgram(native: GLNativeSession, lambert: boolean): NonNullable<SharedGLHost['sceneTextureProgram']> {
+        const existing = lambert ? this.sceneLambertProgram : this.sceneTextureProgram;
+        if (existing) return existing;
         const functions = this.sceneFunctions!, gl = native.gl, owners = native.recordOwners;
         // The linked program belongs to the context, independently of the frame that first uses it.
         native.recordOwners = undefined;
         try {
-            const program = native.program(functions.SHARED_GL_SCENE_TEXTURE_VERTEX, functions.SHARED_GL_SCENE_TEXTURE_FRAGMENT);
-            native.block(program, 'SceneDraw', ['uMVP'], 64);
-            const indices = gl.getUniformIndices(program, ['uMVP'])!;
-            if ((gl.getActiveUniforms(program, indices, 35389) as number[])[0] !== 16
-                || (gl.getActiveUniforms(program, indices, 35390) as boolean[])[0] !== false) {
+            const program = lambert
+                ? native.program(functions.SHARED_GL_SCENE_LAMBERT_VERTEX, functions.SHARED_GL_SCENE_LAMBERT_FRAGMENT)
+                : native.program(functions.SHARED_GL_SCENE_TEXTURE_VERTEX, functions.SHARED_GL_SCENE_TEXTURE_FRAGMENT);
+            const names = lambert ? ['uMVP','uNormal0','uNormal1','uNormal2','uLight'] : ['uMVP'];
+            const indices = gl.getUniformIndices(program, names);
+            if (!indices || indices.some(index => index === gl.INVALID_INDEX)) throw glFailure('WEBGL2_CONTEXT_LIMIT');
+            if (lambert) {
+                const block = gl.getUniformBlockIndex(program, 'SceneLambert');
+                if (block === gl.INVALID_INDEX || gl.getActiveUniformBlockParameter(program, block, gl.UNIFORM_BLOCK_DATA_SIZE) !== 128) {
+                    throw glFailure('WEBGL2_CONTEXT_LIMIT');
+                }
+                const offsets = gl.getActiveUniforms(program, indices, gl.UNIFORM_OFFSET) as number[];
+                if (offsets.length !== names.length || offsets.some((offset, i) => offset !== [0,64,80,96,112][i])) {
+                    throw glFailure('WEBGL2_CONTEXT_LIMIT');
+                }
+                gl.uniformBlockBinding(program, block, 0);
+            } else native.block(program, 'SceneDraw', names, 64);
+            if ((gl.getActiveUniforms(program, [indices[0]!], 35389) as number[])[0] !== 16
+                || (gl.getActiveUniforms(program, [indices[0]!], 35390) as boolean[])[0] !== false) {
                 throw glFailure('WEBGL2_CONTEXT_LIMIT');
             }
             const page = gl.getUniformLocation(program, 'uScenePage');
             if (!page) throw glFailure('WEBGL2_CONTEXT_LIMIT');
-            this.sceneTextureProgram = {program, page};
-            return this.sceneTextureProgram;
+            const result = {program, page};
+            if (lambert) this.sceneLambertProgram = result;
+            else this.sceneTextureProgram = result;
+            return result;
         } finally {
             native.recordOwners = owners;
         }
@@ -1127,17 +1145,20 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             if(record.scene){
                 gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.depthFunc(gl.GREATER);gl.clearDepth(0);gl.clear(gl.DEPTH_BUFFER_BIT);
                 gl.useProgram(this.sceneProgram!);gl.bindVertexArray(this.sceneVAO!);
-                let usingTexture = false;
+                let activeSceneRole: 'plain' | 'texture' | 'lambert' = 'plain';
                 for (let i = 0; i < record.scene.draws.length; i++) {
                     const draw = record.scene.draws[i]!;
                     if (!draw.mesh.indexCount) continue;
                     const item = meshes.find(value => value.mesh === draw.mesh)!;
                     const pageIndex = draw.pageIndex;
                     const textured = pageIndex !== undefined;
-                    if (usingTexture !== textured) {
-                        usingTexture = textured;
+                    const role = draw.lambert ? 'lambert' : textured ? 'texture' : 'plain';
+                    if (activeSceneRole !== role) {
+                        if (activeSceneRole === 'lambert') gl.disableVertexAttribArray(3);
+                        activeSceneRole = role;
                         if (textured) {
-                            const variant = this.getSceneTextureProgram(native);
+                            if (draw.lambert) gl.frontFace(gl.CCW);
+                            const variant = this.getSceneTextureProgram(native, draw.lambert === true);
                             gl.useProgram(variant.program);
                             gl.activeTexture(gl.TEXTURE0);
                             gl.uniform1i(variant.page, 0);
@@ -1148,7 +1169,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                     }
                     gl.bindBuffer(gl.ARRAY_BUFFER, record.leases[item.vertex]!.handle.resource.value as WebGLBuffer);
                     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, record.leases[item.index]!.handle.resource.value as WebGLBuffer);
-                    const stride = textured ? 32 : 24;
+                    const stride = draw.lambert ? 44 : textured ? 32 : 24;
                     for (const [index, offset] of [[0, 0], [1, 12]] as const) {
                         gl.enableVertexAttribArray(index);
                         gl.vertexAttribPointer(index, 3, gl.FLOAT, false, stride, offset);
@@ -1160,10 +1181,17 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                         gl.vertexAttribDivisor(2, 0);
                         gl.bindTexture(gl.TEXTURE_2D, pageTextures.get(pageIndex)!.native.value as WebGLTexture);
                     }
-                    gl.bindBufferRange(gl.UNIFORM_BUFFER, 0, record.leases[uniform]!.handle.resource.value as WebGLBuffer, record.arena.sceneRanges[i]!.uniformOffset, 64);
+                    if (draw.lambert) {
+                        gl.enableVertexAttribArray(3);
+                        gl.vertexAttribPointer(3, 3, gl.FLOAT, false, stride, 32);
+                        gl.vertexAttribDivisor(3, 0);
+                    }
+                    const range = record.arena.sceneRanges[i]!;
+                    gl.bindBufferRange(gl.UNIFORM_BUFFER, 0, record.leases[uniform]!.handle.resource.value as WebGLBuffer, range.uniformOffset, range.uniformSize);
                     gl.drawElements(gl.TRIANGLES, draw.mesh.indexCount, gl.UNSIGNED_INT, 0);
                 }
-                if (usingTexture) gl.disableVertexAttribArray(2);
+                if (activeSceneRole === 'lambert') gl.disableVertexAttribArray(3);
+                if (activeSceneRole !== 'plain') gl.disableVertexAttribArray(2);
                 if(record.scene.cards.length){
                     const variant=this.getSceneCardProgram(native);
                     gl.useProgram(variant.program);gl.bindVertexArray(this.resolveVAO!);

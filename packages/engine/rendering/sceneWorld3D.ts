@@ -4,7 +4,7 @@ import type {Matrix4} from './matrix4.js';
 import {isMeshGeometry3D} from './meshGeometry3D.js';
 import type {MeshGeometry3D} from './meshGeometry3D.js';
 import {createAuthoredSceneFrame3D,isSceneWorldCard3D,Scene3DError} from './sceneFrame3D.js';
-import type {SceneFrame3D,SceneMeshTexture3D,SceneProjectionInput3D,SceneWorldCard3D} from './sceneFrame3D.js';
+import type {SceneDirectionalLighting3D,SceneFrame3D,SceneLambertDraw3D,SceneLambertSurface3D,SceneMeshTexture3D,SceneProjectionInput3D,SceneWorldCard3D} from './sceneFrame3D.js';
 
 type Vec3=readonly [number,number,number];
 export type SceneWorldProjectionInput3D={
@@ -37,6 +37,11 @@ export interface SceneWorld3D {
     capture(camera:SceneWorldCamera3D):SceneFrame3D;
     withNodeTransform(id:string,localMatrix:readonly number[]):SceneWorld3D;
     withNodes(nodes:readonly SceneWorldNodeInput3D[]):SceneWorld3D;
+}
+export interface SceneLambertWorld3D extends SceneWorld3D {
+    withLighting(input: SceneDirectionalLighting3D): SceneLambertWorld3D;
+    withNodes(nodes: readonly SceneWorldNodeInput3D[]): SceneLambertWorld3D;
+    withNodeTransform(id: string, localMatrix: readonly number[]): SceneLambertWorld3D;
 }
 interface OwnedNode {
     readonly id:string;
@@ -126,7 +131,43 @@ function localMatrix(input:readonly number[]):Matrix4 {
 function checkId(id:unknown):asserts id is string {
     if(typeof id!=='string'||id.length===0||id.length>96)invalid('node.id');
 }
-function assemble(nodes: readonly OwnedNode[], textures?: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D>): SceneWorld3D {
+function normalizeLighting(input: SceneDirectionalLighting3D): SceneDirectionalLighting3D {
+    if (!input || typeof input !== 'object') invalid('lighting');
+    const raw = source(() => ({direction: input.direction, ambient: input.ambient, intensity: input.intensity}));
+    const ambient = finite(raw.ambient, 'lighting.ambient'), intensity = finite(raw.intensity, 'lighting.intensity');
+    if (ambient < 0 || intensity < 0 || ambient + intensity > 1) invalid('lighting range');
+    const direction = unit(vector(raw.direction, 'lighting.direction'), 'lighting.direction');
+    return Object.freeze({direction: Object.freeze(direction), ambient, intensity});
+}
+
+interface SceneNormalTransform {
+    readonly normalMatrix: readonly number[];
+    readonly mirrored: boolean;
+}
+function normalTransform(matrix: Matrix4): SceneNormalTransform {
+    const scale = Math.max(...[0,1,2,4,5,6,8,9,10].map(index => Math.abs(matrix[index]!)));
+    if (!Number.isFinite(scale) || scale === 0) invalid('lit node normal transform');
+    const c0: Vec3 = [matrix[0]! / scale, matrix[1]! / scale, matrix[2]! / scale];
+    const c1: Vec3 = [matrix[4]! / scale, matrix[5]! / scale, matrix[6]! / scale];
+    const c2: Vec3 = [matrix[8]! / scale, matrix[9]! / scale, matrix[10]! / scale];
+    const n0 = cross(c1,c2), n1 = cross(c2,c0), n2 = cross(c0,c1);
+    const determinant = dot(c0,n0);
+    const matrixNorm = Math.max(...c0.map((value,row) => Math.abs(value) + Math.abs(c1[row]!) + Math.abs(c2[row]!)));
+    const adjugateNorm = Math.max(...[n0,n1,n2].map(column => Math.abs(column[0]) + Math.abs(column[1]) + Math.abs(column[2])));
+    const reciprocalCondition = Math.abs(determinant) / (matrixNorm * adjugateNorm);
+    if (!Number.isFinite(reciprocalCondition) || reciprocalCondition < 2 ** -16) invalid('lit node normal transform');
+    const cofactor = [...n0,...n1,...n2];
+    const largest = Math.max(...cofactor.map(Math.abs));
+    const mirrored = determinant < 0;
+    // This bounded cofactor matrix is direction-equivalent to the inverse transpose.
+    // Preserve determinant sign before fragment normalization and double-sided facing.
+    const normalMatrix = Object.freeze(cofactor.map(value => Math.fround((mirrored ? -value : value) / largest) || 0));
+    return Object.freeze({normalMatrix, mirrored});
+}
+
+function assemble(nodes: readonly OwnedNode[],
+    textures?: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D | SceneLambertSurface3D>,
+    lighting?: SceneDirectionalLighting3D): SceneWorld3D {
     const byId=new Map(nodes.map(node=>[node.id,node]));
     if(byId.size!==nodes.length)invalid('duplicate node.id');
     const transforms=new Map<string,Matrix4>();
@@ -149,27 +190,47 @@ function assemble(nodes: readonly OwnedNode[], textures?: ReadonlyMap<MeshGeomet
     // Resolve graph order once per world revision. Draw order remains authored.
     const draws=nodes.flatMap(node=>{
         const transform=resolve(node);
-        return node.meshes.map(geometry=>({geometry,transform}));
+        let basis: SceneNormalTransform | undefined;
+        return node.meshes.map(geometry => {
+            const surface = textures?.get(geometry);
+            const normal = surface && 'normals' in surface
+                ? {...(basis ??= normalTransform(transform)), normals: surface.normals} : undefined;
+            return {geometry, transform, normal};
+        });
     });
+    // Keep prepared normal transforms across light-only edits of the same revision.
     const cards=nodes.flatMap(node=>node.cards.map(card=>({card,transform:resolve(node)})));
-    return Object.freeze({
-        nodeCount:nodes.length,
-        capture(camera:SceneWorldCamera3D){
-            const owned=cameras.get(camera);
-            if(!owned)invalid('camera identity');
-            return createAuthoredSceneFrame3D({projection:owned.projection,draws:draws.map(draw=>({
-                geometry:draw.geometry,modelView:multiplyMatrix4(owned.view,draw.transform),
-            }))},cards.length?cards.map(draw=>({card:draw.card,modelView:multiplyMatrix4(owned.view,draw.transform)})):undefined,textures);
-        },
-        withNodes(input:readonly SceneWorldNodeInput3D[]){
-            return assemble([...nodes,...captureNodes(input,nodes.length,draws.length+cards.length)],textures);
-        },
-        withNodeTransform(id:string,input:readonly number[]){
-            if(!byId.has(id))invalid('node.id');
-            const transform=localMatrix(input);
-            return assemble(nodes.map(node=>node.id===id?{...node,localMatrix:transform}:node),textures);
-        },
-    });
+    function publish(light?: SceneDirectionalLighting3D): SceneWorld3D {
+        const world = {
+            nodeCount: nodes.length,
+            capture(camera: SceneWorldCamera3D) {
+                const owned = cameras.get(camera);
+                if (!owned) invalid('camera identity');
+                const lambert = light ? new Map<number, SceneLambertDraw3D>() : undefined;
+                const commands = draws.map((draw,index) => {
+                    if (lambert && draw.normal && light) {
+                        lambert.set(index, Object.freeze({...draw.normal, lighting: light}));
+                    }
+                    return {geometry: draw.geometry, modelView: multiplyMatrix4(owned.view,draw.transform)};
+                });
+                return createAuthoredSceneFrame3D({projection: owned.projection, draws: commands},
+                    cards.length ? cards.map(draw=>({card:draw.card,modelView:multiplyMatrix4(owned.view,draw.transform)})) : undefined,
+                    textures, lambert);
+            },
+            withNodes(input: readonly SceneWorldNodeInput3D[]) {
+                return assemble([...nodes,...captureNodes(input,nodes.length,draws.length+cards.length)],textures,light);
+            },
+            withNodeTransform(id: string, input: readonly number[]) {
+                if (!byId.has(id)) invalid('node.id');
+                const transform = localMatrix(input);
+                return assemble(nodes.map(node=>node.id===id?{...node,localMatrix:transform}:node),textures,light);
+            },
+        };
+        return Object.freeze(light ? {...world, withLighting(input: SceneDirectionalLighting3D) {
+            return publish(normalizeLighting(input));
+        }} : world);
+    }
+    return publish(lighting);
 }
 function captureNodes(input:readonly SceneWorldNodeInput3D[],existingNodes:number,drawCount:number):OwnedNode[] {
     if(!source(()=>Array.isArray(input)))invalid('nodes');
@@ -223,4 +284,10 @@ export function createSceneWorld3D(input:readonly SceneWorldNodeInput3D[]):Scene
 export function createTexturedSceneWorld3D(input: readonly SceneWorldNodeInput3D[],
     textures: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D>): SceneWorld3D {
     return assemble(captureNodes(input,0,0), new Map(textures));
+}
+
+/** The explicit Lambert binder owns the normals and image leases at publication. */
+export function createLambertSceneWorld3D(input: readonly SceneWorldNodeInput3D[],
+    surfaces: ReadonlyMap<MeshGeometry3D, SceneLambertSurface3D>, lighting: SceneDirectionalLighting3D): SceneLambertWorld3D {
+    return assemble(captureNodes(input,0,0), new Map(surfaces), normalizeLighting(lighting)) as SceneLambertWorld3D;
 }

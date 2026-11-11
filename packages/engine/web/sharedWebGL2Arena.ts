@@ -14,7 +14,7 @@ interface SharedRange {
 interface SceneRange {
     readonly uniform: Float32Array<ArrayBuffer>;
     readonly uniformOffset: number;
-    readonly uniformSize: 64 | 112;
+    readonly uniformSize: 64 | 112 | 128;
 }
 export interface SharedWebGL2ArenaPlan {
     readonly vertexBytes: number;
@@ -63,9 +63,9 @@ export function planSharedWebGL2Arenas(
     for (let j = 0; j < scenes; j++) {
         const uniform = sceneUniforms[j]!;
         const uniformSize = uniform.byteLength;
-        if (uniformSize !== 64 && uniformSize !== 112) fail('budget');
+        if (uniformSize !== 64 && uniformSize !== 112 && uniformSize !== 128) fail('budget');
         sceneRanges.push({ uniform, uniformOffset: uniformBytes, uniformSize });
-        uniformBytes += uniformSize === 64 ? sceneStride : cardStride;
+        uniformBytes += uniformSize === 64 ? sceneStride : uniformSize === 112 ? cardStride : sharedStride;
     }
     // Allocation includes final stride padding; range sizes above expose only original payloads.
     if (uniformBytes > RECORD_UNIFORM || uniformBytes > RECORD_TOTAL - vertexBytes) fail('budget');

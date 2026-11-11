@@ -10,7 +10,7 @@ import type { SharedWebGPUHostOptions, SharedSceneWebGPUHostOptions, SharedWebGP
 import { prepareSharedDraws2D, SharedPreparationError } from '../rendering/prepareSharedDraws2D.js';
 import { planSharedSubmission2D, packSharedSubmission2D, materializeSharedPages2D, checkSharedCapacity2D, SharedStorageError2D } from './prepareSharedSubmission2D.js';
 import type { SharedSubmissionStorage2D, SharedOwnerSnapshot2D } from './prepareSharedSubmission2D.js';
-import { attachSharedSceneSources2D, packSharedSceneCardUniform3D } from './sharedSubmissionStorage2D.js';
+import { attachSharedSceneSources2D, packSharedSceneCardUniform3D, packSharedSceneLambertUniform3D } from './sharedSubmissionStorage2D.js';
 import type { packSharedMeshGeometry3D } from '../rendering/packSharedMeshGeometry3D.js';
 import type { PackedSharedDraw2D } from '../rendering/packSharedDraws2D.js';
 import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js';
@@ -218,16 +218,19 @@ type BuiltinFunctions = Omit<B1BuiltinProtocol,'version'|'createWebGPUMeshPipeli
 type SceneValue = ReturnType<BuiltinFunctions['createSceneFrame3D']>;
 type PackedMesh = ReturnType<BuiltinFunctions['packMeshGeometry3D']>;
 type SceneGeometry = SceneValue['geometries'][number];
-interface SceneUploadDraw { mesh: PackedMesh; uniform: Float32Array<ArrayBuffer>; viewIndex: number|undefined; }
+interface SceneVertexAttributes { texcoords: readonly number[]; normals: readonly number[]|undefined; }
+interface SceneUploadDraw { mesh: PackedMesh; uniform: Float32Array<ArrayBuffer>; viewIndex: number|undefined; lambert: boolean; }
 interface SceneUploadCard { viewIndex: number; uniform: Float32Array<ArrayBuffer>; }
 type CardPipelineFactory = typeof import('./sharedB1.js')['createSharedWebGPUCardPipeline'];
 interface SceneAdmission {
     scene: SceneValue; functions: BuiltinFunctions;
     sceneBytes: number; uniformBytes: number; depthBytes: number;
-    textureCoordinates: ReadonlyMap<SceneGeometry,readonly number[]>|undefined;
+    vertexAttributes: ReadonlyMap<SceneGeometry,SceneVertexAttributes>|undefined;
+    lambertCount: number;
     meshes: PackedMesh[]; draws: SceneUploadDraw[]; cards: SceneUploadCard[];
 }
 const CARD_UNIFORM_BYTES = 112;
+const LAMBERT_UNIFORM_BYTES = 128;
 const B1_LIMITS = { draws: 64, geometries: 64, cpu: 8388608, scene: 4194304, pendingScene: 8388608, uniform: 4096, pendingUniform: 8192, depth: 16777216, pendingDepth: 33554432 } as const;
 const B1_OWNERS = new WeakSet<object>();
 const B1_FUNCTIONS = new WeakMap<object, BuiltinFunctions>();
@@ -313,6 +316,8 @@ class WebGPUHostImplementation {
     private cardLayout: GPUBindGroupLayout | undefined;
     private texturedSceneMeshPipeline: GPURenderPipeline | undefined;
     private texturedSceneMeshLayout: GPUBindGroupLayout | undefined;
+    private lambertMeshPipeline: GPURenderPipeline | undefined;
+    private lambertMeshLayout: GPUBindGroupLayout | undefined;
     private sampler: GPUSampler | undefined;
     private readonly sharedPipelines=new Map<string,{pipeline:GPURenderPipeline;layout:GPUBindGroupLayout}>();
     private readonly sharedSamplers=new Map<string,GPUSampler>();
@@ -683,6 +688,7 @@ class WebGPUHostImplementation {
         this.meshPipeline=undefined;this.meshLayout=undefined;this.sampler=undefined;this.resolvePipeline=undefined;this.resolveLayout=undefined;this.effectPipelines.clear();
         this.cardPipeline=undefined;this.cardLayout=undefined;
         this.texturedSceneMeshPipeline=undefined;this.texturedSceneMeshLayout=undefined;
+        this.lambertMeshPipeline=undefined;this.lambertMeshLayout=undefined;
         this.sharedPipelines.clear();this.sharedSamplers.clear();
     }
 
@@ -690,6 +696,7 @@ class WebGPUHostImplementation {
         let stage: WebGPUHostErrorCode = 'WEBGPU_UNAVAILABLE';
         let createCardPipeline:CardPipelineFactory|undefined;
         let createTexturedSceneMeshPipeline:CardPipelineFactory|undefined;
+        let createLambertMeshPipeline:CardPipelineFactory|undefined;
         const operation=this.recoveryAttempt;
         const gate=():void=>{
             if(operation){this.checkRecoveryDeadline(operation);if(operation.failure)throw new ClassifiedWebGPUFailure(operation.failure.code as WebGPUHostErrorCode,operation.failure.cause,operation.failure);if(this.recoveryAttempt!==operation||operation.cancelled||this.state!=='restoring')throw new ClassifiedWebGPUFailure('WEBGPU_START_CANCELLED',this.generationFailure?.cause);}
@@ -730,7 +737,8 @@ class WebGPUHostImplementation {
                     const sceneModule=namespace as typeof import('./sharedB1.js');
                     createCardPipeline=sceneModule.createSharedWebGPUCardPipeline;gate();
                     createTexturedSceneMeshPipeline=sceneModule.createSharedWebGPUTexturedMeshPipeline;gate();
-                    if(typeof createCardPipeline!=='function'||typeof createTexturedSceneMeshPipeline!=='function')
+                    createLambertMeshPipeline=sceneModule.createSharedWebGPULambertMeshPipeline;gate();
+                    if(typeof createCardPipeline!=='function'||typeof createTexturedSceneMeshPipeline!=='function'||typeof createLambertMeshPipeline!=='function')
                         throw new TypeError('Shared scene sampled pipeline exports');
                 }
                 gate();
@@ -822,6 +830,7 @@ class WebGPUHostImplementation {
                         if(builtin)builtin.createWebGPUMeshPipeline(capturedShader,capturedPipeline,'rgba8unorm-srgb');
                         createCardPipeline?.(capturedShader,capturedPipeline);
                         createTexturedSceneMeshPipeline?.(capturedShader,capturedPipeline);
+                        createLambertMeshPipeline?.(capturedShader,capturedPipeline);
                         if(SHARED_OPTIONS.get(this)!.enableEffects)for(const mode of EFFECT_PASSES)createSharedEffectPipeline(capturedShader,capturedPipeline,mode);
                         for(const filter of ['nearest','linear'] as const)for(const u of ['clamp-to-edge','repeat','mirror-repeat'] as const)for(const v of ['clamp-to-edge','repeat','mirror-repeat'] as const){
                             const value=sampler({addressModeU:u,addressModeV:v,addressModeW:'clamp-to-edge',minFilter:filter,magFilter:filter,mipmapFilter:'nearest',lodMinClamp:0,lodMaxClamp:0,maxAnisotropy:1});
@@ -859,6 +868,10 @@ class WebGPUHostImplementation {
                 if(createTexturedSceneMeshPipeline){
                     this.texturedSceneMeshPipeline=roles[index++]!.value;
                     this.texturedSceneMeshLayout=this.method(this.texturedSceneMeshPipeline,'getBindGroupLayout',gate)(0);gate();
+                }
+                if(createLambertMeshPipeline){
+                    this.lambertMeshPipeline=roles[index++]!.value;
+                    this.lambertMeshLayout=this.method(this.lambertMeshPipeline,'getBindGroupLayout',gate)(0);gate();
                 }
                 if(SHARED_OPTIONS.get(this)!.enableEffects)for(const mode of EFFECT_PASSES){const pipeline=roles[index++]!.value,layout=this.method(pipeline,'getBindGroupLayout',gate)(0);gate();this.effectPipelines.set(mode,{pipeline,layout});}
             }else{
@@ -1230,16 +1243,22 @@ class WebGPUHostImplementation {
         // Legacy scene routes have no shared image-page admission or sampled pass.
         if(cardCount>0&&!allowSharedImages)throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
         if (count + cardCount > B1_LIMITS.draws || distinct > B1_LIMITS.geometries) throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_BUDGET');
-        let textureCoordinates:Map<SceneGeometry,readonly number[]>|undefined;
-        for(const draw of scene.draws)if(draw.texture){
-            if(!allowSharedImages)throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
-            // Authentic authored frames assign one texture and UV table to each geometry identity.
-            (textureCoordinates??=new Map()).set(draw.geometry,draw.texture.texcoords);
+        let vertexAttributes:Map<SceneGeometry,SceneVertexAttributes>|undefined,lambertCount=0;
+        for(const draw of scene.draws){
+            if(draw.lambert){
+                if(!draw.texture)throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
+                lambertCount++;
+            }
+            if(draw.texture){
+                if(!allowSharedImages)throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
+                // Authentic frames assign one UV and optional normal table per geometry identity.
+                (vertexAttributes??=new Map()).set(draw.geometry,{texcoords:draw.texture.texcoords,normals:draw.lambert?.normals});
+            }
         }
         let cpuBytes = 0, sceneBytes = 0;
-        const uniformBytes = 64 * count + CARD_UNIFORM_BYTES * cardCount;
+        const uniformBytes = 64 * count + (LAMBERT_UNIFORM_BYTES - 64) * lambertCount + CARD_UNIFORM_BYTES * cardCount;
         for (const geometry of scene.geometries) {
-            const components=textureCoordinates?.has(geometry)?8:6;
+            const attributes=vertexAttributes?.get(geometry),components=attributes?.normals?11:attributes?8:6;
             const vertexBytes = 4 * components * geometry.vertexCount, indexBytes = 4 * geometry.indexCount;
             cpuBytes += 8 * (components * geometry.vertexCount + geometry.indexCount);
             sceneBytes += vertexBytes + indexBytes;
@@ -1248,17 +1267,17 @@ class WebGPUHostImplementation {
         if (![cpuBytes, sceneBytes, uniformBytes].every(Number.isSafeInteger) || cpuBytes > B1_LIMITS.cpu || sceneBytes > B1_LIMITS.scene || uniformBytes > B1_LIMITS.uniform) throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_BUDGET');
         if (cpuBytes !== scene.cpuLogicalBytes || sceneBytes !== scene.sceneBytes || uniformBytes !== scene.uniformBytes) throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
         if (!deferDevice && count > 0 && 64 > this.limits.maxBufferSize) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
-        return { scene, functions, sceneBytes, uniformBytes, depthBytes: 0, textureCoordinates, meshes: [], draws: [], cards: [] };
+        return { scene, functions, sceneBytes, uniformBytes, depthBytes: 0, vertexAttributes, lambertCount, meshes: [], draws: [], cards: [] };
     }
     private packScene(plan: SceneAdmission, trustedFailures?: WeakSet<object>, textureViews?:ReadonlyMap<SceneGeometry,number>): void {
         const packed = new Map<SceneGeometry, PackedMesh>();
         for (const geometry of plan.scene.geometries) {
             let mesh: PackedMesh;
             try {
-                const uv=plan.textureCoordinates?.get(geometry);
-                // Only the authenticated shared B1 factory supports the optional UV argument.
+                const attributes=plan.vertexAttributes?.get(geometry);
+                // Only the authenticated shared B1 factory supports UV and normal payloads.
                 const pack=plan.functions.packMeshGeometry3D as typeof packSharedMeshGeometry3D;
-                mesh=uv?pack(geometry,uv):plan.functions.packMeshGeometry3D(geometry);
+                mesh=attributes?pack(geometry,attributes.texcoords,attributes.normals):plan.functions.packMeshGeometry3D(geometry);
             }
             catch (cause) {
                 // Origin is queried only at this trusted invocation boundary;
@@ -1278,13 +1297,14 @@ class WebGPUHostImplementation {
             }
             // CPU MVP is an immutable 16-number tuple. Upload its column-major
             // float32 ABI directly: no elements property, transpose or Y flip.
-            const uniform = new Float32Array(draw.mvp);
+            const lambert=draw.lambert!==undefined;
+            const uniform = lambert?packSharedSceneLambertUniform3D(draw):new Float32Array(draw.mvp);
             const viewIndex=mesh.indexCount>0?textureViews?.get(draw.geometry):undefined;
             if(mesh.indexCount>0&&draw.texture&&viewIndex===undefined){
                 const failure=new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
                 trustedFailures?.add(failure);throw failure;
             }
-            this.active(); plan.draws.push({ mesh, uniform, viewIndex });
+            this.active(); plan.draws.push({ mesh, uniform, viewIndex, lambert });
         }
     }
     private preflight(input: RenderFrame2D, sceneInput?: unknown) {
@@ -1550,10 +1570,11 @@ class WebGPUHostImplementation {
                 const attached=scene?attachSharedSceneSources2D(overlay,cards??[],scene.scene.draws):undefined;
                 const prepared=attached?.prepared??overlay;
                 // Joint logical fees include scene geometry, uniforms, and merged image pages before native work.
-                const sceneBufferBytes=scene?scene.scene.geometries.flatMap(geometry=>[
-                    (scene.textureCoordinates?.has(geometry)?32:24)*geometry.vertexCount,4*geometry.indexCount,
-                ]):[];
-                if(scene&&scene.scene.draws.length>0)sceneBufferBytes.push(64);
+                const sceneBufferBytes=scene?scene.scene.geometries.flatMap(geometry=>{
+                    const attributes=scene.vertexAttributes?.get(geometry),stride=attributes?.normals?44:attributes?32:24;
+                    return [stride*geometry.vertexCount,4*geometry.indexCount];
+                }):[];
+                if(scene&&scene.scene.draws.length>0)sceneBufferBytes.push(scene.lambertCount?LAMBERT_UNIFORM_BYTES:64);
                 if(cards?.length)sceneBufferBytes.push(CARD_UNIFORM_BYTES);
                 const storage=planSharedSubmission2D(prepared,options,{...this.limits,sceneBufferBytes},this.sharedOwnerSnapshot(),staging?options.enableReadback:ticket!==undefined,scene,attached?.projectionPlan);
                 if(scene){
@@ -1933,12 +1954,14 @@ class WebGPUHostImplementation {
                 const meshes=new Map<PackedMesh,{vertex:OwnedWebGPUBuffer|undefined;index:OwnedWebGPUBuffer|undefined}>(),sceneBindings=new Map<SceneUploadDraw,GPUBindGroup>();
                 if(scene){for(const mesh of scene.meshes){const vertex=mesh.vertexBytes?this.submissionBuffer(record,requestId++,gate).handle.resource:undefined,index=mesh.indexBytes?this.submissionBuffer(record,requestId++,gate).handle.resource:undefined;meshes.set(mesh,{vertex,index});
                         if(vertex){this.sharedWrite(record,vertex.buffer,mesh.vertices,mesh.vertexBytes/mesh.vertexCount);gate();}if(index){this.sharedWrite(record,index.buffer,mesh.indices,4);gate();}}
-                    for(const draw of scene.draws){const lease=this.submissionBuffer(record,requestId++,gate);this.sharedWrite(record,lease.handle.resource.buffer,draw.uniform,64);gate();
-                        const index=draw.viewIndex,layout=index===undefined?this.meshLayout!:this.texturedSceneMeshLayout!;
+                    for(const draw of scene.draws){const lease=this.submissionBuffer(record,requestId++,gate);
+                        const size=draw.lambert?LAMBERT_UNIFORM_BYTES:64;
+                        this.sharedWrite(record,lease.handle.resource.buffer,draw.uniform,size);gate();
+                        const index=draw.viewIndex,layout=index===undefined?this.meshLayout!:draw.lambert?this.lambertMeshLayout!:this.texturedSceneMeshLayout!;
                         const image=index===undefined?undefined:imageUse.hits.get(index)??imageUse.candidates.get(index)!.entry;
                         const view=index===undefined?undefined:realized.get(index)!.view;
-                        const key:DrawBindingKey={session:this.imageEpoch,layout,texture:image?.identity,view,sampler:undefined,uniform:lease.handle,offset:0,size:64};
-                        const entries:GPUBindGroupEntry[]=[{binding:0,resource:{buffer:lease.handle.resource.buffer,offset:0,size:64}}];
+                        const key:DrawBindingKey={session:this.imageEpoch,layout,texture:image?.identity,view,sampler:undefined,uniform:lease.handle,offset:0,size};
+                        const entries:GPUBindGroupEntry[]=[{binding:0,resource:{buffer:lease.handle.resource.buffer,offset:0,size}}];
                         if(view)entries.push({binding:1,resource:view});
                         sceneBindings.set(draw,this.submissionBinding(record,key,entries,image,gate));}}
                 const cardBindings:GPUBindGroup[]=[];
@@ -1981,7 +2004,7 @@ class WebGPUHostImplementation {
                     const pass=capture(raw,scene.draws.some(draw=>draw.mesh.indexCount>0)?['setPipeline','setViewport','setScissorRect','setVertexBuffer','setIndexBuffer','setBindGroup','drawIndexed']:[]),end=this.method(raw,'end',gate);
                     for(const draw of scene.draws)if(draw.mesh.indexCount>0){
                         const mesh=meshes.get(draw.mesh)!;
-                        const pipeline=draw.viewIndex===undefined?this.meshPipeline!:this.texturedSceneMeshPipeline!;
+                        const pipeline=draw.viewIndex===undefined?this.meshPipeline!:draw.lambert?this.lambertMeshPipeline!:this.texturedSceneMeshPipeline!;
                         scene.functions.encodeWebGPUMesh(pass,pipeline,mesh.vertex!.buffer,mesh.index!.buffer,sceneBindings.get(draw)!,draw.mesh.indexCount,width,height);
                     }
                     // Opaque cards share the mesh depth attachment; the HUD opens a depth-free pass.
@@ -2391,6 +2414,7 @@ class WebGPUHostImplementation {
         if (this.destroyDevice) { const destroy = this.destroyDevice; this.destroyDevice = undefined; try { destroy(); } catch (cause) { this.proofFailed(cause); } }
         this.cardPipeline=undefined;this.cardLayout=undefined;
         this.texturedSceneMeshPipeline=undefined;this.texturedSceneMeshLayout=undefined;
+        this.lambertMeshPipeline=undefined;this.lambertMeshLayout=undefined;
         if(SHARED_OPTIONS.get(this)?.recovery&&!this.unsafe){this.borrowed=undefined;this.clearNativeReferences();}
         this.cleanupOutcome = this.unsafe ? 'unsafe' : 'safe'; this.state = 'closed';
         if (this.unsafe) throw error('WEBGPU_CLOSE_UNSAFE', this.unsafeCause);

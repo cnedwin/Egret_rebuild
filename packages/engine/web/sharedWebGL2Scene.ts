@@ -4,7 +4,7 @@ import type { SceneFrame3D } from '../rendering/sceneFrame3D.js';
 import { packSharedMeshGeometry3D, getSharedMeshPacking3DErrorOrigin } from '../rendering/packSharedMeshGeometry3D.js';
 import type { PackedMeshGeometry3D } from '../rendering/packSharedMeshGeometry3D.js';
 import { noteOwnedPreparationFailure } from '../rendering/ownedPreparationFailure2D.js';
-import { packSharedSceneCardUniform3D } from './sharedSubmissionStorage2D.js';
+import { packSharedSceneCardUniform3D, packSharedSceneLambertUniform3D } from './sharedSubmissionStorage2D.js';
 
 // These are the genuine existing CPU references, not a second scene registry.
 // The Host imports this fixed module namespace; callers cannot inject a plugin.
@@ -35,6 +35,7 @@ export interface SharedGLSceneDraw {
     readonly mesh: PackedMeshGeometry3D;
     readonly uniform: Float32Array<ArrayBuffer>;
     readonly pageIndex?: number;
+    readonly lambert?: true;
 }
 export interface SharedGLSceneCardDraw {
     readonly pageIndex: number;
@@ -56,11 +57,11 @@ export function admitSharedGLScene(input: unknown, width: number, height: number
     const cards = frame.cards?.length ?? 0;
     if (count + cards > LIMITS.draws || distinct > LIMITS.geometries) fail('budget');
     let cpuBytes = 0, sceneBytes = 0;
-    const uniformBytes = 64 * count + 112 * cards;
+    const uniformBytes = frame.draws.reduce((bytes, draw) => bytes + (draw.lambert ? 128 : 64), 112 * cards);
     const bufferBytes: number[] = [];
-    const textured = new Set(frame.draws.filter(draw => draw.texture).map(draw => draw.geometry));
+    const componentsByGeometry = new Map(frame.draws.map(draw => [draw.geometry, draw.lambert ? 11 : draw.texture ? 8 : 6]));
     for (const geometry of frame.geometries) {
-        const components = textured.has(geometry) ? 8 : 6;
+        const components = componentsByGeometry.get(geometry)!;
         const vertexBytes = 4 * components * geometry.vertexCount, indexBytes = 4 * geometry.indexCount;
         cpuBytes += 8 * (components * geometry.vertexCount + geometry.indexCount);
         sceneBytes += vertexBytes + indexBytes;
@@ -90,10 +91,11 @@ export function prepareSharedGLScene(
     const draws: SharedGLSceneDraw[] = [];
     const uniforms: Float32Array<ArrayBuffer>[] = [];
     const byGeometry = new Map<SceneFrame3D['geometries'][number], PackedMeshGeometry3D>();
-    const textures = new Map(admission.frame.draws.filter(draw => draw.texture).map(draw => [draw.geometry, draw.texture!]));
+    const byDrawGeometry = new Map(admission.frame.draws.map(draw => [draw.geometry, draw]));
     for (const geometry of admission.frame.geometries) {
         let mesh: PackedMeshGeometry3D;
-        try { mesh = packSharedMeshGeometry3D(geometry, textures.get(geometry)?.texcoords); }
+        const sample = byDrawGeometry.get(geometry)!;
+        try { mesh = packSharedMeshGeometry3D(geometry, sample.texture?.texcoords, sample.lambert?.normals); }
         catch (cause) {
             // Only this imported packer's private origin predicate authenticates its failure.
             const origin = getSharedMeshPacking3DErrorOrigin(cause);
@@ -110,10 +112,11 @@ export function prepareSharedGLScene(
         if (!mesh) fail('frame');
         // Preserve the existing 16-number, column-major float32 ABI, including empty draws.
         // Clip depth remapping occurs in the vertex shader; no CPU transpose, divide or Y flip.
-        const uniform = new Float32Array(draw.mvp);
+        const uniform = draw.lambert ? packSharedSceneLambertUniform3D(draw) : new Float32Array(draw.mvp);
         const pageIndex = textureViews?.get(draw.geometry);
         if (draw.texture && mesh.indexCount !== 0 && pageIndex === undefined) fail("frame");
-        draws.push(pageIndex === undefined ? { mesh, uniform } : { mesh, uniform, pageIndex });
+        draws.push(draw.lambert && pageIndex !== undefined ? {mesh, uniform, pageIndex, lambert: true}
+            : pageIndex === undefined ? {mesh, uniform} : {mesh, uniform, pageIndex});
         uniforms.push(uniform);
     }
     const cards = (admission.frame.cards ?? []).map((card, index) => {
@@ -247,5 +250,58 @@ void main() {
     vec3 linear = mix(encoded / 12.92, pow((encoded + vec3(0.055)) / 1.055, vec3(2.4)),
         greaterThan(encoded, vec3(0.04045)));
     outColor = vec4(linear * vLinearColor, 1.0);
+}
+`;
+
+const SCENE_LAMBERT_UNIFORM = `layout(std140) uniform SceneLambert {
+    mat4 uMVP;
+    vec4 uNormal0;
+    vec4 uNormal1;
+    vec4 uNormal2;
+    vec4 uLight;
+};
+`;
+export const SHARED_GL_SCENE_LAMBERT_VERTEX = `#version 300 es
+precision highp float;
+precision highp int;
+layout(location = 0) in vec3 aPosition;
+layout(location = 1) in vec3 aLinearColor;
+layout(location = 2) in vec2 aUV;
+layout(location = 3) in vec3 aNormal;
+${SCENE_LAMBERT_UNIFORM}
+out highp vec3 vLinearColor;
+out highp vec2 vUV;
+out highp vec3 vNormal;
+void main() {
+    vec4 clip = uMVP * vec4(aPosition, 1.0);
+    gl_Position = vec4(clip.xy, 2.0 * clip.z - clip.w, clip.w);
+    vLinearColor = aLinearColor;
+    vUV = aUV;
+    vNormal = mat3(uNormal0.xyz, uNormal1.xyz, uNormal2.xyz) * aNormal;
+}
+`;
+export const SHARED_GL_SCENE_LAMBERT_FRAGMENT = `#version 300 es
+precision highp float;
+precision highp int;
+${SCENE_LAMBERT_UNIFORM}
+uniform highp sampler2D uScenePage;
+in highp vec3 vLinearColor;
+in highp vec2 vUV;
+in highp vec3 vNormal;
+layout(location = 0) out vec4 outColor;
+void main() {
+    ivec2 dimensions = textureSize(uScenePage, 0);
+    ivec2 pixel = min(ivec2(clamp(vUV, 0.0, 1.0) * vec2(dimensions)), dimensions - 1);
+    vec3 encoded = texelFetch(uScenePage, pixel, 0).rgb;
+    vec3 linear = mix(encoded / 12.92, pow((encoded + vec3(0.055)) / 1.055, vec3(2.4)),
+        greaterThan(encoded, vec3(0.04045)));
+    // Mirrored model transforms reverse native winding. Light the authored side.
+    bool front = gl_FrontFacing != (uNormal1.w < 0.0);
+    vec3 oriented = front ? vNormal : -vNormal;
+    vec3 absolute = abs(oriented);
+    float scale = max(absolute.x, max(absolute.y, absolute.z));
+    float directional = 0.0;
+    if (scale >= 1.17549435e-38) directional = max(0.0, dot(normalize(oriented / scale), uLight.xyz));
+    outColor = vec4(linear * vLinearColor * (uNormal0.w + uLight.w * directional), 1.0);
 }
 `;

@@ -52,7 +52,8 @@ function preflight(values: readonly number[]): void {
         if (!admitted) fail('MESH3D_PACK_F32_UNSUPPORTED', 'validation');
     }
 }
-export function packSharedMeshGeometry3D(geometry: MeshGeometry3D, texcoords?: readonly number[]): PackedMeshGeometry3D {
+export function packSharedMeshGeometry3D(geometry: MeshGeometry3D, texcoords?: readonly number[],
+    normals?: readonly number[]): PackedMeshGeometry3D {
     // A static annotation grants no runtime authority. WeakMap identity must
     // succeed before even one geometry field is read; no lookalike is reflected.
     if (!native(() => isMeshGeometry3D(geometry))) fail('MESH3D_PACK_INPUT_INVALID', 'validation');
@@ -61,7 +62,8 @@ export function packSharedMeshGeometry3D(geometry: MeshGeometry3D, texcoords?: r
     const countsAdmitted = native(() => Number.isSafeInteger(vertexCount) && vertexCount >= 0 && vertexCount <= 65536
         && Number.isSafeInteger(indexCount) && indexCount >= 0 && indexCount <= 196608);
     if (!countsAdmitted) fail('MESH3D_PACK_BUDGET', 'budget');
-    const stride = texcoords ? 8 : 6;
+    if (normals && !texcoords) fail('MESH3D_PACK_INPUT_INVALID', 'validation');
+    const stride = normals ? 11 : texcoords ? 8 : 6;
     const logicalBytes = 8 * (stride * vertexCount + indexCount);
     const vertexBytes = 4 * stride * vertexCount;
     const indexBytes = 4 * indexCount;
@@ -82,6 +84,10 @@ export function packSharedMeshGeometry3D(geometry: MeshGeometry3D, texcoords?: r
         if (texcoords.length !== 2 * vertexCount) fail("MESH3D_PACK_INPUT_INVALID", "validation");
         preflight(texcoords);
     }
+    if (normals) {
+        if (normals.length !== 3 * vertexCount) fail('MESH3D_PACK_INPUT_INVALID', 'validation');
+        preflight(normals);
+    }
     const vertices = native(() => new Float32Array(stride * vertexCount));
     const indices = native(() => new Uint32Array(indexCount));
     native(() => {
@@ -96,6 +102,11 @@ export function packSharedMeshGeometry3D(geometry: MeshGeometry3D, texcoords?: r
                 // UVs are owned at parse time and are interpolated by the native mesh pipeline.
                 vertices[stride * vertex + 6] = texcoords[2 * vertex]!;
                 vertices[stride * vertex + 7] = texcoords[2 * vertex + 1]!;
+            }
+            if (normals) {
+                for (let component = 0; component < 3; component++) {
+                    vertices[stride * vertex + 8 + component] = normals[3 * vertex + component]!;
+                }
             }
         }
         for (let index = 0; index < indexCount; index++) {

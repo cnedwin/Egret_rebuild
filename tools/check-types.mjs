@@ -634,6 +634,12 @@ const texturedSceneDom = {"marker":{"path":"packages/engine/dist/rendering/scene
     {"path":"packages/engine/dist/web/sharedB1.d.ts","baseBytes":1302,"baseSha256":"f2df25a1ba2a184731c240f8aef5b9b4c9a0af05d583f493cc9ba816ce91abd5","bytes":1407,"sha256":"eeed1c020a474059965ddcd6b21c9cfac79cb30a03524b235264aeb61c267e1a"},
     {"path":"packages/engine/dist/web/webgpuSharedMeshPass.d.ts","baseBytes":743,"baseSha256":"7d1094342be884cfc1bf0850d8fc4cf8437d0bcc1b571b044791094be0b380c7","bytes":1413,"sha256":"157dd14218985bdff9a167bac2d99e8998a0a1b99ac4154be648893238939beb"}
   ]};
+const lambertSceneDom = {"marker":{"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":888,"sha256":"cfc884e784a269304bf1236e6fb7a9ae63cf1d023a1bcb969668cb98583201e4"},"declaration":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":4006,"sha256":"c4fc5adfe9acfc7b686d632cc39b90c1117a387d24b3b769cd5da22bbf4713d2"},
+  "sharedDeclarations":[
+    {"path":"packages/engine/dist/rendering/packSharedMeshGeometry3D.d.ts","baseBytes":1086,"baseSha256":"f442f5cfe82626d887d8a2af294cd3e63c0a8b27eb026838a2f445a7a0435b9c","bytes":1146,"sha256":"44d735b142c798075a49c281c83f47d814184ad375f26198d3c6ee02b1c6da02"},
+    {"path":"packages/engine/dist/web/sharedB1.d.ts","baseBytes":1302,"baseSha256":"f2df25a1ba2a184731c240f8aef5b9b4c9a0af05d583f493cc9ba816ce91abd5","bytes":1446,"sha256":"226036012fe92be805709b57311f9805dc53831491e7982cb81cd7750a5e80d8"},
+    {"path":"packages/engine/dist/web/webgpuSharedMeshPass.d.ts","baseBytes":743,"baseSha256":"7d1094342be884cfc1bf0850d8fc4cf8437d0bcc1b571b044791094be0b380c7","bytes":1737,"sha256":"67711a2a5c08da820df0764c71298c32d504fd5c4bb65747d5976281f03f08eb"}
+  ]};
 // AUTHORED-SCENE-DECLARATION-END
 function verifySceneDomM13(){
   if(!sceneDomM13Selected)return;
@@ -647,7 +653,7 @@ function verifySceneDomM13(){
   if(authoredSceneSelected){
     const marker=fingerprintFile(root,authoredSceneDomMarker.path);
     const matches=pin=>marker.bytes===pin.bytes&&marker.sha256===pin.sha256;
-    const successor=[worldCardSceneDom,texturedSceneDom].find(value=>matches(value.marker));
+    const successor=[worldCardSceneDom,texturedSceneDom,lambertSceneDom].find(value=>matches(value.marker));
     if(successor){authoredDeclaration=successor.declaration;sharedDeclarations=successor.sharedDeclarations;}
     else if(!matches(authoredSceneDomMarker))throw Error(sceneDomLabel+' authored scene declaration marker changed');
   }

@@ -219,7 +219,9 @@ function m24SpineStrictPin(root,selected,id,row){
  const worldCard=worldCardStrictPairs.find(next=>equal(next.base,pair.current));
  if(worldCard&&equal(actual,worldCard.current))return worldCard.current;
  const texturedGlb=worldCard&&texturedGlbStrictPairs.find(next=>equal(next.base,worldCard.current));
- return texturedGlb&&equal(actual,texturedGlb.current)?texturedGlb.current:row;
+ if(texturedGlb&&equal(actual,texturedGlb.current))return texturedGlb.current;
+ const lambertGlb=texturedGlb&&lambertGlbStrictPairs.find(next=>equal(next.base,texturedGlb.current));
+ return lambertGlb&&equal(actual,lambertGlb.current)?lambertGlb.current:row;
 }
 // M24-SPINE-CURRENT-END
 
@@ -241,15 +243,19 @@ const worldCardStrictPairs = [{"base":{"path":"packages/engine/dist/rendering/sc
 const worldCardStrictMarker = {"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":667,"sha256":"8a9843a90b00fc624c7cbb8f5cd9f1d1e0193846c0ac68f84b64b8adf88544cb"};
 const texturedGlbStrictPairs = [{"base":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":3137,"sha256":"d3d9317989f4d89b7e596e857c7ff999d8762741467f0f713b16f07f95b2709b"},"current":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":3357,"sha256":"03d2f4070133f51954ff990792fce04e83354b7f32f3f8f203918e9a5b9cc62f"}},{"base":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":17373,"sha256":"41360bb7035ab083bedac497c7740292ce2c8ae1df846960d3d051ef95ea5907"},"current":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":17926,"sha256":"e507e7e0705cb999606241d42556c0176052c481a9857d14dd906c40765bf9eb"}},{"base":{"path":"packages/engine/web/WebGPUHost.ts","bytes":200125,"sha256":"aa72fa15df521aaee5a34e73b61448d5207f346ec26301bae188901bad033882"},"current":{"path":"packages/engine/web/WebGPUHost.ts","bytes":203818,"sha256":"c673d33d7ac329724dc7f222bf8f14a3f26d2d90e940e74167303dd54a917c4c"}}];
 const texturedGlbStrictMarker = {"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":779,"sha256":"e249f2a69ab4aec89152d698cfbd7e5f36b2d3107c0acd04d8d0dba02d966835"};
+const lambertGlbStrictPairs = [{"base":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":3357,"sha256":"03d2f4070133f51954ff990792fce04e83354b7f32f3f8f203918e9a5b9cc62f"},"current":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":4006,"sha256":"c4fc5adfe9acfc7b686d632cc39b90c1117a387d24b3b769cd5da22bbf4713d2"}},{"base":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":17926,"sha256":"e507e7e0705cb999606241d42556c0176052c481a9857d14dd906c40765bf9eb"},"current":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":18820,"sha256":"31773b68d096eb210e56af7c81e121f2daaa7a045254a96ed64769509eeff377"}},{"base":{"path":"packages/engine/web/WebGPUHost.ts","bytes":203818,"sha256":"c673d33d7ac329724dc7f222bf8f14a3f26d2d90e940e74167303dd54a917c4c"},"current":{"path":"packages/engine/web/WebGPUHost.ts","bytes":205694,"sha256":"e91be7252e869987d0b2e4fc261fd3940521f1a28f916cbe1d8507cb892f7d73"}}];
+const lambertGlbStrictMarker = {"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":888,"sha256":"cfc884e784a269304bf1236e6fb7a9ae63cf1d023a1bcb969668cb98583201e4"};
 function authoredSceneStrictPin(root,selected,row){
  if(selected!==M15_DATA)return row;
  const pair=authoredSceneStrictPairs.find(pair=>equal(row,pair.base));
  if(!pair||!existsSync(path.join(root,authoredSceneStrictMarker.path)))return row;
  const marker=fingerprintFile(root,authoredSceneStrictMarker.path);
- if(equal(marker,worldCardStrictMarker)||equal(marker,texturedGlbStrictMarker)){
+ if(equal(marker,worldCardStrictMarker)||equal(marker,texturedGlbStrictMarker)||equal(marker,lambertGlbStrictMarker)){
   const worldCard=worldCardStrictPairs.find(next=>equal(next.base,pair.current))?.current??pair.current;
-  if(equal(marker,texturedGlbStrictMarker))return texturedGlbStrictPairs.find(next=>equal(next.base,worldCard))?.current??worldCard;
-  return worldCard;
+  if(equal(marker,worldCardStrictMarker))return worldCard;
+  const texturedGlb=texturedGlbStrictPairs.find(next=>equal(next.base,worldCard))?.current??worldCard;
+  if(equal(marker,texturedGlbStrictMarker))return texturedGlb;
+  return lambertGlbStrictPairs.find(next=>equal(next.base,texturedGlb))?.current??texturedGlb;
  }
  if(!equal(marker,authoredSceneStrictMarker))fail('authored scene declaration selection changed');
  return pair.current;
@@ -321,9 +327,14 @@ export function selectM13StrictSuccessor(root,id,inventory){
  const selectedInputs=[...inputPins,...selectedPins,...sourcePins];
  const worldCards=selectedInputs.some(row=>worldCardStrictPairs.some(pair=>equal(row,pair.current)));
  const texturedGlb=selectedInputs.some(row=>texturedGlbStrictPairs.some(pair=>equal(row,pair.current)));
- if(texturedGlb||worldCards||selectedInputs.some(row=>[authoredSceneStrictPackage,...authoredSceneStrictPairs].some(pair=>equal(row,pair.current)))){
+ const lambertGlb=selectedInputs.some(row=>lambertGlbStrictPairs.some(pair=>equal(row,pair.current)));
+ if(lambertGlb||texturedGlb||worldCards||selectedInputs.some(row=>[authoredSceneStrictPackage,...authoredSceneStrictPairs].some(pair=>equal(row,pair.current)))){
   const marker=fingerprintFile(root,authoredSceneStrictMarker.path);
-  if(texturedGlb||equal(marker,texturedGlbStrictMarker)){
+  if(lambertGlb||equal(marker,lambertGlbStrictMarker)){
+   if(selectedInputs.some(row=>lambertGlbStrictPairs.some(pair=>row.path===pair.current.path&&!equal(row,pair.current))))
+    fail('mixed Lambert GLB source revisions');
+   selectedPins.push(lambertGlbStrictMarker);
+  }else if(texturedGlb||equal(marker,texturedGlbStrictMarker)){
    if(selectedInputs.some(row=>texturedGlbStrictPairs.some(pair=>row.path===pair.current.path&&!equal(row,pair.current))))
     fail('mixed textured GLB source revisions');
    selectedPins.push(texturedGlbStrictMarker);

@@ -181,3 +181,77 @@ export function createSharedWebGPUTexturedMeshPipeline(
         multisample: { count: 1, alphaToCoverageEnabled: false },
     });
 }
+
+// The shared color page decodes opaque sRGB texels before applying linear light.
+const LAMBERT_MESH_SHADER = `struct LambertUniform {
+    mvp: mat4x4<f32>,
+    normalColumn0: vec4<f32>,
+    normalColumn1: vec4<f32>,
+    normalColumn2: vec4<f32>,
+    light: vec4<f32>,
+}
+@group(0) @binding(0) var<uniform> draw: LambertUniform;
+@group(0) @binding(1) var page: texture_2d<f32>;
+
+struct LambertVertexOutput {
+    @builtin(position) clip: vec4<f32>,
+    @location(0) rgb: vec3<f32>,
+    @location(1) uv: vec2<f32>,
+    @location(2) normal: vec3<f32>,
+}
+
+@vertex fn vertexMain(
+    @location(0) position: vec3<f32>,
+    @location(1) color: vec3<f32>,
+    @location(2) uv: vec2<f32>,
+    @location(3) normal: vec3<f32>,
+) -> LambertVertexOutput {
+    var result: LambertVertexOutput;
+    result.clip = draw.mvp * vec4<f32>(position, 1.0);
+    result.rgb = color;
+    result.uv = uv;
+    result.normal = mat3x3<f32>(draw.normalColumn0.xyz, draw.normalColumn1.xyz, draw.normalColumn2.xyz) * normal;
+    return result;
+}
+
+@fragment fn fragmentMain(input: LambertVertexOutput, @builtin(front_facing) front: bool) -> @location(0) vec4<f32> {
+    let size = textureDimensions(page, 0);
+    let uv = clamp(input.uv, vec2<f32>(0.0), vec2<f32>(1.0));
+    let coordinate = min(vec2<u32>(floor(uv * vec2<f32>(size))), size - vec2<u32>(1));
+    let texel = textureLoad(page, vec2<i32>(coordinate), 0);
+    // Scale before normalization to avoid a near-cancelled normal squaring to zero.
+    let magnitude = max(max(abs(input.normal.x), abs(input.normal.y)), abs(input.normal.z));
+    var diffuse = 0.0;
+    if (magnitude >= 1.17549435e-38) {
+        let normal = normalize(input.normal / magnitude);
+        let authoredFront = front != (draw.normalColumn1.w < 0.0);
+        diffuse = max(0.0, dot(select(-normal, normal, authoredFront), draw.light.xyz));
+    }
+    let amount = draw.normalColumn0.w + draw.light.w * diffuse;
+    return vec4<f32>(input.rgb * texel.rgb * amount, 1.0);
+}
+`;
+
+/** Private Lambert role on the existing opaque reversed-depth scene attachment. */
+export function createSharedWebGPULambertMeshPipeline(
+    shader: Parameters<typeof createSharedWebGPUMeshPipeline>[0],
+    pipeline: Parameters<typeof createSharedWebGPUMeshPipeline>[1],
+): ReturnType<typeof createSharedWebGPUMeshPipeline> {
+    const module = shader({ code: LAMBERT_MESH_SHADER });
+    return pipeline({
+        layout: 'auto',
+        vertex: {
+            module, entryPoint: 'vertexMain',
+            buffers: [{ arrayStride: 44, stepMode: 'vertex', attributes: [
+                { shaderLocation: 0, offset: 0, format: 'float32x3' },
+                { shaderLocation: 1, offset: 12, format: 'float32x3' },
+                { shaderLocation: 2, offset: 24, format: 'float32x2' },
+                { shaderLocation: 3, offset: 32, format: 'float32x3' },
+            ] }],
+        },
+        fragment: { module, entryPoint: 'fragmentMain', targets: [{ format: 'rgba8unorm-srgb', writeMask: 15 }] },
+        primitive: { topology: 'triangle-list', frontFace: 'ccw', cullMode: 'none', unclippedDepth: false },
+        depthStencil: { format: 'depth32float', depthWriteEnabled: true, depthCompare: 'greater', depthBias: 0, depthBiasSlopeScale: 0, depthBiasClamp: 0 },
+        multisample: { count: 1, alphaToCoverageEnabled: false },
+    });
+}

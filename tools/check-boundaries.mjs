@@ -707,7 +707,7 @@ for(const relative of ['web/webgpu.ts','dist/web/webgpu.d.ts','dist/web/webgpu.j
   if(!relative.endsWith('.js'))for(const name of sharedGPUTypes)sharedForward(text,name,true,'./WebGPUHost.js',file);
 }
 const privateSharedGPU = ["SharedStorageLimits2D","SharedStorageFees2D","SharedReadbackLayout2D","SharedStoragePlan2D","planSharedStorageFees2D","withSharedReadbackLayout2D","createRetentionLedger","RetentionRequestBase","KeyedRetentionRequest","LedgerHandle","LedgerLease","LedgerPlan","LedgerReturnPlan","RetentionLedgerStatus","RetentionSettlement","RetentionLedger","MeshPacking3DError","MeshPacking3DErrorCode","MeshPacking3DErrorOrigin","PackedMeshGeometry3D","PackedSharedDraw2D","PackedSharedEntry2D","PreparedSharedBarrier2D","PreparedSharedBatchPlan2D","PreparedSharedDraw2D","PreparedSharedEntry2D","PreparedSharedFrame2D","RetentionBufferRequest","RetentionHandle","RetentionLease","RetentionPlan","RetentionRequest","RetentionReturnPlan","RetentionTargetRequest","SHARED_BLENDS","SharedB1BuiltinProtocol","SharedDrawCommand2D","SharedOwnerSnapshot2D","SharedPoint2D","SharedPreparationError","SharedPreparationOptions2D","SharedSceneStorage2D","SharedStorageError2D","SharedSubmissionStorage2D","SharedWebGPUConfiguration","WebGPURetentionPool","admitSharedWebGPUOptions","checkSharedCapacity2D","copySharedPagePixels","createSharedResolvePipeline","createSharedWebGPUMeshPipeline","createSharedWebGPUPipeline","createWebGPURetentionPool","decodeSharedSRGB","encodeSharedSRGB","encodeSharedWebGPUMesh","getBuiltinSharedB1Protocol","getSharedMeshPacking3DErrorOrigin","isBuiltinSharedB1Protocol","materializeSharedPages2D","packSharedDraws2D","packSharedMeshGeometry3D","packSharedSubmission2D","planSharedSubmission2D","prepareSharedBatches2D","prepareSharedDraws2D","qualifySharedUV","sharedFailure"];
-privateSharedGPU.push("attachSharedSceneCardSources2D","attachSharedSceneSources2D","packSharedSceneCardUniform3D","createSharedWebGPUCardPipeline","createSharedWebGPUTexturedMeshPipeline");
+privateSharedGPU.push("attachSharedSceneCardSources2D","attachSharedSceneSources2D","packSharedSceneCardUniform3D","createSharedWebGPUCardPipeline","createSharedWebGPUTexturedMeshPipeline","packSharedSceneLambertUniform3D","createSharedWebGPULambertMeshPipeline");
 const privateSharedModules = ["sharedSubmissionStorage2D","sharedRetentionLedger","packSharedDraws2D","packSharedMeshGeometry3D","prepareSharedDraws2D","prepareSharedSubmission2D","preparedSharedBatches2D","sharedB1","sharedColor2D","sharedWebGPUOptions","webgpuRetentionPool","webgpuSharedMeshPass","webgpuSharedPass","webgpuSharedResolvePass"];
 for(const [entry,values,stem]of meshEntries) {
   const text=readFileSync(path.join(root,stem+'.d.ts'),'utf8')+'\n'+readFileSync(path.join(root,stem+'.js'),'utf8');
@@ -1272,13 +1272,13 @@ function sceneWebCanonicalTypes(code,label) {
 const sceneCPU=await import('@egret/engine/scene3d');
 const sceneWeb=await import('@egret/engine/webgpu/scene3d');
 // Authored scene and GLB operations remain behind one separate DOM-free route.
-const authoredSceneValues=['createSceneCamera3D','createSceneWorld3D','createSceneWorldCard3D','loadStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError'];
-const authoredSceneTypes=['SceneWorldCamera3D','SceneWorldCameraInput3D','SceneWorldProjectionInput3D','SceneWorld3D','SceneWorldNodeInput3D','SceneWorldCard3D','SceneWorldCardInput3D','PreparedTexturedStaticGlb3D','StaticGlbImageBinding3D','StaticGlbImageRequest3D','StaticGlb3DErrorCode'];
+const authoredSceneValues=['createSceneCamera3D','createSceneWorld3D','createSceneWorldCard3D','loadStaticGlbScene3D','prepareLambertStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError'];
+const authoredSceneTypes=['SceneWorldCamera3D','SceneWorldCameraInput3D','SceneWorldProjectionInput3D','SceneWorld3D','SceneWorldNodeInput3D','SceneWorldCard3D','SceneWorldCardInput3D','SceneDirectionalLighting3D','SceneLambertWorld3D','PreparedLambertStaticGlb3D','PreparedTexturedStaticGlb3D','StaticGlbImageBinding3D','StaticGlbImageRequest3D','StaticGlb3DErrorCode'];
 const authoredScene=await import('@egret/engine/scene3d/authoring');
 if(!sceneEqual(Object.keys(authoredScene),authoredSceneValues))throw new Error('scene3d/authoring: exact runtime export surface mismatch');
-const authoredRules={'./sceneWorld3D.js':{value:['createSceneCamera3D','createSceneWorld3D'],type:authoredSceneTypes.slice(0,5)},
-  './sceneFrame3D.js':{value:['createSceneWorldCard3D'],type:['SceneWorldCard3D','SceneWorldCardInput3D']},
-  './staticGlb3D.js':{value:['readStaticGlbNodes3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError'],type:['PreparedTexturedStaticGlb3D','StaticGlbImageBinding3D','StaticGlbImageRequest3D','StaticGlb3DErrorCode']}};
+const authoredRules={'./sceneWorld3D.js':{value:['createSceneCamera3D','createSceneWorld3D'],type:[...authoredSceneTypes.slice(0,5),'SceneLambertWorld3D']},
+  './sceneFrame3D.js':{value:['createSceneWorldCard3D'],type:['SceneWorldCard3D','SceneWorldCardInput3D','SceneDirectionalLighting3D']},
+  './staticGlb3D.js':{value:['readStaticGlbNodes3D','prepareLambertStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError'],type:['PreparedLambertStaticGlb3D','PreparedTexturedStaticGlb3D','StaticGlbImageBinding3D','StaticGlbImageRequest3D','StaticGlb3DErrorCode']}};
 for(const [file,kind] of [['packages/engine/rendering/scene3dAuthoring.ts','source'],
   ['packages/engine/dist/rendering/scene3dAuthoring.js','emitted'],['packages/engine/dist/rendering/scene3dAuthoring.d.ts','declaration']]){
   const code=sceneRead(file);
@@ -1288,7 +1288,7 @@ for(const [file,kind] of [['packages/engine/rendering/scene3dAuthoring.ts','sour
   if(kind!=='declaration'&&!/returncreateSceneWorld3D\(readStaticGlbNodes3D\(bytes\)\);/.test(code.replace(/\s+/g,'')))
     throw new Error('scene3d/authoring: exact GLB assembly mismatch');
 }
-for(const [target,names] of [['sceneWorld3D',['createSceneCamera3D','createSceneWorld3D']],['sceneFrame3D',['createSceneWorldCard3D']],['staticGlb3D',['prepareTexturedStaticGlbScene3D','StaticGlb3DError']]]){
+for(const [target,names] of [['sceneWorld3D',['createSceneCamera3D','createSceneWorld3D']],['sceneFrame3D',['createSceneWorldCard3D']],['staticGlb3D',['prepareLambertStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError']]]){
   const original=await import(new URL('../packages/engine/dist/rendering/'+target+'.js',import.meta.url));
   for(const name of names)if(authoredScene[name]!==original[name])throw new Error('scene3d/authoring: original module identity mismatch: '+name);
 }
@@ -1349,7 +1349,7 @@ for (const [target,names] of [['matrix4',['Math3DError']],['meshGeometry3D',['is
   const original=await import(new URL('../packages/engine/dist/rendering/'+target+'.js',import.meta.url));
   for (const name of names) if (sceneCPU[name]!==original[name]) throw new Error('scene3d: original module identity mismatch: '+name);
 }
-const sceneNewNames=[...authoredSceneValues,...authoredSceneTypes,'createAuthoredSceneFrame3D','readStaticGlbNodes3D','readStaticGlbTexturePlan3D','createTexturedSceneWorld3D','SceneMeshTexture3D','createMatrix4','multiplyMatrix4','Math3DError','Math3DErrorCode','MeshGeometry3DInput',...sceneWebValues,...sceneLegacyWebTypes,'TexturedSceneWebGPUHost','SharedSceneWebGPUHost','SharedSceneWebGPUHostOptions'];
+const sceneNewNames=[...authoredSceneValues,...authoredSceneTypes,'createAuthoredSceneFrame3D','readStaticGlbNodes3D','readStaticGlbTexturePlan3D','createTexturedSceneWorld3D','createLambertSceneWorld3D','SceneLambertDraw3D','SceneLambertSurface3D','SceneMeshTexture3D','createMatrix4','multiplyMatrix4','Math3DError','Math3DErrorCode','MeshGeometry3DInput',...sceneWebValues,...sceneLegacyWebTypes,'TexturedSceneWebGPUHost','SharedSceneWebGPUHost','SharedSceneWebGPUHostOptions'];
 for (const [entry,values,emittedEntry] of [...textEntries,['project',projectFacade,'packages/project/dist/index']]) {
   const text=[sceneRead(assetGroupSourceEntries[entry]),sceneRead(emittedEntry+'.js'),sceneRead(emittedEntry+'.d.ts')].join('\n');
   for (const name of sceneNewNames) if (name in values || new RegExp('\\b'+name+'\\b').test(text)) throw new Error(entry+': explicit-only scene name leaked: '+name);
@@ -1410,7 +1410,7 @@ const glPrivateNames = ['createSharedSceneWebGL2HostInternal','SharedGLHost','GL
   'SharedWebGL2Configuration','admitSharedWebGL2Options','SharedWebGL2ArenaStrides','SharedWebGL2ArenaPlan','SharedWebGL2ArenaOwner','qualifySharedWebGL2Alignment','planSharedWebGL2Arenas','checkSharedWebGL2ArenaCapacity',
   'sharedWebGL2VertexSource','sharedWebGL2FragmentSource','sharedWebGL2ResolveVertexSource','sharedWebGL2ResolveFragmentSource','sharedWebGL2BlendFactors','sharedWebGL2LayerVertexSource','sharedWebGL2LayerFragmentSource','sharedWebGL2LayerEffectFragmentSource',
   'SharedGLScenePreparationReason','SharedGLScenePreparationError','SharedGLSceneAdmission','SharedGLSceneDraw','PreparedSharedGLScene','admitSharedGLScene','prepareSharedGLScene','SHARED_GL_SCENE_LAYOUT','SHARED_GL_SCENE_VERTEX','SHARED_GL_SCENE_FRAGMENT',
-  'SharedGLSceneCardDraw','SHARED_GL_SCENE_CARD_VERTEX','SHARED_GL_SCENE_CARD_FRAGMENT','SHARED_GL_SCENE_TEXTURE_VERTEX','SHARED_GL_SCENE_TEXTURE_FRAGMENT'];
+  'SharedGLSceneCardDraw','SHARED_GL_SCENE_CARD_VERTEX','SHARED_GL_SCENE_CARD_FRAGMENT','SHARED_GL_SCENE_TEXTURE_VERTEX','SHARED_GL_SCENE_TEXTURE_FRAGMENT','SHARED_GL_SCENE_LAMBERT_VERTEX','SHARED_GL_SCENE_LAMBERT_FRAGMENT'];
 const glOtherEntryFiles = [
   ...Object.entries(assetGroupSourceEntries).map(([name,source])=>[name,source]),
   ['engine/layout','packages/engine/src/layout.ts'],['engine/web/input','packages/engine/web/input.ts'],['engine/web/image','packages/engine/web/image.ts'],
@@ -1493,7 +1493,7 @@ const glNativeMethods = [
   'getShaderParameter','getProgramParameter','getShaderInfoLog','getProgramInfoLog',
   'getUniformBlockIndex','getActiveUniformBlockParameter','getUniformIndices','getActiveUniforms',
   'getUniformLocation','useProgram','clientWaitSync','activeTexture','bindTexture','bindRenderbuffer',
-  'bindVertexArray','bindSampler','bindBufferRange','enable','disable','colorMask','depthMask','depthFunc',
+  'bindVertexArray','bindSampler','bindBufferRange','enable','disable','colorMask','depthMask','depthFunc','frontFace',
   'clearDepth','clearColor','clear','viewport','scissor','depthRange','blendEquationSeparate','blendFuncSeparate',
   'pixelStorei','texParameteri','texStorage2D','texSubImage2D','renderbufferStorage','framebufferTexture2D',
   'framebufferRenderbuffer','drawBuffers','readBuffer','compileShader','linkProgram','detachShader',
@@ -8444,7 +8444,7 @@ const texturedSceneEdges = {
   'web/WebGPUHost.ts': ['../rendering/packSharedMeshGeometry3D.js'],
   'rendering/staticGlb3D.ts': ['./sceneFrame3D.js','./sceneWorld3D.js','@egret/contracts','@egret/contracts'],
   'dist/rendering/staticGlb3D.js': ['./sceneWorld3D.js','@egret/contracts'],
-  'dist/rendering/staticGlb3D.d.ts': ['./meshGeometry3D.js','@egret/contracts'],
+  'dist/rendering/staticGlb3D.d.ts': ['./meshGeometry3D.js','./sceneFrame3D.js','@egret/contracts'],
 };
 for (const additions of [worldCardSceneEdges,texturedSceneEdges]) {
   for (const [file,added] of Object.entries(additions)) {

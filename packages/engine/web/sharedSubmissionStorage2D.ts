@@ -52,6 +52,20 @@ export function packSharedSceneCardUniform3D(card:SceneCardDraw3D):Float32Array<
     data.set(card.mvp,0);data.set(card.bounds,16);data.set(card.region,20);data[24]=card.alphaCutoff/255;
     return data;
 }
+/** Fixed 128-byte uniform ABI for the optional opaque Lambert draw. */
+export function packSharedSceneLambertUniform3D(draw: SceneDraw3D): Float32Array<ArrayBuffer> {
+    const {normalMatrix, mirrored, lighting} = draw.lambert!;
+    const data = new Float32Array(32);
+    data.set(draw.mvp, 0);
+    for (let column = 0; column < 3; column++) {
+        for (let row = 0; row < 3; row++) data[16 + 4 * column + row] = normalMatrix[3 * column + row]!;
+    }
+    data[19] = lighting.ambient;
+    data[23] = mirrored ? -1 : 1;
+    data.set(lighting.direction, 28);
+    data[31] = lighting.intensity;
+    return data;
+}
 export class SharedStorageError2D extends Error { public constructor(public readonly reason:'budget'|'device'|'backpressure'|'serial'){super('Shared storage '+reason);} }
 function fail(reason:SharedStorageError2D['reason']):never {throw noteOwnedPreparationFailure(new SharedStorageError2D(reason));}
 export interface SharedOwnerSnapshot2D { readonly pendingFrames:number; readonly pendingUploadBytes:number; readonly pendingReadbackBytes:number; readonly pendingTextureBytes:number; readonly pendingGeometryBytes:number; readonly pendingColorBytes:number; readonly pendingCanonicalBytes:number; readonly pendingSceneBytes:number; readonly pendingUniformBytes:number; readonly pendingDepthBytes:number; readonly serial:number; }

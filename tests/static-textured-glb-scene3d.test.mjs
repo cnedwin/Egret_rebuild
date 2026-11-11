@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { crc32, deflateSync } from 'node:zlib';
-import { readStaticGlbNodes3D, readStaticGlbTexturePlan3D, StaticGlb3DError }
+import { prepareLambertStaticGlbScene3D, readStaticGlbNodes3D, readStaticGlbTexturePlan3D, StaticGlb3DError }
   from '../packages/engine/dist/rendering/staticGlb3D.js';
 import { createImageData2D } from '@egret/contracts';
 import { createSceneCamera3D, prepareTexturedStaticGlbScene3D } from '@egret/engine/scene3d/authoring';
@@ -34,14 +34,22 @@ function png({ width = 2, height = 1, colorType = 2, extra = [], level = 6, red 
     ...extra, chunk('IDAT', deflateSync(rows, { level })), chunk('IEND', Buffer.alloc(0))]);
 }
 
-function glb({ images = [png(), png({ red: 31 })], edit = () => {}, editBinary = () => {} } = {}) {
-  const bytes = [uvOffset + 24];
+function glb({ images = [png(), png({ red: 31 })], withNormals = false, vertexCount = 3,
+  edit = () => {}, editBinary = () => {} } = {}) {
+  const indexOffset = vertexCount * 12;
+  const coordsOffset = align(indexOffset + 6);
+  const normalOffset = coordsOffset + vertexCount * 8;
+  const bytes = [normalOffset + (withNormals ? vertexCount * 12 : 0)];
   for (const image of images) bytes.push(align(bytes.at(-1) + image.byteLength));
   const binary = new Uint8Array(bytes.at(-1));
   const view = new DataView(binary.buffer);
   [0, 0, 0, 1, 0, 0, 0, 1, 0].forEach((value, index) => view.setFloat32(index * 4, value, true));
-  [0, 1, 2].forEach((value, index) => view.setUint16(36 + index * 2, value, true));
-  [-.5, 0, 1, 0, 0, 1].forEach((value, index) => view.setFloat32(uvOffset + index * 4, value, true));
+  [0, 1, 2].forEach((value, index) => view.setUint16(indexOffset + index * 2, value, true));
+  [-.5, 0, 1, 0, 0, 1].forEach((value, index) => view.setFloat32(coordsOffset + index * 4, value, true));
+  if (withNormals) {
+    view.setFloat32(normalOffset, -0, true);
+    for (let vertex = 0; vertex < vertexCount; vertex++) view.setFloat32(normalOffset + vertex * 12 + 8, 1, true);
+  }
   images.forEach((image, index) => binary.set(image, bytes[index]));
 
   const extension = 'KHR_materials_unlit';
@@ -51,13 +59,13 @@ function glb({ images = [png(), png({ red: 31 })], edit = () => {}, editBinary =
   const model = {
     asset: { version: '2.0' }, extensionsUsed: [extension], extensionsRequired: [extension],
     buffers: [{ byteLength: binary.byteLength }],
-    bufferViews: [{ buffer: 0, byteOffset: 0, byteLength: 36 },
-      { buffer: 0, byteOffset: 36, byteLength: 6 },
-      { buffer: 0, byteOffset: uvOffset, byteLength: 24 },
+    bufferViews: [{ buffer: 0, byteOffset: 0, byteLength: indexOffset },
+      { buffer: 0, byteOffset: indexOffset, byteLength: 6 },
+      { buffer: 0, byteOffset: coordsOffset, byteLength: vertexCount * 8 },
       ...images.map((image, index) => ({ buffer: 0, byteOffset: bytes[index], byteLength: image.byteLength }))],
-    accessors: [{ bufferView: 0, count: 3, componentType: 5126, type: 'VEC3', min: [0, 0, 0], max: [1, 1, 0] },
+    accessors: [{ bufferView: 0, count: vertexCount, componentType: 5126, type: 'VEC3', min: [0, 0, 0], max: [1, 1, 0] },
       { bufferView: 1, count: 3, componentType: 5123, type: 'SCALAR' },
-      { bufferView: 2, count: 3, componentType: 5126, type: 'VEC2', min: [-.5, 0], max: [1, 1] }],
+      { bufferView: 2, count: vertexCount, componentType: 5126, type: 'VEC2', min: [-.5, 0], max: [1, 1] }],
     images: images.map((_, index) => ({ bufferView: index + 3, mimeType: 'image/png' })),
     samplers: [{ magFilter: 9728, minFilter: 9728, wrapS: 33071, wrapT: 33071 }],
     textures: [{ sampler: 0, source: images.length > 1 ? 1 : 0 }, { sampler: 0, source: 0 }],
@@ -69,8 +77,14 @@ function glb({ images = [png(), png({ red: 31 })], edit = () => {}, editBinary =
     ] }],
     nodes: [{ children: [1, 2] }, { mesh: 0 }, { mesh: 0 }], scene: 0, scenes: [{ nodes: [0] }],
   };
+  if (withNormals) {
+    const bufferView = model.bufferViews.length;
+    model.bufferViews.push({ buffer: 0, byteOffset: normalOffset, byteLength: vertexCount * 12 });
+    model.accessors.push({ bufferView, count: vertexCount, componentType: 5126, type: 'VEC3' });
+    for (const primitive of model.meshes[0].primitives.slice(0, 2)) primitive.attributes.NORMAL = 3;
+  }
   edit(model);
-  editBinary(view);
+  editBinary(view, normalOffset);
   const json = new TextEncoder().encode(JSON.stringify(model)), jsonLength = align(json.byteLength);
   const output = new Uint8Array(28 + jsonLength + binary.byteLength);
   const header = new DataView(output.buffer);
@@ -207,4 +221,83 @@ test('public textured GLB binds one opaque image atomically and keeps old revisi
   const second = plan.bindImages([{ imageIndex: 0, source: secondImage }]);
   assert.equal(second.capture(camera).draws[0].texture.source, secondImage);
   assert.equal(first.capture(camera).draws[0].texture.source, firstImage);
+});
+
+test('Lambert GLB opts in to normal streams while both old GLB readers retain their profile', () => {
+  const authored = glb({ withNormals: true });
+  assert.throws(() => readStaticGlbTexturePlan3D(authored), failure('UNSUPPORTED', 'mesh primitive.attributes.NORMAL'));
+  assert.throws(() => readStaticGlbNodes3D(authored), failure('UNSUPPORTED'));
+  assert.throws(() => prepareLambertStaticGlbScene3D(glb()), failure('UNSUPPORTED', 'Lambert primitive requires NORMAL'));
+  assert.throws(() => prepareLambertStaticGlbScene3D(glb({ withNormals: true, edit: model => {
+    model.meshes[0].primitives[2].attributes.NORMAL = 3;
+  } })), failure('UNSUPPORTED', 'unused NORMAL'));
+
+  const plan = prepareLambertStaticGlbScene3D(authored);
+  authored.fill(0);
+  assert(Object.isFrozen(plan));
+  assert.deepEqual(plan.images.map(image => image.imageIndex), [0, 1]);
+  assert.deepEqual(Buffer.from(plan.images[0].copyBytes()), png());
+});
+
+test('Lambert GLB rejects wrong normal layout, range, count and non-unit binary32 values', () => {
+  const wrong = (edit, code, field) => assert.throws(
+    () => prepareLambertStaticGlbScene3D(glb({ withNormals: true, edit })), failure(code, field));
+  wrong(model => { model.accessors[3].type = 'VEC2'; }, 'UNSUPPORTED', 'accessor format');
+  wrong(model => { model.accessors[3].componentType = 5123; }, 'UNSUPPORTED', 'accessor format');
+  wrong(model => { model.accessors[3].normalized = true; }, 'UNSUPPORTED', 'accessor.normalized');
+  wrong(model => { model.bufferViews.at(-1).byteStride = 16; }, 'UNSUPPORTED', 'bufferView.byteStride');
+  wrong(model => { model.bufferViews.at(-1).byteLength = 32; }, 'INVALID', 'accessor byte range');
+  wrong(model => { model.accessors[3].bufferView = model.images[0].bufferView; }, 'INVALID', 'bufferView used by image and accessor');
+  wrong(model => { model.accessors[3].max = [0, 0, 0]; }, 'INVALID', 'NORMAL bounds');
+  assert.throws(() => prepareLambertStaticGlbScene3D(glb({ withNormals: true, vertexCount: 4, edit: model => {
+    model.accessors[3].count = 3;
+  } })), failure('INVALID', 'NORMAL count'));
+
+  for (const value of [NaN, Infinity, 2 ** -140]) {
+    assert.throws(() => prepareLambertStaticGlbScene3D(glb({ withNormals: true,
+      editBinary: (view, start) => view.setFloat32(start, value, true) })), failure('INVALID', 'NORMAL binary32'));
+  }
+  for (const value of [0, .9999, 1.0001]) {
+    assert.throws(() => prepareLambertStaticGlbScene3D(glb({ withNormals: true,
+      editBinary: (view, start) => view.setFloat32(start + 8, value, true) })), failure('INVALID', 'NORMAL unit length'));
+  }
+  assert.doesNotThrow(() => prepareLambertStaticGlbScene3D(glb({ withNormals: true,
+    editBinary: (view, start) => view.setFloat32(start + 8, .99998, true) })));
+});
+
+test('Lambert GLB charges extra per-geometry normal bytes before reading payloads', () => {
+  const overBudget = glb({ withNormals: true, vertexCount: 50000,
+    editBinary: (view, start) => view.setFloat32(start + 8, 0, true) });
+  assert.throws(() => prepareLambertStaticGlbScene3D(overBudget), failure('BUDGET', 'scene geometry'));
+});
+
+test('Lambert GLB binds canonical opaque pages and preserves shared normals through world revisions', () => {
+  const plan = prepareLambertStaticGlbScene3D(glb({ withNormals: true }));
+  const first = createImageData2D({ width: 2, height: 1, pixels: Uint8Array.of(255, 0, 0, 255, 0, 255, 0, 255) });
+  const second = createImageData2D({ width: 2, height: 1, pixels: Uint8Array.of(0, 0, 255, 255, 255, 255, 0, 255) });
+  const transparent = createImageData2D({ width: 2, height: 1, pixels: Uint8Array.of(0, 0, 255, 0, 255, 255, 0, 255) });
+  const bindings = [{ imageIndex: 1, source: second }, { imageIndex: 0, source: first }];
+  const lighting = { direction: [0, 0, 1], ambient: .25, intensity: .75 };
+  assert.throws(() => plan.bindImages([bindings[0], bindings[0]], lighting), failure('INVALID', 'image binding'));
+  assert.throws(() => plan.bindImages([bindings[0], { imageIndex: 0, source: transparent }], lighting),
+    failure('UNSUPPORTED', 'image binding alpha'));
+
+  const world = plan.bindImages(bindings, lighting);
+  const camera = createSceneCamera3D({ eye: [0, 0, 5], target: [0, 0, 0],
+    projection: { kind: 'orthographic', height: 3, aspect: 1.5, near: 1, far: 12 } });
+  const initial = world.capture(camera);
+  assert.equal(initial.draws[0].texture.source, second);
+  assert.equal(initial.draws[1].texture.source, first);
+  assert.deepEqual(initial.draws[0].lambert.normals, [0, 0, 1, 0, 0, 1, 0, 0, 1]);
+  assert(Object.isFrozen(initial.draws[0].lambert.normals));
+  assert.equal(initial.draws[0].lambert.normals, initial.draws[3].lambert.normals);
+  assert.equal(initial.draws[2].lambert, undefined);
+  assert.deepEqual([initial.geometries.length, initial.draws.length, initial.cpuLogicalBytes, initial.sceneBytes, initial.uniformBytes],
+    [3, 6, 744, 372, 640]);
+
+  const edited = world.withLighting({ direction: [0, 0, -1], ambient: .25, intensity: .75 });
+  assert.equal(edited.capture(camera).draws[0].lambert.normals, initial.draws[0].lambert.normals);
+  lighting.direction[2] = -1;
+  bindings[0].source = first;
+  assert.deepEqual(world.capture(camera), initial);
 });

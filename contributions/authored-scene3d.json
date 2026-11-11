@@ -75,6 +75,14 @@
     {
       "path": "tools/verify-textured-glb-scene3d.mjs",
       "originRole": "Independently authored first-party Egret bounded textured GLB demonstration or verification using a generated RGB8 image; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/scene-lambert-world3d.test.mjs",
+      "originRole": "Independently authored first-party Egret bounded Lambert rendering validation with generated models and textures; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-lambert-glb-scene3d.mjs",
+      "originRole": "Independently authored first-party Egret bounded Lambert rendering validation with generated models and textures; AI-assisted; Apache-2.0."
     }
   ],
   "documents": [

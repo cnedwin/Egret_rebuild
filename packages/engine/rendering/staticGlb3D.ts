@@ -3,9 +3,9 @@ import { copyImageData2DPixels, IMAGE_LIMITS_2D, isImageData2D } from '@egret/co
 import { createMeshGeometry3D } from './meshGeometry3D.js';
 import type { MeshGeometry3D } from './meshGeometry3D.js';
 import type { ImageData2D } from '@egret/contracts';
-import type { SceneMeshTexture3D } from './sceneFrame3D.js';
-import { createTexturedSceneWorld3D } from './sceneWorld3D.js';
-import type { SceneWorld3D, SceneWorldNodeInput3D } from './sceneWorld3D.js';
+import type { SceneDirectionalLighting3D, SceneLambertSurface3D, SceneMeshTexture3D } from './sceneFrame3D.js';
+import { createLambertSceneWorld3D, createTexturedSceneWorld3D } from './sceneWorld3D.js';
+import type { SceneLambertWorld3D, SceneWorld3D, SceneWorldNodeInput3D } from './sceneWorld3D.js';
 import { encodeSharedSRGB } from './sharedColor2D.js';
 
 export type StaticGlb3DErrorCode = 'SCENE3D_GLB_INVALID' | 'SCENE3D_GLB_UNSUPPORTED' | 'SCENE3D_GLB_BUDGET';
@@ -38,12 +38,18 @@ export interface StaticGlbTexturePlan3D {
     readonly primitives: readonly StaticGlbTexturePrimitive3D[];
     readonly images: readonly StaticGlbPngImage3D[];
 }
+interface MaterialPrimitive extends StaticGlbTexturePrimitive3D {
+    readonly normals?: readonly number[];
+}
+interface MaterialPlan extends StaticGlbTexturePlan3D {
+    readonly primitives: readonly MaterialPrimitive[];
+}
 interface PngSource extends Omit<StaticGlbPngImage3D, 'copyBytes'> { readonly offset: number; }
 interface TexturePlanBuilder {
     readonly images: readonly PngSource[];
     readonly imageViews: ReadonlySet<number>;
     readonly textureImages: readonly number[];
-    readonly primitives: StaticGlbTexturePrimitive3D[];
+    readonly primitives: MaterialPrimitive[];
 }
 interface Payload {
     readonly gltf: Record3D;
@@ -69,6 +75,7 @@ const MAX_NODES = 64;
 const MAX_ACCESSORS = 192;
 const MIN_NORMAL_FLOAT = 1.1754943508222875e-38;
 const MAX_UV_MAGNITUDE = 2 ** 20;
+const NORMAL_LENGTH_SQUARED_TOLERANCE = 1e-4;
 const MAX_PNG_BYTES = 4 * 1024 * 1024;
 const MAX_TOTAL_PNG_BYTES = 6 * 1024 * 1024;
 const MAX_TOTAL_PNG_PIXELS = 4 * IMAGE_LIMITS_2D.maxSourcePixels;
@@ -353,16 +360,41 @@ function readTexcoords(definition: Record3D, uv: Accessor, binary: DataView): re
     return Object.freeze(coords);
 }
 
+function readNormals(definition: Record3D, accessor: Accessor, binary: DataView): readonly number[] {
+    const normals: number[] = [], minimum = [Infinity, Infinity, Infinity], maximum = [-Infinity, -Infinity, -Infinity];
+    for (let vertex = 0; vertex < accessor.count; vertex++) {
+        let lengthSquared = 0;
+        for (let axis = 0; axis < 3; axis++) {
+            const value = binary.getFloat32(accessor.offset + vertex * accessor.stride + axis * 4, true);
+            if (!Number.isFinite(value) || (value !== 0 && Math.abs(value) < MIN_NORMAL_FLOAT)) invalid('NORMAL binary32');
+            normals.push(value === 0 ? 0 : value);
+            minimum[axis] = Math.min(minimum[axis]!, value);
+            maximum[axis] = Math.max(maximum[axis]!, value);
+            lengthSquared += value * value;
+        }
+        if (Math.abs(lengthSquared - 1) > NORMAL_LENGTH_SQUARED_TOLERANCE) invalid('NORMAL unit length');
+    }
+    for (const [key, bound] of [['min', minimum], ['max', maximum]] as const) {
+        if (definition[key] === undefined) continue;
+        const declared = numbers(definition[key], 3, 'NORMAL ' + key).map(Math.fround);
+        if (declared.some((value, axis) => value !== bound[axis])) invalid('NORMAL bounds');
+    }
+    return Object.freeze(normals);
+}
+
 function readGeometry(
     primitive: Record3D, accessors: readonly unknown[], views: readonly unknown[],
-    binary: DataView, materials: readonly Material[], charge: (vertices: number, indices: number, textured: boolean) => void,
-    textures?: TexturePlanBuilder,
+    binary: DataView, materials: readonly Material[], charge: (vertices: number, indices: number, components: number) => void,
+    textures: TexturePlanBuilder | undefined, lambert: boolean,
 ): MeshGeometry3D {
     fields(primitive, 'mesh primitive', ['attributes', 'indices', 'material', 'mode', 'extras']);
     if (primitive.mode !== undefined && primitive.mode !== 4) unsupported('mesh primitive.mode');
     if (primitive.indices === undefined) unsupported('non-indexed primitive');
     const attributes = record(primitive.attributes, 'mesh primitive.attributes');
-    fields(attributes, 'mesh primitive.attributes', textures ? ['POSITION', 'COLOR_0', 'TEXCOORD_0'] : ['POSITION', 'COLOR_0']);
+    const allowedAttributes = ['POSITION', 'COLOR_0'];
+    if (textures) allowedAttributes.push('TEXCOORD_0');
+    if (lambert) allowedAttributes.push('NORMAL');
+    fields(attributes, 'mesh primitive.attributes', allowedAttributes);
     const { color: factor, textureIndex } = materials[index(primitive.material, materials.length - 1, 'mesh primitive.material')]!;
     const positionDefinition = record(accessors[index(attributes.POSITION, accessors.length - 1, 'POSITION accessor')], 'POSITION accessor');
     const positions = readAccessor(positionDefinition, views, binary, 'VEC3', textures?.imageViews);
@@ -377,7 +409,15 @@ function readGeometry(
         record(accessors[index(attributes.TEXCOORD_0, accessors.length - 1, 'TEXCOORD_0 accessor')], 'TEXCOORD_0 accessor');
     const uv = uvDefinition === undefined ? undefined : readAccessor(uvDefinition, views, binary, 'VEC2', textures!.imageViews);
     if (uv !== undefined && uv.count !== positions.count) invalid('TEXCOORD_0 count');
-    charge(positions.count, indices.count, uv !== undefined);
+    // Only the explicit Lambert profile can use glTF normals. Untextured primitives remain unlit.
+    if (lambert && textureIndex !== undefined && attributes.NORMAL === undefined) unsupported('Lambert primitive requires NORMAL');
+    if (attributes.NORMAL !== undefined && textureIndex === undefined) unsupported('unused NORMAL');
+    const normalDefinition = attributes.NORMAL === undefined ? undefined :
+        record(accessors[index(attributes.NORMAL, accessors.length - 1, 'NORMAL accessor')], 'NORMAL accessor');
+    const normal = normalDefinition === undefined ? undefined : readAccessor(normalDefinition, views, binary, 'VEC3', textures!.imageViews);
+    if (normal !== undefined && normal.count !== positions.count) invalid('NORMAL count');
+    // Account for every retained stream before reading any geometry payloads.
+    charge(positions.count, indices.count, 6 + (uv ? 2 : 0) + (normal ? 3 : 0));
     const xyz: number[] = [];
     const min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
     const rgb: number[] = [];
@@ -406,9 +446,11 @@ function readGeometry(
         triangles.push(value);
     }
     const texcoords = uv === undefined ? undefined : readTexcoords(uvDefinition!, uv, binary);
+    const normals = normal === undefined ? undefined : readNormals(normalDefinition!, normal, binary);
     const geometry = createMeshGeometry3D({ positions: xyz, colors: rgb, indices: triangles });
     if (textureIndex !== undefined) textures!.primitives.push(Object.freeze({
         geometry, imageIndex: textures!.textureImages[textureIndex]!, texcoords: texcoords!,
+        ...(normals === undefined ? {} : { normals }),
     }));
     return geometry;
 }
@@ -456,8 +498,8 @@ export function readStaticGlbTexturePlan3D(bytes: Uint8Array): StaticGlbTextureP
 }
 
 function readStaticGlb(bytes: Uint8Array, textured: false): readonly SceneWorldNodeInput3D[];
-function readStaticGlb(bytes: Uint8Array, textured: true): StaticGlbTexturePlan3D;
-function readStaticGlb(bytes: Uint8Array, textured: boolean): readonly SceneWorldNodeInput3D[] | StaticGlbTexturePlan3D {
+function readStaticGlb(bytes: Uint8Array, textured: true, lambert?: boolean): MaterialPlan;
+function readStaticGlb(bytes: Uint8Array, textured: boolean, lambert = false): readonly SceneWorldNodeInput3D[] | MaterialPlan {
     const { gltf, binary } = readPayload(bytes);
     const allowed = ['asset', 'extras', 'extensionsUsed', 'extensionsRequired', 'buffers', 'bufferViews',
         'accessors', 'materials', 'meshes', 'nodes', 'scenes', 'scene'];
@@ -481,10 +523,10 @@ function readStaticGlb(bytes: Uint8Array, textured: boolean): readonly SceneWorl
     const roots = list(scene.nodes, 'scene.nodes', MAX_NODES);
 
     let cpuBytes = 0, packedBytes = 0, geometryCount = 0, drawCount = 0;
-    function charge(vertices: number, indices: number, usesTexture: boolean): void {
-        const cpu = 8 * ((usesTexture ? 8 : 6) * vertices + indices);
+    function charge(vertices: number, indices: number, components: number): void {
+        const cpu = 8 * (components * vertices + indices);
         cpuBytes += cpu;
-        packedBytes += (usesTexture ? 32 : 24) * vertices + 4 * indices;
+        packedBytes += 4 * (components * vertices + indices);
         if (++geometryCount > MAX_NODES || cpu > 4194304 || cpuBytes > 8388608 || packedBytes > 4194304) budget('scene geometry');
     }
     const byMesh = new Map<number, readonly MeshGeometry3D[]>();
@@ -506,7 +548,7 @@ function readStaticGlb(bytes: Uint8Array, textured: boolean): readonly SceneWorl
                 const mesh = record(meshes[meshIndex], 'mesh');
                 fields(mesh, 'mesh', ['primitives', 'name', 'extras']);
                 geometry = list(mesh.primitives, 'mesh.primitives', MAX_NODES)
-                    .map(primitive => readGeometry(record(primitive, 'mesh primitive'), accessors, views, binary, materials, charge, textures));
+                    .map(primitive => readGeometry(record(primitive, 'mesh primitive'), accessors, views, binary, materials, charge, textures, lambert));
                 if (textured) Object.freeze(geometry);
                 byMesh.set(meshIndex, geometry);
             }
@@ -551,6 +593,51 @@ export interface PreparedTexturedStaticGlb3D {
     bindImages(bindings: readonly StaticGlbImageBinding3D[]): SceneWorld3D;
 }
 
+export interface PreparedLambertStaticGlb3D {
+    readonly images: readonly StaticGlbImageRequest3D[];
+    bindImages(bindings: readonly StaticGlbImageBinding3D[], lighting: SceneDirectionalLighting3D): SceneLambertWorld3D;
+}
+
+function bindOpaqueImages(expected: ReadonlyMap<number, StaticGlbImageRequest3D>,
+    bindings: readonly StaticGlbImageBinding3D[]): ReadonlyMap<number, ImageData2D> {
+    const sources = new Map<number, ImageData2D>();
+    const verified = new Set<ImageData2D>();
+    try {
+        if (!Array.isArray(bindings) || bindings.length !== expected.size) {
+            throw new StaticGlb3DError("SCENE3D_GLB_INVALID", "image bindings");
+        }
+        for (let index = 0; index < expected.size; index++) {
+            const binding = bindings[index];
+            const imageIndex = binding?.imageIndex;
+            const source = binding?.source;
+            if (typeof imageIndex !== "number") throw new StaticGlb3DError("SCENE3D_GLB_INVALID", "image binding index");
+            const image = expected.get(imageIndex);
+            if (!image || sources.has(imageIndex) || !isImageData2D(source)
+                || source.width !== image.width || source.height !== image.height) {
+                throw new StaticGlb3DError("SCENE3D_GLB_INVALID", "image binding");
+            }
+            if (!verified.has(source)) {
+                // The existing image page premultiplies alpha. Opaque GLB RGB must survive that conversion.
+                const pixels = copyImageData2DPixels(source);
+                for (let row = 0; row < source.height; row++) {
+                    const end = row * source.bytesPerRow + source.width * 4;
+                    for (let offset = row * source.bytesPerRow + 3; offset < end; offset += 4) {
+                        if (pixels[offset] !== 255) {
+                            throw new StaticGlb3DError("SCENE3D_GLB_UNSUPPORTED", "image binding alpha");
+                        }
+                    }
+                }
+                verified.add(source);
+            }
+            sources.set(imageIndex, source);
+        }
+    } catch (cause) {
+        if (cause instanceof StaticGlb3DError) throw cause;
+        throw new StaticGlb3DError("SCENE3D_GLB_INVALID", "image bindings", cause);
+    }
+    return sources;
+}
+
 /** A decode plan with no host dependency. Publish only after every opaque image is owned. */
 export function prepareTexturedStaticGlbScene3D(bytes: Uint8Array): PreparedTexturedStaticGlb3D {
     const {images, nodes, primitives} = readStaticGlbTexturePlan3D(bytes);
@@ -558,46 +645,30 @@ export function prepareTexturedStaticGlbScene3D(bytes: Uint8Array): PreparedText
     return Object.freeze({
         images,
         bindImages(bindings: readonly StaticGlbImageBinding3D[]): SceneWorld3D {
-            const sources = new Map<number, ImageData2D>();
-            const verified = new Set<ImageData2D>();
-            try {
-                if (!Array.isArray(bindings) || bindings.length !== images.length) {
-                    throw new StaticGlb3DError("SCENE3D_GLB_INVALID", "image bindings");
-                }
-                for (let index = 0; index < images.length; index++) {
-                    const binding = bindings[index];
-                    const imageIndex = binding?.imageIndex;
-                    const source = binding?.source;
-                    if (typeof imageIndex !== "number") throw new StaticGlb3DError("SCENE3D_GLB_INVALID", "image binding index");
-                    const image = expected.get(imageIndex);
-                    if (!image || sources.has(imageIndex) || !isImageData2D(source)
-                        || source.width !== image.width || source.height !== image.height) {
-                        throw new StaticGlb3DError("SCENE3D_GLB_INVALID", "image binding");
-                    }
-                    if (!verified.has(source)) {
-                        // The existing image page premultiplies alpha. Opaque GLB RGB must survive that conversion.
-                        const pixels = copyImageData2DPixels(source);
-                        for (let row = 0; row < source.height; row++) {
-                            const end = row * source.bytesPerRow + source.width * 4;
-                            for (let offset = row * source.bytesPerRow + 3; offset < end; offset += 4) {
-                                if (pixels[offset] !== 255) {
-                                    throw new StaticGlb3DError("SCENE3D_GLB_UNSUPPORTED", "image binding alpha");
-                                }
-                            }
-                        }
-                        verified.add(source);
-                    }
-                    sources.set(imageIndex, source);
-                }
-            } catch (cause) {
-                if (cause instanceof StaticGlb3DError) throw cause;
-                throw new StaticGlb3DError("SCENE3D_GLB_INVALID", "image bindings", cause);
-            }
+            const sources = bindOpaqueImages(expected, bindings);
             const textures = new Map<MeshGeometry3D, SceneMeshTexture3D>();
             for (const {geometry, imageIndex, texcoords} of primitives) {
                 textures.set(geometry, Object.freeze({source: sources.get(imageIndex)!, texcoords}));
             }
             return createTexturedSceneWorld3D(nodes, textures);
+        },
+    });
+}
+
+/** Apply an explicit Egret Lambert override to the admitted GLB unlit texture profile. */
+export function prepareLambertStaticGlbScene3D(bytes: Uint8Array): PreparedLambertStaticGlb3D {
+    const { images, nodes, primitives } = readStaticGlb(bytes, true, true);
+    const expected = new Map(images.map(image => [image.imageIndex, image]));
+    return Object.freeze({
+        images,
+        bindImages(bindings: readonly StaticGlbImageBinding3D[], lighting: SceneDirectionalLighting3D): SceneLambertWorld3D {
+            const sources = bindOpaqueImages(expected, bindings);
+            const surfaces = new Map<MeshGeometry3D, SceneLambertSurface3D>();
+            for (const { geometry, imageIndex, texcoords, normals } of primitives) {
+                // Each textured primitive in this plan has already admitted its own normal stream.
+                surfaces.set(geometry, Object.freeze({ source: sources.get(imageIndex)!, texcoords, normals: normals! }));
+            }
+            return createLambertSceneWorld3D(nodes, surfaces, lighting);
         },
     });
 }
