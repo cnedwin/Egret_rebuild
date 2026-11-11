@@ -781,6 +781,35 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       write(file,original+'\n'+imports+'\n');
     }
 
+    // B2 advances the inert scene dependencies while keeping each legacy policy fixture above.
+    const worldCardFixtureImports={
+      'rendering/sceneFrame3D.ts': ['@egret/contracts','@egret/contracts'],
+      'dist/rendering/sceneFrame3D.js': ['@egret/contracts'],
+      'dist/rendering/sceneFrame3D.d.ts': ['@egret/contracts'],
+      'web/WebGPUHost.ts': ['./sharedSubmissionStorage2D.js'],
+      'dist/web/WebGPUHost.js': ['./sharedSubmissionStorage2D.js'],
+      'dist/web/prepareSharedSubmission2D.d.ts': ['./imageProjections2D.js'],
+      'web/sharedB1.ts': ['./webgpuSharedMeshPass.js'],
+      'dist/web/sharedB1.js': ['./webgpuSharedMeshPass.js'],
+      'dist/web/sharedB1.d.ts': ['./webgpuSharedMeshPass.js'],
+      'web/sharedSubmissionStorage2D.ts': ['../rendering/sceneFrame3D.js'],
+      'dist/web/sharedSubmissionStorage2D.d.ts': ['../rendering/sceneFrame3D.js'],
+      'web/sharedWebGL2Scene.ts': ['./sharedSubmissionStorage2D.js'],
+      'dist/web/sharedWebGL2Scene.js': ['./sharedSubmissionStorage2D.js'],
+    };
+    for(const [relative,imports] of Object.entries(worldCardFixtureImports)){
+      const file='packages/engine/'+relative;
+      const previous=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
+      write(file,previous+'\n'+imports.map(target=>'import '+JSON.stringify(target)+';').join('\n')+'\n');
+    }
+    const cardFixtureHost='packages/engine/web/WebGPUHost.ts';
+    const cardFixtureHostSource=readFileSync(path.join(root,cardFixtureHost),'utf8');
+    write(cardFixtureHost,cardFixtureHostSource+"\ntype CardPipelineFactory = typeof import('./sharedB1.js');\n"+
+      "const inertCardFactory = () => import('./sharedB1.js');\n");
+    const cardFixtureFrame=authored+'sceneFrame3D.js';
+    write(cardFixtureFrame,readFileSync(path.join(root,cardFixtureFrame),'utf8')+
+      "\nexport function createSceneWorldCard3D(){throw new Error('Synthetic policy fixture only');}\n");
+
     // M3.1 fixed independent inert UI surfaces and literal scaffold. No product execution.
     const m31FixtureGraph = {
       "packages/engine/src/Engine.ts": [["static","./assetGroup.js"],["static","./assetGroup.js"],["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./gameClock.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./internal/uiFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./manifestAssetGroup.js"],["static","./manifestAssetGroup.js"],["static","./manifestResourceTypes.js"],["static","./mouseInput.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./sequencePlayback.js"],["static","./sequencePlaybackTypes.js"],["static","./tween.js"],["static","./tween.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"]],

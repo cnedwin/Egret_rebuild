@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "408bb140ab737f65f0cb052e7922fd05b6759c1fb7e00dd96046d79c76377864",
+      "sha256": "2f8836902784a5b4f81021fd5687b5e526dffe572eb4aa31441cdc8bfd36c9a8",
       "bytes": 393743,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -5171,8 +5171,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 274930,
-      "sha256": "d55c991da6b25f209a1491358befc5f6c3780037bafbc6473d3251505d190ab2",
+      "bytes": 276876,
+      "sha256": "65700722ab0f57e7659537fade451a3cd72a169a66feea550958f67227a48b12",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
