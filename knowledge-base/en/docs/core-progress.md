@@ -25,6 +25,12 @@ Egret's product direction combines animation-rich 2D games and complex interface
 
 The Outfit Studio now runs X-D60/1 and X-MTouch/1 with 6,000 authored nodes, eight dual-track Spine actors, 80 sequence instances and a 50,000-record virtual catalogue. Both desktop backends have five observed timing windows per state. Full-dirty synchronous elapsed p95 was 74.0 ms on WebGPU and 87.8 ms on WebGL2. This locates frame cost while formal whole-engine CPU remains open. The frame interval targets were missed. A physical Android Chrome collected 100 controlled touch responses per backend and actual keyboard, rotation and Home/resume results. The response p95 was 412.4 ms and 383.6 ms against 100 ms. Formal lifecycle, human input and iPhone rows remain open. [Fixed evidence](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/fixed-verification-summary.json)
 
+## Shared clipping in the fixed scene — 2026-11-11
+
+Both shared rendering backends reuse the normalized polygon when a canonical clip fully contains it. Budget replay charges the original predicate and tuple work. An actual intersection or a failed replay uses the existing clipping path.
+
+A short foreground Edge comparison used the same X-D60/1 scene, a 5-second warm-up and three 5-second windows per state. Host p95 in static and full-dirty states measured 34.4 → 17.6, 39.5 → 19.2 ms on WebGPU and 40.9 → 22.6, 42.0 → 27.0 ms on WebGL2. The full X timing and device targets remain open. [M4.2 qualification](m4-core-acceptance-plan.md)
+
 ## Compact desktop reference increment — 2026-11-08
 
 The Outfit Studio composes two independently controlled Spine actors, a sequence effect, managed UI with native rename and an opaque 3D background under one Engine. A palette candidate uses the existing Spine RESET and shared Host staging. Exported snapshots reopen with stable IDs and authored values. Ten checks passed per backend, including font refusal, mouse release outside the pressed row, replacement failure, retry and retirement. [Outfit Studio](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/outfit-studio)

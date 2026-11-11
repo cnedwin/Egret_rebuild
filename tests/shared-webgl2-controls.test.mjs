@@ -61,6 +61,39 @@ test('GL G03 genuine saved shared frames submit; lookalikes refuse before native
   await h.close(); assert.equal(f.live().length, 0);
 }));
 
+test('GL G03 contained clips preserve packed attributes and exact tuple admission', async () => author(async a => {
+  const unclipped = a.frame();
+  a.sprite.clipRect = {x:0,y:0,width:6,height:6};
+  const contained = a.frame();
+  assert.equal(contained.commands.find(command => command.kind === 'rect')?.clips.length, 1);
+  // Four distinct corners cost ten XY comparisons per normalization.
+  // One explicit clip and the viewport each normalize four more times.
+  const tupleLimit = 90;
+  for (const maxTupleComparisons of [tupleLimit - 1, tupleLimit]) {
+    const f = glPorts(), h = createSharedWebGL2Host({canvas:f.canvas,maxTupleComparisons});
+    try {
+      await h.start();
+      const draw = async frame => {
+        const before = f.events.length;
+        h.renderSharedFrame(frame);
+        await h.whenIdle();
+        return f.events.slice(before).filter(row => row[0] === 'bufferSubData' && row[1] === f.gl.ARRAY_BUFFER).map(row => row[3]);
+      };
+      const expected = await draw(unclipped);
+      assert.equal(expected.length, 1);
+      assert.equal(expected[0].length, 6 * 11);
+      if (maxTupleComparisons === tupleLimit) {
+        assert.deepEqual(await draw(contained), expected);
+      } else {
+        const before = f.events.length;
+        assert.throws(() => h.renderSharedFrame(contained), code('GEOMETRY_RANGE'));
+        assert.equal(f.events.length, before);
+        assert.equal(h.getStatus().lastSerial, 1);
+      }
+    } finally { await h.close(); }
+  }
+}));
+
 test('GL G04 PBO copy is issued before a later submission; delayed extraction belongs to the first frame', async () => author(async a => {
   const f = glPorts(), h = createSharedWebGL2Host({canvas:f.canvas,enableReadback:true}); await h.start(); f.autoSignal = false;
   const frame = a.frame(), readback = h.requestReadback();

@@ -632,7 +632,10 @@ const m3FontModuleIdentities = new Map([...m34ModuleIdentities,...m3FontModuleSu
 const uiLayerAuthorityModuleSuccessors = new Map([["packages/engine/dist/internal/uiFactoryState.js",{"bytes":5463,"sha256":"e8ee30245ab4ad8693cc82a4f6ded832675038f759291ea54efba2232db1f992"}]]);
 assert.deepEqual([...uiLayerAuthorityModuleSuccessors.keys()],["packages/engine/dist/internal/uiFactoryState.js"]);
 assert.deepEqual(m3FontModuleIdentities.get("packages/engine/dist/internal/uiFactoryState.js"),{"bytes":5115,"sha256":"79777e8e276c941ab203344738eb781686fcbc7694e4c4fcaf67bd32e46c3ba9"});
-const currentModuleIdentities = new Map([...m3FontModuleIdentities,...m24ResetModuleSuccessor,...uiLayerAuthorityModuleSuccessors]);
+// The shared clip optimization changes one existing emitted module; retain its effects baseline.
+const m42ContainedClipModuleSuccessor = new Map([["packages/engine/dist/rendering/prepareSharedDraws2D.js",{"bytes":14216,"sha256":"3de9c4e3b1e89eba05d11b8a56220b2625168fe659604eed88d8019db3991c17"}]]);
+assert.deepEqual(m34EffectModuleSuccessors.get("packages/engine/dist/rendering/prepareSharedDraws2D.js"),{bytes:13916,sha256:"55cd7ed455dcbf9f8417dcc0324e19cc1609ef3bbd89dd7e40f519937a6122d5"});
+const currentModuleIdentities = new Map([...m3FontModuleIdentities,...m24ResetModuleSuccessor,...uiLayerAuthorityModuleSuccessors,...m42ContainedClipModuleSuccessor]);
 assert.equal(currentModuleIdentities.size,m3FontSourceModuleLimit,'Font resources current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {
