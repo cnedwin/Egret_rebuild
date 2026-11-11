@@ -4,11 +4,35 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
-## UI popup/modal composition — 2026-11-07
+## Isometric WebGL2 map — 2026-11-12
+
+The standalone example uses Egret’s public APIs for grid movement, collision, depth ordering and bounded frame submission. [#136](https://github.com/cnedwin/Egret_rebuild/pull/136)
+
+## Shared geometry construction — 2026-11-11
+
+Reduce the per-frame cost of building shared geometry for Spine while retaining input copying, numeric admission and identity. Short desktop and single-Android comparisons show a lower animation stage cost. Formal frame intervals, CPU/GPU and device targets remain open. [#140](https://github.com/cnedwin/Egret_rebuild/pull/140)
+
+## Compatible sequence playback preservation — 2026-11-11
+
+Carry playback position, loop, rate, pause state and marker numbering across ContentLoader replacements with identical ordered frame boundaries. Both browser backends passed bounded pixel and lifecycle checks. Spine state preservation remains open. [#139](https://github.com/cnedwin/Egret_rebuild/pull/139)
+
+## Shared clipping preparation — 2026-11-11
+
+WebGPU and WebGL2 reuse fully contained polygons while keeping the original budget and intersection rules. The fixed scene has short paired Host p95 observations. Full M4 qualification remains open. [#138](https://github.com/cnedwin/Egret_rebuild/pull/138)
+
+## Fixed Outfit Studio workloads and multitouch — 2026-11-11
+
+Run fixed desktop and mobile profiles in one Outfit Studio and record desktop timing and controlled Android multi-contact results on both backends. Formal frame-interval and touch-response targets remain open. [#137](https://github.com/cnedwin/Egret_rebuild/pull/137)
+
+## Editable Outfit Studio — 2026-11-07
+
+Compose independent Spine instances, sequence animation, managed UI and an opaque 3D background in one Engine. The two desktop backends cover the compact scene, replacement and cold-start observations. [#135](https://github.com/cnedwin/Egret_rebuild/pull/135)
+
+## UI popup/modal composition — 2026-11-07 · [#134](https://github.com/cnedwin/Egret_rebuild/pull/134)
 
 Add optional root-owned popup/modal composition, staged publication, clipped anchors, pointer barriers and contained/restored keyboard/native-editor eligibility. Integrate the existing form with draft rename and shared font/lifecycle owners. Desktop evidence, the initial locked attempt, two actual phone failures and final32 current-device observations are distinguished. Programmatic fallback no longer activates the base editor; width rebuild settles the rename preedit before saving its model. Complete M3.4, semantics, touch contribution and M1.2 remain open. [Contract](docs/ui-layers.md).
 
-## Android native editing and responsive form — 2026-11-07
+## Android native editing and responsive form — 2026-11-07 · [#133](https://github.com/cnedwin/Egret_rebuild/pull/133)
 
 Repair terminal composition callbacks after cancellation without weakening active-session reentry. The existing form gains responsive width/startup DPR and separately scoped view retirement, retaining the fixed fixture. Actual Samsung keyboard observations, final-source lifecycle on both backends and desktop checks are documented with predecessor/failure boundaries. [Evidence and remaining qualification](docs/android-native-text-editing.md).
 

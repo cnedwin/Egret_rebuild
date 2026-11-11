@@ -400,8 +400,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "a8c43f6028585b6c37c969ed54c08d5d2c4a2be918eec352f98345461fbe1279",
-      "zhSha256": "a8f248a734a345afc4ea1e4231f2bf5acfef4b615ff1a7a49a9ef94007fd8401"
+      "enSha256": "aedc7d59ee467a48a4274d8937f2beedf888ab3eed1e40a1f92bf9cecb119d72",
+      "zhSha256": "20c9965c1a6aa52a402c8e63cfc8f5e344f1db9f194577c41370cbcb8c29f7f1"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "603d31e870695f590bb62a6a5ceedd276946944e29a485dd6fc9af3080ee1edb",
-      "zhSha256": "e753327276f27a5a1117676754b039f9883ced216f4400c9a7a903aa256d4c3e"
+      "enSha256": "b6d561815aa7a77c37642e45b45591d99eb8dc163272bb1586ca58985d5d22cd",
+      "zhSha256": "638a76adc434859a6eb795fc5fdd0ea1068efcc930d252249d6e3abf5099e585"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -610,8 +610,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "1ad542a6c6f20041f0e75946997000d838a43f5ea165e971f10f82683450345d",
-      "zhSha256": "71fd1779bd83bae455626ed08797a6e6997359089b6e440a6b433fc2c80d8698"
+      "enSha256": "9678a3480bd96310b66a9f4171c42290413c3ebea6e5f6f3e5f0e2c1a51e9b81",
+      "zhSha256": "a168ed86a8126dd761cbde1e7a9ddfa21ceb27fec62c35ca9061371b11d1545f"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "831a41b2b0187ca5f29762fecfea0b827f54db70f3596806962e63d67b51121c",
-      "zhSha256": "cc17fe5379304bca3316b4ebbfddedb7bfa69775f8448e52bd93c75e608de881"
+      "enSha256": "ebdbe7b594edffff74537b1c0592e371d4dd3344bf817a618e232d0d485b2039",
+      "zhSha256": "7baeafcf965aa518bf0741726a2312692f3e37da1585dbe4ae83fa6d487acbf9"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
