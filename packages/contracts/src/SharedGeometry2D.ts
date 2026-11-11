@@ -35,7 +35,7 @@ const Bytes = Uint8Array;
 const Numbers = Array;
 const apply = Reflect.apply;
 const freeze = Object.freeze;
-const defineProperty = Object.defineProperty;
+const arrayFrom = Numbers.from;
 const TypeFault = TypeError;
 const RangeFault = RangeError;
 const finite = Number.isFinite;
@@ -102,8 +102,9 @@ function copyPayload(source: unknown, tag: PayloadTag, length: number): Payload 
     return copy;
 }
 function canonical(source: Payload, length: number, kind: 'position' | 'uv' | 'unit' | 'index', vertexCount: number): readonly number[] {
-    const result = new Numbers<number>(length);
-    for (let index = 0; index < length; index++) {
+    // Native Array.from creates own indices. The private array-like has no inherited hooks.
+    const input = { __proto__: null, length };
+    const convert = (_unused: unknown, index: number): number => {
         const value = source[index]!;
         if (!finite(value) ||
             (kind === 'unit' && (value < 0 || value > 1)) ||
@@ -116,14 +117,10 @@ function canonical(source: Payload, length: number, kind: 'position' | 'uv' | 'u
         if (!finite(rounded) || (kind === 'uv' && abs(rounded) > 1048576)) {
             throw new RangeFault('Shared geometry numeric range is invalid');
         }
-        // Create own elements rather than invoking an inherited indexed setter.
-        // A null-prototype descriptor also excludes inherited get/set fields.
         // Equality with zero converts both signed zeros to positive zero.
-        const descriptor = { __proto__: null, value: rounded === 0 ? 0 : rounded,
-            writable: true, enumerable: true, configurable: true };
-        defineProperty(result, index, descriptor);
-    }
-    return freeze(result);
+        return rounded === 0 ? 0 : rounded;
+    };
+    return freeze(apply(arrayFrom, Numbers, [input, convert]) as number[]);
 }
 
 export function createSharedGeometry2D(input: SharedGeometryInput2D): SharedGeometry2D {

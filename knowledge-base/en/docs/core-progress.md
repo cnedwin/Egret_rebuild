@@ -31,6 +31,14 @@ Both shared rendering backends reuse the normalized polygon when a canonical cli
 
 A short foreground Edge comparison used the same X-D60/1 scene, a 5-second warm-up and three 5-second windows per state. Host p95 in static and full-dirty states measured 34.4 → 17.6, 39.5 → 19.2 ms on WebGPU and 40.9 → 22.6, 42.0 → 27.0 ms on WebGL2. The full X timing and device targets remain open. [M4.2 qualification](m4-core-acceptance-plan.md)
 
+## Spine geometry in the fixed scene — 2026-11-11
+
+The shared geometry factory now creates and freezes dense numeric arrays through a captured native constructor. It retains the existing copy, range, rounding and brand rules. Spine actors use the same public geometry path.
+
+In a short foreground Edge comparison of the same fully changing X-D60/1 scene, animation stage p95 was 39.6 → 10.2 ms on WebGPU and 47.4 → 9.7 ms on WebGL2. Completed-frame interval p95 was 68.7 → 42.5 ms and 83.0 → 47.1 ms respectively. Each backend ran three 5-second windows after a 5-second warm-up. The completed-frame results still exceed the formal target. [M4.2 qualification](m4-core-acceptance-plan.md)
+
+On one physical Android phone with the X-MTouch/1 profile, animation p95 was 51.1 → 11.6 ms on WebGPU and 68.1 → 11.7 ms on WebGL2. Completed-frame interval p95 was 112.8 → 68.9 ms and 132.3 → 77.2 ms respectively. Host p95 increased to 29.6 and 43.7 ms from 23.0 and 42.1 ms. This used short sequential windows on USB power. Formal mobile cadence and touch-response targets remain open.
+
 ## Compact desktop reference increment — 2026-11-08
 
 The Outfit Studio composes two independently controlled Spine actors, a sequence effect, managed UI with native rename and an opaque 3D background under one Engine. A palette candidate uses the existing Spine RESET and shared Host staging. Exported snapshots reopen with stable IDs and authored values. Ten checks passed per backend, including font refusal, mouse release outside the pressed row, replacement failure, retry and retirement. [Outfit Studio](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/outfit-studio)

@@ -638,7 +638,10 @@ assert.deepEqual(m3FontModuleIdentities.get("packages/engine/dist/internal/uiFac
 // The shared clip optimization changes one existing emitted module; retain its effects baseline.
 const m42ContainedClipModuleSuccessor = new Map([["packages/engine/dist/rendering/prepareSharedDraws2D.js",{"bytes":14216,"sha256":"3de9c4e3b1e89eba05d11b8a56220b2625168fe659604eed88d8019db3991c17"}]]);
 assert.deepEqual(m34EffectModuleSuccessors.get("packages/engine/dist/rendering/prepareSharedDraws2D.js"),{bytes:13916,sha256:"55cd7ed455dcbf9f8417dcc0324e19cc1609ef3bbd89dd7e40f519937a6122d5"});
-const currentModuleIdentities = new Map([...m3FontModuleIdentities,...m24ResetModuleSuccessor,...m24CompatibleSequenceModuleSuccessor,...uiLayerAuthorityModuleSuccessors,...m42ContainedClipModuleSuccessor]);
+// Current canonical geometry changes one emitted module, with the original member retained.
+const m42GeometryCanonicalModuleSuccessor = new Map([["packages/contracts/dist/SharedGeometry2D.js",{"bytes":8391,"sha256":"04e24664a6d486c4bcc6ef07069fab1204d479f568cb0a5e08c2533b5884b348"}]]);
+assert.deepEqual(m3FontModuleIdentities.get("packages/contracts/dist/SharedGeometry2D.js"),{"bytes":8593,"sha256":"0b5ba021999903be40c9ba97206e07cb9f633ea3248efc33f7f0e9dbc3e74302"});
+const currentModuleIdentities = new Map([...m3FontModuleIdentities,...m24ResetModuleSuccessor,...m24CompatibleSequenceModuleSuccessor,...uiLayerAuthorityModuleSuccessors,...m42ContainedClipModuleSuccessor,...m42GeometryCanonicalModuleSuccessor]);
 assert.equal(currentModuleIdentities.size,m3FontSourceModuleLimit,'Font resources current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {

@@ -648,6 +648,9 @@ function m3PointerGraph(root,base,actual) {
   graph=uiControlsGraph(graph,present);
   graph=nativeEditingGraph(graph,present);
  graph=graph.map(row=>sharedContainedClipPairs.find(pair=>same(pair.base,row))?.current??row);
+ // Only the two canonical geometry implementation rows advance; the declaration is byte-identical.
+ const geometryCanonicalPairs = [{"base":{"path":"packages/contracts/src/SharedGeometry2D.ts","bytes":10257,"sha256":"5e93fe14376e806060ab04c3bc1bb795507ad94573c420064a7e67713d47cf09"},"current":{"path":"packages/contracts/src/SharedGeometry2D.ts","bytes":10084,"sha256":"c25ee64856b5023927d131bf16de82904cfa584f4c9070ed237530cc76ec4ad6"}},{"base":{"path":"packages/contracts/dist/SharedGeometry2D.js","bytes":8593,"sha256":"0b5ba021999903be40c9ba97206e07cb9f633ea3248efc33f7f0e9dbc3e74302"},"current":{"path":"packages/contracts/dist/SharedGeometry2D.js","bytes":8391,"sha256":"04e24664a6d486c4bcc6ef07069fab1204d479f568cb0a5e08c2533b5884b348"}}];
+ graph=graph.map(row=>geometryCanonicalPairs.find(pair=>same(pair.base,row))?.current??row);
   for(const row of graph){
     if(!present.has(row.path))return {failure:issue('BIP_BOUNDARY_SOURCE_INVENTORY',row.path,'Incomplete M3 pointer successor: '+row.path)};
     if(!same(present.get(row.path),row))return {failure:issue('BIP_BOUNDARY_FINGERPRINT',row.path,'M3 pointer whole-group raw identity differs: '+row.path)};
