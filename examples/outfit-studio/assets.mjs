@@ -23,7 +23,7 @@ function admit(data) {
   return result.value;
 }
 
-export function createStudioAssets(engine, scope, signal) {
+export function createStudioAssets(engine, scope, signal, fixed = false) {
   const libraries = new Map();
   let fontTransport, paragraphProvider, editorFonts, sequenceSource, sequenceTextures;
 
@@ -31,7 +31,7 @@ export function createStudioAssets(engine, scope, signal) {
     if (!palettes.includes(palette)) throw new Error('Unknown palette');
     if (!libraries.has(palette)) {
       const pending = (async () => {
-        const base = new URL(`content/${palette}/`, import.meta.url);
+        const base = new URL((fixed ? 'content/x/' : 'content/') + palette + '/', import.meta.url);
         const manifest = admit(await (await fetchStudio(new URL('manifest.json', base), signal)).json());
         signal.throwIfAborted();
         const loader = createManifestSpineContentLoader(engine, scope, manifest, {baseUrl:base.href,deadlineMs:15000,networkRetries:0});

@@ -21,7 +21,11 @@ Egret's product direction combines animation-rich 2D games and complex interface
 | 3D | Owned geometry/matrices, fixed opaque scene routes and ordered 2D overlays on the declared backends | Model import, usable scene/camera/material authoring, animated 3D characters, lighting and general VFX |
 | Project and tools | Versioned project snapshots/transactions, structured diagnostics and bounded legacy RES/MovieClip analysis; pinned setup, review and public CI | Project-to-running-game authoring loop, integrated visual tools, Agent/Skill/MCP applications, publication/update adapters and complete migration |
 
-## Desktop mixed reference increment — 2026-11-08
+## Fixed mixed profiles — 2026-11-08
+
+The Outfit Studio now runs X-D60/1 and X-MTouch/1 with 6,000 authored nodes, eight dual-track Spine actors, 80 sequence instances and a 50,000-record virtual catalogue. Both desktop backends have five observed timing windows per state. Full-dirty synchronous elapsed p95 was 74.0 ms on WebGPU and 87.8 ms on WebGL2. This locates frame cost while formal whole-engine CPU remains open. The frame interval targets were missed. A physical Android Chrome collected 100 controlled touch responses per backend and actual keyboard, rotation and Home/resume results. The response p95 was 412.4 ms and 383.6 ms against 100 ms. Formal lifecycle, human input and iPhone rows remain open. [Fixed evidence](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/fixed-verification-summary.json)
+
+## Compact desktop reference increment — 2026-11-08
 
 The Outfit Studio composes two independently controlled Spine actors, a sequence effect, managed UI with native rename and an opaque 3D background under one Engine. A palette candidate uses the existing Spine RESET and shared Host staging. Exported snapshots reopen with stable IDs and authored values. Ten checks passed per backend, including font refusal, mouse release outside the pressed row, replacement failure, retry and retirement. [Outfit Studio](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/outfit-studio)
 
@@ -74,7 +78,7 @@ All eleven M2–M4 packages remain open to their complete acceptance. A merged f
 | M3.2 / [#88](https://github.com/cnedwin/Egret_rebuild/issues/88) | Readonly styled text, geometry and font generations | Required independent references and provider cost/recovery qualification / text maintainer |
 | M3.3 / [#89](https://github.com/cnedwin/Egret_rebuild/issues/89) | Contact routing, keyboard/focus, row integration and native single/multiline plain-text editing | Actual IME/mobile keyboard, clipboard and accessibility qualification / input-host maintainer |
 | M3.4 / [#90](https://github.com/cnedwin/Egret_rebuild/issues/90) | Masks/blur, themes, owned popup/modals and contributed movement/action state | Remaining controls, gestures and semantics / UI maintainer with existing touch contributor |
-| M4.1 / [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) | Editable desktop Outfit Studio and scoped WebGPU/WebGL2 evidence | Complete selected mixed scene and fixed X configurations / integration maintainer |
+| M4.1 / [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) | Editable compact and fixed X Outfit Studio, dual-backend timing and scoped Android evidence | Selected feature coverage and formal X qualification / integration and qualification maintainers |
 | M4.2 / [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) | Fixed desktop recovery and bounded Android component evidence | Complete mixed lifecycle, performance and required device campaign / performance-platform maintainer |
 | M4.3 / [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) | Observable preview failure/cancel/reload and public contribution entry | Clean-consumer distribution and qualified handoff / release maintainer |
 
@@ -92,7 +96,7 @@ M0's [independent newcomer rehearsal #52](https://github.com/cnedwin/Egret_rebui
 
 ## Next development phase
 
-Native plain-text editing and the M3.4 popup/modal increment now consume current paragraph geometry, fonts and managed UI. Complete the remaining control/semantic set within #90. M4.1 now supplies the first desktop mixed scene. Grow that project with the remaining selected capabilities and use the measured provider and font transfer to guide the full profile. M2 contributors can complete binary/content qualification, seek/replay or state-preserving replacement against existing owners. M3.4's coordinated touch work continues separately.
+Native plain-text editing and the M3.4 popup/modal increment now consume current paragraph geometry, fonts and managed UI. Complete the remaining control/semantic set within #90. M4.1 supplies the compact and fixed mixed scene layouts. The open X timing and response rows feed M4.2 alongside formal startup, lifecycle and physical-device qualifications. M2 contributors can complete binary/content qualification, seek/replay or state-preserving replacement against existing owners. M3.4's coordinated touch work continues separately.
 
 Then finish the remaining controls and the complete mixed scenario, resolve the unchanged M1 performance gap, and execute the required M4 campaign on frozen inputs. A bounded engineering preview may precede complete qualification; it must carry its actual limits. The [engineering plan](engineering-plan.md) assigns dependencies and exit criteria without adding work-package IDs or promising dates.
 

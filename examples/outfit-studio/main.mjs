@@ -5,19 +5,41 @@ import {createStudioAssets, fetchStudio} from './assets.mjs';
 import {openStudioProject, outfits} from './project.mjs';
 import {createStudioScene, frameOptions} from './scene.mjs';
 import {createStudioUi} from './ui.mjs';
+import {createStudioWorkload,createStudioReferenceView} from './reference.mjs';
+import {fixedProfile,workload} from './workload.mjs';
+import {studioTouchState} from './touch.mjs';
+import {createStudioTiming} from './timing.mjs';
 
 const canvas = document.querySelector('canvas');
 const status = document.querySelector('#status');
 const pause = document.querySelector('#pause');
 const download = document.querySelector('#download');
 const closeButton = document.querySelector('#close');
-const backend = new URL(location.href).searchParams.get('backend') ?? 'webgpu';
+const params = new URL(location.href).searchParams;
+const backend = params.get('backend') ?? 'webgpu';
+const profileName = params.get('profile');
+const mode = params.get('load') ?? 'sparse';
+const mobile = profileName === 'x-mtouch';
+const viewport = document.querySelector('.viewport');
+const landscape = () => screen.orientation?.type?.startsWith('landscape') ?? matchMedia('(orientation:landscape)').matches;
+let profile = fixedProfile(profileName,landscape()), frame = frameOptions;
+const timing = profile && params.get('trace') === '1' ? createStudioTiming(mode) : undefined;
+const touch = studioTouchState(), selection = {scroll:0,drawer:0};
+let viewScope,view,fixed,fonts,layoutRevision = 0,reflowQueued = false,frames = 0,presented;
+let retiredCast,retiredWorkload;
+if (profile) {
+  document.documentElement.classList.add(mobile ? 'studio-phone' : 'studio-fixed');
+  for (const link of document.querySelectorAll('[data-backend]')) {
+    const search = new URLSearchParams(params); search.set('backend',link.dataset.backend);
+    link.href = '?' + search;
+  }
+}
 const lifetime = new AbortController();
 const {signal} = lifetime;
 const errors = [];
 let host, engine, scope, assets, cache, cast, ui, project, selected, draftId, upload, cleanup;
 let state = 'loading', elapsed = 0, playing = true, raf = 0, lastFrame;
-let pendingActions = 0, palettePending = false, paintQueued = false;
+let pendingActions = 0, palettePending = false, paintQueued = false, paintDirty = false;
 let replacement, nameRefusal, closing, loads = [], tail = Promise.resolve();
 
 const message = (en, zh) => { status.textContent = `${en} / ${zh}`; };
@@ -34,20 +56,43 @@ function enqueue(operation) {
   return pending;
 }
 
+function characters() { return profile ? project.characters() : project.characters().slice(0,2); }
 function inspect() {
+  const bounds = canvas.getBoundingClientRect();
   return {state,backend,playing,selected,revision:project?.revision,characters:project?.characters(),
-    cast:cast?.inspect(),ui:state === 'ready' ? ui.inspect() : undefined,replacement,nameRefusal,cleanup,errors:[...errors],
+    ...(profile ? {profile:profile.id,mode,layoutRevision,scene:fixed?.inspect() ?? retiredWorkload,reference:viewScope?.state === 'open' ? view?.inspect() : undefined,
+      surface:{width:frame.width,height:frame.height,ratio:profile.ratio,dpr:devicePixelRatio,
+        backing:[canvas.width,canvas.height],css:{x:bounds.x,y:bounds.y,width:bounds.width,height:bounds.height}},
+      frames,presented,resources:state === 'ready' ? host.getSharedStatus().resources : undefined} : {}),
+    cast:cast?.inspect() ?? retiredCast,ui:state === 'ready' ? ui.inspect() : undefined,replacement,nameRefusal,cleanup,errors:[...errors],
     interactive:performance.getEntriesByName('egret-studio-interactive')[0]?.startTime};
 }
 
-async function draw(readback = false) {
-  await ui.publish();
+async function draw(readback = false, sample) {
+  const uiStart = sample && performance.now();
+  const vaultChanged = await view?.publish();
+  const uiChanged = await ui.publish();
   signal.throwIfAborted();
+  if (fixed && (uiChanged || vaultChanged || frames === 0)) fixed.sync(cast.root);
+  if (view) { cast.applyView(touch.camera,selected,touch.holds); view.drawControls(); }
+  const action = touch.lastAction;
+  const captureStart = sample && performance.now();
   const reading = readback ? host.requestReadback() : undefined;
   void reading?.catch(() => {});
-  host.renderSceneSharedFrame(cast.scene, engine.captureSharedFrame(frameOptions));
+  const captured = engine.captureSharedFrame(frame);
+  const hostStart = sample && performance.now();
+  host.renderSceneSharedFrame(cast.scene,captured);
+  const submittedAt = sample && performance.now();
   const pixels = await reading;
   await host.whenIdle();
+  const completedAt = performance.now();
+  frames++;
+  if (action && presented?.action !== action.number) {
+    presented = {action:action.number,eventAt:action.at,completedAt,frame:frames,latencyMs:completedAt-action.at};
+  }
+  if (sample) timing.record({...sample,completedAt,submittedAt,uiMs:captureStart-uiStart,
+    captureMs:hostStart-captureStart,hostMs:submittedAt-hostStart,dpr:devicePixelRatio,
+    visible:document.visibilityState === 'visible',focused:document.hasFocus(),layoutRevision});
   return pixels;
 }
 
@@ -61,10 +106,16 @@ function animate(time) {
   if (state !== 'ready' || !playing) return;
   void enqueue(async () => {
     if (!playing) return;
-    const delta = lastFrame === undefined ? 0 : Math.min(.05, Math.max(0, (time - lastFrame) / 1000));
+    const mutationStart = timing && performance.now();
+    fixed?.mutate(mode);
+    const animationStart = timing && performance.now();
+    const delta = profile ? (mode === 'static' ? 0 : workload.clockStep) :
+      lastFrame === undefined ? 0 : Math.min(.05, Math.max(0, (time-lastFrame)/1000));
     lastFrame = time;
-    if (delta) advance(delta);
-    await draw();
+    if (delta) { view?.touch.step(); advance(delta); }
+    const sample = timing ? {raf:time,mutationMs:animationStart-mutationStart,
+      animationMs:performance.now()-animationStart,frame:frames+1} : undefined;
+    await draw(false,sample);
   }).then(schedule, error => { if (!signal.aborted) { playing = false; report(error); } });
 }
 
@@ -73,9 +124,14 @@ function schedule() {
 }
 
 function requestDraw() {
-  if (state !== 'ready' || playing || paintQueued) return;
+  if (state !== 'ready' || playing) return;
+  paintDirty = true;
+  if (paintQueued) return;
   paintQueued = true;
-  void enqueue(() => draw()).catch(report).finally(() => { paintQueued = false; });
+  void enqueue(async () => { paintDirty = false; await draw(); }).catch(report).finally(() => {
+    paintQueued = false;
+    if (paintDirty) requestDraw();
+  });
 }
 
 async function replacePalette(character) {
@@ -95,7 +151,7 @@ async function replacePalette(character) {
     signal.throwIfAborted();
 
     // This queue owns the final capture window. The previous frame stays visible through loading and staging.
-    upload = host.stageSceneSharedFrame(cast.scene, ticket.capture(frameOptions));
+    upload = host.stageSceneSharedFrame(cast.scene, ticket.capture(frame));
     const staged = await upload.ready;
     signal.throwIfAborted();
     const session = host.getSessionStatus();
@@ -130,8 +186,8 @@ async function act(key) {
   const current = project.character(selected);
   const layer = ui.layer;
   if (layer === 'roster') {
-    if (key === 'hero-0' || key === 'hero-1') {
-      selected = project.characters()[Number(key.at(-1))].id;
+    if (/^hero-[0-7]$/.test(key)) {
+      selected = characters()[Number(key.at(-1))].id;
       message(project.character(selected).name, '已选择角色');
     } else if (key === 'skin') {
       const outfit = outfits[(outfits.indexOf(current.outfit) + 1) % outfits.length];
@@ -139,7 +195,10 @@ async function act(key) {
       cast.setOutfit(selected, outfit);
       advance(1 / 120);
       message('Outfit applied', '已应用装扮');
-    } else if (key === 'palette') await replacePalette(current);
+    } else if (key === 'palette') {
+      await replacePalette(current);
+      if (profile && replacement.phase === 'ready') advance(1/120);
+    }
     else if (key === 'details') ui.details();
   } else if (layer === 'details') {
     if (key === 'rename') { draftId = selected; nameRefusal = undefined; ui.rename(current.name); }
@@ -178,50 +237,100 @@ async function act(key) {
     }
   }
   signal.throwIfAborted();
-  ui.update(project.characters(), selected);
+  ui.update(characters(),selected);
   await draw();
 }
 
 function onAction(key) {
-  if (state !== 'ready' || pendingActions >= 8 || (key === 'palette' && palettePending)) return;
-  const sourceLayer = ui.layer;
+  if (state !== 'ready' || reflowQueued || pendingActions >= 8 || (key === 'palette' && palettePending)) return;
+  const source = ui, sourceLayer = source.layer;
   pendingActions++;
   if (key === 'palette') palettePending = true;
   // Apply queued input only while its originating layer still owns the action.
-  void enqueue(() => { if (ui.layer === sourceLayer) return act(key); }).catch(report).finally(() => {
+  void enqueue(() => { if (ui === source && !reflowQueued && source.layer === sourceLayer) return act(key); }).catch(report).finally(() => {
     pendingActions--;
     if (key === 'palette') palettePending = false;
   });
 }
 
+function fitSurface() {
+  if (!profile) return;
+  const viewportHeight = window.visualViewport?.height ?? innerHeight;
+  const top = Math.max(0,viewport.getBoundingClientRect().top-(window.visualViewport?.offsetTop ?? 0));
+  const scale = mobile ? Math.min(viewport.clientWidth/profile.width,Math.max(96,viewportHeight-top-58)/profile.height) : 1;
+  const width = profile.width*scale+'px', height = profile.height*scale+'px';
+  if (canvas.style.width === width && canvas.style.height === height) return;
+  if (ui?.input.state === 'active') ui.input.cancelAll('viewport');
+  canvas.style.width = width;
+  canvas.style.height = height;
+}
+
+async function mountView() {
+  signal.throwIfAborted();
+  viewScope = engine.createScope();
+  ui = await createStudioUi({engine,scope:viewScope,canvas,cache,fonts:fonts.set,initial:{characters:characters(),selected},
+    onAction,onError:report,requestDraw,signal,profile});
+  view = profile ? createStudioReferenceView({engine,scope:viewScope,input:ui.input,profile,state:touch,selection,onAction,invalidate:requestDraw}) : undefined;
+  layoutRevision++;
+}
+
+function reflow() {
+  if (!mobile || state !== 'ready' || reflowQueued) return;
+  if (fixedProfile(profileName,landscape()) === profile) { fitSurface(); return; }
+  reflowQueued = true;
+  ui.input.cancelAll('viewport');
+  ui.input.setInteractive(false);
+  void enqueue(async () => {
+    // Geometry ownership changes as one session. The authored project and shared assets stay live.
+    if (ui.layer === 'rename') ui.cancelRename();
+    draftId = undefined;
+    const previous = viewScope;
+    previous.dispose();
+    ui = view = undefined;
+    profile = fixedProfile(profileName,landscape());
+    frame = {...frameOptions,width:profile.width,height:profile.height};
+    fitSurface();
+    fixed.layout(profile);
+    cast.layout(profile);
+    await mountView();
+    await draw();
+  }).catch(error => { report(error); if (!signal.aborted) void close('failed'); })
+    .finally(() => { reflowQueued = false; reflow(); });
+}
+
 async function open() {
+  if (profile && !Object.hasOwn(workload.mutations,mode)) throw new Error('Choose static, sparse or full');
+  if (profile) frame = {...frameOptions,width:profile.width,height:profile.height};
+  fitSurface();
   if (backend !== 'webgpu' && backend !== 'webgl2') throw new Error('Choose WebGPU or WebGL2');
   const hostModule = backend === 'webgpu'
     ? import('@egret/engine/webgpu/scene3d').then(module => module.createSharedSceneWebGPUHost)
     : import('@egret/engine/webgl2/scene3d').then(module => module.createSharedSceneWebGL2Host);
   const [config, authored, factory] = await Promise.all([
     fetchStudio(new URL('config.json', import.meta.url), signal).then(response => response.json()),
-    fetchStudio(new URL('project.json', import.meta.url), signal).then(response => response.text()),
+    fetchStudio(new URL(profile ? 'project-x.json' : 'project.json', import.meta.url), signal).then(response => response.text()),
     hostModule
   ]);
   project = openStudioProject(authored);
-  const characters = project.characters();
-  selected = characters[0].id;
-  host = factory({canvas,pixelRatio:1,outputAlpha:'opaque',enableReadback:true});
+  selected = characters()[0].id;
+  host = factory({canvas,pixelRatio:profile?.ratio ?? 1,outputAlpha:'opaque',enableReadback:true,...(profile ? {enableEffects:true} : {})});
   engine = await createEngineForProfile({host}, 'egret.shared-frame2d/1');
   signal.throwIfAborted();
   scope = engine.createScope();
-  assets = createStudioAssets(engine, scope, signal);
+  assets = createStudioAssets(engine,scope,signal,Boolean(profile));
   loads = [
     assets.fonts(config.fontConfig), assets.sequence(),
-    Promise.all([...new Set(characters.map(row => row.palette))].map(async key => [key,await assets.spine(key)])).then(rows => new Map(rows))
+    Promise.all([...new Set(characters().map(row => row.palette))].map(async key => [key,await assets.spine(key)])).then(rows => new Map(rows))
   ];
-  const [fonts, sequence, spineAssets] = await Promise.all(loads);
+  const [initialFonts,sequence,spineAssets] = await Promise.all(loads);
+  fonts = initialFonts;
   signal.throwIfAborted();
   cache = scope.use(createParagraphCache(engine.assets, {provider:fonts.paragraphProvider,maxImageBytes:8 * 1024 * 1024}));
-  cast = createStudioScene(engine, scope, characters, spineAssets, sequence);
+  if (profile) { fixed = await createStudioWorkload(engine,scope); fixed.layout(profile); }
+  cast = createStudioScene(engine,scope,characters(),spineAssets,sequence,profile);
   engine.advanceTime(0);
-  ui = await createStudioUi({engine,scope,canvas,cache,fonts:fonts.set,initial:{characters,selected},onAction,onError:report,requestDraw,signal});
+  if (profile) advance(workload.clockStep);
+  await mountView();
   await draw(true);
   signal.throwIfAborted();
   state = 'ready';
@@ -229,6 +338,12 @@ async function open() {
   download.disabled = false;
   performance.mark('egret-studio-interactive');
   message('Choose a character to begin', '请选择角色');
+  if (mobile) {
+    window.addEventListener('resize',reflow,{signal});
+    window.visualViewport?.addEventListener('resize',reflow,{signal});
+    screen.orientation?.addEventListener('change',reflow,{signal});
+    reflow();
+  }
   schedule();
   return inspect();
 }
@@ -247,11 +362,19 @@ function close(finalState = 'closed') {
     const attempt = async action => { try { await action(); } catch (error) { failures.push(String(error?.message ?? error)); } };
     // Cancel owned requests and UI before waiting for work already in progress.
     await attempt(() => upload?.dispose());
+    await attempt(() => ui?.input.state === 'active' && ui.input.cancelAll('owner'));
+    await attempt(() => viewScope?.dispose());
     await attempt(() => scope?.dispose());
     await Promise.allSettled([ready,tail,...loads]);
     await attempt(() => assets?.close());
     await attempt(() => engine ? engine.dispose() : host?.close());
-    cleanup = {scope:scope?.state,fonts:assets?.fontStatus(),cache:cache?.getStatus(),host:host?.getSessionStatus(),failures};
+    cleanup = {scope:scope?.state,view:viewScope?.state,fonts:assets?.fontStatus(),cache:cache?.getStatus(),
+      host:host?.getSessionStatus(),failures};
+    retiredCast = cast?.inspect();
+    retiredWorkload = fixed?.inspect();
+    // Retain scalar receipts after Close and release the authored tree and resource owners.
+    cast = fixed = view = ui = viewScope = scope = assets = fonts = cache = engine = host = undefined;
+    loads = [];
     state = finalState;
     if (finalState === 'closed') message(failures.length ? 'Close reported an error' : 'Studio closed', failures.length ? '关闭时发生错误' : '场景已关闭');
     return inspect();
@@ -274,6 +397,16 @@ pause.addEventListener('click', () => {
   pause.textContent = playing ? 'Pause preview / 暂停预览' : 'Resume preview / 继续预览';
   schedule();
 });
+canvas.addEventListener('wheel',event => {
+  if (!view || state !== 'ready' || ui.layer !== 'roster') return;
+  const {x,y,width,height} = canvas.getBoundingClientRect();
+  const logicalX = (event.clientX-x)*frame.width/width, logicalY = (event.clientY-y)*frame.height/height;
+  const region = view.inspect().vault;
+  if (logicalX < region.x || logicalX >= region.x+region.width || logicalY < region.y || logicalY >= region.y+region.height) return;
+  event.preventDefault();
+  const delta = event.deltaY*(event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? region.height : 1);
+  view.scrollBy(delta);
+},{passive:false,signal});
 download.addEventListener('click', () => {
   const url = URL.createObjectURL(new Blob([project.serialize()], {type:'application/json'}));
   const link = document.createElement('a');
@@ -287,6 +420,7 @@ window.addEventListener('pagehide', () => { void close(); }, {once:true});
 
 // Inspect the real example and read only selected points from its actual completed frame.
 globalThis.__egretOutfitStudio = Object.freeze({ready,inspect,close,
+  ...(timing ? {timings:timing.read} : {}),
   pixels(points) { return enqueue(async () => {
     const result = await draw(true);
     return points.map(([x,y]) => Array.from(result.bytes.subarray((y * result.width + x) * 4, (y * result.width + x) * 4 + 4)));

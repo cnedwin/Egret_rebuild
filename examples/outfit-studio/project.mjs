@@ -27,10 +27,10 @@ export function skins(outfit) {
 
 export function openStudioProject(text) {
   const snapshot = unwrap(parseProjectSnapshot(text, {maxSnapshotUtf8Bytes:64 * 1024}));
-  if (snapshot.projectId !== 'p_outfit_studio' || snapshot.roots.length !== 2 ||
-      snapshot.entities.length !== 2 || snapshot.files.length || snapshot.entities.some(entity =>
+  if (snapshot.projectId !== 'p_outfit_studio' || ![2,8].includes(snapshot.roots.length) ||
+      snapshot.entities.length !== snapshot.roots.length || snapshot.files.length || snapshot.entities.some(entity =>
         entity.kind !== 'outfit-character' || entity.dataSchemaVersion !== '1.0' || entity.references.length)) {
-    throw new Error('Expected a two-character Outfit Studio project');
+    throw new Error('Expected an Outfit Studio project with two or eight characters');
   }
   snapshot.entities.forEach(character);
   const store = unwrap(createProjectStore(snapshot));
@@ -67,4 +67,22 @@ export function openStudioProject(text) {
     },
     serialize() { return unwrap(serializeProjectSnapshot(store.getSnapshot())) + '\n'; }
   });
+}
+
+/** Keep the original two authored identities and add the six reference actors once. */
+export function expandStudioProject(text) {
+  const admitted = openStudioProject(text);
+  const snapshot = unwrap(parseProjectSnapshot(admitted.serialize()));
+  if (snapshot.roots.length === 8) return admitted.serialize();
+  const names = ["Vale 云霞","Ink 墨羽","Tide 澜光","Dawn 朝阳","Dune 沙星","Frost 白雪"];
+  const reserved = new Set([...snapshot.roots,...snapshot.retiredEntityIds]);
+  let index = 2;
+  const extra = names.map((name,offset) => {
+    while (reserved.has('e_studio_'+index)) index++;
+    const id = 'e_studio_'+index++;
+    return {id,kind:'outfit-character',dataSchemaVersion:'1.0',name,
+      data:{outfit:outfits[(offset+2)%outfits.length],palette:'studio'},references:[]};
+  });
+  return unwrap(serializeProjectSnapshot({...snapshot,
+    roots:[...snapshot.roots,...extra.map(row => row.id)],entities:[...snapshot.entities,...extra]})) + '\n';
 }

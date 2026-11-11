@@ -1,0 +1,713 @@
+{
+  "schemaVersion": 1,
+  "profiles": [
+    {
+      "id": "X-D60/1",
+      "width": 1024,
+      "height": 768,
+      "ratio": 1,
+      "rows": 32,
+      "residentCap": 48,
+      "rowHeights": [
+        15,
+        17
+      ],
+      "roster": {
+        "x": 20,
+        "y": 16,
+        "width": 300,
+        "height": 220
+      },
+      "vault": {
+        "x": 20,
+        "y": 248,
+        "width": 300,
+        "height": 512
+      },
+      "map": {
+        "x": 340,
+        "y": 20,
+        "width": 664,
+        "height": 728
+      }
+    },
+    {
+      "id": "X-MTouch/1",
+      "width": 360,
+      "height": 640,
+      "ratio": 2,
+      "rows": 8,
+      "residentCap": 24,
+      "rowHeights": [
+        22,
+        26
+      ],
+      "roster": {
+        "x": 8,
+        "y": 248,
+        "width": 344,
+        "height": 146
+      },
+      "vault": {
+        "x": 8,
+        "y": 406,
+        "width": 344,
+        "height": 192
+      },
+      "map": {
+        "x": 8,
+        "y": 8,
+        "width": 344,
+        "height": 232
+      }
+    },
+    {
+      "id": "X-MTouch/1",
+      "width": 640,
+      "height": 360,
+      "ratio": 2,
+      "rows": 8,
+      "residentCap": 24,
+      "rowHeights": [
+        22,
+        26
+      ],
+      "roster": {
+        "x": 8,
+        "y": 8,
+        "width": 246,
+        "height": 146
+      },
+      "vault": {
+        "x": 8,
+        "y": 156,
+        "width": 246,
+        "height": 192
+      },
+      "map": {
+        "x": 264,
+        "y": 8,
+        "width": 368,
+        "height": 344
+      }
+    }
+  ],
+  "workload": {
+    "authored": 6000,
+    "visible": 600,
+    "records": 50000,
+    "actors": 8,
+    "sequences": 80,
+    "clipLevels": 8,
+    "bones": 120,
+    "slots": 96,
+    "weightedVertices": 2000,
+    "mutations": {
+      "static": 0,
+      "sparse": 60,
+      "full": 6000
+    },
+    "clockStep": 0.016666666666666666,
+    "displacement": 0.25,
+    "dragThreshold": 6,
+    "drawerLimit": 12,
+    "cameraScale": [
+      0.65,
+      2.5
+    ],
+    "text": "Outfits 颜色 · العربية 🆕"
+  },
+  "desktop": {
+    "browser": "157.0.4341.42",
+    "headlessCorrectness": true,
+    "sourceReportSha256": "5efba24edfcb96c537b170746c379886edeccab383ee282ed83f082c19fabf27",
+    "transport": "Cold cache, uncompressed unshaped loopback HTTP through first completed interactive frame.",
+    "rows": [
+      {
+        "backend": "webgpu",
+        "responseBodies": 333,
+        "firstInteractiveMs": 1371.4,
+        "transferBytes": 30567912,
+        "initialVisibleRows": 32,
+        "initialLiveContainers": 34,
+        "sampledPixels": [
+          [
+            16,
+            25,
+            44,
+            255
+          ],
+          [
+            32,
+            48,
+            80,
+            255
+          ],
+          [
+            65,
+            90,
+            119,
+            255
+          ],
+          [
+            85,
+            186,
+            186,
+            255
+          ],
+          [
+            54,
+            84,
+            108,
+            255
+          ],
+          [
+            95,
+            126,
+            173,
+            255
+          ]
+        ],
+        "fixedAssets": [
+          {
+            "path": "/examples/outfit-studio/project-x.json",
+            "bytes": 1612,
+            "sha256": "a5e41b0f63a2524364d7a5b0f7e9cf1474d7648d53a7ad319d381d43f53c6a99"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/manifest.json",
+            "bytes": 5934,
+            "sha256": "95e2b57af7d893cf5fb4619bdb4a8b0a0df8f60db193815865c117a214f26785"
+          },
+          {
+            "path": "/examples/paragraph-panel/vendor/runtime/layout-r1/canvaskit.wasm",
+            "bytes": 8600298,
+            "sha256": "156593fd1411ffc41a3707ac74cbea72b76b4d04dd1eff9be4fab98c26530329"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/assets/sparks",
+            "bytes": 74,
+            "sha256": "5c8196e06d11248a33c6c0038e8487af028f7825fe8bcf42adc0363188aec005"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/assets/warm",
+            "bytes": 76,
+            "sha256": "6c82fdfe13ec5682015891cdda52c07f273aea1691628cc71cef2c4989a6fb9c"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/assets/cool",
+            "bytes": 76,
+            "sha256": "fb4b93e6671b6f2c7f8ae60af5b713009757c80ba9b1d1662ad6555faeaddbf5"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/assets/sequence",
+            "bytes": 157,
+            "sha256": "61858da0d1df02c1d47609c763f8965a12c7c2fc9fd93f4267854ab907d5fc9d"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/assets/atlas",
+            "bytes": 177,
+            "sha256": "8dfb3d8610d16084e9a0574eb8c3ef2654659af1b98f94444f34749357d96386"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/assets/character",
+            "bytes": 224428,
+            "sha256": "e34e54780e843cd3ce9d44df3df1fbdd0e7e155d7754dc7b5866ca233407e751"
+          }
+        ]
+      },
+      {
+        "backend": "webgl2",
+        "responseBodies": 309,
+        "firstInteractiveMs": 1100.3,
+        "transferBytes": 30376726,
+        "initialVisibleRows": 32,
+        "initialLiveContainers": 34,
+        "sampledPixels": [
+          [
+            16,
+            25,
+            44,
+            255
+          ],
+          [
+            32,
+            48,
+            80,
+            255
+          ],
+          [
+            65,
+            90,
+            119,
+            255
+          ],
+          [
+            85,
+            186,
+            186,
+            255
+          ],
+          [
+            54,
+            84,
+            108,
+            255
+          ],
+          [
+            95,
+            126,
+            173,
+            255
+          ]
+        ],
+        "fixedAssets": [
+          {
+            "path": "/examples/outfit-studio/project-x.json",
+            "bytes": 1612,
+            "sha256": "a5e41b0f63a2524364d7a5b0f7e9cf1474d7648d53a7ad319d381d43f53c6a99"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/manifest.json",
+            "bytes": 5934,
+            "sha256": "95e2b57af7d893cf5fb4619bdb4a8b0a0df8f60db193815865c117a214f26785"
+          },
+          {
+            "path": "/examples/paragraph-panel/vendor/runtime/layout-r1/canvaskit.wasm",
+            "bytes": 8600298,
+            "sha256": "156593fd1411ffc41a3707ac74cbea72b76b4d04dd1eff9be4fab98c26530329"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/assets/sparks",
+            "bytes": 74,
+            "sha256": "5c8196e06d11248a33c6c0038e8487af028f7825fe8bcf42adc0363188aec005"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/assets/warm",
+            "bytes": 76,
+            "sha256": "6c82fdfe13ec5682015891cdda52c07f273aea1691628cc71cef2c4989a6fb9c"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/assets/cool",
+            "bytes": 76,
+            "sha256": "fb4b93e6671b6f2c7f8ae60af5b713009757c80ba9b1d1662ad6555faeaddbf5"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/assets/sequence",
+            "bytes": 157,
+            "sha256": "61858da0d1df02c1d47609c763f8965a12c7c2fc9fd93f4267854ab907d5fc9d"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/assets/atlas",
+            "bytes": 177,
+            "sha256": "8dfb3d8610d16084e9a0574eb8c3ef2654659af1b98f94444f34749357d96386"
+          },
+          {
+            "path": "/examples/outfit-studio/content/x/studio/assets/character",
+            "bytes": 224428,
+            "sha256": "e34e54780e843cd3ce9d44df3df1fbdd0e7e155d7754dc7b5866ca233407e751"
+          }
+        ]
+      }
+    ]
+  },
+  "timing": {
+    "browser": "157.0.4341.42",
+    "headless": false,
+    "os": "Windows 11 Home China",
+    "cpu": "Intel(R) Core(TM) Ultra 9 275HX",
+    "sourceReportSha256": "ed5832b908fad7aaf55143748b8be19b5a2f468f8b250177391885f8e85a1de2",
+    "windows": "One 30-second warm-up and five consecutive 60-second windows for every backend/state. Include crossing intervals.",
+    "spans": "Fixture mutations are recorded separately. Sum the measured synchronous animation, capture and Host elapsed spans per frame. They may include driver waits or preemption. Their comparison with 8 ms is diagnostic and formal active whole-engine CPU remains open. The full synchronous Host call contains preparation and may provide a conservative upper bound. Frame intervals use Host completion and retain wait/backpressure.",
+    "rows": [
+      {
+        "backend": "webgpu",
+        "state": "static",
+        "medianP95": {
+          "synchronousElapsed": 33.9,
+          "sampledPhaseElapsed": 34,
+          "host": 30.1,
+          "frameP95": 41.1,
+          "frameP99": 76.8,
+          "mutation": 0,
+          "animation": 0,
+          "uiElapsed": 0.1,
+          "capture": 3.8
+        },
+        "completedFrames": [
+          1609,
+          1604,
+          1614,
+          1649,
+          1635
+        ],
+        "targets": {
+          "engine": "OPEN",
+          "preparation": "OPEN",
+          "frameIntervals": "FAIL",
+          "synchronousElapsedAbove8": true
+        },
+        "gpu": "UNMEASURED",
+        "traceSha256": "b117e5eebcb804fd99fc80b01f937fbe9e458733fb88b8a72eb549795d6e2fdf"
+      },
+      {
+        "backend": "webgpu",
+        "state": "sparse",
+        "medianP95": {
+          "synchronousElapsed": 75,
+          "sampledPhaseElapsed": 75,
+          "host": 35.1,
+          "frameP95": 82.4,
+          "frameP99": 89,
+          "mutation": 0.1,
+          "animation": 35.7,
+          "uiElapsed": 0.1,
+          "capture": 4.1
+        },
+        "completedFrames": [
+          836,
+          846,
+          846,
+          767,
+          714
+        ],
+        "targets": {
+          "engine": "OPEN",
+          "preparation": "OPEN",
+          "frameIntervals": "FAIL",
+          "synchronousElapsedAbove8": true
+        },
+        "gpu": "UNMEASURED",
+        "traceSha256": "4c43b22a926c60767878e584f309b21695e53f6739ee84295846a9a0bbf164b5"
+      },
+      {
+        "backend": "webgpu",
+        "state": "full",
+        "medianP95": {
+          "synchronousElapsed": 74,
+          "sampledPhaseElapsed": 74.1,
+          "host": 34.6,
+          "frameP95": 82.2,
+          "frameP99": 88.6,
+          "mutation": 0.8,
+          "animation": 35.1,
+          "uiElapsed": 0.1,
+          "capture": 4.1
+        },
+        "completedFrames": [
+          758,
+          832,
+          833,
+          842,
+          835
+        ],
+        "targets": {
+          "engine": "OPEN",
+          "preparation": "OPEN",
+          "frameIntervals": "FAIL",
+          "synchronousElapsedAbove8": true
+        },
+        "gpu": "UNMEASURED",
+        "traceSha256": "1165e653a97dcd4f9503702b22a96dd34119e7df2030e9080eb4ebfa2437f086"
+      },
+      {
+        "backend": "webgl2",
+        "state": "static",
+        "medianP95": {
+          "synchronousElapsed": 37.9,
+          "sampledPhaseElapsed": 37.9,
+          "host": 34.4,
+          "frameP95": 46.3,
+          "frameP99": 85.4,
+          "mutation": 0,
+          "animation": 0,
+          "uiElapsed": 0.1,
+          "capture": 3.8
+        },
+        "completedFrames": [
+          1451,
+          1414,
+          1424,
+          1418,
+          1363
+        ],
+        "targets": {
+          "engine": "OPEN",
+          "preparation": "OPEN",
+          "frameIntervals": "FAIL",
+          "synchronousElapsedAbove8": true
+        },
+        "gpu": "UNMEASURED",
+        "traceSha256": "0777bb36913409f12ac23c7abdee59011d8843e09c69798cfda3665a62b86305"
+      },
+      {
+        "backend": "webgl2",
+        "state": "sparse",
+        "medianP95": {
+          "synchronousElapsed": 80.7,
+          "sampledPhaseElapsed": 80.7,
+          "host": 40.5,
+          "frameP95": 87.5,
+          "frameP99": 91.4,
+          "mutation": 0.1,
+          "animation": 36,
+          "uiElapsed": 0.1,
+          "capture": 4.1
+        },
+        "completedFrames": [
+          788,
+          790,
+          782,
+          713,
+          725
+        ],
+        "targets": {
+          "engine": "OPEN",
+          "preparation": "OPEN",
+          "frameIntervals": "FAIL",
+          "synchronousElapsedAbove8": true
+        },
+        "gpu": "UNMEASURED",
+        "traceSha256": "f8f42ad95ebc71bf6028ef4a9f89aa6384dad7e9641f05cfbb039b4e3295d77d"
+      },
+      {
+        "backend": "webgl2",
+        "state": "full",
+        "medianP95": {
+          "synchronousElapsed": 87.8,
+          "sampledPhaseElapsed": 87.8,
+          "host": 38.9,
+          "frameP95": 96,
+          "frameP99": 104,
+          "mutation": 1.1,
+          "animation": 45.5,
+          "uiElapsed": 0.1,
+          "capture": 5.1
+        },
+        "completedFrames": [
+          796,
+          717,
+          693,
+          669,
+          698
+        ],
+        "targets": {
+          "engine": "OPEN",
+          "preparation": "OPEN",
+          "frameIntervals": "FAIL",
+          "synchronousElapsedAbove8": true
+        },
+        "gpu": "UNMEASURED",
+        "traceSha256": "a5e1c10166d5c5f6e608a4fa3bdff19ff8268a50b88f2cee3f254520ddafde4d"
+      }
+    ],
+    "windowDpr": 1.0000000298023224,
+    "reportedDevices": [
+      {
+        "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+        "driverVersion": "32.0.16.2101"
+      },
+      {
+        "device": "Intel(R) Graphics",
+        "driverVersion": "32.0.101.8826"
+      },
+      {
+        "device": "Microsoft Basic Render Driver",
+        "driverVersion": "10.0.26100.9711"
+      }
+    ],
+    "gpuSelection": "Browser-level hardware enumeration. The exact WebGPU device selected inside the Host and GPU timestamps remain unmeasured.",
+    "interpretation": "The raw traces are preserved. Their original synchronousFloor field represents elapsed time. Any raw engine FAIL derived only from that field is superseded by formal engine OPEN.",
+    "earlierPreflightReportSha256": "fb880f88bba4f7616aee8fe60ab6b8f6c293f1fb81e4e2aa5e47ae3daeb314db"
+  },
+  "android": {
+    "input": "CDP contact injection on physical Chrome; actual system keyboard, orientation and Android Home are separate observations.",
+    "rows": [
+      {
+        "backend": "webgpu",
+        "model": "SM-F966U1",
+        "android": "17",
+        "chrome": "Chrome/156.0.8078.79",
+        "soc": "SM8750",
+        "cases": [
+          "portrait",
+          "independent-contact-probe",
+          "hold-and-press-0",
+          "hold-and-press-1",
+          "100-action-response",
+          "scroll-versus-tap",
+          "inner-to-drawer-boundary",
+          "pinch-third-contact-and-cancel",
+          "scrolling-form",
+          "modal-contact-arbitration",
+          "landscape",
+          "actual-background-and-resume"
+        ],
+        "response": {
+          "samples": 100,
+          "p95Ms": 412.4,
+          "maxMs": 421,
+          "targetMs": 100,
+          "status": "FAIL"
+        },
+        "controls": {
+          "heldActionPresses": [
+            20,
+            20
+          ],
+          "scrollTap": 20,
+          "drawerHandoff": 20,
+          "pinchCancel": 20,
+          "modalCancel": 20
+        },
+        "actualKeyboard": true,
+        "actualRotation": true,
+        "actualBackground": true,
+        "viewport": [
+          {
+            "width": 360,
+            "height": 640,
+            "ratio": 2,
+            "dpr": 2.625,
+            "backing": [
+              720,
+              1280
+            ],
+            "css": {
+              "x": 4.214285850524902,
+              "y": 4,
+              "width": 403,
+              "height": 716.4404907226562
+            }
+          },
+          {
+            "width": 640,
+            "height": 360,
+            "ratio": 2,
+            "dpr": 2.625,
+            "backing": [
+              1280,
+              720
+            ],
+            "css": {
+              "x": 202.5,
+              "y": 4,
+              "width": 468.1428527832031,
+              "height": 263.3333435058594
+            }
+          }
+        ],
+        "pausedOffset": 79.99999318462233,
+        "fullReportSha256": "c39d569e69db484ad5fd500b47dbca032ab0ffc420102a95f2e67fb522f20dc8",
+        "pausedReportSha256": "aeb944bca3a2c92c02fe2d0787c29b8cb70516696cc1d3c43dc0e5f95e2ef6d8"
+      },
+      {
+        "backend": "webgl2",
+        "model": "SM-F966U1",
+        "android": "17",
+        "chrome": "Chrome/156.0.8078.79",
+        "soc": "SM8750",
+        "cases": [
+          "portrait",
+          "independent-contact-probe",
+          "hold-and-press-0",
+          "hold-and-press-1",
+          "100-action-response",
+          "scroll-versus-tap",
+          "inner-to-drawer-boundary",
+          "pinch-third-contact-and-cancel",
+          "scrolling-form",
+          "modal-contact-arbitration",
+          "landscape",
+          "actual-background-and-resume"
+        ],
+        "response": {
+          "samples": 100,
+          "p95Ms": 383.6,
+          "maxMs": 473.5,
+          "targetMs": 100,
+          "status": "FAIL"
+        },
+        "controls": {
+          "heldActionPresses": [
+            20,
+            20
+          ],
+          "scrollTap": 20,
+          "drawerHandoff": 20,
+          "pinchCancel": 20,
+          "modalCancel": 20
+        },
+        "actualKeyboard": true,
+        "actualRotation": true,
+        "actualBackground": true,
+        "viewport": [
+          {
+            "width": 360,
+            "height": 640,
+            "ratio": 2,
+            "dpr": 2.625,
+            "backing": [
+              720,
+              1280
+            ],
+            "css": {
+              "x": 4.214285850524902,
+              "y": 4,
+              "width": 403,
+              "height": 716.4404907226562
+            }
+          },
+          {
+            "width": 640,
+            "height": 360,
+            "ratio": 2,
+            "dpr": 2.625,
+            "backing": [
+              1280,
+              720
+            ],
+            "css": {
+              "x": 202.5,
+              "y": 4,
+              "width": 468.1428527832031,
+              "height": 263.3333435058594
+            }
+          }
+        ],
+        "pausedOffset": 79.99999318462233,
+        "fullReportSha256": "49b427db5534e1513f18bba721a3f1ce1b0b7ad1f0c2b1750a765667e03da508",
+        "pausedReportSha256": "0884c5a11bd6f2cb710cb9abbf764c94e7e5893791835e5cbf077f039d06f4f3"
+      }
+    ],
+    "guard": {
+      "intervalSeconds": 20,
+      "observations": 76,
+      "restored": true
+    },
+    "open": [
+      "Human simultaneous-touch and CJK composition",
+      "iPhone Safari",
+      "100-cycle and sustained L qualification",
+      "Formal 60 Hz device and thermal/energy qualification"
+    ],
+    "sourceMain": {
+      "playingSha256": "aa1d5db3842887f19aff250a6f1c4a502c95fd2545339100b360be546bd73902",
+      "pausedSha256": "fab96d1f96e45b09ce6ae46f25181a24bad1fb7ce21bf54740e9fc3dd11bb5bc",
+      "delta": "Paused-mode redraw coalescing only. The full batches ran with playing enabled; each final paused route has its own physical-device result."
+    }
+  },
+  "remaining": [
+    "Complete selected Spine capability matrix",
+    "Formal compressed and shaped cold startup",
+    "GPU timing",
+    "Required whole-engine CPU/preparation rows and failed frame/response targets",
+    "Fixed lifecycle and memory campaign"
+  ],
+  "history": [
+    "The first glyph was outside the admitted font set and was replaced with U+1F195.",
+    "The first tessellation reached the existing tuple budget. The frozen source uses all 2,000 weighted vertices in 680 indexed mesh triangles per instance.",
+    "The first Android WebGL2 run observed 100 responses at 270.1 ms p95 before the measured text rows exposed a clipped Details control. Corrected runs are separate.",
+    "The first foreground timing attempt retained six preflight refusals for actual window DPR 1.0000000298023224. The rerun fixes render ratio at 1 and requires identical unrounded actual window DPR across all lanes and frames."
+  ]
+}
