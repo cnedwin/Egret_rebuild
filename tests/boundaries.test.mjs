@@ -13,7 +13,7 @@ const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, spineImportMutation, combinedSceneMutation, sharedMutation, sequenceMutation, /* S3D1_OPTIONS_BEGIN */ scene3dMutation /* S3D1_OPTIONS_END */ }, run) {
+function fixture({ imported, missingCachedLayerTypes, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, spineImportMutation, combinedSceneMutation, sharedMutation, sequenceMutation, /* S3D1_OPTIONS_BEGIN */ scene3dMutation /* S3D1_OPTIONS_END */ }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -726,6 +726,16 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     const m15HostForward="export type {SharedDeviceSessionState,SharedDeviceSessionStatus,SharedHostResourceStatus} from './sharedDeviceSession.js';\nexport type {SharedFrameUploadOptions,SharedFrameUploadReady,SharedFrameSubmission,SharedFrameUpload} from './sharedFrameUpload.js';\n";
     for(const name of ['webgpu','scene3d','webgl2','webgl2Scene3d']) for(const [directory,suffix] of [['web','.ts'],['dist/web','.d.ts']])
       append('packages/engine/'+directory+'/'+name+suffix,m15HostForward);
+    // The current synthetic facade adds only erased cached-layer types to the retained M1.4/M1.5 fixture.
+    const layerTypeNames = ['SharedLayerWebGL2Host', 'SharedWebGL2Layer2D', 'SharedWebGL2LayerPlacement2D', 'SharedWebGL2LayerStatus'];
+    for (const [directory,suffix] of [['web','.ts'],['dist/web','.d.ts']]) {
+      const facade = 'packages/engine/'+directory+'/webgl2'+suffix;
+      const types = 'packages/engine/'+directory+'/webgl2Types'+suffix;
+      const original = readFileSync(path.join(root,facade),'utf8'), anchor = 'SharedWebGL2Host,';
+      assert.equal(original.split(anchor).length,2,'one retained WebGL2 type forwarding clause');
+      if (missingCachedLayerTypes !== suffix) write(facade,original.replace(anchor,anchor+' '+layerTypeNames.join(', ')+','));
+      append(types,layerTypeNames.map(name=>'export type '+name+' = unknown;\n').join(''));
+    }
     const m15EngineImports="import type {AdmittedResourceManifest} from '@egret/contracts/resources';\nimport type {ManifestAssetGroup,ManifestBinding,ManifestGroupOptions} from './manifestResourceTypes.js';\n";
     const m15Methods=['capturePreparedSharedFrame(ticket: BitmapBindingTicket, options: SharedFrameOptions2D): SharedRenderFrame2D',
       'createManifestGroup(scope: Scope, manifest: AdmittedResourceManifest, roots: readonly string[], bindings: readonly ManifestBinding[], options?: ManifestGroupOptions): ManifestAssetGroup'];
@@ -2326,6 +2336,15 @@ for(const [name,reason]of [
   });
 });
 // S3D1_TESTS_END
+
+test('cached-layer facade requires current erased types in source and declaration',()=>{
+  for (const [suffix,file] of [['.ts','packages/engine/web/webgl2.ts'],['.d.ts','packages/engine/dist/web/webgl2.d.ts']]) {
+    fixture({ imported:'robust-predicates', missingCachedLayerTypes:suffix }, result=>{
+      assert.equal(result.status,1,result.stdout+result.stderr);
+      assert.ok(result.stderr.includes('M14: exact WebGL2 forwarding/type erasure mismatch: '+file),result.stderr);
+    });
+  }
+});
 
 // Each assigned control starts from its own complete legal policy fixture.
 for(const [name,reason]of [

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/shared-webgl2-layer-cache.test.mjs",
+      "originRole": "Independently authored first-party public WebGL2 layer cache behavior tests; AI-assisted; Apache-2.0. Synthetic art and test ports.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/verify-webgl2-layer-cache.mjs",
+      "originRole": "Independently authored first-party native WebGL2 layer cache collector; AI-assisted; Apache-2.0. Synthetic pixels only.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

@@ -16,7 +16,7 @@ M1.4 包含真实 WebGL context 恢复。M1.5 另行负责统一设备会话、�
 
 | 入口 | 唯一运行时导出 | 擦除类型导出 |
 | --- | --- | --- |
-| `@egret/engine/webgl2` | `createSharedWebGL2Host(options): SharedWebGL2Host` | `SharedWebGL2Host`、`SharedWebGL2HostOptions`、`SharedWebGL2HostStatus`、`SharedWebGL2Readback`、`WebGL2HostState`、`WebGL2HostErrorCode`、`WebGL2HostFailure`、`WebGL2HostDiagnostic`、`WebGL2HostStatus` |
+| `@egret/engine/webgl2` | `createSharedWebGL2Host(options): SharedLayerWebGL2Host` | `SharedWebGL2Host`、`SharedLayerWebGL2Host`、`SharedWebGL2Layer2D`、`SharedWebGL2LayerPlacement2D`、`SharedWebGL2LayerStatus`、`SharedWebGL2HostOptions`、`SharedWebGL2HostStatus`、`SharedWebGL2Readback`、`WebGL2HostState`、`WebGL2HostErrorCode`、`WebGL2HostFailure`、`WebGL2HostDiagnostic`、`WebGL2HostStatus` |
 | `@egret/engine/webgl2/scene3d` | `createSharedSceneWebGL2Host(options): SharedSceneWebGL2Host` | `SharedSceneWebGL2Host`、`SharedSceneWebGL2HostOptions` |
 
 默认 Engine、Canvas 和现有 WebGPU 入口保持原接口。普通 GL 不加载可选 scene 组装。Scene 组装是固定第一方代码，不能由调用者提供协议。
@@ -29,6 +29,18 @@ M1.4 包含真实 WebGL context 恢复。M1.5 另行负责统一设备会话、�
 - `requestReadback(): Promise<SharedWebGL2Readback>`、`getStatus(): WebGL2HostStatus`、`getSharedStatus(): SharedWebGL2HostStatus`。
 
 它不实现旧 `renderFrame` 或 `renderTexturedFrame` 兼容方法。现有 `createEngineForProfile` 直接完成协商，不新增 profile 或 core 分支。Scene Host 只增加 `renderSceneSharedFrame(scene: SceneFrame3D, overlay: SharedRenderFrame2D): undefined` 与 `getSceneStatus()`，后者返回不可变 `{host, pendingSceneBytes, pendingUniformBytes, pendingDepthBytes}`。两个输入必须是真实公共值；scene 输出与 overlay 均要求不透明。
+
+## 可缓存的 2D 图层
+
+WebGL2 工厂返回 `SharedLayerWebGL2Host`，继承原有宿主接口。每个地图块或静态绘制组对应一个 `SharedWebGL2Layer2D`。`update(frame)` 接收不可变的 Engine 捕获帧，要求透明清屏、预乘输出、整数像素尺寸，支持正常 source-over 矩形、图像和普通裁剪。宿主用共享渲染路径按每源单位一纹素烘焙，复用常规绘制的图像页驻留。
+
+通过 `renderSharedFrameWithLayers(frame, placements)` 按绘制顺序提交可见块。每项包含 `layer`、`x`、`y`、`width` 和 `height`，位置和尺寸使用帧的逻辑坐标，随宿主像素比缩放。宿主以最近邻采样，将缓存合成到清屏底色上，再绘制常规帧。更高的 DPR 会缩放放置尺寸，源细节由烘焙分辨率决定。需要与角色交错遮挡的物件、角色和 UI 保留在常规帧中。镜头移动只更新放置参数。编辑地图时重新捕获并更新受影响的块。瓦片跨块时，旧、新足迹覆盖到的块都需要更新。
+
+首次放置前等待 `update` 完成。替换烘焙完成前仍可使用上次就绪的版本，已提交帧持有其采样的版本。`dispose()` 让该块退出后续提交，待引用它的帧退役后释放纹理。宿主最多接纳 512 个活动句柄，每帧最多放置 512 项，单边上限 2,048 像素。RGBA8 缓存目标总额为 32 MiB，包含烘焙中和仍被帧持有的旧版本。现有设备、帧预算与背压限制同时适用。`getSharedLayerStatus()` 报告逻辑目标字节和就绪、待完成的句柄数。释放的句柄立即退出计数，在途纹理仍计费至退役。图像上传量由原有共享资源诊断统计。
+
+上下文丢失后，曾就绪的图层变为 `stale`。应用应保留构建配方或源帧，在 `whenReady()` 后重新更新。缓存不可用期间，应用可使用直接绘制或 CPU 烘焙作为回退。关闭宿主会释放全部图层句柄。首批接口覆盖显式 WebGL2 2D 路径，WebGPU 图层、场景局部效果和深度合成另行验收。
+
+执行 `node tools/verify-webgl2-layer-cache.mjs <playwright-root> <fresh-output>` 复现 Edge 原生验证。夹具覆盖 DPR 2 下的放置、绘制顺序、透明度、非对称图案的方向、镜头移动复用、真实上下文丢失和显式重建。同一合成夹具在实体 Android Chrome 157（Samsung SM-F966U1、Adreno 830）上得到两组逐字节一致的缓存／直接绘制帧。移动图层未新增上传，真实上下文丢失后显式重建的回读结果一致。性能和设备验收见 [M4.2 计划](m4-core-acceptance-plan.md)。
 
 `SharedWebGL2HostOptions` 必须提供 `canvas: HTMLCanvasElement`，可选 `onDiagnostic?: (diagnostic: WebGL2HostDiagnostic) => unknown`。其余选项如下：
 

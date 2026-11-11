@@ -175,6 +175,23 @@ The M1 startup/recovery targets remain: application JavaScript ≤ 1 MiB gzip ex
 
 Required rows are selected before collection. An unavailable required row remains OPEN and blocks its declared support/release claim; it is not silently reclassified as optional. Separate future platforms outside the selected M4 profile do not block unrelated desktop development. Roles identify coordination needs, not an assignment to a particular volunteer.
 
+### KYS cached-layer comparison — 2026-11-12
+
+The opt-in [WebGL2 layer cache](webgl2-executor-contract.md#cached-2d-layers) was paired with the existing CPU Canvas chunk bake on the same Edge 157.0.4341.46 foreground browser and RTX 5090 Laptop GPU (D3D11). Each lane used the same engine build, scene inputs, 640 × 360 viewport and camera schedule. There were three alternating pairs of 120 completed frames per scene. Warm p95 is the median of the three per-run p95 values. Cold wall time includes asset preparation and network work. Uploads are host-observed bytes; residency is logical RGBA8 storage.
+
+| Observation | Gao Sheng Inn, Canvas → GPU cache | Dense battle, Canvas → GPU cache |
+| --- | ---: | ---: |
+| Warm completed frame interval p95 | 13.7 → 13.7 ms | 14.0 → 14.2 ms |
+| Warm submission-to-completion p95 | 10.6 → 10.4 ms | 10.9 → 10.7 ms |
+| Cold start wall time, median | 272.7 → 419.1 ms | 611.6 → 763.3 ms |
+| Cold texture uploads | 4,513,792 → 1,368,064 B | 3,059,712 → 700,416 B |
+| Warm camera texture uploads | 0 → 0 B | 262,144 → 0 B |
+| Warm logical texture residence | 4,513,792 → 9,756,672 B | 3,846,144 → 9,875,456 B |
+
+Camera motion rebuilt zero cached chunks. One inn ground edit rebuilt 1 of 32 chunks and reused the other 31. The CPU path rebuilt all 32. Median edit wall time fell from 36.5 to 7.8 ms, and uploads fell from 3,145,728 B to 0 B. Five paired color readbacks and both post-restoration captures were byte-identical. The cache rebuilt explicitly after each real WebGL2 context loss. The layer targets themselves account for 8 MiB at the inn and 8.75 MiB in battle.
+
+The desktop observations support selective use for local edits and upload reduction. They show similar warm frame intervals and higher cold cost and residence. GPU timer queries and physical GPU memory were unmeasured. The KYS fixture and its media remain private. This comparison is supplementary to [#92](https://github.com/cnedwin/Egret_rebuild/issues/92), whose fixed X profile and device rows remain open.
+
 ## 7. Connection to the all-in-one creation platform
 
 The longer-term platform combines coding, debugging, main canvas, UI/animation editing, 3D scenes/VFX, worlds/characters and target publication. Visual, code and natural-language editing should share project identity, versioned changes, diagnostics, preview and undo. Compatible editor surfaces may be combined after their workflows are evaluated.
