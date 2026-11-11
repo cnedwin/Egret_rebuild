@@ -16,7 +16,7 @@ M1.4 包含真实 WebGL context 恢复。M1.5 另行负责统一设备会话、�
 
 | 入口 | 唯一运行时导出 | 擦除类型导出 |
 | --- | --- | --- |
-| `@egret/engine/webgl2` | `createSharedWebGL2Host(options): SharedLayerWebGL2Host` | `SharedWebGL2Host`、`SharedLayerWebGL2Host`、`SharedWebGL2Layer2D`、`SharedWebGL2LayerPlacement2D`、`SharedWebGL2LayerStatus`、`SharedWebGL2HostOptions`、`SharedWebGL2HostStatus`、`SharedWebGL2Readback`、`WebGL2HostState`、`WebGL2HostErrorCode`、`WebGL2HostFailure`、`WebGL2HostDiagnostic`、`WebGL2HostStatus` |
+| `@egret/engine/webgl2` | `createSharedWebGL2Host(options): SharedLayerWebGL2Host` | `SharedWebGL2Host`、`SharedLayerWebGL2Host`、`SharedWebGL2Layer2D`、`SharedWebGL2LayerEffect2D`、`SharedWebGL2LayerPlacement2D`、`SharedWebGL2LayerStatus`、`SharedWebGL2HostOptions`、`SharedWebGL2HostStatus`、`SharedWebGL2Readback`、`WebGL2HostState`、`WebGL2HostErrorCode`、`WebGL2HostFailure`、`WebGL2HostDiagnostic`、`WebGL2HostStatus` |
 | `@egret/engine/webgl2/scene3d` | `createSharedSceneWebGL2Host(options): SharedSceneWebGL2Host` | `SharedSceneWebGL2Host`、`SharedSceneWebGL2HostOptions` |
 
 默认 Engine、Canvas 和现有 WebGPU 入口保持原接口。普通 GL 不加载可选 scene 组装。Scene 组装是固定第一方代码，不能由调用者提供协议。
@@ -38,9 +38,19 @@ WebGL2 工厂返回 `SharedLayerWebGL2Host`，继承原有宿主接口。每个�
 
 首次放置前等待 `update` 完成。替换烘焙完成前仍可使用上次就绪的版本，已提交帧持有其采样的版本。`dispose()` 让该块退出后续提交，待引用它的帧退役后释放纹理。宿主最多接纳 512 个活动句柄，每帧最多放置 512 项，单边上限 2,048 像素。RGBA8 缓存目标总额为 32 MiB，包含烘焙中和仍被帧持有的旧版本。现有设备、帧预算与背压限制同时适用。`getSharedLayerStatus()` 报告逻辑目标字节和就绪、待完成的句柄数。释放的句柄立即退出计数，在途纹理仍计费至退役。图像上传量由原有共享资源诊断统计。
 
-上下文丢失后，曾就绪的图层变为 `stale`。应用应保留构建配方或源帧，在 `whenReady()` 后重新更新。缓存不可用期间，应用可使用直接绘制或 CPU 烘焙作为回退。关闭宿主会释放全部图层句柄。首批接口覆盖显式 WebGL2 2D 路径，WebGPU 图层、场景局部效果和深度合成另行验收。
+上下文丢失后，曾就绪的图层变为 `stale`。应用应保留构建配方或源帧，在 `whenReady()` 后重新更新。缓存不可用期间，应用可使用直接绘制或 CPU 烘焙作为回退。关闭宿主会释放全部图层句柄。首批接口覆盖显式 WebGL2 2D 路径，WebGPU 图层和深度合成另行验收。
 
 执行 `node tools/verify-webgl2-layer-cache.mjs <playwright-root> <fresh-output>` 复现 Edge 原生验证。夹具覆盖 DPR 2 下的放置、绘制顺序、透明度、非对称图案的方向、镜头移动复用、真实上下文丢失和显式重建。同一合成夹具在实体 Android Chrome 157（Samsung SM-F966U1、Adreno 830）上得到两组逐字节一致的缓存／直接绘制帧。移动图层未新增上传，真实上下文丢失后显式重建的回读结果一致。性能和设备验收见 [M4.2 计划](m4-core-acceptance-plan.md)。
+
+### 场景局部光照与调色
+
+WebGL2 宿主开启 `enableEffects: true` 时，缓存块的放置项可带一个 `effect`，包含 `bounds: { x, y, width, height }`，以及可选的 `multiply`、`add` RGB 三元组。区域与放置项使用相同的左上原点帧逻辑坐标。将同一半开矩形传给相邻块，可让效果跨越块边缘。渲染先将效果限制在逻辑帧内，再按物理像素中心判断区域，在不同像素比下保持小数边界一致。
+
+RGB 乘数范围为 0 至 4，默认 `[1, 1, 1]`。RGB 加数范围为 0 至 1，默认 `[0, 0, 0]`。合成在线性预乘 RGB 上计算 `min(rgb × multiply + alpha × add, alpha)`，Alpha 保持原值。应用可对区域调色、压暗或加入有限的光色。区域外保持缓存原色。场景层仍先于常规帧绘制，因此随后绘制的 UI 和角色保持原样。每个放置项有一个区域。
+
+调整效果时更新合成参数。缓存纹素、图像上传、纹理预算、替换及恢复继续遵循图层契约。上下文恢复后用原始输入重建块，再随放置项提交效果。这项第一方效果只作用于缓存合成。其他场景效果另有契约。
+
+执行 `node tools/verify-webgl2-layer-light.mjs <playwright-root> <fresh-output>` 复验有界调色、相邻块、DPR、透明度、叠层顺序和真实上下文恢复。Edge 与实体 Android Chrome（Adreno 830）均在 1×、2× 宿主像素比下通过。两块间的作用边界连续，UI 与 Alpha 覆盖不变；调整效果时上传与图层驻留计数不变。两种比例均在真实上下文丢失后重建并得到一致像素。
 
 `SharedWebGL2HostOptions` 必须提供 `canvas: HTMLCanvasElement`，可选 `onDiagnostic?: (diagnostic: WebGL2HostDiagnostic) => unknown`。其余选项如下：
 

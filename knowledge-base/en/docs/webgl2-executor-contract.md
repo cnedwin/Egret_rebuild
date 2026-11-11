@@ -16,7 +16,7 @@ M1.4 includes actual WebGL context restoration. M1.5 separately owns unified dev
 
 | Entry | Sole runtime export | Erased exports |
 | --- | --- | --- |
-| `@egret/engine/webgl2` | `createSharedWebGL2Host(options): SharedLayerWebGL2Host` | `SharedWebGL2Host`, `SharedLayerWebGL2Host`, `SharedWebGL2Layer2D`, `SharedWebGL2LayerPlacement2D`, `SharedWebGL2LayerStatus`, `SharedWebGL2HostOptions`, `SharedWebGL2HostStatus`, `SharedWebGL2Readback`, `WebGL2HostState`, `WebGL2HostErrorCode`, `WebGL2HostFailure`, `WebGL2HostDiagnostic`, `WebGL2HostStatus` |
+| `@egret/engine/webgl2` | `createSharedWebGL2Host(options): SharedLayerWebGL2Host` | `SharedWebGL2Host`, `SharedLayerWebGL2Host`, `SharedWebGL2Layer2D`, `SharedWebGL2LayerEffect2D`, `SharedWebGL2LayerPlacement2D`, `SharedWebGL2LayerStatus`, `SharedWebGL2HostOptions`, `SharedWebGL2HostStatus`, `SharedWebGL2Readback`, `WebGL2HostState`, `WebGL2HostErrorCode`, `WebGL2HostFailure`, `WebGL2HostDiagnostic`, `WebGL2HostStatus` |
 | `@egret/engine/webgl2/scene3d` | `createSharedSceneWebGL2Host(options): SharedSceneWebGL2Host` | `SharedSceneWebGL2Host`, `SharedSceneWebGL2HostOptions` |
 
 The default Engine, Canvas and existing WebGPU entries keep their interfaces. Ordinary GL does not load the optional scene assembly. Scene assembly is fixed first-party code, never a caller-provided protocol.
@@ -38,9 +38,19 @@ Pass the visible layers in painter order to `renderSharedFrameWithLayers(frame, 
 
 Await `update` before first placement. A replacement leaves the last ready revision available until the new bake completes. Submitted frames pin the revision they sampled. `dispose()` removes the layer from future submissions and releases its textures when those frames retire. The host admits at most 512 live handles, 512 placements per frame, 2,048 pixels per target edge and 32 MiB of cached RGBA8 targets including pending and pinned superseded revisions. The existing device, frame and backpressure limits also apply. `getSharedLayerStatus()` reports logical target bytes and counts of ready and pending handles. A disposed handle exits those counts immediately; its in-flight textures remain charged until retirement. Image uploads are tracked by the ordinary shared resource diagnostics.
 
-After context loss, previously ready layers become `stale`. Retain the application's recipes or source captures and update them after `whenReady()`. Choose the direct painter or CPU bake as an application fallback while the cache is unavailable. Host close disposes all layer handles. This first slice covers the explicit WebGL2 2D route. WebGPU layers, scene-layer effects and depth-aware world composition have separate acceptance.
+After context loss, previously ready layers become `stale`. Retain the application's recipes or source captures and update them after `whenReady()`. Choose the direct painter or CPU bake as an application fallback while the cache is unavailable. Host close disposes all layer handles. This first slice covers the explicit WebGL2 2D route. WebGPU layers and depth-aware world composition have separate acceptance.
 
 Run `node tools/verify-webgl2-layer-cache.mjs <playwright-root> <fresh-output>` for the native Edge reference. The fixture checks DPR 2 placement, painter order, transparency, asymmetric row orientation, camera reuse, actual context loss and explicit rebuild. The same synthetic reference on physical Android Chrome 157 (Samsung SM-F966U1, Adreno 830) produced two byte-identical cached/direct frames, zero additional uploads during placement and a byte-identical explicit rebuild after native loss. See [M4.2 qualification](m4-core-acceptance-plan.md) for performance and device acceptance.
+
+### Local scene lighting and tint
+
+For the WebGL2 host with `enableEffects: true`, a cached placement may declare an `effect` with `bounds: { x, y, width, height }` and optional `multiply` and `add` RGB triplets. Bounds use the same top-left logical frame coordinates as placements. A single half-open rectangle can cross several chunks when each placement receives the same descriptor. The renderer clips the effect to the logical frame and compares physical pixel centers, which keeps fractional bounds consistent at different pixel ratios.
+
+The RGB multipliers range from 0 to 4 and default to `[1, 1, 1]`. RGB additions range from 0 to 1 and default to `[0, 0, 0]`. The compositor applies `min(rgb × multiply + alpha × add, alpha)` to linear premultiplied RGB and keeps Alpha unchanged. This lets an application tint a region, darken it or add a bounded light color. Pixels outside the region retain the cached source. The scene layer is still drawn before the ordinary frame, so its effect leaves later UI and actors unchanged. Each placement has one region.
+
+Changing the effect moves parameters in the composite pass. Cache texels, image uploads, texture budgets, replacement and restoration continue to follow the layer contract. After a loss, rebuild the chunks from their source and submit the effect again as part of each placement. The first-party effect is confined to this cache composition pass. Other scene effects have separate contracts.
+
+Run `node tools/verify-webgl2-layer-light.mjs <playwright-root> <fresh-output>` for the native reference of bounded color, adjacent chunks, DPR, transparency, overlay order and actual context restoration. The reference passed on Edge and physical Android Chrome (Adreno 830) at 1× and 2× host ratios. It observed continuous bounds across two chunks, unchanged UI and coverage, stable upload and layer residency counts during effect changes, and a pixel-identical rebuild after actual loss at both ratios.
 
 `SharedWebGL2HostOptions` requires `canvas: HTMLCanvasElement`; `onDiagnostic?: (diagnostic: WebGL2HostDiagnostic) => unknown` is optional. The remaining options are:
 

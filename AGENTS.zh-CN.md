@@ -152,7 +152,7 @@ B1 源码检查后继保留历史上的 19 个捕获，当前仅准入三个指�
 
 ## M1.4 WebGL2 公开行为与源码边界
 
-WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/webgl2/scene3d`。前者导出 `createSharedWebGL2Host` 及九个擦除类型，后者导出 `createSharedSceneWebGL2Host` 及两个擦除类型。根入口与 Canvas 入口不加载 WebGL2 模块。场景模式采用固定的第一方装配，复用既有场景身份验证与打包辅助模块；仅启用私有场景模式的 Host 加载该精确场景模块。调用者提供的 shader、场景插件或原生对象均不是 SDK 输入。
+WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/webgl2/scene3d`。前者导出 `createSharedWebGL2Host`、原有九个擦除类型，以及宿主管理的 2D 图层缓存和有界效果所需的五个附加类型，后者导出 `createSharedSceneWebGL2Host` 及两个擦除类型。根入口与 Canvas 入口不加载 WebGL2 模块。场景模式采用固定的第一方装配，复用既有场景身份验证与打包辅助模块；仅启用私有场景模式的 Host 加载该精确场景模块。调用者提供的 shader、场景插件或原生对象均不是 SDK 输入。
 
 `tests/shared-webgl2-controls.test.mjs` 与 `tests/fixtures/gl-shared-rendering.mjs` 使用构建后的公开 SDK 入口、真实 Engine 捕获，以及测试自有的 canvas、GL 和事件端口。属性 getter、指定故障、完成延迟与重入回调仅作用于这些自有端口／选项。形似帧的对象只用于拒绝对照，不能作为已接受夹具。除下述精确时钟对照外，这些单元不增加私有产品导入、加载钩子、全局／原型拦截或测试导出。它们证明受控准入、命令顺序、逻辑所有权与生命周期结果；真实浏览器像素、原生丢失／恢复及性能需要独立证据。既有选项／arena、共享存储与保留资源 UNIT 权限保持不变。
 

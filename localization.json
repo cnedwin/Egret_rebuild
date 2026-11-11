@@ -323,8 +323,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "0bd84fd27a03216cd116693cbd35248a90d80a490aaa504feb246da43bfb1d3f",
-      "zhSha256": "4df2e09bfd6ef8b23363f3ba6d2fe101f4341cd405173f460a0e427fc648236d"
+      "enSha256": "103fd83e550dc99f05feb2509f00c179198524ca0912c1da54d1b856a138b7a3",
+      "zhSha256": "9ebdc8781040faecc9d9c128ea2b2e8d3b948cd8f9296f5691fdf181ad18866e"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -1928,8 +1928,8 @@
       "en": "knowledge-base/en/docs/webgl2-executor-contract.md",
       "zh": "knowledge-base/Cns/docs/webgl2-executor-contract.md",
       "kind": "public_reading",
-      "enSha256": "c06542a30649033a625fe0d6f50158f5f3f31552e151c7f05244bad501ed077b",
-      "zhSha256": "1fe919924061ec1dd3dd9691b5f3ea690f9ad943087ab257c331bfd49f375bee"
+      "enSha256": "b35b26a493728584c909ee2c3334bc400a0ffa84d9e6117a0d52e7373c9dfc9c",
+      "zhSha256": "25a2e6f6a48bc0de07ef2897bc1b17f2278092933366dcfc7bbcdca617308686"
     },
     {
       "en": "knowledge-base/en/docs/webgl2-executor-evidence.md",
@@ -3147,11 +3147,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "56f2843bfcd6381f3e1a2d0c52054fec24b51e8661b9942d26268d4da1f4ac2e"
+      "sha256": "27c5f5117120b6818203c204daaf731248c4f252dbefa07789b6ba28b15630d8"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "6b0ee50a241f3e74ce440fb3f6c70cd72e58f753d967cd91c683368a6c1a6b14"
+      "sha256": "090306f70ddfd3e87818fba83d2ce55fa755a4e0de2ca535fa8aaaba7a773ad7"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3291,7 +3291,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "3f1073fc59c0e53d813fbe04a6a3d7b9f5cccd53ed7cc36169f306db3f329c00"
+      "sha256": "2424dd6f11aa8927c063ece1ebefc40e250ca7eff87d4cb66e64ab847ba5a6b2"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3439,7 +3439,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "7bfd18156f007e0bba1b44b7c547005d197d1cb3872e749c028550831d45779e"
+      "sha256": "83cd5b756eee3275507e5cd3e90ed75ed4181d77353acdec12232deae8b869bb"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3911,7 +3911,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "1b138753798bd5565b055af6e036b14c42ad02307338782dffe149e8e30bab71"
+      "sha256": "070f83bb6bf47a18f1c98c9a0444dde19795d04a80ba20ce89c8c84b39078d8f"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3939,7 +3939,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "03c44ecfa8e76fdeab8b756420759f1bdda0b466aa2da4aa0fb1af0590e5424b"
+      "sha256": "6f708846007b2db23ea890778bede6777aeaa77dc8c9e8db25c687619673534f"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4063,7 +4063,7 @@
     },
     {
       "path": "packages/engine/web/WebGL2Host.ts",
-      "sha256": "4efdf3310ca9ae7dc0988641a0a106dc55e2e0ba00ba17d6b1f2e03ec6cd592d"
+      "sha256": "82a1d973fcd9c1d809b3e9b49f78381473a5051a66a4d111354534ffddefc31d"
     },
     {
       "path": "packages/engine/web/sharedRetentionLedger.ts",
@@ -4087,11 +4087,11 @@
     },
     {
       "path": "packages/engine/web/sharedWebGL2Shaders.ts",
-      "sha256": "5836a0cf9e5e9f557b7ba4cdd4ebf397d2c1e7a7268debab9c2a8337650cf8cd"
+      "sha256": "84ede8b264a3dd6e2d324a43d45b8603570373bb4d72f79caa9e7302a52abb70"
     },
     {
       "path": "packages/engine/web/webgl2.ts",
-      "sha256": "19246e019e35de54511b1fefbac612d601e5be66b640087e2e95a9baa65e7767"
+      "sha256": "4035fe24f6a635b0606db205aa9647533a3ec3daa11739436e6a41169bae7277"
     },
     {
       "path": "packages/engine/web/webgl2Native.ts",
@@ -4103,7 +4103,7 @@
     },
     {
       "path": "packages/engine/web/webgl2Types.ts",
-      "sha256": "fd77fa090505c54470c0c4bd65a0c361ff11f47a17dedb8f63bec9e23bbf4423"
+      "sha256": "0133ef15d217a8dac0939777e382ba2c8609838e414eb2b202aa731e12641347"
     },
     {
       "path": "tools/check-push.mjs",
@@ -4824,6 +4824,14 @@
     {
       "path": "tools/verify-webgl2-layer-cache.mjs",
       "sha256": "a1d30b03ed2d165edc598b9481a3d724ca10e6916aee968453719994b7bb1ea3"
+    },
+    {
+      "path": "tests/shared-webgl2-layer-light.test.mjs",
+      "sha256": "ffbba8882afe9d6277eba9106ad053b404d91bfb8c72f57fd57a3a875651f31b"
+    },
+    {
+      "path": "tools/verify-webgl2-layer-light.mjs",
+      "sha256": "007b892da46103d9a84cf96d5c2b4871668ca9e78751fd377e485dfb9006cef0"
     }
   ],
   "historicalSemanticReview": {

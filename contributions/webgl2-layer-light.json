@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/shared-webgl2-layer-light.test.mjs",
+      "originRole": "Independently authored first-party bounded scene-layer effect behavior tests; AI-assisted; Apache-2.0. Test-owned GL ports and synthetic art.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/verify-webgl2-layer-light.mjs",
+      "originRole": "Independently authored first-party native WebGL2 scene lighting collector; AI-assisted; Apache-2.0. Synthetic pixels and application-owned browser canvas.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
