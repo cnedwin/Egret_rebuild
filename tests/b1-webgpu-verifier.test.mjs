@@ -379,7 +379,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   const { resolveB1Dependency } = await import(pathToFileURL(join(repository, 'tools/b1-webgpu/registryProvenance.mjs')).href);
   const served = new Map();
   // Evaluate only the verifier's policy declarations and collector, never emitted SDK code or main().
-  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, uiLayerAuthorityModuleSuccessors, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
+  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m24CompatibleSequenceModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, uiLayerAuthorityModuleSuccessors, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
     repository: await realpath(repository), sep, assert, resolve, readFile: selectedReadFile, realpath, resolveB1Dependency, URL,
     served, identities: new Map(), hash: body => createHash('sha256').update(body).digest('hex'),
   }, { timeout: 1000 });
@@ -780,7 +780,7 @@ test('S18 sequence collector admits only four exact successors and three private
  const policy=await completeCurrentClosure();
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m22SequenceModuleSuccessors])),sequenceSuccessors);
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m22SequenceModuleAdditions])),sequenceAdditions);
- for(const [name,expected]of [...sequenceSuccessors,...sequenceAdditions])assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))),JSON.parse(JSON.stringify(policy.m24ResetModuleSuccessor.get(name)??policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??expected)));
+ for(const [name,expected]of [...sequenceSuccessors,...sequenceAdditions])assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))),JSON.parse(JSON.stringify(policy.m24CompatibleSequenceModuleSuccessor.get(name)??policy.m24ResetModuleSuccessor.get(name)??policy.m34EffectModuleSuccessors.get(name)??policy.m24SpineModuleSuccessors.get(name)??expected)));
  for(const name of ['packages/engine/dist/animation/index.js','packages/engine/dist/animation/sequenceController.js','packages/engine/dist/animation/sequenceCoordinator.js']){assert.equal(policy.allowedModules.has(name),false);await assert.rejects(policy.collect(name),error=>error.message==='Unapproved public native dependency: '+name);}
 });
 
@@ -789,7 +789,8 @@ test('S18 RESET collector keeps the historical content identity and admits only 
  const policy=await completeCurrentClosure(),target='packages/engine/dist/internal/contentFactoryState.js';
  assert.deepEqual(JSON.parse(JSON.stringify(policy.m22SequenceModuleAdditions.get(target))),{bytes:574,sha256:'4c38c5b38105459e829be1398ff29d157b9ff8e942857b9194cef0830cc25fb1'});
  assert.deepEqual(JSON.parse(JSON.stringify([...policy.m24ResetModuleSuccessor])),[[target,{bytes:1085,sha256:'1e9f75627a4a24593da30a77ba23f8814092484cbeaa969ef23ecc56a18f1ff3'}]]);
- assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(target))),{bytes:1085,sha256:'1e9f75627a4a24593da30a77ba23f8814092484cbeaa969ef23ecc56a18f1ff3'});
+ assert.deepEqual(JSON.parse(JSON.stringify([...policy.m24CompatibleSequenceModuleSuccessor])),[["packages/engine/dist/internal/contentFactoryState.js",{"bytes":1775,"sha256":"b257a477d739162a9f6a68f2b2adb1d8d761edea2348af5a80e04ed73531f257"}]]);
+ assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(target))),{"bytes":1775,"sha256":"b257a477d739162a9f6a68f2b2adb1d8d761edea2348af5a80e04ed73531f257"});
  assert.equal(policy.served.size,144);assert.equal(policy.currentModuleIdentities.size,144);
  for(const name of ['packages/engine/dist/animation/sequenceResetSlot.js','packages/engine/dist/animation/sequenceResetTypes.js']){assert.equal(policy.allowedModules.has(name),false);await assert.rejects(policy.collect(name),error=>error.message==='Unapproved public native dependency: '+name);}
 });

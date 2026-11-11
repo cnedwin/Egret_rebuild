@@ -627,6 +627,9 @@ const m24ResetModuleSuccessor = new Map([
 assert.equal(m24ResetModuleSuccessor.size,1);
 assert.deepEqual([...m24ResetModuleSuccessor.keys()],['packages/engine/dist/internal/contentFactoryState.js']);
 assert.deepEqual(m22SequenceModuleAdditions.get('packages/engine/dist/internal/contentFactoryState.js'),{bytes:574,sha256:'4c38c5b38105459e829be1398ff29d157b9ff8e942857b9194cef0830cc25fb1'});
+// Compatible sequence playback changes the same already reachable content authority.
+const m24CompatibleSequenceModuleSuccessor = new Map([["packages/engine/dist/internal/contentFactoryState.js",{"bytes":1775,"sha256":"b257a477d739162a9f6a68f2b2adb1d8d761edea2348af5a80e04ed73531f257"}]]);
+assert.deepEqual(m24ResetModuleSuccessor.get("packages/engine/dist/internal/contentFactoryState.js"),{"bytes":1085,"sha256":"1e9f75627a4a24593da30a77ba23f8814092484cbeaa969ef23ecc56a18f1ff3"});
 const m3FontModuleIdentities = new Map([...m34ModuleIdentities,...m3FontModuleSuccessors,...m3FontModuleAdditions]);
 // Layer ownership changes exactly one already-reachable authority; no native collector membership/budget change.
 const uiLayerAuthorityModuleSuccessors = new Map([["packages/engine/dist/internal/uiFactoryState.js",{"bytes":5463,"sha256":"e8ee30245ab4ad8693cc82a4f6ded832675038f759291ea54efba2232db1f992"}]]);
@@ -635,7 +638,7 @@ assert.deepEqual(m3FontModuleIdentities.get("packages/engine/dist/internal/uiFac
 // The shared clip optimization changes one existing emitted module; retain its effects baseline.
 const m42ContainedClipModuleSuccessor = new Map([["packages/engine/dist/rendering/prepareSharedDraws2D.js",{"bytes":14216,"sha256":"3de9c4e3b1e89eba05d11b8a56220b2625168fe659604eed88d8019db3991c17"}]]);
 assert.deepEqual(m34EffectModuleSuccessors.get("packages/engine/dist/rendering/prepareSharedDraws2D.js"),{bytes:13916,sha256:"55cd7ed455dcbf9f8417dcc0324e19cc1609ef3bbd89dd7e40f519937a6122d5"});
-const currentModuleIdentities = new Map([...m3FontModuleIdentities,...m24ResetModuleSuccessor,...uiLayerAuthorityModuleSuccessors,...m42ContainedClipModuleSuccessor]);
+const currentModuleIdentities = new Map([...m3FontModuleIdentities,...m24ResetModuleSuccessor,...m24CompatibleSequenceModuleSuccessor,...uiLayerAuthorityModuleSuccessors,...m42ContainedClipModuleSuccessor]);
 assert.equal(currentModuleIdentities.size,m3FontSourceModuleLimit,'Font resources current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {

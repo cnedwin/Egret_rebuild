@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "98accf0cd51efacf868446a302dd83172e90a95f3c16e03e99cb1ab49345f8fd",
+      "sha256": "98aa492b0218a1c79a721390ea61e99710000039984a4c7f6bdf55ccd6e88e5b",
       "bytes": 391873,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -6382,8 +6382,8 @@
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 58076,
-      "sha256": "1cef47356f91cba412b2c7943d052e93010972834f8a290ffc54fd1b9548b934",
+      "bytes": 58420,
+      "sha256": "130c41af80b46317929ebcb055587b810075c2b0fc78cbf962fd894c37f80857",
       "identityHistory": [
         {
           "bytes": 17519,
@@ -7033,8 +7033,8 @@
     {
       "path": "tools/verify-webgpu-b1.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 91694,
-      "sha256": "de6414b612197a3464be6fa729f7ff097690db140c74d99f3cc11d37c931ed89",
+      "bytes": 92219,
+      "sha256": "0c87a758adf50713ecd6e7bda3373b4f2d2985fa03935178fbd952c73b0ff8c2",
       "identityHistory": [
         {
           "bytes": 38603,
