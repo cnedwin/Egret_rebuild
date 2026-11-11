@@ -364,11 +364,13 @@ test('S06 collector pins the current Host and retains both schedules separately'
   const effect=source.match(/^  const m34EffectHostSourceSuccessor = (\{[^\n]+\});$/m);assert.ok(effect);
   const worldCard=source.match(/^  const worldCardHostSourceSuccessor = (\{[^\n]+\});$/m);assert.ok(worldCard);
   assert.deepEqual(JSON.parse(effect[1]), {"bytes":195968,"sha256":"cdcaef7f728507e3407e7ffd3e827ee164d9cd5f1597458fefc3685bde0e75ac"});
-  const selected = JSON.parse(worldCard[1]);
+  const texturedGlb=source.match(/^  const texturedGlbHostSourceSuccessor = (\{[^\n]+\});$/m);assert.ok(texturedGlb);
+  assert.deepEqual(JSON.parse(worldCard[1]), {"bytes":200125,"sha256":"aa72fa15df521aaee5a34e73b61448d5207f346ec26301bae188901bad033882"});
+  const selected = JSON.parse(texturedGlb[1]);
   const currentHost = await readFile(join(repository, 'packages/engine/web/WebGPUHost.ts'));
   assert.deepEqual(selected, { bytes: currentHost.length, sha256: createHash('sha256').update(currentHost).digest('hex') });
-  assert.match(source, /assert\.equal\(currentHost\.bytes, worldCardHostSourceSuccessor\.bytes,/);
-  assert.match(source, /assert\.equal\(currentHost\.sha256, worldCardHostSourceSuccessor\.sha256\)/);
+  assert.match(source, /assert\.equal\(currentHost\.bytes, texturedGlbHostSourceSuccessor\.bytes,/);
+  assert.match(source, /assert\.equal\(currentHost\.sha256, texturedGlbHostSourceSuccessor\.sha256\)/);
   assert.match(source, /allowedModules\.has\(name\)/);
   assert.match(source, /maximumSubmittedFrames: 11/); assert.match(source, /maximumSubmittedFrames: 3/);
   assert.match(source, /baselinePixelComparisons !== 14/); assert.match(source, /window\.frames\.reduce\([^\n]*8214/);
@@ -381,7 +383,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   const { resolveB1Dependency } = await import(pathToFileURL(join(repository, 'tools/b1-webgpu/registryProvenance.mjs')).href);
   const served = new Map();
   // Evaluate only the verifier's policy declarations and collector, never emitted SDK code or main().
-  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, authoredSceneFrameModuleSuccessor, authoredSceneModuleIdentities, worldCardModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m24CompatibleSequenceModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, uiLayerAuthorityModuleSuccessors, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
+  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, authoredSceneFrameModuleSuccessor, authoredSceneModuleIdentities, worldCardModuleSuccessors, worldCardModuleIdentities, texturedGlbModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m24CompatibleSequenceModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, uiLayerAuthorityModuleSuccessors, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
     repository: await realpath(repository), sep, assert, resolve, readFile: selectedReadFile, realpath, resolveB1Dependency, URL,
     served, identities: new Map(), hash: body => createHash('sha256').update(body).digest('hex'),
   }, { timeout: 1000 });
@@ -427,7 +429,10 @@ test('S07 the finite native collector admits the actual current emitted public c
   assert.deepEqual(JSON.parse(JSON.stringify(policy.m15ModuleIdentities.get(sceneFrame))), {"bytes":10022,"sha256":"c059e09ddf929c3f27c1bbe40fd3fba9237931b23ee2192bec66fb70d1a5bb80"});
   assert.deepEqual(JSON.parse(JSON.stringify(policy.authoredSceneFrameModuleSuccessor.get(sceneFrame))),{"bytes":10736,"sha256":"ba1ea422860c571c2d41f0796d50883f8db102ab1dd31e955f28a655dcda2c2a"});
   assert.deepEqual([...policy.worldCardModuleSuccessors.keys()],["packages/engine/dist/rendering/sceneFrame3D.js","packages/engine/dist/web/WebGPUHost.js","packages/engine/dist/web/prepareSharedSubmission2D.js","packages/engine/dist/web/sharedB1.js","packages/engine/dist/web/sharedSubmissionStorage2D.js","packages/engine/dist/web/webgpuSharedMeshPass.js"]);
-  for(const [name,expected] of policy.worldCardModuleSuccessors){
+  for(const [name,expected] of policy.worldCardModuleSuccessors)
+    assert.deepEqual(policy.worldCardModuleIdentities.get(name),expected);
+  assert.deepEqual([...policy.texturedGlbModuleSuccessors.keys()],["packages/engine/dist/rendering/packSharedMeshGeometry3D.js","packages/engine/dist/rendering/sceneFrame3D.js","packages/engine/dist/web/WebGPUHost.js","packages/engine/dist/web/sharedB1.js","packages/engine/dist/web/sharedSubmissionStorage2D.js","packages/engine/dist/web/webgpuSharedMeshPass.js"]);
+  for(const [name,expected] of policy.texturedGlbModuleSuccessors){
     const body=await readFile(join(repository,name));
     assert.deepEqual(JSON.parse(JSON.stringify(expected)),{bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
   }

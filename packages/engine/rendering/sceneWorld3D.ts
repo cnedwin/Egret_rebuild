@@ -4,7 +4,7 @@ import type {Matrix4} from './matrix4.js';
 import {isMeshGeometry3D} from './meshGeometry3D.js';
 import type {MeshGeometry3D} from './meshGeometry3D.js';
 import {createAuthoredSceneFrame3D,isSceneWorldCard3D,Scene3DError} from './sceneFrame3D.js';
-import type {SceneFrame3D,SceneProjectionInput3D,SceneWorldCard3D} from './sceneFrame3D.js';
+import type {SceneFrame3D,SceneMeshTexture3D,SceneProjectionInput3D,SceneWorldCard3D} from './sceneFrame3D.js';
 
 type Vec3=readonly [number,number,number];
 export type SceneWorldProjectionInput3D={
@@ -126,7 +126,7 @@ function localMatrix(input:readonly number[]):Matrix4 {
 function checkId(id:unknown):asserts id is string {
     if(typeof id!=='string'||id.length===0||id.length>96)invalid('node.id');
 }
-function assemble(nodes:readonly OwnedNode[]):SceneWorld3D {
+function assemble(nodes: readonly OwnedNode[], textures?: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D>): SceneWorld3D {
     const byId=new Map(nodes.map(node=>[node.id,node]));
     if(byId.size!==nodes.length)invalid('duplicate node.id');
     const transforms=new Map<string,Matrix4>();
@@ -159,15 +159,15 @@ function assemble(nodes:readonly OwnedNode[]):SceneWorld3D {
             if(!owned)invalid('camera identity');
             return createAuthoredSceneFrame3D({projection:owned.projection,draws:draws.map(draw=>({
                 geometry:draw.geometry,modelView:multiplyMatrix4(owned.view,draw.transform),
-            }))},cards.length?cards.map(draw=>({card:draw.card,modelView:multiplyMatrix4(owned.view,draw.transform)})):undefined);
+            }))},cards.length?cards.map(draw=>({card:draw.card,modelView:multiplyMatrix4(owned.view,draw.transform)})):undefined,textures);
         },
         withNodes(input:readonly SceneWorldNodeInput3D[]){
-            return assemble([...nodes,...captureNodes(input,nodes.length,draws.length+cards.length)]);
+            return assemble([...nodes,...captureNodes(input,nodes.length,draws.length+cards.length)],textures);
         },
         withNodeTransform(id:string,input:readonly number[]){
             if(!byId.has(id))invalid('node.id');
             const transform=localMatrix(input);
-            return assemble(nodes.map(node=>node.id===id?{...node,localMatrix:transform}:node));
+            return assemble(nodes.map(node=>node.id===id?{...node,localMatrix:transform}:node),textures);
         },
     });
 }
@@ -217,4 +217,10 @@ function captureNodes(input:readonly SceneWorldNodeInput3D[],existingNodes:numbe
 }
 export function createSceneWorld3D(input:readonly SceneWorldNodeInput3D[]):SceneWorld3D {
     return assemble(captureNodes(input,0,0));
+}
+
+/** The GLB binder provides immutable UVs and opaque images before publication. */
+export function createTexturedSceneWorld3D(input: readonly SceneWorldNodeInput3D[],
+    textures: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D>): SceneWorld3D {
+    return assemble(captureNodes(input,0,0), new Map(textures));
 }

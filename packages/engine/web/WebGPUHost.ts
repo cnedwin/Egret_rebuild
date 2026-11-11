@@ -10,7 +10,8 @@ import type { SharedWebGPUHostOptions, SharedSceneWebGPUHostOptions, SharedWebGP
 import { prepareSharedDraws2D, SharedPreparationError } from '../rendering/prepareSharedDraws2D.js';
 import { planSharedSubmission2D, packSharedSubmission2D, materializeSharedPages2D, checkSharedCapacity2D, SharedStorageError2D } from './prepareSharedSubmission2D.js';
 import type { SharedSubmissionStorage2D, SharedOwnerSnapshot2D } from './prepareSharedSubmission2D.js';
-import { attachSharedSceneCardSources2D, packSharedSceneCardUniform3D } from './sharedSubmissionStorage2D.js';
+import { attachSharedSceneSources2D, packSharedSceneCardUniform3D } from './sharedSubmissionStorage2D.js';
+import type { packSharedMeshGeometry3D } from '../rendering/packSharedMeshGeometry3D.js';
 import type { PackedSharedDraw2D } from '../rendering/packSharedDraws2D.js';
 import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js';
 import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatches2D.js';
@@ -216,12 +217,14 @@ type BuiltinFunctions = Omit<B1BuiltinProtocol,'version'|'createWebGPUMeshPipeli
 };
 type SceneValue = ReturnType<BuiltinFunctions['createSceneFrame3D']>;
 type PackedMesh = ReturnType<BuiltinFunctions['packMeshGeometry3D']>;
-interface SceneUploadDraw { mesh: PackedMesh; uniform: Float32Array<ArrayBuffer>; }
+type SceneGeometry = SceneValue['geometries'][number];
+interface SceneUploadDraw { mesh: PackedMesh; uniform: Float32Array<ArrayBuffer>; viewIndex: number|undefined; }
 interface SceneUploadCard { viewIndex: number; uniform: Float32Array<ArrayBuffer>; }
 type CardPipelineFactory = typeof import('./sharedB1.js')['createSharedWebGPUCardPipeline'];
 interface SceneAdmission {
     scene: SceneValue; functions: BuiltinFunctions;
     sceneBytes: number; uniformBytes: number; depthBytes: number;
+    textureCoordinates: ReadonlyMap<SceneGeometry,readonly number[]>|undefined;
     meshes: PackedMesh[]; draws: SceneUploadDraw[]; cards: SceneUploadCard[];
 }
 const CARD_UNIFORM_BYTES = 112;
@@ -308,6 +311,8 @@ class WebGPUHostImplementation {
     private meshLayout: GPUBindGroupLayout | undefined;
     private cardPipeline: GPURenderPipeline | undefined;
     private cardLayout: GPUBindGroupLayout | undefined;
+    private texturedSceneMeshPipeline: GPURenderPipeline | undefined;
+    private texturedSceneMeshLayout: GPUBindGroupLayout | undefined;
     private sampler: GPUSampler | undefined;
     private readonly sharedPipelines=new Map<string,{pipeline:GPURenderPipeline;layout:GPUBindGroupLayout}>();
     private readonly sharedSamplers=new Map<string,GPUSampler>();
@@ -677,12 +682,14 @@ class WebGPUHostImplementation {
         this.pipeline=undefined;this.imagePipeline=undefined;this.imageLayout=undefined;this.texturedPipeline=undefined;this.texturedLayout=undefined;
         this.meshPipeline=undefined;this.meshLayout=undefined;this.sampler=undefined;this.resolvePipeline=undefined;this.resolveLayout=undefined;this.effectPipelines.clear();
         this.cardPipeline=undefined;this.cardLayout=undefined;
+        this.texturedSceneMeshPipeline=undefined;this.texturedSceneMeshLayout=undefined;
         this.sharedPipelines.clear();this.sharedSamplers.clear();
     }
 
     private async initialize(supplied?:NativeCapture): Promise<void> {
         let stage: WebGPUHostErrorCode = 'WEBGPU_UNAVAILABLE';
         let createCardPipeline:CardPipelineFactory|undefined;
+        let createTexturedSceneMeshPipeline:CardPipelineFactory|undefined;
         const operation=this.recoveryAttempt;
         const gate=():void=>{
             if(operation){this.checkRecoveryDeadline(operation);if(operation.failure)throw new ClassifiedWebGPUFailure(operation.failure.code as WebGPUHostErrorCode,operation.failure.cause,operation.failure);if(this.recoveryAttempt!==operation||operation.cancelled||this.state!=='restoring')throw new ClassifiedWebGPUFailure('WEBGPU_START_CANCELLED',this.generationFailure?.cause);}
@@ -720,8 +727,11 @@ class WebGPUHostImplementation {
                 if (!Object.isFrozen(protocol)) throw new TypeError('B1 built-in freeze');
                 B1_FUNCTIONS.set(this, Object.freeze(functions));
                 if(shared){
-                    createCardPipeline=(namespace as typeof import('./sharedB1.js')).createSharedWebGPUCardPipeline;gate();
-                    if(typeof createCardPipeline!=='function')throw new TypeError('Shared scene card pipeline export');
+                    const sceneModule=namespace as typeof import('./sharedB1.js');
+                    createCardPipeline=sceneModule.createSharedWebGPUCardPipeline;gate();
+                    createTexturedSceneMeshPipeline=sceneModule.createSharedWebGPUTexturedMeshPipeline;gate();
+                    if(typeof createCardPipeline!=='function'||typeof createTexturedSceneMeshPipeline!=='function')
+                        throw new TypeError('Shared scene sampled pipeline exports');
                 }
                 gate();
             }
@@ -811,6 +821,7 @@ class WebGPUHostImplementation {
                         createSharedResolvePipeline(capturedShader,capturedPipeline,this.format,SHARED_OPTIONS.get(this)!.outputAlpha==='opaque');
                         if(builtin)builtin.createWebGPUMeshPipeline(capturedShader,capturedPipeline,'rgba8unorm-srgb');
                         createCardPipeline?.(capturedShader,capturedPipeline);
+                        createTexturedSceneMeshPipeline?.(capturedShader,capturedPipeline);
                         if(SHARED_OPTIONS.get(this)!.enableEffects)for(const mode of EFFECT_PASSES)createSharedEffectPipeline(capturedShader,capturedPipeline,mode);
                         for(const filter of ['nearest','linear'] as const)for(const u of ['clamp-to-edge','repeat','mirror-repeat'] as const)for(const v of ['clamp-to-edge','repeat','mirror-repeat'] as const){
                             const value=sampler({addressModeU:u,addressModeV:v,addressModeW:'clamp-to-edge',minFilter:filter,magFilter:filter,mipmapFilter:'nearest',lodMinClamp:0,lodMaxClamp:0,maxAnisotropy:1});
@@ -845,6 +856,10 @@ class WebGPUHostImplementation {
                 this.resolvePipeline=roles[index++]!.value;this.resolveLayout=this.method(this.resolvePipeline,'getBindGroupLayout',gate)(0);gate();
                 if(builtin){this.meshPipeline=roles[index++]!.value;this.meshLayout=this.method(this.meshPipeline,'getBindGroupLayout',gate)(0);gate();}
                 if(createCardPipeline){this.cardPipeline=roles[index++]!.value;this.cardLayout=this.method(this.cardPipeline,'getBindGroupLayout',gate)(0);gate();}
+                if(createTexturedSceneMeshPipeline){
+                    this.texturedSceneMeshPipeline=roles[index++]!.value;
+                    this.texturedSceneMeshLayout=this.method(this.texturedSceneMeshPipeline,'getBindGroupLayout',gate)(0);gate();
+                }
                 if(SHARED_OPTIONS.get(this)!.enableEffects)for(const mode of EFFECT_PASSES){const pipeline=roles[index++]!.value,layout=this.method(pipeline,'getBindGroupLayout',gate)(0);gate();this.effectPipelines.set(mode,{pipeline,layout});}
             }else{
             this.pipeline = roles[0]!.value;
@@ -1206,33 +1221,45 @@ class WebGPUHostImplementation {
         const createView = this.method(texture, 'createView', gate);
         const view = createView(); record.views.push(view); gate(); return view;
     }
-    private admitScene(value: unknown, deferDevice = false, allowCards = false): SceneAdmission {
+    private admitScene(value: unknown, deferDevice = false, allowSharedImages = false): SceneAdmission {
         const functions = B1_FUNCTIONS.get(this);
         // Only the actual CPU module's identity predicate grants access to
         // immutable fields. Foreign objects/proxies receive no property reads.
         if (!functions || !functions.isSceneFrame3D(value)) throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
         const scene = value, count = scene.draws.length, distinct = scene.geometries.length, cardCount = scene.cards?.length ?? 0;
-        // Legacy scene routes have no shared image-page admission or cutout pass.
-        if(cardCount>0&&!allowCards)throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
+        // Legacy scene routes have no shared image-page admission or sampled pass.
+        if(cardCount>0&&!allowSharedImages)throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
         if (count + cardCount > B1_LIMITS.draws || distinct > B1_LIMITS.geometries) throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_BUDGET');
+        let textureCoordinates:Map<SceneGeometry,readonly number[]>|undefined;
+        for(const draw of scene.draws)if(draw.texture){
+            if(!allowSharedImages)throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
+            // Authentic authored frames assign one texture and UV table to each geometry identity.
+            (textureCoordinates??=new Map()).set(draw.geometry,draw.texture.texcoords);
+        }
         let cpuBytes = 0, sceneBytes = 0;
         const uniformBytes = 64 * count + CARD_UNIFORM_BYTES * cardCount;
         for (const geometry of scene.geometries) {
-            const vertexBytes = 24 * geometry.vertexCount, indexBytes = 4 * geometry.indexCount;
-            cpuBytes += 8 * (6 * geometry.vertexCount + geometry.indexCount);
+            const components=textureCoordinates?.has(geometry)?8:6;
+            const vertexBytes = 4 * components * geometry.vertexCount, indexBytes = 4 * geometry.indexCount;
+            cpuBytes += 8 * (components * geometry.vertexCount + geometry.indexCount);
             sceneBytes += vertexBytes + indexBytes;
             if (!deferDevice && (vertexBytes > this.limits.maxBufferSize || indexBytes > this.limits.maxBufferSize)) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
         }
         if (![cpuBytes, sceneBytes, uniformBytes].every(Number.isSafeInteger) || cpuBytes > B1_LIMITS.cpu || sceneBytes > B1_LIMITS.scene || uniformBytes > B1_LIMITS.uniform) throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_BUDGET');
         if (cpuBytes !== scene.cpuLogicalBytes || sceneBytes !== scene.sceneBytes || uniformBytes !== scene.uniformBytes) throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
         if (!deferDevice && count > 0 && 64 > this.limits.maxBufferSize) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
-        return { scene, functions, sceneBytes, uniformBytes, depthBytes: 0, meshes: [], draws: [], cards: [] };
+        return { scene, functions, sceneBytes, uniformBytes, depthBytes: 0, textureCoordinates, meshes: [], draws: [], cards: [] };
     }
-    private packScene(plan: SceneAdmission, trustedFailures?: WeakSet<object>): void {
-        const packed = new Map<SceneValue['geometries'][number], PackedMesh>();
+    private packScene(plan: SceneAdmission, trustedFailures?: WeakSet<object>, textureViews?:ReadonlyMap<SceneGeometry,number>): void {
+        const packed = new Map<SceneGeometry, PackedMesh>();
         for (const geometry of plan.scene.geometries) {
             let mesh: PackedMesh;
-            try { mesh = plan.functions.packMeshGeometry3D(geometry); }
+            try {
+                const uv=plan.textureCoordinates?.get(geometry);
+                // Only the authenticated shared B1 factory supports the optional UV argument.
+                const pack=plan.functions.packMeshGeometry3D as typeof packSharedMeshGeometry3D;
+                mesh=uv?pack(geometry,uv):plan.functions.packMeshGeometry3D(geometry);
+            }
             catch (cause) {
                 // Origin is queried only at this trusted invocation boundary;
                 // a foreign class/code is never authority for helper mapping.
@@ -1252,7 +1279,12 @@ class WebGPUHostImplementation {
             // CPU MVP is an immutable 16-number tuple. Upload its column-major
             // float32 ABI directly: no elements property, transpose or Y flip.
             const uniform = new Float32Array(draw.mvp);
-            this.active(); plan.draws.push({ mesh, uniform });
+            const viewIndex=mesh.indexCount>0?textureViews?.get(draw.geometry):undefined;
+            if(mesh.indexCount>0&&draw.texture&&viewIndex===undefined){
+                const failure=new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
+                trustedFailures?.add(failure);throw failure;
+            }
+            this.active(); plan.draws.push({ mesh, uniform, viewIndex });
         }
     }
     private preflight(input: RenderFrame2D, sceneInput?: unknown) {
@@ -1515,15 +1547,17 @@ class WebGPUHostImplementation {
                 if(hasScene){try{scene=this.admitScene(sceneInput,true,true);}catch(cause){if(cause instanceof ClassifiedWebGPUFailure)trusted.add(cause);throw cause;}scene.depthBytes=4*width*height;}
                 const overlay=prepareSharedDraws2D(frame,width,height,options),ticket=this.ticket&&!this.ticket.bound?this.ticket:undefined;
                 const cards=scene?.scene.cards;
-                const attached=cards?.length?attachSharedSceneCardSources2D(overlay,cards):undefined;
+                const attached=scene?attachSharedSceneSources2D(overlay,cards??[],scene.scene.draws):undefined;
                 const prepared=attached?.prepared??overlay;
-                // Joint logical fees include card uniforms and the merged image pages before native work.
-                const sceneBufferBytes=scene?scene.scene.geometries.flatMap(geometry=>[24*geometry.vertexCount,4*geometry.indexCount]):[];
+                // Joint logical fees include scene geometry, uniforms, and merged image pages before native work.
+                const sceneBufferBytes=scene?scene.scene.geometries.flatMap(geometry=>[
+                    (scene.textureCoordinates?.has(geometry)?32:24)*geometry.vertexCount,4*geometry.indexCount,
+                ]):[];
                 if(scene&&scene.scene.draws.length>0)sceneBufferBytes.push(64);
-                if(attached)sceneBufferBytes.push(CARD_UNIFORM_BYTES);
+                if(cards?.length)sceneBufferBytes.push(CARD_UNIFORM_BYTES);
                 const storage=planSharedSubmission2D(prepared,options,{...this.limits,sceneBufferBytes},this.sharedOwnerSnapshot(),staging?options.enableReadback:ticket!==undefined,scene,attached?.projectionPlan);
                 if(scene){
-                    this.packScene(scene,trusted);
+                    this.packScene(scene,trusted,attached?.textureViews);
                     if(cards&&attached)for(const [index,card] of cards.entries()){
                         scene.cards.push({viewIndex:attached.cardViews[index]!,uniform:packSharedSceneCardUniform3D(card)});
                     }
@@ -1535,7 +1569,10 @@ class WebGPUHostImplementation {
                     if(viewIndex===undefined)demands.push({kind:'rect'});
                     else demands.push({kind:entry.prepared.command.kind==='mesh'?'mesh':'image',packed:{vertexCount:entry.vertexCount},viewIndex});}
                 for(const group of prepared.effects.groups)if(group.maskPageIndex!==undefined)demands.push({kind:'image',packed:{vertexCount:3},viewIndex:group.maskPageIndex});
-                if(scene)for(const card of scene.cards)demands.push({kind:'image',packed:{vertexCount:6},viewIndex:card.viewIndex});
+                if(scene){
+                    for(const draw of scene.draws)if(draw.viewIndex!==undefined)demands.push({kind:'mesh',packed:draw.mesh,viewIndex:draw.viewIndex});
+                    for(const card of scene.cards)demands.push({kind:'image',packed:{vertexCount:6},viewIndex:card.viewIndex});
+                }
                 const imagePlan=this.planImageResidency(storage.projectionPlan,demands,true);
                 const pages=materializeSharedPages2D(storage,new Set(imagePlan.use.candidates.keys()),this.sharedOwnerSnapshot(),this.resourceCpu);materialized=pages.canonicalBytes;this.active();
                 checkSharedCapacity2D(storage,this.sharedOwnerSnapshot(),pages.canonicalBytes);
@@ -1879,7 +1916,10 @@ class WebGPUHostImplementation {
                 const realized=new Map<number,{texture:GPUTexture;view:GPUTextureView}>();
                 for(const draw of batch.draws){const index=draw.prepared.pageIndex;if(index!==undefined&&!realized.has(index))realized.set(index,this.realizeImageResidency(record,imageUse,index,gate));}
                 for(const group of p.storage.prepared.effects.groups){const index=group.maskPageIndex;if(index!==undefined&&!realized.has(index))realized.set(index,this.realizeImageResidency(record,imageUse,index,gate));}
-                if(scene)for(const card of scene.cards){const index=card.viewIndex;if(!realized.has(index))realized.set(index,this.realizeImageResidency(record,imageUse,index,gate));}
+                if(scene){
+                    for(const draw of scene.draws){const index=draw.viewIndex;if(index!==undefined&&!realized.has(index))realized.set(index,this.realizeImageResidency(record,imageUse,index,gate));}
+                    for(const card of scene.cards){const index=card.viewIndex;if(!realized.has(index))realized.set(index,this.realizeImageResidency(record,imageUse,index,gate));}
+                }
                 let requestId=0;const vertices=new Map<PackedSharedDraw2D,OwnedWebGPUBuffer>(),bindings=new Map<PackedSharedDraw2D,GPUBindGroup>();
                 for(const draw of batch.draws){const vertex=this.submissionBuffer(record,requestId++,gate).handle.resource,lease=this.submissionBuffer(record,requestId++,gate),uniform=lease.handle.resource;
                     vertices.set(draw,vertex);this.sharedWrite(record,vertex.buffer,draw.data,44);gate();this.sharedWrite(record,uniform.buffer,draw.uniform,128);gate();
@@ -1892,10 +1932,15 @@ class WebGPUHostImplementation {
                 }
                 const meshes=new Map<PackedMesh,{vertex:OwnedWebGPUBuffer|undefined;index:OwnedWebGPUBuffer|undefined}>(),sceneBindings=new Map<SceneUploadDraw,GPUBindGroup>();
                 if(scene){for(const mesh of scene.meshes){const vertex=mesh.vertexBytes?this.submissionBuffer(record,requestId++,gate).handle.resource:undefined,index=mesh.indexBytes?this.submissionBuffer(record,requestId++,gate).handle.resource:undefined;meshes.set(mesh,{vertex,index});
-                        if(vertex){this.sharedWrite(record,vertex.buffer,mesh.vertices,24);gate();}if(index){this.sharedWrite(record,index.buffer,mesh.indices,4);gate();}}
+                        if(vertex){this.sharedWrite(record,vertex.buffer,mesh.vertices,mesh.vertexBytes/mesh.vertexCount);gate();}if(index){this.sharedWrite(record,index.buffer,mesh.indices,4);gate();}}
                     for(const draw of scene.draws){const lease=this.submissionBuffer(record,requestId++,gate);this.sharedWrite(record,lease.handle.resource.buffer,draw.uniform,64);gate();
-                        const key:DrawBindingKey={session:this.imageEpoch,layout:this.meshLayout!,texture:undefined,view:undefined,sampler:undefined,uniform:lease.handle,offset:0,size:64};
-                        sceneBindings.set(draw,this.submissionBinding(record,key,[{binding:0,resource:{buffer:lease.handle.resource.buffer,offset:0,size:64}}],undefined,gate));}}
+                        const index=draw.viewIndex,layout=index===undefined?this.meshLayout!:this.texturedSceneMeshLayout!;
+                        const image=index===undefined?undefined:imageUse.hits.get(index)??imageUse.candidates.get(index)!.entry;
+                        const view=index===undefined?undefined:realized.get(index)!.view;
+                        const key:DrawBindingKey={session:this.imageEpoch,layout,texture:image?.identity,view,sampler:undefined,uniform:lease.handle,offset:0,size:64};
+                        const entries:GPUBindGroupEntry[]=[{binding:0,resource:{buffer:lease.handle.resource.buffer,offset:0,size:64}}];
+                        if(view)entries.push({binding:1,resource:view});
+                        sceneBindings.set(draw,this.submissionBinding(record,key,entries,image,gate));}}
                 const cardBindings:GPUBindGroup[]=[];
                 if(scene)for(const card of scene.cards){
                     const lease=this.submissionBuffer(record,requestId++,gate);
@@ -1934,7 +1979,11 @@ class WebGPUHostImplementation {
                 if(scene){
                     const raw=begin({colorAttachments:[attachment],depthStencilAttachment:{view:depth!.view,depthClearValue:0,depthLoadOp:'clear',depthStoreOp:'store'}});gate();
                     const pass=capture(raw,scene.draws.some(draw=>draw.mesh.indexCount>0)?['setPipeline','setViewport','setScissorRect','setVertexBuffer','setIndexBuffer','setBindGroup','drawIndexed']:[]),end=this.method(raw,'end',gate);
-                    for(const draw of scene.draws)if(draw.mesh.indexCount>0){const mesh=meshes.get(draw.mesh)!;scene.functions.encodeWebGPUMesh(pass,this.meshPipeline!,mesh.vertex!.buffer,mesh.index!.buffer,sceneBindings.get(draw)!,draw.mesh.indexCount,width,height);}
+                    for(const draw of scene.draws)if(draw.mesh.indexCount>0){
+                        const mesh=meshes.get(draw.mesh)!;
+                        const pipeline=draw.viewIndex===undefined?this.meshPipeline!:this.texturedSceneMeshPipeline!;
+                        scene.functions.encodeWebGPUMesh(pass,pipeline,mesh.vertex!.buffer,mesh.index!.buffer,sceneBindings.get(draw)!,draw.mesh.indexCount,width,height);
+                    }
                     // Opaque cards share the mesh depth attachment; the HUD opens a depth-free pass.
                     if(recipe.cardBindings.length>0){
                         const cards=capture(raw,['setPipeline','setViewport','setScissorRect','setBindGroup','draw']);
@@ -2341,6 +2390,7 @@ class WebGPUHostImplementation {
         delete this.lossCell.notify;delete this.lossCell.unknown;
         if (this.destroyDevice) { const destroy = this.destroyDevice; this.destroyDevice = undefined; try { destroy(); } catch (cause) { this.proofFailed(cause); } }
         this.cardPipeline=undefined;this.cardLayout=undefined;
+        this.texturedSceneMeshPipeline=undefined;this.texturedSceneMeshLayout=undefined;
         if(SHARED_OPTIONS.get(this)?.recovery&&!this.unsafe){this.borrowed=undefined;this.clearNativeReferences();}
         this.cleanupOutcome = this.unsafe ? 'unsafe' : 'safe'; this.state = 'closed';
         if (this.unsafe) throw error('WEBGPU_CLOSE_UNSAFE', this.unsafeCause);

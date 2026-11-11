@@ -123,3 +123,61 @@ export function createSharedWebGPUCardPipeline(
         multisample: { count: 1, alphaToCoverageEnabled: false },
     });
 }
+
+// The page's sRGB view decodes the opaque base-color texel to linear RGB.
+// UVs are perspective-correct and top-left, with nearest sampling clamped to the page.
+const TEXTURED_MESH_SHADER = `struct MeshUniform {
+    mvp: mat4x4<f32>,
+}
+@group(0) @binding(0) var<uniform> draw: MeshUniform;
+@group(0) @binding(1) var page: texture_2d<f32>;
+
+struct MeshVertexOutput {
+    @builtin(position) clip: vec4<f32>,
+    @location(0) rgb: vec3<f32>,
+    @location(1) uv: vec2<f32>,
+}
+
+@vertex fn vertexMain(
+    @location(0) position: vec3<f32>,
+    @location(1) color: vec3<f32>,
+    @location(2) uv: vec2<f32>,
+) -> MeshVertexOutput {
+    var result: MeshVertexOutput;
+    result.clip = draw.mvp * vec4<f32>(position, 1.0);
+    result.rgb = color;
+    result.uv = uv;
+    return result;
+}
+
+@fragment fn fragmentMain(input: MeshVertexOutput) -> @location(0) vec4<f32> {
+    let size = textureDimensions(page, 0);
+    let uv = clamp(input.uv, vec2<f32>(0.0), vec2<f32>(1.0));
+    let coordinate = min(vec2<u32>(floor(uv * vec2<f32>(size))), size - vec2<u32>(1));
+    let texel = textureLoad(page, vec2<i32>(coordinate), 0);
+    return vec4<f32>(input.rgb * texel.rgb, 1.0);
+}
+`;
+
+/** Private authored textured meshes share the same opaque reversed-depth pass as untextured meshes. */
+export function createSharedWebGPUTexturedMeshPipeline(
+    shader: Parameters<typeof createSharedWebGPUMeshPipeline>[0],
+    pipeline: Parameters<typeof createSharedWebGPUMeshPipeline>[1],
+): ReturnType<typeof createSharedWebGPUMeshPipeline> {
+    const module = shader({ code: TEXTURED_MESH_SHADER });
+    return pipeline({
+        layout: 'auto',
+        vertex: {
+            module, entryPoint: 'vertexMain',
+            buffers: [{ arrayStride: 32, stepMode: 'vertex', attributes: [
+                { shaderLocation: 0, offset: 0, format: 'float32x3' },
+                { shaderLocation: 1, offset: 12, format: 'float32x3' },
+                { shaderLocation: 2, offset: 24, format: 'float32x2' },
+            ] }],
+        },
+        fragment: { module, entryPoint: 'fragmentMain', targets: [{ format: 'rgba8unorm-srgb', writeMask: 15 }] },
+        primitive: { topology: 'triangle-list', frontFace: 'ccw', cullMode: 'none', unclippedDepth: false },
+        depthStencil: { format: 'depth32float', depthWriteEnabled: true, depthCompare: 'greater', depthBias: 0, depthBiasSlopeScale: 0, depthBiasClamp: 0 },
+        multisample: { count: 1, alphaToCoverageEnabled: false },
+    });
+}

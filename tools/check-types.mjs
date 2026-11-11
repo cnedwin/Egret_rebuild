@@ -628,6 +628,12 @@ const worldCardSceneDom = {"marker":{"path":"packages/engine/dist/rendering/scen
     {"path":"packages/engine/dist/web/sharedB1.d.ts","baseBytes":1302,"baseSha256":"f2df25a1ba2a184731c240f8aef5b9b4c9a0af05d583f493cc9ba816ce91abd5","bytes":1367,"sha256":"bda202291c6d068a2b3bb5de055c660e127b680c6a9c00e2f84e4e076d960d63"},
     {"path":"packages/engine/dist/web/webgpuSharedMeshPass.d.ts","baseBytes":743,"baseSha256":"7d1094342be884cfc1bf0850d8fc4cf8437d0bcc1b571b044791094be0b380c7","bytes":1068,"sha256":"1068c657e1051671f8a80366da0baf0048f193f3303838d122d2049ae9b90c31"}
   ]};
+const texturedSceneDom = {"marker":{"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":779,"sha256":"e249f2a69ab4aec89152d698cfbd7e5f36b2d3107c0acd04d8d0dba02d966835"},"declaration":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":3357,"sha256":"03d2f4070133f51954ff990792fce04e83354b7f32f3f8f203918e9a5b9cc62f"},
+  "sharedDeclarations":[
+    {"path":"packages/engine/dist/rendering/packSharedMeshGeometry3D.d.ts","baseBytes":1086,"baseSha256":"f442f5cfe82626d887d8a2af294cd3e63c0a8b27eb026838a2f445a7a0435b9c","bytes":1117,"sha256":"7052dfbf39a40d6ccc6043d0a82c32688b543b3accfe3a8d2f713b27f42b29e4"},
+    {"path":"packages/engine/dist/web/sharedB1.d.ts","baseBytes":1302,"baseSha256":"f2df25a1ba2a184731c240f8aef5b9b4c9a0af05d583f493cc9ba816ce91abd5","bytes":1407,"sha256":"eeed1c020a474059965ddcd6b21c9cfac79cb30a03524b235264aeb61c267e1a"},
+    {"path":"packages/engine/dist/web/webgpuSharedMeshPass.d.ts","baseBytes":743,"baseSha256":"7d1094342be884cfc1bf0850d8fc4cf8437d0bcc1b571b044791094be0b380c7","bytes":1413,"sha256":"157dd14218985bdff9a167bac2d99e8998a0a1b99ac4154be648893238939beb"}
+  ]};
 // AUTHORED-SCENE-DECLARATION-END
 function verifySceneDomM13(){
   if(!sceneDomM13Selected)return;
@@ -637,16 +643,18 @@ function verifySceneDomM13(){
   if(JSON.parse(readFileSync(path.join(sceneDomM13Native,'package.json'),'utf8')).version!==sceneDomSuccessor.compilerVersion)throw Error(sceneDomLabel+' actual native compiler version differs');
   const authoredSceneSelected=sceneDomM15Selected&&existsSync(path.join(root,authoredSceneDomMarker.path));
   let authoredDeclaration=authoredSceneDomDeclaration.current;
+  let sharedDeclarations=[];
   if(authoredSceneSelected){
     const marker=fingerprintFile(root,authoredSceneDomMarker.path);
     const matches=pin=>marker.bytes===pin.bytes&&marker.sha256===pin.sha256;
-    if(matches(worldCardSceneDom.marker))authoredDeclaration=worldCardSceneDom.declaration;
+    const successor=[worldCardSceneDom,texturedSceneDom].find(value=>matches(value.marker));
+    if(successor){authoredDeclaration=successor.declaration;sharedDeclarations=successor.sharedDeclarations;}
     else if(!matches(authoredSceneDomMarker))throw Error(sceneDomLabel+' authored scene declaration marker changed');
   }
   for(const row of [...sceneDomSuccessor.inputs.map(pin=>({owner:'repository',...pin})),...sceneDomSuccessor.closure]){
     const owner=row.owner==='compiler-native'?sceneDomM13Native:root,actual=fingerprintFile(owner,row.path);
-    const shared=authoredDeclaration===worldCardSceneDom.declaration&&row.owner==='repository'
-      ?worldCardSceneDom.sharedDeclarations.find(pin=>row.path===pin.path&&row.bytes===pin.baseBytes&&row.sha256===pin.baseSha256):undefined;
+    const shared=row.owner==='repository'
+      ?sharedDeclarations.find(pin=>row.path===pin.path&&row.bytes===pin.baseBytes&&row.sha256===pin.baseSha256):undefined;
     const expected=authoredSceneSelected&&row.owner==='repository'&&row.path===authoredSceneDomDeclaration.base.path&&
       row.bytes===authoredSceneDomDeclaration.base.bytes&&row.sha256===authoredSceneDomDeclaration.base.sha256?
       authoredDeclaration:shared??row;

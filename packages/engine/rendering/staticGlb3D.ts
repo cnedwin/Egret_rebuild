@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
+import { copyImageData2DPixels, IMAGE_LIMITS_2D, isImageData2D } from '@egret/contracts';
 import { createMeshGeometry3D } from './meshGeometry3D.js';
 import type { MeshGeometry3D } from './meshGeometry3D.js';
-import type { SceneWorldNodeInput3D } from './sceneWorld3D.js';
+import type { ImageData2D } from '@egret/contracts';
+import type { SceneMeshTexture3D } from './sceneFrame3D.js';
+import { createTexturedSceneWorld3D } from './sceneWorld3D.js';
+import type { SceneWorld3D, SceneWorldNodeInput3D } from './sceneWorld3D.js';
 import { encodeSharedSRGB } from './sharedColor2D.js';
 
 export type StaticGlb3DErrorCode = 'SCENE3D_GLB_INVALID' | 'SCENE3D_GLB_UNSUPPORTED' | 'SCENE3D_GLB_BUDGET';
@@ -15,6 +19,32 @@ export class StaticGlb3DError extends Error {
 
 type Record3D = Record<string, unknown>;
 type RGB = readonly [number, number, number];
+interface Material { readonly color: RGB; readonly textureIndex?: number; }
+
+export interface StaticGlbTexturePrimitive3D {
+    readonly geometry: MeshGeometry3D;
+    readonly imageIndex: number;
+    readonly texcoords: readonly number[];
+}
+export interface StaticGlbPngImage3D {
+    readonly imageIndex: number;
+    readonly width: number;
+    readonly height: number;
+    readonly byteLength: number;
+    copyBytes(): Uint8Array<ArrayBuffer>;
+}
+export interface StaticGlbTexturePlan3D {
+    readonly nodes: readonly SceneWorldNodeInput3D[];
+    readonly primitives: readonly StaticGlbTexturePrimitive3D[];
+    readonly images: readonly StaticGlbPngImage3D[];
+}
+interface PngSource extends Omit<StaticGlbPngImage3D, 'copyBytes'> { readonly offset: number; }
+interface TexturePlanBuilder {
+    readonly images: readonly PngSource[];
+    readonly imageViews: ReadonlySet<number>;
+    readonly textureImages: readonly number[];
+    readonly primitives: StaticGlbTexturePrimitive3D[];
+}
 interface Payload {
     readonly gltf: Record3D;
     readonly binary: DataView;
@@ -38,6 +68,14 @@ const MAX_JSON = 512 * 1024;
 const MAX_NODES = 64;
 const MAX_ACCESSORS = 192;
 const MIN_NORMAL_FLOAT = 1.1754943508222875e-38;
+const MAX_UV_MAGNITUDE = 2 ** 20;
+const MAX_PNG_BYTES = 4 * 1024 * 1024;
+const MAX_TOTAL_PNG_BYTES = 6 * 1024 * 1024;
+const MAX_TOTAL_PNG_PIXELS = 4 * IMAGE_LIMITS_2D.maxSourcePixels;
+const MAX_PNG_CHUNKS = 1024;
+const PNG_IHDR = 0x49484452, PNG_IDAT = 0x49444154, PNG_IEND = 0x49454e44;
+const PNG_SRGB = 0x73524742, PNG_GAMA = 0x67414d41, PNG_CHRM = 0x6348524d;
+const SRGB_CHROMATICITY = [31270, 32900, 64000, 33000, 30000, 6000, 15000, 6000];
 
 // Intrinsic access also accepts other realms and ignores instance metadata.
 const apply = Reflect.apply;
@@ -138,7 +176,92 @@ function readExtensions(value: unknown, field: string): void {
     if (value.length !== 1 || value[0] !== UNLIT) unsupported(field);
 }
 
-function readMaterial(value: unknown): RGB {
+/** Inspect framing and the opaque color profile in place. Native decode owns the IDAT stream. */
+function inspectEmbeddedPng(binary: DataView, offset: number, byteLength: number): { width: number; height: number } {
+    if (byteLength < 33 || binary.getUint32(offset) !== 0x89504e47 || binary.getUint32(offset + 4) !== 0x0d0a1a0a ||
+        binary.getUint32(offset + 8) !== 13 || binary.getUint32(offset + 12) !== PNG_IHDR) invalid('image PNG header');
+    const width = binary.getUint32(offset + 16), height = binary.getUint32(offset + 20);
+    if (width === 0 || height === 0) invalid('image PNG dimensions');
+    if (width > IMAGE_LIMITS_2D.maxSourceEdge || height > IMAGE_LIMITS_2D.maxSourceEdge ||
+        width * height > IMAGE_LIMITS_2D.maxSourcePixels) budget('image PNG dimensions');
+    if (binary.getUint8(offset + 24) !== 8 || binary.getUint8(offset + 25) !== 2 ||
+        binary.getUint8(offset + 26) !== 0 || binary.getUint8(offset + 27) !== 0 ||
+        binary.getUint8(offset + 28) !== 0) unsupported('image PNG RGB8 noninterlaced');
+
+    const end = offset + byteLength, metadata = new Set<number>();
+    let idatBytes = 0, idatStarted = false, chunkCount = 1, cursor = offset + 33;
+    while (cursor < end) {
+        if (++chunkCount > MAX_PNG_CHUNKS) budget('image PNG chunks');
+        if (end - cursor < 12) invalid('image PNG chunk framing');
+        const size = binary.getUint32(cursor), tag = binary.getUint32(cursor + 4), data = cursor + 8;
+        if (size > end - cursor - 12) invalid('image PNG chunk range');
+        cursor += size + 12;
+        if (tag === PNG_IDAT) {
+            idatBytes += size;
+            idatStarted = true;
+            continue;
+        }
+        if (tag === PNG_IEND) {
+            if (size !== 0 || cursor !== end || idatBytes === 0) invalid('image PNG IEND');
+            if ((metadata.has(PNG_GAMA) || metadata.has(PNG_CHRM)) && !metadata.has(PNG_SRGB)) unsupported('image PNG color space');
+            return { width, height };
+        }
+        if (tag === PNG_IHDR) invalid('image PNG duplicate IHDR');
+        if (tag !== PNG_SRGB && tag !== PNG_GAMA && tag !== PNG_CHRM) unsupported('image PNG chunk profile');
+        const expected = tag === PNG_SRGB ? 1 : tag === PNG_GAMA ? 4 : 32;
+        if (size !== expected || idatStarted || metadata.has(tag)) invalid('image PNG color metadata');
+        if (tag === PNG_SRGB && binary.getUint8(data) > 3 || tag === PNG_GAMA && binary.getUint32(data) !== 45455 ||
+            tag === PNG_CHRM && SRGB_CHROMATICITY.some((value, index) => binary.getUint32(data + index * 4) !== value)) {
+            unsupported('image PNG color space');
+        }
+        metadata.add(tag);
+    }
+    invalid('image PNG IEND');
+}
+
+function readTextureSources(gltf: Record3D, views: readonly unknown[], binary: DataView): TexturePlanBuilder {
+    const samplers = gltf.samplers === undefined ? [] : list(gltf.samplers, 'samplers', MAX_NODES);
+    for (const row of samplers) {
+        const sampler = record(row, 'sampler');
+        fields(sampler, 'sampler', ['name', 'extras', 'magFilter', 'minFilter', 'wrapS', 'wrapT']);
+        // Missing glTF samplers default to repeat and automatic filtering, outside this profile.
+        if (sampler.magFilter !== 9728 || sampler.minFilter !== 9728 || sampler.wrapS !== 33071 || sampler.wrapT !== 33071) {
+            unsupported('sampler nearest clamp');
+        }
+    }
+    const imageDefinitions = list(gltf.images, 'images', MAX_NODES);
+    const textureImages = list(gltf.textures, 'textures', MAX_NODES).map(row => {
+        const texture = record(row, 'texture');
+        fields(texture, 'texture', ['name', 'extras', 'sampler', 'source']);
+        if (texture.sampler === undefined) unsupported('texture default sampler');
+        index(texture.sampler, samplers.length - 1, 'texture.sampler');
+        return index(texture.source, imageDefinitions.length - 1, 'texture.source');
+    });
+    let encoded = 0, pixels = 0;
+    const imageViews = new Set<number>();
+    const images = imageDefinitions.map((row, imageIndex) => {
+        const image = record(row, 'image');
+        fields(image, 'image', ['name', 'extras', 'bufferView', 'mimeType']);
+        if (image.mimeType !== 'image/png') unsupported('image MIME type');
+        const viewIndex = index(image.bufferView, views.length - 1, 'image.bufferView');
+        imageViews.add(viewIndex);
+        const view = record(views[viewIndex], 'image bufferView');
+        fields(view, 'image bufferView', ['buffer', 'byteOffset', 'byteLength', 'name', 'extras']);
+        if (view.buffer !== 0) invalid('image bufferView.buffer');
+        const offset = index(view.byteOffset === undefined ? 0 : view.byteOffset, binary.byteLength, 'image bufferView.byteOffset');
+        const byteLength = index(view.byteLength, binary.byteLength - offset, 'image bufferView.byteLength');
+        if (byteLength > MAX_PNG_BYTES) budget('image PNG bytes');
+        encoded += byteLength;
+        if (encoded > MAX_TOTAL_PNG_BYTES) budget('total image PNG bytes');
+        const { width, height } = inspectEmbeddedPng(binary, offset, byteLength);
+        pixels += width * height;
+        if (pixels > MAX_TOTAL_PNG_PIXELS) budget('total image PNG pixels');
+        return { imageIndex, offset, byteLength, width, height };
+    });
+    return { images, imageViews, textureImages, primitives: [] };
+}
+
+function readMaterial(value: unknown, textureCount: number | undefined): Material {
     const material = record(value, 'material');
     fields(material, 'material', ['name', 'extras', 'doubleSided', 'alphaMode', 'extensions', 'pbrMetallicRoughness']);
     if (material.doubleSided !== true) unsupported('material.doubleSided');
@@ -148,39 +271,53 @@ function readMaterial(value: unknown): RGB {
     fields(extensions, 'material.extensions', [UNLIT]);
     if (extensions[UNLIT] === undefined) unsupported('material.KHR_materials_unlit');
     fields(record(extensions[UNLIT], 'material.KHR_materials_unlit'), 'material.KHR_materials_unlit', []);
-    if (material.pbrMetallicRoughness === undefined) return [1, 1, 1];
+    if (material.pbrMetallicRoughness === undefined) return { color: [1, 1, 1] };
     const factors = record(material.pbrMetallicRoughness, 'material.pbrMetallicRoughness');
-    fields(factors, 'material.pbrMetallicRoughness', ['baseColorFactor', 'metallicFactor', 'roughnessFactor', 'extras']);
+    const allowed = ['baseColorFactor', 'metallicFactor', 'roughnessFactor', 'extras'];
+    if (textureCount !== undefined) allowed.push('baseColorTexture');
+    fields(factors, 'material.pbrMetallicRoughness', allowed);
     for (const key of ['metallicFactor', 'roughnessFactor']) {
         const factor = factors[key];
         if (factor !== undefined && (typeof factor !== 'number' || !Number.isFinite(factor) || factor < 0 || factor > 1)) {
             invalid('material.' + key);
         }
     }
-    if (factors.baseColorFactor === undefined) return [1, 1, 1];
-    const color = numbers(factors.baseColorFactor, 4, 'material.baseColorFactor');
+    const color = factors.baseColorFactor === undefined ? [1, 1, 1, 1] :
+        numbers(factors.baseColorFactor, 4, 'material.baseColorFactor');
     if (color.some(component => component < 0 || component > 1)) invalid('material.baseColorFactor');
     // OPAQUE ignores the source alpha; the retained scene pipeline always writes alpha 1.
-    return [color[0]!, color[1]!, color[2]!];
+    const rgb: RGB = [color[0]!, color[1]!, color[2]!];
+    if (factors.baseColorTexture === undefined) return { color: rgb };
+    const texture = record(factors.baseColorTexture, 'material.baseColorTexture');
+    fields(texture, 'material.baseColorTexture', ['index', 'texCoord', 'extras']);
+    if (texture.texCoord !== undefined && texture.texCoord !== 0) unsupported('material.baseColorTexture.texCoord');
+    return { color: rgb, textureIndex: index(texture.index, textureCount! - 1, 'material.baseColorTexture.index') };
 }
 
-function readAccessor(raw: unknown, views: readonly unknown[], binary: DataView, vertex: boolean): Accessor {
+function readAccessor(
+    raw: unknown, views: readonly unknown[], binary: DataView,
+    type: 'VEC2' | 'VEC3' | 'SCALAR', imageViews?: ReadonlySet<number>,
+): Accessor {
     const accessor = record(raw, 'accessor');
     fields(accessor, 'accessor', ['bufferView', 'byteOffset', 'componentType', 'count', 'type', 'normalized', 'min', 'max', 'name', 'extras']);
     const component = accessor.componentType;
-    if (vertex ? component !== FLOAT || accessor.type !== 'VEC3' :
-        (component !== SHORT && component !== INT) || accessor.type !== 'SCALAR') unsupported('accessor format');
+    const vertex = type !== 'SCALAR';
+    if (accessor.type !== type || (vertex ? component !== FLOAT : component !== SHORT && component !== INT)) unsupported('accessor format');
     if (accessor.normalized !== undefined && accessor.normalized !== false) unsupported('accessor.normalized');
     const size = component === SHORT ? 2 : 4;
-    const stride = vertex ? 12 : size;
+    const stride = vertex ? (type === 'VEC2' ? 8 : 12) : size;
     const count = index(accessor.count, Number.MAX_SAFE_INTEGER, 'accessor.count');
     if (count < 3) invalid('accessor.count');
     if (count > (vertex ? 65536 : 196608)) budget('accessor.count');
-    const view = record(views[index(accessor.bufferView, views.length - 1, 'accessor.bufferView')], 'bufferView');
+    const viewIndex = index(accessor.bufferView, views.length - 1, 'accessor.bufferView');
+    if (imageViews?.has(viewIndex)) invalid('bufferView used by image and accessor');
+    const view = record(views[viewIndex], 'bufferView');
     fields(view, 'bufferView', ['buffer', 'byteOffset', 'byteLength', 'byteStride', 'target', 'name', 'extras']);
     if (view.buffer !== 0) invalid('bufferView.buffer');
     if (view.byteStride !== undefined && (!vertex || view.byteStride !== stride)) unsupported('bufferView.byteStride');
     if (view.target !== undefined && view.target !== (vertex ? 34962 : 34963)) invalid('bufferView.target');
+    // Preserve the legacy reader's offset defaults. The new profile rejects an explicit null.
+    if (imageViews && (view.byteOffset === null || accessor.byteOffset === null)) invalid('accessor byte offset');
     const start = index(view.byteOffset ?? 0, binary.byteLength, 'bufferView.byteOffset');
     const length = index(view.byteLength, binary.byteLength - start, 'bufferView.byteLength');
     const relative = index(accessor.byteOffset ?? 0, length, 'accessor.byteOffset');
@@ -198,25 +335,49 @@ function channel(value: number): number {
     return value;
 }
 
+function readTexcoords(definition: Record3D, uv: Accessor, binary: DataView): readonly number[] {
+    const coords: number[] = [], minimum = [Infinity, Infinity], maximum = [-Infinity, -Infinity];
+    for (let vertex = 0; vertex < uv.count; vertex++) for (let axis = 0; axis < 2; axis++) {
+        const value = binary.getFloat32(uv.offset + vertex * uv.stride + axis * 4, true);
+        if (!Number.isFinite(value) || Math.abs(value) > MAX_UV_MAGNITUDE ||
+            (value !== 0 && Math.abs(value) < MIN_NORMAL_FLOAT)) invalid('TEXCOORD_0 binary32');
+        coords.push(value === 0 ? 0 : value);
+        minimum[axis] = Math.min(minimum[axis]!, value);
+        maximum[axis] = Math.max(maximum[axis]!, value);
+    }
+    for (const [key, bound] of [['min', minimum], ['max', maximum]] as const) {
+        if (definition[key] === undefined) continue;
+        const declared = numbers(definition[key], 2, 'TEXCOORD_0 ' + key).map(Math.fround);
+        if (declared.some((value, axis) => value !== bound[axis])) invalid('TEXCOORD_0 bounds');
+    }
+    return Object.freeze(coords);
+}
+
 function readGeometry(
     primitive: Record3D, accessors: readonly unknown[], views: readonly unknown[],
-    binary: DataView, materials: readonly RGB[], charge: (vertices: number, indices: number) => void,
+    binary: DataView, materials: readonly Material[], charge: (vertices: number, indices: number, textured: boolean) => void,
+    textures?: TexturePlanBuilder,
 ): MeshGeometry3D {
     fields(primitive, 'mesh primitive', ['attributes', 'indices', 'material', 'mode', 'extras']);
     if (primitive.mode !== undefined && primitive.mode !== 4) unsupported('mesh primitive.mode');
     if (primitive.indices === undefined) unsupported('non-indexed primitive');
     const attributes = record(primitive.attributes, 'mesh primitive.attributes');
-    fields(attributes, 'mesh primitive.attributes', ['POSITION', 'COLOR_0']);
-    const factor = materials[index(primitive.material, materials.length - 1, 'mesh primitive.material')]!;
+    fields(attributes, 'mesh primitive.attributes', textures ? ['POSITION', 'COLOR_0', 'TEXCOORD_0'] : ['POSITION', 'COLOR_0']);
+    const { color: factor, textureIndex } = materials[index(primitive.material, materials.length - 1, 'mesh primitive.material')]!;
     const positionDefinition = record(accessors[index(attributes.POSITION, accessors.length - 1, 'POSITION accessor')], 'POSITION accessor');
-    const positions = readAccessor(positionDefinition, views, binary, true);
+    const positions = readAccessor(positionDefinition, views, binary, 'VEC3', textures?.imageViews);
     const declaredMin = numbers(positionDefinition.min, 3, 'POSITION min').map(Math.fround);
     const declaredMax = numbers(positionDefinition.max, 3, 'POSITION max').map(Math.fround);
-    const indices = readAccessor(accessors[index(primitive.indices, accessors.length - 1, 'index accessor')], views, binary, false);
+    const indices = readAccessor(accessors[index(primitive.indices, accessors.length - 1, 'index accessor')], views, binary, 'SCALAR', textures?.imageViews);
     const colors = attributes.COLOR_0 === undefined ? undefined :
-        readAccessor(accessors[index(attributes.COLOR_0, accessors.length - 1, 'COLOR_0 accessor')], views, binary, true);
+        readAccessor(accessors[index(attributes.COLOR_0, accessors.length - 1, 'COLOR_0 accessor')], views, binary, 'VEC3', textures?.imageViews);
     if (indices.count % 3 !== 0 || (colors !== undefined && colors.count !== positions.count)) invalid('primitive counts');
-    charge(positions.count, indices.count);
+    if (attributes.TEXCOORD_0 !== undefined && textureIndex === undefined) unsupported('unused TEXCOORD_0');
+    const uvDefinition = textureIndex === undefined ? undefined :
+        record(accessors[index(attributes.TEXCOORD_0, accessors.length - 1, 'TEXCOORD_0 accessor')], 'TEXCOORD_0 accessor');
+    const uv = uvDefinition === undefined ? undefined : readAccessor(uvDefinition, views, binary, 'VEC2', textures!.imageViews);
+    if (uv !== undefined && uv.count !== positions.count) invalid('TEXCOORD_0 count');
+    charge(positions.count, indices.count, uv !== undefined);
     const xyz: number[] = [];
     const min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
     const rgb: number[] = [];
@@ -244,7 +405,12 @@ function readGeometry(
         if (value >= positions.count || value === (indices.component === SHORT ? 0xffff : 0xffffffff)) invalid('primitive index');
         triangles.push(value);
     }
-    return createMeshGeometry3D({ positions: xyz, colors: rgb, indices: triangles });
+    const texcoords = uv === undefined ? undefined : readTexcoords(uvDefinition!, uv, binary);
+    const geometry = createMeshGeometry3D({ positions: xyz, colors: rgb, indices: triangles });
+    if (textureIndex !== undefined) textures!.primitives.push(Object.freeze({
+        geometry, imageIndex: textures!.textureImages[textureIndex]!, texcoords: texcoords!,
+    }));
+    return geometry;
 }
 
 function matrixFor(node: Record3D): number[] {
@@ -281,9 +447,22 @@ function matrixFor(node: Record3D): number[] {
 
 /** Bounded GLB subset, independent of transport, model lifetime, and native graphics. */
 export function readStaticGlbNodes3D(bytes: Uint8Array): readonly SceneWorldNodeInput3D[] {
+    return readStaticGlb(bytes, false);
+}
+
+/** Validate the complete model before publishing owned texture requests and geometry. */
+export function readStaticGlbTexturePlan3D(bytes: Uint8Array): StaticGlbTexturePlan3D {
+    return readStaticGlb(bytes, true);
+}
+
+function readStaticGlb(bytes: Uint8Array, textured: false): readonly SceneWorldNodeInput3D[];
+function readStaticGlb(bytes: Uint8Array, textured: true): StaticGlbTexturePlan3D;
+function readStaticGlb(bytes: Uint8Array, textured: boolean): readonly SceneWorldNodeInput3D[] | StaticGlbTexturePlan3D {
     const { gltf, binary } = readPayload(bytes);
-    fields(gltf, 'glTF', ['asset', 'extras', 'extensionsUsed', 'extensionsRequired', 'buffers', 'bufferViews',
-        'accessors', 'materials', 'meshes', 'nodes', 'scenes', 'scene']);
+    const allowed = ['asset', 'extras', 'extensionsUsed', 'extensionsRequired', 'buffers', 'bufferViews',
+        'accessors', 'materials', 'meshes', 'nodes', 'scenes', 'scene'];
+    if (textured) allowed.push('images', 'textures', 'samplers');
+    fields(gltf, 'glTF', allowed);
     const asset = record(gltf.asset, 'asset');
     if (asset.version !== '2.0' || (asset.minVersion !== undefined && asset.minVersion !== '2.0')) unsupported('asset.version');
     if (gltf.extensionsUsed === undefined) invalid('extensionsUsed');
@@ -291,7 +470,8 @@ export function readStaticGlbNodes3D(bytes: Uint8Array): readonly SceneWorldNode
     readExtensions(gltf.extensionsRequired, 'extensionsRequired');
     const views = list(gltf.bufferViews, 'bufferViews', MAX_ACCESSORS);
     const accessors = list(gltf.accessors, 'accessors', MAX_ACCESSORS);
-    const materials = list(gltf.materials, 'materials', MAX_NODES).map(readMaterial);
+    const textures = textured ? readTextureSources(gltf, views, binary) : undefined;
+    const materials = list(gltf.materials, 'materials', MAX_NODES).map(row => readMaterial(row, textures?.textureImages.length));
     const meshes = list(gltf.meshes, 'meshes', MAX_NODES);
     const nodes = list(gltf.nodes, 'nodes', MAX_NODES);
     const scenes = list(gltf.scenes, 'scenes', 1);
@@ -301,10 +481,10 @@ export function readStaticGlbNodes3D(bytes: Uint8Array): readonly SceneWorldNode
     const roots = list(scene.nodes, 'scene.nodes', MAX_NODES);
 
     let cpuBytes = 0, packedBytes = 0, geometryCount = 0, drawCount = 0;
-    function charge(vertices: number, indices: number): void {
-        const cpu = 8 * (6 * vertices + indices);
+    function charge(vertices: number, indices: number, usesTexture: boolean): void {
+        const cpu = 8 * ((usesTexture ? 8 : 6) * vertices + indices);
         cpuBytes += cpu;
-        packedBytes += 24 * vertices + 4 * indices;
+        packedBytes += (usesTexture ? 32 : 24) * vertices + 4 * indices;
         if (++geometryCount > MAX_NODES || cpu > 4194304 || cpuBytes > 8388608 || packedBytes > 4194304) budget('scene geometry');
     }
     const byMesh = new Map<number, readonly MeshGeometry3D[]>();
@@ -326,18 +506,98 @@ export function readStaticGlbNodes3D(bytes: Uint8Array): readonly SceneWorldNode
                 const mesh = record(meshes[meshIndex], 'mesh');
                 fields(mesh, 'mesh', ['primitives', 'name', 'extras']);
                 geometry = list(mesh.primitives, 'mesh.primitives', MAX_NODES)
-                    .map(primitive => readGeometry(record(primitive, 'mesh primitive'), accessors, views, binary, materials, charge));
+                    .map(primitive => readGeometry(record(primitive, 'mesh primitive'), accessors, views, binary, materials, charge, textures));
+                if (textured) Object.freeze(geometry);
                 byMesh.set(meshIndex, geometry);
             }
             drawCount += geometry.length;
             if (drawCount > MAX_NODES) budget('scene draw count');
         }
-        result.push({ id, localMatrix, ...(parentId === undefined ? {} : { parentId }), ...(geometry === undefined ? {} : { meshes: geometry }) });
+        const output = { id, localMatrix, ...(parentId === undefined ? {} : { parentId }),
+            ...(geometry === undefined ? {} : { meshes: geometry }) };
+        if (textured) { Object.freeze(localMatrix); Object.freeze(output); }
+        result.push(output);
         if (node.children !== undefined) {
             for (const child of list(node.children, 'node.children', MAX_NODES)) visit(child, id);
         }
     }
     for (const root of roots) visit(root);
     if (seen.size !== nodes.length || byMesh.size !== meshes.length || drawCount === 0) unsupported('scene must include all nodes and meshes');
-    return result;
+    if (textures === undefined) return result;
+    if (textures.primitives.length === 0) unsupported('scene must include a textured primitive');
+    const used = new Set(textures.primitives.map(primitive => primitive.imageIndex));
+    // Delay each byte copy until the whole GLB and aggregate budgets are accepted.
+    const images = textures.images.filter(image => used.has(image.imageIndex)).map(({ offset, ...image }) => {
+        const owned = new Uint8Array(image.byteLength);
+        owned.set(new Uint8Array(binary.buffer, binary.byteOffset + offset, image.byteLength));
+        return Object.freeze({ ...image, copyBytes: () => owned.slice() });
+    });
+    return Object.freeze({ nodes: Object.freeze(result), primitives: Object.freeze(textures.primitives), images: Object.freeze(images) });
+}
+
+export interface StaticGlbImageRequest3D {
+    readonly imageIndex: number;
+    readonly width: number;
+    readonly height: number;
+    readonly byteLength: number;
+    copyBytes(): Uint8Array<ArrayBuffer>;
+}
+export interface StaticGlbImageBinding3D {
+    readonly imageIndex: number;
+    readonly source: ImageData2D;
+}
+export interface PreparedTexturedStaticGlb3D {
+    readonly images: readonly StaticGlbImageRequest3D[];
+    bindImages(bindings: readonly StaticGlbImageBinding3D[]): SceneWorld3D;
+}
+
+/** A decode plan with no host dependency. Publish only after every opaque image is owned. */
+export function prepareTexturedStaticGlbScene3D(bytes: Uint8Array): PreparedTexturedStaticGlb3D {
+    const {images, nodes, primitives} = readStaticGlbTexturePlan3D(bytes);
+    const expected = new Map(images.map(image => [image.imageIndex, image]));
+    return Object.freeze({
+        images,
+        bindImages(bindings: readonly StaticGlbImageBinding3D[]): SceneWorld3D {
+            const sources = new Map<number, ImageData2D>();
+            const verified = new Set<ImageData2D>();
+            try {
+                if (!Array.isArray(bindings) || bindings.length !== images.length) {
+                    throw new StaticGlb3DError("SCENE3D_GLB_INVALID", "image bindings");
+                }
+                for (let index = 0; index < images.length; index++) {
+                    const binding = bindings[index];
+                    const imageIndex = binding?.imageIndex;
+                    const source = binding?.source;
+                    if (typeof imageIndex !== "number") throw new StaticGlb3DError("SCENE3D_GLB_INVALID", "image binding index");
+                    const image = expected.get(imageIndex);
+                    if (!image || sources.has(imageIndex) || !isImageData2D(source)
+                        || source.width !== image.width || source.height !== image.height) {
+                        throw new StaticGlb3DError("SCENE3D_GLB_INVALID", "image binding");
+                    }
+                    if (!verified.has(source)) {
+                        // The existing image page premultiplies alpha. Opaque GLB RGB must survive that conversion.
+                        const pixels = copyImageData2DPixels(source);
+                        for (let row = 0; row < source.height; row++) {
+                            const end = row * source.bytesPerRow + source.width * 4;
+                            for (let offset = row * source.bytesPerRow + 3; offset < end; offset += 4) {
+                                if (pixels[offset] !== 255) {
+                                    throw new StaticGlb3DError("SCENE3D_GLB_UNSUPPORTED", "image binding alpha");
+                                }
+                            }
+                        }
+                        verified.add(source);
+                    }
+                    sources.set(imageIndex, source);
+                }
+            } catch (cause) {
+                if (cause instanceof StaticGlb3DError) throw cause;
+                throw new StaticGlb3DError("SCENE3D_GLB_INVALID", "image bindings", cause);
+            }
+            const textures = new Map<MeshGeometry3D, SceneMeshTexture3D>();
+            for (const {geometry, imageIndex, texcoords} of primitives) {
+                textures.set(geometry, Object.freeze({source: sources.get(imageIndex)!, texcoords}));
+            }
+            return createTexturedSceneWorld3D(nodes, textures);
+        },
+    });
 }

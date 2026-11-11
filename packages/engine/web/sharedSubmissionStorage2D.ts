@@ -1,4 +1,4 @@
-import type { SceneCardDraw3D } from '../rendering/sceneFrame3D.js';
+import type { SceneCardDraw3D, SceneDraw3D } from '../rendering/sceneFrame3D.js';
 import type { PreparedSharedFrame2D } from '../rendering/prepareSharedDraws2D.js';
 import { copySharedPagePixels } from '../rendering/sharedColor2D.js';
 import type { SharedPageCopyDiagnostics2D } from '../rendering/sharedColor2D.js';
@@ -13,27 +13,39 @@ export interface SharedStorageLimits2D {
     readonly maxReadbackBytes:number;
     readonly maxPendingGeometryBytes:number;
 }
-/** Append card images to the ordinary page namespace without changing overlay indices. */
-export function attachSharedSceneCardSources2D(prepared:PreparedSharedFrame2D,cards:readonly SceneCardDraw3D[]):{
-    prepared:PreparedSharedFrame2D;projectionPlan:ProjectionPlan2D;cardViews:readonly number[];
-}{
-    const makeView=(image:SceneCardDraw3D['source']):ProjectionView2D=>({
-        image,region:{x:0,y:0,width:image.width,height:image.height},byteLength:image.byteLength,
+/** Append scene images to the existing page namespace without changing overlay indices. */
+export function attachSharedSceneSources2D(prepared: PreparedSharedFrame2D,
+    cards: readonly SceneCardDraw3D[], draws: readonly SceneDraw3D[]): {
+    prepared: PreparedSharedFrame2D; projectionPlan: ProjectionPlan2D;
+    cardViews: readonly number[]; textureViews: ReadonlyMap<SceneDraw3D['geometry'], number>;
+} | undefined {
+    if (cards.length === 0 && !draws.some(draw => draw.texture && draw.geometry.indexCount !== 0)) return undefined;
+    const makeView = (image: SceneCardDraw3D['source']): ProjectionView2D => ({
+        image, region: {x: 0, y: 0, width: image.width, height: image.height}, byteLength: image.byteLength,
     });
-    const views=prepared.frame.pages.map(page=>makeView(page.source));
-    const ids=new Map(views.map((view,index)=>[view.image,index]));
-    let extra=0;
-    const cardViews=cards.map(card=>{
-        const existing=ids.get(card.source);
-        if(existing!==undefined)return existing;
-        const index=views.length,view=makeView(card.source);
-        ids.set(card.source,index);views.push(view);extra+=view.byteLength;
-        if(!Number.isSafeInteger(extra)||prepared.pageBytes+extra>33554432)fail('budget');
+    const views = prepared.frame.pages.map(page => makeView(page.source));
+    const ids = new Map(views.map((view, index) => [view.image, index]));
+    let extra = 0;
+    function append(image: SceneCardDraw3D['source']): number {
+        const existing = ids.get(image);
+        if (existing !== undefined) return existing;
+        const index = views.length, view = makeView(image);
+        extra += view.byteLength;
+        if (!Number.isSafeInteger(extra) || prepared.pageBytes + extra > 33554432) fail('budget');
+        ids.set(image, index);
+        views.push(view);
         return index;
-    });
-    const expanded=extra?{...prepared,pageBytes:prepared.pageBytes+extra,upload:prepared.upload+extra}:prepared;
-    const projectionPlan={views,commandViews:[],projectionBytes:expanded.pageBytes,scratchBytes:0};
-    return {prepared:expanded,projectionPlan,cardViews};
+    }
+    const cardViews = cards.map(card => append(card.source));
+    const textureViews = new Map<SceneDraw3D['geometry'], number>();
+    for (const draw of draws) {
+        if (draw.texture && draw.geometry.indexCount !== 0 && !textureViews.has(draw.geometry)) {
+            textureViews.set(draw.geometry, append(draw.texture.source));
+        }
+    }
+    const expanded = extra ? {...prepared, pageBytes: prepared.pageBytes + extra, upload: prepared.upload + extra} : prepared;
+    const projectionPlan = {views, commandViews: [], projectionBytes: expanded.pageBytes, scratchBytes: 0};
+    return {prepared: expanded, projectionPlan, cardViews, textureViews};
 }
 export function packSharedSceneCardUniform3D(card:SceneCardDraw3D):Float32Array<ArrayBuffer>{
     const data=new Float32Array(28);

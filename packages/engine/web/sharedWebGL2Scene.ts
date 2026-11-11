@@ -34,6 +34,7 @@ export interface SharedGLSceneAdmission {
 export interface SharedGLSceneDraw {
     readonly mesh: PackedMeshGeometry3D;
     readonly uniform: Float32Array<ArrayBuffer>;
+    readonly pageIndex?: number;
 }
 export interface SharedGLSceneCardDraw {
     readonly pageIndex: number;
@@ -57,9 +58,11 @@ export function admitSharedGLScene(input: unknown, width: number, height: number
     let cpuBytes = 0, sceneBytes = 0;
     const uniformBytes = 64 * count + 112 * cards;
     const bufferBytes: number[] = [];
+    const textured = new Set(frame.draws.filter(draw => draw.texture).map(draw => draw.geometry));
     for (const geometry of frame.geometries) {
-        const vertexBytes = 24 * geometry.vertexCount, indexBytes = 4 * geometry.indexCount;
-        cpuBytes += 8 * (6 * geometry.vertexCount + geometry.indexCount);
+        const components = textured.has(geometry) ? 8 : 6;
+        const vertexBytes = 4 * components * geometry.vertexCount, indexBytes = 4 * geometry.indexCount;
+        cpuBytes += 8 * (components * geometry.vertexCount + geometry.indexCount);
         sceneBytes += vertexBytes + indexBytes;
         bufferBytes.push(vertexBytes, indexBytes);
     }
@@ -77,6 +80,7 @@ export function admitSharedGLScene(input: unknown, width: number, height: number
 /** Call only after joint logical, native-limit and pending admission; never as that preflight. */
 export function prepareSharedGLScene(
     input: unknown, width: number, height: number, cardViews: readonly number[] = [],
+    textureViews?: ReadonlyMap<SceneFrame3D["geometries"][number], number>,
 ): PreparedSharedGLScene {
     // Repeating finite metadata over a genuine immutable frame keeps this private entry self-contained.
     const admission = admitSharedGLScene(input, width, height);
@@ -86,9 +90,10 @@ export function prepareSharedGLScene(
     const draws: SharedGLSceneDraw[] = [];
     const uniforms: Float32Array<ArrayBuffer>[] = [];
     const byGeometry = new Map<SceneFrame3D['geometries'][number], PackedMeshGeometry3D>();
+    const textures = new Map(admission.frame.draws.filter(draw => draw.texture).map(draw => [draw.geometry, draw.texture!]));
     for (const geometry of admission.frame.geometries) {
         let mesh: PackedMeshGeometry3D;
-        try { mesh = packSharedMeshGeometry3D(geometry); }
+        try { mesh = packSharedMeshGeometry3D(geometry, textures.get(geometry)?.texcoords); }
         catch (cause) {
             // Only this imported packer's private origin predicate authenticates its failure.
             const origin = getSharedMeshPacking3DErrorOrigin(cause);
@@ -106,7 +111,9 @@ export function prepareSharedGLScene(
         // Preserve the existing 16-number, column-major float32 ABI, including empty draws.
         // Clip depth remapping occurs in the vertex shader; no CPU transpose, divide or Y flip.
         const uniform = new Float32Array(draw.mvp);
-        draws.push({ mesh, uniform });
+        const pageIndex = textureViews?.get(draw.geometry);
+        if (draw.texture && mesh.indexCount !== 0 && pageIndex === undefined) fail("frame");
+        draws.push(pageIndex === undefined ? { mesh, uniform } : { mesh, uniform, pageIndex });
         uniforms.push(uniform);
     }
     const cards = (admission.frame.cards ?? []).map((card, index) => {
@@ -203,5 +210,42 @@ void main() {
     vec3 premultiplied = mix(texel.rgb / 12.92, pow((texel.rgb + vec3(0.055)) / 1.055, vec3(2.4)),
         greaterThan(texel.rgb, vec3(0.04045)));
     outColor = vec4(clamp(premultiplied / texel.a, vec3(0.0), vec3(1.0)), 1.0);
+}
+`;
+
+export const SHARED_GL_SCENE_TEXTURE_VERTEX = `#version 300 es
+precision highp float;
+precision highp int;
+layout(location = 0) in vec3 aPosition;
+layout(location = 1) in vec3 aLinearColor;
+layout(location = 2) in vec2 aUV;
+layout(std140) uniform SceneDraw {
+    mat4 uMVP;
+};
+out highp vec3 vLinearColor;
+out highp vec2 vUV;
+void main() {
+    vec4 clip = uMVP * vec4(aPosition, 1.0);
+    gl_Position = vec4(clip.xy, 2.0 * clip.z - clip.w, clip.w);
+    vLinearColor = aLinearColor;
+    vUV = aUV;
+}
+`;
+
+export const SHARED_GL_SCENE_TEXTURE_FRAGMENT = `#version 300 es
+precision highp float;
+precision highp int;
+uniform highp sampler2D uScenePage;
+in highp vec3 vLinearColor;
+in highp vec2 vUV;
+layout(location = 0) out vec4 outColor;
+void main() {
+    // Shared GL pages hold encoded color in top-left row order. Decode once before modulation.
+    ivec2 dimensions = textureSize(uScenePage, 0);
+    ivec2 pixel = min(ivec2(clamp(vUV, 0.0, 1.0) * vec2(dimensions)), dimensions - 1);
+    vec3 encoded = texelFetch(uScenePage, pixel, 0).rgb;
+    vec3 linear = mix(encoded / 12.92, pow((encoded + vec3(0.055)) / 1.055, vec3(2.4)),
+        greaterThan(encoded, vec3(0.04045)));
+    outColor = vec4(linear * vLinearColor, 1.0);
 }
 `;

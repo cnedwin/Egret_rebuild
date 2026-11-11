@@ -22,7 +22,7 @@ import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatch
 import { decodeSharedSRGB } from '../rendering/sharedColor2D.js';
 import type { SharedPageCopyDiagnostics2D } from '../rendering/sharedColor2D.js';
 import { runOwnedPreparationScope } from '../rendering/ownedPreparationFailure2D.js';
-import { attachSharedSceneCardSources2D, planSharedStorageFees2D, withSharedReadbackLayout2D, checkSharedCapacity2D, materializeSharedPages2D, SharedStorageError2D } from './sharedSubmissionStorage2D.js';
+import { attachSharedSceneSources2D, planSharedStorageFees2D, withSharedReadbackLayout2D, checkSharedCapacity2D, materializeSharedPages2D, SharedStorageError2D } from './sharedSubmissionStorage2D.js';
 import type { SharedOwnerSnapshot2D, SharedSubmissionStorage2D } from './sharedSubmissionStorage2D.js';
 import { planSharedWebGL2Arenas, checkSharedWebGL2ArenaCapacity, qualifySharedWebGL2Alignment } from './sharedWebGL2Arena.js';
 import type { SharedWebGL2ArenaPlan } from './sharedWebGL2Arena.js';
@@ -194,6 +194,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     private sceneVAO:WebGLVertexArrayObject|undefined;
     private sceneProgram:WebGLProgram|undefined;
     private sceneCardProgram:{program:WebGLProgram;page:WebGLUniformLocation}|undefined;
+    private sceneTextureProgram: {program: WebGLProgram; page: WebGLUniformLocation} | undefined;
     private sceneFunctions:typeof import('./sharedWebGL2Scene.js')|undefined;
     private pump:ReturnType<typeof schedule>|undefined;
     private restoreTimer:ReturnType<typeof schedule>|undefined;
@@ -392,7 +393,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             if(restoring)this.attempt++;
             // Fixed native handles never cross a context generation, including partial startup.
             this.framebuffer=undefined;this.program=undefined;this.resolveProgram=undefined;this.layerProgram=undefined;this.layerEffectProgram=undefined;this.effectPrograms.clear();
-            this.drawVAO=undefined;this.resolveVAO=undefined;this.sceneVAO=undefined;this.sceneProgram=undefined;this.sceneCardProgram=undefined;
+            this.drawVAO=undefined;this.resolveVAO=undefined;this.sceneVAO=undefined;this.sceneProgram=undefined;this.sceneCardProgram=undefined;this.sceneTextureProgram=undefined;
             this.limits=undefined;this.native=undefined;
             this.generation++;this.token={};const token=this.token;
             this.pool=createRetentionLedger<Request,GLNativeOwner>(token,this.resourceReuse);
@@ -662,8 +663,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 if(!Number.isSafeInteger(width)||!Number.isSafeInteger(height)||width<=0||height<=0||width>4294967295||height>4294967295||width>Math.floor(options.maxBackingPixels/height))throw glFailure('WEBGL2_BACKING_LIMIT');
                 const sceneFees=withScene?this.sceneFunctions!.admitSharedGLScene(sceneInput,width,height):undefined;
                 const overlay=prepareSharedDraws2D(frame,width,height,options);
-                const cards=sceneFees?.frame.cards;
-                const attached=cards?.length?attachSharedSceneCardSources2D(overlay,cards):undefined;
+                const attached = sceneFees ? attachSharedSceneSources2D(overlay, sceneFees.frame.cards ?? [], sceneFees.frame.draws) : undefined;
                 const prepared=attached?.prepared??overlay,cardViews=attached?.cardViews??[];
                 const ticket=!layerWrite&&!staging&&this.ticket&&!this.ticket.bound?this.ticket:undefined;
                 const reserve=staging?options.enableReadback:!!ticket;
@@ -678,7 +678,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 if(projectionPlan.views.some(({image})=>image.width>limits.texture||image.height>limits.texture))throw glFailure('WEBGL2_CONTEXT_LIMIT');
                 const storage:SharedSubmissionStorage2D={...layout,projectionPlan};
                 checkSharedCapacity2D(storage,this.snapshot());
-                const scene=withScene?this.sceneFunctions!.prepareSharedGLScene(sceneInput,width,height,cardViews):undefined;this.active();
+                const scene=withScene?this.sceneFunctions!.prepareSharedGLScene(sceneInput,width,height,cardViews,attached?.textureViews):undefined;this.active();
                 const packed=packSharedDraws2D(prepared);this.active();
                 const cold=new Set<number>(),hits=new Map<number,Page>();
                 const trackPage=(index:number):void=>{
@@ -688,6 +688,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 for(const draw of packed){if('barrier' in draw||!draw.vertexCount||draw.prepared.pageIndex===undefined)continue;trackPage(draw.prepared.pageIndex);}
                 for(const group of prepared.effects.groups)if(group.maskPageIndex!==undefined)trackPage(group.maskPageIndex);
                 for(const index of cardViews)trackPage(index);
+                for(const index of attached?.textureViews.values()??[])trackPage(index);
                 const pages=materializeSharedPages2D(storage,cold,this.snapshot(),this.resourceCpu);materialized=pages.canonicalBytes;this.active();
                 checkSharedCapacity2D(storage,this.snapshot(),pages.canonicalBytes);
                 batch=prepareSharedBatches2D(packed,options.maxUploadBytes,this.scratch);this.active();
@@ -1093,6 +1094,28 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         }finally{native.recordOwners=owners;}
     }
 
+    private getSceneTextureProgram(native: GLNativeSession): NonNullable<SharedGLHost['sceneTextureProgram']> {
+        if (this.sceneTextureProgram) return this.sceneTextureProgram;
+        const functions = this.sceneFunctions!, gl = native.gl, owners = native.recordOwners;
+        // The linked program belongs to the context, independently of the frame that first uses it.
+        native.recordOwners = undefined;
+        try {
+            const program = native.program(functions.SHARED_GL_SCENE_TEXTURE_VERTEX, functions.SHARED_GL_SCENE_TEXTURE_FRAGMENT);
+            native.block(program, 'SceneDraw', ['uMVP'], 64);
+            const indices = gl.getUniformIndices(program, ['uMVP'])!;
+            if ((gl.getActiveUniforms(program, indices, 35389) as number[])[0] !== 16
+                || (gl.getActiveUniforms(program, indices, 35390) as boolean[])[0] !== false) {
+                throw glFailure('WEBGL2_CONTEXT_LIMIT');
+            }
+            const page = gl.getUniformLocation(program, 'uScenePage');
+            if (!page) throw glFailure('WEBGL2_CONTEXT_LIMIT');
+            this.sceneTextureProgram = {program, page};
+            return this.sceneTextureProgram;
+        } finally {
+            native.recordOwners = owners;
+        }
+    }
+
     private drawRecord(record:Record2D,layout:RecordLayout):void {
         const native=record.native,gl=native.gl,{width,height,frame}=record.storage.prepared;
         const {vertex,uniform,color,depth,meshes,pageTextures}=layout;
@@ -1104,11 +1127,43 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             if(record.scene){
                 gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.depthFunc(gl.GREATER);gl.clearDepth(0);gl.clear(gl.DEPTH_BUFFER_BIT);
                 gl.useProgram(this.sceneProgram!);gl.bindVertexArray(this.sceneVAO!);
-                for(let i=0;i<record.scene.draws.length;i++){const draw=record.scene.draws[i]!,item=meshes.find(value=>value.mesh===draw.mesh)!;if(!draw.mesh.indexCount)continue;
-                    gl.bindBuffer(gl.ARRAY_BUFFER,record.leases[item.vertex]!.handle.resource.value as WebGLBuffer);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,record.leases[item.index]!.handle.resource.value as WebGLBuffer);
-                    for(const [index,offset] of [[0,0],[1,12]]){gl.enableVertexAttribArray(index!);gl.vertexAttribPointer(index!,3,gl.FLOAT,false,24,offset!);gl.vertexAttribDivisor(index!,0);}
-                    gl.bindBufferRange(gl.UNIFORM_BUFFER,0,record.leases[uniform]!.handle.resource.value as WebGLBuffer,record.arena.sceneRanges[i]!.uniformOffset,64);gl.drawElements(gl.TRIANGLES,draw.mesh.indexCount,gl.UNSIGNED_INT,0);
+                let usingTexture = false;
+                for (let i = 0; i < record.scene.draws.length; i++) {
+                    const draw = record.scene.draws[i]!;
+                    if (!draw.mesh.indexCount) continue;
+                    const item = meshes.find(value => value.mesh === draw.mesh)!;
+                    const pageIndex = draw.pageIndex;
+                    const textured = pageIndex !== undefined;
+                    if (usingTexture !== textured) {
+                        usingTexture = textured;
+                        if (textured) {
+                            const variant = this.getSceneTextureProgram(native);
+                            gl.useProgram(variant.program);
+                            gl.activeTexture(gl.TEXTURE0);
+                            gl.uniform1i(variant.page, 0);
+                        } else {
+                            gl.disableVertexAttribArray(2);
+                            gl.useProgram(this.sceneProgram!);
+                        }
+                    }
+                    gl.bindBuffer(gl.ARRAY_BUFFER, record.leases[item.vertex]!.handle.resource.value as WebGLBuffer);
+                    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, record.leases[item.index]!.handle.resource.value as WebGLBuffer);
+                    const stride = textured ? 32 : 24;
+                    for (const [index, offset] of [[0, 0], [1, 12]] as const) {
+                        gl.enableVertexAttribArray(index);
+                        gl.vertexAttribPointer(index, 3, gl.FLOAT, false, stride, offset);
+                        gl.vertexAttribDivisor(index, 0);
+                    }
+                    if (pageIndex !== undefined) {
+                        gl.enableVertexAttribArray(2);
+                        gl.vertexAttribPointer(2, 2, gl.FLOAT, false, stride, 24);
+                        gl.vertexAttribDivisor(2, 0);
+                        gl.bindTexture(gl.TEXTURE_2D, pageTextures.get(pageIndex)!.native.value as WebGLTexture);
+                    }
+                    gl.bindBufferRange(gl.UNIFORM_BUFFER, 0, record.leases[uniform]!.handle.resource.value as WebGLBuffer, record.arena.sceneRanges[i]!.uniformOffset, 64);
+                    gl.drawElements(gl.TRIANGLES, draw.mesh.indexCount, gl.UNSIGNED_INT, 0);
                 }
+                if (usingTexture) gl.disableVertexAttribArray(2);
                 if(record.scene.cards.length){
                     const variant=this.getSceneCardProgram(native);
                     gl.useProgram(variant.program);gl.bindVertexArray(this.resolveVAO!);

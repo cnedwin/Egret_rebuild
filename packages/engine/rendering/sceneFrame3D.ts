@@ -20,9 +20,14 @@ export interface SceneInput3D {
     readonly projection: SceneProjectionInput3D;
     readonly draws: readonly SceneDrawInput3D[];
 }
+export interface SceneMeshTexture3D {
+    readonly source: ImageData2D;
+    readonly texcoords: readonly number[];
+}
 export interface SceneDraw3D {
     readonly geometry: MeshGeometry3D;
     readonly mvp: Matrix4;
+    readonly texture?: SceneMeshTexture3D;
 }
 type CardTuple=readonly [number,number,number,number];
 export interface SceneWorldCardInput3D {
@@ -211,10 +216,12 @@ function authoredMatrix(exact:Matrix4):Matrix4 {
 export function createSceneFrame3D(input: unknown): SceneFrame3D {
     return captureSceneFrame(input, false);
 }
-export function createAuthoredSceneFrame3D(input: SceneInput3D, cards:readonly SceneCardCapture3D[]=noCards): SceneFrame3D {
-    return captureSceneFrame(input, true, cards);
+export function createAuthoredSceneFrame3D(input: SceneInput3D, cards: readonly SceneCardCapture3D[] = noCards,
+    textures?: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D>): SceneFrame3D {
+    return captureSceneFrame(input, true, cards, textures);
 }
-function captureSceneFrame(input: unknown, authored: boolean, cardInputs:readonly SceneCardCapture3D[]=noCards): SceneFrame3D {
+function captureSceneFrame(input: unknown, authored: boolean, cardInputs: readonly SceneCardCapture3D[] = noCards,
+    textures?: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D>): SceneFrame3D {
     if (input === null || typeof input !== 'object') fail('SCENE3D_INPUT_INVALID', 'validation');
     const projection = own(input, 'projection'), draws = own(input, 'draws');
     if (projection === missing || draws === missing) fail('SCENE3D_INPUT_INVALID', 'validation');
@@ -278,13 +285,16 @@ function captureSceneFrame(input: unknown, authored: boolean, cardInputs:readonl
     if (uniformBytes > 4096) fail('SCENE3D_BUDGET', 'budget');
     for (let index = 0; index < count; index++) {
         const geometry = geometries[index] as MeshGeometry3D;
+        const texture = textures?.get(geometry);
         const exact = trustedMath(() => multiplyMatrix4(matrix, models[index]));
         const mvp=authored?authoredMatrix(exact):exact;
         let seen = false;
         for (let item = 0; item < distinct.length; item++) if (distinct[item] === geometry) seen = true;
         if (!seen) {
-            const logical = 8 * (6 * geometry.vertexCount + geometry.indexCount);
-            const packed = 24 * geometry.vertexCount + 4 * geometry.indexCount;
+            // Charge one UV stream per owned geometry. Image residency is charged by the host.
+            const components = texture ? 8 : 6;
+            const logical = 8 * (components * geometry.vertexCount + geometry.indexCount);
+            const packed = 4 * (components * geometry.vertexCount + geometry.indexCount);
             cpuLogicalBytes += logical; sceneBytes += packed;
             const admitted = native(() => Number.isSafeInteger(logical) && Number.isSafeInteger(packed)
                 && Number.isSafeInteger(cpuLogicalBytes) && Number.isSafeInteger(sceneBytes));
@@ -297,7 +307,7 @@ function captureSceneFrame(input: unknown, authored: boolean, cardInputs:readonl
         }
         profile(geometry.positions); profile(geometry.colors); profile(mvp);
         headroom(geometry.positions, mvp);
-        write(ownedDraws, index, native(() => Object.freeze({geometry, mvp})));
+        write(ownedDraws, index, native(() => Object.freeze(texture ? {geometry, mvp, texture} : {geometry, mvp})));
     }
     native(() => Object.freeze(ownedDraws));
     native(() => Object.freeze(distinct));

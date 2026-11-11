@@ -601,8 +601,9 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     write(authored+'sceneWorld3D.js',"import './matrix4.js'; import './meshGeometry3D.js'; import './sceneFrame3D.js';\n"+
       "export function createSceneWorld3D(){throw new Error('Synthetic policy fixture only');}\n"+
       "export function createSceneCamera3D(){throw new Error('Synthetic policy fixture only');}\n");
-    write(authored+'staticGlb3D.js',"import './meshGeometry3D.js'; import './sharedColor2D.js';\n"+
+    write(authored+'staticGlb3D.js',"import './meshGeometry3D.js'; import './sharedColor2D.js'; import './sceneWorld3D.js'; import '@egret/contracts';\n"+
       "export class StaticGlb3DError extends Error {}\n"+
+      "export function prepareTexturedStaticGlbScene3D(){throw new Error('Synthetic policy fixture only');}\n"+
       "export function readStaticGlbNodes3D(){throw new Error('Synthetic policy fixture only');}\n");
     // S3D1_FIXTURE_SCAFFOLD_END
     // Only these fixed inert runtime dependencies are reached by the shared capture stub.
@@ -786,7 +787,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       'rendering/sceneFrame3D.ts': ['@egret/contracts','@egret/contracts'],
       'dist/rendering/sceneFrame3D.js': ['@egret/contracts'],
       'dist/rendering/sceneFrame3D.d.ts': ['@egret/contracts'],
-      'web/WebGPUHost.ts': ['./sharedSubmissionStorage2D.js'],
+      'web/WebGPUHost.ts': ['./sharedSubmissionStorage2D.js','../rendering/packSharedMeshGeometry3D.js'],
       'dist/web/WebGPUHost.js': ['./sharedSubmissionStorage2D.js'],
       'dist/web/prepareSharedSubmission2D.d.ts': ['./imageProjections2D.js'],
       'web/sharedB1.ts': ['./webgpuSharedMeshPass.js'],

@@ -18,6 +18,16 @@
 
 运行 `node tools/serve-example.mjs`，打开 `/examples/authored-scene3d/index.html?backend=webgl2`，也可将后端改成 `webgpu`。示例生成自己的小型 GLB，展示相机移动和有父节点的模型编辑。运行 `node tools/verify-authored-scene3d.mjs <playwright-root> <fresh-output>` 复验浏览器参考。Edge 上两个后端对模型顺序反转、前后深度、节点编辑、相机移动、正交视图和 2D HUD 的回读逐字节一致。实体 Android Chrome 以最终相机和解析器产物在两个后端通过同一夹具。每个后端的六次回读均与桌面逐字节一致。这里记录的是功能验证。
 
+## 带不透明贴图的 GLB
+
+使用 `prepareTexturedStaticGlbScene3D(bytes)` 导入带基础颜色贴图的限定静态模型。带贴图的图元使用一组紧密排列的 float32 `TEXCOORD_0`、不透明双面 `KHR_materials_unlit` 材质，以及嵌入式非隔行 RGB8 PNG。采样器显式选择最近邻放大和缩小，两个轴均钳制到边缘。UV 原点位于左上角。缺省重复寻址、第二组纹理坐标、RGBA 图像、外部图像引用和其他材质模式会得到结构化拒绝。
+
+准备结果列出带索引的图像请求。每次调用 `copyBytes()` 都返回一份新副本，可交给现有 PNG 提供者。应用通过 AssetManager 和 Scope 取得解码贴图。等全部图像就绪后，将每张贴图的 `imageData` 交给 `plan.bindImages([{ imageIndex, source }, ...])`。绑定在发布场景版本前核验图像身份、尺寸和完全不透明。传入图像与嵌入式 PNG 的对应关系由字节提供者和解码流程保证。使用场景期间持有源图像租约，所有替换图像成功绑定后再发布新版本。
+
+每张嵌入图像的编码上限为 4 MiB，边长上限为 4096，像素上限为 1,048,576。单个资产最多包含 6 MiB 的嵌入 PNG 字节和 4,194,304 个解码像素。UV 为每个顶点增加八字节原生几何开销。共享 WebGL2 和 WebGPU 复用现有图页所有者与反向深度通道，基础颜色和顶点色因子在线性 RGB 中相乘后再做输出转换。同一张图像可让网格、裁剪卡片和 HUD 共用一个原生图页。
+
+运行 `node tools/serve-example.mjs`，打开 `/examples/textured-scene3d/index.html?backend=webgl2`，也可选择 `webgpu`。运行 `node tools/verify-textured-glb-scene3d.mjs <playwright-root> <new-output-directory>` 可复验桌面结果。示例生成四色 PNG，并把 2D 角色卡片移动到墙前和墙后。桌面 Edge 与实体 Android Chrome 的两个后端在此夹具中均匹配六项指定像素与五次完整回读。首帧上传一个图页，热帧没有重复上传，原生设备恢复后首次提交重新上传一次。这些证据覆盖本节所述的导入范围和生命周期。
+
 ## 参与深度遮挡的 2D 角色
 
 `createSceneWorldCard3D({ source, width, height, region, pivotX, pivotY, alphaCutoff })` 创建不可变图像卡片。传入现有资源租约持有的 `ImageData2D`。宽、高使用世界单位，可选图集区域使用以左上角为原点的像素坐标。锚点相对裁剪区域，可落在区域之外，默认位于底边中心。Alpha 阈值表示第一个可绘制的字节值，范围为 1 至 255，默认 128。
@@ -52,7 +62,7 @@ const frame = revision.capture(camera);
 
 | 工作包 | 引擎决策与验收 |
 | --- | --- |
-| 纹理模型、材质与光照 | 扩展导入到显式 UV、法线、图像语义和版本化材质契约。光照在线性空间计算，输出统一转换一次，共用纹理与设备生命周期。验收创作颜色、法线方向、曝光范围和不透明／裁剪／混合规则。 |
+| 法线、光照材质与更多贴图类型 | 扩展导入到显式 UV、法线、图像语义和版本化材质契约。光照在线性空间计算，输出统一转换一次，共用纹理与设备生命周期。验收创作颜色、法线方向、曝光范围和不透明／裁剪／混合规则。 |
 | 3D 角色动画与场景特效 | 使用现有游戏时钟驱动片段、姿势和事件。实例状态独立，复用不可变网格和蒙皮数据。在既有绘制顺序和能力预算中接入有界特效。验证模型导入到预览编辑的完整链路、资源替换、设备恢复和声明的帧预算。 |
 
 Three.js 提供资产解析、场景创作、渲染阶段和颜色管理的公开设计参考。白鹭独立实现，采用现有场景身份、后端和生命周期。GLB 与所选材质扩展遵循 Khronos 规范。[Three.js 模型加载](https://threejs.org/docs/pages/GLTFLoader.html) · [Three.js 颜色管理](https://threejs.org/manual/pages/color-management.html) · [Khronos glTF 2.0](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html) · [KHR_materials_unlit](https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_unlit)
