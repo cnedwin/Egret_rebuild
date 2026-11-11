@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { EgretError } from '@egret/runtime';
-import type { AssetProvider, AssetType, Scope } from '@egret/runtime';
+import type { AssetProvider, AssetType, Scope, SequenceClip, SequenceFrameInput } from '@egret/runtime';
 import type { AdmittedResourceManifest } from '@egret/contracts/resources';
 import type { ManifestAssetGroup, ManifestBinding, ManifestGroupOptions } from '../manifestResourceTypes.js';
 
@@ -30,4 +30,17 @@ export function authenticateContentLoader(loader: unknown, scope: Scope, imageId
   const authenticate = contentLoaders.get(loader as object);
   if (!authenticate) throw new EgretError('SEQUENCE_RESET_LOADER_INVALID');
   authenticate(scope, imageId, sequenceId);
+}
+
+/** Retain only the authored frame boundaries of genuine ContentLoader clips. */
+const sequenceTimelines = new WeakMap<SequenceClip, readonly number[]>();
+export function registerSequenceTimeline(clip: SequenceClip, frames: readonly SequenceFrameInput[]): void {
+  let end = 0;
+  sequenceTimelines.set(clip, Object.freeze(frames.map(frame => end += frame.durationSeconds)));
+}
+export function hasSequenceTimeline(clip: SequenceClip): boolean { return sequenceTimelines.has(clip); }
+export function hasMatchingSequenceTimeline(source: SequenceClip, candidate: SequenceClip): boolean {
+  const first = sequenceTimelines.get(source), second = sequenceTimelines.get(candidate);
+  return first !== undefined && second !== undefined && first.length === second.length
+    && first.every((end, index) => end === second[index]);
 }

@@ -2257,8 +2257,8 @@
       "en": "knowledge-base/en/docs/sequence-reset.md",
       "zh": "knowledge-base/Cns/docs/序列动画RESET替换.md",
       "kind": "public_reading",
-      "enSha256": "9c932e35e7660c4edf038f005402dc7d9941262217ca230614652025cd7fd028",
-      "zhSha256": "1ef04354ff72813ce1d1ae1272aaad6059bea7f8a6b3dfc66a73b727d14b27f7"
+      "enSha256": "5e8e7bb95d86e959516b894ec8c466245287143844844ab949a5e27dbe29fd79",
+      "zhSha256": "9141665f4679aa56256cba01d5640174d951baec570da1907b9b44a16750aa94"
     },
     {
       "en": "skills/egret-windows-ci/SKILL.md",
@@ -2722,7 +2722,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "de6414b612197a3464be6fa729f7ff097690db140c74d99f3cc11d37c931ed89"
+      "sha256": "0c87a758adf50713ecd6e7bda3373b4f2d2985fa03935178fbd952c73b0ff8c2"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2734,7 +2734,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "1cef47356f91cba412b2c7943d052e93010972834f8a290ffc54fd1b9548b934"
+      "sha256": "130c41af80b46317929ebcb055587b810075c2b0fc78cbf962fd894c37f80857"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -3284,7 +3284,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "fcfc3eb6f57c449adeab29a59b5bb1976fe05f6244d28a60b5ce4591ef00272d"
+      "sha256": "ff20a368a0f8799b983217a296420bbcb138c7dd3c861df0b7322c76821bf8be"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3432,7 +3432,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "f9852114b8b6621c13ad45b53ff8928f90fe3c51deb867fd9f6e52951ef9ff79"
+      "sha256": "ce63a9d9ffe530b1de9ce864404ca78b0024b4f84b6b4d5db5961c02f8ef0e2b"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3904,7 +3904,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "05a0b7bf8953aa89109810d4b2ec7e3bf5ad35a0e92488bc745e1a88dd4e0863"
+      "sha256": "01f6a1711d0bac6131e64e76f664c053a1efea148a8f84c11b53725096cc9f7b"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3932,7 +3932,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "95f0e18873e2a2c724a9f138f44a54000db01f319214b6572573cb26f94957e5"
+      "sha256": "4c7de90067723f0ab4e6bc7859b7b1c6e6cea4c8780783b9e5fba84f0c06aa30"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4280,7 +4280,7 @@
     },
     {
       "path": "packages/engine/src/animation/sequenceController.ts",
-      "sha256": "ea476a5d41f62c0f5c9e1469efa9a8b2d124a01de53159af53984ff731a3a4e8"
+      "sha256": "1b7b91f30e7f32a16a37287064778d686b1e2296f3fea9a1c21a38032c4010af"
     },
     {
       "path": "packages/engine/src/animation/sequenceCoordinator.ts",
@@ -4316,11 +4316,11 @@
     },
     {
       "path": "packages/engine/src/contentLoader.ts",
-      "sha256": "a1db93dad35f49dd9a55f2f492bbf8d0ded1788f6a1ce2e405d88436edddd5e7"
+      "sha256": "016652083561c826257381a4a3236d896f735de6e8e3071bc3f9c1e311c733b9"
     },
     {
       "path": "packages/engine/src/internal/contentFactoryState.ts",
-      "sha256": "81a0d471ecf828289598239c5d68d32a3b2ced5d468380b95da3a019b5000d7c"
+      "sha256": "f6abac54f4f58504dca750aa3b4b6c5a2ca344007ecd1c63d58f3a160baffd42"
     },
     {
       "path": "packages/engine/src/paragraph.ts",
@@ -4600,11 +4600,11 @@
     },
     {
       "path": "packages/engine/src/animation/sequenceResetSlot.ts",
-      "sha256": "ad8cf7106cfd8b37bcdca9d92448e0339f019e71111f71d255ef676e22de8a09"
+      "sha256": "d0353d8163a79ca216c519f8ca6b5a3a2a4dfdac043bf1e8f461aac07b20cb1a"
     },
     {
       "path": "packages/engine/src/animation/sequenceResetTypes.ts",
-      "sha256": "3d40cd1cb3e1cdcff9a0020d8fec652e40c71381cc8e5ed3dd3e8c5d4403a45c"
+      "sha256": "0afbec5920189de78aee57e53d8204d787086113185c982abdc35f4a685537fc"
     },
     {
       "path": "tests/sequence-reset-fixture.mjs",
@@ -4616,7 +4616,7 @@
     },
     {
       "path": "tests/sequence-reset.test.mjs",
-      "sha256": "fb0d5eb1e31ccec27346df1dc5e1b458894eb0d47276813679ba2825fe944e29"
+      "sha256": "3fc0962c3ec6ade409dec0787afa312427686190e39629ed9a5b17c1ddb14009"
     },
     {
       "path": "tests/types/sequence-reset-negative.ts",
@@ -4640,7 +4640,7 @@
     },
     {
       "path": "tools/sequence-reset-types.mjs",
-      "sha256": "f2636960b269b0796d6c893c242a44f07bdde10c541387f8c7ef63c2d4a623bf"
+      "sha256": "7ef73a4a5ab95012355979b600834f9cf8a87662f8a8bf2230c775b5db55786e"
     },
     {
       "path": "tools/check-test-baselines.mjs",
@@ -4801,6 +4801,10 @@
     {
       "path": "examples/outfit-studio/verify-fixed.mjs",
       "sha256": "2ba306e1a323e9e5dfe457b11acdcdf3b96ea92a7892cffb43046798474ceee6"
+    },
+    {
+      "path": "tools/lib/sequence-preserve-pins.mjs",
+      "sha256": "3daf0ac659765145f564cf6873c69e8c07b402a96ae5eef3255523ce9d874180"
     }
   ],
   "historicalSemanticReview": {
