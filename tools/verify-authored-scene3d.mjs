@@ -80,8 +80,8 @@ try {
         assert.deepEqual([frame.backend, frame.view, frame.nodeCount, frame.width, frame.height], [backend, view, 3, 120, 96]);
         assert.equal(frame.bytes.length, frame.width * frame.height * 4);
         const bytes = Buffer.from(frame.bytes);
-        row.frames[view] = { sha256: hash(bytes), firstDrawColor: frame.firstDrawColor,
-          overlay: sample(frame, 60, 48, green), background: sample(frame, 3, 3, black) };
+        const overlay = sample(frame, 60, 48, green), background = sample(frame, 3, 3, black);
+        row.frames[view] ??= { sha256: hash(bytes), firstDrawColor: frame.firstDrawColor, overlay, background };
         row.renderer = frame.renderer;
         return frame;
       }
@@ -98,6 +98,35 @@ try {
       const moved = await record('moved');
       row.frames.moved.depth = [sample(moved, 48, 45, blue), sample(moved, 85, 45, red)];
       assert.notEqual(row.frames.initial.sha256, row.frames.moved.sha256);
+
+      await page.evaluate(() => globalThis.egretAuthoredScene.show('animation-start'));
+      assert.deepEqual((await record('animation-start')).bytes, initial.bytes);
+      await page.locator('[data-view="animation-mid"]').click();
+      await page.waitForFunction(() => globalThis.egretAuthoredScene.inspect()?.view === 'animation-mid');
+      const midpoint = await record('animation-mid');
+      row.frames['animation-mid'].depth = [
+        sample(midpoint, 48, 45, blue), sample(midpoint, 72, 45, red), sample(midpoint, 105, 45, black),
+      ];
+      assert.notEqual(row.frames['animation-mid'].sha256, row.frames.initial.sha256);
+      assert.notEqual(row.frames['animation-mid'].sha256, row.frames.moved.sha256);
+      await page.locator('[data-view="animation-end"]').click();
+      await page.waitForFunction(() => globalThis.egretAuthoredScene.inspect()?.view === 'animation-end');
+      assert.deepEqual((await record('animation-end')).bytes, moved.bytes, 'The endpoint matches an independent direct edit.');
+      await page.evaluate(() => globalThis.egretAuthoredScene.show('animation-wrap'));
+      assert.deepEqual((await record('animation-wrap')).bytes, initial.bytes, 'An exact loop boundary seeks to the first pose.');
+      await page.evaluate(() => globalThis.egretAuthoredScene.show('animation-mid'));
+      assert.deepEqual((await record('animation-mid')).bytes, midpoint.bytes, 'Out-of-order seeks reproduce the midpoint.');
+
+      const playButton = page.locator('[data-play-animation]');
+      await playButton.click();
+      await page.waitForFunction(() => globalThis.egretAuthoredScene.inspect()?.view === 'animation-play');
+      await page.waitForFunction(() => document.querySelector('[data-play-animation]').getAttribute('aria-pressed') === 'false');
+      assert.deepEqual((await record('animation-play')).bytes, moved.bytes, 'Clock playback presents the final pose.');
+      await playButton.click();
+      await page.locator('[data-view="animation-mid"]').click();
+      await page.waitForFunction(() => globalThis.egretAuthoredScene.inspect()?.view === 'animation-mid');
+      assert.equal(await playButton.getAttribute('aria-pressed'), 'false');
+      assert.deepEqual((await record('animation-mid')).bytes, midpoint.bytes, 'Manual seeking stops clock playback.');
 
       await page.locator('[data-view="orbit"]').click();
       await page.waitForFunction(() => globalThis.egretAuthoredScene.inspect()?.view === 'orbit');

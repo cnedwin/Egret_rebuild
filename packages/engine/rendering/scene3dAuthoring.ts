@@ -7,8 +7,10 @@ import {readStaticGlbNodes3D} from './staticGlb3D.js';
 export {createSceneCamera3D,createSceneWorld3D} from './sceneWorld3D.js';
 export type {
     SceneWorldCamera3D,SceneWorldCameraInput3D,SceneWorldProjectionInput3D,
-    SceneWorld3D,SceneWorldNodeInput3D,SceneLambertWorld3D,
+    SceneWorld3D,SceneWorldNodeInput3D,SceneWorldNodeTransform3D,SceneLambertWorld3D,
 } from './sceneWorld3D.js';
+export {createSceneAnimationClip3D} from './sceneAnimation3D.js';
+export type {SceneAnimationClip3D,SceneAnimationClipInput3D,SceneAnimationTrackInput3D,SceneAnimationKey3D} from './sceneAnimation3D.js';
 export {createSceneWorldCard3D} from './sceneFrame3D.js';
 export type {SceneWorldCard3D,SceneWorldCardInput3D,SceneDirectionalLighting3D} from './sceneFrame3D.js';
 export {prepareLambertStaticGlbScene3D,prepareTexturedStaticGlbScene3D,StaticGlb3DError} from './staticGlb3D.js';
