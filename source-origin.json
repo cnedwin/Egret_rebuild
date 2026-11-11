@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "2f8836902784a5b4f81021fd5687b5e526dffe572eb4aa31441cdc8bfd36c9a8",
+      "sha256": "1de2ec897480fc2349228a7c2e01aeac331f382c9d42e538b265bbc839095e47",
       "bytes": 393743,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1483451,
-      "sha256": "58daab25bbdd495939c2f11d7a44c20654191a5dc93c8eca2508d8207af84839"
+      "bytes": 1521174,
+      "sha256": "cb7d1eafec16d6abc336c6b950cde76bbd758e9f38c45bf1e53efeb0b11b4871"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
