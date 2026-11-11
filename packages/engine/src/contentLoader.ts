@@ -7,7 +7,7 @@ import type { Engine } from './Engine.js';
 import type { ContentBinding, ContentGroup, ContentLoader, ContentProviderFactory, ContentProviders } from './contentTypes.js';
 import type { ManifestAssetBinding, ManifestBinding, ManifestGroupOptions } from './manifestResourceTypes.js';
 import { createManifestAssetBinding } from './manifestResourceState.js';
-import { registerContentLoader, requireContentEngine } from './internal/contentFactoryState.js';
+import { registerContentLoader, registerSequenceTimeline, requireContentEngine } from './internal/contentFactoryState.js';
 import { contentFault, parseAtlasArtifact, parseSequenceArtifact } from './contentArtifacts.js';
 import type { AtlasArtifact } from './contentArtifacts.js';
 import { parseAtlasPagesArtifact } from './contentAtlasPages.js';
@@ -165,7 +165,8 @@ export function createContentLoader(engine: Engine, manifest: AdmittedResourceMa
                 atlases.set(e.id,atlas); sheets.set(e.id,createSpriteSheet(page,atlas.frames,'trim-rotation-v1'));
               } else {
                 const atlas=atlases.get(e.dependencies[0]!);if(!atlas)throw contentFault('DEPENDENCY',e.id);
-                clips.set(e.id,createSequenceClip(parseSequenceArtifact(text,e.id,atlas),'trim-rotation-v1'));
+                const input=parseSequenceArtifact(text,e.id,atlas),clip=createSequenceClip(input,'trim-rotation-v1');
+                registerSequenceTimeline(clip,input.frames);clips.set(e.id,clip);
               }
             }
           }

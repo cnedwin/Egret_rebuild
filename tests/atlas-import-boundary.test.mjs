@@ -59,7 +59,7 @@ function isolated(action){
   }
   for(const name of packages)copy(path.join(repository,'packages',name),'packages/'+name);
   const policy=JSON.parse(readFileSync(path.join(repository,'tests/types/atlas-import-diagnostic-expectations.json'),'utf8')).sourcePolicy;
-  const files=new Set(['tools/atlas-import-boundary.mjs','tools/lib/file-identity.mjs','tests/types/atlas-import-diagnostic-expectations.json',...policy.configurationPins.map(pin=>pin.path)]);
+  const files=new Set(['tools/atlas-import-boundary.mjs','tools/lib/file-identity.mjs','tools/lib/sequence-preserve-pins.mjs','tests/types/atlas-import-diagnostic-expectations.json',...policy.configurationPins.map(pin=>pin.path)]);
   for(const file of files)if(!copied.some(row=>row.path===file))copy(path.join(repository,file),file);
   const resolver=createRequire(path.join(repository,'packages/project/package.json'));
   const jsonc=realpathSync(resolver.resolve('jsonc-parser'));
@@ -82,6 +82,7 @@ function isolated(action){
 
 test('ATLAS-M11 full genuine owner copy satisfies source actor',()=>isolated(({root,run,baseline})=>{assert.deepEqual(inventory(root),baseline);accepted(run());}));
 const controls=[
+ ['compatible sequence source refuses mixed bytes','packages/engine/src/animation/sequenceController.ts','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('// unreviewed sequence source\n')])],
  ['key-reveal source cannot drift with unchanged emissions','packages/engine/src/ui/index.ts','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('// unreviewed key-reveal source\n')])],
  ['key-reveal emission cannot drift within the admitted group','packages/engine/dist/ui/virtualList.js','ATLAS_SOURCE_IDENTITY',raw=>{const changed=Buffer.from(raw);changed[0]^=1;return changed;}],
  ['M2.1 content source rejects unknown bytes','packages/project/src/resources/content.ts','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('// unknown content source\n')])],

@@ -3,7 +3,7 @@ import { prepareEffects2D } from './sharedEffects2D.js';
 import type { PreparedEffects2D } from './sharedEffects2D.js';
 import type { SharedRenderFrame2D, SharedRenderCommand2D, SharedMaterial2D, SharedRegion2D, Matrix2D } from '@egret/contracts';
 import { Preparation, coordinate, clipPolygon2D, finishPolygonWinding2D } from './prepareRectangles2D.js';
-import type { PolygonClipPolicy2D, CrossingAttributes } from './prepareRectangles2D.js';
+import type { PolygonClipPolicy2D, CrossingAttributes, PreparedPoint2D } from './prepareRectangles2D.js';
 import { TexturedPreparationBudget2D } from './texturedPreparationBudget2D.js';
 import type { TexturedPreparationLimits2D } from './texturedPreparationBudget2D.js';
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
@@ -80,19 +80,23 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
     const entries:PreparedSharedEntry2D[]=[];let upload=0;
     for(const command of frame.commands){if(command.kind==='barrier'){entries.push({kind:'barrier',ordinal:command.ordinal,occurrenceId:command.occurrenceId});continue;}
         const material=frame.materials[command.materialIndex]!,region=command.kind==='rect'?undefined:frame.regions[command.regionIndex]!,pageIndex=region?.pageIndex;
-        const preparation=new Preparation(options,budget),m=command.matrix,ratio=coordinate(options.pixelRatio);
+        const preparation=new Preparation(options,budget,true),m=command.matrix,ratio=coordinate(options.pixelRatio);
         for(const n of [m.a,m.b,m.c,m.d,m.tx,m.ty])coordinate(n);unit(command.opacity);
         const clips=command.clips.map(clip=>preparation.rectangle(clip));
         const viewport=[{x:0,y:0},{x:coordinate(width),y:0},{x:coordinate(width),y:coordinate(height)},{x:0,y:coordinate(height)}];
         const {policy,normalize}=policyFor(budget),polygons:SharedPoint2D[][]=[];let vertexReservation=0;
+        // Both SHARED Hosts authenticate the frame before this private helper owns its budget.
+        // Shared polygons retain attributed corners and charge the same XY comparisons as TEXTURED meshes.
+        const intersect=(polygon:SharedPoint2D[],clip:readonly PreparedPoint2D[]):SharedPoint2D[]=>
+            preparation.tryContainedClip(polygon,clip,'mesh')??clipPolygon2D(preparation,polygon,clip,normalize,attach,policy,'mesh');
         const descriptor={region,material,pageIndex};
         const accept=(points:SharedPoint2D[]):void=>{
             for(const p of points)qualifySharedUV(p,descriptor,frame);
             const authored=preparation.sign(points[0]!,points[1]!,points[2]!);if(authored===0)return;
             const rank=preparation.sign({x:0,y:0},{x:m.a,y:m.b},{x:m.c,y:m.d});if(rank===0)return;
             const transformed=points.map(p=>transform(p,m,ratio));const sign=preparation.sign(transformed[0]!,transformed[1]!,transformed[2]!);if(sign===0)return;if(sign!==authored*rank)sharedFailure('precision');
-            let polygon=normalize(preparation,transformed);for(const clip of clips)polygon=clipPolygon2D(preparation,polygon,clip,normalize,attach,policy);
-            polygon=clipPolygon2D(preparation,polygon,viewport,normalize,attach,policy);
+            let polygon=normalize(preparation,transformed);for(const clip of clips)polygon=intersect(polygon,clip);
+            polygon=intersect(polygon,viewport);
             for(const p of polygon)qualifySharedUV(p,descriptor,frame);
             if(polygon.length<3||command.opacity===0)return;const count=(polygon.length-2)*3;budget.admitPreparedVertices(count);vertexReservation+=count;polygons.push(polygon);
         };

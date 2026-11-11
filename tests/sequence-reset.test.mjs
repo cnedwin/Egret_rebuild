@@ -9,11 +9,12 @@ const frame={width:8,height:4,clearColor:0,clearAlpha:1,outputAlpha:'opaque'};
 const playback={profile:'egret.sequence-control/1',totalPlays:'infinite'};
 const request=loader=>({policy:'reset',version:'next',loader,imageId:'e_page',sequenceId:'e_sequence',playback});
 const code=(fn,c)=>assert.throws(fn,{code:c});
-async function scene(){
+async function scene(initialPlayback=playback,{beforeController,clip}={}){
  const s=await contentSetup(),scope=s.engine.createScope(),resources=s.engine.createScope(),group=s.loader.load(resources,['e_sequence']);await group.ready;
  const container=scope.use(new egret.DisplayObjectContainer());s.engine.stage.addChild(container);
  const bitmap=resources.use(new egret.Bitmap(group.getImage('e_page')));container.addChild(bitmap);
- const controller=createSequenceController(s.engine,resources,bitmap,group.getSequence('e_sequence'),playback);controller.start();
+ beforeController?.(s.engine,scope);
+ const controller=createSequenceController(s.engine,resources,bitmap,clip??group.getSequence('e_sequence'),initialPlayback);controller.start();
  const b=resources.use(new egret.Bitmap(group.getImage('e_page')));b.x=3;s.engine.stage.addChild(b);
  const other=createSequenceController(s.engine,resources,b,group.getSequence('e_sequence'),playback);other.start();s.engine.advanceTime(0);
  const slot=createSequenceResetSlot(s.engine,scope,container,{version:'old',bitmap,controller});
@@ -153,5 +154,134 @@ for(const operation of ['stop','dispose'])test('refused reentrant '+operation+' 
  const s=await scene();try{const t=s.slot.request(request(s.loader));await t.ready;t.capture(frame);let rejected;
   const bad={...request(s.loader),playback:{...playback,get rate(){try{s.controller[operation]();}catch(error){rejected=error.code;}return 17;}}};
   code(()=>s.slot.request(bad),'ANIMATION_OPTIONS_INVALID');assert.equal(rejected,'ANIMATION_REENTRANT');assert.equal(t.state,'prepared');assert.equal(s.controller.getStatus().state,'paused');assert.equal(t.commit().controller.getStatus().positionSeconds,0);assert.equal(t.state,'committed');
+ }finally{await s.close();}
+});
+
+
+const preserveRequest=loader=>({version:'preserved',loader,imageId:'e_page',sequenceId:'e_sequence'});
+
+test('compatible sequence replacement preserves the second play and resumes from commit time',async()=>{
+ const events=[],s=await scene({...playback,rate:2,totalPlays:2,markers:[
+  {id:'zero',timeSeconds:0},{id:'first',timeSeconds:0.125},{id:'second',timeSeconds:0.25},
+ ],onEvent:event=>{events.push(event);}});
+ const next=await contentSetup(contentFixture(),{hold:true,pixels:[0,0,255,255,255,255,0,255]},s.engine);
+ try{
+  const ticket=s.slot.requestPreserving(preserveRequest(next.loader));
+  s.engine.advanceTime(0.1875);assert.equal(ticket.state,'loading');
+  next.pending[0].d.resolve(next.pending[0].texture);await ticket.ready;
+  s.engine.advanceTime(0.28125);
+  const before=s.controller.getStatus();assert.equal(before.playIndex,1);assert.equal(before.positionSeconds,0.1875);
+  assert.deepEqual(events.map(event=>event.id),['zero','first','second','zero','first']);
+  ticket.capture(frame);
+  s.engine.advanceTime(0.34375);
+  assert.equal(s.controller.getStatus().state,'paused');assert.equal(s.other.getStatus().positionSeconds,0.34375);
+  const active=ticket.commit(),after=active.controller.getStatus();
+  assert.equal(s.container.getChildAt(0),active.bitmap);assert.notEqual(active.bitmap,s.bitmap);
+  assert.equal(after.state,'running');assert.equal(after.elapsedSeconds,before.elapsedSeconds);
+  assert.equal(after.positionSeconds,before.positionSeconds);assert.equal(after.playIndex,before.playIndex);
+  assert.equal(after.rate,2);assert.equal(after.totalPlays,2);assert.equal(after.lastSample.frameIndex,1);
+  assert.equal(after.committedEventCount,5);assert.equal(events.length,5);assert.equal(s.bitmap.isDisposed,false);
+  s.engine.advanceTime(0.375);
+  assert.equal(active.controller.getStatus().elapsedSeconds,0.625);
+  assert.deepEqual([events[5].id,events[5].sequence,events[5].playIndex],['second',6,1]);
+  s.engine.advanceTime(0.4375);
+  assert.deepEqual([events.length,events[6].kind,events[6].sequence],[7,'complete',7]);
+  assert.equal(active.controller.getStatus().state,'completed');
+ }finally{await s.close();await next.close();}
+});
+
+test('compatible replacement preserves pause, while mismatch and cancellation keep the old owner',async()=>{
+ const s=await scene(),different=await contentSetup(contentFixture(f=>{
+  for(const input of [f.atlas.sequenceInput,f.sequence.sequenceInput]){
+   input.frames[0].durationSeconds=0.25;input.frames[1].durationSeconds=0.125;
+  }
+ }),{},s.engine);
+ const next=await contentSetup(contentFixture(),{},s.engine);
+ try{
+  s.engine.advanceTime(0.125);
+  const rejected=s.slot.requestPreserving(preserveRequest(different.loader));
+  await assert.rejects(rejected.ready,{code:'SEQUENCE_RESET_PRESERVE_TIMELINE'});
+  assert.equal(rejected.state,'failed');assert.equal(s.slot.getActive().bitmap,s.bitmap);
+  assert.equal(s.controller.getStatus().state,'running');
+  assert.equal(different.textures[0].isDisposed,true);
+  const cancelled=s.slot.requestPreserving(preserveRequest(next.loader));await cancelled.ready;
+  cancelled.capture(frame);assert.equal(s.controller.getStatus().state,'paused');
+  cancelled.dispose();assert.equal(s.slot.getActive().bitmap,s.bitmap);
+  assert.equal(s.controller.getStatus().state,'running');
+  s.controller.pause();s.controller.setRate(0);
+  const retained=s.slot.requestPreserving(preserveRequest(next.loader));await retained.ready;retained.capture(frame);
+  const active=retained.commit();
+  s.engine.advanceTime(0.25);
+  const after=active.controller.getStatus();
+  assert.equal(after.state,'paused');assert.equal(after.rate,0);assert.equal(after.elapsedSeconds,0.125);
+  assert.equal(after.lastSample.frameIndex,1);
+ }finally{await s.close();await different.close();await next.close();}
+});
+
+
+test('a caller command after preserve capture and an ended source keep their authority',async()=>{
+ const s=await scene();
+ try{
+  const ticket=s.slot.requestPreserving(preserveRequest(s.loader));await ticket.ready;ticket.capture(frame);
+  s.controller.seek({timeSeconds:0.25});
+  code(()=>ticket.commit(),'SEQUENCE_RESET_CONTROLLER_CHANGED');
+  assert.equal(ticket.state,'failed');assert.equal(s.slot.getActive().bitmap,s.bitmap);
+  assert.equal(s.controller.getStatus().state,'paused');assert.equal(s.controller.getStatus().elapsedSeconds,0.25);
+  s.controller.stop();
+  code(()=>s.slot.requestPreserving(preserveRequest(s.loader)),'SEQUENCE_RESET_PRESERVE_STATE');
+  const reset=s.slot.request(request(s.loader));await reset.ready;reset.capture(frame);
+  assert.equal(reset.commit().controller.getStatus().elapsedSeconds,0);
+ }finally{await s.close();}
+});
+
+
+test('a source without ContentLoader provenance cannot cancel an accepted RESET',async()=>{
+ const raw=egret.createSequenceClip({atlasWidth:2,atlasHeight:1,frames:[
+  {x:0,y:0,width:1,height:1,durationSeconds:0.125},
+  {x:1,y:0,width:1,height:1,durationSeconds:0.25},
+ ]});
+ const s=await scene(playback,{clip:raw}),next=await contentSetup(contentFixture(),{hold:true},s.engine);
+ try{
+  const pending=s.slot.request(request(next.loader));
+  code(()=>s.slot.requestPreserving(preserveRequest(s.loader)),'SEQUENCE_RESET_PRESERVE_TIMELINE');
+  assert.equal(pending.state,'loading');assert.equal(s.controller.getStatus().state,'running');
+  next.pending[0].d.resolve(next.pending[0].texture);
+  await pending.ready;pending.capture(frame);assert.equal(pending.commit().ownership,'owned');
+ }finally{await s.close();await next.close();}
+});
+
+test('queued source commands and finite completion refuse a preserve request',async()=>{
+ let s;
+ s=await scene({...playback,totalPlays:1,markers:[{id:'first',timeSeconds:0.125}],
+  onEvent(){s.controller.setRate(1);}});
+ try{
+  s.engine.advanceTime(0.125);assert.equal(s.controller.getStatus().pendingCommands,1);
+  code(()=>s.slot.requestPreserving(preserveRequest(s.loader)),'SEQUENCE_RESET_PRESERVE_STATE');
+  s.engine.advanceTime(0.25);assert.equal(s.controller.getStatus().pendingCommands,0);
+  s.engine.advanceTime(0.375);assert.equal(s.controller.getStatus().state,'completed');
+  code(()=>s.slot.requestPreserving(preserveRequest(s.loader)),'SEQUENCE_RESET_PRESERVE_STATE');
+ }finally{await s.close();}
+});
+
+for(const callerPause of [false,true])test('capture cancellation during a caught-up marker respects the caller pause '+callerPause,async()=>{
+ let s,ticket,first=true;
+ s=await scene({...playback,markers:[{id:'owed',timeSeconds:0.125}],onEvent(){
+  if(callerPause)s.controller.pause();
+  ticket.dispose();
+ }},{beforeController(engine,scope){
+  engine.clock.onTick(scope,()=>{if(first){first=false;throw Error('prior clock callback');}});
+ }});
+ try{
+  ticket=s.slot.requestPreserving(preserveRequest(s.loader));await ticket.ready;
+  code(()=>s.engine.advanceTime(0.125),'CLOCK_CALLBACK_FAILED');
+  assert.equal(s.controller.getStatus().elapsedSeconds,0);
+  code(()=>ticket.capture(frame),'SEQUENCE_RESET_RETIRED');
+  const state=s.controller.getStatus();
+  assert.equal(ticket.state,'cancelled');assert.equal(s.slot.getActive().bitmap,s.bitmap);
+  assert.equal(state.elapsedSeconds,0.125);assert.equal(state.committedEventCount,1);
+  assert.equal(state.state,callerPause?'paused':'running');
+  assert.equal(state.pendingCommands,callerPause?1:0);
+  s.engine.advanceTime(0.25);
+  assert.equal(s.controller.getStatus().elapsedSeconds,callerPause?0.125:0.25);
  }finally{await s.close();}
 });

@@ -9,7 +9,8 @@ import {createExampleServer} from '../../tools/serve-example.mjs';
 import {fingerprintFile, ownerRelativePath, samePhysicalPath} from '../../tools/lib/file-identity.mjs';
 import {localPackage} from '../../tools/lib/local-package.mjs';
 import {buildOriginalContent} from '../animation-outfits/author.mjs';
-import {openStudioProject} from './project.mjs';
+import {expandStudioProject,openStudioProject} from './project.mjs';
+import {buildStressSkeleton} from './author-x.mjs';
 
 const root = path.resolve(import.meta.dirname, '../..');
 const base = '/examples/outfit-studio/';
@@ -21,10 +22,8 @@ const projectModules = [
 ];
 const json = value => Buffer.from(JSON.stringify(value) + '\n');
 
-function alternatePalette(original) {
-  const values = new Map(original.values);
-  values.set('e_warm', original.values.get('e_cool'));
-  values.set('e_cool', original.values.get('e_warm'));
+function replaceContent(original, replacements) {
+  const values = new Map([...original.values,...replacements]);
   const entries = original.manifest.entries.map(entry => {
     const {buildKey, runtimeIdentity, ...input} = entry;
     const bytes = values.get(entry.id);
@@ -49,8 +48,9 @@ export async function createStudioServer(projectFile = path.join(import.meta.dir
 
   file(base + 'index.html', 'examples/outfit-studio/index.html', 'text/html; charset=utf-8');
   file(base + 'style.css', 'examples/outfit-studio/style.css', 'text/css; charset=utf-8');
-  for (const name of ['main', 'project', 'assets', 'scene', 'ui']) file(base + name + '.mjs', `examples/outfit-studio/${name}.mjs`, javascript);
+  for (const name of ['main', 'project', 'assets', 'scene', 'ui', 'workload', 'reference', 'touch', 'timing']) file(base + name + '.mjs', `examples/outfit-studio/${name}.mjs`, javascript);
   resource(base + 'project.json', Buffer.from(project.serialize()), applicationJson);
+  resource(base + 'project-x.json', Buffer.from(expandStudioProject(project.serialize())), applicationJson);
   resource(base + 'config.json', json({fontConfig:font.configPath}), applicationJson);
   for (const name of projectModules) {
     const relative = `packages/project/dist/${name}.js`;
@@ -62,7 +62,11 @@ export async function createStudioServer(projectFile = path.join(import.meta.dir
     file('/studio-deps/jsonc-parser/' + name, ownerRelativePath(root, source), javascript);
   }
   const original = buildOriginalContent();
-  for (const [palette, content] of [['studio', original], ['alternate', alternatePalette(original)]]) {
+  const colors = [['e_warm',original.values.get('e_cool')],['e_cool',original.values.get('e_warm')]];
+  const stress = replaceContent(original, [['e_character',json(buildStressSkeleton())]]);
+  const versions = [['studio',original],['alternate',replaceContent(original,colors)],
+    ['x/studio',stress],['x/alternate',replaceContent(stress,colors)]];
+  for (const [palette,content] of versions) {
     const folder = `${base}content/${palette}/`;
     resource(folder + 'manifest.json', json(content.manifest), applicationJson);
     for (const entry of content.manifest.entries) {
