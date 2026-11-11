@@ -21,9 +21,9 @@ Egret is a community rebuild of the game engine for Web and lightweight games, w
 | Area | Available on main | Remaining work |
 | --- | --- | --- |
 | Rendering and resources | Shared WebGPU/WebGL2 rendering, ordered preparation, resource groups and selected device recovery | Broader host/device qualification; the fixed M1.2 full-dirty Engine median-p95 remains [10.3 ms against an 8 ms target](https://github.com/cnedwin/Egret_rebuild/issues/55) |
-| Content and animation | PNG/atlas/sequence builds, multipage atlases, font artifacts; optional Spine playback/display and selected replacement paths | Complete selected-version Spine references, texture variants, state-preserving replacement and final lifecycle/performance acceptance |
-| UI and text | Variable-height lists, focus/navigation, multilingual styled paragraphs, committed text geometry, font/theme switching, masks/blur and optional native single/multiline editing | Actual IME qualification, complete controls/modal/semantic integration and broader script/device qualification |
-| Integration | Editable resource, UI and animation examples; responsive preview | Complete mixed reference game and qualified core handoff |
+| Content and animation | PNG/atlas/sequence builds, multipage atlases and font artifacts, optional Spine playback/display and RESET, compatible sequence playback preservation | Complete selected-version Spine references and state preservation, texture variants, integrated lifecycle and performance qualification |
+| UI and text | Variable-height lists, focus/navigation, multilingual styled paragraphs, text geometry, font/theme switching, masks/blur, owned popup/modal layers and optional native single/multiline editing | Actual IME, remaining controls/semantics and broader script/device qualification |
+| Integration | [Editable Outfit Studio](examples/outfit-studio/README.md) with a compact desktop scene, fixed mixed workloads and a mobile multitouch profile | Selected feature coverage, full performance/device qualification and the core preview handoff |
 
 [Android observations and remaining device limits](knowledge-base/en/docs/android-device-validation.md) cover exact component profiles; they do not establish universal phone support or close the M1.2 performance target.
 
@@ -35,19 +35,19 @@ Use **Node.js 26.7.0** and **pnpm 11.25.0**. From the repository root:
     pnpm check:quick
     pnpm example:browser
 
-The [getting-started guide](knowledge-base/en/docs/getting-started.md) explains prerequisites, expected results and troubleshooting. Explore [responsive examples](examples/mobile/README.md), [paragraphs in UI](examples/paragraph-panel/README.md) and [sequence replacement](examples/sequence-reset/README.md). Fixed qualification fixtures remain separate from the responsive preview.
+The [getting-started guide](knowledge-base/en/docs/getting-started.md) explains prerequisites, expected results and troubleshooting. Explore [Outfit Studio](examples/outfit-studio/README.md), [responsive examples](examples/mobile/README.md), [paragraphs in UI](examples/paragraph-panel/README.md) and [sequence replacement](examples/sequence-reset/README.md). Use the fixed profiles for qualification and the responsive previews to try the UI.
 
 See the [WebGL2 isometric map](examples/isometric-map/README.md) for depth ordering and frame submission in a small grid-based scene.
 
 ## Development and community
 
-Read the [current capability map](knowledge-base/en/docs/core-progress.md) and [next-phase engineering plan](knowledge-base/en/docs/engineering-plan.md) before choosing work. The 2026-11-07 review reconciles the implemented core, remaining requirements and the same eleven M2–M4 packages.
+Read the [current capability map](knowledge-base/en/docs/core-progress.md) and [engineering plan](knowledge-base/en/docs/engineering-plan.md) to see delivered features and open acceptance criteria across the eleven M2–M4 packages.
 
 The [M2–M4 roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md), [Issues](https://github.com/cnedwin/Egret_rebuild/issues), [milestones](https://github.com/cnedwin/Egret_rebuild/milestones) and [community board](https://github.com/users/cnedwin/projects/2) describe delivered work, dependencies and remaining acceptance.
 
 - **Native editing slice:** [single/multiline editing in managed UI (#89)](https://github.com/cnedwin/Egret_rebuild/issues/89) reuses paragraph geometry, focus and resource lifetimes. See the [contract](knowledge-base/en/docs/native-text-editing.md), [responsive form](examples/text-editing/README.md) and [Samsung Android keyboard/lifecycle observations](knowledge-base/en/docs/android-native-text-editing.md); other IMEs/devices, clipboard, accessibility and full-package acceptance remain open.
-- **Parallel integration:** [one editable mixed reference (#91)](https://github.com/cnedwin/Egret_rebuild/issues/91) can start from current assets/UI/animation; [remaining M2 work](https://github.com/cnedwin/Egret_rebuild/issues/56) keeps binary/reference/seek/preservation outcomes distinct. These are bounded contribution entries, not full acceptance.
-- **Contribute independently:** authorized content/reference fixtures, documented reproduction cases, targeted code, translation and [independent newcomer rehearsal (#52)](https://github.com/cnedwin/Egret_rebuild/issues/52). Coordinate touch/gesture work with its existing contributor before editing shared inputs.
+- **Integration and animation**. Complete selected features in the [editable mixed example (#91)](https://github.com/cnedwin/Egret_rebuild/issues/91), or work on [animation lifecycle and compatible Spine replacement (#86)](https://github.com/cnedwin/Egret_rebuild/issues/86) using the [Spine RESET contract](knowledge-base/en/docs/spine-reset-slot.md) and the [sequence compatibility contract](knowledge-base/en/docs/sequence-reset.md).
+- **Contribute independently**. Authorized reference fixtures, reproducible issues, focused code, translation and [independent newcomer rehearsal (#52)](https://github.com/cnedwin/Egret_rebuild/issues/52) are welcome. Use #89 and #90 for shared input changes and cover the affected desktop and mobile cases.
 - **Work in complete packages:** [M2 content/animation](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 UI/text/input](https://github.com/cnedwin/Egret_rebuild/issues/57) and [M4 integration](https://github.com/cnedwin/Egret_rebuild/issues/58). A merged increment does not close all acceptance for its package.
 
 Read [CONTRIBUTING](CONTRIBUTING.md), discuss proposals in [Discussions](https://github.com/cnedwin/Egret_rebuild/discussions), and identify a bounded scope before starting. Develop with focused checks; publish with independent review, English/Chinese documentation, relevant browser evidence and complete protected merge checks. Reuse unchanged evidence and preserve failures. Repository and knowledge-base reading editions are English-first, with Chinese under Cns/ or companion files.
@@ -58,6 +58,14 @@ These are merged engineering increments, not new package-version or full-support
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#136](https://github.com/cnedwin/Egret_rebuild/pull/136) | Standalone WebGL2 isometric example with depth ordering, grid collision and bounded submission | 独立 WebGL2 等距地图示例，展示深度排序、网格碰撞和有界提交 |
+| [#140](https://github.com/cnedwin/Egret_rebuild/pull/140) | Faster shared geometry construction for Spine, with short desktop and Android comparisons | 加快 Spine 使用的共享几何构造，记录桌面和 Android 短时对照 |
+| [#139](https://github.com/cnedwin/Egret_rebuild/pull/139) | Preserve sequence playback across compatible ContentLoader replacements | 在兼容的 ContentLoader 资源替换中保留序列播放状态 |
+| [#138](https://github.com/cnedwin/Egret_rebuild/pull/138) | Reuse fully contained shared clip geometry in WebGPU and WebGL2 | WebGPU 和 WebGL2 复用完全包含的裁剪几何 |
+| [#137](https://github.com/cnedwin/Egret_rebuild/pull/137) | Fixed Outfit Studio workloads and mobile multitouch profile | 换装工作室固定负载与移动端多点触摸档位 |
+| [#135](https://github.com/cnedwin/Egret_rebuild/pull/135) | Editable desktop Outfit Studio with UI, animation and bounded 3D | 可编辑桌面换装工作室，组合 UI、动画及有界 3D |
+| [#134](https://github.com/cnedwin/Egret_rebuild/pull/134) | Owned popup and modal layers with keyboard and native-editor focus | 受管弹出层与模态层，接通键盘和原生编辑焦点 |
+| [#133](https://github.com/cnedwin/Egret_rebuild/pull/133) | Native composition teardown repair and responsive editor preview | 修复原生组合会话退役，完善响应式编辑预览 |
 | [#132](https://github.com/cnedwin/Egret_rebuild/pull/132) | Optional native single/multiline editing, managed UI and paired fonts | 可选原生单／多行编辑、托管 UI 与配对字体 |
 | [#130](https://github.com/cnedwin/Egret_rebuild/pull/130) | Precise Android heap accounting and finite lifecycle/recovery follow-up; historical callback trigger remains unresolved | Android 精确内存口径及有限生命周期／恢复补充；历史回调触发原因仍待查 |
 | [#129](https://github.com/cnedwin/Egret_rebuild/pull/129) | Registered-font selection retained across equipment changes in the paragraph example | 段落示例换装后保持已注册字体选择 |

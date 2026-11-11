@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/core-progress.md)
 
-Reviewed baseline: 2026-11-07, main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1). This is an engineering preview with runnable public examples. Workspace packages remain private at 0.0.0; source publication is not an installable stable-engine release.
+Reviewed main [72edea9](https://github.com/cnedwin/Egret_rebuild/commit/72edea9de4a5f113ebd18cba9c8a970485bccd19) on 2026-11-12. The engineering preview provides runnable public examples. Workspace packages remain private at 0.0.0. A stable engine distribution remains future work.
 
 Use this page for current capability status, the [engineering plan](engineering-plan.md) for the next work, and subsystem contracts for exact APIs and evidence. Historical previews are not competing current versions.
 
@@ -14,7 +14,7 @@ Egret's product direction combines animation-rich 2D games and complex interface
 | --- | --- | --- |
 | Display and rendering | Familiar display objects, coordinates, explicit hit geometry and immutable captures; ordered shared WebGPU/WebGL2 paths, adjacent preparation/batching, texture pages, bounded buffer/target reuse, Alpha masks and separable blur | Original full-dirty CPU/preparation targets; broader devices and hosts; complete feature-specific references. Canvas retains its smaller declared profile. |
 | Resources and builds | Manifest admission, shared acquisition/leases, Scope cleanup, cancellation and late-result handling; reproducible selected PNG/atlas/sequence/font builds, cache/project adoption and typed runtime groups | Spine binary products, selected texture/mip/compression variants, broader format/exporter qualification and complete scene-level acceptance |
-| Animation | Explicit Engine time, Tween and sequence playback/controls; optional Spine JSON assets, independent players, combined skins, finite plays and shared rendering; separate Spine/sequence RESET slots | Bounded Spine seek/replay, complete selected-version semantics/references and compatible state-preserving asset replacement |
+| Animation | Explicit Engine time, Tween, sequence playback/controls and compatible replacement with state preservation, optional Spine JSON assets, independent players, combined skins, finite plays and shared rendering, separate Spine and sequence RESET slots | Bounded Spine seek/replay, complete selected-version semantics/references and Spine state-preserving replacement |
 | UI | Managed roots, measure/arrange, variable-height stable-key lists, anchors, row focus and reveal; immutable theme/skin generations, shared effects and owned popup/modal composition | Full controls, semantic projection and complete large-scene qualification |
 | Text and fonts | Readonly CanvasKit/SkParagraph paragraphs, final-line bidi, wrapping, alignment/maxLines, styled runs, committed hit/selection/caret geometry and managed font-set switching; optional native single/multiline editing and paired browser fonts | Actual IME qualification; independent required script/font/ink references; transfer/startup and CPU/Wasm/memory qualification |
 | Input | Compatible old mouse API, optional multi-contact routing, keyboard/logical focus, responsive examples and merged movement/action state controls | Remaining control/example/keyboard wiring, gesture arbitration, full semantic integration and required actual phone/IME/accessibility rows |
@@ -87,13 +87,13 @@ All eleven M2–M4 packages remain open to their complete acceptance. A merged f
 | M2.1 / [#83](https://github.com/cnedwin/Egret_rebuild/issues/83) | PNG, atlas, multipage, sequence and font build/runtime paths; optional Spine JSON ingress | Binary/variant builds and authorized selected-version reference inventory / content maintainer |
 | M2.2 / [#84](https://github.com/cnedwin/Egret_rebuild/issues/84) | Independent Spine instances, tracks/queues, skins and finite plays; sequence controls | Complete qualified semantics and bounded seek/replay / animation maintainer |
 | M2.3 / [#85](https://github.com/cnedwin/Egret_rebuild/issues/85) | Shared Spine geometry under explicit egret-shared-linear/1 | Complete attachment/clip/tint/blend/sampling references / rendering maintainer |
-| M2.4 / [#86](https://github.com/cnedwin/Egret_rebuild/issues/86) | Editable 20-Spine/200-sequence example; RESET and selected recovery | Compatible state preservation and final animation lifecycle/budgets / resource-animation maintainer |
+| M2.4 / [#86](https://github.com/cnedwin/Egret_rebuild/issues/86) | Editable 20-Spine/200-sequence example, RESET, compatible sequence preservation and selected recovery | Spine state preservation and integrated animation lifecycle/budget qualification / resource-animation maintainer |
 | M3.1 / [#87](https://github.com/cnedwin/Egret_rebuild/issues/87) | Managed layout, stable-key virtualization, anchors, focus/reveal, font/theme integration and bounded editor-row retention | Complete coherent UI scenario / UI maintainer |
 | M3.2 / [#88](https://github.com/cnedwin/Egret_rebuild/issues/88) | Readonly styled text, geometry and font generations | Required independent references and provider cost/recovery qualification / text maintainer |
 | M3.3 / [#89](https://github.com/cnedwin/Egret_rebuild/issues/89) | Contact routing, keyboard/focus, row integration and native single/multiline plain-text editing | Actual IME/mobile keyboard, clipboard and accessibility qualification / input-host maintainer |
 | M3.4 / [#90](https://github.com/cnedwin/Egret_rebuild/issues/90) | Masks/blur, themes, owned popup/modals and contributed movement/action state | Remaining controls, gestures and semantics / UI maintainer with existing touch contributor |
 | M4.1 / [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) | Editable compact and fixed X Outfit Studio, dual-backend timing and scoped Android evidence | Selected feature coverage and formal X qualification / integration and qualification maintainers |
-| M4.2 / [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) | Fixed desktop recovery and bounded Android component evidence | Complete mixed lifecycle, performance and required device campaign / performance-platform maintainer |
+| M4.2 / [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) | Fixed desktop recovery, Android component evidence and short paired observations for shared clipping and geometry construction | Complete mixed lifecycle, performance and required device campaign / performance-platform maintainer |
 | M4.3 / [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) | Observable preview failure/cancel/reload and public contribution entry | Clean-consumer distribution and qualified handoff / release maintainer |
 
 Roles describe responsibilities, not staffing or automatic volunteer assignments. Existing touch/control ownership is retained; other work consumes its interfaces.
@@ -110,9 +110,9 @@ M0's [independent newcomer rehearsal #52](https://github.com/cnedwin/Egret_rebui
 
 ## Next development phase
 
-Native plain-text editing and the M3.4 popup/modal increment now consume current paragraph geometry, fonts and managed UI. Complete the remaining control/semantic set within #90. M4.1 supplies the compact and fixed mixed scene layouts. The open X timing and response rows feed M4.2 alongside formal startup, lifecycle and physical-device qualifications. M2 contributors can complete binary/content qualification, seek/replay or state-preserving replacement against existing owners. M3.4's coordinated touch work continues separately.
+Use the original M1 fixture to locate the full-dirty cost in #55. Once short diagnostics support a concrete change, run the formal paired measurements using the original protocol. In #92, address measured bottlenecks in the fixed Outfit Studio and qualify startup, mixed lifecycle, recovery and physical devices after #91 completes the selected features.
 
-Then finish the remaining controls and the complete mixed scenario, resolve the unchanged M1 performance gap, and execute the required M4 campaign on frozen inputs. A bounded engineering preview may precede complete qualification; it must carry its actual limits. The [engineering plan](engineering-plan.md) assigns dependencies and exit criteria without adding work-package IDs or promising dates.
+#86 can advance compatible Spine replacement and integrated animation lifecycles in parallel, reusing the delivered sequence replacement and resource ownership. #89 and #90 track remaining IME, controls and semantics. #93 can verify the clean-consumer example, public entries and dependency notices while the complete handoff waits for #91 and #92. The [engineering plan](engineering-plan.md) sets dependencies and exit criteria.
 
 ## Historical records
 

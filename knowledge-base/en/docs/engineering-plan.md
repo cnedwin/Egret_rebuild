@@ -2,13 +2,13 @@
 
 English | [简体中文](../../Cns/docs/工程规划.md)
 
-2026-11-07 · Audited implementation baseline: main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1).
+2026-11-12 · Audited implementation baseline is main [72edea9](https://github.com/cnedwin/Egret_rebuild/commit/72edea9de4a5f113ebd18cba9c8a970485bccd19).
 
 The next phase turns existing components into a usable core workflow. Preserve the eleven M2–M4 packages, their public contracts and current contributor ownership. [Core capabilities](core-progress.md) states what exists; the [architecture plan](architecture-and-engineering-plan.md) defines authority and gates; the [M2–M4 roadmap](m2-m4-delivery-plan.md) retains complete milestone acceptance.
 
 ## M3.4 layer implementation checkpoint
 
-The next coherent UI increment supplies [popup/modal ownership and focus](ui-layers.md), consuming the delivered native editor and the existing paragraph/font/root lifetime. The form now connects details, draft rename and return. Use concentrated implementation followed by affected checks and one independent source/results/bilingual review. Complete controls/semantics remain in #90; M4.1 and the touch contributor retain their scopes.
+The delivered [popup/modal layers and focus](ui-layers.md) use the native editor and the existing paragraph, font and root lifetimes. The form supports details, draft rename and return. Remaining controls and semantics stay in #90.
 
 ## M3.3 implementation checkpoint
 
@@ -16,7 +16,7 @@ The native single/multiline increment uses the existing optional editing entries
 
 ## Current position
 
-M0's engineering foundation is available; independent human onboarding and remaining scenario/rights/device qualification stay in #52/#54. M1's rendering/resource engineering is integrated, while formal M1.2 remains OPEN at 10.3 ms full-dirty Engine median-p95 against 8 ms. M2/M3 have runnable assets, players, UI, paragraphs, fonts, themes and shared effects. M4 has usable ingredients but no complete mixed reference game or qualified core release.
+M0’s engineering foundation is available. Independent human onboarding and remaining scenario, rights and device qualification stay in #52 and #54. M1 rendering and resources are integrated. The original M1.2 full-dirty Engine median-p95 remains 10.3 ms against 8 ms. M2 ships compatible sequence preservation, and M3 includes native single/multiline editing and owned popup/modal layers. M4’s [Outfit Studio](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/README.md) runs compact and fixed mixed scenes. Complete scenario qualification and the core release remain open.
 
 The priority is to connect missing user behavior and expose integrated costs, not to rebuild delivered components or add another maintenance-automation phase. Package versions remain private 0.0.0; engineering-document numbers and merged PRs are not product release versions.
 
@@ -26,12 +26,11 @@ These are coherent increments within existing Issues, not new work-package IDs, 
 
 | Order / existing owner | Deliverable and actual entry points | Dependencies | Exit for the increment |
 | --- | --- | --- | --- |
-| First: M3.3 #89, input/host with M3.1/#87 and M3.2/#88 | Native single/multiline plain-text editing in managed UI. Reuse packages/runtime/src/input/, packages/runtime/src/ui/, packages/engine/src/ui/, packages/engine/web/keyboard.ts, the paragraph entries and existing committed geometry. | Delivered UI, focus, paragraph geometry and font sets. Does not wait for complete Spine or the unrelated touch implementation. | Editable scrolling form; revisioned values/selection/composition; bounded row/focus lifetime; old-visible-on-failure and clean disposal. Consolidated controlled and real-browser results; actual IME/device rows reported separately. |
-| Parallel first integration: M4.1 #91, integration owner | One evolving editable mixed example, reusing examples/animation-outfits/, paragraph-panel/, ui-data-panel/, spine-reset/, sequence-reset/ and the existing scene3d contracts. | Current public interfaces for the first subset; #89 and remaining controls for its complete form. | One Engine/shared resource authority, stable authored IDs, independent animation/UI state, visible loading/failure/retry, replacement/recovery and precise declared subset. Record provider/content size and cost before the final campaign. |
-| Parallel content/animation: M2.1–M2.4 #83–#86 | Binary/content and selected texture profiles; complete feature/reference inventory; bounded Spine seek/replay; compatible state-preserving replacement. Reuse packages/project/src/resources/, packages/spine/src/ and engine resource/animation owners. | Exact current artifact/instance contracts. Authorized Editor exports and independent references block their corresponding qualification, not all programmatic implementation. | Each chosen increment has one end-to-end public consumer, clear compatibility/failure semantics and required affected checks. Full selected-version acceptance stays open until every required row has evidence. |
-| Join: M3.4 #90, UI/control owner | Complete the remaining control/layer/semantic set using existing themes/effects and #89's editor. | Usable UI/text/input slices; existing coordinated touch contribution. | One coherent form/list/popup/modal example with keyboard/semantic behavior and controlled cleanup; declared assistive-technology and phone rows remain explicit. |
-| Qualification: M1 #55 and M4.2 #92 | Measured full-dirty improvement on the unchanged original M1 fixture, then complete mixed performance/lifecycle/device campaign. | Short correctness/recovery path; final actual source/content/device/profile frozen for formal collection. | Original CPU/preparation targets and required X/L/phone rows pass, with all original failures and unmeasured physical domains retained. |
-| Handoff: M4.3 #93 | Clean-consumer preview distribution, example/contract matrix, compatibility notes and contribution path. | Early documentation can proceed now; complete qualification depends on #91/#92. | Actual distribution/public entries/notices verified; English/Chinese guide; exact supported combinations and open rows. No stable-engine or full-product claim from a source archive alone. |
+| Original M1 performance #55 | Use a short diagnostic on the original TEXTURED fixture to locate the full-dirty cost. Follow a justified change with formal paired measurements using the original protocol. | Original fixture and timing method. Keep formal runs free of competing load. | Test the 8 ms full-dirty Engine and 4 ms preparation targets with measured results. Retain earlier failures, unmeasurable GPU time and per-stage evidence limits. |
+| Parallel content and animation #83–#86 | Complete binary/texture variants, independent references and bounded Spine seek/replay. In #86, build compatible Spine state replacement and integrated lifecycle coverage on the delivered sequence and resource ownership. | Existing artifact/instance contracts. Authorized exports and independent references qualify their corresponding scope. | The candidate preserves declared state, refuses incompatible publication and verifies cancellation, resource release and device recovery. |
+| Join selected features #89–#91 | Complete remaining actual IME, controls and semantics in #89/#90. Complete selected features in examples/outfit-studio/ for #91, retaining compact and fixed scenes. | Existing editor, contact routing, shared resources, rendering and animation. | The editable example preserves stable authored IDs, independent animation state, resource failure/retry and compatible input. State the supported subset. |
+| Mixed qualification #92 | Continue measuring and addressing fixed-scene bottlenecks, then run the formal X/L/device campaign. | Collect each row once #91 and the relevant M2/M3 behavior, devices and references are ready. Final M4 acceptance requires #55. Freeze the actual source, content, device and profile. | Qualify startup, CPU/GPU, frame intervals, memory, lifecycle and recovery. Keep the original failures and unmeasured rows. |
+| Preview handoff #93 | Verify the clean-consumer example, actual distribution, public entries and dependency/content notices in parallel. Complete the bilingual guide. | Complete handoff depends on #91 and #92. | Record verified combinations, build/startup evidence and remaining qualification. |
 
 The table gives dependency order, not calendar duration. One public interface/file has one active writer; separate branches/worktrees allow independent packages to advance while CI checks a frozen candidate. Integrate the next candidate with current main before its own delivery. Formal performance runs remain free of competing local load.
 
@@ -65,7 +64,7 @@ M2.1 owns exact artifact/source/runtime identities, fixture rights and variant a
 
 M2.3 owns copied ordered geometry and exact alpha/color/sampling. Failed drawing preserves its last owned visual without pretending committed animation events were rolled back. M2.4 owns resource/instance candidate preparation, compatibility policy, CPU commit and Host-generation integration.
 
-Current RESET does not preserve arbitrary tracks/time. A preserve-mode increment first declares compatible asset IDs/names/tracks/skins/event history, stages a candidate and refuses unsupported mappings without silently resetting. Independent instances and the global game clock do not wait for a surface recovery. Source/instance and device generations remain distinct.
+A sequence controller can carry position, loop, rate, pause state and marker numbering across ContentLoader clips with identical ordered frame boundaries. Compatible Spine replacement must first define the asset, track, skin and event-history mapping. Refuse an unsupported mapping before publication. Independent instances and the global clock keep running, with resource, instance and device generations checked separately.
 
 ## Retain, change and defer
 
