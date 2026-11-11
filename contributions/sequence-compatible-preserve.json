@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/lib/sequence-preserve-pins.mjs",
+      "originRole": "First-party exact source identity successor for compatible sequence animation replacement",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

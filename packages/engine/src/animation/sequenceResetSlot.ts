@@ -5,12 +5,12 @@ import type {SharedFrameOptions2D, SharedRenderFrame2D} from '@egret/contracts';
 import {Engine} from '../Engine.js';
 import type {DisplaySubtreeTicket} from '../displaySubtreeTicket.js';
 import type {ContentLoader} from '../contentTypes.js';
-import {authenticateContentLoader} from '../internal/contentFactoryState.js';
+import {authenticateContentLoader, hasMatchingSequenceTimeline, hasSequenceTimeline} from '../internal/contentFactoryState.js';
 import {requireSequenceControllerEngine} from '../internal/sequenceControllerFactoryState.js';
 import type {SequenceScopePort} from '../internal/sequenceControllerFactoryState.js';
 import {captureInput, coordinatorSize, mustQueue, assertNotCapturing} from './sequenceCoordinator.js';
 import {captureOptions} from './sequenceInput.js';
-import {createSequenceController, requireResetController} from './sequenceController.js';
+import {createSequenceController, pauseSequenceForReplacement, requireResetController, requireSequencePreserveSource, stageSequencePreserve} from './sequenceController.js';
 import type {SequenceResetInitial, SequenceResetActive, SequenceResetRequest, SequenceResetSlot, SequenceResetTicket, SequenceResetState} from './sequenceResetTypes.js';
 
 const apply=Reflect.apply, freeze=Object.freeze;
@@ -49,6 +49,116 @@ export function createSequenceResetSlot(engine:Engine,scope:Scope,target:Display
   function open():void{if(disposed)throw fault('DISPOSED');owner.assertOpen();}
   function idle():void{open();assertNotCapturing(port);if(busy||mustQueue(port))throw fault('REENTRANT');}
   function cleanup(actions:readonly (()=>void)[]):unknown[]{const errors:unknown[]=[];for(const action of actions)try{action();}catch(cause){errors.push(cause);port.captureCleanup(cause);}return errors;}
+  function requestReplacement(request:unknown,preserve:boolean):SequenceResetTicket{
+    idle();busy=true;let spare:SequenceScopePort|undefined;
+    try{
+      topology();requireResetController(active.controller,port,active.bitmap);
+      const admitted=captureInput(port,()=>{
+        const keys=['version','loader','imageId','sequenceId'];
+        const r=record(request,preserve?keys:[...keys,'policy','playback'],open);
+        if((!preserve&&r.policy!=='reset')||!label(r.version)||!label(r.imageId,512)||!label(r.sequenceId,512))throw fault('OPTIONS_INVALID');
+        // Validate all caller-owned descriptors before replacing valid intent. Actual
+        // clip-dependent duration/marker checks repeat after genuine group readiness.
+        const playback=preserve?undefined:captureOptions(r.playback,2**32,false);open();
+        return {r,playback};
+      });
+      const {r}=admitted;
+      if(preserve&&!hasSequenceTimeline(requireSequencePreserveSource(active.controller,port,active.bitmap).clip))throw fault('PRESERVE_TIMELINE');
+      if(coordinatorSize(port)>=256)throw new EgretError('ANIMATION_CONTROLLER_LIMIT');
+      if(port.claims.size>=256)throw new EgretError('ANIMATION_LIMIT');
+      spare=port.createScope();const owned=spare;
+      authenticateContentLoader(r.loader,owned.scope,r.imageId as string,r.sequenceId as string);open();
+      const id=++intent,prior=pending;
+      let state:SequenceResetState='loading',next:SequenceResetActive|undefined,tree:DisplaySubtreeTicket|undefined;
+      let publishPreserved: (()=>void)|undefined;
+      let paused:{controller:SequenceResetInitial['controller'];revision:()=>object;at:object;resume:boolean}|undefined;
+      let resolve!:()=>void,reject!:(cause:unknown)=>void;
+      const ready=new Promise<void>((yes,no)=>{resolve=yes;reject=no;});void ready.catch(()=>{});
+      function current():void{open();if(id!==intent||state==='cancelled'||state==='failed'||state==='committed')throw fault('RETIRED');owned.assertOpen();}
+      function restore():void{
+        const old=paused;paused=undefined;
+        // A caller command after our pause owns the next transition. Never overwrite it.
+        if(old?.resume&&old.revision()===old.at&&old.controller.getStatus().state==='paused'){
+          // The borrowed controller owns its lifetime; the slot Scope may be closing.
+          try{old.controller.resume();}catch(cause){port.captureCleanup(cause);}
+        }
+      }
+      function release():unknown[]{const captured=tree;tree=undefined;publishPreserved=undefined;return cleanup([()=>captured?.dispose(),restore,()=>owned.dispose()]);}
+      function cancel():void{
+        if(state==='committed'||state==='cancelled'||state==='failed')return;
+        state='cancelled';if(pending===demand)pending=undefined;
+        reject(fault('CANCELLED'));const errors=release();if(errors.length)throw fault('CLEANUP_FAILED',errors);
+      }
+      function fail(cause:unknown):unknown{
+        if(state==='cancelled'||state==='failed'||state==='committed')return cause;
+        state='failed';if(pending===demand)pending=undefined;
+        const errors=release(),failure=errors.length?fault('CLEANUP_FAILED',{cause,errors}):cause;
+        reject(failure);return failure;
+      }
+      const demand={cancel};pending=demand;
+      const ticket:SequenceResetTicket=freeze({
+        get ready(){return ready;},get state(){return state;},
+        capture(options:SharedFrameOptions2D):SharedRenderFrame2D{
+          idle();current();if(state!=='ready'||!next)throw fault('NOT_READY');busy=true;
+          try{
+            topology();const revision=requireResetController(active.controller,port,active.bitmap);
+            if(preserve)requireSequencePreserveSource(active.controller,port,active.bitmap);
+            const running=active.controller.getStatus().state==='running';
+            const transition={controller:active.controller,revision,at:running?{}:revision(),resume:running};
+            try{if(running)pauseSequenceForReplacement(active.controller,port,active.bitmap,transition.at);}
+            finally{paused=transition;}
+            current();if(revision()!==transition.at)throw fault('CONTROLLER_CHANGED');
+            if(preserve)publishPreserved=stageSequencePreserve(port,active.controller,active.bitmap,next.controller,next.bitmap,running);
+            tree=apply(prepare,engine,[owned.scope,target,next.bitmap]) as DisplaySubtreeTicket;
+            const frame=apply(capture,engine,[tree,options]) as SharedRenderFrame2D;current();state='prepared';return frame;
+          }catch(cause){
+            const failure=fail(cause);
+            // Cancellation during pause delivery ran before the slot could record the rollback.
+            restore();throw failure;
+          }finally{busy=false;}
+        },
+        commit():SequenceResetActive{
+          idle();current();if(state!=='prepared'||!tree||!next)throw fault('NOT_PREPARED');busy=true;
+          try{
+            topology();if(paused&&paused.revision()!==paused.at)throw fault('CONTROLLER_CHANGED');
+            tree.commit();publishPreserved?.();publishPreserved=undefined;
+            const previous=activeScope;active=next;activeScope=owned;state='committed';tree=undefined;pending=undefined;paused=undefined;
+            // CPU publication is final. Reentrant retirement observes the published state.
+            const errors=cleanup([()=>previous?.dispose()]);if(errors.length)throw fault('POSTCOMMIT_FAILED',errors);
+            return active;
+          }catch(cause){throw fail(cause);}finally{busy=false;}
+        },
+        dispose(){cancel();},
+      });
+      spare=undefined;
+      try{
+        prior?.cancel();current();
+        const group=(r.loader as ContentLoader).load(owned.scope,[r.sequenceId as string]);current();
+        void group.ready.then(()=>{
+          try{
+            current();
+            const clip=group.getSequence(r.sequenceId as string);
+            const source=preserve?requireSequencePreserveSource(active.controller,port,active.bitmap):undefined;
+            if(source&&!hasMatchingSequenceTimeline(source.clip,clip))throw fault('PRESERVE_TIMELINE');
+            const playback=source??admitted.playback!;
+            const bitmap=new Bitmap(group.getImage(r.imageId as string));owned.use(bitmap);
+            let visible=false;
+            const controller=createSequenceController(engine,owned.scope,bitmap,clip,{
+              profile:'egret.sequence-control/1',rate:0,totalPlays:playback.totalPlays,
+              markers:[...playback.markers].sort((a,b)=>a.markerIndex-b.markerIndex).map(m=>({id:m.id,timeSeconds:m.timeSeconds})),
+              onEvent:event=>visible?admitted.playback?.listener?.(event):undefined,
+            });
+            if(admitted.playback){controller.start();controller.setRate(admitted.playback.rate);}
+            current();
+            next=freeze({version:r.version as string,bitmap,controller,ownership:'owned'});state='ready';
+            // RESET consumes zero start markers silently. Preserve stays idle until capture.
+            visible=true;resolve();
+          }catch(cause){fail(cause);}
+        },fail);
+      }catch(cause){fail(cause);}
+      return ticket;
+    }finally{spare?.dispose();busy=false;}
+  }
   const slot:SequenceResetSlot=freeze({
     get isDisposed(){return disposed;},
     getActive(){open();return active;},
@@ -58,100 +168,8 @@ export function createSequenceResetSlot(engine:Engine,scope:Scope,target:Display
       const errors=cleanup([()=>candidate?.cancel(),()=>owned?.dispose()]);
       if(errors.length)throw fault('CLEANUP_FAILED',errors);
     },
-    request(request:SequenceResetRequest):SequenceResetTicket{
-      idle();busy=true;let spare:SequenceScopePort|undefined;
-      try{
-        topology();requireResetController(active.controller,port,active.bitmap);
-        const admitted=captureInput(port,()=>{
-          const r=record(request,['policy','version','loader','imageId','sequenceId','playback'],open);
-          if(r.policy!=='reset'||!label(r.version)||!label(r.imageId,512)||!label(r.sequenceId,512))throw fault('OPTIONS_INVALID');
-          // Validate all caller-owned descriptors before replacing valid intent. Actual
-          // clip-dependent duration/marker checks repeat after genuine group readiness.
-          const playback=captureOptions(r.playback,2**32,false);open();
-          return {r,playback};
-        });
-        const {r,playback}=admitted;
-        if(coordinatorSize(port)>=256)throw new EgretError('ANIMATION_CONTROLLER_LIMIT');
-        if(port.claims.size>=256)throw new EgretError('ANIMATION_LIMIT');
-        spare=port.createScope();const owned=spare;
-        authenticateContentLoader(r.loader,owned.scope,r.imageId as string,r.sequenceId as string);open();
-        const id=++intent,prior=pending;
-        let state:SequenceResetState='loading',next:SequenceResetActive|undefined,tree:DisplaySubtreeTicket|undefined;
-        let paused:{controller:SequenceResetInitial['controller'];revision:()=>object;at:object;resume:boolean}|undefined;
-        let resolve!:()=>void,reject!:(cause:unknown)=>void;
-        const ready=new Promise<void>((yes,no)=>{resolve=yes;reject=no;});void ready.catch(()=>{});
-        function current():void{open();if(id!==intent||state==='cancelled'||state==='failed'||state==='committed')throw fault('RETIRED');owned.assertOpen();}
-        function restore():void{
-          const old=paused;paused=undefined;
-          // A caller command after our pause owns the next transition. Never overwrite it.
-          if(old?.resume&&old.revision()===old.at&&old.controller.getStatus().state==='paused'){
-            // The borrowed controller owns its lifetime; the slot Scope may be closing.
-            try{old.controller.resume();}catch(cause){port.captureCleanup(cause);}
-          }
-        }
-        function release():unknown[]{const captured=tree;tree=undefined;return cleanup([()=>captured?.dispose(),restore,()=>owned.dispose()]);}
-        function cancel():void{
-          if(state==='committed'||state==='cancelled'||state==='failed')return;
-          state='cancelled';if(pending===demand)pending=undefined;
-          reject(fault('CANCELLED'));const errors=release();if(errors.length)throw fault('CLEANUP_FAILED',errors);
-        }
-        function fail(cause:unknown):unknown{
-          if(state==='cancelled'||state==='failed'||state==='committed')return cause;
-          state='failed';if(pending===demand)pending=undefined;
-          const errors=release(),failure=errors.length?fault('CLEANUP_FAILED',{cause,errors}):cause;
-          reject(failure);return failure;
-        }
-        const demand={cancel};pending=demand;
-        const ticket:SequenceResetTicket=freeze({
-          get ready(){return ready;},get state(){return state;},
-          capture(options:SharedFrameOptions2D):SharedRenderFrame2D{
-            idle();current();if(state!=='ready'||!next)throw fault('NOT_READY');busy=true;
-            try{
-              topology();const revision=requireResetController(active.controller,port,active.bitmap);
-              const running=active.controller.getStatus().state==='running';
-              if(running)active.controller.pause();
-              paused={controller:active.controller,revision,at:revision(),resume:running};current();
-              tree=apply(prepare,engine,[owned.scope,target,next.bitmap]) as DisplaySubtreeTicket;
-              const frame=apply(capture,engine,[tree,options]) as SharedRenderFrame2D;current();state='prepared';return frame;
-            }catch(cause){throw fail(cause);}finally{busy=false;}
-          },
-          commit():SequenceResetActive{
-            idle();current();if(state!=='prepared'||!tree||!next)throw fault('NOT_PREPARED');busy=true;
-            try{
-              topology();if(paused&&paused.revision()!==paused.at)throw fault('CONTROLLER_CHANGED');
-              tree.commit();
-              const previous=activeScope;active=next;activeScope=owned;state='committed';tree=undefined;pending=undefined;paused=undefined;
-              // CPU publication is final. Reentrant retirement observes the published state.
-              const errors=cleanup([()=>previous?.dispose()]);if(errors.length)throw fault('POSTCOMMIT_FAILED',errors);
-              return active;
-            }catch(cause){throw fail(cause);}finally{busy=false;}
-          },
-          dispose(){cancel();},
-        });
-        spare=undefined;
-        try{
-          prior?.cancel();current();
-          const group=(r.loader as ContentLoader).load(owned.scope,[r.sequenceId as string]);current();
-          void group.ready.then(()=>{
-            try{
-              current();
-              const bitmap=new Bitmap(group.getImage(r.imageId as string));owned.use(bitmap);
-              let visible=false;
-              const controller=createSequenceController(engine,owned.scope,bitmap,group.getSequence(r.sequenceId as string),{
-                profile:'egret.sequence-control/1',rate:0,totalPlays:playback.totalPlays,
-                markers:[...playback.markers].sort((a,b)=>a.markerIndex-b.markerIndex).map(m=>({id:m.id,timeSeconds:m.timeSeconds})),
-                onEvent:event=>visible?playback.listener?.(event):undefined,
-              });
-              controller.start();controller.setRate(playback.rate);current();
-              next=freeze({version:r.version as string,bitmap,controller,ownership:'owned'});state='ready';
-              // No candidate clock movement occurs while paused. Zero start markers are consumed silently.
-              visible=true;resolve();
-            }catch(cause){fail(cause);}
-          },fail);
-        }catch(cause){fail(cause);}
-        return ticket;
-      }finally{spare?.dispose();busy=false;}
-    },
+    request(request:SequenceResetRequest){return requestReplacement(request,false);},
+    requestPreserving(request:Omit<SequenceResetRequest,'policy'|'playback'>){return requestReplacement(request,true);},
   });
   claims.set(target,slot);
   try{owner.use(slot);open();}catch(cause){slot.dispose();throw cause;}

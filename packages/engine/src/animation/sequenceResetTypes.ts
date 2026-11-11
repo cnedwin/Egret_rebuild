@@ -26,7 +26,7 @@ export interface SequenceResetTicket {
   readonly state: SequenceResetState;
   /** Pauses only the affected predecessor during the final bounded window. */
   capture(options: SharedFrameOptions2D): SharedRenderFrame2D;
-  /** Publishes at time zero, paused; separately call the returned controller.resume(). */
+  /** Publishes the prepared successor. RESET starts paused at zero. Preserve carries forward the captured controller state. */
   commit(): SequenceResetActive;
   dispose(): void;
 }
@@ -34,6 +34,8 @@ export interface SequenceResetSlot {
   readonly isDisposed: boolean;
   getActive(): SequenceResetActive;
   request(request: SequenceResetRequest): SequenceResetTicket;
+  /** Preserve a live controller across ContentLoader clips with identical frame boundaries. */
+  requestPreserving(request: Omit<SequenceResetRequest, 'policy' | 'playback'>): SequenceResetTicket;
   /** Initial content is borrowed; only candidates and owned successors are disposed. */
   dispose(): void;
 }

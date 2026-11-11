@@ -5,6 +5,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {fingerprintFile, samePhysicalPath} from './lib/file-identity.mjs';
+import { selectSequencePreservePins } from './lib/sequence-preserve-pins.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const inventoryPin = {"path":"tests/types/atlas-import-diagnostic-expectations.json","bytes":254943,"sha256":"3d59e24a78708bd0d85f06d6124bced00d5687afcc494d1e919dce1fc9a985c6"};
@@ -452,7 +453,7 @@ function m3PointerGraph(root,base,actual) {
   graph=m34EffectGraph(graph,present);
   graph=fontResourceGraph(graph,present);
   graph=uiThemeGraph(graph,present);
-  graph=sequenceResetGraph(graph,present);
+  graph=selectSequencePreservePins(root,sequenceResetGraph(graph,present),present);
   graph=uiControlsGraph(graph,present);
   graph=nativeEditingGraph(graph,present);
  graph=graph.map(row=>sharedContainedClipPairs.find(pair=>same(pair.base,row))?.current??row);

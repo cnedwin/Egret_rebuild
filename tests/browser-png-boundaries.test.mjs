@@ -97,7 +97,7 @@ async function isolated(check, body) {
     for (const name of packages) copy('packages/' + name);
     for (const file of ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml',
       ...readdirSync(repository).filter(name => /^tsconfig(?:\.[A-Za-z0-9-]+)?\.json$/.test(name)),
-      'tools/browser-png-boundary.mjs', 'tools/lib/file-identity.mjs',
+      'tools/browser-png-boundary.mjs', 'tools/lib/file-identity.mjs', 'tools/lib/sequence-preserve-pins.mjs',
       'tools/build.mjs', 'tools/generate-project-format.mjs']) copy(file);
     mkdirSync(path.join(root, 'node_modules/@egret'), { recursive: true });
     for (const name of packages) symlinkSync(path.join(root, 'packages', name), path.join(root, 'node_modules/@egret', name), process.platform === 'win32' ? 'junction' : 'dir');
@@ -128,6 +128,7 @@ function append(text) { return bytes => Buffer.concat([bytes, Buffer.from(text, 
 function jsonEdit(change) { return bytes => { const value = JSON.parse(bytes); change(value); return Buffer.from(JSON.stringify(value, null, 2) + '\n'); }; }
 const adapter = 'packages/engine/web/BrowserTextureProvider.ts';
 const cases = [
+  ['compatible sequence source refuses mixed bytes', 'packages/engine/src/animation/sequenceController.ts', 'BIP_BOUNDARY_FINGERPRINT', append('// unreviewed sequence source\n')],
   ['key-reveal source cannot drift with unchanged emissions', 'packages/engine/src/ui/index.ts', 'BIP_BOUNDARY_FINGERPRINT', append('// unreviewed key-reveal source\n')],
   ['key-reveal emission cannot drift within the admitted group', 'packages/engine/dist/ui/virtualList.js', 'BIP_BOUNDARY_FINGERPRINT', bytes => { const changed = Buffer.from(bytes); changed[0] ^= 1; return changed; }],
   ['M2.1 content source rejects unreviewed bytes', 'packages/project/src/resources/content.ts', 'BIP_BOUNDARY_FINGERPRINT', append('// unreviewed content source\n')],

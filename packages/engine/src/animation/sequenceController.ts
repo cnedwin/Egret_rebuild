@@ -28,6 +28,7 @@ interface RecordState {
   coordinator: SequenceCoordinator | undefined;
   driver: SequenceDriver | undefined;
   player: SequencePlayer | undefined;
+  clip: SequenceClip | undefined;
   target: Bitmap | undefined;
   claimed: boolean;
   readonly claimToken: object;
@@ -83,7 +84,7 @@ function retire(record: RecordState, state: 'completed' | 'stopped' | 'faulted',
   const driver = record.driver, player = record.player, target = record.target, abort = record.abort;
   const claimed = record.claimed;
   record.port = undefined; record.scope = undefined; record.coordinator = undefined;
-  record.driver = undefined; record.player = undefined; record.target = undefined;
+  record.driver = undefined; record.player = undefined; record.clip = undefined; record.target = undefined;
   record.abort = undefined; record.claimed = false; record.listener = undefined;
   record.markers = EMPTY_MARKERS; record.pending = [];
   let first: Issue | undefined;
@@ -292,9 +293,9 @@ function advance(record: RecordState, tick: GameClockTick): SequenceDelivery | u
     return refusal(record, port, scope, cause, tick.tickId);
   } finally { record.busy = false; }
 }
-function execute(record: RecordState, command: Command): void {
+function execute(record: RecordState, command: Command, revision?: object): void {
   const port = assertControl(record), scope = record.scope!;
-  record.revision = {};
+  record.revision = revision ?? {};
   const tick = port.clock.tickId;
   if (mustQueue(port)) {
     if (record.pending.length >= 16) throw new EgretError('ANIMATION_COMMAND_LIMIT');
@@ -356,11 +357,58 @@ function handleFor(record: RecordState): SequenceController {
 const resetControllers = new WeakMap<object, RecordState>();
 // Neither a terminal handle nor this registry retains its former Bitmap borrow.
 const resetTargets = new WeakMap<Bitmap, WeakMap<object, SequenceControllerEnginePort>>();
-/** Optional assembly only: authenticate the exact Engine, original controller and Bitmap. */
-export function requireResetController(value: unknown, port: SequenceControllerEnginePort, bitmap: Bitmap): () => object {
+function requireResetRecord(value: unknown, port: SequenceControllerEnginePort, bitmap: Bitmap): RecordState {
   const record = resetControllers.get(value as object);
   if (!record || resetTargets.get(bitmap)?.get(value as object) !== port) throw new EgretError('SEQUENCE_RESET_INITIAL_INVALID');
+  return record;
+}
+/** Optional assembly only: authenticate the exact Engine, original controller and Bitmap. */
+export function requireResetController(value: unknown, port: SequenceControllerEnginePort, bitmap: Bitmap): () => object {
+  const record = requireResetRecord(value, port, bitmap);
   return (): object => record.revision;
+}
+
+/** Reserve the replacement pause revision before synchronous event delivery can reenter the slot. */
+export function pauseSequenceForReplacement(value: SequenceController, port: SequenceControllerEnginePort,
+  bitmap: Bitmap, revision: object): void {
+  execute(requireResetRecord(value, port, bitmap), {kind: 'pause'}, revision);
+}
+
+function requirePreserveRecord(value: SequenceController, port: SequenceControllerEnginePort, bitmap: Bitmap): RecordState {
+  const record = requireResetRecord(value, port, bitmap);
+  if ((record.state !== 'running' && record.state !== 'paused') || record.pending.length !== 0) {
+    throw new EgretError('SEQUENCE_RESET_PRESERVE_STATE');
+  }
+  assertControl(record);
+  return record;
+}
+export function requireSequencePreserveSource(value: SequenceController, port: SequenceControllerEnginePort,
+  bitmap: Bitmap): {clip: SequenceClip; totalPlays: number | 'infinite';
+    markers: readonly {readonly id: string; readonly timeSeconds: number; readonly markerIndex: number}[]} {
+  const record = requirePreserveRecord(value, port, bitmap);
+  return {clip: record.clip!, totalPlays: record.totalPlays, markers: record.markers};
+}
+
+/** Stage an event-free successor at the paused source position. The slot has checked both timelines. */
+export function stageSequencePreserve(port: SequenceControllerEnginePort, from: SequenceController, fromBitmap: Bitmap,
+  to: SequenceController, toBitmap: Bitmap, running: boolean): () => void {
+  const source = requirePreserveRecord(from, port, fromBitmap), next = requireResetRecord(to, port, toBitmap);
+  assertControl(next);
+  if (source.state !== 'paused' || next.state !== 'idle' || source.totalPlays !== next.totalPlays) {
+    throw new EgretError('SEQUENCE_RESET_PRESERVE_STATE');
+  }
+  const candidate = begin(next);
+  candidate.elapsed = source.elapsed; candidate.position = source.position; candidate.play = source.play;
+  candidate.rate = source.rate; candidate.state = 'paused'; candidate.applyTarget = true;
+  candidate.baseline = port.clock.elapsedSeconds;
+  commit(next, candidate, port.clock.tickId, false).diagnostics();
+  next.eventCount = source.eventCount;
+  next.listener = source.listener;
+  // The final window can span clock ticks. Rebase only when the subtree publishes.
+  return (): void => {
+    next.baseline = port.clock.elapsedSeconds;
+    next.state = running ? 'running' : 'paused';
+  };
 }
 
 /** Opt-in sequence controls share Engine ownership but never create a second timer. */
@@ -380,7 +428,7 @@ export function createSequenceController(engine: Engine, scope: Scope, bitmap: B
     owned.assertOpen();
     if (port.claims.has(bitmap)) throw new EgretError('ANIMATION_TARGET_BUSY');
     coordinator = requireCoordinator(port);
-    record = {port, scope: owned, coordinator, driver: undefined, player, target: bitmap,
+    record = {port, scope: owned, coordinator, driver: undefined, player, clip, target: bitmap,
       claimed: false, claimToken: {}, abort: undefined, duration: clip.durationSeconds,
       totalPlays: admitted.totalPlays, markers: admitted.markers, listener: admitted.listener,
       state: 'idle', elapsed: 0, position: 0, play: 0, rate: admitted.rate,
