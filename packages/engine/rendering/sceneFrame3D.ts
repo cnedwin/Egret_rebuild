@@ -1,3 +1,5 @@
+import {isImageData2D} from '@egret/contracts';
+import type {ImageData2D,TextureRegion2D} from '@egret/contracts';
 import {createMatrix4, multiplyMatrix4, Math3DError} from './matrix4.js';
 import type {Matrix4} from './matrix4.js';
 import {createPerspectiveProjection3D, createOrthographicProjection3D} from './projection3D.js';
@@ -18,11 +20,65 @@ export interface SceneInput3D {
     readonly projection: SceneProjectionInput3D;
     readonly draws: readonly SceneDrawInput3D[];
 }
+export interface SceneMeshTexture3D {
+    readonly source: ImageData2D;
+    readonly texcoords: readonly number[];
+}
+export interface SceneDirectionalLighting3D {
+    /** World-space direction pointing toward the light. */
+    readonly direction: readonly [number, number, number];
+    readonly ambient: number;
+    readonly intensity: number;
+}
+export interface SceneLambertSurface3D extends SceneMeshTexture3D {
+    readonly normals: readonly number[];
+}
+export interface SceneLambertDraw3D {
+    readonly normals: readonly number[];
+    readonly normalMatrix: readonly number[];
+    readonly mirrored: boolean;
+    readonly lighting: SceneDirectionalLighting3D;
+}
 export interface SceneDraw3D {
     readonly geometry: MeshGeometry3D;
     readonly mvp: Matrix4;
+    readonly texture?: SceneMeshTexture3D;
+    readonly lambert?: SceneLambertDraw3D;
 }
+type CardTuple=readonly [number,number,number,number];
+export interface SceneWorldCardInput3D {
+    readonly source:ImageData2D;
+    /** Card dimensions in world units. */
+    readonly width:number;
+    readonly height:number;
+    readonly region?:TextureRegion2D;
+    /** Pivot in crop-relative pixels. It can lie outside the crop. */
+    readonly pivotX?:number;
+    readonly pivotY?:number;
+    /** First admitted source-alpha byte, from 1 through 255. */
+    readonly alphaCutoff?:number;
+}
+declare const cardBrand:unique symbol;
+export interface SceneWorldCard3D {
+    readonly [cardBrand]:true;
+    readonly source:ImageData2D;
+    readonly bounds:CardTuple;
+    readonly region:CardTuple;
+    readonly alphaCutoff:number;
+}
+export interface SceneCardDraw3D {
+    readonly source:ImageData2D;
+    readonly bounds:CardTuple;
+    readonly region:CardTuple;
+    readonly alphaCutoff:number;
+    readonly mvp:Matrix4;
+}
+interface SceneCardCapture3D { readonly card:SceneWorldCard3D; readonly modelView:Matrix4; }
+const cardOwners=new WeakSet<object>();
+const noCards=Object.freeze([]) as readonly SceneCardCapture3D[];
+
 export interface SceneFrame3D {
+    readonly cards?:readonly SceneCardDraw3D[];
     readonly draws: readonly SceneDraw3D[];
     readonly geometries: readonly MeshGeometry3D[];
     readonly cpuLogicalBytes: number;
@@ -123,7 +179,67 @@ function headroom(positions: readonly number[], mvp: Matrix4): void {
         }
     }
 }
+
+function cardNumber(value:unknown,fallback?:number):number {
+    if((value===missing||value===undefined)&&fallback!==undefined)return fallback;
+    if(typeof value!=='number'||!Number.isFinite(value))fail('SCENE3D_INPUT_INVALID','validation');
+    return value;
+}
+function canonicalComponent(value:number):number {
+    const rounded=Math.fround(value);
+    if(value!==0&&rounded===0)fail('SCENE3D_PRECISION_UNSUPPORTED','validation');
+    return rounded===0?0:rounded;
+}
+export function createSceneWorldCard3D(input:SceneWorldCardInput3D):SceneWorldCard3D {
+    if(!record(input))fail('SCENE3D_INPUT_INVALID','validation');
+    const image=own(input,'source'),rawRegion=own(input,'region');
+    if(!isImageData2D(image))fail('SCENE3D_INPUT_INVALID','validation');
+    let x=0,y=0,pixelWidth=image.width,pixelHeight=image.height;
+    if(rawRegion!==undefined&&rawRegion!==missing){
+        if(!record(rawRegion))fail('SCENE3D_INPUT_INVALID','validation');
+        x=cardNumber(own(rawRegion,'x'));y=cardNumber(own(rawRegion,'y'));
+        pixelWidth=cardNumber(own(rawRegion,'width'));pixelHeight=cardNumber(own(rawRegion,'height'));
+        if(![x,y,pixelWidth,pixelHeight].every(Number.isSafeInteger)||x<0||y<0||pixelWidth<=0||pixelHeight<=0||
+            pixelWidth>image.width-x||pixelHeight>image.height-y)fail('SCENE3D_INPUT_INVALID','validation');
+    }
+    const width=cardNumber(own(input,'width')),height=cardNumber(own(input,'height'));
+    const pivotX=cardNumber(own(input,'pivotX'),pixelWidth/2),pivotY=cardNumber(own(input,'pivotY'),pixelHeight);
+    const alphaCutoff=cardNumber(own(input,'alphaCutoff'),128);
+    if(width<=0||height<=0||!Number.isInteger(alphaCutoff)||alphaCutoff<1||alphaCutoff>255)
+        fail('SCENE3D_INPUT_INVALID','validation');
+    const left=-pivotX/pixelWidth*width,top=pivotY/pixelHeight*height;
+    const bounds=[canonicalComponent(left),canonicalComponent(top-height),canonicalComponent(left+width),canonicalComponent(top)] as const;
+    profile(bounds);
+    if(bounds[0]>=bounds[2]||bounds[1]>=bounds[3])fail('SCENE3D_PRECISION_UNSUPPORTED','validation');
+    const region=[x,y,pixelWidth,pixelHeight] as const;
+    const result=native(()=>Object.freeze({source:image,bounds:Object.freeze(bounds),region:Object.freeze(region),alphaCutoff})) as SceneWorldCard3D;
+    native(()=>cardOwners.add(result));
+    return result;
+}
+export function isSceneWorldCard3D(value:unknown):value is SceneWorldCard3D {
+    return value!==null&&typeof value==='object'&&cardOwners.has(value);
+}
+function authoredMatrix(exact:Matrix4):Matrix4 {
+    // Authored paths round once at the native MVP boundary.
+    const rounded=native(()=>exact.map(value=>Math.fround(value)));
+    for(let slot=0;slot<16;slot++){
+        if(exact[slot]!==0&&rounded[slot]===0)fail('SCENE3D_PRECISION_UNSUPPORTED','validation');
+    }
+    profile(rounded);
+    return trustedMath(()=>createMatrix4(rounded));
+}
+
 export function createSceneFrame3D(input: unknown): SceneFrame3D {
+    return captureSceneFrame(input, false);
+}
+export function createAuthoredSceneFrame3D(input: SceneInput3D, cards: readonly SceneCardCapture3D[] = noCards,
+    textures?: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D>,
+    lambertDraws?: ReadonlyMap<number, SceneLambertDraw3D>): SceneFrame3D {
+    return captureSceneFrame(input, true, cards, textures, lambertDraws);
+}
+function captureSceneFrame(input: unknown, authored: boolean, cardInputs: readonly SceneCardCapture3D[] = noCards,
+    textures?: ReadonlyMap<MeshGeometry3D, SceneMeshTexture3D>,
+    lambertDraws?: ReadonlyMap<number, SceneLambertDraw3D>): SceneFrame3D {
     if (input === null || typeof input !== 'object') fail('SCENE3D_INPUT_INVALID', 'validation');
     const projection = own(input, 'projection'), draws = own(input, 'draws');
     if (projection === missing || draws === missing) fail('SCENE3D_INPUT_INVALID', 'validation');
@@ -133,7 +249,9 @@ export function createSceneFrame3D(input: unknown): SceneFrame3D {
         fail('SCENE3D_INPUT_INVALID', 'validation');
     }
     // Fixed length/quota admission precedes any payload scratch or indexed read.
-    if (count > 64) fail('SCENE3D_BUDGET', 'budget');
+    const cardCount=cardInputs===noCards?0:source(()=>Array.isArray(cardInputs)?cardInputs.length:-1);
+    if(!Number.isSafeInteger(cardCount)||cardCount<0)fail('SCENE3D_INPUT_INVALID','validation');
+    if (count + cardCount > 64) fail('SCENE3D_BUDGET', 'budget');
     if (!record(projection)) fail('SCENE3D_INPUT_INVALID', 'validation');
     const parameters = native(() => new Array<unknown>(7));
     const records = native(() => new Array<unknown>(count));
@@ -181,16 +299,21 @@ export function createSceneFrame3D(input: unknown): SceneFrame3D {
     const ownedDraws = native(() => new Array<SceneDraw3D>(count));
     const distinct = native(() => new Array<MeshGeometry3D>());
     let cpuLogicalBytes = 0, sceneBytes = 0;
-    const uniformBytes = count * 64;
+    const uniformBytes = count * 64 + (lambertDraws?.size ?? 0) * 64 + cardCount * 112;
     if (uniformBytes > 4096) fail('SCENE3D_BUDGET', 'budget');
     for (let index = 0; index < count; index++) {
         const geometry = geometries[index] as MeshGeometry3D;
-        const mvp = trustedMath(() => multiplyMatrix4(matrix, models[index]));
+        const texture = textures?.get(geometry);
+        const lambert = lambertDraws?.get(index);
+        const exact = trustedMath(() => multiplyMatrix4(matrix, models[index]));
+        const mvp=authored?authoredMatrix(exact):exact;
         let seen = false;
         for (let item = 0; item < distinct.length; item++) if (distinct[item] === geometry) seen = true;
         if (!seen) {
-            const logical = 8 * (6 * geometry.vertexCount + geometry.indexCount);
-            const packed = 24 * geometry.vertexCount + 4 * geometry.indexCount;
+            // Charge UVs and normals once per owned geometry. The host charges image residency.
+            const components = lambert ? 11 : texture ? 8 : 6;
+            const logical = 8 * (components * geometry.vertexCount + geometry.indexCount);
+            const packed = 4 * (components * geometry.vertexCount + geometry.indexCount);
             cpuLogicalBytes += logical; sceneBytes += packed;
             const admitted = native(() => Number.isSafeInteger(logical) && Number.isSafeInteger(packed)
                 && Number.isSafeInteger(cpuLogicalBytes) && Number.isSafeInteger(sceneBytes));
@@ -203,12 +326,31 @@ export function createSceneFrame3D(input: unknown): SceneFrame3D {
         }
         profile(geometry.positions); profile(geometry.colors); profile(mvp);
         headroom(geometry.positions, mvp);
-        write(ownedDraws, index, native(() => Object.freeze({geometry, mvp})));
+        write(ownedDraws, index, native(() => Object.freeze(lambert ? {geometry, mvp, texture: texture!, lambert}
+            : texture ? {geometry, mvp, texture} : {geometry, mvp})));
     }
     native(() => Object.freeze(ownedDraws));
     native(() => Object.freeze(distinct));
-    const result = native(() => Object.freeze({draws: ownedDraws, geometries: distinct,
-        cpuLogicalBytes, sceneBytes, uniformBytes}));
+    let cards:SceneCardDraw3D[]|undefined;
+    if(cardCount){
+        cards=native(()=>new Array<SceneCardDraw3D>(cardCount));
+        for(let index=0;index<cardCount;index++){
+            const drawInput=own(cardInputs,String(index));
+            if(!record(drawInput))fail('SCENE3D_INPUT_INVALID','validation');
+            const card=own(drawInput,'card'),model=own(drawInput,'modelView');
+            if(!isSceneWorldCard3D(card))fail('SCENE3D_INPUT_INVALID','validation');
+            const view=trustedMath(()=>createMatrix4(model));
+            const mvp=authoredMatrix(trustedMath(()=>multiplyMatrix4(matrix,view)));
+            const {bounds:[left,bottom,right,top]}=card;
+            headroom([left,bottom,0,right,bottom,0,left,top,0,right,top,0],mvp);
+            const {source:image,bounds,region,alphaCutoff}=card;
+            write(cards,index,native(()=>Object.freeze({source:image,bounds,region,alphaCutoff,mvp})));
+        }
+        native(()=>Object.freeze(cards!));
+    }
+    const result = native(() => Object.freeze(cards
+        ? {draws:ownedDraws,geometries:distinct,cpuLogicalBytes,sceneBytes,uniformBytes,cards}
+        : {draws:ownedDraws,geometries:distinct,cpuLogicalBytes,sceneBytes,uniformBytes}));
     // Publication/authentication is last. Failed registration returns no frame.
     native(() => scenes.set(result, true));
     return result;

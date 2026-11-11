@@ -1,8 +1,9 @@
+import type { SceneCardDraw3D, SceneDraw3D } from '../rendering/sceneFrame3D.js';
 import type { PreparedSharedFrame2D } from '../rendering/prepareSharedDraws2D.js';
 import { copySharedPagePixels } from '../rendering/sharedColor2D.js';
 import type { SharedPageCopyDiagnostics2D } from '../rendering/sharedColor2D.js';
 import { noteOwnedPreparationFailure } from '../rendering/ownedPreparationFailure2D.js';
-import type { ProjectionPlan2D } from './imageProjections2D.js';
+import type { ProjectionPlan2D,ProjectionView2D } from './imageProjections2D.js';
 
 /** Private logical limits; native capabilities remain in each concrete wrapper. */
 export interface SharedStorageLimits2D {
@@ -11,6 +12,59 @@ export interface SharedStorageLimits2D {
     readonly maxPendingFrames:number;
     readonly maxReadbackBytes:number;
     readonly maxPendingGeometryBytes:number;
+}
+/** Append scene images to the existing page namespace without changing overlay indices. */
+export function attachSharedSceneSources2D(prepared: PreparedSharedFrame2D,
+    cards: readonly SceneCardDraw3D[], draws: readonly SceneDraw3D[]): {
+    prepared: PreparedSharedFrame2D; projectionPlan: ProjectionPlan2D;
+    cardViews: readonly number[]; textureViews: ReadonlyMap<SceneDraw3D['geometry'], number>;
+} | undefined {
+    if (cards.length === 0 && !draws.some(draw => draw.texture && draw.geometry.indexCount !== 0)) return undefined;
+    const makeView = (image: SceneCardDraw3D['source']): ProjectionView2D => ({
+        image, region: {x: 0, y: 0, width: image.width, height: image.height}, byteLength: image.byteLength,
+    });
+    const views = prepared.frame.pages.map(page => makeView(page.source));
+    const ids = new Map(views.map((view, index) => [view.image, index]));
+    let extra = 0;
+    function append(image: SceneCardDraw3D['source']): number {
+        const existing = ids.get(image);
+        if (existing !== undefined) return existing;
+        const index = views.length, view = makeView(image);
+        extra += view.byteLength;
+        if (!Number.isSafeInteger(extra) || prepared.pageBytes + extra > 33554432) fail('budget');
+        ids.set(image, index);
+        views.push(view);
+        return index;
+    }
+    const cardViews = cards.map(card => append(card.source));
+    const textureViews = new Map<SceneDraw3D['geometry'], number>();
+    for (const draw of draws) {
+        if (draw.texture && draw.geometry.indexCount !== 0 && !textureViews.has(draw.geometry)) {
+            textureViews.set(draw.geometry, append(draw.texture.source));
+        }
+    }
+    const expanded = extra ? {...prepared, pageBytes: prepared.pageBytes + extra, upload: prepared.upload + extra} : prepared;
+    const projectionPlan = {views, commandViews: [], projectionBytes: expanded.pageBytes, scratchBytes: 0};
+    return {prepared: expanded, projectionPlan, cardViews, textureViews};
+}
+export function packSharedSceneCardUniform3D(card:SceneCardDraw3D):Float32Array<ArrayBuffer>{
+    const data=new Float32Array(28);
+    data.set(card.mvp,0);data.set(card.bounds,16);data.set(card.region,20);data[24]=card.alphaCutoff/255;
+    return data;
+}
+/** Fixed 128-byte uniform ABI for the optional opaque Lambert draw. */
+export function packSharedSceneLambertUniform3D(draw: SceneDraw3D): Float32Array<ArrayBuffer> {
+    const {normalMatrix, mirrored, lighting} = draw.lambert!;
+    const data = new Float32Array(32);
+    data.set(draw.mvp, 0);
+    for (let column = 0; column < 3; column++) {
+        for (let row = 0; row < 3; row++) data[16 + 4 * column + row] = normalMatrix[3 * column + row]!;
+    }
+    data[19] = lighting.ambient;
+    data[23] = mirrored ? -1 : 1;
+    data.set(lighting.direction, 28);
+    data[31] = lighting.intensity;
+    return data;
 }
 export class SharedStorageError2D extends Error { public constructor(public readonly reason:'budget'|'device'|'backpressure'|'serial'){super('Shared storage '+reason);} }
 function fail(reason:SharedStorageError2D['reason']):never {throw noteOwnedPreparationFailure(new SharedStorageError2D(reason));}

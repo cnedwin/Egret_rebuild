@@ -186,10 +186,14 @@ function m33KeyboardStrictPin(root,selected,id,row){
 
 // Exact package-only native editing successor; historical tuples and closures remain unchanged.
 const nativeEditingStrictPackages = [{"base":{"path":"packages/engine/package.json","bytes":1567,"sha256":"e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}},{"base":{"path":"packages/engine/package.json","bytes":1799,"sha256":"c106c84b479f88ac1570418a21672b6148b1bdd0b870631198c359d467f2f0c7"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}},{"base":{"path":"packages/engine/package.json","bytes":2167,"sha256":"be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}},{"base":{"path":"packages/engine/package.json","bytes":2591,"sha256":"817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}},{"base":{"path":"packages/engine/package.json","bytes":2933,"sha256":"afcc7ed24ddd5e73f0ebed1f60b1c1b31d1bac59d2127e0b061c499cfe8e93fe"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}},{"base":{"path":"packages/engine/src/input.ts","bytes":418,"sha256":"c6be2e7fe994333ea745add616eaaa125be1600c93cafda95cd5e1a4bd1ca35b"},"current":{"path":"packages/engine/src/input.ts","bytes":521,"sha256":"769543b5e34181e2bd23ecc7ba7c0a70ccd16826495c9ef9261410f51a95b9e2"}},{"base":{"path":"packages/engine/dist/input.js","bytes":210,"sha256":"834623a834ac38d8b4c537c613a7d4a8e54100661631b0d11b09f49f6a459f50"},"current":{"path":"packages/engine/dist/input.js","bytes":268,"sha256":"552829011c6e5022b042e9d6acab1cbd4fda112d815f69b201e0a22161e89c5e"}},{"base":{"path":"packages/engine/dist/input.d.ts","bytes":429,"sha256":"bc994dad542569bdb2fca049ad73eb6a4310d4c1dfeb541cd124f71e4ff9e498"},"current":{"path":"packages/engine/dist/input.d.ts","bytes":533,"sha256":"6db9202a2cb5261207254648f83227b510a9d5ebdcea1d82623b7154dc7b8051"}},{"base":{"path":"packages/engine/src/internal/mouseInputFactoryState.ts","bytes":5963,"sha256":"ef3d075050fc7f29c9dd7d94f7542cf23e11e6c9b59a037f5f0f41afa738142f"},"current":{"path":"packages/engine/src/internal/mouseInputFactoryState.ts","bytes":6739,"sha256":"6fef55c1cc4aad67a5fa8f113e022742d6beb95b4faafcc2c03e7e346c83d16a"}},{"base":{"path":"packages/engine/dist/internal/mouseInputFactoryState.js","bytes":4356,"sha256":"bfb0f749f658c2365e8d8a3605f0de8269e2d27cb978a689ef6f3af0b149bbe9"},"current":{"path":"packages/engine/dist/internal/mouseInputFactoryState.js","bytes":4961,"sha256":"82e9331c803fd5cfcfd24cfe7edf10ca20eaded2342cdfd66f4caa48d9a70435"}},{"base":{"path":"packages/engine/dist/internal/mouseInputFactoryState.d.ts","bytes":2847,"sha256":"ee0f110477892343ec32e895c303ca2f81854dcdb7914367a633c0531f12f7bc"},"current":{"path":"packages/engine/dist/internal/mouseInputFactoryState.d.ts","bytes":3258,"sha256":"6e4d93da3abe7b5cfb3f7c32888a2214ff47ff90b5a932de0ba91beec09d2836"}},{"base":{"path":"packages/runtime/src/Mesh2D.ts","bytes":5179,"sha256":"aa0c2277fd7b2b251595675a634015fd6c1e6cb175a137f5c9ef2592916ad56f"},"current":{"path":"packages/runtime/src/Mesh2D.ts","bytes":8333,"sha256":"b7593dd78bf1f2255a529f7ce84811f49329cebf84d7904e28c605dafc6bd40e"}},{"base":{"path":"packages/runtime/dist/Mesh2D.d.ts","bytes":995,"sha256":"97f47566b1e2239f3eebf09e4510e6c97008d65bd35c07ce2a8c6ad480590ef0"},"current":{"path":"packages/runtime/dist/Mesh2D.d.ts","bytes":1461,"sha256":"e004d9805c2a543275c746bd0fd3c75fff54379a4d80c36baaa4d2813c3c392b"}},{"base":{"path":"packages/runtime/package.json","bytes":568,"sha256":"cb9822d5bbc457edf1256a98d2a7437ee8e13bc58caffe9914afdaa9345ef8c3"},"current":{"path":"packages/runtime/package.json","bytes":795,"sha256":"2533e015708632dd8f536b54835021d62e34a2be535ecd97c07f47610f61aa8f"}},{"base":{"path":"packages/runtime/package.json","bytes":327,"sha256":"b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"},"current":{"path":"packages/runtime/package.json","bytes":795,"sha256":"2533e015708632dd8f536b54835021d62e34a2be535ecd97c07f47610f61aa8f"}}];
+const authoredSceneStrictPackage = {"base":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"},"current":{"path":"packages/engine/package.json","bytes":3662,"sha256":"32bdc997a04e80bc65fc014a174a46e874b565960703d005850be6120811beec"}};
 function nativeEditingStrictPin(root,selected,id,row){
  if(selected!==M15_DATA||!IDS.includes(id))return row;
  const pair=nativeEditingStrictPackages.find(pair=>equal(pair.base,row));
- return pair&&equal(fingerprintFile(root,row.path),pair.current)?pair.current:row;
+ if(!pair)return row;
+ const actual=fingerprintFile(root,row.path);
+ if(equal(actual,pair.current))return pair.current;
+ return equal(pair.current,authoredSceneStrictPackage.base)&&equal(actual,authoredSceneStrictPackage.current)?authoredSceneStrictPackage.current:row;
 }
 function m22SequencePin(root,selected,id,row){
  const editing=nativeEditingStrictPin(root,selected,id,row);if(editing!==row)return editing;
@@ -209,7 +213,15 @@ const m24SpineStrictAddition = {"path":"packages/engine/dist/displaySubtreeTicke
 function m24SpineStrictPin(root,selected,id,row){
  if(selected!==M15_DATA||!IDS.includes(id))return row;
  const pair=m24SpineStrictPairs.find(pair=>equal(pair.base,row));
- return pair&&equal(fingerprintFile(root,row.path),pair.current)?pair.current:row;
+ if(!pair)return row;
+ const actual=fingerprintFile(root,row.path);
+ if(equal(actual,pair.current))return pair.current;
+ const worldCard=worldCardStrictPairs.find(next=>equal(next.base,pair.current));
+ if(worldCard&&equal(actual,worldCard.current))return worldCard.current;
+ const texturedGlb=worldCard&&texturedGlbStrictPairs.find(next=>equal(next.base,worldCard.current));
+ if(texturedGlb&&equal(actual,texturedGlb.current))return texturedGlb.current;
+ const lambertGlb=texturedGlb&&lambertGlbStrictPairs.find(next=>equal(next.base,texturedGlb.current));
+ return lambertGlb&&equal(actual,lambertGlb.current)?lambertGlb.current:row;
 }
 // M24-SPINE-CURRENT-END
 
@@ -223,6 +235,30 @@ const geometryCanonicalSource = {"base":{"path":"packages/contracts/src/SharedGe
 function geometryCanonicalSourcePin(root,row){
  if(!equal(row,geometryCanonicalSource.base))return row;
  return equal(fingerprintFile(root,row.path),geometryCanonicalSource.current)?geometryCanonicalSource.current:row;
+}
+// The optional authored scene changes one exact declaration and its source.
+const authoredSceneStrictPairs = [{"base":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":1650,"sha256":"6eede4d7ca07375516bc746ad0ac70fef56cf7ab6dca532f46ef049339314a82"},"current":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":1737,"sha256":"81f9914f53b2d3fca293573bef45060d807abc9581ea5211731c758073592fd1"}},{"base":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":11442,"sha256":"c2ee3db171c8f88f821bfec28ca2d93474c60e6cd1a6d1dd2f7d400e4ff5c16e"},"current":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":12165,"sha256":"abc0a7ce5c4a11164756d043770dadbc9a38844220449988b33551ac5ffeae3d"}}];
+const authoredSceneStrictMarker = {"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":525,"sha256":"07868163d41254a0376c5225d2fe160a2b1cf319ab2cff05422ef92e66926185"};
+const worldCardStrictPairs = [{"base":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":1737,"sha256":"81f9914f53b2d3fca293573bef45060d807abc9581ea5211731c758073592fd1"},"current":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":3137,"sha256":"d3d9317989f4d89b7e596e857c7ff999d8762741467f0f713b16f07f95b2709b"}},{"base":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":12165,"sha256":"abc0a7ce5c4a11164756d043770dadbc9a38844220449988b33551ac5ffeae3d"},"current":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":17373,"sha256":"41360bb7035ab083bedac497c7740292ce2c8ae1df846960d3d051ef95ea5907"}},{"base":{"path":"packages/engine/web/WebGPUHost.ts","bytes":195968,"sha256":"cdcaef7f728507e3407e7ffd3e827ee164d9cd5f1597458fefc3685bde0e75ac"},"current":{"path":"packages/engine/web/WebGPUHost.ts","bytes":200125,"sha256":"aa72fa15df521aaee5a34e73b61448d5207f346ec26301bae188901bad033882"}}];
+const worldCardStrictMarker = {"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":667,"sha256":"8a9843a90b00fc624c7cbb8f5cd9f1d1e0193846c0ac68f84b64b8adf88544cb"};
+const texturedGlbStrictPairs = [{"base":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":3137,"sha256":"d3d9317989f4d89b7e596e857c7ff999d8762741467f0f713b16f07f95b2709b"},"current":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":3357,"sha256":"03d2f4070133f51954ff990792fce04e83354b7f32f3f8f203918e9a5b9cc62f"}},{"base":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":17373,"sha256":"41360bb7035ab083bedac497c7740292ce2c8ae1df846960d3d051ef95ea5907"},"current":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":17926,"sha256":"e507e7e0705cb999606241d42556c0176052c481a9857d14dd906c40765bf9eb"}},{"base":{"path":"packages/engine/web/WebGPUHost.ts","bytes":200125,"sha256":"aa72fa15df521aaee5a34e73b61448d5207f346ec26301bae188901bad033882"},"current":{"path":"packages/engine/web/WebGPUHost.ts","bytes":203818,"sha256":"c673d33d7ac329724dc7f222bf8f14a3f26d2d90e940e74167303dd54a917c4c"}}];
+const texturedGlbStrictMarker = {"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":779,"sha256":"e249f2a69ab4aec89152d698cfbd7e5f36b2d3107c0acd04d8d0dba02d966835"};
+const lambertGlbStrictPairs = [{"base":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":3357,"sha256":"03d2f4070133f51954ff990792fce04e83354b7f32f3f8f203918e9a5b9cc62f"},"current":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":4006,"sha256":"c4fc5adfe9acfc7b686d632cc39b90c1117a387d24b3b769cd5da22bbf4713d2"}},{"base":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":17926,"sha256":"e507e7e0705cb999606241d42556c0176052c481a9857d14dd906c40765bf9eb"},"current":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":18820,"sha256":"31773b68d096eb210e56af7c81e121f2daaa7a045254a96ed64769509eeff377"}},{"base":{"path":"packages/engine/web/WebGPUHost.ts","bytes":203818,"sha256":"c673d33d7ac329724dc7f222bf8f14a3f26d2d90e940e74167303dd54a917c4c"},"current":{"path":"packages/engine/web/WebGPUHost.ts","bytes":205694,"sha256":"e91be7252e869987d0b2e4fc261fd3940521f1a28f916cbe1d8507cb892f7d73"}}];
+const lambertGlbStrictMarker = {"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":888,"sha256":"cfc884e784a269304bf1236e6fb7a9ae63cf1d023a1bcb969668cb98583201e4"};
+function authoredSceneStrictPin(root,selected,row){
+ if(selected!==M15_DATA)return row;
+ const pair=authoredSceneStrictPairs.find(pair=>equal(row,pair.base));
+ if(!pair||!existsSync(path.join(root,authoredSceneStrictMarker.path)))return row;
+ const marker=fingerprintFile(root,authoredSceneStrictMarker.path);
+ if(equal(marker,worldCardStrictMarker)||equal(marker,texturedGlbStrictMarker)||equal(marker,lambertGlbStrictMarker)){
+  const worldCard=worldCardStrictPairs.find(next=>equal(next.base,pair.current))?.current??pair.current;
+  if(equal(marker,worldCardStrictMarker))return worldCard;
+  const texturedGlb=texturedGlbStrictPairs.find(next=>equal(next.base,worldCard))?.current??worldCard;
+  if(equal(marker,texturedGlbStrictMarker))return texturedGlb;
+  return lambertGlbStrictPairs.find(next=>equal(next.base,texturedGlb))?.current??texturedGlb;
+ }
+ if(!equal(marker,authoredSceneStrictMarker))fail('authored scene declaration selection changed');
+ return pair.current;
 }
 export function selectM13StrictSuccessor(root,id,inventory){
  if(!IDS.includes(id))fail('unknown owner');
@@ -248,7 +284,7 @@ export function selectM13StrictSuccessor(root,id,inventory){
  if(!data.selectionPaths.some(file=>existsSync(path.join(root,file))))return null;
  const pins=new Map(data.inputs.map(row=>[row.path,row]));
  const nativePins=new Map(data.nativeLibraries.map(row=>[row.path,row]));
- const pin=file=>{const row=file===fontResourceStrictAddition.path&&selected===M15_DATA?fontResourceStrictAddition:file===m34EffectStrictAddition.path&&selected===M15_DATA?m34EffectStrictAddition:file===m24SpineStrictAddition.path&&selected===M15_DATA?m24SpineStrictAddition:pins.get(file);if(!row)fail('unregistered selected input '+file);return geometryCanonicalSourcePin(root,m22SequencePin(root,selected,id,m31UiPin(root,selected,id,m21ResourcePin(root,selected,id,m33PointerInputPin(root,selected,id,m24SpineStrictPin(root,selected,id,row))))));};
+ const pin=file=>{const row=file===fontResourceStrictAddition.path&&selected===M15_DATA?fontResourceStrictAddition:file===m34EffectStrictAddition.path&&selected===M15_DATA?m34EffectStrictAddition:file===m24SpineStrictAddition.path&&selected===M15_DATA?m24SpineStrictAddition:pins.get(file);if(!row)fail('unregistered selected input '+file);return authoredSceneStrictPin(root,selected,geometryCanonicalSourcePin(root,m22SequencePin(root,selected,id,m31UiPin(root,selected,id,m21ResourcePin(root,selected,id,m33PointerInputPin(root,selected,id,m24SpineStrictPin(root,selected,id,row)))))));};
  // Only these two predecessor inventories included their own gate bytes.
  // Their immutable historical rows remain provenance. The outer compiler
  // maintenance closure pins the current gate; this snapshot also rejects
@@ -260,7 +296,7 @@ export function selectM13StrictSuccessor(root,id,inventory){
  if(historicalGate&&!equal(inventory.inputPins.find(row=>row.path===historicalGate.path),historicalGate))fail('historical self-gate row changed');
  const currentGate=historicalGate?fingerprintFile(root,historicalGate.path):undefined;
  let inputPins=(inventory.inputPins??[]).map(row=>row.path===historicalGate?.path?currentGate
-  :owner.replacementPaths.includes(row.path)?pin(row.path):row).map(row=>m14EnginePackagePin(root,row)).map(row=>m33PointerInputPin(root,selected,id,row)).map(row=>m21ResourcePin(root,selected,id,row)).map(row=>m31UiPin(root,selected,id,row)).map(row=>m22SequencePin(root,selected,id,row)).map(row=>m24SpineStrictPin(root,selected,id,row));
+  :owner.replacementPaths.includes(row.path)?pin(row.path):row).map(row=>m14EnginePackagePin(root,row)).map(row=>m33PointerInputPin(root,selected,id,row)).map(row=>m21ResourcePin(root,selected,id,row)).map(row=>m31UiPin(root,selected,id,row)).map(row=>m22SequencePin(root,selected,id,row)).map(row=>m24SpineStrictPin(root,selected,id,row)).map(row=>authoredSceneStrictPin(root,selected,row));
  for(const file of new Set(owner.groups.flatMap(group=>group.repositoryClosure.filter(file=>file.endsWith('.d.ts')))))
   if(!inputPins.some(row=>row.path===file))inputPins.push(pin(file));
  const wrapperOwner=realpathSync(path.join(root,'node_modules/typescript'));
@@ -287,6 +323,23 @@ export function selectM13StrictSuccessor(root,id,inventory){
  const currentNativePins=['package.json','lib/tsc'+(process.platform==='win32'?'.exe':'')].map(file=>fingerprintFile(nativeOwner,file));
  const sourcePins=owner.sourcePaths.map(pin).map(row=>m12NineSliceHostPin(root,selected,id,row)).map(row=>m12CaptureSourcePin(root,selected,row)),selectedPins=owner.inputPaths.map(pin);
  const libraryPaths=[...new Set(owner.groups.flatMap(group=>group.nativeLibraryClosure))];
+ // Keep the optional marker stable whenever this closure selected a new pair.
+ const selectedInputs=[...inputPins,...selectedPins,...sourcePins];
+ const worldCards=selectedInputs.some(row=>worldCardStrictPairs.some(pair=>equal(row,pair.current)));
+ const texturedGlb=selectedInputs.some(row=>texturedGlbStrictPairs.some(pair=>equal(row,pair.current)));
+ const lambertGlb=selectedInputs.some(row=>lambertGlbStrictPairs.some(pair=>equal(row,pair.current)));
+ if(lambertGlb||texturedGlb||worldCards||selectedInputs.some(row=>[authoredSceneStrictPackage,...authoredSceneStrictPairs].some(pair=>equal(row,pair.current)))){
+  const marker=fingerprintFile(root,authoredSceneStrictMarker.path);
+  if(lambertGlb||equal(marker,lambertGlbStrictMarker)){
+   if(selectedInputs.some(row=>lambertGlbStrictPairs.some(pair=>row.path===pair.current.path&&!equal(row,pair.current))))
+    fail('mixed Lambert GLB source revisions');
+   selectedPins.push(lambertGlbStrictMarker);
+  }else if(texturedGlb||equal(marker,texturedGlbStrictMarker)){
+   if(selectedInputs.some(row=>texturedGlbStrictPairs.some(pair=>row.path===pair.current.path&&!equal(row,pair.current))))
+    fail('mixed textured GLB source revisions');
+   selectedPins.push(texturedGlbStrictMarker);
+  }else selectedPins.push(worldCards||equal(marker,worldCardStrictMarker)?worldCardStrictMarker:authoredSceneStrictMarker);
+ }
  function recheck(){
   if(!equal(fingerprintFile(root,'tools/lib/m13-strict-successor.mjs'),helperPin)
    ||!equal(fingerprintFile(root,DATA.path),DATA)||!equal(fingerprintFile(root,selected.path),selected)||!equal(fingerprintFile(root,owner.inventory.path),owner.inventory))fail('successor/history changed during replay');

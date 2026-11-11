@@ -28,7 +28,7 @@ const METHODS = [
     'getShaderParameter','getProgramParameter','getShaderInfoLog','getProgramInfoLog',
     'getUniformBlockIndex','getActiveUniformBlockParameter','getUniformIndices','getActiveUniforms',
     'getUniformLocation','useProgram','clientWaitSync','activeTexture','bindTexture','bindRenderbuffer',
-    'bindVertexArray','bindSampler','bindBufferRange','enable','disable','colorMask','depthMask','depthFunc',
+    'bindVertexArray','bindSampler','bindBufferRange','enable','disable','colorMask','depthMask','depthFunc','frontFace',
     'clearDepth','clearColor','clear','viewport','scissor','depthRange','blendEquationSeparate','blendFuncSeparate',
     'pixelStorei','texParameteri','texStorage2D','texSubImage2D','renderbufferStorage','framebufferTexture2D',
     'framebufferRenderbuffer','drawBuffers','readBuffer','compileShader','linkProgram','detachShader',
@@ -89,7 +89,7 @@ export class GLNativeSession {
             BLEND:3042,DEPTH_TEST:2929,STENCIL_TEST:2960,SCISSOR_TEST:3089,CULL_FACE:2884,DITHER:3024,
             RASTERIZER_DISCARD:35977,SAMPLE_ALPHA_TO_COVERAGE:32926,SAMPLE_COVERAGE:32928,POLYGON_OFFSET_FILL:32823,
             FUNC_ADD:32774,ONE:1,ZERO:0,ONE_MINUS_SRC_ALPHA:771,ONE_MINUS_SRC_COLOR:769,DST_COLOR:774,
-            GREATER:516,TRIANGLES:4,SYNC_GPU_COMMANDS_COMPLETE:37143,ALREADY_SIGNALED:37146,TIMEOUT_EXPIRED:37147,
+            GREATER:516,CCW:2305,TRIANGLES:4,SYNC_GPU_COMMANDS_COMPLETE:37143,ALREADY_SIGNALED:37146,TIMEOUT_EXPIRED:37147,
             CONDITION_SATISFIED:37148,WAIT_FAILED:37149,
         };
         Object.assign(captured, constants); this.gl = captured;

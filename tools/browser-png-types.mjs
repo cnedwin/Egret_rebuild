@@ -51,9 +51,24 @@ const m22PngEnginePackage = {base:{path:'packages/engine/package.json',bytes:259
 const m32PngEnginePackage = {base:m22PngEnginePackage.current,current:{path:'packages/engine/package.json',bytes:2933,sha256:'afcc7ed24ddd5e73f0ebed1f60b1c1b31d1bac59d2127e0b061c499cfe8e93fe'}};
 // Exact additive native editing package projection for unchanged PNG consumers.
 const nativeEditingPngPackage = {"base":{"path":"packages/engine/package.json","bytes":3172,"sha256":"93aa97c85bf7c58d9ff462851f1f63aa101aa3a73bf07d2b0518dc14189cec61"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}};
-const nativeEditingPngSelected=equal(fingerprintFile(root,nativeEditingPngPackage.current.path),nativeEditingPngPackage.current);
+const authoredScenePngPackage={"base":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"},"current":{"path":"packages/engine/package.json","bytes":3662,"sha256":"32bdc997a04e80bc65fc014a174a46e874b565960703d005850be6120811beec"}};
+const actualEnginePackage=fingerprintFile(root,nativeEditingPngPackage.current.path);
+const authoredScenePngSelected=equal(actualEnginePackage,authoredScenePngPackage.current);
+const nativeEditingPngSelected=equal(actualEnginePackage,nativeEditingPngPackage.current)||authoredScenePngSelected;
+function authoredScenePngPredecessor(raw){
+ if(!authoredScenePngSelected)return raw;
+ const {base,current}=authoredScenePngPackage;
+ if(raw.length!==current.bytes||hash(raw)!==current.sha256)failure('Authored scene PNG package changed during replay');
+ const value=JSON.parse(raw);
+ if(!equal(value.exports['./scene3d/authoring'],{types:'./dist/rendering/scene3dAuthoring.d.ts',import:'./dist/rendering/scene3dAuthoring.js'}))failure('Authored scene optional mapping differs');
+ delete value.exports['./scene3d/authoring'];
+ const before=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ if(before.length!==base.bytes||hash(before)!==base.sha256)failure('Authored scene PNG predecessor differs');
+ return before;
+}
 function nativeEditingPngPredecessor(raw){
  if(!nativeEditingPngSelected)return raw;const {base,current}=nativeEditingPngPackage;
+ raw=authoredScenePngPredecessor(raw);
  if(raw.length!==current.bytes||hash(raw)!==current.sha256)failure('Native editing PNG package changed during replay');
  const value=JSON.parse(raw);
  if(!equal(value.exports['./ui/editing'],{types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'})||!equal(value.exports['./web/editing'],{types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'})||!equal(value.imports['#egret-text-editor'],{types:'./dist/ui/textEditor.d.ts',import:'./dist/ui/textEditor.js'}))failure('Native editing optional mapping differs');
@@ -162,7 +177,7 @@ function checkPin(pin) {
   if(m22PngPackageSelected&&equal(pin,m22PngEnginePackage.base))pin=m22PngEnginePackage.current;
   if(m32PngPackageSelected&&equal(pin,m32PngEnginePackage.base))pin=m32PngEnginePackage.current;
   if(m33KeyboardPngPackageSelected&&equal(pin,m33KeyboardPngEnginePackage.base))pin=m33KeyboardPngEnginePackage.current;
-  if(nativeEditingPngSelected&&equal(pin,nativeEditingPngPackage.base))pin=nativeEditingPngPackage.current;
+  if(nativeEditingPngSelected&&equal(pin,nativeEditingPngPackage.base))pin=authoredScenePngSelected?authoredScenePngPackage.current:nativeEditingPngPackage.current;
   logicalPath(pin.path);
   if (!Number.isSafeInteger(pin.bytes) || pin.bytes < 0 || !/^[0-9a-f]{64}$/.test(pin.sha256)) failure('malformed raw pin');
   const actual = fingerprintFile(root, pin.path);
