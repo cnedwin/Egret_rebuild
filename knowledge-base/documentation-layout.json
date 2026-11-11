@@ -24,8 +24,8 @@
       "action": "move-pair",
       "previousZhSha256": "ca2be6243c614a900ed12f1b46649155f215a4827e04818e025bad8d03f8af9e",
       "previousEnSha256": "7e72f6245d7c86551dc2640356416b8b06a2d80872f262daf227f98142eac7ae",
-      "currentZhSha256": "4df2e09bfd6ef8b23363f3ba6d2fe101f4341cd405173f460a0e427fc648236d",
-      "currentEnSha256": "0bd84fd27a03216cd116693cbd35248a90d80a490aaa504feb246da43bfb1d3f"
+      "currentZhSha256": "9ebdc8781040faecc9d9c128ea2b2e8d3b948cd8f9296f5691fdf181ad18866e",
+      "currentEnSha256": "103fd83e550dc99f05feb2509f00c179198524ca0912c1da54d1b856a138b7a3"
     },
     {
       "oldZh": "CONTRIBUTING.md",

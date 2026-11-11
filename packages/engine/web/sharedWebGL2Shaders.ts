@@ -21,6 +21,24 @@ in vec2 layerUV;
 out vec4 color;
 void main() { color = texture(layerTexture, layerUV); }`;
 
+
+export const sharedWebGL2LayerEffectFragmentSource = `#version 300 es
+precision highp float;
+uniform sampler2D layerTexture;
+uniform vec2 viewportSize, effectMin, effectMax, multiplyRG, multiplyBAddR, addGB;
+in vec2 layerUV;
+out vec4 color;
+void main() {
+    color = texture(layerTexture, layerUV);
+    vec2 center = vec2(gl_FragCoord.x, viewportSize.y - gl_FragCoord.y);
+    if (all(greaterThanEqual(center, effectMin)) && all(lessThan(center, effectMax))) {
+        vec3 scale = vec3(multiplyRG, multiplyBAddR.x);
+        vec3 add = vec3(multiplyBAddR.y, addGB);
+        // Add light in linear premultiplied space and preserve coverage.
+        color.rgb = min(color.rgb * scale + color.a * add, vec3(color.a));
+    }
+}`;
+
 // The original 128-byte payload is three float vectors followed by five uint vectors.
 // Keep this identical in both stages; the Host verifies active offsets and block size.
 const DRAW_UNIFORM = `layout(std140) uniform DrawUniform {
