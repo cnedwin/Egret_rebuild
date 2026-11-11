@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "b49c2548d0603750393d1b379fdd10e4fc4477779785991f2e6ff5de5582e6ed",
-      "zhSha256": "3b045ad524145897baf22e4cd5785390baf688277472468e4fec1c8ad0300775"
+      "enSha256": "4bc3189a318ea8e92d5476b95c166bfc15125e6e4f2a466bce13248d452e4527",
+      "zhSha256": "cd1b1054767676352e6f786ad337ca284a6977b275f69437682e4b2b021b1217"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -2722,7 +2722,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "a12dd10884185c0d5aeb5aa69130da35ab501f0bdb175a8904d99735ebbd9c6c"
+      "sha256": "de6414b612197a3464be6fa729f7ff097690db140c74d99f3cc11d37c931ed89"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -3284,7 +3284,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "4c46de36cb28ca3797634d74aa102b2b67692b8e2c1cf3d04fb4849f9c3c80f6"
+      "sha256": "fcfc3eb6f57c449adeab29a59b5bb1976fe05f6244d28a60b5ce4591ef00272d"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3432,11 +3432,11 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "4e8a13f8d1167d08280d3d910ba06a503d5d016f5076929450ff112fdcf3544e"
+      "sha256": "f9852114b8b6621c13ad45b53ff8928f90fe3c51deb867fd9f6e52951ef9ff79"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
-      "sha256": "a4a9928fd4210037656d5facd9c3ad100e5e559e4fbc09115159cc86dca654f8"
+      "sha256": "d8827b5be210eb7e8f8acd648dbb5362b5981e6a88e2c32ff04f00d4df692947"
     },
     {
       "path": "tests/display-container-remove-children-api.test.mjs",
@@ -3608,7 +3608,7 @@
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
-      "sha256": "cee8ac3ad10a1f1f39253749a96fd82b98e4cb4beac2a6301d4c79b052e76f2c"
+      "sha256": "bdb5adcf984c30ec191f63dacac466966c4103bb392b528d8b9002bc6117db19"
     },
     {
       "path": "tools/verify-bitmap-resource-slot.mjs",
@@ -3744,7 +3744,7 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-boundary.mjs",
-      "sha256": "66b81960502532f9a16b5115ed5ebb2bdc0e616994dfd9ee08d1d5fc45c9c091"
+      "sha256": "265552943c2f0c241ebdecbf93a080e78804060da13b93a5f6cb9771d3f98f96"
     },
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
@@ -3904,7 +3904,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "73a99865bbc01a505631a0828b0f5d13ea6c9b0bbb83083a39e6aecee745c8d8"
+      "sha256": "05a0b7bf8953aa89109810d4b2ec7e3bf5ad35a0e92488bc745e1a88dd4e0863"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3932,7 +3932,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "6117488d2b0e6fa2e99b1d21ae386ee0fd535bae3d7464f5abf402629311e80d"
+      "sha256": "95f0e18873e2a2c724a9f138f44a54000db01f319214b6572573cb26f94957e5"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4004,7 +4004,7 @@
     },
     {
       "path": "packages/engine/rendering/prepareSharedDraws2D.ts",
-      "sha256": "c9c4e9db48d844d7e3296d8fa3aa8670235f8ba72e22f13d2a23f3602d7f2250"
+      "sha256": "d1382518ed5357bc2d9ab5cffb9e6ecd55dc072ca00afe6873025542269a350f"
     },
     {
       "path": "packages/engine/rendering/sharedColor2D.ts",

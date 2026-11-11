@@ -25,6 +25,12 @@
 
 换装工作室现可运行 X-D60/1 与 X-MTouch/1，包含 6,000 个创作节点、八个双轨 Spine、80 个序列帧实例及 50,000 条虚拟目录。桌面两端的各状态均采集五个窗口。全脏同步阶段耗时 p95 为 WebGPU 74.0 毫秒、WebGL2 87.8 毫秒。该数据用于定位帧耗时，正式全引擎 CPU 仍待测，完成帧间隔未达到目标。Android Chrome 真机在每端采集 100 次受控触摸响应，并验证实际键盘、旋转与 Home 返回。两端响应 p95 为 412.4 与 383.6 毫秒，目标为 100 毫秒。正式生命周期、真人输入与 iPhone 项仍待验收。[固定场景证据](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/fixed-verification-summary.json)
 
+## 固定场景的共享裁剪 — 2026-11-11
+
+两个共享渲染后端在标准裁剪矩形完全包含多边形时复用已规范化的顶点。预算仍按原路径计入几何谓词和顶点元组比较。实际相交或预算无法一次扣除时，沿用既有裁剪路径。
+
+同一 X-D60/1 场景在前台 Edge 预热 5 秒，每个状态采集三个 5 秒窗口。静态与全脏的 Host p95 分别为 WebGPU 34.4 → 17.6、39.5 → 19.2 毫秒，WebGL2 40.9 → 22.6、42.0 → 27.0 毫秒。正式 X 计时和设备目标继续验收。[M4 验收计划](m4-core-acceptance-plan.md)
+
 ## 精简桌面参考场景增量 — 2026-11-08
 
 换装工作室通过同一个 Engine 组合两个独立控制的 Spine 角色、序列帧、带原生重命名的托管 UI 及不透明 3D 背景。配色候选复用 Spine RESET 与共享 Host 准备流程。导出的快照重新打开后保留稳定 ID 和创作值。每个后端通过十项检查，覆盖字体拒绝、拖出原行再释放、替换失败、重试及退出清理。[换装工作室](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/README.zh-CN.md)
