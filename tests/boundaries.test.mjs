@@ -13,7 +13,7 @@ const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, missingCachedLayerTypes, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, spineImportMutation, combinedSceneMutation, sharedMutation, sequenceMutation, /* S3D1_OPTIONS_BEGIN */ scene3dMutation /* S3D1_OPTIONS_END */ }, run) {
+function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectType, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, spineImportMutation, combinedSceneMutation, sharedMutation, sequenceMutation, /* S3D1_OPTIONS_BEGIN */ scene3dMutation /* S3D1_OPTIONS_END */ }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -727,13 +727,14 @@ function fixture({ imported, missingCachedLayerTypes, subtree = 'engine/renderin
     for(const name of ['webgpu','scene3d','webgl2','webgl2Scene3d']) for(const [directory,suffix] of [['web','.ts'],['dist/web','.d.ts']])
       append('packages/engine/'+directory+'/'+name+suffix,m15HostForward);
     // The current synthetic facade adds only erased cached-layer types to the retained M1.4/M1.5 fixture.
-    const layerTypeNames = ['SharedLayerWebGL2Host', 'SharedWebGL2Layer2D', 'SharedWebGL2LayerPlacement2D', 'SharedWebGL2LayerStatus'];
+    const layerTypeNames = ['SharedLayerWebGL2Host', 'SharedWebGL2Layer2D', 'SharedWebGL2LayerEffect2D', 'SharedWebGL2LayerPlacement2D', 'SharedWebGL2LayerStatus'];
     for (const [directory,suffix] of [['web','.ts'],['dist/web','.d.ts']]) {
       const facade = 'packages/engine/'+directory+'/webgl2'+suffix;
       const types = 'packages/engine/'+directory+'/webgl2Types'+suffix;
       const original = readFileSync(path.join(root,facade),'utf8'), anchor = 'SharedWebGL2Host,';
       assert.equal(original.split(anchor).length,2,'one retained WebGL2 type forwarding clause');
-      if (missingCachedLayerTypes !== suffix) write(facade,original.replace(anchor,anchor+' '+layerTypeNames.join(', ')+','));
+      const forwarded = missingCachedLayerEffectType === suffix ? layerTypeNames.filter(name => name !== 'SharedWebGL2LayerEffect2D') : layerTypeNames;
+      if (missingCachedLayerTypes !== suffix) write(facade,original.replace(anchor,anchor+' '+forwarded.join(', ')+','));
       append(types,layerTypeNames.map(name=>'export type '+name+' = unknown;\n').join(''));
     }
     const m15EngineImports="import type {AdmittedResourceManifest} from '@egret/contracts/resources';\nimport type {ManifestAssetGroup,ManifestBinding,ManifestGroupOptions} from './manifestResourceTypes.js';\n";
@@ -2340,6 +2341,15 @@ for(const [name,reason]of [
 test('cached-layer facade requires current erased types in source and declaration',()=>{
   for (const [suffix,file] of [['.ts','packages/engine/web/webgl2.ts'],['.d.ts','packages/engine/dist/web/webgl2.d.ts']]) {
     fixture({ imported:'robust-predicates', missingCachedLayerTypes:suffix }, result=>{
+      assert.equal(result.status,1,result.stdout+result.stderr);
+      assert.ok(result.stderr.includes('M14: exact WebGL2 forwarding/type erasure mismatch: '+file),result.stderr);
+    });
+  }
+});
+
+test('cached-layer light requires its erased type on the optional WebGL2 facade',()=>{
+  for (const [suffix,file] of [['.ts','packages/engine/web/webgl2.ts'],['.d.ts','packages/engine/dist/web/webgl2.d.ts']]) {
+    fixture({ imported:'robust-predicates', missingCachedLayerEffectType:suffix }, result=>{
       assert.equal(result.status,1,result.stdout+result.stderr);
       assert.ok(result.stderr.includes('M14: exact WebGL2 forwarding/type erasure mismatch: '+file),result.stderr);
     });

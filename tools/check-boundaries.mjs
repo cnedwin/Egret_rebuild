@@ -1355,7 +1355,7 @@ for (const file of [...files(path.join(root,'packages/engine/src')),...files(pat
 // finite additions leave all retained WebGPU closure/capture policies intact.
 const glValues = ['createSharedWebGL2Host'];
 const glTypes = ['SharedWebGL2HostOptions','SharedWebGL2Host','SharedWebGL2HostStatus','SharedWebGL2Readback','WebGL2HostState','WebGL2HostErrorCode','WebGL2HostFailure','WebGL2HostDiagnostic','WebGL2HostStatus'];
-const glLayerTypes = ['SharedLayerWebGL2Host','SharedWebGL2Layer2D','SharedWebGL2LayerPlacement2D','SharedWebGL2LayerStatus'];
+const glLayerTypes = ['SharedLayerWebGL2Host','SharedWebGL2Layer2D','SharedWebGL2LayerEffect2D','SharedWebGL2LayerPlacement2D','SharedWebGL2LayerStatus'];
 const glSceneValues = ['createSharedSceneWebGL2Host'];
 const glSceneTypes = ['SharedSceneWebGL2Host','SharedSceneWebGL2HostOptions'];
 const glFacade = await import('@egret/engine/webgl2');
@@ -1380,7 +1380,7 @@ for (const [stem,valueClause,typeClauses] of glFacadeRules) {
 const glModuleNames = ['webgl2','webgl2Scene3d','WebGL2Host','webgl2Types','webgl2Native','sharedWebGL2Options','sharedWebGL2Arena','sharedWebGL2Shaders','sharedWebGL2Scene'];
 const glPrivateNames = ['createSharedSceneWebGL2HostInternal','SharedGLHost','GLNativeKind','GLNativeOwner','GLNativeSession','glFailure','isGLFailure',
   'SharedWebGL2Configuration','admitSharedWebGL2Options','SharedWebGL2ArenaStrides','SharedWebGL2ArenaPlan','SharedWebGL2ArenaOwner','qualifySharedWebGL2Alignment','planSharedWebGL2Arenas','checkSharedWebGL2ArenaCapacity',
-  'sharedWebGL2VertexSource','sharedWebGL2FragmentSource','sharedWebGL2ResolveVertexSource','sharedWebGL2ResolveFragmentSource','sharedWebGL2BlendFactors','sharedWebGL2LayerVertexSource','sharedWebGL2LayerFragmentSource',
+  'sharedWebGL2VertexSource','sharedWebGL2FragmentSource','sharedWebGL2ResolveVertexSource','sharedWebGL2ResolveFragmentSource','sharedWebGL2BlendFactors','sharedWebGL2LayerVertexSource','sharedWebGL2LayerFragmentSource','sharedWebGL2LayerEffectFragmentSource',
   'SharedGLScenePreparationReason','SharedGLScenePreparationError','SharedGLSceneAdmission','SharedGLSceneDraw','PreparedSharedGLScene','admitSharedGLScene','prepareSharedGLScene','SHARED_GL_SCENE_LAYOUT','SHARED_GL_SCENE_VERTEX','SHARED_GL_SCENE_FRAGMENT'];
 const glOtherEntryFiles = [
   ...Object.entries(assetGroupSourceEntries).map(([name,source])=>[name,source]),

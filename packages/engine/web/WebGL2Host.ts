@@ -12,7 +12,7 @@ import type { SharedWebGL2HostOptions, SharedSceneWebGL2HostOptions, SharedWebGL
 import type { SharedSceneWebGL2Host } from './webgl2Types.js';
 import type { SceneFrame3D } from '../rendering/sceneFrame3D.js';
 import type { PreparedSharedGLScene } from './sharedWebGL2Scene.js';
-import type { SharedLayerWebGL2Host, SharedWebGL2Layer2D, SharedWebGL2LayerPlacement2D, SharedWebGL2LayerStatus, SharedWebGL2Readback, SharedWebGL2HostStatus, WebGL2HostState, WebGL2HostStatus, WebGL2HostFailure, WebGL2HostErrorCode, WebGL2HostDiagnostic } from './webgl2Types.js';
+import type { SharedLayerWebGL2Host, SharedWebGL2Layer2D, SharedWebGL2LayerEffect2D, SharedWebGL2LayerPlacement2D, SharedWebGL2LayerStatus, SharedWebGL2Readback, SharedWebGL2HostStatus, WebGL2HostState, WebGL2HostStatus, WebGL2HostFailure, WebGL2HostErrorCode, WebGL2HostDiagnostic } from './webgl2Types.js';
 import { prepareSharedDraws2D, SharedPreparationError } from '../rendering/prepareSharedDraws2D.js';
 import { GeometryPreparationError } from '../rendering/prepareRectangles2D.js';
 import { packSharedDraws2D } from '../rendering/packSharedDraws2D.js';
@@ -30,7 +30,7 @@ import { createRetentionLedger } from './sharedRetentionLedger.js';
 import type { RetentionLedger, LedgerLease, LedgerHandle, LedgerPlan, KeyedRetentionRequest, RetentionLedgerDiagnostics, NativeUnknownDiagnostics } from './sharedRetentionLedger.js';
 import { GLNativeSession, glFailure, isGLFailure } from './webgl2Native.js';
 import type { GLNativeOwner, GLNativeResourceDiagnostics } from './webgl2Native.js';
-import { sharedWebGL2VertexSource, sharedWebGL2FragmentSource, sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragmentSource, sharedWebGL2BlendFactors, sharedWebGL2LayerVertexSource, sharedWebGL2LayerFragmentSource } from './sharedWebGL2Shaders.js';
+import { sharedWebGL2VertexSource, sharedWebGL2FragmentSource, sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragmentSource, sharedWebGL2BlendFactors, sharedWebGL2LayerVertexSource, sharedWebGL2LayerFragmentSource, sharedWebGL2LayerEffectFragmentSource } from './sharedWebGL2Shaders.js';
 
 function deferred<T>(): {promise:Promise<T>;resolve:(value:T)=>void;reject:(cause:unknown)=>void} {
     let resolve!:(value:T)=>void, reject!:(cause:unknown)=>void;
@@ -62,13 +62,29 @@ interface LayerWrite {
     submitted:boolean;
     revision:LayerRevision|undefined;
 }
-interface LayerRead {readonly revision:LayerRevision;readonly x:number;readonly y:number;readonly width:number;readonly height:number;}
+interface LayerEffect {
+    readonly left:number;readonly top:number;readonly right:number;readonly bottom:number;
+    readonly scale:readonly [number,number,number];
+    readonly emission:readonly [number,number,number];
+}
+interface LayerRead {
+    readonly revision:LayerRevision;
+    readonly x:number;readonly y:number;readonly width:number;readonly height:number;
+    readonly effect:LayerEffect|undefined;
+}
 interface LayerProgram {
     readonly program:WebGLProgram;
     readonly origin:WebGLUniformLocation|null;
     readonly extent:WebGLUniformLocation|null;
     readonly viewport:WebGLUniformLocation|null;
     readonly texture:WebGLUniformLocation|null;
+    readonly effect: {
+        readonly min:WebGLUniformLocation|null;
+        readonly max:WebGLUniformLocation|null;
+        readonly scaleRG:WebGLUniformLocation|null;
+        readonly scaleBAddR:WebGLUniformLocation|null;
+        readonly addGB:WebGLUniformLocation|null;
+    }|undefined;
 }
 type LayerInput={readonly write:LayerWrite}|{readonly placements:readonly SharedWebGL2LayerPlacement2D[]};
 interface PreparedRecord {
@@ -166,6 +182,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     private readonly layerGarbage=new Set<LayerRevision>();
     private layerBytes=0;
     private layerProgram:LayerProgram|undefined;
+    private layerEffectProgram:LayerProgram|undefined;
     private ticket:Ticket|undefined;
     private limits:Limits|undefined;
     private framebuffer:WebGLFramebuffer|undefined;
@@ -373,7 +390,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             if(this.generation>=Number.MAX_SAFE_INTEGER||(restoring&&this.attempt>=Number.MAX_SAFE_INTEGER))throw glFailure('WEBGL2_GENERATION_EXHAUSTED');
             if(restoring)this.attempt++;
             // Fixed native handles never cross a context generation, including partial startup.
-            this.framebuffer=undefined;this.program=undefined;this.resolveProgram=undefined;this.layerProgram=undefined;this.effectPrograms.clear();
+            this.framebuffer=undefined;this.program=undefined;this.resolveProgram=undefined;this.layerProgram=undefined;this.layerEffectProgram=undefined;this.effectPrograms.clear();
             this.drawVAO=undefined;this.resolveVAO=undefined;this.sceneVAO=undefined;this.sceneProgram=undefined;
             this.limits=undefined;this.native=undefined;
             this.generation++;this.token={};const token=this.token;
@@ -522,7 +539,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             if(native.invalidated&&native===this.native)this.onLoss();
         }
     }
-    private readLayers(input:readonly SharedWebGL2LayerPlacement2D[]):LayerRead[] {
+    private readLayers(input:readonly SharedWebGL2LayerPlacement2D[],frameWidth:number,frameHeight:number):LayerRead[] {
         if(!Array.isArray(input))throw glFailure('WEBGL2_LAYER_INVALID');
         const count=input.length;
         if(count>MAX_LAYER_HANDLES)throw glFailure('WEBGL2_LAYER_BUDGET');
@@ -532,7 +549,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         for(let index=0;index<count;index++){
             const item=input[index];
             if(!item||typeof item!=='object')throw glFailure('WEBGL2_LAYER_INVALID');
-            const {layer,x,y,width,height}=item;
+            const {layer,x,y,width,height,effect}=item;
+            const light=effect===undefined?undefined:this.readLayerEffect(effect,frameWidth,frameHeight);
             this.active();
             const slot=this.layers.get(layer);
             if(!slot)throw glFailure('WEBGL2_LAYER_INVALID');
@@ -542,12 +560,41 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             const physicalX=x*ratio,physicalY=y*ratio,physicalWidth=width*ratio,physicalHeight=height*ratio;
             if(![physicalX,physicalY,physicalWidth,physicalHeight,physicalX+physicalWidth,physicalY+physicalHeight]
                 .every(value=>Number.isFinite(value)&&Math.abs(value)<=8388608))throw glFailure('WEBGL2_LAYER_INVALID');
-            reads.push({revision,x:physicalX,y:physicalY,width:physicalWidth,height:physicalHeight});
+            const visibleLight=light&&light.left<physicalX+physicalWidth&&light.right>physicalX&&
+                light.top<physicalY+physicalHeight&&light.bottom>physicalY?light:undefined;
+            reads.push({revision,x:physicalX,y:physicalY,width:physicalWidth,height:physicalHeight,effect:visibleLight});
         }
         // A later placement getter may have disposed an earlier revision.
         if(reads.some(read=>!read.revision.retained))throw glFailure('WEBGL2_LAYER_NOT_READY');
         return reads;
     }
+
+    private readLayerEffect(input:SharedWebGL2LayerEffect2D,frameWidth:number,frameHeight:number):LayerEffect|undefined {
+        if(!this.options.enableEffects||!input||typeof input!=='object')throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
+        const {bounds,multiply,add}=input;
+        if(!bounds||typeof bounds!=='object')throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
+        const {x,y,width,height}=bounds;
+        if(typeof x!=='number'||typeof y!=='number'||typeof width!=='number'||typeof height!=='number'||width<=0||height<=0)throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
+        const ratio=this.options.pixelRatio,left=x*ratio,top=y*ratio,right=(x+width)*ratio,bottom=(y+height)*ratio;
+        if(![left,top,right,bottom].every(value=>Number.isFinite(value)&&Math.abs(value)<=8388608)||
+            right<=left||bottom<=top)throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
+        const scale=multiply===undefined?undefined:this.readLayerColor(multiply,4);
+        const emission=add===undefined?undefined:this.readLayerColor(add,1);
+        if((!scale||scale.every(value=>value===1))&&(!emission||emission.every(value=>value===0)))return undefined;
+        // Ceil-sized backing buffers can contain centers beyond the logical frame.
+        const clippedLeft=Math.max(0,left),clippedTop=Math.max(0,top);
+        const clippedRight=Math.min(frameWidth*ratio,right),clippedBottom=Math.min(frameHeight*ratio,bottom);
+        if(clippedRight<=clippedLeft||clippedBottom<=clippedTop)return undefined;
+        return {left:clippedLeft,top:clippedTop,right:clippedRight,bottom:clippedBottom,
+            scale:scale??[1,1,1],emission:emission??[0,0,0]};
+    }
+    private readLayerColor(input:readonly [number,number,number],max:number):readonly [number,number,number] {
+        if(!Array.isArray(input)||input.length!==3)throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
+        const rgb=[input[0],input[1],input[2]] as const;
+        if(!rgb.every(value=>typeof value==='number'&&Number.isFinite(value)&&value>=0&&value<=max))throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
+        return rgb;
+    }
+
     private finishLayerRecord(record:Record2D):void {
         for(const read of record.layerReads??[])this.unpinLayer(read.revision);
         const write=record.layerWrite;
@@ -598,7 +645,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 if(withScene&&(!this.sceneFunctions||!this.sceneFunctions.isSceneFrame3D(sceneInput)))throw glFailure('WEBGL2_FRAME_INVALID');
                 if(staging)staging.signal=this.captureSignal(staging.options,staging.token);
                 const layerWrite=layerInput&&'write' in layerInput?layerInput.write:undefined;
-                const layerReads=layerInput&&'placements' in layerInput?this.readLayers(layerInput.placements):undefined;
+                const layerReads=layerInput&&'placements' in layerInput?this.readLayers(layerInput.placements,frame.width,frame.height):undefined;
                 const options=layerWrite?{...this.options,pixelRatio:1}:this.options;
                 const alpha=layerWrite?'premultiplied':options.outputAlpha;
                 if(frame.outputAlpha!==alpha||frame.outputRepresentation!==(alpha==='opaque'?'egret.srgb-opaque-unorm8/1':'egret.srgb-premultiplied-unorm8/1'))throw glFailure('WEBGL2_FRAME_PROFILE_UNSUPPORTED');
@@ -977,21 +1024,40 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         const reads=record.layerReads;
         if(!reads?.length)return;
         const native=record.native,gl=native.gl;
-        if(!this.layerProgram){
-            const program=native.program(sharedWebGL2LayerVertexSource,sharedWebGL2LayerFragmentSource);
-            this.layerProgram={program,origin:gl.getUniformLocation(program,'origin'),extent:gl.getUniformLocation(program,'extent'),
-                viewport:gl.getUniformLocation(program,'viewportSize'),texture:gl.getUniformLocation(program,'layerTexture')};
-        }
-        const {program,origin,extent,viewport,texture}=this.layerProgram;
-        gl.useProgram(program);gl.bindVertexArray(this.resolveVAO!);gl.activeTexture(gl.TEXTURE0);
-        gl.uniform1i(texture,0);gl.uniform2f(viewport,width,height);
+        gl.bindVertexArray(this.resolveVAO!);gl.activeTexture(gl.TEXTURE0);
         gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.ONE,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
+        let current:LayerProgram|undefined;
         for(const read of reads){
+            const variant=this.getLayerProgram(native,read.effect!==undefined);
+            if(current!==variant){
+                current=variant;
+                gl.useProgram(variant.program);gl.uniform1i(variant.texture,0);gl.uniform2f(variant.viewport,width,height);
+            }
+            if(read.effect&&variant.effect){
+                const {left,top,right,bottom,scale,emission}=read.effect,loc=variant.effect;
+                gl.uniform2f(loc.min,left,top);gl.uniform2f(loc.max,right,bottom);
+                gl.uniform2f(loc.scaleRG,scale[0],scale[1]);gl.uniform2f(loc.scaleBAddR,scale[2],emission[0]);gl.uniform2f(loc.addGB,emission[1],emission[2]);
+            }
             gl.bindTexture(gl.TEXTURE_2D,read.revision.owner.value as WebGLTexture);
-            gl.uniform2f(origin,read.x,read.y);gl.uniform2f(extent,read.width,read.height);
+            gl.uniform2f(variant.origin,read.x,read.y);gl.uniform2f(variant.extent,read.width,read.height);
             gl.drawArrays(gl.TRIANGLES,0,6);
         }
         gl.bindTexture(gl.TEXTURE_2D,null);
+    }
+
+
+    private getLayerProgram(native:GLNativeSession,effect:boolean):LayerProgram {
+        const existing=effect?this.layerEffectProgram:this.layerProgram;
+        if(existing)return existing;
+        const gl=native.gl,program=native.program(sharedWebGL2LayerVertexSource,
+            effect?sharedWebGL2LayerEffectFragmentSource:sharedWebGL2LayerFragmentSource);
+        const location=(name:string)=>gl.getUniformLocation(program,name);
+        const variant:LayerProgram={program,origin:location('origin'),extent:location('extent'),
+            viewport:location('viewportSize'),texture:location('layerTexture'),
+            effect:effect?{min:location('effectMin'),max:location('effectMax'),scaleRG:location('multiplyRG'),
+                scaleBAddR:location('multiplyBAddR'),addGB:location('addGB')}:undefined};
+        if(effect)this.layerEffectProgram=variant;else this.layerProgram=variant;
+        return variant;
     }
 
     private drawRecord(record:Record2D,layout:RecordLayout):void {
