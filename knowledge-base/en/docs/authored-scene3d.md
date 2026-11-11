@@ -4,7 +4,7 @@ English | [简体中文](../../Cns/docs/authored-scene3d.md)
 
 ## Scene, camera and asset ownership
 
-Egret's optional `@egret/engine/scene3d/authoring` entry creates immutable, editable scene revisions. A node has a stable ID, an optional parent, a column-major affine local transform and references to owned meshes. A revision resolves the hierarchy and keeps mesh identity across instances and edits. `withNodeTransform(id, matrix)` returns a new revision. Saved worlds, frames and the UI display list remain usable. The authored scene admits at most 64 mesh draws across at most 256 nodes, with the existing frame geometry and uniform budgets.
+Egret's optional `@egret/engine/scene3d/authoring` entry creates immutable, editable scene revisions. A node has a stable ID, an optional parent, a column-major affine local transform and references to owned meshes. A revision resolves the hierarchy and keeps mesh identity across instances and edits. `withNodeTransform(id, matrix)` returns a new revision. Saved worlds, frames and the UI display list remain usable. The authored scene admits at most 64 combined mesh and card draws across at most 256 nodes, with the existing frame geometry and uniform budgets.
 
 `createSceneCamera3D` accepts eye, target and optional up vectors and either a perspective or orthographic projection. Perspective field of view is vertical and measured in radians. Orthographic height is the full vertical span. Both projections use an explicit aspect, near and far. The camera uses a right-handed view with negative forward Z. Capture composes the world, view and reverse-depth projection in binary64, then rounds the final MVP once to finite normal float32 or exact zero. Values that overflow, underflow to zero or lack existing arithmetic headroom are refused. The original scene capture keeps its established exact binary32 admission.
 
@@ -18,11 +18,40 @@ The bounded import profile admits at most 64 nodes, draws and unique primitives,
 
 Run `node tools/serve-example.mjs` and open `/examples/authored-scene3d/index.html?backend=webgl2` or change the backend to `webgpu`. The sample builds its own small GLB and demonstrates camera movement and parented model edits. Use `node tools/verify-authored-scene3d.mjs <playwright-root> <fresh-output>` for the browser reference. The Edge reference matched both backends byte for byte for reversed model order, foreground/background depth, node edits, camera orbit, orthographic view and the 2D HUD. Physical Android Chrome passed the same reference using the final camera and parser build on both backends. Its six captures per backend match the desktop output byte for byte. These are functional observations.
 
+## Depth-tested 2D characters
+
+`createSceneWorldCard3D({ source, width, height, region, pivotX, pivotY, alphaCutoff })` creates an immutable image card. Supply an owned `ImageData2D` from the existing asset lease. Width and height use world units. The optional atlas region uses top-left pixel coordinates. Pivot coordinates are relative to the crop and may extend outside it. The default pivot is bottom center. The alpha cutoff is the first accepted byte, from 1 to 255, with a default of 128.
+
+Attach cards to a node with its `cards` field. Use `world.withNodes([...])` to append nodes to a new revision, including one loaded from a GLB. Node transforms place and orient the cards. WebGL2 and WebGPU draw them with the opaque scene's depth buffer. Pixels below the alpha cutoff are discarded before they can write depth. Accepted pixels reconstruct straight RGB from the canonical premultiplied page and write full opacity. The ordinary HUD is composed afterward. This profile supports nearest-sampled cutouts with an explicit orientation.
+
+Cards, HUD images and atlas crops share the existing image storage, preparation limits and device lifecycle. Two cards using the same source image share one page, even when they sample different crops. The application holds the image lease while it uses the card. On the first submission after device recovery, the host recreates the GPU pages from owned CPU data. Use the shared scene host and submission path to draw card-bearing frames.
+
+
+```ts
+import { createSceneWorldCard3D } from "@egret/engine/scene3d/authoring";
+
+const card = createSceneWorldCard3D({
+  source: actorImage,
+  width: 1,
+  height: 1.5,
+  region: { x: 32, y: 0, width: 32, height: 48 },
+});
+const revision = world.withNodes([{
+  id: "actor",
+  localMatrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0, 4, 1],
+  cards: [card],
+}]);
+const frame = revision.capture(camera);
+```
+
+Run `node tools/verify-world-depth-cards.mjs <playwright-root> <new-output-directory>` to verify the original generated GLB and atlas fixture on both backends. It checks occlusion in front of and behind the building, transparent holes, atlas coordinates, alpha cutoff, the HUD, staged and direct submissions, upload reuse, and native loss and recovery. Named witness pixels test cross-backend behavior. Raster coverage and nearest sampling at exact ties can differ between implementations.
+
+On desktop Edge and physical Android Chrome, both backends passed all nine witness checks. Staged, immediate, reversed-order and restored submissions matched byte for byte within each host in the applicable scene. The fixture observed two cold uploads, no warm uploads, and two uploads after native device recovery. These are functional and lifecycle results.
+
 ## Remaining 3D work
 
 | Increment | Engine decision and required proof |
 | --- | --- |
-| 2D characters in a 3D world | Add a world-space textured card that shares the opaque scene depth, reads textures through existing owned image leases and writes depth only for admitted cutout pixels. Keep the ordinary HUD pass after it. Verify a character crossing behind and in front of the same imported building on both backends, including transparent edges and restoration. |
 | Textured models, materials and light | Extend the imported profile with explicit UVs, normals, image semantics and a versioned material contract. Use linear light with a single output conversion; share texture and device lifetime. Test authored color reference, normal direction, exposure range, and distinct opaque, cutout and blended policy. |
 | Animated 3D actors and scene effects | Use the existing game clock for clips, poses and events. Adopt per-instance state and share immutable mesh/skin data. Integrate bounded scene effects with the existing pass order and capability limits. Verify complete model-to-preview editing, asset replacement and recovery, plus declared device and frame budgets. |
 

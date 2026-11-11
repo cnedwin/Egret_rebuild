@@ -1,8 +1,9 @@
+import type { SceneCardDraw3D } from '../rendering/sceneFrame3D.js';
 import type { PreparedSharedFrame2D } from '../rendering/prepareSharedDraws2D.js';
 import { copySharedPagePixels } from '../rendering/sharedColor2D.js';
 import type { SharedPageCopyDiagnostics2D } from '../rendering/sharedColor2D.js';
 import { noteOwnedPreparationFailure } from '../rendering/ownedPreparationFailure2D.js';
-import type { ProjectionPlan2D } from './imageProjections2D.js';
+import type { ProjectionPlan2D,ProjectionView2D } from './imageProjections2D.js';
 
 /** Private logical limits; native capabilities remain in each concrete wrapper. */
 export interface SharedStorageLimits2D {
@@ -11,6 +12,33 @@ export interface SharedStorageLimits2D {
     readonly maxPendingFrames:number;
     readonly maxReadbackBytes:number;
     readonly maxPendingGeometryBytes:number;
+}
+/** Append card images to the ordinary page namespace without changing overlay indices. */
+export function attachSharedSceneCardSources2D(prepared:PreparedSharedFrame2D,cards:readonly SceneCardDraw3D[]):{
+    prepared:PreparedSharedFrame2D;projectionPlan:ProjectionPlan2D;cardViews:readonly number[];
+}{
+    const makeView=(image:SceneCardDraw3D['source']):ProjectionView2D=>({
+        image,region:{x:0,y:0,width:image.width,height:image.height},byteLength:image.byteLength,
+    });
+    const views=prepared.frame.pages.map(page=>makeView(page.source));
+    const ids=new Map(views.map((view,index)=>[view.image,index]));
+    let extra=0;
+    const cardViews=cards.map(card=>{
+        const existing=ids.get(card.source);
+        if(existing!==undefined)return existing;
+        const index=views.length,view=makeView(card.source);
+        ids.set(card.source,index);views.push(view);extra+=view.byteLength;
+        if(!Number.isSafeInteger(extra)||prepared.pageBytes+extra>33554432)fail('budget');
+        return index;
+    });
+    const expanded=extra?{...prepared,pageBytes:prepared.pageBytes+extra,upload:prepared.upload+extra}:prepared;
+    const projectionPlan={views,commandViews:[],projectionBytes:expanded.pageBytes,scratchBytes:0};
+    return {prepared:expanded,projectionPlan,cardViews};
+}
+export function packSharedSceneCardUniform3D(card:SceneCardDraw3D):Float32Array<ArrayBuffer>{
+    const data=new Float32Array(28);
+    data.set(card.mvp,0);data.set(card.bounds,16);data.set(card.region,20);data[24]=card.alphaCutoff/255;
+    return data;
 }
 export class SharedStorageError2D extends Error { public constructor(public readonly reason:'budget'|'device'|'backpressure'|'serial'){super('Shared storage '+reason);} }
 function fail(reason:SharedStorageError2D['reason']):never {throw noteOwnedPreparationFailure(new SharedStorageError2D(reason));}

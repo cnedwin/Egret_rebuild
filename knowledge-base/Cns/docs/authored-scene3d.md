@@ -4,7 +4,7 @@
 
 ## 场景、相机与资源所有权
 
-白鹭的可选入口 `@egret/engine/scene3d/authoring` 创建可编辑的不可变场景版本。节点包含稳定 ID、可选父节点、列主序仿射局部变换和自有网格引用。每个版本解析层级，实例和编辑之间复用网格身份。`withNodeTransform(id, matrix)` 返回一个新版本，保存过的场景、帧与 UI 显示列表可继续使用。创作场景最多含 256 个节点和 64 项网格绘制，沿用现有帧几何与 uniform 预算。
+白鹭的可选入口 `@egret/engine/scene3d/authoring` 创建可编辑的不可变场景版本。节点包含稳定 ID、可选父节点、列主序仿射局部变换和自有网格引用。每个版本解析层级，实例和编辑之间复用网格身份。`withNodeTransform(id, matrix)` 返回一个新版本，保存过的场景、帧与 UI 显示列表可继续使用。创作场景最多含 256 个节点和 合计 64 项网格与卡片绘制，沿用现有帧几何与 uniform 预算。
 
 `createSceneCamera3D` 接收眼点、目标点、可选的向上向量，以及透视或正交投影。透视视角为垂直弧度；正交高度为完整垂直跨度。两种投影都显式指定宽高比和近、远裁剪面。相机使用右手坐标系，沿视图负 Z 方向看。捕获时以 binary64 合成世界、视图和反向深度投影，最后将 MVP 舍入一次至有限的正常 float32 或精确零。溢出、下溢至零或超出既有算术余量时拒绝提交。原有场景捕获继续使用既定的精确 binary32 准入。
 
@@ -18,11 +18,40 @@
 
 运行 `node tools/serve-example.mjs`，打开 `/examples/authored-scene3d/index.html?backend=webgl2`，也可将后端改成 `webgpu`。示例生成自己的小型 GLB，展示相机移动和有父节点的模型编辑。运行 `node tools/verify-authored-scene3d.mjs <playwright-root> <fresh-output>` 复验浏览器参考。Edge 上两个后端对模型顺序反转、前后深度、节点编辑、相机移动、正交视图和 2D HUD 的回读逐字节一致。实体 Android Chrome 以最终相机和解析器产物在两个后端通过同一夹具。每个后端的六次回读均与桌面逐字节一致。这里记录的是功能验证。
 
+## 参与深度遮挡的 2D 角色
+
+`createSceneWorldCard3D({ source, width, height, region, pivotX, pivotY, alphaCutoff })` 创建不可变图像卡片。传入现有资源租约持有的 `ImageData2D`。宽、高使用世界单位，可选图集区域使用以左上角为原点的像素坐标。锚点相对裁剪区域，可落在区域之外，默认位于底边中心。Alpha 阈值表示第一个可绘制的字节值，范围为 1 至 255，默认 128。
+
+通过节点的 `cards` 字段挂载卡片。用 `world.withNodes([...])` 向场景追加节点并生成新版本，场景也可以来自 GLB。节点变换决定卡片的位置和朝向。WebGL2 与 WebGPU 让卡片和不透明场景共用深度缓冲。低于 Alpha 阈值的像素在写入深度前丢弃。其余像素从规范预乘图页还原直通 RGB，并以完全不透明的方式输出。普通 HUD 在场景之后合成。当前支持显式朝向的最近邻采样裁剪卡片。
+
+卡片、HUD 图像和图集裁剪共用既有图像存储、准备预算与设备生命周期。两张卡片即使取图集中的不同区域，也只为同一源图像分配一页。应用在使用卡片期间持有图像租约。设备恢复后首次提交时，宿主用持有的 CPU 数据重建 GPU 图页。含卡片的帧通过共享场景宿主及其提交路径绘制。
+
+
+```ts
+import { createSceneWorldCard3D } from "@egret/engine/scene3d/authoring";
+
+const card = createSceneWorldCard3D({
+  source: actorImage,
+  width: 1,
+  height: 1.5,
+  region: { x: 32, y: 0, width: 32, height: 48 },
+});
+const revision = world.withNodes([{
+  id: "actor",
+  localMatrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0, 4, 1],
+  cards: [card],
+}]);
+const frame = revision.capture(camera);
+```
+
+运行 `node tools/verify-world-depth-cards.mjs <playwright-root> <new-output-directory>` 可在两个后端验证项目生成的 GLB 和图集夹具。检查涵盖建筑前后遮挡、透明孔洞、图集坐标、Alpha 阈值、HUD、分阶段和直接提交、上传复用，以及原生设备丢失与恢复。跨后端验收比较指定像素。边界正好落在采样位置时，不同实现的光栅覆盖与最近邻采样可能有差异。
+
+桌面 Edge 与实体 Android Chrome 的两个后端都通过九项指定像素检查。同一宿主中，使用同一场景进行分阶段提交、直接提交、反转顺序与恢复后提交，回读逐字节一致。夹具记录到冷启动上传两次、热帧上传零次、原生设备恢复后上传两次。这些是功能和生命周期结果。
+
 ## 后续 3D 工作
 
 | 工作包 | 引擎决策与验收 |
 | --- | --- |
-| 2D 角色进入 3D 世界 | 增加共享不透明场景深度的世界空间纹理卡片，复用现有自有图像租约，只在通过 Alpha 裁剪的像素写入深度。普通 HUD 在其后绘制。两个后端都验证角色经过同一座导入建筑前后时的遮挡、透明边缘与恢复。 |
 | 纹理模型、材质与光照 | 扩展导入到显式 UV、法线、图像语义和版本化材质契约。光照在线性空间计算，输出统一转换一次，共用纹理与设备生命周期。验收创作颜色、法线方向、曝光范围和不透明／裁剪／混合规则。 |
 | 3D 角色动画与场景特效 | 使用现有游戏时钟驱动片段、姿势和事件。实例状态独立，复用不可变网格和蒙皮数据。在既有绘制顺序和能力预算中接入有界特效。验证模型导入到预览编辑的完整链路、资源替换、设备恢复和声明的帧预算。 |
 

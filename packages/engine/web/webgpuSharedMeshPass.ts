@@ -67,3 +67,59 @@ export function encodeSharedWebGPUMesh(
     pass.setBindGroup(0, bindings);
     pass.drawIndexed(indexCount, 1, 0, 0, 0);
 }
+
+// Cards sample canonical linear-PMA texels from the same sRGB pages as the HUD.
+// Accepted fragments are opaque so depth and color have identical coverage.
+const CARD_SHADER = `struct CardUniform {
+    mvp: mat4x4<f32>,
+    bounds: vec4<f32>,
+    region: vec4<f32>,
+    params: vec4<f32>,
+}
+@group(0) @binding(0) var<uniform> card: CardUniform;
+@group(0) @binding(1) var page: texture_2d<f32>;
+
+const corners = array<vec2<f32>, 6>(
+    vec2<f32>(0.0, 0.0), vec2<f32>(0.0, 1.0), vec2<f32>(1.0, 0.0),
+    vec2<f32>(1.0, 0.0), vec2<f32>(0.0, 1.0), vec2<f32>(1.0, 1.0),
+);
+struct CardVertexOutput {
+    @builtin(position) clip: vec4<f32>,
+    @location(0) uv: vec2<f32>,
+}
+
+@vertex fn vertexMain(@builtin(vertex_index) index: u32) -> CardVertexOutput {
+    let corner = corners[index];
+    var result: CardVertexOutput;
+    // Select exact endpoints; an admitted pair need not have a finite f32 span.
+    let xy = vec2<f32>(select(card.bounds.x, card.bounds.z, corner.x == 1.0),
+        select(card.bounds.w, card.bounds.y, corner.y == 1.0));
+    result.clip = card.mvp * vec4<f32>(xy, 0.0, 1.0);
+    result.uv = corner;
+    return result;
+}
+
+@fragment fn fragmentMain(input: CardVertexOutput) -> @location(0) vec4<f32> {
+    let edge = vec2<i32>(card.region.zw) - vec2<i32>(1);
+    let offset = clamp(vec2<i32>(floor(input.uv * card.region.zw)), vec2<i32>(0), edge);
+    let texel = textureLoad(page, vec2<i32>(card.region.xy) + offset, 0);
+    if (round(texel.a * 255.0) < round(card.params.x * 255.0)) { discard; }
+    return vec4<f32>(clamp(texel.rgb / texel.a, vec3<f32>(0.0), vec3<f32>(1.0)), 1.0);
+}
+`;
+
+/** Private cutout pass on the shared scene's existing color and reversed-depth targets. */
+export function createSharedWebGPUCardPipeline(
+    shader: Parameters<typeof createSharedWebGPUMeshPipeline>[0],
+    pipeline: Parameters<typeof createSharedWebGPUMeshPipeline>[1],
+): ReturnType<typeof createSharedWebGPUMeshPipeline> {
+    const module = shader({ code: CARD_SHADER });
+    return pipeline({
+        layout: 'auto',
+        vertex: { module, entryPoint: 'vertexMain' },
+        fragment: { module, entryPoint: 'fragmentMain', targets: [{ format: 'rgba8unorm-srgb', writeMask: 15 }] },
+        primitive: { topology: 'triangle-list', frontFace: 'ccw', cullMode: 'none', unclippedDepth: false },
+        depthStencil: { format: 'depth32float', depthWriteEnabled: true, depthCompare: 'greater', depthBias: 0, depthBiasSlopeScale: 0, depthBiasClamp: 0 },
+        multisample: { count: 1, alphaToCoverageEnabled: false },
+    });
+}

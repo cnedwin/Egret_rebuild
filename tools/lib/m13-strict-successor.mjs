@@ -213,7 +213,11 @@ const m24SpineStrictAddition = {"path":"packages/engine/dist/displaySubtreeTicke
 function m24SpineStrictPin(root,selected,id,row){
  if(selected!==M15_DATA||!IDS.includes(id))return row;
  const pair=m24SpineStrictPairs.find(pair=>equal(pair.base,row));
- return pair&&equal(fingerprintFile(root,row.path),pair.current)?pair.current:row;
+ if(!pair)return row;
+ const actual=fingerprintFile(root,row.path);
+ if(equal(actual,pair.current))return pair.current;
+ const worldCard=worldCardStrictPairs.find(next=>equal(next.base,pair.current));
+ return worldCard&&equal(actual,worldCard.current)?worldCard.current:row;
 }
 // M24-SPINE-CURRENT-END
 
@@ -231,11 +235,15 @@ function geometryCanonicalSourcePin(root,row){
 // The optional authored scene changes one exact declaration and its source.
 const authoredSceneStrictPairs = [{"base":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":1650,"sha256":"6eede4d7ca07375516bc746ad0ac70fef56cf7ab6dca532f46ef049339314a82"},"current":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":1737,"sha256":"81f9914f53b2d3fca293573bef45060d807abc9581ea5211731c758073592fd1"}},{"base":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":11442,"sha256":"c2ee3db171c8f88f821bfec28ca2d93474c60e6cd1a6d1dd2f7d400e4ff5c16e"},"current":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":12165,"sha256":"abc0a7ce5c4a11164756d043770dadbc9a38844220449988b33551ac5ffeae3d"}}];
 const authoredSceneStrictMarker = {"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":525,"sha256":"07868163d41254a0376c5225d2fe160a2b1cf319ab2cff05422ef92e66926185"};
+const worldCardStrictPairs = [{"base":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":1737,"sha256":"81f9914f53b2d3fca293573bef45060d807abc9581ea5211731c758073592fd1"},"current":{"path":"packages/engine/dist/rendering/sceneFrame3D.d.ts","bytes":3137,"sha256":"d3d9317989f4d89b7e596e857c7ff999d8762741467f0f713b16f07f95b2709b"}},{"base":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":12165,"sha256":"abc0a7ce5c4a11164756d043770dadbc9a38844220449988b33551ac5ffeae3d"},"current":{"path":"packages/engine/rendering/sceneFrame3D.ts","bytes":17373,"sha256":"41360bb7035ab083bedac497c7740292ce2c8ae1df846960d3d051ef95ea5907"}},{"base":{"path":"packages/engine/web/WebGPUHost.ts","bytes":195968,"sha256":"cdcaef7f728507e3407e7ffd3e827ee164d9cd5f1597458fefc3685bde0e75ac"},"current":{"path":"packages/engine/web/WebGPUHost.ts","bytes":200125,"sha256":"aa72fa15df521aaee5a34e73b61448d5207f346ec26301bae188901bad033882"}}];
+const worldCardStrictMarker = {"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":667,"sha256":"8a9843a90b00fc624c7cbb8f5cd9f1d1e0193846c0ac68f84b64b8adf88544cb"};
 function authoredSceneStrictPin(root,selected,row){
  if(selected!==M15_DATA)return row;
  const pair=authoredSceneStrictPairs.find(pair=>equal(row,pair.base));
  if(!pair||!existsSync(path.join(root,authoredSceneStrictMarker.path)))return row;
- if(!equal(fingerprintFile(root,authoredSceneStrictMarker.path),authoredSceneStrictMarker))fail('authored scene declaration selection changed');
+ const marker=fingerprintFile(root,authoredSceneStrictMarker.path);
+ if(equal(marker,worldCardStrictMarker))return worldCardStrictPairs.find(next=>equal(next.base,pair.current))?.current??pair.current;
+ if(!equal(marker,authoredSceneStrictMarker))fail('authored scene declaration selection changed');
  return pair.current;
 }
 export function selectM13StrictSuccessor(root,id,inventory){
@@ -302,8 +310,12 @@ export function selectM13StrictSuccessor(root,id,inventory){
  const sourcePins=owner.sourcePaths.map(pin).map(row=>m12NineSliceHostPin(root,selected,id,row)).map(row=>m12CaptureSourcePin(root,selected,row)),selectedPins=owner.inputPaths.map(pin);
  const libraryPaths=[...new Set(owner.groups.flatMap(group=>group.nativeLibraryClosure))];
  // Keep the optional marker stable whenever this closure selected a new pair.
- if([...inputPins,...selectedPins,...sourcePins].some(row=>[authoredSceneStrictPackage,...authoredSceneStrictPairs].some(pair=>equal(row,pair.current))))
-  selectedPins.push(authoredSceneStrictMarker);
+ const selectedInputs=[...inputPins,...selectedPins,...sourcePins];
+ const worldCards=selectedInputs.some(row=>worldCardStrictPairs.some(pair=>equal(row,pair.current)));
+ if(worldCards||selectedInputs.some(row=>[authoredSceneStrictPackage,...authoredSceneStrictPairs].some(pair=>equal(row,pair.current)))){
+  const marker=fingerprintFile(root,authoredSceneStrictMarker.path);
+  selectedPins.push(worldCards||equal(marker,worldCardStrictMarker)?worldCardStrictMarker:authoredSceneStrictMarker);
+ }
  function recheck(){
   if(!equal(fingerprintFile(root,'tools/lib/m13-strict-successor.mjs'),helperPin)
    ||!equal(fingerprintFile(root,DATA.path),DATA)||!equal(fingerprintFile(root,selected.path),selected)||!equal(fingerprintFile(root,owner.inventory.path),owner.inventory))fail('successor/history changed during replay');

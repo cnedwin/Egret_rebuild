@@ -9,6 +9,8 @@ export type {
     SceneWorldCamera3D,SceneWorldCameraInput3D,SceneWorldProjectionInput3D,
     SceneWorld3D,SceneWorldNodeInput3D,
 } from './sceneWorld3D.js';
+export {createSceneWorldCard3D} from './sceneFrame3D.js';
+export type {SceneWorldCard3D,SceneWorldCardInput3D} from './sceneFrame3D.js';
 export {StaticGlb3DError} from './staticGlb3D.js';
 export type {StaticGlb3DErrorCode} from './staticGlb3D.js';
 

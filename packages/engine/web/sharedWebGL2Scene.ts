@@ -4,6 +4,7 @@ import type { SceneFrame3D } from '../rendering/sceneFrame3D.js';
 import { packSharedMeshGeometry3D, getSharedMeshPacking3DErrorOrigin } from '../rendering/packSharedMeshGeometry3D.js';
 import type { PackedMeshGeometry3D } from '../rendering/packSharedMeshGeometry3D.js';
 import { noteOwnedPreparationFailure } from '../rendering/ownedPreparationFailure2D.js';
+import { packSharedSceneCardUniform3D } from './sharedSubmissionStorage2D.js';
 
 // These are the genuine existing CPU references, not a second scene registry.
 // The Host imports this fixed module namespace; callers cannot inject a plugin.
@@ -34,10 +35,15 @@ export interface SharedGLSceneDraw {
     readonly mesh: PackedMeshGeometry3D;
     readonly uniform: Float32Array<ArrayBuffer>;
 }
+export interface SharedGLSceneCardDraw {
+    readonly pageIndex: number;
+    readonly uniform: Float32Array<ArrayBuffer>;
+}
 export interface PreparedSharedGLScene extends SharedGLSceneAdmission {
     readonly meshes: readonly PackedMeshGeometry3D[];
     readonly draws: readonly SharedGLSceneDraw[];
-    /** The same 64-byte payload references as draws[i].uniform, in authored draw order. */
+    readonly cards: readonly SharedGLSceneCardDraw[];
+    /** Mesh uniforms followed by card uniforms, each in its authored draw order. */
     readonly uniforms: readonly Float32Array<ArrayBuffer>[];
 }
 
@@ -46,9 +52,10 @@ export function admitSharedGLScene(input: unknown, width: number, height: number
     // Identity precedes every input property read, including for proxies and lookalikes.
     if (!isSceneFrame3D(input)) fail('frame');
     const frame = input, count = frame.draws.length, distinct = frame.geometries.length;
-    if (count > LIMITS.draws || distinct > LIMITS.geometries) fail('budget');
+    const cards = frame.cards?.length ?? 0;
+    if (count + cards > LIMITS.draws || distinct > LIMITS.geometries) fail('budget');
     let cpuBytes = 0, sceneBytes = 0;
-    const uniformBytes = 64 * count;
+    const uniformBytes = 64 * count + 112 * cards;
     const bufferBytes: number[] = [];
     for (const geometry of frame.geometries) {
         const vertexBytes = 24 * geometry.vertexCount, indexBytes = 4 * geometry.indexCount;
@@ -68,10 +75,13 @@ export function admitSharedGLScene(input: unknown, width: number, height: number
 }
 
 /** Call only after joint logical, native-limit and pending admission; never as that preflight. */
-export function prepareSharedGLScene(input: unknown, width: number, height: number): PreparedSharedGLScene {
+export function prepareSharedGLScene(
+    input: unknown, width: number, height: number, cardViews: readonly number[] = [],
+): PreparedSharedGLScene {
     // Repeating finite metadata over a genuine immutable frame keeps this private entry self-contained.
     const admission = admitSharedGLScene(input, width, height);
     if (admission.depthBytes > LIMITS.depth) fail('budget');
+    if ((admission.frame.cards?.length ?? 0) !== cardViews.length) fail('frame');
     const meshes: PackedMeshGeometry3D[] = [];
     const draws: SharedGLSceneDraw[] = [];
     const uniforms: Float32Array<ArrayBuffer>[] = [];
@@ -99,7 +109,13 @@ export function prepareSharedGLScene(input: unknown, width: number, height: numb
         draws.push({ mesh, uniform });
         uniforms.push(uniform);
     }
-    return { ...admission, meshes, draws, uniforms };
+    const cards = (admission.frame.cards ?? []).map((card, index) => {
+        const pageIndex = cardViews[index]!;
+        const uniform = packSharedSceneCardUniform3D(card);
+        uniforms.push(uniform);
+        return { pageIndex, uniform };
+    });
+    return { ...admission, meshes, draws, cards, uniforms };
 }
 
 /** Fixed metadata for linked ABI verification and native setup owned entirely by the Host. */
@@ -144,5 +160,48 @@ in highp vec3 vLinearColor;
 layout(location = 0) out vec4 outColor;
 void main() {
     outColor = vec4(vLinearColor, 1.0);
+}
+`;
+
+// Cards share the opaque depth attachment; only admitted coverage writes depth.
+const SCENE_CARD_UNIFORM = `layout(std140) uniform SceneCard {
+    mat4 uCardMVP;
+    vec4 uCardBounds;
+    vec4 uCardRegion;
+    vec4 uCardCutoff;
+};
+`;
+
+export const SHARED_GL_SCENE_CARD_VERTEX = `#version 300 es
+precision highp float;
+precision highp int;
+${SCENE_CARD_UNIFORM}
+out highp vec2 vCardUV;
+const vec2 corners[6] = vec2[6](vec2(0, 0), vec2(0, 1), vec2(1, 0), vec2(1, 0), vec2(0, 1), vec2(1, 1));
+void main() {
+    vCardUV = corners[gl_VertexID];
+    // Select the same endpoints and triangle diagonal as WebGPU.
+    vec2 position = vec2(vCardUV.x == 0.0 ? uCardBounds.x : uCardBounds.z,
+        vCardUV.y == 0.0 ? uCardBounds.w : uCardBounds.y);
+    vec4 clip = uCardMVP * vec4(position, 0.0, 1.0);
+    gl_Position = vec4(clip.xy, 2.0 * clip.z - clip.w, clip.w);
+}
+`;
+
+export const SHARED_GL_SCENE_CARD_FRAGMENT = `#version 300 es
+precision highp float;
+precision highp int;
+${SCENE_CARD_UNIFORM}
+uniform highp sampler2D uCardPage;
+in highp vec2 vCardUV;
+layout(location = 0) out vec4 outColor;
+void main() {
+    // Canonical atlas upload keeps top-left source rows and does no automatic sRGB decode.
+    vec2 local = clamp(floor(vCardUV * uCardRegion.zw), vec2(0.0), uCardRegion.zw - vec2(1.0));
+    vec4 texel = texelFetch(uCardPage, ivec2(uCardRegion.xy) + ivec2(local), 0);
+    if (floor(texel.a * 255.0 + 0.5) < floor(uCardCutoff.x * 255.0 + 0.5)) discard;
+    vec3 premultiplied = mix(texel.rgb / 12.92, pow((texel.rgb + vec3(0.055)) / 1.055, vec3(2.4)),
+        greaterThan(texel.rgb, vec3(0.04045)));
+    outColor = vec4(clamp(premultiplied / texel.a, vec3(0.0), vec3(1.0)), 1.0);
 }
 `;

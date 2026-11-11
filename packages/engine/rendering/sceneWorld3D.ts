@@ -3,8 +3,8 @@ import {createMatrix4,multiplyMatrix4} from './matrix4.js';
 import type {Matrix4} from './matrix4.js';
 import {isMeshGeometry3D} from './meshGeometry3D.js';
 import type {MeshGeometry3D} from './meshGeometry3D.js';
-import {createAuthoredSceneFrame3D,Scene3DError} from './sceneFrame3D.js';
-import type {SceneFrame3D,SceneProjectionInput3D} from './sceneFrame3D.js';
+import {createAuthoredSceneFrame3D,isSceneWorldCard3D,Scene3DError} from './sceneFrame3D.js';
+import type {SceneFrame3D,SceneProjectionInput3D,SceneWorldCard3D} from './sceneFrame3D.js';
 
 type Vec3=readonly [number,number,number];
 export type SceneWorldProjectionInput3D={
@@ -30,17 +30,20 @@ export interface SceneWorldNodeInput3D {
     readonly parentId?:string;
     readonly localMatrix:readonly number[];
     readonly meshes?:readonly MeshGeometry3D[];
+    readonly cards?:readonly SceneWorldCard3D[];
 }
 export interface SceneWorld3D {
     readonly nodeCount:number;
     capture(camera:SceneWorldCamera3D):SceneFrame3D;
     withNodeTransform(id:string,localMatrix:readonly number[]):SceneWorld3D;
+    withNodes(nodes:readonly SceneWorldNodeInput3D[]):SceneWorld3D;
 }
 interface OwnedNode {
     readonly id:string;
     readonly parentId:string|undefined;
     readonly localMatrix:Matrix4;
     readonly meshes:readonly MeshGeometry3D[];
+    readonly cards:readonly SceneWorldCard3D[];
 }
 const cameras=new WeakMap<SceneWorldCamera3D,{readonly view:Matrix4;readonly projection:SceneProjectionInput3D}>();
 const MAX_NODES=256;
@@ -148,6 +151,7 @@ function assemble(nodes:readonly OwnedNode[]):SceneWorld3D {
         const transform=resolve(node);
         return node.meshes.map(geometry=>({geometry,transform}));
     });
+    const cards=nodes.flatMap(node=>node.cards.map(card=>({card,transform:resolve(node)})));
     return Object.freeze({
         nodeCount:nodes.length,
         capture(camera:SceneWorldCamera3D){
@@ -155,7 +159,10 @@ function assemble(nodes:readonly OwnedNode[]):SceneWorld3D {
             if(!owned)invalid('camera identity');
             return createAuthoredSceneFrame3D({projection:owned.projection,draws:draws.map(draw=>({
                 geometry:draw.geometry,modelView:multiplyMatrix4(owned.view,draw.transform),
-            }))});
+            }))},cards.length?cards.map(draw=>({card:draw.card,modelView:multiplyMatrix4(owned.view,draw.transform)})):undefined);
+        },
+        withNodes(input:readonly SceneWorldNodeInput3D[]){
+            return assemble([...nodes,...captureNodes(input,nodes.length,draws.length+cards.length)]);
         },
         withNodeTransform(id:string,input:readonly number[]){
             if(!byId.has(id))invalid('node.id');
@@ -164,18 +171,17 @@ function assemble(nodes:readonly OwnedNode[]):SceneWorld3D {
         },
     });
 }
-export function createSceneWorld3D(input:readonly SceneWorldNodeInput3D[]):SceneWorld3D {
+function captureNodes(input:readonly SceneWorldNodeInput3D[],existingNodes:number,drawCount:number):OwnedNode[] {
     if(!source(()=>Array.isArray(input)))invalid('nodes');
     const count=source(()=>input.length);
     if(!Number.isSafeInteger(count)||count<0)invalid('nodes.length');
-    if(count>MAX_NODES)budget();
+    if(count>MAX_NODES-existingNodes)budget();
     const nodes:OwnedNode[]=[];
-    let drawCount=0;
     for(let index=0;index<count;index++){
         const row=source(()=>input[index]);
         if(!row||typeof row!=='object')invalid('node');
-        const {id,parentId,localMatrix:matrix,meshes}=source(()=>({
-            id:row.id,parentId:row.parentId,localMatrix:row.localMatrix,meshes:row.meshes,
+        const {id,parentId,localMatrix:matrix,meshes,cards}=source(()=>({
+            id:row.id,parentId:row.parentId,localMatrix:row.localMatrix,meshes:row.meshes,cards:row.cards,
         }));
         checkId(id);
         if(parentId!==undefined)checkId(parentId);
@@ -192,7 +198,23 @@ export function createSceneWorld3D(input:readonly SceneWorldNodeInput3D[]):Scene
             }
             drawCount+=length;
         }
-        nodes.push({id,parentId,localMatrix:localMatrix(matrix),meshes:Object.freeze(attached)});
+        const attachedCards:SceneWorldCard3D[]=[];
+        if(cards!==undefined){
+            if(!source(()=>Array.isArray(cards)))invalid('node.cards');
+            const length=source(()=>cards.length);
+            if(!Number.isSafeInteger(length)||length<0)invalid('node.cards.length');
+            if(length>MAX_DRAWS-drawCount)budget();
+            for(let cardIndex=0;cardIndex<length;cardIndex++){
+                const card=source(()=>cards[cardIndex]);
+                if(!isSceneWorldCard3D(card))invalid('node.cards identity');
+                attachedCards.push(card);
+            }
+            drawCount+=length;
+        }
+        nodes.push({id,parentId,localMatrix:localMatrix(matrix),meshes:Object.freeze(attached),cards:Object.freeze(attachedCards)});
     }
-    return assemble(nodes);
+    return nodes;
+}
+export function createSceneWorld3D(input:readonly SceneWorldNodeInput3D[]):SceneWorld3D {
+    return assemble(captureNodes(input,0,0));
 }

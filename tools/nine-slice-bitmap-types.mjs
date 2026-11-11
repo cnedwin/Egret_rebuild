@@ -11,7 +11,7 @@ if (process.argv.length !== 2) throw new TypeError('This type gate accepts no ar
 const inventory = JSON.parse(readFileSync(path.join(root, 'tests/types/nine-slice-bitmap-diagnostic-expectations.json'), 'utf8'));
 // Preserve the immutable predecessor and authenticate the complete M1.3 successor.
 const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
-if ((m13HelperPin.bytes !== 85316 || m13HelperPin.sha256 !== '8d9d3604ca43eefd1d13b63c24023a1bb7347e8248e9b4b7756e00205054ee93') && (m13HelperPin.bytes !== 85991 || m13HelperPin.sha256 !== 'c160e1d8cd83e131cac6f73953412e83e3331c320d3842e3af2913b99a2bd290') && (m13HelperPin.bytes !== 88195 || m13HelperPin.sha256 !== 'c71a650058f5995c9ac0c40b4087fad09c0241f5a6c6f35c5c56ee524ac21bf6')) throw Error('M1.3 strict helper changed before import');
+if ((m13HelperPin.bytes !== 85316 || m13HelperPin.sha256 !== '8d9d3604ca43eefd1d13b63c24023a1bb7347e8248e9b4b7756e00205054ee93') && (m13HelperPin.bytes !== 85991 || m13HelperPin.sha256 !== 'c160e1d8cd83e131cac6f73953412e83e3331c320d3842e3af2913b99a2bd290') && (m13HelperPin.bytes !== 88195 || m13HelperPin.sha256 !== 'c71a650058f5995c9ac0c40b4087fad09c0241f5a6c6f35c5c56ee524ac21bf6') && (m13HelperPin.bytes !== 89966 || m13HelperPin.sha256 !== '11f2455aa5f3a9b1aaa5f27692a39448452cba2bfefb10695cc469e9187a824f')) throw Error('M1.3 strict helper changed before import');
 const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
 const m13 = selectM13StrictSuccessor(root, 'nine-slice-bitmap', inventory);
 

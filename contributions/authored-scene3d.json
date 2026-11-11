@@ -47,6 +47,14 @@
     {
       "path": "knowledge-base/Cns/docs/authored-scene3d.md",
       "originRole": "Independently authored first-party Egret 3D scene and camera, generated demonstration, focused validation or bilingual guidance; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/scene-world-card3d.test.mjs",
+      "originRole": "Independently authored first-party Egret world-space card validation with generated assets; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-world-depth-cards.mjs",
+      "originRole": "Independently authored first-party Egret world-space card validation with generated assets; AI-assisted; Apache-2.0."
     }
   ],
   "documents": [

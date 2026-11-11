@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "483620144ece6c779ba9f6396cca65937456641254c6d9e4e9777af3a044cf15",
-      "zhSha256": "a40d8b523acdd432a769c82651ac98ed473600907c95c4f45e8cd7d903908a11"
+      "enSha256": "12c0eb8096e4c730ecb35dbf6581a26053d1e3fed5d1297e0e573e0bf853058e",
+      "zhSha256": "21ad70c2f766945fe5846b49ee80d0606a28c417383d13574df1b92cc03f8702"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -2327,8 +2327,8 @@
       "en": "knowledge-base/en/docs/authored-scene3d.md",
       "zh": "knowledge-base/Cns/docs/authored-scene3d.md",
       "kind": "public_reading",
-      "enSha256": "48295aaf48e6e8290fccca64ddfa0e28a4c970cc0301a508b8e3dd53ff816335",
-      "zhSha256": "5d63387f4177e939380ba419ed0f3bc347374a4503db6aadd1cf54023f08923e"
+      "enSha256": "840aa18d5b23023b561ccef69b16751b8e30e344efb2eb427e8de01ba1a8089e",
+      "zhSha256": "003d2cbf5508bb76700eae32a80a3c9ee4cddcdc0f7c068040c737eb91139c16"
     }
   ],
   "registries": [
@@ -2476,7 +2476,7 @@
     },
     {
       "path": "packages/engine/web/WebGPUHost.ts",
-      "sha256": "cdcaef7f728507e3407e7ffd3e827ee164d9cd5f1597458fefc3685bde0e75ac"
+      "sha256": "aa72fa15df521aaee5a34e73b61448d5207f346ec26301bae188901bad033882"
     },
     {
       "path": "packages/engine/web/canvasImageProjection.ts",
@@ -2712,7 +2712,7 @@
     },
     {
       "path": "packages/engine/rendering/sceneFrame3D.ts",
-      "sha256": "abc0a7ce5c4a11164756d043770dadbc9a38844220449988b33551ac5ffeae3d"
+      "sha256": "41360bb7035ab083bedac497c7740292ce2c8ae1df846960d3d051ef95ea5907"
     },
     {
       "path": "packages/engine/web/b1.ts",
@@ -2736,7 +2736,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "ad38e24925ef3de4f4f209682e14602ce15101610cdb9bf0152f8ed30c14a210"
+      "sha256": "fc51362f7e7abf2c38f4a1d26833b2ce227fd32d9ea72a7100b83d879bc5e0a6"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2748,7 +2748,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "bf33f86d2c2406c042f7b7872a17945e123ef89977b42103f17554f443cea33b"
+      "sha256": "2e71f4a9fd5742b3da1fabf46803a57fcb0f46fb993c283f6ae351cb41678d41"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -3154,7 +3154,7 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "44cdfd97ce9104650cc0265afb76b753629176779e2e0890a7e3b3f88c3599e1"
+      "sha256": "fbc1cf598bbe55443c5873abe7c8f798fe20d40ee9d65765c003f3cbc9f921b9"
     },
     {
       "path": "tests/boundaries.test.mjs",
@@ -3166,7 +3166,7 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "63e087a39952ce23cb556787ca0b3f4e672786277af50885031e96d692dbe363"
+      "sha256": "188606f1f8e0752756c4aedf6cdc25cf50aac4193e556746a396616b5993d507"
     },
     {
       "path": "packages/runtime/src/NineSliceGeometry2D.ts",
@@ -3270,7 +3270,7 @@
     },
     {
       "path": "tools/sequence-playback-types.mjs",
-      "sha256": "a1208aeb8d9dd78bb4a7deb0eeee3815d341313b5efbd090975d33f19db15af9"
+      "sha256": "2c7d46355699e261676aaca7db94902dc48c7ce471def3340e021cda63450f47"
     },
     {
       "path": "tools/check-repository-hygiene.mjs",
@@ -3298,7 +3298,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "c7b931679ac8756ec6987bc5218089082cbe56471e92a8a67e9484de909a8a88"
+      "sha256": "3aa1cae612345230a0461c49a872914ee998fd8806d807d0cb4484266eb31684"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3434,7 +3434,7 @@
     },
     {
       "path": "tools/nine-slice-bitmap-types.mjs",
-      "sha256": "d74653b8141c8133abef0a6c841629178921cb7e2461f50bf4381765def5b1e4"
+      "sha256": "cf0c07bd416845cc8c10b46c3270e43c301c79e578aed90691a95ae757cc23c1"
     },
     {
       "path": "tools/nine-slice-bitmap-native/fixture.mjs",
@@ -3446,11 +3446,11 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "b460877da8b8ca870db95de7ca8a9d236c2cc7d8781ff76c5f61902bbab975a7"
+      "sha256": "4ccf826a39fa50c47ae9f5fbcd08c1f835fb544d3c8993ebe3a251d1eb5136cc"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
-      "sha256": "41f79f11c0ca976b24db974efdf1d8d56ce81b3ddfc468a78633adef7a393903"
+      "sha256": "00fd782d8ca1cd804fc9c16993a72a0bce9cfe502d1f887040f73b3cb0c1ed99"
     },
     {
       "path": "tests/display-container-remove-children-api.test.mjs",
@@ -3462,7 +3462,7 @@
     },
     {
       "path": "tools/display-container-remove-children-types.mjs",
-      "sha256": "77c366316b4efe3b8a4028be15f4e01f8dd3bb426c6e3feae99eb6788f4f2693"
+      "sha256": "4d2f89c5d4d4356306eacf4e8c1fae0304cf360ac65aa39f2af144677f0cfba0"
     },
     {
       "path": "tools/display-container-remove-children-native/fixture.mjs",
@@ -3490,7 +3490,7 @@
     },
     {
       "path": "tools/display-container-child-index-types.mjs",
-      "sha256": "75926a64039e735306aae18207395d15ae5fb02f60503770b2be72413088571e"
+      "sha256": "94bc26046fa12583c5821337bd551507dfdd001b942040e8590831becd6111ba"
     },
     {
       "path": "tools/display-container-child-index-native/fixture.mjs",
@@ -3534,11 +3534,11 @@
     },
     {
       "path": "tools/display-anchor-offsets-types.mjs",
-      "sha256": "5c81fcded68e8be5d5813a0a000f0c7a468ad009b0a98834aacc7c715fdbf599"
+      "sha256": "2e2cce16d32526bb87bf852bc67dad4a56382425b9534846cdacf06aaebc6903"
     },
     {
       "path": "tools/display-container-add-child-at-types.mjs",
-      "sha256": "280fc2cbb9fbdd1926be73d7a60a1f57086704b85da2e8a4e461305eae90aff8"
+      "sha256": "68dbd265e63f6f497fe232f51f43ad6cc4bf7ca9269af467c6bf5e31bc812049"
     },
     {
       "path": "tools/display-anchor-offsets-native/fixture.mjs",
@@ -3590,7 +3590,7 @@
     },
     {
       "path": "tools/bitmap-button-types.mjs",
-      "sha256": "d9b7f155bc73a5a7ac61ad0edc74084f166e47085328e956253b8f6a59ba54a6"
+      "sha256": "078ab5c41b2ad2efcfa66dc1e6a425f96686593acf0213943f07e99cb57d0d9c"
     },
     {
       "path": "packages/engine/src/layout.ts",
@@ -3602,7 +3602,7 @@
     },
     {
       "path": "tools/linear-layout-types.mjs",
-      "sha256": "9324d86c366ebda0fb276fbababc2fa2fd40e03e20f70b47a4d92c603a8bdf35"
+      "sha256": "c083f51ac6c7a69093d657dfc31eb8d5cc44db9b180f53e16ddd9047e1a5b227"
     },
     {
       "path": "examples/linear-layout/main.mjs",
@@ -3618,11 +3618,11 @@
     },
     {
       "path": "tools/bitmap-resource-slot-types.mjs",
-      "sha256": "6d4b7489e798ff293163e750a18d3b92283a4a2edc764539570cd7fcf3017778"
+      "sha256": "c3dc0f91ec4e8af1a9656151660f19b028fe21b7cbb8a2a08d842646cbf7344e"
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
-      "sha256": "4a398c73aa10808ab7dd8837c3862b39a05a3cf1bc157afa479102b26521cc29"
+      "sha256": "0f46f8ee3d89fdc8c23e6b3c1c5064f033ee1687de9156bb2faabb853b8dd973"
     },
     {
       "path": "tools/verify-bitmap-resource-slot.mjs",
@@ -3758,11 +3758,11 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-boundary.mjs",
-      "sha256": "cf84050013391fc3fdbe0aec44a3e4ca06440c3f0a0afe3551ec9b3d62a16027"
+      "sha256": "9f39b8e6eb7f53a4c8c5c52a607c3dc45a0759d1ac56941356658b80ad6be917"
     },
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
-      "sha256": "aadb1145d259912e8d306bc6f959dd78c6ede3c10b15288d3e80a369e2013525"
+      "sha256": "0c401def6d5ad94dc698d161bc4ba1dfb18f3453b5cbdf8c238b33fbc34f9a34"
     },
     {
       "path": "tools/prepared-resource-groups/native-fixture.mjs",
@@ -3846,7 +3846,7 @@
     },
     {
       "path": "tools/atlas-frame-types.mjs",
-      "sha256": "cb282d17be6b0af0572755eb9435d2f66a56b32cb4b7dbf52f221f6c9e082edb"
+      "sha256": "e697fec0d8a24062392dd291bd10a03fb38e450170c6c526dc490f492be85097"
     },
     {
       "path": "tools/atlas-frame/author-assets.mjs",
@@ -3918,7 +3918,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "e21c199a2ad034ee48bea795c4ee63e50ee69c7816338509b02dd08b673bea3d"
+      "sha256": "58daab25bbdd495939c2f11d7a44c20654191a5dc93c8eca2508d8207af84839"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3946,7 +3946,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "4b7916d4d4f449d631f389a55dd9bfbeec9be22e25c5832ae6f50bfbb8a7d3a5"
+      "sha256": "624c79aab67f75da0c1f5f81cc0064ecae40ef452a55e56c42dda5f1f5b5cf5a"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -3954,11 +3954,11 @@
     },
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
-      "sha256": "846be1ee9df6dea2def973a80b44051aa9a54c564467cb31b3ac1f0c255a3dca"
+      "sha256": "314ad4667538361211d9365008cff025afbaa55e5fa24e77fb4388576157b314"
     },
     {
       "path": "packages/engine/web/webgpuBindingCache.ts",
-      "sha256": "6edcff73a936c4ddfd748ca578adc98058bfbcfb86741ee4e0851af7d64c64ea"
+      "sha256": "f46d1428fa5556b88b68a99f76eb47d95d00793fe0f2914d4928b410128dc3c4"
     },
     {
       "path": "packages/engine/web/webgpuBufferPool.ts",
@@ -4026,11 +4026,11 @@
     },
     {
       "path": "packages/engine/web/prepareSharedSubmission2D.ts",
-      "sha256": "13bfc654208dde113c2bc6290a4d5a065c5555c82fd5e2bdd1ef1657af8024f5"
+      "sha256": "6888c44947cbce9411dbd156a332a3c0fa91818188bad3dac6427ae5f4eedde4"
     },
     {
       "path": "packages/engine/web/sharedB1.ts",
-      "sha256": "a1d91beff1753059384b3ccee6b519c8aa77e5c60060436e36197ad1b17c1ec6"
+      "sha256": "bf9587d66076379509a663ee229a71c255a58faf1944cb335c4b7ec9e72e1d1f"
     },
     {
       "path": "packages/engine/web/sharedWebGPUOptions.ts",
@@ -4042,7 +4042,7 @@
     },
     {
       "path": "packages/engine/web/webgpuSharedMeshPass.ts",
-      "sha256": "ebddd1002bc6de36a4c5cc50b51d16ed08f4c25228b73f76b14986272170dd5b"
+      "sha256": "9f1ed90babb7f894899c8f5ce25c3fc035d2cdbc3a271d3d9228b4c3d3a9a7a6"
     },
     {
       "path": "packages/engine/web/webgpuSharedPass.ts",
@@ -4070,7 +4070,7 @@
     },
     {
       "path": "packages/engine/web/WebGL2Host.ts",
-      "sha256": "82a1d973fcd9c1d809b3e9b49f78381473a5051a66a4d111354534ffddefc31d"
+      "sha256": "121c90c97ec5302ff9ff30cd3d4ca9ffc1ea57b17607124c8d0e56f0c57d95b7"
     },
     {
       "path": "packages/engine/web/sharedRetentionLedger.ts",
@@ -4078,11 +4078,11 @@
     },
     {
       "path": "packages/engine/web/sharedSubmissionStorage2D.ts",
-      "sha256": "6732e63c0d14a5ff2270458de3cf57593285048ba5a4b079ce50717572b615b7"
+      "sha256": "71b2aeccfab90057ef87cd40d8d65943f951dfe2a2e66eb6c64ac62cf3d18104"
     },
     {
       "path": "packages/engine/web/sharedWebGL2Arena.ts",
-      "sha256": "dc5af7f50245247524378f47fc72050874bcd768a2dc3793169c677ec21169b4"
+      "sha256": "47ba49a4304f9a3150a2312c2673daa148c1afde77a8c00a9ebe6414a4d1ab1b"
     },
     {
       "path": "packages/engine/web/sharedWebGL2Options.ts",
@@ -4090,7 +4090,7 @@
     },
     {
       "path": "packages/engine/web/sharedWebGL2Scene.ts",
-      "sha256": "f1876aa0a6b3a39585c11a536779f8ae3ecdbcb17125db0ef3a9e59fc4664af4"
+      "sha256": "b3990c3c8d91e75d431942b80cca9fd38319fe97f5c15ea8166554c9c605b487"
     },
     {
       "path": "packages/engine/web/sharedWebGL2Shaders.ts",
@@ -4842,11 +4842,11 @@
     },
     {
       "path": "packages/engine/rendering/scene3dAuthoring.ts",
-      "sha256": "7442116e4b098faf25a930139a80a2d9f5ab2887431cf6f99bbaa0c64b52e5ac"
+      "sha256": "24c8c15cff72b87ba8571321938b981ed97195e7e4cc136cff7069fe4f91b1a9"
     },
     {
       "path": "packages/engine/rendering/sceneWorld3D.ts",
-      "sha256": "ecc88942f0c44505d6a02627882ab6ffeae1e4da47d67a6a544521d246780182"
+      "sha256": "c59018dc29ffe976b1c704384e6bad6f7fa8070a2c088c19e33c3df35fd4f686"
     },
     {
       "path": "packages/engine/rendering/staticGlb3D.ts",
