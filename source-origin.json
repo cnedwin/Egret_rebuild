@@ -826,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 15405,
-      "sha256": "92753215bf4aa221b326d1d83fa0387f5444dc206f28d9dfed584f86e058f8d8",
+      "bytes": 15583,
+      "sha256": "ec206c96d09e5af42fd66968c04658b40e02a036293d6147c743f8f1ac0604db",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "e3bca0afe5e725ecd1880037928a9a5b3705a870f0d2ed90bd0b9f225fe82d47",
+      "sha256": "1cd38175c59eb6f39d28ef6eef02c3c53416adc16406148902606c989f6c18ae",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2546,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 17400,
-      "sha256": "0b3e8a7a03ded3f6a7a5f10b2816fe3e587e6d61f5bb114219ed4e2a05fa1f41",
+      "bytes": 17603,
+      "sha256": "33082f956c42c0f4aaf287330522855edda27157b5e67434f31e68b7df144593",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "3582d7117bacfc6855c9cf586666c6f5f4f9ae8a59ea90ca8f23f99e003fb1b3",
-      "bytes": 399095,
+      "sha256": "1eb5a9385102d0ee44990653374dd76ef7ad2714807ac4bdb16c13a74e0f46ea",
+      "bytes": 400521,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4860,8 +4860,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "ebdbe7b594edffff74537b1c0592e371d4dd3344bf817a618e232d0d485b2039",
-      "bytes": 17600,
+      "sha256": "06f8e65f2c3d08077951f3cbd0aec41832a07697ab902a114f6663214147adbb",
+      "bytes": 17746,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -5003,8 +5003,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "7baeafcf965aa518bf0741726a2312692f3e37da1585dbe4ae83fa6d487acbf9",
-      "bytes": 17042,
+      "sha256": "da93b3596eaad17ae837cf38eacd39007b6e746978ab1d8a759192af551d9495",
+      "bytes": 17180,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -16294,6 +16294,222 @@
       "originRole": "Independently authored first-party Egret rigid GLB animation tests using a generated fixture and the public Khronos format specification; AI-assisted; Apache-2.0.",
       "bytes": 9822,
       "sha256": "8c7f67341f584810d7d4e1c6411ab932d982be2370fde79d2ed7068e2171d9aa"
+    },
+    {
+      "path": "integrations/src/archive.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "bytes": 9344,
+      "sha256": "da232395747c3448894637d66e38755edc8894e1646efb3b1cd8be093dbdec9f"
+    },
+    {
+      "path": "integrations/src/errors.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "bytes": 757,
+      "sha256": "ae41057a142c2d7c135740c196a83a442ddf2bcbcccea654560a760f6a86164f"
+    },
+    {
+      "path": "integrations/src/i18n.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "bytes": 4907,
+      "sha256": "140b39699b8d14884d0607936d249e5a002e3e44dc8d88699310a3489166bdf2"
+    },
+    {
+      "path": "integrations/src/physics.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "bytes": 11516,
+      "sha256": "43c0ddc40c58e757c13276751a8e249aac0551ddea0c229451ce77325b505990"
+    },
+    {
+      "path": "integrations/src/texture.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "bytes": 13133,
+      "sha256": "f2d7cd7fba6914d76f94df6316b79a691e744348858c4e3f1d328a72e851f2a4"
+    },
+    {
+      "path": "integrations/src/tiled-vendors.d.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "bytes": 1179,
+      "sha256": "e68671114040b9680d0c307452129dda638634bb6a576cfedb02768c858d48e1"
+    },
+    {
+      "path": "integrations/src/tiled.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "bytes": 30636,
+      "sha256": "286023d17392fefcdf63ce9cd46adcd8fc3971750b3e5120ee6d0e0c59769ac7"
+    },
+    {
+      "path": "integrations/src/web/audio.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "bytes": 11655,
+      "sha256": "62633501d7db1fa28b8d2985879d71a70a1deaea1e6f92b6d45b56016b864367"
+    },
+    {
+      "path": "integrations/src/web/storage.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "bytes": 3657,
+      "sha256": "79dbabfc78313b169305868bcb3b2b503003fbcdc4a76d0ff5c500c39f8312de"
+    },
+    {
+      "path": "integrations/tests/archive.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries.",
+      "bytes": 2440,
+      "sha256": "0c4c3ed85c435ca963c09bbb63a25118f84ac91248ee89d80cf3dcf12fc3f006"
+    },
+    {
+      "path": "integrations/tests/audio.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries.",
+      "bytes": 420,
+      "sha256": "acc65a0273f754db14917a0cd5e25605d8867865271693483459e7d9434a3649"
+    },
+    {
+      "path": "integrations/tests/i18n.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries.",
+      "bytes": 2061,
+      "sha256": "d502e0b0f9ec7ef9a74e6c2fd24fdd3e502d506ea3e86e0208b6c2d497ef2d2d"
+    },
+    {
+      "path": "integrations/tests/physics.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries.",
+      "bytes": 4888,
+      "sha256": "991a6a7b07c0bf2c95f2f69d491d0e398095b4124b91e2fcc64436f91ab00421"
+    },
+    {
+      "path": "integrations/tests/storage.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries.",
+      "bytes": 862,
+      "sha256": "56aaf8df3b57f311fc3f9ef9426f5cf18a0fed39ff9e6489b0a6c8d71a760497"
+    },
+    {
+      "path": "integrations/tests/texture.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries.",
+      "bytes": 5459,
+      "sha256": "e985e3fc5b0b49a0e8bffa63066b7d784f2194a3f0b7ae32719d9b2a5930cc4d"
+    },
+    {
+      "path": "integrations/tests/tiled.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries.",
+      "bytes": 6037,
+      "sha256": "1d6c67f646b639fe9736afe033b1c39c3a9cf7a24dacce73c31df5ef9dd59b42"
+    },
+    {
+      "path": "integrations/example/assets/fixture-texture.mjs",
+      "originRole": "First-party runnable Egret integration example or generated fixture authored with AI assistance under Apache-2.0. Uses the built optional package and public engine API.",
+      "bytes": 2279,
+      "sha256": "8a41bd677b04bd2473eacf2251b30d9fc3fef1e6174d6aee6febf6abf4f3540f"
+    },
+    {
+      "path": "integrations/example/assets/room.tmx",
+      "originRole": "First-party runnable Egret integration example or generated fixture authored with AI assistance under Apache-2.0. Uses the built optional package and public engine API.",
+      "bytes": 852,
+      "sha256": "f25c824bba3c4119c28bad6895a40b56032532546eab19126fa9817ea3246e39"
+    },
+    {
+      "path": "integrations/example/assets/tiles.png",
+      "originRole": "First-party runnable Egret integration example or generated fixture authored with AI assistance under Apache-2.0. Uses the built optional package and public engine API.",
+      "bytes": 126,
+      "sha256": "6f2f0f4f1f61bd1d82924042ae980890fce585fa7d2fa168ca4f942f638564bc"
+    },
+    {
+      "path": "integrations/example/assets/tiles.tsx",
+      "originRole": "First-party runnable Egret integration example or generated fixture authored with AI assistance under Apache-2.0. Uses the built optional package and public engine API.",
+      "bytes": 269,
+      "sha256": "e14ce1e4bf885294b2d72ad72801b5dcfb4f8df62da26d90964c5aa55119f4fa"
+    },
+    {
+      "path": "integrations/example/index.html",
+      "originRole": "First-party runnable Egret integration example or generated fixture authored with AI assistance under Apache-2.0. Uses the built optional package and public engine API.",
+      "bytes": 1819,
+      "sha256": "c7ad18b0252b20153359dc6a4b6c9e6fb6f8eb89731c4ed0e56c82221b7e562d"
+    },
+    {
+      "path": "integrations/example/main.mjs",
+      "originRole": "First-party runnable Egret integration example or generated fixture authored with AI assistance under Apache-2.0. Uses the built optional package and public engine API.",
+      "bytes": 10000,
+      "sha256": "033bfa3f0d96e55f31e69a483b049f44e8ad6f09408b2df4cbc752f0318d4d86"
+    },
+    {
+      "path": "integrations/tools/example.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries.",
+      "bytes": 3834,
+      "sha256": "c6b8c7838982af3a55d4f34052c7a0e78181744f5a2984f1129bbcb3f15ec295"
+    },
+    {
+      "path": "integrations/tools/import-tiled.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries.",
+      "bytes": 1967,
+      "sha256": "db4bc5beccb342badd45f822659a4af93fae39d2dc72045db4eef40d928220ca"
+    },
+    {
+      "path": "integrations/tools/verify-browser.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries.",
+      "bytes": 2987,
+      "sha256": "622719443b5213c55f33ba3c1dc5fc37675ee630d65735782d23ba7f81e94f20"
+    },
+    {
+      "path": "integrations/.gitignore",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
+      "bytes": 7,
+      "sha256": "fe56da5f27d174b011ca65d2c1c9be83ca19ce1428e1594f8ed3ca037e8814ed"
+    },
+    {
+      "path": "integrations/package.json",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
+      "bytes": 1655,
+      "sha256": "a25e49a0db576df7776a6c9c86de6356f7e5070e6497acd83a90318b72a60445"
+    },
+    {
+      "path": "integrations/pnpm-workspace.yaml",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
+      "bytes": 243,
+      "sha256": "d2990ab350e5df7d631c112b81dcb64e92c3c58b5ca2cf5ff293c35e26b2d4c8"
+    },
+    {
+      "path": "integrations/pnpm-lock.yaml",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
+      "bytes": 19558,
+      "sha256": "8f629369cf6f25b0b7a94521286c91c5ca3154344604f3bf9ed794443f3b9454"
+    },
+    {
+      "path": "integrations/tsconfig.json",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
+      "bytes": 542,
+      "sha256": "45ec5027004cadcdb6fa60ee73013d2e925ed308d1c6a1eee0d18f494c394be6"
+    },
+    {
+      "path": "integrations/THIRD_PARTY_NOTICES",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
+      "bytes": 1743,
+      "sha256": "838126279b171e39ad6f5404d972d15f11419de38ffa43ab280b1dca76a887af"
+    },
+    {
+      "path": "integrations/README.md",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
+      "bytes": 5822,
+      "sha256": "429317b1db4014b1c5510135b4752916897f29e15c193ab0d826eebc847cac53"
+    },
+    {
+      "path": "integrations/README.zh-CN.md",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
+      "bytes": 5229,
+      "sha256": "813a93f8d24b4a654c6f51ff32ef1f83699dd5e8597a700e9540efa43e309730"
+    },
+    {
+      "path": ".github/workflows/integrations.yml",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
+      "bytes": 1094,
+      "sha256": "76e69a347d44fe57e1ed062dab065b09b5b93d47c7dd7a33cd55e1c7d66a9d0b"
+    },
+    {
+      "path": "integrations/tools/copy-license.mjs",
+      "originRole": "First-party package assembly tool authored with AI assistance under Apache-2.0. Copies the exact existing repository license into the standalone build artifact.",
+      "bytes": 258,
+      "sha256": "294ed19c1b7f08e1203cce319160c5770718f24fe1aff158d90b52dc091a5464"
+    },
+    {
+      "path": "contributions/third-party-integrations.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 9303,
+      "sha256": "b45aef1318fb82d9565564aadd54eb619ca64e5519df68fcb638d04bd829ae4e"
     },
     {
       "path": "examples/world3d/README.md",
