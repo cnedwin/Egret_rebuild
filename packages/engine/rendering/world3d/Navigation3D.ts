@@ -2,15 +2,15 @@
 // Navigation for characters that walk: a navigation mesh built from the
 // walkable triangles of level geometry, shortest paths across it, straight
 // line-of-sight checks, movement that slides along its edges, a small crowd
-// that steers agents along paths while keeping them apart, and A* on a grid
-// for tile maps. Everything is plain data and arithmetic: no physics world
+// that steers agents along paths while keeping them apart, and weighted search
+// on a grid for tile maps. Everything is plain data and arithmetic: no physics world
 // and no DOM is needed.
 import {World3DError, requireFinite3D, requirePositive3D} from './core3D.js';
 import {Geometry3D, createGeometry3D} from './Geometry3D.js';
 import type {Object3D} from './Object3D.js';
 import {createMeshShape3D} from './PhysicsMesh3D.js';
 
-export const NAVIGATION3D_LIMITS = Object.freeze({maxTriangles: 1048576, maxAgents: 4096, maxGridCells: 16777216} as const);
+export const NAVIGATION3D_LIMITS = Object.freeze({maxTriangles: 1048576, maxAgents: 4096, maxGridCells: 16777216, maxCellReferences: 8388608} as const);
 export type NavPoint3D = [number, number, number];
 export interface NavMeshOptions3D {
     /** Steepest walkable slope in radians. Defaults to 45 degrees. */
@@ -42,32 +42,44 @@ export interface NavPath3D {
 /** Twice the signed area of a triangle seen from above; the sign tells which side of a-b the point c lies on. */
 const side = (ax: number, az: number, bx: number, bz: number, cx: number, cz: number): number => (cx - ax) * (bz - az) - (bx - ax) * (cz - az);
 
-/** Binary heap of numbers ordered by a score array. */
+/** Store a snapshot of each priority so reprioritizing a node cannot corrupt the heap. */
 class Heap {
-    readonly #items: number[] = [];
-    constructor(private readonly score: Float64Array | Float32Array) {}
+    readonly #items: {index: number; priority: number}[] = [];
+    constructor(private readonly score: Float64Array) {}
     get size(): number { return this.#items.length; }
-    push(item: number): void {
-        const items = this.#items, score = this.score;
+    push(index: number): void {
+        const items = this.#items;
+        const item = {index, priority: this.score[index]!};
         let i = items.length;
         items.push(item);
-        while (i > 0) { const parent = (i - 1) >> 1; if (score[items[parent]!]! <= score[item]!) break; items[i] = items[parent]!; i = parent; }
+        while (i > 0) {
+            const parent = (i - 1) >> 1;
+            if (items[parent]!.priority <= item.priority) break;
+            items[i] = items[parent]!;
+            i = parent;
+        }
         items[i] = item;
     }
-    pop(): number {
-        const items = this.#items, score = this.score, top = items[0]!, last = items.pop()!;
-        if (items.length > 0) {
-            let i = 0;
-            for (;;) {
-                let child = i * 2 + 1;
-                if (child >= items.length) break;
-                if (child + 1 < items.length && score[items[child + 1]!]! < score[items[child]!]!) child++;
-                if (score[items[child]!]! >= score[last]!) break;
-                items[i] = items[child]!; i = child;
+    pop(): number | undefined {
+        const items = this.#items;
+        while (items.length > 0) {
+            const top = items[0]!;
+            const last = items.pop()!;
+            if (items.length > 0) {
+                let i = 0;
+                for (;;) {
+                    let child = i * 2 + 1;
+                    if (child >= items.length) break;
+                    if (child + 1 < items.length && items[child + 1]!.priority < items[child]!.priority) child++;
+                    if (items[child]!.priority >= last.priority) break;
+                    items[i] = items[child]!;
+                    i = child;
+                }
+                items[i] = last;
             }
-            items[i] = last;
+            if (this.score[top.index] === top.priority) return top.index;
         }
-        return top;
+        return undefined;
     }
 }
 
@@ -81,7 +93,9 @@ export class NavMesh3D {
     readonly triangleCount: number;
     /** Connected region of each triangle; two points can reach each other only within one region. */
     readonly regions: Int32Array;
-    readonly #cost: Float32Array;
+    readonly #cost: Float64Array;
+    #minimumCost = 1;
+    #nonDefaultCostCount = 0;
     readonly #enabled: Uint8Array;
     readonly #cellSize: number;
     readonly #minX: number; readonly #minZ: number; readonly #columns: number; readonly #rows: number;
@@ -121,7 +135,7 @@ export class NavMesh3D {
             const from = Math.floor(key / vertexCount), to = key % vertexCount, other = edges.get(to * vertexCount + from);
             if (other !== undefined) this.neighbors[slot] = Math.floor(other / 3);
         }
-        this.#cost = new Float32Array(total).fill(1); this.#enabled = new Uint8Array(total).fill(1);
+        this.#cost = new Float64Array(total).fill(1); this.#enabled = new Uint8Array(total).fill(1);
         this.regions = new Int32Array(total).fill(-1);
         for (let t = 0, region = 0; t < total; t++) {
             if (this.regions[t] !== -1) continue;
@@ -136,23 +150,45 @@ export class NavMesh3D {
         const cell = this.#cellSize = Math.max(Math.sqrt((maxX - minX + 1e-6) * (maxZ - minZ + 1e-6) / total) * 1.5, 1e-3);
         this.#minX = minX; this.#minZ = minZ;
         const columns = this.#columns = Math.min(Math.max(Math.ceil((maxX - minX) / cell), 1), 2048), rows = this.#rows = Math.min(Math.max(Math.ceil((maxZ - minZ) / cell), 1), 2048);
-        const counts = new Uint32Array(columns * rows + 1), spans: number[] = [];
+        const spans = new Uint16Array(total * 4);
+        let references = 0;
         for (let t = 0; t < total; t++) {
             let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
             for (let e = 0; e < 3; e++) { const v = triangles[t * 3 + e]! * 3; x0 = Math.min(x0, vertices[v]!); x1 = Math.max(x1, vertices[v]!); z0 = Math.min(z0, vertices[v + 2]!); z1 = Math.max(z1, vertices[v + 2]!); }
             const c0 = this.column(x0), c1 = this.column(x1), r0 = this.row(z0), r1 = this.row(z1);
-            spans.push(c0, c1, r0, r1);
-            for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) counts[r * columns + c + 1]!++;
+            references += (c1 - c0 + 1) * (r1 - r0 + 1);
+            if (references > NAVIGATION3D_LIMITS.maxCellReferences) throw new World3DError('WORLD3D_BUDGET', 'navigation cell references');
+            const span = t * 4;
+            spans[span] = c0; spans[span + 1] = c1; spans[span + 2] = r0; spans[span + 3] = r1;
+        }
+        // Both passes are bounded by the admitted reference count.
+        const counts = new Uint32Array(columns * rows + 1);
+        for (let span = 0; span < spans.length; span += 4) {
+            for (let r = spans[span + 2]!; r <= spans[span + 3]!; r++) {
+                for (let c = spans[span]!; c <= spans[span + 1]!; c++) counts[r * columns + c + 1]!++;
+            }
         }
         for (let i = 1; i < counts.length; i++) counts[i]! += counts[i - 1]!;
-        this.#cellStart = counts.slice(); this.#cellItems = new Uint32Array(counts[counts.length - 1]!);
+        this.#cellStart = counts;
+        this.#cellItems = new Uint32Array(references);
         const fill = counts.slice(0, counts.length - 1);
-        for (let t = 0; t < total; t++) for (let r = spans[t * 4 + 2]!; r <= spans[t * 4 + 3]!; r++) for (let c = spans[t * 4]!; c <= spans[t * 4 + 1]!; c++) this.#cellItems[fill[r * columns + c]!++] = t;
+        for (let span = 0; span < spans.length; span += 4) {
+            for (let r = spans[span + 2]!; r <= spans[span + 3]!; r++) {
+                for (let c = spans[span]!; c <= spans[span + 1]!; c++) this.#cellItems[fill[r * columns + c]!++] = span / 4;
+            }
+        }
     }
     private column(x: number): number { return Math.min(Math.max(Math.floor((x - this.#minX) / this.#cellSize), 0), this.#columns - 1); }
     private row(z: number): number { return Math.min(Math.max(Math.floor((z - this.#minZ) / this.#cellSize), 0), this.#rows - 1); }
     /** Travel cost multiplier of a triangle (mud, shallow water); 1 by default. */
-    setCost(triangle: number, cost: number): void { this.#cost[this.checked(triangle)] = requirePositive3D(cost, 'cost'); }
+    setCost(triangle: number, cost: number): void {
+        const index = this.checked(triangle);
+        const price = requirePositive3D(cost, 'cost');
+        this.#nonDefaultCostCount += Number(price !== 1) - Number(this.#cost[index] !== 1);
+        this.#cost[index] = price;
+        // A historical minimum remains a safe lower bound when a cost rises again.
+        this.#minimumCost = this.#nonDefaultCostCount === 0 ? 1 : Math.min(this.#minimumCost, price);
+    }
     /** Close or reopen a triangle, as for a door or a collapsed bridge. Paths and movement avoid closed triangles. */
     setEnabled(triangle: number, enabled: boolean): void { this.#enabled[this.checked(triangle)] = enabled ? 1 : 0; }
     isEnabled(triangle: number): boolean { return this.#enabled[this.checked(triangle)] === 1; }
@@ -228,16 +264,19 @@ export class NavMesh3D {
         const entry = new Float32Array(total * 3), v = this.vertices, tri = this.triangles, heap = new Heap(f), center: NavPoint3D = [0, 0, 0];
         this.center(start, center);
         entry[start * 3] = center[0]; entry[start * 3 + 1] = center[1]; entry[start * 3 + 2] = center[2];
-        g[start] = 0; f[start] = Math.hypot(center[0] - target[0], center[1] - target[1], center[2] - target[2]);
+        const distanceToGoal = (x: number, y: number, z: number): number => Math.hypot(x - target[0], y - target[1], z - target[2]);
+        let nearest = start, nearestDistance = distanceToGoal(center[0], center[1], center[2]);
+        g[start] = 0;
+        f[start] = nearestDistance * this.#minimumCost;
         heap.push(start);
-        let nearest = start, nearestDistance = f[start]!;
         this.#reached = false;
         while (heap.size > 0) {
             const current = heap.pop();
+            if (current === undefined) break;
             if (closed[current]) continue;
             closed[current] = 1;
             if (current === end) { this.#reached = true; nearest = end; break; }
-            const here = f[current]! - g[current]!;
+            const here = distanceToGoal(entry[current * 3]!, entry[current * 3 + 1]!, entry[current * 3 + 2]!);
             if (here < nearestDistance) { nearestDistance = here; nearest = current; }
             for (let e = 0; e < 3; e++) {
                 const next = this.neighbors[current * 3 + e]!;
@@ -250,7 +289,7 @@ export class NavMesh3D {
                 if (cost >= g[next]!) continue;
                 g[next] = cost; from[next] = current;
                 entry[next * 3] = mx; entry[next * 3 + 1] = my; entry[next * 3 + 2] = mz;
-                f[next] = cost + Math.hypot(mx - target[0], my - target[1], mz - target[2]);
+                f[next] = cost + distanceToGoal(mx, my, mz) * this.#minimumCost;
                 heap.push(next);
             }
         }
@@ -259,7 +298,7 @@ export class NavMesh3D {
         return chain.reverse();
     }
     /**
-     * Shortest walkable path between two points. The points are snapped onto
+     * Cost-guided walkable path between two points. The points are snapped onto
      * the mesh first; undefined is returned when either lies too far from it.
      */
     findPath(start: ArrayLike<number>, end: ArrayLike<number>, options: NavPathOptions3D = {}): NavPath3D | undefined {
@@ -313,15 +352,17 @@ export class NavMesh3D {
             }
         }
         cornerPoints.push(goal); corners.push(count - 1);
-        // The corridor of triangles found above is not always the straightest one, so the pulled string can
-        // still bend where it need not. Skip every corner that can be passed in a straight walk.
-        let points: NavPoint3D[] = [cornerPoints[0]!];
-        for (let i = 0; i + 1 < cornerPoints.length;) {
-            const here = this.findNearest(cornerPoints[i]!, 0.5);
-            let next = i + 1;
-            if (here) for (let j = cornerPoints.length - 1; j > i + 1; j--) if (this.clearWalk(here, cornerPoints[j]!, radius)) { next = j; break; }
-            points.push(cornerPoints[next]!);
-            i = next;
+        let points = cornerPoints;
+        // A walkable shortcut can cost more than the selected corridor, even if the shortcut's own cost is uniform.
+        if (this.#nonDefaultCostCount === 0) {
+            points = [cornerPoints[0]!];
+            for (let i = 0; i + 1 < cornerPoints.length;) {
+                const here = this.findNearest(cornerPoints[i]!, 0.5);
+                let next = i + 1;
+                if (here) for (let j = cornerPoints.length - 1; j > i + 1; j--) if (this.clearWalk(here, cornerPoints[j]!, radius)) { next = j; break; }
+                points.push(cornerPoints[next]!);
+                i = next;
+            }
         }
         if (options.followSurface) {
             // Add a point wherever a straight piece crosses from one triangle to the next, so the path hugs slopes.
@@ -623,8 +664,8 @@ export interface GridPathOptions3D {
 }
 /**
  * Shortest path on a grid of cells, for tile maps. `cost(x, y)` returns the
- * price of entering a cell (1 for plain ground, more for rough ground) or a
- * value of 0 or less for a blocked cell. Returns the cells from start to end
+ * finite positive price of entering a cell (including fractional costs).
+ * All other values mark a blocked cell. Returns the cells from start to end
  * inclusive, or undefined when there is no way.
  */
 export function findGridPath3D(width: number, height: number, cost: (x: number, y: number) => number, start: readonly [number, number], end: readonly [number, number],
@@ -633,15 +674,23 @@ export function findGridPath3D(width: number, height: number, cost: (x: number, 
     if (width * height > NAVIGATION3D_LIMITS.maxGridCells) throw new World3DError('WORLD3D_BUDGET', 'grid size');
     const inside = (x: number, y: number): boolean => Number.isInteger(x) && Number.isInteger(y) && x >= 0 && y >= 0 && x < width && y < height;
     if (!inside(start[0], start[1]) || !inside(end[0], end[1])) throw new World3DError('WORLD3D_INPUT_INVALID', 'grid cell');
-    if (!(cost(end[0], end[1]) > 0)) return undefined;
-    const total = width * height, g = new Float32Array(total).fill(Infinity), f = new Float32Array(total).fill(Infinity), from = new Int32Array(total).fill(-1), closed = new Uint8Array(total), heap = new Heap(f);
+    const priceAt = (x: number, y: number): number => {
+        const price = cost(x, y);
+        return Number.isFinite(price) && price > 0 ? price : 0;
+    };
+    if (!priceAt(end[0], end[1])) return undefined;
+    const total = width * height;
+    const distances = new Float64Array(total).fill(Infinity);
+    const from = new Int32Array(total).fill(-1);
+    const closed = new Uint8Array(total);
+    const heap = new Heap(distances);
     const diagonal = options.diagonal ?? true, limit = options.maxVisited ?? total, goal = end[1] * width + end[0], first = start[1] * width + start[0];
-    // Distance with diagonal steps costing the square root of two; plain steps otherwise.
-    const estimate = (x: number, y: number): number => { const dx = Math.abs(x - end[0]), dy = Math.abs(y - end[1]); return diagonal ? Math.max(dx, dy) + (Math.SQRT2 - 1) * Math.min(dx, dy) : dx + dy; };
-    g[first] = 0; f[first] = estimate(start[0], start[1]);
+    // Without a lower bound on callback costs, Dijkstra preserves the cheapest route.
+    distances[first] = 0;
     heap.push(first);
     for (let visited = 0; heap.size > 0 && visited < limit;) {
         const current = heap.pop();
+        if (current === undefined) break;
         if (closed[current]) continue;
         closed[current] = 1; visited++;
         if (current === goal) {
@@ -656,13 +705,15 @@ export function findGridPath3D(width: number, height: number, cost: (x: number, 
             if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
             const next = ny * width + nx;
             if (closed[next]) continue;
-            const price = cost(nx, ny);
-            if (!(price > 0)) continue;
+            const price = priceAt(nx, ny);
+            if (price === 0) continue;
             // A diagonal step needs both cells beside it open.
-            if (dx !== 0 && dy !== 0 && (!(cost(x + dx, y) > 0) || !(cost(x, y + dy) > 0))) continue;
-            const reached = g[current]! + price * (dx !== 0 && dy !== 0 ? Math.SQRT2 : 1);
-            if (reached >= g[next]!) continue;
-            g[next] = reached; from[next] = current; f[next] = reached + estimate(nx, ny);
+            const diagonalStep = dx !== 0 && dy !== 0;
+            if (diagonalStep && (!priceAt(x + dx, y) || !priceAt(x, y + dy))) continue;
+            const reached = distances[current]! + price * (diagonalStep ? Math.SQRT2 : 1);
+            if (reached >= distances[next]!) continue;
+            distances[next] = reached;
+            from[next] = current;
             heap.push(next);
         }
     }
