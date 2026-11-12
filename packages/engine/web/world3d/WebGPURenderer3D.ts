@@ -13,7 +13,8 @@ import type {InstancedMesh3D, Mesh3D, Skeleton3D} from '../../rendering/world3d/
 import type {Scene3D} from '../../rendering/world3d/Object3D.js';
 import {RenderList3D} from '../../rendering/world3d/RenderList3D.js';
 import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
-import {CubeTexture3D, RenderTarget3D, isTexturePixels3D} from '../../rendering/world3d/Texture3D.js';
+import {COMPRESSED_BLOCK_BYTES_3D, CubeTexture3D, RenderTarget3D, isCompressedPixels3D, isTexturePixels3D} from '../../rendering/world3d/Texture3D.js';
+import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import type {Texture3D, TextureSource3D} from '../../rendering/world3d/Texture3D.js';
 import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
 import type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
@@ -359,6 +360,23 @@ export class WebGPURenderer3D implements Renderer3D {
             return {view: target.colorView, sampler: this.sampler(texture), key: 't' + source.id + ':' + source.version};
         }
         const entry = this.textureEntry(texture, () => {
+            if (isCompressedPixels3D(source)) {
+                const format = this.compressedFormat(source.format, texture.colorSpace === 'srgb');
+                if (!format) throw new World3DError('WORLD3D_RESOURCE_FAILED', 'compressed format ' + source.format + ' is not supported by this device');
+                const block = COMPRESSED_BLOCK_BYTES_3D[source.format];
+                // The base size must be block-aligned; smaller mips are padded to whole blocks on upload.
+                const gpu = this.device.createTexture({
+                    size: [Math.ceil(source.width / 4) * 4, Math.ceil(source.height / 4) * 4], format, mipLevelCount: source.levels.length,
+                    usage: TEXTURE_USAGE.TEXTURE_BINDING | TEXTURE_USAGE.COPY_DST,
+                });
+                let width = gpu.width, height = gpu.height;
+                source.levels.forEach((level, mipLevel) => {
+                    const columns = Math.ceil(width / 4), rows = Math.ceil(height / 4);
+                    this.device.queue.writeTexture({texture: gpu, mipLevel}, level.buffer as ArrayBuffer, {offset: level.byteOffset, bytesPerRow: columns * block, rowsPerImage: rows}, [columns * 4, rows * 4]);
+                    width = Math.max(1, width >> 1); height = Math.max(1, height >> 1);
+                });
+                return {texture: gpu, view: gpu.createView()};
+            }
             const [width, height] = isTexturePixels3D(source) ? [source.width, source.height] : hostSize(source);
             const gpu = this.createColorTexture(width, height, 1, texture);
             this.uploadSource(gpu, source, 0, texture.flipY);
@@ -366,6 +384,20 @@ export class WebGPURenderer3D implements Renderer3D {
             return {texture: gpu, view: gpu.createView()};
         });
         return {view: entry.view, sampler: entry.sampler, key: texture.id + ':' + texture.version};
+    }
+    private compressedFormat(format: CompressedFormat3D, srgb: boolean): GPUTextureFormat | undefined {
+        const table: Record<CompressedFormat3D, [GPUFeatureName, string]> = {
+            'bc1': ['texture-compression-bc', 'bc1-rgba-unorm'], 'bc3': ['texture-compression-bc', 'bc3-rgba-unorm'], 'bc7': ['texture-compression-bc', 'bc7-rgba-unorm'],
+            'etc2-rgb8': ['texture-compression-etc2', 'etc2-rgb8unorm'], 'etc2-rgba8': ['texture-compression-etc2', 'etc2-rgba8unorm'],
+            'astc-4x4': ['texture-compression-astc', 'astc-4x4-unorm'],
+        };
+        const entry = table[format];
+        if (!entry || !this.device.features.has(entry[0])) return undefined;
+        return (entry[1] + (srgb ? '-srgb' : '')) as GPUTextureFormat;
+    }
+    /** True when textures in this compressed format can be used on this device. */
+    supportsCompressedFormat(format: CompressedFormat3D): boolean {
+        return this.compressedFormat(format, false) !== undefined;
     }
     private textureCube(texture: CubeTexture3D): TextureGpu {
         return this.textureEntry(texture, () => {
@@ -1010,7 +1042,9 @@ export async function createWebGPURenderer3D(options: WebGPURenderer3DOptions): 
     const adapter = await navigator.gpu.requestAdapter({powerPreference: options.powerPreference ?? 'high-performance'});
     if (!adapter) throw new World3DError('WORLD3D_CONTEXT_UNAVAILABLE', 'webgpu adapter');
     let device: GPUDevice;
-    try { device = await adapter.requestDevice(); }
+    // Enable every block-compression family the adapter offers so compressed textures can be uploaded.
+    const requiredFeatures = (['texture-compression-bc', 'texture-compression-etc2', 'texture-compression-astc'] as GPUFeatureName[]).filter(feature => adapter.features.has(feature));
+    try { device = await adapter.requestDevice({requiredFeatures}); }
     catch (cause) { throw new World3DError('WORLD3D_CONTEXT_UNAVAILABLE', 'webgpu device', cause); }
     try { return new WebGPURenderer3D(options, device, true); }
     catch (cause) { device.destroy(); throw cause; }

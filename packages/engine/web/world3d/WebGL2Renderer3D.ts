@@ -14,6 +14,7 @@ import type {Scene3D} from '../../rendering/world3d/Object3D.js';
 import {RenderList3D} from '../../rendering/world3d/RenderList3D.js';
 import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
 import {CubeTexture3D, RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
+import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
 import type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
 import {GpuResources3D} from './gpuResources3D.js';
@@ -556,6 +557,10 @@ export class WebGL2Renderer3D implements Renderer3D {
     private clearMaterialPrograms(): void {
         for (const entry of this.#materialPrograms.values()) entry.unsubscribe();
         this.#materialPrograms.clear();
+    }
+    /** True when textures in this compressed format can be used on this device. */
+    supportsCompressedFormat(format: CompressedFormat3D): boolean {
+        return this.#resources.compressedFormat(format, false) !== undefined;
     }
     /** Release every GPU object and detach from the canvas. Idempotent. */
     dispose(): void {

@@ -59,3 +59,10 @@ export {
     createAxesHelper3D,
 } from './helpers3D.js';
 export type {ScreenLayerOptions3D} from './helpers3D.js';
+export {isCompressedPixels3D, COMPRESSED_BLOCK_BYTES_3D} from './Texture3D.js';
+export type {CompressedFormat3D, CompressedPixels3D} from './Texture3D.js';
+export {isKtx23D, parseKtx23D} from './Ktx23D.js';
+export type {Ktx2Info3D, Ktx2Result3D, Ktx2Options3D} from './Ktx23D.js';
+export type {GltfMeshoptRequest3D, GltfDracoRequest3D, GltfDracoResult3D} from './Gltf3D.js';
+export {SCENE_DOCUMENT_FORMAT_3D, SCENE_DOCUMENT_VERSION_3D, SERIALIZE3D_LIMITS, serializeScene3D, deserializeScene3D} from './Serialize3D.js';
+export type {SceneDocument3D, SerializeOptions3D, DeserializeOptions3D, DeserializedScene3D} from './Serialize3D.js';

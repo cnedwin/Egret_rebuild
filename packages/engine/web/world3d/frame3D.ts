@@ -10,7 +10,7 @@ import {frustumFromMatrix, frustumIntersectsSphere, mat4Invert, mat4LookAt, mat4
 import type {Mesh3D} from '../../rendering/world3d/Mesh3D.js';
 import type {Scene3D} from '../../rendering/world3d/Object3D.js';
 import type {RenderList3D} from '../../rendering/world3d/RenderList3D.js';
-import type {RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
+import type {CompressedFormat3D, RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
 
 export type ToneMapping3D = 'none' | 'reinhard' | 'aces';
 export interface Renderer3DInfo {
@@ -35,6 +35,8 @@ export interface Renderer3D extends Disposable {
     render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean;
     setSize(width: number, height: number, pixelRatio?: number): void;
     resizeToDisplaySize(pixelRatio?: number): boolean;
+    /** True when textures in this compressed format can be used on this device. */
+    supportsCompressedFormat(format: CompressedFormat3D): boolean;
     /** RGBA8 pixels of a render target, top row first, in the sRGB encoding. */
     readRenderTargetPixels(target: RenderTarget3D): Promise<Uint8Array>;
 }
