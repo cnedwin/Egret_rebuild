@@ -4,7 +4,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
-  HeightField3D, PlanarReflection3D, Scene3D, Terrain3D, World3DError, createHeightField3D, createHeightFieldFromPixels3D, createPerspectiveCamera3D,
+  HeightField3D, PlanarReflection3D, Scene3D, Terrain3D, World3DError, createHeightField3D, createHeightFieldFromPixels3D,
+  createOrthographicCamera3D, createPerspectiveCamera3D,
   createPhysicsWorld3D, createStandardMaterial3D, createTerrain3D, createWater3D, createWaterMaterial3D,
 } from '@egret/engine/world3d';
 
@@ -120,6 +121,23 @@ test('a chunk grid that does not divide the field still covers it', () => {
   close(maxX, 20); close(maxZ, 11);
 });
 
+test('terrain rejects excessive chunk counts before building meshes', () => {
+  const field = createHeightField3D({columns: 66, rows: 65, width: 65, depth: 64});
+  const colorAt = () => assert.fail('geometry creation started before the chunk budget was checked');
+  assert.throws(() => createTerrain3D(field, createStandardMaterial3D(), {chunkCells: 1, colorAt}), code('WORLD3D_BUDGET'));
+});
+
+test('terrain budgets the full cached LOD set before building its first mesh', () => {
+  const field = createHeightField3D({columns: 1409, rows: 1409, width: 1408, depth: 1408});
+  const material = createStandardMaterial3D();
+  const allocationStarted = new Error('geometry creation reached');
+  const colorAt = () => { throw allocationStarted; };
+  const options = {chunkCells: 128, skirtDepth: 0, colorAt};
+  // The fine level fits on its own; the retained two-level cache exceeds the cap.
+  assert.throws(() => createTerrain3D(field, material, {...options, levels: 1}), error => error === allocationStarted);
+  assert.throws(() => createTerrain3D(field, material, {...options, levels: 2}), code('WORLD3D_BUDGET'));
+});
+
 test('bodies land on the terrain collision shape and stay there', () => {
   const field = createHeightField3D({columns: 65, rows: 65, width: 128, depth: 128, sample: hill});
   const world = createPhysicsWorld3D({});
@@ -203,4 +221,43 @@ test('the mirror camera reflects the viewer and cuts at the plane', () => {
   assert.equal(water.material.reflectionMap, water.reflection.texture);
   reflection.dispose();
   assert.equal(reflection.target.isDisposed, true);
+});
+
+test('the orthographic mirror rejects views with a singular or reversed depth axis', () => {
+  const mirror = new PlanarReflection3D();
+  const camera = createOrthographicCamera3D({height: 4});
+  camera.setPosition(0, 1, 5).lookAt(0, 1, 0);
+  assert.equal(mirror.update(camera, [0, 1, 0, 0]), false);
+  camera.lookAt(0, 1.1, 0);
+  assert.equal(mirror.update(camera, [0, 1, 0, 0]), false);
+  mirror.dispose();
+});
+
+test('the orthographic mirror preserves screen coordinates and clips at a slanted plane', () => {
+  const camera = createOrthographicCamera3D({height: 12, aspect: 1.5, near: 0.1, far: 100});
+  camera.setPosition(3, 5, 8).lookAt(0, 1, 0);
+  const reflection = new PlanarReflection3D({width: 60, height: 40});
+  const plane = [0, 1, 0, -1];
+  reflection.clipBias = 0;
+  assert.equal(reflection.update(camera, plane), true);
+  const mirror = reflection.camera;
+  assert.equal(mirror.projectionKind, 'orthographic');
+  for (const point of [[0, 1, 0], [2, 1, -3]]) {
+    const seen = camera.worldToScreenPoint([0, 0, 0], point);
+    const projected = mirror.worldToScreenPoint([0, 0, 0], point);
+    close(projected[0], -seen[0], 1e-4);
+    close(projected[1], seen[1], 1e-4);
+    close(projected[2], -1, 1e-4);
+  }
+  const above = mirror.worldToScreenPoint([0, 0, 0], [0, 1.5, 0]);
+  const below = mirror.worldToScreenPoint([0, 0, 0], [0, 0.5, 0]);
+  assert.ok(above[2] > -1 && above[2] < 1);
+  assert.ok(below[2] < -1);
+  const perspective = createPerspectiveCamera3D({aspect: 1.5, near: 0.1, far: 100});
+  perspective.setPosition(3, 5, 8).lookAt(0, 1, 0);
+  assert.equal(reflection.update(perspective, plane), true);
+  assert.equal(reflection.camera.projectionKind, 'perspective');
+  assert.equal(reflection.update(camera, plane), true);
+  assert.equal(reflection.camera, mirror);
+  reflection.dispose();
 });

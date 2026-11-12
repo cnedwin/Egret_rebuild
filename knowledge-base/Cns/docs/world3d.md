@@ -196,13 +196,13 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `createHeightField3D({columns, rows, width, depth, heights | sample})` 在以原点为中心的规则网格上保存高度；`createHeightFieldFromPixels3D(pixels, {width, depth, minHeight, maxHeight, encoding})` 从已解码的图像读取高度，可取红色通道的 8 位，或红、绿两个通道合成的 16 位。`heightAt(x, z)` 沿用绘制和碰撞所用的每格两个三角形，`normalAt` 给出平滑法线，`raycast(origin, direction, limit)` 以半格步长让射线走到地表。写入 `heights` 之后调用 `refresh()`。
 
-`createTerrain3D(field, material, {chunkCells, levels, lodDistance, skirtDepth, uvScale, colorAt})` 把高度场绘制成一组分块网格。每帧绘制前，各分块按到相机的距离选择细节层级：`lodDistance` 以内用完整细节，距离每翻一倍，每边采样数减半。不同层级的相邻分块靠边缘下垂的裙边遮住缝隙；法线始终取自完整细节的高度场，层级切换时光照不会跳变。`colorAt(height, slope, x, z, out)` 为每个采样写入顶点颜色，配合开启 `vertexColors` 的材质做出沙地、草地、岩石和积雪的分带；`lodBias` 整体偏移层级，`chunkLevels` 和 `triangleCount` 报告当前绘制的内容。修改高度场后，分块在下一帧重建。
+`createTerrain3D(field, material, {chunkCells, levels, lodDistance, skirtDepth, uvScale, colorAt})` 把高度场绘制成一组分块网格。每帧绘制前，各分块按到相机的距离选择细节层级：`lodDistance` 以内用完整细节，距离每翻一倍，每边采样数减半。不同层级的相邻分块靠边缘下垂的裙边遮住缝隙；法线始终取自完整细节的高度场，层级切换时光照不会跳变。`colorAt(height, slope, x, z, out)` 为每个采样写入顶点颜色，配合开启 `vertexColors` 的材质做出沙地、草地、岩石和积雪的分带；`lodBias` 整体偏移层级，`chunkLevels` 和 `triangleCount` 报告当前绘制的内容。修改高度场后，分块在下一帧重建。创建地形时会在分配分块几何体前检查两个上限，分别是 4,096 个分块，以及所有可缓存细节层级的顶点和索引缓冲合计 128 MiB。启用裙边或顶点颜色时，其缓冲计入预算。
 
 `field.createShape()` 把完整细节的三角形作为 `mesh` 碰撞形状返回，用于静态刚体，于是球、胶囊、盒子、凸包、角色控制器和物理射线面对的是同一片地面。盒子和凸包与网格的碰撞同时得到加强：一步之内角已经穿过表面，或者网格的棱脊从两个角之间顶入，现在都会产生接触。
 
 `createWater3D({width, depth, segments, color, amplitude, wavelength, speed, direction, steepness, rippleStrength, clarity, thickness, reflectionSize})` 是一块水平水面：四组叠加的波浪移动顶点和着色法线，另有随距离减弱的细小涟漪。水下的景物通过与玻璃相同的折射被弯折后看到；天空的反射来自场景的环境贴图。每帧调用 `water.update(deltaSeconds)`；在主画面之前调用 `water.renderReflection(renderer, scene, camera)`，可得到场景的真实镜像。`water.heightAt(x, z)` 在 CPU 上计算同一组波浪，供漂浮物使用。`createWaterMaterial3D` 只返回材质，可用于自己的几何体。
 
-水面背后的镜子是 `PlanarReflection3D`，可用于任何平面：`reflection.render(renderer, scene, camera, [nx, ny, nz, d], hidden)` 摆放镜像相机，用倾斜的近平面裁掉平面背后的一切，并绘制到 `reflection.target`；把 `reflection.texture` 赋给标准材质的 `reflectionMap` 即可。镜像按像素自身的屏幕位置读取，按表面法线乘以 `reflectionDistortion` 偏移，按观察角度加权，并取代环境贴图的反射。自定义着色器现在还可以带法线钩子 `glslNormal` 和 `wgslNormal`，在光照计算前替换着色法线。
+水面背后的镜子是 `PlanarReflection3D`，可用于任何平面：`reflection.render(renderer, scene, camera, [nx, ny, nz, d], hidden)` 摆放透视或正交镜像相机，用倾斜的近平面在镜面处裁剪，并绘制到 `reflection.target`。正交视线与镜面近乎平行或背向镜面时，该投影无法保持由近到远的深度顺序，返回 `false`。把 `reflection.texture` 赋给标准材质的 `reflectionMap` 即可。镜像按像素自身的屏幕位置读取，按表面法线乘以 `reflectionDistortion` 偏移，按观察角度加权，并取代环境贴图的反射。自定义着色器现在还可以带法线钩子 `glslNormal` 和 `wgslNormal`，在光照计算前替换着色法线。
 
 地形使用顶点颜色和一张平铺的 `map` 着色，没有内置按权重图混合多种地表纹理。细节层级按分块选择并用裙边遮缝，不做边对边的缝合；也没有从磁盘流式加载，整个高度场都在内存中。水面只有一个水平镜面，因此旋转过的水面网格或远高于默认值的波浪反射并不精确；没有按水深变化的岸边过渡、泡沫和焦散，也没有处理相机位于水下的情况。镜像需要把场景连同阴影再绘制一次。
 
