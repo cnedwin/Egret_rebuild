@@ -418,6 +418,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (depthOnly) return;
         const e = material.emissiveIntensity;
         if (u['uEmissive']) gl.uniform3f(u['uEmissive'], material.emissive[0]! * e, material.emissive[1]! * e, material.emissive[2]! * e);
+        if (u['uClearcoat']) gl.uniform2f(u['uClearcoat'], material.clearcoat, material.clearcoatRoughness);
         if (u['uSurface']) gl.uniform4f(u['uSurface'], material.metallic, material.roughness, material.normalScale, material.occlusionStrength);
         if (u['uSpecular']) gl.uniform4f(u['uSpecular'], material.specular[0]!, material.specular[1]!, material.specular[2]!, material.shading === 'toon' ? material.toonSteps : material.shininess);
         if (u['uEnvironmentScale']) gl.uniform1f(u['uEnvironmentScale'], material.environmentIntensity);

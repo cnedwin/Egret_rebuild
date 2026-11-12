@@ -89,7 +89,7 @@ struct Material {
     emissive: vec4f,
     surface: vec4f,      // metallic, roughness, normal scale, occlusion strength
     specular: vec4f,     // rgb and shininess
-    params: vec4f,       // alpha cutoff, environment scale
+    params: vec4f,       // alpha cutoff, environment scale, clearcoat strength, clearcoat roughness
     uvRow0: vec4f,       // uv' = (dot(uvRow0.xyz, (uv, 1)), dot(uvRow1.xyz, (uv, 1)))
     uvRow1: vec4f,
     sprite: vec4f,       // rotation, size attenuation flag
@@ -232,7 +232,17 @@ fn fragmentMain(input: VertexOutput) {
     let fresnel = s.f0 + (1.0 - s.f0) * pow(1.0 - vh, 5.0);
     let diffuse = s.albedo * (1.0 - s.metallic) * (1.0 - fresnel);
     // Light units are scaled by PI so a unit white light fully lights a white diffuse surface.
-    return (diffuse + distribution * visibility * fresnel * PI) * radiance * nl;`;
+    var lit = diffuse + distribution * visibility * fresnel * PI;
+    if (material.params.z > 0.0) {
+        // A second, dielectric lobe on top; the base layer loses what the coat reflects.
+        var ca = max(material.params.w, 0.045);
+        ca *= ca;
+        let ca2 = ca * ca;
+        let cd = nh * nh * (ca2 - 1.0) + 1.0;
+        let coatFresnel = (0.04 + 0.96 * pow(1.0 - vh, 5.0)) * material.params.z;
+        lit = lit * (1.0 - coatFresnel) + ca2 / (PI * cd * cd) * (0.25 / max(vh * vh, 0.0001)) * coatFresnel * PI;
+    }
+    return lit * radiance * nl;`;
     return /* wgsl */`
 const PI = 3.141592653589793;
 struct Surface {

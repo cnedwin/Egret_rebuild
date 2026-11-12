@@ -122,6 +122,9 @@ export class Material3D extends Resource3D {
     shininess = 30;
     /** Optional fragment hook. Call touch() after assigning a different shader. */
     shader: CustomShader3D | undefined;
+    /** Strength, 0 to 1, of a clear lacquer layer over a standard material (car paint, varnish). */
+    clearcoat = 0;
+    clearcoatRoughness = 0.1;
     /** Number of light bands for toon shading. */
     toonSteps = 3;
     // Standard (metallic-roughness PBR)

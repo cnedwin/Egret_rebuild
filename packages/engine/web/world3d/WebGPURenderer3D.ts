@@ -581,7 +581,7 @@ export class WebGPURenderer3D implements Renderer3D {
         data[4] = material.emissive[0]! * e; data[5] = material.emissive[1]! * e; data[6] = material.emissive[2]! * e; data[7] = 0;
         data[8] = material.metallic; data[9] = material.roughness; data[10] = material.normalScale; data[11] = material.occlusionStrength;
         data[12] = material.specular[0]!; data[13] = material.specular[1]!; data[14] = material.specular[2]!; data[15] = material.shading === 'toon' ? material.toonSteps : material.shininess;
-        data[16] = material.alphaCutoff; data[17] = material.environmentIntensity; data[18] = 0; data[19] = 0;
+        data[16] = material.alphaCutoff; data[17] = material.environmentIntensity; data[18] = material.clearcoat; data[19] = material.clearcoatRoughness;
         let ax = 1, bx = 0, tx = 0, ay = 0, by = 1, ty = 0;
         if (map?.hasTransform) {
             const c = Math.cos(map.rotation), s = Math.sin(map.rotation);

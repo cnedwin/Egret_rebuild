@@ -171,6 +171,7 @@ uniform vec3 uEmissive;
 uniform vec4 uSurface;           // metallic, roughness, normal scale, occlusion strength
 uniform vec4 uSpecular;          // rgb and shininess
 uniform float uAlphaCutoff;
+uniform vec2 uClearcoat;         // strength and roughness
 uniform float uEnvironmentScale;
 uniform sampler2D uMap;
 uniform sampler2D uNormalMap;
@@ -292,7 +293,15 @@ vec3 shade(Surface s, vec3 l, vec3 radiance) {
     vec3 fresnel = s.f0 + (1.0 - s.f0) * pow(1.0 - vh, 5.0);
     vec3 diffuse = s.albedo * (1.0 - s.metallic) * (1.0 - fresnel);
     // Light units are scaled by PI so a unit white light fully lights a white diffuse surface.
-    return (diffuse + distribution * visibility * fresnel * PI) * radiance * nl;
+    vec3 lit = diffuse + distribution * visibility * fresnel * PI;
+    if (uClearcoat.x > 0.0) {
+        // A second, dielectric lobe on top; the base layer loses what the coat reflects.
+        float ca = max(uClearcoat.y, 0.045); ca *= ca;
+        float ca2 = ca * ca, cd = nh * nh * (ca2 - 1.0) + 1.0;
+        float coatFresnel = (0.04 + 0.96 * pow(1.0 - vh, 5.0)) * uClearcoat.x;
+        lit = lit * (1.0 - coatFresnel) + ca2 / (PI * cd * cd) * (0.25 / max(vh * vh, 0.0001)) * coatFresnel * PI;
+    }
+    return lit * radiance * nl;
     #endif
 }
 
