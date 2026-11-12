@@ -36,8 +36,8 @@
       "action": "move-pair",
       "previousZhSha256": "9de14fd2a1e74069ec8718ebaa0d39a13afce4b836a2eba5bb521c94f1df5dda",
       "previousEnSha256": "f7feb36d983e8da309bbe161a51b398c7233e1cac9678572fc8ce0f2941af2b7",
-      "currentZhSha256": "db1c77c6e37d62daf69e8c0802437463e2782bc534cf8c8e75206fd7d374c3ea",
-      "currentEnSha256": "50c397506ffb8eac2f906a705331d88f5553823db77a8e9121645514998c67b0"
+      "currentZhSha256": "6741d6372bd8e4e52eeec344c161b18bd657d41fb11fde546b53b589074dda6e",
+      "currentEnSha256": "d946e1c22d052523257ab7d7bea13e297e238bafbed0d541295c9971e1bffd65"
     },
     {
       "oldZh": "DOCUMENTATION.md",
@@ -2046,8 +2046,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "db4383392dd39dc3b752fbb6fa6beb4242056a33327c167ca79f92b74eb576d2",
-      "currentZhSha256": "589bb53b5b385302dde29998376d04963dcd72c779a7f942da6638e6de72d001"
+      "currentEnSha256": "9ffed6c85af0eedff809682c7097d95bf1b4a619eede364a5d2d58744a24c5e6",
+      "currentZhSha256": "3333d8047f14a7769d518ec36bbfa9d4236fe89e8e1deb5e4dfad0c4afb9341a"
     }
   ],
   "registries": [

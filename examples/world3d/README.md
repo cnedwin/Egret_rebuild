@@ -39,7 +39,7 @@ Open `http://127.0.0.1:4173/examples/world3d/features.html` (or follow the link 
 
 ## Landscape
 
-Open `http://127.0.0.1:4173/examples/world3d/landscape.html` for a height-map terrain and a lake. The terrain is 257 by 257 samples in 64 chunks; the status line shows how many of its triangles are drawn at the current detail levels, and "Wireframe" shows the levels and the skirts between them. The same heights are the collision shape the balls and crates land on; "Drop" adds more. The lake has waves, bends what lies under it and mirrors the scene; "Reflection" switches the mirror image off, leaving the sky's reflection, and "Calm" flattens the waves. The buoy rides the waves through the CPU copy of the wave formula.
+Open `http://127.0.0.1:4173/examples/world3d/landscape.html` for a height-map terrain and a lake. The terrain is 257 by 257 samples in 64 chunks; the status line shows how many of its triangles are drawn at the current detail levels, and "Wireframe" shows the levels and the skirts between them. The same heights are the collision shape the balls and crates land on; "Drop" adds more. The lake has waves, bends what lies under it and mirrors the scene; "Reflection" switches the mirror image off, leaving the sky's reflection, and "Calm" flattens the waves. The buoy rides the waves through the CPU copy of the wave formula. Six hundred box figures walk, pause, look around and wave on the dry ground; they are one draw call, posed from three clips baked into an animation texture.
 
 The page was run on WebGL2 in headless Chromium with software rendering. It has not been run on a physical GPU or through WebGPU canvas presentation, and no person has operated it.
 

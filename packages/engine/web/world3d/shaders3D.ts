@@ -6,7 +6,7 @@
 /** Fixed vertex attribute locations shared by every program and vertex array. */
 export const ATTRIBUTE_LOCATIONS_3D = Object.freeze({
     position: 0, normal: 1, uv: 2, tangent: 3, color: 4, joints: 5, weights: 6, uv1: 7,
-    instanceMatrix: 8, instanceColor: 12,
+    instanceMatrix: 8, instanceColor: 12, instanceAnimation: 13,
 } as const);
 
 /** Fixed texture units; samplers are assigned once when a program is linked. */
@@ -59,6 +59,7 @@ layout(location = 6) in vec4 aWeights;
 layout(location = 7) in vec2 aUv1;
 layout(location = 8) in mat4 aInstanceMatrix;
 layout(location = 12) in vec4 aInstanceColor;
+layout(location = 13) in vec4 aInstanceAnimation; // first frame, second frame, blend, bone count
 ${FRAME_BLOCK}
 uniform mat4 uModel;
 uniform mat3 uNormalMatrix;
@@ -69,6 +70,9 @@ uniform mat4 uDepthViewProjection;
 #ifdef USE_SKINNING
 uniform highp sampler2D uBoneTexture;
 uniform mat4 uBindMatrix;
+#endif
+#ifdef USE_SKIN_INSTANCING
+uniform highp sampler2D uBoneTexture; // every frame of every clip: four texels per bone matrix, rows wrap
 #endif
 #ifdef USE_MORPH
 uniform highp sampler2D uMorphTexture;
@@ -95,6 +99,18 @@ mat4 boneMatrix(uint index) {
     int row = int(index);
     return mat4(texelFetch(uBoneTexture, ivec2(0, row), 0), texelFetch(uBoneTexture, ivec2(1, row), 0),
         texelFetch(uBoneTexture, ivec2(2, row), 0), texelFetch(uBoneTexture, ivec2(3, row), 0));
+}
+#endif
+#ifdef USE_SKIN_INSTANCING
+mat4 bakedBone(uint joint, float frame) {
+    int texel = (int(frame) * int(aInstanceAnimation.w) + int(joint)) * 4, width = textureSize(uBoneTexture, 0).x;
+    ivec2 at = ivec2(texel % width, texel / width);
+    return mat4(texelFetch(uBoneTexture, at, 0), texelFetch(uBoneTexture, at + ivec2(1, 0), 0),
+        texelFetch(uBoneTexture, at + ivec2(2, 0), 0), texelFetch(uBoneTexture, at + ivec2(3, 0), 0));
+}
+mat4 bakedPose(float frame) {
+    return aWeights.x * bakedBone(aJoints.x, frame) + aWeights.y * bakedBone(aJoints.y, frame)
+        + aWeights.z * bakedBone(aJoints.z, frame) + aWeights.w * bakedBone(aJoints.w, frame);
 }
 #endif
 #ifdef USE_MORPH
@@ -134,6 +150,11 @@ void main() {
     #ifdef USE_INSTANCING
     model = model * aInstanceMatrix;
     normalMatrix = normalMatrix * mat3(aInstanceMatrix);
+    #endif
+    #ifdef USE_SKIN_INSTANCING
+    // Each instance is posed in its own space before its transform places it.
+    model = model * (bakedPose(aInstanceAnimation.x) * (1.0 - aInstanceAnimation.z) + bakedPose(aInstanceAnimation.y) * aInstanceAnimation.z);
+    normalMatrix = mat3(model);
     #endif
     vec4 world = model * vec4(position, 1.0);
     #ifdef CUSTOM_VERTEX
