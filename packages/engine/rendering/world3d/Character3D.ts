@@ -106,9 +106,9 @@ export class CharacterMotor3D {
         this.#ground = hit.body;
         return true;
     }
-    /** Place the character somewhere else and forget its motion. */
+    /** Place the character somewhere else and forget its motion. Invalid coordinates leave the motor unchanged. */
     teleport(x: number, y: number, z: number): void {
-        this.controller.position[0] = requireFinite3D(x, 'x'); this.controller.position[1] = requireFinite3D(y, 'y'); this.controller.position[2] = requireFinite3D(z, 'z');
+        this.controller.position.set([requireFinite3D(x, 'x'), requireFinite3D(y, 'y'), requireFinite3D(z, 'z')]);
         this.velocity.fill(0);
         this.#airTime = Infinity;
         this.#wasGrounded = this.settle(0, 0, 0);
