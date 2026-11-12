@@ -106,7 +106,7 @@ Roles describe responsibilities, not staffing or automatic volunteer assignments
 
 ## Evidence that remains open
 
-M1.1–M1.5 engineering is integrated. The formal M1.2 static/sparse/full-dirty Engine median-p95 remains **5.0 / 6.4 / 10.3 ms**; full-dirty misses the **8 ms** target. The full-dirty Host span of 7.7 ms does not establish the 4 ms preparation upper bound or isolate pure preparation. GPU time remains unmeasured. [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) and the [original record](incremental-frame-preparation-evidence.md) remain open.
+M1.1–M1.5 engineering is integrated. The latest fixed Windows comparison reports static/sparse/full-dirty Engine median-p95 of **5.0 / 5.9 / 5.3 ms**, with containing Host spans of **2.5 / 3.2 / 2.8 ms**. All three states meet the 8 ms Engine target and establish the 4 ms preparation upper bound. The sparse and full-dirty duration-weighted wall-gap p95 exceeds 16.7 ms. The #55 pacing item remains open. GPU time remains unmeasured and overall D60 is incomplete. See the [current and historical evidence](incremental-frame-preparation-evidence.md).
 
 The [Android report](android-device-validation.md) records finite WebGPU/WebGL2 component, lifecycle and controlled recovery results, including the font-registration example correction in #129 and twelve added diagnostic/lifecycle cases in #130. The historical approximately 41.4 ms callback trigger was not reproduced; precise heap/backing observations do not establish physical-memory or universal zero-leak acceptance. The withdrawn wrong-target startup report is not an Engine regression.
 
@@ -116,7 +116,7 @@ M0's [independent newcomer rehearsal #52](https://github.com/cnedwin/Egret_rebui
 
 ## Next development phase
 
-Start [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) with in-browser opening of an exported Outfit Studio project. Apply a valid snapshot through existing project transactions, keep the live scene and resources on cancellation or failed import, and allow retry. #55 can diagnose full-dirty cost in the original M1 fixture in parallel and return to formal paired measurements after a concrete change. #92 uses the existing fixed profiles to address measured bottlenecks and follows the existing qualification criteria once the selected #91 features land.
+Start [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) with in-browser opening of an exported Outfit Studio project. Apply a valid snapshot through existing project transactions, keep the live scene and resources on cancellation or failed import, and allow retry. #55 can isolate the remaining sparse and full-dirty wall-gap tails using the original workload and raw callback records. #92 uses the existing fixed profiles to address measured bottlenecks and follows the existing qualification criteria once the selected #91 features land.
 
 #86 can advance compatible Spine replacement and integrated animation lifecycles in parallel, reusing the delivered sequence replacement and resource ownership. #89 and #90 track remaining IME, controls and semantics. #93 can verify the clean-consumer example, public entries and dependency notices while the complete handoff waits for #91 and #92. The [engineering plan](engineering-plan.md) sets dependencies and exit criteria.
 

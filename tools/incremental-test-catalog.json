@@ -298,8 +298,8 @@
     {
       "file": {
         "path": "tests/b1-webgpu-verifier.test.mjs",
-        "bytes": 36764,
-        "sha256": "8bf9d35ba5d9637b3a0d29cdb14458d4b6b2e4f7ed66c299502dd96b4a3a0f98"
+        "bytes": 62450,
+        "sha256": "b1b11c09b48a8fc304b2de7bff75c289f07b951f743d8cb8d2e5335be53d843b"
       },
       "packages": null,
       "support": []
@@ -1159,8 +1159,8 @@
     {
       "file": {
         "path": "tests/incremental-preparation-private.test.mjs",
-        "bytes": 41523,
-        "sha256": "da442f50bc809a0a23a539626d581b4a28bc5c6b59eeb628f63114f564b45bd3"
+        "bytes": 47463,
+        "sha256": "892ce338e61fa2c8d41e8e74394a0ec3813da163ffef73dc4ffaae1f655786b5"
       },
       "packages": null,
       "support": []
@@ -1168,8 +1168,8 @@
     {
       "file": {
         "path": "tests/incremental-rendering-tool.test.mjs",
-        "bytes": 56428,
-        "sha256": "61cea921206e96b5c3532141dcf6c3195a97f6b4713ece8e4a9a2c583d258974"
+        "bytes": 60127,
+        "sha256": "cca2fdf1820f2b94da25e43c4329d1b82eda94390129d94441c09d1e4aecad8f"
       },
       "packages": null,
       "support": []
@@ -2281,8 +2281,8 @@
     {
       "file": {
         "path": "tests/textured-frame-capture.test.mjs",
-        "bytes": 33418,
-        "sha256": "0c2bbb2bf1ce9966eb00849a88290170a6ba379b36e7bea7b3e6fad5069486a6"
+        "bytes": 34129,
+        "sha256": "e9070c7f8baee838c68bbbe177f5ffbc844e2cc29ca4c79215a405cb97db58b2"
       },
       "packages": [
         "engine"
@@ -2354,8 +2354,8 @@
     {
       "file": {
         "path": "tests/textured-preparation-budget.test.mjs",
-        "bytes": 59976,
-        "sha256": "0242376aa27d6cb5f5f92cda8ac03204222e3dbd19e46e1ce7f566f8e0dd8bf6"
+        "bytes": 64061,
+        "sha256": "85973bcf1a4c9a2aa4ef9705f5b6dff73b788bec9dacaa0df5497126a27b36a3"
       },
       "packages": null,
       "support": []

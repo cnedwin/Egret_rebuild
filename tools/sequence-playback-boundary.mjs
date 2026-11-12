@@ -253,6 +253,29 @@ const sharedContainedClipPairs = [{"base":{"path":"packages/engine/rendering/pre
 function sharedContainedClipPin(pin) {
   return sharedContainedClipPairs.find(pair=>JSON.stringify(pair.base)===JSON.stringify(pin))?.current??pin;
 }
+// M12-FULL-DIRTY-IDENTITY-BEGIN
+// Exact successors of the two previously admitted capture identities.
+const m12FullDirtyCapturePairs = [
+  {"base":{"path":"packages/runtime/src/texturedFrameCapture.ts","bytes":15705,"sha256":"5389b3ae7dc94d8555cec79679a2cdd36b6538399b2751658d1ca8aefa0a067b"},"current":{"path":"packages/runtime/src/texturedFrameCapture.ts","bytes":16233,"sha256":"967cc1319248b49530c53b13ae1ae3eccbdddd471b2be510a8e213621315ddb0"}},
+  {"base":{"path":"packages/runtime/dist/texturedFrameCapture.js","bytes":15312,"sha256":"c24d52a9fc718807f5acc33555dd9b22c3bedef681cfe56545b3ddcb2e9d49ac"},"current":{"path":"packages/runtime/dist/texturedFrameCapture.js","bytes":15785,"sha256":"c67b0b3966a17d06d4886841865086b6c7423c92005b5e5958badd27f7466e12"}},
+];
+function m12FullDirtyCapturePin(root,pin,code){
+ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+ const pair=m12FullDirtyCapturePairs.find(row=>same(row.base,pin));
+ if(!pair)return pin;
+ const marker=m12FullDirtyCapturePairs[0].current;
+ const source=seqpbRead(root,marker.path);
+ if(source.length!==marker.bytes||seqpbHash(source)!==marker.sha256)return pin;
+ for(const row of m12FullDirtyCapturePairs){
+  if(row.base.path!==row.current.path||!m34EffectInterfacePairs.some(prior=>same(prior.current,row.base)))
+   seqpbFail(code,'M1.2 full-dirty capture predecessor differs: '+row.base.path);
+  const raw=row.current.path===marker.path?source:seqpbRead(root,row.current.path);
+  if(raw.length!==row.current.bytes||seqpbHash(raw)!==row.current.sha256)
+   seqpbFail(code,'M1.2 full-dirty capture group differs: '+row.current.path);
+ }
+ return pair.current;
+}
+// M12-FULL-DIRTY-IDENTITY-END
 function seqpbPin(root, pin, code) {
   pin = m13SequencePin(root, pin);
   pin = m31UiSourcePairs.find(pair=>JSON.stringify(pair.base)===JSON.stringify(pin))?.current??pin;
@@ -261,6 +284,7 @@ function seqpbPin(root, pin, code) {
   pin = m24SpineSourcePairs.find(pair=>JSON.stringify(pair.base)===JSON.stringify(pin))?.current??pin;
   pin = m34EffectInterfacePairs.find(pair=>JSON.stringify(pair.base)===JSON.stringify(pin))?.current??pin;
   pin = sharedContainedClipPin(pin);
+  pin = m12FullDirtyCapturePin(root, pin, code);
   const bytes = seqpbRead(root, pin.path);
   const worldCard=worldCardRawPairs.find(pair=>JSON.stringify(pair.base)===JSON.stringify(pin));
   if(worldCard&&bytes.length===worldCard.current.bytes&&seqpbHash(bytes)===worldCard.current.sha256)pin=worldCard.current;

@@ -20,7 +20,7 @@ Egret is a community rebuild of a game engine for the Web, with familiar TypeScr
 
 | Area | Available on main | Remaining work |
 | --- | --- | --- |
-| Rendering and resources | Shared WebGPU/WebGL2 rendering, ordered preparation, resource groups and selected device recovery | Broader host/device qualification; the fixed M1.2 full-dirty Engine median-p95 remains [10.3 ms against an 8 ms target](https://github.com/cnedwin/Egret_rebuild/issues/55) |
+| Rendering and resources | Shared WebGPU/WebGL2 rendering, ordered preparation, resource groups and selected device recovery. The fixed M1.2 full-dirty Engine median-p95 is 5.3 ms against 8 ms. | Broader host/device qualification and the remaining [M1.2 pacing target](https://github.com/cnedwin/Egret_rebuild/issues/55) |
 | Content and animation | PNG/atlas/sequence builds, multipage atlases and font artifacts, optional Spine playback/display and RESET, compatible sequence playback preservation | Complete selected-version Spine references and state preservation, texture variants, integrated lifecycle and performance qualification |
 | UI and text | Variable-height lists, focus/navigation, multilingual styled paragraphs, text geometry, font/theme switching, masks/blur, owned popup/modal layers and optional native single/multiline editing | Actual IME, remaining controls/semantics and broader script/device qualification |
 | 3D | [Optional World3D](knowledge-base/en/docs/world3d.md) covers glTF, lighting and shadows, post-processing, animation and static mesh colliders. The shared host supports bounded 3D backgrounds with 2D composition. | Broader asset and device qualification and project authoring integration |

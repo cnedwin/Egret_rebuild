@@ -598,6 +598,35 @@ function m3PointerGraph(root,base,actual) {
   }
   // IMPORTED-GLB-ANIMATION-GRAPH-END
   if(retainedPackage!==authoredPackage)graph=[...graph,...world3dGraphPins];
+  // M12-FULL-DIRTY-IDENTITY-BEGIN
+  // The fixed-scene capture revision selects only these retained closure rows.
+  const fullDirtyPairs = [
+    {"base":{"path":"packages/runtime/src/texturedFrameCapture.ts","bytes":15705,"sha256":"5389b3ae7dc94d8555cec79679a2cdd36b6538399b2751658d1ca8aefa0a067b"},"current":{"path":"packages/runtime/src/texturedFrameCapture.ts","bytes":16233,"sha256":"967cc1319248b49530c53b13ae1ae3eccbdddd471b2be510a8e213621315ddb0"}},
+    {"base":{"path":"packages/runtime/dist/texturedFrameCapture.js","bytes":15312,"sha256":"c24d52a9fc718807f5acc33555dd9b22c3bedef681cfe56545b3ddcb2e9d49ac"},"current":{"path":"packages/runtime/dist/texturedFrameCapture.js","bytes":15785,"sha256":"c67b0b3966a17d06d4886841865086b6c7423c92005b5e5958badd27f7466e12"}},
+    {"base":{"path":"packages/engine/rendering/prepareImages2D.ts","bytes":5878,"sha256":"327daa1f237fa8d0dbb9b0009b9188e5fd5d8689d8ffff4b96344bbab5c82220"},"current":{"path":"packages/engine/rendering/prepareImages2D.ts","bytes":6090,"sha256":"bb5834275024922022b0b4851b4036bfde5a1ccdbde9579eab1b966255bc4bc3"}},
+    {"base":{"path":"packages/engine/dist/rendering/prepareImages2D.js","bytes":4821,"sha256":"82f93f3c93665c0d69d300b19b4e673779cd450727e784fb17d21c9d5af36589"},"current":{"path":"packages/engine/dist/rendering/prepareImages2D.js","bytes":5037,"sha256":"2372183b63818abbf76903102baf4b0693ba0e749894bc1c20c53d245d91369a"}},
+    {"base":{"path":"packages/engine/rendering/prepareRectangles2D.ts","bytes":23676,"sha256":"1f52cc62e220480965d2e18f7b5752a46ee3ab4d07268e1315b8a9782281ca66"},"current":{"path":"packages/engine/rendering/prepareRectangles2D.ts","bytes":28872,"sha256":"05bf1a0bdd3fc2c1ff7b987dd6570b093f58d3edb9fa31a120220a6bb88fc9f0"}},
+    {"base":{"path":"packages/engine/dist/rendering/prepareRectangles2D.js","bytes":20840,"sha256":"401732bc01b2385b7aab673d518a4e44d3772beb77c57d63f9a6c46c0035841c"},"current":{"path":"packages/engine/dist/rendering/prepareRectangles2D.js","bytes":25661,"sha256":"b734d744f59381ff8d98f6c248f14b39ff0ae67819be120fa87c95d75903611e"}},
+    {"base":{"path":"packages/engine/rendering/prepareTexturedDraws2D.ts","bytes":6276,"sha256":"9f71e769951f242fad53e49ccf8bec67aab1d59cf47049e32ec88885723641bc"},"current":{"path":"packages/engine/rendering/prepareTexturedDraws2D.ts","bytes":6440,"sha256":"dd9e8023fd5e5c759bc96638dc245b9264c3065c96fa05b9355605f47d2ab4fe"}},
+    {"base":{"path":"packages/engine/dist/rendering/prepareTexturedDraws2D.js","bytes":4612,"sha256":"b81bcaa01006be0fe1eb3f18d5a93e51f354e5de79923f7d918e3f9976e085c4"},"current":{"path":"packages/engine/dist/rendering/prepareTexturedDraws2D.js","bytes":4784,"sha256":"1a359aac2797fe524c4467a34d83a4ed4086f98af486071b17ad5e6f167d24f4"}},
+    {"base":{"path":"packages/engine/rendering/prepareTexturedMesh2D.ts","bytes":8935,"sha256":"31c39b7087c3fd99893090317ea390b2eed810ae4c1b17d85a3d25c13d533981"},"current":{"path":"packages/engine/rendering/prepareTexturedMesh2D.ts","bytes":9154,"sha256":"bcacd52a28f7f851f72b494e0590cba4367657ebf18b848bf08e286afd849724"}},
+    {"base":{"path":"packages/engine/dist/rendering/prepareTexturedMesh2D.js","bytes":7762,"sha256":"28796314e7b0d1fc8acceaa6fbe6c8805040b531b4df0772c207acd0123429e3"},"current":{"path":"packages/engine/dist/rendering/prepareTexturedMesh2D.js","bytes":7985,"sha256":"2b65f7d5ee58e43099cc46f58b36961f7a3c36e12553adf6bb82f6547b6556d7"}},
+    {"base":{"path":"packages/engine/rendering/preparedFrameCache2D.ts","bytes":26915,"sha256":"77af2d03ae6d46c61cbe17292ac2f5cd713fa96fbe00b7e1b8cd19b816d6d473"},"current":{"path":"packages/engine/rendering/preparedFrameCache2D.ts","bytes":31679,"sha256":"ce9d0c8e5cd75d81e62da4da463b5ec1802b1b0b69dec57c4dc8f8ca0683a11f"}},
+    {"base":{"path":"packages/engine/dist/rendering/preparedFrameCache2D.js","bytes":23608,"sha256":"b28b5313bbf1ace8d741d686b72a59d3385c5b56591dcd363e68ab92a0bae294"},"current":{"path":"packages/engine/dist/rendering/preparedFrameCache2D.js","bytes":28364,"sha256":"b34c175ab5efa37a755edb9b774390803abf649bd9b1a4f5b087e7db9f0a4417"}},
+    {"base":{"path":"packages/engine/dist/rendering/prepareRectangles2D.d.ts","bytes":5347,"sha256":"a881fe140eb1a75695ea234c8f6a44e153232c0a55f5b359a3f28a65d996d7a5"},"current":{"path":"packages/engine/dist/rendering/prepareRectangles2D.d.ts","bytes":6330,"sha256":"130e6a050c587f0c45f72da5a7c054d7593ad9766d9250003769e8237646482e"}},
+    {"base":{"path":"packages/engine/dist/rendering/preparedFrameCache2D.d.ts","bytes":3832,"sha256":"6d838404b52ad870f08d5305367dd529e5564aa52f6ce5ec44dee8141a9216cf"},"current":{"path":"packages/engine/dist/rendering/preparedFrameCache2D.d.ts","bytes":3998,"sha256":"645fea59957a8fce36815e51e24bdaaf075789f0aa99abf2f9f475e4a785d1bd"}},
+  ];
+  const fullDirtyMarker=fullDirtyPairs[0].current;
+  if(authored&&present.has(fullDirtyMarker.path)){
+    const raw=readFileSync(path.join(root,fullDirtyMarker.path));
+    if(raw.length===fullDirtyMarker.bytes&&digest(raw)===fullDirtyMarker.sha256){
+      if(new Set(fullDirtyPairs.map(pair=>pair.base.path)).size!==fullDirtyPairs.length
+        ||fullDirtyPairs.some(pair=>pair.base.path!==pair.current.path||graph.filter(row=>same(row,pair.base)).length!==1))
+        return reject('M1.2 full-dirty predecessor identities differ');
+      graph=graph.map(row=>fullDirtyPairs.find(pair=>same(pair.base,row))?.current??row);
+    }
+  }
+  // M12-FULL-DIRTY-IDENTITY-END
   for(const row of graph){
     if(!present.has(row.path))refuse('ATLAS_SOURCE_FILES','Incomplete M3 pointer successor: '+row.path);
     const raw=readFileSync(path.join(root,row.path));if(raw.length!==row.bytes||digest(raw)!==row.sha256)return reject('M3 pointer whole-group raw identity differs: '+row.path);
