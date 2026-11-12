@@ -12,7 +12,7 @@ export {
     Texture3D, CubeTexture3D, RenderTarget3D, createSolidTexture3D, createGradientCubeTexture3D, isTexturePixels3D, TEXTURE3D_LIMITS,
 } from './Texture3D.js';
 export type {
-    TextureWrap3D, TextureFilter3D, TextureColorSpace3D, TexturePixels3D, TextureSource3D, TextureOptions3D, RenderTargetOptions3D,
+    TextureWrap3D, TextureFilter3D, TextureColorSpace3D, TexturePixels3D, TextureSource3D, TextureOptions3D, RenderTargetOptions3D, RenderTargetFormat3D,
 } from './Texture3D.js';
 export {Attribute3D, Geometry3D, createGeometry3D, ATTRIBUTE_3D, GEOMETRY3D_LIMITS} from './Geometry3D.js';
 export type {AttributeArray3D, Topology3D, GeometryGroup3D, MorphTarget3D, GeometryInput3D} from './Geometry3D.js';
@@ -26,10 +26,10 @@ export type {
 } from './primitives3D.js';
 export {
     Material3D, setColor3D, createUnlitMaterial3D, createLambertMaterial3D, createPhongMaterial3D,
-    createStandardMaterial3D, createSpriteMaterial3D,
+    createStandardMaterial3D, createCustomShader3D, createToonMaterial3D, createMatcapMaterial3D, createSpriteMaterial3D,
 } from './Material3D.js';
 export type {
-    Shading3D, Side3D, AlphaMode3D, Blending3D, ColorInput3D, MaterialOptions3D, PhongMaterialOptions3D,
+    Shading3D, CustomShader3D, Side3D, AlphaMode3D, Blending3D, ColorInput3D, MaterialOptions3D, PhongMaterialOptions3D,
     StandardMaterialOptions3D, SpriteMaterialOptions3D,
 } from './Material3D.js';
 export {Camera3D, createPerspectiveCamera3D, createOrthographicCamera3D} from './Camera3D.js';
@@ -55,6 +55,41 @@ export type {GltfImageRequest3D, GltfLoadOptions3D, GltfAsset3D} from './Gltf3D.
 export {ParticleEmitter3D, createParticleEmitter3D, PARTICLES3D_LIMITS} from './Particles3D.js';
 export type {ParticleShape3D, ParticleEmitterOptions3D} from './Particles3D.js';
 export {
-    Lod3D, createGridGeometry3D, createAxesGeometry3D, createBoxEdgesGeometry3D, createLineMaterial3D, createGridHelper3D,
+    Lod3D, ScreenLayer3D, createScreenLayer3D, createGridGeometry3D, createAxesGeometry3D, createBoxEdgesGeometry3D, createLineMaterial3D, createGridHelper3D,
     createAxesHelper3D,
 } from './helpers3D.js';
+export type {ScreenLayerOptions3D} from './helpers3D.js';
+export {isCompressedPixels3D, COMPRESSED_BLOCK_BYTES_3D} from './Texture3D.js';
+export type {CompressedFormat3D, CompressedPixels3D} from './Texture3D.js';
+export {isKtx23D, parseKtx23D} from './Ktx23D.js';
+export type {Ktx2Info3D, Ktx2Result3D, Ktx2Options3D} from './Ktx23D.js';
+export type {GltfMeshoptRequest3D, GltfDracoRequest3D, GltfDracoResult3D} from './Gltf3D.js';
+export {SCENE_DOCUMENT_FORMAT_3D, SCENE_DOCUMENT_VERSION_3D, SERIALIZE3D_LIMITS, serializeScene3D, deserializeScene3D} from './Serialize3D.js';
+export type {SceneDocument3D, SerializeOptions3D, DeserializeOptions3D, DeserializedScene3D} from './Serialize3D.js';
+export {STATE_MACHINE3D_LIMITS, AnimationStateMachine3D, createAnimationStateMachine3D} from './StateMachine3D.js';
+export type {StateParameter3D, StateConditionOperator3D, StateCondition3D, StateBlendEntry3D, StateOptions3D, TransitionOptions3D} from './StateMachine3D.js';
+export {PHYSICS3D_LIMITS, RigidBody3D, PhysicsWorld3D, CharacterController3D, createPhysicsWorld3D, createCharacterController3D} from './Physics3D.js';
+export type {
+    BodyType3D, ShapeDefinition3D, RigidBodyOptions3D, PhysicsRaycastHit3D, PhysicsWorldOptions3D, CharacterControllerOptions3D,
+} from './Physics3D.js';
+export {
+    CURVE3D_LIMITS, Curve3D, LineCurve3D, QuadraticBezierCurve3D, CubicBezierCurve3D, CatmullRomCurve3D, CurvePath3D, Path2D3D, Shape3D,
+    signedArea2D, triangulateShape3D,
+} from './Curves3D.js';
+export type {Point3D, Point2D, CatmullRomKind3D} from './Curves3D.js';
+export {
+    createCircleGeometry3D, createRingGeometry3D, createTorusKnotGeometry3D, createPolyhedronGeometry3D, createTetrahedronGeometry3D,
+    createOctahedronGeometry3D, createIcosahedronGeometry3D, createDodecahedronGeometry3D, createLatheGeometry3D, createTubeGeometry3D,
+    createShapeGeometry3D, createExtrudeGeometry3D, createWireframeGeometry3D, createEdgesGeometry3D, toNonIndexedGeometry3D,
+    mergeGeometries3D, mergeVertices3D, transformGeometry3D,
+} from './geometries3D.js';
+export type {
+    CircleGeometryOptions3D, RingGeometryOptions3D, TorusKnotGeometryOptions3D, PolyhedronOptions3D, LatheGeometryOptions3D,
+    TubeGeometryOptions3D, ExtrudeGeometryOptions3D,
+} from './geometries3D.js';
+export {
+    computeObjectBounds3D, LineHelper3D, BoxHelper3D, ArrowHelper3D, CameraHelper3D, LightHelper3D, SkeletonHelper3D,
+    createBoxHelper3D, createArrowHelper3D, createCameraHelper3D, createLightHelper3D, createSkeletonHelper3D,
+} from './debug3D.js';
+export {HDR3D_LIMITS, parseRgbe3D, createCubeTextureFromEquirect3D} from './Hdr3D.js';
+export type {HdrImage3D, EquirectOptions3D} from './Hdr3D.js';

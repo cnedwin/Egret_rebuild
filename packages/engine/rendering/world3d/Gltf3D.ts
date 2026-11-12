@@ -14,7 +14,9 @@ import {Light3D} from './Light3D.js';
 import {Material3D} from './Material3D.js';
 import {Bone3D, MESH3D_LIMITS, Mesh3D, Skeleton3D} from './Mesh3D.js';
 import {Object3D} from './Object3D.js';
-import {Texture3D} from './Texture3D.js';
+import {isKtx23D, parseKtx23D} from './Ktx23D.js';
+import type {Ktx2Options3D} from './Ktx23D.js';
+import {Texture3D, isCompressedPixels3D} from './Texture3D.js';
 import type {TextureColorSpace3D, TextureSource3D, TextureWrap3D} from './Texture3D.js';
 import {mat4Identity} from './math3D.js';
 
@@ -31,6 +33,32 @@ export interface GltfLoadOptions3D {
     readonly decodeImage?: (request: GltfImageRequest3D) => Promise<TextureSource3D>;
     /** Fetch an external .bin buffer referenced by a .gltf file. */
     readonly loadBuffer?: (uri: string) => Promise<Uint8Array>;
+    /** Transcode KTX2 payloads the built-in reader cannot use directly (Basis Universal, supercompressed). */
+    readonly transcodeKtx2?: Ktx2Options3D['transcode'];
+    /**
+     * Decode one EXT_meshopt_compression buffer view into `count * stride`
+     * bytes, with the view's filter already applied.
+     */
+    readonly decodeMeshopt?: (request: GltfMeshoptRequest3D) => Uint8Array;
+    /** Decode one KHR_draco_mesh_compression primitive. */
+    readonly decodeDraco?: (request: GltfDracoRequest3D) => Promise<GltfDracoResult3D> | GltfDracoResult3D;
+}
+export interface GltfMeshoptRequest3D {
+    readonly source: Uint8Array;
+    readonly count: number;
+    readonly stride: number;
+    readonly mode: 'ATTRIBUTES' | 'TRIANGLES' | 'INDICES';
+    readonly filter: 'NONE' | 'OCTAHEDRAL' | 'QUATERNION' | 'EXPONENTIAL';
+}
+export interface GltfDracoRequest3D {
+    readonly bytes: Uint8Array;
+    /** glTF semantic (POSITION, NORMAL, ...) to Draco attribute id. */
+    readonly attributes: Readonly<Record<string, number>>;
+}
+export interface GltfDracoResult3D {
+    /** Decoded arrays by glTF semantic, in the component type of the matching accessor. */
+    readonly attributes: Readonly<Record<string, Float32Array | Uint32Array | Uint16Array | Uint8Array | Int16Array | Int8Array>>;
+    readonly indices?: Uint32Array | Uint16Array;
 }
 export interface GltfAsset3D {
     /** Root of the default scene (or the first one). */
@@ -46,7 +74,9 @@ export interface GltfAsset3D {
 }
 
 type Json = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-const SUPPORTED_EXTENSIONS = new Set(['KHR_materials_unlit', 'KHR_materials_emissive_strength', 'KHR_texture_transform', 'KHR_lights_punctual', 'KHR_mesh_quantization']);
+const SUPPORTED_EXTENSIONS = new Set(['KHR_materials_unlit', 'KHR_materials_emissive_strength', 'KHR_texture_transform', 'KHR_lights_punctual', 'KHR_mesh_quantization', 'KHR_texture_basisu']);
+/** Extensions accepted only when the caller injects the matching decoder. */
+const DECODER_EXTENSIONS: Readonly<Record<string, 'decodeMeshopt' | 'decodeDraco'>> = Object.freeze({EXT_meshopt_compression: 'decodeMeshopt', KHR_draco_mesh_compression: 'decodeDraco'});
 const GLTF_LIMITS = Object.freeze({
     maxNodes: 65536, maxAccessors: 262144, maxJsonBytes: 64 * 1024 * 1024,
     maxAccessorBytes: 128 * 1024 * 1024, maxDecodedAccessorBytes: 256 * 1024 * 1024,
@@ -125,6 +155,8 @@ class GltfReader {
     private readonly materialCache = new Map<string, Material3D>();
     private readonly textureCache = new Map<string, Texture3D>();
     private readonly imageCache = new Map<number, Promise<TextureSource3D>>();
+    /** Transfer function recorded in a KTX2 container, kept for diagnostics. */
+    private readonly imageColorSpace = new Map<number, TextureColorSpace3D>();
     private nodes: Object3D[] = [];
     /** Mesh objects created for each node, used by skins and weight animations. */
     private nodeMeshes: Mesh3D[][] = [];
@@ -132,8 +164,29 @@ class GltfReader {
     constructor(private readonly json: Json, private readonly buffers: (Uint8Array | undefined)[], private readonly options: GltfLoadOptions3D) {}
 
     // ---- binary access -------------------------------------------------------
+    private readonly meshoptCache = new Map<number, Uint8Array>();
     private bufferView(index: number): {bytes: Uint8Array; stride: number} {
         const view = this.json.bufferViews?.[index] ?? fail('bufferView ' + index);
+        const packed = view.extensions?.EXT_meshopt_compression;
+        if (packed) {
+            let bytes = this.meshoptCache.get(index);
+            if (!bytes) {
+                const decode = this.options.decodeMeshopt;
+                if (!decode) throw new World3DError('WORLD3D_GLTF_UNSUPPORTED', 'EXT_meshopt_compression needs the decodeMeshopt option');
+                const source = this.buffers[packed.buffer] ?? fail('meshopt buffer ' + packed.buffer);
+                const from = packed.byteOffset ?? 0, size = packed.byteLength, count = packed.count, stride = packed.byteStride;
+                if (!Number.isSafeInteger(from) || !Number.isSafeInteger(size) || from < 0 || size < 0 || size > source.byteLength - from) fail('meshopt range');
+                if (!Number.isSafeInteger(count) || !Number.isSafeInteger(stride) || count < 0 || stride <= 0 || stride > 256 || count * stride > GLTF_LIMITS.maxJsonBytes * 16) fail('meshopt layout');
+                if (!['ATTRIBUTES', 'TRIANGLES', 'INDICES'].includes(packed.mode)) fail('meshopt mode');
+                const filter = packed.filter ?? 'NONE';
+                if (!['NONE', 'OCTAHEDRAL', 'QUATERNION', 'EXPONENTIAL'].includes(filter)) fail('meshopt filter');
+                bytes = decode({source: source.subarray(from, from + size), count, stride, mode: packed.mode, filter});
+                if (!(bytes instanceof Uint8Array) || bytes.byteLength !== count * stride) fail('meshopt decoder output size');
+                this.meshoptCache.set(index, bytes);
+            }
+            // The uncompressed view describes the layout; only its data comes from the decoder.
+            return {bytes, stride: view.byteStride ?? 0};
+        }
         const buffer = this.buffers[view.buffer] ?? fail('buffer ' + view.buffer);
         const offset = view.byteOffset ?? 0, length = view.byteLength;
         if (!Number.isSafeInteger(offset) || !Number.isSafeInteger(length) || offset < 0 || length < 0 || length > buffer.byteLength - offset) fail('bufferView range');
@@ -229,6 +282,19 @@ class GltfReader {
         if (pending) return pending;
         const def = this.json.images?.[index] ?? fail('image ' + index);
         const decode = this.options.decodeImage;
+        // KTX2 containers are read here; every other encoding goes to the injected decoder.
+        const embeddedBytes = def.bufferView !== undefined ? this.bufferView(def.bufferView).bytes : typeof def.uri === 'string' ? dataUri(def.uri)?.bytes : undefined;
+        if (embeddedBytes && isKtx23D(embeddedBytes) || !embeddedBytes && def.mimeType === 'image/ktx2' && typeof def.uri === 'string' && this.options.loadBuffer) {
+            const transcode = this.options.transcodeKtx2;
+            pending = (async (): Promise<TextureSource3D> => {
+                const bytes = embeddedBytes ?? await this.options.loadBuffer!(def.uri);
+                const result = await parseKtx23D(bytes, transcode ? {transcode} : {});
+                this.imageColorSpace.set(index, result.colorSpace);
+                return result.source;
+            })();
+            this.imageCache.set(index, pending);
+            return pending;
+        }
         if (!decode) throw new World3DError('WORLD3D_GLTF_UNSUPPORTED', 'decodeImage is required for textured assets');
         let request: GltfImageRequest3D;
         if (def.bufferView !== undefined) request = {index, mimeType: def.mimeType, bytes: this.bufferView(def.bufferView).bytes, uri: undefined};
@@ -250,15 +316,19 @@ class GltfReader {
         const cached = this.textureCache.get(key);
         if (cached) return cached;
         const def = this.json.textures?.[info.index] ?? fail('texture ' + info.index);
-        if (def.source === undefined) throw new World3DError('WORLD3D_GLTF_UNSUPPORTED', 'texture without a core image source');
+        const imageIndex: number | undefined = def.extensions?.KHR_texture_basisu?.source ?? def.source;
+        if (imageIndex === undefined) throw new World3DError('WORLD3D_GLTF_UNSUPPORTED', 'texture without a supported image source');
         const sampler = def.sampler !== undefined ? this.json.samplers?.[def.sampler] ?? {} : {};
         const wrap = (mode: number | undefined): TextureWrap3D => mode === 33071 ? 'clamp' : mode === 33648 ? 'mirror' : 'repeat';
         const min = sampler.minFilter as number | undefined;
-        const texture = new Texture3D(await this.image(def.source), {
+        const image = await this.image(imageIndex);
+        // A compressed chain carries its own mip levels; none can be generated for it.
+        const storedLevels = isCompressedPixels3D(image) ? image.levels.length : 0;
+        const texture = new Texture3D(image, {
             name: def.name ?? '', colorSpace, flipY: false, wrapS: wrap(sampler.wrapS), wrapT: wrap(sampler.wrapT),
             magFilter: sampler.magFilter === 9728 ? 'nearest' : 'linear',
             minFilter: min === 9728 || min === 9984 || min === 9986 ? 'nearest' : 'linear',
-            mipmaps: min === undefined || min >= 9984,
+            mipmaps: storedLevels > 0 ? storedLevels > 1 : min === undefined || min >= 9984,
         });
         if (transform) {
             if (Array.isArray(transform.offset)) texture.offset.set(transform.offset);
@@ -303,6 +373,28 @@ class GltfReader {
     }
 
     // ---- geometry ----------------------------------------------------------------
+    /** Decode a Draco primitive once and seed the accessor cache with its arrays. */
+    private readonly dracoDecoded = new Set<number>();
+    private async prepareDraco(primitive: Json): Promise<void> {
+        const packed = primitive.extensions?.KHR_draco_mesh_compression;
+        if (!packed || this.dracoDecoded.has(packed.bufferView)) return;
+        const decode = this.options.decodeDraco;
+        if (!decode) throw new World3DError('WORLD3D_GLTF_UNSUPPORTED', 'KHR_draco_mesh_compression needs the decodeDraco option');
+        const semantics: Record<string, number> = packed.attributes ?? fail('draco attributes');
+        const result = await decode({bytes: this.bufferView(packed.bufferView).bytes, attributes: semantics});
+        const seed = (accessorIndex: number, array: Accessor['array'] | undefined, label: string): void => {
+            const def = this.json.accessors?.[accessorIndex] ?? fail('accessor ' + accessorIndex);
+            const itemSize = COMPONENTS[def.type] ?? fail('accessor type');
+            if (!array || !ArrayBuffer.isView(array) || array.length !== def.count * itemSize) fail('draco decoder output for ' + label);
+            this.accessorCache.set(accessorIndex, {array, itemSize, count: def.count, normalized: def.normalized === true});
+        };
+        for (const semantic of Object.keys(semantics)) {
+            const accessorIndex = primitive.attributes?.[semantic];
+            if (accessorIndex !== undefined) seed(accessorIndex, result.attributes?.[semantic], semantic);
+        }
+        if (primitive.indices !== undefined) seed(primitive.indices, result.indices, 'indices');
+        this.dracoDecoded.add(packed.bufferView);
+    }
     private geometry(primitive: Json, targetNames: readonly string[] | undefined): Geometry3D {
         const key = JSON.stringify([primitive.attributes, primitive.indices, primitive.mode, primitive.targets]);
         const cached = this.geometryCache.get(key);
@@ -364,6 +456,7 @@ class GltfReader {
         const primitives: Json[] = Array.isArray(def.primitives) ? def.primitives : fail('mesh primitives');
         const names: string[] | undefined = def.extras?.targetNames;
         return Promise.all(primitives.map(async (primitive, i) => {
+            await this.prepareDraco(primitive);
             const geometry = this.geometry(primitive, names);
             const lit = geometry.topology === 'triangles';
             const material = await this.material(primitive.material, geometry.getAttribute('color') !== undefined, lit && !geometry.getAttribute('normal'));
@@ -539,6 +632,9 @@ async function unpack(data: Uint8Array | object, options: GltfLoadOptions3D): Pr
     if (!json || typeof json !== 'object' || json.asset?.version?.[0] !== '2') throw new World3DError('WORLD3D_GLTF_UNSUPPORTED', 'asset.version');
     if (Array.isArray(json.accessors) && json.accessors.length > GLTF_LIMITS.maxAccessors) throw new World3DError('WORLD3D_BUDGET', 'gltf accessors');
     for (const extension of (json.extensionsRequired ?? []) as string[]) {
+        const decoder = DECODER_EXTENSIONS[extension];
+        if (decoder && typeof options[decoder] === 'function') continue;
+        if (decoder) throw new World3DError('WORLD3D_GLTF_UNSUPPORTED', 'required extension ' + extension + ' needs the ' + decoder + ' option');
         if (!SUPPORTED_EXTENSIONS.has(extension)) throw new World3DError('WORLD3D_GLTF_UNSUPPORTED', 'required extension ' + extension);
     }
     const buffers = await Promise.all(((json.buffers ?? []) as Json[]).map(async (def, index) => {

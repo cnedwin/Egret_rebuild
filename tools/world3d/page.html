@@ -20,9 +20,13 @@
       await verifyTextureSourceReplacement(W, renderer);
       const target = new W.RenderTarget3D(320, 200);
       for (const [name, build] of Object.entries(buildCases(W))) {
-        const { scene, camera } = build();
+        const { scene, camera, setup } = build();
+        // A case may configure the renderer; its post-processing settings are restored afterwards.
+        const post = { ...renderer.postProcess };
+        setup?.(renderer);
         if (!renderer.render(scene, camera, target)) throw new Error('renderer lost before ' + name);
         images[name] = Array.from(await renderer.readRenderTargetPixels(target));
+        Object.assign(renderer.postProcess, post);
         await new Promise((resolve) => setTimeout(resolve, 30));
         if (errors.length) throw new Error('GPU error in ' + name);
         done.push(name);
