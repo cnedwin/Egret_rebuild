@@ -48,9 +48,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 环境光和半球光提供间接光。平行光、点光源和聚光灯为精确光源。一帧最多使用四个平行光、八个点光源和四个聚光灯；超出的灯光按遍历顺序忽略。
 
-平行光和聚光灯可以投射阴影。最多四个阴影灯光共用一张深度图集，各占四分之一，并用 3x3 比较核过滤。`light.shadow` 设置体积、偏移、法线偏移和过滤半径。网格通过 `castShadow` 和 `receiveShadow` 选择参与。点光源阴影尚未实现。
-
-平行光把 `shadow.cascades` 设为 2 到 4 时，阴影按到相机的距离分级。每一级占用图集的一格，覆盖视野中的一段，最远到 `shadow.cascadeDistance`；`shadow.cascadeLambda` 让分割距离在均匀（0）与对数（1）之间变化。各级的体积是对齐到整纹素的包围球，相机移动或转动时阴影边缘保持稳定，相邻两级在接缝处混合。每个场景只有一个灯光分级，它的各级计入图集的四格。
+平行光和聚光灯可以投射阴影。最多四个阴影灯光共用一张深度图集，各占四分之一，并用 3x3 比较核过滤。`light.shadow` 设置体积、偏移、法线偏移和过滤半径。网格通过 `castShadow` 和 `receiveShadow` 选择参与。平行光把 `shadow.cascades` 设为 2 到 4 时，阴影按到相机的距离分级。每一级占用图集的一格，覆盖视野中的一段，最远到 `shadow.cascadeDistance`；`shadow.cascadeLambda` 让分割距离在均匀（0）与对数（1）之间变化。各级的体积是对齐到整纹素的包围球，相机移动或转动时阴影边缘保持稳定，相邻两级在接缝处混合。每个场景只有一个灯光分级，它的各级计入图集的四格。
 
 ## 网格、实例化、蒙皮与变形
 
@@ -122,6 +120,65 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 求解器不包含关节、连续碰撞检测，也不支持凸包和三角网格形状。体积小、速度快的刚体可能穿过薄的几何体；墙体厚度应大于刚体单步移动的距离。
 
+## 曲线、轮廓与更多几何体
+
+曲线（`LineCurve3D`、`QuadraticBezierCurve3D`、`CubicBezierCurve3D`、`CatmullRomCurve3D`、`CurvePath3D`）提供 `getPoint(t)`、匀速的 `getPointAt(u)`、切线、长度和无扭转的标架。`Path2D3D` 和 `Shape3D` 用 `moveTo`、`lineTo`、`quadraticCurveTo`、`bezierCurveTo` 和 `arc` 构造平面轮廓；形状可以带孔。
+
+新增的构造函数：`createCircleGeometry3D`、`createRingGeometry3D`、`createTorusKnotGeometry3D`、`createTetrahedronGeometry3D`、`createOctahedronGeometry3D`、`createIcosahedronGeometry3D`、`createDodecahedronGeometry3D`、`createPolyhedronGeometry3D`、`createLatheGeometry3D`、`createTubeGeometry3D`、`createShapeGeometry3D` 和 `createExtrudeGeometry3D`（直线挤出或沿曲线挤出；端面和侧壁是两个材质组；不生成倒角）。工具函数：`createEdgesGeometry3D`、`createWireframeGeometry3D`、`mergeGeometries3D`、`mergeVertices3D`、`toNonIndexedGeometry3D` 和 `transformGeometry3D`。
+
+## 风格化与自定义材质
+
+`createToonMaterial3D({steps})` 把漫反射光量化成若干平坦的色阶。`createMatcapMaterial3D({matcap})` 按视图空间法线从一张球面图像取色，不需要灯光。标准材质通过 `clearcoat` 和 `clearcoatRoughness` 增加一层清漆。
+
+`material.shader = createCustomShader3D({key, glsl, wgsl, uniforms})` 为任意材质增加片元钩子。钩子是名为 `customFragment` 的函数，接收着色后的线性颜色与透明度、世界坐标、法线和 UV，返回新的颜色；可以使用 `discard`。有十六个浮点数可用，GLSL 中为 `uCustom[0..3]`，WGSL 中为 `material.custom[0..3]`；随时间变化的效果每帧写入 `shader.uniforms`。需要为要发布的每个后端提供源码；没有对应源码的后端按原样绘制材质。更换着色器后调用 `material.touch()`。
+
+## 点光源阴影、环境与视口
+
+可以有一个点光源投射阴影（`createPointLight3D({castShadow: true})`）。它通过四面体的四个面绘制四张阴影图，用普通透视阴影图覆盖所有方向，过滤方式与其他灯光相同。它占用整张图集，在没有平行光或聚光灯投射阴影时生效。
+
+`parseRgbe3D(bytes)` 解码 Radiance `.hdr` 文件，`createCubeTextureFromEquirect3D(image, {size, exposure, maxValue})` 把全景图转换为立方体纹理，用于 `scene.background` 和 `scene.environment`。立方体各面在曝光和高光压缩后以 8 位保存。`captureCubeTexture3D(renderer, scene, position, options)` 把某一点周围的场景烘焙成立方体纹理，用于局部反射；它需要回读像素，适合在加载时使用。
+
+`renderer.viewport = [x, y, width, height]`（0 到 1，原点在左下角）把绘制限制在输出的一部分，`renderer.autoClear = false` 保留之前的视图已绘制的内容。两者配合，在一帧内多次调用 `render()` 即可实现分屏、小地图和画中画。
+
+## 辅助器、第一人称控制与声音
+
+`createBoxHelper3D`、`createArrowHelper3D`、`createCameraHelper3D`、`createLightHelper3D` 和 `createSkeletonHelper3D` 是跟随目标的线条节点；目标移动后调用 `update()`。`computeObjectBounds3D(object)` 返回一棵子树的世界包围盒。
+
+`createFlyControls3D(camera, element, options)` 通过指针锁定或拖动来转动视角，用键盘移动，可以飞行，也可以在水平面上行走。`createAudioListener3D()` 和 `createPositionalAudio3D(listener, options)` 把 Web Audio 声源放进场景，支持距离衰减和锥形指向；每帧调用 `listener.update()`，并在用户手势中调用 `listener.resume()`。
+
+## 从 Three.js 迁移
+
+| Three.js | World3D |
+| --- | --- |
+| `Scene`、`Object3D`、`Group`、`Mesh`、`InstancedMesh`、`SkinnedMesh`、`LOD`、`Sprite` | `Scene3D`、`Object3D`、`Mesh3D`、`InstancedMesh3D`、`Mesh3D.bind(skeleton)`、`Lod3D`、`createSprite3D` |
+| `PerspectiveCamera`、`OrthographicCamera` | `createPerspectiveCamera3D`、`createOrthographicCamera3D` |
+| `BufferGeometry`、`BufferAttribute` | `Geometry3D`、`Attribute3D`、`createGeometry3D` |
+| `BoxGeometry` 到 `TorusKnotGeometry`、`ExtrudeGeometry`、`LatheGeometry`、`TubeGeometry`、`ShapeGeometry`、`EdgesGeometry` | `createBoxGeometry3D` 到 `createTorusKnotGeometry3D`、`createExtrudeGeometry3D`、`createLatheGeometry3D`、`createTubeGeometry3D`、`createShapeGeometry3D`、`createEdgesGeometry3D` |
+| `BufferGeometryUtils.mergeGeometries`、`mergeVertices` | `mergeGeometries3D`、`mergeVertices3D` |
+| `Curve`、`CatmullRomCurve3`、`Shape`、`Path` | `Curve3D`、`CatmullRomCurve3D`、`Shape3D`、`Path2D3D` |
+| `MeshBasicMaterial`、`MeshLambertMaterial`、`MeshPhongMaterial`、`MeshStandardMaterial` | `createUnlitMaterial3D`、`createLambertMaterial3D`、`createPhongMaterial3D`、`createStandardMaterial3D` |
+| `MeshToonMaterial`、`MeshMatcapMaterial`、`MeshPhysicalMaterial.clearcoat` | `createToonMaterial3D`、`createMatcapMaterial3D`、`material.clearcoat` |
+| `ShaderMaterial`、`onBeforeCompile` | 把 `createCustomShader3D` 的结果赋给 `material.shader` |
+| `LineBasicMaterial`、`PointsMaterial`、`SpriteMaterial` | `createLineMaterial3D`、`createSpriteMaterial3D`，配合 `lines` 或 `points` 几何体 |
+| `Texture`、`DataTexture`、`CanvasTexture`、`CompressedTexture`、`CubeTexture`、`WebGLRenderTarget` | `Texture3D`（像素、图像、画布或压缩链）、`CubeTexture3D`、`RenderTarget3D` |
+| `AmbientLight`、`HemisphereLight`、`DirectionalLight`、`PointLight`、`SpotLight` | `createAmbientLight3D`、`createHemisphereLight3D`、`createDirectionalLight3D`、`createPointLight3D`、`createSpotLight3D` |
+| `light.shadow`、`CSM` | `light.shadow`、`light.shadow.cascades` |
+| `Fog`、`FogExp2`、`scene.background`、`scene.environment` | `scene.fog`、`scene.background`、`scene.environment` |
+| `AnimationMixer`、`AnimationClip`、`AnimationAction` | `AnimationMixer3D`、`AnimationClip3D`、`AnimationAction3D`，另有 `AnimationStateMachine3D` |
+| `Raycaster` | `Raycaster3D` |
+| `GLTFLoader`、`KTX2Loader`、`DRACOLoader`、`MeshoptDecoder`、`RGBELoader`、`TextureLoader` | 带解码钩子的 `loadGltfFromUrl3D`、`parseKtx23D`、`parseRgbe3D`、`loadTexture3D` |
+| `LoadingManager`、`Cache` | 在 Engine 的 `AssetManager` 上调用 `registerWorld3DAssets` |
+| `ObjectLoader`、`toJSON` | `deserializeScene3D`、`serializeScene3D` |
+| `WebGLRenderer`、`WebGPURenderer`、`setViewport`、`autoClear` | `createWebGL2Renderer3D`、`createWebGPURenderer3D`、`renderer.viewport`、`renderer.autoClear` |
+| `EffectComposer`、`UnrealBloomPass`、`OutputPass`、`FXAAShader` | `renderer.postProcess` |
+| `CubeCamera`、`PMREMGenerator.fromEquirectangular` | `captureCubeTexture3D`、`createCubeTextureFromEquirect3D` |
+| `OrbitControls`、`PointerLockControls`、`FlyControls` | `createOrbitControls3D`、`createFlyControls3D` |
+| `AudioListener`、`PositionalAudio` | `createAudioListener3D`、`createPositionalAudio3D` |
+| `BoxHelper`、`ArrowHelper`、`CameraHelper`、各种灯光辅助器、`SkeletonHelper`、`GridHelper`、`AxesHelper` | 对应的 `create...Helper3D` 函数 |
+| cannon-es、Rapier 等物理扩展 | `createPhysicsWorld3D`、`createCharacterController3D` |
+
+需要注意的差异：用工厂函数代替构造函数；颜色是线性 RGB 数组或十六进制数；向量和四元数是类型化数组，通过 `setPosition`、`setRotation`、`setScale` 和 `lookAt` 修改；资源用 `dispose()` 释放；错误是带 `code` 的 `World3DError`。
+
 ## 与 Engine 的整合
 
 World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为只有 3D 画布的应用返回宿主。`startWorld3DLoop(engine)` 每个显示帧推进一次显式 Engine 时钟，并在间隔超过时钟步长上限后重新设定锚点。
@@ -136,9 +193,9 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 [World3D 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/world3d/README.zh-CN.md)在任一后端上展示灯光、阴影、实例化、蒙皮、变形、粒子、渲染目标、拾取和轨道控制。
 
-无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs` 和 `tests/world3d-extended.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
+无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
 
-`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把十二个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的五个场景覆盖级联阴影、后处理、压缩纹理、屏幕层，以及从保存的文档还原的场景。开发期间全部十二个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前七个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把十四个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的七个场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质，以及点光源阴影。开发期间全部十四个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前七个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
 
 `tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。
 
@@ -146,5 +203,5 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 - 桌面复审强制触发 WebGL2 上下文丢失并恢复了目标像素，也强制触发 WebGPU 设备丢失，确认收到通知并拒绝后续操作。更广泛的设备与恢复场景仍待验证。
 - 一台运行 Chrome 157 的 Android 真机已呈现两个后端，响应了自动触发的阴影开关，并在释放后停止更新帧。性能、真人手势与更广泛的移动设备矩阵仍待验证。
-- 级联阴影、后处理、压缩纹理、屏幕层、状态机和物理目前只在软件渲染下运行过；较新的五个比较场景和基准测试仍需在桌面与移动端的真实 GPU 上验证。
-- 尚未实现：点光源阴影，内置的 Basis、meshopt 或 Draco 解码器，HDR 环境预过滤，清漆与透射材质，物理关节与网格碰撞体。
+- 级联阴影与点光源阴影、后处理、压缩纹理、屏幕层、卡通、Matcap、清漆与自定义着色器、视口和探针目前只在软件渲染下运行过，两个后端的结果一致；它们以及较新的七个比较场景和基准测试仍需在桌面与移动端的真实 GPU 上验证。第一人称控制和空间音频尚未经过真人操作验证。
+- 尚未实现：内置的 Basis、meshopt 或 Draco 解码器，浮点精度的环境预过滤，透射与光泽层，裁剪平面，环境光遮蔽与景深处理，变换操纵器，文字几何体，物理关节与网格碰撞体。

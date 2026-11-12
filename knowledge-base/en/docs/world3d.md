@@ -48,9 +48,7 @@ Geometries, materials, textures and targets are resources with a `version` and a
 
 Ambient and hemisphere lights add indirect light. Directional, point and spot lights are punctual. A frame uses at most four directional, eight point and four spot lights; additional lights are ignored in traversal order.
 
-Directional and spot lights can cast shadows. Up to four shadow lights share one depth atlas, each with a quarter tile, filtered with a 3x3 comparison kernel. `light.shadow` sets the volume, bias, normal bias and filter radius. Meshes opt in with `castShadow` and `receiveShadow`. Point-light shadows are not implemented.
-
-A directional light with `shadow.cascades` from 2 to 4 splits its shadow by distance from the camera. Each cascade takes one atlas tile and covers a slice of the view up to `shadow.cascadeDistance`; `shadow.cascadeLambda` moves the split distances between even (0) and logarithmic (1) spacing. Cascade volumes are bounding spheres snapped to whole texels, so shadow edges stay still while the camera moves or turns, and neighbouring cascades blend across their seam. One light per scene is cascaded, and its cascades count toward the four atlas tiles.
+Directional and spot lights can cast shadows. Up to four shadow lights share one depth atlas, each with a quarter tile, filtered with a 3x3 comparison kernel. `light.shadow` sets the volume, bias, normal bias and filter radius. Meshes opt in with `castShadow` and `receiveShadow`. A directional light with `shadow.cascades` from 2 to 4 splits its shadow by distance from the camera. Each cascade takes one atlas tile and covers a slice of the view up to `shadow.cascadeDistance`; `shadow.cascadeLambda` moves the split distances between even (0) and logarithmic (1) spacing. Cascade volumes are bounding spheres snapped to whole texels, so shadow edges stay still while the camera moves or turns, and neighbouring cascades blend across their seam. One light per scene is cascaded, and its cascades count toward the four atlas tiles.
 
 ## Meshes, instancing, skinning and morphing
 
@@ -122,6 +120,65 @@ While post-processing is on, canvas multisampling does not apply; FXAA takes its
 
 The solver has no joints, continuous collision detection or convex and triangle-mesh shapes. Fast, small bodies can pass through thin geometry; keep walls thicker than the distance a body moves in one step.
 
+## Curves, outlines and more geometries
+
+Curves (`LineCurve3D`, `QuadraticBezierCurve3D`, `CubicBezierCurve3D`, `CatmullRomCurve3D`, `CurvePath3D`) answer `getPoint(t)`, the constant-speed `getPointAt(u)`, tangents, lengths and twist-free frames. `Path2D3D` and `Shape3D` build flat outlines with `moveTo`, `lineTo`, `quadraticCurveTo`, `bezierCurveTo` and `arc`; a shape may carry holes.
+
+Further builders: `createCircleGeometry3D`, `createRingGeometry3D`, `createTorusKnotGeometry3D`, `createTetrahedronGeometry3D`, `createOctahedronGeometry3D`, `createIcosahedronGeometry3D`, `createDodecahedronGeometry3D`, `createPolyhedronGeometry3D`, `createLatheGeometry3D`, `createTubeGeometry3D`, `createShapeGeometry3D` and `createExtrudeGeometry3D` (straight or along a curve; caps and walls are separate material groups; bevels are not generated). Utilities: `createEdgesGeometry3D`, `createWireframeGeometry3D`, `mergeGeometries3D`, `mergeVertices3D`, `toNonIndexedGeometry3D` and `transformGeometry3D`.
+
+## Stylized and custom materials
+
+`createToonMaterial3D({steps})` quantizes diffuse light into flat bands. `createMatcapMaterial3D({matcap})` looks colour up from a sphere image by the view-space normal and needs no lights. A standard material gains a lacquer layer with `clearcoat` and `clearcoatRoughness`.
+
+`material.shader = createCustomShader3D({key, glsl, wgsl, uniforms})` adds a fragment hook to any material. The hook is a function named `customFragment` that receives the shaded linear colour with alpha, the world position, the normal and the UV, and returns the new colour; it may `discard`. Sixteen floats are available as `uCustom[0..3]` in GLSL and `material.custom[0..3]` in WGSL; write `shader.uniforms` each frame for time-driven effects. Supply source for each backend you ship; a backend without source draws the material unchanged. Call `material.touch()` after assigning a different shader.
+
+## Point-light shadows, environments and views
+
+One point light may cast shadows (`createPointLight3D({castShadow: true})`). It renders four maps through the faces of a tetrahedron, so every direction is covered with ordinary perspective maps and the same filtering as other lights. It takes the whole atlas and applies when no directional or spot light casts shadows.
+
+`parseRgbe3D(bytes)` decodes a Radiance `.hdr` file and `createCubeTextureFromEquirect3D(image, {size, exposure, maxValue})` turns a panorama into a cube texture for `scene.background` and `scene.environment`. Cube faces are stored in 8 bits after exposure and highlight compression. `captureCubeTexture3D(renderer, scene, position, options)` bakes the scene around a point into a cube texture for local reflections; it reads pixels back and is meant for load time.
+
+`renderer.viewport = [x, y, width, height]` (0 to 1, origin at the bottom left) limits drawing to part of the output, and `renderer.autoClear = false` keeps what earlier views drew. Together they give split screens, inset maps and picture-in-picture from several `render()` calls in one frame.
+
+## Helpers, first-person controls and sound
+
+`createBoxHelper3D`, `createArrowHelper3D`, `createCameraHelper3D`, `createLightHelper3D` and `createSkeletonHelper3D` are line nodes that follow their subject; call `update()` after it moves. `computeObjectBounds3D(object)` returns world bounds of a subtree.
+
+`createFlyControls3D(camera, element, options)` looks with pointer lock or drag and moves with the keyboard, either flying or walking on a level plane. `createAudioListener3D()` and `createPositionalAudio3D(listener, options)` place Web Audio sources in the scene with distance attenuation and cones; call `listener.update()` each frame and `listener.resume()` from a user gesture.
+
+## Coming from Three.js
+
+| Three.js | World3D |
+| --- | --- |
+| `Scene`, `Object3D`, `Group`, `Mesh`, `InstancedMesh`, `SkinnedMesh`, `LOD`, `Sprite` | `Scene3D`, `Object3D`, `Mesh3D`, `InstancedMesh3D`, `Mesh3D.bind(skeleton)`, `Lod3D`, `createSprite3D` |
+| `PerspectiveCamera`, `OrthographicCamera` | `createPerspectiveCamera3D`, `createOrthographicCamera3D` |
+| `BufferGeometry`, `BufferAttribute` | `Geometry3D`, `Attribute3D`, `createGeometry3D` |
+| `BoxGeometry` ... `TorusKnotGeometry`, `ExtrudeGeometry`, `LatheGeometry`, `TubeGeometry`, `ShapeGeometry`, `EdgesGeometry` | `createBoxGeometry3D` ... `createTorusKnotGeometry3D`, `createExtrudeGeometry3D`, `createLatheGeometry3D`, `createTubeGeometry3D`, `createShapeGeometry3D`, `createEdgesGeometry3D` |
+| `BufferGeometryUtils.mergeGeometries`, `mergeVertices` | `mergeGeometries3D`, `mergeVertices3D` |
+| `Curve`, `CatmullRomCurve3`, `Shape`, `Path` | `Curve3D`, `CatmullRomCurve3D`, `Shape3D`, `Path2D3D` |
+| `MeshBasicMaterial`, `MeshLambertMaterial`, `MeshPhongMaterial`, `MeshStandardMaterial` | `createUnlitMaterial3D`, `createLambertMaterial3D`, `createPhongMaterial3D`, `createStandardMaterial3D` |
+| `MeshToonMaterial`, `MeshMatcapMaterial`, `MeshPhysicalMaterial.clearcoat` | `createToonMaterial3D`, `createMatcapMaterial3D`, `material.clearcoat` |
+| `ShaderMaterial`, `onBeforeCompile` | `createCustomShader3D` assigned to `material.shader` |
+| `LineBasicMaterial`, `PointsMaterial`, `SpriteMaterial` | `createLineMaterial3D`, `createSpriteMaterial3D` with a `lines` or `points` geometry |
+| `Texture`, `DataTexture`, `CanvasTexture`, `CompressedTexture`, `CubeTexture`, `WebGLRenderTarget` | `Texture3D` (pixels, images, canvases or compressed chains), `CubeTexture3D`, `RenderTarget3D` |
+| `AmbientLight`, `HemisphereLight`, `DirectionalLight`, `PointLight`, `SpotLight` | `createAmbientLight3D`, `createHemisphereLight3D`, `createDirectionalLight3D`, `createPointLight3D`, `createSpotLight3D` |
+| `light.shadow`, `CSM` | `light.shadow`, `light.shadow.cascades` |
+| `Fog`, `FogExp2`, `scene.background`, `scene.environment` | `scene.fog`, `scene.background`, `scene.environment` |
+| `AnimationMixer`, `AnimationClip`, `AnimationAction` | `AnimationMixer3D`, `AnimationClip3D`, `AnimationAction3D`, plus `AnimationStateMachine3D` |
+| `Raycaster` | `Raycaster3D` |
+| `GLTFLoader`, `KTX2Loader`, `DRACOLoader`, `MeshoptDecoder`, `RGBELoader`, `TextureLoader` | `loadGltfFromUrl3D` with decoder hooks, `parseKtx23D`, `parseRgbe3D`, `loadTexture3D` |
+| `LoadingManager`, `Cache` | `registerWorld3DAssets` on the Engine `AssetManager` |
+| `ObjectLoader`, `toJSON` | `deserializeScene3D`, `serializeScene3D` |
+| `WebGLRenderer`, `WebGPURenderer`, `setViewport`, `autoClear` | `createWebGL2Renderer3D`, `createWebGPURenderer3D`, `renderer.viewport`, `renderer.autoClear` |
+| `EffectComposer`, `UnrealBloomPass`, `OutputPass`, `FXAAShader` | `renderer.postProcess` |
+| `CubeCamera`, `PMREMGenerator.fromEquirectangular` | `captureCubeTexture3D`, `createCubeTextureFromEquirect3D` |
+| `OrbitControls`, `PointerLockControls`, `FlyControls` | `createOrbitControls3D`, `createFlyControls3D` |
+| `AudioListener`, `PositionalAudio` | `createAudioListener3D`, `createPositionalAudio3D` |
+| `BoxHelper`, `ArrowHelper`, `CameraHelper`, light helpers, `SkeletonHelper`, `GridHelper`, `AxesHelper` | the matching `create...Helper3D` functions |
+| physics add-ons such as cannon-es or Rapier | `createPhysicsWorld3D`, `createCharacterController3D` |
+
+Differences to keep in mind: factories replace constructors; colours are linear RGB arrays or hex numbers; vectors and quaternions are typed arrays changed through `setPosition`, `setRotation`, `setScale` and `lookAt`; resources are released with `dispose()`; and errors are `World3DError` with a `code`.
+
 ## Engine integration
 
 A World3D canvas is separate from the 2D stage surface. `createWorld3DHost(canvas)` returns a host for applications whose only surface is the 3D canvas. `startWorld3DLoop(engine)` advances the explicit Engine clock once per display frame and re-anchors it after a gap longer than the clock's delta limit.
@@ -136,9 +193,9 @@ For a 2D interface above a 3D scene, either stack a transparent shared 2D host c
 
 The [World3D example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/world3d/README.md) shows lights, shadows, instancing, skinning, morphing, particles, a render target, picking and orbit controls on either backend.
 
-Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.test.mjs`, `tests/world3d-gltf.test.mjs`, `tests/world3d-renderer-lifetime.test.mjs` and `tests/world3d-extended.test.mjs` cover the DOM-free core, the asset providers, the state machine and physics through the public entries.
+Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.test.mjs`, `tests/world3d-gltf.test.mjs`, `tests/world3d-renderer-lifetime.test.mjs`, `tests/world3d-extended.test.mjs` and `tests/world3d-parity.test.mjs` cover the DOM-free core, the asset providers, the state machine and physics through the public entries.
 
-`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` renders twelve fixed scenes into a render target on both backends and compares the images. The five newer scenes cover cascaded shadows, post-processing, a compressed texture, screen layers and a scene restored from its saved document. During development all twelve ran in headless Chromium with software rendering. The desktop review ran the first seven cases in Edge 157 on an NVIDIA RTX 5090 Laptop GPU without renderer override flags. The visible sample presented on both backends with antialiasing and stopped advancing frames on disposal.
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` renders fourteen fixed scenes into a render target on both backends and compares the images. The seven newer scenes cover cascaded shadows, post-processing, a compressed texture, screen layers, a scene restored from its saved document, stylized and custom materials, and point-light shadows. During development all fourteen ran in headless Chromium with software rendering. The desktop review ran the first seven cases in Edge 157 on an NVIDIA RTX 5090 Laptop GPU without renderer override flags. The visible sample presented on both backends with antialiasing and stopped advancing frames on disposal.
 
 `tools/bench-world3d.mjs --playwright <installed-playwright-module>` measures the CPU time of `render()` for fixed workloads on both backends, as a baseline for regressions rather than an absolute score.
 
@@ -146,5 +203,5 @@ Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.t
 
 - The desktop review forced WebGL2 context loss and restored the target pixels. It also forced WebGPU device loss and verified notification and refusal of subsequent work. Wider device and recovery coverage remains open.
 - One physical Android Chrome 157 device presented both backends, responded to an automated shadow toggle, and stopped frame updates on disposal. Performance, human gestures and a broader mobile device matrix remain open.
-- Cascaded shadows, post-processing, compressed textures, screen layers, the state machine and physics have run only under software rendering so far; the five newer comparison scenes and the benchmark still need a pass on physical desktop and mobile GPUs.
-- Not implemented: point-light shadows, bundled Basis, meshopt or Draco decoders, HDR environment prefiltering, clear coat and transmission materials, physics joints and mesh colliders.
+- Cascaded and point-light shadows, post-processing, compressed textures, screen layers, toon, matcap, clearcoat and custom shaders, viewports and probes have run only under software rendering so far, where both backends matched; they, the seven newer comparison scenes and the benchmark still need a pass on physical desktop and mobile GPUs. First-person controls and spatial audio have not been exercised by a person.
+- Not implemented: bundled Basis, meshopt or Draco decoders, float-precision environment prefiltering, transmission and sheen, clipping planes, ambient occlusion and depth-of-field passes, transform gizmos, text geometry, physics joints and mesh colliders.
