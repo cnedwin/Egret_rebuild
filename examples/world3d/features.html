@@ -47,6 +47,7 @@
     <button id="surfaces" type="button">Surfaces / 表面</button>
     <button id="physics" type="button">Physics / 物理</button>
     <button id="editing" type="button">Editing / 编辑</button>
+    <button id="character" type="button" aria-pressed="false">Character / 角色</button>
     <button id="shoot" type="button">Shoot / 发射</button>
     <button id="translate" type="button">Move / 移动</button>
     <button id="rotate" type="button">Turn / 旋转</button>
@@ -60,7 +61,7 @@
     <label>Text / 文字 <input id="text" type="text" value="Egret 白鹭" size="12"></label>
     <output id="status" aria-live="polite">Loading / 加载中</output>
   </header>
-  <canvas id="stage" aria-label="Interactive 3D scene; drag to orbit, scroll to zoom, click an object to edit it / 可交互 3D 场景，拖动旋转，滚轮缩放，点击物体进行编辑"></canvas>
+  <canvas id="stage" tabindex="0" aria-label="Interactive 3D scene; drag to orbit, scroll to zoom, click an object to edit it; in character mode use W A S D or the arrow keys to walk, Shift to run and Space to jump / 可交互 3D 场景，拖动旋转，滚轮缩放，点击物体进行编辑；角色模式下用 W A S D 或方向键行走，Shift 奔跑，空格跳跃"></canvas>
   <script type="module" src="./features.mjs"></script>
 </body>
 </html>

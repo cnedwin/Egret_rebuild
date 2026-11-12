@@ -128,6 +128,12 @@ Level geometry collides as a triangle mesh: `world.createBody({shape: {type: 'me
 
 `world.raycast(origin, direction, maxDistance, mask)` returns the nearest solid body with the hit point and normal, and `world.overlapSphere(center, radius, mask)` lists solid bodies in a volume. `createCharacterController3D(world, options)` is a kinematic capsule: `move(dx, dy, dz)` slides along obstacles and reports `isGrounded`, `groundNormal` and `groundBody`.
 
+`createCharacterMotor3D(world, options)` builds a walking, jumping character on that capsule. After `world.step()`, call `motor.update(deltaSeconds, wishX, wishZ, jump)` with the horizontal velocity the player asks for. The motor applies gravity and jumping (`jumpSpeed`, with a short `coyoteTime` after walking off a ledge), ground and air acceleration (`acceleration`, `airControl`), climbs ledges up to `stepHeight` and stays on the ground when walking down steps and slopes, and stops rising under a ceiling. A kinematic or dynamic body under its feet carries it along, including around a turning platform; `motor.carriedYaw` is the turn to add to the character's facing, and leaving a moving platform keeps its speed. Walking into dynamic bodies pushes them at the character's pace, limited by `pushForce`. Move platforms with velocities, not by writing positions, so the motor can see how they move. Low steps are climbed by the capsule's rounded foot at reduced speed; long staircases walk better over a ramp collider.
+
+`createFollowCamera3D(camera, target, {world, distance, height, yaw, pitch})` keeps a camera behind an object, and moves it closer at once when a solid body would hide the target, easing back out over `recovery` seconds. `moveDirection(forward, right)` turns stick or key input into a world direction relative to the view. The browser entries add `createFollowControls3D(camera, element, target, options)`: drag to look around, scroll or pinch for distance, with the rig in `controls.follow`.
+
+A body's `node` is placed at the body when it is added to the world, and follows it after every step unless the body is static.
+
 `{type: 'convex', hull: createConvexHullShape3D(geometryOrPoints)}` is a convex solid for moving props; more than 64 corners are reduced to the most extreme ones. Hulls collide exactly with planes and, through their corners, with meshes; against spheres, capsules, boxes and other hulls they use face planes and corner containment, and where two edges cross without any corner inside the other solid, a contact is placed between those edges.
 
 `world.createJoint(options)` connects two bodies, or pins one to the world, from world-space anchors: `point` (ball and socket), `hinge` (with an `axis`), `fixed` (weld) and `distance` (a rod, or a `rope` that goes slack). Jointed bodies do not collide with each other unless `collideConnected` is set.
@@ -223,6 +229,7 @@ The gizmo itself, `createTransformGizmo3D(camera)` from the core entry, takes no
 | `OrbitControls`, `PointerLockControls`, `FlyControls` | `createOrbitControls3D`, `createFlyControls3D` |
 | `AudioListener`, `PositionalAudio` | `createAudioListener3D`, `createPositionalAudio3D` |
 | `BoxHelper`, `ArrowHelper`, `CameraHelper`, light helpers, `SkeletonHelper`, `GridHelper`, `AxesHelper` | the matching `create...Helper3D` functions |
+| character controllers and third-person cameras from add-on libraries | `createCharacterMotor3D`, `createFollowCamera3D`, `createFollowControls3D` |
 | physics add-ons such as cannon-es or Rapier, trimesh and convex colliders, constraints | `createPhysicsWorld3D`, `createCharacterController3D`, `createMeshShape3D`, `createConvexHullShape3D`, `world.createJoint` |
 
 Differences to keep in mind: factories replace constructors; colours are linear RGB arrays or hex numbers; vectors and quaternions are typed arrays changed through `setPosition`, `setRotation`, `setScale` and `lookAt`; resources are released with `dispose()`; and errors are `World3DError` with a `code`.

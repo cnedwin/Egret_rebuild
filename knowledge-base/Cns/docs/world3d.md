@@ -128,6 +128,12 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `world.raycast(origin, direction, maxDistance, mask)` 返回最近的实体刚体及命中点和法线，`world.overlapSphere(center, radius, mask)` 列出一个体积内的实体刚体。`createCharacterController3D(world, options)` 是运动学胶囊：`move(dx, dy, dz)` 沿障碍物滑动，并报告 `isGrounded`、`groundNormal` 和 `groundBody`。
 
+`createCharacterMotor3D(world, options)` 在这个胶囊上构建会行走和跳跃的角色。在 `world.step()` 之后调用 `motor.update(deltaSeconds, wishX, wishZ, jump)`，传入玩家期望的水平速度。它处理重力和跳跃（`jumpSpeed`，走出平台边缘后还有一小段 `coyoteTime` 可以起跳）、地面与空中的加速（`acceleration`、`airControl`），能走上不高于 `stepHeight` 的台阶，下台阶和下坡时贴住地面，头顶碰到天花板时停止上升。脚下的运动学或动力学刚体会带着角色移动，包括绕旋转平台转动；`motor.carriedYaw` 是应加到角色朝向上的转角，离开移动平台时保留平台的速度。走向动力学刚体时会以角色自身的速度推动它，推力上限为 `pushForce`。平台要用速度来移动，不要直接改写位置，这样角色才能知道平台的运动。低台阶靠胶囊的圆形底部爬上去，速度会变慢；较长的楼梯用斜坡碰撞体走起来更顺。
+
+`createFollowCamera3D(camera, target, {world, distance, height, yaw, pitch})` 让相机跟在物体后方；当有实体会挡住目标时相机立即拉近，障碍消失后在 `recovery` 秒内回到原距离。`moveDirection(forward, right)` 把摇杆或按键输入换算成相对于视角的世界方向。浏览器入口另外提供 `createFollowControls3D(camera, element, target, options)`：拖动环视，滚轮或双指调整距离，相机装置在 `controls.follow` 中。
+
+刚体的 `node` 在刚体加入世界时被放到刚体的位置；除静态刚体外，之后每一步都跟随刚体。
+
 `{type: 'convex', hull: createConvexHullShape3D(geometryOrPoints)}` 是用于可移动摆设的凸多面体；超过 64 个角点时只保留最外侧的那些。凸包与平面精确碰撞，与网格通过角点碰撞；与球、胶囊、盒子和其他凸包之间使用面平面和角点包含判断，当两条棱相交而任何一方都没有角点进入对方时，会在这两条棱之间生成一个接触点。
 
 `world.createJoint(options)` 用世界空间的锚点连接两个刚体，或把一个刚体固定在世界中：`point`（球窝）、`hinge`（带 `axis`）、`fixed`（焊接）和 `distance`（刚性杆，或松弛时不受力的 `rope`）。被关节连接的两个刚体默认互不碰撞，除非设置 `collideConnected`。
@@ -223,6 +229,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 | `OrbitControls`、`PointerLockControls`、`FlyControls` | `createOrbitControls3D`、`createFlyControls3D` |
 | `AudioListener`、`PositionalAudio` | `createAudioListener3D`、`createPositionalAudio3D` |
 | `BoxHelper`、`ArrowHelper`、`CameraHelper`、各种灯光辅助器、`SkeletonHelper`、`GridHelper`、`AxesHelper` | 对应的 `create...Helper3D` 函数 |
+| 扩展库中的角色控制器和第三人称相机 | `createCharacterMotor3D`、`createFollowCamera3D`、`createFollowControls3D` |
 | cannon-es、Rapier 等物理扩展，三角网格与凸包碰撞体，约束 | `createPhysicsWorld3D`、`createCharacterController3D`、`createMeshShape3D`、`createConvexHullShape3D`、`world.createJoint` |
 
 需要注意的差异：用工厂函数代替构造函数；颜色是线性 RGB 数组或十六进制数；向量和四元数是类型化数组，通过 `setPosition`、`setRotation`、`setScale` 和 `lookAt` 修改；资源用 `dispose()` 释放；错误是带 `code` 的 `World3DError`。

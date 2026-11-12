@@ -27,10 +27,11 @@ The header buttons toggle shadows, particles and wireframe. The status line repo
 
 ## Feature gallery
 
-Open `http://127.0.0.1:4173/examples/world3d/features.html` (or follow the link in the header) for the newer features in one scene. The header buttons move the camera between three areas:
+Open `http://127.0.0.1:4173/examples/world3d/features.html` (or follow the link in the header) for the newer features in one scene. The header buttons move the camera between four areas:
 
 - **Surfaces**: thin, solid and frosted glass that bends and tints the checker wall behind it, velvet sheen, clearcoat, toon shading, a light map on a second coordinate set, 240 batched pebbles drawn in one call, a wide line, and extruded text. "Font" loads any TrueType file and "Text" rewrites the title with it, including Chinese, Japanese and Korean fonts.
 - **Physics**: a crate pyramid, convex-hull rocks, a rope of weights, a hinged door with limits and a motor, a moving platform that carries a crate, and a thin glass wall. "Shoot" fires fast projectiles with continuous collision from the camera.
+- **Character**: a capsule character with a follow camera. W A S D or the arrow keys walk relative to the view, Shift runs and Space jumps. It climbs the stairs, walks down the ramp, pushes the crates, and is carried by the turntable and the ferry; the camera moves in when the wall comes between it and the character. This area needs a keyboard.
 - **Editing**: click an object to select it; it is outlined and gets a transform gizmo. "Move", "Turn" and "Size" switch the handles and "World/Local" their orientation.
 
 "Post", "SSAO", "Depth of field" and "Shadows" toggle those effects. The gallery was run on WebGL2 in headless Chromium with software rendering, including handle drags with real pointer events; it has not been run on a physical GPU or through WebGPU canvas presentation, and no person has operated it by hand yet.
