@@ -2341,8 +2341,8 @@
       "en": "knowledge-base/en/docs/world3d.md",
       "zh": "knowledge-base/Cns/docs/world3d.md",
       "kind": "public_reading",
-      "enSha256": "2c38146cb03d3d5f1e9bae7db3ffe549601f88b95201f5d1b1720a1ea29f33d9",
-      "zhSha256": "9540cbbcb6981a4d11e4dbcc9850d324699a7b595cbab32a18d1372d2689aaf9"
+      "enSha256": "9197504825dff1eb3cfd1882b186233fa55fc9f0d73cb622351a75cdab85ae30",
+      "zhSha256": "ed4bae53add34db80a6831a1e1238d13c74a9b2ce7d059b5fa73600b80af3dfa"
     },
     {
       "en": "examples/world3d/README.md",
@@ -5027,7 +5027,7 @@
     },
     {
       "path": "tools/lib/world3d-boundary.mjs",
-      "sha256": "98517f8481def55fbf0f22cfceb0b08d5c35963e69ed73573925f088ba33a475"
+      "sha256": "860c497687ed32649022f2edc6abfec7c22577d8e03197c7e5f05dfd5aa11a38"
     },
     {
       "path": "packages/engine/rendering/world3d/Curves3D.ts",
@@ -5138,12 +5138,12 @@
       "sha256": "a28073fcc21049bc09bd027b27c4a9a8314fecd7a69fca0c41f9a20c1d1838eb"
     },
     {
-      "path": "packages/engine/rendering/world3d/Navigation3D.ts",
-      "sha256": "8415de98353680145263e9dd37c6acf353702d925f346885e2d400fcb9b15070"
-    },
-    {
       "path": "packages/engine/rendering/world3d/decoders3D.ts",
       "sha256": "1ed3390f6c6c070acdec37e85da8ae37303eba9a9710bd0fe80c3b10f5230e87"
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Navigation3D.ts",
+      "sha256": "9d9577ee694f4ca0c089317c0136d11090edafeffdff259b70a0e9164a8906f8"
     }
   ],
   "historicalSemanticReview": {
