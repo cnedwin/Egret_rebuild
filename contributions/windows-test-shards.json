@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/lib/test-shards.mjs",
+      "originRole": "First-party parallel Windows test shards that keep the complete merge suite; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/publication/test-shards.test.mjs",
+      "originRole": "First-party parallel Windows test shards that keep the complete merge suite; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/browser-png-boundaries-2.test.mjs",
+      "originRole": "First-party parallel Windows test shards that keep the complete merge suite; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/browser-png-boundaries-3.test.mjs",
+      "originRole": "First-party parallel Windows test shards that keep the complete merge suite; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/browser-png-boundaries-4.test.mjs",
+      "originRole": "First-party parallel Windows test shards that keep the complete merge suite; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
