@@ -677,7 +677,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         gl.bindVertexArray(wire ? wire.vao : instanced ? resources.instances(mesh as InstancedMesh3D, frame) : gpu.vao);
         const topology = geometry.topology;
         const mode = wire ? gl.LINES : topology === 'triangles' ? gl.TRIANGLES : topology === 'lines' ? gl.LINES : topology === 'line-strip' ? gl.LINE_STRIP : gl.POINTS;
-        const instances = instanced ? (mesh as InstancedMesh3D).count : 1;
+        const instances = mesh instanceof SkinnedInstancedMesh3D ? mesh.drawCount : instanced ? (mesh as InstancedMesh3D).count : 1;
         if (instances <= 0) return;
         if (wire) {
             // Wireframe draws the whole geometry: its edge list is not split by groups.

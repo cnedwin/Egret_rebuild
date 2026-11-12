@@ -4,7 +4,7 @@ English | [简体中文](DOCUMENTATION.zh-CN.md)
 
 Read the product documents in the order below, then follow the relevant subsystem contracts. Complete editions are available in the [English knowledge base](knowledge-base/en/README.md) and [中文知识库](knowledge-base/Cns/README.md).
 
-Current-source review: 2026-11-07. Start with present capabilities and the next engineering phase; historical contract/evidence pages retain their original cutoffs.
+The [capability map](knowledge-base/en/docs/core-progress.md) records the reviewed source baseline. Historical contracts and evidence retain their dates and scope.
 
 ## Current project entry
 
@@ -39,6 +39,10 @@ Current-source review: 2026-11-07. Start with present capabilities and the next 
 | Sources | [Acknowledgements](ACKNOWLEDGEMENTS.md) |
 
 ## Subsystem reference
+
+- [Bounded 3D and 2D composition in a shared scene](knowledge-base/en/docs/authored-scene3d.md)
+- [Standalone World3D scene graph and renderers](knowledge-base/en/docs/world3d.md)
+- [Fixed M1.2 performance evidence](knowledge-base/en/docs/incremental-frame-preparation-evidence.md)
 
 - [Experimental WebGPU image residency contract](knowledge-base/en/docs/gpu-image-residency-contract.md)
 - [Experimental WebGPU image residency evidence](knowledge-base/en/docs/gpu-image-residency-evidence.md)

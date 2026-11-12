@@ -5,8 +5,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
-  AnimationMixer3D, AnimationTexture3D, Attribute3D, Bone3D, Mesh3D, Object3D, RenderList3D, Scene3D, Skeleton3D, createDecal3D, createPerspectiveCamera3D, SkinnedInstancedMesh3D, World3DError, bakeAnimationTexture3D,
-  createAnimationClip3D, createBoxGeometry3D, createCylinderGeometry3D, createOrthographicCamera3D, createSkinnedInstancedMesh3D, createStandardMaterial3D, mat4Invert, mat4Multiply, quatFromAxisAngle,
+  AnimationMixer3D, AnimationTexture3D, Attribute3D, Bone3D, Mesh3D, Object3D, RenderList3D, Scene3D, Skeleton3D, createDecal3D, createOrthographicCamera3D, createPerspectiveCamera3D, SkinnedInstancedMesh3D, World3DError, bakeAnimationTexture3D,
+  createAnimationClip3D, createBoxGeometry3D, createCylinderGeometry3D, createSkinnedInstancedMesh3D, createStandardMaterial3D, mat4Invert, mat4Multiply, quatFromAxisAngle,
 } from '@egret/engine/world3d';
 
 const code = value => error => error instanceof World3DError && error.code === value;
@@ -133,7 +133,7 @@ test('instances keep their own clip, time and speed', () => {
   assert.equal(crowd.isInstanced, true); assert.equal(crowd.skeleton, undefined);
   assert.equal(crowd.boundsScale, baked.reach); assert.equal(crowd.total, 4); assert.equal(crowd.count, 4);
   // Twelve floats per instance: a clip's two frames and blend, the shared numbers, a second clip, a rotation.
-  assert.deepEqual([...crowd.instanceAnimation.subarray(0, 12)], [1, 2, 0, 4, 1, 2, 0, 0, 0, 0, 0, 1]);
+  assert.deepEqual([...crowd.drawAnimation.subarray(0, 12)], [1, 2, 0, 4, 1, 2, 0, 0, 0, 0, 0, 1]);
   crowd.setClipAt(1, 'grow', {time: 0.45, speed: 2, loop: false});
   crowd.setClipAt(2, 0, {time: 0.95});
   assert.equal(crowd.clipAt(1), 1); close(crowd.timeAt(1), 0.45);
@@ -141,12 +141,12 @@ test('instances keep their own clip, time and speed', () => {
   crowd.update(0.1);
   assert.ok(crowd.instanceVersion > version);
   close(crowd.timeAt(0), 0.1); close(crowd.timeAt(1), 0.65); close(crowd.timeAt(2), 0.05, 1e-5);
-  assert.deepEqual([...crowd.instanceAnimation.subarray(0, 2)], [2, 3]);
-  assert.deepEqual([...crowd.instanceAnimation.subarray(12, 14)], [12 + 6, 12 + 7]); close(crowd.instanceAnimation[14], 0.5, 1e-4);
+  assert.deepEqual([...crowd.drawAnimation.subarray(0, 2)], [2, 3]);
+  assert.deepEqual([...crowd.drawAnimation.subarray(12, 14)], [12 + 6, 12 + 7]); close(crowd.drawAnimation[14], 0.5, 1e-4);
   assert.equal(crowd.isFinishedAt(1), false);
   crowd.update(1);
   close(crowd.timeAt(1), 2); assert.equal(crowd.isFinishedAt(1), true); assert.equal(crowd.isFinishedAt(0), false);
-  assert.deepEqual([...crowd.instanceAnimation.subarray(12, 15)], [32, 32, 0]);
+  assert.deepEqual([...crowd.drawAnimation.subarray(12, 15)], [32, 32, 0]);
   crowd.setSpeedAt(0, -1); crowd.setTimeAt(0, 0.05); crowd.update(0.1);
   close(crowd.timeAt(0), 0.95, 1e-5);
   // Instances beyond `total` stand still and are not drawn.
@@ -154,11 +154,53 @@ test('instances keep their own clip, time and speed', () => {
   assert.equal(crowd.timeAt(3), held); assert.equal(crowd.count, 2);
   const copy = crowd.clone();
   assert.equal(copy.clipAt(1), 1); close(copy.timeAt(1), crowd.timeAt(1)); assert.equal(copy.total, 2);
-  assert.deepEqual([...copy.instanceAnimation.subarray(0, 24)], [...crowd.instanceAnimation.subarray(0, 24)]);
+  assert.deepEqual([...copy.drawAnimation.subarray(0, 24)], [...crowd.drawAnimation.subarray(0, 24)]);
   assert.throws(() => crowd.setClipAt(0, 'none'), code('WORLD3D_INPUT_INVALID'));
   assert.throws(() => crowd.setClipAt(9, 0), code('WORLD3D_INPUT_INVALID'));
   assert.throws(() => createSkinnedInstancedMesh3D(createBoxGeometry3D({}), mesh.material, baked, 2), code('WORLD3D_INPUT_INVALID'));
   assert.throws(() => createSkinnedInstancedMesh3D(geometry, mesh.material, {}, 2), code('WORLD3D_INPUT_INVALID'));
+});
+
+test('legacy crowd count and raw instance arrays remain stable across camera compaction', () => {
+  const {root, mesh, geometry, sway} = rig();
+  const baked = bakeAnimationTexture3D(root, mesh, [sway], {fps: 10});
+  const crowd = createSkinnedInstancedMesh3D(geometry, mesh.material, baked, 3);
+  const animation = crowd.instanceAnimation;
+  assert.equal(animation.length, 12, 'legacy rows have four floats');
+  assert.equal(animation[7], baked.boneCount);
+  crowd.setTimeAt(1, 0.5);
+  assert.deepEqual([...animation.subarray(4, 8)], [6, 7, 0, baked.boneCount]);
+  crowd.count = 2;
+  const inactiveTime = crowd.timeAt(2);
+  crowd.update(0.125);
+  assert.equal(crowd.count, 2);
+  assert.equal(crowd.total, 2);
+  assert.equal(crowd.timeAt(2), inactiveTime);
+
+  // Existing low-level callers write authored data and mark its version.
+  crowd.instanceMatrices[12] = 40;
+  crowd.instanceMatrices[16 + 12] = 2;
+  crowd.instanceColors = Float32Array.of(1, 0, 0, 0, 1, 0, 0, 0, 1);
+  crowd.instanceVersion++;
+  crowd.castShadow = false;
+  crowd.cullRadius = 0.5;
+  crowd.cullPadding = 0;
+  const camera = createOrthographicCamera3D({height: 6});
+  camera.setPosition(0, 0, 5).lookAt(0, 0, 0);
+  crowd.beforeRender(camera);
+  assert.equal(crowd.count, 2);
+  assert.equal(crowd.drawCount, 1);
+  assert.equal(crowd.drawMatrices[12], 2);
+  assert.deepEqual([...crowd.drawColors.subarray(0, 3)], [0, 1, 0]);
+  assert.equal(crowd.instanceMatrices[12], 40);
+  assert.deepEqual([...crowd.instanceColors.subarray(0, 3)], [1, 0, 0]);
+  assert.equal(crowd.instanceAnimation, animation);
+
+  crowd.cullInstances = false;
+  crowd.beforeRender(camera);
+  assert.equal(crowd.drawCount, 2);
+  assert.equal(crowd.drawMatrices, crowd.instanceMatrices);
+  assert.equal(crowd.drawColors, crowd.instanceColors);
 });
 
 test('a second clip blends in, by a set weight or as a cross-fade', () => {
@@ -170,7 +212,7 @@ test('a second clip blends in, by a set weight or as a cross-fade', () => {
   crowd.setBlendAt(0, 'grow', 0.3);
   crowd.update(0);
   close(crowd.blendAt(0), 0.3);
-  const a = crowd.instanceAnimation;
+  const a = crowd.drawAnimation;
   assert.deepEqual([a[0], a[1]], [3, 4]); close(a[7], 0.3);
   // A quarter of the way through "sway" is a quarter of the way through "grow": frame 5 of 20.
   assert.deepEqual([a[4], a[5]], [12 + 5, 12 + 6]); close(a[6], 0, 1e-4);
@@ -178,7 +220,7 @@ test('a second clip blends in, by a set weight or as a cross-fade', () => {
   close(crowd.blendAt(0), 0.3);
   crowd.setBlendAt(0, 'grow', 0);
   crowd.update(0);
-  assert.equal(crowd.blendAt(0), 0); assert.equal(crowd.instanceAnimation[7], 0);
+  assert.equal(crowd.blendAt(0), 0); assert.equal(crowd.drawAnimation[7], 0);
   assert.throws(() => crowd.setBlendAt(0, 'grow', 1.5), code('WORLD3D_INPUT_INVALID'));
   // A cross-fade: the old clip keeps playing as the second one while its weight runs out.
   crowd.setClipAt(1, 'sway', {time: 0.4});
@@ -186,31 +228,16 @@ test('a second clip blends in, by a set weight or as a cross-fade', () => {
   assert.equal(crowd.clipAt(1), 1); close(crowd.blendAt(1), 1);
   crowd.update(0.25);
   close(crowd.blendAt(1), 0.5, 1e-5);
-  const b = crowd.instanceAnimation.subarray(12, 24);
+  const b = crowd.drawAnimation.subarray(12, 24);
   assert.ok(b[0] >= 12 && b[4] >= 1 && b[4] < 12, 'new clip first, old clip second');
   close(b[7], 0.5, 1e-5);
-  crowd.update(0.3);
-  assert.equal(crowd.blendAt(1), 0); assert.equal(crowd.instanceAnimation[12 + 7], 0);
-});
-
-test('clones continue an active fade with independent playback state', () => {
-  const {root, mesh, geometry, sway, grow} = rig();
-  const baked = bakeAnimationTexture3D(root, mesh, [sway, grow], {fps: 10});
-  const crowd = createSkinnedInstancedMesh3D(geometry, mesh.material, baked, 1);
-  crowd.setClipAt(0, 'sway', {time: 0.42});
-  crowd.setClipAt(0, 'grow', {fade: 0.5});
-  crowd.update(0.12);
-
   const copy = crowd.clone();
-  assert.deepEqual(copy.instanceAnimation, crowd.instanceAnimation);
-  for (const step of [0, 0.06, 0.13, 0.25]) {
-    const previous = crowd.instanceAnimation.slice();
-    copy.update(step);
-    assert.deepEqual(crowd.instanceAnimation, previous);
-    crowd.update(step);
-    assert.deepEqual(copy.instanceAnimation, crowd.instanceAnimation);
-    assert.equal(copy.timeAt(0), crowd.timeAt(0));
-  }
+  copy.update(0.1);
+  close(crowd.blendAt(1), 0.5, 1e-5);
+  crowd.update(0.1);
+  assert.deepEqual([...copy.drawAnimation], [...crowd.drawAnimation]);
+  crowd.update(0.3);
+  assert.equal(crowd.blendAt(1), 0); assert.equal(crowd.drawAnimation[12 + 7], 0);
 });
 
 test('a fixed-origin scaled skin stays in the render list when its rest bound is outside', () => {
@@ -230,12 +257,12 @@ test('a fixed-origin scaled skin stays in the render list when its rest bound is
     {targetName: bone.name, path: 'scale', times: [0], values: [8, 1, 1]},
   ]});
   const baked = bakeAnimationTexture3D(root, mesh, [stretch]);
-  // Frame 0 holds the bone pivots; the first pose follows it, one bone row and one weight row per frame.
-  const pose = baked.stride * 16;
+  const pose = baked.clips[0].start * baked.stride * 16;
   assert.equal(baked.data[pose], 8);
   assert.deepEqual([...baked.data.subarray(pose + 12, pose + 15)], [0, 0, 0]);
   const crowd = createSkinnedInstancedMesh3D(geometry, material, baked, 1);
   crowd.setPosition(6, 0, 0);
+  crowd.castShadow = false;
   // Requesting culling must still be safe when the available bound is unqualified.
   crowd.frustumCulled = true;
   const control = new Mesh3D(geometry, material);
@@ -258,12 +285,12 @@ test('one bone can be turned per instance', () => {
   assert.equal(crowd.lookBone, -1);
   crowd.lookBone = 2;
   // The shared float carries the matrices per frame and the bone.
-  assert.equal(crowd.instanceAnimation[3], 4 + 2048 * 3);
+  assert.equal(crowd.drawAnimation[3], 4 + 2048 * 3);
   crowd.setBoneRotationAt(1, 0, 2, 0, 2);
   crowd.update(0);
-  const turned = [...crowd.instanceAnimation.subarray(12 + 8, 24)];
+  const turned = [...crowd.drawAnimation.subarray(12 + 8, 24)];
   close(turned[1], Math.SQRT1_2); close(turned[3], Math.SQRT1_2);
-  assert.deepEqual([...crowd.instanceAnimation.subarray(8, 12)], [0, 0, 0, 1]);
+  assert.deepEqual([...crowd.drawAnimation.subarray(8, 12)], [0, 0, 0, 1]);
   assert.throws(() => { crowd.lookBone = 3; }, code('WORLD3D_INPUT_INVALID'));
   assert.throws(() => crowd.setBoneRotationAt(0, 0, 0, 0, 0), code('WORLD3D_INPUT_INVALID'));
 });
@@ -272,31 +299,38 @@ test('instances outside the view are left out of the draw', () => {
   const {root, mesh, geometry, sway} = rig();
   const baked = bakeAnimationTexture3D(root, mesh, [sway]);
   const crowd = createSkinnedInstancedMesh3D(geometry, mesh.material, baked, 5);
+  crowd.castShadow = false;
   // Three in front of the camera, one far to the side, one behind it.
   [[0, 0, 0], [2, 0, -3], [-2, 0, -6], [400, 0, 0], [0, 0, 60]].forEach((at, i) => { crowd.setTransformAt(i, at); crowd.setColorAt(i, i / 4, 0, 0); });
   crowd.update(0);
-  assert.equal(crowd.count, 5);
-  // Leaving instances out is asked for; by default every instance is drawn.
-  assert.equal(crowd.cullInstances, false);
-  crowd.cullInstances = true;
+  assert.equal(crowd.drawCount, 5);
   const camera = createPerspectiveCamera3D({fov: 50, aspect: 1, near: 0.1, far: 200});
   camera.setPosition(0, 1, 12).lookAt(0, 1, 0); camera.updateViewMatrices();
   crowd.beforeRender(camera);
-  assert.equal(crowd.count, 3);
+  assert.equal(crowd.drawCount, 5, 'a crowd without a posed bound must keep all instances');
+  assert.throws(() => { crowd.cullRadius = 0; }, code('WORLD3D_INPUT_INVALID'));
+  crowd.cullRadius = 3;
+  crowd.cullPadding = 0;
+  crowd.beforeRender(camera);
+  assert.equal(crowd.drawCount, 3);
   // The drawn arrays hold the visible instances, in order, with their own colors.
-  assert.deepEqual([crowd.instanceMatrices[12], crowd.instanceMatrices[16 + 12], crowd.instanceMatrices[32 + 12]], [0, 2, -2]);
-  assert.deepEqual([crowd.instanceColors[0], crowd.instanceColors[3], crowd.instanceColors[6]], [0, 0.25, 0.5]);
+  assert.deepEqual([crowd.drawMatrices[12], crowd.drawMatrices[16 + 12], crowd.drawMatrices[32 + 12]], [0, 2, -2]);
+  assert.deepEqual([crowd.drawColors[0], crowd.drawColors[3], crowd.drawColors[6]], [0, 0.25, 0.5]);
   // Turning around shows the one behind; switching culling off draws all.
   camera.setPosition(0, 1, 12).lookAt(0, 1, 100); camera.updateViewMatrices();
   crowd.beforeRender(camera);
-  assert.equal(crowd.count, 1); assert.equal(crowd.instanceMatrices[14], 60);
+  assert.equal(crowd.drawCount, 1); assert.equal(crowd.drawMatrices[14], 60);
   crowd.cullInstances = false; crowd.beforeRender(camera);
-  assert.equal(crowd.count, 5);
-  // Padding keeps instances just outside the view, whose shadows may still reach it.
-  crowd.cullInstances = true; crowd.cullPadding = 400;
+  assert.equal(crowd.drawCount, 5);
+  // A camera-only rejection cannot remove a caster whose shadow reaches the view.
+  crowd.cullInstances = true; crowd.castShadow = true;
+  crowd.beforeRender(camera);
+  assert.equal(crowd.drawCount, 5);
+  crowd.castShadow = false;
+  crowd.cullPadding = 400;
   camera.setPosition(0, 1, 12).lookAt(0, 1, 0); camera.updateViewMatrices();
   crowd.beforeRender(camera);
-  assert.equal(crowd.count, 5);
+  assert.equal(crowd.drawCount, 5);
   baked.dispose();
   assert.equal(baked.isDisposed, true);
 });

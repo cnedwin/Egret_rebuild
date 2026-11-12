@@ -197,10 +197,16 @@ void main() {
         // A floor: find when the particle comes down on it, then let it leave again slower, once. Drag is not applied on this path.
         vec3 pull = uCustom[1].xyz, launch = particleMotion.xyz;
         float a = 0.5 * pull.y, b = launch.y, c = particleStart.y - uCustom[3].z, hit = -1.0;
-        if (abs(a) > 0.000001) { float root = b * b - 4.0 * a * c; if (root >= 0.0) hit = max((-b - sqrt(root)) / (2.0 * a), (-b + sqrt(root)) / (2.0 * a)); }
-        else if (b < 0.0) hit = -c / b;
+        if (c == 0.0 && (b < 0.0 || (b == 0.0 && a < 0.0))) hit = 0.0;
+        else if (abs(a) > 0.000001) {
+            float discriminant = b * b - 4.0 * a * c;
+            if (discriminant > 0.0) {
+                float root = sqrt(discriminant);
+                hit = b < 0.0 ? 2.0 * c / (root - b) : (-b - root) / (2.0 * a);
+            }
+        } else if (b < 0.0) hit = -c / b;
         particleCenter = particleStart.xyz + launch * particleTime + pull * (0.5 * particleTime * particleTime);
-        if (c >= 0.0 && hit > 0.0 && particleTime > hit) {
+        if (c >= 0.0 && hit >= 0.0 && particleTime >= hit) {
             vec3 landed = particleStart.xyz + launch * hit + pull * (0.5 * hit * hit), away = (launch + pull * hit) * vec3(uCustom[3].w, -uCustom[3].w, uCustom[3].w);
             float since = particleTime - hit;
             particleCenter = landed + away * since + pull * (0.5 * since * since);
