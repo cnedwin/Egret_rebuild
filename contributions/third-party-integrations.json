@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "integrations/src/archive.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "criticalComment": true
+    },
+    {
+      "path": "integrations/src/errors.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "criticalComment": true
+    },
+    {
+      "path": "integrations/src/i18n.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "criticalComment": true
+    },
+    {
+      "path": "integrations/src/physics.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "criticalComment": true
+    },
+    {
+      "path": "integrations/src/texture.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "criticalComment": true
+    },
+    {
+      "path": "integrations/src/tiled-vendors.d.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES."
+    },
+    {
+      "path": "integrations/src/tiled.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "criticalComment": true
+    },
+    {
+      "path": "integrations/src/web/audio.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "criticalComment": true
+    },
+    {
+      "path": "integrations/src/web/storage.ts",
+      "originRole": "First-party Egret integration adapter authored with AI assistance under Apache-2.0. Uses the explicit locked dependency APIs documented in integrations/THIRD_PARTY_NOTICES.",
+      "criticalComment": true
+    },
+    {
+      "path": "integrations/tests/archive.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries."
+    },
+    {
+      "path": "integrations/tests/audio.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries."
+    },
+    {
+      "path": "integrations/tests/i18n.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries."
+    },
+    {
+      "path": "integrations/tests/physics.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries."
+    },
+    {
+      "path": "integrations/tests/storage.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries."
+    },
+    {
+      "path": "integrations/tests/texture.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries."
+    },
+    {
+      "path": "integrations/tests/tiled.test.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries."
+    },
+    {
+      "path": "integrations/example/assets/fixture-texture.mjs",
+      "originRole": "First-party runnable Egret integration example or generated fixture authored with AI assistance under Apache-2.0. Uses the built optional package and public engine API."
+    },
+    {
+      "path": "integrations/example/assets/room.tmx",
+      "originRole": "First-party runnable Egret integration example or generated fixture authored with AI assistance under Apache-2.0. Uses the built optional package and public engine API."
+    },
+    {
+      "path": "integrations/example/assets/tiles.png",
+      "originRole": "First-party runnable Egret integration example or generated fixture authored with AI assistance under Apache-2.0. Uses the built optional package and public engine API."
+    },
+    {
+      "path": "integrations/example/assets/tiles.tsx",
+      "originRole": "First-party runnable Egret integration example or generated fixture authored with AI assistance under Apache-2.0. Uses the built optional package and public engine API."
+    },
+    {
+      "path": "integrations/example/index.html",
+      "originRole": "First-party runnable Egret integration example or generated fixture authored with AI assistance under Apache-2.0. Uses the built optional package and public engine API."
+    },
+    {
+      "path": "integrations/example/main.mjs",
+      "originRole": "First-party runnable Egret integration example or generated fixture authored with AI assistance under Apache-2.0. Uses the built optional package and public engine API."
+    },
+    {
+      "path": "integrations/tools/example.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries."
+    },
+    {
+      "path": "integrations/tools/import-tiled.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries."
+    },
+    {
+      "path": "integrations/tools/verify-browser.mjs",
+      "originRole": "First-party Egret integration validation or tool authored with AI assistance under Apache-2.0, using generated input fixtures and actual built public entries."
+    },
+    {
+      "path": "integrations/.gitignore",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately."
+    },
+    {
+      "path": "integrations/package.json",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately."
+    },
+    {
+      "path": "integrations/pnpm-workspace.yaml",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately."
+    },
+    {
+      "path": "integrations/pnpm-lock.yaml",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately."
+    },
+    {
+      "path": "integrations/tsconfig.json",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately."
+    },
+    {
+      "path": "integrations/THIRD_PARTY_NOTICES",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately."
+    },
+    {
+      "path": "integrations/README.md",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately."
+    },
+    {
+      "path": "integrations/README.zh-CN.md",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately."
+    },
+    {
+      "path": ".github/workflows/integrations.yml",
+      "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately."
+    }
+  ],
+  "documents": [
+    {
+      "en": "integrations/README.md",
+      "zh": "integrations/README.zh-CN.md"
+    }
+  ]
+}

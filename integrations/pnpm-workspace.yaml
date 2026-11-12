@@ -1,0 +1,10 @@
+# Optional integration dependencies have their own installation and lockfile.
+packages: []
+autoInstallPeers: false
+packageExtensions:
+  'planck@1.5.1':
+    peerDependenciesMeta:
+      stage-js:
+        optional: true
+allowBuilds:
+  '*': false

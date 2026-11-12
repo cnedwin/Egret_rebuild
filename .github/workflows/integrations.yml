@@ -1,0 +1,30 @@
+name: Third-party integrations
+on:
+  pull_request:
+    paths: ['integrations/**', '.github/workflows/integrations.yml']
+  push:
+    branches: [main]
+    paths: ['integrations/**', '.github/workflows/integrations.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    name: Optional integration smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - run: npm install --global pnpm@11.25.0 --ignore-scripts
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm build
+      - run: pnpm --dir integrations install --frozen-lockfile --ignore-scripts
+      - run: pnpm --dir integrations build
+      - run: pnpm --dir integrations test
+      - run: pnpm --dir integrations exec playwright install --with-deps chromium
+      - run: pnpm --dir integrations verify:browser chromium
