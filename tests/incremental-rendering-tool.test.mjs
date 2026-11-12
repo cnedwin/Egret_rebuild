@@ -269,6 +269,67 @@ test('UNIT recipe 6 keeps capacity-paced/1 and the fixed thirty timing plus six 
   assert.equal(recipe.schedules.timing.length + recipe.schedules.diagnostic.length, 36);
   assert.deepEqual(recipe.browser, { channel: 'msedge' });
 }));
+test('UNIT current SDK recipe changes only bounded source admission and keeps recipe 6 intact', () => metadataFixture(({owner,recipe}) => {
+  const current = createFixedRecipe(recipe.baseline, recipe.candidate, undefined, 'm12-current');
+  assert.equal(current.schema, 'egret.incremental-native-recipe/7');
+  assert.deepEqual(current.fixed, { ...recipe.fixed, sourceProfile: 'm12-current' });
+  assert.deepEqual(current.schedules, recipe.schedules);
+  assert.equal(protocol.recipeSourceProfile(recipe, 'candidate'), 'm12-recipe5');
+  assert.equal(protocol.recipeSourceProfile(current, 'baseline'), 'm12-recipe5');
+  assert.equal(protocol.recipeSourceProfile(current, 'candidate'), 'm3-font-resources-textured');
+  assert.throws(() => validateRecipe({ ...current, schema: recipe.schema }), /RECIPE_FIXED/);
+  assert.throws(() => validateRecipe({ ...current, fixed: { ...current.fixed, warmMs: 1 } }), /RECIPE_FIXED/);
+  const file = path.join(owner, 'current.json');
+  fs.writeFileSync(file, canonicalTextBytes(JSON.stringify(current, null, 2)));
+  assert.deepEqual(loadRecipe(file).recipe, current);
+  const keys = ['--baseline', '--candidate', '--baseline-build-log', '--baseline-build-exit',
+    '--candidate-build-log', '--candidate-build-exit', '--output', '--executable'];
+  const args = ['--prepare', ...keys.flatMap((key, index) => [key, path.join(owner, String(index))])];
+  assert.equal(prepareOptions([...args, '--source-profile', 'm12-current'])['--source-profile'], 'm12-current');
+  assert.throws(() => prepareOptions([...args, '--source-profile', 'm3-font-resources-textured']), /PREPARE_SOURCE_PROFILE/);
+}));
+
+test('UNIT current SDK map admits only the exact added Engine private aliases', () => metadataFixture(({owner}) => {
+  const put = (relative, body) => {
+    const file = path.join(owner, relative);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, body);
+  };
+  const names = ['contracts', 'runtime', 'engine'];
+  const suffixes = {
+    '#egret-pointer-input': 'pointerInput',
+    '#egret-keyboard-input': 'keyboardInput',
+    '#egret-text-editor': 'ui/textEditor',
+  };
+  const imports = Object.fromEntries(Object.entries(suffixes).map(([key, target]) =>
+    [key, { import: './dist/' + target + '.js', types: './dist/' + target + '.d.ts' }]));
+  const writePackage = (name, aliases) => {
+    put('packages/' + name + '/package.json', JSON.stringify({
+      name: '@egret/' + name,
+      exports: { '.': { import: './dist/index.js', types: './dist/index.d.ts' } },
+      imports: aliases,
+    }));
+  };
+  for (const name of names) {
+    put('packages/' + name + '/dist/index.js', 'export {};');
+    put('packages/' + name + '/dist/index.d.ts', 'export {};');
+    writePackage(name, name === 'engine' ? imports : {});
+  }
+  for (const target of Object.values(imports)) {
+    for (const value of Object.values(target)) put('packages/engine/' + value.slice(2), 'export {};');
+  }
+  const profile = 'm3-font-resources-textured';
+  assert.throws(() => protocol.publicEntriesFor(owner), /PACKAGE_PRIVATE_ALIAS/);
+  const current = protocol.publicEntriesFor(owner, profile);
+  for (const [key, target] of Object.entries(imports)) {
+    assert.equal(current.imports[key], '/packages/engine/' + target.import.slice(2));
+  }
+  writePackage('engine', { ...imports, '#egret-text-editor': imports['#egret-pointer-input'] });
+  assert.throws(() => protocol.publicEntriesFor(owner, profile), /PACKAGE_PRIVATE_ALIAS_TARGET/);
+  writePackage('engine', imports);
+  writePackage('runtime', { '#egret-pointer-input': imports['#egret-pointer-input'] });
+  assert.throws(() => protocol.publicEntriesFor(owner, profile), /PACKAGE_PRIVATE_ALIAS_TARGET/);
+}));
 test('UNIT gap coverage weights wall time, keeps zero spans and never rounds performance thresholds', () => {
   assert.equal(typeof protocol.weightedGapQuantile, 'function');
   const gaps = [0, ...Array(99).fill(16.7), 58346.7];

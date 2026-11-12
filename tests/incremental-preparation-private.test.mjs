@@ -622,3 +622,124 @@ test('UNIT P25 stable probe rearm keeps its historical second input walk and fai
     assert.equal(read(recovery).value.marker, 4); assert.equal(cache.snapshot().reservedBytes, 0);
   } finally { cache.clear(); }
 });
+
+test('UNIT P26 recurring keys recover from either reset order and bounded novel misses enter a probe', () => {
+  const cache = new PreparedFrameCache2D();
+  const command = tx => rect({ matrix: { ...matrix(), tx } });
+  const next = (tx, profile = 1) => {
+    const context = cache.context(profile, OPTIONS);
+    cache.enableRecurringTexturedKeys(context);
+    return slot(context, command(tx));
+  };
+  const produce = (selected, marker) => {
+    publish(selected, { marker });
+    publishPreparedStage2D(selected, 'packing', { data: new Float32Array([marker, 2]) }, ZERO);
+  };
+  const expect = (selected, marker) => {
+    assert.equal(read(selected).value.marker, marker);
+    assert.deepEqual(Array.from(readPreparedStage2D(selected, 'packing').value.data), [marker, 2]);
+  };
+  try {
+    const neutral = next(0); produce(neutral, 0);
+    const oneEntry = cache.snapshot().bytes;
+    const first = next(1); assert.equal(read(first), undefined); produce(first, 1);
+    const second = next(-1); assert.equal(read(second), undefined); produce(second, -1);
+    assert.equal(read(neutral), undefined);
+    assert.deepEqual([cache.snapshot().entries, cache.snapshot().bytes], [2, oneEntry * 2]);
+    assert.equal(read(slot(cache.context(1, OPTIONS), command(-1))), undefined, 'A default context cannot read the alternate key');
+    for (const value of [1, -1, 1, -1]) {
+      const selected = next(value); expect(selected, value); acceptPreparedStage2D(selected);
+    }
+    for (const firstAfterReset of [1, -1]) {
+      produce(next(0), 0);
+      let misses = 0;
+      for (const value of [firstAfterReset, -firstAfterReset, firstAfterReset, -firstAfterReset]) {
+        const selected = next(value);
+        if (read(selected)) {
+          expect(selected, value);
+          acceptPreparedStage2D(selected);
+        } else {
+          misses++;
+          produce(selected, value);
+        }
+      }
+      assert.ok(misses <= 2, 'Reset can require two complete replacements before the next hit');
+      expect(next(1), 1); expect(next(-1), -1);
+      assert.deepEqual([cache.snapshot().entries, cache.snapshot().bytes], [2, oneEntry * 2]);
+    }
+    for (const value of [2, 3, 4]) {
+      const novel = next(value); assert.equal(read(novel), undefined); produce(novel, value);
+      expect(novel, value);
+      assert.deepEqual([cache.snapshot().entries, cache.snapshot().bytes], [2, oneEntry * 2]);
+    }
+    const failed = next(5);
+    assert.equal(read(failed), undefined);
+    publishPreparedStage2D(failed, 'geometry', { marker: 3 }, { ...ZERO, predicates: -1 });
+    expect(next(3), 3); expect(next(4), 4);
+    const fourthMiss = next(5); produce(fourthMiss, 5);
+    for (const selected of [next(3), next(4), fourthMiss]) {
+      assert.equal(read(selected), undefined);
+      assert.equal(readPreparedStage2D(selected, 'packing'), undefined);
+    }
+    assert.deepEqual([cache.snapshot().entries, cache.snapshot().bytes], [1, 256 + 80 + 24 + 8 * 24]);
+    for (const value of [6, 7, 8]) {
+      const novel = next(value); produce(novel, value); assert.equal(read(novel), undefined);
+    }
+
+    const ordinary = next(0, 0); produce(ordinary, 0); produce(next(1, 0), 1);
+    assert.equal(read(ordinary), undefined, 'Other Host profiles keep a single candidate');
+    cache.clear(); produce(second, 7);
+    assert.equal(read(second), undefined);
+    assert.deepEqual([cache.snapshot().entries, cache.snapshot().bytes], [0, 0]);
+  } finally { cache.clear(); }
+});
+
+test('UNIT P27 recurring key reuse keeps resource identities, signed zeros and one ordered caller scan', () => {
+  const cache = new PreparedFrameCache2D(), a = image(), b = image(), meshA = geometry(), meshB = geometry();
+  const next = (resource, shape, zero) => {
+    let visits = 0;
+    const command = meshCommand({ matrix: { ...matrix(), get b() { visits++; return zero; } } });
+    const context = cache.context(1, OPTIONS);
+    cache.enableRecurringTexturedKeys(context);
+    const selected = slot(context, command, { image: resource, geometry: shape });
+    assert.equal(visits, 1);
+    return selected;
+  };
+  try {
+    publish(next(a, meshA, -0), { marker: 11 });
+    publish(next(b, meshB, +0), { marker: 22 });
+    for (const [resource, shape, zero, marker] of [[a, meshA, -0, 11], [b, meshB, +0, 22]]) {
+      assert.equal(read(next(resource, shape, zero)).value.marker, marker);
+    }
+    assert.equal(read(next(a, meshB, -0)), undefined);
+    assert.equal(read(next(b, meshA, +0)), undefined);
+    assert.equal(read(next(a, meshA, +0)), undefined);
+    assert.equal(read(next(b, meshB, -0)), undefined);
+    assert.equal(cache.snapshot().entries, 2);
+    assert.ok(cache.snapshot().peakBytes <= CAP);
+  } finally { cache.clear(); }
+});
+
+test('UNIT P28 alternate entries share the Host cap and survive correct primary eviction', () => {
+  const cache = new PreparedFrameCache2D();
+  const next = (tx, ordinal) => {
+    const context = cache.context(1, OPTIONS);
+    cache.enableRecurringTexturedKeys(context);
+    return slot(context, rect({ matrix: { ...matrix(), tx } }), { ordinal });
+  };
+  try {
+    const a = next(0, 0); publish(a, { marker: 0 });
+    const entryBytes = cache.snapshot().bytes;
+    const b = next(1, 0); publish(b, { marker: 1 });
+    for (let ordinal = 1; ordinal < 4096; ordinal++) publish(next(0, ordinal), { marker: ordinal });
+    assert.equal(read(a), undefined);
+    assert.equal(read(b).value.marker, 1, 'Eviction promotes the remaining exact variant');
+    assert.deepEqual([cache.snapshot().entries, cache.snapshot().bytes], [4096, entryBytes * 4096]);
+    acceptPreparedStage2D(b);
+    publish(next(0, 0), { marker: 2 });
+    assert.equal(read(a).value.marker, 2, 'The original complete slot compares against the newly published exact key');
+    assert.equal(read(b).value.marker, 1);
+    assert.equal(cache.snapshot().peakEntries, 4096);
+    assert.ok(cache.snapshot().peakBytes <= CAP);
+  } finally { cache.clear(); }
+});
