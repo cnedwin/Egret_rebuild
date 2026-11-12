@@ -162,6 +162,13 @@ export class WebGL2Renderer3D implements Renderer3D {
      * Draw one frame to the canvas, or into `target` when given. Returns false
      * when the context is lost and nothing was drawn.
      */
+    /**
+     * Draw runs of plain meshes that share a geometry and a material as one
+     * instanced draw each, in the main view and in shadow maps. On by default;
+     * the meshes themselves are untouched.
+     */
+    get autoInstancing(): boolean { return this.#list.autoInstanceThreshold > 1; }
+    set autoInstancing(value: boolean) { this.#list.autoInstanceThreshold = value ? 8 : 0; }
     render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean {
         if (this.#disposed) throw new World3DError('WORLD3D_DISPOSED', 'renderer');
         if (this.isContextLost) return false;

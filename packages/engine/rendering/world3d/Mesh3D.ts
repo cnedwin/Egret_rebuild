@@ -49,9 +49,18 @@ export class Skeleton3D {
         if (frame === this.#lastFrame) return;
         this.#lastFrame = frame;
         const bones = this.bones, out = this.boneMatrices, inverse = this.inverseBindMatrices;
+        // Written out in place: a view per bone per frame would be thousands of short-lived objects.
         for (let i = 0; i < bones.length; i++) {
-            const o = i * 16;
-            mat4Multiply(out.subarray(o, o + 16), bones[i]!.matrixWorld, inverse.subarray(o, o + 16));
+            const o = i * 16, a = bones[i]!.matrixWorld;
+            const a00 = a[0]!, a01 = a[1]!, a02 = a[2]!, a10 = a[4]!, a11 = a[5]!, a12 = a[6]!, a20 = a[8]!, a21 = a[9]!, a22 = a[10]!, a30 = a[12]!, a31 = a[13]!, a32 = a[14]!;
+            for (let column = 0; column < 4; column++) {
+                const c = o + column * 4, b0 = inverse[c]!, b1 = inverse[c + 1]!, b2 = inverse[c + 2]!, b3 = inverse[c + 3]!;
+                out[c] = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3;
+                out[c + 1] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3;
+                out[c + 2] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3;
+                // Bone and bind matrices are affine, so the last row stays 0 0 0 1.
+                out[c + 3] = b3;
+            }
         }
         this.version++;
     }
@@ -71,10 +80,17 @@ export class Mesh3D extends Object3D {
     /** Mesh-space to skeleton-space matrix captured at bind time. */
     readonly bindMatrix = mat4Identity(new Float32Array(16)) as Float32Array;
     readonly #worldSphere = new Float32Array(4);
-    #sphereKey = '';
+    #sphereGeometry: Geometry3D | undefined;
+    // Whether this is exactly a Mesh3D, and whether its transform keeps the winding: asked for every mesh on every frame.
+    #exact = false;
+    #windingWorld = -1;
+    #winding = true;
+    #sphereVersion = -1;
+    #sphereWorld = -1;
 
     constructor(geometry: Geometry3D = new Geometry3D(), material: Material3D | Material3D[] = new Material3D('unlit')) {
         super('mesh');
+        this.#exact = new.target === Mesh3D;
         if (!(geometry instanceof Geometry3D)) throw new World3DError('WORLD3D_INPUT_INVALID', 'geometry');
         const list = Array.isArray(material) ? material : [material];
         if (list.length === 0 || list.length > MESH3D_LIMITS.maxMaterials || !list.every(item => item instanceof Material3D)) throw new World3DError('WORLD3D_INPUT_INVALID', 'material');
@@ -84,6 +100,21 @@ export class Mesh3D extends Object3D {
         this.syncMorphWeights();
     }
     get isInstanced(): boolean { return false; }
+    /**
+     * True when an instanced draw could stand in for this mesh: it is a plain
+     * Mesh3D without skinning or morphing, and its transform is not mirrored.
+     * The renderer uses it to fold repeated meshes into one draw.
+     */
+    get canInstance(): boolean {
+        if (!this.#exact || this.skeleton !== undefined || this.geometry.morphTargets.length > 0) return false;
+        const version = this.worldVersion;
+        if (version !== this.#windingWorld) {
+            const m = this.matrixWorld;
+            this.#winding = m[0]! * (m[5]! * m[10]! - m[6]! * m[9]!) - m[4]! * (m[1]! * m[10]! - m[2]! * m[9]!) + m[8]! * (m[1]! * m[6]! - m[2]! * m[5]!) > 0;
+            this.#windingWorld = version;
+        }
+        return this.#winding;
+    }
     /** Material for a geometry group index, falling back to the first slot. */
     materialAt(index: number): Material3D {
         return Array.isArray(this.material) ? (this.material[index] ?? this.material[0]!) : this.material;
@@ -110,10 +141,11 @@ export class Mesh3D extends Object3D {
      */
     get worldBoundingSphere(): Float32Array {
         if (this.skeleton) return this.skinnedBounds();
-        const key = this.geometry.id + ':' + this.geometry.version + ':' + this.worldVersion;
-        if (key !== this.#sphereKey) {
-            sphereTransform(this.#worldSphere, this.geometry.boundingSphere, this.matrixWorld);
-            this.#sphereKey = key;
+        // Compared as numbers: this runs for every mesh on every frame.
+        const geometry = this.geometry, version = geometry.version, world = this.worldVersion;
+        if (geometry !== this.#sphereGeometry || version !== this.#sphereVersion || world !== this.#sphereWorld) {
+            sphereTransform(this.#worldSphere, geometry.boundingSphere, this.matrixWorld);
+            this.#sphereGeometry = geometry; this.#sphereVersion = version; this.#sphereWorld = world;
         }
         return this.#worldSphere;
     }
