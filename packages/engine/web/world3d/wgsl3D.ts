@@ -48,6 +48,8 @@ export interface ShaderFeatures3D {
     readonly customNormalWgsl?: string;
     /** Standard material with a mirror image read at the pixel's place on screen. */
     readonly reflectionMap?: boolean;
+    /** Instances posed from a table of baked bone matrices. */
+    readonly skinInstancing?: boolean;
 }
 
 export const MAX_MORPH_INFLUENCES_WGSL_3D = 8;
@@ -153,7 +155,8 @@ function vertexSource(f: ShaderFeatures3D): string {
     if (f.tangent) inputs.push('@location(3) tangent: vec4f');
     if (f.vertexColor) inputs.push('@location(4) color: vec4f');
     if (f.uv1) inputs.push('@location(7) uv1: vec2f');
-    if (f.skinning) inputs.push('@location(5) joints: vec4u', '@location(6) weights: vec4f');
+    if (f.skinning || f.skinInstancing) inputs.push('@location(5) joints: vec4u', '@location(6) weights: vec4f');
+    if (f.skinInstancing) inputs.push('@location(13) instanceAnimation: vec4f');
     if (f.instancing) inputs.push('@location(8) instance0: vec4f', '@location(9) instance1: vec4f', '@location(10) instance2: vec4f', '@location(11) instance3: vec4f');
     if (f.instanceColor) inputs.push('@location(12) instanceColor: vec4f');
     return /* wgsl */`
@@ -173,6 +176,12 @@ fn morphDelta(targetIndex: i32, channel: i32, vertexIndex: u32) -> vec3f {
     let texel = (targetIndex * object.morph.y + channel) * object.morph.x + i32(vertexIndex);
     return morphData[texel].xyz;
 }
+${f.skinInstancing ? /* wgsl */`
+// The bones table holds every frame of every clip, a whole skeleton per frame.
+fn bakedPose(frame: f32, count: f32, joints: vec4u, weights: vec4f) -> mat4x4f {
+    let first = u32(frame) * u32(count);
+    return weights.x * bones[first + joints.x] + weights.y * bones[first + joints.y] + weights.z * bones[first + joints.z] + weights.w * bones[first + joints.w];
+}` : ''}
 @vertex
 fn vertexMain(input: VertexInput) -> VertexOutput {
     var position = input.position;
@@ -195,6 +204,11 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     let instance = mat4x4f(input.instance0, input.instance1, input.instance2, input.instance3);
     model = model * instance;
     normalMatrix = normalMatrix * mat3x3f(instance[0].xyz, instance[1].xyz, instance[2].xyz);` : ''}
+    ${f.skinInstancing ? /* wgsl */`
+    // Each instance is posed in its own space before its transform places it.
+    let animation = input.instanceAnimation;
+    model = model * (bakedPose(animation.x, animation.w, input.joints, input.weights) * (1.0 - animation.z) + bakedPose(animation.y, animation.w, input.joints, input.weights) * animation.z);
+    normalMatrix = mat3x3f(model[0].xyz, model[1].xyz, model[2].xyz);` : ''}
     var world = model * vec4f(position, 1.0);
     ${f.customVertexWgsl !== undefined ? `world = vec4f(customVertex(world.xyz, position, normal, ${f.uv ? 'input.uv' : 'vec2f(0.0)'}, ${f.vertexColor ? 'input.color' : 'vec4f(1.0)'}), world.w);` : ''}
     ${f.billboard ? /* wgsl */`
