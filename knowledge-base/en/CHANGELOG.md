@@ -4,6 +4,18 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## World3D gameplay physics and rendering — 2026-11-13
+
+Automatic instancing groups compatible draws and the picking hierarchy accelerates dense-mesh queries. Physics adds shape sweeps, compound bodies, contact reports and solver improvements, followed by ragdoll, arcade vehicle, rope, cloth and message-port helpers. The latest PR reports 27 fixed headless software-rendered WebGL2/WebGPU comparisons and remote tests using MessageChannel and a Node worker thread. Browser Worker, physical-device and performance qualification remain open. [#163](https://github.com/cnedwin/Egret_rebuild/pull/163) · [#166](https://github.com/cnedwin/Egret_rebuild/pull/166) · [#167](https://github.com/cnedwin/Egret_rebuild/pull/167) · [#168](https://github.com/cnedwin/Egret_rebuild/pull/168)
+
+## Parallel Windows merge checks — 2026-11-13
+
+One Windows job runs the structural and publication checks while four independent test shards cover the complete suite on the same candidate. The final hosted run for #164 took 13 minutes 12 seconds from creation to completion. [#164](https://github.com/cnedwin/Egret_rebuild/pull/164) · [Hosted run](https://github.com/cnedwin/Egret_rebuild/actions/runs/43294257120)
+
+## World3D character, terrain and effects — 2026-11-12–13
+
+Character controls, asset decoding, navigation, terrain and water, skinned crowds and effects landed across the series. The last checkpoint in this set passed 25 fixed Windows Edge offscreen WebGL2/WebGPU comparisons, with a separate soft-particle depth check on both backends. [#154](https://github.com/cnedwin/Egret_rebuild/pull/154)–[#159](https://github.com/cnedwin/Egret_rebuild/pull/159) · [#161](https://github.com/cnedwin/Egret_rebuild/pull/161)
+
 ## Fixed desktop rendering CPU targets — 2026-11-12
 
 Windows E20 reached a 5.3 ms full-dirty Engine median-p95 and met the CPU and preparation targets in all states. Sparse and full-dirty pacing remains above target. GPU time is unmeasured. [#153](https://github.com/cnedwin/Egret_rebuild/pull/153)

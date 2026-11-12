@@ -2,7 +2,7 @@
 
 [English](../../en/docs/core-progress.md) | 简体中文
 
-2026-11-12 按 main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc) 复盘。工程预览提供可运行的公共示例。工作区包为 private 0.0.0，稳定引擎发行仍待交付。
+2026-11-13 按 main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e) 复盘。工程预览提供可运行的公共示例。工作区包为 private 0.0.0，稳定引擎发行仍待交付。
 
 本页说明当前能力，[工程计划](工程规划.md)说明接下来的工作，子系统契约给出准确 API 和证据范围。历史预览记录不再作为并行的“当前版本”。
 
@@ -18,16 +18,24 @@
 | UI | 托管根、测量／排列、变高稳定键列表、锚点、行焦点与定位；不可变主题／皮肤代次、共享特效及受管弹出层／模态层 | 完整控件、语义投影及完整大场景资格 |
 | 文字与字体 | 只读 CanvasKit／SkParagraph 段落、最终行双向排版、换行、对齐／行数限制、多样式、已提交命中／选区／插入点几何及受管字体集合切换、可选原生单／多行编辑及配对浏览器字体 | 真实 IME 资格、必需文字／字体／墨迹的独立参考、传输／启动及 CPU／Wasm／内存资格 |
 | 输入 | 兼容旧鼠标 API、可选多触点路由、键盘／逻辑焦点、响应式示例及已合并的移动／动作控件状态 | 其余控件／示例／键盘接线、手势仲裁、完整语义整合和必需真实手机／IME／无障碍记录 |
-| 3D | [共享创作场景](authored-scene3d.md)支持有界背景、参与深度测试的 2D 卡片和刚体动画。[可选 World3D](world3d.md)提供独立 WebGL2／WebGPU 渲染器，以及 glTF 实例、光照阴影、后处理、蒙皮、变形、文字和物理。 | 后端功能与验收范围见契约。更广资产、设备与性能资格及统一 2D／3D 创作流程仍待交付。 |
+| 3D | [共享创作场景](authored-scene3d.md)支持有界背景、参与深度测试的 2D 卡片和刚体动画。[可选 World3D](world3d.md)提供独立 WebGL2／WebGPU 渲染器，以及 glTF 实例、光照阴影、后处理、蒙皮、变形和文字。物理预览包含形状扫掠、组合刚体、分片求解和玩法辅助组件。 | 后端功能与验收范围见契约。更广资产、设备与性能资格及统一 2D／3D 创作流程仍待交付。 |
 | 工程与工具 | 版本化工程快照／事务、结构化诊断、有界旧 RES／MovieClip 分析；固定环境、评审及公开 CI | 工程到运行游戏的创作闭环、集成可视化工具、Agent／Skill／MCP 应用、发布／更新适配和完整迁移 |
 
-## 可选 World3D — 2026-11-12
+## 可选 World3D — 2026-11-13
 
 [#147](https://github.com/cnedwin/Egret_rebuild/pull/147) 合入独立渲染器。[#148](https://github.com/cnedwin/Egret_rebuild/pull/148) 和 [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) 扩展材质、场景、纹理和碰撞。[#151](https://github.com/cnedwin/Egret_rebuild/pull/151) 新增折射、光照贴图、景深、合批、文字几何体、变换操纵器及物理能力。[#152](https://github.com/cnedwin/Egret_rebuild/pull/152) 新增功能展厅，扩展 CPU 回归负载、阴影准备和碰撞路径。
 
 [#154](https://github.com/cnedwin/Egret_rebuild/pull/154) 到 [#159](https://github.com/cnedwin/Egret_rebuild/pull/159) 新增角色控制、压缩资源解码、导航、地形与反射、蒙皮人群及场景特效。Windows Edge 通过全部 24 个 WebGL2／WebGPU 固定场景对比和软粒子深度专项检查。此前 Android Chrome 真机证据覆盖示例呈现及两个后端的指定屏幕效果、顶点钩子和斜投影。功能展厅另有 WebGL2 软件渲染记录。各后端和设备的具体覆盖范围见 [World3D 契约](world3d.md)。
 
 [#161](https://github.com/cnedwin/Egret_rebuild/pull/161) 扩展地形和水面、蒙皮人群及特效。Windows Edge 通过 25 个固定 WebGL2／WebGPU 离屏对比，包含体积雾，并通过两个后端的软粒子深度检查。流式地块与水下雾效所有权由独立无头回归验证。地形示例交互、更广设备及正式性能验收仍开放。
+
+自动实例化合并符合条件的网格绘制，仍可逐个拾取网格。稠密网格拾取使用包围盒层级，部分逐帧操作减少了内存分配。所列性能数据来自单台开发机器。 [#163](https://github.com/cnedwin/Egret_rebuild/pull/163)
+
+物理检查点新增形状扫掠、组合刚体、滑动关节、弹簧、接触报告与果冻视觉形变，并扩展静态刚体层级、面接触、成组休眠、分片求解和高速刚体扫掠。随后增加布娃娃、街机式载具、绳索、布料和消息端口物理客户端。对应 PR 记录在使用软件渲染的无头 Chromium 中分别通过 26 和 27 个固定 WebGL2／WebGPU 对比。远程物理测试使用 MessageChannel 和 Node 工作线程。上述新增能力的浏览器 Worker 执行、实体设备行为及性能仍待验收。五项已复现的 API 回归由专项任务跟踪。 [#169](https://github.com/cnedwin/Egret_rebuild/issues/169) [#166](https://github.com/cnedwin/Egret_rebuild/pull/166) · [#167](https://github.com/cnedwin/Egret_rebuild/pull/167) · [#168](https://github.com/cnedwin/Egret_rebuild/pull/168)
+
+## Windows 合并门禁 — 2026-11-13
+
+代码路线在 Windows 上并行执行独立检查作业和四个测试分片。路线作业选择适用的检查，汇总作业要求各项结果通过。#164 合并前的最终托管工作流从创建到完成用时 13 分 12 秒，最慢分片运行 12 分 33 秒。耗时仅对应这次工作流及其执行机分配。 [#164](https://github.com/cnedwin/Egret_rebuild/pull/164) · [托管运行记录](https://github.com/cnedwin/Egret_rebuild/actions/runs/43294257120)
 
 ## 固定混合场景 — 2026-11-08
 

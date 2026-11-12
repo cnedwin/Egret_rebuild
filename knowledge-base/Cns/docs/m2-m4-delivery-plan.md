@@ -6,7 +6,7 @@
 
 ## 目标与当前基线
 
-复盘 main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc)。
+复盘 main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e)。
 
 让当前共享核心支撑动画丰富、界面复杂的游戏，再完成声明范围的完整资格。保留原十一个工作包。[当前能力](core-progress.md)给出实际实现，[工程计划](工程规划.md)说明下一批完整增量，[M2](m2-spine-content-plan.md)、[M3](m3-ui-text-input-plan.md)、[M4](m4-core-acceptance-plan.md)负责详细契约。
 

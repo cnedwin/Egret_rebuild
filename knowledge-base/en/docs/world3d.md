@@ -338,6 +338,8 @@ Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.t
 
 ## Open items
 
+- The physics helper comparison is a software-rendered offscreen scene. Remote-world tests use MessageChannel and a Node worker thread. Browser Worker transport, interactive vehicle and ragdoll use, physical devices and performance remain open. The scoped API follow-up tracks remote request settlement and ownership, ragdoll activation rollback, and suspension ray filtering. [#169](https://github.com/cnedwin/Egret_rebuild/issues/169) [#168](https://github.com/cnedwin/Egret_rebuild/pull/168)
+
 - The desktop review forced WebGL2 context loss and restored the target pixels. It also forced WebGPU device loss and verified notification and refusal of subsequent work. Wider device and recovery coverage remains open.
 - One physical Android Chrome 157 device presented both backends, responded to an automated shadow toggle, and stopped frame updates on disposal. On the same device class the latest review also checked screen-space effects, vertex displacement and shadows, and oblique projection depth on WebGL2 and WebGPU.
 - Broader mobile and device recovery coverage, dedicated viewport and reflection-probe checks, performance measurements, and human verification of first-person controls and spatial audio remain open.

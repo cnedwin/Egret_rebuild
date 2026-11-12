@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/core-progress.md)
 
-Reviewed main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc) on 2026-11-12. The engineering preview provides runnable public examples. Workspace packages are private at 0.0.0. A stable engine distribution remains future work.
+Reviewed main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e) on 2026-11-13. The engineering preview provides runnable public examples. Workspace packages are private at 0.0.0. A stable engine distribution remains future work.
 
 Use this page for current capability status, the [engineering plan](engineering-plan.md) for the next work, and subsystem contracts for exact APIs and evidence. Historical previews are not competing current versions.
 
@@ -18,16 +18,24 @@ Egret's product direction combines animation-rich 2D games and complex interface
 | UI | Managed roots, measure/arrange, variable-height stable-key lists, anchors, row focus and reveal; immutable theme/skin generations, shared effects and owned popup/modal composition | Full controls, semantic projection and complete large-scene qualification |
 | Text and fonts | Readonly CanvasKit/SkParagraph paragraphs, final-line bidi, wrapping, alignment/maxLines, styled runs, committed hit/selection/caret geometry and managed font-set switching; optional native single/multiline editing and paired browser fonts | Actual IME qualification; independent required script/font/ink references; transfer/startup and CPU/Wasm/memory qualification |
 | Input | Compatible old mouse API, optional multi-contact routing, keyboard/logical focus, responsive examples and merged movement/action state controls | Remaining control/example/keyboard wiring, gesture arbitration, full semantic integration and required actual phone/IME/accessibility rows |
-| 3D | The [authored shared scene](authored-scene3d.md) provides bounded backgrounds, depth-tested 2D cards and rigid animation. [Optional World3D](world3d.md) provides standalone WebGL2 and WebGPU renderers, with glTF instancing, lighting and shadows, post-processing, skinning, morphs, text and physics. | See the contract for backend and verification scope. Broader asset, device and performance qualification and unified 2D/3D authoring remain open. |
+| 3D | The [authored shared scene](authored-scene3d.md) provides bounded backgrounds, depth-tested 2D cards and rigid animation. [Optional World3D](world3d.md) provides standalone WebGL2 and WebGPU renderers, with glTF instancing, lighting and shadows, post-processing, skinning, morphs and text. The physics preview includes shape sweeps, compound bodies, solver slices and gameplay helpers. | See the contract for backend and verification scope. Broader asset, device and performance qualification and unified 2D/3D authoring remain open. |
 | Project and tools | Versioned project snapshots/transactions, structured diagnostics and bounded legacy RES/MovieClip analysis; pinned setup, review and public CI | Project-to-running-game authoring loop, integrated visual tools, Agent/Skill/MCP applications, publication/update adapters and complete migration |
 
-## Optional World3D — 2026-11-12
+## Optional World3D — 2026-11-13
 
 [#147](https://github.com/cnedwin/Egret_rebuild/pull/147) integrated the standalone renderers. [#148](https://github.com/cnedwin/Egret_rebuild/pull/148) and [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) expanded the material, scene, texture and collision paths. [#151](https://github.com/cnedwin/Egret_rebuild/pull/151) added refraction, light maps, depth of field, batching, text geometry, a transform gizmo and physics features. [#152](https://github.com/cnedwin/Egret_rebuild/pull/152) added the feature gallery and extended the CPU regression workloads, shadow preparation and collision paths.
 
 [#154](https://github.com/cnedwin/Egret_rebuild/pull/154) through [#159](https://github.com/cnedwin/Egret_rebuild/pull/159) added character controls, compressed asset decoding, navigation, terrain and reflections, skinned crowds, and scene effects. Windows Edge passed all 24 fixed WebGL2/WebGPU comparisons and focused soft-particle depth checks. Earlier physical Android Chrome evidence covers the sample presentation and selected screen-space, vertex-hook and oblique-projection cases on both backends. The feature gallery has separate WebGL2 software-rendered evidence. See the [World3D contract](world3d.md) for the exact backend and device scope.
 
 [#161](https://github.com/cnedwin/Egret_rebuild/pull/161) extends terrain and water, skinned crowds and effects. Windows Edge passed 25 fixed offscreen WebGL2/WebGPU comparisons, including volumetric fog, and the soft-particle depth check on both backends. Separate headless regressions cover streamed-tile and water-fog ownership. Interactive landscape, broader devices and formal performance qualification remain open.
+
+Automatic instancing groups eligible meshes for drawing while preserving individual picking. The dense-mesh picking hierarchy and reduced per-frame allocations are also available. The reported performance figures are single-machine development measurements. [#163](https://github.com/cnedwin/Egret_rebuild/pull/163)
+
+The physics checkpoints add shape sweeps, compound bodies, slider joints, springs, contact reports and visual jelly deformation, followed by a static-body hierarchy, face contacts, group sleeping, solver slices and swept fast bodies. The next checkpoint adds ragdolls, arcade vehicles, rope and cloth, and a message-port simulation client. The PR records report 26 and 27 fixed WebGL2/WebGPU comparisons in headless Chromium with software rendering, respectively. The remote physics tests used MessageChannel and a Node worker thread. Browser Worker execution, physical-device behavior and performance qualification remain open for these additions. A scoped API follow-up tracks five reproduced regressions. [#169](https://github.com/cnedwin/Egret_rebuild/issues/169) [#166](https://github.com/cnedwin/Egret_rebuild/pull/166) · [#167](https://github.com/cnedwin/Egret_rebuild/pull/167) · [#168](https://github.com/cnedwin/Egret_rebuild/pull/168)
+
+## Windows merge checks — 2026-11-13
+
+The code route now runs an independent Windows checks job and four test shards. The route job selects the applicable checks, and the aggregate job requires their results. The final hosted workflow for #164 finished in 13 minutes 12 seconds. Its longest shard ran for 12 minutes 33 seconds. These times describe one workflow and its runner allocation. [#164](https://github.com/cnedwin/Egret_rebuild/pull/164) · [Hosted run](https://github.com/cnedwin/Egret_rebuild/actions/runs/43294257120)
 
 ## Fixed mixed profiles — 2026-11-08
 

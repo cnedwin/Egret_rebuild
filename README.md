@@ -14,7 +14,7 @@ Years later, as times change and technology advances, many developers continue t
 
 ## Egret today
 
-Egret is an open-source TypeScript game engine for the Web. Its familiar display, event and resource APIs support animation-rich 2D games and complex interfaces through shared WebGPU and WebGL2 rendering. Optional [World3D](knowledge-base/en/docs/world3d.md) provides standalone 3D renderers. The roadmap includes an integrated AI-assisted creation platform and additional native and mini-game hosts.
+Egret is an open-source TypeScript engine for Web games. The display, event and resource APIs support 2D animation and complex interfaces through shared WebGPU and WebGL2 rendering. Optional World3D adds standalone 3D rendering and physics. The roadmap includes integrated AI-assisted creation and additional native and mini-game hosts. [World3D contract](knowledge-base/en/docs/world3d.md)
 
 **Engineering preview.** Start from a runnable example and use its capability contract for supported platforms, features and validation scope. Workspace packages are private at 0.0.0.
 
@@ -23,7 +23,7 @@ Egret is an open-source TypeScript game engine for the Web. Its familiar display
 | Rendering and resources | Shared WebGPU/WebGL2 rendering, ordered preparation, resource groups and selected device recovery. The fixed M1.2 full-dirty Engine median-p95 is 5.3 ms against 8 ms. | Broader host/device qualification and the remaining [M1.2 pacing target](https://github.com/cnedwin/Egret_rebuild/issues/55) |
 | Content and animation | PNG/atlas/sequence builds, multipage atlases and font artifacts, optional Spine playback/display and RESET, compatible sequence playback preservation | Complete selected-version Spine references and state preservation, texture variants, integrated lifecycle and performance qualification |
 | UI and text | Variable-height lists, focus/navigation, multilingual styled paragraphs, text geometry, font/theme switching, masks/blur, owned popup/modal layers and optional native single/multiline editing | Actual IME, remaining controls/semantics and broader script/device qualification |
-| 3D | [Optional World3D](knowledge-base/en/docs/world3d.md) covers glTF, lighting and shadows, post-processing, animation, text, and physics with mesh colliders and joints. The shared host supports bounded 3D backgrounds with 2D composition. | Broader asset and device qualification and project authoring integration |
+| 3D | [Optional World3D](knowledge-base/en/docs/world3d.md) covers glTF, lighting and shadows, post-processing, animation, text, automatic instancing and accelerated picking. The physics preview includes shape sweeps, compound bodies, solver slices and gameplay helpers. The shared host supports bounded 3D backgrounds with 2D composition. | Broader asset and device qualification and project authoring integration |
 | Integration | [Editable Outfit Studio](examples/outfit-studio/README.md) with a compact desktop scene, fixed mixed workloads and a mobile multitouch profile | Selected feature coverage, full performance/device qualification and the core preview handoff |
 
 [Android observations](knowledge-base/en/docs/android-device-validation.md) cover specific component and mixed-scene cases on the tested phones. See the [current capability map](knowledge-base/en/docs/core-progress.md) for device, input and performance coverage.
@@ -63,6 +63,10 @@ Merged engineering increments for the current preview. 当前工程预览已合�
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#168](https://github.com/cnedwin/Egret_rebuild/pull/168) | World3D physics helpers for ragdolls, arcade vehicles, rope and cloth, plus a message-port simulation client | World3D 增加布娃娃、街机式载具、绳索和布料辅助组件，以及消息端口物理客户端 |
+| [#166](https://github.com/cnedwin/Egret_rebuild/pull/166)–[#167](https://github.com/cnedwin/Egret_rebuild/pull/167) | Shape sweeps, compound bodies, joints and contacts, plus static-body hierarchy and solver slices | 新增形状扫掠、组合刚体、关节和接触报告，扩展静态刚体层级及分片求解 |
+| [#163](https://github.com/cnedwin/Egret_rebuild/pull/163) | Automatic instancing, accelerated picking and reduced per-frame allocation | 自动实例化、加速拾取并减少逐帧分配 |
+| [#164](https://github.com/cnedwin/Egret_rebuild/pull/164) | Parallel Windows code gate with four complete test shards | Windows 代码门禁拆为并行作业，四个测试分片保留完整覆盖 |
 | [#161](https://github.com/cnedwin/Egret_rebuild/pull/161) | World3D terrain, water, crowd and effects refinements, with 25 fixed Windows Edge WebGL2/WebGPU comparisons | World3D 地形、水面、人群与特效完善，Windows Edge 通过 25 个固定 WebGL2／WebGPU 对比 |
 | [#154](https://github.com/cnedwin/Egret_rebuild/pull/154)–[#159](https://github.com/cnedwin/Egret_rebuild/pull/159) | World3D character controls, decoding, navigation, terrain, skinned crowds and effects. Windows Edge passed 24 fixed WebGL2/WebGPU comparisons. | World3D 新增角色控制、解码、导航、地形、蒙皮人群与特效，Windows Edge 通过 24 个 WebGL2／WebGPU 固定场景对比。 |
 | [#153](https://github.com/cnedwin/Egret_rebuild/pull/153) | Fixed Windows full-dirty Engine median-p95 reaches 5.3 ms against 8 ms. Sparse/full-dirty pacing remains open. | Windows 固定全脏 Engine p95 中位数达到 5.3 ms，目标 8 ms。稀疏／全脏帧节奏仍待验收。 |
