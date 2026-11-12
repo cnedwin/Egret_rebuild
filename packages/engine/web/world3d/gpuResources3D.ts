@@ -6,7 +6,8 @@
 import {World3DError} from '../../rendering/world3d/core3D.js';
 import type {Attribute3D, Geometry3D} from '../../rendering/world3d/Geometry3D.js';
 import type {InstancedMesh3D, Skeleton3D} from '../../rendering/world3d/Mesh3D.js';
-import {RenderTarget3D, isTexturePixels3D} from '../../rendering/world3d/Texture3D.js';
+import {RenderTarget3D, isCompressedPixels3D, isTexturePixels3D} from '../../rendering/world3d/Texture3D.js';
+import type {CompressedFormat3D, CompressedPixels3D} from '../../rendering/world3d/Texture3D.js';
 import type {CubeTexture3D, Texture3D, TextureSource3D} from '../../rendering/world3d/Texture3D.js';
 import {ATTRIBUTE_LOCATIONS_3D, TEXTURE_UNITS_3D} from './shaders3D.js';
 import type {ShaderSources3D} from './shaders3D.js';
@@ -65,6 +66,8 @@ export class GpuResources3D {
     readonly #anisotropy: {readonly TEXTURE_MAX_ANISOTROPY_EXT: number} | null;
     readonly #maxAnisotropy: number;
     readonly #maxTextureSize: number;
+    /** True when half-float color targets can be rendered to. */
+    readonly floatTargets: boolean;
     #nextProgramId = 1;
 
     constructor(gl: WebGL2RenderingContext) {
@@ -72,6 +75,7 @@ export class GpuResources3D {
         this.#anisotropy = gl.getExtension('EXT_texture_filter_anisotropic');
         this.#maxAnisotropy = this.#anisotropy ? gl.getParameter(0x84ff) as number : 1;
         this.#maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE) as number;
+        this.floatTargets = gl.getExtension('EXT_color_buffer_float') !== null || gl.getExtension('EXT_color_buffer_half_float') !== null;
     }
     get counts(): {programs: number; geometries: number; textures: number} {
         return {programs: this.#programs.size, geometries: this.#geometries.size, textures: this.#textures.size};
@@ -401,10 +405,43 @@ export class GpuResources3D {
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, texture.flipY);
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
         gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
-        this.image(gl.TEXTURE_2D, texture.source, texture.colorSpace === 'srgb' ? gl.SRGB8_ALPHA8 : gl.RGBA8);
-        if (texture.mipmaps) gl.generateMipmap(gl.TEXTURE_2D);
+        if (isCompressedPixels3D(texture.source)) this.compressedImage(texture.source, texture.colorSpace === 'srgb');
+        else {
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAX_LEVEL, 1000);
+            this.image(gl.TEXTURE_2D, texture.source, texture.colorSpace === 'srgb' ? gl.SRGB8_ALPHA8 : gl.RGBA8);
+            if (texture.mipmaps) gl.generateMipmap(gl.TEXTURE_2D);
+        }
         this.applySampler(gl.TEXTURE_2D, texture);
         entry.version = texture.version;
+    }
+    /** Internal format for a compressed format on this context, or undefined when its extension is missing. */
+    compressedFormat(format: CompressedFormat3D, srgb: boolean): number | undefined {
+        const gl = this.#gl;
+        // Enumerants are fixed by the extension specifications; the extension only has to be enabled.
+        const table: Record<CompressedFormat3D, [string[], number, number]> = {
+            'bc1': [['WEBGL_compressed_texture_s3tc', 'WEBGL_compressed_texture_s3tc_srgb'], 0x83f1, 0x8c4d],
+            'bc3': [['WEBGL_compressed_texture_s3tc', 'WEBGL_compressed_texture_s3tc_srgb'], 0x83f3, 0x8c4f],
+            'bc7': [['EXT_texture_compression_bptc'], 0x8e8c, 0x8e8d],
+            'etc2-rgb8': [['WEBGL_compressed_texture_etc'], 0x9274, 0x9275],
+            'etc2-rgba8': [['WEBGL_compressed_texture_etc'], 0x9278, 0x9279],
+            'astc-4x4': [['WEBGL_compressed_texture_astc'], 0x93b0, 0x93d0],
+        };
+        const entry = table[format];
+        if (!entry) return undefined;
+        const needed = entry[0].length === 2 ? [entry[0][srgb ? 1 : 0]!] : entry[0];
+        for (const name of needed) if (!gl.getExtension(name)) return undefined;
+        return srgb ? entry[2] : entry[1];
+    }
+    private compressedImage(source: CompressedPixels3D, srgb: boolean): void {
+        const gl = this.#gl, internal = this.compressedFormat(source.format, srgb);
+        if (internal === undefined) throw new World3DError('WORLD3D_RESOURCE_FAILED', 'compressed format ' + source.format + ' is not supported by this device');
+        let width = source.width, height = source.height;
+        source.levels.forEach((level, index) => {
+            gl.compressedTexImage2D(gl.TEXTURE_2D, index, internal, width, height, 0, level);
+            width = Math.max(1, width >> 1); height = Math.max(1, height >> 1);
+        });
+        // Sampling must stay inside the stored chain: no further levels can be generated.
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAX_LEVEL, source.levels.length - 1);
     }
     /** Bind a cube texture and return its highest mip level (used as a roughness scale). */
     bindCube(unit: number, texture: CubeTexture3D): number {
@@ -453,7 +490,8 @@ export class GpuResources3D {
         try {
             gl.bindTexture(gl.TEXTURE_2D, entry.color);
             // Mutable storage lets setSize() reallocate the same texture object.
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.SRGB8_ALPHA8, target.width, target.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            if (target.format === 'rgba16f' && this.floatTargets) gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, target.width, target.height, 0, gl.RGBA, gl.HALF_FLOAT, null);
+            else gl.texImage2D(gl.TEXTURE_2D, 0, gl.SRGB8_ALPHA8, target.width, target.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
             this.applySampler(gl.TEXTURE_2D, target.texture);
             gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, entry.framebuffer);
             gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, entry.color, 0);

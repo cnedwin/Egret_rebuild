@@ -16,7 +16,28 @@ export interface TexturePixels3D {
     readonly data: Uint8Array;
 }
 /** Owned pixels, or a host image object carrying its own dimensions. */
-export type TextureSource3D = TexturePixels3D | object;
+/** Block-compressed GPU formats that can be uploaded without transcoding. */
+export type CompressedFormat3D = 'bc1' | 'bc3' | 'bc7' | 'etc2-rgb8' | 'etc2-rgba8' | 'astc-4x4';
+/** Bytes per 4x4 block of each compressed format. */
+export const COMPRESSED_BLOCK_BYTES_3D: Readonly<Record<CompressedFormat3D, number>> = Object.freeze({
+    'bc1': 8, 'bc3': 16, 'bc7': 16, 'etc2-rgb8': 8, 'etc2-rgba8': 16, 'astc-4x4': 16,
+});
+/**
+ * A pre-compressed mip chain, largest level first. Each level halves the
+ * previous one and stores whole 4x4 blocks. Support depends on the device:
+ * ask the renderer with supportsCompressedFormat() before choosing a format.
+ */
+export interface CompressedPixels3D {
+    readonly width: number;
+    readonly height: number;
+    readonly format: CompressedFormat3D;
+    readonly levels: readonly Uint8Array[];
+}
+export type TextureSource3D = TexturePixels3D | CompressedPixels3D | object;
+export function isCompressedPixels3D(source: unknown): source is CompressedPixels3D {
+    return typeof source === 'object' && source !== null && Array.isArray((source as CompressedPixels3D).levels)
+        && typeof (source as CompressedPixels3D).format === 'string';
+}
 
 export interface TextureOptions3D {
     readonly name?: string;
@@ -35,6 +56,17 @@ export function isTexturePixels3D(source: unknown): source is TexturePixels3D {
 }
 function checkSource(source: TextureSource3D): void {
     if (typeof source !== 'object' || source === null) throw new World3DError('WORLD3D_INPUT_INVALID', 'texture source');
+    if (isCompressedPixels3D(source)) {
+        const block = COMPRESSED_BLOCK_BYTES_3D[source.format];
+        if (block === undefined) throw new World3DError('WORLD3D_INPUT_INVALID', 'compressed format');
+        let width = requireCount3D(source.width, 'texture width', TEXTURE3D_LIMITS.maxEdge), height = requireCount3D(source.height, 'texture height', TEXTURE3D_LIMITS.maxEdge);
+        if (width === 0 || height === 0 || source.levels.length === 0 || source.levels.length > 14) throw new World3DError('WORLD3D_INPUT_INVALID', 'compressed levels');
+        for (const level of source.levels) {
+            if (!(level instanceof Uint8Array) || level.byteLength !== Math.ceil(width / 4) * Math.ceil(height / 4) * block) throw new World3DError('WORLD3D_INPUT_INVALID', 'compressed level size');
+            width = Math.max(1, width >> 1); height = Math.max(1, height >> 1);
+        }
+        return;
+    }
     if (!isTexturePixels3D(source)) return;
     const width = requireCount3D(source.width, 'texture width', TEXTURE3D_LIMITS.maxEdge);
     const height = requireCount3D(source.height, 'texture height', TEXTURE3D_LIMITS.maxEdge);
@@ -112,8 +144,15 @@ export function createSolidTexture3D(r: number, g: number, b: number, a = 255, o
     return new Texture3D({width: 1, height: 1, data: new Uint8Array([r, g, b, a])}, {mipmaps: false, ...options});
 }
 
+/** Color storage of a render target: 8-bit sRGB, or half-float linear for values above 1. */
+export type RenderTargetFormat3D = 'rgba8' | 'rgba16f';
 export interface RenderTargetOptions3D {
     readonly name?: string;
+    /**
+     * 'rgba16f' keeps unclamped linear light and skips tone mapping, for
+     * post-processing. Backends without float targets fall back to 'rgba8'.
+     */
+    readonly format?: RenderTargetFormat3D;
     /** Attach a depth buffer so the target can be rendered with depth testing. */
     readonly depth?: boolean;
     readonly magFilter?: TextureFilter3D;
@@ -129,6 +168,7 @@ export class RenderTarget3D extends Resource3D {
     #width: number;
     #height: number;
     readonly depth: boolean;
+    readonly format: RenderTargetFormat3D;
     /** Sampled view of the color attachment; its source is this target. */
     readonly texture: Texture3D;
     constructor(width: number, height: number, options: RenderTargetOptions3D = {}) {
@@ -138,9 +178,12 @@ export class RenderTarget3D extends Resource3D {
         this.#height = requireCount3D(height, 'target height', TEXTURE3D_LIMITS.maxEdge);
         if (this.#width === 0 || this.#height === 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'target size');
         this.depth = options.depth ?? true;
+        if (options.format !== undefined && options.format !== 'rgba8' && options.format !== 'rgba16f') throw new World3DError('WORLD3D_INPUT_INVALID', 'target format');
+        this.format = options.format ?? 'rgba8';
         this.texture = new Texture3D(this, {
             mipmaps: false, wrapS: options.wrapS ?? 'clamp', wrapT: options.wrapT ?? 'clamp',
-            magFilter: options.magFilter ?? 'linear', minFilter: options.minFilter ?? 'linear', colorSpace: 'srgb',
+            magFilter: options.magFilter ?? 'linear', minFilter: options.minFilter ?? 'linear',
+            colorSpace: this.format === 'rgba16f' ? 'linear' : 'srgb',
         });
     }
     get width(): number { return this.#width; }

@@ -48,7 +48,7 @@ Geometries, materials, textures and targets are resources with a `version` and a
 
 Ambient and hemisphere lights add indirect light. Directional, point and spot lights are punctual. A frame uses at most four directional, eight point and four spot lights; additional lights are ignored in traversal order.
 
-Directional and spot lights can cast shadows. Up to four shadow lights share one depth atlas, each with a quarter tile, filtered with a 3x3 comparison kernel. `light.shadow` sets the volume, bias, normal bias and filter radius. Meshes opt in with `castShadow` and `receiveShadow`. Point-light shadows and cascades are not implemented.
+Directional and spot lights can cast shadows. Up to four shadow lights share one depth atlas, each with a quarter tile, filtered with a 3x3 comparison kernel. `light.shadow` sets the volume, bias, normal bias and filter radius. Meshes opt in with `castShadow` and `receiveShadow`. A directional light with `shadow.cascades` from 2 to 4 splits its shadow by distance from the camera. Each cascade takes one atlas tile and covers a slice of the view up to `shadow.cascadeDistance`; `shadow.cascadeLambda` moves the split distances between even (0) and logarithmic (1) spacing. Cascade volumes are bounding spheres snapped to whole texels, so shadow edges stay still while the camera moves or turns, and neighbouring cascades blend across their seam. One light per scene is cascaded, and its cascades count toward the four atlas tiles.
 
 ## Meshes, instancing, skinning and morphing
 
@@ -72,7 +72,7 @@ Skinning uses `Bone3D` nodes and a `Skeleton3D` with inverse bind matrices; four
 
 ## glTF
 
-`loadGltf3D` reads `.glb` bytes or a parsed `.gltf` object and returns scenes, cameras, animations and the created resources with one `dispose()`. It supports meshes, metallic-roughness and unlit materials, texture transforms, node hierarchies, skins, morph targets, animations, cameras and punctual lights. Image decoding and external buffer loading are injected, so the reader stays DOM-free. The initial reader accepts disjoint scene roots and texture coordinate set 0. It refuses shared scene roots and alternate texture coordinate sets with a typed diagnostic. A single decoded accessor is limited to 128 MiB and the combined decoded accessors are limited to 256 MiB. Draco, meshopt and Basis compression and other required extensions are refused with `WORLD3D_GLTF_UNSUPPORTED`. `loadGltfFromUrl3D` in the browser entries supplies fetch and `createImageBitmap`.
+`loadGltf3D` reads `.glb` bytes or a parsed `.gltf` object and returns scenes, cameras, animations and the created resources with one `dispose()`. It supports meshes, metallic-roughness and unlit materials, texture transforms, node hierarchies, skins, morph targets, animations, cameras and punctual lights. Image decoding and external buffer loading are injected, so the reader stays DOM-free. The initial reader accepts disjoint scene roots and texture coordinate set 0. It refuses shared scene roots and alternate texture coordinate sets with a typed diagnostic. A single decoded accessor is limited to 128 MiB and the combined decoded accessors are limited to 256 MiB. Draco, meshopt and Basis payloads need a decoder supplied by the caller (see Compressed resources); without one they, and any other required extension, are refused with `WORLD3D_GLTF_UNSUPPORTED`. `loadGltfFromUrl3D` in the browser entries supplies fetch and `createImageBitmap`.
 
 ## Renderers
 
@@ -84,13 +84,108 @@ Both renderers implement `Renderer3D`: `render(scene, camera, target?)`, `setSiz
 
 Output is tone mapped (`none`, `reinhard` or `aces`) and sRGB encoded. Normal and premultiplied source-over draws store alpha-weighted linear RGB in the sRGB render target with linear alpha. Raw RGBA8 readback preserves that encoding. Sampling the target as a material's base color map recovers straight linear RGB before shading. `blending: 'premultiplied'` accepts ordinary material color and opacity and premultiplies the shader output. Additive and multiply modes preserve destination alpha. Use normal or premultiplied source-over for transparent targets intended for later source-over composition.
 
+## Compressed resources
+
+A texture source may be a block-compressed mip chain: `{width, height, format, levels}` with `format` one of `bc1`, `bc3`, `bc7`, `etc2-rgb8`, `etc2-rgba8` or `astc-4x4`. The chain is uploaded as stored, so it stays compressed in GPU memory. `renderer.supportsCompressedFormat(format)` reports what the device accepts; desktop GPUs usually offer BC, mobile GPUs ETC2 and ASTC.
+
+`parseKtx23D(bytes, options)` reads a KTX2 container. Uncompressed RGBA8 and the block formats above are used directly. Basis Universal and supercompressed payloads are passed to `options.transcode`, which returns pixels or a compressed chain for the current device. `loadTexture3D` recognizes KTX2 files by their header.
+
+The glTF reader accepts `KHR_texture_basisu`, `EXT_meshopt_compression` and `KHR_draco_mesh_compression` when the matching hook is supplied: `transcodeKtx2`, `decodeMeshopt` or `decodeDraco`. The engine ships no decoder; the hooks let an application plug in the reference WebAssembly decoders without the engine depending on them. A file that requires an extension whose hook is missing is rejected with `WORLD3D_GLTF_UNSUPPORTED`.
+
+## Assets and saved scenes
+
+`registerWorld3DAssets(engine.assets, options)` registers providers for `GLTF_ASSET_3D`, `TEXTURE_ASSET_3D`, `CUBE_TEXTURE_ASSET_3D` and `SCENE_ASSET_3D`. Acquire with `engine.assets.acquire(createAssetRef(GLTF_ASSET_3D, url))`. Leases are reference counted: concurrent requests share one load, cancellation aborts the download, and the last release disposes every GPU-facing resource the asset created. A cube texture id contains `{face}`, replaced by `px`, `nx`, `py`, `ny`, `pz` and `nz`.
+
+`serializeScene3D(root, options)` writes a subtree as a JSON-safe document: transforms, cameras, lights, meshes, instanced meshes, materials, geometries, skeletons and level-of-detail groups. Shared geometries and materials are stored once. Textures with pixel or compressed sources up to 1 MiB are embedded; others are stored by the key `options.textureKey` returns and resolved again by `deserializeScene3D(document, {resolveTexture})`. Particle emitters and screen layers are written as plain nodes and listed in the `skipped` field of the result. `userData` keeps only JSON values. The result of `deserializeScene3D` owns what it created and releases it through `dispose()`.
+
+## Post-processing
+
+`renderer.postProcess` holds the settings; nothing runs until `enabled` is true. The scene is then drawn into a half-float target in scene-referred linear light, and a full-screen chain produces the final image: a dual-filter bloom pyramid (`bloomThreshold`, `bloomKnee`, `bloomIntensity`, `bloomLevels`), tone mapping with `brightness`, `saturation`, `contrast` and `vignette`, and optional FXAA. Both backends run the same passes and match to within one 8-bit step in the comparison tool.
+
+While post-processing is on, canvas multisampling does not apply; FXAA takes its place. The scene background colour is tone mapped together with the scene. `new RenderTarget3D(width, height, {format: 'rgba16f'})` gives applications the same half-float storage for their own passes; such targets skip tone mapping and cannot be read back as bytes. A WebGL2 device without float colour buffers falls back to 8-bit storage.
+
+## 2D and 3D on one surface
+
+`createScreenLayer3D(source, options)` draws a texture source across the whole surface as part of the scene. An overlay is blended after the scene; an `order: 'underlay'` layer is drawn first and covered by it. With `autoUpdate` the source is uploaded again each frame, so a canvas that the 2D stage renders into becomes an interface above, or a backdrop below, the 3D content in a single presented surface.
+
+## Animation state machine
+
+`createAnimationStateMachine3D(mixer)` drives a mixer from named states. A state plays one clip, or a `blend` of several clips selected by a numeric parameter; blended clips are time-scaled to a common cycle so their phases stay aligned. Transitions name a source state (or `*`), a target, a cross-fade `duration`, parameter `conditions` and an optional `exitTime`. `set(name, value)` writes a number or boolean, and `trigger(name)` raises a flag that the first matching transition consumes. A fade can be interrupted: every state continues from the weight it had reached. `addEvent(state, normalizedTime, callback)` fires on each pass, and `onStateChange` reports every switch. Call `update(deltaSeconds)` once per frame; it advances the mixer.
+
+## Physics
+
+`createPhysicsWorld3D(options)` creates a small rigid-body world for gameplay. Shapes are spheres, boxes, capsules and infinite planes; bodies are `static`, `kinematic` or `dynamic`. `world.step(deltaSeconds)` advances in fixed steps and then copies each body's pose to its `node`. Pairs are found by sweep and prune and resolved by a warm-started impulse solver with friction and restitution. Resting bodies sleep until something moving touches them. `layer` and `mask` filter collisions, `isTrigger` bodies report overlaps without pushing, and `onContactBegin` and `onContactEnd` report pairs.
+
+`world.raycast(origin, direction, maxDistance, mask)` returns the nearest solid body with the hit point and normal, and `world.overlapSphere(center, radius, mask)` lists solid bodies in a volume. `createCharacterController3D(world, options)` is a kinematic capsule: `move(dx, dy, dz)` slides along obstacles and reports `isGrounded`, `groundNormal` and `groundBody`.
+
+The solver has no joints, continuous collision detection or convex and triangle-mesh shapes. Fast, small bodies can pass through thin geometry; keep walls thicker than the distance a body moves in one step.
+
+## Curves, outlines and more geometries
+
+Curves (`LineCurve3D`, `QuadraticBezierCurve3D`, `CubicBezierCurve3D`, `CatmullRomCurve3D`, `CurvePath3D`) answer `getPoint(t)`, the constant-speed `getPointAt(u)`, tangents, lengths and twist-free frames. `Path2D3D` and `Shape3D` build flat outlines with `moveTo`, `lineTo`, `quadraticCurveTo`, `bezierCurveTo` and `arc`; a shape may carry holes.
+
+Further builders: `createCircleGeometry3D`, `createRingGeometry3D`, `createTorusKnotGeometry3D`, `createTetrahedronGeometry3D`, `createOctahedronGeometry3D`, `createIcosahedronGeometry3D`, `createDodecahedronGeometry3D`, `createPolyhedronGeometry3D`, `createLatheGeometry3D`, `createTubeGeometry3D`, `createShapeGeometry3D` and `createExtrudeGeometry3D` (straight or along a curve; caps and walls are separate material groups; bevels are not generated). Utilities: `createEdgesGeometry3D`, `createWireframeGeometry3D`, `mergeGeometries3D`, `mergeVertices3D`, `toNonIndexedGeometry3D` and `transformGeometry3D`.
+
+## Stylized and custom materials
+
+`createToonMaterial3D({steps})` quantizes diffuse light into flat bands. `createMatcapMaterial3D({matcap})` looks colour up from a sphere image by the view-space normal and needs no lights. A standard material gains a lacquer layer with `clearcoat` and `clearcoatRoughness`.
+
+`material.shader = createCustomShader3D({key, glsl, wgsl, uniforms})` adds a fragment hook to any material. The hook is a function named `customFragment` that receives the shaded linear colour with alpha, the world position, the normal and the UV, and returns the new colour; it may `discard`. Sixteen floats are available as `uCustom[0..3]` in GLSL and `material.custom[0..3]` in WGSL; write `shader.uniforms` each frame for time-driven effects. Supply source for each backend you ship; a backend without source draws the material unchanged. Call `material.touch()` after assigning a different shader.
+
+## Point-light shadows, environments and views
+
+One point light may cast shadows (`createPointLight3D({castShadow: true})`). It renders four maps through the faces of a tetrahedron, so every direction is covered with ordinary perspective maps and the same filtering as other lights. It takes the whole atlas and applies when no directional or spot light casts shadows.
+
+`parseRgbe3D(bytes)` decodes a Radiance `.hdr` file and `createCubeTextureFromEquirect3D(image, {size, exposure, maxValue})` turns a panorama into a cube texture for `scene.background` and `scene.environment`. Cube faces are stored in 8 bits after exposure and highlight compression. `captureCubeTexture3D(renderer, scene, position, options)` bakes the scene around a point into a cube texture for local reflections; it reads pixels back and is meant for load time.
+
+`renderer.viewport = [x, y, width, height]` (0 to 1, origin at the bottom left) limits drawing to part of the output, and `renderer.autoClear = false` keeps what earlier views drew. Together they give split screens, inset maps and picture-in-picture from several `render()` calls in one frame.
+
+## Helpers, first-person controls and sound
+
+`createBoxHelper3D`, `createArrowHelper3D`, `createCameraHelper3D`, `createLightHelper3D` and `createSkeletonHelper3D` are line nodes that follow their subject; call `update()` after it moves. `computeObjectBounds3D(object)` returns world bounds of a subtree.
+
+`createFlyControls3D(camera, element, options)` looks with pointer lock or drag and moves with the keyboard, either flying or walking on a level plane. `createAudioListener3D()` and `createPositionalAudio3D(listener, options)` place Web Audio sources in the scene with distance attenuation and cones; call `listener.update()` each frame and `listener.resume()` from a user gesture.
+
+## Coming from Three.js
+
+| Three.js | World3D |
+| --- | --- |
+| `Scene`, `Object3D`, `Group`, `Mesh`, `InstancedMesh`, `SkinnedMesh`, `LOD`, `Sprite` | `Scene3D`, `Object3D`, `Mesh3D`, `InstancedMesh3D`, `Mesh3D.bind(skeleton)`, `Lod3D`, `createSprite3D` |
+| `PerspectiveCamera`, `OrthographicCamera` | `createPerspectiveCamera3D`, `createOrthographicCamera3D` |
+| `BufferGeometry`, `BufferAttribute` | `Geometry3D`, `Attribute3D`, `createGeometry3D` |
+| `BoxGeometry` ... `TorusKnotGeometry`, `ExtrudeGeometry`, `LatheGeometry`, `TubeGeometry`, `ShapeGeometry`, `EdgesGeometry` | `createBoxGeometry3D` ... `createTorusKnotGeometry3D`, `createExtrudeGeometry3D`, `createLatheGeometry3D`, `createTubeGeometry3D`, `createShapeGeometry3D`, `createEdgesGeometry3D` |
+| `BufferGeometryUtils.mergeGeometries`, `mergeVertices` | `mergeGeometries3D`, `mergeVertices3D` |
+| `Curve`, `CatmullRomCurve3`, `Shape`, `Path` | `Curve3D`, `CatmullRomCurve3D`, `Shape3D`, `Path2D3D` |
+| `MeshBasicMaterial`, `MeshLambertMaterial`, `MeshPhongMaterial`, `MeshStandardMaterial` | `createUnlitMaterial3D`, `createLambertMaterial3D`, `createPhongMaterial3D`, `createStandardMaterial3D` |
+| `MeshToonMaterial`, `MeshMatcapMaterial`, `MeshPhysicalMaterial.clearcoat` | `createToonMaterial3D`, `createMatcapMaterial3D`, `material.clearcoat` |
+| `ShaderMaterial`, `onBeforeCompile` | `createCustomShader3D` assigned to `material.shader` |
+| `LineBasicMaterial`, `PointsMaterial`, `SpriteMaterial` | `createLineMaterial3D`, `createSpriteMaterial3D` with a `lines` or `points` geometry |
+| `Texture`, `DataTexture`, `CanvasTexture`, `CompressedTexture`, `CubeTexture`, `WebGLRenderTarget` | `Texture3D` (pixels, images, canvases or compressed chains), `CubeTexture3D`, `RenderTarget3D` |
+| `AmbientLight`, `HemisphereLight`, `DirectionalLight`, `PointLight`, `SpotLight` | `createAmbientLight3D`, `createHemisphereLight3D`, `createDirectionalLight3D`, `createPointLight3D`, `createSpotLight3D` |
+| `light.shadow`, `CSM` | `light.shadow`, `light.shadow.cascades` |
+| `Fog`, `FogExp2`, `scene.background`, `scene.environment` | `scene.fog`, `scene.background`, `scene.environment` |
+| `AnimationMixer`, `AnimationClip`, `AnimationAction` | `AnimationMixer3D`, `AnimationClip3D`, `AnimationAction3D`, plus `AnimationStateMachine3D` |
+| `Raycaster` | `Raycaster3D` |
+| `GLTFLoader`, `KTX2Loader`, `DRACOLoader`, `MeshoptDecoder`, `RGBELoader`, `TextureLoader` | `loadGltfFromUrl3D` with decoder hooks, `parseKtx23D`, `parseRgbe3D`, `loadTexture3D` |
+| `LoadingManager`, `Cache` | `registerWorld3DAssets` on the Engine `AssetManager` |
+| `ObjectLoader`, `toJSON` | `deserializeScene3D`, `serializeScene3D` |
+| `WebGLRenderer`, `WebGPURenderer`, `setViewport`, `autoClear` | `createWebGL2Renderer3D`, `createWebGPURenderer3D`, `renderer.viewport`, `renderer.autoClear` |
+| `EffectComposer`, `UnrealBloomPass`, `OutputPass`, `FXAAShader` | `renderer.postProcess` |
+| `CubeCamera`, `PMREMGenerator.fromEquirectangular` | `captureCubeTexture3D`, `createCubeTextureFromEquirect3D` |
+| `OrbitControls`, `PointerLockControls`, `FlyControls` | `createOrbitControls3D`, `createFlyControls3D` |
+| `AudioListener`, `PositionalAudio` | `createAudioListener3D`, `createPositionalAudio3D` |
+| `BoxHelper`, `ArrowHelper`, `CameraHelper`, light helpers, `SkeletonHelper`, `GridHelper`, `AxesHelper` | the matching `create...Helper3D` functions |
+| physics add-ons such as cannon-es or Rapier | `createPhysicsWorld3D`, `createCharacterController3D` |
+
+Differences to keep in mind: factories replace constructors; colours are linear RGB arrays or hex numbers; vectors and quaternions are typed arrays changed through `setPosition`, `setRotation`, `setScale` and `lookAt`; resources are released with `dispose()`; and errors are `World3DError` with a `code`.
+
 ## Engine integration
 
 A World3D canvas is separate from the 2D stage surface. `createWorld3DHost(canvas)` returns a host for applications whose only surface is the 3D canvas. `startWorld3DLoop(engine)` advances the explicit Engine clock once per display frame and re-anchors it after a gap longer than the clock's delta limit.
 
 `createWorld3DView(engine, scope, options)` subscribes to the Engine clock under a Scope. Each tick resizes the drawing buffer when needed, calls `onUpdate`, advances mixers, controls and particle emitters, and renders. Closing the Scope ends the view. The renderer, scene and controls stay owned by their creator; register them with `scope.use(...)` to retire them with the Scope.
 
-For a 2D interface above a 3D scene, stack a transparent shared 2D host canvas over the World3D canvas. Drawing World3D content and ordered 2D content in one host remains the job of the authored scene path.
+For a 2D interface above a 3D scene, either stack a transparent shared 2D host canvas over the World3D canvas or draw the 2D canvas as a screen layer (see 2D and 3D on one surface). Interleaving individual 2D display objects between 3D objects in depth remains the job of the authored scene path.
 
 `createOrbitControls3D(camera, element, options)` provides orbit, pan and zoom with Pointer Events, including two-finger pan and pinch, damping and optional automatic rotation.
 
@@ -98,12 +193,15 @@ For a 2D interface above a 3D scene, stack a transparent shared 2D host canvas o
 
 The [World3D example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/world3d/README.md) shows lights, shadows, instancing, skinning, morphing, particles, a render target, picking and orbit controls on either backend.
 
-Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.test.mjs` and `tests/world3d-gltf.test.mjs` cover the DOM-free core through the public entry.
+Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.test.mjs`, `tests/world3d-gltf.test.mjs`, `tests/world3d-renderer-lifetime.test.mjs`, `tests/world3d-extended.test.mjs` and `tests/world3d-parity.test.mjs` cover the DOM-free core, the asset providers, the state machine and physics through the public entries.
 
-`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` renders seven fixed scenes into a render target on both backends and compares the images. During development it ran in headless Chromium with software rendering. The desktop review also ran all seven cases in Edge 157 on an NVIDIA RTX 5090 Laptop GPU without renderer override flags. The visible sample presented on both backends with antialiasing and stopped advancing frames on disposal.
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` renders fourteen fixed scenes into a render target on both backends and compares the images. The seven newer scenes cover cascaded shadows, post-processing, a compressed texture, screen layers, a scene restored from its saved document, stylized and custom materials, and point-light shadows. During development all fourteen ran in headless Chromium with software rendering. The desktop review ran the first seven cases in Edge 157 on an NVIDIA RTX 5090 Laptop GPU without renderer override flags. The visible sample presented on both backends with antialiasing and stopped advancing frames on disposal.
+
+`tools/bench-world3d.mjs --playwright <installed-playwright-module>` measures the CPU time of `render()` for fixed workloads on both backends, as a baseline for regressions rather than an absolute score.
 
 ## Open items
 
 - The desktop review forced WebGL2 context loss and restored the target pixels. It also forced WebGPU device loss and verified notification and refusal of subsequent work. Wider device and recovery coverage remains open.
 - One physical Android Chrome 157 device presented both backends, responded to an automated shadow toggle, and stopped frame updates on disposal. Performance, human gestures and a broader mobile device matrix remain open.
-- Not implemented: point-light and cascaded shadows, post-processing, compressed textures and geometry, HDR environment prefiltering, clear coat and transmission materials, and physics.
+- Cascaded and point-light shadows, post-processing, compressed textures, screen layers, toon, matcap, clearcoat and custom shaders, viewports and probes have run only under software rendering so far, where both backends matched; they, the seven newer comparison scenes and the benchmark still need a pass on physical desktop and mobile GPUs. First-person controls and spatial audio have not been exercised by a person.
+- Not implemented: bundled Basis, meshopt or Draco decoders, float-precision environment prefiltering, transmission and sheen, clipping planes, ambient occlusion and depth-of-field passes, transform gizmos, text geometry, physics joints and mesh colliders.

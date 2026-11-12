@@ -13,9 +13,13 @@ import type {InstancedMesh3D, Mesh3D, Skeleton3D} from '../../rendering/world3d/
 import type {Scene3D} from '../../rendering/world3d/Object3D.js';
 import {RenderList3D} from '../../rendering/world3d/RenderList3D.js';
 import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
-import {CubeTexture3D, RenderTarget3D, isTexturePixels3D} from '../../rendering/world3d/Texture3D.js';
+import {COMPRESSED_BLOCK_BYTES_3D, CubeTexture3D, RenderTarget3D, isCompressedPixels3D, isTexturePixels3D} from '../../rendering/world3d/Texture3D.js';
+import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import type {Texture3D, TextureSource3D} from '../../rendering/world3d/Texture3D.js';
 import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
+import {createPostProcessSettings3D} from './post3D.js';
+import type {PostProcessSettings3D} from './post3D.js';
+import {PostChainWebGPU3D} from './postWebGPU3D.js';
 import type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
 import {
     MATERIAL_BLOCK_BYTES_3D, MAX_MORPH_INFLUENCES_WGSL_3D, MIPMAP_WGSL_3D, OBJECT_BLOCK_BYTES_3D, SKYBOX_WGSL_3D, buildMaterialWgsl3D,
@@ -41,7 +45,7 @@ export interface WebGPURenderer3DOptions {
     readonly onDeviceLost?: (message: string) => void;
 }
 
-type PassKind = 'canvas' | 'target' | 'depth';
+type PassKind = 'canvas' | 'target' | 'hdr' | 'depth';
 interface BufferGpu { buffer: GPUBuffer; version: number; bytes: number; }
 interface GeometryGpu {
     readonly buffers: Map<string, BufferGpu>;
@@ -49,6 +53,8 @@ interface GeometryGpu {
     wire: {buffer: GPUBuffer; count: number; version: number} | undefined;
     morph: {buffer: GPUBuffer; channels: number; vertexCount: number} | undefined;
     layoutVersion: number;
+    /** Render-call serial of the last version check. */
+    serial: number;
     readonly unsubscribe: () => void;
 }
 interface InstanceGpu { matrices: BufferGpu; colors: BufferGpu | undefined; version: number; lastFrame: number; }
@@ -64,7 +70,7 @@ const BUFFER_USAGE = Object.freeze({MAP_READ: 1, COPY_DST: 8, INDEX: 16, VERTEX:
 const TEXTURE_USAGE = Object.freeze({COPY_SRC: 1, COPY_DST: 2, TEXTURE_BINDING: 4, RENDER_ATTACHMENT: 16} as const);
 const MAP_MODE_READ = 1;
 const ATTRIBUTE_SLOTS = ['position', 'normal', 'uv', 'tangent', 'color', 'joints', 'weights'] as const;
-const TARGET_FORMAT: GPUTextureFormat = 'rgba8unorm-srgb';
+const TARGET_FORMAT: GPUTextureFormat = 'rgba8unorm-srgb', HDR_FORMAT: GPUTextureFormat = 'rgba16float';
 const SHADOW_FORMAT: GPUTextureFormat = 'depth32float';
 const DEPTH_FORMAT: GPUTextureFormat = 'depth24plus';
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -91,6 +97,12 @@ export class WebGPURenderer3D implements Renderer3D {
     toneMapping: ToneMapping3D;
     exposure: number;
     shadowsEnabled: boolean;
+    /** Bloom, color grading and FXAA; set `enabled` to turn the chain on. */
+    readonly postProcess: PostProcessSettings3D = createPostProcessSettings3D();
+    viewport: readonly [number, number, number, number] | undefined;
+    autoClear = true;
+    #post: PostChainWebGPU3D | undefined;
+    #inPost = false;
     readonly info: Renderer3DInfo = {frame: 0, drawCalls: 0, triangles: 0, visited: 0, culled: 0, shadowMaps: 0, programs: 0, geometries: 0, textures: 0};
     readonly #context: GPUCanvasContext;
     readonly #format: GPUTextureFormat;
@@ -357,6 +369,23 @@ export class WebGPURenderer3D implements Renderer3D {
             return {view: target.colorView, sampler: this.sampler(texture), key: 't' + source.id + ':' + source.version};
         }
         const entry = this.textureEntry(texture, () => {
+            if (isCompressedPixels3D(source)) {
+                const format = this.compressedFormat(source.format, texture.colorSpace === 'srgb');
+                if (!format) throw new World3DError('WORLD3D_RESOURCE_FAILED', 'compressed format ' + source.format + ' is not supported by this device');
+                const block = COMPRESSED_BLOCK_BYTES_3D[source.format];
+                // The base size must be block-aligned; smaller mips are padded to whole blocks on upload.
+                const gpu = this.device.createTexture({
+                    size: [Math.ceil(source.width / 4) * 4, Math.ceil(source.height / 4) * 4], format, mipLevelCount: source.levels.length,
+                    usage: TEXTURE_USAGE.TEXTURE_BINDING | TEXTURE_USAGE.COPY_DST,
+                });
+                let width = gpu.width, height = gpu.height;
+                source.levels.forEach((level, mipLevel) => {
+                    const columns = Math.ceil(width / 4), rows = Math.ceil(height / 4);
+                    this.device.queue.writeTexture({texture: gpu, mipLevel}, level.buffer as ArrayBuffer, {offset: level.byteOffset, bytesPerRow: columns * block, rowsPerImage: rows}, [columns * 4, rows * 4]);
+                    width = Math.max(1, width >> 1); height = Math.max(1, height >> 1);
+                });
+                return {texture: gpu, view: gpu.createView()};
+            }
             const [width, height] = isTexturePixels3D(source) ? [source.width, source.height] : hostSize(source);
             const gpu = this.createColorTexture(width, height, 1, texture);
             this.uploadSource(gpu, source, 0, texture.flipY);
@@ -364,6 +393,20 @@ export class WebGPURenderer3D implements Renderer3D {
             return {texture: gpu, view: gpu.createView()};
         });
         return {view: entry.view, sampler: entry.sampler, key: texture.id + ':' + texture.version};
+    }
+    private compressedFormat(format: CompressedFormat3D, srgb: boolean): GPUTextureFormat | undefined {
+        const table: Record<CompressedFormat3D, [GPUFeatureName, string]> = {
+            'bc1': ['texture-compression-bc', 'bc1-rgba-unorm'], 'bc3': ['texture-compression-bc', 'bc3-rgba-unorm'], 'bc7': ['texture-compression-bc', 'bc7-rgba-unorm'],
+            'etc2-rgb8': ['texture-compression-etc2', 'etc2-rgb8unorm'], 'etc2-rgba8': ['texture-compression-etc2', 'etc2-rgba8unorm'],
+            'astc-4x4': ['texture-compression-astc', 'astc-4x4-unorm'],
+        };
+        const entry = table[format];
+        if (!entry || !this.device.features.has(entry[0])) return undefined;
+        return (entry[1] + (srgb ? '-srgb' : '')) as GPUTextureFormat;
+    }
+    /** True when textures in this compressed format can be used on this device. */
+    supportsCompressedFormat(format: CompressedFormat3D): boolean {
+        return this.compressedFormat(format, false) !== undefined;
     }
     private textureCube(texture: CubeTexture3D): TextureGpu {
         return this.textureEntry(texture, () => {
@@ -381,7 +424,7 @@ export class WebGPURenderer3D implements Renderer3D {
         const limit = this.device.limits.maxTextureDimension2D;
         if (target.width > limit || target.height > limit) throw new World3DError('WORLD3D_BUDGET', 'render target size');
         const color = this.device.createTexture({
-            size: [target.width, target.height], format: TARGET_FORMAT,
+            size: [target.width, target.height], format: target.format === 'rgba16f' ? HDR_FORMAT : TARGET_FORMAT,
             usage: TEXTURE_USAGE.RENDER_ATTACHMENT | TEXTURE_USAGE.TEXTURE_BINDING | TEXTURE_USAGE.COPY_SRC,
         });
         const depth = target.depth ? this.device.createTexture({size: [target.width, target.height], format: DEPTH_FORMAT, usage: TEXTURE_USAGE.RENDER_ATTACHMENT}) : undefined;
@@ -414,8 +457,10 @@ export class WebGPURenderer3D implements Renderer3D {
     }
     private geometry(geometry: Geometry3D): GeometryGpu {
         let entry = this.#geometries.get(geometry);
+        // Buffers are checked against the CPU versions once per render call.
+        if (entry && entry.serial === this.#serial) return entry;
         if (!entry) {
-            const created: GeometryGpu = {buffers: new Map(), index: undefined, wire: undefined, morph: undefined, layoutVersion: -1, unsubscribe: geometry.onDispose(() => this.releaseGeometry(geometry))};
+            const created: GeometryGpu = {buffers: new Map(), index: undefined, wire: undefined, morph: undefined, layoutVersion: -1, serial: -1, unsubscribe: geometry.onDispose(() => this.releaseGeometry(geometry))};
             this.#geometries.set(geometry, entry = created);
         }
         for (const name of ATTRIBUTE_SLOTS) {
@@ -457,6 +502,7 @@ export class WebGPURenderer3D implements Renderer3D {
             entry.wire = undefined;
             entry.layoutVersion = geometry.layoutVersion;
         }
+        entry.serial = this.#serial;
         return entry;
     }
     private wireframe(geometry: Geometry3D, entry: GeometryGpu): {buffer: GPUBuffer; count: number} {
@@ -534,8 +580,8 @@ export class WebGPURenderer3D implements Renderer3D {
         data[0] = material.color[0]!; data[1] = material.color[1]!; data[2] = material.color[2]!; data[3] = material.opacity;
         data[4] = material.emissive[0]! * e; data[5] = material.emissive[1]! * e; data[6] = material.emissive[2]! * e; data[7] = 0;
         data[8] = material.metallic; data[9] = material.roughness; data[10] = material.normalScale; data[11] = material.occlusionStrength;
-        data[12] = material.specular[0]!; data[13] = material.specular[1]!; data[14] = material.specular[2]!; data[15] = material.shininess;
-        data[16] = material.alphaCutoff; data[17] = material.environmentIntensity; data[18] = 0; data[19] = 0;
+        data[12] = material.specular[0]!; data[13] = material.specular[1]!; data[14] = material.specular[2]!; data[15] = material.shading === 'toon' ? material.toonSteps : material.shininess;
+        data[16] = material.alphaCutoff; data[17] = material.environmentIntensity; data[18] = material.clearcoat; data[19] = material.clearcoatRoughness;
         let ax = 1, bx = 0, tx = 0, ay = 0, by = 1, ty = 0;
         if (map?.hasTransform) {
             const c = Math.cos(map.rotation), s = Math.sin(map.rotation);
@@ -547,6 +593,7 @@ export class WebGPURenderer3D implements Renderer3D {
         data[20] = ax; data[21] = bx; data[22] = tx; data[23] = 0;
         data[24] = ay; data[25] = by; data[26] = ty; data[27] = 0;
         data[28] = material.rotation; data[29] = material.sizeAttenuation ? 1 : 0; data[30] = 0; data[31] = 0;
+        if (material.shader) data.set(material.shader.uniforms, 32);
         this.device.queue.writeBuffer(entry.buffer, 0, data);
         const entries: GPUBindGroupEntry[] = [{binding: 0, resource: {buffer: entry.buffer}}];
         let key = '';
@@ -562,7 +609,7 @@ export class WebGPURenderer3D implements Renderer3D {
         return entry.group;
     }
     private features(item: RenderItem3D, gpu: GeometryGpu, kind: PassKind, frameFlags: {fog: boolean; environment: boolean}): ShaderFeatures3D {
-        const {mesh, material} = item, depthOnly = kind === 'depth', lit = material.shading !== 'unlit' && !depthOnly;
+        const {mesh, material} = item, depthOnly = kind === 'depth', lit = material.shading !== 'unlit' && material.shading !== 'matcap' && !depthOnly;
         const uv = gpu.buffers.has('uv'), instanced = mesh.isInstanced;
         const skinning = mesh.skeleton !== undefined && gpu.buffers.has('joints') && gpu.buffers.has('weights');
         return {
@@ -573,19 +620,20 @@ export class WebGPURenderer3D implements Renderer3D {
             vertexColor: material.vertexColors && gpu.buffers.has('color'),
             skinning, morph: gpu.morph !== undefined, morphNormals: gpu.morph?.channels === 2,
             instancing: instanced, instanceColor: instanced && !depthOnly && (mesh as InstancedMesh3D).instanceColors !== undefined,
-            billboard: material.billboard,
+            billboard: material.billboard && !material.screenSpace, screenSpace: material.screenSpace,
             map: uv && material.map !== undefined && (!depthOnly || material.alphaMode !== 'opaque'),
             mapFromTarget: !depthOnly && uv && material.map?.source instanceof RenderTarget3D,
             normalMap: lit && uv && material.normalMap !== undefined,
             metallicRoughnessMap: lit && uv && material.metallicRoughnessMap !== undefined && material.shading === 'standard',
             occlusionMap: lit && uv && material.occlusionMap !== undefined,
-            emissiveMap: !depthOnly && uv && material.emissiveMap !== undefined,
+            emissiveMap: !depthOnly && uv && material.emissiveMap !== undefined && material.shading !== 'matcap',
             alphaMask: material.alphaMode === 'mask', alphaBlend: material.alphaMode === 'blend',
             premultipliedAlpha: !depthOnly && material.alphaMode === 'blend' && material.blending === 'premultiplied',
             flatShading: material.flatShading, doubleSided: material.side === 'double',
             receiveShadow: lit && mesh.receiveShadow && this.#shadowCount > 0,
             environment: lit && frameFlags.environment, fog: !depthOnly && frameFlags.fog && material.fog,
-            toneMapped: !depthOnly && this.toneMapping !== 'none' && material.toneMapped, linearOutput: kind === 'target',
+            ...(!depthOnly && material.shader?.wgsl !== undefined ? {customKey: material.shader.key, customWgsl: material.shader.wgsl} : {}),
+            toneMapped: !depthOnly && kind !== 'hdr' && this.toneMapping !== 'none' && material.toneMapped, linearOutput: kind === 'target' || kind === 'hdr',
         };
     }
     private pipeline(features: ShaderFeatures3D, item: RenderItem3D, gpu: GeometryGpu, kind: PassKind, mirrored: boolean, wire: boolean): GPURenderPipeline {
@@ -646,7 +694,7 @@ export class WebGPURenderer3D implements Renderer3D {
             multisample: {count: kind === 'canvas' ? this.#sampleCount : 1},
             ...(needsFragment ? {fragment: {
                 module, entryPoint: 'fragmentMain',
-                targets: depthOnly ? [] : [{format: kind === 'target' ? TARGET_FORMAT : this.#format, ...(blendState ? {blend: blendState} : {})}],
+                targets: depthOnly ? [] : [{format: this.colorFormat(kind), ...(blendState ? {blend: blendState} : {})}],
             }} : {}),
         };
         pipeline = this.device.createRenderPipeline(descriptor);
@@ -683,37 +731,82 @@ export class WebGPURenderer3D implements Renderer3D {
         } else ints[o + 46] = 0;
         return index * OBJECT_BLOCK_BYTES_3D;
     }
+    // Pass-local memo of the last bound state; consecutive draws that share it skip the redundant calls.
+    #boundPipeline: GPURenderPipeline | undefined;
+    #boundMaterial: GPUBindGroup | undefined;
+    #boundSkin: GPUBindGroup | undefined;
+    #boundVertices: unknown;
+    #boundIndex: GPUBuffer | undefined;
+    readonly #drawVariants = new WeakMap<Material3D, {version: number; variants: Map<number, Map<number, {pipeline: GPURenderPipeline; features: ShaderFeatures3D; layoutVersion: number}>>}>();
+    private resetPassState(): void {
+        this.#boundPipeline = undefined; this.#boundMaterial = undefined; this.#boundSkin = undefined; this.#boundVertices = undefined; this.#boundIndex = undefined;
+    }
     private draw(pass: GPURenderPassEncoder, item: RenderItem3D, kind: PassKind, frameFlags: {fog: boolean; environment: boolean}): void {
         const {mesh, geometry, material} = item, frame = this.#list.frame;
         const gpu = this.geometry(geometry);
         if (!gpu.buffers.has('position')) return;
-        const features = this.features(item, gpu, kind, frameFlags);
         const instanced = mesh.isInstanced, instances = instanced ? (mesh as InstancedMesh3D).count : 1;
         if (instances <= 0 || this.#objectCount >= this.#objectCapacity) return;
         const world = mesh.matrixWorld;
         const determinant = world[0]! * (world[5]! * world[10]! - world[6]! * world[9]!) - world[4]! * (world[1]! * world[10]! - world[2]! * world[9]!)
             + world[8]! * (world[1]! * world[6]! - world[2]! * world[5]!);
         const wire = material.wireframe && kind !== 'depth' && geometry.topology === 'triangles';
-        pass.setPipeline(this.pipeline(features, item, gpu, kind, determinant < 0 && !features.skinning, wire));
-        pass.setBindGroup(1, this.material(material));
+        // Everything that selects a pipeline besides the material and geometry themselves,
+        // packed into one number so the common case is a single map lookup.
+        const bits = (kind === 'canvas' ? 0 : kind === 'target' ? 1 : kind === 'depth' ? 2 : 3) | (wire ? 4 : 0) | (determinant < 0 ? 8 : 0) | (instanced ? 16 : 0)
+            | (instanced && (mesh as InstancedMesh3D).instanceColors ? 32 : 0) | (mesh.skeleton ? 64 : 0) | (mesh.receiveShadow && this.#shadowCount > 0 ? 128 : 0)
+            | (frameFlags.fog ? 256 : 0) | (frameFlags.environment ? 512 : 0) | (this.toneMapping !== 'none' ? 1024 : 0)
+            | (instanced && (mesh as InstancedMesh3D).instanceColorSize === 4 ? 2048 : 0)
+            | (material.side === 'double' ? 4096 : material.side === 'back' ? 8192 : 0);
+        let cache = this.#drawVariants.get(material);
+        if (!cache || cache.version !== material.version) this.#drawVariants.set(material, cache = {version: material.version, variants: new Map()});
+        // Material fields that select shader features or pipeline state. They are read every
+        // draw so plain assignments (a new map, another blend mode) need no touch().
+        const map = material.map;
+        const surface = (map ? 1 : 0) | (map?.source instanceof RenderTarget3D ? 2 : 0) | (material.normalMap ? 4 : 0) | (material.metallicRoughnessMap ? 8 : 0)
+            | (material.occlusionMap ? 16 : 0) | (material.emissiveMap ? 32 : 0) | (material.alphaMode === 'mask' ? 64 : material.alphaMode === 'blend' ? 128 : 0)
+            | (material.blending === 'premultiplied' ? 256 : material.blending === 'additive' ? 32768 : material.blending === 'multiply' ? 65536 : 0)
+            | (material.flatShading ? 512 : 0) | (material.vertexColors ? 1024 : 0) | (material.billboard ? 2048 : 0) | (material.screenSpace ? 4096 : 0)
+            | (material.depthTest ? 8192 : 0) | (material.depthWrite ? 16384 : 0) | (material.fog ? 131072 : 0) | (material.toneMapped ? 262144 : 0)
+            | (material.polygonOffset ? 524288 : 0);
+        const variantKey = surface * 16384 + bits;
+        let byGeometry = cache.variants.get(geometry.id);
+        if (!byGeometry) cache.variants.set(geometry.id, byGeometry = new Map());
+        let variant = byGeometry.get(variantKey);
+        if (!variant || variant.layoutVersion !== gpu.layoutVersion) {
+            const built = this.features(item, gpu, kind, frameFlags);
+            variant = {features: built, pipeline: this.pipeline(built, item, gpu, kind, determinant < 0 && !built.skinning, wire), layoutVersion: gpu.layoutVersion};
+            byGeometry.set(variantKey, variant);
+        }
+        const features = variant.features;
+        if (variant.pipeline !== this.#boundPipeline) { pass.setPipeline(variant.pipeline); this.#boundPipeline = variant.pipeline; }
+        const materialGroup = this.material(material);
+        if (materialGroup !== this.#boundMaterial) { pass.setBindGroup(1, materialGroup); this.#boundMaterial = materialGroup; }
         pass.setBindGroup(2, this.#objectGroup, [this.writeObject(mesh, gpu, features.skinning)]);
-        pass.setBindGroup(3, this.skin(mesh, gpu, features.skinning, frame));
-        let slot = 0;
-        const bind = (enabled: boolean, name: string): void => { if (enabled) pass.setVertexBuffer(slot++, gpu.buffers.get(name)!.buffer); };
-        bind(true, 'position'); bind(features.normal, 'normal'); bind(features.uv, 'uv'); bind(features.tangent, 'tangent');
-        bind(features.vertexColor, 'color'); bind(features.skinning, 'joints'); bind(features.skinning, 'weights');
-        if (instanced) {
-            const instance = this.instances(mesh as InstancedMesh3D, frame);
-            pass.setVertexBuffer(slot++, instance.matrices.buffer);
-            if (features.instanceColor) pass.setVertexBuffer(slot++, instance.colors!.buffer);
+        const skinGroup = this.skin(mesh, gpu, features.skinning, frame);
+        if (skinGroup !== this.#boundSkin) { pass.setBindGroup(3, skinGroup); this.#boundSkin = skinGroup; }
+        // Vertex bindings depend on the geometry and on which attributes this variant reads.
+        if (instanced || this.#boundVertices !== variant || this.#boundPipeline !== variant.pipeline) {
+            let slot = 0;
+            const bind = (enabled: boolean, name: string): void => { if (enabled) pass.setVertexBuffer(slot++, gpu.buffers.get(name)!.buffer); };
+            bind(true, 'position'); bind(features.normal, 'normal'); bind(features.uv, 'uv'); bind(features.tangent, 'tangent');
+            bind(features.vertexColor, 'color'); bind(features.skinning, 'joints'); bind(features.skinning, 'weights');
+            if (instanced) {
+                const instance = this.instances(mesh as InstancedMesh3D, frame);
+                pass.setVertexBuffer(slot++, instance.matrices.buffer);
+                if (features.instanceColor) pass.setVertexBuffer(slot++, instance.colors!.buffer);
+            }
+            this.#boundVertices = instanced ? undefined : variant;
+            this.#boundIndex = undefined;
         }
         if (wire) {
             // Wireframe draws the whole geometry: its edge list is not split by groups.
             const lines = this.wireframe(geometry, gpu);
             pass.setIndexBuffer(lines.buffer, 'uint32');
             pass.drawIndexed(lines.count, instances);
+            this.#boundIndex = undefined;
         } else if (gpu.index) {
-            pass.setIndexBuffer(gpu.index.buffer, gpu.index.format);
+            if (gpu.index.buffer !== this.#boundIndex) { pass.setIndexBuffer(gpu.index.buffer, gpu.index.format); this.#boundIndex = gpu.index.buffer; }
             pass.drawIndexed(item.count, instances, item.start);
         } else pass.draw(item.count, instances, item.start);
         if (kind !== 'depth') {
@@ -755,6 +848,9 @@ export class WebGPURenderer3D implements Renderer3D {
         }
         return {color: this.#canvasColor?.createView(), depth: this.#canvasDepth.createView()};
     }
+    private colorFormat(kind: PassKind): GPUTextureFormat {
+        return kind === 'target' ? TARGET_FORMAT : kind === 'hdr' ? HDR_FORMAT : this.#format;
+    }
     private drawSkybox(pass: GPURenderPassEncoder, texture: CubeTexture3D, intensity: number, camera: Camera3D, kind: PassKind): void {
         const device = this.device, key = 'skybox/' + kind;
         if (!mat4Invert(this.#scratch16, camera.viewProjectionMatrix)) return;
@@ -769,7 +865,7 @@ export class WebGPURenderer3D implements Renderer3D {
             pipeline = device.createRenderPipeline({
                 label: key, layout: device.createPipelineLayout({bindGroupLayouts: [this.#skyLayout]}),
                 vertex: {module, entryPoint: 'vertexMain'},
-                fragment: {module, entryPoint: 'fragmentMain', targets: [{format: kind === 'target' ? TARGET_FORMAT : this.#format}]},
+                fragment: {module, entryPoint: 'fragmentMain', targets: [{format: this.colorFormat(kind)}]},
                 primitive: {topology: 'triangle-list'},
                 depthStencil: {format: DEPTH_FORMAT, depthWriteEnabled: false, depthCompare: 'less-equal'},
                 multisample: {count: kind === 'canvas' ? this.#sampleCount : 1},
@@ -779,7 +875,8 @@ export class WebGPURenderer3D implements Renderer3D {
         this.#skyBuffer ??= device.createBuffer({size: 80, usage: BUFFER_USAGE.UNIFORM | BUFFER_USAGE.COPY_DST});
         const data = new Float32Array(20);
         data.set(this.#scratch16);
-        data[16] = intensity; data[17] = kind === 'target' ? 1 : 0; data[18] = this.exposure; data[19] = this.toneMapping === 'aces' ? 2 : this.toneMapping === 'reinhard' ? 1 : 0;
+        data[16] = intensity; data[17] = kind === 'canvas' ? 0 : 1; data[18] = this.exposure;
+        data[19] = kind === 'hdr' ? 0 : this.toneMapping === 'aces' ? 2 : this.toneMapping === 'reinhard' ? 1 : 0;
         device.queue.writeBuffer(this.#skyBuffer, 0, data);
         const cube = this.textureCube(texture), groupKey = texture.id + ':' + texture.version;
         if (!this.#skyGroup || this.#skyGroup.key !== groupKey) {
@@ -800,7 +897,9 @@ export class WebGPURenderer3D implements Renderer3D {
     render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean {
         if (this.#disposed) throw new World3DError('WORLD3D_DISPOSED', 'renderer');
         if (this.#lost) return false;
-        const device = this.device, list = this.#list, info = this.info, kind: PassKind = target ? 'target' : 'canvas';
+        if (this.postProcess.enabled && !this.#inPost) return this.renderPost(scene, camera, target);
+        // Half-float targets keep scene-referred light; tone mapping happens when they are displayed.
+        const device = this.device, list = this.#list, info = this.info, kind: PassKind = target ? (target.format === 'rgba16f' ? 'hdr' : 'target') : 'canvas';
         if (target?.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
         list.build(scene, camera);
         this.#serial++;
@@ -809,10 +908,10 @@ export class WebGPURenderer3D implements Renderer3D {
         info.visited = list.stats.visited; info.culled = list.stats.culled;
 
         const atlas = this.ensureShadowAtlas();
-        const plans = planShadows3D(this.#frameData, list, this.#shadowAtlasSize, this.shadowsEnabled, true, this.#shadowSlots);
+        const plans = planShadows3D(this.#frameData, list, this.#shadowAtlasSize, this.shadowsEnabled, true, this.#shadowSlots, camera);
         this.#shadowCount = plans.length;
         const environment = scene.environment && !scene.environment.isDisposed ? this.textureCube(scene.environment) : undefined;
-        writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {exposure: this.exposure, toneMapping: this.toneMapping, environmentMaxMip: environment?.maxMip ?? 0});
+        writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {exposure: this.exposure, toneMapping: kind === 'hdr' ? 'none' : this.toneMapping, environmentMaxMip: environment?.maxMip ?? 0});
         device.queue.writeBuffer(this.#frameBuffer, 0, this.#frameData);
         const frameKey = (environment ? scene.environment!.id + ':' + scene.environment!.version : '-');
         if (!this.#frameGroup || this.#frameGroupKey !== frameKey) {
@@ -836,6 +935,7 @@ export class WebGPURenderer3D implements Renderer3D {
 
         const encoder = device.createCommandEncoder();
         if (plans.length > 0) {
+            this.resetPassState();
             const pass = encoder.beginRenderPass({colorAttachments: [], depthStencilAttachment: {view: atlas, depthClearValue: 1, depthLoadOp: 'clear', depthStoreOp: 'store'}});
             for (const plan of plans) {
                 let slot = this.#depthFrames[plan.slot];
@@ -857,24 +957,38 @@ export class WebGPURenderer3D implements Renderer3D {
         const encode = target ? (value: number): number => value : linearToSrgb;
         const clearValue: GPUColor = Array.isArray(background) ? [encode(background[0]!), encode(background[1]!), encode(background[2]!), 1]
             : [0, 0, 0, (target || this.#alpha) && !background ? 0 : 1];
-        let colorAttachment: GPURenderPassColorAttachment, depthView: GPUTextureView | undefined;
+        let colorAttachment: GPURenderPassColorAttachment, depthView: GPUTextureView | undefined, outputWidth: number, outputHeight: number;
+        const loadOp: GPULoadOp = this.autoClear ? 'clear' : 'load';
         if (target) {
             const entry = this.target(target);
-            colorAttachment = {view: entry.colorView, clearValue, loadOp: 'clear', storeOp: 'store'};
+            colorAttachment = {view: entry.colorView, clearValue, loadOp, storeOp: 'store'};
             depthView = entry.depthView;
+            outputWidth = target.width; outputHeight = target.height;
             if (!depthView) throw new World3DError('WORLD3D_INPUT_INVALID', 'the WebGPU backend requires render targets with depth');
         } else {
             const current = this.#context.getCurrentTexture(), attachments = this.canvasAttachments(current), view = current.createView();
-            colorAttachment = attachments.color ? {view: attachments.color, resolveTarget: view, clearValue, loadOp: 'clear', storeOp: 'discard'}
-                : {view, clearValue, loadOp: 'clear', storeOp: 'store'};
+            // The multisampled color is kept so a later view of the same frame can load it.
+            colorAttachment = attachments.color ? {view: attachments.color, resolveTarget: view, clearValue, loadOp, storeOp: 'store'}
+                : {view, clearValue, loadOp, storeOp: 'store'};
             depthView = attachments.depth;
+            outputWidth = current.width; outputHeight = current.height;
         }
+        this.resetPassState();
         const pass = encoder.beginRenderPass({colorAttachments: [colorAttachment], depthStencilAttachment: {view: depthView, depthClearValue: 1, depthLoadOp: 'clear', depthStoreOp: 'discard'}});
+        const view = this.viewport;
+        if (view) {
+            // The public rectangle has its origin at the bottom left; WebGPU's is at the top left.
+            const w = Math.max(Math.round(view[2] * outputWidth), 1), h = Math.max(Math.round(view[3] * outputHeight), 1);
+            const x = Math.min(Math.max(Math.round(view[0] * outputWidth), 0), outputWidth - 1), y = Math.min(Math.max(outputHeight - Math.round(view[1] * outputHeight) - h, 0), outputHeight - 1);
+            const cw = Math.min(w, outputWidth - x), ch = Math.min(h, outputHeight - y);
+            pass.setViewport(x, y, cw, ch, 0, 1); pass.setScissorRect(x, y, cw, ch);
+        }
         const flags = {fog: scene.fog !== undefined, environment: environment !== undefined};
         pass.setBindGroup(0, this.#frameGroup);
         for (const item of list.opaque) this.draw(pass, item, kind, flags);
         if (background instanceof CubeTexture3D && !background.isDisposed) {
             this.drawSkybox(pass, background, scene.backgroundIntensity, camera, kind);
+            this.resetPassState();
             pass.setBindGroup(0, this.#frameGroup);
         }
         for (const item of list.transparent) this.draw(pass, item, kind, flags);
@@ -885,6 +999,25 @@ export class WebGPURenderer3D implements Renderer3D {
         this.prune(list.frame);
         info.programs = this.#pipelines.size; info.geometries = this.#geometries.size; info.textures = this.#textures.size;
         info.shadowMaps = plans.length;
+        return true;
+    }
+    /** Draw the scene into the half-float chain target, then post-process into the output. */
+    private renderPost(scene: Scene3D, camera: Camera3D, target: RenderTarget3D | undefined): boolean {
+        if (target?.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
+        const current = target ? undefined : this.#context.getCurrentTexture();
+        const width = target ? target.width : current!.width, height = target ? target.height : current!.height;
+        const post = this.#post ??= new PostChainWebGPU3D(this.device);
+        post.scene.setSize(Math.max(width, 1), Math.max(height, 1));
+        this.#inPost = true;
+        try { if (!this.render(scene, camera, post.scene)) return false; }
+        finally { this.#inPost = false; }
+        const encoder = this.device.createCommandEncoder();
+        const output = target ? this.target(target).colorView : current!.createView();
+        const format = target ? (target.format === 'rgba16f' ? HDR_FORMAT : TARGET_FORMAT) : this.#format;
+        // 8-bit targets encode sRGB on write and half-float targets store linear light; only the canvas needs encoded values.
+        this.info.drawCalls += post.run(encoder, this.target(post.scene).colorView, width, height, output, format, target !== undefined,
+            this.postProcess, target?.format === 'rgba16f' ? 'none' : this.toneMapping);
+        this.device.queue.submit([encoder.finish()]);
         return true;
     }
     /** Retire per-mesh and per-skeleton buffers that have not been drawn recently. */
@@ -903,6 +1036,7 @@ export class WebGPURenderer3D implements Renderer3D {
     }
     /** RGBA8 pixels of a render target, top row first. */
     async readRenderTargetPixels(target: RenderTarget3D): Promise<Uint8Array> {
+        if (target.format === 'rgba16f') throw new World3DError('WORLD3D_INPUT_INVALID', 'half-float targets cannot be read back as bytes');
         if (this.#disposed) throw new World3DError('WORLD3D_DISPOSED', 'renderer');
         if (this.#lost) throw new World3DError('WORLD3D_CONTEXT_LOST', 'readback');
         const device = this.device, entry = this.target(target), width = target.width, height = target.height;
@@ -930,6 +1064,7 @@ export class WebGPURenderer3D implements Renderer3D {
         this.#disposed = true;
         this.#unsubscribeDeviceLoss();
         this.#list.clear();
+        this.#post?.dispose(); this.#post = undefined;
         for (const geometry of [...this.#geometries.keys()]) { this.#geometries.get(geometry)!.unsubscribe(); this.releaseGeometry(geometry); }
         for (const entry of this.#textures.values()) { entry.unsubscribe(); entry.texture.destroy(); }
         for (const entry of this.#targets.values()) { entry.unsubscribe(); entry.color.destroy(); entry.depth?.destroy(); }
@@ -957,7 +1092,9 @@ export async function createWebGPURenderer3D(options: WebGPURenderer3DOptions): 
     const adapter = await navigator.gpu.requestAdapter({powerPreference: options.powerPreference ?? 'high-performance'});
     if (!adapter) throw new World3DError('WORLD3D_CONTEXT_UNAVAILABLE', 'webgpu adapter');
     let device: GPUDevice;
-    try { device = await adapter.requestDevice(); }
+    // Enable every block-compression family the adapter offers so compressed textures can be uploaded.
+    const requiredFeatures = (['texture-compression-bc', 'texture-compression-etc2', 'texture-compression-astc'] as GPUFeatureName[]).filter(feature => adapter.features.has(feature));
+    try { device = await adapter.requestDevice({requiredFeatures}); }
     catch (cause) { throw new World3DError('WORLD3D_CONTEXT_UNAVAILABLE', 'webgpu device', cause); }
     try { return new WebGPURenderer3D(options, device, true); }
     catch (cause) { device.destroy(); throw cause; }

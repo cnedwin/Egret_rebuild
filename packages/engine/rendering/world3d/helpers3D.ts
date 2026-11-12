@@ -6,6 +6,9 @@ import {Attribute3D, Geometry3D} from './Geometry3D.js';
 import {Material3D} from './Material3D.js';
 import type {ColorInput3D} from './Material3D.js';
 import {Mesh3D} from './Mesh3D.js';
+import {createPlaneGeometry3D} from './primitives3D.js';
+import {Texture3D} from './Texture3D.js';
+import type {TextureSource3D} from './Texture3D.js';
 import {Object3D} from './Object3D.js';
 
 function lineGeometry(positions: number[], colors?: number[]): Geometry3D {
@@ -101,4 +104,57 @@ export class Lod3D extends Object3D {
         for (const level of this.#levels) copy.addLevel(level.object.clone(true), level.distance);
         return copy;
     }
+}
+
+export interface ScreenLayerOptions3D {
+    /** 'overlay' draws after the scene with blending; 'underlay' draws first and is covered by it. */
+    readonly order?: 'overlay' | 'underlay';
+    /** Multiplies the layer's alpha. */
+    readonly opacity?: number;
+    /** Re-upload the source every frame. Disable for layers that change rarely and call refreshSource() instead. */
+    readonly autoUpdate?: boolean;
+    /** Source rows start at the top, as canvases and images do. Defaults to true. */
+    readonly topRowFirst?: boolean;
+}
+let layerGeometry: Geometry3D | undefined;
+/**
+ * Full-screen image drawn in the same pass as the 3D scene, typically the
+ * canvas of a 2D stage. An overlay is composited above the scene and an
+ * underlay beneath it, so interface, scene and backdrop share one surface.
+ */
+export class ScreenLayer3D extends Mesh3D {
+    readonly texture: Texture3D;
+    autoUpdate: boolean;
+    constructor(source: TextureSource3D, options: ScreenLayerOptions3D = {}) {
+        const overlay = (options.order ?? 'overlay') === 'overlay';
+        const texture = new Texture3D(source, {mipmaps: false, wrapS: 'clamp', wrapT: 'clamp', flipY: options.topRowFirst ?? true});
+        const material = new Material3D('unlit', {map: texture, alphaMode: overlay ? 'blend' : 'opaque', depthTest: false, depthWrite: false, opacity: options.opacity ?? 1});
+        material.screenSpace = true;
+        material.fog = false;
+        material.toneMapped = false;
+        super(layerGeometry ??= createPlaneGeometry3D({width: 2, height: 2}), material);
+        this.texture = texture;
+        this.autoUpdate = options.autoUpdate ?? true;
+        this.name = overlay ? 'screen-overlay' : 'screen-underlay';
+        this.castShadow = false;
+        this.receiveShadow = false;
+        this.frustumCulled = false;
+        // Far outside the range applications use, so layers bracket the whole scene.
+        this.renderOrder = overlay ? 1e6 : -1e6;
+    }
+    /** Schedule a new upload of the source pixels. */
+    refreshSource(): void {
+        if (!this.texture.isDisposed) this.texture.touch();
+    }
+    /** Release the layer's texture and material. The shared quad geometry stays alive. */
+    dispose(): void {
+        (this.material as Material3D).dispose();
+        this.texture.dispose();
+    }
+    override clone(): this {
+        throw new World3DError('WORLD3D_INPUT_INVALID', 'a screen layer cannot be cloned; create a new one from the same source');
+    }
+}
+export function createScreenLayer3D(source: TextureSource3D, options: ScreenLayerOptions3D = {}): ScreenLayer3D {
+    return new ScreenLayer3D(source, options);
 }

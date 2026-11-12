@@ -14,7 +14,11 @@ import type {Scene3D} from '../../rendering/world3d/Object3D.js';
 import {RenderList3D} from '../../rendering/world3d/RenderList3D.js';
 import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
 import {CubeTexture3D, RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
+import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
+import {createPostProcessSettings3D} from './post3D.js';
+import type {PostProcessSettings3D} from './post3D.js';
+import {PostChainWebGL23D} from './postWebGL23D.js';
 import type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
 import {GpuResources3D} from './gpuResources3D.js';
 import type {GeometryGpu3D, Program3D} from './gpuResources3D.js';
@@ -49,6 +53,13 @@ export class WebGL2Renderer3D implements Renderer3D {
     toneMapping: ToneMapping3D;
     exposure: number;
     shadowsEnabled: boolean;
+    /** Bloom, color grading and FXAA; set `enabled` to turn the chain on. */
+    readonly postProcess: PostProcessSettings3D = createPostProcessSettings3D();
+    viewport: readonly [number, number, number, number] | undefined;
+    autoClear = true;
+    #post: PostChainWebGL23D | undefined;
+    #inPost = false;
+    #frameToneMapping: ToneMapping3D = 'none';
     readonly info: Renderer3DInfo = {frame: 0, drawCalls: 0, triangles: 0, visited: 0, culled: 0, shadowMaps: 0, programs: 0, geometries: 0, textures: 0};
     readonly #gl: WebGL2RenderingContext;
     readonly #alpha: boolean;
@@ -108,6 +119,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         this.#onRestored = (): void => {
             this.#resources.reset();
             this.#resources = new GpuResources3D(gl);
+            this.#post?.dispose(true); this.#post = undefined;
             this.clearMaterialPrograms();
             this.#frameBuffer = this.#emptyVao = this.#shadowTexture = this.#shadowFramebuffer = null;
             this.#shadowSize = 0;
@@ -147,14 +159,17 @@ export class WebGL2Renderer3D implements Renderer3D {
     render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean {
         if (this.#disposed) throw new World3DError('WORLD3D_DISPOSED', 'renderer');
         if (this.isContextLost) return false;
+        if (this.postProcess.enabled && !this.#inPost) return this.renderPost(scene, camera, target);
         const gl = this.#gl, list = this.#list, info = this.info;
+        // Half-float targets keep scene-referred light; tone mapping happens when they are displayed.
+        const toneMapping = this.#frameToneMapping = target?.format === 'rgba16f' ? 'none' : this.toneMapping;
         list.build(scene, camera);
         info.frame = list.frame; info.drawCalls = info.triangles = 0;
         info.visited = list.stats.visited; info.culled = list.stats.culled;
         this.resetState();
         this.bindFrameBlock();
         this.ensureShadowAtlas();
-        this.renderShadows();
+        this.renderShadows(camera);
 
         if (target) {
             if (target.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
@@ -173,24 +188,49 @@ export class WebGL2Renderer3D implements Renderer3D {
         const encode = target ? (value: number): number => value : linearToSrgb;
         if (Array.isArray(background)) gl.clearColor(encode(background[0]!), encode(background[1]!), encode(background[2]!), 1);
         else gl.clearColor(0, 0, 0, (target || this.#alpha) && !background ? 0 : 1);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.clear(this.autoClear ? gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT : gl.DEPTH_BUFFER_BIT);
+        const view = this.viewport;
+        if (view) {
+            const fullWidth = target ? target.width : gl.drawingBufferWidth, fullHeight = target ? target.height : gl.drawingBufferHeight;
+            const x = Math.round(view[0] * fullWidth), y = Math.round(view[1] * fullHeight), w = Math.max(Math.round(view[2] * fullWidth), 1), h = Math.max(Math.round(view[3] * fullHeight), 1);
+            gl.viewport(x, y, w, h);
+            gl.enable(gl.SCISSOR_TEST); gl.scissor(x, y, w, h);
+        }
 
         let environmentMaxMip = 0;
         this.#lastEnvironment = scene.environment;
         if (scene.environment) environmentMaxMip = this.#resources.bindCube(TEXTURE_UNITS_3D.environment, scene.environment);
-        writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {exposure: this.exposure, toneMapping: this.toneMapping, environmentMaxMip});
+        writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {exposure: this.exposure, toneMapping, environmentMaxMip});
         this.uploadFrameBlock();
-        const flags = (scene.fog ? V.fog : 0) | (this.toneMapping !== 'none' ? V.toneMapped : 0) | (scene.environment ? V.environment : 0)
+        const flags = (scene.fog ? V.fog : 0) | (toneMapping !== 'none' ? V.toneMapped : 0) | (scene.environment ? V.environment : 0)
             | (target ? V.linearOutput : 0);
         for (const item of list.opaque) this.draw(item, flags, false);
         if (background instanceof CubeTexture3D) this.drawSkybox(background, scene.backgroundIntensity, camera);
         for (const item of list.transparent) this.draw(item, flags, false);
         gl.bindVertexArray(null);
+        if (view) gl.disable(gl.SCISSOR_TEST);
         if (target) gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         this.#resources.prune(list.frame);
         const counts = this.#resources.counts;
         info.programs = counts.programs; info.geometries = counts.geometries; info.textures = counts.textures;
         info.shadowMaps = this.#shadowCount;
+        return true;
+    }
+    /** Draw the scene into the half-float chain target, then post-process into the output. */
+    private renderPost(scene: Scene3D, camera: Camera3D, target: RenderTarget3D | undefined): boolean {
+        const gl = this.#gl;
+        if (target?.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
+        const width = target ? target.width : gl.drawingBufferWidth, height = target ? target.height : gl.drawingBufferHeight;
+        const post = this.#post ??= new PostChainWebGL23D(gl, this.#resources);
+        post.scene.setSize(Math.max(width, 1), Math.max(height, 1));
+        this.#inPost = true;
+        try { if (!this.render(scene, camera, post.scene)) return false; }
+        finally { this.#inPost = false; }
+        const output = target ? this.#resources.target(target).framebuffer : null;
+        // 8-bit targets encode sRGB on write and half-float targets store linear light; only the canvas needs encoded values.
+        this.info.drawCalls += post.run(this.#resources.target(post.scene).color, width, height, output, target !== undefined,
+            this.postProcess, target?.format === 'rgba16f' ? 'none' : this.toneMapping, this.#emptyVao ??= gl.createVertexArray());
+        this.resetState();
         return true;
     }
     private resetState(): void {
@@ -250,12 +290,12 @@ export class WebGL2Renderer3D implements Renderer3D {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         this.#shadowTexture = texture; this.#shadowFramebuffer = framebuffer; this.#shadowSize = wanted;
     }
-    private renderShadows(): void {
+    private renderShadows(camera: Camera3D): void {
         const gl = this.#gl;
         this.#shadowCount = 0;
         gl.activeTexture(gl.TEXTURE0 + TEXTURE_UNITS_3D.shadow);
         gl.bindTexture(gl.TEXTURE_2D, this.#shadowTexture);
-        const plans = planShadows3D(this.#frameData, this.#list, this.#shadowSize, this.shadowsEnabled, false, this.#shadowSlots);
+        const plans = planShadows3D(this.#frameData, this.#list, this.#shadowSize, this.shadowsEnabled, false, this.#shadowSlots, camera);
         if (plans.length === 0) return;
         const size = this.#shadowSize;
         // Unbind the atlas while rendering into it to avoid a feedback loop.
@@ -315,14 +355,16 @@ export class WebGL2Renderer3D implements Renderer3D {
         const has = (bit: number): boolean => (variant & bit) !== 0;
         const depthOnly = has(V.depthOnly), uv = has(V.uv), defines: string[] = [];
         if (depthOnly) defines.push('DEPTH_ONLY');
-        else defines.push(material.shading === 'unlit' ? 'SHADING_UNLIT' : material.shading === 'lambert' ? 'SHADING_LAMBERT' : material.shading === 'phong' ? 'SHADING_PHONG' : 'SHADING_STANDARD');
+        else defines.push(material.shading === 'unlit' ? 'SHADING_UNLIT' : material.shading === 'lambert' ? 'SHADING_LAMBERT' : material.shading === 'phong' ? 'SHADING_PHONG'
+            : material.shading === 'toon' ? 'SHADING_TOON' : material.shading === 'matcap' ? 'SHADING_MATCAP' : 'SHADING_STANDARD');
         if (has(V.normal)) defines.push('USE_NORMAL');
         if (has(V.skin)) defines.push('USE_SKINNING');
         if (has(V.morph)) defines.push('USE_MORPH');
         if (has(V.morphNormals) && !depthOnly) defines.push('USE_MORPH_NORMALS');
         if (has(V.instancing)) defines.push('USE_INSTANCING');
         if (has(V.points)) defines.push('POINTS');
-        if (material.billboard) defines.push('BILLBOARD');
+        if (material.screenSpace) defines.push('SCREEN_SPACE');
+        else if (material.billboard) defines.push('BILLBOARD');
         if (uv && material.map) {
             defines.push('USE_MAP');
             if (has(V.mapFromTarget)) defines.push('MAP_FROM_TARGET');
@@ -334,12 +376,12 @@ export class WebGL2Renderer3D implements Renderer3D {
         }
         if (has(V.color)) defines.push('USE_VERTEX_COLOR');
         if (!depthOnly) {
-            const lit = material.shading !== 'unlit';
+            const lit = material.shading !== 'unlit' && material.shading !== 'matcap';
             if (has(V.instanceColor)) defines.push('USE_INSTANCE_COLOR');
             if (lit && uv && material.normalMap) { defines.push('USE_NORMAL_MAP'); if (has(V.tangent)) defines.push('USE_TANGENT'); }
             if (lit && uv && material.metallicRoughnessMap && material.shading === 'standard') defines.push('USE_MR_MAP');
             if (lit && uv && material.occlusionMap) defines.push('USE_AO_MAP');
-            if (uv && material.emissiveMap) defines.push('USE_EMISSIVE_MAP');
+            if (uv && material.emissiveMap && material.shading !== 'matcap') defines.push('USE_EMISSIVE_MAP');
             if (material.flatShading) defines.push('FLAT_SHADED');
             if (material.side === 'double') defines.push('DOUBLE_SIDED');
             if (lit && has(V.receiveShadow)) defines.push('RECEIVE_SHADOW');
@@ -348,7 +390,9 @@ export class WebGL2Renderer3D implements Renderer3D {
             if (has(V.toneMapped) && material.toneMapped) defines.push('TONE_MAPPED');
             if (has(V.linearOutput)) defines.push('LINEAR_OUTPUT');
         }
-        program = this.#resources.program(defines.join(' '), () => buildMaterialShader3D(defines));
+        const custom = depthOnly ? undefined : material.shader?.glsl;
+        if (custom !== undefined) defines.push('CUSTOM_FRAGMENT');
+        program = this.#resources.program(defines.join(' ') + (custom === undefined ? '' : '|' + material.shader!.key), () => buildMaterialShader3D(defines, custom));
         cache.variants.set(variant, program);
         return program;
     }
@@ -356,6 +400,8 @@ export class WebGL2Renderer3D implements Renderer3D {
         const gl = this.#gl, u = program.uniforms, resources = this.#resources;
         if (u['uColor']) gl.uniform4f(u['uColor'], material.color[0]!, material.color[1]!, material.color[2]!, material.opacity);
         if (u['uAlphaCutoff']) gl.uniform1f(u['uAlphaCutoff'], material.alphaCutoff);
+        const customLocation = u['uCustom[0]'] ?? u['uCustom'];
+        if (customLocation && material.shader) gl.uniform4fv(customLocation, material.shader.uniforms);
         if (u['uMap'] && material.map) resources.bindTexture(TEXTURE_UNITS_3D.map, material.map);
         if (u['uUvTransform']) {
             const map = material.map;
@@ -372,8 +418,9 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (depthOnly) return;
         const e = material.emissiveIntensity;
         if (u['uEmissive']) gl.uniform3f(u['uEmissive'], material.emissive[0]! * e, material.emissive[1]! * e, material.emissive[2]! * e);
+        if (u['uClearcoat']) gl.uniform2f(u['uClearcoat'], material.clearcoat, material.clearcoatRoughness);
         if (u['uSurface']) gl.uniform4f(u['uSurface'], material.metallic, material.roughness, material.normalScale, material.occlusionStrength);
-        if (u['uSpecular']) gl.uniform4f(u['uSpecular'], material.specular[0]!, material.specular[1]!, material.specular[2]!, material.shininess);
+        if (u['uSpecular']) gl.uniform4f(u['uSpecular'], material.specular[0]!, material.specular[1]!, material.specular[2]!, material.shading === 'toon' ? material.toonSteps : material.shininess);
         if (u['uEnvironmentScale']) gl.uniform1f(u['uEnvironmentScale'], material.environmentIntensity);
         if (u['uNormalMap'] && material.normalMap) resources.bindTexture(TEXTURE_UNITS_3D.normalMap, material.normalMap);
         if (u['uMetallicRoughnessMap'] && material.metallicRoughnessMap) resources.bindTexture(TEXTURE_UNITS_3D.metallicRoughnessMap, material.metallicRoughnessMap);
@@ -505,7 +552,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         this.#resources.bindCube(TEXTURE_UNITS_3D.environment, texture);
         if (!mat4Invert(this.#scratch16, camera.viewProjectionMatrix)) return;
         if (u['uInverseViewProjection']) gl.uniformMatrix4fv(u['uInverseViewProjection'], false, this.#scratch16);
-        if (u['uOutput']) gl.uniform4f(u['uOutput'], intensity, this.#linearOutput ? 1 : 0, this.exposure, this.toneMapping === 'aces' ? 2 : this.toneMapping === 'reinhard' ? 1 : 0);
+        if (u['uOutput']) gl.uniform4f(u['uOutput'], intensity, this.#linearOutput ? 1 : 0, this.exposure, this.#frameToneMapping === 'aces' ? 2 : this.#frameToneMapping === 'reinhard' ? 1 : 0);
         gl.disable(gl.CULL_FACE); this.#cull = 'none';
         gl.disable(gl.BLEND); this.#blend = 'off';
         gl.enable(gl.DEPTH_TEST); this.#depthTest = true;
@@ -546,6 +593,7 @@ export class WebGL2Renderer3D implements Renderer3D {
     async readRenderTargetPixels(target: RenderTarget3D): Promise<Uint8Array> {
         this.assertReadbackAvailable();
         const width = target.width, height = target.height;
+        if (target.format === 'rgba16f') throw new World3DError('WORLD3D_INPUT_INVALID', 'half-float targets cannot be read back as bytes');
         const rows = this.readFramebuffer(this.#resources.target(target).framebuffer, 0, 0, width, height);
         const out = new Uint8Array(rows.length);
         // WebGL returns the bottom row first; flip to the shared top-first order.
@@ -555,6 +603,10 @@ export class WebGL2Renderer3D implements Renderer3D {
     private clearMaterialPrograms(): void {
         for (const entry of this.#materialPrograms.values()) entry.unsubscribe();
         this.#materialPrograms.clear();
+    }
+    /** True when textures in this compressed format can be used on this device. */
+    supportsCompressedFormat(format: CompressedFormat3D): boolean {
+        return this.#resources.compressedFormat(format, false) !== undefined;
     }
     /** Release every GPU object and detach from the canvas. Idempotent. */
     dispose(): void {
@@ -566,9 +618,11 @@ export class WebGL2Renderer3D implements Renderer3D {
         this.#list.clear();
         this.clearMaterialPrograms();
         if (this.isContextLost) {
+            this.#post?.dispose(true); this.#post = undefined;
             this.#resources.reset();
             return;
         }
+        this.#post?.dispose(); this.#post = undefined;
         this.#resources.dispose();
         if (this.#frameBuffer) gl.deleteBuffer(this.#frameBuffer);
         if (this.#emptyVao) gl.deleteVertexArray(this.#emptyVao);

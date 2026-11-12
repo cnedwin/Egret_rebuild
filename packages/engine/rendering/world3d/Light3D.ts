@@ -23,6 +23,16 @@ export interface LightShadow3D {
     extent: number;
     /** Percentage-closer filter radius in texels; 0 samples once. */
     radius: number;
+    /**
+     * Number of cascades for a directional light, 1 to 4. Each cascade takes
+     * one atlas tile and follows the camera, so `extent` is ignored above 1.
+     * Only the first cascaded directional light in a scene is split.
+     */
+    cascades: number;
+    /** Distance from the camera, in world units, that cascaded shadows cover. */
+    cascadeDistance: number;
+    /** Split distribution: 0 spaces cascades evenly, 1 logarithmically. */
+    cascadeLambda: number;
 }
 
 export interface LightOptions3D {
@@ -50,7 +60,7 @@ export class Light3D extends Object3D {
     range = 0;
     angle = Math.PI / 4;
     penumbra = 0.1;
-    readonly shadow: LightShadow3D = {mapSize: 1024, bias: 0.0005, normalBias: 0.02, near: 0.1, far: 100, extent: 10, radius: 1};
+    readonly shadow: LightShadow3D = {mapSize: 1024, bias: 0.0005, normalBias: 0.02, near: 0.1, far: 100, extent: 10, radius: 1, cascades: 1, cascadeDistance: 100, cascadeLambda: 0.7};
 
     constructor(lightType: LightType3D = 'directional') {
         super('light');
@@ -92,7 +102,7 @@ export function createDirectionalLight3D(options: LightOptions3D = {}): Light3D 
     return base(new Light3D('directional'), options);
 }
 export function createPointLight3D(options: PointLightOptions3D = {}): Light3D {
-    const light = base(new Light3D('point'), {...options, castShadow: false});
+    const light = base(new Light3D('point'), options);
     light.range = options.range ?? 0;
     return light;
 }

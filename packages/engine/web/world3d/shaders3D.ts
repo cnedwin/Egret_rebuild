@@ -40,6 +40,9 @@ layout(std140) uniform Frame {
     vec4 uShadowRect[4];           // atlas uv offset (xy) and scale (zw)
     vec4 uShadowParams[4];         // x: depth bias, y: normal bias, z: filter radius in atlas uv
     vec4 uOutput;                  // x: environment intensity, y: environment max mip, z: exposure, w: tone mapping
+    vec4 uCascadeSplits;           // view-space far distance of each cascade
+    vec4 uCascadeInfo;             // x: cascaded directional light index or -1, y: cascade count, z: blend fraction
+    vec4 uPointShadow;             // x: shadowed point light index or -1, y: first of its four slots
 };
 `;
 
@@ -126,7 +129,11 @@ void main() {
     #else
     mat4 viewProjection = uViewProjection;
     #endif
-    #ifdef BILLBOARD
+    #ifdef SCREEN_SPACE
+    // Positions are already in normalized device coordinates.
+    world = vec4(uCameraPosition.xyz, 1.0);
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+    #elif defined(BILLBOARD)
     // Expand the quad in view space around the transformed node origin.
     vec4 center = uView * (model * vec4(0.0, 0.0, 0.0, 1.0));
     vec2 scale = vec2(length(model[0].xyz), length(model[1].xyz));
@@ -165,6 +172,7 @@ uniform vec3 uEmissive;
 uniform vec4 uSurface;           // metallic, roughness, normal scale, occlusion strength
 uniform vec4 uSpecular;          // rgb and shininess
 uniform float uAlphaCutoff;
+uniform vec2 uClearcoat;         // strength and roughness
 uniform float uEnvironmentScale;
 uniform sampler2D uMap;
 uniform sampler2D uNormalMap;
@@ -232,6 +240,28 @@ float shadowFactor(int slot, vec3 normal) {
     }
     return lit / 9.0;
 }
+float pointShadowFactor(int slot, vec3 fromLight, vec3 normal) {
+    // Faces of the tetrahedron the four maps were rendered through.
+    const float k = 0.5773502691896258;
+    float d0 = dot(fromLight, vec3(k, k, k)), d1 = dot(fromLight, vec3(-k, -k, k)), d2 = dot(fromLight, vec3(-k, k, -k)), d3 = dot(fromLight, vec3(k, -k, -k));
+    int face = 0; float best = d0;
+    if (d1 > best) { best = d1; face = 1; }
+    if (d2 > best) { best = d2; face = 2; }
+    if (d3 > best) face = 3;
+    return shadowFactor(slot + face, normal);
+}
+float cascadedShadowFactor(int slot, vec3 normal) {
+    float viewDepth = -(uView * vec4(vWorldPosition, 1.0)).z;
+    int count = int(uCascadeInfo.y), cascade = 0;
+    for (int c = 0; c < 3; c++) if (c < count - 1 && viewDepth > uCascadeSplits[c]) cascade = c + 1;
+    float edge = uCascadeSplits[cascade];
+    if (viewDepth >= edge) return 1.0;
+    float visible = shadowFactor(slot + cascade, normal);
+    // Blend into the next cascade, or out to unshadowed past the last one.
+    float t = smoothstep(edge * (1.0 - uCascadeInfo.z), edge, viewDepth);
+    if (t > 0.0) visible = mix(visible, cascade < count - 1 ? shadowFactor(slot + cascade + 1, normal) : 1.0, t);
+    return visible;
+}
 #endif
 
 float rangeFalloff(float dist, float range) {
@@ -257,6 +287,9 @@ vec3 shade(Surface s, vec3 l, vec3 radiance) {
     if (nl <= 0.0) return vec3(0.0);
     #if defined(SHADING_LAMBERT)
     return s.albedo * radiance * nl;
+    #elif defined(SHADING_TOON)
+    // uSpecular.w carries the band count for toon shading.
+    return s.albedo * radiance * (ceil(nl * uSpecular.w - 0.001) / max(uSpecular.w, 1.0));
     #elif defined(SHADING_PHONG)
     vec3 h = normalize(l + s.view);
     float specular = pow(max(dot(s.normal, h), 0.0), max(uSpecular.w, 1.0));
@@ -271,9 +304,22 @@ vec3 shade(Surface s, vec3 l, vec3 radiance) {
     vec3 fresnel = s.f0 + (1.0 - s.f0) * pow(1.0 - vh, 5.0);
     vec3 diffuse = s.albedo * (1.0 - s.metallic) * (1.0 - fresnel);
     // Light units are scaled by PI so a unit white light fully lights a white diffuse surface.
-    return (diffuse + distribution * visibility * fresnel * PI) * radiance * nl;
+    vec3 lit = diffuse + distribution * visibility * fresnel * PI;
+    if (uClearcoat.x > 0.0) {
+        // A second, dielectric lobe on top; the base layer loses what the coat reflects.
+        float ca = max(uClearcoat.y, 0.045); ca *= ca;
+        float ca2 = ca * ca, cd = nh * nh * (ca2 - 1.0) + 1.0;
+        float coatFresnel = (0.04 + 0.96 * pow(1.0 - vh, 5.0)) * uClearcoat.x;
+        lit = lit * (1.0 - coatFresnel) + ca2 / (PI * cd * cd) * (0.25 / max(vh * vh, 0.0001)) * coatFresnel * PI;
+    }
+    return lit * radiance * nl;
     #endif
 }
+
+#ifdef CUSTOM_FRAGMENT
+uniform vec4 uCustom[4];
+/*CUSTOM_FRAGMENT*/
+#endif
 
 vec3 toneMap(vec3 color) {
     color *= uOutput.z;
@@ -314,6 +360,9 @@ void main() {
     vec3 color;
     #ifdef SHADING_UNLIT
     color = base.rgb;
+    #elif defined(SHADING_MATCAP)
+    vec3 viewNormal = normalize(mat3(uView) * surfaceNormal());
+    color = base.rgb * texture(uEmissiveMap, viewNormal.xy * 0.5 + 0.5).rgb;
     #else
     Surface s;
     s.normal = surfaceNormal();
@@ -360,14 +409,20 @@ void main() {
     for (int i = 0; i < directionalCount; i++) {
         float visible = 1.0;
         #ifdef RECEIVE_SHADOW
-        if (uDirectionalDirection[i].w >= 0.0) visible = shadowFactor(int(uDirectionalDirection[i].w), s.normal);
+        if (uDirectionalDirection[i].w >= 0.0) {
+            visible = float(i) == uCascadeInfo.x ? cascadedShadowFactor(int(uDirectionalDirection[i].w), s.normal) : shadowFactor(int(uDirectionalDirection[i].w), s.normal);
+        }
         #endif
         if (visible > 0.0) color += shade(s, -uDirectionalDirection[i].xyz, uDirectionalColor[i].rgb) * visible;
     }
     for (int i = 0; i < pointCount; i++) {
         vec3 toLight = uPointPosition[i].xyz - vWorldPosition;
         float dist = length(toLight);
-        color += shade(s, toLight / max(dist, 0.0001), uPointColor[i].rgb * rangeFalloff(dist, uPointPosition[i].w));
+        float visible = 1.0;
+        #ifdef RECEIVE_SHADOW
+        if (float(i) == uPointShadow.x) visible = pointShadowFactor(int(uPointShadow.y), -toLight, s.normal);
+        #endif
+        color += shade(s, toLight / max(dist, 0.0001), uPointColor[i].rgb * rangeFalloff(dist, uPointPosition[i].w)) * visible;
     }
     for (int i = 0; i < spotCount; i++) {
         vec3 toLight = uSpotPosition[i].xyz - vWorldPosition;
@@ -383,12 +438,18 @@ void main() {
     }
     #endif
 
+    #ifndef SHADING_MATCAP
     vec3 emissive = uEmissive;
     #ifdef USE_EMISSIVE_MAP
     emissive *= texture(uEmissiveMap, vUv).rgb;
     #endif
     color += emissive;
+    #endif
 
+    #ifdef CUSTOM_FRAGMENT
+    vec4 customized = customFragment(vec4(color, base.a), vWorldPosition, normalize(vNormal), vUv);
+    color = customized.rgb; base.a = customized.a;
+    #endif
     #ifdef USE_FOG
     if (uFogParams.x > 0.5) {
         float dist = length(uCameraPosition.xyz - vWorldPosition);
@@ -401,8 +462,9 @@ void main() {
     color = toneMap(color);
     #endif
     #ifdef LINEAR_OUTPUT
-    // sRGB render targets encode on write; hand them linear values.
-    color = clamp(color, 0.0, 1.0);
+    // sRGB render targets encode on write; hand them linear values. Fixed-point
+    // targets clamp by themselves, and half-float targets must keep values above 1.
+    color = max(color, vec3(0.0));
     #else
     color = encodeSrgb(color);
     #endif
@@ -423,9 +485,9 @@ export interface ShaderSources3D {
     readonly fragment: string;
 }
 /** Specialize the material shader pair with a list of preprocessor symbols. */
-export function buildMaterialShader3D(defines: readonly string[]): ShaderSources3D {
+export function buildMaterialShader3D(defines: readonly string[], customFragment = ''): ShaderSources3D {
     const header = '#version 300 es\nprecision highp float;\nprecision highp int;\n' + defines.map(name => '#define ' + name + '\n').join('');
-    return {vertex: header + VERTEX_SOURCE, fragment: header + FRAGMENT_SOURCE};
+    return {vertex: header + VERTEX_SOURCE, fragment: header + FRAGMENT_SOURCE.replace('/*CUSTOM_FRAGMENT*/', () => customFragment)};
 }
 
 /** Full-screen triangle that samples a cube map along the view ray; drawn at the far plane. */

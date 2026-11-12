@@ -5,7 +5,30 @@ import {Resource3D, World3DError} from './core3D.js';
 import {colorFromHex} from './math3D.js';
 import type {Texture3D} from './Texture3D.js';
 
-export type Shading3D = 'unlit' | 'lambert' | 'phong' | 'standard';
+/**
+ * A fragment hook that post-processes a material's shaded color. Supply the
+ * function in each shading language you target:
+ *   GLSL:  vec4 customFragment(vec4 color, vec3 worldPosition, vec3 normal, vec2 uv)  reading uCustom[0..3]
+ *   WGSL:  fn customFragment(color: vec4f, worldPosition: vec3f, normal: vec3f, uv: vec2f) -> vec4f  reading material.custom[0..3]
+ * `color` is linear and not yet fogged or tone mapped; return the new color and alpha.
+ * A backend without source for its language draws the material unchanged.
+ */
+export interface CustomShader3D {
+    /** Identifies the source; materials with the same key share compiled programs. */
+    readonly key: string;
+    readonly glsl?: string;
+    readonly wgsl?: string;
+    /** Four vec4 parameters, written by the application (time, colors, thresholds). */
+    readonly uniforms: Float32Array;
+}
+export function createCustomShader3D(input: {readonly key: string; readonly glsl?: string; readonly wgsl?: string; readonly uniforms?: ArrayLike<number>}): CustomShader3D {
+    if (!input || typeof input.key !== 'string' || input.key.length === 0 || /[\s|/]/.test(input.key)) throw new World3DError('WORLD3D_INPUT_INVALID', 'shader key');
+    if (input.glsl === undefined && input.wgsl === undefined) throw new World3DError('WORLD3D_INPUT_INVALID', 'shader source');
+    const uniforms = new Float32Array(16);
+    if (input.uniforms) uniforms.set(Array.from(input.uniforms).slice(0, 16));
+    return Object.freeze({key: input.key, ...(input.glsl === undefined ? {} : {glsl: input.glsl}), ...(input.wgsl === undefined ? {} : {wgsl: input.wgsl}), uniforms});
+}
+export type Shading3D = 'unlit' | 'lambert' | 'phong' | 'standard' | 'toon' | 'matcap';
 export type Side3D = 'front' | 'back' | 'double';
 export type AlphaMode3D = 'opaque' | 'mask' | 'blend';
 export type Blending3D = 'normal' | 'additive' | 'multiply' | 'premultiplied';
@@ -97,6 +120,13 @@ export class Material3D extends Resource3D {
     // Phong
     readonly specular = new Float32Array([0.07, 0.07, 0.07]);
     shininess = 30;
+    /** Optional fragment hook. Call touch() after assigning a different shader. */
+    shader: CustomShader3D | undefined;
+    /** Strength, 0 to 1, of a clear lacquer layer over a standard material (car paint, varnish). */
+    clearcoat = 0;
+    clearcoatRoughness = 0.1;
+    /** Number of light bands for toon shading. */
+    toonSteps = 3;
     // Standard (metallic-roughness PBR)
     metallic = 0;
     roughness = 1;
@@ -104,6 +134,8 @@ export class Material3D extends Resource3D {
     environmentIntensity = 1;
     // Sprite and point rendering
     billboard = false;
+    /** Treat vertex positions as normalized device coordinates; used by full-screen layers. */
+    screenSpace = false;
     sizeAttenuation = true;
     rotation = 0;
     pointSize = 1;
@@ -167,6 +199,21 @@ export function createPhongMaterial3D(options: PhongMaterialOptions3D = {}): Mat
     const material = new Material3D('phong', options);
     if (options.specular !== undefined) setColor3D(material.specular, options.specular);
     material.shininess = options.shininess ?? 30;
+    return material;
+}
+/** Cel shading: diffuse light quantized into `steps` flat bands. */
+export function createToonMaterial3D(options: MaterialOptions3D & {readonly steps?: number} = {}): Material3D {
+    const material = new Material3D('toon', options);
+    material.toonSteps = Math.max(1, Math.floor(options.steps ?? 3));
+    return material;
+}
+/**
+ * Lighting baked into a sphere image: the surface color is looked up by the
+ * view-space normal, so no lights are needed. The image is held in `emissiveMap`.
+ */
+export function createMatcapMaterial3D(options: MaterialOptions3D & {readonly matcap: Texture3D}): Material3D {
+    const material = new Material3D('matcap', options);
+    material.emissiveMap = options.matcap;
     return material;
 }
 /** Physically based metallic-roughness model, matching glTF 2.0 materials. */

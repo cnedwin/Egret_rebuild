@@ -4,7 +4,7 @@
 // The lighting model mirrors the GLSL library in shaders3D.ts.
 
 export interface ShaderFeatures3D {
-    readonly shading: 'unlit' | 'lambert' | 'phong' | 'standard';
+    readonly shading: 'unlit' | 'lambert' | 'phong' | 'standard' | 'toon' | 'matcap';
     readonly depthOnly: boolean;
     readonly normal: boolean;
     readonly uv: boolean;
@@ -16,6 +16,7 @@ export interface ShaderFeatures3D {
     readonly instancing: boolean;
     readonly instanceColor: boolean;
     readonly billboard: boolean;
+    readonly screenSpace: boolean;
     readonly map: boolean;
     readonly mapFromTarget: boolean;
     readonly normalMap: boolean;
@@ -32,13 +33,16 @@ export interface ShaderFeatures3D {
     readonly fog: boolean;
     readonly toneMapped: boolean;
     readonly linearOutput: boolean;
+    /** Key and WGSL source of the material's fragment hook, when it has one. */
+    readonly customKey?: string;
+    readonly customWgsl?: string;
 }
 
 export const MAX_MORPH_INFLUENCES_WGSL_3D = 8;
 /** Bytes of the per-draw Object uniform block; also its dynamic-offset stride. */
 export const OBJECT_BLOCK_BYTES_3D = 256;
 /** Bytes of the per-material uniform block. */
-export const MATERIAL_BLOCK_BYTES_3D = 128;
+export const MATERIAL_BLOCK_BYTES_3D = 192;
 
 const FRAME = /* wgsl */`
 struct Frame {
@@ -63,6 +67,9 @@ struct Frame {
     shadowRect: array<vec4f, 4>,
     shadowParams: array<vec4f, 4>,
     output: vec4f,
+    cascadeSplits: vec4f,
+    cascadeInfo: vec4f,
+    pointShadow: vec4f,
 }
 @group(0) @binding(0) var<uniform> frame: Frame;
 @group(0) @binding(1) var shadowMap: texture_depth_2d;
@@ -83,10 +90,11 @@ struct Material {
     emissive: vec4f,
     surface: vec4f,      // metallic, roughness, normal scale, occlusion strength
     specular: vec4f,     // rgb and shininess
-    params: vec4f,       // alpha cutoff, environment scale
+    params: vec4f,       // alpha cutoff, environment scale, clearcoat strength, clearcoat roughness
     uvRow0: vec4f,       // uv' = (dot(uvRow0.xyz, (uv, 1)), dot(uvRow1.xyz, (uv, 1)))
     uvRow1: vec4f,
     sprite: vec4f,       // rotation, size attenuation flag
+    custom: array<vec4f, 4>, // parameters of the optional fragment hook
 }
 @group(1) @binding(0) var<uniform> material: Material;
 @group(1) @binding(1) var mapTexture: texture_2d<f32>;
@@ -178,7 +186,8 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     normal = vec3f(0.0, 0.0, 1.0);
     normalMatrix = transpose(mat3x3f(frame.view[0].xyz, frame.view[1].xyz, frame.view[2].xyz));` : ''}
     var output: VertexOutput;
-    let clip = frame.viewProjection * world;
+    var clip = frame.viewProjection * world;
+    ${f.screenSpace ? '// Positions are already in normalized device coordinates; depth is remapped below.\n    clip = vec4f(position.xy, -1.0, 1.0);' : ''}
     // Matrices follow OpenGL clip conventions; WebGPU depth spans [0, 1].
     output.clip = vec4f(clip.xy, (clip.z + clip.w) * 0.5, clip.w);
     output.worldPosition = world.xyz;
@@ -194,7 +203,7 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
 }
 
 function fragmentSource(f: ShaderFeatures3D): string {
-    const lit = f.shading !== 'unlit';
+    const lit = f.shading !== 'unlit' && f.shading !== 'matcap';
     if (f.depthOnly) {
         return /* wgsl */`
 @fragment
@@ -206,7 +215,9 @@ fn fragmentMain(input: VertexOutput) {
 }
 `;
     }
-    const shade = f.shading === 'lambert' ? 'return s.albedo * radiance * nl;' : f.shading === 'phong' ? /* wgsl */`
+    const shade = f.shading === 'lambert' ? 'return s.albedo * radiance * nl;'
+        // material.specular.w carries the band count for toon shading.
+        : f.shading === 'toon' ? 'return s.albedo * radiance * (ceil(nl * material.specular.w - 0.001) / max(material.specular.w, 1.0));' : f.shading === 'phong' ? /* wgsl */`
     let h = normalize(l + s.view);
     let specular = pow(max(dot(s.normal, h), 0.0), max(material.specular.w, 1.0));
     return (s.albedo + material.specular.rgb * specular) * radiance * nl;` : /* wgsl */`
@@ -222,7 +233,17 @@ fn fragmentMain(input: VertexOutput) {
     let fresnel = s.f0 + (1.0 - s.f0) * pow(1.0 - vh, 5.0);
     let diffuse = s.albedo * (1.0 - s.metallic) * (1.0 - fresnel);
     // Light units are scaled by PI so a unit white light fully lights a white diffuse surface.
-    return (diffuse + distribution * visibility * fresnel * PI) * radiance * nl;`;
+    var lit = diffuse + distribution * visibility * fresnel * PI;
+    if (material.params.z > 0.0) {
+        // A second, dielectric lobe on top; the base layer loses what the coat reflects.
+        var ca = max(material.params.w, 0.045);
+        ca *= ca;
+        let ca2 = ca * ca;
+        let cd = nh * nh * (ca2 - 1.0) + 1.0;
+        let coatFresnel = (0.04 + 0.96 * pow(1.0 - vh, 5.0)) * material.params.z;
+        lit = lit * (1.0 - coatFresnel) + ca2 / (PI * cd * cd) * (0.25 / max(vh * vh, 0.0001)) * coatFresnel * PI;
+    }
+    return lit * radiance * nl;`;
     return /* wgsl */`
 const PI = 3.141592653589793;
 struct Surface {
@@ -253,6 +274,36 @@ fn shadowFactor(slot: i32, worldPosition: vec3f, normal: vec3f) -> f32 {
         }
     }
     return lit / 9.0;
+}
+fn pointShadowFactor(slot: i32, fromLight: vec3f, worldPosition: vec3f, normal: vec3f) -> f32 {
+    // Faces of the tetrahedron the four maps were rendered through.
+    let k = 0.5773502691896258;
+    let d1 = dot(fromLight, vec3f(-k, -k, k));
+    let d2 = dot(fromLight, vec3f(-k, k, -k));
+    let d3 = dot(fromLight, vec3f(k, -k, -k));
+    var face = 0;
+    var best = dot(fromLight, vec3f(k, k, k));
+    if (d1 > best) { best = d1; face = 1; }
+    if (d2 > best) { best = d2; face = 2; }
+    if (d3 > best) { face = 3; }
+    return shadowFactor(slot + face, worldPosition, normal);
+}
+fn cascadedShadowFactor(slot: i32, worldPosition: vec3f, normal: vec3f) -> f32 {
+    let viewDepth = -(frame.view * vec4f(worldPosition, 1.0)).z;
+    let count = i32(frame.cascadeInfo.y);
+    var cascade = 0;
+    for (var c = 0; c < 3; c++) { if (c < count - 1 && viewDepth > frame.cascadeSplits[c]) { cascade = c + 1; } }
+    let edge = frame.cascadeSplits[cascade];
+    if (viewDepth >= edge) { return 1.0; }
+    var visible = shadowFactor(slot + cascade, worldPosition, normal);
+    // Blend into the next cascade, or out to unshadowed past the last one.
+    let t = smoothstep(edge * (1.0 - frame.cascadeInfo.z), edge, viewDepth);
+    if (t > 0.0) {
+        var next = 1.0;
+        if (cascade < count - 1) { next = shadowFactor(slot + cascade + 1, worldPosition, normal); }
+        visible = mix(visible, next, t);
+    }
+    return visible;
 }
 fn rangeFalloff(dist: f32, range: f32) -> f32 {
     let inverseSquare = 1.0 / max(dist * dist, 0.0001);
@@ -297,8 +348,13 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     ${f.metallicRoughnessMap ? 'let mrSample = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, input.uv);' : ''}
     ${f.occlusionMap ? 'let occlusionSample = textureSample(occlusionTexture, occlusionSampler, input.uv).r;' : ''}
     ${f.emissiveMap ? 'let emissiveSample = textureSample(emissiveTexture, emissiveSampler, input.uv).rgb;' : ''}
+    ${f.shading === 'matcap' ? /* wgsl */`
+    var matcapNormal = normalize(${f.normal ? 'input.normal' : 'cross(dpx, -dpy)'});
+    ${f.doubleSided ? 'if (!frontFacing) { matcapNormal = -matcapNormal; }' : ''}
+    let matcapView = normalize((frame.view * vec4f(matcapNormal, 0.0)).xyz);
+    let matcapSample = textureSampleLevel(emissiveTexture, emissiveSampler, matcapView.xy * 0.5 + 0.5, 0.0).rgb;` : ''}
     ${f.alphaMask ? 'if (base.a < material.params.x) { discard; }' : ''}
-    var color = base.rgb;
+    var color = base.rgb${f.shading === 'matcap' ? ' * matcapSample' : ''};
     ${lit ? /* wgsl */`
     var s: Surface;
     ${f.flatShading || !f.normal ? 'var n = normalize(cross(dpy, dpx));' : /* wgsl */`var n = normalize(input.normal);
@@ -350,13 +406,18 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     let spotCount = i32(frame.lightCounts.z);
     for (var i = 0; i < directionalCount; i++) {
         var visible = 1.0;
-        ${f.receiveShadow ? 'if (frame.directionalDirection[i].w >= 0.0) { visible = shadowFactor(i32(frame.directionalDirection[i].w), input.worldPosition, s.normal); }' : ''}
+        ${f.receiveShadow ? `if (frame.directionalDirection[i].w >= 0.0) {
+            if (f32(i) == frame.cascadeInfo.x) { visible = cascadedShadowFactor(i32(frame.directionalDirection[i].w), input.worldPosition, s.normal); }
+            else { visible = shadowFactor(i32(frame.directionalDirection[i].w), input.worldPosition, s.normal); }
+        }` : ''}
         color += shade(s, -frame.directionalDirection[i].xyz, frame.directionalColor[i].rgb) * visible;
     }
     for (var i = 0; i < pointCount; i++) {
         let toLight = frame.pointPosition[i].xyz - input.worldPosition;
         let dist = length(toLight);
-        color += shade(s, toLight / max(dist, 0.0001), frame.pointColor[i].rgb * rangeFalloff(dist, frame.pointPosition[i].w));
+        var visible = 1.0;
+        ${f.receiveShadow ? 'if (f32(i) == frame.pointShadow.x) { visible = pointShadowFactor(i32(frame.pointShadow.y), -toLight, input.worldPosition, s.normal); }' : ''}
+        color += shade(s, toLight / max(dist, 0.0001), frame.pointColor[i].rgb * rangeFalloff(dist, frame.pointPosition[i].w)) * visible;
     }
     for (var i = 0; i < spotCount; i++) {
         let toLight = frame.spotPosition[i].xyz - input.worldPosition;
@@ -367,9 +428,14 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
         ${f.receiveShadow ? 'if (cone > 0.0 && frame.spotDirection[i].w >= 0.0) { visible = shadowFactor(i32(frame.spotDirection[i].w), input.worldPosition, s.normal); }' : ''}
         color += shade(s, l, frame.spotColor[i].rgb * rangeFalloff(dist, frame.spotPosition[i].w) * cone) * visible;
     }` : ''}
+    ${f.shading === 'matcap' ? '' : /* wgsl */`
     var emissive = material.emissive.rgb;
     ${f.emissiveMap ? 'emissive *= emissiveSample;' : ''}
-    color += emissive;
+    color += emissive;`}
+    ${f.customWgsl !== undefined ? /* wgsl */`
+    let customized = customFragment(vec4f(color, base.a), input.worldPosition, normalize(input.normal), input.uv);
+    color = customized.rgb;
+    base.a = customized.a;` : ''}
     ${f.fog ? /* wgsl */`
     if (frame.fogParams.x > 0.5) {
         let dist = length(frame.cameraPosition.xyz - input.worldPosition);
@@ -378,7 +444,7 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
         color = mix(color, frame.fogColor.rgb, clamp(fog, 0.0, 1.0));
     }` : ''}
     ${f.toneMapped ? 'color = toneMap(color);' : ''}
-    ${f.linearOutput ? 'color = clamp(color, vec3f(0.0), vec3f(1.0));' : 'color = encodeSrgb(color);'}
+    ${f.linearOutput ? 'color = max(color, vec3f(0.0));' : 'color = encodeSrgb(color);'}
     ${f.premultipliedAlpha ? 'color *= base.a;' : ''}
     return vec4f(color, ${f.alphaBlend ? 'base.a' : '1.0'});
 }
@@ -387,7 +453,7 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
 
 /** Assemble the complete WGSL module for one material variant. */
 export function buildMaterialWgsl3D(features: ShaderFeatures3D): string {
-    return (features.depthOnly ? DEPTH_FRAME : FRAME) + SHARED + vertexSource(features) + fragmentSource(features);
+    return (features.depthOnly ? DEPTH_FRAME : FRAME) + SHARED + vertexSource(features) + (features.customWgsl ?? '') + '\n' + fragmentSource(features);
 }
 /** Stable cache key for a feature set. */
 export function shaderFeatureKey3D(features: ShaderFeatures3D): string {
@@ -395,6 +461,7 @@ export function shaderFeatureKey3D(features: ShaderFeatures3D): string {
     for (const name of Object.keys(features).sort()) {
         if (name !== 'shading' && (features as unknown as Record<string, unknown>)[name] === true) key += ' ' + name;
     }
+    if (features.customKey !== undefined) key += ' custom:' + features.customKey;
     return key;
 }
 
@@ -426,8 +493,7 @@ fn fragmentMain(input: SkyOutput) -> @location(0) vec4f {
     var color = textureSample(skyMap, skySampler, normalize(input.direction)).rgb * sky.output.x * sky.output.z;
     if (sky.output.w > 1.5) { color = clamp((color * (2.51 * color + 0.03)) / (color * (2.43 * color + 0.59) + 0.14), vec3f(0.0), vec3f(1.0)); }
     else if (sky.output.w > 0.5) { color = color / (1.0 + color); }
-    color = clamp(color, vec3f(0.0), vec3f(1.0));
-    if (sky.output.y < 0.5) { color = mix(color * 12.92, 1.055 * pow(color, vec3f(1.0 / 2.4)) - 0.055, step(vec3f(0.0031308), color)); }
+    if (sky.output.y < 0.5) { color = clamp(color, vec3f(0.0), vec3f(1.0)); color = mix(color * 12.92, 1.055 * pow(color, vec3f(1.0 / 2.4)) - 0.055, step(vec3f(0.0031308), color)); }
     return vec4f(color, 1.0);
 }
 `;
