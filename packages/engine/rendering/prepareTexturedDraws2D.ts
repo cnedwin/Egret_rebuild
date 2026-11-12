@@ -53,6 +53,8 @@ export function prepareTexturedDraws2D(admitted: TexturedFrameAdmission2D,
     options: RectanglePreparationOptions, budget: TexturedPreparationBudget2D, cache?: PreparedCacheContext2D, containedClipping = false): readonly PreparedTexturedDraw2D[] {
     coordinate(options.pixelRatio);
     const trustedClipping = containedClipping && firstPartyLedger(budget);
+    // The ordinary Host owns both the immutable input and its preparation cache.
+    if (trustedClipping && cache) cache.cache.enableRecurringTexturedKeys(cache);
     const clipContext = trustedClipping ? createClipRectangleContext2D(options, budget) : undefined;
     try {
         const { frame, width, height } = admitted, draws: PreparedTexturedDraw2D[] = [];

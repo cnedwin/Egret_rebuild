@@ -2,6 +2,28 @@
 
 English | [中文](../../Cns/docs/incremental-frame-preparation-evidence.md)
 
+## E20 · Fixed desktop paired qualification, 2026-11-12
+
+Schema 7 used the original M1.1 reference and current candidate on one physical Windows PC in the same Chrome 157/WebGPU environment. Each run warmed for 30 seconds and measured for 60 seconds. The static, exactly 1% changed and full-dirty states each had five pairs. The two preflight, six correctness, six operation-count and six diagnostic trials passed. All 30 formal trials completed and the 15 paired environments qualified. The table reports medians of five trial percentiles in milliseconds.
+
+| State | Reference Engine | Candidate Engine | Candidate Host | Candidate RAF p95/p99 | Candidate weighted gap p95/p99 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| static | 19.2 | 5.0 | 2.5 | 8.4 / 16.7 | 16.0 / 19.4 |
+| sparse | 19.1 | 5.9 | 3.2 | 12.5 / 16.7 | 17.2 / 20.7 |
+| full | 18.9 | 5.3 | 2.8 | 12.5 / 16.7 | 17.3 / 20.9 |
+
+The formal result is **FAIL_TIMING_TARGET**. The full-dirty update-through-render ratio is 0.303 against a limit of 1.10. All three states meet Engine ≤ 8 ms. Their containing synchronous Host spans establish preparation ≤ 4 ms. All three states meet count-based cadence. The duration-weighted wall-gap p95 for sparse and full-dirty is 17.2 and 17.3 ms against 16.7 ms. GPU time remains UNMEASURED and overall D60 remains INCOMPLETE. E19 retains the previous 10.3 ms miss.
+
+Physical Android Chrome compared current main and the candidate on the same native WebGPU adapter. All eight 1024 × 768 readbacks matched exact RGBA, public frame values and controls. The checks covered static, sparse and full-dirty states, one new transform step, and restoration. The resources and test pages were retired.
+
+The first timing attempt stopped after a Windows foreground-window switch. The incomplete result was retained. All 30 timing trials were rerun using the same frozen recipe.
+
+Raw callback review found that gaps over 16.7 ms occupied 5.18% of the sparse window and 5.13% of the full-dirty window at the median of five runs. Nearly all of their duration fell in gaps containing a sampled two-frame capacity stall. The remaining pacing investigation follows queue completion, validation and ledger retirement separately. The containing Host establishes the preparation bound, and isolated preparation remains unmeasured.
+
+Frozen recipe and public-summary SHA-256: `fa72f244d3e35d37f08ab8a811be3ce32a267352096caf783d3f505539246d46` / `45f3ebbab5f8ac347caa4c0140b7f3d8ee09101c8b1925944640da76d5409ea0`.
+
+## Earlier records through E19
+
 2026-10-21 · Functional delivery recorded; formal performance remains OPEN
 
 ## Current verification checkpoint — 2026-10-21

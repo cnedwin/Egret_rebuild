@@ -71,7 +71,7 @@ export function prepareTexturedMesh2D(command: TexturedMeshCommand2D, geometry: 
         try { previousTuples = budget.snapshot().tupleComparisonsCharged; }
         catch { cacheSlot = undefined; } // Optional accounting alone may degrade to cold work.
     }
-    const preparation = new Preparation(options, budget, containedClipping);
+    const preparation = new Preparation(options, budget, containedClipping, clipContext);
     const matrix = command.matrix;
     admitMatrix(matrix);
     // Every authored clip is numerically preflighted before the first indexed tuple,
@@ -79,6 +79,7 @@ export function prepareTexturedMesh2D(command: TexturedMeshCommand2D, geometry: 
     const clips = command.clips.map(clip => preparation.clipRectangle(clip, clipContext));
     const viewport = [{ x: 0, y: 0 }, { x: coordinate(width), y: 0 },
         { x: coordinate(width), y: coordinate(height) }, { x: 0, y: coordinate(height) }];
+    const bounds = clipContext && preparation.containedClipStackBounds(clips, viewport);
     const policy = createMeshClipPolicy2D(budget), polygons: MeshPoint2D[][] = [];
     const counters = { authoredDegenerateTriangles: 0, singularSuppressedTriangles: 0,
         transformedCollapsedTriangles: 0, clippedCollapsedTriangles: 0, packedCollapsedTriangles: 0 };
@@ -98,8 +99,10 @@ export function prepareTexturedMesh2D(command: TexturedMeshCommand2D, geometry: 
         if (represented !== authored * rank) fail('precision');
         // Winding and crossings transport complete XY/UV/light tuples, including collinear attributes.
         let polygon = policy.normalize(preparation, transformed);
-        for (const clip of clips) polygon = preparation.tryContainedClip(polygon, clip, 'mesh') ?? clipPolygon2D(preparation, polygon, clip, policy.normalize, attachTexturedMeshAttributes2D, policy, containedClipping ? 'mesh' : undefined);
-        polygon = preparation.tryContainedClip(polygon, viewport, 'mesh') ?? clipPolygon2D(preparation, polygon, viewport, policy.normalize, attachTexturedMeshAttributes2D, policy, containedClipping ? 'mesh' : undefined);
+        if (bounds === undefined || !preparation.tryContainedClipStack(polygon, bounds, 'mesh')) {
+            for (const clip of clips) polygon = preparation.tryContainedClip(polygon, clip, 'mesh') ?? clipPolygon2D(preparation, polygon, clip, policy.normalize, attachTexturedMeshAttributes2D, policy, containedClipping ? 'mesh' : undefined);
+            polygon = preparation.tryContainedClip(polygon, viewport, 'mesh') ?? clipPolygon2D(preparation, polygon, viewport, policy.normalize, attachTexturedMeshAttributes2D, policy, containedClipping ? 'mesh' : undefined);
+        }
         if (polygon.length === 0) { counters.clippedCollapsedTriangles++; continue; }
         if (command.alpha === 0) continue;
         const fanVertices = (polygon.length - 2) * 3;

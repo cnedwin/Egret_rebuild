@@ -656,7 +656,21 @@ const texturedGlbModuleIdentities = new Map([...worldCardModuleIdentities,...tex
 // B4 advances only the six previously bound modules reached by the ordinary B1 entry.
 const lambertGlbModuleSuccessors = new Map([["packages/engine/dist/rendering/packSharedMeshGeometry3D.js",{"bytes":5958,"sha256":"86b6b0b12da887cb60b6a1a475004ef8cca4a48747646d741712158ffc928380"}],["packages/engine/dist/rendering/sceneFrame3D.js",{"bytes":15454,"sha256":"a3f67a6c7ea2cc235e96e1b0da5e8d75eff0ce0517e56d3889c7ea411ab40dbc"}],["packages/engine/dist/web/WebGPUHost.js",{"bytes":203362,"sha256":"98d7b9579bb7f65a598dfb6a31e4d37bcb5de146733fab3f7506718bdf03bd25"}],["packages/engine/dist/web/sharedB1.js",{"bytes":1271,"sha256":"c9bb47733878e43725a86ab5cc82426cad9b66ce2dd48fcbbac7058681bb1a0a"}],["packages/engine/dist/web/sharedSubmissionStorage2D.js",{"bytes":6378,"sha256":"c3601de39bded017c4b15ccb2064de7159f30a2bed120af896e921a7206f3105"}],["packages/engine/dist/web/webgpuSharedMeshPass.js",{"bytes":10640,"sha256":"5b0d4b85013211c9a1655a2eeb57bd55b29f68c8a338548742faf8887e43ea05"}]]);
 for(const [name,pin] of [["packages/engine/dist/rendering/packSharedMeshGeometry3D.js",{"bytes":5458,"sha256":"26dceb936d451e80708a8e4ba228e61e510fe76ed1d54219ca2b4978b9911f6f"}],["packages/engine/dist/rendering/sceneFrame3D.js",{"bytes":15244,"sha256":"e76187cdf3f20bda52a41e252f9f9e477ac35c0f894b58b2c43e2a6fbe591a14"}],["packages/engine/dist/web/WebGPUHost.js",{"bytes":201653,"sha256":"d3bdd65cc83576e3dff688c19a1e0feb4c60b543abe38b6836fe74857b1bc732"}],["packages/engine/dist/web/sharedB1.js",{"bytes":1232,"sha256":"659ec609d98f6997bca6a1744b0dbd093d7842f1ce02f0de7c138b356cb87720"}],["packages/engine/dist/web/sharedSubmissionStorage2D.js",{"bytes":5791,"sha256":"a371ea7b6d1bca34d0a3584ad47adeec98ba3ca0b61ce1ab8172de6a22610397"}],["packages/engine/dist/web/webgpuSharedMeshPass.js",{"bytes":7453,"sha256":"e84fdd8b75eb703215eff483346805ae980dc7d04a175134000b5de06a52d7ec"}]])assert.deepEqual(texturedGlbModuleIdentities.get(name),pin);
-const currentModuleIdentities = new Map([...texturedGlbModuleIdentities,...lambertGlbModuleSuccessors]);
+const lambertGlbModuleIdentities = new Map([...texturedGlbModuleIdentities,...lambertGlbModuleSuccessors]);
+// Rebind the reviewed M1.2 full-dirty emissions within the existing closure.
+const m12FullDirtyModuleSuccessors = new Map([
+  ["packages/engine/dist/rendering/prepareImages2D.js", { bytes: 5037, sha256: "2372183b63818abbf76903102baf4b0693ba0e749894bc1c20c53d245d91369a" }],
+  ["packages/engine/dist/rendering/prepareRectangles2D.js", { bytes: 25661, sha256: "b734d744f59381ff8d98f6c248f14b39ff0ae67819be120fa87c95d75903611e" }],
+  ["packages/engine/dist/rendering/prepareTexturedDraws2D.js", { bytes: 4784, sha256: "1a359aac2797fe524c4467a34d83a4ed4086f98af486071b17ad5e6f167d24f4" }],
+  ["packages/engine/dist/rendering/prepareTexturedMesh2D.js", { bytes: 7985, sha256: "2b65f7d5ee58e43099cc46f58b36961f7a3c36e12553adf6bb82f6547b6556d7" }],
+  ["packages/engine/dist/rendering/preparedFrameCache2D.js", { bytes: 28364, sha256: "b34c175ab5efa37a755edb9b774390803abf649bd9b1a4f5b087e7db9f0a4417" }],
+  ["packages/runtime/dist/texturedFrameCapture.js", { bytes: 15785, sha256: "c67b0b3966a17d06d4886841865086b6c7423c92005b5e5958badd27f7466e12" }],
+]);
+for (const [name, pin] of m12FullDirtyModuleSuccessors) {
+  assert.ok(lambertGlbModuleIdentities.has(name), "Full-dirty successor must retain B1 membership");
+  assert.notEqual(pin.sha256, lambertGlbModuleIdentities.get(name).sha256);
+}
+const currentModuleIdentities = new Map([...lambertGlbModuleIdentities,...m12FullDirtyModuleSuccessors]);
 assert.equal(currentModuleIdentities.size,m3FontSourceModuleLimit,'Font resources current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {

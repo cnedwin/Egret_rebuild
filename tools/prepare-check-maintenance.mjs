@@ -167,10 +167,31 @@ const world3dBoundaryEdits = [
   ["    'tools/lib/world3d-boundary.mjs',\n",""],
   ["    if(name==='engine')value.exports=projectWorld3dExports(value.exports);\n",""],
 ];
+// Exact current owners may recover their pre-M1.2 bodies before the older inverse.
+const m12FullDirtyBoundaryOwners = [
+  {"path":"tools/atlas-import-boundary.mjs","bytes":285520,"sha256":"2226ce896e0adc2452269f980bfe75fb2d77017d6ff3161745ef50d6bae0497c"},
+  {"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":94328,"sha256":"f07301577887e6e49ef1aeefe37b37d25a62ceb34675321fdb22b507eff006de"},
+  {"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":87749,"sha256":"9018d6bac3ef2db76eb9ea203b2a92f60c3a5e238d4981ad02a8040faf06fe48"},
+  {"path":"tools/browser-png-boundary.mjs","bytes":390753,"sha256":"3a75dfe3509e31518004f76da9ce56d7bdb62daf4abfce1dfd7c7f7387cf2a28"},
+  {"path":"tools/sequence-playback-boundary.mjs","bytes":92502,"sha256":"812a086baa07cf9dfc314e6b4a2d76dd9bd21ad146f73cd7df0c9169730031ff"},
+  {"path":"tools/spritesheet-boundary.mjs","bytes":380778,"sha256":"896160d7f2c9a9a3584c8c7e9ea593a90a7d8277f5aba1a14d6e2d2f08c82426"},
+];
+const m12FullDirtyBoundaryBlock = /^([ ]*)\/\/ M12-FULL-DIRTY-IDENTITY-BEGIN\n[\s\S]*?^\1\/\/ M12-FULL-DIRTY-IDENTITY-END\n/gm;
 export function world3dBoundaryPrevious(raw, file){
  const pair=world3dBoundaryOwners.find(row=>row.path===file);
+ if(!pair)return raw;
  const matches=(bytes,pin)=>bytes.length===pin.bytes&&createHash('sha256').update(bytes).digest('hex')===pin.sha256;
- if(!pair||!matches(raw,pair.current))return raw;
+ const fullDirty=m12FullDirtyBoundaryOwners.find(row=>row.path===file);
+ if(fullDirty&&matches(raw,fullDirty)){
+  let text=raw.toString('utf8');
+  if([...text.matchAll(m12FullDirtyBoundaryBlock)].length!==1)throw Error('M1.2 full-dirty owner block differs: '+file);
+  text=text.replace(m12FullDirtyBoundaryBlock,'');
+  if(file==='tools/sequence-playback-boundary.mjs')text=text.replace("  pin = m12FullDirtyCapturePin(root, pin, code);\n",'');
+  else if(file==='tools/bitmap-binding-ticket-boundary.mjs'||file==='tools/bitmap-resource-slot-boundary.mjs')text=text.replace("pin=m12FullDirtyCapturePin(pin,code);",'');
+  raw=Buffer.from(text);
+  if(!matches(raw,pair.current))throw Error('M1.2 full-dirty boundary predecessor identity differs: '+file);
+ }
+ if(!matches(raw,pair.current))return raw;
  const previous=Buffer.from(world3dBoundaryEdits.reduce((text,[current,prior])=>text.replace(current,prior),raw.toString('utf8')));
  if(!matches(previous,pair.base))throw Error('World3D boundary predecessor identity differs: '+file);
  return previous;
