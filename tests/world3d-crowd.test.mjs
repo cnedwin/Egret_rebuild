@@ -5,8 +5,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
-  AnimationMixer3D, AnimationTexture3D, Attribute3D, Bone3D, Mesh3D, Object3D, Skeleton3D, SkinnedInstancedMesh3D, World3DError, bakeAnimationTexture3D,
-  createAnimationClip3D, createBoxGeometry3D, createCylinderGeometry3D, createSkinnedInstancedMesh3D, createStandardMaterial3D, mat4Invert, mat4Multiply, quatFromAxisAngle,
+  AnimationMixer3D, AnimationTexture3D, Attribute3D, Bone3D, Mesh3D, Object3D, RenderList3D, Scene3D, Skeleton3D, SkinnedInstancedMesh3D, World3DError, bakeAnimationTexture3D,
+  createAnimationClip3D, createBoxGeometry3D, createCylinderGeometry3D, createOrthographicCamera3D, createSkinnedInstancedMesh3D, createStandardMaterial3D, mat4Invert, mat4Multiply, quatFromAxisAngle,
 } from '@egret/engine/world3d';
 
 const code = value => error => error instanceof World3DError && error.code === value;
@@ -134,7 +134,7 @@ test('instances keep their own clip, time and speed', () => {
   assert.deepEqual([...crowd.instanceAnimation.subarray(0, 2)], [1, 2]);
   assert.deepEqual([...crowd.instanceAnimation.subarray(4, 6)], [11 + 6, 11 + 7]); close(crowd.instanceAnimation[6], 0.5, 1e-4);
   assert.equal(crowd.isFinishedAt(1), false);
-  crowd.update(1); 
+  crowd.update(1);
   close(crowd.timeAt(1), 2); assert.equal(crowd.isFinishedAt(1), true); assert.equal(crowd.isFinishedAt(0), false);
   assert.deepEqual([...crowd.instanceAnimation.subarray(4, 7)], [31, 31, 0]);
   crowd.setSpeedAt(0, -1); crowd.setTimeAt(0, 0.05); crowd.update(0.1);
@@ -165,6 +165,62 @@ test('a fade blends from the held pose into the new clip', () => {
   crowd.update(0.3);
   // After the fade the instance is between two frames of the new clip again.
   assert.ok(crowd.instanceAnimation[0] >= 11 && crowd.instanceAnimation[1] === crowd.instanceAnimation[0] + 1);
+});
+
+test('clones continue an active fade with independent playback state', () => {
+  const {root, mesh, geometry, sway, grow} = rig();
+  const baked = bakeAnimationTexture3D(root, mesh, [sway, grow], {fps: 10});
+  const crowd = createSkinnedInstancedMesh3D(geometry, mesh.material, baked, 1);
+  crowd.setClipAt(0, 'sway', {time: 0.42});
+  crowd.setClipAt(0, 'grow', {fade: 0.5});
+  crowd.update(0.12);
+
+  const copy = crowd.clone();
+  assert.deepEqual(copy.instanceAnimation, crowd.instanceAnimation);
+  for (const step of [0, 0.06, 0.13, 0.25]) {
+    const previous = crowd.instanceAnimation.slice();
+    copy.update(step);
+    assert.deepEqual(crowd.instanceAnimation, previous);
+    crowd.update(step);
+    assert.deepEqual(copy.instanceAnimation, crowd.instanceAnimation);
+    assert.equal(copy.timeAt(0), crowd.timeAt(0));
+  }
+});
+
+test('a fixed-origin scaled skin stays in the render list when its rest bound is outside', () => {
+  const geometry = createBoxGeometry3D({width: 2, height: 2, depth: 2});
+  const count = geometry.getAttribute('position').count;
+  const joints = new Uint16Array(count * 4), weights = new Float32Array(count * 4);
+  for (let i = 0; i < count; i++) weights[i * 4] = 1;
+  geometry.setAttribute('joints', new Attribute3D(joints, 4));
+  geometry.setAttribute('weights', new Attribute3D(weights, 4));
+  const material = createStandardMaterial3D({});
+  const root = new Object3D(), mesh = new Mesh3D(geometry, material), bone = new Bone3D();
+  bone.name = 'scaling-bone';
+  root.addChild(mesh); mesh.addChild(bone);
+  root.updateWorldMatrices();
+  mesh.bind(new Skeleton3D([bone]));
+  const stretch = createAnimationClip3D({name: 'stretch', tracks: [
+    {targetName: bone.name, path: 'scale', times: [0], values: [8, 1, 1]},
+  ]});
+  const baked = bakeAnimationTexture3D(root, mesh, [stretch]);
+  assert.equal(baked.data[0], 8);
+  assert.deepEqual([...baked.data.subarray(12, 15)], [0, 0, 0]);
+  const crowd = createSkinnedInstancedMesh3D(geometry, material, baked, 1);
+  crowd.setPosition(6, 0, 0);
+  // Requesting culling must still be safe when the available bound is unqualified.
+  crowd.frustumCulled = true;
+  const control = new Mesh3D(geometry, material);
+  control.setPosition(6, 0, 0);
+  const camera = createOrthographicCamera3D({height: 2});
+  camera.setPosition(0, 0, 5);
+  const scene = new Scene3D();
+  scene.addChild(crowd); scene.addChild(control);
+
+  const list = new RenderList3D();
+  list.build(scene, camera);
+  assert.deepEqual(list.opaque.map(item => item.mesh.id), [crowd.id]);
+  assert.equal(list.stats.culled, 1);
 });
 
 test('instance bounds grow by the reach of the animation', () => {

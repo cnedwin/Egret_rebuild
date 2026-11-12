@@ -58,7 +58,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `Lod3D` 按相机距离显示其中一个子节点。
 
-成群的动画角色可以一次绘制。`bakeAnimationTexture3D(root, mesh, clips, {fps})` 把每个动画片段采样到骨架上，按帧保存蒙皮网格每根骨骼的矩阵；烘焙结束后骨架恢复原状。`createSkinnedInstancedMesh3D(geometry, material, baked, capacity)` 随后不用骨架就能绘制蒙皮几何体的多个副本：每个实例像普通实例一样有自己的变换和颜色，另有 `setClipAt(index, clip, {time, speed, loop, fade})`。每帧调用一次 `crowd.update(deltaSeconds)`，它推进所有实例，写入实例所处的前后两帧及其混合比例，顶点阶段据此在烘焙表中查找；这张表在 WebGL2 上是浮点纹理，在 WebGPU 上是存储缓冲区。阴影使用同样的姿态。`isFinishedAt` 报告不循环的片段是否播完，`fade` 从切换时保持的姿态过渡到新片段。只烘焙骨骼变换：变形权重、片段混合树以及注视之类的逐实例骨骼修改仍需使用普通蒙皮网格。两帧之间的姿态按矩阵逐个混合，在默认每秒 30 帧时足够准确，低帧率下的快速旋转会有偏差。剔除时把全部实例当作一个物体，并按动画的活动范围放宽包围球。
+成群的动画角色可以一次绘制。`bakeAnimationTexture3D(root, mesh, clips, {fps})` 把每个动画片段采样到骨架上，按帧保存蒙皮网格每根骨骼的矩阵；烘焙结束后骨架恢复原状。`createSkinnedInstancedMesh3D(geometry, material, baked, capacity)` 随后不用骨架就能绘制蒙皮几何体的多个副本：每个实例像普通实例一样有自己的变换和颜色，另有 `setClipAt(index, clip, {time, speed, loop, fade})`。每帧调用一次 `crowd.update(deltaSeconds)`，它推进所有实例，写入实例所处的前后两帧及其混合比例，顶点阶段据此在烘焙表中查找；这张表在 WebGL2 上是浮点纹理，在 WebGPU 上是存储缓冲区。阴影使用同样的姿态。`isFinishedAt` 报告不循环的片段是否播完，`fade` 从切换时保持的姿态过渡到新片段。只烘焙骨骼变换：变形权重、片段混合树以及注视之类的逐实例骨骼修改仍需使用普通蒙皮网格。两帧之间的姿态按矩阵逐个混合，在默认每秒 30 帧时足够准确，低帧率下的快速旋转会有偏差。克隆会继承正在进行的淡入及后续播放状态。当前活动范围估计无法包住变形后的顶点，因此烘焙蒙皮整批提交，跳过相机和阴影视锥剔除。绘制列表以批次节点原点排序。
 
 ## 动画
 
@@ -198,13 +198,13 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `createHeightField3D({columns, rows, width, depth, heights | sample})` 在以原点为中心的规则网格上保存高度；`createHeightFieldFromPixels3D(pixels, {width, depth, minHeight, maxHeight, encoding})` 从已解码的图像读取高度，可取红色通道的 8 位，或红、绿两个通道合成的 16 位。`heightAt(x, z)` 沿用绘制和碰撞所用的每格两个三角形，`normalAt` 给出平滑法线，`raycast(origin, direction, limit)` 以半格步长让射线走到地表。写入 `heights` 之后调用 `refresh()`。
 
-`createTerrain3D(field, material, {chunkCells, levels, lodDistance, skirtDepth, uvScale, colorAt})` 把高度场绘制成一组分块网格。每帧绘制前，各分块按到相机的距离选择细节层级：`lodDistance` 以内用完整细节，距离每翻一倍，每边采样数减半。不同层级的相邻分块靠边缘下垂的裙边遮住缝隙；法线始终取自完整细节的高度场，层级切换时光照不会跳变。`colorAt(height, slope, x, z, out)` 为每个采样写入顶点颜色，配合开启 `vertexColors` 的材质做出沙地、草地、岩石和积雪的分带；`lodBias` 整体偏移层级，`chunkLevels` 和 `triangleCount` 报告当前绘制的内容。修改高度场后，分块在下一帧重建。
+`createTerrain3D(field, material, {chunkCells, levels, lodDistance, skirtDepth, uvScale, colorAt})` 把高度场绘制成一组分块网格。每帧绘制前，各分块按到相机的距离选择细节层级：`lodDistance` 以内用完整细节，距离每翻一倍，每边采样数减半。不同层级的相邻分块靠边缘下垂的裙边遮住缝隙；法线始终取自完整细节的高度场，层级切换时光照不会跳变。`colorAt(height, slope, x, z, out)` 为每个采样写入顶点颜色，配合开启 `vertexColors` 的材质做出沙地、草地、岩石和积雪的分带；`lodBias` 整体偏移层级，`chunkLevels` 和 `triangleCount` 报告当前绘制的内容。修改高度场后，分块在下一帧重建。创建地形时会在分配分块几何体前检查两个上限，分别是 4,096 个分块，以及所有可缓存细节层级的顶点和索引缓冲合计 128 MiB。启用裙边或顶点颜色时，其缓冲计入预算。
 
 `field.createShape()` 把完整细节的三角形作为 `mesh` 碰撞形状返回，用于静态刚体，于是球、胶囊、盒子、凸包、角色控制器和物理射线面对的是同一片地面。盒子和凸包与网格的碰撞同时得到加强：一步之内角已经穿过表面，或者网格的棱脊从两个角之间顶入，现在都会产生接触。
 
 `createWater3D({width, depth, segments, color, amplitude, wavelength, speed, direction, steepness, rippleStrength, clarity, thickness, reflectionSize})` 是一块水平水面：四组叠加的波浪移动顶点和着色法线，另有随距离减弱的细小涟漪。水下的景物通过与玻璃相同的折射被弯折后看到；天空的反射来自场景的环境贴图。每帧调用 `water.update(deltaSeconds)`；在主画面之前调用 `water.renderReflection(renderer, scene, camera)`，可得到场景的真实镜像。`water.heightAt(x, z)` 在 CPU 上计算同一组波浪，供漂浮物使用。`createWaterMaterial3D` 只返回材质，可用于自己的几何体。
 
-水面背后的镜子是 `PlanarReflection3D`，可用于任何平面：`reflection.render(renderer, scene, camera, [nx, ny, nz, d], hidden)` 摆放镜像相机，用倾斜的近平面裁掉平面背后的一切，并绘制到 `reflection.target`；把 `reflection.texture` 赋给标准材质的 `reflectionMap` 即可。镜像按像素自身的屏幕位置读取，按表面法线乘以 `reflectionDistortion` 偏移，按观察角度加权，并取代环境贴图的反射。自定义着色器现在还可以带法线钩子 `glslNormal` 和 `wgslNormal`，在光照计算前替换着色法线。
+水面背后的镜子是 `PlanarReflection3D`，可用于任何平面：`reflection.render(renderer, scene, camera, [nx, ny, nz, d], hidden)` 摆放透视或正交镜像相机，用倾斜的近平面在镜面处裁剪，并绘制到 `reflection.target`。正交视线与镜面近乎平行或背向镜面时，该投影无法保持由近到远的深度顺序，返回 `false`。把 `reflection.texture` 赋给标准材质的 `reflectionMap` 即可。镜像按像素自身的屏幕位置读取，按表面法线乘以 `reflectionDistortion` 偏移，按观察角度加权，并取代环境贴图的反射。自定义着色器现在还可以带法线钩子 `glslNormal` 和 `wgslNormal`，在光照计算前替换着色法线。
 
 地形使用顶点颜色和一张平铺的 `map` 着色，没有内置按权重图混合多种地表纹理。细节层级按分块选择并用裙边遮缝，不做边对边的缝合；也没有从磁盘流式加载，整个高度场都在内存中。水面只有一个水平镜面，因此旋转过的水面网格或远高于默认值的波浪反射并不精确；没有按水深变化的岸边过渡、泡沫和焦散，也没有处理相机位于水下的情况。镜像需要把场景连同阴影再绘制一次。
 
@@ -295,7 +295,7 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs`、`tests/world3d-decoders.test.mjs`、`tests/world3d-navigation.test.mjs`、`tests/world3d-terrain.test.mjs`、`tests/world3d-crowd.test.mjs`、`tests/world3d-effects.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
 
-`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十四个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，文字与变换操纵器，带反射水面、细节层级混合的地形，处于不同片段、带阴影的实例化蒙皮角色，带拖尾和软 GPU 粒子的贴花，以及带光束的高度雾。开发期间全部二十四个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前十六个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十四个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，文字与变换操纵器，带反射水面、细节层级混合的地形，处于不同片段、带阴影的实例化蒙皮角色，带拖尾和软 GPU 粒子的贴花，以及带光束的高度雾。开发期间全部二十四个场景在使用软件渲染的无头 Chromium 中运行。首轮桌面复审在 NVIDIA RTX 5090 Laptop GPU 上执行了前十六个场景。整合复审在 Windows Edge 157 上通过了全部二十二个 WebGL2／WebGPU 图像对比，包括地形与水面、蒙皮人群，未使用强制渲染后端的启动参数。独立的正交反射回读确认，两个后端都保留镜面上方的几何体并裁掉镜面下方的几何体。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
 
 `tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。负载包括静止与运动的网格、阴影、实例化、多光源、每个网格一次绘制的蒙皮与一次绘制 2000 个烘焙实例的蒙皮、合批、覆盖在场景上的玻璃以及后处理链；另外还测量一次物理步进的耗时，场景为静止的箱子堆、三角网格上的球体和关节链。不测量 GPU 执行时间。
 

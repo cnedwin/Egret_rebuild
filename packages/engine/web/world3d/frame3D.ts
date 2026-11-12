@@ -3,6 +3,7 @@
 // the WebGL2 and WebGPU world3d backends. The block uses only mat4 and vec4
 // members, so its std140 (GLSL) and WGSL uniform layouts are identical.
 import type {Disposable} from '@egret/contracts';
+import {worldRenderSphere3D} from '../../rendering/world3d/AnimationTexture3D.js';
 import type {Camera3D} from '../../rendering/world3d/Camera3D.js';
 import {LIGHT3D_LIMITS} from '../../rendering/world3d/Light3D.js';
 import type {Light3D} from '../../rendering/world3d/Light3D.js';
@@ -186,8 +187,10 @@ export function planShadows3D(data: Float32Array, list: RenderList3D, atlasSize:
         data[F.shadowParams + slot * 4 + 2] = Math.max(shadow.radius, 0) / atlasSize; data[F.shadowParams + slot * 4 + 3] = 0;
         const casters: Mesh3D[] = [];
         for (const mesh of list.shadowCasters) {
-            const sphere = mesh.worldBoundingSphere;
-            if (mesh.frustumCulled && sphere[3]! >= 0 && !frustumIntersectsSphere(scratchFrustum, sphere)) continue;
+            if (mesh.frustumCulled) {
+                const sphere = worldRenderSphere3D(mesh);
+                if (sphere && sphere[3]! >= 0 && !frustumIntersectsSphere(scratchFrustum, sphere)) continue;
+            }
             casters.push(mesh);
         }
         plans.push({light, slot, x, y, tile, matrix, casters});

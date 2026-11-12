@@ -10,7 +10,7 @@ import {Material3D, createCustomShader3D, createStandardMaterial3D} from './Mate
 import {Mesh3D} from './Mesh3D.js';
 import type {Object3D, Scene3D} from './Object3D.js';
 import {RenderTarget3D, TEXTURE3D_LIMITS} from './Texture3D.js';
-import {colorFromHex, quatFromRotationMatrix} from './math3D.js';
+import {colorFromHex, mat4Invert, quatFromRotationMatrix} from './math3D.js';
 
 /** Anything that can draw a scene into a render target: both first-party renderers qualify. */
 export interface ReflectionRenderer3D {
@@ -27,29 +27,37 @@ export interface ReflectionRenderer3D {
  */
 export class PlanarReflection3D {
     readonly target: RenderTarget3D;
-    readonly camera = new Camera3D();
+    readonly #perspectiveCamera = new Camera3D();
+    readonly #orthographicCamera = new Camera3D('orthographic');
+    #camera = this.#perspectiveCamera;
+    get camera(): Camera3D { return this.#camera; }
     /** Moves the cutting plane back by this distance so geometry touching the mirror leaves no gap. */
     clipBias = 0.05;
     readonly #projection = new Float32Array(16);
+    readonly #perspectiveProjection = new Float32Array(16);
+    readonly #orthographicProjection = new Float32Array(16);
+    readonly #inverseProjection = new Float64Array(16);
     readonly #basis = new Float32Array(16);
 
     constructor(options: {readonly width?: number; readonly height?: number} = {}) {
         const width = requireCount3D(options.width ?? 512, 'reflection width', TEXTURE3D_LIMITS.maxEdge), height = requireCount3D(options.height ?? 512, 'reflection height', TEXTURE3D_LIMITS.maxEdge);
         this.target = new RenderTarget3D(width, height, {name: 'planar-reflection'});
-        this.camera.name = 'reflection-camera';
+        this.#perspectiveCamera.name = this.#orthographicCamera.name = 'reflection-camera';
     }
     get texture(): RenderTarget3D['texture'] { return this.target.texture; }
     /**
      * Place the mirror camera for a viewing camera and a world plane given as
      * [nx, ny, nz, d] with unit normal, where n . p + d = 0 and the normal
      * points to the side the viewer is on. Returns false when the viewer is
-     * behind the plane and there is nothing to reflect.
+     * behind the plane or the projection cannot represent a forward clip.
      */
     update(camera: Camera3D, plane: ArrayLike<number>): boolean {
         const nx = requireFinite3D(plane[0], 'plane'), ny = requireFinite3D(plane[1], 'plane'), nz = requireFinite3D(plane[2], 'plane'), d = requireFinite3D(plane[3], 'plane');
         if (Math.abs(Math.hypot(nx, ny, nz) - 1) > 1e-3) throw new World3DError('WORLD3D_INPUT_INVALID', 'plane normal must have unit length');
         camera.updateViewMatrices();
-        const from = camera.matrixWorld, mirror = this.camera, basis = this.#basis;
+        const from = camera.matrixWorld, basis = this.#basis;
+        const orthographic = camera.projectionKind === 'orthographic';
+        const mirror = orthographic ? this.#orthographicCamera : this.#perspectiveCamera;
         const height = from[12]! * nx + from[13]! * ny + from[14]! * nz + d;
         if (height <= 0) return false;
         // Reflect the camera's axes and position; flipping its X axis as well keeps it a proper rotation.
@@ -62,23 +70,31 @@ export class PlanarReflection3D {
         mirror.setPosition(from[12]! - 2 * height * nx, from[13]! - 2 * height * ny, from[14]! - 2 * height * nz);
         mirror.fov = camera.fov; mirror.aspect = camera.aspect; mirror.near = camera.near; mirror.far = camera.far; mirror.zoom = camera.zoom;
         mirror.orthographicHeight = camera.orthographicHeight; mirror.layerMask = camera.layerMask;
-        // The mirror uses the viewer's projection as it stands, whatever kind it is.
-        const p = this.#projection;
+        const p = this.#projection, inverse = this.#inverseProjection;
         p.set(camera.projectionMatrix);
-        mirror.customProjection = p;
-        mirror.updateViewMatrices();
-        if (camera.projectionKind === 'perspective' && p[11] === -1 && p[15] === 0) {
-            // Slant the near plane onto the mirror (Lengyel's oblique frustum).
-            const world = mirror.matrixWorld;
-            const cx = world[0]! * nx + world[1]! * ny + world[2]! * nz, cy = world[4]! * nx + world[5]! * ny + world[6]! * nz, cz = world[8]! * nx + world[9]! * ny + world[10]! * nz;
-            const cw = world[12]! * nx + world[13]! * ny + world[14]! * nz + d + this.clipBias;
-            if (cw < 0) {
-                const qx = (Math.sign(cx) + p[8]!) / p[0]!, qy = (Math.sign(cy) + p[9]!) / p[5]!, qw = (1 + p[10]!) / p[14]!;
-                const scale = 2 / (cx * qx + cy * qy - cz + cw * qw);
-                p[2] = cx * scale; p[6] = cy * scale; p[10] = cz * scale + 1; p[14] = cw * scale;
-                mirror.updateViewMatrices();
-            }
+        if (!mat4Invert(inverse, p)) return false;
+        mirror.updateWorldMatrix();
+        const world = mirror.matrixWorld;
+        const cx = world[0]! * nx + world[1]! * ny + world[2]! * nz, cy = world[4]! * nx + world[5]! * ny + world[6]! * nz, cz = world[8]! * nx + world[9]! * ny + world[10]! * nz;
+        const cw = world[12]! * nx + world[13]! * ny + world[14]! * nz + d + requireFinite3D(this.clipBias, 'clipBias');
+        if (cw < 0 || orthographic) {
+            // Transform the plane to clip space. Its furthest kept corner sets the scale;
+            // replacing z + w clips against the plane while preserving the projected x and y.
+            const clip = (column: number): number => cx * inverse[column]! + cy * inverse[column + 1]! + cz * inverse[column + 2]! + cw * inverse[column + 3]!;
+            const depth = clip(8), farSide = Math.abs(clip(0)) + Math.abs(clip(4)) + Math.abs(depth) + clip(12);
+            if (depth === 0 || !Number.isFinite(farSide) || farSide <= 0) return false;
+            // Orthographic rays share a direction. A tangent or backward plane
+            // would make the replacement depth singular or reverse depth order.
+            if (orthographic && depth / farSide <= 1e-7) return false;
+            const scale = 2 / farSide;
+            p[2] = cx * scale - p[3]!; p[6] = cy * scale - p[7]!;
+            p[10] = cz * scale - p[11]!; p[14] = cw * scale - p[15]!;
         }
+        const projection = orthographic ? this.#orthographicProjection : this.#perspectiveProjection;
+        projection.set(p);
+        mirror.customProjection = projection;
+        mirror.updateViewMatrices();
+        this.#camera = mirror;
         return true;
     }
     /**
