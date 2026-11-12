@@ -73,6 +73,14 @@ export type {JointType3D, JointOptions3D} from './Physics3D.js';
 export type {CompoundChild3D, PhysicsContact3D, PhysicsShapeCastHit3D} from './Physics3D.js';
 export {Jelly3D, createJelly3D, createJellyShader3D} from './Jelly3D.js';
 export type {JellyOptions3D} from './Jelly3D.js';
+export {RAGDOLL3D_LIMITS, Ragdoll3D, createRagdoll3D} from './Ragdoll3D.js';
+export type {RagdollJoint3D, RagdollOptions3D, RagdollPart3D} from './Ragdoll3D.js';
+export {VEHICLE3D_LIMITS, Vehicle3D, createVehicle3D} from './Vehicle3D.js';
+export type {VehicleOptions3D, Wheel3D, WheelOptions3D} from './Vehicle3D.js';
+export {CLOTH3D_LIMITS, Cloth3D, Rope3D, createCloth3D, createRope3D} from './Cloth3D.js';
+export type {ClothOptions3D, RopeOptions3D, StrandOptions3D} from './Cloth3D.js';
+export {PhysicsClient3D, RemoteBody3D, RemoteJoint3D, connectPhysics3D, servePhysics3D} from './PhysicsRemote3D.js';
+export type {PhysicsPort3D, RemoteBodyOptions3D, RemoteJointOptions3D, RemoteRaycastHit3D, RemoteShape3D} from './PhysicsRemote3D.js';
 export {PHYSICS3D_LIMITS, RigidBody3D, PhysicsWorld3D, CharacterController3D, createPhysicsWorld3D, createCharacterController3D} from './Physics3D.js';
 export type {
     BodyType3D, ShapeDefinition3D, RigidBodyOptions3D, PhysicsRaycastHit3D, PhysicsWorldOptions3D, CharacterControllerOptions3D,

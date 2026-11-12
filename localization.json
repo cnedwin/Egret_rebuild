@@ -2341,8 +2341,8 @@
       "en": "knowledge-base/en/docs/world3d.md",
       "zh": "knowledge-base/Cns/docs/world3d.md",
       "kind": "public_reading",
-      "enSha256": "d056e7a97a74838231be198a685af51da8abcf6203808bab2639e0b18ab7d3fa",
-      "zhSha256": "44abc2d9db998081d2f962ab8f93495a1abf67e6e0ec19d760fdd4bded8d39f1"
+      "enSha256": "03d25334092973f6a8b124f7762334d9256f1d9753a07bc826c5f5d52cba4681",
+      "zhSha256": "bca3154813904d79263f75a213c5c3515f6728a0530e5c8e3a8705814b8d769f"
     },
     {
       "en": "examples/world3d/README.md",
@@ -4967,7 +4967,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/index.ts",
-      "sha256": "4187e7eb21edba2efbe0c7eaf9733de4d9029338f50fa6ee982c59ad5005dde8"
+      "sha256": "b128a66a61e207b22d888b8a632898b5c461081035d0253ab415537284e5d704"
     },
     {
       "path": "packages/engine/rendering/world3d/math3D.ts",
@@ -5027,7 +5027,7 @@
     },
     {
       "path": "tools/lib/world3d-boundary.mjs",
-      "sha256": "840b48681244596bd954e0f557d44672550c01f6ca3928418b9821c8f7f6438c"
+      "sha256": "fb7413c34c327752f7fdc935bd9a032abf3925ba10ebb92ee64041b11db5fe20"
     },
     {
       "path": "packages/engine/rendering/world3d/Curves3D.ts",
@@ -5174,12 +5174,28 @@
       "sha256": "0caeb515b187347ef331095431a5ba27bd441bb8e4a7ce40816dfb74afcfeb44"
     },
     {
+      "path": "packages/engine/rendering/world3d/VolumetricFog3D.ts",
+      "sha256": "51e3701826ace2330cd1a9b62c650227d2c36d68deab1d03db2cd92317fb6a7f"
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Cloth3D.ts",
+      "sha256": "ae8f5ffec6ef65508064bbee27499c6122a2ddc90603244a0625ae47ea7a0ca5"
+    },
+    {
       "path": "packages/engine/rendering/world3d/Jelly3D.ts",
       "sha256": "0d79e4917a2b49bdffa21a3bc027f9cb54362bd3c5790554964cf58a9c7ed706"
     },
     {
-      "path": "packages/engine/rendering/world3d/VolumetricFog3D.ts",
-      "sha256": "51e3701826ace2330cd1a9b62c650227d2c36d68deab1d03db2cd92317fb6a7f"
+      "path": "packages/engine/rendering/world3d/PhysicsRemote3D.ts",
+      "sha256": "7485eedf5514932e6bdae9b41e977bf5e2faf64092dd2aca3e6be31b97950016"
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Ragdoll3D.ts",
+      "sha256": "0b3a9570d53d9dc0f0d11818ac2db3b4142943523a12203313bfbc37bb633dc5"
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Vehicle3D.ts",
+      "sha256": "68d2cf9a01069c51b4b90b1b250fd5939f5fdbfb953d32ccf7401bd4a9f17250"
     }
   ],
   "historicalSemanticReview": {
