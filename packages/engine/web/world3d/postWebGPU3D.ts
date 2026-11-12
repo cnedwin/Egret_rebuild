@@ -32,13 +32,13 @@ export class PostChainWebGPU3D {
     #ldr: Surface | undefined;
     #ao: Surface | undefined;
     #slot = 0;
-    readonly #params = new Float32Array(36);
+    readonly #params = new Float32Array(40);
     #maskView: GPUTextureView | undefined;
     #outline: PostProcessSettings3D | undefined;
     readonly #noDepth: GPUTexture;
     readonly #noDepthView: GPUTextureView;
     // State shared by the passes of one run().
-    #view: PostView3D = {scaleX: 1, scaleY: 1, near: 0.1, far: 1, orthographic: false};
+    #view: PostView3D = {scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0, depth: [-1, -1, -1, 0], orthographic: false};
     #depthView: GPUTextureView | undefined;
     #aoView: GPUTextureView | undefined;
     #custom: CustomPost3D | undefined;
@@ -89,7 +89,7 @@ export class PostChainWebGPU3D {
         const device = this.#device;
         // Each pass in a frame owns one small uniform buffer, since all writes land before the encoder runs.
         let slot = this.#slots[this.#slot];
-        if (!slot) slot = this.#slots[this.#slot] = {buffer: device.createBuffer({size: 144, usage: UNIFORM | COPY_DST}), group: undefined, source: undefined, bloom: undefined, depth: undefined, ao: undefined, mask: undefined};
+        if (!slot) slot = this.#slots[this.#slot] = {buffer: device.createBuffer({size: 160, usage: UNIFORM | COPY_DST}), group: undefined, source: undefined, bloom: undefined, depth: undefined, ao: undefined, mask: undefined};
         this.#slot++;
         const p = this.#params, depth = this.#depthView ?? this.#noDepthView, ao = this.#aoView ?? this.#blackView;
         const mask = this.#maskView ?? this.#blackView;

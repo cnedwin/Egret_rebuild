@@ -56,6 +56,7 @@ layout(location = 3) in vec4 aTangent;
 layout(location = 4) in vec4 aColor;
 layout(location = 5) in uvec4 aJoints;
 layout(location = 6) in vec4 aWeights;
+layout(location = 7) in vec2 aUv1;
 layout(location = 8) in mat4 aInstanceMatrix;
 layout(location = 12) in vec4 aInstanceColor;
 ${FRAME_BLOCK}
@@ -85,6 +86,7 @@ uniform vec2 uPointSize;         // x: size in pixels, y: size attenuation flag
 out vec3 vWorldPosition;
 out vec3 vNormal;
 out vec2 vUv;
+out vec2 vUv1;
 out vec4 vTangent;
 out vec4 vColor;
 
@@ -167,6 +169,7 @@ void main() {
     vWorldPosition = world.xyz;
     vNormal = normalMatrix * normal;
     vUv = (uUvTransform * vec3(aUv, 1.0)).xy;
+    vUv1 = aUv1;
     vTangent = vec4(mat3(model) * aTangent.xyz, aTangent.w);
     vColor = vec4(1.0);
     #ifdef USE_VERTEX_COLOR
@@ -197,6 +200,7 @@ uniform highp sampler2DShadow uShadowMap;
 in vec3 vWorldPosition;
 in vec3 vNormal;
 in vec2 vUv;
+in vec2 vUv1;
 in vec4 vTangent;
 in vec4 vColor;
 out vec4 outColor;
@@ -395,7 +399,11 @@ void main() {
     s.f0 = mix(vec3(0.04), s.albedo, s.metallic);
     float occlusion = 1.0;
     #ifdef USE_AO_MAP
+    #ifdef AO_UV1
+    occlusion = mix(1.0, texture(uOcclusionMap, vUv1).r, uSurface.w);
+    #else
     occlusion = mix(1.0, texture(uOcclusionMap, vUv).r, uSurface.w);
+    #endif
     #endif
 
     // Indirect light: ambient, hemisphere and optional environment map.
@@ -457,7 +465,11 @@ void main() {
     #ifndef SHADING_MATCAP
     vec3 emissive = uEmissive;
     #ifdef USE_EMISSIVE_MAP
+    #ifdef EMISSIVE_UV1
+    emissive *= texture(uEmissiveMap, vUv1).rgb;
+    #else
     emissive *= texture(uEmissiveMap, vUv).rgb;
+    #endif
     #endif
     color += emissive;
     #endif

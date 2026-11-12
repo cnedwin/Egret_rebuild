@@ -383,3 +383,45 @@ test('scene overrides, clipping planes and shader hooks are plain data', () => {
   assert.equal(new RenderTarget3D(4, 4, {depthTexture: true}).depthTexture, true);
   assert.equal(new RenderTarget3D(4, 4, {depth: false, depthTexture: true}).depthTexture, false);
 });
+
+test('glTF occlusion and emissive maps may use the second texture coordinate set', async () => {
+  const quad = quadGltf();
+  const uvs = new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]), bin = new Uint8Array(60 + 32 + 32);
+  bin.set(quad.bin); bin.set(new Uint8Array(uvs.buffer), 60); bin.set(new Uint8Array(uvs.buffer), 92);
+  const json = quad.json;
+  json.buffers[0].byteLength = bin.length;
+  json.bufferViews.push({buffer: 0, byteOffset: 60, byteLength: 32}, {buffer: 0, byteOffset: 92, byteLength: 32});
+  json.accessors.push({bufferView: 2, componentType: 5126, count: 4, type: 'VEC2'}, {bufferView: 3, componentType: 5126, count: 4, type: 'VEC2'});
+  json.meshes[0].primitives[0].attributes.TEXCOORD_0 = 2; json.meshes[0].primitives[0].attributes.TEXCOORD_1 = 3; json.meshes[0].primitives[0].material = 0;
+  json.images = [{uri: 'baked.png'}]; json.textures = [{source: 0}];
+  json.materials = [{occlusionTexture: {index: 0, texCoord: 1}, emissiveTexture: {index: 0}, emissiveFactor: [1, 1, 1]}];
+  const options = {loadBuffer: async () => bin, decodeImage: async () => ({width: 1, height: 1, data: new Uint8Array([255, 255, 255, 255])})};
+  const asset = await loadGltf3D(new TextEncoder().encode(JSON.stringify(json)), options);
+  const mesh = asset.scene.getObjectByName('quad');
+  assert.equal(mesh.geometry.getAttribute('uv1').count, 4);
+  assert.equal(mesh.material.occlusionMap.channel, 1, 'baked occlusion reads uv1');
+  assert.equal(mesh.material.emissiveMap.channel, 0);
+  assert.notEqual(mesh.material.occlusionMap, mesh.material.emissiveMap, 'one image, two coordinate sets');
+  asset.dispose();
+  // Base colour, normal and metallic-roughness maps stay on the first set.
+  json.materials = [{pbrMetallicRoughness: {baseColorTexture: {index: 0, texCoord: 1}}}];
+  await assert.rejects(loadGltf3D(new TextEncoder().encode(JSON.stringify(json)), options), code('WORLD3D_GLTF_UNSUPPORTED'));
+  assert.throws(() => new Texture3D({width: 1, height: 1, data: new Uint8Array(4)}, {channel: 2}), code('WORLD3D_INPUT_INVALID'));
+});
+
+test('a camera accepts a complete custom projection', () => {
+  const camera = createPerspectiveCamera3D({fov: 60, aspect: 1, near: 0.1, far: 100});
+  camera.updateViewMatrices();
+  const derived = camera.projectionMatrix.slice();
+  // Off-center frustum: left -0.2, right 0.6, bottom -0.3, top 0.3, near 0.5, far 50.
+  const custom = [1.25, 0, 0, 0, 0, 5 / 3, 0, 0, 0.5, 0, -50.5 / 49.5, -1, 0, 0, -50 / 49.5, 0];
+  camera.customProjection = custom;
+  camera.updateViewMatrices();
+  close(camera.projectionMatrix[8], 0.5, 1e-6);
+  close(camera.viewProjectionMatrix[14], -50 / 49.5, 1e-6);
+  camera.customProjection = undefined;
+  camera.updateViewMatrices();
+  assert.deepEqual([...camera.projectionMatrix], [...derived]);
+  camera.customProjection = [1, 2, 3];
+  assert.throws(() => camera.updateProjectionMatrix(), code('WORLD3D_INPUT_INVALID'));
+});

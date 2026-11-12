@@ -49,6 +49,8 @@ export interface TextureOptions3D {
     readonly colorSpace?: TextureColorSpace3D;
     readonly flipY?: boolean;
     readonly anisotropy?: number;
+    /** Texture coordinate set to sample with: 0 for `uv`, 1 for `uv1`. */
+    readonly channel?: 0 | 1;
 }
 
 export function isTexturePixels3D(source: unknown): source is TexturePixels3D {
@@ -89,8 +91,16 @@ abstract class TextureBase3D extends Resource3D {
      */
     flipY: boolean;
     anisotropy: number;
+    /**
+     * Texture coordinate set used when this texture is a material's occlusion
+     * or emissive map: 0 reads `uv`, 1 reads `uv1`, the usual home of baked
+     * lighting. Other map slots always use `uv`.
+     */
+    channel: 0 | 1;
     protected constructor(options: TextureOptions3D) {
         super();
+        if (options.channel !== undefined && options.channel !== 0 && options.channel !== 1) throw new World3DError('WORLD3D_INPUT_INVALID', 'texture channel');
+        this.channel = options.channel ?? 0;
         this.name = options.name ?? '';
         this.wrapS = options.wrapS ?? 'repeat';
         this.wrapT = options.wrapT ?? 'repeat';

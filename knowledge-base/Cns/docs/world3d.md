@@ -72,7 +72,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 ## glTF
 
-`loadGltf3D` 读取 `.glb` 字节或已解析的 `.gltf` 对象，返回场景、相机、动画和所创建的资源，并提供统一的 `dispose()`。支持网格、金属度-粗糙度和无光照材质、纹理变换、节点层级、蒙皮、变形目标、动画、相机、精确光源，以及 `EXT_mesh_gpu_instancing` 节点（读入为 `InstancedMesh3D`）。图像解码和外部缓冲加载由调用方注入，读取器因此不依赖 DOM。当前读取器接受根节点彼此独立的场景与第 0 套纹理坐标。共享场景根节点或其他纹理坐标集会触发明确的错误诊断。单个访问器解码上限为 128 MiB，合计上限为 256 MiB。Draco、meshopt 和 Basis 数据需要调用方提供解码器（见“压缩资源”）；未提供时，它们和其他必需扩展会以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。浏览器入口中的 `loadGltfFromUrl3D` 提供 fetch 和 `createImageBitmap`。
+`loadGltf3D` 读取 `.glb` 字节或已解析的 `.gltf` 对象，返回场景、相机、动画和所创建的资源，并提供统一的 `dispose()`。支持网格、金属度-粗糙度和无光照材质、纹理变换、节点层级、蒙皮、变形目标、动画、相机、精确光源，以及 `EXT_mesh_gpu_instancing` 节点（读入为 `InstancedMesh3D`）。图像解码和外部缓冲加载由调用方注入，读取器因此不依赖 DOM。读取器接受根节点彼此独立的场景。遮蔽贴图和自发光贴图可以使用第 0 套或第 1 套纹理坐标（烘焙光照通常放在第 1 套）；它们会设置 `texture.channel`，手动指定的遮蔽或自发光贴图同样可以使用这个属性。基础色、法线和金属度-粗糙度贴图使用第 0 套。共享场景根节点或其他纹理坐标集会触发明确的错误诊断。单个访问器解码上限为 128 MiB，合计上限为 256 MiB。Draco、meshopt 和 Basis 数据需要调用方提供解码器（见“压缩资源”）；未提供时，它们和其他必需扩展会以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。浏览器入口中的 `loadGltfFromUrl3D` 提供 fetch 和 `createImageBitmap`。
 
 ## 渲染器
 
@@ -104,7 +104,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `postProcess.ssao` 根据场景深度加入屏幕空间环境光遮蔽，由 `ssaoRadius`（世界单位）、`ssaoIntensity` 和 `ssaoBias` 调节。`postProcess.outlineLayers` 为 `layers` 中带有这些位的每个对象描边，颜色和宽度（像素）由 `outlineColor`、`outlineThickness` 指定；描边会透过前方的物体显示，适合用于选中和可交互提示。
 
-`postProcess.custom = createCustomPost3D({key, glsl, wgsl, uniforms})` 在遮蔽和泛光之后、色调映射之前加入一个应用自定义的处理。它的函数 `customPost(color, uv)` 可以调用 `sceneColor(uv)` 和 `sceneDepth(uv)`（到相机平面的距离，世界单位），足以实现深度雾、接触阴影和边缘效果。十六个浮点数在 GLSL 中为 `uPostCustom[0..3]`，在 WGSL 中为 `params.custom[0..3]`。UV 的行在 GLSL 中自下而上、在 WGSL 中自上而下，因此 V 方向的偏移在两个后端上指向相反。
+`postProcess.custom = createCustomPost3D({key, glsl, wgsl, uniforms})` 在遮蔽和泛光之后、色调映射之前加入一个应用自定义的处理。它的函数 `customPost(color, uv)` 可以调用 `sceneColor(uv)` 和 `sceneDepth(uv)`（到相机平面的距离，世界单位），足以实现深度雾、接触阴影和边缘效果。十六个浮点数在 GLSL 中为 `uPostCustom[0..3]`，在 WGSL 中为 `params.custom[0..3]`。深度直接根据投影矩阵本身重建，因此对偏心、斜切和手写的投影同样正确；把完整的矩阵赋给 `camera.customProjection` 即可使用这类投影。UV 的行在 GLSL 中自下而上、在 WGSL 中自上而下，因此 V 方向的偏移在两个后端上指向相反。
 
 开启后处理时，画布多重采样不生效，由 FXAA 代替。场景背景色会和场景一起做色调映射。`new RenderTarget3D(width, height, {format: 'rgba16f'})` 让应用为自己的处理使用同样的半浮点存储；这类目标跳过色调映射，也不能按字节回读。不支持浮点颜色缓冲的 WebGL2 设备退回 8 位存储。
 

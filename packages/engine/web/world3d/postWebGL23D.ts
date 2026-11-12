@@ -69,7 +69,8 @@ export class PostChainWebGL23D {
         const outline = this.#outline;
         if (u['uOutline']) gl.uniform4f(u['uOutline'], outline ? outline.outlineColor[0] : 0, outline ? outline.outlineColor[1] : 0, outline ? outline.outlineColor[2] : 0, outline ? outline.outlineThickness : 0);
         const view = this.#view;
-        if (u['uProj'] && view) gl.uniform4f(u['uProj'], view.scaleX, view.scaleY, view.near, view.far);
+        if (u['uProj'] && view) gl.uniform4f(u['uProj'], view.scaleX, view.scaleY, view.offsetX, view.offsetY);
+        if (u['uDepthParams'] && view) gl.uniform4f(u['uDepthParams'], view.depth[0], view.depth[1], view.depth[2], view.depth[3]);
         if (u['uFlags'] && view) gl.uniform4f(u['uFlags'], view.orthographic ? 1 : 0, this.#aoOn ? 1 : 0, 1 / width, 1 / height);
         const customLocation = u['uPostCustom[0]'] ?? u['uPostCustom'];
         if (customLocation && this.#custom) gl.uniform4fv(customLocation, this.#custom);

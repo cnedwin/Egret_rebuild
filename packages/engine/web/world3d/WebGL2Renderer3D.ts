@@ -43,7 +43,7 @@ export interface WebGL2Renderer3DOptions {
 const V = Object.freeze({
     normal: 1, tangent: 2, uv: 4, color: 8, skin: 16, morph: 32, morphNormals: 64, instancing: 128, instanceColor: 256,
     receiveShadow: 512, fog: 1024, toneMapped: 2048, environment: 4096, points: 8192, depthOnly: 16384, linearOutput: 32768,
-    mapFromTarget: 65536,
+    mapFromTarget: 65536, uv1: 131072, occlusionSecond: 262144, emissiveSecond: 524288,
 } as const);
 const IDENTITY3 = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -391,8 +391,10 @@ export class WebGL2Renderer3D implements Renderer3D {
             if (has(V.instanceColor)) defines.push('USE_INSTANCE_COLOR');
             if (lit && uv && material.normalMap) { defines.push('USE_NORMAL_MAP'); if (has(V.tangent)) defines.push('USE_TANGENT'); }
             if (lit && uv && material.metallicRoughnessMap && material.shading === 'standard') defines.push('USE_MR_MAP');
-            if (lit && uv && material.occlusionMap) defines.push('USE_AO_MAP');
-            if (uv && material.emissiveMap && material.shading !== 'matcap') defines.push('USE_EMISSIVE_MAP');
+            // A map on the second coordinate set needs only that set; it falls back to the first when the geometry lacks it.
+            const aoSecond = has(V.occlusionSecond), emissiveSecond = has(V.emissiveSecond);
+            if (lit && (uv || aoSecond) && material.occlusionMap) { defines.push('USE_AO_MAP'); if (aoSecond) defines.push('AO_UV1'); }
+            if ((uv || emissiveSecond) && material.emissiveMap && material.shading !== 'matcap') { defines.push('USE_EMISSIVE_MAP'); if (emissiveSecond) defines.push('EMISSIVE_UV1'); }
             if (material.flatShading) defines.push('FLAT_SHADED');
             if (material.side === 'double') defines.push('DOUBLE_SIDED');
             if (lit && has(V.receiveShadow)) defines.push('RECEIVE_SHADOW');
@@ -480,6 +482,12 @@ export class WebGL2Renderer3D implements Renderer3D {
         let variant = depthOnly ? V.depthOnly : frameFlags;
         if (geometry.getAttribute('normal')) variant |= V.normal;
         if (geometry.getAttribute('tangent')) variant |= V.tangent;
+        if (geometry.getAttribute('uv1')) {
+            variant |= V.uv1;
+            // A texture's coordinate set can change without changing the material version.
+            if (!depthOnly && material.occlusionMap?.channel === 1) variant |= V.occlusionSecond;
+            if (!depthOnly && material.emissiveMap?.channel === 1) variant |= V.emissiveSecond;
+        }
         if (geometry.getAttribute('uv')) {
             variant |= V.uv;
             // A texture can change its source without changing the material version.

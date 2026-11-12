@@ -69,7 +69,7 @@ const SHADER_STAGE = Object.freeze({VERTEX: 1, FRAGMENT: 2} as const);
 const BUFFER_USAGE = Object.freeze({MAP_READ: 1, COPY_DST: 8, INDEX: 16, VERTEX: 32, UNIFORM: 64, STORAGE: 128} as const);
 const TEXTURE_USAGE = Object.freeze({COPY_SRC: 1, COPY_DST: 2, TEXTURE_BINDING: 4, RENDER_ATTACHMENT: 16} as const);
 const MAP_MODE_READ = 1;
-const ATTRIBUTE_SLOTS = ['position', 'normal', 'uv', 'tangent', 'color', 'joints', 'weights'] as const;
+const ATTRIBUTE_SLOTS = ['position', 'normal', 'uv', 'tangent', 'color', 'joints', 'weights', 'uv1'] as const;
 const TARGET_FORMAT: GPUTextureFormat = 'rgba8unorm-srgb', HDR_FORMAT: GPUTextureFormat = 'rgba16float';
 const SHADOW_FORMAT: GPUTextureFormat = 'depth32float';
 const DEPTH_FORMAT: GPUTextureFormat = 'depth24plus';
@@ -611,6 +611,9 @@ export class WebGPURenderer3D implements Renderer3D {
     private features(item: RenderItem3D, gpu: GeometryGpu, kind: PassKind, frameFlags: {fog: boolean; environment: boolean}): ShaderFeatures3D {
         const {mesh, material} = item, depthOnly = kind === 'depth', lit = material.shading !== 'unlit' && material.shading !== 'matcap' && !depthOnly;
         const uv = gpu.buffers.has('uv'), instanced = mesh.isInstanced;
+        // A map on the second coordinate set needs only that set; it falls back to the first when the geometry lacks it.
+        const second = gpu.buffers.has('uv1') && !depthOnly, occlusionUv1 = second && lit && material.occlusionMap?.channel === 1;
+        const emissiveUv1 = second && material.shading !== 'matcap' && material.emissiveMap?.channel === 1;
         const skinning = mesh.skeleton !== undefined && gpu.buffers.has('joints') && gpu.buffers.has('weights');
         return {
             shading: material.shading, depthOnly,
@@ -625,8 +628,9 @@ export class WebGPURenderer3D implements Renderer3D {
             mapFromTarget: !depthOnly && uv && material.map?.source instanceof RenderTarget3D,
             normalMap: lit && uv && material.normalMap !== undefined,
             metallicRoughnessMap: lit && uv && material.metallicRoughnessMap !== undefined && material.shading === 'standard',
-            occlusionMap: lit && uv && material.occlusionMap !== undefined,
-            emissiveMap: !depthOnly && uv && material.emissiveMap !== undefined && material.shading !== 'matcap',
+            occlusionMap: lit && (uv || occlusionUv1) && material.occlusionMap !== undefined,
+            uv1: occlusionUv1 || emissiveUv1, occlusionUv1, emissiveUv1,
+            emissiveMap: !depthOnly && (uv || emissiveUv1) && material.emissiveMap !== undefined && material.shading !== 'matcap',
             alphaMask: material.alphaMode === 'mask', alphaBlend: material.alphaMode === 'blend',
             premultipliedAlpha: !depthOnly && material.alphaMode === 'blend' && material.blending === 'premultiplied',
             flatShading: material.flatShading, doubleSided: material.side === 'double',
@@ -667,6 +671,7 @@ export class WebGPURenderer3D implements Renderer3D {
         add(features.vertexColor, 4, colorSize === 3 ? 'float32x3' : 'float32x4', colorSize * 4);
         add(features.skinning, 5, 'uint32x4', 16);
         add(features.skinning, 6, 'float32x4', 16);
+        add(features.uv1, 7, 'float32x2', 8);
         if (features.instancing) {
             buffers.push({arrayStride: 64, stepMode: 'instance', attributes: [0, 1, 2, 3].map(column => ({shaderLocation: 8 + column, offset: column * 16, format: 'float32x4' as GPUVertexFormat}))});
         }
@@ -769,7 +774,7 @@ export class WebGPURenderer3D implements Renderer3D {
             | (material.blending === 'premultiplied' ? 256 : material.blending === 'additive' ? 32768 : material.blending === 'multiply' ? 65536 : 0)
             | (material.flatShading ? 512 : 0) | (material.vertexColors ? 1024 : 0) | (material.billboard ? 2048 : 0) | (material.screenSpace ? 4096 : 0)
             | (material.depthTest ? 8192 : 0) | (material.depthWrite ? 16384 : 0) | (material.fog ? 131072 : 0) | (material.toneMapped ? 262144 : 0)
-            | (material.polygonOffset ? 524288 : 0);
+            | (material.polygonOffset ? 524288 : 0) | (material.occlusionMap?.channel === 1 ? 1048576 : 0) | (material.emissiveMap?.channel === 1 ? 2097152 : 0);
         const variantKey = surface * 16384 + bits;
         let byGeometry = cache.variants.get(geometry.id);
         if (!byGeometry) cache.variants.set(geometry.id, byGeometry = new Map());
@@ -791,7 +796,7 @@ export class WebGPURenderer3D implements Renderer3D {
             let slot = 0;
             const bind = (enabled: boolean, name: string): void => { if (enabled) pass.setVertexBuffer(slot++, gpu.buffers.get(name)!.buffer); };
             bind(true, 'position'); bind(features.normal, 'normal'); bind(features.uv, 'uv'); bind(features.tangent, 'tangent');
-            bind(features.vertexColor, 'color'); bind(features.skinning, 'joints'); bind(features.skinning, 'weights');
+            bind(features.vertexColor, 'color'); bind(features.skinning, 'joints'); bind(features.skinning, 'weights'); bind(features.uv1, 'uv1');
             if (instanced) {
                 const instance = this.instances(mesh as InstancedMesh3D, frame);
                 pass.setVertexBuffer(slot++, instance.matrices.buffer);

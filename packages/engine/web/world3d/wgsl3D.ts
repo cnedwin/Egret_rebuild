@@ -33,6 +33,10 @@ export interface ShaderFeatures3D {
     readonly fog: boolean;
     readonly toneMapped: boolean;
     readonly linearOutput: boolean;
+    /** The geometry's second coordinate set is bound, for occlusion or emissive maps that ask for it. */
+    readonly uv1: boolean;
+    readonly occlusionUv1: boolean;
+    readonly emissiveUv1: boolean;
     /** Key and WGSL source of the material's fragment hook, when it has one. */
     readonly customKey?: string;
     readonly customWgsl?: string;
@@ -132,6 +136,7 @@ function vertexSource(f: ShaderFeatures3D): string {
     if (f.uv) inputs.push('@location(2) uv: vec2f');
     if (f.tangent) inputs.push('@location(3) tangent: vec4f');
     if (f.vertexColor) inputs.push('@location(4) color: vec4f');
+    if (f.uv1) inputs.push('@location(7) uv1: vec2f');
     if (f.skinning) inputs.push('@location(5) joints: vec4u', '@location(6) weights: vec4f');
     if (f.instancing) inputs.push('@location(8) instance0: vec4f', '@location(9) instance1: vec4f', '@location(10) instance2: vec4f', '@location(11) instance3: vec4f');
     if (f.instanceColor) inputs.push('@location(12) instanceColor: vec4f');
@@ -146,6 +151,7 @@ struct VertexOutput {
     @location(2) uv: vec2f,
     @location(3) tangent: vec4f,
     @location(4) color: vec4f,
+    @location(5) uv1: vec2f,
 }
 fn morphDelta(targetIndex: i32, channel: i32, vertexIndex: u32) -> vec3f {
     let texel = (targetIndex * object.morph.y + channel) * object.morph.x + i32(vertexIndex);
@@ -200,6 +206,7 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     output.uv = vec2f(dot(material.uvRow0.xyz, uv), dot(material.uvRow1.xyz, uv));
     output.tangent = ${f.tangent ? 'vec4f(mat3x3f(model[0].xyz, model[1].xyz, model[2].xyz) * input.tangent.xyz, input.tangent.w)' : 'vec4f(1.0, 0.0, 0.0, 1.0)'};
     output.color = ${f.vertexColor ? 'input.color' : 'vec4f(1.0)'};
+    output.uv1 = ${f.uv1 ? 'input.uv1' : 'vec2f(0.0)'};
     ${f.instanceColor ? 'output.color *= input.instanceColor;' : ''}
     return output;
 }
@@ -350,8 +357,8 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     : f.map ? 'base *= textureSample(mapTexture, mapSampler, input.uv);' : ''}
     ${f.normalMap ? 'let normalSample = textureSample(normalTexture, normalSampler, input.uv).xyz;' : ''}
     ${f.metallicRoughnessMap ? 'let mrSample = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, input.uv);' : ''}
-    ${f.occlusionMap ? 'let occlusionSample = textureSample(occlusionTexture, occlusionSampler, input.uv).r;' : ''}
-    ${f.emissiveMap ? 'let emissiveSample = textureSample(emissiveTexture, emissiveSampler, input.uv).rgb;' : ''}
+    ${f.occlusionMap ? 'let occlusionSample = textureSample(occlusionTexture, occlusionSampler, ' + (f.occlusionUv1 ? 'input.uv1' : 'input.uv') + ').r;' : ''}
+    ${f.emissiveMap ? 'let emissiveSample = textureSample(emissiveTexture, emissiveSampler, ' + (f.emissiveUv1 ? 'input.uv1' : 'input.uv') + ').rgb;' : ''}
     ${f.shading === 'matcap' ? /* wgsl */`
     var matcapNormal = normalize(${f.normal ? 'input.normal' : 'cross(dpx, -dpy)'});
     ${f.doubleSided ? 'if (!frontFacing) { matcapNormal = -matcapNormal; }' : ''}

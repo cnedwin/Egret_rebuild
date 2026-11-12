@@ -307,12 +307,13 @@ class GltfReader {
         this.imageCache.set(index, pending);
         return pending;
     }
-    private async texture(info: Json | undefined, colorSpace: TextureColorSpace3D): Promise<Texture3D | undefined> {
+    private async texture(info: Json | undefined, colorSpace: TextureColorSpace3D, secondSet = false): Promise<Texture3D | undefined> {
         if (!info || typeof info.index !== 'number') return undefined;
         const transform = info.extensions?.KHR_texture_transform;
         const texCoord = transform?.texCoord ?? info.texCoord ?? 0;
-        if (texCoord !== 0) throw new World3DError('WORLD3D_GLTF_UNSUPPORTED', 'texture coordinate set ' + texCoord);
-        const key = info.index + ':' + colorSpace + ':' + (transform ? JSON.stringify(transform) : '');
+        // Occlusion and emissive maps may use the second set, where baked lighting lives.
+        if (texCoord !== 0 && !(texCoord === 1 && secondSet)) throw new World3DError('WORLD3D_GLTF_UNSUPPORTED', 'texture coordinate set ' + texCoord);
+        const key = info.index + ':' + colorSpace + ':' + texCoord + ':' + (transform ? JSON.stringify(transform) : '');
         const cached = this.textureCache.get(key);
         if (cached) return cached;
         const def = this.json.textures?.[info.index] ?? fail('texture ' + info.index);
@@ -335,6 +336,7 @@ class GltfReader {
             if (Array.isArray(transform.scale)) texture.repeat.set(transform.scale);
             if (typeof transform.rotation === 'number') texture.rotation = transform.rotation;
         }
+        texture.channel = texCoord === 1 ? 1 : 0;
         this.textures.push(texture);
         this.textureCache.set(key, texture);
         return texture;
@@ -363,7 +365,7 @@ class GltfReader {
         material.occlusionStrength = def.occlusionTexture?.strength ?? 1;
         const [map, metallicRoughness, normal, occlusion, emissive] = await Promise.all([
             this.texture(pbr.baseColorTexture, 'srgb'), this.texture(pbr.metallicRoughnessTexture, 'linear'),
-            this.texture(def.normalTexture, 'linear'), this.texture(def.occlusionTexture, 'linear'), this.texture(def.emissiveTexture, 'srgb'),
+            this.texture(def.normalTexture, 'linear'), this.texture(def.occlusionTexture, 'linear', true), this.texture(def.emissiveTexture, 'srgb', true),
         ]);
         material.map = map; material.metallicRoughnessMap = metallicRoughness; material.normalMap = normal;
         material.occlusionMap = occlusion; material.emissiveMap = emissive;

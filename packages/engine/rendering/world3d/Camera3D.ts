@@ -31,6 +31,13 @@ export class Camera3D extends Object3D {
     zoom = 1;
     /** Objects render when (object.layers & camera.layerMask) is non-zero. */
     layerMask = 0xffffffff;
+    /**
+     * A complete projection matrix (OpenGL clip conventions, column-major) used
+     * instead of the one derived from fov, aspect, near and far: for off-center
+     * frusta, oblique near planes and portals. Assign undefined to return to the
+     * derived projection.
+     */
+    customProjection: ArrayLike<number> | undefined;
     readonly projectionMatrix = new Float32Array(16);
     readonly viewMatrix = new Float32Array(16);
     readonly viewProjectionMatrix = new Float32Array(16);
@@ -44,6 +51,13 @@ export class Camera3D extends Object3D {
     }
     /** Recompute the projection when a parameter changed since the last call. */
     updateProjectionMatrix(): void {
+        const custom = this.customProjection;
+        if (custom) {
+            if (custom.length !== 16) throw new World3DError('WORLD3D_INPUT_INVALID', 'camera.customProjection');
+            for (let i = 0; i < 16; i++) this.projectionMatrix[i] = requireFinite3D(custom[i], 'camera.customProjection');
+            this.#projectionKey = 'custom';
+            return;
+        }
         const key = this.fov + '|' + this.orthographicHeight + '|' + this.aspect + '|' + this.near + '|' + this.far + '|' + this.zoom;
         if (key === this.#projectionKey) return;
         const aspect = requirePositive3D(this.aspect, 'camera.aspect'), zoom = requirePositive3D(this.zoom, 'camera.zoom');
