@@ -26,6 +26,8 @@ export class FollowControls3D implements Disposable {
     enabled = true;
     readonly #pointers = new Map<number, {x: number; y: number}>();
     readonly #listeners: [string, EventListener, AddEventListenerOptions | undefined][];
+    readonly #previousTouchAction: string;
+    readonly #previousTouchActionPriority: string;
     #pinch = 0;
     #disposed = false;
 
@@ -52,9 +54,11 @@ export class FollowControls3D implements Disposable {
             this.#pinch = spread;
         };
         const up = (event: PointerEvent): void => {
-            if (!this.#pointers.delete(event.pointerId)) return;
-            this.element.releasePointerCapture?.(event.pointerId);
-            this.#pinch = 0;
+            if (this.forgetPointer(event.pointerId)) this.releaseCapture(event.pointerId);
+        };
+        const lost = (event: PointerEvent): void => {
+            // A descendant losing its capture does not end a capture on this element.
+            if (event.target === element) this.forgetPointer(event.pointerId);
         };
         const wheel = (event: WheelEvent): void => {
             if (!this.enabled) return;
@@ -63,19 +67,39 @@ export class FollowControls3D implements Disposable {
         };
         this.#listeners = [
             ['pointerdown', down as EventListener, undefined], ['pointermove', move as EventListener, undefined], ['pointerup', up as EventListener, undefined],
-            ['pointercancel', up as EventListener, undefined], ['wheel', wheel as EventListener, {passive: false}],
+            ['pointercancel', up as EventListener, undefined], ['lostpointercapture', lost as EventListener, undefined],
+            ['wheel', wheel as EventListener, {passive: false}],
         ];
         for (const [type, listener, listenerOptions] of this.#listeners) element.addEventListener(type, listener, listenerOptions);
-        // Stop the browser from scrolling or zooming the page during a drag.
-        element.style.touchAction = 'none';
+        // Disable native gestures while attached without losing the host's inline style.
+        this.#previousTouchAction = element.style.getPropertyValue('touch-action');
+        this.#previousTouchActionPriority = element.style.getPropertyPriority('touch-action');
+        if (this.#previousTouchAction !== 'none') element.style.setProperty('touch-action', 'none', this.#previousTouchActionPriority);
     }
     /** Place the camera; call once per frame after moving the target. */
     update(deltaSeconds = 0): void { if (!this.#disposed) this.follow.update(deltaSeconds); }
     dispose(): void {
         if (this.#disposed) return;
         this.#disposed = true;
-        for (const [type, listener, listenerOptions] of this.#listeners) this.element.removeEventListener(type, listener, listenerOptions);
+        const element = this.element;
+        for (const [type, listener, listenerOptions] of this.#listeners) element.removeEventListener(type, listener, listenerOptions);
+        for (const id of this.#pointers.keys()) this.releaseCapture(id);
         this.#pointers.clear();
+        this.#pinch = 0;
+        const style = element.style;
+        // Preserve any later inline style installed by the caller.
+        if (this.#previousTouchAction !== 'none' && style.getPropertyValue('touch-action') === 'none'
+            && style.getPropertyPriority('touch-action') === this.#previousTouchActionPriority) {
+            style.setProperty('touch-action', this.#previousTouchAction, this.#previousTouchActionPriority);
+        }
+    }
+    private forgetPointer(id: number): boolean {
+        if (!this.#pointers.delete(id)) return false;
+        this.#pinch = 0;
+        return true;
+    }
+    private releaseCapture(id: number): void {
+        if (this.element.hasPointerCapture?.(id)) this.element.releasePointerCapture(id);
     }
 }
 
