@@ -153,6 +153,8 @@ export interface RenderTargetOptions3D {
      * post-processing. Backends without float targets fall back to 'rgba8'.
      */
     readonly format?: RenderTargetFormat3D;
+    /** Keep depth in a texture the post-processing chain can read, instead of a write-only buffer. */
+    readonly depthTexture?: boolean;
     /** Attach a depth buffer so the target can be rendered with depth testing. */
     readonly depth?: boolean;
     readonly magFilter?: TextureFilter3D;
@@ -169,6 +171,7 @@ export class RenderTarget3D extends Resource3D {
     #height: number;
     readonly depth: boolean;
     readonly format: RenderTargetFormat3D;
+    readonly depthTexture: boolean;
     /** Sampled view of the color attachment; its source is this target. */
     readonly texture: Texture3D;
     constructor(width: number, height: number, options: RenderTargetOptions3D = {}) {
@@ -180,6 +183,7 @@ export class RenderTarget3D extends Resource3D {
         this.depth = options.depth ?? true;
         if (options.format !== undefined && options.format !== 'rgba8' && options.format !== 'rgba16f') throw new World3DError('WORLD3D_INPUT_INVALID', 'target format');
         this.format = options.format ?? 'rgba8';
+        this.depthTexture = this.depth && (options.depthTexture ?? false);
         this.texture = new Texture3D(this, {
             mipmaps: false, wrapS: options.wrapS ?? 'clamp', wrapT: options.wrapT ?? 'clamp',
             magFilter: options.magFilter ?? 'linear', minFilter: options.minFilter ?? 'linear',

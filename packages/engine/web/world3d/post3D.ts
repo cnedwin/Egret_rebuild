@@ -5,8 +5,34 @@
 //   -> optional FXAA -> canvas or target.
 // Bloom uses a dual-filter pyramid: each level is one 5-tap downsample and
 // one 8-tap upsample, which is cheap enough for integrated and mobile GPUs.
+import type {Camera3D} from '../../rendering/world3d/Camera3D.js';
+import {World3DError} from '../../rendering/world3d/core3D.js';
 import type {ToneMapping3D} from './frame3D.js';
 
+/**
+ * A full-screen hook that runs after ambient occlusion and bloom and before
+ * tone mapping. Supply the function in each shading language you target:
+ *   GLSL:  vec3 customPost(vec3 color, vec2 uv)   reading uPostCustom[0..3]
+ *   WGSL:  fn customPost(color: vec3f, uv: vec2f) -> vec3f   reading params.custom[0..3]
+ * Both may call sceneColor(uv) for the lit scene and sceneDepth(uv) for the
+ * distance from the camera plane in world units, which is enough for fog
+ * volumes, outlines, contact shadows and similar screen-space effects.
+ */
+export interface CustomPost3D {
+    /** Identifies the source; equal keys share one compiled program. */
+    readonly key: string;
+    readonly glsl?: string;
+    readonly wgsl?: string;
+    /** Four vec4 parameters written by the application. */
+    readonly uniforms: Float32Array;
+}
+export function createCustomPost3D(input: {readonly key: string; readonly glsl?: string; readonly wgsl?: string; readonly uniforms?: ArrayLike<number>}): CustomPost3D {
+    if (!input || typeof input.key !== 'string' || input.key.length === 0 || /[\s|/]/.test(input.key)) throw new World3DError('WORLD3D_INPUT_INVALID', 'post key');
+    if (input.glsl === undefined && input.wgsl === undefined) throw new World3DError('WORLD3D_INPUT_INVALID', 'post source');
+    const uniforms = new Float32Array(16);
+    if (input.uniforms) uniforms.set(Array.from(input.uniforms).slice(0, 16));
+    return Object.freeze({key: input.key, ...(input.glsl === undefined ? {} : {glsl: input.glsl}), ...(input.wgsl === undefined ? {} : {wgsl: input.wgsl}), uniforms});
+}
 export interface PostProcessSettings3D {
     /** Master switch. While false the renderer draws directly and nothing here costs anything. */
     enabled: boolean;
@@ -28,10 +54,35 @@ export interface PostProcessSettings3D {
     brightness: number;
     /** Darkening toward the corners, in [0, 1]; 0 disables it. */
     vignette: number;
+    /** Screen-space ambient occlusion: darkens creases and contact areas using scene depth. */
+    ssao: boolean;
+    /** World-space reach of the occlusion search. */
+    ssaoRadius: number;
+    ssaoIntensity: number;
+    /** Ignores occluders this close to the surface plane, against self-shadowing on flat faces. */
+    ssaoBias: number;
+    /** Optional application pass; see CustomPost3D. */
+    custom: CustomPost3D | undefined;
+}
+/** Camera values the depth-reading passes need. */
+export interface PostView3D { readonly scaleX: number; readonly scaleY: number; readonly near: number; readonly far: number; readonly orthographic: boolean }
+export function postViewFromCamera3D(camera: Camera3D): PostView3D {
+    // The projection's diagonal holds 1 / (half extent at unit distance), or 1 / half size when orthographic.
+    const p = camera.projectionMatrix;
+    return {scaleX: 1 / p[0]!, scaleY: 1 / p[5]!, near: camera.near, far: camera.far, orthographic: camera.projectionKind === 'orthographic'};
+}
+/** Fill the 32 floats every post pass reads: a, b, projection, flags, custom[4]. */
+export function writePostParams3D(out: Float32Array, a: ArrayLike<number>, b: ArrayLike<number>, view: PostView3D, aoEnabled: boolean, width: number, height: number, custom?: CustomPost3D): void {
+    out.fill(0);
+    out.set(a, 0); out.set(b, 4);
+    out[8] = view.scaleX; out[9] = view.scaleY; out[10] = view.near; out[11] = view.far;
+    out[12] = view.orthographic ? 1 : 0; out[13] = aoEnabled ? 1 : 0; out[14] = 1 / width; out[15] = 1 / height;
+    if (custom) out.set(custom.uniforms, 16);
 }
 export const POST3D_LIMITS = Object.freeze({maxBloomLevels: 8} as const);
 export function createPostProcessSettings3D(): PostProcessSettings3D {
-    return {enabled: false, bloom: true, bloomThreshold: 1, bloomKnee: 0.5, bloomIntensity: 0.6, bloomLevels: 5, fxaa: true, saturation: 1, contrast: 1, brightness: 1, vignette: 0};
+    return {enabled: false, bloom: true, bloomThreshold: 1, bloomKnee: 0.5, bloomIntensity: 0.6, bloomLevels: 5, fxaa: true, saturation: 1, contrast: 1, brightness: 1, vignette: 0,
+        ssao: false, ssaoRadius: 0.5, ssaoIntensity: 1, ssaoBias: 0.025, custom: undefined};
 }
 /** Number of bloom levels that fit the output size. */
 export function bloomLevelCount3D(settings: PostProcessSettings3D, width: number, height: number): number {
@@ -65,6 +116,42 @@ uniform sampler2D uSource;
 uniform vec4 uA; // per pass, see below
 uniform vec4 uB;
 `;
+const GLSL_DEPTH = /* glsl */`
+uniform highp sampler2D uDepth;
+uniform vec4 uProj;  // x, y: view extent at unit distance; z: near; w: far
+uniform vec4 uFlags; // x: orthographic; y: ambient occlusion on; z, w: texel size
+/** Distance from the camera plane, in world units. */
+float sceneDepth(vec2 uv) {
+    ivec2 size = textureSize(uDepth, 0);
+    float d = texelFetch(uDepth, clamp(ivec2(uv * vec2(size)), ivec2(0), size - 1), 0).r;
+    if (uFlags.x > 0.5) return uProj.z + d * (uProj.w - uProj.z);
+    return 2.0 * uProj.z * uProj.w / (uProj.w + uProj.z - (d * 2.0 - 1.0) * (uProj.w - uProj.z));
+}
+`;
+/** uA: radius, intensity, bias. Writes occlusion (1 = open) to every channel. */
+export const POST_SSAO_GLSL_3D = GLSL_HEAD + GLSL_DEPTH + /* glsl */`
+vec3 viewPosition(vec2 uv) {
+    float d = sceneDepth(uv);
+    return vec3((uv * 2.0 - 1.0) * uProj.xy * (uFlags.x > 0.5 ? 1.0 : d), -d);
+}
+void main() {
+    vec3 p = viewPosition(vUv);
+    // The surface normal comes from neighbouring depths, so no extra buffer is needed.
+    vec3 n = normalize(cross(dFdx(p), dFdy(p)));
+    float noise = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715)))) * 6.2831853;
+    vec2 radiusUv = uA.x / (uProj.xy * (uFlags.x > 0.5 ? 1.0 : -p.z)) * 0.5;
+    float occlusion = 0.0, reach = uA.x * uA.x;
+    for (int i = 0; i < 12; i++) {
+        float angle = noise + float(i) * 2.399963;
+        vec3 v = viewPosition(vUv + vec2(cos(angle), sin(angle)) * ((float(i) + 0.5) / 12.0) * radiusUv) - p;
+        float d2 = dot(v, v);
+        occlusion += max(dot(n, v) * inversesqrt(d2 + 0.000001) - uA.z, 0.0) / (1.0 + d2 / reach) * step(d2, reach * 4.0);
+    }
+    float open = clamp(1.0 - uA.y * occlusion / 12.0 * 2.5, 0.0, 1.0);
+    // The far plane is sky: never occluded.
+    if (-p.z >= uProj.w * 0.999) open = 1.0;
+    outColor = vec4(vec3(open), 1.0);
+}`;
 /** uA: xy source texel, z threshold, w knee. uB.x: 1 applies the brightness prefilter. */
 export const POST_DOWN_GLSL_3D = GLSL_HEAD + /* glsl */`
 void main() {
@@ -93,12 +180,27 @@ void main() {
     outColor = vec4(c / 12.0, 1.0);
 }`;
 /** uA: bloom scale, tone mapping, sRGB encode, vignette. uB: saturation, contrast, brightness. */
-export const POST_COMPOSITE_GLSL_3D = GLSL_HEAD + /* glsl */`
+export function postCompositeGlsl3D(customPost?: string): string {
+    return GLSL_HEAD.replace('#version 300 es\n', '#version 300 es\n' + (customPost === undefined ? '' : '#define CUSTOM_POST\n')) + GLSL_DEPTH + /* glsl */`
 uniform sampler2D uBloom;
+uniform sampler2D uAo;
+vec3 sceneColor(vec2 uv) { return texture(uSource, uv).rgb; }
+#ifdef CUSTOM_POST
+uniform vec4 uPostCustom[4];
+${customPost ?? ''}
+#endif
 void main() {
     vec4 scene = texture(uSource, vUv);
     vec3 c = scene.rgb;
+    if (uFlags.y > 0.5) {
+        // Five taps hide the per-pixel sampling pattern of the occlusion pass.
+        vec2 t = uFlags.zw * 1.5;
+        c *= 0.2 * (texture(uAo, vUv).r + texture(uAo, vUv + t).r + texture(uAo, vUv - t).r + texture(uAo, vUv + vec2(t.x, -t.y)).r + texture(uAo, vUv + vec2(-t.x, t.y)).r);
+    }
     if (uA.x > 0.0) c += texture(uBloom, vUv).rgb * uA.x;
+    #ifdef CUSTOM_POST
+    c = max(customPost(c, vUv), vec3(0.0));
+    #endif
     c *= uB.z;
     if (uA.y > 1.5) c = clamp((c * (2.51 * c + 0.03)) / (c * (2.43 * c + 0.59) + 0.14), 0.0, 1.0);
     else if (uA.y > 0.5) c = c / (1.0 + c);
@@ -109,6 +211,7 @@ void main() {
     if (uA.z > 0.5) c = mix(c * 12.92, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055, step(vec3(0.0031308), c));
     outColor = vec4(c, scene.a);
 }`;
+}
 /** uA.xy: source texel; uA.z: 1 converts the sRGB-encoded result back to linear for an encoding target. */
 export const POST_FXAA_GLSL_3D = GLSL_HEAD + /* glsl */`
 float luma(vec3 c) { return dot(c, vec3(0.299, 0.587, 0.114)); }
@@ -134,11 +237,19 @@ void main() {
 }`;
 
 const WGSL_HEAD = /* wgsl */`
-struct Params { a: vec4f, b: vec4f }
+struct Params {
+    a: vec4f,
+    b: vec4f,
+    proj: vec4f,   // x, y: view extent at unit distance; z: near; w: far
+    flags: vec4f,  // x: orthographic; y: ambient occlusion on; z, w: texel size
+    custom: array<vec4f, 4>,
+}
 @group(0) @binding(0) var<uniform> params: Params;
 @group(0) @binding(1) var source: texture_2d<f32>;
 @group(0) @binding(2) var linearSampler: sampler;
 @group(0) @binding(3) var bloom: texture_2d<f32>;
+@group(0) @binding(4) var depthTexture: texture_depth_2d;
+@group(0) @binding(5) var aoTexture: texture_2d<f32>;
 struct VertexOutput { @builtin(position) position: vec4f, @location(0) uv: vec2f }
 @vertex fn vertexMain(@builtin(vertex_index) index: u32) -> VertexOutput {
     let p = vec2f(f32((index << 1u) & 2u), f32(index & 2u));
@@ -149,7 +260,44 @@ struct VertexOutput { @builtin(position) position: vec4f, @location(0) uv: vec2f
     return output;
 }
 fn tap(uv: vec2f) -> vec3f { return textureSampleLevel(source, linearSampler, uv, 0.0).rgb; }
+fn sceneColor(uv: vec2f) -> vec3f { return tap(uv); }
+/** Distance from the camera plane, in world units. */
+fn sceneDepth(uv: vec2f) -> f32 {
+    let size = vec2f(textureDimensions(depthTexture));
+    let d = textureLoad(depthTexture, vec2i(clamp(uv * size, vec2f(0.0), size - 1.0)), 0);
+    if (params.flags.x > 0.5) { return params.proj.z + d * (params.proj.w - params.proj.z); }
+    return 2.0 * params.proj.z * params.proj.w / (params.proj.w + params.proj.z - (d * 2.0 - 1.0) * (params.proj.w - params.proj.z));
+}
 `;
+export const POST_SSAO_WGSL_3D = WGSL_HEAD + /* wgsl */`
+fn viewPosition(uv: vec2f) -> vec3f {
+    let d = sceneDepth(uv);
+    var scale = d;
+    if (params.flags.x > 0.5) { scale = 1.0; }
+    // UV rows run top-down here, so Y is flipped back to view space.
+    return vec3f((uv.x * 2.0 - 1.0) * params.proj.x * scale, (1.0 - uv.y * 2.0) * params.proj.y * scale, -d);
+}
+@fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
+    let p = viewPosition(input.uv);
+    // Framebuffer Y points down, so the Y derivative is negated to keep the normal facing the camera.
+    let n = normalize(cross(dpdx(p), -dpdy(p)));
+    let noise = fract(52.9829189 * fract(dot(input.position.xy, vec2f(0.06711056, 0.00583715)))) * 6.2831853;
+    var scale = -p.z;
+    if (params.flags.x > 0.5) { scale = 1.0; }
+    let radiusUv = params.a.x / (params.proj.xy * scale) * 0.5;
+    let reach = params.a.x * params.a.x;
+    var occlusion = 0.0;
+    for (var i = 0; i < 12; i++) {
+        let angle = noise + f32(i) * 2.399963;
+        // The disc is mirrored in Y so both backends sample the same scene points.
+        let v = viewPosition(input.uv + vec2f(cos(angle), -sin(angle)) * ((f32(i) + 0.5) / 12.0) * radiusUv) - p;
+        let d2 = dot(v, v);
+        occlusion += max(dot(n, v) * inverseSqrt(d2 + 0.000001) - params.a.z, 0.0) / (1.0 + d2 / reach) * step(d2, reach * 4.0);
+    }
+    var open = clamp(1.0 - params.a.y * occlusion / 12.0 * 2.5, 0.0, 1.0);
+    if (-p.z >= params.proj.w * 0.999) { open = 1.0; }
+    return vec4f(vec3f(open), 1.0);
+}`;
 export const POST_DOWN_WGSL_3D = WGSL_HEAD + /* wgsl */`
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
     let o = params.a.xy;
@@ -173,10 +321,19 @@ export const POST_UP_WGSL_3D = WGSL_HEAD + /* wgsl */`
     c += 2.0 * (tap(uv + vec2f(-h.x, h.y)) + tap(uv + vec2f(h.x, h.y)) + tap(uv + vec2f(h.x, -h.y)) + tap(uv + vec2f(-h.x, -h.y)));
     return vec4f(c / 12.0, 1.0);
 }`;
-export const POST_COMPOSITE_WGSL_3D = WGSL_HEAD + /* wgsl */`
+export function postCompositeWgsl3D(customPost?: string): string {
+    return WGSL_HEAD + (customPost ?? '') + /* wgsl */`
+fn occlusionTap(uv: vec2f) -> f32 { return textureSampleLevel(aoTexture, linearSampler, uv, 0.0).r; }
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
     let scene = textureSampleLevel(source, linearSampler, input.uv, 0.0);
-    var c = scene.rgb + textureSampleLevel(bloom, linearSampler, input.uv, 0.0).rgb * params.a.x;
+    var c = scene.rgb;
+    if (params.flags.y > 0.5) {
+        // Five taps hide the per-pixel sampling pattern of the occlusion pass.
+        let t = params.flags.zw * 1.5;
+        c *= 0.2 * (occlusionTap(input.uv) + occlusionTap(input.uv + t) + occlusionTap(input.uv - t) + occlusionTap(input.uv + vec2f(t.x, -t.y)) + occlusionTap(input.uv + vec2f(-t.x, t.y)));
+    }
+    c += textureSampleLevel(bloom, linearSampler, input.uv, 0.0).rgb * params.a.x;
+    ${customPost === undefined ? '' : 'c = max(customPost(c, input.uv), vec3f(0.0));'}
     c *= params.b.z;
     if (params.a.y > 1.5) { c = clamp((c * (2.51 * c + 0.03)) / (c * (2.43 * c + 0.59) + 0.14), vec3f(0.0), vec3f(1.0)); }
     else if (params.a.y > 0.5) { c = c / (1.0 + c); }
@@ -187,6 +344,7 @@ export const POST_COMPOSITE_WGSL_3D = WGSL_HEAD + /* wgsl */`
     if (params.a.z > 0.5) { c = mix(c * 12.92, 1.055 * pow(c, vec3f(1.0 / 2.4)) - 0.055, step(vec3f(0.0031308), c)); }
     return vec4f(c, scene.a);
 }`;
+}
 export const POST_FXAA_WGSL_3D = WGSL_HEAD + /* wgsl */`
 fn luma(c: vec3f) -> f32 { return dot(c, vec3f(0.299, 0.587, 0.114)); }
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {

@@ -17,7 +17,7 @@ import {COMPRESSED_BLOCK_BYTES_3D, CubeTexture3D, RenderTarget3D, isCompressedPi
 import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import type {Texture3D, TextureSource3D} from '../../rendering/world3d/Texture3D.js';
 import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
-import {createPostProcessSettings3D} from './post3D.js';
+import {createPostProcessSettings3D, postViewFromCamera3D} from './post3D.js';
 import type {PostProcessSettings3D} from './post3D.js';
 import {PostChainWebGPU3D} from './postWebGPU3D.js';
 import type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
@@ -427,7 +427,7 @@ export class WebGPURenderer3D implements Renderer3D {
             size: [target.width, target.height], format: target.format === 'rgba16f' ? HDR_FORMAT : TARGET_FORMAT,
             usage: TEXTURE_USAGE.RENDER_ATTACHMENT | TEXTURE_USAGE.TEXTURE_BINDING | TEXTURE_USAGE.COPY_SRC,
         });
-        const depth = target.depth ? this.device.createTexture({size: [target.width, target.height], format: DEPTH_FORMAT, usage: TEXTURE_USAGE.RENDER_ATTACHMENT}) : undefined;
+        const depth = target.depth ? this.device.createTexture({size: [target.width, target.height], format: DEPTH_FORMAT, usage: target.depthTexture ? TEXTURE_USAGE.RENDER_ATTACHMENT | TEXTURE_USAGE.TEXTURE_BINDING : TEXTURE_USAGE.RENDER_ATTACHMENT}) : undefined;
         if (entry) {
             entry.color.destroy(); entry.depth?.destroy();
             entry.color = color; entry.colorView = color.createView(); entry.depth = depth; entry.depthView = depth?.createView();
@@ -975,7 +975,7 @@ export class WebGPURenderer3D implements Renderer3D {
             outputWidth = current.width; outputHeight = current.height;
         }
         this.resetPassState();
-        const pass = encoder.beginRenderPass({colorAttachments: [colorAttachment], depthStencilAttachment: {view: depthView, depthClearValue: 1, depthLoadOp: 'clear', depthStoreOp: 'discard'}});
+        const pass = encoder.beginRenderPass({colorAttachments: [colorAttachment], depthStencilAttachment: {view: depthView, depthClearValue: 1, depthLoadOp: 'clear', depthStoreOp: target?.depthTexture ? 'store' : 'discard'}});
         const view = this.viewport;
         if (view) {
             // The public rectangle has its origin at the bottom left; WebGPU's is at the top left.
@@ -1016,7 +1016,8 @@ export class WebGPURenderer3D implements Renderer3D {
         const output = target ? this.target(target).colorView : current!.createView();
         const format = target ? (target.format === 'rgba16f' ? HDR_FORMAT : TARGET_FORMAT) : this.#format;
         // 8-bit targets encode sRGB on write and half-float targets store linear light; only the canvas needs encoded values.
-        this.info.drawCalls += post.run(encoder, this.target(post.scene).colorView, width, height, output, format, target !== undefined,
+        const sceneEntry = this.target(post.scene);
+        this.info.drawCalls += post.run(encoder, sceneEntry.colorView, sceneEntry.depthView, postViewFromCamera3D(camera), width, height, output, format, target !== undefined,
             this.postProcess, target?.format === 'rgba16f' ? 'none' : this.toneMapping);
         this.device.queue.submit([encoder.finish()]);
         return true;

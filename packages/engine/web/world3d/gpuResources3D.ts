@@ -48,6 +48,8 @@ export interface RenderTargetGpu3D {
     readonly framebuffer: WebGLFramebuffer;
     readonly color: WebGLTexture;
     depth: WebGLRenderbuffer | undefined;
+    /** Depth attachment as a texture, for targets created with `depthTexture`. */
+    depthTexture: WebGLTexture | undefined;
     version: number;
     readonly unsubscribe: () => void;
 }
@@ -479,7 +481,7 @@ export class GpuResources3D {
                 if (color) gl.deleteTexture(color);
                 throw new World3DError('WORLD3D_CONTEXT_LOST', 'createFramebuffer');
             }
-            entry = {framebuffer, color, depth: undefined, version: -1, unsubscribe: target.onDispose(() => this.releaseTarget(target))};
+            entry = {framebuffer, color, depth: undefined, depthTexture: undefined, version: -1, unsubscribe: target.onDispose(() => this.releaseTarget(target))};
             this.#targets.set(target, entry);
         }
         // A sampled target can allocate here while a different target is being drawn.
@@ -495,7 +497,16 @@ export class GpuResources3D {
             this.applySampler(gl.TEXTURE_2D, target.texture);
             gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, entry.framebuffer);
             gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, entry.color, 0);
-            if (target.depth) {
+            if (target.depthTexture) {
+                entry.depthTexture ??= gl.createTexture() ?? undefined;
+                if (!entry.depthTexture) throw new World3DError('WORLD3D_CONTEXT_LOST', 'createTexture');
+                gl.bindTexture(gl.TEXTURE_2D, entry.depthTexture);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT24, target.width, target.height, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null);
+                // Depth textures cannot be filtered; they are read texel by texel.
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, entry.depthTexture, 0);
+            } else if (target.depth) {
                 entry.depth ??= gl.createRenderbuffer() ?? undefined;
                 if (!entry.depth) throw new World3DError('WORLD3D_CONTEXT_LOST', 'createRenderbuffer');
                 gl.bindRenderbuffer(gl.RENDERBUFFER, entry.depth);
@@ -526,6 +537,7 @@ export class GpuResources3D {
         gl.deleteFramebuffer(entry.framebuffer);
         gl.deleteTexture(entry.color);
         if (entry.depth) gl.deleteRenderbuffer(entry.depth);
+        if (entry.depthTexture) gl.deleteTexture(entry.depthTexture);
     }
 
     // ---- lifetime -----------------------------------------------------------------------

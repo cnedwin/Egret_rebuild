@@ -16,7 +16,7 @@ import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
 import {CubeTexture3D, RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
 import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
-import {createPostProcessSettings3D} from './post3D.js';
+import {createPostProcessSettings3D, postViewFromCamera3D} from './post3D.js';
 import type {PostProcessSettings3D} from './post3D.js';
 import {PostChainWebGL23D} from './postWebGL23D.js';
 import type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
@@ -228,7 +228,8 @@ export class WebGL2Renderer3D implements Renderer3D {
         finally { this.#inPost = false; }
         const output = target ? this.#resources.target(target).framebuffer : null;
         // 8-bit targets encode sRGB on write and half-float targets store linear light; only the canvas needs encoded values.
-        this.info.drawCalls += post.run(this.#resources.target(post.scene).color, width, height, output, target !== undefined,
+        const sceneEntry = this.#resources.target(post.scene);
+        this.info.drawCalls += post.run(sceneEntry.color, sceneEntry.depthTexture, postViewFromCamera3D(camera), width, height, output, target !== undefined,
             this.postProcess, target?.format === 'rgba16f' ? 'none' : this.toneMapping, this.#emptyVao ??= gl.createVertexArray());
         this.resetState();
         return true;
