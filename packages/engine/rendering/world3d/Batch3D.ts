@@ -204,7 +204,12 @@ export class FatLine3D extends Mesh3D {
             let sx = dy * vz - dz * vy, sy = dz * vx - dx * vz, sz = dx * vy - dy * vx;
             const length = Math.hypot(sx, sy, sz);
             let half = this.width / 2;
-            if (this.screenSpace) half *= camera.projectionKind === 'perspective' ? pixel * Math.hypot(vx, vy, vz) : pixel;
+            if (this.screenSpace && camera.projectionKind === 'perspective') {
+                // A pixel's size grows with depth along the view axis, not with straight-line distance.
+                const m = this.matrixWorld, wx = m[0]! * x + m[4]! * y + m[8]! * z + m[12]!, wy = m[1]! * x + m[5]! * y + m[9]! * z + m[13]!, wz = m[2]! * x + m[6]! * y + m[10]! * z + m[14]!;
+                const view = camera.viewMatrix;
+                half *= pixel * Math.max(-(view[2]! * wx + view[6]! * wy + view[10]! * wz + view[14]!), 0);
+            } else if (this.screenSpace) half *= pixel;
             half *= miter;
             if (length > 1e-12) { sx *= half / length; sy *= half / length; sz *= half / length; } else { sx = sy = sz = 0; }
             const o = i * 6;

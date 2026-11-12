@@ -4,14 +4,15 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
-  CatmullRomCurve3D, CubicBezierCurve3D, CurvePath3D, LineCurve3D, Mesh3D, Object3D, Path2D3D, Shape3D, World3DError,
+  Attribute3D, CatmullRomCurve3D, CubicBezierCurve3D, CurvePath3D, LineCurve3D, Mesh3D, Object3D, Path2D3D, Shape3D, World3DError,
   computeObjectBounds3D, createArrowHelper3D, createBoxGeometry3D, createBoxHelper3D, createCameraHelper3D, createCircleGeometry3D,
   createCubeTextureFromEquirect3D, createCustomShader3D, createDirectionalLight3D, createDodecahedronGeometry3D, createEdgesGeometry3D,
   createExtrudeGeometry3D, createIcosahedronGeometry3D, createLambertMaterial3D, createLatheGeometry3D, createLightHelper3D,
   createMatcapMaterial3D, createOctahedronGeometry3D, createPerspectiveCamera3D, createPointLight3D, createRingGeometry3D,
   createShapeGeometry3D, createSolidTexture3D, createStandardMaterial3D, createTetrahedronGeometry3D, createToonMaterial3D,
   createTorusKnotGeometry3D, createTubeGeometry3D, createWireframeGeometry3D, mergeGeometries3D, mergeVertices3D, parseRgbe3D,
-  toNonIndexedGeometry3D, transformGeometry3D, triangulateShape3D,
+  toNonIndexedGeometry3D, transformGeometry3D, triangulateShape3D, createBatchedMesh3D, createFatLine3D, createGlassMaterial3D,
+  createConvexHullShape3D, createMeshShape3D, createPhysicsWorld3D, createSphereGeometry3D,
 } from '@egret/engine/world3d';
 
 const code = value => error => error instanceof World3DError && error.code === value;
@@ -155,4 +156,118 @@ test('toon, matcap, clearcoat and custom shaders are ordinary materials', () => 
   assert.equal(paint.clone().shader, shader);
   assert.throws(() => createCustomShader3D({key: 'bad key', glsl: ''}), code('WORLD3D_INPUT_INVALID'));
   assert.throws(() => createCustomShader3D({key: 'empty'}), code('WORLD3D_INPUT_INVALID'));
+});
+
+test('light maps, sheen and glass are plain material settings', () => {
+  const baked = createLambertMaterial3D({});
+  const image = createSolidTexture3D([255, 255, 255, 255]);
+  image.channel = 1;
+  baked.lightMap = image; baked.lightMapIntensity = 2;
+  const copy = baked.clone();
+  assert.deepEqual([copy.lightMap === image, copy.lightMapIntensity], [true, 2]);
+  const velvet = createStandardMaterial3D({});
+  velvet.sheen = 1; velvet.sheenColor.set([1, 0.5, 0.25]);
+  const twin = velvet.clone();
+  assert.deepEqual([...twin.sheenColor], [1, 0.5, 0.25]);
+  assert.notEqual(twin.sheenColor, velvet.sheenColor, 'colors are copied, not shared');
+  const glass = createGlassMaterial3D({});
+  assert.deepEqual([glass.shading, glass.alphaMode, glass.blending, glass.depthWrite, glass.transmission, glass.isTransparent], ['standard', 'blend', 'premultiplied', false, 0.9, true]);
+});
+
+test('a batch draws many geometries as one and tracks per-item changes', () => {
+  const batch = createBatchedMesh3D(createLambertMaterial3D({}));
+  const move = (x, scale = 1) => [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, x, 0, 0, 1];
+  const box = batch.addGeometry(createBoxGeometry3D({}), move(-2)), ball = batch.addGeometry(createSphereGeometry3D({radius: 0.5}), move(2));
+  batch.beforeRender();
+  const boxVertices = 24, ballVertices = createSphereGeometry3D({radius: 0.5}).getAttribute('position').count;
+  assert.equal(batch.geometry.getAttribute('position').count, boxVertices + ballVertices);
+  assert.deepEqual([...batch.geometry.boundingBox].map(v => +v.toFixed(2)), [-2.5, -0.5, -0.5, 2.5, 0.5, 0.5]);
+  batch.setMatrixAt(box, move(-6, 2)).flush();
+  close(batch.geometry.boundingBox[0], -7);
+  batch.setVisibleAt(ball, false).flush();
+  assert.equal(batch.geometry.getAttribute('position').count, boxVertices);
+  batch.setColorAt(box, 1, 0, 0).flush();
+  assert.deepEqual([...batch.geometry.getAttribute('color').data.subarray(0, 3)], [1, 0, 0]);
+  // A mirrored item keeps outward faces.
+  const mirrored = createBatchedMesh3D(createLambertMaterial3D({}));
+  mirrored.addGeometry(createBoxGeometry3D({}), [-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  mirrored.flush();
+  assert.equal(measure(mirrored.geometry).agree, 1);
+  batch.deleteGeometry(box).flush();
+  assert.equal(batch.itemCount, 1);
+  assert.throws(() => batch.setMatrixAt(box, move(0)), code('WORLD3D_INPUT_INVALID'));
+});
+
+test('a fat line builds a camera-facing ribbon of the requested width', () => {
+  const line = createFatLine3D([[-1, 0, 0], [1, 0, 0]], {width: 0.2});
+  const camera = createPerspectiveCamera3D({fov: 60, aspect: 1, near: 0.1, far: 100});
+  camera.setPosition(0, 0, 5); camera.updateViewMatrices();
+  line.updateWorldMatrices();
+  line.beforeRender(camera);
+  const p = line.geometry.getAttribute('position').data;
+  // Seen from +Z, a line along X widens along Y: each point becomes a pair 0.2 apart.
+  assert.deepEqual([p[0], p[3], p[6], p[9]].map(v => +v.toFixed(3)), [-1, -1, 1, 1]);
+  close(Math.abs(p[1] - p[4]), 0.2, 1e-5); close(p[1] + p[4], 0, 1e-5);
+  close(p[2], 0, 1e-5); close(p[5], 0, 1e-5);
+  assert.equal(line.geometry.index.count, 6);
+  // Screen-space width: 10 pixels of a 100 pixel tall view, 5 units away.
+  line.screenSpace = true; line.width = 10; line.resolutionHeight = 100;
+  line.beforeRender(camera);
+  close(Math.abs(p[1] - p[4]), 10 * 2 * Math.tan(Math.PI / 6) * 5 / 100, 1e-3);
+  const loop = createFatLine3D([0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0], {closed: true});
+  assert.equal(loop.geometry.index.count, 24);
+  assert.throws(() => createFatLine3D([[0, 0, 0]]), code('WORLD3D_INPUT_INVALID'));
+});
+
+test('joints hold bodies together as pivots, hinges, welds, rods and ropes', () => {
+  const world = createPhysicsWorld3D({allowSleep: false});
+  const bob = world.createBody({shape: {type: 'sphere', radius: 0.2}, position: [2, 5, 0], linearDamping: 0, angularDamping: 0});
+  world.createJoint({type: 'distance', bodyA: bob, anchor: [2, 5, 0], anchorB: [0, 5, 0]});
+  const door = world.createBody({shape: {type: 'box', halfExtents: [0.5, 1, 0.05]}, position: [10.5, 1, 0]});
+  world.createJoint({type: 'hinge', bodyA: door, anchor: [10, 1, 0], axis: [0, 1, 0]});
+  door.applyImpulse(0, 0, 3, [11, 1, 0]);
+  const hanging = world.createBody({shape: {type: 'sphere', radius: 0.2}, position: [20, 4.5, 0]});
+  world.createJoint({type: 'distance', bodyA: hanging, anchor: [20, 4.5, 0], anchorB: [20, 5, 0], length: 2, rope: true});
+  const left = world.createBody({shape: {type: 'box', halfExtents: [0.5, 0.5, 0.5]}, position: [30, 3, 0]}), right = world.createBody({shape: {type: 'box', halfExtents: [0.5, 0.5, 0.5]}, position: [31.5, 3, 0]});
+  const weld = world.createJoint({type: 'fixed', bodyA: left, bodyB: right});
+  let lowest = 9, longest = 0;
+  for (let i = 0; i < 300; i++) {
+    world.step(1 / 60);
+    lowest = Math.min(lowest, bob.position[1]); longest = Math.max(longest, Math.hypot(bob.position[0], bob.position[1] - 5));
+  }
+  close(lowest, 3, 0.05); close(longest, 2, 0.03);                        // a rod swings on a circle
+  close(door.position[1], 1, 0.01); close(door.rotation[4], 1, 1e-3);     // a hinge keeps the door upright
+  close(Math.hypot(door.position[0] - 10, door.position[2]), 0.5, 0.03);
+  assert.ok(Math.abs(door.position[2]) > 0.05, 'and lets it swing');
+  close(hanging.position[1], 3, 0.02);                                    // a rope stops the fall at its length
+  close(right.position[0] - left.position[0], 1.5, 0.01);                 // a weld falls as one piece
+  close(right.position[1], left.position[1], 0.01);
+  assert.equal(world.joints.length, 4);
+  world.removeJoint(weld);
+  world.removeBody(bob);
+  assert.equal(world.joints.length, 2, 'removing a body removes its joints');
+  assert.throws(() => world.createJoint({type: 'point', bodyA: bob}), code('WORLD3D_INPUT_INVALID'));
+});
+
+test('convex hulls and moving mesh platforms collide', () => {
+  const hull = createConvexHullShape3D(createIcosahedronGeometry3D({radius: 0.6}));
+  assert.deepEqual([hull.points.length / 3, hull.planes.length / 4], [12, 20]);
+  close(hull.radius, 0.6, 1e-3);
+  assert.throws(() => createConvexHullShape3D([0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0]), code('WORLD3D_INPUT_INVALID'));
+  const world = createPhysicsWorld3D();
+  world.createBody({shape: {type: 'plane'}});
+  const rock = world.createBody({shape: {type: 'convex', hull}, position: [0, 3, 0], quaternion: [0.2, 0.1, 0.3, 0.927]});
+  const wedge = world.createBody({type: 'static', shape: {type: 'convex', hull: createConvexHullShape3D([-1, -0.5, -1, 1, -0.5, -1, 1, -0.5, 1, -1, -0.5, 1, -1, 0.5, -1, -1, 0.5, 1])}, position: [5, 0.5, 0]});
+  const ball = world.createBody({shape: {type: 'sphere', radius: 0.3}, position: [4.5, 3, 0]});
+  const lift = world.createBody({type: 'kinematic', shape: {type: 'mesh', mesh: createMeshShape3D(createBoxGeometry3D({width: 4, height: 0.2, depth: 4}))}, position: [20, 0, 0]}).setLinearVelocity(0, 1, 0);
+  const rider = world.createBody({shape: {type: 'sphere', radius: 0.3}, position: [20, 1, 0]});
+  for (let i = 0; i < 180; i++) world.step(1 / 60);
+  close(rider.position[1], lift.position[1] + 0.4, 0.03);                 // carried up by the platform
+  assert.ok(ball.position[0] > 6, 'the ball rolled down and off the wedge');
+  for (let i = 0; i < 300; i++) world.step(1 / 60);
+  close(rock.position[1], 0.477, 0.02);                                   // resting on a face: the inscribed radius
+  assert.equal(rock.isSleeping, true);
+  const hit = world.raycast([5, 5, 0], [0, -1, 0]);
+  assert.equal(hit.body, wedge); close(hit.distance, 4.5, 1e-3); close(hit.normal[1], 0.894, 1e-2);
+  assert.throws(() => world.createBody({shape: {type: 'mesh', mesh: createMeshShape3D(createBoxGeometry3D({}))}, type: 'dynamic'}), code('WORLD3D_INPUT_INVALID'));
 });

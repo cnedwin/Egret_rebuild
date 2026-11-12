@@ -104,6 +104,8 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `postProcess.ssao` 根据场景深度加入屏幕空间环境光遮蔽，由 `ssaoRadius`（世界单位）、`ssaoIntensity` 和 `ssaoBias` 调节。`postProcess.outlineLayers` 为 `layers` 中带有这些位的每个对象描边，颜色和宽度（像素）由 `outlineColor`、`outlineThickness` 指定；描边会透过前方的物体显示，适合用于选中和可交互提示。
 
+`postProcess.dof` 模糊比 `dofFocus` 加减 `dofRange`（世界单位）更近或更远的部分，最大模糊半径为 `dofRadius` 像素。清晰的像素不向周围采样，因此对焦的物体在模糊背景前保持清晰的边缘。
+
 `postProcess.custom = createCustomPost3D({key, glsl, wgsl, uniforms})` 在遮蔽和泛光之后、色调映射之前加入一个应用自定义的处理。它的函数 `customPost(color, uv)` 可以调用 `sceneColor(uv)` 和 `sceneDepth(uv)`（到相机平面的距离，世界单位），足以实现深度雾、接触阴影和边缘效果。十六个浮点数在 GLSL 中为 `uPostCustom[0..3]`，在 WGSL 中为 `params.custom[0..3]`。深度直接根据投影矩阵本身重建，因此对偏心、斜切和手写的投影同样正确；把完整的矩阵赋给 `camera.customProjection` 即可使用这类投影。UV 的行在 GLSL 中自下而上、在 WGSL 中自上而下，因此 V 方向的偏移在两个后端上指向相反。
 
 开启后处理时，画布多重采样不生效，由 FXAA 代替。场景背景色会和场景一起做色调映射。`new RenderTarget3D(width, height, {format: 'rgba16f'})` 让应用为自己的处理使用同样的半浮点存储；这类目标跳过色调映射，也不能按字节回读。不支持浮点颜色缓冲的 WebGL2 设备退回 8 位存储。
@@ -120,11 +122,15 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `createPhysicsWorld3D(options)` 创建一个面向玩法的小型刚体世界。形状有球、盒、胶囊和无限平面；刚体分为 `static`、`kinematic` 和 `dynamic`。`world.step(deltaSeconds)` 按固定步长推进，然后把每个刚体的位姿复制到它的 `node`。碰撞对由扫掠排序找出，由带热启动的冲量求解器处理，支持摩擦和弹性。静止的刚体进入休眠，直到有运动的物体碰到它。`layer` 和 `mask` 过滤碰撞，`isTrigger` 刚体只报告重叠而不产生推力，`onContactBegin` 和 `onContactEnd` 报告碰撞对。
 
-关卡几何体以三角网格参与碰撞：`world.createBody({shape: {type: 'mesh', mesh: createMeshShape3D(levelRoot)}})`。`createMeshShape3D` 接受一个几何体，或一个对象（它下面的网格会连同世界变换合并在一起）。网格刚体是静态的，三角形只在正面是实心的。球、胶囊、角色控制器和射线与三角形精确碰撞；盒子通过它的八个角落在网格上。包围体层次结构让开销只与附近的三角形数量有关，三角形接缝处的接触经过过滤，物体可以平滑地越过接缝。
+关卡几何体以三角网格参与碰撞：`world.createBody({shape: {type: 'mesh', mesh: createMeshShape3D(levelRoot)}})`。`createMeshShape3D` 接受一个几何体，或一个对象（它下面的网格会连同世界变换合并在一起）。网格刚体是静态的，也可以是运动学的（用于移动平台），三角形只在正面是实心的。球、胶囊、角色控制器和射线与三角形精确碰撞；盒子通过它的八个角落在网格上。包围体层次结构让开销只与附近的三角形数量有关，三角形接缝处的接触经过过滤，物体可以平滑地越过接缝。
 
 `world.raycast(origin, direction, maxDistance, mask)` 返回最近的实体刚体及命中点和法线，`world.overlapSphere(center, radius, mask)` 列出一个体积内的实体刚体。`createCharacterController3D(world, options)` 是运动学胶囊：`move(dx, dy, dz)` 沿障碍物滑动，并报告 `isGrounded`、`groundNormal` 和 `groundBody`。
 
-求解器不包含关节、连续碰撞检测，也不支持凸包和可移动的三角网格。体积小、速度快的刚体可能穿过薄的几何体；墙体厚度应大于刚体单步移动的距离。
+`{type: 'convex', hull: createConvexHullShape3D(geometryOrPoints)}` 是用于可移动摆设的凸多面体；超过 64 个角点时只保留最外侧的那些。凸包与平面精确碰撞，与网格通过角点碰撞；与球、胶囊、盒子和其他凸包之间使用面平面和角点包含判断，不做圆角处理：两个实体之间棱对棱的接触检测不到。
+
+`world.createJoint(options)` 用世界空间的锚点连接两个刚体，或把一个刚体固定在世界中：`point`（球窝）、`hinge`（带 `axis`）、`fixed`（焊接）和 `distance`（刚性杆，或松弛时不受力的 `rope`）。被关节连接的两个刚体默认互不碰撞，除非设置 `collideConnected`。
+
+求解器不包含关节限位和马达，也没有连续碰撞检测。体积小、速度快的刚体可能穿过薄的几何体；墙体厚度应大于刚体单步移动的距离。
 
 ## 曲线、轮廓与更多几何体
 
@@ -134,7 +140,9 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 ## 风格化与自定义材质
 
-`createToonMaterial3D({steps})` 把漫反射光量化成若干平坦的色阶。`createMatcapMaterial3D({matcap})` 按视图空间法线从一张球面图像取色，不需要灯光。标准材质通过 `clearcoat` 和 `clearcoatRoughness` 增加一层清漆。
+`createToonMaterial3D({steps})` 把漫反射光量化成若干平坦的色阶。`createMatcapMaterial3D({matcap})` 按视图空间法线从一张球面图像取色，不需要灯光。标准材质通过 `clearcoat` 和 `clearcoatRoughness` 增加一层清漆，通过 `sheen`、`sheenColor` 和 `sheenRoughness` 增加布料的柔和边缘光，通过 `transmission` 实现可透视的玻璃（`createGlassMaterial3D`）。透射会在表面正对观察者的位置降低不透明度，在掠射角保留反射；它需要 `alphaMode: 'blend'`，不产生折射。
+
+任何受光材质都可以设置 `lightMap` 和 `lightMapIntensity` 来使用烘焙光照，它会加到间接光上。贴图按自身的 `channel` 采样，通常设为 1，让烘焙使用第二套不重叠的 UV。
 
 `material.shader = createCustomShader3D({key, glsl, wgsl, uniforms})` 为任意材质增加片元钩子。钩子是名为 `customFragment` 的函数，接收着色后的线性颜色与透明度、世界坐标、法线和 UV，返回新的颜色；可以使用 `discard`。有十六个浮点数可用，GLSL 中为 `uCustom[0..3]`，WGSL 中为 `material.custom[0..3]`；随时间变化的效果每帧写入 `shader.uniforms`。需要为要发布的每个后端提供源码；没有对应源码的后端按原样绘制材质。更换着色器后调用 `material.touch()`。
 
@@ -149,6 +157,12 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 `renderer.viewport = [x, y, width, height]`（0 到 1，原点在左下角）把绘制限制在输出的一部分，`renderer.autoClear = false` 保留之前的视图已绘制的内容。两者配合，在一帧内多次调用 `render()` 即可实现分屏、小地图和画中画。
 
 `scene.clippingPlanes` 保存最多四个世界空间平面，格式为 `[nx, ny, nz, d]`；位于负侧的片元不绘制，可用于剖面和水面反射。`scene.overrideMaterial` 让所有网格都用同一个材质绘制。
+
+## 合批与宽线
+
+`createBatchedMesh3D(material)` 把共用一个材质的多个不同几何体合并成一次绘制。`addGeometry(geometry, matrix)` 返回一个 id；之后可以用 `setMatrixAt`、`setVisibleAt`、`setColorAt` 和 `deleteGeometry` 修改单个条目。合并后的缓冲只在有改动时重建，适合很少移动的摆设。
+
+`createFatLine3D(points, {width, screenSpace, closed, color})` 把折线绘制成始终朝向相机的带状网格，拐角处做斜接。宽度以世界单位计；开启 `screenSpace` 并把 `resolutionHeight` 设为输出高度后，以像素计。
 
 ## 辅助器、第一人称控制与声音
 
@@ -167,7 +181,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 | `BufferGeometryUtils.mergeGeometries`、`mergeVertices` | `mergeGeometries3D`、`mergeVertices3D` |
 | `Curve`、`CatmullRomCurve3`、`Shape`、`Path` | `Curve3D`、`CatmullRomCurve3D`、`Shape3D`、`Path2D3D` |
 | `MeshBasicMaterial`、`MeshLambertMaterial`、`MeshPhongMaterial`、`MeshStandardMaterial` | `createUnlitMaterial3D`、`createLambertMaterial3D`、`createPhongMaterial3D`、`createStandardMaterial3D` |
-| `MeshToonMaterial`、`MeshMatcapMaterial`、`MeshPhysicalMaterial.clearcoat` | `createToonMaterial3D`、`createMatcapMaterial3D`、`material.clearcoat` |
+| `MeshToonMaterial`、`MeshMatcapMaterial`、`MeshPhysicalMaterial` 的清漆、光泽和透射、`lightMap` | `createToonMaterial3D`、`createMatcapMaterial3D`、`material.clearcoat`、`material.sheen`、`createGlassMaterial3D`、`material.lightMap` |
 | `ShaderMaterial`、`onBeforeCompile`、`customDepthMaterial` | 把 `createCustomShader3D` 的结果赋给 `material.shader`；其中的顶点钩子同时作用于阴影 |
 | `LineBasicMaterial`、`PointsMaterial`、`SpriteMaterial` | `createLineMaterial3D`、`createSpriteMaterial3D`，配合 `lines` 或 `points` 几何体 |
 | `Texture`、`DataTexture`、`CanvasTexture`、`CompressedTexture`、`CubeTexture`、`WebGLRenderTarget` | `Texture3D`（像素、图像、画布或压缩链）、`CubeTexture3D`、`RenderTarget3D` |
@@ -180,13 +194,14 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 | `LoadingManager`、`Cache` | 在 Engine 的 `AssetManager` 上调用 `registerWorld3DAssets` |
 | `ObjectLoader`、`toJSON` | `deserializeScene3D`、`serializeScene3D` |
 | `WebGLRenderer`、`WebGPURenderer`、`setViewport`、`autoClear` | `createWebGL2Renderer3D`、`createWebGPURenderer3D`、`renderer.viewport`、`renderer.autoClear` |
-| `EffectComposer`、`UnrealBloomPass`、`OutputPass`、`FXAAShader`、`SSAOPass`、`OutlinePass`、`ShaderPass`、`DepthTexture` | `renderer.postProcess`，配合 `ssao`、`outlineLayers` 和 `custom`（`sceneDepth`） |
+| `EffectComposer`、`UnrealBloomPass`、`OutputPass`、`FXAAShader`、`SSAOPass`、`OutlinePass`、`BokehPass`、`ShaderPass`、`DepthTexture` | `renderer.postProcess`，配合 `ssao`、`outlineLayers`、`dof` 和 `custom`（`sceneDepth`） |
+| `BatchedMesh`、`Line2` | `createBatchedMesh3D`、`createFatLine3D` |
 | `renderer.clippingPlanes`、`scene.overrideMaterial` | `scene.clippingPlanes`、`scene.overrideMaterial` |
 | `CubeCamera`、`PMREMGenerator.fromEquirectangular` | `captureCubeTexture3D`、`createCubeTextureFromEquirect3D` |
 | `OrbitControls`、`PointerLockControls`、`FlyControls` | `createOrbitControls3D`、`createFlyControls3D` |
 | `AudioListener`、`PositionalAudio` | `createAudioListener3D`、`createPositionalAudio3D` |
 | `BoxHelper`、`ArrowHelper`、`CameraHelper`、各种灯光辅助器、`SkeletonHelper`、`GridHelper`、`AxesHelper` | 对应的 `create...Helper3D` 函数 |
-| cannon-es、Rapier 等物理扩展，三角网格碰撞体 | `createPhysicsWorld3D`、`createCharacterController3D`、`createMeshShape3D` |
+| cannon-es、Rapier 等物理扩展，三角网格与凸包碰撞体，约束 | `createPhysicsWorld3D`、`createCharacterController3D`、`createMeshShape3D`、`createConvexHullShape3D`、`world.createJoint` |
 
 需要注意的差异：用工厂函数代替构造函数；颜色是线性 RGB 数组或十六进制数；向量和四元数是类型化数组，通过 `setPosition`、`setRotation`、`setScale` 和 `lookAt` 修改；资源用 `dispose()` 释放；错误是带 `code` 的 `World3DError`。
 
@@ -206,7 +221,7 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
 
-`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把十六个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，以及顶点钩子及其阴影。开发期间全部十六个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前十四个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把十八个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，以及景深。开发期间全部十八个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前十四个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
 
 `tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。
 
@@ -215,4 +230,4 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 - 桌面复审强制触发 WebGL2 上下文丢失并恢复了目标像素，也强制触发 WebGPU 设备丢失，确认收到通知并拒绝后续操作。更广泛的设备与恢复场景仍待验证。
 - 一台运行 Chrome 157 的 Android 真机已呈现两个后端，响应了自动触发的阴影开关，并在释放后停止更新帧。性能、真人手势与更广泛的移动设备矩阵仍待验证。
 - 级联阴影与点光源阴影、后处理、压缩纹理、屏幕层、卡通、Matcap、清漆与自定义着色器、视口和探针目前只在软件渲染下运行过，两个后端的结果一致；它们以及较新的七个比较场景和基准测试仍需在桌面与移动端的真实 GPU 上验证。第一人称控制和空间音频尚未经过真人操作验证。
-- 尚未实现：内置的 Basis、meshopt 或 Draco 解码器，浮点精度的环境预过滤，透射与光泽层，景深处理，变换操纵器，文字几何体，物理关节、凸包与可移动的网格碰撞体。
+- 尚未实现：内置的 Basis、meshopt 或 Draco 解码器，浮点精度的环境预过滤，折射，变换操纵器，文字几何体，关节限位与马达，以及凸包之间的精确接触。

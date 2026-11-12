@@ -7,6 +7,7 @@
 // a replacement for a full physics engine.
 import {World3DError, requireFinite3D, requirePositive3D} from './core3D.js';
 import type {Object3D} from './Object3D.js';
+import {ConvexHullShape3D} from './PhysicsHull3D.js';
 import {TriangleMeshShape3D} from './PhysicsMesh3D.js';
 
 export const PHYSICS3D_LIMITS = Object.freeze({maxBodies: 16384, maxSubSteps: 8, maxContactsPerPair: 8} as const);
@@ -18,7 +19,9 @@ export type ShapeDefinition3D =
     | {readonly type: 'capsule'; readonly radius: number; readonly halfHeight: number}
     /** Infinite plane through the body position, facing the body's local +Y axis. Static only. */
     | {readonly type: 'plane'}
-    /** Triangle mesh for level geometry, solid on the front side of each triangle. Static only. */
+    /** Convex solid given by its corner points; any body type. */
+    | {readonly type: 'convex'; readonly hull: ConvexHullShape3D}
+    /** Triangle mesh for level geometry, solid on the front side of each triangle. Static, or kinematic for moving platforms. */
     | {readonly type: 'mesh'; readonly mesh: TriangleMeshShape3D};
 export interface RigidBodyOptions3D {
     readonly type?: BodyType3D;
@@ -105,11 +108,12 @@ export class RigidBody3D {
         else if (shape.type === 'box') { for (const half of shape.halfExtents) requirePositive3D(half, 'box halfExtents'); }
         else if (shape.type === 'capsule') { requirePositive3D(shape.radius, 'capsule radius'); if (!(requireFinite3D(shape.halfHeight, 'capsule halfHeight') >= 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'capsule halfHeight'); }
         else if (shape.type === 'mesh') { if (!(shape.mesh instanceof TriangleMeshShape3D)) throw new World3DError('WORLD3D_INPUT_INVALID', 'mesh shape'); }
+        else if (shape.type === 'convex') { if (!(shape.hull instanceof ConvexHullShape3D)) throw new World3DError('WORLD3D_INPUT_INVALID', 'convex shape'); }
         else if (shape.type !== 'plane') throw new World3DError('WORLD3D_INPUT_INVALID', 'shape type');
         this.shape = shape;
         const fixed = shape.type === 'plane' || shape.type === 'mesh';
         this.type = options.type ?? (fixed ? 'static' : 'dynamic');
-        if (fixed && this.type !== 'static') throw new World3DError('WORLD3D_INPUT_INVALID', 'planes and meshes must be static');
+        if (shape.type === 'plane' ? this.type !== 'static' : shape.type === 'mesh' && this.type === 'dynamic') throw new World3DError('WORLD3D_INPUT_INVALID', 'planes must be static and meshes static or kinematic');
         this.mass = this.type === 'dynamic' ? requirePositive3D(options.mass ?? 1, 'mass') : 0;
         this.inverseMass = this.mass > 0 ? 1 / this.mass : 0;
         if (options.position) this.position.set(options.position);
@@ -125,8 +129,9 @@ export class RigidBody3D {
             const m = this.mass;
             let ix: number, iy: number, iz: number;
             if (shape.type === 'sphere') ix = iy = iz = 0.4 * m * shape.radius * shape.radius;
-            else if (shape.type === 'box') {
-                const [x, y, z] = shape.halfExtents;
+            else if (shape.type === 'box' || shape.type === 'convex') {
+                // A hull is weighed like the box around it.
+                const [x, y, z] = shape.type === 'box' ? shape.halfExtents : shape.hull.halfExtents;
                 ix = m / 3 * (y * y + z * z); iy = m / 3 * (x * x + z * z); iz = m / 3 * (x * x + y * y);
             } else {
                 // Treat the capsule as a cylinder spanning its full length.
@@ -176,6 +181,7 @@ export class RigidBody3D {
         const p = this.position, box = this.aabb, shape = this.shape;
         let ex: number, ey: number, ez: number;
         if (shape.type === 'sphere') ex = ey = ez = shape.radius;
+        else if (shape.type === 'convex') ex = ey = ez = shape.hull.radius;
         else if (shape.type === 'box') {
             const h = shape.halfExtents;
             ex = Math.abs(r[0]!) * h[0] + Math.abs(r[1]!) * h[1] + Math.abs(r[2]!) * h[2];
@@ -480,19 +486,72 @@ function capsuleMesh(m: Manifold, capsule: RigidBody3D, meshBody: RigidBody3D): 
     });
     emitMeshContacts(m, meshBody);
 }
-/** Boxes rest on meshes through their corners, which is enough for crates on floors and slopes. */
-function boxMesh(m: Manifold, box: RigidBody3D, meshBody: RigidBody3D): void {
-    const mesh = (meshBody.shape as {mesh: TriangleMeshShape3D}).mesh, radius = 0.03;
+// ---- boxes and hulls as generic convex solids ----
+const solidNormal = [0, 0, 0], solidPoint = v3();
+function solidVertexCount(body: RigidBody3D): number { return body.shape.type === 'convex' ? body.shape.hull.points.length / 3 : 8; }
+function solidVertex(out: Vec, body: RigidBody3D, index: number): Vec {
+    if (body.shape.type !== 'convex') return boxCorner(out, body, index);
+    const points = body.shape.hull.points, r = body.rotation, p = body.position, x = points[index * 3]!, y = points[index * 3 + 1]!, z = points[index * 3 + 2]!;
+    out[0] = p[0]! + r[0]! * x + r[1]! * y + r[2]! * z; out[1] = p[1]! + r[3]! * x + r[4]! * y + r[5]! * z; out[2] = p[2]! + r[6]! * x + r[7]! * y + r[8]! * z;
+    return out;
+}
+/** Signed distance of a world point to a box or hull (negative inside), with the world normal of the nearest face. */
+function solidDistance(body: RigidBody3D, x: number, y: number, z: number, normal: number[]): number {
+    const r = body.rotation, p = body.position, dx = x - p[0]!, dy = y - p[1]!, dz = z - p[2]!;
+    const lx = r[0]! * dx + r[3]! * dy + r[6]! * dz, ly = r[1]! * dx + r[4]! * dy + r[7]! * dz, lz = r[2]! * dx + r[5]! * dy + r[8]! * dz;
+    let distance: number, nx = 0, ny = 0, nz = 0;
+    if (body.shape.type === 'convex') { distance = body.shape.hull.signedDistance(lx, ly, lz, solidNormal); nx = solidNormal[0]!; ny = solidNormal[1]!; nz = solidNormal[2]!; }
+    else {
+        const h = (body.shape as {halfExtents: readonly number[]}).halfExtents, ax = Math.abs(lx) - h[0]!, ay = Math.abs(ly) - h[1]!, az = Math.abs(lz) - h[2]!;
+        if (ax >= ay && ax >= az) { distance = ax; nx = lx >= 0 ? 1 : -1; } else if (ay >= az) { distance = ay; ny = ly >= 0 ? 1 : -1; } else { distance = az; nz = lz >= 0 ? 1 : -1; }
+    }
+    normal[0] = r[0]! * nx + r[1]! * ny + r[2]! * nz; normal[1] = r[3]! * nx + r[4]! * ny + r[5]! * nz; normal[2] = r[6]! * nx + r[7]! * ny + r[8]! * nz;
+    return distance;
+}
+const faceNormal = [0, 0, 0];
+/** Sphere (first) against a hull (second), treating the hull as the intersection of its face planes. */
+function sphereSolid(m: Manifold, x: number, y: number, z: number, radius: number, solid: RigidBody3D): void {
+    const distance = solidDistance(solid, x, y, z, faceNormal);
+    if (distance >= radius) return;
+    const nx = faceNormal[0]!, ny = faceNormal[1]!, nz = faceNormal[2]!;
+    m.add(x - nx * (distance + (radius - distance) * 0.5), y - ny * (distance + (radius - distance) * 0.5), z - nz * (distance + (radius - distance) * 0.5), -nx, -ny, -nz, radius - distance);
+}
+/** Corners of each solid that have entered the other; `a` is the first body of the pair. */
+function solidSolid(m: Manifold, a: RigidBody3D, b: RigidBody3D): void {
+    const countA = solidVertexCount(a), countB = solidVertexCount(b);
+    for (let i = 0; i < countA; i++) {
+        solidVertex(solidPoint, a, i);
+        const distance = solidDistance(b, solidPoint[0]!, solidPoint[1]!, solidPoint[2]!, faceNormal);
+        // The face normal of b points back toward a, so the pair normal is its opposite.
+        if (distance < MARGIN) { m.feature = i; m.addDeep(solidPoint[0]!, solidPoint[1]!, solidPoint[2]!, -faceNormal[0]!, -faceNormal[1]!, -faceNormal[2]!, -distance); }
+    }
+    for (let i = 0; i < countB; i++) {
+        solidVertex(solidPoint, b, i);
+        const distance = solidDistance(a, solidPoint[0]!, solidPoint[1]!, solidPoint[2]!, faceNormal);
+        if (distance < MARGIN) { m.feature = 64 + i; m.addDeep(solidPoint[0]!, solidPoint[1]!, solidPoint[2]!, faceNormal[0]!, faceNormal[1]!, faceNormal[2]!, -distance); }
+    }
+}
+function solidPlane(m: Manifold, solid: RigidBody3D, plane: RigidBody3D): void {
+    const r = plane.rotation, nx = r[1]!, ny = r[4]!, nz = r[7]!, p = plane.position, count = solidVertexCount(solid);
+    for (let i = 0; i < count; i++) {
+        solidVertex(solidPoint, solid, i);
+        const distance = (solidPoint[0]! - p[0]!) * nx + (solidPoint[1]! - p[1]!) * ny + (solidPoint[2]! - p[2]!) * nz;
+        if (distance < MARGIN) { m.feature = i; m.addDeep(solidPoint[0]! - nx * distance * 0.5, solidPoint[1]! - ny * distance * 0.5, solidPoint[2]! - nz * distance * 0.5, -nx, -ny, -nz, -distance); }
+    }
+}
+/** Boxes and hulls rest on meshes through their corners, which is enough for props on floors and slopes. */
+function solidMesh(m: Manifold, solid: RigidBody3D, meshBody: RigidBody3D): void {
+    const mesh = (meshBody.shape as {mesh: TriangleMeshShape3D}).mesh, radius = 0.03, count = solidVertexCount(solid);
     candidateCount = 0;
-    for (let i = 0; i < 8; i++) {
-        boxCorner(corner, box, i);
-        toMeshLocal(meshSegA, meshBody, corner[0]!, corner[1]!, corner[2]!);
+    for (let i = 0; i < count; i++) {
+        solidVertex(solidPoint, solid, i);
+        toMeshLocal(meshSegA, meshBody, solidPoint[0]!, solidPoint[1]!, solidPoint[2]!);
         const lx = meshSegA[0]!, ly = meshSegA[1]!, lz = meshSegA[2]!;
-        mesh.query(lx - radius, ly - radius, lz - radius, lx + radius, ly + radius, lz + radius, triangle => sphereTriangle(mesh, triangle, lx, ly, lz, radius, i * 1024 + (triangle & 1023)));
+        mesh.query(lx - radius, ly - radius, lz - radius, lx + radius, ly + radius, lz + radius, triangle => sphereTriangle(mesh, triangle, lx, ly, lz, radius, (i & 31) * 1024 + (triangle & 1023)));
     }
     emitMeshContacts(m, meshBody);
 }
-const ORDER = {sphere: 0, capsule: 1, box: 2, plane: 3, mesh: 4} as const;
+const ORDER = {sphere: 0, capsule: 1, box: 2, convex: 3, plane: 4, mesh: 5} as const;
 /** Fill `m` with the contacts between two bodies; returns false when they do not touch. */
 function collide(m: Manifold, first: RigidBody3D, second: RigidBody3D): boolean {
     m.count = 0; m.feature = 0;
@@ -502,7 +561,7 @@ function collide(m: Manifold, first: RigidBody3D, second: RigidBody3D): boolean 
     if (sb.type === 'mesh') {
         if (sa.type === 'sphere') sphereMesh(m, pa[0]!, pa[1]!, pa[2]!, sa.radius, b, 0);
         else if (sa.type === 'capsule') capsuleMesh(m, a, b);
-        else if (sa.type === 'box') boxMesh(m, a, b);
+        else if (sa.type === 'box' || sa.type === 'convex') solidMesh(m, a, b);
     } else if (sa.type === 'sphere') {
         if (sb.type === 'sphere') sphereSphere(m, pa[0]!, pa[1]!, pa[2]!, sa.radius, pb[0]!, pb[1]!, pb[2]!, sb.radius);
         else if (sb.type === 'capsule') {
@@ -510,24 +569,134 @@ function collide(m: Manifold, first: RigidBody3D, second: RigidBody3D): boolean 
             closestOnSegment(segC, segA, segB, pa[0]!, pa[1]!, pa[2]!);
             sphereSphere(m, pa[0]!, pa[1]!, pa[2]!, sa.radius, segC[0]!, segC[1]!, segC[2]!, sb.radius);
         } else if (sb.type === 'box') sphereBox(m, pa[0]!, pa[1]!, pa[2]!, sa.radius, b);
-        else spherePlane(m, pa[0]!, pa[1]!, pa[2]!, sa.radius, b);
+        else if (sb.type === 'convex') sphereSolid(m, pa[0]!, pa[1]!, pa[2]!, sa.radius, b);
+        else if (sb.type === 'plane') spherePlane(m, pa[0]!, pa[1]!, pa[2]!, sa.radius, b);
     } else if (sa.type === 'capsule') {
         if (sb.type === 'capsule') {
             capsuleSegment(a, segA, segB); capsuleSegment(b, segC, segD);
             closestBetweenSegments(segA, segB, segC, segD, scratchC, scratchD);
             sphereSphere(m, scratchC[0]!, scratchC[1]!, scratchC[2]!, sa.radius, scratchD[0]!, scratchD[1]!, scratchD[2]!, sb.radius);
         } else if (sb.type === 'box') capsuleBox(m, a, b);
-        else {
+        else if (sb.type === 'convex') {
+            // Spheres at both caps and the middle stand in for the capsule against the hull's faces.
+            capsuleSegment(a, segA, segB);
+            sphereSolid(m, segA[0]!, segA[1]!, segA[2]!, sa.radius, b);
+            m.feature = 1; sphereSolid(m, segB[0]!, segB[1]!, segB[2]!, sa.radius, b);
+            m.feature = 2; sphereSolid(m, (segA[0]! + segB[0]!) / 2, (segA[1]! + segB[1]!) / 2, (segA[2]! + segB[2]!) / 2, sa.radius, b);
+        } else if (sb.type === 'plane') {
             capsuleSegment(a, segA, segB);
             spherePlane(m, segA[0]!, segA[1]!, segA[2]!, sa.radius, b);
             m.feature = 1; spherePlane(m, segB[0]!, segB[1]!, segB[2]!, sa.radius, b);
         }
     } else if (sa.type === 'box') {
-        if (sb.type === 'box') boxBox(m, a, b); else if (sb.type === 'plane') boxPlane(m, a, b);
+        if (sb.type === 'box') boxBox(m, a, b); else if (sb.type === 'convex') solidSolid(m, a, b); else if (sb.type === 'plane') boxPlane(m, a, b);
+    } else if (sa.type === 'convex') {
+        if (sb.type === 'convex') solidSolid(m, a, b); else if (sb.type === 'plane') solidPlane(m, a, b);
     }
     if (m.count === 0) return false;
     m.finish(flip);
     return true;
+}
+
+// ---- joints -------------------------------------------------------------------
+export type JointType3D = 'point' | 'hinge' | 'fixed' | 'distance';
+export interface JointOptions3D {
+    readonly type: JointType3D;
+    readonly bodyA: RigidBody3D;
+    /** Second body; leave out to pin bodyA to a fixed place in the world. */
+    readonly bodyB?: RigidBody3D;
+    /**
+     * World-space pivot when the joint is created. Defaults to bodyA's position.
+     * For 'distance' this is the attachment on bodyA.
+     */
+    readonly anchor?: readonly [number, number, number];
+    /** 'distance' only: world-space attachment on bodyB (or in the world). Defaults to bodyB's position. */
+    readonly anchorB?: readonly [number, number, number];
+    /** 'hinge' only: world-space direction of the hinge pin. */
+    readonly axis?: readonly [number, number, number];
+    /** 'distance' only: rest length; defaults to the distance between the anchors at creation. */
+    readonly length?: number;
+    /** 'distance' only: act like a rope that goes slack when shorter than its length. */
+    readonly rope?: boolean;
+    /** Let the two bodies collide with each other. Defaults to false. */
+    readonly collideConnected?: boolean;
+}
+interface JointPoint { localA: Vec; localB: Vec; ra: Vec; rb: Vec; bias: Vec; inverse: Float64Array }
+/** A constraint between two bodies, or between a body and the world. Create it with world.createJoint(). */
+export class Joint3D {
+    readonly type: JointType3D;
+    readonly bodyA: RigidBody3D;
+    readonly bodyB: RigidBody3D | undefined;
+    readonly collideConnected: boolean;
+    enabled = true;
+    /** 'distance' joints: rest length, and whether it only limits stretching. */
+    length = 0;
+    rope = false;
+    /** @internal */ readonly points: JointPoint[] = [];
+    /** @internal */ accumulated = 0;
+    /** @internal */ world: PhysicsWorld3D | undefined;
+    constructor(options: JointOptions3D) {
+        const a = options?.bodyA, b = options.bodyB;
+        if (!(a instanceof RigidBody3D) || (b !== undefined && !(b instanceof RigidBody3D)) || a === b) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint bodies');
+        if (!['point', 'hinge', 'fixed', 'distance'].includes(options.type)) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint type');
+        this.type = options.type; this.bodyA = a; this.bodyB = b; this.collideConnected = options.collideConnected ?? false;
+        const anchor = options.anchor ?? [a.position[0]!, a.position[1]!, a.position[2]!];
+        const add = (ax: number, ay: number, az: number, bx = ax, by = ay, bz = az): void => {
+            this.points.push({localA: toLocal(a, ax, ay, az), localB: b ? toLocal(b, bx, by, bz) : v3(bx, by, bz), ra: v3(), rb: v3(), bias: v3(), inverse: new Float64Array(9)});
+        };
+        if (this.type === 'distance') {
+            const other = options.anchorB ?? (b ? [b.position[0]!, b.position[1]!, b.position[2]!] : anchor);
+            add(anchor[0], anchor[1], anchor[2], other[0], other[1], other[2]);
+            this.length = options.length ?? Math.hypot(other[0]! - anchor[0], other[1]! - anchor[1], other[2]! - anchor[2]);
+            if (!(this.length >= 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint length');
+            this.rope = options.rope ?? false;
+        } else if (this.type === 'point') add(anchor[0], anchor[1], anchor[2]);
+        else if (this.type === 'hinge') {
+            // Two pivots along the pin leave exactly one free rotation: about the pin.
+            const axis = options.axis ?? [0, 1, 0], size = Math.hypot(axis[0], axis[1], axis[2]);
+            if (!(size > 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint axis');
+            const k = 0.5 / size;
+            add(anchor[0] - axis[0] * k, anchor[1] - axis[1] * k, anchor[2] - axis[2] * k); add(anchor[0] + axis[0] * k, anchor[1] + axis[1] * k, anchor[2] + axis[2] * k);
+        } else {
+            // Three pivots that are not in a line lock every rotation.
+            add(anchor[0], anchor[1], anchor[2]); add(anchor[0] + 0.5, anchor[1], anchor[2]); add(anchor[0], anchor[1] + 0.5, anchor[2]);
+        }
+    }
+}
+function toLocal(body: RigidBody3D, x: number, y: number, z: number): Vec {
+    const r = body.rotation, p = body.position, dx = x - p[0]!, dy = y - p[1]!, dz = z - p[2]!;
+    return v3(r[0]! * dx + r[3]! * dy + r[6]! * dz, r[1]! * dx + r[4]! * dy + r[7]! * dz, r[2]! * dx + r[5]! * dy + r[8]! * dz);
+}
+function rotateInto(out: Vec, body: RigidBody3D, local: Vec): Vec {
+    const r = body.rotation, x = local[0]!, y = local[1]!, z = local[2]!;
+    out[0] = r[0]! * x + r[1]! * y + r[2]! * z; out[1] = r[3]! * x + r[4]! * y + r[5]! * z; out[2] = r[6]! * x + r[7]! * y + r[8]! * z;
+    return out;
+}
+const jointA = v3(), jointB = v3(), jointC = v3(), jointK = new Float64Array(9), JOINT_BAUMGARTE = 0.2;
+/** Add one body's contribution to the 3x3 effective-mass matrix of a pivot at offset r. */
+function addPivotMass(k: Float64Array, body: RigidBody3D, r: Vec): void {
+    if (body.type !== 'dynamic' || body.isSleeping) return;
+    k[0]! += body.inverseMass; k[4]! += body.inverseMass; k[8]! += body.inverseMass;
+    for (let i = 0; i < 3; i++) {
+        // Column i is (I^-1 (r x e_i)) x r.
+        jointA[0] = jointA[1] = jointA[2] = 0; jointA[i] = 1;
+        cross(jointB, r, jointA); applyInverseInertia(jointC, body.inverseInertiaWorld, jointB); cross(jointB, jointC, r);
+        k[i]! += jointB[0]!; k[3 + i]! += jointB[1]!; k[6 + i]! += jointB[2]!;
+    }
+}
+function applyPivotImpulse(body: RigidBody3D, r: Vec, x: number, y: number, z: number, sign: number): void {
+    if (body.type !== 'dynamic' || body.isSleeping) return;
+    const v = body.linearVelocity, w = body.angularVelocity;
+    v[0]! += x * body.inverseMass * sign; v[1]! += y * body.inverseMass * sign; v[2]! += z * body.inverseMass * sign;
+    jointA[0] = x; jointA[1] = y; jointA[2] = z;
+    cross(jointB, r, jointA); applyInverseInertia(jointC, body.inverseInertiaWorld, jointB);
+    w[0]! += jointC[0]! * sign; w[1]! += jointC[1]! * sign; w[2]! += jointC[2]! * sign;
+}
+function pivotVelocity(out: Vec, body: RigidBody3D | undefined, r: Vec): Vec {
+    if (!body) { out[0] = out[1] = out[2] = 0; return out; }
+    cross(out, body.angularVelocity, r);
+    out[0]! += body.linearVelocity[0]!; out[1]! += body.linearVelocity[1]!; out[2]! += body.linearVelocity[2]!;
+    return out;
 }
 
 // ---- world --------------------------------------------------------------------
@@ -562,6 +731,8 @@ export class PhysicsWorld3D {
     #accumulator = 0;
     readonly #sorted: RigidBody3D[] = [];
     readonly #planes: RigidBody3D[] = [];
+    readonly #joints: Joint3D[] = [];
+    readonly #jointPairs = new Map<number, number>();
     readonly #warm = new Map<number, WarmEntry>();
     readonly #warmFeatures = new Int16Array(8);
     readonly #warmImpulses = new Float64Array(24);
@@ -588,8 +759,94 @@ export class PhysicsWorld3D {
     }
     /** Create a body from options and add it. */
     createBody(options: RigidBodyOptions3D): RigidBody3D { return this.addBody(new RigidBody3D(options)); }
+    get joints(): readonly Joint3D[] { return this.#joints; }
+    /** Connect two bodies, or pin one to the world. Anchors are given in world space as the bodies stand now. */
+    createJoint(options: JointOptions3D): Joint3D {
+        const joint = new Joint3D(options);
+        if (joint.bodyA.world !== this || (joint.bodyB && joint.bodyB.world !== this)) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint bodies are not in this world');
+        joint.world = this;
+        this.#joints.push(joint);
+        if (joint.bodyB && !joint.collideConnected) { const key = this.pairKey(joint.bodyA, joint.bodyB); this.#jointPairs.set(key, (this.#jointPairs.get(key) ?? 0) + 1); }
+        joint.bodyA.wake(); joint.bodyB?.wake();
+        return joint;
+    }
+    removeJoint(joint: Joint3D): void {
+        const index = this.#joints.indexOf(joint);
+        if (index < 0) return;
+        this.#joints.splice(index, 1);
+        joint.world = undefined;
+        if (joint.bodyB && !joint.collideConnected) {
+            const key = this.pairKey(joint.bodyA, joint.bodyB), count = (this.#jointPairs.get(key) ?? 1) - 1;
+            if (count > 0) this.#jointPairs.set(key, count); else this.#jointPairs.delete(key);
+        }
+        joint.bodyA.wake(); joint.bodyB?.wake();
+    }
+    private prepareJoints(dt: number): void {
+        for (const joint of this.#joints) {
+            const a = joint.bodyA, b = joint.bodyB;
+            // A moving partner wakes a sleeper, so a chain cannot hang frozen in mid-swing.
+            if (a.isSleeping && b && isMoving(b)) a.wake();
+            if (b?.isSleeping && isMoving(a)) b.wake();
+            joint.accumulated = 0;
+            for (const point of joint.points) {
+                rotateInto(point.ra, a, point.localA);
+                if (b) rotateInto(point.rb, b, point.localB); else point.rb.fill(0);
+                // Positional error: where b's pivot is relative to a's.
+                for (let i = 0; i < 3; i++) point.bias[i] = ((b ? b.position[i]! + point.rb[i]! : point.localB[i]!) - a.position[i]! - point.ra[i]!) * JOINT_BAUMGARTE / dt;
+                const k = jointK;
+                k.fill(0);
+                addPivotMass(k, a, point.ra);
+                if (b) addPivotMass(k, b, point.rb);
+                // Invert the symmetric 3x3 by cofactors.
+                const c0 = k[4]! * k[8]! - k[5]! * k[7]!, c1 = k[5]! * k[6]! - k[3]! * k[8]!, c2 = k[3]! * k[7]! - k[4]! * k[6]!, determinant = k[0]! * c0 + k[1]! * c1 + k[2]! * c2, inverse = point.inverse;
+                if (Math.abs(determinant) < 1e-12) { inverse.fill(0); continue; }
+                const d = 1 / determinant;
+                inverse[0] = c0 * d; inverse[1] = (k[2]! * k[7]! - k[1]! * k[8]!) * d; inverse[2] = (k[1]! * k[5]! - k[2]! * k[4]!) * d;
+                inverse[3] = c1 * d; inverse[4] = (k[0]! * k[8]! - k[2]! * k[6]!) * d; inverse[5] = (k[2]! * k[3]! - k[0]! * k[5]!) * d;
+                inverse[6] = c2 * d; inverse[7] = (k[1]! * k[6]! - k[0]! * k[7]!) * d; inverse[8] = (k[0]! * k[4]! - k[1]! * k[3]!) * d;
+            }
+        }
+    }
+    private solveJoint(joint: Joint3D, dt: number): void {
+        const a = joint.bodyA, b = joint.bodyB;
+        if (!joint.enabled || ((a.type !== 'dynamic' || a.isSleeping) && (!b || b.type !== 'dynamic' || b.isSleeping))) return;
+        for (const point of joint.points) {
+            const va = pivotVelocity(scratchC, a, point.ra), vb = pivotVelocity(scratchD, b, point.rb);
+            const dx = vb[0]! - va[0]!, dy = vb[1]! - va[1]!, dz = vb[2]! - va[2]!;
+            if (joint.type === 'distance') {
+                // One equation along the line between the two attachments.
+                let nx = (b ? b.position[0]! + point.rb[0]! : point.localB[0]!) - a.position[0]! - point.ra[0]!, ny = (b ? b.position[1]! + point.rb[1]! : point.localB[1]!) - a.position[1]! - point.ra[1]!;
+                let nz = (b ? b.position[2]! + point.rb[2]! : point.localB[2]!) - a.position[2]! - point.ra[2]!;
+                const length = Math.hypot(nx, ny, nz);
+                if (length < 1e-9 || (joint.rope && length <= joint.length)) continue;
+                nx /= length; ny /= length; nz /= length;
+                jointA[0] = nx; jointA[1] = ny; jointA[2] = nz;
+                let mass = 0;
+                for (const [body, r] of [[a, point.ra], [b, point.rb]] as const) {
+                    if (!body || body.type !== 'dynamic' || body.isSleeping) continue;
+                    cross(jointB, r, [nx, ny, nz]); applyInverseInertia(jointC, body.inverseInertiaWorld, jointB);
+                    mass += body.inverseMass + jointB[0]! * jointC[0]! + jointB[1]! * jointC[1]! + jointB[2]! * jointC[2]!;
+                }
+                if (mass <= 0) continue;
+                let lambda = -(dx * nx + dy * ny + dz * nz + (length - joint.length) * JOINT_BAUMGARTE / dt) / mass;
+                if (joint.rope) {
+                    // A rope only pulls: the running total may never push the ends apart.
+                    const total = Math.min(joint.accumulated + lambda, 0);
+                    lambda = total - joint.accumulated; joint.accumulated = total;
+                }
+                applyPivotImpulse(a, point.ra, nx * lambda, ny * lambda, nz * lambda, -1);
+                if (b) applyPivotImpulse(b, point.rb, nx * lambda, ny * lambda, nz * lambda, 1);
+                continue;
+            }
+            const m = point.inverse, rx = -dx - point.bias[0]!, ry = -dy - point.bias[1]!, rz = -dz - point.bias[2]!;
+            const px = m[0]! * rx + m[1]! * ry + m[2]! * rz, py = m[3]! * rx + m[4]! * ry + m[5]! * rz, pz = m[6]! * rx + m[7]! * ry + m[8]! * rz;
+            applyPivotImpulse(a, point.ra, px, py, pz, -1);
+            if (b) applyPivotImpulse(b, point.rb, px, py, pz, 1);
+        }
+    }
     removeBody(body: RigidBody3D): void {
         if (body.world !== this) return;
+        for (const joint of [...this.#joints]) if (joint.bodyA === body || joint.bodyB === body) this.removeJoint(joint);
         body.world = undefined;
         this.#bodies.splice(this.#bodies.indexOf(body), 1);
         const list = body.shape.type === 'plane' ? this.#planes : this.#sorted;
@@ -648,7 +905,12 @@ export class PhysicsWorld3D {
             if (c.tangentImpulse1 !== 0) this.applyContactImpulse(c, c.t1, c.tangentImpulse1);
             if (c.tangentImpulse2 !== 0) this.applyContactImpulse(c, c.t2, c.tangentImpulse2);
         }
-        for (let iteration = 0; iteration < this.iterations; iteration++) for (let i = 0; i < count; i++) this.solve(contacts[i]!);
+        this.prepareJoints(dt);
+        const joints = this.#joints;
+        for (let iteration = 0; iteration < this.iterations; iteration++) {
+            for (let i = 0; i < count; i++) this.solve(contacts[i]!);
+            for (let i = 0; i < joints.length; i++) this.solveJoint(joints[i]!, dt);
+        }
         for (let i = 0; i < count; i++) {
             const c = contacts[i]!, at = c.slot * 3;
             c.warm.impulses[at] = c.normalImpulse; c.warm.impulses[at + 1] = c.tangentImpulse1; c.warm.impulses[at + 2] = c.tangentImpulse2;
@@ -704,6 +966,7 @@ export class PhysicsWorld3D {
     }
     private testPair(a: RigidBody3D, b: RigidBody3D, dt: number): void {
         if ((a.layer & b.mask) === 0 || (b.layer & a.mask) === 0) return;
+        if (this.#jointPairs.size > 0 && this.#jointPairs.has(this.pairKey(a, b))) return;
         const movingA = a.type === 'dynamic' && !a.isSleeping, movingB = b.type === 'dynamic' && !b.isSleeping;
         // A pair of resting or immovable bodies needs no work, except to keep reporting triggers.
         if (!movingA && !movingB && a.type !== 'kinematic' && b.type !== 'kinematic') {
@@ -870,7 +1133,11 @@ function rayShape(body: RigidBody3D, o: number[], d: number[], limit: number, no
     const lo = [r[0]! * dx + r[3]! * dy + r[6]! * dz, r[1]! * dx + r[4]! * dy + r[7]! * dz, r[2]! * dx + r[5]! * dy + r[8]! * dz];
     const ld = [r[0]! * d[0]! + r[3]! * d[1]! + r[6]! * d[2]!, r[1]! * d[0]! + r[4]! * d[1]! + r[7]! * d[2]!, r[2]! * d[0]! + r[5]! * d[1]! + r[8]! * d[2]!];
     let t = -1, lx = 0, ly = 0, lz = 0;
-    if (shape.type === 'mesh') {
+    if (shape.type === 'convex') {
+        t = shape.hull.raycast(lo[0]!, lo[1]!, lo[2]!, ld[0]!, ld[1]!, ld[2]!, limit, meshNormal);
+        if (t < 0) return -1;
+        lx = meshNormal[0]!; ly = meshNormal[1]!; lz = meshNormal[2]!;
+    } else if (shape.type === 'mesh') {
         t = shape.mesh.raycast(lo[0]!, lo[1]!, lo[2]!, ld[0]!, ld[1]!, ld[2]!, limit, meshNormal);
         if (t < 0) return -1;
         lx = meshNormal[0]!; ly = meshNormal[1]!; lz = meshNormal[2]!;

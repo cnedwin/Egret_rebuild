@@ -83,7 +83,7 @@ for (const name of Object.keys(results.webgl2.images ?? {})) {
   summary.cases.push(entry);
   if (!entry.pass) summary.failures.push({ case: name, failure: varied ? 'backends differ beyond the limit' : 'image is a single color' });
 }
-summary.pass = summary.failures.length === 0 && summary.cases.length === 16;
+summary.pass = summary.failures.length === 0 && summary.cases.length === 18;
 fs.writeFileSync(path.join(output, 'summary.json'), JSON.stringify(summary, null, 2) + '\n');
 console.log(JSON.stringify(summary, null, 2));
 process.exitCode = summary.pass ? 0 : 1;

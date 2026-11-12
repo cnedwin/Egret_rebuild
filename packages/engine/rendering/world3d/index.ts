@@ -68,6 +68,8 @@ export {SCENE_DOCUMENT_FORMAT_3D, SCENE_DOCUMENT_VERSION_3D, SERIALIZE3D_LIMITS,
 export type {SceneDocument3D, SerializeOptions3D, DeserializeOptions3D, DeserializedScene3D} from './Serialize3D.js';
 export {STATE_MACHINE3D_LIMITS, AnimationStateMachine3D, createAnimationStateMachine3D} from './StateMachine3D.js';
 export type {StateParameter3D, StateConditionOperator3D, StateCondition3D, StateBlendEntry3D, StateOptions3D, TransitionOptions3D} from './StateMachine3D.js';
+export {Joint3D} from './Physics3D.js';
+export type {JointType3D, JointOptions3D} from './Physics3D.js';
 export {PHYSICS3D_LIMITS, RigidBody3D, PhysicsWorld3D, CharacterController3D, createPhysicsWorld3D, createCharacterController3D} from './Physics3D.js';
 export type {
     BodyType3D, ShapeDefinition3D, RigidBodyOptions3D, PhysicsRaycastHit3D, PhysicsWorldOptions3D, CharacterControllerOptions3D,
@@ -96,3 +98,4 @@ export type {HdrImage3D, EquirectOptions3D} from './Hdr3D.js';
 export {PHYSICS_MESH3D_LIMITS, TriangleMeshShape3D, createMeshShape3D} from './PhysicsMesh3D.js';
 export {BATCH3D_LIMITS, BatchedMesh3D, FatLine3D, createBatchedMesh3D, createFatLine3D} from './Batch3D.js';
 export type {FatLineOptions3D} from './Batch3D.js';
+export {PHYSICS_HULL3D_LIMITS, ConvexHullShape3D, createConvexHullShape3D} from './PhysicsHull3D.js';
