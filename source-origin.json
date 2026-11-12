@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "68b83525547bec05229eee44c2b5aa433aafdb48ba621582d91701d8f7c7b695",
+      "sha256": "c3c797eb61afdfce6d2fbc984c42d08570c928336136969b8ecdc903fd2b40c1",
       "bytes": 393902,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -6615,8 +6615,8 @@
     {
       "path": "tests/project-boundaries.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 42122,
-      "sha256": "5cfcc4e50d95e6a4909c64e9a7e71e0249532ead00cd11c64cc0db129496aebd",
+      "bytes": 42151,
+      "sha256": "4847a058dd3526ad19855c9872f028f754cf3f55650f33c711255d2d982990c9",
       "identityHistory": [
         {
           "bytes": 13130,

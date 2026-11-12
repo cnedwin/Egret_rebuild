@@ -3330,7 +3330,7 @@
     },
     {
       "path": "tests/project-boundaries.test.mjs",
-      "sha256": "5cfcc4e50d95e6a4909c64e9a7e71e0249532ead00cd11c64cc0db129496aebd"
+      "sha256": "4847a058dd3526ad19855c9872f028f754cf3f55650f33c711255d2d982990c9"
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/src/types.ts",
