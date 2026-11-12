@@ -99,6 +99,8 @@ export class WebGPURenderer3D implements Renderer3D {
     shadowsEnabled: boolean;
     /** Bloom, color grading and FXAA; set `enabled` to turn the chain on. */
     readonly postProcess: PostProcessSettings3D = createPostProcessSettings3D();
+    viewport: readonly [number, number, number, number] | undefined;
+    autoClear = true;
     #post: PostChainWebGPU3D | undefined;
     #inPost = false;
     readonly info: Renderer3DInfo = {frame: 0, drawCalls: 0, triangles: 0, visited: 0, culled: 0, shadowMaps: 0, programs: 0, geometries: 0, textures: 0};
@@ -955,20 +957,32 @@ export class WebGPURenderer3D implements Renderer3D {
         const encode = target ? (value: number): number => value : linearToSrgb;
         const clearValue: GPUColor = Array.isArray(background) ? [encode(background[0]!), encode(background[1]!), encode(background[2]!), 1]
             : [0, 0, 0, (target || this.#alpha) && !background ? 0 : 1];
-        let colorAttachment: GPURenderPassColorAttachment, depthView: GPUTextureView | undefined;
+        let colorAttachment: GPURenderPassColorAttachment, depthView: GPUTextureView | undefined, outputWidth: number, outputHeight: number;
+        const loadOp: GPULoadOp = this.autoClear ? 'clear' : 'load';
         if (target) {
             const entry = this.target(target);
-            colorAttachment = {view: entry.colorView, clearValue, loadOp: 'clear', storeOp: 'store'};
+            colorAttachment = {view: entry.colorView, clearValue, loadOp, storeOp: 'store'};
             depthView = entry.depthView;
+            outputWidth = target.width; outputHeight = target.height;
             if (!depthView) throw new World3DError('WORLD3D_INPUT_INVALID', 'the WebGPU backend requires render targets with depth');
         } else {
             const current = this.#context.getCurrentTexture(), attachments = this.canvasAttachments(current), view = current.createView();
-            colorAttachment = attachments.color ? {view: attachments.color, resolveTarget: view, clearValue, loadOp: 'clear', storeOp: 'discard'}
-                : {view, clearValue, loadOp: 'clear', storeOp: 'store'};
+            // The multisampled color is kept so a later view of the same frame can load it.
+            colorAttachment = attachments.color ? {view: attachments.color, resolveTarget: view, clearValue, loadOp, storeOp: 'store'}
+                : {view, clearValue, loadOp, storeOp: 'store'};
             depthView = attachments.depth;
+            outputWidth = current.width; outputHeight = current.height;
         }
         this.resetPassState();
         const pass = encoder.beginRenderPass({colorAttachments: [colorAttachment], depthStencilAttachment: {view: depthView, depthClearValue: 1, depthLoadOp: 'clear', depthStoreOp: 'discard'}});
+        const view = this.viewport;
+        if (view) {
+            // The public rectangle has its origin at the bottom left; WebGPU's is at the top left.
+            const w = Math.max(Math.round(view[2] * outputWidth), 1), h = Math.max(Math.round(view[3] * outputHeight), 1);
+            const x = Math.min(Math.max(Math.round(view[0] * outputWidth), 0), outputWidth - 1), y = Math.min(Math.max(outputHeight - Math.round(view[1] * outputHeight) - h, 0), outputHeight - 1);
+            const cw = Math.min(w, outputWidth - x), ch = Math.min(h, outputHeight - y);
+            pass.setViewport(x, y, cw, ch, 0, 1); pass.setScissorRect(x, y, cw, ch);
+        }
         const flags = {fog: scene.fog !== undefined, environment: environment !== undefined};
         pass.setBindGroup(0, this.#frameGroup);
         for (const item of list.opaque) this.draw(pass, item, kind, flags);

@@ -34,6 +34,17 @@ export interface Renderer3D extends Disposable {
     shadowsEnabled: boolean;
     /** Bloom, color grading and FXAA; set `enabled` to turn the chain on. */
     readonly postProcess: PostProcessSettings3D;
+    /**
+     * Part of the output to draw into, as [x, y, width, height] in 0 to 1 with
+     * the origin at the bottom left; undefined draws everywhere. Set the
+     * camera's aspect to match. Used for split screens and inset views.
+     */
+    viewport: readonly [number, number, number, number] | undefined;
+    /**
+     * Clear the whole output to the scene background before drawing. Turn it
+     * off for the second and later views of one frame; depth is always cleared.
+     */
+    autoClear: boolean;
     /** Draw to the canvas, or into `target`. Returns false when the device is lost. */
     render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean;
     setSize(width: number, height: number, pixelRatio?: number): void;

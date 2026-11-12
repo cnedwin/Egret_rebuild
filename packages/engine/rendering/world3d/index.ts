@@ -91,3 +91,5 @@ export {
     computeObjectBounds3D, LineHelper3D, BoxHelper3D, ArrowHelper3D, CameraHelper3D, LightHelper3D, SkeletonHelper3D,
     createBoxHelper3D, createArrowHelper3D, createCameraHelper3D, createLightHelper3D, createSkeletonHelper3D,
 } from './debug3D.js';
+export {HDR3D_LIMITS, parseRgbe3D, createCubeTextureFromEquirect3D} from './Hdr3D.js';
+export type {HdrImage3D, EquirectOptions3D} from './Hdr3D.js';

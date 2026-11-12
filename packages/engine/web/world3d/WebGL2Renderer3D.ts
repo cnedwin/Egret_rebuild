@@ -55,6 +55,8 @@ export class WebGL2Renderer3D implements Renderer3D {
     shadowsEnabled: boolean;
     /** Bloom, color grading and FXAA; set `enabled` to turn the chain on. */
     readonly postProcess: PostProcessSettings3D = createPostProcessSettings3D();
+    viewport: readonly [number, number, number, number] | undefined;
+    autoClear = true;
     #post: PostChainWebGL23D | undefined;
     #inPost = false;
     #frameToneMapping: ToneMapping3D = 'none';
@@ -186,7 +188,14 @@ export class WebGL2Renderer3D implements Renderer3D {
         const encode = target ? (value: number): number => value : linearToSrgb;
         if (Array.isArray(background)) gl.clearColor(encode(background[0]!), encode(background[1]!), encode(background[2]!), 1);
         else gl.clearColor(0, 0, 0, (target || this.#alpha) && !background ? 0 : 1);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.clear(this.autoClear ? gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT : gl.DEPTH_BUFFER_BIT);
+        const view = this.viewport;
+        if (view) {
+            const fullWidth = target ? target.width : gl.drawingBufferWidth, fullHeight = target ? target.height : gl.drawingBufferHeight;
+            const x = Math.round(view[0] * fullWidth), y = Math.round(view[1] * fullHeight), w = Math.max(Math.round(view[2] * fullWidth), 1), h = Math.max(Math.round(view[3] * fullHeight), 1);
+            gl.viewport(x, y, w, h);
+            gl.enable(gl.SCISSOR_TEST); gl.scissor(x, y, w, h);
+        }
 
         let environmentMaxMip = 0;
         this.#lastEnvironment = scene.environment;
@@ -199,6 +208,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (background instanceof CubeTexture3D) this.drawSkybox(background, scene.backgroundIntensity, camera);
         for (const item of list.transparent) this.draw(item, flags, false);
         gl.bindVertexArray(null);
+        if (view) gl.disable(gl.SCISSOR_TEST);
         if (target) gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         this.#resources.prune(list.frame);
         const counts = this.#resources.counts;
