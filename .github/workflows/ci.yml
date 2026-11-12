@@ -123,11 +123,15 @@ jobs:
           console.log(JSON.stringify({status:'RETAINED_EVIDENCE_VERIFIED',head:pr.head.sha,base,tree:git('rev-parse','HEAD^{tree}'),previousHead:old,previousTree:tree,testedMerge:tested,run:run.id,retained}));
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'Windows and Linux: reused exact successful executions; not rerun. Only PR120 workflow and its fingerprint changed. Intel macOS CPU validation is still required; ARM64/GPU acceptance is not claimed.\n\nWindows/Linux：复用原成功执行，未重跑。仅工作流及其指纹变化；仍需 Intel macOS CPU 实测，不代表 ARM64/GPU 验收。\n');
           NODE
-  windows:
+  # The route is decided once; the Windows jobs below read the same trusted answer.
+  # 路线只判定一次；后续 Windows 作业读取同一个可信结论。
+  route:
+    name: Windows route
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.number != 120 }}
     runs-on: windows-latest
-    # Allow the complete suite to finish on hosted Windows without omitting checks.
-    timeout-minutes: 60
+    timeout-minutes: 10
+    outputs:
+      profile: ${{ steps.windows-route.outputs.profile }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -136,29 +140,6 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
-      - name: Install exact PowerShell
-        shell: pwsh
-        env:
-          GH_RELEASE_TOKEN: ${{ github.token }}
-        run: |
-          # Authenticate public metadata with the read-only job token; never forward it to the archive URL.
-          $headers = @{ Authorization = "Bearer $env:GH_RELEASE_TOKEN"; Accept = "application/vnd.github+json" }
-          $release = Invoke-RestMethod -Headers $headers https://api.github.com/repos/PowerShell/PowerShell/releases/tags/v7.6.5
-          $asset = $release.assets | Where-Object name -eq 'PowerShell-7.6.5-win-x64.zip'
-          if (-not $asset -or $asset.digest -notmatch '^sha256:[0-9a-f]{64}$') { throw 'Missing verified PowerShell asset' }
-          $archive = Join-Path $env:RUNNER_TEMP 'pwsh.zip'
-          Invoke-WebRequest $asset.browser_download_url -OutFile $archive
-          if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $asset.digest.Substring(7)) { throw 'PowerShell checksum mismatch' }
-          $target = Join-Path $env:RUNNER_TEMP 'egret-pwsh'
-          Expand-Archive $archive $target
-          $target | Out-File $env:GITHUB_PATH -Append -Encoding utf8
-      - name: Select canonical temporary directory
-        shell: pwsh
-        run: |
-          $temporary = node -p "require('node:fs').realpathSync.native(require('node:os').tmpdir())"
-          if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $temporary -PathType Container)) { throw 'Cannot resolve temporary directory' }
-          "TEMP=$temporary" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
-          "TMP=$temporary" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
       - name: Select Windows merge checks
         id: windows-route
         shell: pwsh
@@ -192,12 +173,48 @@ jobs:
           }
           Write-Output "$profile Windows merge checks. $receipt"
           "profile=$profile" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+  windows:
+    needs: [route]
+    runs-on: windows-latest
+    # The test files run in the windows-tests shards; this job keeps every other merge check.
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Install exact PowerShell
+        shell: pwsh
+        env:
+          GH_RELEASE_TOKEN: ${{ github.token }}
+        run: |
+          # Authenticate public metadata with the read-only job token; never forward it to the archive URL.
+          $headers = @{ Authorization = "Bearer $env:GH_RELEASE_TOKEN"; Accept = "application/vnd.github+json" }
+          $release = Invoke-RestMethod -Headers $headers https://api.github.com/repos/PowerShell/PowerShell/releases/tags/v7.6.5
+          $asset = $release.assets | Where-Object name -eq 'PowerShell-7.6.5-win-x64.zip'
+          if (-not $asset -or $asset.digest -notmatch '^sha256:[0-9a-f]{64}$') { throw 'Missing verified PowerShell asset' }
+          $archive = Join-Path $env:RUNNER_TEMP 'pwsh.zip'
+          Invoke-WebRequest $asset.browser_download_url -OutFile $archive
+          if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $asset.digest.Substring(7)) { throw 'PowerShell checksum mismatch' }
+          $target = Join-Path $env:RUNNER_TEMP 'egret-pwsh'
+          Expand-Archive $archive $target
+          $target | Out-File $env:GITHUB_PATH -Append -Encoding utf8
+      - name: Select canonical temporary directory
+        shell: pwsh
+        run: |
+          $temporary = node -p "require('node:fs').realpathSync.native(require('node:os').tmpdir())"
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $temporary -PathType Container)) { throw 'Cannot resolve temporary directory' }
+          "TEMP=$temporary" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "TMP=$temporary" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
       - name: Install pinned package manager
         run: npm install --global pnpm@11.25.0 --ignore-scripts
       - name: Clean setup
         run: pnpm setup:dev --no-build
       - name: Documentation-only merge checks
-        if: steps.windows-route.outputs.profile == 'documentation'
+        if: needs.route.outputs.profile == 'documentation'
         shell: pwsh
         env:
           EGRET_METADATA_BASE: ${{ github.event.pull_request.base.sha }}
@@ -213,10 +230,61 @@ jobs:
           'Windows documentation-only checks passed on the bound PR merge tree. Engine verification was not run in this job.' |
             Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
       - name: Full merge checks
-        if: steps.windows-route.outputs.profile != 'documentation'
+        if: needs.route.outputs.profile != 'documentation'
         env:
           EGRET_METADATA_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
-        run: node tools/prepush.mjs --integrated
+        run: node tools/prepush.mjs --integrated --no-tests
+  # The complete test file list, dealt across parallel runners; every shard is required.
+  # 完整测试文件清单分配到并行运行器；每个分片都是必需的。
+  windows-tests:
+    name: windows tests (${{ matrix.shard }}/4)
+    needs: [route]
+    if: ${{ needs.route.outputs.profile != 'documentation' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Install exact PowerShell
+        shell: pwsh
+        env:
+          GH_RELEASE_TOKEN: ${{ github.token }}
+        run: |
+          # Authenticate public metadata with the read-only job token; never forward it to the archive URL.
+          $headers = @{ Authorization = "Bearer $env:GH_RELEASE_TOKEN"; Accept = "application/vnd.github+json" }
+          $release = Invoke-RestMethod -Headers $headers https://api.github.com/repos/PowerShell/PowerShell/releases/tags/v7.6.5
+          $asset = $release.assets | Where-Object name -eq 'PowerShell-7.6.5-win-x64.zip'
+          if (-not $asset -or $asset.digest -notmatch '^sha256:[0-9a-f]{64}$') { throw 'Missing verified PowerShell asset' }
+          $archive = Join-Path $env:RUNNER_TEMP 'pwsh.zip'
+          Invoke-WebRequest $asset.browser_download_url -OutFile $archive
+          if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $asset.digest.Substring(7)) { throw 'PowerShell checksum mismatch' }
+          $target = Join-Path $env:RUNNER_TEMP 'egret-pwsh'
+          Expand-Archive $archive $target
+          $target | Out-File $env:GITHUB_PATH -Append -Encoding utf8
+      - name: Select canonical temporary directory
+        shell: pwsh
+        run: |
+          $temporary = node -p "require('node:fs').realpathSync.native(require('node:os').tmpdir())"
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $temporary -PathType Container)) { throw 'Cannot resolve temporary directory' }
+          "TEMP=$temporary" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "TMP=$temporary" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Install pinned package manager
+        run: npm install --global pnpm@11.25.0 --ignore-scripts
+      - name: Clean setup
+        run: pnpm setup:dev --no-build
+      - name: Build
+        run: node tools/build.mjs
+      - name: Test files of this shard
+        run: node tools/test.mjs --shard=${{ matrix.shard }}/4
   cpu:
     needs: [retained]
     if: ${{ always() && !cancelled() && (needs.retained.result == 'success' || needs.retained.result == 'skipped') }}
@@ -244,21 +312,34 @@ jobs:
   merge-ready:
     name: M0 / merge-ready
     if: ${{ always() }}
-    needs: [retained, windows, cpu]
+    needs: [retained, route, windows, windows-tests, cpu]
     runs-on: ubuntu-latest
     steps:
       - name: Require all declared jobs
         env:
           PR120: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 120 }}
           RETAINED_RESULT: ${{ needs.retained.result }}
+          ROUTE_RESULT: ${{ needs.route.result }}
+          ROUTE_PROFILE: ${{ needs.route.outputs.profile }}
           WINDOWS_RESULT: ${{ needs.windows.result }}
+          WINDOWS_TESTS_RESULT: ${{ needs.windows-tests.result }}
           CPU_RESULT: ${{ needs.cpu.result }}
         run: |
           if [ "$PR120" = true ]; then
             test "$RETAINED_RESULT" = success
+            test "$ROUTE_RESULT" = skipped
             test "$WINDOWS_RESULT" = skipped
+            test "$WINDOWS_TESTS_RESULT" = skipped
           else
             test "$RETAINED_RESULT" = skipped
+            test "$ROUTE_RESULT" = success
             test "$WINDOWS_RESULT" = success
+            # Only the trusted documentation route may leave the test shards unrun.
+            if [ "$ROUTE_PROFILE" = documentation ]; then
+              test "$WINDOWS_TESTS_RESULT" = skipped
+            else
+              test "$ROUTE_PROFILE" = full
+              test "$WINDOWS_TESTS_RESULT" = success
+            fi
           fi
           test "$CPU_RESULT" = success
