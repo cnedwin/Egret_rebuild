@@ -5027,7 +5027,7 @@
     },
     {
       "path": "tools/lib/world3d-boundary.mjs",
-      "sha256": "14c3407724e739cf62dd3ee55d76b39cf779cc17cde17fdd381f315b88f9a043"
+      "sha256": "8b7d50f763a29561208a047d1e81a047e291111c5ffd071e238f3b90f7032d11"
     },
     {
       "path": "packages/engine/rendering/world3d/Curves3D.ts",
