@@ -113,8 +113,8 @@ export type {DracoModule3D, BasisModule3D} from './decoders3D.js';
 export {NAVIGATION3D_LIMITS, NavMesh3D, NavAgent3D, NavCrowd3D, createNavMesh3D, createNavCrowd3D, findGridPath3D} from './Navigation3D.js';
 export type {NavPoint3D, NavMeshOptions3D, NavLocation3D, NavPathOptions3D, NavPath3D, NavAgentOptions3D, GridPathOptions3D} from './Navigation3D.js';
 export {
-    HeightField3D, Terrain3D, createHeightField3D, createHeightFieldFromPixels3D, createTerrain3D, TERRAIN3D_LIMITS,
-    type HeightFieldOptions3D, type HeightImageOptions3D, type TerrainOptions3D,
+    HeightField3D, Terrain3D, TerrainStream3D, createHeightField3D, createHeightFieldFromPixels3D, createTerrain3D, createTerrainMaterial3D, createTerrainStream3D, TERRAIN3D_LIMITS,
+    type HeightFieldOptions3D, type HeightImageOptions3D, type TerrainOptions3D, type TerrainMaterialOptions3D, type TerrainStreamOptions3D, type TerrainTile3D,
 } from './Terrain3D.js';
 export {
     PlanarReflection3D, Water3D, createWater3D, createWaterMaterial3D,
@@ -122,8 +122,9 @@ export {
 } from './Water3D.js';
 export {
     AnimationTexture3D, SkinnedInstancedMesh3D, bakeAnimationTexture3D, createSkinnedInstancedMesh3D, ANIMATION_TEXTURE3D_LIMITS,
-    type BakedClip3D, type BakeAnimationOptions3D, type InstanceClipOptions3D,
+    type BakedClip3D, type BakeAnimationOptions3D, type InstanceClipOptions3D, type InstanceBlendOptions3D,
 } from './AnimationTexture3D.js';
 export {Trail3D, createTrail3D, TRAIL3D_LIMITS, type TrailOptions3D} from './Trail3D.js';
 export {createDecalGeometry3D, createDecal3D, DECAL3D_LIMITS, type DecalOptions3D} from './Decal3D.js';
 export {GpuParticles3D, createGpuParticles3D, type GpuParticlesOptions3D} from './GpuParticles3D.js';
+export {VolumetricFog3D, createVolumetricFog3D, type VolumetricFogOptions3D} from './VolumetricFog3D.js';

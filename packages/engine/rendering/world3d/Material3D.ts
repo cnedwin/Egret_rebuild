@@ -165,6 +165,15 @@ export class Material3D extends Resource3D {
      * it, instead of ending in a hard line. 0 turns the fade off.
      */
     softness = 0;
+    /**
+     * Ground layers blended by a weight map, for terrain: up to four tiling
+     * textures, each shown where its channel of `weights` (R, G, B, A) is
+     * strong. Weights are read with the mesh's coordinates as they are and
+     * layers with those coordinates times their `repeat`. The layers take
+     * the texture slots of map, emissiveMap, occlusionMap, metallicRoughnessMap
+     * and lightMap, so leave those unset. Call touch() after assigning.
+     */
+    splat: {readonly weights: Texture3D; readonly layers: readonly Texture3D[]; readonly repeat: readonly number[]} | undefined;
     /** Strength, 0 to 1, of a soft rim lobe for cloth and velvet on a standard material. */
     sheen = 0;
     readonly sheenColor = new Float32Array([1, 1, 1]);

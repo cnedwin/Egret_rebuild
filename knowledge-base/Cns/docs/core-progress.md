@@ -27,6 +27,8 @@
 
 [#154](https://github.com/cnedwin/Egret_rebuild/pull/154) 到 [#159](https://github.com/cnedwin/Egret_rebuild/pull/159) 新增角色控制、压缩资源解码、导航、地形与反射、蒙皮人群及场景特效。Windows Edge 通过全部 24 个 WebGL2／WebGPU 固定场景对比和软粒子深度专项检查。此前 Android Chrome 真机证据覆盖示例呈现及两个后端的指定屏幕效果、顶点钩子和斜投影。功能展厅另有 WebGL2 软件渲染记录。各后端和设备的具体覆盖范围见 [World3D 契约](world3d.md)。
 
+[#161](https://github.com/cnedwin/Egret_rebuild/pull/161) 扩展地形和水面、蒙皮人群及特效。Windows Edge 通过 25 个固定 WebGL2／WebGPU 离屏对比，包含体积雾，并通过两个后端的软粒子深度检查。流式地块与水下雾效所有权由独立无头回归验证。地形示例交互、更广设备及正式性能验收仍开放。
+
 ## 固定混合场景 — 2026-11-08
 
 换装工作室现可运行 X-D60/1 与 X-MTouch/1，包含 6,000 个创作节点、八个双轨 Spine、80 个序列帧实例及 50,000 条虚拟目录。桌面两端的各状态均采集五个窗口。全脏同步阶段耗时 p95 为 WebGPU 74.0 毫秒、WebGL2 87.8 毫秒。该数据用于定位帧耗时，正式全引擎 CPU 仍待测，完成帧间隔未达到目标。Android Chrome 真机在每端采集 100 次受控触摸响应，并验证实际键盘、旋转与 Home 返回。两端响应 p95 为 412.4 与 383.6 毫秒，目标为 100 毫秒。正式生命周期、真人输入与 iPhone 项仍待验收。[固定场景证据](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/fixed-verification-summary.json)
