@@ -70,6 +70,9 @@ export {STATE_MACHINE3D_LIMITS, AnimationStateMachine3D, createAnimationStateMac
 export type {StateParameter3D, StateConditionOperator3D, StateCondition3D, StateBlendEntry3D, StateOptions3D, TransitionOptions3D} from './StateMachine3D.js';
 export {Joint3D} from './Physics3D.js';
 export type {JointType3D, JointOptions3D} from './Physics3D.js';
+export type {CompoundChild3D, PhysicsContact3D, PhysicsShapeCastHit3D} from './Physics3D.js';
+export {Jelly3D, createJelly3D, createJellyShader3D} from './Jelly3D.js';
+export type {JellyOptions3D} from './Jelly3D.js';
 export {PHYSICS3D_LIMITS, RigidBody3D, PhysicsWorld3D, CharacterController3D, createPhysicsWorld3D, createCharacterController3D} from './Physics3D.js';
 export type {
     BodyType3D, ShapeDefinition3D, RigidBodyOptions3D, PhysicsRaycastHit3D, PhysicsWorldOptions3D, CharacterControllerOptions3D,

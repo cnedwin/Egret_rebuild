@@ -2341,8 +2341,8 @@
       "en": "knowledge-base/en/docs/world3d.md",
       "zh": "knowledge-base/Cns/docs/world3d.md",
       "kind": "public_reading",
-      "enSha256": "f021c81b537b7483a7d4fa155d93ec2b038e2a006133674e068d14714dc85bac",
-      "zhSha256": "75dcc4fb1c9df05ca33175ed80cb256b2298023db8ab505080775dd1582b8089"
+      "enSha256": "607a0d9a17ab988ccaf43535bce717fc0ccb36228c8f6f3a75f9666eb6d7dcb3",
+      "zhSha256": "4e8863235f70f95c4807b01f619db23ceb8592a1a4224fb2273ac08f1f2abf0d"
     },
     {
       "en": "examples/world3d/README.md",
@@ -4967,7 +4967,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/index.ts",
-      "sha256": "087229e1a36cf11ed58a54f22e15ff8cadc3640bdbceffcf51a0c28fc2b23564"
+      "sha256": "4187e7eb21edba2efbe0c7eaf9733de4d9029338f50fa6ee982c59ad5005dde8"
     },
     {
       "path": "packages/engine/rendering/world3d/math3D.ts",
@@ -5027,7 +5027,7 @@
     },
     {
       "path": "tools/lib/world3d-boundary.mjs",
-      "sha256": "1c51229ec3b465cba64bb58290217a5e7f8dbf733abdee870ae8a1798afa45ed"
+      "sha256": "f945a5b8cd50f9025ab0b41a556ad6148b5e6770cb0b3a8343637ec8babc3623"
     },
     {
       "path": "packages/engine/rendering/world3d/Curves3D.ts",
@@ -5043,7 +5043,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/Physics3D.ts",
-      "sha256": "10b2abe45cf6735c89d6314e4d8a65d3a9b607efb7ef91b4be0a7a402ab828ca"
+      "sha256": "1964dc4c72d98b2e60a6811f6bcfe16c97e586d001b3d91e1f3419ae280988cd"
     },
     {
       "path": "packages/engine/rendering/world3d/Serialize3D.ts",
@@ -5170,12 +5170,16 @@
       "sha256": "956b474ff49559be5a5cc1c1414919cc5e96ad3c50a50b9d650b7012fcb5d444"
     },
     {
-      "path": "packages/engine/rendering/world3d/VolumetricFog3D.ts",
-      "sha256": "51e3701826ace2330cd1a9b62c650227d2c36d68deab1d03db2cd92317fb6a7f"
-    },
-    {
       "path": "packages/engine/web/world3d/atmosphere3D.ts",
       "sha256": "0caeb515b187347ef331095431a5ba27bd441bb8e4a7ce40816dfb74afcfeb44"
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Jelly3D.ts",
+      "sha256": "0d79e4917a2b49bdffa21a3bc027f9cb54362bd3c5790554964cf58a9c7ed706"
+    },
+    {
+      "path": "packages/engine/rendering/world3d/VolumetricFog3D.ts",
+      "sha256": "51e3701826ace2330cd1a9b62c650227d2c36d68deab1d03db2cd92317fb6a7f"
     }
   ],
   "historicalSemanticReview": {
