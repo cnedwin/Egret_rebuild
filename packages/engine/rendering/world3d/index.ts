@@ -110,3 +110,5 @@ export type {MeshoptMode3D, MeshoptFilter3D} from './Meshopt3D.js';
 export {COMPRESSION3D_LIMITS, inflate3D, decompressZstd3D} from './Compression3D.js';
 export {createDracoDecoder3D, createBasisTranscoder3D} from './decoders3D.js';
 export type {DracoModule3D, BasisModule3D} from './decoders3D.js';
+export {NAVIGATION3D_LIMITS, NavMesh3D, NavAgent3D, NavCrowd3D, createNavMesh3D, createNavCrowd3D, findGridPath3D} from './Navigation3D.js';
+export type {NavPoint3D, NavMeshOptions3D, NavLocation3D, NavPathOptions3D, NavPath3D, NavAgentOptions3D, GridPathOptions3D} from './Navigation3D.js';

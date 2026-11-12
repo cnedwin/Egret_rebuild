@@ -178,6 +178,20 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `createFatLine3D(points, {width, screenSpace, closed, color})` 把折线绘制成始终朝向相机的带状网格，拐角处做斜接。宽度以世界单位计；开启 `screenSpace` 并把 `resolutionHeight` 设为输出高度后，以像素计。
 
+## 导航与寻路
+
+`createNavMesh3D(source, {slopeLimit})` 从关卡几何体构建导航网格：可以传入几何体、一个物体（其下的网格按世界变换合并），或原始的 `{positions, indices}`。比坡度上限更陡的面和朝下的面会被剔除；共用一条边的三角形互为邻居，互不相连的楼层属于不同的区域。
+
+`navMesh.findPath(start, end, {agentRadius, followSurface})` 返回最短可行走路线的点列表、路线长度，以及 `complete`：终点无法到达时为 `false`，此时路径停在能到达的最近位置。搜索在三角形上进行，路线再沿所穿过的边被拉直，并去掉可以直线走过的拐点。`agentRadius` 让路线与拐角保持一个半径的距离，并排除角色挤不过去的缺口；`followSurface` 在每次跨越三角形的位置加一个点，让路径贴着坡面。`setCost(triangle, cost)` 提高某块地面的通行代价，`setEnabled(triangle, false)` 把它关闭，例如一扇门。
+
+`findNearest(point, maxDistance)` 把点吸附到网格上，`raycast(from, x, z)` 返回直线行走在碰到边界之前能走多远，`moveAlong(from, x, z)` 在三角形之间移动并沿边界滑动，`isReachable` 判断两处能否经由开放的三角形互相到达，`randomPoint()` 按面积均匀地取一个位置。`createDebugGeometry()` 返回由边组成的线几何体。
+
+`createNavCrowd3D(navMesh)` 负责移动一群角色：`crowd.addAgent({position, radius, speed, node})`、`agent.setTarget(point)`，并在每帧调用 `crowd.update(deltaSeconds)`。每个角色沿自己的路径行走，快要重叠时会被推开，不会离开网格，并通过 `arrived` 报告是否到达；在人群中，当目标位置已被占据、角色无法再靠近时，它会停下并视为已到达。
+
+`findGridPath3D(width, height, cost, start, end)` 是用于瓦片地图的网格 A*，可选择是否允许斜向移动，斜向移动不会从被阻挡的拐角之间穿过。
+
+导航网格按传入的三角形原样使用：不做体素化，也不向内收缩，因此可行走的三角形本身应当与墙保持距离，或者在寻路时传入 `agentRadius`。角色之间只靠简单的互相推开来避让，不预测碰撞；也没有跳跃、梯子这类网格外连接。
+
 ## 文字
 
 `createTextGeometry3D(text, font, {size, depth, align, letterSpacing, lineHeight, curveSegments})` 把字符串变成位于 XY 平面的网格几何体，第一行的基线在 y = 0。设置 `depth` 时它是一个挤出体，带正反面和侧面两个材质分组；`depth: 0` 时是平面文字。`createTextShapes3D` 只返回轮廓，`font.measureText` 返回宽度。
@@ -225,6 +239,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 | `EffectComposer`、`UnrealBloomPass`、`OutputPass`、`FXAAShader`、`SSAOPass`、`OutlinePass`、`BokehPass`、`ShaderPass`、`DepthTexture` | `renderer.postProcess`，配合 `ssao`、`outlineLayers`、`dof` 和 `custom`（`sceneDepth`） |
 | `BatchedMesh`、`Line2` | `createBatchedMesh3D`、`createFatLine3D` |
 | `TextGeometry`、`FontLoader`、`TTFLoader` | `createTextGeometry3D`、`parseTypefaceFont3D`、`parseTrueTypeFont3D` |
+| three-pathfinding、recast-navigation 等寻路扩展 | `createNavMesh3D`、`navMesh.findPath`、`createNavCrowd3D`、`findGridPath3D` |
 | `TransformControls` | `createTransformControls3D`、`createTransformGizmo3D` |
 | `renderer.clippingPlanes`、`scene.overrideMaterial` | `scene.clippingPlanes`、`scene.overrideMaterial` |
 | `CubeCamera`、`PMREMGenerator.fromEquirectangular` | `captureCubeTexture3D`、`createCubeTextureFromEquirect3D` |
@@ -250,7 +265,7 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 [World3D 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/world3d/README.zh-CN.md)在任一后端上展示灯光、阴影、实例化、蒙皮、变形、粒子、渲染目标、拾取和轨道控制。
 
-无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs`、`tests/world3d-decoders.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
+无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs`、`tests/world3d-decoders.test.mjs`、`tests/world3d-navigation.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
 
 `tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，以及文字与变换操纵器。开发期间全部二十个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前十六个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
 
