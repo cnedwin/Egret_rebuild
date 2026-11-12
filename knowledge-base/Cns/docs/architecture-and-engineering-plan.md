@@ -2,9 +2,9 @@
 
 [English](../../en/docs/architecture-and-engineering-plan.md) | 中文
 
-2026-11-12 · 当前架构与交付对齐 · M0–M4。
+2026-11-13 · 当前架构与交付对齐 · M0–M4。
 
-复盘 main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc) 已有共享 Web 渲染、资源与动画、托管 UI 与文字输入、可编辑换装工作室及可选独立 World3D。[核心能力](core-progress.md)记录实际实现与证据，[工程计划](工程规划.md)给出下一批交付。工作区包为 private 0.0.0。
+复盘 main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e) 已有共享 Web 渲染、资源与动画、托管 UI 与文字输入、可编辑换装工作室及可选独立 World3D。[核心能力](core-progress.md)记录实际实现与证据，[工程计划](工程规划.md)给出下一批交付。工作区包为 private 0.0.0。
 
 环境保持 Node 26.7.0、pnpm 11.25.0、TypeScript 7.0.2、PowerShell 7.6.5。当前元数据生成、聚焦开发反馈、正常 hooks 及最终候选完整合并 CI 已实现；下一项核心功能不以前置新增维护自动化为条件。
 

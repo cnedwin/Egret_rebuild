@@ -14,7 +14,7 @@ Years later, as times change and technology advances, many developers continue t
 
 ## 当前白鹭引擎
 
-白鹭是面向 Web 游戏的开源 TypeScript 引擎。熟悉的显示、事件与资源接口配合 WebGPU 和 WebGL2 共享渲染，支持动画丰富的 2D 游戏与复杂界面。可选 [World3D](knowledge-base/Cns/docs/world3d.md) 提供独立 3D 渲染器。一体化 AI 创作平台及更多原生和小游戏宿主已列入路线图。
+白鹭是面向 Web 游戏的开源 TypeScript 引擎。显示、事件与资源接口配合 WebGPU 和 WebGL2 共享渲染，支持 2D 动画与复杂界面。可选 World3D 提供独立 3D 渲染与物理。一体化 AI 辅助创作及更多原生和小游戏宿主已列入路线图。 [World3D 契约](knowledge-base/Cns/docs/world3d.md)
 
 **工程预览阶段。** 可从公开示例开始体验，并查阅对应契约了解适用平台、功能与验收范围。工作区包为 private 0.0.0。
 
@@ -23,7 +23,7 @@ Years later, as times change and technology advances, many developers continue t
 | 渲染与资源 | WebGPU／WebGL2 共享渲染、有序准备、资源组及选定设备恢复路径。固定 M1.2 全脏 Engine p95 中位数为 5.3 ms，目标为 8 ms。 | 更广泛的宿主／设备验收和剩余 [M1.2 帧节奏目标](https://github.com/cnedwin/Egret_rebuild/issues/55) |
 | 内容与动画 | PNG／图集／序列帧构建、多页图集和字体产物，可选 Spine 播放／显示与 RESET，兼容资源替换时保留序列播放状态 | 完整选定版本 Spine 参考与状态保留、纹理变体、组合生命周期和性能验收 |
 | UI 与文字 | 变高列表、焦点／导航、多语言多样式段落、文字几何、字体／主题切换、遮罩／模糊、受管弹出层／模态层及可选原生单／多行编辑 | 真实 IME、其余控件／语义以及更多文字与设备验收 |
-| 3D | [可选 World3D](knowledge-base/Cns/docs/world3d.md) 支持 glTF、光照与阴影、后处理、动画、文字，以及带网格碰撞和关节的物理。共享宿主提供有界 3D 背景与 2D 合成。 | 更多资产、设备性能和工程创作整合 |
+| 3D | [可选 World3D](knowledge-base/Cns/docs/world3d.md) 支持 glTF、光照与阴影、后处理、动画、文字、自动实例化和加速拾取。物理预览包含形状扫掠、组合刚体、分片求解和玩法辅助组件。共享宿主提供有界 3D 背景与 2D 合成。 | 更多资产、设备性能和工程创作整合 |
 | 集成 | [可编辑换装工作室](examples/outfit-studio/README.zh-CN.md)，含精简桌面场景、固定混合负载及移动多点触摸档位 | 选定功能覆盖、完整性能／设备验收和核心预览交接 |
 
 [Android 真机观察](knowledge-base/Cns/docs/android-device-validation.md)覆盖已测试手机上的特定组件和混合场景。设备、输入及性能的验收范围见[当前能力图](knowledge-base/Cns/docs/core-progress.md)。
@@ -63,6 +63,10 @@ Merged engineering increments for the current preview. 当前工程预览已合�
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#168](https://github.com/cnedwin/Egret_rebuild/pull/168) | World3D physics helpers for ragdolls, arcade vehicles, rope and cloth, plus a message-port simulation client | World3D 增加布娃娃、街机式载具、绳索和布料辅助组件，以及消息端口物理客户端 |
+| [#166](https://github.com/cnedwin/Egret_rebuild/pull/166)–[#167](https://github.com/cnedwin/Egret_rebuild/pull/167) | Shape sweeps, compound bodies, joints and contacts, plus static-body hierarchy and solver slices | 新增形状扫掠、组合刚体、关节和接触报告，扩展静态刚体层级及分片求解 |
+| [#163](https://github.com/cnedwin/Egret_rebuild/pull/163) | Automatic instancing, accelerated picking and reduced per-frame allocation | 自动实例化、加速拾取并减少逐帧分配 |
+| [#164](https://github.com/cnedwin/Egret_rebuild/pull/164) | Parallel Windows code gate with four complete test shards | Windows 代码门禁拆为并行作业，四个测试分片保留完整覆盖 |
 | [#161](https://github.com/cnedwin/Egret_rebuild/pull/161) | World3D terrain, water, crowd and effects refinements, with 25 fixed Windows Edge WebGL2/WebGPU comparisons | World3D 地形、水面、人群与特效完善，Windows Edge 通过 25 个固定 WebGL2／WebGPU 对比 |
 | [#154](https://github.com/cnedwin/Egret_rebuild/pull/154)–[#159](https://github.com/cnedwin/Egret_rebuild/pull/159) | World3D character controls, decoding, navigation, terrain, skinned crowds and effects. Windows Edge passed 24 fixed WebGL2/WebGPU comparisons. | World3D 新增角色控制、解码、导航、地形、蒙皮人群与特效，Windows Edge 通过 24 个 WebGL2／WebGPU 固定场景对比。 |
 | [#153](https://github.com/cnedwin/Egret_rebuild/pull/153) | Fixed Windows full-dirty Engine median-p95 reaches 5.3 ms against 8 ms. Sparse/full-dirty pacing remains open. | Windows 固定全脏 Engine p95 中位数达到 5.3 ms，目标 8 ms。稀疏／全脏帧节奏仍待验收。 |

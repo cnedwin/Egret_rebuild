@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/交付计划.md)
 
-2026-11-12 · Current-source review: main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc).
+2026-11-13 · Current-source review: main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e).
 
 Egret has two delivery levels: a usable, honestly scoped engine core, then the complete game-creation and publication product. M0–M4 organize the current core program; V001–V008/V020 retain the larger product obligations. Completing a core milestone cannot silently close the creator platform, general 3D, native hosts or one-click migration.
 

@@ -338,6 +338,8 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 ## 待完成事项
 
+- 物理辅助组件的对比使用软件渲染离屏场景。远程物理世界测试使用 MessageChannel 和 Node 工作线程。浏览器 Worker 传输、载具和布娃娃实际交互、实体设备及性能仍待验收。API 专项跟踪远程请求结束与所有权、布娃娃激活回滚以及悬挂射线过滤。 [#169](https://github.com/cnedwin/Egret_rebuild/issues/169) [#168](https://github.com/cnedwin/Egret_rebuild/pull/168)
+
 - 桌面复审强制触发 WebGL2 上下文丢失并恢复了目标像素，也强制触发 WebGPU 设备丢失，确认收到通知并拒绝后续操作。更广泛的设备与恢复场景仍待验证。
 - 一台运行 Chrome 157 的 Android 真机已呈现两个后端，响应了自动触发的阴影开关，并在释放后停止更新帧。本次复审还在同类真机的 WebGL2 和 WebGPU 上检查了屏幕空间效果、顶点位移与阴影，以及斜切投影深度。
 - 更广泛的移动端与设备恢复覆盖、视口和反射探针专项检查、性能测量，以及第一人称控制和空间音频的真人验证仍待完成。

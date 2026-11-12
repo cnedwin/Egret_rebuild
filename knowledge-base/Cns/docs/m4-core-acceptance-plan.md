@@ -16,7 +16,7 @@ M4.3 必须将交付范围表述为复杂 2D UI／动画／资源核心预览，
 
 ## 2. 当前基础与依赖
 
-复盘 main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc) 已交付可编辑换装工作室、固定 X-D60/1 与 X-MTouch/1 档位、双后端计时及有限 Android 真机结果。先推进 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91)，让换装工作室通过既有工程事务在浏览器中打开导出的工程。导入取消或被拒绝时应保留当前场景及其资源租约。选定内容及输入行为就绪后，使用固定档位完成 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92)。[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) 的干净环境交接准备可并行进行。 完整选定版本 Spine、其余控件及设备和性能指标仍待验收。
+复盘 main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e) 已交付可编辑换装工作室、固定 X-D60/1 与 X-MTouch/1 档位、双后端计时及有限 Android 真机结果。先推进 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91)，让换装工作室通过既有工程事务在浏览器中打开导出的工程。导入取消或被拒绝时应保留当前场景及其资源租约。选定内容及输入行为就绪后，使用固定档位完成 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92)。[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) 的干净环境交接准备可并行进行。 完整选定版本 Spine、其余控件及设备和性能指标仍待验收。
 
 M3.2 已采用 CanvasKit／SkParagraph，早期 ICU／HarfBuzz／FreeType 表述指其段落服务，不是再建一套实现。M4.1 与 M3.2 尽早绑定真实 provider／字体产物并测量冷传输、初始化及分别驻留，M4.2 负责最终测量。所有已公布数值上限保留；不兼容场景／provider 变化须在采集前形成有理由的版本化后继，保留原档位／失败。
 

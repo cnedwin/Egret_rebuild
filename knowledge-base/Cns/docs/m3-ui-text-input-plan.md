@@ -2,7 +2,7 @@
 
 [English](../../en/docs/m3-ui-text-input-plan.md) | 中文
 
-架构与交付计划 · 2026-11-12 · 复盘 main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc)。父任务为 [#57](https://github.com/cnedwin/Egret_rebuild/issues/57)。保留四个工作包。托管 UI 已接入原生单行与多行编辑及受管弹层，实际 IME、设备和辅助技术资格继续按契约验收。
+架构与交付计划 · 2026-11-13 · 复盘 main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e)。父任务为 [#57](https://github.com/cnedwin/Egret_rebuild/issues/57)。保留四个工作包。托管 UI 已接入原生单行与多行编辑及受管弹层，实际 IME、设备和辅助技术资格继续按契约验收。
 
 M3 在既有 Engine、显示树、Scope 和资源所有者之上交付可用 UI 系统，包括自动布局、变高虚拟列表、带样式段落文字、指针/键盘输入、焦点、基础原生文字编辑及浏览器无障碍。它不代表完整 EUI/EXML 迁移、所有平台接入或 M4 生产验收完成。
 

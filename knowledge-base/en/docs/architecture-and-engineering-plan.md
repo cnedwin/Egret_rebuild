@@ -2,9 +2,9 @@
 
 English | [中文](../../Cns/docs/architecture-and-engineering-plan.md)
 
-2026-11-12 · Current architecture and delivery alignment · M0–M4.
+2026-11-13 · Current architecture and delivery alignment · M0–M4.
 
-Audited main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc) contains shared Web rendering, resources and animation, managed UI and text input, editable Outfit Studio and optional standalone World3D. [Core capabilities](core-progress.md) records implementation and evidence. The [engineering plan](engineering-plan.md) gives the next delivery sequence. Workspace packages are private at 0.0.0.
+Audited main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e) contains shared Web rendering, resources and animation, managed UI and text input, editable Outfit Studio and optional standalone World3D. [Core capabilities](core-progress.md) records implementation and evidence. The [engineering plan](engineering-plan.md) gives the next delivery sequence. Workspace packages are private at 0.0.0.
 
 The environment remains Node 26.7.0, pnpm 11.25.0, TypeScript 7.0.2 and PowerShell 7.6.5. Current metadata generation, scoped development feedback, normal hooks and complete final-candidate merge CI are implemented. No new maintenance-automation program is required to start the next core feature.
 
