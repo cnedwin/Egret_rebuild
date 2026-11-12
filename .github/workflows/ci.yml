@@ -12,8 +12,8 @@ concurrency:
   group: m0-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  # PR120 alone reuses prior exact Windows/Linux evidence; all other heads run the full suite.
-  # 仅 PR120 精确复用 Windows/Linux 成功记录，其他提交仍执行完整检查。
+  # PR120 alone reuses prior exact Windows/Linux evidence.
+  # 仅 PR120 精确复用 Windows/Linux 成功记录。
   retained:
     name: PR120 / retained Windows and Linux evidence
     if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 120 }}
@@ -159,11 +159,61 @@ jobs:
           if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $temporary -PathType Container)) { throw 'Cannot resolve temporary directory' }
           "TEMP=$temporary" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
           "TMP=$temporary" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Select Windows merge checks
+        id: windows-route
+        shell: pwsh
+        env:
+          EGRET_EVENT: ${{ github.event_name }}
+          EGRET_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          EGRET_PR_BASE: ${{ github.event.pull_request.base.sha }}
+          EGRET_PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          EGRET_PR_MERGE: ${{ github.sha }}
+        run: |
+          $profile = 'full'
+          $receipt = 'No trusted documentation-only selection was established.'
+          if ($env:EGRET_EVENT -ceq 'pull_request' -and $env:EGRET_BASE_REF -ceq 'main' -and $env:EGRET_PR_BASE -cmatch '^[0-9a-f]{40}$') {
+            try {
+              # Never let a candidate-selected classifier opt out of the full gate.
+              $PSNativeCommandUseErrorActionPreference = $false
+              foreach ($file in @('.github/workflows/ci.yml', 'tools/check-ci-documentation.mjs')) {
+                $trusted = git --no-replace-objects rev-parse --verify "${env:EGRET_PR_BASE}:${file}" 2>$null
+                if ($LASTEXITCODE -ne 0) { throw 'Base does not contain the current route policy.' }
+                $checked = git --no-replace-objects rev-parse --verify "HEAD:${file}" 2>$null
+                if ($LASTEXITCODE -ne 0 -or $checked -cne $trusted) { throw 'Candidate changes the route policy.' }
+                $actual = git --no-replace-objects hash-object --no-filters -- $file 2>$null
+                if ($LASTEXITCODE -ne 0 -or $actual -cne $trusted) { throw 'Checkout does not match the trusted route policy.' }
+              }
+              $receipt = node tools/check-ci-documentation.mjs $env:EGRET_EVENT $env:EGRET_BASE_REF $env:EGRET_PR_BASE $env:EGRET_PR_HEAD $env:EGRET_PR_MERGE
+              if ($LASTEXITCODE -ne 0) { throw 'Route policy could not run.' }
+              if (($receipt | ConvertFrom-Json).profile -ceq 'documentation') { $profile = 'documentation' }
+            } catch {
+              $receipt = $_.Exception.Message
+            }
+          }
+          Write-Output "$profile Windows merge checks. $receipt"
+          "profile=$profile" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
       - name: Install pinned package manager
         run: npm install --global pnpm@11.25.0 --ignore-scripts
       - name: Clean setup
         run: pnpm setup:dev --no-build
+      - name: Documentation-only merge checks
+        if: steps.windows-route.outputs.profile == 'documentation'
+        shell: pwsh
+        env:
+          EGRET_METADATA_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          node tools/check-repository-hygiene.mjs --committed
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tools/contribution-metadata.mjs --check --base $env:EGRET_METADATA_BASE
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tools/check-publication.mjs --contribution
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          pwsh -NoProfile -File knowledge-base/tools/Validate-KnowledgeBase.ps1 -CheckOnly
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          'Windows documentation-only checks passed on the bound PR merge tree. Engine verification was not run in this job.' |
+            Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
       - name: Full merge checks
+        if: steps.windows-route.outputs.profile != 'documentation'
         env:
           EGRET_METADATA_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: node tools/prepush.mjs --integrated
