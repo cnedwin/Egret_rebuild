@@ -12,13 +12,13 @@ import {Attribute3D, Geometry3D} from './Geometry3D.js';
 import type {MorphTarget3D, Topology3D} from './Geometry3D.js';
 import {Light3D} from './Light3D.js';
 import {Material3D} from './Material3D.js';
-import {Bone3D, MESH3D_LIMITS, Mesh3D, Skeleton3D} from './Mesh3D.js';
+import {Bone3D, InstancedMesh3D, MESH3D_LIMITS, Mesh3D, Skeleton3D} from './Mesh3D.js';
 import {Object3D} from './Object3D.js';
 import {isKtx23D, parseKtx23D} from './Ktx23D.js';
 import type {Ktx2Options3D} from './Ktx23D.js';
 import {Texture3D, isCompressedPixels3D} from './Texture3D.js';
 import type {TextureColorSpace3D, TextureSource3D, TextureWrap3D} from './Texture3D.js';
-import {mat4Identity} from './math3D.js';
+import {mat4Compose, mat4Identity} from './math3D.js';
 
 export interface GltfImageRequest3D {
     readonly index: number;
@@ -74,7 +74,7 @@ export interface GltfAsset3D {
 }
 
 type Json = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-const SUPPORTED_EXTENSIONS = new Set(['KHR_materials_unlit', 'KHR_materials_emissive_strength', 'KHR_texture_transform', 'KHR_lights_punctual', 'KHR_mesh_quantization', 'KHR_texture_basisu']);
+const SUPPORTED_EXTENSIONS = new Set(['KHR_materials_unlit', 'KHR_materials_emissive_strength', 'KHR_texture_transform', 'KHR_lights_punctual', 'KHR_mesh_quantization', 'KHR_texture_basisu', 'EXT_mesh_gpu_instancing']);
 /** Extensions accepted only when the caller injects the matching decoder. */
 const DECODER_EXTENSIONS: Readonly<Record<string, 'decodeMeshopt' | 'decodeDraco'>> = Object.freeze({EXT_meshopt_compression: 'decodeMeshopt', KHR_draco_mesh_compression: 'decodeDraco'});
 const GLTF_LIMITS = Object.freeze({
@@ -467,6 +467,48 @@ class GltfReader {
         }));
     }
 
+    /**
+     * EXT_mesh_gpu_instancing: replace a node's meshes with instanced meshes
+     * placed by the extension's TRANSLATION, ROTATION and SCALE accessors.
+     * An optional _COLOR_0 accessor tints each instance.
+     */
+    private instanced(meshes: Mesh3D[], extension: Json): Mesh3D[] {
+        const attributes: Json = extension.attributes ?? fail('EXT_mesh_gpu_instancing.attributes');
+        const read = (name: string, itemSize: number): Float32Array | undefined => {
+            const index = attributes[name];
+            if (index === undefined) return undefined;
+            const accessor = this.accessor(index);
+            if (accessor.itemSize !== itemSize) fail('instancing ' + name);
+            return this.floats(index);
+        };
+        const translation = read('TRANSLATION', 3), rotation = read('ROTATION', 4), scale = read('SCALE', 3);
+        const colorIndex = attributes['_COLOR_0'], colorSize = colorIndex === undefined ? 0 : this.accessor(colorIndex).itemSize;
+        if (colorSize !== 0 && colorSize !== 3 && colorSize !== 4) fail('instancing _COLOR_0');
+        const colors = colorIndex === undefined ? undefined : this.floats(colorIndex);
+        const counts = [translation && translation.length / 3, rotation && rotation.length / 4, scale && scale.length / 3, colors && colors.length / colorSize].filter((n): n is number => n !== undefined);
+        const count = counts[0] ?? fail('instancing needs an attribute');
+        if (count < 1 || counts.some(n => n !== count)) fail('instancing accessor counts');
+        if (count > MESH3D_LIMITS.maxInstances) throw new World3DError('WORLD3D_BUDGET', 'gltf instances');
+        const t = [0, 0, 0], q = [0, 0, 0, 1], k = [1, 1, 1];
+        return meshes.map(mesh => {
+            const instances = new InstancedMesh3D(mesh.geometry, mesh.material, count, colorSize === 4 ? 4 : 3);
+            instances.name = mesh.name;
+            for (let i = 0; i < count; i++) {
+                if (translation) { t[0] = translation[i * 3]!; t[1] = translation[i * 3 + 1]!; t[2] = translation[i * 3 + 2]!; }
+                if (rotation) {
+                    // Quantized rotations are only approximately unit length.
+                    const x = rotation[i * 4]!, y = rotation[i * 4 + 1]!, z = rotation[i * 4 + 2]!, w = rotation[i * 4 + 3]!, length = Math.hypot(x, y, z, w) || 1;
+                    q[0] = x / length; q[1] = y / length; q[2] = z / length; q[3] = w / length;
+                }
+                if (scale) { k[0] = scale[i * 3]!; k[1] = scale[i * 3 + 1]!; k[2] = scale[i * 3 + 2]!; }
+                mat4Compose(instances.instanceMatrices.subarray(i * 16, i * 16 + 16), t, q, k);
+            }
+            if (colors) instances.instanceColors = colors.slice();
+            instances.instanceVersion++;
+            return instances;
+        });
+    }
+
     // ---- nodes, skins, scenes -----------------------------------------------------
     private camera(index: number): Camera3D {
         const def = this.json.cameras?.[index] ?? fail('camera ' + index);
@@ -510,7 +552,9 @@ class GltfReader {
         this.nodes = []; this.nodeMeshes = [];
         for (let i = 0; i < nodeDefs.length; i++) {
             const def = nodeDefs[i]!;
-            const meshes = def.mesh !== undefined ? await this.meshes(def.mesh) : [];
+            let meshes = def.mesh !== undefined ? await this.meshes(def.mesh) : [];
+            const instancing = def.extensions?.EXT_mesh_gpu_instancing;
+            if (instancing && meshes.length > 0) meshes = this.instanced(meshes, instancing);
             // A single-primitive mesh becomes the node itself; otherwise the
             // node is a plain parent holding one mesh per primitive.
             let node: Object3D;

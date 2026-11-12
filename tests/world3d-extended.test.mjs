@@ -90,6 +90,33 @@ test('glTF accepts meshopt and Draco only through injected decoders', async () =
   await assert.rejects(loadGltf3D(bytes, {loadBuffer, decodeMeshopt: () => new Uint8Array(3)}), code('WORLD3D_GLTF_INVALID'));
 });
 
+test('glTF EXT_mesh_gpu_instancing nodes load as instanced meshes', async () => {
+  const quad = quadGltf({extensionsUsed: ['EXT_mesh_gpu_instancing'], extensionsRequired: ['EXT_mesh_gpu_instancing']});
+  // Three instances: translations as floats, rotations as normalized shorts, uniform scales.
+  const translations = new Float32Array([0, 0, 0, 5, 0, 0, 0, 7, 0]), scales = new Float32Array([1, 1, 1, 2, 2, 2, 1, 1, 1]);
+  const half = Math.round(Math.SQRT1_2 * 32767), rotations = new Int16Array([0, 0, 0, 32767, 0, 0, half, half, 0, 0, 0, 32767]);
+  const bin = new Uint8Array(60 + 36 + 36 + 24);
+  bin.set(quad.bin); bin.set(new Uint8Array(translations.buffer), 60); bin.set(new Uint8Array(scales.buffer), 96); bin.set(new Uint8Array(rotations.buffer), 132);
+  const json = quad.json;
+  json.buffers[0].byteLength = bin.length;
+  json.bufferViews.push({buffer: 0, byteOffset: 60, byteLength: 36}, {buffer: 0, byteOffset: 96, byteLength: 36}, {buffer: 0, byteOffset: 132, byteLength: 24});
+  json.accessors.push({bufferView: 2, componentType: 5126, count: 3, type: 'VEC3'}, {bufferView: 3, componentType: 5126, count: 3, type: 'VEC3'}, {bufferView: 4, componentType: 5122, count: 3, type: 'VEC4', normalized: true});
+  json.nodes[0].extensions = {EXT_mesh_gpu_instancing: {attributes: {TRANSLATION: 2, SCALE: 3, ROTATION: 4}}};
+  const asset = await loadGltf3D(new TextEncoder().encode(JSON.stringify(json)), {loadBuffer: async () => bin});
+  const mesh = asset.scene.getObjectByName('quad');
+  assert.ok(mesh instanceof InstancedMesh3D);
+  assert.equal(mesh.count, 3);
+  const m = mesh.instanceMatrices;
+  assert.deepEqual([m[12], m[13], m[14]], [0, 0, 0]);
+  assert.equal(m[16 + 12], 5, 'second instance is moved');
+  // It is also scaled by 2 and turned 90 degrees about Z: its X axis points along +Y and its Y axis along -X.
+  close(m[16 + 0], 0, 1e-3); close(m[16 + 1], 2, 1e-3); close(m[16 + 4], -2, 1e-3); close(m[16 + 10], 2, 1e-3);
+  assert.equal(m[32 + 13], 7);
+  asset.dispose();
+  json.nodes[0].extensions.EXT_mesh_gpu_instancing.attributes.SCALE = 0;
+  await assert.rejects(loadGltf3D(new TextEncoder().encode(JSON.stringify(json)), {loadBuffer: async () => bin}), code('WORLD3D_GLTF_INVALID'));
+});
+
 test('scene documents round-trip nodes, resources and skip what cannot be saved', () => {
   const scene = new Scene3D(); scene.name = 'level'; scene.background = [0.1, 0.2, 0.3]; scene.fog = {kind: 'linear', color: [1, 1, 1], near: 2, far: 9};
   const camera = createPerspectiveCamera3D({fov: 40, aspect: 2, near: 0.5, far: 50}); camera.name = 'eye'; camera.setPosition(1, 2, 3); scene.addChild(camera);

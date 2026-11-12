@@ -72,7 +72,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 ## glTF
 
-`loadGltf3D` 读取 `.glb` 字节或已解析的 `.gltf` 对象，返回场景、相机、动画和所创建的资源，并提供统一的 `dispose()`。支持网格、金属度-粗糙度和无光照材质、纹理变换、节点层级、蒙皮、变形目标、动画、相机和精确光源。图像解码和外部缓冲加载由调用方注入，读取器因此不依赖 DOM。当前读取器接受根节点彼此独立的场景与第 0 套纹理坐标。共享场景根节点或其他纹理坐标集会触发明确的错误诊断。单个访问器解码上限为 128 MiB，合计上限为 256 MiB。Draco、meshopt 和 Basis 数据需要调用方提供解码器（见“压缩资源”）；未提供时，它们和其他必需扩展会以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。浏览器入口中的 `loadGltfFromUrl3D` 提供 fetch 和 `createImageBitmap`。
+`loadGltf3D` 读取 `.glb` 字节或已解析的 `.gltf` 对象，返回场景、相机、动画和所创建的资源，并提供统一的 `dispose()`。支持网格、金属度-粗糙度和无光照材质、纹理变换、节点层级、蒙皮、变形目标、动画、相机、精确光源，以及 `EXT_mesh_gpu_instancing` 节点（读入为 `InstancedMesh3D`）。图像解码和外部缓冲加载由调用方注入，读取器因此不依赖 DOM。当前读取器接受根节点彼此独立的场景与第 0 套纹理坐标。共享场景根节点或其他纹理坐标集会触发明确的错误诊断。单个访问器解码上限为 128 MiB，合计上限为 256 MiB。Draco、meshopt 和 Basis 数据需要调用方提供解码器（见“压缩资源”）；未提供时，它们和其他必需扩展会以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。浏览器入口中的 `loadGltfFromUrl3D` 提供 fetch 和 `createImageBitmap`。
 
 ## 渲染器
 
