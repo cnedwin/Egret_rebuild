@@ -2,11 +2,11 @@
 
 [English](../../en/docs/m3-ui-text-input-plan.md) | 中文
 
-架构与交付计划，2026-11-07 按 main f869b37 统一。父任务：#57。保留四个工作包。已实现的输入与 UI 基础分别记录契约和证据；本计划不代表整个工作包、性能、IME 或辅助技术验收通过。
+架构与交付计划 · 2026-11-12 · 复盘 main [0ac1dc3](https://github.com/cnedwin/Egret_rebuild/commit/0ac1dc3afe65f479f7821f765e2d52605b4ace8f)。父任务为 [#57](https://github.com/cnedwin/Egret_rebuild/issues/57)。保留四个工作包。托管 UI 已接入原生单行与多行编辑及受管弹层，实际 IME、设备和辅助技术资格继续按契约验收。
 
 M3 在既有 Engine、显示树、Scope 和资源所有者之上交付可用 UI 系统，包括自动布局、变高虚拟列表、带样式段落文字、指针/键盘输入、焦点、基础原生文字编辑及浏览器无障碍。它不代表完整 EUI/EXML 迁移、所有平台接入或 M4 生产验收完成。
 
-sequence-6 正式计时得出有效失败后，M1.2/D60 继续 OPEN。现有渲染/资源结果是前置基础和回归参考，不是 M3 验收。M3 的独立工作可以推进，但不能因此将性能缺口标为关闭。
+固定 Windows E20 已达到 Engine 与准备目标。M1.2 帧节奏和 D60 仍开放，详见 [M1.2 证据](incremental-frame-preparation-evidence.md)。M3 的独立工作按自身契约推进。
 
 ## 1. 当前实现与计划变化
 

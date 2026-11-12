@@ -2,11 +2,11 @@
 
 English | [中文](../../Cns/docs/m3-ui-text-input-plan.md)
 
-Architecture and delivery plan, reconciled 2026-11-07 at main f869b37. Parent tracking issue: #57. The four work packages are retained. Implemented input and UI foundations have separate contracts and evidence; this plan does not establish whole-package, performance, IME or assistive-technology acceptance.
+Architecture and delivery plan · 2026-11-12 · Reviewed main [0ac1dc3](https://github.com/cnedwin/Egret_rebuild/commit/0ac1dc3afe65f479f7821f765e2d52605b4ace8f). Parent tracking issue [#57](https://github.com/cnedwin/Egret_rebuild/issues/57). The four work packages cover managed UI with native single/multiline editing and owned layers. The contracts track remaining IME, device and assistive-technology qualification.
 
 M3 delivers a usable UI system on the existing Engine, display tree, Scope and resource owners. It includes automatic layout, variable-height virtual lists, styled paragraph text, pointer/keyboard input, focus, basic native text editing and browser accessibility. It does not complete legacy EUI/EXML migration, all platform integrations or M4 production acceptance.
 
-M1.2/D60 remains OPEN after the valid sequence-6 formal timing failure. Existing rendering/resource results are prerequisites and regression references, not M3 acceptance. Independent M3 work may proceed without representing that performance gap as closed.
+Fixed Windows E20 meets Engine and preparation targets. M1.2 pacing and D60 remain open. The [M1.2 evidence](incremental-frame-preparation-evidence.md) records their scope. Independent M3 work follows its own contracts.
 
 ## 1. Current implementation and the intended change
 

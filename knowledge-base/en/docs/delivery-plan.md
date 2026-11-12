@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/交付计划.md)
 
-2026-11-07 · Current-source review: main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1).
+2026-11-12 · Current-source review: main [0ac1dc3](https://github.com/cnedwin/Egret_rebuild/commit/0ac1dc3afe65f479f7821f765e2d52605b4ace8f).
 
 Egret has two delivery levels: a usable, honestly scoped engine core, then the complete game-creation and publication product. M0–M4 organize the current core program; V001–V008/V020 retain the larger product obligations. Completing a core milestone cannot silently close the creator platform, general 3D, native hosts or one-click migration.
 
@@ -13,12 +13,12 @@ Egret has two delivery levels: a usable, honestly scoped engine core, then the c
 | Milestone | Available delivery | Remaining exit |
 | --- | --- | --- |
 | M0 Architecture/community foundations | Pinned environment, setup/examples, public collaboration, current metadata, scoped feedback and full CI | Independent human newcomer/fork rehearsal #52; remaining source/fixture/device/profile qualification #54 |
-| M1 Rendering/resource foundation | Incremental ordered rendering, reuse, shared WebGPU/WebGL2, manifests and selected device recovery | Formal full-dirty Engine 10.3 ms versus 8 ms, preparation coverage and separately declared measurements; #55 remains open |
+| M1 Rendering/resource foundation | Incremental ordered rendering, reuse, shared WebGPU/WebGL2, manifests and selected device recovery. E20 meets fixed desktop CPU and preparation targets | Sparse and full-dirty pacing, unmeasured GPU timing and complete D60 qualification. [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) remains open |
 | M2 Spine/content | Selected reproducible build/runtime groups, optional JSON assets, independent players/shared display, sequence controls, RESET and selected recovery | Remaining content/binary/variants, complete selected-version references/semantics, seek and compatible preservation; #83–#86 |
-| M3 UI/text/input | Managed layout/virtualization/focus, styled paragraphs/geometry, fonts/themes, masks/blur, contact/keyboard foundations and contributed control state | Native editing/IME, complete controls/layers/semantics, coordinated gesture work and required text/device/accessibility qualification; #87–#90 |
-| M4 Mixed core acceptance | Reusable component examples and preview failure/reload behavior | One mixed reference project, complete X/L/phone/performance campaign and clean-consumer handoff; #91–#93 |
+| M3 UI/text/input | Managed layout/virtualization/focus, styled paragraphs and geometry, fonts/themes, masks/blur, touch and keyboard, native editing and owned layers | IME, remaining controls and semantics, and required text, device and accessibility qualification. #87–#90 |
+| M4 Mixed core acceptance | Editable Outfit Studio, fixed mixed profiles, dual-backend and scoped physical Android results | In-browser project open, full X/L/phone/performance qualification and clean-consumer handoff. #91–#93 |
 
-The [engineering plan](engineering-plan.md) prioritizes native editing, early mixed integration and remaining animation/content work within those same packages. First integration can start without every external acceptance row; final M4 closure requires its complete prerequisites. Staffing, costs and dates are not inferred from test or commit counts.
+Start with [#91](https://github.com/cnedwin/Egret_rebuild/issues/91), browser opening of an exported Outfit Studio project through the existing project transaction. A canceled or rejected import must preserve the live scene and its resource leases. After selected content and input behavior is ready, use the fixed profiles for [#92](https://github.com/cnedwin/Egret_rebuild/issues/92). Clean-consumer handoff preparation in [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) can proceed in parallel. The [engineering plan](engineering-plan.md) sets dependencies and exit criteria.
 
 ## Full product delivery
 

@@ -14,9 +14,9 @@ Years later, as times change and technology advances, many developers continue t
 
 ## 当前白鹭引擎
 
-白鹭是面向 Web 游戏的引擎社区重建项目，保留熟悉的 TypeScript API，提供动画丰富的 2D、复杂界面和明确的资源所有权。可选 World3D 提供独立的 WebGL2 与 WebGPU 渲染入口。一体化 AI 创作平台及新增原生／小游戏宿主已列入路线图。
+白鹭是面向 Web 游戏的开源 TypeScript 引擎。熟悉的显示、事件与资源接口配合 WebGPU 和 WebGL2 共享渲染，支持动画丰富的 2D 游戏与复杂界面。可选 [World3D](knowledge-base/Cns/docs/world3d.md) 提供独立 3D 渲染器。一体化 AI 创作平台及更多原生和小游戏宿主已列入路线图。
 
-**工程预览阶段：**main 包含经评审、可运行的工程增量，不代表完整引擎发布，也不代表所有平台、Spine 功能、无障碍与性能已验收。请按各能力契约和实际测量范围使用。
+**工程预览阶段。** 可从公开示例开始体验，并查阅对应契约了解适用平台、功能与验收范围。工作区包为 private 0.0.0。
 
 | 领域 | 主干已有能力 | 仍需完成 |
 | --- | --- | --- |
@@ -26,7 +26,7 @@ Years later, as times change and technology advances, many developers continue t
 | 3D | [可选 World3D](knowledge-base/Cns/docs/world3d.md) 支持 glTF、光照与阴影、后处理、动画、文字，以及带网格碰撞和关节的物理。共享宿主提供有界 3D 背景与 2D 合成。 | 更多资产、设备性能和工程创作整合 |
 | 集成 | [可编辑换装工作室](examples/outfit-studio/README.zh-CN.md)，含精简桌面场景、固定混合负载及移动多点触摸档位 | 选定功能覆盖、完整性能／设备验收和核心预览交接 |
 
-[Android 观察与剩余设备限制](knowledge-base/Cns/docs/android-device-validation.md)只覆盖准确组件档位，不代表通用手机支持或关闭 M1.2 性能目标。
+[Android 真机观察](knowledge-base/Cns/docs/android-device-validation.md)覆盖已测试手机上的特定组件和混合场景。设备、输入及性能的验收范围见[当前能力图](knowledge-base/Cns/docs/core-progress.md)。
 
 ## 运行示例
 
@@ -40,7 +40,7 @@ Years later, as times change and technology advances, many developers continue t
 
 [WebGL2 等距地图示例](examples/isometric-map/README.zh-CN.md)展示小型网格场景的深度排序和帧提交。
 
-用 [World3D 示例](examples/world3d/README.zh-CN.md) 在 WebGL2 或 WebGPU 上体验可选 3D 入口。
+运行 [World3D 示例与功能展厅](examples/world3d/README.zh-CN.md)，体验可选 3D 能力。示例文档列出了适用后端和已验证环境。
 
 地图、物理、音频、存档、解包、KTX2 和多语言可按需启用，详见[第三方集成](integrations/README.zh-CN.md)。
 
@@ -59,10 +59,12 @@ Years later, as times change and technology advances, many developers continue t
 
 ## 最近交付 / Recent deliveries
 
-下列记录为已合并工程增量，不代表发布新包版本或完整支持声明。These are merged engineering increments, not new package-version or full-support announcements.
+Merged engineering increments for the current preview. 当前工程预览已合并的增量。
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#153](https://github.com/cnedwin/Egret_rebuild/pull/153) | Fixed Windows full-dirty Engine median-p95 reaches 5.3 ms against 8 ms. Sparse/full-dirty pacing remains open. | Windows 固定全脏 Engine p95 中位数达到 5.3 ms，目标 8 ms。稀疏／全脏帧节奏仍待验收。 |
+| [#152](https://github.com/cnedwin/Egret_rebuild/pull/152) | World3D feature gallery, CPU regression workloads, and physics and shadow optimizations | World3D 功能展厅、CPU 回归负载及物理与阴影优化 |
 | [#147](https://github.com/cnedwin/Egret_rebuild/pull/147) | Optional World3D scene graph and standalone WebGL2/WebGPU renderers | 新增可选 World3D 场景图与独立 WebGL2／WebGPU 渲染器 |
 | [#148](https://github.com/cnedwin/Egret_rebuild/pull/148) | World3D materials, lighting, post-processing, compressed textures and scene documents | 扩展 World3D 材质、光照、后处理、压缩纹理和场景文档 |
 | [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) | World3D instance import, vertex hooks and static mesh collisions with PC and Android functional evidence | 新增 World3D 实例导入、顶点钩子和静态网格碰撞，补齐 PC 与 Android 功能证据 |

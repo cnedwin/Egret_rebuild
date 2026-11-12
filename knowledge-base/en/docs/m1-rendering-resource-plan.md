@@ -4,6 +4,10 @@ English | [中文](../../Cns/docs/m1-rendering-resource-plan.md)
 
 2026-10-21 · Revision 6 · Design and acceptance targets, not completed capabilities
 
+## Current formal timing — 2026-11-12
+
+The fixed Windows E20 run met the Engine and preparation targets in all three states. The Engine median-p95 for static, sparse and full-dirty was 5.0, 5.9 and 5.3 ms against 8 ms. The sparse and full-dirty duration-weighted wall-gap p95 was 17.2 and 17.3 ms against 16.7 ms. GPU time is unmeasured. [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) remains open and D60 remains incomplete. The [M1.2 evidence](incremental-frame-preparation-evidence.md) contains the source-bound batch and earlier results.
+
 ## Historical implementation checkpoint — 2026-10-20
 
 Verification cutoff: 2026-10-20. M1.3 and M1.4 were delivered through [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75) and [PR #77](https://github.com/cnedwin/Egret_rebuild/pull/77). M1.5 has completed independent review of its seven fixed desktop recovery cases. The affected browser regression completed all twenty-four suites and thirty-six actual calls with independent result review. Final package review and protected merge checks remained outstanding at this checkpoint, followed by M1.2 formal paired performance acceptance.
@@ -126,6 +130,6 @@ The following status is updated through 2026-10-21, including the later M1.5 del
 | --- | --- |
 | Workflow integration and fixed recovery verification | Completed: workflow [PR #78](https://github.com/cnedwin/Egret_rebuild/pull/78) and independently reviewed C7 results. |
 | M1.5 regression and protected integration | Delivered through [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79), main `4924b471b52927184252191055f902c30c29af52`. Twenty-four browser suites / thirty-six actual calls and C7 have independent review. Complete protected CI passed 290 publication, 4,528 core and 160 F2 tests, with no failures, skips or cancellations. The [evidence record](resource-recovery-evidence.md) preserves the finite scope and original failures. |
-| M1.2 performance and M1 closeout | Sequence 6 completed all 30 formal trials with FAIL_TIMING_TARGET. Static/sparse Engine targets pass; full-dirty Engine p95 is 10.3 ms versus 8 ms, and the preparation upper bound is unestablished. Preserve original evidence and completed independent reviews; resolve the remaining cost before M1 closeout. |
+| M1.2 performance and M1 closeout | E20 meets the fixed desktop Engine and preparation targets in all three states. Sparse and full-dirty wall gaps miss their target, GPU timing is unmeasured and D60 remains incomplete. See the [M1.2 evidence](incremental-frame-preparation-evidence.md) for E20 and the original E19 result. |
 
 These are connected outcomes within existing M1. A functional merge cannot close an outstanding performance or platform acceptance row. Unavailable GPU timing, external devices, authorized Editor content and human onboarding remain explicitly unaccepted where evidence is missing.

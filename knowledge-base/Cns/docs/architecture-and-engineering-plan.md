@@ -2,15 +2,15 @@
 
 [English](../../en/docs/architecture-and-engineering-plan.md) | 中文
 
-2026-11-07 · 当前架构与交付对齐 · M0–M4。
+2026-11-12 · 当前架构与交付对齐 · M0–M4。
 
-复盘 main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1) 已有四个基础包与可选 Spine、M1 渲染／资源、选定 M2 内容／动画、托管 M3 UI／文字／输入及有界 Android 补充。[核心能力](core-progress.md)是当前实现图，[工程计划](工程规划.md)说明下一批完整增量。工作区包仍为 private 0.0.0。
+复盘 main [0ac1dc3](https://github.com/cnedwin/Egret_rebuild/commit/0ac1dc3afe65f479f7821f765e2d52605b4ace8f) 已有共享 Web 渲染、资源与动画、托管 UI 与文字输入、可编辑换装工作室及可选独立 World3D。[核心能力](core-progress.md)记录实际实现与证据，[工程计划](工程规划.md)给出下一批交付。工作区包为 private 0.0.0。
 
 环境保持 Node 26.7.0、pnpm 11.25.0、TypeScript 7.0.2、PowerShell 7.6.5。当前元数据生成、聚焦开发反馈、正常 hooks 及最终候选完整合并 CI 已实现；下一项核心功能不以前置新增维护自动化为条件。
 
-M0 真人／fork 和剩余权利／设备资格保留在 #52／#54。M1.2 继续保留全脏 10.3 ms 对 8 ms 的有效失败、准备覆盖及未测 GPU 时间；这些限制对应声明与最终 M4 资格，不阻塞无关 M2／M3 实现或首次混合整合。
+M0 独立新贡献者演练与剩余权利／设备资格由 [#52](https://github.com/cnedwin/Egret_rebuild/issues/52) 和 [#54](https://github.com/cnedwin/Egret_rebuild/issues/54) 跟踪。Windows E20 固定场景的三种状态均达到 Engine 与准备目标。静态、稀疏、全脏的 Engine p95 中位数依次为 5.0、5.9、5.3 ms，目标为 8 ms。稀疏和全脏的按时长加权墙钟间隔 p95 分别为 17.2 和 17.3 ms，目标为 16.7 ms。GPU 时间未测。[#55](https://github.com/cnedwin/Egret_rebuild/issues/55) 仍开放，D60 仍未完成。 原测量保留于 [M1.2 证据](incremental-frame-preparation-evidence.md)。
 
-保留 [M2–M4 路线图](m2-m4-delivery-plan.md)、原十一个包和不变验收目标。原生编辑、同一混合参考和剩余 Spine／内容是下一批建议，本次文档不实现它们。
+[M2–M4 路线图](m2-m4-delivery-plan.md)保留十一个工作包和既有验收目标。先推进 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91)，让换装工作室通过既有工程事务在浏览器中打开导出的工程。导入取消或被拒绝时应保留当前场景及其资源租约。选定内容及输入行为就绪后，使用固定档位完成 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92)。[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) 的干净环境交接准备可并行进行。
 
 ## 1. 目标、范围与取舍
 

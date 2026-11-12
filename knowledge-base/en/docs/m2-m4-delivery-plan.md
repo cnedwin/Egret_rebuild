@@ -2,27 +2,27 @@
 
 English | [简体中文](../../Cns/docs/m2-m4-delivery-plan.md)
 
-2026-11-07 · Current implementation and next-phase alignment
+2026-11-12 · Current implementation and next-phase alignment
 
 ## Purpose and current baseline
 
-2026-11-07 · Reconciled roadmap · Audited main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1).
+Reviewed main [0ac1dc3](https://github.com/cnedwin/Egret_rebuild/commit/0ac1dc3afe65f479f7821f765e2d52605b4ace8f).
 
 Make the current shared core usable for animation-rich, complex-interface games, then qualify its complete declared scope. The eleven existing packages remain unchanged. [Current capabilities](core-progress.md) provides the as-built map; [engineering](engineering-plan.md) gives the next complete increments; [M2](m2-spine-content-plan.md), [M3](m3-ui-text-input-plan.md) and [M4](m4-core-acceptance-plan.md) own their detailed contracts.
 
-M1 rendering, WebGL2, manifests and selected recovery are integrated. M1.2 formal static/sparse/full-dirty Engine median-p95 remains 5.0/6.4/10.3 ms against 8 ms; full-dirty preparation coverage is unestablished and GPU time is unmeasured. Keep #55 open.
+M1 rendering, WebGL2, manifests and selected recovery are integrated. The fixed Windows E20 run met the Engine and preparation targets in all three states. The Engine median-p95 for static, sparse and full-dirty was 5.0, 5.9 and 5.3 ms against 8 ms. The sparse and full-dirty duration-weighted wall-gap p95 was 17.2 and 17.3 ms against 16.7 ms. GPU time is unmeasured. [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) remains open and D60 remains incomplete. See the [M1.2 evidence](incremental-frame-preparation-evidence.md) for the original batches.
 
-M2 has build-to-runtime PNG/atlas/multipage/sequence/font paths, optional Core 4.3.13 JSON assets, independent players/shared display, skins/finite plays, RESET and selected recovery. M3 has managed UI/navigation, readonly styled paragraphs/geometry, font/theme generations, shared masks/blur, contact/keyboard foundations and contributed movement/action state. Their complete package acceptance remains open. Bounded Android evidence is in the [device report](android-device-validation.md).
+M2 has PNG, multipage atlas, sequence and font build/runtime paths, optional Spine 4.3.13 JSON and shared display, and compatible sequence state preservation. M3 has managed UI, paragraphs and geometry, font/theme switching, native single/multiline editing, owned layers, and touch and keyboard foundations. M4 has editable Outfit Studio, fixed workloads and scoped physical Android evidence. See [current capabilities](core-progress.md) and the [device report](android-device-validation.md).
 
 ### Next complete increments
 
 | Entry | First outcome | Remaining dependency |
 | --- | --- | --- |
-| M3.3 #89 with #87/#88 | Native plain-text editing in existing UI, consuming committed paragraph geometry and focus | Actual editor/IME and bounded row-retention implementation; no duplicate text engine or touch ownership |
-| M4.1 #91 | One growing mixed reference built from available public interfaces; early actual provider/content budget intake | Full form/controls and selected content before final X qualification |
+| M3.3 #89 with #87/#88 | Complete the declared editing behavior on the delivered native editor, paragraph and focus foundations | Human IME, devices, text references and accessibility still need their respective acceptance |
+| M4.1 #91 | Open an exported Outfit Studio project in the browser through the existing transaction, covering cancel, failure and retry | Selected content and controls precede #92 fixed-profile qualification |
 | M2.1–M2.4 #83–#86 | Remaining content/binary/variants, seek/replay and compatible state preservation | Version/rights/reference rows qualify their advertised scope |
 
-Existing M3.4 touch contributions continue under their coordinated owner. Full M4 closure still needs all required functionality, unchanged performance targets and actual required device/material evidence. These priorities do not start new engine work through this documentation change.
+Full M4 closure requires the declared functionality, unchanged performance targets and actual device and asset evidence. Optional [World3D](world3d.md) has its own feature and verification scope.
 
 ## Architectural choice
 
@@ -125,7 +125,7 @@ Retain the D60 engine CPU p95 ≤ 8 ms and preparation ≤ 4 ms targets, frame-i
 
 | Open boundary | Responsible role | Required resolution; affected claim |
 | --- | --- | --- |
-| M1.2 full-dirty CPU/preparation | Rendering maintainer | Measured implementation improvement and the fixed formal acceptance; blocks M1 performance/M4 core performance, not independent UI design |
+| M1.2 sparse and full-dirty pacing | Rendering maintainer | Attribute above-target wall gaps on the fixed workload and meet formal acceptance. Measure GPU timing separately when available. |
 | Spine version, entitlement and redistribution | Animation maintainer + release maintainer | Exact supported export/runtime identity, authorized fixtures and applicable notices; blocks unqualified complete-Spine/support claims |
 | Fonts, IME, accessibility and target devices | UI/host maintainer + volunteer device testers | Licensed font corpus and real keyboard/IME/screen-reader/device runs; synthetic events cannot close those rows |
 | Independent newcomer/fork | Community maintainer + a new contributor | Keep #52 open until an uninvolved person performs the public contribution flow |

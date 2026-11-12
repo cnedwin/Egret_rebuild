@@ -2,14 +2,14 @@
 
 简体中文 | [English](../../en/docs/m2-spine-content-plan.md)
 
-计划与当前状态 · 2026-11-07 · 复盘 main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1)。完整 M2 仍开放。
+计划与当前状态 · 2026-11-12 · 复盘 main [0ac1dc3](https://github.com/cnedwin/Egret_rebuild/commit/0ac1dc3afe65f479f7821f765e2d52605b4ace8f)。完整 M2 仍开放。
 
 | 工作包 | 已实现 | 剩余 |
 | --- | --- | --- |
 | M2.1 #83 | PNG／图集／序列构建与运行时组、多页及字体产物／集合、可选 Spine JSON 资产 | 二进制／变体产物及选定版本权利／导出／参考资格 |
 | M2.2 #84 | 独立 Spine 播放器、轨道／队列、组合皮肤、有限播放及序列控制 | 完整选定版本语义与有界跳转／重放 |
 | M2.3 #85 | WebGPU／WebGL2 下 egret-shared-linear/1 的复制有序共享显示 | 完整附件／裁剪／双色／混合／采样参考 |
-| M2.4 #86 | 可编辑 20-Spine／200-序列示例、Spine／序列 RESET 及选定桌面／Android 恢复 | 兼容保留状态替换及最终生命周期／性能资格 |
+| M2.4 #86 | 可编辑 20-Spine／200-序列示例、Spine／序列 RESET、兼容序列替换保留状态及选定桌面／Android 恢复 | 兼容 Spine 替换保留状态及最终生命周期和性能资格 |
 
 复用[现有资产／播放器／显示](spine-content-ingress.md)、[内容构建](content-build-pipeline.md)、[字体代次](font-resource-generations.md)、[Spine RESET](spine-reset-slot.md)、[序列 RESET](序列动画RESET替换.md)及[Android 记录](android-device-validation.md)，这些切片不关闭完整 Spine 或 M4。
 
