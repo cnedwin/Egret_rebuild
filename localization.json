@@ -2341,15 +2341,15 @@
       "en": "knowledge-base/en/docs/world3d.md",
       "zh": "knowledge-base/Cns/docs/world3d.md",
       "kind": "public_reading",
-      "enSha256": "46fc5e82712fd0b89f8df10d0d94fe66d70a058b7e1e399257f8197a286f71cd",
-      "zhSha256": "22457edbac2020e102b1b0441354726d9dfe83ce2d1ae182168665ad0c5bcff8"
+      "enSha256": "ca00050022c6f1395c67c9da71b20ad70b13d0ba46c9671b0148093ff21f27a2",
+      "zhSha256": "751c09a5c688d304a52083e8919d9dd5b66c317a9a6cf8bc164d8a850a1ca3f3"
     },
     {
       "en": "examples/world3d/README.md",
       "zh": "examples/world3d/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "2ed812982d16d98f31cf1c09f12cc92f7b1218017c535f671195bae07d774f0d",
-      "zhSha256": "425b5ecf56607fbc4516405440d03eb092a52cfb51790f5cc158041067a510f2"
+      "enSha256": "f7db06c6ca412970e4ac4438eb0f1cadd5d5c1e4eac88c628ff1abf77434a282",
+      "zhSha256": "7fe353507dacc90a360975ca375db4745ab930a09aa70e8ff92ca33f41b1f223"
     }
   ],
   "registries": [
@@ -4983,7 +4983,7 @@
     },
     {
       "path": "packages/engine/web/world3d/WebGL2Renderer3D.ts",
-      "sha256": "dcd475b83297dec36297db07b89bd8160b29315b0d20138305d69e76cca9b0cd"
+      "sha256": "573d2a5492e88cc1cd00ed6dd9283786e69052a95d101279e128da8034a74b42"
     },
     {
       "path": "packages/engine/web/world3d/WebGPURenderer3D.ts",
@@ -5027,7 +5027,7 @@
     },
     {
       "path": "tools/lib/world3d-boundary.mjs",
-      "sha256": "386057eea69a3c5e3c802fa70319b5628df540fa2b16fa076259fa7bc62d4e7e"
+      "sha256": "cd72bfa2352004fb6d091281e36202fb04f1a862370d418c4260a7d200855fab"
     }
   ],
   "historicalSemanticReview": {

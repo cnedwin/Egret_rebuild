@@ -1,6 +1,50 @@
 // SPDX-License-Identifier: Apache-2.0
 // Deterministic World3D scenes rendered by tools/verify-world3d.mjs on both backends.
 // Each case returns a scene and camera built only from the public world3d entry.
+export async function verifyTextureSourceReplacement(W, renderer) {
+  const camera = W.createOrthographicCamera3D({height: 2, aspect: 1, near: 0.1, far: 10});
+  camera.setPosition(0, 0, 3).lookAt(0, 0, 0);
+  const geometry = W.createPlaneGeometry3D({width: 1, height: 1});
+  const source = new W.RenderTarget3D(16, 16);
+  const output = new W.RenderTarget3D(16, 16);
+  const pixels = {width: 1, height: 1, data: new Uint8Array([255, 0, 0, 128])};
+  const mutable = new W.Texture3D(pixels, {mipmaps: false});
+  const sourceMaterial = W.createUnlitMaterial3D({color: 0xff0000, opacity: 0.5, toneMapped: false});
+  const material = W.createUnlitMaterial3D({map: mutable, alphaMode: 'blend', toneMapped: false});
+  const inputScene = new W.Scene3D();
+  const outputScene = new W.Scene3D();
+  outputScene.background = [0, 0, 1];
+  inputScene.addChild(new W.Mesh3D(geometry, sourceMaterial));
+  outputScene.addChild(new W.Mesh3D(geometry, material));
+
+  async function verifyPixel(label) {
+    if (!renderer.render(outputScene, camera, output)) throw new Error('Renderer lost during ' + label);
+    const data = await renderer.readRenderTargetPixels(output);
+    const offset = (8 * output.width + 8) * 4;
+    const rgba = data.subarray(offset, offset + 4);
+    const expected = [188, 0, 188, 255];
+    if (rgba.some((value, index) => Math.abs(value - expected[index]) > 2)) {
+      throw new Error('Unexpected composite after ' + label + ': ' + rgba.join(','));
+    }
+  }
+
+  try {
+    if (!renderer.render(inputScene, camera, source)) throw new Error('Renderer lost before texture replacement');
+    await verifyPixel('initial pixel source');
+    mutable.setSource(source);
+    await verifyPixel('texture source changed to render target');
+    mutable.setSource(pixels);
+    await verifyPixel('texture source changed back to pixels');
+    material.map = source.texture;
+    await verifyPixel('material map changed to render target');
+    material.map = mutable;
+    await verifyPixel('material map changed back to pixels');
+  } finally {
+    material.dispose(); sourceMaterial.dispose(); mutable.dispose();
+    output.dispose(); source.dispose(); geometry.dispose();
+  }
+}
+
 export function buildCases(W) {
   const checker = (size, cells, a, b) => { const data = new Uint8Array(size * size * 4); for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) data.set([...(((Math.floor(x * cells / size) + Math.floor(y * cells / size)) & 1) ? b : a), 255], (y * size + x) * 4); return new W.Texture3D({width: size, height: size, data}); };
   const dot = size => { const data = new Uint8Array(size * size * 4); for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) { const d = Math.hypot((x + .5) / size - .5, (y + .5) / size - .5) * 2; data.set([255, 255, 255, Math.round(255 * Math.max(0, 1 - d) ** 2)], (y * size + x) * 4); } return new W.Texture3D({width: size, height: size, data}, {wrapS: 'clamp', wrapT: 'clamp'}); };

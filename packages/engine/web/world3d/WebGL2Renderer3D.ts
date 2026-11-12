@@ -39,6 +39,7 @@ export interface WebGL2Renderer3DOptions {
 const V = Object.freeze({
     normal: 1, tangent: 2, uv: 4, color: 8, skin: 16, morph: 32, morphNormals: 64, instancing: 128, instanceColor: 256,
     receiveShadow: 512, fog: 1024, toneMapped: 2048, environment: 4096, points: 8192, depthOnly: 16384, linearOutput: 32768,
+    mapFromTarget: 65536,
 } as const);
 const IDENTITY3 = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -324,7 +325,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (material.billboard) defines.push('BILLBOARD');
         if (uv && material.map) {
             defines.push('USE_MAP');
-            if (!depthOnly && material.map.source instanceof RenderTarget3D) defines.push('MAP_FROM_TARGET');
+            if (has(V.mapFromTarget)) defines.push('MAP_FROM_TARGET');
         }
         if (material.alphaMode === 'mask') defines.push('ALPHA_MASK');
         if (material.alphaMode === 'blend') {
@@ -420,7 +421,11 @@ export class WebGL2Renderer3D implements Renderer3D {
         let variant = depthOnly ? V.depthOnly : frameFlags;
         if (geometry.getAttribute('normal')) variant |= V.normal;
         if (geometry.getAttribute('tangent')) variant |= V.tangent;
-        if (geometry.getAttribute('uv')) variant |= V.uv;
+        if (geometry.getAttribute('uv')) {
+            variant |= V.uv;
+            // A texture can change its source without changing the material version.
+            if (!depthOnly && material.map?.source instanceof RenderTarget3D) variant |= V.mapFromTarget;
+        }
         if (material.vertexColors && geometry.getAttribute('color')) variant |= V.color;
         if (skinned) variant |= V.skin;
         if (gpu.morph) variant |= V.morph | (gpu.morph.attributes === 2 ? V.morphNormals : 0);

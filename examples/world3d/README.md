@@ -27,4 +27,4 @@ The header buttons toggle shadows, particles and wireframe. The status line repo
 
 ## Limits
 
-The example is a demonstration, not an acceptance fixture. It has been observed in headless Chromium with software WebGL2. The WebGPU canvas path needs a browser with a real GPU. See the [World3D contract](../../knowledge-base/en/docs/world3d.md) for scope and open items.
+The example demonstrates rendering and interaction. The desktop Edge and physical Android Chrome checks observed visible output, shadow toggles, and disposal on both backends. Performance, human gestures and broader device coverage remain open. See the [World3D contract](../../knowledge-base/en/docs/world3d.md) for scope and open items.

@@ -105,5 +105,5 @@ Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.t
 ## Open items
 
 - The desktop review forced WebGL2 context loss and restored the target pixels. It also forced WebGPU device loss and verified notification and refusal of subsequent work. Wider device and recovery coverage remains open.
-- Performance and a mobile device matrix remain open. The desktop checks compare pixels and observe visible presentation.
+- One physical Android Chrome 157 device presented both backends, responded to an automated shadow toggle, and stopped frame updates on disposal. Performance, human gestures and a broader mobile device matrix remain open.
 - Not implemented: point-light and cascaded shadows, post-processing, compressed textures and geometry, HDR environment prefiltering, clear coat and transmission materials, and physics.

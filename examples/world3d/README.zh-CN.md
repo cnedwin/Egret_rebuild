@@ -27,4 +27,4 @@
 
 ## 限制
 
-本示例用于演示，不是验收夹具。已在使用软件 WebGL2 的无头 Chromium 中观察。WebGPU 画布路径需要带真实 GPU 的浏览器。范围和待完成事项见 [World3D 契约](../../knowledge-base/Cns/docs/world3d.md)。
+本示例展示渲染与交互。桌面 Edge 和 Android 真机 Chrome 均已检查两个后端的可见输出、阴影开关与释放行为。性能、真人手势与更广泛的设备覆盖仍待验收。范围和待完成事项见 [World3D 契约](../../knowledge-base/Cns/docs/world3d.md)。
