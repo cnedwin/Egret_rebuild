@@ -358,16 +358,16 @@
     {
       "path": "CONTRIBUTING.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "d946e1c22d052523257ab7d7bea13e297e238bafbed0d541295c9971e1bffd65",
-      "bytes": 7072,
+      "sha256": "50c397506ffb8eac2f906a705331d88f5553823db77a8e9121645514998c67b0",
+      "bytes": 7387,
       "previousRevisionSha256": "cfd1f60cfae8c262a8897e78b542e7f3036c3d492b5bbab79bdd80be80677e4d",
       "previousLayoutPath": "CONTRIBUTING.en.md",
       "previousLayoutSha256": "ea91269863610b03cc682a3656d77b55325631c6b897efb0c6bcb534d5ac5fee"
     },
     {
       "path": "CONTRIBUTING.zh-CN.md",
-      "sha256": "6741d6372bd8e4e52eeec344c161b18bd657d41fb11fde546b53b589074dda6e",
-      "bytes": 5923,
+      "sha256": "db1c77c6e37d62daf69e8c0802437463e2782bc534cf8c8e75206fd7d374c3ea",
+      "bytes": 6273,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "da6292f0408cc88f776b7d113924b364dd045b94d3a7541e85d71e1964ed4dae",
       "previousRevisionSha256": "373de5c518c0208d972ceef4c331d8ae81853102ca6aee8dbd1f90064c57bec8",
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "d0ea59fd65e1e5bd9774ded4ced5d74e7f8c64b07d5ba1ffb17a17b716d51ac5",
+      "sha256": "8bd6cf8bcc5279fad38f6d199ec6ac0f47275978f16e3ac2f8c26f5779d5af40",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "b1cb545687124d839ab52f8f865e7f9de8be8534c6150c6971e0026dc445fe51",
-      "bytes": 405588,
+      "sha256": "6344d58ed1cff52e4d2b284c9ecea3ad8478f55a99755f0e81b9f3da5112c0c8",
+      "bytes": 406338,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -5591,8 +5591,8 @@
     {
       "path": "tools/prepush.mjs",
       "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "340fc4ca3a60610655cadb037aa96245b07045cc8fe18971c2997adb9b411325",
-      "bytes": 2250,
+      "sha256": "af7fed61866fc08f6c4de28d03f05efae7c39821b228c290890389f0ba0d2b70",
+      "bytes": 2617,
       "previousRevisionSha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4",
       "previousLayoutPath": "tools/prepush.mjs",
       "previousLayoutSha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4"
@@ -5608,8 +5608,8 @@
     },
     {
       "path": "tools/test.mjs",
-      "sha256": "a3f2114fee235aad8f8d5d22967bac9e4454597b298bfe9812bab125174f5c31",
-      "bytes": 769,
+      "sha256": "a990b8f222386a301d96b279407110ed9de72f9168a463ca308b7fee0d95f802",
+      "bytes": 2691,
       "originalSha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
@@ -5636,8 +5636,8 @@
     },
     {
       "path": "tools/verify.mjs",
-      "sha256": "15e848e6cdd4e0686bc6c0098a9725009f7efaf4b52729229c0c12869f7f9050",
-      "bytes": 1118,
+      "sha256": "462903675ffa40375122a7cbe29bff38b8fe4758c8dc7e88a3fb35a51d1718f8",
+      "bytes": 1490,
       "originalSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousRevisionSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
@@ -10321,8 +10321,8 @@
     },
     {
       "path": "tests/browser-png-boundaries.test.mjs",
-      "bytes": 23746,
-      "sha256": "43f7b4efe44782d0c44c0fdc3ef5dcc090d10857fdf69550cf7c9539d59405f1",
+      "bytes": 24301,
+      "sha256": "1ee09c5fde11203b5143cad0e5ddac4a06bb0c6940baa024f5e73695ab3bdaaa",
       "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
     },
     {
@@ -10436,8 +10436,8 @@
     {
       "path": ".github/workflows/ci.yml",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 15299,
-      "sha256": "90f42487c91d9b0bf2c7846f0cb9bb6bf8fb1e2e5a82c5b3c3157dcf8295a003"
+      "bytes": 19309,
+      "sha256": "9c3580f50acdfcadaad88b606cc56f10da631ff57f1cb2abe0f5743a0f5184ee"
     },
     {
       "path": ".node-version",
@@ -10514,14 +10514,14 @@
     {
       "path": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "originRole": "First-party M0 tools, verification, configuration or documentation; AI-assisted from approved plan; Apache-2.0.",
-      "bytes": 58408,
-      "sha256": "3333d8047f14a7769d518ec36bbfa9d4236fe89e8e1deb5e4dfad0c4afb9341a"
+      "bytes": 58945,
+      "sha256": "589bb53b5b385302dde29998376d04963dcd72c779a7f942da6638e6de72d001"
     },
     {
       "path": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "originRole": "First-party M0 tools, verification, configuration or documentation; AI-assisted from approved plan; Apache-2.0.",
-      "bytes": 68624,
-      "sha256": "9ffed6c85af0eedff809682c7097d95bf1b4a619eede364a5d2d58744a24c5e6"
+      "bytes": 69168,
+      "sha256": "db4383392dd39dc3b752fbb6fa6beb4242056a33327c167ca79f92b74eb576d2"
     },
     {
       "path": "tools/contribution-metadata.mjs",
@@ -17026,6 +17026,42 @@
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "bytes": 16250,
       "sha256": "2b90a30c01e2530d64467b23984cf1b6b5fa1ee3a1d4c3bce57095a76b09af0d"
+    },
+    {
+      "path": "tools/lib/test-shards.mjs",
+      "originRole": "First-party parallel Windows test shards that keep the complete merge suite; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 1721,
+      "sha256": "44b7ba9841240406e81b3132a7c4f159cedf1cf1fc35f9793449d1331f2db367"
+    },
+    {
+      "path": "tests/publication/test-shards.test.mjs",
+      "originRole": "First-party parallel Windows test shards that keep the complete merge suite; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 4648,
+      "sha256": "08aae3367c863fb45f6a71139e6570d26a1ec079030780825d8ccaf8ad62481e"
+    },
+    {
+      "path": "tests/browser-png-boundaries-2.test.mjs",
+      "originRole": "First-party parallel Windows test shards that keep the complete merge suite; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 192,
+      "sha256": "cb7d4c79719b9a4c82ba3c5152831d14d201904871f70622633d9c230ed19c4c"
+    },
+    {
+      "path": "tests/browser-png-boundaries-3.test.mjs",
+      "originRole": "First-party parallel Windows test shards that keep the complete merge suite; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 192,
+      "sha256": "af4999386a538e57fc3a5c318cac5c745093d5acc77b28cbcb5f68cffc401637"
+    },
+    {
+      "path": "tests/browser-png-boundaries-4.test.mjs",
+      "originRole": "First-party parallel Windows test shards that keep the complete merge suite; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 192,
+      "sha256": "d9be954c0b4b491843bf6721ec0ca171c1b231fa214e96cde8c03336f10d6fd7"
+    },
+    {
+      "path": "contributions/windows-test-shards.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 1321,
+      "sha256": "7f6112d4adc09c39f1dc48dad1a7fb59ddea924102216decefc1c105dc411d1f"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
