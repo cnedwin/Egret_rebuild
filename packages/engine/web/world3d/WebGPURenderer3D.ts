@@ -191,7 +191,7 @@ export class WebGPURenderer3D implements Renderer3D {
         context.configure({device, format: this.#format, alphaMode: this.#alpha ? 'premultiplied' : 'opaque', usage: TEXTURE_USAGE.RENDER_ATTACHMENT | TEXTURE_USAGE.COPY_SRC});
 
         const filtering: GPUBindGroupLayoutEntry[] = [];
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 7; i++) {
             filtering.push({binding: 1 + i * 2, visibility: SHADER_STAGE.FRAGMENT, texture: {}});
             filtering.push({binding: 2 + i * 2, visibility: SHADER_STAGE.FRAGMENT, sampler: {}});
         }
@@ -599,7 +599,7 @@ export class WebGPURenderer3D implements Renderer3D {
         if (map?.source instanceof RenderTarget3D) { ay = -ay; by = -by; ty = 1 - ty; }
         data[20] = ax; data[21] = bx; data[22] = tx; data[23] = 0;
         data[24] = ay; data[25] = by; data[26] = ty; data[27] = 0;
-        data[28] = material.rotation; data[29] = material.sizeAttenuation ? 1 : 0; data[30] = 0; data[31] = 0;
+        data[28] = material.rotation; data[29] = material.sizeAttenuation ? 1 : 0; data[30] = material.reflectionDistortion; data[31] = material.reflectionStrength;
         if (material.shader) data.set(material.shader.uniforms, 32); else data.fill(0, 32, 48);
         data[48] = material.sheenColor[0]! * material.sheen; data[49] = material.sheenColor[1]! * material.sheen; data[50] = material.sheenColor[2]! * material.sheen; data[51] = material.sheenRoughness;
         data[52] = material.lightMapIntensity; data[53] = material.transmission; data[54] = material.ior; data[55] = material.thickness;
@@ -607,7 +607,7 @@ export class WebGPURenderer3D implements Renderer3D {
         this.device.queue.writeBuffer(entry.buffer, 0, data);
         const entries: GPUBindGroupEntry[] = [{binding: 0, resource: {buffer: entry.buffer}}];
         let key = '';
-        [material.map, material.normalMap, material.metallicRoughnessMap, material.occlusionMap, material.emissiveMap, material.lightMap].forEach((texture, i) => {
+        [material.map, material.normalMap, material.metallicRoughnessMap, material.occlusionMap, material.emissiveMap, material.lightMap, material.reflectionMap].forEach((texture, i) => {
             const gpu = texture && !texture.isDisposed ? this.texture2d(texture) : undefined;
             entries.push({binding: 1 + i * 2, resource: gpu?.view ?? this.#white}, {binding: 2 + i * 2, resource: gpu?.sampler ?? this.#defaultSampler});
             key += (gpu?.key ?? '-') + '|';
@@ -650,6 +650,8 @@ export class WebGPURenderer3D implements Renderer3D {
             environment: lit && frameFlags.environment, fog: !depthOnly && frameFlags.fog && material.fog,
             ...(!depthOnly && material.shader?.wgsl !== undefined ? {customKey: material.shader.key, customWgsl: material.shader.wgsl} : {}),
             ...(material.shader?.wgslVertex !== undefined ? {customKey: material.shader.key, customVertexWgsl: material.shader.wgslVertex} : {}),
+            ...(lit && material.shader?.wgslNormal !== undefined ? {customKey: material.shader.key, customNormalWgsl: material.shader.wgslNormal} : {}),
+            reflectionMap: lit && material.shading === 'standard' && material.reflectionMap !== undefined,
             toneMapped: !depthOnly && kind !== 'hdr' && this.toneMapping !== 'none' && material.toneMapped, linearOutput: kind === 'target' || kind === 'hdr',
         };
     }
@@ -788,7 +790,7 @@ export class WebGPURenderer3D implements Renderer3D {
             | (material.flatShading ? 512 : 0) | (material.vertexColors ? 1024 : 0) | (material.billboard ? 2048 : 0) | (material.screenSpace ? 4096 : 0)
             | (material.depthTest ? 8192 : 0) | (material.depthWrite ? 16384 : 0) | (material.fog ? 131072 : 0) | (material.toneMapped ? 262144 : 0)
             | (material.polygonOffset ? 524288 : 0) | (material.occlusionMap?.channel === 1 ? 1048576 : 0) | (material.emissiveMap?.channel === 1 ? 2097152 : 0)
-            | (material.lightMap ? 4194304 : 0) | (material.lightMap?.channel === 1 ? 8388608 : 0);
+            | (material.lightMap ? 4194304 : 0) | (material.lightMap?.channel === 1 ? 8388608 : 0) | (material.reflectionMap ? 16777216 : 0);
         const variantKey = surface * 16384 + bits;
         let byGeometry = cache.variants.get(geometry.id);
         if (!byGeometry) cache.variants.set(geometry.id, byGeometry = new Map());

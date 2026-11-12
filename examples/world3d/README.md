@@ -37,6 +37,12 @@ Open `http://127.0.0.1:4173/examples/world3d/features.html` (or follow the link 
 
 "Post", "SSAO", "Depth of field" and "Shadows" toggle those effects. The gallery was run on WebGL2 in headless Chromium with software rendering, including handle drags with real pointer events; it has not been run on a physical GPU or through WebGPU canvas presentation, and no person has operated it by hand yet.
 
+## Landscape
+
+Open `http://127.0.0.1:4173/examples/world3d/landscape.html` for a height-map terrain and a lake. The terrain is 257 by 257 samples in 64 chunks; the status line shows how many of its triangles are drawn at the current detail levels, and "Wireframe" shows the levels and the skirts between them. The same heights are the collision shape the balls and crates land on; "Drop" adds more. The lake has waves, bends what lies under it and mirrors the scene; "Reflection" switches the mirror image off, leaving the sky's reflection, and "Calm" flattens the waves. The buoy rides the waves through the CPU copy of the wave formula.
+
+The page was run on WebGL2 in headless Chromium with software rendering. It has not been run on a physical GPU or through WebGPU canvas presentation, and no person has operated it.
+
 ## Limits
 
 The example demonstrates rendering and interaction. The desktop Edge and physical Android Chrome checks observed visible output, shadow toggles, and disposal on both backends. Performance, human gestures and broader device coverage remain open. See the [World3D contract](../../knowledge-base/en/docs/world3d.md) for scope and open items.

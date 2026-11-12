@@ -651,15 +651,58 @@ function solidPlane(m: Manifold, solid: RigidBody3D, plane: RigidBody3D): void {
     }
 }
 /** Boxes and hulls rest on meshes through their corners, which is enough for props on floors and slopes. */
+const meshCenter = [0, 0, 0], meshSeen = new Int32Array(96);
+function pushCandidate(x: number, y: number, z: number, nx: number, ny: number, nz: number, depth: number, feature: number): void {
+    let c = candidates[candidateCount];
+    if (!c) c = candidates[candidateCount] = {x: 0, y: 0, z: 0, nx: 0, ny: 0, nz: 0, depth: 0, face: false, feature: 0};
+    candidateCount++;
+    c.x = x; c.y = y; c.z = z; c.nx = nx; c.ny = ny; c.nz = nz; c.depth = depth; c.face = true; c.feature = feature;
+}
 function solidMesh(m: Manifold, solid: RigidBody3D, meshBody: RigidBody3D): void {
     const mesh = (meshBody.shape as {mesh: TriangleMeshShape3D}).mesh, radius = 0.03, count = solidVertexCount(solid);
     candidateCount = 0;
+    toMeshLocal(meshCenter, meshBody, solid.position[0]!, solid.position[1]!, solid.position[2]!);
+    const cx = meshCenter[0]!, cy = meshCenter[1]!, cz = meshCenter[2]!, p = mesh.positions, indices = mesh.indices;
+    let x0 = Infinity, y0 = Infinity, z0 = Infinity, x1 = -Infinity, y1 = -Infinity, z1 = -Infinity;
     for (let i = 0; i < count; i++) {
         solidVertex(solidPoint, solid, i);
         toMeshLocal(meshSegA, meshBody, solidPoint[0]!, solidPoint[1]!, solidPoint[2]!);
         const lx = meshSegA[0]!, ly = meshSegA[1]!, lz = meshSegA[2]!;
+        x0 = Math.min(x0, lx); y0 = Math.min(y0, ly); z0 = Math.min(z0, lz); x1 = Math.max(x1, lx); y1 = Math.max(y1, ly); z1 = Math.max(z1, lz);
         mesh.query(lx - radius, ly - radius, lz - radius, lx + radius, ly + radius, lz + radius, triangle => sphereTriangle(mesh, triangle, lx, ly, lz, radius, (i & 31) * 1024 + (triangle & 1023)));
+        // A corner that went through the surface in one step: the line from the
+        // solid's center to the corner crosses a triangle the center is still in front of.
+        mesh.query(Math.min(lx, cx), Math.min(ly, cy), Math.min(lz, cz), Math.max(lx, cx), Math.max(ly, cy), Math.max(lz, cz), triangle => {
+            mesh.triangleNormal(triangle, meshNormal);
+            const a = indices[triangle * 3]! * 3, nx = meshNormal[0]!, ny = meshNormal[1]!, nz = meshNormal[2]!;
+            const below = (lx - p[a]!) * nx + (ly - p[a + 1]!) * ny + (lz - p[a + 2]!) * nz, above = (cx - p[a]!) * nx + (cy - p[a + 1]!) * ny + (cz - p[a + 2]!) * nz;
+            if (above <= 0 || below >= -radius) return;
+            const t = above / (above - below), qx = cx + (lx - cx) * t, qy = cy + (ly - cy) * t, qz = cz + (lz - cz) * t;
+            mesh.closestPoint(triangle, qx, qy, qz, meshPoint);
+            if (Math.abs(meshPoint[0]! - qx) + Math.abs(meshPoint[1]! - qy) + Math.abs(meshPoint[2]! - qz) > 1e-4) return;
+            pushCandidate(lx - nx * below, ly - ny * below, lz - nz * below, -nx, -ny, -nz, radius - below, (i & 31) * 1024 + (triangle & 1023));
+        });
     }
+    // Points of the surface that poke into the solid between its corners, such as a ridge under a crate.
+    let seen = 0;
+    const r = meshBody.rotation, origin = meshBody.position;
+    mesh.query(x0, y0, z0, x1, y1, z1, triangle => {
+        mesh.triangleNormal(triangle, meshNormal);
+        const a = indices[triangle * 3]! * 3;
+        if ((cx - p[a]!) * meshNormal[0]! + (cy - p[a + 1]!) * meshNormal[1]! + (cz - p[a + 2]!) * meshNormal[2]! <= 0) return;
+        for (let corner = 0; corner < 3; corner++) {
+            const vertex = indices[triangle * 3 + corner]!;
+            let known = false;
+            for (let k = 0; k < seen && !known; k++) known = meshSeen[k] === vertex;
+            if (known || seen >= meshSeen.length) continue;
+            meshSeen[seen++] = vertex;
+            const vx = p[vertex * 3]!, vy = p[vertex * 3 + 1]!, vz = p[vertex * 3 + 2]!;
+            const distance = solidDistance(solid, origin[0]! + r[0]! * vx + r[1]! * vy + r[2]! * vz, origin[1]! + r[3]! * vx + r[4]! * vy + r[5]! * vz, origin[2]! + r[6]! * vx + r[7]! * vy + r[8]! * vz, faceNormal);
+            if (distance >= 0) continue;
+            const wx = faceNormal[0]!, wy = faceNormal[1]!, wz = faceNormal[2]!;
+            pushCandidate(vx, vy, vz, r[0]! * wx + r[3]! * wy + r[6]! * wz, r[1]! * wx + r[4]! * wy + r[7]! * wz, r[2]! * wx + r[5]! * wy + r[8]! * wz, -distance, 32768 + (vertex & 32767));
+        }
+    });
     emitMeshContacts(m, meshBody);
 }
 const ORDER = {sphere: 0, capsule: 1, box: 2, convex: 3, plane: 4, mesh: 5} as const;

@@ -45,6 +45,9 @@ export interface ShaderFeatures3D {
     readonly customKey?: string;
     readonly customWgsl?: string;
     readonly customVertexWgsl?: string;
+    readonly customNormalWgsl?: string;
+    /** Standard material with a mirror image read at the pixel's place on screen. */
+    readonly reflectionMap?: boolean;
 }
 
 export const MAX_MORPH_INFLUENCES_WGSL_3D = 8;
@@ -106,7 +109,7 @@ struct Material {
     params: vec4f,       // alpha cutoff, environment scale, clearcoat strength, clearcoat roughness
     uvRow0: vec4f,       // uv' = (dot(uvRow0.xyz, (uv, 1)), dot(uvRow1.xyz, (uv, 1)))
     uvRow1: vec4f,
-    sprite: vec4f,       // rotation, size attenuation flag
+    sprite: vec4f,       // rotation, size attenuation flag, mirror image distortion and strength
     custom: array<vec4f, 4>, // parameters of the optional fragment hook
     sheen: vec4f,        // color scaled by strength, roughness
     extra: vec4f,        // light map intensity, transmission, index of refraction, thickness
@@ -125,6 +128,8 @@ struct Material {
 @group(1) @binding(10) var emissiveSampler: sampler;
 @group(1) @binding(11) var lightTexture: texture_2d<f32>;
 @group(1) @binding(12) var lightSampler: sampler;
+@group(1) @binding(13) var reflectionTexture: texture_2d<f32>;
+@group(1) @binding(14) var reflectionSampler: sampler;
 
 struct Object {
     model: mat4x4f,
@@ -406,6 +411,7 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     t *= invmax;
     b *= invmax;`}
     n = normalize(mat3x3f(t, b, n) * mapped);` : ''}
+    ${f.customNormalWgsl !== undefined ? 'n = normalize(customNormal(n, input.worldPosition, ' + (f.uv ? 'input.uv' : 'vec2f(0.0)') + '));' : ''}
     s.normal = n;
     s.view = normalize(frame.cameraPosition.xyz - input.worldPosition);
     s.albedo = base.rgb;
@@ -418,7 +424,8 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     ${f.occlusionMap ? 'occlusion = mix(1.0, occlusionSample, material.surface.w);' : ''}
     ${f.transmission ? /* wgsl */`
     // Light that passes through replaces that share of the diffuse reflection.
-    let through = material.extra.y * (1.0 - s.metallic);
+    // What the surface reflects at this angle does not pass through it.
+    let through = material.extra.y * (1.0 - s.metallic) * (1.0 - (0.04 + 0.96 * pow(1.0 - max(dot(s.normal, s.view), 0.0), 5.0)));
     var passed = vec3f(0.0);
     {
         let bent = refract(-s.view, s.normal, 1.0 / max(material.extra.z, 1.0));
@@ -441,13 +448,21 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     if (material.attenuation.w > 0.0) { tint *= pow(max(material.attenuation.rgb, vec3f(0.0001)), vec3f(material.extra.w / material.attenuation.w)); }
     s.albedo *= 1.0 - through;
     var clear = 1.0;` : ''}
+    ${f.reflectionMap ? /* wgsl */`
+    var mirrorClear = 1.0;
+    // The mirror camera sees the scene flipped left to right; stored images are top row first.
+    let mirrorAt = frame.viewProjection * vec4f(input.worldPosition, 1.0);
+    let mirrorNdc = mirrorAt.xy / max(mirrorAt.w, 0.0001);
+    let mirrorUv = vec2f(0.5 - mirrorNdc.x * 0.5, 0.5 - mirrorNdc.y * 0.5) + vec2f(s.normal.x, -s.normal.z) * material.sprite.z;
+    let mirrored = textureSampleLevel(reflectionTexture, reflectionSampler, clamp(mirrorUv, vec2f(0.002), vec2f(0.998)), 0.0).rgb
+        * (s.f0 + (1.0 - s.f0) * pow(1.0 - max(dot(s.normal, s.view), 0.0), 5.0)) * material.sprite.w;` : ''}
     var diffuseAlbedo = s.albedo;
     ${f.shading === 'standard' ? 'diffuseAlbedo *= 1.0 - s.metallic;' : ''}
     var irradiance = frame.ambient.rgb + mix(frame.hemisphereGround.rgb, frame.hemisphereSky.rgb, s.normal.y * 0.5 + 0.5);
     ${f.environment ? 'irradiance += textureSampleLevel(environmentMap, environmentSampler, s.normal, frame.output.y).rgb * frame.output.x * material.params.y;' : ''}
     ${f.lightMap ? 'irradiance += lightSample * material.extra.x;' : ''}
     color = diffuseAlbedo * irradiance * occlusion;
-    ${f.environment && f.shading === 'standard' ? /* wgsl */`
+    ${f.environment && f.shading === 'standard' && !f.reflectionMap ? /* wgsl */`
     {
         let reflected = reflect(-s.view, s.normal);
         let nv = max(dot(s.normal, s.view), 0.0);
@@ -500,12 +515,14 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
         if (frame.fogParams.x > 1.5) { fog = 1.0 - exp(-frame.fogParams.y * frame.fogParams.y * dist * dist); }
         color = mix(color, frame.fogColor.rgb, clamp(fog, 0.0, 1.0));
         ${f.transmission ? 'clear = 1.0 - clamp(fog, 0.0, 1.0);' : ''}
+        ${f.reflectionMap ? 'mirrorClear = 1.0 - clamp(fog, 0.0, 1.0);' : ''}
     }` : ''}
     ${f.toneMapped ? 'color = toneMap(color);' : ''}
     ${f.transmission ? /* wgsl */`
     // The stored scene is display-ready, so it joins after tone mapping; the canvas holds it sRGB-encoded.
     ${f.linearOutput ? '' : 'passed = mix(passed / 12.92, pow((passed + 0.055) / 1.055, vec3f(2.4)), step(vec3f(0.04045), passed));'}
     color += passed * tint * through * clear;` : ''}
+    ${f.reflectionMap ? 'color += mirrored * mirrorClear;' : ''}
     ${f.linearOutput ? 'color = max(color, vec3f(0.0));' : 'color = encodeSrgb(color);'}
     ${f.premultipliedAlpha ? 'color *= base.a;' : ''}
     return vec4f(color, ${f.alphaBlend ? 'base.a' : '1.0'});
@@ -515,7 +532,7 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
 
 /** Assemble the complete WGSL module for one material variant. */
 export function buildMaterialWgsl3D(features: ShaderFeatures3D): string {
-    return (features.depthOnly ? DEPTH_FRAME : FRAME) + SHARED + (features.customVertexWgsl ?? '') + '\n' + vertexSource(features) + (features.customWgsl ?? '') + '\n' + fragmentSource(features);
+    return (features.depthOnly ? DEPTH_FRAME : FRAME) + SHARED + (features.customVertexWgsl ?? '') + '\n' + vertexSource(features) + (features.customWgsl ?? '') + '\n' + (features.customNormalWgsl ?? '') + '\n' + fragmentSource(features);
 }
 /** Stable cache key for a feature set. */
 export function shaderFeatureKey3D(features: ShaderFeatures3D): string {
