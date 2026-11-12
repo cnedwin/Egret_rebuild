@@ -120,6 +120,48 @@ export async function verifyObliquePostDepth(W, renderer, createCustomPost3D) {
   }
 }
 
+/** Folding repeated meshes into instanced draws must not change a pixel, only the number of draws. */
+export async function verifyAutoInstancing(W, renderer) {
+  const scene = new W.Scene3D(); scene.background = [0.1, 0.12, 0.16];
+  const camera = W.createPerspectiveCamera3D({aspect: 1, fov: 50, near: 0.1, far: 100}); camera.setPosition(6, 9, 14).lookAt(0, 0, 0); scene.addChild(camera);
+  scene.addChild(W.createAmbientLight3D({intensity: 0.2}));
+  const sun = W.createDirectionalLight3D({intensity: 1.8, castShadow: true}); sun.setPosition(5, 10, 4).lookAt(0, 0, 0); sun.shadow.extent = 14; scene.addChild(sun);
+  const floor = new W.Mesh3D(W.createPlaneGeometry3D({width: 30, height: 30}), W.createStandardMaterial3D({color: 0xbbbbbb})); floor.setRotation(-Math.PI / 2, 0, 0); floor.receiveShadow = true; floor.castShadow = false; scene.addChild(floor);
+  const box = W.createBoxGeometry3D({}), ball = W.createSphereGeometry3D({radius: 0.5}), paints = [W.createStandardMaterial3D({color: 0xcc5533}), W.createLambertMaterial3D({color: 0x3377cc})];
+  for (let i = 0; i < 90; i++) {
+    const mesh = new W.Mesh3D(i % 3 ? box : ball, paints[i % 2]);
+    mesh.setPosition(-7 + (i % 10) * 1.5, 0.5 + (i % 4) * 0.2, -6 + Math.floor(i / 10) * 1.5).setRotation(i * 0.3, i * 0.7, 0).setScale(0.6 + (i % 5) * 0.1);
+    // A few that must stay on their own or in runs of their own: mirrored, not receiving shadows, on another layer.
+    if (i % 17 === 0) mesh.setScale(-0.8, 0.8, 0.8);
+    mesh.receiveShadow = i % 11 !== 0; mesh.layers = i % 13 === 0 ? 3 : 1;
+    scene.addChild(mesh);
+  }
+  const target = new W.RenderTarget3D(96, 96);
+  try {
+    renderer.autoInstancing = false;
+    if (!renderer.render(scene, camera, target)) throw new Error('Renderer lost during the instancing check');
+    const plain = Array.from(await renderer.readRenderTargetPixels(target)), plainDraws = renderer.info.drawCalls;
+    renderer.autoInstancing = true;
+    if (!renderer.render(scene, camera, target)) throw new Error('Renderer lost during the instancing check');
+    const folded = await renderer.readRenderTargetPixels(target), foldedDraws = renderer.info.drawCalls;
+    let worst = 0, varied = false;
+    for (let i = 0; i < plain.length; i++) { worst = Math.max(worst, Math.abs(plain[i] - folded[i])); if (plain[i] !== plain[i % 4]) varied = true; }
+    if (!varied) throw new Error('The instancing check drew a single color');
+    if (worst > 1) throw new Error('Automatic instancing changed the image by ' + worst + ' of 255');
+    if (!(foldedDraws < plainDraws / 2)) throw new Error('Automatic instancing drew ' + foldedDraws + ' times against ' + plainDraws);
+    // Moving one mesh must show up in the next frame.
+    scene.children[40].setPosition(0, 4, 0);
+    renderer.render(scene, camera, target);
+    const moved = await renderer.readRenderTargetPixels(target);
+    renderer.autoInstancing = false;
+    renderer.render(scene, camera, target);
+    const reference = await renderer.readRenderTargetPixels(target);
+    let drift = 0, changed = 0;
+    for (let i = 0; i < moved.length; i++) { drift = Math.max(drift, Math.abs(moved[i] - reference[i])); if (moved[i] !== folded[i]) changed++; }
+    if (drift > 1 || changed === 0) throw new Error('A moved mesh was not redrawn in its instanced run: drift ' + drift + ', changed ' + changed);
+  } finally { renderer.autoInstancing = true; target.dispose(); }
+}
+
 export function buildCases(W, web) {
   const checker = (size, cells, a, b) => { const data = new Uint8Array(size * size * 4); for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) data.set([...(((Math.floor(x * cells / size) + Math.floor(y * cells / size)) & 1) ? b : a), 255], (y * size + x) * 4); return new W.Texture3D({width: size, height: size, data}); };
   const dot = size => { const data = new Uint8Array(size * size * 4); for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) { const d = Math.hypot((x + .5) / size - .5, (y + .5) / size - .5) * 2; data.set([255, 255, 255, Math.round(255 * Math.max(0, 1 - d) ** 2)], (y * size + x) * 4); } return new W.Texture3D({width: size, height: size, data}, {wrapS: 'clamp', wrapT: 'clamp'}); };
