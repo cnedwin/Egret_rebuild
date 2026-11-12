@@ -69,13 +69,24 @@ function gitNames() {
   assert.equal(new Set(names).size, names.length);
   return { names, bytes: bytes.length, sha256: sha(bytes), format: 'literal-NUL-delimited-tracked-plus-visible-untracked' };
 }
-/** A complete four-package build copy, not a synthetic facade or runtime mock. */
-async function isolated(check, body) {
+function removePolicyCopy({ root, parent }) {
+  const resolved = realpathSync(root);
+  assert.ok(samePhysicalPath(resolved, root)); assert.ok(samePhysicalPath(path.dirname(resolved), parent));
+  assert.ok(path.basename(resolved).startsWith('browser-png-policy-'));
+  for (const name of packages) {
+    const link = path.join(resolved, 'node_modules/@egret', name);
+    if (existsSync(link)) assert.ok(samePhysicalPath(realpathSync(link), path.join(resolved, 'packages', name)));
+  }
+  rmSync(resolved, { recursive: true, force: false, maxRetries: 0 });
+  assert.equal(existsSync(resolved), false);
+}
+
+/** A private byte-for-byte build copy whose package aliases stay inside the copy. */
+function createPolicyCopy(check) {
   const parent = path.resolve(tmpdir(), 'egret-browser-png-policy-controls');
   mkdirSync(parent, { recursive: true });
   assert.ok(samePhysicalPath(parent, realpathSync(parent)));
   const root = mkdtempSync(path.join(parent, 'browser-png-policy-'));
-  let primary, cleanup;
   try {
     const sourceFiles = [];
     const copy = relative => {
@@ -104,26 +115,56 @@ async function isolated(check, body) {
     for (const name of packages) symlinkSync(path.join(root, 'packages', name), path.join(root, 'node_modules/@egret', name), process.platform === 'win32' ? 'junction' : 'dir');
     const gitInventory = gitNames(), names = new Set(gitInventory.names);
     for (const row of sourceFiles) if (!row.path.includes('/dist/') && !/\.tsbuildinfo$/.test(row.path)) assert.ok(names.has(row.path), 'Tracked/untracked inventory omitted copied source: ' + row.path);
-    const baseline = inventory(root), token = randomUUID();
-    writeFileSync(path.join(root, '.browser-png-policy-copy.json'), JSON.stringify({ schemaVersion: 1,
+    const baseline = inventory(root), token = randomUUID(), marker = path.join(root, '.browser-png-policy-copy.json');
+    const receipt = Buffer.from(JSON.stringify({ schemaVersion: 1,
       kind: 'BIP1_GENUINE_BUILT_POLICY_COPY', root, parent, sourceRoot: repository, token,
-      sourceFiles, files: baseline, gitInventory }, null, 2) + '\n', { flag: 'wx' });
-    const run = () => check(root, { ownedParent: parent, ownerToken: token });
-    assert.deepEqual((await run()).issues, [], 'Fresh genuine full-built policy baseline');
-    await body({ root, run, baseline });
-  } catch (cause) { primary = { cause }; }
+      sourceFiles, files: baseline, gitInventory }, null, 2) + '\n');
+    writeFileSync(marker, receipt, { flag: 'wx' });
+    return { root, parent, baseline, marker, receipt, run: () => check(root, { ownedParent: parent, ownerToken: token }) };
+  } catch (cause) {
+    let cleanup;
+    try { removePolicyCopy({ root, parent }); }
+    catch (error) { cleanup = { cause: error }; }
+    finish({ cause }, cleanup);
+  }
+}
+
+let policyCopy, active = false;
+test.after(() => {
+  assert.equal(active, false, 'The policy copy must be idle before cleanup');
+  if (policyCopy) removePolicyCopy(policyCopy);
+});
+
+/** Each control independently checks the full baseline before and after its mutation. */
+async function isolated(check, body) {
+  assert.equal(active, false, 'Policy controls must run serially');
+  active = true;
   try {
-    const resolved = realpathSync(root);
-    assert.ok(samePhysicalPath(resolved, root)); assert.ok(samePhysicalPath(path.dirname(resolved), parent));
-    assert.ok(path.basename(resolved).startsWith('browser-png-policy-'));
-    for (const name of packages) {
-      const link = path.join(resolved, 'node_modules/@egret', name);
-      if (existsSync(link)) assert.ok(samePhysicalPath(realpathSync(link), path.join(resolved, 'packages', name)));
+    let primary, cleanup;
+    try {
+      policyCopy ??= createPolicyCopy(check);
+      assert.deepEqual(readFileSync(policyCopy.marker), policyCopy.receipt, 'Exact fresh owner receipt');
+      assert.deepEqual((await policyCopy.run()).issues, [], 'Fresh genuine full-built policy baseline');
+      await body(policyCopy);
+    } catch (cause) { primary = { cause }; }
+    if (policyCopy) {
+      try {
+        assert.deepEqual(readFileSync(policyCopy.marker), policyCopy.receipt, 'Exact owner receipt restored');
+        assert.deepEqual(inventory(policyCopy.root), policyCopy.baseline, 'Complete original snapshot restored');
+        assert.deepEqual((await policyCopy.run()).issues, [], 'Restored genuine policy baseline');
+      } catch (cause) { cleanup = { cause }; }
+      if (primary || cleanup) {
+        // A failed case cannot lend its fixture to the next control.
+        const failed = policyCopy;
+        policyCopy = undefined;
+        try { removePolicyCopy(failed); }
+        catch (cause) {
+          cleanup = { cause: cleanup ? new AggregateError([cleanup.cause, cause], 'BIP_POLICY_RESTORE_AND_DISCARD_FAILED') : cause };
+        }
+      }
     }
-    rmSync(resolved, { recursive: true, force: false, maxRetries: 0 });
-    assert.equal(existsSync(resolved), false);
-  } catch (cause) { cleanup = { cause }; }
-  finish(primary, cleanup);
+    finish(primary, cleanup);
+  } finally { active = false; }
 }
 function append(text) { return bytes => Buffer.concat([bytes, Buffer.from(text, 'utf8')]); }
 function jsonEdit(change) { return bytes => { const value = JSON.parse(bytes); change(value); return Buffer.from(JSON.stringify(value, null, 2) + '\n'); }; }
@@ -187,8 +228,6 @@ for (const [name, relative, code, mutate] of cases) test('BIP-P ' + name, { time
     try {
       if (existed) writeFileSync(file, before); else rmSync(file);
       if (existed) assert.deepEqual(readFileSync(file), before, 'Whole original file inverse');
-      assert.deepEqual(inventory(root), baseline, 'Complete original snapshot restored');
-      assert.deepEqual((await run()).issues, [], 'Restored genuine policy baseline');
     } catch (cause) { cleanup = { cause }; }
     finish(primary, cleanup);
   });
@@ -202,17 +241,17 @@ test('BIP-P missing retained Host module refuses the exact inventory', async () 
       rmSync(file); const current = inventory(root);
       assert.deepEqual(baseline.filter(row => !current.some(now => now.path === row.path)).map(row => row.path), [relative]);
       assert.deepEqual((await run()).issues.map(issue => [issue.code, issue.path]), [['BIP_BOUNDARY_SOURCE_INVENTORY', relative]]);
-    } finally { writeFileSync(file, before); assert.deepEqual(inventory(root), baseline); assert.deepEqual((await run()).issues, []); }
+    } finally { writeFileSync(file, before); }
   });
 });
 test('BIP-P copy cannot be relabelled with another owner token', async () => {
   const check = await checker();
-  await isolated(check, async ({ root, run, baseline }) => {
+  await isolated(check, async ({ root, run }) => {
     const file = path.join(root, '.browser-png-policy-copy.json'), before = readFileSync(file);
     try {
       const receipt = JSON.parse(before); receipt.token = randomUUID(); writeFileSync(file, JSON.stringify(receipt) + '\n');
       assert.deepEqual((await run()).issues.map(issue => [issue.code, issue.path]), [['BIP_BOUNDARY_OWNER', '.browser-png-policy-copy.json']]);
-    } finally { writeFileSync(file, before); assert.deepEqual(inventory(root), baseline); assert.deepEqual((await run()).issues, []); }
+    } finally { writeFileSync(file, before); }
   });
 });
 
@@ -225,7 +264,7 @@ for (const relative of ['packages/engine/dist/web/webgpuBufferPool.d.ts', 'packa
         rmSync(file); const current = inventory(root);
         assert.deepEqual(baseline.filter(row => !current.some(now => now.path === row.path)).map(row => row.path), [relative]);
         assert.deepEqual((await run()).issues.map(issue => [issue.code, issue.path]), [['BIP_BOUNDARY_SOURCE_INVENTORY', relative]]);
-      } finally { writeFileSync(file, before); assert.deepEqual(inventory(root), baseline); assert.deepEqual((await run()).issues, []); }
+      } finally { writeFileSync(file, before); }
     });
   });
 
@@ -239,7 +278,7 @@ for (const relative of ["packages/engine/dist/rendering/preparedBatches2D.d.ts",
         assert.deepEqual(baseline.filter(row => !current.some(now => now.path === row.path)).map(row => row.path), [relative]);
         assert.deepEqual(current, baseline.filter(row => row.path !== relative));
         assert.deepEqual((await run()).issues.map(issue => [issue.code, issue.path]), [['BIP_BOUNDARY_SOURCE_INVENTORY', relative]]);
-      } finally { writeFileSync(file, before); assert.deepEqual(inventory(root), baseline); assert.deepEqual((await run()).issues, []); }
+      } finally { writeFileSync(file, before); }
     });
   });
 
@@ -256,11 +295,11 @@ for (const [relative, mode] of [["packages/contracts/src/SharedGeometry2D.ts","m
         const now=inventory(root),prior=new Map(baseline.map(row=>[row.path,row]));
         assert.deepEqual([...now.filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),...baseline.filter(row=>!now.some(current=>current.path===row.path)).map(row=>row.path)],[relative]);
         assert.deepEqual((await run()).issues.map(issue=>[issue.code,issue.path]),[[mode==='missing'?'BIP_BOUNDARY_SOURCE_INVENTORY':'BIP_BOUNDARY_FINGERPRINT',relative]]);
-      } finally {writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);assert.deepEqual((await run()).issues,[]);}
+      } finally {writeFileSync(file,before);}
     });
   });
 
-// M1.4 controls retain a fresh complete source-file copy before each assigned change.
+// M1.4 controls verify a fresh complete source baseline before each assigned change.
 for (const [relative,mode] of [["packages/engine/dist/web/webgl2.d.ts","missing"],["packages/engine/dist/web/sharedRetentionLedger.js","missing"],["packages/engine/web/prepareSharedSubmission2D.ts","same-size-hash"],["packages/engine/package.json","extra-export"]])
  test('BIP-M14 complete successor refuses '+mode+' '+relative,async ()=>{
   const check=await checker();
@@ -273,7 +312,7 @@ for (const [relative,mode] of [["packages/engine/dist/web/webgl2.d.ts","missing"
    const now=inventory(root),prior=new Map(baseline.map(row=>[row.path,row]));
    assert.deepEqual([...now.filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),...baseline.filter(row=>!now.some(current=>current.path===row.path)).map(row=>row.path)],[relative]);
    assert.deepEqual((await run()).issues.map(issue=>[issue.code,issue.path]),[[mode==='missing'?'BIP_BOUNDARY_SOURCE_INVENTORY':mode==='extra-export'?'BIP_BOUNDARY_EXPORT_MAP':'BIP_BOUNDARY_FINGERPRINT',relative]]);
-  }finally{writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);assert.deepEqual((await run()).issues,[]);}
+  }finally{writeFileSync(file,before);}
  });
  });
 
@@ -289,6 +328,6 @@ for(const [relative,mode] of [['packages/engine/dist/ui/controls.d.ts','missing'
     const current=inventory(root),prior=new Map(baseline.map(row=>[row.path,row]));
     assert.deepEqual([...current.filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),...baseline.filter(row=>!current.some(now=>now.path===row.path)).map(row=>row.path)],[relative]);
     assert.deepEqual((await run()).issues.map(issue=>[issue.code,issue.path]),[[mode==='missing'?'BIP_BOUNDARY_SOURCE_INVENTORY':'BIP_BOUNDARY_FINGERPRINT',relative]]);
-   }finally{writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);assert.deepEqual((await run()).issues,[]);}
+   }finally{writeFileSync(file,before);}
   });
  });

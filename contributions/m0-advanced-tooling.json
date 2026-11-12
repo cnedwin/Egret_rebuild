@@ -15,6 +15,16 @@
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
+    },
+    {
+      "path": "tools/check-ci-documentation.mjs",
+      "originRole": "First-party Windows merge admission for a narrow documentation-only route; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/publication/ci-documentation-route.test.mjs",
+      "originRole": "First-party real Git regression fixtures for Windows documentation admission; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
     }
   ],
   "documents": []
