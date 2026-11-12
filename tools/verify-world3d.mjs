@@ -55,10 +55,11 @@ try {
   finally { server.close(); }
 }
 fs.mkdirSync(output, { recursive: true });
-const summary = { browser: options.channel ?? 'bundled chromium', cases: [], failures: [] };
+const summary = { browser: options.channel ?? 'bundled chromium', cases: [], failures: [], softDepth: {} };
 for (const backend of ['webgl2', 'webgpu']) {
   const result = results[backend];
   if (result.failure || result.errors.length) summary.failures.push({ backend, failure: result.failure, errors: result.errors });
+  if (result.softDepth) summary.softDepth[backend] = result.softDepth;
   for (const [name, data] of Object.entries(result.images ?? {})) {
     const png = new PNG({ width: result.width, height: result.height });
     png.data.set(data);

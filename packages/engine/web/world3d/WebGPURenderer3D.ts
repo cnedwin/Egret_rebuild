@@ -47,7 +47,7 @@ export interface WebGPURenderer3DOptions {
     readonly onDeviceLost?: (message: string) => void;
 }
 
-type PassKind = 'canvas' | 'target' | 'hdr' | 'depth';
+type PassKind = 'canvas' | 'target' | 'hdr' | 'depth' | 'scene-depth';
 interface BufferGpu { buffer: GPUBuffer; version: number; bytes: number; }
 interface GeometryGpu {
     readonly buffers: Map<string, BufferGpu>;
@@ -134,7 +134,6 @@ export class WebGPURenderer3D implements Renderer3D {
     /** True while the frame being drawn has a depth image of its solid geometry. */
     #softDepth = false;
     #sceneDepthSerial = 0;
-    #sceneDepthPass = false;
     readonly #skins = new WeakMap<Mesh3D, SkinGpu>();
     readonly #samplers = new Map<string, GPUSampler>();
     readonly #mipPipelines = new Map<GPUTextureFormat, GPURenderPipeline>();
@@ -646,7 +645,8 @@ export class WebGPURenderer3D implements Renderer3D {
         return entry.group;
     }
     private features(item: RenderItem3D, gpu: GeometryGpu, kind: PassKind, frameFlags: {fog: boolean; environment: boolean}): ShaderFeatures3D {
-        const {mesh, material} = item, depthOnly = kind === 'depth', lit = material.shading !== 'unlit' && material.shading !== 'matcap' && !depthOnly;
+        const {mesh, material} = item, depthOnly = kind === 'depth' || kind === 'scene-depth';
+        const lit = material.shading !== 'unlit' && material.shading !== 'matcap' && !depthOnly;
         const uv = gpu.buffers.has('uv'), instanced = mesh.isInstanced;
         // A map on the second coordinate set needs only that set; it falls back to the first when the geometry lacks it.
         const second = gpu.buffers.has('uv1') && !depthOnly, occlusionUv1 = second && lit && material.occlusionMap?.channel === 1;
@@ -688,17 +688,17 @@ export class WebGPURenderer3D implements Renderer3D {
         };
     }
     private pipeline(features: ShaderFeatures3D, item: RenderItem3D, gpu: GeometryGpu, kind: PassKind, mirrored: boolean, wire: boolean): GPURenderPipeline {
-        const {geometry, material, mesh} = item, depthOnly = kind === 'depth';
+        const {geometry, material, mesh} = item, shadow = kind === 'depth', depthOnly = shadow || kind === 'scene-depth';
         const featureKey = shaderFeatureKey3D(features);
         const topology: GPUPrimitiveTopology = wire ? 'line-list' : geometry.topology === 'triangles' ? 'triangle-list' : geometry.topology === 'lines' ? 'line-list'
             : geometry.topology === 'line-strip' ? 'line-strip' : 'point-list';
         // Shadow maps draw both faces: closed and open meshes then cast alike.
-        const cull: GPUCullMode = depthOnly || material.side === 'double' || material.billboard ? 'none' : material.side === 'back' ? 'front' : 'back';
+        const cull: GPUCullMode = shadow || material.side === 'double' || material.billboard ? 'none' : material.side === 'back' ? 'front' : 'back';
         const blend = !depthOnly && material.alphaMode === 'blend' ? material.blending : 'off';
-        const depthWrite = depthOnly || material.depthWrite, offset = depthOnly ? '1.5,2' : material.polygonOffset ? material.polygonOffset.join(',') : '';
+        const depthWrite = shadow || material.depthWrite, offset = shadow ? '1.5,2' : material.polygonOffset ? material.polygonOffset.join(',') : '';
         const colorSize = geometry.getAttribute('color')?.itemSize ?? 4, instanceColorSize = mesh.isInstanced ? (mesh as InstancedMesh3D).instanceColorSize : 4;
         const strip = topology === 'line-strip' && gpu.index ? gpu.index.format : '';
-        const key = [featureKey, kind, topology, cull, mirrored ? 'cw' : 'ccw', blend, depthWrite, material.depthTest, offset, colorSize, instanceColorSize, strip, this.#sceneDepthPass ? 'plain' : ''].join('/');
+        const key = [featureKey, kind, topology, cull, mirrored ? 'cw' : 'ccw', blend, depthWrite, material.depthTest, offset, colorSize, instanceColorSize, strip].join('/');
         let pipeline = this.#pipelines.get(key);
         if (pipeline) return pipeline;
         let module = this.#modules.get(featureKey);
@@ -739,11 +739,10 @@ export class WebGPURenderer3D implements Renderer3D {
             primitive: {topology, cullMode: cull, frontFace: mirrored ? 'cw' : 'ccw', ...(strip ? {stripIndexFormat: strip as GPUIndexFormat} : {})},
             depthStencil: {
                 format: depthOnly ? SHADOW_FORMAT : DEPTH_FORMAT, depthWriteEnabled: depthWrite,
-                depthCompare: material.depthTest || depthOnly ? 'less-equal' : 'always',
+                depthCompare: material.depthTest || shadow ? 'less-equal' : 'always',
                 // Depth bias applies to filled triangles only.
-                // Shadow maps are pushed back against acne; the scene's own depth image must be exact.
-                ...(filled && depthOnly && !this.#sceneDepthPass ? {depthBias: 2, depthBiasSlopeScale: 1.5} : {}),
-                ...(filled && !depthOnly && material.polygonOffset ? {depthBias: Math.round(material.polygonOffset[1]), depthBiasSlopeScale: material.polygonOffset[0]} : {}),
+                ...(filled && shadow ? {depthBias: 2, depthBiasSlopeScale: 1.5} : {}),
+                ...(filled && !shadow && material.polygonOffset ? {depthBias: Math.round(material.polygonOffset[1]), depthBiasSlopeScale: material.polygonOffset[0]} : {}),
             },
             multisample: {count: kind === 'canvas' ? this.#sampleCount : 1},
             ...(needsFragment ? {fragment: {
@@ -810,11 +809,11 @@ export class WebGPURenderer3D implements Renderer3D {
         const wire = material.wireframe && kind !== 'depth' && geometry.topology === 'triangles';
         // Everything that selects a pipeline besides the material and geometry themselves,
         // packed into one number so the common case is a single map lookup.
-        const bits = (kind === 'canvas' ? 0 : kind === 'target' ? 1 : kind === 'depth' ? 2 : 3) | (wire ? 4 : 0) | (determinant < 0 ? 8 : 0) | (instanced ? 16 : 0)
+        const bits = (kind === 'canvas' ? 0 : kind === 'target' ? 1 : kind === 'depth' ? 2 : kind === 'hdr' ? 3 : 65536) | (wire ? 4 : 0) | (determinant < 0 ? 8 : 0) | (instanced ? 16 : 0)
             | (instanced && (mesh as InstancedMesh3D).instanceColors ? 32 : 0) | (mesh.skeleton ? 64 : 0) | (mesh.receiveShadow && this.#shadowCount > 0 ? 128 : 0)
             | (frameFlags.fog ? 256 : 0) | (frameFlags.environment ? 512 : 0) | (this.toneMapping !== 'none' ? 1024 : 0)
             | (instanced && (mesh as InstancedMesh3D).instanceColorSize === 4 ? 2048 : 0)
-            | (material.side === 'double' ? 4096 : material.side === 'back' ? 8192 : 0) | (mesh instanceof SkinnedInstancedMesh3D ? 16384 : 0) | (mesh instanceof GpuParticles3D ? 32768 : 0) | (this.#sceneDepthPass ? 65536 : 0);
+            | (material.side === 'double' ? 4096 : material.side === 'back' ? 8192 : 0) | (mesh instanceof SkinnedInstancedMesh3D ? 16384 : 0) | (mesh instanceof GpuParticles3D ? 32768 : 0);
         let cache = this.#drawVariants.get(material);
         if (!cache || cache.version !== material.version) this.#drawVariants.set(material, cache = {version: material.version, variants: new Map()});
         // Material fields that select shader features or pipeline state. They are read every
@@ -868,7 +867,7 @@ export class WebGPURenderer3D implements Renderer3D {
             if (gpu.index.buffer !== this.#boundIndex) { pass.setIndexBuffer(gpu.index.buffer, gpu.index.format); this.#boundIndex = gpu.index.buffer; }
             pass.drawIndexed(item.count, instances, item.start);
         } else pass.draw(item.count, instances, item.start);
-        if (kind !== 'depth') {
+        if (kind !== 'depth' && kind !== 'scene-depth') {
             this.info.drawCalls++;
             if (!wire && geometry.topology === 'triangles') this.info.triangles += item.count / 3 * instances;
         }
@@ -1046,11 +1045,10 @@ export class WebGPURenderer3D implements Renderer3D {
             }
             pass.setBindGroup(0, depth.group);
             const none = {fog: false, environment: false};
-            this.#sceneDepthPass = true;
+            // Scene depth follows the main view's culling and material offset.
             for (const item of list.opaque) {
-                if (item.geometry.topology === 'triangles' && item.material.depthWrite && !item.material.billboard && !item.material.screenSpace) this.draw(pass, item, 'depth', none);
+                if (item.geometry.topology === 'triangles' && item.material.depthWrite && !item.material.billboard && !item.material.screenSpace) this.draw(pass, item, 'scene-depth', none);
             }
-            this.#sceneDepthPass = false;
             pass.end();
         }
 
