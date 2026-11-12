@@ -52,6 +52,14 @@
       "types": "./dist/web/webgl2.d.ts",
       "import": "./dist/web/webgl2.js"
     },
+    "./world3d": {
+      "types": "./dist/rendering/world3d/index.d.ts",
+      "import": "./dist/rendering/world3d/index.js"
+    },
+    "./webgl2/world3d": {
+      "types": "./dist/web/world3d/index.d.ts",
+      "import": "./dist/web/world3d/index.js"
+    },
     "./webgl2/scene3d": {
       "types": "./dist/web/webgl2Scene3d.d.ts",
       "import": "./dist/web/webgl2Scene3d.js"

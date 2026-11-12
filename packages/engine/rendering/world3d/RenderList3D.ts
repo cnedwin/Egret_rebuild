@@ -4,6 +4,7 @@
 // are pooled so a steady scene allocates nothing per frame.
 import type {Camera3D} from './Camera3D.js';
 import type {Geometry3D} from './Geometry3D.js';
+import {Lod3D} from './helpers3D.js';
 import {LIGHT3D_LIMITS, Light3D} from './Light3D.js';
 import type {Material3D} from './Material3D.js';
 import {frustumIntersectsSphere} from './math3D.js';
@@ -69,6 +70,10 @@ export class RenderList3D {
     }
     private visit(object: Object3D, camera: Camera3D): void {
         if (!object.visible) return;
+        if (object instanceof Lod3D) {
+            const eye = camera.matrixWorld;
+            object.select(eye[12]!, eye[13]!, eye[14]!);
+        }
         if (object.kind === 'mesh') this.addMesh(object as Mesh3D, camera);
         else if (object.kind === 'light') this.addLight(object as Light3D);
         const children = object.children;

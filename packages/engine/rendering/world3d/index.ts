@@ -8,8 +8,12 @@ export {Resource3D} from './core3D.js';
 export * from './math3D.js';
 export {Object3D, Scene3D, WORLD3D_LIMITS} from './Object3D.js';
 export type {Object3DKind, Fog3D} from './Object3D.js';
-export {Texture3D, CubeTexture3D, createSolidTexture3D, isTexturePixels3D, TEXTURE3D_LIMITS} from './Texture3D.js';
-export type {TextureWrap3D, TextureFilter3D, TextureColorSpace3D, TexturePixels3D, TextureSource3D, TextureOptions3D} from './Texture3D.js';
+export {
+    Texture3D, CubeTexture3D, RenderTarget3D, createSolidTexture3D, createGradientCubeTexture3D, isTexturePixels3D, TEXTURE3D_LIMITS,
+} from './Texture3D.js';
+export type {
+    TextureWrap3D, TextureFilter3D, TextureColorSpace3D, TexturePixels3D, TextureSource3D, TextureOptions3D, RenderTargetOptions3D,
+} from './Texture3D.js';
 export {Attribute3D, Geometry3D, createGeometry3D, ATTRIBUTE_3D, GEOMETRY3D_LIMITS} from './Geometry3D.js';
 export type {AttributeArray3D, Topology3D, GeometryGroup3D, MorphTarget3D, GeometryInput3D} from './Geometry3D.js';
 export {
@@ -48,3 +52,9 @@ export {RenderList3D} from './RenderList3D.js';
 export type {RenderItem3D, RenderStats3D} from './RenderList3D.js';
 export {loadGltf3D} from './Gltf3D.js';
 export type {GltfImageRequest3D, GltfLoadOptions3D, GltfAsset3D} from './Gltf3D.js';
+export {ParticleEmitter3D, createParticleEmitter3D, PARTICLES3D_LIMITS} from './Particles3D.js';
+export type {ParticleShape3D, ParticleEmitterOptions3D} from './Particles3D.js';
+export {
+    Lod3D, createGridGeometry3D, createAxesGeometry3D, createBoxEdgesGeometry3D, createLineMaterial3D, createGridHelper3D,
+    createAxesHelper3D,
+} from './helpers3D.js';

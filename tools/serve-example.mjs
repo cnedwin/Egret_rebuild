@@ -28,6 +28,7 @@ export function createExampleServer(repository=root){
    ||/^work\/spine-reset\/(?:v1|v2)\/(?:manifest\.json|assets\/(?:body|head|atlas|character))$/.test(relative)
    ||/^examples\/prepared-subtree\/(?:index\.html|main\.mjs|scene\.mjs)$/.test(relative)
    ||/^examples\/isometric-map\/(?:index\.html|main\.mjs)$/.test(relative)
+   ||/^examples\/world3d\/(?:index\.html|main\.mjs)$/.test(relative)
    ||/^examples\/authored-scene3d\/(?:index\.html|main\.mjs|room-glb\.mjs)$/.test(relative)
    ||/^examples\/textured-scene3d\/(?:index\.html|main\.mjs|room-glb\.mjs)$/.test(relative)
    ||/^examples\/mobile\/(?:index\.html|style\.css|main\.mjs|viewport\.mjs|resources\.mjs|pointers\.mjs|panels\.mjs)$/.test(relative)

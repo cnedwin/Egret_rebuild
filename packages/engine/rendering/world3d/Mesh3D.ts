@@ -144,15 +144,19 @@ export class InstancedMesh3D extends Mesh3D {
     count: number;
     /** 16 floats per instance, relative to this node. */
     readonly instanceMatrices: Float32Array;
-    /** Optional linear RGB per instance, created on first setColorAt(). */
+    /** Optional linear RGB (or RGBA) per instance, created on first setColorAt(). */
     instanceColors: Float32Array | undefined;
+    /** Components per instance color: 3 for RGB, 4 when instances also carry opacity. */
+    readonly instanceColorSize: 3 | 4;
     /** Bump after editing instance arrays directly. */
     instanceVersion = 1;
     #boundsVersion = 0;
     readonly #instanceSphere = new Float32Array(4);
 
-    constructor(geometry: Geometry3D, material: Material3D | Material3D[], capacity: number) {
+    constructor(geometry: Geometry3D, material: Material3D | Material3D[], capacity: number, instanceColorSize: 3 | 4 = 3) {
         super(geometry, material);
+        if (instanceColorSize !== 3 && instanceColorSize !== 4) throw new World3DError('WORLD3D_INPUT_INVALID', 'instanceColorSize');
+        this.instanceColorSize = instanceColorSize;
         this.capacity = requireCount3D(capacity, 'capacity', MESH3D_LIMITS.maxInstances);
         this.count = this.capacity;
         this.instanceMatrices = new Float32Array(this.capacity * 16);
@@ -170,10 +174,11 @@ export class InstancedMesh3D extends Mesh3D {
         mat4Compose(this.instanceMatrices.subarray(index * 16, index * 16 + 16), position, quaternion, s);
         this.instanceVersion++;
     }
-    setColorAt(index: number, r: number, g: number, b: number): void {
+    setColorAt(index: number, r: number, g: number, b: number, a = 1): void {
         if (!Number.isSafeInteger(index) || index < 0 || index >= this.capacity) throw new World3DError('WORLD3D_INPUT_INVALID', 'instance index');
-        const colors = this.instanceColors ??= new Float32Array(this.capacity * 3).fill(1);
-        colors[index * 3] = r; colors[index * 3 + 1] = g; colors[index * 3 + 2] = b;
+        const size = this.instanceColorSize, colors = this.instanceColors ??= new Float32Array(this.capacity * size).fill(1);
+        colors[index * size] = r; colors[index * size + 1] = g; colors[index * size + 2] = b;
+        if (size === 4) colors[index * size + 3] = a;
         this.instanceVersion++;
     }
     /** Sphere enclosing every instance, in world space. */
@@ -197,7 +202,7 @@ export class InstancedMesh3D extends Mesh3D {
     }
     private readonly localSphere = new Float32Array(4);
     override clone(): this {
-        const copy = new InstancedMesh3D(this.geometry, this.material, this.capacity) as this;
+        const copy = new InstancedMesh3D(this.geometry, this.material, this.capacity, this.instanceColorSize) as this;
         copy.copyFrom(this);
         copy.count = this.count;
         copy.instanceMatrices.set(this.instanceMatrices);
