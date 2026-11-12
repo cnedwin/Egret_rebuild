@@ -66,3 +66,9 @@ export type {Ktx2Info3D, Ktx2Result3D, Ktx2Options3D} from './Ktx23D.js';
 export type {GltfMeshoptRequest3D, GltfDracoRequest3D, GltfDracoResult3D} from './Gltf3D.js';
 export {SCENE_DOCUMENT_FORMAT_3D, SCENE_DOCUMENT_VERSION_3D, SERIALIZE3D_LIMITS, serializeScene3D, deserializeScene3D} from './Serialize3D.js';
 export type {SceneDocument3D, SerializeOptions3D, DeserializeOptions3D, DeserializedScene3D} from './Serialize3D.js';
+export {STATE_MACHINE3D_LIMITS, AnimationStateMachine3D, createAnimationStateMachine3D} from './StateMachine3D.js';
+export type {StateParameter3D, StateConditionOperator3D, StateCondition3D, StateBlendEntry3D, StateOptions3D, TransitionOptions3D} from './StateMachine3D.js';
+export {PHYSICS3D_LIMITS, RigidBody3D, PhysicsWorld3D, CharacterController3D, createPhysicsWorld3D, createCharacterController3D} from './Physics3D.js';
+export type {
+    BodyType3D, ShapeDefinition3D, RigidBodyOptions3D, PhysicsRaycastHit3D, PhysicsWorldOptions3D, CharacterControllerOptions3D,
+} from './Physics3D.js';
