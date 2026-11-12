@@ -2,17 +2,19 @@
 // World3D landscape: a height-map terrain whose chunks drop detail with
 // distance, the same heights as a collision shape, and a lake with waves,
 // refraction and a mirror image of the scene. A crowd of walking figures is
-// drawn in one call from clips baked into an animation texture.
+// drawn in one call from clips baked into an animation texture. Height fog with
+// light shafts, smoke and mist from GPU particles that fade into the ground,
+// a trail behind a circling light, and decals stamped onto the terrain.
 import { createEngine } from '@egret/engine';
 import {
-  Attribute3D, Bone3D, Mesh3D, Object3D, Scene3D, Skeleton3D, bakeAnimationTexture3D, createAmbientLight3D, createAnimationClip3D, createBoxGeometry3D,
-  createDirectionalLight3D, createGeometry3D, createGradientCubeTexture3D, createHeightField3D, createPerspectiveCamera3D, createPhysicsWorld3D,
+  Attribute3D, Bone3D, Mesh3D, Object3D, Scene3D, Skeleton3D, Texture3D, bakeAnimationTexture3D, createAmbientLight3D, createAnimationClip3D, createBoxGeometry3D,
+  createDecal3D, createDirectionalLight3D, createGeometry3D, createGpuParticles3D, createTrail3D, createGradientCubeTexture3D, createHeightField3D, createPerspectiveCamera3D, createPhysicsWorld3D,
   createSkinnedInstancedMesh3D, createSphereGeometry3D, createStandardMaterial3D, createTerrain3D, createWater3D, quatFromAxisAngle,
 } from '@egret/engine/world3d';
 
 const useWebGPU = new URLSearchParams(location.search).get('backend') === 'webgpu';
 const backend = await (useWebGPU ? import('@egret/engine/webgpu/world3d') : import('@egret/engine/webgl2/world3d'));
-const { createOrbitControls3D, createWorld3DHost, createWorld3DView, startWorld3DLoop } = backend;
+const { createAtmosphere3D, createOrbitControls3D, createWorld3DHost, createWorld3DView, startWorld3DLoop } = backend;
 const canvas = document.querySelector('#stage');
 const status = document.querySelector('#status');
 const report = (text) => { status.textContent = text; };
@@ -100,7 +102,7 @@ async function main() {
   scene.addChild(camera);
   scene.addChild(createAmbientLight3D({ intensity: 0.08 }));
   const sun = createDirectionalLight3D({ color: 0xfff1d6, intensity: 1.7, castShadow: true });
-  sun.setPosition(60, 80, 30).lookAt(0, 0, 0);
+  sun.setPosition(70, 36, 20).lookAt(0, 0, 0);
   Object.assign(sun.shadow, { cascades: 3, cascadeDistance: 160 });
   scene.addChild(sun);
 
@@ -183,6 +185,66 @@ async function main() {
   };
   moveCrowd(0);
 
+  // ---- effects --------------------------------------------------------------------
+  // Fog that pools in the basin, and shafts where the hills stand in front of the sun.
+  const air = createAtmosphere3D({ fogColor: 0xb9c8d6, fogDensity: 0.004, fogHeight: -10, fogFalloff: 0.06, shaftIntensity: 0.5 });
+  Object.assign(renderer.postProcess, { enabled: true, ssao: false, custom: air.post });
+  const sunTravel = [-70, -36, -20];
+  // A soft round dot for the particles, drawn into a small texture.
+  const dot = (() => {
+    const size = 32, data = new Uint8Array(size * size * 4);
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+      const d = Math.hypot((x + 0.5) / size - 0.5, (y + 0.5) / size - 0.5) * 2, a = Math.max(0, 1 - d);
+      data.set([255, 255, 255, Math.round(a * a * 255)], (y * size + x) * 4);
+    }
+    return new Texture3D({ width: size, height: size, data });
+  })();
+  // Mist drifting over the lake: large, slow particles that fade where they meet the water's edge and the shore.
+  const mist = createGpuParticles3D({ count: 900, lifetime: [8, 14], speed: [0.2, 0.7], direction: [1, 0.05, 0.3], spread: 0.9, startSize: [5, 9], endScale: 1.6, startColor: 0xdfe8f0, startOpacity: 0.16, endOpacity: 0.16, fadeIn: 0.3, fadeOut: 0.4, shape: 'box', extents: [55, 0.6, 45], map: dot, blending: 'normal', softness: 2.5 });
+  mist.setPosition(0, -8.6, 0);
+  scene.addChild(mist);
+  // A campfire on the shore: smoke that rises and spreads, and sparks that fall back.
+  let fireX = 0, fireZ = 0;
+  for (let reach = 20; reach < 150; reach += 2) { fireX = -reach * 0.6; fireZ = reach * 0.8; if (field.heightAt(fireX, fireZ) > -9.2) break; }
+  const fireY = field.heightAt(fireX, fireZ);
+  const smoke = createGpuParticles3D({ count: 500, lifetime: [4, 7], speed: [1.2, 2], spread: 0.25, gravity: [0.25, 0.1, 0.1], drag: 0.15, startSize: [0.7, 1.2], endScale: 5, spin: [-0.6, 0.6], rotation: [0, 6.28], startColor: 0x6a6660, endColor: 0xb8b8b8, startOpacity: 0.55, endOpacity: 0, fadeIn: 0.08, fadeOut: 0.6, map: dot, blending: 'normal', softness: 1 });
+  const sparks = createGpuParticles3D({ count: 300, lifetime: [0.8, 1.8], speed: [2.5, 5], spread: 0.5, gravity: [0, -3.5, 0], startSize: [0.06, 0.12], endScale: 0.3, startColor: 0xffc060, endColor: 0xff3010, map: dot });
+  for (const emitter of [smoke, sparks]) { emitter.setPosition(fireX, fireY + 0.2, fireZ); scene.addChild(emitter); }
+  // A light circling the lake with a ribbon behind it.
+  const wisp = new Mesh3D(createSphereGeometry3D({ radius: 0.35 }), createStandardMaterial3D({ color: 0x000000, roughness: 1 }));
+  wisp.material.emissive.set([0.4, 1.6, 2.4]); wisp.castShadow = false;
+  scene.addChild(wisp);
+  const trail = createTrail3D({ target: wisp, points: 96, lifetime: 2.2, width: 0.7, endWidth: 0, color: 0x66ddff, endColor: 0x7744ff, opacity: 0.9, minDistance: 0.2 });
+  scene.addChild(trail);
+  // Decals: a painted ring stamped onto whichever terrain chunk lies under a point.
+  const ring = (() => {
+    const size = 64, data = new Uint8Array(size * size * 4);
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+      const d = Math.hypot((x + 0.5) / size - 0.5, (y + 0.5) / size - 0.5) * 2, on = (d > 0.62 && d < 0.9) || d < 0.22;
+      data.set(on ? [235, 60, 40, 235] : [0, 0, 0, 0], (y * size + x) * 4);
+    }
+    return new Texture3D({ width: size, height: size, data });
+  })();
+  const stamps = [];
+  const stamp = (x, z) => {
+    const y = field.heightAt(x, z);
+    for (const chunk of terrain.children) {
+      const box = chunk.geometry.boundingBox;
+      if (x < box[0] - 3 || x > box[3] + 3 || z < box[2] - 3 || z > box[5] + 3) continue;
+      const decal = createDecal3D(chunk, createStandardMaterial3D({ map: ring, alphaMode: 'blend', roughness: 0.8 }), { position: [x, y, z], normal: field.normalAt(x, z), width: 6, height: 6, depth: 8, rotation: Math.random() * 6.28 });
+      if (decal) stamps.push(decal);
+    }
+  };
+  stamp(fireX + 5, fireZ + 2); stamp(52, -30); stamp(70, -18);
+  let clock = 0;
+  const moveEffects = (deltaSeconds) => {
+    clock += deltaSeconds;
+    wisp.setPosition(Math.cos(clock * 0.7) * 38, -6.5 + Math.sin(clock * 1.9) * 1.5, Math.sin(clock * 0.7) * 30);
+    trail.update(deltaSeconds);
+    mist.update(deltaSeconds); smoke.update(deltaSeconds); sparks.update(deltaSeconds);
+    air.update(camera, sunTravel);
+  };
+
   const controls = createOrbitControls3D(camera, canvas, { target: [0, -6, 0], minDistance: 6, maxDistance: 320, maxPolarAngle: Math.PI * 0.495 });
   const view = createWorld3DView(engine, scope, {
     renderer, scene, camera, controls,
@@ -190,6 +252,7 @@ async function main() {
       world.step(deltaSeconds);
       moveCrowd(Math.min(deltaSeconds, 0.1));
       water.update(deltaSeconds);
+      moveEffects(Math.min(deltaSeconds, 0.1));
       buoy.setPosition(-12, water.heightAt(-12, 8) + 0.3, 8);
       // The mirror image is drawn first; the main view then reads it.
       if (reflect) water.renderReflection(renderer, scene, camera);
@@ -203,6 +266,9 @@ async function main() {
   toggle('#wire', (on) => { ground.wireframe = on; ground.touch(); });
   toggle('#reflect', (on) => { reflect = on; waterMaterial.reflectionMap = on ? mirror : undefined; waterMaterial.touch(); });
   toggle('#calm', (on) => { water.amplitude = on ? 0.02 : 0.18; });
+  toggle('#fog', (on) => { air.fogDensity = on ? 0.004 : 0; air.shaftIntensity = on ? 0.5 : 0; });
+  // A level changes the chunk's triangles, so a stamp belongs to the level it was made on: stamp at the detail in view.
+  document.querySelector('#stamp').addEventListener('click', () => stamp(controls.target[0] + (Math.random() - 0.5) * 20, controls.target[2] + (Math.random() - 0.5) * 20));
   document.querySelector('#drop').addEventListener('click', () => drop(6));
 
   const loopHandle = startWorld3DLoop(engine, (cause) => { lastError = String(cause?.stack ?? cause); report('Stopped: ' + (cause?.message ?? cause)); });
@@ -221,6 +287,7 @@ async function main() {
     get info() { return { ...renderer.info, terrainTriangles: terrain.triangleCount, levels: terrain.chunkLevels.join(''), bodies: bodies.length }; },
     get resting() { return bodies.map((body) => { const p = body.position; return +(p[1] - field.heightAt(p[0], p[2])).toFixed(2); }); },
     get buoy() { return buoy.position[1]; },
+    get effects() { return { stamps: stamps.length, trail: trail.pointCount, mist: mist.count, smoke: +smoke.time.toFixed(2), fog: air.fogDensity, sun: [...air.post.uniforms.subarray(8, 11)].map((v) => +v.toFixed(2)), fire: [fireX, fireY, fireZ].map((v) => +v.toFixed(1)) }; },
     get crowd() { return { count: crowd.count, walking: walkers.filter((walker) => walker.rest <= 0).length, frames: baked.frameCount, bones: baked.boneCount, first: [walkers[0].x, walkers[0].z].map((v) => +v.toFixed(2)) }; },
     backend: useWebGPU ? 'webgpu' : 'webgl2',
     look(x, y, z, tx = 0, ty = -6, tz = 0) { camera.setPosition(x, y, z); controls.target.set([tx, ty, tz]); camera.lookAt(tx, ty, tz); controls.syncFromCamera(); },

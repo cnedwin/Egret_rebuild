@@ -61,6 +61,8 @@ export class Mesh3D extends Object3D {
     /** Optional hook the render list calls once per frame before the mesh is culled and sorted. */
     beforeRender?(camera: import('./Camera3D.js').Camera3D): void;
     geometry: Geometry3D;
+    /** false leaves the mesh out of ray picking, as for effects whose drawn shape is not their geometry. */
+    pickable = true;
     /** One material, or one per geometry group addressed by materialIndex. */
     material: Material3D | Material3D[];
     /** Weight per geometry morph target; resized automatically to the target count. */

@@ -66,7 +66,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 ## 拾取
 
-`Raycaster3D` 与子树求交，返回按距离排序的命中结果，包含世界坐标点、面索引、插值 UV 和实例索引。它先检测包围球，遵循材质面向和层掩码，并可在每个网格的首个命中处停止。`setFromCamera` 由归一化设备坐标构造射线，射线从近平面出发。
+`Raycaster3D` 与子树求交，返回按距离排序的命中结果，包含世界坐标点、面索引、插值 UV 和实例索引。它先检测包围球，遵循材质面向和层掩码，并可在每个网格的首个命中处停止。`pickable = false` 的网格不参与拾取；拖尾和 GPU 粒子发射器默认如此，因为它们绘制出来的形状并不是自身的几何体。`setFromCamera` 由归一化设备坐标构造射线，射线从近平面出发。
 
 ## 粒子
 
@@ -208,6 +208,18 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 地形使用顶点颜色和一张平铺的 `map` 着色，没有内置按权重图混合多种地表纹理。细节层级按分块选择并用裙边遮缝，不做边对边的缝合；也没有从磁盘流式加载，整个高度场都在内存中。水面只有一个水平镜面，因此旋转过的水面网格或远高于默认值的波浪反射并不精确；没有按水深变化的岸边过渡、泡沫和焦散，也没有处理相机位于水下的情况。镜像需要把场景连同阴影再绘制一次。
 
+## 特效
+
+`createTrail3D({target, lifetime, points, width, endWidth, color, endColor, opacity, endOpacity, map})` 是跟在运动物体后面的拖尾：目标移动时记录世界坐标，记录点随时间消失，每次绘制前重新构建并朝向相机，向尾部逐渐变窄、变淡。把它直接加入场景而不是挂在目标之下，并且每帧调用 `update(deltaSeconds)`；`push(x, y, z)` 可以手动送入点，瞬移之后用 `clear()` 清空。
+
+`createDecal3D(mesh, material, {position, normal, width, height, depth, rotation})` 把一张纹理贴到已有的几何体上。目标网格落在贴花盒子内的三角形被取出、按盒子裁剪，作为一个贴合表面的新网格返回，纹理坐标在盒子范围内从 0 到 1；它被加为目标的子节点，因此随目标移动，并像普通网格一样接受光照和阴影。`createDecalGeometry3D` 只返回几何体。目标使用镜像变换时，角度判断遵循目标的可见面。背向贴花的面会被略去，盒子没有碰到表面时返回 `undefined`。贴花按静止形状裁剪：不会跟随蒙皮变形，也不会跟随地形分块切换细节层级。
+
+`createGpuParticles3D({count, lifetime, speed, direction, spread, gravity, drag, startSize, endScale, rotation, spin, startColor, endColor, startOpacity, endOpacity, fadeIn, fadeOut, shape, loop, duration, map, blending, softness})` 在顶点阶段计算粒子运动。每个粒子的起点、出生时间、速度、寿命、大小和旋转只写入一次；每帧只有时间在变，由 `update(deltaSeconds)` 设置。循环发射器是一股在时间 0 就已稳定运行的粒子流；`loop: false` 是一次爆发，可用 `isFinished` 查询结束、用 `restart()` 重放。大约一百万个粒子以内都是一次绘制，CPU 每帧不做任何逐粒子工作。代价是运动必须符合公式：在发射器空间内的发射、重力和阻力，并随发射器节点移动。需要碰撞、受吸引，或在发射器移动后留在世界中的粒子仍应使用 `ParticleEmitter3D`。粒子不排序，因此宜用叠加混合，或柔和、低不透明度的贴图。
+
+`material.softness` 让混合材质在接近其后方实体几何的那段距离内逐渐淡出，而不是留下一条生硬的交线：软粒子、薄雾、光锥都用得上。两种粒子发射器都接受这个参数。只要有可见的混合材质需要它，渲染器就把不透明三角形的深度绘制到与输出同样大小的纹理中。这次额外的深度绘制采用相机视图的面剔除规则和材质的多边形偏移。
+
+`createAtmosphere3D({fogColor, fogDensity, fogHeight, fogFalloff, shaftIntensity, shaftLength})` 来自后端入口，把高度雾和光束做成一个后处理钩子：把 `atmosphere.post` 赋给 `renderer.postProcess.custom`，并且每帧调用 `atmosphere.update(camera, sunDirection)`。雾随距离变浓、随高度按指数变薄，沿每条视线以闭式积分求得。光束从每个像素朝太阳在屏幕上的位置走 24 步，累计途中有多少开阔天空，于是挡在太阳前面的物体会在光晕中切出暗条；太阳离开画面时光束随之淡出。这是屏幕空间的近似：雾不受阴影影响，也不按各个光源分别照亮，密度没有噪声和局部体积，光束只在太阳位于屏幕内或附近时存在。它占用唯一的自定义后处理槽位。平面镜像在绘制时不做后处理，主画面的后处理随后会作用于它。
+
 ## 文字
 
 `createTextGeometry3D(text, font, {size, depth, align, letterSpacing, lineHeight, curveSegments})` 把字符串变成位于 XY 平面的网格几何体，第一行的基线在 y = 0。设置 `depth` 时它是一个挤出体，带正反面和侧面两个材质分组；`depth: 0` 时是平面文字。`createTextShapes3D` 只返回轮廓，`font.measureText` 返回宽度。
@@ -281,9 +293,9 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 [World3D 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/world3d/README.zh-CN.md)在任一后端上展示灯光、阴影、实例化、蒙皮、变形、粒子、渲染目标、拾取和轨道控制。
 
-无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs`、`tests/world3d-decoders.test.mjs`、`tests/world3d-navigation.test.mjs`、`tests/world3d-terrain.test.mjs`、`tests/world3d-crowd.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
+无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs`、`tests/world3d-decoders.test.mjs`、`tests/world3d-navigation.test.mjs`、`tests/world3d-terrain.test.mjs`、`tests/world3d-crowd.test.mjs`、`tests/world3d-effects.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
 
-`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十二个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，文字与变换操纵器，带反射水面、细节层级混合的地形，以及处于不同片段、带阴影的实例化蒙皮角色。开发期间全部二十二个场景在使用软件渲染的无头 Chromium 中运行。首轮桌面复审在 NVIDIA RTX 5090 Laptop GPU 上执行了前十六个场景。整合复审在 Windows Edge 157 上通过了全部二十二个 WebGL2／WebGPU 图像对比，包括地形与水面、蒙皮人群，未使用强制渲染后端的启动参数。独立的正交反射回读确认，两个后端都保留镜面上方的几何体并裁掉镜面下方的几何体。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十四个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，文字与变换操纵器，带反射水面、细节层级混合的地形，处于不同片段、带阴影的实例化蒙皮角色，带拖尾和软 GPU 粒子的贴花，以及带光束的高度雾。开发期间全部二十四个场景在使用软件渲染的无头 Chromium 中运行。首轮桌面复审在 NVIDIA RTX 5090 Laptop GPU 上执行了前十六个场景。整合复审在 Windows Edge 157 上通过了全部二十二个 WebGL2／WebGPU 图像对比，包括地形与水面、蒙皮人群，未使用强制渲染后端的启动参数。独立的正交反射回读确认，两个后端都保留镜面上方的几何体并裁掉镜面下方的几何体。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
 
 `tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。负载包括静止与运动的网格、阴影、实例化、多光源、每个网格一次绘制的蒙皮与一次绘制 2000 个烘焙实例的蒙皮、合批、覆盖在场景上的玻璃以及后处理链；另外还测量一次物理步进的耗时，场景为静止的箱子堆、三角网格上的球体和关节链。不测量 GPU 执行时间。
 
@@ -293,6 +305,7 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 - 一台运行 Chrome 157 的 Android 真机已呈现两个后端，响应了自动触发的阴影开关，并在释放后停止更新帧。本次复审还在同类真机的 WebGL2 和 WebGPU 上检查了屏幕空间效果、顶点位移与阴影，以及斜切投影深度。
 - 更广泛的移动端与设备恢复覆盖、视口和反射探针专项检查、性能测量，以及第一人称控制和空间音频的真人验证仍待完成。
 - 最新的四个比较场景（光泽、玻璃与光照贴图；景深；折射；文字与变换操纵器）以及关节、凸包、连续碰撞和变换控制目前只在软件渲染和无头测试中运行过，仍需在真实 GPU 上验证并由真人操作检查。
+- 桌面 Edge 已在两个后端对比固定的特效与大气场景。固定像素检查覆盖被剔除的背面，以及在采样点深度相同的两个可见墙面。地形示例的交互、性能和更广泛的设备仍待验收。
 - 烘焙蒙皮实例目前只在无头测试、软件渲染下的比较场景与基准测试，以及软件渲染下 WebGL2 的地形示例中运行过。
 - 地形、水面和平面镜像目前只在无头测试、软件渲染下的比较场景以及软件渲染下 WebGL2 的地形示例中运行过，仍需在真实 GPU 上、通过 WebGPU 画布呈现并由真人操作检查。
 - 尚未实现：不依赖官方模块的 Draco 与 Basis Universal 解码，浮点精度的环境预过滤，多于一层的折射，带倒角的挤出体，文字整形与 CFF 字体，滑动关节与弹簧关节，以及针对旋转或宽大刚体的连续碰撞。
