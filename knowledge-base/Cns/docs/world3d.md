@@ -74,7 +74,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 ## glTF
 
-`loadGltf3D` 读取 `.glb` 字节或已解析的 `.gltf` 对象，返回场景、相机、动画和所创建的资源，并提供统一的 `dispose()`。支持网格、金属度-粗糙度和无光照材质、纹理变换、节点层级、蒙皮、变形目标、动画、相机、精确光源，以及 `EXT_mesh_gpu_instancing` 节点（读入为 `InstancedMesh3D`）。图像解码和外部缓冲加载由调用方注入，读取器因此不依赖 DOM。读取器接受根节点彼此独立的场景。遮蔽贴图和自发光贴图可以使用第 0 套或第 1 套纹理坐标（烘焙光照通常放在第 1 套）；它们会设置 `texture.channel`，手动指定的遮蔽或自发光贴图同样可以使用这个属性。基础色、法线和金属度-粗糙度贴图使用第 0 套。共享场景根节点或其他纹理坐标集会触发明确的错误诊断。单个访问器解码上限为 128 MiB，合计上限为 256 MiB。各节点和图元生成的实例变换矩阵共享每个资产 64 MiB 的预算。Draco、meshopt 和 Basis 数据需要调用方提供解码器（见“压缩资源”）；未提供时，它们和其他必需扩展会以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。浏览器入口中的 `loadGltfFromUrl3D` 提供 fetch 和 `createImageBitmap`。
+`loadGltf3D` 读取 `.glb` 字节或已解析的 `.gltf` 对象，返回场景、相机、动画和所创建的资源，并提供统一的 `dispose()`。支持网格、金属度-粗糙度和无光照材质、纹理变换、节点层级、蒙皮、变形目标、动画、相机、精确光源，以及 `EXT_mesh_gpu_instancing` 节点（读入为 `InstancedMesh3D`）。图像解码和外部缓冲加载由调用方注入，读取器因此不依赖 DOM。读取器接受根节点彼此独立的场景。遮蔽贴图和自发光贴图可以使用第 0 套或第 1 套纹理坐标（烘焙光照通常放在第 1 套）；它们会设置 `texture.channel`，手动指定的遮蔽或自发光贴图同样可以使用这个属性。基础色、法线和金属度-粗糙度贴图使用第 0 套。共享场景根节点或其他纹理坐标集会触发明确的错误诊断。单个访问器解码上限为 128 MiB，合计上限为 256 MiB。各节点和图元生成的实例变换矩阵共享每个资产 64 MiB 的预算。meshopt 由引擎内置解码。Draco 和 Basis 数据使用应用提供的适配器；没有可用解码器的必需扩展会以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。参见“压缩资源”。浏览器入口中的 `loadGltfFromUrl3D` 提供 fetch 和 `createImageBitmap`。
 
 ## 渲染器
 
@@ -90,9 +90,9 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 纹理源可以是块压缩的多级链：`{width, height, format, levels}`，`format` 为 `bc1`、`bc3`、`bc7`、`etc2-rgb8`、`etc2-rgba8` 或 `astc-4x4`。数据按存储的样子上传，在显存中保持压缩。`renderer.supportsCompressedFormat(format)` 报告设备是否接受某种格式；桌面 GPU 通常提供 BC，移动 GPU 提供 ETC2 和 ASTC。
 
-`parseKtx23D(bytes, options)` 读取 KTX2 容器。未压缩的 RGBA8 和上述块格式直接使用。包在 Zstandard 或 zlib 里的层级会先被解开。Basis Universal 数据以及读取器不认识的格式交给 `options.transcode`，由它返回适合当前设备的像素或压缩链。`loadTexture3D` 通过文件头识别 KTX2。
+`parseKtx23D(bytes, options)` 读取 KTX2 容器。未压缩的 RGBA8 和上述块格式直接使用。显式提供的 `options.transcode` 优先处理超级压缩或未知格式，返回设备支持的像素或压缩链。未提供该回调时，读取器内置解开已知格式的 Zstandard 或 zlib 超级压缩，并在解码前校验每个纹理层级的实际字节数。Basis Universal 仍需要转码器。`loadTexture3D` 通过文件头识别 KTX2。
 
-`EXT_meshopt_compression` 由引擎自行解码：`decodeMeshopt3D` 用 TypeScript 实现了顶点、三角形和索引序列三种编码，以及八面体、四元数和指数三种过滤器，这类文件不需要任何额外选项即可加载。如果提供了 `decodeMeshopt` 钩子，则改用钩子，例如在文件非常大时换成 WebAssembly 解码器。KTX2 读取器还会解开包在可读层级外面的 Zstandard 和 zlib 超级压缩（`decompressZstd3D` 和 `inflate3D` 也已导出，可另作他用）；不支持 Zstandard 字典。
+`EXT_meshopt_compression` 由引擎自行解码：`decodeMeshopt3D` 用 TypeScript 实现了顶点、三角形和索引序列三种编码，以及八面体、四元数和指数三种过滤器，这类文件不需要任何额外选项即可加载。如果提供了 `decodeMeshopt` 钩子，则改用钩子，例如在文件非常大时换成 WebAssembly 解码器。KTX2 读取器还会解开包在可读层级外面的 Zstandard 和 zlib 超级压缩（`decompressZstd3D` 和 `inflate3D` 也已导出，可另作他用）；不支持 Zstandard 字典。格式参考包括 [KTX 2.0 规范](https://registry.khronos.org/KTX/specs/2.0/ktxspec.v2.html)、[EXT_meshopt_compression 位流规范](https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Vendor/EXT_meshopt_compression)、[RFC 1950](https://www.rfc-editor.org/rfc/rfc1950)、[RFC 1951](https://www.rfc-editor.org/rfc/rfc1951) 和 [RFC 8878](https://www.rfc-editor.org/rfc/rfc8878)。
 
 `KHR_draco_mesh_compression` 和 Basis Universal 纹理（`KHR_texture_basisu`）仍然需要官方的 WebAssembly 解码器，引擎不附带它们。应用自行加载解码模块，再用适配函数包装：`decodeDraco: createDracoDecoder3D(dracoModule)`，`transcodeKtx2: createBasisTranscoder3D(basisModule, format => renderer.supportsCompressedFormat(format))`。Basis 适配函数会选择设备支持的最佳压缩格式，都不支持时退回普通 RGBA。文件要求 Draco 而没有提供钩子时，以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。两个适配函数按官方模块的公开接口编写，目前只用替身模块测试过，还没有在真实模块上运行。
 
