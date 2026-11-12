@@ -214,12 +214,15 @@ const m24SpineStrictPairs = [{"base":{"path":"packages/engine/dist/Engine.d.ts",
 const fontResourceStrictAddition = {"path":"packages/contracts/dist/resources/fontArtifact.d.ts","bytes":292,"sha256":"a9dbd1b40727ccb99733c058fbd12574c87c3d3ae193ac67edc4cc0232040969"};
 const m34EffectStrictAddition = {"path":"packages/runtime/dist/renderEffect.d.ts","bytes":688,"sha256":"bc13e6d9f7cc725322103e7d844aab4484e34b8667360c9a203952ec917b362f"};
 const m24SpineStrictAddition = {"path":"packages/engine/dist/displaySubtreeTicket.d.ts","bytes":1128,"sha256":"378e77f6c08b7f733e1df335ab42b14d96e6c5b8e49b214b6e35ee946b4278da"};
+// A current implementation-only capture successor keeps the retained declarations and observations.
+const m12FullDirtyCaptureSource = {"base":{"path":"packages/runtime/src/texturedFrameCapture.ts","bytes":15705,"sha256":"5389b3ae7dc94d8555cec79679a2cdd36b6538399b2751658d1ca8aefa0a067b"},"current":{"path":"packages/runtime/src/texturedFrameCapture.ts","bytes":16233,"sha256":"967cc1319248b49530c53b13ae1ae3eccbdddd471b2be510a8e213621315ddb0"}};
 function m24SpineStrictPin(root,selected,id,row){
  if(selected!==M15_DATA||!IDS.includes(id))return row;
  const pair=m24SpineStrictPairs.find(pair=>equal(pair.base,row));
  if(!pair)return row;
  const actual=fingerprintFile(root,row.path);
  if(equal(actual,pair.current))return pair.current;
+ if(equal(pair.current,m12FullDirtyCaptureSource.base)&&equal(actual,m12FullDirtyCaptureSource.current))return m12FullDirtyCaptureSource.current;
  const worldCard=worldCardStrictPairs.find(next=>equal(next.base,pair.current));
  if(worldCard&&equal(actual,worldCard.current))return worldCard.current;
  const texturedGlb=worldCard&&texturedGlbStrictPairs.find(next=>equal(next.base,worldCard.current));

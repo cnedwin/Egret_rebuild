@@ -227,7 +227,29 @@ const sharedContainedClipPairs = [{"base":{"path":"packages/engine/rendering/pre
 
 
 const m24SpineProjectedPairs = [{"base":{"path":"packages/engine/src/index.ts","bytes":4093,"sha256":"e4365269cdd2dcac13d7a2605693c945ce9b130083f25728c64a14ae53347d21"},"current":{"path":"packages/engine/src/index.ts","bytes":4238,"sha256":"8f311ec45b6129dc0eb4f42107ee429f8441a65e53bca37d9c74504052e7b966"}},{"base":{"path":"packages/engine/dist/index.d.ts","bytes":4127,"sha256":"d4439f22d3dc56ace0e3c85fea434eb0dda4fec1f499099f9d50dcf4342324f3"},"current":{"path":"packages/engine/dist/index.d.ts","bytes":4268,"sha256":"b3c085a421cb720f4c5da4548215363b730be53836650fff385d992745c34760"}},{"base":{"path":"packages/engine/dist/Engine.d.ts","bytes":4574,"sha256":"d04a9439127540f86f3934141e685268a3f4a26a3e41658c78dfe92ce4a88793"},"current":{"path":"packages/engine/dist/Engine.d.ts","bytes":5326,"sha256":"81b88b7015945de12d7fd0fd619cb2855a6d063ae529076fb89a6c586482c66e"}}];
-function pinCheck(pin,code){const raw=read(pin.path);pin=m31UiSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m22SequenceSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m33KeyboardSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m24SpineSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m34EffectInterfacePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=sharedContainedClipPairs.find(pair=>equal(pair.base,pin))?.current??pin;const worldCard=worldCardRawPairs.find(pair=>equal(pair.base,pin));if(worldCard&&raw.length===worldCard.current.bytes&&hash(raw)===worldCard.current.sha256)pin=worldCard.current;const texturedGlb=texturedGlbRawPairs.find(pair=>equal(pair.base,worldCard?.current??pin));if(texturedGlb&&raw.length===texturedGlb.current.bytes&&hash(raw)===texturedGlb.current.sha256)pin=texturedGlb.current;const lambertGlb=lambertGlbRawPairs.find(pair=>equal(pair.base,texturedGlb?.current??pin));if(lambertGlb&&raw.length===lambertGlb.current.bytes&&hash(raw)===lambertGlb.current.sha256)pin=lambertGlb.current;const content=m21ContentConfigurationPairs.find(pair=>equal(pair.base,pin));if(content&&raw.length===content.current.bytes&&hash(raw)===content.current.sha256)pin=content.current;if(m31UiPackageSuccessor(pin,raw)||m3PointerPackageSuccessor(pin,raw)||m15ResourcePackageSuccessor(pin,raw)||m14EnginePackageSuccessor(pin,raw)||bbtbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
+// M12-FULL-DIRTY-IDENTITY-BEGIN
+// Exact successors of the two previously admitted capture identities.
+const m12FullDirtyCapturePairs = [
+  {"base":{"path":"packages/runtime/src/texturedFrameCapture.ts","bytes":15705,"sha256":"5389b3ae7dc94d8555cec79679a2cdd36b6538399b2751658d1ca8aefa0a067b"},"current":{"path":"packages/runtime/src/texturedFrameCapture.ts","bytes":16233,"sha256":"967cc1319248b49530c53b13ae1ae3eccbdddd471b2be510a8e213621315ddb0"}},
+  {"base":{"path":"packages/runtime/dist/texturedFrameCapture.js","bytes":15312,"sha256":"c24d52a9fc718807f5acc33555dd9b22c3bedef681cfe56545b3ddcb2e9d49ac"},"current":{"path":"packages/runtime/dist/texturedFrameCapture.js","bytes":15785,"sha256":"c67b0b3966a17d06d4886841865086b6c7423c92005b5e5958badd27f7466e12"}},
+];
+function m12FullDirtyCapturePin(pin,code){
+ const pair=m12FullDirtyCapturePairs.find(row=>equal(row.base,pin));
+ if(!pair)return pin;
+ const marker=m12FullDirtyCapturePairs[0].current;
+ const source=read(marker.path);
+ if(source.length!==marker.bytes||hash(source)!==marker.sha256)return pin;
+ for(const row of m12FullDirtyCapturePairs){
+  if(row.base.path!==row.current.path||!m34EffectInterfacePairs.some(prior=>equal(prior.current,row.base)))
+   bbtbFail(code,'M1.2 full-dirty capture predecessor differs: '+row.base.path);
+  const raw=row.current.path===marker.path?source:read(row.current.path);
+  if(raw.length!==row.current.bytes||hash(raw)!==row.current.sha256)
+   bbtbFail(code,'M1.2 full-dirty capture group differs: '+row.current.path);
+ }
+ return pair.current;
+}
+// M12-FULL-DIRTY-IDENTITY-END
+function pinCheck(pin,code){const raw=read(pin.path);pin=m31UiSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m22SequenceSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m33KeyboardSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m24SpineSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m34EffectInterfacePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=sharedContainedClipPairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m12FullDirtyCapturePin(pin,code);const worldCard=worldCardRawPairs.find(pair=>equal(pair.base,pin));if(worldCard&&raw.length===worldCard.current.bytes&&hash(raw)===worldCard.current.sha256)pin=worldCard.current;const texturedGlb=texturedGlbRawPairs.find(pair=>equal(pair.base,worldCard?.current??pin));if(texturedGlb&&raw.length===texturedGlb.current.bytes&&hash(raw)===texturedGlb.current.sha256)pin=texturedGlb.current;const lambertGlb=lambertGlbRawPairs.find(pair=>equal(pair.base,texturedGlb?.current??pin));if(lambertGlb&&raw.length===lambertGlb.current.bytes&&hash(raw)===lambertGlb.current.sha256)pin=lambertGlb.current;const content=m21ContentConfigurationPairs.find(pair=>equal(pair.base,pin));if(content&&raw.length===content.current.bytes&&hash(raw)===content.current.sha256)pin=content.current;if(m31UiPackageSuccessor(pin,raw)||m3PointerPackageSuccessor(pin,raw)||m15ResourcePackageSuccessor(pin,raw)||m14EnginePackageSuccessor(pin,raw)||bbtbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
 const policyPin={"path":"tools/bitmap-binding-ticket-policy.json","bytes":17762,"sha256":"81fb8a30379ae85782fb4eff61c25a890ab1f4a79404b4ea9bb8b3f1468de6e5"};
 pinCheck(policyPin,'BBT_BOUNDARY_POLICY_IDENTITY');
 const policy=JSON.parse(read(policyPin.path));

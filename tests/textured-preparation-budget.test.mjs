@@ -1000,3 +1000,93 @@ test('A07_EDGE real dispatcher rejects custom tuple replay and preflights later 
   });
   assert.deepEqual(observed.calls, []);
 });
+
+test('A09_AXIS owned classification preserves crossings and partial predicate refusal', () => {
+  const clip = clipRecord(-0), clips = [clip];
+  const crossing = { ...rectCommand(), rect: { x: -1, y: 1, width: 4, height: 2 }, clips };
+  const frame = clipFixture([crossing,
+    { ...imageCommand(), rect: crossing.rect, clips },
+    { ...clipMesh(clips), matrix: { ...IDENTITY, tx: -2 } }]);
+  const cold = dispatchClipFrame(frame, false);
+  const original = Preparation.prototype.sign;
+  let leftClassifications = 0;
+  try {
+    Preparation.prototype.sign = function(a, b, c) {
+      if (a.x === 0 && a.y === 8 && b.x === 0 && b.y === 0 && c.y > 0 && c.y < 8) leftClassifications++;
+      return original.call(this, a, b, c);
+    };
+    assert.deepStrictEqual(dispatchClipFrame(frame, true), cold);
+  } finally {
+    Preparation.prototype.sign = original;
+  }
+  assert.equal(leftClassifications, 0, 'owned axis edges should use exact coordinate comparisons');
+  const quotaFrame = clipFixture([crossing]);
+  const outsideFrame = clipFixture([{ ...crossing, rect: { x: -3, y: 1, width: 2, height: 2 } }]);
+  // Three earlier edges fit. This leaves three predicates for four classifications.
+  for (const enabled of [false, true]) {
+    const budget = ledger({ maxClipEdgeTests: 57 });
+    assert.throws(() => dispatchClipFrame(quotaFrame, enabled, OPTIONS, budget), reason('budget'));
+    snapshot(budget, 0, 0, 57, 0);
+    const exact = ledger({ maxClipEdgeTests: 58 });
+    const outside = dispatchClipFrame(outsideFrame, enabled, OPTIONS, exact);
+    assert.deepEqual(outside.draws[0].prepared.commands, []);
+    snapshot(exact, 0, 0, 58, 0);
+  }
+});
+
+test('A08_OWNED contained steps reuse private polygons without sharing output between mesh draws', () => {
+  const whole = clipRecord(), crossing = clipRecord(2);
+  const frame = clipFixture([clipMesh([whole, crossing]), clipMesh([whole, crossing])]);
+  const cold = dispatchClipFrame(frame, false);
+  const originals = {
+    tryContainedClip: Preparation.prototype.tryContainedClip,
+    tryContainedEdge: Preparation.prototype.tryContainedEdge,
+  };
+  const hits = new Set();
+  let owned;
+  try {
+    for (const [method, original] of Object.entries(originals)) {
+      Preparation.prototype[method] = function(subject, ...args) {
+        const result = original.call(this, subject, ...args);
+        if (result !== undefined) {
+          hits.add(method);
+          assert.equal(result, subject, 'contained work should keep the existing private polygon');
+        }
+        return result;
+      };
+    }
+    owned = dispatchClipFrame(frame, true);
+  } finally {
+    Object.assign(Preparation.prototype, originals);
+  }
+  assert.deepEqual([...hits].sort(), ['tryContainedClip', 'tryContainedEdge']);
+  assert.deepStrictEqual(owned, cold);
+  const [first, second] = owned.draws.map(draw => draw.prepared.polygons[0]);
+  assert.notEqual(first, second);
+  assert.ok(first.every((point, index) => point !== second[index]));
+});
+
+test('A08_STACK grouped contained clips keep exact output and fall back on a one-short budget', () => {
+  const clips = [clipRecord(), clipRecord(1)];
+  const frame = clipFixture([{ ...rectCommand(), clips }, { ...imageCommand(), clips }, clipMesh(clips)]);
+  const cold = dispatchClipFrame(frame, false);
+  const original = Preparation.prototype.tryContainedClip;
+  let separateClips = 0;
+  try {
+    Preparation.prototype.tryContainedClip = function(...args) {
+      separateClips++;
+      return original.apply(this, args);
+    };
+    assert.deepStrictEqual(dispatchClipFrame(frame, true), cold);
+  } finally {
+    Preparation.prototype.tryContainedClip = original;
+  }
+  assert.equal(separateClips, 0, 'contained stacks should replay once per polygon');
+  const limits = { maxClipEdgeTests: cold.budget.predicatesCharged - 1 };
+  const outcomes = [false, true].map(enabled => {
+    const budget = ledger(limits);
+    assert.throws(() => dispatchClipFrame(frame, enabled, OPTIONS, budget), reason('budget'));
+    return budget.snapshot();
+  });
+  assert.deepStrictEqual(outcomes[1], outcomes[0]);
+});
