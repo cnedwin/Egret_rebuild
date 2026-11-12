@@ -3,28 +3,24 @@
 // pass, an opaque pass sorted for minimal state changes, an optional skybox
 // and a back-to-front transparent pass. The renderer owns its context and
 // every GPU object; scene objects stay backend-free.
-import type {Disposable} from '@egret/contracts';
 import type {Camera3D} from '../../rendering/world3d/Camera3D.js';
 import {World3DError} from '../../rendering/world3d/core3D.js';
 import type {Geometry3D} from '../../rendering/world3d/Geometry3D.js';
-import {LIGHT3D_LIMITS} from '../../rendering/world3d/Light3D.js';
 import type {Light3D} from '../../rendering/world3d/Light3D.js';
 import type {Material3D} from '../../rendering/world3d/Material3D.js';
-import {
-    frustumFromMatrix, frustumIntersectsSphere, linearToSrgb, mat3NormalFromMat4, mat4Invert, mat4LookAt, mat4Multiply,
-    mat4Orthographic, mat4Perspective,
-} from '../../rendering/world3d/math3D.js';
+import {linearToSrgb, mat3NormalFromMat4, mat4Invert} from '../../rendering/world3d/math3D.js';
 import type {InstancedMesh3D, Mesh3D} from '../../rendering/world3d/Mesh3D.js';
 import type {Scene3D} from '../../rendering/world3d/Object3D.js';
 import {RenderList3D} from '../../rendering/world3d/RenderList3D.js';
 import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
 import {CubeTexture3D} from '../../rendering/world3d/Texture3D.js';
 import type {RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
+import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
+import type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
 import {GpuResources3D} from './gpuResources3D.js';
 import type {GeometryGpu3D, Program3D} from './gpuResources3D.js';
-import {FRAME_BLOCK_FLOATS_3D, MAX_MORPH_INFLUENCES_3D, SKYBOX_SHADER_3D, TEXTURE_UNITS_3D, buildMaterialShader3D} from './shaders3D.js';
+import {MAX_MORPH_INFLUENCES_3D, SKYBOX_SHADER_3D, TEXTURE_UNITS_3D, buildMaterialShader3D} from './shaders3D.js';
 
-export type ToneMapping3D = 'none' | 'reinhard' | 'aces';
 export interface WebGL2Renderer3DOptions {
     readonly canvas: HTMLCanvasElement | OffscreenCanvas;
     readonly antialias?: boolean;
@@ -40,24 +36,6 @@ export interface WebGL2Renderer3DOptions {
     readonly onContextLost?: () => void;
     readonly onContextRestored?: () => void;
 }
-export interface Renderer3DInfo {
-    frame: number;
-    drawCalls: number;
-    triangles: number;
-    visited: number;
-    culled: number;
-    shadowMaps: number;
-    programs: number;
-    geometries: number;
-    textures: number;
-}
-
-// Offsets, in floats, into the std140 Frame block declared in shaders3D.ts.
-const F = Object.freeze({
-    viewProjection: 0, view: 16, cameraPosition: 32, fogColor: 36, fogParams: 40, ambient: 44, hemisphereSky: 48, hemisphereGround: 52,
-    lightCounts: 56, directionalDirection: 60, directionalColor: 76, pointPosition: 92, pointColor: 124, spotPosition: 156,
-    spotDirection: 172, spotColor: 188, spotCone: 204, shadowMatrix: 220, shadowRect: 284, shadowParams: 300, output: 316,
-} as const);
 // Program variant bits contributed by geometry, mesh and frame state.
 const V = Object.freeze({
     normal: 1, tangent: 2, uv: 4, color: 8, skin: 16, morph: 32, morphNormals: 64, instancing: 128, instanceColor: 256,
@@ -65,9 +43,8 @@ const V = Object.freeze({
 } as const);
 const IDENTITY3 = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-const UP = [0, 1, 0], FORWARD_UP = [0, 0, 1];
 
-export class WebGL2Renderer3D implements Disposable {
+export class WebGL2Renderer3D implements Renderer3D {
     readonly canvas: HTMLCanvasElement | OffscreenCanvas;
     toneMapping: ToneMapping3D;
     exposure: number;
@@ -99,10 +76,7 @@ export class WebGL2Renderer3D implements Disposable {
     #offset: readonly [number, number] | undefined;
     readonly #scratch16 = new Float32Array(16);
     readonly #scratch9 = new Float32Array(9);
-    readonly #lightView = new Float32Array(16);
-    readonly #lightProjection = new Float32Array(16);
-    readonly #lightMatrix = new Float32Array(16);
-    readonly #lightFrustum = new Float32Array(24);
+    #lightMatrix: Float32Array = new Float32Array(16);
     readonly #morphIndices = new Int32Array(MAX_MORPH_INFLUENCES_3D);
     readonly #morphWeights = new Float32Array(MAX_MORPH_INFLUENCES_3D);
     readonly #onLost: (event: Event) => void;
@@ -181,7 +155,6 @@ export class WebGL2Renderer3D implements Disposable {
         this.bindFrameBlock();
         this.ensureShadowAtlas();
         this.renderShadows();
-        this.writeFrameBlock(scene, camera);
 
         if (target) {
             if (target.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
@@ -202,10 +175,10 @@ export class WebGL2Renderer3D implements Disposable {
         else gl.clearColor(0, 0, 0, (target || this.#alpha) && !background ? 0 : 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        let environmentMip = 0;
+        let environmentMaxMip = 0;
         this.#lastEnvironment = scene.environment;
-        if (scene.environment) environmentMip = this.#resources.bindCube(TEXTURE_UNITS_3D.environment, scene.environment);
-        this.#frameData[F.output + 1] = environmentMip;
+        if (scene.environment) environmentMaxMip = this.#resources.bindCube(TEXTURE_UNITS_3D.environment, scene.environment);
+        writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {exposure: this.exposure, toneMapping: this.toneMapping, environmentMaxMip});
         this.uploadFrameBlock();
         const flags = (scene.fog ? V.fog : 0) | (this.toneMapping !== 'none' ? V.toneMapped : 0) | (scene.environment ? V.environment : 0)
             | (target ? V.linearOutput : 0);
@@ -231,52 +204,6 @@ export class WebGL2Renderer3D implements Disposable {
         gl.disable(gl.POLYGON_OFFSET_FILL);
         gl.disable(gl.SCISSOR_TEST);
         gl.colorMask(true, true, true, true);
-    }
-    private writeFrameBlock(scene: Scene3D, camera: Camera3D): void {
-        const data = this.#frameData, list = this.#list;
-        data.set(camera.viewProjectionMatrix, F.viewProjection);
-        data.set(camera.viewMatrix, F.view);
-        data.set(camera.matrixWorld.subarray(12, 15), F.cameraPosition);
-        const fog = scene.fog;
-        data.fill(0, F.fogColor, F.fogParams + 4);
-        if (fog) {
-            data.set(fog.color, F.fogColor);
-            if (fog.kind === 'linear') { data[F.fogParams] = 1; data[F.fogParams + 1] = fog.near; data[F.fogParams + 2] = fog.far; }
-            else { data[F.fogParams] = 2; data[F.fogParams + 1] = fog.density; }
-        }
-        data.set(list.ambient, F.ambient); data.set(list.hemisphereSky, F.hemisphereSky); data.set(list.hemisphereGround, F.hemisphereGround);
-        data[F.lightCounts] = list.directionalLights.length; data[F.lightCounts + 1] = list.pointLights.length; data[F.lightCounts + 2] = list.spotLights.length;
-        const direction = (light: Light3D, offset: number): void => {
-            // Lights shine along their local negative Z axis.
-            const m = light.matrixWorld, x = -m[8]!, y = -m[9]!, z = -m[10]!, length = Math.hypot(x, y, z) || 1;
-            data[offset] = x / length; data[offset + 1] = y / length; data[offset + 2] = z / length;
-        };
-        const color = (light: Light3D, offset: number): void => {
-            data[offset] = light.color[0]! * light.intensity; data[offset + 1] = light.color[1]! * light.intensity; data[offset + 2] = light.color[2]! * light.intensity;
-        };
-        list.directionalLights.forEach((light, i) => {
-            direction(light, F.directionalDirection + i * 4);
-            data[F.directionalDirection + i * 4 + 3] = this.#shadowSlots.get(light) ?? -1;
-            color(light, F.directionalColor + i * 4);
-        });
-        list.pointLights.forEach((light, i) => {
-            data.set(light.matrixWorld.subarray(12, 15), F.pointPosition + i * 4);
-            data[F.pointPosition + i * 4 + 3] = light.range;
-            color(light, F.pointColor + i * 4);
-        });
-        list.spotLights.forEach((light, i) => {
-            data.set(light.matrixWorld.subarray(12, 15), F.spotPosition + i * 4);
-            data[F.spotPosition + i * 4 + 3] = light.range;
-            direction(light, F.spotDirection + i * 4);
-            data[F.spotDirection + i * 4 + 3] = this.#shadowSlots.get(light) ?? -1;
-            color(light, F.spotColor + i * 4);
-            const outer = Math.min(Math.max(light.angle, 0.001), Math.PI / 2), inner = outer * (1 - Math.min(Math.max(light.penumbra, 0), 1));
-            data[F.spotCone + i * 4] = Math.cos(outer);
-            // Keep the inner cosine strictly above the outer one so smoothstep stays defined.
-            data[F.spotCone + i * 4 + 1] = Math.max(Math.cos(inner), Math.cos(outer) + 1e-4);
-        });
-        data[F.output] = scene.environmentIntensity; data[F.output + 2] = this.exposure;
-        data[F.output + 3] = this.toneMapping === 'aces' ? 2 : this.toneMapping === 'reinhard' ? 1 : 0;
     }
     /** std140 blocks stay active even when unused, so the buffer must be bound before the shadow pass. */
     private bindFrameBlock(): void {
@@ -324,15 +251,13 @@ export class WebGL2Renderer3D implements Disposable {
         this.#shadowTexture = texture; this.#shadowFramebuffer = framebuffer; this.#shadowSize = wanted;
     }
     private renderShadows(): void {
-        const gl = this.#gl, list = this.#list, data = this.#frameData, slots = this.#shadowSlots;
-        slots.clear();
+        const gl = this.#gl;
         this.#shadowCount = 0;
         gl.activeTexture(gl.TEXTURE0 + TEXTURE_UNITS_3D.shadow);
         gl.bindTexture(gl.TEXTURE_2D, this.#shadowTexture);
-        if (!this.shadowsEnabled || list.shadowCasters.length === 0) return;
-        const lights = [...list.directionalLights, ...list.spotLights].filter(light => light.castShadow).slice(0, LIGHT3D_LIMITS.maxShadows);
-        if (lights.length === 0) return;
-        const size = this.#shadowSize, tile = size >> 1;
+        const plans = planShadows3D(this.#frameData, this.#list, this.#shadowSize, this.shadowsEnabled, false, this.#shadowSlots);
+        if (plans.length === 0) return;
+        const size = this.#shadowSize;
         // Unbind the atlas while rendering into it to avoid a feedback loop.
         gl.bindTexture(gl.TEXTURE_2D, null);
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.#shadowFramebuffer);
@@ -343,39 +268,19 @@ export class WebGL2Renderer3D implements Disposable {
         gl.enable(gl.POLYGON_OFFSET_FILL);
         gl.polygonOffset(1.5, 4);
         gl.colorMask(false, false, false, false);
-        lights.forEach((light, slot) => {
-            slots.set(light, slot);
-            const shadow = light.shadow, m = light.matrixWorld;
-            const eye = [m[12]!, m[13]!, m[14]!], target = [m[12]! - m[8]!, m[13]! - m[9]!, m[14]! - m[10]!];
-            // Pick an up vector that is not parallel to the light direction.
-            const up = Math.abs(m[9]!) > 0.99 * Math.hypot(m[8]!, m[9]!, m[10]!) ? FORWARD_UP : UP;
-            mat4LookAt(this.#scratch16, eye, target, up);
-            mat4Invert(this.#lightView, this.#scratch16);
-            if (light.lightType === 'spot') {
-                const far = light.range > 0 ? Math.min(light.range, shadow.far) : shadow.far;
-                mat4Perspective(this.#lightProjection, Math.min(light.angle * 2, Math.PI * 0.98), 1, shadow.near, far);
-            } else mat4Orthographic(this.#lightProjection, -shadow.extent, shadow.extent, -shadow.extent, shadow.extent, shadow.near, shadow.far);
-            mat4Multiply(this.#lightMatrix, this.#lightProjection, this.#lightView);
-            frustumFromMatrix(this.#lightFrustum, this.#lightMatrix);
-            const x = (slot & 1) * tile, y = (slot >> 1) * tile;
-            gl.viewport(x, y, tile, tile);
-            gl.scissor(x, y, tile, tile);
-            data.set(this.#lightMatrix, F.shadowMatrix + slot * 16);
-            data.set([x / size, y / size, tile / size, tile / size], F.shadowRect + slot * 4);
-            data.set([shadow.bias, shadow.normalBias, Math.max(shadow.radius, 0) / size, 0], F.shadowParams + slot * 4);
-            for (const mesh of list.shadowCasters) {
-                const sphere = mesh.worldBoundingSphere;
-                if (mesh.frustumCulled && sphere[3]! >= 0 && !frustumIntersectsSphere(this.#lightFrustum, sphere)) continue;
-                this.drawDepth(mesh);
-            }
-        });
+        for (const plan of plans) {
+            gl.viewport(plan.x, plan.y, plan.tile, plan.tile);
+            gl.scissor(plan.x, plan.y, plan.tile, plan.tile);
+            this.#lightMatrix = plan.matrix;
+            for (const mesh of plan.casters) this.drawDepth(mesh);
+        }
         gl.colorMask(true, true, true, true);
         gl.disable(gl.SCISSOR_TEST);
         gl.disable(gl.POLYGON_OFFSET_FILL);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.activeTexture(gl.TEXTURE0 + TEXTURE_UNITS_3D.shadow);
         gl.bindTexture(gl.TEXTURE_2D, this.#shadowTexture);
-        this.#shadowCount = lights.length;
+        this.#shadowCount = plans.length;
         this.#program = undefined; this.#appliedProgram = undefined;
     }
     private readonly depthItem: RenderItem3D = {mesh: undefined as unknown as Mesh3D, geometry: undefined as unknown as Geometry3D, material: undefined as unknown as Material3D, start: 0, count: 0, depth: 0};
@@ -612,6 +517,16 @@ export class WebGL2Renderer3D implements Disposable {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.readPixels(x, y, width, height, gl.RGBA, gl.UNSIGNED_BYTE, out);
         return out;
+    }
+    /** RGBA8 pixels of a render target, top row first. Resolves immediately on WebGL2. */
+    readRenderTargetPixels(target: RenderTarget3D): Promise<Uint8Array> {
+        const gl = this.#gl, width = target.width, height = target.height, rows = new Uint8Array(width * height * 4), out = new Uint8Array(rows.length);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.#resources.target(target).framebuffer);
+        gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, rows);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        // WebGL returns the bottom row first; flip to the shared top-first order.
+        for (let y = 0; y < height; y++) out.set(rows.subarray((height - 1 - y) * width * 4, (height - y) * width * 4), y * width * 4);
+        return Promise.resolve(out);
     }
     /** Release every GPU object and detach from the canvas. Idempotent. */
     dispose(): void {

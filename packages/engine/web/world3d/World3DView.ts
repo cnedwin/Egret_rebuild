@@ -11,7 +11,7 @@ import {World3DError} from '../../rendering/world3d/core3D.js';
 import type {Scene3D} from '../../rendering/world3d/Object3D.js';
 import {ParticleEmitter3D} from '../../rendering/world3d/Particles3D.js';
 import type {OrbitControls3D} from './OrbitControls3D.js';
-import type {WebGL2Renderer3D} from './WebGL2Renderer3D.js';
+import type {Renderer3D} from './frame3D.js';
 
 /** The part of an Engine this view needs: its explicit game clock. */
 export interface World3DClockSource {
@@ -20,7 +20,7 @@ export interface World3DClockSource {
     };
 }
 export interface World3DViewOptions {
-    readonly renderer: WebGL2Renderer3D;
+    readonly renderer: Renderer3D;
     readonly scene: Scene3D;
     readonly camera: Camera3D;
     readonly mixers?: readonly AnimationMixer3D[];
@@ -38,7 +38,7 @@ export interface World3DViewOptions {
 }
 
 export class World3DView implements Disposable {
-    readonly renderer: WebGL2Renderer3D;
+    readonly renderer: Renderer3D;
     scene: Scene3D;
     camera: Camera3D;
     readonly mixers: AnimationMixer3D[];

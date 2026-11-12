@@ -3,7 +3,8 @@
 // controls, browser loaders and the Engine clock binding. Nothing here is
 // loaded by the default Engine, Canvas or shared 2D entries.
 export {WebGL2Renderer3D, createWebGL2Renderer3D} from './WebGL2Renderer3D.js';
-export type {ToneMapping3D, WebGL2Renderer3DOptions, Renderer3DInfo} from './WebGL2Renderer3D.js';
+export type {WebGL2Renderer3DOptions} from './WebGL2Renderer3D.js';
+export type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
 export {OrbitControls3D, createOrbitControls3D} from './OrbitControls3D.js';
 export type {OrbitControlsOptions3D} from './OrbitControls3D.js';
 export {loadTexture3D, loadCubeTexture3D, loadGltfFromUrl3D} from './loaders3D.js';

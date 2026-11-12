@@ -10,9 +10,11 @@ import {
   createPerspectiveCamera3D, createPhongMaterial3D, createPlaneGeometry3D, createPointLight3D, createSphereGeometry3D,
   createSpotLight3D, createSprite3D, createStandardMaterial3D, createTorusGeometry3D, createUnlitMaterial3D,
 } from '@egret/engine/world3d';
-import {
-  createOrbitControls3D, createWebGL2Renderer3D, createWorld3DHost, createWorld3DView, startWorld3DLoop,
-} from '@egret/engine/webgl2/world3d';
+
+// The backend is chosen by the page URL: ?backend=webgpu or the WebGL2 default.
+const useWebGPU = new URLSearchParams(location.search).get('backend') === 'webgpu';
+const backend = await (useWebGPU ? import('@egret/engine/webgpu/world3d') : import('@egret/engine/webgl2/world3d'));
+const { createOrbitControls3D, createWorld3DHost, createWorld3DView, startWorld3DLoop } = backend;
 
 const canvas = document.querySelector('#stage');
 const status = document.querySelector('#status');
@@ -95,10 +97,16 @@ function createMorphSphere() {
 }
 
 async function main() {
+  let deviceLost = '';
   const engine = await createEngine({ host: createWorld3DHost(canvas) });
   const scope = engine.createScope();
-  const renderer = createWebGL2Renderer3D({ canvas, antialias: true, toneMapping: 'aces' });
+  const renderer = useWebGPU
+    ? await backend.createWebGPURenderer3D({ canvas, antialias: true, toneMapping: 'aces', onDeviceLost: (message) => { deviceLost = message || 'device lost'; report('Device lost / 设备丢失: ' + deviceLost); } })
+    : backend.createWebGL2Renderer3D({ canvas, antialias: true, toneMapping: 'aces' });
   scope.use(renderer);
+  const link = document.querySelector('#backend');
+  link.textContent = useWebGPU ? 'WebGL2' : 'WebGPU';
+  link.href = useWebGPU ? '?' : '?backend=webgpu';
 
   const scene = new Scene3D();
   const sky = createGradientCubeTexture3D([70, 120, 210], [200, 215, 235], [70, 66, 62], 64);
@@ -187,6 +195,8 @@ async function main() {
   scope.use(controls);
 
   let frames = 0, lastError = '';
+  // WebGPU reports validation problems asynchronously on the device.
+  renderer.device?.addEventListener('uncapturederror', (event) => { lastError ||= event.error.message; report('GPU error: ' + event.error.message); });
   const view = createWorld3DView(engine, scope, {
     renderer, scene, camera, mixers: [mixer], controls,
     onUpdate(deltaSeconds, elapsedSeconds) {
@@ -239,9 +249,10 @@ async function main() {
   // Read-only probe for automated checks of this example.
   globalThis.__world3dExample = {
     get frames() { return frames; },
-    get error() { return lastError; },
+    get error() { return lastError || deviceLost; },
     get info() { return { ...renderer.info, particles: fire.aliveCount, selected: selected?.name }; },
-    readPixels: () => renderer.readPixels(),
+    backend: useWebGPU ? 'webgpu' : 'webgl2',
+    readTarget: () => renderer.readRenderTargetPixels(target),
     async dispose() { loop.dispose(); view.dispose(); await engine.dispose(); },
   };
 }

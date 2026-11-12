@@ -16,8 +16,6 @@ export const TEXTURE_UNITS_3D = Object.freeze({
 } as const);
 
 export const MAX_MORPH_INFLUENCES_3D = 8;
-/** Size in floats of the std140 Frame uniform block below. */
-export const FRAME_BLOCK_FLOATS_3D = 320;
 
 const FRAME_BLOCK = /* glsl */`
 layout(std140) uniform Frame {
