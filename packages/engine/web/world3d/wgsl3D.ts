@@ -33,13 +33,16 @@ export interface ShaderFeatures3D {
     readonly fog: boolean;
     readonly toneMapped: boolean;
     readonly linearOutput: boolean;
+    /** Key and WGSL source of the material's fragment hook, when it has one. */
+    readonly customKey?: string;
+    readonly customWgsl?: string;
 }
 
 export const MAX_MORPH_INFLUENCES_WGSL_3D = 8;
 /** Bytes of the per-draw Object uniform block; also its dynamic-offset stride. */
 export const OBJECT_BLOCK_BYTES_3D = 256;
 /** Bytes of the per-material uniform block. */
-export const MATERIAL_BLOCK_BYTES_3D = 128;
+export const MATERIAL_BLOCK_BYTES_3D = 192;
 
 const FRAME = /* wgsl */`
 struct Frame {
@@ -90,6 +93,7 @@ struct Material {
     uvRow0: vec4f,       // uv' = (dot(uvRow0.xyz, (uv, 1)), dot(uvRow1.xyz, (uv, 1)))
     uvRow1: vec4f,
     sprite: vec4f,       // rotation, size attenuation flag
+    custom: array<vec4f, 4>, // parameters of the optional fragment hook
 }
 @group(1) @binding(0) var<uniform> material: Material;
 @group(1) @binding(1) var mapTexture: texture_2d<f32>;
@@ -402,6 +406,10 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     var emissive = material.emissive.rgb;
     ${f.emissiveMap ? 'emissive *= emissiveSample;' : ''}
     color += emissive;`}
+    ${f.customWgsl !== undefined ? /* wgsl */`
+    let customized = customFragment(vec4f(color, base.a), input.worldPosition, normalize(input.normal), input.uv);
+    color = customized.rgb;
+    base.a = customized.a;` : ''}
     ${f.fog ? /* wgsl */`
     if (frame.fogParams.x > 0.5) {
         let dist = length(frame.cameraPosition.xyz - input.worldPosition);
@@ -419,7 +427,7 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
 
 /** Assemble the complete WGSL module for one material variant. */
 export function buildMaterialWgsl3D(features: ShaderFeatures3D): string {
-    return (features.depthOnly ? DEPTH_FRAME : FRAME) + SHARED + vertexSource(features) + fragmentSource(features);
+    return (features.depthOnly ? DEPTH_FRAME : FRAME) + SHARED + vertexSource(features) + (features.customWgsl ?? '') + '\n' + fragmentSource(features);
 }
 /** Stable cache key for a feature set. */
 export function shaderFeatureKey3D(features: ShaderFeatures3D): string {
@@ -427,6 +435,7 @@ export function shaderFeatureKey3D(features: ShaderFeatures3D): string {
     for (const name of Object.keys(features).sort()) {
         if (name !== 'shading' && (features as unknown as Record<string, unknown>)[name] === true) key += ' ' + name;
     }
+    if (features.customKey !== undefined) key += ' custom:' + features.customKey;
     return key;
 }
 

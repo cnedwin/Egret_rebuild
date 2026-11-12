@@ -591,6 +591,7 @@ export class WebGPURenderer3D implements Renderer3D {
         data[20] = ax; data[21] = bx; data[22] = tx; data[23] = 0;
         data[24] = ay; data[25] = by; data[26] = ty; data[27] = 0;
         data[28] = material.rotation; data[29] = material.sizeAttenuation ? 1 : 0; data[30] = 0; data[31] = 0;
+        if (material.shader) data.set(material.shader.uniforms, 32);
         this.device.queue.writeBuffer(entry.buffer, 0, data);
         const entries: GPUBindGroupEntry[] = [{binding: 0, resource: {buffer: entry.buffer}}];
         let key = '';
@@ -629,6 +630,7 @@ export class WebGPURenderer3D implements Renderer3D {
             flatShading: material.flatShading, doubleSided: material.side === 'double',
             receiveShadow: lit && mesh.receiveShadow && this.#shadowCount > 0,
             environment: lit && frameFlags.environment, fog: !depthOnly && frameFlags.fog && material.fog,
+            ...(!depthOnly && material.shader?.wgsl !== undefined ? {customKey: material.shader.key, customWgsl: material.shader.wgsl} : {}),
             toneMapped: !depthOnly && kind !== 'hdr' && this.toneMapping !== 'none' && material.toneMapped, linearOutput: kind === 'target' || kind === 'hdr',
         };
     }

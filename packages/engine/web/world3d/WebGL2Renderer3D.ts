@@ -380,7 +380,9 @@ export class WebGL2Renderer3D implements Renderer3D {
             if (has(V.toneMapped) && material.toneMapped) defines.push('TONE_MAPPED');
             if (has(V.linearOutput)) defines.push('LINEAR_OUTPUT');
         }
-        program = this.#resources.program(defines.join(' '), () => buildMaterialShader3D(defines));
+        const custom = depthOnly ? undefined : material.shader?.glsl;
+        if (custom !== undefined) defines.push('CUSTOM_FRAGMENT');
+        program = this.#resources.program(defines.join(' ') + (custom === undefined ? '' : '|' + material.shader!.key), () => buildMaterialShader3D(defines, custom));
         cache.variants.set(variant, program);
         return program;
     }
@@ -388,6 +390,8 @@ export class WebGL2Renderer3D implements Renderer3D {
         const gl = this.#gl, u = program.uniforms, resources = this.#resources;
         if (u['uColor']) gl.uniform4f(u['uColor'], material.color[0]!, material.color[1]!, material.color[2]!, material.opacity);
         if (u['uAlphaCutoff']) gl.uniform1f(u['uAlphaCutoff'], material.alphaCutoff);
+        const customLocation = u['uCustom[0]'] ?? u['uCustom'];
+        if (customLocation && material.shader) gl.uniform4fv(customLocation, material.shader.uniforms);
         if (u['uMap'] && material.map) resources.bindTexture(TEXTURE_UNITS_3D.map, material.map);
         if (u['uUvTransform']) {
             const map = material.map;

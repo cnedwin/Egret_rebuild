@@ -296,6 +296,11 @@ vec3 shade(Surface s, vec3 l, vec3 radiance) {
     #endif
 }
 
+#ifdef CUSTOM_FRAGMENT
+uniform vec4 uCustom[4];
+/*CUSTOM_FRAGMENT*/
+#endif
+
 vec3 toneMap(vec3 color) {
     color *= uOutput.z;
     if (uOutput.w > 1.5) {
@@ -417,6 +422,10 @@ void main() {
     color += emissive;
     #endif
 
+    #ifdef CUSTOM_FRAGMENT
+    vec4 customized = customFragment(vec4(color, base.a), vWorldPosition, normalize(vNormal), vUv);
+    color = customized.rgb; base.a = customized.a;
+    #endif
     #ifdef USE_FOG
     if (uFogParams.x > 0.5) {
         float dist = length(uCameraPosition.xyz - vWorldPosition);
@@ -452,9 +461,9 @@ export interface ShaderSources3D {
     readonly fragment: string;
 }
 /** Specialize the material shader pair with a list of preprocessor symbols. */
-export function buildMaterialShader3D(defines: readonly string[]): ShaderSources3D {
+export function buildMaterialShader3D(defines: readonly string[], customFragment = ''): ShaderSources3D {
     const header = '#version 300 es\nprecision highp float;\nprecision highp int;\n' + defines.map(name => '#define ' + name + '\n').join('');
-    return {vertex: header + VERTEX_SOURCE, fragment: header + FRAGMENT_SOURCE};
+    return {vertex: header + VERTEX_SOURCE, fragment: header + FRAGMENT_SOURCE.replace('/*CUSTOM_FRAGMENT*/', () => customFragment)};
 }
 
 /** Full-screen triangle that samples a cube map along the view ray; drawn at the far plane. */
