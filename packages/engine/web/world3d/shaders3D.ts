@@ -42,6 +42,7 @@ layout(std140) uniform Frame {
     vec4 uOutput;                  // x: environment intensity, y: environment max mip, z: exposure, w: tone mapping
     vec4 uCascadeSplits;           // view-space far distance of each cascade
     vec4 uCascadeInfo;             // x: cascaded directional light index or -1, y: cascade count, z: blend fraction
+    vec4 uPointShadow;             // x: shadowed point light index or -1, y: first of its four slots
 };
 `;
 
@@ -239,6 +240,16 @@ float shadowFactor(int slot, vec3 normal) {
     }
     return lit / 9.0;
 }
+float pointShadowFactor(int slot, vec3 fromLight, vec3 normal) {
+    // Faces of the tetrahedron the four maps were rendered through.
+    const float k = 0.5773502691896258;
+    float d0 = dot(fromLight, vec3(k, k, k)), d1 = dot(fromLight, vec3(-k, -k, k)), d2 = dot(fromLight, vec3(-k, k, -k)), d3 = dot(fromLight, vec3(k, -k, -k));
+    int face = 0; float best = d0;
+    if (d1 > best) { best = d1; face = 1; }
+    if (d2 > best) { best = d2; face = 2; }
+    if (d3 > best) face = 3;
+    return shadowFactor(slot + face, normal);
+}
 float cascadedShadowFactor(int slot, vec3 normal) {
     float viewDepth = -(uView * vec4(vWorldPosition, 1.0)).z;
     int count = int(uCascadeInfo.y), cascade = 0;
@@ -407,7 +418,11 @@ void main() {
     for (int i = 0; i < pointCount; i++) {
         vec3 toLight = uPointPosition[i].xyz - vWorldPosition;
         float dist = length(toLight);
-        color += shade(s, toLight / max(dist, 0.0001), uPointColor[i].rgb * rangeFalloff(dist, uPointPosition[i].w));
+        float visible = 1.0;
+        #ifdef RECEIVE_SHADOW
+        if (float(i) == uPointShadow.x) visible = pointShadowFactor(int(uPointShadow.y), -toLight, s.normal);
+        #endif
+        color += shade(s, toLight / max(dist, 0.0001), uPointColor[i].rgb * rangeFalloff(dist, uPointPosition[i].w)) * visible;
     }
     for (int i = 0; i < spotCount; i++) {
         vec3 toLight = uSpotPosition[i].xyz - vWorldPosition;

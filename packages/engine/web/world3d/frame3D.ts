@@ -56,12 +56,12 @@ export interface Renderer3D extends Disposable {
 }
 
 /** Size in floats of the Frame uniform block. */
-export const FRAME_BLOCK_FLOATS_3D = 328;
+export const FRAME_BLOCK_FLOATS_3D = 332;
 /** Offsets, in floats, of the Frame block members. */
 export const FRAME_OFFSETS_3D = Object.freeze({
     viewProjection: 0, view: 16, cameraPosition: 32, fogColor: 36, fogParams: 40, ambient: 44, hemisphereSky: 48, hemisphereGround: 52,
     lightCounts: 56, directionalDirection: 60, directionalColor: 76, pointPosition: 92, pointColor: 124, spotPosition: 156,
-    spotDirection: 172, spotColor: 188, spotCone: 204, shadowMatrix: 220, shadowRect: 284, shadowParams: 300, output: 316, cascadeSplits: 320, cascadeInfo: 324,
+    spotDirection: 172, spotColor: 188, spotCone: 204, shadowMatrix: 220, shadowRect: 284, shadowParams: 300, output: 316, cascadeSplits: 320, cascadeInfo: 324, pointShadow: 328,
 } as const);
 const F = FRAME_OFFSETS_3D;
 
@@ -135,6 +135,11 @@ const UP = [0, 1, 0], FORWARD_UP = [0, 0, 1], ORIGIN = [0, 0, 0];
 const scratchWorld = new Float32Array(16), scratchView = new Float32Array(16), scratchProjection = new Float32Array(16), scratchFrustum = new Float32Array(24);
 const scratchInverse = new Float32Array(16), scratchCorners = new Float32Array(24), scratchPoint = new Float32Array(3), scratchCenter = new Float32Array(3);
 const NDC_CORNERS = [-1, -1, 1, -1, -1, 1, 1, 1];
+const K = 1 / Math.sqrt(3);
+/** Outward face directions of a regular tetrahedron; the shaders pick the face a direction is closest to. */
+const TETRAHEDRON_FACES = [[K, K, K], [-K, -K, K], [-K, K, -K], [K, -K, -K]];
+// Each face's region reaches 70.53 degrees from its axis; a little more leaves room for filtering.
+const TETRAHEDRON_FOV = 144 * Math.PI / 180;
 
 /** View-space far distance of each cascade, blending uniform and logarithmic spacing. */
 export function cascadeSplits3D(near: number, far: number, count: number, lambda: number): number[] {
@@ -156,8 +161,8 @@ export function cascadeSplits3D(near: number, far: number, count: number, lambda
 export function planShadows3D(data: Float32Array, list: RenderList3D, atlasSize: number, enabled: boolean, flipY: boolean,
     slots: Map<Light3D, number>, camera?: Camera3D): ShadowPlan3D[] {
     slots.clear();
-    data.fill(0, F.cascadeSplits, F.cascadeInfo + 4);
-    data[F.cascadeInfo] = -1;
+    data.fill(0, F.cascadeSplits, F.pointShadow + 4);
+    data[F.cascadeInfo] = -1; data[F.pointShadow] = -1;
     const plans: ShadowPlan3D[] = [];
     if (!enabled || list.shadowCasters.length === 0) return plans;
     const tile = atlasSize >> 1;
@@ -181,6 +186,21 @@ export function planShadows3D(data: Float32Array, list: RenderList3D, atlasSize:
         plans.push({light, slot, x, y, tile, matrix, casters});
     };
     const lights = [...list.directionalLights, ...list.spotLights].filter(light => light.castShadow);
+    // One point light may cast shadows. It needs all four tiles: one per face of a
+    // tetrahedron around it, which covers every direction with ordinary perspective maps.
+    const point = list.pointLights.find(light => light.castShadow);
+    if (point && lights.length === 0) {
+        const m = point.matrixWorld, eye = [m[12]!, m[13]!, m[14]!], shadow = point.shadow, far = point.range > 0 ? Math.min(point.range, shadow.far) : shadow.far;
+        slots.set(point, 0);
+        mat4Perspective(scratchProjection, TETRAHEDRON_FOV, 1, shadow.near, far);
+        for (const face of TETRAHEDRON_FACES) {
+            mat4LookAt(scratchWorld, eye, [eye[0]! + face[0]!, eye[1]! + face[1]!, eye[2]! + face[2]!], Math.abs(face[1]!) > 0.9 ? FORWARD_UP : UP);
+            mat4Invert(scratchView, scratchWorld);
+            emit(point, mat4Multiply(new Float32Array(16), scratchProjection, scratchView) as Float32Array, 1);
+        }
+        data[F.pointShadow] = list.pointLights.indexOf(point); data[F.pointShadow + 1] = 0;
+        return plans;
+    }
     for (const light of lights) {
         const remaining = LIGHT3D_LIMITS.maxShadows - plans.length;
         if (remaining <= 0) break;

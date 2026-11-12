@@ -69,6 +69,7 @@ struct Frame {
     output: vec4f,
     cascadeSplits: vec4f,
     cascadeInfo: vec4f,
+    pointShadow: vec4f,
 }
 @group(0) @binding(0) var<uniform> frame: Frame;
 @group(0) @binding(1) var shadowMap: texture_depth_2d;
@@ -274,6 +275,19 @@ fn shadowFactor(slot: i32, worldPosition: vec3f, normal: vec3f) -> f32 {
     }
     return lit / 9.0;
 }
+fn pointShadowFactor(slot: i32, fromLight: vec3f, worldPosition: vec3f, normal: vec3f) -> f32 {
+    // Faces of the tetrahedron the four maps were rendered through.
+    let k = 0.5773502691896258;
+    let d1 = dot(fromLight, vec3f(-k, -k, k));
+    let d2 = dot(fromLight, vec3f(-k, k, -k));
+    let d3 = dot(fromLight, vec3f(k, -k, -k));
+    var face = 0;
+    var best = dot(fromLight, vec3f(k, k, k));
+    if (d1 > best) { best = d1; face = 1; }
+    if (d2 > best) { best = d2; face = 2; }
+    if (d3 > best) { face = 3; }
+    return shadowFactor(slot + face, worldPosition, normal);
+}
 fn cascadedShadowFactor(slot: i32, worldPosition: vec3f, normal: vec3f) -> f32 {
     let viewDepth = -(frame.view * vec4f(worldPosition, 1.0)).z;
     let count = i32(frame.cascadeInfo.y);
@@ -401,7 +415,9 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     for (var i = 0; i < pointCount; i++) {
         let toLight = frame.pointPosition[i].xyz - input.worldPosition;
         let dist = length(toLight);
-        color += shade(s, toLight / max(dist, 0.0001), frame.pointColor[i].rgb * rangeFalloff(dist, frame.pointPosition[i].w));
+        var visible = 1.0;
+        ${f.receiveShadow ? 'if (f32(i) == frame.pointShadow.x) { visible = pointShadowFactor(i32(frame.pointShadow.y), -toLight, input.worldPosition, s.normal); }' : ''}
+        color += shade(s, toLight / max(dist, 0.0001), frame.pointColor[i].rgb * rangeFalloff(dist, frame.pointPosition[i].w)) * visible;
     }
     for (var i = 0; i < spotCount; i++) {
         let toLight = frame.spotPosition[i].xyz - input.worldPosition;

@@ -102,7 +102,7 @@ export function createDirectionalLight3D(options: LightOptions3D = {}): Light3D 
     return base(new Light3D('directional'), options);
 }
 export function createPointLight3D(options: PointLightOptions3D = {}): Light3D {
-    const light = base(new Light3D('point'), {...options, castShadow: false});
+    const light = base(new Light3D('point'), options);
     light.range = options.range ?? 0;
     return light;
 }
