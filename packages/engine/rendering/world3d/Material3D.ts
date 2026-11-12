@@ -5,7 +5,7 @@ import {Resource3D, World3DError} from './core3D.js';
 import {colorFromHex} from './math3D.js';
 import type {Texture3D} from './Texture3D.js';
 
-export type Shading3D = 'unlit' | 'lambert' | 'phong' | 'standard';
+export type Shading3D = 'unlit' | 'lambert' | 'phong' | 'standard' | 'toon' | 'matcap';
 export type Side3D = 'front' | 'back' | 'double';
 export type AlphaMode3D = 'opaque' | 'mask' | 'blend';
 export type Blending3D = 'normal' | 'additive' | 'multiply' | 'premultiplied';
@@ -97,6 +97,8 @@ export class Material3D extends Resource3D {
     // Phong
     readonly specular = new Float32Array([0.07, 0.07, 0.07]);
     shininess = 30;
+    /** Number of light bands for toon shading. */
+    toonSteps = 3;
     // Standard (metallic-roughness PBR)
     metallic = 0;
     roughness = 1;
@@ -169,6 +171,21 @@ export function createPhongMaterial3D(options: PhongMaterialOptions3D = {}): Mat
     const material = new Material3D('phong', options);
     if (options.specular !== undefined) setColor3D(material.specular, options.specular);
     material.shininess = options.shininess ?? 30;
+    return material;
+}
+/** Cel shading: diffuse light quantized into `steps` flat bands. */
+export function createToonMaterial3D(options: MaterialOptions3D & {readonly steps?: number} = {}): Material3D {
+    const material = new Material3D('toon', options);
+    material.toonSteps = Math.max(1, Math.floor(options.steps ?? 3));
+    return material;
+}
+/**
+ * Lighting baked into a sphere image: the surface color is looked up by the
+ * view-space normal, so no lights are needed. The image is held in `emissiveMap`.
+ */
+export function createMatcapMaterial3D(options: MaterialOptions3D & {readonly matcap: Texture3D}): Material3D {
+    const material = new Material3D('matcap', options);
+    material.emissiveMap = options.matcap;
     return material;
 }
 /** Physically based metallic-roughness model, matching glTF 2.0 materials. */

@@ -578,7 +578,7 @@ export class WebGPURenderer3D implements Renderer3D {
         data[0] = material.color[0]!; data[1] = material.color[1]!; data[2] = material.color[2]!; data[3] = material.opacity;
         data[4] = material.emissive[0]! * e; data[5] = material.emissive[1]! * e; data[6] = material.emissive[2]! * e; data[7] = 0;
         data[8] = material.metallic; data[9] = material.roughness; data[10] = material.normalScale; data[11] = material.occlusionStrength;
-        data[12] = material.specular[0]!; data[13] = material.specular[1]!; data[14] = material.specular[2]!; data[15] = material.shininess;
+        data[12] = material.specular[0]!; data[13] = material.specular[1]!; data[14] = material.specular[2]!; data[15] = material.shading === 'toon' ? material.toonSteps : material.shininess;
         data[16] = material.alphaCutoff; data[17] = material.environmentIntensity; data[18] = 0; data[19] = 0;
         let ax = 1, bx = 0, tx = 0, ay = 0, by = 1, ty = 0;
         if (map?.hasTransform) {
@@ -606,7 +606,7 @@ export class WebGPURenderer3D implements Renderer3D {
         return entry.group;
     }
     private features(item: RenderItem3D, gpu: GeometryGpu, kind: PassKind, frameFlags: {fog: boolean; environment: boolean}): ShaderFeatures3D {
-        const {mesh, material} = item, depthOnly = kind === 'depth', lit = material.shading !== 'unlit' && !depthOnly;
+        const {mesh, material} = item, depthOnly = kind === 'depth', lit = material.shading !== 'unlit' && material.shading !== 'matcap' && !depthOnly;
         const uv = gpu.buffers.has('uv'), instanced = mesh.isInstanced;
         const skinning = mesh.skeleton !== undefined && gpu.buffers.has('joints') && gpu.buffers.has('weights');
         return {
@@ -623,7 +623,7 @@ export class WebGPURenderer3D implements Renderer3D {
             normalMap: lit && uv && material.normalMap !== undefined,
             metallicRoughnessMap: lit && uv && material.metallicRoughnessMap !== undefined && material.shading === 'standard',
             occlusionMap: lit && uv && material.occlusionMap !== undefined,
-            emissiveMap: !depthOnly && uv && material.emissiveMap !== undefined,
+            emissiveMap: !depthOnly && uv && material.emissiveMap !== undefined && material.shading !== 'matcap',
             alphaMask: material.alphaMode === 'mask', alphaBlend: material.alphaMode === 'blend',
             premultipliedAlpha: !depthOnly && material.alphaMode === 'blend' && material.blending === 'premultiplied',
             flatShading: material.flatShading, doubleSided: material.side === 'double',

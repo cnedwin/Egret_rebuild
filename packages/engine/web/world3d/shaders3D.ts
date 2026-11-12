@@ -275,6 +275,9 @@ vec3 shade(Surface s, vec3 l, vec3 radiance) {
     if (nl <= 0.0) return vec3(0.0);
     #if defined(SHADING_LAMBERT)
     return s.albedo * radiance * nl;
+    #elif defined(SHADING_TOON)
+    // uSpecular.w carries the band count for toon shading.
+    return s.albedo * radiance * (ceil(nl * uSpecular.w - 0.001) / max(uSpecular.w, 1.0));
     #elif defined(SHADING_PHONG)
     vec3 h = normalize(l + s.view);
     float specular = pow(max(dot(s.normal, h), 0.0), max(uSpecular.w, 1.0));
@@ -332,6 +335,9 @@ void main() {
     vec3 color;
     #ifdef SHADING_UNLIT
     color = base.rgb;
+    #elif defined(SHADING_MATCAP)
+    vec3 viewNormal = normalize(mat3(uView) * surfaceNormal());
+    color = base.rgb * texture(uEmissiveMap, viewNormal.xy * 0.5 + 0.5).rgb;
     #else
     Surface s;
     s.normal = surfaceNormal();
@@ -403,11 +409,13 @@ void main() {
     }
     #endif
 
+    #ifndef SHADING_MATCAP
     vec3 emissive = uEmissive;
     #ifdef USE_EMISSIVE_MAP
     emissive *= texture(uEmissiveMap, vUv).rgb;
     #endif
     color += emissive;
+    #endif
 
     #ifdef USE_FOG
     if (uFogParams.x > 0.5) {

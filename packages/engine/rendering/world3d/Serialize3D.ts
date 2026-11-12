@@ -106,7 +106,7 @@ function plainData(value: unknown, depth = 0): unknown {
 }
 
 const MATERIAL_SCALARS = ['opacity', 'side', 'alphaMode', 'alphaCutoff', 'blending', 'depthTest', 'depthWrite', 'vertexColors', 'fog', 'toneMapped', 'visible',
-    'emissiveIntensity', 'normalScale', 'occlusionStrength', 'flatShading', 'wireframe', 'shininess', 'metallic', 'roughness', 'environmentIntensity', 'billboard',
+    'emissiveIntensity', 'normalScale', 'occlusionStrength', 'flatShading', 'wireframe', 'shininess', 'toonSteps', 'metallic', 'roughness', 'environmentIntensity', 'billboard',
     'screenSpace', 'sizeAttenuation', 'rotation', 'pointSize'] as const;
 const MATERIAL_MAPS = ['map', 'emissiveMap', 'normalMap', 'occlusionMap', 'metallicRoughnessMap'] as const;
 const NODE_FLAGS = ['visible', 'layers', 'renderOrder', 'castShadow', 'receiveShadow', 'frustumCulled'] as const;
@@ -254,7 +254,7 @@ export function deserializeScene3D(saved: SceneDocument3D, options: DeserializeO
             return texture;
         });
         for (const entry of doc['materials'] as Json[]) {
-            if (!['unlit', 'lambert', 'phong', 'standard'].includes(entry['shading'])) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: shading');
+            if (!['unlit', 'lambert', 'phong', 'standard', 'toon', 'matcap'].includes(entry['shading'])) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: shading');
             const material = new Material3D(entry['shading'], {name: entry['name'] ?? ''});
             created.push(material); materials.push(material);
             material.color.set(vector(entry['color'], 3, 'color')); material.emissive.set(vector(entry['emissive'], 3, 'emissive')); material.specular.set(vector(entry['specular'], 3, 'specular'));

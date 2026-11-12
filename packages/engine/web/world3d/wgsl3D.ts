@@ -4,7 +4,7 @@
 // The lighting model mirrors the GLSL library in shaders3D.ts.
 
 export interface ShaderFeatures3D {
-    readonly shading: 'unlit' | 'lambert' | 'phong' | 'standard';
+    readonly shading: 'unlit' | 'lambert' | 'phong' | 'standard' | 'toon' | 'matcap';
     readonly depthOnly: boolean;
     readonly normal: boolean;
     readonly uv: boolean;
@@ -198,7 +198,7 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
 }
 
 function fragmentSource(f: ShaderFeatures3D): string {
-    const lit = f.shading !== 'unlit';
+    const lit = f.shading !== 'unlit' && f.shading !== 'matcap';
     if (f.depthOnly) {
         return /* wgsl */`
 @fragment
@@ -210,7 +210,9 @@ fn fragmentMain(input: VertexOutput) {
 }
 `;
     }
-    const shade = f.shading === 'lambert' ? 'return s.albedo * radiance * nl;' : f.shading === 'phong' ? /* wgsl */`
+    const shade = f.shading === 'lambert' ? 'return s.albedo * radiance * nl;'
+        // material.specular.w carries the band count for toon shading.
+        : f.shading === 'toon' ? 'return s.albedo * radiance * (ceil(nl * material.specular.w - 0.001) / max(material.specular.w, 1.0));' : f.shading === 'phong' ? /* wgsl */`
     let h = normalize(l + s.view);
     let specular = pow(max(dot(s.normal, h), 0.0), max(material.specular.w, 1.0));
     return (s.albedo + material.specular.rgb * specular) * radiance * nl;` : /* wgsl */`
@@ -318,8 +320,13 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     ${f.metallicRoughnessMap ? 'let mrSample = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, input.uv);' : ''}
     ${f.occlusionMap ? 'let occlusionSample = textureSample(occlusionTexture, occlusionSampler, input.uv).r;' : ''}
     ${f.emissiveMap ? 'let emissiveSample = textureSample(emissiveTexture, emissiveSampler, input.uv).rgb;' : ''}
+    ${f.shading === 'matcap' ? /* wgsl */`
+    var matcapNormal = normalize(${f.normal ? 'input.normal' : 'cross(dpx, -dpy)'});
+    ${f.doubleSided ? 'if (!frontFacing) { matcapNormal = -matcapNormal; }' : ''}
+    let matcapView = normalize((frame.view * vec4f(matcapNormal, 0.0)).xyz);
+    let matcapSample = textureSampleLevel(emissiveTexture, emissiveSampler, matcapView.xy * 0.5 + 0.5, 0.0).rgb;` : ''}
     ${f.alphaMask ? 'if (base.a < material.params.x) { discard; }' : ''}
-    var color = base.rgb;
+    var color = base.rgb${f.shading === 'matcap' ? ' * matcapSample' : ''};
     ${lit ? /* wgsl */`
     var s: Surface;
     ${f.flatShading || !f.normal ? 'var n = normalize(cross(dpy, dpx));' : /* wgsl */`var n = normalize(input.normal);
@@ -391,9 +398,10 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
         ${f.receiveShadow ? 'if (cone > 0.0 && frame.spotDirection[i].w >= 0.0) { visible = shadowFactor(i32(frame.spotDirection[i].w), input.worldPosition, s.normal); }' : ''}
         color += shade(s, l, frame.spotColor[i].rgb * rangeFalloff(dist, frame.spotPosition[i].w) * cone) * visible;
     }` : ''}
+    ${f.shading === 'matcap' ? '' : /* wgsl */`
     var emissive = material.emissive.rgb;
     ${f.emissiveMap ? 'emissive *= emissiveSample;' : ''}
-    color += emissive;
+    color += emissive;`}
     ${f.fog ? /* wgsl */`
     if (frame.fogParams.x > 0.5) {
         let dist = length(frame.cameraPosition.xyz - input.worldPosition);

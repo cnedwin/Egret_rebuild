@@ -345,7 +345,8 @@ export class WebGL2Renderer3D implements Renderer3D {
         const has = (bit: number): boolean => (variant & bit) !== 0;
         const depthOnly = has(V.depthOnly), uv = has(V.uv), defines: string[] = [];
         if (depthOnly) defines.push('DEPTH_ONLY');
-        else defines.push(material.shading === 'unlit' ? 'SHADING_UNLIT' : material.shading === 'lambert' ? 'SHADING_LAMBERT' : material.shading === 'phong' ? 'SHADING_PHONG' : 'SHADING_STANDARD');
+        else defines.push(material.shading === 'unlit' ? 'SHADING_UNLIT' : material.shading === 'lambert' ? 'SHADING_LAMBERT' : material.shading === 'phong' ? 'SHADING_PHONG'
+            : material.shading === 'toon' ? 'SHADING_TOON' : material.shading === 'matcap' ? 'SHADING_MATCAP' : 'SHADING_STANDARD');
         if (has(V.normal)) defines.push('USE_NORMAL');
         if (has(V.skin)) defines.push('USE_SKINNING');
         if (has(V.morph)) defines.push('USE_MORPH');
@@ -365,12 +366,12 @@ export class WebGL2Renderer3D implements Renderer3D {
         }
         if (has(V.color)) defines.push('USE_VERTEX_COLOR');
         if (!depthOnly) {
-            const lit = material.shading !== 'unlit';
+            const lit = material.shading !== 'unlit' && material.shading !== 'matcap';
             if (has(V.instanceColor)) defines.push('USE_INSTANCE_COLOR');
             if (lit && uv && material.normalMap) { defines.push('USE_NORMAL_MAP'); if (has(V.tangent)) defines.push('USE_TANGENT'); }
             if (lit && uv && material.metallicRoughnessMap && material.shading === 'standard') defines.push('USE_MR_MAP');
             if (lit && uv && material.occlusionMap) defines.push('USE_AO_MAP');
-            if (uv && material.emissiveMap) defines.push('USE_EMISSIVE_MAP');
+            if (uv && material.emissiveMap && material.shading !== 'matcap') defines.push('USE_EMISSIVE_MAP');
             if (material.flatShading) defines.push('FLAT_SHADED');
             if (material.side === 'double') defines.push('DOUBLE_SIDED');
             if (lit && has(V.receiveShadow)) defines.push('RECEIVE_SHADOW');
@@ -404,7 +405,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         const e = material.emissiveIntensity;
         if (u['uEmissive']) gl.uniform3f(u['uEmissive'], material.emissive[0]! * e, material.emissive[1]! * e, material.emissive[2]! * e);
         if (u['uSurface']) gl.uniform4f(u['uSurface'], material.metallic, material.roughness, material.normalScale, material.occlusionStrength);
-        if (u['uSpecular']) gl.uniform4f(u['uSpecular'], material.specular[0]!, material.specular[1]!, material.specular[2]!, material.shininess);
+        if (u['uSpecular']) gl.uniform4f(u['uSpecular'], material.specular[0]!, material.specular[1]!, material.specular[2]!, material.shading === 'toon' ? material.toonSteps : material.shininess);
         if (u['uEnvironmentScale']) gl.uniform1f(u['uEnvironmentScale'], material.environmentIntensity);
         if (u['uNormalMap'] && material.normalMap) resources.bindTexture(TEXTURE_UNITS_3D.normalMap, material.normalMap);
         if (u['uMetallicRoughnessMap'] && material.metallicRoughnessMap) resources.bindTexture(TEXTURE_UNITS_3D.metallicRoughnessMap, material.metallicRoughnessMap);
