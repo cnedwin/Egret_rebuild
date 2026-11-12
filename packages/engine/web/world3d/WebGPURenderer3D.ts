@@ -544,9 +544,11 @@ export class WebGPURenderer3D implements Renderer3D {
         if (!entry) this.#instances.set(mesh, entry = {matrices: this.writeBuffer(undefined, mesh.instanceMatrices, BUFFER_USAGE.VERTEX), colors: undefined, version: -1, lastFrame: frame});
         entry.lastFrame = frame;
         if (entry.version !== mesh.instanceVersion) {
-            entry.matrices = this.writeBuffer(entry.matrices, mesh.instanceMatrices, BUFFER_USAGE.VERTEX);
-            if (mesh.instanceColors) entry.colors = this.writeBuffer(entry.colors, mesh.instanceColors, BUFFER_USAGE.VERTEX);
-            if (mesh instanceof SkinnedInstancedMesh3D) entry.animation = this.writeBuffer(entry.animation, mesh.instanceAnimation, BUFFER_USAGE.VERTEX);
+            const crowd = mesh instanceof SkinnedInstancedMesh3D ? mesh : undefined;
+            const colors = crowd ? crowd.drawColors : mesh.instanceColors;
+            entry.matrices = this.writeBuffer(entry.matrices, crowd?.drawMatrices ?? mesh.instanceMatrices, BUFFER_USAGE.VERTEX);
+            if (colors) entry.colors = this.writeBuffer(entry.colors, colors, BUFFER_USAGE.VERTEX);
+            if (crowd) entry.animation = this.writeBuffer(entry.animation, crowd.drawAnimation, BUFFER_USAGE.VERTEX);
             entry.version = mesh.instanceVersion;
         }
         return entry;
@@ -626,10 +628,14 @@ export class WebGPURenderer3D implements Renderer3D {
         data[48] = material.sheenColor[0]! * material.sheen; data[49] = material.sheenColor[1]! * material.sheen; data[50] = material.sheenColor[2]! * material.sheen; data[51] = material.sheenRoughness;
         data[52] = material.lightMapIntensity; data[53] = material.transmission; data[54] = material.ior; data[55] = material.thickness;
         data[56] = material.attenuationColor[0]!; data[57] = material.attenuationColor[1]!; data[58] = material.attenuationColor[2]!; data[59] = Number.isFinite(material.attenuationDistance) ? material.attenuationDistance : 0;
+        const splat = material.splat;
+        data[60] = splat?.repeat[0] ?? 1; data[61] = splat?.repeat[1] ?? 1; data[62] = splat?.repeat[2] ?? 1; data[63] = splat?.repeat[3] ?? 1;
         this.device.queue.writeBuffer(entry.buffer, 0, data);
         const entries: GPUBindGroupEntry[] = [{binding: 0, resource: {buffer: entry.buffer}}];
         let key = '';
-        [material.map, material.normalMap, material.metallicRoughnessMap, material.occlusionMap, material.emissiveMap, material.lightMap, material.reflectionMap].forEach((texture, i) => {
+        // Ground layers borrow the slots of the maps they stand in for; a missing layer reads the first.
+        (splat ? [splat.layers[0], material.normalMap, splat.layers[3] ?? splat.layers[0], splat.layers[2] ?? splat.layers[0], splat.layers[1] ?? splat.layers[0], splat.weights, material.reflectionMap]
+            : [material.map, material.normalMap, material.metallicRoughnessMap, material.occlusionMap, material.emissiveMap, material.lightMap, material.reflectionMap]).forEach((texture, i) => {
             const gpu = texture && !texture.isDisposed ? this.texture2d(texture) : undefined;
             entries.push({binding: 1 + i * 2, resource: gpu?.view ?? this.#white}, {binding: 2 + i * 2, resource: gpu?.sampler ?? this.#defaultSampler});
             key += (gpu?.key ?? '-') + '|';
@@ -649,14 +655,17 @@ export class WebGPURenderer3D implements Renderer3D {
         const emissiveUv1 = second && material.shading !== 'matcap' && material.emissiveMap?.channel === 1;
         const lightUv1 = second && lit && material.lightMap?.channel === 1, lightMap = lit && material.lightMap !== undefined && (uv || lightUv1);
         const skinning = mesh.skeleton !== undefined && gpu.buffers.has('joints') && gpu.buffers.has('weights');
+        // A draw may bind eight vertex buffers. Baked instances use them up, so they do without tangents, vertex colors and second coordinates.
+        const baked = instanced && !skinning && mesh instanceof SkinnedInstancedMesh3D;
         return {
             shading: material.shading, depthOnly,
             normal: gpu.buffers.has('normal') && (!depthOnly || material.shader?.wgslVertex !== undefined),
             uv: uv && (!depthOnly || (material.map !== undefined && material.alphaMode !== 'opaque') || material.shader?.wgslVertex !== undefined),
-            tangent: lit && uv && material.normalMap !== undefined && gpu.buffers.has('tangent'),
-            vertexColor: material.vertexColors && gpu.buffers.has('color'),
+            tangent: lit && uv && material.normalMap !== undefined && gpu.buffers.has('tangent') && !baked,
+            vertexColor: material.vertexColors && gpu.buffers.has('color') && !baked,
             skinning, morph: gpu.morph !== undefined, morphNormals: gpu.morph?.channels === 2,
             skinInstancing: instanced && !skinning && mesh instanceof SkinnedInstancedMesh3D && gpu.buffers.has('joints') && gpu.buffers.has('weights'),
+            splat: !depthOnly && uv && material.splat !== undefined,
             gpuParticles: instanced && !depthOnly && mesh instanceof GpuParticles3D, softDepth: !depthOnly && material.softness > 0 && this.#softDepth,
             instancing: instanced, instanceColor: instanced && !depthOnly && (mesh as InstancedMesh3D).instanceColors !== undefined,
             billboard: material.billboard && !material.screenSpace, screenSpace: material.screenSpace,
@@ -665,7 +674,7 @@ export class WebGPURenderer3D implements Renderer3D {
             normalMap: lit && uv && material.normalMap !== undefined,
             metallicRoughnessMap: lit && uv && material.metallicRoughnessMap !== undefined && material.shading === 'standard',
             occlusionMap: lit && (uv || occlusionUv1) && material.occlusionMap !== undefined,
-            uv1: occlusionUv1 || emissiveUv1 || lightUv1, occlusionUv1, emissiveUv1, lightMap, lightUv1,
+            uv1: (occlusionUv1 || emissiveUv1 || lightUv1) && !baked, occlusionUv1: occlusionUv1 && !baked, emissiveUv1: emissiveUv1 && !baked, lightMap, lightUv1: lightUv1 && !baked,
             transmission: !depthOnly && this.#grabbed && material.shading === 'standard' && material.transmission > 0,
             emissiveMap: !depthOnly && (uv || emissiveUv1) && material.emissiveMap !== undefined && material.shading !== 'matcap',
             alphaMask: material.alphaMode === 'mask', alphaBlend: material.alphaMode === 'blend',
@@ -717,7 +726,7 @@ export class WebGPURenderer3D implements Renderer3D {
         if (features.instanceColor) {
             buffers.push({arrayStride: instanceColorSize * 4, stepMode: 'instance', attributes: [{shaderLocation: 12, offset: 0, format: instanceColorSize === 3 ? 'float32x3' : 'float32x4'}]});
         }
-        if (features.skinInstancing) buffers.push({arrayStride: 16, stepMode: 'instance', attributes: [{shaderLocation: 13, offset: 0, format: 'float32x4'}]});
+        if (features.skinInstancing) buffers.push({arrayStride: 48, stepMode: 'instance', attributes: [0, 1, 2].map(part => ({shaderLocation: 13 + part, offset: part * 16, format: 'float32x4' as GPUVertexFormat}))});
         const blendState: GPUBlendState | undefined = blend === 'off' ? undefined
             : blend === 'additive' ? {color: {srcFactor: 'src-alpha', dstFactor: 'one'}, alpha: {srcFactor: 'zero', dstFactor: 'one'}}
             : blend === 'multiply' ? {color: {srcFactor: 'dst', dstFactor: 'zero'}, alpha: {srcFactor: 'zero', dstFactor: 'one'}}
@@ -773,6 +782,8 @@ export class WebGPURenderer3D implements Renderer3D {
                 for (let k = 1; k < count; k++) if (Math.abs(floats[values + k]!) < Math.abs(floats[values + weakest]!)) weakest = k;
                 if (Math.abs(weight) > Math.abs(floats[values + weakest]!)) { ints[indices + weakest] = i; floats[values + weakest] = weight; }
             }
+            // Baked instances take their morph weights from the table; the shader only needs to know how many targets to read.
+            if (mesh instanceof SkinnedInstancedMesh3D && !mesh.skeleton) count = Math.min(MAX_MORPH_INFLUENCES_WGSL_3D, mesh.animations.morphCount, mesh.geometry.morphTargets.length);
             ints[o + 44] = gpu.morph.vertexCount; ints[o + 45] = gpu.morph.channels; ints[o + 46] = count; ints[o + 47] = 0;
         } else ints[o + 46] = 0;
         return index * OBJECT_BLOCK_BYTES_3D;
@@ -792,7 +803,8 @@ export class WebGPURenderer3D implements Renderer3D {
         const {mesh, geometry, material} = item, frame = this.#list.frame;
         const gpu = this.geometry(geometry);
         if (!gpu.buffers.has('position')) return;
-        const instanced = mesh.isInstanced, instances = instanced ? (mesh as InstancedMesh3D).count : 1;
+        const instanced = mesh.isInstanced;
+        const instances = mesh instanceof SkinnedInstancedMesh3D ? mesh.drawCount : instanced ? (mesh as InstancedMesh3D).count : 1;
         if (instances <= 0 || this.#objectCount >= this.#objectCapacity) return;
         const world = mesh.matrixWorld;
         const determinant = world[0]! * (world[5]! * world[10]! - world[6]! * world[9]!) - world[4]! * (world[1]! * world[10]! - world[2]! * world[9]!)
@@ -816,7 +828,7 @@ export class WebGPURenderer3D implements Renderer3D {
             | (material.flatShading ? 512 : 0) | (material.vertexColors ? 1024 : 0) | (material.billboard ? 2048 : 0) | (material.screenSpace ? 4096 : 0)
             | (material.depthTest ? 8192 : 0) | (material.depthWrite ? 16384 : 0) | (material.fog ? 131072 : 0) | (material.toneMapped ? 262144 : 0)
             | (material.polygonOffset ? 524288 : 0) | (material.occlusionMap?.channel === 1 ? 1048576 : 0) | (material.emissiveMap?.channel === 1 ? 2097152 : 0)
-            | (material.lightMap ? 4194304 : 0) | (material.lightMap?.channel === 1 ? 8388608 : 0) | (material.reflectionMap ? 16777216 : 0) | (material.softness > 0 && this.#softDepth ? 33554432 : 0);
+            | (material.lightMap ? 4194304 : 0) | (material.lightMap?.channel === 1 ? 8388608 : 0) | (material.reflectionMap ? 16777216 : 0) | (material.softness > 0 && this.#softDepth ? 33554432 : 0) | (material.splat ? 67108864 : 0);
         const variantKey = surface * 131072 + bits;
         let byGeometry = cache.variants.get(geometry.id);
         if (!byGeometry) cache.variants.set(geometry.id, byGeometry = new Map());

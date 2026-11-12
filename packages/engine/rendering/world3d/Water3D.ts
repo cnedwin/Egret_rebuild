@@ -17,6 +17,8 @@ export interface ReflectionRenderer3D {
     render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean;
     /** When present, post-processing is switched off while the mirror image is drawn. */
     readonly postProcess?: {enabled: boolean};
+    /** When present, shadows can be left out of the mirror image. */
+    shadowsEnabled?: boolean;
 }
 
 /**
@@ -33,6 +35,14 @@ export class PlanarReflection3D {
     get camera(): Camera3D { return this.#camera; }
     /** Moves the cutting plane back by this distance so geometry touching the mirror leaves no gap. */
     clipBias = 0.05;
+    /** Draw the mirror image on every Nth call only; in between, the last image is kept. 1 draws every time. */
+    interval = 1;
+    /** Only objects on these layers appear in the mirror image: leave small or distant things out to save time. */
+    layerMask = 0xffffffff;
+    /** false leaves shadows out of the mirror image, which saves the shadow passes for it. */
+    shadows = true;
+    #calls = 0;
+    #drawn: {renderer: ReflectionRenderer3D; scene: Scene3D; version: number} | undefined;
     readonly #projection = new Float32Array(16);
     readonly #perspectiveProjection = new Float32Array(16);
     readonly #orthographicProjection = new Float32Array(16);
@@ -102,19 +112,45 @@ export class PlanarReflection3D {
      * `hidden`, normally the mirror itself, are left out of the image.
      */
     render(renderer: ReflectionRenderer3D, scene: Scene3D, camera: Camera3D, plane: ArrayLike<number>, hidden: readonly Object3D[] = []): boolean {
-        if (!this.update(camera, plane)) return false;
-        const shown = hidden.map((object) => object.visible);
-        for (const object of hidden) object.visible = false;
-        // The mirror image is plain; the main view's post-processing reaches it with everything else.
-        const post = renderer.postProcess, processed = post?.enabled ?? false;
-        if (post) post.enabled = false;
-        try { return renderer.render(scene, this.camera, this.target); }
-        finally {
-            if (post) post.enabled = processed;
-            hidden.forEach((object, i) => { object.visible = shown[i]!; });
+        const interval = requireCount3D(this.interval, 'reflection interval', Number.MAX_SAFE_INTEGER);
+        if (interval === 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'reflection interval');
+        if (this.target.isDisposed || !this.update(camera, plane)) { this.#drawn = undefined; return false; }
+        this.camera.layerMask = camera.layerMask & this.layerMask;
+        const scheduled = this.#calls === 0;
+        this.#calls = (this.#calls + 1) % interval;
+        const drawn = this.#drawn;
+        if (!scheduled && drawn?.renderer === renderer && drawn.scene === scene && drawn.version === this.target.version) return true;
+        this.#drawn = undefined;
+
+        const shadowsEnabled = renderer.shadowsEnabled, post = renderer.postProcess, postEnabled = post?.enabled;
+        const disableShadows = !this.shadows && shadowsEnabled !== undefined;
+        const shown = hidden.map(object => object.visible);
+        let touchedShadows = false, touchedPost = false, touchedHidden = 0;
+        let result = false, primary: {cause: unknown} | undefined, cleanupErrors: unknown[] | undefined;
+        try {
+            if (disableShadows) { touchedShadows = true; renderer.shadowsEnabled = false; }
+            for (const object of hidden) { touchedHidden++; object.visible = false; }
+            if (post) { touchedPost = true; post.enabled = false; }
+            result = renderer.render(scene, this.camera, this.target);
+        } catch (cause) { primary = {cause}; }
+
+        // Restore every owned setting, even when setup, rendering or another restoration fails.
+        const restore = (action: () => void): void => {
+            try { action(); } catch (cause) { (cleanupErrors ??= []).push(cause); }
+        };
+        if (post && touchedPost) restore(() => { post.enabled = postEnabled!; });
+        for (let i = touchedHidden - 1; i >= 0; i--) restore(() => { hidden[i]!.visible = shown[i]!; });
+        if (touchedShadows) restore(() => { renderer.shadowsEnabled = shadowsEnabled!; });
+        if (cleanupErrors) {
+            const causes = primary ? [primary.cause, ...cleanupErrors] : cleanupErrors;
+            if (causes.length === 1) throw causes[0];
+            throw new AggregateError(causes, 'WORLD3D_REFLECTION_FAILED');
         }
+        if (primary) throw primary.cause;
+        if (result) this.#drawn = {renderer, scene, version: this.target.version};
+        return result;
     }
-    dispose(): void { this.target.dispose(); }
+    dispose(): void { this.#drawn = undefined; this.target.dispose(); }
 }
 
 // Four waves share one formula: each is turned from the main direction,
@@ -211,6 +247,50 @@ fn customNormal(normal: vec3f, worldPosition: vec3f, uv: vec2f) -> vec3f {
 }
 `;
 
+const GLSL_FRAGMENT = /* glsl */`
+vec4 customFragment(vec4 color, vec3 worldPosition, vec3 normal, vec2 uv) {
+    vec4 a = uCustom[0], look = uCustom[3];
+    float gap = sceneDistance - surfaceDistance;
+    // Without a depth image there is no telling how deep the water is here.
+    if (gap > 1.0e8 || gap < 0.0) return vec4(color.rgb, 1.0);
+    float clock = a.x * a.w;
+    // Foam: a band along the shore, broken up by two crossing ripples that drift.
+    float edge = 1.0 - smoothstep(0.0, max(look.x, 0.0001), gap);
+    float broken = 0.5 + 0.5 * sin(dot(worldPosition.xz, vec2(1.7, 2.3)) * 2.0 + clock * 1.5) * sin(dot(worldPosition.xz, vec2(-2.1, 1.3)) * 1.6 - clock);
+    float foam = smoothstep(0.35, 0.8, edge * (0.6 + 0.8 * broken)) * look.y;
+    // Caustics: light gathered by the waves, drawn on the bottom where it is seen through shallow water.
+    vec3 ray = normalize(worldPosition - uCameraPosition.xyz);
+    float facing = max(dot(ray, -vec3(uView[0].z, uView[1].z, uView[2].z)), 0.05);
+    vec3 bottom = worldPosition + ray * (gap / facing);
+    float web = sin(bottom.x * 2.1 + sin(bottom.z * 1.7 + clock)) + sin(bottom.z * 2.3 + sin(bottom.x * 1.9 - clock * 1.3));
+    float light = pow(1.0 - abs(web) * 0.5, 6.0) * look.z * exp(-gap / max(look.w, 0.0001));
+    vec3 lit = color.rgb + vec3(0.85, 1.0, 0.9) * light;
+    return vec4(mix(lit, vec3(0.92), foam), 1.0 - foam);
+}
+`;
+const WGSL_FRAGMENT = /* wgsl */`
+fn customFragment(color: vec4f, worldPosition: vec3f, normal: vec3f, uv: vec2f) -> vec4f {
+    let a = material.custom[0];
+    let look = material.custom[3];
+    let gap = sceneDistance - surfaceDistance;
+    // Without a depth image there is no telling how deep the water is here.
+    if (gap > 1.0e8 || gap < 0.0) { return vec4f(color.rgb, 1.0); }
+    let clock = a.x * a.w;
+    // Foam: a band along the shore, broken up by two crossing ripples that drift.
+    let edge = 1.0 - smoothstep(0.0, max(look.x, 0.0001), gap);
+    let broken = 0.5 + 0.5 * sin(dot(worldPosition.xz, vec2f(1.7, 2.3)) * 2.0 + clock * 1.5) * sin(dot(worldPosition.xz, vec2f(-2.1, 1.3)) * 1.6 - clock);
+    let foam = smoothstep(0.35, 0.8, edge * (0.6 + 0.8 * broken)) * look.y;
+    // Caustics: light gathered by the waves, drawn on the bottom where it is seen through shallow water.
+    let ray = normalize(worldPosition - frame.cameraPosition.xyz);
+    let facing = max(dot(ray, -vec3f(frame.view[0].z, frame.view[1].z, frame.view[2].z)), 0.05);
+    let bottom = worldPosition + ray * (gap / facing);
+    let web = sin(bottom.x * 2.1 + sin(bottom.z * 1.7 + clock)) + sin(bottom.z * 2.3 + sin(bottom.x * 1.9 - clock * 1.3));
+    let light = pow(1.0 - abs(web) * 0.5, 6.0) * look.z * exp(-gap / max(look.w, 0.0001));
+    let lit = color.rgb + vec3f(0.85, 1.0, 0.9) * light;
+    return vec4f(mix(lit, vec3f(0.92), foam), 1.0 - foam);
+}
+`;
+
 export interface WaterOptions3D {
     /** Size of the surface along X and Z. Defaults: 100 each. */
     readonly width?: number;
@@ -240,7 +320,23 @@ export interface WaterOptions3D {
     readonly clarity?: number;
     /** Edge of the square mirror image in pixels; 0 disables true reflections and leaves the sky's. Default 512. */
     readonly reflectionSize?: number;
+    /** Color the water takes on where it is deep, 0xRRGGBB. Default: a darker shade of `color`. */
+    readonly deepColor?: number;
+    /** Depth over which the view through the water fades to the deep color. Default 6. */
+    readonly depthFade?: number;
+    /** Width of the foam band along shores, as water depth; 0 for none. Default 0.5. */
+    readonly foamWidth?: number;
+    /** Strength of the light patterns on the bottom of shallow water, 0 for none. Default 0.5. */
+    readonly caustics?: number;
 }
+
+interface UnderwaterFogOverride3D {
+    readonly scene: Scene3D;
+    readonly previous: Scene3D['fog'];
+    readonly installed: NonNullable<Scene3D['fog']>;
+}
+// A scene has one fog slot; another water node waits until its owner releases it.
+const underwaterFogOwners = new WeakMap<Scene3D, UnderwaterFogOverride3D>();
 
 /**
  * A horizontal water surface. Waves move its vertices and its shading
@@ -253,6 +349,7 @@ export class Water3D extends Mesh3D {
     readonly reflection: PlanarReflection3D | undefined;
     readonly #uniforms: Float32Array;
     readonly #plane = [0, 1, 0, 0];
+    #fogOverride: UnderwaterFogOverride3D | undefined;
 
     constructor(options: WaterOptions3D = {}) {
         const width = requirePositive3D(options.width ?? 100, 'width'), depth = requirePositive3D(options.depth ?? 100, 'depth'), segments = requireCount3D(options.segments ?? 96, 'segments', 1024);
@@ -318,8 +415,44 @@ export class Water3D extends Mesh3D {
         this.#plane[3] = -this.matrixWorld[13]!;
         return this.reflection.render(renderer, scene, camera, this.#plane, [this]);
     }
+    /** Test the horizontal wave height at a point, including beyond the rendered mesh edges. */
+    isUnderwater(point: ArrayLike<number>): boolean {
+        this.updateWorldMatrix();
+        return point[1]! < this.heightAt(point[0]!, point[2]!);
+    }
+    /**
+     * Give the scene the look of being under water while the camera is below
+     * the surface: thick fog in the water's color. The scene's own fog is put
+     * back when the camera comes up. Call it each frame; it returns whether the
+     * camera is under water, where there is no mirror image to draw.
+     */
+    updateUnderwater(scene: Scene3D, camera: Camera3D, density = 0.06): boolean {
+        camera.updateWorldMatrix();
+        const eye = camera.matrixWorld, under = this.isUnderwater([eye[12]!, eye[13]!, eye[14]!]);
+        if (!under || this.#fogOverride?.scene !== scene) this.restoreUnderwaterFog();
+        if (under && !this.#fogOverride && !underwaterFogOwners.has(scene)) {
+            density = requireFinite3D(density, 'density');
+            if (density < 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'density');
+            const tint = (this.material as Material3D).attenuationColor;
+            const installed: NonNullable<Scene3D['fog']> = {kind: 'exponential', color: [tint[0]! * 1.6, tint[1]! * 1.6, tint[2]! * 1.6], density};
+            const override = {scene, previous: scene.fog, installed};
+            scene.fog = installed;
+            underwaterFogOwners.set(scene, override);
+            this.#fogOverride = override;
+        }
+        return under;
+    }
+    private restoreUnderwaterFog(): void {
+        const override = this.#fogOverride;
+        this.#fogOverride = undefined;
+        if (!override || underwaterFogOwners.get(override.scene) !== override) return;
+        underwaterFogOwners.delete(override.scene);
+        // A later scene edit has already superseded our temporary value.
+        if (override.scene.fog === override.installed) override.scene.fog = override.previous;
+    }
     /** Release the geometry, the material and the mirror image. */
     dispose(): void {
+        this.restoreUnderwaterFog();
         this.geometry.dispose();
         (this.material as Material3D).dispose();
         this.reflection?.dispose();
@@ -344,10 +477,17 @@ export function createWaterMaterial3D(options: WaterOptions3D = {}): Material3D 
     material.ior = 1.33;
     material.thickness = requireFinite3D(options.thickness ?? 0.5, 'thickness');
     const tint = colorFromHex(new Float32Array(3), options.color ?? 0x2f7f9f);
-    material.attenuationColor.set(tint);
+    if (options.deepColor === undefined) { material.attenuationColor[0] = tint[0]! * 0.25; material.attenuationColor[1] = tint[1]! * 0.35; material.attenuationColor[2] = tint[2]! * 0.45; }
+    else colorFromHex(material.attenuationColor, options.deepColor);
+    const depthFade = requirePositive3D(options.depthFade ?? 6, 'depthFade'), foamWidth = requireFinite3D(options.foamWidth ?? 0.5, 'foamWidth'), caustics = requireFinite3D(options.caustics ?? 0.35, 'caustics');
+    material.attenuationDistance = depthFade;
+    // Asking for the depth of the solid scene: shore, foam and caustics all depend on how deep the water is.
+    material.softness = 1;
+    // The underside is drawn too, for a camera below the surface.
+    material.side = 'double';
     material.shader = createCustomShader3D({
-        key: 'world3d-water', glslVertex: GLSL_VERTEX, wgslVertex: WGSL_VERTEX, glslNormal: GLSL_NORMAL, wgslNormal: WGSL_NORMAL,
-        uniforms: [0, amplitude, wavelength, speed, dx / length, dz / length, steepness, ripple, rippleLength, 0.03, 0, 0],
+        key: 'world3d-water', glslVertex: GLSL_VERTEX, wgslVertex: WGSL_VERTEX, glslNormal: GLSL_NORMAL, wgslNormal: WGSL_NORMAL, glsl: GLSL_FRAGMENT, wgsl: WGSL_FRAGMENT,
+        uniforms: [0, amplitude, wavelength, speed, dx / length, dz / length, steepness, ripple, rippleLength, 0.03, 0, 0, foamWidth, foamWidth > 0 ? 1 : 0, caustics, depthFade * 0.5],
     });
     return material;
 }

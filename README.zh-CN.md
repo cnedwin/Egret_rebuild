@@ -63,6 +63,7 @@ Merged engineering increments for the current preview. 当前工程预览已合�
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#161](https://github.com/cnedwin/Egret_rebuild/pull/161) | World3D terrain, water, crowd and effects refinements, with 25 fixed Windows Edge WebGL2/WebGPU comparisons | World3D 地形、水面、人群与特效完善，Windows Edge 通过 25 个固定 WebGL2／WebGPU 对比 |
 | [#154](https://github.com/cnedwin/Egret_rebuild/pull/154)–[#159](https://github.com/cnedwin/Egret_rebuild/pull/159) | World3D character controls, decoding, navigation, terrain, skinned crowds and effects. Windows Edge passed 24 fixed WebGL2/WebGPU comparisons. | World3D 新增角色控制、解码、导航、地形、蒙皮人群与特效，Windows Edge 通过 24 个 WebGL2／WebGPU 固定场景对比。 |
 | [#153](https://github.com/cnedwin/Egret_rebuild/pull/153) | Fixed Windows full-dirty Engine median-p95 reaches 5.3 ms against 8 ms. Sparse/full-dirty pacing remains open. | Windows 固定全脏 Engine p95 中位数达到 5.3 ms，目标 8 ms。稀疏／全脏帧节奏仍待验收。 |
 | [#152](https://github.com/cnedwin/Egret_rebuild/pull/152) | World3D feature gallery, CPU regression workloads, and physics and shadow optimizations | World3D 功能展厅、CPU 回归负载及物理与阴影优化 |
