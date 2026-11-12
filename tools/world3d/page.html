@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>World3D backend comparison</title>
+  <script type="importmap">{"imports":{"@egret/contracts":"/packages/contracts/dist/index.js","@egret/runtime":"/packages/runtime/dist/index.js"}}</script>
+</head>
+<body>
+  <canvas id="c" width="64" height="64"></canvas>
+  <script type="module">
+    // Renders every case into a render target on one backend and publishes the pixels.
+    import * as W from '/packages/engine/dist/rendering/world3d/index.js';
+    import { buildCases, verifyTextureSourceReplacement } from './cases.mjs';
+    const backend = new URL(location.href).searchParams.get('backend'), errors = [], images = {}, done = [];
+    try {
+      const mod = await import(backend === 'webgpu' ? '/packages/engine/dist/web/world3d/webgpu.js' : '/packages/engine/dist/web/world3d/index.js');
+      const canvas = document.querySelector('#c');
+      const renderer = backend === 'webgpu' ? await mod.createWebGPURenderer3D({ canvas, onDeviceLost: (message) => errors.push('device lost: ' + message) }) : mod.createWebGL2Renderer3D({ canvas });
+      renderer.device?.addEventListener('uncapturederror', (event) => errors.push(event.error.message.slice(0, 600)));
+      await verifyTextureSourceReplacement(W, renderer);
+      const target = new W.RenderTarget3D(320, 200);
+      for (const [name, build] of Object.entries(buildCases(W))) {
+        const { scene, camera } = build();
+        if (!renderer.render(scene, camera, target)) throw new Error('renderer lost before ' + name);
+        images[name] = Array.from(await renderer.readRenderTargetPixels(target));
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        if (errors.length) throw new Error('GPU error in ' + name);
+        done.push(name);
+      }
+      renderer.dispose();
+      globalThis.__world3dResult = { backend, done, errors, width: 320, height: 200, images };
+    } catch (cause) {
+      globalThis.__world3dResult = { backend, done, errors, failure: String(cause?.stack ?? cause) };
+    }
+  </script>
+</body>
+</html>

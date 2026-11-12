@@ -252,6 +252,12 @@ for (const [name, allowed] of Object.entries(expected)) {
     textExports['./ui/editing'] = {types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'};
     if (name === 'engine') textExports['./web/editing'] = {types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'};
     if (name === 'engine') textExports['./scene3d/authoring'] = {"types":"./dist/rendering/scene3dAuthoring.d.ts","import":"./dist/rendering/scene3dAuthoring.js"};
+    // World3D: a DOM-free scene graph entry and one explicit entry per rendering backend.
+    if (name === 'engine') {
+      textExports['./world3d'] = {types:'./dist/rendering/world3d/index.d.ts',import:'./dist/rendering/world3d/index.js'};
+      textExports['./webgl2/world3d'] = {types:'./dist/web/world3d/index.d.ts',import:'./dist/web/world3d/index.js'};
+      textExports['./webgpu/world3d'] = {types:'./dist/web/world3d/webgpu.d.ts',import:'./dist/web/world3d/webgpu.js'};
+    }
     if (JSON.stringify(Object.keys(pkg.exports ?? {}).sort()) !== JSON.stringify(Object.keys(textExports).sort())
         || Object.entries(textExports).some(([entry, mapping]) => JSON.stringify(pkg.exports[entry]) !== JSON.stringify(mapping)))
       throw new Error(`${name}: text explicit export mapping mismatch`);

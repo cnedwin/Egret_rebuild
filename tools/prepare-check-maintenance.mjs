@@ -146,6 +146,36 @@ const texturedGlbSourceOwners = [{"path":"tools/atlas-import-boundary.mjs","byte
 const lambertGlbSourceOwners = [{"path":"tools/atlas-import-boundary.mjs","bytes":272488,"sha256":"6d5957edb26911bb616e3ba6c5c2cc2b42f9d490fc40b3677d584034a6e5f747"},{"path":"tools/browser-png-boundary.mjs","bytes":377614,"sha256":"0245f9776c5bd71b9bbb32d61161b5822755071fd2e3ee784dbee349346f9351"},{"path":"tools/spritesheet-boundary.mjs","bytes":367775,"sha256":"702623cff673d162e0fa53c90b4d30b6ad2171b90dcb778b8ddfd77928c6be98"},{"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":92622,"sha256":"9357961e01c7ddb78d26aafe80ea77f3563de0fcba4b598f6120fb2afc061c6a"},{"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":86043,"sha256":"71e981e06cc4344018d6c035ad2c825a73bce4a34fc6a8d7e59d2fbece18298d"},{"path":"tools/sequence-playback-boundary.mjs","bytes":90691,"sha256":"4b6bf9d671d2fe00deae1de3fbfecdee4789aeae660deb0d237f2137294d03a3"}];
 const sceneAnimationSourceOwners = [{"path":"tools/atlas-import-boundary.mjs","bytes":275895,"sha256":"0fa164004e76b1f4e8692456f6b5aba6813a713d71929833d9cb9b4f2765642c"},{"path":"tools/browser-png-boundary.mjs","bytes":381021,"sha256":"06e73501889f0de5b42897606801ee137147a23df72b9cb759413bf338834fcf"},{"path":"tools/spritesheet-boundary.mjs","bytes":371182,"sha256":"9ed71f5e37a9c20ad0b8bda449cb44210f4036bf819d9d5729e98f559a240269"}];
 const importedGlbAnimationSourceOwners = [{"path":"tools/atlas-import-boundary.mjs","bytes":279862,"sha256":"6f9abb824bd75d7de38fc68ab7943d52816b28f7a141a815ce0989f7575c0f59"},{"path":"tools/browser-png-boundary.mjs","bytes":384988,"sha256":"65bd61b12c56c6b4902124997e023d47457a74c78712cc8d8d5f68f553f6a8c7"},{"path":"tools/spritesheet-boundary.mjs","bytes":375149,"sha256":"f4f48a3015f6d72208bc7a9b145ca95da8e0403175a7c5ed035b5bc21bd6054f"}];
+// Keep historical declaration extraction on the exact pre-World3D owners.
+const world3dBoundaryOwners = [
+  {"path":"tools/atlas-import-boundary.mjs","base":{"bytes":279862,"sha256":"6f9abb824bd75d7de38fc68ab7943d52816b28f7a141a815ce0989f7575c0f59"},"current":{"bytes":280112,"sha256":"7f8d816cd022a22de9a8679e59407f50230bbe8bc57bab6674471dc383fb5b56"}},
+  {"path":"tools/bitmap-binding-ticket-boundary.mjs","base":{"bytes":92622,"sha256":"9357961e01c7ddb78d26aafe80ea77f3563de0fcba4b598f6120fb2afc061c6a"},"current":{"bytes":92713,"sha256":"bb37504e266187e01284fc9f7355ebd4ee918fe90ccc2d60cec1b0e7f2f6d75d"}},
+  {"path":"tools/bitmap-resource-slot-boundary.mjs","base":{"bytes":86043,"sha256":"71e981e06cc4344018d6c035ad2c825a73bce4a34fc6a8d7e59d2fbece18298d"},"current":{"bytes":86134,"sha256":"71040477e0ee38842b7684d8a4d3a8ea1857b0573a3b4a820d6b900f08a1405e"}},
+  {"path":"tools/browser-png-boundary.mjs","base":{"bytes":384988,"sha256":"65bd61b12c56c6b4902124997e023d47457a74c78712cc8d8d5f68f553f6a8c7"},"current":{"bytes":385345,"sha256":"691b020ae311bc6af4d25219e485e96b4cbf483c6132c02c79f16b3ed0a654ad"}},
+  {"path":"tools/sequence-playback-boundary.mjs","base":{"bytes":90691,"sha256":"4b6bf9d671d2fe00deae1de3fbfecdee4789aeae660deb0d237f2137294d03a3"},"current":{"bytes":90782,"sha256":"37608be2cc8ee7001eb469341874d454248fcf4f8761cfd9305f6830cc166459"}},
+  {"path":"tools/spritesheet-boundary.mjs","base":{"bytes":375149,"sha256":"f4f48a3015f6d72208bc7a9b145ca95da8e0403175a7c5ed035b5bc21bd6054f"},"current":{"bytes":375370,"sha256":"8cb75dae678635ba5fa912c842f05b6801ac613ba6506442cd3fadefa8e5b187"}},
+];
+const world3dBoundaryEdits = [
+  ["import { projectWorld3dExports, projectWorld3dPackage, world3dGraphPins } from './lib/world3d-boundary.mjs';\n",""],
+  ["import { projectWorld3dPackage, world3dGraphPins } from './lib/world3d-boundary.mjs';\n",""],
+  ["import { projectWorld3dPackage } from './lib/world3d-boundary.mjs';\n",""],
+  ["projectAuthoredScenePackage(projectWorld3dPackage(raw))","projectAuthoredScenePackage(raw)"],
+  ["  raw=projectWorld3dPackage(raw);\n",""],
+  ["  const retainedPackage=projectWorld3dPackage(authoredPackage);\n  const authored=projectAuthoredScenePackage(retainedPackage)!==retainedPackage;\n","  const authored=projectAuthoredScenePackage(authoredPackage)!==authoredPackage;\n"],
+  ["  if(retainedPackage!==authoredPackage)graph=[...graph,...world3dGraphPins];\n",""],
+  ["  if(projectWorld3dPackage(authoredPackage)!==authoredPackage) graph=[...graph,...world3dGraphPins];\n",""],
+  ["    'tools/lib/world3d-boundary.mjs',\n",""],
+  ["    if(name==='engine')value.exports=projectWorld3dExports(value.exports);\n",""],
+];
+export function world3dBoundaryPrevious(raw, file){
+ const pair=world3dBoundaryOwners.find(row=>row.path===file);
+ const matches=(bytes,pin)=>bytes.length===pin.bytes&&createHash('sha256').update(bytes).digest('hex')===pin.sha256;
+ if(!pair||!matches(raw,pair.current))return raw;
+ const previous=Buffer.from(world3dBoundaryEdits.reduce((text,[current,prior])=>text.replace(current,prior),raw.toString('utf8')));
+ if(!matches(previous,pair.base))throw Error('World3D boundary predecessor identity differs: '+file);
+ return previous;
+}
+
 // Explicit selectors keep historical transforms and third-party owners separate.
 const policyRegistrations=[
  {owner:'tools/bitmap-resource-slot-boundary.mjs',binding:'policyPin',target:'tools/bitmap-resource-slot-policy.json',kind:'BITMAP_RESOURCE_SLOT_FINITE_INTERFACE_POLICY',selectors:['packages','configurations','stableEntries','oldRootPins','oldEngineDeclarationPin','workspacePins']},
@@ -201,19 +231,20 @@ function present(root,file){
 function reader(root){
  const inputs=new Map();
  function pin(file){if(!inputs.has(file))inputs.set(file,present(root,file)?fingerprintFile(root,file):null);return inputs.get(file);}
- function text(file){
+ function bytes(file){
   const identity=pin(file);if(!identity)throw Error('Missing required maintenance input: '+file);
   const raw=fs.readFileSync(path.join(root,file));
   if(raw.length!==identity.bytes||createHash('sha256').update(raw).digest('hex')!==identity.sha256)throw Error('Input changed while reading '+file);
-  return raw.toString('utf8');
+  return raw;
  }
+ const text=file=>bytes(file).toString('utf8');
  function finish(){
   const rows=[...inputs].sort(([a],[b])=>a<b?-1:a>b?1:0).map(([file,identity])=>({path:file,identity}));
   for(const row of rows)if(!equal(row.identity,present(root,row.path)?fingerprintFile(root,row.path):null))throw Error('Input changed during preparation: '+row.path);
   return rows;
  }
  for(const file of ['tools/prepare-check-maintenance.mjs','tools/lib/file-identity.mjs'])text(file);
- return {pin,text,finish};
+ return {pin,bytes,text,finish};
 }
 // This is a bounded preamble reader, not a JavaScript parser. Ambiguous raw
 // occurrences and unsupported prefix syntax are refused, never evaluated.
@@ -263,9 +294,17 @@ function codeInventory(root){
 }
 export function prepareBaselineReview(root){
  const read=reader(root),owners=new Map(),declarations=[],policyLinks=[],successorPairs=[];
- const ownerText=file=>{if(!owners.has(file))owners.set(file,read.text(file));return owners.get(file);};
+ function readOwner(file){
+  if(!owners.has(file)){
+   const raw=read.bytes(file),previous=world3dBoundaryPrevious(raw,file);
+   const identity=previous===raw?read.pin(file):{path:file,...world3dBoundaryOwners.find(row=>row.path===file).base};
+   owners.set(file,{text:previous.toString('utf8'),identity});
+  }
+  return owners.get(file);
+ }
+ const ownerText=file=>readOwner(file).text;
  function registeredDeclaration(owner,binding){
-  const text=ownerText(owner);
+  const {text,identity}=readOwner(owner);
   try{return declaration(text,binding);}catch(cause){
    const allowed=registrations.some(row=>row[0]===owner&&row[1]===binding&&binding.startsWith('m13'))
     || m13PairRegistrations.some(row=>row[0]===owner&&row[1]===binding)
@@ -281,7 +320,7 @@ export function prepareBaselineReview(root){
     || m3PointerPairRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || [...m42ContainedClipPairRegistrations,...uiControlsPairRegistrations,...uiControlsGraphRegistrations,...m24ResetPairRegistrations,...m24ResetGraphRegistrations,...m34ThemePairRegistrations,...m34ThemeGraphRegistrations,...m24SpinePairRegistrations,...m24SpineGraphRegistrations,...m3KeyRevealPairRegistrations,...m33KeyboardPairRegistrations,...m33KeyboardGraphRegistrations].some(row=>row[0]===owner&&row[1]===binding);
    const reviewed=[...m13SourceOwners,...m14SourceOwners,...m15SourceOwners,...m15CancellationSourceOwners,...m15DiagnosticSourceOwners,...m12PreparationSourceOwners,...m3PointerSourceOwners,...m21ContentSourceOwners,...m31UiSourceOwners,...m22SequenceSourceOwners,...m33KeyboardSourceOwners,...m3KeyRevealSourceOwners,...m24SpineSourceOwners,...m34ThemeSourceOwners,...m34ThemeSelectionSourceOwners,...m24ResetSourceOwners,...uiControlsSourceOwners,...m42ContainedClipSourceOwners,...m24CompatibleSequenceSourceOwners,...m42GeometryCanonicalSourceOwners,...sharedLayerCacheSourceOwners,...sharedLayerLightSourceOwners,...authoredSceneSourceOwners,...worldCardSourceOwners,...texturedGlbSourceOwners,...lambertGlbSourceOwners,...sceneAnimationSourceOwners,...importedGlbAnimationSourceOwners].filter(row=>row.path===owner);
-   if(!allowed||!reviewed.some(row=>samePin(read.pin(owner),row)))throw cause;
+   if(!allowed||!reviewed.some(row=>samePin(identity,row)))throw cause;
    // Raw source authority precedes extraction; no caller-selected parser fallback.
    const lines=text.split(/\r?\n/).filter(line=>line.startsWith('const '+binding+' = '));
    if(lines.length!==1||!lines[0].endsWith(';'))throw Error('Missing or ambiguous reviewed M1.3 declaration');
@@ -295,7 +334,6 @@ export function prepareBaselineReview(root){
   declarations.push({owner,binding,comparison,rows:pins.map(row)});
  }
  for(const [owner,binding,member]of registrations){
-  if(!owners.has(owner))owners.set(owner,read.text(owner));
   const value=registeredDeclaration(owner,binding),pins=member?value[member]:value;
   if(!Array.isArray(pins))throw Error('Expected declared pin array: '+binding);
   const seen=new Set(),rows=pins.map(expected=>{

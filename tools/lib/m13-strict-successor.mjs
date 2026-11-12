@@ -6,6 +6,7 @@ import {createRequire} from 'node:module';
 import {spawnSync} from 'node:child_process';
 import path from 'node:path';
 import {fingerprintFile,ownerRelativePath,samePhysicalPath} from './file-identity.mjs';
+import {world3dPackagePair} from './world3d-boundary.mjs';
 const DATA={path:'tools/m13-strict-successors.json',bytes:449376,sha256:'c7843db0289d7535c0196379631e5da9ba1b6a1edef7ac996a3793900f7139c7'};
 const M15_DATA={"path":"tools/m15-strict-successors.json","bytes":467926,"sha256":"f130ab6234fc6fa3f27424c4152f68f243ff3c3921b93324ba92d5fd14a49724"};
 const M15_SELECTION=['packages/contracts/dist/ResourceManifest.d.ts','packages/engine/dist/manifestResourceTypes.d.ts'];
@@ -193,7 +194,10 @@ function nativeEditingStrictPin(root,selected,id,row){
  if(!pair)return row;
  const actual=fingerprintFile(root,row.path);
  if(equal(actual,pair.current))return pair.current;
- return equal(pair.current,authoredSceneStrictPackage.base)&&equal(actual,authoredSceneStrictPackage.current)?authoredSceneStrictPackage.current:row;
+ if(!equal(pair.current,authoredSceneStrictPackage.base))return row;
+ if(equal(actual,authoredSceneStrictPackage.current))return authoredSceneStrictPackage.current;
+ // The isolated world3d subpaths do not enter these historical compiler lanes.
+ return equal(authoredSceneStrictPackage.current,world3dPackagePair.base)&&equal(actual,world3dPackagePair.current)?world3dPackagePair.current:row;
 }
 function m22SequencePin(root,selected,id,row){
  const editing=nativeEditingStrictPin(root,selected,id,row);if(editing!==row)return editing;
@@ -330,7 +334,8 @@ export function selectM13StrictSuccessor(root,id,inventory){
  const worldCards=selectedInputs.some(row=>worldCardStrictPairs.some(pair=>equal(row,pair.current)));
  const texturedGlb=selectedInputs.some(row=>texturedGlbStrictPairs.some(pair=>equal(row,pair.current)));
  const lambertGlb=selectedInputs.some(row=>lambertGlbStrictPairs.some(pair=>equal(row,pair.current)));
- if(lambertGlb||texturedGlb||worldCards||selectedInputs.some(row=>[authoredSceneStrictPackage,...authoredSceneStrictPairs].some(pair=>equal(row,pair.current)))){
+ if(selectedInputs.some(row=>equal(row,world3dPackagePair.current)))selectedPins.push(fingerprintFile(root,'tools/lib/world3d-boundary.mjs'));
+ if(lambertGlb||texturedGlb||worldCards||selectedInputs.some(row=>[authoredSceneStrictPackage,world3dPackagePair,...authoredSceneStrictPairs].some(pair=>equal(row,pair.current)))){
   const marker=fingerprintFile(root,authoredSceneStrictMarker.path);
   const sceneAnimation=equal(marker,sceneAnimationStrictMarker);
   const importedGlbAnimation=equal(marker,importedGlbAnimationStrictMarker);

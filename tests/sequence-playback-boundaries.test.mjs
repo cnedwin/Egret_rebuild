@@ -100,6 +100,7 @@ function seqpcIsolated(action) {
     }
     copy(path.join(seqpcRepository, 'node_modules/typescript/package.json'), 'dependency-evidence/typescript-package.json');
     copy(seqpcGate, 'tools/sequence-playback-boundary.mjs');
+    copy(path.join(seqpcRepository, 'tools/lib/world3d-boundary.mjs'), 'tools/lib/world3d-boundary.mjs');
     copy(path.join(seqpcRepository, 'tools/check-boundaries.mjs'), 'tools/check-boundaries.mjs');
     const baseline = seqpcInventory(fixture);
     const marker = { kind: 'GENUINE_SEQUENCE_PLAYBACK_POLICY_COPY', token,
