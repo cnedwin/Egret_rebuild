@@ -43,14 +43,17 @@ function encodeVertices(bytes, count, stride) {
   return u8(out);
 }
 
-test('meshopt index streams decode to the published results', () => {
-  // The triangle and sequence examples used by the reference implementation's own tests.
-  const triangles = u8([0xe0, 0xf0, 0x10, 0xfe, 0xff, 0xf0, 0x0c, 0xff, 0x02, 0x02, 0x02, 0x00, 0x76, 0x87, 0x56, 0x67, 0x78, 0xa9, 0x86, 0x65, 0x89, 0x68, 0x98, 0x01, 0x69, 0x00, 0x00]);
-  assert.deepEqual(as(Uint32Array, decodeMeshopt3D(triangles, 12, 4, 'TRIANGLES')), [0, 1, 2, 2, 1, 3, 4, 6, 5, 7, 8, 9]);
-  assert.deepEqual(as(Uint16Array, decodeMeshopt3D(triangles, 12, 2, 'TRIANGLES')), [0, 1, 2, 2, 1, 3, 4, 6, 5, 7, 8, 9]);
-  const sequence = u8([0xd1, 0x00, 0x04, 0xcd, 0x01, 0x04, 0x07, 0x98, 0x1f, 0x00, 0x00, 0x00, 0x00]);
-  assert.deepEqual(as(Uint32Array, decodeMeshopt3D(sequence, 6, 4, 'INDICES')), [0, 1, 51, 2, 49, 1000]);
-  assert.deepEqual(as(Uint16Array, decodeMeshopt3D(sequence, 6, 2, 'INDICES')), [0, 1, 51, 2, 49, 1000]);
+test('meshopt index streams decode independently authored bitstream fixtures', () => {
+  // Four faces: fresh, reused edge, reused edge and corner, then fresh.
+  const triangles = u8([0xe0, 0xf0, 0x10, 0x02, 0xf0, ...new Array(16).fill(0)]);
+  const faces = [0, 1, 2, 2, 1, 3, 2, 3, 1, 4, 5, 6];
+  assert.deepEqual(as(Uint32Array, decodeMeshopt3D(triangles, 12, 4, 'TRIANGLES')), faces);
+  assert.deepEqual(as(Uint16Array, decodeMeshopt3D(triangles, 12, 2, 'TRIANGLES')), faces);
+  // Alternating predictors encode signed deltas [6, 80, -1, 8, 2043, -1].
+  const sequence = u8([0xd1, 24, 0xc1, 2, 2, 33, 0xec, 0x3f, 3, 0, 0, 0, 0]);
+  const indices = [6, 80, 5, 88, 2048, 87];
+  assert.deepEqual(as(Uint32Array, decodeMeshopt3D(sequence, 6, 4, 'INDICES')), indices);
+  assert.deepEqual(as(Uint16Array, decodeMeshopt3D(sequence, 6, 2, 'INDICES')), indices);
   // Version 1 adds "one above" and "one below the last explicit index" codes (14 and 13) for the corner after a reused edge.
   // Traced by hand: a fresh triangle (0,1,2); its newest edge (0,2) with corner 0 + 1; then edge (0,1) with corner 1 - 1.
   const stepped = u8([0xe1, 0xfe, 0x0e, 0x0d, 0x00, ...new Array(16).fill(0)]);
@@ -86,15 +89,16 @@ test('meshopt vertex streams decode every group encoding and apply filters', () 
     assert.deepEqual(decodeMeshopt3D(packed, count, stride, 'ATTRIBUTES'), source);
     assert.ok(count < 100 || packed.length < source.length, 'the writer really packed the easy columns');
   }
-  // Filter inputs are the outputs the reference encoder publishes for these vectors.
+  // Original axis, folded normal, quaternion and exact-power filter cases.
   const filtered = (bytes, count, stride, filter) => decodeMeshopt3D(encodeVertices(bytes, count, stride), count, stride, 'ATTRIBUTES', filter);
-  assert.deepEqual(as(Int8Array, filtered(u8([0x7f, 0, 0x7f, 0, 0, 0x81, 0x7f, 0, 0x3f, 0, 0x7f, 0x7f, 0x81, 0x40, 0x7f, 0x7f]), 4, 4, 'OCTAHEDRAL')), [127, 0, 0, 0, 0, -127, 0, 0, 89, 0, 91, 127, -89, 0, -91, 127]);
-  const wide = new Uint8Array(new Uint16Array([0x7ff, 0, 0x7ff, 0, 0, 0xf801, 0x7ff, 0, 0x3ff, 0, 0x7ff, 0x7fff, 0xf801, 0x400, 0x7ff, 0x7fff]).buffer);
-  assert.deepEqual(as(Int16Array, filtered(wide, 4, 8, 'OCTAHEDRAL')), [32767, 0, 0, 0, 0, -32767, 0, 0, 23158, 0, 23181, 32767, -23158, 0, -23181, 32767]);
-  const turns = new Uint8Array(new Uint16Array([0, 0, 0, 0x7fc, 0, 0, 0, 0x7fd, 0x7ff, 0, 0, 0x7ff, 0x7ff, 0, 0, 0x7ff]).buffer);
-  assert.deepEqual(as(Int16Array, filtered(turns, 4, 8, 'QUATERNION')), [32767, 0, 0, 0, 0, 32767, 0, 0, 23170, 0, 0, 23170, 23170, 0, 0, 23170]);
-  const floats = new Uint8Array(new Uint32Array([0xf7000200, 0xf7ffd133, 0xf7ffffcd]).buffer);
-  assert.deepEqual(as(Float32Array, filtered(floats, 3, 4, 'EXPONENTIAL')), [1, -23.400390625, -0.099609375]);
+  const narrow = u8([0, 0, 127, 17, 127, 0, 127, -5, 127, 127, 127, 3, 0, -127, 127, 9]);
+  assert.deepEqual(as(Int8Array, filtered(narrow, 4, 4, 'OCTAHEDRAL')), [0, 0, 127, 17, 127, 0, 0, -5, 0, 0, -127, 3, 0, -127, 0, 9]);
+  const wide = new Uint8Array(new Int16Array([0, 0, 2047, 123, -2047, 0, 2047, 7, 0, 2047, 2047, 8, -2047, -2047, 2047, -9]).buffer);
+  assert.deepEqual(as(Int16Array, filtered(wide, 4, 8, 'OCTAHEDRAL')), [0, 0, 32767, 123, -32767, 0, 0, 7, 0, 32767, 0, 8, 0, 0, -32767, -9]);
+  const turns = new Uint8Array(new Int16Array([0, 0, 0, 0x7ff, 0, -2047, 0, 0x7fe]).buffer);
+  assert.deepEqual(as(Int16Array, filtered(turns, 2, 8, 'QUATERNION')), [0, 0, 0, 32767, -23170, 0, 23170, 0]);
+  const floats = new Uint8Array(new Uint32Array([0xfe00000b, 0x02fffffd, 0]).buffer);
+  assert.deepEqual(as(Float32Array, filtered(floats, 3, 4, 'EXPONENTIAL')), [2.75, -12, 0]);
   assert.throws(() => filtered(turns, 8, 4, 'QUATERNION'), code('WORLD3D_GLTF_INVALID'));
   assert.throws(() => decodeMeshopt3D(u8([0xd1, 0, 0, 0, 0]), 0, 4, 'INDICES', 'OCTAHEDRAL'), code('WORLD3D_GLTF_INVALID'));
 });
@@ -184,6 +188,28 @@ test('KTX2 levels wrapped in Zstandard or zlib are unwrapped without a transcode
   }
   // Basis Universal payloads still need the transcoder.
   await assert.rejects(parseKtx23D(ktx2(0, 4, 4, [new Uint8Array(12)], 1, [0])), code('WORLD3D_GLTF_UNSUPPORTED'));
+});
+
+test('KTX2 preserves an injected decoder for known supercompressed formats', async () => {
+  const pixels = new Uint8Array(16).fill(55);
+  const compressed = new Uint8Array(zlib.deflateSync(pixels));
+  const file = ktx2(43, 2, 2, [compressed], 3, [pixels.length]);
+  const replacement = {source: {width: 2, height: 2, data: new Uint8Array(16).fill(88)}, colorSpace: 'srgb'};
+  let calls = 0;
+  const result = await parseKtx23D(file, {transcode(info) {
+    calls++;
+    assert.equal(info.file, file);
+    assert.equal(info.supercompression, 3);
+    assert.deepEqual(info.levels[0], compressed);
+    return replacement;
+  }});
+  assert.equal(calls, 1);
+  assert.equal(result, replacement);
+});
+
+test('KTX2 rejects an inconsistent mip declaration before opening the compressed stream', async () => {
+  const file = ktx2(43, 2, 2, [u8([1, 2, 3])], 3, [32]);
+  await assert.rejects(parseKtx23D(file), {code: 'WORLD3D_INPUT_INVALID', message: /ktx2: level size$/});
 });
 
 test('the Draco and Basis adapters drive a decoder module and release what they take', async () => {
