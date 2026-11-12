@@ -117,6 +117,19 @@ try {
       await page.evaluate(() => globalThis.egretAuthoredScene.show('animation-mid'));
       assert.deepEqual((await record('animation-mid')).bytes, midpoint.bytes, 'Out-of-order seeks reproduce the midpoint.');
 
+      await page.evaluate(() => globalThis.egretAuthoredScene.show('glb-start'));
+      assert.deepEqual((await record('glb-start')).bytes, initial.bytes);
+      await page.locator('[data-view="glb-mid"]').click();
+      await page.waitForFunction(() => globalThis.egretAuthoredScene.inspect()?.view === 'glb-mid');
+      const glbMidpoint = await record('glb-mid');
+      assert.notDeepEqual(glbMidpoint.bytes, midpoint.bytes, 'The exact STEP key scales the panel at the translation midpoint.');
+      await page.evaluate(() => globalThis.egretAuthoredScene.show('glb-mid-reference'));
+      assert.deepEqual(glbMidpoint.bytes, (await record('glb-mid-reference')).bytes);
+      await page.evaluate(() => globalThis.egretAuthoredScene.show('glb-end'));
+      assert.deepEqual((await record('glb-end')).bytes, moved.bytes);
+      await page.evaluate(() => globalThis.egretAuthoredScene.show('glb-wrap'));
+      assert.deepEqual((await record('glb-wrap')).bytes, initial.bytes);
+
       const playButton = page.locator('[data-play-animation]');
       await playButton.click();
       await page.waitForFunction(() => globalThis.egretAuthoredScene.inspect()?.view === 'animation-play');

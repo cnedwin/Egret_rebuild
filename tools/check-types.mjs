@@ -643,6 +643,9 @@ const lambertSceneDom = {"marker":{"path":"packages/engine/dist/rendering/scene3
 const animationSceneDom = {...lambertSceneDom,
   marker:{...lambertSceneDom.marker,bytes:1126,sha256:'c2761c534c8a2b42e30db2915277cb5787e42cd070f71a78d3e2905bbb786c99'},
 };
+const glbAnimationSceneDom = {...animationSceneDom,
+  marker:{...animationSceneDom.marker,bytes:1200,sha256:'a528baf020bb417acb0ede5fe3bcf14fc0c31f8ccc889e644ba2cc0a3aa7c781'},
+};
 // AUTHORED-SCENE-DECLARATION-END
 function verifySceneDomM13(){
   if(!sceneDomM13Selected)return;
@@ -656,7 +659,7 @@ function verifySceneDomM13(){
   if(authoredSceneSelected){
     const marker=fingerprintFile(root,authoredSceneDomMarker.path);
     const matches=pin=>marker.bytes===pin.bytes&&marker.sha256===pin.sha256;
-    const successor=[worldCardSceneDom,texturedSceneDom,lambertSceneDom,animationSceneDom].find(value=>matches(value.marker));
+    const successor=[worldCardSceneDom,texturedSceneDom,lambertSceneDom,animationSceneDom,glbAnimationSceneDom].find(value=>matches(value.marker));
     if(successor){authoredDeclaration=successor.declaration;sharedDeclarations=successor.sharedDeclarations;}
     else if(!matches(authoredSceneDomMarker))throw Error(sceneDomLabel+' authored scene declaration marker changed');
   }

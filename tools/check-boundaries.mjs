@@ -1272,15 +1272,15 @@ function sceneWebCanonicalTypes(code,label) {
 const sceneCPU=await import('@egret/engine/scene3d');
 const sceneWeb=await import('@egret/engine/webgpu/scene3d');
 // Authored scene and GLB operations remain behind one separate DOM-free route.
-const authoredSceneValues=['createSceneAnimationClip3D','createSceneCamera3D','createSceneWorld3D','createSceneWorldCard3D','loadStaticGlbScene3D','prepareLambertStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError'];
-const sceneAnimationTypes=['SceneAnimationClip3D','SceneAnimationClipInput3D','SceneAnimationTrackInput3D','SceneAnimationKey3D'];
-const authoredSceneTypes=['SceneWorldCamera3D','SceneWorldCameraInput3D','SceneWorldProjectionInput3D','SceneWorld3D','SceneWorldNodeInput3D','SceneWorldCard3D','SceneWorldCardInput3D','SceneDirectionalLighting3D','SceneLambertWorld3D','PreparedLambertStaticGlb3D','PreparedTexturedStaticGlb3D','StaticGlbImageBinding3D','StaticGlbImageRequest3D','StaticGlb3DErrorCode','SceneWorldNodeTransform3D',...sceneAnimationTypes];
+const authoredSceneValues=['createSceneAnimationClip3D','createSceneCamera3D','createSceneWorld3D','createSceneWorldCard3D','loadAnimatedGlbScene3D','loadStaticGlbScene3D','prepareLambertStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError'];
+const sceneAnimationTypes=['ImportedSceneAnimationClip3D','SceneAnimationClip3D','SceneAnimationClipInput3D','SceneAnimationTrackInput3D','SceneAnimationKey3D'];
+const authoredSceneTypes=['SceneWorldCamera3D','SceneWorldCameraInput3D','SceneWorldProjectionInput3D','SceneWorld3D','SceneWorldNodeInput3D','SceneWorldCard3D','SceneWorldCardInput3D','SceneDirectionalLighting3D','SceneLambertWorld3D','PreparedLambertStaticGlb3D','PreparedTexturedStaticGlb3D','StaticGlbImageBinding3D','StaticGlbImageRequest3D','StaticGlb3DErrorCode','SceneWorldNodeTransform3D','AnimatedGlbScene3D',...sceneAnimationTypes];
 const authoredScene=await import('@egret/engine/scene3d/authoring');
 if(!sceneEqual(Object.keys(authoredScene),authoredSceneValues))throw new Error('scene3d/authoring: exact runtime export surface mismatch');
 const authoredRules={'./sceneWorld3D.js':{value:['createSceneCamera3D','createSceneWorld3D'],type:[...authoredSceneTypes.slice(0,5),'SceneLambertWorld3D','SceneWorldNodeTransform3D']},
   './sceneAnimation3D.js':{value:['createSceneAnimationClip3D'],type:sceneAnimationTypes},
   './sceneFrame3D.js':{value:['createSceneWorldCard3D'],type:['SceneWorldCard3D','SceneWorldCardInput3D','SceneDirectionalLighting3D']},
-  './staticGlb3D.js':{value:['readStaticGlbNodes3D','prepareLambertStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError'],type:['PreparedLambertStaticGlb3D','PreparedTexturedStaticGlb3D','StaticGlbImageBinding3D','StaticGlbImageRequest3D','StaticGlb3DErrorCode']}};
+  './staticGlb3D.js':{value:['loadAnimatedGlbScene3D','readStaticGlbNodes3D','prepareLambertStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError'],type:['AnimatedGlbScene3D','PreparedLambertStaticGlb3D','PreparedTexturedStaticGlb3D','StaticGlbImageBinding3D','StaticGlbImageRequest3D','StaticGlb3DErrorCode']}};
 for(const [file,kind] of [['packages/engine/rendering/scene3dAuthoring.ts','source'],
   ['packages/engine/dist/rendering/scene3dAuthoring.js','emitted'],['packages/engine/dist/rendering/scene3dAuthoring.d.ts','declaration']]){
   const code=sceneRead(file);
@@ -1290,7 +1290,7 @@ for(const [file,kind] of [['packages/engine/rendering/scene3dAuthoring.ts','sour
   if(kind!=='declaration'&&!/returncreateSceneWorld3D\(readStaticGlbNodes3D\(bytes\)\);/.test(code.replace(/\s+/g,'')))
     throw new Error('scene3d/authoring: exact GLB assembly mismatch');
 }
-for(const [target,names] of [['sceneAnimation3D',['createSceneAnimationClip3D']],['sceneWorld3D',['createSceneCamera3D','createSceneWorld3D']],['sceneFrame3D',['createSceneWorldCard3D']],['staticGlb3D',['prepareLambertStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError']]]){
+for(const [target,names] of [['sceneAnimation3D',['createSceneAnimationClip3D']],['sceneWorld3D',['createSceneCamera3D','createSceneWorld3D']],['sceneFrame3D',['createSceneWorldCard3D']],['staticGlb3D',['loadAnimatedGlbScene3D','prepareLambertStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError']]]){
   const original=await import(new URL('../packages/engine/dist/rendering/'+target+'.js',import.meta.url));
   for(const name of names)if(authoredScene[name]!==original[name])throw new Error('scene3d/authoring: original module identity mismatch: '+name);
 }
@@ -8456,7 +8456,12 @@ const animationSceneEdges = {
   'dist/rendering/sceneAnimation3D.js': ['./sceneFrame3D.js','./sceneWorld3D.js'],
   'dist/rendering/sceneAnimation3D.d.ts': ['./sceneWorld3D.js'],
 };
-for (const additions of [worldCardSceneEdges,texturedSceneEdges,animationSceneEdges]) {
+const glbAnimationEdges = {
+  'rendering/staticGlb3D.ts': ['./sceneAnimation3D.js','./sceneAnimation3D.js'],
+  'dist/rendering/staticGlb3D.js': ['./sceneAnimation3D.js'],
+  'dist/rendering/staticGlb3D.d.ts': ['./sceneAnimation3D.js'],
+};
+for (const additions of [worldCardSceneEdges,texturedSceneEdges,animationSceneEdges,glbAnimationEdges]) {
   for (const [file,added] of Object.entries(additions)) {
     const path='packages/engine/'+file;
     currentSceneLiteralClosure[path]=[...(currentSceneLiteralClosure[path]??[]),...added.map(edge=>typeof edge==='string'?['static',edge]:edge)]

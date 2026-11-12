@@ -6,6 +6,13 @@ import type {SceneLambertWorld3D, SceneWorld3D} from './sceneWorld3D.js';
 type Vec3 = readonly [number, number, number];
 type Quaternion = readonly [number, number, number, number];
 type PlaybackMode = 'once' | 'loop';
+type Interpolation = 'step' | 'linear';
+
+interface TimedKey { readonly timeSeconds: number; }
+interface TimedTrack<Key extends TimedKey> {
+    readonly interpolation: Interpolation;
+    readonly keys: readonly Key[];
+}
 
 export interface SceneAnimationKey3D {
     readonly timeSeconds: number;
@@ -16,7 +23,7 @@ export interface SceneAnimationKey3D {
 }
 export interface SceneAnimationTrackInput3D {
     readonly nodeId: string;
-    readonly interpolation: 'step' | 'linear';
+    readonly interpolation: Interpolation;
     readonly keys: readonly SceneAnimationKey3D[];
 }
 export interface SceneAnimationClipInput3D {
@@ -28,10 +35,36 @@ export interface SceneAnimationClip3D {
     sample(world: SceneWorld3D, elapsedSeconds: number, mode?: PlaybackMode): SceneWorld3D;
 }
 
+export interface ImportedSceneAnimationClip3D {
+    readonly name?: string;
+    readonly durationSeconds: number;
+    sample(elapsedSeconds: number, mode?: PlaybackMode): SceneWorld3D;
+}
+
+export type SceneNodePose3D = Omit<SceneAnimationKey3D, 'timeSeconds'>;
+export type SceneAnimationComponentTrack3D<Value> = TimedTrack<TimedKey & { readonly value: Value }>;
+export interface ImportedSceneNodeTracks3D {
+    readonly nodeId: string;
+    readonly base: SceneNodePose3D;
+    readonly translation?: SceneAnimationComponentTrack3D<Vec3>;
+    readonly rotation?: SceneAnimationComponentTrack3D<Quaternion>;
+    readonly scale?: SceneAnimationComponentTrack3D<Vec3>;
+}
+
 const MAX_TRACKS = 256;
 const MAX_KEYS = 8192;
 const MAX_TRANSFORM_COMPONENT = 2 ** 24;
 const MIN_SCALE_MAGNITUDE = 2 ** -24;
+
+export function isAnimationTranslationInRange(value: Vec3): boolean {
+    return value.every(component => Math.abs(component) <= MAX_TRANSFORM_COMPONENT);
+}
+export function isAnimationScaleInRange(value: Vec3): boolean {
+    return value.every(component => Math.abs(component) >= MIN_SCALE_MAGNITUDE && Math.abs(component) <= MAX_TRANSFORM_COMPONENT);
+}
+export function hasMatchingAnimationScaleSigns(a: Vec3, b: Vec3): boolean {
+    return a.every((component, axis) => (component < 0) === (b[axis]! < 0));
+}
 
 function invalid(field: string): never {
     throw new Scene3DError('SCENE3D_INPUT_INVALID', field);
@@ -87,11 +120,9 @@ function readKey(value: unknown): SceneAnimationKey3D {
     const timeSeconds = finite(fields.timeSeconds, 'animation key time');
     if (timeSeconds < 0) invalid('animation key time');
     const translation = components(fields.translation, 3, 'animation key translation');
-    if (translation.some(value => Math.abs(value) > MAX_TRANSFORM_COMPONENT)) invalid('animation key translation');
+    if (!isAnimationTranslationInRange(translation)) invalid('animation key translation');
     const scale = components(fields.scale, 3, 'animation key scale');
-    if (scale.some(value => Math.abs(value) < MIN_SCALE_MAGNITUDE || Math.abs(value) > MAX_TRANSFORM_COMPONENT)) {
-        invalid('animation key scale');
-    }
+    if (!isAnimationScaleInRange(scale)) invalid('animation key scale');
     const rotation = unitQuaternion(components(fields.rotation, 4, 'animation key rotation'));
     return {timeSeconds, translation, rotation, scale};
 }
@@ -118,11 +149,13 @@ function blendRotation(a: Quaternion, b: Quaternion, t: number): Quaternion {
         a[0] * from + b[0] * to, a[1] * from + b[1] * to, a[2] * from + b[2] * to, a[3] * from + b[3] * to,
     ]);
 }
-function poseAt(track: SceneAnimationTrackInput3D, time: number): SceneAnimationKey3D {
-    const keys = track.keys;
+function sampleTrack<Key extends TimedKey, Value>(
+    { keys, interpolation }: TimedTrack<Key>, time: number, read: (key: Key) => Value,
+    blend: (a: Value, b: Value, fraction: number) => Value,
+): Value {
     const first = keys[0]!, last = keys[keys.length - 1]!;
-    if (time <= first.timeSeconds) return first;
-    if (time >= last.timeSeconds) return last;
+    if (time <= first.timeSeconds) return read(first);
+    if (time >= last.timeSeconds) return read(last);
 
     let lower = 0, upper = keys.length - 1;
     while (upper - lower > 1) {
@@ -131,16 +164,21 @@ function poseAt(track: SceneAnimationTrackInput3D, time: number): SceneAnimation
         else upper = middle;
     }
     const left = keys[lower]!, right = keys[upper]!;
-    if (track.interpolation === 'step' || time === left.timeSeconds) return left;
+    if (interpolation === 'step' || time === left.timeSeconds) return read(left);
     const fraction = (time - left.timeSeconds) / (right.timeSeconds - left.timeSeconds);
+    return blend(read(left), read(right), fraction);
+}
+function keyPose(key: SceneAnimationKey3D): SceneNodePose3D {
+    return key;
+}
+function blendPose(a: SceneNodePose3D, b: SceneNodePose3D, t: number): SceneNodePose3D {
     return {
-        timeSeconds: time,
-        translation: blendVector(left.translation, right.translation, fraction),
-        rotation: blendRotation(left.rotation, right.rotation, fraction),
-        scale: blendVector(left.scale, right.scale, fraction),
+        translation: blendVector(a.translation, b.translation, t),
+        rotation: blendRotation(a.rotation, b.rotation, t),
+        scale: blendVector(a.scale, b.scale, t),
     };
 }
-function localMatrix(pose: SceneAnimationKey3D): readonly number[] {
+export function matrixForSceneNodePose3D(pose: SceneNodePose3D): number[] {
     const [x, y, z, w] = pose.rotation;
     const [sx, sy, sz] = pose.scale;
     const [tx, ty, tz] = pose.translation;
@@ -154,6 +192,42 @@ function localMatrix(pose: SceneAnimationKey3D): readonly number[] {
         (xz + yw) * sz, (yz - xw) * sz, (1 - xx - yy) * sz, 0,
         tx, ty, tz, 1,
     ];
+}
+
+function clipTime(elapsedSeconds: number, durationSeconds: number, mode: PlaybackMode): number {
+    const elapsed = finite(elapsedSeconds, 'animation elapsed time');
+    if (elapsed < 0) invalid('animation elapsed time');
+    if (mode !== 'once' && mode !== 'loop') invalid('animation playback mode');
+    return mode === 'loop' && durationSeconds > 0 ? elapsed % durationSeconds : Math.min(elapsed, durationSeconds);
+}
+
+function sampleComponent<Value>(
+    track: SceneAnimationComponentTrack3D<Value> | undefined, time: number, fallback: Value,
+    blend: (a: Value, b: Value, fraction: number) => Value,
+): Value {
+    return track ? sampleTrack(track, time, key => key.value, blend) : fallback;
+}
+
+/** Tracks and base poses are owned and validated by the GLB reader before binding. */
+export function bindImportedSceneAnimationClip3D(
+    world: SceneWorld3D, tracks: readonly ImportedSceneNodeTracks3D[], durationSeconds: number, name?: string,
+): ImportedSceneAnimationClip3D {
+    return Object.freeze({
+        ...(name === undefined ? {} : {name}),
+        durationSeconds,
+        sample(elapsedSeconds: number, mode: PlaybackMode = 'once'): SceneWorld3D {
+            const time = clipTime(elapsedSeconds, durationSeconds, mode);
+            // glTF components keep independent timelines and share one immutable world revision.
+            return world.withNodeTransforms(tracks.map(track => ({
+                id: track.nodeId,
+                localMatrix: matrixForSceneNodePose3D({
+                    translation: sampleComponent(track.translation, time, track.base.translation, blendVector),
+                    rotation: sampleComponent(track.rotation, time, track.base.rotation, blendRotation),
+                    scale: sampleComponent(track.scale, time, track.base.scale, blendVector),
+                }),
+            })));
+        },
+    });
 }
 
 /** An owned rigid-node clip sampled with an explicit time and playback policy. */
@@ -193,7 +267,7 @@ export function createSceneAnimationClip3D(input: SceneAnimationClipInput3D): Sc
             const previous = keys[index - 1];
             if (previous && key.timeSeconds <= previous.timeSeconds) invalid('animation key time order');
             if (previous && interpolation === 'linear' &&
-                key.scale.some((value, axis) => (value < 0) !== (previous.scale[axis]! < 0))) {
+                !hasMatchingAnimationScaleSigns(key.scale, previous.scale)) {
                 invalid('animation linear scale sign');
             }
             keys.push(key);
@@ -206,12 +280,9 @@ export function createSceneAnimationClip3D(input: SceneAnimationClipInput3D): Sc
     function sample(world: SceneWorld3D, elapsedSeconds: number, mode?: PlaybackMode): SceneWorld3D;
     function sample(world: SceneWorld3D, elapsedSeconds: number, mode: PlaybackMode = 'once'): SceneWorld3D {
         if (!isSceneWorld3D(world)) invalid('animation world identity');
-        const elapsed = finite(elapsedSeconds, 'animation elapsed time');
-        if (elapsed < 0) invalid('animation elapsed time');
-        if (mode !== 'once' && mode !== 'loop') invalid('animation playback mode');
-        const time = mode === 'loop' && durationSeconds > 0 ? elapsed % durationSeconds : Math.min(elapsed, durationSeconds);
+        const time = clipTime(elapsedSeconds, durationSeconds, mode);
         return world.withNodeTransforms(tracks.map(track => ({
-            id: track.nodeId, localMatrix: localMatrix(poseAt(track, time)),
+            id: track.nodeId, localMatrix: matrixForSceneNodePose3D(sampleTrack(track, time, keyPose, blendPose)),
         })));
     }
 

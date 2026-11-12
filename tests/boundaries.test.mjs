@@ -603,7 +603,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       "export function createSceneCamera3D(){throw new Error('Synthetic policy fixture only');}\n");
     write(authored+'sceneAnimation3D.js',"import './sceneFrame3D.js';\nimport './sceneWorld3D.js';\n"+
       "export function createSceneAnimationClip3D(){throw new Error('Synthetic policy fixture only');}\n");
-    write(authored+'staticGlb3D.js',"import './meshGeometry3D.js'; import './sharedColor2D.js'; import './sceneWorld3D.js'; import '@egret/contracts';\n"+
+    write(authored+'staticGlb3D.js',"import './sceneAnimation3D.js'; import './meshGeometry3D.js'; import './sharedColor2D.js'; import './sceneWorld3D.js'; import '@egret/contracts';\n"+
+      "export function loadAnimatedGlbScene3D(){throw new Error('Synthetic policy fixture only');}\n"+
       "export class StaticGlb3DError extends Error {}\n"+
       "export function prepareTexturedStaticGlbScene3D(){throw new Error('Synthetic policy fixture only');}\n"+
       "export function prepareLambertStaticGlbScene3D(){throw new Error('Synthetic policy fixture only');}\n"+

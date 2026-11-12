@@ -92,6 +92,10 @@
     {
       "path": "tests/scene-animation3d.test.mjs",
       "originRole": "Independently authored first-party Egret rigid scene animation and validation; AI-assisted; Apache-2.0. The public Khronos interpolation specification serves as a design reference."
+    },
+    {
+      "path": "tests/animated-glb-scene3d.test.mjs",
+      "originRole": "Independently authored first-party Egret rigid GLB animation tests using a generated fixture and the public Khronos format specification; AI-assisted; Apache-2.0."
     }
   ],
   "documents": [

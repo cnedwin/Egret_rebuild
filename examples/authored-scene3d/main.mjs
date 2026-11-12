@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { Sprite, createEngineForProfile } from '@egret/engine';
-import { createSceneAnimationClip3D, createSceneCamera3D, loadStaticGlbScene3D } from '@egret/engine/scene3d/authoring';
+import { createSceneAnimationClip3D, createSceneCamera3D, loadAnimatedGlbScene3D, loadStaticGlbScene3D } from '@egret/engine/scene3d/authoring';
 import { createPanelGlb } from './room-glb.mjs';
 
 const canvas = document.querySelector('#scene');
@@ -14,7 +14,9 @@ const aspect = width / height;
 const perspective = { kind: 'perspective', verticalFov: Math.PI / 3, aspect, near: 1, far: 12 };
 const cameraOptions = { eye: [0, 0, 5], target: [0, 0, 0], projection: perspective };
 const animationTimes = { 'animation-start': 0, 'animation-mid': 1, 'animation-end': 2, 'animation-wrap': 2 };
-const views = new Set(['initial', 'reversed', 'moved', 'orbit', 'orthographic', ...Object.keys(animationTimes)]);
+const glbAnimationTimes = { 'glb-start': 0, 'glb-mid': 1, 'glb-end': 2, 'glb-wrap': 2 };
+const views = new Set(['initial', 'reversed', 'moved', 'orbit', 'orthographic', 'glb-mid-reference',
+  ...Object.keys(animationTimes), ...Object.keys(glbAnimationTimes)]);
 const clip = createSceneAnimationClip3D({ tracks: [{
   nodeId: 'gltf-node-1', interpolation: 'linear',
   keys: [
@@ -22,7 +24,7 @@ const clip = createSceneAnimationClip3D({ tracks: [{
     { timeSeconds: 2, translation: [1.65, 0, 1], rotation: [0, 0, 0, 1], scale: [1, 1, 1] },
   ],
 }] });
-let engine, host, world, reverseWorld, tail = Promise.resolve(), closing;
+let engine, host, world, reverseWorld, importedClip, tail = Promise.resolve(), closing;
 let result, playing;
 
 function label(en, zh) { status.textContent = en + ' / ' + zh; }
@@ -54,6 +56,13 @@ async function render(view, elapsedSeconds = animationTimes[view]) {
     // Seek from the same imported base revision every time, including at a loop boundary.
     selected = clip.sample(world, elapsedSeconds, view === 'animation-wrap' ? 'loop' : 'once');
   }
+  if (Object.hasOwn(glbAnimationTimes, view)) {
+    selected = importedClip.sample(glbAnimationTimes[view], view === 'glb-wrap' ? 'loop' : 'once');
+  }
+  if (view === 'glb-mid-reference') {
+    // A direct matrix gives the browser verifier an independent reference for the mixed-channel sample.
+    selected = world.withNodeTransform('gltf-node-1', [1, 0, 0, 0, 0, .5, 0, 0, 0, 0, 1, 0, .725, 0, 1, 1]);
+  }
   const scene = selected.capture(camera);
   const overlay = engine.captureSharedFrame(frameOptions);
   const reading = host.requestReadback();
@@ -67,6 +76,7 @@ async function render(view, elapsedSeconds = animationTimes[view]) {
 
 const ready = (async () => {
   world = loadStaticGlbScene3D(createPanelGlb());
+  importedClip = loadAnimatedGlbScene3D(createPanelGlb({ animated: true })).clips[0];
   reverseWorld = loadStaticGlbScene3D(createPanelGlb({ reverse: true }));
   host = await createHost();
   engine = await createEngineForProfile({ host }, 'egret.shared-frame2d/1');
