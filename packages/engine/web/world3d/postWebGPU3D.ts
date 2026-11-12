@@ -3,7 +3,7 @@
 import {Material3D} from '../../rendering/world3d/Material3D.js';
 import {RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
 import type {ToneMapping3D} from './frame3D.js';
-import {POST_DOWN_WGSL_3D, POST_FXAA_WGSL_3D, POST_SSAO_WGSL_3D, POST_UP_WGSL_3D, bloomLevelCount3D, postCompositeWgsl3D, writeCompositeParams3D, writePostParams3D} from './post3D.js';
+import {POST_DOWN_WGSL_3D, POST_FXAA_WGSL_3D, POST_PARAMS_FLOATS_3D, POST_SSAO_WGSL_3D, POST_UP_WGSL_3D, bloomLevelCount3D, postCompositeWgsl3D, writeCompositeParams3D, writePostParams3D} from './post3D.js';
 import type {CustomPost3D, PostProcessSettings3D, PostView3D} from './post3D.js';
 
 // Numeric WebGPU flags, so this module does not depend on the browser globals at load time.
@@ -32,13 +32,13 @@ export class PostChainWebGPU3D {
     #ldr: Surface | undefined;
     #ao: Surface | undefined;
     #slot = 0;
-    readonly #params = new Float32Array(40);
+    readonly #params = new Float32Array(POST_PARAMS_FLOATS_3D);
     #maskView: GPUTextureView | undefined;
     #outline: PostProcessSettings3D | undefined;
     readonly #noDepth: GPUTexture;
     readonly #noDepthView: GPUTextureView;
     // State shared by the passes of one run().
-    #view: PostView3D = {scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0, depth: [-1, -1, -1, 0], orthographic: false};
+    #view: PostView3D = {inverseProjection: new Float32Array(16)};
     #depthView: GPUTextureView | undefined;
     #aoView: GPUTextureView | undefined;
     #custom: CustomPost3D | undefined;
@@ -89,7 +89,7 @@ export class PostChainWebGPU3D {
         const device = this.#device;
         // Each pass in a frame owns one small uniform buffer, since all writes land before the encoder runs.
         let slot = this.#slots[this.#slot];
-        if (!slot) slot = this.#slots[this.#slot] = {buffer: device.createBuffer({size: 160, usage: UNIFORM | COPY_DST}), group: undefined, source: undefined, bloom: undefined, depth: undefined, ao: undefined, mask: undefined};
+        if (!slot) slot = this.#slots[this.#slot] = {buffer: device.createBuffer({size: this.#params.byteLength, usage: UNIFORM | COPY_DST}), group: undefined, source: undefined, bloom: undefined, depth: undefined, ao: undefined, mask: undefined};
         this.#slot++;
         const p = this.#params, depth = this.#depthView ?? this.#noDepthView, ao = this.#aoView ?? this.#blackView;
         const mask = this.#maskView ?? this.#blackView;

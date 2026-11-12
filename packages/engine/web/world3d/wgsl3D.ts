@@ -166,7 +166,7 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
         let targetIndex = object.morphIndices[i / 4][i % 4];
         let weight = object.morphWeights[i / 4][i % 4];
         position += morphDelta(targetIndex, 0, input.vertexIndex) * weight;
-        ${f.morphNormals && !f.depthOnly ? 'normal += morphDelta(targetIndex, 1, input.vertexIndex) * weight;' : ''}
+        ${f.morphNormals && (!f.depthOnly || f.customVertexWgsl !== undefined) ? 'normal += morphDelta(targetIndex, 1, input.vertexIndex) * weight;' : ''}
     }` : ''}
     var model = object.model;
     var normalMatrix = mat3x3f(object.normal0.xyz, object.normal1.xyz, object.normal2.xyz);

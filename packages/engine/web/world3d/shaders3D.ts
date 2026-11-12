@@ -110,7 +110,11 @@ uniform vec4 uCustom[4];
 #endif
 void main() {
     vec3 position = aPosition;
+    #ifdef USE_NORMAL
     vec3 normal = aNormal;
+    #else
+    vec3 normal = vec3(0.0, 0.0, 1.0);
+    #endif
     #ifdef USE_MORPH
     for (int i = 0; i < uMorphCount; i++) {
         position += morphDelta(uMorphIndices[i], 0) * uMorphWeights[i];

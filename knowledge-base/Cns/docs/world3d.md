@@ -72,7 +72,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 ## glTF
 
-`loadGltf3D` 读取 `.glb` 字节或已解析的 `.gltf` 对象，返回场景、相机、动画和所创建的资源，并提供统一的 `dispose()`。支持网格、金属度-粗糙度和无光照材质、纹理变换、节点层级、蒙皮、变形目标、动画、相机、精确光源，以及 `EXT_mesh_gpu_instancing` 节点（读入为 `InstancedMesh3D`）。图像解码和外部缓冲加载由调用方注入，读取器因此不依赖 DOM。读取器接受根节点彼此独立的场景。遮蔽贴图和自发光贴图可以使用第 0 套或第 1 套纹理坐标（烘焙光照通常放在第 1 套）；它们会设置 `texture.channel`，手动指定的遮蔽或自发光贴图同样可以使用这个属性。基础色、法线和金属度-粗糙度贴图使用第 0 套。共享场景根节点或其他纹理坐标集会触发明确的错误诊断。单个访问器解码上限为 128 MiB，合计上限为 256 MiB。Draco、meshopt 和 Basis 数据需要调用方提供解码器（见“压缩资源”）；未提供时，它们和其他必需扩展会以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。浏览器入口中的 `loadGltfFromUrl3D` 提供 fetch 和 `createImageBitmap`。
+`loadGltf3D` 读取 `.glb` 字节或已解析的 `.gltf` 对象，返回场景、相机、动画和所创建的资源，并提供统一的 `dispose()`。支持网格、金属度-粗糙度和无光照材质、纹理变换、节点层级、蒙皮、变形目标、动画、相机、精确光源，以及 `EXT_mesh_gpu_instancing` 节点（读入为 `InstancedMesh3D`）。图像解码和外部缓冲加载由调用方注入，读取器因此不依赖 DOM。读取器接受根节点彼此独立的场景。遮蔽贴图和自发光贴图可以使用第 0 套或第 1 套纹理坐标（烘焙光照通常放在第 1 套）；它们会设置 `texture.channel`，手动指定的遮蔽或自发光贴图同样可以使用这个属性。基础色、法线和金属度-粗糙度贴图使用第 0 套。共享场景根节点或其他纹理坐标集会触发明确的错误诊断。单个访问器解码上限为 128 MiB，合计上限为 256 MiB。各节点和图元生成的实例变换矩阵共享每个资产 64 MiB 的预算。Draco、meshopt 和 Basis 数据需要调用方提供解码器（见“压缩资源”）；未提供时，它们和其他必需扩展会以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。浏览器入口中的 `loadGltfFromUrl3D` 提供 fetch 和 `createImageBitmap`。
 
 ## 渲染器
 
@@ -96,15 +96,15 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `registerWorld3DAssets(engine.assets, options)` 注册 `GLTF_ASSET_3D`、`TEXTURE_ASSET_3D`、`CUBE_TEXTURE_ASSET_3D` 和 `SCENE_ASSET_3D` 的提供者。用 `engine.assets.acquire(createAssetRef(GLTF_ASSET_3D, url))` 获取。租约按引用计数：并发请求共用一次加载，取消会中止下载，最后一次释放会销毁该资源创建的全部面向 GPU 的对象。立方体纹理的 id 含有 `{face}`，依次替换为 `px`、`nx`、`py`、`ny`、`pz`、`nz`。
 
-`serializeScene3D(root, options)` 把一棵子树写成可直接转为 JSON 的文档：变换、相机、灯光、网格、实例化网格、材质、几何体、骨架和细节层次组。共享的几何体和材质只保存一份。像素源或压缩源不超过 1 MiB 的纹理内嵌在文档里；其余纹理按 `options.textureKey` 返回的键保存，再由 `deserializeScene3D(document, {resolveTexture})` 解析。粒子发射器和屏幕层按普通节点写出，并列在结果的 `skipped` 字段中。`userData` 只保留 JSON 值。`deserializeScene3D` 的结果拥有它创建的资源，通过 `dispose()` 释放。
+`serializeScene3D(root, options)` 把一棵子树写成可直接转为 JSON 的文档：变换、相机、灯光、网格、实例化网格、材质、几何体、骨架和细节层次组。共享的几何体和材质只保存一份。像素源或压缩源不超过 1 MiB 的纹理内嵌在文档里，并保留 UV 通道。其他纹理以 `options.textureKey` 返回的键保存，`deserializeScene3D(document, {resolveTexture})` 使用调用方解析出的纹理。粒子发射器和屏幕层按普通节点写出，并列在结果的 `skipped` 字段中。`userData` 只保留 JSON 值。`deserializeScene3D` 的结果拥有它创建的资源，通过 `dispose()` 释放。
 
 ## 后处理
 
 `renderer.postProcess` 保存各项设置；`enabled` 为 true 之前不会执行任何处理。开启后，场景先以场景线性光绘制到半浮点目标，再由全屏处理链生成最终图像：双重滤波的泛光金字塔（`bloomThreshold`、`bloomKnee`、`bloomIntensity`、`bloomLevels`），带 `brightness`、`saturation`、`contrast` 和 `vignette` 的色调映射，以及可选的 FXAA。两个后端执行相同的处理，比较工具中的差异不超过一个 8 位色阶。
 
-`postProcess.ssao` 根据场景深度加入屏幕空间环境光遮蔽，由 `ssaoRadius`（世界单位）、`ssaoIntensity` 和 `ssaoBias` 调节。`postProcess.outlineLayers` 为 `layers` 中带有这些位的每个对象描边，颜色和宽度（像素）由 `outlineColor`、`outlineThickness` 指定；描边会透过前方的物体显示，适合用于选中和可交互提示。
+`postProcess.ssao` 根据场景深度加入屏幕空间环境光遮蔽，由 `ssaoRadius`（世界单位）、`ssaoIntensity` 和 `ssaoBias` 调节。`postProcess.outlineLayers` 为 `layers` 中带有这些位的每个对象描边，颜色和宽度（像素）由 `outlineColor`、`outlineThickness` 指定；描边会透过前景物体，并采用材质透明裁剪和自定义顶点位移前的基础轮廓。
 
-`postProcess.custom = createCustomPost3D({key, glsl, wgsl, uniforms})` 在遮蔽和泛光之后、色调映射之前加入一个应用自定义的处理。它的函数 `customPost(color, uv)` 可以调用 `sceneColor(uv)` 和 `sceneDepth(uv)`（到相机平面的距离，世界单位），足以实现深度雾、接触阴影和边缘效果。十六个浮点数在 GLSL 中为 `uPostCustom[0..3]`，在 WGSL 中为 `params.custom[0..3]`。深度直接根据投影矩阵本身重建，因此对偏心、斜切和手写的投影同样正确；把完整的矩阵赋给 `camera.customProjection` 即可使用这类投影。UV 的行在 GLSL 中自下而上、在 WGSL 中自上而下，因此 V 方向的偏移在两个后端上指向相反。
+`postProcess.custom = createCustomPost3D({key, glsl, wgsl, uniforms})` 在遮蔽和泛光之后、色调映射之前加入一个应用自定义的处理。它的函数 `customPost(color, uv)` 可以调用 `sceneColor(uv)` 和 `sceneDepth(uv)`（到相机平面的距离，世界单位），足以实现深度雾、接触阴影和边缘效果。十六个浮点数在 GLSL 中为 `uPostCustom[0..3]`，在 WGSL 中为 `params.custom[0..3]`。后处理结合采样点的屏幕坐标和逆投影矩阵重建深度，当相机覆盖完整的后处理目标时，适用于偏心和斜切投影。需要自定义投影时，将完整的可逆矩阵赋给 `camera.customProjection`。UV 的行在 GLSL 中自下而上、在 WGSL 中自上而下，因此 V 方向的偏移在两个后端上指向相反。
 
 开启后处理时，画布多重采样不生效，由 FXAA 代替。场景背景色会和场景一起做色调映射。`new RenderTarget3D(width, height, {format: 'rgba16f'})` 让应用为自己的处理使用同样的半浮点存储；这类目标跳过色调映射，也不能按字节回读。不支持浮点颜色缓冲的 WebGL2 设备退回 8 位存储。
 
@@ -120,7 +120,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `createPhysicsWorld3D(options)` 创建一个面向玩法的小型刚体世界。形状有球、盒、胶囊和无限平面；刚体分为 `static`、`kinematic` 和 `dynamic`。`world.step(deltaSeconds)` 按固定步长推进，然后把每个刚体的位姿复制到它的 `node`。碰撞对由扫掠排序找出，由带热启动的冲量求解器处理，支持摩擦和弹性。静止的刚体进入休眠，直到有运动的物体碰到它。`layer` 和 `mask` 过滤碰撞，`isTrigger` 刚体只报告重叠而不产生推力，`onContactBegin` 和 `onContactEnd` 报告碰撞对。
 
-关卡几何体以三角网格参与碰撞：`world.createBody({shape: {type: 'mesh', mesh: createMeshShape3D(levelRoot)}})`。`createMeshShape3D` 接受一个几何体，或一个对象（它下面的网格会连同世界变换合并在一起）。网格刚体是静态的，三角形只在正面是实心的。球、胶囊、角色控制器和射线与三角形精确碰撞；盒子通过它的八个角落在网格上。包围体层次结构让开销只与附近的三角形数量有关，三角形接缝处的接触经过过滤，物体可以平滑地越过接缝。
+关卡几何体以三角网格参与碰撞：`world.createBody({shape: {type: 'mesh', mesh: createMeshShape3D(levelRoot)}})`。`createMeshShape3D` 接受三角形几何体或对象子树。对象子树中，非实例化、无蒙皮的三角网格会按其基础几何体与当前世界变换合并。网格刚体是静态的，三角形只在正面是实心的。球、胶囊、角色控制器和射线与三角形精确碰撞；盒子通过它的八个角落在网格上。包围体层次结构让开销只与附近的三角形数量有关，三角形接缝处的接触经过过滤，物体可以平滑地越过接缝。
 
 `world.raycast(origin, direction, maxDistance, mask)` 返回最近的实体刚体及命中点和法线，`world.overlapSphere(center, radius, mask)` 列出一个体积内的实体刚体。`createCharacterController3D(world, options)` 是运动学胶囊：`move(dx, dy, dz)` 沿障碍物滑动，并报告 `isGrounded`、`groundNormal` 和 `groundBody`。
 
@@ -206,13 +206,13 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
 
-`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把十六个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，以及顶点钩子及其阴影。开发期间全部十六个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前十四个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把十六个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，以及顶点钩子及其阴影。开发期间全部十六个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了全部十六个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
 
 `tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。
 
 ## 待完成事项
 
 - 桌面复审强制触发 WebGL2 上下文丢失并恢复了目标像素，也强制触发 WebGPU 设备丢失，确认收到通知并拒绝后续操作。更广泛的设备与恢复场景仍待验证。
-- 一台运行 Chrome 157 的 Android 真机已呈现两个后端，响应了自动触发的阴影开关，并在释放后停止更新帧。性能、真人手势与更广泛的移动设备矩阵仍待验证。
-- 级联阴影与点光源阴影、后处理、压缩纹理、屏幕层、卡通、Matcap、清漆与自定义着色器、视口和探针目前只在软件渲染下运行过，两个后端的结果一致；它们以及较新的七个比较场景和基准测试仍需在桌面与移动端的真实 GPU 上验证。第一人称控制和空间音频尚未经过真人操作验证。
+- 一台运行 Chrome 157 的 Android 真机已呈现两个后端，响应了自动触发的阴影开关，并在释放后停止更新帧。本次复审还在同类真机的 WebGL2 和 WebGPU 上检查了屏幕空间效果、顶点位移与阴影，以及斜切投影深度。
+- 更广泛的移动端与设备恢复覆盖、视口和反射探针专项检查、性能测量，以及第一人称控制和空间音频的真人验证仍待完成。
 - 尚未实现：内置的 Basis、meshopt 或 Draco 解码器，浮点精度的环境预过滤，透射与光泽层，景深处理，变换操纵器，文字几何体，物理关节、凸包与可移动的网格碰撞体。

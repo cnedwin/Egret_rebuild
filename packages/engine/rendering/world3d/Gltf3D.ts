@@ -80,6 +80,7 @@ const DECODER_EXTENSIONS: Readonly<Record<string, 'decodeMeshopt' | 'decodeDraco
 const GLTF_LIMITS = Object.freeze({
     maxNodes: 65536, maxAccessors: 262144, maxJsonBytes: 64 * 1024 * 1024,
     maxAccessorBytes: 128 * 1024 * 1024, maxDecodedAccessorBytes: 256 * 1024 * 1024,
+    maxInstanceMatrixBytes: 64 * 1024 * 1024,
 } as const);
 const COMPONENTS: Record<string, number> = {SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4, MAT2: 4, MAT3: 9, MAT4: 16};
 type TypedArrayConstructor = Int8ArrayConstructor | Uint8ArrayConstructor | Int16ArrayConstructor | Uint16ArrayConstructor | Uint32ArrayConstructor | Float32ArrayConstructor;
@@ -151,6 +152,7 @@ class GltfReader {
     private readonly accessorCache = new Map<number, Accessor>();
     private readonly floatAccessorCache = new Map<number, Float32Array>();
     private decodedAccessorBytes = 0;
+    private instanceMatrixBytes = 0;
     private readonly geometryCache = new Map<string, Geometry3D>();
     private readonly materialCache = new Map<string, Material3D>();
     private readonly textureCache = new Map<string, Texture3D>();
@@ -491,10 +493,15 @@ class GltfReader {
         const count = counts[0] ?? fail('instancing needs an attribute');
         if (count < 1 || counts.some(n => n !== count)) fail('instancing accessor counts');
         if (count > MESH3D_LIMITS.maxInstances) throw new World3DError('WORLD3D_BUDGET', 'gltf instances');
+        // Nodes and primitives may share accessors, but their generated matrices are distinct.
+        const matrixBytes = count * meshes.length * 16 * Float32Array.BYTES_PER_ELEMENT;
+        if (this.instanceMatrixBytes + matrixBytes > GLTF_LIMITS.maxInstanceMatrixBytes) throw new World3DError('WORLD3D_BUDGET', 'gltf instance matrices');
+        this.instanceMatrixBytes += matrixBytes;
         const t = [0, 0, 0], q = [0, 0, 0, 1], k = [1, 1, 1];
         return meshes.map(mesh => {
             const instances = new InstancedMesh3D(mesh.geometry, mesh.material, count, colorSize === 4 ? 4 : 3);
             instances.name = mesh.name;
+            instances.morphWeights.set(mesh.morphWeights);
             for (let i = 0; i < count; i++) {
                 if (translation) { t[0] = translation[i * 3]!; t[1] = translation[i * 3 + 1]!; t[2] = translation[i * 3 + 2]!; }
                 if (rotation) {
