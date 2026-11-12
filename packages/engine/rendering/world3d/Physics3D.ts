@@ -10,7 +10,7 @@ import type {Object3D} from './Object3D.js';
 import {ConvexHullShape3D} from './PhysicsHull3D.js';
 import {TriangleMeshShape3D} from './PhysicsMesh3D.js';
 
-export const PHYSICS3D_LIMITS = Object.freeze({maxBodies: 16384, maxSubSteps: 8, maxContactsPerPair: 8, maxCompoundChildren: 32} as const);
+export const PHYSICS3D_LIMITS = Object.freeze({maxBodies: 16384, maxSubSteps: 8, maxContactsPerPair: 8, maxCompoundChildren: 32, maxSolverSteps: 8} as const);
 export type BodyType3D = 'static' | 'kinematic' | 'dynamic';
 export type ShapeDefinition3D =
     | {readonly type: 'sphere'; readonly radius: number}
@@ -94,6 +94,12 @@ export interface PhysicsWorldOptions3D {
     readonly fixedStep?: number;
     readonly maxSubSteps?: number;
     readonly iterations?: number;
+    /**
+     * Solve each fixed step in this many smaller slices, finding contacts once. More slices
+     * hold tall stacks, long chains and heavy loads on light links far better than more
+     * iterations do, at about the same cost when `iterations` is lowered to match. Defaults to 1.
+     */
+    readonly solverSteps?: number;
     readonly allowSleep?: boolean;
 }
 
@@ -138,6 +144,7 @@ export class RigidBody3D {
     /** @internal */ readonly inverseInertiaWorld = new Float64Array(9);
     /** @internal */ readonly aabb = new Float64Array(6);
     /** @internal */ sleepTime = 0;
+    /** @internal */ slot = 0;
     /** @internal */ world: PhysicsWorld3D | undefined;
     /** @internal Stand-in bodies for the parts of a compound shape, kept at their world poses by refresh(). */
     readonly parts: RigidBody3D[] = [];
@@ -206,11 +213,11 @@ export class RigidBody3D {
         this.refresh();
     }
     wake(): void { this.isSleeping = false; this.sleepTime = 0; }
-    setPosition(x: number, y: number, z: number): this { this.position[0] = x; this.position[1] = y; this.position[2] = z; this.wake(); this.refresh(); return this; }
+    setPosition(x: number, y: number, z: number): this { this.position[0] = x; this.position[1] = y; this.position[2] = z; this.wake(); this.refresh(); this.world?.staticMoved(this); return this; }
     setQuaternion(x: number, y: number, z: number, w: number): this {
         const length = Math.hypot(x, y, z, w) || 1;
         this.quaternion[0] = x / length; this.quaternion[1] = y / length; this.quaternion[2] = z / length; this.quaternion[3] = w / length;
-        this.wake(); this.refresh();
+        this.wake(); this.refresh(); this.world?.staticMoved(this);
         return this;
     }
     setLinearVelocity(x: number, y: number, z: number): this { this.linearVelocity[0] = x; this.linearVelocity[1] = y; this.linearVelocity[2] = z; this.wake(); return this; }
@@ -429,7 +436,7 @@ function boxPlane(m: Manifold, box: RigidBody3D, plane: RigidBody3D): void {
         if (distance < MARGIN) m.add(corner[0]! - nx * distance * 0.5, corner[1]! - ny * distance * 0.5, corner[2]! - nz * distance * 0.5, -nx, -ny, -nz, -distance);
     }
 }
-const axisScratch = v3(), bestAxis = v3();
+const axisScratch = v3(), bestAxis = v3(), faceA = new Float64Array(32), faceB = new Float64Array(32);
 function boxProjection(box: RigidBody3D, axis: ArrayLike<number>): number {
     const r = box.rotation, h = (box.shape as {halfExtents: readonly number[]}).halfExtents;
     return Math.abs(axis[0]! * r[0]! + axis[1]! * r[3]! + axis[2]! * r[6]!) * h[0]! + Math.abs(axis[0]! * r[1]! + axis[1]! * r[4]! + axis[2]! * r[7]!) * h[1]!
@@ -443,26 +450,78 @@ function insideBox(box: RigidBody3D, point: Vec, tolerance: number): boolean {
 }
 function boxBox(m: Manifold, a: RigidBody3D, b: RigidBody3D): void {
     const ra = a.rotation, rb = b.rotation, d = [b.position[0]! - a.position[0]!, b.position[1]! - a.position[1]!, b.position[2]! - a.position[2]!];
-    let best = Infinity, bestDepth = 0;
+    let best = Infinity, bestDepth = 0, bestIndex = -1;
     // Separating-axis test over the 6 face normals and 9 edge cross products.
-    const test = (x: number, y: number, z: number, bias: number): boolean => {
+    const test = (x: number, y: number, z: number, bias: number, index: number): boolean => {
         const length = Math.hypot(x, y, z);
         if (length < 1e-6) return true;
         axisScratch[0] = x / length; axisScratch[1] = y / length; axisScratch[2] = z / length;
         const overlap = boxProjection(a, axisScratch) + boxProjection(b, axisScratch) - Math.abs(dot(axisScratch, d));
         if (overlap <= 0) return false;
         // Face axes win ties so resting contacts stay on faces.
-        if (overlap * bias < best) { best = overlap * bias; bestAxis.set(axisScratch); bestDepth = overlap; }
+        if (overlap * bias < best) { best = overlap * bias; bestAxis.set(axisScratch); bestDepth = overlap; bestIndex = index; }
         return true;
     };
-    for (let i = 0; i < 3; i++) if (!test(ra[i]!, ra[3 + i]!, ra[6 + i]!, 1) || !test(rb[i]!, rb[3 + i]!, rb[6 + i]!, 1)) return;
+    // The first box's faces win near-ties, so two parallel faces do not swap roles from step to step.
+    for (let i = 0; i < 3; i++) if (!test(ra[i]!, ra[3 + i]!, ra[6 + i]!, 1, i) || !test(rb[i]!, rb[3 + i]!, rb[6 + i]!, 1.02, 3 + i)) return;
     for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
         const ax = ra[i]!, ay = ra[3 + i]!, az = ra[6 + i]!, bx = rb[j]!, by = rb[3 + j]!, bz = rb[6 + j]!;
-        if (!test(ay * bz - az * by, az * bx - ax * bz, ax * by - ay * bx, 1.05)) return;
+        if (!test(ay * bz - az * by, az * bx - ax * bz, ax * by - ay * bx, 1.05, 6)) return;
     }
     if (dot(bestAxis, d) < 0) { bestAxis[0] = -bestAxis[0]!; bestAxis[1] = -bestAxis[1]!; bestAxis[2] = -bestAxis[2]!; }
     const nx = bestAxis[0]!, ny = bestAxis[1]!, nz = bestAxis[2]!, extentA = boxProjection(a, bestAxis), extentB = boxProjection(b, bestAxis);
     const before = m.count;
+    if (bestIndex < 6) {
+        // Face against face, edge or corner: the part of the other box's nearest face that lies over this face.
+        const onA = bestIndex < 3, reference = onA ? a : b, incident = onA ? b : a, rr = reference.rotation, ri = incident.rotation, axis = bestIndex % 3;
+        const hr = (reference.shape as {halfExtents: readonly number[]}).halfExtents, hi = (incident.shape as {halfExtents: readonly number[]}).halfExtents;
+        // Outward normal of the reference face, toward the incident box.
+        const fx = onA ? nx : -nx, fy = onA ? ny : -ny, fz = onA ? nz : -nz;
+        // The incident face is the one that most squarely faces the reference face.
+        let facing = 0, turned = 0;
+        for (let j = 0; j < 3; j++) { const along = ri[j]! * fx + ri[3 + j]! * fy + ri[6 + j]! * fz; if (Math.abs(along) > Math.abs(turned)) { turned = along; facing = j; } }
+        const side = turned > 0 ? -1 : 1, p1 = (facing + 1) % 3, p2 = (facing + 2) % 3, ip = incident.position, rp = reference.position;
+        const cx = ip[0]! + ri[facing]! * side * hi[facing]!, cy = ip[1]! + ri[3 + facing]! * side * hi[facing]!, cz = ip[2]! + ri[6 + facing]! * side * hi[facing]!;
+        let count = 4;
+        for (let k = 0; k < 4; k++) {
+            const s1 = (k === 0 || k === 3 ? -1 : 1) * hi[p1]!, s2 = (k < 2 ? -1 : 1) * hi[p2]!;
+            faceA[k * 4] = cx + ri[p1]! * s1 + ri[p2]! * s2; faceA[k * 4 + 1] = cy + ri[3 + p1]! * s1 + ri[3 + p2]! * s2; faceA[k * 4 + 2] = cz + ri[6 + p1]! * s1 + ri[6 + p2]! * s2; faceA[k * 4 + 3] = k;
+        }
+        // Cut the incident face by the four sides of the reference face.
+        let from = faceA, to = faceB;
+        for (let plane = 0; plane < 4 && count > 0; plane++) {
+            // A hair of slack keeps corners that sit exactly on the rim from being cut away one step and kept the next.
+            const across = (axis + 1 + (plane >> 1)) % 3, sign = plane & 1 ? -1 : 1, limit = hr[across]! + 1e-3;
+            const ux = rr[across]! * sign, uy = rr[3 + across]! * sign, uz = rr[6 + across]! * sign;
+            let kept = 0;
+            for (let k = 0; k < count; k++) {
+                const o = k * 4, next = ((k + 1) % count) * 4;
+                const d0 = (from[o]! - rp[0]!) * ux + (from[o + 1]! - rp[1]!) * uy + (from[o + 2]! - rp[2]!) * uz - limit;
+                const d1 = (from[next]! - rp[0]!) * ux + (from[next + 1]! - rp[1]!) * uy + (from[next + 2]! - rp[2]!) * uz - limit;
+                if (d0 <= 0 && kept < 8) { to[kept * 4] = from[o]!; to[kept * 4 + 1] = from[o + 1]!; to[kept * 4 + 2] = from[o + 2]!; to[kept * 4 + 3] = from[o + 3]!; kept++; }
+                if ((d0 < 0) !== (d1 < 0) && d0 !== 0 && d1 !== 0 && kept < 8) {
+                    const t = d0 / (d0 - d1);
+                    to[kept * 4] = from[o]! + (from[next]! - from[o]!) * t; to[kept * 4 + 1] = from[o + 1]! + (from[next + 1]! - from[o + 1]!) * t; to[kept * 4 + 2] = from[o + 2]! + (from[next + 2]! - from[o + 2]!) * t;
+                    // A cut point is named after the edge it lies on and the side that cut it.
+                    to[kept * 4 + 3] = 4 + plane * 4 + (from[o + 3]! & 3);
+                    kept++;
+                }
+            }
+            count = kept;
+            const swap = from; from = to; to = swap;
+        }
+        const reach = hr[axis]!;
+        for (let k = 0; k < count; k++) {
+            const o = k * 4, x = from[o]!, y = from[o + 1]!, z = from[o + 2]!;
+            // How far the point sits below the reference face.
+            const depth = reach - ((x - rp[0]!) * fx + (y - rp[1]!) * fy + (z - rp[2]!) * fz);
+            if (depth <= -MARGIN) continue;
+            m.feature = bestIndex * 32 + from[o + 3]!;
+            // Report the point halfway between the two surfaces.
+            m.add(x + fx * depth * 0.5, y + fy * depth * 0.5, z + fz * depth * 0.5, nx, ny, nz, depth);
+        }
+        if (m.count > before) return;
+    }
     for (let i = 0; i < 8; i++) {
         boxCorner(corner, b, i);
         m.feature = i;
@@ -1061,6 +1120,102 @@ function pivotVelocity(out: Vec, body: RigidBody3D | undefined, r: Vec): Vec {
     return out;
 }
 
+// ---- static bodies --------------------------------------------------------------
+/**
+ * Bodies that never move, kept in a hierarchy of boxes so that a moving body, a ray or a
+ * sweep only looks at the ones nearby. It is rebuilt when a static body is added, removed or moved.
+ */
+class StaticTree {
+    readonly bodies: RigidBody3D[] = [];
+    #boxes = new Float64Array(0);
+    /** Two numbers per node: an inner node holds its children; a leaf holds -(first body + 1) and a count. */
+    #links = new Int32Array(0);
+    #count = 0;
+    #dirty = false;
+    readonly #stack = new Int32Array(64);
+    #busy = false;
+    add(body: RigidBody3D): void { this.bodies.push(body); this.#dirty = true; }
+    remove(body: RigidBody3D): void { const at = this.bodies.indexOf(body); if (at >= 0) { this.bodies.splice(at, 1); this.#dirty = true; } }
+    touch(): void { this.#dirty = true; }
+    private build(): void {
+        this.#dirty = false; this.#count = 0;
+        const bodies = this.bodies, most = Math.max(2 * bodies.length, 1);
+        if (this.#links.length < most * 2) { this.#boxes = new Float64Array(most * 6); this.#links = new Int32Array(most * 2); }
+        if (bodies.length > 0) this.split(0, bodies.length);
+    }
+    private split(first: number, end: number): number {
+        const bodies = this.bodies, node = this.#count++, box = this.#boxes, at = node * 6;
+        let lx = Infinity, ly = Infinity, lz = Infinity, hx = -Infinity, hy = -Infinity, hz = -Infinity;
+        let cx0 = Infinity, cy0 = Infinity, cz0 = Infinity, cx1 = -Infinity, cy1 = -Infinity, cz1 = -Infinity;
+        for (let i = first; i < end; i++) {
+            const b = bodies[i]!.aabb, cx = b[0]! + b[3]!, cy = b[1]! + b[4]!, cz = b[2]! + b[5]!;
+            lx = Math.min(lx, b[0]!); ly = Math.min(ly, b[1]!); lz = Math.min(lz, b[2]!); hx = Math.max(hx, b[3]!); hy = Math.max(hy, b[4]!); hz = Math.max(hz, b[5]!);
+            cx0 = Math.min(cx0, cx); cy0 = Math.min(cy0, cy); cz0 = Math.min(cz0, cz); cx1 = Math.max(cx1, cx); cy1 = Math.max(cy1, cy); cz1 = Math.max(cz1, cz);
+        }
+        box[at] = lx; box[at + 1] = ly; box[at + 2] = lz; box[at + 3] = hx; box[at + 4] = hy; box[at + 5] = hz;
+        const count = end - first, sx = cx1 - cx0, sy = cy1 - cy0, sz = cz1 - cz0, axis = sx >= sy && sx >= sz ? 0 : sy >= sz ? 1 : 2;
+        // A handful of bodies, or bodies stacked at one place, stay together in a leaf.
+        if (count <= 4 || !(Math.max(sx, sy, sz) > 0)) { this.#links[node * 2] = -(first + 1); this.#links[node * 2 + 1] = count; return node; }
+        const part = bodies.slice(first, end).sort((a, b) => a.aabb[axis]! + a.aabb[axis + 3]! - b.aabb[axis]! - b.aabb[axis + 3]!);
+        for (let i = 0; i < count; i++) bodies[first + i] = part[i]!;
+        const middle = first + (count >> 1);
+        const left = this.split(first, middle), right = this.split(middle, end);
+        this.#links[node * 2] = left; this.#links[node * 2 + 1] = right;
+        return node;
+    }
+    /** Call `visit` for every static body whose bounds meet the box. */
+    query(lx: number, ly: number, lz: number, hx: number, hy: number, hz: number, visit: (body: RigidBody3D) => void): void {
+        if (this.#dirty) this.build();
+        if (this.#count === 0) return;
+        const box = this.#boxes, links = this.#links, bodies = this.bodies, shared = !this.#busy;
+        // A visitor may ask again while this walk is under way; it then gets a list of its own.
+        let stack = shared ? this.#stack : new Int32Array(64), top = 0;
+        if (shared) this.#busy = true;
+        stack[top++] = 0;
+        try { while (top > 0) {
+            const node = stack[--top]!, at = node * 6;
+            if (box[at]! > hx || box[at + 3]! < lx || box[at + 1]! > hy || box[at + 4]! < ly || box[at + 2]! > hz || box[at + 5]! < lz) continue;
+            const link = links[node * 2]!;
+            if (link < 0) {
+                for (let i = -link - 1, end = i + links[node * 2 + 1]!; i < end; i++) {
+                    const b = bodies[i]!.aabb;
+                    if (b[0]! > hx || b[3]! < lx || b[1]! > hy || b[4]! < ly || b[2]! > hz || b[5]! < lz) continue;
+                    visit(bodies[i]!);
+                }
+                continue;
+            }
+            if (top + 2 > stack.length) { const grown = new Int32Array(stack.length * 2); grown.set(stack); stack = grown; }
+            stack[top++] = link; stack[top++] = links[node * 2 + 1]!;
+        } } finally { if (shared) this.#busy = false; }
+    }
+    /** Call `visit` for static bodies whose bounds the ray crosses within the distance `visit` returns. */
+    ray(o: ArrayLike<number>, d: ArrayLike<number>, limit: number, visit: (body: RigidBody3D, limit: number) => number): void {
+        if (this.#dirty) this.build();
+        if (this.#count === 0) return;
+        const box = this.#boxes, links = this.#links, bodies = this.bodies, stack: number[] = [0];
+        const reaches = (b: ArrayLike<number>, at: number): boolean => {
+            let near = 0, far = limit;
+            for (let i = 0; i < 3; i++) {
+                const low = b[at + i]!, high = b[at + i + 3]!, from = o[i]!, way = d[i]!;
+                if (Math.abs(way) < 1e-12) { if (from < low || from > high) return false; continue; }
+                let t1 = (low - from) / way, t2 = (high - from) / way;
+                if (t1 > t2) { const swap = t1; t1 = t2; t2 = swap; }
+                if (t1 > near) near = t1;
+                if (t2 < far) far = t2;
+                if (near > far) return false;
+            }
+            return true;
+        };
+        while (stack.length > 0) {
+            const node = stack.pop()!;
+            if (!reaches(box, node * 6)) continue;
+            const link = links[node * 2]!;
+            if (link < 0) { for (let i = -link - 1, end = i + links[node * 2 + 1]!; i < end; i++) if (reaches(bodies[i]!.aabb, 0)) limit = visit(bodies[i]!, limit); }
+            else stack.push(link, links[node * 2 + 1]!);
+        }
+    }
+}
+
 // ---- world --------------------------------------------------------------------
 interface SolverContact {
     a: RigidBody3D; b: RigidBody3D;
@@ -1068,6 +1223,10 @@ interface SolverContact {
     ra: Vec; rb: Vec;
     normalMass: number; tangentMass1: number; tangentMass2: number;
     bias: number; friction: number;
+    /** Overlap along the normal, kept up to date between the slices of a step; and the push summed over them. */
+    depth: number; total: number;
+    /** True while the bias asks for a bounce rather than for pushing out of an overlap. */
+    bounce: boolean;
     normalImpulse: number; tangentImpulse1: number; tangentImpulse2: number;
     warm: WarmEntry; slot: number;
     /** Inverse masses as the solver sees them: zero for a body that cannot be moved this step. */
@@ -1087,6 +1246,7 @@ export class PhysicsWorld3D {
     fixedStep: number;
     maxSubSteps: number;
     iterations: number;
+    solverSteps: number;
     allowSleep: boolean;
     /** Called when two bodies start or stop touching. Triggers report here too. */
     onContactBegin: ((a: RigidBody3D, b: RigidBody3D) => void) | undefined;
@@ -1104,8 +1264,10 @@ export class PhysicsWorld3D {
     #touching = new Map<number, [RigidBody3D, RigidBody3D]>();
     #previousTouching = new Map<number, [RigidBody3D, RigidBody3D]>();
     #accumulator = 0;
+    /** Bodies that can move, kept sorted along x from step to step. */
     readonly #sorted: RigidBody3D[] = [];
     readonly #planes: RigidBody3D[] = [];
+    readonly #statics = new StaticTree();
     readonly #joints: Joint3D[] = [];
     readonly #jointPairs = new Map<number, number>();
     readonly #warm = new Map<number, WarmEntry>();
@@ -1118,9 +1280,22 @@ export class PhysicsWorld3D {
         this.fixedStep = requirePositive3D(options.fixedStep ?? 1 / 60, 'fixedStep');
         this.maxSubSteps = Math.min(Math.max(Math.floor(options.maxSubSteps ?? 4), 1), PHYSICS3D_LIMITS.maxSubSteps);
         this.iterations = Math.min(Math.max(Math.floor(options.iterations ?? 8), 1), 64);
+        this.solverSteps = Math.min(Math.max(Math.floor(options.solverSteps ?? 1), 1), PHYSICS3D_LIMITS.maxSolverSteps);
         this.allowSleep = options.allowSleep ?? true;
     }
     get bodies(): readonly RigidBody3D[] { return this.#bodies; }
+    /** @internal A static body was repositioned: its place among the others is worked out again. */
+    staticMoved(body: RigidBody3D): void { if (body.type === 'static') this.#statics.touch(); }
+    /** Visit every body whose bounds meet a box: planes, bodies that can move, then static ones. */
+    private near(lx: number, ly: number, lz: number, hx: number, hy: number, hz: number, visit: (body: RigidBody3D) => void): void {
+        for (const plane of this.#planes) visit(plane);
+        for (const body of this.#sorted) {
+            const b = body.aabb;
+            if (b[0]! > hx || b[3]! < lx || b[1]! > hy || b[4]! < ly || b[2]! > hz || b[5]! < lz) continue;
+            visit(body);
+        }
+        this.#statics.query(lx, ly, lz, hx, hy, hz, visit);
+    }
     /** Contact points solved in the last step. */
     get contactCount(): number { return this.#contactCount; }
 
@@ -1129,7 +1304,7 @@ export class PhysicsWorld3D {
         if (this.#bodies.length >= PHYSICS3D_LIMITS.maxBodies) throw new World3DError('WORLD3D_BUDGET', 'bodies');
         body.world = this;
         this.#bodies.push(body);
-        (body.shape.type === 'plane' ? this.#planes : this.#sorted).push(body);
+        if (body.shape.type === 'plane') this.#planes.push(body); else if (body.type === 'static') this.#statics.add(body); else this.#sorted.push(body);
         // Static bodies never move, so their node is placed once, here.
         const node = body.node;
         if (node) { node.position.set(body.position); node.quaternion.set(body.quaternion); node.markTransformDirty(); }
@@ -1377,8 +1552,8 @@ export class PhysicsWorld3D {
         for (const joint of [...this.#joints]) if (joint.bodyA === body || joint.bodyB === body) this.removeJoint(joint);
         body.world = undefined;
         this.#bodies.splice(this.#bodies.indexOf(body), 1);
-        const list = body.shape.type === 'plane' ? this.#planes : this.#sorted;
-        list.splice(list.indexOf(body), 1);
+        if (body.shape.type !== 'plane' && body.type === 'static') this.#statics.remove(body);
+        else { const list = body.shape.type === 'plane' ? this.#planes : this.#sorted; list.splice(list.indexOf(body), 1); }
         // After a step the pairs that were touching live in the previous-step map.
         for (const [key, pair] of this.#previousTouching) {
             if (pair[0] !== body && pair[1] !== body) continue;
@@ -1413,31 +1588,64 @@ export class PhysicsWorld3D {
         }
     }
     private fixedUpdate(dt: number): void {
-        const bodies = this.#bodies, g = this.gravity;
-        for (const body of bodies) {
-            if (body.type !== 'dynamic' || body.isSleeping) continue;
-            const v = body.linearVelocity, w = body.angularVelocity;
-            v[0]! += (g[0]! + body.force[0]! * body.inverseMass) * dt; v[1]! += (g[1]! + body.force[1]! * body.inverseMass) * dt; v[2]! += (g[2]! + body.force[2]! * body.inverseMass) * dt;
-            applyInverseInertia(scratchA, body.inverseInertiaWorld, body.torque);
-            w[0]! += scratchA[0]! * dt; w[1]! += scratchA[1]! * dt; w[2]! += scratchA[2]! * dt;
-            const linear = 1 / (1 + body.linearDamping * dt), angular = 1 / (1 + body.angularDamping * dt);
-            v[0]! *= linear; v[1]! *= linear; v[2]! *= linear; w[0]! *= angular; w[1]! *= angular; w[2]! *= angular;
-        }
+        // Static bodies and planes take no part in what follows; only the bodies that can move are walked.
+        const bodies = this.#sorted, g = this.gravity, joints = this.#joints, contacts = this.#contacts;
+        const slices = Math.min(Math.max(Math.floor(this.solverSteps), 1), PHYSICS3D_LIMITS.maxSolverSteps), h = dt / slices;
         this.#stamp++;
-        this.findContacts(dt);
-        const contacts = this.#contacts, count = this.#contactCount;
-        // Warm start: re-apply last step's impulses so stacks begin close to equilibrium.
-        for (let i = 0; i < count; i++) {
-            const c = contacts[i]!;
-            if (c.normalImpulse !== 0) this.applyRow(c, 0, c.normalImpulse);
-            if (c.tangentImpulse1 !== 0) this.applyRow(c, 15, c.tangentImpulse1);
-            if (c.tangentImpulse2 !== 0) this.applyRow(c, 30, c.tangentImpulse2);
-        }
-        this.prepareJoints(dt);
-        const joints = this.#joints;
-        for (let iteration = 0; iteration < this.iterations; iteration++) {
+        let count = 0;
+        for (let slice = 0; slice < slices; slice++) {
+            for (const body of bodies) {
+                if (body.type !== 'dynamic' || body.isSleeping) continue;
+                const v = body.linearVelocity, w = body.angularVelocity;
+                v[0]! += (g[0]! + body.force[0]! * body.inverseMass) * h; v[1]! += (g[1]! + body.force[1]! * body.inverseMass) * h; v[2]! += (g[2]! + body.force[2]! * body.inverseMass) * h;
+                applyInverseInertia(scratchA, body.inverseInertiaWorld, body.torque);
+                w[0]! += scratchA[0]! * h; w[1]! += scratchA[1]! * h; w[2]! += scratchA[2]! * h;
+                const linear = 1 / (1 + body.linearDamping * h), angular = 1 / (1 + body.angularDamping * h);
+                v[0]! *= linear; v[1]! *= linear; v[2]! *= linear; w[0]! *= angular; w[1]! *= angular; w[2]! *= angular;
+            }
+            if (slice === 0) { this.findContacts(h); count = this.#contactCount; }
+            else {
+                // Contacts are found once per step; later slices only correct what is left of each overlap.
+                for (let i = 0; i < count; i++) { const c = contacts[i]!; c.bias = c.depth < 0 ? c.depth / h : BAUMGARTE / h * Math.max(c.depth - SLOP, 0); c.bounce = false; }
+            }
+            // Warm start: re-apply the last impulses so stacks begin close to equilibrium.
+            for (let i = 0; i < count; i++) {
+                const c = contacts[i]!;
+                if (c.normalImpulse !== 0) this.applyRow(c, 0, c.normalImpulse);
+                if (c.tangentImpulse1 !== 0) this.applyRow(c, 15, c.tangentImpulse1);
+                if (c.tangentImpulse2 !== 0) this.applyRow(c, 30, c.tangentImpulse2);
+            }
+            this.prepareJoints(h);
+            for (let iteration = 0; iteration < this.iterations; iteration++) {
+                for (let i = 0; i < count; i++) this.solve(contacts[i]!);
+                for (let i = 0; i < joints.length; i++) this.solveJoint(joints[i]!, h);
+            }
+            for (let i = 0; i < count; i++) {
+                const c = contacts[i]!;
+                c.total += c.normalImpulse;
+                // Moving apart along the normal leaves less overlap for the next slice.
+                if (slices > 1) c.depth -= this.rowVelocity(c, 0) * h;
+            }
+            for (const body of bodies) {
+                if (body.type === 'static' || body.isSleeping) continue;
+                const v = body.linearVelocity, w = body.angularVelocity, p = body.position, q = body.quaternion;
+                const reach = body.continuous && body.type === 'dynamic' ? this.sweep(body, h) : 1;
+                p[0]! += v[0]! * h * reach; p[1]! += v[1]! * h * reach; p[2]! += v[2]! * h * reach;
+                if (!body.fixedRotation && (w[0] !== 0 || w[1] !== 0 || w[2] !== 0)) {
+                    // q += 0.5 * h * (w, 0) * q
+                    const x = q[0]!, y = q[1]!, z = q[2]!, r = q[3]!, half = 0.5 * h;
+                    q[0] = x + half * (w[0]! * r + w[1]! * z - w[2]! * y); q[1] = y + half * (w[1]! * r + w[2]! * x - w[0]! * z);
+                    q[2] = z + half * (w[2]! * r + w[0]! * y - w[1]! * x); q[3] = r - half * (w[0]! * x + w[1]! * y + w[2]! * z);
+                    const length = Math.hypot(q[0]!, q[1]!, q[2]!, q[3]!) || 1;
+                    q[0]! /= length; q[1]! /= length; q[2]! /= length; q[3]! /= length;
+                }
+                body.refresh();
+            }
+            // The push that separated overlapping bodies has done its work in the move above. Solving once
+            // more without it takes that speed back out, so a resting pile is not kept simmering.
+            this.#relaxing = true;
             for (let i = 0; i < count; i++) this.solve(contacts[i]!);
-            for (let i = 0; i < joints.length; i++) this.solveJoint(joints[i]!, dt);
+            this.#relaxing = false;
         }
         for (let i = 0; i < count; i++) {
             const c = contacts[i]!, at = c.slot * 3;
@@ -1451,8 +1659,8 @@ export class PhysicsWorld3D {
                 const first = contacts[i]!, a = first.a, b = first.b;
                 let total = 0, px = 0, py = 0, pz = 0, weight = 0, last = i;
                 for (; last < count && contacts[last]!.a === a && contacts[last]!.b === b; last++) {
-                    const c = contacts[last]!, share = c.normalImpulse + 1e-9;
-                    total += c.normalImpulse; weight += share;
+                    const c = contacts[last]!, share = c.total + 1e-9;
+                    total += c.total; weight += share;
                     px += (a.position[0]! + c.ra[0]!) * share; py += (a.position[1]! + c.ra[1]!) * share; pz += (a.position[2]! + c.ra[2]!) * share;
                 }
                 i = last;
@@ -1462,26 +1670,33 @@ export class PhysicsWorld3D {
                 this.onContact(report);
             }
         }
+        // Bodies joined by contacts or joints rest and wake together: a pile sleeps only once all of it is still.
+        const parent = this.#islands.length >= bodies.length ? this.#islands : (this.#islands = new Int32Array(bodies.length * 2));
+        const rest = this.#islandRest.length >= bodies.length ? this.#islandRest : (this.#islandRest = new Float64Array(bodies.length * 2));
+        for (let i = 0; i < bodies.length; i++) { bodies[i]!.slot = i; parent[i] = i; }
+        const root = (index: number): number => { while (parent[index] !== index) { parent[index] = parent[parent[index]!]!; index = parent[index]!; } return index; };
+        const join = (a: RigidBody3D, b: RigidBody3D | undefined): void => {
+            if (!b || a.type !== 'dynamic' || b.type !== 'dynamic' || a.isSleeping || b.isSleeping) return;
+            const ra = root(a.slot), rb = root(b.slot);
+            if (ra !== rb) parent[ra] = rb;
+        };
+        if (this.allowSleep) {
+            for (let i = 0; i < count; i++) join(contacts[i]!.a, contacts[i]!.b);
+            for (const joint of joints) if (joint.enabled) join(joint.bodyA, joint.bodyB);
+        }
+        for (let i = 0; i < bodies.length; i++) rest[i] = Infinity;
         for (const body of bodies) {
             body.force.fill(0); body.torque.fill(0);
-            if (body.type === 'static' || body.isSleeping) continue;
-            const v = body.linearVelocity, w = body.angularVelocity, p = body.position, q = body.quaternion;
-            const reach = body.continuous && body.type === 'dynamic' ? this.sweep(body, dt) : 1;
-            p[0]! += v[0]! * dt * reach; p[1]! += v[1]! * dt * reach; p[2]! += v[2]! * dt * reach;
-            if (!body.fixedRotation && (w[0] !== 0 || w[1] !== 0 || w[2] !== 0)) {
-                // q += 0.5 * dt * (w, 0) * q
-                const x = q[0]!, y = q[1]!, z = q[2]!, s = q[3]!, half = 0.5 * dt;
-                q[0] = x + half * (w[0]! * s + w[1]! * z - w[2]! * y); q[1] = y + half * (w[1]! * s + w[2]! * x - w[0]! * z);
-                q[2] = z + half * (w[2]! * s + w[0]! * y - w[1]! * x); q[3] = s - half * (w[0]! * x + w[1]! * y + w[2]! * z);
-                const length = Math.hypot(q[0]!, q[1]!, q[2]!, q[3]!) || 1;
-                q[0]! /= length; q[1]! /= length; q[2]! /= length; q[3]! /= length;
-            }
-            body.refresh();
-            if (body.type === 'dynamic' && this.allowSleep) {
-                const slow = v[0]! * v[0]! + v[1]! * v[1]! + v[2]! * v[2]! < SLEEP_LINEAR * SLEEP_LINEAR && w[0]! * w[0]! + w[1]! * w[1]! + w[2]! * w[2]! < SLEEP_ANGULAR * SLEEP_ANGULAR;
-                body.sleepTime = slow ? body.sleepTime + dt : 0;
-                if (body.sleepTime >= SLEEP_DELAY) { body.isSleeping = true; v.fill(0); w.fill(0); }
-            }
+            if (body.type !== 'dynamic' || body.isSleeping || !this.allowSleep) continue;
+            const v = body.linearVelocity, w = body.angularVelocity;
+            const slow = v[0]! * v[0]! + v[1]! * v[1]! + v[2]! * v[2]! < SLEEP_LINEAR * SLEEP_LINEAR && w[0]! * w[0]! + w[1]! * w[1]! + w[2]! * w[2]! < SLEEP_ANGULAR * SLEEP_ANGULAR;
+            body.sleepTime = slow ? body.sleepTime + dt : 0;
+            const island = root(body.slot);
+            if (body.sleepTime < rest[island]!) rest[island] = body.sleepTime;
+        }
+        if (this.allowSleep) for (const body of bodies) {
+            if (body.type !== 'dynamic' || body.isSleeping || rest[root(body.slot)]! < SLEEP_DELAY) continue;
+            body.isSleeping = true; body.linearVelocity.fill(0); body.angularVelocity.fill(0);
         }
         // Contact events compare this step's touching pairs with the previous step's.
         const now = this.#touching, before = this.#previousTouching;
@@ -1491,32 +1706,59 @@ export class PhysicsWorld3D {
         before.clear();
     }
     /**
-     * Share of this step's travel a fast body may make before its center line
-     * meets a surface. It stops just touching, so the next step finds the
-     * contact and answers it with the body's full speed.
+     * Share of this step's travel a fast body may make before its shape meets
+     * a surface it is not already resting on. It stops just touching, so the
+     * next step finds the contact and answers it with the body's full speed.
      */
     private sweep(body: RigidBody3D, dt: number): number {
-        const v = body.linearVelocity, speed = Math.hypot(v[0]!, v[1]!, v[2]!), travel = speed * dt, shape = body.shape;
-        const inner = thinnestHalf(shape);
+        const v = body.linearVelocity, speed = Math.hypot(v[0]!, v[1]!, v[2]!), travel = speed * dt, inner = thinnestHalf(body.shape);
         // Slow enough that the ordinary overlap test cannot miss anything.
         if (travel <= inner * 0.5 || travel === 0) return 1;
-        const d = [v[0]! / speed, v[1]! / speed, v[2]! / speed], o = [body.position[0]!, body.position[1]!, body.position[2]!], normal = [0, 0, 0];
-        let limit = travel + inner, allowed = travel;
-        for (const other of this.#bodies) {
-            if (other === body || other.isTrigger || (body.layer & other.mask) === 0 || (other.layer & body.mask) === 0) continue;
-            if (this.#jointPairs.size > 0 && this.#jointPairs.has(this.pairKey(body, other))) continue;
-            const box = other.aabb;
-            // Skip bodies whose bounds the swept line cannot reach.
-            if (Math.min(o[0]!, o[0]! + d[0]! * limit) - inner > box[3]! || Math.max(o[0]!, o[0]! + d[0]! * limit) + inner < box[0]! || Math.min(o[1]!, o[1]! + d[1]! * limit) - inner > box[4]!
-                || Math.max(o[1]!, o[1]! + d[1]! * limit) + inner < box[1]! || Math.min(o[2]!, o[2]! + d[2]! * limit) - inner > box[5]! || Math.max(o[2]!, o[2]! + d[2]! * limit) + inner < box[2]!) continue;
-            const distance = rayShape(other, o, d, limit, normal);
-            if (distance < 0 || distance > limit) continue;
-            // A round body meets a slanted surface before its center line does.
-            const facing = Math.max(-(d[0]! * normal[0]! + d[1]! * normal[1]! + d[2]! * normal[2]!), 0.2);
-            limit = distance;
-            allowed = Math.min(allowed, Math.max(distance - inner / facing + SLOP, 0));
+        const p = body.position, ox = p[0]!, oy = p[1]!, oz = p[2]!;
+        const distance = this.cast(body, v[0]! / speed, v[1]! / speed, v[2]! / speed, travel, inner, (other) => other !== body && (body.layer & other.mask) !== 0 && (other.layer & body.mask) !== 0
+            && !(this.#jointPairs.size > 0 && this.#jointPairs.has(this.pairKey(body, other))), true);
+        p[0] = ox; p[1] = oy; p[2] = oz; body.refresh();
+        return distance < 0 ? 1 : distance / travel;
+    }
+    readonly #castNear: RigidBody3D[] = [];
+    #castBody: RigidBody3D | undefined;
+    /**
+     * Walk `probe` along a unit direction and return how far it gets before touching one of
+     * the accepted bodies, or -1. The probe is left where it touched and the body it met in
+     * #castBody. With `skipTouching`, whatever the probe already rests on is not counted.
+     */
+    private cast(probe: RigidBody3D, dx: number, dy: number, dz: number, reach: number, thin: number, accept: (body: RigidBody3D) => boolean, skipTouching: boolean): number {
+        const m = this.#manifold, ox = probe.position[0]!, oy = probe.position[1]!, oz = probe.position[2]!, near = this.#castNear;
+        near.length = 0; this.#castBody = undefined;
+        // Only bodies whose bounds meet the swept bounds of the shape can be touched.
+        const from = probe.aabb;
+        this.near(from[0]! + Math.min(dx * reach, 0), from[1]! + Math.min(dy * reach, 0), from[2]! + Math.min(dz * reach, 0),
+            from[3]! + Math.max(dx * reach, 0), from[4]! + Math.max(dy * reach, 0), from[5]! + Math.max(dz * reach, 0), (body) => { if (!body.isTrigger && accept(body)) near.push(body); });
+        if (near.length === 0) return -1;
+        const pressing = (body: RigidBody3D): boolean => {
+            if (!collide(m, probe, body)) return false;
+            for (let i = 0; i < m.count; i++) if (m.contacts[i]!.depth > (skipTouching ? SLOP : 0)) return true;
+            return false;
+        };
+        // Whatever the body already touches, however lightly, is the solver's business, not the sweep's.
+        if (skipTouching) for (let i = near.length - 1; i >= 0; i--) if (collide(m, probe, near[i]!)) near.splice(i, 1);
+        const touches = (t: number): boolean => {
+            probe.position[0] = ox + dx * t; probe.position[1] = oy + dy * t; probe.position[2] = oz + dz * t;
+            probe.refresh();
+            for (const body of near) if (pressing(body)) { this.#castBody = body; return true; }
+            return false;
+        };
+        let clear = 0, hit = -1;
+        if (touches(0)) hit = 0;
+        else for (let t = Math.min(thin, reach); ; t = Math.min(t + thin, reach)) {
+            if (touches(t)) { hit = t; break; }
+            clear = t;
+            if (t >= reach) return -1;
         }
-        return allowed / travel;
+        // Narrow the first touch down between the last clear place and the first touching one.
+        for (let i = 0; i < 20 && hit - clear > 1e-5; i++) { const middle = (clear + hit) / 2; if (touches(middle)) hit = middle; else clear = middle; }
+        touches(hit);
+        return hit;
     }
     private findContacts(dt: number): void {
         this.#contactCount = 0;
@@ -1528,8 +1770,10 @@ export class PhysicsWorld3D {
             while (j >= 0 && sorted[j]!.aabb[0]! > key) { sorted[j + 1] = sorted[j]!; j--; }
             sorted[j + 1] = body;
         }
+        this.#pairStep = dt;
         for (let i = 0; i < sorted.length; i++) {
             const a = sorted[i]!, box = a.aabb, maxX = box[3]!;
+            this.#pairBody = a;
             for (let j = i + 1; j < sorted.length; j++) {
                 const b = sorted[j]!, other = b.aabb;
                 if (other[0]! > maxX) break;
@@ -1537,8 +1781,15 @@ export class PhysicsWorld3D {
                 this.testPair(a, b, dt);
             }
             for (const plane of planes) this.testPair(a, plane, dt);
+            this.#statics.query(box[0]!, box[1]!, box[2]!, box[3]!, box[4]!, box[5]!, this.#againstStatic);
         }
     }
+    #relaxing = false;
+    #islands = new Int32Array(0);
+    #islandRest = new Float64Array(0);
+    #pairBody: RigidBody3D | undefined;
+    #pairStep = 0;
+    readonly #againstStatic = (other: RigidBody3D): void => this.testPair(this.#pairBody!, other, this.#pairStep);
     private testPair(a: RigidBody3D, b: RigidBody3D, dt: number): void {
         if ((a.layer & b.mask) === 0 || (b.layer & a.mask) === 0) return;
         if (this.#jointPairs.size > 0 && this.#jointPairs.has(this.pairKey(a, b))) return;
@@ -1574,7 +1825,7 @@ export class PhysicsWorld3D {
         for (let i = 0; i < m.count; i++) {
             const source = m.contacts[i]!;
             let c = this.#contacts[this.#contactCount];
-            if (!c) c = this.#contacts[this.#contactCount] = {a, b, nx: 0, ny: 0, nz: 0, t1: v3(), t2: v3(), ra: v3(), rb: v3(), normalMass: 0, tangentMass1: 0, tangentMass2: 0, bias: 0, friction: 0, normalImpulse: 0, tangentImpulse1: 0, tangentImpulse2: 0, warm, slot: 0, ima: 0, imb: 0, rows: new Float64Array(45)};
+            if (!c) c = this.#contacts[this.#contactCount] = {a, b, nx: 0, ny: 0, nz: 0, t1: v3(), t2: v3(), ra: v3(), rb: v3(), normalMass: 0, tangentMass1: 0, tangentMass2: 0, bias: 0, friction: 0, depth: 0, total: 0, bounce: false, normalImpulse: 0, tangentImpulse1: 0, tangentImpulse2: 0, warm, slot: 0, ima: 0, imb: 0, rows: new Float64Array(45)};
             this.#contactCount++;
             c.a = a; c.b = b; c.nx = source.nx; c.ny = source.ny; c.nz = source.nz; c.friction = friction;
             c.normalImpulse = c.tangentImpulse1 = c.tangentImpulse2 = 0;
@@ -1599,6 +1850,7 @@ export class PhysicsWorld3D {
             // A real impact bounces; a resting or slow contact is pushed out of penetration instead.
             // Doing both in one step would add the correction speed to the bounce.
             c.bias = source.depth < 0 ? source.depth / dt : approach < -1 && restitution > 0 ? -restitution * approach : BAUMGARTE / dt * Math.max(source.depth - SLOP, 0);
+            c.depth = source.depth; c.total = 0; c.bounce = source.depth >= 0 && approach < -1 && restitution > 0;
         }
     }
     private pairKey(a: RigidBody3D, b: RigidBody3D): number { return a.id < b.id ? a.id * 4194304 + b.id : b.id * 4194304 + a.id; }
@@ -1646,7 +1898,8 @@ export class PhysicsWorld3D {
     }
     private solve(c: SolverContact): void {
         // Normal: accumulate and clamp so contacts only ever push.
-        let delta = (c.bias - this.rowVelocity(c, 0)) * c.normalMass;
+        const bias = this.#relaxing && !c.bounce && c.bias > 0 ? 0 : c.bias;
+        let delta = (bias - this.rowVelocity(c, 0)) * c.normalMass;
         const total = Math.max(c.normalImpulse + delta, 0);
         delta = total - c.normalImpulse; c.normalImpulse = total;
         if (delta !== 0) this.applyRow(c, 0, delta);
@@ -1668,19 +1921,23 @@ export class PhysicsWorld3D {
         const d = [direction[0]! / length, direction[1]! / length, direction[2]! / length], o = [origin[0]!, origin[1]!, origin[2]!];
         let best: PhysicsRaycastHit3D | undefined, limit = maxDistance;
         const normal = [0, 0, 0];
-        for (const body of this.#bodies) {
-            if ((body.layer & mask) === 0 || body.isTrigger) continue;
-            const distance = rayShape(body, o, d, limit, normal);
-            if (distance < 0 || distance > limit) continue;
-            limit = distance;
+        const test = (body: RigidBody3D, within: number): number => {
+            if ((body.layer & mask) === 0 || body.isTrigger) return within;
+            const distance = rayShape(body, o, d, within, normal);
+            if (distance < 0 || distance > within) return within;
             best = {body, distance, point: [o[0]! + d[0]! * distance, o[1]! + d[1]! * distance, o[2]! + d[2]! * distance], normal: [normal[0]!, normal[1]!, normal[2]!]};
-        }
+            return distance;
+        };
+        for (const body of this.#planes) limit = test(body, limit);
+        for (const body of this.#sorted) limit = test(body, limit);
+        this.#statics.ray(o, d, limit, test);
         return best;
     }
     /** Solid bodies whose shape touches a sphere; triggers are skipped. */
     overlapSphere(center: ArrayLike<number>, radius: number, mask = -1): RigidBody3D[] {
         const probe = probeBody(center, {type: 'sphere', radius: requirePositive3D(radius, 'radius')}), found: RigidBody3D[] = [];
-        for (const body of this.#bodies) if ((body.layer & mask) !== 0 && !body.isTrigger && collide(this.#manifold, probe, body)) found.push(body);
+        const box = probe.aabb;
+        this.near(box[0]!, box[1]!, box[2]!, box[3]!, box[4]!, box[5]!, (body) => { if ((body.layer & mask) !== 0 && !body.isTrigger && collide(this.#manifold, probe, body)) found.push(body); });
         return found;
     }
     /**
@@ -1696,40 +1953,11 @@ export class PhysicsWorld3D {
         const reach = requireFinite3D(maxDistance, 'maxDistance');
         if (!(reach >= 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'maxDistance');
         if (shape?.type === 'plane' || shape?.type === 'mesh') throw new World3DError('WORLD3D_INPUT_INVALID', 'only solid shapes can be cast');
-        const probe = probeBody(origin, shape), ox = probe.position[0]!, oy = probe.position[1]!, oz = probe.position[2]!, m = this.#manifold;
+        const probe = probeBody(origin, shape);
         if (quaternion) probe.setQuaternion(quaternion[0]!, quaternion[1]!, quaternion[2]!, quaternion[3]!);
-        const thin = Math.max(thinnestHalf(shape), 0.02);
-        // Only bodies whose bounds meet the swept bounds of the shape can be touched.
-        const from = probe.aabb, lowX = from[0]! + Math.min(dx * reach, 0), lowY = from[1]! + Math.min(dy * reach, 0), lowZ = from[2]! + Math.min(dz * reach, 0);
-        const highX = from[3]! + Math.max(dx * reach, 0), highY = from[4]! + Math.max(dy * reach, 0), highZ = from[5]! + Math.max(dz * reach, 0);
-        const near: RigidBody3D[] = [];
-        for (const body of this.#bodies) {
-            const box = body.aabb;
-            if ((body.layer & mask) === 0 || body.isTrigger || box[0]! > highX || box[3]! < lowX || box[1]! > highY || box[4]! < lowY || box[2]! > highZ || box[5]! < lowZ) continue;
-            near.push(body);
-        }
-        if (near.length === 0) return undefined;
-        let touched: RigidBody3D | undefined;
-        const touches = (t: number): boolean => {
-            probe.position[0] = ox + dx * t; probe.position[1] = oy + dy * t; probe.position[2] = oz + dz * t;
-            probe.refresh();
-            for (const body of near) {
-                if (!collide(m, probe, body)) continue;
-                for (let i = 0; i < m.count; i++) if (m.contacts[i]!.depth > 0) { touched = body; return true; }
-            }
-            return false;
-        };
-        let clear = 0, hit = -1;
-        if (touches(0)) hit = 0;
-        else for (let t = Math.min(thin, reach); ; t = Math.min(t + thin, reach)) {
-            if (touches(t)) { hit = t; break; }
-            clear = t;
-            if (t >= reach) return undefined;
-        }
-        // Narrow the first touch down between the last clear place and the first touching one.
-        for (let i = 0; i < 20 && hit - clear > 1e-5; i++) { const middle = (clear + hit) / 2; if (touches(middle)) hit = middle; else clear = middle; }
-        touches(hit);
-        const body = touched!;
+        const m = this.#manifold, hit = this.cast(probe, dx, dy, dz, reach, Math.max(thinnestHalf(shape), 0.02), (body) => (body.layer & mask) !== 0, false);
+        if (hit < 0) return undefined;
+        const body = this.#castBody!;
         collide(m, probe, body);
         let best = m.contacts[0]!;
         for (let i = 1; i < m.count; i++) if (m.contacts[i]!.depth > best.depth) best = m.contacts[i]!;
@@ -1740,13 +1968,10 @@ export class PhysicsWorld3D {
     /** @internal Contacts of a free-standing shape against the world, for the character controller. */
     probe(body: RigidBody3D, mask: number, visit: (nx: number, ny: number, nz: number, depth: number, other: RigidBody3D) => void): void {
         const m = this.#manifold, box = body.aabb;
-        for (const other of this.#bodies) {
-            if (other === body || other.isTrigger || (other.layer & mask) === 0) continue;
-            const b = other.aabb;
-            if (box[0]! > b[3]! || box[3]! < b[0]! || box[1]! > b[4]! || box[4]! < b[1]! || box[2]! > b[5]! || box[5]! < b[2]!) continue;
-            if (!collide(m, body, other)) continue;
+        this.near(box[0]!, box[1]!, box[2]!, box[3]!, box[4]!, box[5]!, (other) => {
+            if (other === body || other.isTrigger || (other.layer & mask) === 0 || !collide(m, body, other)) return;
             for (let i = 0; i < m.count; i++) { const c = m.contacts[i]!; if (c.depth > 0) visit(c.nx, c.ny, c.nz, c.depth, other); }
-        }
+        });
     }
 }
 /** Half the thinnest extent of a solid shape; zero for planes and meshes. */

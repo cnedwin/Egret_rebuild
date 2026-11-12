@@ -287,7 +287,10 @@ test('edges of two solids that cross without a corner inside are found', () => {
     const other = world.createBody({shape: {type: 'convex', hull}, quaternion: turn([0, 1, 0], Math.PI / 4), position: [Math.SQRT2 - 0.1, 0, 0]});
     world.step(1 / 60);
     assert.equal(world.contactCount, 1);
-    assert.ok(other.linearVelocity[0] > 0.1, 'pushed apart along the direction across both ridges');
+    // The overlap is pushed out by moving the body; the speed that did it is taken back out afterwards.
+    assert.ok(other.position[0] > Math.SQRT2 - 0.1 + 0.005, 'pushed apart along the direction across both ridges');
+    close(other.position[1], 0, 1e-6); close(other.position[2], 0, 1e-6);
+    assert.ok(Math.abs(other.linearVelocity[0]) < 0.05);
     close(other.linearVelocity[1], 0, 1e-6); close(other.linearVelocity[2], 0, 1e-6);
   }
 });
