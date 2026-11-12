@@ -72,7 +72,9 @@ Skinning uses `Bone3D` nodes and a `Skeleton3D` with inverse bind matrices; four
 
 ## glTF
 
-`loadGltf3D` reads `.glb` bytes or a parsed `.gltf` object and returns scenes, cameras, animations and the created resources with one `dispose()`. It supports meshes, metallic-roughness and unlit materials, texture transforms, node hierarchies, skins, morph targets, animations, cameras, punctual lights and `EXT_mesh_gpu_instancing` nodes, which load as `InstancedMesh3D`. Image decoding and external buffer loading are injected, so the reader stays DOM-free. The reader accepts disjoint scene roots. Occlusion and emissive textures may use texture coordinate set 0 or 1, which is where baked lighting usually lives; they set `texture.channel`, and the same property works on any occlusion or emissive map assigned by hand. Base colour, normal and metallic-roughness textures use set 0. Shared scene roots and other coordinate sets are refused with a typed diagnostic. A single decoded accessor is limited to 128 MiB and the combined decoded accessors are limited to 256 MiB. Draco, meshopt and Basis payloads need a decoder supplied by the caller (see Compressed resources); without one they, and any other required extension, are refused with `WORLD3D_GLTF_UNSUPPORTED`. `loadGltfFromUrl3D` in the browser entries supplies fetch and `createImageBitmap`.
+`loadGltf3D` reads `.glb` bytes or a parsed `.gltf` object and returns scenes, cameras, animations and the created resources with one `dispose()`. It supports meshes, metallic-roughness and unlit materials, texture transforms, node hierarchies, skins, morph targets, animations, cameras, punctual lights and `EXT_mesh_gpu_instancing` nodes, which load as `InstancedMesh3D`. Image decoding and external buffer loading are injected, so the reader stays DOM-free. The reader accepts disjoint scene roots. Occlusion and emissive textures may use texture coordinate set 0 or 1, which is where baked lighting usually lives; they set `texture.channel`, and the same property works on any occlusion or emissive map assigned by hand. Base colour, normal and metallic-roughness textures use set 0. Shared scene roots and other coordinate sets are refused with a typed diagnostic. A single decoded accessor is limited to 128 MiB and the combined decoded accessors are limited to 256 MiB. Draco, meshopt and Basis payloads need a decoder supplied by the caller (see Compressed resources); without one they, and any other required extension, are refused with `WORLD3D_GLTF_UNSUPPORTED`.
+
+The surface extensions `KHR_materials_transmission`, `KHR_materials_ior`, `KHR_materials_volume`, `KHR_materials_clearcoat` and `KHR_materials_sheen` are read as their plain factors; the textures those extensions may carry are not used. `loadGltfFromUrl3D` in the browser entries supplies fetch and `createImageBitmap`.
 
 ## Renderers
 
@@ -126,11 +128,15 @@ Level geometry collides as a triangle mesh: `world.createBody({shape: {type: 'me
 
 `world.raycast(origin, direction, maxDistance, mask)` returns the nearest solid body with the hit point and normal, and `world.overlapSphere(center, radius, mask)` lists solid bodies in a volume. `createCharacterController3D(world, options)` is a kinematic capsule: `move(dx, dy, dz)` slides along obstacles and reports `isGrounded`, `groundNormal` and `groundBody`.
 
-`{type: 'convex', hull: createConvexHullShape3D(geometryOrPoints)}` is a convex solid for moving props; more than 64 corners are reduced to the most extreme ones. Hulls collide exactly with planes and, through their corners, with meshes; against spheres, capsules, boxes and other hulls they use face planes and corner containment, which rounds nothing: edge-to-edge touches between two solids are not detected.
+`{type: 'convex', hull: createConvexHullShape3D(geometryOrPoints)}` is a convex solid for moving props; more than 64 corners are reduced to the most extreme ones. Hulls collide exactly with planes and, through their corners, with meshes; against spheres, capsules, boxes and other hulls they use face planes and corner containment, and where two edges cross without any corner inside the other solid, a contact is placed between those edges.
 
 `world.createJoint(options)` connects two bodies, or pins one to the world, from world-space anchors: `point` (ball and socket), `hinge` (with an `axis`), `fixed` (weld) and `distance` (a rod, or a `rope` that goes slack). Jointed bodies do not collide with each other unless `collideConnected` is set.
 
-The solver has no joint limits or motors and no continuous collision detection. Fast, small bodies can pass through thin geometry; keep walls thicker than the distance a body moves in one step.
+A hinge takes `limits: [min, max]`, in radians from the pose it was created in, and a motor: `motorSpeed` is the turning speed it drives toward and `maxMotorTorque` the strength it may use; a motor with zero speed acts as a brake. A point joint takes `coneLimit`, the widest angle the two bodies may swing apart around `axis`. `joint.angle` reports the current angle, counted as bodyA turning relative to bodyB or the world. Limits and motor values may be changed at any time.
+
+`continuous: true` on a body is for projectiles and other small, fast things: each step its travel is cut short at the first surface on its path, so it cannot pass through a thin wall. The path is probed along the line of the body's center, which catches what the body would hit head-on but not what only its side would graze.
+
+The solver has no sliding or spring joints. Without `continuous`, fast, small bodies can pass through thin geometry; keep walls thicker than the distance a body moves in one step.
 
 ## Curves, outlines and more geometries
 
@@ -140,7 +146,7 @@ Further builders: `createCircleGeometry3D`, `createRingGeometry3D`, `createTorus
 
 ## Stylized and custom materials
 
-`createToonMaterial3D({steps})` quantizes diffuse light into flat bands. `createMatcapMaterial3D({matcap})` looks colour up from a sphere image by the view-space normal and needs no lights. A standard material gains a lacquer layer with `clearcoat` and `clearcoatRoughness`, a soft cloth rim with `sheen`, `sheenColor` and `sheenRoughness`, and see-through glass with `transmission` (`createGlassMaterial3D`). Transmission lowers opacity where the surface faces the viewer and keeps reflections at grazing angles; it needs `alphaMode: 'blend'` and does not refract.
+`createToonMaterial3D({steps})` quantizes diffuse light into flat bands. `createMatcapMaterial3D({matcap})` looks colour up from a sphere image by the view-space normal and needs no lights. A standard material gains a lacquer layer with `clearcoat` and `clearcoatRoughness`, a soft cloth rim with `sheen`, `sheenColor` and `sheenRoughness`, and see-through glass with `transmission` (`createGlassMaterial3D`). A transmitting surface shows what was drawn before it: the renderer copies the picture once the opaque objects and the background are done, and the surface reads that copy, tinted by its color and blurred by its roughness, while keeping its own reflections. `thickness` (world units) together with `ior` bends the view as a solid block would; a thickness of zero is a thin sheet that does not bend it. `attenuationColor` and `attenuationDistance` deepen the tint with the distance travelled inside. Transmitting materials are drawn with the transparent objects whatever their `alphaMode`. Only one layer is seen: other see-through and transparent objects behind such a surface do not show through it, and the bending is worked out at the entry surface alone, so a glass ball magnifies what is behind it instead of turning it upside down.
 
 Any lit material accepts `lightMap` and `lightMapIntensity` for baked lighting, added to its indirect light. The map is sampled with its `channel`, normally 1 so the bake can use a second, non-overlapping UV set.
 
@@ -164,6 +170,20 @@ One point light may cast shadows (`createPointLight3D({castShadow: true})`). It 
 
 `createFatLine3D(points, {width, screenSpace, closed, color})` draws a polyline as a ribbon that turns to face the camera, with mitred joints. The width is in world units, or in pixels with `screenSpace` when `resolutionHeight` is set to the output height.
 
+## Text
+
+`createTextGeometry3D(text, font, {size, depth, align, letterSpacing, lineHeight, curveSegments})` turns a string into a mesh geometry in the XY plane with its first baseline on y = 0. With `depth` it is an extrusion with two material groups, faces and sides; with `depth: 0` it is flat. `createTextShapes3D` returns the outlines alone, and `font.measureText` the width.
+
+A font comes from `parseTrueTypeFont3D(bytes)`, which reads a `.ttf` file directly (also an OpenType file with TrueType outlines, or the first font of a `.ttc` collection), or from `parseTypefaceFont3D(json)` for the typeface JSON format used with web 3D libraries. Glyphs are decoded when first used, so a large Chinese, Japanese or Korean font costs only what the text needs. Fonts with PostScript (CFF) outlines are rejected. Characters are placed left to right one after another with no kerning or shaping, so scripts that join or reorder letters, such as Arabic or Devanagari, are not laid out correctly. Extrusions have sharp edges; bevels are not generated.
+
+## Transform gizmo
+
+`createTransformControls3D(camera, element)` from the browser entry gives handles for moving, turning and resizing an object with the pointer. Add `controls.gizmo` to the scene, `attach(object)`, and call `controls.update()` once per frame. `mode` is `'translate'`, `'rotate'` or `'scale'`; `space` is `'world'` or `'local'`; `translationSnap`, `rotationSnap` and `scaleSnap` on the gizmo set step sizes. The handles keep a constant size on screen and draw over the scene.
+
+Create the transform controls before orbit or fly controls on the same element: a press that lands on a handle is then kept from them. `gizmo.onDraggingChanged` reports the start and end of a drag for applications that pause camera controls themselves, and `gizmo.onChange` reports every change.
+
+The gizmo itself, `createTransformGizmo3D(camera)` from the core entry, takes no input events. It is driven with world-space rays through `hover`, `beginDrag`, `drag`, `endDrag` and `cancelDrag`, so it also works from a controller or a test.
+
 ## Helpers, first-person controls and sound
 
 `createBoxHelper3D`, `createArrowHelper3D`, `createCameraHelper3D`, `createLightHelper3D` and `createSkeletonHelper3D` are line nodes that follow their subject; call `update()` after it moves. `computeObjectBounds3D(object)` returns world bounds of a subtree.
@@ -181,7 +201,7 @@ One point light may cast shadows (`createPointLight3D({castShadow: true})`). It 
 | `BufferGeometryUtils.mergeGeometries`, `mergeVertices` | `mergeGeometries3D`, `mergeVertices3D` |
 | `Curve`, `CatmullRomCurve3`, `Shape`, `Path` | `Curve3D`, `CatmullRomCurve3D`, `Shape3D`, `Path2D3D` |
 | `MeshBasicMaterial`, `MeshLambertMaterial`, `MeshPhongMaterial`, `MeshStandardMaterial` | `createUnlitMaterial3D`, `createLambertMaterial3D`, `createPhongMaterial3D`, `createStandardMaterial3D` |
-| `MeshToonMaterial`, `MeshMatcapMaterial`, `MeshPhysicalMaterial` clearcoat, sheen and transmission, `lightMap` | `createToonMaterial3D`, `createMatcapMaterial3D`, `material.clearcoat`, `material.sheen`, `createGlassMaterial3D`, `material.lightMap` |
+| `MeshToonMaterial`, `MeshMatcapMaterial`, `MeshPhysicalMaterial` clearcoat, sheen, transmission, `ior`, `thickness` and attenuation, `lightMap` | `createToonMaterial3D`, `createMatcapMaterial3D`, `material.clearcoat`, `material.sheen`, `createGlassMaterial3D` with `material.ior` and `material.thickness`, `material.lightMap` |
 | `ShaderMaterial`, `onBeforeCompile`, `customDepthMaterial` | `createCustomShader3D` assigned to `material.shader`; its vertex hook also shapes shadows |
 | `LineBasicMaterial`, `PointsMaterial`, `SpriteMaterial` | `createLineMaterial3D`, `createSpriteMaterial3D` with a `lines` or `points` geometry |
 | `Texture`, `DataTexture`, `CanvasTexture`, `CompressedTexture`, `CubeTexture`, `WebGLRenderTarget` | `Texture3D` (pixels, images, canvases or compressed chains), `CubeTexture3D`, `RenderTarget3D` |
@@ -196,6 +216,8 @@ One point light may cast shadows (`createPointLight3D({castShadow: true})`). It 
 | `WebGLRenderer`, `WebGPURenderer`, `setViewport`, `autoClear` | `createWebGL2Renderer3D`, `createWebGPURenderer3D`, `renderer.viewport`, `renderer.autoClear` |
 | `EffectComposer`, `UnrealBloomPass`, `OutputPass`, `FXAAShader`, `SSAOPass`, `OutlinePass`, `BokehPass`, `ShaderPass`, `DepthTexture` | `renderer.postProcess` with `ssao`, `outlineLayers`, `dof` and `custom` (`sceneDepth`) |
 | `BatchedMesh`, `Line2` | `createBatchedMesh3D`, `createFatLine3D` |
+| `TextGeometry`, `FontLoader`, `TTFLoader` | `createTextGeometry3D`, `parseTypefaceFont3D`, `parseTrueTypeFont3D` |
+| `TransformControls` | `createTransformControls3D`, `createTransformGizmo3D` |
 | `renderer.clippingPlanes`, `scene.overrideMaterial` | `scene.clippingPlanes`, `scene.overrideMaterial` |
 | `CubeCamera`, `PMREMGenerator.fromEquirectangular` | `captureCubeTexture3D`, `createCubeTextureFromEquirect3D` |
 | `OrbitControls`, `PointerLockControls`, `FlyControls` | `createOrbitControls3D`, `createFlyControls3D` |
@@ -221,7 +243,7 @@ The [World3D example](https://github.com/cnedwin/Egret_rebuild/blob/main/example
 
 Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.test.mjs`, `tests/world3d-gltf.test.mjs`, `tests/world3d-renderer-lifetime.test.mjs`, `tests/world3d-extended.test.mjs` and `tests/world3d-parity.test.mjs` cover the DOM-free core, the asset providers, the state machine and physics through the public entries.
 
-`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` renders eighteen fixed scenes into a render target on both backends and compares the images. The newer scenes cover cascaded shadows, post-processing, a compressed texture, screen layers, a scene restored from its saved document, stylized and custom materials, point-light shadows, screen-space occlusion with outlines and clipping, a vertex hook with its shadows, sheen, glass, light maps, a batch and a wide line, and depth of field. During development all eighteen ran in headless Chromium with software rendering. The desktop review ran the first fourteen cases in Edge 157 on an NVIDIA RTX 5090 Laptop GPU without renderer override flags. The visible sample presented on both backends with antialiasing and stopped advancing frames on disposal.
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` renders twenty fixed scenes into a render target on both backends and compares the images. The newer scenes cover cascaded shadows, post-processing, a compressed texture, screen layers, a scene restored from its saved document, stylized and custom materials, point-light shadows, screen-space occlusion with outlines and clipping, a vertex hook with its shadows, sheen, glass, light maps, a batch and a wide line, depth of field, refraction through glass, and text with transform gizmos. During development all twenty ran in headless Chromium with software rendering. The desktop review ran the first fourteen cases in Edge 157 on an NVIDIA RTX 5090 Laptop GPU without renderer override flags. The visible sample presented on both backends with antialiasing and stopped advancing frames on disposal.
 
 `tools/bench-world3d.mjs --playwright <installed-playwright-module>` measures the CPU time of `render()` for fixed workloads on both backends, as a baseline for regressions rather than an absolute score.
 
@@ -230,4 +252,4 @@ Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.t
 - The desktop review forced WebGL2 context loss and restored the target pixels. It also forced WebGPU device loss and verified notification and refusal of subsequent work. Wider device and recovery coverage remains open.
 - One physical Android Chrome 157 device presented both backends, responded to an automated shadow toggle, and stopped frame updates on disposal. Performance, human gestures and a broader mobile device matrix remain open.
 - Cascaded and point-light shadows, post-processing, compressed textures, screen layers, toon, matcap, clearcoat and custom shaders, viewports and probes have run only under software rendering so far, where both backends matched; they, the seven newer comparison scenes and the benchmark still need a pass on physical desktop and mobile GPUs. First-person controls and spatial audio have not been exercised by a person.
-- Not implemented: bundled Basis, meshopt or Draco decoders, float-precision environment prefiltering, refraction, transform gizmos, text geometry, joint limits and motors, and exact convex-against-convex contact.
+- Not implemented: bundled Basis, meshopt or Draco decoders, float-precision environment prefiltering, more than one layer of refraction, bevelled extrusions, text shaping and CFF fonts, sliding and spring joints, and continuous collision for spinning or wide bodies.

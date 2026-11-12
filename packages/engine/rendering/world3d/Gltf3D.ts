@@ -74,7 +74,8 @@ export interface GltfAsset3D {
 }
 
 type Json = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-const SUPPORTED_EXTENSIONS = new Set(['KHR_materials_unlit', 'KHR_materials_emissive_strength', 'KHR_texture_transform', 'KHR_lights_punctual', 'KHR_mesh_quantization', 'KHR_texture_basisu', 'EXT_mesh_gpu_instancing']);
+const SUPPORTED_EXTENSIONS = new Set(['KHR_materials_unlit', 'KHR_materials_emissive_strength', 'KHR_texture_transform', 'KHR_lights_punctual', 'KHR_mesh_quantization', 'KHR_texture_basisu', 'EXT_mesh_gpu_instancing',
+    'KHR_materials_transmission', 'KHR_materials_ior', 'KHR_materials_volume', 'KHR_materials_clearcoat', 'KHR_materials_sheen']);
 /** Extensions accepted only when the caller injects the matching decoder. */
 const DECODER_EXTENSIONS: Readonly<Record<string, 'decodeMeshopt' | 'decodeDraco'>> = Object.freeze({EXT_meshopt_compression: 'decodeMeshopt', KHR_draco_mesh_compression: 'decodeDraco'});
 const GLTF_LIMITS = Object.freeze({
@@ -361,6 +362,17 @@ class GltfReader {
         material.flatShading = flat;
         if (Array.isArray(def.emissiveFactor)) material.emissive.set(def.emissiveFactor);
         material.emissiveIntensity = extensions.KHR_materials_emissive_strength?.emissiveStrength ?? 1;
+        // Surface extensions are read as their plain factors; their own textures are not used.
+        const transmission: Json = extensions.KHR_materials_transmission, volume: Json = extensions.KHR_materials_volume, coat: Json = extensions.KHR_materials_clearcoat, sheen: Json = extensions.KHR_materials_sheen;
+        if (transmission) material.transmission = transmission.transmissionFactor ?? 0;
+        if (extensions.KHR_materials_ior) material.ior = extensions.KHR_materials_ior.ior ?? 1.5;
+        if (volume) {
+            material.thickness = volume.thicknessFactor ?? 0;
+            if (Array.isArray(volume.attenuationColor)) material.attenuationColor.set(volume.attenuationColor);
+            if (volume.attenuationDistance > 0) material.attenuationDistance = volume.attenuationDistance;
+        }
+        if (coat) { material.clearcoat = coat.clearcoatFactor ?? 0; material.clearcoatRoughness = coat.clearcoatRoughnessFactor ?? 0; }
+        if (sheen) { material.sheen = 1; material.sheenColor.set(sheen.sheenColorFactor ?? [0, 0, 0]); material.sheenRoughness = sheen.sheenRoughnessFactor ?? 0; }
         material.normalScale = def.normalTexture?.scale ?? 1;
         material.occlusionStrength = def.occlusionTexture?.strength ?? 1;
         const [map, metallicRoughness, normal, occlusion, emissive] = await Promise.all([

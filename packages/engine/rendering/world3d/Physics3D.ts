@@ -40,6 +40,13 @@ export interface RigidBodyOptions3D {
     readonly mask?: number;
     /** Stop the body from rotating, as for an upright character. */
     readonly fixedRotation?: boolean;
+    /**
+     * Continuous collision for fast bodies such as projectiles: each step the
+     * body's travel is cut short at the first surface in its path, so it
+     * cannot pass through thin walls. The path is probed along the line of
+     * the body's center.
+     */
+    readonly continuous?: boolean;
     /** Scene node moved with the body after each step; it must not have a transformed parent. */
     readonly node?: Object3D;
     readonly userData?: unknown;
@@ -91,6 +98,7 @@ export class RigidBody3D {
     layer: number;
     mask: number;
     fixedRotation: boolean;
+    continuous: boolean;
     node: Object3D | undefined;
     userData: unknown;
     isSleeping = false;
@@ -123,6 +131,7 @@ export class RigidBody3D {
         this.isTrigger = options.isTrigger ?? false;
         this.layer = options.layer ?? 1; this.mask = options.mask ?? -1;
         this.fixedRotation = options.fixedRotation ?? false;
+        this.continuous = options.continuous ?? false;
         this.node = options.node; this.userData = options.userData;
         if (this.type === 'dynamic') {
             // Principal moments of inertia about the local axes.
@@ -530,6 +539,80 @@ function solidSolid(m: Manifold, a: RigidBody3D, b: RigidBody3D): void {
         const distance = solidDistance(a, solidPoint[0]!, solidPoint[1]!, solidPoint[2]!, faceNormal);
         if (distance < MARGIN) { m.feature = 64 + i; m.addDeep(solidPoint[0]!, solidPoint[1]!, solidPoint[2]!, faceNormal[0]!, faceNormal[1]!, faceNormal[2]!, -distance); }
     }
+    solidEdges(m, a, b);
+}
+const BOX_EDGES = [0, 1, 2, 3, 4, 5, 6, 7, 0, 2, 1, 3, 4, 6, 5, 7, 0, 4, 1, 5, 2, 6, 3, 7];
+function solidEdgeCount(body: RigidBody3D): number { return body.shape.type === 'convex' ? body.shape.hull.edges.length / 2 : 12; }
+function solidEdge(body: RigidBody3D, index: number, a: Vec, b: Vec): void {
+    const list = body.shape.type === 'convex' ? body.shape.hull.edges : BOX_EDGES;
+    solidVertex(a, body, list[index * 2]!); solidVertex(b, body, list[index * 2 + 1]!);
+}
+const clipRange = [0, 0], clipA = v3(), clipB = v3();
+/** Part of the world segment a-b that lies inside a box or hull, as parameters in clipRange; false when none does. */
+function clipSegmentSolid(body: RigidBody3D, a: Vec, b: Vec): boolean {
+    const r = body.rotation, p = body.position;
+    let dx = a[0]! - p[0]!, dy = a[1]! - p[1]!, dz = a[2]! - p[2]!;
+    const ax = r[0]! * dx + r[3]! * dy + r[6]! * dz, ay = r[1]! * dx + r[4]! * dy + r[7]! * dz, az = r[2]! * dx + r[5]! * dy + r[8]! * dz;
+    dx = b[0]! - p[0]!; dy = b[1]! - p[1]!; dz = b[2]! - p[2]!;
+    const ex = r[0]! * dx + r[3]! * dy + r[6]! * dz - ax, ey = r[1]! * dx + r[4]! * dy + r[7]! * dz - ay, ez = r[2]! * dx + r[5]! * dy + r[8]! * dz - az;
+    let enter = 0, exit = 1;
+    const cut = (side: number, along: number): boolean => {
+        // side: signed distance of the start to a plane; along: its change over the segment.
+        if (Math.abs(along) < 1e-12) return side <= 0;
+        const t = -side / along;
+        if (along < 0) { if (t > enter) enter = t; } else if (t < exit) exit = t;
+        return enter < exit;
+    };
+    if (body.shape.type === 'convex') {
+        const planes = body.shape.hull.planes;
+        for (let i = 0; i < planes.length; i += 4) {
+            const nx = planes[i]!, ny = planes[i + 1]!, nz = planes[i + 2]!;
+            if (!cut(nx * ax + ny * ay + nz * az + planes[i + 3]!, nx * ex + ny * ey + nz * ez)) return false;
+        }
+    } else {
+        const h = (body.shape as {halfExtents: readonly number[]}).halfExtents;
+        if (!cut(ax - h[0]!, ex) || !cut(-ax - h[0]!, -ex) || !cut(ay - h[1]!, ey) || !cut(-ay - h[1]!, -ey) || !cut(az - h[2]!, ez) || !cut(-az - h[2]!, -ez)) return false;
+    }
+    clipRange[0] = enter; clipRange[1] = exit;
+    return true;
+}
+const edgeA = v3(), edgeB = v3(), otherA = v3(), otherB = v3(), nearA = v3(), nearB = v3();
+/**
+ * Edge against edge: an edge of `a` that passes through `b` while both its
+ * ends stay outside touches no corner, so the corner tests miss it. The
+ * contact sits between that edge and the nearest edge of `b`, along the
+ * direction perpendicular to both.
+ */
+function solidEdges(m: Manifold, a: RigidBody3D, b: RigidBody3D): void {
+    const countA = solidEdgeCount(a), countB = solidEdgeCount(b);
+    for (let i = 0; i < countA; i++) {
+        solidEdge(a, i, edgeA, edgeB);
+        if (!clipSegmentSolid(b, edgeA, edgeB)) continue;
+        const enter = clipRange[0]!, exit = clipRange[1]!;
+        if (enter < 1e-4 || exit > 1 - 1e-4) continue;   // an end is inside: a corner contact covers it
+        const dx = edgeB[0]! - edgeA[0]!, dy = edgeB[1]! - edgeA[1]!, dz = edgeB[2]! - edgeA[2]!;
+        clipA[0] = edgeA[0]! + dx * enter; clipA[1] = edgeA[1]! + dy * enter; clipA[2] = edgeA[2]! + dz * enter;
+        clipB[0] = edgeA[0]! + dx * exit; clipB[1] = edgeA[1]! + dy * exit; clipB[2] = edgeA[2]! + dz * exit;
+        let best = Infinity, nx = 0, ny = 0, nz = 0, depth = 0, px = 0, py = 0, pz = 0;
+        for (let j = 0; j < countB; j++) {
+            solidEdge(b, j, otherA, otherB);
+            closestBetweenSegments(clipA, clipB, otherA, otherB, nearA, nearB);
+            const gap = Math.hypot(nearA[0]! - nearB[0]!, nearA[1]! - nearB[1]!, nearA[2]! - nearB[2]!);
+            if (gap >= best) continue;
+            const fx = otherB[0]! - otherA[0]!, fy = otherB[1]! - otherA[1]!, fz = otherB[2]! - otherA[2]!;
+            let cx = dy * fz - dz * fy, cy = dz * fx - dx * fz, cz = dx * fy - dy * fx;
+            const length = Math.hypot(cx, cy, cz);
+            if (length < 1e-9) continue;   // parallel edges: a face or corner contact describes it better
+            cx /= length; cy /= length; cz /= length;
+            // b's inside lies beyond its edge, which fixes the direction from a to b.
+            if (cx * (b.position[0]! - nearB[0]!) + cy * (b.position[1]! - nearB[1]!) + cz * (b.position[2]! - nearB[2]!) < 0) { cx = -cx; cy = -cy; cz = -cz; }
+            const overlap = cx * (nearA[0]! - nearB[0]!) + cy * (nearA[1]! - nearB[1]!) + cz * (nearA[2]! - nearB[2]!);
+            if (overlap <= 0) continue;
+            best = gap; nx = cx; ny = cy; nz = cz; depth = overlap;
+            px = (nearA[0]! + nearB[0]!) / 2; py = (nearA[1]! + nearB[1]!) / 2; pz = (nearA[2]! + nearB[2]!) / 2;
+        }
+        if (best < Infinity) { m.feature = 256 + i; m.addDeep(px, py, pz, nx, ny, nz, depth); }
+    }
 }
 function solidPlane(m: Manifold, solid: RigidBody3D, plane: RigidBody3D): void {
     const r = plane.rotation, nx = r[1]!, ny = r[4]!, nz = r[7]!, p = plane.position, count = solidVertexCount(solid);
@@ -612,8 +695,19 @@ export interface JointOptions3D {
     readonly anchor?: readonly [number, number, number];
     /** 'distance' only: world-space attachment on bodyB (or in the world). Defaults to bodyB's position. */
     readonly anchorB?: readonly [number, number, number];
-    /** 'hinge' only: world-space direction of the hinge pin. */
+    /**
+     * 'hinge': world-space direction of the hinge pin. 'point': the direction
+     * `coneLimit` is measured around. Defaults to +Y.
+     */
     readonly axis?: readonly [number, number, number];
+    /** 'hinge' only: lowest and highest angle in radians, relative to the pose at creation; both within -PI..PI. */
+    readonly limits?: readonly [number, number];
+    /** 'hinge' only: turning speed in radians per second the motor drives toward. */
+    readonly motorSpeed?: number;
+    /** 'hinge' only: strongest torque the motor may use. Zero, the default, turns the motor off. */
+    readonly maxMotorTorque?: number;
+    /** 'point' only: largest angle in radians bodyB may swing away from `axis`. */
+    readonly coneLimit?: number;
     /** 'distance' only: rest length; defaults to the distance between the anchors at creation. */
     readonly length?: number;
     /** 'distance' only: act like a rope that goes slack when shorter than its length. */
@@ -632,7 +726,30 @@ export class Joint3D {
     /** 'distance' joints: rest length, and whether it only limits stretching. */
     length = 0;
     rope = false;
+    /** 'hinge' joints: angle range in radians, or undefined for a free hinge. */
+    limits: [number, number] | undefined;
+    /** 'hinge' joints: target speed in radians per second, and the torque available to reach it (0 = off). */
+    motorSpeed = 0;
+    maxMotorTorque = 0;
+    /** 'point' joints: largest swing angle in radians, or undefined for none. */
+    coneLimit: number | undefined;
     /** @internal */ readonly points: JointPoint[] = [];
+    /** @internal */ readonly axisA = v3(0, 1, 0);
+    /** @internal */ readonly axisB = v3(0, 1, 0);
+    /** @internal */ readonly sideA = v3(1, 0, 0);
+    /** @internal */ readonly sideB = v3(1, 0, 0);
+    /** @internal */ readonly row = v3();
+    /** @internal */ rowMass = 0;
+    /** @internal */ rowArm = 1;
+    /** @internal */ readonly rowDirection = v3();
+    /** @internal */ readonly rowA = v3();
+    /** @internal */ readonly rowB = v3();
+    /** @internal */ rowLow = NaN;
+    /** @internal */ rowHigh = NaN;
+    /** @internal */ limitImpulse = 0;
+    /** @internal */ limitImpulseHigh = 0;
+    /** @internal */ motorImpulse = 0;
+    /** @internal */ current = 0;
     /** @internal */ accumulated = 0;
     /** @internal */ world: PhysicsWorld3D | undefined;
     constructor(options: JointOptions3D) {
@@ -650,7 +767,35 @@ export class Joint3D {
             this.length = options.length ?? Math.hypot(other[0]! - anchor[0], other[1]! - anchor[1], other[2]! - anchor[2]);
             if (!(this.length >= 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint length');
             this.rope = options.rope ?? false;
-        } else if (this.type === 'point') add(anchor[0], anchor[1], anchor[2]);
+        }
+        if (this.type === 'hinge' || this.type === 'point') {
+            const axis = options.axis ?? [0, 1, 0], size = Math.hypot(axis[0], axis[1], axis[2]);
+            if (!(size > 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint axis');
+            const x = axis[0] / size, y = axis[1] / size, z = axis[2] / size;
+            // Any direction across the axis serves as the zero mark for measuring the angle.
+            const seed = Math.abs(x) < 0.57 ? [1, 0, 0] : [0, 1, 0], side = cross(v3(), [x, y, z], seed), length = Math.hypot(side[0]!, side[1]!, side[2]!);
+            side[0]! /= length; side[1]! /= length; side[2]! /= length;
+            const turn = (body: RigidBody3D | undefined, out: Vec, wx: number, wy: number, wz: number): void => {
+                if (!body) { out[0] = wx; out[1] = wy; out[2] = wz; return; }
+                const r = body.rotation;
+                out[0] = r[0]! * wx + r[3]! * wy + r[6]! * wz; out[1] = r[1]! * wx + r[4]! * wy + r[7]! * wz; out[2] = r[2]! * wx + r[5]! * wy + r[8]! * wz;
+            };
+            turn(a, this.axisA, x, y, z); turn(b, this.axisB, x, y, z); turn(a, this.sideA, side[0]!, side[1]!, side[2]!); turn(b, this.sideB, side[0]!, side[1]!, side[2]!);
+            if (options.limits) {
+                if (this.type !== 'hinge' || !(options.limits[0] <= options.limits[1]) || options.limits[0] < -Math.PI || options.limits[1] > Math.PI) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint limits');
+                this.limits = [options.limits[0], options.limits[1]];
+            }
+            if (options.coneLimit !== undefined) {
+                if (this.type !== 'point' || !(options.coneLimit >= 0 && options.coneLimit <= Math.PI)) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint coneLimit');
+                this.coneLimit = options.coneLimit;
+            }
+            this.motorSpeed = requireFinite3D(options.motorSpeed ?? 0, 'joint motorSpeed');
+            this.maxMotorTorque = requireFinite3D(options.maxMotorTorque ?? 0, 'joint maxMotorTorque');
+            if (this.maxMotorTorque < 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint maxMotorTorque');
+        }
+        else if (options.limits || options.coneLimit !== undefined || options.maxMotorTorque) throw new World3DError('WORLD3D_INPUT_INVALID', 'limits and motors need a hinge or point joint');
+        if (this.type === 'distance') { /* built above */ }
+        else if (this.type === 'point') add(anchor[0], anchor[1], anchor[2]);
         else if (this.type === 'hinge') {
             // Two pivots along the pin leave exactly one free rotation: about the pin.
             const axis = options.axis ?? [0, 1, 0], size = Math.hypot(axis[0], axis[1], axis[2]);
@@ -661,6 +806,25 @@ export class Joint3D {
             // Three pivots that are not in a line lock every rotation.
             add(anchor[0], anchor[1], anchor[2]); add(anchor[0] + 0.5, anchor[1], anchor[2]); add(anchor[0], anchor[1] + 0.5, anchor[2]);
         }
+    }
+    /**
+     * 'hinge' joints: how far bodyA has turned about the pin since creation,
+     * relative to bodyB or the world, in radians. 'point' joints: how far
+     * the two bodies have swung apart, measured between their copies of the axis.
+     */
+    get angle(): number {
+        const a = this.bodyA, b = this.bodyB;
+        if (this.type === 'point') {
+            rotateInto(jointA, a, this.axisA);
+            if (b) rotateInto(jointB, b, this.axisB); else jointB.set(this.axisB);
+            return Math.acos(clamp(dot(jointA, jointB), -1, 1));
+        }
+        if (this.type !== 'hinge') return 0;
+        const n = rotateInto(v3(), a, this.axisA);
+        rotateInto(jointA, a, this.sideA);
+        if (b) rotateInto(jointB, b, this.sideB); else jointB.set(this.sideB);
+        cross(jointC, jointB, jointA);
+        return Math.atan2(dot(jointC, n), dot(jointA, jointB));
     }
 }
 function toLocal(body: RigidBody3D, x: number, y: number, z: number): Vec {
@@ -787,7 +951,30 @@ export class PhysicsWorld3D {
             // A moving partner wakes a sleeper, so a chain cannot hang frozen in mid-swing.
             if (a.isSleeping && b && isMoving(b)) a.wake();
             if (b?.isSleeping && isMoving(a)) b.wake();
-            joint.accumulated = 0;
+            joint.accumulated = 0; joint.limitImpulse = 0; joint.limitImpulseHigh = 0; joint.motorImpulse = 0;
+            joint.rowMass = 0; joint.rowLow = joint.rowHigh = NaN;
+            const motor = joint.type === 'hinge' && joint.maxMotorTorque > 0;
+            if (joint.enabled && (motor || joint.limits || joint.coneLimit !== undefined)) {
+                // One rotational equation: about the pin for a hinge, about the swing direction for a cone.
+                const row = joint.row;
+                let active = true;
+                if (joint.type === 'hinge') {
+                    // Reversed pin, so that a positive turn of bodyA relative to bodyB counts as positive.
+                    rotateInto(row, a, joint.axisA);
+                    row[0] = -row[0]!; row[1] = -row[1]!; row[2] = -row[2]!;
+                    joint.current = joint.angle;
+                    if (joint.limits) { joint.rowLow = joint.current - joint.limits[0]; joint.rowHigh = joint.current - joint.limits[1]; }
+                    if (motor && joint.motorSpeed !== 0) { a.wake(); b?.wake(); }
+                } else {
+                    rotateInto(jointA, a, joint.axisA);
+                    if (b) rotateInto(jointB, b, joint.axisB); else jointB.set(joint.axisB);
+                    cross(row, jointA, jointB);
+                    const size = Math.hypot(row[0]!, row[1]!, row[2]!);
+                    joint.current = Math.atan2(size, dot(jointA, jointB));
+                    if (size > 1e-6) { row[0]! /= size; row[1]! /= size; row[2]! /= size; joint.rowHigh = joint.current - joint.coneLimit!; } else active = false;
+                }
+                if (active) this.prepareRow(joint);
+            }
             for (const point of joint.points) {
                 rotateInto(point.ra, a, point.localA);
                 if (b) rotateInto(point.rb, b, point.localB); else point.rb.fill(0);
@@ -807,9 +994,79 @@ export class PhysicsWorld3D {
             }
         }
     }
+    /**
+     * Set up the rotational equation of a joint. Turning impulses are applied
+     * as a push at the point where the more mobile body would pivot freely
+     * about the joint (its center of percussion), which leaves the pivot
+     * itself undisturbed and so settles in few iterations even for a small
+     * weight on a long arm.
+     */
+    private prepareRow(joint: Joint3D): void {
+        const a = joint.bodyA, b = joint.bodyB, u = joint.row, pivot = scratchA;
+        pivot.fill(0);
+        for (const point of joint.points) { rotateInto(jointA, a, point.localA); pivot[0]! += jointA[0]!; pivot[1]! += jointA[1]!; pivot[2]! += jointA[2]!; }
+        const share = 1 / joint.points.length;
+        pivot[0] = a.position[0]! + pivot[0]! * share; pivot[1] = a.position[1]! + pivot[1]! * share; pivot[2] = a.position[2]! + pivot[2]! * share;
+        let best = 0, arm = 0, ex = 0, ey = 0, ez = 0;
+        for (const body of [a, b]) {
+            if (!body || body.type !== 'dynamic' || body.isSleeping) continue;
+            applyInverseInertia(jointC, body.inverseInertiaWorld, u);
+            const spin = dot(u, jointC);
+            // Offset of the center from the pivot, across the turning direction.
+            let x = body.position[0]! - pivot[0]!, y = body.position[1]! - pivot[1]!, z = body.position[2]! - pivot[2]!;
+            const along = x * u[0]! + y * u[1]! + z * u[2]!;
+            x -= u[0]! * along; y -= u[1]! * along; z -= u[2]! * along;
+            const offset = Math.hypot(x, y, z), inertia = spin > 1e-12 ? 1 / spin : Infinity, mobility = 1 / (inertia + body.mass * offset * offset);
+            if (mobility <= best) continue;
+            best = mobility;
+            if (offset > 1e-4 && inertia < Infinity) { arm = offset + inertia / (body.mass * offset); ex = x / offset; ey = y / offset; ez = z / offset; } else arm = 0;
+        }
+        if (best === 0) return;
+        if (arm === 0) {
+            // Centered on the pivot: a far-away push acts as a pure twist.
+            cross(jointB, u, Math.abs(u[0]!) < 0.57 ? [1, 0, 0] : [0, 1, 0]);
+            const size = Math.hypot(jointB[0]!, jointB[1]!, jointB[2]!);
+            ex = jointB[0]! / size; ey = jointB[1]! / size; ez = jointB[2]! / size; arm = 1000;
+        }
+        const t = cross(joint.rowDirection, u, [ex, ey, ez]), px = pivot[0]! + ex * arm, py = pivot[1]! + ey * arm, pz = pivot[2]! + ez * arm;
+        joint.rowArm = arm;
+        joint.rowA[0] = px - a.position[0]!; joint.rowA[1] = py - a.position[1]!; joint.rowA[2] = pz - a.position[2]!;
+        if (b) { joint.rowB[0] = px - b.position[0]!; joint.rowB[1] = py - b.position[1]!; joint.rowB[2] = pz - b.position[2]!; }
+        let k = 0;
+        for (const [body, r] of [[a, joint.rowA], [b, joint.rowB]] as const) {
+            if (!body || body.type !== 'dynamic' || body.isSleeping) continue;
+            cross(jointB, r, t); applyInverseInertia(jointC, body.inverseInertiaWorld, jointB);
+            k += body.inverseMass + dot(jointB, jointC);
+        }
+        joint.rowMass = k > 1e-12 ? arm * arm / k : 0;
+    }
     private solveJoint(joint: Joint3D, dt: number): void {
         const a = joint.bodyA, b = joint.bodyB;
         if (!joint.enabled || ((a.type !== 'dynamic' || a.isSleeping) && (!b || b.type !== 'dynamic' || b.isSleeping))) return;
+        if (joint.rowMass > 0) {
+            const t = joint.rowDirection, arm = joint.rowArm;
+            const turn = (impulse: number): void => {
+                if (impulse === 0) return;
+                const push = impulse / arm;
+                applyPivotImpulse(a, joint.rowA, t[0]! * push, t[1]! * push, t[2]! * push, -1);
+                if (b) applyPivotImpulse(b, joint.rowB, t[0]! * push, t[1]! * push, t[2]! * push, 1);
+            };
+            const rate = (): number => { const va = pivotVelocity(scratchC, a, joint.rowA), vb = pivotVelocity(scratchD, b, joint.rowB); return ((vb[0]! - va[0]!) * t[0]! + (vb[1]! - va[1]!) * t[1]! + (vb[2]! - va[2]!) * t[2]!) / arm; };
+            if (joint.type === 'hinge' && joint.maxMotorTorque > 0) {
+                const most = joint.maxMotorTorque * dt, total = clamp(joint.motorImpulse + (joint.motorSpeed - rate()) * joint.rowMass, -most, most);
+                turn(total - joint.motorImpulse); joint.motorImpulse = total;
+            }
+            // A limit lets the angle close the remaining gap this step and no more; past the limit it steers back.
+            const low = joint.rowLow, high = joint.rowHigh;
+            if (low === low) {
+                const total = Math.max(joint.limitImpulse + (-rate() - (low > 0 ? low : low * JOINT_BAUMGARTE) / dt) * joint.rowMass, 0);
+                turn(total - joint.limitImpulse); joint.limitImpulse = total;
+            }
+            if (high === high) {
+                const total = Math.min(joint.limitImpulseHigh + (-rate() - (high < 0 ? high : high * JOINT_BAUMGARTE) / dt) * joint.rowMass, 0);
+                turn(total - joint.limitImpulseHigh); joint.limitImpulseHigh = total;
+            }
+        }
         for (const point of joint.points) {
             const va = pivotVelocity(scratchC, a, point.ra), vb = pivotVelocity(scratchD, b, point.rb);
             const dx = vb[0]! - va[0]!, dy = vb[1]! - va[1]!, dz = vb[2]! - va[2]!;
@@ -920,7 +1177,8 @@ export class PhysicsWorld3D {
             body.force.fill(0); body.torque.fill(0);
             if (body.type === 'static' || body.isSleeping) continue;
             const v = body.linearVelocity, w = body.angularVelocity, p = body.position, q = body.quaternion;
-            p[0]! += v[0]! * dt; p[1]! += v[1]! * dt; p[2]! += v[2]! * dt;
+            const reach = body.continuous && body.type === 'dynamic' ? this.sweep(body, dt) : 1;
+            p[0]! += v[0]! * dt * reach; p[1]! += v[1]! * dt * reach; p[2]! += v[2]! * dt * reach;
             if (!body.fixedRotation && (w[0] !== 0 || w[1] !== 0 || w[2] !== 0)) {
                 // q += 0.5 * dt * (w, 0) * q
                 const x = q[0]!, y = q[1]!, z = q[2]!, s = q[3]!, half = 0.5 * dt;
@@ -942,6 +1200,34 @@ export class PhysicsWorld3D {
         if (this.onContactEnd) for (const [key, pair] of before) if (!now.has(key) && pair[0].world === this && pair[1].world === this) this.onContactEnd(pair[0], pair[1]);
         this.#previousTouching = now; this.#touching = before;
         before.clear();
+    }
+    /**
+     * Share of this step's travel a fast body may make before its center line
+     * meets a surface. It stops just touching, so the next step finds the
+     * contact and answers it with the body's full speed.
+     */
+    private sweep(body: RigidBody3D, dt: number): number {
+        const v = body.linearVelocity, speed = Math.hypot(v[0]!, v[1]!, v[2]!), travel = speed * dt, shape = body.shape;
+        const inner = shape.type === 'sphere' || shape.type === 'capsule' ? shape.radius : shape.type === 'box' ? Math.min(shape.halfExtents[0], shape.halfExtents[1], shape.halfExtents[2]) : shape.type === 'convex' ? shape.hull.innerRadius : 0;
+        // Slow enough that the ordinary overlap test cannot miss anything.
+        if (travel <= inner * 0.5 || travel === 0) return 1;
+        const d = [v[0]! / speed, v[1]! / speed, v[2]! / speed], o = [body.position[0]!, body.position[1]!, body.position[2]!], normal = [0, 0, 0];
+        let limit = travel + inner, allowed = travel;
+        for (const other of this.#bodies) {
+            if (other === body || other.isTrigger || (body.layer & other.mask) === 0 || (other.layer & body.mask) === 0) continue;
+            if (this.#jointPairs.size > 0 && this.#jointPairs.has(this.pairKey(body, other))) continue;
+            const box = other.aabb;
+            // Skip bodies whose bounds the swept line cannot reach.
+            if (Math.min(o[0]!, o[0]! + d[0]! * limit) - inner > box[3]! || Math.max(o[0]!, o[0]! + d[0]! * limit) + inner < box[0]! || Math.min(o[1]!, o[1]! + d[1]! * limit) - inner > box[4]!
+                || Math.max(o[1]!, o[1]! + d[1]! * limit) + inner < box[1]! || Math.min(o[2]!, o[2]! + d[2]! * limit) - inner > box[5]! || Math.max(o[2]!, o[2]! + d[2]! * limit) + inner < box[2]!) continue;
+            const distance = rayShape(other, o, d, limit, normal);
+            if (distance < 0 || distance > limit) continue;
+            // A round body meets a slanted surface before its center line does.
+            const facing = Math.max(-(d[0]! * normal[0]! + d[1]! * normal[1]! + d[2]! * normal[2]!), 0.2);
+            limit = distance;
+            allowed = Math.min(allowed, Math.max(distance - inner / facing + SLOP, 0));
+        }
+        return allowed / travel;
     }
     private findContacts(dt: number): void {
         this.#contactCount = 0;

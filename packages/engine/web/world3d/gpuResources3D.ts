@@ -122,7 +122,7 @@ export class GpuResources3D {
         const samplers: Record<string, number> = {
             uMap: TEXTURE_UNITS_3D.map, uNormalMap: TEXTURE_UNITS_3D.normalMap, uMetallicRoughnessMap: TEXTURE_UNITS_3D.metallicRoughnessMap,
             uOcclusionMap: TEXTURE_UNITS_3D.occlusionMap, uEmissiveMap: TEXTURE_UNITS_3D.emissiveMap, uLightMap: TEXTURE_UNITS_3D.lightMap, uEnvironment: TEXTURE_UNITS_3D.environment,
-            uShadowMap: TEXTURE_UNITS_3D.shadow, uBoneTexture: TEXTURE_UNITS_3D.bones, uMorphTexture: TEXTURE_UNITS_3D.morph,
+            uShadowMap: TEXTURE_UNITS_3D.shadow, uBoneTexture: TEXTURE_UNITS_3D.bones, uMorphTexture: TEXTURE_UNITS_3D.morph, uSceneColor: TEXTURE_UNITS_3D.sceneColor,
         };
         for (const name in samplers) if (uniforms[name]) gl.uniform1i(uniforms[name]!, samplers[name]!);
         const entry: Program3D = {id: this.#nextProgramId++, program, uniforms};

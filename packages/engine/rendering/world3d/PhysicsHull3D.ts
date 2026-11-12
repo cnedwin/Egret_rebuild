@@ -17,6 +17,10 @@ export class ConvexHullShape3D {
     readonly radius: number;
     /** Half extents of the axis-aligned box around the points. */
     readonly halfExtents: readonly [number, number, number];
+    /** Edges as pairs of corner indices. */
+    readonly edges: Uint8Array;
+    /** Radius of the largest sphere around the origin that fits inside. */
+    readonly innerRadius: number;
 
     /**
      * @param points Flat [x, y, z, ...] corner candidates. Interior points are
@@ -81,6 +85,32 @@ export class ConvexHullShape3D {
         }
         this.radius = radius;
         this.halfExtents = [hx, hy, hz];
+        // The corners lying on one face, walked in order around its normal, give that face's edges.
+        const edges: number[] = [], known = new Set<number>(), total = corners.length / 3, tolerance = 1e-4 * Math.max(1, radius);
+        let inner = Infinity;
+        for (let f = 0; f < planes.length; f += 4) {
+            const nx = planes[f]!, ny = planes[f + 1]!, nz = planes[f + 2]!, d = planes[f + 3]!;
+            inner = Math.min(inner, -d);
+            const on: number[] = [];
+            let cx = 0, cy = 0, cz = 0;
+            for (let i = 0; i < total; i++) if (Math.abs(nx * corners[i * 3]! + ny * corners[i * 3 + 1]! + nz * corners[i * 3 + 2]! + d) <= tolerance) { on.push(i); cx += corners[i * 3]!; cy += corners[i * 3 + 1]!; cz += corners[i * 3 + 2]!; }
+            if (on.length < 3) continue;
+            cx /= on.length; cy /= on.length; cz /= on.length;
+            // Two axes spanning the face.
+            const first = on[0]!;
+            let ux = corners[first * 3]! - cx, uy = corners[first * 3 + 1]! - cy, uz = corners[first * 3 + 2]! - cz;
+            const size = Math.hypot(ux, uy, uz) || 1;
+            ux /= size; uy /= size; uz /= size;
+            const vx = ny * uz - nz * uy, vy = nz * ux - nx * uz, vz = nx * uy - ny * ux;
+            const angle = (i: number): number => { const x = corners[i * 3]! - cx, y = corners[i * 3 + 1]! - cy, z = corners[i * 3 + 2]! - cz; return Math.atan2(x * vx + y * vy + z * vz, x * ux + y * uy + z * uz); };
+            on.sort((a, b) => angle(a) - angle(b));
+            for (let i = 0; i < on.length; i++) {
+                const a = on[i]!, b = on[(i + 1) % on.length]!, key = a < b ? a * 256 + b : b * 256 + a;
+                if (!known.has(key)) { known.add(key); edges.push(a, b); }
+            }
+        }
+        this.edges = Uint8Array.from(edges);
+        this.innerRadius = Math.max(inner, 0);
     }
     /**
      * Largest signed plane distance of a local point: negative inside, and the

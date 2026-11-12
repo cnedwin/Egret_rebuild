@@ -37,6 +37,8 @@ export interface ShaderFeatures3D {
     readonly uv1: boolean;
     readonly lightMap: boolean;
     readonly lightUv1: boolean;
+    /** Standard material that lets light through and reads the stored scene behind it. */
+    readonly transmission: boolean;
     readonly occlusionUv1: boolean;
     readonly emissiveUv1: boolean;
     /** Key and WGSL source of the material's fragment hook, when it has one. */
@@ -49,7 +51,7 @@ export const MAX_MORPH_INFLUENCES_WGSL_3D = 8;
 /** Bytes of the per-draw Object uniform block; also its dynamic-offset stride. */
 export const OBJECT_BLOCK_BYTES_3D = 256;
 /** Bytes of the per-material uniform block. */
-export const MATERIAL_BLOCK_BYTES_3D = 224;
+export const MATERIAL_BLOCK_BYTES_3D = 240;
 
 const FRAME = /* wgsl */`
 struct Frame {
@@ -85,6 +87,8 @@ struct Frame {
 @group(0) @binding(2) var shadowSampler: sampler_comparison;
 @group(0) @binding(3) var environmentMap: texture_cube<f32>;
 @group(0) @binding(4) var environmentSampler: sampler;
+@group(0) @binding(5) var sceneColor: texture_2d<f32>;
+@group(0) @binding(6) var sceneColorSampler: sampler;
 `;
 const DEPTH_FRAME = /* wgsl */`
 struct Frame {
@@ -105,7 +109,8 @@ struct Material {
     sprite: vec4f,       // rotation, size attenuation flag
     custom: array<vec4f, 4>, // parameters of the optional fragment hook
     sheen: vec4f,        // color scaled by strength, roughness
-    extra: vec4f,        // light map intensity, transmission
+    extra: vec4f,        // light map intensity, transmission, index of refraction, thickness
+    attenuation: vec4f,  // color after the attenuation distance; w: that distance (0 = none)
 }
 @group(1) @binding(0) var<uniform> material: Material;
 @group(1) @binding(1) var mapTexture: texture_2d<f32>;
@@ -411,12 +416,36 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     s.f0 = mix(vec3f(0.04), s.albedo, s.metallic);
     var occlusion = 1.0;
     ${f.occlusionMap ? 'occlusion = mix(1.0, occlusionSample, material.surface.w);' : ''}
+    ${f.transmission ? /* wgsl */`
+    // Light that passes through replaces that share of the diffuse reflection.
+    let through = material.extra.y * (1.0 - s.metallic);
+    var passed = vec3f(0.0);
+    {
+        let bent = refract(-s.view, s.normal, 1.0 / max(material.extra.z, 1.0));
+        let here = frame.viewProjection * vec4f(input.worldPosition, 1.0);
+        let there = frame.viewProjection * vec4f(input.worldPosition + bent * material.extra.w, 1.0);
+        let shift = (there.xy / max(there.w, 0.0001) - here.xy / here.w) * 0.5 * frame.clipInfo.zw;
+        let at = input.clip.xy / vec2f(textureDimensions(sceneColor)) + vec2f(shift.x, -shift.y);
+        // A rough surface scatters the view: average a spiral of taps that widens with roughness.
+        let spread = s.roughness * s.roughness * 0.25 / max(here.w, 1.0);
+        for (var i = 0; i < 12; i++) {
+            let turn = f32(i) * 2.399963;
+            let reach = sqrt((f32(i) + 0.5) / 12.0) * spread;
+            // The stored image is top row first, so an upward step is a downward one in it.
+            passed += textureSampleLevel(sceneColor, sceneColorSampler, clamp(at + vec2f(cos(turn), -sin(turn)) * reach, vec2f(0.0), vec2f(1.0)), 0.0).rgb;
+        }
+        passed /= 12.0;
+    }
+    // Tint of the material, deepened by the distance travelled inside it.
+    var tint = s.albedo;
+    if (material.attenuation.w > 0.0) { tint *= pow(max(material.attenuation.rgb, vec3f(0.0001)), vec3f(material.extra.w / material.attenuation.w)); }
+    s.albedo *= 1.0 - through;
+    var clear = 1.0;` : ''}
     var diffuseAlbedo = s.albedo;
     ${f.shading === 'standard' ? 'diffuseAlbedo *= 1.0 - s.metallic;' : ''}
     var irradiance = frame.ambient.rgb + mix(frame.hemisphereGround.rgb, frame.hemisphereSky.rgb, s.normal.y * 0.5 + 0.5);
     ${f.environment ? 'irradiance += textureSampleLevel(environmentMap, environmentSampler, s.normal, frame.output.y).rgb * frame.output.x * material.params.y;' : ''}
     ${f.lightMap ? 'irradiance += lightSample * material.extra.x;' : ''}
-    ${f.shading === 'standard' ? '// Transmission: light passes straight through where the surface faces the viewer.\n    base.a *= 1.0 - material.extra.y * (1.0 - s.metallic) * (1.0 - pow(1.0 - max(dot(s.normal, s.view), 0.0), 5.0));' : ''}
     color = diffuseAlbedo * irradiance * occlusion;
     ${f.environment && f.shading === 'standard' ? /* wgsl */`
     {
@@ -470,8 +499,13 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
         var fog = smoothstep(frame.fogParams.y, frame.fogParams.z, dist);
         if (frame.fogParams.x > 1.5) { fog = 1.0 - exp(-frame.fogParams.y * frame.fogParams.y * dist * dist); }
         color = mix(color, frame.fogColor.rgb, clamp(fog, 0.0, 1.0));
+        ${f.transmission ? 'clear = 1.0 - clamp(fog, 0.0, 1.0);' : ''}
     }` : ''}
     ${f.toneMapped ? 'color = toneMap(color);' : ''}
+    ${f.transmission ? /* wgsl */`
+    // The stored scene is display-ready, so it joins after tone mapping; the canvas holds it sRGB-encoded.
+    ${f.linearOutput ? '' : 'passed = mix(passed / 12.92, pow((passed + 0.055) / 1.055, vec3f(2.4)), step(vec3f(0.04045), passed));'}
+    color += passed * tint * through * clear;` : ''}
     ${f.linearOutput ? 'color = max(color, vec3f(0.0));' : 'color = encodeSrgb(color);'}
     ${f.premultipliedAlpha ? 'color *= base.a;' : ''}
     return vec4f(color, ${f.alphaBlend ? 'base.a' : '1.0'});

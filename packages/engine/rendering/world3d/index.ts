@@ -99,3 +99,7 @@ export {PHYSICS_MESH3D_LIMITS, TriangleMeshShape3D, createMeshShape3D} from './P
 export {BATCH3D_LIMITS, BatchedMesh3D, FatLine3D, createBatchedMesh3D, createFatLine3D} from './Batch3D.js';
 export type {FatLineOptions3D} from './Batch3D.js';
 export {PHYSICS_HULL3D_LIMITS, ConvexHullShape3D, createConvexHullShape3D} from './PhysicsHull3D.js';
+export {TEXT3D_LIMITS, Font3D, parseTypefaceFont3D, parseTrueTypeFont3D, createTextShapes3D, createTextGeometry3D} from './Text3D.js';
+export type {GlyphOutline3D, FontSource3D, TextLayoutOptions3D, TextGeometryOptions3D} from './Text3D.js';
+export {TransformGizmo3D, createTransformGizmo3D} from './Gizmo3D.js';
+export type {GizmoMode3D, GizmoSpace3D, GizmoHandle3D, TransformGizmoOptions3D} from './Gizmo3D.js';

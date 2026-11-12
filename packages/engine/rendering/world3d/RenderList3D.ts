@@ -134,7 +134,8 @@ export class RenderList3D {
         if (!item) this.#pool[this.#used] = item = {mesh, geometry, material, start, count, depth};
         else { item.mesh = mesh; item.geometry = geometry; item.material = material; item.start = start; item.count = count; item.depth = depth; }
         this.#used++;
-        (material.isTransparent ? this.transparent : this.opaque).push(item);
+        // A transmitting surface shows what was drawn before it, so it waits for the opaque pass like blended ones.
+        (material.isTransparent || material.transmission > 0 ? this.transparent : this.opaque).push(item);
     }
     /** Drop pooled references so retired scene content can be collected. */
     clear(): void {

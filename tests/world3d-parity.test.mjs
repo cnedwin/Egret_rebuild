@@ -12,7 +12,8 @@ import {
   createShapeGeometry3D, createSolidTexture3D, createStandardMaterial3D, createTetrahedronGeometry3D, createToonMaterial3D,
   createTorusKnotGeometry3D, createTubeGeometry3D, createWireframeGeometry3D, mergeGeometries3D, mergeVertices3D, parseRgbe3D,
   toNonIndexedGeometry3D, transformGeometry3D, triangulateShape3D, createBatchedMesh3D, createFatLine3D, createGlassMaterial3D,
-  createConvexHullShape3D, createMeshShape3D, createPhysicsWorld3D, createSphereGeometry3D,
+  createConvexHullShape3D, createMeshShape3D, createPhysicsWorld3D, createSphereGeometry3D, RenderList3D, Scene3D, createTextGeometry3D, createTextShapes3D,
+  createTransformGizmo3D, createUnlitMaterial3D, mat4Decompose, parseTrueTypeFont3D, parseTypefaceFont3D, quatFromAxisAngle, quatMultiply, signedArea2D,
 } from '@egret/engine/world3d';
 
 const code = value => error => error instanceof World3DError && error.code === value;
@@ -171,7 +172,7 @@ test('light maps, sheen and glass are plain material settings', () => {
   assert.deepEqual([...twin.sheenColor], [1, 0.5, 0.25]);
   assert.notEqual(twin.sheenColor, velvet.sheenColor, 'colors are copied, not shared');
   const glass = createGlassMaterial3D({});
-  assert.deepEqual([glass.shading, glass.alphaMode, glass.blending, glass.depthWrite, glass.transmission, glass.isTransparent], ['standard', 'blend', 'premultiplied', false, 0.9, true]);
+  assert.deepEqual([glass.shading, glass.roughness, glass.depthWrite, glass.transmission], ['standard', 0.05, true, 1]);
 });
 
 test('a batch draws many geometries as one and tracks per-item changes', () => {
@@ -270,4 +271,176 @@ test('convex hulls and moving mesh platforms collide', () => {
   const hit = world.raycast([5, 5, 0], [0, -1, 0]);
   assert.equal(hit.body, wedge); close(hit.distance, 4.5, 1e-3); close(hit.normal[1], 0.894, 1e-2);
   assert.throws(() => world.createBody({shape: {type: 'mesh', mesh: createMeshShape3D(createBoxGeometry3D({}))}, type: 'dynamic'}), code('WORLD3D_INPUT_INVALID'));
+});
+
+test('edges of two solids that cross without a corner inside are found', () => {
+  const corners = [];
+  for (const x of [-0.5, 0.5]) for (const y of [-0.5, 0.5]) for (const z of [-0.5, 0.5]) corners.push(x, y, z);
+  const hull = createConvexHullShape3D(corners), turn = (axis, angle) => [axis[0] * Math.sin(angle / 2), axis[1] * Math.sin(angle / 2), axis[2] * Math.sin(angle / 2), Math.cos(angle / 2)];
+  assert.deepEqual([hull.edges.length / 2, hull.innerRadius], [12, 0.5]);
+  assert.equal(createConvexHullShape3D(createIcosahedronGeometry3D({radius: 0.6})).edges.length / 2, 30);
+  // Two cubes standing on edge, their ridges crossing at right angles and overlapping by 0.1.
+  for (const first of [{type: 'convex', hull}, {type: 'box', halfExtents: [0.5, 0.5, 0.5]}]) {
+    const world = createPhysicsWorld3D({gravity: [0, 0, 0]});
+    world.createBody({type: 'static', shape: first, quaternion: turn([0, 0, 1], Math.PI / 4)});
+    const other = world.createBody({shape: {type: 'convex', hull}, quaternion: turn([0, 1, 0], Math.PI / 4), position: [Math.SQRT2 - 0.1, 0, 0]});
+    world.step(1 / 60);
+    assert.equal(world.contactCount, 1);
+    assert.ok(other.linearVelocity[0] > 0.1, 'pushed apart along the direction across both ridges');
+    close(other.linearVelocity[1], 0, 1e-6); close(other.linearVelocity[2], 0, 1e-6);
+  }
+});
+
+test('joints take limits, motors and cone limits', () => {
+  // A door hanging sideways from a hinge swings down until its limit stops it.
+  let world = createPhysicsWorld3D();
+  const door = world.createBody({shape: {type: 'box', halfExtents: [0.5, 0.1, 0.1]}, position: [0.5, 0, 0]});
+  const hinge = world.createJoint({type: 'hinge', bodyA: door, anchor: [0, 0, 0], axis: [0, 0, 1], limits: [-0.5, 0.5]});
+  let lowest = 0;
+  for (let i = 0; i < 300; i++) { world.step(1 / 60); lowest = Math.min(lowest, hinge.angle); }
+  close(lowest, -0.5, 0.01); close(hinge.angle, -0.5, 0.01);
+  // A motor brings a wheel to its target speed; between two free bodies it turns them against each other.
+  world = createPhysicsWorld3D({gravity: [0, 0, 0]});
+  const wheel = world.createBody({shape: {type: 'sphere', radius: 0.5}});
+  const motor = world.createJoint({type: 'hinge', bodyA: wheel, axis: [0, 0, 1], motorSpeed: 3, maxMotorTorque: 50});
+  const rotor = world.createBody({shape: {type: 'box', halfExtents: [0.5, 0.1, 0.1]}, position: [5, 0, 0]}), stator = world.createBody({shape: {type: 'box', halfExtents: [0.3, 0.3, 0.3]}, mass: 4, position: [5, 0, 0]});
+  world.createJoint({type: 'hinge', bodyA: rotor, bodyB: stator, anchor: [5, 0, 0], axis: [0, 0, 1], motorSpeed: 2, maxMotorTorque: 20});
+  for (let i = 0; i < 60; i++) world.step(1 / 60);
+  close(wheel.angularVelocity[2], 3, 0.01);
+  close(rotor.angularVelocity[2] - stator.angularVelocity[2], 2, 0.02);
+  assert.ok(rotor.angularVelocity[2] > 0 && stator.angularVelocity[2] < 0);
+  close(Math.hypot(...rotor.linearVelocity) + Math.hypot(...stator.linearVelocity), 0, 1e-3);   // nothing drifts away
+  motor.maxMotorTorque = 0.01; motor.motorSpeed = 0;                                              // a weak motor acts as a brake
+  for (let i = 0; i < 120; i++) world.step(1 / 60);
+  assert.ok(wheel.angularVelocity[2] < 2.9);
+  // A weight on a ball joint, thrown sideways, cannot swing past its cone.
+  world = createPhysicsWorld3D();
+  const bob = world.createBody({shape: {type: 'sphere', radius: 0.2}, position: [0, -1, 0]}).setLinearVelocity(6, 0, 0);
+  const socket = world.createJoint({type: 'point', bodyA: bob, anchor: [0, 0, 0], coneLimit: 0.4});
+  let widest = 0;
+  for (let i = 0; i < 300; i++) { world.step(1 / 60); widest = Math.max(widest, socket.angle); }
+  close(widest, 0.4, 0.02);
+  assert.throws(() => world.createJoint({type: 'hinge', bodyA: bob, limits: [1, -1]}), code('WORLD3D_INPUT_INVALID'));
+  assert.throws(() => world.createJoint({type: 'distance', bodyA: bob, coneLimit: 1}), code('WORLD3D_INPUT_INVALID'));   // cone limits belong to point joints
+});
+
+test('a fast body with continuous collision stops at a thin wall', () => {
+  const run = continuous => {
+    const world = createPhysicsWorld3D({gravity: [0, 0, 0]});
+    world.createBody({type: 'static', shape: {type: 'box', halfExtents: [0.05, 2, 2]}, position: [5, 0, 0], restitution: 0});
+    const bullet = world.createBody({shape: {type: 'sphere', radius: 0.1}, continuous, restitution: 0}).setLinearVelocity(200, 0, 0);
+    for (let i = 0; i < 30; i++) world.step(1 / 60);
+    return bullet.position[0];
+  };
+  assert.ok(run(false) > 50, 'without it the bullet tunnels through');
+  assert.ok(run(true) < 4.95, 'with it the bullet stays on the near side');
+});
+
+// A tiny TrueType file: glyph 1 ('A') is a square with one bulging side, glyph 2 ('B') places glyph 1 shifted.
+function tinyTrueType() {
+  const u16 = value => [(value >> 8) & 255, value & 255], u32 = value => [...u16(value >>> 16), ...u16(value & 65535)], pad = bytes => { while (bytes.length % 4) bytes.push(0); return bytes; };
+  const simple = [...u16(1), ...u16(0), ...u16(0), ...u16(700), ...u16(500), ...u16(4), ...u16(0), 1, 1, 0, 1, 1,
+    ...[0, 500, 200, -200, -500].flatMap(u16), ...[0, 0, 250, 250, 0].flatMap(u16), 0];
+  const composite = [...u16(-1), ...u16(100), ...u16(50), ...u16(800), ...u16(550), ...u16(3), ...u16(1), ...u16(100), ...u16(50)];
+  const head = new Array(54).fill(0); head.splice(18, 2, ...u16(1000));
+  const hhea = new Array(36).fill(0); hhea.splice(4, 4, ...u16(800), ...u16(-200)); hhea.splice(34, 2, ...u16(3));
+  const cmap = [...u16(0), ...u16(1), ...u16(3), ...u16(1), ...u32(12), ...u16(4), ...u16(32), ...u16(0), ...u16(4), ...u16(4), ...u16(1), ...u16(0),
+    ...u16(66), ...u16(0xffff), ...u16(0), ...u16(65), ...u16(0xffff), ...u16(1 - 65), ...u16(1), ...u16(0), ...u16(0)];
+  const tables = {cmap, glyf: [...simple, ...composite], head, hhea, hmtx: [...u16(500), ...u16(0), ...u16(600), ...u16(0), ...u16(700), ...u16(0)],
+    loca: [0, 0, simple.length / 2, (simple.length + composite.length) / 2].flatMap(u16), maxp: [...u32(0x00010000), ...u16(3)]};
+  const names = Object.keys(tables), bytes = [...u32(0x00010000), ...u16(names.length), 0, 0, 0, 0, 0, 0];
+  let offset = 12 + names.length * 16;
+  for (const name of names) { bytes.push(...[...name].map(c => c.charCodeAt(0)), ...u32(0), ...u32(offset), ...u32(tables[name].length)); offset += pad([...tables[name]]).length; }
+  for (const name of names) bytes.push(...pad([...tables[name]]));
+  return new Uint8Array(bytes);
+}
+test('fonts become outlines and text becomes geometry', () => {
+  const area = shapes => shapes.reduce((sum, shape) => sum + Math.abs(signedArea2D(shape.contour())) - shape.holes.reduce((inner, hole) => inner + Math.abs(signedArea2D(hole.contour())), 0), 0);
+  const font = parseTrueTypeFont3D(tinyTrueType());
+  assert.deepEqual([font.unitsPerEm, font.ascender, font.descender, font.hasGlyph('A'), font.hasGlyph('C')], [1000, 800, -200, true, false]);
+  // The square plus the bulge of its curved side: 0.25 + 2/3 of a 0.5 by 0.2 triangle.
+  close(area(font.generateShapes('A', {curveSegments: 32})), 0.25 + 0.1 / 3, 1e-3);
+  close(font.measureText('AB'), 1.3); close(font.measureText('AB', {size: 2, letterSpacing: 0.5}), 3.1);
+  // The composite glyph is the first one moved by (0.1, 0.05), placed after the advance of 'A'.
+  const second = createTextShapes3D('AB', font)[1].contour();
+  close(Math.min(...second.map(p => p[0])), 0.7); close(Math.min(...second.map(p => p[1])), 0.05);
+  close(Math.min(...createTextShapes3D('A\nA', font, {lineHeight: 2})[1].contour().map(p => p[1])), -2);
+  assert.equal(createTextShapes3D('C?', font).length, 0);                           // unknown characters leave a gap
+  assert.throws(() => parseTrueTypeFont3D(new Uint8Array([0x4f, 0x54, 0x54, 0x4f, 0, 0, 0, 0, 0, 0, 0, 0])), code('WORLD3D_INPUT_INVALID'));
+  assert.throws(() => parseTrueTypeFont3D(tinyTrueType().subarray(0, 100)), code('WORLD3D_INPUT_INVALID'));
+
+  const typeface = parseTypefaceFont3D(JSON.stringify({resolution: 1000, boundingBox: {yMin: -200, yMax: 800}, underlineThickness: 50, glyphs: {
+    o: {ha: 600, o: 'm 50 0 l 550 0 l 550 500 l 50 500 m 150 100 l 150 400 l 450 400 l 450 100'}, l: {ha: 300, o: 'm 100 0 l 200 0 q 200 700 250 350 l 100 700'}}}));
+  const ring = typeface.generateShapes('o');
+  assert.deepEqual([ring.length, ring[0].holes.length], [1, 1]);                    // the counter is a hole, not a second solid
+  close(area(ring), 0.16);
+  const flat = createTextGeometry3D('lol', typeface, {depth: 0, align: 'center'}), solid = createTextGeometry3D('lol', typeface, {size: 2, depth: 0.5});
+  close(flat.boundingBox[0] + flat.boundingBox[3], 0, 0.11);                        // centred on x = 0
+  assert.deepEqual([flat.groups.length, solid.groups.length], [0, 2]);
+  close(solid.boundingBox[5] - solid.boundingBox[2], 0.5);
+  close(typeface.lineHeight, 1050);
+  assert.throws(() => createTextGeometry3D('  ', typeface), code('WORLD3D_INPUT_INVALID'));
+  assert.throws(() => parseTypefaceFont3D('{'), code('WORLD3D_INPUT_INVALID'));
+});
+
+test('the transform gizmo moves, turns and resizes an object from rays', () => {
+  const scene = new Scene3D(), camera = createPerspectiveCamera3D({fov: 50, aspect: 1, near: 0.1, far: 100});
+  camera.setPosition(3, 3, 8).lookAt(0, 0, 0); scene.addChild(camera);
+  const parent = new Object3D(); parent.setPosition(1, 0, 0).setRotation(0, 0.5, 0); scene.addChild(parent);
+  const box = new Mesh3D(createBoxGeometry3D(), createUnlitMaterial3D()); box.setPosition(0, 1, 0); parent.addChild(box);
+  const gizmo = createTransformGizmo3D(camera); scene.addChild(gizmo);
+  assert.equal(gizmo.visible, false);
+  gizmo.attach(box);
+  scene.updateWorldMatrix(); scene.updateWorldMatrices(); camera.updateViewMatrices();
+  const ray = point => { const ndc = camera.worldToScreenPoint([0, 0, 0], point), origin = new Float32Array(3), direction = new Float32Array(3); camera.screenPointToRay(ndc[0], ndc[1], origin, direction); return [origin, direction]; };
+  const where = () => [...box.getWorldPosition()], near = (actual, expected) => actual.forEach((value, i) => close(value, expected[i], 2e-3));
+  const pull = (from, to) => { const began = gizmo.beginDrag(...ray(from)); gizmo.drag(...ray(to)); return began; };
+  let c = where(), s = gizmo.scale[0], events = [];
+  gizmo.onDraggingChanged = dragging => events.push(dragging);
+  assert.equal(gizmo.hover(...ray([c[0] + 0.6 * s, c[1], c[2]])), 'x');
+  assert.equal(pull([c[0] + 0.6 * s, c[1], c[2]], [c[0] + 0.6 * s + 1, c[1], c[2]]), true); gizmo.endDrag();
+  near(where(), [2, 1, 0]);                                                          // one unit along world X, through a rotated parent
+  assert.deepEqual(events, [true, false]);
+  c = where();
+  assert.equal(gizmo.hover(...ray([c[0] + 0.37 * s, c[1] + 0.37 * s, c[2]])), 'xy');
+  pull([c[0] + 0.37 * s, c[1] + 0.37 * s, c[2]], [c[0] + 0.37 * s + 0.5, c[1] + 0.37 * s - 0.25, c[2]]); gizmo.endDrag();
+  near(where(), [2.5, 0.75, 0]);
+  gizmo.translationSnap = 0.5;
+  c = where(); pull([c[0], c[1] + 0.6 * s, c[2]], [c[0], c[1] + 0.6 * s + 0.7, c[2]]); gizmo.endDrag();
+  near(where(), [2.5, 1.25, 0]);                                                     // 0.7 snaps to 0.5
+  gizmo.mode = 'rotate'; gizmo.update();
+  c = where(); s = gizmo.scale[0];
+  const k = Math.SQRT1_2 * s;
+  assert.equal(gizmo.hover(...ray([c[0] + k, c[1], c[2] + k])), 'y');
+  pull([c[0] + k, c[1], c[2] + k], [c[0] + k, c[1], c[2] - k]); gizmo.endDrag();     // a quarter turn about world Y
+  const t = [0, 0, 0], q = [0, 0, 0, 1], scale = [1, 1, 1];
+  box.updateWorldMatrix(); mat4Decompose(box.matrixWorld, t, q, scale);
+  near(q, [...quatMultiply([0, 0, 0, 1], quatFromAxisAngle([0, 0, 0, 1], [0, 1, 0], Math.PI / 2), quatFromAxisAngle([0, 0, 0, 1], [0, 1, 0], 0.5))]);
+  gizmo.mode = 'scale'; gizmo.update();
+  c = where(); s = gizmo.scale[0];
+  const axis = [box.matrixWorld[0], box.matrixWorld[1], box.matrixWorld[2]];                // the box's own X axis
+  pull(axis.map((v, i) => c[i] + v * 0.5 * s), axis.map((v, i) => c[i] + v * s));
+  near([...box.scale], [2, 1, 1]);
+  gizmo.cancelDrag();
+  near([...box.scale], [1, 1, 1]);
+  assert.equal(gizmo.beginDrag(...ray([c[0] + 5, c[1] + 5, c[2]])), false);
+  gizmo.detach();
+  assert.deepEqual([gizmo.visible, gizmo.object], [false, undefined]);
+  gizmo.dispose();
+  assert.equal(gizmo.parent, undefined);
+});
+
+test('see-through materials wait for the opaque pass and copy their volume settings', () => {
+  const glass = createGlassMaterial3D({thickness: 0.5, ior: 1.33});
+  assert.deepEqual([glass.transmission, glass.ior, glass.thickness, glass.alphaMode, glass.isTransparent], [1, 1.33, 0.5, 'opaque', false]);
+  glass.attenuationColor.set([0.2, 0.8, 0.4]); glass.attenuationDistance = 2;
+  const copy = glass.clone();
+  assert.deepEqual([[...copy.attenuationColor].map(v => +v.toFixed(2)), copy.attenuationDistance, copy.thickness], [[0.2, 0.8, 0.4], 2, 0.5]);
+  assert.notEqual(copy.attenuationColor, glass.attenuationColor);
+  const scene = new Scene3D(), camera = createPerspectiveCamera3D({aspect: 1});
+  camera.setPosition(0, 0, 5); scene.addChild(camera);
+  scene.addChild(new Mesh3D(createBoxGeometry3D(), glass)); scene.addChild(new Mesh3D(createBoxGeometry3D(), createStandardMaterial3D()));
+  const list = new RenderList3D();
+  list.build(scene, camera);
+  assert.deepEqual([list.opaque.length, list.transparent.length, list.transparent[0].material], [1, 1, glass]);
 });
