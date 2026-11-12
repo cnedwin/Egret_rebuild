@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
-// Save and restore a World3D subtree as a plain JSON-safe document. Node
+// Save and restore a World3D subtree as plain JSON-safe data. Node
 // transforms, cameras, lights, meshes, materials, geometries, skeletons and
 // level-of-detail groups round-trip. Geometry data and small owned textures
 // are embedded as base64; other textures are stored by a caller-chosen key
-// and resolved again on load, so large images stay outside the document.
+// and resolved again on load, so large images stay outside the saved data.
 import {Camera3D} from './Camera3D.js';
 import {World3DError} from './core3D.js';
 import {Attribute3D, Geometry3D} from './Geometry3D.js';
@@ -63,14 +63,14 @@ function encodeBase64(bytes: Uint8Array): string {
     return out;
 }
 function decodeBase64(text: unknown): Uint8Array {
-    if (typeof text !== 'string' || text.length % 4 !== 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: base64');
+    if (typeof text !== 'string' || text.length % 4 !== 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: base64');
     const padding = text.endsWith('==') ? 2 : text.endsWith('=') ? 1 : 0, out = new Uint8Array(text.length / 4 * 3 - padding);
     let o = 0;
     for (let i = 0; i < text.length; i += 4) {
         let bits = 0;
         for (let k = 0; k < 4; k++) {
             const char = text[i + k]!, value = char === '=' ? 0 : ALPHABET.indexOf(char);
-            if (value < 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: base64');
+            if (value < 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: base64');
             bits = (bits << 6) | value;
         }
         if (o < out.length) out[o++] = (bits >> 16) & 255;
@@ -87,9 +87,9 @@ function packArray(data: AttributeArray3D): {type: ArrayTag; data: string} {
 }
 function unpackArray(packed: Json): AttributeArray3D {
     const Type = ARRAY_TYPES[packed?.type as ArrayTag];
-    if (!Type) throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: array type');
+    if (!Type) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: array type');
     const bytes = decodeBase64(packed.data);
-    if (bytes.byteLength % Type.BYTES_PER_ELEMENT !== 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: array length');
+    if (bytes.byteLength % Type.BYTES_PER_ELEMENT !== 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: array length');
     // Copy into an aligned buffer of the element type.
     return new Type(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer);
 }
@@ -111,7 +111,7 @@ const MATERIAL_SCALARS = ['opacity', 'side', 'alphaMode', 'alphaCutoff', 'blendi
 const MATERIAL_MAPS = ['map', 'emissiveMap', 'normalMap', 'occlusionMap', 'metallicRoughnessMap'] as const;
 const NODE_FLAGS = ['visible', 'layers', 'renderOrder', 'castShadow', 'receiveShadow', 'frustumCulled'] as const;
 
-/** Write the subtree under `root` as a JSON-safe document. */
+/** Write the subtree under `root` as JSON-safe data. */
 export function serializeScene3D(root: Object3D, options: SerializeOptions3D = {}): SceneDocument3D {
     if (!(root instanceof Object3D)) throw new World3DError('WORLD3D_INPUT_INVALID', 'root');
     const nodes: Json[] = [], geometries: Json[] = [], materials: Json[] = [], textures: Json[] = [], skeletons: Json[] = [], skipped: string[] = [];
@@ -166,7 +166,7 @@ export function serializeScene3D(root: Object3D, options: SerializeOptions3D = {
         return geometries.length - 1;
     };
     const visit = (object: Object3D, parent: number | undefined): void => {
-        if (nodes.length >= SERIALIZE3D_LIMITS.maxNodes) throw new World3DError('WORLD3D_BUDGET', 'scene document nodes');
+        if (nodes.length >= SERIALIZE3D_LIMITS.maxNodes) throw new World3DError('WORLD3D_BUDGET', 'saved scene nodes');
         const id = nodes.length;
         const entry: Json = {
             name: object.name, type: 'object', position: [...object.position], quaternion: [...object.quaternion], scale: [...object.scale],
@@ -224,17 +224,17 @@ export function serializeScene3D(root: Object3D, options: SerializeOptions3D = {
 }
 
 function vector(value: unknown, length: number, field: string): number[] {
-    if (!Array.isArray(value) || value.length !== length || !value.every(Number.isFinite)) throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: ' + field);
+    if (!Array.isArray(value) || value.length !== length || !value.every(Number.isFinite)) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: ' + field);
     return value as number[];
 }
 
-/** Rebuild a subtree from a document produced by serializeScene3D. */
-export function deserializeScene3D(document: SceneDocument3D, options: DeserializeOptions3D = {}): DeserializedScene3D {
-    const doc = document as unknown as Json;
-    if (!doc || doc['format'] !== SCENE_DOCUMENT_FORMAT_3D) throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: format');
-    if (doc['version'] !== SCENE_DOCUMENT_VERSION_3D) throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: version ' + doc['version']);
-    for (const list of ['nodes', 'geometries', 'materials', 'textures', 'skeletons']) if (!Array.isArray(doc[list])) throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: ' + list);
-    if (doc['nodes'].length === 0 || doc['nodes'].length > SERIALIZE3D_LIMITS.maxNodes) throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: nodes');
+/** Rebuild a subtree from data produced by serializeScene3D. */
+export function deserializeScene3D(saved: SceneDocument3D, options: DeserializeOptions3D = {}): DeserializedScene3D {
+    const doc = saved as unknown as Json;
+    if (!doc || doc['format'] !== SCENE_DOCUMENT_FORMAT_3D) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: format');
+    if (doc['version'] !== SCENE_DOCUMENT_VERSION_3D) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: version ' + doc['version']);
+    for (const list of ['nodes', 'geometries', 'materials', 'textures', 'skeletons']) if (!Array.isArray(doc[list])) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: ' + list);
+    if (doc['nodes'].length === 0 || doc['nodes'].length > SERIALIZE3D_LIMITS.maxNodes) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: nodes');
     const created: {dispose(): void}[] = [], ownedTextures: Texture3D[] = [], geometries: Geometry3D[] = [], materials: Material3D[] = [], cameras: Camera3D[] = [];
     try {
         const textures = (doc['textures'] as Json[]).map((entry): Texture3D | undefined => {
@@ -246,7 +246,7 @@ export function deserializeScene3D(document: SceneDocument3D, options: Deseriali
             let source;
             if (entry['pixels']) source = {width: entry['pixels'].width, height: entry['pixels'].height, data: decodeBase64(entry['pixels'].data)};
             else if (entry['compressed']) source = {width: entry['compressed'].width, height: entry['compressed'].height, format: entry['compressed'].format, levels: (entry['compressed'].levels as unknown[]).map(decodeBase64)};
-            else throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: texture source');
+            else throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: texture source');
             const texture = new Texture3D(source, {name: entry['name'], wrapS: entry['wrapS'], wrapT: entry['wrapT'], magFilter: entry['magFilter'], minFilter: entry['minFilter'],
                 mipmaps: entry['mipmaps'], colorSpace: entry['colorSpace'], flipY: entry['flipY'], anisotropy: entry['anisotropy']});
             texture.offset.set(vector(entry['offset'], 2, 'texture offset')); texture.repeat.set(vector(entry['repeat'], 2, 'texture repeat')); texture.rotation = entry['rotation'] ?? 0;
@@ -254,7 +254,7 @@ export function deserializeScene3D(document: SceneDocument3D, options: Deseriali
             return texture;
         });
         for (const entry of doc['materials'] as Json[]) {
-            if (!['unlit', 'lambert', 'phong', 'standard'].includes(entry['shading'])) throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: shading');
+            if (!['unlit', 'lambert', 'phong', 'standard'].includes(entry['shading'])) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: shading');
             const material = new Material3D(entry['shading'], {name: entry['name'] ?? ''});
             created.push(material); materials.push(material);
             material.color.set(vector(entry['color'], 3, 'color')); material.emissive.set(vector(entry['emissive'], 3, 'emissive')); material.specular.set(vector(entry['specular'], 3, 'specular'));
@@ -282,7 +282,7 @@ export function deserializeScene3D(document: SceneDocument3D, options: Deseriali
         }
         const pick = <T>(list: readonly T[], index: unknown, field: string): T => {
             const item = typeof index === 'number' ? list[index] : undefined;
-            if (item === undefined) throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: ' + field);
+            if (item === undefined) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: ' + field);
             return item;
         };
         const nodes = (doc['nodes'] as Json[]).map((entry): Object3D => {
@@ -335,10 +335,10 @@ export function deserializeScene3D(document: SceneDocument3D, options: Deseriali
             if (entry['userData']) node.userData = plainData(entry['userData']) as Record<string, unknown>;
             return node;
         });
-        // Parents always precede their children in the document, so one pass links the tree.
+        // Parents always precede their children in the saved data, so one pass links the tree.
         (doc['nodes'] as Json[]).forEach((entry, index) => {
             if (entry['parent'] === undefined) return;
-            if (typeof entry['parent'] !== 'number' || entry['parent'] >= index) throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: parent order');
+            if (typeof entry['parent'] !== 'number' || entry['parent'] >= index) throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: parent order');
             const parent = nodes[entry['parent']]!, node = nodes[index]!;
             if (parent instanceof Lod3D) return; // Level-of-detail children are attached with their distances below.
             parent.addChild(node);
@@ -365,10 +365,10 @@ export function deserializeScene3D(document: SceneDocument3D, options: Deseriali
             },
         });
     } catch (cause) {
-        // Never leak partially created resources when a document is refused midway.
+        // Never leak partially created resources when the input is refused midway.
         for (const resource of created) resource.dispose();
         if (cause instanceof World3DError) throw cause;
-        throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: malformed', cause);
+        throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: malformed', cause);
     }
 }
 void RenderTarget3D;

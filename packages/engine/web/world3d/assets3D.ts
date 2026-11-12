@@ -105,10 +105,10 @@ export function registerWorld3DAssets(assets: AssetManager, options: World3DAsse
             if (!response.ok) throw new World3DError('WORLD3D_RESOURCE_FAILED', target + ' (HTTP ' + response.status + ')');
             const text = await response.text();
             if (options.maxBytes !== undefined && text.length > options.maxBytes) throw new World3DError('WORLD3D_BUDGET', target);
-            let document: SceneDocument3D;
-            try { document = JSON.parse(text) as SceneDocument3D; }
+            let saved: SceneDocument3D;
+            try { saved = JSON.parse(text) as SceneDocument3D; }
             catch (cause) { throw new World3DError('WORLD3D_INPUT_INVALID', 'scene document: ' + target, cause); }
-            return deserializeScene3D(document, options.resolveTexture ? {resolveTexture: options.resolveTexture} : {});
+            return deserializeScene3D(saved, options.resolveTexture ? {resolveTexture: options.resolveTexture} : {});
         }),
         dispose,
     });

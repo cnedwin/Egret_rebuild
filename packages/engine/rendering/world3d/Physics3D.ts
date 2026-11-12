@@ -481,9 +481,10 @@ export class PhysicsWorld3D {
         this.#bodies.splice(this.#bodies.indexOf(body), 1);
         const list = body.shape.type === 'plane' ? this.#planes : this.#sorted;
         list.splice(list.indexOf(body), 1);
-        for (const [key, pair] of this.#touching) {
+        // After a step the pairs that were touching live in the previous-step map.
+        for (const [key, pair] of this.#previousTouching) {
             if (pair[0] !== body && pair[1] !== body) continue;
-            this.#touching.delete(key);
+            this.#previousTouching.delete(key);
             pair[0].wake(); pair[1].wake();
             this.onContactEnd?.(pair[0], pair[1]);
         }
@@ -643,7 +644,9 @@ export class PhysicsWorld3D {
             c.normalMass = this.effectiveMass(c, n); c.tangentMass1 = this.effectiveMass(c, c.t1); c.tangentMass2 = this.effectiveMass(c, c.t2);
             const approach = this.relativeVelocity(c, n);
             // Push out of penetration, and bounce only on real impacts so resting contacts stay quiet.
-            c.bias = source.depth < 0 ? source.depth / dt : BAUMGARTE / dt * Math.max(source.depth - SLOP, 0) + (approach < -1 ? -restitution * approach : 0);
+            // A real impact bounces; a resting or slow contact is pushed out of penetration instead.
+            // Doing both in one step would add the correction speed to the bounce.
+            c.bias = source.depth < 0 ? source.depth / dt : approach < -1 && restitution > 0 ? -restitution * approach : BAUMGARTE / dt * Math.max(source.depth - SLOP, 0);
         }
     }
     private pairKey(a: RigidBody3D, b: RigidBody3D): number { return a.id < b.id ? a.id * 4194304 + b.id : b.id * 4194304 + a.id; }
@@ -691,7 +694,7 @@ export class PhysicsWorld3D {
     }
 
     // ---- queries ----------------------------------------------------------------
-    /** Nearest body hit by a ray. `direction` need not be normalized. */
+    /** Nearest solid body hit by a ray; triggers are skipped. `direction` need not be normalized. */
     raycast(origin: ArrayLike<number>, direction: ArrayLike<number>, maxDistance = Infinity, mask = -1): PhysicsRaycastHit3D | undefined {
         const length = Math.hypot(direction[0]!, direction[1]!, direction[2]!);
         if (!(length > 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'ray direction');
@@ -699,7 +702,7 @@ export class PhysicsWorld3D {
         let best: PhysicsRaycastHit3D | undefined, limit = maxDistance;
         const normal = [0, 0, 0];
         for (const body of this.#bodies) {
-            if ((body.layer & mask) === 0) continue;
+            if ((body.layer & mask) === 0 || body.isTrigger) continue;
             const distance = rayShape(body, o, d, limit, normal);
             if (distance < 0 || distance > limit) continue;
             limit = distance;
@@ -707,10 +710,10 @@ export class PhysicsWorld3D {
         }
         return best;
     }
-    /** Bodies whose shape touches a sphere. */
+    /** Solid bodies whose shape touches a sphere; triggers are skipped. */
     overlapSphere(center: ArrayLike<number>, radius: number, mask = -1): RigidBody3D[] {
         const probe = probeBody(center, {type: 'sphere', radius: requirePositive3D(radius, 'radius')}), found: RigidBody3D[] = [];
-        for (const body of this.#bodies) if ((body.layer & mask) !== 0 && collide(this.#manifold, probe, body)) found.push(body);
+        for (const body of this.#bodies) if ((body.layer & mask) !== 0 && !body.isTrigger && collide(this.#manifold, probe, body)) found.push(body);
         return found;
     }
     /** @internal Contacts of a free-standing shape against the world, for the character controller. */
