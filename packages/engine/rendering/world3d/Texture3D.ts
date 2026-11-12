@@ -50,7 +50,11 @@ abstract class TextureBase3D extends Resource3D {
     mipmaps: boolean;
     /** Color textures are 'srgb'; data textures (normal, roughness, occlusion) are 'linear'. */
     colorSpace: TextureColorSpace3D;
-    /** Flip rows at upload so V = 0 addresses the bottom row. glTF textures keep this false. */
+    /**
+     * Flip rows at upload so V = 0 addresses the bottom row. glTF textures keep this false.
+     * WebGL ignores the flag for ImageBitmap sources: decode those with `imageOrientation: 'flipY'`
+     * instead, as loadTexture3D does.
+     */
     flipY: boolean;
     anisotropy: number;
     protected constructor(options: TextureOptions3D) {

@@ -26,9 +26,10 @@ async function fetchBytes(url: string, options: LoadOptions3D): Promise<Uint8Arr
     if (bytes.byteLength > limit) throw new World3DError('WORLD3D_BUDGET', url);
     return bytes;
 }
-async function decode(blob: Blob, url: string): Promise<ImageBitmap> {
+async function decode(blob: Blob, url: string, flipY = false): Promise<ImageBitmap> {
     // Decode without color-space conversion or premultiplication: the renderer handles both.
-    try { return await createImageBitmap(blob, {colorSpaceConversion: 'none', premultiplyAlpha: 'none'}); }
+    // Rows are flipped here because WebGL ignores its unpack flip flag for ImageBitmap sources.
+    try { return await createImageBitmap(blob, {colorSpaceConversion: 'none', premultiplyAlpha: 'none', imageOrientation: flipY ? 'flipY' : 'from-image'}); }
     catch (cause) { throw new World3DError('WORLD3D_RESOURCE_FAILED', 'image decode: ' + url, cause); }
 }
 
@@ -38,8 +39,9 @@ async function decode(blob: Blob, url: string): Promise<ImageBitmap> {
  */
 export async function loadTexture3D(url: string, options: TextureOptions3D & LoadOptions3D = {}): Promise<Texture3D> {
     const bytes = await fetchBytes(url, options);
-    const bitmap = await decode(new Blob([bytes as BlobPart]), url);
-    const texture = new Texture3D(bitmap, {flipY: true, ...options, name: options.name ?? url});
+    const bitmap = await decode(new Blob([bytes as BlobPart]), url, options.flipY ?? true);
+    // The bitmap is already oriented, so the texture itself must not flip again.
+    const texture = new Texture3D(bitmap, {...options, flipY: false, name: options.name ?? url});
     // The decoded bitmap is owned by the texture from here on.
     texture.onDispose(() => bitmap.close());
     return texture;
