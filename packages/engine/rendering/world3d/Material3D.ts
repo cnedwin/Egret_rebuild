@@ -20,6 +20,13 @@ import type {Texture3D} from './Texture3D.js';
  * Return the new world position. Use only the arguments and the custom
  * parameters; per-frame camera data is not available while drawing shadows.
  * `color` is the vertex color when the material enables vertexColors, else white.
+ *
+ * A normal hook replaces the shading normal of a lit material before any
+ * light is computed, for surfaces whose detail is a formula rather than a
+ * texture, such as ripples on water:
+ *   GLSL:  vec3 customNormal(vec3 normal, vec3 worldPosition, vec2 uv)
+ *   WGSL:  fn customNormal(normal: vec3f, worldPosition: vec3f, uv: vec2f) -> vec3f
+ * The result is normalized for you.
  */
 export interface CustomShader3D {
     /** Identifies the source; materials with the same key share compiled programs. */
@@ -28,16 +35,19 @@ export interface CustomShader3D {
     readonly wgsl?: string;
     readonly glslVertex?: string;
     readonly wgslVertex?: string;
+    readonly glslNormal?: string;
+    readonly wgslNormal?: string;
     /** Four vec4 parameters, written by the application (time, colors, thresholds). */
     readonly uniforms: Float32Array;
 }
-export function createCustomShader3D(input: {readonly key: string; readonly glsl?: string; readonly wgsl?: string; readonly glslVertex?: string; readonly wgslVertex?: string; readonly uniforms?: ArrayLike<number>}): CustomShader3D {
+export function createCustomShader3D(input: {readonly key: string; readonly glsl?: string; readonly wgsl?: string; readonly glslVertex?: string; readonly wgslVertex?: string; readonly glslNormal?: string; readonly wgslNormal?: string; readonly uniforms?: ArrayLike<number>}): CustomShader3D {
     if (!input || typeof input.key !== 'string' || input.key.length === 0 || /[\s|/]/.test(input.key)) throw new World3DError('WORLD3D_INPUT_INVALID', 'shader key');
-    if (input.glsl === undefined && input.wgsl === undefined && input.glslVertex === undefined && input.wgslVertex === undefined) throw new World3DError('WORLD3D_INPUT_INVALID', 'shader source');
+    if (input.glsl === undefined && input.wgsl === undefined && input.glslVertex === undefined && input.wgslVertex === undefined && input.glslNormal === undefined && input.wgslNormal === undefined) throw new World3DError('WORLD3D_INPUT_INVALID', 'shader source');
     const uniforms = new Float32Array(16);
     if (input.uniforms) uniforms.set(Array.from(input.uniforms).slice(0, 16));
     return Object.freeze({key: input.key, ...(input.glsl === undefined ? {} : {glsl: input.glsl}), ...(input.wgsl === undefined ? {} : {wgsl: input.wgsl}),
-        ...(input.glslVertex === undefined ? {} : {glslVertex: input.glslVertex}), ...(input.wgslVertex === undefined ? {} : {wgslVertex: input.wgslVertex}), uniforms});
+        ...(input.glslVertex === undefined ? {} : {glslVertex: input.glslVertex}), ...(input.wgslVertex === undefined ? {} : {wgslVertex: input.wgslVertex}),
+        ...(input.glslNormal === undefined ? {} : {glslNormal: input.glslNormal}), ...(input.wgslNormal === undefined ? {} : {wgslNormal: input.wgslNormal}), uniforms});
 }
 export type Shading3D = 'unlit' | 'lambert' | 'phong' | 'standard' | 'toon' | 'matcap';
 export type Side3D = 'front' | 'back' | 'double';
@@ -139,6 +149,16 @@ export class Material3D extends Resource3D {
      */
     lightMap: Texture3D | undefined;
     lightMapIntensity = 1;
+    /**
+     * A mirror image of the scene for a flat reflective surface on a standard
+     * material, normally the texture of a PlanarReflection3D. It is read at
+     * the pixel's own place on screen, so the mesh needs no coordinates for
+     * it, and it takes the place of the environment map's reflection.
+     */
+    reflectionMap: Texture3D | undefined;
+    reflectionStrength = 1;
+    /** How far the surface normal pushes the mirror image sideways, as a share of the screen. */
+    reflectionDistortion = 0.02;
     /** Strength, 0 to 1, of a soft rim lobe for cloth and velvet on a standard material. */
     sheen = 0;
     readonly sheenColor = new Float32Array([1, 1, 1]);

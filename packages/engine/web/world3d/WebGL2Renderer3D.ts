@@ -452,11 +452,14 @@ export class WebGL2Renderer3D implements Renderer3D {
             if (has(V.toneMapped) && material.toneMapped) defines.push('TONE_MAPPED');
             if (has(V.linearOutput)) defines.push('LINEAR_OUTPUT');
             if (has(V.transmission) && material.shading === 'standard') defines.push('USE_TRANSMISSION');
+            if (material.reflectionMap && material.shading === 'standard') defines.push('USE_REFLECTION_MAP');
         }
         const custom = depthOnly ? undefined : material.shader?.glsl, customVertex = material.shader?.glslVertex;
+        const customNormal = depthOnly || material.shading === 'unlit' || material.shading === 'matcap' ? undefined : material.shader?.glslNormal;
         if (custom !== undefined) defines.push('CUSTOM_FRAGMENT');
         if (customVertex !== undefined) defines.push('CUSTOM_VERTEX');
-        program = this.#resources.program(defines.join(' ') + (custom === undefined && customVertex === undefined ? '' : '|' + material.shader!.key), () => buildMaterialShader3D(defines, custom, customVertex));
+        if (customNormal !== undefined) defines.push('CUSTOM_NORMAL');
+        program = this.#resources.program(defines.join(' ') + (custom === undefined && customVertex === undefined && customNormal === undefined ? '' : '|' + material.shader!.key), () => buildMaterialShader3D(defines, custom, customVertex, customNormal));
         cache.variants.set(variant, program);
         return program;
     }
@@ -491,6 +494,8 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (u['uOcclusionMap'] && material.occlusionMap) resources.bindTexture(TEXTURE_UNITS_3D.occlusionMap, material.occlusionMap);
         if (u['uEmissiveMap'] && material.emissiveMap) resources.bindTexture(TEXTURE_UNITS_3D.emissiveMap, material.emissiveMap);
         if (u['uLightMap'] && material.lightMap) resources.bindTexture(TEXTURE_UNITS_3D.lightMap, material.lightMap);
+        if (u['uReflectionMap'] && material.reflectionMap) resources.bindTexture(TEXTURE_UNITS_3D.reflectionMap, material.reflectionMap);
+        if (u['uReflection']) gl.uniform2f(u['uReflection'], material.reflectionStrength, material.reflectionDistortion);
         if (u['uSheen']) gl.uniform4f(u['uSheen'], material.sheenColor[0]! * material.sheen, material.sheenColor[1]! * material.sheen, material.sheenColor[2]! * material.sheen, material.sheenRoughness);
         if (u['uExtra']) gl.uniform2f(u['uExtra'], material.lightMapIntensity, material.transmission);
         if (u['uRefraction']) gl.uniform4f(u['uRefraction'], material.ior, material.thickness, Number.isFinite(material.attenuationDistance) ? material.attenuationDistance : 0, 0);

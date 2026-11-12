@@ -12,7 +12,7 @@ export const ATTRIBUTE_LOCATIONS_3D = Object.freeze({
 /** Fixed texture units; samplers are assigned once when a program is linked. */
 export const TEXTURE_UNITS_3D = Object.freeze({
     map: 0, normalMap: 1, metallicRoughnessMap: 2, occlusionMap: 3, emissiveMap: 4,
-    environment: 5, shadow: 6, bones: 7, morph: 8, lightMap: 9, sceneColor: 10,
+    environment: 5, shadow: 6, bones: 7, morph: 8, lightMap: 9, sceneColor: 10, reflectionMap: 11,
 } as const);
 
 export const MAX_MORPH_INFLUENCES_3D = 8;
@@ -207,6 +207,10 @@ uniform sampler2D uSceneColor;   // what was drawn before the see-through surfac
 uniform vec4 uRefraction;        // index of refraction, thickness, attenuation distance (0 = none)
 uniform vec3 uAttenuation;
 #endif
+#ifdef USE_REFLECTION_MAP
+uniform sampler2D uReflectionMap; // mirror image of the scene, read at the pixel's place on screen
+uniform vec2 uReflection;         // strength, distortion by the normal
+#endif
 uniform samplerCube uEnvironment;
 uniform highp sampler2DShadow uShadowMap;
 in vec3 vWorldPosition;
@@ -350,9 +354,14 @@ vec3 shade(Surface s, vec3 l, vec3 radiance) {
     #endif
 }
 
-#ifdef CUSTOM_FRAGMENT
+#if defined(CUSTOM_FRAGMENT) || defined(CUSTOM_NORMAL)
 uniform vec4 uCustom[4];
+#endif
+#ifdef CUSTOM_FRAGMENT
 /*CUSTOM_FRAGMENT*/
+#endif
+#ifdef CUSTOM_NORMAL
+/*CUSTOM_NORMAL*/
 #endif
 
 vec3 toneMap(vec3 color) {
@@ -403,6 +412,9 @@ void main() {
     #else
     Surface s;
     s.normal = surfaceNormal();
+    #ifdef CUSTOM_NORMAL
+    s.normal = normalize(customNormal(s.normal, vWorldPosition, vUv));
+    #endif
     s.view = normalize(uCameraPosition.xyz - vWorldPosition);
     s.albedo = base.rgb;
     s.metallic = uSurface.x;
@@ -425,7 +437,8 @@ void main() {
 
     #ifdef USE_TRANSMISSION
     // Light that passes through replaces that share of the diffuse reflection.
-    float through = uExtra.y * (1.0 - s.metallic);
+    // What the surface reflects at this angle does not pass through it.
+    float through = uExtra.y * (1.0 - s.metallic) * (1.0 - (0.04 + 0.96 * pow(1.0 - max(dot(s.normal, s.view), 0.0), 5.0)));
     vec3 passed = vec3(0.0);
     {
         vec3 bent = refract(-s.view, s.normal, 1.0 / max(uRefraction.x, 1.0));
@@ -445,6 +458,18 @@ void main() {
     s.albedo *= 1.0 - through;
     float clear = 1.0;
     #endif
+    #ifdef USE_REFLECTION_MAP
+    vec3 mirrored;
+    float mirrorClear = 1.0;
+    {
+        // The mirror camera sees the scene flipped left to right.
+        vec4 at = uViewProjection * vec4(vWorldPosition, 1.0);
+        vec2 where = at.xy / max(at.w, 0.0001) * 0.5 + 0.5;
+        where = vec2(1.0 - where.x, where.y) + s.normal.xz * uReflection.y;
+        float facing = max(dot(s.normal, s.view), 0.0);
+        mirrored = texture(uReflectionMap, clamp(where, vec2(0.002), vec2(0.998))).rgb * (s.f0 + (1.0 - s.f0) * pow(1.0 - facing, 5.0)) * uReflection.x;
+    }
+    #endif
     // Indirect light: ambient, hemisphere and optional environment map.
     vec3 diffuseAlbedo = s.albedo;
     #ifdef SHADING_STANDARD
@@ -462,7 +487,7 @@ void main() {
     #endif
     #endif
     color = diffuseAlbedo * irradiance * occlusion;
-    #if defined(USE_ENVIRONMENT) && defined(SHADING_STANDARD)
+    #if defined(USE_ENVIRONMENT) && defined(SHADING_STANDARD) && !defined(USE_REFLECTION_MAP)
     {
         vec3 reflected = reflect(-s.view, s.normal);
         float nv = max(dot(s.normal, s.view), 0.0);
@@ -533,6 +558,9 @@ void main() {
         #ifdef USE_TRANSMISSION
         clear = 1.0 - clamp(fog, 0.0, 1.0);
         #endif
+        #ifdef USE_REFLECTION_MAP
+        mirrorClear = 1.0 - clamp(fog, 0.0, 1.0);
+        #endif
     }
     #endif
     #ifdef TONE_MAPPED
@@ -544,6 +572,10 @@ void main() {
     passed = mix(passed / 12.92, pow((passed + 0.055) / 1.055, vec3(2.4)), step(vec3(0.04045), passed));
     #endif
     color += passed * tint * through * clear;
+    #endif
+    #ifdef USE_REFLECTION_MAP
+    // The mirror image is display-ready too.
+    color += mirrored * mirrorClear;
     #endif
     #ifdef LINEAR_OUTPUT
     // sRGB render targets encode on write; hand them linear values. Fixed-point
@@ -569,9 +601,9 @@ export interface ShaderSources3D {
     readonly fragment: string;
 }
 /** Specialize the material shader pair with a list of preprocessor symbols. */
-export function buildMaterialShader3D(defines: readonly string[], customFragment = '', customVertex = ''): ShaderSources3D {
+export function buildMaterialShader3D(defines: readonly string[], customFragment = '', customVertex = '', customNormal = ''): ShaderSources3D {
     const header = '#version 300 es\nprecision highp float;\nprecision highp int;\n' + defines.map(name => '#define ' + name + '\n').join('');
-    return {vertex: header + VERTEX_SOURCE.replace('/*CUSTOM_VERTEX*/', () => customVertex), fragment: header + FRAGMENT_SOURCE.replace('/*CUSTOM_FRAGMENT*/', () => customFragment)};
+    return {vertex: header + VERTEX_SOURCE.replace('/*CUSTOM_VERTEX*/', () => customVertex), fragment: header + FRAGMENT_SOURCE.replace('/*CUSTOM_FRAGMENT*/', () => customFragment).replace('/*CUSTOM_NORMAL*/', () => customNormal)};
 }
 
 /** Full-screen triangle that samples a cube map along the view ray; drawn at the far plane. */
