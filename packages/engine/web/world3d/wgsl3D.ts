@@ -36,6 +36,7 @@ export interface ShaderFeatures3D {
     /** Key and WGSL source of the material's fragment hook, when it has one. */
     readonly customKey?: string;
     readonly customWgsl?: string;
+    readonly customVertexWgsl?: string;
 }
 
 export const MAX_MORPH_INFLUENCES_WGSL_3D = 8;
@@ -171,6 +172,7 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     model = model * instance;
     normalMatrix = normalMatrix * mat3x3f(instance[0].xyz, instance[1].xyz, instance[2].xyz);` : ''}
     var world = model * vec4f(position, 1.0);
+    ${f.customVertexWgsl !== undefined ? `world = vec4f(customVertex(world.xyz, position, normal, ${f.uv ? 'input.uv' : 'vec2f(0.0)'}, ${f.vertexColor ? 'input.color' : 'vec4f(1.0)'}), world.w);` : ''}
     ${f.billboard ? /* wgsl */`
     // Expand the quad along the camera's right and up axes around the node origin.
     let origin = model * vec4f(0.0, 0.0, 0.0, 1.0);
@@ -453,7 +455,7 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
 
 /** Assemble the complete WGSL module for one material variant. */
 export function buildMaterialWgsl3D(features: ShaderFeatures3D): string {
-    return (features.depthOnly ? DEPTH_FRAME : FRAME) + SHARED + vertexSource(features) + (features.customWgsl ?? '') + '\n' + fragmentSource(features);
+    return (features.depthOnly ? DEPTH_FRAME : FRAME) + SHARED + (features.customVertexWgsl ?? '') + '\n' + vertexSource(features) + (features.customWgsl ?? '') + '\n' + fragmentSource(features);
 }
 /** Stable cache key for a feature set. */
 export function shaderFeatureKey3D(features: ShaderFeatures3D): string {

@@ -100,6 +100,10 @@ vec3 morphDelta(int targetIndex, int channel) {
 }
 #endif
 
+#ifdef CUSTOM_VERTEX
+uniform vec4 uCustom[4];
+/*CUSTOM_VERTEX*/
+#endif
 void main() {
     vec3 position = aPosition;
     vec3 normal = aNormal;
@@ -124,6 +128,13 @@ void main() {
     normalMatrix = normalMatrix * mat3(aInstanceMatrix);
     #endif
     vec4 world = model * vec4(position, 1.0);
+    #ifdef CUSTOM_VERTEX
+    #ifdef USE_VERTEX_COLOR
+    world.xyz = customVertex(world.xyz, position, normal, aUv, aColor);
+    #else
+    world.xyz = customVertex(world.xyz, position, normal, aUv, vec4(1.0));
+    #endif
+    #endif
     #ifdef DEPTH_ONLY
     mat4 viewProjection = uDepthViewProjection;
     #else
@@ -485,9 +496,9 @@ export interface ShaderSources3D {
     readonly fragment: string;
 }
 /** Specialize the material shader pair with a list of preprocessor symbols. */
-export function buildMaterialShader3D(defines: readonly string[], customFragment = ''): ShaderSources3D {
+export function buildMaterialShader3D(defines: readonly string[], customFragment = '', customVertex = ''): ShaderSources3D {
     const header = '#version 300 es\nprecision highp float;\nprecision highp int;\n' + defines.map(name => '#define ' + name + '\n').join('');
-    return {vertex: header + VERTEX_SOURCE, fragment: header + FRAGMENT_SOURCE.replace('/*CUSTOM_FRAGMENT*/', () => customFragment)};
+    return {vertex: header + VERTEX_SOURCE.replace('/*CUSTOM_VERTEX*/', () => customVertex), fragment: header + FRAGMENT_SOURCE.replace('/*CUSTOM_FRAGMENT*/', () => customFragment)};
 }
 
 /** Full-screen triangle that samples a cube map along the view ray; drawn at the far plane. */

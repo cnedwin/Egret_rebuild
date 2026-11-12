@@ -390,9 +390,10 @@ export class WebGL2Renderer3D implements Renderer3D {
             if (has(V.toneMapped) && material.toneMapped) defines.push('TONE_MAPPED');
             if (has(V.linearOutput)) defines.push('LINEAR_OUTPUT');
         }
-        const custom = depthOnly ? undefined : material.shader?.glsl;
+        const custom = depthOnly ? undefined : material.shader?.glsl, customVertex = material.shader?.glslVertex;
         if (custom !== undefined) defines.push('CUSTOM_FRAGMENT');
-        program = this.#resources.program(defines.join(' ') + (custom === undefined ? '' : '|' + material.shader!.key), () => buildMaterialShader3D(defines, custom));
+        if (customVertex !== undefined) defines.push('CUSTOM_VERTEX');
+        program = this.#resources.program(defines.join(' ') + (custom === undefined && customVertex === undefined ? '' : '|' + material.shader!.key), () => buildMaterialShader3D(defines, custom, customVertex));
         cache.variants.set(variant, program);
         return program;
     }

@@ -12,21 +12,32 @@ import type {Texture3D} from './Texture3D.js';
  *   WGSL:  fn customFragment(color: vec4f, worldPosition: vec3f, normal: vec3f, uv: vec2f) -> vec4f  reading material.custom[0..3]
  * `color` is linear and not yet fogged or tone mapped; return the new color and alpha.
  * A backend without source for its language draws the material unchanged.
+ *
+ * A vertex hook displaces vertices in world space, in the visible pass and in
+ * shadow maps alike, so swaying foliage casts swaying shadows:
+ *   GLSL:  vec3 customVertex(vec3 worldPosition, vec3 localPosition, vec3 normal, vec2 uv, vec4 color)
+ *   WGSL:  fn customVertex(worldPosition: vec3f, localPosition: vec3f, normal: vec3f, uv: vec2f, color: vec4f) -> vec3f
+ * Return the new world position. Use only the arguments and the custom
+ * parameters; per-frame camera data is not available while drawing shadows.
+ * `color` is the vertex color when the material enables vertexColors, else white.
  */
 export interface CustomShader3D {
     /** Identifies the source; materials with the same key share compiled programs. */
     readonly key: string;
     readonly glsl?: string;
     readonly wgsl?: string;
+    readonly glslVertex?: string;
+    readonly wgslVertex?: string;
     /** Four vec4 parameters, written by the application (time, colors, thresholds). */
     readonly uniforms: Float32Array;
 }
-export function createCustomShader3D(input: {readonly key: string; readonly glsl?: string; readonly wgsl?: string; readonly uniforms?: ArrayLike<number>}): CustomShader3D {
+export function createCustomShader3D(input: {readonly key: string; readonly glsl?: string; readonly wgsl?: string; readonly glslVertex?: string; readonly wgslVertex?: string; readonly uniforms?: ArrayLike<number>}): CustomShader3D {
     if (!input || typeof input.key !== 'string' || input.key.length === 0 || /[\s|/]/.test(input.key)) throw new World3DError('WORLD3D_INPUT_INVALID', 'shader key');
-    if (input.glsl === undefined && input.wgsl === undefined) throw new World3DError('WORLD3D_INPUT_INVALID', 'shader source');
+    if (input.glsl === undefined && input.wgsl === undefined && input.glslVertex === undefined && input.wgslVertex === undefined) throw new World3DError('WORLD3D_INPUT_INVALID', 'shader source');
     const uniforms = new Float32Array(16);
     if (input.uniforms) uniforms.set(Array.from(input.uniforms).slice(0, 16));
-    return Object.freeze({key: input.key, ...(input.glsl === undefined ? {} : {glsl: input.glsl}), ...(input.wgsl === undefined ? {} : {wgsl: input.wgsl}), uniforms});
+    return Object.freeze({key: input.key, ...(input.glsl === undefined ? {} : {glsl: input.glsl}), ...(input.wgsl === undefined ? {} : {wgsl: input.wgsl}),
+        ...(input.glslVertex === undefined ? {} : {glslVertex: input.glslVertex}), ...(input.wgslVertex === undefined ? {} : {wgslVertex: input.wgslVertex}), uniforms});
 }
 export type Shading3D = 'unlit' | 'lambert' | 'phong' | 'standard' | 'toon' | 'matcap';
 export type Side3D = 'front' | 'back' | 'double';

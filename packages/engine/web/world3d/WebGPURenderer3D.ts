@@ -615,7 +615,7 @@ export class WebGPURenderer3D implements Renderer3D {
         return {
             shading: material.shading, depthOnly,
             normal: gpu.buffers.has('normal') && !depthOnly,
-            uv: uv && (!depthOnly || (material.map !== undefined && material.alphaMode !== 'opaque')),
+            uv: uv && (!depthOnly || (material.map !== undefined && material.alphaMode !== 'opaque') || material.shader?.wgslVertex !== undefined),
             tangent: lit && uv && material.normalMap !== undefined && gpu.buffers.has('tangent'),
             vertexColor: material.vertexColors && gpu.buffers.has('color'),
             skinning, morph: gpu.morph !== undefined, morphNormals: gpu.morph?.channels === 2,
@@ -633,6 +633,7 @@ export class WebGPURenderer3D implements Renderer3D {
             receiveShadow: lit && mesh.receiveShadow && this.#shadowCount > 0,
             environment: lit && frameFlags.environment, fog: !depthOnly && frameFlags.fog && material.fog,
             ...(!depthOnly && material.shader?.wgsl !== undefined ? {customKey: material.shader.key, customWgsl: material.shader.wgsl} : {}),
+            ...(material.shader?.wgslVertex !== undefined ? {customKey: material.shader.key, customVertexWgsl: material.shader.wgslVertex} : {}),
             toneMapped: !depthOnly && kind !== 'hdr' && this.toneMapping !== 'none' && material.toneMapped, linearOutput: kind === 'target' || kind === 'hdr',
         };
     }
