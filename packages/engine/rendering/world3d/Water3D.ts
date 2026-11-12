@@ -42,6 +42,7 @@ export class PlanarReflection3D {
     /** false leaves shadows out of the mirror image, which saves the shadow passes for it. */
     shadows = true;
     #calls = 0;
+    #drawn: {renderer: ReflectionRenderer3D; scene: Scene3D; version: number} | undefined;
     readonly #projection = new Float32Array(16);
     readonly #perspectiveProjection = new Float32Array(16);
     readonly #orthographicProjection = new Float32Array(16);
@@ -111,24 +112,45 @@ export class PlanarReflection3D {
      * `hidden`, normally the mirror itself, are left out of the image.
      */
     render(renderer: ReflectionRenderer3D, scene: Scene3D, camera: Camera3D, plane: ArrayLike<number>, hidden: readonly Object3D[] = []): boolean {
-        if (this.#calls++ % Math.max(1, Math.floor(this.interval)) !== 0) return true;
-        if (!this.update(camera, plane)) return false;
+        const interval = requireCount3D(this.interval, 'reflection interval', Number.MAX_SAFE_INTEGER);
+        if (interval === 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'reflection interval');
+        if (this.target.isDisposed || !this.update(camera, plane)) { this.#drawn = undefined; return false; }
         this.camera.layerMask = camera.layerMask & this.layerMask;
-        const lit = renderer.shadowsEnabled;
-        if (!this.shadows && lit !== undefined) renderer.shadowsEnabled = false;
-        const shown = hidden.map((object) => object.visible);
-        for (const object of hidden) object.visible = false;
-        // The mirror image is plain; the main view's post-processing reaches it with everything else.
-        const post = renderer.postProcess, processed = post?.enabled ?? false;
-        if (post) post.enabled = false;
-        try { return renderer.render(scene, this.camera, this.target); }
-        finally {
-            if (post) post.enabled = processed;
-            if (!this.shadows && lit !== undefined) renderer.shadowsEnabled = lit;
-            hidden.forEach((object, i) => { object.visible = shown[i]!; });
+        const scheduled = this.#calls === 0;
+        this.#calls = (this.#calls + 1) % interval;
+        const drawn = this.#drawn;
+        if (!scheduled && drawn?.renderer === renderer && drawn.scene === scene && drawn.version === this.target.version) return true;
+        this.#drawn = undefined;
+
+        const shadowsEnabled = renderer.shadowsEnabled, post = renderer.postProcess, postEnabled = post?.enabled;
+        const disableShadows = !this.shadows && shadowsEnabled !== undefined;
+        const shown = hidden.map(object => object.visible);
+        let touchedShadows = false, touchedPost = false, touchedHidden = 0;
+        let result = false, primary: {cause: unknown} | undefined, cleanupErrors: unknown[] | undefined;
+        try {
+            if (disableShadows) { touchedShadows = true; renderer.shadowsEnabled = false; }
+            for (const object of hidden) { touchedHidden++; object.visible = false; }
+            if (post) { touchedPost = true; post.enabled = false; }
+            result = renderer.render(scene, this.camera, this.target);
+        } catch (cause) { primary = {cause}; }
+
+        // Restore every owned setting, even when setup, rendering or another restoration fails.
+        const restore = (action: () => void): void => {
+            try { action(); } catch (cause) { (cleanupErrors ??= []).push(cause); }
+        };
+        if (post && touchedPost) restore(() => { post.enabled = postEnabled!; });
+        for (let i = touchedHidden - 1; i >= 0; i--) restore(() => { hidden[i]!.visible = shown[i]!; });
+        if (touchedShadows) restore(() => { renderer.shadowsEnabled = shadowsEnabled!; });
+        if (cleanupErrors) {
+            const causes = primary ? [primary.cause, ...cleanupErrors] : cleanupErrors;
+            if (causes.length === 1) throw causes[0];
+            throw new AggregateError(causes, 'WORLD3D_REFLECTION_FAILED');
         }
+        if (primary) throw primary.cause;
+        if (result) this.#drawn = {renderer, scene, version: this.target.version};
+        return result;
     }
-    dispose(): void { this.target.dispose(); }
+    dispose(): void { this.#drawn = undefined; this.target.dispose(); }
 }
 
 // Four waves share one formula: each is turned from the main direction,
@@ -308,6 +330,14 @@ export interface WaterOptions3D {
     readonly caustics?: number;
 }
 
+interface UnderwaterFogOverride3D {
+    readonly scene: Scene3D;
+    readonly previous: Scene3D['fog'];
+    readonly installed: NonNullable<Scene3D['fog']>;
+}
+// A scene has one fog slot; another water node waits until its owner releases it.
+const underwaterFogOwners = new WeakMap<Scene3D, UnderwaterFogOverride3D>();
+
 /**
  * A horizontal water surface. Waves move its vertices and its shading
  * normal; what is under the surface is seen bent through it; the sky reflects
@@ -319,8 +349,7 @@ export class Water3D extends Mesh3D {
     readonly reflection: PlanarReflection3D | undefined;
     readonly #uniforms: Float32Array;
     readonly #plane = [0, 1, 0, 0];
-    #submerged = false;
-    #fogAbove: Scene3D['fog'];
+    #fogOverride: UnderwaterFogOverride3D | undefined;
 
     constructor(options: WaterOptions3D = {}) {
         const width = requirePositive3D(options.width ?? 100, 'width'), depth = requirePositive3D(options.depth ?? 100, 'depth'), segments = requireCount3D(options.segments ?? 96, 'segments', 1024);
@@ -386,7 +415,7 @@ export class Water3D extends Mesh3D {
         this.#plane[3] = -this.matrixWorld[13]!;
         return this.reflection.render(renderer, scene, camera, this.#plane, [this]);
     }
-    /** True when a world point, such as the camera, is below the waves. */
+    /** Test the horizontal wave height at a point, including beyond the rendered mesh edges. */
     isUnderwater(point: ArrayLike<number>): boolean {
         this.updateWorldMatrix();
         return point[1]! < this.heightAt(point[0]!, point[2]!);
@@ -400,16 +429,30 @@ export class Water3D extends Mesh3D {
     updateUnderwater(scene: Scene3D, camera: Camera3D, density = 0.06): boolean {
         camera.updateWorldMatrix();
         const eye = camera.matrixWorld, under = this.isUnderwater([eye[12]!, eye[13]!, eye[14]!]);
-        if (under && !this.#submerged) {
-            this.#fogAbove = scene.fog;
+        if (!under || this.#fogOverride?.scene !== scene) this.restoreUnderwaterFog();
+        if (under && !this.#fogOverride && !underwaterFogOwners.has(scene)) {
+            density = requireFinite3D(density, 'density');
+            if (density < 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'density');
             const tint = (this.material as Material3D).attenuationColor;
-            scene.fog = {kind: 'exponential', color: [tint[0]! * 1.6, tint[1]! * 1.6, tint[2]! * 1.6], density: requireFinite3D(density, 'density')};
-        } else if (!under && this.#submerged) scene.fog = this.#fogAbove;
-        this.#submerged = under;
+            const installed: NonNullable<Scene3D['fog']> = {kind: 'exponential', color: [tint[0]! * 1.6, tint[1]! * 1.6, tint[2]! * 1.6], density};
+            const override = {scene, previous: scene.fog, installed};
+            scene.fog = installed;
+            underwaterFogOwners.set(scene, override);
+            this.#fogOverride = override;
+        }
         return under;
+    }
+    private restoreUnderwaterFog(): void {
+        const override = this.#fogOverride;
+        this.#fogOverride = undefined;
+        if (!override || underwaterFogOwners.get(override.scene) !== override) return;
+        underwaterFogOwners.delete(override.scene);
+        // A later scene edit has already superseded our temporary value.
+        if (override.scene.fog === override.installed) override.scene.fog = override.previous;
     }
     /** Release the geometry, the material and the mirror image. */
     dispose(): void {
+        this.restoreUnderwaterFog();
         this.geometry.dispose();
         (this.material as Material3D).dispose();
         this.reflection?.dispose();

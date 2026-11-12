@@ -58,7 +58,8 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `Lod3D` 按相机距离显示其中一个子节点。
 
-成群的动画角色可以一次绘制。`bakeAnimationTexture3D(root, mesh, clips, {fps})` 把每个动画片段采样到骨架上，按帧保存蒙皮网格每根骨骼的矩阵以及前 16 个变形目标的权重；烘焙结束后骨架恢复原状。`createSkinnedInstancedMesh3D(geometry, material, baked, capacity)` 随后不用骨架就能绘制蒙皮几何体的多个副本。每个实例有自己的变换和颜色；`setClipAt(index, clip, {time, speed, loop, fade})` 设置片段，其中 `fade` 从正在播放的片段交叉淡入；`setBlendAt(index, clip, weight, {sync})` 可以再按权重混入第二个片段，比如从走到跑。`lookBone` 指定一根骨骼，`setBoneRotationAt(index, x, y, z, w)` 让它在每个实例上绕自己的关节转动，比如头部。每帧调用一次 `crowd.update(deltaSeconds)`。设置 `cullInstances` 后，每次绘制前相机视野之外的实例会被剔除，并留出 `cullPadding` 倍包围半径的余量，使它们的影子仍能落入视野；该选项默认关闭，因为判断依据是活动范围估计，带缩放的骨骼或被转动的骨骼可能超出它；`total` 是存在的实例数，`count` 是实际绘制的数量。顶点阶段在烘焙表中查找姿态，这张表在 WebGL2 上是浮点纹理，在 WebGPU 上是存储缓冲区；最多应用八个变形目标；阴影使用同样的姿态。一个实例最多混合两个片段，被转动的骨骼不会带动它下面的骨骼；烘焙实例不使用切线、顶点颜色和第二套纹理坐标，因为两个后端都能保证的顶点输入已经用完。两帧之间的姿态按矩阵逐个混合，在默认每秒 30 帧时足够准确，低帧率下的快速旋转会有偏差。克隆会继承正在进行的淡入及后续播放状态。当前活动范围估计无法包住变形后的顶点，因此烘焙蒙皮的批次整体提交，跳过相机和阴影视锥剔除。绘制列表以批次节点原点排序。
+成群的动画角色可以一次绘制。`bakeAnimationTexture3D(root, mesh, clips, {fps})` 把每个动画片段采样到骨架上，按帧保存蒙皮网格每根骨骼的矩阵以及前 16 个变形目标的权重；烘焙结束后骨架恢复原状。`createSkinnedInstancedMesh3D(geometry, material, baked, capacity)` 随后不用骨架就能绘制蒙皮几何体的多个副本。每个实例有自己的变换和颜色；`setClipAt(index, clip, {time, speed, loop, fade})` 设置片段，其中 `fade` 从正在播放的片段交叉淡入；`setBlendAt(index, clip, weight, {sync})` 可以再按权重混入第二个片段，比如从走到跑。`lookBone` 指定一根骨骼，`setBoneRotationAt(index, x, y, z, w)` 让它在每个实例上绕自己的关节转动，比如头部。每帧调用一次 `crowd.update(deltaSeconds)`。只有在能覆盖所有使用的蒙皮、变形目标和骨骼姿态时，才设置以实例原点为中心的正 `crowd.cullRadius`。`cullPadding` 扩大这个半径。有可靠半径且不投射阴影时，相机视锥可剔除实例。开启 `cullInstances` 可启用剔除。未提供姿态包围半径或投射阴影的人群保留全部实例。`count` 及其别名 `total` 都是活动实例数，`drawCount` 报告已准备绘制的数量。原始 `instanceMatrices` 和 `instanceColors` 保留实例编号顺序，`instanceAnimation` 保持原有四值布局。剔除时使用单独的绘制数组。顶点阶段在烘焙表中查找姿态，这张表在 WebGL2 上是浮点纹理，在 WebGPU 上是存储缓冲区；最多应用八个变形目标；阴影使用同样的姿态。一个实例最多混合两个片段，被转动的骨骼不会带动它下面的骨骼；烘焙实例不使用切线、顶点颜色和第二套纹理坐标，因为两个后端都能保证的顶点输入已经用完。两帧之间的姿态按矩阵逐个混合，在默认每秒 30 帧时足够准确，低帧率下的快速旋转会有偏差。克隆会保留正在进行的淡入。绘制列表按批次节点原点排序。
+
 
 ## 动画
 
@@ -206,11 +207,15 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 水面背后的镜子是 `PlanarReflection3D`，可用于任何平面：`reflection.render(renderer, scene, camera, [nx, ny, nz, d], hidden)` 摆放透视或正交镜像相机，用倾斜的近平面在镜面处裁剪，并绘制到 `reflection.target`。正交视线与镜面近乎平行或背向镜面时，该投影无法保持由近到远的深度顺序，返回 `false`。把 `reflection.texture` 赋给标准材质的 `reflectionMap` 即可。镜像按像素自身的屏幕位置读取，按表面法线乘以 `reflectionDistortion` 偏移，按观察角度加权，并取代环境贴图的反射。自定义着色器现在还可以带法线钩子 `glslNormal` 和 `wgslNormal`，在光照计算前替换着色法线。当材质的 `softness` 大于 0 时，片元钩子可以读取 `sceneDistance` 和 `surfaceDistance`，即从相机平面到该像素后方实体场景以及到表面自身的距离，还可以读取 `surfacePixel`；在透射材质上，钩子返回的 alpha 表示还有多少光能透过。
 
-`createTerrainMaterial3D({layers, weights, repeat})` 按一张权重图混合最多四张平铺的地表纹理，权重图的 R、G、B、A 通道分别决定各层出现的位置；配合 `uvScale` 为 1 的地形使用，使权重图恰好覆盖整块地形一次。任何材质都可以通过 `material.splat` 带上这样的地表层；它们占用颜色、自发光、遮蔽、金属粗糙度和光照贴图的纹理槽位。`terrain.createDecal(material, options)` 按完整细节的高度裁剪贴花，因此分块切换层级时贴花不变。
+`createTerrainMaterial3D({layers, weights, repeat})` 按一张权重图混合最多四张平铺的地表纹理，权重图的 R、G、B、A 通道分别决定各层出现的位置；配合 `uvScale` 为 1 的地形使用，使权重图恰好覆盖整块地形一次。任何材质都可以通过 `material.splat` 带上这样的地表层；它们占用颜色、自发光、遮蔽、金属粗糙度和光照贴图的纹理槽位。`terrain.createDecal(material, options)` 按世界坐标的投影盒从完整细节的高度场裁出贴花，地形缩放时也保持投影尺寸。分块切换层级时贴花保持原样。临时地形片在分配几何前检查贴花三角形预算。销毁地形时会释放仍挂在地形下、由它创建的贴花。材质与已移到其他父节点的贴花由调用方负责。
 
-`createTerrainStream3D({tileSize, viewDistance, load, material, terrain, onLoad, onUnload})` 是随观察者出现和消失的地形：一个由地块组成的网格，每块有自己的高度场和 `Terrain3D`。`update(x, z)` 报告观察者位置后，由近到远请求地块，距离超过 `viewDistance` 四分之一后释放。`load(x, z)` 立即或以 Promise 返回地块的高度场，来源可以是文件、服务器或公式；`onLoad` 和 `onUnload` 用来添加和移除对应的碰撞体。`heightAt` 可跨已加载的地块查询。
+`createTerrainStream3D({tileSize, viewDistance, load, material, terrain, onLoad, onUnload})` 是随观察者出现和消失的地形：一个由地块组成的网格，每块有自己的高度场和 `Terrain3D`。`update(x, z)` 报告观察者位置后，由近到远请求地块，距离超过 `viewDistance` 的 1.25 倍加四分之一地块大小时释放。`load(x, z)` 立即或以 Promise 返回地块的高度场，来源可以是文件、服务器或公式；`onLoad` 和 `onUnload` 用来添加和移除对应的碰撞体。`heightAt` 可跨已加载的地块查询。
+
+地块保留窗口最多覆盖 256 个地块位置，同时最多等待 32 次加载。加载器返回的高度场宽度和深度必须与 `tileSize` 一致。离开保留范围会结束对应位置的请求。旧结果无法覆盖新请求，但旧加载器在结束前仍占用等待额度，计入 `pendingCount`。`dispose()` 结束流式地形并释放所有地块。`lastFailure` 记录最近一次加载、准备或生命周期失败，包含地块坐标和阶段。
 
 水面会读取其后方实体场景的深度：透过水看到的景物在 `depthFade` 的深度内逐渐变暗为 `deepColor`，岸边有一条深度为 `foamWidth` 的断续泡沫带，`caustics` 在浅水底部绘制流动的光纹。水面的背面也会绘制；相机位于波浪之下时，`water.updateUnderwater(scene, camera)` 给场景加上水色的浓雾。镜像是其中开销最大的部分：`reflection.interval` 每隔 N 帧才绘制一次，`reflection.shadows = false` 让镜像不含阴影，`reflection.layerMask` 让部分物体不进入镜像，而且镜像始终不做后处理。
+
+镜像仅在渲染器、场景及渲染目标版本一致时复用上次成功绘制的图像。绘制失败后，下一次有效调用会重试。绘制结束或失败时会恢复临时修改的阴影、可见性与后处理设置。水下判定使用水平波面高度，采样范围延伸至可见网格之外。每个场景同时只接受一个水面节点的雾效覆盖。所有者离开水下、切换场景或释放时撤回覆盖。场景随后设置的雾效优先生效，其他水面节点可在所有者撤回后通过下一次更新取得覆盖权。
 
 地表层只混合颜色：各层没有自己的法线和粗糙度贴图，混合是线性的而不是按高度的。细节层级用裙边遮缝而不做边对边的缝合，流式地块之间也不共享边界上的细节层级。水面仍然只有一个水平镜面，因此旋转过的水面网格或很高的波浪反射并不精确；泡沫和焦散是公式而不是模拟，焦散画在能看到水底的水面上而不是真正照亮水底，水下效果只是雾，没有视线折射。读取场景深度需要对不透明物体多做一遍仅深度的绘制。
 
@@ -218,9 +223,9 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `createTrail3D({target, lifetime, points, width, endWidth, color, endColor, opacity, endOpacity, map})` 是跟在运动物体后面的拖尾：目标移动时记录世界坐标，记录点随时间消失，每次绘制前重新构建并朝向相机，向尾部逐渐变窄、变淡。把它直接加入场景而不是挂在目标之下，并且每帧调用 `update(deltaSeconds)`；`push(x, y, z)` 可以手动送入点，瞬移之后用 `clear()` 清空。
 
-`createDecal3D(mesh, material, {position, normal, width, height, depth, rotation})` 把一张纹理贴到已有的几何体上。目标网格落在贴花盒子内的三角形被取出、按盒子裁剪，作为一个贴合表面的新网格返回，纹理坐标在盒子范围内从 0 到 1；它被加为目标的子节点，因此随目标移动，并像普通网格一样接受光照和阴影。`createDecalGeometry3D` 只返回几何体。目标使用镜像变换时，角度判断遵循目标的可见面。背向贴花的面会被略去，盒子没有碰到表面时返回 `undefined`。在蒙皮网格上，贴花按绑定姿态裁剪并保留关节和权重，绑定到同一副骨架，因此会跟随动画；在地形上请用 `terrain.createDecal`，它按完整细节的高度裁剪。
+`createDecal3D(mesh, material, {position, normal, width, height, depth, rotation})` 把一张纹理贴到已有的几何体上。目标网格落在贴花盒子内的三角形被取出、按盒子裁剪，作为一个贴合表面的新网格返回，纹理坐标在盒子范围内从 0 到 1；它被加为目标的子节点，因此随目标移动，并像普通网格一样接受光照和阴影。`createDecalGeometry3D` 只返回几何体。目标使用镜像变换时，角度判断遵循目标的可见面。背向贴花的面会被略去，盒子没有碰到表面时返回 `undefined`。在蒙皮网格上，贴花按绑定姿态裁剪并保留关节和权重，再绑定到同一副骨架。插值得到的权重只能近似贴合动画后的表面。边的两端骨骼权重不同时，剧烈形变可能让贴花与表面分离。地形请使用 `terrain.createDecal`，它按完整细节的高度裁剪。
 
-`createGpuParticles3D({count, lifetime, speed, direction, spread, gravity, drag, startSize, endScale, rotation, spin, startColor, endColor, startOpacity, endOpacity, fadeIn, fadeOut, shape, loop, duration, map, blending, softness})` 在顶点阶段计算粒子运动。每个粒子的起点、出生时间、速度、寿命、大小和旋转只写入一次；每帧只有时间在变，由 `update(deltaSeconds)` 设置。循环发射器是一股在时间 0 就已稳定运行的粒子流；`loop: false` 是一次爆发，可用 `isFinished` 查询结束、用 `restart()` 重放。大约一百万个粒子以内都是一次绘制，CPU 每帧不做任何逐粒子工作。代价是运动必须符合公式：发射、重力和阻力。`floor` 和 `bounce` 在同一个公式里加上一次水平地面的反弹。`space: 'world'` 让粒子在发射器移走后留在发射时的位置，`sorted: true` 让远处的粒子先画，适合透明混合的烟雾；这两项各需要 CPU 遍历一遍粒子，分别发生在每次更新时和每次绘制前。需要与场景几何体碰撞，或受变化的力牵引的粒子仍应使用 `ParticleEmitter3D`。
+`createGpuParticles3D({count, lifetime, speed, direction, spread, gravity, drag, startSize, endScale, rotation, spin, startColor, endColor, startOpacity, endOpacity, fadeIn, fadeOut, shape, loop, duration, map, blending, softness})` 在顶点阶段计算粒子运动。每个粒子的起点、出生时间、速度、寿命、大小和旋转只写入一次；每帧只有时间在变，由 `update(deltaSeconds)` 设置。循环发射器是一股在时间 0 就已稳定运行的粒子流；`loop: false` 是一次爆发，可用 `isFinished` 查询结束、用 `restart()` 重放。大约一百万个粒子以内都是一次绘制，CPU 每帧不做任何逐粒子工作。代价是运动必须符合公式：发射、重力和阻力。启用 `floor` 后使用无阻力的弹道运动，`bounce` 控制粒子与水平地面发生的一次反弹。粒子已接触地面且向下运动时可以立即反弹。局部空间的剔除包围体涵盖反弹前后的两段弹道。`space: 'world'` 让粒子在发射器移走后留在发射时的位置，`sorted: true` 让远处的粒子先画，适合透明混合的烟雾；这两项各需要 CPU 遍历一遍粒子，分别发生在每次更新时和每次绘制前。可在运行时切换 `sorted`。关闭排序会恢复实例编号顺序，`positionAt()` 和 `respawn()` 始终使用相同的粒子编号。需要与场景几何体碰撞，或受变化的力牵引的粒子仍应使用 `ParticleEmitter3D`。
 
 `material.softness` 让混合材质在接近其后方实体几何的那段距离内逐渐淡出，而不是留下一条生硬的交线：软粒子、薄雾、光锥都用得上。两种粒子发射器都接受这个参数。只要有可见的混合材质需要它，渲染器就把不透明三角形的深度绘制到与输出同样大小的纹理中。这次额外的深度绘制采用相机视图的面剔除规则和材质的多边形偏移。
 
