@@ -72,3 +72,18 @@ export {PHYSICS3D_LIMITS, RigidBody3D, PhysicsWorld3D, CharacterController3D, cr
 export type {
     BodyType3D, ShapeDefinition3D, RigidBodyOptions3D, PhysicsRaycastHit3D, PhysicsWorldOptions3D, CharacterControllerOptions3D,
 } from './Physics3D.js';
+export {
+    CURVE3D_LIMITS, Curve3D, LineCurve3D, QuadraticBezierCurve3D, CubicBezierCurve3D, CatmullRomCurve3D, CurvePath3D, Path2D3D, Shape3D,
+    signedArea2D, triangulateShape3D,
+} from './Curves3D.js';
+export type {Point3D, Point2D, CatmullRomKind3D} from './Curves3D.js';
+export {
+    createCircleGeometry3D, createRingGeometry3D, createTorusKnotGeometry3D, createPolyhedronGeometry3D, createTetrahedronGeometry3D,
+    createOctahedronGeometry3D, createIcosahedronGeometry3D, createDodecahedronGeometry3D, createLatheGeometry3D, createTubeGeometry3D,
+    createShapeGeometry3D, createExtrudeGeometry3D, createWireframeGeometry3D, createEdgesGeometry3D, toNonIndexedGeometry3D,
+    mergeGeometries3D, mergeVertices3D, transformGeometry3D,
+} from './geometries3D.js';
+export type {
+    CircleGeometryOptions3D, RingGeometryOptions3D, TorusKnotGeometryOptions3D, PolyhedronOptions3D, LatheGeometryOptions3D,
+    TubeGeometryOptions3D, ExtrudeGeometryOptions3D,
+} from './geometries3D.js';
