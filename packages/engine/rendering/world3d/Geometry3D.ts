@@ -91,6 +91,14 @@ export class Geometry3D extends Resource3D {
             const data = ArrayBuffer.isView(index) ? index
                 : (this.vertexCount > 65535 ? new Uint32Array(index) : new Uint16Array(index));
             requireCount3D(data.length, 'index count', GEOMETRY3D_LIMITS.maxIndices);
+            // An index past the vertex data would read outside the vertex buffers.
+            const vertexCount = this.vertexCount;
+            if (vertexCount > 0) {
+                for (let i = 0; i < data.length; i++) if (data[i]! >= vertexCount) throw new World3DError('WORLD3D_INPUT_INVALID', 'index out of range');
+            }
+            if (!ArrayBuffer.isView(index)) {
+                for (let i = 0; i < index.length; i++) if (!Number.isSafeInteger(index[i]) || index[i]! < 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'index value');
+            }
             this.#index = new Attribute3D(data, 1);
         }
         this.#layoutVersion++;
