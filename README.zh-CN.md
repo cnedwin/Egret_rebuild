@@ -40,7 +40,7 @@ Years later, as times change and technology advances, many developers continue t
 
 [WebGL2 等距地图示例](examples/isometric-map/README.zh-CN.md)展示小型网格场景的深度排序和帧提交。
 
-用 [World3D 示例](examples/world3d/README.zh-CN.md) 在 WebGL2 或 WebGPU 上体验可选 3D 入口。
+用 [World3D 示例](examples/world3d/README.zh-CN.md) 在 WebGL2 或 WebGPU 上体验可选 3D 入口，或者试玩基于它做的完整小游戏[果冻熊猫](examples/jelly-pandas/README.zh-CN.md)。
 
 地图、物理、音频、存档、解包、KTX2 和多语言可按需启用，详见[第三方集成](integrations/README.zh-CN.md)。
 

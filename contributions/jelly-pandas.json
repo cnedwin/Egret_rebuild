@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/jelly-pandas/README.md",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/README.zh-CN.md",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/audio.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/data.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/headless.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/hud.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/index.html",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/input.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/island.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/main.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/panda.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/sim.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/toys.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/jelly-pandas/view.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/jelly-pandas/README.md",
+      "zh": "examples/jelly-pandas/README.zh-CN.md"
+    }
+  ]
+}

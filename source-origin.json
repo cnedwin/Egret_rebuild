@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "d0ea59fd65e1e5bd9774ded4ced5d74e7f8c64b07d5ba1ffb17a17b716d51ac5",
+      "sha256": "0f9966c91bbdf2afe4bbbd35a285fbadc1eca0de72621cc66c7d442e6ca95606",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "b1cb545687124d839ab52f8f865e7f9de8be8534c6150c6971e0026dc445fe51",
-      "bytes": 405588,
+      "sha256": "e38a3b9bd55ce804574ade6ccbfcb0c7e0d94f1fff8e78ec1f6c9d99375fa5c6",
+      "bytes": 405904,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4860,8 +4860,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "39af4e3dda781287403908dc933677fc9fffa6604260afa4006a103f28880bc2",
-      "bytes": 19162,
+      "sha256": "cdd49c03f9b20edd748701f6f7b3707aa49a07eebda7a9849f9fbd94408ea826",
+      "bytes": 19254,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -5003,8 +5003,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "25e47079b156f04247fb347ca94295ff332b2977fa5fa32f3e374df98deed062",
-      "bytes": 18598,
+      "sha256": "215fad680fb0a1dcedc7c02a61b933a352aa432fb61770708f18d66783b289c0",
+      "bytes": 18696,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -10496,8 +10496,8 @@
     {
       "path": "tools/serve-example.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 7440,
-      "sha256": "4501530f8fad55377708df4cefcd65fd3adeca473e1be8eed74a3e8e67a069ef"
+      "bytes": 7589,
+      "sha256": "308aa2a8fe369be7c526d27de75863d652975c3fec0e6fb3aeeaed4a62236e47"
     },
     {
       "path": "tools/setup-dev.mjs",
@@ -17026,6 +17026,96 @@
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "bytes": 16250,
       "sha256": "2b90a30c01e2530d64467b23984cf1b6b5fa1ee3a1d4c3bce57095a76b09af0d"
+    },
+    {
+      "path": "examples/jelly-pandas/README.md",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 4742,
+      "sha256": "ea51b8f650aee0a50b0df0f22217a58be333b78012af937f432b7a0aa045db20"
+    },
+    {
+      "path": "examples/jelly-pandas/README.zh-CN.md",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 4368,
+      "sha256": "8111d2e17c0476d2ac83a341f1d1a3dce6e6521890a314cf0018db688a5907cf"
+    },
+    {
+      "path": "examples/jelly-pandas/audio.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 5325,
+      "sha256": "014b40afcdd0b29bcb7b2df06d38d809ae22ebd32cdaee57aeca40cffebdfc7c"
+    },
+    {
+      "path": "examples/jelly-pandas/data.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 16513,
+      "sha256": "810b0333082bcdad7976bc8aa6401ee2ee90cc5535182512af1bf3ddf0f4f603"
+    },
+    {
+      "path": "examples/jelly-pandas/headless.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 2552,
+      "sha256": "ca96e742f778bb9babb0207f4af7003b0df5a91b5733ebb1f6dd68072026161d"
+    },
+    {
+      "path": "examples/jelly-pandas/hud.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 15031,
+      "sha256": "9cffd1c8221da806a2012329ec2a5cb2822cfc708b7abffd3dfe10a1235be82f"
+    },
+    {
+      "path": "examples/jelly-pandas/index.html",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 13451,
+      "sha256": "76328ee1af9787d98f8426fdf2391cbe2fe988883e84d70a8b678f62fcb89e30"
+    },
+    {
+      "path": "examples/jelly-pandas/input.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 4750,
+      "sha256": "f43bda5a2b2ed095941e53b814f6f446c0c27d86f3f7022f42bd15ccb7625588"
+    },
+    {
+      "path": "examples/jelly-pandas/island.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 4657,
+      "sha256": "54e688a534433820f8b54f04bdd117b0903a76165aaa37d65f1045933b819e65"
+    },
+    {
+      "path": "examples/jelly-pandas/main.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 10599,
+      "sha256": "6d758b5f317e3f407b4fd309714288d84a3d3042b7abf4c53b78b9834632ce47"
+    },
+    {
+      "path": "examples/jelly-pandas/panda.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 12004,
+      "sha256": "629bf9b3893ab754d504b16ca10a05f49ebbe0413b67425b0e5285b834b8adc2"
+    },
+    {
+      "path": "examples/jelly-pandas/sim.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 42776,
+      "sha256": "d70152e184fff9030d8b761c98b0aa96c8f2f1ba9c120d1a0521d5dd67e00ccf"
+    },
+    {
+      "path": "examples/jelly-pandas/toys.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 23317,
+      "sha256": "34a5e8f18352a62dfa064cff9831df5f6c8d42ba27f2fe938d7b9b3a32df8de6"
+    },
+    {
+      "path": "examples/jelly-pandas/view.mjs",
+      "originRole": "Independently authored first-party Egret example game on World3D, with its simulation, drawing, interface and bilingual guidance; game design follows the publicly playable Jiggle Kings by GamesByAI with no borrowed code, assets, names, numbers or text; AI-assisted; Apache-2.0.",
+      "bytes": 31140,
+      "sha256": "59fc164548255c8cea7657c5e039ff7185ac4ff4ef80628f41485583cd8e1047"
+    },
+    {
+      "path": "contributions/jelly-pandas.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 5246,
+      "sha256": "54bb6d7540b164d84592d8b5fa3a839b794a6d4d85db71229081e443376f01c6"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

@@ -40,7 +40,7 @@ The [getting-started guide](knowledge-base/en/docs/getting-started.md) explains 
 
 See the [WebGL2 isometric map](examples/isometric-map/README.md) for depth ordering and frame submission in a small grid-based scene.
 
-Run the [World3D example](examples/world3d/README.md) to try the optional 3D entry on WebGL2 or WebGPU.
+Run the [World3D example](examples/world3d/README.md) to try the optional 3D entry on WebGL2 or WebGPU, or play [Jelly Pandas](examples/jelly-pandas/README.md), a complete small game built on it.
 
 For optional tile-map, physics, audio, save, archive, KTX2 and localization support, see the [third-party integrations](integrations/README.md).
 
