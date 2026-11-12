@@ -3,6 +3,7 @@
 // material additions that need no GPU.
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import {createFollowControls3D} from '@egret/engine/webgl2/world3d';
 import {
   Attribute3D, CatmullRomCurve3D, CubicBezierCurve3D, CurvePath3D, LineCurve3D, Mesh3D, Object3D, Path2D3D, Shape3D, World3DError,
   computeObjectBounds3D, createArrowHelper3D, createBoxGeometry3D, createBoxHelper3D, createCameraHelper3D, createCircleGeometry3D,
@@ -536,4 +537,83 @@ test('the follow camera stays behind its target and closes in on walls; static b
   follow.pitch = 5; follow.distance = 500; follow.update();
   assert.deepEqual([follow.pitch, follow.distance], [follow.maxPitch, follow.maxDistance]);
   assert.throws(() => createFollowCamera3D(undefined, [0, 0, 0]), code('WORLD3D_INPUT_INVALID'));
+});
+
+test('a rejected character teleport leaves the current motion and pose intact', () => {
+  const world = createPhysicsWorld3D();
+  world.createBody({shape: {type: 'plane'}});
+  const node = new Object3D();
+  const motor = createCharacterMotor3D(world, {node, position: [0, 0.92, 0]});
+  motor.update(1 / 60, 3, 0);
+  const position = [...motor.position], velocity = [...motor.velocity], pose = [...node.position], ground = motor.groundBody;
+  assert.throws(() => motor.teleport(100, 200, NaN), code('WORLD3D_INPUT_INVALID'));
+  assert.deepEqual([...motor.position], position);
+  assert.deepEqual([...motor.velocity], velocity);
+  assert.deepEqual([...node.position], pose);
+  assert.equal(motor.isGrounded, true);
+  assert.equal(motor.groundBody, ground);
+  motor.teleport(2, 3, 4);
+  assert.deepEqual([...motor.position], [2, 3, 4]);
+  assert.deepEqual([...motor.velocity], [0, 0, 0]);
+  assert.deepEqual([...node.position], [2, 3, 4]);
+});
+
+function followControlsElement() {
+  let value = 'pan-y', priority = 'important';
+  const element = new EventTarget(), captures = new Set();
+  element.style = {
+    get touchAction() { return value; },
+    set touchAction(next) { value = next; priority = ''; },
+    getPropertyValue: () => value,
+    getPropertyPriority: () => priority,
+    setProperty(_name, next, importance) { value = next; priority = importance ?? ''; },
+  };
+  element.hasPointerCapture = id => captures.has(id);
+  element.setPointerCapture = id => captures.add(id);
+  element.releasePointerCapture = id => {
+    assert.ok(captures.delete(id), 'release only a capture the host still owns');
+  };
+  return element;
+}
+
+function dispatchFollowPointer(element, type, pointerId, clientX) {
+  element.dispatchEvent(Object.assign(new Event(type), {pointerId, clientX, clientY: 0}));
+}
+
+test('follow controls release pointer capture and restore only their own touch-action', () => {
+  const element = followControlsElement();
+  const camera = createPerspectiveCamera3D({});
+  const controls = createFollowControls3D(camera, element, [0, 0, 0]);
+  assert.equal(element.style.touchAction, 'none');
+  dispatchFollowPointer(element, 'pointerdown', 1, 0);
+  assert.equal(element.hasPointerCapture(1), true);
+  controls.dispose();
+  controls.dispose();
+  assert.equal(element.hasPointerCapture(1), false);
+  assert.equal(element.style.touchAction, 'pan-y');
+  assert.equal(element.style.getPropertyPriority('touch-action'), 'important');
+  dispatchFollowPointer(element, 'pointerdown', 2, 20);
+  assert.equal(element.hasPointerCapture(2), false);
+
+  const replacement = createFollowControls3D(camera, element, [0, 0, 0]);
+  element.style.touchAction = 'manipulation';
+  replacement.dispose();
+  assert.equal(element.style.touchAction, 'manipulation');
+});
+
+test('follow controls forget contacts whose pointer capture transfers away', () => {
+  const element = followControlsElement();
+  const controls = createFollowControls3D(createPerspectiveCamera3D({}), element, [0, 0, 0]);
+  try {
+    dispatchFollowPointer(element, 'pointerdown', 1, 0);
+    dispatchFollowPointer(element, 'pointerdown', 2, 20);
+    dispatchFollowPointer(element, 'pointermove', 2, 25);
+    element.releasePointerCapture(2);
+    dispatchFollowPointer(element, 'lostpointercapture', 2, 25);
+    dispatchFollowPointer(element, 'pointermove', 1, 10);
+    close(controls.follow.yaw, -10 * controls.rotateSpeed);
+    close(controls.follow.distance, 6);
+  } finally {
+    controls.dispose();
+  }
 });
