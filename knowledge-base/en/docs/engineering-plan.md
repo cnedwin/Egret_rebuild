@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/工程规划.md)
 
-2026-11-12 · Audited implementation baseline is main [72edea9](https://github.com/cnedwin/Egret_rebuild/commit/72edea9de4a5f113ebd18cba9c8a970485bccd19).
+2026-11-12 · Audited implementation baseline is main [5a9b860](https://github.com/cnedwin/Egret_rebuild/commit/5a9b860fa7fdc777987bad844d98016d7e824eeb).
 
 The next phase turns existing components into a usable core workflow. Preserve the eleven M2–M4 packages, their public contracts and current contributor ownership. [Core capabilities](core-progress.md) states what exists; the [architecture plan](architecture-and-engineering-plan.md) defines authority and gates; the [M2–M4 roadmap](m2-m4-delivery-plan.md) retains complete milestone acceptance.
 
@@ -18,7 +18,7 @@ The native single/multiline increment uses the existing optional editing entries
 
 M0’s engineering foundation is available. Independent human onboarding and remaining scenario, rights and device qualification stay in #52 and #54. M1 rendering and resources are integrated. The original M1.2 full-dirty Engine median-p95 remains 10.3 ms against 8 ms. M2 ships compatible sequence preservation, and M3 includes native single/multiline editing and owned popup/modal layers. M4’s [Outfit Studio](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/README.md) runs compact and fixed mixed scenes. Complete scenario qualification and the core release remain open.
 
-The priority is to connect missing user behavior and expose integrated costs, not to rebuild delivered components or add another maintenance-automation phase. Package versions remain private 0.0.0; engineering-document numbers and merged PRs are not product release versions.
+Start the next phase in [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) with in-browser opening of an exported Outfit Studio project. Load a valid snapshot through existing transactions, retain the live scene and resources on cancellation or failed import, and allow retry. #83–#90 continue to supply capabilities as the reference project needs them. #55 can diagnose the full-dirty cost independently. #92 runs formal qualification against the frozen profiles and #93 can prepare the clean-consumer handoff in parallel. Optional [World3D](world3d.md) has runnable entries and device functional evidence. The fixed mixed profiles retain their existing acceptance scope.
 
 ## Next capability batch
 
@@ -74,13 +74,13 @@ A sequence controller can carry position, loop, rate, pause state and marker num
 | Extend | Native edit state/host bridge and UI retention; current content producer/provider profiles; Spine replay/compatible replacement; complete controls/semantics; one mixed example |
 | Refactor only for a demonstrated need | Shared frame preparation, provider/raster keys or native/storage paths required by a selected capability or measured bottleneck. Keep ordinary old-API consumers and saved-frame behavior. |
 | Keep historical | Spine/3D/text research programs and original evidence. They inform mechanisms but do not replace current product adapters or full-feature references. |
-| Defer as separate product lines | Imported 3D scenes/characters/materials/VFX, mini-game/native/desktop hosts, integrated visual/Agent platform and complete migration. Their requirements remain mandatory in the larger product scope. |
+| Advance as separate product lines | Unified 2D/3D project authoring and broader asset compatibility, mini-game/native/desktop hosts, integrated visual/Agent creation and complete migration. |
 
 ## Larger product sequence
 
 | Product line | Entry supplied by this core | Next complete outcome and acceptance |
 | --- | --- | --- |
-| Lightweight 3D | Existing scene/resource/clock/Host boundaries, 2D overlay composition and [authored static GLB and cameras](authored-scene3d.md) | Editable model-to-scene import and camera/materials, then animated characters and bounded VFX, sharing UI/resources/recovery. Actual import/pixels/events/device budgets, not procedural quads, qualify this line. |
+| Lightweight 3D | The [shared authored scene](authored-scene3d.md) provides bounded 3D/2D composition. [Optional World3D](world3d.md) provides glTF, materials, character animation, effects and separate entries for both backends. | Connect authored projects, resource ownership and recovery, and broaden asset and device coverage. Qualify with actual imports, pixels, events and device budgets. |
 | Platform Runtime and publishing | Explicit host/capability/input/resource contracts | Select actual browser/mini-game/native priorities, then one complete startup/play/pause/storage/update/debug/package loop per chosen host. Native language/VM/graphics selection has its own measured boundary. |
 | Creation and Agent platform | Stable project transactions, artifacts, diagnostics and editable examples | Shared code/visual/natural-language changes, preview, conflict/undo, user-selected model APIs, Skill/MCP/plugins, visible token costs/limits and real target publication. Validate actual new-creator task completion. |
 | Legacy migration | Preserved display/event/resource semantics and bounded RES/MovieClip planners | Authorized old baseline → deterministic conversion → bounded Agent repair → equivalent old/new replay → continued editing/publication/update within a declared support matrix. Compilation/startup alone cannot pass. |
