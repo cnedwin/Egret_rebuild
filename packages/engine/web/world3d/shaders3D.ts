@@ -6,7 +6,7 @@
 /** Fixed vertex attribute locations shared by every program and vertex array. */
 export const ATTRIBUTE_LOCATIONS_3D = Object.freeze({
     position: 0, normal: 1, uv: 2, tangent: 3, color: 4, joints: 5, weights: 6, uv1: 7,
-    instanceMatrix: 8, instanceColor: 12, instanceAnimation: 13,
+    instanceMatrix: 8, instanceColor: 12, instanceAnimation: 13, instanceAnimation2: 14, instanceLook: 15,
 } as const);
 
 /** Fixed texture units; samplers are assigned once when a program is linked. */
@@ -59,7 +59,9 @@ layout(location = 6) in vec4 aWeights;
 layout(location = 7) in vec2 aUv1;
 layout(location = 8) in mat4 aInstanceMatrix;
 layout(location = 12) in vec4 aInstanceColor;
-layout(location = 13) in vec4 aInstanceAnimation; // first frame, second frame, blend, bone count
+layout(location = 13) in vec4 aInstanceAnimation;  // first frame, second frame, blend, shared numbers
+layout(location = 14) in vec4 aInstanceAnimation2; // the same for a second clip, and its weight
+layout(location = 15) in vec4 aInstanceLook;       // rotation of the look bone
 ${FRAME_BLOCK}
 uniform mat4 uModel;
 uniform mat3 uNormalMatrix;
@@ -102,15 +104,36 @@ mat4 boneMatrix(uint index) {
 }
 #endif
 #ifdef USE_SKIN_INSTANCING
-mat4 bakedBone(uint joint, float frame) {
-    int texel = (int(frame) * int(aInstanceAnimation.w) + int(joint)) * 4, width = textureSize(uBoneTexture, 0).x;
+// The fourth float carries what every instance shares: matrices per frame, and the bone that may turn.
+int crowdStride() { return int(mod(aInstanceAnimation.w, 2048.0)); }
+mat4 bakedBone(int joint, float frame) {
+    int texel = (int(frame) * crowdStride() + joint) * 4, width = textureSize(uBoneTexture, 0).x;
     ivec2 at = ivec2(texel % width, texel / width);
     return mat4(texelFetch(uBoneTexture, at, 0), texelFetch(uBoneTexture, at + ivec2(1, 0), 0),
         texelFetch(uBoneTexture, at + ivec2(2, 0), 0), texelFetch(uBoneTexture, at + ivec2(3, 0), 0));
 }
-mat4 bakedPose(float frame) {
-    return aWeights.x * bakedBone(aJoints.x, frame) + aWeights.y * bakedBone(aJoints.y, frame)
-        + aWeights.z * bakedBone(aJoints.z, frame) + aWeights.w * bakedBone(aJoints.w, frame);
+// One table entry for this instance: between two frames of its clip, and of a second clip when it has one.
+mat4 bakedBlend(int joint) {
+    mat4 pose = bakedBone(joint, aInstanceAnimation.x) * (1.0 - aInstanceAnimation.z) + bakedBone(joint, aInstanceAnimation.y) * aInstanceAnimation.z;
+    if (aInstanceAnimation2.w > 0.0) {
+        pose = pose * (1.0 - aInstanceAnimation2.w)
+            + (bakedBone(joint, aInstanceAnimation2.x) * (1.0 - aInstanceAnimation2.z) + bakedBone(joint, aInstanceAnimation2.y) * aInstanceAnimation2.z) * aInstanceAnimation2.w;
+    }
+    return pose;
+}
+mat4 bakedJoint(uint joint) {
+    mat4 pose = bakedBlend(int(joint));
+    int look = int(aInstanceAnimation.w / 2048.0) - 1;
+    if (int(joint) == look) {
+        // Turn the bone about its joint, whose place in the bind pose is kept in frame 0.
+        vec3 pivot = bakedBone(look, 0.0)[3].xyz, v = aInstanceLook.xyz;
+        float w = aInstanceLook.w;
+        mat3 turn = mat3(1.0 - 2.0 * (v.y * v.y + v.z * v.z), 2.0 * (v.x * v.y + v.z * w), 2.0 * (v.x * v.z - v.y * w),
+            2.0 * (v.x * v.y - v.z * w), 1.0 - 2.0 * (v.x * v.x + v.z * v.z), 2.0 * (v.y * v.z + v.x * w),
+            2.0 * (v.x * v.z + v.y * w), 2.0 * (v.y * v.z - v.x * w), 1.0 - 2.0 * (v.x * v.x + v.y * v.y));
+        pose = pose * mat4(vec4(turn[0], 0.0), vec4(turn[1], 0.0), vec4(turn[2], 0.0), vec4(pivot - turn * pivot, 1.0));
+    }
+    return pose;
 }
 #endif
 #ifdef USE_MORPH
@@ -133,7 +156,16 @@ void main() {
     #else
     vec3 normal = vec3(0.0, 0.0, 1.0);
     #endif
-    #ifdef USE_MORPH
+    #if defined(USE_MORPH) && defined(USE_SKIN_INSTANCING)
+    // Baked instances read their morph weights from the last entry of their frames.
+    mat4 bakedWeights = bakedBlend(crowdStride() - 1);
+    for (int i = 0; i < uMorphCount; i++) {
+        position += morphDelta(i, 0) * bakedWeights[i / 4][i % 4];
+        #ifdef USE_MORPH_NORMALS
+        normal += morphDelta(i, 1) * bakedWeights[i / 4][i % 4];
+        #endif
+    }
+    #elif defined(USE_MORPH)
     for (int i = 0; i < uMorphCount; i++) {
         position += morphDelta(uMorphIndices[i], 0) * uMorphWeights[i];
         #ifdef USE_MORPH_NORMALS
@@ -161,6 +193,22 @@ void main() {
     float particleAge = clamp(particleTime / particleLife, 0.0, 1.0);
     float particleTravel = uCustom[1].w > 0.0001 ? (1.0 - exp(-uCustom[1].w * particleTime)) / uCustom[1].w : particleTime;
     vec3 particleCenter = particleStart.xyz + particleMotion.xyz * particleTravel + uCustom[1].xyz * (0.5 * particleTime * particleTime);
+    if (uCustom[3].y > 0.5) {
+        // A floor: find when the particle comes down on it, then let it leave again slower, once. Drag is not applied on this path.
+        vec3 pull = uCustom[1].xyz, launch = particleMotion.xyz;
+        float a = 0.5 * pull.y, b = launch.y, c = particleStart.y - uCustom[3].z, hit = -1.0;
+        if (abs(a) > 0.000001) { float root = b * b - 4.0 * a * c; if (root >= 0.0) hit = max((-b - sqrt(root)) / (2.0 * a), (-b + sqrt(root)) / (2.0 * a)); }
+        else if (b < 0.0) hit = -c / b;
+        particleCenter = particleStart.xyz + launch * particleTime + pull * (0.5 * particleTime * particleTime);
+        if (c >= 0.0 && hit > 0.0 && particleTime > hit) {
+            vec3 landed = particleStart.xyz + launch * hit + pull * (0.5 * hit * hit), away = (launch + pull * hit) * vec3(uCustom[3].w, -uCustom[3].w, uCustom[3].w);
+            float since = particleTime - hit;
+            particleCenter = landed + away * since + pull * (0.5 * since * since);
+            particleCenter.y = max(particleCenter.y, uCustom[3].z);
+        }
+    }
+    // Particles left behind in the world carry world positions and ignore the emitter's transform.
+    if (uCustom[3].x > 0.5) model = mat4(1.0);
     float particleSize = mix(particleLook.x, particleLook.y, particleAge);
     model = model * mat4(vec4(particleSize, 0.0, 0.0, 0.0), vec4(0.0, particleSize, 0.0, 0.0), vec4(0.0, 0.0, particleSize, 0.0), vec4(particleCenter, 1.0));
     spriteTurn = particleLook.z + particleLook.w * particleTime;
@@ -170,7 +218,7 @@ void main() {
     #endif
     #ifdef USE_SKIN_INSTANCING
     // Each instance is posed in its own space before its transform places it.
-    model = model * (bakedPose(aInstanceAnimation.x) * (1.0 - aInstanceAnimation.z) + bakedPose(aInstanceAnimation.y) * aInstanceAnimation.z);
+    model = model * (aWeights.x * bakedJoint(aJoints.x) + aWeights.y * bakedJoint(aJoints.y) + aWeights.z * bakedJoint(aJoints.z) + aWeights.w * bakedJoint(aJoints.w));
     normalMatrix = mat3(model);
     #endif
     vec4 world = model * vec4(position, 1.0);
@@ -255,6 +303,20 @@ uniform vec3 uAttenuation;
 uniform highp sampler2D uSceneDepth; // depth of the solid scene, drawn before the frame
 uniform float uSoftness;
 #endif
+#ifdef USE_SPLAT
+uniform sampler2D uSplatWeights;
+uniform sampler2D uSplat0;
+uniform sampler2D uSplat1;
+uniform sampler2D uSplat2;
+uniform sampler2D uSplat3;
+uniform vec4 uSplatRepeat;
+#endif
+// Distance from the camera plane to the solid scene behind this pixel and to the surface itself;
+// hooks may read them. Without a depth image the scene counts as far away.
+float sceneDistance = 1.0e9;
+float surfaceDistance = 0.0;
+// This pixel's place on the output, counted from the top row when a depth image tells its height.
+vec2 surfacePixel = vec2(0.0);
 #ifdef USE_REFLECTION_MAP
 uniform sampler2D uReflectionMap; // mirror image of the scene, read at the pixel's place on screen
 uniform vec2 uReflection;         // strength, distortion by the normal
@@ -303,9 +365,9 @@ vec3 surfaceNormal() {
 }
 
 #ifdef RECEIVE_SHADOW
-float shadowFactor(int slot, vec3 normal) {
+float shadowFactor(int slot, vec3 at, vec3 normal) {
     vec4 params = uShadowParams[slot];
-    vec4 clip = uShadowMatrix[slot] * vec4(vWorldPosition + normal * params.y, 1.0);
+    vec4 clip = uShadowMatrix[slot] * vec4(at + normal * params.y, 1.0);
     vec3 ndc = clip.xyz / clip.w * 0.5 + 0.5;
     if (clip.w <= 0.0 || any(lessThan(ndc, vec3(0.0))) || any(greaterThan(ndc, vec3(1.0)))) return 1.0;
     vec4 rect = uShadowRect[slot];
@@ -321,7 +383,22 @@ float shadowFactor(int slot, vec3 normal) {
     }
     return lit / 9.0;
 }
-float pointShadowFactor(int slot, vec3 fromLight, vec3 normal) {
+// One unfiltered lookup for a point in the air, as fog marching needs many; the flag picks the cascade for that depth.
+float volumeShadow(int slot, vec3 at, bool cascaded) {
+    if (cascaded) {
+        float viewDepth = -(uView * vec4(at, 1.0)).z;
+        int count = int(uCascadeInfo.y), cascade = 0;
+        for (int c = 0; c < 3; c++) if (c < count - 1 && viewDepth > uCascadeSplits[c]) cascade = c + 1;
+        if (viewDepth >= uCascadeSplits[cascade]) return 1.0;
+        slot += cascade;
+    }
+    vec4 clip = uShadowMatrix[slot] * vec4(at, 1.0);
+    vec3 ndc = clip.xyz / clip.w * 0.5 + 0.5;
+    if (clip.w <= 0.0 || any(lessThan(ndc, vec3(0.0))) || any(greaterThan(ndc, vec3(1.0)))) return 1.0;
+    vec4 rect = uShadowRect[slot];
+    return texture(uShadowMap, vec3(rect.xy + ndc.xy * rect.zw, ndc.z - uShadowParams[slot].x));
+}
+float pointShadowFactor(int slot, vec3 fromLight, vec3 at, vec3 normal) {
     // Faces of the tetrahedron the four maps were rendered through.
     const float k = 0.5773502691896258;
     float d0 = dot(fromLight, vec3(k, k, k)), d1 = dot(fromLight, vec3(-k, -k, k)), d2 = dot(fromLight, vec3(-k, k, -k)), d3 = dot(fromLight, vec3(k, -k, -k));
@@ -329,18 +406,18 @@ float pointShadowFactor(int slot, vec3 fromLight, vec3 normal) {
     if (d1 > best) { best = d1; face = 1; }
     if (d2 > best) { best = d2; face = 2; }
     if (d3 > best) face = 3;
-    return shadowFactor(slot + face, normal);
+    return shadowFactor(slot + face, at, normal);
 }
-float cascadedShadowFactor(int slot, vec3 normal) {
-    float viewDepth = -(uView * vec4(vWorldPosition, 1.0)).z;
+float cascadedShadowFactor(int slot, vec3 at, vec3 normal) {
+    float viewDepth = -(uView * vec4(at, 1.0)).z;
     int count = int(uCascadeInfo.y), cascade = 0;
     for (int c = 0; c < 3; c++) if (c < count - 1 && viewDepth > uCascadeSplits[c]) cascade = c + 1;
     float edge = uCascadeSplits[cascade];
     if (viewDepth >= edge) return 1.0;
-    float visible = shadowFactor(slot + cascade, normal);
+    float visible = shadowFactor(slot + cascade, at, normal);
     // Blend into the next cascade, or out to unshadowed past the last one.
     float t = smoothstep(edge * (1.0 - uCascadeInfo.z), edge, viewDepth);
-    if (t > 0.0) visible = mix(visible, cascade < count - 1 ? shadowFactor(slot + cascade + 1, normal) : 1.0, t);
+    if (t > 0.0) visible = mix(visible, cascade < count - 1 ? shadowFactor(slot + cascade + 1, at, normal) : 1.0, t);
     return visible;
 }
 #endif
@@ -430,6 +507,9 @@ void main() {
     #ifndef DEPTH_ONLY
     for (int i = 0; i < int(uClipInfo.x); i++) if (dot(vWorldPosition, uClipPlanes[i].xyz) + uClipPlanes[i].w < 0.0) discard;
     #endif
+    #ifndef DEPTH_ONLY
+    surfacePixel = gl_FragCoord.xy;
+    #endif
     vec4 base = uColor * vColor;
     #ifdef USE_MAP
     vec4 mapColor = texture(uMap, vUv);
@@ -439,13 +519,26 @@ void main() {
     #endif
     base *= mapColor;
     #endif
+    #ifdef USE_SPLAT
+    {
+        // Ground layers, each weighted by its channel of the weight map.
+        vec4 share = texture(uSplatWeights, vUv);
+        float total = share.r + share.g + share.b + share.a;
+        share = total > 0.0001 ? share / total : vec4(1.0, 0.0, 0.0, 0.0);
+        base.rgb *= texture(uSplat0, vUv * uSplatRepeat.x).rgb * share.r + texture(uSplat1, vUv * uSplatRepeat.y).rgb * share.g
+            + texture(uSplat2, vUv * uSplatRepeat.z).rgb * share.b + texture(uSplat3, vUv * uSplatRepeat.w).rgb * share.a;
+    }
+    #endif
     #ifdef USE_SOFT_DEPTH
     {
         // Fade out over the last stretch before the solid surface behind this pixel.
         float stored = texelFetch(uSceneDepth, ivec2(gl_FragCoord.xy), 0).r * 2.0 - 1.0;
-        float behind = uLightCounts.w > 0.5 ? (uPointShadow.w - stored) / uPointShadow.z : uPointShadow.w / (stored + uPointShadow.z);
-        float here = -(uView * vec4(vWorldPosition, 1.0)).z;
-        base.a *= clamp((behind - here) / max(uSoftness, 0.0001), 0.0, 1.0);
+        surfacePixel = vec2(gl_FragCoord.x, float(textureSize(uSceneDepth, 0).y) - gl_FragCoord.y);
+        sceneDistance = uLightCounts.w > 0.5 ? (uPointShadow.w - stored) / uPointShadow.z : uPointShadow.w / (stored + uPointShadow.z);
+        surfaceDistance = -(uView * vec4(vWorldPosition, 1.0)).z;
+        #ifndef USE_TRANSMISSION
+        base.a *= clamp((sceneDistance - surfaceDistance) / max(uSoftness, 0.0001), 0.0, 1.0);
+        #endif
     }
     #endif
     #ifdef POINTS
@@ -511,7 +604,12 @@ void main() {
     }
     // Tint of the material, deepened by the distance travelled inside it.
     vec3 tint = s.albedo;
-    if (uRefraction.z > 0.0) tint *= pow(max(uAttenuation, vec3(0.0001)), vec3(uRefraction.y / uRefraction.z));
+    float travelled = uRefraction.y;
+    #ifdef USE_SOFT_DEPTH
+    // With a depth image the light's path through the material is the real gap to what lies behind.
+    travelled = max(sceneDistance - surfaceDistance, 0.0);
+    #endif
+    if (uRefraction.z > 0.0) tint *= pow(max(uAttenuation, vec3(0.0001)), vec3(travelled / uRefraction.z));
     s.albedo *= 1.0 - through;
     float clear = 1.0;
     #endif
@@ -562,7 +660,7 @@ void main() {
         float visible = 1.0;
         #ifdef RECEIVE_SHADOW
         if (uDirectionalDirection[i].w >= 0.0) {
-            visible = float(i) == uCascadeInfo.x ? cascadedShadowFactor(int(uDirectionalDirection[i].w), s.normal) : shadowFactor(int(uDirectionalDirection[i].w), s.normal);
+            visible = float(i) == uCascadeInfo.x ? cascadedShadowFactor(int(uDirectionalDirection[i].w), vWorldPosition, s.normal) : shadowFactor(int(uDirectionalDirection[i].w), vWorldPosition, s.normal);
         }
         #endif
         if (visible > 0.0) color += shade(s, -uDirectionalDirection[i].xyz, uDirectionalColor[i].rgb) * visible;
@@ -572,7 +670,7 @@ void main() {
         float dist = length(toLight);
         float visible = 1.0;
         #ifdef RECEIVE_SHADOW
-        if (float(i) == uPointShadow.x) visible = pointShadowFactor(int(uPointShadow.y), -toLight, s.normal);
+        if (float(i) == uPointShadow.x) visible = pointShadowFactor(int(uPointShadow.y), -toLight, vWorldPosition, s.normal);
         #endif
         color += shade(s, toLight / max(dist, 0.0001), uPointColor[i].rgb * rangeFalloff(dist, uPointPosition[i].w)) * visible;
     }
@@ -584,7 +682,7 @@ void main() {
         if (cone <= 0.0) continue;
         float visible = 1.0;
         #ifdef RECEIVE_SHADOW
-        if (uSpotDirection[i].w >= 0.0) visible = shadowFactor(int(uSpotDirection[i].w), s.normal);
+        if (uSpotDirection[i].w >= 0.0) visible = shadowFactor(int(uSpotDirection[i].w), vWorldPosition, s.normal);
         #endif
         color += shade(s, l, uSpotColor[i].rgb * rangeFalloff(dist, uSpotPosition[i].w) * cone) * visible;
     }
@@ -605,6 +703,10 @@ void main() {
     #ifdef CUSTOM_FRAGMENT
     vec4 customized = customFragment(vec4(color, base.a), vWorldPosition, normalize(vNormal), vUv);
     color = customized.rgb; base.a = customized.a;
+    #ifdef USE_TRANSMISSION
+    // On a see-through material the hook's alpha is how much still passes: 0 covers what lies behind.
+    through *= clamp(customized.a, 0.0, 1.0);
+    #endif
     #endif
     #ifdef USE_FOG
     if (uFogParams.x > 0.5) {

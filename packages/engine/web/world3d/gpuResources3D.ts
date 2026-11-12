@@ -124,7 +124,8 @@ export class GpuResources3D {
         gl.useProgram(program);
         const samplers: Record<string, number> = {
             uMap: TEXTURE_UNITS_3D.map, uNormalMap: TEXTURE_UNITS_3D.normalMap, uMetallicRoughnessMap: TEXTURE_UNITS_3D.metallicRoughnessMap,
-            uOcclusionMap: TEXTURE_UNITS_3D.occlusionMap, uEmissiveMap: TEXTURE_UNITS_3D.emissiveMap, uLightMap: TEXTURE_UNITS_3D.lightMap, uReflectionMap: TEXTURE_UNITS_3D.reflectionMap, uSceneDepth: TEXTURE_UNITS_3D.sceneDepth, uEnvironment: TEXTURE_UNITS_3D.environment,
+            uOcclusionMap: TEXTURE_UNITS_3D.occlusionMap, uEmissiveMap: TEXTURE_UNITS_3D.emissiveMap, uLightMap: TEXTURE_UNITS_3D.lightMap, uReflectionMap: TEXTURE_UNITS_3D.reflectionMap, uSceneDepth: TEXTURE_UNITS_3D.sceneDepth, uSplatWeights: TEXTURE_UNITS_3D.lightMap, uSplat0: TEXTURE_UNITS_3D.map,
+            uSplat1: TEXTURE_UNITS_3D.emissiveMap, uSplat2: TEXTURE_UNITS_3D.occlusionMap, uSplat3: TEXTURE_UNITS_3D.metallicRoughnessMap, uEnvironment: TEXTURE_UNITS_3D.environment,
             uShadowMap: TEXTURE_UNITS_3D.shadow, uBoneTexture: TEXTURE_UNITS_3D.bones, uMorphTexture: TEXTURE_UNITS_3D.morph, uSceneColor: TEXTURE_UNITS_3D.sceneColor,
         };
         for (const name in samplers) if (uniforms[name]) gl.uniform1i(uniforms[name]!, samplers[name]!);
@@ -319,7 +320,7 @@ export class GpuResources3D {
                 entry.animation ??= this.buffer();
                 gl.bindBuffer(gl.ARRAY_BUFFER, entry.animation);
                 if (created) gl.bufferData(gl.ARRAY_BUFFER, animated, gl.DYNAMIC_DRAW);
-                else gl.bufferSubData(gl.ARRAY_BUFFER, 0, animated, 0, mesh.count * 4);
+                else gl.bufferSubData(gl.ARRAY_BUFFER, 0, animated, 0, mesh.count * 12);
             }
             entry.version = mesh.instanceVersion;
         }
@@ -341,9 +342,11 @@ export class GpuResources3D {
             }
             if (entry.animation) {
                 gl.bindBuffer(gl.ARRAY_BUFFER, entry.animation);
-                gl.enableVertexAttribArray(ATTRIBUTE_LOCATIONS_3D.instanceAnimation);
-                gl.vertexAttribPointer(ATTRIBUTE_LOCATIONS_3D.instanceAnimation, 4, gl.FLOAT, false, 0, 0);
-                gl.vertexAttribDivisor(ATTRIBUTE_LOCATIONS_3D.instanceAnimation, 1);
+                for (let part = 0; part < 3; part++) {
+                    gl.enableVertexAttribArray(ATTRIBUTE_LOCATIONS_3D.instanceAnimation + part);
+                    gl.vertexAttribPointer(ATTRIBUTE_LOCATIONS_3D.instanceAnimation + part, 4, gl.FLOAT, false, 48, part * 16);
+                    gl.vertexAttribDivisor(ATTRIBUTE_LOCATIONS_3D.instanceAnimation + part, 1);
+                }
             }
             gl.bindVertexArray(null);
             entry.layoutVersion = geometry.layoutVersion;

@@ -134,6 +134,7 @@ export class WebGPURenderer3D implements Renderer3D {
     /** True while the frame being drawn has a depth image of its solid geometry. */
     #softDepth = false;
     #sceneDepthSerial = 0;
+    #sceneDepthPass = false;
     readonly #skins = new WeakMap<Mesh3D, SkinGpu>();
     readonly #samplers = new Map<string, GPUSampler>();
     readonly #mipPipelines = new Map<GPUTextureFormat, GPURenderPipeline>();
@@ -626,10 +627,14 @@ export class WebGPURenderer3D implements Renderer3D {
         data[48] = material.sheenColor[0]! * material.sheen; data[49] = material.sheenColor[1]! * material.sheen; data[50] = material.sheenColor[2]! * material.sheen; data[51] = material.sheenRoughness;
         data[52] = material.lightMapIntensity; data[53] = material.transmission; data[54] = material.ior; data[55] = material.thickness;
         data[56] = material.attenuationColor[0]!; data[57] = material.attenuationColor[1]!; data[58] = material.attenuationColor[2]!; data[59] = Number.isFinite(material.attenuationDistance) ? material.attenuationDistance : 0;
+        const splat = material.splat;
+        data[60] = splat?.repeat[0] ?? 1; data[61] = splat?.repeat[1] ?? 1; data[62] = splat?.repeat[2] ?? 1; data[63] = splat?.repeat[3] ?? 1;
         this.device.queue.writeBuffer(entry.buffer, 0, data);
         const entries: GPUBindGroupEntry[] = [{binding: 0, resource: {buffer: entry.buffer}}];
         let key = '';
-        [material.map, material.normalMap, material.metallicRoughnessMap, material.occlusionMap, material.emissiveMap, material.lightMap, material.reflectionMap].forEach((texture, i) => {
+        // Ground layers borrow the slots of the maps they stand in for; a missing layer reads the first.
+        (splat ? [splat.layers[0], material.normalMap, splat.layers[3] ?? splat.layers[0], splat.layers[2] ?? splat.layers[0], splat.layers[1] ?? splat.layers[0], splat.weights, material.reflectionMap]
+            : [material.map, material.normalMap, material.metallicRoughnessMap, material.occlusionMap, material.emissiveMap, material.lightMap, material.reflectionMap]).forEach((texture, i) => {
             const gpu = texture && !texture.isDisposed ? this.texture2d(texture) : undefined;
             entries.push({binding: 1 + i * 2, resource: gpu?.view ?? this.#white}, {binding: 2 + i * 2, resource: gpu?.sampler ?? this.#defaultSampler});
             key += (gpu?.key ?? '-') + '|';
@@ -648,14 +653,17 @@ export class WebGPURenderer3D implements Renderer3D {
         const emissiveUv1 = second && material.shading !== 'matcap' && material.emissiveMap?.channel === 1;
         const lightUv1 = second && lit && material.lightMap?.channel === 1, lightMap = lit && material.lightMap !== undefined && (uv || lightUv1);
         const skinning = mesh.skeleton !== undefined && gpu.buffers.has('joints') && gpu.buffers.has('weights');
+        // A draw may bind eight vertex buffers. Baked instances use them up, so they do without tangents, vertex colors and second coordinates.
+        const baked = instanced && !skinning && mesh instanceof SkinnedInstancedMesh3D;
         return {
             shading: material.shading, depthOnly,
             normal: gpu.buffers.has('normal') && (!depthOnly || material.shader?.wgslVertex !== undefined),
             uv: uv && (!depthOnly || (material.map !== undefined && material.alphaMode !== 'opaque') || material.shader?.wgslVertex !== undefined),
-            tangent: lit && uv && material.normalMap !== undefined && gpu.buffers.has('tangent'),
-            vertexColor: material.vertexColors && gpu.buffers.has('color'),
+            tangent: lit && uv && material.normalMap !== undefined && gpu.buffers.has('tangent') && !baked,
+            vertexColor: material.vertexColors && gpu.buffers.has('color') && !baked,
             skinning, morph: gpu.morph !== undefined, morphNormals: gpu.morph?.channels === 2,
             skinInstancing: instanced && !skinning && mesh instanceof SkinnedInstancedMesh3D && gpu.buffers.has('joints') && gpu.buffers.has('weights'),
+            splat: !depthOnly && uv && material.splat !== undefined,
             gpuParticles: instanced && !depthOnly && mesh instanceof GpuParticles3D, softDepth: !depthOnly && material.softness > 0 && this.#softDepth,
             instancing: instanced, instanceColor: instanced && !depthOnly && (mesh as InstancedMesh3D).instanceColors !== undefined,
             billboard: material.billboard && !material.screenSpace, screenSpace: material.screenSpace,
@@ -664,7 +672,7 @@ export class WebGPURenderer3D implements Renderer3D {
             normalMap: lit && uv && material.normalMap !== undefined,
             metallicRoughnessMap: lit && uv && material.metallicRoughnessMap !== undefined && material.shading === 'standard',
             occlusionMap: lit && (uv || occlusionUv1) && material.occlusionMap !== undefined,
-            uv1: occlusionUv1 || emissiveUv1 || lightUv1, occlusionUv1, emissiveUv1, lightMap, lightUv1,
+            uv1: (occlusionUv1 || emissiveUv1 || lightUv1) && !baked, occlusionUv1: occlusionUv1 && !baked, emissiveUv1: emissiveUv1 && !baked, lightMap, lightUv1: lightUv1 && !baked,
             transmission: !depthOnly && this.#grabbed && material.shading === 'standard' && material.transmission > 0,
             emissiveMap: !depthOnly && (uv || emissiveUv1) && material.emissiveMap !== undefined && material.shading !== 'matcap',
             alphaMask: material.alphaMode === 'mask', alphaBlend: material.alphaMode === 'blend',
@@ -690,7 +698,7 @@ export class WebGPURenderer3D implements Renderer3D {
         const depthWrite = depthOnly || material.depthWrite, offset = depthOnly ? '1.5,2' : material.polygonOffset ? material.polygonOffset.join(',') : '';
         const colorSize = geometry.getAttribute('color')?.itemSize ?? 4, instanceColorSize = mesh.isInstanced ? (mesh as InstancedMesh3D).instanceColorSize : 4;
         const strip = topology === 'line-strip' && gpu.index ? gpu.index.format : '';
-        const key = [featureKey, kind, topology, cull, mirrored ? 'cw' : 'ccw', blend, depthWrite, material.depthTest, offset, colorSize, instanceColorSize, strip].join('/');
+        const key = [featureKey, kind, topology, cull, mirrored ? 'cw' : 'ccw', blend, depthWrite, material.depthTest, offset, colorSize, instanceColorSize, strip, this.#sceneDepthPass ? 'plain' : ''].join('/');
         let pipeline = this.#pipelines.get(key);
         if (pipeline) return pipeline;
         let module = this.#modules.get(featureKey);
@@ -716,7 +724,7 @@ export class WebGPURenderer3D implements Renderer3D {
         if (features.instanceColor) {
             buffers.push({arrayStride: instanceColorSize * 4, stepMode: 'instance', attributes: [{shaderLocation: 12, offset: 0, format: instanceColorSize === 3 ? 'float32x3' : 'float32x4'}]});
         }
-        if (features.skinInstancing) buffers.push({arrayStride: 16, stepMode: 'instance', attributes: [{shaderLocation: 13, offset: 0, format: 'float32x4'}]});
+        if (features.skinInstancing) buffers.push({arrayStride: 48, stepMode: 'instance', attributes: [0, 1, 2].map(part => ({shaderLocation: 13 + part, offset: part * 16, format: 'float32x4' as GPUVertexFormat}))});
         const blendState: GPUBlendState | undefined = blend === 'off' ? undefined
             : blend === 'additive' ? {color: {srcFactor: 'src-alpha', dstFactor: 'one'}, alpha: {srcFactor: 'zero', dstFactor: 'one'}}
             : blend === 'multiply' ? {color: {srcFactor: 'dst', dstFactor: 'zero'}, alpha: {srcFactor: 'zero', dstFactor: 'one'}}
@@ -733,7 +741,8 @@ export class WebGPURenderer3D implements Renderer3D {
                 format: depthOnly ? SHADOW_FORMAT : DEPTH_FORMAT, depthWriteEnabled: depthWrite,
                 depthCompare: material.depthTest || depthOnly ? 'less-equal' : 'always',
                 // Depth bias applies to filled triangles only.
-                ...(filled && depthOnly ? {depthBias: 2, depthBiasSlopeScale: 1.5} : {}),
+                // Shadow maps are pushed back against acne; the scene's own depth image must be exact.
+                ...(filled && depthOnly && !this.#sceneDepthPass ? {depthBias: 2, depthBiasSlopeScale: 1.5} : {}),
                 ...(filled && !depthOnly && material.polygonOffset ? {depthBias: Math.round(material.polygonOffset[1]), depthBiasSlopeScale: material.polygonOffset[0]} : {}),
             },
             multisample: {count: kind === 'canvas' ? this.#sampleCount : 1},
@@ -772,6 +781,8 @@ export class WebGPURenderer3D implements Renderer3D {
                 for (let k = 1; k < count; k++) if (Math.abs(floats[values + k]!) < Math.abs(floats[values + weakest]!)) weakest = k;
                 if (Math.abs(weight) > Math.abs(floats[values + weakest]!)) { ints[indices + weakest] = i; floats[values + weakest] = weight; }
             }
+            // Baked instances take their morph weights from the table; the shader only needs to know how many targets to read.
+            if (mesh instanceof SkinnedInstancedMesh3D && !mesh.skeleton) count = Math.min(MAX_MORPH_INFLUENCES_WGSL_3D, mesh.animations.morphCount, mesh.geometry.morphTargets.length);
             ints[o + 44] = gpu.morph.vertexCount; ints[o + 45] = gpu.morph.channels; ints[o + 46] = count; ints[o + 47] = 0;
         } else ints[o + 46] = 0;
         return index * OBJECT_BLOCK_BYTES_3D;
@@ -803,7 +814,7 @@ export class WebGPURenderer3D implements Renderer3D {
             | (instanced && (mesh as InstancedMesh3D).instanceColors ? 32 : 0) | (mesh.skeleton ? 64 : 0) | (mesh.receiveShadow && this.#shadowCount > 0 ? 128 : 0)
             | (frameFlags.fog ? 256 : 0) | (frameFlags.environment ? 512 : 0) | (this.toneMapping !== 'none' ? 1024 : 0)
             | (instanced && (mesh as InstancedMesh3D).instanceColorSize === 4 ? 2048 : 0)
-            | (material.side === 'double' ? 4096 : material.side === 'back' ? 8192 : 0) | (mesh instanceof SkinnedInstancedMesh3D ? 16384 : 0) | (mesh instanceof GpuParticles3D ? 32768 : 0);
+            | (material.side === 'double' ? 4096 : material.side === 'back' ? 8192 : 0) | (mesh instanceof SkinnedInstancedMesh3D ? 16384 : 0) | (mesh instanceof GpuParticles3D ? 32768 : 0) | (this.#sceneDepthPass ? 65536 : 0);
         let cache = this.#drawVariants.get(material);
         if (!cache || cache.version !== material.version) this.#drawVariants.set(material, cache = {version: material.version, variants: new Map()});
         // Material fields that select shader features or pipeline state. They are read every
@@ -815,8 +826,8 @@ export class WebGPURenderer3D implements Renderer3D {
             | (material.flatShading ? 512 : 0) | (material.vertexColors ? 1024 : 0) | (material.billboard ? 2048 : 0) | (material.screenSpace ? 4096 : 0)
             | (material.depthTest ? 8192 : 0) | (material.depthWrite ? 16384 : 0) | (material.fog ? 131072 : 0) | (material.toneMapped ? 262144 : 0)
             | (material.polygonOffset ? 524288 : 0) | (material.occlusionMap?.channel === 1 ? 1048576 : 0) | (material.emissiveMap?.channel === 1 ? 2097152 : 0)
-            | (material.lightMap ? 4194304 : 0) | (material.lightMap?.channel === 1 ? 8388608 : 0) | (material.reflectionMap ? 16777216 : 0) | (material.softness > 0 && this.#softDepth ? 33554432 : 0);
-        const variantKey = surface * 65536 + bits;
+            | (material.lightMap ? 4194304 : 0) | (material.lightMap?.channel === 1 ? 8388608 : 0) | (material.reflectionMap ? 16777216 : 0) | (material.softness > 0 && this.#softDepth ? 33554432 : 0) | (material.splat ? 67108864 : 0);
+        const variantKey = surface * 131072 + bits;
         let byGeometry = cache.variants.get(geometry.id);
         if (!byGeometry) cache.variants.set(geometry.id, byGeometry = new Map());
         let variant = byGeometry.get(variantKey);
@@ -1028,9 +1039,11 @@ export class WebGPURenderer3D implements Renderer3D {
             }
             pass.setBindGroup(0, depth.group);
             const none = {fog: false, environment: false};
+            this.#sceneDepthPass = true;
             for (const item of list.opaque) {
                 if (item.geometry.topology === 'triangles' && item.material.depthWrite && !item.material.billboard && !item.material.screenSpace) this.draw(pass, item, 'depth', none);
             }
+            this.#sceneDepthPass = false;
             pass.end();
         }
 

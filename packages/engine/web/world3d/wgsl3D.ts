@@ -54,13 +54,15 @@ export interface ShaderFeatures3D {
     readonly gpuParticles?: boolean;
     /** Blended surface that fades where it nears the solid scene. */
     readonly softDepth?: boolean;
+    /** Ground layers blended by a weight map; they use the map, emissive, occlusion, metallic-roughness and light map slots. */
+    readonly splat?: boolean;
 }
 
 export const MAX_MORPH_INFLUENCES_WGSL_3D = 8;
 /** Bytes of the per-draw Object uniform block; also its dynamic-offset stride. */
 export const OBJECT_BLOCK_BYTES_3D = 256;
 /** Bytes of the per-material uniform block. */
-export const MATERIAL_BLOCK_BYTES_3D = 240;
+export const MATERIAL_BLOCK_BYTES_3D = 256;
 
 const FRAME = /* wgsl */`
 struct Frame {
@@ -99,6 +101,12 @@ struct Frame {
 @group(0) @binding(5) var sceneColor: texture_2d<f32>;
 @group(0) @binding(6) var sceneColorSampler: sampler;
 @group(0) @binding(7) var sceneDepthMap: texture_depth_2d;
+// Distance from the camera plane to the solid scene behind this pixel and to the surface itself;
+// hooks may read them. Without a depth image the scene counts as far away.
+var<private> sceneDistance: f32 = 1.0e9;
+var<private> surfaceDistance: f32 = 0.0;
+// This pixel's place on the output, counted from the top row.
+var<private> surfacePixel: vec2f = vec2f(0.0);
 `;
 const DEPTH_FRAME = /* wgsl */`
 struct Frame {
@@ -121,6 +129,7 @@ struct Material {
     sheen: vec4f,        // color scaled by strength, roughness
     extra: vec4f,        // light map intensity, transmission, index of refraction, thickness
     attenuation: vec4f,  // color after the attenuation distance; w: that distance (0 = none)
+    splat: vec4f,        // how often each ground layer repeats
 }
 @group(1) @binding(0) var<uniform> material: Material;
 @group(1) @binding(1) var mapTexture: texture_2d<f32>;
@@ -161,7 +170,7 @@ function vertexSource(f: ShaderFeatures3D): string {
     if (f.vertexColor) inputs.push('@location(4) color: vec4f');
     if (f.uv1) inputs.push('@location(7) uv1: vec2f');
     if (f.skinning || f.skinInstancing) inputs.push('@location(5) joints: vec4u', '@location(6) weights: vec4f');
-    if (f.skinInstancing) inputs.push('@location(13) instanceAnimation: vec4f');
+    if (f.skinInstancing) inputs.push('@location(13) instanceAnimation: vec4f', '@location(14) instanceAnimation2: vec4f', '@location(15) instanceLook: vec4f');
     if (f.instancing) inputs.push('@location(8) instance0: vec4f', '@location(9) instance1: vec4f', '@location(10) instance2: vec4f', '@location(11) instance3: vec4f');
     if (f.instanceColor) inputs.push('@location(12) instanceColor: vec4f');
     return /* wgsl */`
@@ -182,16 +191,44 @@ fn morphDelta(targetIndex: i32, channel: i32, vertexIndex: u32) -> vec3f {
     return morphData[texel].xyz;
 }
 ${f.skinInstancing ? /* wgsl */`
-// The bones table holds every frame of every clip, a whole skeleton per frame.
-fn bakedPose(frame: f32, count: f32, joints: vec4u, weights: vec4f) -> mat4x4f {
-    let first = u32(frame) * u32(count);
-    return weights.x * bones[first + joints.x] + weights.y * bones[first + joints.y] + weights.z * bones[first + joints.z] + weights.w * bones[first + joints.w];
+// The bones table holds every frame of every clip. The fourth float of an instance carries what all
+// instances share: matrices per frame, and the bone that may turn.
+fn bakedBone(joint: u32, frame: f32, packed: f32) -> mat4x4f {
+    return bones[u32(frame) * (u32(packed) % 2048u) + joint];
+}
+// One table entry for an instance: between two frames of its clip, and of a second clip when it has one.
+fn bakedBlend(joint: u32, a: vec4f, b: vec4f) -> mat4x4f {
+    var pose = bakedBone(joint, a.x, a.w) * (1.0 - a.z) + bakedBone(joint, a.y, a.w) * a.z;
+    if (b.w > 0.0) { pose = pose * (1.0 - b.w) + (bakedBone(joint, b.x, a.w) * (1.0 - b.z) + bakedBone(joint, b.y, a.w) * b.z) * b.w; }
+    return pose;
+}
+fn bakedJoint(joint: u32, a: vec4f, b: vec4f, look: vec4f) -> mat4x4f {
+    var pose = bakedBlend(joint, a, b);
+    let bone = i32(u32(a.w) / 2048u) - 1;
+    if (i32(joint) == bone) {
+        // Turn the bone about its joint, whose place in the bind pose is kept in frame 0.
+        let pivot = bakedBone(joint, 0.0, a.w)[3].xyz;
+        let v = look.xyz;
+        let w = look.w;
+        let turn = mat3x3f(1.0 - 2.0 * (v.y * v.y + v.z * v.z), 2.0 * (v.x * v.y + v.z * w), 2.0 * (v.x * v.z - v.y * w),
+            2.0 * (v.x * v.y - v.z * w), 1.0 - 2.0 * (v.x * v.x + v.z * v.z), 2.0 * (v.y * v.z + v.x * w),
+            2.0 * (v.x * v.z + v.y * w), 2.0 * (v.y * v.z - v.x * w), 1.0 - 2.0 * (v.x * v.x + v.y * v.y));
+        pose = pose * mat4x4f(vec4f(turn[0], 0.0), vec4f(turn[1], 0.0), vec4f(turn[2], 0.0), vec4f(pivot - turn * pivot, 1.0));
+    }
+    return pose;
 }` : ''}
+
 @vertex
 fn vertexMain(input: VertexInput) -> VertexOutput {
     var position = input.position;
     var normal = ${f.normal ? 'input.normal' : 'vec3f(0.0, 0.0, 1.0)'};
-    ${f.morph ? /* wgsl */`
+    ${f.morph && f.skinInstancing ? /* wgsl */`
+    // Baked instances read their morph weights from the last entry of their frames.
+    let bakedWeights = bakedBlend(u32(input.instanceAnimation.w) % 2048u - 1u, input.instanceAnimation, input.instanceAnimation2);
+    for (var i = 0; i < object.morph.z; i++) {
+        position += morphDelta(i, 0, input.vertexIndex) * bakedWeights[i / 4][i % 4];
+        ${f.morphNormals && (!f.depthOnly || f.customVertexWgsl !== undefined) ? 'normal += morphDelta(i, 1, input.vertexIndex) * bakedWeights[i / 4][i % 4];' : ''}
+    }` : f.morph ? /* wgsl */`
     for (var i = 0; i < object.morph.z; i++) {
         let targetIndex = object.morphIndices[i / 4][i % 4];
         let weight = object.morphWeights[i / 4][i % 4];
@@ -217,7 +254,28 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     let particleAge = clamp(particleTime / particleLife, 0.0, 1.0);
     var particleTravel = particleTime;
     if (material.custom[1].w > 0.0001) { particleTravel = (1.0 - exp(-material.custom[1].w * particleTime)) / material.custom[1].w; }
-    let particleCenter = input.instance0.xyz + input.instance1.xyz * particleTravel + material.custom[1].xyz * (0.5 * particleTime * particleTime);
+    var particleCenter = input.instance0.xyz + input.instance1.xyz * particleTravel + material.custom[1].xyz * (0.5 * particleTime * particleTime);
+    if (material.custom[3].y > 0.5) {
+        // A floor: find when the particle comes down on it, then let it leave again slower, once. Drag is not applied on this path.
+        let pull = material.custom[1].xyz;
+        let launch = input.instance1.xyz;
+        let a = 0.5 * pull.y;
+        let b = launch.y;
+        let c = input.instance0.y - material.custom[3].z;
+        var hit = -1.0;
+        if (abs(a) > 0.000001) { let root = b * b - 4.0 * a * c; if (root >= 0.0) { hit = max((-b - sqrt(root)) / (2.0 * a), (-b + sqrt(root)) / (2.0 * a)); } }
+        else if (b < 0.0) { hit = -c / b; }
+        particleCenter = input.instance0.xyz + launch * particleTime + pull * (0.5 * particleTime * particleTime);
+        if (c >= 0.0 && hit > 0.0 && particleTime > hit) {
+            let landed = input.instance0.xyz + launch * hit + pull * (0.5 * hit * hit);
+            let away = (launch + pull * hit) * vec3f(material.custom[3].w, -material.custom[3].w, material.custom[3].w);
+            let since = particleTime - hit;
+            particleCenter = landed + away * since + pull * (0.5 * since * since);
+            particleCenter.y = max(particleCenter.y, material.custom[3].z);
+        }
+    }
+    // Particles left behind in the world carry world positions and ignore the emitter's transform.
+    if (material.custom[3].x > 0.5) { model = mat4x4f(vec4f(1.0, 0.0, 0.0, 0.0), vec4f(0.0, 1.0, 0.0, 0.0), vec4f(0.0, 0.0, 1.0, 0.0), vec4f(0.0, 0.0, 0.0, 1.0)); }
     let particleSize = mix(input.instance2.x, input.instance2.y, particleAge);
     model = model * mat4x4f(vec4f(particleSize, 0.0, 0.0, 0.0), vec4f(0.0, particleSize, 0.0, 0.0), vec4f(0.0, 0.0, particleSize, 0.0), vec4f(particleCenter, 1.0));
     spriteTurn = input.instance2.z + input.instance2.w * particleTime;` : ''}
@@ -227,8 +285,10 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     normalMatrix = normalMatrix * mat3x3f(instance[0].xyz, instance[1].xyz, instance[2].xyz);` : ''}
     ${f.skinInstancing ? /* wgsl */`
     // Each instance is posed in its own space before its transform places it.
-    let animation = input.instanceAnimation;
-    model = model * (bakedPose(animation.x, animation.w, input.joints, input.weights) * (1.0 - animation.z) + bakedPose(animation.y, animation.w, input.joints, input.weights) * animation.z);
+    let first = input.instanceAnimation;
+    let second = input.instanceAnimation2;
+    model = model * (input.weights.x * bakedJoint(input.joints.x, first, second, input.instanceLook) + input.weights.y * bakedJoint(input.joints.y, first, second, input.instanceLook)
+        + input.weights.z * bakedJoint(input.joints.z, first, second, input.instanceLook) + input.weights.w * bakedJoint(input.joints.w, first, second, input.instanceLook));
     normalMatrix = mat3x3f(model[0].xyz, model[1].xyz, model[2].xyz);` : ''}
     var world = model * vec4f(position, 1.0);
     ${f.customVertexWgsl !== undefined ? `world = vec4f(customVertex(world.xyz, position, normal, ${f.uv ? 'input.uv' : 'vec2f(0.0)'}, ${f.vertexColor ? 'input.color' : 'vec4f(1.0)'}), world.w);` : ''}
@@ -347,6 +407,24 @@ fn shadowFactor(slot: i32, worldPosition: vec3f, normal: vec3f) -> f32 {
     }
     return lit / 9.0;
 }
+// One unfiltered lookup for a point in the air, as fog marching needs many; the flag picks the cascade for that depth.
+fn volumeShadow(first: i32, at: vec3f, cascaded: bool) -> f32 {
+    var slot = first;
+    if (cascaded) {
+        let viewDepth = -(frame.view * vec4f(at, 1.0)).z;
+        let count = i32(frame.cascadeInfo.y);
+        var cascade = 0;
+        for (var c = 0; c < 3; c++) { if (c < count - 1 && viewDepth > frame.cascadeSplits[c]) { cascade = c + 1; } }
+        if (viewDepth >= frame.cascadeSplits[cascade]) { return 1.0; }
+        slot += cascade;
+    }
+    let clip = frame.shadowMatrix[slot] * vec4f(at, 1.0);
+    if (clip.w <= 0.0) { return 1.0; }
+    let ndc = clip.xyz / clip.w * 0.5 + 0.5;
+    if (any(ndc < vec3f(0.0)) || any(ndc > vec3f(1.0))) { return 1.0; }
+    let rect = frame.shadowRect[slot];
+    return textureSampleCompareLevel(shadowMap, shadowSampler, rect.xy + ndc.xy * rect.zw, ndc.z - frame.shadowParams[slot].x);
+}
 fn pointShadowFactor(slot: i32, fromLight: vec3f, worldPosition: vec3f, normal: vec3f) -> f32 {
     // Faces of the tetrahedron the four maps were rendered through.
     let k = 0.5773502691896258;
@@ -404,6 +482,7 @@ fn encodeSrgb(input: vec3f) -> vec3f {
 @fragment
 fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -> @location(0) vec4f {
     // Implicit-derivative operations run first, before any non-uniform control flow.
+    surfacePixel = input.clip.xy;
     let dpx = dpdx(input.worldPosition);
     let dpy = dpdy(input.worldPosition);
     let duvx = dpdx(input.uv);
@@ -416,14 +495,23 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     if (mapColor.a > 0.0) { straightColor = mapColor.rgb / mapColor.a; }
     base *= vec4f(straightColor, mapColor.a);`
     : f.map ? 'base *= textureSample(mapTexture, mapSampler, input.uv);' : ''}
+    ${f.splat ? /* wgsl */`
+    {
+        // Ground layers, each weighted by its channel of the weight map.
+        var share = textureSample(lightTexture, lightSampler, input.uv);
+        let total = share.r + share.g + share.b + share.a;
+        if (total > 0.0001) { share = share / total; } else { share = vec4f(1.0, 0.0, 0.0, 0.0); }
+        base = vec4f(base.rgb * (textureSample(mapTexture, mapSampler, input.uv * material.splat.x).rgb * share.r + textureSample(emissiveTexture, emissiveSampler, input.uv * material.splat.y).rgb * share.g
+            + textureSample(occlusionTexture, occlusionSampler, input.uv * material.splat.z).rgb * share.b + textureSample(metallicRoughnessTexture, metallicRoughnessSampler, input.uv * material.splat.w).rgb * share.a), base.a);
+    }` : ''}
     ${f.softDepth ? /* wgsl */`
     {
         // Fade out over the last stretch before the solid surface behind this pixel.
         let stored = textureLoad(sceneDepthMap, vec2i(input.clip.xy), 0) * 2.0 - 1.0;
-        var behind = frame.pointShadow.w / (stored + frame.pointShadow.z);
-        if (frame.lightCounts.w > 0.5) { behind = (frame.pointShadow.w - stored) / frame.pointShadow.z; }
-        let here = -(frame.view * vec4f(input.worldPosition, 1.0)).z;
-        base.a *= clamp((behind - here) / max(material.emissive.w, 0.0001), 0.0, 1.0);
+        sceneDistance = frame.pointShadow.w / (stored + frame.pointShadow.z);
+        if (frame.lightCounts.w > 0.5) { sceneDistance = (frame.pointShadow.w - stored) / frame.pointShadow.z; }
+        surfaceDistance = -(frame.view * vec4f(input.worldPosition, 1.0)).z;
+        ${f.transmission ? '' : 'base.a *= clamp((sceneDistance - surfaceDistance) / max(material.emissive.w, 0.0001), 0.0, 1.0);'}
     }` : ''}
     ${f.normalMap ? 'let normalSample = textureSample(normalTexture, normalSampler, input.uv).xyz;' : ''}
     ${f.metallicRoughnessMap ? 'let mrSample = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, input.uv);' : ''}
@@ -474,7 +562,7 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     ${f.transmission ? /* wgsl */`
     // Light that passes through replaces that share of the diffuse reflection.
     // What the surface reflects at this angle does not pass through it.
-    let through = material.extra.y * (1.0 - s.metallic) * (1.0 - (0.04 + 0.96 * pow(1.0 - max(dot(s.normal, s.view), 0.0), 5.0)));
+    var through = material.extra.y * (1.0 - s.metallic) * (1.0 - (0.04 + 0.96 * pow(1.0 - max(dot(s.normal, s.view), 0.0), 5.0)));
     var passed = vec3f(0.0);
     {
         let bent = refract(-s.view, s.normal, 1.0 / max(material.extra.z, 1.0));
@@ -494,7 +582,9 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     }
     // Tint of the material, deepened by the distance travelled inside it.
     var tint = s.albedo;
-    if (material.attenuation.w > 0.0) { tint *= pow(max(material.attenuation.rgb, vec3f(0.0001)), vec3f(material.extra.w / material.attenuation.w)); }
+    // With a depth image the light's path through the material is the real gap to what lies behind.
+    let travelled = ${f.softDepth ? 'max(sceneDistance - surfaceDistance, 0.0)' : 'material.extra.w'};
+    if (material.attenuation.w > 0.0) { tint *= pow(max(material.attenuation.rgb, vec3f(0.0001)), vec3f(travelled / material.attenuation.w)); }
     s.albedo *= 1.0 - through;
     var clear = 1.0;` : ''}
     ${f.reflectionMap ? /* wgsl */`
@@ -556,7 +646,8 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     ${f.customWgsl !== undefined ? /* wgsl */`
     let customized = customFragment(vec4f(color, base.a), input.worldPosition, normalize(input.normal), input.uv);
     color = customized.rgb;
-    base.a = customized.a;` : ''}
+    base.a = customized.a;
+    ${f.transmission ? '// On a see-through material the hook\'s alpha is how much still passes: 0 covers what lies behind.\n    through *= clamp(customized.a, 0.0, 1.0);' : ''}` : ''}
     ${f.fog ? /* wgsl */`
     if (frame.fogParams.x > 0.5) {
         let dist = length(frame.cameraPosition.xyz - input.worldPosition);

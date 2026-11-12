@@ -5,7 +5,9 @@
 // the pixels in.
 import {World3DError, requireCount3D, requireFinite3D, requirePositive3D} from './core3D.js';
 import {Attribute3D, Geometry3D} from './Geometry3D.js';
-import type {Material3D} from './Material3D.js';
+import {type Material3D, type StandardMaterialOptions3D, createStandardMaterial3D} from './Material3D.js';
+import {type DecalOptions3D, createDecalGeometry3D} from './Decal3D.js';
+import type {Texture3D} from './Texture3D.js';
 import {Mesh3D} from './Mesh3D.js';
 import {Object3D} from './Object3D.js';
 import {TriangleMeshShape3D} from './PhysicsMesh3D.js';
@@ -284,6 +286,45 @@ export class Terrain3D extends Object3D {
             this.use(chunk, level);
         }
     }
+    /**
+     * Lay a decal on the terrain. It is cut from the full-detail heights, not
+     * from whichever level a chunk happens to show, so it stays put when the
+     * levels change; far away, where chunks are coarse, it can sink slightly
+     * into them. The decal becomes a child of the terrain. Returns undefined
+     * when the box misses the ground.
+     */
+    createDecal(material: Material3D, options: DecalOptions3D): Mesh3D | undefined {
+        const field = this.field, local = [0, 0, 0];
+        this.updateWorldMatrix();
+        this.worldToLocal(local, options.position);
+        const reach = Math.hypot(options.width ?? 1, options.height ?? 1, options.depth ?? Math.max(options.width ?? 1, options.height ?? 1) / 2) / 2;
+        const toColumn = (x: number): number => (x / field.width + 0.5) * (field.columns - 1), toRow = (z: number): number => (z / field.depth + 0.5) * (field.rows - 1);
+        const c0 = Math.max(0, Math.floor(toColumn(local[0]! - reach))), c1 = Math.min(field.columns - 1, Math.ceil(toColumn(local[0]! + reach)));
+        const r0 = Math.max(0, Math.floor(toRow(local[2]! - reach))), r1 = Math.min(field.rows - 1, Math.ceil(toRow(local[2]! + reach)));
+        if (c1 <= c0 || r1 <= r0) return undefined;
+        // The patch of full-detail ground under the box, as a throwaway mesh to cut from.
+        const nx = c1 - c0 + 1, nz = r1 - r0 + 1, positions = new Float32Array(nx * nz * 3), normals = new Float32Array(nx * nz * 3), indices: number[] = [], normal = [0, 0, 0];
+        for (let iz = 0; iz < nz; iz++) for (let ix = 0; ix < nx; ix++) {
+            const o = (iz * nx + ix) * 3, x = field.columnX(c0 + ix), z = field.rowZ(r0 + iz);
+            positions[o] = x; positions[o + 1] = field.heights[(r0 + iz) * field.columns + c0 + ix]!; positions[o + 2] = z;
+            field.normalAt(x, z, normal); normals[o] = normal[0]!; normals[o + 1] = normal[1]!; normals[o + 2] = normal[2]!;
+        }
+        for (let iz = 0; iz < nz - 1; iz++) for (let ix = 0; ix < nx - 1; ix++) { const a = iz * nx + ix, b = a + 1, d = a + nx, e = d + 1; indices.push(a, d, b, b, d, e); }
+        const patch = new Geometry3D();
+        patch.setAttribute('position', new Attribute3D(positions, 3)); patch.setAttribute('normal', new Attribute3D(normals, 3)); patch.setIndex(Uint32Array.from(indices));
+        const source = new Mesh3D(patch, material);
+        this.addChild(source);
+        let geometry: Geometry3D | undefined;
+        try { geometry = createDecalGeometry3D(source, {offset: 0.03, ...options}); }
+        finally { source.removeFromParent(); patch.dispose(); }
+        if (!geometry) return undefined;
+        material.depthWrite = false;
+        material.polygonOffset ??= [-4, -8];
+        const decal = new Mesh3D(geometry, material);
+        decal.name = 'decal'; decal.castShadow = false; decal.receiveShadow = true;
+        this.addChild(decal);
+        return decal;
+    }
     /** Release every chunk geometry. The material and the field stay with the caller. */
     dispose(): void {
         for (const chunk of this.#chunks) {
@@ -363,3 +404,135 @@ export class Terrain3D extends Object3D {
     }
 }
 export function createTerrain3D(field: HeightField3D, material: Material3D, options: TerrainOptions3D = {}): Terrain3D { return new Terrain3D(field, material, options); }
+
+export interface TerrainMaterialOptions3D extends StandardMaterialOptions3D {
+    /** One to four tiling ground textures. */
+    readonly layers: readonly Texture3D[];
+    /** Where each layer shows: its R, G, B and A channels weigh layers 0 to 3 across the whole terrain. */
+    readonly weights: Texture3D;
+    /** How often each layer repeats across the terrain. Default 32 each. */
+    readonly repeat?: number | readonly number[];
+}
+/**
+ * A standard material whose color is a blend of ground textures, such as
+ * sand, grass, rock and snow, painted by a weight map. Use it on a terrain
+ * with `uvScale` 1 so the weight map covers the terrain once.
+ */
+export function createTerrainMaterial3D(options: TerrainMaterialOptions3D): Material3D {
+    if (!options || !Array.isArray(options.layers) || options.layers.length < 1 || options.layers.length > 4 || !options.weights) throw new World3DError('WORLD3D_INPUT_INVALID', 'terrain layers');
+    const repeat = [0, 1, 2, 3].map((i) => requirePositive3D(typeof options.repeat === 'number' ? options.repeat : options.repeat?.[i] ?? 32, 'repeat'));
+    const material = createStandardMaterial3D({roughness: 0.95, ...options});
+    material.splat = Object.freeze({weights: options.weights, layers: Object.freeze([...options.layers]), repeat: Object.freeze(repeat)});
+    return material;
+}
+
+export interface TerrainTile3D {
+    readonly x: number;
+    readonly z: number;
+    readonly field: HeightField3D;
+    readonly terrain: Terrain3D;
+}
+export interface TerrainStreamOptions3D {
+    /** World size of one square tile. Tile (x, z) covers x * size to (x + 1) * size on each axis. */
+    readonly tileSize: number;
+    /** Tiles whose nearest point is within this distance of the viewer are kept loaded. */
+    readonly viewDistance: number;
+    /**
+     * Supplies the heights of a tile, now or later, as a field `tileSize`
+     * wide and deep; undefined leaves the tile empty. Neighbouring tiles
+     * should share the samples along their common edge.
+     */
+    readonly load: (x: number, z: number) => HeightField3D | undefined | Promise<HeightField3D | undefined>;
+    readonly material: Material3D | ((x: number, z: number, field: HeightField3D) => Material3D);
+    readonly terrain?: TerrainOptions3D;
+    /** Tiles requested per update, nearest first. Default 2. */
+    readonly loadsPerUpdate?: number;
+    /** Called when a tile has been added to or removed from the scene, as for creating and removing its collision body. */
+    readonly onLoad?: (tile: TerrainTile3D) => void;
+    readonly onUnload?: (tile: TerrainTile3D) => void;
+}
+
+/**
+ * Terrain that comes and goes around the viewer: a grid of tiles, each its
+ * own height field and Terrain3D, requested as the viewer approaches and
+ * released once it has moved away. Where the heights come from is up to
+ * `load`: a file, a server or a formula. Call `update(x, z)` with the
+ * viewer's position each frame.
+ */
+export class TerrainStream3D extends Object3D {
+    readonly tileSize: number;
+    viewDistance: number;
+    readonly #options: TerrainStreamOptions3D;
+    readonly #tiles = new Map<string, TerrainTile3D>();
+    // Requested or failed tiles: they are not asked for again while they stay in range.
+    readonly #pending = new Map<string, number>();
+    #generation = 0;
+
+    constructor(options: TerrainStreamOptions3D) {
+        super();
+        if (!options || typeof options.load !== 'function' || !options.material) throw new World3DError('WORLD3D_INPUT_INVALID', 'terrain stream options');
+        this.tileSize = requirePositive3D(options.tileSize, 'tileSize');
+        this.viewDistance = requirePositive3D(options.viewDistance, 'viewDistance');
+        this.#options = options;
+    }
+    get tiles(): readonly TerrainTile3D[] { return [...this.#tiles.values()]; }
+    /** Tiles asked for and not yet delivered. */
+    get pendingCount(): number { let count = 0; for (const state of this.#pending.values()) if (state === 1) count++; return count; }
+    tileAt(x: number, z: number): TerrainTile3D | undefined { return this.#tiles.get(Math.floor(x / this.tileSize) + ',' + Math.floor(z / this.tileSize)); }
+    /** Ground height at a world point of this node's space, or undefined where no tile is loaded. */
+    heightAt(x: number, z: number): number | undefined {
+        const tile = this.tileAt(x, z);
+        return tile ? tile.field.heightAt(x - (tile.x + 0.5) * this.tileSize, z - (tile.z + 0.5) * this.tileSize) : undefined;
+    }
+    /** Request the tiles near a position and release those that fell out of range. */
+    update(x: number, z: number): void {
+        const size = this.tileSize, reach = this.viewDistance, near = (tx: number, tz: number): number => Math.hypot(Math.max(tx * size - x, 0, x - (tx + 1) * size), Math.max(tz * size - z, 0, z - (tz + 1) * size));
+        // Releasing happens a little further out than loading, so a viewer pacing along an edge does not thrash.
+        for (const [key, tile] of this.#tiles) if (near(tile.x, tile.z) > reach * 1.25 + size * 0.25) this.release(key, tile);
+        for (const key of this.#pending.keys()) { const [tx, tz] = key.split(',').map(Number) as [number, number]; if (near(tx, tz) > reach * 1.25 + size * 0.25) this.#pending.delete(key); }
+        const wanted: {x: number; z: number; distance: number}[] = [];
+        for (let tz = Math.floor((z - reach) / size); tz <= Math.floor((z + reach) / size); tz++) {
+            for (let tx = Math.floor((x - reach) / size); tx <= Math.floor((x + reach) / size); tx++) {
+                const key = tx + ',' + tz, distance = near(tx, tz);
+                if (distance <= reach && !this.#tiles.has(key) && !this.#pending.has(key)) wanted.push({x: tx, z: tz, distance});
+            }
+        }
+        wanted.sort((a, b) => a.distance - b.distance);
+        const budget = Math.max(1, Math.floor(this.#options.loadsPerUpdate ?? 2));
+        for (const want of wanted.slice(0, budget)) this.request(want.x, want.z);
+    }
+    /** Release every tile. */
+    dispose(): void {
+        this.#generation++;
+        for (const [key, tile] of [...this.#tiles]) this.release(key, tile);
+        this.#pending.clear();
+    }
+    private request(x: number, z: number): void {
+        const key = x + ',' + z, generation = this.#generation;
+        this.#pending.set(key, 1);
+        const accept = (field: HeightField3D | undefined): void => {
+            // The viewer may have left, or the stream been disposed, while the tile was on its way.
+            if (generation !== this.#generation || this.#pending.get(key) !== 1) return;
+            if (!field) { this.#pending.set(key, 2); return; }
+            this.#pending.delete(key);
+            const material = typeof this.#options.material === 'function' ? this.#options.material(x, z, field) : this.#options.material;
+            const terrain = new Terrain3D(field, material, this.#options.terrain);
+            terrain.setPosition((x + 0.5) * this.tileSize, 0, (z + 0.5) * this.tileSize);
+            this.addChild(terrain);
+            const tile: TerrainTile3D = Object.freeze({x, z, field, terrain});
+            this.#tiles.set(key, tile);
+            this.#options.onLoad?.(tile);
+        };
+        let result: HeightField3D | undefined | Promise<HeightField3D | undefined>;
+        try { result = this.#options.load(x, z); } catch { this.#pending.set(key, 2); return; }
+        if (result instanceof Promise) result.then(accept, () => { if (generation === this.#generation && this.#pending.get(key) === 1) this.#pending.set(key, 2); });
+        else accept(result);
+    }
+    private release(key: string, tile: TerrainTile3D): void {
+        this.#tiles.delete(key);
+        tile.terrain.removeFromParent();
+        tile.terrain.dispose();
+        this.#options.onUnload?.(tile);
+    }
+}
+export function createTerrainStream3D(options: TerrainStreamOptions3D): TerrainStream3D { return new TerrainStream3D(options); }

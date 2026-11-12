@@ -15,7 +15,7 @@ import {GpuParticles3D} from '../../rendering/world3d/GpuParticles3D.js';
 import type {Scene3D} from '../../rendering/world3d/Object3D.js';
 import {RenderList3D} from '../../rendering/world3d/RenderList3D.js';
 import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
-import {CubeTexture3D, RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
+import {CubeTexture3D, RenderTarget3D, type Texture3D} from '../../rendering/world3d/Texture3D.js';
 import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import {FRAME_BLOCK_FLOATS_3D, FRAME_OFFSETS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
 import {createPostProcessSettings3D, outlineActive3D, postViewFromCamera3D} from './post3D.js';
@@ -479,6 +479,7 @@ export class WebGL2Renderer3D implements Renderer3D {
             defines.push('USE_MAP');
             if (has(V.mapFromTarget)) defines.push('MAP_FROM_TARGET');
         }
+        if (uv && material.splat && !depthOnly) defines.push('USE_SPLAT');
         if (material.alphaMode === 'mask') defines.push('ALPHA_MASK');
         if (material.alphaMode === 'blend') {
             defines.push('ALPHA_BLEND');
@@ -546,6 +547,15 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (u['uEmissiveMap'] && material.emissiveMap) resources.bindTexture(TEXTURE_UNITS_3D.emissiveMap, material.emissiveMap);
         if (u['uLightMap'] && material.lightMap) resources.bindTexture(TEXTURE_UNITS_3D.lightMap, material.lightMap);
         if (u['uReflectionMap'] && material.reflectionMap) resources.bindTexture(TEXTURE_UNITS_3D.reflectionMap, material.reflectionMap);
+        const splat = material.splat;
+        if (u['uSplatRepeat'] && splat) {
+            // Layers borrow the units of the maps they stand in for; a missing layer reads the first.
+            const layer = (i: number): Texture3D => splat.layers[i] ?? splat.layers[0]!;
+            resources.bindTexture(TEXTURE_UNITS_3D.map, layer(0)); resources.bindTexture(TEXTURE_UNITS_3D.emissiveMap, layer(1));
+            resources.bindTexture(TEXTURE_UNITS_3D.occlusionMap, layer(2)); resources.bindTexture(TEXTURE_UNITS_3D.metallicRoughnessMap, layer(3));
+            resources.bindTexture(TEXTURE_UNITS_3D.lightMap, splat.weights);
+            gl.uniform4f(u['uSplatRepeat'], splat.repeat[0] ?? 1, splat.repeat[1] ?? 1, splat.repeat[2] ?? 1, splat.repeat[3] ?? 1);
+        }
         if (u['uSoftness']) gl.uniform1f(u['uSoftness'], material.softness);
         if (u['uReflection']) gl.uniform2f(u['uReflection'], material.reflectionStrength, material.reflectionDistortion);
         if (u['uSheen']) gl.uniform4f(u['uSheen'], material.sheenColor[0]! * material.sheen, material.sheenColor[1]! * material.sheen, material.sheenColor[2]! * material.sheen, material.sheenRoughness);
@@ -593,8 +603,10 @@ export class WebGL2Renderer3D implements Renderer3D {
         const instanced = mesh.isInstanced, skinned = mesh.skeleton !== undefined && geometry.getAttribute('joints') !== undefined && geometry.getAttribute('weights') !== undefined;
         let variant = depthOnly ? V.depthOnly : frameFlags;
         if (geometry.getAttribute('normal')) variant |= V.normal;
-        if (geometry.getAttribute('tangent')) variant |= V.tangent;
-        if (geometry.getAttribute('uv1')) {
+        // Baked instances already fill the vertex inputs both backends can count on; they do without tangents, vertex colors and second coordinates.
+        const baked = mesh instanceof SkinnedInstancedMesh3D && mesh.skeleton === undefined;
+        if (geometry.getAttribute('tangent') && !baked) variant |= V.tangent;
+        if (geometry.getAttribute('uv1') && !baked) {
             variant |= V.uv1;
             // A texture's coordinate set can change without changing the material version.
             if (!depthOnly && material.occlusionMap?.channel === 1) variant |= V.occlusionSecond;
@@ -606,7 +618,7 @@ export class WebGL2Renderer3D implements Renderer3D {
             // A texture can change its source without changing the material version.
             if (!depthOnly && material.map?.source instanceof RenderTarget3D) variant |= V.mapFromTarget;
         }
-        if (material.vertexColors && geometry.getAttribute('color')) variant |= V.color;
+        if (material.vertexColors && geometry.getAttribute('color') && !baked) variant |= V.color;
         if (skinned) variant |= V.skin;
         if (gpu.morph) variant |= V.morph | (gpu.morph.attributes === 2 ? V.morphNormals : 0);
         if (instanced) variant |= V.instancing | ((mesh as InstancedMesh3D).instanceColors ? V.instanceColor : 0);
@@ -650,6 +662,8 @@ export class WebGL2Renderer3D implements Renderer3D {
             if (u['uNormalMatrix']) gl.uniformMatrix3fv(u['uNormalMatrix'], false, mat3NormalFromMat4(this.#scratch9, world) as Float32Array);
         }
         if (gpu.morph) this.applyMorph(program, mesh, gpu);
+        // Baked instances take their morph weights from the table; the shader only needs to know how many targets to read.
+        if (gpu.morph && crowd && u['uMorphCount']) gl.uniform1i(u['uMorphCount'], Math.min(MAX_MORPH_INFLUENCES_3D, crowd.animations.morphCount, geometry.morphTargets.length));
         const wire = material.wireframe && !depthOnly && geometry.topology === 'triangles' ? resources.wireframe(geometry) : undefined;
         gl.bindVertexArray(wire ? wire.vao : instanced ? resources.instances(mesh as InstancedMesh3D, frame) : gpu.vao);
         const topology = geometry.topology;

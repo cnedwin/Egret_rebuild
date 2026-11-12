@@ -58,7 +58,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `Lod3D` 按相机距离显示其中一个子节点。
 
-成群的动画角色可以一次绘制。`bakeAnimationTexture3D(root, mesh, clips, {fps})` 把每个动画片段采样到骨架上，按帧保存蒙皮网格每根骨骼的矩阵；烘焙结束后骨架恢复原状。`createSkinnedInstancedMesh3D(geometry, material, baked, capacity)` 随后不用骨架就能绘制蒙皮几何体的多个副本：每个实例像普通实例一样有自己的变换和颜色，另有 `setClipAt(index, clip, {time, speed, loop, fade})`。每帧调用一次 `crowd.update(deltaSeconds)`，它推进所有实例，写入实例所处的前后两帧及其混合比例，顶点阶段据此在烘焙表中查找；这张表在 WebGL2 上是浮点纹理，在 WebGPU 上是存储缓冲区。阴影使用同样的姿态。`isFinishedAt` 报告不循环的片段是否播完，`fade` 从切换时保持的姿态过渡到新片段。只烘焙骨骼变换：变形权重、片段混合树以及注视之类的逐实例骨骼修改仍需使用普通蒙皮网格。两帧之间的姿态按矩阵逐个混合，在默认每秒 30 帧时足够准确，低帧率下的快速旋转会有偏差。剔除时把全部实例当作一个物体，并按动画的活动范围放宽包围球。
+成群的动画角色可以一次绘制。`bakeAnimationTexture3D(root, mesh, clips, {fps})` 把每个动画片段采样到骨架上，按帧保存蒙皮网格每根骨骼的矩阵以及前 16 个变形目标的权重；烘焙结束后骨架恢复原状。`createSkinnedInstancedMesh3D(geometry, material, baked, capacity)` 随后不用骨架就能绘制蒙皮几何体的多个副本。每个实例有自己的变换和颜色；`setClipAt(index, clip, {time, speed, loop, fade})` 设置片段，其中 `fade` 从正在播放的片段交叉淡入；`setBlendAt(index, clip, weight, {sync})` 可以再按权重混入第二个片段，比如从走到跑。`lookBone` 指定一根骨骼，`setBoneRotationAt(index, x, y, z, w)` 让它在每个实例上绕自己的关节转动，比如头部。每帧调用一次 `crowd.update(deltaSeconds)`。每次绘制前，相机视野之外的实例会被剔除，并留出 `cullPadding` 倍包围半径的余量，使它们的影子仍能落入视野；`total` 是存在的实例数，`count` 是实际绘制的数量。顶点阶段在烘焙表中查找姿态，这张表在 WebGL2 上是浮点纹理，在 WebGPU 上是存储缓冲区；最多应用八个变形目标；阴影使用同样的姿态。一个实例最多混合两个片段，被转动的骨骼不会带动它下面的骨骼；烘焙实例不使用切线、顶点颜色和第二套纹理坐标，因为两个后端都能保证的顶点输入已经用完。两帧之间的姿态按矩阵逐个混合，在默认每秒 30 帧时足够准确，低帧率下的快速旋转会有偏差。
 
 ## 动画
 
@@ -204,21 +204,29 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `createWater3D({width, depth, segments, color, amplitude, wavelength, speed, direction, steepness, rippleStrength, clarity, thickness, reflectionSize})` 是一块水平水面：四组叠加的波浪移动顶点和着色法线，另有随距离减弱的细小涟漪。水下的景物通过与玻璃相同的折射被弯折后看到；天空的反射来自场景的环境贴图。每帧调用 `water.update(deltaSeconds)`；在主画面之前调用 `water.renderReflection(renderer, scene, camera)`，可得到场景的真实镜像。`water.heightAt(x, z)` 在 CPU 上计算同一组波浪，供漂浮物使用。`createWaterMaterial3D` 只返回材质，可用于自己的几何体。
 
-水面背后的镜子是 `PlanarReflection3D`，可用于任何平面：`reflection.render(renderer, scene, camera, [nx, ny, nz, d], hidden)` 摆放镜像相机，用倾斜的近平面裁掉平面背后的一切，并绘制到 `reflection.target`；把 `reflection.texture` 赋给标准材质的 `reflectionMap` 即可。镜像按像素自身的屏幕位置读取，按表面法线乘以 `reflectionDistortion` 偏移，按观察角度加权，并取代环境贴图的反射。自定义着色器现在还可以带法线钩子 `glslNormal` 和 `wgslNormal`，在光照计算前替换着色法线。
+水面背后的镜子是 `PlanarReflection3D`，可用于任何平面：`reflection.render(renderer, scene, camera, [nx, ny, nz, d], hidden)` 摆放镜像相机，用倾斜的近平面裁掉平面背后的一切，并绘制到 `reflection.target`；把 `reflection.texture` 赋给标准材质的 `reflectionMap` 即可。镜像按像素自身的屏幕位置读取，按表面法线乘以 `reflectionDistortion` 偏移，按观察角度加权，并取代环境贴图的反射。自定义着色器现在还可以带法线钩子 `glslNormal` 和 `wgslNormal`，在光照计算前替换着色法线。当材质的 `softness` 大于 0 时，片元钩子可以读取 `sceneDistance` 和 `surfaceDistance`，即从相机平面到该像素后方实体场景以及到表面自身的距离，还可以读取 `surfacePixel`；在透射材质上，钩子返回的 alpha 表示还有多少光能透过。
 
-地形使用顶点颜色和一张平铺的 `map` 着色，没有内置按权重图混合多种地表纹理。细节层级按分块选择并用裙边遮缝，不做边对边的缝合；也没有从磁盘流式加载，整个高度场都在内存中。水面只有一个水平镜面，因此旋转过的水面网格或远高于默认值的波浪反射并不精确；没有按水深变化的岸边过渡、泡沫和焦散，也没有处理相机位于水下的情况。镜像需要把场景连同阴影再绘制一次。
+`createTerrainMaterial3D({layers, weights, repeat})` 按一张权重图混合最多四张平铺的地表纹理，权重图的 R、G、B、A 通道分别决定各层出现的位置；配合 `uvScale` 为 1 的地形使用，使权重图恰好覆盖整块地形一次。任何材质都可以通过 `material.splat` 带上这样的地表层；它们占用颜色、自发光、遮蔽、金属粗糙度和光照贴图的纹理槽位。`terrain.createDecal(material, options)` 按完整细节的高度裁剪贴花，因此分块切换层级时贴花不变。
+
+`createTerrainStream3D({tileSize, viewDistance, load, material, terrain, onLoad, onUnload})` 是随观察者出现和消失的地形：一个由地块组成的网格，每块有自己的高度场和 `Terrain3D`。`update(x, z)` 报告观察者位置后，由近到远请求地块，距离超过 `viewDistance` 四分之一后释放。`load(x, z)` 立即或以 Promise 返回地块的高度场，来源可以是文件、服务器或公式；`onLoad` 和 `onUnload` 用来添加和移除对应的碰撞体。`heightAt` 可跨已加载的地块查询。
+
+水面会读取其后方实体场景的深度：透过水看到的景物在 `depthFade` 的深度内逐渐变暗为 `deepColor`，岸边有一条深度为 `foamWidth` 的断续泡沫带，`caustics` 在浅水底部绘制流动的光纹。水面的背面也会绘制；相机位于波浪之下时，`water.updateUnderwater(scene, camera)` 给场景加上水色的浓雾。镜像是其中开销最大的部分：`reflection.interval` 每隔 N 帧才绘制一次，`reflection.shadows = false` 让镜像不含阴影，`reflection.layerMask` 让部分物体不进入镜像，而且镜像始终不做后处理。
+
+地表层只混合颜色：各层没有自己的法线和粗糙度贴图，混合是线性的而不是按高度的。细节层级用裙边遮缝而不做边对边的缝合，流式地块之间也不共享边界上的细节层级。水面仍然只有一个水平镜面，因此旋转过的水面网格或很高的波浪反射并不精确；泡沫和焦散是公式而不是模拟，焦散画在能看到水底的水面上而不是真正照亮水底，水下效果只是雾，没有视线折射。读取场景深度需要对不透明物体多做一遍仅深度的绘制。
 
 ## 特效
 
 `createTrail3D({target, lifetime, points, width, endWidth, color, endColor, opacity, endOpacity, map})` 是跟在运动物体后面的拖尾：目标移动时记录世界坐标，记录点随时间消失，每次绘制前重新构建并朝向相机，向尾部逐渐变窄、变淡。把它直接加入场景而不是挂在目标之下，并且每帧调用 `update(deltaSeconds)`；`push(x, y, z)` 可以手动送入点，瞬移之后用 `clear()` 清空。
 
-`createDecal3D(mesh, material, {position, normal, width, height, depth, rotation})` 把一张纹理贴到已有的几何体上。目标网格落在贴花盒子内的三角形被取出、按盒子裁剪，作为一个贴合表面的新网格返回，纹理坐标在盒子范围内从 0 到 1；它被加为目标的子节点，因此随目标移动，并像普通网格一样接受光照和阴影。`createDecalGeometry3D` 只返回几何体。背向贴花的面会被略去，盒子没有碰到表面时返回 `undefined`。贴花按静止形状裁剪：不会跟随蒙皮变形，也不会跟随地形分块切换细节层级。
+`createDecal3D(mesh, material, {position, normal, width, height, depth, rotation})` 把一张纹理贴到已有的几何体上。目标网格落在贴花盒子内的三角形被取出、按盒子裁剪，作为一个贴合表面的新网格返回，纹理坐标在盒子范围内从 0 到 1；它被加为目标的子节点，因此随目标移动，并像普通网格一样接受光照和阴影。`createDecalGeometry3D` 只返回几何体。背向贴花的面会被略去，盒子没有碰到表面时返回 `undefined`。在蒙皮网格上，贴花按绑定姿态裁剪并保留关节和权重，绑定到同一副骨架，因此会跟随动画；在地形上请用 `terrain.createDecal`，它按完整细节的高度裁剪。
 
-`createGpuParticles3D({count, lifetime, speed, direction, spread, gravity, drag, startSize, endScale, rotation, spin, startColor, endColor, startOpacity, endOpacity, fadeIn, fadeOut, shape, loop, duration, map, blending, softness})` 在顶点阶段计算粒子运动。每个粒子的起点、出生时间、速度、寿命、大小和旋转只写入一次；每帧只有时间在变，由 `update(deltaSeconds)` 设置。循环发射器是一股在时间 0 就已稳定运行的粒子流；`loop: false` 是一次爆发，可用 `isFinished` 查询结束、用 `restart()` 重放。大约一百万个粒子以内都是一次绘制，CPU 每帧不做任何逐粒子工作。代价是运动必须符合公式：在发射器空间内的发射、重力和阻力，并随发射器节点移动。需要碰撞、受吸引，或在发射器移动后留在世界中的粒子仍应使用 `ParticleEmitter3D`。粒子不排序，因此宜用叠加混合，或柔和、低不透明度的贴图。
+`createGpuParticles3D({count, lifetime, speed, direction, spread, gravity, drag, startSize, endScale, rotation, spin, startColor, endColor, startOpacity, endOpacity, fadeIn, fadeOut, shape, loop, duration, map, blending, softness})` 在顶点阶段计算粒子运动。每个粒子的起点、出生时间、速度、寿命、大小和旋转只写入一次；每帧只有时间在变，由 `update(deltaSeconds)` 设置。循环发射器是一股在时间 0 就已稳定运行的粒子流；`loop: false` 是一次爆发，可用 `isFinished` 查询结束、用 `restart()` 重放。大约一百万个粒子以内都是一次绘制，CPU 每帧不做任何逐粒子工作。代价是运动必须符合公式：发射、重力和阻力。`floor` 和 `bounce` 在同一个公式里加上一次水平地面的反弹。`space: 'world'` 让粒子在发射器移走后留在发射时的位置，`sorted: true` 让远处的粒子先画，适合透明混合的烟雾；这两项各需要 CPU 遍历一遍粒子，分别发生在每次更新时和每次绘制前。需要与场景几何体碰撞，或受变化的力牵引的粒子仍应使用 `ParticleEmitter3D`。
 
 `material.softness` 让混合材质在接近其后方实体几何的那段距离内逐渐淡出，而不是留下一条生硬的交线：软粒子、薄雾、光锥都用得上。两种粒子发射器都接受这个参数。只要有可见的混合材质需要它，渲染器就先把不透明场景的深度绘制到与输出同样大小的纹理中，代价是对不透明物体多做一遍仅深度的绘制。
 
-`createAtmosphere3D({fogColor, fogDensity, fogHeight, fogFalloff, shaftIntensity, shaftLength})` 来自后端入口，把高度雾和光束做成一个后处理钩子：把 `atmosphere.post` 赋给 `renderer.postProcess.custom`，并且每帧调用 `atmosphere.update(camera, sunDirection)`。雾随距离变浓、随高度按指数变薄，沿每条视线以闭式积分求得。光束从每个像素朝太阳在屏幕上的位置走 24 步，累计途中有多少开阔天空，于是挡在太阳前面的物体会在光晕中切出暗条；太阳离开画面时光束随之淡出。这是屏幕空间的近似：雾不受阴影影响，也不按各个光源分别照亮，密度没有噪声和局部体积，光束只在太阳位于屏幕内或附近时存在。它占用唯一的自定义后处理槽位。平面镜像在绘制时不做后处理，主画面的后处理随后会作用于它。
+`createVolumetricFog3D({color, density, height, falloff, distance, anisotropy, sunStrength, ambientStrength, lightStrength})` 是受光照的雾。把它加到场景根节点下：每次绘制前它会自己移到相机前方，每个像素的视线分 24 步走到其后方的实体场景。每一步的雾都会散射到达那里的光：平行光通过各自的阴影贴图（包括级联），因此无论太阳是否在画面内，空气中都会出现光柱和影柱；聚光灯带有光锥和阴影；另有点光源和环境光。它不需要后处理。它是取代而不是叠加 `scene.fog`，点光源不会在雾中投下阴影，密度没有噪声和局部体积，开销是每个像素 24 步、每步读取所有光源。
+
+`createAtmosphere3D({fogColor, fogDensity, fogHeight, fogFalloff, shaftIntensity, shaftLength})` 来自后端入口，把高度雾和光束做成一个后处理钩子：把 `atmosphere.post` 赋给 `renderer.postProcess.custom`，并且每帧调用 `atmosphere.update(camera, sunDirection)`。雾随距离变浓、随高度按指数变薄，沿每条视线以闭式积分求得。光束从每个像素朝太阳在屏幕上的位置走 24 步，累计途中有多少开阔天空，于是挡在太阳前面的物体会在光晕中切出暗条；太阳离开画面时光束随之淡出。这是屏幕空间的近似：雾不受阴影影响，也不按各个光源分别照亮，密度没有噪声和局部体积，光束只在太阳位于屏幕内或附近时存在。它是体积雾的廉价替代方案，占用唯一的自定义后处理槽位。平面镜像在绘制时不做后处理，主画面的后处理随后会作用于它。
 
 ## 文字
 
@@ -295,7 +303,7 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs`、`tests/world3d-decoders.test.mjs`、`tests/world3d-navigation.test.mjs`、`tests/world3d-terrain.test.mjs`、`tests/world3d-crowd.test.mjs`、`tests/world3d-effects.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
 
-`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十四个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，文字与变换操纵器，带反射水面、细节层级混合的地形，处于不同片段、带阴影的实例化蒙皮角色，带拖尾和软 GPU 粒子的贴花，以及带光束的高度雾。开发期间全部二十四个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前十六个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十五个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，文字与变换操纵器，带反射水面、细节层级混合的地形，处于不同片段、带阴影的实例化蒙皮角色，带拖尾和软 GPU 粒子的贴花，带光束的高度雾，以及受光照的体积雾。开发期间全部二十五个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前十六个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
 
 `tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。负载包括静止与运动的网格、阴影、实例化、多光源、每个网格一次绘制的蒙皮与一次绘制 2000 个烘焙实例的蒙皮、合批、覆盖在场景上的玻璃以及后处理链；另外还测量一次物理步进的耗时，场景为静止的箱子堆、三角网格上的球体和关节链。不测量 GPU 执行时间。
 
@@ -305,6 +313,7 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 - 一台运行 Chrome 157 的 Android 真机已呈现两个后端，响应了自动触发的阴影开关，并在释放后停止更新帧。本次复审还在同类真机的 WebGL2 和 WebGPU 上检查了屏幕空间效果、顶点位移与阴影，以及斜切投影深度。
 - 更广泛的移动端与设备恢复覆盖、视口和反射探针专项检查、性能测量，以及第一人称控制和空间音频的真人验证仍待完成。
 - 最新的四个比较场景（光泽、玻璃与光照贴图；景深；折射；文字与变换操纵器）以及关节、凸包、连续碰撞和变换控制目前只在软件渲染和无头测试中运行过，仍需在真实 GPU 上验证并由真人操作检查。
+- 地表层、流式地形、岸边深度、泡沫、焦散、水下效果、可混合并逐实例剔除的烘焙实例、可反弹、排序和留在世界中的 GPU 粒子、蒙皮与地形贴花，以及体积雾，目前只在无头测试、软件渲染下的比较场景以及软件渲染下 WebGL2 的地形示例中运行过。
 - 拖尾、贴花、GPU 粒子、柔化淡出和大气钩子目前只在无头测试、软件渲染下的两个比较场景以及软件渲染下 WebGL2 的地形示例中运行过，在真实硬件上的观感和开销尚未评估。
 - 烘焙蒙皮实例目前只在无头测试、软件渲染下的比较场景与基准测试，以及软件渲染下 WebGL2 的地形示例中运行过。
 - 地形、水面和平面镜像目前只在无头测试、软件渲染下的比较场景以及软件渲染下 WebGL2 的地形示例中运行过，仍需在真实 GPU 上、通过 WebGPU 画布呈现并由真人操作检查。

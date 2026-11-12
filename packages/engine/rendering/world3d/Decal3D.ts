@@ -30,13 +30,15 @@ export interface DecalOptions3D {
     readonly offset?: number;
 }
 
-type Vertex = [number, number, number, number, number, number];   // decal-space position and normal
+// Decal-space position and normal, and for skinned targets the bones that move the vertex as joint, weight pairs.
+type Vertex = [number, number, number, number, number, number] & {bones?: number[]};
 
 /**
  * Cut the part of a mesh's surface that lies inside the decal box. The
  * result is in the mesh's local space, with coordinates running 0 to 1 across
- * the box, or undefined when nothing is inside. Skinned and instanced meshes
- * are read in their rest shape.
+ * the box, or undefined when nothing is inside. A skinned mesh is cut in its
+ * bind pose, where `position` and `normal` must lie too, and the result keeps
+ * joints and weights so it can follow the same skeleton.
  */
 export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Geometry3D | undefined {
     if (!(mesh instanceof Mesh3D) || !options) throw new World3DError('WORLD3D_INPUT_INVALID', 'decal target');
@@ -68,6 +70,7 @@ export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Ge
     const p = source.data, normals = geometry.getAttribute('normal')?.data, index = geometry.index?.data, count = index ? index.length : source.count;
     if (count / 3 > DECAL3D_LIMITS.maxTriangles) throw new World3DError('WORLD3D_BUDGET', 'decal target triangles');
     const hx = width / 2, hy = height / 2, hz = depth / 2, m = toDecal;
+    const joints = geometry.getAttribute('joints')?.data, weights = geometry.getAttribute('weights')?.data, skinned = joints !== undefined && weights !== undefined;
     const read = (i: number): Vertex => {
         const x = p[i * 3]!, y = p[i * 3 + 1]!, z = p[i * 3 + 2]!;
         const out: Vertex = [m[0]! * x + m[4]! * y + m[8]! * z + m[12]!, m[1]! * x + m[5]! * y + m[9]! * z + m[13]!, m[2]! * x + m[6]! * y + m[10]! * z + m[14]!, 0, 0, 0];
@@ -75,6 +78,7 @@ export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Ge
             const nx = normals[i * 3]!, ny = normals[i * 3 + 1]!, nz = normals[i * 3 + 2]!;
             out[3] = m[0]! * nx + m[4]! * ny + m[8]! * nz; out[4] = m[1]! * nx + m[5]! * ny + m[9]! * nz; out[5] = m[2]! * nx + m[6]! * ny + m[10]! * nz;
         }
+        if (skinned) { out.bones = []; for (let k = 0; k < 4; k++) if (weights[i * 4 + k]! > 0) out.bones.push(joints[i * 4 + k]!, weights[i * 4 + k]!); }
         return out;
     };
     // Sutherland-Hodgman: keep the part of a polygon on the inner side of one face of the box.
@@ -85,12 +89,22 @@ export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Ge
             if (da >= 0) out.push(a);
             if ((da >= 0) !== (db >= 0)) {
                 const t = da / (da - db);
-                out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t, a[4] + (b[4] - a[4]) * t, a[5] + (b[5] - a[5]) * t]);
+                const cut: Vertex = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t, a[4] + (b[4] - a[4]) * t, a[5] + (b[5] - a[5]) * t];
+                if (a.bones && b.bones) {
+                    // A point on an edge is moved by the bones of both ends, in proportion.
+                    cut.bones = [];
+                    for (let k = 0; k < a.bones.length; k += 2) cut.bones.push(a.bones[k]!, a.bones[k + 1]! * (1 - t));
+                    for (let k = 0; k < b.bones.length; k += 2) {
+                        const known = cut.bones.findIndex((value, at) => at % 2 === 0 && value === b.bones![k]);
+                        if (known >= 0) cut.bones[known + 1] = cut.bones[known + 1]! + b.bones[k + 1]! * t; else cut.bones.push(b.bones[k]!, b.bones[k + 1]! * t);
+                    }
+                }
+                out.push(cut);
             }
         }
         return out;
     };
-    const outPositions: number[] = [], outNormals: number[] = [], outUvs: number[] = [];
+    const outPositions: number[] = [], outNormals: number[] = [], outUvs: number[] = [], outJoints: number[] = [], outWeights: number[] = [];
     for (let t = 0; t < count; t += 3) {
         const a = read(index ? index[t]! : t), b = read(index ? index[t + 1]! : t + 1), d = read(index ? index[t + 2]! : t + 2);
         // Quick rejects: wholly outside one face of the box, or turned away from the decal.
@@ -113,6 +127,14 @@ export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Ge
                 const mx = w[0]! * nx + w[4]! * ny + w[8]! * nz, my = w[1]! * nx + w[5]! * ny + w[9]! * nz, mz = w[2]! * nx + w[6]! * ny + w[10]! * nz, ml = Math.hypot(mx, my, mz) || 1;
                 outNormals.push(mx / ml, my / ml, mz / ml);
                 outUvs.push(vertex[0] / width + 0.5, vertex[1] / height + 0.5);
+                if (skinned) {
+                    // Keep the four strongest bones and make their weights sum to one.
+                    const pairs: [number, number][] = [];
+                    for (let k = 0; k < (vertex.bones?.length ?? 0); k += 2) pairs.push([vertex.bones![k]!, vertex.bones![k + 1]!]);
+                    pairs.sort((first, second) => second[1] - first[1]);
+                    const kept = pairs.slice(0, 4), total = kept.reduce((sum, pair) => sum + pair[1], 0) || 1;
+                    for (let k = 0; k < 4; k++) { outJoints.push(kept[k]?.[0] ?? 0); outWeights.push((kept[k]?.[1] ?? 0) / total); }
+                }
             }
         }
     }
@@ -121,13 +143,15 @@ export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Ge
     out.setAttribute('position', new Attribute3D(new Float32Array(outPositions), 3));
     out.setAttribute('normal', new Attribute3D(new Float32Array(outNormals), 3));
     out.setAttribute('uv', new Attribute3D(new Float32Array(outUvs), 2));
+    if (skinned) { out.setAttribute('joints', new Attribute3D(new Uint16Array(outJoints), 4)); out.setAttribute('weights', new Attribute3D(new Float32Array(outWeights), 4)); }
     return out;
 }
 
 /**
  * A decal mesh on a target mesh, added as its child so it moves with it.
  * The material is used as given except that it stops writing depth and gains a
- * depth offset when it has none. Returns undefined when the box misses the surface.
+ * depth offset when it has none. On a skinned mesh the decal follows the
+ * skeleton. Returns undefined when the box misses the surface.
  */
 export function createDecal3D(mesh: Mesh3D, material: Material3D, options: DecalOptions3D): Mesh3D | undefined {
     const geometry = createDecalGeometry3D(mesh, options);
@@ -139,5 +163,7 @@ export function createDecal3D(mesh: Mesh3D, material: Material3D, options: Decal
     decal.castShadow = false;
     decal.receiveShadow = mesh.receiveShadow;
     mesh.addChild(decal);
+    // On a skinned target the decal is moved by the same bones.
+    if (mesh.skeleton && geometry.getAttribute('joints')) decal.bind(mesh.skeleton, mesh.bindMatrix);
     return decal;
 }
