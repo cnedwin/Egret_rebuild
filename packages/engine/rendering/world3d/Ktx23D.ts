@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 // KTX 2.0 container reader for 2D textures. Block-compressed and RGBA8
-// payloads stored without supercompression are read directly. Basis Universal
-// payloads and Zstandard or zlib supercompression need a transcoder, which the
+// payloads are read directly, including levels wrapped in Zstandard or zlib
+// supercompression. Basis Universal payloads need a transcoder, which the
 // caller injects so this module stays dependency-free and DOM-free.
+import {decompressZstd3D, inflate3D} from './Compression3D.js';
 import {World3DError} from './core3D.js';
 import {COMPRESSED_BLOCK_BYTES_3D} from './Texture3D.js';
 import type {CompressedFormat3D, CompressedPixels3D, TextureColorSpace3D, TexturePixels3D} from './Texture3D.js';
@@ -62,16 +63,27 @@ export async function parseKtx23D(bytes: Uint8Array, options: Ktx2Options3D = {}
     if (width === 0 || height === 0 || width > KTX2_LIMITS.maxEdge || height > KTX2_LIMITS.maxEdge) fail('size');
     if (depth !== 0 || layers !== 0 || faces !== 1) throw new World3DError('WORLD3D_GLTF_UNSUPPORTED', 'ktx2: only single 2D textures are supported');
     if (levelCount > KTX2_LIMITS.maxLevels || 80 + levelCount * 24 > bytes.byteLength) fail('level index');
-    const levels: Uint8Array[] = [];
+    const levels: Uint8Array[] = [], unpackedSizes: number[] = [];
     for (let level = 0; level < levelCount; level++) {
         const base = 80 + level * 24;
         // Offsets are 64-bit; files this reader accepts fit comfortably in the low 53 bits.
         const offset = Number(view.getBigUint64(base, true)), length = Number(view.getBigUint64(base + 8, true));
         if (!Number.isSafeInteger(offset) || !Number.isSafeInteger(length) || length > bytes.byteLength - offset) fail('level range');
         levels.push(bytes.subarray(offset, offset + length));
+        unpackedSizes.push(Number(view.getBigUint64(base + 16, true)));
     }
     const known = FORMATS[vkFormat];
-    if (supercompression !== 0 || !known) {
+    if (known && (supercompression === 2 || supercompression === 3)) {
+        // General-purpose compression around levels this reader understands: unwrap each level here.
+        for (let level = 0; level < levelCount; level++) {
+            const size = unpackedSizes[level]!;
+            if (!Number.isSafeInteger(size) || size > KTX2_LIMITS.maxEdge * KTX2_LIMITS.maxEdge * 4) fail('level size');
+            const options3D = {sizeHint: size, maxBytes: size};
+            const unpacked = supercompression === 2 ? decompressZstd3D(levels[level]!, options3D) : inflate3D(levels[level]!, options3D);
+            if (unpacked.byteLength !== size) fail('level does not unpack to its stated size');
+            levels[level] = unpacked;
+        }
+    } else if (supercompression !== 0 || !known) {
         if (!options.transcode) throw new World3DError('WORLD3D_GLTF_UNSUPPORTED', 'ktx2: this payload needs a transcoder (vkFormat ' + vkFormat + ', supercompression ' + supercompression + ')');
         return await options.transcode({vkFormat, width, height, levelCount, supercompression, levels, file: bytes});
     }

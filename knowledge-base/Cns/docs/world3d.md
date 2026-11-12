@@ -88,9 +88,11 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 纹理源可以是块压缩的多级链：`{width, height, format, levels}`，`format` 为 `bc1`、`bc3`、`bc7`、`etc2-rgb8`、`etc2-rgba8` 或 `astc-4x4`。数据按存储的样子上传，在显存中保持压缩。`renderer.supportsCompressedFormat(format)` 报告设备是否接受某种格式；桌面 GPU 通常提供 BC，移动 GPU 提供 ETC2 和 ASTC。
 
-`parseKtx23D(bytes, options)` 读取 KTX2 容器。未压缩的 RGBA8 和上述块格式直接使用。Basis Universal 和带超级压缩的数据交给 `options.transcode`，由它返回适合当前设备的像素或压缩链。`loadTexture3D` 通过文件头识别 KTX2。
+`parseKtx23D(bytes, options)` 读取 KTX2 容器。未压缩的 RGBA8 和上述块格式直接使用。包在 Zstandard 或 zlib 里的层级会先被解开。Basis Universal 数据以及读取器不认识的格式交给 `options.transcode`，由它返回适合当前设备的像素或压缩链。`loadTexture3D` 通过文件头识别 KTX2。
 
-提供对应钩子后，glTF 读取器接受 `KHR_texture_basisu`、`EXT_meshopt_compression` 和 `KHR_draco_mesh_compression`：`transcodeKtx2`、`decodeMeshopt`、`decodeDraco`。引擎不内置解码器；应用可以通过钩子接入官方 WebAssembly 解码器，引擎本身不依赖它们。文件要求的扩展缺少钩子时，以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。
+`EXT_meshopt_compression` 由引擎自行解码：`decodeMeshopt3D` 用 TypeScript 实现了顶点、三角形和索引序列三种编码，以及八面体、四元数和指数三种过滤器，这类文件不需要任何额外选项即可加载。如果提供了 `decodeMeshopt` 钩子，则改用钩子，例如在文件非常大时换成 WebAssembly 解码器。KTX2 读取器还会解开包在可读层级外面的 Zstandard 和 zlib 超级压缩（`decompressZstd3D` 和 `inflate3D` 也已导出，可另作他用）；不支持 Zstandard 字典。
+
+`KHR_draco_mesh_compression` 和 Basis Universal 纹理（`KHR_texture_basisu`）仍然需要官方的 WebAssembly 解码器，引擎不附带它们。应用自行加载解码模块，再用适配函数包装：`decodeDraco: createDracoDecoder3D(dracoModule)`，`transcodeKtx2: createBasisTranscoder3D(basisModule, format => renderer.supportsCompressedFormat(format))`。Basis 适配函数会选择设备支持的最佳压缩格式，都不支持时退回普通 RGBA。文件要求 Draco 而没有提供钩子时，以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。两个适配函数按官方模块的公开接口编写，目前只用替身模块测试过，还没有在真实模块上运行。
 
 表面扩展 `KHR_materials_transmission`、`KHR_materials_ior`、`KHR_materials_volume`、`KHR_materials_clearcoat` 和 `KHR_materials_sheen` 按各自的数值系数读取；这些扩展可能附带的纹理不会被使用。
 
@@ -241,7 +243,7 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 [World3D 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/world3d/README.zh-CN.md)在任一后端上展示灯光、阴影、实例化、蒙皮、变形、粒子、渲染目标、拾取和轨道控制。
 
-无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
+无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs`、`tests/world3d-decoders.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
 
 `tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，以及文字与变换操纵器。开发期间全部二十个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前十六个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
 
@@ -253,4 +255,4 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 - 一台运行 Chrome 157 的 Android 真机已呈现两个后端，响应了自动触发的阴影开关，并在释放后停止更新帧。本次复审还在同类真机的 WebGL2 和 WebGPU 上检查了屏幕空间效果、顶点位移与阴影，以及斜切投影深度。
 - 更广泛的移动端与设备恢复覆盖、视口和反射探针专项检查、性能测量，以及第一人称控制和空间音频的真人验证仍待完成。
 - 最新的四个比较场景（光泽、玻璃与光照贴图；景深；折射；文字与变换操纵器）以及关节、凸包、连续碰撞和变换控制目前只在软件渲染和无头测试中运行过，仍需在真实 GPU 上验证并由真人操作检查。
-- 尚未实现：内置的 Basis、meshopt 或 Draco 解码器，浮点精度的环境预过滤，多于一层的折射，带倒角的挤出体，文字整形与 CFF 字体，滑动关节与弹簧关节，以及针对旋转或宽大刚体的连续碰撞。
+- 尚未实现：不依赖官方模块的 Draco 与 Basis Universal 解码，浮点精度的环境预过滤，多于一层的折射，带倒角的挤出体，文字整形与 CFF 字体，滑动关节与弹簧关节，以及针对旋转或宽大刚体的连续碰撞。
