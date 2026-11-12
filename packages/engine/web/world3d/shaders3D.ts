@@ -12,7 +12,7 @@ export const ATTRIBUTE_LOCATIONS_3D = Object.freeze({
 /** Fixed texture units; samplers are assigned once when a program is linked. */
 export const TEXTURE_UNITS_3D = Object.freeze({
     map: 0, normalMap: 1, metallicRoughnessMap: 2, occlusionMap: 3, emissiveMap: 4,
-    environment: 5, shadow: 6, bones: 7, morph: 8,
+    environment: 5, shadow: 6, bones: 7, morph: 8, lightMap: 9, sceneColor: 10,
 } as const);
 
 export const MAX_MORPH_INFLUENCES_3D = 8;
@@ -44,7 +44,7 @@ layout(std140) uniform Frame {
     vec4 uCascadeInfo;             // x: cascaded directional light index or -1, y: cascade count, z: blend fraction
     vec4 uPointShadow;             // x: shadowed point light index or -1, y: first of its four slots
     vec4 uClipPlanes[4];           // world-space planes; the negative side is discarded
-    vec4 uClipInfo;                // x: plane count
+    vec4 uClipInfo;                // x: plane count; zw: share of the output the view covers
 };
 `;
 
@@ -199,6 +199,14 @@ uniform sampler2D uNormalMap;
 uniform sampler2D uMetallicRoughnessMap;
 uniform sampler2D uOcclusionMap;
 uniform sampler2D uEmissiveMap;
+uniform sampler2D uLightMap;
+uniform vec4 uSheen;             // color scaled by strength, roughness
+uniform vec2 uExtra;             // light map intensity, transmission
+#ifdef USE_TRANSMISSION
+uniform sampler2D uSceneColor;   // what was drawn before the see-through surfaces
+uniform vec4 uRefraction;        // index of refraction, thickness, attenuation distance (0 = none)
+uniform vec3 uAttenuation;
+#endif
 uniform samplerCube uEnvironment;
 uniform highp sampler2DShadow uShadowMap;
 in vec3 vWorldPosition;
@@ -326,6 +334,11 @@ vec3 shade(Surface s, vec3 l, vec3 radiance) {
     vec3 diffuse = s.albedo * (1.0 - s.metallic) * (1.0 - fresnel);
     // Light units are scaled by PI so a unit white light fully lights a white diffuse surface.
     vec3 lit = diffuse + distribution * visibility * fresnel * PI;
+    if (uSheen.r + uSheen.g + uSheen.b > 0.0) {
+        // Cloth lobe: an inverted Gaussian that brightens toward grazing angles.
+        float inverse = 1.0 / max(uSheen.w, 0.07);
+        lit += uSheen.rgb * ((2.0 + inverse) * pow(max(1.0 - nh * nh, 0.0), inverse * 0.5) / (2.0 * PI)) / (4.0 * (nl + nv - nl * nv)) * PI;
+    }
     if (uClearcoat.x > 0.0) {
         // A second, dielectric lobe on top; the base layer loses what the coat reflects.
         float ca = max(uClearcoat.y, 0.045); ca *= ca;
@@ -410,6 +423,28 @@ void main() {
     #endif
     #endif
 
+    #ifdef USE_TRANSMISSION
+    // Light that passes through replaces that share of the diffuse reflection.
+    float through = uExtra.y * (1.0 - s.metallic);
+    vec3 passed = vec3(0.0);
+    {
+        vec3 bent = refract(-s.view, s.normal, 1.0 / max(uRefraction.x, 1.0));
+        vec4 here = uViewProjection * vec4(vWorldPosition, 1.0), there = uViewProjection * vec4(vWorldPosition + bent * uRefraction.y, 1.0);
+        vec2 at = gl_FragCoord.xy / vec2(textureSize(uSceneColor, 0)) + (there.xy / max(there.w, 0.0001) - here.xy / here.w) * 0.5 * uClipInfo.zw;
+        // A rough surface scatters the view: average a spiral of taps that widens with roughness.
+        float spread = s.roughness * s.roughness * 0.25 / max(here.w, 1.0);
+        for (int i = 0; i < 12; i++) {
+            float turn = float(i) * 2.399963, reach = sqrt((float(i) + 0.5) / 12.0) * spread;
+            passed += texture(uSceneColor, clamp(at + vec2(cos(turn), sin(turn)) * reach, vec2(0.0), vec2(1.0))).rgb;
+        }
+        passed /= 12.0;
+    }
+    // Tint of the material, deepened by the distance travelled inside it.
+    vec3 tint = s.albedo;
+    if (uRefraction.z > 0.0) tint *= pow(max(uAttenuation, vec3(0.0001)), vec3(uRefraction.y / uRefraction.z));
+    s.albedo *= 1.0 - through;
+    float clear = 1.0;
+    #endif
     // Indirect light: ambient, hemisphere and optional environment map.
     vec3 diffuseAlbedo = s.albedo;
     #ifdef SHADING_STANDARD
@@ -418,6 +453,13 @@ void main() {
     vec3 irradiance = uAmbient.rgb + mix(uHemisphereGround.rgb, uHemisphereSky.rgb, s.normal.y * 0.5 + 0.5);
     #ifdef USE_ENVIRONMENT
     irradiance += textureLod(uEnvironment, s.normal, uOutput.y).rgb * uOutput.x * uEnvironmentScale;
+    #endif
+    #ifdef USE_LIGHT_MAP
+    #ifdef LIGHT_UV1
+    irradiance += texture(uLightMap, vUv1).rgb * uExtra.x;
+    #else
+    irradiance += texture(uLightMap, vUv).rgb * uExtra.x;
+    #endif
     #endif
     color = diffuseAlbedo * irradiance * occlusion;
     #if defined(USE_ENVIRONMENT) && defined(SHADING_STANDARD)
@@ -488,10 +530,20 @@ void main() {
         float fog = uFogParams.x > 1.5 ? 1.0 - exp(-uFogParams.y * uFogParams.y * dist * dist)
             : smoothstep(uFogParams.y, uFogParams.z, dist);
         color = mix(color, uFogColor.rgb, clamp(fog, 0.0, 1.0));
+        #ifdef USE_TRANSMISSION
+        clear = 1.0 - clamp(fog, 0.0, 1.0);
+        #endif
     }
     #endif
     #ifdef TONE_MAPPED
     color = toneMap(color);
+    #endif
+    #ifdef USE_TRANSMISSION
+    // The stored scene is display-ready, so it joins after tone mapping; the canvas holds it sRGB-encoded.
+    #ifndef LINEAR_OUTPUT
+    passed = mix(passed / 12.92, pow((passed + 0.055) / 1.055, vec3(2.4)), step(vec3(0.04045), passed));
+    #endif
+    color += passed * tint * through * clear;
     #endif
     #ifdef LINEAR_OUTPUT
     // sRGB render targets encode on write; hand them linear values. Fixed-point

@@ -23,3 +23,4 @@ export {AudioListener3D, PositionalAudio3D, createAudioListener3D, createPositio
 export type {AudioListenerOptions3D, PositionalAudioOptions3D} from './Audio3D.js';
 export {captureCubeTexture3D} from './probe3D.js';
 export type {CubeCaptureOptions3D} from './probe3D.js';
+export {TransformControls3D, createTransformControls3D} from './TransformControls3D.js';

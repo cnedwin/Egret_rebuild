@@ -133,6 +133,31 @@ export class Material3D extends Resource3D {
     shininess = 30;
     /** Optional fragment hook. Call touch() after assigning a different shader. */
     shader: CustomShader3D | undefined;
+    /**
+     * Baked lighting added to the indirect light of lit materials. It is sampled
+     * with the texture's `channel`, normally 1 for a second, non-overlapping UV set.
+     */
+    lightMap: Texture3D | undefined;
+    lightMapIntensity = 1;
+    /** Strength, 0 to 1, of a soft rim lobe for cloth and velvet on a standard material. */
+    sheen = 0;
+    readonly sheenColor = new Float32Array([1, 1, 1]);
+    sheenRoughness = 0.5;
+    /**
+     * How much light passes through a standard material, 0 to 1, as for glass.
+     * What lies behind is drawn first and then seen through the surface,
+     * tinted by its color and blurred by its roughness. Such a material is
+     * drawn with the transparent objects whatever its alphaMode; other
+     * see-through and transparent objects behind it do not show through.
+     */
+    transmission = 0;
+    /** Index of refraction for transmission: 1 does not bend light, 1.5 is glass, 1.33 water. */
+    ior = 1.5;
+    /** How far, in world units, light travels inside a transmitting object. Zero means a thin sheet that does not bend the view. */
+    thickness = 0;
+    /** Color white light takes on after travelling `attenuationDistance` inside a transmitting object. */
+    readonly attenuationColor = new Float32Array([1, 1, 1]);
+    attenuationDistance = Infinity;
     /** Strength, 0 to 1, of a clear lacquer layer over a standard material (car paint, varnish). */
     clearcoat = 0;
     clearcoatRoughness = 0.1;
@@ -188,11 +213,11 @@ export class Material3D extends Resource3D {
     /** Independent copy sharing texture references. */
     clone(): Material3D {
         const copy = new Material3D(this.shading);
-        const skip = new Set(['id', 'shading', 'color', 'emissive', 'specular']);
+        const skip = new Set(['id', 'shading', 'color', 'emissive', 'specular', 'sheenColor', 'attenuationColor']);
         for (const key of Object.keys(this) as (keyof Material3D)[]) {
             if (!skip.has(key)) (copy as unknown as Record<string, unknown>)[key] = this[key];
         }
-        copy.color.set(this.color); copy.emissive.set(this.emissive); copy.specular.set(this.specular);
+        copy.color.set(this.color); copy.emissive.set(this.emissive); copy.specular.set(this.specular); copy.sheenColor.set(this.sheenColor); copy.attenuationColor.set(this.attenuationColor);
         return copy;
     }
 }
@@ -225,6 +250,17 @@ export function createToonMaterial3D(options: MaterialOptions3D & {readonly step
 export function createMatcapMaterial3D(options: MaterialOptions3D & {readonly matcap: Texture3D}): Material3D {
     const material = new Material3D('matcap', options);
     material.emissiveMap = options.matcap;
+    return material;
+}
+/**
+ * A standard material set up as glass: smooth and see-through, with
+ * reflections kept. Give it a `thickness` to bend the view like a solid block.
+ */
+export function createGlassMaterial3D(options: StandardMaterialOptions3D & {readonly transmission?: number; readonly ior?: number; readonly thickness?: number} = {}): Material3D {
+    const material = createStandardMaterial3D({roughness: 0.05, metallic: 0, ...options});
+    material.transmission = options.transmission ?? 1;
+    material.ior = options.ior ?? 1.5;
+    material.thickness = options.thickness ?? 0;
     return material;
 }
 /** Physically based metallic-roughness model, matching glTF 2.0 materials. */

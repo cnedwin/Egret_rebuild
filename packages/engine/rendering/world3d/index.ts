@@ -26,7 +26,7 @@ export type {
 } from './primitives3D.js';
 export {
     Material3D, setColor3D, createUnlitMaterial3D, createLambertMaterial3D, createPhongMaterial3D,
-    createStandardMaterial3D, createCustomShader3D, createToonMaterial3D, createMatcapMaterial3D, createSpriteMaterial3D,
+    createStandardMaterial3D, createGlassMaterial3D, createCustomShader3D, createToonMaterial3D, createMatcapMaterial3D, createSpriteMaterial3D,
 } from './Material3D.js';
 export type {
     Shading3D, CustomShader3D, Side3D, AlphaMode3D, Blending3D, ColorInput3D, MaterialOptions3D, PhongMaterialOptions3D,
@@ -68,6 +68,8 @@ export {SCENE_DOCUMENT_FORMAT_3D, SCENE_DOCUMENT_VERSION_3D, SERIALIZE3D_LIMITS,
 export type {SceneDocument3D, SerializeOptions3D, DeserializeOptions3D, DeserializedScene3D} from './Serialize3D.js';
 export {STATE_MACHINE3D_LIMITS, AnimationStateMachine3D, createAnimationStateMachine3D} from './StateMachine3D.js';
 export type {StateParameter3D, StateConditionOperator3D, StateCondition3D, StateBlendEntry3D, StateOptions3D, TransitionOptions3D} from './StateMachine3D.js';
+export {Joint3D} from './Physics3D.js';
+export type {JointType3D, JointOptions3D} from './Physics3D.js';
 export {PHYSICS3D_LIMITS, RigidBody3D, PhysicsWorld3D, CharacterController3D, createPhysicsWorld3D, createCharacterController3D} from './Physics3D.js';
 export type {
     BodyType3D, ShapeDefinition3D, RigidBodyOptions3D, PhysicsRaycastHit3D, PhysicsWorldOptions3D, CharacterControllerOptions3D,
@@ -94,3 +96,10 @@ export {
 export {HDR3D_LIMITS, parseRgbe3D, createCubeTextureFromEquirect3D} from './Hdr3D.js';
 export type {HdrImage3D, EquirectOptions3D} from './Hdr3D.js';
 export {PHYSICS_MESH3D_LIMITS, TriangleMeshShape3D, createMeshShape3D} from './PhysicsMesh3D.js';
+export {BATCH3D_LIMITS, BatchedMesh3D, FatLine3D, createBatchedMesh3D, createFatLine3D} from './Batch3D.js';
+export type {FatLineOptions3D} from './Batch3D.js';
+export {PHYSICS_HULL3D_LIMITS, ConvexHullShape3D, createConvexHullShape3D} from './PhysicsHull3D.js';
+export {TEXT3D_LIMITS, Font3D, parseTypefaceFont3D, parseTrueTypeFont3D, createTextShapes3D, createTextGeometry3D} from './Text3D.js';
+export type {GlyphOutline3D, FontSource3D, TextLayoutOptions3D, TextGeometryOptions3D} from './Text3D.js';
+export {TransformGizmo3D, createTransformGizmo3D} from './Gizmo3D.js';
+export type {GizmoMode3D, GizmoSpace3D, GizmoHandle3D, TransformGizmoOptions3D} from './Gizmo3D.js';

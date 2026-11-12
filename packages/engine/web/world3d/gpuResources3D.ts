@@ -121,8 +121,8 @@ export class GpuResources3D {
         gl.useProgram(program);
         const samplers: Record<string, number> = {
             uMap: TEXTURE_UNITS_3D.map, uNormalMap: TEXTURE_UNITS_3D.normalMap, uMetallicRoughnessMap: TEXTURE_UNITS_3D.metallicRoughnessMap,
-            uOcclusionMap: TEXTURE_UNITS_3D.occlusionMap, uEmissiveMap: TEXTURE_UNITS_3D.emissiveMap, uEnvironment: TEXTURE_UNITS_3D.environment,
-            uShadowMap: TEXTURE_UNITS_3D.shadow, uBoneTexture: TEXTURE_UNITS_3D.bones, uMorphTexture: TEXTURE_UNITS_3D.morph,
+            uOcclusionMap: TEXTURE_UNITS_3D.occlusionMap, uEmissiveMap: TEXTURE_UNITS_3D.emissiveMap, uLightMap: TEXTURE_UNITS_3D.lightMap, uEnvironment: TEXTURE_UNITS_3D.environment,
+            uShadowMap: TEXTURE_UNITS_3D.shadow, uBoneTexture: TEXTURE_UNITS_3D.bones, uMorphTexture: TEXTURE_UNITS_3D.morph, uSceneColor: TEXTURE_UNITS_3D.sceneColor,
         };
         for (const name in samplers) if (uniforms[name]) gl.uniform1i(uniforms[name]!, samplers[name]!);
         const entry: Program3D = {id: this.#nextProgramId++, program, uniforms};
@@ -348,6 +348,8 @@ export class GpuResources3D {
         if (entry.version !== skeleton.version && count > 0) {
             gl.activeTexture(gl.TEXTURE0 + TEXTURE_UNITS_3D.bones);
             gl.bindTexture(gl.TEXTURE_2D, entry.texture);
+            // Row order here is data, not an image: never let an earlier image upload's flip apply.
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
             gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 4, count, gl.RGBA, gl.FLOAT, skeleton.boneMatrices);
             entry.version = skeleton.version;
         }
@@ -414,6 +416,8 @@ export class GpuResources3D {
             if (texture.mipmaps) gl.generateMipmap(gl.TEXTURE_2D);
         }
         this.applySampler(gl.TEXTURE_2D, texture);
+        // The flip belongs to this upload only; leave the context as every other upload expects it.
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
         entry.version = texture.version;
     }
     /** Internal format for a compressed format on this context, or undefined when its extension is missing. */

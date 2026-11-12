@@ -106,9 +106,9 @@ function plainData(value: unknown, depth = 0): unknown {
 }
 
 const MATERIAL_SCALARS = ['opacity', 'side', 'alphaMode', 'alphaCutoff', 'blending', 'depthTest', 'depthWrite', 'vertexColors', 'fog', 'toneMapped', 'visible',
-    'emissiveIntensity', 'normalScale', 'occlusionStrength', 'flatShading', 'wireframe', 'shininess', 'toonSteps', 'clearcoat', 'clearcoatRoughness', 'metallic', 'roughness', 'environmentIntensity', 'billboard',
+    'emissiveIntensity', 'normalScale', 'occlusionStrength', 'flatShading', 'wireframe', 'shininess', 'toonSteps', 'clearcoat', 'clearcoatRoughness', 'lightMapIntensity', 'sheen', 'sheenRoughness', 'transmission', 'ior', 'thickness', 'metallic', 'roughness', 'environmentIntensity', 'billboard',
     'screenSpace', 'sizeAttenuation', 'rotation', 'pointSize'] as const;
-const MATERIAL_MAPS = ['map', 'emissiveMap', 'normalMap', 'occlusionMap', 'metallicRoughnessMap'] as const;
+const MATERIAL_MAPS = ['map', 'emissiveMap', 'normalMap', 'occlusionMap', 'metallicRoughnessMap', 'lightMap'] as const;
 const NODE_FLAGS = ['visible', 'layers', 'renderOrder', 'castShadow', 'receiveShadow', 'frustumCulled'] as const;
 
 /** Write the subtree under `root` as JSON-safe data. */

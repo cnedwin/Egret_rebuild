@@ -235,3 +235,24 @@ test('W3C11 materials default alpha handling from opacity and LOD shows one leve
   lod.select(0, 0, 100);
   assert.equal(lod.currentLevel, 2);
 });
+
+test('W3C20 a parent refreshed on its own still carries its change to descendants on the next traversal', () => {
+  const scene = new Scene3D(), parent = new Object3D(), child = new Object3D(), grandchild = new Object3D();
+  scene.addChild(parent); parent.addChild(child); child.addChild(grandchild);
+  parent.setPosition(2, 0, 0); child.setPosition(1, 0, 0); grandchild.setPosition(0, 0, 1);
+  scene.updateWorldMatrices();
+  parent.setPosition(10, 0, 0); parent.setScale(2); quatFromAxisAngle(parent.quaternion, [0, 1, 0], Math.PI / 2); parent.markTransformDirty();
+  assert.equal(parent.updateWorldMatrix(), true);               // the single-node call refreshes the parent only
+  assert.equal(child.matrixWorld[12], 3);
+  scene.updateWorldMatrices();
+  const at = node => [node.matrixWorld[12], node.matrixWorld[13], node.matrixWorld[14]];
+  at(child).forEach((value, i) => assert.ok(Math.abs(value - [10, 0, -2][i]) < 1e-6));
+  at(grandchild).forEach((value, i) => assert.ok(Math.abs(value - [12, 0, -2][i]) < 1e-6));
+  const versions = [parent.worldVersion, child.worldVersion, grandchild.worldVersion];
+  scene.updateWorldMatrices();
+  assert.deepEqual([parent.worldVersion, child.worldVersion, grandchild.worldVersion], versions);   // nothing changed, nothing recomputed
+  // Reading a deep node first resolves its ancestors and leaves the middle one consistent too.
+  parent.setPosition(0, 5, 0);
+  grandchild.updateWorldMatrix(); scene.updateWorldMatrices();
+  assert.ok(Math.abs(child.matrixWorld[13] - 5) < 1e-6);
+});
