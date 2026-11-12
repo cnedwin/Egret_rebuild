@@ -230,8 +230,10 @@ test('a fixed-origin scaled skin stays in the render list when its rest bound is
     {targetName: bone.name, path: 'scale', times: [0], values: [8, 1, 1]},
   ]});
   const baked = bakeAnimationTexture3D(root, mesh, [stretch]);
-  assert.equal(baked.data[0], 8);
-  assert.deepEqual([...baked.data.subarray(12, 15)], [0, 0, 0]);
+  // Frame 0 holds the bone pivots; the first pose follows it, one bone row and one weight row per frame.
+  const pose = baked.stride * 16;
+  assert.equal(baked.data[pose], 8);
+  assert.deepEqual([...baked.data.subarray(pose + 12, pose + 15)], [0, 0, 0]);
   const crowd = createSkinnedInstancedMesh3D(geometry, material, baked, 1);
   crowd.setPosition(6, 0, 0);
   // Requesting culling must still be safe when the available bound is unqualified.

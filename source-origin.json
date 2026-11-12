@@ -17066,8 +17066,8 @@
     {
       "path": "tests/world3d-crowd.test.mjs",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 18883,
-      "sha256": "5363dd9532663a5abcaef7dd1eb32c5d8be0ae3c2424ee1dfbc5a32214e63eab"
+      "bytes": 19040,
+      "sha256": "a1335c45f3e6a0167d79f9e8e0a404363bfe872223bd4254ea6e1e085aad33aa"
     },
     {
       "path": "tests/world3d-effects.test.mjs",
