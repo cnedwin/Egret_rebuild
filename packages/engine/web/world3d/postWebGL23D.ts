@@ -7,7 +7,7 @@ import {Material3D} from '../../rendering/world3d/Material3D.js';
 import {RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
 import type {ToneMapping3D} from './frame3D.js';
 import type {GpuResources3D, Program3D} from './gpuResources3D.js';
-import {POST_DOWN_GLSL_3D, POST_FXAA_GLSL_3D, POST_SSAO_GLSL_3D, POST_UP_GLSL_3D, POST_VERTEX_GLSL_3D, bloomLevelCount3D, postCompositeGlsl3D, writeCompositeParams3D} from './post3D.js';
+import {POST_DOF_GLSL_3D, POST_DOWN_GLSL_3D, POST_FXAA_GLSL_3D, POST_SSAO_GLSL_3D, POST_UP_GLSL_3D, POST_VERTEX_GLSL_3D, bloomLevelCount3D, postCompositeGlsl3D, writeCompositeParams3D} from './post3D.js';
 import type {PostProcessSettings3D, PostView3D} from './post3D.js';
 
 interface Surface { texture: WebGLTexture; framebuffer: WebGLFramebuffer; width: number; height: number }
@@ -24,6 +24,7 @@ export class PostChainWebGL23D {
     readonly #levels: Surface[] = [];
     #ldr: Surface | undefined;
     #ao: Surface | undefined;
+    #dof: Surface | undefined;
     #black: WebGLTexture | null = null;
     readonly #params = new Float32Array(8);
     #view: PostView3D | undefined;
@@ -98,6 +99,14 @@ export class PostChainWebGL23D {
             this.pass(program, sceneTexture, ao.framebuffer, width, height, [Math.max(settings.ssaoRadius, 0.001), settings.ssaoIntensity, settings.ssaoBias, 0], [0, 0, 0, 0]);
             draws++;
         }
+        if (settings.dof && depthTexture !== undefined && settings.dofRadius > 0) {
+            // Everything after this reads the blurred image as the scene.
+            const dof = this.#dof = this.surface(this.#dof, width, height, this.#float);
+            const program = resources.program('post/dof', () => ({vertex: POST_VERTEX_GLSL_3D, fragment: POST_DOF_GLSL_3D}));
+            this.pass(program, sceneTexture, dof.framebuffer, width, height, [settings.dofFocus, Math.max(settings.dofRange, 0.001), settings.dofRadius, 0], [0, 0, 0, 0]);
+            sceneTexture = dof.texture;
+            draws++;
+        }
         const levels = bloomLevelCount3D(settings, width, height);
         if (levels > 0) {
             const down = resources.program('post/down', () => ({vertex: POST_VERTEX_GLSL_3D, fragment: POST_DOWN_GLSL_3D}));
@@ -165,10 +174,10 @@ export class PostChainWebGL23D {
     dispose(lost = false): void {
         const gl = this.#gl;
         if (!lost) {
-            for (const surface of [...this.#levels, ...(this.#ldr ? [this.#ldr] : []), ...(this.#ao ? [this.#ao] : [])]) { gl.deleteTexture(surface.texture); gl.deleteFramebuffer(surface.framebuffer); }
+            for (const surface of [...this.#levels, ...(this.#ldr ? [this.#ldr] : []), ...(this.#ao ? [this.#ao] : []), ...(this.#dof ? [this.#dof] : [])]) { gl.deleteTexture(surface.texture); gl.deleteFramebuffer(surface.framebuffer); }
             if (this.#black) gl.deleteTexture(this.#black);
         }
-        this.#levels.length = 0; this.#ldr = undefined; this.#ao = undefined; this.#black = null;
+        this.#levels.length = 0; this.#ldr = undefined; this.#ao = undefined; this.#dof = undefined; this.#black = null;
         this.scene.dispose(); this.mask.dispose(); this.maskMaterial.dispose();
     }
 }

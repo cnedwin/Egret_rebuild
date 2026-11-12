@@ -62,6 +62,14 @@ export interface PostProcessSettings3D {
     ssaoIntensity: number;
     /** Ignores occluders this close to the surface plane, against self-shadowing on flat faces. */
     ssaoBias: number;
+    /** Depth of field: blur what lies nearer or farther than the focused range. */
+    dof: boolean;
+    /** Distance from the camera, in world units, that is perfectly sharp. */
+    dofFocus: number;
+    /** Half-depth of the sharp zone around the focus distance, in world units. */
+    dofRange: number;
+    /** Largest blur radius in pixels. */
+    dofRadius: number;
     /** Optional application pass; see CustomPost3D. */
     custom: CustomPost3D | undefined;
     /**
@@ -102,7 +110,7 @@ export function writePostParams3D(out: Float32Array, a: ArrayLike<number>, b: Ar
 export const POST3D_LIMITS = Object.freeze({maxBloomLevels: 8} as const);
 export function createPostProcessSettings3D(): PostProcessSettings3D {
     return {enabled: false, bloom: true, bloomThreshold: 1, bloomKnee: 0.5, bloomIntensity: 0.6, bloomLevels: 5, fxaa: true, saturation: 1, contrast: 1, brightness: 1, vignette: 0,
-        ssao: false, ssaoRadius: 0.5, ssaoIntensity: 1, ssaoBias: 0.025, custom: undefined,
+        ssao: false, ssaoRadius: 0.5, ssaoIntensity: 1, ssaoBias: 0.025, dof: false, dofFocus: 10, dofRange: 3, dofRadius: 6, custom: undefined,
         outlineLayers: 0, outlineColor: [1, 0.6, 0.1], outlineThickness: 2};
 }
 /** Number of bloom levels that fit the output size. */
@@ -207,6 +215,27 @@ void main() {
     c += 2.0 * (texture(uSource, vUv + vec2(-h.x, h.y)).rgb + texture(uSource, vUv + vec2(h.x, h.y)).rgb
         + texture(uSource, vUv + vec2(h.x, -h.y)).rgb + texture(uSource, vUv + vec2(-h.x, -h.y)).rgb);
     outColor = vec4(c / 12.0, 1.0);
+}`;
+/** uA: focus distance, sharp half-range, largest radius in pixels. Blurs by distance from the focused zone. */
+export const POST_DOF_GLSL_3D = GLSL_HEAD + GLSL_DEPTH + /* glsl */`
+float blurRadius(vec2 uv) { return clamp((abs(sceneDepth(uv) - uA.x) - uA.y) / max(uA.y, 0.001), 0.0, 1.0) * uA.z; }
+void main() {
+    vec4 center = texture(uSource, vUv);
+    float radius = blurRadius(vUv);
+    vec3 sum = center.rgb;
+    float weight = 1.0;
+    // A sharp pixel gathers nothing, so focused objects keep crisp edges against a blurred backdrop.
+    if (radius > 0.5) {
+        for (int i = 0; i < 16; i++) {
+            float angle = float(i) * 2.399963;
+            vec2 uv = vUv + vec2(cos(angle), sin(angle)) * sqrt((float(i) + 0.5) / 16.0) * radius * uFlags.zw;
+            // Sharp neighbours contribute little, which keeps them from smearing into the blur.
+            float w = mix(0.15, 1.0, clamp(blurRadius(uv) / radius, 0.0, 1.0));
+            sum += texture(uSource, uv).rgb * w;
+            weight += w;
+        }
+    }
+    outColor = vec4(sum / weight, center.a);
 }`;
 /** uA: bloom scale, tone mapping, sRGB encode, vignette. uB: saturation, contrast, brightness. */
 export function postCompositeGlsl3D(customPost?: string): string {
@@ -365,6 +394,26 @@ export const POST_UP_WGSL_3D = WGSL_HEAD + /* wgsl */`
     var c = tap(uv + vec2f(-2.0 * h.x, 0.0)) + tap(uv + vec2f(2.0 * h.x, 0.0)) + tap(uv + vec2f(0.0, 2.0 * h.y)) + tap(uv + vec2f(0.0, -2.0 * h.y));
     c += 2.0 * (tap(uv + vec2f(-h.x, h.y)) + tap(uv + vec2f(h.x, h.y)) + tap(uv + vec2f(h.x, -h.y)) + tap(uv + vec2f(-h.x, -h.y)));
     return vec4f(c / 12.0, 1.0);
+}`;
+export const POST_DOF_WGSL_3D = WGSL_HEAD + /* wgsl */`
+fn blurRadius(uv: vec2f) -> f32 { return clamp((abs(sceneDepth(uv) - params.a.x) - params.a.y) / max(params.a.y, 0.001), 0.0, 1.0) * params.a.z; }
+@fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
+    let center = textureSampleLevel(source, linearSampler, input.uv, 0.0);
+    let radius = blurRadius(input.uv);
+    var sum = center.rgb;
+    var weight = 1.0;
+    // A sharp pixel gathers nothing, so focused objects keep crisp edges against a blurred backdrop.
+    if (radius > 0.5) {
+        for (var i = 0; i < 16; i++) {
+            let angle = f32(i) * 2.399963;
+            let uv = input.uv + vec2f(cos(angle), -sin(angle)) * sqrt((f32(i) + 0.5) / 16.0) * radius * params.flags.zw;
+            // Sharp neighbours contribute little, which keeps them from smearing into the blur.
+            let w = mix(0.15, 1.0, clamp(blurRadius(uv) / radius, 0.0, 1.0));
+            sum += tap(uv) * w;
+            weight += w;
+        }
+    }
+    return vec4f(sum / weight, center.a);
 }`;
 export function postCompositeWgsl3D(customPost?: string): string {
     return WGSL_HEAD + (customPost ?? '') + /* wgsl */`

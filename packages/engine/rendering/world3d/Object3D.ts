@@ -45,6 +45,8 @@ export class Object3D {
     #localDirty = true;
     #worldDirty = true;
     #worldVersion = 0;
+    /** World version of the parent that matrixWorld was last computed from. */
+    #parentVersion = -1;
 
     constructor(kind: Object3DKind = 'object') {
         this.kind = kind;
@@ -190,8 +192,11 @@ export class Object3D {
             this.#localDirty = false;
             this.#worldDirty = true;
         }
-        if (!this.#worldDirty && !parentChanged) return false;
-        if (this.#parent) mat4Multiply(this.matrixWorld, this.#parent.matrixWorld, this.matrix);
+        // The parent may have been refreshed on its own earlier, so its change no longer arrives
+        // through `parentChanged`; comparing versions catches that.
+        const parent = this.#parent;
+        if (!this.#worldDirty && !parentChanged && (!parent || this.#parentVersion === parent.#worldVersion)) return false;
+        if (parent) { mat4Multiply(this.matrixWorld, parent.matrixWorld, this.matrix); this.#parentVersion = parent.#worldVersion; }
         else mat4Copy(this.matrixWorld, this.matrix);
         this.#worldDirty = false;
         this.#worldVersion++;

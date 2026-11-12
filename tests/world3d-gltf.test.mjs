@@ -271,3 +271,20 @@ test('W3G08 the browser loader closes a decode completed after another image fai
     else delete globalThis.createImageBitmap;
   }
 });
+
+test('W3G10 surface extensions set transmission, volume, clearcoat and sheen from their factors', async () => {
+  const asset = await loadGltf3D(createAsset(json => {
+    json.extensionsUsed.push('KHR_materials_transmission', 'KHR_materials_ior', 'KHR_materials_volume', 'KHR_materials_clearcoat', 'KHR_materials_sheen');
+    json.extensionsRequired = ['KHR_materials_transmission'];
+    Object.assign(json.materials[0].extensions, {KHR_materials_transmission: {transmissionFactor: 0.8}, KHR_materials_ior: {ior: 1.33},
+      KHR_materials_volume: {thicknessFactor: 0.5, attenuationColor: [0.25, 0.75, 0.5], attenuationDistance: 2},
+      KHR_materials_clearcoat: {clearcoatFactor: 0.5, clearcoatRoughnessFactor: 0.125}, KHR_materials_sheen: {sheenColorFactor: [1, 0.5, 0.25], sheenRoughnessFactor: 0.25}});
+    return json;
+  }), {decodeImage});
+  let material;
+  asset.scene.traverse(node => { if (node instanceof Mesh3D) material = node.material; return true; });
+  assert.deepEqual([material.transmission, material.ior, material.thickness, material.attenuationDistance, material.clearcoat, material.clearcoatRoughness, material.sheen, material.sheenRoughness],
+    [0.8, 1.33, 0.5, 2, 0.5, 0.125, 1, 0.25]);
+  assert.deepEqual([[...material.attenuationColor], [...material.sheenColor]], [[0.25, 0.75, 0.5], [1, 0.5, 0.25]]);
+  asset.dispose?.();
+});

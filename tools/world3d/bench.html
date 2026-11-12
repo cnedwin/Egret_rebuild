@@ -34,9 +34,26 @@
         'instances-100000': () => { const s = base(); const mesh = new W.InstancedMesh3D(box, materials[0], 100000); for (let i = 0; i < 100000; i++) mesh.setTransformAt(i, [(i % 400 - 200) * 0.5, 0, (Math.floor(i / 400) - 125) * 0.5], [0, 0, 0, 1], 0.3); s.scene.addChild(mesh); return s; },
         'lights-16-meshes-1000': () => { const s = base(); grid(s.scene, 1000, (i) => new W.Mesh3D(box, materials[i % 8])); for (let i = 0; i < 8; i++) { const p = W.createPointLight3D({ intensity: 30, range: 25 }); p.setPosition(Math.cos(i) * 20, 5, Math.sin(i) * 20); s.scene.addChild(p); } for (let i = 0; i < 4; i++) { const l = W.createSpotLight3D({ intensity: 80, range: 60 }); l.setPosition(i * 10 - 15, 20, 10).lookAt(i * 10 - 15, 0, 0); s.scene.addChild(l); } return s; },
         'skinned-200': () => { const s = base(); const g = W.createCylinderGeometry3D({ height: 2, heightSegments: 8, radialSegments: 12 }), count = g.vertexCount, joints = new Uint16Array(count * 4), weights = new Float32Array(count * 4), pos = g.getAttribute('position').data; for (let i = 0; i < count; i++) { const k = pos[i * 3 + 1] / 2 + 0.5; joints.set([0, 1, 0, 0], i * 4); weights.set([1 - k, k, 0, 0], i * 4); } g.setAttribute('joints', new W.Attribute3D(joints, 4)); g.setAttribute('weights', new W.Attribute3D(weights, 4)); const tips = []; grid(s.scene, 200, () => { const mesh = new W.Mesh3D(g, materials[1]); const a = new W.Bone3D(), b = new W.Bone3D(); a.setPosition(0, -1, 0); b.setPosition(0, 2, 0); mesh.addChild(a); a.addChild(b); mesh.updateWorldMatrices(); mesh.bind(new W.Skeleton3D([a, b])); tips.push(b); return mesh; }); s.update = (t) => { for (const tip of tips) tip.setRotation(0, 0, Math.sin(t) * 0.4); }; return s; },
+        'meshes-5000-shadows-one-material': () => { const s = base(); s.sun.castShadow = true; grid(s.scene, 5000, () => new W.Mesh3D(box, materials[0])); return s; },
+        'batched-5000': () => { const s = base(); const batch = W.createBatchedMesh3D(materials[0]), side = 71, m = new Float32Array(16); for (let i = 0; i < 5000; i++) { W.mat4Compose(m, [(i % side - side / 2) * 1.6, 0.5, (Math.floor(i / side) - side / 2) * 1.6], [0, 0, 0, 1], [1, 1, 1]); batch.addGeometry(box, m); } s.scene.addChild(batch); return s; },
+        'glass-200-over-meshes-1000': () => { const s = base(); grid(s.scene, 1000, (i) => new W.Mesh3D(box, materials[i % 8])); const glass = W.createGlassMaterial3D({ thickness: 0.5 }), ball = W.createSphereGeometry3D({ radius: 0.6 }); for (let i = 0; i < 200; i++) { const mesh = new W.Mesh3D(ball, glass); mesh.setPosition((i % 20 - 10) * 3, 3, (Math.floor(i / 20) - 5) * 3); s.scene.addChild(mesh); } return s; },
+        'post-chain-meshes-1000': () => { const s = base(); grid(s.scene, 1000, (i) => new W.Mesh3D(box, materials[i % 8])); s.setup = () => Object.assign(renderer.postProcess, { enabled: true, bloom: true, ssao: true, fxaa: true, dof: true, dofFocus: 90, dofRange: 30 }); return s; },
       };
+      // Work that never reaches the GPU: one fixed physics step, and building text.
+      const cpu = {
+        'physics-step-1000-boxes-resting': () => { const world = W.createPhysicsWorld3D({ allowSleep: false }); world.createBody({ shape: { type: 'plane' } }); for (let i = 0; i < 1000; i++) world.createBody({ shape: { type: 'box', halfExtents: [0.5, 0.5, 0.5] }, position: [(i % 10) * 1.2, 0.5 + Math.floor(i / 100) * 1.0, (Math.floor(i / 10) % 10) * 1.2] }); for (let i = 0; i < 60; i++) world.step(1 / 60); return () => world.step(1 / 60); },
+        'physics-step-2000-spheres-on-mesh': () => { const world = W.createPhysicsWorld3D({ allowSleep: false }); world.createBody({ shape: { type: 'mesh', mesh: W.createMeshShape3D(W.createPlaneGeometry3D({ width: 200, height: 200, widthSegments: 64, heightSegments: 64 })) }, quaternion: [-Math.SQRT1_2, 0, 0, Math.SQRT1_2] }); for (let i = 0; i < 2000; i++) world.createBody({ shape: { type: 'sphere', radius: 0.4 }, position: [(i % 45 - 22) * 1.5, 1 + (i % 7) * 0.2, (Math.floor(i / 45) - 22) * 1.5] }); for (let i = 0; i < 60; i++) world.step(1 / 60); return () => world.step(1 / 60); },
+        'physics-step-200-link-chain': () => { const world = W.createPhysicsWorld3D({ allowSleep: false }); let previous; for (let i = 0; i < 200; i++) { const link = world.createBody({ shape: { type: 'sphere', radius: 0.2 }, position: [i * 0.5, 50, 0] }); world.createJoint(previous ? { type: 'point', bodyA: link, bodyB: previous, anchor: [i * 0.5 - 0.25, 50, 0] } : { type: 'point', bodyA: link, anchor: [-0.25, 50, 0] }); previous = link; } for (let i = 0; i < 30; i++) world.step(1 / 60); return () => world.step(1 / 60); },
+      };
+      for (const [name, build] of Object.entries(cpu)) {
+        const run = build(), samples = [];
+        for (let i = 0; i < frames; i++) { const start = performance.now(); run(); samples.push(performance.now() - start); }
+        samples.sort((a, b) => a - b);
+        rows.push({ case: name, medianMs: samples[samples.length >> 1], p95Ms: samples[Math.floor(samples.length * 0.95)], drawCalls: 0, triangles: 0, culled: 0 });
+      }
       for (const [name, build] of Object.entries(cases)) {
-        const { scene, camera, update } = build(), samples = [];
+        const { scene, camera, update, setup } = build(), samples = [], post = { ...renderer.postProcess };
+        setup?.();
         for (let i = 0; i < frames + 5; i++) {
           update?.(i / 30);
           const start = performance.now();
@@ -45,6 +62,7 @@
           if (i >= 5) samples.push(elapsed);
         }
         await renderer.readRenderTargetPixels(target);
+        Object.assign(renderer.postProcess, post);
         samples.sort((a, b) => a - b);
         rows.push({ case: name, medianMs: samples[samples.length >> 1], p95Ms: samples[Math.floor(samples.length * 0.95)], drawCalls: renderer.info.drawCalls, triangles: Math.round(renderer.info.triangles), culled: renderer.info.culled });
       }

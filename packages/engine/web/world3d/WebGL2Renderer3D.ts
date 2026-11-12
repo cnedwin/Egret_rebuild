@@ -15,7 +15,7 @@ import {RenderList3D} from '../../rendering/world3d/RenderList3D.js';
 import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
 import {CubeTexture3D, RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
 import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
-import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
+import {FRAME_BLOCK_FLOATS_3D, FRAME_OFFSETS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
 import {createPostProcessSettings3D, outlineActive3D, postViewFromCamera3D} from './post3D.js';
 import type {PostProcessSettings3D} from './post3D.js';
 import {PostChainWebGL23D} from './postWebGL23D.js';
@@ -43,7 +43,7 @@ export interface WebGL2Renderer3DOptions {
 const V = Object.freeze({
     normal: 1, tangent: 2, uv: 4, color: 8, skin: 16, morph: 32, morphNormals: 64, instancing: 128, instanceColor: 256,
     receiveShadow: 512, fog: 1024, toneMapped: 2048, environment: 4096, points: 8192, depthOnly: 16384, linearOutput: 32768,
-    mapFromTarget: 65536, uv1: 131072, occlusionSecond: 262144, emissiveSecond: 524288,
+    mapFromTarget: 65536, uv1: 131072, occlusionSecond: 262144, emissiveSecond: 524288, lightSecond: 1048576, transmission: 2097152,
 } as const);
 const IDENTITY3 = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -122,6 +122,7 @@ export class WebGL2Renderer3D implements Renderer3D {
             this.#post?.dispose(true); this.#post = undefined;
             this.clearMaterialPrograms();
             this.#frameBuffer = this.#emptyVao = this.#shadowTexture = this.#shadowFramebuffer = null;
+            this.#grab = undefined;
             this.#shadowSize = 0;
             this.resetState();
             this.#lost = false;
@@ -201,12 +202,17 @@ export class WebGL2Renderer3D implements Renderer3D {
         this.#lastEnvironment = scene.environment;
         if (scene.environment) environmentMaxMip = this.#resources.bindCube(TEXTURE_UNITS_3D.environment, scene.environment);
         writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {exposure: this.exposure, toneMapping, environmentMaxMip});
+        this.#frameData[FRAME_OFFSETS_3D.clipInfo + 2] = view ? view[2] : 1; this.#frameData[FRAME_OFFSETS_3D.clipInfo + 3] = view ? view[3] : 1;
         this.uploadFrameBlock();
         const flags = (scene.fog ? V.fog : 0) | (toneMapping !== 'none' ? V.toneMapped : 0) | (scene.environment ? V.environment : 0)
             | (target ? V.linearOutput : 0);
         for (const item of list.opaque) this.draw(item, flags, false);
         if (background instanceof CubeTexture3D) this.drawSkybox(background, scene.backgroundIntensity, camera);
+        // See-through surfaces read a copy of everything drawn so far.
+        this.#grabbed = false;
+        for (const item of list.transparent) if (item.material.transmission > 0 && item.material.shading === 'standard') { this.#grabbed = this.grabScene(target); break; }
         for (const item of list.transparent) this.draw(item, flags, false);
+        this.#grabbed = false;
         gl.bindVertexArray(null);
         if (view) gl.disable(gl.SCISSOR_TEST);
         if (target) gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -235,8 +241,10 @@ export class WebGL2Renderer3D implements Renderer3D {
             const saved = {layerMask: camera.layerMask, override: scene.overrideMaterial, background: scene.background, shadows: this.shadowsEnabled, planes: scene.clippingPlanes};
             camera.layerMask = this.postProcess.outlineLayers; scene.overrideMaterial = post.maskMaterial; scene.background = [0, 0, 0]; this.shadowsEnabled = false;
             this.#inPost = true;
+            // The counters describe the scene, not this helper pass.
+            const counted = {...this.info};
             try { if (this.render(scene, camera, post.mask)) maskTexture = this.#resources.target(post.mask).color; }
-            finally { this.#inPost = false; camera.layerMask = saved.layerMask; scene.overrideMaterial = saved.override; scene.background = saved.background; this.shadowsEnabled = saved.shadows; }
+            finally { this.#inPost = false; camera.layerMask = saved.layerMask; scene.overrideMaterial = saved.override; scene.background = saved.background; this.shadowsEnabled = saved.shadows; Object.assign(this.info, counted); }
         }
         const sceneEntry = this.#resources.target(post.scene);
         this.info.drawCalls += post.run(sceneEntry.color, sceneEntry.depthTexture, maskTexture, postViewFromCamera3D(camera), width, height, output, target !== undefined,
@@ -244,6 +252,46 @@ export class WebGL2Renderer3D implements Renderer3D {
         this.resetState();
         return true;
     }
+    /** Copy the output drawn so far into a texture on the scene-color unit. */
+    private grabScene(target: RenderTarget3D | undefined): boolean {
+        const gl = this.#gl, source = target ? this.#resources.target(target).framebuffer : null;
+        const width = target ? target.width : gl.drawingBufferWidth, height = target ? target.height : gl.drawingBufferHeight;
+        const format = target ? (target.format === 'rgba16f' && this.#resources.floatTargets ? gl.RGBA16F : gl.SRGB8_ALPHA8) : this.#alpha ? gl.RGBA8 : gl.RGB8;
+        let grab = this.#grab;
+        gl.activeTexture(gl.TEXTURE0 + TEXTURE_UNITS_3D.sceneColor);
+        if (!grab) {
+            const texture = gl.createTexture(), framebuffer = gl.createFramebuffer();
+            if (!texture || !framebuffer) { if (texture) gl.deleteTexture(texture); if (framebuffer) gl.deleteFramebuffer(framebuffer); gl.activeTexture(gl.TEXTURE0); return false; }
+            grab = this.#grab = {texture, framebuffer, width: 0, height: 0, format: 0};
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        } else gl.bindTexture(gl.TEXTURE_2D, grab.texture);
+        if (grab.width !== width || grab.height !== height || grab.format !== format) {
+            if (format === gl.RGBA16F) gl.texImage2D(gl.TEXTURE_2D, 0, format, width, height, 0, gl.RGBA, gl.HALF_FLOAT, null);
+            else if (format === gl.RGB8) gl.texImage2D(gl.TEXTURE_2D, 0, format, width, height, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+            else gl.texImage2D(gl.TEXTURE_2D, 0, format, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            grab.width = width; grab.height = height; grab.format = format;
+            gl.bindFramebuffer(gl.FRAMEBUFFER, grab.framebuffer);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, grab.texture, 0);
+        }
+        if (target) {
+            gl.bindFramebuffer(gl.READ_FRAMEBUFFER, source);
+            gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, grab.framebuffer);
+            gl.blitFramebuffer(0, 0, width, height, 0, 0, width, height, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, source);
+        } else {
+            // The canvas may be antialiased; a texture copy reads its resolved image.
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, width, height);
+        }
+        gl.activeTexture(gl.TEXTURE0);
+        return true;
+    }
+    #grab: {texture: WebGLTexture; framebuffer: WebGLFramebuffer; width: number; height: number; format: number} | undefined;
+    #grabbed = false;
+    /** Stands for every plain opaque material while drawing depth only. */
+    readonly #plainDepth = {} as Material3D;
     private resetState(): void {
         const gl = this.#gl;
         this.#appliedProgram = undefined; this.#appliedMaterial = undefined;
@@ -395,6 +443,7 @@ export class WebGL2Renderer3D implements Renderer3D {
             const aoSecond = has(V.occlusionSecond), emissiveSecond = has(V.emissiveSecond);
             if (lit && (uv || aoSecond) && material.occlusionMap) { defines.push('USE_AO_MAP'); if (aoSecond) defines.push('AO_UV1'); }
             if ((uv || emissiveSecond) && material.emissiveMap && material.shading !== 'matcap') { defines.push('USE_EMISSIVE_MAP'); if (emissiveSecond) defines.push('EMISSIVE_UV1'); }
+            if (lit && material.lightMap && (uv || has(V.lightSecond))) { defines.push('USE_LIGHT_MAP'); if (has(V.lightSecond)) defines.push('LIGHT_UV1'); }
             if (material.flatShading) defines.push('FLAT_SHADED');
             if (material.side === 'double') defines.push('DOUBLE_SIDED');
             if (lit && has(V.receiveShadow)) defines.push('RECEIVE_SHADOW');
@@ -402,6 +451,7 @@ export class WebGL2Renderer3D implements Renderer3D {
             if (has(V.fog) && material.fog) defines.push('USE_FOG');
             if (has(V.toneMapped) && material.toneMapped) defines.push('TONE_MAPPED');
             if (has(V.linearOutput)) defines.push('LINEAR_OUTPUT');
+            if (has(V.transmission) && material.shading === 'standard') defines.push('USE_TRANSMISSION');
         }
         const custom = depthOnly ? undefined : material.shader?.glsl, customVertex = material.shader?.glslVertex;
         if (custom !== undefined) defines.push('CUSTOM_FRAGMENT');
@@ -440,6 +490,11 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (u['uMetallicRoughnessMap'] && material.metallicRoughnessMap) resources.bindTexture(TEXTURE_UNITS_3D.metallicRoughnessMap, material.metallicRoughnessMap);
         if (u['uOcclusionMap'] && material.occlusionMap) resources.bindTexture(TEXTURE_UNITS_3D.occlusionMap, material.occlusionMap);
         if (u['uEmissiveMap'] && material.emissiveMap) resources.bindTexture(TEXTURE_UNITS_3D.emissiveMap, material.emissiveMap);
+        if (u['uLightMap'] && material.lightMap) resources.bindTexture(TEXTURE_UNITS_3D.lightMap, material.lightMap);
+        if (u['uSheen']) gl.uniform4f(u['uSheen'], material.sheenColor[0]! * material.sheen, material.sheenColor[1]! * material.sheen, material.sheenColor[2]! * material.sheen, material.sheenRoughness);
+        if (u['uExtra']) gl.uniform2f(u['uExtra'], material.lightMapIntensity, material.transmission);
+        if (u['uRefraction']) gl.uniform4f(u['uRefraction'], material.ior, material.thickness, Number.isFinite(material.attenuationDistance) ? material.attenuationDistance : 0, 0);
+        if (u['uAttenuation']) gl.uniform3f(u['uAttenuation'], material.attenuationColor[0]!, material.attenuationColor[1]!, material.attenuationColor[2]!);
     }
     private applyState(material: Material3D, depthOnly: boolean, mirrored: boolean): void {
         const gl = this.#gl;
@@ -487,6 +542,7 @@ export class WebGL2Renderer3D implements Renderer3D {
             // A texture's coordinate set can change without changing the material version.
             if (!depthOnly && material.occlusionMap?.channel === 1) variant |= V.occlusionSecond;
             if (!depthOnly && material.emissiveMap?.channel === 1) variant |= V.emissiveSecond;
+            if (!depthOnly && material.lightMap?.channel === 1) variant |= V.lightSecond;
         }
         if (geometry.getAttribute('uv')) {
             variant |= V.uv;
@@ -499,13 +555,17 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (instanced) variant |= V.instancing | ((mesh as InstancedMesh3D).instanceColors ? V.instanceColor : 0);
         if (geometry.topology === 'points') variant |= V.points;
         if (!depthOnly && mesh.receiveShadow && this.#shadowCount > 0) variant |= V.receiveShadow;
+        if (!depthOnly && material.transmission > 0 && this.#grabbed) variant |= V.transmission;
         const program = this.selectProgram(material, variant), u = program.uniforms, frame = this.#list.frame;
         if (program !== this.#program) { gl.useProgram(program.program); this.#program = program; }
         // Texture units are shared by all programs, so material state is reapplied
         // whenever either the program or the material differs from the previous draw.
-        if (program !== this.#appliedProgram || material !== this.#appliedMaterial) {
+        // In a shadow pass an opaque material without a vertex hook contributes nothing but its
+        // program, so casters that share the program need no per-material work.
+        const applied = depthOnly && material.alphaMode === 'opaque' && material.shader === undefined ? this.#plainDepth : material;
+        if (program !== this.#appliedProgram || applied !== this.#appliedMaterial) {
             this.applyMaterial(program, material, depthOnly);
-            this.#appliedProgram = program; this.#appliedMaterial = material;
+            this.#appliedProgram = program; this.#appliedMaterial = applied;
         }
         if (depthOnly && u['uDepthViewProjection']) gl.uniformMatrix4fv(u['uDepthViewProjection'], false, this.#lightMatrix);
         const world = mesh.matrixWorld;
@@ -648,6 +708,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (this.#emptyVao) gl.deleteVertexArray(this.#emptyVao);
         if (this.#shadowTexture) gl.deleteTexture(this.#shadowTexture);
         if (this.#shadowFramebuffer) gl.deleteFramebuffer(this.#shadowFramebuffer);
+        if (this.#grab) { gl.deleteTexture(this.#grab.texture); gl.deleteFramebuffer(this.#grab.framebuffer); this.#grab = undefined; }
     }
 }
 

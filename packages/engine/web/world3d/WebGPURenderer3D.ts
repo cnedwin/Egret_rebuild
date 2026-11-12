@@ -16,7 +16,7 @@ import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
 import {COMPRESSED_BLOCK_BYTES_3D, CubeTexture3D, RenderTarget3D, isCompressedPixels3D, isTexturePixels3D} from '../../rendering/world3d/Texture3D.js';
 import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import type {Texture3D, TextureSource3D} from '../../rendering/world3d/Texture3D.js';
-import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
+import {FRAME_BLOCK_FLOATS_3D, FRAME_OFFSETS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
 import {createPostProcessSettings3D, outlineActive3D, postViewFromCamera3D} from './post3D.js';
 import type {PostProcessSettings3D} from './post3D.js';
 import {PostChainWebGPU3D} from './postWebGPU3D.js';
@@ -146,6 +146,9 @@ export class WebGPURenderer3D implements Renderer3D {
     #shadowTexture: GPUTexture | undefined;
     #shadowView: GPUTextureView | undefined;
     #frameGroup: GPUBindGroup | undefined;
+    readonly #grabSampler: GPUSampler;
+    /** Copies of the output for see-through surfaces, one per kind of output. */
+    readonly #grabs = new Map<string, {texture: GPUTexture; view: GPUTextureView; group: GPUBindGroup | undefined; key: string}>();
     #frameGroupKey = '';
     #objectBuffer: GPUBuffer;
     #objectGroup: GPUBindGroup;
@@ -184,10 +187,11 @@ export class WebGPURenderer3D implements Renderer3D {
         this.exposure = options.exposure ?? 1;
         this.shadowsEnabled = options.shadows ?? true;
         this.#shadowAtlasSize = Math.min(options.shadowAtlasSize ?? 2048, device.limits.maxTextureDimension2D);
-        context.configure({device, format: this.#format, alphaMode: this.#alpha ? 'premultiplied' : 'opaque'});
+        // The canvas image is copied when see-through surfaces need what lies behind them.
+        context.configure({device, format: this.#format, alphaMode: this.#alpha ? 'premultiplied' : 'opaque', usage: TEXTURE_USAGE.RENDER_ATTACHMENT | TEXTURE_USAGE.COPY_SRC});
 
         const filtering: GPUBindGroupLayoutEntry[] = [];
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 6; i++) {
             filtering.push({binding: 1 + i * 2, visibility: SHADER_STAGE.FRAGMENT, texture: {}});
             filtering.push({binding: 2 + i * 2, visibility: SHADER_STAGE.FRAGMENT, sampler: {}});
         }
@@ -198,6 +202,8 @@ export class WebGPURenderer3D implements Renderer3D {
             {binding: 2, visibility: SHADER_STAGE.FRAGMENT, sampler: {type: 'comparison'}},
             {binding: 3, visibility: SHADER_STAGE.FRAGMENT, texture: {viewDimension: 'cube'}},
             {binding: 4, visibility: SHADER_STAGE.FRAGMENT, sampler: {}},
+            {binding: 5, visibility: SHADER_STAGE.FRAGMENT, texture: {}},
+            {binding: 6, visibility: SHADER_STAGE.FRAGMENT, sampler: {}},
         ]});
         this.#depthFrameLayout = device.createBindGroupLayout({entries: [{binding: 0, visibility: both, buffer: {}}]});
         this.#materialLayout = device.createBindGroupLayout({entries: [{binding: 0, visibility: both, buffer: {}}, ...filtering]});
@@ -222,6 +228,7 @@ export class WebGPURenderer3D implements Renderer3D {
         this.#whiteCube = whiteCube.createView({dimension: 'cube'});
         this.#defaultSampler = device.createSampler({magFilter: 'linear', minFilter: 'linear', mipmapFilter: 'linear'});
         this.#shadowSampler = device.createSampler({compare: 'less-equal', magFilter: 'linear', minFilter: 'linear'});
+        this.#grabSampler = device.createSampler({magFilter: 'linear', minFilter: 'linear', addressModeU: 'clamp-to-edge', addressModeV: 'clamp-to-edge'});
         this.#dummyBones = device.createBuffer({size: 64, usage: BUFFER_USAGE.STORAGE});
         this.#dummyMorph = device.createBuffer({size: 16, usage: BUFFER_USAGE.STORAGE});
         this.#dummySkin = this.createSkinGroup(this.#dummyBones, this.#dummyMorph);
@@ -593,11 +600,14 @@ export class WebGPURenderer3D implements Renderer3D {
         data[20] = ax; data[21] = bx; data[22] = tx; data[23] = 0;
         data[24] = ay; data[25] = by; data[26] = ty; data[27] = 0;
         data[28] = material.rotation; data[29] = material.sizeAttenuation ? 1 : 0; data[30] = 0; data[31] = 0;
-        if (material.shader) data.set(material.shader.uniforms, 32);
+        if (material.shader) data.set(material.shader.uniforms, 32); else data.fill(0, 32, 48);
+        data[48] = material.sheenColor[0]! * material.sheen; data[49] = material.sheenColor[1]! * material.sheen; data[50] = material.sheenColor[2]! * material.sheen; data[51] = material.sheenRoughness;
+        data[52] = material.lightMapIntensity; data[53] = material.transmission; data[54] = material.ior; data[55] = material.thickness;
+        data[56] = material.attenuationColor[0]!; data[57] = material.attenuationColor[1]!; data[58] = material.attenuationColor[2]!; data[59] = Number.isFinite(material.attenuationDistance) ? material.attenuationDistance : 0;
         this.device.queue.writeBuffer(entry.buffer, 0, data);
         const entries: GPUBindGroupEntry[] = [{binding: 0, resource: {buffer: entry.buffer}}];
         let key = '';
-        [material.map, material.normalMap, material.metallicRoughnessMap, material.occlusionMap, material.emissiveMap].forEach((texture, i) => {
+        [material.map, material.normalMap, material.metallicRoughnessMap, material.occlusionMap, material.emissiveMap, material.lightMap].forEach((texture, i) => {
             const gpu = texture && !texture.isDisposed ? this.texture2d(texture) : undefined;
             entries.push({binding: 1 + i * 2, resource: gpu?.view ?? this.#white}, {binding: 2 + i * 2, resource: gpu?.sampler ?? this.#defaultSampler});
             key += (gpu?.key ?? '-') + '|';
@@ -614,6 +624,7 @@ export class WebGPURenderer3D implements Renderer3D {
         // A map on the second coordinate set needs only that set; it falls back to the first when the geometry lacks it.
         const second = gpu.buffers.has('uv1') && !depthOnly, occlusionUv1 = second && lit && material.occlusionMap?.channel === 1;
         const emissiveUv1 = second && material.shading !== 'matcap' && material.emissiveMap?.channel === 1;
+        const lightUv1 = second && lit && material.lightMap?.channel === 1, lightMap = lit && material.lightMap !== undefined && (uv || lightUv1);
         const skinning = mesh.skeleton !== undefined && gpu.buffers.has('joints') && gpu.buffers.has('weights');
         return {
             shading: material.shading, depthOnly,
@@ -629,7 +640,8 @@ export class WebGPURenderer3D implements Renderer3D {
             normalMap: lit && uv && material.normalMap !== undefined,
             metallicRoughnessMap: lit && uv && material.metallicRoughnessMap !== undefined && material.shading === 'standard',
             occlusionMap: lit && (uv || occlusionUv1) && material.occlusionMap !== undefined,
-            uv1: occlusionUv1 || emissiveUv1, occlusionUv1, emissiveUv1,
+            uv1: occlusionUv1 || emissiveUv1 || lightUv1, occlusionUv1, emissiveUv1, lightMap, lightUv1,
+            transmission: !depthOnly && this.#grabbed && material.shading === 'standard' && material.transmission > 0,
             emissiveMap: !depthOnly && (uv || emissiveUv1) && material.emissiveMap !== undefined && material.shading !== 'matcap',
             alphaMask: material.alphaMode === 'mask', alphaBlend: material.alphaMode === 'blend',
             premultipliedAlpha: !depthOnly && material.alphaMode === 'blend' && material.blending === 'premultiplied',
@@ -744,6 +756,7 @@ export class WebGPURenderer3D implements Renderer3D {
     #boundVertices: unknown;
     #boundIndex: GPUBuffer | undefined;
     readonly #drawVariants = new WeakMap<Material3D, {version: number; variants: Map<number, Map<number, {pipeline: GPURenderPipeline; features: ShaderFeatures3D; layoutVersion: number}>>}>();
+    #grabbed = false;
     private resetPassState(): void {
         this.#boundPipeline = undefined; this.#boundMaterial = undefined; this.#boundSkin = undefined; this.#boundVertices = undefined; this.#boundIndex = undefined;
     }
@@ -774,7 +787,8 @@ export class WebGPURenderer3D implements Renderer3D {
             | (material.blending === 'premultiplied' ? 256 : material.blending === 'additive' ? 32768 : material.blending === 'multiply' ? 65536 : 0)
             | (material.flatShading ? 512 : 0) | (material.vertexColors ? 1024 : 0) | (material.billboard ? 2048 : 0) | (material.screenSpace ? 4096 : 0)
             | (material.depthTest ? 8192 : 0) | (material.depthWrite ? 16384 : 0) | (material.fog ? 131072 : 0) | (material.toneMapped ? 262144 : 0)
-            | (material.polygonOffset ? 524288 : 0) | (material.occlusionMap?.channel === 1 ? 1048576 : 0) | (material.emissiveMap?.channel === 1 ? 2097152 : 0);
+            | (material.polygonOffset ? 524288 : 0) | (material.occlusionMap?.channel === 1 ? 1048576 : 0) | (material.emissiveMap?.channel === 1 ? 2097152 : 0)
+            | (material.lightMap ? 4194304 : 0) | (material.lightMap?.channel === 1 ? 8388608 : 0);
         const variantKey = surface * 16384 + bits;
         let byGeometry = cache.variants.get(geometry.id);
         if (!byGeometry) cache.variants.set(geometry.id, byGeometry = new Map());
@@ -918,12 +932,14 @@ export class WebGPURenderer3D implements Renderer3D {
         this.#shadowCount = plans.length;
         const environment = scene.environment && !scene.environment.isDisposed ? this.textureCube(scene.environment) : undefined;
         writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {exposure: this.exposure, toneMapping: kind === 'hdr' ? 'none' : this.toneMapping, environmentMaxMip: environment?.maxMip ?? 0});
+        this.#frameData[FRAME_OFFSETS_3D.clipInfo + 2] = this.viewport ? this.viewport[2] : 1; this.#frameData[FRAME_OFFSETS_3D.clipInfo + 3] = this.viewport ? this.viewport[3] : 1;
         device.queue.writeBuffer(this.#frameBuffer, 0, this.#frameData);
         const frameKey = (environment ? scene.environment!.id + ':' + scene.environment!.version : '-');
         if (!this.#frameGroup || this.#frameGroupKey !== frameKey) {
             this.#frameGroup = device.createBindGroup({layout: this.#frameLayout, entries: [
                 {binding: 0, resource: {buffer: this.#frameBuffer}}, {binding: 1, resource: atlas}, {binding: 2, resource: this.#shadowSampler},
                 {binding: 3, resource: environment?.view ?? this.#whiteCube}, {binding: 4, resource: environment?.sampler ?? this.#defaultSampler},
+                {binding: 5, resource: this.#white}, {binding: 6, resource: this.#grabSampler},
             ]});
             this.#frameGroupKey = frameKey;
         }
@@ -963,12 +979,14 @@ export class WebGPURenderer3D implements Renderer3D {
         const encode = target ? (value: number): number => value : linearToSrgb;
         const clearValue: GPUColor = Array.isArray(background) ? [encode(background[0]!), encode(background[1]!), encode(background[2]!), 1]
             : [0, 0, 0, (target || this.#alpha) && !background ? 0 : 1];
-        let colorAttachment: GPURenderPassColorAttachment, depthView: GPUTextureView | undefined, outputWidth: number, outputHeight: number;
+        let colorAttachment: GPURenderPassColorAttachment, depthView: GPUTextureView | undefined, outputWidth: number, outputHeight: number, outputTexture: GPUTexture;
+        // See-through surfaces read a copy of everything drawn before them, which splits the pass in two.
+        const grab = list.transparent.some(item => item.material.transmission > 0 && item.material.shading === 'standard');
         const loadOp: GPULoadOp = this.autoClear ? 'clear' : 'load';
         if (target) {
             const entry = this.target(target);
             colorAttachment = {view: entry.colorView, clearValue, loadOp, storeOp: 'store'};
-            depthView = entry.depthView;
+            depthView = entry.depthView; outputTexture = entry.color;
             outputWidth = target.width; outputHeight = target.height;
             if (!depthView) throw new World3DError('WORLD3D_INPUT_INVALID', 'the WebGPU backend requires render targets with depth');
         } else {
@@ -976,19 +994,22 @@ export class WebGPURenderer3D implements Renderer3D {
             // The multisampled color is kept so a later view of the same frame can load it.
             colorAttachment = attachments.color ? {view: attachments.color, resolveTarget: view, clearValue, loadOp, storeOp: 'store'}
                 : {view, clearValue, loadOp, storeOp: 'store'};
-            depthView = attachments.depth;
+            depthView = attachments.depth; outputTexture = current;
             outputWidth = current.width; outputHeight = current.height;
         }
         this.resetPassState();
-        const pass = encoder.beginRenderPass({colorAttachments: [colorAttachment], depthStencilAttachment: {view: depthView, depthClearValue: 1, depthLoadOp: 'clear', depthStoreOp: target?.depthTexture ? 'store' : 'discard'}});
+        const depthStoreOp: GPUStoreOp = target?.depthTexture || grab ? 'store' : 'discard';
+        let pass = encoder.beginRenderPass({colorAttachments: [colorAttachment], depthStencilAttachment: {view: depthView, depthClearValue: 1, depthLoadOp: 'clear', depthStoreOp}});
         const view = this.viewport;
-        if (view) {
+        const frame = (): void => {
+            if (!view) return;
             // The public rectangle has its origin at the bottom left; WebGPU's is at the top left.
             const w = Math.max(Math.round(view[2] * outputWidth), 1), h = Math.max(Math.round(view[3] * outputHeight), 1);
             const x = Math.min(Math.max(Math.round(view[0] * outputWidth), 0), outputWidth - 1), y = Math.min(Math.max(outputHeight - Math.round(view[1] * outputHeight) - h, 0), outputHeight - 1);
             const cw = Math.min(w, outputWidth - x), ch = Math.min(h, outputHeight - y);
             pass.setViewport(x, y, cw, ch, 0, 1); pass.setScissorRect(x, y, cw, ch);
-        }
+        };
+        frame();
         const flags = {fog: scene.fog !== undefined, environment: environment !== undefined};
         pass.setBindGroup(0, this.#frameGroup);
         for (const item of list.opaque) this.draw(pass, item, kind, flags);
@@ -997,7 +1018,32 @@ export class WebGPURenderer3D implements Renderer3D {
             this.resetPassState();
             pass.setBindGroup(0, this.#frameGroup);
         }
+        if (grab) {
+            pass.end();
+            const format = this.colorFormat(kind);
+            let entry = this.#grabs.get(kind);
+            if (!entry || entry.texture.width !== outputWidth || entry.texture.height !== outputHeight || entry.texture.format !== format) {
+                entry?.texture.destroy();
+                const texture = device.createTexture({size: [outputWidth, outputHeight], format, usage: TEXTURE_USAGE.TEXTURE_BINDING | TEXTURE_USAGE.COPY_DST});
+                this.#grabs.set(kind, entry = {texture, view: texture.createView(), group: undefined, key: ''});
+            }
+            if (!entry.group || entry.key !== frameKey) {
+                entry.group = device.createBindGroup({layout: this.#frameLayout, entries: [
+                    {binding: 0, resource: {buffer: this.#frameBuffer}}, {binding: 1, resource: atlas}, {binding: 2, resource: this.#shadowSampler},
+                    {binding: 3, resource: environment?.view ?? this.#whiteCube}, {binding: 4, resource: environment?.sampler ?? this.#defaultSampler},
+                    {binding: 5, resource: entry.view}, {binding: 6, resource: this.#grabSampler},
+                ]});
+                entry.key = frameKey;
+            }
+            encoder.copyTextureToTexture({texture: outputTexture}, {texture: entry.texture}, [outputWidth, outputHeight]);
+            pass = encoder.beginRenderPass({colorAttachments: [{...colorAttachment, loadOp: 'load'}], depthStencilAttachment: {view: depthView, depthLoadOp: 'load', depthStoreOp: target?.depthTexture ? 'store' : 'discard'}});
+            frame();
+            this.resetPassState();
+            pass.setBindGroup(0, entry.group);
+            this.#grabbed = true;
+        }
         for (const item of list.transparent) this.draw(pass, item, kind, flags);
+        this.#grabbed = false;
         pass.end();
         if (this.#objectCount > 0) device.queue.writeBuffer(this.#objectBuffer, 0, this.#objectStaging, 0, this.#objectCount * OBJECT_BLOCK_BYTES_3D);
         device.queue.submit([encoder.finish()]);
@@ -1028,8 +1074,10 @@ export class WebGPURenderer3D implements Renderer3D {
             const saved = {layerMask: camera.layerMask, override: scene.overrideMaterial, background: scene.background, shadows: this.shadowsEnabled, planes: scene.clippingPlanes};
             camera.layerMask = this.postProcess.outlineLayers; scene.overrideMaterial = post.maskMaterial; scene.background = [0, 0, 0]; this.shadowsEnabled = false;
             this.#inPost = true;
+            // The counters describe the scene, not this helper pass.
+            const counted = {...this.info};
             try { if (this.render(scene, camera, post.mask)) maskView = this.target(post.mask).colorView; }
-            finally { this.#inPost = false; camera.layerMask = saved.layerMask; scene.overrideMaterial = saved.override; scene.background = saved.background; this.shadowsEnabled = saved.shadows; }
+            finally { this.#inPost = false; camera.layerMask = saved.layerMask; scene.overrideMaterial = saved.override; scene.background = saved.background; this.shadowsEnabled = saved.shadows; Object.assign(this.info, counted); }
         }
         const sceneEntry = this.target(post.scene);
         this.info.drawCalls += post.run(encoder, sceneEntry.colorView, sceneEntry.depthView, maskView, postViewFromCamera3D(camera), width, height, output, format, target !== undefined,
@@ -1094,6 +1142,8 @@ export class WebGPURenderer3D implements Renderer3D {
         this.#frameBuffer.destroy(); this.#objectBuffer.destroy(); this.#skyBuffer?.destroy();
         this.#dummyBones.destroy(); this.#dummyMorph.destroy();
         this.#whiteTexture.destroy(); this.#whiteCubeTexture.destroy();
+        for (const entry of this.#grabs.values()) entry.texture.destroy();
+        this.#grabs.clear();
         this.#shadowTexture?.destroy(); this.#canvasDepth?.destroy(); this.#canvasColor?.destroy();
         try { this.#context.unconfigure(); } catch { /* The canvas may already be detached. */ }
         if (this.#ownsDevice) this.device.destroy();
