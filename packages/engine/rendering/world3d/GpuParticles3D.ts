@@ -97,7 +97,29 @@ export class GpuParticles3D extends InstancedMesh3D {
     readonly duration: number;
     readonly #uniforms: Float32Array;
     readonly space: 'local' | 'world';
-    sorted: boolean;
+    #sorted = false;
+    #previousBeforeRender: GpuParticles3D['beforeRender'];
+    readonly #sortBeforeRender = (camera: Camera3D): void => {
+        this.#previousBeforeRender?.(camera);
+        if (this.#sorted) this.arrange(camera);
+    };
+    /** Sort far to near before drawing. Disabling restores the logical instance order. */
+    get sorted(): boolean { return this.#sorted; }
+    set sorted(value: boolean) {
+        if (value === this.#sorted) return;
+        this.#sorted = value;
+        if (value) {
+            this.#previousBeforeRender = this.beforeRender;
+            this.beforeRender = this.#sortBeforeRender;
+        } else {
+            if (this.beforeRender === this.#sortBeforeRender) {
+                if (this.#previousBeforeRender) this.beforeRender = this.#previousBeforeRender;
+                else delete this.beforeRender;
+            }
+            this.#previousBeforeRender = undefined;
+            this.restoreOrder();
+        }
+    }
     // What was generated, in the emitter's space; the drawn arrays are filled from it.
     readonly #source: Float32Array;
     // World mode: which life each particle is in, to notice when it is reborn.
@@ -120,6 +142,9 @@ export class GpuParticles3D extends InstancedMesh3D {
         if (life[0] <= 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'lifetime');
         const endScale = requireFinite3D(options.endScale ?? 1, 'endScale'), spread = requireFinite3D(options.spread ?? Math.PI / 8, 'spread'), drag = requireFinite3D(options.drag ?? 0, 'drag');
         const gravity = options.gravity ?? [0, 0, 0], direction = options.direction ?? [0, 1, 0], shape = options.shape ?? 'point';
+        const hasFloor = options.floor !== undefined, floor = requireFinite3D(options.floor ?? 0, 'floor'), bounce = requireFinite3D(options.bounce ?? 0.4, 'bounce');
+        const maxBounceSpeed = Math.max(1, Math.abs(Math.fround(bounce)));
+        const pullX = Math.abs(Math.fround(gravity[0])), pullY = Math.abs(Math.fround(gravity[1])), pullZ = Math.abs(Math.fround(gravity[2]));
         const radius = requireFinite3D(options.radius ?? 0.5, 'radius'), extents = options.extents ?? [0.5, 0.5, 0.5];
         const dl = Math.hypot(direction[0], direction[1], direction[2]);
         if (dl < 1e-9 || drag < 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'direction and drag');
@@ -158,10 +183,21 @@ export class GpuParticles3D extends InstancedMesh3D {
             data[o + 8] = startSize; data[o + 9] = startSize * endScale; data[o + 10] = rotation[0] + (rotation[1] - rotation[0]) * random(); data[o + 11] = spin[0] + (spin[1] - spin[0]) * random();
             data[o + 12] = 0; data[o + 13] = 0; data[o + 14] = 0; data[o + 15] = 1;
             colors[i * 4] = start[0]!; colors[i * 4 + 1] = start[1]!; colors[i * 4 + 2] = start[2]!; colors[i * 4 + 3] = startOpacity;
-            // Bounds: where the particle is at a few moments of its life.
-            for (let step = 0; step <= 4; step++) {
-                const t = lifetime * step / 4, travel = drag > 1e-4 ? (1 - Math.exp(-drag * t)) / drag : t;
-                grow(px + wx * travel + gravity[0] * 0.5 * t * t, py + wy * travel + gravity[1] * 0.5 * t * t, pz + wz * travel + gravity[2] * 0.5 * t * t);
+            if (hasFloor) {
+                // Bound both ballistic legs over the whole lifetime. At most one bounce
+                // scales the velocity, and the floor clamp stays within this extent.
+                const t = Math.max(data[o + 7]!, 1e-4), halfTimeSquared = 0.5 * t * t;
+                const reachX = maxBounceSpeed * (Math.abs(data[o + 4]!) * t + pullX * halfTimeSquared);
+                const reachY = maxBounceSpeed * (Math.abs(data[o + 5]!) * t + pullY * halfTimeSquared);
+                const reachZ = maxBounceSpeed * (Math.abs(data[o + 6]!) * t + pullZ * halfTimeSquared);
+                grow(data[o]! - reachX, data[o + 1]! - reachY, data[o + 2]! - reachZ);
+                grow(data[o]! + reachX, data[o + 1]! + reachY, data[o + 2]! + reachZ);
+            } else {
+                // Sample the ordinary drag path as before.
+                for (let step = 0; step <= 4; step++) {
+                    const t = lifetime * step / 4, travel = drag > 1e-4 ? (1 - Math.exp(-drag * t)) / drag : t;
+                    grow(px + wx * travel + gravity[0] * 0.5 * t * t, py + wy * travel + gravity[1] * 0.5 * t * t, pz + wz * travel + gravity[2] * 0.5 * t * t);
+                }
             }
             largest = Math.max(largest, startSize, startSize * endScale);
         }
@@ -178,8 +214,6 @@ export class GpuParticles3D extends InstancedMesh3D {
         this.#order = new Uint32Array(count); this.#depth = new Float32Array(count);
         // Particles left in the world can be anywhere the emitter has been.
         if (this.space === 'world') this.frustumCulled = false;
-        const hasFloor = options.floor !== undefined, floor = requireFinite3D(options.floor ?? 0, 'floor'), bounce = requireFinite3D(options.bounce ?? 0.4, 'bounce');
-        if (this.sorted || this.space === 'world') this.beforeRender = (camera: Camera3D) => this.arrange(camera);
         const fadeIn = requireFinite3D(options.fadeIn ?? 0.1, 'fadeIn'), fadeOut = requireFinite3D(options.fadeOut ?? 0.3, 'fadeOut');
         // time, loop flag, fade in, fade out | gravity, drag | end color and opacity.
         this.#uniforms = new Float32Array([0, this.loop ? 1 : 0, fadeIn, fadeOut, gravity[0], gravity[1], gravity[2], drag, end[0]!, end[1]!, end[2]!, endOpacity, this.space === 'world' ? 1 : 0, hasFloor ? 1 : 0, floor, bounce]);
@@ -199,7 +233,10 @@ export class GpuParticles3D extends InstancedMesh3D {
     /** Where a particle is now, in the emitter's space, or in the world for world-space particles; false while it is not alive. */
     positionAt(index: number, out: number[] | Float32Array): boolean {
         if (!Number.isSafeInteger(index) || index < 0 || index >= this.capacity) throw new World3DError('WORLD3D_INPUT_INVALID', 'particle index');
-        const d = this.instanceMatrices, o = (this.sorted ? this.slotOf(index) : index) * 16, u = this.#uniforms, life = Math.max(d[o + 7]!, 1e-4);
+        return this.positionInSlot(this.slotOf(index), out);
+    }
+    private positionInSlot(slot: number, out: number[] | Float32Array): boolean {
+        const d = this.instanceMatrices, o = slot * 16, u = this.#uniforms, life = Math.max(d[o + 7]!, 1e-4);
         let t = u[0]! - d[o + 3]!, alive = true;
         if (this.loop) { t %= life; if (t < 0) t += life; } else alive = t >= 0 && t <= life;
         const drag = u[7]!, travel = drag > 1e-4 && u[13]! < 0.5 ? (1 - Math.exp(-drag * t)) / drag : t;
@@ -208,8 +245,16 @@ export class GpuParticles3D extends InstancedMesh3D {
             // The same single bounce the vertex stage computes.
             const a = 0.5 * u[5]!, b = d[o + 5]!, c = d[o + 1]! - u[14]!;
             let hit = -1;
-            if (Math.abs(a) > 1e-6) { const root = b * b - 4 * a * c; if (root >= 0) hit = Math.max((-b - Math.sqrt(root)) / (2 * a), (-b + Math.sqrt(root)) / (2 * a)); } else if (b < 0) hit = -c / b;
-            if (c >= 0 && hit > 0 && t > hit) {
+            if (c === 0 && (b < 0 || (b === 0 && a < 0))) hit = 0;
+            else if (Math.abs(a) > 1e-6) {
+                const discriminant = b * b - 4 * a * c;
+                if (discriminant > 0) {
+                    // Use the downward crossing, with the equivalent form that avoids cancellation.
+                    const root = Math.sqrt(discriminant);
+                    hit = b < 0 ? 2 * c / (root - b) : (-b - root) / (2 * a);
+                }
+            } else if (b < 0) hit = -c / b;
+            if (c >= 0 && hit >= 0 && t >= hit) {
                 const k = u[15]!, since = t - hit;
                 for (let axis = 0; axis < 3; axis++) {
                     const landed = d[o + axis]! + d[o + 4 + axis]! * hit + u[4 + axis]! * 0.5 * hit * hit, away = (d[o + 4 + axis]! + u[4 + axis]! * hit) * (axis === 1 ? -k : k);
@@ -234,7 +279,7 @@ export class GpuParticles3D extends InstancedMesh3D {
             const o = i * 16, since = time - source[o + 3]!, life = Math.max(source[o + 7]!, 1e-4), now = this.loop ? Math.floor(since / life) : since >= 0 ? 0 : -1;
             if (now === cycle[i]) continue;
             cycle[i] = now;
-            const x = source[o]!, y = source[o + 1]!, z = source[o + 2]!, vx = source[o + 4]!, vy = source[o + 5]!, vz = source[o + 6]!, to = this.sorted ? this.slotOf(i) * 16 : o;
+            const x = source[o]!, y = source[o + 1]!, z = source[o + 2]!, vx = source[o + 4]!, vy = source[o + 5]!, vz = source[o + 6]!, to = this.slotOf(i) * 16;
             out[to] = m[0]! * x + m[4]! * y + m[8]! * z + m[12]!; out[to + 1] = m[1]! * x + m[5]! * y + m[9]! * z + m[13]!; out[to + 2] = m[2]! * x + m[6]! * y + m[10]! * z + m[14]!;
             out[to + 4] = m[0]! * vx + m[4]! * vy + m[8]! * vz; out[to + 5] = m[1]! * vx + m[5]! * vy + m[9]! * vz; out[to + 6] = m[2]! * vx + m[6]! * vy + m[10]! * vz;
             changed = true;
@@ -243,33 +288,42 @@ export class GpuParticles3D extends InstancedMesh3D {
     }
     /** Before a draw: reorder the drawn arrays so the farthest particle comes first. */
     private arrange(camera: Camera3D): void {
-        if (!this.sorted) return;
-        const n = this.capacity, order = this.#order, depth = this.#depth, data = this.instanceMatrices, colors = this.instanceColors!, view = camera.viewMatrix, world = this.matrixWorld, point = [0, 0, 0];
+        const n = this.capacity, order = this.#order, depth = this.#depth, view = camera.viewMatrix, world = this.matrixWorld, point = [0, 0, 0];
         if (this.#sorting === undefined) { for (let i = 0; i < n; i++) order[i] = i; this.#sorting = {data: new Float32Array(n * 16), colors: new Float32Array(n * 4), next: new Uint32Array(n)}; }
         const scratch = this.#sorting, local = this.space === 'local';
         // Depth of every slot as it stands, then the slots in far-to-near order.
-        const wasSorted = this.sorted; this.sorted = false;
         for (let slot = 0; slot < n; slot++) {
-            this.positionAt(slot, point);
+            this.positionInSlot(slot, point);
             let x = point[0]!, y = point[1]!, z = point[2]!;
             if (local) { const lx = x, ly = y, lz = z; x = world[0]! * lx + world[4]! * ly + world[8]! * lz + world[12]!; y = world[1]! * lx + world[5]! * ly + world[9]! * lz + world[13]!; z = world[2]! * lx + world[6]! * ly + world[10]! * lz + world[14]!; }
             depth[slot] = view[2]! * x + view[6]! * y + view[10]! * z + view[14]!;
         }
-        this.sorted = wasSorted;
         const slots = scratch.next;
         for (let i = 0; i < n; i++) slots[i] = i;
         slots.sort((a, b) => depth[a]! - depth[b]!);
-        scratch.data.set(data); scratch.colors.set(colors);
-        for (let to = 0; to < n; to++) {
-            const from = slots[to]!;
-            data.set(scratch.data.subarray(from * 16, from * 16 + 16), to * 16);
-            colors.set(scratch.colors.subarray(from * 4, from * 4 + 4), to * 4);
-            scratch.next[to] = order[from]!;
-        }
-        // `next` held the slot order while it was read and now holds which particle sits in each slot.
+        this.reorderSlots(slots);
+        // Convert the source slots to logical indices for the next frame.
+        for (let to = 0; to < n; to++) slots[to] = order[slots[to]!]!;
         order.set(scratch.next);
         const where = this.#slots ??= new Uint32Array(n);
         for (let slot = 0; slot < n; slot++) where[order[slot]!] = slot;
+        this.instanceVersion++;
+    }
+    private reorderSlots(slots: Uint32Array): void {
+        const scratch = this.#sorting!, data = this.instanceMatrices, colors = this.instanceColors;
+        scratch.data.set(data);
+        if (colors) scratch.colors.set(colors);
+        for (let to = 0; to < slots.length; to++) {
+            const from = slots[to]!;
+            data.set(scratch.data.subarray(from * 16, from * 16 + 16), to * 16);
+            if (colors) colors.set(scratch.colors.subarray(from * 4, from * 4 + 4), to * 4);
+        }
+    }
+    private restoreOrder(): void {
+        if (!this.#slots) return;
+        this.reorderSlots(this.#slots);
+        for (let i = 0; i < this.capacity; i++) this.#order[i] = i;
+        this.#slots = undefined;
         this.instanceVersion++;
     }
     #sorting: {data: Float32Array; colors: Float32Array; next: Uint32Array} | undefined;

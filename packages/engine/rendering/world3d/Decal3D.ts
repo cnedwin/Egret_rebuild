@@ -38,7 +38,8 @@ type Vertex = [number, number, number, number, number, number] & {bones?: number
  * result is in the mesh's local space, with coordinates running 0 to 1 across
  * the box, or undefined when nothing is inside. A skinned mesh is cut in its
  * bind pose, where `position` and `normal` must lie too, and the result keeps
- * joints and weights so it can follow the same skeleton.
+ * joints and weights so it can follow the same skeleton. Interpolated weights
+ * approximate the posed surface where the source vertices have different weights.
  */
 export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Geometry3D | undefined {
     if (!(mesh instanceof Mesh3D) || !options) throw new World3DError('WORLD3D_INPUT_INVALID', 'decal target');
@@ -70,11 +71,11 @@ export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Ge
     const p = source.data, normals = geometry.getAttribute('normal')?.data, index = geometry.index?.data, count = index ? index.length : source.count;
     if (count / 3 > DECAL3D_LIMITS.maxTriangles) throw new World3DError('WORLD3D_BUDGET', 'decal target triangles');
     const hx = width / 2, hy = height / 2, hz = depth / 2, m = toDecal;
-    const joints = geometry.getAttribute('joints')?.data, weights = geometry.getAttribute('weights')?.data, skinned = joints !== undefined && weights !== undefined;
     // Reflected transforms reverse winding, but the renderers keep the same visible face.
     const determinant = m[0]! * (m[5]! * m[10]! - m[6]! * m[9]!) - m[4]! * (m[1]! * m[10]! - m[2]! * m[9]!)
         + m[8]! * (m[1]! * m[6]! - m[2]! * m[5]!);
     const facing = determinant < 0 ? -1 : 1;
+    const joints = geometry.getAttribute('joints')?.data, weights = geometry.getAttribute('weights')?.data, skinned = joints !== undefined && weights !== undefined;
     const read = (i: number): Vertex => {
         const x = p[i * 3]!, y = p[i * 3 + 1]!, z = p[i * 3 + 2]!;
         const out: Vertex = [m[0]! * x + m[4]! * y + m[8]! * z + m[12]!, m[1]! * x + m[5]! * y + m[9]! * z + m[13]!, m[2]! * x + m[6]! * y + m[10]! * z + m[14]!, 0, 0, 0];
@@ -99,7 +100,7 @@ export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Ge
                 const t = da / (da - db);
                 const cut: Vertex = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t, a[4] + (b[4] - a[4]) * t, a[5] + (b[5] - a[5]) * t];
                 if (a.bones && b.bones) {
-                    // A point on an edge is moved by the bones of both ends, in proportion.
+                    // Blend endpoint influences to approximate attachment along the clipped edge.
                     cut.bones = [];
                     for (let k = 0; k < a.bones.length; k += 2) cut.bones.push(a.bones[k]!, a.bones[k + 1]! * (1 - t));
                     for (let k = 0; k < b.bones.length; k += 2) {

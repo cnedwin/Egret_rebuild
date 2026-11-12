@@ -4,6 +4,14 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 固定桌面渲染 CPU 目标 — 2026-11-12
+
+Windows E20 的全脏 Engine p95 中位数达到 5.3 ms，三种状态均达到 CPU 与准备目标。稀疏和全脏帧节奏仍超出目标，GPU 时间未测。[#153](https://github.com/cnedwin/Egret_rebuild/pull/153)
+
+## World3D 渲染、物理与展厅 — 2026-11-12
+
+新增可选独立 3D 场景图及渲染器，接入 glTF、光照阴影、后处理和物理，提供功能展厅与固定 CPU 回归负载。各后端的功能与已验证环境见 [World3D 契约](docs/world3d.md)。[#147](https://github.com/cnedwin/Egret_rebuild/pull/147) · [#148](https://github.com/cnedwin/Egret_rebuild/pull/148) · [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) · [#151](https://github.com/cnedwin/Egret_rebuild/pull/151) · [#152](https://github.com/cnedwin/Egret_rebuild/pull/152)
+
 ## WebGL2 等距地图 — 2026-11-12
 
 独立示例使用白鹭公开接口展示网格移动、碰撞、深度排序及有界帧提交。 [#136](https://github.com/cnedwin/Egret_rebuild/pull/136)

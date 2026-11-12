@@ -302,25 +302,29 @@ export class GpuResources3D {
             this.#instances.set(mesh, entry = {vao, matrices: this.buffer(), colors: undefined, version: -1, layoutVersion: -1, geometryId: -1, capacityBytes: -1, lastFrame: frame});
         }
         entry.lastFrame = frame;
-        const animated = mesh instanceof SkinnedInstancedMesh3D ? mesh.instanceAnimation : undefined;
+        const crowd = mesh instanceof SkinnedInstancedMesh3D ? mesh : undefined;
+        const matrices = crowd?.drawMatrices ?? mesh.instanceMatrices;
+        const colors = crowd ? crowd.drawColors : mesh.instanceColors;
+        const count = crowd?.drawCount ?? mesh.count;
+        const animated = crowd?.drawAnimation;
         const rebind = entry.layoutVersion !== geometry.layoutVersion || entry.geometryId !== geometry.id || (mesh.instanceColors !== undefined && !entry.colors) || (animated !== undefined && !entry.animation);
         if (entry.version !== mesh.instanceVersion) {
             gl.bindBuffer(gl.ARRAY_BUFFER, entry.matrices);
-            if (entry.capacityBytes === mesh.instanceMatrices.byteLength) gl.bufferSubData(gl.ARRAY_BUFFER, 0, mesh.instanceMatrices, 0, mesh.count * 16);
-            else { gl.bufferData(gl.ARRAY_BUFFER, mesh.instanceMatrices, gl.DYNAMIC_DRAW); entry.capacityBytes = mesh.instanceMatrices.byteLength; }
-            if (mesh.instanceColors) {
+            if (entry.capacityBytes === matrices.byteLength) gl.bufferSubData(gl.ARRAY_BUFFER, 0, matrices, 0, count * 16);
+            else { gl.bufferData(gl.ARRAY_BUFFER, matrices, gl.DYNAMIC_DRAW); entry.capacityBytes = matrices.byteLength; }
+            if (colors) {
                 const created = !entry.colors;
                 entry.colors ??= this.buffer();
                 gl.bindBuffer(gl.ARRAY_BUFFER, entry.colors);
-                if (created) gl.bufferData(gl.ARRAY_BUFFER, mesh.instanceColors, gl.DYNAMIC_DRAW);
-                else gl.bufferSubData(gl.ARRAY_BUFFER, 0, mesh.instanceColors, 0, mesh.count * mesh.instanceColorSize);
+                if (created) gl.bufferData(gl.ARRAY_BUFFER, colors, gl.DYNAMIC_DRAW);
+                else gl.bufferSubData(gl.ARRAY_BUFFER, 0, colors, 0, count * mesh.instanceColorSize);
             }
             if (animated) {
                 const created = !entry.animation;
                 entry.animation ??= this.buffer();
                 gl.bindBuffer(gl.ARRAY_BUFFER, entry.animation);
                 if (created) gl.bufferData(gl.ARRAY_BUFFER, animated, gl.DYNAMIC_DRAW);
-                else gl.bufferSubData(gl.ARRAY_BUFFER, 0, animated, 0, mesh.count * 12);
+                else gl.bufferSubData(gl.ARRAY_BUFFER, 0, animated, 0, count * 12);
             }
             entry.version = mesh.instanceVersion;
         }

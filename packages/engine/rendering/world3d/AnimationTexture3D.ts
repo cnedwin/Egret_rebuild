@@ -10,7 +10,17 @@ import type {Material3D} from './Material3D.js';
 import type {Camera3D} from './Camera3D.js';
 import {InstancedMesh3D, type Mesh3D} from './Mesh3D.js';
 import type {Object3D} from './Object3D.js';
-import {frustumIntersectsSphere, mat4Compose, mat4Identity, mat4Invert, mat4Multiply} from './math3D.js';
+import {frustumIntersectsSphere, mat4Identity, mat4Invert, mat4Multiply} from './math3D.js';
+
+// sqrt(||A||_1 * ||A||_inf) bounds the stretch even when composed matrices shear.
+function affineScaleBound(m: ArrayLike<number>, o: number): number {
+    const a = Math.abs(m[o]!), b = Math.abs(m[o + 4]!), c = Math.abs(m[o + 8]!);
+    const d = Math.abs(m[o + 1]!), e = Math.abs(m[o + 5]!), f = Math.abs(m[o + 9]!);
+    const g = Math.abs(m[o + 2]!), h = Math.abs(m[o + 6]!), i = Math.abs(m[o + 10]!);
+    const rows = Math.max(a + b + c, d + e + f, g + h + i);
+    const columns = Math.max(a + d + g, b + e + h, c + f + i);
+    return Math.sqrt(rows) * Math.sqrt(columns);
+}
 
 export const ANIMATION_TEXTURE3D_LIMITS = Object.freeze({maxMatrices: 2097152, maxClips: 256, maxFps: 240} as const);
 
@@ -41,7 +51,7 @@ export class AnimationTexture3D extends Resource3D {
     readonly fps: number;
     readonly data: Float32Array;
     readonly clips: readonly BakedClip3D[];
-    /** Approximate reach from bone origins. It is not a conservative bound on the posed vertices. */
+    /** How far a bone travels from the mesh origin in any frame, relative to the geometry's bounding radius; instances widen their bounds by it. */
     readonly reach: number;
 
     constructor(boneCount: number, fps: number, data: Float32Array, clips: readonly BakedClip3D[], reach = 1, morphCount = 0) {
@@ -219,27 +229,49 @@ const scratchSphere = new Float32Array(4);
  * you set (walk into run) or cross-faded from the one before. One bone,
  * `lookBone`, can be given an extra rotation per instance, as for heads that
  * turn toward something. Before each draw the instances outside the camera's
- * view are left out; `instanceMatrices`, `instanceColors` and `count`
- * therefore describe what is drawn, and `total` the instances that exist.
+ * view may be left out of the draw arrays. `count` and its alias `total`
+ * remain the number of active instances, and `drawCount` reports the visible range.
  */
 export class SkinnedInstancedMesh3D extends InstancedMesh3D {
     readonly animations: AnimationTexture3D;
-    /** Twelve floats per drawn instance, written by update() and by culling. */
-    readonly instanceAnimation: Float32Array;
-    /** Instances that exist, drawn or not; at most `capacity`. */
-    total: number;
-    /**
-     * true leaves out the instances outside the view before each draw. Off by default: the test uses the
-     * reach estimate, which a bone that scales or a turned bone can exceed.
-     */
-    cullInstances = false;
-    /**
-     * Instances this many bounding radii outside the view are still drawn, so
-     * that their shadows can fall into it. Default 3.
-     */
+    #legacyAnimation: Float32Array | undefined;
+    /** Four floats per logical instance: first frame, second frame, blend and bone count. */
+    get instanceAnimation(): Float32Array {
+        if (!this.#legacyAnimation) {
+            this.#legacyAnimation = new Float32Array(this.capacity * 4);
+            for (let i = 0; i < this.capacity; i++) this.writeLegacy(i, this.#legacyAnimation);
+        }
+        return this.#legacyAnimation;
+    }
+    /** Alias for the active instance count. */
+    get total(): number { return this.count; }
+    set total(value: number) { this.count = value; }
+    /** Number of entries prepared for the current draw. */
+    get drawCount(): number { return this.#drawCount; }
+    /** Draw matrices in the prepared instance order. */
+    get drawMatrices(): Float32Array { return this.#compacting ? this.#compactMatrices! : this.instanceMatrices; }
+    /** Draw colors in the prepared instance order. */
+    get drawColors(): Float32Array | undefined { return this.#compacting && this.instanceColors ? this.#compactColors : this.instanceColors; }
+    /** Packed GPU animation data in the prepared instance order. */
+    get drawAnimation(): Float32Array { return this.#compacting ? this.#compactAnimation! : this.#animation; }
+    /** Enables view culling when a conservative posed radius is available. */
+    cullInstances = true;
+    /** Extra radius multiples retained around the view. Default 3. */
     cullPadding = 3;
-    readonly #matrices: Float32Array;
-    #colors: Float32Array | undefined;
+    #cullRadius: number | undefined;
+    /**
+     * A sphere about the instance origin covering every used skin, morph and bone pose.
+     * Without this authored bound, drawing keeps all instances.
+     */
+    get cullRadius(): number | undefined { return this.#cullRadius; }
+    set cullRadius(value: number | undefined) {
+        this.#cullRadius = value === undefined ? undefined : requirePositive3D(value, 'posed crowd culling radius');
+    }
+    #drawCount = 0;
+    #compacting = false;
+    #compactMatrices: Float32Array | undefined;
+    #compactColors: Float32Array | undefined;
+    #compactAnimation: Float32Array | undefined;
     readonly #animation: Float32Array;
     readonly #clip: Int32Array;
     readonly #time: Float32Array;
@@ -262,9 +294,6 @@ export class SkinnedInstancedMesh3D extends InstancedMesh3D {
         this.boundsScale = animations.reach;
         this.frustumCulled = false;
         const n = this.capacity;
-        this.total = n;
-        this.instanceAnimation = new Float32Array(n * FLOATS);
-        this.#matrices = this.instanceMatrices.slice();
         this.#animation = new Float32Array(n * FLOATS);
         this.#clip = new Int32Array(n); this.#time = new Float32Array(n); this.#speed = new Float32Array(n).fill(1); this.#loop = new Uint8Array(n).fill(1);
         this.#clipB = new Int32Array(n).fill(-1); this.#timeB = new Float32Array(n); this.#speedB = new Float32Array(n).fill(1); this.#flagsB = new Uint8Array(n);
@@ -287,21 +316,6 @@ export class SkinnedInstancedMesh3D extends InstancedMesh3D {
         const o = index * FLOATS + 8, length = Math.hypot(x, y, z, w);
         if (!(length > 1e-9)) throw new World3DError('WORLD3D_INPUT_INVALID', 'rotation');
         this.#animation[o] = x / length; this.#animation[o + 1] = y / length; this.#animation[o + 2] = z / length; this.#animation[o + 3] = w / length;
-    }
-    override setMatrixAt(index: number, matrix: ArrayLike<number>): void {
-        this.check(index);
-        for (let i = 0; i < 16; i++) this.#matrices[index * 16 + i] = matrix[i]!;
-    }
-    override setTransformAt(index: number, position: ArrayLike<number>, quaternion: ArrayLike<number> = [0, 0, 0, 1], scale: ArrayLike<number> | number = 1): void {
-        this.check(index);
-        mat4Compose(this.#matrices.subarray(index * 16, index * 16 + 16), position, quaternion, typeof scale === 'number' ? [scale, scale, scale] : scale);
-    }
-    override setColorAt(index: number, r: number, g: number, b: number, a = 1): void {
-        this.check(index);
-        const size = this.instanceColorSize, colors = this.#colors ??= new Float32Array(this.capacity * size).fill(1);
-        this.instanceColors ??= new Float32Array(this.capacity * size).fill(1);
-        colors[index * size] = r; colors[index * size + 1] = g; colors[index * size + 2] = b;
-        if (size === 4) colors[index * size + 3] = a;
     }
     /** Play a clip, by index or name, on one instance. */
     setClipAt(index: number, clip: number | string, options: InstanceClipOptions3D = {}): void {
@@ -377,35 +391,42 @@ export class SkinnedInstancedMesh3D extends InstancedMesh3D {
      * of them without one. Rendering does this by itself.
      */
     compact(camera: Camera3D | undefined): void {
-        const total = Math.min(this.total, this.capacity), size = this.instanceColorSize, colors = this.#colors, out = this.instanceMatrices, m = this.#matrices;
+        const total = Math.min(this.count, this.capacity), size = this.instanceColorSize, colors = this.instanceColors, m = this.instanceMatrices;
         let drawn = 0;
-        if (camera) {
+        // Camera compaction is shared by the shadow draw. Keep all casters
+        // until shadow and camera lists can consume separate instance ranges.
+        if (camera && this.#cullRadius !== undefined && !this.castShadow && Number.isFinite(this.cullPadding)) {
+            this.#compacting = true;
+            this.#compactMatrices ??= new Float32Array(this.capacity * 16);
+            this.#compactAnimation ??= new Float32Array(this.capacity * FLOATS);
+            if (colors) this.#compactColors ??= new Float32Array(this.capacity * size);
             this.updateWorldMatrix();
-            const base = this.geometry.boundingSphere, world = this.matrixWorld, sphere = scratchSphere, reach = base[3]! * this.boundsScale * (1 + this.cullPadding);
-            const ws = Math.sqrt(Math.max(world[0]! ** 2 + world[1]! ** 2 + world[2]! ** 2, world[4]! ** 2 + world[5]! ** 2 + world[6]! ** 2, world[8]! ** 2 + world[9]! ** 2 + world[10]! ** 2));
+            camera.updateViewMatrices();
+            const world = this.matrixWorld, sphere = scratchSphere;
+            const worldRadius = this.#cullRadius * (1 + Math.max(0, this.cullPadding)) * affineScaleBound(world, 0);
             for (let i = 0; i < total; i++) {
                 const o = i * 16;
-                // The instance's center in the mesh's space, then in the world.
-                const x = m[o]! * base[0]! + m[o + 4]! * base[1]! + m[o + 8]! * base[2]! + m[o + 12]!, y = m[o + 1]! * base[0]! + m[o + 5]! * base[1]! + m[o + 9]! * base[2]! + m[o + 13]!, z = m[o + 2]! * base[0]! + m[o + 6]! * base[1]! + m[o + 10]! * base[2]! + m[o + 14]!;
-                sphere[0] = world[0]! * x + world[4]! * y + world[8]! * z + world[12]!; sphere[1] = world[1]! * x + world[5]! * y + world[9]! * z + world[13]!; sphere[2] = world[2]! * x + world[6]! * y + world[10]! * z + world[14]!;
-                sphere[3] = reach * ws * Math.sqrt(Math.max(m[o]! ** 2 + m[o + 1]! ** 2 + m[o + 2]! ** 2, m[o + 4]! ** 2 + m[o + 5]! ** 2 + m[o + 6]! ** 2, m[o + 8]! ** 2 + m[o + 9]! ** 2 + m[o + 10]! ** 2));
-                if (frustumIntersectsSphere(camera.frustum, sphere)) this.place(drawn++, i, size, colors);
+                const x = m[o + 12]!, y = m[o + 13]!, z = m[o + 14]!;
+                sphere[0] = world[0]! * x + world[4]! * y + world[8]! * z + world[12]!;
+                sphere[1] = world[1]! * x + world[5]! * y + world[9]! * z + world[13]!;
+                sphere[2] = world[2]! * x + world[6]! * y + world[10]! * z + world[14]!;
+                sphere[3] = worldRadius * affineScaleBound(m, o);
+                if (!Number.isFinite(sphere[3]) || frustumIntersectsSphere(camera.frustum, sphere)) this.place(drawn++, i, size, colors);
             }
         } else {
-            out.set(m.subarray(0, total * 16));
-            this.instanceAnimation.set(this.#animation.subarray(0, total * FLOATS));
-            if (colors) this.instanceColors!.set(colors.subarray(0, total * size));
+            this.#compacting = false;
             drawn = total;
         }
-        this.count = drawn;
+        this.#drawCount = drawn;
         this.instanceVersion++;
     }
     override clone(): this {
         const copy = new SkinnedInstancedMesh3D(this.geometry, this.material, this.animations, this.capacity, this.instanceColorSize) as this;
         copy.copyFrom(this);
         copy.total = this.total; copy.cullInstances = this.cullInstances; copy.cullPadding = this.cullPadding;
-        copy.#matrices.set(this.#matrices); copy.#animation.set(this.#animation);
-        if (this.#colors) { copy.#colors = this.#colors.slice(); copy.instanceColors = this.#colors.slice(); }
+        copy.#cullRadius = this.#cullRadius;
+        copy.instanceMatrices.set(this.instanceMatrices); copy.#animation.set(this.#animation);
+        if (this.instanceColors) copy.instanceColors = this.instanceColors.slice();
         copy.#clip.set(this.#clip); copy.#time.set(this.#time); copy.#speed.set(this.#speed); copy.#loop.set(this.#loop);
         copy.#clipB.set(this.#clipB); copy.#timeB.set(this.#timeB); copy.#speedB.set(this.#speedB); copy.#flagsB.set(this.#flagsB); copy.#weightB.set(this.#weightB); copy.#fadeRate.set(this.#fadeRate);
         copy.#lookBone = this.#lookBone;
@@ -413,9 +434,9 @@ export class SkinnedInstancedMesh3D extends InstancedMesh3D {
         return copy;
     }
     private place(slot: number, index: number, size: number, colors: Float32Array | undefined): void {
-        this.instanceMatrices.set(this.#matrices.subarray(index * 16, index * 16 + 16), slot * 16);
-        this.instanceAnimation.set(this.#animation.subarray(index * FLOATS, index * FLOATS + FLOATS), slot * FLOATS);
-        if (colors) this.instanceColors!.set(colors.subarray(index * size, index * size + size), slot * size);
+        this.#compactMatrices!.set(this.instanceMatrices.subarray(index * 16, index * 16 + 16), slot * 16);
+        this.#compactAnimation!.set(this.#animation.subarray(index * FLOATS, index * FLOATS + FLOATS), slot * FLOATS);
+        if (colors) this.#compactColors!.set(colors.subarray(index * size, index * size + size), slot * size);
     }
     private resolve(clip: number | string): number {
         const resolved = typeof clip === 'string' ? this.animations.clipIndex(clip) : clip;
@@ -432,6 +453,19 @@ export class SkinnedInstancedMesh3D extends InstancedMesh3D {
         a[o + 3] = this.animations.stride + 2048 * (this.#lookBone + 1);
         if (second >= 0) { this.animations.framesAt(second, this.#timeB[index]!, (this.#flagsB[index]! & 1) === 1, a, o + 4); a[o + 7] = this.#weightB[index]!; }
         else { a[o + 4] = a[o]!; a[o + 5] = a[o + 1]!; a[o + 6] = 0; a[o + 7] = 0; }
+        if (this.#legacyAnimation) this.writeLegacy(index, this.#legacyAnimation);
+    }
+    private writeLegacy(index: number, target: Float32Array): void {
+        const o = index * FLOATS, to = index * 4, data = this.#animation;
+        if (this.#fadeRate[index]! > 0) {
+            // The legacy four-float view can report only the nearest frame of each fading clip.
+            target[to] = data[o + (data[o + 6]! < 0.5 ? 4 : 5)]!;
+            target[to + 1] = data[o + (data[o + 2]! < 0.5 ? 0 : 1)]!;
+            target[to + 2] = 1 - data[o + 7]!;
+        } else {
+            target[to] = data[o]!; target[to + 1] = data[o + 1]!; target[to + 2] = data[o + 2]!;
+        }
+        target[to + 3] = this.animations.boneCount;
     }
 }
 /** A baked skin can extend beyond the available sphere, including when a bone scales in place. */

@@ -4,7 +4,7 @@
 
 建议按下列顺序了解产品与工程，再查阅所需子系统的接口契约。知识库提供完整 [English](knowledge-base/en/README.md) 和[简体中文](knowledge-base/Cns/README.md)版本。
 
-当前源码复盘：2026-11-07。先了解已有能力和下一工程阶段；历史契约／证据保留原截止。
+[核心能力页](knowledge-base/Cns/docs/core-progress.md)记录源码复盘基线。历史契约和证据保留各自的日期与范围。
 
 ## 当前项目入口
 
@@ -39,6 +39,10 @@
 | 资料来源 | [鸣谢](ACKNOWLEDGEMENTS.zh-CN.md) |
 
 ## 子系统参考
+
+- [共享场景中的有界 3D 与 2D 合成](knowledge-base/Cns/docs/authored-scene3d.md)
+- [独立 World3D 场景图与渲染器](knowledge-base/Cns/docs/world3d.md)
+- [M1.2 固定性能证据](knowledge-base/Cns/docs/incremental-frame-preparation-evidence.md)
 
 - [实验性 WebGPU 图像驻留契约](knowledge-base/Cns/docs/gpu-image-residency-contract.md)
 - [实验性 WebGPU 图像驻留证据](knowledge-base/Cns/docs/gpu-image-residency-evidence.md)

@@ -263,10 +263,16 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
         let b = launch.y;
         let c = input.instance0.y - material.custom[3].z;
         var hit = -1.0;
-        if (abs(a) > 0.000001) { let root = b * b - 4.0 * a * c; if (root >= 0.0) { hit = max((-b - sqrt(root)) / (2.0 * a), (-b + sqrt(root)) / (2.0 * a)); } }
-        else if (b < 0.0) { hit = -c / b; }
+        if (c == 0.0 && (b < 0.0 || (b == 0.0 && a < 0.0))) { hit = 0.0; }
+        else if (abs(a) > 0.000001) {
+            let discriminant = b * b - 4.0 * a * c;
+            if (discriminant > 0.0) {
+                let root = sqrt(discriminant);
+                if (b < 0.0) { hit = 2.0 * c / (root - b); } else { hit = (-b - root) / (2.0 * a); }
+            }
+        } else if (b < 0.0) { hit = -c / b; }
         particleCenter = input.instance0.xyz + launch * particleTime + pull * (0.5 * particleTime * particleTime);
-        if (c >= 0.0 && hit > 0.0 && particleTime > hit) {
+        if (c >= 0.0 && hit >= 0.0 && particleTime >= hit) {
             let landed = input.instance0.xyz + launch * hit + pull * (0.5 * hit * hit);
             let away = (launch + pull * hit) * vec3f(material.custom[3].w, -material.custom[3].w, material.custom[3].w);
             let since = particleTime - hit;
