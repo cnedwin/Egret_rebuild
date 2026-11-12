@@ -144,8 +144,15 @@ export function createSolidTexture3D(r: number, g: number, b: number, a = 255, o
     return new Texture3D({width: 1, height: 1, data: new Uint8Array([r, g, b, a])}, {mipmaps: false, ...options});
 }
 
+/** Color storage of a render target: 8-bit sRGB, or half-float linear for values above 1. */
+export type RenderTargetFormat3D = 'rgba8' | 'rgba16f';
 export interface RenderTargetOptions3D {
     readonly name?: string;
+    /**
+     * 'rgba16f' keeps unclamped linear light and skips tone mapping, for
+     * post-processing. Backends without float targets fall back to 'rgba8'.
+     */
+    readonly format?: RenderTargetFormat3D;
     /** Attach a depth buffer so the target can be rendered with depth testing. */
     readonly depth?: boolean;
     readonly magFilter?: TextureFilter3D;
@@ -161,6 +168,7 @@ export class RenderTarget3D extends Resource3D {
     #width: number;
     #height: number;
     readonly depth: boolean;
+    readonly format: RenderTargetFormat3D;
     /** Sampled view of the color attachment; its source is this target. */
     readonly texture: Texture3D;
     constructor(width: number, height: number, options: RenderTargetOptions3D = {}) {
@@ -170,9 +178,12 @@ export class RenderTarget3D extends Resource3D {
         this.#height = requireCount3D(height, 'target height', TEXTURE3D_LIMITS.maxEdge);
         if (this.#width === 0 || this.#height === 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'target size');
         this.depth = options.depth ?? true;
+        if (options.format !== undefined && options.format !== 'rgba8' && options.format !== 'rgba16f') throw new World3DError('WORLD3D_INPUT_INVALID', 'target format');
+        this.format = options.format ?? 'rgba8';
         this.texture = new Texture3D(this, {
             mipmaps: false, wrapS: options.wrapS ?? 'clamp', wrapT: options.wrapT ?? 'clamp',
-            magFilter: options.magFilter ?? 'linear', minFilter: options.minFilter ?? 'linear', colorSpace: 'srgb',
+            magFilter: options.magFilter ?? 'linear', minFilter: options.minFilter ?? 'linear',
+            colorSpace: this.format === 'rgba16f' ? 'linear' : 'srgb',
         });
     }
     get width(): number { return this.#width; }

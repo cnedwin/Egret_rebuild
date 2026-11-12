@@ -40,6 +40,8 @@ layout(std140) uniform Frame {
     vec4 uShadowRect[4];           // atlas uv offset (xy) and scale (zw)
     vec4 uShadowParams[4];         // x: depth bias, y: normal bias, z: filter radius in atlas uv
     vec4 uOutput;                  // x: environment intensity, y: environment max mip, z: exposure, w: tone mapping
+    vec4 uCascadeSplits;           // view-space far distance of each cascade
+    vec4 uCascadeInfo;             // x: cascaded directional light index or -1, y: cascade count, z: blend fraction
 };
 `;
 
@@ -236,6 +238,18 @@ float shadowFactor(int slot, vec3 normal) {
     }
     return lit / 9.0;
 }
+float cascadedShadowFactor(int slot, vec3 normal) {
+    float viewDepth = -(uView * vec4(vWorldPosition, 1.0)).z;
+    int count = int(uCascadeInfo.y), cascade = 0;
+    for (int c = 0; c < 3; c++) if (c < count - 1 && viewDepth > uCascadeSplits[c]) cascade = c + 1;
+    float edge = uCascadeSplits[cascade];
+    if (viewDepth >= edge) return 1.0;
+    float visible = shadowFactor(slot + cascade, normal);
+    // Blend into the next cascade, or out to unshadowed past the last one.
+    float t = smoothstep(edge * (1.0 - uCascadeInfo.z), edge, viewDepth);
+    if (t > 0.0) visible = mix(visible, cascade < count - 1 ? shadowFactor(slot + cascade + 1, normal) : 1.0, t);
+    return visible;
+}
 #endif
 
 float rangeFalloff(float dist, float range) {
@@ -364,7 +378,9 @@ void main() {
     for (int i = 0; i < directionalCount; i++) {
         float visible = 1.0;
         #ifdef RECEIVE_SHADOW
-        if (uDirectionalDirection[i].w >= 0.0) visible = shadowFactor(int(uDirectionalDirection[i].w), s.normal);
+        if (uDirectionalDirection[i].w >= 0.0) {
+            visible = float(i) == uCascadeInfo.x ? cascadedShadowFactor(int(uDirectionalDirection[i].w), s.normal) : shadowFactor(int(uDirectionalDirection[i].w), s.normal);
+        }
         #endif
         if (visible > 0.0) color += shade(s, -uDirectionalDirection[i].xyz, uDirectionalColor[i].rgb) * visible;
     }
@@ -405,8 +421,9 @@ void main() {
     color = toneMap(color);
     #endif
     #ifdef LINEAR_OUTPUT
-    // sRGB render targets encode on write; hand them linear values.
-    color = clamp(color, 0.0, 1.0);
+    // sRGB render targets encode on write; hand them linear values. Fixed-point
+    // targets clamp by themselves, and half-float targets must keep values above 1.
+    color = max(color, vec3(0.0));
     #else
     color = encodeSrgb(color);
     #endif

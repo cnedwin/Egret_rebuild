@@ -16,6 +16,9 @@ import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
 import {CubeTexture3D, RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
 import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
+import {createPostProcessSettings3D} from './post3D.js';
+import type {PostProcessSettings3D} from './post3D.js';
+import {PostChainWebGL23D} from './postWebGL23D.js';
 import type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
 import {GpuResources3D} from './gpuResources3D.js';
 import type {GeometryGpu3D, Program3D} from './gpuResources3D.js';
@@ -50,6 +53,11 @@ export class WebGL2Renderer3D implements Renderer3D {
     toneMapping: ToneMapping3D;
     exposure: number;
     shadowsEnabled: boolean;
+    /** Bloom, color grading and FXAA; set `enabled` to turn the chain on. */
+    readonly postProcess: PostProcessSettings3D = createPostProcessSettings3D();
+    #post: PostChainWebGL23D | undefined;
+    #inPost = false;
+    #frameToneMapping: ToneMapping3D = 'none';
     readonly info: Renderer3DInfo = {frame: 0, drawCalls: 0, triangles: 0, visited: 0, culled: 0, shadowMaps: 0, programs: 0, geometries: 0, textures: 0};
     readonly #gl: WebGL2RenderingContext;
     readonly #alpha: boolean;
@@ -109,6 +117,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         this.#onRestored = (): void => {
             this.#resources.reset();
             this.#resources = new GpuResources3D(gl);
+            this.#post?.dispose(true); this.#post = undefined;
             this.clearMaterialPrograms();
             this.#frameBuffer = this.#emptyVao = this.#shadowTexture = this.#shadowFramebuffer = null;
             this.#shadowSize = 0;
@@ -148,14 +157,17 @@ export class WebGL2Renderer3D implements Renderer3D {
     render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean {
         if (this.#disposed) throw new World3DError('WORLD3D_DISPOSED', 'renderer');
         if (this.isContextLost) return false;
+        if (this.postProcess.enabled && !this.#inPost) return this.renderPost(scene, camera, target);
         const gl = this.#gl, list = this.#list, info = this.info;
+        // Half-float targets keep scene-referred light; tone mapping happens when they are displayed.
+        const toneMapping = this.#frameToneMapping = target?.format === 'rgba16f' ? 'none' : this.toneMapping;
         list.build(scene, camera);
         info.frame = list.frame; info.drawCalls = info.triangles = 0;
         info.visited = list.stats.visited; info.culled = list.stats.culled;
         this.resetState();
         this.bindFrameBlock();
         this.ensureShadowAtlas();
-        this.renderShadows();
+        this.renderShadows(camera);
 
         if (target) {
             if (target.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
@@ -179,9 +191,9 @@ export class WebGL2Renderer3D implements Renderer3D {
         let environmentMaxMip = 0;
         this.#lastEnvironment = scene.environment;
         if (scene.environment) environmentMaxMip = this.#resources.bindCube(TEXTURE_UNITS_3D.environment, scene.environment);
-        writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {exposure: this.exposure, toneMapping: this.toneMapping, environmentMaxMip});
+        writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {exposure: this.exposure, toneMapping, environmentMaxMip});
         this.uploadFrameBlock();
-        const flags = (scene.fog ? V.fog : 0) | (this.toneMapping !== 'none' ? V.toneMapped : 0) | (scene.environment ? V.environment : 0)
+        const flags = (scene.fog ? V.fog : 0) | (toneMapping !== 'none' ? V.toneMapped : 0) | (scene.environment ? V.environment : 0)
             | (target ? V.linearOutput : 0);
         for (const item of list.opaque) this.draw(item, flags, false);
         if (background instanceof CubeTexture3D) this.drawSkybox(background, scene.backgroundIntensity, camera);
@@ -192,6 +204,23 @@ export class WebGL2Renderer3D implements Renderer3D {
         const counts = this.#resources.counts;
         info.programs = counts.programs; info.geometries = counts.geometries; info.textures = counts.textures;
         info.shadowMaps = this.#shadowCount;
+        return true;
+    }
+    /** Draw the scene into the half-float chain target, then post-process into the output. */
+    private renderPost(scene: Scene3D, camera: Camera3D, target: RenderTarget3D | undefined): boolean {
+        const gl = this.#gl;
+        if (target?.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
+        const width = target ? target.width : gl.drawingBufferWidth, height = target ? target.height : gl.drawingBufferHeight;
+        const post = this.#post ??= new PostChainWebGL23D(gl, this.#resources);
+        post.scene.setSize(Math.max(width, 1), Math.max(height, 1));
+        this.#inPost = true;
+        try { if (!this.render(scene, camera, post.scene)) return false; }
+        finally { this.#inPost = false; }
+        const output = target ? this.#resources.target(target).framebuffer : null;
+        // 8-bit targets encode sRGB on write and half-float targets store linear light; only the canvas needs encoded values.
+        this.info.drawCalls += post.run(this.#resources.target(post.scene).color, width, height, output, target !== undefined,
+            this.postProcess, target?.format === 'rgba16f' ? 'none' : this.toneMapping, this.#emptyVao ??= gl.createVertexArray());
+        this.resetState();
         return true;
     }
     private resetState(): void {
@@ -251,12 +280,12 @@ export class WebGL2Renderer3D implements Renderer3D {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         this.#shadowTexture = texture; this.#shadowFramebuffer = framebuffer; this.#shadowSize = wanted;
     }
-    private renderShadows(): void {
+    private renderShadows(camera: Camera3D): void {
         const gl = this.#gl;
         this.#shadowCount = 0;
         gl.activeTexture(gl.TEXTURE0 + TEXTURE_UNITS_3D.shadow);
         gl.bindTexture(gl.TEXTURE_2D, this.#shadowTexture);
-        const plans = planShadows3D(this.#frameData, this.#list, this.#shadowSize, this.shadowsEnabled, false, this.#shadowSlots);
+        const plans = planShadows3D(this.#frameData, this.#list, this.#shadowSize, this.shadowsEnabled, false, this.#shadowSlots, camera);
         if (plans.length === 0) return;
         const size = this.#shadowSize;
         // Unbind the atlas while rendering into it to avoid a feedback loop.
@@ -507,7 +536,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         this.#resources.bindCube(TEXTURE_UNITS_3D.environment, texture);
         if (!mat4Invert(this.#scratch16, camera.viewProjectionMatrix)) return;
         if (u['uInverseViewProjection']) gl.uniformMatrix4fv(u['uInverseViewProjection'], false, this.#scratch16);
-        if (u['uOutput']) gl.uniform4f(u['uOutput'], intensity, this.#linearOutput ? 1 : 0, this.exposure, this.toneMapping === 'aces' ? 2 : this.toneMapping === 'reinhard' ? 1 : 0);
+        if (u['uOutput']) gl.uniform4f(u['uOutput'], intensity, this.#linearOutput ? 1 : 0, this.exposure, this.#frameToneMapping === 'aces' ? 2 : this.#frameToneMapping === 'reinhard' ? 1 : 0);
         gl.disable(gl.CULL_FACE); this.#cull = 'none';
         gl.disable(gl.BLEND); this.#blend = 'off';
         gl.enable(gl.DEPTH_TEST); this.#depthTest = true;
@@ -548,6 +577,7 @@ export class WebGL2Renderer3D implements Renderer3D {
     async readRenderTargetPixels(target: RenderTarget3D): Promise<Uint8Array> {
         this.assertReadbackAvailable();
         const width = target.width, height = target.height;
+        if (target.format === 'rgba16f') throw new World3DError('WORLD3D_INPUT_INVALID', 'half-float targets cannot be read back as bytes');
         const rows = this.readFramebuffer(this.#resources.target(target).framebuffer, 0, 0, width, height);
         const out = new Uint8Array(rows.length);
         // WebGL returns the bottom row first; flip to the shared top-first order.
@@ -572,9 +602,11 @@ export class WebGL2Renderer3D implements Renderer3D {
         this.#list.clear();
         this.clearMaterialPrograms();
         if (this.isContextLost) {
+            this.#post?.dispose(true); this.#post = undefined;
             this.#resources.reset();
             return;
         }
+        this.#post?.dispose(); this.#post = undefined;
         this.#resources.dispose();
         if (this.#frameBuffer) gl.deleteBuffer(this.#frameBuffer);
         if (this.#emptyVao) gl.deleteVertexArray(this.#emptyVao);

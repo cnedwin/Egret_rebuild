@@ -64,6 +64,8 @@ struct Frame {
     shadowRect: array<vec4f, 4>,
     shadowParams: array<vec4f, 4>,
     output: vec4f,
+    cascadeSplits: vec4f,
+    cascadeInfo: vec4f,
 }
 @group(0) @binding(0) var<uniform> frame: Frame;
 @group(0) @binding(1) var shadowMap: texture_depth_2d;
@@ -256,6 +258,23 @@ fn shadowFactor(slot: i32, worldPosition: vec3f, normal: vec3f) -> f32 {
     }
     return lit / 9.0;
 }
+fn cascadedShadowFactor(slot: i32, worldPosition: vec3f, normal: vec3f) -> f32 {
+    let viewDepth = -(frame.view * vec4f(worldPosition, 1.0)).z;
+    let count = i32(frame.cascadeInfo.y);
+    var cascade = 0;
+    for (var c = 0; c < 3; c++) { if (c < count - 1 && viewDepth > frame.cascadeSplits[c]) { cascade = c + 1; } }
+    let edge = frame.cascadeSplits[cascade];
+    if (viewDepth >= edge) { return 1.0; }
+    var visible = shadowFactor(slot + cascade, worldPosition, normal);
+    // Blend into the next cascade, or out to unshadowed past the last one.
+    let t = smoothstep(edge * (1.0 - frame.cascadeInfo.z), edge, viewDepth);
+    if (t > 0.0) {
+        var next = 1.0;
+        if (cascade < count - 1) { next = shadowFactor(slot + cascade + 1, worldPosition, normal); }
+        visible = mix(visible, next, t);
+    }
+    return visible;
+}
 fn rangeFalloff(dist: f32, range: f32) -> f32 {
     let inverseSquare = 1.0 / max(dist * dist, 0.0001);
     if (range <= 0.0) { return inverseSquare; }
@@ -352,7 +371,10 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     let spotCount = i32(frame.lightCounts.z);
     for (var i = 0; i < directionalCount; i++) {
         var visible = 1.0;
-        ${f.receiveShadow ? 'if (frame.directionalDirection[i].w >= 0.0) { visible = shadowFactor(i32(frame.directionalDirection[i].w), input.worldPosition, s.normal); }' : ''}
+        ${f.receiveShadow ? `if (frame.directionalDirection[i].w >= 0.0) {
+            if (f32(i) == frame.cascadeInfo.x) { visible = cascadedShadowFactor(i32(frame.directionalDirection[i].w), input.worldPosition, s.normal); }
+            else { visible = shadowFactor(i32(frame.directionalDirection[i].w), input.worldPosition, s.normal); }
+        }` : ''}
         color += shade(s, -frame.directionalDirection[i].xyz, frame.directionalColor[i].rgb) * visible;
     }
     for (var i = 0; i < pointCount; i++) {
@@ -380,7 +402,7 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
         color = mix(color, frame.fogColor.rgb, clamp(fog, 0.0, 1.0));
     }` : ''}
     ${f.toneMapped ? 'color = toneMap(color);' : ''}
-    ${f.linearOutput ? 'color = clamp(color, vec3f(0.0), vec3f(1.0));' : 'color = encodeSrgb(color);'}
+    ${f.linearOutput ? 'color = max(color, vec3f(0.0));' : 'color = encodeSrgb(color);'}
     ${f.premultipliedAlpha ? 'color *= base.a;' : ''}
     return vec4f(color, ${f.alphaBlend ? 'base.a' : '1.0'});
 }
@@ -428,8 +450,7 @@ fn fragmentMain(input: SkyOutput) -> @location(0) vec4f {
     var color = textureSample(skyMap, skySampler, normalize(input.direction)).rgb * sky.output.x * sky.output.z;
     if (sky.output.w > 1.5) { color = clamp((color * (2.51 * color + 0.03)) / (color * (2.43 * color + 0.59) + 0.14), vec3f(0.0), vec3f(1.0)); }
     else if (sky.output.w > 0.5) { color = color / (1.0 + color); }
-    color = clamp(color, vec3f(0.0), vec3f(1.0));
-    if (sky.output.y < 0.5) { color = mix(color * 12.92, 1.055 * pow(color, vec3f(1.0 / 2.4)) - 0.055, step(vec3f(0.0031308), color)); }
+    if (sky.output.y < 0.5) { color = clamp(color, vec3f(0.0), vec3f(1.0)); color = mix(color * 12.92, 1.055 * pow(color, vec3f(1.0 / 2.4)) - 0.055, step(vec3f(0.0031308), color)); }
     return vec4f(color, 1.0);
 }
 `;

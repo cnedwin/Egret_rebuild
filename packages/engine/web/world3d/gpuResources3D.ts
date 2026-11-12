@@ -66,6 +66,8 @@ export class GpuResources3D {
     readonly #anisotropy: {readonly TEXTURE_MAX_ANISOTROPY_EXT: number} | null;
     readonly #maxAnisotropy: number;
     readonly #maxTextureSize: number;
+    /** True when half-float color targets can be rendered to. */
+    readonly floatTargets: boolean;
     #nextProgramId = 1;
 
     constructor(gl: WebGL2RenderingContext) {
@@ -73,6 +75,7 @@ export class GpuResources3D {
         this.#anisotropy = gl.getExtension('EXT_texture_filter_anisotropic');
         this.#maxAnisotropy = this.#anisotropy ? gl.getParameter(0x84ff) as number : 1;
         this.#maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE) as number;
+        this.floatTargets = gl.getExtension('EXT_color_buffer_float') !== null || gl.getExtension('EXT_color_buffer_half_float') !== null;
     }
     get counts(): {programs: number; geometries: number; textures: number} {
         return {programs: this.#programs.size, geometries: this.#geometries.size, textures: this.#textures.size};
@@ -487,7 +490,8 @@ export class GpuResources3D {
         try {
             gl.bindTexture(gl.TEXTURE_2D, entry.color);
             // Mutable storage lets setSize() reallocate the same texture object.
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.SRGB8_ALPHA8, target.width, target.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            if (target.format === 'rgba16f' && this.floatTargets) gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, target.width, target.height, 0, gl.RGBA, gl.HALF_FLOAT, null);
+            else gl.texImage2D(gl.TEXTURE_2D, 0, gl.SRGB8_ALPHA8, target.width, target.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
             this.applySampler(gl.TEXTURE_2D, target.texture);
             gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, entry.framebuffer);
             gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, entry.color, 0);

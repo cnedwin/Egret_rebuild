@@ -15,3 +15,5 @@ export {World3DView, createWorld3DView} from './World3DView.js';
 export type {World3DClockSource, World3DViewOptions} from './World3DView.js';
 export {createWorld3DHost, startWorld3DLoop} from './host3D.js';
 export type {World3DLoopSource} from './host3D.js';
+export {POST3D_LIMITS, createPostProcessSettings3D} from './post3D.js';
+export type {PostProcessSettings3D} from './post3D.js';

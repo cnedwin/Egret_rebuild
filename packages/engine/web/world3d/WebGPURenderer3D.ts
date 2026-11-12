@@ -17,6 +17,9 @@ import {COMPRESSED_BLOCK_BYTES_3D, CubeTexture3D, RenderTarget3D, isCompressedPi
 import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import type {Texture3D, TextureSource3D} from '../../rendering/world3d/Texture3D.js';
 import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
+import {createPostProcessSettings3D} from './post3D.js';
+import type {PostProcessSettings3D} from './post3D.js';
+import {PostChainWebGPU3D} from './postWebGPU3D.js';
 import type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
 import {
     MATERIAL_BLOCK_BYTES_3D, MAX_MORPH_INFLUENCES_WGSL_3D, MIPMAP_WGSL_3D, OBJECT_BLOCK_BYTES_3D, SKYBOX_WGSL_3D, buildMaterialWgsl3D,
@@ -42,7 +45,7 @@ export interface WebGPURenderer3DOptions {
     readonly onDeviceLost?: (message: string) => void;
 }
 
-type PassKind = 'canvas' | 'target' | 'depth';
+type PassKind = 'canvas' | 'target' | 'hdr' | 'depth';
 interface BufferGpu { buffer: GPUBuffer; version: number; bytes: number; }
 interface GeometryGpu {
     readonly buffers: Map<string, BufferGpu>;
@@ -67,7 +70,7 @@ const BUFFER_USAGE = Object.freeze({MAP_READ: 1, COPY_DST: 8, INDEX: 16, VERTEX:
 const TEXTURE_USAGE = Object.freeze({COPY_SRC: 1, COPY_DST: 2, TEXTURE_BINDING: 4, RENDER_ATTACHMENT: 16} as const);
 const MAP_MODE_READ = 1;
 const ATTRIBUTE_SLOTS = ['position', 'normal', 'uv', 'tangent', 'color', 'joints', 'weights'] as const;
-const TARGET_FORMAT: GPUTextureFormat = 'rgba8unorm-srgb';
+const TARGET_FORMAT: GPUTextureFormat = 'rgba8unorm-srgb', HDR_FORMAT: GPUTextureFormat = 'rgba16float';
 const SHADOW_FORMAT: GPUTextureFormat = 'depth32float';
 const DEPTH_FORMAT: GPUTextureFormat = 'depth24plus';
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -94,6 +97,10 @@ export class WebGPURenderer3D implements Renderer3D {
     toneMapping: ToneMapping3D;
     exposure: number;
     shadowsEnabled: boolean;
+    /** Bloom, color grading and FXAA; set `enabled` to turn the chain on. */
+    readonly postProcess: PostProcessSettings3D = createPostProcessSettings3D();
+    #post: PostChainWebGPU3D | undefined;
+    #inPost = false;
     readonly info: Renderer3DInfo = {frame: 0, drawCalls: 0, triangles: 0, visited: 0, culled: 0, shadowMaps: 0, programs: 0, geometries: 0, textures: 0};
     readonly #context: GPUCanvasContext;
     readonly #format: GPUTextureFormat;
@@ -415,7 +422,7 @@ export class WebGPURenderer3D implements Renderer3D {
         const limit = this.device.limits.maxTextureDimension2D;
         if (target.width > limit || target.height > limit) throw new World3DError('WORLD3D_BUDGET', 'render target size');
         const color = this.device.createTexture({
-            size: [target.width, target.height], format: TARGET_FORMAT,
+            size: [target.width, target.height], format: target.format === 'rgba16f' ? HDR_FORMAT : TARGET_FORMAT,
             usage: TEXTURE_USAGE.RENDER_ATTACHMENT | TEXTURE_USAGE.TEXTURE_BINDING | TEXTURE_USAGE.COPY_SRC,
         });
         const depth = target.depth ? this.device.createTexture({size: [target.width, target.height], format: DEPTH_FORMAT, usage: TEXTURE_USAGE.RENDER_ATTACHMENT}) : undefined;
@@ -622,7 +629,7 @@ export class WebGPURenderer3D implements Renderer3D {
             flatShading: material.flatShading, doubleSided: material.side === 'double',
             receiveShadow: lit && mesh.receiveShadow && this.#shadowCount > 0,
             environment: lit && frameFlags.environment, fog: !depthOnly && frameFlags.fog && material.fog,
-            toneMapped: !depthOnly && this.toneMapping !== 'none' && material.toneMapped, linearOutput: kind === 'target',
+            toneMapped: !depthOnly && kind !== 'hdr' && this.toneMapping !== 'none' && material.toneMapped, linearOutput: kind === 'target' || kind === 'hdr',
         };
     }
     private pipeline(features: ShaderFeatures3D, item: RenderItem3D, gpu: GeometryGpu, kind: PassKind, mirrored: boolean, wire: boolean): GPURenderPipeline {
@@ -683,7 +690,7 @@ export class WebGPURenderer3D implements Renderer3D {
             multisample: {count: kind === 'canvas' ? this.#sampleCount : 1},
             ...(needsFragment ? {fragment: {
                 module, entryPoint: 'fragmentMain',
-                targets: depthOnly ? [] : [{format: kind === 'target' ? TARGET_FORMAT : this.#format, ...(blendState ? {blend: blendState} : {})}],
+                targets: depthOnly ? [] : [{format: this.colorFormat(kind), ...(blendState ? {blend: blendState} : {})}],
             }} : {}),
         };
         pipeline = this.device.createRenderPipeline(descriptor);
@@ -742,7 +749,7 @@ export class WebGPURenderer3D implements Renderer3D {
         const wire = material.wireframe && kind !== 'depth' && geometry.topology === 'triangles';
         // Everything that selects a pipeline besides the material and geometry themselves,
         // packed into one number so the common case is a single map lookup.
-        const bits = (kind === 'canvas' ? 0 : kind === 'target' ? 1 : 2) | (wire ? 4 : 0) | (determinant < 0 ? 8 : 0) | (instanced ? 16 : 0)
+        const bits = (kind === 'canvas' ? 0 : kind === 'target' ? 1 : kind === 'depth' ? 2 : 3) | (wire ? 4 : 0) | (determinant < 0 ? 8 : 0) | (instanced ? 16 : 0)
             | (instanced && (mesh as InstancedMesh3D).instanceColors ? 32 : 0) | (mesh.skeleton ? 64 : 0) | (mesh.receiveShadow && this.#shadowCount > 0 ? 128 : 0)
             | (frameFlags.fog ? 256 : 0) | (frameFlags.environment ? 512 : 0) | (this.toneMapping !== 'none' ? 1024 : 0)
             | (instanced && (mesh as InstancedMesh3D).instanceColorSize === 4 ? 2048 : 0)
@@ -837,6 +844,9 @@ export class WebGPURenderer3D implements Renderer3D {
         }
         return {color: this.#canvasColor?.createView(), depth: this.#canvasDepth.createView()};
     }
+    private colorFormat(kind: PassKind): GPUTextureFormat {
+        return kind === 'target' ? TARGET_FORMAT : kind === 'hdr' ? HDR_FORMAT : this.#format;
+    }
     private drawSkybox(pass: GPURenderPassEncoder, texture: CubeTexture3D, intensity: number, camera: Camera3D, kind: PassKind): void {
         const device = this.device, key = 'skybox/' + kind;
         if (!mat4Invert(this.#scratch16, camera.viewProjectionMatrix)) return;
@@ -851,7 +861,7 @@ export class WebGPURenderer3D implements Renderer3D {
             pipeline = device.createRenderPipeline({
                 label: key, layout: device.createPipelineLayout({bindGroupLayouts: [this.#skyLayout]}),
                 vertex: {module, entryPoint: 'vertexMain'},
-                fragment: {module, entryPoint: 'fragmentMain', targets: [{format: kind === 'target' ? TARGET_FORMAT : this.#format}]},
+                fragment: {module, entryPoint: 'fragmentMain', targets: [{format: this.colorFormat(kind)}]},
                 primitive: {topology: 'triangle-list'},
                 depthStencil: {format: DEPTH_FORMAT, depthWriteEnabled: false, depthCompare: 'less-equal'},
                 multisample: {count: kind === 'canvas' ? this.#sampleCount : 1},
@@ -861,7 +871,8 @@ export class WebGPURenderer3D implements Renderer3D {
         this.#skyBuffer ??= device.createBuffer({size: 80, usage: BUFFER_USAGE.UNIFORM | BUFFER_USAGE.COPY_DST});
         const data = new Float32Array(20);
         data.set(this.#scratch16);
-        data[16] = intensity; data[17] = kind === 'target' ? 1 : 0; data[18] = this.exposure; data[19] = this.toneMapping === 'aces' ? 2 : this.toneMapping === 'reinhard' ? 1 : 0;
+        data[16] = intensity; data[17] = kind === 'canvas' ? 0 : 1; data[18] = this.exposure;
+        data[19] = kind === 'hdr' ? 0 : this.toneMapping === 'aces' ? 2 : this.toneMapping === 'reinhard' ? 1 : 0;
         device.queue.writeBuffer(this.#skyBuffer, 0, data);
         const cube = this.textureCube(texture), groupKey = texture.id + ':' + texture.version;
         if (!this.#skyGroup || this.#skyGroup.key !== groupKey) {
@@ -882,7 +893,9 @@ export class WebGPURenderer3D implements Renderer3D {
     render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean {
         if (this.#disposed) throw new World3DError('WORLD3D_DISPOSED', 'renderer');
         if (this.#lost) return false;
-        const device = this.device, list = this.#list, info = this.info, kind: PassKind = target ? 'target' : 'canvas';
+        if (this.postProcess.enabled && !this.#inPost) return this.renderPost(scene, camera, target);
+        // Half-float targets keep scene-referred light; tone mapping happens when they are displayed.
+        const device = this.device, list = this.#list, info = this.info, kind: PassKind = target ? (target.format === 'rgba16f' ? 'hdr' : 'target') : 'canvas';
         if (target?.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
         list.build(scene, camera);
         this.#serial++;
@@ -891,10 +904,10 @@ export class WebGPURenderer3D implements Renderer3D {
         info.visited = list.stats.visited; info.culled = list.stats.culled;
 
         const atlas = this.ensureShadowAtlas();
-        const plans = planShadows3D(this.#frameData, list, this.#shadowAtlasSize, this.shadowsEnabled, true, this.#shadowSlots);
+        const plans = planShadows3D(this.#frameData, list, this.#shadowAtlasSize, this.shadowsEnabled, true, this.#shadowSlots, camera);
         this.#shadowCount = plans.length;
         const environment = scene.environment && !scene.environment.isDisposed ? this.textureCube(scene.environment) : undefined;
-        writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {exposure: this.exposure, toneMapping: this.toneMapping, environmentMaxMip: environment?.maxMip ?? 0});
+        writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {exposure: this.exposure, toneMapping: kind === 'hdr' ? 'none' : this.toneMapping, environmentMaxMip: environment?.maxMip ?? 0});
         device.queue.writeBuffer(this.#frameBuffer, 0, this.#frameData);
         const frameKey = (environment ? scene.environment!.id + ':' + scene.environment!.version : '-');
         if (!this.#frameGroup || this.#frameGroupKey !== frameKey) {
@@ -972,6 +985,25 @@ export class WebGPURenderer3D implements Renderer3D {
         info.shadowMaps = plans.length;
         return true;
     }
+    /** Draw the scene into the half-float chain target, then post-process into the output. */
+    private renderPost(scene: Scene3D, camera: Camera3D, target: RenderTarget3D | undefined): boolean {
+        if (target?.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
+        const current = target ? undefined : this.#context.getCurrentTexture();
+        const width = target ? target.width : current!.width, height = target ? target.height : current!.height;
+        const post = this.#post ??= new PostChainWebGPU3D(this.device);
+        post.scene.setSize(Math.max(width, 1), Math.max(height, 1));
+        this.#inPost = true;
+        try { if (!this.render(scene, camera, post.scene)) return false; }
+        finally { this.#inPost = false; }
+        const encoder = this.device.createCommandEncoder();
+        const output = target ? this.target(target).colorView : current!.createView();
+        const format = target ? (target.format === 'rgba16f' ? HDR_FORMAT : TARGET_FORMAT) : this.#format;
+        // 8-bit targets encode sRGB on write and half-float targets store linear light; only the canvas needs encoded values.
+        this.info.drawCalls += post.run(encoder, this.target(post.scene).colorView, width, height, output, format, target !== undefined,
+            this.postProcess, target?.format === 'rgba16f' ? 'none' : this.toneMapping);
+        this.device.queue.submit([encoder.finish()]);
+        return true;
+    }
     /** Retire per-mesh and per-skeleton buffers that have not been drawn recently. */
     private prune(frame: number): void {
         if (frame % PRUNE_INTERVAL !== 0) return;
@@ -988,6 +1020,7 @@ export class WebGPURenderer3D implements Renderer3D {
     }
     /** RGBA8 pixels of a render target, top row first. */
     async readRenderTargetPixels(target: RenderTarget3D): Promise<Uint8Array> {
+        if (target.format === 'rgba16f') throw new World3DError('WORLD3D_INPUT_INVALID', 'half-float targets cannot be read back as bytes');
         if (this.#disposed) throw new World3DError('WORLD3D_DISPOSED', 'renderer');
         if (this.#lost) throw new World3DError('WORLD3D_CONTEXT_LOST', 'readback');
         const device = this.device, entry = this.target(target), width = target.width, height = target.height;
@@ -1015,6 +1048,7 @@ export class WebGPURenderer3D implements Renderer3D {
         this.#disposed = true;
         this.#unsubscribeDeviceLoss();
         this.#list.clear();
+        this.#post?.dispose(); this.#post = undefined;
         for (const geometry of [...this.#geometries.keys()]) { this.#geometries.get(geometry)!.unsubscribe(); this.releaseGeometry(geometry); }
         for (const entry of this.#textures.values()) { entry.unsubscribe(); entry.texture.destroy(); }
         for (const entry of this.#targets.values()) { entry.unsubscribe(); entry.color.destroy(); entry.depth?.destroy(); }
