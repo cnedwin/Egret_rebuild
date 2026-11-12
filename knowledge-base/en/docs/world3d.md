@@ -106,5 +106,6 @@ Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.t
 
 - Presenting the WebGPU backend to a visible canvas, including four-sample resolve, was not exercised: the development browser cannot present WebGPU canvases. It needs a check on a real GPU.
 - WebGL2 context restoration and WebGPU device loss have no recorded browser evidence.
+- The pinned source-identity chains in `tools/*-boundary.mjs` and the two maintenance cases in `tests/publication/incremental-checks.test.mjs` have not been extended for the new package entries and files. Those tools currently refuse this branch; the integration pass and the complete merge gate run on Windows.
 - No performance measurement, physical-device run or fixed-channel browser gate has been recorded.
 - Not implemented: point-light and cascaded shadows, post-processing, compressed textures and geometry, HDR environment prefiltering, clear coat and transmission materials, and physics.

@@ -106,5 +106,6 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 - WebGPU 后端向可见画布呈现（包括四倍采样解析）尚未运行：开发用浏览器无法呈现 WebGPU 画布，需要在真实 GPU 上检查。
 - WebGL2 上下文恢复和 WebGPU 设备丢失没有记录的浏览器证据。
+- `tools/*-boundary.mjs` 中固定的源码身份链，以及 `tests/publication/incremental-checks.test.mjs` 中的两个维护用例，尚未针对新增的包入口和文件续接。这些工具目前会拒绝本分支；续接与完整合并门禁需在 Windows 上完成。
 - 尚未记录性能测量、真机运行或固定通道的浏览器门禁。
 - 尚未实现：点光源阴影与级联阴影、后处理、压缩纹理与几何、HDR 环境预过滤、清漆与透射材质，以及物理。
