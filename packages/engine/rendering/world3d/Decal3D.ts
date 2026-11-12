@@ -71,12 +71,20 @@ export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Ge
     if (count / 3 > DECAL3D_LIMITS.maxTriangles) throw new World3DError('WORLD3D_BUDGET', 'decal target triangles');
     const hx = width / 2, hy = height / 2, hz = depth / 2, m = toDecal;
     const joints = geometry.getAttribute('joints')?.data, weights = geometry.getAttribute('weights')?.data, skinned = joints !== undefined && weights !== undefined;
+    // Reflected transforms reverse winding, but the renderers keep the same visible face.
+    const determinant = m[0]! * (m[5]! * m[10]! - m[6]! * m[9]!) - m[4]! * (m[1]! * m[10]! - m[2]! * m[9]!)
+        + m[8]! * (m[1]! * m[6]! - m[2]! * m[5]!);
+    const facing = determinant < 0 ? -1 : 1;
     const read = (i: number): Vertex => {
         const x = p[i * 3]!, y = p[i * 3 + 1]!, z = p[i * 3 + 2]!;
         const out: Vertex = [m[0]! * x + m[4]! * y + m[8]! * z + m[12]!, m[1]! * x + m[5]! * y + m[9]! * z + m[13]!, m[2]! * x + m[6]! * y + m[10]! * z + m[14]!, 0, 0, 0];
         if (normals) {
             const nx = normals[i * 3]!, ny = normals[i * 3 + 1]!, nz = normals[i * 3 + 2]!;
-            out[3] = m[0]! * nx + m[4]! * ny + m[8]! * nz; out[4] = m[1]! * nx + m[5]! * ny + m[9]! * nz; out[5] = m[2]! * nx + m[6]! * ny + m[10]! * nz;
+            // Normals use the inverse transpose, so lifting the decal follows the surface under nonuniform scale.
+            const inverse = toMesh;
+            out[3] = inverse[0]! * nx + inverse[1]! * ny + inverse[2]! * nz;
+            out[4] = inverse[4]! * nx + inverse[5]! * ny + inverse[6]! * nz;
+            out[5] = inverse[8]! * nx + inverse[9]! * ny + inverse[10]! * nz;
         }
         if (skinned) { out.bones = []; for (let k = 0; k < 4; k++) if (weights[i * 4 + k]! > 0) out.bones.push(joints[i * 4 + k]!, weights[i * 4 + k]!); }
         return out;
@@ -112,8 +120,9 @@ export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Ge
         const ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2], vx = d[0] - a[0], vy = d[1] - a[1], vz = d[2] - a[2];
         let fx = uy * vz - uz * vy, fy = uz * vx - ux * vz, fz = ux * vy - uy * vx;
         const fl = Math.hypot(fx, fy, fz);
-        if (fl < 1e-12 || fz / fl < limit) continue;
-        fx /= fl; fy /= fl; fz /= fl;
+        if (fl < 1e-12 || facing * fz / fl < limit) continue;
+        const normalScale = facing / fl;
+        fx *= normalScale; fy *= normalScale; fz *= normalScale;
         if (!normals) for (const vertex of [a, b, d]) { vertex[3] = fx; vertex[4] = fy; vertex[5] = fz; }
         let polygon: Vertex[] = [a, b, d];
         polygon = clip(polygon, 0, 1, hx); polygon = clip(polygon, 0, -1, hx);
@@ -124,7 +133,8 @@ export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Ge
                 const nl = Math.hypot(vertex[3], vertex[4], vertex[5]) || 1, nx = vertex[3] / nl, ny = vertex[4] / nl, nz = vertex[5] / nl;
                 const x = vertex[0] + nx * lift, y = vertex[1] + ny * lift, z = vertex[2] + nz * lift, w = toMesh;
                 outPositions.push(w[0]! * x + w[4]! * y + w[8]! * z + w[12]!, w[1]! * x + w[5]! * y + w[9]! * z + w[13]!, w[2]! * x + w[6]! * y + w[10]! * z + w[14]!);
-                const mx = w[0]! * nx + w[4]! * ny + w[8]! * nz, my = w[1]! * nx + w[5]! * ny + w[9]! * nz, mz = w[2]! * nx + w[6]! * ny + w[10]! * nz, ml = Math.hypot(mx, my, mz) || 1;
+                const mx = m[0]! * nx + m[1]! * ny + m[2]! * nz, my = m[4]! * nx + m[5]! * ny + m[6]! * nz, mz = m[8]! * nx + m[9]! * ny + m[10]! * nz;
+                const ml = Math.hypot(mx, my, mz) || 1;
                 outNormals.push(mx / ml, my / ml, mz / ml);
                 outUvs.push(vertex[0] / width + 0.5, vertex[1] / height + 0.5);
                 if (skinned) {
