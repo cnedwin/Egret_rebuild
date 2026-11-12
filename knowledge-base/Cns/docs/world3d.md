@@ -133,7 +133,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 关卡几何体以三角网格参与碰撞：`world.createBody({shape: {type: 'mesh', mesh: createMeshShape3D(levelRoot)}})`。`createMeshShape3D` 接受三角形几何体或对象子树。对象子树中，非实例化、无蒙皮的三角网格会按其基础几何体与当前世界变换合并。网格刚体是静态的，也可以是运动学的（用于移动平台），三角形只在正面是实心的。球、胶囊、角色控制器和射线与三角形精确碰撞；盒子通过它的八个角落在网格上。包围体层次结构让开销只与附近的三角形数量有关，三角形接缝处的接触经过过滤，物体可以平滑地越过接缝。
 
-`world.raycast(origin, direction, maxDistance, mask)` 返回最近的实体刚体及命中点和法线，`world.overlapSphere(center, radius, mask)` 列出一个体积内的实体刚体。`createCharacterController3D(world, options)` 是运动学胶囊：`move(dx, dy, dz)` 沿障碍物滑动，并报告 `isGrounded`、`groundNormal` 和 `groundBody`。
+`world.raycast(origin, direction, maxDistance, mask)` 返回最近的实体刚体及命中点和法线，`world.overlapSphere(center, radius, mask)` 列出一个体积内的实体刚体。`world.shapeCast(shape, origin, direction, maxDistance, mask, quaternion)` 让球、胶囊、盒子、凸包或组合体沿单位方向移动，返回它最先碰到的实体刚体：移动的距离、接触点和朝向该形状的法线。它能发现从中间穿过的射线会漏掉的物体，相机防穿墙、近战挥砍和台阶探测都需要它。路径按不超过形状最薄处一半的步长前进，并在两步之间细化，因此比这个步长更薄的障碍物可能被越过；起点已在物体内部时返回距离零。`createCharacterController3D(world, options)` 是运动学胶囊：`move(dx, dy, dz)` 沿障碍物滑动，并报告 `isGrounded`、`groundNormal` 和 `groundBody`。
 
 `createCharacterMotor3D(world, options)` 在这个胶囊上构建会行走和跳跃的角色。在 `world.step()` 之后调用 `motor.update(deltaSeconds, wishX, wishZ, jump)`，传入玩家期望的水平速度。它处理重力和跳跃（`jumpSpeed`，走出平台边缘后还有一小段 `coyoteTime` 可以起跳）、地面与空中的加速（`acceleration`、`airControl`），能走上不高于 `stepHeight` 的台阶，下台阶和下坡时贴住地面，头顶碰到天花板时停止上升。脚下的运动学或动力学刚体会带着角色移动，包括绕旋转平台转动；`motor.carriedYaw` 是应加到角色朝向上的转角，离开移动平台时保留平台的速度。走向动力学刚体时会以角色自身的速度推动它，推力上限为 `pushForce`。平台要用速度来移动，不要直接改写位置，这样角色才能知道平台的运动。低台阶靠胶囊的圆形底部爬上去，速度会变慢；较长的楼梯用斜坡碰撞体走起来更顺。`motor.teleport(x, y, z)` 重新放置角色并清除其运动状态。若任一坐标不是有限数值，位置与运动状态都保持原样。
 
@@ -143,13 +143,21 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `{type: 'convex', hull: createConvexHullShape3D(geometryOrPoints)}` 是用于可移动摆设的凸多面体；超过 64 个角点时只保留最外侧的那些。凸包与平面精确碰撞，与网格通过角点碰撞；与球、胶囊、盒子和其他凸包之间使用面平面和角点包含判断，当两条棱相交而任何一方都没有角点进入对方时，会在这两条棱之间生成一个接触点。
 
-`world.createJoint(options)` 用世界空间的锚点连接两个刚体，或把一个刚体固定在世界中：`point`（球窝）、`hinge`（带 `axis`）、`fixed`（焊接）和 `distance`（刚性杆，或松弛时不受力的 `rope`）。被关节连接的两个刚体默认互不碰撞，除非设置 `collideConnected`。
+`{type: 'compound', children: [{shape, position, quaternion}, ...]}` 把最多 32 个球、盒子、胶囊和凸包组合成一个刚体，用于桌子、L 形块或车身。各部分放在刚体的局部坐标系中，刚体的位置被当作质心，因此应把各部分围绕原点布置。组合体按包住它的盒子计算转动惯量。射线、扫掠、重叠查询和接触都逐个部分处理。
+
+`world.onContact` 在每一步之后针对每一对相互挤压的实体刚体调用一次，给出 `a`、`b`、接触位置 `point`、从 `a` 指向 `b` 的 `normal`、沿法线的 `impulse`，以及在刚接触的那一步为真的 `began`。把冲量除以刚体质量就是它造成的速度变化，足以用来选择音效、计算伤害或压扁一个形状。该对象会被复用，需要保留的内容请自行复制。
+
+`world.createJoint(options)` 用世界空间的锚点连接两个刚体，或把一个刚体固定在世界中：`point`（球窝）、`hinge`（带 `axis`）、`fixed`（焊接）、`distance`（刚性杆，或松弛时不受力的 `rope`）和 `slider`（沿 `axis` 移动且不转动）。被关节连接的两个刚体默认互不碰撞，除非设置 `collideConnected`。
 
 铰链可以设置 `limits: [min, max]`（弧度，相对于创建时的姿态）和马达：`motorSpeed` 是马达要达到的转速，`maxMotorTorque` 是它可以使用的最大力矩；转速为零的马达相当于刹车。球窝关节可以设置 `coneLimit`，即两个刚体绕 `axis` 相互摆开的最大角度。`joint.angle` 返回当前角度，按 bodyA 相对于 bodyB 或世界的转动计算。限位和马达的数值可以随时修改。
 
+滑动关节的 `limits: [min, max]` 是 bodyA 沿轴相对于创建位置的行程，马达使用 `motorSpeed` 和 `maxMotorForce`；`joint.translation` 返回当前行程。它适合电梯、活塞、抽屉和推拉门。距离关节设置 `stiffness`（每秒摆动次数）和 `damping`（0 为不损耗，1 为不过冲地停下）后成为弹簧。
+
 刚体上的 `continuous: true` 用于子弹等体积小、速度快的物体：每一步中，它的位移会在路径上遇到的第一个表面处截断，因此不会穿过薄墙。路径沿刚体中心所在的直线探测，能发现正面撞上的物体，但发现不了只被侧面擦到的物体。
 
-求解器不包含滑动关节和弹簧关节。未开启 `continuous` 时，体积小、速度快的刚体可能穿过薄的几何体；墙体厚度应大于刚体单步移动的距离。
+未开启 `continuous` 时，体积小、速度快的刚体可能穿过薄的几何体；墙体厚度应大于刚体单步移动的距离。
+
+`createJelly3D(target, options)` 让刚性物体呈现柔软有弹性的外观，而不模拟软体。参与碰撞的刚体保持刚性；画出来的形状沿每次撞击的方向压扁、回弹过头再停下，顶部在突然移动时会滞后。`target` 下的每个网格都会得到一份带顶点钩子的材质副本，因此共用该材质的其他物体不受影响；已经带有着色器钩子的材质保持原样。每帧调用一次 `jelly.update(deltaSeconds)`。设置 `body` 后，震动来自该刚体速度的变化；否则来自目标的移动。`impact(direction, strength)` 可以手动敲击它。`stiffness` 是每秒摆动次数，`damping` 决定多快停下，`squash` 是最大压扁程度，`sensitivity` 是每米每秒速度变化对应的压扁量，`wobble` 是顶部滞后的幅度，`idle` 是缓慢的呼吸动作。形状以底部为基准压缩（底部在 `base` 所指的 `height` 比例处），体积大致保持不变。`jelly.deform(out, x, y, z)` 返回着色器把一个世界坐标点放到的位置。着色法线不会重新计算，变形很强时明暗会略有偏差；阴影跟随变形后的形状。
 
 ## 曲线、轮廓与更多几何体
 
@@ -310,7 +318,7 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs`、`tests/world3d-decoders.test.mjs`、`tests/world3d-navigation.test.mjs`、`tests/world3d-terrain.test.mjs`、`tests/world3d-crowd.test.mjs`、`tests/world3d-effects.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
 
-`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十五个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，文字与变换操纵器，带反射水面、细节层级混合的地形，处于不同片段、带阴影的实例化蒙皮角色，带拖尾和软 GPU 粒子的贴花，带光束的高度雾，以及受光照的体积雾。开发期间全部二十五个场景在使用软件渲染的无头 Chromium 中运行。首轮桌面复审在 NVIDIA RTX 5090 Laptop GPU 上执行了前十六个场景。整合复审在 Windows Edge 157 上通过了全部二十二个 WebGL2／WebGPU 图像对比，包括地形与水面、蒙皮人群，未使用强制渲染后端的启动参数。独立的正交反射回读确认，两个后端都保留镜面上方的几何体并裁掉镜面下方的几何体。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。 #159 整合时通过 24 项 Windows Edge 离屏对比。#161 整合时通过 25 项 Windows Edge 固定 WebGL2／WebGPU 离屏对比，以及两个后端的软粒子深度像素检查。 正交反射和软粒子深度保留各自的固定像素检查。
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十六个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，文字与变换操纵器，带反射水面、细节层级混合的地形，处于不同片段、带阴影的实例化蒙皮角色，带拖尾和软 GPU 粒子的贴花，带光束的高度雾，受光照的体积雾，以及被压扁、拉长和推歪的果冻形状，旁边是一张经物理模拟落稳、上面停着一个球的组合体桌子。开发期间全部二十六个场景在使用软件渲染的无头 Chromium 中运行。首轮桌面复审在 NVIDIA RTX 5090 Laptop GPU 上执行了前十六个场景。整合复审在 Windows Edge 157 上通过了全部二十二个 WebGL2／WebGPU 图像对比，包括地形与水面、蒙皮人群，未使用强制渲染后端的启动参数。独立的正交反射回读确认，两个后端都保留镜面上方的几何体并裁掉镜面下方的几何体。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。 #159 整合时通过 24 项 Windows Edge 离屏对比。#161 整合时通过 25 项 Windows Edge 固定 WebGL2／WebGPU 离屏对比，以及两个后端的软粒子深度像素检查。 正交反射和软粒子深度保留各自的固定像素检查。
 
 `tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。负载包括静止与运动的网格、阴影、实例化、多光源、每个网格一次绘制的蒙皮与一次绘制 2000 个烘焙实例的蒙皮、合批、覆盖在场景上的玻璃以及后处理链；另外还测量一次物理步进的耗时，场景为静止的箱子堆、三角网格上的球体和关节链。不测量 GPU 执行时间。启用自动实例化后，5000 个网格的负载从约 4900 次绘制降到 1 至 8 次，软件渲染下 `render()` 的 CPU 时间在无阴影时从 3.3 ms 降到 1.0 ms，有阴影时从 7.5 ms 降到 1.1 ms；对 26 万三角形的球体做一次拾取，从约 5 ms 降到 0.05 ms 以内，另有一次性约 0.1 秒的层级构建；更新 200 副各 60 根骨骼的骨架，从约 10 ms 降到 4 ms 以内。这些都是单台机器上的单次测量。
 
@@ -324,4 +332,4 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 - 桌面 Edge 已在两个后端对比固定的特效与大气场景。固定像素检查覆盖被剔除的背面，以及在采样点深度相同的两个可见墙面。地形示例的交互、性能和更广泛的设备仍待验收。
 - 烘焙蒙皮实例有固定对比及无头行为检查记录。软件渲染基准保留独立范围，实体性能仍待验收。
 - 固定对比包含地形、水面和平面镜像。地形示例的 WebGPU 画布呈现和实际操作仍待验收。
-- 尚未实现：不依赖官方模块的 Draco 与 Basis Universal 解码，浮点精度的环境预过滤，多于一层的折射，带倒角的挤出体，文字整形与 CFF 字体，滑动关节与弹簧关节，以及针对旋转或宽大刚体的连续碰撞。
+- 尚未实现：不依赖官方模块的 Draco 与 Basis Universal 解码，浮点精度的环境预过滤，多于一层的折射，带倒角的挤出体，文字整形与 CFF 字体，软体、布料与流体，现成的载具与布娃娃封装，以及针对旋转或宽大刚体的连续碰撞。
