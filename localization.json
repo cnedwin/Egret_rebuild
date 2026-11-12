@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "33082f956c42c0f4aaf287330522855edda27157b5e67434f31e68b7df144593",
-      "zhSha256": "ec206c96d09e5af42fd66968c04658b40e02a036293d6147c743f8f1ac0604db"
+      "enSha256": "42dab270151ca636ff3843cfbedb51dc29f037cbbf8a58ccaf78e180554b3481",
+      "zhSha256": "ab3841c184368b228b4da9d5a4ee8503bb6ff105455c4fa3311443dc4c17bb9a"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -610,8 +610,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "d38aecc4039325f4633f2b6eaeedbb82537fe2deb1487e396443893f3a735579",
-      "zhSha256": "f01f4a56be5b7a7bb713a441056930e40281b01e9dbbdf5a6e27bea38748269b"
+      "enSha256": "5d15247d9b0b5b02c0bd6a152bc5f74a81af853ced0a430278ab7daf4e40ecb1",
+      "zhSha256": "a8d557dbd9c57c7954dfdea3dfae458cf84d2dac5be3aaac6e17af6188c04122"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "06f8e65f2c3d08077951f3cbd0aec41832a07697ab902a114f6663214147adbb",
-      "zhSha256": "da93b3596eaad17ae837cf38eacd39007b6e746978ab1d8a759192af551d9495"
+      "enSha256": "a312d28a5ee021be30836b1ee625e03f352a9a45c80a3b34b4ec2e282449c693",
+      "zhSha256": "e6c6eaf17e5d22746f82b0357e622cea3ab0925f7eb5e3fb2543c181e1aa4650"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
