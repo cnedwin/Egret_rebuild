@@ -6,7 +6,8 @@
 import {World3DError, requireCount3D, requireFinite3D, requirePositive3D} from './core3D.js';
 import {Attribute3D, Geometry3D} from './Geometry3D.js';
 import {type Material3D, type StandardMaterialOptions3D, createStandardMaterial3D} from './Material3D.js';
-import {type DecalOptions3D, createDecalGeometry3D} from './Decal3D.js';
+import {DECAL3D_LIMITS, type DecalOptions3D, createDecalGeometry3D} from './Decal3D.js';
+import {mat4Invert, vec3TransformMat4} from './math3D.js';
 import type {Texture3D} from './Texture3D.js';
 import {Mesh3D} from './Mesh3D.js';
 import {Object3D} from './Object3D.js';
@@ -15,6 +16,7 @@ import type {Camera3D} from './Camera3D.js';
 
 export const TERRAIN3D_LIMITS = Object.freeze({
     maxSamplesPerSide: 4097, maxChunkCells: 254, maxLevels: 8, maxChunks: 4096, maxCachedGeometryBytes: 128 * 1024 * 1024,
+    maxStreamTiles: 256, maxStreamPending: 32,
 } as const);
 
 export interface HeightFieldOptions3D {
@@ -234,6 +236,7 @@ export class Terrain3D extends Object3D {
     /** Added to every chunk's level: raise it to lower the detail of the whole terrain. */
     lodBias = 0;
     readonly #chunks: Chunk[] = [];
+    readonly #decalGeometries = new WeakMap<Object3D, Geometry3D>();
     readonly #skirt: number;
     readonly #uvScale: number;
     readonly #colorAt: TerrainOptions3D['colorAt'];
@@ -299,28 +302,45 @@ export class Terrain3D extends Object3D {
      * Lay a decal on the terrain. It is cut from the full-detail heights, not
      * from whichever level a chunk happens to show, so it stays put when the
      * levels change; far away, where chunks are coarse, it can sink slightly
-     * into them. The decal becomes a child of the terrain. Returns undefined
-     * when the box misses the ground.
+     * into them. Attached decal geometry is released with the terrain; a
+     * reparented decal belongs to the caller. Returns undefined when the box misses the ground.
      */
     createDecal(material: Material3D, options: DecalOptions3D): Mesh3D | undefined {
-        const field = this.field, local = [0, 0, 0];
+        const field = this.field, inverse = new Float64Array(16), local = [0, 0, 0];
         this.updateWorldMatrix();
-        this.worldToLocal(local, options.position);
-        const reach = Math.hypot(options.width ?? 1, options.height ?? 1, options.depth ?? Math.max(options.width ?? 1, options.height ?? 1) / 2) / 2;
+        if (!mat4Invert(inverse, this.matrixWorld)) throw new World3DError('WORLD3D_INPUT_INVALID', 'singular world matrix');
+        const position = options.position;
+        vec3TransformMat4(local, [
+            requireFinite3D(position[0], 'position'), requireFinite3D(position[1], 'position'), requireFinite3D(position[2], 'position'),
+        ], inverse);
+        const width = requirePositive3D(options.width ?? 1, 'width'), height = requirePositive3D(options.height ?? 1, 'height');
+        const depth = requirePositive3D(options.depth ?? Math.max(width, height) / 2, 'depth');
+        // The world-space sphere encloses the rotated decal box. Project it onto local X and Z.
+        const reach = Math.hypot(width, height, depth) / 2;
+        const reachX = reach * Math.hypot(inverse[0]!, inverse[4]!, inverse[8]!);
+        const reachZ = reach * Math.hypot(inverse[2]!, inverse[6]!, inverse[10]!);
         const toColumn = (x: number): number => (x / field.width + 0.5) * (field.columns - 1), toRow = (z: number): number => (z / field.depth + 0.5) * (field.rows - 1);
-        const c0 = Math.max(0, Math.floor(toColumn(local[0]! - reach))), c1 = Math.min(field.columns - 1, Math.ceil(toColumn(local[0]! + reach)));
-        const r0 = Math.max(0, Math.floor(toRow(local[2]! - reach))), r1 = Math.min(field.rows - 1, Math.ceil(toRow(local[2]! + reach)));
+        const c0 = Math.max(0, Math.floor(toColumn(local[0]! - reachX))), c1 = Math.min(field.columns - 1, Math.ceil(toColumn(local[0]! + reachX)));
+        const r0 = Math.max(0, Math.floor(toRow(local[2]! - reachZ))), r1 = Math.min(field.rows - 1, Math.ceil(toRow(local[2]! + reachZ)));
         if (c1 <= c0 || r1 <= r0) return undefined;
-        // The patch of full-detail ground under the box, as a throwaway mesh to cut from.
-        const nx = c1 - c0 + 1, nz = r1 - r0 + 1, positions = new Float32Array(nx * nz * 3), normals = new Float32Array(nx * nz * 3), indices: number[] = [], normal = [0, 0, 0];
+        const triangleCount = 2 * (c1 - c0) * (r1 - r0);
+        if (triangleCount > DECAL3D_LIMITS.maxTriangles) throw new World3DError('WORLD3D_BUDGET', 'terrain decal patch triangles');
+        // The bounded full-detail ground patch supplies the triangles for the exact decal clip.
+        const nx = c1 - c0 + 1, nz = r1 - r0 + 1, positions = new Float32Array(nx * nz * 3), normals = new Float32Array(nx * nz * 3);
+        const indices = new Uint32Array(triangleCount * 3), normal = [0, 0, 0];
         for (let iz = 0; iz < nz; iz++) for (let ix = 0; ix < nx; ix++) {
             const o = (iz * nx + ix) * 3, x = field.columnX(c0 + ix), z = field.rowZ(r0 + iz);
             positions[o] = x; positions[o + 1] = field.heights[(r0 + iz) * field.columns + c0 + ix]!; positions[o + 2] = z;
             field.normalAt(x, z, normal); normals[o] = normal[0]!; normals[o + 1] = normal[1]!; normals[o + 2] = normal[2]!;
         }
-        for (let iz = 0; iz < nz - 1; iz++) for (let ix = 0; ix < nx - 1; ix++) { const a = iz * nx + ix, b = a + 1, d = a + nx, e = d + 1; indices.push(a, d, b, b, d, e); }
+        let at = 0;
+        for (let iz = 0; iz < nz - 1; iz++) for (let ix = 0; ix < nx - 1; ix++) {
+            const a = iz * nx + ix, b = a + 1, d = a + nx, e = d + 1;
+            indices[at++] = a; indices[at++] = d; indices[at++] = b;
+            indices[at++] = b; indices[at++] = d; indices[at++] = e;
+        }
         const patch = new Geometry3D();
-        patch.setAttribute('position', new Attribute3D(positions, 3)); patch.setAttribute('normal', new Attribute3D(normals, 3)); patch.setIndex(Uint32Array.from(indices));
+        patch.setAttribute('position', new Attribute3D(positions, 3)); patch.setAttribute('normal', new Attribute3D(normals, 3)); patch.setIndex(indices);
         const source = new Mesh3D(patch, material);
         this.addChild(source);
         let geometry: Geometry3D | undefined;
@@ -332,16 +352,30 @@ export class Terrain3D extends Object3D {
         const decal = new Mesh3D(geometry, material);
         decal.name = 'decal'; decal.castShadow = false; decal.receiveShadow = true;
         this.addChild(decal);
+        this.#decalGeometries.set(decal, geometry);
         return decal;
     }
-    /** Release every chunk geometry. The material and the field stay with the caller. */
+    /** Release chunk geometry and attached factory decals. Materials and the field stay with the caller. */
     dispose(): void {
-        for (const chunk of this.#chunks) {
-            for (const geometry of chunk.geometries) geometry?.dispose();
-            chunk.geometries.length = 0;
+        const failures: unknown[] = [];
+        for (const chunk of this.#chunks.splice(0)) {
             chunk.mesh.removeFromParent();
+            for (const geometry of chunk.geometries.splice(0)) {
+                try { geometry?.dispose(); }
+                catch (cause) { failures.push(cause); }
+            }
         }
-        this.#chunks.length = 0;
+        for (const child of [...this.children]) {
+            if (child.parent !== this) continue;
+            const geometry = this.#decalGeometries.get(child);
+            if (!geometry) continue;
+            this.#decalGeometries.delete(child);
+            child.removeFromParent();
+            try { geometry.dispose(); }
+            catch (cause) { failures.push(cause); }
+        }
+        if (failures.length === 1) throw failures[0];
+        if (failures.length > 1) throw new AggregateError(failures, 'WORLD3D_TERRAIN_DISPOSE_FAILED');
     }
     private checkGeometryBudget(): void {
         const columns = this.field.columns - 1, rows = this.field.rows - 1, chunkCells = this.chunkCells;
@@ -500,25 +534,45 @@ export interface TerrainStreamOptions3D {
  * `load`: a file, a server or a formula. Call `update(x, z)` with the
  * viewer's position each frame.
  */
+interface TerrainStreamRequest3D {
+    readonly x: number;
+    readonly z: number;
+}
+type TerrainStreamFailure3D = Readonly<{
+    x: number;
+    z: number;
+    phase: 'load' | 'prepare' | 'onLoad' | 'dispose' | 'onUnload';
+    cause: unknown;
+}>;
+
 export class TerrainStream3D extends Object3D {
     readonly tileSize: number;
     viewDistance: number;
     readonly #options: TerrainStreamOptions3D;
+    readonly #loadsPerUpdate: number;
     readonly #tiles = new Map<string, TerrainTile3D>();
-    // Requested or failed tiles: they are not asked for again while they stay in range.
-    readonly #pending = new Map<string, number>();
-    #generation = 0;
+    // Each request owns its key until it leaves retention or is published.
+    readonly #requests = new Map<string, TerrainStreamRequest3D>();
+    #outstanding = 0;
+    #disposed = false;
+    #updating = false;
+    #lastFailure: TerrainStreamFailure3D | undefined;
 
     constructor(options: TerrainStreamOptions3D) {
         super();
         if (!options || typeof options.load !== 'function' || !options.material) throw new World3DError('WORLD3D_INPUT_INVALID', 'terrain stream options');
         this.tileSize = requirePositive3D(options.tileSize, 'tileSize');
+        if (!Number.isFinite(Math.fround(this.tileSize))) throw new World3DError('WORLD3D_BUDGET', 'terrain tile size');
         this.viewDistance = requirePositive3D(options.viewDistance, 'viewDistance');
+        this.#loadsPerUpdate = requireCount3D(options.loadsPerUpdate ?? 2, 'loadsPerUpdate', TERRAIN3D_LIMITS.maxStreamPending);
+        if (this.#loadsPerUpdate === 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'loadsPerUpdate');
         this.#options = options;
     }
     get tiles(): readonly TerrainTile3D[] { return [...this.#tiles.values()]; }
-    /** Tiles asked for and not yet delivered. */
-    get pendingCount(): number { let count = 0; for (const state of this.#pending.values()) if (state === 1) count++; return count; }
+    /** Outstanding loader calls, including retired requests that have yet to settle. */
+    get pendingCount(): number { return this.#outstanding; }
+    /** Most recent failure in a loader, tile preparation, or lifecycle callback. */
+    get lastFailure(): TerrainStreamFailure3D | undefined { return this.#lastFailure; }
     tileAt(x: number, z: number): TerrainTile3D | undefined { return this.#tiles.get(Math.floor(x / this.tileSize) + ',' + Math.floor(z / this.tileSize)); }
     /** Ground height at a world point of this node's space, or undefined where no tile is loaded. */
     heightAt(x: number, z: number): number | undefined {
@@ -527,53 +581,107 @@ export class TerrainStream3D extends Object3D {
     }
     /** Request the tiles near a position and release those that fell out of range. */
     update(x: number, z: number): void {
-        const size = this.tileSize, reach = this.viewDistance, near = (tx: number, tz: number): number => Math.hypot(Math.max(tx * size - x, 0, x - (tx + 1) * size), Math.max(tz * size - z, 0, z - (tz + 1) * size));
-        // Releasing happens a little further out than loading, so a viewer pacing along an edge does not thrash.
-        for (const [key, tile] of this.#tiles) if (near(tile.x, tile.z) > reach * 1.25 + size * 0.25) this.release(key, tile);
-        for (const key of this.#pending.keys()) { const [tx, tz] = key.split(',').map(Number) as [number, number]; if (near(tx, tz) > reach * 1.25 + size * 0.25) this.#pending.delete(key); }
-        const wanted: {x: number; z: number; distance: number}[] = [];
-        for (let tz = Math.floor((z - reach) / size); tz <= Math.floor((z + reach) / size); tz++) {
-            for (let tx = Math.floor((x - reach) / size); tx <= Math.floor((x + reach) / size); tx++) {
-                const key = tx + ',' + tz, distance = near(tx, tz);
-                if (distance <= reach && !this.#tiles.has(key) && !this.#pending.has(key)) wanted.push({x: tx, z: tz, distance});
-            }
+        if (this.#disposed) throw new World3DError('WORLD3D_DISPOSED', 'terrain stream');
+        if (this.#updating) throw new World3DError('WORLD3D_INPUT_INVALID', 'terrain stream update is reentrant');
+        requireFinite3D(x, 'viewer x');
+        requireFinite3D(z, 'viewer z');
+        const size = this.tileSize, reach = requirePositive3D(this.viewDistance, 'viewDistance');
+        const retention = reach * 1.25 + size * 0.25;
+        const minX = Math.floor((x - retention) / size), maxX = Math.floor((x + retention) / size);
+        const minZ = Math.floor((z - retention) / size), maxZ = Math.floor((z + retention) / size);
+        const bounds = [minX, maxX, minZ, maxZ];
+        if (!bounds.every(value => Number.isSafeInteger(value) && Number.isFinite(Math.fround((value + 0.5) * size)))
+            || (maxX - minX + 1) * (maxZ - minZ + 1) > TERRAIN3D_LIMITS.maxStreamTiles) {
+            throw new World3DError('WORLD3D_BUDGET', 'terrain stream tile range');
         }
-        wanted.sort((a, b) => a.distance - b.distance);
-        const budget = Math.max(1, Math.floor(this.#options.loadsPerUpdate ?? 2));
-        for (const want of wanted.slice(0, budget)) this.request(want.x, want.z);
+        const near = (tx: number, tz: number): number => Math.hypot(
+            Math.max(tx * size - x, 0, x - (tx + 1) * size), Math.max(tz * size - z, 0, z - (tz + 1) * size),
+        );
+
+        this.#updating = true;
+        try {
+            for (const [key, tile] of this.#tiles) if (near(tile.x, tile.z) > retention) this.release(key, tile);
+            for (const [key, request] of this.#requests) if (near(request.x, request.z) > retention) this.#requests.delete(key);
+            const budget = Math.min(this.#loadsPerUpdate, TERRAIN3D_LIMITS.maxStreamPending - this.#outstanding);
+            if (budget <= 0 || this.#disposed) return;
+            const wanted: {x: number; z: number; distance: number}[] = [];
+            for (let tz = Math.floor((z - reach) / size); tz <= Math.floor((z + reach) / size); tz++) {
+                for (let tx = Math.floor((x - reach) / size); tx <= Math.floor((x + reach) / size); tx++) {
+                    const key = tx + ',' + tz, distance = near(tx, tz);
+                    if (distance <= reach && !this.#tiles.has(key) && !this.#requests.has(key)) wanted.push({x: tx, z: tz, distance});
+                }
+            }
+            wanted.sort((a, b) => a.distance - b.distance);
+            for (const want of wanted.slice(0, budget)) {
+                if (this.#disposed) break;
+                this.request(want.x, want.z);
+            }
+        } finally { this.#updating = false; }
     }
-    /** Release every tile. */
+    /** Retire the stream and release all tile geometry. Outstanding loads cannot publish. */
     dispose(): void {
-        this.#generation++;
-        for (const [key, tile] of [...this.#tiles]) this.release(key, tile);
-        this.#pending.clear();
+        if (this.#disposed) return;
+        this.#disposed = true;
+        this.#requests.clear();
+        for (const [key, tile] of this.#tiles) this.release(key, tile);
     }
     private request(x: number, z: number): void {
-        const key = x + ',' + z, generation = this.#generation;
-        this.#pending.set(key, 1);
+        const key = x + ',' + z, request: TerrainStreamRequest3D = {x, z};
+        this.#requests.set(key, request);
+        this.#outstanding++;
+        const current = (): boolean => this.#requests.get(key) === request;
+        const reject = (cause: unknown): void => {
+            this.#outstanding--;
+            if (!current()) return;
+            this.recordFailure(request, 'load', cause);
+        };
         const accept = (field: HeightField3D | undefined): void => {
-            // The viewer may have left, or the stream been disposed, while the tile was on its way.
-            if (generation !== this.#generation || this.#pending.get(key) !== 1) return;
-            if (!field) { this.#pending.set(key, 2); return; }
-            this.#pending.delete(key);
-            const material = typeof this.#options.material === 'function' ? this.#options.material(x, z, field) : this.#options.material;
-            const terrain = new Terrain3D(field, material, this.#options.terrain);
-            terrain.setPosition((x + 0.5) * this.tileSize, 0, (z + 0.5) * this.tileSize);
-            this.addChild(terrain);
-            const tile: TerrainTile3D = Object.freeze({x, z, field, terrain});
-            this.#tiles.set(key, tile);
-            this.#options.onLoad?.(tile);
+            let staged: Terrain3D | undefined;
+            try {
+                if (!current()) return;
+                    if (field === undefined) return;
+                if (!(field instanceof HeightField3D) || field.width !== this.tileSize || field.depth !== this.tileSize) {
+                    throw new World3DError('WORLD3D_INPUT_INVALID', 'terrain tile field size');
+                }
+                const material = typeof this.#options.material === 'function' ? this.#options.material(x, z, field) : this.#options.material;
+                if (!current()) return;
+                const terrain = new Terrain3D(field, material, this.#options.terrain);
+                staged = terrain;
+                if (!current()) return;
+                terrain.setPosition((x + 0.5) * this.tileSize, 0, (z + 0.5) * this.tileSize);
+                this.addChild(terrain);
+                const tile: TerrainTile3D = Object.freeze({x, z, field, terrain});
+                this.#tiles.set(key, tile);
+                this.#requests.delete(key);
+                staged = undefined;
+                try { this.#options.onLoad?.(tile); }
+                catch (cause) { this.recordFailure(tile, 'onLoad', cause); }
+            } catch (cause) {
+                if (current()) this.recordFailure(request, 'prepare', cause);
+            } finally {
+                this.#outstanding--;
+                if (staged) {
+                    try { staged.dispose(); }
+                    catch (cause) { this.recordFailure(request, 'dispose', cause); }
+                }
+            }
         };
         let result: HeightField3D | undefined | Promise<HeightField3D | undefined>;
-        try { result = this.#options.load(x, z); } catch { this.#pending.set(key, 2); return; }
-        if (result instanceof Promise) result.then(accept, () => { if (generation === this.#generation && this.#pending.get(key) === 1) this.#pending.set(key, 2); });
-        else accept(result);
+        try { result = this.#options.load(x, z); }
+        catch (cause) { reject(cause); return; }
+        if (result === undefined || result instanceof HeightField3D) accept(result);
+        else void Promise.resolve(result).then(accept, reject);
     }
     private release(key: string, tile: TerrainTile3D): void {
         this.#tiles.delete(key);
         tile.terrain.removeFromParent();
-        tile.terrain.dispose();
-        this.#options.onUnload?.(tile);
+        try { tile.terrain.dispose(); }
+        catch (cause) { this.recordFailure(tile, 'dispose', cause); }
+        try { this.#options.onUnload?.(tile); }
+        catch (cause) { this.recordFailure(tile, 'onUnload', cause); }
+    }
+    private recordFailure(location: {readonly x: number; readonly z: number}, phase: TerrainStreamFailure3D['phase'], cause: unknown): void {
+        this.#lastFailure = Object.freeze({x: location.x, z: location.z, phase, cause});
     }
 }
 export function createTerrainStream3D(options: TerrainStreamOptions3D): TerrainStream3D { return new TerrainStream3D(options); }

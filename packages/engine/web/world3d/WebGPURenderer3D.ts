@@ -544,9 +544,11 @@ export class WebGPURenderer3D implements Renderer3D {
         if (!entry) this.#instances.set(mesh, entry = {matrices: this.writeBuffer(undefined, mesh.instanceMatrices, BUFFER_USAGE.VERTEX), colors: undefined, version: -1, lastFrame: frame});
         entry.lastFrame = frame;
         if (entry.version !== mesh.instanceVersion) {
-            entry.matrices = this.writeBuffer(entry.matrices, mesh.instanceMatrices, BUFFER_USAGE.VERTEX);
-            if (mesh.instanceColors) entry.colors = this.writeBuffer(entry.colors, mesh.instanceColors, BUFFER_USAGE.VERTEX);
-            if (mesh instanceof SkinnedInstancedMesh3D) entry.animation = this.writeBuffer(entry.animation, mesh.instanceAnimation, BUFFER_USAGE.VERTEX);
+            const crowd = mesh instanceof SkinnedInstancedMesh3D ? mesh : undefined;
+            const colors = crowd ? crowd.drawColors : mesh.instanceColors;
+            entry.matrices = this.writeBuffer(entry.matrices, crowd?.drawMatrices ?? mesh.instanceMatrices, BUFFER_USAGE.VERTEX);
+            if (colors) entry.colors = this.writeBuffer(entry.colors, colors, BUFFER_USAGE.VERTEX);
+            if (crowd) entry.animation = this.writeBuffer(entry.animation, crowd.drawAnimation, BUFFER_USAGE.VERTEX);
             entry.version = mesh.instanceVersion;
         }
         return entry;
@@ -801,7 +803,8 @@ export class WebGPURenderer3D implements Renderer3D {
         const {mesh, geometry, material} = item, frame = this.#list.frame;
         const gpu = this.geometry(geometry);
         if (!gpu.buffers.has('position')) return;
-        const instanced = mesh.isInstanced, instances = instanced ? (mesh as InstancedMesh3D).count : 1;
+        const instanced = mesh.isInstanced;
+        const instances = mesh instanceof SkinnedInstancedMesh3D ? mesh.drawCount : instanced ? (mesh as InstancedMesh3D).count : 1;
         if (instances <= 0 || this.#objectCount >= this.#objectCapacity) return;
         const world = mesh.matrixWorld;
         const determinant = world[0]! * (world[5]! * world[10]! - world[6]! * world[9]!) - world[4]! * (world[1]! * world[10]! - world[2]! * world[9]!)

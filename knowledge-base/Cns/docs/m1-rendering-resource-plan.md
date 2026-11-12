@@ -4,6 +4,10 @@
 
 2026-10-21 · 版本 6 · 设计与验收目标，不代表能力已完成
 
+## 当前正式计时 — 2026-11-12
+
+Windows E20 固定场景的三种状态均达到 Engine 与准备目标。静态、稀疏、全脏的 Engine p95 中位数依次为 5.0、5.9、5.3 ms，目标为 8 ms。稀疏和全脏的按时长加权墙钟间隔 p95 分别为 17.2 和 17.3 ms，目标为 16.7 ms。GPU 时间未测。[#55](https://github.com/cnedwin/Egret_rebuild/issues/55) 仍开放，D60 仍未完成。 原始批次及旧结果见 [M1.2 证据](incremental-frame-preparation-evidence.md)。
+
 ## 历史实现检查点 — 2026-10-20
 
 验证截止点：2026-10-20。M1.3 与 M1.4 已分别通过 [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75) 和 [PR #77](https://github.com/cnedwin/Egret_rebuild/pull/77) 交付。M1.5 七项固定桌面恢复验证已通过独立评审。受影响的浏览器回归已完成全部二十四个套件、三十六次实际调用及独立结果评审。在此检查点，仍需完成最终工作包评审与受保护合并门禁，再完成 M1.2 正式成对性能验收。
@@ -126,6 +130,6 @@ PR 记录基线/候选、实测范围、失败/修复及最终 main 文件树，
 | --- | --- |
 | 流程集成与固定恢复验证 | 已完成：流程 [PR #78](https://github.com/cnedwin/Egret_rebuild/pull/78) 与经独立评审的 C7 结果。 |
 | M1.5 回归与受保护集成 | 已通过 [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) 交付，main 为 `4924b471b52927184252191055f902c30c29af52`。二十四个浏览器套件、三十六次实际调用及 C7 已经独立评审；完整受保护 CI 通过 290 项发布、4,528 项核心及 160 项 F2 测试，失败、跳过、取消均为零。[证据记录](resource-recovery-evidence.md)保留有限范围与原始失败。 |
-| M1.2 性能与 M1 收口 | 序列 6 已完成全部 30 次正式运行，结果为 FAIL_TIMING_TARGET。静态/稀疏 Engine 目标通过；全脏 Engine p95 为 10.3 ms，目标为 8 ms，准备上界尚未建立。保留原始证据与已完成的独立复核，解决剩余成本后再收口 M1。 |
+| M1.2 性能与 M1 收口 | E20 达到固定桌面三种状态的 Engine 与准备目标。稀疏与全脏墙钟间隔未达标，GPU 时间未测，D60 保持未完成。原始 E19 结果与本轮计时均见[M1.2 证据](incremental-frame-preparation-evidence.md)。 |
 
 以上是既有 M1 中相连的成果。功能合并不能关闭未完成的性能或平台验收项。不可用的 GPU 时间、外部设备、授权 Editor 内容与真人上手验证，在缺少证据时继续明确标为未验收。

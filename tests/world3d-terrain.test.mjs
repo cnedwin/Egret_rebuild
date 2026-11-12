@@ -4,9 +4,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
-  HeightField3D, PlanarReflection3D, Scene3D, Terrain3D, World3DError, createHeightField3D, createHeightFieldFromPixels3D,
-  createOrthographicCamera3D, createPerspectiveCamera3D,
-  TerrainStream3D, Texture3D, createPhysicsWorld3D, createStandardMaterial3D, createTerrain3D, createTerrainMaterial3D, createTerrainStream3D, createWater3D, createWaterMaterial3D,
+  HeightField3D, Object3D, PlanarReflection3D, Scene3D, Terrain3D, World3DError, createHeightField3D, createHeightFieldFromPixels3D, createOrthographicCamera3D, createPerspectiveCamera3D,
+  TERRAIN3D_LIMITS, TerrainStream3D, Texture3D, createPhysicsWorld3D, createStandardMaterial3D, createTerrain3D, createTerrainMaterial3D, createTerrainStream3D, createWater3D, createWaterMaterial3D,
 } from '@egret/engine/world3d';
 
 const code = value => error => error instanceof World3DError && error.code === value;
@@ -299,6 +298,187 @@ test('streamed terrain loads tiles around the viewer and lets go of the far ones
   assert.throws(() => createTerrainStream3D({tileSize: 0, viewDistance: 1, load: () => undefined, material: createStandardMaterial3D({})}), code('WORLD3D_INPUT_INVALID'));
 });
 
+function terrainRequestFixture() {
+  const requests = [];
+  const field = height => createHeightField3D({columns: 3, rows: 3, width: 10, depth: 10, sample: () => height});
+  const load = (x, z) => new Promise((resolve, reject) => { requests.push({x, z, resolve, reject}); });
+  return {requests, field, load};
+}
+
+test('a terrain request that left the visible area cannot publish over its replacement', async () => {
+  for (const reject of [false, true]) {
+    const {requests, field, load} = terrainRequestFixture();
+    const published = [];
+    const stream = createTerrainStream3D({
+      tileSize: 10, viewDistance: 1, load, material: createStandardMaterial3D(),
+      onLoad: tile => published.push(tile),
+    });
+    stream.update(5, 5);
+    stream.update(105, 5);
+    stream.update(5, 5);
+    assert.deepEqual(requests.map(r => [r.x, r.z]), [[0, 0], [10, 0], [0, 0]]);
+    if (reject) requests[0].reject(new Error('stale transport'));
+    else requests[0].resolve(field(1));
+    await Promise.resolve();
+    assert.equal(stream.heightAt(5, 5), undefined);
+    assert.equal(stream.lastFailure, undefined);
+
+    requests[2].resolve(field(2));
+    await Promise.resolve();
+    assert.equal(stream.heightAt(5, 5), 2);
+    assert.equal(published.length, 1);
+    stream.dispose();
+    requests[1].resolve(field(3));
+    await Promise.resolve();
+    assert.equal(stream.pendingCount, 0);
+    assert.deepEqual(stream.tiles, []);
+    assert.equal(stream.numChildren, 0);
+    assert.throws(() => stream.update(5, 5), code('WORLD3D_DISPOSED'));
+  }
+});
+
+test('terrain streaming bounds its scan and outstanding loads before they can accumulate', async () => {
+  const {requests, load} = terrainRequestFixture();
+  const stream = createTerrainStream3D({tileSize: 10, viewDistance: 1, load, material: createStandardMaterial3D()});
+  assert.throws(() => stream.update(Infinity, 0), code('WORLD3D_INPUT_INVALID'));
+  assert.throws(() => stream.update(Number.MAX_VALUE, 0), code('WORLD3D_BUDGET'));
+  stream.viewDistance = 1e6;
+  assert.throws(() => stream.update(5, 5), code('WORLD3D_BUDGET'));
+  stream.viewDistance = 1;
+  for (let i = 0; i <= TERRAIN3D_LIMITS.maxStreamPending; i++) stream.update(5 + 100 * i, 5);
+  assert.equal(requests.length, TERRAIN3D_LIMITS.maxStreamPending);
+  assert.equal(stream.pendingCount, requests.length);
+  requests[0].resolve();
+  await Promise.resolve();
+  stream.update(5 + 100 * TERRAIN3D_LIMITS.maxStreamPending, 5);
+  assert.equal(requests.length, TERRAIN3D_LIMITS.maxStreamPending + 1);
+  stream.dispose();
+  for (const request of requests) request.resolve();
+  await Promise.resolve();
+  assert.equal(stream.pendingCount, 0);
+});
+
+test('terrain disposal retires every tile despite unload callback failures', () => {
+  const {field} = terrainRequestFixture();
+  const callbackFailure = new Error('onUnload');
+  const unloaded = [];
+  const stream = createTerrainStream3D({
+    tileSize: 10, viewDistance: 2, load: () => field(1), material: createStandardMaterial3D(), terrain: {chunkCells: 1},
+    onUnload(tile) { unloaded.push(tile.x); if (tile.x === 0) throw callbackFailure; },
+  });
+  stream.update(5, 5); stream.update(15, 5);
+  const loaded = stream.tiles;
+  assert.equal(loaded.length, 2);
+  const chunks = loaded.flatMap(tile => [...tile.terrain.children]);
+  chunks[0].geometry.onDispose(() => { throw new Error('geometry observer'); });
+  stream.dispose();
+  assert.deepEqual(unloaded, [0, 1]);
+  assert.equal(stream.tiles.length, 0);
+  assert.equal(stream.numChildren, 0);
+  assert.ok(chunks.every(mesh => mesh.geometry.isDisposed));
+  assert.equal(stream.lastFailure.cause, callbackFailure);
+  assert.equal(stream.lastFailure.phase, 'onUnload');
+});
+
+test('async terrain creation records the failure and retires the request', async () => {
+  const {requests, field, load} = terrainRequestFixture();
+  const failure = new Error('material factory');
+  const stream = createTerrainStream3D({tileSize: 10, viewDistance: 1, load, material() { throw failure; }});
+  stream.update(5, 5);
+  requests[0].resolve(field(1));
+  await Promise.resolve();
+  assert.equal(stream.pendingCount, 0);
+  assert.equal(stream.numChildren, 0);
+  assert.deepEqual(stream.lastFailure, {x: 0, z: 0, phase: 'prepare', cause: failure});
+  stream.update(5, 5);
+  assert.equal(requests.length, 1);
+  stream.dispose();
+});
+
+test('a water mirror restores renderer state and retries after an unsuccessful draw', () => {
+  const water = createWater3D({segments: 1, reflectionSize: 16}), scene = new Scene3D();
+  const camera = createPerspectiveCamera3D({});
+  camera.setPosition(0, 5, 5).lookAt(0, 0, 0);
+  const reflection = water.reflection;
+  reflection.interval = 2;
+  reflection.shadows = false;
+  const renderer = {shadowsEnabled: true, postProcess: {enabled: true}, calls: 0, render() {
+    this.calls++;
+    assert.equal(this.postProcess.enabled, false);
+    assert.equal(water.visible, false);
+    if (this.calls === 1) {
+      assert.equal(this.shadowsEnabled, false);
+      reflection.shadows = true;
+      return false;
+    }
+    assert.equal(this.shadowsEnabled, true);
+    return true;
+  }};
+  assert.equal(water.renderReflection(renderer, scene, camera), false);
+  assert.equal(renderer.shadowsEnabled, true);
+  assert.equal(renderer.postProcess.enabled, true);
+  assert.equal(water.visible, true);
+  assert.equal(water.renderReflection(renderer, scene, camera), true);
+  assert.equal(renderer.calls, 2);
+  water.dispose();
+});
+
+test('a failed water mirror setup restores shadows and hidden meshes', () => {
+  const water = createWater3D({segments: 1, reflectionSize: 16}), scene = new Scene3D();
+  const camera = createPerspectiveCamera3D({});
+  camera.setPosition(0, 5, 5).lookAt(0, 0, 0);
+  water.reflection.shadows = false;
+  const failure = new Error('cannot disable post-processing');
+  const postProcess = {get enabled() { return true; }, set enabled(value) { if (!value) throw failure; }};
+  const renderer = {shadowsEnabled: true, postProcess, render() { assert.fail('render after setup failed'); }};
+  assert.throws(() => water.renderReflection(renderer, scene, camera), error => error === failure);
+  assert.equal(renderer.shadowsEnabled, true);
+  assert.equal(water.visible, true);
+  water.dispose();
+});
+
+test('underwater fog follows the owning scene and preserves later scene edits', () => {
+  const water = createWater3D({segments: 1, reflectionSize: 0, amplitude: 0});
+  water.setPosition(0, 2, 0);
+  const first = new Scene3D(), second = new Scene3D(), camera = createPerspectiveCamera3D({});
+  const firstFog = {kind: 'linear', color: [1, 1, 1], near: 1, far: 9};
+  const updatedFog = {kind: 'linear', color: [0.5, 0.5, 0.5], near: 1, far: 8};
+  const secondFog = {kind: 'linear', color: [0.3, 0.3, 0.3], near: 2, far: 8};
+  first.fog = firstFog; second.fog = secondFog;
+  camera.setPosition(0, 1, 0);
+  assert.equal(water.updateUnderwater(first, camera), true);
+  assert.notEqual(first.fog, firstFog);
+  first.fog = updatedFog;
+  assert.equal(water.updateUnderwater(second, camera), true);
+  assert.equal(first.fog, updatedFog);
+  assert.notEqual(second.fog, secondFog);
+  water.dispose();
+  assert.equal(second.fog, secondFog);
+});
+
+test('only one water node owns the fog of a scene at a time', () => {
+  const first = createWater3D({segments: 1, reflectionSize: 0, amplitude: 0});
+  const second = createWater3D({segments: 1, reflectionSize: 0, amplitude: 0});
+  first.setPosition(0, 2, 0);
+  second.setPosition(0, 3, 0);
+  const scene = new Scene3D(), camera = createPerspectiveCamera3D({});
+  const authored = {kind: 'linear', color: [1, 1, 1], near: 1, far: 9};
+  scene.fog = authored;
+  camera.setPosition(0, 1, 0);
+  assert.equal(first.updateUnderwater(scene, camera, 0.08), true);
+  const firstFog = scene.fog;
+  assert.equal(firstFog.density, 0.08);
+  assert.equal(second.updateUnderwater(scene, camera, 0.12), true);
+  assert.equal(scene.fog, firstFog);
+
+  first.dispose();
+  assert.equal(scene.fog, authored);
+  assert.equal(second.updateUnderwater(scene, camera, 0.12), true);
+  assert.equal(scene.fog.density, 0.12);
+  second.dispose();
+  assert.equal(scene.fog, authored);
+});
+
 test('water knows its depth settings, the camera under it, and a cheaper mirror', () => {
   const water = createWater3D({segments: 2, reflectionSize: 16, amplitude: 0, color: 0x4080c0, depthFade: 4, foamWidth: 0.8, caustics: 0.2});
   water.setPosition(0, 2, 0); water.updateWorldMatrix();
@@ -367,4 +547,62 @@ test('the orthographic mirror preserves screen coordinates and clips at a slante
   assert.equal(reflection.update(camera, plane), true);
   assert.equal(reflection.camera, mirror);
   reflection.dispose();
+});
+
+test('a terrain decal keeps its requested world footprint under nonuniform scale', () => {
+  const field = createHeightField3D({columns: 65, rows: 65, width: 64, depth: 64});
+  const ground = createStandardMaterial3D();
+  const terrain = createTerrain3D(field, ground, {chunkCells: 32, levels: 2});
+  terrain.setScale(0.1, 1, 0.2);
+  const material = createStandardMaterial3D();
+  const decal = terrain.createDecal(material, {position: [0, 0, 0], normal: [0, 1, 0], width: 2, height: 3, offset: 0});
+  assert.ok(decal);
+  // The upward decal frame uses world X for width and world -Z for height.
+  const box = decal.geometry.boundingBox;
+  close((box[3] - box[0]) * 0.1, 2);
+  close((box[5] - box[2]) * 0.2, 3);
+  terrain.dispose();
+  material.dispose();
+  ground.dispose();
+});
+
+test('terrain rejects an oversized decal patch before sampling its geometry', () => {
+  class ObservedHeightField extends HeightField3D {
+    allowSampling = true;
+    normalAt(...args) {
+      assert.ok(this.allowSampling, 'decal patch sampled the terrain before its triangle budget was checked');
+      return super.normalAt(...args);
+    }
+  }
+  const field = new ObservedHeightField({columns: 513, rows: 513, width: 512, depth: 512});
+  const material = createStandardMaterial3D();
+  const terrain = createTerrain3D(field, material, {chunkCells: 128, levels: 4});
+  field.allowSampling = false;
+  assert.throws(() => terrain.createDecal(material, {
+    position: [0, 0, 0], normal: [0, 1, 0], width: 2048, height: 2048,
+  }), code('WORLD3D_BUDGET'));
+  terrain.dispose();
+  material.dispose();
+});
+
+test('terrain disposal retires attached factory decals and keeps borrowed resources', () => {
+  const field = createHeightField3D({columns: 5, rows: 5, width: 4, depth: 4});
+  const material = createStandardMaterial3D();
+  const terrain = createTerrain3D(field, material);
+  const decalOptions = {position: [0, 0, 0], normal: [0, 1, 0]};
+  const retained = terrain.createDecal(material, decalOptions);
+  const transferred = terrain.createDecal(material, decalOptions);
+  assert.ok(retained && transferred);
+  const otherScene = new Scene3D(), appChild = new Object3D();
+  otherScene.addChild(transferred);
+  terrain.addChild(appChild);
+  terrain.dispose();
+  assert.equal(retained.parent, undefined);
+  assert.equal(retained.geometry.isDisposed, true);
+  assert.equal(transferred.parent, otherScene);
+  assert.equal(transferred.geometry.isDisposed, false);
+  assert.equal(appChild.parent, terrain);
+  assert.equal(material.isDisposed, false);
+  transferred.geometry.dispose();
+  material.dispose();
 });

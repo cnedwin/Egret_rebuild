@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/工程规划.md)
 
-2026-11-12 · Audited implementation baseline is main [5a9b860](https://github.com/cnedwin/Egret_rebuild/commit/5a9b860fa7fdc777987bad844d98016d7e824eeb).
+2026-11-12 · Audited implementation baseline is main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc).
 
 The next phase turns existing components into a usable core workflow. Preserve the eleven M2–M4 packages, their public contracts and current contributor ownership. [Core capabilities](core-progress.md) states what exists; the [architecture plan](architecture-and-engineering-plan.md) defines authority and gates; the [M2–M4 roadmap](m2-m4-delivery-plan.md) retains complete milestone acceptance.
 

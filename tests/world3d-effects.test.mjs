@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   GpuParticles3D, Mesh3D, Object3D, Raycaster3D, Trail3D, World3DError, createBoxGeometry3D, createDecal3D, createDecalGeometry3D, createGpuParticles3D,
-  VolumetricFog3D, createPerspectiveCamera3D, createPlaneGeometry3D, createSphereGeometry3D, createStandardMaterial3D, createTrail3D, createVolumetricFog3D,
+  RenderList3D, Scene3D, VolumetricFog3D, createOrthographicCamera3D, createPerspectiveCamera3D, createPlaneGeometry3D, createSphereGeometry3D, createStandardMaterial3D, createTrail3D, createVolumetricFog3D,
 } from '@egret/engine/world3d';
 import { createAtmosphere3D } from '@egret/engine/webgl2/world3d';
 import { Atmosphere3D } from '@egret/engine/webgpu/world3d';
@@ -236,6 +236,37 @@ test('GPU particles bounce off a floor, on the CPU as in the shader', () => {
   high.time = 3.5; assert.equal(high.positionAt(0, at), false);
 });
 
+test('particles that start on their floor only leave it when moving away', () => {
+  const options = {count: 1, lifetime: 3, spread: 0, floor: 0, bounce: 0.5, loop: false};
+  const p = [0, 0, 0];
+  const resting = createGpuParticles3D({...options, speed: 0, gravity: [0, -10, 0]});
+  resting.time = 0.5; assert.equal(resting.positionAt(0, p), true); close(p[1], 0);
+
+  const down = createGpuParticles3D({...options, speed: 2, direction: [0, -1, 0], gravity: [0, 2, 0]});
+  down.time = 0.5; assert.equal(down.positionAt(0, p), true); close(p[1], 0.75);
+
+  const up = createGpuParticles3D({...options, speed: 2, direction: [0, 1, 0], gravity: [0, -2, 0]});
+  up.time = 0.5; assert.equal(up.positionAt(0, p), true); close(p[1], 0.75);
+});
+
+test('floor-mode particle bounds include the ballistic path when drag is configured', () => {
+  const particles = createGpuParticles3D({count: 1, lifetime: 2, speed: 100, direction: [1, 0, 0], spread: 0, drag: 100, floor: -1, loop: false});
+  particles.time = 1;
+  const position = [0, 0, 0];
+  assert.equal(particles.positionAt(0, position), true);
+  close(position[0], 100);
+  const sphere = particles.worldBoundingSphere;
+  assert.ok(Math.hypot(position[0] - sphere[0], position[1] - sphere[1], position[2] - sphere[2]) <= sphere[3]);
+
+  const camera = createOrthographicCamera3D({height: 2});
+  camera.setPosition(100, 0, 5).lookAt(100, 0, 0);
+  const scene = new Scene3D();
+  scene.addChild(particles);
+  const list = new RenderList3D();
+  list.build(scene, camera);
+  assert.equal(list.transparent.length, 1);
+});
+
 test('world-space particles stay where the emitter was when they were born', () => {
   const smoke = createGpuParticles3D({count: 4, lifetime: 1, speed: 2, direction: [0, 1, 0], spread: 0, space: 'world', loop: true, seed: 9});
   assert.equal(smoke.space, 'world'); assert.equal(smoke.frustumCulled, false);
@@ -271,6 +302,64 @@ test('sorted particles are drawn far to near', () => {
   puffs.beforeRender(camera);
   for (let i = 1; i < 30; i++) assert.ok(data[i * 16 + 2] <= data[(i - 1) * 16 + 2]);
   puffs.positionAt(7, at); close(at[2], original[7 * 16 + 2]);
+});
+
+test('switching particle sorting at runtime preserves logical positions, buffers and the caller hook', () => {
+  const particles = createGpuParticles3D({count: 12, lifetime: 5, speed: 0, shape: 'box', extents: [0, 0, 12], seed: 8});
+  const camera = createPerspectiveCamera3D({});
+  camera.setPosition(0, 0, 20).lookAt(0, 0, 0); camera.updateViewMatrices();
+  for (let i = 0; i < particles.count; i++) particles.instanceColors[i * 4] = i;
+  const matrices = particles.instanceMatrices.slice(), colors = particles.instanceColors.slice();
+  const point = [0, 0, 0];
+  let calls = 0;
+  const callback = () => { calls++; };
+  assert.equal(particles.beforeRender, undefined);
+  particles.beforeRender = callback;
+  particles.sorted = true;
+  particles.beforeRender(camera);
+  assert.equal(calls, 1);
+  assert.notDeepEqual(particles.instanceMatrices, matrices);
+  assert.deepEqual(
+    Array.from({length: particles.count}, (_, i) => particles.instanceMatrices[i * 16 + 2]),
+    Array.from({length: particles.count}, (_, i) => matrices[i * 16 + 2]).sort((a, b) => a - b),
+  );
+  for (let i = 0; i < particles.count; i++) {
+    assert.equal(particles.positionAt(i, point), true);
+    close(point[2], matrices[i * 16 + 2]);
+  }
+
+  particles.sorted = false;
+  assert.equal(particles.beforeRender, callback);
+  assert.deepEqual(particles.instanceMatrices, matrices);
+  assert.deepEqual(particles.instanceColors, colors);
+  particles.beforeRender(camera);
+  assert.equal(calls, 2);
+  particles.sorted = true;
+  particles.beforeRender(camera);
+  assert.equal(calls, 3);
+  particles.sorted = false;
+  assert.deepEqual(particles.instanceMatrices, matrices);
+  assert.deepEqual(particles.instanceColors, colors);
+});
+
+test('world particle respawns still address the same logical indices after sorting is disabled', () => {
+  const options = {count: 12, lifetime: 1, speed: 0, shape: 'box', extents: [0, 0, 12], space: 'world', seed: 8};
+  const sorted = createGpuParticles3D(options), reference = createGpuParticles3D(options);
+  const camera = createPerspectiveCamera3D({});
+  camera.setPosition(0, 0, 20).lookAt(0, 0, 0); camera.updateViewMatrices();
+  for (const puffs of [sorted, reference]) { puffs.setPosition(2, 0, 0); puffs.update(0); }
+  sorted.sorted = true; sorted.beforeRender(camera);
+  assert.notDeepEqual(sorted.instanceMatrices, reference.instanceMatrices);
+  sorted.sorted = false;
+  for (const puffs of [sorted, reference]) { puffs.setPosition(8, 0, 0); puffs.update(0.4); }
+  assert.deepEqual(sorted.instanceMatrices, reference.instanceMatrices);
+  const observed = [0, 0, 0], expected = [0, 0, 0];
+  for (let i = 0; i < sorted.count; i++) {
+    assert.equal(sorted.positionAt(i, observed), reference.positionAt(i, expected));
+    assert.deepEqual(observed, expected);
+  }
+  for (const puffs of [sorted, reference]) { puffs.restart(); puffs.setPosition(-2, 0, 0); puffs.update(0); }
+  assert.deepEqual(sorted.instanceMatrices, reference.instanceMatrices);
 });
 
 test('volumetric fog stands in front of whichever camera draws', () => {

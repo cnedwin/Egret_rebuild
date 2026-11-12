@@ -2,7 +2,7 @@
 
 [English](../en/README.md) | 简体中文
 
-这里是白鹭社区重建的产品与工程入口。2026-11-07 按 main f869b37 复盘，需求、已实现能力、未来计划和实际证据各有明确用途。
+从这里查阅白鹭社区重建的产品与工程文档。[当前能力](docs/core-progress.md)记录最近一次源码复盘的基线及实际验收范围。
 
 ## 从当前项目开始
 
@@ -23,13 +23,14 @@
 | 内容／动画 | [M2](docs/m2-spine-content-plan.md) · [构建／运行时](docs/content-build-pipeline.md) · [Spine](docs/spine-content-ingress.md) · [序列 RESET](docs/序列动画RESET替换.md) |
 | UI／文字／输入 | [M3](docs/m3-ui-text-input-plan.md) · [托管 UI](docs/ui-data-panel.md) · [段落](docs/readonly-paragraph-sdk.md) · [字体](docs/font-resource-generations.md) · [特效](docs/shared-ui-effects.md) |
 | 混合整合 | [M4](docs/m4-core-acceptance-plan.md) · [Android 范围](docs/android-device-validation.md) |
+| 3D | [有界 3D 与 2D 合成](docs/authored-scene3d.md) · [独立 World3D](docs/world3d.md) |
 | 后续工具／兼容 | [工程事务](docs/工程事务核心合同.md) · [AI／工程接口](docs/AI创作与工程接口.md) · [完整迁移](docs/旧工程迁移.md) |
 
 [完整文档目录](https://github.com/cnedwin/Egret_rebuild/blob/main/DOCUMENTATION.zh-CN.md)继续链接底层契约，各子系统保留准确运行时入口、来源／许可和验证。
 
 ## 阅读状态与证据
 
-当前核心是工程预览，不等于完整 M2／M3／M4 或一体化创作产品。M1.2 全脏 10.3 ms 对目标 8 ms 仍 OPEN；Android 组件实测不替代完整混合／设备／IME／Spine／性能资格。[Issues](https://github.com/cnedwin/Egret_rebuild/issues)、[里程碑](https://github.com/cnedwin/Egret_rebuild/milestones)和[Project2](https://github.com/users/cnedwin/projects/2)保持相同工作包边界。
+当前为工程预览。[#55](https://github.com/cnedwin/Egret_rebuild/issues/55) 的固定桌面 CPU 与准备目标已达到，稀疏和全脏帧节奏及 GPU 时间仍待验收。[Issues](https://github.com/cnedwin/Egret_rebuild/issues)、[里程碑](https://github.com/cnedwin/Egret_rebuild/milestones)和[社区看板](https://github.com/users/cnedwin/projects/2)跟踪工作包。
 
 已确认需求与原证据／决策／交付登记保留身份，英文登记视图是中文权威记录的只读翻译。历史待定截止按原日期阅读，不升级为当前项目结论。
 
