@@ -50,6 +50,10 @@ export interface ShaderFeatures3D {
     readonly reflectionMap?: boolean;
     /** Instances posed from a table of baked bone matrices. */
     readonly skinInstancing?: boolean;
+    /** Instance slots hold particle parameters and the vertex stage moves the particles. */
+    readonly gpuParticles?: boolean;
+    /** Blended surface that fades where it nears the solid scene. */
+    readonly softDepth?: boolean;
 }
 
 export const MAX_MORPH_INFLUENCES_WGSL_3D = 8;
@@ -94,6 +98,7 @@ struct Frame {
 @group(0) @binding(4) var environmentSampler: sampler;
 @group(0) @binding(5) var sceneColor: texture_2d<f32>;
 @group(0) @binding(6) var sceneColorSampler: sampler;
+@group(0) @binding(7) var sceneDepthMap: texture_depth_2d;
 `;
 const DEPTH_FRAME = /* wgsl */`
 struct Frame {
@@ -200,7 +205,23 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
         + input.weights.z * bones[input.joints.z] + input.weights.w * bones[input.joints.w];
     model = skin * object.bind;
     normalMatrix = mat3x3f(model[0].xyz, model[1].xyz, model[2].xyz);` : ''}
-    ${f.instancing ? /* wgsl */`
+    var spriteTurn = 0.0;
+    ${f.gpuParticles ? /* wgsl */`
+    // The instance slots carry a particle's start and birth, velocity and life, sizes and angles;
+    // where it is now follows from the time alone.
+    let particleLife = max(input.instance1.w, 0.0001);
+    var particleTime = material.custom[0].x - input.instance0.w;
+    var particleAlive = true;
+    if (material.custom[0].y > 0.5) { particleTime = particleTime - floor(particleTime / particleLife) * particleLife; }
+    else { particleAlive = particleTime >= 0.0 && particleTime <= particleLife; }
+    let particleAge = clamp(particleTime / particleLife, 0.0, 1.0);
+    var particleTravel = particleTime;
+    if (material.custom[1].w > 0.0001) { particleTravel = (1.0 - exp(-material.custom[1].w * particleTime)) / material.custom[1].w; }
+    let particleCenter = input.instance0.xyz + input.instance1.xyz * particleTravel + material.custom[1].xyz * (0.5 * particleTime * particleTime);
+    let particleSize = mix(input.instance2.x, input.instance2.y, particleAge);
+    model = model * mat4x4f(vec4f(particleSize, 0.0, 0.0, 0.0), vec4f(0.0, particleSize, 0.0, 0.0), vec4f(0.0, 0.0, particleSize, 0.0), vec4f(particleCenter, 1.0));
+    spriteTurn = input.instance2.z + input.instance2.w * particleTime;` : ''}
+    ${f.instancing && !f.gpuParticles ? /* wgsl */`
     let instance = mat4x4f(input.instance0, input.instance1, input.instance2, input.instance3);
     model = model * instance;
     normalMatrix = normalMatrix * mat3x3f(instance[0].xyz, instance[1].xyz, instance[2].xyz);` : ''}
@@ -218,8 +239,8 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     let up = vec3f(frame.view[0].y, frame.view[1].y, frame.view[2].y);
     var scale = vec2f(length(model[0].xyz), length(model[1].xyz));
     if (material.sprite.y < 0.5) { scale *= -(frame.view * origin).z; }
-    let c = cos(material.sprite.x);
-    let s = sin(material.sprite.x);
+    let c = cos(material.sprite.x + spriteTurn);
+    let s = sin(material.sprite.x + spriteTurn);
     let corner = position.xy * scale;
     let turned = vec2f(c * corner.x - s * corner.y, s * corner.x + c * corner.y);
     world = vec4f(origin.xyz + right * turned.x + up * turned.y, 1.0);
@@ -238,6 +259,11 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     output.color = ${f.vertexColor ? 'input.color' : 'vec4f(1.0)'};
     output.uv1 = ${f.uv1 ? 'input.uv1' : 'vec2f(0.0)'};
     ${f.instanceColor ? 'output.color *= input.instanceColor;' : ''}
+    ${f.gpuParticles ? /* wgsl */`
+    // From the instance's color to the shared end color over the particle's life, fading at both ends.
+    output.color = mix(input.instanceColor, material.custom[2], particleAge);
+    output.color.a *= smoothstep(0.0, max(material.custom[0].z, 0.0001), particleAge) * (1.0 - smoothstep(1.0 - max(material.custom[0].w, 0.0001), 1.0, particleAge));
+    if (!particleAlive) { output.clip = vec4f(2.0, 2.0, 2.0, 1.0); }` : ''}
     return output;
 }
 `;
@@ -390,6 +416,15 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     if (mapColor.a > 0.0) { straightColor = mapColor.rgb / mapColor.a; }
     base *= vec4f(straightColor, mapColor.a);`
     : f.map ? 'base *= textureSample(mapTexture, mapSampler, input.uv);' : ''}
+    ${f.softDepth ? /* wgsl */`
+    {
+        // Fade out over the last stretch before the solid surface behind this pixel.
+        let stored = textureLoad(sceneDepthMap, vec2i(input.clip.xy), 0) * 2.0 - 1.0;
+        var behind = frame.pointShadow.w / (stored + frame.pointShadow.z);
+        if (frame.lightCounts.w > 0.5) { behind = (frame.pointShadow.w - stored) / frame.pointShadow.z; }
+        let here = -(frame.view * vec4f(input.worldPosition, 1.0)).z;
+        base.a *= clamp((behind - here) / max(material.emissive.w, 0.0001), 0.0, 1.0);
+    }` : ''}
     ${f.normalMap ? 'let normalSample = textureSample(normalTexture, normalSampler, input.uv).xyz;' : ''}
     ${f.metallicRoughnessMap ? 'let mrSample = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, input.uv);' : ''}
     ${f.occlusionMap ? 'let occlusionSample = textureSample(occlusionTexture, occlusionSampler, ' + (f.occlusionUv1 ? 'input.uv1' : 'input.uv') + ').r;' : ''}

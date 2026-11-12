@@ -26,3 +26,5 @@ export type {CubeCaptureOptions3D} from './probe3D.js';
 export {TransformControls3D, createTransformControls3D} from './TransformControls3D.js';
 export {FollowControls3D, createFollowControls3D} from './FollowControls3D.js';
 export type {FollowControlsOptions3D} from './FollowControls3D.js';
+export {Atmosphere3D, createAtmosphere3D} from './atmosphere3D.js';
+export type {AtmosphereOptions3D} from './atmosphere3D.js';

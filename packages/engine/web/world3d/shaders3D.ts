@@ -12,7 +12,7 @@ export const ATTRIBUTE_LOCATIONS_3D = Object.freeze({
 /** Fixed texture units; samplers are assigned once when a program is linked. */
 export const TEXTURE_UNITS_3D = Object.freeze({
     map: 0, normalMap: 1, metallicRoughnessMap: 2, occlusionMap: 3, emissiveMap: 4,
-    environment: 5, shadow: 6, bones: 7, morph: 8, lightMap: 9, sceneColor: 10, reflectionMap: 11,
+    environment: 5, shadow: 6, bones: 7, morph: 8, lightMap: 9, sceneColor: 10, reflectionMap: 11, sceneDepth: 12,
 } as const);
 
 export const MAX_MORPH_INFLUENCES_3D = 8;
@@ -120,8 +120,10 @@ vec3 morphDelta(int targetIndex, int channel) {
 }
 #endif
 
-#ifdef CUSTOM_VERTEX
+#if defined(CUSTOM_VERTEX) || defined(GPU_PARTICLES)
 uniform vec4 uCustom[4];
+#endif
+#ifdef CUSTOM_VERTEX
 /*CUSTOM_VERTEX*/
 #endif
 void main() {
@@ -147,7 +149,22 @@ void main() {
     model = skin * uBindMatrix;
     normalMatrix = mat3(model);
     #endif
-    #ifdef USE_INSTANCING
+    float spriteTurn = 0.0;
+    #ifdef GPU_PARTICLES
+    // The instance slots carry a particle's start and birth, velocity and life, sizes and angles;
+    // where it is now follows from the time alone.
+    vec4 particleStart = aInstanceMatrix[0], particleMotion = aInstanceMatrix[1], particleLook = aInstanceMatrix[2];
+    float particleLife = max(particleMotion.w, 0.0001), particleTime = uCustom[0].x - particleStart.w;
+    bool particleAlive = true;
+    if (uCustom[0].y > 0.5) particleTime = mod(particleTime, particleLife);
+    else particleAlive = particleTime >= 0.0 && particleTime <= particleLife;
+    float particleAge = clamp(particleTime / particleLife, 0.0, 1.0);
+    float particleTravel = uCustom[1].w > 0.0001 ? (1.0 - exp(-uCustom[1].w * particleTime)) / uCustom[1].w : particleTime;
+    vec3 particleCenter = particleStart.xyz + particleMotion.xyz * particleTravel + uCustom[1].xyz * (0.5 * particleTime * particleTime);
+    float particleSize = mix(particleLook.x, particleLook.y, particleAge);
+    model = model * mat4(vec4(particleSize, 0.0, 0.0, 0.0), vec4(0.0, particleSize, 0.0, 0.0), vec4(0.0, 0.0, particleSize, 0.0), vec4(particleCenter, 1.0));
+    spriteTurn = particleLook.z + particleLook.w * particleTime;
+    #elif defined(USE_INSTANCING)
     model = model * aInstanceMatrix;
     normalMatrix = normalMatrix * mat3(aInstanceMatrix);
     #endif
@@ -178,7 +195,7 @@ void main() {
     vec4 center = uView * (model * vec4(0.0, 0.0, 0.0, 1.0));
     vec2 scale = vec2(length(model[0].xyz), length(model[1].xyz));
     if (uSprite.y < 0.5) scale *= -center.z;
-    float c = cos(uSprite.x), s = sin(uSprite.x);
+    float c = cos(uSprite.x + spriteTurn), s = sin(uSprite.x + spriteTurn);
     vec2 corner = position.xy * scale;
     center.xy += vec2(c * corner.x - s * corner.y, s * corner.x + c * corner.y);
     world = inverse(uView) * center;
@@ -202,6 +219,12 @@ void main() {
     #endif
     #ifdef USE_INSTANCE_COLOR
     vColor *= aInstanceColor;
+    #endif
+    #ifdef GPU_PARTICLES
+    // From the instance's color to the shared end color over the particle's life, fading at both ends.
+    vColor = mix(aInstanceColor, uCustom[2], particleAge);
+    vColor.a *= smoothstep(0.0, max(uCustom[0].z, 0.0001), particleAge) * (1.0 - smoothstep(1.0 - max(uCustom[0].w, 0.0001), 1.0, particleAge));
+    if (!particleAlive) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
     #endif
 }
 `;
@@ -227,6 +250,10 @@ uniform vec2 uExtra;             // light map intensity, transmission
 uniform sampler2D uSceneColor;   // what was drawn before the see-through surfaces
 uniform vec4 uRefraction;        // index of refraction, thickness, attenuation distance (0 = none)
 uniform vec3 uAttenuation;
+#endif
+#ifdef USE_SOFT_DEPTH
+uniform highp sampler2D uSceneDepth; // depth of the solid scene, drawn before the frame
+uniform float uSoftness;
 #endif
 #ifdef USE_REFLECTION_MAP
 uniform sampler2D uReflectionMap; // mirror image of the scene, read at the pixel's place on screen
@@ -411,6 +438,15 @@ void main() {
     mapColor.rgb = mapColor.a > 0.0 ? mapColor.rgb / mapColor.a : vec3(0.0);
     #endif
     base *= mapColor;
+    #endif
+    #ifdef USE_SOFT_DEPTH
+    {
+        // Fade out over the last stretch before the solid surface behind this pixel.
+        float stored = texelFetch(uSceneDepth, ivec2(gl_FragCoord.xy), 0).r * 2.0 - 1.0;
+        float behind = uLightCounts.w > 0.5 ? (uPointShadow.w - stored) / uPointShadow.z : uPointShadow.w / (stored + uPointShadow.z);
+        float here = -(uView * vec4(vWorldPosition, 1.0)).z;
+        base.a *= clamp((behind - here) / max(uSoftness, 0.0001), 0.0, 1.0);
+    }
     #endif
     #ifdef POINTS
     if (length(gl_PointCoord - 0.5) > 0.5) discard;

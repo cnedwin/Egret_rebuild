@@ -15,6 +15,8 @@ import {colorFromHex, mat4Invert, quatFromRotationMatrix} from './math3D.js';
 /** Anything that can draw a scene into a render target: both first-party renderers qualify. */
 export interface ReflectionRenderer3D {
     render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean;
+    /** When present, post-processing is switched off while the mirror image is drawn. */
+    readonly postProcess?: {enabled: boolean};
 }
 
 /**
@@ -103,8 +105,14 @@ export class PlanarReflection3D {
         if (!this.update(camera, plane)) return false;
         const shown = hidden.map((object) => object.visible);
         for (const object of hidden) object.visible = false;
+        // The mirror image is plain; the main view's post-processing reaches it with everything else.
+        const post = renderer.postProcess, processed = post?.enabled ?? false;
+        if (post) post.enabled = false;
         try { return renderer.render(scene, this.camera, this.target); }
-        finally { hidden.forEach((object, i) => { object.visible = shown[i]!; }); }
+        finally {
+            if (post) post.enabled = processed;
+            hidden.forEach((object, i) => { object.visible = shown[i]!; });
+        }
     }
     dispose(): void { this.target.dispose(); }
 }

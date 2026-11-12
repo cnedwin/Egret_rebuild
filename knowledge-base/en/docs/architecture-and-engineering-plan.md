@@ -2,15 +2,15 @@
 
 English | [中文](../../Cns/docs/architecture-and-engineering-plan.md)
 
-2026-11-07 · Current architecture and delivery alignment · M0–M4.
+2026-11-12 · Current architecture and delivery alignment · M0–M4.
 
-Audited main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1) contains the four foundation packages and optional Spine, M1 rendering/resources, selected M2 content/animation, managed M3 UI/text/input and bounded Android follow-up. [Core capabilities](core-progress.md) is the current implementation map; [engineering](engineering-plan.md) gives the next coherent increments. Workspace packages remain private 0.0.0.
+Audited main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc) contains shared Web rendering, resources and animation, managed UI and text input, editable Outfit Studio and optional standalone World3D. [Core capabilities](core-progress.md) records implementation and evidence. The [engineering plan](engineering-plan.md) gives the next delivery sequence. Workspace packages are private at 0.0.0.
 
 The environment remains Node 26.7.0, pnpm 11.25.0, TypeScript 7.0.2 and PowerShell 7.6.5. Current metadata generation, scoped development feedback, normal hooks and complete final-candidate merge CI are implemented. No new maintenance-automation program is required to start the next core feature.
 
-M0 human/fork and remaining rights/device qualification stay in #52/#54. M1.2 retains its valid full-dirty 10.3 ms versus 8 ms failure, preparation coverage and unmeasured GPU time. These limit their claims and final M4 qualification, not independent M2/M3 implementation or first mixed integration.
+M0 independent newcomer rehearsal and remaining rights/device qualification are tracked in [#52](https://github.com/cnedwin/Egret_rebuild/issues/52) and [#54](https://github.com/cnedwin/Egret_rebuild/issues/54). The fixed Windows E20 run met the Engine and preparation targets in all three states. The Engine median-p95 for static, sparse and full-dirty was 5.0, 5.9 and 5.3 ms against 8 ms. The sparse and full-dirty duration-weighted wall-gap p95 was 17.2 and 17.3 ms against 16.7 ms. GPU time is unmeasured. [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) remains open and D60 remains incomplete. The [M1.2 evidence](incremental-frame-preparation-evidence.md) retains the original measurements.
 
-Keep the [M2–M4 roadmap](m2-m4-delivery-plan.md), its existing eleven packages and unchanged acceptance targets. Native editing, one mixed reference and remaining Spine/content work are the next proposed batch; current documentation work does not implement them.
+The [M2–M4 roadmap](m2-m4-delivery-plan.md) retains the eleven work packages and acceptance targets. Start with [#91](https://github.com/cnedwin/Egret_rebuild/issues/91), browser opening of an exported Outfit Studio project through the existing project transaction. A canceled or rejected import must preserve the live scene and its resource leases. After selected content and input behavior is ready, use the fixed profiles for [#92](https://github.com/cnedwin/Egret_rebuild/issues/92). Clean-consumer handoff preparation in [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) can proceed in parallel.
 
 ## 1. Objectives, scope and tradeoffs
 
@@ -392,7 +392,7 @@ Implementation status is maintained in the [M0 delivery record](m0-community-fou
 
 ## 13. Baseline sources
 
-The links below preserve the original architecture-design baseline. Current implementation is the reviewed f869b37 source and core-progress; these older links are not a competing current baseline.
+The links below preserve the original architecture-design baseline. See the [current capability map](core-progress.md) for the reviewed implementation.
 
 - [Current core progress](https://github.com/cnedwin/Egret_rebuild/blob/030a34646774dea6c46cc947b55186da9265a6c8/knowledge-base/en/docs/core-progress.md)
 - [Existing architecture](https://github.com/cnedwin/Egret_rebuild/blob/030a34646774dea6c46cc947b55186da9265a6c8/knowledge-base/en/docs/technical-architecture.md)
