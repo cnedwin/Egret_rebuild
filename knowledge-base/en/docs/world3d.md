@@ -178,6 +178,20 @@ One point light may cast shadows (`createPointLight3D({castShadow: true})`). It 
 
 `createFatLine3D(points, {width, screenSpace, closed, color})` draws a polyline as a ribbon that turns to face the camera, with mitred joints. The width is in world units, or in pixels with `screenSpace` when `resolutionHeight` is set to the output height.
 
+## Navigation
+
+`createNavMesh3D(source, {slopeLimit})` builds a navigation mesh from level geometry: a geometry, an object whose meshes are merged with their world transforms, or raw `{positions, indices}`. Faces steeper than the slope limit and faces pointing down are left out; triangles that share an edge become neighbors, and separate floors stay separate regions.
+
+`navMesh.findPath(start, end, {agentRadius, followSurface})` returns a cost-guided walkable route as a list of points, `complete: false` when the end cannot be reached (the path then stops at the closest reachable place), and its length. The search runs over triangles, the route is pulled tight through the edges it crosses, and on an unweighted mesh, corners that a straight walk can skip are removed. `agentRadius` keeps corners at arm's length and rules out gaps the agent does not fit through; `followSurface` adds a point at every triangle crossing so the path hugs slopes. `setCost(triangle, cost)` sets a finite positive travel multiplier and `setEnabled(triangle, false)` closes it, as for a door.
+
+`findNearest(point, maxDistance)` snaps a point onto the mesh, `raycast(from, x, z)` reports how far a straight walk gets before an edge, `moveAlong(from, x, z)` moves across triangles and slides along edges, `isReachable` compares regions through open triangles, and `randomPoint()` picks a place evenly by area. `createDebugGeometry()` gives the edges as lines.
+
+`createNavCrowd3D(navMesh)` moves agents: `crowd.addAgent({position, radius, speed, node})`, `agent.setTarget(point)`, and `crowd.update(deltaSeconds)` each frame. Agents follow their own paths, are pushed apart when they would overlap, never leave the mesh, and report `arrived`; in a crowd an agent that can no longer get closer to a taken spot stops and counts as arrived.
+
+`findGridPath3D(width, height, cost, start, end)` finds the least-cost grid route for finite positive cell costs, including fractions. A diagonal step costs √2 times the destination cell cost and cannot cut a blocked corner. Grid search is bounded by `maxVisited`. The navigation mesh uses triangle costs to select and simplify a walkable corridor, and refuses spatial indexes above 8,388,608 triangle-to-cell references.
+
+The mesh is used as given: nothing is voxelized or eroded, so walkable triangles should already stop short of walls, or paths should be asked for with an `agentRadius`. Agents avoid each other by simple separation, not by predicting collisions, and there are no off-mesh links such as jumps or ladders.
+
 ## Text
 
 `createTextGeometry3D(text, font, {size, depth, align, letterSpacing, lineHeight, curveSegments})` turns a string into a mesh geometry in the XY plane with its first baseline on y = 0. With `depth` it is an extrusion with two material groups, faces and sides; with `depth: 0` it is flat. `createTextShapes3D` returns the outlines alone, and `font.measureText` the width.
@@ -225,6 +239,7 @@ The gizmo itself, `createTransformGizmo3D(camera)` from the core entry, takes no
 | `EffectComposer`, `UnrealBloomPass`, `OutputPass`, `FXAAShader`, `SSAOPass`, `OutlinePass`, `BokehPass`, `ShaderPass`, `DepthTexture` | `renderer.postProcess` with `ssao`, `outlineLayers`, `dof` and `custom` (`sceneDepth`) |
 | `BatchedMesh`, `Line2` | `createBatchedMesh3D`, `createFatLine3D` |
 | `TextGeometry`, `FontLoader`, `TTFLoader` | `createTextGeometry3D`, `parseTypefaceFont3D`, `parseTrueTypeFont3D` |
+| pathfinding add-ons such as three-pathfinding or recast-navigation | `createNavMesh3D`, `navMesh.findPath`, `createNavCrowd3D`, `findGridPath3D` |
 | `TransformControls` | `createTransformControls3D`, `createTransformGizmo3D` |
 | `renderer.clippingPlanes`, `scene.overrideMaterial` | `scene.clippingPlanes`, `scene.overrideMaterial` |
 | `CubeCamera`, `PMREMGenerator.fromEquirectangular` | `captureCubeTexture3D`, `createCubeTextureFromEquirect3D` |
@@ -250,7 +265,7 @@ For a 2D interface above a 3D scene, either stack a transparent shared 2D host c
 
 The [World3D example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/world3d/README.md) shows lights, shadows, instancing, skinning, morphing, particles, a render target, picking and orbit controls on either backend.
 
-Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.test.mjs`, `tests/world3d-gltf.test.mjs`, `tests/world3d-renderer-lifetime.test.mjs`, `tests/world3d-extended.test.mjs`, `tests/world3d-decoders.test.mjs` and `tests/world3d-parity.test.mjs` cover the DOM-free core, the asset providers, the state machine and physics through the public entries.
+Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.test.mjs`, `tests/world3d-gltf.test.mjs`, `tests/world3d-renderer-lifetime.test.mjs`, `tests/world3d-extended.test.mjs`, `tests/world3d-decoders.test.mjs`, `tests/world3d-navigation.test.mjs` and `tests/world3d-parity.test.mjs` cover the DOM-free core, the asset providers, the state machine and physics through the public entries.
 
 `tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` renders twenty fixed scenes into a render target on both backends and compares the images. The newer scenes cover cascaded shadows, post-processing, a compressed texture, screen layers, a scene restored from its saved document, stylized and custom materials, point-light shadows, screen-space occlusion with outlines and clipping, a vertex hook with its shadows, sheen, glass, light maps, a batch and a wide line, depth of field, refraction through glass, and text with transform gizmos. During development all twenty ran in headless Chromium with software rendering. The desktop review ran the first sixteen cases in Edge 157 on an NVIDIA RTX 5090 Laptop GPU without renderer override flags. The visible sample presented on both backends with antialiasing and stopped advancing frames on disposal.
 

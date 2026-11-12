@@ -9,7 +9,7 @@ import {
   Attribute3D, Mesh3D, Raycaster3D, Scene3D, Texture3D,
   createAmbientLight3D, createBatchedMesh3D, createBoxGeometry3D, createCapsuleGeometry3D, createCharacterMotor3D, createConvexHullShape3D, createCylinderGeometry3D,
   createDirectionalLight3D, createFatLine3D, createGlassMaterial3D, createGradientCubeTexture3D, createIcosahedronGeometry3D,
-  createLambertMaterial3D, createPerspectiveCamera3D, createPhysicsWorld3D, createPlaneGeometry3D, createSphereGeometry3D,
+  createLambertMaterial3D, createNavCrowd3D, createNavMesh3D, createPerspectiveCamera3D, createPhysicsWorld3D, createPlaneGeometry3D, createSphereGeometry3D,
   createStandardMaterial3D, createTextGeometry3D, createToonMaterial3D, createTorusKnotGeometry3D, createUnlitMaterial3D,
   mat4Compose, parseTrueTypeFont3D, parseTypefaceFont3D, quatFromAxisAngle,
 } from '@egret/engine/world3d';
@@ -65,8 +65,8 @@ async function main() {
   sun.setPosition(8, 14, 6).lookAt(0, 0, 0);
   Object.assign(sun.shadow, { cascades: 3, cascadeDistance: 60 });
   scene.addChild(sun);
-  const ground = new Mesh3D(createPlaneGeometry3D({ width: 120, height: 60 }), createStandardMaterial3D({ map: checker(256, 8, [150, 156, 166], [112, 118, 130]), roughness: 0.9 }));
-  ground.material.map.repeat.set([12, 6]);
+  const ground = new Mesh3D(createPlaneGeometry3D({ width: 120, height: 100 }), createStandardMaterial3D({ map: checker(256, 8, [150, 156, 166], [112, 118, 130]), roughness: 0.9 }));
+  ground.material.map.repeat.set([12, 10]);
   ground.setRotation(-Math.PI / 2, 0, 0);
   scene.addChild(ground);
 
@@ -177,6 +177,30 @@ async function main() {
   addEventListener('keyup', (event) => { keys.delete(event.code); });
   addEventListener('blur', () => keys.clear());
 
+  // ---- area 5: crowd (around z = -26) --------------------------------------------
+  // A yard of unit cells with pillars; the cells without a pillar become the navigation mesh.
+  const NZ = -26, yard = 24, pillarAt = (x, z) => (x % 6 === 3 && z % 5 === 2) || (x === 12 && z > 4 && z < 19 && z !== 11);
+  const navPositions = [], navIndices = [], pillar = createBoxGeometry3D({ width: 1, height: 1.4, depth: 1 }), pillarMaterial = createStandardMaterial3D({ color: 0x6f7f96, roughness: 0.8 });
+  for (let z = 0; z < yard; z++) for (let x = 0; x < yard; x++) {
+    const wx = x - yard / 2, wz = NZ + z - yard / 2;
+    if (pillarAt(x, z)) { const post = new Mesh3D(pillar, pillarMaterial); post.setPosition(wx + 0.5, 0.7, wz + 0.5); post.castShadow = true; scene.addChild(post); continue; }
+    const base = navPositions.length / 3;
+    navPositions.push(wx, 0, wz, wx + 1, 0, wz, wx + 1, 0, wz + 1, wx, 0, wz + 1);
+    navIndices.push(base, base + 2, base + 1, base, base + 3, base + 2);
+  }
+  const navMesh = createNavMesh3D({ positions: navPositions, indices: navIndices }), crowd = createNavCrowd3D(navMesh);
+  const navLines = new Mesh3D(navMesh.createDebugGeometry(0.03), createUnlitMaterial3D({ color: 0x2f6fd0 }));
+  navLines.visible = false;
+  scene.addChild(navLines);
+  const walkerGeometry = createCapsuleGeometry3D({ radius: 0.25, height: 0.7 }), walkerMaterials = [0xe85d4a, 0x4ab0e8, 0x6cc24a, 0xe8c04a].map((color) => createStandardMaterial3D({ color, roughness: 0.6 }));
+  for (let i = 0; i < 48; i++) {
+    const body = new Mesh3D(walkerGeometry, walkerMaterials[i % 4]);
+    body.castShadow = true;
+    // The capsule's middle sits above the ground, so it rides on a holder that the agent moves.
+    const holder = new Mesh3D(); body.setPosition(0, 0.6, 0); holder.addChild(body); scene.addChild(holder);
+    crowd.addAgent({ position: navMesh.randomPoint().point, radius: 0.3, speed: 2 + (i % 3) * 0.6, node: holder }).setTarget(navMesh.randomPoint().point);
+  }
+
   // ---- area 3: editing (around x = -26) ------------------------------------------
   const EX = -26;
   place(new Mesh3D(createBoxGeometry3D({}), createStandardMaterial3D({ color: 0x5aa0e6, roughness: 0.5 })), EX - 2, 0.5, 0, 'box');
@@ -222,6 +246,9 @@ async function main() {
       turntable.setAngularVelocity(0, 0.8, 0);
       ferry.setLinearVelocity(Math.cos(elapsedSeconds * 0.5) * 2, 0, 0);
       world.step(deltaSeconds);
+      // Each walker picks a new place to go once it has arrived.
+      for (const agent of crowd.agents) if (agent.arrived) agent.setTarget(navMesh.randomPoint().point);
+      crowd.update(deltaSeconds);
       // The character moves after the world, relative to the camera: W or Up walks away from the viewer.
       const forward = (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0) - (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0), right = (keys.has('KeyD') || keys.has('ArrowRight') ? 1 : 0) - (keys.has('KeyA') || keys.has('ArrowLeft') ? 1 : 0);
       const wish = follow.follow.moveDirection(forward, right), size = Math.hypot(wish[0], wish[2]) || 1, speed = keys.has('ShiftLeft') ? 6 : 3.5;
@@ -244,6 +271,7 @@ async function main() {
   press('#physics', () => go(PX, [0, 5, 13]));
   press('#editing', () => { go(EX, [0, 4, 8]); if (!selected) select(pickable.find((mesh) => mesh.name === 'column')); });
   press('#character', () => { setCharacterMode(true); canvas.focus(); });
+  press('#crowd', () => { go(0, [0, 16, 14]); controls.target.set([0, 0, NZ]); camera.setPosition(0, 18, NZ + 16); controls.syncFromCamera(); controls.update(0); });
   press('#shoot', shoot);
   for (const mode of ['translate', 'rotate', 'scale']) press('#' + mode, () => { transform.mode = mode; });
   press('#space', (event) => { transform.space = transform.space === 'world' ? 'local' : 'world'; event.currentTarget.textContent = transform.space === 'world' ? 'World / 世界' : 'Local / 本地'; });
@@ -252,6 +280,7 @@ async function main() {
     button.addEventListener('click', () => { const pressed = button.getAttribute('aria-pressed') !== 'true'; button.setAttribute('aria-pressed', String(pressed)); apply(pressed); });
   };
   toggle('#post', (on) => { post.enabled = on; });
+  toggle('#navmesh', (on) => { navLines.visible = on; });
   toggle('#ssao', (on) => { post.ssao = on; });
   toggle('#dof', (on) => { post.dof = on; });
   toggle('#shadows', (on) => { renderer.shadowsEnabled = on; });
@@ -285,6 +314,7 @@ async function main() {
     get frames() { return frames; },
     get error() { return lastError || deviceLost; },
     get info() { return { ...renderer.info, contacts: world.contactCount, bodies: world.bodies.length, selected: selected?.name, doorAngle: hinge.angle }; },
+    get crowd() { return { agents: crowd.agents.length, moving: crowd.agents.filter((agent) => Math.hypot(agent.velocity[0], agent.velocity[2]) > 0.2).length, triangles: navMesh.triangleCount }; },
     get hero() { return { position: [...motor.position], grounded: motor.isGrounded, ground: motor.groundBody?.type, cameraDistance: follow.follow.currentDistance }; },
     backend: useWebGPU ? 'webgpu' : 'webgl2',
     get selectedPosition() { return selected ? [...selected.getWorldPosition()] : undefined; },
