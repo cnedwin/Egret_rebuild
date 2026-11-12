@@ -104,6 +104,8 @@ export class Material3D extends Resource3D {
     environmentIntensity = 1;
     // Sprite and point rendering
     billboard = false;
+    /** Treat vertex positions as normalized device coordinates; used by full-screen layers. */
+    screenSpace = false;
     sizeAttenuation = true;
     rotation = 0;
     pointSize = 1;

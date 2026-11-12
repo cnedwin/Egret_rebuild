@@ -126,7 +126,11 @@ void main() {
     #else
     mat4 viewProjection = uViewProjection;
     #endif
-    #ifdef BILLBOARD
+    #ifdef SCREEN_SPACE
+    // Positions are already in normalized device coordinates.
+    world = vec4(uCameraPosition.xyz, 1.0);
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+    #elif defined(BILLBOARD)
     // Expand the quad in view space around the transformed node origin.
     vec4 center = uView * (model * vec4(0.0, 0.0, 0.0, 1.0));
     vec2 scale = vec2(length(model[0].xyz), length(model[1].xyz));

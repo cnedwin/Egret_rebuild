@@ -49,6 +49,8 @@ interface GeometryGpu {
     wire: {buffer: GPUBuffer; count: number; version: number} | undefined;
     morph: {buffer: GPUBuffer; channels: number; vertexCount: number} | undefined;
     layoutVersion: number;
+    /** Render-call serial of the last version check. */
+    serial: number;
     readonly unsubscribe: () => void;
 }
 interface InstanceGpu { matrices: BufferGpu; colors: BufferGpu | undefined; version: number; lastFrame: number; }
@@ -414,8 +416,10 @@ export class WebGPURenderer3D implements Renderer3D {
     }
     private geometry(geometry: Geometry3D): GeometryGpu {
         let entry = this.#geometries.get(geometry);
+        // Buffers are checked against the CPU versions once per render call.
+        if (entry && entry.serial === this.#serial) return entry;
         if (!entry) {
-            const created: GeometryGpu = {buffers: new Map(), index: undefined, wire: undefined, morph: undefined, layoutVersion: -1, unsubscribe: geometry.onDispose(() => this.releaseGeometry(geometry))};
+            const created: GeometryGpu = {buffers: new Map(), index: undefined, wire: undefined, morph: undefined, layoutVersion: -1, serial: -1, unsubscribe: geometry.onDispose(() => this.releaseGeometry(geometry))};
             this.#geometries.set(geometry, entry = created);
         }
         for (const name of ATTRIBUTE_SLOTS) {
@@ -457,6 +461,7 @@ export class WebGPURenderer3D implements Renderer3D {
             entry.wire = undefined;
             entry.layoutVersion = geometry.layoutVersion;
         }
+        entry.serial = this.#serial;
         return entry;
     }
     private wireframe(geometry: Geometry3D, entry: GeometryGpu): {buffer: GPUBuffer; count: number} {
@@ -573,7 +578,7 @@ export class WebGPURenderer3D implements Renderer3D {
             vertexColor: material.vertexColors && gpu.buffers.has('color'),
             skinning, morph: gpu.morph !== undefined, morphNormals: gpu.morph?.channels === 2,
             instancing: instanced, instanceColor: instanced && !depthOnly && (mesh as InstancedMesh3D).instanceColors !== undefined,
-            billboard: material.billboard,
+            billboard: material.billboard && !material.screenSpace, screenSpace: material.screenSpace,
             map: uv && material.map !== undefined && (!depthOnly || material.alphaMode !== 'opaque'),
             mapFromTarget: !depthOnly && uv && material.map?.source instanceof RenderTarget3D,
             normalMap: lit && uv && material.normalMap !== undefined,
@@ -683,37 +688,82 @@ export class WebGPURenderer3D implements Renderer3D {
         } else ints[o + 46] = 0;
         return index * OBJECT_BLOCK_BYTES_3D;
     }
+    // Pass-local memo of the last bound state; consecutive draws that share it skip the redundant calls.
+    #boundPipeline: GPURenderPipeline | undefined;
+    #boundMaterial: GPUBindGroup | undefined;
+    #boundSkin: GPUBindGroup | undefined;
+    #boundVertices: unknown;
+    #boundIndex: GPUBuffer | undefined;
+    readonly #drawVariants = new WeakMap<Material3D, {version: number; variants: Map<number, Map<number, {pipeline: GPURenderPipeline; features: ShaderFeatures3D; layoutVersion: number}>>}>();
+    private resetPassState(): void {
+        this.#boundPipeline = undefined; this.#boundMaterial = undefined; this.#boundSkin = undefined; this.#boundVertices = undefined; this.#boundIndex = undefined;
+    }
     private draw(pass: GPURenderPassEncoder, item: RenderItem3D, kind: PassKind, frameFlags: {fog: boolean; environment: boolean}): void {
         const {mesh, geometry, material} = item, frame = this.#list.frame;
         const gpu = this.geometry(geometry);
         if (!gpu.buffers.has('position')) return;
-        const features = this.features(item, gpu, kind, frameFlags);
         const instanced = mesh.isInstanced, instances = instanced ? (mesh as InstancedMesh3D).count : 1;
         if (instances <= 0 || this.#objectCount >= this.#objectCapacity) return;
         const world = mesh.matrixWorld;
         const determinant = world[0]! * (world[5]! * world[10]! - world[6]! * world[9]!) - world[4]! * (world[1]! * world[10]! - world[2]! * world[9]!)
             + world[8]! * (world[1]! * world[6]! - world[2]! * world[5]!);
         const wire = material.wireframe && kind !== 'depth' && geometry.topology === 'triangles';
-        pass.setPipeline(this.pipeline(features, item, gpu, kind, determinant < 0 && !features.skinning, wire));
-        pass.setBindGroup(1, this.material(material));
+        // Everything that selects a pipeline besides the material and geometry themselves,
+        // packed into one number so the common case is a single map lookup.
+        const bits = (kind === 'canvas' ? 0 : kind === 'target' ? 1 : 2) | (wire ? 4 : 0) | (determinant < 0 ? 8 : 0) | (instanced ? 16 : 0)
+            | (instanced && (mesh as InstancedMesh3D).instanceColors ? 32 : 0) | (mesh.skeleton ? 64 : 0) | (mesh.receiveShadow && this.#shadowCount > 0 ? 128 : 0)
+            | (frameFlags.fog ? 256 : 0) | (frameFlags.environment ? 512 : 0) | (this.toneMapping !== 'none' ? 1024 : 0)
+            | (instanced && (mesh as InstancedMesh3D).instanceColorSize === 4 ? 2048 : 0)
+            | (material.side === 'double' ? 4096 : material.side === 'back' ? 8192 : 0);
+        let cache = this.#drawVariants.get(material);
+        if (!cache || cache.version !== material.version) this.#drawVariants.set(material, cache = {version: material.version, variants: new Map()});
+        // Material fields that select shader features or pipeline state. They are read every
+        // draw so plain assignments (a new map, another blend mode) need no touch().
+        const map = material.map;
+        const surface = (map ? 1 : 0) | (map?.source instanceof RenderTarget3D ? 2 : 0) | (material.normalMap ? 4 : 0) | (material.metallicRoughnessMap ? 8 : 0)
+            | (material.occlusionMap ? 16 : 0) | (material.emissiveMap ? 32 : 0) | (material.alphaMode === 'mask' ? 64 : material.alphaMode === 'blend' ? 128 : 0)
+            | (material.blending === 'premultiplied' ? 256 : material.blending === 'additive' ? 32768 : material.blending === 'multiply' ? 65536 : 0)
+            | (material.flatShading ? 512 : 0) | (material.vertexColors ? 1024 : 0) | (material.billboard ? 2048 : 0) | (material.screenSpace ? 4096 : 0)
+            | (material.depthTest ? 8192 : 0) | (material.depthWrite ? 16384 : 0) | (material.fog ? 131072 : 0) | (material.toneMapped ? 262144 : 0)
+            | (material.polygonOffset ? 524288 : 0);
+        const variantKey = surface * 16384 + bits;
+        let byGeometry = cache.variants.get(geometry.id);
+        if (!byGeometry) cache.variants.set(geometry.id, byGeometry = new Map());
+        let variant = byGeometry.get(variantKey);
+        if (!variant || variant.layoutVersion !== gpu.layoutVersion) {
+            const built = this.features(item, gpu, kind, frameFlags);
+            variant = {features: built, pipeline: this.pipeline(built, item, gpu, kind, determinant < 0 && !built.skinning, wire), layoutVersion: gpu.layoutVersion};
+            byGeometry.set(variantKey, variant);
+        }
+        const features = variant.features;
+        if (variant.pipeline !== this.#boundPipeline) { pass.setPipeline(variant.pipeline); this.#boundPipeline = variant.pipeline; }
+        const materialGroup = this.material(material);
+        if (materialGroup !== this.#boundMaterial) { pass.setBindGroup(1, materialGroup); this.#boundMaterial = materialGroup; }
         pass.setBindGroup(2, this.#objectGroup, [this.writeObject(mesh, gpu, features.skinning)]);
-        pass.setBindGroup(3, this.skin(mesh, gpu, features.skinning, frame));
-        let slot = 0;
-        const bind = (enabled: boolean, name: string): void => { if (enabled) pass.setVertexBuffer(slot++, gpu.buffers.get(name)!.buffer); };
-        bind(true, 'position'); bind(features.normal, 'normal'); bind(features.uv, 'uv'); bind(features.tangent, 'tangent');
-        bind(features.vertexColor, 'color'); bind(features.skinning, 'joints'); bind(features.skinning, 'weights');
-        if (instanced) {
-            const instance = this.instances(mesh as InstancedMesh3D, frame);
-            pass.setVertexBuffer(slot++, instance.matrices.buffer);
-            if (features.instanceColor) pass.setVertexBuffer(slot++, instance.colors!.buffer);
+        const skinGroup = this.skin(mesh, gpu, features.skinning, frame);
+        if (skinGroup !== this.#boundSkin) { pass.setBindGroup(3, skinGroup); this.#boundSkin = skinGroup; }
+        // Vertex bindings depend on the geometry and on which attributes this variant reads.
+        if (instanced || this.#boundVertices !== variant || this.#boundPipeline !== variant.pipeline) {
+            let slot = 0;
+            const bind = (enabled: boolean, name: string): void => { if (enabled) pass.setVertexBuffer(slot++, gpu.buffers.get(name)!.buffer); };
+            bind(true, 'position'); bind(features.normal, 'normal'); bind(features.uv, 'uv'); bind(features.tangent, 'tangent');
+            bind(features.vertexColor, 'color'); bind(features.skinning, 'joints'); bind(features.skinning, 'weights');
+            if (instanced) {
+                const instance = this.instances(mesh as InstancedMesh3D, frame);
+                pass.setVertexBuffer(slot++, instance.matrices.buffer);
+                if (features.instanceColor) pass.setVertexBuffer(slot++, instance.colors!.buffer);
+            }
+            this.#boundVertices = instanced ? undefined : variant;
+            this.#boundIndex = undefined;
         }
         if (wire) {
             // Wireframe draws the whole geometry: its edge list is not split by groups.
             const lines = this.wireframe(geometry, gpu);
             pass.setIndexBuffer(lines.buffer, 'uint32');
             pass.drawIndexed(lines.count, instances);
+            this.#boundIndex = undefined;
         } else if (gpu.index) {
-            pass.setIndexBuffer(gpu.index.buffer, gpu.index.format);
+            if (gpu.index.buffer !== this.#boundIndex) { pass.setIndexBuffer(gpu.index.buffer, gpu.index.format); this.#boundIndex = gpu.index.buffer; }
             pass.drawIndexed(item.count, instances, item.start);
         } else pass.draw(item.count, instances, item.start);
         if (kind !== 'depth') {
@@ -836,6 +886,7 @@ export class WebGPURenderer3D implements Renderer3D {
 
         const encoder = device.createCommandEncoder();
         if (plans.length > 0) {
+            this.resetPassState();
             const pass = encoder.beginRenderPass({colorAttachments: [], depthStencilAttachment: {view: atlas, depthClearValue: 1, depthLoadOp: 'clear', depthStoreOp: 'store'}});
             for (const plan of plans) {
                 let slot = this.#depthFrames[plan.slot];
@@ -869,12 +920,14 @@ export class WebGPURenderer3D implements Renderer3D {
                 : {view, clearValue, loadOp: 'clear', storeOp: 'store'};
             depthView = attachments.depth;
         }
+        this.resetPassState();
         const pass = encoder.beginRenderPass({colorAttachments: [colorAttachment], depthStencilAttachment: {view: depthView, depthClearValue: 1, depthLoadOp: 'clear', depthStoreOp: 'discard'}});
         const flags = {fog: scene.fog !== undefined, environment: environment !== undefined};
         pass.setBindGroup(0, this.#frameGroup);
         for (const item of list.opaque) this.draw(pass, item, kind, flags);
         if (background instanceof CubeTexture3D && !background.isDisposed) {
             this.drawSkybox(pass, background, scene.backgroundIntensity, camera, kind);
+            this.resetPassState();
             pass.setBindGroup(0, this.#frameGroup);
         }
         for (const item of list.transparent) this.draw(pass, item, kind, flags);

@@ -322,7 +322,8 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (has(V.morphNormals) && !depthOnly) defines.push('USE_MORPH_NORMALS');
         if (has(V.instancing)) defines.push('USE_INSTANCING');
         if (has(V.points)) defines.push('POINTS');
-        if (material.billboard) defines.push('BILLBOARD');
+        if (material.screenSpace) defines.push('SCREEN_SPACE');
+        else if (material.billboard) defines.push('BILLBOARD');
         if (uv && material.map) {
             defines.push('USE_MAP');
             if (has(V.mapFromTarget)) defines.push('MAP_FROM_TARGET');

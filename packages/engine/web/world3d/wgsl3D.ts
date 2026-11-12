@@ -16,6 +16,7 @@ export interface ShaderFeatures3D {
     readonly instancing: boolean;
     readonly instanceColor: boolean;
     readonly billboard: boolean;
+    readonly screenSpace: boolean;
     readonly map: boolean;
     readonly mapFromTarget: boolean;
     readonly normalMap: boolean;
@@ -178,7 +179,8 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     normal = vec3f(0.0, 0.0, 1.0);
     normalMatrix = transpose(mat3x3f(frame.view[0].xyz, frame.view[1].xyz, frame.view[2].xyz));` : ''}
     var output: VertexOutput;
-    let clip = frame.viewProjection * world;
+    var clip = frame.viewProjection * world;
+    ${f.screenSpace ? '// Positions are already in normalized device coordinates; depth is remapped below.\n    clip = vec4f(position.xy, -1.0, 1.0);' : ''}
     // Matrices follow OpenGL clip conventions; WebGPU depth spans [0, 1].
     output.clip = vec4f(clip.xy, (clip.z + clip.w) * 0.5, clip.w);
     output.worldPosition = world.xyz;

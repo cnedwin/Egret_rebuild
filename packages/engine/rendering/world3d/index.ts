@@ -55,6 +55,7 @@ export type {GltfImageRequest3D, GltfLoadOptions3D, GltfAsset3D} from './Gltf3D.
 export {ParticleEmitter3D, createParticleEmitter3D, PARTICLES3D_LIMITS} from './Particles3D.js';
 export type {ParticleShape3D, ParticleEmitterOptions3D} from './Particles3D.js';
 export {
-    Lod3D, createGridGeometry3D, createAxesGeometry3D, createBoxEdgesGeometry3D, createLineMaterial3D, createGridHelper3D,
+    Lod3D, ScreenLayer3D, createScreenLayer3D, createGridGeometry3D, createAxesGeometry3D, createBoxEdgesGeometry3D, createLineMaterial3D, createGridHelper3D,
     createAxesHelper3D,
 } from './helpers3D.js';
+export type {ScreenLayerOptions3D} from './helpers3D.js';

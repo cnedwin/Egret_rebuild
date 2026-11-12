@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>World3D frame-cost baseline</title>
+  <script type="importmap">{"imports":{"@egret/contracts":"/packages/contracts/dist/index.js","@egret/runtime":"/packages/runtime/dist/index.js"}}</script>
+</head>
+<body>
+  <canvas id="c" width="64" height="64"></canvas>
+  <script type="module">
+    // Measures the CPU time of render() for fixed scenes drawn into a 1280x720 render target.
+    import * as W from '/packages/engine/dist/rendering/world3d/index.js';
+    const params = new URL(location.href).searchParams, backend = params.get('backend'), frames = Number(params.get('frames') ?? 40);
+    const rows = [], errors = [];
+    try {
+      const mod = await import(backend === 'webgpu' ? '/packages/engine/dist/web/world3d/webgpu.js' : '/packages/engine/dist/web/world3d/index.js');
+      const canvas = document.querySelector('#c');
+      const renderer = backend === 'webgpu' ? await mod.createWebGPURenderer3D({ canvas, onDeviceLost: (message) => errors.push('device lost: ' + message) }) : mod.createWebGL2Renderer3D({ canvas });
+      const target = new W.RenderTarget3D(1280, 720);
+      const base = () => {
+        const scene = new W.Scene3D(); scene.background = [0.05, 0.08, 0.12];
+        const camera = W.createPerspectiveCamera3D({ aspect: 16 / 9, fov: 55, near: 0.5, far: 400 }); camera.setPosition(0, 40, 90).lookAt(0, 0, 0); scene.addChild(camera);
+        scene.addChild(W.createAmbientLight3D({ intensity: 0.2 }));
+        const sun = W.createDirectionalLight3D({ intensity: 1.5 }); sun.setPosition(30, 60, 20).lookAt(0, 0, 0); Object.assign(sun.shadow, { extent: 80, near: 1, far: 200 }); scene.addChild(sun);
+        return { scene, camera, sun };
+      };
+      const grid = (scene, count, make) => { const side = Math.ceil(Math.sqrt(count)), nodes = []; for (let i = 0; i < count; i++) { const node = make(i); node.setPosition((i % side - side / 2) * 1.6, 0.5, (Math.floor(i / side) - side / 2) * 1.6); scene.addChild(node); nodes.push(node); } return nodes; };
+      const box = W.createBoxGeometry3D(), materials = Array.from({ length: 8 }, (_, i) => W.createStandardMaterial3D({ color: [0.3 + i / 12, 0.5, 0.9 - i / 12], roughness: 0.6 }));
+      const cases = {
+        'meshes-1000-static': () => { const s = base(); grid(s.scene, 1000, (i) => new W.Mesh3D(box, materials[i % 8])); return s; },
+        'meshes-5000-static': () => { const s = base(); grid(s.scene, 5000, (i) => new W.Mesh3D(box, materials[i % 8])); return s; },
+        'meshes-5000-all-moving': () => { const s = base(); const nodes = grid(s.scene, 5000, (i) => new W.Mesh3D(box, materials[i % 8])); s.update = (t) => { for (let i = 0; i < nodes.length; i++) nodes[i].rotateOnAxis([0, 1, 0], 0.01); }; return s; },
+        'meshes-5000-shadows': () => { const s = base(); s.sun.castShadow = true; grid(s.scene, 5000, (i) => new W.Mesh3D(box, materials[i % 8])); return s; },
+        'instances-100000': () => { const s = base(); const mesh = new W.InstancedMesh3D(box, materials[0], 100000); for (let i = 0; i < 100000; i++) mesh.setTransformAt(i, [(i % 400 - 200) * 0.5, 0, (Math.floor(i / 400) - 125) * 0.5], [0, 0, 0, 1], 0.3); s.scene.addChild(mesh); return s; },
+        'lights-16-meshes-1000': () => { const s = base(); grid(s.scene, 1000, (i) => new W.Mesh3D(box, materials[i % 8])); for (let i = 0; i < 8; i++) { const p = W.createPointLight3D({ intensity: 30, range: 25 }); p.setPosition(Math.cos(i) * 20, 5, Math.sin(i) * 20); s.scene.addChild(p); } for (let i = 0; i < 4; i++) { const l = W.createSpotLight3D({ intensity: 80, range: 60 }); l.setPosition(i * 10 - 15, 20, 10).lookAt(i * 10 - 15, 0, 0); s.scene.addChild(l); } return s; },
+        'skinned-200': () => { const s = base(); const g = W.createCylinderGeometry3D({ height: 2, heightSegments: 8, radialSegments: 12 }), count = g.vertexCount, joints = new Uint16Array(count * 4), weights = new Float32Array(count * 4), pos = g.getAttribute('position').data; for (let i = 0; i < count; i++) { const k = pos[i * 3 + 1] / 2 + 0.5; joints.set([0, 1, 0, 0], i * 4); weights.set([1 - k, k, 0, 0], i * 4); } g.setAttribute('joints', new W.Attribute3D(joints, 4)); g.setAttribute('weights', new W.Attribute3D(weights, 4)); const tips = []; grid(s.scene, 200, () => { const mesh = new W.Mesh3D(g, materials[1]); const a = new W.Bone3D(), b = new W.Bone3D(); a.setPosition(0, -1, 0); b.setPosition(0, 2, 0); mesh.addChild(a); a.addChild(b); mesh.updateWorldMatrices(); mesh.bind(new W.Skeleton3D([a, b])); tips.push(b); return mesh; }); s.update = (t) => { for (const tip of tips) tip.setRotation(0, 0, Math.sin(t) * 0.4); }; return s; },
+      };
+      for (const [name, build] of Object.entries(cases)) {
+        const { scene, camera, update } = build(), samples = [];
+        for (let i = 0; i < frames + 5; i++) {
+          update?.(i / 30);
+          const start = performance.now();
+          if (!renderer.render(scene, camera, target)) throw new Error('renderer lost in ' + name);
+          const elapsed = performance.now() - start;
+          if (i >= 5) samples.push(elapsed);
+        }
+        await renderer.readRenderTargetPixels(target);
+        samples.sort((a, b) => a - b);
+        rows.push({ case: name, medianMs: samples[samples.length >> 1], p95Ms: samples[Math.floor(samples.length * 0.95)], drawCalls: renderer.info.drawCalls, triangles: Math.round(renderer.info.triangles), culled: renderer.info.culled });
+      }
+      renderer.dispose();
+      globalThis.__world3dBench = { backend, frames, rows, errors };
+    } catch (cause) {
+      globalThis.__world3dBench = { backend, rows, errors, failure: String(cause?.stack ?? cause) };
+    }
+  </script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 // are pooled so a steady scene allocates nothing per frame.
 import type {Camera3D} from './Camera3D.js';
 import type {Geometry3D} from './Geometry3D.js';
-import {Lod3D} from './helpers3D.js';
+import {Lod3D, ScreenLayer3D} from './helpers3D.js';
 import {LIGHT3D_LIMITS, Light3D} from './Light3D.js';
 import type {Material3D} from './Material3D.js';
 import {frustumIntersectsSphere} from './math3D.js';
@@ -106,6 +106,7 @@ export class RenderList3D {
         if (geometry.isDisposed || geometry.drawCount === 0) return;
         this.stats.visited++;
         if (mesh.skeleton) mesh.skeleton.update(this.#frame);
+        if (mesh instanceof ScreenLayer3D && mesh.autoUpdate) mesh.refreshSource();
         if (mesh.castShadow) this.shadowCasters.push(mesh);
         if ((mesh.layers & camera.layerMask) === 0) return;
         const sphere = mesh.worldBoundingSphere;
