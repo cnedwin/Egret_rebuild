@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import test from 'node:test';
+import nodeTest from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, readdirSync, lstatSync,
   realpathSync, copyFileSync, symlinkSync, rmSync, existsSync } from 'node:fs';
@@ -10,6 +10,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createImageData2D, createTexture, copyImageData2DPixels } from '@egret/engine';
 import { fingerprintFile, logicalPath, samePhysicalPath } from '../tools/lib/file-identity.mjs';
+
+// The controls are dealt across four sibling test files so that they run side by side.
+// Each file owns its own policy copy; together the files register every control exactly once.
+const parts = 4, part = Number(new URL(import.meta.url).searchParams.get('part') ?? '1');
+assert.ok(Number.isInteger(part) && part >= 1 && part <= parts, 'A control part between one and four is required');
+let ordinal = 0;
+const test = Object.assign((...registration) => { if (ordinal++ % parts === part - 1) nodeTest(...registration); }, { after: nodeTest.after });
 
 const repository = realpathSync(fileURLToPath(new URL('../', import.meta.url)));
 const packages = ['contracts', 'runtime', 'engine', 'project'];
