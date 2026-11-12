@@ -124,7 +124,24 @@ function nativeEditingPackageSuccessor(expected,raw){
 // AUTHORED-SCENE-PACKAGE-BEGIN
 // Only the exact authored-scene package may project to its complete predecessor.
 const authoredScenePackagePair = {"base":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"},"current":{"path":"packages/engine/package.json","bytes":3662,"sha256":"32bdc997a04e80bc65fc014a174a46e874b565960703d005850be6120811beec"}};
+// WORLD3D-PACKAGE-BEGIN
+// Only the exact World3D package may project to its complete predecessor.
+const world3dPackagePair = {"base":{"path":"packages/engine/package.json","bytes":3662,"sha256":"32bdc997a04e80bc65fc014a174a46e874b565960703d005850be6120811beec"},"current":{"path":"packages/engine/package.json","bytes":4050,"sha256":"c413bebdaafd1ab3bb9075a518122857aaabad560997c700f214b3b4f4dcb6ab"}};
+const world3dPackageExports = {"./world3d":{"types":"./dist/rendering/world3d/index.d.ts","import":"./dist/rendering/world3d/index.js"},"./webgl2/world3d":{"types":"./dist/web/world3d/index.d.ts","import":"./dist/web/world3d/index.js"},"./webgpu/world3d":{"types":"./dist/web/world3d/webgpu.d.ts","import":"./dist/web/world3d/webgpu.js"}};
+function projectWorld3DPackage(raw){
+  const {base,current}=world3dPackagePair,digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+  if(raw.length!==current.bytes||digest(raw)!==current.sha256)return raw;
+  const value=JSON.parse(raw.toString('utf8'));
+  for(const [entry,mapping] of Object.entries(world3dPackageExports)){
+    if(JSON.stringify(value.exports[entry])!==JSON.stringify(mapping))return raw;
+    delete value.exports[entry];
+  }
+  const prior=Buffer.from(JSON.stringify(value,null,2)+'\n');
+  return prior.length===base.bytes&&digest(prior)===base.sha256?prior:raw;
+}
+// WORLD3D-PACKAGE-END
 function projectAuthoredScenePackage(raw){
+  raw=projectWorld3DPackage(raw);
   const {base,current}=authoredScenePackagePair,digest=bytes=>createHash('sha256').update(bytes).digest('hex');
   if(raw.length!==current.bytes||digest(raw)!==current.sha256)return raw;
   const value=JSON.parse(raw.toString('utf8'));

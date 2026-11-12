@@ -193,6 +193,8 @@ function nativeEditingStrictPin(root,selected,id,row){
  if(!pair)return row;
  const actual=fingerprintFile(root,row.path);
  if(equal(actual,pair.current))return pair.current;
+ // World3D extends the authored-scene package mapping only; its exact identity is the one further successor.
+ if(equal(pair.current,authoredSceneStrictPackage.base)&&equal(actual,{"path":"packages/engine/package.json","bytes":4050,"sha256":"c413bebdaafd1ab3bb9075a518122857aaabad560997c700f214b3b4f4dcb6ab"}))return {"path":"packages/engine/package.json","bytes":4050,"sha256":"c413bebdaafd1ab3bb9075a518122857aaabad560997c700f214b3b4f4dcb6ab"};
  return equal(pair.current,authoredSceneStrictPackage.base)&&equal(actual,authoredSceneStrictPackage.current)?authoredSceneStrictPackage.current:row;
 }
 function m22SequencePin(root,selected,id,row){
