@@ -4,6 +4,18 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## World3D 玩法物理与渲染 — 2026-11-13
+
+自动实例化合并兼容的绘制项，拾取层级加速稠密网格查询。物理增加形状扫掠、组合刚体、接触报告和求解器改进，并提供布娃娃、街机式载具、绳索、布料和消息端口辅助组件。最新 PR 记录了 27 项无头软件渲染 WebGL2／WebGPU 固定对比，以及使用 MessageChannel 和 Node 工作线程的远程测试。浏览器 Worker、实体设备和性能仍待验收。 [#163](https://github.com/cnedwin/Egret_rebuild/pull/163) · [#166](https://github.com/cnedwin/Egret_rebuild/pull/166) · [#167](https://github.com/cnedwin/Egret_rebuild/pull/167) · [#168](https://github.com/cnedwin/Egret_rebuild/pull/168)
+
+## Windows 合并检查并行化 — 2026-11-13
+
+一个 Windows 作业执行结构和发布检查，四个独立测试分片在同一候选上覆盖完整套件。#164 合并前的最终托管运行从创建到完成用时 13 分 12 秒。 [#164](https://github.com/cnedwin/Egret_rebuild/pull/164) · [托管运行记录](https://github.com/cnedwin/Egret_rebuild/actions/runs/43294257120)
+
+## World3D 角色、地形与特效 — 2026-11-12–13
+
+系列交付涵盖角色控制、资源解码、导航、地形与水面、蒙皮人群和特效。该系列最后一个检查点在 Windows Edge 通过 25 项固定 WebGL2／WebGPU 离屏对比，以及两个后端各自的软粒子深度检查。 [#154](https://github.com/cnedwin/Egret_rebuild/pull/154)–[#159](https://github.com/cnedwin/Egret_rebuild/pull/159) · [#161](https://github.com/cnedwin/Egret_rebuild/pull/161)
+
 ## 固定桌面渲染 CPU 目标 — 2026-11-12
 
 Windows E20 的全脏 Engine p95 中位数达到 5.3 ms，三种状态均达到 CPU 与准备目标。稀疏和全脏帧节奏仍超出目标，GPU 时间未测。[#153](https://github.com/cnedwin/Egret_rebuild/pull/153)
