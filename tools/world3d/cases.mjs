@@ -86,6 +86,47 @@ export async function verifySkinAfterFlippedUpload(W, renderer) {
   }
 }
 
+export async function verifySoftDepthVisibility(W, renderer) {
+  const camera = W.createOrthographicCamera3D({height: 2, aspect: 1, near: 0.1, far: 10});
+  camera.setPosition(0, 0, 4).lookAt(0, 0, 0);
+  const scene = new W.Scene3D();
+  scene.background = [0, 0, 0];
+  const particle = W.createGpuParticles3D({
+    count: 1, lifetime: 2, loop: false, speed: 0, startSize: 0.6, startColor: 0x00ff00,
+    fadeIn: 0, fadeOut: 0, softness: 0.4, blending: 'normal',
+  });
+  particle.time = 1;
+  const wall = new W.Mesh3D(W.createPlaneGeometry3D({width: 1, height: 1}), W.createUnlitMaterial3D({color: 0x000000, side: 'front'}));
+  const output = new W.RenderTarget3D(16, 16);
+  scene.addChild(particle);
+  async function green() {
+    if (!renderer.render(scene, camera, output)) throw new Error('Renderer lost during soft depth verification');
+    const data = await renderer.readRenderTargetPixels(output);
+    return data[(8 * output.width + 8) * 4 + 1];
+  }
+  try {
+    const clear = await green();
+    wall.setPosition(0, 0, 0.25).setRotation(0, Math.PI, 0);
+    scene.addChild(wall);
+    const back = await green();
+    if (clear < 210 || Math.abs(clear - back) > 2) throw new Error('A hidden backface changed soft particle visibility: ' + clear + ', ' + back);
+    wall.setPosition(0, 0, -0.05).setRotation(0, 0, 0);
+    const front = await green();
+    if (front < 40 || front > 150) throw new Error('A visible face did not fade the particle: ' + front);
+    const turn = Math.PI / 3, sampleX = 1 / output.width;
+    // Match the flat wall's depth at the sampled pixel; a shadow slope bias would change the fade.
+    wall.setPosition(0, 0, -0.05 + Math.tan(turn) * sampleX).setRotation(0, turn, 0);
+    const slope = await green();
+    if (Math.abs(front - slope) > 3) throw new Error('Soft depth changed with wall slope: ' + front + ', ' + slope);
+    return {clear, back, front, slope};
+  } finally {
+    output.dispose();
+    particle.dispose();
+    wall.geometry.dispose();
+    wall.material.dispose();
+  }
+}
+
 export async function verifyObliquePostDepth(W, renderer, createCustomPost3D) {
   const savedToneMapping = renderer.toneMapping;
   const camera = W.createPerspectiveCamera3D({aspect: 1, near: 0.1, far: 100});

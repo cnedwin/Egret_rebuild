@@ -110,6 +110,28 @@ test('a decal wraps a curved surface and rides on its mesh', () => {
   assert.equal(faces.size, 3);
 });
 
+test('a decal follows the visible face of a mirrored target', () => {
+  const geometry = createPlaneGeometry3D({width: 4, height: 4});
+  const wall = new Mesh3D(geometry, createStandardMaterial3D({}));
+  wall.setScale(-2, 1, 3);
+  const scene = new Object3D();
+  scene.addChild(wall);
+  const ray = new Raycaster3D();
+  ray.set([0, 0, 5], [0, 0, -1]);
+  const hit = ray.intersect(scene)[0];
+  assert.equal(hit.object, wall);
+  for (const withNormal of [true, false]) {
+    if (!withNormal) geometry.removeAttribute('normal');
+    const decal = createDecalGeometry3D(wall, {position: hit.point, normal: [0, 0, 1], offset: 0.03});
+    assert.ok(decal, 'the visible face must admit a decal');
+    const positions = decal.getAttribute('position').data, normals = decal.getAttribute('normal').data;
+    for (let i = 0; i < positions.length; i += 3) {
+      close(positions[i + 2] * 3, 0.03);
+      close(normals[i + 2], 1);
+    }
+  }
+});
+
 test('GPU particles carry their whole motion in the instance data', () => {
   const particles = createGpuParticles3D({count: 500, lifetime: [1, 2], speed: [2, 3], direction: [0, 1, 0], spread: 0.3, gravity: [0, -5, 0], drag: 0.2, startSize: [0.1, 0.2], endScale: 3, startColor: [1, 0.5, 0], endColor: [0, 0, 1], startOpacity: 0.8, endOpacity: 0.1, softness: 0.4, seed: 5});
   assert.ok(particles instanceof GpuParticles3D);
