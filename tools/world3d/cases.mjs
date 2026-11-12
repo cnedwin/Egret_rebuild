@@ -45,6 +45,40 @@ export async function verifyTextureSourceReplacement(W, renderer) {
   }
 }
 
+export async function verifyObliquePostDepth(W, renderer, createCustomPost3D) {
+  const savedToneMapping = renderer.toneMapping;
+  const camera = W.createPerspectiveCamera3D({aspect: 1, near: 0.1, far: 100});
+  camera.customProjection = camera.projectionMatrix.slice();
+  // Make clip depth depend on view X and Y. The wall still has constant view depth.
+  camera.customProjection[2] = 0.05;
+  camera.customProjection[6] = -0.04;
+  const scene = new W.Scene3D();
+  const geometry = W.createPlaneGeometry3D({width: 6, height: 6});
+  const material = W.createUnlitMaterial3D();
+  scene.addChild(new W.Mesh3D(geometry, material)).setPosition(0, 0, -8);
+  const target = new W.RenderTarget3D(64, 64);
+  const post = {...renderer.postProcess};
+  try {
+    renderer.toneMapping = 'none';
+    Object.assign(renderer.postProcess, {enabled: true, bloom: false, fxaa: false, custom: createCustomPost3D({
+      key: 'verify-oblique-depth',
+      glsl: 'vec3 customPost(vec3 c, vec2 uv) { return abs(sceneDepth(uv) - 8.0) < 0.05 ? vec3(0, 1, 0) : vec3(1, 0, 0); }',
+      wgsl: 'fn customPost(c: vec3f, uv: vec2f) -> vec3f { return select(vec3f(1, 0, 0), vec3f(0, 1, 0), abs(sceneDepth(uv) - 8.0) < 0.05); }',
+    })});
+    if (!renderer.render(scene, camera, target)) throw new Error('Renderer lost during oblique depth check');
+    const pixels = await renderer.readRenderTargetPixels(target);
+    for (const [x, y] of [[19, 32], [32, 32], [43, 32], [32, 20], [32, 44]]) {
+      const offset = (y * target.width + x) * 4;
+      const rgba = pixels.subarray(offset, offset + 4);
+      if (rgba[0] > 2 || rgba[1] < 253) throw new Error(`Expected depth 8 at ${x},${y} under oblique projection, got RGBA ${rgba.join(',')}`);
+    }
+  } finally {
+    renderer.toneMapping = savedToneMapping;
+    Object.assign(renderer.postProcess, post);
+    target.dispose(); material.dispose(); geometry.dispose();
+  }
+}
+
 export function buildCases(W) {
   const checker = (size, cells, a, b) => { const data = new Uint8Array(size * size * 4); for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) data.set([...(((Math.floor(x * cells / size) + Math.floor(y * cells / size)) & 1) ? b : a), 255], (y * size + x) * 4); return new W.Texture3D({width: size, height: size, data}); };
   const dot = size => { const data = new Uint8Array(size * size * 4); for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) { const d = Math.hypot((x + .5) / size - .5, (y + .5) / size - .5) * 2; data.set([255, 255, 255, Math.round(255 * Math.max(0, 1 - d) ** 2)], (y * size + x) * 4); } return new W.Texture3D({width: size, height: size, data}, {wrapS: 'clamp', wrapT: 'clamp'}); };
@@ -66,5 +100,7 @@ export function buildCases(W) {
     savedScene() { const s = base(); lights(s.scene, true); floor(s.scene); const t = checker(16, 4, [240, 240, 240], [60, 90, 200]); const box = new W.Mesh3D(W.createBoxGeometry3D({width: 1.4, height: 1.4, depth: 1.4}), W.createStandardMaterial3D({map: t, roughness: 0.6})); box.setPosition(0, 0.7, 0).setRotation(0, 0.5, 0); s.scene.addChild(box); const im = new W.InstancedMesh3D(W.createSphereGeometry3D({radius: 0.2}), W.createLambertMaterial3D({color: 0xffcc44}), 6); for (let i = 0; i < 6; i++) { const at = new W.Object3D().setPosition(-2.5 + i, 0.2, 1.6); at.updateWorldMatrices(); im.setMatrixAt(i, at.matrixWorld); } s.scene.addChild(im); const restored = W.deserializeScene3D(JSON.parse(JSON.stringify(W.serializeScene3D(s.scene)))); return {scene: restored.root, camera: restored.cameras[0]}; },
     stylizedMaterials() { const s = base(); lights(s.scene); const N = 32, image = new Uint8Array(N * N * 4); for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const dx = (x + 0.5) / N * 2 - 1, dy = (y + 0.5) / N * 2 - 1, l = Math.sqrt(Math.max(0, 1 - Math.hypot(dx, dy))); image.set([255 * l, 160 * l + 60 * Math.max(0, dy), 80 + 100 * Math.max(0, -dx), 255], (y * N + x) * 4); } const paint = W.createStandardMaterial3D({color: 0x991111, roughness: 0.7}); paint.clearcoat = 1; paint.clearcoatRoughness = 0.05; const striped = W.createLambertMaterial3D({color: 0xcccccc}); striped.shader = W.createCustomShader3D({key: 'verify-stripes', uniforms: [0.2, 1, 0.3, 8], glsl: 'vec4 customFragment(vec4 color, vec3 p, vec3 n, vec2 uv) { float band = step(0.5, fract(p.y * uCustom[0].w)); return vec4(mix(color.rgb, uCustom[0].rgb, band * 0.6), color.a); }', wgsl: 'fn customFragment(color: vec4f, p: vec3f, n: vec3f, uv: vec2f) -> vec4f { let band = step(0.5, fract(p.y * material.custom[0].w)); return vec4f(mix(color.rgb, material.custom[0].rgb, band * 0.6), color.a); }'}); const materials = [W.createToonMaterial3D({color: 0xe66633, steps: 3}), W.createMatcapMaterial3D({matcap: new W.Texture3D({width: N, height: N, data: image})}), paint, striped]; const geometries = [W.createTorusKnotGeometry3D({radius: 0.6, tube: 0.2}), W.createIcosahedronGeometry3D({radius: 0.6, detail: 2}), W.createSphereGeometry3D({radius: 0.6}), W.createExtrudeGeometry3D(new W.Shape3D([[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [0, 0.1], [-0.5, 0.5]]), {depth: 0.4})]; materials.forEach((material, i) => { s.scene.addChild(new W.Mesh3D(geometries[i], material)).setPosition(-2.4 + i * 1.6, 0.7, 0).setRotation(0.3, 0.5, 0); }); return s; },
     pointShadows() { const s = base([0.02, 0.02, 0.03]); s.camera.setPosition(0, 7, 9).lookAt(0, 0.5, 0); s.scene.addChild(W.createAmbientLight3D({intensity: 0.05})); const lamp = W.createPointLight3D({intensity: 30, range: 20, castShadow: true}); lamp.setPosition(0, 2, 0); Object.assign(lamp.shadow, {far: 20, bias: 0.002}); s.scene.addChild(lamp); const ground = new W.Mesh3D(W.createPlaneGeometry3D({width: 20, height: 20}), W.createLambertMaterial3D({color: 0xcccccc})); ground.setRotation(-Math.PI / 2, 0, 0); ground.castShadow = false; s.scene.addChild(ground); const material = W.createLambertMaterial3D({color: 0xe68033}), pillar = W.createBoxGeometry3D({width: 0.6, height: 1.5, depth: 0.6}); for (let i = 0; i < 8; i++) { const angle = i / 8 * Math.PI * 2; s.scene.addChild(new W.Mesh3D(pillar, material)).setPosition(Math.cos(angle) * 3, 0.75, Math.sin(angle) * 3); } s.scene.addChild(new W.Mesh3D(W.createSphereGeometry3D({radius: 0.4}), material)).setPosition(0.8, 3.2, 0.5); return s; },
+    screenSpace() { const s = base([0.6, 0.7, 0.8]); s.camera.setPosition(3, 3, 6).lookAt(0, 0.8, 0); s.scene.addChild(W.createAmbientLight3D({intensity: 0.9})); const sun = W.createDirectionalLight3D({intensity: 0.6}); sun.setPosition(2, 6, 3).lookAt(0, 0, 0); s.scene.addChild(sun); const white = W.createLambertMaterial3D({color: 0xe6e6e6}); s.scene.addChild(new W.Mesh3D(W.createPlaneGeometry3D({width: 12, height: 12}), white)).setRotation(-Math.PI / 2, 0, 0); s.scene.addChild(new W.Mesh3D(W.createBoxGeometry3D({width: 12, height: 4, depth: 0.2}), white)).setPosition(0, 2, -2); for (let i = 0; i < 5; i++) { const h = 0.6 + i * 0.4; s.scene.addChild(new W.Mesh3D(W.createBoxGeometry3D({width: 0.8, height: h, depth: 0.8}), white)).setPosition(-3 + i * 1.3, h / 2, -1.2 + (i % 2) * 0.9); } const ball = new W.Mesh3D(W.createSphereGeometry3D({radius: 0.6}), white); ball.setPosition(1.5, 0.6, 1.2); ball.layers |= 2; s.scene.addChild(ball); s.scene.clippingPlanes = [[-1, 0, 0, 3.2]]; return {...s, setup(renderer) { Object.assign(renderer.postProcess, {enabled: true, bloom: false, fxaa: true, ssao: true, ssaoRadius: 0.6, ssaoIntensity: 1.5, outlineLayers: 2, outlineThickness: 3, outlineColor: [1, 0.4, 0]}); }}; },
+    vertexHook() { const s = base([0.5, 0.7, 0.9]); s.camera.setPosition(0, 4, 9).lookAt(0, 1, 0); s.scene.addChild(W.createAmbientLight3D({intensity: 0.3})); const sun = W.createDirectionalLight3D({intensity: 2, castShadow: true}); sun.setPosition(-4, 8, 3).lookAt(0, 0, 0); sun.shadow.extent = 8; s.scene.addChild(sun); const ground = new W.Mesh3D(W.createPlaneGeometry3D({width: 20, height: 20}), W.createLambertMaterial3D({color: 0xcccbb2})); ground.setRotation(-Math.PI / 2, 0, 0); ground.castShadow = false; s.scene.addChild(ground); const swaying = W.createLambertMaterial3D({color: 0x339933}); swaying.shader = W.createCustomShader3D({key: 'verify-wind', uniforms: [1.3, 0.8, 0, 0], glslVertex: 'vec3 customVertex(vec3 w, vec3 l, vec3 n, vec2 uv, vec4 c) { float bend = uv.y * uv.y * uCustom[0].y; return w + vec3(sin(uCustom[0].x + w.x) * bend + bend + n.x * bend * 0.65, 0.0, 0.0); }', wgslVertex: 'fn customVertex(w: vec3f, l: vec3f, n: vec3f, uv: vec2f, c: vec4f) -> vec3f { let bend = uv.y * uv.y * material.custom[0].y; return w + vec3f(sin(material.custom[0].x + w.x) * bend + bend + n.x * bend * 0.65, 0.0, 0.0); }'}); const blade = W.createCylinderGeometry3D({radiusTop: 0.05, radiusBottom: 0.15, height: 3, heightSegments: 12}), still = W.createLambertMaterial3D({color: 0x994d33}); for (let i = 0; i < 6; i++) s.scene.addChild(new W.Mesh3D(blade, i % 2 ? swaying : still)).setPosition(-5 + i * 2, 1.5, 0); return s; },
   };
 }

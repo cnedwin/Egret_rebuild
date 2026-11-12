@@ -43,6 +43,8 @@ layout(std140) uniform Frame {
     vec4 uCascadeSplits;           // view-space far distance of each cascade
     vec4 uCascadeInfo;             // x: cascaded directional light index or -1, y: cascade count, z: blend fraction
     vec4 uPointShadow;             // x: shadowed point light index or -1, y: first of its four slots
+    vec4 uClipPlanes[4];           // world-space planes; the negative side is discarded
+    vec4 uClipInfo;                // x: plane count
 };
 `;
 
@@ -54,6 +56,7 @@ layout(location = 3) in vec4 aTangent;
 layout(location = 4) in vec4 aColor;
 layout(location = 5) in uvec4 aJoints;
 layout(location = 6) in vec4 aWeights;
+layout(location = 7) in vec2 aUv1;
 layout(location = 8) in mat4 aInstanceMatrix;
 layout(location = 12) in vec4 aInstanceColor;
 ${FRAME_BLOCK}
@@ -83,6 +86,7 @@ uniform vec2 uPointSize;         // x: size in pixels, y: size attenuation flag
 out vec3 vWorldPosition;
 out vec3 vNormal;
 out vec2 vUv;
+out vec2 vUv1;
 out vec4 vTangent;
 out vec4 vColor;
 
@@ -100,9 +104,17 @@ vec3 morphDelta(int targetIndex, int channel) {
 }
 #endif
 
+#ifdef CUSTOM_VERTEX
+uniform vec4 uCustom[4];
+/*CUSTOM_VERTEX*/
+#endif
 void main() {
     vec3 position = aPosition;
+    #ifdef USE_NORMAL
     vec3 normal = aNormal;
+    #else
+    vec3 normal = vec3(0.0, 0.0, 1.0);
+    #endif
     #ifdef USE_MORPH
     for (int i = 0; i < uMorphCount; i++) {
         position += morphDelta(uMorphIndices[i], 0) * uMorphWeights[i];
@@ -124,6 +136,13 @@ void main() {
     normalMatrix = normalMatrix * mat3(aInstanceMatrix);
     #endif
     vec4 world = model * vec4(position, 1.0);
+    #ifdef CUSTOM_VERTEX
+    #ifdef USE_VERTEX_COLOR
+    world.xyz = customVertex(world.xyz, position, normal, aUv, aColor);
+    #else
+    world.xyz = customVertex(world.xyz, position, normal, aUv, vec4(1.0));
+    #endif
+    #endif
     #ifdef DEPTH_ONLY
     mat4 viewProjection = uDepthViewProjection;
     #else
@@ -154,6 +173,7 @@ void main() {
     vWorldPosition = world.xyz;
     vNormal = normalMatrix * normal;
     vUv = (uUvTransform * vec3(aUv, 1.0)).xy;
+    vUv1 = aUv1;
     vTangent = vec4(mat3(model) * aTangent.xyz, aTangent.w);
     vColor = vec4(1.0);
     #ifdef USE_VERTEX_COLOR
@@ -184,6 +204,7 @@ uniform highp sampler2DShadow uShadowMap;
 in vec3 vWorldPosition;
 in vec3 vNormal;
 in vec2 vUv;
+in vec2 vUv1;
 in vec4 vTangent;
 in vec4 vColor;
 out vec4 outColor;
@@ -336,6 +357,9 @@ vec3 encodeSrgb(vec3 color) {
 #endif
 
 void main() {
+    #ifndef DEPTH_ONLY
+    for (int i = 0; i < int(uClipInfo.x); i++) if (dot(vWorldPosition, uClipPlanes[i].xyz) + uClipPlanes[i].w < 0.0) discard;
+    #endif
     vec4 base = uColor * vColor;
     #ifdef USE_MAP
     vec4 mapColor = texture(uMap, vUv);
@@ -379,7 +403,11 @@ void main() {
     s.f0 = mix(vec3(0.04), s.albedo, s.metallic);
     float occlusion = 1.0;
     #ifdef USE_AO_MAP
+    #ifdef AO_UV1
+    occlusion = mix(1.0, texture(uOcclusionMap, vUv1).r, uSurface.w);
+    #else
     occlusion = mix(1.0, texture(uOcclusionMap, vUv).r, uSurface.w);
+    #endif
     #endif
 
     // Indirect light: ambient, hemisphere and optional environment map.
@@ -441,7 +469,11 @@ void main() {
     #ifndef SHADING_MATCAP
     vec3 emissive = uEmissive;
     #ifdef USE_EMISSIVE_MAP
+    #ifdef EMISSIVE_UV1
+    emissive *= texture(uEmissiveMap, vUv1).rgb;
+    #else
     emissive *= texture(uEmissiveMap, vUv).rgb;
+    #endif
     #endif
     color += emissive;
     #endif
@@ -485,9 +517,9 @@ export interface ShaderSources3D {
     readonly fragment: string;
 }
 /** Specialize the material shader pair with a list of preprocessor symbols. */
-export function buildMaterialShader3D(defines: readonly string[], customFragment = ''): ShaderSources3D {
+export function buildMaterialShader3D(defines: readonly string[], customFragment = '', customVertex = ''): ShaderSources3D {
     const header = '#version 300 es\nprecision highp float;\nprecision highp int;\n' + defines.map(name => '#define ' + name + '\n').join('');
-    return {vertex: header + VERTEX_SOURCE, fragment: header + FRAGMENT_SOURCE.replace('/*CUSTOM_FRAGMENT*/', () => customFragment)};
+    return {vertex: header + VERTEX_SOURCE.replace('/*CUSTOM_VERTEX*/', () => customVertex), fragment: header + FRAGMENT_SOURCE.replace('/*CUSTOM_FRAGMENT*/', () => customFragment)};
 }
 
 /** Full-screen triangle that samples a cube map along the view ray; drawn at the far plane. */

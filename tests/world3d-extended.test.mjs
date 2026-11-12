@@ -6,14 +6,15 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createAssetRef, createEngine } from '@egret/engine';
 import {
-  AnimationMixer3D, InstancedMesh3D, Mesh3D, Object3D, RenderTarget3D, Scene3D, Texture3D, World3DError,
+  AnimationMixer3D, InstancedMesh3D, MESH3D_LIMITS, Mesh3D, Object3D, RenderTarget3D, Scene3D, Texture3D, World3DError,
   createAmbientLight3D, createAnimationClip3D, createAnimationStateMachine3D, createBoxGeometry3D, createCharacterController3D,
   createDirectionalLight3D, createLambertMaterial3D, createPerspectiveCamera3D, createPhysicsWorld3D, createScreenLayer3D,
-  createStandardMaterial3D, deserializeScene3D, isKtx23D, loadGltf3D, parseKtx23D, serializeScene3D,
+  createCustomShader3D, createGeometry3D, createMeshShape3D, createStandardMaterial3D, deserializeScene3D, isKtx23D, loadGltf3D, parseKtx23D, serializeScene3D,
 } from '@egret/engine/world3d';
 import {
   GLTF_ASSET_3D, SCENE_ASSET_3D, TEXTURE_ASSET_3D, createPostProcessSettings3D, registerWorld3DAssets,
 } from '@egret/engine/webgl2/world3d';
+import { createCustomPost3D } from '@egret/engine/webgpu/world3d';
 import { host } from './helpers.mjs';
 
 const code = value => error => error instanceof World3DError && error.code === value;
@@ -90,14 +91,64 @@ test('glTF accepts meshopt and Draco only through injected decoders', async () =
   await assert.rejects(loadGltf3D(bytes, {loadBuffer, decodeMeshopt: () => new Uint8Array(3)}), code('WORLD3D_GLTF_INVALID'));
 });
 
+test('glTF EXT_mesh_gpu_instancing nodes load as instanced meshes', async () => {
+  const quad = quadGltf({extensionsUsed: ['EXT_mesh_gpu_instancing'], extensionsRequired: ['EXT_mesh_gpu_instancing']});
+  // Three instances: translations as floats, rotations as normalized shorts, uniform scales.
+  const translations = new Float32Array([0, 0, 0, 5, 0, 0, 0, 7, 0]), scales = new Float32Array([1, 1, 1, 2, 2, 2, 1, 1, 1]);
+  const half = Math.round(Math.SQRT1_2 * 32767), rotations = new Int16Array([0, 0, 0, 32767, 0, 0, half, half, 0, 0, 0, 32767]);
+  const morphPositions = new Float32Array([0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1]);
+  const bin = new Uint8Array(60 + 36 + 36 + 24 + morphPositions.byteLength);
+  bin.set(quad.bin); bin.set(new Uint8Array(translations.buffer), 60); bin.set(new Uint8Array(scales.buffer), 96); bin.set(new Uint8Array(rotations.buffer), 132);
+  bin.set(new Uint8Array(morphPositions.buffer), 156);
+  const json = quad.json;
+  json.buffers[0].byteLength = bin.length;
+  json.bufferViews.push({buffer: 0, byteOffset: 60, byteLength: 36}, {buffer: 0, byteOffset: 96, byteLength: 36}, {buffer: 0, byteOffset: 132, byteLength: 24});
+  json.accessors.push({bufferView: 2, componentType: 5126, count: 3, type: 'VEC3'}, {bufferView: 3, componentType: 5126, count: 3, type: 'VEC3'}, {bufferView: 4, componentType: 5122, count: 3, type: 'VEC4', normalized: true});
+  json.bufferViews.push({buffer: 0, byteOffset: 156, byteLength: morphPositions.byteLength});
+  json.accessors.push({bufferView: 5, componentType: 5126, count: 4, type: 'VEC3', min: [0, 0, 1], max: [0, 0, 1]});
+  json.meshes[0].primitives[0].targets = [{POSITION: 5}];
+  json.meshes[0].weights = [0.625];
+  json.nodes[0].extensions = {EXT_mesh_gpu_instancing: {attributes: {TRANSLATION: 2, SCALE: 3, ROTATION: 4}}};
+  const options = {loadBuffer: async () => bin};
+  const load = () => loadGltf3D(new TextEncoder().encode(JSON.stringify(json)), options);
+  const asset = await load();
+  const mesh = asset.scene.getObjectByName('quad');
+  assert.ok(mesh instanceof InstancedMesh3D);
+  assert.equal(mesh.count, 3);
+  assert.deepEqual([...mesh.morphWeights], [0.625], 'instancing preserves the mesh default');
+  const m = mesh.instanceMatrices;
+  assert.deepEqual([m[12], m[13], m[14]], [0, 0, 0]);
+  assert.equal(m[16 + 12], 5, 'second instance is moved');
+  // It is also scaled by 2 and turned 90 degrees about Z: its X axis points along +Y and its Y axis along -X.
+  close(m[16 + 0], 0, 1e-3); close(m[16 + 1], 2, 1e-3); close(m[16 + 4], -2, 1e-3); close(m[16 + 10], 2, 1e-3);
+  assert.equal(m[32 + 13], 7);
+  asset.dispose();
+  json.nodes[0].weights = [0.25];
+  const overridden = await load();
+  assert.deepEqual([...overridden.scene.getObjectByName('quad').morphWeights], [0.25], 'node weights still override mesh defaults');
+  overridden.dispose();
+  json.nodes[0].extensions.EXT_mesh_gpu_instancing.attributes.SCALE = 0;
+  await assert.rejects(load(), code('WORLD3D_GLTF_INVALID'));
+});
+
+test('glTF rejects an asset whose primitives exceed the generated instance matrix budget', async () => {
+  const {json, bin} = quadGltf({extensionsUsed: ['EXT_mesh_gpu_instancing'], extensionsRequired: ['EXT_mesh_gpu_instancing']});
+  // Two primitives share a small implicit-zero accessor, but each needs its own matrices.
+  json.accessors.push({componentType: 5126, count: MESH3D_LIMITS.maxInstances / 2 + 1, type: 'VEC3'});
+  json.meshes[0].primitives.push(json.meshes[0].primitives[0]);
+  json.nodes[0].extensions = {EXT_mesh_gpu_instancing: {attributes: {TRANSLATION: 2}}};
+  await assert.rejects(loadGltf3D(json, {loadBuffer: async () => bin}),
+    error => code('WORLD3D_BUDGET')(error) && error.message.includes('instance matrices'));
+});
+
 test('scene documents round-trip nodes, resources and skip what cannot be saved', () => {
   const scene = new Scene3D(); scene.name = 'level'; scene.background = [0.1, 0.2, 0.3]; scene.fog = {kind: 'linear', color: [1, 1, 1], near: 2, far: 9};
   const camera = createPerspectiveCamera3D({fov: 40, aspect: 2, near: 0.5, far: 50}); camera.name = 'eye'; camera.setPosition(1, 2, 3); scene.addChild(camera);
   const sun = createDirectionalLight3D({intensity: 2, castShadow: true}); sun.shadow.cascades = 3; scene.addChild(sun);
   scene.addChild(createAmbientLight3D({intensity: 0.25}));
-  const embedded = new Texture3D({width: 1, height: 1, data: new Uint8Array([9, 8, 7, 255])}, {mipmaps: false});
+  const embedded = new Texture3D({width: 1, height: 1, data: new Uint8Array([9, 8, 7, 255])}, {mipmaps: false, channel: 1});
   const keyed = new Texture3D({width: 1, height: 1, data: new Uint8Array(4)}, {name: 'atlas'});
-  const material = createStandardMaterial3D({color: [0.5, 0.25, 1], map: embedded, normalMap: keyed, roughness: 0.3});
+  const material = createStandardMaterial3D({color: [0.5, 0.25, 1], map: embedded, normalMap: keyed, occlusionMap: embedded, roughness: 0.3});
   const geometry = createBoxGeometry3D({width: 2});
   const box = new Mesh3D(geometry, material); box.name = 'box'; box.userData = {hp: 3, tags: ['a'], skip() {}}; box.setPosition(4, 5, 6); scene.addChild(box);
   const twin = new Mesh3D(geometry, material); box.addChild(twin);
@@ -124,6 +175,8 @@ test('scene documents round-trip nodes, resources and skip what cannot be saved'
   assert.equal(copy.children[0].geometry, copy.geometry, 'sharing survives the round trip');
   assert.equal(copy.material.roughness, 0.3);
   assert.deepEqual([...copy.material.map.source.data], [9, 8, 7, 255]);
+  assert.equal(copy.material.occlusionMap, copy.material.map);
+  assert.equal(copy.material.occlusionMap.channel, 1, 'embedded UV1 survives save and reload');
   assert.equal(copy.material.normalMap, keyed);
   const light = root.children.find(child => child.lightType === 'directional');
   assert.deepEqual([light.intensity, light.castShadow, light.shadow.cascades], [2, true, 3]);
@@ -133,6 +186,12 @@ test('scene documents round-trip nodes, resources and skip what cannot be saved'
   restored.dispose();
   assert.equal(copy.geometry.isDisposed, true);
   assert.equal(keyed.isDisposed, false);
+
+  const legacy = JSON.parse(text);
+  for (const texture of legacy.textures) delete texture.channel;
+  const legacyRestored = deserializeScene3D(legacy);
+  assert.equal(legacyRestored.root.getObjectByName('box').material.occlusionMap.channel, 0);
+  legacyRestored.dispose();
 
   assert.throws(() => deserializeScene3D({...saved, version: 99}), code('WORLD3D_INPUT_INVALID'));
   const broken = JSON.parse(text); broken.nodes[1].parent = 5;
@@ -292,4 +351,136 @@ test('character controller slides along walls and finds the ground', () => {
   close(character.position[0], 3 - 0.35, 0.03);     // stopped by the wall
   close(character.position[2], 4, 0.03);            // but still sliding along it
   close(character.groundNormal[1], 1, 1e-6);
+});
+
+test('triangle-mesh colliders carry bodies, characters and rays across level geometry', () => {
+  // A 40 m square of 1 m cells: flat where x < 0, then a 20 degree ramp.
+  const cells = 40, slope = Math.tan(20 * Math.PI / 180), positions = [], indices = [];
+  for (let j = 0; j <= cells; j++) for (let i = 0; i <= cells; i++) { const x = i - cells / 2; positions.push(x, x < 0 ? 0 : x * slope, j - cells / 2); }
+  for (let j = 0; j < cells; j++) for (let i = 0; i < cells; i++) { const a = j * (cells + 1) + i, b = a + 1, c = a + cells + 1; indices.push(a, c, b, b, c, c + 1); }
+  const level = new Object3D();
+  level.addChild(new Mesh3D(createGeometry3D({positions, indices}), createLambertMaterial3D({})));
+  const wall = new Mesh3D(createBoxGeometry3D({width: 1, height: 4, depth: 10}), createLambertMaterial3D({}));
+  wall.setPosition(-8, 2, 0); level.addChild(wall);
+  const shape = createMeshShape3D(level);
+  assert.equal(shape.triangleCount, cells * cells * 2 + 12);
+  const world = createPhysicsWorld3D();
+  const ground = world.createBody({shape: {type: 'mesh', mesh: shape}});
+  assert.equal(ground.type, 'static');
+  assert.throws(() => world.createBody({shape: {type: 'mesh', mesh: shape}, type: 'dynamic'}), code('WORLD3D_INPUT_INVALID'));
+
+  const crate = world.createBody({shape: {type: 'box', halfExtents: [0.5, 0.5, 0.5]}, position: [-5.2, 2, 5.3]});
+  // Rolling exactly along a row of triangle edges must not bump or drift.
+  const roller = world.createBody({shape: {type: 'sphere', radius: 0.5}, position: [-4, 0.5, -8], friction: 0, linearDamping: 0}).setLinearVelocity(0, 0, 6);
+  let bump = 0;
+  for (let i = 0; i < 240; i++) { world.step(1 / 60); if (i > 30) bump = Math.max(bump, Math.abs(roller.position[1] - 0.5)); }
+  assert.ok(bump < 0.02, 'seams are smooth: ' + bump);
+  close(roller.position[0], -4, 0.01); close(roller.linearVelocity[2], 6, 0.05);
+  close(crate.position[1], 0.53, 0.03);
+  assert.equal(crate.isSleeping, true);
+
+  let hit = world.raycast([5, 20, 0], [0, -1, 0]);
+  close(hit.distance, 20 - 5 * slope, 1e-3);
+  close(hit.normal[1], Math.cos(20 * Math.PI / 180), 1e-3);
+  hit = world.raycast([0, 1, 0], [-1, 0, 0]);
+  close(hit.distance, 7.5, 1e-3);
+  assert.deepEqual(hit.normal, [1, 0, 0]);
+  assert.equal(world.raycast([5, -5, 0], [0, 1, 0]), undefined, 'triangles are solid from the front only');
+
+  const character = createCharacterController3D(world, {position: [-5, 2, -5]});
+  let fall = 0;
+  for (let i = 0; i < 360; i++) { fall = character.isGrounded ? 0 : fall - 9.81 / 60; character.move(3 / 60, fall / 60 - (character.isGrounded ? 0.02 : 0), 0); }
+  assert.equal(character.isGrounded, true);
+  assert.ok(character.position[0] > 9, 'walked up the ramp');
+  close(character.position[1], character.position[0] * slope + 0.9 / Math.cos(20 * Math.PI / 180), 0.06);
+  close(character.groundNormal[1], Math.cos(20 * Math.PI / 180), 1e-3);
+  const blocked = createCharacterController3D(world, {position: [-5, 0.95, 0]});
+  for (let i = 0; i < 120; i++) blocked.move(-3 / 60, -0.01, 0);
+  close(blocked.position[0], -7.5 + 0.35, 0.03);
+});
+
+test('a capsule detects contact near the end of its axis against a nearly parallel triangle', () => {
+  const mesh = createMeshShape3D(createGeometry3D({positions: [-0.2, -2, -2, 0, 2, -2, 0, 2, 2]}));
+  const world = createPhysicsWorld3D({gravity: [0, 0, 0]});
+  const wall = world.createBody({shape: {type: 'mesh', mesh}});
+  assert.deepEqual(world.overlapSphere([0, 1, 0], 0.08), [wall], 'upper cap overlaps the triangle');
+  const capsule = world.createBody({shape: {type: 'capsule', halfHeight: 1, radius: 0.08}});
+  const contacts = [];
+  world.onContactBegin = (a, b) => { contacts.push([a, b]); };
+  world.step(1 / 60);
+  assert.ok(contacts.some(pair => pair.includes(wall) && pair.includes(capsule)));
+});
+
+test('mesh collider baking refreshes a moved parent above the supplied subtree', () => {
+  const scene = new Object3D();
+  const parent = scene.addChild(new Object3D().setPosition(2, 0, 0));
+  const subtree = parent.addChild(new Object3D().setPosition(1, 0, 0));
+  const sibling = parent.addChild(new Object3D().setPosition(3, 0, 0));
+  const geometry = createGeometry3D({positions: [0, 0, 0, 0, 0, 2, 2, 0, 0]});
+  subtree.addChild(new Mesh3D(geometry, createLambertMaterial3D({})));
+  scene.updateWorldMatrices();
+
+  parent.setPosition(10, 0, 0);
+  assert.deepEqual([...createMeshShape3D(subtree).bounds], [11, 0, 0, 13, 0, 2]);
+  assert.equal(sibling.matrixWorld[12], 13);
+  scene.setPosition(10, 0, 0).updateWorldMatrix();
+  assert.deepEqual([...createMeshShape3D(subtree).bounds], [21, 0, 0, 23, 0, 2]);
+});
+
+test('scene overrides, clipping planes and shader hooks are plain data', () => {
+  const scene = new Scene3D();
+  assert.equal(scene.overrideMaterial, undefined);
+  assert.deepEqual(scene.clippingPlanes, []);
+  const wind = createCustomShader3D({key: 'wind', glslVertex: 'vec3 customVertex(vec3 w, vec3 l, vec3 n, vec2 uv, vec4 c) { return w; }'});
+  assert.equal(wind.glsl, undefined);
+  assert.equal(typeof wind.glslVertex, 'string');
+  const post = createPostProcessSettings3D();
+  assert.deepEqual([post.ssao, post.outlineLayers, post.custom], [false, 0, undefined]);
+  const fog = createCustomPost3D({key: 'fog', glsl: 'vec3 customPost(vec3 c, vec2 uv) { return c; }', uniforms: [1, 2]});
+  assert.deepEqual([...fog.uniforms.subarray(0, 3)], [1, 2, 0]);
+  assert.throws(() => createCustomPost3D({key: 'none'}), code('WORLD3D_INPUT_INVALID'));
+  assert.equal(new RenderTarget3D(4, 4, {depthTexture: true}).depthTexture, true);
+  assert.equal(new RenderTarget3D(4, 4, {depth: false, depthTexture: true}).depthTexture, false);
+});
+
+test('glTF occlusion and emissive maps may use the second texture coordinate set', async () => {
+  const quad = quadGltf();
+  const uvs = new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]), bin = new Uint8Array(60 + 32 + 32);
+  bin.set(quad.bin); bin.set(new Uint8Array(uvs.buffer), 60); bin.set(new Uint8Array(uvs.buffer), 92);
+  const json = quad.json;
+  json.buffers[0].byteLength = bin.length;
+  json.bufferViews.push({buffer: 0, byteOffset: 60, byteLength: 32}, {buffer: 0, byteOffset: 92, byteLength: 32});
+  json.accessors.push({bufferView: 2, componentType: 5126, count: 4, type: 'VEC2'}, {bufferView: 3, componentType: 5126, count: 4, type: 'VEC2'});
+  json.meshes[0].primitives[0].attributes.TEXCOORD_0 = 2; json.meshes[0].primitives[0].attributes.TEXCOORD_1 = 3; json.meshes[0].primitives[0].material = 0;
+  json.images = [{uri: 'baked.png'}]; json.textures = [{source: 0}];
+  json.materials = [{occlusionTexture: {index: 0, texCoord: 1}, emissiveTexture: {index: 0}, emissiveFactor: [1, 1, 1]}];
+  const options = {loadBuffer: async () => bin, decodeImage: async () => ({width: 1, height: 1, data: new Uint8Array([255, 255, 255, 255])})};
+  const asset = await loadGltf3D(new TextEncoder().encode(JSON.stringify(json)), options);
+  const mesh = asset.scene.getObjectByName('quad');
+  assert.equal(mesh.geometry.getAttribute('uv1').count, 4);
+  assert.equal(mesh.material.occlusionMap.channel, 1, 'baked occlusion reads uv1');
+  assert.equal(mesh.material.emissiveMap.channel, 0);
+  assert.notEqual(mesh.material.occlusionMap, mesh.material.emissiveMap, 'one image, two coordinate sets');
+  asset.dispose();
+  // Base colour, normal and metallic-roughness maps stay on the first set.
+  json.materials = [{pbrMetallicRoughness: {baseColorTexture: {index: 0, texCoord: 1}}}];
+  await assert.rejects(loadGltf3D(new TextEncoder().encode(JSON.stringify(json)), options), code('WORLD3D_GLTF_UNSUPPORTED'));
+  assert.throws(() => new Texture3D({width: 1, height: 1, data: new Uint8Array(4)}, {channel: 2}), code('WORLD3D_INPUT_INVALID'));
+});
+
+test('a camera accepts a complete custom projection', () => {
+  const camera = createPerspectiveCamera3D({fov: 60, aspect: 1, near: 0.1, far: 100});
+  camera.updateViewMatrices();
+  const derived = camera.projectionMatrix.slice();
+  // Off-center frustum: left -0.2, right 0.6, bottom -0.3, top 0.3, near 0.5, far 50.
+  const custom = [1.25, 0, 0, 0, 0, 5 / 3, 0, 0, 0.5, 0, -50.5 / 49.5, -1, 0, 0, -50 / 49.5, 0];
+  camera.customProjection = custom;
+  camera.updateViewMatrices();
+  close(camera.projectionMatrix[8], 0.5, 1e-6);
+  close(camera.viewProjectionMatrix[14], -50 / 49.5, 1e-6);
+  camera.customProjection = undefined;
+  camera.updateViewMatrices();
+  assert.deepEqual([...camera.projectionMatrix], [...derived]);
+  camera.customProjection = [1, 2, 3];
+  assert.throws(() => camera.updateProjectionMatrix(), code('WORLD3D_INPUT_INVALID'));
 });

@@ -49,6 +49,8 @@ export interface TextureOptions3D {
     readonly colorSpace?: TextureColorSpace3D;
     readonly flipY?: boolean;
     readonly anisotropy?: number;
+    /** Texture coordinate set to sample with: 0 for `uv`, 1 for `uv1`. */
+    readonly channel?: 0 | 1;
 }
 
 export function isTexturePixels3D(source: unknown): source is TexturePixels3D {
@@ -89,8 +91,16 @@ abstract class TextureBase3D extends Resource3D {
      */
     flipY: boolean;
     anisotropy: number;
+    /**
+     * Texture coordinate set used when this texture is a material's occlusion
+     * or emissive map: 0 reads `uv`, 1 reads `uv1`, the usual home of baked
+     * lighting. Other map slots always use `uv`.
+     */
+    channel: 0 | 1;
     protected constructor(options: TextureOptions3D) {
         super();
+        if (options.channel !== undefined && options.channel !== 0 && options.channel !== 1) throw new World3DError('WORLD3D_INPUT_INVALID', 'texture channel');
+        this.channel = options.channel ?? 0;
         this.name = options.name ?? '';
         this.wrapS = options.wrapS ?? 'repeat';
         this.wrapT = options.wrapT ?? 'repeat';
@@ -153,6 +163,8 @@ export interface RenderTargetOptions3D {
      * post-processing. Backends without float targets fall back to 'rgba8'.
      */
     readonly format?: RenderTargetFormat3D;
+    /** Keep depth in a texture the post-processing chain can read, instead of a write-only buffer. */
+    readonly depthTexture?: boolean;
     /** Attach a depth buffer so the target can be rendered with depth testing. */
     readonly depth?: boolean;
     readonly magFilter?: TextureFilter3D;
@@ -169,6 +181,7 @@ export class RenderTarget3D extends Resource3D {
     #height: number;
     readonly depth: boolean;
     readonly format: RenderTargetFormat3D;
+    readonly depthTexture: boolean;
     /** Sampled view of the color attachment; its source is this target. */
     readonly texture: Texture3D;
     constructor(width: number, height: number, options: RenderTargetOptions3D = {}) {
@@ -180,6 +193,7 @@ export class RenderTarget3D extends Resource3D {
         this.depth = options.depth ?? true;
         if (options.format !== undefined && options.format !== 'rgba8' && options.format !== 'rgba16f') throw new World3DError('WORLD3D_INPUT_INVALID', 'target format');
         this.format = options.format ?? 'rgba8';
+        this.depthTexture = this.depth && (options.depthTexture ?? false);
         this.texture = new Texture3D(this, {
             mipmaps: false, wrapS: options.wrapS ?? 'clamp', wrapT: options.wrapT ?? 'clamp',
             magFilter: options.magFilter ?? 'linear', minFilter: options.minFilter ?? 'linear',

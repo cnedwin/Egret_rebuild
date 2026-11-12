@@ -16,7 +16,7 @@ import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
 import {CubeTexture3D, RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
 import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
-import {createPostProcessSettings3D} from './post3D.js';
+import {createPostProcessSettings3D, outlineActive3D, postViewFromCamera3D} from './post3D.js';
 import type {PostProcessSettings3D} from './post3D.js';
 import {PostChainWebGL23D} from './postWebGL23D.js';
 import type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
@@ -43,7 +43,7 @@ export interface WebGL2Renderer3DOptions {
 const V = Object.freeze({
     normal: 1, tangent: 2, uv: 4, color: 8, skin: 16, morph: 32, morphNormals: 64, instancing: 128, instanceColor: 256,
     receiveShadow: 512, fog: 1024, toneMapped: 2048, environment: 4096, points: 8192, depthOnly: 16384, linearOutput: 32768,
-    mapFromTarget: 65536,
+    mapFromTarget: 65536, uv1: 131072, occlusionSecond: 262144, emissiveSecond: 524288,
 } as const);
 const IDENTITY3 = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -228,7 +228,18 @@ export class WebGL2Renderer3D implements Renderer3D {
         finally { this.#inPost = false; }
         const output = target ? this.#resources.target(target).framebuffer : null;
         // 8-bit targets encode sRGB on write and half-float targets store linear light; only the canvas needs encoded values.
-        this.info.drawCalls += post.run(this.#resources.target(post.scene).color, width, height, output, target !== undefined,
+        // Outlined objects are drawn once more, flat white, into a mask the composite traces.
+        let maskTexture: WebGLTexture | undefined;
+        if (outlineActive3D(this.postProcess)) {
+            post.mask.setSize(Math.max(width, 1), Math.max(height, 1));
+            const saved = {layerMask: camera.layerMask, override: scene.overrideMaterial, background: scene.background, shadows: this.shadowsEnabled, planes: scene.clippingPlanes};
+            camera.layerMask = this.postProcess.outlineLayers; scene.overrideMaterial = post.maskMaterial; scene.background = [0, 0, 0]; this.shadowsEnabled = false;
+            this.#inPost = true;
+            try { if (this.render(scene, camera, post.mask)) maskTexture = this.#resources.target(post.mask).color; }
+            finally { this.#inPost = false; camera.layerMask = saved.layerMask; scene.overrideMaterial = saved.override; scene.background = saved.background; this.shadowsEnabled = saved.shadows; }
+        }
+        const sceneEntry = this.#resources.target(post.scene);
+        this.info.drawCalls += post.run(sceneEntry.color, sceneEntry.depthTexture, maskTexture, postViewFromCamera3D(camera), width, height, output, target !== undefined,
             this.postProcess, target?.format === 'rgba16f' ? 'none' : this.toneMapping, this.#emptyVao ??= gl.createVertexArray());
         this.resetState();
         return true;
@@ -360,7 +371,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (has(V.normal)) defines.push('USE_NORMAL');
         if (has(V.skin)) defines.push('USE_SKINNING');
         if (has(V.morph)) defines.push('USE_MORPH');
-        if (has(V.morphNormals) && !depthOnly) defines.push('USE_MORPH_NORMALS');
+        if (has(V.morphNormals) && (!depthOnly || material.shader?.glslVertex !== undefined)) defines.push('USE_MORPH_NORMALS');
         if (has(V.instancing)) defines.push('USE_INSTANCING');
         if (has(V.points)) defines.push('POINTS');
         if (material.screenSpace) defines.push('SCREEN_SPACE');
@@ -380,8 +391,10 @@ export class WebGL2Renderer3D implements Renderer3D {
             if (has(V.instanceColor)) defines.push('USE_INSTANCE_COLOR');
             if (lit && uv && material.normalMap) { defines.push('USE_NORMAL_MAP'); if (has(V.tangent)) defines.push('USE_TANGENT'); }
             if (lit && uv && material.metallicRoughnessMap && material.shading === 'standard') defines.push('USE_MR_MAP');
-            if (lit && uv && material.occlusionMap) defines.push('USE_AO_MAP');
-            if (uv && material.emissiveMap && material.shading !== 'matcap') defines.push('USE_EMISSIVE_MAP');
+            // A map on the second coordinate set needs only that set; it falls back to the first when the geometry lacks it.
+            const aoSecond = has(V.occlusionSecond), emissiveSecond = has(V.emissiveSecond);
+            if (lit && (uv || aoSecond) && material.occlusionMap) { defines.push('USE_AO_MAP'); if (aoSecond) defines.push('AO_UV1'); }
+            if ((uv || emissiveSecond) && material.emissiveMap && material.shading !== 'matcap') { defines.push('USE_EMISSIVE_MAP'); if (emissiveSecond) defines.push('EMISSIVE_UV1'); }
             if (material.flatShading) defines.push('FLAT_SHADED');
             if (material.side === 'double') defines.push('DOUBLE_SIDED');
             if (lit && has(V.receiveShadow)) defines.push('RECEIVE_SHADOW');
@@ -390,9 +403,10 @@ export class WebGL2Renderer3D implements Renderer3D {
             if (has(V.toneMapped) && material.toneMapped) defines.push('TONE_MAPPED');
             if (has(V.linearOutput)) defines.push('LINEAR_OUTPUT');
         }
-        const custom = depthOnly ? undefined : material.shader?.glsl;
+        const custom = depthOnly ? undefined : material.shader?.glsl, customVertex = material.shader?.glslVertex;
         if (custom !== undefined) defines.push('CUSTOM_FRAGMENT');
-        program = this.#resources.program(defines.join(' ') + (custom === undefined ? '' : '|' + material.shader!.key), () => buildMaterialShader3D(defines, custom));
+        if (customVertex !== undefined) defines.push('CUSTOM_VERTEX');
+        program = this.#resources.program(defines.join(' ') + (custom === undefined && customVertex === undefined ? '' : '|' + material.shader!.key), () => buildMaterialShader3D(defines, custom, customVertex));
         cache.variants.set(variant, program);
         return program;
     }
@@ -468,6 +482,12 @@ export class WebGL2Renderer3D implements Renderer3D {
         let variant = depthOnly ? V.depthOnly : frameFlags;
         if (geometry.getAttribute('normal')) variant |= V.normal;
         if (geometry.getAttribute('tangent')) variant |= V.tangent;
+        if (geometry.getAttribute('uv1')) {
+            variant |= V.uv1;
+            // A texture's coordinate set can change without changing the material version.
+            if (!depthOnly && material.occlusionMap?.channel === 1) variant |= V.occlusionSecond;
+            if (!depthOnly && material.emissiveMap?.channel === 1) variant |= V.emissiveSecond;
+        }
         if (geometry.getAttribute('uv')) {
             variant |= V.uv;
             // A texture can change its source without changing the material version.

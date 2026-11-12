@@ -7,6 +7,7 @@
 // a replacement for a full physics engine.
 import {World3DError, requireFinite3D, requirePositive3D} from './core3D.js';
 import type {Object3D} from './Object3D.js';
+import {TriangleMeshShape3D} from './PhysicsMesh3D.js';
 
 export const PHYSICS3D_LIMITS = Object.freeze({maxBodies: 16384, maxSubSteps: 8, maxContactsPerPair: 8} as const);
 export type BodyType3D = 'static' | 'kinematic' | 'dynamic';
@@ -16,7 +17,9 @@ export type ShapeDefinition3D =
     /** Capsule along the local Y axis; `halfHeight` is half the distance between the two cap centers. */
     | {readonly type: 'capsule'; readonly radius: number; readonly halfHeight: number}
     /** Infinite plane through the body position, facing the body's local +Y axis. Static only. */
-    | {readonly type: 'plane'};
+    | {readonly type: 'plane'}
+    /** Triangle mesh for level geometry, solid on the front side of each triangle. Static only. */
+    | {readonly type: 'mesh'; readonly mesh: TriangleMeshShape3D};
 export interface RigidBodyOptions3D {
     readonly type?: BodyType3D;
     readonly shape: ShapeDefinition3D;
@@ -101,10 +104,12 @@ export class RigidBody3D {
         if (shape.type === 'sphere') requirePositive3D(shape.radius, 'sphere radius');
         else if (shape.type === 'box') { for (const half of shape.halfExtents) requirePositive3D(half, 'box halfExtents'); }
         else if (shape.type === 'capsule') { requirePositive3D(shape.radius, 'capsule radius'); if (!(requireFinite3D(shape.halfHeight, 'capsule halfHeight') >= 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'capsule halfHeight'); }
+        else if (shape.type === 'mesh') { if (!(shape.mesh instanceof TriangleMeshShape3D)) throw new World3DError('WORLD3D_INPUT_INVALID', 'mesh shape'); }
         else if (shape.type !== 'plane') throw new World3DError('WORLD3D_INPUT_INVALID', 'shape type');
         this.shape = shape;
-        this.type = options.type ?? (shape.type === 'plane' ? 'static' : 'dynamic');
-        if (shape.type === 'plane' && this.type !== 'static') throw new World3DError('WORLD3D_INPUT_INVALID', 'planes must be static');
+        const fixed = shape.type === 'plane' || shape.type === 'mesh';
+        this.type = options.type ?? (fixed ? 'static' : 'dynamic');
+        if (fixed && this.type !== 'static') throw new World3DError('WORLD3D_INPUT_INVALID', 'planes and meshes must be static');
         this.mass = this.type === 'dynamic' ? requirePositive3D(options.mass ?? 1, 'mass') : 0;
         this.inverseMass = this.mass > 0 ? 1 / this.mass : 0;
         if (options.position) this.position.set(options.position);
@@ -178,6 +183,13 @@ export class RigidBody3D {
             ez = Math.abs(r[6]!) * h[0] + Math.abs(r[7]!) * h[1] + Math.abs(r[8]!) * h[2];
         } else if (shape.type === 'capsule') {
             ex = Math.abs(r[1]!) * shape.halfHeight + shape.radius; ey = Math.abs(r[4]!) * shape.halfHeight + shape.radius; ez = Math.abs(r[7]!) * shape.halfHeight + shape.radius;
+        } else if (shape.type === 'mesh') {
+            // Rotate the local bounds about their own center.
+            const b = shape.mesh.bounds, cx = (b[0]! + b[3]!) / 2, cy = (b[1]! + b[4]!) / 2, cz = (b[2]! + b[5]!) / 2, hx = (b[3]! - b[0]!) / 2, hy = (b[4]! - b[1]!) / 2, hz = (b[5]! - b[2]!) / 2;
+            ex = Math.abs(r[0]!) * hx + Math.abs(r[1]!) * hy + Math.abs(r[2]!) * hz; ey = Math.abs(r[3]!) * hx + Math.abs(r[4]!) * hy + Math.abs(r[5]!) * hz; ez = Math.abs(r[6]!) * hx + Math.abs(r[7]!) * hy + Math.abs(r[8]!) * hz;
+            const wx = p[0]! + r[0]! * cx + r[1]! * cy + r[2]! * cz, wy = p[1]! + r[3]! * cx + r[4]! * cy + r[5]! * cz, wz = p[2]! + r[6]! * cx + r[7]! * cy + r[8]! * cz;
+            box[0] = wx - ex; box[1] = wy - ey; box[2] = wz - ez; box[3] = wx + ex; box[4] = wy + ey; box[5] = wz + ez;
+            return;
         } else ex = ey = ez = Infinity;
         box[0] = p[0]! - ex; box[1] = p[1]! - ey; box[2] = p[2]! - ez; box[3] = p[0]! + ex; box[4] = p[1]! + ey; box[5] = p[2]! + ez;
     }
@@ -200,6 +212,15 @@ class Manifold {
     add(px: number, py: number, pz: number, nx: number, ny: number, nz: number, depth: number): void {
         if (this.count >= this.contacts.length) return;
         const c = this.contacts[this.count++]!;
+        c.px = px; c.py = py; c.pz = pz; c.nx = nx; c.ny = ny; c.nz = nz; c.depth = depth; c.feature = this.feature;
+    }
+    /** Like add(), but when full it replaces the shallowest contact if the new one is deeper. */
+    addDeep(px: number, py: number, pz: number, nx: number, ny: number, nz: number, depth: number): void {
+        if (this.count < this.contacts.length) { this.add(px, py, pz, nx, ny, nz, depth); return; }
+        let shallow = 0;
+        for (let i = 1; i < this.count; i++) if (this.contacts[i]!.depth < this.contacts[shallow]!.depth) shallow = i;
+        const c = this.contacts[shallow]!;
+        if (depth <= c.depth) return;
         c.px = px; c.py = py; c.pz = pz; c.nx = nx; c.ny = ny; c.nz = nz; c.depth = depth; c.feature = this.feature;
     }
     /** Keep the deepest contacts and reverse normals when the pair was tested in swapped order. */
@@ -267,23 +288,26 @@ function closestOnSegment(out: Vec, a: Vec, b: Vec, x: number, y: number, z: num
     return t;
 }
 /** Closest points between segments p1-q1 and p2-q2, written to c1 and c2. */
-function closestBetweenSegments(p1: Vec, q1: Vec, p2: Vec, q2: Vec, c1: Vec, c2: Vec): void {
-    const d1 = [q1[0]! - p1[0]!, q1[1]! - p1[1]!, q1[2]! - p1[2]!], d2 = [q2[0]! - p2[0]!, q2[1]! - p2[1]!, q2[2]! - p2[2]!];
-    const r = [p1[0]! - p2[0]!, p1[1]! - p2[1]!, p1[2]! - p2[2]!], a = dot(d1, d1), e = dot(d2, d2), f = dot(d2, r);
+function closestBetweenSegments(p1: ArrayLike<number>, q1: ArrayLike<number>, p2: ArrayLike<number>, q2: ArrayLike<number>, c1: Vec, c2: Vec): void {
+    const ux = q1[0]! - p1[0]!, uy = q1[1]! - p1[1]!, uz = q1[2]! - p1[2]!;
+    const vx = q2[0]! - p2[0]!, vy = q2[1]! - p2[1]!, vz = q2[2]! - p2[2]!;
+    const rx = p1[0]! - p2[0]!, ry = p1[1]! - p2[1]!, rz = p1[2]! - p2[2]!;
+    const a = ux * ux + uy * uy + uz * uz, e = vx * vx + vy * vy + vz * vz, f = vx * rx + vy * ry + vz * rz;
     let s = 0, t = 0;
     if (a <= 1e-12 && e <= 1e-12) { s = t = 0; }
     else if (a <= 1e-12) t = clamp(f / e, 0, 1);
     else {
-        const c = dot(d1, r);
+        const c = ux * rx + uy * ry + uz * rz;
         if (e <= 1e-12) s = clamp(-c / a, 0, 1);
         else {
-            const b = dot(d1, d2), denominator = a * e - b * b;
+            const b = ux * vx + uy * vy + uz * vz, denominator = a * e - b * b;
             s = denominator > 1e-12 ? clamp((b * f - c * e) / denominator, 0, 1) : 0.5;
             t = (b * s + f) / e;
             if (t < 0) { t = 0; s = clamp(-c / a, 0, 1); } else if (t > 1) { t = 1; s = clamp((b - c) / a, 0, 1); }
         }
     }
-    for (let i = 0; i < 3; i++) { c1[i] = p1[i]! + d1[i]! * s; c2[i] = p2[i]! + d2[i]! * t; }
+    c1[0] = p1[0]! + ux * s; c1[1] = p1[1]! + uy * s; c1[2] = p1[2]! + uz * s;
+    c2[0] = p2[0]! + vx * t; c2[1] = p2[1]! + vy * t; c2[2] = p2[2]! + vz * t;
 }
 function capsuleBox(m: Manifold, capsule: RigidBody3D, box: RigidBody3D): void {
     const radius = (capsule.shape as {radius: number}).radius;
@@ -383,14 +407,131 @@ function isMoving(body: RigidBody3D): boolean {
     const v = body.linearVelocity, w = body.angularVelocity;
     return v[0]! * v[0]! + v[1]! * v[1]! + v[2]! * v[2]! > 4 * SLEEP_LINEAR * SLEEP_LINEAR || w[0]! * w[0]! + w[1]! * w[1]! + w[2]! * w[2]! > 4 * SLEEP_ANGULAR * SLEEP_ANGULAR;
 }
-const ORDER = {sphere: 0, capsule: 1, box: 2, plane: 3} as const;
+// ---- triangle meshes ----
+interface MeshCandidate { x: number; y: number; z: number; nx: number; ny: number; nz: number; depth: number; face: boolean; feature: number }
+const candidates: MeshCandidate[] = [];
+let candidateCount = 0;
+const meshPoint = [0, 0, 0], meshNormal = [0, 0, 0], meshSegA = [0, 0, 0], meshSegB = [0, 0, 0];
+function toMeshLocal(out: number[], body: RigidBody3D, x: number, y: number, z: number): void {
+    const r = body.rotation, p = body.position, dx = x - p[0]!, dy = y - p[1]!, dz = z - p[2]!;
+    out[0] = r[0]! * dx + r[3]! * dy + r[6]! * dz; out[1] = r[1]! * dx + r[4]! * dy + r[7]! * dz; out[2] = r[2]! * dx + r[5]! * dy + r[8]! * dz;
+}
+/** Test a sphere, given in the mesh's local space, against one triangle and record a candidate contact. */
+function sphereTriangle(mesh: TriangleMeshShape3D, triangle: number, x: number, y: number, z: number, radius: number, feature: number): void {
+    const face = mesh.closestPoint(triangle, x, y, z, meshPoint);
+    let nx = meshPoint[0]! - x, ny = meshPoint[1]! - y, nz = meshPoint[2]! - z;
+    const distance = Math.hypot(nx, ny, nz);
+    if (distance >= radius) return;
+    mesh.triangleNormal(triangle, meshNormal);
+    let depth = radius - distance;
+    // Triangles are solid on their front side only. A center that has sunk behind the
+    // face is pushed back out through it instead of further in.
+    const side = (x - meshPoint[0]!) * meshNormal[0]! + (y - meshPoint[1]!) * meshNormal[1]! + (z - meshPoint[2]!) * meshNormal[2]!;
+    if (face && side < 0) { nx = -meshNormal[0]!; ny = -meshNormal[1]!; nz = -meshNormal[2]!; depth = radius + distance; }
+    else if (distance > 1e-9) { nx /= distance; ny /= distance; nz /= distance; }
+    else { nx = -meshNormal[0]!; ny = -meshNormal[1]!; nz = -meshNormal[2]!; }
+    // Back-facing edge hits belong to the far side of a thin wall.
+    if (!face && nx * meshNormal[0]! + ny * meshNormal[1]! + nz * meshNormal[2]! > 0.01) return;
+    let c = candidates[candidateCount];
+    if (!c) c = candidates[candidateCount] = {x: 0, y: 0, z: 0, nx: 0, ny: 0, nz: 0, depth: 0, face: false, feature: 0};
+    candidateCount++;
+    c.x = meshPoint[0]!; c.y = meshPoint[1]!; c.z = meshPoint[2]!; c.nx = nx; c.ny = ny; c.nz = nz; c.depth = depth; c.face = face; c.feature = feature;
+}
+/** Turn the candidates gathered for one body into world-space contacts. */
+function emitMeshContacts(m: Manifold, meshBody: RigidBody3D): void {
+    const r = meshBody.rotation, p = meshBody.position;
+    for (let i = 0; i < candidateCount; i++) {
+        const c = candidates[i]!;
+        let keep = true;
+        for (let j = 0; j < candidateCount && keep; j++) {
+            if (j === i) continue;
+            const other = candidates[j]!, alike = c.nx * other.nx + c.ny * other.ny + c.nz * other.nz;
+            // An edge or corner hit that leans away from a deeper contact on the same surface
+            // would only add a sideways bump at the seams of a tessellated floor.
+            if (!c.face && other.depth > c.depth + 1e-6 && (alike > 0.9 || (other.face && alike > 0.7))) keep = false;
+            // Neighbouring triangles report the same point twice; keep the first.
+            else if (j < i && c.face === other.face && alike > 0.999 && Math.abs(c.x - other.x) + Math.abs(c.y - other.y) + Math.abs(c.z - other.z) < 1e-3) keep = false;
+        }
+        if (!keep) continue;
+        m.feature = c.feature;
+        m.addDeep(p[0]! + r[0]! * c.x + r[1]! * c.y + r[2]! * c.z, p[1]! + r[3]! * c.x + r[4]! * c.y + r[5]! * c.z, p[2]! + r[6]! * c.x + r[7]! * c.y + r[8]! * c.z,
+            r[0]! * c.nx + r[1]! * c.ny + r[2]! * c.nz, r[3]! * c.nx + r[4]! * c.ny + r[5]! * c.nz, r[6]! * c.nx + r[7]! * c.ny + r[8]! * c.nz, c.depth);
+    }
+}
+function sphereMesh(m: Manifold, x: number, y: number, z: number, radius: number, meshBody: RigidBody3D, feature: number): void {
+    const mesh = (meshBody.shape as {mesh: TriangleMeshShape3D}).mesh;
+    toMeshLocal(meshSegA, meshBody, x, y, z);
+    const lx = meshSegA[0]!, ly = meshSegA[1]!, lz = meshSegA[2]!;
+    candidateCount = 0;
+    mesh.query(lx - radius, ly - radius, lz - radius, lx + radius, ly + radius, lz + radius, triangle => sphereTriangle(mesh, triangle, lx, ly, lz, radius, feature + (triangle & 1023)));
+    emitMeshContacts(m, meshBody);
+}
+function capsuleMesh(m: Manifold, capsule: RigidBody3D, meshBody: RigidBody3D): void {
+    const mesh = (meshBody.shape as {mesh: TriangleMeshShape3D}).mesh, radius = (capsule.shape as {radius: number}).radius;
+    capsuleSegment(capsule, segA, segB);
+    toMeshLocal(meshSegA, meshBody, segA[0]!, segA[1]!, segA[2]!); toMeshLocal(meshSegB, meshBody, segB[0]!, segB[1]!, segB[2]!);
+    const ax = meshSegA[0]!, ay = meshSegA[1]!, az = meshSegA[2]!, bx = meshSegB[0]!, by = meshSegB[1]!, bz = meshSegB[2]!;
+    const dx = bx - ax, dy = by - ay, dz = bz - az, radius2 = radius * radius;
+    let triangle = 0, bestDistance2 = radius2, bestFace = false, bestX = 0, bestY = 0, bestZ = 0;
+    const consider = (x: number, y: number, z: number): void => {
+        const face = mesh.closestPoint(triangle, x, y, z, meshPoint);
+        const px = x - meshPoint[0]!, py = y - meshPoint[1]!, pz = z - meshPoint[2]!;
+        const distance2 = px * px + py * py + pz * pz;
+        if (distance2 >= radius2 || distance2 > bestDistance2 || (distance2 === bestDistance2 && (!face || bestFace))) return;
+        // Keep the one-sided edge rule used by the sphere contact solver.
+        const side = px * meshNormal[0]! + py * meshNormal[1]! + pz * meshNormal[2]!;
+        if (!face && distance2 > 1e-18 && side < -0.01 * Math.sqrt(distance2)) return;
+        bestDistance2 = distance2; bestFace = face; bestX = x; bestY = y; bestZ = z;
+    };
+    const positions = mesh.positions, indices = mesh.indices;
+    candidateCount = 0;
+    mesh.query(Math.min(ax, bx) - radius, Math.min(ay, by) - radius, Math.min(az, bz) - radius, Math.max(ax, bx) + radius, Math.max(ay, by) + radius, Math.max(az, bz) + radius, index => {
+        triangle = index; bestDistance2 = radius2; bestFace = false;
+        mesh.triangleNormal(triangle, meshNormal);
+        // A minimum is attained at an axis endpoint, at a triangle edge, or at a crossing of the triangle plane.
+        consider(ax, ay, az);
+        consider(bx, by, bz);
+        const base = triangle * 3, vertex = indices[base]! * 3;
+        const alongNormal = dx * meshNormal[0]! + dy * meshNormal[1]! + dz * meshNormal[2]!;
+        if (alongNormal !== 0) {
+            const offset = (positions[vertex]! - ax) * meshNormal[0]! + (positions[vertex + 1]! - ay) * meshNormal[1]! + (positions[vertex + 2]! - az) * meshNormal[2]!;
+            const t = offset / alongNormal;
+            if (t > 0 && t < 1) consider(ax + dx * t, ay + dy * t, az + dz * t);
+        }
+        for (let edge = 0; edge < 3; edge++) {
+            const first = indices[base + edge]! * 3, second = indices[base + (edge + 1) % 3]! * 3;
+            for (let i = 0; i < 3; i++) { segC[i] = positions[first + i]!; segD[i] = positions[second + i]!; }
+            closestBetweenSegments(meshSegA, meshSegB, segC, segD, scratchC, scratchD);
+            consider(scratchC[0]!, scratchC[1]!, scratchC[2]!);
+        }
+        if (bestDistance2 < radius2) sphereTriangle(mesh, triangle, bestX, bestY, bestZ, radius, triangle & 1023);
+    });
+    emitMeshContacts(m, meshBody);
+}
+/** Boxes rest on meshes through their corners, which is enough for crates on floors and slopes. */
+function boxMesh(m: Manifold, box: RigidBody3D, meshBody: RigidBody3D): void {
+    const mesh = (meshBody.shape as {mesh: TriangleMeshShape3D}).mesh, radius = 0.03;
+    candidateCount = 0;
+    for (let i = 0; i < 8; i++) {
+        boxCorner(corner, box, i);
+        toMeshLocal(meshSegA, meshBody, corner[0]!, corner[1]!, corner[2]!);
+        const lx = meshSegA[0]!, ly = meshSegA[1]!, lz = meshSegA[2]!;
+        mesh.query(lx - radius, ly - radius, lz - radius, lx + radius, ly + radius, lz + radius, triangle => sphereTriangle(mesh, triangle, lx, ly, lz, radius, i * 1024 + (triangle & 1023)));
+    }
+    emitMeshContacts(m, meshBody);
+}
+const ORDER = {sphere: 0, capsule: 1, box: 2, plane: 3, mesh: 4} as const;
 /** Fill `m` with the contacts between two bodies; returns false when they do not touch. */
 function collide(m: Manifold, first: RigidBody3D, second: RigidBody3D): boolean {
     m.count = 0; m.feature = 0;
     // Dispatch on an ordered pair so each combination is written once.
     const flip = ORDER[first.shape.type] > ORDER[second.shape.type], a = flip ? second : first, b = flip ? first : second;
     const pa = a.position, pb = b.position, sa = a.shape, sb = b.shape;
-    if (sa.type === 'sphere') {
+    if (sb.type === 'mesh') {
+        if (sa.type === 'sphere') sphereMesh(m, pa[0]!, pa[1]!, pa[2]!, sa.radius, b, 0);
+        else if (sa.type === 'capsule') capsuleMesh(m, a, b);
+        else if (sa.type === 'box') boxMesh(m, a, b);
+    } else if (sa.type === 'sphere') {
         if (sb.type === 'sphere') sphereSphere(m, pa[0]!, pa[1]!, pa[2]!, sa.radius, pb[0]!, pb[1]!, pb[2]!, sb.radius);
         else if (sb.type === 'capsule') {
             capsuleSegment(b, segA, segB);
@@ -410,7 +551,7 @@ function collide(m: Manifold, first: RigidBody3D, second: RigidBody3D): boolean 
             m.feature = 1; spherePlane(m, segB[0]!, segB[1]!, segB[2]!, sa.radius, b);
         }
     } else if (sa.type === 'box') {
-        if (sb.type === 'box') boxBox(m, a, b); else boxPlane(m, a, b);
+        if (sb.type === 'box') boxBox(m, a, b); else if (sb.type === 'plane') boxPlane(m, a, b);
     }
     if (m.count === 0) return false;
     m.finish(flip);
@@ -757,7 +898,11 @@ function rayShape(body: RigidBody3D, o: number[], d: number[], limit: number, no
     const lo = [r[0]! * dx + r[3]! * dy + r[6]! * dz, r[1]! * dx + r[4]! * dy + r[7]! * dz, r[2]! * dx + r[5]! * dy + r[8]! * dz];
     const ld = [r[0]! * d[0]! + r[3]! * d[1]! + r[6]! * d[2]!, r[1]! * d[0]! + r[4]! * d[1]! + r[7]! * d[2]!, r[2]! * d[0]! + r[5]! * d[1]! + r[8]! * d[2]!];
     let t = -1, lx = 0, ly = 0, lz = 0;
-    if (shape.type === 'box') {
+    if (shape.type === 'mesh') {
+        t = shape.mesh.raycast(lo[0]!, lo[1]!, lo[2]!, ld[0]!, ld[1]!, ld[2]!, limit, meshNormal);
+        if (t < 0) return -1;
+        lx = meshNormal[0]!; ly = meshNormal[1]!; lz = meshNormal[2]!;
+    } else if (shape.type === 'box') {
         let near = 0, far = limit, axis = -1, sign = 0;
         for (let i = 0; i < 3; i++) {
             const h = shape.halfExtents[i]!;

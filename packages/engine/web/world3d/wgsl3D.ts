@@ -33,9 +33,14 @@ export interface ShaderFeatures3D {
     readonly fog: boolean;
     readonly toneMapped: boolean;
     readonly linearOutput: boolean;
+    /** The geometry's second coordinate set is bound, for occlusion or emissive maps that ask for it. */
+    readonly uv1: boolean;
+    readonly occlusionUv1: boolean;
+    readonly emissiveUv1: boolean;
     /** Key and WGSL source of the material's fragment hook, when it has one. */
     readonly customKey?: string;
     readonly customWgsl?: string;
+    readonly customVertexWgsl?: string;
 }
 
 export const MAX_MORPH_INFLUENCES_WGSL_3D = 8;
@@ -70,6 +75,8 @@ struct Frame {
     cascadeSplits: vec4f,
     cascadeInfo: vec4f,
     pointShadow: vec4f,
+    clipPlanes: array<vec4f, 4>,
+    clipInfo: vec4f,
 }
 @group(0) @binding(0) var<uniform> frame: Frame;
 @group(0) @binding(1) var shadowMap: texture_depth_2d;
@@ -129,6 +136,7 @@ function vertexSource(f: ShaderFeatures3D): string {
     if (f.uv) inputs.push('@location(2) uv: vec2f');
     if (f.tangent) inputs.push('@location(3) tangent: vec4f');
     if (f.vertexColor) inputs.push('@location(4) color: vec4f');
+    if (f.uv1) inputs.push('@location(7) uv1: vec2f');
     if (f.skinning) inputs.push('@location(5) joints: vec4u', '@location(6) weights: vec4f');
     if (f.instancing) inputs.push('@location(8) instance0: vec4f', '@location(9) instance1: vec4f', '@location(10) instance2: vec4f', '@location(11) instance3: vec4f');
     if (f.instanceColor) inputs.push('@location(12) instanceColor: vec4f');
@@ -143,6 +151,7 @@ struct VertexOutput {
     @location(2) uv: vec2f,
     @location(3) tangent: vec4f,
     @location(4) color: vec4f,
+    @location(5) uv1: vec2f,
 }
 fn morphDelta(targetIndex: i32, channel: i32, vertexIndex: u32) -> vec3f {
     let texel = (targetIndex * object.morph.y + channel) * object.morph.x + i32(vertexIndex);
@@ -157,7 +166,7 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
         let targetIndex = object.morphIndices[i / 4][i % 4];
         let weight = object.morphWeights[i / 4][i % 4];
         position += morphDelta(targetIndex, 0, input.vertexIndex) * weight;
-        ${f.morphNormals && !f.depthOnly ? 'normal += morphDelta(targetIndex, 1, input.vertexIndex) * weight;' : ''}
+        ${f.morphNormals && (!f.depthOnly || f.customVertexWgsl !== undefined) ? 'normal += morphDelta(targetIndex, 1, input.vertexIndex) * weight;' : ''}
     }` : ''}
     var model = object.model;
     var normalMatrix = mat3x3f(object.normal0.xyz, object.normal1.xyz, object.normal2.xyz);
@@ -171,6 +180,7 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     model = model * instance;
     normalMatrix = normalMatrix * mat3x3f(instance[0].xyz, instance[1].xyz, instance[2].xyz);` : ''}
     var world = model * vec4f(position, 1.0);
+    ${f.customVertexWgsl !== undefined ? `world = vec4f(customVertex(world.xyz, position, normal, ${f.uv ? 'input.uv' : 'vec2f(0.0)'}, ${f.vertexColor ? 'input.color' : 'vec4f(1.0)'}), world.w);` : ''}
     ${f.billboard ? /* wgsl */`
     // Expand the quad along the camera's right and up axes around the node origin.
     let origin = model * vec4f(0.0, 0.0, 0.0, 1.0);
@@ -196,6 +206,7 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     output.uv = vec2f(dot(material.uvRow0.xyz, uv), dot(material.uvRow1.xyz, uv));
     output.tangent = ${f.tangent ? 'vec4f(mat3x3f(model[0].xyz, model[1].xyz, model[2].xyz) * input.tangent.xyz, input.tangent.w)' : 'vec4f(1.0, 0.0, 0.0, 1.0)'};
     output.color = ${f.vertexColor ? 'input.color' : 'vec4f(1.0)'};
+    output.uv1 = ${f.uv1 ? 'input.uv1' : 'vec2f(0.0)'};
     ${f.instanceColor ? 'output.color *= input.instanceColor;' : ''}
     return output;
 }
@@ -346,14 +357,17 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     : f.map ? 'base *= textureSample(mapTexture, mapSampler, input.uv);' : ''}
     ${f.normalMap ? 'let normalSample = textureSample(normalTexture, normalSampler, input.uv).xyz;' : ''}
     ${f.metallicRoughnessMap ? 'let mrSample = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, input.uv);' : ''}
-    ${f.occlusionMap ? 'let occlusionSample = textureSample(occlusionTexture, occlusionSampler, input.uv).r;' : ''}
-    ${f.emissiveMap ? 'let emissiveSample = textureSample(emissiveTexture, emissiveSampler, input.uv).rgb;' : ''}
+    ${f.occlusionMap ? 'let occlusionSample = textureSample(occlusionTexture, occlusionSampler, ' + (f.occlusionUv1 ? 'input.uv1' : 'input.uv') + ').r;' : ''}
+    ${f.emissiveMap ? 'let emissiveSample = textureSample(emissiveTexture, emissiveSampler, ' + (f.emissiveUv1 ? 'input.uv1' : 'input.uv') + ').rgb;' : ''}
     ${f.shading === 'matcap' ? /* wgsl */`
     var matcapNormal = normalize(${f.normal ? 'input.normal' : 'cross(dpx, -dpy)'});
     ${f.doubleSided ? 'if (!frontFacing) { matcapNormal = -matcapNormal; }' : ''}
     let matcapView = normalize((frame.view * vec4f(matcapNormal, 0.0)).xyz);
     let matcapSample = textureSampleLevel(emissiveTexture, emissiveSampler, matcapView.xy * 0.5 + 0.5, 0.0).rgb;` : ''}
     ${f.alphaMask ? 'if (base.a < material.params.x) { discard; }' : ''}
+    for (var plane = 0; plane < i32(frame.clipInfo.x); plane++) {
+        if (dot(input.worldPosition, frame.clipPlanes[plane].xyz) + frame.clipPlanes[plane].w < 0.0) { discard; }
+    }
     var color = base.rgb${f.shading === 'matcap' ? ' * matcapSample' : ''};
     ${lit ? /* wgsl */`
     var s: Surface;
@@ -453,7 +467,7 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
 
 /** Assemble the complete WGSL module for one material variant. */
 export function buildMaterialWgsl3D(features: ShaderFeatures3D): string {
-    return (features.depthOnly ? DEPTH_FRAME : FRAME) + SHARED + vertexSource(features) + (features.customWgsl ?? '') + '\n' + fragmentSource(features);
+    return (features.depthOnly ? DEPTH_FRAME : FRAME) + SHARED + (features.customVertexWgsl ?? '') + '\n' + vertexSource(features) + (features.customWgsl ?? '') + '\n' + fragmentSource(features);
 }
 /** Stable cache key for a feature set. */
 export function shaderFeatureKey3D(features: ShaderFeatures3D): string {

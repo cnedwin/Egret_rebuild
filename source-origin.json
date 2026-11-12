@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "c83640d0e091d1ed27b47a0b6f1c6d4e111064ab01ee9ab00484d5fd8cb06864",
-      "bytes": 403025,
+      "sha256": "5354dfce06860bc53ca76d401e43347d696022c26f00316d235cab79f430e8b3",
+      "bytes": 403189,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -16538,14 +16538,14 @@
     {
       "path": "knowledge-base/Cns/docs/world3d.md",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 26151,
-      "sha256": "ccbed1c0d2cfa39c6e0665169544d5754ed9c2431bbfa1cac26a7d059b538a0f"
+      "bytes": 29380,
+      "sha256": "a62fe11f95e0dd2ba9e26f04e431968469fbfa5bdfca2ac7ab3870d699f92dc9"
     },
     {
       "path": "knowledge-base/en/docs/world3d.md",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 27214,
-      "sha256": "8b4085938a1c5bcff2d5e0db17128b8453859dcd4f06db159390709f5fc9bd4d"
+      "bytes": 30547,
+      "sha256": "7d3af56724076010fb818a49e43dba5fb0595703b97b799945b92049918dfa34"
     },
     {
       "path": "packages/engine/rendering/world3d/Animation3D.ts",
@@ -16556,8 +16556,8 @@
     {
       "path": "packages/engine/rendering/world3d/Camera3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 5826,
-      "sha256": "95aea52abff097f17c3c704aa60f51952aa10a6c5b8bbc14976c29da654e80c4"
+      "bytes": 6666,
+      "sha256": "bde690c725d1fa7a000df12a7d1d3cd96b0628f9d7f51e4874888be5d90c1cb9"
     },
     {
       "path": "packages/engine/rendering/world3d/Geometry3D.ts",
@@ -16568,8 +16568,8 @@
     {
       "path": "packages/engine/rendering/world3d/Gltf3D.ts",
       "originRole": "Independently authored first-party glTF 2.0 reader based on the Khronos glTF specification; AI-assisted; Apache-2.0. No borrowed implementation.",
-      "bytes": 43646,
-      "sha256": "f232596b317cb1e86483455ae2f229259b33093a1c21583f179d1f4ec0eca56e"
+      "bytes": 47471,
+      "sha256": "b2d48baed750587a7b5296e086be9c09fb55f363c61cce2ac59a5dd4239cafcd"
     },
     {
       "path": "packages/engine/rendering/world3d/Light3D.ts",
@@ -16580,8 +16580,8 @@
     {
       "path": "packages/engine/rendering/world3d/Material3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 10992,
-      "sha256": "11f291a6ce8f13dd2744fa917c39f26860b53862d90c4de154c25ecfefc422f8"
+      "bytes": 11949,
+      "sha256": "7d24f395d30f02715ba159af72bdc4de65f14dd8dd3d87170c472bf1f03be6e6"
     },
     {
       "path": "packages/engine/rendering/world3d/Mesh3D.ts",
@@ -16592,8 +16592,8 @@
     {
       "path": "packages/engine/rendering/world3d/Object3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 11991,
-      "sha256": "118aa6fbd7db938292a8167b42af4e78d1bd47427e148ccbfd42954e1df21f86"
+      "bytes": 12412,
+      "sha256": "5a88136cdf4ab70049703d8c3811853dd822ce944bc1fad9dcaaf9e31bc61b29"
     },
     {
       "path": "packages/engine/rendering/world3d/Particles3D.ts",
@@ -16610,14 +16610,14 @@
     {
       "path": "packages/engine/rendering/world3d/RenderList3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 6767,
-      "sha256": "7951604ab3a6094682a152d77f19e8ba1b06f3fd2986578688513a41d9352409"
+      "bytes": 7097,
+      "sha256": "1f956beaaa4c9bd14c3895a2ed71a6345f85ed514ce720c0aad99bc97117578c"
     },
     {
       "path": "packages/engine/rendering/world3d/Texture3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 11850,
-      "sha256": "91aa037e196095a87b63b9b96ab56cf0700ab4a22e548e6bb4a07dde67b9cb66"
+      "bytes": 12654,
+      "sha256": "abae379febee1fae04b3c6e16d75d512a6be21ebd1a7f41d2182305ef72263e0"
     },
     {
       "path": "packages/engine/rendering/world3d/core3D.ts",
@@ -16634,8 +16634,8 @@
     {
       "path": "packages/engine/rendering/world3d/index.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 6401,
-      "sha256": "16d8e7eee55b908072e3f4a722dbd22dee20cc4dfed7b162e8a83cd96922693f"
+      "bytes": 6499,
+      "sha256": "806100fca2d18252af1d70b9677f9c7e933b072097fd7e635c3cc7c9d625c7ea"
     },
     {
       "path": "packages/engine/rendering/world3d/math3D.ts",
@@ -16658,14 +16658,14 @@
     {
       "path": "packages/engine/web/world3d/WebGL2Renderer3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 39288,
-      "sha256": "518184f208063d404247c855799bd3076197e8f9072d668ca131a514e7ec410f"
+      "bytes": 41393,
+      "sha256": "e2617826af469a897cca5766aa216d3bfef13144af28faa8309149647570da42"
     },
     {
       "path": "packages/engine/web/world3d/WebGPURenderer3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 74968,
-      "sha256": "5cb3e37e1f856e9a3ce6378f95e44bd03df33361f3da63560a2e3b4bf2b7d42b"
+      "bytes": 77086,
+      "sha256": "52eddc1f7c13481bddfcd6b74525342ffa2bab3a71d137016dfc3f3b13da73a2"
     },
     {
       "path": "packages/engine/web/world3d/World3DView.ts",
@@ -16676,14 +16676,14 @@
     {
       "path": "packages/engine/web/world3d/frame3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 17329,
-      "sha256": "009dc928e9127adf0f9c92718810ff1155607a60f5680d9123f8e8ed58d24a58"
+      "bytes": 17563,
+      "sha256": "fd8ee938e7857ec84016ad2306d04fb160ffa06b7b908b1df9ccbb609cf2250f"
     },
     {
       "path": "packages/engine/web/world3d/gpuResources3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 33341,
-      "sha256": "fe40245ba0f87020a0195693cbffacadc7e7fc04218e745a07aa6c0716dbc72a"
+      "bytes": 34513,
+      "sha256": "c2e938e0dcef2dcc3ae32003098282ccece4cea346deec9db70c64cc33fc0b34"
     },
     {
       "path": "packages/engine/web/world3d/host3D.ts",
@@ -16694,8 +16694,8 @@
     {
       "path": "packages/engine/web/world3d/index.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 1818,
-      "sha256": "6525dc89d093e966c987541968c947748ee5ec969cbc9763f8415c5c290e8f12"
+      "bytes": 1852,
+      "sha256": "87dcb0b52464e16ffd3c04de8b5b3b2dac5ebe9361ab87098122ef5f1263a1a2"
     },
     {
       "path": "packages/engine/web/world3d/loaders3D.ts",
@@ -16706,20 +16706,20 @@
     {
       "path": "packages/engine/web/world3d/shaders3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 20507,
-      "sha256": "584d01c3941fdfb1d9ed4526dc62012afb43d07f4f30f5d3ec4a9c6af9300cb5"
+      "bytes": 21546,
+      "sha256": "2986a7d8affb6a455163e157207eae44b734fd87fc439246cb42c4733d73f5a2"
     },
     {
       "path": "packages/engine/web/world3d/webgpu.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 1792,
-      "sha256": "f00ab123757b7bc399b8a47534924bab5d14b15177865383cfae69a876438056"
+      "bytes": 1826,
+      "sha256": "fb2f1f3d299c390cfbd652995c372b6af0db3d1ce87f38e86bd037336e9299b1"
     },
     {
       "path": "packages/engine/web/world3d/wgsl3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 25127,
-      "sha256": "859ecf864f81b5a7eb42de170b2d2c063306ab47d721228d3d220f6128c6b8bf"
+      "bytes": 26119,
+      "sha256": "2b7333503a2fa654b7cb0a368619ef8d6d3a96a9c3bb302349dde722eec5dbeb"
     },
     {
       "path": "tests/world3d-animation-picking.test.mjs",
@@ -16730,8 +16730,8 @@
     {
       "path": "tests/world3d-core.test.mjs",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 13450,
-      "sha256": "721f9c00f69ee2094f48f5ea3b43f74ae014af2746d1dc325edbe349d0fd4c26"
+      "bytes": 14151,
+      "sha256": "0beeac4b843d8adb82ee3c9a071bb6013f74688dd54390f601b9ab60c42fadd1"
     },
     {
       "path": "tests/world3d-gltf.test.mjs",
@@ -16748,32 +16748,32 @@
     {
       "path": "tools/lib/world3d-boundary.mjs",
       "originRole": "Independently authored first-party World3D optional entry and source identity policy; AI-assisted; Apache-2.0.",
-      "bytes": 21757,
-      "sha256": "56b9c67f4cc1f422f59cd6015e878eb76fd6e6739504b268268075612dab9e06"
+      "bytes": 22240,
+      "sha256": "7583b8f32aa0e6724793125f2e702a607caaf7a1b8b269714adae464a178a0ec"
     },
     {
       "path": "tools/verify-world3d.mjs",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "bytes": 5515,
-      "sha256": "887d91ead1c0d98588e01041f2e2392cd6b28d8243fd7b9c19dd2994c7375f19"
+      "sha256": "0d6876b6971790f4d5716d791c5fa12e7441cec98de026ededdcc719442bac88"
     },
     {
       "path": "tools/world3d/cases.mjs",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 16702,
-      "sha256": "ac635b7f1d981052e059247408ffb5d1f73bb3ae0135ca6e30573a6e022c7363"
+      "bytes": 21257,
+      "sha256": "fdcadf5fb5b3db2e63bf23bec9ee1c5a92a822dddb3efaf4f7980a938e93bc31"
     },
     {
       "path": "tools/world3d/page.html",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 2318,
-      "sha256": "6554ec66df399ca08302162c87c6dab60a794dc30ac3ad2e08d9533d165e08f9"
+      "bytes": 2450,
+      "sha256": "ca8dd627880e1430b07a206c5f949dacf9bf4d07baa06f9dca62c5839fdb1f7d"
     },
     {
       "path": "contributions/world3d.json",
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
-      "bytes": 22173,
-      "sha256": "4466bf7847a8b7a3b520545e7b5491545b4163e20b7c22d00fcc26ea186b1e86"
+      "bytes": 22551,
+      "sha256": "0c05ce42964665822382b41c5c6e3b4860aec4117b495c6bfd31c13418dde532"
     },
     {
       "path": "packages/engine/rendering/world3d/Curves3D.ts",
@@ -16796,14 +16796,14 @@
     {
       "path": "packages/engine/rendering/world3d/Physics3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 54935,
-      "sha256": "2361b19e67a41244f1399fc5f4657b01e1b737b197f34572918c841ff091eaae"
+      "bytes": 65752,
+      "sha256": "d87b261cc6cdb3ede2e6b8d79ea274753630362faf90319c9e6308e4fb0286ef"
     },
     {
       "path": "packages/engine/rendering/world3d/Serialize3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 26294,
-      "sha256": "2092af315504b471140ddd4af189a93343338861d327fff310465afde4a6f418"
+      "bytes": 26376,
+      "sha256": "07b786558f4248664d2134fd0a9a628e51bf33358106540b7b2431087d452131"
     },
     {
       "path": "packages/engine/rendering/world3d/StateMachine3D.ts",
@@ -16844,20 +16844,20 @@
     {
       "path": "packages/engine/web/world3d/post3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 11509,
-      "sha256": "887603b9504ae46cf94162bf07258f7a22f4425d8e40a83d33d160ee51d36cfd"
+      "bytes": 23243,
+      "sha256": "dad2715a7ec870e1ffcb8958dfa3a76b303c724af9adeb292604f1ead693173a"
     },
     {
       "path": "packages/engine/web/world3d/postWebGL23D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 8142,
-      "sha256": "936c03149be0814fe3617830112119f6b11b78f7dcdf6cb3913617d9344b9c66"
+      "bytes": 11521,
+      "sha256": "0550720832a57648723fd03d9526a74ab247caad0af4ac53dad475963573a069"
     },
     {
       "path": "packages/engine/web/world3d/postWebGPU3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 8384,
-      "sha256": "b5e3a9312f009694a0bd41ea71ca45af8bc8d784f1cfea44c5bad2b9f7e459d3"
+      "bytes": 12021,
+      "sha256": "f4a9e0f040e5ab73c94519604e5f7ce5baf427aab7370e516b06b70ac262fc8c"
     },
     {
       "path": "packages/engine/web/world3d/probe3D.ts",
@@ -16868,8 +16868,8 @@
     {
       "path": "tests/world3d-extended.test.mjs",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 19121,
-      "sha256": "a101b4f0bfdc96fa8a88df243523fc9adafc8e8b24f4dcdbdb721075acbcd40c"
+      "bytes": 32013,
+      "sha256": "72131c5c9d154aac5e57f06a74496e8592f02e35cc431c8f91ac973993664a0a"
     },
     {
       "path": "tests/world3d-parity.test.mjs",
@@ -16888,6 +16888,12 @@
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "bytes": 5719,
       "sha256": "304685577bc9f6391d3328883935210cf024336d8a9f2249435eec4d8ba3338e"
+    },
+    {
+      "path": "packages/engine/rendering/world3d/PhysicsMesh3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "bytes": 15490,
+      "sha256": "fe434452ef1c11784f036b32890e32145f0f2f34dc07eb126619b5ff5dc01738"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
