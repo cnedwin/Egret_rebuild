@@ -84,6 +84,7 @@ export class GpuParticles3D extends InstancedMesh3D {
         const material = createSpriteMaterial3D({...(options.map ? {map: options.map} : {}), blending: options.blending ?? 'additive', depthWrite: false});
         super(createQuadGeometry3D(), material, count, 4);
         this.name = 'gpu-particles';
+        this.pickable = false;
         this.castShadow = false;
         this.receiveShadow = false;
         const life = pair(options.lifetime, 2, 'lifetime'), speed = pair(options.speed, 1, 'speed'), size = pair(options.startSize, 0.2, 'startSize');

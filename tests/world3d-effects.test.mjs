@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
-  GpuParticles3D, Mesh3D, Object3D, Trail3D, World3DError, createBoxGeometry3D, createDecal3D, createDecalGeometry3D, createGpuParticles3D,
+  GpuParticles3D, Mesh3D, Object3D, Raycaster3D, Trail3D, World3DError, createBoxGeometry3D, createDecal3D, createDecalGeometry3D, createGpuParticles3D,
   createPerspectiveCamera3D, createPlaneGeometry3D, createSphereGeometry3D, createStandardMaterial3D, createTrail3D,
 } from '@egret/engine/world3d';
 import { createAtmosphere3D } from '@egret/engine/webgl2/world3d';
@@ -157,6 +157,14 @@ test('a burst is emitted once and reports its end', () => {
   assert.throws(() => createGpuParticles3D({direction: [0, 0, 0]}), code('WORLD3D_INPUT_INVALID'));
   assert.throws(() => createGpuParticles3D({shape: 'ring'}), code('WORLD3D_INPUT_INVALID'));
   assert.throws(() => createGpuParticles3D({count: 2e6}), code('WORLD3D_BUDGET'));
+  // Particle slots are not transforms, so the emitter keeps out of ray picking; an ordinary mesh can opt out too.
+  const scene = new Object3D(), wall = new Mesh3D(createPlaneGeometry3D({width: 4, height: 4}), createStandardMaterial3D({}));
+  scene.addChild(box); scene.addChild(wall);
+  const ray = new Raycaster3D(); ray.set([0.3, 0.7, 5], [0, 0, -1]);
+  assert.equal(box.pickable, false);
+  assert.deepEqual(ray.intersect(scene).map(hit => hit.object), [wall]);
+  wall.pickable = false;
+  assert.equal(ray.intersect(scene).length, 0);
   burst.dispose();
   assert.equal(burst.geometry.isDisposed, true);
 });

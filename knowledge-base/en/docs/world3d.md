@@ -66,7 +66,7 @@ Crowds of animated characters are drawn in one call. `bakeAnimationTexture3D(roo
 
 ## Picking
 
-`Raycaster3D` intersects a subtree and returns hits sorted by distance, with the world point, face index, interpolated UV and instance index. It tests bounding spheres first, respects material sides and layer masks, and can stop at the first hit per mesh. `setFromCamera` builds the ray from normalized device coordinates; the ray starts on the near plane.
+`Raycaster3D` intersects a subtree and returns hits sorted by distance, with the world point, face index, interpolated UV and instance index. It tests bounding spheres first, respects material sides and layer masks, and can stop at the first hit per mesh. A mesh with `pickable = false` is left out; trails and GPU particle emitters are, since what they draw is not their geometry. `setFromCamera` builds the ray from normalized device coordinates; the ray starts on the near plane.
 
 ## Particles
 

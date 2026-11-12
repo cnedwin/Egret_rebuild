@@ -74,6 +74,7 @@ export class Trail3D extends Mesh3D {
         });
         super(geometry, material);
         this.name = 'trail';
+        this.pickable = false;
         this.castShadow = false;
         this.frustumCulled = false;
         this.capacity = capacity;
