@@ -21,3 +21,5 @@ export {FlyControls3D, createFlyControls3D} from './FlyControls3D.js';
 export type {FlyControlsOptions3D, FlyControlsKeys3D} from './FlyControls3D.js';
 export {AudioListener3D, PositionalAudio3D, createAudioListener3D, createPositionalAudio3D} from './Audio3D.js';
 export type {AudioListenerOptions3D, PositionalAudioOptions3D} from './Audio3D.js';
+export {captureCubeTexture3D} from './probe3D.js';
+export type {CubeCaptureOptions3D} from './probe3D.js';
