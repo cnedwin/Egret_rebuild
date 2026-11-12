@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "36a369e82f8f9154f4c9cad3b96f96b31723e5ff95fb58cfb858b23497198377",
+      "sha256": "9a700f92c81f7d68f20e1433b6536c27780985a60b5039bff059b2a0a86ea8f5",
       "bytes": 395328,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -16454,8 +16454,8 @@
     {
       "path": "integrations/package.json",
       "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
-      "bytes": 1624,
-      "sha256": "a308cabb4df12c0119f13dc2fec996982ac14b492f82aa8227f75b0a8bad2f33"
+      "bytes": 1655,
+      "sha256": "a25e49a0db576df7776a6c9c86de6356f7e5070e6497acd83a90318b72a60445"
     },
     {
       "path": "integrations/pnpm-workspace.yaml",
@@ -16478,20 +16478,20 @@
     {
       "path": "integrations/THIRD_PARTY_NOTICES",
       "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
-      "bytes": 1704,
-      "sha256": "eae863a596fd78fb0513af9079f56a529500de3f38c4bfc6a5773af7d54c5a0a"
+      "bytes": 1743,
+      "sha256": "838126279b171e39ad6f5404d972d15f11419de38ffa43ab280b1dca76a887af"
     },
     {
       "path": "integrations/README.md",
       "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
-      "bytes": 5518,
-      "sha256": "c99574d5ad59fbda044950136209b805e4c0498c1b2be2771d5e7ada47a977ec"
+      "bytes": 5822,
+      "sha256": "429317b1db4014b1c5510135b4752916897f29e15c193ab0d826eebc847cac53"
     },
     {
       "path": "integrations/README.zh-CN.md",
       "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately.",
-      "bytes": 4970,
-      "sha256": "5f740d176bb72a1252c41a59c92d1af6551c29e4fd6e7ff8d7955760f11247bf"
+      "bytes": 5229,
+      "sha256": "813a93f8d24b4a654c6f51ff32ef1f83699dd5e8597a700e9540efa43e309730"
     },
     {
       "path": ".github/workflows/integrations.yml",
@@ -16500,10 +16500,16 @@
       "sha256": "76e69a347d44fe57e1ed062dab065b09b5b93d47c7dd7a33cd55e1c7d66a9d0b"
     },
     {
+      "path": "integrations/tools/copy-license.mjs",
+      "originRole": "First-party package assembly tool authored with AI assistance under Apache-2.0. Copies the exact existing repository license into the standalone build artifact.",
+      "bytes": 258,
+      "sha256": "294ed19c1b7f08e1203cce319160c5770718f24fe1aff158d90b52dc091a5464"
+    },
+    {
       "path": "contributions/third-party-integrations.json",
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
-      "bytes": 9054,
-      "sha256": "bab130b3609f9a30e1b49291f189c00e55a793a62acfb43c487bab7ca5db1d7b"
+      "bytes": 9303,
+      "sha256": "b45aef1318fb82d9565564aadd54eb619ca64e5519df68fcb638d04bd829ae4e"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

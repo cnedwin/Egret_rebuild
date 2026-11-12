@@ -43,7 +43,7 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node tools/copy-license.mjs",
     "test": "node --test tests/*.test.mjs",
     "dev": "node tools/example.mjs",
     "verify:browser": "node tools/verify-browser.mjs"

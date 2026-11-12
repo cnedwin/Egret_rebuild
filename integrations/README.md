@@ -17,6 +17,8 @@ The optional `@egret/integrations` package lives in `integrations/`. Its depende
 
 All subpaths start with `@egret/integrations`. The package is a repository-local preview. An application in another checkout can declare a local file dependency on the built package and use the same imports.
 
+With pnpm, an external application can add the built package using `pnpm add @egret/integrations@file:../Egret_rebuild/integrations`. For an offline install, use the [Planck peer setting](pnpm-workspace.yaml) in the consuming workspace to keep the unused Stage testbed out of its dependency resolution.
+
 ## Asset and scene ownership
 
 - Tiled stays an external editor. Open `example/assets/room.tmx` there to edit the sample. The Node importer only accepts caller-declared TMX and TSX text. Tile layers preserve empty cells and the horizontal, vertical and diagonal flags. Use the resulting atlas paths with the game's asset loader. The finite profile supports the map features listed in the adapter, with explicit errors for infinite maps, compressed layers and unsupported layer/object features.

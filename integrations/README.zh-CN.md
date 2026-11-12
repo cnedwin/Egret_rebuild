@@ -17,6 +17,8 @@
 
 各子入口以 `@egret/integrations` 开头。当前以仓库内预览包交付，独立工程可以通过本地文件依赖引用构建后的包并沿用相同导入方式。
 
+外部 pnpm 工程可以用 `pnpm add @egret/integrations@file:../Egret_rebuild/integrations` 安装构建后的包。离线安装时，在消费端采用本包的 [Planck peer 配置](pnpm-workspace.yaml)，避免解析此处用不到的 Stage 测试床。
+
 ## 资源与场景归属
 
 - 在外部 Tiled 编辑器打开 `example/assets/room.tmx` 即可编辑样例。Node 导入器只接收调用者明确提供的 TMX 和 TSX 文本。图层保留空格、水平翻转、垂直翻转和对角变换标记，图集路径由游戏资源加载器读取。有限地图配置以适配器支持范围为准，无限地图、压缩图层和超出范围的图层或对象会给出明确错误。

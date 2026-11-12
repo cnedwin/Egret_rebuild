@@ -144,6 +144,10 @@
     {
       "path": ".github/workflows/integrations.yml",
       "originRole": "First-party optional integration package configuration, attribution or bilingual guidance authored with AI assistance under Apache-2.0. Dependency licenses are recorded separately."
+    },
+    {
+      "path": "integrations/tools/copy-license.mjs",
+      "originRole": "First-party package assembly tool authored with AI assistance under Apache-2.0. Copies the exact existing repository license into the standalone build artifact."
     }
   ],
   "documents": [
