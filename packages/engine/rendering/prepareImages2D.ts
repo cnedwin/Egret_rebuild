@@ -60,14 +60,17 @@ export function prepareImage2D(command: ImageCommand2D, width: number, height: n
         // Rebind this frame's image table address; the cache retains only geometry.
         return { ...cached.value, imageIndex: command.imageIndex, sourceRect: command.sourceRect, alpha: command.alpha };
     }
-    const preparation = new Preparation(options, budget, containedClipping), corners = preparation.corners(command);
+    const preparation = new Preparation(options, budget, containedClipping, clipContext), corners = preparation.corners(command);
     const uv = [[0, 0], [1, 0], [1, 1], [0, 1]] as const;
     let polygon = normalize(preparation, corners.map((point, i) => ({ ...point, u: uv[i]![0], v: uv[i]![1] })));
     // Every clip is preflighted even for singular, empty or zero-alpha commands.
     const clips = command.clips.map(clip => preparation.clipRectangle(clip, clipContext));
-    for (const clip of clips) polygon = preparation.tryContainedClip(polygon, clip, 'image') ?? clipPolygon2D(preparation, polygon, clip, normalize, attach, undefined, containedClipping ? 'image' : undefined);
     const viewport = [{ x: 0, y: 0 }, { x: width, y: 0 }, { x: width, y: height }, { x: 0, y: height }];
-    polygon = preparation.tryContainedClip(polygon, viewport, 'image') ?? clipPolygon2D(preparation, polygon, viewport, normalize, attach, undefined, containedClipping ? 'image' : undefined);
+    const bounds = clipContext && preparation.containedClipStackBounds(clips, viewport);
+    if (bounds === undefined || !preparation.tryContainedClipStack(polygon, bounds, 'image')) {
+        for (const clip of clips) polygon = preparation.tryContainedClip(polygon, clip, 'image') ?? clipPolygon2D(preparation, polygon, clip, normalize, attach, undefined, containedClipping ? 'image' : undefined);
+        polygon = preparation.tryContainedClip(polygon, viewport, 'image') ?? clipPolygon2D(preparation, polygon, viewport, normalize, attach, undefined, containedClipping ? 'image' : undefined);
+    }
     if (command.alpha === 0) polygon = [];
     const vertices = polygon.length ? (polygon.length - 2) * 3 : 0;
     if (vertices > options.maxPreparedVertices || vertices > 4294967295) fail('budget');

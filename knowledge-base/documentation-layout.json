@@ -159,8 +159,8 @@
       "action": "move-pair",
       "previousZhSha256": "96722b4dfc8e1ae6989c6b8956ffbbcdb8d6703400b4b1b8ba1ca443c9aed17e",
       "previousEnSha256": "b6fa739d6b9f1ba36e1cb329876be61487cccc38a4362bd08867d134934453b2",
-      "currentZhSha256": "a8d557dbd9c57c7954dfdea3dfae458cf84d2dac5be3aaac6e17af6188c04122",
-      "currentEnSha256": "5d15247d9b0b5b02c0bd6a152bc5f74a81af853ced0a430278ab7daf4e40ecb1"
+      "currentZhSha256": "c68e254e64b5d362d707aa5a139017f512462b4182fa07f7937d597adb1850aa",
+      "currentEnSha256": "4ffadec9bac4243554a7ff4db8326fc518eac6ccef2ddcdf8daf773ecae91edb"
     },
     {
       "oldZh": "knowledge-base/docs/工程技术架构与项目结构.md",
@@ -964,8 +964,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "42aa5e1b2cd971ea11af18391c6397aa77ebda03494eb691566e7ce676fa834a",
-      "currentEnSha256": "cf233a81eef8662069bcda21aebe69a50c3303c2fe67ad1237147c41d0797ab0",
+      "currentZhSha256": "25e47079b156f04247fb347ca94295ff332b2977fa5fa32f3e374df98deed062",
+      "currentEnSha256": "39af4e3dda781287403908dc933677fc9fffa6604260afa4006a103f28880bc2",
       "currentEngineeringPreview": "0.61.0"
     },
     {
@@ -1086,8 +1086,8 @@
       "action": "move-pair",
       "previousZhSha256": "61639f120f4ed3aa77c4ffd41cf377e447dcac20e9562322c103e2e6b44c3990",
       "previousEnSha256": "60c77a11dc614191ba1d98fa488301a344839cc672df01e2c632048d85e8d376",
-      "currentZhSha256": "670006f9cebeb0314c2a4361418ddee0227b1568ac08106a5b4e82acc1e0dc91",
-      "currentEnSha256": "dd568c0478ea864252e2bdfb51da3b2e253ea399a7d671a964718f0cd1ef494a",
+      "currentZhSha256": "e360e93d3981ca9e70bbf2482c0fa55864c6f2f0b87fb994b29780907446ca54",
+      "currentEnSha256": "345a260e419fb4d61e2f80f5c0484117b033308675a4ca09731f349e91fd29de",
       "currentEngineeringPreview": "0.61.0"
     },
     {

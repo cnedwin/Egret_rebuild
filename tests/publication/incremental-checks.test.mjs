@@ -12,7 +12,7 @@ import {spawnSync} from 'node:child_process';
 import {selectChecks} from '../../tools/check-incremental.mjs';
 import {isolatedGitEnvironment} from '../../tools/contribution-metadata.mjs';
 import {world3dBoundaryPrevious} from '../../tools/prepare-check-maintenance.mjs';
-import {world3dCompilerFixturePrevious} from '../../tools/prepare-compiler-maintenance.mjs';
+import {m12FullDirtyCapturePrevious,world3dCompilerFixturePrevious} from '../../tools/prepare-compiler-maintenance.mjs';
 import {projectWorld3dPackage} from '../../tools/lib/world3d-boundary.mjs';
 function fixture(){
  const root=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'egret incremental ')));
@@ -1724,6 +1724,7 @@ function worldCardHostPrevious(raw,file){
  return raw;
 }
 function m24SpinePrevious(raw,file){
+ raw=m12FullDirtyCapturePrevious(raw,file);
  raw=worldCardHostPrevious(m34ThemePrevious(raw,file),file);
  const selected=m24SpineSourceHistory.find(row=>row.path===file);if(!selected)return raw;
  const identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});

@@ -20,7 +20,7 @@ Years later, as times change and technology advances, many developers continue t
 
 | 领域 | 主干已有能力 | 仍需完成 |
 | --- | --- | --- |
-| 渲染与资源 | WebGPU／WebGL2 共享渲染、有序准备、资源组及选定设备恢复路径 | 更广泛的宿主／设备验收；固定 M1.2 全脏 Engine p95 中位数仍为 [10.3 ms，目标 8 ms](https://github.com/cnedwin/Egret_rebuild/issues/55) |
+| 渲染与资源 | WebGPU／WebGL2 共享渲染、有序准备、资源组及选定设备恢复路径。固定 M1.2 全脏 Engine p95 中位数为 5.3 ms，目标为 8 ms。 | 更广泛的宿主／设备验收和剩余 [M1.2 帧节奏目标](https://github.com/cnedwin/Egret_rebuild/issues/55) |
 | 内容与动画 | PNG／图集／序列帧构建、多页图集和字体产物，可选 Spine 播放／显示与 RESET，兼容资源替换时保留序列播放状态 | 完整选定版本 Spine 参考与状态保留、纹理变体、组合生命周期和性能验收 |
 | UI 与文字 | 变高列表、焦点／导航、多语言多样式段落、文字几何、字体／主题切换、遮罩／模糊、受管弹出层／模态层及可选原生单／多行编辑 | 真实 IME、其余控件／语义以及更多文字与设备验收 |
 | 3D | [可选 World3D](knowledge-base/Cns/docs/world3d.md) 支持 glTF、光照与阴影、后处理、动画、文字，以及带网格碰撞和关节的物理。共享宿主提供有界 3D 背景与 2D 合成。 | 更多资产、设备性能和工程创作整合 |
