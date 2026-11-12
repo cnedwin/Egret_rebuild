@@ -323,15 +323,15 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "103fd83e550dc99f05feb2509f00c179198524ca0912c1da54d1b856a138b7a3",
-      "zhSha256": "9ebdc8781040faecc9d9c128ea2b2e8d3b948cd8f9296f5691fdf181ad18866e"
+      "enSha256": "c681c3405b640e4c5c787b129a56858c26f897999ac221edf5c56703c8f7ea45",
+      "zhSha256": "d5a60024f400ce8f0d4ee05175be73ad6a19049e0c4d797b5415ef4d97e1b1b8"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
       "en": "CONTRIBUTING.md",
       "kind": "public_reading",
-      "enSha256": "c32ed45a532a0f6b7ff84a8fe7e29b6cbe37e2cb07aaacde47b437f4e447d9bb",
-      "zhSha256": "320feaece2c1a8b6f0fac3749e2ef71e273c680b8210a373e8ea52490fc3e386"
+      "enSha256": "d946e1c22d052523257ab7d7bea13e297e238bafbed0d541295c9971e1bffd65",
+      "zhSha256": "6741d6372bd8e4e52eeec344c161b18bd657d41fb11fde546b53b589074dda6e"
     },
     {
       "zh": "docs/evidence/texture-a1.zh-CN.md",
@@ -477,8 +477,8 @@
       "zh": "knowledge-base/Cns/docs/双语文档与推送前检查.md",
       "en": "knowledge-base/en/docs/bilingual-documentation-and-prepush-checks.md",
       "kind": "public_reading",
-      "enSha256": "addbf6017e0b96d8c6d0525458642c0b3078c08672ed336a6a0daa9e6f0ef7e7",
-      "zhSha256": "c06a3972e1a05fd4e1756d5197e639049ecf3c1c4387eb69e0acedf17b15fe79"
+      "enSha256": "6e21b9a6d802700e752ccbdd647df182a9d2bda25b6c0232a3db5647e37e111c",
+      "zhSha256": "0e4f31a9cd69c25552ac4b916d3a8f8167f615cb781a4dff545c575fb3104695"
     },
     {
       "zh": "knowledge-base/Cns/docs/bitmap-region-contract.md",
@@ -498,8 +498,8 @@
       "zh": "knowledge-base/Cns/docs/代码规范与质量门禁.md",
       "en": "knowledge-base/en/docs/code-standards-and-quality-gates.md",
       "kind": "public_reading",
-      "enSha256": "b95450dbaa8473470091a9c873e8aad41c033bcafbcee66890ba6b6e14cf4652",
-      "zhSha256": "85d2da51deed89aa400a7871810bd9981506249453bbe116925865d8608fe66c"
+      "enSha256": "290ac097dca04d3059909f411c4580bc6008590391920cdf1d6ba52473e189d3",
+      "zhSha256": "5c6c0338af7c448a2e49076703e5226619350398f8ecb550d69fe414b9a13b19"
     },
     {
       "zh": "knowledge-base/Cns/docs/社区参与.md",
@@ -1844,8 +1844,8 @@
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "13dc08e32040597de9fb2a6203a0ead0cb3515e60d6df7883b0434a14f4fd592",
-      "zhSha256": "a46c2667dd6d676cea22b3a414162f88fc38305d2bda18a3011297ba7fedf2e5"
+      "enSha256": "9ffed6c85af0eedff809682c7097d95bf1b4a619eede364a5d2d58744a24c5e6",
+      "zhSha256": "3333d8047f14a7769d518ec36bbfa9d4236fe89e8e1deb5e4dfad0c4afb9341a"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -3307,7 +3307,7 @@
     },
     {
       "path": "tools/prepush.mjs",
-      "sha256": "3daec108ff13e102857e2ffcd2364a65cf27bccb7c782bd0d5f5c9746ebd9745"
+      "sha256": "340fc4ca3a60610655cadb037aa96245b07045cc8fe18971c2997adb9b411325"
     },
     {
       "path": "packages/engine/web/image.ts",
@@ -5120,6 +5120,14 @@
     {
       "path": "packages/engine/web/world3d/FollowControls3D.ts",
       "sha256": "7e17e87e26d40c29140c52e4fca25ccc3b0dd893d996067ad2830a03ae4a3338"
+    },
+    {
+      "path": "tools/check-ci-documentation.mjs",
+      "sha256": "a4d1482d0c7fae3a1a17bea5d1e5302953d908f817c4e2f889d697346644b6e3"
+    },
+    {
+      "path": "tests/publication/ci-documentation-route.test.mjs",
+      "sha256": "1d0dea3e54f447d6fbc43fe8f1f335e41189c3d947fba7296f84ae48a33536b4"
     }
   ],
   "historicalSemanticReview": {
