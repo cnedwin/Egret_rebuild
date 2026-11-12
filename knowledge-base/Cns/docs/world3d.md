@@ -184,13 +184,13 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `createNavMesh3D(source, {slopeLimit})` 从关卡几何体构建导航网格：可以传入几何体、一个物体（其下的网格按世界变换合并），或原始的 `{positions, indices}`。比坡度上限更陡的面和朝下的面会被剔除；共用一条边的三角形互为邻居，互不相连的楼层属于不同的区域。
 
-`navMesh.findPath(start, end, {agentRadius, followSurface})` 返回最短可行走路线的点列表、路线长度，以及 `complete`：终点无法到达时为 `false`，此时路径停在能到达的最近位置。搜索在三角形上进行，路线再沿所穿过的边被拉直，并去掉可以直线走过的拐点。`agentRadius` 让路线与拐角保持一个半径的距离，并排除角色挤不过去的缺口；`followSurface` 在每次跨越三角形的位置加一个点，让路径贴着坡面。`setCost(triangle, cost)` 提高某块地面的通行代价，`setEnabled(triangle, false)` 把它关闭，例如一扇门。
+`navMesh.findPath(start, end, {agentRadius, followSurface})` 返回按代价选择的可行走路线的点列表、路线长度，以及 `complete`：终点无法到达时为 `false`，此时路径停在能到达的最近位置。搜索在三角形上进行，路线再沿所穿过的边被拉直，未加权时再去掉可以直线走过的拐点。`agentRadius` 让路线与拐角保持一个半径的距离，并排除角色挤不过去的缺口；`followSurface` 在每次跨越三角形的位置加一个点，让路径贴着坡面。`setCost(triangle, cost)` 设置某块地面有限且大于零的通行倍率，`setEnabled(triangle, false)` 把它关闭，例如一扇门。
 
 `findNearest(point, maxDistance)` 把点吸附到网格上，`raycast(from, x, z)` 返回直线行走在碰到边界之前能走多远，`moveAlong(from, x, z)` 在三角形之间移动并沿边界滑动，`isReachable` 判断两处能否经由开放的三角形互相到达，`randomPoint()` 按面积均匀地取一个位置。`createDebugGeometry()` 返回由边组成的线几何体。
 
 `createNavCrowd3D(navMesh)` 负责移动一群角色：`crowd.addAgent({position, radius, speed, node})`、`agent.setTarget(point)`，并在每帧调用 `crowd.update(deltaSeconds)`。每个角色沿自己的路径行走，快要重叠时会被推开，不会离开网格，并通过 `arrived` 报告是否到达；在人群中，当目标位置已被占据、角色无法再靠近时，它会停下并视为已到达。
 
-`findGridPath3D(width, height, cost, start, end)` 是用于瓦片地图的网格 A*，可选择是否允许斜向移动，斜向移动不会从被阻挡的拐角之间穿过。
+`findGridPath3D(width, height, cost, start, end)` 在有限正代价（包括小数）下搜索瓦片网格的最低代价路线。斜向移动的代价为目标格代价的 √2 倍，且不能穿越阻挡拐角。`maxVisited` 约束搜索范围。导航网格根据三角形代价选择并简化可行通道，空间索引的三角形到网格单元总引用数上限为 8,388,608。
 
 导航网格按传入的三角形原样使用：不做体素化，也不向内收缩，因此可行走的三角形本身应当与墙保持距离，或者在寻路时传入 `agentRadius`。角色之间只靠简单的互相推开来避让，不预测碰撞；也没有跳跃、梯子这类网格外连接。
 
