@@ -17,3 +17,7 @@ export {createWorld3DHost, startWorld3DLoop} from './host3D.js';
 export type {World3DLoopSource} from './host3D.js';
 export {POST3D_LIMITS, createPostProcessSettings3D} from './post3D.js';
 export type {PostProcessSettings3D} from './post3D.js';
+export {FlyControls3D, createFlyControls3D} from './FlyControls3D.js';
+export type {FlyControlsOptions3D, FlyControlsKeys3D} from './FlyControls3D.js';
+export {AudioListener3D, PositionalAudio3D, createAudioListener3D, createPositionalAudio3D} from './Audio3D.js';
+export type {AudioListenerOptions3D, PositionalAudioOptions3D} from './Audio3D.js';

@@ -87,3 +87,7 @@ export type {
     CircleGeometryOptions3D, RingGeometryOptions3D, TorusKnotGeometryOptions3D, PolyhedronOptions3D, LatheGeometryOptions3D,
     TubeGeometryOptions3D, ExtrudeGeometryOptions3D,
 } from './geometries3D.js';
+export {
+    computeObjectBounds3D, LineHelper3D, BoxHelper3D, ArrowHelper3D, CameraHelper3D, LightHelper3D, SkeletonHelper3D,
+    createBoxHelper3D, createArrowHelper3D, createCameraHelper3D, createLightHelper3D, createSkeletonHelper3D,
+} from './debug3D.js';
