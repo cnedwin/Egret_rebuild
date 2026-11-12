@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/core-progress.md)
 
-Reviewed main [72edea9](https://github.com/cnedwin/Egret_rebuild/commit/72edea9de4a5f113ebd18cba9c8a970485bccd19) on 2026-11-12. The engineering preview provides runnable public examples. Workspace packages remain private at 0.0.0. A stable engine distribution remains future work.
+Reviewed main [5a9b860](https://github.com/cnedwin/Egret_rebuild/commit/5a9b860fa7fdc777987bad844d98016d7e824eeb) on 2026-11-12. The engineering preview provides runnable public examples. Workspace packages are private at 0.0.0. A stable engine distribution remains future work.
 
 Use this page for current capability status, the [engineering plan](engineering-plan.md) for the next work, and subsystem contracts for exact APIs and evidence. Historical previews are not competing current versions.
 
@@ -18,8 +18,12 @@ Egret's product direction combines animation-rich 2D games and complex interface
 | UI | Managed roots, measure/arrange, variable-height stable-key lists, anchors, row focus and reveal; immutable theme/skin generations, shared effects and owned popup/modal composition | Full controls, semantic projection and complete large-scene qualification |
 | Text and fonts | Readonly CanvasKit/SkParagraph paragraphs, final-line bidi, wrapping, alignment/maxLines, styled runs, committed hit/selection/caret geometry and managed font-set switching; optional native single/multiline editing and paired browser fonts | Actual IME qualification; independent required script/font/ink references; transfer/startup and CPU/Wasm/memory qualification |
 | Input | Compatible old mouse API, optional multi-contact routing, keyboard/logical focus, responsive examples and merged movement/action state controls | Remaining control/example/keyboard wiring, gesture arbitration, full semantic integration and required actual phone/IME/accessibility rows |
-| 3D | Owned geometry, opaque depth and ordered 2D overlays; [editable hierarchy, perspective/orthographic cameras and opaque textured GLB, directional lighting, depth-tested 2D cutout cards and rigid node animation authored in code or imported from GLB](authored-scene3d.md) on WebGL2 and WebGPU | Physically based materials, shadows, animated 3D characters, broader model formats and general VFX |
+| 3D | The [authored shared scene](authored-scene3d.md) provides bounded backgrounds, depth-tested 2D cards and rigid animation. [Optional World3D](world3d.md) provides glTF instancing, materials, shadows, post-processing, skinning, morphs and static mesh colliders on WebGL2 and WebGPU. | Broader asset and device qualification, formal performance and a unified 2D/3D project authoring path |
 | Project and tools | Versioned project snapshots/transactions, structured diagnostics and bounded legacy RES/MovieClip analysis; pinned setup, review and public CI | Project-to-running-game authoring loop, integrated visual tools, Agent/Skill/MCP applications, publication/update adapters and complete migration |
+
+## Optional World3D — 2026-11-12
+
+[#147](https://github.com/cnedwin/Egret_rebuild/pull/147) integrated the standalone renderers, [#148](https://github.com/cnedwin/Egret_rebuild/pull/148) extended materials, compressed textures, post-processing and scene documents, and [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) added instance import, depth and vertex hooks, and static mesh colliders. Windows Edge on a physical GPU passed 16 dual-backend comparisons. Physical Android Chrome verified the screen-space and vertex-hook cases and oblique projection depth on both backends. See the [World3D contract](world3d.md) for device scope. #55 and #92 continue to track their formal performance and device criteria.
 
 ## Fixed mixed profiles — 2026-11-08
 
@@ -112,7 +116,7 @@ M0's [independent newcomer rehearsal #52](https://github.com/cnedwin/Egret_rebui
 
 ## Next development phase
 
-Use the original M1 fixture to locate the full-dirty cost in #55. Once short diagnostics support a concrete change, run the formal paired measurements using the original protocol. In #92, address measured bottlenecks in the fixed Outfit Studio and qualify startup, mixed lifecycle, recovery and physical devices after #91 completes the selected features.
+Start [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) with in-browser opening of an exported Outfit Studio project. Apply a valid snapshot through existing project transactions, keep the live scene and resources on cancellation or failed import, and allow retry. #55 can diagnose full-dirty cost in the original M1 fixture in parallel and return to formal paired measurements after a concrete change. #92 uses the existing fixed profiles to address measured bottlenecks and follows the existing qualification criteria once the selected #91 features land.
 
 #86 can advance compatible Spine replacement and integrated animation lifecycles in parallel, reusing the delivered sequence replacement and resource ownership. #89 and #90 track remaining IME, controls and semantics. #93 can verify the clean-consumer example, public entries and dependency notices while the complete handoff waits for #91 and #92. The [engineering plan](engineering-plan.md) sets dependencies and exit criteria.
 

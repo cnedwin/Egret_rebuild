@@ -14,7 +14,7 @@ Years later, as times change and technology advances, many developers continue t
 
 ## Egret today
 
-Egret is a community rebuild of the game engine for Web and lightweight games, with complex 2D interfaces, animation and an architecture that can support AI-assisted creation. Familiar TypeScript APIs, explicit resource ownership and shared rendering are the foundation. The integrated AI creation platform, broader 3D and additional native/mini-game hosts are longer-term product work.
+Egret is a community rebuild of a game engine for the Web, with familiar TypeScript APIs, animation-rich 2D, complex UI and explicit resource ownership. Optional World3D provides standalone WebGL2 and WebGPU renderers. An integrated AI creation platform and additional native and mini-game hosts are on the roadmap.
 
 **Engineering preview:** main contains reviewed, runnable increments. It is not a complete engine release or a claim of universal platform, Spine, accessibility or performance support. Use each capability's contract and measured scope.
 
@@ -23,6 +23,7 @@ Egret is a community rebuild of the game engine for Web and lightweight games, w
 | Rendering and resources | Shared WebGPU/WebGL2 rendering, ordered preparation, resource groups and selected device recovery | Broader host/device qualification; the fixed M1.2 full-dirty Engine median-p95 remains [10.3 ms against an 8 ms target](https://github.com/cnedwin/Egret_rebuild/issues/55) |
 | Content and animation | PNG/atlas/sequence builds, multipage atlases and font artifacts, optional Spine playback/display and RESET, compatible sequence playback preservation | Complete selected-version Spine references and state preservation, texture variants, integrated lifecycle and performance qualification |
 | UI and text | Variable-height lists, focus/navigation, multilingual styled paragraphs, text geometry, font/theme switching, masks/blur, owned popup/modal layers and optional native single/multiline editing | Actual IME, remaining controls/semantics and broader script/device qualification |
+| 3D | [Optional World3D](knowledge-base/en/docs/world3d.md) covers glTF, lighting and shadows, post-processing, animation and static mesh colliders. The shared host supports bounded 3D backgrounds with 2D composition. | Broader asset and device qualification and project authoring integration |
 | Integration | [Editable Outfit Studio](examples/outfit-studio/README.md) with a compact desktop scene, fixed mixed workloads and a mobile multitouch profile | Selected feature coverage, full performance/device qualification and the core preview handoff |
 
 [Android observations and remaining device limits](knowledge-base/en/docs/android-device-validation.md) cover exact component profiles; they do not establish universal phone support or close the M1.2 performance target.
@@ -38,6 +39,8 @@ Use **Node.js 26.7.0** and **pnpm 11.25.0**. From the repository root:
 The [getting-started guide](knowledge-base/en/docs/getting-started.md) explains prerequisites, expected results and troubleshooting. Explore [Outfit Studio](examples/outfit-studio/README.md), [responsive examples](examples/mobile/README.md), [paragraphs in UI](examples/paragraph-panel/README.md) and [sequence replacement](examples/sequence-reset/README.md). Use the fixed profiles for qualification and the responsive previews to try the UI.
 
 See the [WebGL2 isometric map](examples/isometric-map/README.md) for depth ordering and frame submission in a small grid-based scene.
+
+Run the [World3D example](examples/world3d/README.md) to try the optional 3D entry on WebGL2 or WebGPU.
 
 For optional tile-map, physics, audio, save, archive, KTX2 and localization support, see the [third-party integrations](integrations/README.md).
 
@@ -60,6 +63,9 @@ These are merged engineering increments, not new package-version or full-support
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#147](https://github.com/cnedwin/Egret_rebuild/pull/147) | Optional World3D scene graph and standalone WebGL2/WebGPU renderers | 新增可选 World3D 场景图与独立 WebGL2／WebGPU 渲染器 |
+| [#148](https://github.com/cnedwin/Egret_rebuild/pull/148) | World3D materials, lighting, post-processing, compressed textures and scene documents | 扩展 World3D 材质、光照、后处理、压缩纹理和场景文档 |
+| [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) | World3D instance import, vertex hooks and static mesh collisions with PC and Android functional evidence | 新增 World3D 实例导入、顶点钩子和静态网格碰撞，补齐 PC 与 Android 功能证据 |
 | [#136](https://github.com/cnedwin/Egret_rebuild/pull/136) | Standalone WebGL2 isometric example with depth ordering, grid collision and bounded submission | 独立 WebGL2 等距地图示例，展示深度排序、网格碰撞和有界提交 |
 | [#140](https://github.com/cnedwin/Egret_rebuild/pull/140) | Faster shared geometry construction for Spine, with short desktop and Android comparisons | 加快 Spine 使用的共享几何构造，记录桌面和 Android 短时对照 |
 | [#139](https://github.com/cnedwin/Egret_rebuild/pull/139) | Preserve sequence playback across compatible ContentLoader replacements | 在兼容的 ContentLoader 资源替换中保留序列播放状态 |

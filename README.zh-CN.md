@@ -14,7 +14,7 @@ Years later, as times change and technology advances, many developers continue t
 
 ## 当前白鹭引擎
 
-白鹭是面向 Web 与轻量游戏的社区重建项目，重点支持复杂 2D 界面、动画，以及能够承接 AI 辅助创作的架构。熟悉的 TypeScript API、明确的资源所有权和共享渲染构成基础。一体化 AI 创作平台、更完整的 3D 与新增原生／小游戏宿主属于后续产品工作。
+白鹭是面向 Web 游戏的引擎社区重建项目，保留熟悉的 TypeScript API，提供动画丰富的 2D、复杂界面和明确的资源所有权。可选 World3D 提供独立的 WebGL2 与 WebGPU 渲染入口。一体化 AI 创作平台及新增原生／小游戏宿主已列入路线图。
 
 **工程预览阶段：**main 包含经评审、可运行的工程增量，不代表完整引擎发布，也不代表所有平台、Spine 功能、无障碍与性能已验收。请按各能力契约和实际测量范围使用。
 
@@ -23,6 +23,7 @@ Years later, as times change and technology advances, many developers continue t
 | 渲染与资源 | WebGPU／WebGL2 共享渲染、有序准备、资源组及选定设备恢复路径 | 更广泛的宿主／设备验收；固定 M1.2 全脏 Engine p95 中位数仍为 [10.3 ms，目标 8 ms](https://github.com/cnedwin/Egret_rebuild/issues/55) |
 | 内容与动画 | PNG／图集／序列帧构建、多页图集和字体产物，可选 Spine 播放／显示与 RESET，兼容资源替换时保留序列播放状态 | 完整选定版本 Spine 参考与状态保留、纹理变体、组合生命周期和性能验收 |
 | UI 与文字 | 变高列表、焦点／导航、多语言多样式段落、文字几何、字体／主题切换、遮罩／模糊、受管弹出层／模态层及可选原生单／多行编辑 | 真实 IME、其余控件／语义以及更多文字与设备验收 |
+| 3D | [可选 World3D](knowledge-base/Cns/docs/world3d.md) 支持 glTF、光照与阴影、后处理、动画和静态网格碰撞。共享宿主提供有界 3D 背景与 2D 合成。 | 更多资产、设备性能和工程创作整合 |
 | 集成 | [可编辑换装工作室](examples/outfit-studio/README.zh-CN.md)，含精简桌面场景、固定混合负载及移动多点触摸档位 | 选定功能覆盖、完整性能／设备验收和核心预览交接 |
 
 [Android 观察与剩余设备限制](knowledge-base/Cns/docs/android-device-validation.md)只覆盖准确组件档位，不代表通用手机支持或关闭 M1.2 性能目标。
@@ -38,6 +39,8 @@ Years later, as times change and technology advances, many developers continue t
 [上手指南](knowledge-base/Cns/docs/getting-started.md)说明环境、预期结果和排错方法。可体验[换装工作室](examples/outfit-studio/README.zh-CN.md)、[响应式示例](examples/mobile/README.zh-CN.md)、[UI 段落](examples/paragraph-panel/README.zh-CN.md)和[序列替换](examples/sequence-reset/README.zh-CN.md)。固定档位用于验收，响应式预览用于体验界面。
 
 [WebGL2 等距地图示例](examples/isometric-map/README.zh-CN.md)展示小型网格场景的深度排序和帧提交。
+
+用 [World3D 示例](examples/world3d/README.zh-CN.md) 在 WebGL2 或 WebGPU 上体验可选 3D 入口。
 
 地图、物理、音频、存档、解包、KTX2 和多语言可按需启用，详见[第三方集成](integrations/README.zh-CN.md)。
 
@@ -60,6 +63,9 @@ Years later, as times change and technology advances, many developers continue t
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#147](https://github.com/cnedwin/Egret_rebuild/pull/147) | Optional World3D scene graph and standalone WebGL2/WebGPU renderers | 新增可选 World3D 场景图与独立 WebGL2／WebGPU 渲染器 |
+| [#148](https://github.com/cnedwin/Egret_rebuild/pull/148) | World3D materials, lighting, post-processing, compressed textures and scene documents | 扩展 World3D 材质、光照、后处理、压缩纹理和场景文档 |
+| [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) | World3D instance import, vertex hooks and static mesh collisions with PC and Android functional evidence | 新增 World3D 实例导入、顶点钩子和静态网格碰撞，补齐 PC 与 Android 功能证据 |
 | [#136](https://github.com/cnedwin/Egret_rebuild/pull/136) | Standalone WebGL2 isometric example with depth ordering, grid collision and bounded submission | 独立 WebGL2 等距地图示例，展示深度排序、网格碰撞和有界提交 |
 | [#140](https://github.com/cnedwin/Egret_rebuild/pull/140) | Faster shared geometry construction for Spine, with short desktop and Android comparisons | 加快 Spine 使用的共享几何构造，记录桌面和 Android 短时对照 |
 | [#139](https://github.com/cnedwin/Egret_rebuild/pull/139) | Preserve sequence playback across compatible ContentLoader replacements | 在兼容的 ContentLoader 资源替换中保留序列播放状态 |
