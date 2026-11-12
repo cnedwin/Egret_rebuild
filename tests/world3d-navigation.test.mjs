@@ -56,6 +56,16 @@ test('paths cross a navigation mesh by the shortest walkable way', () => {
   assert.equal(mesh.findPath([200, 0, 200], [1, 0, 1]), undefined);                 // too far from the mesh to snap
 });
 
+test('navigation mesh search does not overestimate a cheap corridor', () => {
+  const mesh = createNavMesh3D(floor(9));
+  for (let triangle = 0; triangle < mesh.triangleCount; triangle++) {
+    if (mesh.center(triangle)[2] >= 1) mesh.setCost(triangle, 0.05);
+  }
+  const route = mesh.findPath([0.4, 0, 0.3], [8.6, 0, 0.3]);
+  assert.equal(route.complete, true);
+  assert.ok(route.points.some(point => point[2] >= 1), 'the route uses the cheap corridor');
+});
+
 test('navigation meshes follow slopes, keep levels apart and come from scene objects', () => {
   // Flat for x below 5, then rising half a unit per unit.
   const hill = createNavMesh3D(floor(10, () => false, x => x < 5 ? 0 : (x - 5) * 0.5));
@@ -134,6 +144,18 @@ test('a crowd walks around obstacles and keeps its members apart', () => {
   lone.removeAgent(walker);
   assert.equal(lone.agents.length, 0);
   assert.throws(() => lone.addAgent({position: [500, 0, 500]}), code('WORLD3D_INPUT_INVALID'));
+});
+
+test('navigation mesh construction bounds aggregate cell references', () => {
+  const positions = [0, 0, 0, 0, 0, 100, 100, 0, 0];
+  const triangles = 4800;
+  const indices = Uint32Array.from({length: triangles * 3}, (_, index) => index % 3);
+  assert.throws(() => createNavMesh3D({positions, indices}), code('WORLD3D_BUDGET'));
+});
+
+test('grid paths prefer a fractional-cost detour to a shorter route', () => {
+  const path = findGridPath3D(5, 2, (_x, y) => y === 0 ? 1 : 0.1, [0, 0], [4, 0], {diagonal: false});
+  assert.deepEqual(path, [[0, 0], [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [4, 0]]);
 });
 
 test('grid paths avoid blocked cells and prefer cheap ground', () => {
