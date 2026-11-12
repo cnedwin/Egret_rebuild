@@ -98,6 +98,7 @@ async function isolated(check, body) {
     for (const file of ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml',
       ...readdirSync(repository).filter(name => /^tsconfig(?:\.[A-Za-z0-9-]+)?\.json$/.test(name)),
       'tools/browser-png-boundary.mjs', 'tools/lib/file-identity.mjs', 'tools/lib/sequence-preserve-pins.mjs',
+      'tools/lib/world3d-boundary.mjs',
       'tools/build.mjs', 'tools/generate-project-format.mjs']) copy(file);
     mkdirSync(path.join(root, 'node_modules/@egret'), { recursive: true });
     for (const name of packages) symlinkSync(path.join(root, 'packages', name), path.join(root, 'node_modules/@egret', name), process.platform === 'win32' ? 'junction' : 'dir');

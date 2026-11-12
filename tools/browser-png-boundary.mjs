@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { selectSequencePreservePins } from './lib/sequence-preserve-pins.mjs';
+import { projectWorld3dExports, projectWorld3dPackage, world3dGraphPins } from './lib/world3d-boundary.mjs';
 
 // One reviewed M1.1 group: all eleven raw identities must match before graph derivation.
 const m11WarmSubmissionGraphSuccessor = [{"path":"packages/engine/web/WebGPUHost.ts","bytes":102838,"sha256":"bf33f8aa63f14103ff947f79f77527a28dfd0cf15468cc84abda6c8cd15007e0"},{"path":"packages/engine/dist/web/WebGPUHost.js","bytes":96436,"sha256":"f6f1727bdd06903f66dcb5918476c0c0c9d5d5f93cf9acb714c4d6e5b7cc3615"},{"path":"packages/engine/web/prepareTexturedSubmission2D.ts","bytes":17192,"sha256":"71dd8092df666f38ab7fa214ea9ec34fa2eaf13b5cf4cc039326308767fb9820"},{"path":"packages/engine/dist/web/prepareTexturedSubmission2D.js","bytes":11567,"sha256":"3bde4c2c3eb9570eedb6d6519776425224f6e35a52fb21ec5664448451fff485"},{"path":"packages/engine/dist/web/prepareTexturedSubmission2D.d.ts","bytes":6946,"sha256":"df22e84d752cfc96083920bf5ea01edd28947056c0c007d8023c0e53bb1fd5ee"},{"path":"packages/engine/web/webgpuBufferPool.ts","bytes":18097,"sha256":"a96a3f4655b178a814d3988ab6886255bb34b9613ba84b885854df4c53840957"},{"path":"packages/engine/dist/web/webgpuBufferPool.js","bytes":14951,"sha256":"8692118b05b645d50c15f68a77ecca7b839165f2653f980c4dfbe1ec937caef1"},{"path":"packages/engine/dist/web/webgpuBufferPool.d.ts","bytes":2052,"sha256":"54ffe7bd4fd62fca0ecec2f250fd8cd2dfbfbcfe3724df3ddf8f341c95dcfb27"},{"path":"packages/engine/web/webgpuBindingCache.ts","bytes":9982,"sha256":"22bc0399ce8c9401e103746c7aa24cac073204c852cc2cd3bc27bf8be7513b81"},{"path":"packages/engine/dist/web/webgpuBindingCache.js","bytes":8374,"sha256":"74bcda1b46f7ec63e46cb9a412c97ee353763d21e1375053663567ebdcfabea3"},{"path":"packages/engine/dist/web/webgpuBindingCache.d.ts","bytes":1018,"sha256":"6f7476892b229d2f478736cdb0b5a6c2640e462807d209d990665444ba856397"}];
@@ -278,6 +279,7 @@ function nativeEditingPackageSuccessor(expected,raw){
 // Only the exact authored-scene package may project to its complete predecessor.
 const authoredScenePackagePair = {"base":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"},"current":{"path":"packages/engine/package.json","bytes":3662,"sha256":"32bdc997a04e80bc65fc014a174a46e874b565960703d005850be6120811beec"}};
 function projectAuthoredScenePackage(raw){
+  raw=projectWorld3dPackage(raw);
   const {base,current}=authoredScenePackagePair,digest=bytes=>createHash('sha256').update(bytes).digest('hex');
   if(raw.length!==current.bytes||digest(raw)!==current.sha256)return raw;
   const value=JSON.parse(raw.toString('utf8'));
@@ -429,6 +431,7 @@ function copiedSourceRows(root, id) {
   const roots = ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml',
     ...readdirSync(root).filter(name => /^tsconfig(?:\.[A-Za-z0-9-]+)?\.json$/.test(name)),
     'tools/browser-png-boundary.mjs', 'tools/lib/file-identity.mjs', 'tools/lib/sequence-preserve-pins.mjs',
+    'tools/lib/world3d-boundary.mjs',
     'tools/build.mjs', 'tools/generate-project-format.mjs'];
   for (const file of roots) rows.push(id.fingerprintFile(root, file));
   return ordered(rows);
@@ -786,6 +789,7 @@ function m3PointerGraph(root,base,actual) {
     }
   }
   // IMPORTED-GLB-ANIMATION-GRAPH-END
+  if(projectWorld3dPackage(authoredPackage)!==authoredPackage) graph=[...graph,...world3dGraphPins];
   for(const row of graph){
     if(!present.has(row.path))return {failure:issue('BIP_BOUNDARY_SOURCE_INVENTORY',row.path,'Incomplete M3 pointer successor: '+row.path)};
     if(!same(present.get(row.path),row))return {failure:issue('BIP_BOUNDARY_FINGERPRINT',row.path,'M3 pointer whole-group raw identity differs: '+row.path)};
@@ -978,6 +982,7 @@ function surfaceRules(root, id, snapshot) {
   let admittedAtlasSuccessor = false;
   for (const name of packages) {
     const file = 'packages/' + name + '/package.json', value = JSON.parse(read(root, file, id)), expectedPackage = snapshot.packages[name];
+    if(name==='engine')value.exports=projectWorld3dExports(value.exports);
     if(name==='engine'&&equal(value.exports?.['./scene3d/authoring'],{"types":"./dist/rendering/scene3dAuthoring.d.ts","import":"./dist/rendering/scene3dAuthoring.js"}))delete value.exports['./scene3d/authoring'];
     // Project only the exact optional editing routes; raw package identity is still checked below.
     if(['runtime','engine'].includes(name)&&equal(value.exports?.['./ui/editing'],{types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'}))delete value.exports['./ui/editing'];

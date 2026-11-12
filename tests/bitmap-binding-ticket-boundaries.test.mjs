@@ -62,7 +62,7 @@ function isolated(action){
   for(const name of packages)copy(path.join(repository,'packages',name),'packages/'+name);
   const policy=JSON.parse(readFileSync(path.join(repository,'tools/bitmap-binding-ticket-policy.json'),'utf8'));
   const retained=[...policy.packages,...policy.configurations,...policy.stableEntries,...policy.oldRootPins,policy.oldEngineDeclarationPin,...policy.workspacePins,...policy.selectedProductPins];
-  const files=new Set(['tools/bitmap-resource-slot-boundary.mjs','tools/bitmap-resource-slot-policy.json','tools/bitmap-binding-ticket-boundary.mjs','tools/bitmap-binding-ticket-policy.json','tools/lib/file-identity.mjs',...retained.map(row=>row.path),...policy.entries.flatMap(entry=>[entry.source,entry.js,entry.declaration])]);
+  const files=new Set(['tools/bitmap-resource-slot-boundary.mjs','tools/bitmap-resource-slot-policy.json','tools/bitmap-binding-ticket-boundary.mjs','tools/bitmap-binding-ticket-policy.json','tools/lib/file-identity.mjs','tools/lib/world3d-boundary.mjs',...retained.map(row=>row.path),...policy.entries.flatMap(entry=>[entry.source,entry.js,entry.declaration])]);
   for(const file of files)if(!copied.some(row=>row.path===file))copy(path.join(repository,file),file);
   mkdirSync(path.join(root,'node_modules/@egret'),{recursive:true});
   for(const name of packages)symlinkSync(path.join(root,'packages',name),path.join(root,'node_modules/@egret',name),process.platform==='win32'?'junction':'dir');

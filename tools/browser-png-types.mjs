@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { fingerprintFile, logicalPath, ownerRelativePath, samePhysicalPath } from './lib/file-identity.mjs';
+import { projectWorld3dPackage, world3dPackagePair } from './lib/world3d-boundary.mjs';
 
 const root = realpathSync(fileURLToPath(new URL('../', import.meta.url)));
 const inventoryPath = 'tests/types/browser-png-diagnostic-expectations.json';
@@ -53,10 +54,12 @@ const m32PngEnginePackage = {base:m22PngEnginePackage.current,current:{path:'pac
 const nativeEditingPngPackage = {"base":{"path":"packages/engine/package.json","bytes":3172,"sha256":"93aa97c85bf7c58d9ff462851f1f63aa101aa3a73bf07d2b0518dc14189cec61"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}};
 const authoredScenePngPackage={"base":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"},"current":{"path":"packages/engine/package.json","bytes":3662,"sha256":"32bdc997a04e80bc65fc014a174a46e874b565960703d005850be6120811beec"}};
 const actualEnginePackage=fingerprintFile(root,nativeEditingPngPackage.current.path);
-const authoredScenePngSelected=equal(actualEnginePackage,authoredScenePngPackage.current);
+const world3dPngSelected=equal(actualEnginePackage,world3dPackagePair.current);
+const authoredScenePngSelected=equal(actualEnginePackage,authoredScenePngPackage.current)||world3dPngSelected;
 const nativeEditingPngSelected=equal(actualEnginePackage,nativeEditingPngPackage.current)||authoredScenePngSelected;
 function authoredScenePngPredecessor(raw){
  if(!authoredScenePngSelected)return raw;
+ raw=projectWorld3dPackage(raw);
  const {base,current}=authoredScenePngPackage;
  if(raw.length!==current.bytes||hash(raw)!==current.sha256)failure('Authored scene PNG package changed during replay');
  const value=JSON.parse(raw);
@@ -177,7 +180,7 @@ function checkPin(pin) {
   if(m22PngPackageSelected&&equal(pin,m22PngEnginePackage.base))pin=m22PngEnginePackage.current;
   if(m32PngPackageSelected&&equal(pin,m32PngEnginePackage.base))pin=m32PngEnginePackage.current;
   if(m33KeyboardPngPackageSelected&&equal(pin,m33KeyboardPngEnginePackage.base))pin=m33KeyboardPngEnginePackage.current;
-  if(nativeEditingPngSelected&&equal(pin,nativeEditingPngPackage.base))pin=authoredScenePngSelected?authoredScenePngPackage.current:nativeEditingPngPackage.current;
+  if(nativeEditingPngSelected&&equal(pin,nativeEditingPngPackage.base))pin=world3dPngSelected?world3dPackagePair.current:authoredScenePngSelected?authoredScenePngPackage.current:nativeEditingPngPackage.current;
   logicalPath(pin.path);
   if (!Number.isSafeInteger(pin.bytes) || pin.bytes < 0 || !/^[0-9a-f]{64}$/.test(pin.sha256)) failure('malformed raw pin');
   const actual = fingerprintFile(root, pin.path);

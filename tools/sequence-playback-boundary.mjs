@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Named source/emission policy only; no product module is executed here.
 import { readFileSync, readdirSync, lstatSync, realpathSync } from 'node:fs';
+import { projectWorld3dPackage } from './lib/world3d-boundary.mjs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -131,7 +132,7 @@ function projectAuthoredScenePackage(raw){
 }
 // AUTHORED-SCENE-PACKAGE-END
 function m31UiPackageSuccessor(expected,raw){
- if(expected?.path==='packages/engine/package.json')raw=projectAuthoredScenePackage(raw);
+ if(expected?.path==='packages/engine/package.json')raw=projectAuthoredScenePackage(projectWorld3dPackage(raw));
  if(nativeEditingPackageSuccessor(expected,raw))return true;
  if(m22SequencePackageSuccessor(expected,raw))return true;
  const pair=m31UiPackagePairs.find(pair=>pair.base.path===expected?.path),digest=raw=>createHash('sha256').update(raw).digest('hex');

@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} from 'node:url';import {createRequire} from 'node:module';import {spawnSync} from 'node:child_process';
 import {fingerprintFile,ownerRelativePath,samePhysicalPath} from './lib/file-identity.mjs';
 import { selectSequencePreservePins } from './lib/sequence-preserve-pins.mjs';
+import {world3dPackagePair} from './lib/world3d-boundary.mjs';
 const root=fileURLToPath(new URL('..',import.meta.url)),inventoryPin={"path":"tests/types/sequence-reset-diagnostic-expectations.json","bytes":43863,"sha256":"ad21adbf614cc162976023b5db951055253b1cf1486208cec461f013a85bab51"};
 assert.deepEqual(fingerprintFile(root,inventoryPin.path),inventoryPin);
 const inventory=JSON.parse(fs.readFileSync(path.join(root,inventoryPin.path),'utf8'));assert.equal(inventory.format,'egret.sequence-reset-strict/1');assert.deepEqual(inventory.groups.map(g=>g.lane),['positive','negative']);
@@ -21,9 +22,12 @@ function packagePin(row){
  if(!pair)return row;
  const actual=fingerprintFile(root,row.path);
  if(equal(actual,pair.current))return pair.current;
- return equal(pair.current,authoredScenePackage.base)&&equal(actual,authoredScenePackage.current)?authoredScenePackage.current:row;
+ if(!equal(pair.current,authoredScenePackage.base))return row;
+ if(equal(actual,authoredScenePackage.current))return authoredScenePackage.current;
+ // The isolated world3d subpaths do not enter either RESET compiler lane.
+ return equal(authoredScenePackage.current,world3dPackagePair.base)&&equal(actual,world3dPackagePair.current)?world3dPackagePair.current:row;
 }
-const toolPins=['tools/sequence-reset-types.mjs','tools/lib/sequence-preserve-pins.mjs'].map(path=>fingerprintFile(root,path));
+const toolPins=['tools/sequence-reset-types.mjs','tools/lib/sequence-preserve-pins.mjs','tools/lib/world3d-boundary.mjs'].map(path=>fingerprintFile(root,path));
 function verify(){assert.deepEqual(fingerprintFile(root,inventoryPin.path),inventoryPin);for(const pin of toolPins)assert.deepEqual(fingerprintFile(root,pin.path),pin);for(const row of selectSequencePreservePins(root,inventory.inputs.map(packagePin)))assert.deepEqual(fingerprintFile(root,row.path),row);for(const row of inventory.compiler.wrapper)assert.deepEqual(fingerprintFile(wrapper,row.path),row);for(const row of [...selectedNative,...inventory.nativeLibraries])assert.deepEqual(fingerprintFile(native,row.path),row);for(const pkg of ['engine','runtime','contracts'])assert.ok(samePhysicalPath(fs.realpathSync(path.join(root,'node_modules/@egret',pkg)),path.join(root,'packages',pkg)));}
 const env={...process.env};for(const key of Object.keys(env))if(/^(?:NODE_OPTIONS|NODE_PATH|NODE_V8_COVERAGE|NODE_COMPILE_CACHE|NODE_REPL_EXTERNAL_MODULE|NODE_TEST_CONTEXT|NODE_TEST_WORKER_ID|DOTNET_STARTUP_HOOKS|DOTNET_ADDITIONAL_DEPS|DOTNET_SHARED_STORE)$/i.test(key))delete env[key];
 for(const group of inventory.groups){verify();const args=['node_modules/typescript/bin/tsc','-p',group.config,'--pretty','false'],options={cwd:root,encoding:'utf8',env,windowsHide:true,timeout:30000,maxBuffer:4194304};

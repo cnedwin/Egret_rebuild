@@ -2,6 +2,7 @@
 // Source/emission policy only. Lexer/named-export parser adapted from the
 // first-party SequencePlayback policy; no product module is imported/evaluated.
 import {readFileSync,readdirSync,lstatSync,realpathSync} from 'node:fs';
+import { projectWorld3dPackage } from './lib/world3d-boundary.mjs';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
@@ -133,7 +134,7 @@ function projectAuthoredScenePackage(raw){
 }
 // AUTHORED-SCENE-PACKAGE-END
 function m31UiPackageSuccessor(expected,raw){
- if(expected?.path==='packages/engine/package.json')raw=projectAuthoredScenePackage(raw);
+ if(expected?.path==='packages/engine/package.json')raw=projectAuthoredScenePackage(projectWorld3dPackage(raw));
  if(nativeEditingPackageSuccessor(expected,raw))return true;
  if(m22SequencePackageSuccessor(expected,raw))return true;
  const pair=m31UiPackagePairs.find(pair=>pair.base.path===expected?.path),digest=raw=>createHash('sha256').update(raw).digest('hex');

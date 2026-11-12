@@ -1,0 +1,109 @@
+# World3D 场景图与渲染器
+
+[English](../../en/docs/world3d.md) | 简体中文
+
+## 目的与范围
+
+World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯光和网格组成的树，可在帧间自由修改，再交给渲染器绘制。它与不可变的[可编辑 3D 场景](authored-scene3d.md)互补：后者继续用于与有序 2D 内容共用一个宿主的有界 3D 背景。
+
+模块提供三个显式入口。默认 Engine、Canvas 和共享 2D 入口不会加载其中任何内容。
+
+| 入口 | 内容 |
+| --- | --- |
+| `@egret/engine/world3d` | 不依赖 DOM 的核心：数学、场景图、几何、材质、纹理、灯光、相机、动画、拾取、粒子、辅助对象和 glTF 读取器 |
+| `@egret/engine/webgl2/world3d` | WebGL2 渲染器、轨道控制器、浏览器加载器、Engine 时钟绑定和精简宿主 |
+| `@egret/engine/webgpu/world3d` | WebGPU 渲染器，以及相同的控制器、加载器、绑定和宿主 |
+
+设计参考了 Three.js 公开文档中的概念：带惰性世界矩阵的可变场景图、按最少状态切换排序的逐帧渲染列表、按需编译的材质变体，以及混合动画动作的混合器。实现为第一方独立编写，未复制或改写 Three.js 源码。命名遵循白鹭惯例：工厂函数、`3D` 后缀、明确的所有权与销毁。
+
+## 约定
+
+- 右手坐标系，+Y 向上。相机和灯光沿自身 -Z 轴朝向。矩阵为列主序 `Float32Array(16)`。
+- 角度使用弧度；透视视场角例外，为垂直方向、单位为度。
+- 颜色为线性 RGB。工厂函数也接受 `0xRRGGBB` 形式的 sRGB 数值并自动转换。渲染器在输出时编码为 sRGB。
+- 纹理坐标 V = 0 对应存储的第一行。内置基础几何体的 V 轴向上，因此 `loadTexture3D` 默认翻转行；glTF 纹理不翻转。
+- 错误为带稳定 `code` 的 `World3DError`，例如 `WORLD3D_INPUT_INVALID`、`WORLD3D_BUDGET`、`WORLD3D_DISPOSED`、`WORLD3D_GLTF_INVALID`、`WORLD3D_GLTF_UNSUPPORTED` 和 `WORLD3D_CONTEXT_UNAVAILABLE`。
+
+## 场景图
+
+`Object3D` 用类型化数组保存位置、单位四元数和缩放，提供 `setPosition`、`setRotation`、`setQuaternion`、`setScale`、`rotateOnAxis`、`lookAt` 和 `setMatrix`。直接写入数组后需要调用 `markTransformDirty()`。局部和世界矩阵只对脏节点及其后代重新计算，静态子树每帧没有开销。
+
+层级沿用熟悉的白鹭名称 `addChild`、`addChildAt`、`removeChild`、`removeChildren`、`getChildAt` 和 `numChildren`。节点只有一个父节点，加入其他父节点即为移动。成环、把场景作为子节点以及超过 256 层的深度会被拒绝。`clone()` 复制子树，几何和材质按引用共享。
+
+`Scene3D` 是根节点，包含背景（颜色、立方体纹理或无）、用于基于图像照明的可选环境立方体，以及可选的线性或指数雾。
+
+## 几何、材质与纹理
+
+`Geometry3D` 保存具名的 `Attribute3D` 数组（`position`、`normal`、`tangent`、`uv`、`uv1`、`color`、`joints`、`weights`）、可选索引、材质分组和变形目标。拓扑支持三角形、线段、线带和点。索引会对照顶点数校验。包围盒和包围球带缓存，并保守地包含变形目标。`computeNormals()` 和 `computeTangents()` 可补齐缺失数据。
+
+基础几何体工厂包括立方体、平面、球、圆柱、圆锥、圆环、胶囊和四边形。辅助函数可创建网格线、坐标轴和包围盒边线几何。
+
+`Material3D` 是带 `shading` 模型的单一类：无光照、Lambert、Blinn-Phong 或金属度-粗糙度标准材质。它包含基础色与不透明度、基础色贴图、法线、金属度-粗糙度、遮蔽和自发光贴图，以及面向、Alpha 模式（不透明、遮罩、混合）、混合方式、深度测试与写入、顶点色、平直着色、线框和多边形偏移。标量和颜色修改在下一帧生效。增加贴图或改变 Alpha 模式等会影响着色器特性的修改，需要调用 `touch()`。
+
+`Texture3D` 封装自有 RGBA8 像素或不透明的宿主图像，带环绕、过滤、多级渐远、色彩空间、各向异性和 UV 变换。`CubeTexture3D` 接受六个面。`RenderTarget3D` 是离屏颜色目标，其 `texture` 可用作材质贴图。`createGradientCubeTexture3D` 生成程序化天空。
+
+几何、材质、纹理和渲染目标都是带 `version` 和终结性 `dispose()` 的资源。渲染器依据版本刷新 GPU 副本，并在资源销毁时退役这些副本。核心从不引用后端。
+
+## 灯光与阴影
+
+环境光和半球光提供间接光。平行光、点光源和聚光灯为精确光源。一帧最多使用四个平行光、八个点光源和四个聚光灯；超出的灯光按遍历顺序忽略。
+
+平行光和聚光灯可以投射阴影。最多四个阴影灯光共用一张深度图集，各占四分之一，并用 3x3 比较核过滤。`light.shadow` 设置体积、偏移、法线偏移和过滤半径。网格通过 `castShadow` 和 `receiveShadow` 选择参与。点光源阴影和级联阴影尚未实现。
+
+## 网格、实例化、蒙皮与变形
+
+`Mesh3D` 把几何与一个材质或按分组的多个材质组合。`InstancedMesh3D` 用逐实例矩阵和可选的 RGB 或 RGBA 颜色多次绘制同一几何。`Sprite3D` 是始终朝向相机的四边形。
+
+蒙皮使用 `Bone3D` 节点和带逆绑定矩阵的 `Skeleton3D`；每个顶点的四个影响在 GPU 上混合。变形目标保存位置和可选的法线增量；一次绘制混合权重最大的八个目标。
+
+`Lod3D` 按相机距离显示其中一个子节点。
+
+## 动画
+
+`createAnimationClip3D` 用轨道创建剪辑。轨道按名称指向节点，可驱动 `position`、`quaternion`、`scale` 或变形 `weights`，支持阶跃、线性和三次插值。`AnimationMixer3D` 为每个剪辑创建一个 `AnimationAction3D`。动作可循环、单次播放或往返，带权重和时间缩放，支持 `fadeIn`、`fadeOut` 和 `crossFadeTo`。同一属性上的并发动作按权重混合，四元数取最短路径。`restorePose()` 恢复绑定时记录的姿态。
+
+## 拾取
+
+`Raycaster3D` 与子树求交，返回按距离排序的命中结果，包含世界坐标点、面索引、插值 UV 和实例索引。它先检测包围球，遵循材质面向和层掩码，并可在每个网格的首个命中处停止。`setFromCamera` 由归一化设备坐标构造射线，射线从近平面出发。
+
+## 粒子
+
+`ParticleEmitter3D` 在 CPU 上用平坦数组模拟粒子，并作为一个实例化的朝向相机批次绘制。选项包括发射率、寿命、速度、锥形散布、重力、阻力、随寿命变化的大小与颜色、点、球或盒形生成体积、世界或局部模拟空间，以及用于确定性序列的种子。`burst(count)` 立即发射。单次更新步长上限为 0.25 秒。
+
+## glTF
+
+`loadGltf3D` 读取 `.glb` 字节或已解析的 `.gltf` 对象，返回场景、相机、动画和所创建的资源，并提供统一的 `dispose()`。支持网格、金属度-粗糙度和无光照材质、纹理变换、节点层级、蒙皮、变形目标、动画、相机和精确光源。图像解码和外部缓冲加载由调用方注入，读取器因此不依赖 DOM。当前读取器接受根节点彼此独立的场景与第 0 套纹理坐标。共享场景根节点或其他纹理坐标集会触发明确的错误诊断。单个访问器解码上限为 128 MiB，合计上限为 256 MiB。Draco、meshopt 和 Basis 压缩以及其他必需扩展会以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。浏览器入口中的 `loadGltfFromUrl3D` 提供 fetch 和 `createImageBitmap`。
+
+## 渲染器
+
+两个渲染器都实现 `Renderer3D`：`render(scene, camera, target?)`、`setSize`、`resizeToDisplaySize`、`readRenderTargetPixels`、`toneMapping`、`exposure`、`shadowsEnabled`、`info` 和 `dispose()`。它们共用不依赖 DOM 的渲染列表、逐帧 uniform 块和阴影规划，因此绘制相同的通道：阴影图集、按材质和几何排序的不透明绘制、天空盒，然后是由远及近的混合绘制。
+
+`createWebGL2Renderer3D(options)` 为同步创建，自行持有 WebGL2 上下文。它在上下文丢失并恢复后，根据 CPU 场景重建 GPU 状态。
+
+`createWebGPURenderer3D(options)` 为异步创建。它申请设备，或借用 `options.device`。设备丢失通过 `onDeviceLost` 通知；需要创建新的渲染器才能继续。点拓扑绘制单像素点，渲染目标必须带深度。
+
+输出经过色调映射（`none`、`reinhard` 或 `aces`）并编码为 sRGB。普通及预乘的源覆盖混合在 sRGB 渲染目标中存放按 Alpha 加权的线性 RGB，Alpha 保持线性。RGBA8 原始回读保留该编码。目标用作材质基础颜色贴图时，着色前会还原非预乘线性 RGB。`blending: 'premultiplied'` 接收普通的材质颜色和透明度，由着色器执行预乘。加法与乘法混合保留目标 Alpha。后续还要参与源覆盖合成的透明目标应使用普通或预乘的源覆盖混合。
+
+## 与 Engine 的整合
+
+World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为只有 3D 画布的应用返回宿主。`startWorld3DLoop(engine)` 每个显示帧推进一次显式 Engine 时钟，并在间隔超过时钟步长上限后重新设定锚点。
+
+`createWorld3DView(engine, scope, options)` 在 Scope 下订阅 Engine 时钟。每次 tick 按需调整绘制缓冲大小，调用 `onUpdate`，推进混合器、控制器和粒子发射器，然后渲染。关闭 Scope 即结束视图。渲染器、场景和控制器仍归创建者所有；用 `scope.use(...)` 登记后可随 Scope 一并退役。
+
+需要在 3D 场景上方显示 2D 界面时，把透明的共享 2D 宿主画布叠放在 World3D 画布之上。在同一宿主中绘制 World3D 内容和有序 2D 内容，仍由可编辑场景路径负责。
+
+`createOrbitControls3D(camera, element, options)` 基于 Pointer Events 提供环绕、平移和缩放，包括双指平移与捏合、阻尼和可选的自动旋转。
+
+## 示例与检查
+
+[World3D 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/world3d/README.zh-CN.md)在任一后端上展示灯光、阴影、实例化、蒙皮、变形、粒子、渲染目标、拾取和轨道控制。
+
+无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs` 和 `tests/world3d-gltf.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心。
+
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把七个固定场景分别用两个后端绘制到渲染目标并比较图像。开发期间它在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了全部七个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
+
+## 待完成事项
+
+- 桌面复审强制触发 WebGL2 上下文丢失并恢复了目标像素，也强制触发 WebGPU 设备丢失，确认收到通知并拒绝后续操作。更广泛的设备与恢复场景仍待验证。
+- 性能与移动真机矩阵仍待验证。桌面检查覆盖像素比较与可见画布呈现。
+- 尚未实现：点光源阴影与级联阴影、后处理、压缩纹理与几何、HDR 环境预过滤、清漆与透射材质，以及物理。
