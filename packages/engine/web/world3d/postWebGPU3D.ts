@@ -3,7 +3,7 @@
 import {Material3D} from '../../rendering/world3d/Material3D.js';
 import {RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
 import type {ToneMapping3D} from './frame3D.js';
-import {POST_DOWN_WGSL_3D, POST_FXAA_WGSL_3D, POST_SSAO_WGSL_3D, POST_UP_WGSL_3D, bloomLevelCount3D, postCompositeWgsl3D, writeCompositeParams3D, writePostParams3D} from './post3D.js';
+import {POST_DOF_WGSL_3D, POST_DOWN_WGSL_3D, POST_FXAA_WGSL_3D, POST_SSAO_WGSL_3D, POST_UP_WGSL_3D, bloomLevelCount3D, postCompositeWgsl3D, writeCompositeParams3D, writePostParams3D} from './post3D.js';
 import type {CustomPost3D, PostProcessSettings3D, PostView3D} from './post3D.js';
 
 // Numeric WebGPU flags, so this module does not depend on the browser globals at load time.
@@ -11,7 +11,7 @@ const UNIFORM = 0x40, COPY_DST = 0x08, TEXTURE_COPY_DST = 0x02, RENDER_ATTACHMEN
 const HDR: GPUTextureFormat = 'rgba16float', LDR: GPUTextureFormat = 'rgba8unorm';
 interface Surface { texture: GPUTexture; view: GPUTextureView; width: number; height: number }
 interface Slot { buffer: GPUBuffer; group: GPUBindGroup | undefined; source: GPUTextureView | undefined; bloom: GPUTextureView | undefined; depth: GPUTextureView | undefined; ao: GPUTextureView | undefined; mask: GPUTextureView | undefined }
-const SHADERS = {down: POST_DOWN_WGSL_3D, up: POST_UP_WGSL_3D, fxaa: POST_FXAA_WGSL_3D, ssao: POST_SSAO_WGSL_3D} as const;
+const SHADERS = {down: POST_DOWN_WGSL_3D, up: POST_UP_WGSL_3D, fxaa: POST_FXAA_WGSL_3D, ssao: POST_SSAO_WGSL_3D, dof: POST_DOF_WGSL_3D} as const;
 
 export class PostChainWebGPU3D {
     /** Half-float scene target the renderer draws into before run(). */
@@ -31,6 +31,7 @@ export class PostChainWebGPU3D {
     readonly #slots: Slot[] = [];
     #ldr: Surface | undefined;
     #ao: Surface | undefined;
+    #dof: Surface | undefined;
     #slot = 0;
     readonly #params = new Float32Array(40);
     #maskView: GPUTextureView | undefined;
@@ -125,6 +126,12 @@ export class PostChainWebGPU3D {
             this.pass(encoder, this.pipeline('ssao', LDR, false), sceneView, black, ao.view, false, [Math.max(settings.ssaoRadius, 0.001), settings.ssaoIntensity, settings.ssaoBias, 0], [0, 0, 0, 0]);
             this.#aoView = ao.view;
         }
+        if (settings.dof && depthView && settings.dofRadius > 0) {
+            // Everything after this reads the blurred image as the scene.
+            const dof = this.#dof = this.surface(this.#dof, width, height, HDR);
+            this.pass(encoder, this.pipeline('dof', HDR, false), sceneView, black, dof.view, false, [settings.dofFocus, Math.max(settings.dofRange, 0.001), settings.dofRadius, 0], [0, 0, 0, 0]);
+            sceneView = dof.view;
+        }
         const levels = bloomLevelCount3D(settings, width, height);
         if (levels > 0) {
             const down = this.pipeline('down', HDR, false), up = this.pipeline('up', HDR, true);
@@ -157,10 +164,10 @@ export class PostChainWebGPU3D {
     }
     dispose(): void {
         for (const surface of this.#levels) surface.texture.destroy();
-        this.#ldr?.texture.destroy(); this.#ao?.texture.destroy(); this.#noDepth.destroy();
+        this.#ldr?.texture.destroy(); this.#ao?.texture.destroy(); this.#dof?.texture.destroy(); this.#noDepth.destroy();
         for (const slot of this.#slots) slot.buffer.destroy();
         this.#black.destroy();
-        this.#levels.length = 0; this.#slots.length = 0; this.#ldr = undefined; this.#ao = undefined;
+        this.#levels.length = 0; this.#slots.length = 0; this.#ldr = undefined; this.#ao = undefined; this.#dof = undefined;
         this.#pipelines.clear(); this.#modules.clear();
         this.scene.dispose(); this.mask.dispose(); this.maskMaterial.dispose();
     }

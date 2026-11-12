@@ -103,6 +103,8 @@ export class RenderList3D {
         }
     }
     private addMesh(mesh: Mesh3D, camera: Camera3D): void {
+        // Meshes that build their geometry on demand (batches, camera-facing lines) do it here.
+        mesh.beforeRender?.(camera);
         const geometry = mesh.geometry;
         if (geometry.isDisposed || geometry.drawCount === 0) return;
         this.stats.visited++;

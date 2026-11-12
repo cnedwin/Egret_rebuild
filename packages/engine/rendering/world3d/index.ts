@@ -94,3 +94,5 @@ export {
 export {HDR3D_LIMITS, parseRgbe3D, createCubeTextureFromEquirect3D} from './Hdr3D.js';
 export type {HdrImage3D, EquirectOptions3D} from './Hdr3D.js';
 export {PHYSICS_MESH3D_LIMITS, TriangleMeshShape3D, createMeshShape3D} from './PhysicsMesh3D.js';
+export {BATCH3D_LIMITS, BatchedMesh3D, FatLine3D, createBatchedMesh3D, createFatLine3D} from './Batch3D.js';
+export type {FatLineOptions3D} from './Batch3D.js';
