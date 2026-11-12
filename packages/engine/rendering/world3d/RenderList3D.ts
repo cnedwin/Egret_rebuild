@@ -56,6 +56,7 @@ export class RenderList3D {
     get frame(): number { return this.#frame; }
 
     build(scene: Scene3D, camera: Camera3D): void {
+        this.#override = scene.overrideMaterial && !scene.overrideMaterial.isDisposed ? scene.overrideMaterial : undefined;
         this.#frame++;
         this.#used = 0;
         this.opaque.length = this.transparent.length = this.shadowCasters.length = 0;
@@ -121,7 +122,11 @@ export class RenderList3D {
             }
         } else this.push(mesh, geometry, mesh.materialAt(0), 0, geometry.drawCount, depth);
     }
-    private push(mesh: Mesh3D, geometry: Geometry3D, material: Material3D, start: number, count: number, depth: number): void {
+    #override: Material3D | undefined;
+    private push(mesh: Mesh3D, geometry: Geometry3D, own: Material3D, start: number, count: number, depth: number): void {
+        // An invisible material still hides its mesh when the scene overrides materials.
+        if (!own.visible) return;
+        const material = this.#override ?? own;
         if (!material.visible || material.isDisposed || count <= 0) return;
         let item = this.#pool[this.#used];
         if (!item) this.#pool[this.#used] = item = {mesh, geometry, material, start, count, depth};

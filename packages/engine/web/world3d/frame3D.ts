@@ -56,12 +56,12 @@ export interface Renderer3D extends Disposable {
 }
 
 /** Size in floats of the Frame uniform block. */
-export const FRAME_BLOCK_FLOATS_3D = 332;
+export const FRAME_BLOCK_FLOATS_3D = 352;
 /** Offsets, in floats, of the Frame block members. */
 export const FRAME_OFFSETS_3D = Object.freeze({
     viewProjection: 0, view: 16, cameraPosition: 32, fogColor: 36, fogParams: 40, ambient: 44, hemisphereSky: 48, hemisphereGround: 52,
     lightCounts: 56, directionalDirection: 60, directionalColor: 76, pointPosition: 92, pointColor: 124, spotPosition: 156,
-    spotDirection: 172, spotColor: 188, spotCone: 204, shadowMatrix: 220, shadowRect: 284, shadowParams: 300, output: 316, cascadeSplits: 320, cascadeInfo: 324, pointShadow: 328,
+    spotDirection: 172, spotColor: 188, spotCone: 204, shadowMatrix: 220, shadowRect: 284, shadowParams: 300, output: 316, cascadeSplits: 320, cascadeInfo: 324, pointShadow: 328, clipPlanes: 332, clipInfo: 348,
 } as const);
 const F = FRAME_OFFSETS_3D;
 
@@ -115,6 +115,9 @@ export function writeFrameBlock3D(data: Float32Array, scene: Scene3D, camera: Ca
         // Keep the inner cosine strictly above the outer one so smoothstep stays defined.
         data[F.spotCone + i * 4 + 1] = Math.max(Math.cos(inner), Math.cos(outer) + 1e-4);
     });
+    const planes = scene.clippingPlanes, planeCount = Math.min(planes.length, 4);
+    for (let i = 0; i < planeCount; i++) data.set(planes[i]!, F.clipPlanes + i * 4);
+    data[F.clipInfo] = planeCount;
     data[F.output] = scene.environmentIntensity; data[F.output + 1] = output.environmentMaxMip; data[F.output + 2] = output.exposure;
     data[F.output + 3] = output.toneMapping === 'aces' ? 2 : output.toneMapping === 'reinhard' ? 1 : 0;
 }

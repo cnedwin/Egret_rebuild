@@ -43,6 +43,8 @@ layout(std140) uniform Frame {
     vec4 uCascadeSplits;           // view-space far distance of each cascade
     vec4 uCascadeInfo;             // x: cascaded directional light index or -1, y: cascade count, z: blend fraction
     vec4 uPointShadow;             // x: shadowed point light index or -1, y: first of its four slots
+    vec4 uClipPlanes[4];           // world-space planes; the negative side is discarded
+    vec4 uClipInfo;                // x: plane count
 };
 `;
 
@@ -347,6 +349,9 @@ vec3 encodeSrgb(vec3 color) {
 #endif
 
 void main() {
+    #ifndef DEPTH_ONLY
+    for (int i = 0; i < int(uClipInfo.x); i++) if (dot(vWorldPosition, uClipPlanes[i].xyz) + uClipPlanes[i].w < 0.0) discard;
+    #endif
     vec4 base = uColor * vColor;
     #ifdef USE_MAP
     vec4 mapColor = texture(uMap, vUv);

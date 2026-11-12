@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // WebGPU side of the world3d post-processing chain; mirrors postWebGL23D.
+import {Material3D} from '../../rendering/world3d/Material3D.js';
 import {RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
 import type {ToneMapping3D} from './frame3D.js';
 import {POST_DOWN_WGSL_3D, POST_FXAA_WGSL_3D, POST_SSAO_WGSL_3D, POST_UP_WGSL_3D, bloomLevelCount3D, postCompositeWgsl3D, writeCompositeParams3D, writePostParams3D} from './post3D.js';
@@ -9,12 +10,15 @@ import type {CustomPost3D, PostProcessSettings3D, PostView3D} from './post3D.js'
 const UNIFORM = 0x40, COPY_DST = 0x08, TEXTURE_COPY_DST = 0x02, RENDER_ATTACHMENT = 0x10, TEXTURE_BINDING = 0x04, FRAGMENT = 0x2;
 const HDR: GPUTextureFormat = 'rgba16float', LDR: GPUTextureFormat = 'rgba8unorm';
 interface Surface { texture: GPUTexture; view: GPUTextureView; width: number; height: number }
-interface Slot { buffer: GPUBuffer; group: GPUBindGroup | undefined; source: GPUTextureView | undefined; bloom: GPUTextureView | undefined; depth: GPUTextureView | undefined; ao: GPUTextureView | undefined }
+interface Slot { buffer: GPUBuffer; group: GPUBindGroup | undefined; source: GPUTextureView | undefined; bloom: GPUTextureView | undefined; depth: GPUTextureView | undefined; ao: GPUTextureView | undefined; mask: GPUTextureView | undefined }
 const SHADERS = {down: POST_DOWN_WGSL_3D, up: POST_UP_WGSL_3D, fxaa: POST_FXAA_WGSL_3D, ssao: POST_SSAO_WGSL_3D} as const;
 
 export class PostChainWebGPU3D {
     /** Half-float scene target the renderer draws into before run(). */
     readonly scene = new RenderTarget3D(1, 1, {format: 'rgba16f', depthTexture: true, name: 'world3d.post.scene'});
+    /** Target and flat white material for the outline mask. */
+    readonly mask = new RenderTarget3D(1, 1, {name: 'world3d.post.mask'});
+    readonly maskMaterial = (() => { const material = new Material3D('unlit', {side: 'double'}); material.fog = false; material.toneMapped = false; return material; })();
     readonly #device: GPUDevice;
     readonly #layout: GPUBindGroupLayout;
     readonly #pipelineLayout: GPUPipelineLayout;
@@ -28,7 +32,9 @@ export class PostChainWebGPU3D {
     #ldr: Surface | undefined;
     #ao: Surface | undefined;
     #slot = 0;
-    readonly #params = new Float32Array(32);
+    readonly #params = new Float32Array(36);
+    #maskView: GPUTextureView | undefined;
+    #outline: PostProcessSettings3D | undefined;
     readonly #noDepth: GPUTexture;
     readonly #noDepthView: GPUTextureView;
     // State shared by the passes of one run().
@@ -45,6 +51,7 @@ export class PostChainWebGPU3D {
             {binding: 0, visibility: FRAGMENT, buffer: {}}, {binding: 1, visibility: FRAGMENT, texture: {}},
             {binding: 2, visibility: FRAGMENT, sampler: {}}, {binding: 3, visibility: FRAGMENT, texture: {}},
             {binding: 4, visibility: FRAGMENT, texture: {sampleType: 'depth'}}, {binding: 5, visibility: FRAGMENT, texture: {}},
+            {binding: 6, visibility: FRAGMENT, texture: {}},
         ]});
         this.#pipelineLayout = device.createPipelineLayout({bindGroupLayouts: [this.#layout]});
         this.#sampler = device.createSampler({magFilter: 'linear', minFilter: 'linear', addressModeU: 'clamp-to-edge', addressModeV: 'clamp-to-edge'});
@@ -82,19 +89,20 @@ export class PostChainWebGPU3D {
         const device = this.#device;
         // Each pass in a frame owns one small uniform buffer, since all writes land before the encoder runs.
         let slot = this.#slots[this.#slot];
-        if (!slot) slot = this.#slots[this.#slot] = {buffer: device.createBuffer({size: 128, usage: UNIFORM | COPY_DST}), group: undefined, source: undefined, bloom: undefined, depth: undefined, ao: undefined};
+        if (!slot) slot = this.#slots[this.#slot] = {buffer: device.createBuffer({size: 144, usage: UNIFORM | COPY_DST}), group: undefined, source: undefined, bloom: undefined, depth: undefined, ao: undefined, mask: undefined};
         this.#slot++;
         const p = this.#params, depth = this.#depthView ?? this.#noDepthView, ao = this.#aoView ?? this.#blackView;
-        writePostParams3D(p, a, b, this.#view, this.#aoView !== undefined, this.#width, this.#height, this.#custom);
+        const mask = this.#maskView ?? this.#blackView;
+        writePostParams3D(p, a, b, this.#view, this.#aoView !== undefined, this.#width, this.#height, this.#custom, this.#outline);
         device.queue.writeBuffer(slot.buffer, 0, p);
         // A surface cannot be sampled by the pass that renders into it.
         const aoInput = ao === output ? this.#blackView : ao;
-        if (!slot.group || slot.source !== source || slot.bloom !== bloom || slot.depth !== depth || slot.ao !== aoInput) {
+        if (!slot.group || slot.source !== source || slot.bloom !== bloom || slot.depth !== depth || slot.ao !== aoInput || slot.mask !== mask) {
             slot.group = device.createBindGroup({layout: this.#layout, entries: [
                 {binding: 0, resource: {buffer: slot.buffer}}, {binding: 1, resource: source}, {binding: 2, resource: this.#sampler}, {binding: 3, resource: bloom},
-                {binding: 4, resource: depth}, {binding: 5, resource: aoInput},
+                {binding: 4, resource: depth}, {binding: 5, resource: aoInput}, {binding: 6, resource: mask},
             ]});
-            slot.source = source; slot.bloom = bloom; slot.depth = depth; slot.ao = aoInput;
+            slot.source = source; slot.bloom = bloom; slot.depth = depth; slot.ao = aoInput; slot.mask = mask;
         }
         const pass = encoder.beginRenderPass({colorAttachments: [{view: output, loadOp: load ? 'load' : 'clear', storeOp: 'store', clearValue: [0, 0, 0, 0]}]});
         pass.setPipeline(pipeline);
@@ -106,10 +114,11 @@ export class PostChainWebGPU3D {
      * Process `sceneView` into `output`. `outputEncodes` is true when the
      * output format converts linear values to sRGB on write.
      */
-    run(encoder: GPUCommandEncoder, sceneView: GPUTextureView, depthView: GPUTextureView | undefined, view: PostView3D, width: number, height: number, output: GPUTextureView, outputFormat: GPUTextureFormat,
+    run(encoder: GPUCommandEncoder, sceneView: GPUTextureView, depthView: GPUTextureView | undefined, maskView: GPUTextureView | undefined, view: PostView3D, width: number, height: number, output: GPUTextureView, outputFormat: GPUTextureFormat,
         outputEncodes: boolean, settings: PostProcessSettings3D, toneMapping: ToneMapping3D): number {
         this.#slot = 0;
         this.#view = view; this.#depthView = depthView; this.#aoView = undefined; this.#custom = undefined; this.#width = width; this.#height = height;
+        this.#maskView = maskView; this.#outline = maskView ? settings : undefined;
         const black = this.#blackView;
         if (settings.ssao && depthView && settings.ssaoIntensity > 0) {
             const ao = this.#ao = this.surface(this.#ao, width, height, LDR);
@@ -153,6 +162,6 @@ export class PostChainWebGPU3D {
         this.#black.destroy();
         this.#levels.length = 0; this.#slots.length = 0; this.#ldr = undefined; this.#ao = undefined;
         this.#pipelines.clear(); this.#modules.clear();
-        this.scene.dispose();
+        this.scene.dispose(); this.mask.dispose(); this.maskMaterial.dispose();
     }
 }

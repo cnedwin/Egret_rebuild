@@ -71,6 +71,8 @@ struct Frame {
     cascadeSplits: vec4f,
     cascadeInfo: vec4f,
     pointShadow: vec4f,
+    clipPlanes: array<vec4f, 4>,
+    clipInfo: vec4f,
 }
 @group(0) @binding(0) var<uniform> frame: Frame;
 @group(0) @binding(1) var shadowMap: texture_depth_2d;
@@ -356,6 +358,9 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     let matcapView = normalize((frame.view * vec4f(matcapNormal, 0.0)).xyz);
     let matcapSample = textureSampleLevel(emissiveTexture, emissiveSampler, matcapView.xy * 0.5 + 0.5, 0.0).rgb;` : ''}
     ${f.alphaMask ? 'if (base.a < material.params.x) { discard; }' : ''}
+    for (var plane = 0; plane < i32(frame.clipInfo.x); plane++) {
+        if (dot(input.worldPosition, frame.clipPlanes[plane].xyz) + frame.clipPlanes[plane].w < 0.0) { discard; }
+    }
     var color = base.rgb${f.shading === 'matcap' ? ' * matcapSample' : ''};
     ${lit ? /* wgsl */`
     var s: Surface;

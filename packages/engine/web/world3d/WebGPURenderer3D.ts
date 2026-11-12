@@ -17,7 +17,7 @@ import {COMPRESSED_BLOCK_BYTES_3D, CubeTexture3D, RenderTarget3D, isCompressedPi
 import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import type {Texture3D, TextureSource3D} from '../../rendering/world3d/Texture3D.js';
 import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
-import {createPostProcessSettings3D, postViewFromCamera3D} from './post3D.js';
+import {createPostProcessSettings3D, outlineActive3D, postViewFromCamera3D} from './post3D.js';
 import type {PostProcessSettings3D} from './post3D.js';
 import {PostChainWebGPU3D} from './postWebGPU3D.js';
 import type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
@@ -1016,8 +1016,18 @@ export class WebGPURenderer3D implements Renderer3D {
         const output = target ? this.target(target).colorView : current!.createView();
         const format = target ? (target.format === 'rgba16f' ? HDR_FORMAT : TARGET_FORMAT) : this.#format;
         // 8-bit targets encode sRGB on write and half-float targets store linear light; only the canvas needs encoded values.
+        // Outlined objects are drawn once more, flat white, into a mask the composite traces.
+        let maskView: GPUTextureView | undefined;
+        if (outlineActive3D(this.postProcess)) {
+            post.mask.setSize(Math.max(width, 1), Math.max(height, 1));
+            const saved = {layerMask: camera.layerMask, override: scene.overrideMaterial, background: scene.background, shadows: this.shadowsEnabled, planes: scene.clippingPlanes};
+            camera.layerMask = this.postProcess.outlineLayers; scene.overrideMaterial = post.maskMaterial; scene.background = [0, 0, 0]; this.shadowsEnabled = false;
+            this.#inPost = true;
+            try { if (this.render(scene, camera, post.mask)) maskView = this.target(post.mask).colorView; }
+            finally { this.#inPost = false; camera.layerMask = saved.layerMask; scene.overrideMaterial = saved.override; scene.background = saved.background; this.shadowsEnabled = saved.shadows; }
+        }
         const sceneEntry = this.target(post.scene);
-        this.info.drawCalls += post.run(encoder, sceneEntry.colorView, sceneEntry.depthView, postViewFromCamera3D(camera), width, height, output, format, target !== undefined,
+        this.info.drawCalls += post.run(encoder, sceneEntry.colorView, sceneEntry.depthView, maskView, postViewFromCamera3D(camera), width, height, output, format, target !== undefined,
             this.postProcess, target?.format === 'rgba16f' ? 'none' : this.toneMapping);
         this.device.queue.submit([encoder.finish()]);
         return true;

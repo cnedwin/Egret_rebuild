@@ -16,7 +16,7 @@ import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
 import {CubeTexture3D, RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
 import type {CompressedFormat3D} from '../../rendering/world3d/Texture3D.js';
 import {FRAME_BLOCK_FLOATS_3D, planShadows3D, writeFrameBlock3D} from './frame3D.js';
-import {createPostProcessSettings3D, postViewFromCamera3D} from './post3D.js';
+import {createPostProcessSettings3D, outlineActive3D, postViewFromCamera3D} from './post3D.js';
 import type {PostProcessSettings3D} from './post3D.js';
 import {PostChainWebGL23D} from './postWebGL23D.js';
 import type {Renderer3D, Renderer3DInfo, ToneMapping3D} from './frame3D.js';
@@ -228,8 +228,18 @@ export class WebGL2Renderer3D implements Renderer3D {
         finally { this.#inPost = false; }
         const output = target ? this.#resources.target(target).framebuffer : null;
         // 8-bit targets encode sRGB on write and half-float targets store linear light; only the canvas needs encoded values.
+        // Outlined objects are drawn once more, flat white, into a mask the composite traces.
+        let maskTexture: WebGLTexture | undefined;
+        if (outlineActive3D(this.postProcess)) {
+            post.mask.setSize(Math.max(width, 1), Math.max(height, 1));
+            const saved = {layerMask: camera.layerMask, override: scene.overrideMaterial, background: scene.background, shadows: this.shadowsEnabled, planes: scene.clippingPlanes};
+            camera.layerMask = this.postProcess.outlineLayers; scene.overrideMaterial = post.maskMaterial; scene.background = [0, 0, 0]; this.shadowsEnabled = false;
+            this.#inPost = true;
+            try { if (this.render(scene, camera, post.mask)) maskTexture = this.#resources.target(post.mask).color; }
+            finally { this.#inPost = false; camera.layerMask = saved.layerMask; scene.overrideMaterial = saved.override; scene.background = saved.background; this.shadowsEnabled = saved.shadows; }
+        }
         const sceneEntry = this.#resources.target(post.scene);
-        this.info.drawCalls += post.run(sceneEntry.color, sceneEntry.depthTexture, postViewFromCamera3D(camera), width, height, output, target !== undefined,
+        this.info.drawCalls += post.run(sceneEntry.color, sceneEntry.depthTexture, maskTexture, postViewFromCamera3D(camera), width, height, output, target !== undefined,
             this.postProcess, target?.format === 'rgba16f' ? 'none' : this.toneMapping, this.#emptyVao ??= gl.createVertexArray());
         this.resetState();
         return true;

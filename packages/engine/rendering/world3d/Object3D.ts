@@ -250,6 +250,13 @@ export class Scene3D extends Object3D {
     environment: import('./Texture3D.js').CubeTexture3D | undefined;
     environmentIntensity = 1;
     fog: Fog3D | undefined;
+    /** Draw every mesh with this material instead of its own, as for masks and depth-only views. */
+    overrideMaterial: import('./Material3D.js').Material3D | undefined;
+    /**
+     * Up to four world-space planes as [nx, ny, nz, d]. Fragments on the
+     * negative side (n . p + d < 0) are not drawn. Shadows are not clipped.
+     */
+    clippingPlanes: readonly (readonly [number, number, number, number])[] = [];
     constructor() {
         super('scene');
     }

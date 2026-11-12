@@ -9,11 +9,12 @@ import {
   AnimationMixer3D, InstancedMesh3D, Mesh3D, Object3D, RenderTarget3D, Scene3D, Texture3D, World3DError,
   createAmbientLight3D, createAnimationClip3D, createAnimationStateMachine3D, createBoxGeometry3D, createCharacterController3D,
   createDirectionalLight3D, createLambertMaterial3D, createPerspectiveCamera3D, createPhysicsWorld3D, createScreenLayer3D,
-  createStandardMaterial3D, deserializeScene3D, isKtx23D, loadGltf3D, parseKtx23D, serializeScene3D,
+  createCustomShader3D, createGeometry3D, createMeshShape3D, createStandardMaterial3D, deserializeScene3D, isKtx23D, loadGltf3D, parseKtx23D, serializeScene3D,
 } from '@egret/engine/world3d';
 import {
   GLTF_ASSET_3D, SCENE_ASSET_3D, TEXTURE_ASSET_3D, createPostProcessSettings3D, registerWorld3DAssets,
 } from '@egret/engine/webgl2/world3d';
+import { createCustomPost3D } from '@egret/engine/webgpu/world3d';
 import { host } from './helpers.mjs';
 
 const code = value => error => error instanceof World3DError && error.code === value;
@@ -319,4 +320,66 @@ test('character controller slides along walls and finds the ground', () => {
   close(character.position[0], 3 - 0.35, 0.03);     // stopped by the wall
   close(character.position[2], 4, 0.03);            // but still sliding along it
   close(character.groundNormal[1], 1, 1e-6);
+});
+
+test('triangle-mesh colliders carry bodies, characters and rays across level geometry', () => {
+  // A 40 m square of 1 m cells: flat where x < 0, then a 20 degree ramp.
+  const cells = 40, slope = Math.tan(20 * Math.PI / 180), positions = [], indices = [];
+  for (let j = 0; j <= cells; j++) for (let i = 0; i <= cells; i++) { const x = i - cells / 2; positions.push(x, x < 0 ? 0 : x * slope, j - cells / 2); }
+  for (let j = 0; j < cells; j++) for (let i = 0; i < cells; i++) { const a = j * (cells + 1) + i, b = a + 1, c = a + cells + 1; indices.push(a, c, b, b, c, c + 1); }
+  const level = new Object3D();
+  level.addChild(new Mesh3D(createGeometry3D({positions, indices}), createLambertMaterial3D({})));
+  const wall = new Mesh3D(createBoxGeometry3D({width: 1, height: 4, depth: 10}), createLambertMaterial3D({}));
+  wall.setPosition(-8, 2, 0); level.addChild(wall);
+  const shape = createMeshShape3D(level);
+  assert.equal(shape.triangleCount, cells * cells * 2 + 12);
+  const world = createPhysicsWorld3D();
+  const ground = world.createBody({shape: {type: 'mesh', mesh: shape}});
+  assert.equal(ground.type, 'static');
+  assert.throws(() => world.createBody({shape: {type: 'mesh', mesh: shape}, type: 'dynamic'}), code('WORLD3D_INPUT_INVALID'));
+
+  const crate = world.createBody({shape: {type: 'box', halfExtents: [0.5, 0.5, 0.5]}, position: [-5.2, 2, 5.3]});
+  // Rolling exactly along a row of triangle edges must not bump or drift.
+  const roller = world.createBody({shape: {type: 'sphere', radius: 0.5}, position: [-4, 0.5, -8], friction: 0, linearDamping: 0}).setLinearVelocity(0, 0, 6);
+  let bump = 0;
+  for (let i = 0; i < 240; i++) { world.step(1 / 60); if (i > 30) bump = Math.max(bump, Math.abs(roller.position[1] - 0.5)); }
+  assert.ok(bump < 0.02, 'seams are smooth: ' + bump);
+  close(roller.position[0], -4, 0.01); close(roller.linearVelocity[2], 6, 0.05);
+  close(crate.position[1], 0.53, 0.03);
+  assert.equal(crate.isSleeping, true);
+
+  let hit = world.raycast([5, 20, 0], [0, -1, 0]);
+  close(hit.distance, 20 - 5 * slope, 1e-3);
+  close(hit.normal[1], Math.cos(20 * Math.PI / 180), 1e-3);
+  hit = world.raycast([0, 1, 0], [-1, 0, 0]);
+  close(hit.distance, 7.5, 1e-3);
+  assert.deepEqual(hit.normal, [1, 0, 0]);
+  assert.equal(world.raycast([5, -5, 0], [0, 1, 0]), undefined, 'triangles are solid from the front only');
+
+  const character = createCharacterController3D(world, {position: [-5, 2, -5]});
+  let fall = 0;
+  for (let i = 0; i < 360; i++) { fall = character.isGrounded ? 0 : fall - 9.81 / 60; character.move(3 / 60, fall / 60 - (character.isGrounded ? 0.02 : 0), 0); }
+  assert.equal(character.isGrounded, true);
+  assert.ok(character.position[0] > 9, 'walked up the ramp');
+  close(character.position[1], character.position[0] * slope + 0.9 / Math.cos(20 * Math.PI / 180), 0.06);
+  close(character.groundNormal[1], Math.cos(20 * Math.PI / 180), 1e-3);
+  const blocked = createCharacterController3D(world, {position: [-5, 0.95, 0]});
+  for (let i = 0; i < 120; i++) blocked.move(-3 / 60, -0.01, 0);
+  close(blocked.position[0], -7.5 + 0.35, 0.03);
+});
+
+test('scene overrides, clipping planes and shader hooks are plain data', () => {
+  const scene = new Scene3D();
+  assert.equal(scene.overrideMaterial, undefined);
+  assert.deepEqual(scene.clippingPlanes, []);
+  const wind = createCustomShader3D({key: 'wind', glslVertex: 'vec3 customVertex(vec3 w, vec3 l, vec3 n, vec2 uv, vec4 c) { return w; }'});
+  assert.equal(wind.glsl, undefined);
+  assert.equal(typeof wind.glslVertex, 'string');
+  const post = createPostProcessSettings3D();
+  assert.deepEqual([post.ssao, post.outlineLayers, post.custom], [false, 0, undefined]);
+  const fog = createCustomPost3D({key: 'fog', glsl: 'vec3 customPost(vec3 c, vec2 uv) { return c; }', uniforms: [1, 2]});
+  assert.deepEqual([...fog.uniforms.subarray(0, 3)], [1, 2, 0]);
+  assert.throws(() => createCustomPost3D({key: 'none'}), code('WORLD3D_INPUT_INVALID'));
+  assert.equal(new RenderTarget3D(4, 4, {depthTexture: true}).depthTexture, true);
+  assert.equal(new RenderTarget3D(4, 4, {depth: false, depthTexture: true}).depthTexture, false);
 });

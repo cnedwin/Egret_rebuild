@@ -3,6 +3,7 @@
 // scene into `scene`, then run() blooms, grades and anti-aliases it into the
 // canvas or the caller's target.
 import {World3DError} from '../../rendering/world3d/core3D.js';
+import {Material3D} from '../../rendering/world3d/Material3D.js';
 import {RenderTarget3D} from '../../rendering/world3d/Texture3D.js';
 import type {ToneMapping3D} from './frame3D.js';
 import type {GpuResources3D, Program3D} from './gpuResources3D.js';
@@ -14,6 +15,9 @@ interface Surface { texture: WebGLTexture; framebuffer: WebGLFramebuffer; width:
 export class PostChainWebGL23D {
     /** Half-float scene target the renderer draws into before run(). */
     readonly scene = new RenderTarget3D(1, 1, {format: 'rgba16f', depthTexture: true, name: 'world3d.post.scene'});
+    /** Target and flat white material for the outline mask. */
+    readonly mask = new RenderTarget3D(1, 1, {name: 'world3d.post.mask'});
+    readonly maskMaterial = (() => { const material = new Material3D('unlit', {side: 'double'}); material.fog = false; material.toneMapped = false; return material; })();
     readonly #gl: WebGL2RenderingContext;
     readonly #resources: GpuResources3D;
     readonly #float: boolean;
@@ -25,6 +29,7 @@ export class PostChainWebGL23D {
     #view: PostView3D | undefined;
     #aoOn = false;
     #custom: Float32Array | undefined;
+    #outline: PostProcessSettings3D | undefined;
 
     constructor(gl: WebGL2RenderingContext, resources: GpuResources3D) {
         this.#gl = gl;
@@ -60,6 +65,9 @@ export class PostChainWebGL23D {
         // Depth-reading passes: units 2 and 3 are bound by run().
         if (u['uDepth']) gl.uniform1i(u['uDepth'], 2);
         if (u['uAo']) gl.uniform1i(u['uAo'], 3);
+        if (u['uMask']) gl.uniform1i(u['uMask'], 4);
+        const outline = this.#outline;
+        if (u['uOutline']) gl.uniform4f(u['uOutline'], outline ? outline.outlineColor[0] : 0, outline ? outline.outlineColor[1] : 0, outline ? outline.outlineColor[2] : 0, outline ? outline.outlineThickness : 0);
         const view = this.#view;
         if (u['uProj'] && view) gl.uniform4f(u['uProj'], view.scaleX, view.scaleY, view.near, view.far);
         if (u['uFlags'] && view) gl.uniform4f(u['uFlags'], view.orthographic ? 1 : 0, this.#aoOn ? 1 : 0, 1 / width, 1 / height);
@@ -71,14 +79,14 @@ export class PostChainWebGL23D {
      * Process `sceneTexture` into `output` (null for the canvas).
      * `outputEncodes` is true when the output converts linear values to sRGB on write.
      */
-    run(sceneTexture: WebGLTexture, depthTexture: WebGLTexture | undefined, view: PostView3D, width: number, height: number, output: WebGLFramebuffer | null, outputEncodes: boolean,
+    run(sceneTexture: WebGLTexture, depthTexture: WebGLTexture | undefined, maskTexture: WebGLTexture | undefined, view: PostView3D, width: number, height: number, output: WebGLFramebuffer | null, outputEncodes: boolean,
         settings: PostProcessSettings3D, toneMapping: ToneMapping3D, vao: WebGLVertexArrayObject | null): number {
         const gl = this.#gl, resources = this.#resources;
         gl.bindVertexArray(vao);
         gl.disable(gl.DEPTH_TEST); gl.disable(gl.CULL_FACE); gl.disable(gl.BLEND); gl.disable(gl.SCISSOR_TEST);
         gl.depthMask(false); gl.colorMask(true, true, true, true);
         let draws = 0;
-        this.#view = view; this.#aoOn = false; this.#custom = undefined;
+        this.#view = view; this.#aoOn = false; this.#custom = undefined; this.#outline = maskTexture ? settings : undefined;
         const useAo = settings.ssao && depthTexture !== undefined && settings.ssaoIntensity > 0;
         // Allocate before binding the shared units: allocation binds on the active unit.
         const ao = useAo ? this.#ao = this.surface(this.#ao, width, height, false) : undefined;
@@ -121,6 +129,8 @@ export class PostChainWebGL23D {
         const ldr = settings.fxaa ? this.#ldr = this.surface(this.#ldr, width, height, false) : undefined;
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, levels > 0 ? this.#levels[0]!.texture : this.#black);
+        gl.activeTexture(gl.TEXTURE4);
+        gl.bindTexture(gl.TEXTURE_2D, maskTexture ?? this.#black);
         gl.activeTexture(gl.TEXTURE3);
         gl.bindTexture(gl.TEXTURE_2D, ao ? ao.texture : this.#black);
         this.#aoOn = ao !== undefined;
@@ -141,6 +151,7 @@ export class PostChainWebGL23D {
             this.pass(composite, sceneTexture, output, width, height, [p[0]!, p[1]!, p[2]!, p[3]!], [p[4]!, p[5]!, p[6]!, p[7]!]);
             draws++;
         }
+        gl.activeTexture(gl.TEXTURE4); gl.bindTexture(gl.TEXTURE_2D, null);
         gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, null);
         gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, null);
         gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, null);
@@ -158,6 +169,6 @@ export class PostChainWebGL23D {
             if (this.#black) gl.deleteTexture(this.#black);
         }
         this.#levels.length = 0; this.#ldr = undefined; this.#ao = undefined; this.#black = null;
-        this.scene.dispose();
+        this.scene.dispose(); this.mask.dispose(); this.maskMaterial.dispose();
     }
 }

@@ -27,6 +27,7 @@
         if (!renderer.render(scene, camera, target)) throw new Error('renderer lost before ' + name);
         images[name] = Array.from(await renderer.readRenderTargetPixels(target));
         Object.assign(renderer.postProcess, post);
+        scene.clippingPlanes = [];
         await new Promise((resolve) => setTimeout(resolve, 30));
         if (errors.length) throw new Error('GPU error in ' + name);
         done.push(name);

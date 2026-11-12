@@ -2341,8 +2341,8 @@
       "en": "knowledge-base/en/docs/world3d.md",
       "zh": "knowledge-base/Cns/docs/world3d.md",
       "kind": "public_reading",
-      "enSha256": "4f5b0b93b8276b1e052dda5acfc99d7610e8603c3fd8d5f7dba4a675e07fb432",
-      "zhSha256": "987335aa6368411e219d271357b1a64e09518873b728eec49f0d021e7494d772"
+      "enSha256": "6e983ed3f0fb87cd234003a8f9b0c35901d0e6ef991784ffa8559ba52291106f",
+      "zhSha256": "bf138030e440efb7c160279e076c67f31da31477d843292d3773474722410e58"
     },
     {
       "en": "examples/world3d/README.md",
@@ -4931,7 +4931,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/Material3D.ts",
-      "sha256": "11f291a6ce8f13dd2744fa917c39f26860b53862d90c4de154c25ecfefc422f8"
+      "sha256": "7d24f395d30f02715ba159af72bdc4de65f14dd8dd3d87170c472bf1f03be6e6"
     },
     {
       "path": "packages/engine/rendering/world3d/Mesh3D.ts",
@@ -4939,7 +4939,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/Object3D.ts",
-      "sha256": "118aa6fbd7db938292a8167b42af4e78d1bd47427e148ccbfd42954e1df21f86"
+      "sha256": "5a88136cdf4ab70049703d8c3811853dd822ce944bc1fad9dcaaf9e31bc61b29"
     },
     {
       "path": "packages/engine/rendering/world3d/Particles3D.ts",
@@ -4951,11 +4951,11 @@
     },
     {
       "path": "packages/engine/rendering/world3d/RenderList3D.ts",
-      "sha256": "7951604ab3a6094682a152d77f19e8ba1b06f3fd2986578688513a41d9352409"
+      "sha256": "1f956beaaa4c9bd14c3895a2ed71a6345f85ed514ce720c0aad99bc97117578c"
     },
     {
       "path": "packages/engine/rendering/world3d/Texture3D.ts",
-      "sha256": "91aa037e196095a87b63b9b96ab56cf0700ab4a22e548e6bb4a07dde67b9cb66"
+      "sha256": "4c59c6baa990c2e5b8c965f44dc205d06fb3715a29f1fe2df4e64986a2438e94"
     },
     {
       "path": "packages/engine/rendering/world3d/core3D.ts",
@@ -4967,7 +4967,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/index.ts",
-      "sha256": "16d8e7eee55b908072e3f4a722dbd22dee20cc4dfed7b162e8a83cd96922693f"
+      "sha256": "806100fca2d18252af1d70b9677f9c7e933b072097fd7e635c3cc7c9d625c7ea"
     },
     {
       "path": "packages/engine/rendering/world3d/math3D.ts",
@@ -4983,11 +4983,11 @@
     },
     {
       "path": "packages/engine/web/world3d/WebGL2Renderer3D.ts",
-      "sha256": "518184f208063d404247c855799bd3076197e8f9072d668ca131a514e7ec410f"
+      "sha256": "68b134d8d0a8c37cf34701576bb74f436a48eeed57e4376fbc4949c9b4876245"
     },
     {
       "path": "packages/engine/web/world3d/WebGPURenderer3D.ts",
-      "sha256": "5cb3e37e1f856e9a3ce6378f95e44bd03df33361f3da63560a2e3b4bf2b7d42b"
+      "sha256": "206b053afb03d89e7fe8fb39623addf714bc0a8014fb1ca3e7345f7123780b79"
     },
     {
       "path": "packages/engine/web/world3d/World3DView.ts",
@@ -4995,11 +4995,11 @@
     },
     {
       "path": "packages/engine/web/world3d/frame3D.ts",
-      "sha256": "009dc928e9127adf0f9c92718810ff1155607a60f5680d9123f8e8ed58d24a58"
+      "sha256": "fd8ee938e7857ec84016ad2306d04fb160ffa06b7b908b1df9ccbb609cf2250f"
     },
     {
       "path": "packages/engine/web/world3d/gpuResources3D.ts",
-      "sha256": "fe40245ba0f87020a0195693cbffacadc7e7fc04218e745a07aa6c0716dbc72a"
+      "sha256": "c2e938e0dcef2dcc3ae32003098282ccece4cea346deec9db70c64cc33fc0b34"
     },
     {
       "path": "packages/engine/web/world3d/host3D.ts",
@@ -5007,7 +5007,7 @@
     },
     {
       "path": "packages/engine/web/world3d/index.ts",
-      "sha256": "6525dc89d093e966c987541968c947748ee5ec969cbc9763f8415c5c290e8f12"
+      "sha256": "87dcb0b52464e16ffd3c04de8b5b3b2dac5ebe9361ab87098122ef5f1263a1a2"
     },
     {
       "path": "packages/engine/web/world3d/loaders3D.ts",
@@ -5015,19 +5015,19 @@
     },
     {
       "path": "packages/engine/web/world3d/shaders3D.ts",
-      "sha256": "584d01c3941fdfb1d9ed4526dc62012afb43d07f4f30f5d3ec4a9c6af9300cb5"
+      "sha256": "76828f9fc1a3bf4f50c344a46b9fc95681b0d12bf170ce7b6d728729f333edb1"
     },
     {
       "path": "packages/engine/web/world3d/webgpu.ts",
-      "sha256": "f00ab123757b7bc399b8a47534924bab5d14b15177865383cfae69a876438056"
+      "sha256": "fb2f1f3d299c390cfbd652995c372b6af0db3d1ce87f38e86bd037336e9299b1"
     },
     {
       "path": "packages/engine/web/world3d/wgsl3D.ts",
-      "sha256": "859ecf864f81b5a7eb42de170b2d2c063306ab47d721228d3d220f6128c6b8bf"
+      "sha256": "ac427b3eaba6226c14cd1e19e8d108a4c89ca3b29dcc692b09419a1eff2c3986"
     },
     {
       "path": "tools/lib/world3d-boundary.mjs",
-      "sha256": "6fe5f667bbf671721578d43b39ee5b5ab9e8deab0635c61761a2d847a919fc26"
+      "sha256": "da6cbe0e7c1da22918e003a7e9c8f2e7a4fd48297beaedbfed160f949bf7ae41"
     },
     {
       "path": "packages/engine/rendering/world3d/Curves3D.ts",
@@ -5043,7 +5043,11 @@
     },
     {
       "path": "packages/engine/rendering/world3d/Physics3D.ts",
-      "sha256": "2361b19e67a41244f1399fc5f4657b01e1b737b197f34572918c841ff091eaae"
+      "sha256": "50469a5afa503e337e01298ec8475ffcea80522c7cea9dc35ee51c1b8fbf9b43"
+    },
+    {
+      "path": "packages/engine/rendering/world3d/PhysicsMesh3D.ts",
+      "sha256": "b944a4fd3047a9abdd6b68b492f0a56b52df759f61a41e7a166a0b7c12299652"
     },
     {
       "path": "packages/engine/rendering/world3d/Serialize3D.ts",
@@ -5075,15 +5079,15 @@
     },
     {
       "path": "packages/engine/web/world3d/post3D.ts",
-      "sha256": "887603b9504ae46cf94162bf07258f7a22f4425d8e40a83d33d160ee51d36cfd"
+      "sha256": "a80dd684ebacbe1d7185627471a9d81b128255c8bba8d55d5b3cc3c5716e2fe1"
     },
     {
       "path": "packages/engine/web/world3d/postWebGL23D.ts",
-      "sha256": "936c03149be0814fe3617830112119f6b11b78f7dcdf6cb3913617d9344b9c66"
+      "sha256": "ab1f5b6eab908754d71b9be609db857d2f8ff490f070d1715d019343ffd1ec57"
     },
     {
       "path": "packages/engine/web/world3d/postWebGPU3D.ts",
-      "sha256": "b5e3a9312f009694a0bd41ea71ca45af8bc8d784f1cfea44c5bad2b9f7e459d3"
+      "sha256": "48c7e2ce5f6ca7cf707ca45deadfe930476f07e6fc861da20c9454a293319fa7"
     },
     {
       "path": "packages/engine/web/world3d/probe3D.ts",

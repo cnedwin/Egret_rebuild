@@ -63,6 +63,16 @@ export interface PostProcessSettings3D {
     ssaoBias: number;
     /** Optional application pass; see CustomPost3D. */
     custom: CustomPost3D | undefined;
+    /**
+     * Layer bits of the objects to outline; 0 turns outlines off. Give the
+     * objects one of these bits in `layers` and they are traced on screen, even
+     * where something stands in front of them.
+     */
+    outlineLayers: number;
+    /** Linear RGB of the outline. */
+    outlineColor: [number, number, number];
+    /** Outline width in pixels. */
+    outlineThickness: number;
 }
 /** Camera values the depth-reading passes need. */
 export interface PostView3D { readonly scaleX: number; readonly scaleY: number; readonly near: number; readonly far: number; readonly orthographic: boolean }
@@ -71,18 +81,23 @@ export function postViewFromCamera3D(camera: Camera3D): PostView3D {
     const p = camera.projectionMatrix;
     return {scaleX: 1 / p[0]!, scaleY: 1 / p[5]!, near: camera.near, far: camera.far, orthographic: camera.projectionKind === 'orthographic'};
 }
-/** Fill the 32 floats every post pass reads: a, b, projection, flags, custom[4]. */
-export function writePostParams3D(out: Float32Array, a: ArrayLike<number>, b: ArrayLike<number>, view: PostView3D, aoEnabled: boolean, width: number, height: number, custom?: CustomPost3D): void {
+/** True when the settings ask for outlines. */
+export function outlineActive3D(settings: PostProcessSettings3D): boolean { return settings.outlineLayers !== 0 && settings.outlineThickness > 0; }
+/** Fill the 36 floats every post pass reads: a, b, projection, flags, custom[4], outline. */
+export function writePostParams3D(out: Float32Array, a: ArrayLike<number>, b: ArrayLike<number>, view: PostView3D, aoEnabled: boolean, width: number, height: number, custom?: CustomPost3D,
+    outline?: PostProcessSettings3D): void {
     out.fill(0);
     out.set(a, 0); out.set(b, 4);
     out[8] = view.scaleX; out[9] = view.scaleY; out[10] = view.near; out[11] = view.far;
     out[12] = view.orthographic ? 1 : 0; out[13] = aoEnabled ? 1 : 0; out[14] = 1 / width; out[15] = 1 / height;
     if (custom) out.set(custom.uniforms, 16);
+    if (outline) { out.set(outline.outlineColor, 32); out[35] = outline.outlineThickness; }
 }
 export const POST3D_LIMITS = Object.freeze({maxBloomLevels: 8} as const);
 export function createPostProcessSettings3D(): PostProcessSettings3D {
     return {enabled: false, bloom: true, bloomThreshold: 1, bloomKnee: 0.5, bloomIntensity: 0.6, bloomLevels: 5, fxaa: true, saturation: 1, contrast: 1, brightness: 1, vignette: 0,
-        ssao: false, ssaoRadius: 0.5, ssaoIntensity: 1, ssaoBias: 0.025, custom: undefined};
+        ssao: false, ssaoRadius: 0.5, ssaoIntensity: 1, ssaoBias: 0.025, custom: undefined,
+        outlineLayers: 0, outlineColor: [1, 0.6, 0.1], outlineThickness: 2};
 }
 /** Number of bloom levels that fit the output size. */
 export function bloomLevelCount3D(settings: PostProcessSettings3D, width: number, height: number): number {
@@ -184,6 +199,9 @@ export function postCompositeGlsl3D(customPost?: string): string {
     return GLSL_HEAD.replace('#version 300 es\n', '#version 300 es\n' + (customPost === undefined ? '' : '#define CUSTOM_POST\n')) + GLSL_DEPTH + /* glsl */`
 uniform sampler2D uBloom;
 uniform sampler2D uAo;
+uniform sampler2D uMask;
+uniform vec4 uOutline; // rgb and width in pixels; 0 width is off
+float maskAt(vec2 uv) { return texture(uMask, uv).r; }
 vec3 sceneColor(vec2 uv) { return texture(uSource, uv).rgb; }
 #ifdef CUSTOM_POST
 uniform vec4 uPostCustom[4];
@@ -208,6 +226,13 @@ void main() {
     c = (c - 0.18) * uB.y + 0.18;
     c *= 1.0 - uA.w * smoothstep(0.3, 0.75, distance(vUv, vec2(0.5)));
     c = clamp(c, 0.0, 1.0);
+    if (uOutline.w > 0.0) {
+        // The outline is where the mask is present nearby but not at this pixel.
+        vec2 t = uFlags.zw * uOutline.w, d = t * 0.7071;
+        float around = max(max(maskAt(vUv + vec2(t.x, 0.0)), maskAt(vUv - vec2(t.x, 0.0))), max(maskAt(vUv + vec2(0.0, t.y)), maskAt(vUv - vec2(0.0, t.y))));
+        around = max(around, max(max(maskAt(vUv + d), maskAt(vUv - d)), max(maskAt(vUv + vec2(d.x, -d.y)), maskAt(vUv + vec2(-d.x, d.y)))));
+        c = mix(c, uOutline.rgb, clamp(around - maskAt(vUv), 0.0, 1.0));
+    }
     if (uA.z > 0.5) c = mix(c * 12.92, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055, step(vec3(0.0031308), c));
     outColor = vec4(c, scene.a);
 }`;
@@ -243,6 +268,7 @@ struct Params {
     proj: vec4f,   // x, y: view extent at unit distance; z: near; w: far
     flags: vec4f,  // x: orthographic; y: ambient occlusion on; z, w: texel size
     custom: array<vec4f, 4>,
+    outline: vec4f, // rgb and width in pixels; 0 width is off
 }
 @group(0) @binding(0) var<uniform> params: Params;
 @group(0) @binding(1) var source: texture_2d<f32>;
@@ -250,6 +276,7 @@ struct Params {
 @group(0) @binding(3) var bloom: texture_2d<f32>;
 @group(0) @binding(4) var depthTexture: texture_depth_2d;
 @group(0) @binding(5) var aoTexture: texture_2d<f32>;
+@group(0) @binding(6) var maskTexture: texture_2d<f32>;
 struct VertexOutput { @builtin(position) position: vec4f, @location(0) uv: vec2f }
 @vertex fn vertexMain(@builtin(vertex_index) index: u32) -> VertexOutput {
     let p = vec2f(f32((index << 1u) & 2u), f32(index & 2u));
@@ -324,6 +351,7 @@ export const POST_UP_WGSL_3D = WGSL_HEAD + /* wgsl */`
 export function postCompositeWgsl3D(customPost?: string): string {
     return WGSL_HEAD + (customPost ?? '') + /* wgsl */`
 fn occlusionTap(uv: vec2f) -> f32 { return textureSampleLevel(aoTexture, linearSampler, uv, 0.0).r; }
+fn maskAt(uv: vec2f) -> f32 { return textureSampleLevel(maskTexture, linearSampler, uv, 0.0).r; }
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
     let scene = textureSampleLevel(source, linearSampler, input.uv, 0.0);
     var c = scene.rgb;
@@ -341,6 +369,15 @@ fn occlusionTap(uv: vec2f) -> f32 { return textureSampleLevel(aoTexture, linearS
     c = (c - 0.18) * params.b.y + 0.18;
     c *= 1.0 - params.a.w * smoothstep(0.3, 0.75, distance(input.uv, vec2f(0.5)));
     c = clamp(c, vec3f(0.0), vec3f(1.0));
+    if (params.outline.w > 0.0) {
+        // The outline is where the mask is present nearby but not at this pixel.
+        let t = params.flags.zw * params.outline.w;
+        let d = t * 0.7071;
+        let uv = input.uv;
+        var around = max(max(maskAt(uv + vec2f(t.x, 0.0)), maskAt(uv - vec2f(t.x, 0.0))), max(maskAt(uv + vec2f(0.0, t.y)), maskAt(uv - vec2f(0.0, t.y))));
+        around = max(around, max(max(maskAt(uv + d), maskAt(uv - d)), max(maskAt(uv + vec2f(d.x, -d.y)), maskAt(uv + vec2f(-d.x, d.y)))));
+        c = mix(c, params.outline.rgb, clamp(around - maskAt(uv), 0.0, 1.0));
+    }
     if (params.a.z > 0.5) { c = mix(c * 12.92, 1.055 * pow(c, vec3f(1.0 / 2.4)) - 0.055, step(vec3f(0.0031308), c)); }
     return vec4f(c, scene.a);
 }`;
