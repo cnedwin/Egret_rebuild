@@ -41,7 +41,7 @@ export class AnimationTexture3D extends Resource3D {
     readonly fps: number;
     readonly data: Float32Array;
     readonly clips: readonly BakedClip3D[];
-    /** How far a bone travels from the mesh origin in any frame, relative to the geometry's bounding radius; instances widen their bounds by it. */
+    /** Approximate reach from bone origins. It is not a conservative bound on the posed vertices. */
     readonly reach: number;
 
     constructor(boneCount: number, fps: number, data: Float32Array, clips: readonly BakedClip3D[], reach = 1, morphCount = 0) {
@@ -228,8 +228,11 @@ export class SkinnedInstancedMesh3D extends InstancedMesh3D {
     readonly instanceAnimation: Float32Array;
     /** Instances that exist, drawn or not; at most `capacity`. */
     total: number;
-    /** false draws every instance without testing it against the view. */
-    cullInstances = true;
+    /**
+     * true leaves out the instances outside the view before each draw. Off by default: the test uses the
+     * reach estimate, which a bone that scales or a turned bone can exceed.
+     */
+    cullInstances = false;
     /**
      * Instances this many bounding radii outside the view are still drawn, so
      * that their shadows can fall into it. Default 3.
@@ -257,6 +260,7 @@ export class SkinnedInstancedMesh3D extends InstancedMesh3D {
         if (!geometry.getAttribute('joints') || !geometry.getAttribute('weights')) throw new World3DError('WORLD3D_INPUT_INVALID', 'geometry needs joints and weights');
         this.animations = animations;
         this.boundsScale = animations.reach;
+        this.frustumCulled = false;
         const n = this.capacity;
         this.total = n;
         this.instanceAnimation = new Float32Array(n * FLOATS);
@@ -430,6 +434,11 @@ export class SkinnedInstancedMesh3D extends InstancedMesh3D {
         else { a[o + 4] = a[o]!; a[o + 5] = a[o + 1]!; a[o + 6] = 0; a[o + 7] = 0; }
     }
 }
+/** A baked skin can extend beyond the available sphere, including when a bone scales in place. */
+export function worldRenderSphere3D(mesh: Mesh3D): Float32Array | undefined {
+    return mesh instanceof SkinnedInstancedMesh3D ? undefined : mesh.worldBoundingSphere;
+}
+
 export function createSkinnedInstancedMesh3D(geometry: Geometry3D, material: Material3D | Material3D[], animations: AnimationTexture3D, capacity: number, instanceColorSize: 3 | 4 = 3): SkinnedInstancedMesh3D {
     return new SkinnedInstancedMesh3D(geometry, material, animations, capacity, instanceColorSize);
 }
