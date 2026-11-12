@@ -159,6 +159,12 @@ export class Material3D extends Resource3D {
     reflectionStrength = 1;
     /** How far the surface normal pushes the mirror image sideways, as a share of the screen. */
     reflectionDistortion = 0.02;
+    /**
+     * For blended materials such as particles and haze: the distance over which
+     * the surface fades out where it comes close to the solid geometry behind
+     * it, instead of ending in a hard line. 0 turns the fade off.
+     */
+    softness = 0;
     /** Strength, 0 to 1, of a soft rim lobe for cloth and velvet on a standard material. */
     sheen = 0;
     readonly sheenColor = new Float32Array([1, 1, 1]);

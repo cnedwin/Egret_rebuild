@@ -86,6 +86,9 @@ export function writeFrameBlock3D(data: Float32Array, scene: Scene3D, camera: Ca
     }
     data.set(list.ambient, F.ambient); data.set(list.hemisphereSky, F.hemisphereSky); data.set(list.hemisphereGround, F.hemisphereGround);
     data[F.lightCounts] = list.directionalLights.length; data[F.lightCounts + 1] = list.pointLights.length; data[F.lightCounts + 2] = list.spotLights.length;
+    // What a shader needs to turn stored depth back into distance: two projection terms and whether the view is orthographic.
+    data[F.lightCounts + 3] = camera.projectionMatrix[15] === 1 ? 1 : 0;
+    data[F.pointShadow + 2] = camera.projectionMatrix[10]!; data[F.pointShadow + 3] = camera.projectionMatrix[14]!;
     const direction = (light: Light3D, offset: number): void => {
         // Lights shine along their local negative Z axis.
         const m = light.matrixWorld, x = -m[8]!, y = -m[9]!, z = -m[10]!, length = Math.hypot(x, y, z) || 1;
@@ -164,7 +167,8 @@ export function cascadeSplits3D(near: number, far: number, count: number, lambda
 export function planShadows3D(data: Float32Array, list: RenderList3D, atlasSize: number, enabled: boolean, flipY: boolean,
     slots: Map<Light3D, number>, camera?: Camera3D): ShadowPlan3D[] {
     slots.clear();
-    data.fill(0, F.cascadeSplits, F.pointShadow + 4);
+    // The last two floats of pointShadow belong to the camera, written with the rest of the frame.
+    data.fill(0, F.cascadeSplits, F.pointShadow + 2);
     data[F.cascadeInfo] = -1; data[F.pointShadow] = -1;
     const plans: ShadowPlan3D[] = [];
     if (!enabled || list.shadowCasters.length === 0) return plans;

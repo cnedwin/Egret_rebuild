@@ -200,6 +200,10 @@ test('the mirror camera reflects the viewer and cuts at the plane', () => {
   let visibleDuring;
   assert.equal(water.renderReflection({render(drawn, by, target) { visibleDuring = water.visible; assert.equal(target, water.reflection.target); assert.equal(by, water.reflection.camera); return true; }}, scene, camera), true);
   assert.equal(visibleDuring, false); assert.equal(water.visible, true);
+  // Post-processing is switched off for the mirror image and put back afterwards.
+  const fake = {postProcess: {enabled: true}, during: undefined, render() { this.during = this.postProcess.enabled; return true; }};
+  water.renderReflection(fake, scene, camera);
+  assert.equal(fake.during, false); assert.equal(fake.postProcess.enabled, true);
   assert.equal(water.material.reflectionMap, water.reflection.texture);
   reflection.dispose();
   assert.equal(reflection.target.isDisposed, true);

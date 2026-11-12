@@ -66,7 +66,8 @@ for (const backend of ['webgl2', 'webgpu']) {
   }
 }
 // Thin lines rasterize differently per API, so the line case allows a small share of large differences.
-const limits = { default: { mean: 1, share: 0.001 }, spritesLines: { mean: 2, share: 0.02 } };
+// The effects case has hundreds of particles a few pixels wide, whose edge pixels fall differently too.
+const limits = { default: { mean: 1, share: 0.001 }, spritesLines: { mean: 2, share: 0.02 }, effects: { mean: 1, share: 0.004 } };
 for (const name of Object.keys(results.webgl2.images ?? {})) {
   const a = results.webgl2.images[name], b = results.webgpu.images?.[name];
   if (!b) { summary.failures.push({ case: name, failure: 'missing on webgpu' }); continue; }
@@ -83,7 +84,7 @@ for (const name of Object.keys(results.webgl2.images ?? {})) {
   summary.cases.push(entry);
   if (!entry.pass) summary.failures.push({ case: name, failure: varied ? 'backends differ beyond the limit' : 'image is a single color' });
 }
-summary.pass = summary.failures.length === 0 && summary.cases.length === 22;
+summary.pass = summary.failures.length === 0 && summary.cases.length === 24;
 fs.writeFileSync(path.join(output, 'summary.json'), JSON.stringify(summary, null, 2) + '\n');
 console.log(JSON.stringify(summary, null, 2));
 process.exitCode = summary.pass ? 0 : 1;

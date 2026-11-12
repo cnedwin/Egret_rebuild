@@ -21,7 +21,7 @@
       await verifySkinAfterFlippedUpload(W, renderer);
       await verifyObliquePostDepth(W, renderer, mod.createCustomPost3D);
       const target = new W.RenderTarget3D(320, 200);
-      for (const [name, build] of Object.entries(buildCases(W))) {
+      for (const [name, build] of Object.entries(buildCases(W, mod))) {
         const { scene, camera, setup } = build();
         // A case may configure the renderer; its post-processing settings are restored afterwards.
         const post = { ...renderer.postProcess };

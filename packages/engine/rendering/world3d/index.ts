@@ -124,3 +124,6 @@ export {
     AnimationTexture3D, SkinnedInstancedMesh3D, bakeAnimationTexture3D, createSkinnedInstancedMesh3D, ANIMATION_TEXTURE3D_LIMITS,
     type BakedClip3D, type BakeAnimationOptions3D, type InstanceClipOptions3D,
 } from './AnimationTexture3D.js';
+export {Trail3D, createTrail3D, TRAIL3D_LIMITS, type TrailOptions3D} from './Trail3D.js';
+export {createDecalGeometry3D, createDecal3D, DECAL3D_LIMITS, type DecalOptions3D} from './Decal3D.js';
+export {GpuParticles3D, createGpuParticles3D, type GpuParticlesOptions3D} from './GpuParticles3D.js';

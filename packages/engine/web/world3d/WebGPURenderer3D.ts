@@ -11,6 +11,7 @@ import type {Material3D} from '../../rendering/world3d/Material3D.js';
 import {linearToSrgb, mat3NormalFromMat4, mat4Invert} from '../../rendering/world3d/math3D.js';
 import type {InstancedMesh3D, Mesh3D, Skeleton3D} from '../../rendering/world3d/Mesh3D.js';
 import {type AnimationTexture3D, SkinnedInstancedMesh3D} from '../../rendering/world3d/AnimationTexture3D.js';
+import {GpuParticles3D} from '../../rendering/world3d/GpuParticles3D.js';
 import type {Scene3D} from '../../rendering/world3d/Object3D.js';
 import {RenderList3D} from '../../rendering/world3d/RenderList3D.js';
 import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
@@ -129,6 +130,10 @@ export class WebGPURenderer3D implements Renderer3D {
     readonly #materials = new Map<Material3D, MaterialGpu>();
     readonly #bones = new Map<Skeleton3D, BonesGpu>();
     readonly #animations = new Map<AnimationTexture3D, GPUBuffer>();
+    #sceneDepth: {texture: GPUTexture; view: GPUTextureView; buffer: GPUBuffer; group: GPUBindGroup} | undefined;
+    /** True while the frame being drawn has a depth image of its solid geometry. */
+    #softDepth = false;
+    #sceneDepthSerial = 0;
     readonly #skins = new WeakMap<Mesh3D, SkinGpu>();
     readonly #samplers = new Map<string, GPUSampler>();
     readonly #mipPipelines = new Map<GPUTextureFormat, GPURenderPipeline>();
@@ -206,6 +211,7 @@ export class WebGPURenderer3D implements Renderer3D {
             {binding: 4, visibility: SHADER_STAGE.FRAGMENT, sampler: {}},
             {binding: 5, visibility: SHADER_STAGE.FRAGMENT, texture: {}},
             {binding: 6, visibility: SHADER_STAGE.FRAGMENT, sampler: {}},
+            {binding: 7, visibility: SHADER_STAGE.FRAGMENT, texture: {sampleType: 'depth'}},
         ]});
         this.#depthFrameLayout = device.createBindGroupLayout({entries: [{binding: 0, visibility: both, buffer: {}}]});
         this.#materialLayout = device.createBindGroupLayout({entries: [{binding: 0, visibility: both, buffer: {}}, ...filtering]});
@@ -601,7 +607,7 @@ export class WebGPURenderer3D implements Renderer3D {
         // Scalars are rewritten once per frame so plain field edits need no touch().
         const data = this.#materialData, e = material.emissiveIntensity, map = material.map;
         data[0] = material.color[0]!; data[1] = material.color[1]!; data[2] = material.color[2]!; data[3] = material.opacity;
-        data[4] = material.emissive[0]! * e; data[5] = material.emissive[1]! * e; data[6] = material.emissive[2]! * e; data[7] = 0;
+        data[4] = material.emissive[0]! * e; data[5] = material.emissive[1]! * e; data[6] = material.emissive[2]! * e; data[7] = material.softness;
         data[8] = material.metallic; data[9] = material.roughness; data[10] = material.normalScale; data[11] = material.occlusionStrength;
         data[12] = material.specular[0]!; data[13] = material.specular[1]!; data[14] = material.specular[2]!; data[15] = material.shading === 'toon' ? material.toonSteps : material.shininess;
         data[16] = material.alphaCutoff; data[17] = material.environmentIntensity; data[18] = material.clearcoat; data[19] = material.clearcoatRoughness;
@@ -650,6 +656,7 @@ export class WebGPURenderer3D implements Renderer3D {
             vertexColor: material.vertexColors && gpu.buffers.has('color'),
             skinning, morph: gpu.morph !== undefined, morphNormals: gpu.morph?.channels === 2,
             skinInstancing: instanced && !skinning && mesh instanceof SkinnedInstancedMesh3D && gpu.buffers.has('joints') && gpu.buffers.has('weights'),
+            gpuParticles: instanced && !depthOnly && mesh instanceof GpuParticles3D, softDepth: !depthOnly && material.softness > 0 && this.#softDepth,
             instancing: instanced, instanceColor: instanced && !depthOnly && (mesh as InstancedMesh3D).instanceColors !== undefined,
             billboard: material.billboard && !material.screenSpace, screenSpace: material.screenSpace,
             map: uv && material.map !== undefined && (!depthOnly || material.alphaMode !== 'opaque'),
@@ -796,7 +803,7 @@ export class WebGPURenderer3D implements Renderer3D {
             | (instanced && (mesh as InstancedMesh3D).instanceColors ? 32 : 0) | (mesh.skeleton ? 64 : 0) | (mesh.receiveShadow && this.#shadowCount > 0 ? 128 : 0)
             | (frameFlags.fog ? 256 : 0) | (frameFlags.environment ? 512 : 0) | (this.toneMapping !== 'none' ? 1024 : 0)
             | (instanced && (mesh as InstancedMesh3D).instanceColorSize === 4 ? 2048 : 0)
-            | (material.side === 'double' ? 4096 : material.side === 'back' ? 8192 : 0) | (mesh instanceof SkinnedInstancedMesh3D ? 16384 : 0);
+            | (material.side === 'double' ? 4096 : material.side === 'back' ? 8192 : 0) | (mesh instanceof SkinnedInstancedMesh3D ? 16384 : 0) | (mesh instanceof GpuParticles3D ? 32768 : 0);
         let cache = this.#drawVariants.get(material);
         if (!cache || cache.version !== material.version) this.#drawVariants.set(material, cache = {version: material.version, variants: new Map()});
         // Material fields that select shader features or pipeline state. They are read every
@@ -808,8 +815,8 @@ export class WebGPURenderer3D implements Renderer3D {
             | (material.flatShading ? 512 : 0) | (material.vertexColors ? 1024 : 0) | (material.billboard ? 2048 : 0) | (material.screenSpace ? 4096 : 0)
             | (material.depthTest ? 8192 : 0) | (material.depthWrite ? 16384 : 0) | (material.fog ? 131072 : 0) | (material.toneMapped ? 262144 : 0)
             | (material.polygonOffset ? 524288 : 0) | (material.occlusionMap?.channel === 1 ? 1048576 : 0) | (material.emissiveMap?.channel === 1 ? 2097152 : 0)
-            | (material.lightMap ? 4194304 : 0) | (material.lightMap?.channel === 1 ? 8388608 : 0) | (material.reflectionMap ? 16777216 : 0);
-        const variantKey = surface * 32768 + bits;
+            | (material.lightMap ? 4194304 : 0) | (material.lightMap?.channel === 1 ? 8388608 : 0) | (material.reflectionMap ? 16777216 : 0) | (material.softness > 0 && this.#softDepth ? 33554432 : 0);
+        const variantKey = surface * 65536 + bits;
         let byGeometry = cache.variants.get(geometry.id);
         if (!byGeometry) cache.variants.set(geometry.id, byGeometry = new Map());
         let variant = byGeometry.get(variantKey);
@@ -955,17 +962,29 @@ export class WebGPURenderer3D implements Renderer3D {
         writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {exposure: this.exposure, toneMapping: kind === 'hdr' ? 'none' : this.toneMapping, environmentMaxMip: environment?.maxMip ?? 0});
         this.#frameData[FRAME_OFFSETS_3D.clipInfo + 2] = this.viewport ? this.viewport[2] : 1; this.#frameData[FRAME_OFFSETS_3D.clipInfo + 3] = this.viewport ? this.viewport[3] : 1;
         device.queue.writeBuffer(this.#frameBuffer, 0, this.#frameData);
-        const frameKey = (environment ? scene.environment!.id + ':' + scene.environment!.version : '-');
+        // Surfaces that fade near solid geometry read its depth, drawn once before the frame.
+        const soft = list.transparent.some(item => item.material.softness > 0);
+        const softWidth = target ? target.width : this.#context.getCurrentTexture().width, softHeight = target ? target.height : this.#context.getCurrentTexture().height;
+        if (soft && (!this.#sceneDepth || this.#sceneDepth.texture.width !== softWidth || this.#sceneDepth.texture.height !== softHeight)) {
+            this.#sceneDepth?.texture.destroy(); this.#sceneDepth?.buffer.destroy();
+            const texture = device.createTexture({size: [softWidth, softHeight], format: SHADOW_FORMAT, usage: TEXTURE_USAGE.RENDER_ATTACHMENT | TEXTURE_USAGE.TEXTURE_BINDING});
+            const buffer = device.createBuffer({size: 128, usage: BUFFER_USAGE.UNIFORM | BUFFER_USAGE.COPY_DST});
+            this.#sceneDepth = {texture, view: texture.createView(), buffer, group: device.createBindGroup({layout: this.#depthFrameLayout, entries: [{binding: 0, resource: {buffer}}]})};
+            this.#sceneDepthSerial++;
+        }
+        this.#softDepth = soft;
+        const sceneDepthView = soft ? this.#sceneDepth!.view : atlas;
+        const frameKey = (environment ? scene.environment!.id + ':' + scene.environment!.version : '-') + (soft ? '|d' + this.#sceneDepthSerial : '');
         if (!this.#frameGroup || this.#frameGroupKey !== frameKey) {
             this.#frameGroup = device.createBindGroup({layout: this.#frameLayout, entries: [
                 {binding: 0, resource: {buffer: this.#frameBuffer}}, {binding: 1, resource: atlas}, {binding: 2, resource: this.#shadowSampler},
                 {binding: 3, resource: environment?.view ?? this.#whiteCube}, {binding: 4, resource: environment?.sampler ?? this.#defaultSampler},
-                {binding: 5, resource: this.#white}, {binding: 6, resource: this.#grabSampler},
+                {binding: 5, resource: this.#white}, {binding: 6, resource: this.#grabSampler}, {binding: 7, resource: sceneDepthView},
             ]});
             this.#frameGroupKey = frameKey;
         }
         // Size the per-draw uniform buffer before any pass references its bind group.
-        let needed = list.opaque.length + list.transparent.length;
+        let needed = list.opaque.length * (soft ? 2 : 1) + list.transparent.length;
         for (const plan of plans) for (const mesh of plan.casters) needed += Array.isArray(mesh.material) ? Math.max(mesh.geometry.groups.length, 1) : 1;
         if (needed > this.#objectCapacity) {
             while (this.#objectCapacity < needed) this.#objectCapacity *= 2;
@@ -991,6 +1010,26 @@ export class WebGPURenderer3D implements Renderer3D {
                 pass.setScissorRect(plan.x, plan.y, plan.tile, plan.tile);
                 pass.setBindGroup(0, slot.group);
                 for (const mesh of plan.casters) this.drawDepth(pass, mesh);
+            }
+            pass.end();
+        }
+        if (soft) {
+            const depth = this.#sceneDepth!;
+            // The depth-only frame block holds a view-projection matrix followed by the view matrix.
+            device.queue.writeBuffer(depth.buffer, 0, camera.viewProjectionMatrix);
+            device.queue.writeBuffer(depth.buffer, 64, camera.viewMatrix);
+            this.resetPassState();
+            const pass = encoder.beginRenderPass({colorAttachments: [], depthStencilAttachment: {view: depth.view, depthClearValue: 1, depthLoadOp: 'clear', depthStoreOp: 'store'}});
+            const rect = this.viewport;
+            if (rect) {
+                const w = Math.max(Math.round(rect[2] * softWidth), 1), h = Math.max(Math.round(rect[3] * softHeight), 1);
+                const x = Math.min(Math.max(Math.round(rect[0] * softWidth), 0), softWidth - 1), y = Math.min(Math.max(softHeight - Math.round(rect[1] * softHeight) - h, 0), softHeight - 1);
+                pass.setViewport(x, y, Math.min(w, softWidth - x), Math.min(h, softHeight - y), 0, 1);
+            }
+            pass.setBindGroup(0, depth.group);
+            const none = {fog: false, environment: false};
+            for (const item of list.opaque) {
+                if (item.geometry.topology === 'triangles' && item.material.depthWrite && !item.material.billboard && !item.material.screenSpace) this.draw(pass, item, 'depth', none);
             }
             pass.end();
         }
@@ -1052,7 +1091,7 @@ export class WebGPURenderer3D implements Renderer3D {
                 entry.group = device.createBindGroup({layout: this.#frameLayout, entries: [
                     {binding: 0, resource: {buffer: this.#frameBuffer}}, {binding: 1, resource: atlas}, {binding: 2, resource: this.#shadowSampler},
                     {binding: 3, resource: environment?.view ?? this.#whiteCube}, {binding: 4, resource: environment?.sampler ?? this.#defaultSampler},
-                    {binding: 5, resource: entry.view}, {binding: 6, resource: this.#grabSampler},
+                    {binding: 5, resource: entry.view}, {binding: 6, resource: this.#grabSampler}, {binding: 7, resource: sceneDepthView},
                 ]});
                 entry.key = frameKey;
             }
@@ -1168,6 +1207,7 @@ export class WebGPURenderer3D implements Renderer3D {
         for (const entry of this.#grabs.values()) entry.texture.destroy();
         this.#grabs.clear();
         this.#shadowTexture?.destroy(); this.#canvasDepth?.destroy(); this.#canvasColor?.destroy();
+        this.#sceneDepth?.texture.destroy(); this.#sceneDepth?.buffer.destroy(); this.#sceneDepth = undefined;
         try { this.#context.unconfigure(); } catch { /* The canvas may already be detached. */ }
         if (this.#ownsDevice) this.device.destroy();
     }
