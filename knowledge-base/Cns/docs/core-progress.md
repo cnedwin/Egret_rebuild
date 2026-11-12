@@ -18,12 +18,12 @@
 | UI | 托管根、测量／排列、变高稳定键列表、锚点、行焦点与定位；不可变主题／皮肤代次、共享特效及受管弹出层／模态层 | 完整控件、语义投影及完整大场景资格 |
 | 文字与字体 | 只读 CanvasKit／SkParagraph 段落、最终行双向排版、换行、对齐／行数限制、多样式、已提交命中／选区／插入点几何及受管字体集合切换、可选原生单／多行编辑及配对浏览器字体 | 真实 IME 资格、必需文字／字体／墨迹的独立参考、传输／启动及 CPU／Wasm／内存资格 |
 | 输入 | 兼容旧鼠标 API、可选多触点路由、键盘／逻辑焦点、响应式示例及已合并的移动／动作控件状态 | 其余控件／示例／键盘接线、手势仲裁、完整语义整合和必需真实手机／IME／无障碍记录 |
-| 3D | [可编辑共享场景](authored-scene3d.md)提供有界 3D 背景、共享深度的 2D 角色卡片和刚体动画。[可选 World3D](world3d.md)在 WebGL2／WebGPU 上提供 glTF 实例导入、材质、阴影、后处理、蒙皮、形变和静态网格碰撞。 | 更广的资产与设备验收、正式性能、统一的 2D／3D 工程创作链路 |
+| 3D | [可编辑共享场景](authored-scene3d.md)提供有界 3D 背景、共享深度的 2D 角色卡片和刚体动画。[可选 World3D](world3d.md)在 WebGL2／WebGPU 上提供 glTF 实例导入、材质、阴影、后处理、蒙皮、形变、文字，以及带网格碰撞和关节的物理。 | 更广的资产与设备验收、正式性能、统一的 2D／3D 工程创作链路 |
 | 工程与工具 | 版本化工程快照／事务、结构化诊断、有界旧 RES／MovieClip 分析；固定环境、评审及公开 CI | 工程到运行游戏的创作闭环、集成可视化工具、Agent／Skill／MCP 应用、发布／更新适配和完整迁移 |
 
 ## 可选 World3D — 2026-11-12
 
-[#147](https://github.com/cnedwin/Egret_rebuild/pull/147) 合入独立渲染器，[#148](https://github.com/cnedwin/Egret_rebuild/pull/148) 扩展材质、压缩纹理、后处理和场景文档，[#149](https://github.com/cnedwin/Egret_rebuild/pull/149) 补上实例导入、深度与顶点钩子，以及静态网格碰撞。Windows Edge 真机通过 16 组双后端对比。Android Chrome 真机在两个后端验证了屏幕空间效果、顶点钩子和斜切投影深度。设备范围见 [World3D 契约](world3d.md)。#55 和 #92 继续记录各自的正式性能与设备资格。
+[#147](https://github.com/cnedwin/Egret_rebuild/pull/147) 合入独立渲染器，[#148](https://github.com/cnedwin/Egret_rebuild/pull/148) 扩展材质、压缩纹理、后处理和场景文档，[#149](https://github.com/cnedwin/Egret_rebuild/pull/149) 补上实例导入、深度与顶点钩子，以及静态网格碰撞。[#151](https://github.com/cnedwin/Egret_rebuild/pull/151) 增加折射、光照贴图、景深、合批、文字几何体、变换操纵器，以及物理关节、凸包和连续碰撞；它新增的四组对比场景目前只在软件渲染下运行过。Windows Edge 真机通过前 16 组双后端对比。Android Chrome 真机在两个后端验证了屏幕空间效果、顶点钩子和斜切投影深度。设备范围见 [World3D 契约](world3d.md)。#55 和 #92 继续记录各自的正式性能与设备资格。
 
 ## 固定混合场景 — 2026-11-08
 

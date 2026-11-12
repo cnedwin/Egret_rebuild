@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "42dab270151ca636ff3843cfbedb51dc29f037cbbf8a58ccaf78e180554b3481",
-      "zhSha256": "ab3841c184368b228b4da9d5a4ee8503bb6ff105455c4fa3311443dc4c17bb9a"
+      "enSha256": "dd568c0478ea864252e2bdfb51da3b2e253ea399a7d671a964718f0cd1ef494a",
+      "zhSha256": "670006f9cebeb0314c2a4361418ddee0227b1568ac08106a5b4e82acc1e0dc91"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "a312d28a5ee021be30836b1ee625e03f352a9a45c80a3b34b4ec2e282449c693",
-      "zhSha256": "e6c6eaf17e5d22746f82b0357e622cea3ab0925f7eb5e3fb2543c181e1aa4650"
+      "enSha256": "cf233a81eef8662069bcda21aebe69a50c3303c2fe67ad1237147c41d0797ab0",
+      "zhSha256": "42aa5e1b2cd971ea11af18391c6397aa77ebda03494eb691566e7ce676fa834a"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
