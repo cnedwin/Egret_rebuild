@@ -1254,8 +1254,8 @@
       "zh": "knowledge-base/Cns/docs/显示树扩展性.md",
       "en": "knowledge-base/en/docs/display-tree-scaling.md",
       "kind": "public_reading",
-      "enSha256": "43af81c28b5721cfbe8794b2b208710c67e0fdf4f9a3873775c1d772dea709b5",
-      "zhSha256": "e56852c31bb4a2184eb5a19d909ca9b0538e4d340254873dcc3fd870c139da4b"
+      "enSha256": "e642bbb5d7707d84834fcbbbb3976514d5ae44709b5127ad911e39b0564af28c",
+      "zhSha256": "99365bbe210d3e183f83e5ebff636d321aa3db7dfaa2e89a74547d8fa0b19ec7"
     },
     {
       "zh": "knowledge-base/Cns/docs/Canvas文字WC1.md",
@@ -5216,6 +5216,10 @@
     {
       "path": "packages/engine/rendering/world3d/Vehicle3D.ts",
       "sha256": "68d2cf9a01069c51b4b90b1b250fd5939f5fdbfb953d32ccf7401bd4a9f17250"
+    },
+    {
+      "path": "tools/bench-2d.mjs",
+      "sha256": "73cc8eda701cf622fd9f2f84abc9af6ccfde60f643a059131d29675492374cbb"
     }
   ],
   "historicalSemanticReview": {
