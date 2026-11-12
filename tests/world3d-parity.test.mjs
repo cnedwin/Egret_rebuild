@@ -3,6 +3,7 @@
 // material additions that need no GPU.
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import {createFollowControls3D} from '@egret/engine/webgl2/world3d';
 import {
   Attribute3D, CatmullRomCurve3D, CubicBezierCurve3D, CurvePath3D, LineCurve3D, Mesh3D, Object3D, Path2D3D, Shape3D, World3DError,
   computeObjectBounds3D, createArrowHelper3D, createBoxGeometry3D, createBoxHelper3D, createCameraHelper3D, createCircleGeometry3D,
@@ -13,7 +14,7 @@ import {
   createTorusKnotGeometry3D, createTubeGeometry3D, createWireframeGeometry3D, mergeGeometries3D, mergeVertices3D, parseRgbe3D,
   toNonIndexedGeometry3D, transformGeometry3D, triangulateShape3D, createBatchedMesh3D, createFatLine3D, createGlassMaterial3D,
   createConvexHullShape3D, createMeshShape3D, createPhysicsWorld3D, createSphereGeometry3D, RenderList3D, Scene3D, createTextGeometry3D, createTextShapes3D,
-  createTransformGizmo3D, createUnlitMaterial3D, mat4Decompose, parseTrueTypeFont3D, parseTypefaceFont3D, quatFromAxisAngle, quatMultiply, signedArea2D,
+  createTransformGizmo3D, createUnlitMaterial3D, createCharacterMotor3D, createFollowCamera3D, mat4Decompose, parseTrueTypeFont3D, parseTypefaceFont3D, quatFromAxisAngle, quatMultiply, signedArea2D,
 } from '@egret/engine/world3d';
 
 const code = value => error => error instanceof World3DError && error.code === value;
@@ -443,4 +444,176 @@ test('see-through materials wait for the opaque pass and copy their volume setti
   const list = new RenderList3D();
   list.build(scene, camera);
   assert.deepEqual([list.opaque.length, list.transparent.length, list.transparent[0].material], [1, 1, glass]);
+});
+
+test('the character motor walks, jumps, climbs steps and stops at walls', () => {
+  const ground = () => { const world = createPhysicsWorld3D(); world.createBody({shape: {type: 'plane'}}); return world; };
+  const run = (world, motor, frames, x, z, jump = () => false) => { for (let i = 0; i < frames; i++) { world.step(1 / 60); motor.update(1 / 60, x, z, jump(i)); } };
+  let world = ground(), motor = createCharacterMotor3D(world, {position: [0, 0.92, 0]});
+  assert.equal(motor.isGrounded, true);
+  run(world, motor, 60, 3, 0);
+  close(motor.position[0], 3, 0.1); close(motor.position[1], 0.91, 0.02);        // a second of walking, after a short run-up
+  run(world, motor, 1, 0, 0, () => true);
+  assert.deepEqual([motor.jumped, motor.isGrounded], [true, false]);
+  let top = 0;
+  for (let i = 0; i < 90; i++) { world.step(1 / 60); motor.update(1 / 60, 0, 0); top = Math.max(top, motor.position[1]); }
+  close(top - 0.91, 25 / (2 * 9.81), 0.08);                                        // jump height from speed 5 under gravity
+  assert.equal(motor.isGrounded, true);
+  run(world, motor, 1, 0, 0, () => false);
+  assert.equal(motor.jumped, false);
+  // Six steps of 0.2 are climbed and walked back down without leaving the ground; a 0.45 step is not climbed.
+  for (const [rise, climbs] of [[0.2, true], [0.45, false]]) {
+    world = ground();
+    for (let i = 0; i < 6; i++) world.createBody({type: 'static', shape: {type: 'box', halfExtents: [i === 5 ? 2 : 0.2, rise / 2 * (i + 1), 1]}, position: [1 + i * 0.4 + (i === 5 ? 1.8 : 0), rise / 2 * (i + 1), 0]});
+    motor = createCharacterMotor3D(world, {position: [0, 0.92, 0]});
+    let airborne = 0;
+    for (let i = 0; i < 240 && motor.position[0] < 4; i++) { world.step(1 / 60); motor.update(1 / 60, 3, 0); if (!motor.isGrounded) airborne++; }
+    assert.equal(motor.position[0] >= 4, climbs);
+    if (!climbs) { assert.ok(motor.position[0] < 0.5); continue; }
+    close(motor.position[1], 6 * rise + 0.91, 0.03);
+    for (let i = 0; i < 240 && motor.position[0] > 0; i++) { world.step(1 / 60); motor.update(1 / 60, -3, 0); if (!motor.isGrounded) airborne++; }
+    assert.equal(airborne, 0);
+    close(motor.position[1], 0.91, 0.03);
+  }
+  // A ceiling stops a jump short.
+  world = ground(); world.createBody({type: 'static', shape: {type: 'box', halfExtents: [2, 0.1, 2]}, position: [0, 2.3, 0]});
+  motor = createCharacterMotor3D(world, {position: [0, 0.92, 0]});
+  run(world, motor, 1, 0, 0, () => true);
+  top = 0;
+  for (let i = 0; i < 40; i++) { world.step(1 / 60); motor.update(1 / 60, 0, 0); top = Math.max(top, motor.position[1]); }
+  assert.ok(top < 1.31, 'the head stays under the ceiling');
+});
+
+test('the character motor rides platforms and pushes loose bodies', () => {
+  const world = createPhysicsWorld3D();
+  world.createBody({shape: {type: 'plane'}});
+  const lift = world.createBody({type: 'kinematic', shape: {type: 'box', halfExtents: [2, 0.1, 2]}, position: [0, 0.5, 0]}).setLinearVelocity(1, 0.5, 0);
+  const motor = createCharacterMotor3D(world, {position: [0, 1.55, 0]});
+  const run = (frames, x = 0, z = 0, jump = false) => { for (let i = 0; i < frames; i++) { world.step(1 / 60); motor.update(1 / 60, x, z, jump && i === 0); } };
+  run(120);
+  assert.deepEqual([motor.isGrounded, motor.groundBody], [true, lift]);
+  close(motor.position[0], lift.position[0], 0.05); close(motor.position[1], lift.position[1] + 1.02, 0.03);   // carried sideways and up
+  // A turning platform swings the character around its center and turns it by the same angle.
+  lift.setLinearVelocity(0, 0, 0); lift.setAngularVelocity(0, 1, 0);
+  motor.teleport(lift.position[0] + 1, motor.position[1], lift.position[2]);
+  let turned = 0;
+  for (let i = 0; i < Math.round(60 * Math.PI / 2); i++) { world.step(1 / 60); motor.update(1 / 60, 0, 0); turned += motor.carriedYaw; }
+  close(turned, Math.PI / 2, 0.01);
+  close(motor.position[0] - lift.position[0], 0, 0.05); close(motor.position[2] - lift.position[2], -1, 0.05);
+  // Jumping off a moving platform keeps its speed.
+  lift.setAngularVelocity(0, 0, 0); lift.setLinearVelocity(4, 0, 0);
+  run(30); run(1, 0, 0, true);
+  assert.ok(motor.velocity[0] > 3.5);
+  // Walking into a loose crate pushes it ahead at walking pace instead of launching it.
+  const flat = createPhysicsWorld3D();
+  flat.createBody({shape: {type: 'plane'}});
+  const crate = flat.createBody({shape: {type: 'box', halfExtents: [0.4, 0.4, 0.4]}, position: [1.5, 0.4, 0]}), walker = createCharacterMotor3D(flat, {position: [0, 0.92, 0]});
+  for (let i = 0; i < 120; i++) { flat.step(1 / 60); walker.update(1 / 60, 2, 0); }
+  assert.ok(crate.position[0] > 3.5, 'the crate moved');
+  close(crate.position[0] - walker.position[0], 0.75, 0.08);                         // still touching: radius plus half the crate
+  const heavy = createCharacterMotor3D(flat, {position: [0, 0.92, 5], pushForce: 0});
+  const anchor = flat.createBody({shape: {type: 'box', halfExtents: [0.4, 0.4, 0.4]}, position: [1.5, 0.4, 5]});
+  for (let i = 0; i < 60; i++) { flat.step(1 / 60); heavy.update(1 / 60, 2, 0); }
+  close(anchor.position[0], 1.5, 0.05);                                            // pushing switched off
+});
+
+test('the follow camera stays behind its target and closes in on walls; static bodies place their node', () => {
+  const world = createPhysicsWorld3D();
+  const wall = new Object3D();
+  world.createBody({type: 'static', shape: {type: 'box', halfExtents: [5, 5, 0.2]}, position: [0, 5, 3], node: wall});
+  assert.deepEqual([...wall.position], [0, 5, 3]);
+  const camera = createPerspectiveCamera3D({}), follow = createFollowCamera3D(camera, [0, 0, 0], {world, distance: 6, pitch: 0.2, height: 1.4});
+  follow.update();
+  assert.ok(follow.currentDistance < 2.7 && camera.position[2] < 2.8, 'the wall at z = 2.8 pulls the camera in');
+  follow.yaw = Math.PI;
+  follow.update(1 / 60);
+  assert.ok(follow.currentDistance < 6, 'it eases back out rather than jumping');
+  for (let i = 0; i < 120; i++) follow.update(1 / 60);
+  close(follow.currentDistance, 6, 0.01);
+  close(camera.position[2], -6 * Math.cos(0.2), 0.01); close(camera.position[1], 1.4 + 6 * Math.sin(0.2), 0.01);
+  // With the camera behind at -Z, "forward" walks toward +Z and "right" toward -X.
+  const forward = follow.moveDirection(1, 0), right = follow.moveDirection(0, 1);
+  close(forward[2], 1); close(forward[0], 0); close(right[0], -1); close(right[2], 0);
+  follow.pitch = 5; follow.distance = 500; follow.update();
+  assert.deepEqual([follow.pitch, follow.distance], [follow.maxPitch, follow.maxDistance]);
+  assert.throws(() => createFollowCamera3D(undefined, [0, 0, 0]), code('WORLD3D_INPUT_INVALID'));
+});
+
+test('a rejected character teleport leaves the current motion and pose intact', () => {
+  const world = createPhysicsWorld3D();
+  world.createBody({shape: {type: 'plane'}});
+  const node = new Object3D();
+  const motor = createCharacterMotor3D(world, {node, position: [0, 0.92, 0]});
+  motor.update(1 / 60, 3, 0);
+  const position = [...motor.position], velocity = [...motor.velocity], pose = [...node.position], ground = motor.groundBody;
+  assert.throws(() => motor.teleport(100, 200, NaN), code('WORLD3D_INPUT_INVALID'));
+  assert.deepEqual([...motor.position], position);
+  assert.deepEqual([...motor.velocity], velocity);
+  assert.deepEqual([...node.position], pose);
+  assert.equal(motor.isGrounded, true);
+  assert.equal(motor.groundBody, ground);
+  motor.teleport(2, 3, 4);
+  assert.deepEqual([...motor.position], [2, 3, 4]);
+  assert.deepEqual([...motor.velocity], [0, 0, 0]);
+  assert.deepEqual([...node.position], [2, 3, 4]);
+});
+
+function followControlsElement() {
+  let value = 'pan-y', priority = 'important';
+  const element = new EventTarget(), captures = new Set();
+  element.style = {
+    get touchAction() { return value; },
+    set touchAction(next) { value = next; priority = ''; },
+    getPropertyValue: () => value,
+    getPropertyPriority: () => priority,
+    setProperty(_name, next, importance) { value = next; priority = importance ?? ''; },
+  };
+  element.hasPointerCapture = id => captures.has(id);
+  element.setPointerCapture = id => captures.add(id);
+  element.releasePointerCapture = id => {
+    assert.ok(captures.delete(id), 'release only a capture the host still owns');
+  };
+  return element;
+}
+
+function dispatchFollowPointer(element, type, pointerId, clientX) {
+  element.dispatchEvent(Object.assign(new Event(type), {pointerId, clientX, clientY: 0}));
+}
+
+test('follow controls release pointer capture and restore only their own touch-action', () => {
+  const element = followControlsElement();
+  const camera = createPerspectiveCamera3D({});
+  const controls = createFollowControls3D(camera, element, [0, 0, 0]);
+  assert.equal(element.style.touchAction, 'none');
+  dispatchFollowPointer(element, 'pointerdown', 1, 0);
+  assert.equal(element.hasPointerCapture(1), true);
+  controls.dispose();
+  controls.dispose();
+  assert.equal(element.hasPointerCapture(1), false);
+  assert.equal(element.style.touchAction, 'pan-y');
+  assert.equal(element.style.getPropertyPriority('touch-action'), 'important');
+  dispatchFollowPointer(element, 'pointerdown', 2, 20);
+  assert.equal(element.hasPointerCapture(2), false);
+
+  const replacement = createFollowControls3D(camera, element, [0, 0, 0]);
+  element.style.touchAction = 'manipulation';
+  replacement.dispose();
+  assert.equal(element.style.touchAction, 'manipulation');
+});
+
+test('follow controls forget contacts whose pointer capture transfers away', () => {
+  const element = followControlsElement();
+  const controls = createFollowControls3D(createPerspectiveCamera3D({}), element, [0, 0, 0]);
+  try {
+    dispatchFollowPointer(element, 'pointerdown', 1, 0);
+    dispatchFollowPointer(element, 'pointerdown', 2, 20);
+    dispatchFollowPointer(element, 'pointermove', 2, 25);
+    element.releasePointerCapture(2);
+    dispatchFollowPointer(element, 'lostpointercapture', 2, 25);
+    dispatchFollowPointer(element, 'pointermove', 1, 10);
+    close(controls.follow.yaw, -10 * controls.rotateSpeed);
+    close(controls.follow.distance, 6);
+  } finally {
+    controls.dispose();
+  }
 });

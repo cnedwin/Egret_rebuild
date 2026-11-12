@@ -10,7 +10,7 @@
   <script type="module">
     // Renders every case into a render target on one backend and publishes the pixels.
     import * as W from '/packages/engine/dist/rendering/world3d/index.js';
-    import { buildCases, verifyObliquePostDepth, verifySkinAfterFlippedUpload, verifyTextureSourceReplacement } from './cases.mjs';
+    import { buildCases, verifyObliquePostDepth, verifySoftDepthVisibility, verifySkinAfterFlippedUpload, verifyTextureSourceReplacement } from './cases.mjs';
     const backend = new URL(location.href).searchParams.get('backend'), errors = [], images = {}, done = [];
     try {
       const mod = await import(backend === 'webgpu' ? '/packages/engine/dist/web/world3d/webgpu.js' : '/packages/engine/dist/web/world3d/index.js');
@@ -20,8 +20,9 @@
       await verifyTextureSourceReplacement(W, renderer);
       await verifySkinAfterFlippedUpload(W, renderer);
       await verifyObliquePostDepth(W, renderer, mod.createCustomPost3D);
+      const softDepth = await verifySoftDepthVisibility(W, renderer);
       const target = new W.RenderTarget3D(320, 200);
-      for (const [name, build] of Object.entries(buildCases(W))) {
+      for (const [name, build] of Object.entries(buildCases(W, mod))) {
         const { scene, camera, setup } = build();
         // A case may configure the renderer; its post-processing settings are restored afterwards.
         const post = { ...renderer.postProcess };
@@ -35,7 +36,7 @@
         done.push(name);
       }
       renderer.dispose();
-      globalThis.__world3dResult = { backend, done, errors, width: 320, height: 200, images };
+      globalThis.__world3dResult = { backend, done, errors, width: 320, height: 200, images, softDepth };
     } catch (cause) {
       globalThis.__world3dResult = { backend, done, errors, failure: String(cause?.stack ?? cause) };
     }

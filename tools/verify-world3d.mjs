@@ -55,10 +55,11 @@ try {
   finally { server.close(); }
 }
 fs.mkdirSync(output, { recursive: true });
-const summary = { browser: options.channel ?? 'bundled chromium', cases: [], failures: [] };
+const summary = { browser: options.channel ?? 'bundled chromium', cases: [], failures: [], softDepth: {} };
 for (const backend of ['webgl2', 'webgpu']) {
   const result = results[backend];
   if (result.failure || result.errors.length) summary.failures.push({ backend, failure: result.failure, errors: result.errors });
+  if (result.softDepth) summary.softDepth[backend] = result.softDepth;
   for (const [name, data] of Object.entries(result.images ?? {})) {
     const png = new PNG({ width: result.width, height: result.height });
     png.data.set(data);
@@ -66,7 +67,8 @@ for (const backend of ['webgl2', 'webgpu']) {
   }
 }
 // Thin lines rasterize differently per API, so the line case allows a small share of large differences.
-const limits = { default: { mean: 1, share: 0.001 }, spritesLines: { mean: 2, share: 0.02 } };
+// The effects case has hundreds of particles a few pixels wide, whose edge pixels fall differently too.
+const limits = { default: { mean: 1, share: 0.001 }, spritesLines: { mean: 2, share: 0.02 }, effects: { mean: 1, share: 0.004 } };
 for (const name of Object.keys(results.webgl2.images ?? {})) {
   const a = results.webgl2.images[name], b = results.webgpu.images?.[name];
   if (!b) { summary.failures.push({ case: name, failure: 'missing on webgpu' }); continue; }
@@ -83,7 +85,7 @@ for (const name of Object.keys(results.webgl2.images ?? {})) {
   summary.cases.push(entry);
   if (!entry.pass) summary.failures.push({ case: name, failure: varied ? 'backends differ beyond the limit' : 'image is a single color' });
 }
-summary.pass = summary.failures.length === 0 && summary.cases.length === 20;
+summary.pass = summary.failures.length === 0 && summary.cases.length === 24;
 fs.writeFileSync(path.join(output, 'summary.json'), JSON.stringify(summary, null, 2) + '\n');
 console.log(JSON.stringify(summary, null, 2));
 process.exitCode = summary.pass ? 0 : 1;

@@ -10,6 +10,8 @@ import type {Light3D} from '../../rendering/world3d/Light3D.js';
 import type {Material3D} from '../../rendering/world3d/Material3D.js';
 import {linearToSrgb, mat3NormalFromMat4, mat4Invert} from '../../rendering/world3d/math3D.js';
 import type {InstancedMesh3D, Mesh3D} from '../../rendering/world3d/Mesh3D.js';
+import {SkinnedInstancedMesh3D} from '../../rendering/world3d/AnimationTexture3D.js';
+import {GpuParticles3D} from '../../rendering/world3d/GpuParticles3D.js';
 import type {Scene3D} from '../../rendering/world3d/Object3D.js';
 import {RenderList3D} from '../../rendering/world3d/RenderList3D.js';
 import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
@@ -43,7 +45,7 @@ export interface WebGL2Renderer3DOptions {
 const V = Object.freeze({
     normal: 1, tangent: 2, uv: 4, color: 8, skin: 16, morph: 32, morphNormals: 64, instancing: 128, instanceColor: 256,
     receiveShadow: 512, fog: 1024, toneMapped: 2048, environment: 4096, points: 8192, depthOnly: 16384, linearOutput: 32768,
-    mapFromTarget: 65536, uv1: 131072, occlusionSecond: 262144, emissiveSecond: 524288, lightSecond: 1048576, transmission: 2097152,
+    mapFromTarget: 65536, uv1: 131072, occlusionSecond: 262144, emissiveSecond: 524288, lightSecond: 1048576, transmission: 2097152, skinInstancing: 4194304, gpuParticles: 8388608, softDepth: 16777216,
 } as const);
 const IDENTITY3 = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -72,6 +74,8 @@ export class WebGL2Renderer3D implements Renderer3D {
     #emptyVao: WebGLVertexArrayObject | null = null;
     #shadowTexture: WebGLTexture | null = null;
     #shadowFramebuffer: WebGLFramebuffer | null = null;
+    #sceneDepth: {texture: WebGLTexture; framebuffer: WebGLFramebuffer; width: number; height: number} | undefined;
+    #sceneDepthReady = false;
     #shadowSize = 0;
     readonly #shadowAtlasSize: number;
     #shadowCount = 0;
@@ -122,6 +126,7 @@ export class WebGL2Renderer3D implements Renderer3D {
             this.#post?.dispose(true); this.#post = undefined;
             this.clearMaterialPrograms();
             this.#frameBuffer = this.#emptyVao = this.#shadowTexture = this.#shadowFramebuffer = null;
+            this.#sceneDepth = undefined; this.#sceneDepthReady = false;
             this.#grab = undefined;
             this.#shadowSize = 0;
             this.resetState();
@@ -171,6 +176,8 @@ export class WebGL2Renderer3D implements Renderer3D {
         this.bindFrameBlock();
         this.ensureShadowAtlas();
         this.renderShadows(camera);
+        // Surfaces that fade near solid geometry read its depth, drawn once up front.
+        this.#sceneDepthReady = list.transparent.some(item => item.material.softness > 0) && this.renderSceneDepth(camera, target);
 
         if (target) {
             if (target.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
@@ -206,12 +213,12 @@ export class WebGL2Renderer3D implements Renderer3D {
         this.uploadFrameBlock();
         const flags = (scene.fog ? V.fog : 0) | (toneMapping !== 'none' ? V.toneMapped : 0) | (scene.environment ? V.environment : 0)
             | (target ? V.linearOutput : 0);
-        for (const item of list.opaque) this.draw(item, flags, false);
+        for (const item of list.opaque) this.draw(item, flags);
         if (background instanceof CubeTexture3D) this.drawSkybox(background, scene.backgroundIntensity, camera);
         // See-through surfaces read a copy of everything drawn so far.
         this.#grabbed = false;
         for (const item of list.transparent) if (item.material.transmission > 0 && item.material.shading === 'standard') { this.#grabbed = this.grabScene(target); break; }
-        for (const item of list.transparent) this.draw(item, flags, false);
+        for (const item of list.transparent) this.draw(item, flags);
         this.#grabbed = false;
         gl.bindVertexArray(null);
         if (view) gl.disable(gl.SCISSOR_TEST);
@@ -382,6 +389,48 @@ export class WebGL2Renderer3D implements Renderer3D {
         this.#shadowCount = plans.length;
         this.#program = undefined; this.#appliedProgram = undefined;
     }
+    /** Draw the depth of the opaque scene, as the camera sees it, into a texture of the output's size. */
+    private renderSceneDepth(camera: Camera3D, target: RenderTarget3D | undefined): boolean {
+        const gl = this.#gl, width = target ? target.width : gl.drawingBufferWidth, height = target ? target.height : gl.drawingBufferHeight;
+        let entry = this.#sceneDepth;
+        if (!entry || entry.width !== width || entry.height !== height) {
+            if (entry) { gl.deleteTexture(entry.texture); gl.deleteFramebuffer(entry.framebuffer); this.#sceneDepth = undefined; }
+            const texture = gl.createTexture(), framebuffer = gl.createFramebuffer();
+            if (!texture || !framebuffer) { if (texture) gl.deleteTexture(texture); if (framebuffer) gl.deleteFramebuffer(framebuffer); return false; }
+            gl.activeTexture(gl.TEXTURE0 + TEXTURE_UNITS_3D.sceneDepth);
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texStorage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT24, width, height);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, texture, 0);
+            gl.drawBuffers([gl.NONE]);
+            gl.readBuffer(gl.NONE);
+            entry = this.#sceneDepth = {texture, framebuffer, width, height};
+        }
+        // The texture must not be bound for reading while it is drawn into.
+        gl.activeTexture(gl.TEXTURE0 + TEXTURE_UNITS_3D.sceneDepth);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, entry.framebuffer);
+        const view = this.viewport;
+        if (view) gl.viewport(Math.round(view[0] * width), Math.round(view[1] * height), Math.max(Math.round(view[2] * width), 1), Math.max(Math.round(view[3] * height), 1));
+        else gl.viewport(0, 0, width, height);
+        gl.depthMask(true); this.#depthWrite = true;
+        gl.clearDepth(1);
+        gl.clear(gl.DEPTH_BUFFER_BIT);
+        this.#lightMatrix = camera.viewProjectionMatrix;
+        // Keep the camera view's face culling and material offset.
+        for (const item of this.#list.opaque) {
+            if (item.geometry.topology === 'triangles' && item.material.depthWrite && !item.material.billboard && !item.material.screenSpace) this.draw(item, 0, 'scene');
+        }
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.activeTexture(gl.TEXTURE0 + TEXTURE_UNITS_3D.sceneDepth);
+        gl.bindTexture(gl.TEXTURE_2D, entry.texture);
+        this.#program = undefined; this.#appliedProgram = undefined;
+        return true;
+    }
     private readonly depthItem: RenderItem3D = {mesh: undefined as unknown as Mesh3D, geometry: undefined as unknown as Geometry3D, material: undefined as unknown as Material3D, start: 0, count: 0, depth: 0};
     private drawDepth(mesh: Mesh3D): void {
         const geometry = mesh.geometry, item = this.depthItem, groups = geometry.groups;
@@ -390,11 +439,11 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (Array.isArray(mesh.material) && groups.length > 0) {
             for (const group of groups) {
                 item.material = mesh.materialAt(group.materialIndex); item.start = group.start; item.count = group.count;
-                if (item.material.visible && !item.material.isDisposed && !item.material.billboard) this.draw(item, 0, true);
+                if (item.material.visible && !item.material.isDisposed && !item.material.billboard) this.draw(item, 0, 'shadow');
             }
         } else {
             item.material = mesh.materialAt(0); item.start = 0; item.count = geometry.drawCount;
-            if (item.material.visible && !item.material.isDisposed && !item.material.billboard) this.draw(item, 0, true);
+            if (item.material.visible && !item.material.isDisposed && !item.material.billboard) this.draw(item, 0, 'shadow');
         }
     }
 
@@ -421,6 +470,9 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (has(V.morph)) defines.push('USE_MORPH');
         if (has(V.morphNormals) && (!depthOnly || material.shader?.glslVertex !== undefined)) defines.push('USE_MORPH_NORMALS');
         if (has(V.instancing)) defines.push('USE_INSTANCING');
+        if (has(V.skinInstancing)) defines.push('USE_SKIN_INSTANCING');
+        if (has(V.gpuParticles) && !depthOnly) defines.push('GPU_PARTICLES');
+        if (has(V.softDepth)) defines.push('USE_SOFT_DEPTH');
         if (has(V.points)) defines.push('POINTS');
         if (material.screenSpace) defines.push('SCREEN_SPACE');
         else if (material.billboard) defines.push('BILLBOARD');
@@ -452,11 +504,14 @@ export class WebGL2Renderer3D implements Renderer3D {
             if (has(V.toneMapped) && material.toneMapped) defines.push('TONE_MAPPED');
             if (has(V.linearOutput)) defines.push('LINEAR_OUTPUT');
             if (has(V.transmission) && material.shading === 'standard') defines.push('USE_TRANSMISSION');
+            if (material.reflectionMap && material.shading === 'standard') defines.push('USE_REFLECTION_MAP');
         }
         const custom = depthOnly ? undefined : material.shader?.glsl, customVertex = material.shader?.glslVertex;
+        const customNormal = depthOnly || material.shading === 'unlit' || material.shading === 'matcap' ? undefined : material.shader?.glslNormal;
         if (custom !== undefined) defines.push('CUSTOM_FRAGMENT');
         if (customVertex !== undefined) defines.push('CUSTOM_VERTEX');
-        program = this.#resources.program(defines.join(' ') + (custom === undefined && customVertex === undefined ? '' : '|' + material.shader!.key), () => buildMaterialShader3D(defines, custom, customVertex));
+        if (customNormal !== undefined) defines.push('CUSTOM_NORMAL');
+        program = this.#resources.program(defines.join(' ') + (custom === undefined && customVertex === undefined && customNormal === undefined ? '' : '|' + material.shader!.key), () => buildMaterialShader3D(defines, custom, customVertex, customNormal));
         cache.variants.set(variant, program);
         return program;
     }
@@ -491,25 +546,28 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (u['uOcclusionMap'] && material.occlusionMap) resources.bindTexture(TEXTURE_UNITS_3D.occlusionMap, material.occlusionMap);
         if (u['uEmissiveMap'] && material.emissiveMap) resources.bindTexture(TEXTURE_UNITS_3D.emissiveMap, material.emissiveMap);
         if (u['uLightMap'] && material.lightMap) resources.bindTexture(TEXTURE_UNITS_3D.lightMap, material.lightMap);
+        if (u['uReflectionMap'] && material.reflectionMap) resources.bindTexture(TEXTURE_UNITS_3D.reflectionMap, material.reflectionMap);
+        if (u['uSoftness']) gl.uniform1f(u['uSoftness'], material.softness);
+        if (u['uReflection']) gl.uniform2f(u['uReflection'], material.reflectionStrength, material.reflectionDistortion);
         if (u['uSheen']) gl.uniform4f(u['uSheen'], material.sheenColor[0]! * material.sheen, material.sheenColor[1]! * material.sheen, material.sheenColor[2]! * material.sheen, material.sheenRoughness);
         if (u['uExtra']) gl.uniform2f(u['uExtra'], material.lightMapIntensity, material.transmission);
         if (u['uRefraction']) gl.uniform4f(u['uRefraction'], material.ior, material.thickness, Number.isFinite(material.attenuationDistance) ? material.attenuationDistance : 0, 0);
         if (u['uAttenuation']) gl.uniform3f(u['uAttenuation'], material.attenuationColor[0]!, material.attenuationColor[1]!, material.attenuationColor[2]!);
     }
-    private applyState(material: Material3D, depthOnly: boolean, mirrored: boolean): void {
+    private applyState(material: Material3D, shadow: boolean, mirrored: boolean): void {
         const gl = this.#gl;
         // Shadow maps draw both faces: closed and open meshes then cast alike.
-        const cull = depthOnly || material.side === 'double' || material.billboard ? 'none' : material.side;
+        const cull = shadow || material.side === 'double' || material.billboard ? 'none' : material.side;
         if (cull !== this.#cull) {
             if (cull === 'none') gl.disable(gl.CULL_FACE);
             else { gl.enable(gl.CULL_FACE); gl.cullFace(cull === 'back' ? gl.FRONT : gl.BACK); }
             this.#cull = cull;
         }
         if (mirrored !== this.#frontCw) { gl.frontFace(mirrored ? gl.CW : gl.CCW); this.#frontCw = mirrored; }
-        const depthTest = material.depthTest, depthWrite = depthOnly || material.depthWrite;
+        const depthTest = material.depthTest, depthWrite = shadow || material.depthWrite;
         if (depthTest !== this.#depthTest) { if (depthTest) gl.enable(gl.DEPTH_TEST); else gl.disable(gl.DEPTH_TEST); this.#depthTest = depthTest; }
         if (depthWrite !== this.#depthWrite) { gl.depthMask(depthWrite); this.#depthWrite = depthWrite; }
-        if (depthOnly) return;
+        if (shadow) return;
         const blend = material.alphaMode === 'blend' ? material.blending : 'off';
         if (blend !== this.#blend) {
             if (blend === 'off') gl.disable(gl.BLEND);
@@ -530,7 +588,8 @@ export class WebGL2Renderer3D implements Renderer3D {
     }
 
     // ---- drawing -----------------------------------------------------------------
-    private draw(item: RenderItem3D, frameFlags: number, depthOnly: boolean): void {
+    private draw(item: RenderItem3D, frameFlags: number, depthPass?: 'shadow' | 'scene'): void {
+        const depthOnly = depthPass !== undefined, shadow = depthPass === 'shadow';
         const gl = this.#gl, {mesh, geometry, material} = item, resources = this.#resources;
         const gpu: GeometryGpu3D = resources.geometry(geometry);
         const instanced = mesh.isInstanced, skinned = mesh.skeleton !== undefined && geometry.getAttribute('joints') !== undefined && geometry.getAttribute('weights') !== undefined;
@@ -553,6 +612,10 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (skinned) variant |= V.skin;
         if (gpu.morph) variant |= V.morph | (gpu.morph.attributes === 2 ? V.morphNormals : 0);
         if (instanced) variant |= V.instancing | ((mesh as InstancedMesh3D).instanceColors ? V.instanceColor : 0);
+        const crowd = !skinned && mesh instanceof SkinnedInstancedMesh3D && geometry.getAttribute('joints') !== undefined && geometry.getAttribute('weights') !== undefined ? mesh : undefined;
+        if (crowd) variant |= V.skinInstancing;
+        if (instanced && mesh instanceof GpuParticles3D) variant |= V.gpuParticles;
+        if (!depthOnly && material.softness > 0 && this.#sceneDepthReady) variant |= V.softDepth;
         if (geometry.topology === 'points') variant |= V.points;
         if (!depthOnly && mesh.receiveShadow && this.#shadowCount > 0) variant |= V.receiveShadow;
         if (!depthOnly && material.transmission > 0 && this.#grabbed) variant |= V.transmission;
@@ -571,7 +634,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         const world = mesh.matrixWorld;
         const determinant = world[0]! * (world[5]! * world[10]! - world[6]! * world[9]!) - world[4]! * (world[1]! * world[10]! - world[2]! * world[9]!)
             + world[8]! * (world[1]! * world[6]! - world[2]! * world[5]!);
-        this.applyState(material, depthOnly, determinant < 0 && !skinned);
+        this.applyState(material, shadow, determinant < 0 && !skinned);
         if (skinned) {
             const bones = resources.bones(mesh.skeleton!, frame);
             gl.activeTexture(gl.TEXTURE0 + TEXTURE_UNITS_3D.bones);
@@ -579,11 +642,17 @@ export class WebGL2Renderer3D implements Renderer3D {
             if (u['uBindMatrix']) gl.uniformMatrix4fv(u['uBindMatrix'], false, mesh.bindMatrix);
             if (u['uModel']) gl.uniformMatrix4fv(u['uModel'], false, IDENTITY4);
         } else {
+            if (crowd) {
+                // Creating the table binds another unit, so fetch it before selecting this one.
+                const table = resources.animations(crowd.animations);
+                gl.activeTexture(gl.TEXTURE0 + TEXTURE_UNITS_3D.bones);
+                gl.bindTexture(gl.TEXTURE_2D, table);
+            }
             if (u['uModel']) gl.uniformMatrix4fv(u['uModel'], false, world);
             if (u['uNormalMatrix']) gl.uniformMatrix3fv(u['uNormalMatrix'], false, mat3NormalFromMat4(this.#scratch9, world) as Float32Array);
         }
         if (gpu.morph) this.applyMorph(program, mesh, gpu);
-        const wire = material.wireframe && !depthOnly && geometry.topology === 'triangles' ? resources.wireframe(geometry) : undefined;
+        const wire = material.wireframe && !shadow && geometry.topology === 'triangles' ? resources.wireframe(geometry) : undefined;
         gl.bindVertexArray(wire ? wire.vao : instanced ? resources.instances(mesh as InstancedMesh3D, frame) : gpu.vao);
         const topology = geometry.topology;
         const mode = wire ? gl.LINES : topology === 'triangles' ? gl.TRIANGLES : topology === 'lines' ? gl.LINES : topology === 'line-strip' ? gl.LINE_STRIP : gl.POINTS;
@@ -709,6 +778,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (this.#shadowTexture) gl.deleteTexture(this.#shadowTexture);
         if (this.#shadowFramebuffer) gl.deleteFramebuffer(this.#shadowFramebuffer);
         if (this.#grab) { gl.deleteTexture(this.#grab.texture); gl.deleteFramebuffer(this.#grab.framebuffer); this.#grab = undefined; }
+        if (this.#sceneDepth) { gl.deleteTexture(this.#sceneDepth.texture); gl.deleteFramebuffer(this.#sceneDepth.framebuffer); this.#sceneDepth = undefined; }
     }
 }
 

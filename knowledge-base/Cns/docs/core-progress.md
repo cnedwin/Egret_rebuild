@@ -2,7 +2,7 @@
 
 [English](../../en/docs/core-progress.md) | 简体中文
 
-2026-11-12 按 main [0ac1dc3](https://github.com/cnedwin/Egret_rebuild/commit/0ac1dc3afe65f479f7821f765e2d52605b4ace8f) 复盘。工程预览提供可运行的公共示例。工作区包为 private 0.0.0，稳定引擎发行仍待交付。
+2026-11-12 按 main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc) 复盘。工程预览提供可运行的公共示例。工作区包为 private 0.0.0，稳定引擎发行仍待交付。
 
 本页说明当前能力，[工程计划](工程规划.md)说明接下来的工作，子系统契约给出准确 API 和证据范围。历史预览记录不再作为并行的“当前版本”。
 
@@ -25,7 +25,7 @@
 
 [#147](https://github.com/cnedwin/Egret_rebuild/pull/147) 合入独立渲染器。[#148](https://github.com/cnedwin/Egret_rebuild/pull/148) 和 [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) 扩展材质、场景、纹理和碰撞。[#151](https://github.com/cnedwin/Egret_rebuild/pull/151) 新增折射、光照贴图、景深、合批、文字几何体、变换操纵器及物理能力。[#152](https://github.com/cnedwin/Egret_rebuild/pull/152) 新增功能展厅，扩展 CPU 回归负载、阴影准备和碰撞路径。
 
-二十组对比场景经过软件渲染验证，前十六组也在 Windows Edge 及实体 GPU 上运行过双后端。Android Chrome 真机双后端呈现了示例，并验证选定的屏幕空间效果、顶点钩子及斜切投影。功能展厅已用软件渲染的 WebGL2 验证。较新的四组对比场景和展厅仍待实体 GPU 验收。详细证据与后端范围见 [World3D 契约](world3d.md)。
+[#154](https://github.com/cnedwin/Egret_rebuild/pull/154) 到 [#159](https://github.com/cnedwin/Egret_rebuild/pull/159) 新增角色控制、压缩资源解码、导航、地形与反射、蒙皮人群及场景特效。Windows Edge 通过全部 24 个 WebGL2／WebGPU 固定场景对比和软粒子深度专项检查。此前 Android Chrome 真机证据覆盖示例呈现及两个后端的指定屏幕效果、顶点钩子和斜投影。功能展厅另有 WebGL2 软件渲染记录。各后端和设备的具体覆盖范围见 [World3D 契约](world3d.md)。
 
 ## 固定混合场景 — 2026-11-08
 

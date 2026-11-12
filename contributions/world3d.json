@@ -22,6 +22,14 @@
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
     },
     {
+      "path": "examples/world3d/landscape.html",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/world3d/landscape.mjs",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
+    },
+    {
       "path": "examples/world3d/main.mjs",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
     },
@@ -39,6 +47,11 @@
       "criticalComment": true
     },
     {
+      "path": "packages/engine/rendering/world3d/AnimationTexture3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
       "path": "packages/engine/rendering/world3d/Batch3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "criticalComment": true
@@ -49,7 +62,22 @@
       "criticalComment": true
     },
     {
+      "path": "packages/engine/rendering/world3d/Character3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Compression3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
       "path": "packages/engine/rendering/world3d/Curves3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Decal3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "criticalComment": true
     },
@@ -66,6 +94,11 @@
     {
       "path": "packages/engine/rendering/world3d/Gltf3D.ts",
       "originRole": "Independently authored first-party glTF 2.0 reader based on the Khronos glTF specification; AI-assisted; Apache-2.0. No borrowed implementation.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/GpuParticles3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "criticalComment": true
     },
     {
@@ -90,6 +123,16 @@
     },
     {
       "path": "packages/engine/rendering/world3d/Mesh3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Meshopt3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Navigation3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "criticalComment": true
     },
@@ -139,6 +182,11 @@
       "criticalComment": true
     },
     {
+      "path": "packages/engine/rendering/world3d/Terrain3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
       "path": "packages/engine/rendering/world3d/Text3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "criticalComment": true
@@ -149,12 +197,27 @@
       "criticalComment": true
     },
     {
+      "path": "packages/engine/rendering/world3d/Trail3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Water3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
       "path": "packages/engine/rendering/world3d/core3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "criticalComment": true
     },
     {
       "path": "packages/engine/rendering/world3d/debug3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/decoders3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "criticalComment": true
     },
@@ -194,6 +257,11 @@
       "criticalComment": true
     },
     {
+      "path": "packages/engine/web/world3d/FollowControls3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
       "path": "packages/engine/web/world3d/OrbitControls3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "criticalComment": true
@@ -220,6 +288,11 @@
     },
     {
       "path": "packages/engine/web/world3d/assets3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/world3d/atmosphere3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "criticalComment": true
     },
@@ -292,11 +365,27 @@
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
     },
     {
+      "path": "tests/world3d-crowd.test.mjs",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/world3d-decoders.test.mjs",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/world3d-effects.test.mjs",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
+    },
+    {
       "path": "tests/world3d-extended.test.mjs",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
     },
     {
       "path": "tests/world3d-gltf.test.mjs",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/world3d-navigation.test.mjs",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
     },
     {
@@ -306,6 +395,10 @@
     {
       "path": "tests/world3d-renderer-lifetime.test.mjs",
       "originRole": "Independently authored first-party tests for World3D framebuffer, renderer and device resource lifetime; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/world3d-terrain.test.mjs",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
     },
     {
       "path": "tools/bench-world3d.mjs",

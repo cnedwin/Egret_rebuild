@@ -58,13 +58,15 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `Lod3D` 按相机距离显示其中一个子节点。
 
+成群的动画角色可以一次绘制。`bakeAnimationTexture3D(root, mesh, clips, {fps})` 把每个动画片段采样到骨架上，按帧保存蒙皮网格每根骨骼的矩阵；烘焙结束后骨架恢复原状。`createSkinnedInstancedMesh3D(geometry, material, baked, capacity)` 随后不用骨架就能绘制蒙皮几何体的多个副本：每个实例像普通实例一样有自己的变换和颜色，另有 `setClipAt(index, clip, {time, speed, loop, fade})`。每帧调用一次 `crowd.update(deltaSeconds)`，它推进所有实例，写入实例所处的前后两帧及其混合比例，顶点阶段据此在烘焙表中查找；这张表在 WebGL2 上是浮点纹理，在 WebGPU 上是存储缓冲区。阴影使用同样的姿态。`isFinishedAt` 报告不循环的片段是否播完，`fade` 从切换时保持的姿态过渡到新片段。只烘焙骨骼变换：变形权重、片段混合树以及注视之类的逐实例骨骼修改仍需使用普通蒙皮网格。两帧之间的姿态按矩阵逐个混合，在默认每秒 30 帧时足够准确，低帧率下的快速旋转会有偏差。克隆会继承正在进行的淡入及后续播放状态。当前活动范围估计无法包住变形后的顶点，因此烘焙蒙皮整批提交，跳过相机和阴影视锥剔除。绘制列表以批次节点原点排序。
+
 ## 动画
 
 `createAnimationClip3D` 用轨道创建剪辑。轨道按名称指向节点，可驱动 `position`、`quaternion`、`scale` 或变形 `weights`，支持阶跃、线性和三次插值。`AnimationMixer3D` 为每个剪辑创建一个 `AnimationAction3D`。动作可循环、单次播放或往返，带权重和时间缩放，支持 `fadeIn`、`fadeOut` 和 `crossFadeTo`。同一属性上的并发动作按权重混合，四元数取最短路径。`restorePose()` 恢复绑定时记录的姿态。
 
 ## 拾取
 
-`Raycaster3D` 与子树求交，返回按距离排序的命中结果，包含世界坐标点、面索引、插值 UV 和实例索引。它先检测包围球，遵循材质面向和层掩码，并可在每个网格的首个命中处停止。`setFromCamera` 由归一化设备坐标构造射线，射线从近平面出发。
+`Raycaster3D` 与子树求交，返回按距离排序的命中结果，包含世界坐标点、面索引、插值 UV 和实例索引。它先检测包围球，遵循材质面向和层掩码，并可在每个网格的首个命中处停止。`pickable = false` 的网格不参与拾取；拖尾和 GPU 粒子发射器默认如此，因为它们绘制出来的形状并不是自身的几何体。`setFromCamera` 由归一化设备坐标构造射线，射线从近平面出发。
 
 ## 粒子
 
@@ -72,7 +74,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 ## glTF
 
-`loadGltf3D` 读取 `.glb` 字节或已解析的 `.gltf` 对象，返回场景、相机、动画和所创建的资源，并提供统一的 `dispose()`。支持网格、金属度-粗糙度和无光照材质、纹理变换、节点层级、蒙皮、变形目标、动画、相机、精确光源，以及 `EXT_mesh_gpu_instancing` 节点（读入为 `InstancedMesh3D`）。图像解码和外部缓冲加载由调用方注入，读取器因此不依赖 DOM。读取器接受根节点彼此独立的场景。遮蔽贴图和自发光贴图可以使用第 0 套或第 1 套纹理坐标（烘焙光照通常放在第 1 套）；它们会设置 `texture.channel`，手动指定的遮蔽或自发光贴图同样可以使用这个属性。基础色、法线和金属度-粗糙度贴图使用第 0 套。共享场景根节点或其他纹理坐标集会触发明确的错误诊断。单个访问器解码上限为 128 MiB，合计上限为 256 MiB。各节点和图元生成的实例变换矩阵共享每个资产 64 MiB 的预算。Draco、meshopt 和 Basis 数据需要调用方提供解码器（见“压缩资源”）；未提供时，它们和其他必需扩展会以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。浏览器入口中的 `loadGltfFromUrl3D` 提供 fetch 和 `createImageBitmap`。
+`loadGltf3D` 读取 `.glb` 字节或已解析的 `.gltf` 对象，返回场景、相机、动画和所创建的资源，并提供统一的 `dispose()`。支持网格、金属度-粗糙度和无光照材质、纹理变换、节点层级、蒙皮、变形目标、动画、相机、精确光源，以及 `EXT_mesh_gpu_instancing` 节点（读入为 `InstancedMesh3D`）。图像解码和外部缓冲加载由调用方注入，读取器因此不依赖 DOM。读取器接受根节点彼此独立的场景。遮蔽贴图和自发光贴图可以使用第 0 套或第 1 套纹理坐标（烘焙光照通常放在第 1 套）；它们会设置 `texture.channel`，手动指定的遮蔽或自发光贴图同样可以使用这个属性。基础色、法线和金属度-粗糙度贴图使用第 0 套。共享场景根节点或其他纹理坐标集会触发明确的错误诊断。单个访问器解码上限为 128 MiB，合计上限为 256 MiB。各节点和图元生成的实例变换矩阵共享每个资产 64 MiB 的预算。meshopt 由引擎内置解码。Draco 和 Basis 数据使用应用提供的适配器；没有可用解码器的必需扩展会以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。参见“压缩资源”。浏览器入口中的 `loadGltfFromUrl3D` 提供 fetch 和 `createImageBitmap`。
 
 ## 渲染器
 
@@ -88,9 +90,11 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 纹理源可以是块压缩的多级链：`{width, height, format, levels}`，`format` 为 `bc1`、`bc3`、`bc7`、`etc2-rgb8`、`etc2-rgba8` 或 `astc-4x4`。数据按存储的样子上传，在显存中保持压缩。`renderer.supportsCompressedFormat(format)` 报告设备是否接受某种格式；桌面 GPU 通常提供 BC，移动 GPU 提供 ETC2 和 ASTC。
 
-`parseKtx23D(bytes, options)` 读取 KTX2 容器。未压缩的 RGBA8 和上述块格式直接使用。Basis Universal 和带超级压缩的数据交给 `options.transcode`，由它返回适合当前设备的像素或压缩链。`loadTexture3D` 通过文件头识别 KTX2。
+`parseKtx23D(bytes, options)` 读取 KTX2 容器。未压缩的 RGBA8 和上述块格式直接使用。显式提供的 `options.transcode` 优先处理超级压缩或未知格式，返回设备支持的像素或压缩链。未提供该回调时，读取器内置解开已知格式的 Zstandard 或 zlib 超级压缩，并在解码前校验每个纹理层级的实际字节数。Basis Universal 仍需要转码器。`loadTexture3D` 通过文件头识别 KTX2。
 
-提供对应钩子后，glTF 读取器接受 `KHR_texture_basisu`、`EXT_meshopt_compression` 和 `KHR_draco_mesh_compression`：`transcodeKtx2`、`decodeMeshopt`、`decodeDraco`。引擎不内置解码器；应用可以通过钩子接入官方 WebAssembly 解码器，引擎本身不依赖它们。文件要求的扩展缺少钩子时，以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。
+`EXT_meshopt_compression` 由引擎自行解码：`decodeMeshopt3D` 用 TypeScript 实现了顶点、三角形和索引序列三种编码，以及八面体、四元数和指数三种过滤器，这类文件不需要任何额外选项即可加载。如果提供了 `decodeMeshopt` 钩子，则改用钩子，例如在文件非常大时换成 WebAssembly 解码器。KTX2 读取器还会解开包在可读层级外面的 Zstandard 和 zlib 超级压缩（`decompressZstd3D` 和 `inflate3D` 也已导出，可另作他用）；不支持 Zstandard 字典。格式参考包括 [KTX 2.0 规范](https://registry.khronos.org/KTX/specs/2.0/ktxspec.v2.html)、[EXT_meshopt_compression 位流规范](https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Vendor/EXT_meshopt_compression)、[RFC 1950](https://www.rfc-editor.org/rfc/rfc1950)、[RFC 1951](https://www.rfc-editor.org/rfc/rfc1951) 和 [RFC 8878](https://www.rfc-editor.org/rfc/rfc8878)。
+
+`KHR_draco_mesh_compression` 和 Basis Universal 纹理（`KHR_texture_basisu`）仍然需要官方的 WebAssembly 解码器，引擎不附带它们。应用自行加载解码模块，再用适配函数包装：`decodeDraco: createDracoDecoder3D(dracoModule)`，`transcodeKtx2: createBasisTranscoder3D(basisModule, format => renderer.supportsCompressedFormat(format))`。Basis 适配函数会选择设备支持的最佳压缩格式，都不支持时退回普通 RGBA。文件要求 Draco 而没有提供钩子时，以 `WORLD3D_GLTF_UNSUPPORTED` 拒绝。两个适配函数按官方模块的公开接口编写，目前只用替身模块测试过，还没有在真实模块上运行。
 
 表面扩展 `KHR_materials_transmission`、`KHR_materials_ior`、`KHR_materials_volume`、`KHR_materials_clearcoat` 和 `KHR_materials_sheen` 按各自的数值系数读取；这些扩展可能附带的纹理不会被使用。
 
@@ -127,6 +131,12 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 关卡几何体以三角网格参与碰撞：`world.createBody({shape: {type: 'mesh', mesh: createMeshShape3D(levelRoot)}})`。`createMeshShape3D` 接受三角形几何体或对象子树。对象子树中，非实例化、无蒙皮的三角网格会按其基础几何体与当前世界变换合并。网格刚体是静态的，也可以是运动学的（用于移动平台），三角形只在正面是实心的。球、胶囊、角色控制器和射线与三角形精确碰撞；盒子通过它的八个角落在网格上。包围体层次结构让开销只与附近的三角形数量有关，三角形接缝处的接触经过过滤，物体可以平滑地越过接缝。
 
 `world.raycast(origin, direction, maxDistance, mask)` 返回最近的实体刚体及命中点和法线，`world.overlapSphere(center, radius, mask)` 列出一个体积内的实体刚体。`createCharacterController3D(world, options)` 是运动学胶囊：`move(dx, dy, dz)` 沿障碍物滑动，并报告 `isGrounded`、`groundNormal` 和 `groundBody`。
+
+`createCharacterMotor3D(world, options)` 在这个胶囊上构建会行走和跳跃的角色。在 `world.step()` 之后调用 `motor.update(deltaSeconds, wishX, wishZ, jump)`，传入玩家期望的水平速度。它处理重力和跳跃（`jumpSpeed`，走出平台边缘后还有一小段 `coyoteTime` 可以起跳）、地面与空中的加速（`acceleration`、`airControl`），能走上不高于 `stepHeight` 的台阶，下台阶和下坡时贴住地面，头顶碰到天花板时停止上升。脚下的运动学或动力学刚体会带着角色移动，包括绕旋转平台转动；`motor.carriedYaw` 是应加到角色朝向上的转角，离开移动平台时保留平台的速度。走向动力学刚体时会以角色自身的速度推动它，推力上限为 `pushForce`。平台要用速度来移动，不要直接改写位置，这样角色才能知道平台的运动。低台阶靠胶囊的圆形底部爬上去，速度会变慢；较长的楼梯用斜坡碰撞体走起来更顺。`motor.teleport(x, y, z)` 重新放置角色并清除其运动状态。若任一坐标不是有限数值，位置与运动状态都保持原样。
+
+`createFollowCamera3D(camera, target, {world, distance, height, yaw, pitch})` 让相机跟在物体后方；当有实体会挡住目标时相机立即拉近，障碍消失后在 `recovery` 秒内回到原距离。`moveDirection(forward, right)` 把摇杆或按键输入换算成相对于视角的世界方向。浏览器入口另外提供 `createFollowControls3D(camera, element, target, options)`：拖动环视，滚轮或双指调整距离，相机装置在 `controls.follow` 中。移除控件时调用 `controls.dispose()`。它会释放控件捕获的指针，并在内联 `touch-action` 仍由该控件持有时恢复原值。
+
+刚体的 `node` 在刚体加入世界时被放到刚体的位置；除静态刚体外，之后每一步都跟随刚体。
 
 `{type: 'convex', hull: createConvexHullShape3D(geometryOrPoints)}` 是用于可移动摆设的凸多面体；超过 64 个角点时只保留最外侧的那些。凸包与平面精确碰撞，与网格通过角点碰撞；与球、胶囊、盒子和其他凸包之间使用面平面和角点包含判断，当两条棱相交而任何一方都没有角点进入对方时，会在这两条棱之间生成一个接触点。
 
@@ -169,6 +179,46 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 `createBatchedMesh3D(material)` 把共用一个材质的多个不同几何体合并成一次绘制。`addGeometry(geometry, matrix)` 返回一个 id；之后可以用 `setMatrixAt`、`setVisibleAt`、`setColorAt` 和 `deleteGeometry` 修改单个条目。合并后的缓冲只在有改动时重建，适合很少移动的摆设。
 
 `createFatLine3D(points, {width, screenSpace, closed, color})` 把折线绘制成始终朝向相机的带状网格，拐角处做斜接。宽度以世界单位计；开启 `screenSpace` 并把 `resolutionHeight` 设为输出高度后，以像素计。
+
+## 导航与寻路
+
+`createNavMesh3D(source, {slopeLimit})` 从关卡几何体构建导航网格：可以传入几何体、一个物体（其下的网格按世界变换合并），或原始的 `{positions, indices}`。比坡度上限更陡的面和朝下的面会被剔除；共用一条边的三角形互为邻居，互不相连的楼层属于不同的区域。
+
+`navMesh.findPath(start, end, {agentRadius, followSurface})` 返回按代价选择的可行走路线的点列表、路线长度，以及 `complete`：终点无法到达时为 `false`，此时路径停在能到达的最近位置。搜索在三角形上进行，路线再沿所穿过的边被拉直，未加权时再去掉可以直线走过的拐点。`agentRadius` 让路线与拐角保持一个半径的距离，并排除角色挤不过去的缺口；`followSurface` 在每次跨越三角形的位置加一个点，让路径贴着坡面。`setCost(triangle, cost)` 设置某块地面有限且大于零的通行倍率，`setEnabled(triangle, false)` 把它关闭，例如一扇门。
+
+`findNearest(point, maxDistance)` 把点吸附到网格上，`raycast(from, x, z)` 返回直线行走在碰到边界之前能走多远，`moveAlong(from, x, z)` 在三角形之间移动并沿边界滑动，`isReachable` 判断两处能否经由开放的三角形互相到达，`randomPoint()` 按面积均匀地取一个位置。`createDebugGeometry()` 返回由边组成的线几何体。
+
+`createNavCrowd3D(navMesh)` 负责移动一群角色：`crowd.addAgent({position, radius, speed, node})`、`agent.setTarget(point)`，并在每帧调用 `crowd.update(deltaSeconds)`。每个角色沿自己的路径行走，快要重叠时会被推开，不会离开网格，并通过 `arrived` 报告是否到达；在人群中，当目标位置已被占据、角色无法再靠近时，它会停下并视为已到达。
+
+`findGridPath3D(width, height, cost, start, end)` 在有限正代价（包括小数）下搜索瓦片网格的最低代价路线。斜向移动的代价为目标格代价的 √2 倍，且不能穿越阻挡拐角。`maxVisited` 约束搜索范围。导航网格根据三角形代价选择并简化可行通道，空间索引的三角形到网格单元总引用数上限为 8,388,608。
+
+导航网格按传入的三角形原样使用：不做体素化，也不向内收缩，因此可行走的三角形本身应当与墙保持距离，或者在寻路时传入 `agentRadius`。角色之间只靠简单的互相推开来避让，不预测碰撞；也没有跳跃、梯子这类网格外连接。
+
+## 地形与水面
+
+`createHeightField3D({columns, rows, width, depth, heights | sample})` 在以原点为中心的规则网格上保存高度；`createHeightFieldFromPixels3D(pixels, {width, depth, minHeight, maxHeight, encoding})` 从已解码的图像读取高度，可取红色通道的 8 位，或红、绿两个通道合成的 16 位。`heightAt(x, z)` 沿用绘制和碰撞所用的每格两个三角形，`normalAt` 给出平滑法线，`raycast(origin, direction, limit)` 以半格步长让射线走到地表。写入 `heights` 之后调用 `refresh()`。
+
+`createTerrain3D(field, material, {chunkCells, levels, lodDistance, skirtDepth, uvScale, colorAt})` 把高度场绘制成一组分块网格。每帧绘制前，各分块按到相机的距离选择细节层级：`lodDistance` 以内用完整细节，距离每翻一倍，每边采样数减半。不同层级的相邻分块靠边缘下垂的裙边遮住缝隙；法线始终取自完整细节的高度场，层级切换时光照不会跳变。`colorAt(height, slope, x, z, out)` 为每个采样写入顶点颜色，配合开启 `vertexColors` 的材质做出沙地、草地、岩石和积雪的分带；`lodBias` 整体偏移层级，`chunkLevels` 和 `triangleCount` 报告当前绘制的内容。修改高度场后，分块在下一帧重建。创建地形时会在分配分块几何体前检查两个上限，分别是 4,096 个分块，以及所有可缓存细节层级的顶点和索引缓冲合计 128 MiB。启用裙边或顶点颜色时，其缓冲计入预算。
+
+`field.createShape()` 把完整细节的三角形作为 `mesh` 碰撞形状返回，用于静态刚体，于是球、胶囊、盒子、凸包、角色控制器和物理射线面对的是同一片地面。盒子和凸包与网格的碰撞同时得到加强：一步之内角已经穿过表面，或者网格的棱脊从两个角之间顶入，现在都会产生接触。
+
+`createWater3D({width, depth, segments, color, amplitude, wavelength, speed, direction, steepness, rippleStrength, clarity, thickness, reflectionSize})` 是一块水平水面：四组叠加的波浪移动顶点和着色法线，另有随距离减弱的细小涟漪。水下的景物通过与玻璃相同的折射被弯折后看到；天空的反射来自场景的环境贴图。每帧调用 `water.update(deltaSeconds)`；在主画面之前调用 `water.renderReflection(renderer, scene, camera)`，可得到场景的真实镜像。`water.heightAt(x, z)` 在 CPU 上计算同一组波浪，供漂浮物使用。`createWaterMaterial3D` 只返回材质，可用于自己的几何体。
+
+水面背后的镜子是 `PlanarReflection3D`，可用于任何平面：`reflection.render(renderer, scene, camera, [nx, ny, nz, d], hidden)` 摆放透视或正交镜像相机，用倾斜的近平面在镜面处裁剪，并绘制到 `reflection.target`。正交视线与镜面近乎平行或背向镜面时，该投影无法保持由近到远的深度顺序，返回 `false`。把 `reflection.texture` 赋给标准材质的 `reflectionMap` 即可。镜像按像素自身的屏幕位置读取，按表面法线乘以 `reflectionDistortion` 偏移，按观察角度加权，并取代环境贴图的反射。自定义着色器现在还可以带法线钩子 `glslNormal` 和 `wgslNormal`，在光照计算前替换着色法线。
+
+地形使用顶点颜色和一张平铺的 `map` 着色，没有内置按权重图混合多种地表纹理。细节层级按分块选择并用裙边遮缝，不做边对边的缝合；也没有从磁盘流式加载，整个高度场都在内存中。水面只有一个水平镜面，因此旋转过的水面网格或远高于默认值的波浪反射并不精确；没有按水深变化的岸边过渡、泡沫和焦散，也没有处理相机位于水下的情况。镜像需要把场景连同阴影再绘制一次。
+
+## 特效
+
+`createTrail3D({target, lifetime, points, width, endWidth, color, endColor, opacity, endOpacity, map})` 是跟在运动物体后面的拖尾：目标移动时记录世界坐标，记录点随时间消失，每次绘制前重新构建并朝向相机，向尾部逐渐变窄、变淡。把它直接加入场景而不是挂在目标之下，并且每帧调用 `update(deltaSeconds)`；`push(x, y, z)` 可以手动送入点，瞬移之后用 `clear()` 清空。
+
+`createDecal3D(mesh, material, {position, normal, width, height, depth, rotation})` 把一张纹理贴到已有的几何体上。目标网格落在贴花盒子内的三角形被取出、按盒子裁剪，作为一个贴合表面的新网格返回，纹理坐标在盒子范围内从 0 到 1；它被加为目标的子节点，因此随目标移动，并像普通网格一样接受光照和阴影。`createDecalGeometry3D` 只返回几何体。目标使用镜像变换时，角度判断遵循目标的可见面。背向贴花的面会被略去，盒子没有碰到表面时返回 `undefined`。贴花按静止形状裁剪：不会跟随蒙皮变形，也不会跟随地形分块切换细节层级。
+
+`createGpuParticles3D({count, lifetime, speed, direction, spread, gravity, drag, startSize, endScale, rotation, spin, startColor, endColor, startOpacity, endOpacity, fadeIn, fadeOut, shape, loop, duration, map, blending, softness})` 在顶点阶段计算粒子运动。每个粒子的起点、出生时间、速度、寿命、大小和旋转只写入一次；每帧只有时间在变，由 `update(deltaSeconds)` 设置。循环发射器是一股在时间 0 就已稳定运行的粒子流；`loop: false` 是一次爆发，可用 `isFinished` 查询结束、用 `restart()` 重放。大约一百万个粒子以内都是一次绘制，CPU 每帧不做任何逐粒子工作。代价是运动必须符合公式：在发射器空间内的发射、重力和阻力，并随发射器节点移动。需要碰撞、受吸引，或在发射器移动后留在世界中的粒子仍应使用 `ParticleEmitter3D`。粒子不排序，因此宜用叠加混合，或柔和、低不透明度的贴图。
+
+`material.softness` 让混合材质在接近其后方实体几何的那段距离内逐渐淡出，而不是留下一条生硬的交线：软粒子、薄雾、光锥都用得上。两种粒子发射器都接受这个参数。只要有可见的混合材质需要它，渲染器就把不透明三角形的深度绘制到与输出同样大小的纹理中。这次额外的深度绘制采用相机视图的面剔除规则和材质的多边形偏移。
+
+`createAtmosphere3D({fogColor, fogDensity, fogHeight, fogFalloff, shaftIntensity, shaftLength})` 来自后端入口，把高度雾和光束做成一个后处理钩子：把 `atmosphere.post` 赋给 `renderer.postProcess.custom`，并且每帧调用 `atmosphere.update(camera, sunDirection)`。雾随距离变浓、随高度按指数变薄，沿每条视线以闭式积分求得。光束从每个像素朝太阳在屏幕上的位置走 24 步，累计途中有多少开阔天空，于是挡在太阳前面的物体会在光晕中切出暗条；太阳离开画面时光束随之淡出。这是屏幕空间的近似：雾不受阴影影响，也不按各个光源分别照亮，密度没有噪声和局部体积，光束只在太阳位于屏幕内或附近时存在。它占用唯一的自定义后处理槽位。平面镜像在绘制时不做后处理，主画面的后处理随后会作用于它。
 
 ## 文字
 
@@ -217,12 +267,14 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 | `EffectComposer`、`UnrealBloomPass`、`OutputPass`、`FXAAShader`、`SSAOPass`、`OutlinePass`、`BokehPass`、`ShaderPass`、`DepthTexture` | `renderer.postProcess`，配合 `ssao`、`outlineLayers`、`dof` 和 `custom`（`sceneDepth`） |
 | `BatchedMesh`、`Line2` | `createBatchedMesh3D`、`createFatLine3D` |
 | `TextGeometry`、`FontLoader`、`TTFLoader` | `createTextGeometry3D`、`parseTypefaceFont3D`、`parseTrueTypeFont3D` |
+| three-pathfinding、recast-navigation 等寻路扩展 | `createNavMesh3D`、`navMesh.findPath`、`createNavCrowd3D`、`findGridPath3D` |
 | `TransformControls` | `createTransformControls3D`、`createTransformGizmo3D` |
 | `renderer.clippingPlanes`、`scene.overrideMaterial` | `scene.clippingPlanes`、`scene.overrideMaterial` |
 | `CubeCamera`、`PMREMGenerator.fromEquirectangular` | `captureCubeTexture3D`、`createCubeTextureFromEquirect3D` |
 | `OrbitControls`、`PointerLockControls`、`FlyControls` | `createOrbitControls3D`、`createFlyControls3D` |
 | `AudioListener`、`PositionalAudio` | `createAudioListener3D`、`createPositionalAudio3D` |
 | `BoxHelper`、`ArrowHelper`、`CameraHelper`、各种灯光辅助器、`SkeletonHelper`、`GridHelper`、`AxesHelper` | 对应的 `create...Helper3D` 函数 |
+| 扩展库中的角色控制器和第三人称相机 | `createCharacterMotor3D`、`createFollowCamera3D`、`createFollowControls3D` |
 | cannon-es、Rapier 等物理扩展，三角网格与凸包碰撞体，约束 | `createPhysicsWorld3D`、`createCharacterController3D`、`createMeshShape3D`、`createConvexHullShape3D`、`world.createJoint` |
 
 需要注意的差异：用工厂函数代替构造函数；颜色是线性 RGB 数组或十六进制数；向量和四元数是类型化数组，通过 `setPosition`、`setRotation`、`setScale` 和 `lookAt` 修改；资源用 `dispose()` 释放；错误是带 `code` 的 `World3DError`。
@@ -241,11 +293,11 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 [World3D 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/world3d/README.zh-CN.md)在任一后端上展示灯光、阴影、实例化、蒙皮、变形、粒子、渲染目标、拾取和轨道控制。
 
-无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
+无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs`、`tests/world3d-decoders.test.mjs`、`tests/world3d-navigation.test.mjs`、`tests/world3d-terrain.test.mjs`、`tests/world3d-crowd.test.mjs`、`tests/world3d-effects.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
 
-`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，以及文字与变换操纵器。开发期间全部二十个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前十六个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十四个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，文字与变换操纵器，带反射水面、细节层级混合的地形，处于不同片段、带阴影的实例化蒙皮角色，带拖尾和软 GPU 粒子的贴花，以及带光束的高度雾。开发期间全部二十四个场景在使用软件渲染的无头 Chromium 中运行。首轮桌面复审在 NVIDIA RTX 5090 Laptop GPU 上执行了前十六个场景。整合复审在 Windows Edge 157 上通过了全部二十二个 WebGL2／WebGPU 图像对比，包括地形与水面、蒙皮人群，未使用强制渲染后端的启动参数。 [#159](https://github.com/cnedwin/Egret_rebuild/pull/159) 最终整合在 Windows Edge 通过 24 项固定 WebGL2／WebGPU 离屏对比，以及两个后端的软粒子深度专项检查。独立的正交反射回读确认，两个后端都保留镜面上方的几何体并裁掉镜面下方的几何体。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
 
-`tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。负载包括静止与运动的网格、阴影、实例化、多光源、蒙皮、合批、覆盖在场景上的玻璃以及后处理链；另外还测量一次物理步进的耗时，场景为静止的箱子堆、三角网格上的球体和关节链。不测量 GPU 执行时间。
+`tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。负载包括静止与运动的网格、阴影、实例化、多光源、每个网格一次绘制的蒙皮与一次绘制 2000 个烘焙实例的蒙皮、合批、覆盖在场景上的玻璃以及后处理链；另外还测量一次物理步进的耗时，场景为静止的箱子堆、三角网格上的球体和关节链。不测量 GPU 执行时间。
 
 ## 待完成事项
 
@@ -253,4 +305,7 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 - 一台运行 Chrome 157 的 Android 真机已呈现两个后端，响应了自动触发的阴影开关，并在释放后停止更新帧。本次复审还在同类真机的 WebGL2 和 WebGPU 上检查了屏幕空间效果、顶点位移与阴影，以及斜切投影深度。
 - 更广泛的移动端与设备恢复覆盖、视口和反射探针专项检查、性能测量，以及第一人称控制和空间音频的真人验证仍待完成。
 - 最新的四个比较场景（光泽、玻璃与光照贴图；景深；折射；文字与变换操纵器）以及关节、凸包、连续碰撞和变换控制目前只在软件渲染和无头测试中运行过，仍需在真实 GPU 上验证并由真人操作检查。
-- 尚未实现：内置的 Basis、meshopt 或 Draco 解码器，浮点精度的环境预过滤，多于一层的折射，带倒角的挤出体，文字整形与 CFF 字体，滑动关节与弹簧关节，以及针对旋转或宽大刚体的连续碰撞。
+- 桌面 Edge 已在两个后端对比固定的特效与大气场景。固定像素检查覆盖被剔除的背面，以及在采样点深度相同的两个可见墙面。地形示例的交互、性能和更广泛的设备仍待验收。
+- 烘焙蒙皮实例目前只在无头测试、软件渲染下的比较场景与基准测试，以及软件渲染下 WebGL2 的地形示例中运行过。
+- 地形、水面和平面镜像目前只在无头测试、软件渲染下的比较场景以及软件渲染下 WebGL2 的地形示例中运行过，仍需在真实 GPU 上、通过 WebGPU 画布呈现并由真人操作检查。
+- 尚未实现：不依赖官方模块的 Draco 与 Basis Universal 解码，浮点精度的环境预过滤，多于一层的折射，带倒角的挤出体，文字整形与 CFF 字体，滑动关节与弹簧关节，以及针对旋转或宽大刚体的连续碰撞。

@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/core-progress.md)
 
-Reviewed main [0ac1dc3](https://github.com/cnedwin/Egret_rebuild/commit/0ac1dc3afe65f479f7821f765e2d52605b4ace8f) on 2026-11-12. The engineering preview provides runnable public examples. Workspace packages are private at 0.0.0. A stable engine distribution remains future work.
+Reviewed main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc) on 2026-11-12. The engineering preview provides runnable public examples. Workspace packages are private at 0.0.0. A stable engine distribution remains future work.
 
 Use this page for current capability status, the [engineering plan](engineering-plan.md) for the next work, and subsystem contracts for exact APIs and evidence. Historical previews are not competing current versions.
 
@@ -25,7 +25,7 @@ Egret's product direction combines animation-rich 2D games and complex interface
 
 [#147](https://github.com/cnedwin/Egret_rebuild/pull/147) integrated the standalone renderers. [#148](https://github.com/cnedwin/Egret_rebuild/pull/148) and [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) expanded the material, scene, texture and collision paths. [#151](https://github.com/cnedwin/Egret_rebuild/pull/151) added refraction, light maps, depth of field, batching, text geometry, a transform gizmo and physics features. [#152](https://github.com/cnedwin/Egret_rebuild/pull/152) added the feature gallery and extended the CPU regression workloads, shadow preparation and collision paths.
 
-Twenty comparison scenes ran under software rendering. The first sixteen also ran on a physical Windows GPU in Edge on both backends. A physical Android Chrome device presented the sample and verified selected screen-space, vertex-hook and oblique-projection cases on both backends. The feature gallery was exercised on software-rendered WebGL2. The four newer comparison scenes and the gallery still need physical-GPU coverage. See the [World3D contract](world3d.md) for the exact evidence and backend scope.
+[#154](https://github.com/cnedwin/Egret_rebuild/pull/154) through [#159](https://github.com/cnedwin/Egret_rebuild/pull/159) added character controls, compressed asset decoding, navigation, terrain and reflections, skinned crowds, and scene effects. Windows Edge passed all 24 fixed WebGL2/WebGPU comparisons and focused soft-particle depth checks. Earlier physical Android Chrome evidence covers the sample presentation and selected screen-space, vertex-hook and oblique-projection cases on both backends. The feature gallery has separate WebGL2 software-rendered evidence. See the [World3D contract](world3d.md) for the exact backend and device scope.
 
 ## Fixed mixed profiles — 2026-11-08
 

@@ -61,6 +61,8 @@ export class Mesh3D extends Object3D {
     /** Optional hook the render list calls once per frame before the mesh is culled and sorted. */
     beforeRender?(camera: import('./Camera3D.js').Camera3D): void;
     geometry: Geometry3D;
+    /** false leaves the mesh out of ray picking, as for effects whose drawn shape is not their geometry. */
+    pickable = true;
     /** One material, or one per geometry group addressed by materialIndex. */
     material: Material3D | Material3D[];
     /** Weight per geometry morph target; resized automatically to the target count. */
@@ -152,6 +154,8 @@ export class InstancedMesh3D extends Mesh3D {
     readonly instanceColorSize: 3 | 4;
     /** Bump after editing instance arrays directly. */
     instanceVersion = 1;
+    /** Multiplies each instance's bounding radius, for instances that move beyond the geometry, such as animated ones. */
+    boundsScale = 1;
     #boundsVersion = 0;
     readonly #instanceSphere = new Float32Array(4);
 
@@ -194,7 +198,7 @@ export class InstancedMesh3D extends Mesh3D {
                 box3ExpandByPoint(box, m[o]! * x + m[o + 4]! * y + m[o + 8]! * z + m[o + 12]!,
                     m[o + 1]! * x + m[o + 5]! * y + m[o + 9]! * z + m[o + 13]!, m[o + 2]! * x + m[o + 6]! * y + m[o + 10]! * z + m[o + 14]!);
                 const scale = Math.sqrt(Math.max(m[o]! ** 2 + m[o + 1]! ** 2 + m[o + 2]! ** 2, m[o + 4]! ** 2 + m[o + 5]! ** 2 + m[o + 6]! ** 2, m[o + 8]! ** 2 + m[o + 9]! ** 2 + m[o + 10]! ** 2));
-                radius = Math.max(radius, base[3]! * scale);
+                radius = Math.max(radius, base[3]! * scale * this.boundsScale);
             }
             sphereFromBox(this.localSphere, box);
             if (this.localSphere[3]! >= 0) this.localSphere[3]! += radius;

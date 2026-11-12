@@ -6,13 +6,13 @@
 /** Fixed vertex attribute locations shared by every program and vertex array. */
 export const ATTRIBUTE_LOCATIONS_3D = Object.freeze({
     position: 0, normal: 1, uv: 2, tangent: 3, color: 4, joints: 5, weights: 6, uv1: 7,
-    instanceMatrix: 8, instanceColor: 12,
+    instanceMatrix: 8, instanceColor: 12, instanceAnimation: 13,
 } as const);
 
 /** Fixed texture units; samplers are assigned once when a program is linked. */
 export const TEXTURE_UNITS_3D = Object.freeze({
     map: 0, normalMap: 1, metallicRoughnessMap: 2, occlusionMap: 3, emissiveMap: 4,
-    environment: 5, shadow: 6, bones: 7, morph: 8, lightMap: 9, sceneColor: 10,
+    environment: 5, shadow: 6, bones: 7, morph: 8, lightMap: 9, sceneColor: 10, reflectionMap: 11, sceneDepth: 12,
 } as const);
 
 export const MAX_MORPH_INFLUENCES_3D = 8;
@@ -59,6 +59,7 @@ layout(location = 6) in vec4 aWeights;
 layout(location = 7) in vec2 aUv1;
 layout(location = 8) in mat4 aInstanceMatrix;
 layout(location = 12) in vec4 aInstanceColor;
+layout(location = 13) in vec4 aInstanceAnimation; // first frame, second frame, blend, bone count
 ${FRAME_BLOCK}
 uniform mat4 uModel;
 uniform mat3 uNormalMatrix;
@@ -69,6 +70,9 @@ uniform mat4 uDepthViewProjection;
 #ifdef USE_SKINNING
 uniform highp sampler2D uBoneTexture;
 uniform mat4 uBindMatrix;
+#endif
+#ifdef USE_SKIN_INSTANCING
+uniform highp sampler2D uBoneTexture; // every frame of every clip: four texels per bone matrix, rows wrap
 #endif
 #ifdef USE_MORPH
 uniform highp sampler2D uMorphTexture;
@@ -97,6 +101,18 @@ mat4 boneMatrix(uint index) {
         texelFetch(uBoneTexture, ivec2(2, row), 0), texelFetch(uBoneTexture, ivec2(3, row), 0));
 }
 #endif
+#ifdef USE_SKIN_INSTANCING
+mat4 bakedBone(uint joint, float frame) {
+    int texel = (int(frame) * int(aInstanceAnimation.w) + int(joint)) * 4, width = textureSize(uBoneTexture, 0).x;
+    ivec2 at = ivec2(texel % width, texel / width);
+    return mat4(texelFetch(uBoneTexture, at, 0), texelFetch(uBoneTexture, at + ivec2(1, 0), 0),
+        texelFetch(uBoneTexture, at + ivec2(2, 0), 0), texelFetch(uBoneTexture, at + ivec2(3, 0), 0));
+}
+mat4 bakedPose(float frame) {
+    return aWeights.x * bakedBone(aJoints.x, frame) + aWeights.y * bakedBone(aJoints.y, frame)
+        + aWeights.z * bakedBone(aJoints.z, frame) + aWeights.w * bakedBone(aJoints.w, frame);
+}
+#endif
 #ifdef USE_MORPH
 vec3 morphDelta(int targetIndex, int channel) {
     int texel = (targetIndex * uMorphLayout.z + channel) * uMorphLayout.x + gl_VertexID;
@@ -104,8 +120,10 @@ vec3 morphDelta(int targetIndex, int channel) {
 }
 #endif
 
-#ifdef CUSTOM_VERTEX
+#if defined(CUSTOM_VERTEX) || defined(GPU_PARTICLES)
 uniform vec4 uCustom[4];
+#endif
+#ifdef CUSTOM_VERTEX
 /*CUSTOM_VERTEX*/
 #endif
 void main() {
@@ -131,9 +149,29 @@ void main() {
     model = skin * uBindMatrix;
     normalMatrix = mat3(model);
     #endif
-    #ifdef USE_INSTANCING
+    float spriteTurn = 0.0;
+    #ifdef GPU_PARTICLES
+    // The instance slots carry a particle's start and birth, velocity and life, sizes and angles;
+    // where it is now follows from the time alone.
+    vec4 particleStart = aInstanceMatrix[0], particleMotion = aInstanceMatrix[1], particleLook = aInstanceMatrix[2];
+    float particleLife = max(particleMotion.w, 0.0001), particleTime = uCustom[0].x - particleStart.w;
+    bool particleAlive = true;
+    if (uCustom[0].y > 0.5) particleTime = mod(particleTime, particleLife);
+    else particleAlive = particleTime >= 0.0 && particleTime <= particleLife;
+    float particleAge = clamp(particleTime / particleLife, 0.0, 1.0);
+    float particleTravel = uCustom[1].w > 0.0001 ? (1.0 - exp(-uCustom[1].w * particleTime)) / uCustom[1].w : particleTime;
+    vec3 particleCenter = particleStart.xyz + particleMotion.xyz * particleTravel + uCustom[1].xyz * (0.5 * particleTime * particleTime);
+    float particleSize = mix(particleLook.x, particleLook.y, particleAge);
+    model = model * mat4(vec4(particleSize, 0.0, 0.0, 0.0), vec4(0.0, particleSize, 0.0, 0.0), vec4(0.0, 0.0, particleSize, 0.0), vec4(particleCenter, 1.0));
+    spriteTurn = particleLook.z + particleLook.w * particleTime;
+    #elif defined(USE_INSTANCING)
     model = model * aInstanceMatrix;
     normalMatrix = normalMatrix * mat3(aInstanceMatrix);
+    #endif
+    #ifdef USE_SKIN_INSTANCING
+    // Each instance is posed in its own space before its transform places it.
+    model = model * (bakedPose(aInstanceAnimation.x) * (1.0 - aInstanceAnimation.z) + bakedPose(aInstanceAnimation.y) * aInstanceAnimation.z);
+    normalMatrix = mat3(model);
     #endif
     vec4 world = model * vec4(position, 1.0);
     #ifdef CUSTOM_VERTEX
@@ -157,7 +195,7 @@ void main() {
     vec4 center = uView * (model * vec4(0.0, 0.0, 0.0, 1.0));
     vec2 scale = vec2(length(model[0].xyz), length(model[1].xyz));
     if (uSprite.y < 0.5) scale *= -center.z;
-    float c = cos(uSprite.x), s = sin(uSprite.x);
+    float c = cos(uSprite.x + spriteTurn), s = sin(uSprite.x + spriteTurn);
     vec2 corner = position.xy * scale;
     center.xy += vec2(c * corner.x - s * corner.y, s * corner.x + c * corner.y);
     world = inverse(uView) * center;
@@ -181,6 +219,12 @@ void main() {
     #endif
     #ifdef USE_INSTANCE_COLOR
     vColor *= aInstanceColor;
+    #endif
+    #ifdef GPU_PARTICLES
+    // From the instance's color to the shared end color over the particle's life, fading at both ends.
+    vColor = mix(aInstanceColor, uCustom[2], particleAge);
+    vColor.a *= smoothstep(0.0, max(uCustom[0].z, 0.0001), particleAge) * (1.0 - smoothstep(1.0 - max(uCustom[0].w, 0.0001), 1.0, particleAge));
+    if (!particleAlive) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
     #endif
 }
 `;
@@ -206,6 +250,14 @@ uniform vec2 uExtra;             // light map intensity, transmission
 uniform sampler2D uSceneColor;   // what was drawn before the see-through surfaces
 uniform vec4 uRefraction;        // index of refraction, thickness, attenuation distance (0 = none)
 uniform vec3 uAttenuation;
+#endif
+#ifdef USE_SOFT_DEPTH
+uniform highp sampler2D uSceneDepth; // depth of the solid scene, drawn before the frame
+uniform float uSoftness;
+#endif
+#ifdef USE_REFLECTION_MAP
+uniform sampler2D uReflectionMap; // mirror image of the scene, read at the pixel's place on screen
+uniform vec2 uReflection;         // strength, distortion by the normal
 #endif
 uniform samplerCube uEnvironment;
 uniform highp sampler2DShadow uShadowMap;
@@ -350,9 +402,14 @@ vec3 shade(Surface s, vec3 l, vec3 radiance) {
     #endif
 }
 
-#ifdef CUSTOM_FRAGMENT
+#if defined(CUSTOM_FRAGMENT) || defined(CUSTOM_NORMAL)
 uniform vec4 uCustom[4];
+#endif
+#ifdef CUSTOM_FRAGMENT
 /*CUSTOM_FRAGMENT*/
+#endif
+#ifdef CUSTOM_NORMAL
+/*CUSTOM_NORMAL*/
 #endif
 
 vec3 toneMap(vec3 color) {
@@ -382,6 +439,15 @@ void main() {
     #endif
     base *= mapColor;
     #endif
+    #ifdef USE_SOFT_DEPTH
+    {
+        // Fade out over the last stretch before the solid surface behind this pixel.
+        float stored = texelFetch(uSceneDepth, ivec2(gl_FragCoord.xy), 0).r * 2.0 - 1.0;
+        float behind = uLightCounts.w > 0.5 ? (uPointShadow.w - stored) / uPointShadow.z : uPointShadow.w / (stored + uPointShadow.z);
+        float here = -(uView * vec4(vWorldPosition, 1.0)).z;
+        base.a *= clamp((behind - here) / max(uSoftness, 0.0001), 0.0, 1.0);
+    }
+    #endif
     #ifdef POINTS
     if (length(gl_PointCoord - 0.5) > 0.5) discard;
     #endif
@@ -403,6 +469,9 @@ void main() {
     #else
     Surface s;
     s.normal = surfaceNormal();
+    #ifdef CUSTOM_NORMAL
+    s.normal = normalize(customNormal(s.normal, vWorldPosition, vUv));
+    #endif
     s.view = normalize(uCameraPosition.xyz - vWorldPosition);
     s.albedo = base.rgb;
     s.metallic = uSurface.x;
@@ -425,7 +494,8 @@ void main() {
 
     #ifdef USE_TRANSMISSION
     // Light that passes through replaces that share of the diffuse reflection.
-    float through = uExtra.y * (1.0 - s.metallic);
+    // What the surface reflects at this angle does not pass through it.
+    float through = uExtra.y * (1.0 - s.metallic) * (1.0 - (0.04 + 0.96 * pow(1.0 - max(dot(s.normal, s.view), 0.0), 5.0)));
     vec3 passed = vec3(0.0);
     {
         vec3 bent = refract(-s.view, s.normal, 1.0 / max(uRefraction.x, 1.0));
@@ -445,6 +515,18 @@ void main() {
     s.albedo *= 1.0 - through;
     float clear = 1.0;
     #endif
+    #ifdef USE_REFLECTION_MAP
+    vec3 mirrored;
+    float mirrorClear = 1.0;
+    {
+        // The mirror camera sees the scene flipped left to right.
+        vec4 at = uViewProjection * vec4(vWorldPosition, 1.0);
+        vec2 where = at.xy / max(at.w, 0.0001) * 0.5 + 0.5;
+        where = vec2(1.0 - where.x, where.y) + s.normal.xz * uReflection.y;
+        float facing = max(dot(s.normal, s.view), 0.0);
+        mirrored = texture(uReflectionMap, clamp(where, vec2(0.002), vec2(0.998))).rgb * (s.f0 + (1.0 - s.f0) * pow(1.0 - facing, 5.0)) * uReflection.x;
+    }
+    #endif
     // Indirect light: ambient, hemisphere and optional environment map.
     vec3 diffuseAlbedo = s.albedo;
     #ifdef SHADING_STANDARD
@@ -462,7 +544,7 @@ void main() {
     #endif
     #endif
     color = diffuseAlbedo * irradiance * occlusion;
-    #if defined(USE_ENVIRONMENT) && defined(SHADING_STANDARD)
+    #if defined(USE_ENVIRONMENT) && defined(SHADING_STANDARD) && !defined(USE_REFLECTION_MAP)
     {
         vec3 reflected = reflect(-s.view, s.normal);
         float nv = max(dot(s.normal, s.view), 0.0);
@@ -533,6 +615,9 @@ void main() {
         #ifdef USE_TRANSMISSION
         clear = 1.0 - clamp(fog, 0.0, 1.0);
         #endif
+        #ifdef USE_REFLECTION_MAP
+        mirrorClear = 1.0 - clamp(fog, 0.0, 1.0);
+        #endif
     }
     #endif
     #ifdef TONE_MAPPED
@@ -544,6 +629,10 @@ void main() {
     passed = mix(passed / 12.92, pow((passed + 0.055) / 1.055, vec3(2.4)), step(vec3(0.04045), passed));
     #endif
     color += passed * tint * through * clear;
+    #endif
+    #ifdef USE_REFLECTION_MAP
+    // The mirror image is display-ready too.
+    color += mirrored * mirrorClear;
     #endif
     #ifdef LINEAR_OUTPUT
     // sRGB render targets encode on write; hand them linear values. Fixed-point
@@ -569,9 +658,9 @@ export interface ShaderSources3D {
     readonly fragment: string;
 }
 /** Specialize the material shader pair with a list of preprocessor symbols. */
-export function buildMaterialShader3D(defines: readonly string[], customFragment = '', customVertex = ''): ShaderSources3D {
+export function buildMaterialShader3D(defines: readonly string[], customFragment = '', customVertex = '', customNormal = ''): ShaderSources3D {
     const header = '#version 300 es\nprecision highp float;\nprecision highp int;\n' + defines.map(name => '#define ' + name + '\n').join('');
-    return {vertex: header + VERTEX_SOURCE.replace('/*CUSTOM_VERTEX*/', () => customVertex), fragment: header + FRAGMENT_SOURCE.replace('/*CUSTOM_FRAGMENT*/', () => customFragment)};
+    return {vertex: header + VERTEX_SOURCE.replace('/*CUSTOM_VERTEX*/', () => customVertex), fragment: header + FRAGMENT_SOURCE.replace('/*CUSTOM_FRAGMENT*/', () => customFragment).replace('/*CUSTOM_NORMAL*/', () => customNormal)};
 }
 
 /** Full-screen triangle that samples a cube map along the view ray; drawn at the far plane. */

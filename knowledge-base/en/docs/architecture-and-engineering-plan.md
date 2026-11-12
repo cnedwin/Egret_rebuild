@@ -4,7 +4,7 @@ English | [中文](../../Cns/docs/architecture-and-engineering-plan.md)
 
 2026-11-12 · Current architecture and delivery alignment · M0–M4.
 
-Audited main [0ac1dc3](https://github.com/cnedwin/Egret_rebuild/commit/0ac1dc3afe65f479f7821f765e2d52605b4ace8f) contains shared Web rendering, resources and animation, managed UI and text input, editable Outfit Studio and optional standalone World3D. [Core capabilities](core-progress.md) records implementation and evidence. The [engineering plan](engineering-plan.md) gives the next delivery sequence. Workspace packages are private at 0.0.0.
+Audited main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc) contains shared Web rendering, resources and animation, managed UI and text input, editable Outfit Studio and optional standalone World3D. [Core capabilities](core-progress.md) records implementation and evidence. The [engineering plan](engineering-plan.md) gives the next delivery sequence. Workspace packages are private at 0.0.0.
 
 The environment remains Node 26.7.0, pnpm 11.25.0, TypeScript 7.0.2 and PowerShell 7.6.5. Current metadata generation, scoped development feedback, normal hooks and complete final-candidate merge CI are implemented. No new maintenance-automation program is required to start the next core feature.
 
@@ -267,7 +267,9 @@ Review rules match actual staffing. Core changes require independent technical r
 
 ### 9.5 CI, protection rules and failure acceptance
 
-CI exposes a stable final check named `M0 / merge-ready`. It always runs and aggregates the Windows full structural/headless lane and the declared Linux/macOS CPU lanes. These cover environment, build, behavior, boundaries, provenance and bilingual structure. Current CI does not launch the real-browser matrices; affected rendering changes require separately executed, independently reviewed browser evidence before merge. Starting a workflow or skipping an upstream job cannot alone produce a pass. Platform-specific checks report separately; executed commands, suites, environments and commits remain inspectable. Do not skip the entire required workflow through path filters. Explicit applicability rules may exempt low-risk documentation changes from unrelated GPU work without omitting necessary regressions.
+The required `M0 / merge-ready` check evaluates the Windows result and the declared Linux/macOS CPU results. The existing PR120 record remains a separately verified exact-candidate exception. This workflow reports the commands, scope and commit actually checked. Rendering changes also require independently reviewed actual-browser evidence for the affected behavior.
+
+Windows uses focused publication checks for eligible documentation-only pull requests. Eligibility checks the exact base, proposed head and checked-out merge candidate. Only edits to existing regular Markdown in the configured allowlist and deterministic updates to their documentation records qualify. For the mixed architecture document, the allowlist applies only to the designated current-status paragraphs. The Windows job runs committed path and byte hygiene, contribution metadata, source and bilingual publication checks, and knowledge-base validation. Changes to code, workflows, policy, or other inputs, along with added, removed or renamed paths and uncertain classifications, use the full Windows suite. Main and manual runs use the full suite. The PR introducing this workflow uses the full suite as well. The Linux/macOS jobs and required merge result still apply.
 
 Results bind the candidate tree, base, tools/dependencies and applicable test domain. Code, shared metadata or base changes trigger impact reassessment and revalidation; generating fresh hashes is not a pass. Bind required checks to their actual reporting source when enabling the Ruleset. If the merge result differs from the verified candidate, validate it again instead of reusing a green status from a different tree.
 
@@ -335,7 +337,7 @@ Authors still declare provenance facts and reviewers confirm them. Automation ma
 | Verification layer | Scope and timing | Meaning of a pass |
 | --- | --- | --- |
 | Daily development | Affected behavior, types, actual dependency closure and relevant contracts during local iteration | Fast feedback within the change's impact; not a substitute for merge checks |
-| Merge | Complete build, core regressions, central package boundaries, provenance, languages and docs on the final candidate; affected graphics require real-browser verification | The candidate meets declared merge rules, not every host/performance obligation |
+| Merge | Check the final candidate through the applicable Windows route and declared portable CPU checks. Full Windows checks cover build, core regressions, boundaries, provenance, languages and docs. Affected graphics require actual-browser verification. | The candidate meets the declared merge rules |
 | Release and platform | Bind artifacts/inputs; device/browser matrix, sustained runs, performance, recovery, packages and examples | Only the executed platforms, versions and workloads are established |
 
 | Risk tier | Classification | Required additions |
@@ -412,10 +414,10 @@ Maintainers can prepare raw baseline differences and conservative catalog candid
 | --- | --- | --- |
 | Development | Environment, text hygiene, build and package boundaries, selected behavioral tests; unknown or stale selection runs all top-level behavior tests | Feedback on the current working tree; no reusable acceptance receipt |
 | Push | Clean committed snapshot, environment, one build and three shared test baselines, source/publication and bilingual structure, knowledge-base checks | Early fixture/dependency feedback and safe review submission; does not replace complete behavior qualification |
-| Merge | Complete integrated publication, build, source/type/boundary and behavior checks, examples and independent source/results/bilingual review; affected real-browser correctness evidence | Qualification of the actual candidate under existing branch protection |
+| Merge | Apply the Windows documentation or full route defined above, with declared platform checks and independent review of source, results and both languages. Verify affected rendering in actual browsers. | Qualification of the actual candidate under existing branch protection |
 | Milestone/release | Sustained recovery, paired performance and required target-device qualification | Separate acceptance rows; missing or failed rows remain OPEN |
 
-The push hook calls `node tools/check-push.mjs --committed`. `pnpm check:merge` / `node tools/prepush.mjs --integrated` remain complete checks. CI keeps all required job names and PR/main coverage, and uses `pnpm setup:dev --no-build` to avoid the duplicate setup build. Default contributor setup still builds. No hook bypass or branch-protection reduction is part of this change.
+The push hook calls `node tools/check-push.mjs --committed`. `pnpm check:merge` and `node tools/prepush.mjs --integrated` provide the complete local route. CI retains the required job names and PR/main coverage. Full Windows CI uses `pnpm setup:dev --no-build` to avoid the duplicate setup build. Default contributor setup still builds.
 
 A rendering/resource change must provide relevant actual-browser correctness and lifecycle evidence before merge. Failures in drawing, cancellation, ownership or recovery block the affected capability. Long-run/performance failures block their corresponding milestone and stable-release claims. Risk in shared lifetime/recovery code may require sustained tests before merge as well. M1.5 is delivered within its recorded scope; M1.2 performance and required mixed/device rows remain open.
 
@@ -435,4 +437,6 @@ The push entry now runs one build followed by three existing positive controls t
 
 Real isolated type fixtures copy the owned tools directory rather than maintain a second helper list; stock compiler ownership, public aliases and diagnostics remain independently checked. Synthetic policy fixtures use current source/declaration prerequisites with inert executable projections, while exact public names, forbidden edges and refusal reasons remain independent test expectations. Collector permissions still require explicitly reviewed current identities and preserve historical pins. Do not derive expected fingerprints automatically from the files being checked.
 
-When a shared baseline fails, report its cause before interpreting downstream mutation counts; keep original failures in the associated delivery evidence. Windows hosts the complete suite, while the smaller Linux/macOS lanes are not an equivalent workload comparison. Attribute platform defects only with relevant evidence, and retain separate device/performance acceptance.
+The browser PNG boundary tests reuse one process-local physical copy of the four built packages. Each negative control still runs the full checker against its baseline, its single mutation and the restored copy. Before reuse, verify the complete restored raw inventory and the exact owner receipt. Discard a failed or dirty copy and verify its owned paths before cleanup. This changes fixture setup only. The browser suite, original evidence and package/source admission rules retain their existing scope.
+
+When a shared baseline fails, establish its cause before interpreting downstream mutation results and preserve the original failure. Use the full Windows lane and the smaller Linux/macOS CPU lanes as their separately defined verification scopes. Device and performance acceptance have their own evidence.

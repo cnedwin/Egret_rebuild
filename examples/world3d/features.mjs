@@ -2,20 +2,21 @@
 // World3D feature gallery: see-through and cloth materials, light maps, text,
 // batches and wide lines; rigid bodies with joints, hulls, a moving platform
 // and fast projectiles; post-processing; and a transform gizmo for editing.
-// One scene holds three areas, and the header buttons move the camera between them.
+// A fourth area has a walking, jumping character with a follow camera.
+// One scene holds the areas, and the header buttons move the camera between them.
 import { createEngine } from '@egret/engine';
 import {
   Attribute3D, Mesh3D, Raycaster3D, Scene3D, Texture3D,
-  createAmbientLight3D, createBatchedMesh3D, createBoxGeometry3D, createConvexHullShape3D, createCylinderGeometry3D,
+  createAmbientLight3D, createBatchedMesh3D, createBoxGeometry3D, createCapsuleGeometry3D, createCharacterMotor3D, createConvexHullShape3D, createCylinderGeometry3D,
   createDirectionalLight3D, createFatLine3D, createGlassMaterial3D, createGradientCubeTexture3D, createIcosahedronGeometry3D,
-  createLambertMaterial3D, createPerspectiveCamera3D, createPhysicsWorld3D, createPlaneGeometry3D, createSphereGeometry3D,
+  createLambertMaterial3D, createNavCrowd3D, createNavMesh3D, createPerspectiveCamera3D, createPhysicsWorld3D, createPlaneGeometry3D, createSphereGeometry3D,
   createStandardMaterial3D, createTextGeometry3D, createToonMaterial3D, createTorusKnotGeometry3D, createUnlitMaterial3D,
   mat4Compose, parseTrueTypeFont3D, parseTypefaceFont3D, quatFromAxisAngle,
 } from '@egret/engine/world3d';
 
 const useWebGPU = new URLSearchParams(location.search).get('backend') === 'webgpu';
 const backend = await (useWebGPU ? import('@egret/engine/webgpu/world3d') : import('@egret/engine/webgl2/world3d'));
-const { createOrbitControls3D, createTransformControls3D, createWorld3DHost, createWorld3DView, startWorld3DLoop } = backend;
+const { createFollowControls3D, createOrbitControls3D, createTransformControls3D, createWorld3DHost, createWorld3DView, startWorld3DLoop } = backend;
 
 const canvas = document.querySelector('#stage');
 const status = document.querySelector('#status');
@@ -64,8 +65,8 @@ async function main() {
   sun.setPosition(8, 14, 6).lookAt(0, 0, 0);
   Object.assign(sun.shadow, { cascades: 3, cascadeDistance: 60 });
   scene.addChild(sun);
-  const ground = new Mesh3D(createPlaneGeometry3D({ width: 120, height: 60 }), createStandardMaterial3D({ map: checker(256, 8, [150, 156, 166], [112, 118, 130]), roughness: 0.9 }));
-  ground.material.map.repeat.set([12, 6]);
+  const ground = new Mesh3D(createPlaneGeometry3D({ width: 120, height: 100 }), createStandardMaterial3D({ map: checker(256, 8, [150, 156, 166], [112, 118, 130]), roughness: 0.9 }));
+  ground.material.map.repeat.set([12, 10]);
   ground.setRotation(-Math.PI / 2, 0, 0);
   scene.addChild(ground);
 
@@ -152,6 +153,54 @@ async function main() {
     if (shots.length > 30) { const old = shots.shift(); old.node.removeFromParent(); world.removeBody(old); bodies.splice(bodies.indexOf(old), 1); }
   };
 
+  // ---- area 4: character (around z = 26) -----------------------------------------
+  const CZ = 26, stone = createStandardMaterial3D({ color: 0x9aa3b5, roughness: 0.9 });
+  const block = (w, h, d, x, y, z, options = {}) => solid(createBoxGeometry3D({ width: w, height: h, depth: d }), options.material ?? stone, { type: 'static', shape: { type: 'box', halfExtents: [w / 2, h / 2, d / 2] }, position: [x, y, z], ...options.body });
+  for (let i = 0; i < 6; i++) block(0.5, 0.2 * (i + 1), 3, 3 + i * 0.5, 0.1 * (i + 1), CZ);            // stairs
+  block(4, 0.2, 3, 7.75, 1.1, CZ);                                                                     // landing at the top
+  block(5, 0.2, 3, 12.1, 0.52, CZ, { body: { quaternion: [0, 0, Math.sin(-0.125), Math.cos(-0.125)] } }); // ramp back down
+  block(0.3, 1.6, 4, -4, 0.8, CZ - 4);                                                                 // a wall for the camera to meet
+  // A turntable and a ferry: standing on either carries the character along.
+  const turntable = solid(createCylinderGeometry3D({ radiusTop: 2, radiusBottom: 2, height: 0.2, radialSegments: 32 }), createStandardMaterial3D({ color: 0xb565c9, roughness: 0.6 }), { type: 'kinematic', shape: { type: 'box', halfExtents: [1.5, 0.1, 1.5] }, position: [-4, 0.1, CZ + 3] });
+  turntable.setAngularVelocity(0, 0.8, 0);
+  const ferry = solid(createBoxGeometry3D({ width: 2.4, height: 0.2, depth: 2.4 }), createStandardMaterial3D({ color: 0x3fa37a, roughness: 0.6 }), { type: 'kinematic', shape: { type: 'box', halfExtents: [1.2, 0.1, 1.2] }, position: [0, 0.1, CZ + 6] });
+  for (let i = 0; i < 4; i++) solid(crate, crateMaterial, { shape: { type: 'box', halfExtents: [0.4, 0.4, 0.4] }, position: [-1 + i * 1.1, 0.4, CZ - 3] });   // loose crates to push
+  const hero = new Mesh3D(createCapsuleGeometry3D({ radius: 0.35, height: 1.1 }), createStandardMaterial3D({ color: 0xff8a3d, roughness: 0.5 }));
+  hero.castShadow = true; hero.name = 'hero';
+  const nose = new Mesh3D(createBoxGeometry3D({ width: 0.2, height: 0.2, depth: 0.3 }), createStandardMaterial3D({ color: 0x222222 }));
+  nose.setPosition(0, 0.5, -0.4); hero.addChild(nose);
+  scene.addChild(hero);
+  const motor = createCharacterMotor3D(world, { radius: 0.35, height: 1.8, position: [0, 0.95, CZ], node: hero, jumpSpeed: 5.5 });
+  let facing = 0, characterMode = false, jumpQueued = false;
+  const keys = new Set();
+  addEventListener('keydown', (event) => { if (!characterMode) return; keys.add(event.code); if (event.code === 'Space') { jumpQueued = true; event.preventDefault(); } });
+  addEventListener('keyup', (event) => { keys.delete(event.code); });
+  addEventListener('blur', () => keys.clear());
+
+  // ---- area 5: crowd (around z = -26) --------------------------------------------
+  // A yard of unit cells with pillars; the cells without a pillar become the navigation mesh.
+  const NZ = -26, yard = 24, pillarAt = (x, z) => (x % 6 === 3 && z % 5 === 2) || (x === 12 && z > 4 && z < 19 && z !== 11);
+  const navPositions = [], navIndices = [], pillar = createBoxGeometry3D({ width: 1, height: 1.4, depth: 1 }), pillarMaterial = createStandardMaterial3D({ color: 0x6f7f96, roughness: 0.8 });
+  for (let z = 0; z < yard; z++) for (let x = 0; x < yard; x++) {
+    const wx = x - yard / 2, wz = NZ + z - yard / 2;
+    if (pillarAt(x, z)) { const post = new Mesh3D(pillar, pillarMaterial); post.setPosition(wx + 0.5, 0.7, wz + 0.5); post.castShadow = true; scene.addChild(post); continue; }
+    const base = navPositions.length / 3;
+    navPositions.push(wx, 0, wz, wx + 1, 0, wz, wx + 1, 0, wz + 1, wx, 0, wz + 1);
+    navIndices.push(base, base + 2, base + 1, base, base + 3, base + 2);
+  }
+  const navMesh = createNavMesh3D({ positions: navPositions, indices: navIndices }), crowd = createNavCrowd3D(navMesh);
+  const navLines = new Mesh3D(navMesh.createDebugGeometry(0.03), createUnlitMaterial3D({ color: 0x2f6fd0 }));
+  navLines.visible = false;
+  scene.addChild(navLines);
+  const walkerGeometry = createCapsuleGeometry3D({ radius: 0.25, height: 0.7 }), walkerMaterials = [0xe85d4a, 0x4ab0e8, 0x6cc24a, 0xe8c04a].map((color) => createStandardMaterial3D({ color, roughness: 0.6 }));
+  for (let i = 0; i < 48; i++) {
+    const body = new Mesh3D(walkerGeometry, walkerMaterials[i % 4]);
+    body.castShadow = true;
+    // The capsule's middle sits above the ground, so it rides on a holder that the agent moves.
+    const holder = new Mesh3D(); body.setPosition(0, 0.6, 0); holder.addChild(body); scene.addChild(holder);
+    crowd.addAgent({ position: navMesh.randomPoint().point, radius: 0.3, speed: 2 + (i % 3) * 0.6, node: holder }).setTarget(navMesh.randomPoint().point);
+  }
+
   // ---- area 3: editing (around x = -26) ------------------------------------------
   const EX = -26;
   place(new Mesh3D(createBoxGeometry3D({}), createStandardMaterial3D({ color: 0x5aa0e6, roughness: 0.5 })), EX - 2, 0.5, 0, 'box');
@@ -164,6 +213,10 @@ async function main() {
   scene.addChild(transform.gizmo);
   const controls = createOrbitControls3D(camera, canvas, { target: [0, 1, 0], minDistance: 2, maxDistance: 60, maxPolarAngle: Math.PI * 0.49 });
   scope.use(controls);
+  // The follow camera stays behind the character and moves in when a wall would hide it.
+  const follow = createFollowControls3D(camera, canvas, hero, { world, distance: 6, height: 0.6, pitch: 0.35 });
+  scope.use(follow);
+  follow.enabled = false;
   const post = renderer.postProcess;
   Object.assign(post, { enabled: true, bloom: true, bloomThreshold: 1.2, ssao: true, ssaoRadius: 0.6, fxaa: true, outlineLayers: SELECTED, outlineColor: [1, 0.85, 0.2], outlineThickness: 2, dofFocus: 10, dofRange: 4, dofRadius: 6 });
 
@@ -185,22 +238,40 @@ async function main() {
   });
 
   const view = createWorld3DView(engine, scope, {
-    renderer, scene, camera, controls,
+    renderer, scene, camera, controls: { update(deltaSeconds) { if (!characterMode) controls.update(deltaSeconds); } },
     onUpdate(deltaSeconds, elapsedSeconds) {
       // The motor reverses when the door reaches a limit, and the lift follows a slow circle.
       if (hinge.angle > 1.15) hinge.motorSpeed = -1; else if (hinge.angle < -1.15) hinge.motorSpeed = 1;
       lift.setLinearVelocity(Math.cos(elapsedSeconds * 0.6) * 1.2, Math.sin(elapsedSeconds * 0.9) * 0.6, 0);
+      turntable.setAngularVelocity(0, 0.8, 0);
+      ferry.setLinearVelocity(Math.cos(elapsedSeconds * 0.5) * 2, 0, 0);
       world.step(deltaSeconds);
+      // Each walker picks a new place to go once it has arrived.
+      for (const agent of crowd.agents) if (agent.arrived) agent.setTarget(navMesh.randomPoint().point);
+      crowd.update(deltaSeconds);
+      // The character moves after the world, relative to the camera: W or Up walks away from the viewer.
+      const forward = (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0) - (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0), right = (keys.has('KeyD') || keys.has('ArrowRight') ? 1 : 0) - (keys.has('KeyA') || keys.has('ArrowLeft') ? 1 : 0);
+      const wish = follow.follow.moveDirection(forward, right), size = Math.hypot(wish[0], wish[2]) || 1, speed = keys.has('ShiftLeft') ? 6 : 3.5;
+      motor.update(deltaSeconds, wish[0] / size * speed * (forward || right ? 1 : 0), wish[2] / size * speed * (forward || right ? 1 : 0), jumpQueued);
+      jumpQueued = false;
+      facing += motor.carriedYaw;
+      if (forward || right) facing = Math.atan2(-wish[0], -wish[2]);
+      quatFromAxisAngle(hero.quaternion, [0, 1, 0], facing); hero.markTransformDirty();
+      if (motor.position[1] < -20) motor.teleport(0, 0.95, CZ);
+      if (characterMode) follow.update(deltaSeconds);
       transform.update();
     },
     onError(cause) { lastError = String(cause?.stack ?? cause); report('Error: ' + (cause?.message ?? cause)); },
   });
 
-  const go = (x, eye) => { controls.target.set([x, 1, 0]); camera.setPosition(x + eye[0], eye[1], eye[2]); controls.syncFromCamera(); controls.update(0); };
+  const setCharacterMode = (on) => { characterMode = on; controls.enabled = !on; follow.enabled = on; transform.enabled = !on; if (on) select(undefined); else keys.clear(); document.querySelector('#character').setAttribute('aria-pressed', String(on)); };
+  const go = (x, eye) => { setCharacterMode(false); controls.target.set([x, 1, 0]); camera.setPosition(x + eye[0], eye[1], eye[2]); controls.syncFromCamera(); controls.update(0); };
   const press = (id, action) => document.querySelector(id).addEventListener('click', action);
   press('#surfaces', () => go(0, [0, 3.5, 10]));
   press('#physics', () => go(PX, [0, 5, 13]));
   press('#editing', () => { go(EX, [0, 4, 8]); if (!selected) select(pickable.find((mesh) => mesh.name === 'column')); });
+  press('#character', () => { setCharacterMode(true); canvas.focus(); });
+  press('#crowd', () => { go(0, [0, 16, 14]); controls.target.set([0, 0, NZ]); camera.setPosition(0, 18, NZ + 16); controls.syncFromCamera(); controls.update(0); });
   press('#shoot', shoot);
   for (const mode of ['translate', 'rotate', 'scale']) press('#' + mode, () => { transform.mode = mode; });
   press('#space', (event) => { transform.space = transform.space === 'world' ? 'local' : 'world'; event.currentTarget.textContent = transform.space === 'world' ? 'World / 世界' : 'Local / 本地'; });
@@ -209,6 +280,7 @@ async function main() {
     button.addEventListener('click', () => { const pressed = button.getAttribute('aria-pressed') !== 'true'; button.setAttribute('aria-pressed', String(pressed)); apply(pressed); });
   };
   toggle('#post', (on) => { post.enabled = on; });
+  toggle('#navmesh', (on) => { navLines.visible = on; });
   toggle('#ssao', (on) => { post.ssao = on; });
   toggle('#dof', (on) => { post.dof = on; });
   toggle('#shadows', (on) => { renderer.shadowsEnabled = on; });
@@ -242,6 +314,8 @@ async function main() {
     get frames() { return frames; },
     get error() { return lastError || deviceLost; },
     get info() { return { ...renderer.info, contacts: world.contactCount, bodies: world.bodies.length, selected: selected?.name, doorAngle: hinge.angle }; },
+    get crowd() { return { agents: crowd.agents.length, moving: crowd.agents.filter((agent) => Math.hypot(agent.velocity[0], agent.velocity[2]) > 0.2).length, triangles: navMesh.triangleCount }; },
+    get hero() { return { position: [...motor.position], grounded: motor.isGrounded, ground: motor.groundBody?.type, cameraDistance: follow.follow.currentDistance }; },
     backend: useWebGPU ? 'webgpu' : 'webgl2',
     get selectedPosition() { return selected ? [...selected.getWorldPosition()] : undefined; },
     get dragging() { return transform.dragging; },

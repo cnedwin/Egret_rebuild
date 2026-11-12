@@ -6,7 +6,7 @@ English | [简体中文](../../Cns/docs/m2-m4-delivery-plan.md)
 
 ## Purpose and current baseline
 
-Reviewed main [0ac1dc3](https://github.com/cnedwin/Egret_rebuild/commit/0ac1dc3afe65f479f7821f765e2d52605b4ace8f).
+Reviewed main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc).
 
 Make the current shared core usable for animation-rich, complex-interface games, then qualify its complete declared scope. The eleven existing packages remain unchanged. [Current capabilities](core-progress.md) provides the as-built map; [engineering](engineering-plan.md) gives the next complete increments; [M2](m2-spine-content-plan.md), [M3](m3-ui-text-input-plan.md) and [M4](m4-core-acceptance-plan.md) own their detailed contracts.
 

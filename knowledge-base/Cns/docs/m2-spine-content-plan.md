@@ -2,7 +2,7 @@
 
 简体中文 | [English](../../en/docs/m2-spine-content-plan.md)
 
-计划与当前状态 · 2026-11-12 · 复盘 main [0ac1dc3](https://github.com/cnedwin/Egret_rebuild/commit/0ac1dc3afe65f479f7821f765e2d52605b4ace8f)。完整 M2 仍开放。
+计划与当前状态 · 2026-11-12 · 复盘 main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc)。完整 M2 仍开放。
 
 | 工作包 | 已实现 | 剩余 |
 | --- | --- | --- |
