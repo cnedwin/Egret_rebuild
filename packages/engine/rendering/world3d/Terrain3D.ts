@@ -13,7 +13,9 @@ import {Object3D} from './Object3D.js';
 import {TriangleMeshShape3D} from './PhysicsMesh3D.js';
 import type {Camera3D} from './Camera3D.js';
 
-export const TERRAIN3D_LIMITS = Object.freeze({maxSamplesPerSide: 4097, maxChunkCells: 254, maxLevels: 8} as const);
+export const TERRAIN3D_LIMITS = Object.freeze({
+    maxSamplesPerSide: 4097, maxChunkCells: 254, maxLevels: 8, maxChunks: 4096, maxCachedGeometryBytes: 128 * 1024 * 1024,
+} as const);
 
 export interface HeightFieldOptions3D {
     /** Samples along X and along Z; a field of n samples has n - 1 cells. */
@@ -204,6 +206,12 @@ export interface TerrainOptions3D {
     readonly colorAt?: (height: number, slope: number, x: number, z: number, out: number[]) => void;
 }
 
+function chunkBufferLayout(nx: number, nz: number, skirts: boolean) {
+    const vertexCount = nx * nz + (skirts ? 2 * (nx + nz) : 0);
+    const indexCount = 6 * ((nx - 1) * (nz - 1) + (skirts ? 2 * (nx + nz - 2) : 0));
+    return {vertexCount, indexCount, indexBytes: vertexCount > 65535 ? 4 : 2};
+}
+
 interface Chunk {
     readonly mesh: Mesh3D;
     readonly column: number; readonly row: number; readonly columns: number; readonly rows: number;
@@ -245,6 +253,7 @@ export class Terrain3D extends Object3D {
         if (this.#skirt < 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'skirtDepth');
         this.#uvScale = requirePositive3D(options.uvScale ?? 1, 'uvScale');
         this.#colorAt = options.colorAt;
+        this.checkGeometryBudget();
         this.#fieldVersion = field.version;
         for (let row = 0; row < field.rows - 1; row += this.chunkCells) {
             for (let column = 0; column < field.columns - 1; column += this.chunkCells) {
@@ -334,6 +343,31 @@ export class Terrain3D extends Object3D {
         }
         this.#chunks.length = 0;
     }
+    private checkGeometryBudget(): void {
+        const columns = this.field.columns - 1, rows = this.field.rows - 1, chunkCells = this.chunkCells;
+        if (Math.ceil(columns / chunkCells) * Math.ceil(rows / chunkCells) > TERRAIN3D_LIMITS.maxChunks) {
+            throw new World3DError('WORLD3D_BUDGET', 'terrain chunk count');
+        }
+        // Every LOD may remain cached. Count all retained attribute and index bytes before building any mesh.
+        const bytesPerVertex = (this.#colorAt ? 11 : 8) * Float32Array.BYTES_PER_ELEMENT;
+        const skirts = this.#skirt > 0;
+        let bytes = 0;
+        for (let row = 0; row < rows; row += chunkCells) {
+            for (let column = 0; column < columns; column += chunkCells) {
+                const width = Math.min(chunkCells, columns - column), depth = Math.min(chunkCells, rows - row);
+                for (let level = 0; level < this.levels; level++) {
+                    const stride = 1 << level;
+                    const {vertexCount, indexCount, indexBytes} = chunkBufferLayout(
+                        Math.ceil(width / stride) + 1, Math.ceil(depth / stride) + 1, skirts,
+                    );
+                    bytes += vertexCount * bytesPerVertex + indexCount * indexBytes;
+                    if (bytes > TERRAIN3D_LIMITS.maxCachedGeometryBytes) {
+                        throw new World3DError('WORLD3D_BUDGET', 'terrain cached geometry bytes');
+                    }
+                }
+            }
+        }
+    }
     private select(chunk: Chunk, camera: Camera3D): void {
         if (this.#fieldVersion !== this.field.version) this.rebuild();
         const sphere = chunk.mesh.worldBoundingSphere, eye = camera.matrixWorld;
@@ -356,8 +390,10 @@ export class Terrain3D extends Object3D {
             return out;
         };
         const xs = line(chunk.column, chunk.columns), zs = line(chunk.row, chunk.rows), nx = xs.length, nz = zs.length;
-        const ring = 2 * (nx + nz), count = nx * nz + ring, positions = new Float32Array(count * 3), normals = new Float32Array(count * 3), uvs = new Float32Array(count * 2);
-        const colors = this.#colorAt ? new Float32Array(count * 3) : undefined, normal = [0, 0, 0], color = [1, 1, 1];
+        const skirts = this.#skirt > 0;
+        const {vertexCount, indexCount, indexBytes} = chunkBufferLayout(nx, nz, skirts);
+        const positions = new Float32Array(vertexCount * 3), normals = new Float32Array(vertexCount * 3), uvs = new Float32Array(vertexCount * 2);
+        const colors = this.#colorAt ? new Float32Array(vertexCount * 3) : undefined, normal = [0, 0, 0], color = [1, 1, 1];
         const write = (to: number, column: number, row: number, drop: number): void => {
             const x = field.columnX(column), z = field.rowZ(row), y = field.heights[row * field.columns + column]!;
             field.normalAt(x, z, normal);
@@ -371,14 +407,19 @@ export class Terrain3D extends Object3D {
             }
         };
         for (let iz = 0; iz < nz; iz++) for (let ix = 0; ix < nx; ix++) write(iz * nx + ix, xs[ix]!, zs[iz]!, 0);
-        const indices: number[] = [];
+        const indices = indexBytes === 4 ? new Uint32Array(indexCount) : new Uint16Array(indexCount);
+        let at = 0;
+        const quad = (a: number, b: number, c: number, d: number, e: number, f: number): void => {
+            indices[at++] = a; indices[at++] = b; indices[at++] = c;
+            indices[at++] = d; indices[at++] = e; indices[at++] = f;
+        };
         for (let iz = 0; iz < nz - 1; iz++) {
             for (let ix = 0; ix < nx - 1; ix++) {
                 const a = iz * nx + ix, b = a + 1, d = a + nx, e = d + 1;
-                indices.push(a, d, b, b, d, e);
+                quad(a, d, b, b, d, e);
             }
         }
-        if (this.#skirt > 0) {
+        if (skirts) {
             // Each border gets a strip hanging down; `flip` keeps its face pointing outward.
             let next = nx * nz;
             const side = (length: number, top: (i: number) => number, column: (i: number) => number, row: (i: number) => number, flip: boolean): void => {
@@ -386,7 +427,7 @@ export class Terrain3D extends Object3D {
                 for (let i = 0; i < length; i++) write(next++, column(i), row(i), this.#skirt);
                 for (let i = 0; i < length - 1; i++) {
                     const t0 = top(i), t1 = top(i + 1), b0 = first + i, b1 = b0 + 1;
-                    if (flip) indices.push(t0, t1, b0, t1, b1, b0); else indices.push(t0, b0, t1, t1, b0, b1);
+                    if (flip) quad(t0, t1, b0, t1, b1, b0); else quad(t0, b0, t1, t1, b0, b1);
                 }
             };
             side(nx, (i) => i, (i) => xs[i]!, () => zs[0]!, true);
@@ -399,7 +440,7 @@ export class Terrain3D extends Object3D {
         geometry.setAttribute('normal', new Attribute3D(normals, 3));
         geometry.setAttribute('uv', new Attribute3D(uvs, 2));
         if (colors) geometry.setAttribute('color', new Attribute3D(colors, 3));
-        geometry.setIndex(count > 65535 ? Uint32Array.from(indices) : Uint16Array.from(indices));
+        geometry.setIndex(indices);
         return geometry;
     }
 }
