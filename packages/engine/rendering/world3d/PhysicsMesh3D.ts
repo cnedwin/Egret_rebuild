@@ -181,8 +181,9 @@ export class TriangleMeshShape3D {
 }
 
 /**
- * Build a collision mesh from a geometry, or from every triangle mesh under
- * an object with their world transforms baked in. Use the result as
+ * Build a collision mesh from a geometry or the unskinned, non-instanced
+ * triangle meshes under an object. Bake their base positions in world space.
+ * Use the result as
  * `{type: 'mesh', mesh}` on a static body left at the origin.
  */
 export function createMeshShape3D(source: Geometry3D | Object3D): TriangleMeshShape3D {
@@ -207,7 +208,10 @@ export function createMeshShape3D(source: Geometry3D | Object3D): TriangleMeshSh
     };
     if (source instanceof Geometry3D) append(source, undefined);
     else if (source instanceof Object3D) {
-        source.updateWorldMatrices();
+        // Refresh the whole tree so baking from a subtree also updates moved ancestors and siblings.
+        let root = source;
+        while (root.parent) root = root.parent;
+        root.updateWorldMatrices(true);
         source.traverse(node => { if (node instanceof Mesh3D && !node.isInstanced && node.skeleton === undefined) append(node.geometry, node.matrixWorld); });
     } else throw new World3DError('WORLD3D_INPUT_INVALID', 'mesh shape source');
     return new TriangleMeshShape3D(positions, indices);

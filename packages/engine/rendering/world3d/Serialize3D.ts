@@ -127,6 +127,7 @@ export function serializeScene3D(root: Object3D, options: SerializeOptions3D = {
             name: value.name, wrapS: value.wrapS, wrapT: value.wrapT, magFilter: value.magFilter, minFilter: value.minFilter, mipmaps: value.mipmaps,
             colorSpace: value.colorSpace, flipY: value.flipY, anisotropy: value.anisotropy, offset: [...value.offset], repeat: [...value.repeat], rotation: value.rotation,
         };
+        if (value.channel === 1) entry['channel'] = 1;
         const key = options.textureKey?.(value), source = value.source;
         if (typeof key === 'string' && key.length > 0) entry['key'] = key;
         else if (isTexturePixels3D(source) && source.data.byteLength <= SERIALIZE3D_LIMITS.maxEmbeddedTextureBytes) {
@@ -248,7 +249,7 @@ export function deserializeScene3D(saved: SceneDocument3D, options: DeserializeO
             else if (entry['compressed']) source = {width: entry['compressed'].width, height: entry['compressed'].height, format: entry['compressed'].format, levels: (entry['compressed'].levels as unknown[]).map(decodeBase64)};
             else throw new World3DError('WORLD3D_INPUT_INVALID', 'saved scene: texture source');
             const texture = new Texture3D(source, {name: entry['name'], wrapS: entry['wrapS'], wrapT: entry['wrapT'], magFilter: entry['magFilter'], minFilter: entry['minFilter'],
-                mipmaps: entry['mipmaps'], colorSpace: entry['colorSpace'], flipY: entry['flipY'], anisotropy: entry['anisotropy']});
+                mipmaps: entry['mipmaps'], colorSpace: entry['colorSpace'], flipY: entry['flipY'], anisotropy: entry['anisotropy'], channel: entry['channel']});
             texture.offset.set(vector(entry['offset'], 2, 'texture offset')); texture.repeat.set(vector(entry['repeat'], 2, 'texture repeat')); texture.rotation = entry['rotation'] ?? 0;
             created.push(texture); ownedTextures.push(texture);
             return texture;

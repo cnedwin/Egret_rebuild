@@ -415,7 +415,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (has(V.normal)) defines.push('USE_NORMAL');
         if (has(V.skin)) defines.push('USE_SKINNING');
         if (has(V.morph)) defines.push('USE_MORPH');
-        if (has(V.morphNormals) && !depthOnly) defines.push('USE_MORPH_NORMALS');
+        if (has(V.morphNormals) && (!depthOnly || material.shader?.glslVertex !== undefined)) defines.push('USE_MORPH_NORMALS');
         if (has(V.instancing)) defines.push('USE_INSTANCING');
         if (has(V.points)) defines.push('POINTS');
         if (material.screenSpace) defines.push('SCREEN_SPACE');

@@ -7,6 +7,7 @@
 // one 8-tap upsample, which is cheap enough for integrated and mobile GPUs.
 import type {Camera3D} from '../../rendering/world3d/Camera3D.js';
 import {World3DError} from '../../rendering/world3d/core3D.js';
+import {mat4Invert} from '../../rendering/world3d/math3D.js';
 import type {ToneMapping3D} from './frame3D.js';
 
 /**
@@ -84,35 +85,27 @@ export interface PostProcessSettings3D {
 }
 /** Camera values the depth-reading passes need. */
 export interface PostView3D {
-    /** Reciprocals of the projection's X and Y scales. */
-    readonly scaleX: number; readonly scaleY: number;
-    /** Off-center shift of the view volume, zero for a symmetric projection. */
-    readonly offsetX: number; readonly offsetY: number;
-    /** Projection entries that map view depth to clip depth and clip w: [2][2], [2][3], [3][2], [3][3]. */
-    readonly depth: readonly [number, number, number, number];
-    readonly orthographic: boolean;
+    readonly inverseProjection: Float32Array;
 }
 export function postViewFromCamera3D(camera: Camera3D): PostView3D {
-    // Everything is read from the matrix itself, not from the camera's fov, near and far,
-    // so off-center, oblique and hand-written projections reconstruct correctly too.
-    const p = camera.projectionMatrix, orthographic = p[11] === 0;
-    return {
-        scaleX: 1 / p[0]!, scaleY: 1 / p[5]!, offsetX: orthographic ? -p[12]! : p[8]!, offsetY: orthographic ? -p[13]! : p[9]!,
-        depth: [p[10]!, p[11]!, p[14]!, p[15]!], orthographic,
-    };
+    // Oblique projections encode X and Y in clip depth. Unproject the full
+    // homogeneous clip position instead of assuming depth depends on Z alone.
+    const inverseProjection = new Float32Array(16);
+    if (!mat4Invert(inverseProjection, camera.projectionMatrix)) throw new World3DError('WORLD3D_INPUT_INVALID', 'post-processing projection is singular');
+    return {inverseProjection};
 }
 /** True when the settings ask for outlines. */
 export function outlineActive3D(settings: PostProcessSettings3D): boolean { return settings.outlineLayers !== 0 && settings.outlineThickness > 0; }
-/** Fill the 40 floats every post pass reads: a, b, projection, flags, custom[4], outline, depth mapping. */
+/** Post uniform layout: a, b, flags, custom[4], outline and inverse projection. */
+export const POST_PARAMS_FLOATS_3D = 48;
 export function writePostParams3D(out: Float32Array, a: ArrayLike<number>, b: ArrayLike<number>, view: PostView3D, aoEnabled: boolean, width: number, height: number, custom?: CustomPost3D,
     outline?: PostProcessSettings3D): void {
     out.fill(0);
     out.set(a, 0); out.set(b, 4);
-    out[8] = view.scaleX; out[9] = view.scaleY; out[10] = view.offsetX; out[11] = view.offsetY;
-    out.set(view.depth, 36);
-    out[12] = view.orthographic ? 1 : 0; out[13] = aoEnabled ? 1 : 0; out[14] = 1 / width; out[15] = 1 / height;
-    if (custom) out.set(custom.uniforms, 16);
-    if (outline) { out.set(outline.outlineColor, 32); out[35] = outline.outlineThickness; }
+    out[9] = aoEnabled ? 1 : 0; out[10] = 1 / width; out[11] = 1 / height;
+    if (custom) out.set(custom.uniforms, 12);
+    if (outline) { out.set(outline.outlineColor, 28); out[31] = outline.outlineThickness; }
+    out.set(view.inverseProjection, 32);
 }
 export const POST3D_LIMITS = Object.freeze({maxBloomLevels: 8} as const);
 export function createPostProcessSettings3D(): PostProcessSettings3D {
@@ -154,32 +147,36 @@ uniform vec4 uB;
 `;
 const GLSL_DEPTH = /* glsl */`
 uniform highp sampler2D uDepth;
-uniform vec4 uProj;        // x, y: reciprocal projection scales; z, w: off-center shift
-uniform vec4 uDepthParams; // projection entries [2][2], [2][3], [3][2], [3][3]
-uniform vec4 uFlags;       // x: orthographic; y: ambient occlusion on; z, w: texel size
+uniform mat4 uInverseProjection;
+uniform vec4 uFlags;       // y: ambient occlusion on; z, w: texel size
 /** Stored depth, 0 at the near plane and 1 at the far plane. */
 float rawDepth(vec2 uv) {
     ivec2 size = textureSize(uDepth, 0);
     return texelFetch(uDepth, clamp(ivec2(uv * vec2(size)), ivec2(0), size - 1), 0).r;
 }
-/** Distance from the camera plane, in world units, for any projection matrix. */
-float sceneDepth(vec2 uv) {
-    float ndc = rawDepth(uv) * 2.0 - 1.0;
-    return (uDepthParams.w * ndc - uDepthParams.z) / (uDepthParams.y * ndc - uDepthParams.x);
+vec3 unprojectDepth(vec2 uv, float depth) {
+    vec4 view = uInverseProjection * vec4(uv * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
+    return view.xyz / view.w;
 }
+/** Distance from the camera plane, in world units. */
+float sceneDepth(vec2 uv) { return -unprojectDepth(uv, rawDepth(uv)).z; }
 `;
 /** uA: radius, intensity, bias. Writes occlusion (1 = open) to every channel. */
 export const POST_SSAO_GLSL_3D = GLSL_HEAD + GLSL_DEPTH + /* glsl */`
 vec3 viewPosition(vec2 uv) {
-    float d = sceneDepth(uv);
-    return vec3((uv * 2.0 - 1.0 + uProj.zw) * uProj.xy * (uFlags.x > 0.5 ? 1.0 : d), -d);
+    return unprojectDepth(uv, rawDepth(uv));
 }
 void main() {
-    vec3 p = viewPosition(vUv);
+    float depth = rawDepth(vUv);
+    vec3 p = unprojectDepth(vUv, depth);
     // The surface normal comes from neighbouring depths, so no extra buffer is needed.
     vec3 n = normalize(cross(dFdx(p), dFdy(p)));
     float noise = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715)))) * 6.2831853;
-    vec2 radiusUv = uA.x / (uProj.xy * (uFlags.x > 0.5 ? 1.0 : -p.z)) * 0.5;
+    // The view-space length of one texel gives a local search radius for any projection.
+    vec2 texel = uFlags.zw;
+    vec2 viewStep = vec2(length(unprojectDepth(vUv + vec2(texel.x, 0.0), depth) - p),
+        length(unprojectDepth(vUv + vec2(0.0, texel.y), depth) - p));
+    vec2 radiusUv = uA.x * texel / max(viewStep, vec2(0.000001));
     float occlusion = 0.0, reach = uA.x * uA.x;
     for (int i = 0; i < 12; i++) {
         float angle = noise + float(i) * 2.399963;
@@ -189,7 +186,7 @@ void main() {
     }
     float open = clamp(1.0 - uA.y * occlusion / 12.0 * 2.5, 0.0, 1.0);
     // The far plane is sky: never occluded.
-    if (rawDepth(vUv) >= 0.99999) open = 1.0;
+    if (depth >= 0.99999) open = 1.0;
     outColor = vec4(vec3(open), 1.0);
 }`;
 /** uA: xy source texel, z threshold, w knee. uB.x: 1 applies the brightness prefilter. */
@@ -311,11 +308,10 @@ const WGSL_HEAD = /* wgsl */`
 struct Params {
     a: vec4f,
     b: vec4f,
-    proj: vec4f,   // x, y: reciprocal projection scales; z, w: off-center shift
-    flags: vec4f,  // x: orthographic; y: ambient occlusion on; z, w: texel size
+    flags: vec4f,  // y: ambient occlusion on; z, w: texel size
     custom: array<vec4f, 4>,
     outline: vec4f, // rgb and width in pixels; 0 width is off
-    depth: vec4f,   // projection entries [2][2], [2][3], [3][2], [3][3]
+    inverseProjection: mat4x4f,
 }
 @group(0) @binding(0) var<uniform> params: Params;
 @group(0) @binding(1) var source: texture_2d<f32>;
@@ -340,28 +336,29 @@ fn rawDepth(uv: vec2f) -> f32 {
     let size = vec2f(textureDimensions(depthTexture));
     return textureLoad(depthTexture, vec2i(clamp(uv * size, vec2f(0.0), size - 1.0)), 0);
 }
-/** Distance from the camera plane, in world units, for any projection matrix. */
-fn sceneDepth(uv: vec2f) -> f32 {
-    let ndc = rawDepth(uv) * 2.0 - 1.0;
-    return (params.depth.w * ndc - params.depth.z) / (params.depth.y * ndc - params.depth.x);
+fn unprojectDepth(uv: vec2f, depth: f32) -> vec3f {
+    // Convert top-down texture UVs and stored [0,1] depth to the camera's clip space.
+    let clip = vec4f(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0, depth * 2.0 - 1.0, 1.0);
+    let view = params.inverseProjection * clip;
+    return view.xyz / view.w;
 }
+/** Distance from the camera plane, in world units. */
+fn sceneDepth(uv: vec2f) -> f32 { return -unprojectDepth(uv, rawDepth(uv)).z; }
 `;
 export const POST_SSAO_WGSL_3D = WGSL_HEAD + /* wgsl */`
 fn viewPosition(uv: vec2f) -> vec3f {
-    let d = sceneDepth(uv);
-    var scale = d;
-    if (params.flags.x > 0.5) { scale = 1.0; }
-    // UV rows run top-down here, so Y is flipped back to view space.
-    return vec3f((uv.x * 2.0 - 1.0 + params.proj.z) * params.proj.x * scale, (1.0 - uv.y * 2.0 + params.proj.w) * params.proj.y * scale, -d);
+    return unprojectDepth(uv, rawDepth(uv));
 }
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
-    let p = viewPosition(input.uv);
+    let depth = rawDepth(input.uv);
+    let p = unprojectDepth(input.uv, depth);
     // Framebuffer Y points down, so the Y derivative is negated to keep the normal facing the camera.
     let n = normalize(cross(dpdx(p), -dpdy(p)));
     let noise = fract(52.9829189 * fract(dot(input.position.xy, vec2f(0.06711056, 0.00583715)))) * 6.2831853;
-    var scale = -p.z;
-    if (params.flags.x > 0.5) { scale = 1.0; }
-    let radiusUv = params.a.x / (params.proj.xy * scale) * 0.5;
+    let texel = params.flags.zw;
+    let viewStep = vec2f(length(unprojectDepth(input.uv + vec2f(texel.x, 0.0), depth) - p),
+        length(unprojectDepth(input.uv + vec2f(0.0, texel.y), depth) - p));
+    let radiusUv = params.a.x * texel / max(viewStep, vec2f(0.000001));
     let reach = params.a.x * params.a.x;
     var occlusion = 0.0;
     for (var i = 0; i < 12; i++) {
@@ -372,7 +369,7 @@ fn viewPosition(uv: vec2f) -> vec3f {
         occlusion += max(dot(n, v) * inverseSqrt(d2 + 0.000001) - params.a.z, 0.0) / (1.0 + d2 / reach) * step(d2, reach * 4.0);
     }
     var open = clamp(1.0 - params.a.y * occlusion / 12.0 * 2.5, 0.0, 1.0);
-    if (rawDepth(input.uv) >= 0.99999) { open = 1.0; }
+    if (depth >= 0.99999) { open = 1.0; }
     return vec4f(vec3f(open), 1.0);
 }`;
 export const POST_DOWN_WGSL_3D = WGSL_HEAD + /* wgsl */`

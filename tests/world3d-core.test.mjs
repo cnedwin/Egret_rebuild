@@ -124,6 +124,23 @@ test('W3C07 cameras build projections, rays and frusta with OpenGL clip conventi
   assert.throws(() => camera.updateProjectionMatrix(), code('WORLD3D_INPUT_INVALID'));
 });
 
+test('camera clone retains an independent custom projection', () => {
+  const camera = createPerspectiveCamera3D();
+  const projection = Array.from(camera.projectionMatrix);
+  projection[2] = 0.05;
+  camera.customProjection = projection;
+  const copy = camera.clone();
+  assert.deepEqual(Array.from(copy.customProjection ?? []), projection);
+  assert.notEqual(copy.customProjection, projection);
+  camera.updateProjectionMatrix();
+  copy.updateProjectionMatrix();
+  assert.deepEqual(copy.projectionMatrix, camera.projectionMatrix);
+  projection[2] = 0.1;
+  camera.updateProjectionMatrix();
+  copy.updateProjectionMatrix();
+  assert.notEqual(copy.projectionMatrix[2], camera.projectionMatrix[2]);
+});
+
 test('W3C08 primitives are closed, outward-facing and correctly bounded', () => {
   const builders = [
     ['box', createBoxGeometry3D({width: 2, height: 4, depth: 6}), [-1, -2, -3, 1, 2, 3]],

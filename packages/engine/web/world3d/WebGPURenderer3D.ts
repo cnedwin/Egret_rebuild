@@ -628,7 +628,7 @@ export class WebGPURenderer3D implements Renderer3D {
         const skinning = mesh.skeleton !== undefined && gpu.buffers.has('joints') && gpu.buffers.has('weights');
         return {
             shading: material.shading, depthOnly,
-            normal: gpu.buffers.has('normal') && !depthOnly,
+            normal: gpu.buffers.has('normal') && (!depthOnly || material.shader?.wgslVertex !== undefined),
             uv: uv && (!depthOnly || (material.map !== undefined && material.alphaMode !== 'opaque') || material.shader?.wgslVertex !== undefined),
             tangent: lit && uv && material.normalMap !== undefined && gpu.buffers.has('tangent'),
             vertexColor: material.vertexColors && gpu.buffers.has('color'),

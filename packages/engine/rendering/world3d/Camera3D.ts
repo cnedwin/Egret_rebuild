@@ -107,6 +107,7 @@ export class Camera3D extends Object3D {
         super.copyFrom(source);
         this.fov = source.fov; this.orthographicHeight = source.orthographicHeight; this.aspect = source.aspect;
         this.near = source.near; this.far = source.far; this.zoom = source.zoom; this.layerMask = source.layerMask;
+        this.customProjection = source.customProjection === undefined ? undefined : Array.from(source.customProjection);
     }
 }
 

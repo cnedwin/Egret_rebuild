@@ -303,23 +303,26 @@ function closestOnSegment(out: Vec, a: Vec, b: Vec, x: number, y: number, z: num
     return t;
 }
 /** Closest points between segments p1-q1 and p2-q2, written to c1 and c2. */
-function closestBetweenSegments(p1: Vec, q1: Vec, p2: Vec, q2: Vec, c1: Vec, c2: Vec): void {
-    const d1 = [q1[0]! - p1[0]!, q1[1]! - p1[1]!, q1[2]! - p1[2]!], d2 = [q2[0]! - p2[0]!, q2[1]! - p2[1]!, q2[2]! - p2[2]!];
-    const r = [p1[0]! - p2[0]!, p1[1]! - p2[1]!, p1[2]! - p2[2]!], a = dot(d1, d1), e = dot(d2, d2), f = dot(d2, r);
+function closestBetweenSegments(p1: ArrayLike<number>, q1: ArrayLike<number>, p2: ArrayLike<number>, q2: ArrayLike<number>, c1: Vec, c2: Vec): void {
+    const ux = q1[0]! - p1[0]!, uy = q1[1]! - p1[1]!, uz = q1[2]! - p1[2]!;
+    const vx = q2[0]! - p2[0]!, vy = q2[1]! - p2[1]!, vz = q2[2]! - p2[2]!;
+    const rx = p1[0]! - p2[0]!, ry = p1[1]! - p2[1]!, rz = p1[2]! - p2[2]!;
+    const a = ux * ux + uy * uy + uz * uz, e = vx * vx + vy * vy + vz * vz, f = vx * rx + vy * ry + vz * rz;
     let s = 0, t = 0;
     if (a <= 1e-12 && e <= 1e-12) { s = t = 0; }
     else if (a <= 1e-12) t = clamp(f / e, 0, 1);
     else {
-        const c = dot(d1, r);
+        const c = ux * rx + uy * ry + uz * rz;
         if (e <= 1e-12) s = clamp(-c / a, 0, 1);
         else {
-            const b = dot(d1, d2), denominator = a * e - b * b;
+            const b = ux * vx + uy * vy + uz * vz, denominator = a * e - b * b;
             s = denominator > 1e-12 ? clamp((b * f - c * e) / denominator, 0, 1) : 0.5;
             t = (b * s + f) / e;
             if (t < 0) { t = 0; s = clamp(-c / a, 0, 1); } else if (t > 1) { t = 1; s = clamp((b - c) / a, 0, 1); }
         }
     }
-    for (let i = 0; i < 3; i++) { c1[i] = p1[i]! + d1[i]! * s; c2[i] = p2[i]! + d2[i]! * t; }
+    c1[0] = p1[0]! + ux * s; c1[1] = p1[1]! + uy * s; c1[2] = p1[2]! + uz * s;
+    c2[0] = p2[0]! + vx * t; c2[1] = p2[1]! + vy * t; c2[2] = p2[2]! + vz * t;
 }
 function capsuleBox(m: Manifold, capsule: RigidBody3D, box: RigidBody3D): void {
     const radius = (capsule.shape as {radius: number}).radius;
@@ -482,16 +485,41 @@ function capsuleMesh(m: Manifold, capsule: RigidBody3D, meshBody: RigidBody3D): 
     const mesh = (meshBody.shape as {mesh: TriangleMeshShape3D}).mesh, radius = (capsule.shape as {radius: number}).radius;
     capsuleSegment(capsule, segA, segB);
     toMeshLocal(meshSegA, meshBody, segA[0]!, segA[1]!, segA[2]!); toMeshLocal(meshSegB, meshBody, segB[0]!, segB[1]!, segB[2]!);
-    const ax = meshSegA[0]!, ay = meshSegA[1]!, az = meshSegA[2]!, bx = meshSegB[0]!, by = meshSegB[1]!, bz = meshSegB[2]!, dx = bx - ax, dy = by - ay, dz = bz - az, length2 = dx * dx + dy * dy + dz * dz;
+    const ax = meshSegA[0]!, ay = meshSegA[1]!, az = meshSegA[2]!, bx = meshSegB[0]!, by = meshSegB[1]!, bz = meshSegB[2]!;
+    const dx = bx - ax, dy = by - ay, dz = bz - az, radius2 = radius * radius;
+    let triangle = 0, bestDistance2 = radius2, bestFace = false, bestX = 0, bestY = 0, bestZ = 0;
+    const consider = (x: number, y: number, z: number): void => {
+        const face = mesh.closestPoint(triangle, x, y, z, meshPoint);
+        const px = x - meshPoint[0]!, py = y - meshPoint[1]!, pz = z - meshPoint[2]!;
+        const distance2 = px * px + py * py + pz * pz;
+        if (distance2 >= radius2 || distance2 > bestDistance2 || (distance2 === bestDistance2 && (!face || bestFace))) return;
+        // Keep the one-sided edge rule used by the sphere contact solver.
+        const side = px * meshNormal[0]! + py * meshNormal[1]! + pz * meshNormal[2]!;
+        if (!face && distance2 > 1e-18 && side < -0.01 * Math.sqrt(distance2)) return;
+        bestDistance2 = distance2; bestFace = face; bestX = x; bestY = y; bestZ = z;
+    };
+    const positions = mesh.positions, indices = mesh.indices;
     candidateCount = 0;
-    mesh.query(Math.min(ax, bx) - radius, Math.min(ay, by) - radius, Math.min(az, bz) - radius, Math.max(ax, bx) + radius, Math.max(ay, by) + radius, Math.max(az, bz) + radius, triangle => {
-        // Walk along the axis toward the point nearest this triangle, then test a sphere there.
-        let t = 0.5;
-        for (let i = 0; i < 4; i++) {
-            mesh.closestPoint(triangle, ax + dx * t, ay + dy * t, az + dz * t, meshPoint);
-            t = length2 > 0 ? clamp(((meshPoint[0]! - ax) * dx + (meshPoint[1]! - ay) * dy + (meshPoint[2]! - az) * dz) / length2, 0, 1) : 0;
+    mesh.query(Math.min(ax, bx) - radius, Math.min(ay, by) - radius, Math.min(az, bz) - radius, Math.max(ax, bx) + radius, Math.max(ay, by) + radius, Math.max(az, bz) + radius, index => {
+        triangle = index; bestDistance2 = radius2; bestFace = false;
+        mesh.triangleNormal(triangle, meshNormal);
+        // A minimum is attained at an axis endpoint, at a triangle edge, or at a crossing of the triangle plane.
+        consider(ax, ay, az);
+        consider(bx, by, bz);
+        const base = triangle * 3, vertex = indices[base]! * 3;
+        const alongNormal = dx * meshNormal[0]! + dy * meshNormal[1]! + dz * meshNormal[2]!;
+        if (alongNormal !== 0) {
+            const offset = (positions[vertex]! - ax) * meshNormal[0]! + (positions[vertex + 1]! - ay) * meshNormal[1]! + (positions[vertex + 2]! - az) * meshNormal[2]!;
+            const t = offset / alongNormal;
+            if (t > 0 && t < 1) consider(ax + dx * t, ay + dy * t, az + dz * t);
         }
-        sphereTriangle(mesh, triangle, ax + dx * t, ay + dy * t, az + dz * t, radius, triangle & 1023);
+        for (let edge = 0; edge < 3; edge++) {
+            const first = indices[base + edge]! * 3, second = indices[base + (edge + 1) % 3]! * 3;
+            for (let i = 0; i < 3; i++) { segC[i] = positions[first + i]!; segD[i] = positions[second + i]!; }
+            closestBetweenSegments(meshSegA, meshSegB, segC, segD, scratchC, scratchD);
+            consider(scratchC[0]!, scratchC[1]!, scratchC[2]!);
+        }
+        if (bestDistance2 < radius2) sphereTriangle(mesh, triangle, bestX, bestY, bestZ, radius, triangle & 1023);
     });
     emitMeshContacts(m, meshBody);
 }
