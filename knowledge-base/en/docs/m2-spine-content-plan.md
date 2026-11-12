@@ -2,14 +2,14 @@
 
 English | [简体中文](../../Cns/docs/m2-spine-content-plan.md)
 
-Plan and current status · 2026-11-07 · Audited main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1). Complete M2 remains open.
+Plan and current status · 2026-11-12 · Reviewed main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc). Complete M2 remains open.
 
 | Package | Implemented | Remaining |
 | --- | --- | --- |
 | M2.1 #83 | PNG/atlas/sequence build/runtime groups, multipage and font artifacts/sets; optional Spine JSON assets | Binary/variant products and selected-version rights/export/reference qualification |
 | M2.2 #84 | Independent Spine players, tracks/queues, combined skins and finite plays; sequence controls | Complete selected-version semantics and bounded seek/replay |
 | M2.3 #85 | Copied ordered shared display under egret-shared-linear/1 on WebGPU/WebGL2 | Complete attachment/clip/tint/blend/sampling references |
-| M2.4 #86 | Editable 20-Spine/200-sequence example; Spine/sequence RESET; selected desktop/Android recovery | Compatible state-preserving replacement and final lifecycle/performance qualification |
+| M2.4 #86 | Editable 20-Spine/200-sequence example, Spine and sequence RESET, compatible sequence state preservation, and selected desktop/Android recovery | Compatible Spine state preservation and final lifecycle and performance qualification |
 
 Reuse [current assets/players/display](spine-content-ingress.md), [content builds](content-build-pipeline.md), [font generations](font-resource-generations.md), [Spine RESET](spine-reset-slot.md), [sequence RESET](sequence-reset.md) and the [Android record](android-device-validation.md). These slices do not close complete Spine or M4.
 

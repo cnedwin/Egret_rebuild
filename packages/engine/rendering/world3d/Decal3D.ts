@@ -76,10 +76,6 @@ export function createDecalGeometry3D(mesh: Mesh3D, options: DecalOptions3D): Ge
         + m[8]! * (m[1]! * m[6]! - m[2]! * m[5]!);
     const facing = determinant < 0 ? -1 : 1;
     const joints = geometry.getAttribute('joints')?.data, weights = geometry.getAttribute('weights')?.data, skinned = joints !== undefined && weights !== undefined;
-    // Reflected transforms reverse winding, but the renderers keep the same visible face.
-    const determinant = m[0]! * (m[5]! * m[10]! - m[6]! * m[9]!) - m[4]! * (m[1]! * m[10]! - m[2]! * m[9]!)
-        + m[8]! * (m[1]! * m[6]! - m[2]! * m[5]!);
-    const facing = determinant < 0 ? -1 : 1;
     const read = (i: number): Vertex => {
         const x = p[i * 3]!, y = p[i * 3 + 1]!, z = p[i * 3 + 2]!;
         const out: Vertex = [m[0]! * x + m[4]! * y + m[8]! * z + m[12]!, m[1]! * x + m[5]! * y + m[9]! * z + m[13]!, m[2]! * x + m[6]! * y + m[10]! * z + m[14]!, 0, 0, 0];

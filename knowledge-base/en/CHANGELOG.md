@@ -4,6 +4,14 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Fixed desktop rendering CPU targets — 2026-11-12
+
+Windows E20 reached a 5.3 ms full-dirty Engine median-p95 and met the CPU and preparation targets in all states. Sparse and full-dirty pacing remains above target. GPU time is unmeasured. [#153](https://github.com/cnedwin/Egret_rebuild/pull/153)
+
+## World3D rendering, physics and gallery — 2026-11-12
+
+Add an optional standalone 3D scene graph and renderers, glTF, lights and shadows, post-processing, physics, a feature gallery and fixed CPU regression workloads. The [World3D contract](docs/world3d.md) records backend features and verified environments. [#147](https://github.com/cnedwin/Egret_rebuild/pull/147) · [#148](https://github.com/cnedwin/Egret_rebuild/pull/148) · [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) · [#151](https://github.com/cnedwin/Egret_rebuild/pull/151) · [#152](https://github.com/cnedwin/Egret_rebuild/pull/152)
+
 ## Isometric WebGL2 map — 2026-11-12
 
 The standalone example uses Egret’s public APIs for grid movement, collision, depth ordering and bounded frame submission. [#136](https://github.com/cnedwin/Egret_rebuild/pull/136)

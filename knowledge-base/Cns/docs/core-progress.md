@@ -2,7 +2,7 @@
 
 [English](../../en/docs/core-progress.md) | 简体中文
 
-复盘基线为 2026-11-12 的 main [5a9b860](https://github.com/cnedwin/Egret_rebuild/commit/5a9b860fa7fdc777987bad844d98016d7e824eeb)。工程预览提供可运行的公共示例。工作区包为 private 0.0.0，稳定引擎发行仍待交付。
+2026-11-12 按 main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc) 复盘。工程预览提供可运行的公共示例。工作区包为 private 0.0.0，稳定引擎发行仍待交付。
 
 本页说明当前能力，[工程计划](工程规划.md)说明接下来的工作，子系统契约给出准确 API 和证据范围。历史预览记录不再作为并行的“当前版本”。
 
@@ -12,18 +12,22 @@
 
 | 领域 | 已有实现 | 仍缺失的能力或验收 |
 | --- | --- | --- |
-| 显示与渲染 | 熟悉的显示对象、坐标、显式命中几何和不可变捕获；有序 WebGPU／WebGL2 共享路径、相邻准备／合批、纹理页、有界缓冲／目标复用、Alpha 遮罩、可分离模糊及[可选 WebGL2 图层缓存](webgl2-executor-contract.md#可缓存的-2d-图层) | 原全脏 CPU／准备目标、更广泛设备与宿主、完整功能参考；Canvas 保留较小的声明范围 |
+| 显示与渲染 | 熟悉的显示对象、坐标、显式命中几何和不可变捕获；有序 WebGPU／WebGL2 共享路径、相邻准备／合批、纹理页、有界缓冲／目标复用、Alpha 遮罩、可分离模糊及[可选 WebGL2 图层缓存](webgl2-executor-contract.md#可缓存的-2d-图层) | 固定桌面帧节奏与未测 GPU 时间、更广泛设备与宿主、完整功能参考；Canvas 保留较小的声明范围 |
 | 资源与构建 | 清单准入、共享获取／租约、Scope 清理、取消及迟到结果处理；选定 PNG／图集／序列／字体的可复现构建、缓存／工程采用及类型化运行时组 | Spine 二进制产物、选定纹理／mip／压缩变体、更广泛格式／导出器资格与完整场景验收 |
 | 动画 | 显式 Engine 时间、Tween、序列播放／控制及兼容替换时的状态保留，可选 Spine JSON 资产、独立播放器、组合皮肤、有限播放及共享显示，Spine 和序列各有 RESET 槽 | 有界 Spine 跳转／重放、完整选定版本语义／参考和 Spine 状态保留替换 |
 | UI | 托管根、测量／排列、变高稳定键列表、锚点、行焦点与定位；不可变主题／皮肤代次、共享特效及受管弹出层／模态层 | 完整控件、语义投影及完整大场景资格 |
 | 文字与字体 | 只读 CanvasKit／SkParagraph 段落、最终行双向排版、换行、对齐／行数限制、多样式、已提交命中／选区／插入点几何及受管字体集合切换、可选原生单／多行编辑及配对浏览器字体 | 真实 IME 资格、必需文字／字体／墨迹的独立参考、传输／启动及 CPU／Wasm／内存资格 |
 | 输入 | 兼容旧鼠标 API、可选多触点路由、键盘／逻辑焦点、响应式示例及已合并的移动／动作控件状态 | 其余控件／示例／键盘接线、手势仲裁、完整语义整合和必需真实手机／IME／无障碍记录 |
-| 3D | [可编辑共享场景](authored-scene3d.md)提供有界 3D 背景、共享深度的 2D 角色卡片和刚体动画。[可选 World3D](world3d.md)在 WebGL2／WebGPU 上提供 glTF 实例导入、材质、阴影、后处理、蒙皮、形变、文字，以及带网格碰撞和关节的物理。 | 更广的资产与设备验收、正式性能、统一的 2D／3D 工程创作链路 |
+| 3D | [共享创作场景](authored-scene3d.md)支持有界背景、参与深度测试的 2D 卡片和刚体动画。[可选 World3D](world3d.md)提供独立 WebGL2／WebGPU 渲染器，以及 glTF 实例、光照阴影、后处理、蒙皮、变形、文字和物理。 | 后端功能与验收范围见契约。更广资产、设备与性能资格及统一 2D／3D 创作流程仍待交付。 |
 | 工程与工具 | 版本化工程快照／事务、结构化诊断、有界旧 RES／MovieClip 分析；固定环境、评审及公开 CI | 工程到运行游戏的创作闭环、集成可视化工具、Agent／Skill／MCP 应用、发布／更新适配和完整迁移 |
 
 ## 可选 World3D — 2026-11-12
 
-[#147](https://github.com/cnedwin/Egret_rebuild/pull/147) 合入独立渲染器，[#148](https://github.com/cnedwin/Egret_rebuild/pull/148) 扩展材质、压缩纹理、后处理和场景文档，[#149](https://github.com/cnedwin/Egret_rebuild/pull/149) 补上实例导入、深度与顶点钩子，以及静态网格碰撞。[#151](https://github.com/cnedwin/Egret_rebuild/pull/151) 增加折射、光照贴图、景深、合批、文字几何体、变换操纵器，以及物理关节、凸包和连续碰撞；它新增的四组对比场景目前只在软件渲染下运行过。Windows Edge 真机通过前 16 组双后端对比。Android Chrome 真机在两个后端验证了屏幕空间效果、顶点钩子和斜切投影深度。设备范围见 [World3D 契约](world3d.md)。#55 和 #92 继续记录各自的正式性能与设备资格。
+[#147](https://github.com/cnedwin/Egret_rebuild/pull/147) 合入独立渲染器。[#148](https://github.com/cnedwin/Egret_rebuild/pull/148) 和 [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) 扩展材质、场景、纹理和碰撞。[#151](https://github.com/cnedwin/Egret_rebuild/pull/151) 新增折射、光照贴图、景深、合批、文字几何体、变换操纵器及物理能力。[#152](https://github.com/cnedwin/Egret_rebuild/pull/152) 新增功能展厅，扩展 CPU 回归负载、阴影准备和碰撞路径。
+
+[#154](https://github.com/cnedwin/Egret_rebuild/pull/154) 到 [#159](https://github.com/cnedwin/Egret_rebuild/pull/159) 新增角色控制、压缩资源解码、导航、地形与反射、蒙皮人群及场景特效。Windows Edge 通过全部 24 个 WebGL2／WebGPU 固定场景对比和软粒子深度专项检查。此前 Android Chrome 真机证据覆盖示例呈现及两个后端的指定屏幕效果、顶点钩子和斜投影。功能展厅另有 WebGL2 软件渲染记录。各后端和设备的具体覆盖范围见 [World3D 契约](world3d.md)。
+
+[#161](https://github.com/cnedwin/Egret_rebuild/pull/161) 扩展地形和水面、蒙皮人群及特效。Windows Edge 通过 25 个固定 WebGL2／WebGPU 离屏对比，包含体积雾，并通过两个后端的软粒子深度检查。流式地块与水下雾效所有权由独立无头回归验证。地形示例交互、更广设备及正式性能验收仍开放。
 
 ## 固定混合场景 — 2026-11-08
 
