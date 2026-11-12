@@ -592,7 +592,7 @@ export class TerrainStream3D extends Object3D {
         const bounds = [minX, maxX, minZ, maxZ];
         if (!bounds.every(value => Number.isSafeInteger(value) && Number.isFinite(Math.fround((value + 0.5) * size)))
             || (maxX - minX + 1) * (maxZ - minZ + 1) > TERRAIN3D_LIMITS.maxStreamTiles) {
-            throw new World3DError('WORLD3D_BUDGET', 'terrain stream tile window');
+            throw new World3DError('WORLD3D_BUDGET', 'terrain stream tile range');
         }
         const near = (tx: number, tz: number): number => Math.hypot(
             Math.max(tx * size - x, 0, x - (tx + 1) * size), Math.max(tz * size - z, 0, z - (tz + 1) * size),

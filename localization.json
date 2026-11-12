@@ -5027,7 +5027,7 @@
     },
     {
       "path": "tools/lib/world3d-boundary.mjs",
-      "sha256": "049de89b0ebc1bba78ff276b123ebdf9818b9b02d98f483cfde06543b1b84b97"
+      "sha256": "8eb4fb0a9fe84d7b8da8fedd3ce3ede9528659a30d38abcc4bb3a70c5cf50bf8"
     },
     {
       "path": "packages/engine/rendering/world3d/Curves3D.ts",
@@ -5147,7 +5147,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/Terrain3D.ts",
-      "sha256": "9b71c02f74050336a314d9e78a58a2867195636acf43e98c7d8a4358f51577c0"
+      "sha256": "c4fea5e71419a78a4b336f5152c56a261592365fb95c5364259648f2be736356"
     },
     {
       "path": "packages/engine/rendering/world3d/Water3D.ts",
