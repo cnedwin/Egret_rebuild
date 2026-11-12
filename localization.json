@@ -351,8 +351,8 @@
       "zh": "DOCUMENTATION.zh-CN.md",
       "en": "DOCUMENTATION.md",
       "kind": "public_reading",
-      "enSha256": "e21504382c81a07a0563db2f2ee4c3323a25a17fd567ea2fa5e2f0dbbfed2663",
-      "zhSha256": "e3a82eeee0916b9dfaad8f9bf5421476578d57521a391762d64336a0fb1e9594"
+      "enSha256": "85c49c674e518426ac4999173b5aa1e1aeef6039dcb38eaf7bdebdc2bec5a5ec",
+      "zhSha256": "0c247388346d1a95eb06b36656086897a228b999ed3ecf3d601edb970f828004"
     },
     {
       "zh": "examples/canvas-scene/README.zh-CN.md",
@@ -400,8 +400,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "aedc7d59ee467a48a4274d8937f2beedf888ab3eed1e40a1f92bf9cecb119d72",
-      "zhSha256": "20c9965c1a6aa52a402c8e63cfc8f5e344f1db9f194577c41370cbcb8c29f7f1"
+      "enSha256": "94aca5797680a5cf9d0d3151d6fd8c456dbcc213becf0b0f55ca993f2bc42902",
+      "zhSha256": "9f5c46c2d36df2531e4d638739b97a4a344ef081973a145dadc34e14e2bcf4d9"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "345a260e419fb4d61e2f80f5c0484117b033308675a4ca09731f349e91fd29de",
-      "zhSha256": "e360e93d3981ca9e70bbf2482c0fa55864c6f2f0b87fb994b29780907446ca54"
+      "enSha256": "e5612a87bd64a979708c744da228df2678db1733d5156f696991fec4543932ca",
+      "zhSha256": "94f05b837a48fbfaa95e0dad89cd64e233998e990b52711a2bd05dff2d03e683"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -561,8 +561,8 @@
       "zh": "knowledge-base/Cns/docs/交付计划.md",
       "en": "knowledge-base/en/docs/delivery-plan.md",
       "kind": "public_reading",
-      "enSha256": "c7a0302d1ff24763cc36c189fc23147b88a59e9cb9cfde5bce1d0085508f36ed",
-      "zhSha256": "5f43aafec59ba00f13abfe3298ab0712497ad213cc3e45f17025156202fa5be9"
+      "enSha256": "b3b61cdd5f745f378c80a8518a57b69bc156a9d4586360c310f6aa76778c2343",
+      "zhSha256": "3aadec9178df60494427a4dd7adeacac594d06c35b86a38a73b5f833e0eabffd"
     },
     {
       "zh": "knowledge-base/Cns/docs/设计理念与定位.md",
@@ -610,8 +610,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "4ffadec9bac4243554a7ff4db8326fc518eac6ccef2ddcdf8daf773ecae91edb",
-      "zhSha256": "c68e254e64b5d362d707aa5a139017f512462b4182fa07f7937d597adb1850aa"
+      "enSha256": "fed6aa837f5bd97fcbf21a30f9bb4431a23a8b257f6875a605ab889966de80b4",
+      "zhSha256": "da435488d499d9669b5ac5c5aa2a24e4af9911809791d55e9ca29b6301bf7644"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -1023,8 +1023,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "f5c4c078114297a1240a03fa9b83ed7dedb409e066f9dd069b1d08e2ce60fd93",
-      "zhSha256": "b3d2d621e30b86f2493341765eabc3a767c881d413535386126ac07909084b1a"
+      "enSha256": "af4694f3502a02389e8a6cf8a1915f514d28fae5ee0051b9e3a6c9957154e6ef",
+      "zhSha256": "8961e80662d17e33e8b14a45d0f929b33e02e36e45f8380ebfb6148896994cac"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -1058,8 +1058,8 @@
       "zh": "knowledge-base/README.zh-CN.md",
       "en": "knowledge-base/README.md",
       "kind": "public_navigation",
-      "enSha256": "1acef867ca888d639cabdfc55e2a43d7429d909db4ed3c66a2b326b1e3ac046b",
-      "zhSha256": "82270231e80751a8b63cf6ba1a150a976c4bcef3ba83e2aa31053e2ee4d08bcb"
+      "enSha256": "bd1d8a8092f2fd66834b6f3ac7cbc91577539b6b673283eee20f9edd24e2e22a",
+      "zhSha256": "6972be0914d9b5f8ccd37a9969fbbf4931c34fec99f909ffaa507498ff1c89a5"
     },
     {
       "zh": "LICENSE.zh-CN.md",
@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "39af4e3dda781287403908dc933677fc9fffa6604260afa4006a103f28880bc2",
-      "zhSha256": "25e47079b156f04247fb347ca94295ff332b2977fa5fa32f3e374df98deed062"
+      "enSha256": "81ea8c327956d0d7dc72d9166048304fe7218e4d69f8598e45b4ead92e41890c",
+      "zhSha256": "b769d595745f2632e4c45d00b735d8e4f69bcda4afdba6a20768c7a980aecbc1"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1844,8 +1844,8 @@
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "9ffed6c85af0eedff809682c7097d95bf1b4a619eede364a5d2d58744a24c5e6",
-      "zhSha256": "3333d8047f14a7769d518ec36bbfa9d4236fe89e8e1deb5e4dfad0c4afb9341a"
+      "enSha256": "61ea0b52b42be4f60ce2dee71dccc41f0d87da88d4589fd3952386c832931c81",
+      "zhSha256": "4d7f9b092f7f0f3cbc168c0afe70c6aa60a1d67ce8894336033fbe878a36a976"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -1879,8 +1879,8 @@
       "en": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
       "zh": "knowledge-base/Cns/docs/m1-rendering-resource-plan.md",
       "kind": "public_reading",
-      "enSha256": "a947fddb77d7c31d74508f393f3b27fa6870e72e0a13d293b6713d5ca3cd68df",
-      "zhSha256": "90da5b0c885318ee8a14241168281c3ce3980d3d42c39934949c238f3bd03022"
+      "enSha256": "65dc04c1370b55be52e90764466344017c03807b46722e2c70540fcf4f3270a0",
+      "zhSha256": "81270fb9b3a3fb506e0b27ae8ff63ca97259915a99c186d977c0aa47c5592b06"
     },
     {
       "en": "knowledge-base/en/docs/warm-submission-contract.md",
@@ -1956,29 +1956,29 @@
       "en": "knowledge-base/en/docs/m2-m4-delivery-plan.md",
       "zh": "knowledge-base/Cns/docs/m2-m4-delivery-plan.md",
       "kind": "public_reading",
-      "enSha256": "d59e768667b4b01e12183fbbee309433f77723f9ee9559f5ef351a7def3bce7f",
-      "zhSha256": "c5289af0d3933a65d695e4d213772b6a2ad4bf5c8eaa3131279d89c072f6b364"
+      "enSha256": "138fb660edac076b848ec6e341bc5a138191aa7f9f409b4b3373be3d75a9cfdd",
+      "zhSha256": "8cb7f2e77671536f3aa1771d46a6ec318696542efb66515e7f1b884051a0ae82"
     },
     {
       "en": "knowledge-base/en/docs/m2-spine-content-plan.md",
       "zh": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
       "kind": "public_reading",
-      "enSha256": "28bf3069657a821d27d39b2b94bd6fcf16a0a4b1ee1de2d23c994fef2cffce9f",
-      "zhSha256": "ddac5cda55e9229f0f64c4a46c70562f9f1fca7cf46173210d2e4b4a2a2ff954"
+      "enSha256": "ffea78dbe7ed74f2c4b528db0a93291c13ba95a62e9b06c2af662812e3776c13",
+      "zhSha256": "712535c70b9a4e0d6e05b941dd93584c38c5bedf7d2edcd9801924529f2c3c8e"
     },
     {
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "19e58c844d6f415b854715bb1614e51d57777c8b174d70a4184877382e41b82b",
-      "zhSha256": "3c4cad55e7d93ed17663e0e956aeb9c2b40fb1e9340ca51cc0334f1df547f616"
+      "enSha256": "def17052ce4af38627debcf36dbfa40eea9481685f17d387f0c0605bf3f6e9c4",
+      "zhSha256": "447cd9a8de24c9d893d44737df5a3ac6b49f564dd923dc5997a199b234c5b94d"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
       "zh": "knowledge-base/Cns/docs/m4-core-acceptance-plan.md",
       "kind": "public_reading",
-      "enSha256": "48ebaa9ecbbd25e64bf2837a4f93f238e5f916901375966a5be90f37e4af54d7",
-      "zhSha256": "912b98e698660de96f64034943e013410aa4078d8f75ea3d84cb5433bffd730d"
+      "enSha256": "13e891e8bdf8e97565340dca49bf345a1fabac7fde02caa0b2f207a2c5345915",
+      "zhSha256": "497b373c32692d21639a72fbbe3f1fa2afa7e75ed3c6d398b716cfda115f7a71"
     },
     {
       "en": "knowledge-base/en/docs/multi-pointer-input.md",
@@ -1998,8 +1998,8 @@
       "en": "knowledge-base/en/docs/content-build-pipeline.md",
       "zh": "knowledge-base/Cns/docs/content-build-pipeline.md",
       "kind": "public_reading",
-      "enSha256": "235bc6a64c27e36eaf25e85423e89018e8a58f344bc8d76529eab8f7b48727b3",
-      "zhSha256": "1d4373b5d6c85e46c56faa158eea4a09b4ef0190f22d52415c98b59c3930668a"
+      "enSha256": "ef6896e11f81f6fa4ecd2566a5a27dafaa2cc30d914d751fdebda112f6d8d742",
+      "zhSha256": "78d47024a7304f8eea6b966dda1ded7d0ee2b8fbf14e3e836f563bbab17f4eeb"
     },
     {
       "en": "examples/content-build/README.md",
@@ -2341,8 +2341,8 @@
       "en": "knowledge-base/en/docs/world3d.md",
       "zh": "knowledge-base/Cns/docs/world3d.md",
       "kind": "public_reading",
-      "enSha256": "5368ec413e422aa4b8bf28d721db549e21807e9a39d223079b31e7a6e56ccac5",
-      "zhSha256": "5b005c5f590f0896ebdf696f645b77164a340be6b519d42df7bc3bf29b851212"
+      "enSha256": "86c7aa52b529cc6583aac19a8e4540933de202745c101bdf2ee4e37be8b3704f",
+      "zhSha256": "14037a56c732e28a10ca01571daea8ccd407589ed8a2c6e17db93e18d6d532f5"
     },
     {
       "en": "examples/world3d/README.md",

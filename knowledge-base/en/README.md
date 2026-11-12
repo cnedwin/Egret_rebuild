@@ -2,7 +2,7 @@
 
 English | [简体中文](../Cns/README.md)
 
-This is the product and engineering entry for Egret's community rebuild. Current-source review: 2026-11-07 at main f869b37. Requirements, implemented capabilities, future plans and actual evidence have separate roles.
+Use this entry to find product and engineering documents for the community rebuild. [Current capabilities](docs/core-progress.md) records the reviewed source baseline and verification scope.
 
 ## Start with the current project
 
@@ -23,13 +23,14 @@ This is the product and engineering entry for Egret's community rebuild. Current
 | Content/animation | [M2](docs/m2-spine-content-plan.md) · [Build/runtime](docs/content-build-pipeline.md) · [Spine](docs/spine-content-ingress.md) · [Sequence RESET](docs/sequence-reset.md) |
 | UI/text/input | [M3](docs/m3-ui-text-input-plan.md) · [Managed UI](docs/ui-data-panel.md) · [Paragraphs](docs/readonly-paragraph-sdk.md) · [Fonts](docs/font-resource-generations.md) · [Effects](docs/shared-ui-effects.md) |
 | Mixed integration | [M4](docs/m4-core-acceptance-plan.md) · [Android scope](docs/android-device-validation.md) |
+| 3D | [Bounded 3D and 2D composition](docs/authored-scene3d.md) · [Standalone World3D](docs/world3d.md) |
 | Future tools/compatibility | [Project transactions](docs/project-transaction-core-contract.md) · [AI/project interfaces](docs/ai-creation-and-engineering-interfaces.md) · [Complete migration](docs/legacy-project-migration.md) |
 
 The [full documentation catalog](https://github.com/cnedwin/Egret_rebuild/blob/main/DOCUMENTATION.md) links lower-level contracts. Runtime entries, sources/licenses and exact verification remain in each subsystem record.
 
 ## Reading status and evidence
 
-The current core is an engineering preview, not complete M2/M3/M4 or the all-in-one creation product. M1.2 remains OPEN at full-dirty 10.3 ms against 8 ms. Actual Android component results do not replace complete mixed/device/IME/Spine/performance qualification. [Issues](https://github.com/cnedwin/Egret_rebuild/issues), [milestones](https://github.com/cnedwin/Egret_rebuild/milestones) and [Project2](https://github.com/users/cnedwin/projects/2) carry the same work-package boundaries.
+The current core is an engineering preview. The fixed desktop CPU and preparation targets in [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) are met. Sparse and full-dirty pacing and GPU timing remain open. [Issues](https://github.com/cnedwin/Egret_rebuild/issues), [milestones](https://github.com/cnedwin/Egret_rebuild/milestones) and the [community board](https://github.com/users/cnedwin/projects/2) track the work packages.
 
 Confirmed requirements and original evidence/decision/delivery registries retain their identities. English registry views are read-only translations of the authoritative Chinese records. A historical pending cutoff is read at its date, not promoted to a current project summary.
 

@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/m4-core-acceptance-plan.md)
 
-Plan and current implementation · 2026-11-07 · Parent: [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58)
+Plan and current implementation · 2026-11-12 · Parent [#58](https://github.com/cnedwin/Egret_rebuild/issues/58)
 
 ## 1. Outcome and scope
 
@@ -16,14 +16,14 @@ M4.3 must name its delivered scope as a complex 2D UI/animation/resource core pr
 
 ## 2. Starting point and dependencies
 
-Audited main f869b37 already supplies independent Spine/sequence examples (#118), RESET/recovery (#120/#125), styled paragraphs (#121), effects (#122), fonts (#123), themes (#124), contributed control state (#127) and bounded Android follow-ups (#129/#130). M4.1 is ready for a first public-interface integration. Full X-D60/1/X-MTouch/1, complete selected Spine, native editing/controls and formal budgets remain open.
+Reviewed main [a1d1222](https://github.com/cnedwin/Egret_rebuild/commit/a1d1222e7f71b4d9cd6d4d4dbfc7a1d221bcbacc) includes editable Outfit Studio, the fixed X-D60/1 and X-MTouch/1 profiles, dual-backend timing and scoped physical Android results. Start with [#91](https://github.com/cnedwin/Egret_rebuild/issues/91), browser opening of an exported Outfit Studio project through the existing project transaction. A canceled or rejected import must preserve the live scene and its resource leases. After selected content and input behavior is ready, use the fixed profiles for [#92](https://github.com/cnedwin/Egret_rebuild/issues/92). Clean-consumer handoff preparation in [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) can proceed in parallel. Complete selected-version Spine, remaining controls, device and performance targets still need qualification.
 
 M3.2's adopted provider is CanvasKit/SkParagraph. The earlier ICU/HarfBuzz/FreeType wording names its paragraph services, not another implementation to build. M4.1 and M3.2 must bind actual provider/font artifacts and measure cold transfer, initialization and separate residence early; M4.2 owns final measurement. Retain every published numeric ceiling. An incompatible scenario/provider change requires a reasoned versioned successor before collection, with the original profile/failures retained.
 
 | Existing evidence | Consequence for M4 |
 | --- | --- |
 | [Architecture plan](architecture-and-engineering-plan.md), milestone table and section 12 | M4 is mixed scenarios/core acceptance; wider 3D, hosts and creator tools follow separately. |
-| [M1 plan](m1-rendering-resource-plan.md), schema-6 sequence 6 | Formal timing is a valid `FAIL_TIMING_TARGET`; Engine p95 is 5.0/6.4/10.3 ms for static/sparse/full-dirty. M1.2 and D60 remain OPEN. |
+| [M1.2 formal evidence](incremental-frame-preparation-evidence.md), E20 | Fixed desktop CPU and preparation targets are met. Sparse and full-dirty weighted wall-gap p95 is 17.2 and 17.3 ms against 16.7 ms. GPU timing is unmeasured and D60 remains incomplete. |
 | [Resource recovery contract](resource-recovery-contract.md) | Shared Host generations, independent resource leases and staged replacement already have defined ownership; M4 extends their use to new content. |
 | [Scene example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/scene3d/README.md) and [resource example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md) | Existing procedural opaque 3D and editable resource interactions are integration starting points, not complete 3D or UI products. Historical example environment statements are not current installation instructions. |
 | [Project transactions](project-transaction-core-contract.md) | Stable IDs, revision checks and recoverable edits exist as a bounded project kernel. An editor, model adapter or complete project-to-runtime compiler does not follow automatically. |
@@ -83,7 +83,7 @@ The first desktop Outfit Studio uses the public M2/M3 interfaces for character s
 - All selected M2/M3 feature rows are complete, including interaction during loading/replacement and restoration of the specified state after recovery.
 - Resource-ready, fresh-generation display-ready and interactive-ready observations remain separate; old asynchronous results cannot publish into a new scene or generation.
 - After cleanup, active owners, unfinished work and in-flight counts return to the declared baseline; retained caches remain within explicit bounds. Heap/reference trends support persistent-growth conclusions.
-- The fixed M1 D60 workload meets its original formal requirements; M1.2 remains OPEN until real evidence resolves its full-dirty CPU gap and preparation coverage.
+- The fixed M1 D60 workload must meet all original formal requirements. E20 met the CPU and preparation targets. Sparse and full-dirty pacing still requires qualification.
 - The mixed X workload has reviewed content counts and applicable CPU/GPU, frame-time, memory, startup and interaction budgets before measurement. M1's original asset/bundle allowances do not automatically become allowances for a larger Spine/UI example.
 - Actual selected-browser correctness, recovery and complete-window timing satisfy the frozen matrix. CPU submission time never substitutes for GPU time, physical VRAM, energy or thermal measurements.
 - Failure results and interrupted runs remain visible; a short run or controlled port cannot replace a required sustained or physical-device row.
@@ -168,7 +168,7 @@ The M1 startup/recovery targets remain: application JavaScript ≤ 1 MiB gzip ex
 
 | Open dependency | Coordinating role | Evidence that resolves it | Work that can proceed |
 | --- | --- | --- | --- |
-| M1.2 full-dirty CPU and preparation coverage; conditional GPU timing | Rendering/performance maintainer | Valid source-bound formal CPU/preparation results meeting original targets; measure GPU when available and otherwise retain UNMEASURED within the declared claim | M2/M3 correctness, M4 scenario and package preparation |
+| M1.2 sparse/full-dirty pacing and conditional GPU timing | Rendering/performance maintainer | Meet the wall-gap targets in a formal source-bound test of the original fixed workload. Record GPU timing independently when available. | M2/M3 correctness, M4 scenario and distribution preparation |
 | Selected-version Spine content/runtime authorization | Animation maintainer and rights holder | Exact version, redistribution conditions, lawful fixtures and required notices; nonredistributable content kept out of public artifacts | Procedural scene/UI and documented import contracts |
 | Required phone/browser/host rows | Platform maintainer and device contributor | Named hardware/OS/browser or actual SDK version, frozen workload and actual result; shared CPU CI is insufficient | Independent desktop implementation and qualification |
 | Human onboarding and IME/accessibility checks | Community/UI maintainer and participating tester | Recorded actual walkthrough and declared input/accessibility matrix | Automated rehearsal and deterministic input checks |
