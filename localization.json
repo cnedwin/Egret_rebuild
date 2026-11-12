@@ -3091,7 +3091,7 @@
     },
     {
       "path": "tests/webgpu-mesh-host.test.mjs",
-      "sha256": "0ff6357ae99370ef5dfe5588060340295afbed495b14b68d4077e8111588abd1"
+      "sha256": "d8b39c1d96b4a24b844f772696ac4bc05261a6726122d21d50ca82c056df6f54"
     },
     {
       "path": "packages/project/src/spine/index.ts",
