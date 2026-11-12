@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "2cd069dc23c57dfc15f7cf8e2d75c25d530df85499fdea186a183cb754d29b12",
+      "sha256": "0f3095de5fdbaeb3233c3c6719253ec301f0790c0d8de255193e999fd9e9fa7a",
       "bytes": 403189,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -16800,12 +16800,6 @@
       "sha256": "50469a5afa503e337e01298ec8475ffcea80522c7cea9dc35ee51c1b8fbf9b43"
     },
     {
-      "path": "packages/engine/rendering/world3d/PhysicsMesh3D.ts",
-      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 15284,
-      "sha256": "b944a4fd3047a9abdd6b68b492f0a56b52df759f61a41e7a166a0b7c12299652"
-    },
-    {
       "path": "packages/engine/rendering/world3d/Serialize3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "bytes": 26294,
@@ -16894,6 +16888,12 @@
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "bytes": 5719,
       "sha256": "304685577bc9f6391d3328883935210cf024336d8a9f2249435eec4d8ba3338e"
+    },
+    {
+      "path": "packages/engine/rendering/world3d/PhysicsMesh3D.ts",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
+      "bytes": 15284,
+      "sha256": "b944a4fd3047a9abdd6b68b492f0a56b52df759f61a41e7a166a0b7c12299652"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

@@ -5046,10 +5046,6 @@
       "sha256": "50469a5afa503e337e01298ec8475ffcea80522c7cea9dc35ee51c1b8fbf9b43"
     },
     {
-      "path": "packages/engine/rendering/world3d/PhysicsMesh3D.ts",
-      "sha256": "b944a4fd3047a9abdd6b68b492f0a56b52df759f61a41e7a166a0b7c12299652"
-    },
-    {
       "path": "packages/engine/rendering/world3d/Serialize3D.ts",
       "sha256": "2092af315504b471140ddd4af189a93343338861d327fff310465afde4a6f418"
     },
@@ -5092,6 +5088,10 @@
     {
       "path": "packages/engine/web/world3d/probe3D.ts",
       "sha256": "308be2e4bcd9b0d2f24fa8aab25fba2d9e82c612ab181f98fa11760de333f144"
+    },
+    {
+      "path": "packages/engine/rendering/world3d/PhysicsMesh3D.ts",
+      "sha256": "b944a4fd3047a9abdd6b68b492f0a56b52df759f61a41e7a166a0b7c12299652"
     }
   ],
   "historicalSemanticReview": {
