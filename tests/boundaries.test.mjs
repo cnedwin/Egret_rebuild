@@ -65,11 +65,17 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       if(name==='runtime'||name==='engine')packageExports['./ui/editing']={types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'};
       if(name==='engine')packageExports['./web/editing']={types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'};
       if(name==='engine')packageExports['./scene3d/authoring']={"types":"./dist/rendering/scene3dAuthoring.d.ts","import":"./dist/rendering/scene3dAuthoring.js"};
+      // World3D entries mirror the product package: one DOM-free entry and one per backend.
+      if(name==='engine'){
+        packageExports['./world3d']={types:'./dist/rendering/world3d/index.d.ts',import:'./dist/rendering/world3d/index.js'};
+        packageExports['./webgl2/world3d']={types:'./dist/web/world3d/index.d.ts',import:'./dist/web/world3d/index.js'};
+        packageExports['./webgpu/world3d']={types:'./dist/web/world3d/webgpu.d.ts',import:'./dist/web/world3d/webgpu.js'};
+      }
       write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(packageExports === undefined ? {} : {exports:packageExports}) });
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
       write(`packages/${name}/dist/index.js`, 'export {};\n');
-      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './webgl2':'./webgl2.js', './webgl2/scene3d':'./webgl2-scene3d.js', './text':'./text.js', './paragraph':'./paragraph.js', './web/paragraph':'./web-paragraph.js', './layout':'./layout.js', './animation':'./animation.js', './web/text':'./web-text.js', './web/image':'./web-image.js', './resources':'./resources.js', './web/resources':'./web-resources.js', './ui':'./ui.js', './scene3d/authoring':'./scene3d-authoring.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
+      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './webgl2':'./webgl2.js', './webgl2/scene3d':'./webgl2-scene3d.js', './text':'./text.js', './paragraph':'./paragraph.js', './web/paragraph':'./web-paragraph.js', './layout':'./layout.js', './animation':'./animation.js', './web/text':'./web-text.js', './web/image':'./web-image.js', './resources':'./resources.js', './web/resources':'./web-resources.js', './ui':'./ui.js', './scene3d/authoring':'./scene3d-authoring.js', './world3d':'./world3d.js', './webgl2/world3d':'./webgl2-world3d.js', './webgpu/world3d':'./webgpu-world3d.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
         : name === 'runtime' ? { '.': './index.js', './text':'./text.js', './paragraph':'./paragraph.js', './ui':'./ui.js' } : name === 'project' ? {'.':'./index.js','./spine':'./spine.js','./resources':'./resources.js'} : {'.':'./index.js','./resources':'./resources.js'};
       write(`node_modules/@egret/${name}/package.json`, { name: `@egret/${name}`, type: 'module', exports });
       write(`node_modules/@egret/${name}/index.js`, 'export {};\n');
