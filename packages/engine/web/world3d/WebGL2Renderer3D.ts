@@ -241,8 +241,10 @@ export class WebGL2Renderer3D implements Renderer3D {
             const saved = {layerMask: camera.layerMask, override: scene.overrideMaterial, background: scene.background, shadows: this.shadowsEnabled, planes: scene.clippingPlanes};
             camera.layerMask = this.postProcess.outlineLayers; scene.overrideMaterial = post.maskMaterial; scene.background = [0, 0, 0]; this.shadowsEnabled = false;
             this.#inPost = true;
+            // The counters describe the scene, not this helper pass.
+            const counted = {...this.info};
             try { if (this.render(scene, camera, post.mask)) maskTexture = this.#resources.target(post.mask).color; }
-            finally { this.#inPost = false; camera.layerMask = saved.layerMask; scene.overrideMaterial = saved.override; scene.background = saved.background; this.shadowsEnabled = saved.shadows; }
+            finally { this.#inPost = false; camera.layerMask = saved.layerMask; scene.overrideMaterial = saved.override; scene.background = saved.background; this.shadowsEnabled = saved.shadows; Object.assign(this.info, counted); }
         }
         const sceneEntry = this.#resources.target(post.scene);
         this.info.drawCalls += post.run(sceneEntry.color, sceneEntry.depthTexture, maskTexture, postViewFromCamera3D(camera), width, height, output, target !== undefined,
@@ -288,6 +290,8 @@ export class WebGL2Renderer3D implements Renderer3D {
     }
     #grab: {texture: WebGLTexture; framebuffer: WebGLFramebuffer; width: number; height: number; format: number} | undefined;
     #grabbed = false;
+    /** Stands for every plain opaque material while drawing depth only. */
+    readonly #plainDepth = {} as Material3D;
     private resetState(): void {
         const gl = this.#gl;
         this.#appliedProgram = undefined; this.#appliedMaterial = undefined;
@@ -556,9 +560,12 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (program !== this.#program) { gl.useProgram(program.program); this.#program = program; }
         // Texture units are shared by all programs, so material state is reapplied
         // whenever either the program or the material differs from the previous draw.
-        if (program !== this.#appliedProgram || material !== this.#appliedMaterial) {
+        // In a shadow pass an opaque material without a vertex hook contributes nothing but its
+        // program, so casters that share the program need no per-material work.
+        const applied = depthOnly && material.alphaMode === 'opaque' && material.shader === undefined ? this.#plainDepth : material;
+        if (program !== this.#appliedProgram || applied !== this.#appliedMaterial) {
             this.applyMaterial(program, material, depthOnly);
-            this.#appliedProgram = program; this.#appliedMaterial = material;
+            this.#appliedProgram = program; this.#appliedMaterial = applied;
         }
         if (depthOnly && u['uDepthViewProjection']) gl.uniformMatrix4fv(u['uDepthViewProjection'], false, this.#lightMatrix);
         const world = mesh.matrixWorld;

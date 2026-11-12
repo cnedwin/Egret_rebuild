@@ -2341,15 +2341,15 @@
       "en": "knowledge-base/en/docs/world3d.md",
       "zh": "knowledge-base/Cns/docs/world3d.md",
       "kind": "public_reading",
-      "enSha256": "cddeb21989c7c296efb93583ebd52ec7e20896af9d64cf9212f8604c69b9e154",
-      "zhSha256": "6d11692157c75a2a4ecc029578830a900bf7e403f02f0dceb2716964bdb49d78"
+      "enSha256": "f9d7a9f46a94c48e4e921c9edefbbf39d0c1d9c55e64fddc93a0dbcbb83fc9df",
+      "zhSha256": "67338ff4dc3c0bb982010040aaa6b6cf3d2031a08a5332a94a5d0cde89a4e03f"
     },
     {
       "en": "examples/world3d/README.md",
       "zh": "examples/world3d/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "f7db06c6ca412970e4ac4438eb0f1cadd5d5c1e4eac88c628ff1abf77434a282",
-      "zhSha256": "7fe353507dacc90a360975ca375db4745ab930a09aa70e8ff92ca33f41b1f223"
+      "enSha256": "f46737de5be8ce731d3b0a8a10898988424f859f41bfd3cddc969bf1315e796b",
+      "zhSha256": "0e06f4163bef7c8f9913f9f234a22d169e8fd0368b8cd48f4895d57170da2a87"
     }
   ],
   "registries": [
@@ -4983,11 +4983,11 @@
     },
     {
       "path": "packages/engine/web/world3d/WebGL2Renderer3D.ts",
-      "sha256": "e9f55fd44f1bcbb8e29712c256bc1b971cfd93db690fcc440099d9b1f3eea4da"
+      "sha256": "a768a5c38dae2f9dc42e13edac7d5705cf28832aca47cd242da9482ea7cc1497"
     },
     {
       "path": "packages/engine/web/world3d/WebGPURenderer3D.ts",
-      "sha256": "bf32e318f6108e512f79711dbc30d107b0b7c2fdee78a6db0acd9064b4fe1db1"
+      "sha256": "a6e8124fee31cff9aef4499cb7159a6609656117c2d2fbf5ce9660d667d3d55d"
     },
     {
       "path": "packages/engine/web/world3d/World3DView.ts",
@@ -5027,7 +5027,7 @@
     },
     {
       "path": "tools/lib/world3d-boundary.mjs",
-      "sha256": "779a0f4ad59d5fa4ba6d205581b68609bc2cea046a01f87cc215ea4d1a648805"
+      "sha256": "5ed2585e223d069a5506af66cc273269ab4e00250bcb364223870f6177321035"
     },
     {
       "path": "packages/engine/rendering/world3d/Curves3D.ts",
@@ -5043,7 +5043,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/Physics3D.ts",
-      "sha256": "feea6a24fae40d6150c74a38083bcb432675faa035f4d9c6b50dea18734bd746"
+      "sha256": "7c4da46a31cd20aca8cb3f7f21ed43930f6dbce1ec88c5cd869ea1ae858ea68f"
     },
     {
       "path": "packages/engine/rendering/world3d/Serialize3D.ts",

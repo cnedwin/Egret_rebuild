@@ -245,7 +245,7 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 `tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，以及文字与变换操纵器。开发期间全部二十个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前十六个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
 
-`tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。
+`tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。负载包括静止与运动的网格、阴影、实例化、多光源、蒙皮、合批、覆盖在场景上的玻璃以及后处理链；另外还测量一次物理步进的耗时，场景为静止的箱子堆、三角网格上的球体和关节链。不测量 GPU 执行时间。
 
 ## 待完成事项
 

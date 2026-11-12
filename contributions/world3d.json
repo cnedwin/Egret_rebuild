@@ -10,6 +10,14 @@
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
     },
     {
+      "path": "examples/world3d/features.html",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/world3d/features.mjs",
+      "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
+    },
+    {
       "path": "examples/world3d/index.html",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0."
     },

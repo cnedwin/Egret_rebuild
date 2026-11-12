@@ -245,7 +245,7 @@ Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.t
 
 `tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` renders twenty fixed scenes into a render target on both backends and compares the images. The newer scenes cover cascaded shadows, post-processing, a compressed texture, screen layers, a scene restored from its saved document, stylized and custom materials, point-light shadows, screen-space occlusion with outlines and clipping, a vertex hook with its shadows, sheen, glass, light maps, a batch and a wide line, depth of field, refraction through glass, and text with transform gizmos. During development all twenty ran in headless Chromium with software rendering. The desktop review ran the first sixteen cases in Edge 157 on an NVIDIA RTX 5090 Laptop GPU without renderer override flags. The visible sample presented on both backends with antialiasing and stopped advancing frames on disposal.
 
-`tools/bench-world3d.mjs --playwright <installed-playwright-module>` measures the CPU time of `render()` for fixed workloads on both backends, as a baseline for regressions rather than an absolute score.
+`tools/bench-world3d.mjs --playwright <installed-playwright-module>` measures the CPU time of `render()` for fixed workloads on both backends, as a baseline for regressions rather than an absolute score. The workloads cover static and moving meshes, shadows, instancing, many lights, skinning, a batch, glass over a scene and the post-processing chain. It also times one physics step for resting box stacks, spheres on a triangle mesh and a jointed chain. GPU execution time is not measured.
 
 ## Open items
 
