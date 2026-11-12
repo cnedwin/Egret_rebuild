@@ -3,7 +3,7 @@
 // Image decoding and external buffer loading are injected so this module
 // stays DOM-free. Supported: meshes, PBR/unlit materials, texture transform,
 // node hierarchies, skins, morph targets, animations, cameras and punctual
-// lights. Compressed geometry or texture extensions are refused explicitly.
+// lights. Meshopt decoding is built in; Draco and Basis use caller-supplied adapters.
 import {decodeMeshopt3D} from './Meshopt3D.js';
 import {AnimationClip3D} from './Animation3D.js';
 import type {AnimationInterpolation3D, AnimationPath3D, AnimationTrackInput3D} from './Animation3D.js';
