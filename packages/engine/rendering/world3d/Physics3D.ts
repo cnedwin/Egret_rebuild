@@ -47,7 +47,7 @@ export interface RigidBodyOptions3D {
      * the body's center.
      */
     readonly continuous?: boolean;
-    /** Scene node moved with the body after each step; it must not have a transformed parent. */
+    /** Scene node placed at the body when it is added and moved with it after each step; it must not have a transformed parent. */
     readonly node?: Object3D;
     readonly userData?: unknown;
 }
@@ -954,6 +954,9 @@ export class PhysicsWorld3D {
         body.world = this;
         this.#bodies.push(body);
         (body.shape.type === 'plane' ? this.#planes : this.#sorted).push(body);
+        // Static bodies never move, so their node is placed once, here.
+        const node = body.node;
+        if (node) { node.position.set(body.position); node.quaternion.set(body.quaternion); node.markTransformDirty(); }
         return body;
     }
     /** Create a body from options and add it. */
@@ -1550,6 +1553,10 @@ export class CharacterController3D {
     readonly groundNormal = v3(0, 1, 0);
     /** Body standing under the capsule, when grounded. */
     groundBody: RigidBody3D | undefined;
+    /** True when the last move was stopped by something overhead. */
+    hitCeiling = false;
+    /** Called for every obstacle the capsule is pushed out of during a move; the normal points from the capsule into the obstacle. */
+    onContact: ((body: RigidBody3D, nx: number, ny: number, nz: number, depth: number) => void) | undefined;
     readonly #probe: RigidBody3D;
 
     constructor(world: PhysicsWorld3D, options: CharacterControllerOptions3D = {}) {
@@ -1569,7 +1576,7 @@ export class CharacterController3D {
         // Split long moves so one step never exceeds the radius and tunnels through thin walls.
         const distance = Math.hypot(dx, dy, dz), steps = Math.min(Math.max(Math.ceil(distance / (this.radius * 0.9)), 1), 32);
         const p = this.position, probe = this.#probe, walkable = Math.cos(this.slopeLimit);
-        this.isGrounded = false; this.groundBody = undefined;
+        this.isGrounded = false; this.groundBody = undefined; this.hitCeiling = false;
         for (let step = 0; step < steps; step++) {
             p[0]! += dx / steps; p[1]! += dy / steps; p[2]! += dz / steps;
             for (let iteration = 0; iteration < 4; iteration++) {
@@ -1582,6 +1589,8 @@ export class CharacterController3D {
                 if (!hit.body) break;
                 const push = hit.depth + this.skin;
                 p[0]! -= hit.nx * push; p[1]! -= hit.ny * push; p[2]! -= hit.nz * push;
+                this.onContact?.(hit.body, hit.nx, hit.ny, hit.nz, hit.depth);
+                if (hit.ny > 0.7) this.hitCeiling = true;
                 if (-hit.ny >= walkable) { this.isGrounded = true; this.groundBody = hit.body; this.groundNormal[0] = -hit.nx; this.groundNormal[1] = -hit.ny; this.groundNormal[2] = -hit.nz; }
             }
         }

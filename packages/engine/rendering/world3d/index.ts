@@ -103,6 +103,8 @@ export {TEXT3D_LIMITS, Font3D, parseTypefaceFont3D, parseTrueTypeFont3D, createT
 export type {GlyphOutline3D, FontSource3D, TextLayoutOptions3D, TextGeometryOptions3D} from './Text3D.js';
 export {TransformGizmo3D, createTransformGizmo3D} from './Gizmo3D.js';
 export type {GizmoMode3D, GizmoSpace3D, GizmoHandle3D, TransformGizmoOptions3D} from './Gizmo3D.js';
+export {CharacterMotor3D, FollowCamera3D, createCharacterMotor3D, createFollowCamera3D} from './Character3D.js';
+export type {CharacterMotorOptions3D, FollowCameraOptions3D} from './Character3D.js';
 export {MESHOPT3D_LIMITS, decodeMeshopt3D} from './Meshopt3D.js';
 export type {MeshoptMode3D, MeshoptFilter3D} from './Meshopt3D.js';
 export {COMPRESSION3D_LIMITS, inflate3D, decompressZstd3D} from './Compression3D.js';
