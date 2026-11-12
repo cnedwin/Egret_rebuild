@@ -386,6 +386,22 @@ test('C08 clip refs charges every emitted occurrence at exact and smallest-over 
   // clip references. Source audit must prove debit precedes clip flattening.
 });
 
+test('adjacent textured draws share immutable clip storage and saved frames keep the old clip', async () => withFixture(async f => {
+  const parent = f.sprite();
+  parent.clipRect = { x: 1, y: 2, width: 20, height: 21 };
+  rectangles(f.sprite(parent), 1);
+  rectangles(f.sprite(parent), 1);
+  const first = capture(f), clips = first.commands[0].clips;
+  assert.strictEqual(first.commands[1].clips, clips);
+  assert.ok(Object.isFrozen(clips));
+  parent.x = 7;
+  const second = capture(f), moved = second.commands[0].clips;
+  assert.strictEqual(second.commands[1].clips, moved);
+  assert.equal(clips[0].matrix.tx, 0);
+  assert.equal(moved[0].matrix.tx, 7);
+  assert.deepEqual(moved[0].rect, clips[0].rect);
+}));
+
 test('C09 ownership saves exact frozen image geometry crop order across later authoring and retirement', async () => {
   const f = await fixture(); let saved, a, b, g1, g2;
   const assertSaved = () => {

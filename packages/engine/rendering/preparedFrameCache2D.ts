@@ -35,6 +35,7 @@ interface SlotOwner {
     readonly cache: PreparedFrameCache2D;
     readonly address: number;
     readonly call: object;
+    readonly allowAlternate: boolean;
     readonly observation: object;
     key: Key | undefined;
     matchedIdentity: number;
@@ -48,10 +49,10 @@ interface Entry {
     // stage records are read-only, so their measured charges remain stable.
     geometryBytes: number;
     packingBytes: number;
-    // An empty call stamp never retains its context or input resources. A pending
+    // A call stamp holds only a private mode bit. A pending
     // observation stamp has no back-reference to its slot or call-local key.
     probe: boolean;
-    replacedWithoutHit: boolean;
+    replacementMisses: number;
     lastCall: object;
     observation: object | boolean;
     bytes: number;
@@ -59,6 +60,7 @@ interface Entry {
     next: Entry | undefined;
 }
 const MAX_ENTRIES = 4096, MAX_BYTES = 16_777_216;
+const MAX_RECURRING_REPLACEMENTS = 3;
 const NativeMap = Map, NativeWeakMap = WeakMap, NativeSet = Set, NativeFloat32Array = Float32Array;
 const apply = Reflect.apply, ownKeys = Reflect.ownKeys, descriptor = Object.getOwnPropertyDescriptor;
 const prototype = Object.getPrototypeOf, isArray = Array.isArray, sameNumber = Object.is;
@@ -67,9 +69,10 @@ const mapGet = Map.prototype.get, mapSet = Map.prototype.set, mapDelete = Map.pr
 const weakGet = WeakMap.prototype.get, weakSet = WeakMap.prototype.set;
 const setHas = Set.prototype.has, setAdd = Set.prototype.add;
 const TOO_LARGE = {};
+interface ContextOwner { reuseRecurringKeys?: true; }
 let slots: WeakMap<object, SlotOwner> | undefined;
-let contexts: WeakMap<object, object> | undefined;
-try { slots = new NativeWeakMap<object, SlotOwner>(); contexts = new NativeWeakMap<object, object>(); }
+let contexts: WeakMap<object, ContextOwner> | undefined;
+try { slots = new NativeWeakMap<object, SlotOwner>(); contexts = new NativeWeakMap<object, ContextOwner>(); }
 catch { /* Optional cache metadata may be unavailable. */ }
 const get = <K, V>(map: Map<K, V>, key: K): V | undefined => apply(mapGet, map, [key]) as V | undefined;
 const set = <K, V>(map: Map<K, V>, key: K, value: V): void => { apply(mapSet, map, [key, value]); };
@@ -137,12 +140,13 @@ function copyKey(key: Key, identity: number): Key {
 function keySize(key: Key): number { return sum(sum(32 + 8 * 6, 24 + key.numbers.length * 8), key.resourceBytes); }
 function addressOf(context: PreparedCacheContext2D, run: boolean, ordinal: number): number {
     if (!Number.isSafeInteger(ordinal) || ordinal < 0 || ordinal > Math.floor((Number.MAX_SAFE_INTEGER - 7) / 8)) throw TOO_LARGE;
-    // The ordinal selects one candidate, never a resource or value identity.
+    // The ordinal selects one address, never a resource or value identity.
     return 8 * ordinal + 2 * context.profile + (run ? 1 : 0);
 }
 interface NumericScan {
     readonly mode: 'build' | 'compare' | 'probe';
-    readonly reference: number[] | undefined;
+    reference: number[] | undefined;
+    alternate: number[] | undefined;
     numbers: number[] | undefined;
     length: number;
     stable: boolean;
@@ -160,7 +164,13 @@ function appendNumber(scan: NumericScan, value: number): void {
         let numbers = scan.numbers;
         if (numbers === undefined) {
             const reference = scan.reference!;
+            const alternate = scan.alternate;
+            if (alternate !== undefined && (index >= alternate.length || !sameNumber(alternate[index], value))) scan.alternate = undefined;
             if (index < reference.length && sameNumber(reference[index], value)) { scan.length++; return; }
+            if (scan.alternate !== undefined) {
+                scan.reference = scan.alternate; scan.alternate = undefined;
+                scan.length++; return;
+            }
             numbers = [];
             for (let prior = 0; prior < index; prior++) numbers[prior] = reference[prior]!;
             scan.numbers = numbers; scan.stable = false;
@@ -179,8 +189,8 @@ function scanRectangle(scan: NumericScan, value: RectangleCommand2D['rect']): vo
 /** One ordered walk builds scratch keys, compares ready keys or updates probes.
  * Ready numeric arrays are immutable; only probe-owned storage is overwritten. */
 function scanNumbers(context: PreparedCacheContext2D, commands: readonly TexturedRenderCommand2D[], width: number, height: number,
-    run: boolean, mode: NumericScan['mode'], reference?: number[]): NumericScan {
-    const scan: NumericScan = { mode, reference, numbers: mode === 'build' ? [] : undefined, length: 0, stable: true };
+    run: boolean, mode: NumericScan['mode'], reference?: number[], alternate?: number[]): NumericScan {
+    const scan: NumericScan = { mode, reference, alternate, numbers: mode === 'build' ? [] : undefined, length: 0, stable: true };
     const settings = context.settings;
     appendNumber(scan, context.profile); appendNumber(scan, width); appendNumber(scan, height); appendNumber(scan, settings.pixelRatio);
     appendNumber(scan, settings.maxPreparedVertices); appendNumber(scan, settings.maxClipEdgeTests);
@@ -195,18 +205,20 @@ function scanNumbers(context: PreparedCacheContext2D, commands: readonly Texture
         for (const clip of command.clips) { scanMatrix(scan, clip.matrix); scanRectangle(scan, clip.rect); }
     }
     if (mode === 'compare' && scan.numbers === undefined) {
-        if (scan.length === reference!.length) scan.numbers = reference;
+        const matchedPrefix = scan.reference!;
+        if (scan.length === matchedPrefix.length) scan.numbers = matchedPrefix;
+        else if (scan.alternate?.length === scan.length) scan.numbers = scan.alternate;
         else {
             const numbers: number[] = [];
-            for (let index = 0; index < scan.length; index++) numbers[index] = reference![index]!;
+            for (let index = 0; index < scan.length; index++) numbers[index] = matchedPrefix[index]!;
             scan.numbers = numbers; scan.stable = false;
         }
     }
     return scan;
 }
 function buildKey(context: PreparedCacheContext2D, commands: readonly TexturedRenderCommand2D[], width: number, height: number,
-    image: ImageData2D | undefined, geometry: TexturedGeometry2D | undefined, run: boolean, address: number, reference?: Key): Key {
-    const values = scanNumbers(context, commands, width, height, run, reference ? 'compare' : 'build', reference?.numbers).numbers!;
+    image: ImageData2D | undefined, geometry: TexturedGeometry2D | undefined, run: boolean, address: number, reference?: Key, alternate?: Key): Key {
+    const values = scanNumbers(context, commands, width, height, run, reference ? 'compare' : 'build', reference?.numbers, alternate?.numbers).numbers!;
     let resourceBytes = image === undefined ? 0 : sum(32 + 8 * 8, image.byteLength);
     if (geometry !== undefined) {
         resourceBytes = sum(resourceBytes, sum(32 + 8 * 8, geometry.logicalByteLength));
@@ -223,6 +235,7 @@ function buildKey(context: PreparedCacheContext2D, commands: readonly TexturedRe
 /** One Host owns the combined geometry/packing allowance and its terminal clear. */
 export class PreparedFrameCache2D {
     private candidates: Map<number, Entry> | undefined;
+    private alternateCandidates: Map<number, Entry> | undefined;
     private oldest: Entry | undefined;
     private newest: Entry | undefined;
     private entries = 0;
@@ -241,14 +254,24 @@ export class PreparedFrameCache2D {
             apply(weakSet, contexts, [context, {}]); return context;
         } catch { this.clear(); return undefined; }
     }
+    public enableRecurringTexturedKeys(context: PreparedCacheContext2D): void {
+        if (!this.candidates || !contexts || context.cache !== this || context.profile !== 1) return;
+        const call = apply(weakGet, contexts, [context]) as ContextOwner | undefined;
+        if (!call) return;
+        try {
+            this.alternateCandidates ??= new NativeMap<number, Entry>();
+            call.reuseRecurringKeys = true;
+        } catch { /* Single-key operation remains available. */ }
+    }
     public slot(context: PreparedCacheContext2D, commands: readonly TexturedRenderCommand2D[], width: number, height: number,
         image?: ImageData2D, geometry?: TexturedGeometry2D, run = false, ordinal = 0): PreparedCacheSlot2D | undefined {
         if (!this.candidates || context.cache !== this || !slots || !contexts) return undefined;
         try {
-            const call = apply(weakGet, contexts, [context]) as object | undefined;
+            const call = apply(weakGet, contexts, [context]) as ContextOwner | undefined;
             if (call === undefined) return undefined;
             const address = addressOf(context, run, ordinal);
-            const selected: SlotOwner = { cache: this, address, call, observation: {}, key: undefined, matchedIdentity: 0, mode: 'full' };
+            const allowAlternate = call.reuseRecurringKeys === true;
+            const selected: SlotOwner = { cache: this, address, call, allowAlternate, observation: {}, key: undefined, matchedIdentity: 0, mode: 'full' };
             const prior = get(this.candidates, address);
             if (prior?.probe && prior.key) {
                 const wasObserved = prior.observation === true, previousCall = prior.lastCall;
@@ -268,17 +291,32 @@ export class PreparedFrameCache2D {
                 // Complete keys remain independent of caller records. A match
                 // may borrow immutable ready numbers; publication owns its key.
                 // Rearm deliberately keeps its original second caller-data walk.
-                const comparison = selected.mode === 'full' && !prior?.probe ? prior?.key : undefined;
-                selected.key = buildKey(context, commands, width, height, image, geometry, run, address, comparison);
+                const ready = selected.mode === 'full' && prior && !prior.probe;
+                let comparison = ready ? prior.key : undefined;
+                let alternate = ready && allowAlternate ? this.alternate(address)?.key : undefined;
+                // Prefer the matching resource when numeric sequences can coincide.
+                if (alternate && alternate.image === image && alternate.geometry === geometry
+                    && (comparison?.image !== image || comparison?.geometry !== geometry)) {
+                    const formerReference = comparison;
+                    comparison = alternate;
+                    alternate = formerReference;
+                }
+                selected.key = buildKey(context, commands, width, height, image, geometry, run, address, comparison, alternate);
                 if (keySize(selected.key) > MAX_BYTES - 256) return undefined;
                 const current = this.candidates ? get(this.candidates, address) : undefined;
-                if (comparison && comparison.identity !== 0 && selected.key.numbers === comparison.numbers
-                    && selected.key.image === comparison.image && selected.key.geometry === comparison.geometry
-                    && current?.key === comparison && !current.probe) selected.matchedIdentity = comparison.identity;
+                const borrowed = selected.key.numbers === comparison?.numbers ? comparison
+                    : selected.key.numbers === alternate?.numbers ? alternate : undefined;
+                if (borrowed && selected.key.image === borrowed.image && selected.key.geometry === borrowed.geometry
+                    && ((current?.key === borrowed && !current.probe) || (allowAlternate && this.alternate(address)?.key === borrowed))) {
+                    selected.matchedIdentity = borrowed.identity;
+                }
             }
             const slot: PreparedCacheSlot2D = { kind: 'prepared-cache-slot' };
             apply(weakSet, slots, [slot, selected]); return slot;
         } catch { return undefined; }
+    }
+    private alternate(address: number): Entry | undefined {
+        return this.alternateCandidates && get(this.alternateCandidates, address);
     }
     private find(selected: SlotOwner): Entry | undefined {
         if (!this.candidates || !selected.key || selected.mode === 'probe' || selected.mode === 'disabled') return undefined;
@@ -288,9 +326,13 @@ export class PreparedFrameCache2D {
         // Only repeat comparisons of the same successful owned key may be skipped.
         // A numeric identity keeps no retired key, resource or stage alive in a slot.
         if (key.identity !== 0 && key.identity === selected.matchedIdentity) return entry;
-        if (!equal(key, selected.key)) { selected.matchedIdentity = 0; return undefined; }
-        selected.matchedIdentity = key.identity;
-        return entry;
+        const alternate = selected.allowAlternate ? this.alternate(selected.address) : undefined;
+        const alternateKey = alternate?.key;
+        if (alternateKey && alternateKey.identity !== 0 && alternateKey.identity === selected.matchedIdentity) return alternate;
+        const matched = equal(key, selected.key) ? entry
+            : alternateKey && equal(alternateKey, selected.key) ? alternate : undefined;
+        selected.matchedIdentity = matched?.key?.identity ?? 0;
+        return matched;
     }
     private unlink(entry: Entry): void {
         if (entry.previous) entry.previous.next = entry.next; else this.oldest = entry.next;
@@ -305,7 +347,17 @@ export class PreparedFrameCache2D {
     private remove(entry: Entry): void {
         const key = entry.key;
         if (!key || !this.candidates) return;
-        apply(mapDelete, this.candidates, [key.address]);
+        const address = key.address;
+        if (get(this.candidates, address) === entry) {
+            const alternate = this.alternate(address);
+            if (alternate) {
+                set(this.candidates, address, alternate);
+                apply(mapDelete, this.alternateCandidates!, [address]);
+            } else apply(mapDelete, this.candidates, [address]);
+        } else {
+            if (this.alternate(address) !== entry) return;
+            apply(mapDelete, this.alternateCandidates!, [address]);
+        }
         this.unlink(entry); this.entries--; this.bytes -= entry.bytes;
         entry.key = undefined; entry.geometry = undefined; entry.packing = undefined;
     }
@@ -319,7 +371,17 @@ export class PreparedFrameCache2D {
             if (entry) {
                 // Only accepted replay, after required-copy success, resets the
                 // replacement history. A probe has no stage to accept.
-                entry.replacedWithoutHit = false;
+                entry.replacementMisses = 0;
+                const address = selected.address, alternate = this.alternate(address);
+                if (alternate) {
+                    const primary = get(this.candidates!, address)!;
+                    primary.replacementMisses = 0; alternate.replacementMisses = 0;
+                    // With two entries, the primary index always names the older one.
+                    if (entry === primary) {
+                        set(this.candidates!, address, alternate);
+                        set(this.alternateCandidates!, address, primary);
+                    }
+                }
                 if (entry !== this.newest) { this.unlink(entry); this.append(entry); }
             }
         } catch { this.clear(); }
@@ -341,7 +403,7 @@ export class PreparedFrameCache2D {
         entry.key = { address: retained.address, identity: retained.identity, numbers,
             image: undefined, geometry: undefined, resourceBytes: 0 };
         entry.geometryBytes = 0; entry.packingBytes = 0;
-        entry.probe = true; entry.replacedWithoutHit = true; entry.lastCall = selected.call; entry.observation = true;
+        entry.probe = true; entry.replacementMisses = 1; entry.lastCall = selected.call; entry.observation = true;
         entry.bytes = bytes;
         set(this.candidates!, retained.address, entry); this.append(entry); this.entries++; this.bytes += bytes; this.reserved = 0;
     }
@@ -361,15 +423,24 @@ export class PreparedFrameCache2D {
             // A slot created before another slot converted the address cannot
             // rearm it. Only the current stable observation grants a cold rebuild.
             if (prior?.probe && (selected.mode !== 'rearm' || prior.observation !== selected.observation)) return;
-            const matched = prior?.key && !prior.probe && equal(prior.key, key) ? prior : undefined;
+            const matched = this.find(selected);
             const previousCall = prior?.lastCall;
-            if (prior && !prior.probe && !matched && prior.replacedWithoutHit && previousCall !== selected.call) {
+            const canAlternate = selected.allowAlternate;
+            const alternate = this.alternate(selected.address);
+            const replacement = prior && !prior.probe && !matched && previousCall !== selected.call;
+            const slidingReplacement = replacement && alternate !== undefined && alternate.lastCall !== selected.call;
+            let replacementMisses = prior?.replacementMisses ?? 0;
+            const overChurnLimit = canAlternate ? slidingReplacement && replacementMisses >= MAX_RECURRING_REPLACEMENTS : replacementMisses !== 0;
+            if (replacement && overChurnLimit) {
                 // The original computation succeeded; skip optional size/copy
                 // now, before doing either stage's generic payload traversal.
+                if (alternate) this.remove(alternate);
                 this.convertToProbe(prior, selected); return;
             }
-            const replacedWithoutHit = prior?.probe ? true : matched ? matched.replacedWithoutHit
-                : prior ? previousCall === selected.call ? prior.replacedWithoutHit : true : false;
+            if (canAlternate) {
+                if (prior?.probe) replacementMisses = 0;
+                else if (slidingReplacement) replacementMisses++;
+            } else if (prior?.probe || replacement) replacementMisses = 1;
             // Capture transferred ownership and its charge before remove clears
             // the old entry. An exact match reuses its immutable owned key.
             const retainedKey = matched?.key;
@@ -380,7 +451,9 @@ export class PreparedFrameCache2D {
             // shared across stages must therefore pay for both retained copies.
             const stageBytes = size(source, new NativeSet<object>());
             const bytes = sum(sum(sum(256, keySize(key)), stageBytes), otherBytes);
-            if (prior) this.remove(prior);
+            if (!canAlternate && alternate) this.remove(alternate);
+            const replaced = matched ?? (!canAlternate || prior?.probe || alternate ? prior : undefined);
+            if (replaced) this.remove(replaced);
             while (this.oldest && (this.entries >= MAX_ENTRIES || bytes > MAX_BYTES - this.bytes)) this.remove(this.oldest);
             if (this.entries >= MAX_ENTRIES || bytes > MAX_BYTES - this.bytes) return;
             // Reserve before allocating cache-owned copies. The original required
@@ -391,21 +464,28 @@ export class PreparedFrameCache2D {
             const ownedKey = retainedKey ?? copyKey(key, this.nextKeyIdentity < Number.MAX_SAFE_INTEGER ? this.nextKeyIdentity++ : 0);
             const owned = copy(source, new NativeMap<object, unknown>());
             // The original 256-byte fixed bookkeeping allowance also covers the
-            // extra fields and two empty stamps: 128 + 32 + 32 + 48 = 240 bytes.
-            // The remaining 16 bytes also cover the cache-wide identity counter.
+            // extra fields and two stamps: 128 + 40 + 32 + 48 = 248 bytes.
+            // The remaining 8 bytes also cover the cache-wide identity counter.
             // Variable numeric storage, resource ownership and stages pay extra.
             const entry: Entry = { key: ownedKey, geometry: stage === 'geometry' ? owned : other,
                 packing: stage === 'packing' ? owned : other,
                 geometryBytes: stage === 'geometry' ? stageBytes : otherBytes,
                 packingBytes: stage === 'packing' ? stageBytes : otherBytes,
-                probe: false, replacedWithoutHit, lastCall: selected.call, observation: false,
+                probe: false, replacementMisses, lastCall: selected.call, observation: false,
                 bytes, previous: undefined, next: undefined };
-            set(this.candidates, key.address, entry); this.append(entry); this.entries++; this.bytes += bytes; this.reserved = 0;
+            // Each ready variant pays its own entry, key, resources and stages.
+            const survivor = canAlternate ? get(this.candidates, key.address) : undefined;
+            if (survivor) survivor.replacementMisses = replacementMisses;
+            const index = survivor ? this.alternateCandidates! : this.candidates;
+            set(index, key.address, entry); this.append(entry); this.entries++; this.bytes += bytes; this.reserved = 0;
             this.peakEntries = Math.max(this.peakEntries, this.entries);
         } catch (cause) { this.reserved = 0; if (cause !== TOO_LARGE) this.clear(); }
     }
     /** Terminal invalidation cannot be undone by an already-created call-local slot. */
-    public clear(): void { this.candidates = undefined; this.oldest = undefined; this.newest = undefined; this.entries = 0; this.bytes = 0; this.reserved = 0; }
+    public clear(): void {
+        this.candidates = undefined; this.alternateCandidates = undefined;
+        this.oldest = undefined; this.newest = undefined; this.entries = 0; this.bytes = 0; this.reserved = 0;
+    }
     /** Private UNIT/diagnostic logical accounting; no keys, resources or GPU authority. */
     public snapshot(): { readonly entries: number; readonly bytes: number; readonly reservedBytes: number; readonly peakEntries: number; readonly peakBytes: number; readonly enabled: boolean } {
         return { entries: this.entries, bytes: this.bytes, reservedBytes: this.reserved, peakEntries: this.peakEntries, peakBytes: this.peakBytes, enabled: this.candidates !== undefined };

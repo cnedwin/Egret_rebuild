@@ -543,7 +543,8 @@ async function main(args, formal) {
     && manifest.workingTree.status.length > 0 && (formal ? /^m1-2-build-[1-9][0-9]*$/.test(manifest.buildReceipt?.name) : manifest.buildReceipt?.name === 'm1-2-build-1') && manifest.buildReceipt.exitCode === 0
     && !['finalMain', 'finalMainTree', 'reviewedCandidate', 'reviewedFiles'].some(key => Object.hasOwn(manifest, key));
   const builtRole = manifest.status === 'FROZEN_BUILT_SDK_SNAPSHOT' && manifest.role === 'built-sdk';
-  if (builtRole) verifyBuiltSnapshot(repository, manifest);
+  const sourceProfile = formal ? recipeSourceProfile(formal.loaded.recipe, formal.trial.role) : 'historical';
+  if (builtRole) verifyBuiltSnapshot(repository, manifest, sourceProfile);
   requireValue((baselineRole || candidateRole || builtRole) && manifest.schemaVersion === 1
     && samePhysicalPath(manifest.owner, repository) && Array.isArray(manifest.files) && manifest.files.length > 0
     && manifest.checks?.copyRawBytesVerified === true && manifest.checks.cloneLinkTargetsVerified === true, 'FROZEN_SDK_MANIFEST');
@@ -585,7 +586,7 @@ async function main(args, formal) {
     const value = retain(repository, relative);
     requireValue(value.pin.bytes === item.bytes && value.pin.sha256 === item.sha256, 'GRAPH_CAPTURE_STABILITY');
   };
-  const graph = await collectPublicGraph(repository, retainSdk, formal?.loaded.recipe.fixed.sourceProfile ?? 'historical'), importMap = chosenMap('baseline');
+  const graph = await collectRecipeGraph(repository, retainSdk, sourceProfile), importMap = chosenMap('baseline');
   const registry = await captureRegistry({ repository, graph, map: importMap });
   const dependencyRelative = 'packages/engine/node_modules/robust-predicates/package.json';
   const dependencyFile = retain(repository, dependencyRelative), dependency = JSON.parse(dependencyFile.body);
@@ -928,7 +929,7 @@ async function main(args, formal) {
         for (const name of ['contracts','runtime','engine']) requireValue(samePhysicalPath(fs.realpathSync(path.join(repository, 'node_modules/@egret', name)),
           path.join(repository, 'packages', name)), 'SDK_ALIAS_CHANGED');
       }
-      if (builtRole) verifyBuiltSnapshot(repository, manifest);
+      if (builtRole) verifyBuiltSnapshot(repository, manifest, sourceProfile);
       report.lifecycle.inputsStable = true;
     });
     await cleanup('registry', async () => { report.registryAfter = await rereadRegistry(registry); requireValue(report.registryAfter.accepted, 'REGISTRY_CHANGED'); });
@@ -1094,6 +1095,26 @@ const FIXED_RECIPE = Object.freeze({
   geometry: {positions:[0,0,128,0,128,24,0,24],uvs:[0,0,1,0,1,1,0,1],lightColors:Array(16).fill(1),indices:[0,1,2,0,2,3]},
   checkpointOrdinals: {static:[0],sparse:[0,1,99,990],full:[0,1]}
 });
+const CURRENT_RECIPE_SOURCE = 'm12-current';
+const CURRENT_CANDIDATE_PROFILE = 'm3-font-resources-textured';
+const CURRENT_CANDIDATE_MODULES = 143;
+const HISTORICAL_RECIPE_SCHEMA = 'egret.incremental-native-recipe/6';
+const CURRENT_RECIPE_SCHEMA = 'egret.incremental-native-recipe/7';
+const CURRENT_RECIPE = Object.freeze({ ...FIXED_RECIPE, sourceProfile: CURRENT_RECIPE_SOURCE });
+
+export function recipeSourceProfile(recipe, role) {
+  return recipe.fixed.sourceProfile === CURRENT_RECIPE_SOURCE && role === 'candidate'
+    ? CURRENT_CANDIDATE_PROFILE : FIXED_RECIPE.sourceProfile;
+}
+
+async function collectRecipeGraph(repository, retain, sourceProfile) {
+  const graph = await collectPublicGraph(repository, retain, sourceProfile);
+  if (sourceProfile === CURRENT_CANDIDATE_PROFILE) {
+    requireValue(graph.modules.size === CURRENT_CANDIDATE_MODULES, 'CURRENT_SDK_GRAPH_MODULE_COUNT');
+  }
+  return graph;
+}
+
 function sameJson(a,b) { return JSON.stringify(a) === JSON.stringify(b); }
 function fields(value, expected, reason) {
   requireValue(value && typeof value === 'object' && !Array.isArray(value)
@@ -1103,7 +1124,8 @@ function validPin(pin) { fields(pin,['path','bytes','sha256'],'RECIPE_PIN');
   requireValue(typeof pin.path==='string' && Number.isSafeInteger(pin.bytes) && pin.bytes>0 && /^[a-f0-9]{64}$/.test(pin.sha256),'RECIPE_PIN'); }
 export function validateRecipe(recipe) {
   fields(recipe,['schema','baseline','candidate','fixed','schedules','tools','profileSpec','browser'],'RECIPE_FIELDS');
-  requireValue(recipe.schema==='egret.incremental-native-recipe/6' && sameJson(recipe.fixed,FIXED_RECIPE),'RECIPE_FIXED');
+  requireValue((recipe.schema === HISTORICAL_RECIPE_SCHEMA && sameJson(recipe.fixed, FIXED_RECIPE))
+    || (recipe.schema === CURRENT_RECIPE_SCHEMA && sameJson(recipe.fixed, CURRENT_RECIPE)), 'RECIPE_FIXED');
   validateRecipeBrowser(recipe.browser);
   requireValue(sameJson(recipe.schedules,Object.fromEntries(MODES.map(mode=>[mode,buildTrialSchedule(mode)]))),'RECIPE_SCHEDULES');
   for(const role of ['baseline','candidate']) {
@@ -1132,9 +1154,11 @@ export function verifyRecipeBrowser(browser) {
   if (browser.executable) requireValue(sameJson(captureRecipeBrowser(browser.executable.path),browser),'RECIPE_BROWSER_CHANGED');
   return browser;
 }
-export function createFixedRecipe(baseline, candidate, executable) {
-  const recipe = { schema: 'egret.incremental-native-recipe/6', baseline, candidate, browser: captureRecipeBrowser(executable),
-    fixed: structuredClone(FIXED_RECIPE), schedules: Object.fromEntries(MODES.map(mode => [mode, buildTrialSchedule(mode)])),
+export function createFixedRecipe(baseline, candidate, executable, sourceProfile = FIXED_RECIPE.sourceProfile) {
+  requireValue(sourceProfile === FIXED_RECIPE.sourceProfile || sourceProfile === CURRENT_RECIPE_SOURCE, 'RECIPE_SOURCE_PROFILE');
+  const current = sourceProfile === CURRENT_RECIPE_SOURCE;
+  const recipe = { schema: current ? CURRENT_RECIPE_SCHEMA : HISTORICAL_RECIPE_SCHEMA, baseline, candidate, browser: captureRecipeBrowser(executable),
+    fixed: structuredClone(current ? CURRENT_RECIPE : FIXED_RECIPE), schedules: Object.fromEntries(MODES.map(mode => [mode, buildTrialSchedule(mode)])),
     tools: TOOL_MEMBERS.map(file => fingerprintFile(CHECKOUT, file)), profileSpec: fingerprintFile(CHECKOUT, PROFILE_SPEC) };
   return validateRecipe(recipe);
 }
@@ -1401,10 +1425,15 @@ const BUILD_LINE = /^Project format check PASS \(21 definitions\)\.[\r\n]*$/;
 const PREPARE_KEYS = ['--baseline', '--candidate', '--baseline-build-log', '--baseline-build-exit',
   '--candidate-build-log', '--candidate-build-exit', '--output'];
 export function prepareOptions(argv) {
-  requireValue((argv.length === 15 || argv.length === 17) && argv[0] === '--prepare', 'PREPARE_CLI'); const result = {};
+  requireValue([15, 17, 19].includes(argv.length) && argv[0] === '--prepare', 'PREPARE_CLI'); const result = {};
   for (let i = 1; i < argv.length; i += 2) {
-    requireValue([...PREPARE_KEYS,'--executable'].includes(argv[i]) && !Object.hasOwn(result, argv[i]) && typeof argv[i + 1] === 'string', 'PREPARE_CLI');
-    requireValue(path.isAbsolute(argv[i + 1]), 'PREPARE_ABSOLUTE');if(argv[i]==='--executable')physicalPathKey(argv[i+1]); result[argv[i]] = argv[i + 1];
+    const key = argv[i], value = argv[i + 1];
+    requireValue([...PREPARE_KEYS, '--executable', '--source-profile'].includes(key)
+      && !Object.hasOwn(result, key) && typeof value === 'string', 'PREPARE_CLI');
+    if (key === '--source-profile') requireValue(value === CURRENT_RECIPE_SOURCE, 'PREPARE_SOURCE_PROFILE');
+    else requireValue(path.isAbsolute(value), 'PREPARE_ABSOLUTE');
+    if (key === '--executable') physicalPathKey(value);
+    result[key] = value;
   }
   requireValue(PREPARE_KEYS.every(key=>Object.hasOwn(result,key)),'PREPARE_CLI');
   return result;
@@ -1495,7 +1524,14 @@ function verifySnapshotMembership(repository, files, generated, links, hasManife
   for (const row of files) readPinned(repository, { path: row.target, bytes: row.bytes, sha256: row.sha256 });
   for (const row of generated) readPinned(repository, row);
 }
-export function publicEntriesFor(repository) {
+// Snapshot these current Engine manifest entries without expanding the timing page's fixed import graph.
+const CURRENT_PRIVATE_ALIASES = new Map([
+  ['#egret-pointer-input', './dist/pointerInput'],
+  ['#egret-keyboard-input', './dist/keyboardInput'],
+  ['#egret-text-editor', './dist/ui/textEditor'],
+]);
+
+export function publicEntriesFor(repository, sourceProfile) {
   const imports = {}, publicEntries = [];
   const target = (name, value) => {
     requireValue(typeof value === 'string' && value.startsWith('./'), 'PACKAGE_EXPORT_TARGET');
@@ -1511,7 +1547,13 @@ export function publicEntriesFor(repository) {
       imports[specifier] = '/' + javascript; publicEntries.push({ specifier, javascript, declaration });
     }
     for (const [specifier, value] of Object.entries(manifest.imports ?? {})) {
-      requireValue(['#egret-textured-frame-state', '#egret-mouse-input', '#egret-manifest-resources'].includes(specifier) && !Object.hasOwn(imports, specifier), 'PACKAGE_PRIVATE_ALIAS');
+      const currentTarget = sourceProfile === CURRENT_CANDIDATE_PROFILE ? CURRENT_PRIVATE_ALIASES.get(specifier) : undefined;
+      requireValue((currentTarget || ['#egret-textured-frame-state', '#egret-mouse-input', '#egret-manifest-resources'].includes(specifier))
+        && !Object.hasOwn(imports, specifier), 'PACKAGE_PRIVATE_ALIAS');
+      if (currentTarget) {
+        requireValue(name === 'engine' && value.import === currentTarget + '.js'
+          && value.types === currentTarget + '.d.ts', 'PACKAGE_PRIVATE_ALIAS_TARGET');
+      }
       if(specifier==='#egret-manifest-resources')requireValue(name==='engine'&&value.import==='./dist/manifestResourceState.js'&&value.types==='./dist/manifestResourceState.d.ts','PACKAGE_PRIVATE_ALIAS_TARGET');
       imports[specifier] = '/' + target(name, value.import); target(name, value.types);
     }
@@ -1519,7 +1561,7 @@ export function publicEntriesFor(repository) {
   imports['robust-predicates'] = '/packages/engine/node_modules/robust-predicates/index.js';
   return { imports, publicEntries };
 }
-function verifyBuiltSnapshot(repository, manifest) {
+function verifyBuiltSnapshot(repository, manifest, sourceProfile) {
   fields(manifest, ['schemaVersion','role','status','createdAtUtc','owner','inputRoot','preparationRuntime','buildReceipt',
     'dependency','counts','files','generated','links','publicEntries','graph','checks','limits'], 'BUILT_MANIFEST_FIELDS');
   requireValue(manifest.role === 'built-sdk' && manifest.status === 'FROZEN_BUILT_SDK_SNAPSHOT' && manifest.schemaVersion === 1
@@ -1542,13 +1584,14 @@ function verifyBuiltSnapshot(repository, manifest) {
   requireValue(sameJson(receipt, manifest.buildReceipt) && receipt.kind === 'provided-successful-build-record' && receipt.exitCode === 0
     && sameJson(receipt.expectedCommand, ['node','tools/build.mjs']) && receipt.commandObserved === false
     && receipt.independentCompilation === false && sameJson(receipt.files, evidence.map(copiedIdentity)), 'BUILT_BUILD_RECEIPT');
-  const entries = publicEntriesFor(repository);
+  const entries = publicEntriesFor(repository, sourceProfile);
   requireValue(sameJson(entries.publicEntries, manifest.publicEntries)
     && sameJson(JSON.parse(strictText(readPinned(repository, manifest.generated.find(row => row.path === 'browser-import-map.json')), 'MAP_UTF8')), { imports: entries.imports }), 'BUILT_PUBLIC_ENTRIES');
   return collected;
 }
 async function prepareSnapshots(args) {
   const roots = {};
+  const selection = { fixed: args['--source-profile'] === CURRENT_RECIPE_SOURCE ? CURRENT_RECIPE : FIXED_RECIPE };
   for (const role of ['baseline','candidate']) {
     const requested = args['--' + role]; await directoryChain(requested); roots[role] = fs.realpathSync(requested);
     requireValue(samePhysicalPath(requested, roots[role]), 'PREPARE_ROOT_ALIAS');
@@ -1590,6 +1633,7 @@ async function prepareSnapshots(args) {
       readPinned(path.dirname(NODE), runtimePin); for (const row of tools) readPinned(CHECKOUT, row);
     };
     for (const role of ['baseline','candidate']) {
+      const sourceProfile = recipeSourceProfile(selection, role);
       const owner = path.join(output, role); fs.mkdirSync(owner);
       const rows = [...captured[role].members, ...records[role]].sort((a,b) => a.target < b.target ? -1 : a.target > b.target ? 1 : 0);
       requireValue(rows.length <= 2048 && rows.reduce((sum,row) => sum + row.bytes, 0) <= 134217728, 'PREPARE_COPY_CAP');
@@ -1605,17 +1649,17 @@ async function prepareSnapshots(args) {
         fs.symlinkSync(path.join(owner, target), path.join(owner, relative), 'junction');
         return { path: relative, target, resolvedTarget: fs.realpathSync(path.join(owner, relative)), cloneOwned: true };
       });
-      const entries = publicEntriesFor(owner); save(owner, 'browser-import-map.json', { imports: entries.imports });
+      const entries = publicEntriesFor(owner, sourceProfile); save(owner, 'browser-import-map.json', { imports: entries.imports });
       const buildReceipt = { kind: 'provided-successful-build-record', exitCode: 0, expectedCommand: ['node','tools/build.mjs'], commandObserved: false,
         independentCompilation: false, preparationRuntime, files: rows.filter(row => row.category === 'build-evidence').map(copiedIdentity),
         boundary: 'The supplied raw log and exit record are bound to this copy. Their build runtime and execution were not observed; copying does not compile or prove source-to-emission equivalence.' };
       save(owner, 'evidence/provided-build-receipt.json', buildReceipt);
       fs.writeFileSync(path.join(owner, 'SNAPSHOT.md'), canonicalTextBytes('# Frozen built SDK snapshot\n\nThis independent raw copy binds provided prior successful build records. It does not independently compile sources, verify source-to-emission equivalence, or claim a committed, reviewed or merged state. Baseline and candidate are recipe positions only.\n\nThe snapshot contains the three core SDK packages, their sources, emissions, manifests/configuration and all installed original robust-predicates 3.0.3 files. It is not a full monorepo installation or standalone build recipe. Preserve these bytes; hash binding is not operating-system immutability.\n'), { flag: 'wx' });
       const byTarget = new Map(rows.map(row => [row.target, row]));
-      const graph = await collectPublicGraph(owner, item => {
+      const graph = await collectRecipeGraph(owner, item => {
         const row = byTarget.get(ownerRelativePath(owner, item.path));
         requireValue(row?.bytes === item.bytes && row.sha256 === item.sha256, 'PREPARE_GRAPH_MEMBER');
-      }, FIXED_RECIPE.sourceProfile);
+      }, sourceProfile);
       const registry = await captureRegistry({ repository: owner, graph, map: chosenMap('baseline') });
       requireValue((await rereadRegistry(registry)).accepted, 'PREPARE_REGISTRY_CHANGED');
       const generated = ['SNAPSHOT.md','browser-import-map.json','evidence/provided-build-receipt.json'].map(file => fingerprintFile(owner, file));
@@ -1629,17 +1673,22 @@ async function prepareSnapshots(args) {
         graph: { modules: graph.modules.size, bytes: graph.totalBytes, registrySourceAndConsumersVerified: true },
         checks: { originalMembershipStable: true, originalRawBytesStable: true, copyRawBytesVerified: true, originalFileAliasesAbsent: true,
           cloneLinkTargetsVerified: true, noExtraCopiedFiles: true }, limits: result.limits };
-      stableOriginals(); save(owner, 'manifest.json', manifest); verifyBuiltSnapshot(owner, manifest);
+      stableOriginals(); save(owner, 'manifest.json', manifest); verifyBuiltSnapshot(owner, manifest, sourceProfile);
       result.snapshots.push({ role, owner, counts, manifest: fingerprintFile(owner, 'manifest.json') });
     }
     stableOriginals();
     for (const row of result.snapshots) {
-      const manifest = JSON.parse(strictText(readPinned(row.owner, row.manifest), 'MANIFEST_UTF8')); verifyBuiltSnapshot(row.owner, manifest);
+      const manifest = JSON.parse(strictText(readPinned(row.owner, row.manifest), 'MANIFEST_UTF8'));
+      verifyBuiltSnapshot(row.owner, manifest, recipeSourceProfile(selection, row.role));
     }
-    const recipe = createFixedRecipe(...result.snapshots.map(row => ({ root: row.owner, manifest: row.manifest })),args['--executable']);
+    const recipe = createFixedRecipe(...result.snapshots.map(row => ({ root: row.owner, manifest: row.manifest })),
+      args['--executable'], selection.fixed.sourceProfile);
     save(output, 'recipe.json', recipe); result.recipe = fingerprintFile(output, 'recipe.json'); loadRecipe(path.join(output, 'recipe.json'));
     stableOriginals();
-    for (const row of result.snapshots) verifyBuiltSnapshot(row.owner, JSON.parse(strictText(readPinned(row.owner, row.manifest), 'MANIFEST_UTF8')));
+    for (const row of result.snapshots) {
+      verifyBuiltSnapshot(row.owner, JSON.parse(strictText(readPinned(row.owner, row.manifest), 'MANIFEST_UTF8')),
+        recipeSourceProfile(recipe, row.role));
+    }
     readPinned(output, result.recipe); result.status = 'PREPARED';
   } catch (error) { result.failure = fault(error); }
   save(output, 'preparation.json', result);
