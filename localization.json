@@ -330,8 +330,8 @@
       "zh": "CONTRIBUTING.zh-CN.md",
       "en": "CONTRIBUTING.md",
       "kind": "public_reading",
-      "enSha256": "d946e1c22d052523257ab7d7bea13e297e238bafbed0d541295c9971e1bffd65",
-      "zhSha256": "6741d6372bd8e4e52eeec344c161b18bd657d41fb11fde546b53b589074dda6e"
+      "enSha256": "50c397506ffb8eac2f906a705331d88f5553823db77a8e9121645514998c67b0",
+      "zhSha256": "db1c77c6e37d62daf69e8c0802437463e2782bc534cf8c8e75206fd7d374c3ea"
     },
     {
       "zh": "docs/evidence/texture-a1.zh-CN.md",
@@ -1844,8 +1844,8 @@
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "61ea0b52b42be4f60ce2dee71dccc41f0d87da88d4589fd3952386c832931c81",
-      "zhSha256": "4d7f9b092f7f0f3cbc168c0afe70c6aa60a1d67ce8894336033fbe878a36a976"
+      "enSha256": "b98c7bf74c8f02c8324a1f754ce89fb76f1a103ee8a0fbffecb239432f2148ee",
+      "zhSha256": "58276379cd7ed471bc1c10f4052dc7db1fa05265b0e2974e6ed58eab63459ae9"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -3307,7 +3307,7 @@
     },
     {
       "path": "tools/prepush.mjs",
-      "sha256": "340fc4ca3a60610655cadb037aa96245b07045cc8fe18971c2997adb9b411325"
+      "sha256": "af7fed61866fc08f6c4de28d03f05efae7c39821b228c290890389f0ba0d2b70"
     },
     {
       "path": "packages/engine/web/image.ts",
@@ -3655,7 +3655,7 @@
     },
     {
       "path": "tools/verify.mjs",
-      "sha256": "15e848e6cdd4e0686bc6c0098a9725009f7efaf4b52729229c0c12869f7f9050"
+      "sha256": "462903675ffa40375122a7cbe29bff38b8fe4758c8dc7e88a3fb35a51d1718f8"
     },
     {
       "path": "examples/resource-scene/gpu-scene.mjs",
@@ -5172,6 +5172,26 @@
     {
       "path": "packages/engine/web/world3d/atmosphere3D.ts",
       "sha256": "0caeb515b187347ef331095431a5ba27bd441bb8e4a7ce40816dfb74afcfeb44"
+    },
+    {
+      "path": "tools/lib/test-shards.mjs",
+      "sha256": "44b7ba9841240406e81b3132a7c4f159cedf1cf1fc35f9793449d1331f2db367"
+    },
+    {
+      "path": "tests/publication/test-shards.test.mjs",
+      "sha256": "08aae3367c863fb45f6a71139e6570d26a1ec079030780825d8ccaf8ad62481e"
+    },
+    {
+      "path": "tests/browser-png-boundaries-2.test.mjs",
+      "sha256": "cb7d4c79719b9a4c82ba3c5152831d14d201904871f70622633d9c230ed19c4c"
+    },
+    {
+      "path": "tests/browser-png-boundaries-3.test.mjs",
+      "sha256": "af4999386a538e57fc3a5c318cac5c745093d5acc77b28cbcb5f68cffc401637"
+    },
+    {
+      "path": "tests/browser-png-boundaries-4.test.mjs",
+      "sha256": "d9be954c0b4b491843bf6721ec0ca171c1b231fa214e96cde8c03336f10d6fd7"
     }
   ],
   "historicalSemanticReview": {
