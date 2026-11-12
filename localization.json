@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "b6241e324531a22419cb9bf86cc71cf9eac9a5c350d4d366db2afd4716ec7167",
-      "zhSha256": "bd4539ff968a86b7bc0dd249f84395fc99372a9703de685e4ca1f888c80f0a41"
+      "enSha256": "0b3e8a7a03ded3f6a7a5f10b2816fe3e587e6d61f5bb114219ed4e2a05fa1f41",
+      "zhSha256": "92753215bf4aa221b326d1d83fa0387f5444dc206f28d9dfed584f86e058f8d8"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -2327,8 +2327,8 @@
       "en": "knowledge-base/en/docs/authored-scene3d.md",
       "zh": "knowledge-base/Cns/docs/authored-scene3d.md",
       "kind": "public_reading",
-      "enSha256": "c3ea3e3caccf697858db10ae211739aa1ae829bd55fb4fcaac2a1ce741ca70b5",
-      "zhSha256": "12c783469e4d55ab562ccafbd4c0a017863237d25a8bede7d501c7b441244ce0"
+      "enSha256": "3b8e9ef18a26384a427e6d3e0b3a6c7abaafa6c712a088691a700e01e843f9b4",
+      "zhSha256": "a45867d2c268652f82da34b4beecdcd6480788814ba20952dd8f2e81e07d73d7"
     }
   ],
   "registries": [
@@ -3154,11 +3154,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "df241848784f41ca1db84faf701939f228caf1f5c5484bad756400f979f2cffa"
+      "sha256": "6dfb85fe4ac8dee9570da2afb837b2578d44104873193202e5adee43e79b0e28"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "7982f7478ffa7d3fb4cf1451f1eda8f681b94f047121bb421442086707d6c2c3"
+      "sha256": "8d1ec1d7256b5e2a624577981c8ff760e1aa10cf2af37867c8154bb09d47350f"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3166,7 +3166,7 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "5557e915b3a9d3e1c572a682b73ccf24532ca8bf9cab1ed9a49d8fb37f25f0a8"
+      "sha256": "80af965aa300ad2f880c801cd4f4c4566179bb5c09f81ef35827c68397af269d"
     },
     {
       "path": "packages/runtime/src/NineSliceGeometry2D.ts",
@@ -3270,7 +3270,7 @@
     },
     {
       "path": "tools/sequence-playback-types.mjs",
-      "sha256": "ebdc067514065fa7dc0d8e0667978eda3d32d59b646059a10be94ccdfc393e64"
+      "sha256": "e932a1b8069c64c5a91cb0fdc87672152c420b7cb976b9f53f0b9d8a21d6229e"
     },
     {
       "path": "tools/check-repository-hygiene.mjs",
@@ -3298,7 +3298,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "0245f9776c5bd71b9bbb32d61161b5822755071fd2e3ee784dbee349346f9351"
+      "sha256": "65bd61b12c56c6b4902124997e023d47457a74c78712cc8d8d5f68f553f6a8c7"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3330,7 +3330,7 @@
     },
     {
       "path": "tests/project-boundaries.test.mjs",
-      "sha256": "5cfcc4e50d95e6a4909c64e9a7e71e0249532ead00cd11c64cc0db129496aebd"
+      "sha256": "4847a058dd3526ad19855c9872f028f754cf3f55650f33c711255d2d982990c9"
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/src/types.ts",
@@ -3434,7 +3434,7 @@
     },
     {
       "path": "tools/nine-slice-bitmap-types.mjs",
-      "sha256": "4119b641ae6a74ae001cd7a2603f3f7d48063707acf90358377419bf2cab7542"
+      "sha256": "ab7ed01a63601581fce8181e07e1349a274bb995771c100c432d8c025329d814"
     },
     {
       "path": "tools/nine-slice-bitmap-native/fixture.mjs",
@@ -3446,7 +3446,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "702623cff673d162e0fa53c90b4d30b6ad2171b90dcb778b8ddfd77928c6be98"
+      "sha256": "f4f48a3015f6d72208bc7a9b145ca95da8e0403175a7c5ed035b5bc21bd6054f"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3462,7 +3462,7 @@
     },
     {
       "path": "tools/display-container-remove-children-types.mjs",
-      "sha256": "8b991908a775f080ef89082d84a97f9201d498c7271626e6200075d60d9afa24"
+      "sha256": "fc4a85c26571446bc9326f3ac36e138430a9fe52522e0956fa9adfb71e4dfdf3"
     },
     {
       "path": "tools/display-container-remove-children-native/fixture.mjs",
@@ -3490,7 +3490,7 @@
     },
     {
       "path": "tools/display-container-child-index-types.mjs",
-      "sha256": "236d29fcee944267c6cc775231c5d5cfdc88f94575fb09616193e3d7e49fcfba"
+      "sha256": "acaacd362016f923cd5c8a7c4f1a0b2b3f4bc49c85a23769eab21f29fd670a4d"
     },
     {
       "path": "tools/display-container-child-index-native/fixture.mjs",
@@ -3534,11 +3534,11 @@
     },
     {
       "path": "tools/display-anchor-offsets-types.mjs",
-      "sha256": "893eebac78ae4c3a0ce2c8bff7de1a84d98e372960b9496ee0a4240f800aaa9d"
+      "sha256": "131a781d871fdfc3cdfb884b7420fcfff6e25f301cc252bac6ee60b42bc867fd"
     },
     {
       "path": "tools/display-container-add-child-at-types.mjs",
-      "sha256": "aeeb77b5adbb2d07e448b9c4eb9b021adea7bdea0f295053ec9689f7009b9049"
+      "sha256": "3b761e8f1e9ef1a168f9145ae1a782a0935ebeb689533e2e89b93be8ac712f97"
     },
     {
       "path": "tools/display-anchor-offsets-native/fixture.mjs",
@@ -3590,7 +3590,7 @@
     },
     {
       "path": "tools/bitmap-button-types.mjs",
-      "sha256": "db8bd6df7a1270d0e7f70a753d3c1c9ff02b2eab1835f5f208c6f8835fc87c86"
+      "sha256": "b22810bdae7d45e7b01eea93330e5d3aa0be89e894af53d714616090505e77b4"
     },
     {
       "path": "packages/engine/src/layout.ts",
@@ -3602,7 +3602,7 @@
     },
     {
       "path": "tools/linear-layout-types.mjs",
-      "sha256": "f6ca6837351bcb0a053162199b3fcb455cba4e60937d8d1168ddaa85a5f80898"
+      "sha256": "fcaf0c8999a41c151d1b9893e7c7be012e77523c14e8308b2a0ab67f6eab2ef5"
     },
     {
       "path": "examples/linear-layout/main.mjs",
@@ -3618,7 +3618,7 @@
     },
     {
       "path": "tools/bitmap-resource-slot-types.mjs",
-      "sha256": "26310ff8138971f65198d2c08ecff4cf837bdd9773d2bf0b9afb3e2973c6d209"
+      "sha256": "3da9645da75876bfa92ee3b572ce1b60644c01af710ae99719fe370dd308fdf1"
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
@@ -3762,7 +3762,7 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
-      "sha256": "1dd9c88eb8a8c6cfc0d067d04a6fd875358778e2a4b65a412a297d961a6e7faf"
+      "sha256": "21a276aa27402e38ec290d608821f2f7be26f1e3b1a440eabb9b3cc7632d5b39"
     },
     {
       "path": "tools/prepared-resource-groups/native-fixture.mjs",
@@ -3846,7 +3846,7 @@
     },
     {
       "path": "tools/atlas-frame-types.mjs",
-      "sha256": "7d5ede8dbda52ec01c44143d44f4942a415aa60cccc8134f6301efe86693c661"
+      "sha256": "16f166c0772437bf79a8d318b79257709249afa6c45c27962d86d491f06e6caa"
     },
     {
       "path": "tools/atlas-frame/author-assets.mjs",
@@ -3918,7 +3918,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "62ef0d30ab14f16738b70f0a8fec66acba688d78ac5a544ee62a11c35a4615a4"
+      "sha256": "e33596908164440b88927d87541bdee438d99475c622149471bba232c3ef92ae"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3946,7 +3946,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "459ff3e73da1f14c1cd5555cae2c09a24219149824ead94fd87d2903d5878083"
+      "sha256": "a06d5355c91b6f62a9d3dd6ece8c137107c23b26f93b37c2135435fa4ab83d71"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -3954,7 +3954,7 @@
     },
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
-      "sha256": "7c78bf1cffba969dd9de36b4079dde414db2563004c813b73fbe8f665bd1d11b"
+      "sha256": "8446fcf1bdfcb04545c7ec716452eb50f638b1f5b377aee059688b97b4fbf2e9"
     },
     {
       "path": "packages/engine/web/webgpuBindingCache.ts",
@@ -4842,15 +4842,19 @@
     },
     {
       "path": "packages/engine/rendering/scene3dAuthoring.ts",
-      "sha256": "3c59f3664f5c6df7ce7cb77b51b80710702abe92057bb03acbf3188191cbb4ee"
+      "sha256": "4332d7ae3270dd11b133b61bc49d609e0bb24dd4fe338a022ce8b758cc6a5a00"
     },
     {
       "path": "packages/engine/rendering/sceneWorld3D.ts",
-      "sha256": "d18742acf3dc0031306fb7685ebab4e2f64520957c296b6fe0988a2734cc1f7b"
+      "sha256": "dd060ad47b11c16e2b3ee97901015447e84b5a7a0685515f1584cdf30055102c"
     },
     {
       "path": "packages/engine/rendering/staticGlb3D.ts",
-      "sha256": "f6d073bffcd7e4c39bdb6fb0e80f9e032d548a11d149547be48e13c477f32a3b"
+      "sha256": "c8d865effa425cc3348dc1edd467c35056727dbf1b4642559a9d7e471360360a"
+    },
+    {
+      "path": "packages/engine/rendering/sceneAnimation3D.ts",
+      "sha256": "cd4d0d72ab789aebbf70df93cb1d12b023170b5bc19cfb7bbeb0eab5fc2b5dd9"
     }
   ],
   "historicalSemanticReview": {

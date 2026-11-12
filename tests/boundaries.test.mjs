@@ -593,7 +593,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     write('node_modules/@egret/engine/scene3d-web.js',"export * from '../../../packages/engine/dist/web/scene3d.js';\n");
     write('node_modules/@egret/engine/scene3d-authoring.js',"export * from '../../../packages/engine/dist/rendering/scene3dAuthoring.js';\n");
     // The facade is projected onto inert dependencies for boundary checks only.
-    for(const name of ['scene3dAuthoring','sceneWorld3D','staticGlb3D'])
+    for(const name of ['scene3dAuthoring','sceneWorld3D','staticGlb3D','sceneAnimation3D'])
       for(const file of ['packages/engine/rendering/'+name+'.ts','packages/engine/dist/rendering/'+name+'.d.ts'])
         write(file,readFileSync(path.join(repository,file),'utf8'));
     const authored='packages/engine/dist/rendering/';
@@ -601,7 +601,10 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     write(authored+'sceneWorld3D.js',"import './matrix4.js'; import './meshGeometry3D.js'; import './sceneFrame3D.js';\n"+
       "export function createSceneWorld3D(){throw new Error('Synthetic policy fixture only');}\n"+
       "export function createSceneCamera3D(){throw new Error('Synthetic policy fixture only');}\n");
-    write(authored+'staticGlb3D.js',"import './meshGeometry3D.js'; import './sharedColor2D.js'; import './sceneWorld3D.js'; import '@egret/contracts';\n"+
+    write(authored+'sceneAnimation3D.js',"import './sceneFrame3D.js';\nimport './sceneWorld3D.js';\n"+
+      "export function createSceneAnimationClip3D(){throw new Error('Synthetic policy fixture only');}\n");
+    write(authored+'staticGlb3D.js',"import './sceneAnimation3D.js'; import './meshGeometry3D.js'; import './sharedColor2D.js'; import './sceneWorld3D.js'; import '@egret/contracts';\n"+
+      "export function loadAnimatedGlbScene3D(){throw new Error('Synthetic policy fixture only');}\n"+
       "export class StaticGlb3DError extends Error {}\n"+
       "export function prepareTexturedStaticGlbScene3D(){throw new Error('Synthetic policy fixture only');}\n"+
       "export function prepareLambertStaticGlbScene3D(){throw new Error('Synthetic policy fixture only');}\n"+

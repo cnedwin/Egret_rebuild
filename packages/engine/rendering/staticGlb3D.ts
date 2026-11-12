@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 import { copyImageData2DPixels, IMAGE_LIMITS_2D, isImageData2D } from '@egret/contracts';
 import { createMeshGeometry3D } from './meshGeometry3D.js';
+import { bindImportedSceneAnimationClip3D, hasMatchingAnimationScaleSigns, isAnimationScaleInRange, isAnimationTranslationInRange, matrixForSceneNodePose3D } from './sceneAnimation3D.js';
+import type { ImportedSceneAnimationClip3D, ImportedSceneNodeTracks3D, SceneAnimationComponentTrack3D, SceneNodePose3D } from './sceneAnimation3D.js';
 import type { MeshGeometry3D } from './meshGeometry3D.js';
 import type { ImageData2D } from '@egret/contracts';
 import type { SceneDirectionalLighting3D, SceneLambertSurface3D, SceneMeshTexture3D } from './sceneFrame3D.js';
-import { createLambertSceneWorld3D, createTexturedSceneWorld3D } from './sceneWorld3D.js';
+import { createLambertSceneWorld3D, createSceneWorld3D, createTexturedSceneWorld3D } from './sceneWorld3D.js';
 import type { SceneLambertWorld3D, SceneWorld3D, SceneWorldNodeInput3D } from './sceneWorld3D.js';
 import { encodeSharedSRGB } from './sharedColor2D.js';
 
@@ -73,6 +75,9 @@ const MAX_BYTES = 8 * 1024 * 1024;
 const MAX_JSON = 512 * 1024;
 const MAX_NODES = 64;
 const MAX_ACCESSORS = 192;
+const MAX_ANIMATIONS = 32;
+const MAX_ANIMATION_CHANNELS = 192;
+const MAX_ANIMATION_KEYS = 8192;
 const MIN_NORMAL_FLOAT = 1.1754943508222875e-38;
 const MAX_UV_MAGNITUDE = 2 ** 20;
 const NORMAL_LENGTH_SQUARED_TOLERANCE = 1e-4;
@@ -301,12 +306,46 @@ function readMaterial(value: unknown, textureCount: number | undefined): Materia
     return { color: rgb, textureIndex: index(texture.index, textureCount! - 1, 'material.baseColorTexture.index') };
 }
 
+const ACCESSOR_FIELDS = ['bufferView', 'byteOffset', 'componentType', 'count', 'type', 'normalized', 'min', 'max', 'name', 'extras'];
+type AccessorViewRole = 'vertex' | 'indices' | 'animation';
+
+function readAccessorOffset(
+    accessor: Record3D, views: readonly unknown[], binary: DataView,
+    layout: { readonly count: number; readonly size: number; readonly stride: number; readonly usage: AccessorViewRole },
+    imageViews?: ReadonlySet<number>, viewRoles?: Map<number, AccessorViewRole>,
+): number {
+    const {count, size, stride, usage} = layout;
+    const vertex = usage === 'vertex';
+    const viewIndex = index(accessor.bufferView, views.length - 1, 'accessor.bufferView');
+    if (imageViews?.has(viewIndex)) invalid('bufferView used by image and accessor');
+    // A geometry view cannot carry animation data even when its optional target is omitted.
+    const previousRole = viewRoles?.get(viewIndex);
+    if (previousRole !== undefined && previousRole !== usage) invalid('bufferView used by different accessor roles');
+    viewRoles?.set(viewIndex, usage);
+    const view = record(views[viewIndex], 'bufferView');
+    fields(view, 'bufferView', ['buffer', 'byteOffset', 'byteLength', 'byteStride', 'target', 'name', 'extras']);
+    if (view.buffer !== 0) invalid('bufferView.buffer');
+    if (view.byteStride !== undefined && (!vertex || view.byteStride !== stride)) unsupported('bufferView.byteStride');
+    const target = vertex ? 34962 : usage === 'indices' ? 34963 : undefined;
+    if (view.target !== undefined && view.target !== target) invalid('bufferView.target');
+    // Keep the legacy geometry offset defaults, while new profiles require numeric offsets.
+    if ((imageViews || usage === 'animation') && (view.byteOffset === null || accessor.byteOffset === null)) {
+        invalid('accessor byte offset');
+    }
+    const start = index(view.byteOffset ?? 0, binary.byteLength, 'bufferView.byteOffset');
+    const length = index(view.byteLength, binary.byteLength - start, 'bufferView.byteLength');
+    const relative = index(accessor.byteOffset ?? 0, length, 'accessor.byteOffset');
+    if (relative % size !== 0 || (start + relative) % size !== 0 ||
+        (vertex && relative % 4 !== 0) || count > Math.floor((length - relative) / stride)) invalid('accessor byte range');
+    return start + relative;
+}
+
 function readAccessor(
     raw: unknown, views: readonly unknown[], binary: DataView,
-    type: 'VEC2' | 'VEC3' | 'SCALAR', imageViews?: ReadonlySet<number>,
+    type: 'VEC2' | 'VEC3' | 'SCALAR', imageViews?: ReadonlySet<number>, viewRoles?: Map<number, AccessorViewRole>,
 ): Accessor {
     const accessor = record(raw, 'accessor');
-    fields(accessor, 'accessor', ['bufferView', 'byteOffset', 'componentType', 'count', 'type', 'normalized', 'min', 'max', 'name', 'extras']);
+    fields(accessor, 'accessor', ACCESSOR_FIELDS);
     const component = accessor.componentType;
     const vertex = type !== 'SCALAR';
     if (accessor.type !== type || (vertex ? component !== FLOAT : component !== SHORT && component !== INT)) unsupported('accessor format');
@@ -316,21 +355,10 @@ function readAccessor(
     const count = index(accessor.count, Number.MAX_SAFE_INTEGER, 'accessor.count');
     if (count < 3) invalid('accessor.count');
     if (count > (vertex ? 65536 : 196608)) budget('accessor.count');
-    const viewIndex = index(accessor.bufferView, views.length - 1, 'accessor.bufferView');
-    if (imageViews?.has(viewIndex)) invalid('bufferView used by image and accessor');
-    const view = record(views[viewIndex], 'bufferView');
-    fields(view, 'bufferView', ['buffer', 'byteOffset', 'byteLength', 'byteStride', 'target', 'name', 'extras']);
-    if (view.buffer !== 0) invalid('bufferView.buffer');
-    if (view.byteStride !== undefined && (!vertex || view.byteStride !== stride)) unsupported('bufferView.byteStride');
-    if (view.target !== undefined && view.target !== (vertex ? 34962 : 34963)) invalid('bufferView.target');
-    // Preserve the legacy reader's offset defaults. The new profile rejects an explicit null.
-    if (imageViews && (view.byteOffset === null || accessor.byteOffset === null)) invalid('accessor byte offset');
-    const start = index(view.byteOffset ?? 0, binary.byteLength, 'bufferView.byteOffset');
-    const length = index(view.byteLength, binary.byteLength - start, 'bufferView.byteLength');
-    const relative = index(accessor.byteOffset ?? 0, length, 'accessor.byteOffset');
-    if (relative % size !== 0 || (start + relative) % size !== 0 ||
-        (vertex && relative % 4 !== 0) || count > Math.floor((length - relative) / stride)) invalid('accessor byte range');
-    return { count, offset: start + relative, component: component as number, stride };
+    const offset = readAccessorOffset(
+        accessor, views, binary, {count, size, stride, usage: vertex ? 'vertex' : 'indices'}, imageViews, viewRoles,
+    );
+    return { count, offset, component: component as number, stride };
 }
 
 function position(value: number): number {
@@ -385,7 +413,7 @@ function readNormals(definition: Record3D, accessor: Accessor, binary: DataView)
 function readGeometry(
     primitive: Record3D, accessors: readonly unknown[], views: readonly unknown[],
     binary: DataView, materials: readonly Material[], charge: (vertices: number, indices: number, components: number) => void,
-    textures: TexturePlanBuilder | undefined, lambert: boolean,
+    textures: TexturePlanBuilder | undefined, lambert: boolean, viewRoles?: Map<number, AccessorViewRole>,
 ): MeshGeometry3D {
     fields(primitive, 'mesh primitive', ['attributes', 'indices', 'material', 'mode', 'extras']);
     if (primitive.mode !== undefined && primitive.mode !== 4) unsupported('mesh primitive.mode');
@@ -397,12 +425,16 @@ function readGeometry(
     fields(attributes, 'mesh primitive.attributes', allowedAttributes);
     const { color: factor, textureIndex } = materials[index(primitive.material, materials.length - 1, 'mesh primitive.material')]!;
     const positionDefinition = record(accessors[index(attributes.POSITION, accessors.length - 1, 'POSITION accessor')], 'POSITION accessor');
-    const positions = readAccessor(positionDefinition, views, binary, 'VEC3', textures?.imageViews);
+    const positions = readAccessor(positionDefinition, views, binary, 'VEC3', textures?.imageViews, viewRoles);
     const declaredMin = numbers(positionDefinition.min, 3, 'POSITION min').map(Math.fround);
     const declaredMax = numbers(positionDefinition.max, 3, 'POSITION max').map(Math.fround);
-    const indices = readAccessor(accessors[index(primitive.indices, accessors.length - 1, 'index accessor')], views, binary, 'SCALAR', textures?.imageViews);
+    const indices = readAccessor(
+        accessors[index(primitive.indices, accessors.length - 1, 'index accessor')], views, binary, 'SCALAR', textures?.imageViews, viewRoles,
+    );
     const colors = attributes.COLOR_0 === undefined ? undefined :
-        readAccessor(accessors[index(attributes.COLOR_0, accessors.length - 1, 'COLOR_0 accessor')], views, binary, 'VEC3', textures?.imageViews);
+        readAccessor(
+            accessors[index(attributes.COLOR_0, accessors.length - 1, 'COLOR_0 accessor')], views, binary, 'VEC3', textures?.imageViews, viewRoles,
+        );
     if (indices.count % 3 !== 0 || (colors !== undefined && colors.count !== positions.count)) invalid('primitive counts');
     if (attributes.TEXCOORD_0 !== undefined && textureIndex === undefined) unsupported('unused TEXCOORD_0');
     const uvDefinition = textureIndex === undefined ? undefined :
@@ -455,6 +487,20 @@ function readGeometry(
     return geometry;
 }
 
+function normalizeGlbQuaternion(q: readonly number[], field: string): SceneNodePose3D['rotation'] {
+    const norm = Math.hypot(...q);
+    if (!Number.isFinite(norm) || Math.abs(norm - 1) > 1e-5) invalid(field);
+    return [q[0]! / norm, q[1]! / norm, q[2]! / norm, q[3]! / norm];
+}
+
+function readNodePose(node: Record3D): SceneNodePose3D {
+    const [tx, ty, tz] = node.translation === undefined ? [0, 0, 0] : numbers(node.translation, 3, 'node.translation');
+    const [sx, sy, sz] = node.scale === undefined ? [1, 1, 1] : numbers(node.scale, 3, 'node.scale');
+    const rotation = node.rotation === undefined ? [0, 0, 0, 1] as const
+        : normalizeGlbQuaternion(numbers(node.rotation, 4, 'node.rotation'), 'node.rotation unit quaternion');
+    return {translation: [tx!, ty!, tz!], rotation, scale: [sx!, sy!, sz!]};
+}
+
 function matrixFor(node: Record3D): number[] {
     if (node.matrix !== undefined) {
         if (node.translation !== undefined || node.rotation !== undefined || node.scale !== undefined) invalid('node.matrix/TRS');
@@ -469,41 +515,211 @@ function matrixFor(node: Record3D): number[] {
         }
         return values;
     }
-    const [tx, ty, tz] = node.translation === undefined ? [0, 0, 0] : numbers(node.translation, 3, 'node.translation');
-    const [sx, sy, sz] = node.scale === undefined ? [1, 1, 1] : numbers(node.scale, 3, 'node.scale');
-    const q = node.rotation === undefined ? [0, 0, 0, 1] : numbers(node.rotation, 4, 'node.rotation');
-    const norm = Math.hypot(...q);
-    if (Math.abs(norm - 1) > 1e-5) invalid('node.rotation unit quaternion');
-    const x = q[0]! / norm, y = q[1]! / norm, z = q[2]! / norm, w = q[3]! / norm;
-    const xx = 2 * x * x, yy = 2 * y * y, zz = 2 * z * z;
-    const xy = 2 * x * y, xz = 2 * x * z, yz = 2 * y * z;
-    const xw = 2 * x * w, yw = 2 * y * w, zw = 2 * z * w;
-    // Column-major T * R * S. Parent composition is owned by SceneWorld3D.
-    return [
-        (1 - yy - zz) * sx!, (xy + zw) * sx!, (xz - yw) * sx!, 0,
-        (xy - zw) * sy!, (1 - xx - zz) * sy!, (yz + xw) * sy!, 0,
-        (xz + yw) * sz!, (yz - xw) * sz!, (1 - xx - yy) * sz!, 0,
-        tx!, ty!, tz!, 1,
-    ];
+    return matrixForSceneNodePose3D(readNodePose(node));
 }
 
 /** Bounded GLB subset, independent of transport, model lifetime, and native graphics. */
 export function readStaticGlbNodes3D(bytes: Uint8Array): readonly SceneWorldNodeInput3D[] {
-    return readStaticGlb(bytes, false);
+    return readStaticGlb(bytes, 'unlit');
 }
 
 /** Validate the complete model before publishing owned texture requests and geometry. */
 export function readStaticGlbTexturePlan3D(bytes: Uint8Array): StaticGlbTexturePlan3D {
-    return readStaticGlb(bytes, true);
+    return readStaticGlb(bytes, 'textured');
 }
 
-function readStaticGlb(bytes: Uint8Array, textured: false): readonly SceneWorldNodeInput3D[];
-function readStaticGlb(bytes: Uint8Array, textured: true, lambert?: boolean): MaterialPlan;
-function readStaticGlb(bytes: Uint8Array, textured: boolean, lambert = false): readonly SceneWorldNodeInput3D[] | MaterialPlan {
+interface AnimatedGlbPlan {
+    readonly nodes: readonly SceneWorldNodeInput3D[];
+    readonly clips: readonly {
+        readonly name?: string;
+        readonly durationSeconds: number;
+        readonly tracks: readonly ImportedSceneNodeTracks3D[];
+    }[];
+}
+type AnimationPath = 'translation' | 'rotation' | 'scale';
+type AnimationAccessor = Pick<Accessor, 'count' | 'offset' | 'stride'>;
+interface GlbAnimationChannel {
+    readonly node: number;
+    readonly path: AnimationPath;
+    readonly interpolation: 'step' | 'linear';
+    readonly input: AnimationAccessor;
+    readonly output: AnimationAccessor;
+    readonly minTime: number;
+    readonly maxTime: number;
+}
+interface GlbNodeTracks {
+    readonly nodeId: string;
+    readonly base: SceneNodePose3D;
+    translation?: SceneAnimationComponentTrack3D<SceneNodePose3D['translation']>;
+    rotation?: SceneAnimationComponentTrack3D<SceneNodePose3D['rotation']>;
+    scale?: SceneAnimationComponentTrack3D<SceneNodePose3D['scale']>;
+}
+
+function readAnimationAccessor(
+    accessor: Record3D, views: readonly unknown[], binary: DataView, type: 'SCALAR' | 'VEC3' | 'VEC4',
+    viewRoles: Map<number, AccessorViewRole>,
+): AnimationAccessor {
+    fields(accessor, 'animation accessor', ACCESSOR_FIELDS);
+    if (accessor.type !== type) invalid('animation accessor type');
+    if (accessor.componentType !== FLOAT || (accessor.normalized !== undefined && accessor.normalized !== false)) {
+        if (type === 'VEC4' && accessor.normalized === true &&
+            (accessor.componentType === 5120 || accessor.componentType === 5121 ||
+             accessor.componentType === 5122 || accessor.componentType === 5123)) unsupported('animation rotation encoding');
+        invalid('animation accessor component type');
+    }
+    const count = index(accessor.count, Number.MAX_SAFE_INTEGER, 'animation accessor count');
+    if (count === 0) invalid('animation accessor count');
+    if (count > MAX_ANIMATION_KEYS) budget('animation accessor count');
+    const stride = type === 'SCALAR' ? 4 : type === 'VEC3' ? 12 : 16;
+    const offset = readAccessorOffset(accessor, views, binary, {count, stride, size: 4, usage: 'animation'}, undefined, viewRoles);
+    return {count, offset, stride};
+}
+
+function readAnimationKeys<Value>(
+    channel: GlbAnimationChannel, binary: DataView, readValue: (offset: number, previous?: Value) => Value,
+): SceneAnimationComponentTrack3D<Value> {
+    const {input, output, interpolation, minTime, maxTime} = channel;
+    const keys: {timeSeconds: number; value: Value}[] = [];
+    let previousTime = -1;
+    for (let i = 0; i < input.count; i++) {
+        const timeSeconds = binary.getFloat32(input.offset + i * input.stride, true);
+        if (!Number.isFinite(timeSeconds) || timeSeconds < 0 || timeSeconds <= previousTime) invalid('animation timestamp order');
+        if ((i === 0 && timeSeconds !== minTime) || (i === input.count - 1 && timeSeconds !== maxTime)) {
+            invalid('animation time bounds');
+        }
+        const value = readValue(output.offset + i * output.stride, keys[i - 1]?.value);
+        keys.push({timeSeconds, value});
+        previousTime = timeSeconds;
+    }
+    return {interpolation, keys};
+}
+
+function readGlbAnimations(
+    raw: unknown, nodes: readonly unknown[], accessors: readonly unknown[], views: readonly unknown[], binary: DataView,
+    viewRoles: Map<number, AccessorViewRole>,
+): AnimatedGlbPlan['clips'] {
+    if (raw === undefined) return [];
+    let keyCount = 0;
+    // Charge every referenced channel, including shared samplers, before copying any key payload.
+    const descriptions = list(raw, 'animations', MAX_ANIMATIONS).map(value => {
+        const animation = record(value, 'animation');
+        fields(animation, 'animation', ['name', 'channels', 'samplers', 'extras']);
+        const name = animation.name;
+        if (name !== undefined && typeof name !== 'string') invalid('animation.name');
+        const samplers = list(animation.samplers, 'animation.samplers', MAX_ANIMATION_CHANNELS).map(value => {
+            const sampler = record(value, 'animation sampler');
+            fields(sampler, 'animation sampler', ['input', 'output', 'interpolation', 'extras']);
+            const interpolation = sampler.interpolation === undefined ? 'LINEAR' : sampler.interpolation;
+            if (interpolation === 'CUBICSPLINE') unsupported('animation interpolation');
+            if (interpolation !== 'LINEAR' && interpolation !== 'STEP') invalid('animation interpolation');
+            return {
+                inputIndex: index(sampler.input, accessors.length - 1, 'animation sampler input'),
+                outputIndex: index(sampler.output, accessors.length - 1, 'animation sampler output'),
+                interpolation: interpolation === 'LINEAR' ? 'linear' : 'step',
+            } as const;
+        });
+        const targets = new Set<string>();
+        const channels = list(animation.channels, 'animation.channels', MAX_ANIMATION_CHANNELS).map((value): GlbAnimationChannel => {
+            const channel = record(value, 'animation channel');
+            fields(channel, 'animation channel', ['sampler', 'target', 'extras']);
+            const sampler = samplers[index(channel.sampler, samplers.length - 1, 'animation channel sampler')]!;
+            const target = record(channel.target, 'animation target');
+            fields(target, 'animation target', ['node', 'path', 'extras']);
+            const node = index(target.node, nodes.length - 1, 'animation target node');
+            const path = target.path;
+            if (path === 'weights') unsupported('animation morph weights');
+            if (path !== 'translation' && path !== 'rotation' && path !== 'scale') invalid('animation target path');
+            if (record(nodes[node], 'node').matrix !== undefined) invalid('animation target node matrix');
+            const identity = node + ':' + path;
+            if (targets.has(identity)) invalid('duplicate animation target');
+            targets.add(identity);
+
+            const inputDefinition = record(accessors[sampler.inputIndex], 'animation time accessor');
+            const input = readAnimationAccessor(inputDefinition, views, binary, 'SCALAR', viewRoles);
+            keyCount += input.count;
+            if (keyCount > MAX_ANIMATION_KEYS) budget('animation key references');
+            const output = readAnimationAccessor(
+                record(accessors[sampler.outputIndex], 'animation value accessor'), views, binary,
+                path === 'rotation' ? 'VEC4' : 'VEC3', viewRoles,
+            );
+            if (output.count !== input.count) invalid('animation sampler count mismatch');
+            const minTime = Math.fround(numbers(inputDefinition.min, 1, 'animation time min')[0]!);
+            const maxTime = Math.fround(numbers(inputDefinition.max, 1, 'animation time max')[0]!);
+            if (!Number.isFinite(minTime) || !Number.isFinite(maxTime) || minTime < 0 || maxTime < minTime) {
+                invalid('animation time bounds');
+            }
+            return {node, path, interpolation: sampler.interpolation, input, output, minTime, maxTime};
+        });
+        return {name, channels};
+    });
+
+    return descriptions.map(({name, channels}) => {
+        const tracks = new Map<number, GlbNodeTracks>();
+        let durationSeconds = 0;
+        for (const channel of channels) {
+            const {node, path} = channel;
+            let track = tracks.get(node);
+            if (!track) {
+                track = {nodeId: 'gltf-node-' + node, base: readNodePose(record(nodes[node], 'node'))};
+                tracks.set(node, track);
+            }
+            if (path === 'rotation') {
+                track.rotation = readAnimationKeys(channel, binary, offset => normalizeGlbQuaternion([
+                    binary.getFloat32(offset, true), binary.getFloat32(offset + 4, true),
+                    binary.getFloat32(offset + 8, true), binary.getFloat32(offset + 12, true),
+                ], 'animation rotation unit quaternion'));
+            } else {
+                track[path] = readAnimationKeys<SceneNodePose3D['scale']>(channel, binary, (offset, previous) => {
+                    const value = [
+                        binary.getFloat32(offset, true), binary.getFloat32(offset + 4, true), binary.getFloat32(offset + 8, true),
+                    ] as const;
+                    if (!value.every(Number.isFinite)) invalid('animation vector value');
+                    if (path === 'scale') {
+                        if (!isAnimationScaleInRange(value)) unsupported('animation scale range');
+                        if (previous && channel.interpolation === 'linear' && !hasMatchingAnimationScaleSigns(previous, value)) {
+                            unsupported('animation linear scale sign');
+                        }
+                    } else if (!isAnimationTranslationInRange(value)) {
+                        unsupported('animation translation range');
+                    }
+                    return value;
+                });
+            }
+            durationSeconds = Math.max(durationSeconds, channel.maxTime);
+        }
+        return {...(name === undefined ? {} : {name}), durationSeconds, tracks: [...tracks.values()]};
+    });
+}
+
+type GlbProfile = 'unlit' | 'textured' | 'lambert' | 'animated';
+
+export interface AnimatedGlbScene3D {
+    readonly world: SceneWorld3D;
+    readonly clips: readonly ImportedSceneAnimationClip3D[];
+}
+
+/** Load a bounded unlit GLB with rigid clips bound to its immutable base world. */
+export function loadAnimatedGlbScene3D(bytes: Uint8Array): AnimatedGlbScene3D {
+    const {nodes, clips} = readStaticGlb(bytes, 'animated');
+    const world = createSceneWorld3D(nodes);
+    return Object.freeze({
+        world,
+        clips: Object.freeze(clips.map(({tracks, durationSeconds, name}) =>
+            bindImportedSceneAnimationClip3D(world, tracks, durationSeconds, name))),
+    });
+}
+
+function readStaticGlb(bytes: Uint8Array, profile: 'unlit'): readonly SceneWorldNodeInput3D[];
+function readStaticGlb(bytes: Uint8Array, profile: 'textured' | 'lambert'): MaterialPlan;
+function readStaticGlb(bytes: Uint8Array, profile: 'animated'): AnimatedGlbPlan;
+function readStaticGlb(bytes: Uint8Array, profile: GlbProfile): readonly SceneWorldNodeInput3D[] | MaterialPlan | AnimatedGlbPlan {
+    const lambert = profile === 'lambert';
+    const textured = lambert || profile === 'textured';
     const { gltf, binary } = readPayload(bytes);
     const allowed = ['asset', 'extras', 'extensionsUsed', 'extensionsRequired', 'buffers', 'bufferViews',
         'accessors', 'materials', 'meshes', 'nodes', 'scenes', 'scene'];
     if (textured) allowed.push('images', 'textures', 'samplers');
+    if (profile === 'animated') allowed.push('animations');
     fields(gltf, 'glTF', allowed);
     const asset = record(gltf.asset, 'asset');
     if (asset.version !== '2.0' || (asset.minVersion !== undefined && asset.minVersion !== '2.0')) unsupported('asset.version');
@@ -529,6 +745,7 @@ function readStaticGlb(bytes: Uint8Array, textured: boolean, lambert = false): r
         packedBytes += 4 * (components * vertices + indices);
         if (++geometryCount > MAX_NODES || cpu > 4194304 || cpuBytes > 8388608 || packedBytes > 4194304) budget('scene geometry');
     }
+    const viewRoles = profile === 'animated' ? new Map<number, AccessorViewRole>() : undefined;
     const byMesh = new Map<number, readonly MeshGeometry3D[]>();
     const seen = new Set<number>();
     const result: SceneWorldNodeInput3D[] = [];
@@ -548,7 +765,9 @@ function readStaticGlb(bytes: Uint8Array, textured: boolean, lambert = false): r
                 const mesh = record(meshes[meshIndex], 'mesh');
                 fields(mesh, 'mesh', ['primitives', 'name', 'extras']);
                 geometry = list(mesh.primitives, 'mesh.primitives', MAX_NODES)
-                    .map(primitive => readGeometry(record(primitive, 'mesh primitive'), accessors, views, binary, materials, charge, textures, lambert));
+                    .map(primitive => readGeometry(
+                        record(primitive, 'mesh primitive'), accessors, views, binary, materials, charge, textures, lambert, viewRoles,
+                    ));
                 if (textured) Object.freeze(geometry);
                 byMesh.set(meshIndex, geometry);
             }
@@ -565,6 +784,9 @@ function readStaticGlb(bytes: Uint8Array, textured: boolean, lambert = false): r
     }
     for (const root of roots) visit(root);
     if (seen.size !== nodes.length || byMesh.size !== meshes.length || drawCount === 0) unsupported('scene must include all nodes and meshes');
+    if (viewRoles !== undefined) {
+        return {nodes: result, clips: readGlbAnimations(gltf.animations, nodes, accessors, views, binary, viewRoles)};
+    }
     if (textures === undefined) return result;
     if (textures.primitives.length === 0) unsupported('scene must include a textured primitive');
     const used = new Set(textures.primitives.map(primitive => primitive.imageIndex));
@@ -657,7 +879,7 @@ export function prepareTexturedStaticGlbScene3D(bytes: Uint8Array): PreparedText
 
 /** Apply an explicit Egret Lambert override to the admitted GLB unlit texture profile. */
 export function prepareLambertStaticGlbScene3D(bytes: Uint8Array): PreparedLambertStaticGlb3D {
-    const { images, nodes, primitives } = readStaticGlb(bytes, true, true);
+    const { images, nodes, primitives } = readStaticGlb(bytes, 'lambert');
     const expected = new Map(images.map(image => [image.imageIndex, image]));
     return Object.freeze({
         images,

@@ -68,11 +68,25 @@ const frame = revision.capture(camera);
 
 桌面 Edge 与实体 Android Chrome 的两个后端都通过九项指定像素检查。同一宿主中，使用同一场景进行分阶段提交、直接提交、反转顺序与恢复后提交，回读逐字节一致。夹具记录到冷启动上传两次、热帧上传零次、原生设备恢复后上传两次。这些是功能和生命周期结果。
 
+## 刚体节点动画
+
+通过 `@egret/engine/scene3d/authoring` 的 `createSceneAnimationClip3D` 为现有节点编写局部变换动画，也可用于静态 GLB 中的节点。每条轨道指定一个节点，并为每个关键帧提供完整平移、按 `[x, y, z, w]` 排列的四元数旋转和缩放。关键帧时间以秒为单位，非负且严格递增。阶跃轨道保持上一帧的值，直到下一个关键帧。线性轨道逐分量插值平移与缩放，旋转沿四元数最短弧插值。片段创建时保存输入快照，最多支持 256 条轨道和 8,192 个关键帧。平移和缩放各分量的绝对值上限为 2²⁴，缩放各分量的绝对值至少为 2⁻²⁴。线性轨道的每个缩放分量始终保持同一符号，避免变换退化。
+
+将游戏时钟或时间轴的经过秒数传给 `clip.sample(world, elapsedSeconds)`。单次模式在片段结束后保持末帧，传入 `"loop"` 可在片段结束时循环。每条轨道在自身时间范围之外保持首帧或末帧。时长为零时保持固定姿态。每次采样将目标节点的局部变换一次写入新的不可变场景版本，继续复用几何、贴图、光照和父子关系。原版本可用于重置和任意时刻采样。`world.withNodeTransforms(edits)` 也可直接接受一组局部矩阵。空批次返回原场景。无效矩阵、重复节点或不存在的目标会拒绝整个批次。
+
+可编辑场景示例提供播放、固定中点、末帧和循环边界控件。运行 `node tools/verify-authored-scene3d.mjs <playwright-root> <new-output-directory>` 可复验动画采样与原有静态场景见证点。该接口用于以代码编写刚体变换。 [glTF 插值参考](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#appendix-c-animation-sampler-interpolation-modes)
+
+### 导入 GLB 刚体动画
+
+`loadAnimatedGlbScene3D(bytes)` 使用不透明无光照 GLB 配置，返回基础场景和有序、不可变的片段列表。片段名称可选，重名时用列表索引选择片段。调用 `clips[i].sample(elapsedSeconds, mode)` 可从导入场景采样一个新版本。平移、旋转和缩放通道各自保留时间轴和 `LINEAR` 或 `STEP` 插值规则。缺失通道沿用节点原有值。片段时长由所有被引用通道中最晚的关键帧决定。示例中的 **GLB 动画中点** 将线性平移与独立时间轴上的阶跃缩放结合。
+
+导入器支持紧密排列、非稀疏的 float32 局部刚体变换通道。沿用现有 GLB 文件容量限制，最多 32 个片段，每个片段最多 192 个通道和 192 个采样器，所有片段合计最多 8,192 个被引用的关键帧。三次样条、骨骼蒙皮、形变目标及动画扩展会被拒绝。静态、贴图及 Lambert GLB 入口沿用原配置。 [glTF 动画通道与采样器](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#animations)
+
 ## 后续 3D 工作
 
 | 工作包 | 引擎决策与验收 |
 | --- | --- |
 | 更多光照和材质类型 | 扩展导入到显式 UV、法线、图像语义和版本化材质契约。光照在线性空间计算，输出统一转换一次，共用纹理与设备生命周期。验收创作颜色、法线方向、曝光范围和不透明／裁剪／混合规则。 |
-| 3D 角色动画与场景特效 | 使用现有游戏时钟驱动片段、姿势和事件。实例状态独立，复用不可变网格和蒙皮数据。在既有绘制顺序和能力预算中接入有界特效。验证模型导入到预览编辑的完整链路、资源替换、设备恢复和声明的帧预算。 |
+| 3D 角色蒙皮与场景特效 | 关节姿势复用已采样的节点变换，再增加蒙皮权重、逆绑定矩阵和动画事件。实例状态独立，复用不可变网格和蒙皮数据。在既有绘制顺序和能力预算中接入有界特效。验证模型导入到预览编辑的完整链路、资源替换、设备恢复和声明的帧预算。 |
 
 Three.js 提供资产解析、场景创作、渲染阶段和颜色管理的公开设计参考。白鹭独立实现，采用现有场景身份、后端和生命周期。GLB 与所选材质扩展遵循 Khronos 规范。[Three.js 模型加载](https://threejs.org/docs/pages/GLTFLoader.html) · [Three.js 颜色管理](https://threejs.org/manual/pages/color-management.html) · [Khronos glTF 2.0](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html) · [KHR_materials_unlit](https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_unlit)

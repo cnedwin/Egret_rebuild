@@ -63,7 +63,7 @@ function isolated(action) {
     assert.deepEqual(readFileSync(path.join(root,bindingEntry)),bindingBytes);
     // The explicit scene and GL facades share original registries and Host factories.
     // Bridge only the resolution copy; source and emitted package bytes stay real.
-    for(const name of ['rendering/matrix4','rendering/meshGeometry3D','rendering/sceneFrame3D','rendering/sceneWorld3D','rendering/staticGlb3D','web/WebGL2Host']) {
+    for(const name of ['rendering/matrix4','rendering/meshGeometry3D','rendering/sceneAnimation3D','rendering/sceneFrame3D','rendering/sceneWorld3D','rendering/staticGlb3D','web/WebGL2Host']) {
       const relative='packages/engine/dist/'+name+'.js';
       const actual=readFileSync(path.join(root,relative));
       const resolution='node_modules/@egret/engine/dist/'+name+'.js';

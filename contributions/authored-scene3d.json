@@ -83,6 +83,19 @@
     {
       "path": "tools/verify-lambert-glb-scene3d.mjs",
       "originRole": "Independently authored first-party Egret bounded Lambert rendering validation with generated models and textures; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/rendering/sceneAnimation3D.ts",
+      "originRole": "Independently authored first-party Egret rigid scene animation and validation; AI-assisted; Apache-2.0. The public Khronos interpolation specification serves as a design reference.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/scene-animation3d.test.mjs",
+      "originRole": "Independently authored first-party Egret rigid scene animation and validation; AI-assisted; Apache-2.0. The public Khronos interpolation specification serves as a design reference."
+    },
+    {
+      "path": "tests/animated-glb-scene3d.test.mjs",
+      "originRole": "Independently authored first-party Egret rigid GLB animation tests using a generated fixture and the public Khronos format specification; AI-assisted; Apache-2.0."
     }
   ],
   "documents": [

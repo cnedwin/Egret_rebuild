@@ -32,16 +32,22 @@ export interface SceneWorldNodeInput3D {
     readonly meshes?:readonly MeshGeometry3D[];
     readonly cards?:readonly SceneWorldCard3D[];
 }
+export interface SceneWorldNodeTransform3D {
+    readonly id: string;
+    readonly localMatrix: readonly number[];
+}
 export interface SceneWorld3D {
     readonly nodeCount:number;
     capture(camera:SceneWorldCamera3D):SceneFrame3D;
     withNodeTransform(id:string,localMatrix:readonly number[]):SceneWorld3D;
+    withNodeTransforms(edits: readonly SceneWorldNodeTransform3D[]): SceneWorld3D;
     withNodes(nodes:readonly SceneWorldNodeInput3D[]):SceneWorld3D;
 }
 export interface SceneLambertWorld3D extends SceneWorld3D {
     withLighting(input: SceneDirectionalLighting3D): SceneLambertWorld3D;
     withNodes(nodes: readonly SceneWorldNodeInput3D[]): SceneLambertWorld3D;
     withNodeTransform(id: string, localMatrix: readonly number[]): SceneLambertWorld3D;
+    withNodeTransforms(edits: readonly SceneWorldNodeTransform3D[]): SceneLambertWorld3D;
 }
 interface OwnedNode {
     readonly id:string;
@@ -50,6 +56,7 @@ interface OwnedNode {
     readonly meshes:readonly MeshGeometry3D[];
     readonly cards:readonly SceneWorldCard3D[];
 }
+const worlds = new WeakSet<SceneWorld3D>();
 const cameras=new WeakMap<SceneWorldCamera3D,{readonly view:Matrix4;readonly projection:SceneProjectionInput3D}>();
 const MAX_NODES=256;
 const MAX_DRAWS=64;
@@ -225,10 +232,32 @@ function assemble(nodes: readonly OwnedNode[],
                 const transform = localMatrix(input);
                 return assemble(nodes.map(node=>node.id===id?{...node,localMatrix:transform}:node),textures,light);
             },
+            withNodeTransforms(edits: readonly SceneWorldNodeTransform3D[]) {
+                if (!source(() => Array.isArray(edits))) invalid('node transforms');
+                const count = source(() => edits.length);
+                if (!Number.isSafeInteger(count) || count < 0) invalid('node transforms length');
+                if (count > nodes.length) budget();
+                if (count === 0) return revision;
+                const replacements = new Map<string, Matrix4>();
+                for (let i = 0; i < count; i++) {
+                    const edit = source(() => edits[i]);
+                    if (!edit || typeof edit !== 'object') invalid('node transform');
+                    const id = source(() => edit.id);
+                    if (!byId.has(id) || replacements.has(id)) invalid('node.id');
+                    replacements.set(id, localMatrix(source(() => edit.localMatrix)));
+                }
+                // Resolve the hierarchy once after the entire pose has been validated.
+                return assemble(nodes.map(node => {
+                    const transform = replacements.get(node.id);
+                    return transform ? {...node, localMatrix: transform} : node;
+                }), textures, light);
+            },
         };
-        return Object.freeze(light ? {...world, withLighting(input: SceneDirectionalLighting3D) {
+        const revision: SceneWorld3D = Object.freeze(light ? {...world, withLighting(input: SceneDirectionalLighting3D) {
             return publish(normalizeLighting(input));
         }} : world);
+        worlds.add(revision);
+        return revision;
     }
     return publish(lighting);
 }
@@ -275,6 +304,9 @@ function captureNodes(input:readonly SceneWorldNodeInput3D[],existingNodes:numbe
         nodes.push({id,parentId,localMatrix:localMatrix(matrix),meshes:Object.freeze(attached),cards:Object.freeze(attachedCards)});
     }
     return nodes;
+}
+export function isSceneWorld3D(value: unknown): value is SceneWorld3D {
+    return typeof value === 'object' && value !== null && worlds.has(value as SceneWorld3D);
 }
 export function createSceneWorld3D(input:readonly SceneWorldNodeInput3D[]):SceneWorld3D {
     return assemble(captureNodes(input,0,0));

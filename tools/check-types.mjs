@@ -640,6 +640,12 @@ const lambertSceneDom = {"marker":{"path":"packages/engine/dist/rendering/scene3
     {"path":"packages/engine/dist/web/sharedB1.d.ts","baseBytes":1302,"baseSha256":"f2df25a1ba2a184731c240f8aef5b9b4c9a0af05d583f493cc9ba816ce91abd5","bytes":1446,"sha256":"226036012fe92be805709b57311f9805dc53831491e7982cb81cd7750a5e80d8"},
     {"path":"packages/engine/dist/web/webgpuSharedMeshPass.d.ts","baseBytes":743,"baseSha256":"7d1094342be884cfc1bf0850d8fc4cf8437d0bcc1b571b044791094be0b380c7","bytes":1737,"sha256":"67711a2a5c08da820df0764c71298c32d504fd5c4bb65747d5976281f03f08eb"}
   ]};
+const animationSceneDom = {...lambertSceneDom,
+  marker:{...lambertSceneDom.marker,bytes:1126,sha256:'c2761c534c8a2b42e30db2915277cb5787e42cd070f71a78d3e2905bbb786c99'},
+};
+const glbAnimationSceneDom = {...animationSceneDom,
+  marker:{...animationSceneDom.marker,bytes:1200,sha256:'a528baf020bb417acb0ede5fe3bcf14fc0c31f8ccc889e644ba2cc0a3aa7c781'},
+};
 // AUTHORED-SCENE-DECLARATION-END
 function verifySceneDomM13(){
   if(!sceneDomM13Selected)return;
@@ -653,7 +659,7 @@ function verifySceneDomM13(){
   if(authoredSceneSelected){
     const marker=fingerprintFile(root,authoredSceneDomMarker.path);
     const matches=pin=>marker.bytes===pin.bytes&&marker.sha256===pin.sha256;
-    const successor=[worldCardSceneDom,texturedSceneDom,lambertSceneDom].find(value=>matches(value.marker));
+    const successor=[worldCardSceneDom,texturedSceneDom,lambertSceneDom,animationSceneDom,glbAnimationSceneDom].find(value=>matches(value.marker));
     if(successor){authoredDeclaration=successor.declaration;sharedDeclarations=successor.sharedDeclarations;}
     else if(!matches(authoredSceneDomMarker))throw Error(sceneDomLabel+' authored scene declaration marker changed');
   }

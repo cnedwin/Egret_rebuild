@@ -728,6 +728,41 @@ function m3PointerGraph(root,base,actual) {
     }
   }
   // LAMBERT-GLB-GRAPH-END
+  // SCENE-ANIMATION-GRAPH-BEGIN
+  const sceneAnimationPairs = [{"base":{"path":"packages/engine/rendering/scene3dAuthoring.ts","bytes":1109,"sha256":"3c59f3664f5c6df7ce7cb77b51b80710702abe92057bb03acbf3188191cbb4ee"},"current":{"path":"packages/engine/rendering/scene3dAuthoring.ts","bytes":1339,"sha256":"372467fb05144ddafcae964b2a31cc33154a2055b4fb86d12f2ca295f25fef12"}},{"base":{"path":"packages/engine/dist/rendering/scene3dAuthoring.js","bytes":640,"sha256":"daa7708b1a742325692a60a2ccc965428f6f8129132089b1db7157ce9ebf616e"},"current":{"path":"packages/engine/dist/rendering/scene3dAuthoring.js","bytes":708,"sha256":"4fd182f56839a66705ac90c58a88e49b63672525fb36819553effcfa6ce21aa2"}},{"base":{"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":888,"sha256":"cfc884e784a269304bf1236e6fb7a9ae63cf1d023a1bcb969668cb98583201e4"},"current":{"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":1126,"sha256":"c2761c534c8a2b42e30db2915277cb5787e42cd070f71a78d3e2905bbb786c99"}},{"base":{"path":"packages/engine/rendering/sceneWorld3D.ts","bytes":15565,"sha256":"d18742acf3dc0031306fb7685ebab4e2f64520957c296b6fe0988a2734cc1f7b"},"current":{"path":"packages/engine/rendering/sceneWorld3D.ts","bytes":17405,"sha256":"dd060ad47b11c16e2b3ee97901015447e84b5a7a0685515f1584cdf30055102c"}},{"base":{"path":"packages/engine/dist/rendering/sceneWorld3D.js","bytes":13092,"sha256":"6353fd3d29391312c069f9fa7714aa07cb4849177fb11d9dd663082500093dcc"},"current":{"path":"packages/engine/dist/rendering/sceneWorld3D.js","bytes":14641,"sha256":"87df31c87eebc24b992290b869915e24eafd6d84a5caaab6a5e7582d7e04dfde"}},{"base":{"path":"packages/engine/dist/rendering/sceneWorld3D.d.ts","bytes":2568,"sha256":"043f4e5bd6dcf0ce2a7a3a0c2bd921482f3270261ab4d169e14a543ca480cde4"},"current":{"path":"packages/engine/dist/rendering/sceneWorld3D.d.ts","bytes":2937,"sha256":"d84c7f9e9ba646b8f47de413ccd681fe0590125d11d5e41a75efd5fb3f4e73c2"}}];
+  const sceneAnimationAdditions = [{"path":"packages/engine/rendering/sceneAnimation3D.ts","bytes":10586,"sha256":"5cd1f19cbc708134d692c06998835a4a45a754d6832a9a4476853111771913a2"},{"path":"packages/engine/dist/rendering/sceneAnimation3D.js","bytes":8776,"sha256":"049d975912d241cfc76c48da170e2203f7006132f19e7757ca39cc3ffb11ac29"},{"path":"packages/engine/dist/rendering/sceneAnimation3D.d.ts","bytes":1240,"sha256":"f88016c24e95ea07d78dda74e8147c5cd85b30ef35bd7eccb2f0e5546663eed6"}];
+  const sceneAnimationMarker = sceneAnimationPairs.find(pair=>pair.base.path===lambertGlbMarker.path).current;
+  if(authored&&present.has(sceneAnimationMarker.path)){
+    const raw=readFileSync(path.join(root,sceneAnimationMarker.path));
+    if(raw.length===sceneAnimationMarker.bytes&&digest(raw)===sceneAnimationMarker.sha256){
+      for(const pairs of [worldCardPairs,texturedGlbPairs,lambertGlbPairs,sceneAnimationPairs]){
+        if(pairs.some(pair=>pair.base.path!==pair.current.path||!graph.some(row=>same(row,pair.base))))
+          return reject('Scene animation predecessor identities differ');
+        graph=graph.map(row=>pairs.find(pair=>same(pair.base,row))?.current??row);
+      }
+      if(sceneAnimationAdditions.some(row=>graph.some(prior=>prior.path===row.path)))
+        return reject('Scene animation additions collide with predecessor identities');
+      graph=[...graph,...sceneAnimationAdditions];
+    }
+  }
+  // SCENE-ANIMATION-GRAPH-END
+  // IMPORTED-GLB-ANIMATION-GRAPH-BEGIN
+  const importedGlbAnimationPairs = [{"base":{"path":"packages/engine/rendering/sceneAnimation3D.ts","bytes":10586,"sha256":"5cd1f19cbc708134d692c06998835a4a45a754d6832a9a4476853111771913a2"},"current":{"path":"packages/engine/rendering/sceneAnimation3D.ts","bytes":13745,"sha256":"cd4d0d72ab789aebbf70df93cb1d12b023170b5bc19cfb7bbeb0eab5fc2b5dd9"}},{"base":{"path":"packages/engine/dist/rendering/sceneAnimation3D.js","bytes":8776,"sha256":"049d975912d241cfc76c48da170e2203f7006132f19e7757ca39cc3ffb11ac29"},"current":{"path":"packages/engine/dist/rendering/sceneAnimation3D.js","bytes":10511,"sha256":"7c1bd7c80b4a4eef966770c09a9f6a09b082a15fd068f319525b99bf4d571f20"}},{"base":{"path":"packages/engine/dist/rendering/sceneAnimation3D.d.ts","bytes":1240,"sha256":"f88016c24e95ea07d78dda74e8147c5cd85b30ef35bd7eccb2f0e5546663eed6"},"current":{"path":"packages/engine/dist/rendering/sceneAnimation3D.d.ts","bytes":2724,"sha256":"074fa52654e4bbbaccd49f0c9748c3068ca891e88eed28b3015f76d31234b256"}},{"base":{"path":"packages/engine/rendering/scene3dAuthoring.ts","bytes":1339,"sha256":"372467fb05144ddafcae964b2a31cc33154a2055b4fb86d12f2ca295f25fef12"},"current":{"path":"packages/engine/rendering/scene3dAuthoring.ts","bytes":1410,"sha256":"4332d7ae3270dd11b133b61bc49d609e0bb24dd4fe338a022ce8b758cc6a5a00"}},{"base":{"path":"packages/engine/dist/rendering/scene3dAuthoring.js","bytes":708,"sha256":"4fd182f56839a66705ac90c58a88e49b63672525fb36819553effcfa6ce21aa2"},"current":{"path":"packages/engine/dist/rendering/scene3dAuthoring.js","bytes":732,"sha256":"759fc7b0d722046979d47cd467b694afee7692a693d63b7090fa3d970e731965"}},{"base":{"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":1126,"sha256":"c2761c534c8a2b42e30db2915277cb5787e42cd070f71a78d3e2905bbb786c99"},"current":{"path":"packages/engine/dist/rendering/scene3dAuthoring.d.ts","bytes":1200,"sha256":"a528baf020bb417acb0ede5fe3bcf14fc0c31f8ccc889e644ba2cc0a3aa7c781"}},{"base":{"path":"packages/engine/rendering/staticGlb3D.ts","bytes":39595,"sha256":"f6d073bffcd7e4c39bdb6fb0e80f9e032d548a11d149547be48e13c477f32a3b"},"current":{"path":"packages/engine/rendering/staticGlb3D.ts","bytes":51675,"sha256":"c8d865effa425cc3348dc1edd467c35056727dbf1b4642559a9d7e471360360a"}},{"base":{"path":"packages/engine/dist/rendering/staticGlb3D.js","bytes":35941,"sha256":"c03aba46639f276a91117cdb9cbf05c324a4a4c9ce8af6b2a79be06b431ab8f6"},"current":{"path":"packages/engine/dist/rendering/staticGlb3D.js","bytes":45692,"sha256":"ea39b6f20116d94056070c0b7d718391bdf4b4ae67f97c855b6cba70fc9b5385"}},{"base":{"path":"packages/engine/dist/rendering/staticGlb3D.d.ts","bytes":2715,"sha256":"423bccbaacbfe745d616a5e3cb602f1664162d189848749e6ceb0c524aef7e33"},"current":{"path":"packages/engine/dist/rendering/staticGlb3D.d.ts","bytes":3096,"sha256":"223b90c0dd049798b6e503f50870959132e6f8bd4b8f859f69f858b7664c9b9d"}}];
+  const importedGlbAnimationMarker = importedGlbAnimationPairs.find(pair=>pair.base.path===sceneAnimationMarker.path).current;
+  if(authored&&present.has(importedGlbAnimationMarker.path)){
+    const raw=readFileSync(path.join(root,importedGlbAnimationMarker.path));
+    if(raw.length===importedGlbAnimationMarker.bytes&&digest(raw)===importedGlbAnimationMarker.sha256){
+      if(sceneAnimationAdditions.some(row=>graph.some(prior=>prior.path===row.path)))
+        return reject('Scene animation additions collide with predecessor identities');
+      graph=[...graph,...sceneAnimationAdditions];
+      for(const pairs of [worldCardPairs,texturedGlbPairs,lambertGlbPairs,sceneAnimationPairs,importedGlbAnimationPairs]){
+        if(pairs.some(pair=>pair.base.path!==pair.current.path||!graph.some(row=>same(row,pair.base))))
+          return reject('Imported GLB animation predecessor identities differ');
+        graph=graph.map(row=>pairs.find(pair=>same(pair.base,row))?.current??row);
+      }
+    }
+  }
+  // IMPORTED-GLB-ANIMATION-GRAPH-END
   for(const row of graph){
     if(!present.has(row.path))return reject('Incomplete M3 pointer successor: '+row.path);
     const raw=readFileSync(path.join(root,row.path));if(raw.length!==row.bytes||digest(raw)!==row.sha256)return reject('M3 pointer whole-group raw identity differs: '+row.path);

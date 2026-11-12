@@ -10,8 +10,15 @@ const indexBytes = quad.length * Uint16Array.BYTES_PER_ELEMENT;
 const panelBytes = positionBytes + indexBytes;
 const unlit = 'KHR_materials_unlit';
 
-export function createPanelGlb({ reverse = false } = {}) {
-  const bin = new Uint8Array(panels.length * panelBytes);
+export function createPanelGlb({ reverse = false, animated = false } = {}) {
+  const meshBytes = panels.length * panelBytes;
+  const animation = animated ? {
+    moveTime: [0, 2], move: [-.2, 0, 1, 1.65, 0, 1],
+    scaleTime: [0, 1, 2], scale: [1, 1, 1, 1, .5, 1, 1, 1, 1],
+  } : undefined;
+  const animationBytes = animation ? Object.values(animation)
+    .reduce((bytes, values) => bytes + values.length * Float32Array.BYTES_PER_ELEMENT, 0) : 0;
+  const bin = new Uint8Array(meshBytes + animationBytes);
   const payload = new DataView(bin.buffer);
   const bufferViews = [], accessors = [], meshes = [], materials = [];
   for (const [index, panel] of panels.entries()) {
@@ -47,6 +54,26 @@ export function createPanelGlb({ reverse = false } = {}) {
     ],
     buffers: [{ byteLength: bin.byteLength }], bufferViews, accessors, materials, meshes,
   };
+  if (animation) {
+    let offset = meshBytes;
+    function appendFloatAccessor(type, count, values, bounds = {}) {
+      const accessor = accessors.length;
+      const byteLength = values.length * Float32Array.BYTES_PER_ELEMENT;
+      accessors.push({ bufferView: bufferViews.length, componentType: 5126, count, type, ...bounds });
+      bufferViews.push({ buffer: 0, byteOffset: offset, byteLength });
+      values.forEach((value, i) => payload.setFloat32(offset + i * 4, value, true));
+      offset += byteLength;
+      return accessor;
+    }
+    const moveTime = appendFloatAccessor('SCALAR', 2, animation.moveTime, { min: [0], max: [2] });
+    const move = appendFloatAccessor('VEC3', 2, animation.move);
+    const scaleTime = appendFloatAccessor('SCALAR', 3, animation.scaleTime, { min: [0], max: [2] });
+    const scale = appendFloatAccessor('VEC3', 3, animation.scale);
+    model.animations = [{ name: 'Slide and scale',
+      samplers: [{ input: moveTime, output: move }, { input: scaleTime, output: scale, interpolation: 'STEP' }],
+      channels: [{ sampler: 0, target: { node: 1, path: 'translation' } }, { sampler: 1, target: { node: 1, path: 'scale' } }],
+    }];
+  }
   const json = new TextEncoder().encode(JSON.stringify(model));
   const jsonSize = Math.ceil(json.byteLength / 4) * 4;
   const out = new Uint8Array(12 + 8 + jsonSize + 8 + bin.byteLength);
