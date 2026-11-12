@@ -39,6 +39,8 @@ The [getting-started guide](knowledge-base/en/docs/getting-started.md) explains 
 
 See the [WebGL2 isometric map](examples/isometric-map/README.md) for depth ordering and frame submission in a small grid-based scene.
 
+For optional tile-map, physics, audio, save, archive, KTX2 and localization support, see the [third-party integrations](integrations/README.md).
+
 ## Development and community
 
 Read the [current capability map](knowledge-base/en/docs/core-progress.md) and [engineering plan](knowledge-base/en/docs/engineering-plan.md) to see delivered features and open acceptance criteria across the eleven M2–M4 packages.

@@ -39,6 +39,8 @@ Years later, as times change and technology advances, many developers continue t
 
 [WebGL2 等距地图示例](examples/isometric-map/README.zh-CN.md)展示小型网格场景的深度排序和帧提交。
 
+地图、物理、音频、存档、解包、KTX2 和多语言可按需启用，详见[第三方集成](integrations/README.zh-CN.md)。
+
 ## 开发与社区参与
 
 选定工作前先读[当前能力图](knowledge-base/Cns/docs/core-progress.md)和[工程计划](knowledge-base/Cns/docs/工程规划.md)，了解十一个 M2–M4 工作包的已交付能力与验收缺口。

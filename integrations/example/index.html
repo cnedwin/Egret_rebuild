@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Egret integrations</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root { color-scheme: dark; font: 16px/1.5 system-ui, sans-serif; background: #15201f; color: #f1f5e8; }
+    body { margin: 0; }
+    main { max-width: 47rem; margin: auto; padding: clamp(1rem, 4vw, 3rem); }
+    h1 { margin: 0 0 1rem; font-size: clamp(1.7rem, 6vw, 2.7rem); }
+    canvas { display: block; width: min(100%, 32rem); height: auto; image-rendering: pixelated; border: 1px solid #68837e; border-radius: .4rem; }
+    .controls { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1rem 0; }
+    button { color: inherit; background: #264541; border: 1px solid #68837e; border-radius: .4rem; padding: .7rem 1rem; font: inherit; }
+    button:disabled { opacity: .5; }
+    button:focus-visible { outline: 2px solid #ffcd79; outline-offset: 3px; }
+    pre { overflow: auto; font-size: .83rem; background: #0e1717; padding: 1rem; border-radius: .4rem; }
+  </style>
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <main>
+    <h1 id="title">Egret integrations / 白鹭第三方集成</h1>
+    <canvas id="scene" width="112" height="80" aria-label="Tiled room and KTX2 image / Tiled 地图和 KTX2 贴图"></canvas>
+    <div class="controls">
+      <button id="run" disabled>Run scene / 运行场景</button>
+      <button id="language" disabled>中文 / English</button>
+      <button id="close" disabled>Close scene / 关闭场景</button>
+    </div>
+    <p id="status" role="status">Loading / 正在加载</p>
+    <details open>
+      <summary>Diagnostics / 调试信息</summary>
+      <pre id="diagnostics" data-phase="starting"></pre>
+    </details>
+  </main>
+</body>
+</html>

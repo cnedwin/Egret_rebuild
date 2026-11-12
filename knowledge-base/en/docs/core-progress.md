@@ -78,6 +78,8 @@ Current usage contracts:
 - [Multi-contact input](multi-pointer-input.md), [keyboard/focus](keyboard-focus-input.md), [movement/action control scope](m3-ui-text-input-plan.md) and [responsive examples](mobile-examples.md).
 - [Bounded 3D](public-scene3d-contract.md), [project transactions](project-transaction-core-contract.md) and [legacy migration scope](legacy-project-migration.md).
 
+The independent optional integrations package supplies Tiled/TMX tooling, 2D physics, browser audio and saves, ZIP assets, KTX2 inspection and RGBA8 decoding, and localization through explicit imports.
+
 ## Existing work packages
 
 All eleven M2–M4 packages remain open to their complete acceptance. A merged feature is credited below without declaring the whole package finished.

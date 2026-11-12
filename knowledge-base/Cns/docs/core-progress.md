@@ -78,6 +78,8 @@ M3.3 提供可选原生 input／textarea 编辑，复用已提交文本／选区
 - [多触点输入](multi-pointer-input.md)、[键盘／焦点](keyboard-focus-input.md)、[移动／动作控件范围](m3-ui-text-input-plan.md)和[响应式示例](mobile-examples.md)。
 - [有界 3D](公共3D场景契约.md)、[工程事务](工程事务核心合同.md)和[旧工程迁移范围](旧工程迁移.md)。
 
+独立的可选集成包提供 Tiled／TMX 工具、2D 物理、浏览器音频与存档、ZIP 资源、KTX2 检查及 RGBA8 解码和多语言，各能力都有显式入口。
+
 ## 现有工作包
 
 M2–M4 的十一个工作包均保留完整验收要求。下表确认已合并能力，不据此宣布整个工作包完成。

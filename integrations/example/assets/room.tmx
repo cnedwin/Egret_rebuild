@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="4" height="3" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="3">
+ <properties>
+  <property name="title" value="Integration room"/>
+ </properties>
+ <tileset firstgid="1" source="tiles.tsx"/>
+ <layer id="1" name="Ground" width="4" height="3">
+  <data encoding="csv">
+1,1,1,1,
+1,2,0,1,
+1,1,2147483650,1
+  </data>
+ </layer>
+ <objectgroup id="2" name="Markers">
+  <object id="1" name="Spawn" type="spawn" x="8" y="8"><point/></object>
+  <object id="2" name="Obstacle" type="collision" x="16" y="16" width="16" height="16">
+   <properties>
+    <property name="blocked" type="bool" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

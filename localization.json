@@ -547,8 +547,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "0b3e8a7a03ded3f6a7a5f10b2816fe3e587e6d61f5bb114219ed4e2a05fa1f41",
-      "zhSha256": "92753215bf4aa221b326d1d83fa0387f5444dc206f28d9dfed584f86e058f8d8"
+      "enSha256": "33082f956c42c0f4aaf287330522855edda27157b5e67434f31e68b7df144593",
+      "zhSha256": "ec206c96d09e5af42fd66968c04658b40e02a036293d6147c743f8f1ac0604db"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "ebdbe7b594edffff74537b1c0592e371d4dd3344bf817a618e232d0d485b2039",
-      "zhSha256": "7baeafcf965aa518bf0741726a2312692f3e37da1585dbe4ae83fa6d487acbf9"
+      "enSha256": "06f8e65f2c3d08077951f3cbd0aec41832a07697ab902a114f6663214147adbb",
+      "zhSha256": "da93b3596eaad17ae837cf38eacd39007b6e746978ab1d8a759192af551d9495"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -2329,6 +2329,13 @@
       "kind": "public_reading",
       "enSha256": "3b8e9ef18a26384a427e6d3e0b3a6c7abaafa6c712a088691a700e01e843f9b4",
       "zhSha256": "a45867d2c268652f82da34b4beecdcd6480788814ba20952dd8f2e81e07d73d7"
+    },
+    {
+      "en": "integrations/README.md",
+      "zh": "integrations/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "429317b1db4014b1c5510135b4752916897f29e15c193ab0d826eebc847cac53",
+      "zhSha256": "813a93f8d24b4a654c6f51ff32ef1f83699dd5e8597a700e9540efa43e309730"
     }
   ],
   "registries": [
@@ -4855,6 +4862,38 @@
     {
       "path": "packages/engine/rendering/sceneAnimation3D.ts",
       "sha256": "cd4d0d72ab789aebbf70df93cb1d12b023170b5bc19cfb7bbeb0eab5fc2b5dd9"
+    },
+    {
+      "path": "integrations/src/archive.ts",
+      "sha256": "da232395747c3448894637d66e38755edc8894e1646efb3b1cd8be093dbdec9f"
+    },
+    {
+      "path": "integrations/src/errors.ts",
+      "sha256": "ae41057a142c2d7c135740c196a83a442ddf2bcbcccea654560a760f6a86164f"
+    },
+    {
+      "path": "integrations/src/i18n.ts",
+      "sha256": "140b39699b8d14884d0607936d249e5a002e3e44dc8d88699310a3489166bdf2"
+    },
+    {
+      "path": "integrations/src/physics.ts",
+      "sha256": "43c0ddc40c58e757c13276751a8e249aac0551ddea0c229451ce77325b505990"
+    },
+    {
+      "path": "integrations/src/texture.ts",
+      "sha256": "f2d7cd7fba6914d76f94df6316b79a691e744348858c4e3f1d328a72e851f2a4"
+    },
+    {
+      "path": "integrations/src/tiled.ts",
+      "sha256": "286023d17392fefcdf63ce9cd46adcd8fc3971750b3e5120ee6d0e0c59769ac7"
+    },
+    {
+      "path": "integrations/src/web/audio.ts",
+      "sha256": "62633501d7db1fa28b8d2985879d71a70a1deaea1e6f92b6d45b56016b864367"
+    },
+    {
+      "path": "integrations/src/web/storage.ts",
+      "sha256": "79dbabfc78313b169305868bcb3b2b503003fbcdc4a76d0ff5c500c39f8312de"
     }
   ],
   "historicalSemanticReview": {
