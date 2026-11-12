@@ -105,3 +105,8 @@ export {TransformGizmo3D, createTransformGizmo3D} from './Gizmo3D.js';
 export type {GizmoMode3D, GizmoSpace3D, GizmoHandle3D, TransformGizmoOptions3D} from './Gizmo3D.js';
 export {CharacterMotor3D, FollowCamera3D, createCharacterMotor3D, createFollowCamera3D} from './Character3D.js';
 export type {CharacterMotorOptions3D, FollowCameraOptions3D} from './Character3D.js';
+export {MESHOPT3D_LIMITS, decodeMeshopt3D} from './Meshopt3D.js';
+export type {MeshoptMode3D, MeshoptFilter3D} from './Meshopt3D.js';
+export {COMPRESSION3D_LIMITS, inflate3D, decompressZstd3D} from './Compression3D.js';
+export {createDracoDecoder3D, createBasisTranscoder3D} from './decoders3D.js';
+export type {DracoModule3D, BasisModule3D} from './decoders3D.js';

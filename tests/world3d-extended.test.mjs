@@ -75,12 +75,13 @@ test('KTX2 reader returns pixels, compressed chains and delegates the rest', asy
   await assert.rejects(parseKtx23D(ktx2(43, 2, 2, [new Uint8Array(16)]).subarray(0, 90)), code('WORLD3D_INPUT_INVALID'));
 });
 
-test('glTF accepts meshopt and Draco only through injected decoders', async () => {
+test('glTF takes an injected meshopt decoder and needs one for Draco', async () => {
   const plain = quadGltf();
   const meshopt = quadGltf({extensionsUsed: ['EXT_meshopt_compression'], extensionsRequired: ['EXT_meshopt_compression']});
   meshopt.json.bufferViews[0].extensions = {EXT_meshopt_compression: {buffer: 0, byteOffset: 0, byteLength: 48, byteStride: 12, count: 4, mode: 'ATTRIBUTES'}};
   const bytes = new TextEncoder().encode(JSON.stringify(meshopt.json)), loadBuffer = async () => plain.bin;
-  await assert.rejects(loadGltf3D(bytes, {loadBuffer}), code('WORLD3D_GLTF_UNSUPPORTED'));
+  // Without a hook the built-in decoder runs; this buffer is not meshopt data, so it is refused as malformed.
+  await assert.rejects(loadGltf3D(bytes, {loadBuffer}), code('WORLD3D_GLTF_INVALID'));
   const requests = [];
   const asset = await loadGltf3D(bytes, {loadBuffer, decodeMeshopt: request => { requests.push([request.count, request.stride, request.mode, request.filter]); return request.source.slice(); }});
   assert.deepEqual(requests, [[4, 12, 'ATTRIBUTES', 'NONE']]);
