@@ -120,3 +120,7 @@ export {
     PlanarReflection3D, Water3D, createWater3D, createWaterMaterial3D,
     type ReflectionRenderer3D, type WaterOptions3D,
 } from './Water3D.js';
+export {
+    AnimationTexture3D, SkinnedInstancedMesh3D, bakeAnimationTexture3D, createSkinnedInstancedMesh3D, ANIMATION_TEXTURE3D_LIMITS,
+    type BakedClip3D, type BakeAnimationOptions3D, type InstanceClipOptions3D,
+} from './AnimationTexture3D.js';

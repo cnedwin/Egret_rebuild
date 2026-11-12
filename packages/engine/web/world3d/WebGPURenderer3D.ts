@@ -10,6 +10,7 @@ import type {Light3D} from '../../rendering/world3d/Light3D.js';
 import type {Material3D} from '../../rendering/world3d/Material3D.js';
 import {linearToSrgb, mat3NormalFromMat4, mat4Invert} from '../../rendering/world3d/math3D.js';
 import type {InstancedMesh3D, Mesh3D, Skeleton3D} from '../../rendering/world3d/Mesh3D.js';
+import {type AnimationTexture3D, SkinnedInstancedMesh3D} from '../../rendering/world3d/AnimationTexture3D.js';
 import type {Scene3D} from '../../rendering/world3d/Object3D.js';
 import {RenderList3D} from '../../rendering/world3d/RenderList3D.js';
 import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
@@ -57,7 +58,7 @@ interface GeometryGpu {
     serial: number;
     readonly unsubscribe: () => void;
 }
-interface InstanceGpu { matrices: BufferGpu; colors: BufferGpu | undefined; version: number; lastFrame: number; }
+interface InstanceGpu { matrices: BufferGpu; colors: BufferGpu | undefined; animation?: BufferGpu; version: number; lastFrame: number; }
 interface TextureGpu { texture: GPUTexture; view: GPUTextureView; sampler: GPUSampler; version: number; maxMip: number; readonly unsubscribe: () => void; }
 interface TargetGpu { color: GPUTexture; colorView: GPUTextureView; depth: GPUTexture | undefined; depthView: GPUTextureView | undefined; version: number; readonly unsubscribe: () => void; }
 interface MaterialGpu { readonly buffer: GPUBuffer; group: GPUBindGroup | undefined; key: string; serial: number; readonly unsubscribe: () => void; }
@@ -127,6 +128,7 @@ export class WebGPURenderer3D implements Renderer3D {
     readonly #targets = new Map<RenderTarget3D, TargetGpu>();
     readonly #materials = new Map<Material3D, MaterialGpu>();
     readonly #bones = new Map<Skeleton3D, BonesGpu>();
+    readonly #animations = new Map<AnimationTexture3D, GPUBuffer>();
     readonly #skins = new WeakMap<Mesh3D, SkinGpu>();
     readonly #samplers = new Map<string, GPUSampler>();
     readonly #mipPipelines = new Map<GPUTextureFormat, GPURenderPipeline>();
@@ -538,14 +540,28 @@ export class WebGPURenderer3D implements Renderer3D {
         if (entry.version !== mesh.instanceVersion) {
             entry.matrices = this.writeBuffer(entry.matrices, mesh.instanceMatrices, BUFFER_USAGE.VERTEX);
             if (mesh.instanceColors) entry.colors = this.writeBuffer(entry.colors, mesh.instanceColors, BUFFER_USAGE.VERTEX);
+            if (mesh instanceof SkinnedInstancedMesh3D) entry.animation = this.writeBuffer(entry.animation, mesh.instanceAnimation, BUFFER_USAGE.VERTEX);
             entry.version = mesh.instanceVersion;
         }
         return entry;
     }
     /** Bind group holding the bone matrices and morph deltas for a mesh. */
     private skin(mesh: Mesh3D, gpu: GeometryGpu, skinned: boolean, frame: number): GPUBindGroup {
-        if (!skinned && !gpu.morph) return this.#dummySkin;
+        const crowd = !skinned && mesh instanceof SkinnedInstancedMesh3D ? mesh.animations : undefined;
+        if (!skinned && !gpu.morph && !crowd) return this.#dummySkin;
         let bonesBuffer = this.#dummyBones;
+        if (crowd) {
+            // Baked poses are uploaded once and stay until the table is disposed.
+            let table = this.#animations.get(crowd);
+            if (!table) {
+                table = this.device.createBuffer({size: crowd.data.byteLength, usage: BUFFER_USAGE.STORAGE | BUFFER_USAGE.COPY_DST});
+                this.device.queue.writeBuffer(table, 0, crowd.data.buffer as ArrayBuffer, crowd.data.byteOffset, crowd.data.byteLength);
+                this.#animations.set(crowd, table);
+                const created = table;
+                crowd.onDispose(() => { if (this.#animations.get(crowd) === created) { created.destroy(); this.#animations.delete(crowd); } });
+            }
+            bonesBuffer = table;
+        }
         if (skinned) {
             const skeleton = mesh.skeleton!, count = skeleton.bones.length;
             let bones = this.#bones.get(skeleton);
@@ -633,6 +649,7 @@ export class WebGPURenderer3D implements Renderer3D {
             tangent: lit && uv && material.normalMap !== undefined && gpu.buffers.has('tangent'),
             vertexColor: material.vertexColors && gpu.buffers.has('color'),
             skinning, morph: gpu.morph !== undefined, morphNormals: gpu.morph?.channels === 2,
+            skinInstancing: instanced && !skinning && mesh instanceof SkinnedInstancedMesh3D && gpu.buffers.has('joints') && gpu.buffers.has('weights'),
             instancing: instanced, instanceColor: instanced && !depthOnly && (mesh as InstancedMesh3D).instanceColors !== undefined,
             billboard: material.billboard && !material.screenSpace, screenSpace: material.screenSpace,
             map: uv && material.map !== undefined && (!depthOnly || material.alphaMode !== 'opaque'),
@@ -683,8 +700,8 @@ export class WebGPURenderer3D implements Renderer3D {
         add(features.uv, 2, 'float32x2', 8);
         add(features.tangent, 3, 'float32x4', 16);
         add(features.vertexColor, 4, colorSize === 3 ? 'float32x3' : 'float32x4', colorSize * 4);
-        add(features.skinning, 5, 'uint32x4', 16);
-        add(features.skinning, 6, 'float32x4', 16);
+        add(features.skinning || features.skinInstancing === true, 5, 'uint32x4', 16);
+        add(features.skinning || features.skinInstancing === true, 6, 'float32x4', 16);
         add(features.uv1, 7, 'float32x2', 8);
         if (features.instancing) {
             buffers.push({arrayStride: 64, stepMode: 'instance', attributes: [0, 1, 2, 3].map(column => ({shaderLocation: 8 + column, offset: column * 16, format: 'float32x4' as GPUVertexFormat}))});
@@ -692,6 +709,7 @@ export class WebGPURenderer3D implements Renderer3D {
         if (features.instanceColor) {
             buffers.push({arrayStride: instanceColorSize * 4, stepMode: 'instance', attributes: [{shaderLocation: 12, offset: 0, format: instanceColorSize === 3 ? 'float32x3' : 'float32x4'}]});
         }
+        if (features.skinInstancing) buffers.push({arrayStride: 16, stepMode: 'instance', attributes: [{shaderLocation: 13, offset: 0, format: 'float32x4'}]});
         const blendState: GPUBlendState | undefined = blend === 'off' ? undefined
             : blend === 'additive' ? {color: {srcFactor: 'src-alpha', dstFactor: 'one'}, alpha: {srcFactor: 'zero', dstFactor: 'one'}}
             : blend === 'multiply' ? {color: {srcFactor: 'dst', dstFactor: 'zero'}, alpha: {srcFactor: 'zero', dstFactor: 'one'}}
@@ -778,7 +796,7 @@ export class WebGPURenderer3D implements Renderer3D {
             | (instanced && (mesh as InstancedMesh3D).instanceColors ? 32 : 0) | (mesh.skeleton ? 64 : 0) | (mesh.receiveShadow && this.#shadowCount > 0 ? 128 : 0)
             | (frameFlags.fog ? 256 : 0) | (frameFlags.environment ? 512 : 0) | (this.toneMapping !== 'none' ? 1024 : 0)
             | (instanced && (mesh as InstancedMesh3D).instanceColorSize === 4 ? 2048 : 0)
-            | (material.side === 'double' ? 4096 : material.side === 'back' ? 8192 : 0);
+            | (material.side === 'double' ? 4096 : material.side === 'back' ? 8192 : 0) | (mesh instanceof SkinnedInstancedMesh3D ? 16384 : 0);
         let cache = this.#drawVariants.get(material);
         if (!cache || cache.version !== material.version) this.#drawVariants.set(material, cache = {version: material.version, variants: new Map()});
         // Material fields that select shader features or pipeline state. They are read every
@@ -791,7 +809,7 @@ export class WebGPURenderer3D implements Renderer3D {
             | (material.depthTest ? 8192 : 0) | (material.depthWrite ? 16384 : 0) | (material.fog ? 131072 : 0) | (material.toneMapped ? 262144 : 0)
             | (material.polygonOffset ? 524288 : 0) | (material.occlusionMap?.channel === 1 ? 1048576 : 0) | (material.emissiveMap?.channel === 1 ? 2097152 : 0)
             | (material.lightMap ? 4194304 : 0) | (material.lightMap?.channel === 1 ? 8388608 : 0) | (material.reflectionMap ? 16777216 : 0);
-        const variantKey = surface * 16384 + bits;
+        const variantKey = surface * 32768 + bits;
         let byGeometry = cache.variants.get(geometry.id);
         if (!byGeometry) cache.variants.set(geometry.id, byGeometry = new Map());
         let variant = byGeometry.get(variantKey);
@@ -812,11 +830,12 @@ export class WebGPURenderer3D implements Renderer3D {
             let slot = 0;
             const bind = (enabled: boolean, name: string): void => { if (enabled) pass.setVertexBuffer(slot++, gpu.buffers.get(name)!.buffer); };
             bind(true, 'position'); bind(features.normal, 'normal'); bind(features.uv, 'uv'); bind(features.tangent, 'tangent');
-            bind(features.vertexColor, 'color'); bind(features.skinning, 'joints'); bind(features.skinning, 'weights'); bind(features.uv1, 'uv1');
+            bind(features.vertexColor, 'color'); bind(features.skinning || features.skinInstancing === true, 'joints'); bind(features.skinning || features.skinInstancing === true, 'weights'); bind(features.uv1, 'uv1');
             if (instanced) {
                 const instance = this.instances(mesh as InstancedMesh3D, frame);
                 pass.setVertexBuffer(slot++, instance.matrices.buffer);
                 if (features.instanceColor) pass.setVertexBuffer(slot++, instance.colors!.buffer);
+                if (features.skinInstancing) pass.setVertexBuffer(slot++, instance.animation!.buffer);
             }
             this.#boundVertices = instanced ? undefined : variant;
             this.#boundIndex = undefined;
@@ -1092,7 +1111,7 @@ export class WebGPURenderer3D implements Renderer3D {
         if (frame % PRUNE_INTERVAL !== 0) return;
         for (const [mesh, entry] of this.#instances) {
             if (frame - entry.lastFrame < PRUNE_INTERVAL) continue;
-            entry.matrices.buffer.destroy(); entry.colors?.buffer.destroy();
+            entry.matrices.buffer.destroy(); entry.colors?.buffer.destroy(); entry.animation?.buffer.destroy();
             this.#instances.delete(mesh);
         }
         for (const [skeleton, entry] of this.#bones) {
@@ -1136,8 +1155,10 @@ export class WebGPURenderer3D implements Renderer3D {
         for (const entry of this.#textures.values()) { entry.unsubscribe(); entry.texture.destroy(); }
         for (const entry of this.#targets.values()) { entry.unsubscribe(); entry.color.destroy(); entry.depth?.destroy(); }
         for (const entry of this.#materials.values()) { entry.unsubscribe(); entry.buffer.destroy(); }
-        for (const entry of this.#instances.values()) { entry.matrices.buffer.destroy(); entry.colors?.buffer.destroy(); }
+        for (const entry of this.#instances.values()) { entry.matrices.buffer.destroy(); entry.colors?.buffer.destroy(); entry.animation?.buffer.destroy(); }
         for (const entry of this.#bones.values()) entry.buffer.destroy();
+        for (const table of this.#animations.values()) table.destroy();
+        this.#animations.clear();
         for (const slot of this.#depthFrames) slot?.buffer.destroy();
         this.#textures.clear(); this.#targets.clear(); this.#materials.clear(); this.#instances.clear(); this.#bones.clear();
         this.#pipelines.clear(); this.#modules.clear();

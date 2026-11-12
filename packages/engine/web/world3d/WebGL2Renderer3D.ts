@@ -10,6 +10,7 @@ import type {Light3D} from '../../rendering/world3d/Light3D.js';
 import type {Material3D} from '../../rendering/world3d/Material3D.js';
 import {linearToSrgb, mat3NormalFromMat4, mat4Invert} from '../../rendering/world3d/math3D.js';
 import type {InstancedMesh3D, Mesh3D} from '../../rendering/world3d/Mesh3D.js';
+import {SkinnedInstancedMesh3D} from '../../rendering/world3d/AnimationTexture3D.js';
 import type {Scene3D} from '../../rendering/world3d/Object3D.js';
 import {RenderList3D} from '../../rendering/world3d/RenderList3D.js';
 import type {RenderItem3D} from '../../rendering/world3d/RenderList3D.js';
@@ -43,7 +44,7 @@ export interface WebGL2Renderer3DOptions {
 const V = Object.freeze({
     normal: 1, tangent: 2, uv: 4, color: 8, skin: 16, morph: 32, morphNormals: 64, instancing: 128, instanceColor: 256,
     receiveShadow: 512, fog: 1024, toneMapped: 2048, environment: 4096, points: 8192, depthOnly: 16384, linearOutput: 32768,
-    mapFromTarget: 65536, uv1: 131072, occlusionSecond: 262144, emissiveSecond: 524288, lightSecond: 1048576, transmission: 2097152,
+    mapFromTarget: 65536, uv1: 131072, occlusionSecond: 262144, emissiveSecond: 524288, lightSecond: 1048576, transmission: 2097152, skinInstancing: 4194304,
 } as const);
 const IDENTITY3 = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -421,6 +422,7 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (has(V.morph)) defines.push('USE_MORPH');
         if (has(V.morphNormals) && (!depthOnly || material.shader?.glslVertex !== undefined)) defines.push('USE_MORPH_NORMALS');
         if (has(V.instancing)) defines.push('USE_INSTANCING');
+        if (has(V.skinInstancing)) defines.push('USE_SKIN_INSTANCING');
         if (has(V.points)) defines.push('POINTS');
         if (material.screenSpace) defines.push('SCREEN_SPACE');
         else if (material.billboard) defines.push('BILLBOARD');
@@ -558,6 +560,8 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (skinned) variant |= V.skin;
         if (gpu.morph) variant |= V.morph | (gpu.morph.attributes === 2 ? V.morphNormals : 0);
         if (instanced) variant |= V.instancing | ((mesh as InstancedMesh3D).instanceColors ? V.instanceColor : 0);
+        const crowd = !skinned && mesh instanceof SkinnedInstancedMesh3D && geometry.getAttribute('joints') !== undefined && geometry.getAttribute('weights') !== undefined ? mesh : undefined;
+        if (crowd) variant |= V.skinInstancing;
         if (geometry.topology === 'points') variant |= V.points;
         if (!depthOnly && mesh.receiveShadow && this.#shadowCount > 0) variant |= V.receiveShadow;
         if (!depthOnly && material.transmission > 0 && this.#grabbed) variant |= V.transmission;
@@ -584,6 +588,12 @@ export class WebGL2Renderer3D implements Renderer3D {
             if (u['uBindMatrix']) gl.uniformMatrix4fv(u['uBindMatrix'], false, mesh.bindMatrix);
             if (u['uModel']) gl.uniformMatrix4fv(u['uModel'], false, IDENTITY4);
         } else {
+            if (crowd) {
+                // Creating the table binds another unit, so fetch it before selecting this one.
+                const table = resources.animations(crowd.animations);
+                gl.activeTexture(gl.TEXTURE0 + TEXTURE_UNITS_3D.bones);
+                gl.bindTexture(gl.TEXTURE_2D, table);
+            }
             if (u['uModel']) gl.uniformMatrix4fv(u['uModel'], false, world);
             if (u['uNormalMatrix']) gl.uniformMatrix3fv(u['uNormalMatrix'], false, mat3NormalFromMat4(this.#scratch9, world) as Float32Array);
         }

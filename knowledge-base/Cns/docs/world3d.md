@@ -58,6 +58,8 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `Lod3D` 按相机距离显示其中一个子节点。
 
+成群的动画角色可以一次绘制。`bakeAnimationTexture3D(root, mesh, clips, {fps})` 把每个动画片段采样到骨架上，按帧保存蒙皮网格每根骨骼的矩阵；烘焙结束后骨架恢复原状。`createSkinnedInstancedMesh3D(geometry, material, baked, capacity)` 随后不用骨架就能绘制蒙皮几何体的多个副本：每个实例像普通实例一样有自己的变换和颜色，另有 `setClipAt(index, clip, {time, speed, loop, fade})`。每帧调用一次 `crowd.update(deltaSeconds)`，它推进所有实例，写入实例所处的前后两帧及其混合比例，顶点阶段据此在烘焙表中查找；这张表在 WebGL2 上是浮点纹理，在 WebGPU 上是存储缓冲区。阴影使用同样的姿态。`isFinishedAt` 报告不循环的片段是否播完，`fade` 从切换时保持的姿态过渡到新片段。只烘焙骨骼变换：变形权重、片段混合树以及注视之类的逐实例骨骼修改仍需使用普通蒙皮网格。两帧之间的姿态按矩阵逐个混合，在默认每秒 30 帧时足够准确，低帧率下的快速旋转会有偏差。剔除时把全部实例当作一个物体，并按动画的活动范围放宽包围球。
+
 ## 动画
 
 `createAnimationClip3D` 用轨道创建剪辑。轨道按名称指向节点，可驱动 `position`、`quaternion`、`scale` 或变形 `weights`，支持阶跃、线性和三次插值。`AnimationMixer3D` 为每个剪辑创建一个 `AnimationAction3D`。动作可循环、单次播放或往返，带权重和时间缩放，支持 `fadeIn`、`fadeOut` 和 `crossFadeTo`。同一属性上的并发动作按权重混合，四元数取最短路径。`restorePose()` 恢复绑定时记录的姿态。
@@ -279,11 +281,11 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 [World3D 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/world3d/README.zh-CN.md)在任一后端上展示灯光、阴影、实例化、蒙皮、变形、粒子、渲染目标、拾取和轨道控制。
 
-无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs`、`tests/world3d-decoders.test.mjs`、`tests/world3d-navigation.test.mjs`、`tests/world3d-terrain.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
+无浏览器测试 `tests/world3d-core.test.mjs`、`tests/world3d-animation-picking.test.mjs`、`tests/world3d-gltf.test.mjs`、`tests/world3d-renderer-lifetime.test.mjs`、`tests/world3d-extended.test.mjs`、`tests/world3d-decoders.test.mjs`、`tests/world3d-navigation.test.mjs`、`tests/world3d-terrain.test.mjs`、`tests/world3d-crowd.test.mjs` 和 `tests/world3d-parity.test.mjs` 通过公共入口覆盖不依赖 DOM 的核心、资源提供者、状态机和物理。
 
-`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十一个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，文字与变换操纵器，以及带反射水面、细节层级混合的地形。开发期间全部二十一个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前十六个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
+`tools/verify-world3d.mjs --playwright <installed-playwright-module> --output <new-directory> [--channel msedge]` 把二十二个固定场景分别用两个后端绘制到渲染目标并比较图像。较新的场景覆盖级联阴影、后处理、压缩纹理、屏幕层、从保存的文档还原的场景、风格化与自定义材质、点光源阴影、带描边与裁剪的屏幕空间遮蔽，顶点钩子及其阴影，光泽、玻璃、光照贴图、合批与宽线，景深，透过玻璃的折射，文字与变换操纵器，带反射水面、细节层级混合的地形，以及处于不同片段、带阴影的实例化蒙皮角色。开发期间全部二十二个场景在使用软件渲染的无头 Chromium 中运行。桌面复审在 NVIDIA RTX 5090 Laptop GPU 上用 Edge 157 执行了前十六个场景，未使用强制渲染后端的启动参数。两个后端的可见示例均开启抗锯齿并正常呈现，释放后停止推进帧。
 
-`tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。负载包括静止与运动的网格、阴影、实例化、多光源、蒙皮、合批、覆盖在场景上的玻璃以及后处理链；另外还测量一次物理步进的耗时，场景为静止的箱子堆、三角网格上的球体和关节链。不测量 GPU 执行时间。
+`tools/bench-world3d.mjs --playwright <installed-playwright-module>` 在两个后端上测量固定负载下 `render()` 的 CPU 时间，用作发现性能回退的基线，而不是绝对评分。负载包括静止与运动的网格、阴影、实例化、多光源、每个网格一次绘制的蒙皮与一次绘制 2000 个烘焙实例的蒙皮、合批、覆盖在场景上的玻璃以及后处理链；另外还测量一次物理步进的耗时，场景为静止的箱子堆、三角网格上的球体和关节链。不测量 GPU 执行时间。
 
 ## 待完成事项
 
@@ -291,5 +293,6 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 - 一台运行 Chrome 157 的 Android 真机已呈现两个后端，响应了自动触发的阴影开关，并在释放后停止更新帧。本次复审还在同类真机的 WebGL2 和 WebGPU 上检查了屏幕空间效果、顶点位移与阴影，以及斜切投影深度。
 - 更广泛的移动端与设备恢复覆盖、视口和反射探针专项检查、性能测量，以及第一人称控制和空间音频的真人验证仍待完成。
 - 最新的四个比较场景（光泽、玻璃与光照贴图；景深；折射；文字与变换操纵器）以及关节、凸包、连续碰撞和变换控制目前只在软件渲染和无头测试中运行过，仍需在真实 GPU 上验证并由真人操作检查。
+- 烘焙蒙皮实例目前只在无头测试、软件渲染下的比较场景与基准测试，以及软件渲染下 WebGL2 的地形示例中运行过。
 - 地形、水面和平面镜像目前只在无头测试、软件渲染下的比较场景以及软件渲染下 WebGL2 的地形示例中运行过，仍需在真实 GPU 上、通过 WebGPU 画布呈现并由真人操作检查。
 - 尚未实现：不依赖官方模块的 Draco 与 Basis Universal 解码，浮点精度的环境预过滤，多于一层的折射，带倒角的挤出体，文字整形与 CFF 字体，滑动关节与弹簧关节，以及针对旋转或宽大刚体的连续碰撞。
