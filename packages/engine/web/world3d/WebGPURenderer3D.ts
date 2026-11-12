@@ -187,7 +187,7 @@ export class WebGPURenderer3D implements Renderer3D {
         context.configure({device, format: this.#format, alphaMode: this.#alpha ? 'premultiplied' : 'opaque'});
 
         const filtering: GPUBindGroupLayoutEntry[] = [];
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 6; i++) {
             filtering.push({binding: 1 + i * 2, visibility: SHADER_STAGE.FRAGMENT, texture: {}});
             filtering.push({binding: 2 + i * 2, visibility: SHADER_STAGE.FRAGMENT, sampler: {}});
         }
@@ -593,11 +593,13 @@ export class WebGPURenderer3D implements Renderer3D {
         data[20] = ax; data[21] = bx; data[22] = tx; data[23] = 0;
         data[24] = ay; data[25] = by; data[26] = ty; data[27] = 0;
         data[28] = material.rotation; data[29] = material.sizeAttenuation ? 1 : 0; data[30] = 0; data[31] = 0;
-        if (material.shader) data.set(material.shader.uniforms, 32);
+        if (material.shader) data.set(material.shader.uniforms, 32); else data.fill(0, 32, 48);
+        data[48] = material.sheenColor[0]! * material.sheen; data[49] = material.sheenColor[1]! * material.sheen; data[50] = material.sheenColor[2]! * material.sheen; data[51] = material.sheenRoughness;
+        data[52] = material.lightMapIntensity; data[53] = material.transmission; data[54] = 0; data[55] = 0;
         this.device.queue.writeBuffer(entry.buffer, 0, data);
         const entries: GPUBindGroupEntry[] = [{binding: 0, resource: {buffer: entry.buffer}}];
         let key = '';
-        [material.map, material.normalMap, material.metallicRoughnessMap, material.occlusionMap, material.emissiveMap].forEach((texture, i) => {
+        [material.map, material.normalMap, material.metallicRoughnessMap, material.occlusionMap, material.emissiveMap, material.lightMap].forEach((texture, i) => {
             const gpu = texture && !texture.isDisposed ? this.texture2d(texture) : undefined;
             entries.push({binding: 1 + i * 2, resource: gpu?.view ?? this.#white}, {binding: 2 + i * 2, resource: gpu?.sampler ?? this.#defaultSampler});
             key += (gpu?.key ?? '-') + '|';
@@ -614,6 +616,7 @@ export class WebGPURenderer3D implements Renderer3D {
         // A map on the second coordinate set needs only that set; it falls back to the first when the geometry lacks it.
         const second = gpu.buffers.has('uv1') && !depthOnly, occlusionUv1 = second && lit && material.occlusionMap?.channel === 1;
         const emissiveUv1 = second && material.shading !== 'matcap' && material.emissiveMap?.channel === 1;
+        const lightUv1 = second && lit && material.lightMap?.channel === 1, lightMap = lit && material.lightMap !== undefined && (uv || lightUv1);
         const skinning = mesh.skeleton !== undefined && gpu.buffers.has('joints') && gpu.buffers.has('weights');
         return {
             shading: material.shading, depthOnly,
@@ -629,7 +632,7 @@ export class WebGPURenderer3D implements Renderer3D {
             normalMap: lit && uv && material.normalMap !== undefined,
             metallicRoughnessMap: lit && uv && material.metallicRoughnessMap !== undefined && material.shading === 'standard',
             occlusionMap: lit && (uv || occlusionUv1) && material.occlusionMap !== undefined,
-            uv1: occlusionUv1 || emissiveUv1, occlusionUv1, emissiveUv1,
+            uv1: occlusionUv1 || emissiveUv1 || lightUv1, occlusionUv1, emissiveUv1, lightMap, lightUv1,
             emissiveMap: !depthOnly && (uv || emissiveUv1) && material.emissiveMap !== undefined && material.shading !== 'matcap',
             alphaMask: material.alphaMode === 'mask', alphaBlend: material.alphaMode === 'blend',
             premultipliedAlpha: !depthOnly && material.alphaMode === 'blend' && material.blending === 'premultiplied',
@@ -774,7 +777,8 @@ export class WebGPURenderer3D implements Renderer3D {
             | (material.blending === 'premultiplied' ? 256 : material.blending === 'additive' ? 32768 : material.blending === 'multiply' ? 65536 : 0)
             | (material.flatShading ? 512 : 0) | (material.vertexColors ? 1024 : 0) | (material.billboard ? 2048 : 0) | (material.screenSpace ? 4096 : 0)
             | (material.depthTest ? 8192 : 0) | (material.depthWrite ? 16384 : 0) | (material.fog ? 131072 : 0) | (material.toneMapped ? 262144 : 0)
-            | (material.polygonOffset ? 524288 : 0) | (material.occlusionMap?.channel === 1 ? 1048576 : 0) | (material.emissiveMap?.channel === 1 ? 2097152 : 0);
+            | (material.polygonOffset ? 524288 : 0) | (material.occlusionMap?.channel === 1 ? 1048576 : 0) | (material.emissiveMap?.channel === 1 ? 2097152 : 0)
+            | (material.lightMap ? 4194304 : 0) | (material.lightMap?.channel === 1 ? 8388608 : 0);
         const variantKey = surface * 16384 + bits;
         let byGeometry = cache.variants.get(geometry.id);
         if (!byGeometry) cache.variants.set(geometry.id, byGeometry = new Map());

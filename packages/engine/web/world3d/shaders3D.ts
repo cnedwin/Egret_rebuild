@@ -12,7 +12,7 @@ export const ATTRIBUTE_LOCATIONS_3D = Object.freeze({
 /** Fixed texture units; samplers are assigned once when a program is linked. */
 export const TEXTURE_UNITS_3D = Object.freeze({
     map: 0, normalMap: 1, metallicRoughnessMap: 2, occlusionMap: 3, emissiveMap: 4,
-    environment: 5, shadow: 6, bones: 7, morph: 8,
+    environment: 5, shadow: 6, bones: 7, morph: 8, lightMap: 9,
 } as const);
 
 export const MAX_MORPH_INFLUENCES_3D = 8;
@@ -195,6 +195,9 @@ uniform sampler2D uNormalMap;
 uniform sampler2D uMetallicRoughnessMap;
 uniform sampler2D uOcclusionMap;
 uniform sampler2D uEmissiveMap;
+uniform sampler2D uLightMap;
+uniform vec4 uSheen;             // color scaled by strength, roughness
+uniform vec2 uExtra;             // light map intensity, transmission
 uniform samplerCube uEnvironment;
 uniform highp sampler2DShadow uShadowMap;
 in vec3 vWorldPosition;
@@ -322,6 +325,11 @@ vec3 shade(Surface s, vec3 l, vec3 radiance) {
     vec3 diffuse = s.albedo * (1.0 - s.metallic) * (1.0 - fresnel);
     // Light units are scaled by PI so a unit white light fully lights a white diffuse surface.
     vec3 lit = diffuse + distribution * visibility * fresnel * PI;
+    if (uSheen.r + uSheen.g + uSheen.b > 0.0) {
+        // Cloth lobe: an inverted Gaussian that brightens toward grazing angles.
+        float inverse = 1.0 / max(uSheen.w, 0.07);
+        lit += uSheen.rgb * ((2.0 + inverse) * pow(max(1.0 - nh * nh, 0.0), inverse * 0.5) / (2.0 * PI)) / (4.0 * (nl + nv - nl * nv)) * PI;
+    }
     if (uClearcoat.x > 0.0) {
         // A second, dielectric lobe on top; the base layer loses what the coat reflects.
         float ca = max(uClearcoat.y, 0.045); ca *= ca;
@@ -414,6 +422,17 @@ void main() {
     vec3 irradiance = uAmbient.rgb + mix(uHemisphereGround.rgb, uHemisphereSky.rgb, s.normal.y * 0.5 + 0.5);
     #ifdef USE_ENVIRONMENT
     irradiance += textureLod(uEnvironment, s.normal, uOutput.y).rgb * uOutput.x * uEnvironmentScale;
+    #endif
+    #ifdef USE_LIGHT_MAP
+    #ifdef LIGHT_UV1
+    irradiance += texture(uLightMap, vUv1).rgb * uExtra.x;
+    #else
+    irradiance += texture(uLightMap, vUv).rgb * uExtra.x;
+    #endif
+    #endif
+    #ifdef SHADING_STANDARD
+    // Transmission: light passes straight through where the surface faces the viewer.
+    base.a *= 1.0 - uExtra.y * (1.0 - s.metallic) * (1.0 - pow(1.0 - max(dot(s.normal, s.view), 0.0), 5.0));
     #endif
     color = diffuseAlbedo * irradiance * occlusion;
     #if defined(USE_ENVIRONMENT) && defined(SHADING_STANDARD)

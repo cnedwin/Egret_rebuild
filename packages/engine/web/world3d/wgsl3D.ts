@@ -35,6 +35,8 @@ export interface ShaderFeatures3D {
     readonly linearOutput: boolean;
     /** The geometry's second coordinate set is bound, for occlusion or emissive maps that ask for it. */
     readonly uv1: boolean;
+    readonly lightMap: boolean;
+    readonly lightUv1: boolean;
     readonly occlusionUv1: boolean;
     readonly emissiveUv1: boolean;
     /** Key and WGSL source of the material's fragment hook, when it has one. */
@@ -47,7 +49,7 @@ export const MAX_MORPH_INFLUENCES_WGSL_3D = 8;
 /** Bytes of the per-draw Object uniform block; also its dynamic-offset stride. */
 export const OBJECT_BLOCK_BYTES_3D = 256;
 /** Bytes of the per-material uniform block. */
-export const MATERIAL_BLOCK_BYTES_3D = 192;
+export const MATERIAL_BLOCK_BYTES_3D = 224;
 
 const FRAME = /* wgsl */`
 struct Frame {
@@ -102,6 +104,8 @@ struct Material {
     uvRow1: vec4f,
     sprite: vec4f,       // rotation, size attenuation flag
     custom: array<vec4f, 4>, // parameters of the optional fragment hook
+    sheen: vec4f,        // color scaled by strength, roughness
+    extra: vec4f,        // light map intensity, transmission
 }
 @group(1) @binding(0) var<uniform> material: Material;
 @group(1) @binding(1) var mapTexture: texture_2d<f32>;
@@ -114,6 +118,8 @@ struct Material {
 @group(1) @binding(8) var occlusionSampler: sampler;
 @group(1) @binding(9) var emissiveTexture: texture_2d<f32>;
 @group(1) @binding(10) var emissiveSampler: sampler;
+@group(1) @binding(11) var lightTexture: texture_2d<f32>;
+@group(1) @binding(12) var lightSampler: sampler;
 
 struct Object {
     model: mat4x4f,
@@ -245,6 +251,11 @@ fn fragmentMain(input: VertexOutput) {
     let diffuse = s.albedo * (1.0 - s.metallic) * (1.0 - fresnel);
     // Light units are scaled by PI so a unit white light fully lights a white diffuse surface.
     var lit = diffuse + distribution * visibility * fresnel * PI;
+    if (material.sheen.r + material.sheen.g + material.sheen.b > 0.0) {
+        // Cloth lobe: an inverted Gaussian that brightens toward grazing angles.
+        let inverse = 1.0 / max(material.sheen.w, 0.07);
+        lit += material.sheen.rgb * ((2.0 + inverse) * pow(max(1.0 - nh * nh, 0.0), inverse * 0.5) / (2.0 * PI)) / (4.0 * (nl + nv - nl * nv)) * PI;
+    }
     if (material.params.z > 0.0) {
         // A second, dielectric lobe on top; the base layer loses what the coat reflects.
         var ca = max(material.params.w, 0.045);
@@ -358,6 +369,7 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     ${f.normalMap ? 'let normalSample = textureSample(normalTexture, normalSampler, input.uv).xyz;' : ''}
     ${f.metallicRoughnessMap ? 'let mrSample = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, input.uv);' : ''}
     ${f.occlusionMap ? 'let occlusionSample = textureSample(occlusionTexture, occlusionSampler, ' + (f.occlusionUv1 ? 'input.uv1' : 'input.uv') + ').r;' : ''}
+    ${f.lightMap ? 'let lightSample = textureSample(lightTexture, lightSampler, ' + (f.lightUv1 ? 'input.uv1' : 'input.uv') + ').rgb;' : ''}
     ${f.emissiveMap ? 'let emissiveSample = textureSample(emissiveTexture, emissiveSampler, ' + (f.emissiveUv1 ? 'input.uv1' : 'input.uv') + ').rgb;' : ''}
     ${f.shading === 'matcap' ? /* wgsl */`
     var matcapNormal = normalize(${f.normal ? 'input.normal' : 'cross(dpx, -dpy)'});
@@ -403,6 +415,8 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
     ${f.shading === 'standard' ? 'diffuseAlbedo *= 1.0 - s.metallic;' : ''}
     var irradiance = frame.ambient.rgb + mix(frame.hemisphereGround.rgb, frame.hemisphereSky.rgb, s.normal.y * 0.5 + 0.5);
     ${f.environment ? 'irradiance += textureSampleLevel(environmentMap, environmentSampler, s.normal, frame.output.y).rgb * frame.output.x * material.params.y;' : ''}
+    ${f.lightMap ? 'irradiance += lightSample * material.extra.x;' : ''}
+    ${f.shading === 'standard' ? '// Transmission: light passes straight through where the surface faces the viewer.\n    base.a *= 1.0 - material.extra.y * (1.0 - s.metallic) * (1.0 - pow(1.0 - max(dot(s.normal, s.view), 0.0), 5.0));' : ''}
     color = diffuseAlbedo * irradiance * occlusion;
     ${f.environment && f.shading === 'standard' ? /* wgsl */`
     {

@@ -26,7 +26,7 @@ export type {
 } from './primitives3D.js';
 export {
     Material3D, setColor3D, createUnlitMaterial3D, createLambertMaterial3D, createPhongMaterial3D,
-    createStandardMaterial3D, createCustomShader3D, createToonMaterial3D, createMatcapMaterial3D, createSpriteMaterial3D,
+    createStandardMaterial3D, createGlassMaterial3D, createCustomShader3D, createToonMaterial3D, createMatcapMaterial3D, createSpriteMaterial3D,
 } from './Material3D.js';
 export type {
     Shading3D, CustomShader3D, Side3D, AlphaMode3D, Blending3D, ColorInput3D, MaterialOptions3D, PhongMaterialOptions3D,

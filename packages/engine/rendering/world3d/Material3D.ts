@@ -133,6 +133,22 @@ export class Material3D extends Resource3D {
     shininess = 30;
     /** Optional fragment hook. Call touch() after assigning a different shader. */
     shader: CustomShader3D | undefined;
+    /**
+     * Baked lighting added to the indirect light of lit materials. It is sampled
+     * with the texture's `channel`, normally 1 for a second, non-overlapping UV set.
+     */
+    lightMap: Texture3D | undefined;
+    lightMapIntensity = 1;
+    /** Strength, 0 to 1, of a soft rim lobe for cloth and velvet on a standard material. */
+    sheen = 0;
+    readonly sheenColor = new Float32Array([1, 1, 1]);
+    sheenRoughness = 0.5;
+    /**
+     * How much light passes through a standard material, 0 to 1, as for glass.
+     * It lowers opacity most where the surface faces the viewer and keeps
+     * reflections at grazing angles; use it with alphaMode 'blend'. There is no refraction.
+     */
+    transmission = 0;
     /** Strength, 0 to 1, of a clear lacquer layer over a standard material (car paint, varnish). */
     clearcoat = 0;
     clearcoatRoughness = 0.1;
@@ -188,11 +204,11 @@ export class Material3D extends Resource3D {
     /** Independent copy sharing texture references. */
     clone(): Material3D {
         const copy = new Material3D(this.shading);
-        const skip = new Set(['id', 'shading', 'color', 'emissive', 'specular']);
+        const skip = new Set(['id', 'shading', 'color', 'emissive', 'specular', 'sheenColor']);
         for (const key of Object.keys(this) as (keyof Material3D)[]) {
             if (!skip.has(key)) (copy as unknown as Record<string, unknown>)[key] = this[key];
         }
-        copy.color.set(this.color); copy.emissive.set(this.emissive); copy.specular.set(this.specular);
+        copy.color.set(this.color); copy.emissive.set(this.emissive); copy.specular.set(this.specular); copy.sheenColor.set(this.sheenColor);
         return copy;
     }
 }
@@ -225,6 +241,12 @@ export function createToonMaterial3D(options: MaterialOptions3D & {readonly step
 export function createMatcapMaterial3D(options: MaterialOptions3D & {readonly matcap: Texture3D}): Material3D {
     const material = new Material3D('matcap', options);
     material.emissiveMap = options.matcap;
+    return material;
+}
+/** A standard material set up as glass: smooth, see-through and blended, with reflections kept at grazing angles. */
+export function createGlassMaterial3D(options: StandardMaterialOptions3D & {readonly transmission?: number} = {}): Material3D {
+    const material = createStandardMaterial3D({roughness: 0.05, metallic: 0, ...options, alphaMode: 'blend', blending: 'premultiplied', depthWrite: false});
+    material.transmission = options.transmission ?? 0.9;
     return material;
 }
 /** Physically based metallic-roughness model, matching glTF 2.0 materials. */

@@ -43,7 +43,7 @@ export interface WebGL2Renderer3DOptions {
 const V = Object.freeze({
     normal: 1, tangent: 2, uv: 4, color: 8, skin: 16, morph: 32, morphNormals: 64, instancing: 128, instanceColor: 256,
     receiveShadow: 512, fog: 1024, toneMapped: 2048, environment: 4096, points: 8192, depthOnly: 16384, linearOutput: 32768,
-    mapFromTarget: 65536, uv1: 131072, occlusionSecond: 262144, emissiveSecond: 524288,
+    mapFromTarget: 65536, uv1: 131072, occlusionSecond: 262144, emissiveSecond: 524288, lightSecond: 1048576,
 } as const);
 const IDENTITY3 = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -395,6 +395,7 @@ export class WebGL2Renderer3D implements Renderer3D {
             const aoSecond = has(V.occlusionSecond), emissiveSecond = has(V.emissiveSecond);
             if (lit && (uv || aoSecond) && material.occlusionMap) { defines.push('USE_AO_MAP'); if (aoSecond) defines.push('AO_UV1'); }
             if ((uv || emissiveSecond) && material.emissiveMap && material.shading !== 'matcap') { defines.push('USE_EMISSIVE_MAP'); if (emissiveSecond) defines.push('EMISSIVE_UV1'); }
+            if (lit && material.lightMap && (uv || has(V.lightSecond))) { defines.push('USE_LIGHT_MAP'); if (has(V.lightSecond)) defines.push('LIGHT_UV1'); }
             if (material.flatShading) defines.push('FLAT_SHADED');
             if (material.side === 'double') defines.push('DOUBLE_SIDED');
             if (lit && has(V.receiveShadow)) defines.push('RECEIVE_SHADOW');
@@ -440,6 +441,9 @@ export class WebGL2Renderer3D implements Renderer3D {
         if (u['uMetallicRoughnessMap'] && material.metallicRoughnessMap) resources.bindTexture(TEXTURE_UNITS_3D.metallicRoughnessMap, material.metallicRoughnessMap);
         if (u['uOcclusionMap'] && material.occlusionMap) resources.bindTexture(TEXTURE_UNITS_3D.occlusionMap, material.occlusionMap);
         if (u['uEmissiveMap'] && material.emissiveMap) resources.bindTexture(TEXTURE_UNITS_3D.emissiveMap, material.emissiveMap);
+        if (u['uLightMap'] && material.lightMap) resources.bindTexture(TEXTURE_UNITS_3D.lightMap, material.lightMap);
+        if (u['uSheen']) gl.uniform4f(u['uSheen'], material.sheenColor[0]! * material.sheen, material.sheenColor[1]! * material.sheen, material.sheenColor[2]! * material.sheen, material.sheenRoughness);
+        if (u['uExtra']) gl.uniform2f(u['uExtra'], material.lightMapIntensity, material.transmission);
     }
     private applyState(material: Material3D, depthOnly: boolean, mirrored: boolean): void {
         const gl = this.#gl;
@@ -487,6 +491,7 @@ export class WebGL2Renderer3D implements Renderer3D {
             // A texture's coordinate set can change without changing the material version.
             if (!depthOnly && material.occlusionMap?.channel === 1) variant |= V.occlusionSecond;
             if (!depthOnly && material.emissiveMap?.channel === 1) variant |= V.emissiveSecond;
+            if (!depthOnly && material.lightMap?.channel === 1) variant |= V.lightSecond;
         }
         if (geometry.getAttribute('uv')) {
             variant |= V.uv;
