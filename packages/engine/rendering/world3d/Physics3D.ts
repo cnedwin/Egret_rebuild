@@ -900,6 +900,13 @@ interface SolverContact {
     bias: number; friction: number;
     normalImpulse: number; tangentImpulse1: number; tangentImpulse2: number;
     warm: WarmEntry; slot: number;
+    /** Inverse masses as the solver sees them: zero for a body that cannot be moved this step. */
+    ima: number; imb: number;
+    /**
+     * Per direction (normal, then the two tangents), fifteen numbers computed once per step:
+     * the direction, ra x direction, rb x direction, and what a unit impulse does to each body's spin.
+     */
+    readonly rows: Float64Array;
 }
 /** Impulses a pair ended the previous step with, matched by contact feature to start the next solve near its answer. */
 interface WarmEntry { stamp: number; count: number; readonly features: Int16Array; readonly impulses: Float64Array }
@@ -1186,9 +1193,9 @@ export class PhysicsWorld3D {
         // Warm start: re-apply last step's impulses so stacks begin close to equilibrium.
         for (let i = 0; i < count; i++) {
             const c = contacts[i]!;
-            if (c.normalImpulse !== 0) this.applyContactImpulse(c, [c.nx, c.ny, c.nz], c.normalImpulse);
-            if (c.tangentImpulse1 !== 0) this.applyContactImpulse(c, c.t1, c.tangentImpulse1);
-            if (c.tangentImpulse2 !== 0) this.applyContactImpulse(c, c.t2, c.tangentImpulse2);
+            if (c.normalImpulse !== 0) this.applyRow(c, 0, c.normalImpulse);
+            if (c.tangentImpulse1 !== 0) this.applyRow(c, 15, c.tangentImpulse1);
+            if (c.tangentImpulse2 !== 0) this.applyRow(c, 30, c.tangentImpulse2);
         }
         this.prepareJoints(dt);
         const joints = this.#joints;
@@ -1313,7 +1320,7 @@ export class PhysicsWorld3D {
         for (let i = 0; i < m.count; i++) {
             const source = m.contacts[i]!;
             let c = this.#contacts[this.#contactCount];
-            if (!c) c = this.#contacts[this.#contactCount] = {a, b, nx: 0, ny: 0, nz: 0, t1: v3(), t2: v3(), ra: v3(), rb: v3(), normalMass: 0, tangentMass1: 0, tangentMass2: 0, bias: 0, friction: 0, normalImpulse: 0, tangentImpulse1: 0, tangentImpulse2: 0, warm, slot: 0};
+            if (!c) c = this.#contacts[this.#contactCount] = {a, b, nx: 0, ny: 0, nz: 0, t1: v3(), t2: v3(), ra: v3(), rb: v3(), normalMass: 0, tangentMass1: 0, tangentMass2: 0, bias: 0, friction: 0, normalImpulse: 0, tangentImpulse1: 0, tangentImpulse2: 0, warm, slot: 0, ima: 0, imb: 0, rows: new Float64Array(45)};
             this.#contactCount++;
             c.a = a; c.b = b; c.nx = source.nx; c.ny = source.ny; c.nz = source.nz; c.friction = friction;
             c.normalImpulse = c.tangentImpulse1 = c.tangentImpulse2 = 0;
@@ -1331,8 +1338,9 @@ export class PhysicsWorld3D {
             const length = Math.hypot(c.t1[0]!, c.t1[1]!, c.t1[2]!);
             c.t1[0]! /= length; c.t1[1]! /= length; c.t1[2]! /= length;
             cross(c.t2, n, c.t1);
-            c.normalMass = this.effectiveMass(c, n); c.tangentMass1 = this.effectiveMass(c, c.t1); c.tangentMass2 = this.effectiveMass(c, c.t2);
-            const approach = this.relativeVelocity(c, n);
+            c.ima = a.type === 'dynamic' && !a.isSleeping ? a.inverseMass : 0; c.imb = b.type === 'dynamic' && !b.isSleeping ? b.inverseMass : 0;
+            c.normalMass = this.prepareContactRow(c, 0, n); c.tangentMass1 = this.prepareContactRow(c, 15, c.t1); c.tangentMass2 = this.prepareContactRow(c, 30, c.t2);
+            const approach = this.rowVelocity(c, 0);
             // Push out of penetration, and bounce only on real impacts so resting contacts stay quiet.
             // A real impact bounces; a resting or slow contact is pushed out of penetration instead.
             // Doing both in one step would add the correction speed to the bounce.
@@ -1340,47 +1348,62 @@ export class PhysicsWorld3D {
         }
     }
     private pairKey(a: RigidBody3D, b: RigidBody3D): number { return a.id < b.id ? a.id * 4194304 + b.id : b.id * 4194304 + a.id; }
-    private effectiveMass(c: SolverContact, axis: ArrayLike<number>): number {
-        const {a, b} = c;
-        let k = a.inverseMass + b.inverseMass;
-        cross(scratchA, c.ra, axis); applyInverseInertia(scratchB, a.inverseInertiaWorld, scratchA); k += dot(scratchA, scratchB);
-        cross(scratchA, c.rb, axis); applyInverseInertia(scratchB, b.inverseInertiaWorld, scratchA); k += dot(scratchA, scratchB);
+    /**
+     * Work out everything one solver direction needs, so the iterations that follow are plain
+     * sums and products. Returns the effective mass along that direction.
+     */
+    private prepareContactRow(c: SolverContact, at: number, axis: ArrayLike<number>): number {
+        const row = c.rows, ra = c.ra, rb = c.rb, x = axis[0]!, y = axis[1]!, z = axis[2]!;
+        row[at] = x; row[at + 1] = y; row[at + 2] = z;
+        const ax = ra[1]! * z - ra[2]! * y, ay = ra[2]! * x - ra[0]! * z, az = ra[0]! * y - ra[1]! * x;
+        const bx = rb[1]! * z - rb[2]! * y, by = rb[2]! * x - rb[0]! * z, bz = rb[0]! * y - rb[1]! * x;
+        row[at + 3] = ax; row[at + 4] = ay; row[at + 5] = az; row[at + 6] = bx; row[at + 7] = by; row[at + 8] = bz;
+        let k = c.ima + c.imb;
+        if (c.ima > 0) {
+            const m = c.a.inverseInertiaWorld, sx = m[0]! * ax + m[1]! * ay + m[2]! * az, sy = m[3]! * ax + m[4]! * ay + m[5]! * az, sz = m[6]! * ax + m[7]! * ay + m[8]! * az;
+            row[at + 9] = sx; row[at + 10] = sy; row[at + 11] = sz;
+            k += ax * sx + ay * sy + az * sz;
+        } else row[at + 9] = row[at + 10] = row[at + 11] = 0;
+        if (c.imb > 0) {
+            const m = c.b.inverseInertiaWorld, sx = m[0]! * bx + m[1]! * by + m[2]! * bz, sy = m[3]! * bx + m[4]! * by + m[5]! * bz, sz = m[6]! * bx + m[7]! * by + m[8]! * bz;
+            row[at + 12] = sx; row[at + 13] = sy; row[at + 14] = sz;
+            k += bx * sx + by * sy + bz * sz;
+        } else row[at + 12] = row[at + 13] = row[at + 14] = 0;
         return k > 0 ? 1 / k : 0;
     }
-    /** Velocity of b relative to a at the contact, along `axis`. */
-    private relativeVelocity(c: SolverContact, axis: ArrayLike<number>): number {
-        const {a, b} = c, va = a.linearVelocity, vb = b.linearVelocity;
-        cross(scratchA, a.angularVelocity, c.ra); cross(scratchB, b.angularVelocity, c.rb);
-        return (vb[0]! + scratchB[0]! - va[0]! - scratchA[0]!) * axis[0]! + (vb[1]! + scratchB[1]! - va[1]! - scratchA[1]!) * axis[1]! + (vb[2]! + scratchB[2]! - va[2]! - scratchA[2]!) * axis[2]!;
+    /** Velocity of b relative to a at the contact, along the direction stored at `at`. */
+    private rowVelocity(c: SolverContact, at: number): number {
+        const row = c.rows, va = c.a.linearVelocity, vb = c.b.linearVelocity, wa = c.a.angularVelocity, wb = c.b.angularVelocity;
+        return (vb[0]! - va[0]!) * row[at]! + (vb[1]! - va[1]!) * row[at + 1]! + (vb[2]! - va[2]!) * row[at + 2]!
+            + wb[0]! * row[at + 6]! + wb[1]! * row[at + 7]! + wb[2]! * row[at + 8]! - wa[0]! * row[at + 3]! - wa[1]! * row[at + 4]! - wa[2]! * row[at + 5]!;
     }
-    private applyContactImpulse(c: SolverContact, axis: ArrayLike<number>, magnitude: number): void {
-        const {a, b} = c, x = axis[0]! * magnitude, y = axis[1]! * magnitude, z = axis[2]! * magnitude;
-        if (a.type === 'dynamic' && !a.isSleeping) {
-            a.linearVelocity[0]! -= x * a.inverseMass; a.linearVelocity[1]! -= y * a.inverseMass; a.linearVelocity[2]! -= z * a.inverseMass;
-            cross(scratchA, c.ra, [x, y, z]); applyInverseInertia(scratchB, a.inverseInertiaWorld, scratchA);
-            a.angularVelocity[0]! -= scratchB[0]!; a.angularVelocity[1]! -= scratchB[1]!; a.angularVelocity[2]! -= scratchB[2]!;
+    private applyRow(c: SolverContact, at: number, magnitude: number): void {
+        const row = c.rows, x = row[at]! * magnitude, y = row[at + 1]! * magnitude, z = row[at + 2]! * magnitude;
+        if (c.ima > 0) {
+            const v = c.a.linearVelocity, w = c.a.angularVelocity, k = c.ima;
+            v[0]! -= x * k; v[1]! -= y * k; v[2]! -= z * k;
+            w[0]! -= row[at + 9]! * magnitude; w[1]! -= row[at + 10]! * magnitude; w[2]! -= row[at + 11]! * magnitude;
         }
-        if (b.type === 'dynamic' && !b.isSleeping) {
-            b.linearVelocity[0]! += x * b.inverseMass; b.linearVelocity[1]! += y * b.inverseMass; b.linearVelocity[2]! += z * b.inverseMass;
-            cross(scratchA, c.rb, [x, y, z]); applyInverseInertia(scratchB, b.inverseInertiaWorld, scratchA);
-            b.angularVelocity[0]! += scratchB[0]!; b.angularVelocity[1]! += scratchB[1]!; b.angularVelocity[2]! += scratchB[2]!;
+        if (c.imb > 0) {
+            const v = c.b.linearVelocity, w = c.b.angularVelocity, k = c.imb;
+            v[0]! += x * k; v[1]! += y * k; v[2]! += z * k;
+            w[0]! += row[at + 12]! * magnitude; w[1]! += row[at + 13]! * magnitude; w[2]! += row[at + 14]! * magnitude;
         }
     }
     private solve(c: SolverContact): void {
-        const n = [c.nx, c.ny, c.nz];
         // Normal: accumulate and clamp so contacts only ever push.
-        let delta = (-this.relativeVelocity(c, n) + c.bias) * c.normalMass;
+        let delta = (c.bias - this.rowVelocity(c, 0)) * c.normalMass;
         const total = Math.max(c.normalImpulse + delta, 0);
         delta = total - c.normalImpulse; c.normalImpulse = total;
-        if (delta !== 0) this.applyContactImpulse(c, n, delta);
+        if (delta !== 0) this.applyRow(c, 0, delta);
         // Friction: bounded by the normal impulse (Coulomb cone, per tangent).
         const limit = c.friction * c.normalImpulse;
-        let tangent = -this.relativeVelocity(c, c.t1) * c.tangentMass1, clamped = clamp(c.tangentImpulse1 + tangent, -limit, limit);
+        let tangent = -this.rowVelocity(c, 15) * c.tangentMass1, clamped = clamp(c.tangentImpulse1 + tangent, -limit, limit);
         tangent = clamped - c.tangentImpulse1; c.tangentImpulse1 = clamped;
-        if (tangent !== 0) this.applyContactImpulse(c, c.t1, tangent);
-        tangent = -this.relativeVelocity(c, c.t2) * c.tangentMass2; clamped = clamp(c.tangentImpulse2 + tangent, -limit, limit);
+        if (tangent !== 0) this.applyRow(c, 15, tangent);
+        tangent = -this.rowVelocity(c, 30) * c.tangentMass2; clamped = clamp(c.tangentImpulse2 + tangent, -limit, limit);
         tangent = clamped - c.tangentImpulse2; c.tangentImpulse2 = clamped;
-        if (tangent !== 0) this.applyContactImpulse(c, c.t2, tangent);
+        if (tangent !== 0) this.applyRow(c, 30, tangent);
     }
 
     // ---- queries ----------------------------------------------------------------

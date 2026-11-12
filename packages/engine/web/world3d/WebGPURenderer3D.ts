@@ -1074,8 +1074,10 @@ export class WebGPURenderer3D implements Renderer3D {
             const saved = {layerMask: camera.layerMask, override: scene.overrideMaterial, background: scene.background, shadows: this.shadowsEnabled, planes: scene.clippingPlanes};
             camera.layerMask = this.postProcess.outlineLayers; scene.overrideMaterial = post.maskMaterial; scene.background = [0, 0, 0]; this.shadowsEnabled = false;
             this.#inPost = true;
+            // The counters describe the scene, not this helper pass.
+            const counted = {...this.info};
             try { if (this.render(scene, camera, post.mask)) maskView = this.target(post.mask).colorView; }
-            finally { this.#inPost = false; camera.layerMask = saved.layerMask; scene.overrideMaterial = saved.override; scene.background = saved.background; this.shadowsEnabled = saved.shadows; }
+            finally { this.#inPost = false; camera.layerMask = saved.layerMask; scene.overrideMaterial = saved.override; scene.background = saved.background; this.shadowsEnabled = saved.shadows; Object.assign(this.info, counted); }
         }
         const sceneEntry = this.target(post.scene);
         this.info.drawCalls += post.run(encoder, sceneEntry.colorView, sceneEntry.depthView, maskView, postViewFromCamera3D(camera), width, height, output, format, target !== undefined,
