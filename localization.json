@@ -2341,8 +2341,8 @@
       "en": "knowledge-base/en/docs/world3d.md",
       "zh": "knowledge-base/Cns/docs/world3d.md",
       "kind": "public_reading",
-      "enSha256": "a79982df2705db6be51d634b4e663bcf3bb46ecbc5eddc1af656f1a471397a9f",
-      "zhSha256": "61a2f7ce03dd89798311c790c9693879e7f365d10b88701f08e22a595410f64d"
+      "enSha256": "f8a99d33cf8fa775a872986fd1293988fd3be57962f96124b23ad097a7a897e1",
+      "zhSha256": "84b2b0f83384d232fc4c91f779f34d09303357ae9bcf64382746eafde8ab8398"
     },
     {
       "en": "examples/world3d/README.md",
@@ -4951,7 +4951,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/RenderList3D.ts",
-      "sha256": "ffcc5dd673d0e749ccbb3e0571cbd25d10a95dba328b055fe2d8810a7398db5f"
+      "sha256": "249177ba171c2b0b03d00661c2244f514b1cfbf7992eb406e8dd53d60f8f49e5"
     },
     {
       "path": "packages/engine/rendering/world3d/Texture3D.ts",
@@ -4995,7 +4995,7 @@
     },
     {
       "path": "packages/engine/web/world3d/frame3D.ts",
-      "sha256": "fd8ee938e7857ec84016ad2306d04fb160ffa06b7b908b1df9ccbb609cf2250f"
+      "sha256": "a164c55c4e6a267e4af266fa1e55b38620cb291bbeb8d1427534dbe1020ff1b1"
     },
     {
       "path": "packages/engine/web/world3d/gpuResources3D.ts",
@@ -5027,7 +5027,7 @@
     },
     {
       "path": "tools/lib/world3d-boundary.mjs",
-      "sha256": "4f6570b05a183408045311c7ed9cd6e0a0c2df6734a7f2a7c7746b258d951d2a"
+      "sha256": "3f7e1fcee317a7323bb7141d351355a8cb97893d3d2db22b5a609043ef58e2e1"
     },
     {
       "path": "packages/engine/rendering/world3d/Curves3D.ts",
@@ -5146,16 +5146,16 @@
       "sha256": "9d9577ee694f4ca0c089317c0136d11090edafeffdff259b70a0e9164a8906f8"
     },
     {
-      "path": "packages/engine/rendering/world3d/AnimationTexture3D.ts",
-      "sha256": "557ad69615e946f3ed04e53b843e4b771316072337157bbf383496b2a8b6d944"
-    },
-    {
       "path": "packages/engine/rendering/world3d/Terrain3D.ts",
-      "sha256": "3f69b353881ab17119970320cf30032ed6585262572d06dadd9a7209c57be995"
+      "sha256": "2e2c329e6b758b22626b3b426390e6b09d34e7f8e328e1a842ce9df667d0ba38"
     },
     {
       "path": "packages/engine/rendering/world3d/Water3D.ts",
-      "sha256": "5a9e46555e9145594bee78e50d2c964a1b4b2d79ec426403ba390dc52ac6ecbf"
+      "sha256": "d62d66b3afecf8eecbb51960e365e4d73edb60634483e4f2283c0618083ee1ba"
+    },
+    {
+      "path": "packages/engine/rendering/world3d/AnimationTexture3D.ts",
+      "sha256": "760cb69bd10277036f590ab800668c70dd04b136e537230cc72ddbaaf29771dc"
     }
   ],
   "historicalSemanticReview": {
