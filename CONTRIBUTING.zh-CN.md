@@ -27,7 +27,7 @@
     pnpm check:quick
     pnpm example:browser
 
-开发时使用 `node tools/check-incremental.mjs --base origin/main` 获取受影响行为反馈。推送前审阅来源、两种阅读版本和关键英文注释。提交钩子检查文本字节，推送钩子对干净已提交快照运行 `node tools/check-push.mjs --committed`，在发布检查前执行一次构建与三个公共夹具／类型基线正例。需要提前检查这些前置条件时，可运行 `node tools/check-test-baselines.mjs`。合并前仍需完整 `pnpm check:merge` / 集成 CI、独立评审及受影响的实际浏览器证据，详见[工程计划](knowledge-base/Cns/docs/architecture-and-engineering-plan.md)的交付分层。
+开发时使用 `node tools/check-incremental.mjs --base origin/main` 获取受影响行为反馈。推送前审阅来源、两种阅读版本和关键英文注释。提交钩子检查文本字节，推送钩子对干净已提交快照运行 `node tools/check-push.mjs --committed`，在发布检查前执行一次构建与三个公共夹具／类型基线正例。需要提前检查这些前置条件时，可运行 `node tools/check-test-baselines.mjs`。代码和其他高风险改动须运行完整 `pnpm check:merge`／集成 CI。符合条件的阅读文档运行受保护的 Windows 文档检查。合并前仍须独立评审及适用的实际浏览器证据，详见[工程计划](knowledge-base/Cns/docs/architecture-and-engineering-plan.md)的交付分层。
 
 Windows 集成 CI 作业的执行时限为 60 分钟，以便托管运行器完成全部检查。这是执行预算，不是开发迭代耗时目标，也不豁免任何检查；合并前所有必需检查仍须完整通过。
 

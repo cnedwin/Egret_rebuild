@@ -9,7 +9,7 @@
 
 新创作第一方文本通过 `tools/write-repository-text.mjs --path <owner-relative-file>` 或 `knowledge-base/tools/Write-CanonicalText.ps1 -RelativePath <owner-relative-file> -Text <text>` 写入，采用不带 BOM 的 UTF-8、LF 和一个末尾换行，保留内部空行及 Markdown 硬换行空格。不得用 `Environment.NewLine` 序列化仓库文本。原始指纹严格保留字节，计算哈希时不得规范化 EOL、BOM、Unicode 或空白；不得对上游／法律原件、原始回执、封存源码快照或历史证据运行创作格式化器。仅刷新确有修改且经过评审的当前文件身份。
 
-通过 `git config --local core.hooksPath .githooks` 启用两个仓库本地钩子，保留其 Git 可执行模式。pre-commit 检查工作/未跟踪及暂存文本字节。pre-push 对干净已提交快照运行 `node tools/check-push.mjs --committed`，检查环境、来源/公开内容、双语及知识库结构。完整 `node tools/prepush.mjs --integrated`、独立源码/结果与双语评审以及必需浏览器证据仍是合并要求，不得绕过钩子或削弱字节规范。
+通过 `git config --local core.hooksPath .githooks` 启用两个仓库本地钩子，保留其 Git 可执行模式。pre-commit 检查工作/未跟踪及暂存文本字节。pre-push 对干净已提交快照运行 `node tools/check-push.mjs --committed`，检查环境、来源/公开内容、双语及知识库结构。受保护的 Windows 作业对代码、工具、策略及不符合纯文档路径的改动运行完整 `node tools/prepush.mjs --integrated`。符合条件的阅读文档执行字节、来源、双语发布和知识库检查。独立源码／结果与双语评审及适用的浏览器证据仍是合并要求。保留正常钩子和字节规范。
 
 知识库验证采用 `-CheckOnly`。分别记录源码、保存的执行、完整本机门禁、实际推送／PR／Main 和远端 CI，保留早先失败与待完成截止点。阅读[仓库规范](knowledge-base/Cns/docs/仓库路径身份与换行规范.md)与[限定证据](knowledge-base/Cns/docs/仓库路径与换行验证记录.md)。
 修改已有第一方文本时，必须通过标准写入器序列化完整的新文件；向旧 CRLF 前缀追加标准文本仍违反新编写文件规范。历史 pin 只有在全部原字节保持一致时才享有未修改豁免；保留原件、封存证据及法律／上游文件保持不变。
@@ -109,7 +109,7 @@ B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-
 
 ## M0 当前元数据集成
 
-贡献者修改内容和独立的 contributions/*.json 声明。普通完整 prepush 只读验证推导出的当前元数据，不修改共享账本；维护者对最终候选运行 tools/contribution-metadata.mjs --base <target-base> --write、--check 及 tools/prepush.mjs --integrated。EGRET_METADATA_BASE 为 prepush 选择同一确切基线，CI 使用 PR 基线 SHA。生成器仅作为 localization.json、knowledge-base/documentation-layout.json 与 source-origin.json 的受限规范写入入口，保留历史对象，拒绝受保护/私有输入，不刷新无关过期来源行。内容/基线变化会使集成失效。完整 hooks、独立来源与双语评审仍为必需。当前浏览器套件使用 tools/browser-verify.mjs；进阶/历史工具保留独立验收范围。参见[贡献流程](knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)。
+贡献者修改内容和独立的 contributions/*.json 声明。普通完整 prepush 只读验证推导出的当前元数据，不修改共享账本；维护者对最终候选运行 tools/contribution-metadata.mjs --base <target-base> --write 和 --check。不符合纯文档路径的候选还须运行 tools/prepush.mjs --integrated。EGRET_METADATA_BASE 为 prepush 选择同一确切基线，CI 使用 PR 基线 SHA。生成器仅作为 localization.json、knowledge-base/documentation-layout.json 与 source-origin.json 的受限规范写入入口，保留历史对象，拒绝受保护/私有输入，不刷新无关过期来源行。内容/基线变化会使集成失效。完整 hooks、独立来源与双语评审仍为必需。当前浏览器套件使用 tools/browser-verify.mjs；进阶/历史工具保留独立验收范围。参见[贡献流程](knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)。
 
 ## M1.1 热提交 UNIT
 
