@@ -4939,7 +4939,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/Object3D.ts",
-      "sha256": "5a88136cdf4ab70049703d8c3811853dd822ce944bc1fad9dcaaf9e31bc61b29"
+      "sha256": "ec491080617a5615ac9eb4cee7d874abf3b1f3a44edf425d61647b5d3cb63ea7"
     },
     {
       "path": "packages/engine/rendering/world3d/Particles3D.ts",
@@ -4999,7 +4999,7 @@
     },
     {
       "path": "packages/engine/web/world3d/gpuResources3D.ts",
-      "sha256": "55b10f53b380ea86c98565ee615111636e809f01c3f85d9c5c544d8f096f7422"
+      "sha256": "29c59b73f264bff031b45f990717e6a070f6168a2be2062c36313bfd08c29dff"
     },
     {
       "path": "packages/engine/web/world3d/host3D.ts",
@@ -5027,7 +5027,7 @@
     },
     {
       "path": "tools/lib/world3d-boundary.mjs",
-      "sha256": "1526f5ab5b41d236725ba5b694d6fe32f44514461452048863938d815a98a41e"
+      "sha256": "779a0f4ad59d5fa4ba6d205581b68609bc2cea046a01f87cc215ea4d1a648805"
     },
     {
       "path": "packages/engine/rendering/world3d/Curves3D.ts",

@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "11d0e89ebd74706287d2b8549630cb658e7174eff324409d82b25af2359f9a6c",
+      "sha256": "324ee03477b59a189999bbdc0227688ef608b0f3f2365e0ff686436768b06d46",
       "bytes": 403990,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -16592,8 +16592,8 @@
     {
       "path": "packages/engine/rendering/world3d/Object3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 12412,
-      "sha256": "5a88136cdf4ab70049703d8c3811853dd822ce944bc1fad9dcaaf9e31bc61b29"
+      "bytes": 12818,
+      "sha256": "ec491080617a5615ac9eb4cee7d874abf3b1f3a44edf425d61647b5d3cb63ea7"
     },
     {
       "path": "packages/engine/rendering/world3d/Particles3D.ts",
@@ -16682,8 +16682,8 @@
     {
       "path": "packages/engine/web/world3d/gpuResources3D.ts",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 34593,
-      "sha256": "55b10f53b380ea86c98565ee615111636e809f01c3f85d9c5c544d8f096f7422"
+      "bytes": 34909,
+      "sha256": "29c59b73f264bff031b45f990717e6a070f6168a2be2062c36313bfd08c29dff"
     },
     {
       "path": "packages/engine/web/world3d/host3D.ts",
@@ -16730,8 +16730,8 @@
     {
       "path": "tests/world3d-core.test.mjs",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 14151,
-      "sha256": "0beeac4b843d8adb82ee3c9a071bb6013f74688dd54390f601b9ab60c42fadd1"
+      "bytes": 15682,
+      "sha256": "6a19923a8defa1f99d3285a370b923f1a1e70a02395c57190108f604871c89f4"
     },
     {
       "path": "tests/world3d-gltf.test.mjs",
@@ -16749,7 +16749,7 @@
       "path": "tools/lib/world3d-boundary.mjs",
       "originRole": "Independently authored first-party World3D optional entry and source identity policy; AI-assisted; Apache-2.0.",
       "bytes": 24562,
-      "sha256": "1526f5ab5b41d236725ba5b694d6fe32f44514461452048863938d815a98a41e"
+      "sha256": "779a0f4ad59d5fa4ba6d205581b68609bc2cea046a01f87cc215ea4d1a648805"
     },
     {
       "path": "tools/verify-world3d.mjs",
@@ -16760,14 +16760,14 @@
     {
       "path": "tools/world3d/cases.mjs",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 27338,
-      "sha256": "74b4fd7d88e9efb13631b0daf4349e6db01c71479c0653b4b618c75a64ce8814"
+      "bytes": 30276,
+      "sha256": "3474dd6ffaea5a0f5a09a53da73ca2be95c52c8215b9cb17bebddda40157b582"
     },
     {
       "path": "tools/world3d/page.html",
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
-      "bytes": 2450,
-      "sha256": "ca8dd627880e1430b07a206c5f949dacf9bf4d07baa06f9dca62c5839fdb1f7d"
+      "bytes": 2535,
+      "sha256": "a18e13b8e177e3fd49bb15651824768cca062f560be09e2931287bb5790375c6"
     },
     {
       "path": "contributions/world3d.json",

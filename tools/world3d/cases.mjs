@@ -45,6 +45,47 @@ export async function verifyTextureSourceReplacement(W, renderer) {
   }
 }
 
+/**
+ * A flipped image upload must not disturb the bone matrices uploaded after it:
+ * the skinned picture before and after drawing a flipY texture has to be identical.
+ */
+export async function verifySkinAfterFlippedUpload(W, renderer) {
+  const camera = W.createOrthographicCamera3D({height: 4, aspect: 1, near: 0.1, far: 10});
+  camera.setPosition(0, 0, 5).lookAt(0, 0, 0);
+  const scene = new W.Scene3D(); scene.background = [0, 0, 0]; scene.addChild(camera);
+  const height = 2.4, geometry = W.createCylinderGeometry3D({radiusTop: 0.2, radiusBottom: 0.3, height, radialSegments: 12, heightSegments: 12});
+  const positions = geometry.getAttribute('position').data, joints = new Uint16Array(positions.length / 3 * 4), weights = new Float32Array(positions.length / 3 * 4);
+  for (let i = 0; i < positions.length / 3; i++) { const upper = positions[i * 3 + 1] > 0 ? 1 : 0; joints.set([upper, 0, 0, 0], i * 4); weights.set([1, 0, 0, 0], i * 4); }
+  geometry.setAttribute('joints', new W.Attribute3D(joints, 4)); geometry.setAttribute('weights', new W.Attribute3D(weights, 4));
+  const material = W.createUnlitMaterial3D({color: 0xffffff, toneMapped: false}), mesh = new W.Mesh3D(geometry, material);
+  const lower = new W.Bone3D(), upper = new W.Bone3D();
+  mesh.addChild(lower); lower.addChild(upper); scene.addChild(mesh);
+  mesh.updateWorldMatrices(); mesh.bind(new W.Skeleton3D([lower, upper]));
+  // The two bones differ, so swapping their rows moves the mesh visibly.
+  upper.setPosition(0.9, 0, 0); upper.setRotation(0, 0, 0.6);
+  const flipped = new W.Texture3D({width: 2, height: 2, data: new Uint8Array([255, 0, 0, 255, 255, 0, 0, 255, 0, 0, 255, 255, 0, 0, 255, 255])}, {flipY: true, mipmaps: false});
+  const tileMaterial = W.createUnlitMaterial3D({map: flipped, toneMapped: false}), tileGeometry = W.createPlaneGeometry3D({width: 0.4, height: 0.4}), tile = new W.Mesh3D(tileGeometry, tileMaterial);
+  tile.setPosition(-1.6, -1.6, 0);
+  const target = new W.RenderTarget3D(64, 64);
+  try {
+    if (!renderer.render(scene, camera, target)) throw new Error('Renderer lost before the flipped upload');
+    const before = (await renderer.readRenderTargetPixels(target)).slice();
+    scene.addChild(tile);
+    renderer.render(scene, camera, target);
+    scene.removeChild(tile);
+    for (let pass = 0; pass < 2; pass++) {
+      upper.markTransformDirty();
+      renderer.render(scene, camera, target);
+      const after = await renderer.readRenderTargetPixels(target);
+      let lit = 0;
+      for (let i = 0; i < before.length; i += 4) { if (before[i] > 128) lit++; if (Math.abs(before[i] - after[i]) > 2) throw new Error('Bone matrices changed after a flipped texture upload (pixel ' + i / 4 + ')'); }
+      if (lit < 50) throw new Error('The skinned mesh did not draw');
+    }
+  } finally {
+    target.dispose(); flipped.dispose(); tileMaterial.dispose(); tileGeometry.dispose(); material.dispose(); geometry.dispose();
+  }
+}
+
 export async function verifyObliquePostDepth(W, renderer, createCustomPost3D) {
   const savedToneMapping = renderer.toneMapping;
   const camera = W.createPerspectiveCamera3D({aspect: 1, near: 0.1, far: 100});
