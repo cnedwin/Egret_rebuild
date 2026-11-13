@@ -225,7 +225,7 @@ Only `tests/browser-hover.test.mjs` may define its test-owned page stand-in unde
 
 ## Semantics
 
-The optional `@egret/engine/ui/semantics` entry exports `createUiSemantics`, `semanticBoundsOf` and fifteen erased types. The optional `@egret/engine/web/semantics` entry exports `createBrowserSemantics` and two erased types. The tree imports the runtime alone and touches no page. The browser module imports the tree entry for its types and the error type and nothing private, and no other entry has any of the three. Follow the [guide](knowledge-base/en/docs/ui-semantics.md).
+The optional `@egret/engine/ui/semantics` entry exports `createUiSemantics`, `semanticBoundsOf`, `createUiListSemantics` and nineteen erased types. The list helper reads a managed UI root through a structural type and imports nothing of the UI entry. The optional `@egret/engine/web/semantics` entry exports `createBrowserSemantics` and two erased types. The tree imports the runtime alone and touches no page. The browser module imports the tree entry for its types and the error type and nothing private, and no other entry has any of the four. Follow the [guide](knowledge-base/en/docs/ui-semantics.md).
 
 Only `tests/browser-semantics.test.mjs` may define its test-owned page stand-in under the global names `window`, `document` and `reportError`, and it restores them after each case. The stand-in is the test's own objects; no native prototype is intercepted. These cases state what the projection writes and what it does with the events it is given. `examples/ui-controls/verify.mjs` reads the accessibility tree Chromium computes for a real page. No screen reader or other assistive technology, Safari or Firefox was run, and a passing tree is not a claim that the UI is usable with one.
 

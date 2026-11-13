@@ -5305,9 +5305,9 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
 // Semantics: a DOM-free tree entry and a browser projection entry, each with one implementation
 // module. The tree is built on the runtime alone, the projection on the tree's types alone, and no
 // other entry has either.
-const semanticTypes=['SemanticAction','SemanticBounds','SemanticChecked','SemanticDescription','SemanticNode','SemanticNodeOptions','SemanticOrientation','SemanticPosition','SemanticRange','SemanticRole','SemanticSnapshot','SemanticSnapshotNode','SemanticsState','UiSemantics','UiSemanticsOptions'];
+const semanticTypes=['SemanticAction','SemanticBounds','SemanticChecked','SemanticDescription','SemanticNode','SemanticNodeOptions','SemanticOrientation','SemanticPosition','SemanticRange','SemanticRole','SemanticSnapshot','SemanticSnapshotNode','SemanticsState','UiSemantics','UiSemanticsOptions','SemanticListRow','SemanticListSource','UiListSemantics','UiListSemanticsOptions'];
 const semanticBrowserTypes=['BrowserSemantics','BrowserSemanticsOptions'];
-const semanticValues=['createUiSemantics','semanticBoundsOf'];
+const semanticValues=['createUiSemantics','semanticBoundsOf','createUiListSemantics'];
 for(const [file,values,types] of [['packages/engine/src/semantics.ts',semanticValues,semanticTypes],['packages/engine/dist/semantics.js',semanticValues,[]],['packages/engine/dist/semantics.d.ts',semanticValues,semanticTypes],
  ['packages/engine/web/semantics.ts',['createBrowserSemantics'],semanticBrowserTypes],['packages/engine/dist/web/semantics.js',['createBrowserSemantics'],[]],['packages/engine/dist/web/semantics.d.ts',['createBrowserSemantics'],semanticBrowserTypes]]){
  const surface=mouseExports(uiRead(file),file);
@@ -5319,9 +5319,12 @@ for(const [label,values,stem] of textEntries){
  for(const name of [...semanticTypes,...semanticBrowserTypes,...semanticValues,'createBrowserSemantics'])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Semantics: leaked to default/other entry: '+label+'/'+name);
 }
 const semanticImports={
- 'src/semantics.ts':['./semanticTree.js','./semanticTypes.js'],
- 'dist/semantics.js':['./semanticTree.js'],
- 'dist/semantics.d.ts':['./semanticTree.js','./semanticTypes.js'],
+ 'src/semantics.ts':['./semanticTree.js','./semanticList.js','./semanticList.js','./semanticTypes.js'],
+ 'dist/semantics.js':['./semanticTree.js','./semanticList.js'],
+ 'dist/semantics.d.ts':['./semanticTree.js','./semanticList.js','./semanticList.js','./semanticTypes.js'],
+ 'src/semanticList.ts':['@egret/runtime','./semanticTypes.js'],
+ 'dist/semanticList.js':['@egret/runtime'],
+ 'dist/semanticList.d.ts':['./semanticTypes.js'],
  'src/semanticTree.ts':['@egret/runtime','@egret/runtime','./semanticTypes.js'],
  'dist/semanticTree.js':['@egret/runtime'],
  'dist/semanticTree.d.ts':['@egret/runtime','./semanticTypes.js'],
@@ -5340,7 +5343,7 @@ for(const [file,expected] of Object.entries(semanticImports)){
  if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Semantics: exact graph mismatch: '+file);
  if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Semantics: acquired automatic host work: '+file);
 }
-const semanticAllowed={'src/semanticTree.js':['src/semantics.ts'],'dist/semanticTree.js':['dist/semantics.js','dist/semantics.d.ts'],'web/BrowserSemantics.js':['web/semantics.ts'],'dist/web/BrowserSemantics.js':['dist/web/semantics.js','dist/web/semantics.d.ts']};
+const semanticAllowed={'src/semanticTree.js':['src/semantics.ts'],'dist/semanticTree.js':['dist/semantics.js','dist/semantics.d.ts'],'src/semanticList.js':['src/semantics.ts'],'dist/semanticList.js':['dist/semantics.js','dist/semantics.d.ts'],'web/BrowserSemantics.js':['web/semantics.ts'],'dist/web/BrowserSemantics.js':['dist/web/semantics.js','dist/web/semantics.d.ts']};
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
  if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){

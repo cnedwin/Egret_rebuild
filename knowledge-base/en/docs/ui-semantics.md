@@ -71,6 +71,33 @@ semantics.add({ id: 'row-' + key, role: 'listitem', parent: 'messages',
 
 A tree holds at most 256 nodes unless `maxNodes` says otherwise, and never more than 4,096.
 
+### A managed virtual list
+
+The rows of a [managed UI](ui-data-panel.md) come and go with every commit of its root. `createUiListSemantics` keeps the nodes in step: one for the list, and one for each row that shows.
+
+```js
+import { createUiListSemantics } from '@egret/engine/ui/semantics';
+
+const rows = createUiListSemantics({
+  semantics, root, list: 'messages', role: 'listbox', name: 'Messages', focusable: true,
+  describeRow: (key, index) => ({ name: titles[index], selected: key === chosen }),
+  onActivateRow: key => choose(key),
+});
+// After root.commit(...), with the frame that shows the same rows:
+semantics.publish(rows.sync());
+```
+
+`root` is the root `createUiRoot` returned and `list` is the id of the virtual list in its tree. `sync()` reads what the root committed: it removes the nodes of the rows that no longer show, moves those that stayed, adds those that show now, and returns the committed revision, which is what `publish` takes. A commit alone changes nothing in the tree.
+
+- **Places.** A row's bounds are the part of it the list shows, on the stage. Its `position` is its index in the whole list and the number of records, and its `order` is its index.
+- **Roles.** `'list'` publishes list items, which may hold other nodes; `'listbox'` publishes options, which need a name from `describeRow`. An option that does not say is not selected.
+- **Ids.** The list node is `id`, by default the id of the root, a slash and the id of the list. A row adds a slash and its key, and `rows.rowId(key)` says it.
+- **Focus.** The row that holds the focus of the root is the focused node. With `focusable: true` a row can be asked to take the focus, which needs a root with a keyboard. A row that scrolls away loses the focus in the root and its node in the tree together, so a projection never names an element that does not exist.
+- **Nodes inside a row.** `onRowAdded(key, id)` is called after the node of a row was added. Nodes added there with `parent: id` go when the row does, and the callback is called again when the row is realized again.
+- **Room.** The rows that left are removed before the new ones are added, so a page of new rows needs no room beside the old. When the tree still refuses a row, `sync()` throws that refusal and adds none of the new rows; what stays in the tree is true of the commit.
+
+`dispose()` removes the list node and every row. The helper adds no listener and changes nothing in the root except the focus a row is asked to take. A root of the application's own is read the same way if it has `id`, `snapshot()` and `list(id)` in the shape of `SemanticListSource`.
+
 ### Focus
 
 `focused: true` marks the node that holds the keyboard focus of the application. One node may hold it. A second is refused with `UI_SEMANTICS_FOCUS`.
@@ -125,7 +152,7 @@ A `textbox` node describes a field that is not being edited: its `name` and its 
 
 ## Keys
 
-The projection adds no key handling. Bind keys through the [keyboard input](keyboard-focus-input.md) as before, to the same methods the nodes call: Space or Enter for a button, a switch and a checkbox; the arrow keys, Home and End inside a radio group or a listbox, where the focus follows the selection. The [control state guide](ui-controls.md) lists the methods, and the [example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-controls) binds them.
+The projection adds no key handling. Keys arrive through the [keyboard input](keyboard-focus-input.md) as before and reach the same methods the nodes call: Space or Enter for a button, a switch and a checkbox; the arrow keys, Home and End inside a radio group or a listbox, where the focus follows the selection. [`createControlKeys`](ui-controls.md#keys) binds them, and the [example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-controls) uses it.
 
 ## What was run
 
@@ -134,15 +161,20 @@ The projection adds no key handling. Bind keys through the [keyboard input](keyb
 | The tree: 19 cases | Node | Pass |
 | The projection against a stand-in for the page: 13 cases | Node | Pass |
 | A strict TypeScript consumer of both entries, with nine refused misuses | Node | Pass |
-| The example page: the computed accessibility tree, the active descendant under Tab and the arrow keys, each element over its control, requests made of the elements, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 4 scenarios beside the 5 existing ones |
+| The example page: the computed accessibility tree, the active descendant under Tab and the arrow keys, each element over its control, requests made of the elements, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 4 scenarios beside the 6 of the controls |
+| The rows of a managed list: 12 cases on a genuine Engine and a genuine UI root, with a strict TypeScript consumer and six refused misuses | Node | Pass |
+| [The list example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics): the list box the browser computes for 8 of 50,000 rows, the active descendant through recycled rows, a jump to row 40,000, a scroll away from the focus, requests made of the options, a scaled and scrolled page, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
 
 Not run: a screen reader, voice control, switch access or any other assistive technology; a person; Edge as installed; Firefox; Safari; a real phone, where exploration by touch depends on the platform's accessibility service; hardware GPUs and WebGPU. A passing accessibility tree is not proof that the UI is usable with a screen reader.
 
-Run the page check with `node examples/ui-controls/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> software`. Without `software` it launches the installed Edge headed.
+Run a page check with `node examples/ui-controls/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> software`, or the same with `examples/ui-list-semantics/verify.mjs`. Without `software` it launches the installed Edge headed.
+
+Operator faults were written into the built list helper one at a time: 61, and the cases caught all of them.
 
 ## Not in this slice
 
 - Roles beyond the first control set: menus, tabs, sliders, trees, grids, headings and live regions.
 - Descriptions, error text and labelling one node by another.
-- Wiring to the managed UI root, its virtual list and the layer manager. The application adds and removes the nodes.
+- Wiring to the layer manager and to the leaves of the managed UI outside a virtual list. The application adds and removes those nodes. The rows of a virtual list have [a helper](#a-managed-virtual-list).
+- A list with several selected rows, and rows in a grid.
 - A projection of the native editor itself. The editor is its own element.
