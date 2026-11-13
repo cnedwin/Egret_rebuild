@@ -670,7 +670,19 @@ for (const [name, pin] of m12FullDirtyModuleSuccessors) {
   assert.ok(lambertGlbModuleIdentities.has(name), "Full-dirty successor must retain B1 membership");
   assert.notEqual(pin.sha256, lambertGlbModuleIdentities.get(name).sha256);
 }
-const currentModuleIdentities = new Map([...lambertGlbModuleIdentities,...m12FullDirtyModuleSuccessors]);
+const m12FullDirtyModuleIdentities = new Map([...lambertGlbModuleIdentities,...m12FullDirtyModuleSuccessors]);
+// Rebind the reviewed 2D cost emissions within the existing closure.
+const twoDCostModuleSuccessors = new Map([
+  ["packages/engine/dist/rendering/packSharedDraws2D.js", { bytes: 7013, sha256: "28a245ca2028bfafa665a3108490fa675e938017ac8f16e2093deac8304d2d67" }],
+  ["packages/engine/dist/rendering/prepareSharedDraws2D.js", { bytes: 16810, sha256: "ba92b37871f2fe3a2fefc8dc0551e8c549c3dd90ded23536c4ba81ef24ec605d" }],
+  ["packages/runtime/dist/displayTreeState.js", { bytes: 19914, sha256: "b5e00bfab0be41c350061e8fbae47b740798a66ea979edb6032b482970d3527d" }],
+  ["packages/runtime/dist/sharedFrameCapture.js", { bytes: 24278, sha256: "97cedf42ac29a8b11edbb7ec075b9afcc70fc61825d17b78f41f2f9f78907ced" }],
+]);
+for (const [name, pin] of twoDCostModuleSuccessors) {
+  assert.ok(m12FullDirtyModuleIdentities.has(name), "2D cost successor must retain B1 membership");
+  assert.notEqual(pin.sha256, m12FullDirtyModuleIdentities.get(name).sha256);
+}
+const currentModuleIdentities = new Map([...m12FullDirtyModuleIdentities,...twoDCostModuleSuccessors]);
 assert.equal(currentModuleIdentities.size,m3FontSourceModuleLimit,'Font resources current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {

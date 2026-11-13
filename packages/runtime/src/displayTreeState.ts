@@ -4,6 +4,8 @@ import type { Stage } from "./Stage.js";
 import { EgretError } from "./EgretError.js";
 import { recordVisualChange, VISUAL_STRUCTURE } from "./displayVisualState.js";
 import { invalidateCaptureNode, clearCaptureStage } from "./frameCaptureCache.js";
+// Read at call time only; ownership imports this module for its own tree operations.
+import { engineOf } from "./ownership.js";
 
 // Internal state authority: validation/commit never uses overridable getters
 // or public removeChild. Public subclass hooks run only during preflight.
@@ -156,6 +158,23 @@ const InsertionSet = Set;
 const insertionSeenHas = Set.prototype.has.call.bind(Set.prototype.has) as (set: Set<unknown>, value: unknown) => boolean;
 const insertionSeenAdd = Set.prototype.add.call.bind(Set.prototype.add) as (set: Set<unknown>, value: unknown) => Set<unknown>;
 
+// An indexed insertion that walked a receiver's whole tree and left every node in it bound to one
+// Engine records that Engine here, so the next insertion into the same receiver does not walk the
+// tree again. A node enters a recorded tree only through addChild or addChildAt, which bind the
+// whole incoming tree to that Engine, or through the list replacements below, which forget the
+// record. Detaching or disposing a node takes it out of the tree and leaves the rest as it was,
+// and Engine affinity, once given, does not change.
+const verifiedInsertionTrees = new WeakMap<object, object>();
+const readVerifiedInsertionTree = verifiedInsertionTrees.get.bind(verifiedInsertionTrees);
+const writeVerifiedInsertionTree = verifiedInsertionTrees.set.bind(verifiedInsertionTrees);
+const deleteVerifiedInsertionTree = verifiedInsertionTrees.delete.bind(verifiedInsertionTrees);
+/** A node whose subtree may now hold other affinity retires the record of every tree containing it. */
+function forgetVerifiedInsertionTrees(node: DisplayObject): void {
+  for (let current: DisplayObject | undefined = node; current !== undefined; current = readParent(current)) {
+    deleteVerifiedInsertionTree(current);
+  }
+}
+
 /** Runtime-private records preserve ordered refusals until after Engine selection. */
 export interface CapturedInsertionNode {
   readonly node: DisplayObject | undefined;
@@ -250,7 +269,12 @@ function captureInsertionTree(root: DisplayObject): CapturedInsertionNode[] {
 
 /** Capture the complete posthook authority once, without semantic refusals or hooks. */
 export function captureChildInsertion(receiver: DisplayObjectContainer, child: DisplayObject): CapturedChildInsertion {
-  const receiverTree = captureInsertionTree(receiver);
+  // A bound receiver whose whole tree an earlier insertion left bound to the same Engine is not
+  // walked again: every record that walk would produce is valid and carries that Engine, so the
+  // receiver contributes its own record only.
+  const receiverEngine = engineOf(receiver);
+  const receiverTree = receiverEngine !== undefined && readVerifiedInsertionTree(receiver) === receiverEngine
+    ? [captureInsertionNode(receiver, undefined, false)] : captureInsertionTree(receiver);
   const incomingTree = captureInsertionTree(child);
   const receiverAncestors: DisplayObject[] = [];
   const seenAncestors = new InsertionSet<unknown>();
@@ -364,6 +388,10 @@ export function publishCapturedInsertionTree(plan: PreparedInsertionTree): void 
     recordVisualChange(plan.capture.receiver, VISUAL_STRUCTURE);
     recordVisualChange(plan.capture.child, VISUAL_STRUCTURE);
   }
+  // Both trees were validated against one Engine and every staged affinity is already written, so a
+  // bound receiver's whole tree now carries its Engine. A tree without an Engine is never recorded.
+  const engine = engineOf(plan.capture.receiver);
+  if (engine !== undefined) writeVerifiedInsertionTree(plan.capture.receiver, engine);
 }
 
 /** UI-only preallocated list replacement, after complete private validation. */
@@ -402,6 +430,8 @@ export function publishUiTree(replacements: readonly UiTreeReplacement[]): void 
       recordVisualChange(child, VISUAL_STRUCTURE);
     }
   }
+  // The replacement children were admitted by the UI commit, not by an indexed insertion.
+  for (let index = 0; index < replacements.length; index++) forgetVerifiedInsertionTrees(replacements[index]!.parent);
 }
 
 /** One validated borrowed-child replacement; all storage was allocated in preparation. */
@@ -411,4 +441,5 @@ export function publishPreparedChildren(parent: DisplayObjectContainer, previous
   insertionWriteParent(next[0]!,parent);
   recordVisualChange(parent,VISUAL_STRUCTURE);
   recordVisualChange(next[0]!,VISUAL_STRUCTURE);
+  forgetVerifiedInsertionTrees(parent);
 }

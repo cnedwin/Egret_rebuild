@@ -231,3 +231,9 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/web
 ## 已授权 Android 开发会话
 
 任务包含保持已授权手机唤醒时，在整段开发／测试会话（包括编写代码的间隔）持有一个有时限的 USB 唤醒租约。核查真实亮屏／解锁状态，每次设备输入前复查，页面可见不足以代表就绪。记录原设置的准确值或缺失状态；先关闭自有手机用例，再结束外层租约，在完成、取消或异常时恢复原值，并保留无关外部修改。继续遵循共享手机租约和准确目标规则。不改变安全锁或绕过认证；锁定、断连或状态不明时停止自动输入。见[设备会话规范](knowledge-base/Cns/docs/android-native-text-editing.md#设备所有权与保持唤醒)。
+
+## 2D 开销单元验证
+
+`tests/display-container-add-child-at-verified.test.mjs` 是带标签的 UNIT。它唯一的私有导入是构建后的 `packages/runtime/dist/displayTreeState.js`：读取 `captureChildInsertion` 以观察接收者的树是否被遍历，并用容器的当前列表调用 `publishUiTree`，使按索引插入所记住的结果作废。所有的树都来自公开 SDK 构造的真实 Engine、Scope 和显示对象；该单元不伪造任何畸形边。
+
+`tests/shared-frame-golden.test.mjs` 是 CPU UNIT，适用已有的对构建后 `engine/dist/rendering` 辅助模块的许可。它导入 `prepareSharedDraws2D.js`、`packSharedDraws2D.js`、`preparedSharedBatches2D.js` 和 `preparedBatches2D.js`，按 Host 的方式在通过公开 Engine 捕获的帧上驱动它们，并与捕获和准备路径改动之前记录的摘要比较。会改变已记录数值的改动需要单独评审；不得为了让改动通过而刷新摘要。这些摘要证明的是 CPU 输出相同，不证明 GPU 执行或速度。

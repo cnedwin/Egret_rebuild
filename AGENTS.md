@@ -231,3 +231,9 @@ Only tests/ui-text-edit-state-unit.test.mjs consumes the built @egret/runtime/ui
 ## Authorized Android development sessions
 
 When keeping an authorized phone awake is part of the task, hold one bounded USB-only wake lease across the entire development/test session, including coding gaps. Observe actual awake/unlocked state and recheck before every device input; page visibility is insufficient. Capture the exact original setting or absence, close owned phone cases before ending the outer lease, and restore the original setting at completion, cancellation or error while preserving unrelated external changes. Keep the existing shared phone lease and exact-target rules. Do not change security lock or bypass credentials; locked, disconnected or unknown state stops automated input. See the [device-session policy](knowledge-base/en/docs/android-native-text-editing.md#device-ownership-and-wake-policy).
+
+## 2D cost units
+
+`tests/display-container-add-child-at-verified.test.mjs` is a labelled UNIT. Its only private import is the built `packages/runtime/dist/displayTreeState.js`: it reads `captureChildInsertion` to observe whether a receiver's tree was walked, and calls `publishUiTree` with a container's current list to retire what indexed insertion remembers. Genuine public Engine, Scope and display objects supply every tree; the unit fabricates no malformed edge.
+
+`tests/shared-frame-golden.test.mjs` is a CPU UNIT under the existing permission for built `engine/dist/rendering` helpers. It imports `prepareSharedDraws2D.js`, `packSharedDraws2D.js`, `preparedSharedBatches2D.js` and `preparedBatches2D.js`, drives them as a Host does on frames captured through the public Engine, and compares digests recorded before the capture and preparation paths were changed. A change that alters a recorded value needs its own review; never refresh the digests to make a change pass. The digests establish equal CPU output, not GPU execution or speed.
