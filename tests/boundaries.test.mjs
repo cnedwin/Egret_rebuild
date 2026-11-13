@@ -1329,8 +1329,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       'dist/hover.js','dist/hover.d.ts','dist/hoverInput.js','dist/hoverInput.d.ts','dist/hoverInputTypes.js','dist/hoverInputTypes.d.ts',
       'dist/web/hover.js','dist/web/hover.d.ts','dist/web/BrowserHoverInput.js','dist/web/BrowserHoverInput.d.ts'];
     // Semantics: inert copies of its five modules and their build output, for the same reason.
-    const semanticGraphFiles=['src/semantics.ts','src/semanticTree.ts','src/semanticTypes.ts','web/semantics.ts','web/BrowserSemantics.ts',
-      'dist/semantics.js','dist/semantics.d.ts','dist/semanticTree.js','dist/semanticTree.d.ts','dist/semanticTypes.js','dist/semanticTypes.d.ts',
+    const semanticGraphFiles=['src/semantics.ts','src/semanticTree.ts','src/semanticList.ts','src/semanticTypes.ts','web/semantics.ts','web/BrowserSemantics.ts',
+      'dist/semantics.js','dist/semantics.d.ts','dist/semanticTree.js','dist/semanticTree.d.ts','dist/semanticList.js','dist/semanticList.d.ts','dist/semanticTypes.js','dist/semanticTypes.d.ts',
       'dist/web/semantics.js','dist/web/semantics.d.ts','dist/web/BrowserSemantics.js','dist/web/BrowserSemantics.d.ts'];
     for(const relative of [...keyboardGraphFiles,...textInputGraphFiles,...hoverGraphFiles,...semanticGraphFiles]){
       const file='packages/engine/'+relative,original=readFileSync(path.join(repository,file),'utf8');
@@ -1354,7 +1354,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     write('node_modules/@egret/engine/hover-browser.js','export function createBrowserHoverInput() {}\n');
     const semanticResolver=JSON.parse(readFileSync(path.join(root,keyboardResolverFile),'utf8'));
     write(keyboardResolverFile,{...semanticResolver,exports:{...semanticResolver.exports,'./ui/semantics':'./semantics-tree.js','./web/semantics':'./semantics-browser.js'}});
-    write('node_modules/@egret/engine/semantics-tree.js','export function createUiSemantics() {}\nexport function semanticBoundsOf() {}\n');
+    write('node_modules/@egret/engine/semantics-tree.js','export function createUiSemantics() {}\nexport function semanticBoundsOf() {}\nexport function createUiListSemantics() {}\n');
     write('node_modules/@egret/engine/semantics-browser.js','export function createBrowserSemantics() {}\n');
     // Native editing keeps an inert, exact policy graph; these are not behavior tests.
     const nativeEditingGraphFiles=["packages/engine/src/internal/uiRootState.ts","packages/engine/dist/internal/uiRootState.js","packages/engine/dist/internal/uiRootState.d.ts","packages/engine/src/ui/editing.ts","packages/engine/dist/ui/editing.js","packages/engine/dist/ui/editing.d.ts","packages/engine/src/ui/textEditor.ts","packages/engine/dist/ui/textEditor.js","packages/engine/dist/ui/textEditor.d.ts","packages/engine/src/ui/textEditorTypes.ts","packages/engine/dist/ui/textEditorTypes.js","packages/engine/dist/ui/textEditorTypes.d.ts","packages/engine/web/BrowserTextEditor.ts","packages/engine/dist/web/BrowserTextEditor.js","packages/engine/dist/web/BrowserTextEditor.d.ts","packages/engine/web/editing.ts","packages/engine/dist/web/editing.js","packages/engine/dist/web/editing.d.ts","packages/engine/web/editorFonts.ts","packages/engine/dist/web/editorFonts.js","packages/engine/dist/web/editorFonts.d.ts","packages/runtime/src/ui/editing.ts","packages/runtime/dist/ui/editing.js","packages/runtime/dist/ui/editing.d.ts","packages/runtime/src/ui/textEditState.ts","packages/runtime/dist/ui/textEditState.js","packages/runtime/dist/ui/textEditState.d.ts","packages/runtime/src/ui/textEditTypes.ts","packages/runtime/dist/ui/textEditTypes.js","packages/runtime/dist/ui/textEditTypes.d.ts"];
@@ -2167,6 +2167,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       const edits={
         'escaped-browser-module':['packages/engine/web/ProbeSemantics.ts',"import {createBrowserSemantics} from './BrowserSemantics.js';\nvoid createBrowserSemantics;\n"],
         'escaped-core-module':['packages/engine/src/probeSemantics.ts',"import {createUiSemantics} from './semanticTree.js';\nvoid createUiSemantics;\n"],
+        'escaped-list-module':['packages/engine/src/probeSemanticList.ts',"import {createUiListSemantics} from './semanticList.js';\nvoid createUiListSemantics;\n"],
+        'timer-in-list':['packages/engine/src/semanticList.ts','void setTimeout;\n'],
         'tree-entry-elsewhere':['packages/engine/web/ProbeSemanticsEntry.ts',"import type {UiSemantics} from '@egret/engine/ui/semantics';\nexport type Probe=UiSemantics;\n"],
         'extra-export':['packages/engine/web/semantics.ts','export const extra=1;\n'],
         'extra-core-export':['packages/engine/src/semantics.ts','export const extra=1;\n'],
@@ -2274,6 +2276,8 @@ for(const [name,reason] of [
 for(const [name,reason] of [
   ['escaped-browser-module','Semantics: implementation module imported outside its entry'],
   ['escaped-core-module','Semantics: implementation module imported outside its entry'],
+  ['escaped-list-module','Semantics: implementation module imported outside its entry'],
+  ['timer-in-list','Semantics: acquired automatic host work'],
   ['tree-entry-elsewhere','Semantics: tree entry imported outside the named browser module'],
   ['extra-export','Semantics: exact entry exports mismatch'],
   ['extra-core-export','Semantics: exact entry exports mismatch'],

@@ -71,6 +71,33 @@ semantics.add({ id: 'row-' + key, role: 'listitem', parent: 'messages',
 
 一棵树默认最多保存 256 个节点，可用 `maxNodes` 调整，上限为 4,096。
 
+### 托管虚拟列表
+
+[托管 UI](ui-data-panel.md) 的行随着根的每一次提交出现和消失。`createUiListSemantics` 让节点与之保持一致：列表一个节点，每个可见行一个节点。
+
+```js
+import { createUiListSemantics } from '@egret/engine/ui/semantics';
+
+const rows = createUiListSemantics({
+  semantics, root, list: 'messages', role: 'listbox', name: 'Messages', focusable: true,
+  describeRow: (key, index) => ({ name: titles[index], selected: key === chosen }),
+  onActivateRow: key => choose(key),
+});
+// 在 root.commit(...) 之后，与显示同一批行的那一帧一起：
+semantics.publish(rows.sync());
+```
+
+`root` 是 `createUiRoot` 返回的根，`list` 是虚拟列表在其树中的 id。`sync()` 读取根已提交的内容：移除不再可见的行的节点，移动留下的行，添加现在可见的行，并返回已提交的修订号，也就是 `publish` 所接受的参数。仅仅提交不会改变语义树。
+
+- **位置。**行的范围是它在舞台上被列表显示出来的那一部分。它的 `position` 是它在整个列表中的序号和记录总数，`order` 是它的序号。
+- **角色。**`'list'` 发布列表项，列表项内部可以有其他节点；`'listbox'` 发布选项，选项需要由 `describeRow` 提供名称。没有说明的选项视为未选中。
+- **id。**列表节点的 id 是 `id`，默认是根的 id、一个斜杠和列表的 id。行在其后再加一个斜杠和自己的键，可用 `rows.rowId(key)` 得到。
+- **焦点。**持有根焦点的行就是获得焦点的节点。设置 `focusable: true` 后可以请求某一行获得焦点，这需要根配有键盘。滚走的行同时失去根里的焦点和树里的节点，所以投射永远不会指向一个不存在的元素。
+- **行内的节点。**某一行的节点添加之后会调用 `onRowAdded(key, id)`。在其中以 `parent: id` 添加的节点会随该行一起消失，该行再次被实例化时回调会再次被调用。
+- **容量。**离开的行先被移除，然后才添加新的行，所以整页换成新行时不需要同时容纳新旧两批。如果树仍然拒绝某一行，`sync()` 抛出这次拒绝，并且不添加任何新行；留在树中的内容与这次提交相符。
+
+`dispose()` 移除列表节点和所有行。这个辅助对象不添加监听器，除了某一行被请求获得的焦点之外，不改变根里的任何东西。应用自己的根只要具有 `SemanticListSource` 形状的 `id`、`snapshot()` 和 `list(id)`，也可以用同样的方式读取。
+
 ### 焦点
 
 `focused: true` 标记持有应用键盘焦点的节点。只能有一个节点持有焦点，出现第二个时以 `UI_SEMANTICS_FOCUS` 拒绝。
@@ -125,7 +152,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 
 ## 按键
 
-投射不添加任何按键处理。按键仍通过[键盘输入](keyboard-focus-input.md)绑定到节点所调用的同一批方法：按钮、开关和复选框用空格或回车；单选组或列表框内用方向键、Home 和 End，焦点跟随选择。[控件状态指南](ui-controls.md)列出了这些方法，[示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-controls)完成了绑定。
+投射不添加任何按键处理。按键仍通过[键盘输入](keyboard-focus-input.md)到达节点所调用的同一批方法：按钮、开关和复选框用空格或回车；单选组或列表框内用方向键、Home 和 End，焦点跟随选择。[`createControlKeys`](ui-controls.md#按键) 完成这些绑定，[示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-controls)使用了它。
 
 ## 实际运行的检查
 
@@ -134,15 +161,20 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 | 语义树：19 项 | Node | 通过 |
 | 投射对照测试自备的页面替身：13 项 | Node | 通过 |
 | 两个入口的严格 TypeScript 使用方，含九种被拒绝的误用 | Node | 通过 |
-| 示例页面：浏览器计算出的无障碍树、Tab 和方向键下的活动后代、每个元素与其控件重合、对元素发出的请求、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，在原有 5 个场景之外新增 4 个 |
+| 示例页面：浏览器计算出的无障碍树、Tab 和方向键下的活动后代、每个元素与其控件重合、对元素发出的请求、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，在控件的 6 个场景之外另有 4 个 |
+| 托管列表的行：真实 Engine 和真实 UI 根上的 12 项，另有严格 TypeScript 使用方和六种被拒绝的误用 | Node | 通过 |
+| [列表示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics)：浏览器为 50,000 行中的 8 行计算出的列表框、穿过被回收行时的活动后代、跳到第 40,000 行、从焦点处滚走、对选项发出的请求、缩放并滚动后的页面、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
 
 未运行：读屏软件、语音控制、开关控制或任何其他辅助技术；真人操作；已安装的 Edge；Firefox；Safari；真实手机（触摸探索取决于平台的无障碍服务）；硬件 GPU 和 WebGPU。无障碍树通过检查，并不证明界面在读屏软件下可用。
 
-页面检查的运行方式：`node examples/ui-controls/verify.mjs <Playwright index.mjs 的绝对路径> <新的绝对输出目录> software`。不带 `software` 时启动已安装的 Edge（有界面）。
+页面检查的运行方式：`node examples/ui-controls/verify.mjs <Playwright index.mjs 的绝对路径> <新的绝对输出目录> software`，`examples/ui-list-semantics/verify.mjs` 的用法相同。不带 `software` 时启动已安装的 Edge（有界面）。
+
+向列表辅助对象的构建产物逐个写入了 61 个运算符错误，这些用例全部发现。
 
 ## 本次未包含
 
 - 首批控件集合之外的角色：菜单、标签页、滑块、树、表格、标题和实时区域。
 - 描述文字、错误文字，以及用一个节点为另一个节点命名。
-- 与托管 UI 根、其虚拟列表和层管理器的接线。节点由应用添加和移除。
+- 与层管理器的接线，以及托管 UI 中虚拟列表之外的叶子节点。这些节点由应用添加和移除。虚拟列表的行有[辅助对象](#托管虚拟列表)。
+- 可多选的列表，以及按网格排列的行。
 - 原生编辑器自身的投射。编辑器本身就是一个元素。

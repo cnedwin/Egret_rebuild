@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/semanticList.ts",
+      "originRole": "First-party helper that keeps the nodes of a semantic tree in step with the rows a managed virtual list committed; independently authored with AI assistance; Apache-2.0. No third-party source or dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-list-semantics.test.mjs",
+      "originRole": "First-party behaviour tests of the list semantics on a genuine Engine and a genuine UI root; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/ui-list-semantics.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the list semantics; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/ui-list-semantics.ts",
+      "originRole": "First-party strict TypeScript consumer of the list semantics, with six refused misuses; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-list-semantics/index.html",
+      "originRole": "First-party page of the list semantics example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/ui-list-semantics/main.mjs",
+      "originRole": "First-party list semantics example: fifty thousand original records in a managed virtual list, drawn as plain rectangles, with keys bound and semantics published; independently authored with AI assistance; Apache-2.0. Original example text and no third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-list-semantics/verify.mjs",
+      "originRole": "First-party real-browser check of the list semantics example against the accessibility tree the browser computes; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-list-semantics/README.md",
+      "originRole": "First-party instructions for the list semantics example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-list-semantics/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the list semantics example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/ui-list-semantics/README.md",
+      "zh": "examples/ui-list-semantics/README.zh-CN.md"
+    }
+  ]
+}

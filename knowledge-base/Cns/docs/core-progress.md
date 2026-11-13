@@ -123,7 +123,7 @@ M2–M4 的十一个工作包均保留完整验收要求。下表确认已合并
 | M3.1／[#87](https://github.com/cnedwin/Egret_rebuild/issues/87) | 托管布局、稳定键虚拟化、锚点、焦点／定位、字体／主题整合及有界编辑行保留 | 完整一致 UI 场景／UI 维护者 |
 | M3.2／[#88](https://github.com/cnedwin/Egret_rebuild/issues/88) | 只读多样式文字、几何和字体代次 | 必需独立参考及 provider 成本／恢复资格／文字维护者 |
 | M3.3／[#89](https://github.com/cnedwin/Egret_rebuild/issues/89) | 触点路由、[悬停与滚轮路由](pointer-hover.md)、键盘／焦点、行整合及原生单／多行纯文本编辑 | 真实 IME／移动键盘、真实鼠标／手写笔／触控板会话、剪贴板及无障碍资格／输入宿主维护者 |
-| M3.4／[#90](https://github.com/cnedwin/Egret_rebuild/issues/90) | 遮罩／模糊、主题、社区移动／动作状态，[悬停、开关、多选一、滚动和文本框状态](ui-controls.md)及[它们的常用按键](ui-controls.md#按键)，以及[语义树及其浏览器投射](ui-semantics.md) | 其余控件与整合场景、层级、手势、语义与托管 UI 的接线，以及真实辅助技术会话／UI 维护者与现有触摸贡献者 |
+| M3.4／[#90](https://github.com/cnedwin/Egret_rebuild/issues/90) | 遮罩／模糊、主题、社区移动／动作状态，[悬停、开关、多选一、滚动和文本框状态](ui-controls.md)及[它们的常用按键](ui-controls.md#按键)，以及[语义树及其浏览器投射](ui-semantics.md)，它跟随[托管列表的行](ui-semantics.md#托管虚拟列表) | 其余控件与整合场景、层级、手势、托管 UI 的层与叶子的语义，以及真实辅助技术会话／UI 维护者与现有触摸贡献者 |
 | M4.1／[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) | 可编辑精简与固定 X 换装场景、浏览器内打开已导出工程、双后端计时和有界 Android 证据 | 打开工程的硬件验证、选定能力覆盖与正式 X 验收／集成与验收维护者 |
 | M4.2／[#92](https://github.com/cnedwin/Egret_rebuild/issues/92) | 固定桌面恢复、Android 组件证据及共享裁剪／几何构造的短时对照 | 完整混合生命周期、性能和必需设备验收／性能平台维护者 |
 | M4.3／[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) | 可观察预览失败／取消／重载、公开贡献入口，以及对打包后的默认引擎在 Node 中的自动[干净消费者检查](clean-consumer.md)，含一个在软件渲染下用 WebGL2 完成绘制并响应按下的消费者页面 | 已发布的分发物、消费者页面在 WebGPU、硬件和其他浏览器上的运行、实测的首次可交互、真人演练与合格交接／发布维护者 |

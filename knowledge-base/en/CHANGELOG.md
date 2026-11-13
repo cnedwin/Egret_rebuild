@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Semantics for the rows of a managed list — 2026-11-14
+
+`createUiListSemantics` in `@egret/engine/ui/semantics` keeps the semantic tree in step with a virtual list of the managed UI: one node for the list and one for each row that shows, with its place on the stage and its position among all the records. The row with the focus is the focused node, and a row that scrolls away takes its node with it, so a projection never names an element that does not exist. A new example lists fifty thousand rows and publishes the eight that show. Checked on a genuine UI root and against the list box headless Chromium computes; no screen reader was run. Part of #90. [Guide](docs/ui-semantics.md#a-managed-virtual-list)
+
 ## The usual keys of a control — 2026-11-14
 
 `createControlKeys` in `@egret/engine/ui` binds the usual keys of a drawn control at the display object that holds the focus: Space or Enter, released, for a button, a switch and a text field; the arrow keys, Home and End for a selection; those and Page Up and Page Down for a scroll position; the arrows and the W A S D positions for a movement. A held key is reported so that it can be painted, a hold that loses the focus activates nothing, a key taken nearer the focus is left alone, and a scroll at its end leaves the key to the page. The three control examples use it. Checked on a genuine Engine and in headless Chromium with software WebGL2 on a US layout; no physical keyboard, other layout or screen reader was run. Part of #90. [Guide](docs/ui-controls.md#keys)
