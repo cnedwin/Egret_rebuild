@@ -6,7 +6,8 @@ if(new Set(options).size!==options.length||options.some(x=>!['--committed','--in
 // --no-tests leaves the test files to the declared parallel shards of the same candidate.
 const withoutTests=options.includes('--no-tests');
 const hygiene=options.filter(x=>x==='--committed');
-const metadata=options.includes('--integrated')?[['tools/contribution-metadata.mjs','--check',...(process.env.EGRET_METADATA_BASE?['--base',process.env.EGRET_METADATA_BASE]:[])]]:[];
+// A merge candidate leaves the ledgers as its base has them, or is itself a complete refresh.
+const metadata=options.includes('--integrated')?[['tools/contribution-metadata.mjs','--merge',...(process.env.EGRET_METADATA_BASE?['--base',process.env.EGRET_METADATA_BASE]:[])]]:[];
 // The complete merge entry builds before publication tests consume emitted declarations.
 for(const args of [['tools/check-repository-hygiene.mjs',...hygiene],...metadata,['tools/build.mjs'],['tools/check-test-baselines.mjs','--no-build'],['tools/check-publication.mjs','--contribution'],['--test','tests/publication/historical-browser-tools.test.mjs','tests/publication/resource-browser-tools.test.mjs','tests/publication/incremental-checks.test.mjs','tests/publication/ci-documentation-route.test.mjs','tests/publication/test-shards.test.mjs','tests/publication/browser-tools.test.mjs','tests/publication/contribution-metadata.test.mjs','tests/publication/m0-foundations.test.mjs','tests/publication/check-publication.test.mjs','tests/publication/knowledge-base-check-only.test.mjs','tests/publication/file-case.test.mjs','tests/publication/file-identity.test.mjs','tests/publication/repository-hygiene.test.mjs','tests/publication/text-writers.test.mjs','tests/publication/powershell-comments.test.mjs'],['tools/verify.mjs','--no-build',...(withoutTests?['--no-tests']:[])],['examples/headless.mjs'],['examples/nine-slice-bitmap-headless.mjs']]){
  const result=spawnSync(process.execPath,args,{cwd:root,stdio:'inherit'});

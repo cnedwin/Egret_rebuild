@@ -70,15 +70,24 @@ Edwin（`@cnedwin`）是当前集成联系人。CODEOWNERS 用于路由评审请
 
 普通完整 prepush 从与 origin/main 的 Git 合并基点只读推导当前发布元数据，贡献者无需手改 localization.json、source-origin.json 或 documentation-layout.json。保持 origin/main 可用且及时更新；使用 fork 时，添加并获取上游仓库，将 EGRET_METADATA_BASE 设为确切目标基线提交进行验证。单语草稿可以讨论，但推送 hook 仍要求最终阅读文档配对；需要翻译协助时应在交付前提出。
 
-完成内容、来源及双语评审后，集成人选择最终基线并运行：
+改动不携带这三份账本。合并之前，CI 运行与 `node tools/prepush.mjs --integrated` 相同的检查：
 
 ```text
-node tools/contribution-metadata.mjs --base <target-base-commit> --write
-node tools/contribution-metadata.mjs --base <target-base-commit> --check
-node tools/prepush.mjs --integrated
+node tools/contribution-metadata.mjs --merge --base <base-commit>
 ```
 
-若 prepush 默认合并基点不同，运行时将 EGRET_METADATA_BASE 设为同一提交。将生成的账本与评审后的内容一起提交。CI 使用 PR 基线 SHA，拒绝过期的集成元数据，不回写贡献者分支。内容、声明或基线变化后须重新生成并验证。生成器只更新当前派生字段及已声明新增项，保留无关旧来源行和全部历史对象。删除、重命名、已有来源声明及历史/结构变更需单独评审迁移。哈希继续按原始字节计算；生成不证明翻译质量、来源权利或行为正确。
+它要求每份账本都与基线中的完全一致。然后它从上一次账本刷新开始规划元数据，所以自那以后改动过的每个文件都必须已声明，每对阅读文档都必须完整，但什么都不写入。若 prepush 默认合并基点不同，运行时将 EGRET_METADATA_BASE 设为基线提交。CI 使用 PR 基线 SHA，不回写贡献者分支。
+
+账本在合并之后刷新，由一个不携带其他任何内容的改动完成。在从当前 main 拉出的分支上运行：
+
+```text
+node tools/contribution-metadata.mjs --since-ledgers --write
+node tools/contribution-metadata.mjs --merge
+```
+
+第一条命令找到 main 第一父提交线上最近一次改动账本的提交，规划自那以后的全部变化，并写入三份账本。第二条命令确认这次刷新是完整的：只要改动携带了账本，就必须恰好是这样一次完整刷新。如果刷新合并之前 main 又前进了，就重新生成。每次合并到 main 之后，CI 会报告自上次刷新以来有多少文件发生了变化。
+
+两次刷新之间，main 上的账本描述的是较早的状态。合并检查不把它们当作当前状态来读：它们根据上一次刷新和现有文件自行推导当前清单。生成器只更新当前派生字段及已声明新增项，保留无关旧来源行和全部历史对象。删除、重命名、已有来源声明及历史/结构变更需单独评审迁移。哈希继续按原始字节计算；生成不证明翻译质量、来源权利或行为正确。
 
 当前浏览器检查使用 Windows x64、Node **26.7.0** 和已安装 Edge，在独立工具目录安装 Playwright 与 playwright-core **1.62.1** 后运行：
 
