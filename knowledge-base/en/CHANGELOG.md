@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## The name a skin gives to a state — 2026-11-14
+
+`selectUiSkin` in `@egret/engine/ui` gives the name a theme skin has for the states of a control that hold now. When several hold, the first in the order a player reads a control wins: unavailable, held, set, focused, pointed at; a state the skin has no name for falls to the next, and then to `default`. The controls example takes its colours from a theme through it, and its real-browser check reads the colour each state is painted with. Checked in Node and in headless Chromium with software WebGL2. Part of #90. [Guide](docs/ui-controls.md#painting-states)
+
 ## Semantics for the boxes and layers of the managed UI — 2026-11-14
 
 `semanticBoxOf` in `@egret/engine/ui/semantics` measures a box a managed UI root laid out, so a leaf or a whole card can be a node of the semantic tree. With it a popup or a modal of the layer manager is described as a dialog that is hidden while the layer is closed. The list example gains a modal card: in headless Chromium the tree the browser computes then has the dialog and its buttons and nothing of the list behind it, and the focus returns to its row when the card closes. No screen reader was run. Part of #90. [Guide](docs/ui-semantics.md#boxes-and-layers-of-the-managed-ui)

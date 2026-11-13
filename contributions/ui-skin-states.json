@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/ui-skin-states.test.mjs",
+      "originRole": "First-party behaviour tests of the name a theme skin gives to the states of a control; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/ui-skin-states.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the skin states; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/ui-skin-states.ts",
+      "originRole": "First-party strict TypeScript consumer of the skin states, with five refused misuses; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

@@ -161,7 +161,18 @@ const keys = createControlKeys({ keyboard, target: button, kind: 'action', contr
 
 ## 绘制状态
 
-控件报告状态，外观由应用选择。[主题](ui-theme-generations.md)为 `default`、`hover`、`pressed`、`disabled`、`focus`、`checked`、`selected` 和 `expanded` 提供皮肤名称。几种状态同时成立时用哪个名称，由应用决定。示例按玩家读取的顺序判断：不可用、按住、被指向、已设置。
+控件报告状态，外观由应用选择。[主题](ui-theme-generations.md)为 `default`、`hover`、`pressed`、`disabled`、`focus`、`checked`、`selected` 和 `expanded` 提供皮肤名称，`selectUiSkin` 给出当前成立的状态所对应的名称：
+
+```js
+import { selectUiSkin } from '@egret/engine/ui';
+
+const name = selectUiSkin(theme.skins.button, {
+  disabled: !apply.enabled, pressed: apply.pressed || keys.pressed, hover: hovered.hovered, focus: ringed });
+```
+
+几种状态同时成立时，按玩家读取控件的顺序取第一个：不可用、按住、已设置（`checked`、`selected`、`expanded`）、获得焦点、被指向。皮肤没有为某个状态命名时，落到下一个成立的状态，最后落到 `default`。第三个参数可以给出另一种顺序，未列入其中的状态永远不会被选中。
+
+皮肤为每个状态提供一个名称，而不是为每种组合提供一个。按住或被指向时仍需保持“已设置”外观的控件，应为它的已设置值使用单独的皮肤，就像示例里的开关那样：`skins.control` 和 `skins.controlOn` 按值选择，各自带有自己的 `hover`。焦点框通常画在皮肤旁边，而不是作为皮肤被选中。
 
 ## 已检查的内容
 
@@ -170,13 +181,14 @@ const keys = createControlKeys({ keyboard, target: button, kind: 'action', contr
 | [`tests/ui-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-controls.test.mjs) | 真实 Engine 上的移动与动作 |
 | [`tests/ui-state-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-state-controls.test.mjs)，13 项 | 真实 Engine 上的悬停、开关和多选一，严格 TypeScript 消费者，以及导出 |
 | [`tests/ui-scroll-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-scroll-control.test.mjs)，13 项 | 真实 Engine 上的滚动位置：范围、滚轮单位、嵌套视口、滑块及其拖动，以及严格 TypeScript 消费者 |
-| [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs)，6 个场景 | 无头 Chromium 软件 WebGL2 的真实页面：鼠标、触摸和按键通过自动化协议注入，其中包括按住一个键，以及按住期间失去焦点。同一文件另有四个场景检查[语义投射](ui-semantics.md) |
+| [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs)，7 个场景 | 无头 Chromium 软件 WebGL2 的真实页面：鼠标、触摸和按键通过自动化协议注入，其中包括按住一个键、按住期间失去焦点，以及每种状态实际绘制出的颜色。同一文件另有四个场景检查[语义投射](ui-semantics.md) |
 | [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs)，9 个场景 | 真实页面中的滚动控件：滚轮、交还给页面、拖动滑块，以及它的按键和按键交还给页面 |
 | [`tests/ui-control-keys.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-control-keys.test.mjs)，16 项 | 真实 Engine 上的按键绑定，使用键盘输入和六种控件：按住、重复、失去焦点、快捷键、嵌套目标、销毁、出错的监听器，以及严格 TypeScript 使用方 |
+| [`tests/ui-skin-states.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-skin-states.test.mjs)，6 项 | 皮肤给出的名称：每个状态单独成立、每两个状态同时成立、缺失的名称、应用自己的顺序、被拒绝的参数，以及严格 TypeScript 使用方 |
 | [`tests/ui-text-field.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-text-field.test.mjs)，17 项 | 真实 Engine 上的文本框，使用测试自备的编辑器：会话、草稿、长度上限、共用编辑器、出错的编辑器和监听器、语义节点，以及以平台文字输入为编辑器的严格 TypeScript 使用方 |
 | [`examples/ui-text-field/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-text-field/verify.mjs)，6 个场景 | 无头 Chromium 软件 WebGL2 真实页面中的两个文本框：通过浏览器协议驱动的输入法组字、键盘、一个文本框把编辑器交给另一个、无障碍树、禁用，以及手机配置 |
 
-向悬停、开关和多选一的构建产物逐个写入了二十九个错误，单元测试全部发现。向滚动控件写入的三十二个错误中发现了三十个，其余两个不改变调用者能看到的任何行为。向文本框控件写入的 114 个运算符错误中发现了 112 个，其余两个只是省去一次循环的捷径，不改变任何结果。向按键绑定写入的 100 个运算符错误全部被发现。
+向悬停、开关和多选一的构建产物逐个写入了二十九个错误，单元测试全部发现。向滚动控件写入的三十二个错误中发现了三十个，其余两个不改变调用者能看到的任何行为。向文本框控件写入的 114 个运算符错误中发现了 112 个，其余两个只是省去一次循环的捷径，不改变任何结果。向按键绑定写入的 100 个运算符错误全部被发现，向皮肤名称选择写入的 22 个也全部被发现。
 
 ## 尚未完成
 

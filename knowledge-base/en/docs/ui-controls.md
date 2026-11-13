@@ -161,7 +161,18 @@ The example registers one keyboard stop for its group and moves that stop to the
 
 ## Painting states
 
-A control reports state; the application chooses what it looks like. The [theme](ui-theme-generations.md) carries skin names for `default`, `hover`, `pressed`, `disabled`, `focus`, `checked`, `selected` and `expanded`. Which name wins when several states hold together is the application's choice. The example reads them in the order a player does: unavailable, held, pointed at, set.
+A control reports state; the application chooses what it looks like. The [theme](ui-theme-generations.md) carries skin names for `default`, `hover`, `pressed`, `disabled`, `focus`, `checked`, `selected` and `expanded`, and `selectUiSkin` gives the name for the states that hold now:
+
+```js
+import { selectUiSkin } from '@egret/engine/ui';
+
+const name = selectUiSkin(theme.skins.button, {
+  disabled: !apply.enabled, pressed: apply.pressed || keys.pressed, hover: hovered.hovered, focus: ringed });
+```
+
+When several states hold, the first in the order a player reads a control wins: unavailable, held, set (`checked`, `selected`, `expanded`), focused, pointed at. A state the skin has no name for falls to the next that holds, and then to `default`. A third argument gives another order, and a state left out of it is never chosen.
+
+A skin has one name for each state, not one for each combination. A control that must stay set while it is held or pointed at takes a skin of its own for its set value, as the example does for its switch: `skins.control` and `skins.controlOn`, chosen by the value, each with its own `hover`. A focus ring is usually drawn beside the skin and not chosen as one.
 
 ## What was checked
 
@@ -170,13 +181,14 @@ A control reports state; the application chooses what it looks like. The [theme]
 | [`tests/ui-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-controls.test.mjs) | Movement and action on a genuine Engine |
 | [`tests/ui-state-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-state-controls.test.mjs), 13 cases | Hover, toggle and selection on a genuine Engine, a strict TypeScript consumer and the exports |
 | [`tests/ui-scroll-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-scroll-control.test.mjs), 13 cases | The scroll position on a genuine Engine: range, wheel units, nested viewports, the thumb and its drag, and a strict TypeScript consumer |
-| [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs), 6 scenarios | A real page in headless Chromium with software WebGL2: mouse, touch and keys injected through the automation protocol, among them a key that is held and a hold that loses the focus. Four further scenarios of the same file check the [semantic projection](ui-semantics.md) |
+| [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs), 7 scenarios | A real page in headless Chromium with software WebGL2: mouse, touch and keys injected through the automation protocol, among them a key that is held, a hold that loses the focus, and the colour each state is painted with. Four further scenarios of the same file check the [semantic projection](ui-semantics.md) |
 | [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs), 9 scenarios | The scroll control in a real page: the wheel, the hand-over to the page, a drag of the thumb, and its keys with their hand-over to the page |
 | [`tests/ui-control-keys.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-control-keys.test.mjs), 16 cases | The key bindings on a genuine Engine with the keyboard input and the six controls: holds, repeats, lost focus, shortcuts, nested targets, disposal, failing listeners, and a strict TypeScript consumer |
+| [`tests/ui-skin-states.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-skin-states.test.mjs), 6 cases | The name a skin gives: each state alone, every pair of states, missing names, an order of the application's own, refused arguments, and a strict TypeScript consumer |
 | [`tests/ui-text-field.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-text-field.test.mjs), 17 cases | The text field on a genuine Engine with a test-owned editor: sessions, drafts, limits, shared editors, failing editors and listeners, the semantic node, and a strict TypeScript consumer with the platform text input as its editor |
 | [`examples/ui-text-field/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-text-field/verify.mjs), 6 scenarios | Two text fields in a real page in headless Chromium with software WebGL2: a composition of an input method driven through the browser's protocol, the keyboard, one field handing the editor to the other, the accessibility tree, disabling, and a phone profile |
 
-Twenty-nine faults were written into the built hover, toggle and selection code one at a time, and the unit tests caught all of them. Of thirty-two written into the scroll control they caught thirty; the other two change nothing a caller can see. Of 114 operator faults in the text field control they caught 112; the other two are a shortcut that saves a loop and changes no result. Of 100 operator faults in the key bindings they caught all.
+Twenty-nine faults were written into the built hover, toggle and selection code one at a time, and the unit tests caught all of them. Of thirty-two written into the scroll control they caught thirty; the other two change nothing a caller can see. Of 114 operator faults in the text field control they caught 112; the other two are a shortcut that saves a loop and changes no result. Of 100 operator faults in the key bindings they caught all, and all 22 in the choice of a skin name.
 
 ## Open
 

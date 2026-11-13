@@ -134,6 +134,39 @@ await scenario('a key that is held paints a press, and a hold that loses the foc
   assert.equal(await page.evaluate(() => scrollY), 0);
 });
 
+/** The colour the page shows inside a control, away from its mark, read from a screenshot the page decodes itself. */
+async function colour(page, name) {
+  const [x, y] = await at(page, [spot[name][0] + 40, spot[name][1] - 10]);
+  const shot = (await page.screenshot({ clip: { x, y, width: 4, height: 4 } })).toString('base64');
+  return page.evaluate(async data => {
+    const bitmap = await createImageBitmap(await (await fetch('data:image/png;base64,' + data)).blob()), surface = new OffscreenCanvas(bitmap.width, bitmap.height).getContext('2d');
+    surface.drawImage(bitmap, 0, 0);
+    const [red, green, blue] = surface.getImageData(1, 1, 1, 1).data;
+    return (red << 16) | (green << 8) | blue;
+  }, shot);
+}
+// The paints the theme of the page names: a control that is off, and one that is on.
+const PAINTS = { idle: 0x3d4a63, hover: 0x56689a, pressed: 0x27314a, on: 0x2f8f6b, onHover: 0x3fae84, disabled: 0x2a2d33 };
+
+await scenario('each state is painted with the paint its skin names for it', desktop, async page => {
+  const shown = async (name, expected) => assert.equal((await colour(page, name)).toString(16), expected.toString(16), name);
+  await move(page, 'empty');
+  await shown('sound', PAINTS.on); await shown('apply', PAINTS.idle); await shown('easy', PAINTS.idle); await shown('normal', PAINTS.on);
+  // Pointed at: a control that is set stays set, in the paint its own skin has for the pointer.
+  await move(page, 'sound'); await shown('sound', PAINTS.onHover);
+  await move(page, 'apply'); await shown('apply', PAINTS.hover); await shown('sound', PAINTS.on);
+  // Held beats pointed at.
+  await page.mouse.down(); await settle(page); await shown('apply', PAINTS.pressed);
+  await page.mouse.up(); await settle(page); await shown('apply', PAINTS.hover);
+  // A key that is held is painted as a press.
+  await move(page, 'empty'); await page.focus('#scene'); await key(page, 'Tab');
+  await page.keyboard.down('Space'); await settle(page); await shown('sound', PAINTS.pressed);
+  await page.keyboard.up('Space'); await settle(page); await shown('sound', PAINTS.idle);
+  // Unavailable beats everything, also under the pointer.
+  await page.click('#disable-all'); await settle(page);
+  await move(page, 'apply'); await shown('apply', PAINTS.disabled); await shown('sound', PAINTS.disabled); await shown('normal', PAINTS.disabled);
+});
+
 await scenario('a disabled option and a disabled panel refuse every input', desktop, async page => {
   await page.click('#disable-hard'); await settle(page);
   let now = await read(page);
