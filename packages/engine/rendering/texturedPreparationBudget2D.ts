@@ -62,6 +62,10 @@ export class TexturedPreparationBudget2D implements PreparationBudget2D {
     public admitTupleComparison(): void {
         this.#tupleComparisonsCharged = admit(1, this.#tupleComparisonsCharged, this.#limits.maxTupleComparisons);
     }
+    /** The three charges a stage replays, as they stand; a stage's cost is their difference across it. */
+    public get preparedVerticesCharged(): number { return this.#preparedVerticesCharged; }
+    public get predicatesCharged(): number { return this.#predicatesCharged; }
+    public get tupleComparisonsCharged(): number { return this.#tupleComparisonsCharged; }
     /** A rejected replay changes no dimension; the original stage then decides its first error. */
     public tryReplayStageCost(cost: PreparedStageCost2D): boolean {
         const vertices = cost.preparedVertices, predicates = cost.predicates, tuples = cost.tupleComparisons;
