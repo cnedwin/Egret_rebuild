@@ -196,7 +196,7 @@ for (const throwing of [false, true]) {
     await withEngine(async engine => {
       const node = target(engine.stage); let close, inner;
       const sourceCause = new egret.EgretError('AREA_APPLICATION_CAUSE');
-      code(() => engine.captureFrame({
+      code(() => engine.captureSharedFrame({
         get width() {
           inner = thrown(() => { node.hitArea = { x: 0, y: 0, width: 1, get height() { close = engine.dispose(); if (throwing) throw sourceCause; return -1; } }; });
           assert.equal(node.isDisposed, false); return 16;
@@ -381,7 +381,7 @@ for (const throwing of [false, true]) {
     await withEngine(async engine => {
       target(engine.stage); let close, inner, reads = 0;
       const cause = new egret.EgretError('OPTION_APPLICATION_CAUSE');
-      code(() => engine.captureFrame({
+      code(() => engine.captureSharedFrame({
         get width() {
           inner = thrown(() => engine.stage.hitTest(1, 1, { get maxNodes() { reads++; close = engine.dispose(); if (throwing) throw cause; return 0; } }));
           assert.equal(engine.stage.isDisposed, false);
@@ -401,14 +401,14 @@ test('HT23 hit queries do not change frames, clock/Tween, host calls or diagnost
     const scope = engine.createScope(), samples = [];
     const tween = engine.createTween(scope, { from: 1, to: 5, durationSeconds: 2, onUpdate(value) { samples.push(value); return undefined; } });
     tween.start(); const node = target(engine.stage);
-    const frameA = engine.captureFrame({ width: 16, height: 16 });
+    const frameA = engine.captureSharedFrame({ width: 16, height: 16 });
     const before = { trace: [...host.trace], tick: engine.clock.tickId, elapsed: engine.clock.elapsedSeconds, tween: tween.value, samples: [...samples], scope: scope.state };
     assert.equal(engine.stage.hitTest(1, 1), node);
     assert.equal(engine.stage.hitTest(99, 99), undefined);
     code(() => engine.stage.hitTest(NaN, 1), 'HIT_TEST_INPUT_INVALID');
     assert.deepEqual({ trace: [...host.trace], tick: engine.clock.tickId, elapsed: engine.clock.elapsedSeconds, tween: tween.value, samples: [...samples], scope: scope.state }, before);
     assert.deepEqual(diagnostics, []); assert.equal(host.timers.size, 0);
-    const frameB = engine.captureFrame({ width: 16, height: 16 });
+    const frameB = engine.captureSharedFrame({ width: 16, height: 16 });
     assert.equal(frameB.frameId, frameA.frameId + 1);
   });
 });

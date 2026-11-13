@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 function capability() { assert.equal(typeof egret.DisplayObjectContainer.prototype.addChildAt, 'function', 'DISPLAY_CONTAINER_ADD_CHILD_AT_REQUIRED'); }
 function code(action, wanted) { assert.throws(action, cause => cause instanceof egret.EgretError && cause.code === wanted); }
@@ -345,13 +346,13 @@ test('ADI21 reparent and refusal preserve real Bitmap leases Scope owners listen
   const lease = b.use(f.borrow(await f.engine.assets.acquire(egret.createAssetRef(type, 'blue'))));
   const bitmap = b.use(f.track(new egret.Bitmap(lease))); bitmap.sourceRect = { x:0,y:0,width:1,height:1 }; bitmap.x = 2; source.addChild(bitmap);
   const crop = bitmap.sourceRect, eventType = egret.createEventType('add-child-at-bitmap-live'); bitmap.on(eventType, () => calls++);
-  const saved = f.engine.captureFrame({ width: 16, height: 4 });
+  const saved = captureDrawn(f.engine, { width: 16, height: 4 });
   const savedCommands = saved.commands, savedImages = saved.images;
   const summarize = frame => frame.commands.map(command => ({ kind:command.kind, x:command.matrix.tx, width:command.rect.width }));
   assert.deepEqual(summarize(saved), [{ kind:'rect',x:7,width:1 },{ kind:'image',x:5,width:1 }]);
   const trace = [...f.port.trace], timers = f.port.timers.size;
   assert.equal(root.addChildAt(bitmap, 0), bitmap); order(root, [bitmap,red]); order(source, []);
-  assert.deepEqual(summarize(f.engine.captureFrame({ width:16,height:4 })), [{ kind:'image',x:9,width:1 },{ kind:'rect',x:7,width:1 }]);
+  assert.deepEqual(summarize(captureDrawn(f.engine, { width:16,height:4 })), [{ kind:'image',x:9,width:1 },{ kind:'rect',x:7,width:1 }]);
   assert.equal(bitmap.textureLease, lease); assert.equal(bitmap.sourceRect, crop); assert.equal(lease.value, texture);
   assert.equal(loads, 1); assert.equal(disposals, 0); assert.equal(calls, 0); assert.equal(a.state, 'open'); assert.equal(b.state, 'open');
   assert.deepEqual(f.port.trace, trace); assert.equal(f.port.timers.size, timers); code(() => a.use(bitmap), 'OWNERSHIP_CONFLICT');
@@ -361,7 +362,7 @@ test('ADI21 reparent and refusal preserve real Bitmap leases Scope owners listen
   assert.throws(() => root.addChildAt(bitmap, 2), cause => cause === sentinel);
   order(root, [bitmap,red]); order(source, []); assert.equal(bitmap.x, 4); assert.equal(bitmap.sourceRect, crop);
   assert.equal(bitmap.textureLease, lease); assert.equal(lease.value, texture); assert.equal(disposals, 0);
-  assert.deepEqual(summarize(f.engine.captureFrame({ width:16,height:4 })), [{ kind:'image',x:11,width:1 },{ kind:'rect',x:7,width:1 }]);
+  assert.deepEqual(summarize(captureDrawn(f.engine, { width:16,height:4 })), [{ kind:'image',x:11,width:1 },{ kind:'rect',x:7,width:1 }]);
   const unowned = f.track(new egret.DisplayObject()); root.addChildAt(unowned, 1); assert.equal(b.use(unowned), unowned);
   a.dispose(); assert.equal(root.isDisposed, true); assert.equal(red.isDisposed, true);
   assert.equal(bitmap.isDisposed, false); assert.equal(unowned.isDisposed, false); assert.equal(bitmap.parent, undefined); assert.equal(unowned.parent, undefined);

@@ -2,6 +2,8 @@
 
 [English](../../en/docs/incremental-frame-preparation-contract.md) | 简体中文
 
+> **宿主已移除。** 本契约所针对并据以测试的矩形、图像和纹理帧 WebGPU 宿主已从 SDK 中移除。本文档保留为当时的记录。当前的 2D 渲染见[共享渲染 Profile](shared-render-profile-contract.md)。
+
 M1.2 减少重复捕获与准备工作，并合并相邻兼容 2D 绘制。显示树、已提交资源绑定与提交所有者继续提供权威。本合同定义实现边界和固定容量节拍协议。当前 Windows 与 Android 结果见[验证记录](incremental-frame-preparation-evidence.md)。
 
 ## 公开行为与不可变值

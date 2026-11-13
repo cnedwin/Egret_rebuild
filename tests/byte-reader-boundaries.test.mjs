@@ -84,7 +84,7 @@ const controls = [
   ['canonical ByteOrder runtime value', 'packages/runtime/dist/ByteReader.js', raw => raw + '\nexport const ByteOrder = 1;\n', 'runtime: canonical ByteReader runtime export surface mismatch'],
   ['Node ambient declaration', 'packages/runtime/dist/ByteReader.d.ts', raw => raw + '\ntype ByteReaderNodeProbe = NodeJS.Impossible;\n', 'packages/runtime/dist/ByteReader.d.ts: host ambient dependency'],
   ['DOM triple-slash source dependency', 'packages/runtime/src/ByteReader.ts', raw => raw + '\n/// <reference lib="dom" />\n', 'packages/runtime/src/ByteReader.ts: host ambient dependency'],
-  ['aliased runtime-wide namespace on web', 'packages/engine/dist/web/index.d.ts', raw => raw + "\nexport type * as ExtraBinary from '@egret/runtime';\n", 'web: root/runtime-only ByteReader module leaked'],
+  ['aliased runtime-wide namespace on the web resources entry', 'packages/engine/dist/web/resources.d.ts', raw => raw + "\nexport type * as ExtraBinary from '@egret/runtime';\n", 'engine/web/resources: root/runtime-only ByteReader module leaked'],
   ['new runtime subpath retains old map refusal', 'packages/runtime/package.json', raw => {
     const pkg = JSON.parse(raw); pkg.exports['./binary'] = {types:'./dist/ByteReader.d.ts', import:'./dist/ByteReader.js'};
     return JSON.stringify(pkg);
@@ -94,38 +94,33 @@ const controls = [
   }, 'runtime: dependency DAG mismatch'],
   // R2 closes local namespace forwarding on the genuine declaration. Every
   // mutation below still passes the full copied baseline before its own edit.
-  ['indirect type namespace on web', 'packages/engine/dist/web/index.d.ts', raw => raw + "\nimport type * as ExtraBinary from '@egret/runtime';\nexport type { ExtraBinary };\n", 'web: root/runtime-only ByteReader module leaked'],
-  ['ordinary namespace with renamed type export on web', 'packages/engine/dist/web/index.d.ts', raw => raw + "\nimport * as LocalBinary from '@egret/runtime';\nexport type { LocalBinary as RenamedBinary };\n", 'web: root/runtime-only ByteReader module leaked'],
-  ['multiple namespace bindings with only the second forwarded', 'packages/engine/dist/web/index.d.ts', raw => raw + "\nimport type * as UnusedBinary from '@egret/runtime';\nimport * as SelectedBinary from '@egret/runtime';\ninterface LocalMarker {}\nexport type { LocalMarker, SelectedBinary as PublicBinary };\n", 'web: root/runtime-only ByteReader module leaked'],
-  ['repeated namespace local name cannot hide forwarding', 'packages/engine/dist/web/index.d.ts', raw => raw + "\nimport type * as RepeatedBinary from '@egret/runtime';\nimport type * as RepeatedBinary from '@egret/runtime';\nexport type { RepeatedBinary as PublicBinary };\n", 'web: root/runtime-only ByteReader module leaked'],
-  ['inline type namespace export on web', 'packages/engine/dist/web/index.d.ts', raw => raw + "\nimport * as InlineBinary from '@egret/runtime';\nexport { type InlineBinary as PublicBinary };\n", 'web: root/runtime-only ByteReader module leaked'],
-  ['literal Unicode and dollar namespace local names', 'packages/engine/dist/web/index.d.ts', raw => raw + "\nimport type * as 二进制$ from '@egret/runtime';\nexport type { 二进制$ as PublicBinary };\n", 'web: root/runtime-only ByteReader module leaked'],
-  ['exported typeof namespace alias on web', 'packages/engine/dist/web/index.d.ts', raw => raw + "\nimport type * as QueriedBinary from '@egret/runtime';\nexport type PublicBinary = typeof QueriedBinary;\n", 'web: root/runtime-only ByteReader module leaked'],
-  ['local typeof relay then renamed export on web', 'packages/engine/dist/web/index.d.ts', raw => raw + "\nimport * as RelayBinary from '@egret/runtime';\ntype LocalRelay = typeof RelayBinary;\nexport type { LocalRelay as PublicBinary };\n", 'web: root/runtime-only ByteReader module leaked'],
+  ['indirect type namespace on the web resources entry', 'packages/engine/dist/web/resources.d.ts', raw => raw + "\nimport type * as ExtraBinary from '@egret/runtime';\nexport type { ExtraBinary };\n", 'engine/web/resources: root/runtime-only ByteReader module leaked'],
+  ['ordinary namespace with renamed type export on the web resources entry', 'packages/engine/dist/web/resources.d.ts', raw => raw + "\nimport * as LocalBinary from '@egret/runtime';\nexport type { LocalBinary as RenamedBinary };\n", 'engine/web/resources: root/runtime-only ByteReader module leaked'],
+  ['multiple namespace bindings with only the second forwarded', 'packages/engine/dist/web/resources.d.ts', raw => raw + "\nimport type * as UnusedBinary from '@egret/runtime';\nimport * as SelectedBinary from '@egret/runtime';\ninterface LocalMarker {}\nexport type { LocalMarker, SelectedBinary as PublicBinary };\n", 'engine/web/resources: root/runtime-only ByteReader module leaked'],
+  ['repeated namespace local name cannot hide forwarding', 'packages/engine/dist/web/resources.d.ts', raw => raw + "\nimport type * as RepeatedBinary from '@egret/runtime';\nimport type * as RepeatedBinary from '@egret/runtime';\nexport type { RepeatedBinary as PublicBinary };\n", 'engine/web/resources: root/runtime-only ByteReader module leaked'],
+  ['inline type namespace export on the web resources entry', 'packages/engine/dist/web/resources.d.ts', raw => raw + "\nimport * as InlineBinary from '@egret/runtime';\nexport { type InlineBinary as PublicBinary };\n", 'engine/web/resources: root/runtime-only ByteReader module leaked'],
+  ['literal Unicode and dollar namespace local names', 'packages/engine/dist/web/resources.d.ts', raw => raw + "\nimport type * as 二进制$ from '@egret/runtime';\nexport type { 二进制$ as PublicBinary };\n", 'engine/web/resources: root/runtime-only ByteReader module leaked'],
+  ['exported typeof namespace alias on the web resources entry', 'packages/engine/dist/web/resources.d.ts', raw => raw + "\nimport type * as QueriedBinary from '@egret/runtime';\nexport type PublicBinary = typeof QueriedBinary;\n", 'engine/web/resources: root/runtime-only ByteReader module leaked'],
+  ['local typeof relay then renamed export on the web resources entry', 'packages/engine/dist/web/resources.d.ts', raw => raw + "\nimport * as RelayBinary from '@egret/runtime';\ntype LocalRelay = typeof RelayBinary;\nexport type { LocalRelay as PublicBinary };\n", 'engine/web/resources: root/runtime-only ByteReader module leaked'],
   ['root namespace import cannot add an erased public namespace', 'packages/engine/dist/index.d.ts', raw => raw + "\nimport type * as ExtraBinary from '@egret/runtime';\nexport type { ExtraBinary as PublicBinary };\n", 'root: exact ByteReader declaration re-export mismatch'],
-  ['escaped namespace local binding remains forbidden', 'packages/engine/dist/web/index.d.ts', raw => raw + "\nimport type * as Extra\\u0042inary from '@egret/runtime';\nexport type { ExtraBinary as PublicBinary };\n", 'web: root/runtime-only ByteReader module leaked'],
-  ['escaped namespace export use remains forbidden', 'packages/engine/dist/web/index.d.ts', raw => raw + "\nimport * as ExtraBinary from '@egret/runtime';\nexport type { Extra\\u0042inary as PublicBinary };\n", 'web: root/runtime-only ByteReader module leaked'],
-  ['typeof default-runtime import query remains forbidden', 'packages/engine/dist/web/index.d.ts', raw => raw + "\nexport type ExtraBinary = typeof import('@egret/runtime');\n", 'web: root/runtime-only ByteReader module leaked'],
+  ['escaped namespace local binding remains forbidden', 'packages/engine/dist/web/resources.d.ts', raw => raw + "\nimport type * as Extra\\u0042inary from '@egret/runtime';\nexport type { ExtraBinary as PublicBinary };\n", 'engine/web/resources: root/runtime-only ByteReader module leaked'],
+  ['escaped namespace export use remains forbidden', 'packages/engine/dist/web/resources.d.ts', raw => raw + "\nimport * as ExtraBinary from '@egret/runtime';\nexport type { Extra\\u0042inary as PublicBinary };\n", 'engine/web/resources: root/runtime-only ByteReader module leaked'],
+  ['typeof default-runtime import query remains forbidden', 'packages/engine/dist/web/resources.d.ts', raw => raw + "\nexport type ExtraBinary = typeof import('@egret/runtime');\n", 'engine/web/resources: root/runtime-only ByteReader module leaked'],
 ];
 for (const [name, file, change, reason] of controls) test('BR1 actual baseline then ' + name, () => isolated(f => {
   checked(f.check(), 0); f.edit(file, change); checked(f.check(), 1, reason);
 }));
 test('BR1 unused default-runtime namespace is also outside the admitted barrel grammar', () => isolated(f => {
   checked(f.check(), 0);
-  f.edit('packages/engine/dist/web/index.d.ts', raw => raw + "\nimport type * as ExtraBinary from '@egret/runtime';\n// ExtraBinary is comment text only.\n/* ExtraBinary remains comment text. */\ntype NamespaceSpelling = 'ExtraBinary';\ntype NamespaceQuoted = \"ExtraBinary\";\ntype NamespaceEscaped = \"prefix \\\" ExtraBinary\";\ntype NamespaceSlash = \"// ExtraBinary\";\ntype NamespaceTemplate = `ExtraBinary`;\n");
-  checked(f.check(), 1, 'web: root/runtime-only ByteReader module leaked');
-}));
-test('BR1 namespace import and query text in comments and literals does not grant a module port', () => isolated(f => {
-  checked(f.check(), 0);
-  f.edit('packages/engine/dist/web/index.d.ts', raw => raw + "\n// import type * as ExtraBinary from '@egret/runtime';\n/* export type ExtraBinary = typeof import('@egret/runtime'); */\ntype NamespaceText = \"import type * as ExtraBinary from '@egret/runtime';\";\ntype QueryText = 'typeof import(\"@egret/runtime\")';\ntype EscapedText = \"prefix \\\" import * as ExtraBinary from '@egret/runtime';\";\ntype TemplateText = `import * as ExtraBinary from '@egret/runtime';`;\n");
-  checked(f.check(), 0);
+  f.edit('packages/engine/dist/web/resources.d.ts', raw => raw + "\nimport type * as ExtraBinary from '@egret/runtime';\n// ExtraBinary is comment text only.\n/* ExtraBinary remains comment text. */\ntype NamespaceSpelling = 'ExtraBinary';\ntype NamespaceQuoted = \"ExtraBinary\";\ntype NamespaceEscaped = \"prefix \\\" ExtraBinary\";\ntype NamespaceSlash = \"// ExtraBinary\";\ntype NamespaceTemplate = `ExtraBinary`;\n");
+  checked(f.check(), 1, 'engine/web/resources: root/runtime-only ByteReader module leaked');
 }));
 
 // Each explicit entry gets one declaration witness. Existing exact-entry
-// refusals retain priority; the less restrictive web/contracts barrels use BR1.
+// refusals retain priority; the less restrictive web resources and contracts barrels use BR1.
 const forbiddenEntries = [
   ['contracts', 'packages/contracts/dist/index.d.ts', 'contracts: root/runtime-only ByteReader port leaked: ByteOrder'],
-  ['web', 'packages/engine/dist/web/index.d.ts', 'web: root/runtime-only ByteReader port leaked: ByteOrder'],
+  ['engine/web/resources', 'packages/engine/dist/web/resources.d.ts', 'engine/web/resources: root/runtime-only ByteReader port leaked: ByteOrder'],
   ['webgpu', 'packages/engine/dist/web/webgpu.d.ts', 'webgpu: exact type-only host export surface mismatch'],
   ['runtime/text', 'packages/runtime/dist/text/index.d.ts', 'runtime/text: exact text declaration surface mismatch'],
   ['engine/text', 'packages/engine/dist/text.d.ts', 'engine/text: exact text declaration surface mismatch'],

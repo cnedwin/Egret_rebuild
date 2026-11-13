@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/anchored-atlas-playback/main.mjs",
+      "originRole": "First-party example of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/bitmap-button/main.mjs",
+      "originRole": "First-party example of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/bitmap-resource-slot/main.mjs",
+      "originRole": "First-party example of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/linear-layout/main.mjs",
+      "originRole": "First-party example of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-resource-groups/README.md",
+      "originRole": "First-party example of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-resource-groups/README.zh-CN.md",
+      "originRole": "First-party example of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-resource-groups/application.mjs",
+      "originRole": "First-party example of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/resource-scene/README.md",
+      "originRole": "First-party example of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/resource-scene/README.zh-CN.md",
+      "originRole": "First-party example of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/resource-scene/main.mjs",
+      "originRole": "First-party example of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/resource-scene/session.mjs",
+      "originRole": "First-party example of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/browser-png-import-negative.ts",
+      "originRole": "First-party test or test fixture of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/nine-slice-bitmap-import-negative.ts",
+      "originRole": "First-party test or test fixture of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [],
+  "frozenInputs": [
+    {
+      "path": "tests/types/byte-writer-2-diagnostic-expectations.json",
+      "bytes": 16518,
+      "sha256": "8922c5fb6f283274b2a14c1d6d738aca4fac49d2f1d0a9840c2d1cc475e16fbd",
+      "originRole": "First-party actual unsuppressed TypeScript 7.0.2 ByteWriter consumer diagnostics after the scene3d entries left the package; the recorded cases of those entries are removed and the others keep their observed tuples; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/types/nine-slice-2-diagnostic-expectations.json",
+      "bytes": 25236,
+      "sha256": "def54d2cada8cc0791f0b68dbbf5d08b9594d0d34a9a722eb2a3d3a70c8b795e",
+      "originRole": "First-party actual unsuppressed TypeScript 7.0.2 nine-slice consumer diagnostics after the scene3d entries left the package; the recorded cases of those entries are removed and the others keep their observed tuples; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/types/spritesheet-2-diagnostic-expectations.json",
+      "bytes": 27041,
+      "sha256": "fb43fe0d72dcfbdc5b8e78abb968063e35951cdd98a60828626d16caa485a758",
+      "originRole": "First-party actual unsuppressed TypeScript 7.0.2 SpriteSheet consumer diagnostics after the scene3d entries left the package; the recorded case of that entry is removed and the others keep their observed tuples; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/types/shared-webgl2-2-diagnostic-expectations.json",
+      "bytes": 5450,
+      "sha256": "fa6dd7258480aa023df24ac21f1ee2e66a90b08cae8f2a13e3ddf547aafd8ef7",
+      "originRole": "First-party actual unsuppressed TypeScript 7.0.2 WebGL2 consumer diagnostics after the scene entry left the package; 20 diagnostic tuples observed from the public built consumer; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/types/resource-recovery-2-diagnostic-expectations.json",
+      "bytes": 39873,
+      "sha256": "ff69de077731b8dda787f90c4d5c618da38f491437b06113e31f22d3f68225fe",
+      "originRole": "First-party actual unsuppressed TypeScript 7.0.2 diagnostics of the seven resource and recovery consumer pairs after the scene entries left the package; 112 diagnostic tuples observed from the public built consumers; AI-assisted; Apache-2.0."
+    }
+  ]
+}

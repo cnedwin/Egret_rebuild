@@ -1,24 +1,18 @@
 // SPDX-License-Identifier: Apache-2.0
-// Strict consumers use the two optional built public entries and genuine SDK values.
+// Strict consumers use the optional built public entry and genuine SDK values.
 import { createEngineForProfile, SHARED_FRAME_PROFILE_2D, type SharedRenderHostAdapter } from '@egret/engine';
-import { createSceneFrame3D, type SceneInput3D } from '@egret/engine/scene3d';
 import * as ordinary from '@egret/engine/webgl2';
-import * as scene from '@egret/engine/webgl2/scene3d';
 import {
   createSharedWebGL2Host, type SharedWebGL2Host, type SharedWebGL2HostOptions,
   type SharedWebGL2HostStatus, type SharedWebGL2Readback, type WebGL2HostState,
   type WebGL2HostErrorCode, type WebGL2HostFailure, type WebGL2HostDiagnostic,
   type WebGL2HostStatus,
 } from '@egret/engine/webgl2';
-import {
-  createSharedSceneWebGL2Host, type SharedSceneWebGL2Host, type SharedSceneWebGL2HostOptions,
-} from '@egret/engine/webgl2/scene3d';
 
 type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2) ? true : false;
 type Assert<T extends true> = T;
 const ordinaryExports: Assert<Equal<keyof typeof ordinary, 'createSharedWebGL2Host'>> = true;
-const sceneExports: Assert<Equal<keyof typeof scene, 'createSharedSceneWebGL2Host'>> = true;
-void [ordinaryExports, sceneExports];
+void [ordinaryExports];
 
 export function options(canvas: HTMLCanvasElement): SharedWebGL2HostOptions {
   return {
@@ -75,22 +69,4 @@ export async function ordinaryConsumer(canvas: HTMLCanvasElement): Promise<Share
   await host.whenIdle();
   await engine.dispose();
   return readback;
-}
-
-export async function sceneConsumer(canvas: HTMLCanvasElement, input: SceneInput3D): Promise<void> {
-  const selected: SharedSceneWebGL2HostOptions = { canvas, outputAlpha: 'opaque', enableReadback: true };
-  const host: SharedSceneWebGL2Host = createSharedSceneWebGL2Host(selected);
-  const ordinaryHost: SharedWebGL2Host = host;
-  const engine = await createEngineForProfile({ host }, SHARED_FRAME_PROFILE_2D);
-  const captured = createSceneFrame3D(input);
-  const overlay = engine.captureSharedFrame({ width: 16, height: 16, outputAlpha: 'opaque', clearAlpha: 1 });
-  const done: undefined = host.renderSceneSharedFrame(captured, overlay);
-  const sceneStatus = host.getSceneStatus();
-  const status: WebGL2HostStatus = sceneStatus.host;
-  const pending: readonly number[] = [sceneStatus.pendingSceneBytes, sceneStatus.pendingUniformBytes, sceneStatus.pendingDepthBytes];
-  void [ordinaryHost, done, status, pending];
-  await host.whenIdle();
-  host.stop();
-  const closed: Promise<void> = engine.dispose();
-  await closed;
 }

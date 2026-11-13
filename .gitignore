@@ -9,3 +9,5 @@ work/
 !.env.example
 *.log
 /knowledge-base/experiments/spine-f2-core/dist/
+# Written by tools/current-identities.mjs --write; a description of one build, never an input.
+/current-identities.json

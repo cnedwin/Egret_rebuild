@@ -37,7 +37,7 @@ const height: number = panel.targetHeight;
 const borrowed: AssetLease<Texture> | undefined = panel.textureLease;
 const fixedInsets: NineSliceInsets2D = panel.insets;
 const bounds = panel.getBounds({ maxPrimitives: 18 });
-const saved = engine.captureTexturedFrame({ width: 20, height: 20 });
+const saved = engine.captureSharedFrame({ width: 20, height: 20 });
 panel.dispose(); panel.dispose();
 void display; void width; void height; void borrowed; void fixedInsets; void bounds; void saved;
 export type { ForwardClass, ForwardOptions, ConstructorShape, OptionsShape, LeaseRead,

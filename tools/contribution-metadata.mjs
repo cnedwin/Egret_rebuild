@@ -345,7 +345,17 @@ export function planMetadata(root,{base}={}){
   }
   if(!registered.has(f)){const entry={path:f,originRole:'First-party contribution declarations; source and authorship statements are reviewed separately.'};origin.files.push(entry);registered.set(f,entry);}
  }
- const refresh=new Set([...changed,...declared,...declarationPaths]);
+ // A file that has left the tree leaves the ledgers with it: its source row, its document pair,
+ // its critical comment and its layout row. Nothing of it is read.
+ const gone=new Set(changed.filter(f=>!fs.existsSync(path.join(root,f))));
+ if(gone.size){
+  for(const f of gone){if(LEDGERS.includes(f))throw Error('A ledger cannot be removed: '+f);registered.delete(f);}
+  origin.files=origin.files.filter(row=>!gone.has(row.path));
+  loc.documents=loc.documents.filter(row=>!gone.has(row.en)&&!gone.has(row.zh));
+  if(loc.criticalComments)loc.criticalComments=loc.criticalComments.filter(row=>!gone.has(row.path));
+  layout.documents=layout.documents.filter(row=>!gone.has(row.newEn)&&!gone.has(row.newZh));
+ }
+ const refresh=new Set([...changed,...declared,...declarationPaths].filter(f=>!gone.has(f)));
  for(const f of refresh){
   if(LEDGERS.includes(f))continue;
   if(preserved(f)&&!frozen.has(f))throw Error('Changed preserved input requires a separate reviewed process: '+f);
@@ -372,6 +382,44 @@ export function planMetadata(root,{base}={}){
 export function checkIntegrated(root,plan){
  for(const [f,text] of Object.entries(plan.outputs))if(!fs.readFileSync(path.join(root,f)).equals(Buffer.from(text)))throw Error('Current metadata not integrated: '+f);
 }
+const ref=value=>{if(typeof value!=='string'||!/^[A-Za-z0-9_./-]+$/.test(value)||value.startsWith('-'))throw Error('Invalid Git base');return value;};
+/**
+ * Where the ledgers were last brought up to date: the newest commit on the first-parent line
+ * of `from` that changed one of them. A change is planned against this commit, not against its
+ * own base, so that files merged since then are refreshed too.
+ */
+export function ledgerBase(root,from){
+ root=path.resolve(root);
+ const start=git(root,['rev-parse','--verify',ref(from??git(root,['merge-base','HEAD','origin/main']).trim())+'^{commit}']).trim();
+ const found=git(root,['log','-1','--first-parent','--format=%H',start,'--',...LEDGERS]).trim();
+ if(!/^[0-9a-f]{40,64}$/.test(found))throw Error('No commit before the base changed a ledger');
+ return found;
+}
+/** The plan of everything that changed since the ledgers were last brought up to date. */
+export function planSinceLedgers(root,{base}={}){
+ const since=ledgerBase(root,base);
+ return {...planMetadata(root,{base:since}),since};
+}
+/**
+ * A change proposed for merging leaves every ledger exactly as its base has it; the ledgers are
+ * refreshed after merges, by a change that carries nothing else. The plan since the last refresh
+ * must still be valid, so every changed file is declared. The one other admitted shape is the
+ * refresh itself: every ledger equal to that complete plan, and no other file changed.
+ */
+export function checkMergeCandidate(root,{base}={}){
+ root=path.resolve(root);
+ const against=git(root,['rev-parse','--verify',ref(base??git(root,['merge-base','HEAD','origin/main']).trim())+'^{commit}']).trim();
+ const carried=LEDGERS.filter(f=>git(root,['rev-parse','--verify',against+':'+f]).trim()!==git(root,['hash-object','--no-filters','--',f]).trim());
+ if(carried.length===0)return {...planSinceLedgers(root,{base:against}),ledgers:'unchanged'};
+ // A refresh is reviewed as generated output, so it is never mixed with authored content.
+ const own=[...new Set((git(root,['diff','--name-only','--no-renames','-z',against,'--'])+git(root,['ls-files','--others','--exclude-standard','-z'])).split('\0').filter(Boolean))];
+ const other=own.filter(f=>!LEDGERS.includes(f)).sort();
+ if(other.length)throw Error('A change that carries a ledger carries nothing else; it also changes: '+other.slice(0,5).join(', ')+(other.length>5?' and '+(other.length-5)+' more':''));
+ const plan=planSinceLedgers(root,{base:against});
+ try{checkIntegrated(root,plan);}
+ catch(error){throw Error('A change leaves every ledger as its base has it, or carries a complete refresh since '+plan.since+'; changed: '+carried.join(', ')+'. '+error.message);}
+ return {...plan,ledgers:'refreshed'};
+}
 export function writeMetadata(root,plan){
  // Validate every captured input before writing any ledger; never normalize
  // bytes when comparing identities. The output vocabulary is fixed here.
@@ -380,13 +428,21 @@ export function writeMetadata(root,plan){
  for(const f of LEDGERS)fs.writeFileSync(path.join(root,f),canonicalTextBytes(plan.outputs[f]));
 }
 if(process.argv[1]&&samePhysicalPath(path.resolve(process.argv[1]),fileURLToPath(import.meta.url))){
- const args=process.argv.slice(2);let base,mode='plan';
+ // --since-ledgers plans from the last ledger refresh at or before the base; --merge does so too and
+ // then requires the ledgers to be untouched or completely refreshed; --pending reports how many
+ // files changed since that refresh. A refresh is `--since-ledgers --write` on a branch that
+ // carries nothing else.
+ const args=process.argv.slice(2);let base,mode='plan',sinceLedgers=false;
  for(let i=0;i<args.length;i++){
   if(args[i]==='--base'&&base===undefined&&args[i+1])base=args[++i];
-  else if(['--write','--check'].includes(args[i])&&mode==='plan')mode=args[i].slice(2);
-  else throw Error('Usage: node tools/contribution-metadata.mjs [--base ref] [--write|--check]');
+  else if(args[i]==='--since-ledgers'&&!sinceLedgers)sinceLedgers=true;
+  else if(['--write','--check','--merge','--pending'].includes(args[i])&&mode==='plan')mode=args[i].slice(2);
+  else throw Error('Usage: node tools/contribution-metadata.mjs [--base ref] [--since-ledgers] [--write|--check|--merge|--pending]');
  }
- const root=fileURLToPath(new URL('..',import.meta.url)),plan=planMetadata(root,{base});
+ const root=fileURLToPath(new URL('..',import.meta.url));
+ const plan=mode==='merge'?checkMergeCandidate(root,{base}):sinceLedgers||mode==='pending'?planSinceLedgers(root,{base}):planMetadata(root,{base});
  if(mode==='write')writeMetadata(root,plan);if(mode==='check')checkIntegrated(root,plan);
- console.log(JSON.stringify({base:plan.base,changed:plan.changed,risk:plan.risk,mode,scope:plan.scope}));
+ // --pending is the report after a merge: how far the ledgers are behind. It never refuses for that.
+ if(mode==='pending')console.log(plan.changed.length+' files changed since the ledgers were last refreshed at '+plan.since+'.'+(plan.changed.length?' To refresh, run node tools/contribution-metadata.mjs --since-ledgers --write on a branch that carries nothing else.':''));
+ else console.log(JSON.stringify({base:plan.base,...(plan.since?{since:plan.since}:{}),...(plan.ledgers?{ledgers:plan.ledgers}:{}),changed:plan.changed,risk:plan.risk,mode,scope:plan.scope}));
 }

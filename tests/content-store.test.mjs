@@ -58,7 +58,7 @@ test('different owned roots copy intrinsic bytes independently',t=>{
 test('strict metadata rejects malformed, duplicate, unordered and bounded values',t=>{
   const {root,store}=withStore(t),bytes=Buffer.from('primary');store.putBlob(bytes);const item=output(bytes);
   for(const outputs of [[],[item,item],[{...item,extra:true}],[{...item,byteLength:-1}],[{...item,sha256:'../escape'}],[{...item,mediaType:'x'.repeat(200)}],[output(bytes,'rgba')],[output(bytes,'rgba'),item]])assert.throws(()=>store.publishRecord(key,outputs));
-  assert.throws(()=>store.putBlob(new Uint8Array(8388609)));
+  assert.throws(()=>store.putBlob(new Uint8Array(16777217)));
   assert.throws(()=>store.readBlob({...descriptor(bytes),extra:true}));assert.throws(()=>store.readRecord('../escape'));
   let accessed=false;const accessor={};Object.defineProperty(accessor,'sha256',{enumerable:true,get(){accessed=true;return hash(bytes);}});assert.throws(()=>store.readBlob(accessor));assert.equal(accessed,false);
   const record=path.join(root,'records',key+'.json');writeFileSync(record,'{"format":"egret.content-cache/1","buildKey":"'+key+'","outputs":[],"outputs":[]}');
@@ -92,9 +92,10 @@ test('generation metadata rejects duplicate IDs, unknown fields and excess resou
 });
 
 test('actual oversized stored files refuse before a successful read; exact blob cap works',t=>{
-  const {root,store}=withStore(t),bytes=Buffer.alloc(8388608,7),blob=store.putBlob(bytes);
-  assert.equal(store.readBlob(blob).length,8388608);truncateSync(path.join(root,blob.path),8388609);
-  assert.throws(()=>store.readBlob(blob),integrity);assert.equal(readFileSync(path.join(root,blob.path)).length,8388609);
+  // The cap is the decoded RGBA of one page of the largest area.
+  const {root,store}=withStore(t),bytes=Buffer.alloc(16777216,7),blob=store.putBlob(bytes);
+  assert.equal(store.readBlob(blob).length,16777216);truncateSync(path.join(root,blob.path),16777217);
+  assert.throws(()=>store.readBlob(blob),integrity);assert.equal(readFileSync(path.join(root,blob.path)).length,16777217);
 });
 
 test('canonical owner/path checks reject aliases and symlinks when supported',t=>{
@@ -121,7 +122,7 @@ test('blob capture ignores shadowable view properties and owns exactly intrinsic
   assert.deepEqual([...store.readBlob(saved)],[1,2,3]);assert.equal(calls,0);
 });
 test('oversized or unstable backing buffers refuse before any immutable blob is published',t=>{
-  const {root,store}=withStore(t),bytes=new Uint8Array(8388609);let calls=0;
+  const {root,store}=withStore(t),bytes=new Uint8Array(16777217);let calls=0;
   Object.defineProperty(bytes,'byteLength',{get(){calls++;return 0;}});
   for(const input of [bytes,new Uint8Array(new SharedArrayBuffer(4)),new Uint8Array(new ArrayBuffer(4,{maxByteLength:8}))]){
     assert.throws(()=>store.putBlob(input),error=>error.code==='CONTENT_STORE_INPUT');

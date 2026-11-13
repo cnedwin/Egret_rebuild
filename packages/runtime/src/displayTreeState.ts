@@ -3,7 +3,6 @@ import type { DisplayObjectContainer } from "./DisplayObjectContainer.js";
 import type { Stage } from "./Stage.js";
 import { EgretError } from "./EgretError.js";
 import { recordVisualChange, VISUAL_STRUCTURE } from "./displayVisualState.js";
-import { invalidateCaptureNode, clearCaptureStage } from "./frameCaptureCache.js";
 // Read at call time only; ownership imports this module for its own tree operations.
 import { engineOf } from "./ownership.js";
 
@@ -139,9 +138,6 @@ export function setNodeIndex(parent: DisplayObjectContainer, child: DisplayObjec
 
 export function terminateNode(node: DisplayObject): void {
   terminated.add(node);
-  // Retire derived values before listener cleanup can reenter; no resource cleanup is owned here.
-  invalidateCaptureNode(node);
-  if (readStageRoot(node)) clearCaptureStage(node as Stage);
   recordVisualChange(node, VISUAL_STRUCTURE);
   detachNode(node);
 }

@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+> **已改用共享 Host。** 本示例默认用共享 WebGPU Host 绘制，加上 `?backend=webgl2` 时用共享 WebGL2 Host。此前使用的 Canvas Host 已移除；下文提到的验证命令为它编写，不再适用。下文关于 Canvas Host、选择 Canvas 以及已记录的 Canvas 检查的说明，描述的是早先的版本。
+
 使用仓库固定 Node 执行 `node tools/build.mjs`，通过普通本地 HTTP 静态服务器提供仓库根目录，再打开 `/examples/sequence-player/`。显式 import map 解析公共包入口及包依赖；样例只导入 `@egret/engine` 与所选公共浏览器后端。WebGPU 需要兼容浏览器与安全上下文（localhost）。
 
 通过界面选择 Canvas / WebGPU，或使用 `?backend=canvas&mode=once` / `?backend=webgpu&mode=loop`。更改选项会重新载入页面。时间按钮直接提供绝对秒数，没有自动计时器。0 / 0.125 / 0.375 秒分别选择红 2×2 / 绿 1×2 / 蓝 3×1。0.5 秒时 once 保持蓝色并标记 `atEnd: true`，loop 回到红色并标记 `atEnd: false`。Bitmap 从 (16,16) 开始，放大 32 倍，对应显示尺寸 64×64 / 32×64 / 96×32。

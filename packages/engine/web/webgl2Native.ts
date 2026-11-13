@@ -199,14 +199,14 @@ export class GLNativeSession {
         if (!vSafe || !fSafe) throw glFailure('WEBGL2_CLOSE_UNSAFE',this.cleanupFailure?.cause);
         return program;
     }
-    public block(program: WebGLProgram, name: string, members: readonly string[], bytes: number): void {
+    public block(program: WebGLProgram, name: string, members: readonly string[], bytes: number, binding = 0): void {
         const gl = this.gl, index = gl.getUniformBlockIndex(program,name);
         if (index === gl.INVALID_INDEX || gl.getActiveUniformBlockParameter(program,index,gl.UNIFORM_BLOCK_DATA_SIZE) !== bytes) throw glFailure('WEBGL2_CONTEXT_LIMIT');
         const indices = gl.getUniformIndices(program,[...members]);
         if (!indices || indices.some(value=>value===gl.INVALID_INDEX)) throw glFailure('WEBGL2_CONTEXT_LIMIT');
         const offsets = gl.getActiveUniforms(program,indices,gl.UNIFORM_OFFSET) as number[];
         if (offsets.length !== members.length || offsets.some((value,i)=>value!==i*16)) throw glFailure('WEBGL2_CONTEXT_LIMIT');
-        gl.uniformBlockBinding(program,index,0);
+        gl.uniformBlockBinding(program,index,binding);
     }
     public workingAttachment(color: WebGLTexture, depth: WebGLRenderbuffer | null): void {
         // The host owns level-zero immutable color storage and allocates depth once per owner.

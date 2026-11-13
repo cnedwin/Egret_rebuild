@@ -43,11 +43,6 @@
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
     {
-      "path": "packages/engine/rendering/packSharedMeshGeometry3D.ts",
-      "criticalComment": true,
-      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
-    },
-    {
       "path": "packages/engine/rendering/preparedSharedBatches2D.ts",
       "criticalComment": true,
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
@@ -68,22 +63,12 @@
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
     {
-      "path": "packages/engine/web/sharedB1.ts",
-      "criticalComment": true,
-      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
-    },
-    {
       "path": "packages/engine/web/sharedWebGPUOptions.ts",
       "criticalComment": true,
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
     {
       "path": "packages/engine/web/webgpuRetentionPool.ts",
-      "criticalComment": true,
-      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
-    },
-    {
-      "path": "packages/engine/web/webgpuSharedMeshPass.ts",
       "criticalComment": true,
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
@@ -109,10 +94,6 @@
     },
     {
       "path": "tests/fixtures/gpu-shared-rendering.mjs",
-      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
-    },
-    {
-      "path": "tests/resource-scene-boundary.test.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
     {
@@ -208,20 +189,6 @@
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
     {
-      "path": "tools/resource-scene-boundary.mjs",
-      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
-    },
-    {
-      "path": "tools/sequence-playback/collector.mjs",
-      "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review.",
-      "criticalComment": true
-    },
-    {
-      "path": "tools/sequence-player/collector.mjs",
-      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms.",
-      "criticalComment": true
-    },
-    {
       "path": "tools/shared-render-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
@@ -254,26 +221,8 @@
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
     {
-      "path": "tools/spritesheet/collector.mjs",
-      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
-      "criticalComment": true
-    },
-    {
-      "path": "tools/verify-prepared-resource-groups.mjs",
-      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
-    },
-    {
-      "path": "tools/verify-resource-scene.mjs",
-      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
-    },
-    {
       "path": "tools/verify-shared-webgpu.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
-    },
-    {
-      "path": "tools/verify-textured-scene-webgpu.mjs",
-      "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor.",
-      "criticalComment": true
     }
   ],
   "documents": [

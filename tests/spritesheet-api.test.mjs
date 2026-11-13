@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 // Original SS1 pixels and literal crops are independent of the missing factory.
 // The bottom blue columns are transparent, unlike the older sequence fixture.
@@ -58,7 +59,7 @@ test('SS01 genuine atlas, sequence and clock cleanup precede the named SpriteShe
     });
     assert.equal(player.lastSample, manualSample);
     assert.ok(Object.isFrozen(manualSample) && Object.isFrozen(manualSample.region));
-    const manualFrame = engine.captureFrame(FRAME);
+    const manualFrame = captureDrawn(engine, FRAME);
     assert.equal(manualFrame.commands.length, 1);
     assert.equal(manualFrame.commands[0].kind, 'image');
     assert.deepEqual(manualFrame.commands[0].sourceRect, GREEN);
@@ -78,7 +79,7 @@ test('SS01 genuine atlas, sequence and clock cleanup precede the named SpriteShe
     assert.deepEqual(playback.lastSample, {
       frameIndex: 0, region: RED, positionSeconds: 0, atEnd: false, stopped: false,
     });
-    const redFrame = engine.captureFrame(FRAME);
+    const redFrame = captureDrawn(engine, FRAME);
     assert.deepEqual(redFrame.commands[0].sourceRect, RED);
     assert.equal(redFrame.images[0], image);
     assert.equal(playback.elapsedSeconds, 0);
@@ -97,7 +98,7 @@ test('SS01 genuine atlas, sequence and clock cleanup precede the named SpriteShe
     });
     assert.ok(Object.isFrozen(selected) && Object.isFrozen(selected.region));
     assert.equal(playback.elapsedSeconds, 0.125);
-    const frame = engine.captureFrame(FRAME);
+    const frame = captureDrawn(engine, FRAME);
     assert.equal(frame.commands.length, 1);
     assert.equal(frame.commands[0].kind, 'image');
     assert.equal(frame.commands[0].imageIndex, 0);

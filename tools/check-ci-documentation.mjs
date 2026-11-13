@@ -4,9 +4,10 @@ import {spawnSync} from 'node:child_process';
 import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 
+// Ledgers are refreshed after merges by a change that carries nothing else. A reading change
+// leaves all three as the base has them; one that carries a ledger takes the full gate.
 const ledgers = ['localization.json','knowledge-base/documentation-layout.json','source-origin.json'];
 const ledgerPaths = new Set(ledgers);
-const ledgerSourcePins = new Set(ledgers.slice(0,2));
 const rootPairs = new Map([
  ['README.md','README.zh-CN.md'],
  ['DOCUMENTATION.md','DOCUMENTATION.zh-CN.md'],
@@ -76,25 +77,6 @@ function architecturePolicy(text){
  }
  return lines.join('\n');
 }
-function allowedLedgerShape(file,text,documents){
- const value=JSON.parse(text);
- if(file==='localization.json'){
-  for(const row of value.documents){
-   if(documents.has(row.en))delete row.enSha256;
-   if(documents.has(row.zh))delete row.zhSha256;
-  }
- }else if(file==='knowledge-base/documentation-layout.json'){
-  for(const row of value.documents){
-   if(documents.has(row.newEn))delete row.currentEnSha256;
-   if(documents.has(row.newZh))delete row.currentZhSha256;
-  }
- }else{
-  for(const row of value.files){
-   if(documents.has(row.path)||ledgerSourcePins.has(row.path)){delete row.sha256;delete row.bytes;}
-  }
- }
- return JSON.stringify(value);
-}
 export async function selectWindowsMergeChecks(root,inputs){
  const {eventName,baseRef,base,head,merge}=inputs;
  const full=reason=>({profile:'full',reason});
@@ -110,8 +92,7 @@ export async function selectWindowsMergeChecks(root,inputs){
   requireThat(!git('status','--porcelain=v1','-z','-uall'),'Checkout has local changes');
   requireThat(git('ls-files','-v','-z').split('\0').filter(Boolean).every(row=>row.startsWith('H ')),'Checkout has hidden or sparse index entries');
 
-  const before=Object.fromEntries(ledgers.map(file=>[file,git('show',base+':'+file)]));
-  const admitted=allowedReadings(JSON.parse(before['localization.json']));
+  const admitted=allowedReadings(JSON.parse(git('show',base+':localization.json')));
   // Identical head and merge trees make this one raw diff sufficient for both.
   const raw=git('diff-tree','--no-commit-id','-r','--raw','--no-abbrev','--no-renames','-z',base,merge,'--').split('\0');
   requireThat(raw.pop()===''&&raw.length%2===0,'Malformed Git path records');
@@ -119,7 +100,7 @@ export async function selectWindowsMergeChecks(root,inputs){
   for(let i=0;i<raw.length;i+=2){
    const file=raw[i+1];
    requireThat(/^:100644 100644 [0-9a-f]{40} [0-9a-f]{40} M$/.test(raw[i]),'A path was added, removed, renamed, or changed file mode');
-   if(ledgerPaths.has(file))continue;
+   requireThat(!ledgerPaths.has(file),'A change that carries a ledger takes the full gate: '+file);
    requireThat(admitted.has(file),'Change outside the current reading allowlist: '+file);
    if(file.endsWith('/'+architecture)){
     requireThat(architecturePolicy(git('show',base+':'+file))===architecturePolicy(git('show',merge+':'+file)),'Architecture policy or document structure changed');
@@ -128,15 +109,8 @@ export async function selectWindowsMergeChecks(root,inputs){
   }
   requireThat(documents.size>0,'No eligible reading edits');
 
-  // Only reach repository helpers after proving their effective tree is unchanged.
-  const {planMetadata,checkIntegrated}=await import('./contribution-metadata.mjs');
-  const plan=planMetadata(root,{base});
-  requireThat(plan.changed.every(file=>documents.has(file)||ledgerPaths.has(file)),'Metadata inputs exceed admitted documents');
-  for(const file of ledgers){
-   requireThat(allowedLedgerShape(file,before[file],documents)===allowedLedgerShape(file,plan.outputs[file],documents),
-    'Generated metadata refresh touches unrelated or historical rows: '+file);
-  }
-  checkIntegrated(root,plan);
+  // Nothing is written for a reading change, so no generated metadata needs admitting here. The
+  // documentation checks that follow still plan it and refuse an undeclared or unpaired file.
   return {profile:'documentation',base,head,merge,tree,documents:[...documents].sort()};
  }catch(error){return full(error.message);}
 }

@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
-// UNIT: fixed scenes whose captured frame, clipped geometry, vertex rows and draw batches were
-// recorded before the capture and preparation paths were made cheaper. A change to those paths has
-// to reproduce every value, property order, logical charge and refusal recorded here.
+// UNIT: fixed scenes whose captured frame, clipped geometry, vertex rows and draw batches are recorded.
+// The captured frame, the clipped geometry and the eleven values a vertex has always had were recorded
+// before the capture and preparation paths were made cheaper, and again unchanged before draws of one
+// page were batched across regions: a change to those paths has to reproduce every value, property order
+// and refusal. The rows as they are uploaded, the uniform blocks and the batches were recorded with batching,
+// and again when a batch came to hold several pages: the rows did not change then, the blocks and batches did.
 // The private imports are built engine/dist/rendering helpers, as AGENTS permits for geometry units.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -33,7 +36,12 @@ function write(value, pages, out) {
 }
 const refusal = cause => 'refused:' + (cause?.constructor?.name ?? typeof cause) + ':' + (cause?.code ?? cause?.reason ?? cause?.message);
 
-/** The four stages of one frame, each reduced to text; a stage that refuses records its refusal and ends the list. */
+const PRINT = process.env.EGRET_PRINT_SHARED_GOLDEN === '1';
+/**
+ * The four stages of one frame, each reduced to text; a stage that refuses records its refusal and ends the list.
+ * `rows11` is the vertex rows without the two values batching added, and without the uniform blocks: what
+ * the rows held before. `rows` and `batches` are the rows, blocks and batches as they are uploaded.
+ */
 function stages(engine, size, pixelRatio) {
   const out = [], pages = [];
   let frame;
@@ -50,11 +58,21 @@ function stages(engine, size, pixelRatio) {
       kind: entry.kind, command: entry.command.ordinal, material: frame.materials.indexOf(entry.material),
       region: entry.region === undefined ? undefined : frame.regions.indexOf(entry.region), pageIndex: entry.pageIndex,
       polygons: entry.polygons, vertexReservation: entry.vertexReservation }),
-    budget: prepared.budget.snapshot(), geometryBytes: prepared.geometryBytes, pageBytes: prepared.pageBytes, upload: prepared.upload,
+    budget: prepared.budget.snapshot(), geometryBytes: prepared.geometryBytes, pageBytes: prepared.pageBytes,
     width: prepared.width, height: prepared.height }));
+  // The logical upload is a sum, stated here and not recorded: 52 bytes for every reserved vertex and 128 for
+  // every draw, 48 for every region of the frame, and the uniform blocks of its effects.
+  if (!PRINT) assert.equal(prepared.upload, prepared.entries.reduce((sum, entry) => entry.kind === 'draw' ? sum + 52 * entry.vertexReservation + 128 : sum, 0)
+    + 48 * frame.regions.length + prepared.effects.uniformBytes);
   let packed;
   try { packed = packSharedDraws2D(prepared); } catch (cause) { out.push('rows ' + refusal(cause)); return out; }
-  const row = entry => 'barrier' in entry ? entry : { command: entry.prepared.command.ordinal, data: entry.data, vertexCount: entry.vertexCount, uniform: entry.uniform };
+  const first11 = entry => {
+    const columns = entry.vertexCount ? entry.data.length / entry.vertexCount : 0, values = new Float32Array(11 * entry.vertexCount);
+    for (let vertex = 0; vertex < entry.vertexCount; vertex++) values.set(entry.data.subarray(vertex * columns, vertex * columns + 11), vertex * 11);
+    return values;
+  };
+  out.push('rows11 ' + text({ entries: packed.map(entry => 'barrier' in entry ? entry : { command: entry.prepared.command.ordinal, data: first11(entry), vertexCount: entry.vertexCount }), budget: prepared.budget.snapshot() }));
+  const row = entry => 'barrier' in entry ? entry : { command: entry.prepared.command.ordinal, data: entry.data, vertexCount: entry.vertexCount, uniform: entry.uniform, regionWindow: entry.regionWindow, pages: entry.pages };
   out.push('rows ' + text({ entries: packed.map(row), budget: prepared.budget.snapshot() }));
   const scratch = new PreparedBatchScratch2D(), plan = prepareSharedBatches2D(packed, 33554432, scratch);
   out.push('batches ' + text({ draws: plan.draws.map(row), spans: plan.logicalSpans, bytes: plan.bytes }));
@@ -142,42 +160,66 @@ async function scene(seed, shape, body) {
 const SHAPES = ['rects', 'axis', 'bitmaps', 'mixed', 'meshes', 'extreme'];
 const VIEWS = [[{ width: 200, height: 120 }, 1], [{ width: 96, height: 64 }, 2], [{ width: 333, height: 211 }, 1.5], [{ width: 16, height: 16 }, 1]];
 async function digest(seed) {
-  const hash = createHash('sha256'), kinds = new Set();
+  const before = createHash('sha256'), uploaded = createHash('sha256'), kinds = new Set();
   for (const shape of SHAPES) await scene(seed, shape, engine => {
-    for (const [size, ratio] of VIEWS) for (const stage of stages(engine, size, ratio)) { hash.update(stage); hash.update('\n'); kinds.add(stage.slice(0, stage.indexOf(' ')) + (stage.includes(' refused:') ? '!' : '')); }
+    for (const [size, ratio] of VIEWS) for (const stage of stages(engine, size, ratio)) {
+      const kind = stage.slice(0, stage.indexOf(' ')), refused = stage.includes(' refused:');
+      // A refusal of the rows is part of both recordings.
+      for (const hash of kind === 'rows' && refused ? [before, uploaded] : kind === 'rows' || kind === 'batches' ? [uploaded] : [before]) { hash.update(stage); hash.update('\n'); }
+      kinds.add(kind + (refused ? '!' : ''));
+    }
   });
-  return { digest: hash.digest('hex'), kinds };
+  return { before: before.digest('hex'), uploaded: uploaded.digest('hex'), kinds };
 }
 
-// Recorded from the capture and preparation paths as they stood before this file was added.
+// The captured frame, the clipped geometry without its upload sum, and the eleven first values of every vertex row.
+// Recorded from the build before draws were batched across regions, which reproduced the recording made
+// before the capture and preparation paths were made cheaper.
+const EXPECTED_BEFORE = [
+  '3e6e3ca3d12ab01486b17bb21750cef54064dccacd73e20218d85055994f665d',
+  'b05a8563dd1b47772fde32483d7a145b5a553b5df7121ddca17d5f27fe6441d8',
+  '7f5fcd7b2a75950a93654dc3935e58a1edb0dc7ec39ed6c6464bedb4b56b7086',
+  '81a6b0370ff3185092005ed92f51ef6eae28bbd624f416bd9d7bcd6c58eeee67',
+  '374a233b0727426415d3e54d47b68a1f94d1dc4d022533b4ff179a5816e31d1c',
+  '443bcaf1fc54151a450387b31e64c3de91687b67cad73f247822af7f73f2bbff',
+  'd768560f4ecb5208d71f0a6ead23ce9d09068a7bc9e5c54bd21fb143c2d89114',
+  'a1b2eb5651358aae4ff0f59af893b0140168b57ab021410ff5704bed5e5bc625',
+  '8ab5c210476a9b3e2f4ae504421fc8a747085b7bf605091b66710a4f0edb4d70',
+  '1a1e0ff3c04f3acf1b7f22a2fa9dac6dd9ee8b9d45040d3f5783c79584088162',
+  '5fa50afccee9827714b1f3dac66e5e40321c5690cbe0d0762dc4b14cb7eb5b60',
+  '71005f5030cf8d0f1291c32bc30337102874f02230b0aca406b2f731fcbfecbb',
+];
+// The rows, uniform blocks and batches as they are uploaded, recorded with batching across regions.
 const EXPECTED = [
-  '81944ba80ef96d7ace1efbbe364362a820bf3a6fbfe6bb52c2b74734dd8d3ba3',
-  '111388dfcaf3e6bafb8b6ef04fa5ed507d0dba5894e4ef8366ec6b1bab45bc23',
-  '264618099d9dc0a063d5057ab122b9faf9c5184be0a55cef4852a7099ad84cc4',
-  '4069a07e98021b4d821ffe5ffae0cb0e1d03f702841e337694419c6d996f14be',
-  'f870fc7adacea2c975b29301f68b42ad5a017eed2fc405c716e3a668985746bb',
-  '3e51b7fca35fd47cbc08793ee4e8f575db15f7f966c77f4b42919da7d6c2df62',
-  'dc06e87148f381854ee20cb9b1aea3b1409b1d856103e4b2c62c1f107c525e3f',
-  '4097584ef3bff3079c539e2a0df525eb9eade5d6534e1a1d665f9d633da09e5f',
-  '25738e51e2ac74679630ae08749fe639af898c2501fff3a00fa583498cccac75',
-  '79a01e82d217ae9054c3b01296bb373e6b58dc5c158c7a555e015a1e5b266fa1',
-  'b40a8b31728641147a5abcc913f028bad5563bb6b9e68595a960e8240a10341a',
-  'ef0183b081e9dda03ffe5621f8b2391811e33bdab45217bde82f6fd46764ace9',
+  'f72520f13c962871f29672572a8e7b0361dd5603772a1c1c2f4d2794ac2d6b4e',
+  '65252485cea874456fa6d2cbd3c14370690c83a58a165563b2473558ed0aa492',
+  'cc0473a13420d3bdd082f6bee2c198e998af6f60070a9e2136c07efb7b403ea7',
+  'fb61788f26e7a3cf1ff70b933fcc579c51dfebf3fb0c991ef40bee65a413fa09',
+  'db18e5a9d41d5030aa12ee83d0d3e61cbe037b2d36ffed795ebfed194b3ec103',
+  'd3eb8b6207a7b459c225b17885f3c7c546f21b18de2c372c80c3b1d36693752b',
+  '247b24e22fba5b0701054c458b16c337b9b27c2f050d39ab464ee5c558dfd382',
+  '3dfbdb6b8d5bb1d04eed820fa80dea754c2c9ed92c6d4b5ee9cf1efca6c18499',
+  'bee283d1332f29537bef99cc857df89e2493515aa44942fd9a66ebc88d74c501',
+  '476f7edcb96dc2b2155cba7b0560b7e65bd9a3c33f74330f17fce64c0e9bf4d6',
+  '68ea6f2d88092229beea433f45b29b7cac334356bad9669a2850f8325939f884',
+  'e3ecbf3cb832adcb4be43cb9062d2672dad89a8b342e013368dba32f3a2e078f',
 ];
 
 test('SHG01 captured frames, clipped geometry, vertex rows and batches reproduce the recorded values', async () => {
   const seen = new Set(), actual = [];
-  for (let seed = 1; seed <= 12; seed++) { const result = await digest(seed); actual.push(result.digest); for (const kind of result.kinds) seen.add(kind); }
-  if (process.env.EGRET_PRINT_SHARED_GOLDEN === '1') console.log(JSON.stringify({ actual, kinds: [...seen].sort() }, null, 1));
+  const before = [];
+  for (let seed = 1; seed <= 12; seed++) { const result = await digest(seed); before.push(result.before); actual.push(result.uploaded); for (const kind of result.kinds) seen.add(kind); }
+  if (PRINT) { console.log(JSON.stringify({ before, actual, kinds: [...seen].sort() }, null, 1)); return; }
   // The recording is only evidence when all four stages completed somewhere and both early stages also refused somewhere.
-  for (const kind of ['capture', 'geometry', 'rows', 'batches', 'capture!', 'geometry!']) assert.ok(seen.has(kind), kind);
+  for (const kind of ['capture', 'geometry', 'rows11', 'rows', 'batches', 'capture!', 'geometry!']) assert.ok(seen.has(kind), kind);
+  assert.deepEqual(before, EXPECTED_BEFORE);
   assert.deepEqual(actual, EXPECTED);
 });
 
 const code = action => { try { action(); return 'ok'; } catch (cause) { return cause instanceof egret.EgretError ? cause.code : 'THROWN:' + cause?.message; } };
-async function stageOf(body) {
+async function stageOf(body, size = 8) {
   const engine = await egret.createEngine({ host: { surface: {}, start() {}, stop() {}, async close() {}, setTimeout() { return () => {}; } } }), scope = engine.createScope();
-  const type = egret.createAssetType('shared-golden-order-' + (stageOf.count = (stageOf.count ?? 0) + 1), egret.isTexture), texture = egret.createTexture(image(8, 3));
+  const type = egret.createAssetType('shared-golden-order-' + (stageOf.count = (stageOf.count ?? 0) + 1), egret.isTexture), texture = egret.createTexture(image(size, 3));
   engine.assets.register(type, { async load() { return texture; }, dispose(value) { value.dispose(); } });
   try {
     const lease = scope.use(await engine.assets.acquire(egret.createAssetRef(type, 'page'), { signal: scope.signal }));
@@ -218,10 +260,10 @@ test('SHG03 the first refusal of visible content in drawing order is the one rep
   const a = scope.use(new egret.Sprite()), b = scope.use(new egret.Bitmap(lease));
   a.graphics.beginFill(1, 1).drawRect(0, 0, 4, 4).endFill();
   engine.stage.addChild(first); engine.stage.addChild(second); first.addChild(a); second.addChild(b);
-  // 129 distinct regions of one page exceed the regions one frame admits; the transform refusal comes first in drawing order.
+  // 4,097 distinct regions of one page exceed the regions one frame admits; the transform refusal comes first in drawing order.
   const regions = [];
-  for (const [width, height] of [[1, 1], [1, 2], [2, 1]]) for (let y = 0; y + height <= 8; y++) for (let x = 0; x + width <= 8; x++) regions.push({ x, y, width, height });
-  for (const region of regions.slice(0, 129)) { const bitmap = scope.use(new egret.Bitmap(lease)); bitmap.sourceRect = region; second.addChild(bitmap); }
+  for (let y = 0; y < 72; y++) for (let x = 0; x < 72; x++) regions.push({ x, y, width: 1, height: 1 });
+  for (const region of regions.slice(0, 4097)) { const bitmap = scope.use(new egret.Bitmap(lease)); bitmap.sourceRect = region; second.addChild(bitmap); }
   assert.equal(code(() => engine.captureSharedFrame({ width: 32, height: 32 })), 'FRAME_IMAGE_BUDGET');
   first.scaleX = 1e200; a.scaleX = 1e200;
   assert.equal(code(() => engine.captureSharedFrame({ width: 32, height: 32 })), 'FRAME_TRANSFORM_INVALID');
@@ -230,7 +272,7 @@ test('SHG03 the first refusal of visible content in drawing order is the one rep
   assert.equal(code(() => engine.captureSharedFrame({ width: 32, height: 32 })), 'FRAME_IMAGE_BUDGET');
   second.alpha = 0;
   assert.equal(code(() => engine.captureSharedFrame({ width: 32, height: 32 })), 'ok');
-}));
+}, 72));
 
 test('SHG04 every draw owns its own range of the frame\'s vertex rows and uniform blocks', async () => {
   await scene(5, 'mixed', engine => {
@@ -239,13 +281,13 @@ test('SHG04 every draw owns its own range of the frame\'s vertex rows and unifor
     assert.ok(packed.length > 8 && packed.some(entry => entry.vertexCount > 0));
     let rowsEnd = 0, blocksEnd = 0;
     for (const entry of packed) {
-      assert.equal(entry.data.byteLength, entry.vertexCount * 44); assert.equal(entry.uniform.byteLength, 128);
+      assert.equal(entry.data.byteLength, entry.vertexCount * 52); assert.equal(entry.uniform.byteLength, 128);
       // Ranges follow one another in command order and never overlap, so writing one draw cannot change another.
       if (entry.data.byteLength > 0) { assert.ok(entry.data.byteOffset >= rowsEnd); rowsEnd = entry.data.byteOffset + entry.data.byteLength; }
       assert.ok(entry.uniform.byteOffset >= blocksEnd); blocksEnd = entry.uniform.byteOffset + 128;
       // A copy made through the view has exactly the draw's bytes, which is how the hosts upload it.
       assert.deepEqual(new Float32Array(entry.data), Float32Array.from(entry.data));
-      assert.equal(new Uint8Array(entry.data.buffer, entry.data.byteOffset, entry.data.byteLength).length, entry.vertexCount * 44);
+      assert.equal(new Uint8Array(entry.data.buffer, entry.data.byteOffset, entry.data.byteLength).length, entry.vertexCount * 52);
     }
   });
 });

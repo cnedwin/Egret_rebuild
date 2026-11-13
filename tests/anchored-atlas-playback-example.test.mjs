@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { createAnchoredAtlasSession } from '../examples/anchored-atlas-playback/session.mjs';
+import { drawnFrame } from './helpers/drawn-frame.mjs';
 
 const RED=Object.freeze({x:0,y:0,width:8,height:6});
 const BLUE=Object.freeze({x:8,y:0,width:8,height:6});
@@ -21,7 +22,7 @@ function recordingHost(options={}){
   const adapter={surface:{},start(){calls.push('start');return options.start?.();},
     stop(){calls.push('stop');return options.stop?.();},
     close(){calls.push('close');return options.close?options.close():Promise.resolve();},
-    renderFrame(frame){renders.push(frame);options.render?.(frame,renders.length);return undefined;},
+    sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D,renderSharedFrame(frame){renders.push(frame);options.render?.(frame,renders.length);return undefined;},
     setTimeout(callback,delayMs){const entry={callback,delayMs};timers.add(entry);return()=>timers.delete(entry);}};
   return{adapter,calls,renders,timers};
 }
@@ -60,22 +61,22 @@ test('AAP01 ready composes genuine public identities and the sole original lease
 
 test('AAP02 exact first-party atlas and saved immutable image outlive wrapper disposal',async()=>{
   const {session}=await readySession();const scene=session.scene,saved=scene.savedFrame,image=scene.texture.imageData;
-  try{assert.equal(saved.images[0],image);assert.deepEqual([image.width,image.height],[16,6]);const copy=egret.copyImageData2DPixels(image);assert.deepEqual([...copy],ATLAS);copy.fill(7);assert.deepEqual([...egret.copyImageData2DPixels(image)],ATLAS);assert.ok(Object.isFrozen(saved));assert.ok(Object.isFrozen(saved.commands));assert.ok(Object.isFrozen(saved.commands[0]));}
+  try{assert.equal(drawnFrame(saved).images[0],image);assert.deepEqual([image.width,image.height],[16,6]);const copy=egret.copyImageData2DPixels(image);assert.deepEqual([...copy],ATLAS);copy.fill(7);assert.deepEqual([...egret.copyImageData2DPixels(image)],ATLAS);assert.ok(Object.isFrozen(saved));assert.ok(Object.isFrozen(saved.commands));assert.ok(Object.isFrozen(drawnFrame(saved).commands[0]));}
   finally{await session.close();}
-  retired(scene);assert.equal(scene.savedFrame,saved);assert.equal(saved.images[0],image);assert.deepEqual([...egret.copyImageData2DPixels(saved.images[0])],ATLAS);assert.deepEqual(saved.commands[0].sourceRect,RED);assert.equal(session.inspect().loads,1);assert.equal(session.inspect().disposals,1);
+  retired(scene);assert.equal(scene.savedFrame,saved);assert.equal(drawnFrame(saved).images[0],image);assert.deepEqual([...egret.copyImageData2DPixels(drawnFrame(saved).images[0])],ATLAS);assert.deepEqual(drawnFrame(saved).commands[0].sourceRect,RED);assert.equal(session.inspect().loads,1);assert.equal(session.inspect().disposals,1);
 });
 
 // Expected rectangles are hand-calculated, without a second transform/capture path.
 test('AAP03 verification and default preview retain the authored pivot geometry',async t=>{
   for(const preset of ['verification','preview'])await t.test(preset,async()=>{
-    const port=recordingHost(),session=createAnchoredAtlasSession({host:port.adapter,...(preset==='verification'?{preset}:{})});try{await session.ready;const s=session.scene,f=s.savedFrame,c=f.commands[0],verification=preset==='verification',scale=verification?1:8,tx=verification?8:64,ty=verification?9:72;
+    const port=recordingHost(),session=createAnchoredAtlasSession({host:port.adapter,...(preset==='verification'?{preset}:{})});try{await session.ready;const s=session.scene,f=drawnFrame(s.savedFrame),c=f.commands[0],verification=preset==='verification',scale=verification?1:8,tx=verification?8:64,ty=verification?9:72;
       assert.deepEqual([f.width,f.height],verification?[24,24]:[192,192]);if(verification)assert.deepEqual([f.clearColor,f.clearAlpha],[0,0]);assert.equal(f.commands.length,1);assert.equal(c.kind,'image');assert.equal(c.imageIndex,0);assert.deepEqual(c.rect,{x:0,y:0,width:8,height:6});assert.deepEqual(c.sourceRect,RED);assert.equal(c.matrix.a,scale);assert.equal(c.matrix.d,scale);assert.ok(c.matrix.b===0&&c.matrix.c===0);assert.deepEqual([c.matrix.tx,c.matrix.ty],[tx,ty]);assert.deepEqual(s.bitmap.getBounds(),{x:0,y:0,width:8,height:6});assert.deepEqual(s.engine.stage.getBounds(),{x:tx,y:ty,width:8*scale,height:6*scale});assert.deepEqual([s.bitmap.x,s.bitmap.y],verification?[12,12]:[96,96]);assert.deepEqual([s.bitmap.scaleX,s.bitmap.scaleY,s.bitmap.rotation],[scale,scale,0]);
     }finally{await session.close();}
   });
 });
 
 test('AAP04 complete literal N1-N7 clock, pause-gap, crops and exact saved replay',async()=>{
-  const {port,session}=await readySession();try{const saved=session.scene.savedFrame,image=saved.images[0];view(session,0,0,0,'red');assert.equal(port.renders.length,1);
+  const {port,session}=await readySession();try{const saved=session.scene.savedFrame,image=drawnFrame(saved).images[0];view(session,0,0,0,'red');assert.equal(port.renders.length,1);
     session.step();view(session,0.125,0.125,1,'blue');assert.equal(port.renders.length,2);const tick2=session.scene.engine.clock.tickId;
     const paused=session.pause();assert.equal(paused.playbackState,'paused');assert.equal(port.renders.length,2);assert.equal(session.scene.engine.clock.tickId,tick2);
     session.step();view(session,0.25,0.125,1,'blue','paused');assert.equal(port.renders.length,3);const tick3=session.scene.engine.clock.tickId;
@@ -83,7 +84,7 @@ test('AAP04 complete literal N1-N7 clock, pause-gap, crops and exact saved repla
     session.step();view(session,0.375,0.25,0,'red');session.step();view(session,0.5,0.375,1,'blue');assert.equal(port.renders.length,5);
     const liveSample=session.scene.playback.lastSample,tick5=session.scene.engine.clock.tickId;
     const replay=session.replayBaseline();view(session,0.5,0.375,1,'blue');assert.equal(replay.presentedColor,'red');assert.equal(port.renders[5],saved);assert.equal(session.scene.playback.lastSample,liveSample);assert.equal(session.scene.engine.clock.tickId,tick5);
-    const live=session.showLive();view(session,0.5,0.375,1,'blue');assert.equal(live.presentedColor,'blue');assert.equal(port.renders.length,7);assert.notEqual(port.renders[6],saved);assert.deepEqual(port.renders[6].commands[0].sourceRect,BLUE);assert.equal(new Set(port.renders).size,6);assert.equal(session.scene.playback.lastSample,liveSample);assert.equal(session.scene.engine.clock.tickId,tick5);assert.ok(port.renders.every(f=>f.images[0]===image));assert.deepEqual(port.renders.map(f=>f.commands[0].sourceRect),[RED,BLUE,BLUE,RED,BLUE,RED,BLUE]);
+    const live=session.showLive();view(session,0.5,0.375,1,'blue');assert.equal(live.presentedColor,'blue');assert.equal(port.renders.length,7);assert.notEqual(port.renders[6],saved);assert.deepEqual(drawnFrame(port.renders[6]).commands[0].sourceRect,BLUE);assert.equal(new Set(port.renders).size,6);assert.equal(session.scene.playback.lastSample,liveSample);assert.equal(session.scene.engine.clock.tickId,tick5);assert.ok(port.renders.every(f=>drawnFrame(f).images[0]===image));assert.deepEqual(port.renders.map(f=>drawnFrame(f).commands[0].sourceRect),[RED,BLUE,BLUE,RED,BLUE,RED,BLUE]);
   }finally{await session.close();}
 });
 

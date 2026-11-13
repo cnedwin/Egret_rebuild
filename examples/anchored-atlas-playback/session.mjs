@@ -30,7 +30,7 @@ export function createAnchoredAtlasSession({host, preset = 'preview', prepareAtl
   if (!layout || (prepareAtlas !== undefined && typeof prepareAtlas !== 'function')) {
     throw failure('EXAMPLE_OPTIONS_INVALID');
   }
-  const render = host?.renderFrame;
+  const render = host?.renderSharedFrame;
   if (typeof render !== 'function') throw failure('EXAMPLE_RENDER_PORT_REQUIRED');
   const frameOptions = Object.freeze({
     width: layout.width, height: layout.height, clearColor: 0, clearAlpha: 0,
@@ -108,7 +108,7 @@ export function createAnchoredAtlasSession({host, preset = 'preview', prepareAtl
   function updateLive() { liveColor = bitmap.sourceRect.x === 0 ? 'red' : 'blue'; }
   function showCurrent() {
     updateLive();
-    present(engine.captureFrame(frameOptions), liveColor);
+    present(engine.captureSharedFrame(frameOptions), liveColor);
     return inspect();
   }
   function perform(operation) {
@@ -181,7 +181,7 @@ export function createAnchoredAtlasSession({host, preset = 'preview', prepareAtl
     engine.advanceTime(0);
     playback = engine.createSequencePlayback(animationScope, bitmap, clip, {mode: 'loop'});
     playback.start();
-    savedFrame = engine.captureFrame(frameOptions);
+    savedFrame = engine.captureSharedFrame(frameOptions);
     liveColor = 'red';
     present(savedFrame, 'red');
     if (state !== 'starting') throw failure('EXAMPLE_CLOSED');

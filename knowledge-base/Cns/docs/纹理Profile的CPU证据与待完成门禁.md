@@ -1,5 +1,7 @@
 # 纹理 Profile：CPU 与桌面 GPU 证据
 
+> **已移除。** `captureFrame`、`captureTexturedFrame`、它们产生的帧记录以及 Canvas 宿主（`@egret/engine/web`）已从 SDK 中移除。本文档保留为当时的记录，不描述当前 SDK。当前的 2D 渲染见[共享渲染 Profile](shared-render-profile-contract.md)。
+
 [English](../../en/docs/textured-profile-cpu-evidence.md) | 简体中文 · [契约](自有纹理几何与Mesh2D契约.md) · [几何/Mesh 证据](自有纹理几何与Mesh2D证据.md)
 
 工程检查点 **0.23.0**，整理于 2026-10-11。自有纹理几何、Mesh2D、不可变 profile 帧及显式 WebGPU 宿主已有有界 CPU、严格类型和桌面原生证据。原生运行的 11 个 calibration 与 10 个 held-out 窗口通过，16 个指定对照窗口全部检出了 12 项独立副本故障。独立保存结果审阅验收了此次记录的 Windows／Edge／NVIDIA 单一环境。公开复现工具、最终双语材料审阅、当前完整推送前检查和远端交付分别记录，本文不从原生 PASS 推断这些结论。

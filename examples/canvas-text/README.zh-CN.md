@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+> **已改用共享 Host。** 本示例默认用共享 WebGPU Host 绘制，加上 `?backend=webgl2` 时用共享 WebGL2 Host。此前使用的 Canvas Host 已移除；下文提到的验证命令为它编写，不再适用。下文关于 Canvas Host、选择 Canvas 以及已记录的 Canvas 检查的说明，描述的是早先的版本。
+
 这个小应用将公开的 WC1 Canvas 文字 provider、公开的 TF1 TextField 与现有 CanvasHost 连起来。Ahem 是几何测试字体：`X` 显示为方块，空格留白，可读原文仍以普通 DOM 文字显示。2026-10-11，实际默认桌面 Edge 冒烟检查完成首次渲染、替换、空文本及显式关闭，浏览器错误为零，关闭后不再保留自有字体或 Canvas。这项交互检查不提供独立像素预期、移动端或性能验收。
 
 在仓库根目录先用 `pnpm install --frozen-lockfile --ignore-scripts` 安装已有锁定依赖，再运行 `node tools/build.mjs`。工作副本必须已经采用 WC1 的 `@egret/engine/web/text` 入口；旧构建不能运行此示例。启动现有的 `node tools/serve-canvas.mjs` 服务，保留其输出 URL 的主机与端口，将路径换成 `/examples/canvas-text/index.html`。用 Ctrl+C 停止服务。通过本机回环 HTTP 或 HTTPS 访问，不要直接打开本地 HTML 文件。不引入新依赖、下载安装器、浏览器参数或服务工具。

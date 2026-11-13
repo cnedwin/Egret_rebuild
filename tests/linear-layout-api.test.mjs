@@ -5,6 +5,7 @@ import * as sdk from '@egret/engine';
 import * as input from '@egret/engine/web/input';
 import {controlledBrowser} from './mouse-input.test.mjs';
 import {withScene, UP, AREA, FRAME} from './bitmap-button-api.test.mjs';
+import { captureDrawn, drawnFrame } from './helpers/drawn-frame.mjs';
 
 test('LL00 genuine shipped Button/resource/input/capture and full cleanup before layout entry', async () => {
   let button, display, saved, image;
@@ -30,12 +31,12 @@ test('LL00 genuine shipped Button/resource/input/capture and full cleanup before
     f.up();
     assert.equal(button.state, 'up');
     assert.equal(activations, 1);
-    saved = f.engine.captureFrame(FRAME);
+    saved = captureDrawn(f.engine, FRAME);
     image = f.texture.imageData;
     assert.equal(saved.commands.length, 1);
     assert.deepEqual(saved.commands[0].sourceRect, UP);
     assert.equal(Object.isFrozen(saved), true);
-    f.engine.renderFrame(FRAME);
+    f.engine.renderSharedFrame(FRAME);
     assert.equal(f.renders.length, 1);
     assert.deepEqual(f.diagnostics, []);
   });
@@ -59,9 +60,9 @@ test('LL00 genuine shipped Button/resource/input/capture and full cleanup before
   assert.deepEqual(Object.keys(layout), ['planLinearLayout']);
   assert.equal(Object.hasOwn(sdk, 'planLinearLayout'), false);
   assert.equal(Object.hasOwn(input, 'planLinearLayout'), false);
-  const web=await import('@egret/engine/web');
+  const webgl2=await import('@egret/engine/webgl2');
   const webgpu=await import('@egret/engine/webgpu');
-  assert.equal(Object.hasOwn(web,'planLinearLayout'),false);
+  assert.equal(Object.hasOwn(webgl2,'planLinearLayout'),false);
   assert.equal(Object.hasOwn(webgpu,'planLinearLayout'),false);
   await genuineComposition();
   await deferredStartupComposition();
@@ -71,7 +72,7 @@ async function genuineComposition() {
   const {createLinearLayoutSession}=await import('../examples/linear-layout/session.mjs');
   const browser=controlledBrowser(),renders=[],trace=[],timers=new Set();
   browser.setRect({left:10,top:20,width:192,height:192});
-  const host={surface:browser.canvas,start(){trace.push('start');},stop(){trace.push('stop');},async close(){trace.push('close');},renderFrame(frame){renders.push(frame);},setTimeout(callback,delay){const timer={callback,delay};timers.add(timer);return()=>timers.delete(timer);}};
+  const host={surface:browser.canvas,start(){trace.push('start');},stop(){trace.push('stop');},async close(){trace.push('close');},sharedFrameProfile:sdk.SHARED_FRAME_PROFILE_2D,renderSharedFrame(frame){renders.push(frame);},setTimeout(callback,delay){const timer={callback,delay};timers.add(timer);return()=>timers.delete(timer);}};
   let session,primary,primaryOccurred=false;
   browser.install();
   try {
@@ -110,7 +111,7 @@ async function genuineComposition() {
     assert.equal(engine.stage.hitTest(6,7),second.display);assert.equal(engine.stage.hitTest(6,15),undefined);
     session.replaySavedHorizontal();assert.equal(renders.at(-1),saved);
     assert.equal(first.display.visible,false);assert.equal(engine.stage.hitTest(6,7),second.display);
-    session.showLive();assert.notEqual(renders.at(-1),saved);assert.equal(renders.at(-1).commands.length,1);
+    session.showLive();assert.notEqual(renders.at(-1),saved);assert.equal(drawnFrame(renders.at(-1)).commands.length,1);
     session.horizontal();session.reinsertFirst();
     assert.equal(inner.getChildAt(0),second.display);assert.equal(inner.getChildAt(1),first.display);
     assert.equal(engine.stage.hitTest(6,7),second.display);assert.equal(engine.stage.hitTest(20,7),first.display);
@@ -133,7 +134,7 @@ async function genuineComposition() {
     assert.equal(done.outerDisposed,true);assert.equal(done.innerDisposed,true);assert.equal(done.layoutScopeState,'closed');
     assert.equal(texture.isDisposed,true);assert.equal(engine.stage.isDisposed,true);
     assert.equal(browser.active().length,0);assert.equal(timers.size,0);assert.deepEqual(trace,['start','stop','close']);
-    assert.deepEqual(saved.commands.map(command=>command.sourceRect),[UP,UP]);
+    assert.deepEqual(drawnFrame(saved).commands.map(command=>command.sourceRect),[UP,UP]);
   } catch(cause) {primaryOccurred=true;primary=cause;}
   finally {
     const cleanup=[];
@@ -162,7 +163,8 @@ async function deferredStartupComposition() {
       surface: browser.canvas,
       start() { trace.push('start'); }, stop() { trace.push('stop'); },
       async close() { trace.push('close'); if (mode === 'reject-cleanup') throw cleanupFailure; },
-      renderFrame(frame) { renders.push(frame); },
+      sharedFrameProfile: sdk.SHARED_FRAME_PROFILE_2D,
+      renderSharedFrame(frame) { renders.push(frame); },
       setTimeout(callback, delay) { const timer = {callback, delay}; timers.add(timer); return () => timers.delete(timer); },
     };
     browser.install();

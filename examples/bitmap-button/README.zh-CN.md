@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+> **已改用共享 Host。** 本示例默认用共享 WebGPU Host 绘制，加上 `?backend=webgl2` 时用共享 WebGL2 Host。此前使用的 Canvas Host 已移除；下文提到的验证命令为它编写，不再适用。下文关于 Canvas Host、选择 Canvas 以及已记录的 Canvas 检查的说明，描述的是早先的版本。
+
 本原创示例使用一个共享 MouseInput 和一个借用图集租约，创建两个具有真实 Scope 的按钮。红、蓝、灰表示抬起、按下和禁用。界面提供启用/禁用、释放/重建、独立/双按钮布局、保存抬起帧回放、当前画面及关闭。
 
 执行 `node tools/build.mjs`，通过普通本地 HTTP 服务托管仓库根目录，再打开 `/examples/bitmap-button/`。默认 Canvas，可显式选择 WebGPU；启动不可用时显示原因，不静默切换。切换前等待当前 Engine 完成关闭链。

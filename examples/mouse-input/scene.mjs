@@ -20,7 +20,7 @@ export function createMouseScene(engine, scope) {
   let input, unsubscribes = [], log = [], revealOnEnd = false, overflow = false;
   let renderCount = 0, lastFrameId = 0;
 
-  function render() { const frame = engine.renderFrame(FRAME); renderCount++; lastFrameId = frame.frameId; return lastFrameId; }
+  function render() { const frame = engine.renderSharedFrame(FRAME); renderCount++; lastFrameId = frame.frameId; return lastFrameId; }
   function unbind() {
     const failures = [];
     for (const unsubscribe of unsubscribes) { try { unsubscribe(); } catch (cause) { failures.push(cause); } }

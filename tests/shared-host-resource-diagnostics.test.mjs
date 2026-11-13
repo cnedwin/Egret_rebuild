@@ -26,7 +26,7 @@ function nondecreasing(previous, current) {
     else assert.ok(current[key] >= item, key + ' lifetime high water cannot fall');
   }
 }
-async function withBackend(backend, run) {
+async function withBackend(backend, run, options = {}) {
   if (backend === 'GPU') return usingGpu(async ({ f, a, h }) => run({
     h, calls: () => f.calls.length,
     capture: () => a.capture(),
@@ -40,7 +40,7 @@ async function withBackend(backend, run) {
     finish: ticket => finishUpload(f, ticket),
     idle: () => gpuUntil(f, () => h.getStatus().pendingFrames === 0),
     close: async () => { const done = observe(h.close()); await gpuUntil(f, () => done.settled); if (done.rejected) throw done.error; },
-  }));
+  }), { options });
   return hosted(async f => run({
     h: f.host, calls: () => f.ports.events.length,
     capture: () => f.frame(),
@@ -48,7 +48,7 @@ async function withBackend(backend, run) {
     stage: frame => f.stage(frame), ready: ticket => ticket.ready,
     finish: async ticket => { const submission = ticket.submit(); await submission.completed; return submission; },
     idle: () => glUntil(() => f.host.getStatus().pendingFrames === 0), close: () => f.host.close(),
-  }));
+  }), { options });
 }
 
 for (const backend of ['GPU', 'GL']) {
@@ -105,7 +105,23 @@ for (const backend of ['GPU', 'GL']) {
     assert.ok(settled.highWater.reusable.leasedEntries > 0);
   }));
 
-  test(backend + ' forty one-MiB pages cause real READY eviction and later reupload', async () => withBackend(backend, async p => {
+  test(backend + ' forty one-MiB pages all stay READY under the default 128 MiB residence', async () => withBackend(backend, async p => {
+    resources(p.h); const nodes = [];
+    for (let i = 0; i < 40; i++) {
+      if (nodes.length) nodes.at(-1).visible = false;
+      const [node] = await p.images(1); nodes.push(node);
+      const ticket = p.stage(p.capture()); await p.ready(ticket); await p.finish(ticket); await p.idle();
+    }
+    const full = resources(p.h);
+    assert.equal(full.totals.pageWriteBytes, 40 * MiB); assert.equal(full.totals.readyCapacityEvictions, 0);
+    assert.equal(full.current.images.readyBytes, 40 * MiB); assert.equal(full.current.images.readyEntries, 40);
+    // The first page is still ready: showing it again writes nothing.
+    nodes.at(-1).visible = false; nodes[0].visible = true;
+    const again = p.stage(p.capture()); await p.ready(again); await p.finish(again); await p.idle();
+    assert.equal(resources(p.h).totals.pageWriteBytes, 40 * MiB);
+  }));
+
+  test(backend + ' forty one-MiB pages cause real READY eviction and later reupload under a 32 MiB residence', async () => withBackend(backend, async p => {
     resources(p.h); const nodes = [];
     for (let i = 0; i < 40; i++) {
       if (nodes.length) nodes.at(-1).visible = false;
@@ -123,7 +139,7 @@ for (const backend of ['GPU', 'GL']) {
     const reloaded = p.stage(p.capture()); await p.ready(reloaded); await p.finish(reloaded); await p.idle();
     assert.equal(resources(p.h).totals.pageWriteBytes, full.totals.pageWriteBytes + MiB);
     assert.ok(resources(p.h).totals.readyCapacityEvictions > full.totals.readyCapacityEvictions);
-  }));
+  }, { maxReadyPageBytes: 32 * MiB }));
 }
 
 test('GPU unknown staged proof remains visible after unsafe close', async () => usingGpu(async ({ f, a, h }) => {

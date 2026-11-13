@@ -20,8 +20,8 @@ test('NLB00 genuine leased NS1 baseline precedes the named missing leaf export',
       insets: { left: 2, top: 2, right: 2, bottom: 2 } });
     mesh = new egret.Mesh2D(lease, geometry);
     scope.use(mesh); engine.stage.addChild(mesh);
-    const frame = engine.captureTexturedFrame({ width: 20, height: 20 });
-    assert.equal(frame.profile, egret.TEXTURED_FRAME_PROFILE_2D);
+    const frame = engine.captureSharedFrame({ width: 20, height: 20 });
+    assert.equal(frame.profile, egret.SHARED_FRAME_PROFILE_2D);
     assert.deepEqual(frame.commands.map(value => value.kind), ['mesh']);
     assert.equal(frame.geometries[0], geometry);
     assert.deepEqual(mesh.getBounds(), { x: 0, y: 0, width: 16, height: 12 });

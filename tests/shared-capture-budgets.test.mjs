@@ -177,16 +177,16 @@ test('CAPTURE B06 source identity admits 64 equal-byte images plus true source r
   });
 });
 
-test('CAPTURE B07 source payload admits exactly 16 MiB with source reuse and rejects one more pixel', async () => {
+test('CAPTURE B07 source payload admits exactly 64 MiB with source reuse and rejects one more pixel', async () => {
   await scene(async f => {
     const items = [];
-    for (let index = 0; index < 4; index++) {
+    for (let index = 0; index < 16; index++) {
       const item = await f.resource(image(1024, 1024)); items.push(item);
       assert.equal(item.source.byteLength, 4194304);
       f.add(new egret.Bitmap(item.lease));
     }
     const reused = await f.resource(items[0].source); f.add(new egret.Bitmap(reused.lease));
-    const inspect = frame => { assert.equal(frame.pages.length, 4); assert.equal(frame.commands.length, 5); };
+    const inspect = frame => { assert.equal(frame.pages.length, 16); assert.equal(frame.commands.length, 17); };
     const before = baseline(f, inspect);
     const extraItem = await f.resource(image()), extra = f.add(new egret.Bitmap(extraItem.lease));
     refusedThenRestored(f, before, 'FRAME_IMAGE_BUDGET', () => extra.dispose(), inspect);
@@ -195,17 +195,17 @@ test('CAPTURE B07 source payload admits exactly 16 MiB with source reuse and rej
   });
 });
 
-test('CAPTURE B08 region values admit 128 plus an equal view and reject a changed logical extent', async () => {
+test('CAPTURE B08 region values admit 4096 plus an equal view and reject a changed logical extent', async () => {
   await scene(async f => {
-    const source = image(128, 1);
-    for (let index = 0; index < 128; index++) {
+    const source = image(4096, 1);
+    for (let index = 0; index < 4096; index++) {
       const item = await f.resource(source, oneView(index)); f.add(new egret.Bitmap(item.lease));
     }
     const duplicate = await f.resource(source, oneView(0)); f.add(new egret.Bitmap(duplicate.lease));
     const inspect = frame => {
       assert.equal(frame.pages.length, 1); assert.equal(frame.pages[0].source, source);
-      assert.equal(frame.regions.length, 128); assert.equal(frame.commands.length, 129);
-      assert.equal(frame.commands[128].regionIndex, 0);
+      assert.equal(frame.regions.length, 4096); assert.equal(frame.commands.length, 4097);
+      assert.equal(frame.commands[4096].regionIndex, 0);
     };
     const before = baseline(f, inspect);
     // Same packed texel; a different logical extent is still a distinct complete region.

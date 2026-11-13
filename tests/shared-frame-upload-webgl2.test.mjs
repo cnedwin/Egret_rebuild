@@ -2,7 +2,7 @@
 // Genuine built public frames with owned GL ports; no native rendering/recovery acceptance.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { hosted, glPorts, createSharedWebGL2Host, code, outcome, pending, turn, until,
+import { egret, hosted, glPorts, createSharedWebGL2Host, code, outcome, pending, turn, until,
   signalPort, taskUploadMeter, uploadRows, visibleRows, MiB } from './shared-frame-upload-gl-fixture.mjs';
 import { fixture as candidateFixture, candidate } from './candidate-shared-frame-fixture.mjs';
 
@@ -48,9 +48,9 @@ for (const [name,options,make,expected] of [
   assert.equal(f.host.getStatus().lastSerial,status.lastSerial);
 }, {options}));
 
-test('GLU00 two genuine frames keep pending canonical pages plus original copy within 32 MiB', async () => hosted(async f => {
-  // Each public frame stays within Engine's 16 MiB source cap. The first holds
-  // 16 MiB; second admission needs 16 MiB canonical plus a 4 MiB original copy.
+test('GLU00 two genuine frames keep pending canonical pages plus original copy within twice the frame page budget', async () => hosted(async f => {
+  // This Host admits 16 MiB of pages in a frame, so conversion memory is bounded by 32 MiB. The
+  // first frame holds 16 MiB; second admission needs 16 MiB canonical plus a 4 MiB original copy.
   const firstPages = await f.images(4), firstFrame = f.frame(); assert.equal(firstFrame.pages.length,4);
   const held = f.stage(firstFrame); await held.ready;
   assert.equal(f.host.getSharedStatus().pendingCanonicalBytes,16 * MiB);
@@ -59,6 +59,48 @@ test('GLU00 two genuine frames keep pending canonical pages plus original copy w
   assert.equal(frame.pages.length,4); assert.notEqual(frame.pages[0].source,firstFrame.pages[0].source);
   assert.throws(() => f.stage(frame),code('BACKPRESSURE'));
   assert.equal(f.ports.events.length,before); assert.equal(f.host.getStatus().pendingFrames,1);
+}, {options:{maxFramePageBytes:16 * MiB}}));
+
+test('GLU00 the default frame page budget admits the same second frame', async () => hosted(async f => {
+  const firstPages = await f.images(4), firstFrame = f.frame();
+  const held = f.stage(firstFrame); await held.ready;
+  assert.equal(f.host.getSharedStatus().pendingCanonicalBytes,16 * MiB);
+  for (const node of firstPages.nodes) f.engine.stage.removeChild(node);
+  await f.images(4); const frame = f.frame();
+  assert.equal(frame.pages.length,4); assert.notEqual(frame.pages[0].source,firstFrame.pages[0].source);
+  const second = f.stage(frame); await second.ready;
+  assert.equal(f.host.getStatus().pendingFrames,2);
+  assert.equal(f.host.getSharedStatus().pendingCanonicalBytes,32 * MiB);
+  held.dispose(); second.dispose();
+}));
+
+test('GLU00 a frame that names more page bytes than the Host admits is refused before native work', async () => hosted(async f => {
+  await f.images(2); const frame = f.frame(), before = f.ports.events.length;
+  assert.equal(frame.pages.length,2);
+  assert.throws(() => f.stage(frame),code('FRAME_BUDGET'));
+  assert.equal(f.ports.events.length,before); assert.equal(f.host.getStatus().pendingFrames,0);
+}, {options:{maxFramePageBytes:8 * MiB - 1}}));
+
+test('GLU00 a frame that names more regions than the Host admits is refused before native work', async () => hosted(async f => {
+  await f.images(3,2,2); const frame = f.frame(), before = f.ports.events.length;
+  assert.equal(frame.regions.length,3);
+  assert.throws(() => f.stage(frame),code('FRAME_BUDGET'));
+  assert.equal(f.ports.events.length,before); assert.equal(f.host.getStatus().pendingFrames,0);
+}, {options:{maxFrameRegions:2}}));
+
+test('GLU00 a frame of 4096 distinct regions of one page is admitted, uploaded once and submitted', async () => hosted(async f => {
+  const { nodes, leases } = await f.images(1,64,64); nodes[0].visible = false;
+  for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
+    const bitmap = f.scope.use(new egret.Bitmap(leases[0])); bitmap.sourceRect = {x,y,width:1,height:1}; f.engine.stage.addChild(bitmap);
+  }
+  const frame = f.frame();
+  assert.equal(frame.pages.length,1); assert.equal(frame.regions.length,4096); assert.equal(frame.commands.length,4097);
+  const ticket = f.stage(frame); await ticket.ready;
+  const submission = ticket.submit(); await submission.completed;
+  await until(() => f.host.getStatus().pendingFrames === 0);
+  // Events are [name, ...arguments]; a page write names its width and height after its offsets.
+  const pageWrites = f.ports.events.filter(event => event[0] === 'texSubImage2D');
+  assert.equal(pageWrites.reduce((bytes,event) => bytes + event[5] * event[6] * 4,0),64 * 64 * 4);
 }));
 
 test('GLU01 aggregate scheduled upload tasks stay at 4 MiB with whole rows and original geometry units', async () => hosted(async f => {
@@ -75,12 +117,28 @@ test('GLU01 aggregate scheduled upload tasks stay at 4 MiB with whole rows and o
     // A bounded implementation may put whole pages in separate tasks. This
     // control requires the aggregate cap, not a particular packing order.
     for (const {name,args} of rows) if (name === 'bufferSubData' && args[0] === f.ports.gl.ARRAY_BUFFER) {
-      assert.equal(args[1] % 44,0); assert.equal(args[2].byteLength % 44,0);
+      assert.equal(args[1] % 52,0); assert.equal(args[2].byteLength % 52,0);
     }
     const before = uploadRows(f.ports.events).length; await ticket.submit().completed;
     assert.equal(uploadRows(f.ports.events).length,before,'submit reuses the admitted uploaded resources');
   } finally { await meter.finish(); }
 }, {ports:glPorts({alignment:12})}));
+
+test('GLU01 one page of the largest area is uploaded once, in whole rows, within the 4 MiB task bound', async () => hosted(async f => {
+  await f.images(1,2048,2048); const frame = f.frame(), meter = taskUploadMeter(f.ports);
+  try {
+    assert.equal(frame.pages.length,1); assert.equal(frame.pages[0].source.byteLength,16 * MiB);
+    const ticket = f.stage(frame); await ticket.ready; await meter.finish();
+    assert.ok(meter.groups.length >= 4,'a 16 MiB page cannot fit fewer than four 4 MiB tasks');
+    assert.ok(meter.groups.every(group => group.bytes > 0 && group.bytes <= 4 * MiB));
+    const imageRows = meter.groups.flatMap(group => group.rows).filter(row => row.name === 'texSubImage2D');
+    assert.equal(imageRows.reduce((n,row) => n + row.args[4] * row.args[5] * 4,0),16 * MiB);
+    assert.ok(imageRows.every(({args}) => args[4] === 2048 && Number.isInteger(args[3]) && Number.isInteger(args[5]) && args[5] > 0));
+    let next = 0; for (const {args} of imageRows) { assert.equal(args[3],next); next += args[5]; } assert.equal(next,2048);
+    const before = uploadRows(f.ports.events).length; await ticket.submit().completed;
+    assert.equal(uploadRows(f.ports.events).length,before,'submit reuses the admitted uploaded resources');
+  } finally { await meter.finish(); }
+}));
 
 test('GLU02 upload ready waits for a real controlled fence and never changes the visible target', async () => {
   const ports = glPorts(), sizes = []; let width = ports.canvas.width, height = ports.canvas.height;
@@ -345,40 +403,6 @@ test('GLU07 committed CPU bindings remain committed after staged candidate submi
   const ordinary = c.capture(); assert.equal(ordinary.pages[0].source,prepared.image);
 }))); // Controlled command failure establishes no presented pixels.
 
-test('GLU08 scene staging uses complete alignment-12 arenas and preserves scene/overlay order at submit', async () => hosted(async f => {
-  const before = f.ports.events.length, ticket = f.stageScene();
-  const status = f.host.getSceneStatus();
-  assert.ok(status.pendingSceneBytes > 0 && status.pendingUniformBytes > 0 && status.pendingDepthBytes > 0);
-  assert.equal(f.host.getStatus().pendingReadbackBytes,8*8*8);
-  await ticket.ready; assert.deepEqual(visibleRows(f.ports.events.slice(before)),[]);
-  const uploads = uploadRows(f.ports.events).length; await ticket.submit().completed; await f.host.whenIdle();
-  const events = f.ports.events.slice(before), draws = events.filter(row => row[0] === 'drawElements' || row[0] === 'drawArrays');
-  assert.deepEqual(draws.map(row => row[0]),['drawElements','drawArrays','drawArrays']);
-  assert.deepEqual(draws[0].slice(1),[f.ports.gl.TRIANGLES,3,f.ports.gl.UNSIGNED_INT,0]);
-  assert.equal(uploadRows(f.ports.events).length,uploads);
-  const ranges = events.filter(row => row[0] === 'bindBufferRange' && row[3] !== null);
-  assert.ok(ranges.some(row => row[4] === 132 && row[5] === 64));
-  assert.ok(ranges.every(row => row[4] % 12 === 0));
-  assert.deepEqual([f.host.getSceneStatus().pendingSceneBytes,f.host.getSceneStatus().pendingUniformBytes,f.host.getSceneStatus().pendingDepthBytes],[0,0,0]);
-}, {scene:true,ports:glPorts({alignment:12})}));
-
-test('GLU08 scene and overlay are genuine inputs before options and profile checks', async () => hosted(async f => {
-  let reads = 0; const options = {get signal(){reads++; throw Error('unreachable');}}, before = f.ports.events.length;
-  assert.throws(() => f.stageScene({...f.scene},f.frame(),options),code('FRAME_INVALID'));
-  assert.equal(reads,0); assert.equal(f.ports.events.length,before);
-  assert.throws(() => f.stageScene(f.scene,{...f.frame()},options),code('FRAME_PROFILE_UNSUPPORTED'));
-  assert.equal(reads,0); assert.equal(f.ports.events.length,before);
-  const wrong = f.engine.captureSharedFrame({width:8,height:8});
-  assert.throws(() => f.stageScene(f.scene,wrong),code('FRAME_PROFILE_UNSUPPORTED'));
-  assert.equal(f.ports.events.length,before);
-}, {scene:true}));
-
-test('GLU08 genuine scene depth charge rejects before native allocation', async () => hosted(async f => {
-  const overlay = f.frame(2049,2048), before = f.ports.events.length;
-  assert.throws(() => f.stageScene(f.scene,overlay),code('FRAME_BUDGET'));
-  assert.equal(f.ports.events.length,before); assert.equal(f.host.getStatus().pendingFrames,0);
-}, {scene:true,options:{enableReadback:false}}));
-
 test('GLH01 session status projects existing GL state and restoration barriers', async () => hosted(async f => {
   const status = f.host.getSessionStatus(); assert.ok(Object.isFrozen(status));
   assert.deepEqual(status,{state:'ready',generation:1,attempt:0,firstFailure:null,generationFailure:null});
@@ -417,16 +441,16 @@ test('GLH01 existing restoration timeout projects failed without another readine
   assert.equal(f.host.getSessionStatus().state,'failed'); assert.equal(f.ports.events.length,before);
 }, {options:{restoreTimeoutMs:15}}));
 
-for (const scene of [false,true]) test('GLH06/H07 stale held stage revokes on loss; fresh '+(scene ? 'scene' : 'ordinary')+' readiness is independent', async () => hosted(async f => {
-  const ticket = scene ? f.stageScene() : f.stage(); await ticket.ready;
+test('GLH06/H07 stale held stage revokes on loss; fresh readiness is independent', async () => hosted(async f => {
+  const ticket = f.stage(); await ticket.ready;
   const oldIdle = outcome(f.host.whenIdle()); await pending(oldIdle);
   f.ports.lose(); const barrier = f.host.whenReady();
   const lost = await oldIdle; assert.ok(code('CONTEXT_LOST')(lost.error));
   f.ports.restore(); await barrier;
   assert.throws(() => ticket.submit(),code('UPLOAD_STALE')); await ticket.ready;
-  const fresh = scene ? f.stageScene() : f.stage(); const ready = await fresh.ready; assert.equal(ready.generation,2);
+  const fresh = f.stage(); const ready = await fresh.ready; assert.equal(ready.generation,2);
   await fresh.submit().completed; await f.host.whenIdle(); assert.equal(f.host.getStatus().pendingFrames,0);
-}, {scene}));
+}));
 
 test('GLH06 old held upload fence cannot publish ready or pixels into a restored generation', async () => hosted(async f => {
   f.ports.autoSignal = false; const before = f.ports.events.length;

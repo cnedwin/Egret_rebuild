@@ -159,23 +159,23 @@ for (const [name, data] of [
   ['second compressed stream', Buffer.concat([compressed, deflateSync(Buffer.from([0]))])], ['invalid zlib', Buffer.from([1, 2, 3])],
 ]) test('strict zlib preflight refuses ' + name, () => refuse(png({ data }), 'INFLATE'));
 test('invalid PNG row filter is an actionable codec refusal', () => refuse(png({ data: deflateSync(Buffer.from([5, 19, 37, 73, 0])) }), 'DECODE'));
-for (const dimensions of [{ width: 4097 }, { height: 4097 }, { width: 1025, height: 1024 }]) {
+for (const dimensions of [{ width: 4097 }, { height: 4097 }, { width: 2049, height: 2048 }, { width: 4096, height: 1025 }]) {
   test('rejects dimension/pixel bound ' + JSON.stringify(dimensions), () => refuse(png({ header: ihdr(dimensions) }), 'LIMIT'));
 }
-test('accepts exactly 1048576 RGBA pixels and reports exact two-pass work unit', () => {
-  const raw = Buffer.alloc(4195328);
-  const output = decode(png({ header: ihdr({ width: 1024, height: 1024 }), data: deflateSync(raw) }));
-  assert.equal(output.scanlineBytes, 4195328); assert.equal(output.rgba.length, 4194304);
-  assert.equal(output.width, 1024); assert.equal(output.height, 1024); assert.ok(output.rgba.every(value => value === 0));
+test('accepts exactly 4194304 RGBA pixels and reports exact two-pass work unit', () => {
+  const raw = Buffer.alloc(16779264);
+  const output = decode(png({ header: ihdr({ width: 2048, height: 2048 }), data: deflateSync(raw) }));
+  assert.equal(output.scanlineBytes, 16779264); assert.equal(output.rgba.length, 16777216);
+  assert.equal(output.width, 2048); assert.equal(output.height, 2048); assert.ok(output.rgba.every(value => value === 0));
 });
 test('accepts maximum 4096 edge within pixel capacity', () => {
   const output = decode(png({ header: ihdr({ width: 4096 }), data: deflateSync(Buffer.alloc(16385)) }));
   assert.equal(output.width, 4096); assert.equal(output.height, 1); assert.equal(output.scanlineBytes, 16385);
 });
 test('accepts maximum height and maximum raw scanline length for the finite profile', () => {
-  const output = decode(png({ header: ihdr({ width: 256, height: 4096 }), data: deflateSync(Buffer.alloc(4198400)) }));
-  assert.equal(output.width, 256); assert.equal(output.height, 4096); assert.equal(output.scanlineBytes, 4198400);
-  assert.equal(output.rgba.length, 4194304); assert.ok(output.rgba.every(value => value === 0));
+  const output = decode(png({ header: ihdr({ width: 1024, height: 4096 }), data: deflateSync(Buffer.alloc(16781312)) }));
+  assert.equal(output.width, 1024); assert.equal(output.height, 4096); assert.equal(output.scanlineBytes, 16781312);
+  assert.equal(output.rgba.length, 16777216); assert.ok(output.rgba.every(value => value === 0));
 });
 function withChunkCount(count) {
   return Buffer.concat([signature, ihdr(), ...Array.from({ length: count - 3 }, () => chunk('IDAT')), chunk('IDAT', compressed), end]);

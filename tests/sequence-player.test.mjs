@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import {host} from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 // Break: the built public root has no explicit-time playback capability.
 test('S01 public root offers the explicit-time player and clip factory',()=>{
@@ -31,7 +32,7 @@ async function fixture({base,attach=true,Node=egret.Bitmap}={}){
   return {port,engine,image,texture,ref,lease,bitmap,counts:()=>({loads,disposals})};
 }
 function code(fn,want){assert.throws(fn,{code:want});}
-function command(f){const frame=f.engine.captureFrame(OPTIONS);assert.equal(frame.commands.length,1);return {frame,c:frame.commands[0]};}
+function command(f){const frame=captureDrawn(f.engine, OPTIONS);assert.equal(frame.commands.length,1);return {frame,c:frame.commands[0]};}
 function selection(f,player,time,index,region,position,atEnd=false){
   const sample=player.applyAt(time);
   assert.deepEqual(sample,{frameIndex:index,region,positionSeconds:position,atEnd,stopped:false});

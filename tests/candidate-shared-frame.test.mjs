@@ -35,7 +35,6 @@ test('CANDIDATE B01 availability follows genuine Engine, group, ticket and ordin
 test('CANDIDATE B02 16-to-64 transformed/clipped witness matches separately committed reference without live pollution', async () => fixture(async f => {
   const prepared = await f.prepare(); requireCandidate(f.engine);
   const fields = fieldSnapshot(f), ordinary = frameShape(f.capture());
-  const legacy = f.engine.captureFrame(FRAME), textured = f.engine.captureTexturedFrame(FRAME);
   const saved = candidate(f, prepared.ticket), draw = imageDraw(saved);
   assert.deepEqual(draw.rect, { x: 0, y: 0, width: 64, height: 64 });
   assert.deepEqual(draw.matrix, { a: 2, b: 0, c: 0, d: 3, tx: 11, ty: 13 });
@@ -53,10 +52,6 @@ test('CANDIDATE B02 16-to-64 transformed/clipped witness matches separately comm
     assert.deepEqual(frameShape(saved), frameShape(reference.capture()));
   });
   assert.deepEqual(fieldSnapshot(f), fields); assert.deepEqual(frameShape(f.capture()), ordinary);
-  for (const [next, previous] of [[f.engine.captureFrame(FRAME), legacy], [f.engine.captureTexturedFrame(FRAME), textured]]) {
-    const { frameId: ignoredNext, ...nextContent } = next, { frameId: ignoredOld, ...oldContent } = previous;
-    assert.deepEqual(nextContent, oldContent);
-  }
   assert.equal(f.neighbor.x, 140); assert.equal(f.neighbor.y, 1);
   prepared.ticket.commit(); assert.equal(f.target.textureLease, prepared.lease);
   assert.deepEqual(frameShape(f.capture()), frameShape(saved));
@@ -83,7 +78,7 @@ test('CANDIDATE B04 repeated captures share ordinary frame IDs and never commit,
   let ticks = 0; f.engine.clock.onTick(f.bindingScope, () => { ticks++; });
   f.engine.advanceTime(10); f.engine.advanceTime(10.125);
   const before = f.capture(), first = candidate(f, prepared.ticket), second = candidate(f, prepared.ticket);
-  const after = f.engine.captureTexturedFrame(FRAME);
+  const after = f.capture();
   assert.deepEqual([first.frameId, second.frameId, after.frameId], [before.frameId + 1, before.frameId + 2, before.frameId + 3]);
   assert.notEqual(first, second); assert.deepEqual(frameShape(first), frameShape(second));
   assert.equal(f.target.textureLease, f.old.lease); assert.equal(ticks, 1); assert.equal(f.engine.clock.elapsedSeconds, .125);
@@ -111,12 +106,12 @@ test('CANDIDATE B06 shared busy barrier applies across candidate, ordinary and c
   const prepared = await f.prepare(); requireCandidate(f.engine); const errors = [];
   const before = f.capture();
   const saved = candidate(f, prepared.ticket, { get width() {
-    for (const invoke of [() => candidate(f, prepared.ticket), () => f.capture(), () => f.engine.captureFrame(FRAME)]) {
+    for (const invoke of [() => candidate(f, prepared.ticket), () => f.capture()]) {
       try { invoke(); } catch (error) { errors.push(error); }
     }
     return 160;
   }, height: 128 });
-  assert.equal(errors.length, 3); assert.ok(errors.every(hasCode('FRAME_REENTRANT'))); assert.equal(saved.frameId, before.frameId + 1);
+  assert.equal(errors.length, 2); assert.ok(errors.every(hasCode('FRAME_REENTRANT'))); assert.equal(saved.frameId, before.frameId + 1);
   let tickError; f.engine.clock.onTick(f.bindingScope, () => { try { candidate(f, prepared.ticket); } catch (error) { tickError = error; } });
   f.engine.advanceTime(20); f.engine.advanceTime(20.125); assert.ok(hasCode('CLOCK_REENTRANT')(tickError));
   assert.equal(f.capture().frameId, saved.frameId + 1);

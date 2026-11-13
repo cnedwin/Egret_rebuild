@@ -98,4 +98,83 @@ The same tool on the same machine, earlier code first:
 | 4,000 siblings | 1,579.3 µs | 120.8 µs |
 | 16,000 siblings | 7,381.9 µs | 499.1 µs |
 
-These figures describe one machine and one pair of runs; they are not acceptance thresholds. Two limits recorded above are unchanged: bitmaps that show different frames of one atlas are still separate draws, and a frame still admits at most 128 distinct regions. Both belong to the shared render profile and its vertex and uniform formats, not to this round.
+These figures describe one machine and one pair of runs; they are not acceptance thresholds. Two limits recorded above were not changed by that round: bitmaps that show different frames of one atlas are still separate draws, and a frame admitted at most 128 distinct regions. The region bound has since been raised to 4,096 in the [shared render profile](shared-render-profile-contract.md), and the separate draws are gone: the next section.
+
+## Batching across regions
+
+Consecutive draws of one page with one material now share one batch whatever their regions and opacities. A draw's region and opacity used to be in its 128-byte uniform block, so every bitmap that showed another frame of an atlas, or had another opacity, was a draw of its own. Each vertex now carries the place of its region in a table and the opacity of its draw, and the table of the frame's regions is uploaded once; the [shared render profile](shared-render-profile-contract.md) states both layouts. A batch still ends at another page, material or kind of draw, at a barrier, and where the next region is in another window of 341 regions of the table. No public interface, frame record or refusal changed. The vertex grew from 44 to 52 bytes, and a frame is charged 48 bytes for each of its regions.
+
+The same tool on the same machine, earlier code first:
+
+| Workload | Draws |
+| --- | --- |
+| 5,000 bitmaps showing 100 frames of one atlas | 5,000 → 1 |
+| 5,000 bitmaps showing 200 frames of one atlas | 5,000 → 1 |
+| 5,000 filled rectangles | 1 → 1 |
+
+The step that forms the batches took 0.4 ms before and 1.0 ms after for the two atlas workloads, because the rows of a merged batch are copied into one array; the other steps were within the variation between runs.
+
+What the output is was checked in three ways. `tests/shared-frame-golden.test.mjs` shows that the captured frame, the clipped geometry and the first eleven values of every vertex row are what they were. `tests/shared-batching.test.mjs` states which draws share a batch and what the new values hold. And 46 scenes were drawn by the build before this change and by the build with it, through both Hosts, in a headless Chromium with software rendering, and the bytes read back were compared: all 92 pairs are identical. The scenes are the 26 two-dimensional cases of `tools/shared-rendering/native-cases.json` and twenty generated ones with 120 to 1,500 sprites of one or two atlases, with trimmed and turned regions, fractional opacities, four sampling policies, four blends, clip rectangles, solid rectangles, meshes and nine-slices, and up to 804 regions in one frame. In the generated scenes of one atlas and one material the WebGL2 draw calls of a frame fell from about 390 to about 60; what remains is the clip rectangles of those scenes, each of which is a barrier. This comparison establishes equal pixels under one software renderer. It is not a run on a hardware GPU, and the saved native evidence of `tools/shared-rendering` was not collected again.
+
+## Batching across pages
+
+Consecutive draws now share one batch whatever their pages, up to eight pages in a batch. The page used to be part of what a batch has in common, so bitmaps that took two atlases in turn were each a draw of their own. The row of a region in the region table now names the region's page and that page's size, and the block of a batch names the page each of eight texture units holds; the [shared render profile](shared-render-profile-contract.md) states both. A batch of one page is drawn as before, by a pipeline with one page texture. A batch of several pages is drawn by a second pipeline with eight. A batch still ends at another material or kind of draw, at a barrier, at a ninth page, and where the next region is in another window of the table. No public interface, frame record, vertex, logical charge or refusal changed. A Host now requires eight texture units of its device or context.
+
+The graphics-device tool below, in a quick pass in a headless Chromium with software rendering, earlier code first:
+
+| Workload | Draws | Submit, WebGPU | Submit, WebGL2 |
+| --- | --- | --- | --- |
+| 5,000 bitmaps taking 8 atlases in turn, all moving | 5,001 → 2 | 79.33 → 10.99 ms | 37.52 → 15.32 ms |
+
+The time that software renderer itself spent on the frame rose, in WebGPU from 278 to 432 ms. It runs the fragment stage on the CPU, and the second pipeline selects among eight textures at every read of a page. Frames of one page are drawn by the first pipeline, and their time did not change: 148 ms before and 158 ms after for 5,000 bitmaps of one atlas. What a hardware GPU does with the second pipeline has not been measured.
+
+Seven scenes of 3 to 20 pages of different sizes, with 160 to 600 sprites, three sampling policies, page-domain materials and four blends, were drawn by the build before this change and by the build with it, through both Hosts, in the same software renderer. All 14 pairs of readbacks are identical, as are the 92 pairs of the earlier comparison. In those seven scenes the WebGL2 draw calls of a frame fell from between 135 and 570 to between 2 and 69. This establishes equal pixels between two builds under one software renderer. It is not a run on a hardware GPU, and it does not compare the two Hosts with each other: in that renderer their readbacks of the generated scenes differ in one to three pixels of a hundred, where the two rasterizers interpolate differently, before and after this change.
+
+## Records kept between frames
+
+A frame used to be captured and prepared in full, whatever had changed since the frame before. Each display node now keeps the records the capture derived from it, and each Host keeps the prepared draws of its last frame. The [shared render profile](shared-render-profile-contract.md#kept-records) states what is kept and when it is used again. A frame made with kept records is the frame made without them: every value, charge and refusal. No public interface changed.
+
+`tools/bench-2d.mjs` on the development machine. "Kept" is the same frame again; for capture it is a frame in which nothing moved, against one in which everything did:
+
+| Workload | Stage | Every frame anew | Kept |
+| --- | --- | --- | --- |
+| 5,000 filled rectangles | Capture | 6.93 ms | 3.53 ms |
+| | Clipped geometry | 7.71 ms | 0.87 ms |
+| | Vertex rows | 4.64 ms | 2.96 ms |
+| 20,000 filled rectangles | Capture | 37.75 ms | 22.98 ms |
+| | Clipped geometry | 39.98 ms | 3.20 ms |
+| | Vertex rows | 15.42 ms | 11.10 ms |
+| 5,000 bitmaps showing 200 frames of one atlas | Clipped geometry | 6.98 ms | 1.00 ms |
+| | Vertex rows | 3.49 ms | 1.86 ms |
+
+In another run, of 240 frames of 5,000 bitmaps, a tenth of them moving in each frame, the geometry took 1.8 ms against 6.0 ms and the rows 1.9 ms against 3.7 ms. With all of them moving, where nothing kept can be used, a Host that keeps draws took about 4 percent longer over the geometry than one that keeps none.
+
+What is still done for every frame: every node is counted, checked and charged, and every resource read; the rows of every draw are copied into the frame's buffer, batches are joined, and everything is uploaded. Keeping a whole batch, and its buffer on the device, is not done.
+
+Two tests capture and prepare every frame both ways and require equal results, refusals included, for stated changes and for scenes changed at random: 640 captured frames and more than 250 prepared ones. Fifty-seven scenes of the pixel comparisons were each drawn three times by one Host, through both Hosts, in a headless Chromium with software rendering: once with some nodes moved, faded or hidden, and twice as they are. The third frame of all 114 runs is identical to the single frame of the build before this change. This is not a run on a hardware GPU.
+
+## Fixed 2D workloads on a graphics device
+
+`node tools/bench-2d-gpu.mjs` draws seven fixed workloads through the shared WebGPU Host and the shared WebGL2 Host in a browser, at 1280 by 720. `tools/bench-2d.mjs` stops where the graphics API begins; this tool measures from there. It prints an address. Opening that address in a browser on the machine to be measured runs the workloads, and the tool prints the table when the page finishes. With `--playwright <installed module>` the tool opens the browser itself: `--channel msedge` names an installed browser, and the window is visible unless `--headless` is given, because a hidden window may not use the graphics card. `--quick` runs a shorter pass, `--json` prints the whole report, and `--backends` and `--only` narrow the run.
+
+Each workload is drawn first as fast as the Host finishes frames, then once per display frame. The table states, per frame:
+
+- **draws**: the draw calls the Host issued, the final copy to the canvas included.
+- **capture**: the Engine turning the display list into a frame record.
+- **submit**: the Host preparing, uploading and encoding that record.
+- **settle**: from the end of submit until the Host reports the frame finished.
+- **gpu**: the time the device spent in the render passes of the frame.
+- **interval** and **p95**: the median and the 95th percentile of the time between display frames, and **refused**: the frames the Host refused because two were still pending.
+
+The device time comes from WebGPU timestamp queries, which need the `timestamp-query` feature, and from `EXT_disjoint_timer_query_webgl2`. Browsers round both to about 0.1 ms, and a browser that offers neither leaves the column empty. To read them, the tool lends the WebGPU Host a device whose command encoders it has wrapped, and wraps the WebGL2 context the Host obtains. The Hosts are unchanged, and the CPU figures include that wrapping.
+
+No run on a hardware GPU is recorded here. A quick pass in a headless Chromium with software rendering, on two shared cores, completed all fourteen rows. Its device times describe the software renderer and are not kept. Its draw counts and Host CPU times are the starting point of the WebGPU work:
+
+| Workload | Draws | Submit, WebGPU | Submit, WebGL2 |
+| --- | --- | --- | --- |
+| 5,000 bitmaps of one atlas, all moving | 2 | 24.03 ms | 17.35 ms |
+| 5,000 bitmaps of one atlas, none moving | 2 | 11.19 ms | 16.98 ms |
+| 5,000 bitmaps taking 8 atlases in turn, all moving | 5,001 | 79.33 ms | 37.52 ms |
+| 20,000 bitmaps of one atlas, all moving | 2 | 77.01 ms | 60.39 ms |
+
+Bitmaps that take their atlases in turn are not batched, and a frame in which nothing moved is captured and prepared again in full.

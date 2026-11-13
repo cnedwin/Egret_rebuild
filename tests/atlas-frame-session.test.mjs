@@ -4,6 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createImageData2D } from '@egret/engine';
 import { host } from './helpers.mjs';
+import { drawnFrame } from './helpers/drawn-frame.mjs';
 import { createAtlasFrameSession } from '../examples/trimmed-atlas-playback/session.mjs';
 import { assertAtlasObservation } from '../tools/atlas-frame/scenario.mjs';
 function image(){
@@ -13,10 +14,12 @@ function image(){
     for(let y=0;y<3;y++)for(let dx=0;dx<2;dx++)pixels.set(colors[rows[y][dx]],(y*6+x+dx)*4);
   return createImageData2D({width:6,height:6,pixels});
 }
-async function fixture(){const adapter=host();return {adapter,session:await createAtlasFrameSession({host:adapter.adapter,profile:'canvas-2d',image:image()})};}
+async function fixture(){const adapter=host();return {adapter,session:await createAtlasFrameSession({host:adapter.adapter,profile:'shared-2d',image:image()})};}
 function observe(session,id){
-  const frame=session.capture(),actual={profile:'canvas-2d',session:session.inspect(),commands:frame.commands,
-    images:(frame.images??[]).map(value=>({width:value.width,height:value.height,byteLength:value.byteLength}))};
+  const shared=session.capture(),frame=drawnFrame(shared),layoutOf=command=>{const region=shared.regions[command.shared.regionIndex];
+    return {logicalWidth:region.logicalWidth,logicalHeight:region.logicalHeight,trimX:region.trimX,trimY:region.trimY,quarterTurn:region.quarterTurn};};
+  const actual={profile:'shared-2d',session:session.inspect(),commands:frame.commands.map(command=>({...command,layout:layoutOf(command)})),
+    images:frame.images.map(value=>({width:value.width,height:value.height,byteLength:value.byteLength}))};
   assert.equal(assertAtlasObservation(actual,id),true);
   return actual;
 }

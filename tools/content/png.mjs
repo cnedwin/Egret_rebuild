@@ -3,7 +3,7 @@ import { constants, crc32, inflateSync } from 'node:zlib';
 import { types } from 'node:util';
 import { PNG } from 'pngjs';
 
-const MAX_BYTES = 8_388_608, MAX_EDGE = 4096, MAX_PIXELS = 1_048_576, MAX_CHUNKS = 1024;
+const MAX_BYTES = 8_388_608, MAX_EDGE = 4096, MAX_PIXELS = 4_194_304, MAX_CHUNKS = 1024;
 const SIGNATURE = [137, 80, 78, 71, 13, 10, 26, 10];
 const ALLOWED = new Set(['IHDR', 'IDAT', 'IEND', 'sRGB', 'gAMA', 'cHRM']);
 const typedPrototype = Object.getPrototypeOf(Uint8Array.prototype);
@@ -87,7 +87,7 @@ function admit(bytes) {
   const width = bytes.readUInt32BE(header), height = bytes.readUInt32BE(header + 4);
   if (width === 0 || height === 0) throw fault('STRUCTURE', 'PNG width and height must be positive');
   if (width > MAX_EDGE || height > MAX_EDGE || width * height > MAX_PIXELS) {
-    throw fault('LIMIT', 'PNG exceeds the 4096-edge or 1048576-pixel input limit');
+    throw fault('LIMIT', 'PNG exceeds the 4096-edge or 4194304-pixel input limit');
   }
   const color = bytes[header + 9];
   if (bytes[header + 8] !== 8 || ![2, 6].includes(color)

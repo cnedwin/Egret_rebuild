@@ -99,7 +99,7 @@ Caller `/page/pageName` admission occurs after complete record capture, during s
 | `maxSourceIdUtf8Bytes` / `maxAssetIdUtf8Bytes` | 256 / 256 |
 | `maxNameUtf8Bytes` / `maxNameUtf16Units` / `maxTotalNameUtf16Units` | 1024 / 128 / 32768 |
 | `maxPageNameUtf8Bytes` / `maxFrames` | 255 / 1024; at least 1 frame |
-| `maxAtlasEdge` / `maxAtlasPixels` | 4096 / 1048576; positive edges and safe area |
+| `maxAtlasEdge` / `maxAtlasPixels` | 4096 / 4194304; positive edges and safe area |
 | `maxSourceDimension` / `maxDurationMilliseconds` | 65535 / 65535; positive integers |
 | `maxProvenanceFieldUtf8Bytes` / `maxProvenanceTotalUtf8Bytes` | 4096 / 24576; all source and page `origin/license/notice/sha256` values, source before page |
 | `maxDiagnosticPointerUtf8Bytes` | 2048; the exact rejection-span rule appears below |

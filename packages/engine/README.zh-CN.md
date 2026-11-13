@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-白鹭实验性公共门面，装配 `@egret/runtime` 与 `@egret/contracts`，管理逻辑生命周期、显示／帧访问、CPU 资源及 surface 独占预留；物理资源和安全归还由宿主负责。根入口保持无 DOM，独立 `@egret/engine/web` 导出 `createCanvasHost`，`@egret/engine/webgpu` 显式启用 WebGPU。Engine 为渲染准备固定使用 `robust-predicates` 3.0.3。
+白鹭实验性公共门面，装配 `@egret/runtime` 与 `@egret/contracts`，管理逻辑生命周期、显示／帧访问、CPU 资源及 surface 独占预留；物理资源和安全归还由宿主负责。根入口保持无 DOM；两个浏览器宿主是独立入口，均须显式导入：`@egret/engine/webgpu` 与 `@egret/engine/webgl2`。Engine 为渲染准备固定使用 `robust-predicates` 3.0.3。
 
 ## 工程预览 0.56.0 — 可恢复位图资源替换
 
@@ -24,7 +24,7 @@ DisplayObjectContainer.getChildIndex(child: DisplayObject): number 只读查询�
 
 `DisplayObjectContainer.removeChildren(): void` 清空显示层，同时保留节点、后代、资源及清理所有者。它认证真实接收者，空容器也先检查 Engine 再检查接收者生命周期，在全部直接边校验后无调用者 hook 提交；Sprite 和 Stage 继承方法，根值／类型、规格、依赖和协议不变。 阅读 [0.49 契约](../../knowledge-base/Cns/docs/容器清空子节点契约.md).
 
-工程预览 0.48.0 在 Runtime／Engine 根入口新增 `NineSliceBitmap` 及擦除类型 `NineSliceBitmapOptions`，借用真实 Texture 租约调整固定边框 NS1 内容；正向渲染使用显式纹理 WebGPU 宿主，Canvas mesh 被拒绝。阅读[契约](../../knowledge-base/Cns/docs/九宫格位图契约.md)及[有限证据](../../knowledge-base/Cns/docs/九宫格位图证据.md)。
+工程预览 0.48.0 在 Runtime／Engine 根入口新增 `NineSliceBitmap` 及擦除类型 `NineSliceBitmapOptions`，借用真实 Texture 租约调整固定边框 NS1 内容；两个共享宿主均可绘制。阅读[契约](../../knowledge-base/Cns/docs/九宫格位图契约.md)及[有限证据](../../knowledge-base/Cns/docs/九宫格位图证据.md)。
 
 根门面导出类型专用 `BoundsQueryOptions` 与继承的 `getBounds`，复用只读 `Rectangle2D`，见[接收者局部边界契约](../../knowledge-base/Cns/docs/显示内容边界契约.md)；布局及命中测试仍待完成。
 
@@ -40,25 +40,25 @@ Scope 或 Stage 清理失败仍继续后续步骤。`EgretError` 保留原 cause
 
 ## 显示与帧执行
 
-`DisplayObject` 提供 `x`、`y`、`scaleX`、`scaleY`、`rotation`、`alpha`、`visible` 与 `clipRect`；`Sprite.graphics` 拥有矩形填充。`Engine.captureFrame` 生成不可变 `RenderFrame2D`，`renderFrame` 另向创建时固定的同步宿主端口提交。没有渲染端口时捕获仍可用，渲染会拒绝。帧读取和执行拒绝重入；清理等待帧调用退出。
+`DisplayObject` 提供 `x`、`y`、`scaleX`、`scaleY`、`rotation`、`alpha`、`visible` 与 `clipRect`；`Sprite.graphics` 拥有矩形填充。`Engine.captureSharedFrame` 生成不可变 `SharedRenderFrame2D`，`renderSharedFrame` 另向 `createEngineForProfile` 在创建时固定的同步宿主端口提交。`createEngine` 创建的 Engine 没有渲染端口：捕获仍可用，渲染会拒绝。帧读取和执行拒绝重入；清理等待帧调用退出。
 
-Canvas DOM 类型与执行保留在 web 子入口。具体行为见[显示与帧合同](../../knowledge-base/Cns/docs/显示与帧执行合同.md)，绑定版本的证据见[实现记录](../../knowledge-base/Cns/docs/显示与帧执行实现记录.md)。
+DOM 类型与执行保留在两个宿主入口。具体行为见[共享渲染 Profile 契约](../../knowledge-base/Cns/docs/shared-render-profile-contract.md)。
 
 ## WebGPU 使用
 
-将 `HTMLCanvasElement` 作为 `canvas`。可选 readback 绑定下一次通过预检的帧；`renderFrame` 同步返回 `undefined`。`result.bytes` 是调用者所有的预乘 RGBA，与浏览器合成结果不同。`whenIdle` 截取已提交工作；只有 `close` 成功才证明安全归还，Engine 包装保留原 cause。见 [WebGPU 示例](../../examples/webgpu/README.zh-CN.md)。
+将 `HTMLCanvasElement` 作为 `canvas`。可选 readback 绑定下一次通过预检的帧；`renderSharedFrame` 同步返回 `undefined`。`result.bytes` 是调用者所有的预乘 RGBA，与浏览器合成结果不同。`whenIdle` 截取已提交工作；只有 `close` 成功才证明安全归还，Engine 包装保留原 cause。
 
 ```ts
-import { createEngine, Sprite } from '@egret/engine';
-import { createWebGPUHost } from '@egret/engine/webgpu';
+import { createEngineForProfile, Sprite, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
+import { createSharedWebGPUHost } from '@egret/engine/webgpu';
 
-const host = createWebGPUHost({ canvas, enableReadback: true });
-const engine = await createEngine({ host });
+const host = createSharedWebGPUHost({ canvas, enableReadback: true });
+const engine = await createEngineForProfile({ host }, SHARED_FRAME_PROFILE_2D);
 const rect = new Sprite();
 rect.graphics.beginFill(0x00ff00).drawRect(4, 4, 16, 16);
 engine.stage.addChild(rect);
 const pixels = host.requestReadback();
-engine.renderFrame({ width: 48, height: 40, clearColor: 0, clearAlpha: 0 });
+engine.renderSharedFrame({ width: 48, height: 40, clearColor: 0, clearAlpha: 0 });
 const result = await pixels;
 await engine.dispose();
 ```

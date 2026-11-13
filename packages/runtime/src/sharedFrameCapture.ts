@@ -37,6 +37,32 @@ interface Cursor {
   readonly drawn: boolean; readonly matrix: Matrix2D; readonly alpha: number; readonly clips: ClipChain | undefined;
   readonly material: SharedMaterial2D; readonly explicit: Boundary | undefined; readonly clip: Boundary | undefined; readonly effect: Boundary | undefined;
 }
+/**
+ * What the capture keeps of one node between frames: records it derived from values that have not changed
+ * since. Each record is kept with the very values it was derived from, and is used again only while they are
+ * the same values, so a frame captured with kept records holds what a frame captured without them holds.
+ * Nothing kept stands for a check: every node is admitted, charged and read for every frame.
+ */
+interface NodeCapture {
+  // The matrix of the node, from its parent's matrix and its own seven numbers.
+  parentMatrix: Matrix2D | undefined; x: number; y: number; scaleX: number; scaleY: number; rotation: number; anchorOffsetX: number; anchorOffsetY: number;
+  matrix: Matrix2D | undefined;
+  // The clip of the node, from its clip rectangle, its matrix and the clips above it; null for a rectangle without area.
+  clipSource: Rectangle2D | undefined; clipMatrix: Matrix2D | undefined; clipAbove: ClipChain | undefined; clipChain: ClipChain | null;
+  // The rectangles of its primitives, from the list of primitives, which only grows or is replaced, and its matrix.
+  primitives: readonly Primitive[] | undefined; rectsMatrix: Matrix2D | undefined; rects: Rectangle2D[];
+  // The rectangle and the region of its bitmap, from the bitmap's state, which is replaced when it changes.
+  bitmap: BitmapCaptureState | undefined; bitmapMatrix: Matrix2D | undefined; bitmapDomain: string | undefined; bitmapRect: Rectangle2D | undefined;
+  regionOf: BitmapCaptureState | undefined; region: TextureViewRegion2D | undefined; regionHash: number;
+  // The commands it last gave, in order. One is given again when every value in it would be the same.
+  commands: SharedRenderCommand2D[];
+}
+function nodeCapture(): NodeCapture {
+  return { parentMatrix: undefined, x: 0, y: 0, scaleX: 0, scaleY: 0, rotation: 0, anchorOffsetX: 0, anchorOffsetY: 0, matrix: undefined,
+    clipSource: undefined, clipMatrix: undefined, clipAbove: undefined, clipChain: null, primitives: undefined, rectsMatrix: undefined, rects: [],
+    bitmap: undefined, bitmapMatrix: undefined, bitmapDomain: undefined, bitmapRect: undefined, regionOf: undefined, region: undefined, regionHash: 0, commands: [] };
+}
+const is = Object.is;
 const freeze = Object.freeze;
 const defaultMaterial = createSharedMaterial2D({});
 const identity: Matrix2D = freeze({ a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
@@ -75,8 +101,9 @@ class CaptureBudget {
   public source(value: ImageData2D): void {
     if (this.sourceOwners.has(value)) return;
     debit(this.sourceOwners.size, 1, 64, 'FRAME_IMAGE_BUDGET');
-    const source = debit(this.sourceBytes, value.byteLength, 16777216, 'FRAME_IMAGE_BUDGET');
-    const canonical = debit(this.canonicalBytes, value.byteLength, 16777216, 'FRAME_IMAGE_BUDGET');
+    // 64 MiB of distinct pages in one frame. A Host may be configured to admit less.
+    const source = debit(this.sourceBytes, value.byteLength, 67108864, 'FRAME_IMAGE_BUDGET');
+    const canonical = debit(this.canonicalBytes, value.byteLength, 67108864, 'FRAME_IMAGE_BUDGET');
     this.sourceBytes = source; this.canonicalBytes = canonical;
     this.sourceOwners.add(value);
   }
@@ -198,8 +225,16 @@ function bitmapRect(bitmap: BitmapCaptureState, material: SharedMaterial2D): Rec
     height: turn === 1 || turn === 3 ? bitmap.sourceRect.width : bitmap.sourceRect.height };
 }
 
-/** Cold, iterative capture. All mutable owners stay inside this invocation. */
+/**
+ * Iterative capture. All mutable owners stay inside this invocation, except what each node keeps of its own
+ * derived records.
+ */
 export function collectSharedFrameContent(stage: Stage): CapturedSharedContent2D {
+  return captureSharedContent(stage, bitmapCaptureState, liveTree, true);
+}
+
+/** The same capture with nothing kept read or written: every record is derived anew. Never forwarded by a package root. */
+export function collectFreshSharedFrameContent(stage: Stage): CapturedSharedContent2D {
   return captureSharedContent(stage, bitmapCaptureState);
 }
 
@@ -222,7 +257,7 @@ export function collectSubtreeSharedFrameContent(stage: Stage, target: DisplayOb
  * walk: the rest of the tree is still admitted, because an admission refusal anywhere outranks it, and the
  * first refusal of visible content is reported only once the whole tree has been admitted.
  */
-function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'], tree: TreeView = liveTree): CapturedSharedContent2D {
+function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'], tree: TreeView = liveTree, keeping = false): CapturedSharedContent2D {
   if (!isStageRoot(stage)) throw new EgretError('FRAME_STAGE_INVALID');
   const engine = engineOf(stage)!;
   engine.assertOpen();
@@ -230,6 +265,8 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
   const commands: SharedRenderCommand2D[] = [], pages: SharedPage2D[] = [], regions: SharedRegion2D[] = [];
   const materials: SharedMaterial2D[] = [], geometries: Geometry[] = [];
   const pageIndexes = new Map<ImageData2D, number>(), regionIndexes = new Map<ImageData2D, Map<number, number[]>>();
+  // The value each region of the table was made from: a kept value met again is that region, with no number compared.
+  const regionValues: TextureViewRegion2D[] = [];
   const materialIndexes = new Map<string, number>(), materialObjects = new Map<SharedMaterial2D, number>(), geometryIndexes = new Map<Geometry, number>();
   const seen = new Set<DisplayObject>(), stack: Cursor[] = [];
   let nextOccurrence = 0, nextBoundary = 0, refused = false, refusal: unknown;
@@ -246,13 +283,14 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
     materials.push(material); materialIndexes.set(key, index); materialObjects.set(material, index);
     return index;
   }
-  function regionIndex(image: ImageData2D, value: TextureViewRegion2D): number {
-    const hash = regionHash(value), owner = regionIndexes.get(image), bucket = owner?.get(hash);
+  function regionIndex(image: ImageData2D, value: TextureViewRegion2D, hash = regionHash(value)): number {
+    const owner = regionIndexes.get(image), bucket = owner?.get(hash);
     if (bucket !== undefined) for (let position = 0; position < bucket.length; position++) {
       const candidate = bucket[position]!;
-      if (sameRegion(regions[candidate]!, value)) return candidate;
+      if (regionValues[candidate] === value || sameRegion(regions[candidate]!, value)) return candidate;
     }
-    debit(regions.length, 1, 128, 'FRAME_IMAGE_BUDGET');
+    // 4,096 distinct regions in one frame. A Host may be configured to admit fewer.
+    debit(regions.length, 1, 4096, 'FRAME_IMAGE_BUDGET');
     let pageIndex = pageIndexes.get(image);
     if (pageIndex === undefined) {
       budget.metadataBytes(96 + 8);
@@ -266,6 +304,7 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
     const index = regions.length;
     regions.push(freeze({ pageIndex, packed, logicalWidth: value.logicalWidth, logicalHeight: value.logicalHeight,
       trimX: value.trimX, trimY: value.trimY, quarterTurn: value.quarterTurn }));
+    regionValues.push(value);
     const entries = owner ?? new Map<number, number[]>();
     if (bucket === undefined) entries.set(hash, [index]); else bucket.push(index);
     if (owner === undefined) regionIndexes.set(image, entries);
@@ -308,13 +347,30 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
     if (!state.visible || state.alpha === 0 || alpha === 0) { close(explicit, undefined); return false; }
     if (!finite(alpha)) throw new EgretError('FRAME_TRANSFORM_INVALID');
     const material = state.sharedMaterial ?? inheritedMaterial;
-    const matrix = checkedMatrix(composeDisplayTransform(parentMatrix, state));
+    let kept = keeping ? state.sharedCapture as NodeCapture | undefined : undefined;
+    let matrix: Matrix2D;
+    if (kept !== undefined && kept.parentMatrix === parentMatrix && is(kept.x, state.x) && is(kept.y, state.y) && is(kept.scaleX, state.scaleX) && is(kept.scaleY, state.scaleY)
+      && is(kept.rotation, state.rotation) && is(kept.anchorOffsetX, state.anchorOffsetX) && is(kept.anchorOffsetY, state.anchorOffsetY)) matrix = kept.matrix!;
+    else {
+      matrix = checkedMatrix(composeDisplayTransform(parentMatrix, state));
+      if (keeping) {
+        if (kept === undefined) state.sharedCapture = kept = nodeCapture();
+        kept.parentMatrix = parentMatrix; kept.x = state.x; kept.y = state.y; kept.scaleX = state.scaleX; kept.scaleY = state.scaleY;
+        kept.rotation = state.rotation; kept.anchorOffsetX = state.anchorOffsetX; kept.anchorOffsetY = state.anchorOffsetY; kept.matrix = matrix;
+      }
+    }
     let clips = inheritedClips, clip: Boundary | undefined;
     if (state.clipRect !== undefined) {
-      const rect = rectangle(matrix, state.clipRect);
+      let chain: ClipChain | null;
+      if (kept !== undefined && kept.clipSource === state.clipRect && kept.clipMatrix === matrix && kept.clipAbove === clips) chain = kept.clipChain;
+      else {
+        const rect = rectangle(matrix, state.clipRect);
+        chain = rect.width === 0 || rect.height === 0 ? null : { previous: clips, clip: freeze({ matrix, rect }), depth: (clips?.depth ?? 0) + 1, flat: undefined };
+        if (kept !== undefined) { kept.clipSource = state.clipRect; kept.clipMatrix = matrix; kept.clipAbove = clips; kept.clipChain = chain; }
+      }
       clip = open('clip-enter');
-      if (rect.width === 0 || rect.height === 0) { close(explicit, clip); return false; }
-      clips = { previous: clips, clip: freeze({ matrix, rect }), depth: (clips?.depth ?? 0) + 1, flat: undefined };
+      if (chain === null) { close(explicit, clip); return false; }
+      clips = chain;
     }
     let effect:Boundary|undefined;
     if(state.renderEffect!==undefined){
@@ -333,24 +389,57 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
       // Parent clips apply to the composited result, not intermediate blur taps.
       clips=undefined;
     }
+    // The place of the next command among those this node gives.
+    let given = 0;
+    let rects: Rectangle2D[] | undefined;
+    if (kept !== undefined && primitiveCount !== 0) {
+      if (kept.primitives !== primitives || kept.rectsMatrix !== matrix) { kept.primitives = primitives; kept.rectsMatrix = matrix; kept.rects = []; }
+      rects = kept.rects;
+    }
     for (let index = 0; index < primitiveCount; index++) {
       const primitive = primitives[index]!, occurrenceId = nextOccurrence++;
-      const rect = rectangle(matrix, primitive.rect), effective = alpha * primitive.alpha;
+      let rect = rects?.[index];
+      if (rect === undefined) { rect = rectangle(matrix, primitive.rect); if (rects !== undefined) rects[index] = rect; }
+      const effective = alpha * primitive.alpha;
       if (rect.width === 0 || rect.height === 0 || effective === 0) { empty(occurrenceId); continue; }
       budget.emission(clips, false);
-      commands.push(freeze({ kind: 'rect', ordinal: commands.length, occurrenceId, materialIndex: materialIndex(material), matrix, opacity: alpha,
-        clips: flattenClips(clips), rect, fillColor: primitive.color, fillAlpha: primitive.alpha }));
+      const material2 = materialIndex(material), flat = flattenClips(clips), last = kept?.commands[given];
+      if (last !== undefined && last.kind === 'rect' && last.ordinal === commands.length && last.occurrenceId === occurrenceId && last.materialIndex === material2
+        && last.matrix === matrix && is(last.opacity, alpha) && last.clips === flat && last.rect === rect && last.fillColor === primitive.color && last.fillAlpha === primitive.alpha) commands.push(last);
+      else {
+        const command = freeze({ kind: 'rect' as const, ordinal: commands.length, occurrenceId, materialIndex: material2, matrix, opacity: alpha,
+          clips: flat, rect, fillColor: primitive.color, fillAlpha: primitive.alpha });
+        commands.push(command); if (kept !== undefined) kept.commands[given] = command;
+      }
+      given++;
     }
     if (bitmap !== undefined) {
       const occurrenceId = nextOccurrence++;
-      const rect = rectangle(matrix, bitmapRect(bitmap, material));
+      let rect: Rectangle2D;
+      if (kept !== undefined && kept.bitmap === bitmap && kept.bitmapMatrix === matrix && kept.bitmapDomain === material.samplingDomain) rect = kept.bitmapRect!;
+      else {
+        rect = rectangle(matrix, bitmapRect(bitmap, material));
+        if (kept !== undefined) { kept.bitmap = bitmap; kept.bitmapMatrix = matrix; kept.bitmapDomain = material.samplingDomain; kept.bitmapRect = rect; }
+      }
       const snapshot = readBitmapImage(bitmap.lease);
-      const region = bitmapRegion(bitmap);
+      let region: TextureViewRegion2D, hash: number;
+      if (kept !== undefined && kept.regionOf === bitmap) { region = kept.region!; hash = kept.regionHash; }
+      else {
+        region = bitmapRegion(bitmap); hash = regionHash(region);
+        if (kept !== undefined) { kept.regionOf = bitmap; kept.region = region; kept.regionHash = hash; }
+      }
       budget.source(snapshot.image);
-      const sharedRegionIndex = regionIndex(snapshot.image, region);
+      const sharedRegionIndex = regionIndex(snapshot.image, region, hash);
       budget.emission(clips, false);
-      commands.push(freeze({ kind: 'image', ordinal: commands.length, occurrenceId, materialIndex: materialIndex(material), matrix, opacity: alpha,
-        clips: flattenClips(clips), rect, regionIndex: sharedRegionIndex }));
+      const material2 = materialIndex(material), flat = flattenClips(clips), last = kept?.commands[given];
+      if (last !== undefined && last.kind === 'image' && last.ordinal === commands.length && last.occurrenceId === occurrenceId && last.materialIndex === material2
+        && last.matrix === matrix && is(last.opacity, alpha) && last.clips === flat && last.rect === rect && last.regionIndex === sharedRegionIndex) commands.push(last);
+      else {
+        const command = freeze({ kind: 'image' as const, ordinal: commands.length, occurrenceId, materialIndex: material2, matrix, opacity: alpha,
+          clips: flat, rect, regionIndex: sharedRegionIndex });
+        commands.push(command); if (kept !== undefined) kept.commands[given] = command;
+      }
+      given++;
     }
     if (mesh !== undefined) {
       const occurrenceId = nextOccurrence++, snapshot = readMeshCaptureImage(mesh);

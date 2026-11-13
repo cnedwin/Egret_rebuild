@@ -1,5 +1,7 @@
 # 自有纹理几何与 Mesh2D：有界契约
 
+> **部分已移除。** 本文描述的纹理帧 Profile（`captureTexturedFrame`、`TexturedRenderFrame2D` 及其宿主）已从 SDK 中移除。`Mesh2D` 与 `TexturedGeometry2D` 保留，并通过[共享渲染 Profile](shared-render-profile-contract.md)绘制。本文关于纹理 Profile 的部分保留为当时的记录。
+
 [English](../../en/docs/textured-geometry-and-mesh2d-contract.md) | 简体中文 · [证据与检查点](自有纹理几何与Mesh2D证据.md)
 
 该工作包提供不可变索引 XY/UV/light-RGBA 几何、纹理显示叶子、保留顺序的自有帧及显式渲染 profile。CPU 所有权可单独验收；整个包完成须由实际浏览器在既有矩形与 Bitmap 之间绘制可变形纹理 Mesh2D，保持顺序、裁剪、着色、alpha 与保留帧所有权。
@@ -193,7 +195,7 @@ Pass B 按 Graphics → Bitmap → Mesh → authored-order children 发出。Inv
 | Backing pixels / maxBackingPixels | — | 16,777,216 | ceil(logical edge*pixelRatio) 为安全正整数，乘积不超上限。 |
 | Readback / maxReadbackBytes | — | 67,108,864 | ceil(4W/256)*256*H staging +4WH output；共享 pending 总和。 |
 
-原 image 限制不变：source edge 4,096；source pixels 1,048,576；images/frame 64；crop views/frame 128；image table/projected crops 各 16,777,216 字节；scratch/pending texture 各 33,554,432 字节。collapse 不退 projection 准入；独立 loader 不合并身份。
+image 限制：source edge 4,096；source pixels 4,194,304（随共享 profile 由 1,048,576 提高；后面的字节预算不变，所以这个 profile 的一帧只能容纳一张最大尺寸的图像）；images/frame 64；crop views/frame 128；image table/projected crops 各 16,777,216 字节；scratch/pending texture 各 33,554,432 字节。collapse 不退 projection 准入；独立 loader 不合并身份。
 
 Options 各读取一次：canvas、device、onDiagnostic；pixelRatio,maxBackingPixels,maxCommands,maxClipRectangles,maxPreparedVertices,maxClipEdgeTests,maxUploadBytes,maxPendingUploadBytes,maxPendingFrames,maxReadbackBytes,enableReadback；最后 maxSourceTriangles,maxFrameGeometryBytes,maxPendingGeometryBytes,maxTupleComparisons。成功读取全部完成后检查语义；再读 policy.kind，仅 borrow 读 policy.device；canvas/policy/callback 先于按捕获顺序验证数字。读错误为 `WEBGPU_OPTIONS_INVALID`，精确保留 cause；语义 cause 为 TypeError/RangeError。准入前不调用 canvas/GPU；仅显式实例有 own nonwritable/nonconfigurable advertisement。
 

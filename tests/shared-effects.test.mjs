@@ -20,9 +20,6 @@ test('nested effects preserve painter boundaries and final clips',()=>scene(f=>{
  const frame=f.capture(),entries=frame.commands.filter(c=>c.reason?.startsWith('effect-'));assert.deepEqual(entries.map(c=>c.reason),['effect-enter','effect-enter','effect-exit','effect-exit']);assert.equal(entries[0].effect.clips.length,1);assert.equal(entries[1].effect.clips.length,0);assert.equal(entries[0].boundaryId,entries[3].boundaryId);
  assert.equal(frame.commands.find(c=>c.kind==='rect').clips.length,0);
 }));
-test('legacy capture explicitly refuses effect and remains usable after removal',()=>scene(f=>{
- f.group.renderEffect={blurRadius:1};assert.throws(()=>f.engine.captureFrame({width:64,height:64}),e=>e.code==='DISPLAY_EFFECT_UNSUPPORTED');assert.throws(()=>f.engine.captureTexturedFrame({width:64,height:64}),e=>e.code==='DISPLAY_EFFECT_UNSUPPORTED');f.group.renderEffect=undefined;assert.ok(f.engine.captureFrame({width:64,height:64}));
-}));
 test('disposed effect owner refuses writes',()=>scene(f=>{f.group.dispose();assert.throws(()=>{f.group.renderEffect={blurRadius:1};});}));
 test('effects require explicit Host capability before native allocation',()=>hosted(async f=>{f.sprite.renderEffect={blurRadius:1};const frame=f.frame(),before=f.ports.events.length;assert.throws(()=>f.stage(frame));assert.equal(f.ports.events.length,before);assert.equal(f.host.getStatus().pendingFrames,0);}));
 test('effect clip references honor the configured common clip budget',()=>hosted(async f=>{

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DisplayObject } from '@egret/engine';
 import { fixture, request, release, errorIs } from './text-raster-public-helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 // Copy this file to the real repository tests directory before running it.
 // The resource/display baseline precedes the new nested-entry import. This is
@@ -23,7 +24,7 @@ test('WC01 RED: genuine Engine/cache/TextField setup precedes the Canvas text en
   field.setRequest(request());
   const metrics = await field.prepare();
   base.engine.stage.addChild(field);
-  const frame = base.engine.captureFrame({ width: 80, height: 80 });
+  const frame = captureDrawn(base.engine, { width: 80, height: 80 });
   assert.equal(frame.commands.length, 1);
   assert.equal(frame.images.length, 1);
   assert.equal(metrics.raster.width, 12);
@@ -81,7 +82,7 @@ function phaseState(state, value) {
 test('WC01: new import is DOM-inert and the factory remains isolated from older entries', async () => {
   const script = `for (const key of ['window','document','HTMLCanvasElement','CanvasRenderingContext2D','ImageData'])
     Object.defineProperty(globalThis,key,{get(){throw new Error('import touched '+key)}});
-    const roots=await Promise.all(['@egret/engine','@egret/engine/web','@egret/engine/webgpu','@egret/engine/text'].map(value=>import(value)));
+    const roots=await Promise.all(['@egret/engine','@egret/engine/webgpu','@egret/engine/webgl2','@egret/engine/text'].map(value=>import(value)));
     if(roots.some(value=>'createCanvasTextRasterProvider' in value))throw new Error('factory leaked');
     const value=await import('@egret/engine/web/text');
     if(Object.keys(value).join(',')!=='createCanvasTextRasterProvider')throw new Error('unexpected export');`;
@@ -397,13 +398,13 @@ test('WC07/WC08: explicit cache invalidation leaves committed content until a ge
   const native = realm(t, { measure: () => ({ ...METRICS, width: advance }) });
   const base = await setup(t, (await factory())());
   base.engine.stage.addChild(base.field); base.field.setRequest(wcRequest()); await base.field.prepare();
-  const old = base.engine.captureFrame({ width: 80, height: 80 }), generation = base.cache.getStatus().fontGeneration;
+  const old = captureDrawn(base.engine, { width: 80, height: 80 }), generation = base.cache.getStatus().fontGeneration;
   advance = 12;
   assert.equal(base.field.getStatus().metrics.logicalBounds.width, 8, 'no hidden font observer');
   base.cache.invalidate(); assert.equal(base.cache.getStatus().fontGeneration, generation + 1);
-  assert.equal(base.engine.captureFrame({ width: 80, height: 80 }).images[0], old.images[0]);
+  assert.equal(captureDrawn(base.engine, { width: 80, height: 80 }).images[0], old.images[0]);
   const metrics = await base.field.prepare(); assert.equal(metrics.logicalBounds.width, 12);
-  assert.notEqual(base.engine.captureFrame({ width: 80, height: 80 }).images[0], old.images[0]);
+  assert.notEqual(captureDrawn(base.engine, { width: 80, height: 80 }).images[0], old.images[0]);
   assert.equal(base.state.requests[1].fontGeneration, generation + 1);
   base.scope.dispose(); await base.cache.whenIdle(); retired(native);
 });
@@ -419,15 +420,15 @@ test('WC08/WC09 CPU: shared fields commit separate leases, failure keeps old ima
   const one = base.field.prepare(), two = field2.prepare(); await Promise.all([one, two]);
   await base.cache.whenIdle(); assert.equal(base.state.plans.length, 1);
   assert.equal(base.cache.getStatus().activeCallerLeases, 2);
-  const old = base.engine.captureFrame({ width: 80, height: 80 });
+  const old = captureDrawn(base.engine, { width: 80, height: 80 });
   assert.equal(old.commands.length, 2); assert.equal(old.images.length, 1);
   scope2.dispose(); assert.equal(base.cache.getStatus().activeCallerLeases, 1);
-  assert.equal(base.engine.captureFrame({ width: 80, height: 80 }).commands.length, 1);
+  assert.equal(captureDrawn(base.engine, { width: 80, height: 80 }).commands.length, 1);
   fail = true; base.field.setRequest(wcRequest({ text: 'failed' }));
   await rejected(base.field.prepare(), 'TEXT_RASTER_FAILED', cause); await base.cache.whenIdle();
-  assert.equal(base.engine.captureFrame({ width: 80, height: 80 }).images[0], old.images[0]);
+  assert.equal(captureDrawn(base.engine, { width: 80, height: 80 }).images[0], old.images[0]);
   fail = false; blank = true; base.field.setRequest(wcRequest({ text: '' })); await base.field.prepare();
-  assert.equal(base.engine.captureFrame({ width: 80, height: 80 }).commands.length, 0);
+  assert.equal(captureDrawn(base.engine, { width: 80, height: 80 }).commands.length, 0);
   assert.equal(base.field.getStatus().metrics.logicalBounds.height, 10);
   assert.deepEqual(base.field.getBounds(), { x: 0, y: 0, width: 0, height: 0 });
   assert.equal(base.cache.getStatus().activeCallerLeases, 0);
@@ -452,9 +453,8 @@ test('WC09 CPU: real TF1 frames retain painter order, density placement, clips a
   base.engine.stage.addChild(bitmap);
   const image = lease.lease.value.imageData;
   let saved;
-  for (const textured of [false, true]) {
-    const frame = textured ? base.engine.captureTexturedFrame({ width: 80, height: 80 })
-      : base.engine.captureFrame({ width: 80, height: 80 });
+  {
+    const frame = captureDrawn(base.engine, { width: 80, height: 80 });
     saved ??= frame;
     assert.deepEqual(frame.commands.map(command => command.kind), ['rect', 'image', 'image']);
     assert.equal(frame.images.length, 1); assert.equal(frame.images[0], image);

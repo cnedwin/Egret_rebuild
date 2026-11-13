@@ -31,11 +31,10 @@
 
 - 核心按白鹭自己的规格独立实现。沿用熟悉的白鹭领域命名，遵循既有模块、API 与代码规范。机制研究、第三方依赖、白鹭适配与第一方实现分别登记来源及版本。
 - 保持包依赖图：engine 依赖 runtime/contracts，runtime 仅依赖 contracts，contracts 不依赖其他包。保留包 exports、strict 配置及不含 DOM/Node 环境全局的核心边界。公开示例与行为测试通过 `@egret/engine` 公共入口使用构建产物。
-- `@egret/engine/web` 保持 Canvas-only，不请求 WebGPU 或 robust-predicates 模块；WebGPU 使用显式 `@egret/engine/webgpu` 入口。rendering 独立编译项目保持无 DOM，仅引用 contracts。engine 精确固定的外部依赖 `robust-predicates` 3.0.3 仅允许在 rendering 通过包根入口的公共 `orient2d` 导入，适用 Unlicense，并与内部包依赖图和项目引用分别检查。
+- engine 有两个浏览器宿主入口，均须显式导入：`@egret/engine/webgpu` 与 `@egret/engine/webgl2`；根入口不加载其中任何一个。rendering 独立编译项目保持无 DOM，仅引用 contracts。engine 精确固定的外部依赖 `robust-predicates` 3.0.3 仅允许在 rendering 通过包根入口的公共 `orient2d` 导入，适用 Unlicense，并与内部包依赖图和项目引用分别检查。
 - 私有几何单元测试可直接导入构建后的 `engine/dist/rendering` 辅助模块，此例外不适用于公开行为测试。
 - 在已采纳的 T1 测试范围内，公开控制还使用构建后的 `@egret/engine/text`；`@egret/runtime/text` 仅用于 T02 入口身份／类型／源码检查。`tests/text-raster-private.test.mjs` 的私有 runtime 导入仅限 `packages/runtime/dist/text/budget.js`、`packages/runtime/dist/text/request.js`、`packages/runtime/dist/text/plan.js` 与 `packages/runtime/dist/EgretError.js`，必须按单元测试记录。
 - `tests/text-raster-allocation.test.mjs` 与 `tests/text-raster-materialization.test.mjs` 是使用真实初始化并恢复被拦截状态的受控构造／计数器故障单元。`tests/text-raster-residency-audit.test.mjs` 仅可在内存中为实际编译的 `packages/runtime/dist/text/TextRasterCache.js` 追加既有只读 `__textRetainedAudit`，注销其单模块加载钩子并保持磁盘字节不变。这些测试不新增产品导出、不授权任意私有导入，也不替代公开行为控制；逻辑计数／保留引用观察不能证明物理内存／GC、字体或渲染器验收。
-- 实验性 `tools/verify-webgpu-b1.mjs` 的普通样例通过精确生成的 import map 导入构建后的 `@egret/engine`、`@egret/engine/scene3d`、`@egret/engine/webgpu/scene3d`。唯一直接私有产品导入为 `packages/engine/dist/web/webgpuMeshPass.js`，仅用于绑定源码的固定原生 WGSL 编译／N4 诊断。服务范围仅限验证器显式模块白名单、这些公共入口的有限字面量导入闭包及固定别名；N1–N5 各自在仓库外的一次性副本中只修改一个已记录的构建文件。S1／S2／SN1 是独立的真实 Engine／Stage／Scope／Bitmap 组合阶段，SN1 只遗漏指定父节点裁剪。原有 oracle 与七正例／五控制／十一次绘制／8214 次比较的计划保持不变。本例外不允许普通示例或公开行为测试私有导入产品模块，也不授权新的产品导出或任意诊断钩子。
 - 公共行为变化同步规格、来源记录与必要回归。记录实际环境、未验证项、反例及修复；第三方研究或历史测试不替代自主产品验收。
 
 <!-- BRS-0.56.0-POLICY-BEGIN -->
@@ -44,7 +43,6 @@
 - 已构建 `@egret/engine` 根入口增加 `Engine.createBitmapResourceSlot(scope, bitmap)`，以及准确两个擦除类型 `BitmapResourceSlot` 与 `BitmapResourceSlotState`。保持包依赖图、无 DOM/Node 核心、私有装配 authority 和既有 Host 协议。槽借用初始有效绑定，仅拥有自己获取的新替换租约，只允许最新已接受意图提交。遵循[所选规格](knowledge-base/Cns/docs/位图资源槽规格.md)、[证据记录](knowledge-base/Cns/docs/位图资源槽核验.md)及[公共示例](examples/bitmap-resource-slot/README.zh-CN.md)。
 - `tests/bitmap-resource-slot-authority-unit.test.mjs`、`tests/bitmap-binding-ticket-authority-unit.test.mjs` 与 `tests/bitmap-resource-slot-authority-supplement.test.mjs` 是限定 UNIT 夹具，可通过已构建公共 `@egret/runtime` 契约与真实公共 runtime 对象构造自定义 context，并观察该构造登记的操作；外部目标对照使用真实公共 Engine。这项权限不增加 SDK 私有导入、加载 hook、原型拦截或产品导出，普通公共行为夹具及示例继续使用公共 SDK。
 - `tools/bitmap-resource-slot-types.mjs` 与 `tools/bitmap-resource-slot-boundary.mjs` 的专用 strict 和源码边界义务须与既有完整检查共同执行。冻结实际未抑制的诊断元组；每项指定类型／策略变异都须先取得全新完整基线，再单独观察拒绝。保持准确的选定公共类型、私有捕获／提交／清理桥、源码／产物身份及已声明依赖边界。
-- 原生组合须先独立审阅完整输入闭包快照，再由 `tools/verify-bitmap-resource-slot.mjs` 使用固定 Playwright 1.62.1、默认 Edge 且无额外 flags 执行。保留原始 import-map 反例、完整普通上下文及独立错误颜色上下文、未修改 RGBA 原始产物与清理记录。像素比较范围为六个字面采样点，完整帧留存用于复核。源码、UNIT、行为、strict／策略、浏览器、完整门禁与 PR/Main 交付分别记状态；完整 UI、Spine R020/V020 和迁移 R008/V006 保持 OPEN。
 <!-- BRS-0.56.0-POLICY-END -->
 
 <!-- LL-0.55.0-POLICY-BEGIN -->
@@ -86,12 +84,10 @@ AI 辅助贡献注明实际范围、资料与作者复核。保留参考出处�
 渲染变更按影响另行执行相应真实浏览器门禁：
 
 ```text
-node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>
-node tools/verify-webgpu.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>
-node tools/verify-webgpu-b1.mjs --playwright "<absolute-installed-playwright-package-directory>" --channel msedge --output "<absolute-new-output-directory-outside-repository>"
+node tools/browser-verify.mjs --suite shared-webgpu --playwright <installed-playwright-module> --output <private-output-directory>
 ```
 
-B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-base/Cns/docs/b1-browser-verifier.md)。使用已接受的固定依赖，浏览器默认启动且不附加 flags。沿用未变构建的已有证据时须明确比对身份；合并候选仍须重新通过完整集成 prepush。
+使用已接受的固定依赖，浏览器默认启动且不附加 flags。沿用未变构建的已有证据时须明确比对身份；合并候选仍须重新通过完整集成 prepush。
 
 发现与登记路径在 Windows 按大小写不敏感方式排除私有执行、依赖及生成目录，清单不能覆盖排除规则。普通公开 AGENTS 文件仍有效；只有两个封存的 Three r186 研究构建精确路径／哈希保留既定例外。
 
@@ -102,14 +98,14 @@ B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-
 <!-- SS1-PRIVILEGED-UNIT-POLICY-BEGIN -->
 ## SpriteSheet 原始操作单元
 
-`tests/spritesheet-fault.test.mjs` 与 `tests/spritesheet-fault-child.mjs` 组成隔离的 SS1 原始操作故障单元。子进程仅固定 `packages/runtime/dist/Bitmap.js` 与 `packages/runtime/dist/spriteSheet.js` 的身份；其单模块加载钩子仅可在内存中替换 Bitmap 唯一的原始操作捕获块，用于计数和一项指派故障／回调。SpriteSheet 经公共 `@egret/engine` 外观加载，磁盘字节保持不变。唯一的直接私有导入是子进程在公共外观加载之前导入已固定身份的 Bitmap 模块，以先取得真实原始类，再临时替换其原型的 `sourceRect` setter 与 `dispose` 方法。
+`tests/spritesheet-fault.test.mjs` 与 `tests/spritesheet-fault-child.mjs` 组成隔离的 SS1 原始操作故障单元。子进程在启动时读取一次 `packages/runtime/dist/Bitmap.js` 与 `packages/runtime/dist/spriteSheet.js` 构建后的身份，并在整个运行期间要求两者保持不变；它不记录任何更早的身份。其单模块加载钩子仅可在内存中替换 Bitmap 唯一的原始操作捕获块，用于计数和一项指派故障／回调。SpriteSheet 经公共 `@egret/engine` 外观加载，磁盘字节保持不变。唯一的直接私有导入是子进程在公共外观加载之前导入 Bitmap 模块，以先取得真实原始类，再临时替换其原型的 `sourceRect` setter 与 `dispose` 方法。
 
 每个用例须先在新子进程完成真实、无钩子的基线，再使用独立指派子进程，并在恢复后使用另一个新的无钩子基线子进程。注销钩子，在普通调用者／Scope／Engine 清理之前恢复原型描述符，并在每个子进程前后核对源码、编译产物、配置、单元与权限文件的完整字节以及属于当前克隆的包别名。注销钩子不卸载模块缓存。尚未取得句柄的构造故障不得虚构 Bitmap 退役；真实构造成功后发生裁剪／终止故障，只使用已捕获的原始 disposer，并保留主要原因与次要清理错误。这些单元不增加产品导出或依赖，不授权任意私有导入，也不授权普通示例／公开行为测试私有导入；不能证明物理 OOM、GC、安全性或渲染器验收。
 <!-- SS1-PRIVILEGED-UNIT-POLICY-END -->
 
 ## M0 当前元数据集成
 
-贡献者修改内容和独立的 contributions/*.json 声明。普通完整 prepush 只读验证推导出的当前元数据，不修改共享账本；维护者对最终候选运行 tools/contribution-metadata.mjs --base <target-base> --write 和 --check。不符合纯文档路径的候选还须运行 tools/prepush.mjs --integrated。EGRET_METADATA_BASE 为 prepush 选择同一确切基线，CI 使用 PR 基线 SHA。生成器仅作为 localization.json、knowledge-base/documentation-layout.json 与 source-origin.json 的受限规范写入入口，保留历史对象，拒绝受保护/私有输入，不刷新无关过期来源行。内容/基线变化会使集成失效。完整 hooks、独立来源与双语评审仍为必需。当前浏览器套件使用 tools/browser-verify.mjs；进阶/历史工具保留独立验收范围。参见[贡献流程](knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)。
+贡献者修改内容和独立的 contributions/*.json 声明。改动永远不携带 localization.json、knowledge-base/documentation-layout.json 或 source-origin.json：tools/prepush.mjs --integrated 和 CI 运行 tools/contribution-metadata.mjs --merge，它要求这三份文件与基线中的完全一致，并从上一次账本刷新开始规划元数据，但不写入。账本在合并之后由一个不携带其他任何内容的改动刷新：在从当前 main 拉出的分支上运行 tools/contribution-metadata.mjs --since-ledgers --write，再运行 --merge。不要在功能改动或文档改动里重新生成账本，也不要手工合并账本冲突；重新生成这次刷新即可。EGRET_METADATA_BASE 为 prepush 选择基线，CI 使用 PR 基线 SHA。生成器仅作为 localization.json、knowledge-base/documentation-layout.json 与 source-origin.json 的受限规范写入入口，保留历史对象，拒绝受保护/私有输入，不要手工刷新任何行。两次刷新之间，main 上的账本描述的是较早的状态；检查会自行推导当前清单。完整 hooks、独立来源与双语评审仍为必需。当前浏览器套件使用 tools/browser-verify.mjs；进阶/历史工具保留独立验收范围。参见[贡献流程](knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)。
 
 ## M1.1 热提交 UNIT
 
@@ -118,19 +114,6 @@ B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-
 仅 tests/webgpu-submission-buffer-private.test.mjs、tests/webgpu-submission-binding-private.test.mjs，以及 tests/webgpu-submission-controls.test.mjs 中的私有绑定保留案例，可直接导入 packages/engine/dist/web/webgpuBufferPool.js 与 webgpuBindingCache.js。这些明确标为 UNIT，不增加产品导出、任意 loader 或公开示例权限。同步 prototype 控制必须在 finally 中恢复精确 descriptor。
 
 tests/webgpu-submission-preparation.test.mjs 与 tests/webgpu-submission-precedence.test.mjs 使用真实公开 SDK 帧和受控 GPU 端口。同步 Float32Array／Uint8Array 构造故障与裁剪计数必须恢复原全局 descriptor；裁剪计数在进入原生 error scope 前结束。其结果只证明受控操作顺序／次数，不证明物理 OOM、总分配或速度。
-
-B1 源码检查后继保留历史上的 19 个捕获，当前仅准入三个指定辅助模块发射文件中的 21 个完整原生方法捕获 initializer。原缓冲区门面作为未链接模块接受检查；该检查不代表运行时执行。七条精确的仅静态导入边覆盖该门面及共享 B1 准备辅助模块；原有五个运行时入口闭包中的每条导入边仍须有实际解析证据。保留原生未链接模块构造、精确捕获消费、指定词法拒绝和原有十三案例调度。采集器的请求与收据容量是有限的验证边界，与产品资源预算分开。该许可不允许动态代码构造，也不是通用 Function 例外。
-
-## M1.2 增量渲染单元
-
-`tests/incremental-batch-private.test.mjs` 是 CPU UNIT，只使用构建后的私有 `engine/dist/rendering/preparedBatches2D.js` helper。合成 packed 数组验证拼接保留上限和有序来源关系，不证明公开准入或原生性能。在 `tests/incremental-preparation-batching.test.mjs` 中，仅明确标注的构造故障单元可以同步拦截 `Float32Array`，目标限于八图合批的精确拼接分配或原四元素 uniform 构造；必须在 `finally` 中恢复完整全局 descriptor，再进行异步完成观察和正常清理。公开行为使用真实 SDK 值及受控 GPU 端口。该权限不增加产品导出、任意 loader 或物理内存耗尽结论。
-
-新增 CPU UNIT 文件仅允许导入以下精确的已构建私有模块：
-
-- `tests/incremental-frame-cache-private.test.mjs`：`packages/runtime/dist/frameCaptureCache.js` 与 `packages/runtime/dist/displayVisualState.js`。所有权来自公开 SDK 构造的真实 Engine、Stage 和 Sprite。读取辅助模块的逻辑账本，以及在溢出前设置私有修订号，仅限这些 UNIT 用例。字节额度可能先于条目额度生效，须如实记录实际触达的限制。
-- `tests/incremental-preparation-private.test.mjs`：`packages/engine/dist/rendering/preparedFrameCache2D.js`、同一 rendering 目录中的 `prepareMixedDraws2D.js`、`prepareTexturedDraws2D.js`、`prepareRectangles2D.js`、`prepareImages2D.js`、`prepareTexturedMesh2D.js`、`packImageVertices2D.js`、`packTexturedMesh2D.js`、`texturedPreparationBudget2D.js`，以及 `packages/engine/dist/web/webgpuPass.js`。资源通过公开 SDK 构造。测试验证真实准备流程、完整键、本帧索引、逻辑计费、原子预算回放与终止失效。
-
-上述权限不允许加载器拦截、增加产品导出或在普通公开示例中导入私有模块。逻辑计费不证明实际内存用量或运行速度。
 
 ## M1.3 共享保留资源单元验证
 
@@ -152,7 +135,7 @@ B1 源码检查后继保留历史上的 19 个捕获，当前仅准入三个指�
 
 ## M1.4 WebGL2 公开行为与源码边界
 
-WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/webgl2/scene3d`。前者导出 `createSharedWebGL2Host`、原有九个擦除类型，以及宿主管理的 2D 图层缓存和有界效果所需的五个附加类型，后者导出 `createSharedSceneWebGL2Host` 及两个擦除类型。根入口与 Canvas 入口不加载 WebGL2 模块。场景模式采用固定的第一方装配，复用既有场景身份验证与打包辅助模块；仅启用私有场景模式的 Host 加载该精确场景模块。调用者提供的 shader、场景插件或原生对象均不是 SDK 输入。
+WebGL2 仅使用显式构建入口 `@egret/engine/webgl2`。该入口导出 `createSharedWebGL2Host`、原有九个擦除类型，以及宿主管理的 2D 图层缓存和有界效果所需的五个附加类型。根入口不加载 WebGL2 模块。调用者提供的 shader 或原生对象均不是 SDK 输入。
 
 `tests/shared-webgl2-controls.test.mjs` 与 `tests/fixtures/gl-shared-rendering.mjs` 使用构建后的公开 SDK 入口、真实 Engine 捕获，以及测试自有的 canvas、GL 和事件端口。属性 getter、指定故障、完成延迟与重入回调仅作用于这些自有端口／选项。形似帧的对象只用于拒绝对照，不能作为已接受夹具。除下述精确时钟对照外，这些单元不增加私有产品导入、加载钩子、全局／原型拦截或测试导出。它们证明受控准入、命令顺序、逻辑所有权与生命周期结果；真实浏览器像素、原生丢失／恢复及性能需要独立证据。既有选项／arena、共享存储与保留资源 UNIT 权限保持不变。
 
@@ -236,4 +219,19 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/web
 
 `tests/display-container-add-child-at-verified.test.mjs` 是带标签的 UNIT。它唯一的私有导入是构建后的 `packages/runtime/dist/displayTreeState.js`：读取 `captureChildInsertion` 以观察接收者的树是否被遍历，并用容器的当前列表调用 `publishUiTree`，使按索引插入所记住的结果作废。所有的树都来自公开 SDK 构造的真实 Engine、Scope 和显示对象；该单元不伪造任何畸形边。
 
-`tests/shared-frame-golden.test.mjs` 是 CPU UNIT，适用已有的对构建后 `engine/dist/rendering` 辅助模块的许可。它导入 `prepareSharedDraws2D.js`、`packSharedDraws2D.js`、`preparedSharedBatches2D.js` 和 `preparedBatches2D.js`，按 Host 的方式在通过公开 Engine 捕获的帧上驱动它们，并与捕获和准备路径改动之前记录的摘要比较。会改变已记录数值的改动需要单独评审；不得为了让改动通过而刷新摘要。这些摘要证明的是 CPU 输出相同，不证明 GPU 执行或速度。
+`tests/shared-frame-golden.test.mjs` 是 CPU UNIT，适用已有的对构建后 `engine/dist/rendering` 辅助模块的许可。它导入 `prepareSharedDraws2D.js`、`packSharedDraws2D.js`、`preparedSharedBatches2D.js` 和 `preparedBatches2D.js`，按 Host 的方式在通过公开 Engine 捕获的帧上驱动它们，并与两份记录比较。第一份包含捕获的帧、裁剪后的几何，以及顶点行一直都有的十一个值；它记录于同一页的绘制跨区域合批之前，所用的构建能重现捕获和准备路径改动之前记录的摘要。第二份包含实际上传的顶点行、uniform block 和批次；它记录于合批之后，并在一批可以包含多张页时重新记录过一次，那次改变的是 uniform block 和批次，顶点行没有变。会改变已记录数值的改动需要单独评审；不得为了让改动通过而刷新摘要。这些摘要证明的是 CPU 输出相同，不证明 GPU 执行或速度。
+
+`tests/shared-batching.test.mjs` 是 CPU UNIT，适用同一许可。它导入同样的四个辅助模块，在通过公开 Engine 捕获的帧上说明：哪些绘制合成一批，顶点行的最后两个值和区域表的各行存放什么，一批为各纹理单元指明哪些页，以及合批不退还任何逻辑费用。它证明的是 Host 执行的 CPU 计划，不证明 GPU 执行。
+
+`tests/shared-prepared-retention.test.mjs` 是 CPU UNIT，适用同一许可。它导入 `prepareSharedDraws2D.js`、`packSharedDraws2D.js` 和 `sharedPreparationRetention2D.js`，把每一帧准备两次：一次不使用保留的绘制，一次使用；几何、顶点行、收费和拒绝必须相同，既针对指明的改动，也针对随机改动的场景。它还说明哪些绘制被再次找到、绘制何时不带几何保留，以及保留内容的上限。它证明的是 CPU 输出相同，不证明 GPU 执行。
+
+`tests/shared-capture-retention.test.mjs` 是 CPU UNIT。它通过公开 Engine 构建并改动场景，把每一帧捕获两次：一次使用构建后的私有模块 `packages/runtime/dist/sharedFrameCapture.js` 中不读写任何保留记录的收集器，一次通过 `captureSharedFrame`。只有这个测试可以导入该模块。两次捕获必须相同，包括拒绝，既针对指明的改动，也针对随机改动的场景；它还说明哪些命令记录被再次给出，以及保留的内容不替代任何检查。
+
+## 证据通道
+
+拿某个包的源文件或构建产物和记录下来的字节做比较的检查，属于证据。它永远不决定一个改动能否合并。`tools/lib/evidence-lane.mjs` 列出这些工具和测试文件；`tools/verify.mjs` 与 `tools/test.mjs` 不包含它们，`node tools/evidence.mjs` 运行它们并报告哪些仍然成立。参见[证据通道](knowledge-base/Cns/docs/evidence-lane.md)。
+
+- 不要把这类检查加进合并序列，也不要为了让证据工具重新成立而给它加后继层。更新证据是一次单独评审的动作，否则就让它保持过期。
+- 重放已成为证据的十四个功能，其对外类型行为由 `tools/check-type-lanes.mjs` 和 `tests/types/type-lanes.json` 保持。只有在确实打算改变对外类型时才运行 `--record`，并审阅每一行变化。
+- 过期的证据检查既不是失败，也不是通过。永远不要把它报告成其中任何一种。
+- 非产品文件（第三方声明、冻结的编译器输入、台账）的哈希仍按原有规则。

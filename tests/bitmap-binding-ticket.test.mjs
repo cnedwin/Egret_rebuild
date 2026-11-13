@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import {Bitmap, EgretError, createEngine, createAssetType, createAssetRef,
   createImageData2D, createTexture, copyImageData2DPixels, isTexture} from '@egret/engine';
 import {host} from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const SPECS={
   oldLeft:{width:2,height:2,rgba:[255,0,0,255]},
@@ -30,7 +31,7 @@ function assertSameFields(bitmap,before){
 function geometry(bitmap){return {parent:bitmap.parent,x:bitmap.x,y:bitmap.y,scaleX:bitmap.scaleX,scaleY:bitmap.scaleY,
   anchorOffsetX:bitmap.anchorOffsetX,anchorOffsetY:bitmap.anchorOffsetY,visible:bitmap.visible,touchEnabled:bitmap.touchEnabled,hitArea:bitmap.hitArea};}
 function assertFrame(engine,colors,dimensions){
-  const frame=engine.captureFrame({width:32,height:16});
+  const frame=captureDrawn(engine, {width:32,height:16});
   assert.equal(frame.commands.length,2);assert.ok(frame.commands.every(command=>command.kind==='image'));
   assert.deepEqual(frame.images.map(image=>[image.width,image.height]),dimensions);
   assert.deepEqual(frame.images.map(image=>Array.from(copyImageData2DPixels(image).subarray(0,4))),colors);

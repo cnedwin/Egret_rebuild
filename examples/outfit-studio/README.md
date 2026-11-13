@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-The default compact view of Outfit Studio joins an editable character roster, two Spine instances, a sequence effect, a procedural 3D background and a native rename dialog in one Engine. The two characters start on the same atlas pages and carry independent outfits and playback state.
+The default compact view of Outfit Studio joins an editable character roster, two Spine instances, a sequence effect, a two-panel backdrop and a native rename dialog in one Engine. The two characters start on the same atlas pages and carry independent outfits and playback state.
 
 From the repository root, run `pnpm setup:dev` and then `node examples/outfit-studio/serve.mjs`. Open the printed local address and select WebGPU or WebGL2. The desktop view uses a 960 × 520 logical surface with pixel ratio 1. Use the mouse or Tab and Enter to choose a character and apply an outfit. Open Details, choose Rename, and select the field to edit it. Save checks the name against the scene's font set and commits it to the project. A refused name keeps the dialog open for a new draft. Cancel discards the draft. A mouse action requires release within the pressed row.
 

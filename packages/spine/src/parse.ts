@@ -34,7 +34,7 @@ export function parseSpineSetup(id:string,source:string,atlasText:string,pageNam
       const page=atlas.pages[i]!,lease=leases[i]!,texture=APPLY(LEASE_VALUE,lease,[]) as Texture,width=APPLY(WIDTH,texture,[]) as number,height=APPLY(HEIGHT,texture,[]) as number;
       const image=APPLY(IMAGE,texture,[]) as Texture['imageData'],rect=APPLY(RECT,texture,[]) as Texture['sourceRect'];
       if(APPLY(VIEW,texture,[])!==null||rect.x!==0||rect.y!==0||image.width!==width||image.height!==height)throw spineFault('PAGE_TEXTURE',id);
-      if(page.name!==pageNames[i]||!integer(width,1,4096)||!integer(height,1,4096)||width*height>1048576||page.width!==width||page.height!==height)throw spineFault('PAGE_DIMENSIONS',id);
+      if(page.name!==pageNames[i]||!integer(width,1,4096)||!integer(height,1,4096)||width*height>4194304||page.width!==width||page.height!==height)throw spineFault('PAGE_DIMENSIONS',id);
       // PMA transport needs its own qualified normalization/color profile.
       if(page.pma)throw spineFault('PAGE_ALPHA_PROFILE',id);
       page.setTexture(new PageTexture(width,height));pages.push(Object.freeze({name:page.name,imageId:imageIds[i]!,width,height,sourcePremultiplied:false}));

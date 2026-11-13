@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+> **已改用共享 Host。** 本示例默认用共享 WebGPU Host 绘制，加上 `?backend=webgl2` 时用共享 WebGL2 Host。此前使用的 Canvas Host 已移除；下文提到的验证命令为它编写，不再适用。下文关于 Canvas Host、选择 Canvas 以及已记录的 Canvas 检查的说明，描述的是早先的版本。
+
 这个限定示例只使用公开的 `@egret/engine`、`@egret/engine/web` 和 `@egret/engine/web/input`。160 × 100 的逻辑场景以 320 × 200 CSS 像素显示，绿色区域覆盖部分红色区域。输入派发有类型的开始、结束和激活事件；应用仍需显式渲染。
 
 先按仓库正常验证流程构建 SDK，再通过 HTTP 提供仓库根目录，打开 `examples/mouse-input/`。HTML 的 import map 包含三个公开入口和四个精确的 SDK 产物依赖：`@egret/runtime`、`@egret/contracts`、`#egret-textured-frame-state` 与 `#egret-mouse-input`。应用 JavaScript 仍只使用三个公开入口。允许的布局要求普通、已连接的 canvas，边框和内边距为零、object-fit 为 fill，所有祖先均无 CSS 变换。示例拥有 Engine 和 Scope，借用 canvas。

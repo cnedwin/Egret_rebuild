@@ -14,7 +14,7 @@ DisplayObjectContainer.getChildIndex(child: DisplayObject): number is a read-onl
 
 `DisplayObjectContainer.removeChildren(): void` clears a display layer while keeping its nodes, descendants, resources and cleanup owners alive. It authenticates the genuine receiver, checks Engine before receiver lifetime even when empty, preflights every direct edge and commits without caller hooks. Sprite and Stage inherit the method; root values/types, profiles, dependencies and protocol remain unchanged. Read the [0.49 contract](../../knowledge-base/en/docs/container-remove-children-contract.md).
 
-Engineering preview 0.48.0 adds `NineSliceBitmap` and erased `NineSliceBitmapOptions` at the Runtime/Engine roots. It borrows a genuine Texture lease and resizes fixed-border NS1 content; positive rendering uses the explicit textured WebGPU host, while Canvas mesh is refused. See the [contract](../../knowledge-base/en/docs/nine-slice-bitmap-contract.md) and [bounded evidence](../../knowledge-base/en/docs/nine-slice-bitmap-evidence.md).
+Engineering preview 0.48.0 adds `NineSliceBitmap` and erased `NineSliceBitmapOptions` at the Runtime/Engine roots. It borrows a genuine Texture lease and resizes fixed-border NS1 content; both shared Hosts draw it. See the [contract](../../knowledge-base/en/docs/nine-slice-bitmap-contract.md) and [bounded evidence](../../knowledge-base/en/docs/nine-slice-bitmap-evidence.md).
 
 Inherited `getBounds` reads authoritative receiver-local content with type-only `BoundsQueryOptions`, explicit node/primitive budgets and a fresh frozen result. Read the [bounds contract](../../knowledge-base/en/docs/display-content-bounds-contract.md).
 
@@ -32,7 +32,7 @@ Failed signal registration withdraws the subscription and attempts adapter rollb
 
 Internal visual state and iterative frame extraction retain authoritative tree order; public getters do not supply frame facts. Graphics belongs to its Sprite. Clip and rectangle values are copied and frozen so later edits cannot alter old frames. Detached but still-bound objects also obey engine closing restrictions.
 
-Through the engine facade, `DisplayObject` exposes `x`, `y`, `scaleX`, `scaleY`, `rotation`, `alpha`, `visible` and `clipRect`; `Sprite.graphics` owns rectangle fills. `Engine.captureFrame`/`renderFrame` capture/submit immutable `RenderFrame2D`. The separate `@egret/engine/web` entry exports `createCanvasHost`, while the root remains DOM-free. See the [display and frame contract](../../knowledge-base/en/docs/display-and-frame-execution-contract.md); automatic frame scheduling is outside that contract.
+Through the engine facade, `DisplayObject` exposes `x`, `y`, `scaleX`, `scaleY`, `rotation`, `alpha`, `visible` and `clipRect`; `Sprite.graphics` owns rectangle fills. `Engine.captureSharedFrame`/`renderSharedFrame` capture/submit immutable `SharedRenderFrame2D`. The browser Hosts are the separate `@egret/engine/webgpu` and `@egret/engine/webgl2` entries, while the root remains DOM-free. See the [shared render profile contract](../../knowledge-base/en/docs/shared-render-profile-contract.md); automatic frame scheduling is outside that contract.
 
 ## Verification and scope
 

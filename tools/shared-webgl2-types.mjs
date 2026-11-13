@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Finite unsuppressed consumers of the two explicit built WebGL2 entries.
+// Finite unsuppressed consumers of the explicit built WebGL2 entry.
 import assert from 'node:assert/strict';
 import {spawnSync} from 'node:child_process';
 import {readFileSync,realpathSync} from 'node:fs';
@@ -8,7 +8,7 @@ import {fileURLToPath} from 'node:url';
 import {fingerprintFile,ownerRelativePath,samePhysicalPath} from './lib/file-identity.mjs';
 
 const root=realpathSync(fileURLToPath(new URL('..',import.meta.url)));
-const inventoryPath='tests/types/shared-webgl2-diagnostic-expectations.json';
+const inventoryPath='tests/types/shared-webgl2-3-diagnostic-expectations.json';
 const inventory=JSON.parse(readFileSync(path.join(root,inventoryPath),'utf8'));
 assert.equal(inventory.schemaVersion,1);
 assert.equal(inventory.kind,'SHARED_WEBGL2_ACTUAL_STRICT_DIAGNOSTICS');
@@ -19,7 +19,7 @@ const expectedInputs=['tests/types/shared-webgl2-positive.ts','tests/types/share
   'tests/types/tsconfig.json','tsconfig.base.json'];
 assert.deepEqual(inventory.inputPins.map(pin=>pin.path),expectedInputs);
 assert.deepEqual(inventory.preservedSharedPins.map(pin=>pin.path),[
-  'tools/shared-render-types.mjs','tests/types/shared-render-diagnostic-expectations.json',
+  'tools/shared-render-types.mjs','tests/types/shared-render-2-diagnostic-expectations.json',
   'tests/types/shared-render-positive.ts','tests/types/shared-render-negative.ts',
   'tests/types/tsconfig.shared-render-positive.json','tests/types/tsconfig.shared-render-negative.json',
   'tests/types/tsconfig.dom-free.json']);
@@ -27,7 +27,7 @@ const snapshot=[inventoryPath,'tools/shared-webgl2-types.mjs',...expectedInputs]
 function verify(){
   for(const pin of [...snapshot,...inventory.inputPins,...inventory.preservedSharedPins])
     assert.deepEqual(fingerprintFile(root,pin.path),pin,'strict input changed: '+pin.path);
-  const retained=JSON.parse(readFileSync(path.join(root,'tests/types/shared-render-diagnostic-expectations.json'),'utf8'));
+  const retained=JSON.parse(readFileSync(path.join(root,'tests/types/shared-render-2-diagnostic-expectations.json'),'utf8'));
   assert.equal(retained.cases.length,24);assert.equal(retained.tuples.length,24);
   for(const name of ['contracts','runtime','engine'])assert.ok(samePhysicalPath(
     realpathSync(path.join(root,'node_modules/@egret',name)),realpathSync(path.join(root,'packages',name)),process.platform),'foreign SDK alias');
@@ -45,9 +45,9 @@ function diagnostics(stdout){
   }
   return tuples;
 }
-assert.equal(inventory.cases.length,26);
-assert.equal(new Set(inventory.cases.map(row=>row.name)).size,26);
-assert.equal(inventory.tuples.length,26);
+assert.equal(inventory.cases.length,20);
+assert.equal(new Set(inventory.cases.map(row=>row.name)).size,20);
+assert.equal(inventory.tuples.length,20);
 for(const lane of ['positive','negative']){
   verify();
   const file='tests/types/shared-webgl2-'+lane+'.ts';

@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 import {createBitmapButtonSession} from './session.mjs';
+import {chooseBackend, loadExampleHostFactory} from '../host.mjs';
 
 const query = new URL(location.href).searchParams;
-const backend = query.get('backend') === 'webgpu' ? 'webgpu' : 'canvas';
+const backend = chooseBackend();
 const preset = query.get('preset') === 'verification' ? 'verification' : 'preview';
 const canvas = document.querySelector('#scene'), status = document.querySelector('#status');
 const selector = document.querySelector('#backend');
@@ -31,12 +32,13 @@ function verificationHost(original) {
     stop: () => original.stop(),
     close: () => original.close(),
     setTimeout: (callback, delay) => original.setTimeout(callback, delay),
-    renderFrame(frame) {
+    sharedFrameProfile: original.sharedFrameProfile,
+    renderSharedFrame(frame) {
       // Arm before submission, including the first saved-up presentation.
       const ticket = original.requestReadback();
       readbacks.push(ticket);
       void ticket.catch(() => {});
-      return original.renderFrame(frame);
+      return original.renderSharedFrame(frame);
     },
   });
 }
@@ -95,8 +97,7 @@ function operationFailed(error) {
 document.querySelector('#close').addEventListener('click', () => { void close().catch(failed); });
 window.addEventListener('pagehide', () => { void close().catch(() => {}); }, {once: true});
 try {
-  const entry = backend === 'webgpu'
-    ? await import('@egret/engine/webgpu') : await import('@egret/engine/web');
+  const createHost = await loadExampleHostFactory(backend);
   if (!closeRequested) {
     const width = preset === 'verification' ? 24 : 192;
     const height = preset === 'verification' ? 24 : 128;
@@ -105,11 +106,9 @@ try {
     // Border/padding stay zero; CSS and input use these same logical dimensions.
     canvas.style.width = width + 'px';
     canvas.style.height = height + 'px';
-    const host = backend === 'webgpu'
-      ? entry.createWebGPUHost({canvas, pixelRatio: 1, enableReadback: preset === 'verification'})
-      : entry.createCanvasHost({canvas, pixelRatio: 1});
+    const host = createHost({canvas, pixelRatio: 1, enableReadback: preset === 'verification'});
     renderHost = host;
-    const sessionHost = preset === 'verification' && backend === 'webgpu' ? verificationHost(host) : host;
+    const sessionHost = preset === 'verification' ? verificationHost(host) : host;
     session = createBitmapButtonSession({host: sessionHost, preset, onUpdate: refresh});
     const operations = {
       enabled: () => session.toggleEnabled(),

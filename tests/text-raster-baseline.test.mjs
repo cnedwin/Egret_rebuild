@@ -5,6 +5,7 @@ import {
   createTexture, createAssetType, createAssetRef, isTexture, Bitmap,
 } from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 test('T01: genuine image and lease baseline precedes the explicit text cache feature', async () => {
   const adapter = host();
@@ -28,7 +29,7 @@ test('T01: genuine image and lease baseline precedes the explicit text cache fea
     assert.equal(first.resourceGeneration, second.resourceGeneration);
     assert.equal(first.value, second.value);
     engine.stage.addChild(new Bitmap(second));
-    const frame = engine.captureFrame({ width: 1, height: 1 });
+    const frame = captureDrawn(engine, { width: 1, height: 1 });
     assert.equal(frame.commands.length, 1);
     assert.equal(frame.commands[0].kind, 'image');
     assert.equal(frame.images[frame.commands[0].imageIndex], image);

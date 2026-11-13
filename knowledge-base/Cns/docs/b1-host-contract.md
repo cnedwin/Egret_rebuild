@@ -2,6 +2,8 @@
 
 [English](../../en/docs/b1-host-contract.md) · [验证证据](b1-host-evidence.md)
 
+> **已移除。** `scene3d` 入口以及矩形、图像和纹理帧的 WebGPU 宿主已从 SDK 中移除。本文档保留为当时的记录，不描述当前 SDK。当前的 2D 渲染见[共享渲染 Profile](shared-render-profile-contract.md)，当前的 3D 见 [World3D](world3d.md)。
+
 白鹭自主实现的 B1 主机把有明确预算的 3D 网格通道与既有 2D 矩形、图片通道接到同一生命周期和提交管理器上。这是内部工程阶段能力。`createB1WebGPUHost`、`renderSceneFrame`、`getSceneStatus` 尚未由包入口集中导出；当前源码签名不代表稳定公开 API。
 
 ## 准入与所有权

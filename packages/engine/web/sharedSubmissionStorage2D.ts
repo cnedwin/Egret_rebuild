@@ -1,9 +1,8 @@
-import type { SceneCardDraw3D, SceneDraw3D } from '../rendering/sceneFrame3D.js';
 import type { PreparedSharedFrame2D } from '../rendering/prepareSharedDraws2D.js';
 import { copySharedPagePixels } from '../rendering/sharedColor2D.js';
 import type { SharedPageCopyDiagnostics2D } from '../rendering/sharedColor2D.js';
 import { noteOwnedPreparationFailure } from '../rendering/ownedPreparationFailure2D.js';
-import type { ProjectionPlan2D,ProjectionView2D } from './imageProjections2D.js';
+import type { ProjectionPlan2D } from './imageProjections2D.js';
 
 /** Private logical limits; native capabilities remain in each concrete wrapper. */
 export interface SharedStorageLimits2D {
@@ -12,76 +11,26 @@ export interface SharedStorageLimits2D {
     readonly maxPendingFrames:number;
     readonly maxReadbackBytes:number;
     readonly maxPendingGeometryBytes:number;
+    /** Absent in a caller that predates the option: the profile's own 64 MiB. */
+    readonly maxFramePageBytes?:number;
 }
-/** Append scene images to the existing page namespace without changing overlay indices. */
-export function attachSharedSceneSources2D(prepared: PreparedSharedFrame2D,
-    cards: readonly SceneCardDraw3D[], draws: readonly SceneDraw3D[]): {
-    prepared: PreparedSharedFrame2D; projectionPlan: ProjectionPlan2D;
-    cardViews: readonly number[]; textureViews: ReadonlyMap<SceneDraw3D['geometry'], number>;
-} | undefined {
-    if (cards.length === 0 && !draws.some(draw => draw.texture && draw.geometry.indexCount !== 0)) return undefined;
-    const makeView = (image: SceneCardDraw3D['source']): ProjectionView2D => ({
-        image, region: {x: 0, y: 0, width: image.width, height: image.height}, byteLength: image.byteLength,
-    });
-    const views = prepared.frame.pages.map(page => makeView(page.source));
-    const ids = new Map(views.map((view, index) => [view.image, index]));
-    let extra = 0;
-    function append(image: SceneCardDraw3D['source']): number {
-        const existing = ids.get(image);
-        if (existing !== undefined) return existing;
-        const index = views.length, view = makeView(image);
-        extra += view.byteLength;
-        if (!Number.isSafeInteger(extra) || prepared.pageBytes + extra > 33554432) fail('budget');
-        ids.set(image, index);
-        views.push(view);
-        return index;
-    }
-    const cardViews = cards.map(card => append(card.source));
-    const textureViews = new Map<SceneDraw3D['geometry'], number>();
-    for (const draw of draws) {
-        if (draw.texture && draw.geometry.indexCount !== 0 && !textureViews.has(draw.geometry)) {
-            textureViews.set(draw.geometry, append(draw.texture.source));
-        }
-    }
-    const expanded = extra ? {...prepared, pageBytes: prepared.pageBytes + extra, upload: prepared.upload + extra} : prepared;
-    const projectionPlan = {views, commandViews: [], projectionBytes: expanded.pageBytes, scratchBytes: 0};
-    return {prepared: expanded, projectionPlan, cardViews, textureViews};
-}
-export function packSharedSceneCardUniform3D(card:SceneCardDraw3D):Float32Array<ArrayBuffer>{
-    const data=new Float32Array(28);
-    data.set(card.mvp,0);data.set(card.bounds,16);data.set(card.region,20);data[24]=card.alphaCutoff/255;
-    return data;
-}
-/** Fixed 128-byte uniform ABI for the optional opaque Lambert draw. */
-export function packSharedSceneLambertUniform3D(draw: SceneDraw3D): Float32Array<ArrayBuffer> {
-    const {normalMatrix, mirrored, lighting} = draw.lambert!;
-    const data = new Float32Array(32);
-    data.set(draw.mvp, 0);
-    for (let column = 0; column < 3; column++) {
-        for (let row = 0; row < 3; row++) data[16 + 4 * column + row] = normalMatrix[3 * column + row]!;
-    }
-    data[19] = lighting.ambient;
-    data[23] = mirrored ? -1 : 1;
-    data.set(lighting.direction, 28);
-    data[31] = lighting.intensity;
-    return data;
-}
+// Page texture bytes awaiting completion, and conversion memory held at once, are each bounded by
+// two frames' worth of pages, as the number of accepted frames is bounded by two.
+const pendingPageBytes=(framePageBytes:number|undefined):number=>2*Math.min(67108864,framePageBytes??67108864);
 export class SharedStorageError2D extends Error { public constructor(public readonly reason:'budget'|'device'|'backpressure'|'serial'){super('Shared storage '+reason);} }
 function fail(reason:SharedStorageError2D['reason']):never {throw noteOwnedPreparationFailure(new SharedStorageError2D(reason));}
-export interface SharedOwnerSnapshot2D { readonly pendingFrames:number; readonly pendingUploadBytes:number; readonly pendingReadbackBytes:number; readonly pendingTextureBytes:number; readonly pendingGeometryBytes:number; readonly pendingColorBytes:number; readonly pendingCanonicalBytes:number; readonly pendingSceneBytes:number; readonly pendingUniformBytes:number; readonly pendingDepthBytes:number; readonly serial:number; }
-export interface SharedSceneStorage2D { readonly sceneBytes:number; readonly uniformBytes:number; readonly depthBytes:number; }
-export interface SharedStorageFees2D { readonly prepared:PreparedSharedFrame2D; readonly options:SharedStorageLimits2D; readonly upload:number; readonly colorBytes:number; readonly effectBytes:number; readonly scene:SharedSceneStorage2D|undefined; }
+export interface SharedOwnerSnapshot2D { readonly pendingFrames:number; readonly pendingUploadBytes:number; readonly pendingReadbackBytes:number; readonly pendingTextureBytes:number; readonly pendingGeometryBytes:number; readonly pendingColorBytes:number; readonly pendingCanonicalBytes:number; readonly serial:number; }
+export interface SharedStorageFees2D { readonly prepared:PreparedSharedFrame2D; readonly options:SharedStorageLimits2D; readonly upload:number; readonly colorBytes:number; readonly effectBytes:number; }
 /** Concrete amounts authored by the backend after the shared logical fee check. */
 export interface SharedReadbackLayout2D { readonly rowPitch:number; readonly staging:number; readonly output:number; }
 export interface SharedStoragePlan2D extends SharedStorageFees2D,SharedReadbackLayout2D {}
 export interface SharedSubmissionStorage2D extends SharedStoragePlan2D { readonly projectionPlan:ProjectionPlan2D; }
 
 /** Joint logical fees precede readback layout, native limits, pending checks and payloads. */
-export function planSharedStorageFees2D(prepared:PreparedSharedFrame2D,options:SharedStorageLimits2D,scene?:SharedSceneStorage2D):SharedStorageFees2D {
-    const {width,height}=prepared,colorBytes=4*width*height,effectBytes=colorBytes*prepared.effects.targetCount,upload=prepared.upload+(scene?scene.sceneBytes+scene.uniformBytes:0);
+export function planSharedStorageFees2D(prepared:PreparedSharedFrame2D,options:SharedStorageLimits2D):SharedStorageFees2D {
+    const {width,height}=prepared,colorBytes=4*width*height,effectBytes=colorBytes*prepared.effects.targetCount,upload=prepared.upload;
     if(!Number.isSafeInteger(colorBytes)||colorBytes+effectBytes>67108864||!Number.isSafeInteger(upload)||upload>options.maxUploadBytes)fail('budget');
-    if(scene&&(scene.sceneBytes>4194304||scene.uniformBytes>4096||scene.depthBytes>16777216))fail('budget');
-    return {prepared,options,upload,colorBytes,effectBytes,scene};
+    return {prepared,options,upload,colorBytes,effectBytes};
 }
 /** No allocator or callback is accepted; the caller supplies its already computed layout. */
 export function withSharedReadbackLayout2D(fees:SharedStorageFees2D,layout:SharedReadbackLayout2D):SharedStoragePlan2D {
@@ -90,13 +39,12 @@ export function withSharedReadbackLayout2D(fees:SharedStorageFees2D,layout:Share
     return {...fees,rowPitch,staging,output};
 }
 export function checkSharedCapacity2D(storage:SharedStoragePlan2D,owner:SharedOwnerSnapshot2D,canonicalBytes=0,sourceCopy=0):void {
-    const {options,prepared,scene}=storage;
+    const {options,prepared}=storage;
     const check=(used:number,amount:number,limit:number):void=>{if(!Number.isSafeInteger(used)||used<0||!Number.isSafeInteger(amount)||amount<0||amount>limit-used)fail('backpressure');};
     check(owner.pendingFrames,1,options.maxPendingFrames);check(owner.pendingUploadBytes,storage.upload,options.maxPendingUploadBytes);
-    check(owner.pendingReadbackBytes,storage.staging+storage.output,options.maxReadbackBytes);check(owner.pendingTextureBytes,prepared.pageBytes,33554432);
+    check(owner.pendingReadbackBytes,storage.staging+storage.output,options.maxReadbackBytes);const pagesAtOnce=pendingPageBytes(options.maxFramePageBytes);check(owner.pendingTextureBytes,prepared.pageBytes,pagesAtOnce);
     check(owner.pendingGeometryBytes,prepared.geometryBytes,options.maxPendingGeometryBytes);check(owner.pendingColorBytes,storage.colorBytes+storage.effectBytes,134217728);
-    if(canonicalBytes+sourceCopy>33554432)fail('budget');check(owner.pendingCanonicalBytes,canonicalBytes+sourceCopy,33554432);
-    if(scene){check(owner.pendingSceneBytes,scene.sceneBytes,8388608);check(owner.pendingUniformBytes,scene.uniformBytes,8192);check(owner.pendingDepthBytes,scene.depthBytes,33554432);}
+    if(canonicalBytes+sourceCopy>pagesAtOnce)fail('budget');check(owner.pendingCanonicalBytes,canonicalBytes+sourceCopy,pagesAtOnce);
     if(!Number.isSafeInteger(owner.serial)||owner.serial<0||owner.serial>=Number.MAX_SAFE_INTEGER)fail('serial');
 }
 /** Only current READY identities authorize omitted whole-page copies. */

@@ -6,7 +6,8 @@ import {createHash,randomUUID} from 'node:crypto';
 import {types} from 'node:util';
 import {logicalPath,ownerRelativePath,samePhysicalPath} from '../lib/file-identity.mjs';
 
-const BLOB_LIMIT=8388608, METADATA_LIMIT=4194304, RECORD_LIMIT=8192;
+// A blob may be the decoded RGBA of one page of the largest area: 16 MiB.
+const BLOB_LIMIT=16777216, METADATA_LIMIT=4194304, RECORD_LIMIT=8192;
 const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
 const sameFile=(a,b)=>a.dev===b.dev&&a.ino===b.ino;
 function fail(code,message){const error=new Error(message);error.code=code;throw error;}

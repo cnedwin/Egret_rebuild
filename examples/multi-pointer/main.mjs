@@ -1,5 +1,5 @@
-import { createEngine, Sprite } from '@egret/engine';
-import { createCanvasHost } from '@egret/engine/web';
+import { createEngineForProfile, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
+import { createExampleHost } from '../host.mjs';
 import { createBrowserPointerInput } from '@egret/engine/web/pointer';
 
 const canvas = document.querySelector('#scene');
@@ -16,7 +16,7 @@ let closing = false, closePromise, renders = 0, maximumContacts = 0;
 
 function render() {
   if (!engine || closing || scope?.state !== 'open') return;
-  engine.renderFrame(frame); renders++;
+  engine.renderSharedFrame(frame); renders++;
 }
 function describe() {
   const contacts = [...active.values()];
@@ -53,7 +53,7 @@ function contact(notification) {
 }
 export const ready = (async () => {
   try {
-    engine = await createEngine({ host: createCanvasHost({ canvas, pixelRatio: window.devicePixelRatio || 1 }), onDiagnostic: value => { diagnostics.push(String(value.code ?? value)); status.textContent = 'Input diagnostic / 输入诊断：' + diagnostics.at(-1); } });
+    engine = await createEngineForProfile({ host: await createExampleHost({ canvas, pixelRatio: window.devicePixelRatio || 1 }), onDiagnostic: value => { diagnostics.push(String(value.code ?? value)); status.textContent = 'Input diagnostic / 输入诊断：' + diagnostics.at(-1); } }, SHARED_FRAME_PROFILE_2D);
     if (closing) { await engine.dispose(); return; }
     scope = engine.createScope(); root = scope.use(new Sprite()); engine.stage.addChild(root);
     function region(x, color) {

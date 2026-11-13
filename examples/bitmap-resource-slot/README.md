@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+> **Now on the shared Hosts.** This example draws with the shared WebGPU Host by default and with the shared WebGL2 Host under `?backend=webgl2`. The Canvas Host it used before has been removed; the verifier commands named below were written for it and no longer apply. Statements below about the Canvas Host, about choosing Canvas, and about recorded Canvas checks describe earlier versions.
+
 The example composes the public Engine resource slot, one ordinary Bitmap, transformed rectangular clipping, explicit hit areas, primary mouse input and two independent BitmapButtons. The original assets are red A (2×2, cropped to 1×2), green B (3×1), blue C (1×3) and a shared gray Button atlas. No external artwork is required.
 
 Serve the repository after its normal build. Open this directory's `index.html`; the backend links select Canvas or WebGPU. Click the left in-scene Button for B or the right for C, then complete, fail or cancel using the controls below the canvas. Click the upper target to retain its selection. The provider deliberately ignores cancellation until a controlled result arrives, so a superseded request can exercise genuine late-result retirement. Disposed or conflicted slots disable both in-scene replacement Buttons; the remaining controls reflect the available operations. Recreate slot explicitly restores the A binding owned by the application and creates a new slot that borrows it.

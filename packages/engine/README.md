@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Egret's experimental public facade assembles `@egret/runtime` and `@egret/contracts`. It manages logical lifecycle, display/frame access, CPU assets and exclusive surface reservations; hosts manage physical resources and safe return. The root entry remains DOM-free. The separate `@egret/engine/web` entry exports `createCanvasHost`; `@egret/engine/webgpu` explicitly enables WebGPU. Engine pins `robust-predicates` 3.0.3 for rendering preparation.
+Egret's experimental public facade assembles `@egret/runtime` and `@egret/contracts`. It manages logical lifecycle, display/frame access, CPU assets and exclusive surface reservations; hosts manage physical resources and safe return. The root entry remains DOM-free. The two browser Hosts are separate entries, each imported explicitly: `@egret/engine/webgpu` and `@egret/engine/webgl2`. Engine pins `robust-predicates` 3.0.3 for rendering preparation.
 
 ## Engineering preview 0.56.0 — recoverable Bitmap resource replacement
 
@@ -24,7 +24,7 @@ DisplayObjectContainer.getChildIndex(child: DisplayObject): number is a read-onl
 
 `DisplayObjectContainer.removeChildren(): void` clears a display layer while keeping its nodes, descendants, resources and cleanup owners alive. It authenticates the genuine receiver, checks Engine before receiver lifetime even when empty, preflights every direct edge and commits without caller hooks. Sprite and Stage inherit the method; root values/types, profiles, dependencies and protocol remain unchanged. Read the [0.49 contract](../../knowledge-base/en/docs/container-remove-children-contract.md).
 
-Engineering preview 0.48.0 adds `NineSliceBitmap` and erased `NineSliceBitmapOptions` at the Runtime/Engine roots. It borrows a genuine Texture lease and resizes fixed-border NS1 content; positive rendering uses the explicit textured WebGPU host, while Canvas mesh is refused. See the [contract](../../knowledge-base/en/docs/nine-slice-bitmap-contract.md) and [bounded evidence](../../knowledge-base/en/docs/nine-slice-bitmap-evidence.md).
+Engineering preview 0.48.0 adds `NineSliceBitmap` and erased `NineSliceBitmapOptions` at the Runtime/Engine roots. It borrows a genuine Texture lease and resizes fixed-border NS1 content; both shared Hosts draw it. See the [contract](../../knowledge-base/en/docs/nine-slice-bitmap-contract.md) and [bounded evidence](../../knowledge-base/en/docs/nine-slice-bitmap-evidence.md).
 
 The root facade exports type-only `BoundsQueryOptions` and inherited `getBounds`, reusing readonly `Rectangle2D`. Read the [receiver-local bounds contract](../../knowledge-base/en/docs/display-content-bounds-contract.md); layout and hit testing remain pending.
 
@@ -40,25 +40,25 @@ Scope or Stage cleanup failures do not stop later steps. `EgretError` retains th
 
 ## Display and frame execution
 
-`DisplayObject` exposes `x`, `y`, `scaleX`, `scaleY`, `rotation`, `alpha`, `visible` and `clipRect`. `Sprite.graphics` owns rectangle fills. `Engine.captureFrame` creates an immutable `RenderFrame2D`; `renderFrame` also submits it to the synchronous host port fixed at creation. Capture remains available without a render port, while rendering rejects. Frame reads and execution reject reentry; cleanup waits for the frame call to exit.
+`DisplayObject` exposes `x`, `y`, `scaleX`, `scaleY`, `rotation`, `alpha`, `visible` and `clipRect`. `Sprite.graphics` owns rectangle fills. `Engine.captureSharedFrame` creates an immutable `SharedRenderFrame2D`; `renderSharedFrame` also submits it to the synchronous Host port that `createEngineForProfile` fixed at creation. An Engine made by `createEngine` has no render port: capture remains available, while rendering rejects. Frame reads and execution reject reentry; cleanup waits for the frame call to exit.
 
-Canvas DOM types and execution stay in the web subentry. Read the [display and frame contract](../../knowledge-base/en/docs/display-and-frame-execution-contract.md) for exact behavior and the [implementation record](../../knowledge-base/en/docs/display-and-frame-implementation-record.md) for version-bound evidence.
+DOM types and execution stay in the two Host entries. Read the [shared render profile contract](../../knowledge-base/en/docs/shared-render-profile-contract.md) for exact behavior.
 
 ## WebGPU use
 
-Supply an `HTMLCanvasElement` as `canvas`. Optional readback arms the next accepted frame; `renderFrame` returns `undefined` synchronously. `result.bytes` is caller-owned premultiplied RGBA, rather than browser composition. `whenIdle` snapshots submitted work; only successful `close` proves safe return. Engine wrapping preserves the original cause. See the [WebGPU example](../../examples/webgpu/README.md).
+Supply an `HTMLCanvasElement` as `canvas`. Optional readback arms the next accepted frame; `renderSharedFrame` returns `undefined` synchronously. `result.bytes` is caller-owned premultiplied RGBA, rather than browser composition. `whenIdle` snapshots submitted work; only successful `close` proves safe return. Engine wrapping preserves the original cause.
 
 ```ts
-import { createEngine, Sprite } from '@egret/engine';
-import { createWebGPUHost } from '@egret/engine/webgpu';
+import { createEngineForProfile, Sprite, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
+import { createSharedWebGPUHost } from '@egret/engine/webgpu';
 
-const host = createWebGPUHost({ canvas, enableReadback: true });
-const engine = await createEngine({ host });
+const host = createSharedWebGPUHost({ canvas, enableReadback: true });
+const engine = await createEngineForProfile({ host }, SHARED_FRAME_PROFILE_2D);
 const rect = new Sprite();
 rect.graphics.beginFill(0x00ff00).drawRect(4, 4, 16, 16);
 engine.stage.addChild(rect);
 const pixels = host.requestReadback();
-engine.renderFrame({ width: 48, height: 40, clearColor: 0, clearAlpha: 0 });
+engine.renderSharedFrame({ width: 48, height: 40, clearColor: 0, clearAlpha: 0 });
 const result = await pixels;
 await engine.dispose();
 ```

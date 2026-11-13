@@ -1,5 +1,7 @@
 # Owned textured geometry and Mesh2D: bounded contract
 
+> **Partly removed.** The textured frame profile described here — `captureTexturedFrame`, `TexturedRenderFrame2D` and its Hosts — has been removed from the SDK. `Mesh2D` and `TexturedGeometry2D` remain, and are drawn through [the shared render profile](shared-render-profile-contract.md). The parts of this document about the textured profile are kept as a record.
+
 English | [简体中文](../../Cns/docs/自有纹理几何与Mesh2D契约.md) · [Evidence and checkpoints](textured-geometry-and-mesh2d-evidence.md)
 
 The package gives developers immutable indexed XY/UV/light-RGBA geometry, a textured display leaf, retained ordered frames and an explicit rendering profile. CPU ownership can be accepted separately. Package completion requires a real browser to draw a deformable textured Mesh2D between existing rectangles and Bitmaps, preserving order, clipping, tint, alpha and retained-frame ownership.
@@ -193,7 +195,7 @@ Capture-column limits below are implemented CPU admission rules. The host column
 | Backing pixels / maxBackingPixels | — | 16,777,216 | Positive safe-integer ceil(logical edge*pixelRatio), product within cap. |
 | Readback / maxReadbackBytes | — | 67,108,864 | ceil(4W/256)*256*H staging +4WH output; shared pending sum. |
 
-Unchanged image limits: source edge 4,096; source pixels 1,048,576; images/frame 64; crop views/frame 128; image table and projected crops each 16,777,216 bytes; scratch and pending texture each 33,554,432 bytes. Projection admission is not refunded by collapse. Independent loaders do not coalesce identity.
+Image limits: source edge 4,096; source pixels 4,194,304 (raised from 1,048,576 with the shared profile; the byte budgets that follow are unchanged, so one frame of this profile holds a single image of the largest size); images/frame 64; crop views/frame 128; image table and projected crops each 16,777,216 bytes; scratch and pending texture each 33,554,432 bytes. Projection admission is not refunded by collapse. Independent loaders do not coalesce identity.
 
 Options are captured once: canvas, device, onDiagnostic; pixelRatio,maxBackingPixels,maxCommands,maxClipRectangles,maxPreparedVertices,maxClipEdgeTests,maxUploadBytes,maxPendingUploadBytes,maxPendingFrames,maxReadbackBytes,enableReadback; then maxSourceTriangles,maxFrameGeometryBytes,maxPendingGeometryBytes,maxTupleComparisons. Complete successful reads before semantics. Read policy.kind then policy.device only for borrow; validate canvas/policy/callback before numeric fields in captured order. Read errors use `WEBGPU_OPTIONS_INVALID` with exact cause; semantic causes are TypeError/RangeError. No canvas/GPU call precedes admission. Only opted-in instances own the nonwritable/nonconfigurable advertisement.
 

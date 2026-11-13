@@ -47,7 +47,7 @@ function frame(value: unknown, width: number, height: number, sequence: boolean,
 }
 function sequence(value: unknown, id: string): SequenceClipInput {
   const input = object(value, ['atlasWidth','atlasHeight','frames'], id);
-  if (!integer(input.atlasWidth,1,4096) || !integer(input.atlasHeight,1,4096) || input.atlasWidth * input.atlasHeight > 1048576
+  if (!integer(input.atlasWidth,1,4096) || !integer(input.atlasHeight,1,4096) || input.atlasWidth * input.atlasHeight > 4194304
     || !Array.isArray(input.frames) || input.frames.length < 1 || input.frames.length > 1024) invalid(id);
   let total = 0;
   const frames = input.frames.map(value => {
@@ -63,7 +63,7 @@ function sequence(value: unknown, id: string): SequenceClipInput {
 export function parseAtlasArtifact(text: string, id: string): AtlasArtifact {
   const value = object(parse(text,id), ['format','pageDependency','width','height','frames','sequenceInput'],id);
   if (value.format !== 'egret.atlas/1' || value.pageDependency !== 0 || !integer(value.width,1,4096) || !integer(value.height,1,4096)
-    || value.width * value.height > 1048576 || !Array.isArray(value.frames) || value.frames.length < 1 || value.frames.length > 1024) invalid(id);
+    || value.width * value.height > 4194304 || !Array.isArray(value.frames) || value.frames.length < 1 || value.frames.length > 1024) invalid(id);
   const input = sequence(value.sequenceInput,id);
   if (input.atlasWidth !== value.width || input.atlasHeight !== value.height || input.frames.length !== value.frames.length) invalid(id);
   const names = new Set<string>(); let units = 0;

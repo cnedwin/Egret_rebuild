@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+> **Now on the shared Hosts.** This example draws with the shared WebGPU Host by default and with the shared WebGL2 Host under `?backend=webgl2`. The Canvas Host it used before has been removed; the verifier commands named below were written for it and no longer apply. Statements below about the Canvas Host, about choosing Canvas, and about recorded Canvas checks describe earlier versions.
+
 Engineering preview 0.53.0 · S107 / V058. This example joins one real asset lease, named SpriteSheet crops, the Engine clock and authored Bitmap pivots. It introduces no Engine API, runtime dependency or automatic timer.
 
 Build with the repository's fixed Node (`node tools/build.mjs`), serve the repository root with an ordinary local HTTP static server, then open `/examples/anchored-atlas-playback/`. The explicit import map resolves built public package entries. Canvas is the default. Choose WebGPU in the selector, or use `?backend=webgpu`; a compatible browser and secure context such as localhost are required. An unavailable backend is shown explicitly. Changing backend reloads into a fresh session.

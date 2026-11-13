@@ -2,6 +2,8 @@
 
 [English](../../en/docs/shared-render-profile-contract.md) | 中文
 
+> **场景模式已移除。** `createSharedSceneWebGPUHost`、`createSharedSceneWebGL2Host`、`renderSceneSharedFrame`、`stageSceneSharedFrame`、`getSceneStatus` 及 B1 路径已从 SDK 中移除。下文中描述它们的段落是记录，不是当前行为。
+
 2026-10-18 · M1.3 · 实现规格；执行与验收尚待完成
 
 ## 目标与兼容
@@ -26,7 +28,7 @@ Mesh2D 的几何泛型默认 TexturedGeometry2D；clear/dispose 后 getter 保�
 
 可选入口增加 `createSharedWebGPUHost`、`createSharedSceneWebGPUHost`，分别提供 `renderSharedFrame`、`renderSceneSharedFrame`，复用内部 Host/设备/提交所有者。新工厂只声明支持的协议；不支持的旧方法在读取帧内容前拒绝。场景工厂要求显式 outputAlpha 为 opaque，overlay 也必须 opaque；通用二维工厂默认 premultiplied。旧工厂行为不变。Canvas 继续隔离在 `@egret/engine/web`；默认 SDK 不增加浏览器或 Spine 依赖。
 
-`SharedWebGPUHostOptions` 仅在既有 textured 选项上增加 outputAlpha。快照依次读取原有 18 个顶层字段、outputAlpha，再读取所选设备策略。`SharedWebGPUReadback.alphaMode` 如实返回 premultiplied 或 opaque；旧读回类型保留原有 premultiplied 字面值。`getSharedStatus()` 返回既有 Host 状态，以及 pendingGeometryBytes、pendingColorBytes 和 pendingCanonicalBytes；最后一项仅统计已接受且仍由提交保有的转换输出，不代表全部临时内存。共享场景另保留既有 `getSceneStatus()` 合同。
+`SharedWebGPUHostOptions` 在既有 textured 选项上增加 outputAlpha 和三个页上限：`maxFrameRegions`、`maxFramePageBytes`、`maxReadyPageBytes`。快照依次读取原有 18 个顶层字段、outputAlpha、三个页上限，再读取所选设备策略。页上限在所有更早的选项之后才做判定。`SharedWebGPUReadback.alphaMode` 如实返回 premultiplied 或 opaque；旧读回类型保留原有 premultiplied 字面值。`getSharedStatus()` 返回既有 Host 状态，以及 pendingGeometryBytes、pendingColorBytes 和 pendingCanonicalBytes；最后一项仅统计已接受且仍由提交保有的转换输出，不代表全部临时内存。共享场景另保留既有 `getSceneStatus()` 合同。
 
 ## 输入阶段与错误
 
@@ -106,11 +108,21 @@ WebGPU hardware linear 先解码 sRGB texel 再过滤。bounded region 路径接
 
 绘制顺序保持节点矩形、Bitmap、Mesh、已提交文字、子节点。命令保留连续 ordinal、源 occurrence、材质、透明度和有序裁剪。遍历到的 isolate 节点即使隐藏、alpha 零或无内容，仍保留 enter/exit；整个祖先子树被跳过时不生成后代事件。有效裁剪边界及经过验证的空/退化/全裁空内容保留屏障。这提供渲染边界，不表示完整 Spine slot 适配已实现。捕获只为其自身已证明为空的合格内容发出公共 empty 屏障；Host 后续裁剪保留保存帧及其表不变，将新发现的空绘制保留为私有有序准备边界。资源或能力拒绝仍是错误。
 
-只合批连续兼容绘制，保留完整原 ordinal 范围，不跨 A–B–A、不同区域、空事件或屏障。共享页不要求所有区域合成一次绘制。缓存命中仍执行当前资源/Scope 检查和完整逻辑收费；暂未缓存的部分可采用正确冷路径。
+只合批连续兼容绘制，保留完整原 ordinal 范围，不跨 A–B–A、空事件或屏障。连续的绘制可以合成一批，区域、透明度和页不同也可以，条件是它们的区域落在区域表的同一个窗口内，并且这一批采样的页不超过八张。一批内的绘制按原顺序绘制，所以页 A、B、A 的一批保持这个顺序。使用保留的记录时，仍执行当前资源/Scope 检查和完整逻辑收费。
 
 新场景方法接收真实既有 SceneFrame3D 和 opaque 共享帧。保留有限 opaque 顶点 RGB 几何、现有 MVP/index 及反向深度 clear 0/greater/write。每个编码 RGB 顶点先解码，再 f32 打包并透视插值；旧编码 B1 着色器/参考独立保留。场景与 UI 原子规划，共用一个自有目标、一次清屏和一次 resolve；UI 不受三维深度影响，不支持的场景/alpha 组合在提交前拒绝。
 
-首版共享捕获与几何准备采用完整冷路径，既有派生缓存配置及地址规则保持不变，不另设缓存额度。相邻合批仍属于本阶段要求，并使用同一个 8 MiB 拼接所有者。兼容条件包含完整材质、区域、源、采样策略、透明度及有序裁剪；逻辑费用先于物理合并收取。冷路径正确性与性能验收分别判断。
+共享捕获与几何准备在帧与帧之间保留派生记录，规则见[保留的记录](#保留的记录)。相邻合批仍属于本阶段要求，并使用同一个 8 MiB 拼接所有者。兼容条件包含完整材质、绘制种类、绘制是否带区域、采样策略、区域表窗口及有序裁剪。区域、透明度和页不在其中：每个顶点自带区域在窗口内的位置和所属绘制的透明度，区域在表中的那一行写明它所在的页。一批最多采样八张页；第九张页开始下一批。逻辑费用先于物理合并收取。冷路径正确性与性能验收分别判断。
+
+## 保留的记录
+
+使用保留记录捕获或准备的帧，与不使用它们捕获或准备的帧完全相同：每一个值、属性的顺序、每一笔逻辑收费，以及每一次拒绝连同它的原因和位置。保留的记录只节省工作，不改变任何别的东西。一条记录和派生它的那些值一起保留，只有这些值没有变时才再次使用；数字按 Object.is 比较，所以两个零不同，对象按身份比较。
+
+**捕获。** 每个显示节点保留捕获从它派生的内容：它的矩阵，来自父节点的矩阵和它自己的位置、缩放、旋转和锚点；它的裁剪，来自裁剪矩形、矩阵和它之上的裁剪；各图元的矩形；位图的矩形和区域；以及它上一次给出的命令。只有当命令里的每个值都不变时才再次给出同一条命令，包括它的 ordinal、occurrence 和指向帧内各表的索引，所以一条命令记录可以被多帧共用，而它的索引所指的始终是该帧自己的表。每次捕获都生成新的帧、新的命令列表和新的表。保留的内容不替代任何检查：每一帧都对每个节点计数、检查和收费，每一帧都在原来的位置读取每个 lease、Texture 和 TextField Scope。Mesh 和 TextField 的内容以及渲染效果每一帧都重新派生。节点保留的内容不持有资源，也不持有节点，并随节点一起消失。
+
+**准备。** 每个 Host 保留它完成了几何阶段的上一帧里已准备的绘制：每个绘制裁剪后的多边形、这些多边形被收取的费用，以及打包之后它的顶点行的一份副本和相应的费用。下一帧的一个绘制与保留的绘制在以下各项都相同时取用它：种类、矩阵、矩形和填充或几何、有序的裁剪、材质、区域和页，并且两者的透明度同为零或同不为零；同时后备尺寸、像素比和限制也相同。材质、页和几何按身份比较，与本配置中所有资源的比较方式一致。保留的绘制在上一帧所在的位置查找，范围是前一个绘制被找到的位置两侧各两条命令之内。先重放它的费用，要么全部计入，要么全不计入：只要有一项超出该帧预算的剩余额度，这个绘制就按没有保留内容的方式准备，由那次准备决定拒绝。绘制的区域在区域表中的位置和它的透明度每一帧都写入顶点行；每个绘制的 128 字节块、区域表、批次和上传每一帧都重新生成。每条命令自身的数值和每一项帧级限制每一帧都检查。
+
+连续两帧都发生变化的绘制，保留时不带多边形和顶点行，直到它有一帧保持不变；这时再准备一次，并完整保留。被拒绝的帧不改变此前保留的内容。Host 保留的内容上限为 65,536 个绘制和 32 MiB，按下面[预算与生命周期](#预算与生命周期)的逻辑口径计算：一条记录 32 字节加每个字段 8 字节，一个数组 24 字节加每个元素 8 字节，类型化存储按其字节长度，每个保留的绘制另计 256 字节。按最大限制被接受的一帧，保留的内容低于这个上限。放不下的绘制每一帧都重新准备。Host 关闭后，或在非活动状态下被要求绘制一帧时，不再保留任何内容；后备尺寸、像素比或限制改变时，丢弃已保留的内容。WebGL2 Host 烘焙到图层里的帧既不使用、也不替换普通帧保留的内容。
 
 ## 预算与生命周期
 
@@ -118,20 +130,26 @@ WebGPU hardware linear 先解码 sRGB texel 再过滤。bounded region 路径接
 
 | 账本 | 上限 |
 | --- | --- |
-| 源 | 保留每轴≤4096、像素≤1,048,576、每图≤4 MiB |
-| 帧页表 | ≤64 个不同源；源字节≤16 MiB，canonical 请求字节另计≤16 MiB，包含 ready 命中 |
-| 区域/材质 | ≤128 个区域，≤256 个完整材质 |
+| 源 | 每轴≤4096、像素≤4,194,304、每图≤16 MiB |
+| 帧页表 | ≤64 个不同源；源字节≤64 MiB，canonical 请求字节另计≤64 MiB，包含 ready 命中。Host 最多接纳它的 `maxFramePageBytes` |
+| 区域/材质 | ≤4,096 个区域，≤256 个完整材质。Host 最多接纳它的 `maxFrameRegions` 个区域 |
 | 树/命令 | 节点、authoring units、按 occurrence 收费的源三角形、绘制加屏障各≤65,536；有序裁剪引用≤262,144 |
 | 几何 | V≤65,536、I≤196,608，索引为三元组；新载荷88V+4I、旧载荷64V+4I；单项≤4,980,736字节，每帧≤128项/16 MiB |
 | 准备 | 顶点≤1,048,576、谓词≤4,194,304、tuple 比较≤1,048,576、裁剪多边形角≤64 |
-| 上传 | 默认每次32 MiB/在途64 MiB；新二维顶点44字节、非动态 draw uniform 128字节，另计生成索引/B1 |
-| 页临时/驻留 | 在途纹理≤32 MiB，CPU 转换/上传临时≤32 MiB；全部配置共享 ready≤32 MiB/256项 |
-| 派生缓存 | 既有每 Stage 16 MiB/65,536项、每 Host 16 MiB/4,096地址；新旧配置共用 |
+| 上传 | 默认每次32 MiB/在途64 MiB；新二维顶点52字节、非动态 draw uniform 128字节、帧内每个区域48字节，另计生成索引/B1 |
+| 页临时/驻留 | 在途纹理和 CPU 转换/上传临时各自不超过 Host 的 `maxFramePageBytes` 的两倍，默认即 128 MiB。共享 Host 的 ready 页不超过它的 `maxReadyPageBytes`（默认 128 MiB）和 256 项；其他配置的 WebGPU Host 为 32 MiB/256 项 |
+| 保留的记录 | 每个显示节点：捕获从它派生的记录；每个 Host：上一帧已准备的绘制，最多 65,536 个绘制、32 MiB |
 | 活跃颜色目标 | 每 backing 像素4字节，每帧≤64 MiB，最多两帧合计≤128 MiB；配置/设备可更严 |
 | 复用留存 | 缓冲与自有颜色/深度目标共用32 MiB/4,096项的 idle 加返还预留权威 |
 | 其他既有限制 | 合批拼接≤8 MiB；回读 staging 加输出默认≤64 MiB；原 B1 几何/uniform/深度限制保留，其中深度每次≤16 MiB/在途≤32 MiB |
 
-顶点 stride 为44字节：position float32x2 位于0，UV float32x2 位于8，light float32x4 位于16，dark float32x3 位于32。128字节 draw uniform 为八个对齐 vec4：viewport/opacity位于0，light/tint位于16，dark位于32，逻辑尺寸/trim位于48，内容尺寸/packed原点位于64，packed尺寸/转向/域位于80，采样策略位于96，页/执行数据位于112。未使用padding为零；opacity、顶点alpha和材质alpha各应用一次。即使合批减少物理分配，每个逻辑draw仍收128字节uniform费用。blend/output策略及资源/会话身份继续作为完整独立key字段。
+顶点 stride 为52字节：position float32x2 位于0，UV float32x2 位于8，light float32x4 位于16，dark float32x3 位于32，44处是一个 float32x2，存放该绘制的区域在区域表窗口内的位置，以及该绘制的透明度。这两个值在一次绘制的所有顶点上相同，不经插值直接到达片元阶段。128字节 draw uniform 为八个对齐 vec4，只放整批相同的内容：viewport位于0，light/tint位于16，dark位于32，八个纹理单元各自的页位于48和64，采样域位于80处的最后一个值，采样策略位于96，执行数据位于112。48和64处的八个值按纹理单元给出该单元所持页在帧内的索引，不持页的单元为 0xffffffff；不带区域的绘制，这八个值为零。0处的后两个值、80处的前三个值、112处的前两个值为零；在不同区域、不同页可以合批之前，这些位置放的是透明度、区域和页的尺寸。未使用padding为零；opacity、顶点alpha和材质alpha各应用一次，顺序与原来相同。即使合批减少物理分配，每个逻辑draw仍收128字节uniform费用。
+
+区域表按帧内顺序为每个区域存放十二个 uint32：逻辑宽高、trim 的 x 和 y；按逻辑方向的内容宽高、packed 的 x 和 y；四分之一转数、区域所在页在帧内的索引，以及该页的宽和高。帧内只要有带区域的绘制，区域表就随该帧上传一次，占一个 uniform buffer，按帧内每个区域48字节收费。绘制在顶点阶段通过一个窗口读取它，一个窗口是连续的341个区域，共16,368字节，这是每个 WebGL2 上下文都保证的 uniform block 大小能容纳的最大数量。不超过341个区域的帧只有一个窗口。更大的帧有多个窗口，下一个绘制的区域落在另一个窗口时，当前这一批结束。不带区域的绘制不读区域表；没有带区域绘制的帧不上传区域表。
+
+只有一张页的一批由带一个页纹理的管线绘制，直接读取该纹理。有二到八张页的一批由第二条管线绘制，它带八个页纹理：顶点阶段在 draw uniform 中找出其值等于区域行内页索引的纹理单元，片元阶段读取该单元。对页的每次读取都指定了层级，所以这种选择不需要导数。这一批没有指明的单元仍持有这一批的第一张页，永远不会被选中。两条管线用相同的页纹素算出相同的值。Host 要求设备或上下文提供八个纹理单元。
+
+在 WebGPU 中，窗口是带区域绘制的第二个 bind group 里唯一的绑定，按帧内用到的每个 pipeline 和窗口各创建一个；各窗口在区域表 buffer 中从16,384字节的整数倍处开始。共享 WebGPU Host 要求 maxBindGroups ≥ 2、maxVertexAttributes ≥ 5、maxVertexBufferArrayStride ≥ 52、maxUniformBuffersPerShaderStage ≥ 2、maxUniformBufferBindingSize ≥ 16,368、maxBindGroupsPlusVertexBuffers ≥ 3、maxInterStageShaderVariables ≥ 8、maxBindingsPerBindGroup ≥ 10、maxSampledTexturesPerShaderStage ≥ 8，均在 WebGPU 默认限制之内；设备低于这些值时，在配置任何目标之前拒绝。blend/output策略及资源/会话身份继续作为完整独立key字段。
 
 帧元数据另设32 MiB逻辑上限：header256，五张表各24+8*length，page96、region128、material192、draw192、barrier64，自有clip值80，clip-array为24+8*length。载荷单独计费，共享不可变clip值计一次但每个引用均收费。这不限制调用方保留帧总量，也不表示实际堆内存上界。
 
@@ -139,7 +157,7 @@ WebGPU hardware linear 先解码 sRGB texel 再过滤。bounded region 路径接
 
 Host 保持唯一原生生命周期所有者；共享私有留存权威只处理原子预留和身份。发布 idle 前预留返还容量，回滚保留仍需原生清理的所有者；淘汰按全局返还 FIFO。过大或溢出目标作为临时资源处理，不新增可选池拒绝。销毁结果未知时保留费用、禁用该会话复用并停止接收，不当作成功释放；未知费用可超过 idle 上限，须单独报告。
 
-页转换准入同时统计已保有的共享 canonical 输出、本次调用各个冷页的输出，以及最大的单页源复制临时量，峰值上限为 32 MiB。单次调用自身超限报告 WEBGPU_FRAME_BUDGET；叠加待完成工作后超限报告 WEBGPU_BACKPRESSURE，两者均在原生副作用之前拒绝。READY 命中仍承担逻辑页费用，但不再复制转换。同一源的两次并发冷转换分别拥有输出并收费；允许最多两个并发帧，并不保证同时接收两个最大冷负载。缓冲与目标的领取、返还预留在同一个留存权威中原子完成。
+页转换准入同时统计已保有的共享 canonical 输出、本次调用各个冷页的输出，以及最大的单页源复制临时量。峰值上限为 Host 的 `maxFramePageBytes` 的两倍，默认即 128 MiB。单次调用自身超限报告 WEBGPU_FRAME_BUDGET；叠加待完成工作后超限报告 WEBGPU_BACKPRESSURE，两者均在原生副作用之前拒绝。READY 命中仍承担逻辑页费用，但不再复制转换。同一源的两次并发冷转换分别拥有输出并收费；允许最多两个并发帧，并不保证同时接收两个最大冷负载。缓冲与目标的领取、返还预留在同一个留存权威中原子完成。
 
 ## 数值资格与验证
 

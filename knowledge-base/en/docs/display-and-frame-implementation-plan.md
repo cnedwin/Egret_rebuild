@@ -1,5 +1,7 @@
 # Display and Frame Implementation Plan
 
+> **Removed.** `captureFrame`, `captureTexturedFrame`, the frame records they produced and the Canvas Host (`@egret/engine/web`) have been removed from the SDK. This document is kept as a record of what they were and does not describe the current SDK. For current 2D rendering see [the shared render profile](shared-render-profile-contract.md).
+
 English | [简体中文](../../Cns/docs/显示与帧执行实现计划.md)
 
 Candidate 0.12.0. Authority: [Display and Frame Execution Contract](display-and-frame-execution-contract.md). The plan advances the independent CPU core into a bounded rectangle renderer. It does not accept GPU performance, complete UI, 3D or migration by inference.

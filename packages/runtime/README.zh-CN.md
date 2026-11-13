@@ -14,7 +14,7 @@ DisplayObjectContainer.getChildIndex(child: DisplayObject): number 只读查询�
 
 `DisplayObjectContainer.removeChildren(): void` 清空显示层，同时保留节点、后代、资源及清理所有者。它认证真实接收者，空容器也先检查 Engine 再检查接收者生命周期，在全部直接边校验后无调用者 hook 提交；Sprite 和 Stage 继承方法，根值／类型、规格、依赖和协议不变。 阅读 [0.49 契约](../../knowledge-base/Cns/docs/容器清空子节点契约.md).
 
-工程预览 0.48.0 在 Runtime／Engine 根入口新增 `NineSliceBitmap` 及擦除类型 `NineSliceBitmapOptions`，借用真实 Texture 租约调整固定边框 NS1 内容；正向渲染使用显式纹理 WebGPU 宿主，Canvas mesh 被拒绝。阅读[契约](../../knowledge-base/Cns/docs/九宫格位图契约.md)及[有限证据](../../knowledge-base/Cns/docs/九宫格位图证据.md)。
+工程预览 0.48.0 在 Runtime／Engine 根入口新增 `NineSliceBitmap` 及擦除类型 `NineSliceBitmapOptions`，借用真实 Texture 租约调整固定边框 NS1 内容；两个共享宿主均可绘制。阅读[契约](../../knowledge-base/Cns/docs/九宫格位图契约.md)及[有限证据](../../knowledge-base/Cns/docs/九宫格位图证据.md)。
 
 继承的 `getBounds` 读取权威接收者局部内容，提供类型专用 `BoundsQueryOptions`、显式节点／图元预算及全新冻结结果，见[边界契约](../../knowledge-base/Cns/docs/显示内容边界契约.md)。
 
@@ -32,7 +32,7 @@ signal 登记失败撤回订阅并尝试 adapter 回滚。同步事件 handler �
 
 内部可视状态和迭代帧提取保持权威树顺序；公共 getter 不作为帧事实来源。Graphics 归其 Sprite 所有。裁剪与矩形值复制并冻结，后续修改不能改变旧帧。离树但仍绑定的对象同样遵守引擎 closing 限制。
 
-通过引擎门面，`DisplayObject` 提供 `x`、`y`、`scaleX`、`scaleY`、`rotation`、`alpha`、`visible` 与 `clipRect`；`Sprite.graphics` 拥有矩形填充。`Engine.captureFrame`／`renderFrame` 捕获／提交不可变 `RenderFrame2D`。独立 `@egret/engine/web` 入口导出 `createCanvasHost`，根入口保持无 DOM。见[显示与帧合同](../../knowledge-base/Cns/docs/显示与帧执行合同.md)；自动帧调度不属于该合同。
+通过引擎门面，`DisplayObject` 提供 `x`、`y`、`scaleX`、`scaleY`、`rotation`、`alpha`、`visible` 与 `clipRect`；`Sprite.graphics` 拥有矩形填充。`Engine.captureSharedFrame`／`renderSharedFrame` 捕获／提交不可变 `SharedRenderFrame2D`。浏览器宿主是独立的 `@egret/engine/webgpu` 与 `@egret/engine/webgl2` 入口，根入口保持无 DOM。见[共享渲染 Profile 契约](../../knowledge-base/Cns/docs/shared-render-profile-contract.md)；自动帧调度不属于该契约。
 
 ## 验证与范围
 

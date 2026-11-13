@@ -1,12 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEngine, Sprite } from '@egret/engine';
+import { createEngineForProfile, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
+import { drawnFrame } from './helpers/drawn-frame.mjs';
 
 function headlessHost(start = () => {}) {
   const frames = [], trace = [], timers = new Set();
   const adapter = {
     surface: {}, start() { trace.push('start'); return start(); },
-    renderFrame(frame) { frames.push(frame); },
+    sharedFrameProfile: SHARED_FRAME_PROFILE_2D,
+    renderSharedFrame(frame) { frames.push(drawnFrame(frame)); },
     stop() { trace.push('stop'); }, async close() { trace.push('close'); },
     setTimeout(callback, delayMs) { const token = { callback, delayMs }; timers.add(token); return () => timers.delete(token); },
   };
@@ -14,7 +16,7 @@ function headlessHost(start = () => {}) {
 }
 async function withScene(t, run) {
   const host = headlessHost(), diagnostics = [];
-  const engine = await createEngine({ host: host.adapter, onDiagnostic: item => diagnostics.push(item) });
+  const engine = await createEngineForProfile({ host: host.adapter, onDiagnostic: item => diagnostics.push(item) }, SHARED_FRAME_PROFILE_2D);
   const scope = engine.createScope();
   const probe = scope.use(new Sprite()); probe.touchEnabled = true;
   probe.hitArea = { x: 0, y: 0, width: 1, height: 1 }; engine.stage.addChild(probe);
@@ -242,7 +244,7 @@ test('APP09 close before genuine Host.start resolution retires late Engine witho
     assert.ok(writes.every(text => !text.startsWith('Ready')));
     assert.equal(ports.canvas.removed, true); assert.equal(host.timers.size, 0);
     // Successful physical host close must permit a real second Engine borrow.
-    const successor = await createEngine({ host: host.adapter });
+    const successor = await createEngineForProfile({ host: host.adapter }, SHARED_FRAME_PROFILE_2D);
     await successor.dispose(); assert.equal(successor.stage.isDisposed, true);
   }, domPorts(), host);
 });
@@ -285,8 +287,8 @@ test('APP11 main evaluates before user closure with genuine CanvasHost startup f
 // Break caught: initial render reentry closes the app, then startup publishes Ready.
 test('APP12 a pagehide during genuine initial render cannot revive Ready', async () => {
   const dom = domPorts(), host = headlessHost();
-  host.adapter.renderFrame = frame => {
-    host.frames.push(frame);
+  host.adapter.renderSharedFrame = frame => {
+    host.frames.push(drawnFrame(frame));
     dom.ports.windowTarget.dispatchEvent(new globalThis.Event('pagehide'));
   };
   await withApplication(async ({ app, writes }) => {

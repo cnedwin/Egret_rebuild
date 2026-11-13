@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 // First-party Apache-2.0 test draft. This source has not been run or admitted
 // to the future BW-delivered baseline. Public imports resolve only after the
@@ -160,8 +161,8 @@ test('NS00 old public baseline completes all cleanup before named missing API RE
     assert.equal(f.node.textureLease, f.lease);
     assert.equal(f.node.geometry, f.triangle);
     assert.equal(egret.isTexturedGeometry2D(f.triangle), true);
-    saved = f.engine.captureTexturedFrame(FRAME);
-    assert.equal(saved.profile, 'egret.textured-frame2d/1');
+    saved = captureDrawn(f.engine, FRAME);
+    assert.equal(saved.frame.profile, 'egret.shared-frame2d/1');
     assert.equal(saved.frameId, 1);
     assert.deepEqual(saved.commands.map(value => value.kind), ['mesh']);
     assert.equal(saved.images[0], f.image);
@@ -359,7 +360,7 @@ test('NS10 real Mesh resize preserves saved geometry/frame, painter order, clip 
     f.node.setContent(f.lease, a);
     const after = f.attach(new egret.Sprite(), parent);
     after.graphics.beginFill(0x445566).drawRect(1, 1, 2, 2);
-    first = f.engine.captureTexturedFrame(FRAME);
+    first = captureDrawn(f.engine, FRAME);
     assert.equal(first.frameId, 1);
     assert.deepEqual(first.commands.map(value => value.kind), ['rect', 'mesh', 'rect']);
     assert.equal(first.geometries[0], a);
@@ -374,7 +375,7 @@ test('NS10 real Mesh resize preserves saved geometry/frame, painter order, clip 
     f.node.setContent(f.lease, b);
     f.node.clipRect = { x: 0, y: 0, width: 12, height: 16 };
     parent.setChildIndex(after, 0);
-    second = f.engine.captureTexturedFrame(FRAME);
+    second = captureDrawn(f.engine, FRAME);
     assert.equal(second.frameId, 2);
     assert.deepEqual(second.commands.map(value => value.kind), ['rect', 'rect', 'mesh']);
     assert.equal(second.images[0], f.image);

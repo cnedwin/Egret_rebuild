@@ -7,6 +7,7 @@ import {
   createImageData2D, createTexture, copyImageData2DPixels, isTexture,
 } from '@egret/engine';
 import { deferred, flush, host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const ART = Object.freeze({
   A: Object.freeze({ bytes: 83, sha256: '376a6eaaeb1ca8861b6a0ee62db3edbb0ec926648f8c20cfd5f6e57c1bf44960', color: [239, 17, 31, 255] }),
@@ -125,7 +126,7 @@ async function fixture(label, body) {
       engine.stage.addChild(bitmap); return bitmap;
     });
     function frame(key) {
-      const captured = engine.captureFrame({ width: 40, height: 20 });
+      const captured = captureDrawn(engine, { width: 40, height: 20 });
       assert.equal(captured.commands.length, 2);
       assert.ok(captured.commands.every(command => command.kind === 'image'));
       assert.deepEqual(captured.images.map(image => Array.from(copyImageData2DPixels(image).subarray(0, 4))),
@@ -357,7 +358,7 @@ test('PGA13b old cleanup closes the coordinator without relabeling committed suc
       assert.equal(target.textureLease, undefined); assert.equal(target.sourceRect, undefined);
       assert.equal(target.naturalWidth, 0); assert.equal(target.naturalHeight, 0);
     }
-    assert.equal(f.engine.captureFrame({ width: 40, height: 20 }).commands.length, 0);
+    assert.equal(captureDrawn(f.engine, { width: 40, height: 20 }).commands.length, 0);
     const stillOpen = f.engine.createScope(); stillOpen.dispose();
     refused(attempt(() => f.coordinator.replace('classic')), 'PREPARED_OUTFIT_DISPOSED');
     await requestSuccess(published);

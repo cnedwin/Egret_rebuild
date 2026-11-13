@@ -289,14 +289,14 @@ control('BIP02 source edge and pixel endpoints reuse existing image limits', asy
   fixture.width = 4096; fixture.height = 1; fixture.pixels = new Uint8ClampedArray(4 * 4096);
   fixture.bytes = structuralPng({ width: 4096, height: 1 });
   assert.equal((await fixture.load()).width, 4096);
-  fixture.width = 1024; fixture.height = 1024; fixture.pixels = new Uint8ClampedArray(4 * 1_048_576);
-  fixture.bytes = structuralPng({ width: 1024, height: 1024 });
+  fixture.width = 2048; fixture.height = 2048; fixture.pixels = new Uint8ClampedArray(4 * 4_194_304);
+  fixture.bytes = structuralPng({ width: 2048, height: 2048 });
   const image = (await fixture.load()).imageData;
-  assert.equal(image.byteLength, 4 * 1_048_576);
+  assert.equal(image.byteLength, 4 * 4_194_304);
   const before = fixture.decodeCalls.length;
   fixture.bytes = structuralPng({ width: 4097, height: 1 });
   await rejection(provider.load(fixture.ref, fixture.context), code('INPUT_LIMIT'));
-  fixture.bytes = structuralPng({ width: 1025, height: 1024 });
+  fixture.bytes = structuralPng({ width: 2049, height: 2048 });
   await rejection(provider.load(fixture.ref, fixture.context), code('INPUT_LIMIT'));
   assert.equal(fixture.decodeCalls.length, before);
 });

@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/公共3D场景契约.md)
 
+> **Removed.** The `scene3d` entries and the WebGPU hosts for rectangle, image and textured frames have been removed from the SDK. This document is kept as a record of what they were and describes nothing in the current SDK. Current 2D rendering is the [shared render profile](shared-render-profile-contract.md); current 3D is [World3D](world3d.md).
+
 This document retains the 0.32.0 scene interface and the separate 0.38.0 Matrix4 and 0.39.0 composition records. Each proposal, NOT_RUN or PENDING label belongs to its own recorded cutoff; later execution successors are identified separately.
 
 Original **0.32.0** contract record, package **S3D1**. Source **S085** and delivery **V036** were checked as available; registration and acceptance were pending at that original cutoff. This independently designed interface exposes the current first-party owned geometry, scene capture and browser Host algorithms through small typed forwarders. First-party code and documentation remain Apache-2.0; no dependency is added. Workspace packages remain private `0.0.0`, protocol `1.0`.

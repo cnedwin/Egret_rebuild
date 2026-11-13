@@ -5,19 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Egret explicit Canvas text / 显式 Canvas 文字</title>
   <link rel="icon" href="data:,">
-  <script type="importmap">
-  {"imports": {
+  <script type="importmap">{
+  "imports": {
     "@egret/engine": "/packages/engine/dist/index.js",
-    "@egret/engine/web": "/packages/engine/dist/web/index.js",
+    "@egret/engine/webgpu": "/packages/engine/dist/web/webgpu.js",
+    "@egret/engine/webgl2": "/packages/engine/dist/web/webgl2.js",
     "@egret/engine/text": "/packages/engine/dist/text.js",
     "@egret/engine/web/text": "/packages/engine/dist/web/text.js",
     "@egret/runtime": "/packages/runtime/dist/index.js",
     "@egret/runtime/text": "/packages/runtime/dist/text/index.js",
     "@egret/contracts": "/packages/contracts/dist/index.js",
     "@egret/contracts/resources": "/packages/contracts/dist/resources/index.js",
-    "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js"
-  }}
-  </script>
+    "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js",
+    "robust-predicates": "/packages/engine/node_modules/robust-predicates/index.js"
+  }
+}</script>
   <style>
     body { font: 1rem/1.5 system-ui, sans-serif; margin: 2rem auto; padding: 0 1rem; max-width: 48rem; color: #172033; background: #f4f6fa; }
     textarea, button { font: inherit; padding: .6rem; }

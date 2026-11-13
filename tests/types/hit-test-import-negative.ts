@@ -1,4 +1,4 @@
-// HIT_TEST_IMPORT_CASE web-options TS2305
+// HIT_TEST_IMPORT_CASE web-options TS2307
 import type { HitTestOptions as WebOptions } from '@egret/engine/web';
 // HIT_TEST_IMPORT_CASE gpu-options TS2305
 import type { HitTestOptions as GpuOptions } from '@egret/engine/webgpu';

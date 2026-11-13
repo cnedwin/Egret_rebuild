@@ -32,6 +32,7 @@ test('TF01: authentic initialized cache creates a scope-owned TextField display 
 // No font, renderer pixel, private implementation or fabricated resource oracle.
 import * as publicEngine from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn, drawnFrame } from './helpers/drawn-frame.mjs';
 import { REQUEST, ROW, REQUEST_KEYS, deferred, flush, image, issue,
   literalProvider, errorIs, rejected, keep, fulfilled,
   rejectedKept, readLog, poisonReads } from './text-raster-public-helpers.mjs';
@@ -68,10 +69,7 @@ function geometry(metrics, raster = RASTER1) {
   assert.deepEqual(metrics.lines.map(line => [line.source.start, line.source.end,
     line.source.breakEnd, line.advance, line.baselineY]), [[0, 1, 1, 8, 5]]);
 }
-function capture(base, textured = false) {
-  return textured ? base.engine.captureTexturedFrame(FRAME)
-    : base.engine.captureFrame(FRAME);
-}
+function capture(base) { return captureDrawn(base.engine, FRAME); }
 function assertOldImage(base, saved) {
   const frame = capture(base);
   assert.equal(frame.commands.length, 1);
@@ -227,8 +225,8 @@ test('TF03: signed logical ink, raster density, direct bounds and painter integr
     const placement = density === 1 ? { x: -3, y: -1, width: 12, height: 10 }
       : { x: -8 / 3, y: -2 / 3, width: 34 / 3, height: 28 / 3 };
     let saved;
-    for (const textured of [false, true]) {
-      const frame = capture(base, textured); saved ??= frame;
+    {
+      const frame = capture(base); saved ??= frame;
       assert.deepEqual(frame.commands.map(command => command.kind), ['rect', 'image', 'image']);
       assert.equal(frame.images.length, 1, 'genuine Bitmap and field share the image table identity');
       const command = frame.commands[1];
@@ -245,12 +243,11 @@ test('TF03: signed logical ink, raster density, direct bounds and painter integr
     }
     field.visible = false;
     assert.equal(capture(base).commands.length, 2);
-    assert.equal(capture(base, true).commands.length, 2);
     assert.deepEqual(field.getBounds(), CONTENT);
     field.visible = true; field.alpha = 0;
     assert.equal(capture(base).commands.length, 2); assert.deepEqual(parent.getBounds(), { x: -5, y: 4, width: 9, height: 20 });
     field.alpha = 0.5; field.clipRect = { x: 0, y: 0, width: 0, height: 10 };
-    assert.equal(capture(base, true).commands.length, 2); assert.deepEqual(field.getBounds(), CONTENT);
+    assert.equal(capture(base).commands.length, 2); assert.deepEqual(field.getBounds(), CONTENT);
     field.x = 99; assert.deepEqual(saved.commands[1].rect, placement);
     assert.deepEqual(saved.commands[1].matrix, { a: -2, b: -0, c: 0, d: 6, tx: 16, ty: 32 });
     bitmapScope.dispose(); field.dispose(); parent.dispose(); before.dispose();
@@ -286,7 +283,7 @@ test('TF04: literal explicit source lines, blank layout and image-to-empty repla
       : { x: 0, y: 0, width: row.width, height: row.height };
     assert.deepEqual(metrics.contentBounds, bounds);
     assert.deepEqual(field.getBounds(), row.width === 0 ? { x: 0, y: 0, width: 0, height: 0 } : bounds);
-    for (const textured of [false, true]) assert.equal(capture(base, textured).commands.length, row.raster ? 1 : 0);
+    assert.equal(capture(base).commands.length, row.raster ? 1 : 0);
     assert.equal(base.cache.getStatus().activeCallerLeases, row.raster ? 1 : 0);
     if (!row.raster) { assert.equal(metrics.raster, undefined); assert.equal(metrics.inkBounds, undefined); }
     else {
@@ -394,19 +391,18 @@ test('TF07: Scope closing refuses reached contribution before cleanup and saved 
     for (const [key, run] of [
       ['setter', () => field.setRequest(poisonReads(REQUEST_KEYS, reads))],
       ['bounds', () => field.getBounds()], ['capture', () => capture(base)],
-      ['textured', () => capture(base, true)],
     ]) { try { run(); } catch (error) { facts[key] = error; } }
     field.visible = false;
-    try { facts.hiddenCommands = capture(base).commands.length; facts.hiddenTexturedCommands = capture(base, true).commands.length; }
+    try { facts.hiddenCommands = capture(base).commands.length; }
     catch (error) { facts.hiddenError = error; }
     field.visible = true;
   });
   scope.dispose();
   assert.equal(facts.scopeState, 'closing'); assert.equal(facts.fieldDisposedBeforeCleanup, false);
   assert.equal(facts.status.state, 'ready'); assert.equal(reads.reads, 0);
-  for (const key of ['setter', 'bounds', 'capture', 'textured']) errorIs('SCOPE_CLOSED')(facts[key]);
+  for (const key of ['setter', 'bounds', 'capture']) errorIs('SCOPE_CLOSED')(facts[key]);
   await rejectedKept(facts.prepare, 'SCOPE_CLOSED');
-  assert.equal(facts.hiddenError, undefined); assert.equal(facts.hiddenCommands, 0); assert.equal(facts.hiddenTexturedCommands, 0);
+  assert.equal(facts.hiddenError, undefined); assert.equal(facts.hiddenCommands, 0);
   assert.deepEqual(cleanup, [true]); assert.equal(field.isDisposed, true);
   assert.equal(snapshot(field).state, 'disposed'); assert.equal(snapshot(field).pending, false);
   assert.equal(base.cache.getStatus().activeCallerLeases, 0); assert.equal(base.cache.getStatus().closed, false);
@@ -431,13 +427,13 @@ test('TF07: Engine terminal reentry, late real raster, first cleanup cause and a
   try {
     const scope = engine.createScope(); scope.use({ dispose() { trace.push('scope-cleanup'); assert.equal(field.isDisposed, true); throw firstCause; } });
     field = text.createTextField(engine, scope, cache); engine.stage.addChild(field);
-    field.setRequest(request()); await field.prepare(); const saved = engine.captureFrame(FRAME), bytes = publicEngine.copyImageData2DPixels(saved.images[0]);
+    field.setRequest(request()); await field.prepare(); const saved = captureDrawn(engine, FRAME), bytes = publicEngine.copyImageData2DPixels(saved.images[0]);
     field.setRequest(request({ text: 'late' })); pending = keep(field.prepare()); await entered.promise;
     const reentry = {}, unread = { reads: 0 };
     scope.signal.addEventListener('abort', () => {
       reentry.state = scope.state; reentry.prepare = keep(field.prepare());
       try { field.setRequest(poisonReads(REQUEST_KEYS, unread)); } catch (error) { reentry.setter = error; }
-      try { engine.captureFrame(FRAME); } catch (error) { reentry.capture = error; }
+      try { engine.captureSharedFrame(FRAME); } catch (error) { reentry.capture = error; }
       reentry.dispose = engine.dispose();
     });
     closing = engine.dispose(); assert.equal(engine.dispose(), closing);
@@ -469,19 +465,19 @@ test('TF07: frame-barrier closing defeats an ordinary same-name Engine state sha
   let base, field, scope, closing;
   const facts = {};
   base = await fixture(t, {}, { maxResidentEntries: 0 }, { hostOverrides: {
-    renderFrame() {
+    renderSharedFrame() {
       closing = base.engine.dispose();
       // This caller-owned ordinary property cannot reopen authentic private state.
       base.engine.currentState = 'open';
       facts.scopeState = scope.state; facts.fieldDisposed = field.isDisposed;
       facts.prepare = keep(field.prepare()); facts.nestedDispose = base.engine.dispose();
-      try { base.engine.captureFrame(FRAME); } catch (error) { facts.capture = error; }
+      try { base.engine.captureSharedFrame(FRAME); } catch (error) { facts.capture = error; }
       try { field.getBounds(); } catch (error) { facts.bounds = error; }
       return undefined;
     },
   } });
   ({ field, scope } = await createField(base)); field.setRequest(request()); await field.prepare();
-  base.engine.stage.addChild(field); const frame = base.engine.renderFrame(FRAME);
+  base.engine.stage.addChild(field); const frame = drawnFrame(base.engine.renderSharedFrame(FRAME));
   assert.equal(facts.scopeState, 'open', 'Scope cleanup still waits behind the live render callback');
   assert.equal(facts.fieldDisposed, false); assert.equal(facts.nestedDispose, closing);
   errorIs('ENGINE_CLOSED')(facts.capture); errorIs('ENGINE_CLOSED')(facts.bounds);
@@ -528,12 +524,12 @@ test('TF08: field shares the existing 64-image capture ledger with genuine Bitma
     const bitmap = scope.use(new publicEngine.Bitmap(lease)); nodes.push(bitmap);
     if (index < 63) base.engine.stage.addChild(bitmap);
   }
-  for (const textured of [false, true]) {
-    const valid = capture(base, textured); assert.equal(valid.images.length, 64); assert.equal(valid.commands.length, 64);
+  {
+    const valid = capture(base); assert.equal(valid.images.length, 64); assert.equal(valid.commands.length, 64);
     base.engine.stage.addChild(nodes[63]);
-    assert.throws(() => capture(base, textured), errorIs('FRAME_IMAGE_BUDGET'));
+    assert.throws(() => capture(base), errorIs('FRAME_IMAGE_BUDGET'));
     base.engine.stage.removeChild(nodes[63]);
-    assert.equal(capture(base, textured).frameId, valid.frameId + 1, 'failed capture consumes no frame ID');
+    assert.equal(capture(base).frameId, valid.frameId + 1, 'failed capture consumes no frame ID');
   }
   scope.dispose();
 });
@@ -554,30 +550,11 @@ test('TF08: hidden leaf node admission and field output/clip units retain exact 
         if (right < nodes.length) nodes[index].addChild(nodes[right]);
       }
       base.engine.stage.addChild(nodes[0]);
-      const valid = capture(base, true); assert.equal(valid.commands.length, 0);
+      const valid = capture(base); assert.equal(valid.commands.length, 0);
       const extra = new publicEngine.Sprite(); nodes.push(extra); base.engine.stage.addChild(extra);
-      assert.throws(() => capture(base, true), errorIs('FRAME_BUDGET_EXCEEDED'));
+      assert.throws(() => capture(base), errorIs('FRAME_BUDGET_EXCEEDED'));
       extra.dispose(); field.visible = true;
-      assert.equal(capture(base, true).frameId, valid.frameId + 1);
+      assert.equal(capture(base).frameId, valid.frameId + 1);
     } finally { for (let index = nodes.length - 1; index >= 0; index--) nodes[index].dispose(); }
-  });
-  await t.test('field shares 65536 authoring/output and 262144 clip-reference units', async (t) => {
-    const base = await fixture(t, {}, { maxResidentEntries: 0 });
-    const { field } = await createField(base); field.setRequest(request()); await field.prepare();
-    const parents = []; let parent = base.engine.stage;
-    for (let index = 0; index < 4; index++) { const node = new publicEngine.Sprite(); node.clipRect = { x: 0, y: 0, width: 10, height: 10 }; parents.push(node); parent.addChild(node); parent = node; }
-    parent.addChild(field); parent.graphics.beginFill(1);
-    for (let index = 0; index < 65535; index++) parent.graphics.drawRect(0, 0, 1, 1);
-    const valid = capture(base, true); assert.equal(valid.commands.length, 65536);
-    assert.equal(valid.commands[65535].kind, 'image');
-    assert.equal(valid.commands.reduce((sum, command) => sum + command.clips.length, 0), 262144);
-    field.clipRect = { x: 0, y: 0, width: 10, height: 10 };
-    assert.throws(() => capture(base, true), errorIs('FRAME_BUDGET_EXCEEDED'), '65535*4 + field*5 = 262145');
-    field.clipRect = undefined; parent.graphics.drawRect(0, 0, 1, 1);
-    field.visible = false;
-    assert.throws(() => capture(base, true), errorIs('FRAME_BUDGET_EXCEEDED'), 'hidden text still consumes its authoring unit');
-    parent.graphics.clear(); assert.equal(capture(base, true).commands.length, 0);
-    field.visible = true; assert.equal(capture(base, true).commands.length, 1);
-    for (let index = parents.length - 1; index >= 0; index--) parents[index].dispose();
   });
 });

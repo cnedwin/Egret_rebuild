@@ -8,15 +8,15 @@ import {fileURLToPath} from 'node:url';
 import {fingerprintFile,ownerRelativePath,samePhysicalPath} from './lib/file-identity.mjs';
 
 const root=realpathSync(fileURLToPath(new URL('..',import.meta.url)));
-const inventoryPath='tests/types/resource-recovery-diagnostic-expectations.json';
+const inventoryPath='tests/types/resource-recovery-3-diagnostic-expectations.json';
 const inventory=JSON.parse(readFileSync(path.join(root,inventoryPath),'utf8'));
 const pairs=[
   ['resources-group',11,true],
   ['manifest-browser',17,false],
   ['candidate-shared-frame',14,true],
   ['manifest-resource-diagnostics',16,false],
-  ['shared-frame-upload-gpu',20,false],
-  ['shared-frame-upload-webgl2',26,false],
+  ['shared-frame-upload-gpu',17,false],
+  ['shared-frame-upload-webgl2',24,false],
   ['shared-host-resource-diagnostics',13,false],
 ];
 const expectedInputs=pairs.flatMap(([name])=>[
@@ -135,4 +135,4 @@ for(const [index,[name]] of pairs.entries())for(const lane of ['positive','negat
   console.log('Resource recovery strict '+name+' '+lane+' PASS: '+
     (lane==='positive'?0:inventory.pairs[index].tuples.length)+' actual diagnostics.');
 }
-console.log('Resource recovery types PASS: seven public consumer pairs, 117 exact unsuppressed refusals; runtime/native acceptance is separate.');
+console.log('Resource recovery types PASS: seven public consumer pairs, 112 exact unsuppressed refusals; runtime/native acceptance is separate.');

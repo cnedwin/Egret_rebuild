@@ -64,16 +64,10 @@ function aliases() {
 }
 const initialAliases = aliases();
 const initialSdk = sdkSnapshot();
-const historicalModulePins = [
-  ['packages/runtime/dist/Bitmap.js', 20300, '473606fd7d65c1c41c1d6bb4625cf5f3f5b2c0fc90adf5e94b80dac4f75a8892'],
-  ['packages/runtime/dist/spriteSheet.js', 11792, 'e7cd446abde11eb22e77881768a685067ea2d83ff2a0d10d62de784fefbcd7fd'],
-];
-const m13ModulePins = [["packages/runtime/dist/Bitmap.js",21049,"b7d91499cb36d73c6b0b0767ec90080b2acaec52a2d0ccf0a785d793b48b6544"],["packages/runtime/dist/spriteSheet.js",11824,"5f15aca4af6961cfd65f0e4c5243f7f81ccac9267056815d2401226b4d8dd00d"]];
-// M1.5 adds candidate capture; the captured original SpriteSheet operation port is unchanged.
-const m15ModulePins = [['packages/runtime/dist/Bitmap.js',23075,'075a6f146714c98fec748aeabe52e3cf38d0213eb6a4f868d7fb846bb59196b8'],['packages/runtime/dist/spriteSheet.js',11824,'5f15aca4af6961cfd65f0e4c5243f7f81ccac9267056815d2401226b4d8dd00d']];
-const qualifiedModulePins = [historicalModulePins,m13ModulePins,m15ModulePins].find(pair=>pair.every(([relative,bytes,sha256])=>JSON.stringify(pin(relative))===JSON.stringify({path:relative,bytes,sha256})));
-assert.ok(qualifiedModulePins, 'one complete qualified compiled pair');
-for(const [relative,bytes,sha256]of qualifiedModulePins)assert.deepEqual(pin(relative),{path:relative,bytes,sha256},'one complete qualified compiled pair');
+// The two modules the child works on are whatever was built. No earlier identity is recorded: the
+// child refuses unless its unique original-operation block is present, and unchanged() holds the
+// whole SDK to the bytes read above for as long as the cases run.
+for (const relative of ['packages/runtime/dist/Bitmap.js', 'packages/runtime/dist/spriteSheet.js']) assert.ok(initialSdk.some(row => row.path === relative), 'one complete compiled pair');
 
 function unchanged() {
   assert.deepEqual(aliases(), initialAliases, 'workspace aliases unchanged');

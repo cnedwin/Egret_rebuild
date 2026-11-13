@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn, drawnFrame } from './helpers/drawn-frame.mjs';
 
 const FRAME = Object.freeze({ width: 20, height: 20, clearColor: 0, clearAlpha: 0 });
 const CROP = Object.freeze({ x: 1, y: 1, width: 8, height: 8 });
@@ -30,7 +31,7 @@ function typeFault(action, cause, requireCause = false) {
     (Object.hasOwn(value, 'cause') && value.cause === cause)));
 }
 function snapshot(f) {
-  const frame = f.engine.captureTexturedFrame(FRAME);
+  const frame = captureDrawn(f.engine, FRAME);
   const command = frame.commands.find(value => value.kind === 'mesh');
   assert.ok(command, 'actual mesh command');
   return { frame, command, geometry: frame.geometries[command.geometryIndex] };
@@ -38,15 +39,11 @@ function snapshot(f) {
 
 // Only public objects provide the positive model. Record created handles before
 // ownership registration so an assertion/setup failure cannot hide a borrow.
-async function fixture(crop = CROP, profile = true) {
+async function fixture(crop = CROP) {
   capability();
   const renders = [], diagnostics = [], resources = [], nodes = [];
-  const port = host({ renderFrame(frame) { renders.push(frame); },
-    ...(profile ? { texturedFrameProfile: egret.TEXTURED_FRAME_PROFILE_2D,
-      renderTexturedFrame(frame) { renders.push(frame); } } : {}) });
-  const engine = profile
-    ? await egret.createEngineForProfile({ host: port.adapter, onDiagnostic: value => diagnostics.push(value) }, egret.TEXTURED_FRAME_PROFILE_2D)
-    : await egret.createEngine({ host: port.adapter, onDiagnostic: value => diagnostics.push(value) });
+  const port = host({ sharedFrameProfile: egret.SHARED_FRAME_PROFILE_2D, renderSharedFrame(frame) { renders.push(frame); } });
+  const engine = await egret.createEngineForProfile({ host: port.adapter, onDiagnostic: value => diagnostics.push(value) }, egret.SHARED_FRAME_PROFILE_2D);
   let scope, closed = false;
   const f = { engine, port, renders, diagnostics, resources, nodes,
     add(node, parent = engine.stage) { nodes.push(node); scope.use(node); parent.addChild(node); return node; },
@@ -131,7 +128,7 @@ test('NLB01 genuine display leaf captures literal fixed-border geometry and crop
     assert.notEqual(panel.insets, input.insets); assert.deepEqual(panel.insets, INSETS); assert.ok(Object.isFrozen(panel.insets));
     assert.equal('setContent' in panel, false); assert.equal('sourceRect' in panel, false);
     const a = snapshot(f);
-    assert.equal(a.frame.profile, egret.TEXTURED_FRAME_PROFILE_2D);
+    assert.equal(a.frame.frame.profile, egret.SHARED_FRAME_PROFILE_2D);
     assert.deepEqual(a.command.sourceRect, CROP);
     assert.deepEqual(a.geometry.positions, POSITIONS_A); assert.deepEqual(a.geometry.uvs, UVS);
     assert.deepEqual(a.geometry.indices, INDICES); assert.equal(a.geometry.triangleCount, 18);
@@ -354,28 +351,25 @@ test('NLB12 release/Texture retirement outrank bad resize and do not change last
 });
 
 // L7/L8: real owned frames use existing routes; this is no browser pixel claim.
-test('NLB13 recording textured render preserves sibling order and ordinary profile refusals', async () => {
+test('NLB13 recording render preserves sibling order and a Host without the profile is refused', async () => {
   const f = await fixture();
   try {
     const panel = leaf(f), sprite = f.add(new egret.Sprite()); sprite.graphics.beginFill(0xff0000).drawRect(0,0,2,2);
     f.add(new egret.Bitmap(f.lease)); panel.alpha = .5; panel.clipRect = { x: 0, y: 0, width: 8, height: 6 };
-    const frame = f.engine.renderTexturedFrame(FRAME);
+    const frame = f.engine.renderSharedFrame(FRAME), drawn = drawnFrame(frame);
     assert.equal(f.renders.length, 1); assert.equal(f.renders[0], frame);
-    assert.deepEqual(frame.commands.map(value => value.kind), ['mesh','rect','image']);
-    assert.equal(frame.commands[0].alpha, .5); assert.deepEqual(frame.commands[0].clips[0].rect, { x: 0, y: 0, width: 8, height: 6 });
-    code(() => f.engine.captureFrame(FRAME), 'FRAME_MESH_UNSUPPORTED');
-    code(() => f.engine.renderFrame(FRAME), 'FRAME_MESH_UNSUPPORTED'); assert.equal(f.renders.length, 1);
+    assert.deepEqual(drawn.commands.map(value => value.kind), ['mesh','rect','image']);
+    assert.equal(drawn.commands[0].alpha, .5); assert.deepEqual(drawn.commands[0].clips[0].rect, { x: 0, y: 0, width: 8, height: 6 });
   } finally { await f.close(); }
-  const legacy = await fixture(CROP, false);
+  const hidden = await fixture();
   try {
-    const panel = leaf(legacy); legacy.lease.release();
-    code(() => legacy.engine.renderFrame(FRAME), 'FRAME_MESH_UNSUPPORTED'); assert.equal(legacy.renders.length, 0);
-    panel.visible = false; assert.deepEqual(legacy.engine.captureFrame(FRAME).commands, []);
-    panel.visible = true; panel.alpha = 0; assert.deepEqual(legacy.engine.captureFrame(FRAME).commands, []);
+    const panel = leaf(hidden); hidden.lease.release();
+    panel.visible = false; assert.deepEqual(captureDrawn(hidden.engine, FRAME).commands, []);
+    panel.visible = true; panel.alpha = 0; assert.deepEqual(captureDrawn(hidden.engine, FRAME).commands, []);
     panel.alpha = 1; panel.clipRect = { x: 0, y: 0, width: 0, height: 4 };
-    assert.deepEqual(legacy.engine.captureFrame(FRAME).commands, []); assert.equal(legacy.renders.length, 0);
-  } finally { await legacy.close(); }
+    assert.deepEqual(captureDrawn(hidden.engine, FRAME).commands, []); assert.equal(hidden.renders.length, 0);
+  } finally { await hidden.close(); }
   const unsupported = host();
-  await assert.rejects(egret.createEngineForProfile({ host: unsupported.adapter }, egret.TEXTURED_FRAME_PROFILE_2D), value => value instanceof egret.EgretError && value.code === 'ENGINE_RENDER_PROFILE_UNSUPPORTED');
+  await assert.rejects(egret.createEngineForProfile({ host: unsupported.adapter }, egret.SHARED_FRAME_PROFILE_2D), value => value instanceof egret.EgretError && value.code === 'ENGINE_RENDER_PROFILE_UNSUPPORTED');
   assert.deepEqual(unsupported.trace, []); assert.equal(unsupported.timers.size, 0);
 });

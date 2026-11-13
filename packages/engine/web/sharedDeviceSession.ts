@@ -15,7 +15,7 @@ export interface SharedDeviceSessionStatus<Failure> {
 
 /** Logical ownership gauges. Credits and overlapping subsets are not additive memory. */
 interface SharedHostResourceCurrent {
-    readonly pending: { readonly frames:number; readonly uploadCreditBytes:number; readonly pageCreditBytes:number; readonly readbackCreditBytes:number; readonly geometryCreditBytes:number; readonly colorCreditBytes:number; readonly sceneCreditBytes:number; readonly uniformCreditBytes:number; readonly depthCreditBytes:number; };
+    readonly pending: { readonly frames:number; readonly uploadCreditBytes:number; readonly pageCreditBytes:number; readonly readbackCreditBytes:number; readonly geometryCreditBytes:number; readonly colorCreditBytes:number; };
     readonly cpu: { readonly canonicalBytes:number; readonly scratchBytes:number; readonly temporaryBytes:number; };
     readonly images: { readonly readyBytes:number; readonly readyEntries:number; readonly pinnedReadyBytes:number; readonly pinnedReadyEntries:number; readonly allocatedLogicalBytes:number; readonly reservedCreditBytes:number; };
     readonly reusable: { readonly idleBytes:number; readonly idleEntries:number; readonly leasedBytes:number; readonly leasedEntries:number; readonly reservedBytes:number; readonly reservedEntries:number; readonly detachedBytes:number; readonly detachedEntries:number; readonly unknownBytes:number; readonly unknownEntries:number; };

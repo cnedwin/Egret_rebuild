@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/3d-cpu-scene-contract.md)
 
+> **Removed.** The `scene3d` entries and the WebGPU hosts for rectangle, image and textured frames have been removed from the SDK. This document is kept as a record of what they were and describes nothing in the current SDK. Current 2D rendering is the [shared render profile](shared-render-profile-contract.md); current 3D is [World3D](world3d.md).
+
 Egret's CPU scene snapshot turns a projection and ordered mesh draws into an owned, immutable `SceneFrame3D`. Each draw keeps an authentic CPU geometry identity and its own `mvp`; a separate first-seen geometry list makes shared-resource accounting inspectable. This is an internal engine interface, with historical source acceptance described in the [implementation evidence](3d-cpu-scene-evidence.md).
 
 Historical documentary candidate 0.1. Public release remains **HELD**. The accepted slice covers CPU snapshot behavior; GPU host integration, native shader/device/pixel precision and performance remain **HELD**.

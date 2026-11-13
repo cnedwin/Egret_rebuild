@@ -6,8 +6,8 @@ import {
   type Engine, type AssetLease, type Texture,
   type TexturedGeometry2D, type SharedGeometry2D, type SharedGeometryInput2D,
   type SharedMaterial2D, type SharedRenderFrame2D, type SharedRenderHostAdapter,
-  type SharedFrameOptions2D, type SharedFrameProfile2D,
-  type TexturedRenderFrame2D, type RenderFrame2D, type RenderHostAdapter,
+  type SharedFrameOptions2D,
+  type SharedFrameProfile2D,
 } from '@egret/engine';
 
 export function rejectSharedAsDefaultMesh(lease: AssetLease<Texture>, shared: SharedGeometry2D): void {
@@ -74,24 +74,24 @@ export function rejectEngineMaterialGuard(value: unknown): void {
   engineFacade.isSharedMaterial2D(value);
 }
 
-export function rejectLegacyAsSharedFrame(frame: RenderFrame2D): void {
-  // SHARED_TYPE_CASE ST-N12: a historical frame is not a shared completed frame.
+export function rejectUnbrandedAsSharedFrame(frame: Omit<SharedRenderFrame2D, Extract<keyof SharedRenderFrame2D, symbol>>): void {
+  // SHARED_TYPE_CASE ST-N12: the members of a frame without its brand are not a shared completed frame.
   const shared: SharedRenderFrame2D = frame;
   void shared;
 }
 
-export function rejectTexturedAsSharedFrame(frame: TexturedRenderFrame2D): void {
-  // SHARED_TYPE_CASE ST-N13: a textured completed frame has a different protocol/brand.
+export function rejectOtherProfileAsSharedFrame(frame: Omit<SharedRenderFrame2D, 'profile'> & { readonly profile: 'egret.textured-frame2d/1' }): void {
+  // SHARED_TYPE_CASE ST-N13: a frame that states the removed textured profile is not a shared frame.
   const shared: SharedRenderFrame2D = frame;
   void shared;
 }
 
-export function rejectSharedOnLegacyPort(host: RenderHostAdapter, frame: SharedRenderFrame2D): void {
-  // SHARED_TYPE_CASE ST-N14: a shared barrier/opacity union is not a historical command union.
+export function rejectSharedOnLegacyPort(host: SharedRenderHostAdapter, frame: SharedRenderFrame2D): void {
+  // SHARED_TYPE_CASE ST-N14: a shared Host has no port of the removed legacy profile.
   host.renderFrame(frame);
 }
 
-export function rejectLegacyOnSharedPort(host: SharedRenderHostAdapter, frame: RenderFrame2D): void {
+export function rejectUnbrandedOnSharedPort(host: SharedRenderHostAdapter, frame: Omit<SharedRenderFrame2D, Extract<keyof SharedRenderFrame2D, symbol>>): void {
   // SHARED_TYPE_CASE ST-N15: shared port requires the actual shared type.
   host.renderSharedFrame(frame);
 }

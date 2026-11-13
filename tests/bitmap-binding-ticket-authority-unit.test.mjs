@@ -9,6 +9,7 @@ import {
 } from '@egret/runtime';
 import { createImageData2D } from '@egret/contracts';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 // Every context deliberately reuses these exact public refs and manager-local IDs.
 const type = createAssetType('P03 original authority UNIT Texture', isTexture);
@@ -194,7 +195,7 @@ async function realEngineFixture() {
   const targets = leases.slice(0, 2).map((lease, index) => {
     const bitmap = new Bitmap(lease); bitmap.sourceRect = INITIAL_CROPS[index]; engine.stage.addChild(bitmap); return bitmap;
   });
-  const capture = () => engine.captureFrame({ width: 16, height: 8 });
+  const capture = () => captureDrawn(engine, { width: 16, height: 8 });
   return {
     engine, textures, leases, targets, candidates: leases.slice(2), capture, ...counters,
     async close() {

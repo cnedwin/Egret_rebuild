@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Public SDK composition. The session owns acquired leases; sheets and Bitmaps borrow them.
-import { Sprite, createAssetRef, createAssetType, createEngine, createEngineForProfile,
-  createSequenceClip, createSpriteSheet, createTexture, isTexture, TEXTURED_FRAME_PROFILE_2D } from '@egret/engine';
+import { Sprite, createAssetRef, createAssetType, createEngine,
+  createSequenceClip, createSpriteSheet, createTexture, isTexture } from '@egret/engine';
 
 const PROFILE = 'trim-rotation-v1';
 const A = Object.freeze({ name:'A', x:0, y:0, width:2, height:3,
@@ -25,10 +25,9 @@ function errorView(cause,seen=new Set(),depth=0){
   return result;
 }
 export async function createAtlasFrameSession({host,profile,image}) {
-  if (!['canvas-2d','webgpu-textured-2d'].includes(profile)) throw new TypeError('Fixed 2D profile required');
+  if (profile!=='shared-2d') throw new TypeError('Fixed 2D profile required');
   const diagnostics=[], ticks=[], cleanupErrors=[], leases=[], textures=[];
-  const engine = await (profile==='canvas-2d' ? createEngine({host,onDiagnostic:row=>diagnostics.push(row)})
-    : createEngineForProfile({host,onDiagnostic:row=>diagnostics.push(row)},TEXTURED_FRAME_PROFILE_2D));
+  const engine = await createEngine({host,onDiagnostic:row=>diagnostics.push(row)});
   const scope=engine.createScope(), animationScope=engine.createScope();
   const type=createAssetType('egret.example.trimmed-atlas',isTexture);
   const ref=createAssetRef(type,'original-atlas');
@@ -94,7 +93,7 @@ export async function createAtlasFrameSession({host,profile,image}) {
     }])),cleanupErrors:cleanupErrors.map(row=>({name:row.name,error:errorView(row.cause)}))});
   return Object.freeze({engine,actors:Object.freeze(actors),clip,
     advanceTo(seconds){open();const tick=engine.advanceTime(seconds);sourceSeconds=seconds;return tick;},
-    capture(){open();return profile==='canvas-2d'?engine.captureFrame(FRAME):engine.captureTexturedFrame(FRAME);},
+    capture(){open();return engine.captureSharedFrame(FRAME);},
     inspect,
     async retire(){
       actors.right.playback.stop();await close();

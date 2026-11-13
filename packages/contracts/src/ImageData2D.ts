@@ -52,7 +52,8 @@ const weakSet = WeakMap.prototype.set;
 const owned = new WeakMap<object, Uint8Array<ArrayBuffer>>();
 
 export const IMAGE_LIMITS_2D = freeze({
-    maxSourceEdge: 4096, maxSourcePixels: 1048576,
+    // One image is at most 2048 x 2048 pixels, or any other shape of that area within the edge bound.
+    maxSourceEdge: 4096, maxSourcePixels: 4194304,
     maxImagesPerFrame: 64, maxViewsPerFrame: 128,
     maxImageTableBytes: 16777216, maxProjectionBytes: 16777216,
     maxImageScratchBytes: 33554432, maxPendingTextureBytes: 33554432,

@@ -70,15 +70,24 @@ New actual compiler observations use the optional `frozenInputs` array in a cont
 
 The normal full prepush derives current publication metadata read-only from the Git merge base with origin/main. It does not require contributors to edit localization.json, source-origin.json or documentation-layout.json. Keep origin/main available and current; in a fork, add/fetch the upstream repository and set EGRET_METADATA_BASE to the exact target-base commit for validation. A one-language draft may be discussed, but the push hook still requires paired final readings. Ask for translation help before delivery if needed.
 
-After content, source and bilingual review, the integrator selects the final base and runs:
+A change does not carry the three ledgers. Before a merge, CI runs the same check as `node tools/prepush.mjs --integrated`:
 
 ```text
-node tools/contribution-metadata.mjs --base <target-base-commit> --write
-node tools/contribution-metadata.mjs --base <target-base-commit> --check
-node tools/prepush.mjs --integrated
+node tools/contribution-metadata.mjs --merge --base <base-commit>
 ```
 
-Set EGRET_METADATA_BASE to that same commit when running prepush if its default merge base differs. Commit the integrated ledgers with the reviewed content. CI uses the PR base SHA and refuses stale integrated metadata; it never writes back to contributor branches. Any new content, declaration or base requires regeneration and fresh checks. The generator changes only current derived fields and registered additions; unrelated old source rows and all historical objects are retained. Deletions, renames, provenance changes to existing rows and historical/schema changes need a separate reviewed migration. Byte hashing remains exact. Generation does not certify translation quality, source rights or behavior.
+It requires every ledger to be exactly as the base has it. It then plans the metadata from the last ledger refresh, so every file changed since then must be declared and every reading pair complete, although nothing is written. Set EGRET_METADATA_BASE to the base commit when running prepush if its default merge base differs. CI uses the PR base SHA and never writes back to contributor branches.
+
+The ledgers are refreshed after merges, by a change that carries nothing else. On a branch taken from current main:
+
+```text
+node tools/contribution-metadata.mjs --since-ledgers --write
+node tools/contribution-metadata.mjs --merge
+```
+
+The first command finds the newest commit on main's first-parent line that changed a ledger, plans everything that changed since, and writes all three ledgers. The second confirms that the refresh is complete: a change that carries a ledger at all must carry exactly this. If main moves before the refresh merges, regenerate it. After every merge to main, CI reports how many files have changed since the last refresh.
+
+Between refreshes the ledgers on main describe an earlier state. The merge checks do not read them as current: they derive the current inventory from the last refresh and the files as they stand. The generator changes only current derived fields and registered additions; unrelated old source rows and all historical objects are retained. Deletions, renames, provenance changes to existing rows and historical/schema changes need a separate reviewed migration. Byte hashing remains exact. Generation does not certify translation quality, source rights or behavior.
 
 For current browser checks, install Playwright and playwright-core **1.62.1** in a separate tool directory and use Windows x64, Node **26.7.0** and installed Edge:
 

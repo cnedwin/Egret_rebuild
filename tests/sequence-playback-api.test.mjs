@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 // Literal pixels, crops and seconds come from the existing public contracts,
 // independently of the proposed clock-driven playback implementation.
@@ -69,7 +70,7 @@ test('SQP00 genuine sequence/clock baseline precedes the named playback factory'
     assert.equal(ticks[0], tick);
     assert.ok(Object.isFrozen(tick));
 
-    const frame = engine.captureFrame({ width: 8, height: 4, clearColor: 0, clearAlpha: 0 });
+    const frame = captureDrawn(engine, { width: 8, height: 4, clearColor: 0, clearAlpha: 0 });
     assert.equal(frame.commands.length, 1);
     assert.equal(frame.commands[0].kind, 'image');
     assert.equal(frame.commands[0].imageIndex, 0);

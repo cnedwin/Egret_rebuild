@@ -4,11 +4,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as gpu from '@egret/engine/webgpu';
-import * as sceneGpu from '@egret/engine/webgpu/scene3d';
-import * as canvas from '@egret/engine/web';
+import * as webgl2 from '@egret/engine/webgl2';
 import {
   usingGpu, requireUpload, requireSession, observe, until, tick, turn,
-  hasCode, expectCode, capture, admitted, submit, readyUpload, egret, triangleScene,
+  hasCode, expectCode, capture, admitted, submit, readyUpload, egret,
 } from './fixtures/shared-frame-upload-gpu.mjs';
 
 test('GPU H00 existing shared status and ordinary readback remain genuine baseline', async () => {
@@ -141,7 +140,7 @@ test('GPU H07 stop revokes a ready-held stage before listener cleanup reentry', 
   });
 });
 
-test('GPU H08 generation is shared-only; legacy readback runtime keys remain unchanged', async () => {
+test('GPU H08 a readback names its generation and no entry gains a session name at run time', async () => {
   await usingGpu(async ({ f, a, h, frame }) => {
     requireSession(h);
     const shared = h.requestReadback(); shared.catch(() => {}); await submit(f, h, frame);
@@ -149,22 +148,7 @@ test('GPU H08 generation is shared-only; legacy readback runtime keys remain unc
     assert.equal(sharedValue.generation, h.getSessionStatus().generation);
     const originalKeys = ['alphaMode', 'bytes', 'colorSpace', 'format', 'frameId', 'height', 'serial', 'sourceFormat', 'width'];
     assert.deepEqual(Object.keys(sharedValue).sort(), [...originalKeys, 'generation'].sort());
-    for (const kind of ['ordinary', 'textured', 'scene', 'combined']) {
-      const legacy = f.host({ enableReadback: true }, kind); await f.ready(legacy);
-      for (const key of ['getSessionStatus', 'whenReady', 'recover', 'stageSharedFrame', 'stageSceneSharedFrame'])
-        assert.equal(key in legacy, false, 'legacy ' + kind + ' must not gain ' + key);
-      const read = legacy.requestReadback(); read.catch(() => {});
-      const ordinary = a.engine.captureFrame({ width: 8, height: 8, clearAlpha: 1 });
-      const textured = a.engine.captureTexturedFrame({ width: 8, height: 8, clearAlpha: 1 });
-      const scene = triangleScene();
-      const record = capture(f, () => kind === 'combined' ? legacy.renderSceneTexturedFrame(scene, textured)
-        : kind === 'scene' ? legacy.renderSceneFrame(scene, ordinary)
-        : kind === 'textured' ? legacy.renderTexturedFrame(textured) : legacy.renderFrame(ordinary));
-      admitted(record); await record.finish();
-      const value = await read; assert.deepEqual(Object.keys(value).sort(), originalKeys);
-      assert.equal('generation' in value, false); await legacy.whenIdle();
-    }
-    for (const entry of [egret, canvas, gpu, sceneGpu])
+    for (const entry of [egret, webgl2, gpu])
       for (const name of ['SharedDeviceSessionState', 'SharedDeviceSessionStatus', 'SharedFrameUploadOptions',
         'SharedFrameUploadReady', 'SharedFrameSubmission', 'SharedFrameUpload'])
         assert.equal(Object.hasOwn(entry, name), false, name + ' remains erased');

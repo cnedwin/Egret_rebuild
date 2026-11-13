@@ -4,7 +4,6 @@ import type { DisplayObject } from "./DisplayObject.js";
 import { assertLive, isDisplayNode } from "./displayTreeState.js";
 import { engineOf } from "./ownership.js";
 import { EgretError } from "./EgretError.js";
-import { invalidateCaptureNode } from "./frameCaptureCache.js";
 
 import type { RenderEffect2D } from './renderEffect.js';
 
@@ -34,6 +33,8 @@ export interface VisualState {
   renderEffect: RenderEffect2D | undefined;
   clipRect: Rectangle2D | undefined;
   primitives: Primitive[];
+  /** What the shared capture keeps of this node between frames; the capture alone reads and writes it. */
+  sharedCapture: object | undefined;
 }
 
 // Authoritative per-node visual state excludes overridable public accessors.
@@ -62,7 +63,6 @@ export function recordVisualChange(node: object, changes: number): void {
     || ((changes & VISUAL_APPEARANCE) !== 0 && state.appearanceRevision >= REVISION_RESTART)
     || ((changes & VISUAL_CONTENT) !== 0 && state.contentRevision >= REVISION_RESTART)
     || ((changes & VISUAL_BINDING) !== 0 && state.bindingRevision >= REVISION_RESTART)) {
-    invalidateCaptureNode(node as DisplayObject);
     state.structureRevision = 0;
     state.transformRevision = 0;
     state.appearanceRevision = 0;
@@ -82,6 +82,7 @@ export function registerVisual(node: DisplayObject): void {
     x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, alpha: 1,
     anchorOffsetX: 0, anchorOffsetY: 0,
     visible: true, renderEffect: undefined, sharedMaterial: null, renderBoundary: 'none', clipRect: undefined, primitives: [],
+    sharedCapture: undefined,
   });
 }
 
