@@ -223,6 +223,10 @@ When keeping an authorized phone awake is part of the task, hold one bounded USB
 
 `tests/shared-batching.test.mjs` is a CPU UNIT under the same permission. It imports the same four helpers and states, on frames captured through the public Engine, which draws share a batch, what the last two values of a vertex row and the rows of the region table hold, which pages a batch names for its texture units, and that batching refunds no logical charge. It establishes the CPU plan a Host executes, not GPU execution.
 
+`tests/shared-prepared-retention.test.mjs` is a CPU UNIT under the same permission. It imports `prepareSharedDraws2D.js`, `packSharedDraws2D.js` and `sharedPreparationRetention2D.js` and prepares every frame twice, without kept draws and with them: the geometry, rows, charges and refusals must be equal, for stated changes and for scenes changed at random. It also states which draws are found again, when a draw is kept without its geometry, and the bound on what is kept. It establishes equal CPU output, not GPU execution.
+
+`tests/shared-capture-retention.test.mjs` is a CPU UNIT. It builds and changes scenes through the public Engine and captures every frame twice: with the built private `packages/runtime/dist/sharedFrameCapture.js` collector that reads and writes no kept record, and through `captureSharedFrame`. Only this test may import that module. The two captures must be equal, refusals included, for stated changes and for scenes changed at random; the test also states which command records are given again and that nothing kept stands for a check.
+
 ## Evidence lane
 
 A check that compares a source or emitted file of a package with recorded bytes is evidence. It never decides whether a change may merge. `tools/lib/evidence-lane.mjs` lists these tools and test files; `tools/verify.mjs` and `tools/test.mjs` leave them out, and `node tools/evidence.mjs` runs them and reports which still hold. See the [evidence lane](knowledge-base/en/docs/evidence-lane.md).

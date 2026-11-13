@@ -33,6 +33,8 @@ export interface VisualState {
   renderEffect: RenderEffect2D | undefined;
   clipRect: Rectangle2D | undefined;
   primitives: Primitive[];
+  /** What the shared capture keeps of this node between frames; the capture alone reads and writes it. */
+  sharedCapture: object | undefined;
 }
 
 // Authoritative per-node visual state excludes overridable public accessors.
@@ -80,6 +82,7 @@ export function registerVisual(node: DisplayObject): void {
     x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, alpha: 1,
     anchorOffsetX: 0, anchorOffsetY: 0,
     visible: true, renderEffect: undefined, sharedMaterial: null, renderBoundary: 'none', clipRect: undefined, primitives: [],
+    sharedCapture: undefined,
   });
 }
 

@@ -8,6 +8,7 @@ import { SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
 import { admitSharedWebGPUOptions } from './sharedWebGPUOptions.js';
 import type { SharedWebGPUHostOptions, SharedWebGPUConfiguration } from './sharedWebGPUOptions.js';
 import { prepareSharedDraws2D, SharedPreparationError } from '../rendering/prepareSharedDraws2D.js';
+import { SharedPreparationRetention2D } from '../rendering/sharedPreparationRetention2D.js';
 import { planSharedSubmission2D, packSharedSubmission2D, packSharedRegionWindows2D, SHARED_REGION_WINDOW_STRIDE_2D, SHARED_REGION_WINDOW_BYTES_2D, materializeSharedPages2D, checkSharedCapacity2D, SharedStorageError2D } from './prepareSharedSubmission2D.js';
 import type { SharedSubmissionStorage2D, SharedOwnerSnapshot2D } from './prepareSharedSubmission2D.js';
 import type { PackedSharedDraw2D } from '../rendering/packSharedDraws2D.js';
@@ -192,6 +193,8 @@ class WebGPUHostImplementation {
     private pendingCanonicalBytes=0;
     private readonly ledger = new Set<Submission>();
     private readonly batchScratch = new PreparedBatchScratch2D();
+    /** The prepared draws of the last frame. A Host that is not active keeps none. */
+    private readonly retention = new SharedPreparationRetention2D();
     // Fixed-size observations only; original records/native owners still authorize every transition.
     private readonly resourceCpu:SharedPageCopyDiagnostics2D={canonicalBytes:0,scratchBytes:0,highCanonicalBytes:0,highScratchBytes:0,highTemporaryBytes:0,saturated:false};
     private readonly resourceUnknown:NativeUnknownDiagnostics={knownLogicalBytes:0,objects:0,highKnownLogicalBytes:0,highObjects:0,saturated:false};
@@ -336,7 +339,7 @@ class WebGPUHostImplementation {
         if(record.shared)for(const raw of record.shared.rawTargets)if(raw.texture!==undefined)this.noteUnknownResource(raw);
     }
     private active(): void {
-        if (this.state !== 'active') throw this.stateError();
+        if (this.state !== 'active') { this.retention.clear(); throw this.stateError(); }
     }
     private stateError(): EgretError { return error(this.state === 'stopped' ? 'WEBGPU_STOPPED' : this.state === 'closing' || this.state === 'closed' ? 'WEBGPU_CLOSED' : this.state === 'failed' ? 'WEBGPU_FAILED' : this.state==='lost'||this.state==='restoring'?'WEBGPU_DEVICE_LOST':'WEBGPU_NOT_STARTED', (SHARED_OPTIONS.get(this)?.recovery?this.generationFailure:this.firstFailure)?.cause); }
     private startupCancelled(): boolean {
@@ -975,7 +978,7 @@ class WebGPUHostImplementation {
                 if(options.outputAlpha==='opaque'&&frame.clearAlpha!==1)refuse('WEBGPU_FRAME_INVALID');
                 const width=Math.ceil(frame.width*options.pixelRatio),height=Math.ceil(frame.height*options.pixelRatio);
                 if(!Number.isSafeInteger(width)||!Number.isSafeInteger(height)||width<=0||height<=0||width>4294967295||height>4294967295||width>Math.floor(options.maxBackingPixels/height))refuse('WEBGPU_BACKING_LIMIT');
-                const prepared=prepareSharedDraws2D(frame,width,height,options),ticket=this.ticket&&!this.ticket.bound?this.ticket:undefined;
+                const prepared=prepareSharedDraws2D(frame,width,height,options,this.retention),ticket=this.ticket&&!this.ticket.bound?this.ticket:undefined;
                 const storage=planSharedSubmission2D(prepared,options,this.limits,this.sharedOwnerSnapshot(),staging?options.enableReadback:ticket!==undefined);
                 this.active();
                 const packed=packSharedSubmission2D(prepared);this.active();
@@ -1602,7 +1605,7 @@ class WebGPUHostImplementation {
         if (this.closing) return this.closing;
         this.invalidateImageResidency();
        
-        const barrier = deferred<void>(); this.closing = barrier.promise; this.state = 'closing'; this.cleanupOutcome = 'pending';
+        const barrier = deferred<void>(); this.closing = barrier.promise; this.state = 'closing'; this.cleanupOutcome = 'pending'; this.retention.clear();
         this.revokeRecovery(error('WEBGPU_CLOSED'));this.revokeStages(error('WEBGPU_CLOSED'));this.cancelTicket(error('WEBGPU_CLOSED'));
         this.cleanup().then(barrier.resolve, barrier.reject); return barrier.promise;
     }
