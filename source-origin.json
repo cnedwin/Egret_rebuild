@@ -295,8 +295,8 @@
     {
       "path": "AGENTS.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "5f3a568762b45582424ab57a116b0ace81ec87c049255a4ee6693b731c088ba1",
-      "bytes": 46014,
+      "sha256": "18943f595c1b58b41ea9af8979f74b1e4043f5c4b9706fca4ad5a00ee38f2dcc",
+      "bytes": 47030,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
       "previousLayoutPath": "AGENTS.en.md",
       "previousLayoutSha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5",
@@ -325,8 +325,8 @@
     },
     {
       "path": "AGENTS.zh-CN.md",
-      "sha256": "fc45aa0752a421b4b93259ec334abeec58462049d4cf4296caff72dad48b6589",
-      "bytes": 41582,
+      "sha256": "06f5646f5029a23641dbac3f6037e356bf3ed1fc3913619bb64ced3c206307ef",
+      "bytes": 42544,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
@@ -2072,7 +2072,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 137800,
-      "sha256": "ca22d873ec63402b76453c42b82b56206e0c62ac8005f1669613cf42bac0383a",
+      "sha256": "4e263e5b15f8ba65ae526dadd9f1a932de9118605a9d4f2722684ed19247e762",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3746,8 +3746,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "5ac9b33c94a069505d12b0bd5150618204b7bbd2061b0b2a566eb1135582fd5d",
-      "bytes": 394076,
+      "sha256": "f5ea800212f0408b3b3e5df548505fe7ce61486cf64c8174d474b9c33f3a6246",
+      "bytes": 395441,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4083,8 +4083,8 @@
     },
     {
       "path": "packages/engine/package.json",
-      "bytes": 3440,
-      "sha256": "4070930d06e98f8213c69ef3e1b2e8f7b850933d86950fe0ce2b851b6c976f78",
+      "bytes": 3559,
+      "sha256": "47f30da0710131fd945cbc85d57ec19abc29a99f8d6b36502cf7c04da49b091d",
       "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset.",
       "identityHistory": [
         {
@@ -4768,8 +4768,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "74e19d78fb388cd3599ab215c72362b1dd390e05aa101e5e35cfeaa6f3db798c",
-      "bytes": 21853,
+      "sha256": "93143c5fbf5ddc137695a19349aea9d3cf02932266937a86f5929d32f082d594",
+      "bytes": 22171,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -4911,8 +4911,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "32ca262b0902418e368d85f9559e88950c6b6888f5f5498325e1972e33092fe1",
-      "bytes": 21185,
+      "sha256": "30c53fdfccaf3cafba30b939155f0738f5373baac72de85255e4b809f293cac1",
+      "bytes": 21493,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -5079,8 +5079,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 229004,
-      "sha256": "ac303f1a34611e8ddc1512e8ae6b0b4ca5ad3ff794ab0e7b04a3b1b00a7915d3",
+      "bytes": 231112,
+      "sha256": "774c25e7e0769a7c158c113290cb1dc794e7293c8fa93a9c3932b7cc7b1082f3",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -5328,8 +5328,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 276145,
-      "sha256": "6afdf12c5223962667edd34ff967247668e3640588ee37ed62e25df749d5b7a3",
+      "bytes": 279364,
+      "sha256": "6fde54999bce8668e87d027bdbb2226b0488a7c455db2164727093752c645dc1",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -9345,8 +9345,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1627341,
-      "sha256": "37b6e5b146f14bb6d54d696a701df801fbf3b6d80e8ba00ee9b6320788478576"
+      "bytes": 1628035,
+      "sha256": "98cb8ebd7e2f8cae99871ad6db40804333783ce17dfeb0999b498058f9961597"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -16439,6 +16439,84 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 7529,
       "sha256": "aa75de9e3d2c372fc5aa01a07eee00f3407d650b3f4014479b47f6f9084372a8"
+    },
+    {
+      "path": "packages/engine/web/BrowserTextInput.ts",
+      "originRole": "First-party platform text entry over a canvas: a native field placed on a rectangle of the stage, for input methods and on-screen keyboards; independently authored with AI assistance; Apache-2.0. No third-party dependency or asset.",
+      "bytes": 23727,
+      "sha256": "57e661f014483f48cc064a5ad4775b333b97dad5edf454854f29af23933ad2a5"
+    },
+    {
+      "path": "packages/engine/web/textInput.ts",
+      "originRole": "First-party optional entry of the platform text entry over a canvas; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 331,
+      "sha256": "ef008b073466e27d9dca3dc87eab424e6e345ac9689ff1ce6804a4eb0a96e260"
+    },
+    {
+      "path": "tests/browser-text-input.test.mjs",
+      "originRole": "First-party unit of the platform text entry against a test-owned stand-in for the page; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 25831,
+      "sha256": "a5f6ea9070c5113e42e6a60efe3087391b79bc6b71e090bbeaf20c7f718f666d"
+    },
+    {
+      "path": "tests/types/text-input.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the text input entry; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 198,
+      "sha256": "1191d3f062eb01078c93ca1949e9c0c190e8ce6b91dfd5a022e0c1d3349da15b"
+    },
+    {
+      "path": "tests/types/text-input.ts",
+      "originRole": "First-party strict TypeScript consumer of the text input entry, with five refused misuses; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 1656,
+      "sha256": "7631cad6975d363e0911a37d274aee6a1997424d4ad06204cece3e7b645cf157"
+    },
+    {
+      "path": "examples/text-input/index.html",
+      "originRole": "First-party page of the text input example; independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "bytes": 2365,
+      "sha256": "c6c63eeb87acb2038eed894b296cae5570bfc3354cc25b06a6205e6704133dea"
+    },
+    {
+      "path": "examples/text-input/main.mjs",
+      "originRole": "First-party text input example: a panel drawn by the engine with a single-line and a multi-line field; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 5809,
+      "sha256": "fa89c0517abe55865a1306969bfa95d38945bc6865fc9881c91b05f9042df76e"
+    },
+    {
+      "path": "examples/text-input/verify.mjs",
+      "originRole": "First-party browser check of the text input example, driving a composition through the browser's protocol; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 9378,
+      "sha256": "52967bd6d169693f5ce888d00dcecb271664d0f963e5845b8c62ea2520eb1b07"
+    },
+    {
+      "path": "examples/text-input/README.md",
+      "originRole": "First-party instructions of the text input example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 1859,
+      "sha256": "9b8063c09bcb58b96aab4ddcd521295cdb0969b7ea287a3ef81b7a5f789f273e"
+    },
+    {
+      "path": "examples/text-input/README.zh-CN.md",
+      "originRole": "First-party Chinese instructions of the text input example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 1817,
+      "sha256": "b1833ab77637e74db8f644dcada87d13bfed5ebb87b00191f2179307ff7d36c0"
+    },
+    {
+      "path": "knowledge-base/en/docs/text-input.md",
+      "originRole": "First-party guide to text input over a canvas; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 9645,
+      "sha256": "c8622347f7da17595f444ddf009be00ca544f7a807a85cb6dc4adcb4cf5a94d6"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/text-input.md",
+      "originRole": "First-party Chinese guide to text input over a canvas; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 9397,
+      "sha256": "17fef5d1bd18c6eef46324d8b28ff86cf4f8e9d7bd3128018719be98717961bb"
+    },
+    {
+      "path": "contributions/text-input.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 3118,
+      "sha256": "56e8e7abff99cd9124c1dfdc95bcb5c2cdb0c0ce02c05e646870dd00b9db2916"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
