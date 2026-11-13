@@ -4,6 +4,8 @@ English | [简体中文](../../Cns/docs/check-maintenance.md)
 
 Contributors can continue with the complete gate when a source baseline or test catalog needs attention. Maintaining these records is a maintainer task; a newcomer does not need to invent review receipts or update historical hashes to submit useful work.
 
+The source baselines described here belong to tools in the [evidence lane](evidence-lane.md). They no longer decide a merge, so preparing them is needed only to renew that evidence.
+
 The maintenance tool prepares review inputs from current files. It reduces manual transcription and discovery across supported declarations. It never edits a baseline, installs a catalog, runs product code or grants acceptance. Original hooks, CI and source/strict/behavior obligations remain required.
 
 ## Prepare and recheck

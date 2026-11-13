@@ -2,11 +2,11 @@
 // Public SDK consumer: verified build outputs are materialized by the shared resource loader.
 import {admitResourceManifest} from '@egret/contracts/resources';
 import {selectExampleGeneration,matchExampleManifest} from './selection.mjs';
-import {createEngine,Bitmap} from '@egret/engine';
-import {createCanvasHost} from '@egret/engine/web';
+import {createEngineForProfile,SHARED_FRAME_PROFILE_2D,Bitmap} from '@egret/engine';
+import {createExampleHost} from '../host.mjs';
 import {createManifestContentLoader} from '@egret/engine/web/resources';
 const canvas=document.querySelector('#scene'),status=document.querySelector('#status'),step=document.querySelector('#step');
-const FRAME={width:12,height:6,clearColor:0x111827,clearAlpha:1};
+const FRAME={width:12,height:6,clearColor:0x111827,clearAlpha:1,outputAlpha:'opaque'};
 let state='starting',engine,host,active,pending,seconds=0,closePromise,closing=false;
 const diagnostics=[],attempts=[],retired=[],records=[];
 const errorView=cause=>({code:cause?.code??null,message:String(cause?.message??cause)});
@@ -21,12 +21,20 @@ async function bounded(url,maximum,signal){
 }
 const json=bytes=>JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));
 const digest=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),value=>value.toString(16).padStart(2,'0')).join('');
-function render(){engine.renderFrame(FRAME);}
+// The pixels of a frame arrive after it is drawn. A snapshot reports those of the last frame that arrived.
+let presented=Promise.resolve(),pixels=null;
+function render(){
+ const ticket=host.requestReadback();
+ presented=ticket.then(result=>{const at=(x,y)=>Array.from(result.bytes.subarray(4*(y*result.width+x),4*(y*result.width+x)+4));pixels={animated:at(2,2),other:at(8,2)};},()=>{});
+ engine.renderSharedFrame(FRAME);
+}
+/** Settles when the pixels of the latest frame are in the snapshot. */
+export const whenPresented=()=>presented;
 function retirement(record){return {generationId:record?.generationId??null,animationScope:record?.animationScope?.state??null,displayScope:record?.displayScope?.state??null,dataScope:record?.dataScope?.state??null,controller:record?.playback?.isDisposed??null,sheet:record?.sheet?.isDisposed??null,bitmap:record?.bitmap?.isDisposed??null,other:record?.other?.isDisposed??null,textures:record?.textures.map(value=>value.isDisposed)??[],loaderDisposed:record?.loader?.isDisposed??null,status:record?.loader?.getStatus()??null};}
 export function readSnapshot(){
- const pixel=(x,y)=>Array.from(canvas.getContext('2d').getImageData(x,y,1,1).data),row=active;
+ const row=active;
  return {state,generationId:row?.generationId??null,seconds,frameName:row?.playback?.lastSample?.frameName??null,sample:row?.playback?.lastSample??null,playbackState:row?.playback?.state??null,
-  pixels:state==='ready'?{animated:pixel(2,2),other:pixel(8,2)}:null,manifestEntries:row?.manifest?.entries.map(entry=>({id:entry.id,dependencies:[...entry.dependencies],sha256:entry.artifact.sha256}))??[],
+  pixels:state==='ready'?pixels:null,manifestEntries:row?.manifest?.entries.map(entry=>({id:entry.id,dependencies:[...entry.dependencies],sha256:entry.artifact.sha256}))??[],
   source:row?.loader?.getStatus().source??null,provider:row?.loader?.getStatus().provider??null,diagnostics:[...diagnostics],attempts:[...attempts],pending:pending?{cancelled:pending.cancelled,loaderCreated:!!pending.loader,generationId:pending.generationId??null}:null,
   retirement:retirement(row),retired:retired.map(retirement),clock:engine?.clock.state??null};
 }
@@ -76,8 +84,8 @@ export function close(){
 }
 export const ready=(async()=>{
  const selected=new URLSearchParams(location.search).get('config');check(selected,'Build the example, then open its generated configuration link. / 请先构建示例，再打开生成的配置链接。');
- host=createCanvasHost({canvas,pixelRatio:1});engine=await createEngine({host,onDiagnostic(row){if(diagnostics.length<32)diagnostics.push({code:row.code,message:String(row.cause?.message??row.cause)});}});current({cancelled:false});engine.advanceTime(0);
- const record=fresh();pending=record;try{await prepare(record,selected);await mount(record);return readSnapshot();}catch(error){await retire(record);throw error;}finally{if(pending===record)pending=undefined;}
+ host=await createExampleHost({canvas,pixelRatio:1,outputAlpha:'opaque',enableReadback:true});engine=await createEngineForProfile({host,onDiagnostic(row){if(diagnostics.length<32)diagnostics.push({code:row.code,message:String(row.cause?.message??row.cause)});}},SHARED_FRAME_PROFILE_2D);current({cancelled:false});engine.advanceTime(0);
+ const record=fresh();pending=record;try{await prepare(record,selected);await mount(record);await presented;return readSnapshot();}catch(error){await retire(record);throw error;}finally{if(pending===record)pending=undefined;}
 })().catch(async error=>{await retire(pending).catch(cleanup=>diagnostics.push({code:'EXAMPLE_CLEANUP',message:String(cleanup)}));if(!closing){state='failed';status.textContent=String(error.message);}throw error;});
 void ready.catch(()=>{});
 step.addEventListener('click',()=>{try{advance(Math.min(10,seconds+0.125));}catch(error){status.textContent=String(error.message);}});

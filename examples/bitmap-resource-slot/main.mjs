@@ -4,9 +4,10 @@ import {
   createAssetType, createAssetRef, isTexture,
 } from '@egret/engine';
 import { createMouseInput, createBitmapButton } from '@egret/engine/web/input';
+import { chooseBackend, loadExampleHostFactory } from '../host.mjs';
 
 const canvas = document.querySelector('#scene'), status = document.querySelector('#status');
-const backend = new URL(location.href).searchParams.get('backend') === 'webgpu' ? 'webgpu' : 'canvas';
+const backend = chooseBackend();
 const FRAME = Object.freeze({ width: 32, height: 24, clearColor: 0, clearAlpha: 0 });
 const errors = [], diagnostics = [], requests = [], providerJobs = [], events = [], buttons = [];
 const pendingTickets = new Set(), tickets = [], timers = new Set(), providerDisposals = [];
@@ -53,7 +54,7 @@ function inspect() {
     pendingTimers: timers.size, providerDisposals: [...providerDisposals],
     inputState: input?.state ?? null, scopeState: scope?.state ?? null,
     inputScopeState: inputScope?.state ?? null,
-    hostStatus: backend === 'webgpu' ? host?.getStatus() ?? null : null,
+    hostStatus: host?.getStatus() ?? null,
     errors: errors.map(errorView), diagnostics: diagnostics.map(value => ({ code: value.code, phase: value.phase })),
   };
 }
@@ -62,7 +63,8 @@ function trackTimerHost(original) {
   return Object.freeze({
     surface: original.surface,
     start: () => original.start(), stop: () => original.stop(), close: () => original.close(),
-    renderFrame: frame => original.renderFrame(frame),
+    sharedFrameProfile: original.sharedFrameProfile,
+    renderSharedFrame: frame => original.renderSharedFrame(frame),
     setTimeout(callback, delay) {
       const token = {}, cancel = original.setTimeout(() => { timers.delete(token); callback(); }, delay);
       timers.add(token);
@@ -71,30 +73,22 @@ function trackTimerHost(original) {
   });
 }
 
-// Every GPU ticket is armed before renderFrame, including the healthy startup frame.
+// Every ticket is armed before its frame is rendered, including the healthy startup frame.
 async function draw(label, frame) {
-  let ticket;
-  if (backend === 'webgpu') {
-    const promise = host.requestReadback();
-    ticket = { promise, label, status: 'pending' }; tickets.push(ticket); pendingTickets.add(ticket);
-    void promise.then(() => { ticket.status = 'fulfilled'; pendingTickets.delete(ticket); },
-      cause => { ticket.status = 'rejected'; pendingTickets.delete(ticket); errors.push(cause); });
-  }
-  host.renderFrame(frame);
-  if (ticket) {
-    const result = await ticket.promise;
-    lastPixels = { width: result.width, height: result.height, bytes: new Uint8Array(result.bytes) };
-    await host.whenIdle();
-  } else {
-    const result = canvas.getContext('2d').getImageData(0, 0, FRAME.width, FRAME.height);
-    lastPixels = { width: result.width, height: result.height, bytes: new Uint8Array(result.data) };
-  }
+  const promise = host.requestReadback();
+  const ticket = { promise, label, status: 'pending' }; tickets.push(ticket); pendingTickets.add(ticket);
+  void promise.then(() => { ticket.status = 'fulfilled'; pendingTickets.delete(ticket); },
+    cause => { ticket.status = 'rejected'; pendingTickets.delete(ticket); errors.push(cause); });
+  host.renderSharedFrame(frame);
+  const result = await ticket.promise;
+  lastPixels = { width: result.width, height: result.height, bytes: new Uint8Array(result.bytes) };
+  await host.whenIdle();
   lastLabel = label;
 }
 function checkpoint(label, saved = false) {
   const result = serialPresentation.then(async () => {
     if (state === 'closed' || state === 'closing') throw new Error('EXAMPLE_CLOSED');
-    await draw(label, saved ? savedInitial : engine.captureFrame(FRAME));
+    await draw(label, saved ? savedInitial : engine.captureSharedFrame(FRAME));
     refresh(); return inspect();
   });
   serialPresentation = result.catch(cause => { errors.push(cause); });
@@ -165,11 +159,9 @@ function readback() {
 }
 
 async function initialize() {
-  const entry = backend === 'webgpu' ? await import('@egret/engine/webgpu') : await import('@egret/engine/web');
+  const createHost = await loadExampleHostFactory(backend);
   if (closeRequested) throw new Error('EXAMPLE_CLOSED');
-  host = backend === 'webgpu'
-    ? entry.createWebGPUHost({ canvas, pixelRatio: 1, enableReadback: true })
-    : entry.createCanvasHost({ canvas, pixelRatio: 1 });
+  host = createHost({ canvas, pixelRatio: 1, enableReadback: true });
   engine = await createEngine({ host: trackTimerHost(host), onDiagnostic: value => { diagnostics.push(value); } });
   if (closeRequested) throw new Error('EXAMPLE_CLOSED');
   scope = engine.createScope(); inputScope = engine.createScope();
@@ -221,12 +213,10 @@ async function initialize() {
     const index = buttons.findIndex(button => event.target === button.display);
     if (index >= 0) events.push({ kind: 'button-route', color: index === 0 ? 'B' : 'C', sameTarget: event.target === buttons[index].display });
   }, { signal: inputScope.signal });
-  savedInitial = engine.captureFrame(FRAME);
+  savedInitial = engine.captureSharedFrame(FRAME);
   await draw('healthy-startup', savedInitial);
-  if (backend === 'webgpu') {
-    if (tickets.length !== 1 || tickets[0].status !== 'fulfilled') throw new Error('EXAMPLE_HEALTHY_STARTUP_READBACK_REQUIRED');
-    await host.whenIdle();
-  }
+  if (tickets.length !== 1 || tickets[0].status !== 'fulfilled') throw new Error('EXAMPLE_HEALTHY_STARTUP_READBACK_REQUIRED');
+  await host.whenIdle();
   state = 'ready'; refresh(); return inspect();
 }
 
@@ -243,7 +233,7 @@ function close() {
     await Promise.allSettled(requests.map(record => record.promise));
     await Promise.resolve(); await Promise.resolve();
     inputScope?.dispose(); scope?.dispose();
-    if (backend === 'webgpu') await host?.whenIdle();
+    await host?.whenIdle();
     await engine?.dispose();
     await Promise.allSettled(tickets.map(ticket => ticket.promise));
     state = 'closed'; refresh();

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { createAssetRef, EgretError } from '@egret/engine';
-import { createCanvasHost } from '@egret/engine/web';
+import { chooseBackend, loadExampleHostFactory } from '../host.mjs';
 import { createBrowserTextureProvider } from '@egret/engine/web/image';
 import { createCanvasTextRasterProvider } from '@egret/engine/web/text';
 import { createMouseInput } from '@egret/engine/web/input';
@@ -8,7 +8,8 @@ import { createResourceSceneSession } from './session.mjs';
 
 const WIDTH = 192, HEIGHT = 128;
 const IDS = Object.freeze(['pilot-left', 'pilot-right']);
-const profile = new URL(location.href).searchParams.get('profile') ?? 'canvas-2d';
+const profile = new URL(location.href).searchParams.get('profile') ?? 'shared-2d';
+const backend = chooseBackend(), createHost = await loadExampleHostFactory(backend);
 const element = id => document.getElementById(id);
 const trace = [], faults = [], epochs = [], replays = [];
 const imagePins = new Map([
@@ -96,7 +97,7 @@ function allocate(restore) {
   const record = { epoch: epochs.length + 1, hostId: 'epoch-' + (epochs.length + 1),
     canvas: epochs.length === 0 ? element('scene') : newCanvas(), restore,
     resources, retired: false, interactive: false, resourceReady: false, frameReady: false, sourceSeconds: 0,
-    session: undefined, host: undefined, provider: undefined, gpu: undefined, input: undefined,
+    session: undefined, host: undefined, provider: undefined, input: undefined,
     families: {}, fonts: [], reads: [], loads: [], requests: [], disposals: [], presentations: [],
     events: [], ticks: [], warm: new Set(), warmPending: 0, warmRequests: [], holdNext: false, assetType: undefined,
     serial: Promise.resolve(), presentationPending: 0, closePromise: undefined, cleanup: [], safeSurface: false };
@@ -169,52 +170,35 @@ function observeProvider(record, provider) {
     },
   });
 }
-function captureStatus(host) {
-  return profile === 'webgpu-scene-textured' ? { host: host?.getStatus() ?? null,
-    textured: host?.getTexturedStatus() ?? null, scene: host?.getSceneStatus() ?? null } : null;
+function makeHost(canvas) {
+  return createHost({ canvas, pixelRatio: 1, enableReadback: true,
+    onDiagnostic(value) { observe('host-diagnostic', { code: value.code, phase: value.phase }); } });
 }
-function makeHost(canvas, gpu) {
-  return profile === 'canvas-2d' ? createCanvasHost({ canvas, pixelRatio: 1 })
-    : gpu.createTexturedSceneWebGPUHost({ canvas, pixelRatio: 1, enableReadback: true,
-      onDiagnostic(value) { observe('host-diagnostic', { code: value.code, phase: value.phase }); } });
-}
-async function draw(record, label, overlay, scene) {
+async function draw(record, label, overlay) {
   const row = { id: ++nextPresentation, epoch: record.epoch ?? null, hostId: record.hostId, label, outcome: 'pending',
     frameId: overlay.frameId, serial: null, readback: 'not-requested', idle: false, error: undefined, promise: undefined };
   record.presentations.push(row); observe('frame-submitted', { epoch: row.epoch, id: row.id, label });
   try {
-    if (profile === 'webgpu-scene-textured') {
-      const original = record.host.requestReadback(); row.promise = original; row.readback = 'pending';
-      // Observe rejection even if the synchronous renderer refuses the frame.
-      void original.catch(() => undefined);
-      record.host.renderSceneTexturedFrame(scene, overlay);
-      const result = await original; row.readback = 'fulfilled'; row.serial = result.serial;
-      await record.host.whenIdle(); row.idle = true;
-      lastPixels = { label, epoch: row.epoch, hostId: row.hostId, frameId: result.frameId, serial: result.serial,
-        width: result.width, height: result.height, bytes: new Uint8Array(result.bytes) };
-    } else {
-      record.host.renderFrame(overlay);
-      const result = record.canvas.getContext('2d').getImageData(0, 0, WIDTH, HEIGHT);
-      lastPixels = { label, epoch: row.epoch, hostId: row.hostId, frameId: overlay.frameId, serial: null,
-        width: result.width, height: result.height, bytes: new Uint8Array(result.data) };
-      row.idle = true;
-    }
+    const original = record.host.requestReadback(); row.promise = original; row.readback = 'pending';
+    // Observe rejection even if the synchronous renderer refuses the frame.
+    void original.catch(() => undefined);
+    record.host.renderSharedFrame(overlay);
+    const result = await original; row.readback = 'fulfilled'; row.serial = result.serial;
+    await record.host.whenIdle(); row.idle = true;
+    lastPixels = { label, epoch: row.epoch, hostId: row.hostId, frameId: result.frameId, serial: result.serial,
+      width: result.width, height: result.height, bytes: new Uint8Array(result.bytes) };
     row.outcome = 'fulfilled'; observe('frame-ready', { epoch: row.epoch, id: row.id, label });
   } catch (cause) { row.outcome = 'rejected'; row.error = errorView(cause); throw cause; }
 }
-function checkpoint(label, sceneChoice = 'normal') {
+function checkpoint(label) {
   const record = assertAdmitted();
   if (typeof label !== 'string' || !/^[a-z0-9-]{1,64}$/.test(label)) throw fault('RESOURCE_SCENE_LABEL_INVALID');
-  if (!['normal', 'reverse-order', 'wrong-depth'].includes(sceneChoice)
-      || (profile === 'canvas-2d' && sceneChoice !== 'normal')) throw fault('RESOURCE_SCENE_PROFILE_UNSUPPORTED');
   record.presentationPending++;
   const original = record.serial.then(async () => {
     if (record.retired) throw fault('RESOURCE_SCENE_CLOSED');
     await record.session.scene.textReady;
     if (record.retired) throw fault('RESOURCE_SCENE_CLOSED');
-    const scene = sceneChoice === 'reverse-order' ? record.composition?.sceneWithReversedDrawOrder
-      : sceneChoice === 'wrong-depth' ? record.composition?.sceneWithWrongDepth : record.composition?.scene;
-    await draw(record, label, record.session.capture(), scene); refresh(); return inspect();
+    await draw(record, label, record.session.capture()); refresh(); return inspect();
   });
   record.serial = original.then(() => { record.presentationPending--; refresh(); },
     () => { record.presentationPending--; refresh(); });
@@ -286,21 +270,17 @@ function releaseWarm(lease) {
 }
 async function initialize(record, label) {
   try {
-    if (!['canvas-2d', 'webgpu-scene-textured'].includes(profile)) throw fault('RESOURCE_SCENE_PROFILE_UNSUPPORTED');
+    if (profile !== 'shared-2d') throw fault('RESOURCE_SCENE_PROFILE_UNSUPPORTED');
     await prepareFonts(record); assertStarting(record);
-    // Only an explicit GPU profile evaluates its optional scene/Host modules.
-    if (profile === 'webgpu-scene-textured') record.gpu = await import('./gpu-scene.mjs');
-    assertStarting(record);
-    record.host = makeHost(record.canvas, record.gpu);
+    record.host = makeHost(record.canvas);
     record.provider = createBrowserTextureProvider({ readBytes(ref, context) { return readImage(record, ref, context); } });
     record.session = createResourceSceneSession({ host: record.host, profile, restore: record.restore,
       textureProvider: observeProvider(record, record.provider), textProvider: createCanvasTextRasterProvider(), fontFamilies: record.families });
     await record.session.ready; assertStarting(record);
-    if (record.gpu) record.composition = record.gpu.createResourceSceneGPU({ session: record.session });
     record.resourceReady = true; record.resources.resolve(); observe('resources-ready', { epoch: record.epoch }); refresh();
-    const overlay = record.session.capture(), scene = record.composition?.scene;
-    await draw(record, label, overlay, scene); assertStarting(record);
-    if (savedBaseline === undefined) savedBaseline = Object.freeze({ overlay, scene });
+    const overlay = record.session.capture();
+    await draw(record, label, overlay); assertStarting(record);
+    if (savedBaseline === undefined) savedBaseline = Object.freeze({ overlay });
     record.frameReady = true;
     record.input = createMouseInput({ engine: record.session.scene.engine, scope: record.session.scene.inputScope, width: WIDTH, height: HEIGHT });
     for (const kind of ['begin', 'end', 'activate', 'cancel']) {
@@ -352,7 +332,7 @@ function retireEpoch(record) {
     if (record.provider) await keep('png-provider-close', () => record.provider.close());
     let hostClosed = record.host === undefined;
     if (record.host) await keep('host-close', async () => { await record.host.close(); hostClosed = true; });
-    record.safeSurface = hostClosed && (record.host === undefined || profile !== 'webgpu-scene-textured' || record.host.getStatus().cleanupOutcome === 'safe');
+    record.safeSurface = hostClosed;
     for (const row of record.fonts) await keep('font-remove', () => {
       if (row.face && document.fonts.has(row.face)) document.fonts.delete(row.face);
       row.member = row.face ? document.fonts.has(row.face) : false; row.removed = !row.member;
@@ -395,14 +375,14 @@ function replay() {
     replays.push(record);
     let failed = false, primary;
     try {
-      record.host = makeHost(record.canvas, previous.gpu); await record.host.start();
+      record.host = makeHost(record.canvas); await record.host.start();
       if (closeRequested) throw fault('RESOURCE_SCENE_CLOSED');
-      await draw(record, 'saved-replay', savedBaseline.overlay, savedBaseline.scene);
+      await draw(record, 'saved-replay', savedBaseline.overlay);
     } catch (cause) { failed = true; primary = cause; }
     let hostClosed = record.host === undefined;
     try { if (record.host) { record.host.stop(); await record.host.close(); hostClosed = true; } }
     catch (cause) { record.cleanup.push(cause); }
-    record.safeSurface = hostClosed && (record.host === undefined || profile !== 'webgpu-scene-textured' || record.host.getStatus().cleanupOutcome === 'safe');
+    record.safeSurface = hostClosed;
     if (record.safeSurface) {
       try { record.canvas.width = 0; record.canvas.height = 0; record.canvas.remove(); } catch (cause) { record.cleanup.push(cause); }
     } else record.cleanup.push(fault('RESOURCE_SCENE_HOST_UNSAFE'));
@@ -458,15 +438,15 @@ function epochView(record) {
       textureIssued: texture !== undefined, textureDisposed: texture?.isDisposed ?? null, error })),
     requests: record.requests.map(({ promise, ...row }) => ({ ...row })), disposals: record.disposals.map(row => ({ ...row })),
     presentations: record.presentations.map(({ promise, ...row }) => ({ ...row })),
-    fonts: record.fonts.map(({ face, ...row }) => ({ ...row })), hostStatus: captureStatus(record.host),
+    fonts: record.fonts.map(({ face, ...row }) => ({ ...row })), hostStatus: null,
     inputState: record.input?.state ?? null, safeSurface: record.safeSurface,
     canvas: { connected: record.canvas.isConnected, width: record.canvas.width, height: record.canvas.height },
     cleanup: record.cleanup.map(row => ({ operation: row.operation, error: errorView(row.cause) })) };
 }
 function inspect() {
-  return { state, profile, currentEpoch: current?.epoch ?? null, traceExhausted: trace.length >= 256,
+  return { state, profile, backend, currentEpoch: current?.epoch ?? null, traceExhausted: trace.length >= 256,
     hasSavedBaseline: savedBaseline !== undefined, selectedId: current?.session?.inspect().selectedId ?? retainedModel?.selectedId ?? IDS[0],
-    epochs: epochs.map(epochView), replays: replays.map(record => ({ hostId: record.hostId, safeSurface: record.safeSurface, hostStatus: captureStatus(record.host),
+    epochs: epochs.map(epochView), replays: replays.map(record => ({ hostId: record.hostId, safeSurface: record.safeSurface, hostStatus: null,
       presentations: record.presentations.map(({ promise, ...row }) => ({ ...row })), cleanup: record.cleanup.map(value => errorView(value)) })),
     trace: trace.map(row => ({ ...row })), faults: faults.map(row => ({ ...row })) };
 }

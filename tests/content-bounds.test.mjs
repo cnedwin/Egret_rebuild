@@ -48,8 +48,8 @@ function near(value,x,y,width,height){
 }
 function rect(node,x,y,width,height,alpha=1){node.graphics.beginFill(0x336699,alpha).drawRect(x,y,width,height);return node;}
 async function withEngine(run,overrides={}){
-  const port=host(overrides),diagnostics=[];
-  const engine=await egret.createEngine({host:port.adapter,onDiagnostic:value=>diagnostics.push(value)});
+  const port=host({sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D,renderSharedFrame(){},...overrides}),diagnostics=[];
+  const engine=await egret.createEngineForProfile({host:port.adapter,onDiagnostic:value=>diagnostics.push(value)},egret.SHARED_FRAME_PROFILE_2D);
   try{return await run(engine,port,diagnostics);}finally{await engine.dispose();}
 }
 async function withBitmap(run){
@@ -149,13 +149,13 @@ test('B07 visibility alpha clipping and host state do not filter logical bounds'
     const ancestor=new egret.Sprite(),root=new egret.Sprite();rect(root,10,20,2,3,0);
     ancestor.visible=false;ancestor.alpha=0;ancestor.clipRect={x:0,y:0,width:0,height:0};
     root.visible=false;root.alpha=0;root.clipRect={x:0,y:0,width:0,height:0};ancestor.addChild(root);engine.stage.addChild(ancestor);
-    const before=engine.captureFrame(FRAME),trace=[...port.trace],timers=port.timers.size;
+    const before=engine.captureSharedFrame(FRAME),trace=[...port.trace],timers=port.timers.size;
     for(let index=0;index<3;index++)rectangle(bounds(root),10,20,2,3);
-    rectangle(bounds(ancestor),10,20,2,3);const after=engine.captureFrame(FRAME);
+    rectangle(bounds(ancestor),10,20,2,3);const after=engine.captureSharedFrame(FRAME);
     assert.equal(after.frameId,before.frameId+1,'queries consume no frame identifiers');assert.equal(draws,0);
     assert.deepEqual(port.trace,trace);assert.equal(port.timers.size,timers);assert.deepEqual(diagnostics,[]);
     assert.equal(root.parent,ancestor);assert.equal(ancestor.parent,engine.stage);
-  },{renderFrame(){draws++;}});
+  },{renderSharedFrame(){draws++;}});
 });
 
 // B08: crop origin is not content origin; retired pixels cannot erase metadata or

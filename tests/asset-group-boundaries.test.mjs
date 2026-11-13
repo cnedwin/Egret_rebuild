@@ -73,7 +73,7 @@ const replaced = (raw, before, after) => {
 
 test('RG1 boundary executable public roots expose no group types factories owners brands or assembly values', async () => {
   // Contracts retains its existing relative public-root route.
-  for (const specifier of ['../packages/contracts/dist/index.js', '@egret/runtime', '@egret/engine', '@egret/engine/web', '@egret/engine/webgpu', '@egret/engine/text', '@egret/runtime/text', '@egret/project']) {
+  for (const specifier of ['../packages/contracts/dist/index.js', '@egret/runtime', '@egret/engine', '@egret/engine/webgl2', '@egret/engine/webgpu', '@egret/engine/text', '@egret/runtime/text', '@egret/project']) {
     const values = await import(specifier);
     for (const name of ['AssetGroup', 'AssetGroupState', 'AssetGroupOptions', 'AssetGroupOperations', 'createAssetGroup', 'createAssetGroupOwner', 'AssetGroupOwner', 'AssetGroupContext', 'assetGroupBrand'])
       assert.equal(Object.hasOwn(values, name), false, specifier + ': ' + name);
@@ -96,7 +96,7 @@ const mutations = [
   ['root-source-factory', 'packages/engine/src/index.ts', raw => raw + '\nexport declare function createAssetGroup(): void;\n', 'root source: private AssetGroup authority leaked: createAssetGroup'],
   ['root-declaration-factory', 'packages/engine/dist/index.d.ts', raw => raw + '\nexport declare function createAssetGroup(): void;\n', 'root: private AssetGroup authority leaked: createAssetGroup'],
   ['root-private-owner', 'packages/engine/dist/index.d.ts', raw => raw + "\nexport { createAssetGroupOwner } from './assetGroup.js';\n", 'root: private AssetGroup authority leaked: createAssetGroupOwner'],
-  ['web-private-owner-context', 'packages/engine/dist/web/index.d.ts', raw => raw + '\nexport interface AssetGroupContext {}\n', 'web: private AssetGroup authority leaked: AssetGroupContext'],
+  ['web-resources-private-owner-context', 'packages/engine/dist/web/resources.d.ts', raw => raw + '\nexport interface AssetGroupContext {}\n', 'engine/web/resources: private AssetGroup authority leaked: AssetGroupContext'],
   ['runtime-private-owner-type', 'packages/runtime/dist/index.d.ts', raw => raw + '\nexport interface AssetGroupOwner {}\n', 'runtime: private AssetGroup authority leaked: AssetGroupOwner'],
   ['private-module-namespace', 'packages/engine/dist/index.d.ts', raw => raw + "\nexport type * as EscapedGroupOwner from './assetGroup.js';\n", 'root: private AssetGroup module leaked'],
   ['source-private-brand', 'packages/engine/src/index.ts', raw => raw + '\nexport declare const assetGroupBrand: unique symbol;\n', 'root source: private AssetGroup authority leaked: assetGroupBrand'],

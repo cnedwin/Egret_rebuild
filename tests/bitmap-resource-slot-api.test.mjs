@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const CROP = Object.freeze({ x: 1, y: 0, width: 1, height: 2 });
 const FRAME = Object.freeze({ width: 8, height: 8 });
@@ -24,7 +25,7 @@ async function scene() {
   const bitmap = resources.use(new egret.Bitmap(lease));
   bitmap.sourceRect = CROP;
   engine.stage.addChild(bitmap);
-  const capture = () => engine.captureFrame(FRAME);
+  const capture = () => captureDrawn(engine, FRAME);
   return { h, engine, resources, scope, image, texture, ref, lease, bitmap, capture,
     counts: () => ({ loads, disposals }) };
 }

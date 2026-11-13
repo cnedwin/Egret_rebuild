@@ -8,7 +8,7 @@ import {fileURLToPath} from 'node:url';
 import {fingerprintFile,ownerRelativePath,samePhysicalPath} from './lib/file-identity.mjs';
 
 const root=realpathSync(fileURLToPath(new URL('..',import.meta.url)));
-const inventoryPath='tests/types/shared-render-diagnostic-expectations.json';
+const inventoryPath='tests/types/shared-render-2-diagnostic-expectations.json';
 const inventory=JSON.parse(readFileSync(path.join(root,inventoryPath),'utf8'));
 assert.equal(inventory.schemaVersion,1);
 assert.equal(inventory.kind,'SHARED_RENDER_ACTUAL_STRICT_DIAGNOSTICS');

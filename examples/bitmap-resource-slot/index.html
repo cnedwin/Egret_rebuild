@@ -8,12 +8,23 @@ body{font:16px system-ui;max-width:820px;margin:24px auto;padding:0 16px;color:#
 </style>
 <h1>Bitmap resource replacement / Bitmap 资源替换</h1>
 <p>Click the left or right in-scene button to request green B or blue C. Settle, fail or cancel it below. The red cropped A remains until a current replacement commits.<br>点击画布下方左右按钮请求绿色 B 或蓝色 C，再完成、失败或取消；当前替换提交前保留红色裁剪 A。</p>
-<p><a href="?backend=canvas">Canvas</a> · <a href="?backend=webgpu">WebGPU</a></p>
+<p><a href="?backend=webgpu">WebGPU</a> · <a href="?backend=webgl2">WebGL2</a></p>
 <canvas id="scene" width="32" height="24" aria-label="Resource replacement scene / 资源替换场景"></canvas>
 <button id="finish" disabled>Complete latest / 完成当前</button><button id="fail" disabled>Fail latest / 当前失败</button><button id="cancel" disabled>Cancel / 取消</button><button id="dispose" disabled>Dispose slot / 销毁资源槽</button><button id="recreate" disabled>Recreate slot / 重建资源槽</button><button id="close">Close / 关闭</button>
 <pre id="status" role="status">Starting / 启动中</pre>
-<script type="importmap">
-{"imports":{"@egret/engine":"../../packages/engine/dist/index.js","@egret/engine/web":"../../packages/engine/dist/web/index.js","@egret/engine/webgpu":"../../packages/engine/dist/web/webgpu.js","@egret/engine/web/input":"../../packages/engine/dist/web/input.js","@egret/runtime":"../../packages/runtime/dist/index.js","@egret/contracts":"../../packages/contracts/dist/index.js","@egret/contracts/resources":"../../packages/contracts/dist/resources/index.js","#egret-mouse-input":"../../packages/engine/dist/mouseInput.js","#egret-textured-frame-state":"../../packages/engine/dist/internal/texturedFrameState.js","robust-predicates":"../../packages/engine/node_modules/robust-predicates/index.js"}}
-</script>
+<script type="importmap">{
+  "imports": {
+    "@egret/engine": "../../packages/engine/dist/index.js",
+    "@egret/engine/webgpu": "../../packages/engine/dist/web/webgpu.js",
+    "@egret/engine/webgl2": "../../packages/engine/dist/web/webgl2.js",
+    "@egret/engine/web/input": "../../packages/engine/dist/web/input.js",
+    "@egret/runtime": "../../packages/runtime/dist/index.js",
+    "@egret/contracts": "../../packages/contracts/dist/index.js",
+    "@egret/contracts/resources": "../../packages/contracts/dist/resources/index.js",
+    "#egret-mouse-input": "../../packages/engine/dist/mouseInput.js",
+    "#egret-textured-frame-state": "../../packages/engine/dist/internal/texturedFrameState.js",
+    "robust-predicates": "../../packages/engine/node_modules/robust-predicates/index.js"
+  }
+}</script>
 <script type="module" src="./main.mjs"></script>
 </html>

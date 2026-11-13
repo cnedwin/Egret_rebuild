@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/bench-2d-gpu.mjs",
+      "originRole": "First-party tool that serves fixed 2D workloads to a browser and prints the frame costs the page measured on the machine's graphics device; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/bench-2d-gpu/page.mjs",
+      "originRole": "First-party browser page of the 2D graphics-device benchmark: fixed workloads drawn through the shared WebGPU and WebGL2 Hosts, with draw counts, Host CPU time, device time and frame pacing; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import * as sdk from '@egret/engine';
 import { deferred, flush, host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 export { sdk, deferred, flush };
 export const FRAME = Object.freeze({ width: 32, height: 32, clearColor: 0, clearAlpha: 0 });
@@ -82,16 +83,16 @@ export function literalTexture(template) {
 }
 
 export async function scene({ hostOverrides = {}, groupInitial = false } = {}) {
-  const port = host(hostOverrides), diagnostics = [], trace = [], loads = [], jobs = [], disposals = [];
+  const port = host({ sharedFrameProfile: sdk.SHARED_FRAME_PROFILE_2D, renderSharedFrame() {}, ...hostOverrides }), diagnostics = [], trace = [], loads = [], jobs = [], disposals = [];
   const values = new Map(), templates = new Map(), hooks = { load: undefined, guard: undefined, dispose: undefined, diagnostic: undefined };
   for (const name of ['A', 'B', 'C']) { values.set(name, literalTexture(name)); templates.set(values.get(name), name); }
   const unhandled = [];
   const onUnhandled = reason => unhandled.push(reason);
   process.on('unhandledRejection', onUnhandled);
   let f;
-  const engine = await sdk.createEngine({ host: port.adapter, onDiagnostic(diagnostic) {
+  const engine = await sdk.createEngineForProfile({ host: port.adapter, onDiagnostic(diagnostic) {
     diagnostics.push(diagnostic); hooks.diagnostic?.(diagnostic, f);
-  } });
+  } }, sdk.SHARED_FRAME_PROFILE_2D);
   const initialScope = engine.createScope(), slotScope = engine.createScope();
   const type = sdk.createAssetType('original-bitmap-slot-texture', value => {
     if (hooks.guard !== undefined) return hooks.guard(value, f);
@@ -158,7 +159,7 @@ export async function scene({ hostOverrides = {}, groupInitial = false } = {}) {
   }
 }
 export function visible(f, template = 'A', crop = template === 'A' ? CROP_A : FULL[template]) {
-  const frame = f.engine.captureFrame(FRAME), command = frame.commands[0];
+  const frame = captureDrawn(f.engine, FRAME), command = frame.commands[0];
   assert.equal(command?.kind, 'image');
   assert.deepEqual(command.sourceRect, crop);
   assert.deepEqual(command.rect, { x: 0, y: 0, width: crop.width, height: crop.height });

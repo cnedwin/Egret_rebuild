@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 import {createAnchoredAtlasSession} from './session.mjs';
+import {chooseBackend, loadExampleHostFactory} from '../host.mjs';
 
 const query = new URL(location.href).searchParams;
-const backend = query.get('backend') === 'webgpu' ? 'webgpu' : 'canvas';
+const backend = chooseBackend();
 const preset = query.get('preset') === 'verification' ? 'verification' : 'preview';
 const canvas = document.querySelector('#scene'), status = document.querySelector('#status');
 const selector = document.querySelector('#backend');
@@ -25,11 +26,12 @@ function verificationHost(original) {
     stop: () => original.stop(),
     close: () => original.close(),
     setTimeout: (callback, delay) => original.setTimeout(callback, delay),
-    renderFrame(frame) {
+    sharedFrameProfile: original.sharedFrameProfile,
+    renderSharedFrame(frame) {
       const ticket = original.requestReadback();
       readbacks.push(ticket);
       void ticket.catch(() => {});
-      return original.renderFrame(frame);
+      return original.renderSharedFrame(frame);
     },
   });
 }
@@ -72,15 +74,14 @@ function failed(error) {
 document.querySelector("#close").addEventListener("click", () => { void close().catch(failed); });
 window.addEventListener("pagehide", () => { void close().catch(() => {}); }, {once: true});
 try {
-  const entry = backend === 'webgpu'
-    ? await import('@egret/engine/webgpu') : await import('@egret/engine/web');
+  const createHost = await loadExampleHostFactory(backend);
   if (!closeRequested) {
-  const host = backend === 'webgpu' ? entry.createWebGPUHost({canvas, enableReadback: preset === 'verification'}) : entry.createCanvasHost({canvas});
+  const host = createHost({canvas, enableReadback: preset === 'verification'});
   const edge = preset === 'verification' ? 24 : 192;
   canvas.style.width = edge + 'px';
   canvas.style.height = edge + 'px';
   renderHost = host;
-  const sessionHost = preset === 'verification' && backend === 'webgpu' ? verificationHost(host) : host;
+  const sessionHost = preset === 'verification' ? verificationHost(host) : host;
   session = createAnchoredAtlasSession({host: sessionHost, preset});
   const operations = {
     step: () => session.step(), pause: () => session.pause(), resume: () => session.resume(),

@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+> **已改用共享 Host。** 本示例默认用共享 WebGPU Host 绘制，加上 `?backend=webgl2` 时用共享 WebGL2 Host。此前使用的 Canvas Host 已移除；下文提到的验证命令为它编写，不再适用。下文关于 Canvas Host、选择 Canvas 以及已记录的 Canvas 检查的说明，描述的是早先的版本。
+
 此 Canvas 小示例使用公开的 `@egret/engine`、`@egret/engine/web` 和 `@egret/engine/web/pointer` 入口。两个显式编写的 `Sprite.hitArea` 矩形展示独立的鼠标、触摸和笔触点，包括非主触点。触点移出画布后仍保留按下时的目标。白色标记和触点列表显示当前逻辑坐标；每个终止事件会清理对应触点的状态。
 
 使用固定版本工具构建仓库后，启动示例服务器并打开 `/examples/multi-pointer/index.html`。模块导出 `ready`、`readSnapshot()` 和 `close()`，用于有界的浏览器观察。快照仅包含触点的标量信息。示例不使用外部素材。

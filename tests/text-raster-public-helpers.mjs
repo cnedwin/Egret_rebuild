@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createEngine, createImageData2D, EgretError } from '@egret/engine';
+import { createEngineForProfile, createImageData2D, EgretError, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
 import { deferred, flush, host } from './helpers.mjs';
 
 export { deferred, flush };
@@ -59,9 +59,9 @@ export async function entry() {
   return value.createTextRasterCache;
 }
 export async function engineFixture(t, options = {}) {
-  const diagnostics = [], adapter = host(options.hostOverrides);
-  const engine = await createEngine({ host: adapter.adapter,
-    onDiagnostic: (value) => diagnostics.push(value) });
+  const diagnostics = [], adapter = host({ sharedFrameProfile: SHARED_FRAME_PROFILE_2D, renderSharedFrame() {}, ...options.hostOverrides });
+  const engine = await createEngineForProfile({ host: adapter.adapter,
+    onDiagnostic: (value) => diagnostics.push(value) }, SHARED_FRAME_PROFILE_2D);
   t.after(async () => { await engine.dispose(); });
   return { engine, diagnostics, adapter };
 }

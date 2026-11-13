@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+> **Now on the shared Hosts.** This example draws with the shared WebGPU Host by default and with the shared WebGL2 Host under `?backend=webgl2`. The Canvas Host it used before has been removed; the verifier commands named below were written for it and no longer apply. Statements below about the Canvas Host, about choosing Canvas, and about recorded Canvas checks describe earlier versions.
+
 This original example creates two genuine scoped Buttons over one shared MouseInput and one borrowed atlas lease. Red, blue and gray indicate up, pressed and disabled. Controls expose enable/disable, dispose/recreate, isolated/two-button layout, saved-up replay, current presentation and Close.
 
 Run `node tools/build.mjs`, serve the repository root over ordinary local HTTP, then open `/examples/bitmap-button/`. Canvas is default; select WebGPU explicitly. Unavailable startup is shown without silently switching backend. Navigation awaits the current Engine close chain.

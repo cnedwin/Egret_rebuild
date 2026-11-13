@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+> **已改用共享 Host。** 本示例默认用共享 WebGPU Host 绘制，加上 `?backend=webgl2` 时用共享 WebGL2 Host。此前使用的 Canvas Host 已移除；下文提到的验证命令为它编写，不再适用。下文关于 Canvas Host、选择 Canvas 以及已记录的 Canvas 检查的说明，描述的是早先的版本。
+
 本示例使用原创 Apache-2.0 合成素材，构建红绿两帧图集及独立蓝色图像。元数据使用固定 Aseprite 1.3.18.6 格式配置，不构成真实导出器验证。
 
 完成仓库标准依赖安装及构建后，在仓库根目录使用固定 Node 26.7.0 执行：

@@ -11,7 +11,7 @@ test('TW01 initialized display and clock precede the scoped scalar Tween witness
     const sprite = scope.use(new Sprite());
     sprite.graphics.beginFill(0x2753a1).drawRect(0, 0, 2, 2);
     engine.stage.addChild(sprite);
-    const frame = engine.captureFrame({ width: 8, height: 8 });
+    const frame = engine.captureSharedFrame({ width: 8, height: 8 });
     assert.equal(frame.frameId, 1);
     assert.equal(frame.commands.length, 1);
     assert.deepEqual(frame.commands[0].rect, { x: 0, y: 0, width: 2, height: 2 });
@@ -97,14 +97,14 @@ test('TW01 captures and construction never advance or offer a Tween sample', asy
     engine.stage.addChild(sprite);
     const tween = engine.createTween(scope, scalarOptions(value => { offered.push(value); sprite.x = value; return undefined; }));
     assert.deepEqual(tweenView(tween), { state: 'idle', isDisposed: false, elapsedSeconds: 0, progress: 0, value: 0 });
-    engine.captureFrame({ width: 8, height: 8 }); tween.start();
-    engine.captureFrame({ width: 8, height: 8 });
+    engine.captureSharedFrame({ width: 8, height: 8 }); tween.start();
+    engine.captureSharedFrame({ width: 8, height: 8 });
     assert.equal(engine.advanceTime(0), undefined);
     assert.deepEqual(offered, []); assert.equal(engine.clock.elapsedSeconds, 0);
     engine.advanceTime(0.25);
     assert.deepEqual(offered, [25]); assert.equal(sprite.x, 25);
     assert.deepEqual(tweenView(tween), { state: 'running', isDisposed: false, elapsedSeconds: 0.25, progress: 0.25, value: 25 });
-    engine.captureFrame({ width: 8, height: 8 });
+    engine.captureSharedFrame({ width: 8, height: 8 });
     assert.deepEqual(offered, [25]); assert.equal(engine.advanceTime(0.25), undefined);
     assert.deepEqual(offered, [25]);
   });
@@ -543,7 +543,7 @@ test('TW08 own writer controls refuse reentry but own stop and existing frame gu
       values.push(value);
       for (const key of ['start', 'pause', 'resume']) tweenError(() => tween[key](), 'TWEEN_REENTRANT');
       tweenError(() => engine.advanceTime(NaN), 'CLOCK_REENTRANT');
-      tweenError(() => engine.captureFrame({ width: 8, height: 8 }), 'CLOCK_REENTRANT');
+      tweenError(() => engine.captureSharedFrame({ width: 8, height: 8 }), 'CLOCK_REENTRANT');
       tween.stop(); tween.dispose(); return undefined;
     }));
     tween.start(); engine.advanceTime(0); engine.advanceTime(0.25); engine.advanceTime(0.5);

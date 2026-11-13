@@ -9,6 +9,7 @@ import {
   createScope, createTexture, isTexture,
 } from '@egret/runtime';
 import { createImageData2D } from '@egret/contracts';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 // These exact same refs/type/IDs are deliberately reused across independent contexts.
 // Equal public IDs and manager-local lease IDs must never supply context authority.
@@ -129,7 +130,7 @@ async function genuineEngineScene() {
   const bitmap = new Bitmap(initialLease);
   bitmap.sourceRect = INITIAL_CROP;
   engine.stage.addChild(bitmap);
-  const capture = () => engine.captureFrame({ width: 8, height: 4 });
+  const capture = () => captureDrawn(engine, { width: 8, height: 4 });
   return {
     engine, bitmap, initialLease, candidateLease, textures, capture, ...counters,
     async close() {

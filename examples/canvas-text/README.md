@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+> **Now on the shared Hosts.** This example draws with the shared WebGPU Host by default and with the shared WebGL2 Host under `?backend=webgl2`. The Canvas Host it used before has been removed; the verifier commands named below were written for it and no longer apply. Statements below about the Canvas Host, about choosing Canvas, and about recorded Canvas checks describe earlier versions.
+
 This small application connects the public WC1 Canvas text provider to the public TF1 TextField and existing CanvasHost. Ahem is a geometric test font: `X` becomes a square block, spaces remain blank, and the readable source remains ordinary DOM text. On 2026-10-11, an actual default desktop Edge smoke check completed initial rendering, replacement, blank text and explicit closing, with zero browser errors and no remaining owned font or Canvas. This interaction check provides no independent pixel-oracle, mobile or performance acceptance.
 
 From the repository root, install the existing locked dependencies with `pnpm install --frozen-lockfile --ignore-scripts`, then run `node tools/build.mjs`. The checkout must already contain the adopted WC1 `@egret/engine/web/text` entry; an older build cannot run this example. Start the existing `node tools/serve-canvas.mjs` server, keep its printed host/port, and replace the URL path with `/examples/canvas-text/index.html`. Stop the server with Ctrl+C. Serve over loopback HTTP or HTTPS; do not open the HTML as a file. No new dependency, download installer, browser flag or server tool is introduced.

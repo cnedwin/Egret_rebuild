@@ -8,6 +8,7 @@ import {
 } from '@egret/engine';
 import { createAtlasImportPlan } from '@egret/project/atlas';
 import { host as controlledHost } from './helpers.mjs';
+import { drawnFrame } from './helpers/drawn-frame.mjs';
 import { createAtlasImportSession } from '../examples/atlas-import-playback/session.mjs';
 
 const PROFILE = 'trim-rotation-v1';
@@ -187,7 +188,7 @@ function originalImage() {
 async function onceFixture() {
   const adapter = controlledHost(), plan = actualPlan();
   const session = await createAtlasImportSession({
-    host: adapter.adapter, profile: 'canvas-2d', image: originalImage(),
+    host: adapter.adapter, profile: 'shared-2d', image: originalImage(),
     sequenceInput: plan.sequenceInput, spriteSheetFrames: plan.spriteSheetFrames,
   });
   return { session, adapter, engine: session.engine, actor: session.actor, plan };
@@ -222,7 +223,9 @@ function assertPublicSample(engine, actor, frame, elapsed, state, position, atEn
   assert.equal(actor.lease.value.isDisposed, false);
   assert.equal(engine.stage.isDisposed, false);
 }
-function assertCapture(captured, frame) {
+// The shared frame states the display matrix and the logical size; trim and turn are in the region.
+function assertCapture(shared, frame) {
+  const captured = drawnFrame(shared);
   assert.equal(captured.width, 24);
   assert.equal(captured.height, 16);
   assert.equal(captured.commands.length, 1);
@@ -231,12 +234,13 @@ function assertCapture(captured, frame) {
   assert.equal(command.kind, 'image');
   assert.equal(command.alpha, 1);
   assert.equal(command.imageIndex, 0);
-  assert.deepEqual(command.rect, { x: 0, y: 0, width: 2, height: 3 });
+  assert.deepEqual(command.rect, { x: 0, y: 0, width: 4, height: 5 });
   assert.deepEqual(command.sourceRect, frame === 0
     ? { x: 0, y: 0, width: 2, height: 3 } : { x: 3, y: 0, width: 2, height: 3 });
-  assert.deepEqual(command.matrix, frame === 0
-    ? { a: 1, b: 0, c: 0, d: 1, tx: 3, ty: 3 }
-    : { a: 1, b: 0, c: 0, d: 1, tx: 3, ty: 4 });
+  assert.deepEqual(command.matrix, { a: 1, b: 0, c: 0, d: 1, tx: 2, ty: 2 });
+  const region = shared.regions[command.shared.regionIndex];
+  assert.deepEqual([region.logicalWidth, region.logicalHeight, region.trimX, region.trimY, region.quarterTurn],
+    [4, 5, 1, frame === 0 ? 1 : 2, 0]);
   assert.deepEqual(command.clips, []);
   assert.deepEqual([image.width, image.height, image.byteLength], [6, 6, 144]);
   assert.deepEqual(copyImageData2DPixels(image), originalPixels());
@@ -378,13 +382,13 @@ test('independent genuine public loop wraps at .375 while borrowing the same ful
     assert.equal(Object.isFrozen(owner.clip), true);
     owner.actor.playback.start();
     assertPublicSample(owner.engine, owner.actor, 0, 0, 'running', 0, false);
-    assertCapture(owner.engine.captureFrame(FRAME), 0);
+    assertCapture(owner.engine.captureSharedFrame(FRAME), 0);
     owner.engine.advanceTime(.125);
     assertPublicSample(owner.engine, owner.actor, 1, .125, 'running', .125, false);
-    assertCapture(owner.engine.captureFrame(FRAME), 1);
+    assertCapture(owner.engine.captureSharedFrame(FRAME), 1);
     owner.engine.advanceTime(.375);
     assertPublicSample(owner.engine, owner.actor, 0, .375, 'running', 0, false);
-    assertCapture(owner.engine.captureFrame(FRAME), 0);
+    assertCapture(owner.engine.captureSharedFrame(FRAME), 0);
     assert.deepEqual(owner.resources().providerDisposals, []);
   } finally {
     await closeLoopOwners(owner);

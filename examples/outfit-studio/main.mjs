@@ -81,7 +81,7 @@ async function draw(readback = false, sample) {
   void reading?.catch(() => {});
   const captured = engine.captureSharedFrame(frame);
   const hostStart = sample && performance.now();
-  host.renderSceneSharedFrame(cast.scene,captured);
+  host.renderSharedFrame(captured);
   const submittedAt = sample && performance.now();
   const pixels = await reading;
   await host.whenIdle();
@@ -151,7 +151,7 @@ async function replacePalette(character) {
     signal.throwIfAborted();
 
     // This queue owns the final capture window. The previous frame stays visible through loading and staging.
-    upload = host.stageSceneSharedFrame(cast.scene, ticket.capture(frame));
+    upload = host.stageSharedFrame(ticket.capture(frame));
     const staged = await upload.ready;
     signal.throwIfAborted();
     const session = host.getSessionStatus();
@@ -304,8 +304,8 @@ async function open() {
   fitSurface();
   if (backend !== 'webgpu' && backend !== 'webgl2') throw new Error('Choose WebGPU or WebGL2');
   const hostModule = backend === 'webgpu'
-    ? import('@egret/engine/webgpu/scene3d').then(module => module.createSharedSceneWebGPUHost)
-    : import('@egret/engine/webgl2/scene3d').then(module => module.createSharedSceneWebGL2Host);
+    ? import('@egret/engine/webgpu').then(module => module.createSharedWebGPUHost)
+    : import('@egret/engine/webgl2').then(module => module.createSharedWebGL2Host);
   const [config, authored, factory] = await Promise.all([
     fetchStudio(new URL('config.json', import.meta.url), signal).then(response => response.json()),
     fetchStudio(new URL(profile ? 'project-x.json' : 'project.json', import.meta.url), signal).then(response => response.text()),

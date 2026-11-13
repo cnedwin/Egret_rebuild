@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
-import {createEngine, Sprite} from '@egret/engine';
-import {createCanvasHost} from '@egret/engine/web';
+import {createEngineForProfile, SHARED_FRAME_PROFILE_2D, Sprite} from '@egret/engine';
+import {loadExampleHostFactory} from '../host.mjs';
 import {createBrowserPointerInput} from '@egret/engine/web/pointer';
 import {createBrowserKeyboardInput} from '@egret/engine/web/keyboard';
 
 /** One disposable demo session; the shell remounts it after a viewport change. */
-export async function mount({canvas, controls, viewport, signal, report, model = {}}) {
+export async function mount({canvas, controls, viewport, signal, report, model = {}, backend = 'webgl2'}) {
   const {width, height, density} = viewport;
   if (![width, height, density].every(Number.isFinite) || width < 240 || width > 960 || height <= 32 || density <= 0 || density > 2) {
     throw new RangeError('MOBILE_POINTER_VIEWPORT');
@@ -67,7 +67,7 @@ export async function mount({canvas, controls, viewport, signal, report, model =
           .drawRect(-3,0,3,box.height).drawRect(box.width,0,3,box.height).endFill();
       }
     }
-    engine.renderFrame(frame);
+    engine.renderSharedFrame(frame);
     renders++;
   }
   function onContact({kind, contact, target, reason}) {
@@ -165,8 +165,8 @@ export async function mount({canvas, controls, viewport, signal, report, model =
     return session;
   }
   try {
-    host = createCanvasHost({canvas, pixelRatio: density});
-    engine = await createEngine({host, onDiagnostic: diagnostic});
+    host = (await loadExampleHostFactory(backend))({canvas, pixelRatio: density});
+    engine = await createEngineForProfile({host, onDiagnostic: diagnostic}, SHARED_FRAME_PROFILE_2D);
     // An abort may arrive while createEngine is awaiting native startup.
     if (signal?.aborted) {
       await close();

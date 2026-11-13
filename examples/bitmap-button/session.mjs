@@ -38,7 +38,7 @@ export function createBitmapButtonSession({host, preset = 'preview', onUpdate} =
   if (!profile || (onUpdate !== undefined && typeof onUpdate !== 'function')) {
     throw failure('EXAMPLE_OPTIONS_INVALID');
   }
-  const render = host?.renderFrame;
+  const render = host?.renderSharedFrame;
   if (typeof render !== 'function') throw failure('EXAMPLE_RENDER_PORT_REQUIRED');
   const frameOptions = Object.freeze({
     width: profile.width, height: profile.height, clearColor: 0, clearAlpha: 0,
@@ -135,7 +135,7 @@ export function createBitmapButtonSession({host, preset = 'preview', onUpdate} =
     presentation = label;
   }
   function showCurrent() {
-    present(engine.captureFrame(frameOptions), 'live');
+    present(engine.captureSharedFrame(frameOptions), 'live');
     return inspect();
   }
   function perform(operation) {
@@ -237,7 +237,7 @@ export function createBitmapButtonSession({host, preset = 'preview', onUpdate} =
         queuePresentation();
       }, {signal: inputScope.signal});
     }
-    savedUpFrame = engine.captureFrame(frameOptions);
+    savedUpFrame = engine.captureSharedFrame(frameOptions);
     present(savedUpFrame, 'saved-up');
     if (state !== 'starting') throw failure('EXAMPLE_CLOSED');
     state = 'ready';

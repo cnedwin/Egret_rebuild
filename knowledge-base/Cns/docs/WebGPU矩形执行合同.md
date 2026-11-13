@@ -1,5 +1,7 @@
 # WebGPU 矩形执行合同——修订 0.6
 
+> **已移除。** `scene3d` 入口以及矩形、图像和纹理帧的 WebGPU 宿主已从 SDK 中移除。本文档保留为当时的记录，不描述当前 SDK。当前的 2D 渲染见[共享渲染 Profile](shared-render-profile-contract.md)，当前的 3D 见 [World3D](world3d.md)。
+
 2026-10-09。修订 **0.6**，范围为实验性浏览器矩形执行。有界完整原生 gate 已独立审查为 **PASS**，公开证据核对及交付仍 **PENDING**。[Complete English](../../en/docs/webgpu-rectangle-execution-contract.md) 与本中文版均包含完整规范合同。[实施计划](WebGPU矩形实施计划.md)定义验收，[实现证据](WebGPU矩形实现证据.md)区分 CPU 证据、已接受有界原生结果及待完成公开交付。
 
 0.6 保留 0.5 两遍打包的分配边界，仅改变规范参数 `t===1` 的受保护交点构造。严格 `0<t<1` 的算术及其他 API、默认值、入口、Canvas 兼容性、预算、拓扑、float32 和生命周期要求不变。帧复制/准备与集成 host/pass/生命周期实现继承已接受状态。源码修订 `956e2f9894dc8e27291ffd0210a6cd8b4e651eab` 的范围内数值修复取得 SPEC PASS、QUALITY PASS，已记录核心套件为 177/177。历史原生 F4 失败仍属于失败，CPU 修复不证明原生像素、浏览器合成或发布就绪。

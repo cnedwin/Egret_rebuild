@@ -1,4 +1,4 @@
-import { createEngine } from '@egret/engine';
+import { createEngineForProfile, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
 import { createHitTestScene } from './scene.mjs';
 
 /** Application-local DOM ownership; no Engine authority is exported. */
@@ -55,7 +55,7 @@ export function createHitTestApplication({ host, canvas, upperButton, gateButton
 
   async function start() {
     try {
-      engine = await createEngine({ host, onDiagnostic() { diagnosticCount++; } });
+      engine = await createEngineForProfile({ host, onDiagnostic() { diagnosticCount++; } }, SHARED_FRAME_PROFILE_2D);
       // Close owns any late Engine. Startup never awaits the close task it feeds.
       if (phase !== 'starting') return;
       scope = engine.createScope();

@@ -1,24 +1,24 @@
 import { createEngine, Sprite } from '@egret/engine';
-import type { RenderHostAdapter, RenderFrame2D } from '@egret/engine';
-declare const host: RenderHostAdapter;
+import type { SharedRenderHostAdapter, SharedRenderFrame2D } from '@egret/engine';
+declare const host: SharedRenderHostAdapter;
 const core = createEngine({host});
 const sprite = new Sprite();
-declare const frame: RenderFrame2D;
+declare const frame: SharedRenderFrame2D;
 void core; void sprite; void frame;
 
 import {createImageData2D,copyImageData2DPixels,isImageData2D,IMAGE_LIMITS_2D} from '@egret/engine';
-import type {ImageData2D,ImageCommand2D,RenderCommand2D,TextureRegion2D} from '@egret/engine';
+import type {ImageData2D,SharedImageCommand2D,SharedRenderCommand2D,TextureRegion2D} from '@egret/engine';
 const image:ImageData2D=createImageData2D({width:1,height:1,pixels:new Uint8Array(new ArrayBuffer(4))});
 const pixels:Uint8Array<ArrayBuffer>=copyImageData2DPixels(image);
-declare const command:ImageCommand2D;
-const mixed:RenderCommand2D=command;const region:TextureRegion2D=command.sourceRect;
+declare const command:SharedImageCommand2D;
+const mixed:SharedRenderCommand2D=command;const region:TextureRegion2D=frame.regions[command.regionIndex]!.packed;
 void pixels;void mixed;void region;void isImageData2D;void IMAGE_LIMITS_2D;
 
-import {collectFrameContent} from '../../packages/runtime/dist/index.js';
-import type {CapturedContent2D,Stage} from '../../packages/runtime/dist/index.js';
+import {collectSharedFrameContent} from '../../packages/runtime/dist/index.js';
+import type {CapturedSharedContent2D,Stage} from '../../packages/runtime/dist/index.js';
 declare const stage:Stage;
-const captured:CapturedContent2D=collectFrameContent(stage);
-const images:readonly ImageData2D[]|undefined=captured.images;
+const captured:CapturedSharedContent2D=collectSharedFrameContent(stage);
+const images:readonly ImageData2D[]=captured.pages.map(page=>page.source);
 void captured;void images;
 
 // Logical coordinate queries require no host globals.
@@ -95,23 +95,20 @@ domMesh.clear();
 domMesh.dispose();
 void domMeshCachedLease; void domMeshCachedGeometry; void domMeshBounds;
 
-// Task 5: opt-in consumers use ES2022 types without DOM or GPU globals.
-import {TEXTURED_FRAME_PROFILE_2D as DomProfileLiteral, createEngineForProfile as DomProfileFactory} from '@egret/engine';
-import type {TexturedFrameProfile2D as DomProfile, TexturedRenderFrame2D as DomProfileFrame, TexturedRenderHostAdapter as DomProfileHost, TexturedRenderCommand2D as DomProfileCommand, TexturedMeshCommand2D as DomProfileMesh, FrameOptions2D as DomProfileOptions, Engine as DomProfileEngine} from '@egret/engine';
-import {collectTexturedFrameContent as DomProfileCollect} from '../../packages/runtime/dist/index.js';
-import type {CapturedTexturedContent2D as DomProfileContent} from '../../packages/runtime/dist/index.js';
+// Consumers of the frame profile use ES2022 types without DOM or GPU globals.
+import {SHARED_FRAME_PROFILE_2D as DomProfileLiteral, createEngineForProfile as DomProfileFactory} from '@egret/engine';
+import type {SharedFrameProfile2D as DomProfile, SharedRenderFrame2D as DomProfileFrame, SharedRenderHostAdapter as DomProfileHost, SharedRenderCommand2D as DomProfileCommand, SharedMeshCommand2D as DomProfileMesh, SharedFrameOptions2D as DomProfileOptions, Engine as DomProfileEngine} from '@egret/engine';
 declare const domProfileEngine: DomProfileEngine;
 declare const domProfileHost: DomProfileHost;
 declare const domProfileMesh: DomProfileMesh;
 const domProfile: DomProfile = DomProfileLiteral;
 const domProfileOptions: DomProfileOptions = {width: 1, height: 1};
-const domProfileFrame: DomProfileFrame = domProfileEngine.captureTexturedFrame(domProfileOptions);
-const domProfileRendered: DomProfileFrame = domProfileEngine.renderTexturedFrame(domProfileOptions);
-const domProfileReturn: undefined = domProfileHost.renderTexturedFrame(domProfileFrame);
+const domProfileFrame: DomProfileFrame = domProfileEngine.captureSharedFrame(domProfileOptions);
+const domProfileRendered: DomProfileFrame = domProfileEngine.renderSharedFrame(domProfileOptions);
+const domProfileReturn: undefined = domProfileHost.renderSharedFrame(domProfileFrame);
 const domProfileFactory: Promise<DomProfileEngine> = DomProfileFactory({host: domProfileHost}, domProfile);
 const domProfileCommands: readonly DomProfileCommand[] = [domProfileMesh];
-const domProfileContent: DomProfileContent = DomProfileCollect(stage);
-void domProfileRendered; void domProfileReturn; void domProfileFactory; void domProfileCommands; void domProfileContent;
+void domProfileRendered; void domProfileReturn; void domProfileFactory; void domProfileCommands;
 
 // Public clock consumers remain within the retained ES2022-only/no ambient types config.
 import type {GameClockOptions as DomClockOptions, GameClockState as DomClockState, GameClockTick as DomClockTick, GameClockHandler as DomClockHandler, GameClock as DomClock, GameClockSubscription as DomClockSubscription, Engine as DomClockEngine} from '@egret/engine';
@@ -124,8 +121,8 @@ const domClockHandler: DomClockHandler = tick => { const elapsed: number = tick.
 const domClockSubscription: DomClockSubscription = domClock.onTick(domClockScope, domClockHandler);
 const domClockOwned: DomClockSubscription = domClockScope.use(domClockSubscription);
 const domClockTick: DomClockTick | undefined = domClockEngine.advanceTime(10);
-const domClockCaptured: RenderFrame2D = domClockEngine.captureFrame({width: 1, height: 1});
-const domClockRendered: RenderFrame2D = domClockEngine.renderFrame({width: 1, height: 1});
+const domClockCaptured: SharedRenderFrame2D = domClockEngine.captureSharedFrame({width: 1, height: 1});
+const domClockRendered: SharedRenderFrame2D = domClockEngine.renderSharedFrame({width: 1, height: 1});
 void domClockOptions; void domClockState; void domClockOwned; void domClockTick; void domClockCaptured; void domClockRendered;
 
 // Public scalar Tween consumers use the unchanged ES2022-only/no-ambient config.

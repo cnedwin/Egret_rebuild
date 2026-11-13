@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/webgl2-executor-contract.md)
 
+> **Scene mode removed.** `createSharedSceneWebGPUHost`, `createSharedSceneWebGL2Host`, `renderSceneSharedFrame`, `stageSceneSharedFrame`, `getSceneStatus` and the B1 path have been removed from the SDK. Passages below that describe them are a record and not current behavior.
+
 2026-10-18 · M1.4 implementation contract draft · Full acceptance and delivery pending
 
 ## Scope and evidence
@@ -74,11 +76,13 @@ Run `node tools/verify-webgl2-layer-light.mjs <playwright-root> <fresh-output>` 
 | maxUploadBytes / maxPendingUploadBytes | 33,554,432 / 67,108,864 |
 | maxFrameGeometryBytes / maxPendingGeometryBytes | 16,777,216 / 33,554,432 |
 | maxPendingFrames / maxReadbackBytes | 2 / 67,108,864 |
+| maxFrameRegions | 4,096 |
+| maxFramePageBytes / maxReadyPageBytes | 67,108,864 / 134,217,728 |
 | enableReadback | false; boolean only |
 | outputAlpha | `'premultiplied'` by default; or `'opaque'` |
 | restoreTimeoutMs | 10,000 default; positive safe integer at most 30,000 |
 
-Scene options require explicit `outputAlpha: 'opaque'`. Numeric caps can only be lowered; except pixelRatio, numeric options are positive safe integers. Unknown properties are not read. Successful reads occur once, before validation, in this order: `canvas`, `onDiagnostic`, `pixelRatio`, `maxBackingPixels`, `maxCommands`, `maxClipRectangles`, `maxPreparedVertices`, `maxClipEdgeTests`, `maxUploadBytes`, `maxPendingUploadBytes`, `maxPendingFrames`, `maxReadbackBytes`, `enableReadback`, `maxSourceTriangles`, `maxFrameGeometryBytes`, `maxPendingGeometryBytes`, `maxTupleComparisons`, `outputAlpha`, `restoreTimeoutMs`. Getter failures preserve their original cause under `WEBGL2_OPTIONS_INVALID`.
+Scene options require explicit `outputAlpha: 'opaque'`. Numeric caps can only be lowered; except pixelRatio, numeric options are positive safe integers. Unknown properties are not read. Successful reads occur once, before validation, in this order: `canvas`, `onDiagnostic`, `pixelRatio`, `maxBackingPixels`, `maxCommands`, `maxClipRectangles`, `maxPreparedVertices`, `maxClipEdgeTests`, `maxUploadBytes`, `maxPendingUploadBytes`, `maxPendingFrames`, `maxReadbackBytes`, `enableReadback`, `maxSourceTriangles`, `maxFrameGeometryBytes`, `maxPendingGeometryBytes`, `maxTupleComparisons`, `outputAlpha`, `restoreTimeoutMs`, `maxFrameRegions`, `maxFramePageBytes`, `maxReadyPageBytes`. The last three are also judged last. Getter failures preserve their original cause under `WEBGL2_OPTIONS_INVALID`.
 
 The Host requests `canvas.getContext('webgl2', {alpha:true, premultipliedAlpha:true, antialias:false, depth:false, stencil:false, preserveDrawingBuffer:false})`, verifies actual attributes and capabilities, and establishes all used state. Both output modes retain alpha storage; opaque writes alpha one. The caller grants exclusive GL state access during the lease. The browser may return an existing same-type context; historical exclusivity cannot be detected. No raw-context/device option, arbitrary attributes, extension selector, power preference, shader or resource-provider callback is accepted.
 
@@ -129,14 +133,16 @@ Within the synchronous render call, uploads/draws/resolve are followed by the ti
 
 ## Allocation and color boundaries
 
-Shared vertices retain 44B stride and offsets 0/8/16/32. The original 128B uniform has float vec4 blocks at 0/16/32 and uint uvec4 blocks at 48/64/80/96/112. GLSL highp/std140 linked offsets and block size must match. B1 retains 24B vertices, 64B uniforms and Uint32 indices, including index 65,535.
+Shared vertices have 52B stride and five attributes at offsets 0/8/16/32/44. The 128B uniform has float vec4 blocks at 0/16/32 and uint uvec4 blocks at 48/64/80/96/112. A draw with a region uses a program whose vertex stage has a second block at binding point 1: one window of the region table, 1,023 uvec4 values, 16,368 bytes. A draw without a region uses a program without that block. GLSL highp/std140 linked offsets and block size must match for each block of each program. Startup requires MAX_VERTEX_ATTRIBS ≥ 5, MAX_UNIFORM_BLOCK_SIZE ≥ 16,368, MAX_UNIFORM_BUFFER_BINDINGS ≥ 2 and MAX_VERTEX_UNIFORM_BLOCKS ≥ 2, all within what OpenGL ES 3.0 guarantees. B1 retains 24B vertices, 64B uniforms and Uint32 indices, including index 65,535.
 
-Each accepted record uses at most one shared vertex arena and one combined shared/B1 UBO arena. Original typed payloads upload into native ranges; no full-frame CPU concat is added. For N physical shared batches and M scene draws, query A and require a safe integer with `4 <= A <= 256 && A % 4 === 0`. Use `s128=ceil(128/A)*A`, `s64=ceil(64/A)*A`; vertex V is the exact payload sum and U is `N*s128+M*s64`. UI range i starts at `i*s128`, scene range j at `N*s128+j*s64`, with sizes 128/64. Allocate and charge final padding but upload only original bytes. No draw means no arena; MAX_UNIFORM_BLOCK_SIZE constrains a block, not the whole arena. No power-of-two assumption is made.
+Each accepted record uses at most one shared vertex arena and one UBO arena. Original typed payloads upload into native ranges; no full-frame CPU concat is added. For N physical shared batches, query A and require a safe integer with `4 <= A <= 256 && A % 4 === 0`. Use `s128=ceil(128/A)*A`; vertex V is the exact payload sum and U is `N*s128`. Range i starts at `i*s128` and is 128 bytes. Allocate and charge final padding but upload only original bytes. No draw means no arena; MAX_UNIFORM_BLOCK_SIZE constrains a block, not the whole arena. No power-of-two assumption is made.
+
+A record with a draw that has a region also leases one uniform buffer for the region table, outside both arenas. With `sW=ceil(16368/A)*A` and W windows, window w starts at `w*sW` and the buffer is `(W-1)*sW+16368` bytes, so that the last window can be bound in full; only the rows of the frame's regions are uploaded. W is at most 13, for 4,096 regions. A record whose draws have no region leases no such buffer.
 
 | Actual arena cap | Per record | Two pending records |
 | --- | ---: | ---: |
 | V | 33,554,432 B | 67,108,864 B |
-| U | 16,793,600 B | 33,587,200 B |
+| U | 16,777,216 B | 33,554,432 B |
 
 Original joint upload and lower caller caps still apply. Whole arenas remain exclusive until the record's fence/PBO/CPU obligations settle. Safe returns compete with all buffers/color/depth in one 32 MiB/4,096 idle-plus-reserved budget; oversized safe owners are deleted. B1 adds at most 128 geometry buffers, giving at most 130 draw-related buffers per scene record, excluding pages/targets/PBOs/sync/fixed state. These are accounting/object bounds, not measured speed or memory. Keep 64 pages/16 MiB logical demand, 32 MiB/256 READY pages, 32 MiB cold CPU peak and 8 MiB batch scratch.
 

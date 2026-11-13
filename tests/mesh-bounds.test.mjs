@@ -18,9 +18,9 @@ function geometry(positions = [2, 3, 6, 3, 2, 8], indices = [0, 1, 2]) {
 }
 async function fixture(positions, indices) {
   capability(); let renderCalls = 0;
-  const port = host({ renderFrame() { renderCalls++; return undefined; } });
-  assert.equal(Object.hasOwn(port.adapter, 'renderFrame'), true);
-  const engine = await egret.createEngine({ host: port.adapter });
+  const port = host({ sharedFrameProfile: egret.SHARED_FRAME_PROFILE_2D, renderSharedFrame() { renderCalls++; return undefined; } });
+  assert.equal(Object.hasOwn(port.adapter, 'renderSharedFrame'), true);
+  const engine = await egret.createEngineForProfile({ host: port.adapter }, egret.SHARED_FRAME_PROFILE_2D);
   try {
     const texture = egret.createTexture(egret.createImageData2D({ width: 4, height: 4, pixels: new Uint8Array(64) }), { x: 1, y: 1, width: 2, height: 2 });
     const key = ++id, type = egret.createAssetType(`mesh-bounds-${key}`, () => true);
@@ -95,9 +95,9 @@ test('B03 direct descendant transforms, cached retirement and saved rectangle ow
     f.node.visible = false; f.node.alpha = 0; f.node.clipRect = { x: 0, y: 0, width: 0, height: 0 };
     parent.visible = false; parent.alpha = 0; parent.clipRect = { x: 0, y: 0, width: 0, height: 0 };
     rectangle(parent.getBounds(), -2, 6, 8, 15);
-    const before = f.engine.captureFrame(FRAME);
+    const before = f.engine.captureSharedFrame(FRAME);
     for (let index = 0; index < 3; index++) rectangle(parent.getBounds(), -2, 6, 8, 15);
-    const after = f.engine.captureFrame(FRAME);
+    const after = f.engine.captureSharedFrame(FRAME);
     assert.equal(before.frameId, 1); assert.equal(after.frameId, 2); assert.equal(f.renderCalls(), 0);
     f.texture.dispose(); rectangle(parent.getBounds(), -2, 6, 8, 15);
     f.lease.release(); rectangle(parent.getBounds(), -2, 6, 8, 15);

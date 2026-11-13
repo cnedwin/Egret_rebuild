@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Example-local composition of public SDK owners. This module has no DOM ports.
-import { Bitmap, Sprite, EgretError, createEngine, createEngineForProfile,
-  createAssetType, createAssetRef, isTexture, createSpriteSheet, createSequenceClip,
-  TEXTURED_FRAME_PROFILE_2D } from '@egret/engine';
+import { Bitmap, Sprite, EgretError, createEngine,
+  createAssetType, createAssetRef, isTexture, createSpriteSheet, createSequenceClip } from '@egret/engine';
 import { createTextRasterCache, createTextField } from '@egret/engine/text';
 
 const IDS = Object.freeze(['pilot-left', 'pilot-right']);
@@ -40,7 +39,7 @@ function restoreModel(input) {
 
 /** Resource readiness and immutable captures are separate from Host presentation. */
 export function createResourceSceneSession(options) {
-  const profile = choice(options.profile, ['canvas-2d', 'webgpu-scene-textured'], 'RESOURCE_SCENE_PROFILE_UNSUPPORTED');
+  choice(options.profile, ['shared-2d'], 'RESOURCE_SCENE_PROFILE_UNSUPPORTED');
   const model = restoreModel(options.restore);
   const families = { ahem: options.fontFamilies?.ahem, cjk: options.fontFamilies?.cjk };
   if (Object.values(families).some(value => typeof value !== 'string' || !value)) throw failure('RESOURCE_SCENE_FONT_REQUIRED');
@@ -78,8 +77,7 @@ export function createResourceSceneSession(options) {
     // Bounded observations do not replace the SDK's original error channel.
     if (diagnostics.length < 256) diagnostics.push(value);
   } };
-  const enginePromise = profile === 'canvas-2d' ? createEngine(engineOptions)
-    : createEngineForProfile(engineOptions, TEXTURED_FRAME_PROFILE_2D);
+  const enginePromise = createEngine(engineOptions);
 
   function assertOpen() {
     if (state !== 'ready') throw failure(state === 'starting' ? 'RESOURCE_SCENE_NOT_READY' : 'RESOURCE_SCENE_CLOSED');
@@ -202,7 +200,6 @@ export function createResourceSceneSession(options) {
       badgeLease = await ownedAcquire(decorationScope, createAssetRef(type,
         new URL('../../tools/browser-png/assets/rgb-red-green.png', import.meta.url).href));
       if (state === 'closing' || state === 'closed') throw failure('RESOURCE_SCENE_CLOSED');
-      // The GPU composition replaces this ordinary badge with its genuine Mesh2D.
       badge = decorationScope.use(new Bitmap(badgeLease)); badge.x = 8; badge.y = 8; badge.scaleX = 8; badge.scaleY = 8;
       engine.stage.addChild(badge);
     })();
@@ -337,7 +334,7 @@ export function createResourceSceneSession(options) {
       record.root.clipRect = value.clip ? { x: 0, y: 0, width: 8, height: 16 } : undefined;
       record.root.rotation = value.rotation;
     },
-    capture() { assertOpen(); return profile === 'canvas-2d' ? engine.captureFrame(FRAME) : engine.captureTexturedFrame(FRAME); },
+    capture() { assertOpen(); return engine.captureSharedFrame(FRAME); },
     snapshot() {
       const result = { version: 1, selectedId: model.selectedId, actors: {} };
       for (const id of IDS) result.actors[id] = Object.freeze({ ...model.actors[id] });

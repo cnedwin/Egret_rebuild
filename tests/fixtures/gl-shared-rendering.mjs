@@ -36,7 +36,8 @@ const constants = {
   GREATER:516, TRIANGLES:4, SYNC_GPU_COMMANDS_COMPLETE:37143, ALREADY_SIGNALED:37146,
   TIMEOUT_EXPIRED:37147, CONDITION_SATISFIED:37148, WAIT_FAILED:37149,
 };
-export function glPorts({ alignment = 256, colorEncoding = constants.LINEAR, attributes = {} } = {}) {
+/** `parameters` replaces the value of a named capability, by its constant name. */
+export function glPorts({ alignment = 256, colorEncoding = constants.LINEAR, attributes = {}, parameters = {} } = {}) {
   const events = [], owners = [], errors = [], listeners = new Map(), buffers = new Map();
   let ordinal = 0, generation = 1, lost = false, framebuffer = null, program = null, readOrdinal = 0;
   const options = { alpha:true, premultipliedAlpha:true, antialias:false, depth:false, stencil:false, preserveDrawingBuffer:false };
@@ -61,7 +62,9 @@ export function glPorts({ alignment = 256, colorEncoding = constants.LINEAR, att
         [gl.MAX_UNIFORM_BLOCK_SIZE,16384],[gl.UNIFORM_BUFFER_OFFSET_ALIGNMENT,alignment],[gl.MAX_UNIFORM_BUFFER_BINDINGS,24],
         [gl.MAX_VERTEX_UNIFORM_BLOCKS,12],[gl.MAX_FRAGMENT_UNIFORM_BLOCKS,12],[gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS,32],
         [gl.MAX_TEXTURE_IMAGE_UNITS,16],[gl.MAX_VERTEX_ATTRIBS,16]]);
-      assert.ok(values.has(key), 'explicit native capability: ' + key); return values.get(key);
+      assert.ok(values.has(key), 'explicit native capability: ' + key);
+      for (const [name, value] of Object.entries(parameters)) if (gl[name] === key) return value;
+      return values.get(key);
     },
     getShaderPrecisionFormat() { log('getShaderPrecisionFormat'); return { rangeMin:127, rangeMax:127, precision:23 }; },
     getFramebufferAttachmentParameter(_target, _attachment, key) {
@@ -85,8 +88,17 @@ export function glPorts({ alignment = 256, colorEncoding = constants.LINEAR, att
     getShaderParameter(shader, pname) { log('getShaderParameter', shader, pname); return true; },
     getProgramParameter(p, pname) { log('getProgramParameter', p, pname); return true; },
     getShaderInfoLog() { return ''; }, getProgramInfoLog() { return ''; },
-    getUniformBlockIndex(p, name) { log('getUniformBlockIndex', p, name); return 0; },
-    getActiveUniformBlockParameter(p, _index, pname) { log('getActiveUniformBlockParameter', p, pname); return p.shaders?.some(s => /mat4/.test(s.source)) ? 64 : 128; },
+    // A block exists in a program whose sources declare it. The region window of a sampled draw is the
+    // second block of its program; a block's size is that of the one fixed layout its name has.
+    getUniformBlockIndex(p, name) {
+      log('getUniformBlockIndex', p, name);
+      const declared = (p.blocks ??= [...new Set((p.shaders ?? []).flatMap(s => [...s.source.matchAll(/uniform\s+(\w+)\s*\{/g)].map(match => match[1])))]);
+      const index = declared.indexOf(name); return index < 0 ? gl.INVALID_INDEX : index;
+    },
+    getActiveUniformBlockParameter(p, index, pname) {
+      log('getActiveUniformBlockParameter', p, pname);
+      return p.blocks?.[index] === 'RegionWindow' ? 16368 : p.shaders?.some(s => /mat4/.test(s.source)) ? 64 : 128;
+    },
     getUniformIndices(p, names) { log('getUniformIndices', p, names); return names.map((_n, i) => i); },
     getActiveUniforms(p, indices, pname) { log('getActiveUniforms', p, indices, pname); return indices.map(i => pname === 35389 ? 16 : pname === 35390 ? false : 16*i); },
     getUniformLocation(p, name) { log('getUniformLocation', p, name); return { program:p, name }; },

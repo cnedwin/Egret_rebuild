@@ -2,6 +2,8 @@
 
 [English](../../en/docs/authored-scene3d.md) | 简体中文
 
+> **已移除。** `scene3d` 入口以及矩形、图像和纹理帧的 WebGPU 宿主已从 SDK 中移除。本文档保留为当时的记录，不描述当前 SDK。当前的 2D 渲染见[共享渲染 Profile](shared-render-profile-contract.md)，当前的 3D 见 [World3D](world3d.md)。
+
 ## 场景、相机与资源所有权
 
 白鹭的可选入口 `@egret/engine/scene3d/authoring` 创建可编辑的不可变场景版本。节点包含稳定 ID、可选父节点、列主序仿射局部变换和自有网格引用。每个版本解析层级，实例和编辑之间复用网格身份。`withNodeTransform(id, matrix)` 返回一个新版本，保存过的场景、帧与 UI 显示列表可继续使用。创作场景最多含 256 个节点和 合计 64 项网格与卡片绘制，沿用现有帧几何与 uniform 预算。

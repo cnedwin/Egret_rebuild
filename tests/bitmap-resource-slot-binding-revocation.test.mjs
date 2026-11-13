@@ -5,6 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as sdk from '@egret/engine';
 import { deferred, flush, host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const FRAME = Object.freeze({ width: 16, height: 16 });
 const CROP_A = Object.freeze({ x: 1, y: 0, width: 1, height: 2 });
@@ -64,7 +65,7 @@ async function fixture(withSlot = false) {
   } catch (cause) { await engine.dispose(); throw cause; }
 }
 function redFrame(f) {
-  const frame = f.engine.captureFrame(FRAME);
+  const frame = captureDrawn(f.engine, FRAME);
   assert.equal(frame.commands[0]?.kind, 'image');
   assert.deepEqual(frame.commands[0].sourceRect, CROP_A);
   assert.deepEqual(frame.commands[0].rect, { x: 0, y: 0, width: 1, height: 2 });
@@ -80,9 +81,9 @@ test('SC04 healthy public Bitmap baseline: manual independent binding and revoca
       const saved = redFrame(f), manual = await f.manualLease(kind);
       assert.notEqual(manual, f.initialLease); f.bitmap.textureLease = manual;
       const expected = kind === 'lease' ? FULL_A : FULL_C;
-      assert.deepEqual(f.bitmap.sourceRect, expected); f.engine.captureFrame(FRAME);
+      assert.deepEqual(f.bitmap.sourceRect, expected); captureDrawn(f.engine, FRAME);
       revoke(manual, kind);
-      expectCode(() => f.engine.captureFrame(FRAME), kind === 'lease' ? 'ASSET_LEASE_RELEASED' : 'TEXTURE_DISPOSED');
+      expectCode(() => captureDrawn(f.engine, FRAME), kind === 'lease' ? 'ASSET_LEASE_RELEASED' : 'TEXTURE_DISPOSED');
       assert.equal(f.bitmap.textureLease, manual); assert.deepEqual(f.bitmap.sourceRect, expected);
       assert.equal(f.initialLease.value, f.values.A); assert.equal(f.count(f.values.A), 0);
       f.bitmap.textureLease = f.initialLease; f.bitmap.sourceRect = CROP_A; redFrame(f);
@@ -110,7 +111,7 @@ test('SC04 changed token dominates revoked manual entitlement on controls and ca
       assert.equal(f.loads.includes('D'), false);
       if (discovery === 'cancel' || discovery === 'replace') { assert.equal(f.providerBContext.signal.aborted, true); f.resolveB(); await flush(); }
       assert.equal(f.count(f.values.B), discovery === 'reaction-failure' ? 0 : 1);
-      expectCode(() => f.engine.captureFrame(FRAME), kind === 'lease' ? 'ASSET_LEASE_RELEASED' : 'TEXTURE_DISPOSED');
+      expectCode(() => captureDrawn(f.engine, FRAME), kind === 'lease' ? 'ASSET_LEASE_RELEASED' : 'TEXTURE_DISPOSED');
       assert.equal(f.initialLease.value, f.values.A); assert.equal(f.count(f.values.A), 0);
       // A later manual restoration cannot silently reopen a conflicted slot claim.
       f.bitmap.textureLease = f.initialLease; f.bitmap.sourceRect = CROP_A; redFrame(f);

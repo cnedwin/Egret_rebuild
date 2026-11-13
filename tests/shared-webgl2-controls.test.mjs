@@ -49,6 +49,64 @@ test('GL G02 startup qualifies attributes, formats and actual non-power-of-two U
 });
 function constantsSRGB() { return 35904; }
 
+// Break caught: end a batch at another page, bind every page to the first unit, or leave a page bound to a later unit.
+test('GL G03 bitmaps of two pages in turn are one draw; each page has its own texture unit and none stays bound', async () => author(async a => {
+  const sizes = [[4, 2], [2, 6]], pages = sizes.map(([width, height]) => egret.createImageData2D({width, height, pixels:new Uint8Array(4 * width * height).fill(255)}));
+  const type = egret.createAssetType('gl-two-pages', egret.isTexture);
+  a.engine.assets.register(type, { async load(ref) { return egret.createTextureView(pages[Number(ref.id)], {packed:{x:0,y:0,width:1,height:2},logicalWidth:1,logicalHeight:2,trimX:0,trimY:0,quarterTurn:0}); }, dispose(value) { value.dispose(); } });
+  const leases = []; for (const id of ['0', '1']) leases.push(a.scope.use(await a.engine.assets.acquire(egret.createAssetRef(type, id), {signal:a.scope.signal})));
+  a.sprite.visible = false;
+  for (const [index, page] of [0, 1, 0, 1].entries()) { const node = a.scope.use(new egret.Bitmap(leases[page])); node.x = 2 * index; a.engine.stage.addChild(node); }
+  const frame = a.frame();
+  assert.equal(frame.pages.length, 2); assert.deepEqual(frame.commands.map(command => frame.regions[command.regionIndex].pageIndex), [0, 1, 0, 1]);
+  const f = glPorts(), h = createSharedWebGL2Host({canvas:f.canvas}); await h.start();
+  // The program of a batch of several pages is linked at startup, after the others, and its eight page samplers name the eight units then.
+  const programs = f.events.filter(row => row[0] === 'linkProgram').map(row => row[1]), paged = programs.at(-1);
+  assert.ok(/uniform highp sampler2D page7;/.test(paged.shaders[1].source) && !/sampler2D page7/.test(programs[0].shaders[1].source));
+  assert.deepEqual(f.events.filter(row => row[0] === 'uniform1i').map(row => [row[1].program === paged, row[1].name, row[2]]), Array.from({length:8}, (_value, unit) => [true, 'page' + unit, unit]));
+  const before = f.events.length; h.renderSharedFrame(frame); await h.whenIdle();
+  const events = f.events.slice(before), gl = f.gl;
+  // One draw of the four bitmaps, by that program, then the resolve.
+  assert.deepEqual(events.filter(row => row[0] === 'drawArrays').map(row => row.slice(1)), [[gl.TRIANGLES, 0, 24], [gl.TRIANGLES, 0, 3]]);
+  const used = events.slice(0, events.findIndex(row => row[0] === 'drawArrays')).filter(row => row[0] === 'useProgram').at(-1);
+  assert.equal(used[1], paged);
+  // The block of the batch names page 0 for the first unit and page 1 for the second.
+  const block = events.filter(row => row[0] === 'bufferSubData' && row[1] === gl.UNIFORM_BUFFER && !(row[3] instanceof Uint32Array));
+  assert.equal(block.length, 1);
+  const bytes = new Uint8Array(block[0][3].buffer, block[0][3].byteOffset, block[0][3].byteLength);
+  assert.deepEqual([...new Uint32Array(bytes.slice(48, 80).buffer)], [0, 1, ...Array(6).fill(4294967295)]);
+  // Both rows of the region table name their page and its size.
+  const table = events.filter(row => row[0] === 'bufferSubData' && row[1] === gl.UNIFORM_BUFFER && row[3] instanceof Uint32Array);
+  assert.deepEqual([...table[0][3]].filter((_value, index) => index % 12 >= 8), [0, 0, 4, 2, 0, 1, 2, 6]);
+  // Between the start of the frame's draws and the draw itself: the second unit is selected once, given a
+  // texture that is not the first unit's, and the first unit is selected again before the draw.
+  const draw = events.findIndex(row => row[0] === 'drawArrays'), leading = events.slice(0, draw);
+  const units = leading.filter(row => row[0] === 'activeTexture').map(row => row[1] - gl.TEXTURE0);
+  assert.deepEqual(units.slice(-2), [1, 0]); assert.equal(units.filter(unit => unit > 1).length, 0);
+  const selected = leading.map((row, index) => [row, index]).filter(([row]) => row[0] === 'activeTexture'), last = selected.at(-2)[1];
+  const second = leading[last + 1]; assert.equal(second[0], 'bindTexture'); assert.equal(second[1], gl.TEXTURE_2D); assert.ok(second[2]);
+  const first = leading.slice(0, last).filter(row => row[0] === 'bindTexture' && row[1] === gl.TEXTURE_2D && row[2]).at(-1);
+  assert.notEqual(first[2], second[2]);
+  // After the draw the second unit holds nothing, and the first unit is the selected one for the resolve.
+  const trailing = events.slice(draw + 1), resolve = trailing.findIndex(row => row[0] === 'drawArrays');
+  const after = trailing.slice(0, resolve).filter(row => row[0] === 'activeTexture' || row[0] === 'bindTexture');
+  assert.deepEqual(after.slice(0, 3).map(row => row[0] === 'activeTexture' ? row[1] - gl.TEXTURE0 : row[2]), [1, null, 0]);
+  await h.close(); assert.equal(f.live().length, 0);
+}));
+
+// Break caught: start on a context that cannot hold five attributes, a second uniform block for the region window, or the eight pages of a batch.
+test('GL G02 a context one below any limit the batched layout needs is refused at startup; the least values start', async () => {
+  const needed = { MAX_VERTEX_ATTRIBS:5, MAX_UNIFORM_BLOCK_SIZE:16368, MAX_UNIFORM_BUFFER_BINDINGS:2, MAX_VERTEX_UNIFORM_BLOCKS:2, MAX_TEXTURE_IMAGE_UNITS:8 };
+  const least = glPorts({parameters:needed}), started = createSharedWebGL2Host({canvas:least.canvas});
+  await started.start(); assert.equal(started.getStatus().state, 'active'); await started.close(); assert.equal(least.live().length, 0);
+  for (const [name, value] of Object.entries(needed)) {
+    const f = glPorts({parameters:{...needed, [name]:value - 1}}), h = createSharedWebGL2Host({canvas:f.canvas});
+    await assert.rejects(h.start(), code('CONTEXT_LIMIT'), name);
+    assert.equal(f.events.filter(row => row[0] === 'createProgram').length, 0, name);
+    await h.close(); assert.equal(f.live().length, 0);
+  }
+});
+
 test('GL G03 genuine saved shared frames submit; lookalikes refuse before native allocation', async () => author(async a => {
   const f = glPorts(), h = createSharedWebGL2Host({canvas:f.canvas}); await h.start();
   const frame = a.frame(), before = f.events.length;
@@ -59,6 +117,63 @@ test('GL G03 genuine saved shared frames submit; lookalikes refuse before native
   assert.equal(f.events.filter(row => row[0] === 'drawArrays').length, 2, 'one solid draw and one final resolve');
   assert.ok(Object.isFrozen(h.getSharedStatus().retention));
   await h.close(); assert.equal(f.live().length, 0);
+}));
+
+// Break caught: keep the region or the opacity in the batch key, give a solid draw the region block, or bind a window per draw.
+test('GL G03 draws of different regions and opacities of one page are one draw through one window of the region table', async () => author(async a => {
+  for (const alignment of [16, 256]) {
+    const page = egret.createImageData2D({width:4,height:2,pixels:new Uint8Array(32).fill(255)}), textures = [];
+    const type = egret.createAssetType('gl-batch-' + alignment, egret.isTexture);
+    a.engine.assets.register(type, { async load(ref) { const texture = egret.createTextureView(page, {packed:{x:Number(ref.id.split(':')[1]),y:0,width:1,height:2},logicalWidth:1,logicalHeight:2,trimX:0,trimY:0,quarterTurn:0}); textures.push(texture); return texture; }, dispose(value) { value.dispose(); } });
+    const nodes = [], opacities = [1, .5, .25];
+    for (const [index, x] of [0, 2, 0].entries()) {
+      const lease = a.scope.use(await a.engine.assets.acquire(egret.createAssetRef(type, alignment + ':' + x), {signal:a.scope.signal}));
+      const node = a.scope.use(new egret.Bitmap(lease)); node.x = 2 * index; node.alpha = opacities[index]; a.engine.stage.addChild(node); nodes.push(node);
+    }
+    // The fixture's rectangle is drawn first; move it behind the images and give it an opacity of its own.
+    a.engine.stage.setChildIndex(a.sprite, 3); a.sprite.alpha = .75;
+    const frame = a.frame();
+    assert.deepEqual(frame.commands.map(command => command.kind), ['image', 'image', 'image', 'rect']); assert.equal(frame.regions.length, 2);
+    const f = glPorts({alignment}), h = createSharedWebGL2Host({canvas:f.canvas}); await h.start();
+    const programs = f.events.filter(row => row[0] === 'linkProgram').map(row => row[1]);
+    // The sampled program declares the region window at binding point 1; the solid program does not declare it.
+    const bindings = f.events.filter(row => row[0] === 'uniformBlockBinding').map(row => [programs.indexOf(row[1]), row[3]]);
+    assert.deepEqual(bindings.slice(0, 3), [[0, 0], [0, 1], [1, 0]]);
+    assert.ok(/uniform RegionWindow/.test(programs[0].shaders[0].source) && !/RegionWindow/.test(programs[1].shaders[0].source + programs[1].shaders[1].source));
+    const before = f.events.length; h.renderSharedFrame(frame); await h.whenIdle();
+    const events = f.events.slice(before), gl = f.gl;
+    // Three images are one draw of eighteen vertices; the rectangle follows with the other program; then the resolve.
+    assert.deepEqual(events.filter(row => row[0] === 'drawArrays').map(row => row.slice(1)), [[gl.TRIANGLES, 0, 18], [gl.TRIANGLES, 18, 6], [gl.TRIANGLES, 0, 3]]);
+    const order = events.filter(row => row[0] === 'useProgram' || row[0] === 'drawArrays').map(row => row[0] === 'drawArrays' ? 'draw' : programs.indexOf(row[1]));
+    assert.deepEqual(order.slice(0, order.indexOf('draw', order.indexOf('draw') + 1) + 1), [0, 'draw', 1, 'draw']);
+    // Five float attributes of one 52-byte row.
+    assert.deepEqual(events.filter(row => row[0] === 'vertexAttribPointer').slice(0, 5).map(row => [row[1], row[2], row[5], row[6]]), [[0, 2, 52, 0], [1, 2, 52, 8], [2, 4, 52, 16], [3, 3, 52, 32], [4, 2, 52, 44]]);
+    // Each batch is written to its own range of the vertex arena: eighteen rows at 0, six at 18 * 52.
+    const written = events.filter(row => row[0] === 'bufferSubData' && row[1] === gl.ARRAY_BUFFER);
+    assert.deepEqual(written.map(row => [row[2], row[3].length]), [[0, 18 * 13], [18 * 52, 6 * 13]]);
+    const rows = written.flatMap(row => [...row[3]]);
+    assert.deepEqual(Array.from({length:24}, (_value, vertex) => [rows[13 * vertex + 11], rows[13 * vertex + 12]]),
+      [...[0, 1, 2].flatMap(index => Array(6).fill([index === 1 ? 1 : 0, opacities[index]])), ...Array(6).fill([0, .75])]);
+    // The region table is one uniform buffer of one whole window; only the two regions' rows are written.
+    assert.deepEqual(events.filter(row => row[0] === 'bufferData' && row[1] === gl.UNIFORM_BUFFER).map(row => row[2]).sort((x, y) => x - y), [2 * Math.ceil(128 / alignment) * alignment, 16368]);
+    const table = events.filter(row => row[0] === 'bufferSubData' && row[1] === gl.UNIFORM_BUFFER && row[3] instanceof Uint32Array);
+    assert.deepEqual(table.map(row => [row[2], [...row[3]]]), [[0, [1, 2, 0, 0, 1, 2, 0, 0, 0, 0, 4, 2, 1, 2, 0, 0, 1, 2, 2, 0, 0, 0, 4, 2]]]);
+    // A batch of one page is drawn by the program of one page sampler, on the first unit; no other unit is selected.
+    assert.deepEqual(events.filter(row => row[0] === 'uniform1i' && /^page/.test(row[1].name)).map(row => [programs.indexOf(row[1].program), row[1].name, row[2]]), [[0, 'page', 0]]);
+    assert.deepEqual(events.filter(row => row[0] === 'activeTexture').map(row => row[1] - gl.TEXTURE0).filter(unit => unit !== 0), []);
+    // The window is bound once, at binding point 1, in full.
+    assert.deepEqual(events.filter(row => row[0] === 'bindBufferRange' && row[2] === 1 && row[3] !== null).map(row => [row[4], row[5]]), [[0, 16368]]);
+    assert.deepEqual(events.filter(row => row[0] === 'bindBufferRange' && row[2] === 0 && row[3] !== null).map(row => row[5]), [128, 128]);
+    // A frame of the rectangle alone leases and binds no region table.
+    for (const node of nodes) node.visible = false;
+    const solid = f.events.length; h.renderSharedFrame(a.frame()); await h.whenIdle();
+    const after = f.events.slice(solid);
+    assert.deepEqual(after.filter(row => row[0] === 'drawArrays').map(row => row.slice(1)), [[gl.TRIANGLES, 0, 6], [gl.TRIANGLES, 0, 3]]);
+    assert.equal(after.filter(row => row[0] === 'bindBufferRange' && row[2] === 1 && row[3] !== null).length, 0);
+    assert.equal(after.filter(row => row[0] === 'bufferSubData' && row[3] instanceof Uint32Array).length, 0);
+    await h.close(); assert.equal(f.live().length, 0);
+    for (const node of nodes) node.dispose();
+  }
 }));
 
 test('GL G03 contained clips preserve packed attributes and exact tuple admission', async () => author(async a => {
@@ -81,7 +196,7 @@ test('GL G03 contained clips preserve packed attributes and exact tuple admissio
       };
       const expected = await draw(unclipped);
       assert.equal(expected.length, 1);
-      assert.equal(expected[0].length, 6 * 11);
+      assert.equal(expected[0].length, 6 * 13);
       if (maxTupleComparisons === tupleLimit) {
         assert.deepEqual(await draw(contained), expected);
       } else {
@@ -132,15 +247,14 @@ test('GL attachment validation follows owned targets and resets after context re
   } finally { await h.close(); }
 }));
 
-test('GL working validation distinguishes depth changes and preserves warm bind errors', async () => author(async a => {
-  const {createSharedSceneWebGL2Host} = await import('@egret/engine/webgl2/scene3d');
-  const {createSceneFrame3D} = await import('@egret/engine/scene3d');
-  const scene = createSceneFrame3D({projection:{kind:'orthographic',left:-1,right:1,bottom:-1,top:1,near:1,far:3},draws:[]});
-  const f = glPorts(), h = createSharedSceneWebGL2Host({canvas:f.canvas,outputAlpha:'opaque'});
+// The Host that drew a scene with a depth buffer is removed, so every working target here has none; the
+// qualification by depth buffer that the native session still holds is not reached from this entry.
+test('GL working validation is made once for a target and a warm bind error still refuses the frame', async () => author(async a => {
+  const f = glPorts(), h = createSharedWebGL2Host({canvas:f.canvas,outputAlpha:'opaque'});
   const frame = a.engine.captureSharedFrame({width:8,height:8,outputAlpha:'opaque',clearAlpha:1});
-  const draw = async (withDepth) => {
+  const draw = async () => {
     const before = f.events.length;
-    if (withDepth) h.renderSceneSharedFrame(scene, frame); else h.renderSharedFrame(frame);
+    h.renderSharedFrame(frame);
     await h.whenIdle();
     const events = f.events.slice(before);
     return {
@@ -151,12 +265,10 @@ test('GL working validation distinguishes depth changes and preserves warm bind 
   };
   try {
     await h.start();
-    const plain = await draw(false), withDepth = await draw(true);
-    assert.ok(plain.color && withDepth.depth);
+    const plain = await draw();
+    assert.ok(plain.color);
     assert.deepEqual(plain, {color:plain.color,depth:null,status:1});
-    assert.deepEqual(withDepth, {color:plain.color,depth:withDepth.depth,status:1});
-    assert.deepEqual(await draw(false), {...plain,status:0});
-    assert.deepEqual(await draw(true), {...withDepth,status:0});
+    assert.deepEqual(await draw(), {...plain,status:0});
 
     // An error raised by rebinding a cached attachment must still fail the frame.
     f.onCall = (name, args) => {
@@ -319,38 +431,11 @@ test('GL G10 event-delayed actual loss inside retirement deletion still settles 
   assert.equal(h.close(), closing);
 }));
 
-test('GL S01 optional genuine scene uses one matrix arena, uint32 indices and ordered overlay', async () => author(async a => {
-  const sceneEntry=await import('@egret/engine/webgl2/scene3d');
-  assert.deepEqual(Object.keys(sceneEntry),['createSharedSceneWebGL2Host']);
-  const {createMeshGeometry3D,createSceneFrame3D,createMatrix4}=await import('@egret/engine/scene3d');
-  const mesh=createMeshGeometry3D({positions:[0,0,-1,1,0,-1,0,1,-1],colors:[1,0,0,0,1,0,0,0,1],indices:[0,1,2]});
-  const scene=createSceneFrame3D({projection:{kind:'orthographic',left:-1,right:1,bottom:-1,top:1,near:1,far:3},draws:[{geometry:mesh,modelView:createMatrix4([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1])}]});
-  const f=glPorts({alignment:12});
-  assert.throws(()=>sceneEntry.createSharedSceneWebGL2Host({canvas:f.canvas}),code('OPTIONS_INVALID'));
-  const h=sceneEntry.createSharedSceneWebGL2Host({canvas:f.canvas,outputAlpha:'opaque'});await h.start();
-  const frame=a.engine.captureSharedFrame({width:8,height:8,outputAlpha:'opaque',clearAlpha:1});
-  const before=f.events.length;
-  assert.throws(()=>h.renderSceneSharedFrame({...scene},frame),code('FRAME_INVALID'));assert.equal(f.events.length,before);
-  h.renderSceneSharedFrame(scene,frame);await h.whenIdle();
-  const events=f.events.slice(before),draws=events.filter(e=>e[0]==='drawElements'||e[0]==='drawArrays');
-  assert.deepEqual(draws.map(e=>e[0]),['drawElements','drawArrays','drawArrays']);
-  assert.deepEqual(draws[0].slice(1),[f.gl.TRIANGLES,3,f.gl.UNSIGNED_INT,0]);
-  const ranges=events.filter(e=>e[0]==='bindBufferRange'&&e[3]!==null);
-  assert.deepEqual(ranges.map(e=>e.slice(4)),[[132,64],[0,128]]);
-  const uniformAlloc=events.filter(e=>e[0]==='bufferData'&&e[1]===f.gl.UNIFORM_BUFFER);
-  assert.deepEqual(uniformAlloc.map(e=>e[2]),[204]);
-  assert.ok(events.some(e=>e[0]==='depthFunc'&&e[1]===f.gl.GREATER));
-  assert.ok(events.some(e=>e[0]==='depthRange'&&e[1]===0&&e[2]===1));
-  assert.deepEqual([h.getSceneStatus().pendingSceneBytes,h.getSceneStatus().pendingUniformBytes,h.getSceneStatus().pendingDepthBytes],[0,0,0]);
-  await h.close();assert.equal(f.live().length,0);
-}));
-
-
-test('GL G11 both assemblies detach retained container references before completion and release the current program at close', { timeout: 2000 }, async () => author(async a => {
-  for (const sceneMode of [false, true]) {
+test('GL G11 the Host detaches retained container references before completion and releases the current program at close', { timeout: 2000 }, async () => author(async a => {
+  {
     const f = glPorts(), gl = f.gl, violations = [], vaos = new Map(), fbos = new Map();
     let vao = null, array = null, drawFBO = null, readFBO = null, currentProgram = null;
-    let populatedAttributes = 0, populatedDepth = 0, populatedIndices = 0, fences = 0;
+    let populatedAttributes = 0, fences = 0;
     const vertexState = key => { if (!vaos.has(key)) vaos.set(key, { attributes:new Map(), element:null }); return vaos.get(key); };
     const targetFBO = target => target === gl.READ_FRAMEBUFFER ? readFBO : drawFBO;
     const attachments = key => { if (!fbos.has(key)) fbos.set(key, new Map()); return fbos.get(key); };
@@ -358,7 +443,7 @@ test('GL G11 both assemblies detach retained container references before complet
       if (name === 'bindVertexArray') vao = args[0];
       if (name === 'bindBuffer') {
         if (args[0] === gl.ARRAY_BUFFER) array = args[1];
-        if (args[0] === gl.ELEMENT_ARRAY_BUFFER) { vertexState(vao).element = args[1]; if (args[1]) populatedIndices++; }
+        if (args[0] === gl.ELEMENT_ARRAY_BUFFER) vertexState(vao).element = args[1];
       }
       if (name === 'vertexAttribPointer') {
         vertexState(vao).attributes.set(args[0], array);
@@ -371,7 +456,6 @@ test('GL G11 both assemblies detach retained container references before complet
       }
       if (name === 'framebufferTexture2D' || name === 'framebufferRenderbuffer') {
         attachments(targetFBO(args[0])).set(args[1], args[3]);
-        if (name === 'framebufferRenderbuffer' && args[1] === gl.DEPTH_ATTACHMENT && args[3]) populatedDepth++;
       }
       if (name === 'useProgram') currentProgram = args[0];
       if (name === 'fenceSync') {
@@ -395,21 +479,12 @@ test('GL G11 both assemblies detach retained container references before complet
       if (name === 'deleteVertexArray') vaos.delete(args[0]);
       if (name === 'deleteFramebuffer') fbos.delete(args[0]);
     };
-    let h, submit;
-    if (sceneMode) {
-      const {createSharedSceneWebGL2Host} = await import('@egret/engine/webgl2/scene3d');
-      const {createMeshGeometry3D,createSceneFrame3D,createMatrix4} = await import('@egret/engine/scene3d');
-      const geometry = createMeshGeometry3D({positions:[0,0,-1,1,0,-1,0,1,-1],colors:[1,0,0,0,1,0,0,0,1],indices:[0,1,2]});
-      const scene = createSceneFrame3D({projection:{kind:'orthographic',left:-1,right:1,bottom:-1,top:1,near:1,far:3},draws:[{geometry,modelView:createMatrix4([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1])}]});
-      h = createSharedSceneWebGL2Host({canvas:f.canvas,outputAlpha:'opaque'});
-      submit = () => h.renderSceneSharedFrame(scene,a.engine.captureSharedFrame({width:8,height:8,outputAlpha:'opaque',clearAlpha:1}));
-    } else { h = createSharedWebGL2Host({canvas:f.canvas}); submit = () => h.renderSharedFrame(a.frame()); }
+    const h = createSharedWebGL2Host({canvas:f.canvas}), submit = () => h.renderSharedFrame(a.frame());
     try {
       await h.start(); f.autoSignal = false; submit(); h.stop();
       const idle = h.whenIdle(); f.signalAll(); await idle; await h.close();
       assert.equal(fences, 1); assert.ok(populatedAttributes > 0);
-      if (sceneMode) { assert.ok(populatedDepth > 0); assert.ok(populatedIndices > 0); }
-      assert.deepEqual(violations, [], sceneMode ? 'scene and overlay containers' : 'shared 2D containers');
+      assert.deepEqual(violations, []);
       assert.equal(f.live().length, 0);
     } finally { f.signalAll(); await h.close(); f.onCall = undefined; }
   }

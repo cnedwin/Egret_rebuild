@@ -2,6 +2,8 @@
 
 [English](../../en/docs/warm-submission-contract.md) | 简体中文 · [验证记录](warm-submission-evidence.md) · [M1 计划](m1-rendering-resource-plan.md)
 
+> **宿主已移除。** 本契约所针对并据以测试的矩形、图像和纹理帧 WebGPU 宿主已从 SDK 中移除。本文档保留为当时的记录。当前的 2D 渲染见[共享渲染 Profile](shared-render-profile-contract.md)。
+
 M1.1 在图像和原生分配可以安全复用时，减少重复渲染同一画面的准备工作。普通 2D、纹理 2D、B1 场景加普通叠层、场景加纹理叠层四条路径共用一个 Host 提交与退休责任主体。公开 API、帧协议、着色器、颜色解释、包入口和 Host 协议保持不变。
 
 ## 图像准备

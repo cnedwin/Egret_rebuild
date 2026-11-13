@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
-// Literal independent actor, time and command expectations. Never generate pixel masks here.
-export const PROFILES=Object.freeze(['canvas-2d','webgpu-textured-2d']);
-export const KINDS=Object.freeze(['ordinary','rotation-sign','trim-y-constant']);
-export const FIXTURE_ROUTE='/tools/atlas-frame/native-fixture.mjs';
-export const HTML_ROUTE='/examples/trimmed-atlas-playback/__native-fixture.html';
+// Literal independent actor, time and command expectations of the trimmed atlas playback session.
+// A command is stated as the shared frame states it: the display matrix, the logical rectangle,
+// and the packed crop, trim and quarter turn of its region. Never generate pixel masks here.
+export const PROFILES=Object.freeze(['shared-2d']);
 const rows=[
   ['N01',0,0,'idle',0,0,'idle',0,0,0],
   ['N02',.125,1,'running',.125,1,'idle',0,0,0],
@@ -27,8 +26,8 @@ function matrix(actual,expected,tolerance,label){
   equal(Object.keys(actual).sort(),['a','b','c','d','tx','ty'].sort(),label+' keys');
   for(const key of Object.keys(expected))requireThat(Number.isFinite(actual[key])&&Math.abs(actual[key]-expected[key])<=tolerance,label+' '+key);
 }
-export function assertAtlasObservation(observation,id,kind='ordinary',role='healthy') {
-  const row=kind==='ordinary'?ORDINARY.find(value=>value.id===id):ORDINARY[1];
+export function assertAtlasObservation(observation,id) {
+  const row=ORDINARY.find(value=>value.id===id);
   requireThat(row,'Known fixed row required');
   const {session,commands,images,profile}=observation;
   requireThat(PROFILES.includes(profile),'Exact capture profile required');
@@ -57,16 +56,11 @@ export function assertAtlasObservation(observation,id,kind='ordinary',role='heal
       anchorOffsetY:transformed?1:0,clipRect:index===0&&row.view===2?{x:0,y:0,width:3,height:4}:null},id+' parent');
     const command=commands[index];
     requireThat(command.kind==='image'&&command.alpha===1&&Number.isSafeInteger(command.imageIndex)&&images[command.imageIndex],id+' public image command');
-    equal(command.rect,{x:0,y:0,width:2,height:3},id+' packed draw rect');
+    equal(command.rect,{x:0,y:0,width:4,height:5},id+' logical draw rect');
     equal(command.sourceRect,crop(frame),id+' command source crop');
-    let expected=frame===0?{a:1,b:0,c:0,d:1,tx:index===0?3:13,ty:3}
-      :{a:0,b:-1,c:1,d:0,tx:index===0?3:13,ty:6};
-    if(transformed)expected={a:1,b:0,c:0,d:1,tx:-1,ty:2};
-    if(index===0&&role==='assigned') {
-      requireThat(kind!=='ordinary','Assigned ordinary refused');
-      if(kind==='rotation-sign')expected={a:0,b:1,c:1,d:0,tx:3,ty:6};
-      else expected={a:0,b:-1,c:1,d:0,tx:3,ty:5};
-    }
+    equal(command.layout,{logicalWidth:4,logicalHeight:5,trimX:1,trimY:frame===0?1:2,quarterTurn:frame===0?0:1},id+' region layout');
+    // The parent stands at (2,2) or (12,2). Turned 90 degrees about its anchor (1,1), the left one is T(2,2) R(90) T(-1,-1).
+    const expected=transformed?{a:0,b:1,c:-1,d:0,tx:3,ty:1}:{a:1,b:0,c:0,d:1,tx:index===0?2:12,ty:2};
     matrix(command.matrix,expected,transformed?1e-12:0,id+' image matrix');
     if(index===0&&row.view===2) {
       requireThat(command.clips.length===1,'One original parent clip required');
@@ -74,14 +68,5 @@ export function assertAtlasObservation(observation,id,kind='ordinary',role='heal
       equal(command.clips[0].rect,{x:0,y:0,width:3,height:4},'Parent clip rect');
     } else equal(command.clips,[],id+' empty clips');
   }
-  return true;
-}
-export function expectedIds(kind){return kind==='ordinary'?[...ORDINARY.map(row=>row.id),'N11']:[kind+':healthy',kind+':assigned'];}
-export function assertAtlasRetirement(retired){
-  requireThat(retired?.state==='closed'&&retired.stage===true&&retired.clock==='closed','Actual original owners must be terminal');
-  for(const key of ['controllers','bitmaps','sheets','leases','textures'])requireThat(Array.isArray(retired[key])&&retired[key].length>0
-    &&retired[key].every(value=>value===true),'Actual retired owner observations required '+key);
-  requireThat(retired.cleanupErrors===0&&Array.isArray(retired.cleanupFailures)&&retired.cleanupFailures.length===0
-    &&Array.isArray(retired.diagnostics)&&retired.diagnostics.length===0,'Post-cleanup diagnostic/failure stream must be empty');
   return true;
 }

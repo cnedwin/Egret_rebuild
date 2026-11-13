@@ -5,6 +5,7 @@ import * as egret from '@egret/engine';
 import { createBrowserTextureProvider as createProvider } from '@egret/engine/web/image';
 import { host } from './helpers.mjs';
 import { controlledFixture, deferred, observe, errorIs, RGBA_PIXELS } from './browser-png-fixture.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 /** Real Engine/manager ownership; only external decode/raster ports are controlled. */
 async function runAssets(body) {
@@ -190,7 +191,7 @@ testAssets('BIP07 one decoded image drives sheet, Bitmaps, sequence and saved fr
   playback.start();
   sheet.dispose();
   engine.advanceTime(0.125);
-  const saved = engine.captureFrame({ width: 3, height: 1, clearColor: 0, clearAlpha: 0 });
+  const saved = captureDrawn(engine, { width: 3, height: 1, clearColor: 0, clearAlpha: 0 });
   assert.equal(saved.images.length, 1); assert.equal(saved.images[0], image);
   assert.equal(saved.commands.length, 2);
   assert.deepEqual(saved.commands.map(command => command.sourceRect), [

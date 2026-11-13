@@ -25,7 +25,5 @@ import type { SpriteSheetFrameInput as ProjectFrame } from '@egret/project';
 import { createSpriteSheet as TextFactory } from '@egret/engine/text';
 // SS_TYPE_CASE SS1-I12: runtime text entry gains no image-sheet facade.
 import type { SpriteSheet as RuntimeTextSheet } from '@egret/runtime/text';
-// SS_TYPE_CASE SS1-I13: scene entry gains no 2D named-table factory.
-import { createSpriteSheet as SceneFactory } from '@egret/engine/scene3d';
 // SS_TYPE_CASE SS1-I14: existing opt-in Spine planning entry gains no sheet type.
 import type { SpriteSheet as SpineSheet } from '@egret/project/spine';

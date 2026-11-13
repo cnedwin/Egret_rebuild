@@ -51,11 +51,11 @@ try {
   playback.start();
   engine.advanceTime(10);
   function capture(label) {
-    const frame = engine.captureFrame({ width: 8, height: 4, clearColor: 0, clearAlpha: 0 });
+    const frame = engine.captureSharedFrame({ width: 8, height: 4, clearColor: 0, clearAlpha: 0 });
     observations.push({
       label, state: playback.state, elapsedSeconds: playback.elapsedSeconds,
       sample: playback.lastSample, frameId: frame.frameId,
-      crop: frame.commands[0].sourceRect,
+      crop: frame.regions[frame.commands[0].regionIndex].packed,
     });
   }
   capture('started-red');

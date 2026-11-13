@@ -2,6 +2,8 @@
 
 [简体中文](../../Cns/docs/b1-host-contract.md) · [Verification evidence](b1-host-evidence.md)
 
+> **Removed.** The `scene3d` entries and the WebGPU hosts for rectangle, image and textured frames have been removed from the SDK. This document is kept as a record of what they were and describes nothing in the current SDK. Current 2D rendering is the [shared render profile](shared-render-profile-contract.md); current 3D is [World3D](world3d.md).
+
 Egret's first-party B1 Host joins a bounded 3D mesh pass with the existing 2D rectangle/image pass under one lifecycle and submission owner. This is an internal engineering slice. `createB1WebGPUHost`, `renderSceneFrame` and `getSceneStatus` are not exported by the package entry barrels; their current source signatures do not establish a stable public API.
 
 ## Admission and ownership

@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 function capability() { assert.equal(typeof egret.DisplayObjectContainer.prototype.removeChildren, 'function', 'DISPLAY_CONTAINER_REMOVE_CHILDREN_REQUIRED'); }
 function code(action, wanted) { assert.throws(action, value => value instanceof egret.EgretError && value.code === wanted); }
@@ -147,19 +148,19 @@ test('DCA05 new bounds/hit/capture omit detached subtrees while saved values sta
     red.touchEnabled = true; red.hitArea = { x: 0, y: 0, width: 4, height: 4 }; layer.addChild(red);
     const nested = scope.use(f.track(new egret.DisplayObjectContainer())); nested.x = 6; layer.addChild(nested);
     const blue = scope.use(f.track(new egret.Sprite())); blue.graphics.beginFill(0x0000ff).drawRect(0,0,2,2); nested.addChild(blue);
-    before = f.engine.captureFrame({ width: 12, height: 8 });
+    before = captureDrawn(f.engine, { width: 12, height: 8 });
     assert.deepEqual(before.commands.map(value => value.color), [0xff0000, 0x0000ff]);
     assert.deepEqual(before.commands.map(value => value.matrix), [{ a:1,b:0,c:0,d:1,tx:2,ty:3 }, { a:1,b:0,c:0,d:1,tx:8,ty:3 }]);
     assert.deepEqual(layer.getBounds(), { x:0,y:0,width:8,height:4 }); assert.equal(f.engine.stage.hitTest(3,4), red);
     layer.removeChildren(); assert.equal(red.parent, undefined); assert.equal(nested.parent, undefined); assert.equal(blue.parent, nested);
     assert.deepEqual(layer.getBounds(), { x:0,y:0,width:0,height:0 }); assert.deepEqual(red.getBounds(), { x:0,y:0,width:4,height:4 });
-    assert.equal(f.engine.stage.hitTest(3,4), undefined); assert.deepEqual(f.engine.captureFrame({ width:12,height:8 }).commands, []);
+    assert.equal(f.engine.stage.hitTest(3,4), undefined); assert.deepEqual(captureDrawn(f.engine, { width:12,height:8 }).commands, []);
     assert.equal(layer.x, 2); assert.equal(layer.y, 3);
     const replacement = scope.use(f.track(new egret.Sprite())); replacement.graphics.beginFill(0x00ff00).drawRect(0,0,1,1);
-    layer.addChild(replacement); assert.deepEqual(f.engine.captureFrame({ width:12,height:8 }).commands.map(value => value.color), [0x00ff00]);
+    layer.addChild(replacement); assert.deepEqual(captureDrawn(f.engine, { width:12,height:8 }).commands.map(value => value.color), [0x00ff00]);
     layer.graphics.beginFill(0x123456).drawRect(0,0,1,1);
     layer.removeChildren();
-    assert.deepEqual(f.engine.captureFrame({ width:12,height:8 }).commands.map(value => value.color), [0x123456]);
+    assert.deepEqual(captureDrawn(f.engine, { width:12,height:8 }).commands.map(value => value.color), [0x123456]);
     assert.deepEqual(f.diagnostics, []);
   } finally { await f.close(); }
   assert.deepEqual(before.commands.map(value => value.color), [0xff0000, 0x0000ff]);

@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { createEngine, DisplayObjectContainer, Sprite } from '@egret/engine';
 import { createUiRoot } from '@egret/engine/ui';
 import { deferred, flush, host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const frameOptions = { width: 160, height: 200 };
 function content(context, height, color = 0xff0000) {
@@ -45,13 +46,13 @@ test('UI prepared leaves measure their wrapping width and publish rendering, geo
         assert.equal(box(root, 'tail').y, 27);
         assert.equal(engine.stage.hitTest(3, 3), results[0].shape);
         assert.equal(engine.stage.hitTest(3, 29), undefined);
-        const saved = engine.captureFrame(frameOptions), priorRevision = root.snapshot().committedRevision;
+        const saved = captureDrawn(engine, frameOptions), priorRevision = root.snapshot().committedRevision;
         root.setViewport({ width: 84, height: 200 }, 1);
         const next = await root.prepare();
         assert.equal(contexts[1].width, 80);
         assert.equal(contexts[0].scope.state, 'open');
         assert.equal(root.snapshot().committedRevision, priorRevision);
-        assert.deepEqual(engine.captureFrame(frameOptions).commands, saved.commands);
+        assert.deepEqual(captureDrawn(engine, frameOptions).commands, saved.commands);
         assert.equal(engine.stage.hitTest(3, 29), undefined);
         root.commit(next);
         assert.equal(box(root, 'body').height, 34);
@@ -69,7 +70,7 @@ test('UI prepared leaves measure their wrapping width and publish rendering, geo
         await commitReady(root);
         assert.equal(box(root, 'body').height, 39);
         assert.equal(box(root, 'tail').y, 42);
-        assert.deepEqual(engine.captureFrame(frameOptions).commands.map(command => command.color), [0x00ff00, 0x0000ff]);
+        assert.deepEqual(captureDrawn(engine, frameOptions).commands.map(command => command.color), [0x00ff00, 0x0000ff]);
         const calls = contexts.length;
         root.setOrigin({ x: 5, y: 0 });
         await commitReady(root);
@@ -96,7 +97,7 @@ test('UI failed and superseded prepared leaves preserve the old render and retir
     const root = createUiRoot({ engine, scope: engine.createScope(), id: 'leaf-root', viewport: { width: 100, height: 200 }, density: 1, tree: column(source) });
     try {
         await commitReady(root);
-        const saved = engine.captureFrame(frameOptions), previous = root.snapshot();
+        const saved = captureDrawn(engine, frameOptions), previous = root.snapshot();
         mode = 'wait'; gate = deferred(); source.revision++;
         root.setTree(column(source));
         const canceled = root.prepare().catch(error => error);
@@ -105,7 +106,7 @@ test('UI failed and superseded prepared leaves preserve the old render and retir
         assert.equal(contexts[1].scope.state, 'closed');
         assert.equal(contexts[1].signal.aborted, true);
         assert.equal(results[1].content.isDisposed, true);
-        assert.deepEqual(engine.captureFrame(frameOptions).commands, saved.commands);
+        assert.deepEqual(captureDrawn(engine, frameOptions).commands, saved.commands);
         gate.resolve(); await flush();
         assert.equal(root.snapshot().committedRevision, previous.committedRevision);
         assert.equal(engine.stage.hitTest(3, 3), results[0].shape);
@@ -116,7 +117,7 @@ test('UI failed and superseded prepared leaves preserve the old render and retir
         assert.equal(results[2].content.isDisposed, true);
         assert.equal(contexts[0].scope.state, 'open');
         assert.deepEqual(root.snapshot().boxes, previous.boxes);
-        assert.deepEqual(engine.captureFrame(frameOptions).commands, saved.commands);
+        assert.deepEqual(captureDrawn(engine, frameOptions).commands, saved.commands);
         mode = 'wait'; gate = deferred(); source.revision++;
         root.setTree(column(source));
         const closing = root.prepare().catch(error => error);
@@ -127,7 +128,7 @@ test('UI failed and superseded prepared leaves preserve the old render and retir
         assert.equal(results[0].content.isDisposed, true);
         gate.resolve(); await flush();
         assert.equal(engine.stage.hitTest(3, 3), undefined);
-        assert.deepEqual(engine.captureFrame(frameOptions).commands, []);
+        assert.deepEqual(captureDrawn(engine, frameOptions).commands, []);
     } finally { await engine.dispose(); }
 });
 

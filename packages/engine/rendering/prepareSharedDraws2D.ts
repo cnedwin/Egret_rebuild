@@ -8,6 +8,7 @@ import { TexturedPreparationBudget2D } from './texturedPreparationBudget2D.js';
 import type { TexturedPreparationLimits2D } from './texturedPreparationBudget2D.js';
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
 import { decodeSharedSRGB } from './sharedColor2D.js';
+import type { RetainedSharedDraw2D, SharedPreparationRetention2D } from './sharedPreparationRetention2D.js';
 export class SharedPreparationError extends Error {
     public constructor(public readonly reason: 'frame' | 'profile' | 'precision' | 'budget') { super('Shared preparation ' + reason); }
 }
@@ -17,8 +18,16 @@ export type SharedDrawCommand2D = Exclude<SharedRenderCommand2D, { kind: 'barrie
 export interface PreparedSharedDraw2D { readonly kind:'draw'; readonly command:SharedDrawCommand2D; readonly material:SharedMaterial2D; readonly region:SharedRegion2D|undefined; readonly pageIndex:number|undefined; readonly polygons:readonly (readonly SharedPoint2D[])[]; readonly vertexReservation:number; }
 export interface PreparedSharedBarrier2D { readonly kind:'barrier'; readonly ordinal:number; readonly occurrenceId:number; }
 export type PreparedSharedEntry2D = PreparedSharedDraw2D | PreparedSharedBarrier2D;
-export interface SharedPreparationOptions2D extends TexturedPreparationLimits2D { readonly enableEffects?:boolean; readonly pixelRatio:number; readonly maxCommands:number; readonly maxClipRectangles:number; readonly maxFrameGeometryBytes:number; }
-export interface PreparedSharedFrame2D { readonly effects:PreparedEffects2D; readonly frame:SharedRenderFrame2D; readonly width:number; readonly height:number; readonly entries:readonly PreparedSharedEntry2D[]; readonly budget:TexturedPreparationBudget2D; readonly geometryBytes:number; readonly pageBytes:number; readonly upload:number; }
+/** What one shared frame may hold at most, whatever a Host is configured to admit. */
+export const SHARED_FRAME_REGIONS_2D=4096,SHARED_FRAME_PAGE_BYTES_2D=67108864;
+/** A Host option may lower the two frame ceilings; an absent one leaves the profile's own. */
+export interface SharedPreparationOptions2D extends TexturedPreparationLimits2D { readonly enableEffects?:boolean; readonly pixelRatio:number; readonly maxCommands:number; readonly maxClipRectangles:number; readonly maxFrameGeometryBytes:number; readonly maxFrameRegions?:number; readonly maxFramePageBytes?:number; }
+/**
+ * `retention` is the Host's kept draws, when the frame was prepared with them, and `retained` names for each
+ * entry the kept draw that packing may take its rows from or give them to.
+ */
+export interface PreparedSharedFrame2D { readonly effects:PreparedEffects2D; readonly frame:SharedRenderFrame2D; readonly width:number; readonly height:number; readonly entries:readonly PreparedSharedEntry2D[]; readonly budget:TexturedPreparationBudget2D; readonly geometryBytes:number; readonly pageBytes:number; readonly upload:number;
+    readonly retention?:SharedPreparationRetention2D; readonly retained?:readonly (RetainedSharedDraw2D|undefined)[]; }
 const ATTRS = ['u','v','r','g','b','a','dr','dg','db'] as const;
 function unit(value:number):number { if(!Number.isFinite(value)||value<0||value>1) sharedFailure('precision'); return value===0?0:value; }
 function uv(value:number):number { if(!Number.isFinite(value))sharedFailure('precision'); return value===0?0:value; }
@@ -70,14 +79,20 @@ function transform(p:OwnedPoint,m:Matrix2D,ratio:number):void {
 }
 const ORIGIN:PreparedPoint2D={x:0,y:0};
 const NO_CLIPS:readonly (readonly PreparedPoint2D[])[]=[];
-/** Authentic completion is checked by Host; this cold helper still defends all table references. */
-export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,height:number,options:SharedPreparationOptions2D):PreparedSharedFrame2D {
+/**
+ * Authentic completion is checked by Host; this helper still defends all table references. With `retention`,
+ * a draw whose every input is the same as in the last frame takes the geometry kept for it, once the charges
+ * recorded with that geometry fit what is left of the budget; any other draw is prepared here and kept.
+ * The frame's tables, every command's own numbers and every frame-wide charge are checked for every frame.
+ */
+export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,height:number,options:SharedPreparationOptions2D,retention?:SharedPreparationRetention2D):PreparedSharedFrame2D {
     if(frame.profile!=='egret.shared-frame2d/1'||frame.colorRecipe!=='egret.linear-srgb-pma/1'||frame.targetRepresentation!=='egret.srgb-pma8-target/1')sharedFailure('profile');
-    if(frame.commands.length>options.maxCommands||frame.commands.length>65536||frame.pages.length>64||frame.regions.length>128||frame.materials.length>256||frame.geometries.length>128)sharedFailure('budget');
+    if(frame.commands.length>options.maxCommands||frame.commands.length>65536||frame.pages.length>64||frame.regions.length>Math.min(SHARED_FRAME_REGIONS_2D,options.maxFrameRegions??SHARED_FRAME_REGIONS_2D)||frame.materials.length>256||frame.geometries.length>128)sharedFailure('budget');
+    const pageLimit=Math.min(SHARED_FRAME_PAGE_BYTES_2D,options.maxFramePageBytes??SHARED_FRAME_PAGE_BYTES_2D);
     const effects=prepareEffects2D(frame,options.pixelRatio,options.enableEffects===true);
     const budget=new TexturedPreparationBudget2D(options);let geometryBytes=0,pageBytes=0,clipsCount=0;
     for(const command of frame.commands)if(command.kind==='barrier'&&command.effect)clipsCount=add(clipsCount,command.effect.clips.length,options.maxClipRectangles);
-    for(const page of frame.pages){if(!isImageData2D(page.source)||page.sourceRepresentation!=='egret.srgb-straight-rgba8/1'||page.canonicalRepresentation!=='egret.alpha8-capped-srgb-pma8/1')sharedFailure('frame');pageBytes=add(pageBytes,page.source.byteLength,16777216);}
+    for(const page of frame.pages){if(!isImageData2D(page.source)||page.sourceRepresentation!=='egret.srgb-straight-rgba8/1'||page.canonicalRepresentation!=='egret.alpha8-capped-srgb-pma8/1')sharedFailure('frame');pageBytes=add(pageBytes,page.source.byteLength,pageLimit);}
     for(const material of frame.materials){if(!isSharedMaterial2D(material))sharedFailure('frame');if(material.blend==='add-preserve'&&frame.outputAlpha!=='opaque')sharedFailure('profile');}
     for(const geometry of frame.geometries){if(!isTexturedGeometry2D(geometry)&&!isSharedGeometry2D(geometry))sharedFailure('frame');geometryBytes=add(geometryBytes,geometry.logicalByteLength,options.maxFrameGeometryBytes);}
     for(const region of frame.regions){const page=frame.pages[region.pageIndex]?.source,p=region.packed;
@@ -90,6 +105,8 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
         if(command.kind!=='rect'&&!frame.regions[command.regionIndex])sharedFailure('frame');
         if(command.kind==='mesh'){const geometry=frame.geometries[command.geometryIndex];if(!geometry)sharedFailure('frame');budget.admitSourceTriangles(geometry.triangleCount);}}
     const entries:PreparedSharedEntry2D[]=[];let upload=0;
+    const retained:(RetainedSharedDraw2D|undefined)[]|undefined=retention?[]:undefined;
+    retention?.begin(frame.commands.length,width,height,options.pixelRatio,options);
     // One clip policy and one predicate ledger serve every command; the ledger's per-command count restarts at each draw.
     // The inactive context only states that every polygon handed to clipping is owned by this call, so a
     // step that leaves a polygon unchanged returns it instead of a copy. No clip rectangle is cached.
@@ -117,11 +134,25 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
         for(const p of polygon)qualifySharedUV(p,descriptor,frame);
         if(polygon.length<3||command.opacity===0)return;const count=(polygon.length-2)*3;budget.admitPreparedVertices(count);vertexReservation+=count;polygons.push(polygon);
     };
-    for(const entry of frame.commands){if(entry.kind==='barrier'){entries.push({kind:'barrier',ordinal:entry.ordinal,occurrenceId:entry.occurrenceId});continue;}
+    try{
+    for(const entry of frame.commands){if(entry.kind==='barrier'){entries.push({kind:'barrier',ordinal:entry.ordinal,occurrenceId:entry.occurrenceId});retained?.push(undefined);continue;}
         command=entry;
         const material=frame.materials[command.materialIndex]!,region=command.kind==='rect'?undefined:frame.regions[command.regionIndex]!,pageIndex=region?.pageIndex;
         preparation.edgeTests=0;m=command.matrix;ratio=coordinate(options.pixelRatio);
         coordinate(m.a);coordinate(m.b);coordinate(m.c);coordinate(m.d);coordinate(m.tx);coordinate(m.ty);unit(command.opacity);
+        // A kept draw with these inputs gives its geometry, if its charges fit. Otherwise the draw is prepared below, as without retention.
+        const page=pageIndex===undefined?undefined:frame.pages[pageIndex]!.source,geometry=command.kind==='mesh'?frame.geometries[command.geometryIndex]!:undefined;
+        const found=retention?.find(command.ordinal,command,material,region,page,geometry);
+        if(found!==undefined&&found.polygons!==undefined&&budget.tryReplayStageCost(found.geometryCost!)){
+            // The record of the last frame is given again while it would be the same in every field that is read.
+            let kept=retention!.rest(found,command,pageIndex);
+            if(kept===undefined){kept={kind:'draw',command,material,region,pageIndex,polygons:found.polygons,vertexReservation:found.vertexReservation};retention!.give(found,kept);}
+            retention!.carry(command.ordinal,found,command,region);retained!.push(found);
+            upload=add(upload,52*found.vertexReservation+128,Number.MAX_SAFE_INTEGER);
+            entries.push(kept);
+            continue;
+        }
+        const verticesBefore=budget.preparedVerticesCharged,predicatesBefore=budget.predicatesCharged,tuplesBefore=budget.tupleComparisonsCharged;
         clips=command.clips.length===0?NO_CLIPS:command.clips.map(clip=>preparation.rectangle(clip));
         // The viewport corners are the same for every command; they are checked when the first draw reaches them.
         viewport??=[{x:0,y:0},{x:coordinate(width),y:0},{x:coordinate(width),y:coordinate(height)},{x:0,y:coordinate(height)}];
@@ -149,8 +180,14 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
             }
             accept(points);
         }
-        upload=add(upload,44*vertexReservation+128,Number.MAX_SAFE_INTEGER);
-        entries.push({kind:'draw',command,material,region,pageIndex,polygons,vertexReservation});
+        upload=add(upload,52*vertexReservation+128,Number.MAX_SAFE_INTEGER);
+        const made:PreparedSharedDraw2D={kind:'draw',command,material,region,pageIndex,polygons,vertexReservation};
+        entries.push(made);
+        retained?.push(retention!.keep(command.ordinal,found,command,material,region,page,geometry,made,
+            budget.preparedVerticesCharged-verticesBefore,budget.predicatesCharged-predicatesBefore,budget.tupleComparisonsCharged-tuplesBefore));
     }
-    return {effects,frame,width,height,entries,budget,geometryBytes,pageBytes,upload:upload+effects.uniformBytes};
+    }catch(cause){retention?.abandon();throw cause;}
+    retention?.commit();
+    // The region table is uploaded with the frame: 48 bytes for each of its regions.
+    return {effects,frame,width,height,entries,budget,geometryBytes,pageBytes,upload:upload+48*frame.regions.length+effects.uniformBytes,...(retention?{retention,retained:retained!}:{})};
 }

@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/3d-webgpu-mesh-contract.md)
 
+> **Removed.** The `scene3d` entries and the WebGPU hosts for rectangle, image and textured frames have been removed from the SDK. This document is kept as a record of what they were and describes nothing in the current SDK. Current 2D rendering is the [shared render profile](shared-render-profile-contract.md); current 3D is [World3D](world3d.md).
+
 Egret's fixed mesh helper expresses a small inspectable GPU interface: one position/RGB vertex layout, one column-major MVP uniform and ordered indexed draws using caller-supplied resources. `createWebGPUMeshPipeline` supplies fixed shader/descriptor text through captured callbacks; `encodeWebGPUMesh` records state and a draw into a supplied pass. The [implementation evidence](3d-webgpu-mesh-evidence.md) distinguishes accepted source/mock behavior from native execution.
 
 Historical documentary candidate 0.1. Public release, scene/UI Host integration, native WGSL/device/pixels and performance remain **HELD**. These internal helpers do not add a public package entry or release a host implementation.

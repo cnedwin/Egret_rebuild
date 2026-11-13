@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+> **Now on the shared Hosts.** This example draws with the shared WebGPU Host by default and with the shared WebGL2 Host under `?backend=webgl2`. The Canvas Host it used before has been removed; the verifier commands named below were written for it and no longer apply. Statements below about the Canvas Host, about choosing Canvas, and about recorded Canvas checks describe earlier versions.
+
 This small Canvas example uses the public `@egret/engine`, `@egret/engine/web` and `@egret/engine/web/pointer` entries. Two authored `Sprite.hitArea` rectangles show independent mouse, touch and pen contacts, including non-primary fingers. Each contact retains its down target while moving outside the canvas. White markers and the contact list show current logical coordinates; each terminal event clears that contact's state.
 
 After building the repository with the pinned tools, run the example server and open `/examples/multi-pointer/index.html`. The module exports `ready`, `readSnapshot()` and `close()` for bounded browser observation. Snapshots contain scalar contact observations only. No external assets are used.

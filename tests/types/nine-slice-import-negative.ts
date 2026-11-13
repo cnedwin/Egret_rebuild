@@ -11,30 +11,12 @@ void Runtime.NineSliceInsets2D;
 // NSI runtime-options-not-value
 void Runtime.NineSliceGeometry2DOptions;
 
-// NSI canvas-no-factory
-import { createNineSliceGeometry2D as canvasFactory } from "@egret/engine/web";
-// NSI canvas-no-insets-type
-import type { NineSliceInsets2D as CanvasInsets } from "@egret/engine/web";
-// NSI canvas-no-options-type
-import type { NineSliceGeometry2DOptions as CanvasOptions } from "@egret/engine/web";
 // NSI webgpu-no-factory
 import { createNineSliceGeometry2D as webGPUFactory } from "@egret/engine/webgpu";
 // NSI webgpu-no-insets-type
 import type { NineSliceInsets2D as WebGPUInsets } from "@egret/engine/webgpu";
 // NSI webgpu-no-options-type
 import type { NineSliceGeometry2DOptions as WebGPUOptions } from "@egret/engine/webgpu";
-// NSI scene3d-no-factory
-import { createNineSliceGeometry2D as sceneFactory } from "@egret/engine/scene3d";
-// NSI scene3d-no-insets-type
-import type { NineSliceInsets2D as SceneInsets } from "@egret/engine/scene3d";
-// NSI scene3d-no-options-type
-import type { NineSliceGeometry2DOptions as SceneOptions } from "@egret/engine/scene3d";
-// NSI webgpu-scene3d-no-factory
-import { createNineSliceGeometry2D as sceneHostFactory } from "@egret/engine/webgpu/scene3d";
-// NSI webgpu-scene3d-no-insets-type
-import type { NineSliceInsets2D as SceneHostInsets } from "@egret/engine/webgpu/scene3d";
-// NSI webgpu-scene3d-no-options-type
-import type { NineSliceGeometry2DOptions as SceneHostOptions } from "@egret/engine/webgpu/scene3d";
 // NSI engine-text-no-factory
 import { createNineSliceGeometry2D as engineTextFactory } from "@egret/engine/text";
 // NSI engine-text-no-insets-type
@@ -76,11 +58,11 @@ import { createNineSliceGeometry2D as runtimeSourceFactory } from "@egret/runtim
 // NSI engine-source-not-public
 import { createNineSliceGeometry2D as engineSourceFactory } from "@egret/engine/src/NineSliceGeometry2D.js";
 
-void canvasFactory; void webGPUFactory; void sceneFactory; void sceneHostFactory;
+void webGPUFactory;
 void engineTextFactory; void runtimeTextFactory; void inputFactory; void canvasTextFactory;
 void contractsFactory; void runtimeSubpathFactory; void engineSubpathFactory;
 void runtimeSourceFactory; void engineSourceFactory;
-export type { CanvasInsets, CanvasOptions, WebGPUInsets, WebGPUOptions,
-  SceneInsets, SceneOptions, SceneHostInsets, SceneHostOptions, EngineTextInsets, EngineTextOptions,
+export type { WebGPUInsets, WebGPUOptions,
+  EngineTextInsets, EngineTextOptions,
   RuntimeTextInsets, RuntimeTextOptions, InputInsets, InputOptions, CanvasTextInsets, CanvasTextOptions,
   ContractsInsets, ContractsOptions };

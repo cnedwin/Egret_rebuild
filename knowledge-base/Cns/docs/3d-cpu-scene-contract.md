@@ -2,6 +2,8 @@
 
 [English](../../en/docs/3d-cpu-scene-contract.md) | 简体中文
 
+> **已移除。** `scene3d` 入口以及矩形、图像和纹理帧的 WebGPU 宿主已从 SDK 中移除。本文档保留为当时的记录，不描述当前 SDK。当前的 2D 渲染见[共享渲染 Profile](shared-render-profile-contract.md)，当前的 3D 见 [World3D](world3d.md)。
+
 白鹭的 CPU 场景快照把投影和有序网格绘制转换为自有、不可变的 `SceneFrame3D`。每次绘制保留真实 CPU 几何身份和独立 `mvp`；按首次出现顺序排列的几何清单，使共享资源的记账可以检查。这是内部引擎接口，历史源码验收见[实现证据](3d-cpu-scene-evidence.md)。
 
 历史文档候选版本 0.1。公开发布继续 **HELD**。已接受范围是 CPU 快照行为；GPU 宿主整合、原生着色器/设备/像素精度及性能继续 **HELD**。

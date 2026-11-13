@@ -1,24 +1,19 @@
 // SPDX-License-Identifier: Apache-2.0
 // Every labelled statement must produce a real, unsuppressed compiler diagnostic.
 import * as root from '@egret/engine';
-import * as canvasEntry from '@egret/engine/web';
-import * as ordinary from '@egret/engine/webgl2';
-import { type SharedRenderFrame2D, type RenderFrame2D } from '@egret/engine';
-import { type SceneFrame3D } from '@egret/engine/scene3d';
+import * as inputEntry from '@egret/engine/web/input';
+import { type SharedRenderFrame2D } from '@egret/engine';
 import {
   createSharedWebGL2Host, type SharedWebGL2Host, type SharedWebGL2HostOptions,
   type SharedWebGL2HostStatus, type SharedWebGL2Readback, type WebGL2HostStatus,
   type WebGL2HostState, type WebGL2HostErrorCode, type WebGL2HostDiagnostic, type WebGL2HostFailure,
 } from '@egret/engine/webgl2';
-import { createSharedSceneWebGL2Host, type SharedSceneWebGL2Host } from '@egret/engine/webgl2/scene3d';
 
 export function rejectEntryLeaks(canvas: HTMLCanvasElement): void {
   // WEBGL2_TYPE_CASE GL-N01: the default root exposes no optional WebGL2 factory.
   root.createSharedWebGL2Host({ canvas });
-  // WEBGL2_TYPE_CASE GL-N02: Canvas exposes no optional WebGL2 factory.
-  canvasEntry.createSharedWebGL2Host({ canvas });
-  // WEBGL2_TYPE_CASE GL-N03: ordinary WebGL2 exposes no scene factory.
-  ordinary.createSharedSceneWebGL2Host({ canvas, outputAlpha: 'opaque' });
+  // WEBGL2_TYPE_CASE GL-N02: the input entry exposes no optional WebGL2 factory.
+  inputEntry.createSharedWebGL2Host({ canvas });
 }
 export function rejectOptions(canvas: HTMLCanvasElement, gl: WebGL2RenderingContext): void {
   // WEBGL2_TYPE_CASE GL-N04: a real HTML canvas is required.
@@ -31,20 +26,14 @@ export function rejectOptions(canvas: HTMLCanvasElement, gl: WebGL2RenderingCont
   createSharedWebGL2Host({ canvas, outputAlpha: 'straight' });
   // WEBGL2_TYPE_CASE GL-N08: absent options differ from explicit undefined.
   createSharedWebGL2Host({ canvas, enableReadback: undefined });
-  // WEBGL2_TYPE_CASE GL-N09: scene callers explicitly select opaque output.
-  createSharedSceneWebGL2Host({ canvas });
-  // WEBGL2_TYPE_CASE GL-N10: scene output cannot be premultiplied.
-  createSharedSceneWebGL2Host({ canvas, outputAlpha: 'premultiplied' });
 }
-export function rejectMutableSnapshots(status: WebGL2HostStatus, shared: SharedWebGL2HostStatus, host: SharedSceneWebGL2Host): void {
+export function rejectMutableSnapshots(status: WebGL2HostStatus, shared: SharedWebGL2HostStatus): void {
   // WEBGL2_TYPE_CASE GL-N11: state is readonly.
   status.state = 'active';
   // WEBGL2_TYPE_CASE GL-N12: generation is readonly.
   status.generation = 2;
   // WEBGL2_TYPE_CASE GL-N13: retention charges are readonly.
   shared.retention.idleBytes = 0;
-  // WEBGL2_TYPE_CASE GL-N14: scene charges are readonly.
-  host.getSceneStatus().pendingDepthBytes = 0;
 }
 export function rejectReadback(readback: SharedWebGL2Readback): void {
   // WEBGL2_TYPE_CASE GL-N15: readback representation cannot be reassigned.
@@ -64,15 +53,11 @@ export function rejectFiniteDiscriminants(diagnostic: WebGL2HostDiagnostic, fail
   failure.phase = 'cleanup';
   void [state, code];
 }
-export function rejectFrames(host: SharedWebGL2Host, sceneHost: SharedSceneWebGL2Host, shared: SharedRenderFrame2D, legacy: RenderFrame2D, scene: SceneFrame3D): void {
+export function rejectFrames(host: SharedWebGL2Host, unbranded: Omit<SharedRenderFrame2D, Extract<keyof SharedRenderFrame2D, symbol>>): void {
   // WEBGL2_TYPE_CASE GL-N21: a structural object is not a completed shared frame.
   host.renderSharedFrame({});
-  // WEBGL2_TYPE_CASE GL-N22: legacy frames cannot enter the shared GL port.
-  host.renderSharedFrame(legacy);
-  // WEBGL2_TYPE_CASE GL-N23: ordinary hosts do not expose scene composition.
-  host.renderSceneSharedFrame(scene, shared);
-  // WEBGL2_TYPE_CASE GL-N24: scene composition requires its overlay.
-  sceneHost.renderSceneSharedFrame(scene);
+  // WEBGL2_TYPE_CASE GL-N22: a frame without its brand cannot enter the shared GL port.
+  host.renderSharedFrame(unbranded);
 }
 export function rejectAsyncPort(): void {
   // WEBGL2_TYPE_CASE GL-N25: rendering returns exact undefined synchronously.

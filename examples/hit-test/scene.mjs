@@ -59,7 +59,7 @@ export function createHitTestScene(engine, scope) {
     if (failures.length !== 0) throw new AggregateError(failures, 'Typed listener retirement failed');
   } });
   paintFeedback(feedbackColor);
-  rememberFrame(engine.renderFrame(FRAME));
+  rememberFrame(engine.renderSharedFrame(FRAME));
 
   function pick(payload) {
     pointerCount++;
@@ -72,20 +72,20 @@ export function createHitTestScene(engine, scope) {
     selected.dispatchEvent(new Event(pickedType, lastPayload));
     paintFeedback(colors.get(selected));
     // Application-only post-dispatch projection anchor; initial rendering is separate.
-    rememberFrame(engine.renderFrame(FRAME));
+    rememberFrame(engine.renderSharedFrame(FRAME));
     return selected;
   }
   function toggleUpper() {
     upper.visible = !upper.visible;
-    rememberFrame(engine.renderFrame(FRAME));
+    rememberFrame(engine.renderSharedFrame(FRAME));
   }
   function toggleGateVisibility() {
     gate.visible = !gate.visible;
-    rememberFrame(engine.renderFrame(FRAME));
+    rememberFrame(engine.renderSharedFrame(FRAME));
   }
   function toggleTouchChildren() {
     gate.touchChildren = !gate.touchChildren;
-    rememberFrame(engine.renderFrame(FRAME));
+    rememberFrame(engine.renderSharedFrame(FRAME));
   }
   function readSnapshot() {
     const disposedNodes = nodes.filter(node => node.isDisposed).length;

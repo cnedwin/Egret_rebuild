@@ -3,9 +3,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
-import {collectFrameCommands} from '../packages/runtime/dist/index.js';
 import {createSequenceClip, sampleSequenceClip} from '../packages/runtime/dist/sequenceClip.js';
 import {host} from './helpers.mjs';
+import { captureDrawn, drawnFrame } from './helpers/drawn-frame.mjs';
 
 const ATLAS = Object.freeze([
   255,0,0,255, 255,0,0,255, 0,255,0,255, 0,0,255,255, 0,0,255,255, 0,0,255,255,
@@ -56,7 +56,7 @@ async function fixture({base, width=6, height=2, attach=true, Node=egret.Bitmap}
   return {engine,node,lease,ref,texture,value,port,counts:()=>({loads,disposals})};
 }
 function command(engine) {
-  const frame = engine.captureFrame(OPTIONS);
+  const frame = captureDrawn(engine, OPTIONS);
   assert.equal(frame.commands.length,1);
   assert.equal(frame.commands[0].kind,'image');
   return {frame,command:frame.commands[0]};
@@ -215,11 +215,11 @@ test('B09 cached metadata survives release while active old-generation demand re
   try {
     const second=await f.engine.assets.acquire(f.ref), node=new egret.Bitmap(second);f.engine.stage.addChild(node);
     setRegion(f.node,GREEN);setRegion(node,BLUE);f.engine.assets.invalidate(f.ref);
-    assert.deepEqual(f.engine.captureFrame(OPTIONS).commands.map(c=>c.sourceRect),[GREEN,BLUE]);
+    assert.deepEqual(captureDrawn(f.engine, OPTIONS).commands.map(c=>c.sourceRect),[GREEN,BLUE]);
     f.lease.release();state(f.node,GREEN,1,2);
     errorCode(()=>setRegion(f.node,undefined),'ASSET_LEASE_RELEASED');
     errorCode(()=>setRegion(f.node,BLUE),'ASSET_LEASE_RELEASED');
-    errorCode(()=>f.engine.captureFrame(OPTIONS),'ASSET_LEASE_RELEASED');
+    errorCode(()=>captureDrawn(f.engine, OPTIONS),'ASSET_LEASE_RELEASED');
     f.node.visible=false;assert.deepEqual(command(f.engine).command.sourceRect,BLUE);
     assert.deepEqual(f.counts(),{loads:1,disposals:0});
     second.release();state(node,BLUE,3,1);
@@ -329,9 +329,9 @@ test('B17 saved selected frames own stable crops and pixels across disposal and 
     for(const part of [saved,saved.commands,saved.images,saved.images[0],saved.commands[0],saved.commands[0].sourceRect,saved.commands[0].rect])assert.ok(Object.isFrozen(part));
     f.lease.release();f.engine.assets.invalidate(f.ref);f.texture.dispose();await f.engine.dispose();closed=true;
     assert.deepEqual(Array.from(egret.copyImageData2DPixels(saved.images[0])),ATLAS);
-    const observed=[], port=host({renderFrame(frame){observed.push({crop:frame.commands[0].sourceRect,rect:frame.commands[0].rect,pixels:Array.from(egret.copyImageData2DPixels(frame.images[0]))});}});
-    const second=await egret.createEngine({host:port.adapter});
-    try { port.adapter.renderFrame(saved);assert.deepEqual(observed,[{crop:GREEN,rect:{x:0,y:0,width:1,height:2},pixels:ATLAS}]); }
+    const observed=[], port=host({sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D,renderSharedFrame(frame){const drawn=drawnFrame(frame);observed.push({crop:drawn.commands[0].sourceRect,rect:drawn.commands[0].rect,pixels:Array.from(egret.copyImageData2DPixels(drawn.images[0]))});}});
+    const second=await egret.createEngineForProfile({host:port.adapter},egret.SHARED_FRAME_PROFILE_2D);
+    try { port.adapter.renderSharedFrame(saved.frame);assert.deepEqual(observed,[{crop:GREEN,rect:{x:0,y:0,width:1,height:2},pixels:ATLAS}]); }
     finally { await second.dispose(); }
   } finally { if(!closed)await f.engine.dispose(); }
 });
@@ -357,31 +357,32 @@ test('B18 intrinsic selection and capture ignore public overrides',async()=>{
 });
 
 // Break: changing geometry-before-entitlement or suppression during selected-crop capture.
-test('B19 selected geometry preserves inherited zero-alpha error precedence',async()=>{
+test('B19 selected geometry stays finite and a subtree of zero accumulated alpha is not drawn',async()=>{
   const f=await fixture();
   try {
     setRegion(f.node,BLUE);const parent=new egret.Sprite();f.engine.stage.addChild(parent);parent.addChild(f.node);
     parent.alpha=1e-200;f.node.alpha=1e-200;f.lease.release();
-    assert.deepEqual(f.engine.captureFrame(OPTIONS).commands,[]);
+    assert.deepEqual(captureDrawn(f.engine, OPTIONS).commands,[]);
     f.node.scaleY=Number.MAX_VALUE;
-    assert.deepEqual(f.engine.captureFrame(OPTIONS).commands,[],'selected height1 stays finite; base height2 would overflow');
+    assert.deepEqual(captureDrawn(f.engine, OPTIONS).commands,[],'selected height1 stays finite; base height2 would overflow');
     f.node.scaleX=Number.MAX_VALUE;
-    errorCode(()=>f.engine.captureFrame(OPTIONS),'FRAME_TRANSFORM_INVALID');
-    f.node.textureLease=undefined;assert.deepEqual(f.engine.captureFrame(OPTIONS).commands,[]);
+    assert.deepEqual(captureDrawn(f.engine, OPTIONS).commands,[],'nothing below zero accumulated alpha is drawn, so its geometry is not composed');
+    f.node.textureLease=undefined;assert.deepEqual(captureDrawn(f.engine, OPTIONS).commands,[]);
   } finally { await f.engine.dispose(); }
 });
 
 // Break: budgeting the base Texture instead of each simultaneous selected view.
-test('B20 same-image region selections preserve 128-view limits and per-frame deduplication',async()=>{
+test('B20 same-image region selections are one page and one region for each distinct selection',async()=>{
   const f=await fixture({width:129,height:1,attach:false});
   try {
     for(let x=0;x<128;x++){const node=new egret.Bitmap(f.lease);setRegion(node,{x,y:0,width:1,height:1});f.engine.stage.addChild(node);}
     const repeated=new egret.Bitmap(f.lease);setRegion(repeated,{x:0,y:0,width:1,height:1});f.engine.stage.addChild(repeated);
-    const first=f.engine.captureFrame(OPTIONS);assert.equal(first.commands.length,129);assert.deepEqual(first.images,[f.value]);
+    const first=captureDrawn(f.engine, OPTIONS);assert.equal(first.commands.length,129);assert.deepEqual(first.images,[f.value]);
+    assert.equal(first.frame.regions.length,128);
     const last=new egret.Bitmap(f.lease);setRegion(last,{x:128,y:0,width:1,height:1});f.engine.stage.addChild(last);
-    errorCode(()=>f.engine.captureFrame(OPTIONS),'FRAME_IMAGE_BUDGET');
-    last.visible=false;assert.equal(f.engine.captureFrame(OPTIONS).commands.length,129);
-    setRegion(repeated,{x:1,y:0,width:1,height:1});assert.equal(f.engine.captureFrame(OPTIONS).images.length,1);
+    const second=captureDrawn(f.engine, OPTIONS);assert.equal(second.commands.length,130);assert.equal(second.frame.regions.length,129);
+    last.visible=false;assert.equal(captureDrawn(f.engine, OPTIONS).commands.length,129);
+    setRegion(repeated,{x:1,y:0,width:1,height:1});assert.equal(captureDrawn(f.engine, OPTIONS).images.length,1);
   } finally { await f.engine.dispose(); }
 });
 
@@ -412,17 +413,5 @@ test('B22 disposal clears crop and sizes before reentrant listener cleanup',asyn
     f.node.dispose();assert.equal(cleanups,1);
     assert.equal(f.lease.value,f.texture);assert.deepEqual(f.counts(),{loads:1,disposals:0});
     errorCode(()=>setRegion(f.node,undefined),'OBJECT_DISPOSED');
-  } finally { await f.engine.dispose(); }
-});
-
-// Break: selected-crop geometry or lease errors losing legacy precedence.
-test('B23 legacy capture keeps geometry then entitlement then unsupported order',async()=>{
-  const f=await fixture();
-  try {
-    setRegion(f.node,GREEN);
-    errorCode(()=>collectFrameCommands(f.engine.stage),'FRAME_IMAGE_UNSUPPORTED');
-    f.lease.release();errorCode(()=>collectFrameCommands(f.engine.stage),'ASSET_LEASE_RELEASED');
-    f.node.scaleY=Number.MAX_VALUE;errorCode(()=>collectFrameCommands(f.engine.stage),'FRAME_TRANSFORM_INVALID');
-    f.node.textureLease=undefined;assert.deepEqual(collectFrameCommands(f.engine.stage),[]);
   } finally { await f.engine.dispose(); }
 });

@@ -4,6 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const PROFILE = 'trim-rotation-v1';
 const OPTIONS = { width: 24, height: 16, clearColor: 0, clearAlpha: 0 };
@@ -54,13 +55,18 @@ function matrix(actual, expected, tolerance = 0) {
       `${key}: actual ${actual[key]}, literal ${expected[key]}`);
   }
 }
-function captures(f) {
-  return [f.engine.captureFrame(OPTIONS), f.engine.captureTexturedFrame(OPTIONS)];
-}
-function onlyImage(frame) {
+// The one image a capture draws, with the region it names.
+function onlyImage(f) {
+  const frame = captureDrawn(f.engine, OPTIONS);
   assert.equal(frame.commands.length, 1);
   assert.equal(frame.commands[0].kind, 'image');
-  return frame.commands[0];
+  const command = frame.commands[0];
+  return { frame, command, region: frame.frame.regions[command.shared.regionIndex] };
+}
+// A region states the authored layout; the display matrix is not composed with it.
+function placed(region, packed, layout) {
+  assert.deepEqual(region, { pageIndex: 0, packed, logicalWidth: layout.sourceWidth, logicalHeight: layout.sourceHeight,
+    trimX: layout.trimX, trimY: layout.trimY, quarterTurn: layout.packedRotation / 90 });
 }
 async function scene(run) {
   const port = host(), diagnostics = [];
@@ -172,36 +178,38 @@ test('AH03 a cropped sheet Bitmap is a legal player target and owns stable logic
   });
 });
 
-// Break: cw90 sign/packed-width/trim is wrong, M*S order reversed, or image S contaminates clips.
-test('AH04 both capture profiles retain literal packed placement and separate parent clip space', async () => {
+// Break: the turn or trim of the region is wrong, the layout leaks into the display matrix, or into clips.
+test('AH04 the capture keeps the display matrix, names the packed region and its layout, and keeps the parent clip space', async () => {
   await scene(async f => {
     const parent = f.nodes.use(new egret.Sprite());
     parent.x = 2; parent.y = 2; f.engine.stage.addChild(parent);
     const bitmap = f.nodes.use(f.sheet().createBitmap('A')); parent.addChild(bitmap);
     const player = f.nodes.use(new egret.SequencePlayer(bitmap, f.clip()));
-    for (const frame of captures(f)) {
-      const command = onlyImage(frame);
-      matrix(command.matrix, { a: 1, b: 0, c: 0, d: 1, tx: 3, ty: 3 });
-      assert.deepEqual(command.sourceRect, { x: 0, y: 0, width: 2, height: 3 });
+    {
+      const { command, region } = onlyImage(f);
+      matrix(command.matrix, { a: 1, b: 0, c: 0, d: 1, tx: 2, ty: 2 });
+      assert.deepEqual(command.rect, { x: 0, y: 0, width: 4, height: 5 });
+      placed(region, A, LA);
     }
     player.applyAt(0.125);
-    for (const frame of captures(f)) {
-      const command = onlyImage(frame);
-      matrix(command.matrix, { a: 0, b: -1, c: 1, d: 0, tx: 3, ty: 6 });
-      assert.deepEqual(command.rect, { x: 0, y: 0, width: 2, height: 3 });
-      assert.deepEqual(command.sourceRect, { x: 3, y: 0, width: 2, height: 3 });
+    {
+      const { frame, command, region } = onlyImage(f);
+      matrix(command.matrix, { a: 1, b: 0, c: 0, d: 1, tx: 2, ty: 2 });
+      assert.deepEqual(command.rect, { x: 0, y: 0, width: 4, height: 5 });
+      placed(region, B, LB);
       assert.deepEqual([...egret.copyImageData2DPixels(frame.images[0])], PIXELS);
     }
     parent.rotation = 90; parent.anchorOffsetX = 1; parent.anchorOffsetY = 1;
     parent.clipRect = { x: 0, y: 0, width: 3, height: 4 };
-    for (const frame of captures(f)) {
-      const command = onlyImage(frame);
+    {
+      const { command, region } = onlyImage(f);
       // Only trig display transforms use <=1e-12; no native pixel tolerance is asserted here.
-      matrix(command.matrix, { a: 1, b: 0, c: 0, d: 1, tx: -1, ty: 2 }, 1e-12);
+      matrix(command.matrix, { a: 0, b: 1, c: -1, d: 0, tx: 3, ty: 1 }, 1e-12);
       assert.equal(command.clips.length, 1);
       matrix(command.clips[0].matrix, { a: 0, b: 1, c: -1, d: 0, tx: 3, ty: 1 }, 1e-12);
       assert.deepEqual(command.clips[0].rect, { x: 0, y: 0, width: 3, height: 4 });
-      assert.deepEqual(command.rect, { x: 0, y: 0, width: 2, height: 3 });
+      assert.deepEqual(command.rect, { x: 0, y: 0, width: 4, height: 5 });
+      placed(region, B, LB);
     }
     assert.deepEqual(bitmap.getBounds(), { x: 0, y: 0, width: 4, height: 5 });
   });
@@ -217,8 +225,11 @@ test('AH05 sourceRect and same exact lease reset layout before player reapplies 
     bitmap.sourceRect = { ...B, layout: LB };
     assert.deepEqual([bitmap.naturalWidth, bitmap.naturalHeight], [2, 3]);
     assert.deepEqual(bitmap.getBounds(), { x: 0, y: 0, width: 2, height: 3 });
-    for (const frame of captures(f)) matrix(onlyImage(frame).matrix,
-      { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
+    {
+      const { command, region } = onlyImage(f);
+      matrix(command.matrix, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
+      placed(region, B, { sourceWidth: 2, sourceHeight: 3, trimX: 0, trimY: 0, packedRotation: 0 });
+    }
     player.applyAt(0.125);
     assert.deepEqual([bitmap.naturalWidth, bitmap.naturalHeight], [4, 5]);
     bitmap.textureLease = f.lease;
@@ -226,8 +237,11 @@ test('AH05 sourceRect and same exact lease reset layout before player reapplies 
     assert.deepEqual([bitmap.naturalWidth, bitmap.naturalHeight], [6, 6]);
     player.applyAt(0.125);
     assert.deepEqual([bitmap.naturalWidth, bitmap.naturalHeight], [4, 5]);
-    for (const frame of captures(f)) matrix(onlyImage(frame).matrix,
-      { a: 0, b: -1, c: 1, d: 0, tx: 1, ty: 4 });
+    {
+      const { command, region } = onlyImage(f);
+      matrix(command.matrix, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
+      placed(region, B, LB);
+    }
   });
 });
 

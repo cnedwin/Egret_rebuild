@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { createEngine, Sprite, Bitmap, createAssetType, createAssetRef, createTexture, createImageData2D, isTexture } from '@egret/engine';
 import { createUiRoot, createUiTheme } from '@egret/engine/ui';
 import { host, deferred, flush } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const frame = { width: 160, height: 200 };
 const makeTheme = (id, color = 0xff0000, gap = 3, height = 20, skin = 'red') => createUiTheme({ id,
@@ -54,14 +55,14 @@ test('paint-only themes publish content, fill and generation atomically without 
     let measurements = 0; const contexts = [], first = makeTheme('red'), second = makeTheme('green', 0x00ff00, 3, 20, 'green');
     const f = await scene({ revision: 0, prepare(c) { contexts.push(c); return makeContent(c); } }, first, () => { measurements++; return { width: 10, height: 5, dependencyRevision: 0 }; });
     try {
-        await publish(f.root); const before = f.root.snapshot(), calls = measurements, saved = f.engine.captureFrame(frame);
+        await publish(f.root); const before = f.root.snapshot(), calls = measurements, saved = captureDrawn(f.engine, frame);
         f.root.setTheme(second); const token = await f.root.prepare();
         assert.equal(f.root.snapshot().theme, first); assert.equal(f.root.snapshot().boxes, before.boxes);
-        assert.deepEqual(f.engine.captureFrame(frame).commands, saved.commands); assert.equal(contexts[0].scope.state, 'open');
+        assert.deepEqual(captureDrawn(f.engine, frame).commands, saved.commands); assert.equal(contexts[0].scope.state, 'open');
         assert.equal(f.root.commit(token).kind, 'committed');
         assert.equal(f.root.snapshot().theme, second); assert.equal(f.root.snapshot().boxes, before.boxes);
         assert.equal(measurements, calls); assert.equal(f.root.snapshot().counters.layoutPasses, before.counters.layoutPasses); assert.equal(f.root.snapshot().counters.measurementCalls, 0); assert.equal(contexts[0].scope.state, 'closed');
-        assert.deepEqual(f.engine.captureFrame(frame).commands.map(c => c.color), [0x00ff00, 0x00ff00]);
+        assert.deepEqual(captureDrawn(f.engine, frame).commands.map(c => c.color), [0x00ff00, 0x00ff00]);
         assert.equal(f.engine.stage.hitTest(2, 2)?.isDisposed, false);
     } finally { await f.engine.dispose(); }
 });
@@ -70,13 +71,13 @@ test('failed, cancelled, superseded and late theme preparations retain committed
     let mode = 'ready', gate; const contexts = [], first = makeTheme('red'), second = makeTheme('green', 0x00ff00), third = makeTheme('blue', 0x0000ff);
     const f = await scene({ revision: 0, prepare(c) { contexts.push(c); const result = makeContent(c); if (mode === 'fail') throw Error('authored failure'); return mode === 'wait' ? gate.promise.then(() => result) : result; } }, first);
     try {
-        await publish(f.root); const before = f.root.snapshot(), saved = f.engine.captureFrame(frame);
+        await publish(f.root); const before = f.root.snapshot(), saved = captureDrawn(f.engine, frame);
         mode = 'fail'; f.root.setTheme(second); await assert.rejects(f.root.prepare(), code('UI_PREPARE_FAILED'));
         assert.equal(contexts.at(-1).scope.state, 'closed'); assert.equal(f.root.snapshot().theme, first);
         mode = 'wait'; gate = deferred(); const pending = f.root.prepare(); await flush();
         assert.equal(contexts.at(-1).theme, second); f.root.setTheme(f.root.snapshot().theme);
         await assert.rejects(pending, code('UI_STALE')); assert.equal(contexts.at(-1).scope.state, 'closed');
-        assert.deepEqual(f.engine.captureFrame(frame).commands, saved.commands); assert.equal(f.root.snapshot().boxes, before.boxes);
+        assert.deepEqual(captureDrawn(f.engine, frame).commands, saved.commands); assert.equal(f.root.snapshot().boxes, before.boxes);
         gate.resolve(); await flush(); mode = 'ready'; await publish(f.root);
         f.root.setTheme(second); const stale = await f.root.prepare(); f.root.setTheme(third);
         assert.equal(f.root.commit(stale).kind, 'stale'); await publish(f.root); assert.equal(f.root.snapshot().theme, third);
@@ -160,7 +161,7 @@ test('theme callback reentry and disposal retire candidates without publishing s
             if (action === 'new-theme') { await publish(root); root.setTheme(second); }
             reenter = true; await assert.rejects(root.prepare(), code(action === 'dispose' ? 'UI_CLOSED' : 'UI_STALE')); await flush();
             assert.equal(contexts.at(-1).scope.state, 'closed');
-            if (action === 'dispose') { assert.deepEqual(root.snapshot().boxes, []); assert.equal(root.snapshot().theme, undefined); assert.deepEqual(f.engine.captureFrame(frame).commands, []); }
+            if (action === 'dispose') { assert.deepEqual(root.snapshot().boxes, []); assert.equal(root.snapshot().theme, undefined); assert.deepEqual(captureDrawn(f.engine, frame).commands, []); }
             else { assert.equal(root.snapshot().theme, first); await publish(root); assert.equal(root.snapshot().theme, third); }
         } finally { await f.engine.dispose(); }
     }
@@ -174,13 +175,13 @@ test('tree, source and scroll intents cannot partially publish a pending theme',
         const layout = () => ({ id: 'rows', kind: 'virtualList', explicitWidth: 100, explicitHeight: 60, source });
         const root = createUiRoot({ engine, scope: owner, id: 'root', viewport: { width: 100, height: 100 }, density: 1, theme: first, tree: layout(), limits: { overscan: 0 } });
         try {
-            await publish(root); const before = root.snapshot(), saved = engine.captureFrame(frame).commands;
+            await publish(root); const before = root.snapshot(), saved = captureDrawn(engine, frame).commands;
             wait = true; root.setTheme(second); const pending = root.prepare(); await flush();
             if (mutation === 'tree') root.setTree(layout());
             else if (mutation === 'source') { source = { ...source, revision: 1 }; root.list('rows').setSource(source); }
             else root.list('rows').setScrollOffset(25);
             await assert.rejects(pending, code('UI_STALE'));
-            assert.equal(root.snapshot().theme, first); assert.deepEqual(root.snapshot().rows, before.rows); assert.deepEqual(engine.captureFrame(frame).commands, saved);
+            assert.equal(root.snapshot().theme, first); assert.deepEqual(root.snapshot().rows, before.rows); assert.deepEqual(captureDrawn(engine, frame).commands, saved);
             wait = false; gate.resolve(); await flush(); await publish(root); assert.equal(root.snapshot().theme, second);
             if (mutation === 'scroll') assert.deepEqual(root.snapshot().anchor, { key: 'r1', offset: 5 });
         } finally { await engine.dispose(); }
@@ -205,9 +206,9 @@ test('explicit focus and composition retention refuse theme rebind until release
         const source = { revision: 0, records: [{ key: 'r', value: 0, estimatedHeight: 20, contentVersion: 0 }], bind: makeContent, unbind() {} };
         const root = createUiRoot({ engine, scope: owner, id: 'root', viewport: { width: 100, height: 100 }, density: 1, theme: first, tree: { id: 'rows', kind: 'virtualList', explicitWidth: 100, explicitHeight: 60, source } });
         try {
-            await publish(root); const list = root.list('rows'), retained = list.retain('r', reason); await publish(root); const before = root.snapshot(), saved = engine.captureFrame(frame).commands;
+            await publish(root); const list = root.list('rows'), retained = list.retain('r', reason); await publish(root); const before = root.snapshot(), saved = captureDrawn(engine, frame).commands;
             assert.throws(() => root.setTheme(second), code('UI_ROW_RETAINED'));
-            assert.equal(root.snapshot().desiredRevision, before.desiredRevision); assert.equal(root.snapshot().theme, first); assert.deepEqual(engine.captureFrame(frame).commands, saved);
+            assert.equal(root.snapshot().desiredRevision, before.desiredRevision); assert.equal(root.snapshot().theme, first); assert.deepEqual(captureDrawn(engine, frame).commands, saved);
             retained.release(); await publish(root); root.setTheme(second);
             const late = list.retain('r', reason); await assert.rejects(root.prepare(), code('UI_ROW_RETAINED'));
             assert.equal(root.snapshot().theme, first); assert.equal(root.snapshot().rows[0].bindingGeneration, before.rows[0].bindingGeneration);

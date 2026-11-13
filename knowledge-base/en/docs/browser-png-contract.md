@@ -56,7 +56,7 @@ Signal polling is itself a checkpoint, not recursive polling: after each success
 
 ## 3. Fixed admission profile and caps
 
-Caps are fixed, with no factory overrides: 4 occupied jobs, 8,388,608 encoded bytes per load, 33,554,432 aggregate admitted encoded-payload bytes, 1,024 chunks, source edge 4,096 and source pixels 1,048,576 (the latter two reuse IMAGE_LIMITS_2D). No queue or automatic retry. Occupied jobs include unsettled operations and quarantined jobs. These bound admission and source-owned accounting, **not** browser internal copies, decode peaks, GPU allocation, physical RAM or OOM safety.
+Caps are fixed, with no factory overrides: 4 occupied jobs, 8,388,608 encoded bytes per load, 33,554,432 aggregate admitted encoded-payload bytes, 1,024 chunks, source edge 4,096 and source pixels 4,194,304 (the latter two reuse IMAGE_LIMITS_2D; the pixel bound was 1,048,576). No queue or automatic retry. Occupied jobs include unsettled operations and quarantined jobs. These bound admission and source-owned accounting, **not** browser internal copies, decode peaks, GPU allocation, physical RAM or OOM safety.
 
 The aggregate ceiling equals four maximum payloads. Under the fixed job/per-load limits, an independent aggregate one-over load cannot be reached legally; validate the four-payload endpoint and assigned JOB_LIMIT/per-load INPUT_LIMIT refusals, without inventing an unreachable aggregate-negative witness.
 

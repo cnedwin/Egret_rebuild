@@ -3,11 +3,9 @@
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { createSharedWebGL2Host } from '@egret/engine/webgl2';
-import { createSharedSceneWebGL2Host } from '@egret/engine/webgl2/scene3d';
-import { createMeshGeometry3D, createSceneFrame3D, createMatrix4 } from '@egret/engine/scene3d';
 import { glPorts } from './fixtures/gl-shared-rendering.mjs';
 
-export { egret, glPorts, createSharedWebGL2Host, createSharedSceneWebGL2Host };
+export { egret, glPorts, createSharedWebGL2Host };
 export const MiB = 1024 * 1024;
 export const code = suffix => error => error instanceof egret.EgretError && error.code === 'WEBGL2_' + suffix;
 export const outcome = promise => promise.then(value => ({ value }), error => ({ error }));
@@ -22,16 +20,9 @@ export async function pending(promise) {
   promise.then(() => { settled = true; }, () => { settled = true; });
   await turn(); assert.equal(settled, false, 'public promise must remain pending');
 }
-export function requireUpload(host, scene = false) {
+export function requireUpload(host) {
   assert.equal(typeof host.getSessionStatus, 'function', 'M15_GL_SESSION_MISSING');
   assert.equal(typeof host.stageSharedFrame, 'function', 'M15_GL_UPLOAD_MISSING');
-  if (scene) assert.equal(typeof host.stageSceneSharedFrame, 'function', 'M15_GL_SCENE_UPLOAD_MISSING');
-}
-export function sceneFrame(count = 1) {
-  const geometry = createMeshGeometry3D({ positions:[0,0,-1,1,0,-1,0,1,-1], colors:[1,0,0,0,1,0,0,0,1], indices:[0,1,2] });
-  const modelView = createMatrix4([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]);
-  return createSceneFrame3D({ projection:{kind:'orthographic',left:-1,right:1,bottom:-1,top:1,near:1,far:3},
-    draws:Array.from({ length:count }, () => ({ geometry, modelView })) });
 }
 export function signalPort() {
   const trace = [], listeners = new Set();
@@ -78,20 +69,18 @@ export function taskUploadMeter(ports) {
     ports.onCall = prior;
   } };
 }
-export async function hosted(body, { scene = false, options = {}, ports = glPorts() } = {}) {
+export async function hosted(body, { options = {}, ports = glPorts() } = {}) {
   const engine = await egret.createEngine({ host:{surface:{},start(){},stop(){},async close(){},setTimeout(){return () => {};}} });
   const scope = engine.createScope(), resources = engine.createScope();
   const sprite = scope.use(new egret.Sprite()); engine.stage.addChild(sprite);
   sprite.graphics.beginFill(0xff0000).drawRect(0,0,4,4).endFill();
   const textures = new Map(), type = egret.createAssetType('upload-gl-owned-textures', egret.isTexture);
   engine.assets.register(type, { async load(ref) { return textures.get(ref.id); }, dispose(texture) { texture.dispose(); } });
-  const host = scene ? createSharedSceneWebGL2Host({canvas:ports.canvas,outputAlpha:'opaque',enableReadback:true,...options})
-    : createSharedWebGL2Host({canvas:ports.canvas,enableReadback:true,...options});
+  const host = createSharedWebGL2Host({canvas:ports.canvas,enableReadback:true,...options});
   const uploads = [], result = { engine, scope, host, ports, sprite, uploads, closeMode:'safe' };
-  const frame = (width = 8, height = 8) => engine.captureSharedFrame({width,height,...(scene ? {outputAlpha:'opaque',clearAlpha:1} : {})});
-  Object.assign(result, { frame, scene:sceneFrame(),
+  const frame = (width = 8, height = 8) => engine.captureSharedFrame({width,height});
+  Object.assign(result, { frame,
     stage(captured = frame(), uploadOptions) { const ticket = host.stageSharedFrame(captured, uploadOptions); uploads.push(ticket); void outcome(ticket.ready); return ticket; },
-    stageScene(sceneInput = result.scene, overlay = frame(), uploadOptions) { const ticket = host.stageSceneSharedFrame(sceneInput, overlay, uploadOptions); uploads.push(ticket); void outcome(ticket.ready); return ticket; },
     async images(count, width = 1024, height = 1024) {
       const nodes = [], images = [], leases = [];
       for (let i = 0; i < count; i++) {
@@ -116,10 +105,10 @@ export async function hosted(body, { scene = false, options = {}, ports = glPort
     // new API's explicit absence assertion, including every parameterized case.
     await host.start();
     const baseline = frame(), readback = options.enableReadback === false ? undefined : host.requestReadback();
-    if (scene) host.renderSceneSharedFrame(result.scene, baseline); else host.renderSharedFrame(baseline);
+    host.renderSharedFrame(baseline);
     if (readback) { const pixels = await readback; assert.deepEqual([pixels.width,pixels.height,pixels.frameId],[8,8,baseline.frameId]); }
     await host.whenIdle(); assert.equal(host.getStatus().lastSerial,1); assert.equal(host.getStatus().pendingFrames,0);
-    requireUpload(host, scene);
+    requireUpload(host);
     return await body(result);
   } catch (error) { bodyFailure = { error }; throw error;
   } finally {

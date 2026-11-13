@@ -148,7 +148,7 @@ async function scenario(page, backend, row) {
   color(row.initialPixels[2],[255,128,32,255]);
   color(row.initialPixels[3],[255,128,32,255]);
   assert.ok([[255,255,0,255],[0,255,128,255]].some(expected => expected.every((value,index) => value === row.initialPixels[4][index])));
-  check('Actual 3D depth, foreground actors and sequence pixels share a frame');
+  check('Backdrop panels, foreground actors and sequence pixels share a frame');
 
   await clickRow(page,'roster','hero-1');
   await wait(page, () => globalThis.__egretOutfitStudio.inspect().selected === 'e_lumen');

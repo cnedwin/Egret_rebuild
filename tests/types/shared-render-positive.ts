@@ -9,8 +9,8 @@ import {
   type SharedMaterial2D, type SharedMaterialInput2D,
   type ImageData2D, type TextureViewRegionInput2D, type TextureViewRegion2D,
   type SharedFrameProfile2D, type SharedOutputAlpha2D, type SharedFrameOptions2D,
-  type SharedRenderFrame2D, type SharedRenderHostAdapter,
-  type RenderFrame2D, type TexturedRenderFrame2D,
+  type SharedRenderFrame2D,
+  type SharedRenderHostAdapter,
 } from '@egret/engine';
 import {
   isSharedGeometry2D, isSharedMaterial2D,
@@ -55,8 +55,8 @@ export type ExactOptions = Assert<Equal<SharedFrameOptions2D, {
   readonly clearAlpha?: number;
   readonly outputAlpha?: 'premultiplied' | 'opaque';
 }>>;
-export type DistinctOldFrame = Assert<Equal<SharedRenderFrame2D extends RenderFrame2D ? true : false, false>>;
-export type DistinctTexturedFrame = Assert<Equal<SharedRenderFrame2D extends TexturedRenderFrame2D ? true : false, false>>;
+export type NoLegacyFramePorts = Assert<Equal<Extract<keyof Engine, 'captureFrame' | 'renderFrame'>, never>>;
+export type NoTexturedFramePorts = Assert<Equal<Extract<keyof Engine, 'captureTexturedFrame' | 'renderTexturedFrame' | 'texturedFrameProfile'>, never>>;
 
 export function authenticInputs(source: ImageData2D): {
   texture: Texture; material: SharedMaterial2D; shared: SharedGeometry2D; legacy: TexturedGeometry2D;

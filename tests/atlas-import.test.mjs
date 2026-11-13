@@ -87,7 +87,7 @@ test('page, pixels, frames and portable PNG name budget boundaries',()=>{
  for(const pageName of ['p'.repeat(251)+'.png','name%#.png']){const data=metadata();data.meta.image=pageName;const req=input(data);req.page.pageName=pageName;assert.equal(createAtlasImportPlan(req).ok,true);}
  const name=input();name.page.pageName='p'.repeat(252)+'.png';refusal(name,'ATLAS_LIMIT_EXCEEDED','/page/pageName');
  for(const pageName of ['','tiny.PNG','CON.png','../tiny.png','a\\tiny.png','a/tiny.png','a:.png']){const req=input();req.page.pageName=pageName;refusal(req,'ATLAS_PAGE_BINDING_INVALID','/page/pageName');}
- const configure=(w,h)=>{const d=metadata();d.meta.size={w,h};const req=input(d);req.page.width=w;req.page.height=h;return req;};assert.equal(createAtlasImportPlan(configure(4096,256)).ok,true);refusal(configure(4097,256),'ATLAS_LIMIT_EXCEEDED','/page/width');refusal(configure(4096,257),'ATLAS_LIMIT_EXCEEDED','/page');
+ const configure=(w,h)=>{const d=metadata();d.meta.size={w,h};const req=input(d);req.page.width=w;req.page.height=h;return req;};assert.equal(createAtlasImportPlan(configure(4096,1024)).ok,true);assert.equal(createAtlasImportPlan(configure(2048,2048)).ok,true);refusal(configure(4097,256),'ATLAS_LIMIT_EXCEEDED','/page/width');refusal(configure(4096,1025),'ATLAS_LIMIT_EXCEEDED','/page');
  const data=metadata();data.frames=Array.from({length:1024},(_,i)=>frame('f'+i,0,0,1,1));assert.equal(createAtlasImportPlan(input(data)).ok,true);data.frames.push(frame('overflow',0,0,1,1));refusal(input(data),'ATLAS_LIMIT_EXCEEDED','/frames');data.frames=[];refusal(input(data),'ATLAS_SCHEMA_INVALID','/frames');
 });
 

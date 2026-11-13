@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/gpu-image-residency-contract.md) · [Evidence and limits](gpu-image-residency-evidence.md)
 
+> **Hosts removed.** The WebGPU hosts for rectangle, image and textured frames, for which this contract was written and tested, have been removed from the SDK. This document is kept as a record. Current 2D rendering is the [shared render profile](shared-render-profile-contract.md).
+
 Engineering preview **0.61.0** adds an internal image cache with per-Host ownership. It reuses an exact cropped GPU image after its earlier submission has completed safely. The mechanism is implemented inside `WebGPUHost`; it adds no package entry, export, option, public status, error code or dependency. Workspace packages remain private **0.0.0** and the Host protocol remains **1.0**. The existing [WebGPU contract](webgpu-rectangle-execution-contract.md) and [textured geometry contract](textured-geometry-and-mesh2d-contract.md) continue to define public admission and rendering behavior.
 
 This contract defines logical ownership and bounded reuse. Operation-count controls are separate from browser pixels, physical GPU memory and performance acceptance. The new dedicated cache browser matrix remains deferred and OPEN; consult the paired evidence for the actual verification cutoff.
@@ -28,7 +30,7 @@ Concurrent cold submissions do not share an unfinished candidate. If another saf
 
 ## Logical budgets and deterministic eviction
 
-The image allocation/reservation pool is **32 MiB (33554432 bytes)**. Each cropped image is charged `4 × width × height`; this is logical accounting, not measured VRAM. At most **256 ready entries** are searchable. This directory limit does not count all in-flight candidates.
+The image allocation/reservation pool is **32 MiB (33554432 bytes)**. A shared Host uses its `maxReadyPageBytes` option instead, 128 MiB by default; see the [shared render profile](shared-render-profile-contract.md). Each cropped image is charged `4 × width × height`; this is logical accounting, not measured VRAM. At most **256 ready entries** are searchable. This directory limit does not count all in-flight candidates.
 
 Existing limits remain: 16 MiB projection per frame, 32 MiB pending projection, 128 views and the existing source/table/scratch/device/scene/geometry/upload/readback limits. Cache hits and uncovered views do not refund the original frame's complete logical projection charge. `pendingUploadBytes` keeps its existing buffer/uniform definition. Ordinary and B1 Hosts retain default `maxPendingFrames=2` and their existing allowance for larger positive safe integers; textured and textured-scene options retain their maximum of 2.
 

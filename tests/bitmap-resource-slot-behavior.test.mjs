@@ -2,6 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { sdk, scene, visible, commit, observe, rejected, fulfilled, code, causeIncludes, flush, CROP_A, FULL } from './bitmap-resource-slot-fixtures.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 test('BRS03 pending retains the exact cropped initial borrow and live red image', async () => {
   const f = await scene();
@@ -146,7 +147,7 @@ test('BRS18 manual crop keeps slot-owned entitlement until dispose; fields are n
     f.slot.dispose(); f.slot.dispose();
     assert.equal(f.slot.state, 'disposed'); assert.equal(f.bitmap.textureLease, owned);
     assert.deepEqual(f.bitmap.sourceRect, manual); code(() => owned.value, 'ASSET_LEASE_RELEASED');
-    code(() => f.engine.captureFrame({ width: 32, height: 32 }), 'ASSET_LEASE_RELEASED');
+    code(() => captureDrawn(f.engine, { width: 32, height: 32 }), 'ASSET_LEASE_RELEASED');
     assert.equal(f.count(f.values.get('B')), 1); assert.equal(f.initialLease.value, f.values.get('A'));
   } finally { await f.close(); }
 });

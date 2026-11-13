@@ -8,6 +8,7 @@ import * as sdk from '@egret/engine';
 import { createTextRasterCache, createTextField } from '@egret/engine/text';
 import { deferred, flush, host } from './helpers.mjs';
 import { literalProvider, request } from './text-raster-public-helpers.mjs';
+import { captureDrawn, drawnFrame } from './helpers/drawn-frame.mjs';
 
 const MODULE = new URL('../examples/prepared-resource-groups/session.mjs', import.meta.url);
 const ASSETS = new URL('../examples/resource-scene/assets/', import.meta.url);
@@ -138,7 +139,7 @@ async function genuineBaseline(t) {
     engine.advanceTime(0); playback = engine.createSequencePlayback(scope, body, clip, { mode: 'loop' }); playback.start();
     engine.advanceTime(0.125); assert.deepEqual(body.sourceRect, ONE); assert.equal(playback.lastSample.frameIndex, 1);
     const field = createTextField(engine, scope, cache); field.setRequest(request()); await field.prepare(); engine.stage.addChild(field);
-    const frame = engine.captureFrame(FRAME);
+    const frame = captureDrawn(engine, FRAME);
     assert.equal(frame.width, 192); assert.equal(frame.height, 128);
     assert.ok(frame.commands.some(row => row.kind === 'image')); assert.ok(frame.images.includes(atlas.value.imageData));
     assert.equal(text.state.measure, 1);
@@ -178,7 +179,7 @@ async function starting(t, options = {}) {
     sourceLedger: Object.freeze({ active: outfits.active }) });
   const dependencies = Object.freeze({ revision: 'p03-scene-deps-r1', textureProvider: deps.provider, textureEvidence: deps.evidence,
     textProvider: text.provider, fontFamilies: Object.freeze({ ahem: 'P03 CPU Ahem substitute', cjk: 'P03 CPU CJK substitute' }), fontEvidence: FONTS });
-  const session = create({ host: port.adapter, profile: 'canvas-2d', outfitSource: source, dependencies,
+  const session = create({ host: port.adapter, profile: 'shared-2d', outfitSource: source, dependencies,
     ...(options.limits === undefined ? {} : { coordinatorLimits: options.limits }) });
   let ready;
   // Register immediately after creation: even a malformed facade/ready owns teardown.
@@ -258,7 +259,7 @@ scenario('P03_SCENE_01 two layer targets keep animation ownership and independen
   for (const key of ['root','body','outer','trim','playback']) assert.equal(left[key], old[key]);
   f.session.advanceTo(0.125); assert.deepEqual(left.body.sourceRect, ONE); assert.deepEqual(right.body.sourceRect, ONE);
   assert.deepEqual(left.outer.sourceRect, ZERO); assert.deepEqual(left.trim.sourceRect, ZERO);
-  const frame = f.session.capture(); assert.equal(frame.width, 192); assert.equal(frame.height, 128);
+  const frame = drawnFrame(f.session.capture()); assert.equal(frame.width, 192); assert.equal(frame.height, 128);
   assert.ok(frame.images.includes(left.outer.textureLease.value.imageData));
   assert.ok(frame.images.includes(left.trim.textureLease.value.imageData));
 });
@@ -312,7 +313,7 @@ scenario('P03_SCENE_05 retiring one entity preserves the other shared materials 
   unchanged(right, survivor); assert.equal(a.isDisposed, false); assert.equal(b.isDisposed, false); assert.equal(atlas.isDisposed, false);
   assert.equal(f.outfits.disposed(a), 0); assert.equal(f.outfits.disposed(b), 0);
   f.session.advanceTo(0.125); assert.deepEqual(right.body.sourceRect, ONE);
-  const frame = f.session.capture(); assert.ok(frame.images.includes(a.imageData)); assert.ok(frame.images.includes(b.imageData));
+  const frame = drawnFrame(f.session.capture()); assert.ok(frame.images.includes(a.imageData)); assert.ok(frame.images.includes(b.imageData));
   throwsCode(() => f.session.replaceOutfit(LEFT, 'summer'), 'PREPARED_SCENE_ACTOR_ABSENT');
 });
 

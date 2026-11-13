@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEngine, createImageData2D } from '@egret/engine';
+import { createEngineForProfile, createImageData2D, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
 import { createTextRasterCache } from '@egret/engine/text';
 import { deferred, host } from './helpers.mjs';
 
@@ -12,7 +12,7 @@ for (const closingDuringFrame of [false, true]) {
   test(`measure settlement revalidates Engine before raster work: closing=${closingDuringFrame}`, async () => {
     const gate = deferred();
     let engine, plan, closing, rasterCalls = 0, releases = 0;
-    const adapter = host({ renderFrame() {
+    const adapter = host({ sharedFrameProfile: SHARED_FRAME_PROFILE_2D, renderSharedFrame() {
       // Queue actual measure settlement before the frame-finally close continuation.
       gate.resolve(plan);
       if (closingDuringFrame) {
@@ -20,7 +20,7 @@ for (const closingDuringFrame of [false, true]) {
         assert.equal(engine.stage.isDisposed, false);
       }
     } }).adapter;
-    engine = await createEngine({ host: adapter });
+    engine = await createEngineForProfile({ host: adapter }, SHARED_FRAME_PROFILE_2D);
     const cache = createTextRasterCache(engine.assets, { maxResidentEntries: 0, provider: {
       identity: 'closing.t1', profile: 'canvas-explicit-lines-v1',
       measure(_request, context) {
@@ -37,7 +37,7 @@ for (const closingDuringFrame of [false, true]) {
     const acquired = cache.acquire(request).then(value => ({ value }), error => ({ error }));
     try {
       assert.ok(plan);
-      engine.renderFrame({ width: 1, height: 1 });
+      engine.renderSharedFrame({ width: 1, height: 1 });
       const outcome = await acquired;
       if (closingDuringFrame) {
         assert.ok('error' in outcome);

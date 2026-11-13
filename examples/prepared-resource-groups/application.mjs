@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // First-party browser composition. External adapters transfer their close ownership here.
 import { EgretError } from '@egret/engine';
-import { createCanvasHost } from '@egret/engine/web';
+import { loadExampleHostFactory } from '../host.mjs';
 import { createMouseInput } from '@egret/engine/web/input';
 import { createPreparedOutfitSource } from './source.mjs';
 import { createPreparedSceneDependencies } from './dependencies.mjs';
@@ -22,10 +22,10 @@ function errorView(cause, depth = 0) {
 
 export function createPreparedResourceApplication(options) {
   if (options === null || typeof options !== 'object' || Array.isArray(options)) throw fault('OPTIONS_INVALID');
-  const { canvas, profile = 'canvas-2d' } = options;
-  if (!['canvas-2d', 'webgpu-scene-textured'].includes(profile)) throw fault('PROFILE_UNSUPPORTED');
+  const { canvas, profile = 'shared-2d' } = options;
+  if (profile !== 'shared-2d') throw fault('PROFILE_UNSUPPORTED');
   if (!canvas || typeof canvas.getContext !== 'function') throw fault('OPTIONS_INVALID');
-  let state = 'starting', source, dependencies, host, session, input, composition, ready, closePromise;
+  let state = 'starting', source, dependencies, host, session, input, ready, closePromise;
   let serial = Promise.resolve(), pendingPresentations = 0, completedPresentations = 0;
   let initialPresentation, lastPresentation;
   let sourceClosing, dependencyClosing, sessionClosing, sessionCloseStarted = false, safeSurface = false;
@@ -56,24 +56,16 @@ export function createPreparedResourceApplication(options) {
     await session.scene.textReady;
     if (state === 'closing' || state === 'closed') throw fault('CLOSED');
     const frame = session.capture();
-    const metadata = { label, frameId: frame.frameId, serial: null, width: WIDTH, height: HEIGHT,
-      frameImagesBytes: (frame.images ?? []).reduce((sum, image) => sum + image.byteLength, 0),
-      geometryLogicalBytes: (frame.geometries ?? []).reduce((sum, geometry) => sum + geometry.logicalByteLength, 0) };
-    let bytes;
-    if (profile === 'canvas-2d') {
-      host.renderFrame(frame);
-      bytes = new Uint8Array(canvas.getContext('2d').getImageData(0, 0, WIDTH, HEIGHT).data);
-    } else {
-      const original = handled(host.requestReadback());
-      host.renderSceneTexturedFrame(composition.scene, frame);
-      const readback = await original;
-      await host.whenIdle();
-      if (readback.frameId !== frame.frameId || readback.width !== WIDTH || readback.height !== HEIGHT) throw fault('READBACK_INVALID');
-      metadata.serial = readback.serial;
-      bytes = new Uint8Array(readback.bytes);
-    }
-    if (bytes.byteLength !== WIDTH * HEIGHT * 4) throw fault('READBACK_INVALID');
-    lastPresentation = FREEZE({ ...metadata, bytes }); completedPresentations++;
+    const metadata = { label, frameId: frame.frameId, width: WIDTH, height: HEIGHT,
+      frameImagesBytes: frame.pages.reduce((sum, page) => sum + page.source.byteLength, 0),
+      geometryLogicalBytes: frame.geometries.reduce((sum, geometry) => sum + geometry.logicalByteLength, 0) };
+    // The ticket is armed before its frame is rendered.
+    const ticket = host.requestReadback(); void ticket.catch(() => undefined);
+    host.renderSharedFrame(frame);
+    const result = await ticket; await host.whenIdle();
+    const bytes = new Uint8Array(result.bytes);
+    if (result.width !== WIDTH || result.height !== HEIGHT || bytes.byteLength !== WIDTH * HEIGHT * 4) throw fault('READBACK_INVALID');
+    lastPresentation = FREEZE({ ...metadata, serial: result.serial, bytes }); completedPresentations++;
     return lastPresentation;
   }
   function enqueue(label) {
@@ -87,14 +79,9 @@ export function createPreparedResourceApplication(options) {
     source = options.outfitSource ?? createPreparedOutfitSource();
     dependencies = options.dependencyOwner ?? createPreparedSceneDependencies();
     await dependencies.ready; starting();
-    // The Canvas path never evaluates the optional GPU module.
-    const gpu = profile === 'webgpu-scene-textured' ? await import('../resource-scene/gpu-scene.mjs') : undefined;
-    starting();
-    host = gpu ? gpu.createTexturedSceneWebGPUHost({ canvas, pixelRatio: 1, enableReadback: true,
-      onDiagnostic(value) { diagnostic('host:' + value.code, value.cause); } }) : createCanvasHost({ canvas, pixelRatio: 1 });
+    host = (await loadExampleHostFactory())({ canvas, pixelRatio: 1, enableReadback: true }); starting();
     session = createPreparedResourceSceneSession({ host, profile, outfitSource: source, dependencies: dependencies.dependencies });
     await session.ready; starting();
-    if (gpu) composition = gpu.createResourceSceneGPU({ session });
     initialPresentation = await enqueue('startup'); starting();
     input = createMouseInput({ engine: session.scene.engine, scope: session.scene.inputScope, width: WIDTH, height: HEIGHT });
     session.scene.engine.stage.on(input.events.activate, event => {
@@ -110,7 +97,6 @@ export function createPreparedResourceApplication(options) {
     let observed;
     do {
       observed = serial; await observed;
-      if (profile === 'webgpu-scene-textured' && host) await host.whenIdle();
     } while (serial !== observed);
     return lastPresentation;
   }
@@ -133,24 +119,13 @@ export function createPreparedResourceApplication(options) {
         closeExternal();
         if (sourceClosing !== undefined) await keep('source.close', () => sourceClosing);
         if (dependencyClosing !== undefined) await keep('dependencies.close', () => dependencyClosing);
-        let idleFailure, hostCloseFailure;
-        if (profile === 'webgpu-scene-textured' && host) {
-          try { await host.whenIdle(); } catch (cause) { idleFailure = { cause }; }
-        }
+        let hostCloseFailure;
         let closed = host === undefined;
         if (host) {
           try { await host.close(); closed = true; } catch (cause) { hostCloseFailure = { cause }; }
         }
-        const status = profile === 'webgpu-scene-textured' && host ? host.getStatus() : undefined;
-        // Safe close can retain a primary Host failure; suppress only its exact idle replay.
-        const failure = status?.firstFailure, cause = idleFailure?.cause;
-        const primaryReplay = closed && status?.state === 'closed' && status.cleanupOutcome === 'safe'
-          && failure !== null && failure !== undefined && ['startup', 'frame', 'readback', 'device'].includes(failure.phase)
-          && cause instanceof EgretError && cause.code === failure.code && Object.hasOwn(cause, 'cause')
-          && Object.is(cause.cause, failure.cause) && cause.cleanupErrors.length === 0;
-        if (idleFailure !== undefined && !primaryReplay) remember('host.whenIdle', idleFailure.cause);
         if (hostCloseFailure !== undefined) remember('host.close', hostCloseFailure.cause);
-        safeSurface = closed && (status === undefined || status.cleanupOutcome === 'safe');
+        safeSurface = closed;
         if (safeSurface) await keep('canvas retirement', () => { canvas.width = 0; canvas.height = 0; canvas.remove(); });
         else remember('surface quarantined', fault('HOST_UNSAFE'));
       } finally { state = 'closed'; }
@@ -172,8 +147,7 @@ export function createPreparedResourceApplication(options) {
       return FREEZE({ state, session: session?.inspect() ?? null, source: source?.snapshot() ?? null,
         dependencies: dependencies?.snapshot() ?? null, pendingPresentations, completedPresentations,
         lastFrame: lastPresentation ? FREEZE(lastFrame) : null, handleHeldRGBABytes,
-        host: profile === 'webgpu-scene-textured' && host ? FREEZE({ general: host.getStatus(),
-          textured: host.getTexturedStatus(), scene: host.getSceneStatus() }) : null,
+        host: null,
         diagnostics: FREEZE([...diagnostics]), cleanupErrors: FREEZE(cleanupErrors.map(value =>
           FREEZE({ operation: value.operation, error: errorView(value.cause) }))), safeSurface });
     },
