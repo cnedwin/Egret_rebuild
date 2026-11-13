@@ -16,20 +16,24 @@ Run `node examples/outfit-studio/verify.mjs <absolute-Playwright-package> <new-a
 
 ## Fixed scene profiles
 
-Use the same server and choose **Fixed desktop** or **Mobile touch**. The default address keeps the compact project. The fixed routes expand the original two-character snapshot with six stable reference actors. All eight can be selected through the catalogue. An exported fixed snapshot can reopen with the same IDs and authored edits. [Fixed workload and layout](workload.mjs)
+Use the same server and choose **Fixed desktop** or **Mobile touch**. The default address keeps the compact project. The fixed routes expand the original two-character snapshot with six stable reference actors. All eight can be selected through the catalogue. The command-line verifier reopens the exported fixed snapshot and checks the IDs and authored edits. Opening an exported project in the browser UI is tracked in [#91](https://github.com/cnedwin/Egret_rebuild/issues/91). [Fixed workload and layout](workload.mjs)
 
 | Profile | Logical surface and render ratio | Initial catalogue |
 | --- | --- | --- |
 | X-D60/1, `?profile=x-d60&backend=webgpu` | 1024 × 768 at 1 | 32 visible rows, at most 48 containers |
 | X-MTouch/1, `?profile=x-mtouch&backend=webgl2` | 360 × 640 portrait or 640 × 360 landscape at 2 | 8 visible rows, at most 24 containers |
 
-Each fixed scene has 6,000 ordered authored display nodes, 600 visible UI nodes including active row descendants, eight nested clips, an alpha mask, a radius-two blur and 50,000 variable-height catalogue records. The eight Spine instances each use 120 bones, 96 slots, 2,000 weighted mesh vertices and two active tracks. They share the initial two atlas pages. Eighty independently phased sequences and two opaque depth quads complete the scene. The form uses the existing CanvasKit/Noto set for English, Chinese, Arabic and the admitted 🆕 glyph. [Original weighted geometry](author-x.mjs)
+Each fixed scene has 6,000 ordered authored display nodes, 600 visible UI nodes including active row descendants, eight nested clips, an alpha mask, a radius-two blur and 50,000 variable-height catalogue records. The eight Spine instances each use 120 bones, 96 slots, 2,000 weighted mesh vertices and two active tracks. They share the initial two atlas pages. Eighty independently phased sequences and two flat 2D backdrop panels complete the current scene. The form uses the existing CanvasKit/Noto set for English, Chinese, Arabic and the admitted 🆕 glyph. [Original weighted geometry](author-x.mjs)
 
 On a phone, hold **+** to move and use a second contact on **■** to act. Drag the scene with one finger or pan, pinch and rotate with two. The map keeps two gesture owners and refuses an additional map contact. Swipe the catalogue to scroll or tap the committed record to select. A drag at its edge can move the drawer by up to 12 logical pixels. Opening a modal cancels held contacts. Rotation rebinds the view and closes its transient draft while keeping the authored snapshot, catalogue position and animation state. The keyboard resizes the fitted view at the current logical orientation. CSS safe-area insets and letterboxing map to the logical surface independently of the render ratio.
 
 ## Fixed profile verification
 
 With installed Edge and Playwright 1.62.1, run `node examples/outfit-studio/verify-fixed.mjs <absolute-Playwright-package> <new-output-directory> --check`. To record timings, use `--timing` with a fresh output directory. Each backend/state warms for 30 seconds before five 60-second windows. The advancing states move the first 60 or all 6,000 ordered nodes by alternating 0 and 0.25 logical pixels, then advance one 1/60-second clock tick. The static state holds its initial pose.
+
+### Historical mixed-scene results
+
+The table and Android results were recorded with the original two depth quads. The current two-panel example can still run the fixture for development checks. Formal [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) timing requires equivalent mixed composition or a reviewed successor profile.
 
 | Backend | State | Synchronous elapsed p95 (ms) | Host-inclusive p95 (ms) | Completed-frame interval p95 (ms) | p99 (ms) |
 | --- | --- | ---: | ---: | ---: | ---: |

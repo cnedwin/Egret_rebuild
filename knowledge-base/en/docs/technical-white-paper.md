@@ -2,13 +2,13 @@
 
 English | [简体中文](../../Cns/docs/技术白皮书.md)
 
-Architecture review: 2026-11-07. Implementation observations refer to main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1). [Current capabilities](core-progress.md), [product requirements](product-requirements.md) and the [engineering plan](engineering-plan.md) separate runnable behavior, required acceptance and future work.
+Architecture reviewed on 2026-11-14 at main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39). [Current capabilities](core-progress.md), [product requirements](product-requirements.md) and the [engineering plan](engineering-plan.md) separate runnable behavior, required acceptance and future work.
 
 ## Product and architectural direction
 
 Egret serves creators building games with AI assistance and developers who need understandable code, predictable runtime behavior and integrated tools. Its differentiating target is a small Web-first core that can combine complex 2D UI, animation and lightweight 3D, then support natural-language, visual and code editing of the same project. Low loading cost, sustained responsiveness and controlled resource use are design goals that require actual equivalent-workload measurements.
 
-The chosen foundation is TypeScript game semantics over shared rendering and resource authority, with optional specialist providers. WebGPU is the modern execution path, WebGL2 is the maintained compatibility path, and Canvas has a smaller explicit profile. WASM/native code enters a measured specialist or host boundary; neither a language rewrite nor an API name establishes a performance advantage.
+The chosen foundation is TypeScript game semantics over shared rendering and resource authority, with optional specialist providers. SharedFrame2D uses WebGPU and WebGL2 as its current browser execution paths. Canvas-based providers supply text and images. WASM/native code enters a measured specialist or host boundary; neither a language rewrite nor an API name establishes a performance advantage.
 
 Four foundation packages are implemented: contracts, runtime, engine and project. A fifth optional Spine package isolates the explicit upstream runtime and its license. Graphics and browser-host code currently live inside engine. Separate graphics/hosts/toolchain/CLI packages, Rust crates and editor applications remain possible later organizations, not prerequisites or existing public APIs.
 
@@ -54,7 +54,7 @@ Texture pages preserve crop, trim, rotation, logical size and sampling identity.
 
 Shared Alpha masks and bounded separable offscreen blur already use the same render/resource lifetime. Targets and scratch work are bounded by pixel extent and overlap, not merely object count. UI supplies effect parameters and invalidation; the renderer supplies target reuse, pass ordering, completion and recovery. A general shader graph is not required for the present core.
 
-Canvas remains a declared basic 2D/text route. It does not acquire full Spine, 3D or filtering equivalence merely because it can draw an image. WebGL1, native graphics libraries and cross-API sharing require separately selected hosts and qualification.
+The Canvas Host was retired. Its historical observations remain bound to their original build. Current 2D drawing uses SharedFrame2D. WebGL1, native graphics libraries and cross-API sharing require separately selected hosts and qualification.
 
 ## Resources, content and replacement
 
@@ -76,7 +76,7 @@ Readonly paragraphs already use a host-injected CanvasKit/SkParagraph provider w
 
 The earlier ICU/HarfBuzz/FreeType proposal is realized through the selected provider integration; it is not an instruction to build another paragraph engine. Private Unicode/bidi comparisons retain their exact source and conformance boundaries. Required independent script/font/ink references, provider transfer/startup costs and complete memory qualification remain open.
 
-M3.3 owns the next native plain-text editor. While active, a real focusable input/textarea owns browser composition, selection and editing geometry. The Engine owns the committed value/revision; a complete handoff returns it to paragraph/UI publication. Native and raster text need declared reflow/anchor tolerances, not an invented pixel-identity guarantee. No active editor has yet been delivered.
+Managed single-line and multiline editing use native browser fields for composition and selection. The Engine owns committed values and publishes them through paragraph/UI layout with explicit reflow and anchor tolerances. The optional canvas adapter places a platform field above a game surface and returns committed text to the application. Real IME and accessibility qualification remain open for their respective paths. [Managed editing](native-text-editing.md) · [Canvas text input](text-input.md)
 
 Mouse compatibility, multi-contact routing, keyboard/focus and contributed movement/action state exist. Gesture/control wiring, popup/modal arbitration, semantic projection and real IME/accessibility acceptance remain separate. Picking consumes committed geometry, never inferred glyph widths or GPU pixels. The existing touch contributor keeps that implementation scope.
 
@@ -86,7 +86,7 @@ The optional Spine package uses official Core 4.3.13 for semantic computation an
 
 Independent playback, combined skins, finite plays and ordered shared graphics are implemented. Complete selected-version support still needs the applicable attachment/constraint/physics/timeline/blend/reference matrix, binary admission, seek/replay and compatible replacement. Programmatic fixtures and two adapters sharing the same Core cannot independently certify all authored animation semantics.
 
-Current 3D is bounded owned geometry, matrices, opaque scene rendering and 2D overlay composition. Imported models, full materials, animated 3D characters and general VFX are future product work. They should reuse resource/build/Host ownership and optional entry boundaries, starting with an editable asset-to-scene slice rather than a second renderer.
+Optional World3D supplies standalone WebGPU and WebGL2 rendering, glTF, materials, skinned animation, effects and preview physics. The earlier scene3d Host is historical. Authoring and equivalent mixed-scene composition with SharedFrame2D remain work under M4. [World3D contract](world3d.md) · [M4 plan](m4-core-acceptance-plan.md)
 
 ## Hosts, recovery and native Runtime
 
@@ -106,7 +106,7 @@ Legacy migration remains a full product obligation: preserve a runnable old base
 
 ## Measurement and delivery
 
-M1.2's original full-dirty Engine median-p95 is 10.3 ms against 8 ms. Preparation coverage and GPU time retain their own boundaries. M4's whole-engine span includes input, animation/events, layout, capture, preparation and synchronous submission; phase p95 values cannot be summed into a whole-engine p95.
+The later E20 desktop run measured 5.3 ms full-dirty Engine median-p95 against 8 ms and met the preparation bound. Sparse/full-dirty wall-gap p95 was 17.2/17.3 ms against 16.7 ms. E20 did not measure GPU time. [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) M4's whole-engine span includes input, animation/events, layout, capture, preparation and synchronous submission; phase p95 values cannot be summed into a whole-engine p95.
 
 Measure actual cold transfer, required provider/font initialization, first interaction, sustained frame tails, replacement peaks and cleanup. The approximately 25.85 MB raw paragraph payload recorded at an earlier checkpoint is not its compressed transfer or complete X budget. M4 must bind the adopted provider and actual assets before formal collection; original targets cannot be silently relaxed.
 

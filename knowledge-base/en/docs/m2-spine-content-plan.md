@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/m2-spine-content-plan.md)
 
-Plan and current status · 2026-11-13 · Reviewed main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e). Complete M2 remains open.
+Plan and current status · 2026-11-14 · Reviewed main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39). Complete M2 remains open.
 
 | Package | Implemented | Remaining |
 | --- | --- | --- |

@@ -18,7 +18,7 @@ Egret connects creation, execution and publication through a shared project mode
 
 ## Current component delivery
 
-At the 2026-11-07 source review, four foundation packages plus optional Spine implement bounded runtime, content and project services. Rendering/resources, animation, UI/text, input and existing utilities are usable through public examples. Byte readers/writers, events, Scope, coordinates and explicit time are reusable core tools; they do not imply complete production coverage.
+The engineering preview delivers four foundation packages and optional Spine. The public examples cover SharedFrame2D rendering and resources, animation, managed UI and native editing, opt-in canvas text entry and standalone World3D. [Current capabilities](core-progress.md) Byte readers/writers, events, Scope, coordinates and explicit time are reusable core tools; they do not imply complete production coverage.
 
 No integrated editor application, Agent/MCP service, plugin marketplace, native Runtime SDK or complete migrator is delivered. The current native-looking @egret/runtime name denotes the host-free TypeScript core. The [capability overview](core-progress.md) and [engineering plan](engineering-plan.md) separate current interfaces from future tool products.
 

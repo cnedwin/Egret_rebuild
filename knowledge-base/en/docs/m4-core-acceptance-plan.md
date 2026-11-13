@@ -16,7 +16,7 @@ M4.3 must name its delivered scope as a complex 2D UI/animation/resource core pr
 
 ## 2. Starting point and dependencies
 
-Reviewed main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e) includes editable Outfit Studio, the fixed X-D60/1 and X-MTouch/1 profiles, dual-backend timing and scoped physical Android results. Start with [#91](https://github.com/cnedwin/Egret_rebuild/issues/91), browser opening of an exported Outfit Studio project through the existing project transaction. A canceled or rejected import must preserve the live scene and its resource leases. After selected content and input behavior is ready, use the fixed profiles for [#92](https://github.com/cnedwin/Egret_rebuild/issues/92). Clean-consumer handoff preparation in [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) can proceed in parallel. Complete selected-version Spine, remaining controls, device and performance targets still need qualification.
+Reviewed main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39) includes editable Outfit Studio on SharedFrame2D, with a flat 2D backdrop. The prior X-D60/1 and X-MTouch/1 results cover a 3D-backed scene on the retired Host. Start with [#91](https://github.com/cnedwin/Egret_rebuild/issues/91), browser reopening of an exported project through the existing transaction. Retain the live scene and leases on canceled or rejected import. Before formal collection in [#92](https://github.com/cnedwin/Egret_rebuild/issues/92), restore equivalent mixed composition on a current path or review a versioned successor. [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) clean-consumer preparation can proceed in parallel. Selected Spine, controls, devices and performance remain to be qualified.
 
 M3.2's adopted provider is CanvasKit/SkParagraph. The earlier ICU/HarfBuzz/FreeType wording names its paragraph services, not another implementation to build. M4.1 and M3.2 must bind actual provider/font artifacts and measure cold transfer, initialization and separate residence early; M4.2 owns final measurement. Retain every published numeric ceiling. An incompatible scenario/provider change requires a reasoned versioned successor before collection, with the original profile/failures retained.
 
@@ -25,7 +25,7 @@ M3.2's adopted provider is CanvasKit/SkParagraph. The earlier ICU/HarfBuzz/FreeT
 | [Architecture plan](architecture-and-engineering-plan.md), milestone table and section 12 | M4 is mixed scenarios/core acceptance; wider 3D, hosts and creator tools follow separately. |
 | [M1.2 formal evidence](incremental-frame-preparation-evidence.md), E20 | Fixed desktop CPU and preparation targets are met. Sparse and full-dirty weighted wall-gap p95 is 17.2 and 17.3 ms against 16.7 ms. GPU timing is unmeasured and D60 remains incomplete. |
 | [Resource recovery contract](resource-recovery-contract.md) | Shared Host generations, independent resource leases and staged replacement already have defined ownership; M4 extends their use to new content. |
-| [Scene example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/scene3d/README.md) and [resource example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md) | Existing procedural opaque 3D and editable resource interactions are integration starting points, not complete 3D or UI products. Historical example environment statements are not current installation instructions. |
+| [World3D example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/world3d/README.md) and [resource example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md) | Current 3D and editable resource starting points. The retired prototype scene and its results remain in the historical record. |
 | [Project transactions](project-transaction-core-contract.md) | Stable IDs, revision checks and recoverable edits exist as a bounded project kernel. An editor, model adapter or complete project-to-runtime compiler does not follow automatically. |
 
 M4.1 consumes the already delivered M2/M3 public interfaces while their remaining features finish. Only changed boundaries need a new agreement in the owning package. Closing M4 requires the complete selected M2/M3 feature rows, not merely interface stubs.
@@ -38,7 +38,7 @@ M1.2's performance gap does not block independent M2/M3 correctness work, exampl
 | --- | --- |
 | Editable project → running game | Persistent project data retains IDs and revisions. Runtime state is separate; playtest changes enter authored data only through an explicit edit. Reuse `packages/project/src/index.ts` and its transaction store. |
 | Animation/UI → rendering | Preserve painter order, clipping, material semantics and resource references through `packages/contracts/src/SharedRenderFrame2D.ts`. M2/M3 use the selected shared contract; neither owns a second GPU resource manager. |
-| Scene + overlay | Reuse `packages/engine/rendering/scene3d.ts`, `packages/engine/web/scene3d.ts` and `packages/engine/web/webgl2Scene3d.ts`. Preserve their bounded opaque procedural scene plus ordered overlay semantics. |
+| Scene + overlay | Use current SharedFrame2D and World3D entries to design equivalent ordered composition. Review device/target ownership and depth/color/pixel semantics before calling it equivalent to the frozen mixed profile. |
 | Resource build → Runtime | Reuse `packages/project/src/resources/index.ts`, `packages/engine/src/resources.ts` and `packages/engine/web/resources.ts`. URLs locate artifacts; admitted metadata and verified bytes establish resource identity. |
 | Replacement and recovery | Application state survives native-generation reconstruction. Prepare replacements before commitment, retain prior usable content, suppress obsolete publication and retire only owned resources. Resource-ready, display-ready and interactive-ready are distinct. |
 | Timing and interaction | M2 animation and M3 UI consume the chosen game-clock and input rules. Recovery must not replay consumed animation/game events or manufacture elapsed catch-up work. Focus/IME restoration follows M3's explicit policy. |
@@ -57,7 +57,7 @@ The first desktop Outfit Studio uses the public M2/M3 interfaces for character s
 
 **Scope:** select a bounded outfit/character-management scene with complex UI, independent Spine tracks/skins, sequence effects, resource replacement and the existing opaque 3D background. Agree a subset of the U/A scenarios; do not silently add all their individual maximum loads together.
 
-**Integration anchors:** `examples/resource-scene/`, `examples/prepared-resource-groups/`, `examples/scene3d/`; actual M2/M3 public entries after their review. Keep the example under `examples/`; do not add another engine package.
+**Integration anchors:** `examples/resource-scene/`, `examples/prepared-resource-groups/`, `examples/world3d/`; actual M2/M3 public entries after their review. Keep the example under `examples/`; do not add another engine package.
 
 **Acceptance:**
 

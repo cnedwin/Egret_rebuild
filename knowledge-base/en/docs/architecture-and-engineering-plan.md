@@ -2,15 +2,15 @@
 
 English | [中文](../../Cns/docs/architecture-and-engineering-plan.md)
 
-2026-11-13 · Current architecture and delivery alignment · M0–M4.
+2026-11-14 · Current architecture and delivery alignment · M0–M4.
 
-Audited main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e) contains shared Web rendering, resources and animation, managed UI and text input, editable Outfit Studio and optional standalone World3D. [Core capabilities](core-progress.md) records implementation and evidence. The [engineering plan](engineering-plan.md) gives the next delivery sequence. Workspace packages are private at 0.0.0.
+Audited main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39) contains shared Web rendering, resources and animation, managed UI and text input, editable Outfit Studio and optional standalone World3D. [Core capabilities](core-progress.md) records implementation and evidence. The [engineering plan](engineering-plan.md) gives the next delivery sequence. Workspace packages are private at 0.0.0.
 
 The environment remains Node 26.7.0, pnpm 11.25.0, TypeScript 7.0.2 and PowerShell 7.6.5. Current metadata generation, scoped development feedback, normal hooks and complete final-candidate merge CI are implemented. No new maintenance-automation program is required to start the next core feature.
 
 M0 independent newcomer rehearsal and remaining rights/device qualification are tracked in [#52](https://github.com/cnedwin/Egret_rebuild/issues/52) and [#54](https://github.com/cnedwin/Egret_rebuild/issues/54). The fixed Windows E20 run met the Engine and preparation targets in all three states. The Engine median-p95 for static, sparse and full-dirty was 5.0, 5.9 and 5.3 ms against 8 ms. The sparse and full-dirty duration-weighted wall-gap p95 was 17.2 and 17.3 ms against 16.7 ms. GPU time is unmeasured. [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) remains open and D60 remains incomplete. The [M1.2 evidence](incremental-frame-preparation-evidence.md) retains the original measurements.
 
-The [M2–M4 roadmap](m2-m4-delivery-plan.md) retains the eleven work packages and acceptance targets. Start with [#91](https://github.com/cnedwin/Egret_rebuild/issues/91), browser opening of an exported Outfit Studio project through the existing project transaction. A canceled or rejected import must preserve the live scene and its resource leases. After selected content and input behavior is ready, use the fixed profiles for [#92](https://github.com/cnedwin/Egret_rebuild/issues/92). Clean-consumer handoff preparation in [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) can proceed in parallel.
+The [M2–M4 roadmap](m2-m4-delivery-plan.md) retains the eleven work packages and acceptance targets. Start with [#91](https://github.com/cnedwin/Egret_rebuild/issues/91), browser opening of an exported Outfit Studio project through the existing project transaction. A canceled or rejected import must preserve the live scene and its resource leases. Run the formal profiles for [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) after the selected content and input behavior is ready and the scene restores equivalent mixed composition or has a reviewed successor profile. Clean-consumer handoff preparation in [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) can proceed in parallel.
 
 ## 1. Objectives, scope and tradeoffs
 
@@ -32,7 +32,7 @@ This program does not implement the complete editor, Agent workbench, native SDK
 
 ## 2. Baseline and engineering assessment
 
-Current source includes display/coordinates, shared WebGPU/WebGL2, incremental capture/preparation, completion-safe reuse, manifests/recovery, typed content/fonts, optional Spine assets/players/shared display/RESET, sequences, managed UI, styled paragraphs/geometry, themes/effects and input foundations. Current 3D is bounded geometry/opaque composition; @egret/runtime is the TypeScript core, not a native SDK.
+Current source includes display/coordinates, shared WebGPU/WebGL2, incremental capture/preparation, completion-safe reuse, manifests/recovery, typed content/fonts, optional Spine assets/players/shared display/RESET, sequences, managed UI, styled paragraphs/geometry, themes/effects and input foundations. Standalone World3D provides WebGL2 and WebGPU rendering and preview physics. SharedFrame2D is the public 2D frame path. `@egret/runtime` remains the TypeScript core.
 
 The previous per-draw-allocation and whole-tree observations motivated already delivered M1 work. Do not treat that old inspection as an instruction to repeat the same refactor. Future changes require a missing contract or a measured current bottleneck, retaining saved-frame, ordering, admission and lifetime semantics.
 
@@ -56,7 +56,6 @@ flowchart TD
     C --> J[GPU residency and device generations]
     J --> I
     I --> K[WebGPU / WebGL2 executors]
-    G --> L[Limited Canvas executor]
     K --> M[Host: presentation Input Fonts Lifecycle]
     L --> M
 ```
@@ -110,7 +109,7 @@ Keep atlas pages resident and reference subimages through regions/UVs, preservin
 
 Specify texture purpose, color space, premultiplication, sampling, mips and blend formulas. The new version uses an explicit linear-composition profile. Preserve a versioned compatibility profile and visual regressions for existing encoded-premultiplied behavior; do not silently change every existing pixel. Map Spine alpha, two-color and blend conventions explicitly through its adapter and materials.
 
-Recommend WebGPU as the primary executor and WebGL2 as the first compatibility executor. They share upper-level drawing/resource semantics and own API-specific resources. Canvas retains existing basic capabilities and text raster services; it does not promise complete Spine, mesh or filter fallback. Select and validate capabilities at startup; reject missing required features during build or loading. A runtime backend change requires resource reconstruction and revalidation, never silent effect removal.
+Recommend WebGPU as the primary executor and WebGL2 as the first compatibility executor. They share upper-level drawing/resource semantics and own API-specific resources. Canvas-based text and image providers feed the selected shared renderer. Select and validate capabilities at startup; reject missing required features during build or loading. A runtime backend change requires resource reconstruction and revalidation, never silent effect removal.
 
 ## 5. Complex UI architecture
 
@@ -163,11 +162,11 @@ Device loss closes old submission → invalidates the old device generation → 
 | Scope/events, assets/leases and display semantics | Retain genuine ownership, cancellation, routing and old API behavior |
 | Incremental capture/preparation and shared retention | Retain delivered M1 implementation; refactor only for measured current cost or a required contract, with full-path references |
 | WebGPUHost/WebGL2Host, page/storage/device-session helpers | Reuse one generation/completion authority and bounded pools; no duplicate UI/Spine GPU manager |
-| CanvasHost and explicit-line text/mouse/layout entries | Keep compatible limited profiles; no silent mesh/filter/full-Spine fallback |
+| Canvas and explicit text/mouse/layout entries | Retain the text and image providers, input and layout entries. Use the shared WebGPU or WebGL2 Host to draw. |
 | Managed UI, paragraph/geometry, font/theme providers and effects | Extend with native editing, coherent bounded row retention, controls/layers/semantics; preserve ready/commit and resource authority |
 | Optional packages/spine and sequence controllers/RESET | Retain implemented assets/instances/graphics/time; add binary/seek/replay/preserve with explicit compatibility and failure contracts |
 | Project transactions, content builds and strict legacy planners | Reuse stable IDs, immutable artifacts and diagnostics; broader formats/project compilation/migration remain complete new outcomes |
-| Bounded scene3d/matrices | Keep regression/composition foundation; imported 3D characters/materials/effects are a later selected line |
+| Optional World3D and historical scene3d | Use World3D for current 3D. Retain source-bound evidence from the retired scene3d Host and qualify mixed composition under the M4 plan. |
 | Historical experiments, raw receipts, source/licensing and public regressions | Preserve original bytes/identities and attribution; consolidate present-tense documentation through immutable history links |
 | Setup, feedback, metadata, hooks and CI | Already implemented M0 foundations; maintain only for concrete contribution/feature failures, without a new automation backlog |
 

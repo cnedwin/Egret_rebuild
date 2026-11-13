@@ -4,6 +4,18 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## SharedFrame2D 与渲染诊断 — 2026-11-14
+
+SharedFrame2D 成为 WebGPU 和 WebGL2 的公共 2D 帧路径。旧 Canvas Host、旧帧捕获及早期 scene3d Host 已退役。共享路径已支持保持顺序的跨纹理页合批，以及稳定命令、打包和批次复用。集成像素对比使用软件渲染。可选调试面板和 GPU 计时工具报告各自可用的计数与时间来源。 [#187](https://github.com/cnedwin/Egret_rebuild/pull/187) · [#188](https://github.com/cnedwin/Egret_rebuild/pull/188) · [#190](https://github.com/cnedwin/Egret_rebuild/pull/190) · [#193](https://github.com/cnedwin/Egret_rebuild/pull/193)
+
+## 画布原生文字输入 — 2026-11-14
+
+可选浏览器适配层在游戏画布上方放置原生文本框。测试覆盖公开 API 行为及 Chromium 协议驱动的组合输入示例。托管编辑仍作为独立路径提供。此适配层的实体输入法、移动软键盘、Safari 和 Firefox 仍待验收。 [#195](https://github.com/cnedwin/Egret_rebuild/pull/195)
+
+## PC 与 Android 的有限图形观察 — 2026-11-13
+
+World3D WebGL2 阴影图集与帧统计在硬件 Edge 及一种 Android Chrome 配置上完成检查。SharedFrame2D 冷纹理与附件改动另有硬件 Edge 成对像素对照、选定 Android 生命周期与计时记录。两份结果分别绑定各自的源码、负载及图形适配器。 [#179](https://github.com/cnedwin/Egret_rebuild/pull/179) · [#185](https://github.com/cnedwin/Egret_rebuild/pull/185)
+
 ## World3D 玩法物理与渲染 — 2026-11-13
 
 自动实例化合并兼容的绘制项，拾取层级加速稠密网格查询。物理增加形状扫掠、组合刚体、接触报告和求解器改进，并提供布娃娃、街机式载具、绳索、布料和消息端口辅助组件。最新 PR 记录了 27 项无头软件渲染 WebGL2／WebGPU 固定对比，以及使用 MessageChannel 和 Node 工作线程的远程测试。浏览器 Worker、实体设备和性能仍待验收。 [#163](https://github.com/cnedwin/Egret_rebuild/pull/163) · [#166](https://github.com/cnedwin/Egret_rebuild/pull/166) · [#167](https://github.com/cnedwin/Egret_rebuild/pull/167) · [#168](https://github.com/cnedwin/Egret_rebuild/pull/168)

@@ -89,22 +89,13 @@ node tools/contribution-metadata.mjs --merge
 
 两次刷新之间，main 上的账本描述的是较早的状态。合并检查不把它们当作当前状态来读：它们根据上一次刷新和现有文件自行推导当前清单。生成器只更新当前派生字段及已声明新增项，保留无关旧来源行和全部历史对象。删除、重命名、已有来源声明及历史/结构变更需单独评审迁移。哈希继续按原始字节计算；生成不证明翻译质量、来源权利或行为正确。
 
-当前浏览器检查使用 Windows x64、Node **26.7.0** 和已安装 Edge，在独立工具目录安装 Playwright 与 playwright-core **1.62.1** 后运行：
+当前浏览器检查在独立工具目录安装 Playwright 和 playwright-core **1.62.1**，使用 Windows x64、Node **26.7.0** 及已安装的 Edge。
 
 ```text
-node tools/browser-verify.mjs --suite canvas --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository>
+node tools/browser-verify.mjs --suite shared-webgpu --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository>
 ```
 
-直接运行的套件为 canvas、webgpu、b1、text、hit-test、mouse-input、shared-webgpu 和 resource-recovery。[资源恢复契约](resource-recovery-contract.md#运行集成恢复采集器)说明了独立的七项前台运行案例、固定上限与完成记录。共享套件执行固定的 30 场景像素矩阵和 11 项指定数值反例，其有限范围见[共享渲染记录](shared-rendering-evidence.md)。resource-scene 和 bitmap-slot 还需要已复核的源码快照：
-
-```text
-node tools/browser-prepare.mjs --suite resource-scene --output <absolute-new-snapshot-file-outside-repository>
-node tools/browser-verify.mjs --suite resource-scene --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository> --snapshot <absolute-reviewed-snapshot-file> --snapshot-sha256 <reviewed-raw-sha256>
-```
-
-验证 bitmap-slot 时，将两条命令中的套件名均替换为 bitmap-slot。准备前使用选定工具链构建。准备步骤不启动浏览器，也不批准生成结果；先复核完整源码闭包、所有者、导入及原有判定标准，再显式提供已复核的原始摘要。采集器会在原生执行前重新计算完整闭包；源码或构建输入变化后必须重新生成并复核快照。不要把未经复核的生成摘要自动传入执行。resource-scene 保留固定 Edge 155.0.4283.45 与字体参考，不自动接纳其他浏览器版本。
-
-输出父目录须已存在，选定文件或目录须为新建且位于输入所有者之外。入口拒绝额外 Node 参数、NODE_OPTIONS/NODE_PATH、错误版本、变化的快照及缺失完成记录；保留失败，不下载浏览器，不放宽原有像素/反例断言。桌面子集不证明手机、通用中文字体性能或完整引擎能力。查看 tools/browser-tool-matrix.json：prepared-group、atlas、BIP1 PNG 和五种独立准入的固定场景配置 使用[资源类型验证流程](resource-browser-workflow.md)，保留独立夹具/配置准入；五个纹理/序列帧/SpriteSheet 范围使用独立的[当前历史验证流程](historical-browser-workflow.md)。原始 Node 24.19.0 回执保留为历史证据，迁移后的当前入口不改写这些回执，也不认证新产品版本。渲染变更仍须验证受影响范围，包装入口不证明独立操作系统进程退出。
+包装器提供 `tools/browser-tool-matrix.json` 中的 `shared-webgpu` 与 `resource-recovery`。固定前台计划见[恢复契约](resource-recovery-contract.md)。[证据通道](evidence-lane.md)说明精确字节历史记录的适用条件。变更涉及 World3D 或画布原生输入时，分别使用[3D 验证器](world3d.md#示例与检查)与[文字输入示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-input/README.zh-CN.md)。桌面浏览器结果仅覆盖记录的后端、场景与设备。
 
 ## 按风险选择本地反馈
 

@@ -2,15 +2,15 @@
 
 [English](../../en/docs/architecture-and-engineering-plan.md) | 中文
 
-2026-11-13 · 当前架构与交付对齐 · M0–M4。
+2026-11-14 · 当前架构与交付对齐 · M0–M4。
 
-复盘 main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e) 已有共享 Web 渲染、资源与动画、托管 UI 与文字输入、可编辑换装工作室及可选独立 World3D。[核心能力](core-progress.md)记录实际实现与证据，[工程计划](工程规划.md)给出下一批交付。工作区包为 private 0.0.0。
+复盘 main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39) 已有共享 Web 渲染、资源与动画、托管 UI 与文字输入、可编辑换装工作室及可选独立 World3D。[核心能力](core-progress.md)记录实际实现与证据，[工程计划](工程规划.md)给出下一批交付。工作区包为 private 0.0.0。
 
 环境保持 Node 26.7.0、pnpm 11.25.0、TypeScript 7.0.2、PowerShell 7.6.5。当前元数据生成、聚焦开发反馈、正常 hooks 及最终候选完整合并 CI 已实现；下一项核心功能不以前置新增维护自动化为条件。
 
 M0 独立新贡献者演练与剩余权利／设备资格由 [#52](https://github.com/cnedwin/Egret_rebuild/issues/52) 和 [#54](https://github.com/cnedwin/Egret_rebuild/issues/54) 跟踪。Windows E20 固定场景的三种状态均达到 Engine 与准备目标。静态、稀疏、全脏的 Engine p95 中位数依次为 5.0、5.9、5.3 ms，目标为 8 ms。稀疏和全脏的按时长加权墙钟间隔 p95 分别为 17.2 和 17.3 ms，目标为 16.7 ms。GPU 时间未测。[#55](https://github.com/cnedwin/Egret_rebuild/issues/55) 仍开放，D60 仍未完成。 原测量保留于 [M1.2 证据](incremental-frame-preparation-evidence.md)。
 
-[M2–M4 路线图](m2-m4-delivery-plan.md)保留十一个工作包和既有验收目标。先推进 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91)，让换装工作室通过既有工程事务在浏览器中打开导出的工程。导入取消或被拒绝时应保留当前场景及其资源租约。选定内容及输入行为就绪后，使用固定档位完成 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92)。[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) 的干净环境交接准备可并行进行。
+[M2–M4 路线图](m2-m4-delivery-plan.md)保留十一个工作包和既有验收目标。先推进 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91)，让换装工作室通过既有工程事务在浏览器中打开导出的工程。导入取消或被拒绝时应保留当前场景及其资源租约。选定内容及输入行为就绪，且场景恢复等效混合合成或有经评审的后继档位后，再执行 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) 的正式验收。[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) 的干净环境交接准备可并行进行。
 
 ## 1. 目标、范围与取舍
 
@@ -32,7 +32,7 @@ M0 独立新贡献者演练与剩余权利／设备资格由 [#52](https://githu
 
 ## 2. 现状与工程判断
 
-当前源码包含显示／坐标、共享 WebGPU／WebGL2、增量捕获／准备、安全等待完成后的复用、清单／恢复、类型化内容／字体、可选 Spine 资产／播放器／共享显示／RESET、序列、托管 UI、多样式段落／几何、主题／特效及输入基础。3D 仍为有界几何／不透明组合，@egret/runtime 是 TypeScript 核心，不是原生 SDK。
+当前源码包含显示／坐标、共享 WebGPU／WebGL2、增量捕获／准备、安全等待完成后的复用、清单／恢复、类型化内容／字体、可选 Spine 资产／播放器／共享显示／RESET、序列、托管 UI、多样式段落／几何、主题／特效及输入基础。独立 World3D 提供 WebGL2／WebGPU 渲染和物理预览。SharedFrame2D 是公共 2D 帧路径。`@egret/runtime` 仍是 TypeScript 核心。
 
 旧逐 draw 分配及整树观察已经促成 M1 交付，不能据此重复同一重构。后续变化针对缺失契约或实测当前瓶颈，保留保存帧、顺序、准入和生命周期语义。
 
@@ -56,7 +56,6 @@ flowchart TD
     C --> J[GPU 驻留与设备代际]
     J --> I
     I --> K[WebGPU / WebGL2 执行器]
-    G --> L[Canvas 有限能力执行器]
     K --> M[宿主：呈现 输入 字体 生命周期]
     L --> M
 ```
@@ -110,7 +109,7 @@ flowchart TD
 
 明确纹理用途、颜色空间、预乘方式、采样、mip 和混合公式。新版本采用明确的线性合成配置；对旧 encoded-premultiplied 行为保留版本化兼容配置和图像回归，禁止无说明地改变所有现有像素。Spine 资产的 alpha、双色和 blend 约定在适配层与材质配置中显式映射。
 
-推荐 WebGPU 为主执行器、WebGL2 为首个兼容执行器；两者共享上层绘制与资源语义，各自管理 API 资源。Canvas 保留已有基础能力与文字栅格服务，不承诺完整 Spine、网格与滤镜降级。启动时选择并验证能力配置；缺少必要特性应在构建或加载阶段明确拒绝。运行中更换后端必须重建资源与重新验证，不允许悄悄删减效果。
+推荐 WebGPU 为主执行器、WebGL2 为首个兼容执行器；两者共享上层绘制与资源语义，各自管理 API 资源。Canvas 文字栅格与图像提供者为选定的共享渲染器供给内容。启动时选择并验证能力配置；缺少必要特性应在构建或加载阶段明确拒绝。运行中更换后端必须重建资源与重新验证，不允许悄悄删减效果。
 
 ## 5. 复杂 UI 架构
 
@@ -163,11 +162,11 @@ flowchart TD
 | Scope／事件、资源／租约及显示语义 | 保留真实所有权、取消、路由和旧 API 行为 |
 | 增量捕获／准备及共享保留 | 保留已交付 M1 实现；仅针对实测当前成本或必要契约重构，并保留完整路径参考 |
 | WebGPUHost／WebGL2Host、页面／存储／设备会话 | 复用一个代际／完成权威及有界池，不另建 UI／Spine GPU 管理器 |
-| CanvasHost 及显式行文字／鼠标／布局入口 | 保留兼容受限档位，不静默模拟网格／滤镜／完整 Spine |
+| Canvas 及显式文字／鼠标／布局入口 | 保留文字、图像提供者及输入、布局入口。绘制使用共享 WebGPU 或 WebGL2 Host。 |
 | 托管 UI、段落／几何、字体／主题 provider 和特效 | 增加原生编辑、一致有界行保留、控件／层级／语义，保留就绪／提交及资源权威 |
 | 可选 packages/spine 与序列控制器／RESET | 保留已有资产／实例／图形／时间，按明确兼容与失败契约增加二进制／跳转／重放／保留 |
 | 工程事务、内容构建和严格旧规划器 | 复用稳定 ID、不可变产物及诊断，更广格式／工程编译／迁移仍是完整新结果 |
-| 有界 scene3d／矩阵 | 保留回归／合成基础，导入式 3D 角色／材质／特效属于后续选定产品线 |
+| 可选 World3D 与历史 scene3d | 当前 3D 使用 World3D。保留退役 scene3d Host 的源码绑定证据，按 M4 计划验收混合合成。 |
 | 历史实验、原始回执、来源／许可及公共回归 | 保留原字节／身份及署名，通过不可变历史链接统一现在时文档 |
 | 安装、反馈、元数据、hooks 和 CI | M0 基础已实现，仅围绕具体贡献／功能失败维护，不新增自动化待办 |
 

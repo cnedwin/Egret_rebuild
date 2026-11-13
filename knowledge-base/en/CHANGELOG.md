@@ -4,6 +4,18 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## SharedFrame2D and rendering diagnostics — 2026-11-14
+
+SharedFrame2D is the public 2D frame path for WebGPU and WebGL2. The older Canvas Host, legacy frame captures and prototype scene3d Host were retired. Ordered cross-page batching and retained command, packing and batch records are available on the shared path. The integrated pixel comparisons were software-rendered. The optional debug monitor and GPU timing harness report their available counters and timing sources. [#187](https://github.com/cnedwin/Egret_rebuild/pull/187) · [#188](https://github.com/cnedwin/Egret_rebuild/pull/188) · [#190](https://github.com/cnedwin/Egret_rebuild/pull/190) · [#193](https://github.com/cnedwin/Egret_rebuild/pull/193)
+
+## Native canvas text entry — 2026-11-14
+
+An opt-in browser adapter places a native field over the game canvas. Its tests cover public API behavior and a Chromium protocol-driven composition example. The managed editing path remains available separately. Physical input methods, mobile keyboards for this adapter, Safari and Firefox remain to be qualified. [#195](https://github.com/cnedwin/Egret_rebuild/pull/195)
+
+## Scoped PC and Android graphics observations — 2026-11-13
+
+World3D WebGL2 shadow-atlas and frame-accounting checks ran in hardware Edge and one Android Chrome configuration. SharedFrame2D cold-texture and attachment changes also have paired hardware Edge pixel observations and selected Android lifecycle and timing evidence. Both records retain their own source, workload and adapter boundaries. [#179](https://github.com/cnedwin/Egret_rebuild/pull/179) · [#185](https://github.com/cnedwin/Egret_rebuild/pull/185)
+
 ## World3D gameplay physics and rendering — 2026-11-13
 
 Automatic instancing groups compatible draws and the picking hierarchy accelerates dense-mesh queries. Physics adds shape sweeps, compound bodies, contact reports and solver improvements, followed by ragdoll, arcade vehicle, rope, cloth and message-port helpers. The latest PR reports 27 fixed headless software-rendered WebGL2/WebGPU comparisons and remote tests using MessageChannel and a Node worker thread. Browser Worker, physical-device and performance qualification remain open. [#163](https://github.com/cnedwin/Egret_rebuild/pull/163) · [#166](https://github.com/cnedwin/Egret_rebuild/pull/166) · [#167](https://github.com/cnedwin/Egret_rebuild/pull/167) · [#168](https://github.com/cnedwin/Egret_rebuild/pull/168)
