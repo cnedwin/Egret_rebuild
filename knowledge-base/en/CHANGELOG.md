@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A managed list as one stop of the keyboard — 2026-11-14
+
+`keyboard: {input, idPrefix, tabStop}` of a managed UI root makes the rows of its list one stop of the keyboard. Tab enters the list at the row that last held the focus, or at the first that shows, and leaves it from there, as it does a native list box; the application moves the focus among the rows. Without `tabStop` every row that shows remains a stop of its own. The list example uses it, and its real-browser check leaves the canvas with Tab and returns to the same row. Part of #89. [Guide](docs/ui-data-panel.md#managed-virtual-row-keyboard-focus)
+
 ## The name a skin gives to a state — 2026-11-14
 
 `selectUiSkin` in `@egret/engine/ui` gives the name a theme skin has for the states of a control that hold now. When several hold, the first in the order a player reads a control wins: unavailable, held, set, focused, pointed at; a state the skin has no name for falls to the next, and then to `default`. The controls example takes its colours from a theme through it, and its real-browser check reads the colour each state is painted with. Checked in Node and in headless Chromium with software WebGL2. Part of #90. [Guide](docs/ui-controls.md#painting-states)

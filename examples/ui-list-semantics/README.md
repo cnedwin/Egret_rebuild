@@ -42,7 +42,7 @@ semantics.publish(rows.sync());
 
 `createBrowserSemantics` lays an invisible element over each row that shows. The keyboard stays with the canvas, which names the element of the row with the focus. A row that has left the list has no element, so the canvas never names one that does not exist.
 
-Each realized row has a `createControlKeys` binding for Space and Enter. The arrow keys ask the root to reveal the next row, and the focus is given after the commit that realizes it.
+The list is one stop of the keyboard (`keyboard: { input, idPrefix, tabStop }` of the root): Tab enters it at the row that last held the focus and leaves it from there. Each realized row has a `createControlKeys` binding for Space and Enter. The arrow keys ask the root to reveal the next row, and the focus is given after the commit that realizes it.
 
 The card is a second root, registered with `createUiLayerManager` as a modal layer. Its semantic node is a dialog of the page's own: hidden while the layer is closed, and placed with `semanticBoxOf(card, 'card')`. While it is published the tree makes the list inert, so the browser gives assistive technology the dialog and its two buttons and nothing behind them.
 

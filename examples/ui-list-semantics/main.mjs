@@ -63,7 +63,9 @@ const source = {
 const root = createUiRoot({
   engine, scope, id: 'servers', viewport: { width: VIEW.width, height: VIEW.height }, origin: { x: VIEW.x, y: VIEW.y }, density: 1,
   tree: { id: 'list', kind: 'virtualList', source, explicitWidth: VIEW.width, explicitHeight: VIEW.height },
-  keyboard: { input: keyboard, idPrefix: 'servers' }, limits: { overscan: 1, residentCap: 24 },
+  // The list is one stop of the keyboard, as a native list box is: Tab enters it at the row that last held the
+  // focus and leaves it from there, and the arrow keys move among the rows.
+  keyboard: { input: keyboard, idPrefix: 'servers', tabStop: 1 }, limits: { overscan: 1, residentCap: 24 },
   // The root owns the rows and tells which one a contact is on. A press that ends on the row it began on chooses it.
   input: pointer,
   onRowPointer(notification) {

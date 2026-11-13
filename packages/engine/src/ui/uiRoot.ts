@@ -213,7 +213,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
     validateNewInput(input);
     const keyboardOptions=options.keyboard;
     const keyboardIdentity=keyboardOptions===undefined?undefined:port.requireKeyboard(keyboardOptions.input);
-    const keyboard=keyboardIdentity===undefined?undefined:createUiKeyboardFocus(keyboardIdentity,keyboardOptions!.idPrefix);
+    const keyboard=keyboardIdentity===undefined?undefined:createUiKeyboardFocus(keyboardIdentity,keyboardOptions!.idPrefix,keyboardOptions!.tabStop);
     let layerVisible=true,layerPointer=true,layerKeyboard=true,layerGeneration=0,layerOwned=false;
     let layerOrigin:Readonly<{x:number;y:number}>|undefined;
     keyboard?.validate(source?.byKey.keys() ?? []);

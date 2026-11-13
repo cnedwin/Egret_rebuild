@@ -106,6 +106,13 @@ export type UiRowPointerNotification = Readonly<{
 export interface UiKeyboardOptions {
     readonly input: KeyboardInput;
     readonly idPrefix: string;
+    /**
+     * Makes the rows of a list one stop of the keyboard, of this index among the stops of the
+     * channel (0 to 32,767). Tab enters the list at the row that last held the focus, or at the first
+     * that shows, and the application moves the focus among the rows. Without it every row that
+     * shows is a stop of its own.
+     */
+    readonly tabStop?: number;
 }
 export interface UiRootOptions {
     readonly theme?: UiTheme;
