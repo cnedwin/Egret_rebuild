@@ -84,6 +84,10 @@
       "types": "./dist/web/keyboard.d.ts",
       "import": "./dist/web/keyboard.js"
     },
+    "./web/text-input": {
+      "types": "./dist/web/textInput.d.ts",
+      "import": "./dist/web/textInput.js"
+    },
     "./ui/editing": {
       "types": "./dist/ui/editing.d.ts",
       "import": "./dist/ui/editing.js"

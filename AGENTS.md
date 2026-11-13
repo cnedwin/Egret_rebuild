@@ -211,6 +211,12 @@ For each distinct Windows CI failure, apply the repository [Egret Windows CI ski
 
 Only tests/ui-text-edit-state-unit.test.mjs consumes the built @egret/runtime/ui/editing entry as a labelled pure UNIT; ordinary UI behavior uses the built @egret/engine/ui/editing facade and genuine Engine/Scope/root values. Native browser cases use real input/textarea and admitted fonts. Controlled composition/paste events do not qualify physical IME or clipboard. No new private test import, native-prototype interception, touch implementation or default-entry expansion is permitted. See the paired native-text-editing contract.
 
+## Text input over a canvas
+
+The optional `@egret/engine/web/text-input` entry exports `createBrowserTextInput` and eight erased types. It imports nothing of the engine but the error type, and no other entry has it. Follow the [guide](knowledge-base/en/docs/text-input.md).
+
+Only `tests/browser-text-input.test.mjs` may define its test-owned page stand-in under the seven global names `window`, `document`, `HTMLElement`, `HTMLCanvasElement`, `CSSStyleSheet`, `ResizeObserver` and `reportError`, and it restores every original descriptor after the file. The stand-in is the test's own objects; no native prototype is intercepted and no private product module is imported. These cases state what the entry adds to the page, where it places the field and which events end a session. They do not establish the behaviour of a real input method. `examples/text-input/verify.mjs` drives a composition through Chromium's protocol in a real page; a physical input method, a real phone, Safari and Firefox remain unchecked.
+
 ## Authorized Android development sessions
 
 When keeping an authorized phone awake is part of the task, hold one bounded USB-only wake lease across the entire development/test session, including coding gaps. Observe actual awake/unlocked state and recheck before every device input; page visibility is insufficient. Capture the exact original setting or absence, close owned phone cases before ending the outer lease, and restore the original setting at completion, cancellation or error while preserving unrelated external changes. Keep the existing shared phone lease and exact-target rules. Do not change security lock or bypass credentials; locked, disconnected or unknown state stops automated input. See the [device-session policy](knowledge-base/en/docs/android-native-text-editing.md#device-ownership-and-wake-policy).

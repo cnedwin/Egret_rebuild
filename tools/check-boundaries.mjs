@@ -245,6 +245,8 @@ for (const [name, allowed] of Object.entries(expected)) {
     };
     textExports['./ui/editing'] = {types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'};
     if (name === 'engine') textExports['./web/editing'] = {types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'};
+    // Platform text entry over a canvas: one optional browser entry.
+    if (name === 'engine') textExports['./web/text-input'] = {types:'./dist/web/textInput.d.ts',import:'./dist/web/textInput.js'};
     // World3D: a DOM-free scene graph entry and one explicit entry per rendering backend.
     if (name === 'engine') {
       textExports['./world3d'] = {types:'./dist/rendering/world3d/index.d.ts',import:'./dist/rendering/world3d/index.js'};
@@ -5194,6 +5196,35 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
   const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
   if(Object.hasOwn(keyboardAllowed,resolved)&&!keyboardAllowed[resolved].includes(relative))throw new Error('M3.3: keyboard private target escaped its exact optional owners: '+relative);
+ }
+}
+// Platform text entry: one browser entry with one implementation module, which no other module imports,
+// and which depends on nothing of the engine but the error type.
+const textInputTypes=['BrowserTextInput','BrowserTextInputOptions','BrowserTextInputRequest','BrowserTextInputRectangle','BrowserTextInputChange','BrowserTextInputSnapshot','BrowserTextInputMode','BrowserTextInputEnterHint'];
+for(const [file,typed] of [['packages/engine/web/textInput.ts',true],['packages/engine/dist/web/textInput.js',false],['packages/engine/dist/web/textInput.d.ts',true]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,['createBrowserTextInput'])||!mouseSame(surface.types,typed?textInputTypes:[]))throw new Error('Text input: exact browser text input exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/web/text-input')),['createBrowserTextInput']))throw new Error('Text input: optional runtime values mismatch');
+for(const [label,values,stem] of textEntries){
+ const body=uiRead(stem+'.d.ts');
+ for(const name of [...textInputTypes,'createBrowserTextInput'])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Text input: leaked to default/other entry: '+label+'/'+name);
+}
+const textInputImports={
+ 'web/BrowserTextInput.ts':['@egret/runtime'],'dist/web/BrowserTextInput.js':['@egret/runtime'],'dist/web/BrowserTextInput.d.ts':[],
+ 'web/textInput.ts':['./BrowserTextInput.js','./BrowserTextInput.js'],'dist/web/textInput.js':['./BrowserTextInput.js'],'dist/web/textInput.d.ts':['./BrowserTextInput.js','./BrowserTextInput.js'],
+};
+for(const [file,expected] of Object.entries(textInputImports)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
+ if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Text input: exact graph mismatch: '+file);
+ if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Text input: acquired automatic host work: '+file);
+}
+const textInputAllowed={'web/BrowserTextInput.js':['web/textInput.ts'],'dist/web/BrowserTextInput.js':['dist/web/textInput.js','dist/web/textInput.d.ts']};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
+ if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
+ for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
+  const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+  if(Object.hasOwn(textInputAllowed,resolved)&&!textInputAllowed[resolved].includes(relative))throw new Error('Text input: implementation module imported outside its entry: '+relative);
  }
 }
 if(!/const primitives=captureMouseInputRuntimePrimitives\(\)/.test(uiRead('packages/engine/src/keyboardInput.ts'))||!/const INPUT_PARENT = Object.getOwnPropertyDescriptor\(DisplayObject.prototype, 'parent'\)/.test(uiRead('packages/engine/src/internal/mouseInputFactoryState.ts')))throw new Error('M3.3: original eager display admission capture missing');

@@ -211,6 +211,12 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2`。该入口导出 `cre
 
 仅 tests/ui-text-edit-state-unit.test.mjs 可使用已构建 @egret/runtime/ui/editing 入口执行标明的纯 UNIT；普通 UI 行为通过已构建 @egret/engine/ui/editing 门面和真实 Engine／Scope／根验证。原生浏览器用例使用真实 input／textarea 和已准入字体；受控组合输入／粘贴不能代替实体 IME 或剪贴板资格。不新增私有测试导入、原生原型拦截、触摸实现或默认入口扩展，参见双语原生文本编辑契约。
 
+## 画布上的文字输入
+
+可选入口 `@egret/engine/web/text-input` 导出 `createBrowserTextInput` 和八个擦除类型。它除错误类型外不导入引擎的任何内容，其他入口也不包含它。遵循[指南](knowledge-base/Cns/docs/text-input.md)。
+
+只有 `tests/browser-text-input.test.mjs` 可以在 `window`、`document`、`HTMLElement`、`HTMLCanvasElement`、`CSSStyleSheet`、`ResizeObserver` 和 `reportError` 这七个全局名称下定义测试自有的页面替身，并在该文件结束后恢复每个原始描述符。替身是测试自己的对象；不拦截任何原生原型，也不导入任何私有产品模块。这些用例说明该入口向页面添加了什么、把文本框放在哪里、哪些事件结束会话，不能证明真实输入法的行为。`examples/text-input/verify.mjs` 在真实页面里通过 Chromium 的协议驱动组字；实体输入法、真实手机、Safari 和 Firefox 仍未检查。
+
 ## 已授权 Android 开发会话
 
 任务包含保持已授权手机唤醒时，在整段开发／测试会话（包括编写代码的间隔）持有一个有时限的 USB 唤醒租约。核查真实亮屏／解锁状态，每次设备输入前复查，页面可见不足以代表就绪。记录原设置的准确值或缺失状态；先关闭自有手机用例，再结束外层租约，在完成、取消或异常时恢复原值，并保留无关外部修改。继续遵循共享手机租约和准确目标规则。不改变安全锁或绕过认证；锁定、断连或状态不明时停止自动输入。见[设备会话规范](knowledge-base/Cns/docs/android-native-text-editing.md#设备所有权与保持唤醒)。

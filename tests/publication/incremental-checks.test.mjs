@@ -2359,8 +2359,18 @@ function restoreWebEntry(raw){
  assert.deepEqual(identity(prior),{bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'});
  return prior;
 }
+// The text input entry is newer than every fixture here. Taking it out gives the package as it was before it.
+function withoutTextInputEntry(raw){
+ const value=JSON.parse(raw);
+ if(!Object.hasOwn(value.exports,'./web/text-input'))return raw;
+ assert.deepEqual(value.exports['./web/text-input'],{types:'./dist/web/textInput.d.ts',import:'./dist/web/textInput.js'});
+ delete value.exports['./web/text-input'];
+ const prior=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3440,sha256:'4070930d06e98f8213c69ef3e1b2e8f7b850933d86950fe0ce2b851b6c976f78'});
+ return prior;
+}
 function restoreScene3dEntries(raw){
- raw=restoreWebEntry(raw);
+ raw=restoreWebEntry(withoutTextInputEntry(raw));
  const identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
  if(JSON.stringify(identity(raw))!==JSON.stringify({bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'}))return raw;
  const value=JSON.parse(raw),exports={};
