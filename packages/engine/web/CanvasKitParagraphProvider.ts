@@ -511,7 +511,8 @@ export function createCanvasKitParagraphProviderOwned(options:CanvasKitParagraph
                 const pixelTop = Math.floor(top * request.density) - 2;
                 const width = Math.ceil(right * request.density) + 2 - pixelLeft;
                 const rasterHeight = Math.ceil(bottom * request.density) + 2 - pixelTop;
-                if (width > IMAGE_LIMITS_2D.maxSourceEdge || rasterHeight > IMAGE_LIMITS_2D.maxSourceEdge || width * rasterHeight > IMAGE_LIMITS_2D.maxSourcePixels) throw new EgretError('PARAGRAPH_IMAGE_LIMIT');
+                // A paragraph raster keeps the bound it was accepted under; the bound of a 2D image is separate.
+                if (width > IMAGE_LIMITS_2D.maxSourceEdge || rasterHeight > IMAGE_LIMITS_2D.maxSourceEdge || width * rasterHeight > 1048576) throw new EgretError('PARAGRAPH_IMAGE_LIMIT');
                 const created = native(() => ck.MakeSurface(width, rasterHeight));
                 if (created === null) throw new EgretError('PARAGRAPH_RASTER_REFUSED');
                 surface = created;

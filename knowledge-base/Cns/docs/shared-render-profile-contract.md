@@ -118,7 +118,7 @@ WebGPU hardware linear 先解码 sRGB texel 再过滤。bounded region 路径接
 
 | 账本 | 上限 |
 | --- | --- |
-| 源 | 保留每轴≤4096、像素≤1,048,576、每图≤4 MiB |
+| 源 | 每轴≤4096、像素≤4,194,304、每图≤16 MiB |
 | 帧页表 | ≤64 个不同源；源字节≤64 MiB，canonical 请求字节另计≤64 MiB，包含 ready 命中。Host 最多接纳它的 `maxFramePageBytes` |
 | 区域/材质 | ≤4,096 个区域，≤256 个完整材质。Host 最多接纳它的 `maxFrameRegions` 个区域 |
 | 树/命令 | 节点、authoring units、按 occurrence 收费的源三角形、绘制加屏障各≤65,536；有序裁剪引用≤262,144 |

@@ -10,7 +10,9 @@ import {ownerRelativePath,samePhysicalPath} from '../lib/file-identity.mjs';
 import {readContentInput} from './input.mjs';
 import {getContentProducer,buildContentResource} from './importers.mjs';
 import {openContentStore} from './store.mjs';
-const SOURCE_BUDGET=67108864,OUTPUT_BUDGET=134217728,SCANLINE_BUDGET=67108864;
+// Outputs and scanline work are four times their first values, as the area of one page is: a run
+// still admits seven cold pages of the largest size.
+const SOURCE_BUDGET=67108864,OUTPUT_BUDGET=536870912,SCANLINE_BUDGET=268435456;
 const aborted=Object.getOwnPropertyDescriptor(AbortSignal.prototype,'aborted').get;
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const canonical=value=>value===null||typeof value!=='object'?JSON.stringify(value):Array.isArray(value)?'['+value.map(canonical).join(',')+']':'{'+Object.keys(value).sort().map(key=>JSON.stringify(key)+':'+canonical(value[key])).join(',')+'}';

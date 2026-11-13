@@ -193,7 +193,7 @@ Pass B 按 Graphics → Bitmap → Mesh → authored-order children 发出。Inv
 | Backing pixels / maxBackingPixels | — | 16,777,216 | ceil(logical edge*pixelRatio) 为安全正整数，乘积不超上限。 |
 | Readback / maxReadbackBytes | — | 67,108,864 | ceil(4W/256)*256*H staging +4WH output；共享 pending 总和。 |
 
-原 image 限制不变：source edge 4,096；source pixels 1,048,576；images/frame 64；crop views/frame 128；image table/projected crops 各 16,777,216 字节；scratch/pending texture 各 33,554,432 字节。collapse 不退 projection 准入；独立 loader 不合并身份。
+image 限制：source edge 4,096；source pixels 4,194,304（随共享 profile 由 1,048,576 提高；后面的字节预算不变，所以这个 profile 的一帧只能容纳一张最大尺寸的图像）；images/frame 64；crop views/frame 128；image table/projected crops 各 16,777,216 字节；scratch/pending texture 各 33,554,432 字节。collapse 不退 projection 准入；独立 loader 不合并身份。
 
 Options 各读取一次：canvas、device、onDiagnostic；pixelRatio,maxBackingPixels,maxCommands,maxClipRectangles,maxPreparedVertices,maxClipEdgeTests,maxUploadBytes,maxPendingUploadBytes,maxPendingFrames,maxReadbackBytes,enableReadback；最后 maxSourceTriangles,maxFrameGeometryBytes,maxPendingGeometryBytes,maxTupleComparisons。成功读取全部完成后检查语义；再读 policy.kind，仅 borrow 读 policy.device；canvas/policy/callback 先于按捕获顺序验证数字。读错误为 `WEBGPU_OPTIONS_INVALID`，精确保留 cause；语义 cause 为 TypeError/RangeError。准入前不调用 canvas/GPU；仅显式实例有 own nonwritable/nonconfigurable advertisement。
 

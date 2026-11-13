@@ -144,7 +144,7 @@ export function createContentLoader(engine: Engine, manifest: AdmittedResourceMa
           for (const e of ordered) {
             if (e.resourceKind === 'image') {
               const lease = raw.get(bindings.get(e.id) as ManifestAssetBinding<Texture>), value = lease.value;
-              if (value.width > 4096 || value.height > 4096 || value.width * value.height > 1048576) throw contentFault('IMAGE',e.id);
+              if (value.width > 4096 || value.height > 4096 || value.width * value.height > 4194304) throw contentFault('IMAGE',e.id);
               images.set(e.id,lease);
             } else {
               const text = raw.get(bindings.get(e.id) as ManifestAssetBinding<string>).value;

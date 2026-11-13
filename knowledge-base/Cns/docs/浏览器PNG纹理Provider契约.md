@@ -56,7 +56,7 @@ Signal 轮询本身就是 checkpoint，不递归轮询；每次 aborted/reason �
 
 ## 3. 固定 profile 与上限
 
-固定且不可由 factory 覆盖：4 occupied jobs，每次编码字节 8,388,608，已准入编码 payload 总计 33,554,432，1,024 chunks，source edge 4,096、pixels 1,048,576（后两项复用 IMAGE_LIMITS_2D）。无队列或自动重试。occupied 包括未结算及隔离 job。这些约束准入和源码所有的记账，**不**约束浏览器内部副本、decode 峰值、GPU 分配、实体 RAM 或 OOM 安全。
+固定且不可由 factory 覆盖：4 occupied jobs，每次编码字节 8,388,608，已准入编码 payload 总计 33,554,432，1,024 chunks，source edge 4,096、pixels 4,194,304（后两项复用 IMAGE_LIMITS_2D；像素上限原为 1,048,576）。无队列或自动重试。occupied 包括未结算及隔离 job。这些约束准入和源码所有的记账，**不**约束浏览器内部副本、decode 峰值、GPU 分配、实体 RAM 或 OOM 安全。
 
 Aggregate 上限等于四个最大 payload；固定 job/per-load 上限下，无法合法到达独立 aggregate one-over load。应验证四 payload 端点及指定 JOB_LIMIT／单次 INPUT_LIMIT 拒绝，不虚构不可达 aggregate-negative 见证。
 

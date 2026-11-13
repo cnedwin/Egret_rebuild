@@ -29,8 +29,10 @@ test('owned-tight-bytes', () => {
 test('source caps, numeric types and exact byte length',()=>{
   const {createImageData2D:create,IMAGE_LIMITS_2D:limits}=api();
   const image=create({width:4096,height:256,pixels:new Uint8Array(4194304)});assert.equal(image.byteLength,4194304);
-  assert.deepEqual(limits,{maxSourceEdge:4096,maxSourcePixels:1048576,maxImagesPerFrame:64,maxViewsPerFrame:128,maxImageTableBytes:16777216,maxProjectionBytes:16777216,maxImageScratchBytes:33554432,maxPendingTextureBytes:33554432});assert.equal(Object.isFrozen(limits),true);
-  for(const overrides of [{width:4097,height:1},{width:1025,height:1024},{width:-0},{height:-0},{width:0},{height:1.5},{width:NaN},{height:Infinity},{width:Number.MAX_SAFE_INTEGER+1},{pixels:new Uint8Array(7)}])assert.throws(()=>create(input(overrides)),RangeError);
+  // The largest image: 4,194,304 pixels, as a square or at the full edge.
+  for(const [width,height]of [[2048,2048],[4096,1024]])assert.equal(create({width,height,pixels:new Uint8Array(16777216)}).byteLength,16777216);
+  assert.deepEqual(limits,{maxSourceEdge:4096,maxSourcePixels:4194304,maxImagesPerFrame:64,maxViewsPerFrame:128,maxImageTableBytes:16777216,maxProjectionBytes:16777216,maxImageScratchBytes:33554432,maxPendingTextureBytes:33554432});assert.equal(Object.isFrozen(limits),true);
+  for(const overrides of [{width:4097,height:1},{width:2049,height:2048},{width:4096,height:1025},{width:-0},{height:-0},{width:0},{height:1.5},{width:NaN},{height:Infinity},{width:Number.MAX_SAFE_INTEGER+1},{pixels:new Uint8Array(7)}])assert.throws(()=>create(input(overrides)),RangeError);
   for(const overrides of [{width:'2'},{height:'1'}])assert.throws(()=>create(input(overrides)),TypeError);
   for(const value of [null,undefined,1,'record',true,()=>{}])assert.throws(()=>create(value),TypeError);
 });

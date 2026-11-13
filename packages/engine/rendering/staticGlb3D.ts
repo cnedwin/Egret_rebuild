@@ -83,7 +83,9 @@ const MAX_UV_MAGNITUDE = 2 ** 20;
 const NORMAL_LENGTH_SQUARED_TOLERANCE = 1e-4;
 const MAX_PNG_BYTES = 4 * 1024 * 1024;
 const MAX_TOTAL_PNG_BYTES = 6 * 1024 * 1024;
-const MAX_TOTAL_PNG_PIXELS = 4 * IMAGE_LIMITS_2D.maxSourcePixels;
+// A GLB image keeps the bound it was accepted under; the bound of a 2D image is separate.
+const MAX_PNG_PIXELS = 1048576;
+const MAX_TOTAL_PNG_PIXELS = 4 * MAX_PNG_PIXELS;
 const MAX_PNG_CHUNKS = 1024;
 const PNG_IHDR = 0x49484452, PNG_IDAT = 0x49444154, PNG_IEND = 0x49454e44;
 const PNG_SRGB = 0x73524742, PNG_GAMA = 0x67414d41, PNG_CHRM = 0x6348524d;
@@ -195,7 +197,7 @@ function inspectEmbeddedPng(binary: DataView, offset: number, byteLength: number
     const width = binary.getUint32(offset + 16), height = binary.getUint32(offset + 20);
     if (width === 0 || height === 0) invalid('image PNG dimensions');
     if (width > IMAGE_LIMITS_2D.maxSourceEdge || height > IMAGE_LIMITS_2D.maxSourceEdge ||
-        width * height > IMAGE_LIMITS_2D.maxSourcePixels) budget('image PNG dimensions');
+        width * height > MAX_PNG_PIXELS) budget('image PNG dimensions');
     if (binary.getUint8(offset + 24) !== 8 || binary.getUint8(offset + 25) !== 2 ||
         binary.getUint8(offset + 26) !== 0 || binary.getUint8(offset + 27) !== 0 ||
         binary.getUint8(offset + 28) !== 0) unsupported('image PNG RGB8 noninterlaced');

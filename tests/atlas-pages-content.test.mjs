@@ -26,6 +26,18 @@ test('canonical runtime artifacts reject invalid page ordinals, duplicate names,
  const s=await runtime(t,f,r,{text:canonical(original).replace('"format":','"format":"duplicate","format":')}),g=s.loader.load(s.engine.createScope(),['e_pages']);await assert.rejects(g.ready);
 });
 
+// Break caught: a page of a multipage artifact is still held to the earlier 1,048,576-pixel area.
+// The real pages are small, so a described size within the bound reaches the dimension comparison.
+test('a multipage artifact may describe pages of the largest image area and no larger',async t=>{
+ const f=await project(t),r=await buildContentProject(f.options),original=JSON.parse(fs.readFileSync(path.join(f.runRoot,find(r,'e_pages').artifact.path),'utf8'));
+ const canonical=v=>v===null||typeof v!=='object'?JSON.stringify(v):Array.isArray(v)?'['+v.map(canonical).join(',')+']':'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}';
+ for(const [width,height,code]of [[2048,2048,'CONTENT_DIMENSIONS_FAILED'],[4096,1024,'CONTENT_DIMENSIONS_FAILED'],[2049,2048,'CONTENT_ARTIFACT_FAILED'],[4096,1025,'CONTENT_ARTIFACT_FAILED']]){
+  const artifact=structuredClone(original);artifact.pages[1].width=width;artifact.pages[1].height=height;
+  const s=await runtime(t,f,r,{text:canonical(artifact)}),g=s.loader.load(s.engine.createScope(),['e_pages']);
+  await assert.rejects(g.ready,{code},width+' x '+height);await flush();assert.ok(s.textures.every(t=>t.isDisposed));
+ }
+});
+
 test('a new genuine generation coexists with its live predecessor and releases independently',async t=>{
  const f=await project(t),first=await buildContentProject(f.options),s=await runtime(t,f,first),a=s.loader.load(s.engine.createScope(),['e_pages']);await a.ready;
  const changed=PNG.sync.write({width:4,height:2,data:Buffer.alloc(32,255)},{colorType:6,inputColorType:6,bitDepth:8});fs.writeFileSync(path.join(f.runRoot,'sources/second.png'),changed);const snapshot=structuredClone(f.store.getSnapshot()),file=snapshot.files.find(x=>x.id==='f_second');file.sha256=sha(changed);file.byteLength=changed.length;

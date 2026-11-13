@@ -99,7 +99,7 @@ Engine 工厂独立重新接纳标准化数据，并执行自身资源、布局�
 | `maxSourceIdUtf8Bytes` / `maxAssetIdUtf8Bytes` | 256 / 256 |
 | `maxNameUtf8Bytes` / `maxNameUtf16Units` / `maxTotalNameUtf16Units` | 1024 / 128 / 32768 |
 | `maxPageNameUtf8Bytes` / `maxFrames` | 255 / 1024；至少 1 帧 |
-| `maxAtlasEdge` / `maxAtlasPixels` | 4096 / 1048576；两边为正，面积安全 |
+| `maxAtlasEdge` / `maxAtlasPixels` | 4096 / 4194304；两边为正，面积安全 |
 | `maxSourceDimension` / `maxDurationMilliseconds` | 65535 / 65535；正整数 |
 | `maxProvenanceFieldUtf8Bytes` / `maxProvenanceTotalUtf8Bytes` | 4096 / 24576；source 与 page 的全部 `origin/license/notice/sha256` 值，source 先于 page |
 | `maxDiagnosticPointerUtf8Bytes` | 2048；下文规定精确拒绝 span |
