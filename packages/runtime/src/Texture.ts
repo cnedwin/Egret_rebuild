@@ -154,6 +154,13 @@ export interface TextureSnapshot2D {
   readonly viewRegion: TextureViewRegion2D | null;
 }
 
+/** The image alone, under the checks of `readTextureSnapshot` and without a record of its own. */
+export function readTextureImage(texture: Texture): ImageData2D {
+  const image = stateOf(texture).image;
+  if (image === undefined) throw new EgretError("TEXTURE_DISPOSED");
+  return image;
+}
+
 /** Runtime-private authority; never consult subclass-overridable getters. */
 export function readTextureSnapshot(texture: Texture): TextureSnapshot2D {
   const state = stateOf(texture);
