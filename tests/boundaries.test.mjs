@@ -2278,7 +2278,7 @@ for(const [name,reason] of [
   ['private-import','Semantics: exact graph mismatch'],
   ['timer','Semantics: acquired automatic host work'],
   // The tree is core: the rule that keeps the page out of the core covers it.
-  ['page-in-tree','packages/engine/src/semanticTree.ts: host ambient dependency'],
+  ['page-in-tree','semanticTree.ts: host ambient dependency'],
 ])test('semantics policy '+name+' is refused for its own reason',()=>{
   fixture({imported:'robust-predicates',semanticsMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
 });
