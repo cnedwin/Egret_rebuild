@@ -54,6 +54,8 @@ Each WebGPU loss episode permits at most three actual recovery attempts, includi
 
 Every opt-in initial and replacement device, owned or borrowed, must pass the actual browser GPUDevice lost/limits getters and fixed method capture. Only fulfillment of that captured native lost promise establishes invalidation for its exact generation. A rejected observer or a structural device with a lost promise does not. Already unknown ownership remains unknown. Recovery-omitted admission keeps its established compatibility behavior.
 
+In an opt-in WebGPU session, an asynchronous `mapAsync` `AbortError` from a directly submitted readback can arrive before its generation's authenticated loss notification. The Host waits for that notification with a timer set to the smaller of the configured recovery timeout and one second. The original readback failure remains terminal if the timer runs before confirmation. Confirmed loss uses the existing device-loss path, with the original queue and error-scope obligations still in force. Staged readback retains its existing behavior.
+
 During lost/restoring, `start()` refuses without acquisition; `whenReady()` observes the current barrier. A safely failed attempt leaves that barrier rejected until a valid explicit retry publishes the next one. Stopping revokes pending recovery and unsubmitted upload publication before cleanup callbacks, enters stopped, and prevents later acquisition, reconstruction or reopening. Already-started work remains owned through settlement. The original initial-start promise and submitted work preserve their established settlement timing. WebGL2 retains its existing restoration policy and has no WebGPU recovery-attempt limit.
 
 ## Candidate capture, staging and commit
