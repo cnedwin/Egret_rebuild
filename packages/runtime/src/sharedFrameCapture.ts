@@ -29,18 +29,12 @@ export interface CapturedSharedContent2D {
 }
 
 type Geometry = TexturedGeometry2D | SharedGeometry2D;
-interface AdmittedNode {
-  readonly primitives: readonly Primitive[];
-  readonly primitiveCount: number;
-  readonly bitmap: BitmapCaptureState | undefined;
-  readonly mesh: MeshCaptureState | undefined;
-  readonly text: TextFieldDisplayState | undefined;
-}
-interface Cursor { readonly node: DisplayObject; readonly children: number; nextChild: number; }
-interface ClipChain { readonly previous: ClipChain | undefined; readonly clip: ClipRectangle2D; readonly depth: number; }
+interface ClipChain { readonly previous: ClipChain | undefined; readonly clip: ClipRectangle2D; readonly depth: number; flat: readonly ClipRectangle2D[] | undefined; }
 interface Boundary { readonly occurrenceId: number; readonly boundaryId: number; }
-interface VisibleCursor extends Cursor {
-  readonly matrix: Matrix2D; readonly alpha: number; readonly clips: ClipChain | undefined;
+/** One node of the walk. `drawn` is false below a node that is not drawn and after a refusal of visible content. */
+interface Cursor {
+  readonly node: DisplayObject; readonly children: number; nextChild: number;
+  readonly drawn: boolean; readonly matrix: Matrix2D; readonly alpha: number; readonly clips: ClipChain | undefined;
   readonly material: SharedMaterial2D; readonly explicit: Boundary | undefined; readonly clip: Boundary | undefined; readonly effect: Boundary | undefined;
 }
 const freeze = Object.freeze;
@@ -114,34 +108,8 @@ function checkNode(node: DisplayObject, parent: DisplayObjectContainer | undefin
   seen.add(node);
 }
 
-/** All-tree metadata and geometry admission precedes any visible resource use. */
-function admitTree(stage: Stage, engine: EngineContext, budget: CaptureBudget, readBitmap: BitmapCaptureView['read'], tree: TreeView): Map<DisplayObject, AdmittedNode> {
-  const admitted = new Map<DisplayObject, AdmittedNode>(), seen = new Set<DisplayObject>(), stack: Cursor[] = [];
-  function enter(node: DisplayObject, parent: DisplayObjectContainer | undefined): void {
-    budget.node();
-    checkNode(node, parent, engine, seen, tree);
-    const primitives = visualOf(node).primitives;
-    budget.authoring(primitives.length);
-    const bitmap = readBitmap(node), mesh = readMeshState(node), text = readTextFieldState(node);
-    if (bitmap !== undefined) budget.authoring(1);
-    if (mesh !== undefined) { budget.authoring(1); budget.geometry(mesh.geometry); }
-    if (text?.committed !== undefined) budget.authoring(1);
-    admitted.set(node, { primitives, primitiveCount: primitives.length, bitmap, mesh, text });
-    stack.push({ node, children: tree.count(node), nextChild: 0 });
-  }
-  enter(stage, undefined);
-  while (stack.length !== 0) {
-    const cursor = stack[stack.length - 1]!;
-    if (cursor.nextChild === cursor.children) { stack.pop(); continue; }
-    const child = tree.child(cursor.node, cursor.nextChild++);
-    if (child === undefined) throw new EgretError('DISPLAY_TREE_INVARIANT');
-    enter(child, cursor.node as DisplayObjectContainer);
-  }
-  return admitted;
-}
-
 function checkedMatrix(matrix: Matrix2D): Matrix2D {
-  if (![matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty].every(finite)) throw new EgretError('FRAME_TRANSFORM_INVALID');
+  if (!finite(matrix.a) || !finite(matrix.b) || !finite(matrix.c) || !finite(matrix.d) || !finite(matrix.tx) || !finite(matrix.ty)) throw new EgretError('FRAME_TRANSFORM_INVALID');
   return freeze(matrix);
 }
 function point(matrix: Matrix2D, x: number, y: number): void {
@@ -173,10 +141,14 @@ function referencedTuples(matrix: Matrix2D, geometry: Geometry): void {
   }
   // GPU page-q and periodic precision admission belongs to Host preparation.
 }
+const noClips: readonly ClipRectangle2D[] = freeze([]);
+/** Draws under one clip chain share one frozen list; draws under none share the empty one. */
 function flattenClips(chain: ClipChain | undefined): readonly ClipRectangle2D[] {
-  const result = new Array<ClipRectangle2D>(chain?.depth ?? 0);
-  for (let cursor = chain; cursor !== undefined; cursor = cursor.previous) result[cursor.depth - 1] = cursor.clip;
-  return freeze(result);
+  if (chain === undefined) return noClips;
+  if (chain.flat !== undefined) return chain.flat;
+  const result = new Array<ClipRectangle2D>(chain.depth);
+  for (let cursor: ClipChain | undefined = chain; cursor !== undefined; cursor = cursor.previous) result[cursor.depth - 1] = cursor.clip;
+  return chain.flat = freeze(result);
 }
 function materialKey(material: SharedMaterial2D): string {
   const light = material.light, dark = material.dark;
@@ -185,10 +157,22 @@ function materialKey(material: SharedMaterial2D): string {
     + ';' + material.filter + ';' + material.addressU + ';' + material.addressV + ';' + material.regionIsolation
     + ';' + material.mipLevel + ';' + material.minFilter + ';' + material.magFilter + ';' + material.maxAnisotropy;
 }
-function regionKey(region: TextureViewRegion2D): string {
+/** Two numbers that print the same: equal, or both not a number. Either zero prints as "0". */
+function sameNumber(a: number, b: number): boolean { return a === b || (a !== a && b !== b); }
+/** Regions with the same nine numbers get the same value; the table compares the numbers themselves. */
+function regionHash(region: TextureViewRegion2D): number {
   const packed = region.packed;
-  return packed.x + ',' + packed.y + ',' + packed.width + ',' + packed.height + ',' + region.logicalWidth
-    + ',' + region.logicalHeight + ',' + region.trimX + ',' + region.trimY + ',' + region.quarterTurn;
+  let hash = packed.x | 0;
+  hash = Math.imul(hash, 31) + (packed.y | 0); hash = Math.imul(hash, 31) + (packed.width | 0); hash = Math.imul(hash, 31) + (packed.height | 0);
+  hash = Math.imul(hash, 31) + (region.logicalWidth | 0); hash = Math.imul(hash, 31) + (region.logicalHeight | 0);
+  hash = Math.imul(hash, 31) + (region.trimX | 0); hash = Math.imul(hash, 31) + (region.trimY | 0);
+  return Math.imul(hash, 31) + (region.quarterTurn | 0) | 0;
+}
+function sameRegion(recorded: SharedRegion2D, value: TextureViewRegion2D): boolean {
+  const a = recorded.packed, b = value.packed;
+  return sameNumber(a.x, b.x) && sameNumber(a.y, b.y) && sameNumber(a.width, b.width) && sameNumber(a.height, b.height)
+    && sameNumber(recorded.logicalWidth, value.logicalWidth) && sameNumber(recorded.logicalHeight, value.logicalHeight)
+    && sameNumber(recorded.trimX, value.trimX) && sameNumber(recorded.trimY, value.trimY) && sameNumber(recorded.quarterTurn, value.quarterTurn);
 }
 function plainRegion(sourceRect: TextureRegion2D): TextureViewRegion2D {
   return { packed: sourceRect, logicalWidth: sourceRect.width, logicalHeight: sourceRect.height, trimX: 0, trimY: 0, quarterTurn: 0 };
@@ -232,31 +216,42 @@ export function collectSubtreeSharedFrameContent(stage: Stage, target: DisplayOb
   return captureSharedContent(stage,bitmapCaptureState,tree);
 }
 
+/**
+ * One walk of the whole tree. Each node is first admitted: counted, checked and charged whether or not it is
+ * drawn. A node that is drawn then contributes its commands. A refusal of visible content does not end the
+ * walk: the rest of the tree is still admitted, because an admission refusal anywhere outranks it, and the
+ * first refusal of visible content is reported only once the whole tree has been admitted.
+ */
 function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'], tree: TreeView = liveTree): CapturedSharedContent2D {
   if (!isStageRoot(stage)) throw new EgretError('FRAME_STAGE_INVALID');
   const engine = engineOf(stage)!;
   engine.assertOpen();
-  const budget = new CaptureBudget(), admitted = admitTree(stage, engine, budget, readBitmap, tree);
-  engine.assertOpen();
+  const budget = new CaptureBudget();
   const commands: SharedRenderCommand2D[] = [], pages: SharedPage2D[] = [], regions: SharedRegion2D[] = [];
   const materials: SharedMaterial2D[] = [], geometries: Geometry[] = [];
-  const pageIndexes = new Map<ImageData2D, number>(), regionIndexes = new Map<ImageData2D, Map<string, number>>();
-  const materialIndexes = new Map<string, number>(), geometryIndexes = new Map<Geometry, number>();
-  const seen = new Set<DisplayObject>(), stack: VisibleCursor[] = [];
-  let nextOccurrence = 0, nextBoundary = 0;
+  const pageIndexes = new Map<ImageData2D, number>(), regionIndexes = new Map<ImageData2D, Map<number, number[]>>();
+  const materialIndexes = new Map<string, number>(), materialObjects = new Map<SharedMaterial2D, number>(), geometryIndexes = new Map<Geometry, number>();
+  const seen = new Set<DisplayObject>(), stack: Cursor[] = [];
+  let nextOccurrence = 0, nextBoundary = 0, refused = false, refusal: unknown;
 
   function materialIndex(material: SharedMaterial2D): number {
+    // The same object within one capture has the same complete value, so its key is built once.
+    const known = materialObjects.get(material);
+    if (known !== undefined) return known;
     const key = materialKey(material), found = materialIndexes.get(key);
-    if (found !== undefined) return found;
+    if (found !== undefined) { materialObjects.set(material, found); return found; }
     debit(materials.length, 1, 256);
     budget.metadataBytes(192 + 8);
     const index = materials.length;
-    materials.push(material); materialIndexes.set(key, index);
+    materials.push(material); materialIndexes.set(key, index); materialObjects.set(material, index);
     return index;
   }
   function regionIndex(image: ImageData2D, value: TextureViewRegion2D): number {
-    const key = regionKey(value), owner = regionIndexes.get(image), found = owner?.get(key);
-    if (found !== undefined) return found;
+    const hash = regionHash(value), owner = regionIndexes.get(image), bucket = owner?.get(hash);
+    if (bucket !== undefined) for (let position = 0; position < bucket.length; position++) {
+      const candidate = bucket[position]!;
+      if (sameRegion(regions[candidate]!, value)) return candidate;
+    }
     debit(regions.length, 1, 128, 'FRAME_IMAGE_BUDGET');
     let pageIndex = pageIndexes.get(image);
     if (pageIndex === undefined) {
@@ -271,8 +266,9 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
     const index = regions.length;
     regions.push(freeze({ pageIndex, packed, logicalWidth: value.logicalWidth, logicalHeight: value.logicalHeight,
       trimX: value.trimX, trimY: value.trimY, quarterTurn: value.quarterTurn }));
-    const entries = owner ?? new Map<string, number>();
-    entries.set(key, index); if (owner === undefined) regionIndexes.set(image, entries);
+    const entries = owner ?? new Map<number, number[]>();
+    if (bucket === undefined) entries.set(hash, [index]); else bucket.push(index);
+    if (owner === undefined) regionIndexes.set(image, entries);
     return index;
   }
   function geometryIndex(geometry: Geometry): number {
@@ -299,21 +295,17 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
     if (explicit !== undefined) barrier('explicit-exit', explicit);
   }
   function empty(occurrenceId: number): void { barrier('empty', { occurrenceId, boundaryId: nextBoundary++ }); }
-  function drawState(occurrenceId: number, material: SharedMaterial2D, matrix: Matrix2D, opacity: number, clips: ClipChain | undefined) {
-    budget.emission(clips, false);
-    return { ordinal: commands.length, occurrenceId, materialIndex: materialIndex(material), matrix, opacity, clips: flattenClips(clips) };
+  function push(node: DisplayObject, drawn: boolean, matrix: Matrix2D, alpha: number, clips: ClipChain | undefined, material: SharedMaterial2D,
+    explicit: Boundary | undefined, clip: Boundary | undefined, effect: Boundary | undefined): void {
+    stack.push({ node, children: tree.count(node), nextChild: 0, drawn, matrix, alpha, clips, material, explicit, clip, effect });
   }
-  function enter(node: DisplayObject, parent: DisplayObjectContainer | undefined, parentMatrix: Matrix2D,
-    parentAlpha: number, inheritedClips: ClipChain | undefined, inheritedMaterial: SharedMaterial2D): void {
-    checkNode(node, parent, engine, seen, tree);
-    const metadata = admitted.get(node), state = visualOf(node);
-    if (metadata === undefined || state.primitives !== metadata.primitives || state.primitives.length !== metadata.primitiveCount
-      || readBitmap(node) !== metadata.bitmap || readMeshState(node) !== metadata.mesh || readTextFieldState(node) !== metadata.text) {
-      throw new EgretError('DISPLAY_TREE_INVARIANT');
-    }
+  /** The commands of one drawn node. Returns false when the node and everything below it are not drawn. */
+  function draw(node: DisplayObject, state: ReturnType<typeof visualOf>, primitives: readonly Primitive[], primitiveCount: number,
+    bitmap: BitmapCaptureState | undefined, mesh: MeshCaptureState | undefined, text: TextFieldDisplayState | undefined,
+    parentMatrix: Matrix2D, parentAlpha: number, inheritedClips: ClipChain | undefined, inheritedMaterial: SharedMaterial2D): boolean {
     const explicit = state.renderBoundary === 'isolate' ? open('explicit-enter') : undefined;
     const alpha = parentAlpha * state.alpha;
-    if (!state.visible || state.alpha === 0 || alpha === 0) { close(explicit, undefined); return; }
+    if (!state.visible || state.alpha === 0 || alpha === 0) { close(explicit, undefined); return false; }
     if (!finite(alpha)) throw new EgretError('FRAME_TRANSFORM_INVALID');
     const material = state.sharedMaterial ?? inheritedMaterial;
     const matrix = checkedMatrix(composeDisplayTransform(parentMatrix, state));
@@ -321,8 +313,8 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
     if (state.clipRect !== undefined) {
       const rect = rectangle(matrix, state.clipRect);
       clip = open('clip-enter');
-      if (rect.width === 0 || rect.height === 0) { close(explicit, clip); return; }
-      clips = { previous: clips, clip: freeze({ matrix, rect }), depth: (clips?.depth ?? 0) + 1 };
+      if (rect.width === 0 || rect.height === 0) { close(explicit, clip); return false; }
+      clips = { previous: clips, clip: freeze({ matrix, rect }), depth: (clips?.depth ?? 0) + 1, flat: undefined };
     }
     let effect:Boundary|undefined;
     if(state.renderEffect!==undefined){
@@ -341,14 +333,14 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
       // Parent clips apply to the composited result, not intermediate blur taps.
       clips=undefined;
     }
-    for (let index = 0; index < metadata.primitiveCount; index++) {
-      const primitive = metadata.primitives[index]!, occurrenceId = nextOccurrence++;
+    for (let index = 0; index < primitiveCount; index++) {
+      const primitive = primitives[index]!, occurrenceId = nextOccurrence++;
       const rect = rectangle(matrix, primitive.rect), effective = alpha * primitive.alpha;
       if (rect.width === 0 || rect.height === 0 || effective === 0) { empty(occurrenceId); continue; }
-      commands.push(freeze({ kind: 'rect', ...drawState(occurrenceId, material, matrix, alpha, clips),
-        rect, fillColor: primitive.color, fillAlpha: primitive.alpha }));
+      budget.emission(clips, false);
+      commands.push(freeze({ kind: 'rect', ordinal: commands.length, occurrenceId, materialIndex: materialIndex(material), matrix, opacity: alpha,
+        clips: flattenClips(clips), rect, fillColor: primitive.color, fillAlpha: primitive.alpha }));
     }
-    const bitmap = metadata.bitmap;
     if (bitmap !== undefined) {
       const occurrenceId = nextOccurrence++;
       const rect = rectangle(matrix, bitmapRect(bitmap, material));
@@ -356,9 +348,10 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
       const region = bitmapRegion(bitmap);
       budget.source(snapshot.image);
       const sharedRegionIndex = regionIndex(snapshot.image, region);
-      commands.push(freeze({ kind: 'image', ...drawState(occurrenceId, material, matrix, alpha, clips), rect, regionIndex: sharedRegionIndex }));
+      budget.emission(clips, false);
+      commands.push(freeze({ kind: 'image', ordinal: commands.length, occurrenceId, materialIndex: materialIndex(material), matrix, opacity: alpha,
+        clips: flattenClips(clips), rect, regionIndex: sharedRegionIndex }));
     }
-    const mesh = metadata.mesh;
     if (mesh !== undefined) {
       const occurrenceId = nextOccurrence++, snapshot = readMeshCaptureImage(mesh);
       if (mesh.regionOnly && material.samplingDomain !== 'region') throw new EgretError('SHARED_MATERIAL_UNSUPPORTED');
@@ -368,11 +361,11 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
       else {
         const sharedRegionIndex = regionIndex(snapshot.image, mesh.viewRegion ?? plainRegion(mesh.sourceRect));
         const sharedGeometryIndex = geometryIndex(mesh.geometry);
-        commands.push(freeze({ kind: 'mesh', ...drawState(occurrenceId, material, matrix, alpha, clips),
-          regionIndex: sharedRegionIndex, geometryIndex: sharedGeometryIndex }));
+        budget.emission(clips, false);
+        commands.push(freeze({ kind: 'mesh', ordinal: commands.length, occurrenceId, materialIndex: materialIndex(material), matrix, opacity: alpha,
+          clips: flattenClips(clips), regionIndex: sharedRegionIndex, geometryIndex: sharedGeometryIndex }));
       }
     }
-    const text = metadata.text;
     if (text !== undefined) {
       assertTextFieldScope(text.scope);
       const committed = text.committed;
@@ -385,22 +378,51 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
           if (rect.width === 0 || rect.height === 0) empty(occurrenceId);
           else {
             const sharedRegionIndex = regionIndex(snapshot.image, snapshot.viewRegion ?? plainRegion(committed.sourceRect));
-            commands.push(freeze({ kind: 'image', ...drawState(occurrenceId, material, matrix, alpha, clips), rect, regionIndex: sharedRegionIndex }));
+            budget.emission(clips, false);
+            commands.push(freeze({ kind: 'image', ordinal: commands.length, occurrenceId, materialIndex: materialIndex(material), matrix, opacity: alpha,
+              clips: flattenClips(clips), rect, regionIndex: sharedRegionIndex }));
           }
         }
       }
     }
-    stack.push({ node, children: tree.count(node), nextChild: 0, matrix, alpha, clips, material, explicit, clip, effect });
+    push(node, true, matrix, alpha, clips, material, explicit, clip, effect);
+    return true;
+  }
+  function enter(node: DisplayObject, parent: DisplayObjectContainer | undefined, drawn: boolean, parentMatrix: Matrix2D,
+    parentAlpha: number, inheritedClips: ClipChain | undefined, inheritedMaterial: SharedMaterial2D): void {
+    // Admission: every node, in walk order, independent of visibility.
+    budget.node();
+    checkNode(node, parent, engine, seen, tree);
+    const state = visualOf(node), primitives = state.primitives, primitiveCount = primitives.length;
+    budget.authoring(primitiveCount);
+    const bitmap = readBitmap(node), mesh = readMeshState(node), text = readTextFieldState(node);
+    if (bitmap !== undefined) budget.authoring(1);
+    if (mesh !== undefined) { budget.authoring(1); budget.geometry(mesh.geometry); }
+    if (text?.committed !== undefined) budget.authoring(1);
+    if (drawn && !refused) {
+      try {
+        if (draw(node, state, primitives, primitiveCount, bitmap, mesh, text, parentMatrix, parentAlpha, inheritedClips, inheritedMaterial)) return;
+      } catch (cause) { refused = true; refusal = cause; }
+    }
+    push(node, false, identity, 0, undefined, defaultMaterial, undefined, undefined, undefined);
   }
 
-  enter(stage, undefined, identity, 1, undefined, defaultMaterial);
+  enter(stage, undefined, true, identity, 1, undefined, defaultMaterial);
   while (stack.length !== 0) {
     const cursor = stack[stack.length - 1]!;
-    if (cursor.nextChild === cursor.children) { close(cursor.explicit, cursor.clip, cursor.effect); stack.pop(); continue; }
+    if (cursor.nextChild === cursor.children) {
+      if (cursor.drawn && !refused) {
+        try { close(cursor.explicit, cursor.clip, cursor.effect); } catch (cause) { refused = true; refusal = cause; }
+      }
+      stack.pop(); continue;
+    }
     const child = tree.child(cursor.node, cursor.nextChild++);
     if (child === undefined) throw new EgretError('DISPLAY_TREE_INVARIANT');
-    enter(child, cursor.node as DisplayObjectContainer, cursor.matrix, cursor.alpha, cursor.clips, cursor.material);
+    enter(child, cursor.node as DisplayObjectContainer, cursor.drawn, cursor.matrix, cursor.alpha, cursor.clips, cursor.material);
   }
+  // The whole tree is admitted. This is where the visible pass used to begin.
+  engine.assertOpen();
+  if (refused) throw refusal;
   engine.assertOpen();
   return freeze({ commands: freeze(commands), pages: freeze(pages), regions: freeze(regions),
     materials: freeze(materials), geometries: freeze(geometries) });
