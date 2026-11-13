@@ -96,41 +96,52 @@ export class Ragdoll3D {
         if (this.active) return;
         const o = this.options;
         this.root.updateWorldMatrix();
-        for (const [index, part] of this.#parts.entries()) {
-            const bone = this.#bones[index]!;
-            bone.updateWorldMatrix();
-            const m = bone.matrixWorld, at = part.offset ?? [0, 0, 0], scale = new Float32Array(3);
-            mat4Decompose(m, place, turn, scale);
-            this.#scales[index] = scale;
-            const body = this.world.createBody({
-                type: 'dynamic', shape: part.shape, mass: part.mass ?? 1,
-                position: [m[0]! * at[0] + m[4]! * at[1] + m[8]! * at[2] + m[12]!, m[1]! * at[0] + m[5]! * at[1] + m[9]! * at[2] + m[13]!, m[2]! * at[0] + m[6]! * at[1] + m[10]! * at[2] + m[14]!],
-                quaternion: [turn[0]!, turn[1]!, turn[2]!, turn[3]!],
-                friction: o.friction ?? 0.6, restitution: o.restitution ?? 0, linearDamping: o.linearDamping ?? 0.05, angularDamping: o.angularDamping ?? 0.4,
-                ...(o.layer === undefined ? {} : {layer: o.layer}), ...(o.mask === undefined ? {} : {mask: o.mask}), userData: this,
-            });
-            body.setLinearVelocity(velocity[0]!, velocity[1]!, velocity[2]!);
-            this.bodies.push(body);
+        const bodies: RigidBody3D[] = [], joints: Joint3D[] = [], scales: Float32Array[] = [];
+        try {
+            for (const [index, part] of this.#parts.entries()) {
+                const bone = this.#bones[index]!;
+                bone.updateWorldMatrix();
+                const m = bone.matrixWorld, at = part.offset ?? [0, 0, 0], scale = new Float32Array(3);
+                mat4Decompose(m, place, turn, scale);
+                scales[index] = scale;
+                const body = this.world.createBody({
+                    type: 'dynamic', shape: part.shape, mass: part.mass ?? 1,
+                    position: [m[0]! * at[0] + m[4]! * at[1] + m[8]! * at[2] + m[12]!, m[1]! * at[0] + m[5]! * at[1] + m[9]! * at[2] + m[13]!, m[2]! * at[0] + m[6]! * at[1] + m[10]! * at[2] + m[14]!],
+                    quaternion: [turn[0]!, turn[1]!, turn[2]!, turn[3]!],
+                    friction: o.friction ?? 0.6, restitution: o.restitution ?? 0, linearDamping: o.linearDamping ?? 0.05, angularDamping: o.angularDamping ?? 0.4,
+                    ...(o.layer === undefined ? {} : {layer: o.layer}), ...(o.mask === undefined ? {} : {mask: o.mask}), userData: this,
+                });
+                bodies.push(body);
+                body.setLinearVelocity(velocity[0]!, velocity[1]!, velocity[2]!);
+            }
+            const rootBody = bodies[this.#parts.findIndex(part => part.parent === undefined)]!;
+            rootBody.setAngularVelocity(spin[0]!, spin[1]!, spin[2]!);
+            for (const [index, part] of this.#parts.entries()) {
+                if (part.parent === undefined) continue;
+                const bone = this.#bones[index]!, m = bone.matrixWorld, joint = part.joint ?? {}, axis = joint.axis ?? [0, 1, 0];
+                // The direction is given in the bone's frame; the joint wants it in the world.
+                const ax = m[0]! * axis[0] + m[4]! * axis[1] + m[8]! * axis[2], ay = m[1]! * axis[0] + m[5]! * axis[1] + m[9]! * axis[2], az = m[2]! * axis[0] + m[6]! * axis[1] + m[10]! * axis[2];
+                const options: JointOptions3D = {
+                    type: joint.type ?? 'point', bodyA: bodies[index]!, bodyB: bodies[part.parent]!, anchor: [m[12]!, m[13]!, m[14]!], axis: [ax, ay, az],
+                    ...(joint.limits && (joint.type === 'hinge') ? {limits: joint.limits} : {}), ...(joint.coneLimit !== undefined && joint.type !== 'hinge' ? {coneLimit: joint.coneLimit} : {}),
+                };
+                joints.push(this.world.createJoint(options));
+            }
+        } catch (error) {
+            // Only objects from this activation are rolled back. Keep the original refusal.
+            for (const joint of joints) this.world.removeJoint(joint);
+            for (const body of bodies) this.world.removeBody(body);
+            throw error;
         }
-        const rootBody = this.bodies[this.#parts.findIndex(part => part.parent === undefined)]!;
-        rootBody.setAngularVelocity(spin[0]!, spin[1]!, spin[2]!);
-        for (const [index, part] of this.#parts.entries()) {
-            if (part.parent === undefined) continue;
-            const bone = this.#bones[index]!, m = bone.matrixWorld, joint = part.joint ?? {}, axis = joint.axis ?? [0, 1, 0];
-            // The direction is given in the bone's frame; the joint wants it in the world.
-            const ax = m[0]! * axis[0] + m[4]! * axis[1] + m[8]! * axis[2], ay = m[1]! * axis[0] + m[5]! * axis[1] + m[9]! * axis[2], az = m[2]! * axis[0] + m[6]! * axis[1] + m[10]! * axis[2];
-            const options: JointOptions3D = {
-                type: joint.type ?? 'point', bodyA: this.bodies[index]!, bodyB: this.bodies[part.parent]!, anchor: [m[12]!, m[13]!, m[14]!], axis: [ax, ay, az],
-                ...(joint.limits && (joint.type === 'hinge') ? {limits: joint.limits} : {}), ...(joint.coneLimit !== undefined && joint.type !== 'hinge' ? {coneLimit: joint.coneLimit} : {}),
-            };
-            this.joints.push(this.world.createJoint(options));
-        }
+        this.bodies.push(...bodies);
+        this.joints.push(...joints);
+        this.#scales.push(...scales);
     }
     /** Remove the bodies and joints; the bones stay where the bodies left them. */
     deactivate(): void {
         for (const joint of this.joints) this.world.removeJoint(joint);
         for (const body of this.bodies) this.world.removeBody(body);
-        this.joints.length = 0; this.bodies.length = 0;
+        this.joints.length = 0; this.bodies.length = 0; this.#scales.length = 0;
     }
     /** Move each bone to its body. Call after world.step() while active. */
     update(): void {
