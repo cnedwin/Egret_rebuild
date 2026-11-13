@@ -31,6 +31,8 @@ input.open({
 
 [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-input/README.zh-CN.md)绘制了一个面板，含一个单行输入框和一个多行输入框。
 
+使用引擎指针和键盘输入的游戏不必手动打开会话：[`createTextFieldControl`](ui-controls.md#文本框) 保存自绘文本框的文字，并在按下、按键或辅助技术请求时在其上方打开这个输入。
+
 ## 请求
 
 所有长度都用舞台逻辑单位，与显示树和指针位置的单位相同。所有颜色都是 `0xRRGGBB`。

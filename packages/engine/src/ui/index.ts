@@ -10,6 +10,8 @@ export { createHoverControl, createToggleControl, createSelectionGroup } from '.
 export type { HoverControl, HoverControlOptions, ToggleControl, ToggleControlOptions, SelectionItem, SelectionGroup, SelectionGroupOptions } from './stateControls.js';
 export { createScrollControl } from './scrollControl.js';
 export type { ScrollAxis, ScrollControl, ScrollControlOptions, ScrollThumb, ScrollThumbOptions, ScrollWheelOptions } from './scrollControl.js';
+export { createTextFieldControl } from './textFieldControl.js';
+export type { TextFieldChange, TextFieldControl, TextFieldControlOptions, TextFieldEditor, TextFieldRectangle, TextFieldSession } from './textFieldControl.js';
 
 export { createUiLayerManager } from './layers.js';
 export type { UiLayerTarget, UiLayerAnchor, UiLayerManagerOptions, UiLayerOptions, UiLayerRegistration, UiLayerCommitResult, UiLayerSnapshot, UiLayerManager } from './layerTypes.js';

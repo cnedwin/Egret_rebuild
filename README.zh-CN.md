@@ -56,7 +56,7 @@ Years later, as times change and technology advances, many developers continue t
 
 - **面向辅助技术的语义：**`@egret/engine/ui/semantics` 描述游戏所绘的控件，`@egret/engine/web/semantics` 把角色、名称和状态投射到页面，键盘仍属于画布。已对照无头 Chromium 的无障碍树检查，未使用读屏软件验证。见[指南](knowledge-base/Cns/docs/ui-semantics.md)和[示例](examples/ui-controls/README.zh-CN.md)。
 - **悬停与滚轮：**`@egret/engine/web/hover` 告诉游戏鼠标或手写笔正指向哪个显示对象，并把滚轮交给它，与触点输入共用同一个画布。见[指南](knowledge-base/Cns/docs/pointer-hover.md)和[示例](examples/pointer-hover/README.zh-CN.md)。
-- **画布上的文字输入：**`@egret/engine/web/text-input` 把平台文本框盖在舞台的一个矩形上，玩家可以输入中文以及平台能输入的任何文字，2D 和 3D 游戏都适用。见[指南](knowledge-base/Cns/docs/text-input.md)和[示例](examples/text-input/README.zh-CN.md)。
+- **画布上的文字输入：**`@egret/engine/web/text-input` 把平台文本框盖在舞台的一个矩形上，玩家可以输入中文以及平台能输入的任何文字，2D 和 3D 游戏都适用。见[指南](knowledge-base/Cns/docs/text-input.md)和[示例](examples/text-input/README.zh-CN.md)。`@egret/engine/ui` 的 `createTextFieldControl` 保存自绘文本框的文字，并在按下或按键时打开这个输入，见[表单示例](examples/ui-text-field/README.zh-CN.md)。
 - **原生编辑切片：**[单／多行编辑与托管 UI（#89）](https://github.com/cnedwin/Egret_rebuild/issues/89)复用段落几何、焦点及资源生命周期。见[契约](knowledge-base/Cns/docs/native-text-editing.md)、[响应式表单](examples/text-editing/README.zh-CN.md)和[三星 Android 键盘／生命周期观察](knowledge-base/Cns/docs/android-native-text-editing.md)；其他输入法／设备、剪贴板、无障碍及完整工作包继续开放。
 - **集成与动画**。在[可编辑混合示例（#91）](https://github.com/cnedwin/Egret_rebuild/issues/91)上补齐选定功能，或根据[Spine RESET 契约](knowledge-base/Cns/docs/spine-reset-slot.md)与[序列兼容替换契约](knowledge-base/Cns/docs/序列动画RESET替换.md)完善[动画生命周期与 Spine 兼容替换（#86）](https://github.com/cnedwin/Egret_rebuild/issues/86)。
 - **可独立参与**。欢迎授权素材与参考夹具、可复现问题、聚焦代码、翻译和[独立新贡献者演练（#52）](https://github.com/cnedwin/Egret_rebuild/issues/52)。共享输入接口的修改沿用 #89 和 #90，覆盖受影响的桌面和移动端用例。
