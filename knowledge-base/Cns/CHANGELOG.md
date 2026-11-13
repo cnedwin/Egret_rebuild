@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 默认引擎的干净消费者检查 — 2026-11-14
+
+`tools/verify-clean-consumer.mjs` 用固定版本的 pnpm 打包默认引擎的三个包，安装到仓库之外的新工程并在那里使用。未经修改的公开示例可以运行，23 个入口都从已安装的副本解析并加载，最小路线不加载 Web、3D 或可选模块，严格的 TypeScript 消费者可以编译。检查在 Node 中进行。这些包仍未发布，从消费者一侧的浏览器运行、首次可交互和真人演练仍然开放。[指南](docs/clean-consumer.md) · [#93](https://github.com/cnedwin/Egret_rebuild/issues/93)
+
 ## 换装工作室打开工程 — 2026-11-14
 
 换装工作室可在运行中的页面内打开已导出的工程。文件先在当前工程的副本上准入，并作为一次编辑事务写入，角色的稳定 ID 不变。新配色在加载并由 Host 接收期间保留原画面，随后工程、角色和列表一起切换。被拒绝的文件、加载失败或取消都不改变任何东西。新增浏览器验证的 WebGL2 各项已在软件渲染的无头 Chromium 上通过；WebGPU、硬件和手机各项尚未运行。[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) · [换装工作室](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/README.zh-CN.md)
