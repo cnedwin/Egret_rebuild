@@ -18,7 +18,7 @@ M1.4 includes actual WebGL context restoration. M1.5 separately owns unified dev
 
 | Entry | Sole runtime export | Erased exports |
 | --- | --- | --- |
-| `@egret/engine/webgl2` | `createSharedWebGL2Host(options): SharedLayerWebGL2Host` | `SharedWebGL2Host`, `SharedLayerWebGL2Host`, `SharedWebGL2Layer2D`, `SharedWebGL2LayerEffect2D`, `SharedWebGL2LayerPlacement2D`, `SharedWebGL2LayerStatus`, `SharedWebGL2HostOptions`, `SharedWebGL2HostStatus`, `SharedWebGL2Readback`, `WebGL2HostState`, `WebGL2HostErrorCode`, `WebGL2HostFailure`, `WebGL2HostDiagnostic`, `WebGL2HostStatus` |
+| `@egret/engine/webgl2` | `createSharedWebGL2Host(options): SharedLayerWebGL2Host` | `SharedWebGL2Host`, `SharedLayerWebGL2Host`, `SharedWebGL2Layer2D`, `SharedWebGL2LayerEffect2D`, `SharedWebGL2LayerPlacement2D`, `SharedWebGL2LayerStatus`, `SharedWebGL2HostOptions`, `SharedWebGL2HostStatus`, `SharedWebGL2Readback`, `SharedWebGL2FrameTiming`, `SharedWebGL2TimingPhase`, `SharedWebGL2TimingSample`, `WebGL2HostState`, `WebGL2HostErrorCode`, `WebGL2HostFailure`, `WebGL2HostDiagnostic`, `WebGL2HostStatus` |
 | `@egret/engine/webgl2/scene3d` | `createSharedSceneWebGL2Host(options): SharedSceneWebGL2Host` | `SharedSceneWebGL2Host`, `SharedSceneWebGL2HostOptions` |
 
 The default Engine, Canvas and existing WebGPU entries keep their interfaces. Ordinary GL does not load the optional scene assembly. Scene assembly is fixed first-party code, never a caller-provided protocol.
@@ -31,6 +31,16 @@ The default Engine, Canvas and existing WebGPU entries keep their interfaces. Or
 - `requestReadback(): Promise<SharedWebGL2Readback>`, `getStatus(): WebGL2HostStatus`, `getSharedStatus(): SharedWebGL2HostStatus`.
 
 It has no `renderFrame` or `renderTexturedFrame` compatibility method. Existing `createEngineForProfile` negotiates it without a new profile or core branch. The scene Host adds `renderSceneSharedFrame(scene: SceneFrame3D, overlay: SharedRenderFrame2D): undefined` and `getSceneStatus()`, returning immutable `{host, pendingSceneBytes, pendingUniformBytes, pendingDepthBytes}`. Both inputs must be genuine public values; scene output and overlay are opaque.
+
+## Shared-frame CPU timing
+
+Set `measureSharedFrames: true` when creating a WebGL2 host. `getSharedFrameTiming()` returns cumulative per-stage counts, total and maximum elapsed milliseconds, and the latest 2,048 samples in completion order. It returns `null` with the default options. `dropped` counts older samples displaced by the ring. Read snapshots outside the render callback when comparing frame cadence.
+
+The samples distinguish cold texture preparation, native texture writes, working and default framebuffer validation, synchronous native submission, fence polling, completion error queries, record retirement, and the error query after deleting a Sync. Submit and retire include their nested stages. Samples use the host's monotonic clock and carry the context generation. A submitted frame has a serial. Preparation and upload work before submission carries a null serial. These values measure elapsed time on the calling thread. Synchronous queries may include time waiting on browser or driver work.
+
+Within one context generation, the working framebuffer reuses its successful format and completeness proof for the same immutable color texture and optional depth renderbuffer. New attachment objects and context restoration trigger full qualification. Each working bind retains its error check, and the default canvas attachment still qualifies on every resolve. Completion validation and Sync deletion validation retain their separate resource and failure handling.
+
+Cold RGBA8 pages use a fixed 64 KiB lookup shared by both backends. It applies the same alpha cap and sRGB rounding to every byte. The per-page source copy, canonical output and their accounting retain their existing ownership.
 
 ## Cached 2D layers
 

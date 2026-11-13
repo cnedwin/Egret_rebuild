@@ -24,8 +24,8 @@
       "action": "move-pair",
       "previousZhSha256": "ca2be6243c614a900ed12f1b46649155f215a4827e04818e025bad8d03f8af9e",
       "previousEnSha256": "7e72f6245d7c86551dc2640356416b8b06a2d80872f262daf227f98142eac7ae",
-      "currentZhSha256": "eeace2c3fb4b6bd5a09b716e766e247db55f5b7e26250f717245c80bb2c3fc4e",
-      "currentEnSha256": "be58cf5650a44098577efe50b398632e7a5be87335b61c179cb4a2434acf1b5b"
+      "currentZhSha256": "c1a5e09157973f8ea920eba414794b82e924b49be300cdedada40d601a9ca48b",
+      "currentEnSha256": "65b45724d3863604efc9a585439092c7d9d2b5ba52e0efa1d616de133a9deb13"
     },
     {
       "oldZh": "CONTRIBUTING.md",
@@ -964,8 +964,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "ae9aee088b389a79f222cd777c0275a2ef11a8f0d435693174c9ced8e7fcf287",
-      "currentEnSha256": "5f420248728a5e09d2b1dfe8391a64960d5cd81c46bd7974023ca3ef388cd325",
+      "currentZhSha256": "f126e15e998853650417f145602aea4006948bc033cd476e594aa504bb8e707d",
+      "currentEnSha256": "bf015888ee903fda31917f8d9975df31af7e6e10d261fee8571fe62a63625481",
       "currentEngineeringPreview": "0.61.0"
     },
     {
@@ -2046,8 +2046,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "de21cab1ad70c5d9075aa1f233f3a9e141d4633ab95083a92cf57fa972fa41e4",
-      "currentZhSha256": "648ef67062ba75b4a21eaafd3f4cb38e17ad55c729b3aa88e3db208d65d4b970"
+      "currentEnSha256": "989102d7cdf06d61248850af8e4aaa2eb9edbd661e73f651481e27c13d38e3eb",
+      "currentZhSha256": "ca4c23b3c6acabbda44fcb61a4cebd0a90bcb292ae10582dfa4e017c0ee57d21"
     }
   ],
   "registries": [

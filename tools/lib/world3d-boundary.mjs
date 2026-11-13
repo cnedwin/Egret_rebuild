@@ -244,3 +244,26 @@ export const world3dGraphPins = [
   {"path":"packages/engine/web/world3d/webgpu.ts","bytes":2191,"sha256":"b092171cf25351693626b5703f4db1e060cb821941fe04b3809f823b766633d3"},
   {"path":"packages/engine/web/world3d/wgsl3D.ts","bytes":41036,"sha256":"7ee34c0f3dc76e62a075ed69fae8eaec8b9039201d039c11b7c3d93b50548944"},
 ];
+
+const world3dFrameMetricsReplacements = [
+  {"path":"packages/engine/dist/rendering/world3d/Water3D.d.ts","bytes":7299,"sha256":"58444f962dd0b4898ae1a914822b6d38d90f0d9228546e50d57765b3c11acbe4"},
+  {"path":"packages/engine/dist/rendering/world3d/Water3D.js","bytes":26265,"sha256":"ddde5584bf8d09c558683d9d3d1d137be0ddb3f1ce6ca5c07c96bad5b49ca4fe"},
+  {"path":"packages/engine/dist/web/world3d/WebGL2Renderer3D.d.ts","bytes":5126,"sha256":"fe4e552a39b9ada5b88eee6606ddd827b05d9245affe44dc3013609a65906816"},
+  {"path":"packages/engine/dist/web/world3d/WebGL2Renderer3D.js","bytes":58337,"sha256":"53f9d8e973bc3bc57e0358880d9607350be13df1deae2286c4bfa437ef4cca31"},
+  {"path":"packages/engine/dist/web/world3d/index.d.ts","bytes":2198,"sha256":"6bd035ab1707e58b05eafd74b471076451d90f1c1ffb613b9c61a248f33a2674"},
+  {"path":"packages/engine/rendering/world3d/Water3D.ts","bytes":29443,"sha256":"928d7238243bcbfed5c7f278864aabad39d04f13d3abd27223641c103e8d1e18"},
+  {"path":"packages/engine/web/world3d/WebGL2Renderer3D.ts","bytes":59059,"sha256":"a6cde8340097486d86aa5575068914aadc3275d31e84233e188dcd9942edb4bb"},
+  {"path":"packages/engine/web/world3d/index.ts","bytes":2355,"sha256":"346f0fab09a6e7205bd3c3d8bcaec098a06a60f1c68cde5bedba4383fcb62335"},
+];
+const world3dFrameMetricsAdditions = [
+  {"path":"packages/engine/web/world3d/webGL2FrameMetrics3D.ts","bytes":8536,"sha256":"a58b0c7e7f1dda5e18efd3461a2068f2091165e4390932d192c72e4e4b80d04c"},
+  {"path":"packages/engine/dist/web/world3d/webGL2FrameMetrics3D.d.ts","bytes":2665,"sha256":"0d0d663ad09e9acce0cd67fc46f055d60055d53f08d6076141d463322503000b"},
+  {"path":"packages/engine/dist/web/world3d/webGL2FrameMetrics3D.js","bytes":6229,"sha256":"49cc207e690524dc777b6702e43d2aef1b49fecebea0d8513a2a2870407cfa58"},
+];
+
+// Inventory membership selects the whole successor. Callers then authenticate every tuple.
+export function selectWorld3dGraphPins(present) {
+  if (!world3dFrameMetricsAdditions.some(row => present.has(row.path))) return world3dGraphPins;
+  const replacements = new Map(world3dFrameMetricsReplacements.map(row => [row.path, row]));
+  return [...world3dGraphPins.map(row => replacements.get(row.path) ?? row), ...world3dFrameMetricsAdditions];
+}

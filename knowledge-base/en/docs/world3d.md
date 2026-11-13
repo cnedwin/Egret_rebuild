@@ -91,6 +91,24 @@ Output is tone mapped (`none`, `reinhard` or `aces`) and sRGB encoded. Normal an
 
 Both renderers fold repeated meshes into instanced draws by themselves. After sorting, a run of at least eight plain meshes that share a geometry, a material, layers and whether they receive shadows is drawn once, with the members' world matrices as instances; shadow casters are grouped the same way. The meshes in the scene are untouched and stay pickable one by one, a member that moves is picked up on the next frame, and the instance data is uploaded again only when a member changed. Skinned, morphing, mirrored, blended and see-through meshes, sprites and wireframes are drawn on their own as before. `renderer.autoInstancing = false` switches it off. When the same items are visible as in the frame before, their sorted order is kept instead of being sorted again.
 
+### WebGL2 application-frame metrics
+
+Call `measureFrame` around the synchronous render work for one application frame. `PlanarReflection3D` identifies its mirror draw automatically. Direct renders to other targets are reported as offscreen views. `frame.reflections.rendered` counts successful planar reflection renders. `frame.reflections.reused` counts interval skips that keep a prior reflection texture. A reused texture adds no reflection pass or draw calls.
+
+```ts
+const frame = renderer.measureFrame(() => {
+    reflection.render(renderer, scene, camera, plane);
+    renderer.render(scene, camera);
+}, {gpuTiming: true});
+// On a later browser turn:
+renderer.pollFrameTimings();
+console.table(frame.passes);
+```
+
+Totals include the color, shadow, depth prepass, outline mask and post-processing stages (`postprocess`). Submitted triangles include instances and fullscreen draws. Pass sizes describe the render attachments. Post-processing reports the final output size. Shadow passes report the atlas size and the actual edge of each map or cascade. `renderer.info` keeps its per-render semantics.
+
+CPU submission time includes render-list work and driver stalls. Per-stage CPU timing covers operations within that stage. GPU timing is opt-in and asynchronous. Re-read `pass.gpuTime` after polling to see the result or its status. Missing counters report unsupported. Disjoint and lost-context samples are discarded. Sampling is bounded and never waits for the GPU. [WebGL2 timer query specification](https://registry.khronos.org/webgl/extensions/EXT_disjoint_timer_query_webgl2/)
+
 ## Compressed resources
 
 A texture source may be a block-compressed mip chain: `{width, height, format, levels}` with `format` one of `bc1`, `bc3`, `bc7`, `etc2-rgb8`, `etc2-rgba8` or `astc-4x4`. The chain is uploaded as stored, so it stays compressed in GPU memory. `renderer.supportsCompressedFormat(format)` reports what the device accepts; desktop GPUs usually offer BC, mobile GPUs ETC2 and ASTC.
@@ -235,7 +253,7 @@ The mesh is used as given: nothing is voxelized or eroded, so walkable triangles
 
 The retention window is bounded to 256 tile slots and at most 32 loader calls may remain outstanding. A loader must return a field whose width and depth match `tileSize`. Leaving retention retires the request for that slot. An earlier result cannot replace a newer request, and its loader still occupies an outstanding slot until it settles. `pendingCount` includes those retired loaders. `dispose()` retires the stream and releases every tile. `lastFailure` reports the latest loader, preparation or lifecycle failure with tile coordinates and phase.
 
-Water reads the depth of the solid scene behind it: the view through it darkens toward `deepColor` over `depthFade`, a broken band of foam `foamWidth` deep runs along shores, and `caustics` draws moving light on the bottom of shallow water. The underside is drawn, and `water.updateUnderwater(scene, camera)` gives the scene thick fog in the water's color while the camera is below the waves. The mirror image is the costly part; `reflection.interval` draws it on every Nth frame, `reflection.shadows = false` leaves shadows out of it, `reflection.layerMask` leaves objects out, and it is always drawn without post-processing.
+Water reads the depth of the solid scene behind it: the view through it darkens toward `deepColor` over `depthFade`, a broken band of foam `foamWidth` deep runs along shores, and `caustics` draws moving light on the bottom of shallow water. The underside is drawn, and `water.updateUnderwater(scene, camera)` gives the scene thick fog in the water's color while the camera is below the waves. The mirror image is the costly part; `reflection.interval` draws it on every Nth frame, `reflection.shadows = false` leaves shadows out of it, `reflection.layerMask` leaves objects out, and it is always drawn without post-processing. WebGL2 keeps a separate 1×1 depth texture for a pass without shadows. Once both modes have rendered, switching between them reuses that texture and the full atlas for the lifetime of the context.
 
 The mirror reuses a successful image only for the same renderer, scene and render-target version. A failed draw is retried on the next valid call. Temporary shadow, visibility and post-processing settings are restored after the draw or a failure. Underwater classification uses the horizontal wave height, including beyond the rendered mesh edges. Each scene accepts one water fog override at a time. The owner releases it on exit, scene change or disposal. A later scene fog edit takes precedence, and another water node can acquire the override on its next update once the owner releases it.
 

@@ -12,6 +12,8 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+**浏览器试玩。** 体验用新白鹭引擎制作的游戏，合集内提供在线试玩链接。 [游戏试玩合集](https://github.com/cnedwin/PortedGamesEgret)
+
 ## 当前白鹭引擎
 
 白鹭是面向 Web 游戏的开源 TypeScript 引擎。显示、事件与资源接口配合 WebGPU 和 WebGL2 共享渲染，支持 2D 动画与复杂界面。可选 World3D 提供独立 3D 渲染与物理。一体化 AI 辅助创作及更多原生和小游戏宿主已列入路线图。 [World3D 契约](knowledge-base/Cns/docs/world3d.md)

@@ -6,6 +6,13 @@ export function encodeSharedSRGB(value: number): number { return value <= 0.0031
 const caps = Object.freeze(Array.from({ length: 256 }, (_, alpha) => {
     let code = 0; while (code < 255 && decodeSharedSRGB((code + 1) / 255) <= alpha / 255) code++; return code;
 }));
+// All alpha and channel inputs are bytes. Precompute the exact scalar rule once.
+const premultipliedSrgb = new Uint8Array(256 * 256);
+for (let alpha = 0; alpha < 256; alpha++) {
+    const a = alpha / 255, cap = caps[alpha]!;
+    for (let code = 0; code < 256; code++) premultipliedSrgb[(alpha << 8) | code] = Math.min(cap,
+        Math.floor(255 * encodeSharedSRGB(a * decodeSharedSRGB(code / 255)) + 0.5));
+}
 /** Plain Host-owned observation only; no allocator, callback or resource authority. */
 export interface SharedPageCopyDiagnostics2D {
     canonicalBytes:number; scratchBytes:number;
@@ -27,9 +34,10 @@ export function copySharedPagePixels(image: ImageData2D, diagnostics?:SharedPage
         output=new Uint8Array(source.byteLength);
         if(diagnostics){diagnostics.canonicalBytes+=output.byteLength;sampleCopy(diagnostics);}
         for (let offset = 0; offset < source.length; offset += 4) {
-            const alpha = source[offset + 3]!, a = alpha / 255, cap = caps[alpha]!;
-            for (let channel = 0; channel < 3; channel++) output[offset + channel] = Math.min(cap,
-                Math.floor(255 * encodeSharedSRGB(a * decodeSharedSRGB(source[offset + channel]! / 255)) + 0.5));
+            const alpha = source[offset + 3]!, row = alpha << 8;
+            output[offset] = premultipliedSrgb[row | source[offset]!]!;
+            output[offset + 1] = premultipliedSrgb[row | source[offset + 1]!]!;
+            output[offset + 2] = premultipliedSrgb[row | source[offset + 2]!]!;
             output[offset + 3] = alpha;
         }
         return output;

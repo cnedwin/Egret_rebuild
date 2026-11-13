@@ -89,6 +89,24 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 两个渲染器都会自动把重复的网格合并成实例化绘制。排序之后，连续至少八个共享几何体、材质、层以及是否接收阴影的普通网格只绘制一次，各成员的世界矩阵作为实例；投射阴影的网格也按同样方式分组。场景中的网格本身不变，仍可逐个拾取；成员移动后下一帧即生效，只有成员发生变化时才重新上传实例数据。蒙皮、变形、镜像、混合和透射的网格，以及精灵和线框，仍然像以前一样单独绘制。`renderer.autoInstancing = false` 可以关闭它。当可见的绘制项与上一帧相同时，沿用上一帧的排序结果而不再排序。
 
+### WebGL2 应用帧统计
+
+用 `measureFrame` 包裹一帧应用的同步渲染操作。`PlanarReflection3D` 自动标记镜像绘制。直接绘制到其他渲染目标会记为离屏视图。`frame.reflections.rendered` 统计成功的平面反射绘制，`frame.reflections.reused` 统计因更新间隔而复用上一张纹理的次数。复用帧不增加反射通道或绘制次数。
+
+```ts
+const frame = renderer.measureFrame(() => {
+    reflection.render(renderer, scene, camera, plane);
+    renderer.render(scene, camera);
+}, {gpuTiming: true});
+// 在浏览器后续轮次读取。
+renderer.pollFrameTimings();
+console.table(frame.passes);
+```
+
+总数汇总颜色、阴影、深度预通道、轮廓遮罩和后处理（`postprocess`）阶段。提交的三角形包含实例倍数和全屏绘制。阶段尺寸对应渲染附件，后处理记录最终输出尺寸。阴影阶段提供图集尺寸，以及每张阴影图或级联实际使用的边长。`renderer.info` 保留原有单次渲染的统计口径。
+
+CPU 提交耗时包含渲染列表处理和驱动等待。分阶段 CPU 耗时只统计各阶段内部操作。GPU 计时需显式启用，查询异步完成。轮询后重新读取 `pass.gpuTime` 可获得结果或状态。缺少计时计数器时返回不支持。计时失效和上下文丢失的样本会被丢弃。采样有数量上限，且不会等待 GPU 完成。 [WebGL2 计时查询规范](https://registry.khronos.org/webgl/extensions/EXT_disjoint_timer_query_webgl2/)
+
 ## 压缩资源
 
 纹理源可以是块压缩的多级链：`{width, height, format, levels}`，`format` 为 `bc1`、`bc3`、`bc7`、`etc2-rgb8`、`etc2-rgba8` 或 `astc-4x4`。数据按存储的样子上传，在显存中保持压缩。`renderer.supportsCompressedFormat(format)` 报告设备是否接受某种格式；桌面 GPU 通常提供 BC，移动 GPU 提供 ETC2 和 ASTC。
@@ -235,7 +253,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 地块保留窗口最多覆盖 256 个地块位置，同时最多等待 32 次加载。加载器返回的高度场宽度和深度必须与 `tileSize` 一致。离开保留范围会结束对应位置的请求。旧结果无法覆盖新请求，但旧加载器在结束前仍占用等待额度，计入 `pendingCount`。`dispose()` 结束流式地形并释放所有地块。`lastFailure` 记录最近一次加载、准备或生命周期失败，包含地块坐标和阶段。
 
-水面会读取其后方实体场景的深度：透过水看到的景物在 `depthFade` 的深度内逐渐变暗为 `deepColor`，岸边有一条深度为 `foamWidth` 的断续泡沫带，`caustics` 在浅水底部绘制流动的光纹。水面的背面也会绘制；相机位于波浪之下时，`water.updateUnderwater(scene, camera)` 给场景加上水色的浓雾。镜像是其中开销最大的部分：`reflection.interval` 每隔 N 帧才绘制一次，`reflection.shadows = false` 让镜像不含阴影，`reflection.layerMask` 让部分物体不进入镜像，而且镜像始终不做后处理。
+水面会读取其后方实体场景的深度：透过水看到的景物在 `depthFade` 的深度内逐渐变暗为 `deepColor`，岸边有一条深度为 `foamWidth` 的断续泡沫带，`caustics` 在浅水底部绘制流动的光纹。水面的背面也会绘制；相机位于波浪之下时，`water.updateUnderwater(scene, camera)` 给场景加上水色的浓雾。镜像是其中开销最大的部分：`reflection.interval` 每隔 N 帧才绘制一次，`reflection.shadows = false` 让镜像不含阴影，`reflection.layerMask` 让部分物体不进入镜像，而且镜像始终不做后处理。WebGL2 为无阴影的通道单独保留一张 1×1 深度纹理。两种模式都绘制过以后，同一上下文内切换模式时会复用这张纹理和完整的阴影图集。
 
 镜像仅在渲染器、场景及渲染目标版本一致时复用上次成功绘制的图像。绘制失败后，下一次有效调用会重试。绘制结束或失败时会恢复临时修改的阴影、可见性与后处理设置。水下判定使用水平波面高度，采样范围延伸至可见网格之外。每个场景同时只接受一个水面节点的雾效覆盖。所有者离开水下、切换场景或释放时撤回覆盖。场景随后设置的雾效优先生效，其他水面节点可在所有者撤回后通过下一次更新取得覆盖权。
 

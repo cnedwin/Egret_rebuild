@@ -12,6 +12,8 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+**Play in your browser.** Explore games built with the new Egret Engine. The collection includes links to play online. [Game demos](https://github.com/cnedwin/PortedGamesEgret)
+
 ## Egret today
 
 Egret is an open-source TypeScript engine for Web games. The display, event and resource APIs support 2D animation and complex interfaces through shared WebGPU and WebGL2 rendering. Optional World3D adds standalone 3D rendering and physics. The roadmap includes integrated AI-assisted creation and additional native and mini-game hosts. [World3D contract](knowledge-base/en/docs/world3d.md)

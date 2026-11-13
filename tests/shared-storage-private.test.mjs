@@ -9,6 +9,7 @@ import {
   SharedStorageError2D, planSharedStorageFees2D, withSharedReadbackLayout2D,
   checkSharedCapacity2D, materializeSharedPages2D,
 } from '../packages/engine/dist/web/sharedSubmissionStorage2D.js';
+import { canonicalPage } from '../tools/shared-rendering/oracle.mjs';
 import * as gpu from '../packages/engine/dist/web/prepareSharedSubmission2D.js';
 
 const MiB=1024*1024;
@@ -140,4 +141,18 @@ test('UNIT SST09 pending pages and conversion memory are twice the frame page bu
     assert.doesNotThrow(()=>checkSharedCapacity2D(s,owner(),cap-8,8));
     assert.throws(()=>checkSharedCapacity2D(s,owner(),cap-8,9),reason('budget'));
   }
+});
+
+test('UNIT cold page materialization matches the scalar reference for every alpha and channel byte',()=>{
+  const width=256,height=256,pixels=new Uint8Array(width*height*4);
+  for(let alpha=0;alpha<height;alpha++)for(let code=0;code<width;code++){
+    const offset=4*(alpha*width+code);
+    pixels.set([code,255-code,(code+97)&255,alpha],offset);
+  }
+  const image=createImageData2D({width,height,pixels}),bytes=image.byteLength;
+  const storage={...tight(),projectionPlan:{views:[{image,region:{x:0,y:0,width,height},byteLength:bytes}],
+    commandViews:[],projectionBytes:bytes,scratchBytes:bytes}};
+  const result=materializeSharedPages2D(storage,new Set([0]),owner());
+  assert.equal(result.canonicalBytes,bytes);
+  assert.deepEqual(result.projections[0],canonicalPage(width,height,pixels).bytes);
 });

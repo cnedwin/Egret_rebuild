@@ -19,6 +19,8 @@ export interface SharedWebGL2Configuration extends SharedPreparationOptions2D, S
 export interface SharedWebGL2HostOptions extends Partial<SharedWebGL2Configuration> {
     readonly canvas: HTMLCanvasElement;
     readonly onDiagnostic?: (diagnostic: WebGL2HostDiagnostic) => unknown;
+    /** Collect bounded CPU elapsed timings for shared frames. Defaults to false. */
+    readonly measureSharedFrames?: boolean;
 }
 
 const DEFAULTS: SharedWebGL2Configuration = Object.freeze({
@@ -35,7 +37,7 @@ const KEYS = ['canvas', 'onDiagnostic', 'pixelRatio', 'maxBackingPixels', 'maxCo
     'maxClipRectangles', 'maxPreparedVertices', 'maxClipEdgeTests', 'maxUploadBytes',
     'maxPendingUploadBytes', 'maxPendingFrames', 'maxReadbackBytes', 'enableReadback',
     'maxSourceTriangles', 'maxFrameGeometryBytes', 'maxPendingGeometryBytes',
-    'maxTupleComparisons', 'enableEffects', 'outputAlpha', 'restoreTimeoutMs',
+    'maxTupleComparisons', 'enableEffects', 'outputAlpha', 'restoreTimeoutMs', 'measureSharedFrames',
     'maxFrameRegions', 'maxFramePageBytes', 'maxReadyPageBytes'] as const;
 function object(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null;
@@ -46,12 +48,14 @@ export function admitSharedWebGL2Options(input: SharedWebGL2HostOptions): {
     surface: HTMLCanvasElement;
     configuration: SharedWebGL2Configuration;
     callback: ((diagnostic: WebGL2HostDiagnostic) => unknown) | undefined;
+    measureSharedFrames: boolean;
 } {
     if (!object(input)) throw new TypeError('options');
     const captured = {} as Record<typeof KEYS[number], unknown>;
     for (const key of KEYS) captured[key] = input[key];
     if (!object(captured.canvas)) throw new TypeError('canvas');
     if (captured.onDiagnostic !== undefined && typeof captured.onDiagnostic !== 'function') throw new TypeError('diagnostic callback');
+    if (captured.measureSharedFrames !== undefined && typeof captured.measureSharedFrames !== 'boolean') throw new TypeError('measureSharedFrames');
     const configuration = {} as SharedWebGL2Configuration;
     for (const key of Object.keys(DEFAULTS) as (keyof SharedWebGL2Configuration)[]) {
         const value = captured[key] === undefined ? DEFAULTS[key] : captured[key];
@@ -70,5 +74,6 @@ export function admitSharedWebGL2Options(input: SharedWebGL2HostOptions): {
         surface: captured.canvas as unknown as HTMLCanvasElement,
         configuration: Object.freeze(configuration),
         callback: captured.onDiagnostic as ((diagnostic: WebGL2HostDiagnostic) => unknown) | undefined,
+        measureSharedFrames: captured.measureSharedFrames === true,
     };
 }

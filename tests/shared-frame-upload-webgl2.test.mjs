@@ -511,3 +511,33 @@ test('GLH05 controlled loss before fence rejection invalidates only still-known 
   const ledger = f.host.getSharedStatus().retention;
   assert.equal(ledger.unknownBytes,0); assert.equal(ledger.unknownNativeBytes,0); assert.equal(ledger.unknownNativeObjects,0);
 }));
+
+
+test('SharedFrame2D CPU timings observe ordinary and staged work without changing its lifecycle', async () => hosted(async f => {
+  const before = f.host.getSharedFrameTiming();
+  await f.images(1);
+  const frame = f.frame();
+  f.host.renderSharedFrame(frame); await f.host.whenIdle();
+  const first = f.host.getSharedFrameTiming();
+  assert.ok(first);
+  assert.ok(first.totals['texture-prepare'].count > 0);
+  assert.ok(first.totals['texture-upload'].count > 0);
+  assert.equal(first.totals['working-framebuffer-validation'].count, before.totals['working-framebuffer-validation'].count);
+  assert.equal(first.totals['default-framebuffer-validation'].count, before.totals['default-framebuffer-validation'].count + 1);
+  assert.equal(first.totals.submit.count - before.totals.submit.count, 1);
+  assert.equal(first.totals.retire.count - before.totals.retire.count, 1);
+  assert.equal(first.totals['sync-delete-error-query'].count - before.totals['sync-delete-error-query'].count, 1);
+  assert.ok(first.recent.slice(before.recent.length).every(row => row.generation === 1 && (row.serial === 2 || (row.phase === 'texture-prepare' && row.serial === null)) && row.durationMs >= 0));
+  assert.ok(Object.isFrozen(first.recent) && Object.isFrozen(first.recent[0]));
+  const uploaded = f.stage(frame); await uploaded.ready; await uploaded.submit().completed; await f.host.whenIdle();
+  const second = f.host.getSharedFrameTiming();
+  assert.equal(first.totals.submit.count - before.totals.submit.count, 1);
+  assert.equal(second.totals.submit.count - first.totals.submit.count, 1);
+  assert.ok(second.recent.some(row => row.phase === 'retire' && row.serial === 3));
+  assert.ok(second.recent.some(row => row.phase === 'completion-error-query' && row.serial === null));
+}, {options:{measureSharedFrames:true}}));
+
+test('SharedFrame2D timing is disabled by default', async () => hosted(async f => {
+  f.host.renderSharedFrame(f.frame()); await f.host.whenIdle();
+  assert.equal(f.host.getSharedFrameTiming(), null);
+}));
