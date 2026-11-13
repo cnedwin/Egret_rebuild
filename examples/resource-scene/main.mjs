@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { createAssetRef, EgretError } from '@egret/engine';
-import { createCanvasHost } from '@egret/engine/web';
+import { chooseBackend, loadExampleHostFactory } from '../host.mjs';
 import { createBrowserTextureProvider } from '@egret/engine/web/image';
 import { createCanvasTextRasterProvider } from '@egret/engine/web/text';
 import { createMouseInput } from '@egret/engine/web/input';
@@ -8,7 +8,8 @@ import { createResourceSceneSession } from './session.mjs';
 
 const WIDTH = 192, HEIGHT = 128;
 const IDS = Object.freeze(['pilot-left', 'pilot-right']);
-const profile = new URL(location.href).searchParams.get('profile') ?? 'canvas-2d';
+const profile = new URL(location.href).searchParams.get('profile') ?? 'shared-2d';
+const backend = chooseBackend(), createHost = await loadExampleHostFactory(backend);
 const element = id => document.getElementById(id);
 const trace = [], faults = [], epochs = [], replays = [];
 const imagePins = new Map([
@@ -169,17 +170,23 @@ function observeProvider(record, provider) {
     },
   });
 }
-function makeHost(canvas) { return createCanvasHost({ canvas, pixelRatio: 1 }); }
+function makeHost(canvas) {
+  return createHost({ canvas, pixelRatio: 1, enableReadback: true,
+    onDiagnostic(value) { observe('host-diagnostic', { code: value.code, phase: value.phase }); } });
+}
 async function draw(record, label, overlay) {
   const row = { id: ++nextPresentation, epoch: record.epoch ?? null, hostId: record.hostId, label, outcome: 'pending',
     frameId: overlay.frameId, serial: null, readback: 'not-requested', idle: false, error: undefined, promise: undefined };
   record.presentations.push(row); observe('frame-submitted', { epoch: row.epoch, id: row.id, label });
   try {
-    record.host.renderFrame(overlay);
-    const result = record.canvas.getContext('2d').getImageData(0, 0, WIDTH, HEIGHT);
-    lastPixels = { label, epoch: row.epoch, hostId: row.hostId, frameId: overlay.frameId, serial: null,
-      width: result.width, height: result.height, bytes: new Uint8Array(result.data) };
-    row.idle = true;
+    const original = record.host.requestReadback(); row.promise = original; row.readback = 'pending';
+    // Observe rejection even if the synchronous renderer refuses the frame.
+    void original.catch(() => undefined);
+    record.host.renderSharedFrame(overlay);
+    const result = await original; row.readback = 'fulfilled'; row.serial = result.serial;
+    await record.host.whenIdle(); row.idle = true;
+    lastPixels = { label, epoch: row.epoch, hostId: row.hostId, frameId: result.frameId, serial: result.serial,
+      width: result.width, height: result.height, bytes: new Uint8Array(result.bytes) };
     row.outcome = 'fulfilled'; observe('frame-ready', { epoch: row.epoch, id: row.id, label });
   } catch (cause) { row.outcome = 'rejected'; row.error = errorView(cause); throw cause; }
 }
@@ -263,7 +270,7 @@ function releaseWarm(lease) {
 }
 async function initialize(record, label) {
   try {
-    if (profile !== 'canvas-2d') throw fault('RESOURCE_SCENE_PROFILE_UNSUPPORTED');
+    if (profile !== 'shared-2d') throw fault('RESOURCE_SCENE_PROFILE_UNSUPPORTED');
     await prepareFonts(record); assertStarting(record);
     record.host = makeHost(record.canvas);
     record.provider = createBrowserTextureProvider({ readBytes(ref, context) { return readImage(record, ref, context); } });
@@ -437,7 +444,7 @@ function epochView(record) {
     cleanup: record.cleanup.map(row => ({ operation: row.operation, error: errorView(row.cause) })) };
 }
 function inspect() {
-  return { state, profile, currentEpoch: current?.epoch ?? null, traceExhausted: trace.length >= 256,
+  return { state, profile, backend, currentEpoch: current?.epoch ?? null, traceExhausted: trace.length >= 256,
     hasSavedBaseline: savedBaseline !== undefined, selectedId: current?.session?.inspect().selectedId ?? retainedModel?.selectedId ?? IDS[0],
     epochs: epochs.map(epochView), replays: replays.map(record => ({ hostId: record.hostId, safeSurface: record.safeSurface, hostStatus: null,
       presentations: record.presentations.map(({ promise, ...row }) => ({ ...row })), cleanup: record.cleanup.map(value => errorView(value)) })),

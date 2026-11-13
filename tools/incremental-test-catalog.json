@@ -151,37 +151,6 @@
     },
     {
       "file": {
-        "path": "tests/atlas-frame-boundary.test.mjs",
-        "bytes": 10899,
-        "sha256": "75bec637d97ab3537018968f43bb6952b3d8e2c4030b7dd0078a22255a204f93"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/atlas-frame-capture.test.mjs",
-        "bytes": 5021,
-        "sha256": "41b4d5e6cb0a670649ae01653f35508c7ae20d7a5b8ecef263dc049371102c44"
-      },
-      "packages": [
-        "engine"
-      ],
-      "support": [
-        {
-          "path": "tests/atlas-frame-fixture.mjs",
-          "bytes": 1412,
-          "sha256": "e8ac6b0a721a05a4521104b7de2fe14e23d46227cd2f6b12031e6e513e7f6237"
-        },
-        {
-          "path": "tests/helpers.mjs",
-          "bytes": 997,
-          "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
-        }
-      ]
-    },
-    {
-      "file": {
         "path": "tests/atlas-frame-heldout.test.mjs",
         "bytes": 14329,
         "sha256": "e78212078d29fb69554ad05a1a62272b6088f409a96cfed722a0a68d4e22c0d5"
@@ -196,15 +165,6 @@
           "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
         }
       ]
-    },
-    {
-      "file": {
-        "path": "tests/atlas-frame-native-source.test.mjs",
-        "bytes": 5697,
-        "sha256": "dd25142f51db55a1ee0a4f94c19d3e89d8851cdd6c0d3bb914bf9e0523387d90"
-      },
-      "packages": null,
-      "support": []
     },
     {
       "file": {
@@ -582,15 +542,6 @@
     },
     {
       "file": {
-        "path": "tests/browser-png-native-observer.test.mjs",
-        "bytes": 25393,
-        "sha256": "87a99a0bd9a0156bf62656e4549287d6e969a360b23156a3421ce0f8e276de32"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/browser-png-terminal-retirement.test.mjs",
         "bytes": 5630,
         "sha256": "3472bf3e2f43f0c7e75aceb4ac8ebf5b8e351685dac9573b5af44a2d8b984679"
@@ -693,33 +644,6 @@
           "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
         }
       ]
-    },
-    {
-      "file": {
-        "path": "tests/canvas-host.test.mjs",
-        "bytes": 8067,
-        "sha256": "91a83b4004d13822b54b6fab2cd9332b247c176c83204bd78db7a4d11a5ba46f"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/canvas-image-host.test.mjs",
-        "bytes": 34348,
-        "sha256": "74c4a08871dd7a27ef8cc62f369a944842f96bb6a6a7d32134d77804eb74809f"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/canvas-text-canvas-verifier.test.mjs",
-        "bytes": 10939,
-        "sha256": "8625566574c064e5ff3d01b3e126aec72110ecaea1a4b81829e9d47d30ec3875"
-      },
-      "packages": null,
-      "support": []
     },
     {
       "file": {
@@ -992,15 +916,6 @@
     },
     {
       "file": {
-        "path": "tests/hit-test-canvas-verifier.test.mjs",
-        "bytes": 17974,
-        "sha256": "44430e9798c6ad698c756cdccdd824a5ac6f4fdac66e0a4d2359cfff49261b8c"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/hit-test-scene.test.mjs",
         "bytes": 17844,
         "sha256": "5bacf3815ce8b2a76f170070cfb3e0b1bd3d5a3392ffa2c87526d3b039417d31"
@@ -1024,33 +939,6 @@
         "path": "tests/image-data-2d.test.mjs",
         "bytes": 8765,
         "sha256": "98c9d33f1befdf21f8b5fa0343c566c8c332e74493ada387e7aa680fcbbbd84e"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/incremental-frame-cache-private.test.mjs",
-        "bytes": 17261,
-        "sha256": "23c0e601c77a8a053bc706213328321c25cd90edeaa7adb9e117023b731b4349"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/incremental-frame-capture.test.mjs",
-        "bytes": 29613,
-        "sha256": "bd97c27582cca96c3c44bfe57e5d7ed5c7fa5ee13475447e633a53bbef35dfe7"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/incremental-rendering-tool.test.mjs",
-        "bytes": 60127,
-        "sha256": "cca2fdf1820f2b94da25e43c4329d1b82eda94390129d94441c09d1e4aecad8f"
       },
       "packages": null,
       "support": []
@@ -1158,32 +1046,6 @@
           "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
         }
       ]
-    },
-    {
-      "file": {
-        "path": "tests/mesh-legacy-capture.test.mjs",
-        "bytes": 10402,
-        "sha256": "4aec04fba77bc89675de9fb70efef4b6afa32e12dc500e094f26220649ff54f6"
-      },
-      "packages": [
-        "engine"
-      ],
-      "support": [
-        {
-          "path": "tests/helpers.mjs",
-          "bytes": 997,
-          "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
-        }
-      ]
-    },
-    {
-      "file": {
-        "path": "tests/mouse-input-canvas-verifier.test.mjs",
-        "bytes": 13243,
-        "sha256": "e62f0ceeef954ee494adf696512366d0ad386a5c2b294c6f1b8f1069183f97ae"
-      },
-      "packages": null,
-      "support": []
     },
     {
       "file": {
@@ -1445,24 +1307,6 @@
         "path": "tests/resource-scene-assets.test.mjs",
         "bytes": 13012,
         "sha256": "a6b27c8c4c833ffdb2ca2af12c1a34998dc552522dd657ad2d8dacaea8f59b2b"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/resource-scene-boundary.test.mjs",
-        "bytes": 9136,
-        "sha256": "d4f55e13c7b67461220ebbe121d13c60e279d75322f24b6da01daa690542621a"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/resource-scene-browser-source.test.mjs",
-        "bytes": 7638,
-        "sha256": "afb5953d3c53aa3e20f610623c6aea636cee110b7d2d9c8faf99461dc00b11b5"
       },
       "packages": null,
       "support": []
@@ -2013,15 +1857,6 @@
     },
     {
       "file": {
-        "path": "tests/texture-frame-types.test.mjs",
-        "bytes": 5065,
-        "sha256": "44be1b34ad26f280de612c22762b41f4a686234ed8a659dc191576eb0f899b48"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/texture-intrinsics.test.mjs",
         "bytes": 1402,
         "sha256": "b0a8cbfe6f3b1320ec2bc743e321e0c7ad9bc1e7286f3ec46f2a80d0d0573148"
@@ -2042,55 +1877,9 @@
     },
     {
       "file": {
-        "path": "tests/textured-frame-capture.test.mjs",
-        "bytes": 34129,
-        "sha256": "e9070c7f8baee838c68bbbe177f5ffbc844e2cc29ca4c79215a405cb97db58b2"
-      },
-      "packages": [
-        "engine"
-      ],
-      "support": [
-        {
-          "path": "tests/helpers.mjs",
-          "bytes": 997,
-          "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
-        }
-      ]
-    },
-    {
-      "file": {
-        "path": "tests/textured-frame-contracts.test.mjs",
-        "bytes": 644,
-        "sha256": "60653ff2e7ca1c575a1685d78126288264dd559fddc5585d62e9ab6bb0b0a69b"
-      },
-      "packages": [
-        "engine"
-      ],
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/textured-geometry-2d.test.mjs",
         "bytes": 27604,
         "sha256": "2e5079c8537f3d91b378646a0b24dfb04f53016b2c64092d27737d8c3f49753f"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/textured-native-oracle.test.mjs",
-        "bytes": 7860,
-        "sha256": "fb50f11a7a591c99f63b33aadaa0527f0ff22878298208633c55d279117b85f2"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/textured-profile-engine.test.mjs",
-        "bytes": 32600,
-        "sha256": "603fa81b2da8cd2add961367a28e8d93e46ce5c0afc5029011e5a2a8c5bf8f81"
       },
       "packages": null,
       "support": []

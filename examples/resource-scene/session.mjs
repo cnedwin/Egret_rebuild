@@ -39,7 +39,7 @@ function restoreModel(input) {
 
 /** Resource readiness and immutable captures are separate from Host presentation. */
 export function createResourceSceneSession(options) {
-  choice(options.profile, ['canvas-2d'], 'RESOURCE_SCENE_PROFILE_UNSUPPORTED');
+  choice(options.profile, ['shared-2d'], 'RESOURCE_SCENE_PROFILE_UNSUPPORTED');
   const model = restoreModel(options.restore);
   const families = { ahem: options.fontFamilies?.ahem, cjk: options.fontFamilies?.cjk };
   if (Object.values(families).some(value => typeof value !== 'string' || !value)) throw failure('RESOURCE_SCENE_FONT_REQUIRED');
@@ -334,7 +334,7 @@ export function createResourceSceneSession(options) {
       record.root.clipRect = value.clip ? { x: 0, y: 0, width: 8, height: 16 } : undefined;
       record.root.rotation = value.rotation;
     },
-    capture() { assertOpen(); return engine.captureFrame(FRAME); },
+    capture() { assertOpen(); return engine.captureSharedFrame(FRAME); },
     snapshot() {
       const result = { version: 1, selectedId: model.selectedId, actors: {} };
       for (const id of IDS) result.actors[id] = Object.freeze({ ...model.actors[id] });

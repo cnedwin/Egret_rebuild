@@ -53,7 +53,7 @@ function isolated(action){
 // Source/emission controls only; these are not fake numeric-state behavior tests.
 test('TW10 actual public roots have no executable Tween values factories owners or brands',async()=>{
   // Retained contracts public-root route has no repository consumer alias.
-  for(const specifier of ['../packages/contracts/dist/index.js','@egret/runtime','@egret/engine','@egret/engine/web','@egret/engine/webgpu','@egret/engine/text','@egret/runtime/text','@egret/project']){
+  for(const specifier of ['../packages/contracts/dist/index.js','@egret/runtime','@egret/engine','@egret/engine/webgl2','@egret/engine/webgpu','@egret/engine/text','@egret/runtime/text','@egret/project']){
     const values=await import(specifier);
     for(const name of ['Tween','TweenState','TweenOptions','TweenEasing','createTweenOwner','TweenContext','TweenOwner','tweenBrand','createTween'])assert.equal(Object.hasOwn(values,name),false,specifier+': '+name);
   }
@@ -63,7 +63,7 @@ test('TW10 genuine four-package baseline passes the exact production checker',t=
 }));
 const mutations=[
   ['owner-factory','packages/engine/dist/index.d.ts',raw=>raw+"\nexport {createTweenOwner} from './tween.js';\n",'root: private Tween authority leaked: createTweenOwner'],
-  ['owner-context','packages/engine/dist/web/index.d.ts',raw=>raw+'\nexport interface TweenContext {}\n','web: private Tween authority leaked: TweenContext'],
+  ['owner-context','packages/engine/dist/web/resources.d.ts',raw=>raw+'\nexport interface TweenContext {}\n','engine/web/resources: private Tween authority leaked: TweenContext'],
   ['owner-type','packages/runtime/dist/index.d.ts',raw=>raw+'\nexport interface TweenOwner {}\n','runtime: private Tween authority leaked: TweenOwner'],
   ['aliased-private-module','packages/engine/dist/index.d.ts',raw=>raw+"\nexport type * as EscapedTween from './tween.js';\n",'root: private Tween module leaked'],
   ['brand-facade','packages/engine/dist/text.d.ts',raw=>raw+'\nexport declare const tweenBrand: unique symbol;\n','engine/text: exact text declaration surface mismatch'],

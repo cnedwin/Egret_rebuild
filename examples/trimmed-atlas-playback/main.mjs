@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
-import { createCanvasHost } from '@egret/engine/web';
+import { createExampleHost } from '../host.mjs';
 import { decodeAtlasPng } from './image.mjs';
 import { createAtlasFrameSession } from './session.mjs';
 const canvas=document.querySelector('#scene'),status=document.querySelector('#status');
-const host=createCanvasHost({canvas,pixelRatio:1});
+const host=await createExampleHost({canvas,pixelRatio:1});
 let session,source=0;
 try {
-  const {image}=await decodeAtlasPng();session=await createAtlasFrameSession({host,profile:'canvas-2d',image});
-  const draw=()=>{host.renderFrame(session.capture());status.textContent=JSON.stringify(session.inspect(),null,2);};
+  const {image}=await decodeAtlasPng();session=await createAtlasFrameSession({host,profile:'shared-2d',image});
+  const draw=()=>{host.renderSharedFrame(session.capture());status.textContent=JSON.stringify(session.inspect(),null,2);};
   draw();
   document.querySelector('#start').onclick=()=>{for(const actor of Object.values(session.actors))if(actor.playback.state==='idle')actor.playback.start();draw();};
   document.querySelector('#step').onclick=()=>{source+=.0625;session.advanceTo(source);draw();};

@@ -108,8 +108,8 @@ test('close in the completion microtask awaits terminal retirement',async()=>{
  test('real Engine startup preserves cause classification only after successful cleanup',async()=>{
  const {createEngineForProfile,EgretError}=await import('@egret/engine');const {host}=await import('./helpers.mjs');const {describePreview}=await import('../examples/mobile/viewport.mjs');
  for(const cleanupFails of [false,true]){
- const h=host({texturedFrameProfile:'egret.textured-frame2d/1',renderTexturedFrame(){},start(){throw new EgretError('WEBGPU_UNAVAILABLE');},close(){if(cleanupFails)throw Error('CLEANUP_FAILED');}});
- const queue=createMountQueue(()=>createEngineForProfile({host:h.adapter},'egret.textured-frame2d/1'));
+ const h=host({sharedFrameProfile:'egret.shared-frame2d/1',renderSharedFrame(){},start(){throw new EgretError('WEBGPU_UNAVAILABLE');},close(){if(cleanupFails)throw Error('CLEANUP_FAILED');}});
+ const queue=createMountQueue(()=>createEngineForProfile({host:h.adapter},'egret.shared-frame2d/1'));
  await queue.request({width:200});const snapshot=queue.inspect();assert.deepEqual(snapshot.errors,['ENGINE_START_FAILED']);
  assert.equal(describePreview(snapshot).state,cleanupFails?'failed':'unsupported');await queue.close();
  }

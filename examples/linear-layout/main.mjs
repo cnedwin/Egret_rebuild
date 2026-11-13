@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 import {createLinearLayoutSession} from './session.mjs';
+import {chooseBackend, loadExampleHostFactory} from '../host.mjs';
 
 const query = new URL(location.href).searchParams;
-const backend = 'canvas';
+const backend = chooseBackend();
 const preset = query.get('preset') === 'verification' ? 'verification' : 'preview';
 const canvas = document.querySelector('#scene'), status = document.querySelector('#status');
 const selector = document.querySelector('#backend');
@@ -17,13 +18,14 @@ function verificationHost(original) {
     surface: original.surface,
     start: () => original.start(), stop: () => original.stop(), close: () => original.close(),
     setTimeout: (callback, delay) => original.setTimeout(callback, delay),
-    renderFrame(frame) {
+    sharedFrameProfile: original.sharedFrameProfile,
+    renderSharedFrame(frame) {
       // requestReadback applies to the NEXT frame; arm before every submission.
       // Retain all real promises rather than selecting only desired checkpoints.
       const ticket = original.requestReadback();
       readbacks.push(ticket);
       void ticket.catch(() => {});
-      return original.renderFrame(frame);
+      return original.renderSharedFrame(frame);
     },
   });
 }
@@ -108,17 +110,16 @@ selector.addEventListener('change', () => {
 document.querySelector('#close').addEventListener('click', () => { void close().catch(failed); });
 window.addEventListener('pagehide', () => { void close().catch(() => {}); }, {once: true});
 try {
-  const entry = await import('@egret/engine/web');
+  const createHost = await loadExampleHostFactory(backend);
   if (!closeRequested) {
     canvas.width = canvas.height = 24;
     canvas.style.width = canvas.style.height = '192px';
-    const host = entry.createCanvasHost({canvas, pixelRatio: 1});
+    const host = createHost({canvas, pixelRatio: 1, enableReadback: preset === 'verification'});
     renderHost = host;
-    const admittedHost = host;
+    const admittedHost = preset === 'verification' ? verificationHost(host) : host;
     session = createLinearLayoutSession({
       host: admittedHost, preset, onUpdate: refresh,
-      waitForStartupIdle: preset === 'verification' && backend === 'webgpu'
-        ? waitForStartupReadback : undefined,
+      waitForStartupIdle: preset === 'verification' ? waitForStartupReadback : undefined,
     });
     const operations = {
       horizontal: () => session.horizontal(), vertical: () => session.vertical(),

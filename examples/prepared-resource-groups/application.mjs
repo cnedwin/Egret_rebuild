@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // First-party browser composition. External adapters transfer their close ownership here.
 import { EgretError } from '@egret/engine';
-import { createCanvasHost } from '@egret/engine/web';
+import { loadExampleHostFactory } from '../host.mjs';
 import { createMouseInput } from '@egret/engine/web/input';
 import { createPreparedOutfitSource } from './source.mjs';
 import { createPreparedSceneDependencies } from './dependencies.mjs';
@@ -22,8 +22,8 @@ function errorView(cause, depth = 0) {
 
 export function createPreparedResourceApplication(options) {
   if (options === null || typeof options !== 'object' || Array.isArray(options)) throw fault('OPTIONS_INVALID');
-  const { canvas, profile = 'canvas-2d' } = options;
-  if (profile !== 'canvas-2d') throw fault('PROFILE_UNSUPPORTED');
+  const { canvas, profile = 'shared-2d' } = options;
+  if (profile !== 'shared-2d') throw fault('PROFILE_UNSUPPORTED');
   if (!canvas || typeof canvas.getContext !== 'function') throw fault('OPTIONS_INVALID');
   let state = 'starting', source, dependencies, host, session, input, ready, closePromise;
   let serial = Promise.resolve(), pendingPresentations = 0, completedPresentations = 0;
@@ -56,13 +56,16 @@ export function createPreparedResourceApplication(options) {
     await session.scene.textReady;
     if (state === 'closing' || state === 'closed') throw fault('CLOSED');
     const frame = session.capture();
-    const metadata = { label, frameId: frame.frameId, serial: null, width: WIDTH, height: HEIGHT,
-      frameImagesBytes: (frame.images ?? []).reduce((sum, image) => sum + image.byteLength, 0),
-      geometryLogicalBytes: (frame.geometries ?? []).reduce((sum, geometry) => sum + geometry.logicalByteLength, 0) };
-    host.renderFrame(frame);
-    const bytes = new Uint8Array(canvas.getContext('2d').getImageData(0, 0, WIDTH, HEIGHT).data);
-    if (bytes.byteLength !== WIDTH * HEIGHT * 4) throw fault('READBACK_INVALID');
-    lastPresentation = FREEZE({ ...metadata, bytes }); completedPresentations++;
+    const metadata = { label, frameId: frame.frameId, width: WIDTH, height: HEIGHT,
+      frameImagesBytes: frame.pages.reduce((sum, page) => sum + page.source.byteLength, 0),
+      geometryLogicalBytes: frame.geometries.reduce((sum, geometry) => sum + geometry.logicalByteLength, 0) };
+    // The ticket is armed before its frame is rendered.
+    const ticket = host.requestReadback(); void ticket.catch(() => undefined);
+    host.renderSharedFrame(frame);
+    const result = await ticket; await host.whenIdle();
+    const bytes = new Uint8Array(result.bytes);
+    if (result.width !== WIDTH || result.height !== HEIGHT || bytes.byteLength !== WIDTH * HEIGHT * 4) throw fault('READBACK_INVALID');
+    lastPresentation = FREEZE({ ...metadata, serial: result.serial, bytes }); completedPresentations++;
     return lastPresentation;
   }
   function enqueue(label) {
@@ -76,7 +79,7 @@ export function createPreparedResourceApplication(options) {
     source = options.outfitSource ?? createPreparedOutfitSource();
     dependencies = options.dependencyOwner ?? createPreparedSceneDependencies();
     await dependencies.ready; starting();
-    host = createCanvasHost({ canvas, pixelRatio: 1 });
+    host = (await loadExampleHostFactory())({ canvas, pixelRatio: 1, enableReadback: true }); starting();
     session = createPreparedResourceSceneSession({ host, profile, outfitSource: source, dependencies: dependencies.dependencies });
     await session.ready; starting();
     initialPresentation = await enqueue('startup'); starting();

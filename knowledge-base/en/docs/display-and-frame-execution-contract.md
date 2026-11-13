@@ -1,5 +1,7 @@
 # Display and Frame Execution Contract
 
+> **Removed.** `captureFrame`, `captureTexturedFrame`, the frame records they produced and the Canvas Host (`@egret/engine/web`) have been removed from the SDK. This document is kept as a record of what they were and does not describe the current SDK. For current 2D rendering see [the shared render profile](shared-render-profile-contract.md).
+
 English | [简体中文](../../Cns/docs/显示与帧执行合同.md)
 
 This contract defines the original 0.12.0 rectangle-display scope. Implementation acceptance is recorded separately from the specification. Existing Apache-2.0 licensing, Egret naming, strict TypeScript, and the absence of an implicit global Stage remain binding.

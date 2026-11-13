@@ -52,7 +52,7 @@ test('T02 actual text entries share the cache factory and preserve default entry
   const runtime=await import('@egret/runtime/text'),engine=await import('@egret/engine/text');
   assert.deepEqual(Object.keys(runtime),['createTextRasterCache']);assert.deepEqual(Object.keys(engine),['createTextField','createTextRasterCache']);
   assert.equal(typeof runtime.createTextRasterCache,'function');assert.equal(runtime.createTextRasterCache,engine.createTextRasterCache);
-  for(const specifier of ['@egret/runtime','@egret/engine','@egret/engine/web','@egret/engine/webgpu'])
+  for(const specifier of ['@egret/runtime','@egret/engine','@egret/engine/webgl2','@egret/engine/webgpu'])
     assert.equal(Object.hasOwn(await import(specifier),'createTextRasterCache'),false,specifier);
 });
 test('T02 valid actual four-package graph with exact text routes passes the production checker',t=>isolated(f=>{
@@ -67,7 +67,7 @@ const mutations=[
   ['default-root-text-type','packages/engine/dist/index.d.ts',raw=>raw+'\nexport interface TextRasterRequestInput {}\n','root: explicit-only text port leaked: TextRasterRequestInput'],
   ['default-runtime-text-module','packages/runtime/dist/index.d.ts',raw=>raw+"\nexport type * from './text/index.js';\n",'runtime: explicit-only text module leaked'],
   ['extra-runtime-package-route','packages/runtime/package.json',raw=>{const p=JSON.parse(raw);p.exports['./text/plan']={types:'./dist/text/plan.d.ts',import:'./dist/text/plan.js'};return JSON.stringify(p);},'runtime: text explicit export mapping mismatch'],
-  ['wrong-engine-text-route','packages/engine/package.json',raw=>{const p=JSON.parse(raw);p.exports['./text'].import='./dist/web/index.js';return JSON.stringify(p);},'engine: text explicit export mapping mismatch'],
+  ['wrong-engine-text-route','packages/engine/package.json',raw=>{const p=JSON.parse(raw);p.exports['./text'].import='./dist/web/webgpu.js';return JSON.stringify(p);},'engine: text explicit export mapping mismatch'],
   ['wrong-parent-runtime-text-import','packages/engine/src/Engine.ts',raw=>raw+"\nimport type {TextRasterRequest} from '@egret/runtime/text';\n",'unapproved/deep package import @egret/runtime/text'],
   ['unsupported-runtime-text-prefix','packages/engine/src/text.ts',raw=>raw+"\nimport type {TextRasterPlan} from '@egret/runtime/text/plan';\n",'unapproved/deep package import @egret/runtime/text/plan'],
   ['core-DOM-ambient','packages/runtime/dist/text/types.d.ts',raw=>raw+'\nexport interface InvalidDOMPort { surface: HTMLCanvasElement; }\n','host ambient dependency'],

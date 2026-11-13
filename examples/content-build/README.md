@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+> **Now on the shared Hosts.** This example draws with the shared WebGPU Host by default and with the shared WebGL2 Host under `?backend=webgl2`. The Canvas Host it used before has been removed; the verifier commands named below were written for it and no longer apply. Statements below about the Canvas Host, about choosing Canvas, and about recorded Canvas checks describe earlier versions.
+
 This finite example builds a two-frame red/green atlas and an unrelated blue image from original Apache-2.0 synthetic sources. Its metadata follows the fixed Aseprite 1.3.18.6 profile; it is not a real exporter qualification.
 
 After the repository's standard dependency setup and build, run with the pinned Node 26.7.0 runtime from the repository root:

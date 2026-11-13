@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 // Unsuppressed compiler cases. Expected tuples are recorded only after a real compiler run.
 import type { Engine, SharedRenderFrame2D } from '@egret/engine';
-import type { CanvasHost } from '@egret/engine/web';
+import type { HostAdapter as PlainHost } from '@egret/engine';
 import type {
   SharedWebGPUHost, SharedWebGPUHostOptions, SharedWebGPUReadback, WebGPUReadback,
   SharedDeviceSessionStatus, WebGPUHostFailure, SharedFrameUpload, SharedFrameUploadReady, SharedFrameSubmission,
 } from '@egret/engine/webgpu';
 declare const engine: Engine;
-declare const canvasHost: CanvasHost;
+declare const plainHost: PlainHost;
 declare const host: SharedWebGPUHost;
 declare const legacyRead: WebGPUReadback;
 declare const sharedRead: SharedWebGPUReadback;
@@ -41,8 +41,8 @@ sharedRead.generation = 4;
 legacyRead.generation;
 // GPU_UPLOAD_TYPE_CASE (GU-N12): core Engine has no native stage port.
 engine.stageSharedFrame(frame);
-// GPU_UPLOAD_TYPE_CASE (GU-N13): Canvas host has no session method.
-canvasHost.getSessionStatus();
+// GPU_UPLOAD_TYPE_CASE (GU-N13): a Host adapter without the shared ports has no session method.
+plainHost.getSessionStatus();
 // GPU_UPLOAD_TYPE_CASE (GU-N14): only selected recovery modes are admitted.
 const mode: SharedWebGPUHostOptions = { canvas, recovery: { mode: 'retry-forever' } };
 // GPU_UPLOAD_TYPE_CASE (GU-N15): no configurable upload scheduler exists.

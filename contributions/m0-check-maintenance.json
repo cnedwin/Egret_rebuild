@@ -15,11 +15,6 @@
       "originRole": "First-party M0 bilingual maintainer workflow; Apache-2.0."
     },
     {
-      "path": "tools/prepare-snapshot-maintenance.mjs",
-      "originRole": "First-party M0 multi-owner source snapshot review workflow; independently authored with AI assistance; Apache-2.0.",
-      "criticalComment": true
-    },
-    {
       "path": "tools/prepare-compiler-maintenance.mjs",
       "originRole": "First-party M0 registered compiler input review workflow; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true

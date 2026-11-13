@@ -184,8 +184,6 @@ test('GPU G03 clone, proxy and wrong profile refuse before payload and native ef
     refusal(f, h, () => h.renderSharedFrame(clone), 'FRAME_PROFILE_UNSUPPORTED');
     refusal(f, h, () => h.renderSharedFrame(proxy), 'FRAME_PROFILE_UNSUPPORTED');
     refusal(f, h, () => h.renderSharedFrame(Object.freeze({ frameId: 1, width: FRAME.width, height: FRAME.height, clearColor: 0, clearAlpha: 0, commands: Object.freeze([]) })), 'FRAME_PROFILE_UNSUPPORTED');
-    if (typeof h.renderFrame === 'function')
-      refusal(f, h, () => h.renderFrame(proxy), 'FRAME_PROFILE_UNSUPPORTED');
     assert.equal(reads, 0);
     const accepted = await submit(f, h, saved);
     assert.equal(passes(accepted.events).length, 2); assert.equal(h.getStatus().lastSerial, 1);

@@ -46,6 +46,7 @@ export function createExampleServer(repository=root){
    ||/^examples\/multi-pointer\/(?:index\.html|main\.mjs)$/.test(relative)
    ||/^examples\/resource-scene\/(?:[\w-]+\.(?:html|mjs)|assets\/[\w.-]+\.(?:png|woff2))$/.test(relative)
    ||/^packages\/(?:engine|runtime|contracts|spine)\/dist\/[\w/.-]+\.js$/.test(relative)
+   ||relative==='examples/host.mjs'
    ||relative==='examples/canvas-text/assets/ahem.ttf'||relative==='tools/browser-png/assets/rgb-red-green.png'
    ||relative.startsWith(dependency)&&/^[\w/-]+\.js$/.test(relative.slice(dependency.length));
   if(!allowed)return finish(404,'Not served');

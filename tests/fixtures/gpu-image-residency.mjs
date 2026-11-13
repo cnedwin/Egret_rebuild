@@ -160,20 +160,3 @@ export function createGpuFixture({ enforceBudget = true } = {}) {
 }
 export function admitted(record) { if (record.threw) throw record.error; assert.equal(record.value, undefined); }
 let sequence = 0;
-export async function authorFrame() {
-  const engine = await egret.createEngine({ host: { surface: {}, start() {}, stop() {}, async close() {}, setTimeout() { return () => {}; } } });
-  const scope = engine.createScope(), source = image(2, 1, new Uint8Array([255, 64, 0, 255, 0, 128, 255, 128]));
-  const texture = egret.createTexture(source, { x: 0, y: 0, width: 1, height: 1 }), name = 'gpu-residency-' + (++sequence);
-  const type = egret.createAssetType(name, egret.isTexture), ref = egret.createAssetRef(type, name);
-  engine.assets.register(type, { load: async () => texture, dispose: value => value.dispose() });
-  const lease = await engine.assets.acquire(ref), bitmap = scope.use(new egret.Bitmap(lease));
-  bitmap.sourceRect = { x: 0, y: 0, width: 1, height: 1 }; engine.stage.addChild(bitmap);
-  const geometry = light => egret.createTexturedGeometry2D({ positions: new Float64Array([1, 1, 5, 1, 1, 5]),
-    uvs: new Float64Array([.25, .5, .25, .5, .25, .5]), lightColors: new Float64Array(12).fill(light), indices: new Uint32Array([0, 1, 2]) });
-  const mesh = scope.use(new egret.Mesh2D(lease, geometry(1)));
-  const capture = () => engine.captureFrame({ width: 8, height: 8, clearAlpha: 1 });
-  const textured = () => engine.captureTexturedFrame({ width: 8, height: 8, clearAlpha: 1 });
-  const close = async () => { scope.dispose(); lease.release(); await engine.dispose(); texture.dispose(); };
-  return { engine, scope, source, texture, lease, ref, bitmap, mesh, geometry, capture, textured, close };
-}
-export async function withAuthored(run) { const a = await authorFrame(); try { return await run(a); } finally { await a.close(); } }

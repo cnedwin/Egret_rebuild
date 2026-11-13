@@ -1,9 +1,9 @@
-import { createCanvasHost } from '@egret/engine/web';
+import { createExampleHost } from '../host.mjs';
 import { createHitTestApplication } from './application.mjs';
 
 const canvas = document.querySelector('#scene');
 const application = createHitTestApplication({
-  host: createCanvasHost({ canvas, pixelRatio: 1 }), canvas,
+  host: await createExampleHost({ canvas, pixelRatio: 1 }), canvas,
   upperButton: document.querySelector('#toggle-upper'),
   gateButton: document.querySelector('#toggle-gate'),
   childrenButton: document.querySelector('#toggle-children'),

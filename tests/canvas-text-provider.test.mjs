@@ -82,7 +82,7 @@ function phaseState(state, value) {
 test('WC01: new import is DOM-inert and the factory remains isolated from older entries', async () => {
   const script = `for (const key of ['window','document','HTMLCanvasElement','CanvasRenderingContext2D','ImageData'])
     Object.defineProperty(globalThis,key,{get(){throw new Error('import touched '+key)}});
-    const roots=await Promise.all(['@egret/engine','@egret/engine/web','@egret/engine/webgpu','@egret/engine/text'].map(value=>import(value)));
+    const roots=await Promise.all(['@egret/engine','@egret/engine/webgpu','@egret/engine/webgl2','@egret/engine/text'].map(value=>import(value)));
     if(roots.some(value=>'createCanvasTextRasterProvider' in value))throw new Error('factory leaked');
     const value=await import('@egret/engine/web/text');
     if(Object.keys(value).join(',')!=='createCanvasTextRasterProvider')throw new Error('unexpected export');`;

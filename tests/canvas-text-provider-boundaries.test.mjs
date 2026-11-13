@@ -53,13 +53,13 @@ test('WC01 actual four-package Canvas text baseline passes production policy',t=
 }));
 const canvasTextMutations=[
   ['root-factory','packages/engine/dist/index.js',raw=>raw+"\nexport {createCanvasTextRasterProvider} from './web/CanvasTextRasterProvider.js';\n",'Canvas text opt-in module imported outside its barrel'],
-  ['web-factory','packages/engine/dist/web/index.js',raw=>raw+"\nexport {createCanvasTextRasterProvider} from './CanvasTextRasterProvider.js';\n",'Canvas text opt-in module imported outside its barrel'],
-  ['web-hidden-value-import','packages/engine/web/index.ts',raw=>raw+"\nimport './CanvasTextRasterProvider.js';\n",'Canvas text opt-in module imported outside its barrel'],
+  ['host-factory','packages/engine/dist/web/webgl2.js',raw=>raw+"\nexport {createCanvasTextRasterProvider} from './CanvasTextRasterProvider.js';\n",'Canvas text opt-in module imported outside its barrel'],
+  ['host-hidden-value-import','packages/engine/web/webgl2.ts',raw=>raw+"\nimport './CanvasTextRasterProvider.js';\n",'Canvas text opt-in module imported outside its barrel'],
   ['dom-in-core','packages/engine/src/index.ts',raw=>raw+'\nexport const wc1DomLeak = document;\n','packages/engine/src/index.ts: host ambient dependency'],
   ['private-text-value','packages/engine/web/CanvasTextRasterProvider.ts',raw=>raw+"\nimport {createTextRasterCache} from '@egret/runtime/text';\n",'unapproved/deep package import @egret/runtime/text'],
   ['public-text-value','packages/engine/web/CanvasTextRasterProvider.ts',raw=>raw+"\nimport {createTextRasterCache} from '@egret/engine/text';\n",'unapproved/deep package import @egret/engine/text'],
   ['wrong-nested-mapping','packages/engine/package.json',raw=>{
-    const pkg=JSON.parse(raw);pkg.exports['./web/text'].import='./dist/web/index.js';return JSON.stringify(pkg,null,2)+'\n';
+    const pkg=JSON.parse(raw);pkg.exports['./web/text'].import='./dist/web/webgpu.js';return JSON.stringify(pkg,null,2)+'\n';
   },'engine: text explicit export mapping mismatch'],
   ['declaration-extra-port','packages/engine/dist/web/text.d.ts',raw=>raw+'\nexport interface CanvasTextRasterProviderOptions {}\n','web/text: exact Canvas text declaration surface mismatch'],
 ];

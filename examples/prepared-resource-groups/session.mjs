@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // First-party example composition of public SDK owners; no DOM or private SDK ports.
 import { AssetLease, Bitmap, EgretError, Sprite, Texture, createAssetRef,
-  createAssetType, createEngine, createEngineForProfile, createSequenceClip,
-  createSpriteSheet, isTexture, TEXTURED_FRAME_PROFILE_2D } from '@egret/engine';
+  createAssetType, createEngine, createSequenceClip,
+  createSpriteSheet, isTexture } from '@egret/engine';
 import { createTextField, createTextRasterCache } from '@egret/engine/text';
 import { createPreparedOutfitCoordinator } from './coordinator.mjs';
 
@@ -45,7 +45,7 @@ function errorView(value, depth = 0) {
 export function createPreparedResourceSceneSession(options) {
   if (!record(options)) throw fault('OPTIONS_INVALID');
   const profile = options.profile;
-  if (!['canvas-2d', 'webgpu-scene-textured'].includes(profile)) throw fault('PROFILE_UNSUPPORTED');
+  if (profile !== 'shared-2d') throw fault('PROFILE_UNSUPPORTED');
   const source = options.outfitSource, dependencies = options.dependencies;
   if (!record(source) || !record(dependencies) || !record(source.provider)
       || typeof source.provider.load !== 'function' || typeof source.provider.dispose !== 'function'
@@ -194,7 +194,7 @@ export function createPreparedResourceSceneSession(options) {
   async function initialize() {
     checkFontPolicy();
     const engineOptions = { host: options.host, onDiagnostic(value) { if (diagnostics.length < 256) diagnostics.push(value); } };
-    engineTask = profile === 'canvas-2d' ? createEngine(engineOptions) : createEngineForProfile(engineOptions, TEXTURED_FRAME_PROFILE_2D);
+    engineTask = createEngine(engineOptions);
     engine = await engineTask; starting();
     engine.assets.register(outfitType, source.provider); engine.assets.register(dependencyType, observedDependencies);
     engine.advanceTime(0); inputScope = engine.createScope(); decorationScope = engine.createScope(); textScope = engine.createScope();
@@ -291,7 +291,7 @@ export function createPreparedResourceSceneSession(options) {
     },
     advanceTo(seconds) { open(); engine.advanceTime(seconds); },
     remove(id) { open(); if (!IDS.includes(id)) throw fault('ACTOR_INVALID'); const actor = actors.get(id); if (actor) retireActor(actor); },
-    capture() { open(); return profile === 'canvas-2d' ? engine.captureFrame(FRAME) : engine.captureTexturedFrame(FRAME); },
+    capture() { open(); return engine.captureSharedFrame(FRAME); },
     close,
   });
   ready = initialize();

@@ -9,7 +9,7 @@ if (new Set(options).size !== options.length || options.some(option => option !=
 const withoutTests = options.includes("--no-tests");
 // Keep source-boundary, type and behavior checks in one fail-fast sequence. A check written against
 // one exact set of product bytes is evidence, listed in tools/lib/evidence-lane.mjs; it never runs here.
-const gates = [...(options.includes("--no-build") ? [] : ["build"]), "check-boundaries", "check-spine-content", "resource-scene-boundary", "atlas-frame/boundary", "check-type-lanes", "check-types", ...(withoutTests ? [] : ["test"]), "verify-spine-f2-source"];
+const gates = [...(options.includes("--no-build") ? [] : ["build"]), "check-boundaries", "check-spine-content", "check-type-lanes", "check-types", ...(withoutTests ? [] : ["test"]), "verify-spine-f2-source"];
 if (gates.some(script => EVIDENCE_TOOLS.includes(script))) throw new Error("An evidence tool cannot be a merge gate");
 for (const script of gates) {
   console.log(`VERIFY ${script}`);

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Mobile application composition; the original resource-scene fixtures stay unchanged.
-import { createCanvasHost } from '@egret/engine/web';
+import { loadExampleHostFactory } from '../host.mjs';
 import { createBrowserTextureProvider } from '@egret/engine/web/image';
 import { createCanvasTextRasterProvider } from '@egret/engine/web/text';
 import { createBrowserPointerInput } from '@egret/engine/web/pointer';
@@ -25,7 +25,7 @@ const FONT_PINS = Object.freeze([
 ]);
 
 /** Borrow the shell's Canvas and controls; own the session, input, fonts and providers. */
-export async function mount({ canvas, controls, viewport, signal, report = () => {}, model }) {
+export async function mount({ canvas, controls, viewport, signal, report = () => {}, model, backend = 'webgl2' }) {
   if (!viewport || ![viewport.width, viewport.height, viewport.density].every(value => Number.isFinite(value) && value > 0)
       || Math.abs(viewport.height - viewport.width * HEIGHT / WIDTH) > 0.01) {
     throw new Error('MOBILE_RESOURCE_VIEWPORT_INVALID');
@@ -111,7 +111,7 @@ export async function mount({ canvas, controls, viewport, signal, report = () =>
     const work = serial.then(async () => {
       assertOpen(); await session.scene.textReady; assertOpen();
       input?.sync();
-      host.renderFrame(session.capture()); renderCount++;
+      host.renderSharedFrame(session.capture()); renderCount++;
       refreshControls(); publish();
     });
     serial = work.catch(() => undefined); return work;
@@ -256,13 +256,13 @@ export async function mount({ canvas, controls, viewport, signal, report = () =>
   initialization = (async () => {
     if (signal?.aborted) throw new DOMException('Mobile resource session aborted', 'AbortError');
     await prepareFonts(); assertOpen();
-    host = createCanvasHost({ canvas, pixelRatio });
+    host = (await loadExampleHostFactory(backend))({ canvas, pixelRatio }); assertOpen();
     provider = createBrowserTextureProvider({ readBytes(ref) {
       const pin = pins.get(ref.id);
       if (!pin) return Promise.reject(new Error('MOBILE_RESOURCE_IMAGE_NOT_SELECTED'));
       return verifiedBytes(ref.id, pin);
     } });
-    session = createResourceSceneSession({ host, profile: 'canvas-2d', restore: model, textureProvider: provider,
+    session = createResourceSceneSession({ host, profile: 'shared-2d', restore: model, textureProvider: provider,
       textProvider: createCanvasTextRasterProvider(), fontFamilies: families });
     await session.ready; assertOpen();
     input = createBrowserPointerInput({ engine: session.scene.engine, scope: session.scene.inputScope,

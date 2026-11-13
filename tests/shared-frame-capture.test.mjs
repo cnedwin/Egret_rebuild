@@ -109,8 +109,7 @@ test('CAPTURE C01 pure capture shares the frame counter and does not advance the
     assert.equal(ticks, 1);
     assert.equal(f.engine.clock.elapsedSeconds, .125);
     const first = f.capture(), second = f.capture();
-    const ordinary = f.engine.captureFrame(FRAME), textured = f.engine.captureTexturedFrame(FRAME);
-    assert.deepEqual([first.frameId, second.frameId, ordinary.frameId, textured.frameId], [1, 2, 3, 4]);
+    assert.deepEqual([first.frameId, second.frameId], [1, 2]);
     assert.deepEqual([ticks, f.engine.clock.elapsedSeconds, f.calls.length], [1, .125, 0]);
     assert.equal(first.profile, 'egret.shared-frame2d/1');
     assert.deepEqual([first.width, first.height, first.clearColor, first.clearAlpha, first.outputAlpha],
@@ -525,9 +524,6 @@ test('CAPTURE C15 committed Sequence trim layout is converted once and capture n
     assert.equal(player.lastSample, selected);
     assert.equal(f.engine.clock.elapsedSeconds, 0);
     assert.deepEqual(repeat.commands, saved.commands);
-    const old = f.engine.captureFrame(FRAME);
-    assert.deepEqual(old.commands[0].rect, { x: 0, y: 0, width: 2, height: 3 });
-    assert.deepEqual(old.commands[0].matrix, { a: 0, b: -1, c: 1, d: 0, tx: 6, ty: 11 });
     player.applyAt(0);
     const changed = f.capture();
     assert.deepEqual(drawRegion(changed, changed.commands[0]), {
@@ -536,46 +532,6 @@ test('CAPTURE C15 committed Sequence trim layout is converted once and capture n
     });
     assert.equal(drawRegion(saved, saved.commands[0]).quarterTurn, 1);
     assert.equal(player.lastSample.frameIndex, 0);
-  });
-});
-
-test('CAPTURE C16 old profiles refuse new visible metadata without consuming frame IDs', async () => {
-  for (const kind of ['view', 'material', 'isolate']) {
-    await withScene(async f => {
-      let node, reset;
-      if (kind === 'view') {
-        const item = await f.resource(source(), viewInput());
-        node = f.bitmap(item);
-        const legacy = await f.resource();
-        reset = () => { node.textureLease = legacy.lease; };
-      } else {
-        node = f.sprite(); fill(node);
-        if (kind === 'material') {
-          node.sharedMaterial = requireFactory('createSharedMaterial2D')({});
-          reset = () => { node.sharedMaterial = null; };
-        } else {
-          node.renderBoundary = 'isolate';
-          reset = () => { node.renderBoundary = 'none'; };
-        }
-      }
-      requireCapture(f.engine);
-      for (const method of ['captureFrame', 'captureTexturedFrame']) {
-        expectCode(() => f.engine[method](FRAME), 'FRAME_PROFILE_METADATA_UNSUPPORTED');
-      }
-      assert.equal(f.capture().frameId, 1);
-      reset();
-      assert.equal(f.engine.captureFrame(FRAME).frameId, 2);
-      assert.equal(f.engine.captureTexturedFrame(FRAME).frameId, 3);
-    });
-  }
-  await withScene(async f => {
-    const item = await f.resource(), mesh = f.mesh(item, geometry());
-    requireCapture(f.engine);
-    expectCode(() => f.engine.captureTexturedFrame(FRAME), 'FRAME_PROFILE_METADATA_UNSUPPORTED');
-    // Ordinary Mesh's pre-existing refusal ordering is a separate legacy
-    // obligation; this case does not rename it to a new metadata error.
-    assert.equal(f.capture().frameId, 1);
-    mesh.clear(); assert.equal(f.engine.captureTexturedFrame(FRAME).frameId, 2);
   });
 });
 
@@ -872,38 +828,37 @@ test('CAPTURE R06 shared profile negotiation preserves exact advertisement and p
     get host() { optionReads++; throw new Error('unsupported profile must not inspect options'); },
   }, 'egret.shared-frame2d/2'), hasCode('ENGINE_RENDER_PROFILE_UNSUPPORTED'));
   assert.equal(optionReads, 0);
-  const trace = [], cause = Object.freeze({ legacyPortRead: true });
+  const trace = [], cause = Object.freeze({ portRead: true });
   const host = {
     get sharedFrameProfile() { trace.push('sharedFrameProfile'); return 'wrong'; },
-    get renderSharedFrame() { trace.push('renderSharedFrame'); return 7; },
-    get renderFrame() { trace.push('renderFrame'); throw cause; },
+    get renderSharedFrame() { trace.push('renderSharedFrame'); throw cause; },
+    get renderFrame() { throw new Error('a port of a removed profile must not be read'); },
   };
   await assert.rejects(egret.createEngineForProfile({
     get host() { trace.push('host'); return host; },
     get onDiagnostic() { throw new Error('port admission must complete first'); },
   }, 'egret.shared-frame2d/1'), error => hasCode('INVALID_RENDERER')(error) && error.cause === cause);
-  assert.deepEqual(trace, ['host', 'sharedFrameProfile', 'renderSharedFrame', 'renderFrame']);
-  for (const [advertisement, shared, legacy, expected] of [
-    ['egret.shared-frame2d/2', () => undefined, undefined, 'ENGINE_RENDER_PROFILE_UNSUPPORTED'],
-    ['egret.shared-frame2d/1', 7, undefined, 'INVALID_RENDERER'],
-    ['egret.shared-frame2d/1', () => undefined, 7, 'INVALID_RENDERER'],
+  assert.deepEqual(trace, ['host', 'sharedFrameProfile', 'renderSharedFrame']);
+  for (const [advertisement, shared, expected] of [
+    ['egret.shared-frame2d/2', () => undefined, 'ENGINE_RENDER_PROFILE_UNSUPPORTED'],
+    ['egret.shared-frame2d/2', 7, 'ENGINE_RENDER_PROFILE_UNSUPPORTED'],
+    ['egret.shared-frame2d/1', 7, 'INVALID_RENDERER'],
   ]) {
     const reads = [];
     const invalidHost = {
       get sharedFrameProfile() { reads.push('sharedFrameProfile'); return advertisement; },
       get renderSharedFrame() { reads.push('renderSharedFrame'); return shared; },
-      get renderFrame() { reads.push('renderFrame'); return legacy; },
       start() { assert.fail('invalid ports must not start a Host'); },
     };
     await assert.rejects(egret.createEngineForProfile({
       host: invalidHost,
       get onDiagnostic() { throw new Error('invalid ports must not inspect remaining options'); },
     }, 'egret.shared-frame2d/1'), hasCode(expected));
-    assert.deepEqual(reads, ['sharedFrameProfile', 'renderSharedFrame', 'renderFrame']);
+    assert.deepEqual(reads, ['sharedFrameProfile', 'renderSharedFrame']);
   }
 });
 
-test('CAPTURE R07 shared and optional legacy ports are captured once with their original Host receiver', async () => {
+test('CAPTURE R07 the shared port is captured once with its original Host receiver', async () => {
   const reads = [], calls = [], lifecycle = [], diagnostics = [], timers = new Set();
   let sealed = false;
   const read = (name, value) => {
@@ -916,11 +871,9 @@ test('CAPTURE R07 shared and optional legacy ports are captured once with their 
     get renderSharedFrame() { return read('renderSharedFrame', function (frame) {
       calls.push({ kind: 'shared', receiver: this, frame }); return undefined;
     }); },
-    get renderFrame() { return read('renderFrame', function (frame) {
-      calls.push({ kind: 'legacy', receiver: this, frame }); return undefined;
-    }); },
-    get texturedFrameProfile() { throw new Error('unselected textured advertisement'); },
-    get renderTexturedFrame() { throw new Error('unselected textured port'); },
+    get renderFrame() { throw new Error('a port of a removed profile must not be read'); },
+    get texturedFrameProfile() { throw new Error('an advertisement of a removed profile must not be read'); },
+    get renderTexturedFrame() { throw new Error('a port of a removed profile must not be read'); },
     start() { lifecycle.push(['start', this]); },
     stop() { lifecycle.push(['stop', this]); },
     async close() { lifecycle.push(['close', this]); },
@@ -933,76 +886,24 @@ test('CAPTURE R07 shared and optional legacy ports are captured once with their 
   }, 'egret.shared-frame2d/1');
   const scope = engine.createScope();
   try {
-    assert.deepEqual(reads, ['sharedFrameProfile', 'renderSharedFrame', 'renderFrame']);
+    assert.deepEqual(reads, ['sharedFrameProfile', 'renderSharedFrame']);
     sealed = true;
     const sprite = scope.use(new egret.Sprite()); fill(sprite);
     engine.stage.addChild(sprite); requireCapture(engine);
     const captured = engine.captureSharedFrame(FRAME);
     assert.equal(calls.length, 0);
-    const rendered = engine.renderSharedFrame(FRAME), legacy = engine.renderFrame(FRAME);
-    assert.deepEqual([captured.frameId, rendered.frameId, legacy.frameId], [1, 2, 3]);
+    const rendered = engine.renderSharedFrame(FRAME);
+    assert.deepEqual([captured.frameId, rendered.frameId], [1, 2]);
     assert.equal(rendered.profile, 'egret.shared-frame2d/1');
     assert.equal(captured.commands.length, 1); assert.equal(rendered.commands.length, 1);
     assert.deepEqual(rendered.commands, captured.commands);
-    assert.deepEqual(calls.map(call => call.kind), ['shared', 'legacy']);
+    assert.deepEqual(calls.map(call => call.kind), ['shared']);
     assert.equal(calls[0].receiver, host); assert.equal(calls[0].frame, rendered);
-    assert.equal(calls[1].receiver, host); assert.equal(calls[1].frame, legacy);
-    assert.deepEqual(reads, ['sharedFrameProfile', 'renderSharedFrame', 'renderFrame']);
+    assert.deepEqual(reads, ['sharedFrameProfile', 'renderSharedFrame']);
     assertFrozenFrame(captured); assertFrozenFrame(rendered);
   } finally { scope.dispose(); await engine.dispose(); }
   assert.deepEqual(lifecycle.map(row => row[0]), ['start', 'stop', 'close']);
   assert.ok(lifecycle.every(row => row[1] === host));
   assert.equal(timers.size, 0); assert.equal(scope.state, 'closed');
   assert.deepEqual(diagnostics, []);
-});
-
-test('CAPTURE R08 oversized legacy Sequence layout stays legacy-valid and shared refusal follows lease qualification', async () => {
-  await withScene(async f => {
-    const item = await f.resource(source(2, 2)), bitmap = f.bitmap(item);
-    const clip = egret.createSequenceClip({ atlasWidth: 2, atlasHeight: 2, frames: [
-      { x: 0, y: 0, width: 1, height: 1, durationSeconds: .125,
-        layout: { sourceWidth: 1048577, sourceHeight: 2, trimX: 0, trimY: 0, packedRotation: 0 } },
-    ] }, 'trim-rotation-v1');
-    const player = f.scope.use(new egret.SequencePlayer(bitmap, clip));
-    const selected = player.applyAt(0);
-    assert.equal(selected.frameIndex, 0);
-    assert.deepEqual([bitmap.naturalWidth, bitmap.naturalHeight], [1048577, 2]);
-    const legacy = f.engine.captureFrame(FRAME);
-    assert.equal(legacy.commands.length, 1);
-    assert.equal(legacy.commands[0].kind, 'image');
-    assert.deepEqual(legacy.commands[0].sourceRect, { x: 0, y: 0, width: 1, height: 1 });
-    assert.deepEqual(legacy.commands[0].rect, { x: 0, y: 0, width: 1, height: 1 });
-    assert.equal(legacy.images[legacy.commands[0].imageIndex], item.image);
-    expectCode(() => f.capture(), 'FRAME_PROFILE_METADATA_UNSUPPORTED');
-    assert.equal(player.lastSample, selected);
-    item.lease.release();
-    expectCode(() => f.capture(), 'ASSET_LEASE_RELEASED');
-    bitmap.dispose();
-    assert.equal(f.capture().frameId, legacy.frameId + 1, 'Neither refused shared capture spends an ID');
-    assert.equal(legacy.images[legacy.commands[0].imageIndex], item.image);
-  });
-});
-
-test('CAPTURE R09 old Mesh arithmetic and current lease retain precedence over new metadata', async () => {
-  for (const metadata of ['material', 'view', 'boundary']) await withScene(async f => {
-    const original = await f.resource();
-    const legacy = egret.createTexturedGeometry2D({
-      positions: new Float64Array([Number.MAX_VALUE, 0, 1, 0, 0, 1]),
-      uvs: new Float64Array([0, 0, 1, 0, 0, 1]),
-      lightColors: new Float64Array(12).fill(1), indices: new Uint16Array([0, 1, 2]),
-    });
-    const mesh = f.mesh(original, legacy); mesh.scaleX = 2;
-    expectCode(() => f.engine.captureTexturedFrame(FRAME), 'FRAME_TRANSFORM_INVALID');
-    let current = original;
-    if (metadata === 'material') mesh.sharedMaterial = egret.createSharedMaterial2D({});
-    else if (metadata === 'boundary') mesh.renderBoundary = 'isolate';
-    else { current = await f.resource(source(), viewInput()); mesh.setContent(current.lease, legacy); }
-    expectCode(() => f.engine.captureTexturedFrame(FRAME), 'FRAME_TRANSFORM_INVALID');
-    mesh.scaleX = 1;
-    expectCode(() => f.engine.captureTexturedFrame(FRAME), 'FRAME_PROFILE_METADATA_UNSUPPORTED');
-    current.lease.release();
-    expectCode(() => f.engine.captureTexturedFrame(FRAME), 'ASSET_LEASE_RELEASED');
-    mesh.dispose();
-    assert.equal(f.engine.captureTexturedFrame(FRAME).frameId, 1);
-  });
 });

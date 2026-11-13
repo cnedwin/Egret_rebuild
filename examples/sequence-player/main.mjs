@@ -1,7 +1,8 @@
-import {createEngine,createImageData2D,createTexture,createAssetType,createAssetRef,isTexture,Bitmap,createSequenceClip,SequencePlayer} from '@egret/engine';
+import {createEngineForProfile,SHARED_FRAME_PROFILE_2D,createImageData2D,createTexture,createAssetType,createAssetRef,isTexture,Bitmap,createSequenceClip,SequencePlayer} from '@egret/engine';
+import {chooseBackend,createExampleHost} from '../host.mjs';
 
 const query=new URL(location.href).searchParams;
-const backend='canvas';
+const backend=chooseBackend();
 const mode=query.get('mode')==='loop'?'loop':'once';
 const status=document.querySelector('#status'),canvas=document.querySelector('#scene');
 document.querySelector('#backend').value=backend;document.querySelector('#mode').value=mode;
@@ -13,11 +14,11 @@ let engine,bitmap,lease,player,renderHost,saved,retired=false,closed=false,loads
 function show(message){status.textContent=message;}
 function guard(operation){try{operation();}catch(error){show(`${error.code??error.name}: ${error.message}`);}}
 function select(seconds){
-  const sample=player.applyAt(seconds);engine.renderFrame(options);
+  const sample=player.applyAt(seconds);engine.renderSharedFrame(options);
   show(`${backend} / ${mode}\n${JSON.stringify(sample,null,2)}\nAtlas loads / 图集加载: ${loads}`);
 }
-function saveGreen(){select(0.125);saved=engine.captureFrame(options);document.querySelector('#replay').disabled=false;}
-function replay(){if(saved){renderHost.renderFrame(saved);show(`Saved green frame / 保存绿帧\n${retired?'Borrow retired / 借用已释放':'Borrow live / 借用存活'}`);}}
+function saveGreen(){select(0.125);saved=engine.captureSharedFrame(options);document.querySelector('#replay').disabled=false;}
+function replay(){if(saved){renderHost.renderSharedFrame(saved);show(`Saved green frame / 保存绿帧\n${retired?'Borrow retired / 借用已释放':'Borrow live / 借用存活'}`);}}
 async function close(){
   if(closed)return;closed=true;
   // The caller owns cleanup; disposing a player never disposes its borrow.
@@ -26,9 +27,8 @@ async function close(){
   show('Closed / 已关闭');
 }
 try{
-  const entry=await import('@egret/engine/web');
-  renderHost=entry.createCanvasHost({canvas});
-  engine=await createEngine({host:renderHost});
+  renderHost=await createExampleHost({canvas},backend);
+  engine=await createEngineForProfile({host:renderHost},SHARED_FRAME_PROFILE_2D);
   const pixels=new Uint8Array([
     255,0,0,255,255,0,0,255,0,255,0,255,0,0,255,255,0,0,255,255,0,0,255,255,
     255,0,0,255,255,0,0,255,0,255,0,255,0,0,0,255,0,0,0,255,0,0,0,255,

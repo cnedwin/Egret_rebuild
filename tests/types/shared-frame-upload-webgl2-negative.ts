@@ -1,28 +1,28 @@
 // SPDX-License-Identifier: Apache-2.0
 // Each labelled statement expects an actual unsuppressed diagnostic from Root's compiler run.
 import * as root from '@egret/engine';
-import * as canvasEntry from '@egret/engine/web';
-import type { RenderFrame2D, SharedRenderFrame2D, Engine } from '@egret/engine';
+import * as inputEntry from '@egret/engine/web/input';
+import type { SharedRenderFrame2D, Engine } from '@egret/engine';
 import { createSharedWebGL2Host, type SharedWebGL2Host, type WebGL2HostFailure,
   type SharedDeviceSessionState, type SharedDeviceSessionStatus, type SharedFrameUpload,
   type SharedFrameUploadOptions, type SharedFrameUploadReady, type SharedFrameSubmission } from '@egret/engine/webgl2';
 
 // M15_GL_TYPE_CASE GLU-N01: root does not forward the optional upload type.
 type RootUpload = root.SharedFrameUpload;
-// M15_GL_TYPE_CASE GLU-N02: Canvas does not forward optional session types.
-type CanvasStatus = canvasEntry.SharedDeviceSessionStatus<WebGL2HostFailure>;
+// M15_GL_TYPE_CASE GLU-N02: the input entry does not forward optional session types.
+type InputStatus = inputEntry.SharedDeviceSessionStatus<WebGL2HostFailure>;
 export function refusePorts(host: SharedWebGL2Host,
-  engine: Engine, frame: SharedRenderFrame2D, old: RenderFrame2D, canvas: HTMLCanvasElement): void {
+  engine: Engine, frame: SharedRenderFrame2D, unbranded: Omit<SharedRenderFrame2D, Extract<keyof SharedRenderFrame2D, symbol>>, canvas: HTMLCanvasElement): void {
   // M15_GL_TYPE_CASE GLU-N03: GL has no GPU recovery method.
   host.recover();
   // M15_GL_TYPE_CASE GLU-N04: staging is not an Engine upload API.
   engine.stageSharedFrame(frame);
-  // M15_GL_TYPE_CASE GLU-N05: legacy frames cannot enter shared staging.
-  host.stageSharedFrame(old);
+  // M15_GL_TYPE_CASE GLU-N05: a frame without its brand cannot enter shared staging.
+  host.stageSharedFrame(unbranded);
   // M15_GL_TYPE_CASE GLU-N06: structural metadata cannot replace a shared frame.
   host.stageSharedFrame({});
-  // M15_GL_TYPE_CASE GLU-N07: Canvas has no shared upload port.
-  canvasEntry.createCanvasHost({canvas}).stageSharedFrame(frame);
+  // M15_GL_TYPE_CASE GLU-N07: the removed Canvas Host cannot be reached through the root.
+  root.createCanvasHost({canvas}).stageSharedFrame(frame);
   // M15_GL_TYPE_CASE GLU-N08: native contexts are not caller inputs.
   createSharedWebGL2Host({canvas,gl:{} as WebGL2RenderingContext});
   // M15_GL_TYPE_CASE GLU-N09: GL has no recovery configuration.

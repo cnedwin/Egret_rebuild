@@ -17,7 +17,7 @@ export function createLinearLayoutSession({host, preset = 'preview', onUpdate, w
     || (waitForStartupIdle !== undefined && typeof waitForStartupIdle !== 'function')) {
     throw failure('EXAMPLE_OPTIONS_INVALID');
   }
-  const render = host?.renderFrame;
+  const render = host?.renderSharedFrame;
   if (typeof render !== 'function') throw failure('EXAMPLE_RENDER_PORT_REQUIRED');
   let state = 'starting', axis = 'horizontal', mode = 'horizontal';
   let presentation = 'unavailable', currentPlan, layoutScope, outer, inner, savedHorizontal;
@@ -161,7 +161,7 @@ export function createLinearLayoutSession({host, preset = 'preview', onUpdate, w
   const initialization = buttons.ready.then(async () => {
     if (state !== 'starting') throw failure('EXAMPLE_CLOSED');
     // The helper has synchronously submitted its ancillary frame. Verification
-    // may await that genuine ticket here; Host.renderFrame stays synchronous.
+    // may await that genuine ticket here; Host.renderSharedFrame stays synchronous.
     if (waitForStartupIdle !== undefined) {
       try { await waitForStartupIdle(); }
       catch (cause) { startupBarrierFailed = true; throw cause; }
@@ -195,7 +195,7 @@ export function createLinearLayoutSession({host, preset = 'preview', onUpdate, w
       });
     }
     applyLayout('horizontal', ['first', 'second'], false, false, 'horizontal');
-    savedHorizontal = engine.captureFrame(FRAME);
+    savedHorizontal = engine.captureSharedFrame(FRAME);
     present(savedHorizontal, 'saved-horizontal');
     state = 'ready';
     notify();

@@ -1,5 +1,7 @@
 # 自有纹理几何与 Mesh2D：有界契约
 
+> **部分已移除。** 本文描述的纹理帧 Profile（`captureTexturedFrame`、`TexturedRenderFrame2D` 及其宿主）已从 SDK 中移除。`Mesh2D` 与 `TexturedGeometry2D` 保留，并通过[共享渲染 Profile](shared-render-profile-contract.md)绘制。本文关于纹理 Profile 的部分保留为当时的记录。
+
 [English](../../en/docs/textured-geometry-and-mesh2d-contract.md) | 简体中文 · [证据与检查点](自有纹理几何与Mesh2D证据.md)
 
 该工作包提供不可变索引 XY/UV/light-RGBA 几何、纹理显示叶子、保留顺序的自有帧及显式渲染 profile。CPU 所有权可单独验收；整个包完成须由实际浏览器在既有矩形与 Bitmap 之间绘制可变形纹理 Mesh2D，保持顺序、裁剪、着色、alpha 与保留帧所有权。

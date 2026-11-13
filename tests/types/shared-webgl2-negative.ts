@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Every labelled statement must produce a real, unsuppressed compiler diagnostic.
 import * as root from '@egret/engine';
-import * as canvasEntry from '@egret/engine/web';
-import { type SharedRenderFrame2D, type RenderFrame2D } from '@egret/engine';
+import * as inputEntry from '@egret/engine/web/input';
+import { type SharedRenderFrame2D } from '@egret/engine';
 import {
   createSharedWebGL2Host, type SharedWebGL2Host, type SharedWebGL2HostOptions,
   type SharedWebGL2HostStatus, type SharedWebGL2Readback, type WebGL2HostStatus,
@@ -12,8 +12,8 @@ import {
 export function rejectEntryLeaks(canvas: HTMLCanvasElement): void {
   // WEBGL2_TYPE_CASE GL-N01: the default root exposes no optional WebGL2 factory.
   root.createSharedWebGL2Host({ canvas });
-  // WEBGL2_TYPE_CASE GL-N02: Canvas exposes no optional WebGL2 factory.
-  canvasEntry.createSharedWebGL2Host({ canvas });
+  // WEBGL2_TYPE_CASE GL-N02: the input entry exposes no optional WebGL2 factory.
+  inputEntry.createSharedWebGL2Host({ canvas });
 }
 export function rejectOptions(canvas: HTMLCanvasElement, gl: WebGL2RenderingContext): void {
   // WEBGL2_TYPE_CASE GL-N04: a real HTML canvas is required.
@@ -53,11 +53,11 @@ export function rejectFiniteDiscriminants(diagnostic: WebGL2HostDiagnostic, fail
   failure.phase = 'cleanup';
   void [state, code];
 }
-export function rejectFrames(host: SharedWebGL2Host, legacy: RenderFrame2D): void {
+export function rejectFrames(host: SharedWebGL2Host, unbranded: Omit<SharedRenderFrame2D, Extract<keyof SharedRenderFrame2D, symbol>>): void {
   // WEBGL2_TYPE_CASE GL-N21: a structural object is not a completed shared frame.
   host.renderSharedFrame({});
-  // WEBGL2_TYPE_CASE GL-N22: legacy frames cannot enter the shared GL port.
-  host.renderSharedFrame(legacy);
+  // WEBGL2_TYPE_CASE GL-N22: a frame without its brand cannot enter the shared GL port.
+  host.renderSharedFrame(unbranded);
 }
 export function rejectAsyncPort(): void {
   // WEBGL2_TYPE_CASE GL-N25: rendering returns exact undefined synchronously.

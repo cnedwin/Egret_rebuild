@@ -6,9 +6,9 @@ if (!['resources','pointers','ui','paragraph'].includes(kind) || !['webgl2','web
 const canvas = document.querySelector('#scene'), surface = document.querySelector('#surface'), controls = document.querySelector('#controls');
 const status = document.querySelector('#status'), phase = document.querySelector('#phase'), closeButton = document.querySelector('#close');
 const fixed = {resources:'resource-scene',pointers:'multi-pointer',ui:'ui-data-panel',paragraph:'paragraph-panel'}[kind];
-document.querySelector('#fixed').href = '../'+fixed+'/index.html'+(['ui','paragraph'].includes(kind)?'?backend='+backend:'');
+document.querySelector('#fixed').href = '../'+fixed+'/index.html'+(['ui','paragraph','pointers','resources'].includes(kind)?'?backend='+backend:'');
 for (const link of document.querySelectorAll('#backend a')) link.href = '?scene='+kind+'&backend='+link.textContent.toLowerCase();
-document.querySelector('#backend').hidden = !['ui','paragraph'].includes(kind);
+document.querySelector('#backend').hidden = !['ui','paragraph','pointers','resources'].includes(kind);
 let lastViewport, latest, stopped = false, media, mediaListener, cancelled = false;
 function describe() {
   const snapshot = queue.inspect(), view = describePreview(snapshot, cancelled);

@@ -34,20 +34,15 @@ void parent;
 void setup;
 
 import { createImageData2D, isImageData2D, copyImageData2DPixels, IMAGE_LIMITS_2D } from '@egret/engine';
-import type { ImageData2DInput, ImageData2D, TextureRegion2D, ImageCommand2D, RenderCommand2D, RenderFrame2D } from '@egret/engine';
+import type { ImageData2DInput, ImageData2D, TextureRegion2D } from '@egret/engine';
 const imageInput: ImageData2DInput = {width:1,height:1,pixels:new Uint8Array(new ArrayBuffer(4)),format:'rgba8unorm',colorSpace:'srgb',alphaMode:'straight',origin:'top-left'};
 const image: ImageData2D = createImageData2D(imageInput);
 const imagePixels: Uint8Array<ArrayBuffer> = copyImageData2DPixels(image);
 const sourceEdge: 4096 = IMAGE_LIMITS_2D.maxSourceEdge;
 const sourceRect: TextureRegion2D = {x:0,y:0,width:1,height:1};
-const imageCommand: ImageCommand2D = {kind:'image',matrix:{a:1,b:0,c:0,d:1,tx:0,ty:0},rect:sourceRect,alpha:1,clips:[],imageIndex:0,sourceRect};
-const imageFrame: RenderFrame2D = {frameId:1,width:1,height:1,clearColor:0,clearAlpha:0,commands:[imageCommand],images:[image]};
-function narrowCommand(command: RenderCommand2D): number {
-  switch(command.kind){case 'rect':return command.color;case 'image':return command.imageIndex;default:{const exhaustive:never=command;return exhaustive;}}
-}
 const unknownImage:unknown=image;
 if(isImageData2D(unknownImage)){const guarded:ImageData2D=unknownImage;void guarded;}
-void imagePixels;void sourceEdge;void imageFrame;void narrowCommand;
+void imagePixels;void sourceEdge;
 
 import {Texture,createTexture,isTexture,Bitmap} from '@egret/engine';
 const textureValue:Texture=createTexture(image,sourceRect);
@@ -59,15 +54,13 @@ const naturalWidth:number=bitmap.naturalWidth;
 if(isTexture(textureValue)){const immutableImage:ImageData2D=textureValue.imageData;void immutableImage;}
 textureValue.dispose();bitmap.dispose();void maybeLease;void naturalWidth;
 
-import {collectFrameContent,collectFrameCommands} from '../../packages/runtime/dist/index.js';
-import type {CapturedContent2D,Stage} from '../../packages/runtime/dist/index.js';
-import type {RectangleCommand2D} from '@egret/engine';
+import {collectSharedFrameContent} from '../../packages/runtime/dist/index.js';
+import type {CapturedSharedContent2D,Stage} from '../../packages/runtime/dist/index.js';
+import type {SharedRenderCommand2D} from '@egret/engine';
 declare const stage:Stage;
-const content:CapturedContent2D=collectFrameContent(stage);
-const legacyCommands:readonly RectangleCommand2D[]=collectFrameCommands(stage);
-const captureCommands:readonly RenderCommand2D[]=content.commands;
-const captureImages:readonly ImageData2D[]|undefined=content.images;
-void legacyCommands;void captureCommands;void captureImages;
+const content:CapturedSharedContent2D=collectSharedFrameContent(stage);
+const captureCommands:readonly SharedRenderCommand2D[]=content.commands;
+void captureCommands;
 
 import {createSequenceClip,SequencePlayer} from '@egret/engine';
 import type {SequenceClipInput,SequenceFrameInput,SequenceClip,SequenceSample,SequenceRegion,SequencePlaybackMode} from '@egret/engine';
@@ -323,61 +316,31 @@ meshPositive.clear();
 meshPositive.dispose();
 void meshPositiveDisplay; void meshPositiveLease; void meshPositiveGeometry; void meshPositiveBounds;
 
-// Task 5: exact opt-in types; append without replacing accepted legacy fixtures.
-import {TEXTURED_FRAME_PROFILE_2D as ProfileLiteral, SHARED_FRAME_PROFILE_2D as SharedProfileLiteral, createEngineForProfile as ProfileFactory} from '@egret/engine';
-import type {SharedFrameProfile2D as SharedProfileType, TexturedFrameProfile2D as ProfileType, TexturedMeshCommand2D as ProfileMesh, TexturedRenderCommand2D as ProfileCommand, TexturedRenderFrame2D as ProfileFrame, TexturedRenderHostAdapter as ProfileHost, Engine as ProfileEngine, EngineOptions as ProfileEngineOptions, FrameOptions2D as ProfileOptions, HostAdapter as ProfileHostBase, Matrix2D as ProfileMatrix, ClipRectangle2D as ProfileClip, TextureRegion2D as ProfileRegion, ImageData2D as ProfileImage, TexturedGeometry2D as ProfileGeometry, RenderCommand2D as ProfileLegacyCommand, RectangleCommand2D as ProfileRect, ImageCommand2D as ProfileImageCommand, RenderFrame2D as ProfileLegacyFrame} from '@egret/engine';
-import {collectTexturedFrameContent as ProfileCollect} from '../../packages/runtime/dist/index.js';
-import type {CapturedTexturedContent2D as ProfileContent, Stage as ProfileStage} from '../../packages/runtime/dist/index.js';
-import type {ContractsProfileType, ContractsProfileMesh, ContractsProfileCommand, ContractsProfileFrame, ContractsProfileHost} from '../../packages/engine/tests/profile-contract-types.js';
+// The shared profile is the only frame profile: exact factory, Engine ports and private collector.
+import {SHARED_FRAME_PROFILE_2D as SharedProfileLiteral, createEngineForProfile as ProfileFactory} from '@egret/engine';
+import type {SharedFrameProfile2D as SharedProfileType, SharedRenderFrame2D as ProfileFrame, SharedRenderHostAdapter as ProfileHost, SharedFrameOptions2D as ProfileOptions, Engine as ProfileEngine, EngineOptions as ProfileEngineOptions} from '@egret/engine'
+import {collectSharedFrameContent as ProfileCollect} from '../../packages/runtime/dist/index.js';
+import type {CapturedSharedContent2D as ProfileContent, Stage as ProfileStage} from '../../packages/runtime/dist/index.js';
 type ProfileEqual<A, B> = (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2) ? ((<T>() => T extends B ? 1 : 2) extends (<T>() => T extends A ? 1 : 2) ? true : false) : false;
 type ProfileAssert<T extends true> = T;
-type ProfileLiteralExact = ProfileAssert<ProfileEqual<typeof ProfileLiteral, 'egret.textured-frame2d/1'>>;
-type ProfileTypeExact = ProfileAssert<ProfileEqual<ProfileType, typeof ProfileLiteral>>;
-type ProfileReexportExact = ProfileAssert<ProfileEqual<ProfileType, ContractsProfileType>>;
-type ProfileMeshReexportExact = ProfileAssert<ProfileEqual<ProfileMesh, ContractsProfileMesh>>;
-type ProfileCommandReexportExact = ProfileAssert<ProfileEqual<ProfileCommand, ContractsProfileCommand>>;
-type ProfileFrameReexportExact = ProfileAssert<ProfileEqual<ProfileFrame, ContractsProfileFrame>>;
-type ProfileHostReexportExact = ProfileAssert<ProfileEqual<ProfileHost, ContractsProfileHost>>;
-type ProfileMeshExact = ProfileAssert<ProfileEqual<ProfileMesh, {readonly kind: 'mesh'; readonly matrix: ProfileMatrix; readonly alpha: number; readonly clips: readonly ProfileClip[]; readonly imageIndex: number; readonly sourceRect: ProfileRegion; readonly geometryIndex: number}>>;
-type ProfileUnionExact = ProfileAssert<ProfileEqual<ProfileCommand, ProfileRect | ProfileImageCommand | ProfileMesh>>;
-type ProfileLegacyUnionExact = ProfileAssert<ProfileEqual<ProfileLegacyCommand, ProfileRect | ProfileImageCommand>>;
-type ProfileFrameFields = {readonly profile: ProfileType; readonly frameId: number; readonly width: number; readonly height: number; readonly clearColor: number; readonly clearAlpha: number; readonly commands: readonly ProfileCommand[]; readonly images: readonly ProfileImage[]; readonly geometries: readonly ProfileGeometry[]};
-type ProfileFrameKeys = ProfileAssert<ProfileEqual<Extract<keyof ProfileFrame, string>, keyof ProfileFrameFields>>;
-type ProfileFrameReadonlyRequired = ProfileAssert<ProfileEqual<Pick<ProfileFrame, keyof ProfileFrameFields>, ProfileFrameFields>>;
-type ProfileBrandPresent = ProfileAssert<ProfileEqual<Extract<keyof ProfileFrame, symbol> extends never ? false : true, true>>;
-type ProfileBrandValue = ProfileAssert<ProfileEqual<ProfileFrame[Extract<keyof ProfileFrame, symbol>], true>>;
-type ProfileHostFields = {readonly texturedFrameProfile: ProfileType; renderTexturedFrame(frame: ProfileFrame): undefined};
-type ProfileHostNewKeys = ProfileAssert<ProfileEqual<Exclude<keyof ProfileHost, keyof ProfileHostBase>, keyof ProfileHostFields>>;
-type ProfileHostExact = ProfileAssert<ProfileEqual<Pick<ProfileHost, keyof ProfileHostFields>, ProfileHostFields>>;
-type ProfileHostPortExact = ProfileAssert<ProfileEqual<ProfileHost['renderTexturedFrame'], (frame: ProfileFrame) => undefined>>;
-type ProfileFactoryExact = ProfileAssert<ProfileEqual<typeof ProfileFactory, (options: ProfileEngineOptions, profile: ProfileType | SharedProfileType) => Promise<ProfileEngine>>>;
-type ProfileEngineAdvertisement = ProfileAssert<ProfileEqual<Pick<ProfileEngine, 'texturedFrameProfile'>, {readonly texturedFrameProfile: ProfileType | undefined}>>;
-type ProfileEngineNewCapture = ProfileAssert<ProfileEqual<ProfileEngine['captureTexturedFrame'], (options: ProfileOptions) => ProfileFrame>>;
-type ProfileEngineNewRender = ProfileAssert<ProfileEqual<ProfileEngine['renderTexturedFrame'], (options: ProfileOptions) => ProfileFrame>>;
-type ProfileEngineOldCapture = ProfileAssert<ProfileEqual<ProfileEngine['captureFrame'], (options: ProfileOptions) => ProfileLegacyFrame>>;
-type ProfileEngineOldRender = ProfileAssert<ProfileEqual<ProfileEngine['renderFrame'], (options: ProfileOptions) => ProfileLegacyFrame>>;
-type ProfileOptionsExact = ProfileAssert<ProfileEqual<ProfileOptions, {readonly width: number; readonly height: number; readonly clearColor?: number; readonly clearAlpha?: number}>>;
-type ProfileContentExact = ProfileAssert<ProfileEqual<ProfileContent, {readonly commands: readonly ProfileCommand[]; readonly images: readonly ProfileImage[]; readonly geometries: readonly ProfileGeometry[]}>>;
+type ProfileLiteralExact = ProfileAssert<ProfileEqual<typeof SharedProfileLiteral, 'egret.shared-frame2d/1'>>;
+type ProfileTypeExact = ProfileAssert<ProfileEqual<SharedProfileType, typeof SharedProfileLiteral>>;
+type ProfileFactoryExact = ProfileAssert<ProfileEqual<typeof ProfileFactory, (options: ProfileEngineOptions, profile: SharedProfileType) => Promise<ProfileEngine>>>;
+type ProfileEngineAdvertisement = ProfileAssert<ProfileEqual<Pick<ProfileEngine, 'sharedFrameProfile'>, {readonly sharedFrameProfile: SharedProfileType | undefined}>>;
+type ProfileEngineCapture = ProfileAssert<ProfileEqual<ProfileEngine['captureSharedFrame'], (options: ProfileOptions) => ProfileFrame>>;
+type ProfileEngineRender = ProfileAssert<ProfileEqual<ProfileEngine['renderSharedFrame'], (options: ProfileOptions) => ProfileFrame>>;
+// The Engine has no member of the removed legacy and textured profiles.
+type ProfileEngineRemoved = ProfileAssert<ProfileEqual<Extract<keyof ProfileEngine, 'captureFrame' | 'renderFrame' | 'captureTexturedFrame' | 'renderTexturedFrame' | 'texturedFrameProfile'>, never>>;
 type ProfileCollectExact = ProfileAssert<ProfileEqual<typeof ProfileCollect, (stage: ProfileStage) => ProfileContent>>;
-function profileExhaustion(command: ProfileCommand): number {
-  switch (command.kind) { case 'rect': return command.color; case 'image': return command.imageIndex; case 'mesh': return command.geometryIndex; default: { const exhausted: never = command; return exhausted; } }
-}
-function profileLegacyExhaustion(command: ProfileLegacyCommand): number {
-  switch (command.kind) { case 'rect': return command.color; case 'image': return command.imageIndex; default: { const exhausted: never = command; return exhausted; } }
-}
 declare const profilePositiveEngine: ProfileEngine;
 declare const profilePositiveHost: ProfileHost;
 declare const profilePositiveStage: ProfileStage;
 const profilePositiveOptions: ProfileOptions = {width: 1, height: 1};
-const profilePositiveCaptured: ProfileFrame = profilePositiveEngine.captureTexturedFrame(profilePositiveOptions);
-const profilePositiveRendered: ProfileFrame = profilePositiveEngine.renderTexturedFrame(profilePositiveOptions);
-const profilePositiveHostReturn: undefined = profilePositiveHost.renderTexturedFrame(profilePositiveCaptured);
-const profilePositiveFactory: Promise<ProfileEngine> = ProfileFactory({host: profilePositiveHost}, ProfileLiteral);
-const sharedProfilePositiveFactory: Promise<ProfileEngine> = ProfileFactory({host: profilePositiveHost}, SharedProfileLiteral);
-void sharedProfilePositiveFactory;
+const profilePositiveCaptured: ProfileFrame = profilePositiveEngine.captureSharedFrame(profilePositiveOptions);
+const profilePositiveRendered: ProfileFrame = profilePositiveEngine.renderSharedFrame(profilePositiveOptions);
+const profilePositiveFactory: Promise<ProfileEngine> = ProfileFactory({host: profilePositiveHost}, SharedProfileLiteral);
 const profilePositiveContent: ProfileContent = ProfileCollect(profilePositiveStage);
-void profileExhaustion; void profileLegacyExhaustion; void profilePositiveRendered;
-void profilePositiveHostReturn; void profilePositiveFactory; void profilePositiveContent;
+void profilePositiveCaptured; void profilePositiveRendered; void profilePositiveFactory; void profilePositiveContent;
 
 // First-party clock consumer authored from revision-1 API, not private owner ports.
 import type {GameClockOptions, GameClockState, GameClockTick, GameClockHandler, GameClock, GameClockSubscription, Engine as ClockEngine, EngineOptions as ClockEngineOptions, Scope as ClockScope} from '@egret/engine';
@@ -406,8 +369,8 @@ const clockConsumerHandler: GameClockHandler = (tick) => { const seconds: number
 const clockConsumerSubscription: GameClockSubscription = clockConsumerEngine.clock.onTick(clockConsumerScope, clockConsumerHandler);
 const clockOwnedSubscription: GameClockSubscription = clockConsumerScope.use(clockConsumerSubscription);
 const clockAdvancedTick: GameClockTick | undefined = clockConsumerEngine.advanceTime(10);
-const clockAfterAdvanceCapture: RenderFrame2D = clockConsumerEngine.captureFrame({width: 1, height: 1});
-const clockAfterAdvanceRender: RenderFrame2D = clockConsumerEngine.renderFrame({width: 1, height: 1});
+const clockAfterAdvanceCapture: ProfileFrame = clockConsumerEngine.captureSharedFrame({width: 1, height: 1});
+const clockAfterAdvanceRender: ProfileFrame = clockConsumerEngine.renderSharedFrame({width: 1, height: 1});
 void clockOwnedSubscription; void clockAdvancedTick; void clockAfterAdvanceCapture; void clockAfterAdvanceRender;
 
 // First-party scalar Tween consumer from the adopted API; no private owner port.

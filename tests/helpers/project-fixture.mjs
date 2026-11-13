@@ -92,7 +92,7 @@ export function prepareTypeFixture({root}) {
     cpSync(path.join(repository,relative),target,{recursive:true});
   };
   copy('tests/types');
-  for(const relative of ['packages/engine/tests/geometry-contract-types.ts','packages/engine/tests/profile-contract-types.ts','package.json','pnpm-lock.yaml','tsconfig.base.json'])copy(relative);
+  for(const relative of ['packages/engine/tests/geometry-contract-types.ts','package.json','pnpm-lock.yaml','tsconfig.base.json'])copy(relative);
   // Preserve the real tool dependency tree instead of predicting individual helper imports.
   // Every source entry is regular and owned; no external link becomes fixture authority.
   assert.equal(ownerRelativePath(realpathSync(repository),realpathSync(path.join(repository,'tools'))),'tools');

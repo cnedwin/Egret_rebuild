@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+> **已改用共享 Host。** 本示例默认用共享 WebGPU Host 绘制，加上 `?backend=webgl2` 时用共享 WebGL2 Host。此前使用的 Canvas Host 已移除；下文提到的验证命令为它编写，不再适用。下文关于 Canvas Host、选择 Canvas 以及已记录的 Canvas 检查的说明，描述的是早先的版本。
+
 工程预览 0.53.0 · S107 / V058。本示例将一份真实资源租约、具名 SpriteSheet 裁剪、Engine 时钟和 Bitmap 显式枢轴串联起来，不新增 Engine API、运行时依赖或自动定时器。
 
 使用仓库固定 Node 构建（`node tools/build.mjs`），通过普通本地 HTTP 静态服务器提供仓库根目录，然后打开 `/examples/anchored-atlas-playback/`。显式 import map 解析已构建的公开包入口。默认使用 Canvas；可通过选择器或 `?backend=webgpu` 选择 WebGPU，后者需要兼容浏览器及 localhost 等安全上下文。后端不可用时会明确显示；切换后端会重新加载并创建新会话。

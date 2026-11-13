@@ -4,7 +4,7 @@ import {createTextField as rootFactory} from '@egret/engine';
 import {createTextField as runtimeTextFactory} from '@egret/runtime/text';
 // TEXT_FIELD_IMPORT_CASE runtime-root-factory TS2724
 import {createTextField as runtimeFactory} from '@egret/runtime';
-// TEXT_FIELD_IMPORT_CASE web-factory TS2305
+// TEXT_FIELD_IMPORT_CASE web-factory TS2307
 import {createTextField as webFactory} from '@egret/engine/web';
 // TEXT_FIELD_IMPORT_CASE gpu-factory TS2305
 import {createTextField as gpuFactory} from '@egret/engine/webgpu';

@@ -1,9 +1,6 @@
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
 import type { ClipRectangle2D } from '@egret/contracts';
-import type { RectangleFrame2D } from './RectangleFrame2D.js';
 import { orient2d } from 'robust-predicates';
-import { readPreparedStage2D, tryReplayPreparedStage2D, acceptPreparedStage2D, publishPreparedStage2D } from './preparedFrameCache2D.js';
-import type { PreparedCacheContext2D, PreparedStageCost2D } from './preparedFrameCache2D.js';
 
 export interface PreparedPoint2D { readonly x: number; readonly y: number; }
 /** Private structural seam; the opted-in dispatcher supplies one first-party ledger. */
@@ -19,10 +16,17 @@ export interface PolygonClipPolicy2D<P extends PreparedPoint2D> {
     sameTuple(first: P, second: P): boolean;
     assertAppend(currentLength: number): void;
 }
-export interface PreparedRectangles2D {
-    readonly points: readonly PreparedPoint2D[];
-    readonly commands: readonly { readonly pointIndices: readonly number[]; readonly color: number; readonly alpha: number }[];
-    readonly edgeTests: number;
+/** What a clip already prepared in this call would have cost; replaying it charges the same budget. */
+export interface PreparedStageCost2D {
+    readonly preparedVertices: number;
+    readonly predicates: number;
+    readonly tupleComparisons: number;
+}
+function tryReplayPreparedStage2D(budget: PreparationBudget2D | undefined, cost: PreparedStageCost2D): boolean {
+    if (!Number.isSafeInteger(cost.preparedVertices) || cost.preparedVertices < 0
+        || !Number.isSafeInteger(cost.predicates) || cost.predicates < 0
+        || !Number.isSafeInteger(cost.tupleComparisons) || cost.tupleComparisons < 0) return false;
+    return budget === undefined || budget.tryReplayStageCost?.(cost) === true;
 }
 export interface RectanglePreparationOptions {
     readonly pixelRatio: number;
@@ -380,56 +384,4 @@ export function clipPolygon2D<P extends PreparedPoint2D>(preparation: Preparatio
         subject = normalize(preparation, output);
     }
     return subject;
-}
-export function prepareRectangles2D(frame: RectangleFrame2D, width: number, height: number, options: RectanglePreparationOptions, budget?: PreparationBudget2D, commandIndices?: number[],
-    cache?: PreparedCacheContext2D, sourceCommandIndices?: readonly number[], containedClipping = false,
-    clipContext?: ClipRectanglePreparationContext2D): PreparedRectangles2D {
-    // A clear-only frame still consumes nominal DPR, so its envelope is unconditional.
-    coordinate(options.pixelRatio);
-    const preparation = new Preparation(options, budget, containedClipping, clipContext);
-    const points: PreparedPoint2D[] = [];
-    const commands: { pointIndices: number[]; color: number; alpha: number }[] = [];
-    const viewport = [{ x: 0, y: 0 }, { x: width, y: 0 }, { x: width, y: height }, { x: 0, y: height }];
-    let vertices = 0;
-    for (let commandIndex = 0; commandIndex < frame.commands.length; commandIndex++) {
-        const command = frame.commands[commandIndex]!;
-        const slot = cache?.cache.slot(cache, [command], width, height, undefined, undefined, false, sourceCommandIndices?.[commandIndex] ?? commandIndex);
-        const cached = readPreparedStage2D<{ readonly polygon: readonly PreparedPoint2D[] }>(slot, 'geometry');
-        const previousPredicates = preparation.edgeTests;
-        let polygon: readonly PreparedPoint2D[], fanVertices: number, hit = false;
-        if (cached && cached.cost.predicates <= options.maxClipEdgeTests - preparation.edgeTests
-            && cached.cost.preparedVertices <= options.maxPreparedVertices - vertices
-            && cached.cost.preparedVertices <= 4294967295 - vertices
-            && tryReplayPreparedStage2D(budget, cached.cost)) {
-            polygon = cached.value.polygon; fanVertices = cached.cost.preparedVertices;
-            preparation.edgeTests += cached.cost.predicates; hit = true;
-            acceptPreparedStage2D(slot);
-        } else {
-            let computed = preparation.rectangle(command);
-            // Preflight all clips even when an earlier clip or alpha already removes coverage.
-            const clips = command.clips.map(clip => preparation.clipRectangle(clip, clipContext));
-            const bounds = clipContext && preparation.containedClipStackBounds(clips, viewport);
-            if (bounds === undefined || !preparation.tryContainedClipStack(computed, bounds, 'rectangle')) {
-                for (const clip of clips) computed = preparation.tryContainedClip(computed, clip, 'rectangle') ?? preparation.intersect(computed, clip, containedClipping);
-                computed = preparation.tryContainedClip(computed, viewport, 'rectangle') ?? preparation.intersect(computed, viewport, containedClipping);
-            }
-            polygon = command.alpha === 0 ? [] : computed;
-            fanVertices = polygon.length ? (polygon.length - 2) * 3 : 0;
-            if (polygon.length) {
-                if (fanVertices > options.maxPreparedVertices - vertices || fanVertices > 4294967295 - vertices) fail('budget');
-                budget?.admitPreparedVertices(fanVertices);
-            }
-        }
-        vertices += fanVertices;
-        if (polygon.length) {
-            const pointIndices: number[] = [];
-            for (const point of polygon) { pointIndices.push(points.length); points.push(point); }
-            commands.push({ pointIndices, color: command.color, alpha: command.alpha });
-            // Retain the actual source ordinal, including holes from empty commands.
-            commandIndices?.push(commandIndex);
-        }
-        if (!hit) publishPreparedStage2D(slot, 'geometry', { polygon },
-            { preparedVertices: fanVertices, predicates: preparation.edgeTests - previousPredicates, tupleComparisons: 0 });
-    }
-    return { points, commands, edgeTests: preparation.edgeTests };
 }

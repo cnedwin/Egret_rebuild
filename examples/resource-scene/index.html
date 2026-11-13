@@ -20,30 +20,30 @@
     details{margin:16px 0}summary{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:18rem;overflow:auto;padding:12px;background:#e8edf3}
     .note{color:#445266;font-size:.95rem}
   </style>
-  <script type="importmap">
-  {
-    "imports": {
-      "@egret/engine": "../../packages/engine/dist/index.js",
-      "@egret/engine/web": "../../packages/engine/dist/web/index.js",
-      "@egret/engine/text": "../../packages/engine/dist/text.js",
-      "@egret/engine/web/text": "../../packages/engine/dist/web/text.js",
-      "@egret/engine/web/image": "../../packages/engine/dist/web/image.js",
-      "@egret/engine/web/input": "../../packages/engine/dist/web/input.js",
-      "@egret/runtime": "../../packages/runtime/dist/index.js",
-      "@egret/runtime/text": "../../packages/runtime/dist/text/index.js",
-      "@egret/contracts": "../../packages/contracts/dist/index.js",
-      "@egret/contracts/resources": "../../packages/contracts/dist/resources/index.js",
-      "#egret-mouse-input": "../../packages/engine/dist/mouseInput.js",
-      "#egret-textured-frame-state": "../../packages/engine/dist/internal/texturedFrameState.js"
-    }
+  <script type="importmap">{
+  "imports": {
+    "@egret/engine": "../../packages/engine/dist/index.js",
+    "@egret/engine/webgpu": "../../packages/engine/dist/web/webgpu.js",
+    "@egret/engine/webgl2": "../../packages/engine/dist/web/webgl2.js",
+    "@egret/engine/text": "../../packages/engine/dist/text.js",
+    "@egret/engine/web/text": "../../packages/engine/dist/web/text.js",
+    "@egret/engine/web/image": "../../packages/engine/dist/web/image.js",
+    "@egret/engine/web/input": "../../packages/engine/dist/web/input.js",
+    "@egret/runtime": "../../packages/runtime/dist/index.js",
+    "@egret/runtime/text": "../../packages/runtime/dist/text/index.js",
+    "@egret/contracts": "../../packages/contracts/dist/index.js",
+    "@egret/contracts/resources": "../../packages/contracts/dist/resources/index.js",
+    "#egret-mouse-input": "../../packages/engine/dist/mouseInput.js",
+    "#egret-textured-frame-state": "../../packages/engine/dist/internal/texturedFrameState.js",
+    "robust-predicates": "../../packages/engine/node_modules/robust-predicates/index.js"
   }
-  </script>
+}</script>
 </head>
 <body>
   <header>
     <h1>Resource scene / <span lang="zh-CN">资源场景</span></h1>
     <p>Two pilots share an animated atlas and change outfits independently. Select a pilot in the scene or use the controls below.<br><span lang="zh-CN">两名角色共享动画图集，可独立换装。点击场景中的角色，或使用下方控件选择。</span></p>
-    <p class="note">Canvas presents the scene.<br><span lang="zh-CN">场景由 Canvas 呈现。</span></p>
+    <p class="note">The shared Host presents the scene: <a href="?backend=webgpu">WebGPU</a> or <a href="?backend=webgl2">WebGL2</a>.<br><span lang="zh-CN">场景由共享 Host 呈现：WebGPU 或 WebGL2。</span></p>
   </header>
   <main>
     <section aria-labelledby="scene-heading">

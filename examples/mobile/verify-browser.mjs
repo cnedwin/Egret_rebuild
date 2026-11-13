@@ -70,10 +70,14 @@ async function verifyKeyboard(page,context,label,mobile){
  await page.keyboard.press('ArrowLeft');state=await read(page);
  check(label+': routed arrow navigation',state.application.keyboard.focusedId,'left');
  check(label+': arrow target recorded',state.application.keyboardEvents.some(e=>e.code==='ArrowLeft'&&e.targetId==='right'));
- const gold=await page.locator('canvas').evaluate((canvas,region)=>{
-  const rect=canvas.getBoundingClientRect(),x=Math.floor((region.x-2)*canvas.width/rect.width),y=Math.floor((region.y+12)*canvas.height/rect.height);
-  return [...canvas.getContext('2d').getImageData(x,y,1,1).data];
- },state.application.regions[0]);
+ // The scene is drawn by a shared Host, so the pixel is read from what the page shows.
+ const shown=await page.locator('canvas').boundingBox(),region=state.application.regions[0];
+ const shot=await page.screenshot({clip:{x:shown.x+region.x-2,y:shown.y+region.y+12,width:1,height:1}});
+ const gold=await page.evaluate(async encoded=>{
+  const image=await createImageBitmap(await (await fetch('data:image/png;base64,'+encoded)).blob());
+  const context=new OffscreenCanvas(1,1).getContext('2d');context.drawImage(image,0,0);
+  return [...context.getImageData(0,0,1,1).data];
+ },shot.toString('base64'));
  check(label+': genuine rendered logical focus border',gold,[255,209,102,255]);
  const before=state.application.activations.left,scroll=await page.evaluate(()=>scrollY);
  await page.keyboard.down('Space');await page.keyboard.down('Space');state=await read(page);
@@ -109,10 +113,10 @@ async function verifyKeyboard(page,context,label,mobile){
 async function verifyKeyboardLab(page,label){
  try{
  await page.evaluate(async()=>{
-  const {createEngine,Sprite}=await import('@egret/engine'),{createCanvasHost}=await import('@egret/engine/web'),{createBrowserKeyboardInput}=await import('@egret/engine/web/keyboard');
+  const {createEngineForProfile,SHARED_FRAME_PROFILE_2D,Sprite}=await import('@egret/engine'),{createSharedWebGL2Host}=await import('@egret/engine/webgl2'),{createBrowserKeyboardInput}=await import('@egret/engine/web/keyboard');
   const canvas=document.createElement('canvas');canvas.id='keyboard-lab';canvas.width=200;canvas.height=80;canvas.style.width='200px';canvas.style.height='80px';
   const editor=document.createElement('input');editor.id='keyboard-lab-editor';document.querySelector('#controls').append(canvas,editor);
-  const diagnostics=[],engine=await createEngine({host:createCanvasHost({canvas}),onDiagnostic:d=>diagnostics.push({code:d.code,cause:d.cause?.code??null})}),scope=engine.createScope();
+  const diagnostics=[],engine=await createEngineForProfile({host:createSharedWebGL2Host({canvas}),onDiagnostic:d=>diagnostics.push({code:d.code,cause:d.cause?.code??null})},SHARED_FRAME_PROFILE_2D),scope=engine.createScope();
   const target=scope.use(new Sprite());target.graphics.beginFill(0x087e8b).drawRect(0,0,180,60).endFill();engine.stage.addChild(target);
   const input=createBrowserKeyboardInput({engine,scope});input.registerTarget({id:'lab',target});
   const events=[],nativeResults=[];let lab;
@@ -120,7 +124,7 @@ async function verifyKeyboardLab(page,label){
   window.addEventListener('keydown',observeNative);
   engine.stage.on(input.events.keyDown,event=>{events.push({kind:'down',code:event.payload.code});if(event.payload.code==='Tab'||event.payload.code==='Enter')event.preventDefault();if(event.payload.code==='KeyE'){event.preventDefault();editor.focus();}if(event.payload.code==='Space'){event.preventDefault();if(lab.action==='suspend')input.setInteractive(false);if(lab.action==='dispose')input.dispose();}},{signal:scope.signal});
   engine.stage.on(input.events.cancel,event=>events.push({kind:'cancel',code:event.payload.code,reason:event.payload.reason}),{signal:scope.signal});
-  engine.renderFrame({width:200,height:80,clearColor:0x172033,clearAlpha:1});
+  engine.renderSharedFrame({width:200,height:80,clearColor:0x172033,clearAlpha:1});
   let duplicate;try{createBrowserKeyboardInput({engine,scope});}catch(error){duplicate=error.code;}
   lab=globalThis.__egretKeyboardLab={input,engine,scope,canvas,editor,target,events,diagnostics,duplicate,nativeResults,observeNative,action:null};
   input.focus('lab',{visible:true});canvas.focus();
@@ -310,7 +314,8 @@ async function verifyRecovery(mode) {
   await route.fulfill({response});
  });
  try{
-  await page.goto(origin+'/examples/mobile/index.html?scene=resources');
+  // The backend is stated, so that recovery is observed the same way with and without a GPU.
+  await page.goto(origin+'/examples/mobile/index.html?scene=resources&backend=webgl2');
   if(mode==='slow'){
    await page.waitForFunction(()=>!document.querySelector('#close').disabled&&document.querySelector('#phase').dataset.state==='resizing');
    for(let wait=0;heldRequests===0&&wait<300;wait++)await new Promise(resolve=>setTimeout(resolve,100));
@@ -325,7 +330,7 @@ async function verifyRecovery(mode) {
   inject=false;
   for(let i=0;i<2;i++){
    await page.locator('#reload').click();await page.waitForFunction(()=>document.querySelector('#phase').dataset.state==='ready',undefined,{timeout:60000});
-   check('recovery/'+mode+': query preserved '+i,new URL(page.url()).search,'?scene=resources');
+   check('recovery/'+mode+': query preserved '+i,new URL(page.url()).search,'?scene=resources&backend=webgl2');
    await page.locator('#close').click();await page.waitForFunction(()=>document.querySelector('#phase').dataset.state==='closed');
    const closed=await read(page);check('recovery/'+mode+': fonts released '+i,closed.retired.fontCount,0);check('recovery/'+mode+': tasks released '+i,closed.retired.pendingSources+closed.retired.pendingTasks,0);
   }

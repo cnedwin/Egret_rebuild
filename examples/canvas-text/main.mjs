@@ -1,6 +1,6 @@
 // First-party Apache-2.0 example. Ahem has separate retained rights in assets/.
-import { createEngine } from '@egret/engine';
-import { createCanvasHost } from '@egret/engine/web';
+import { createEngineForProfile, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
+import { createExampleHost } from '../host.mjs';
 import { createTextRasterCache, createTextField } from '@egret/engine/text';
 import { createCanvasTextRasterProvider } from '@egret/engine/web/text';
 
@@ -71,7 +71,7 @@ async function run() {
     await field.prepare();
     if (closing) return;
     if (!attached) { engine.stage.addChild(field); attached = true; }
-    engine.renderFrame({ width: 320, height: 160, clearColor: 0xffffff, clearAlpha: 1 });
+    engine.renderSharedFrame({ width: 320, height: 160, clearColor: 0xffffff, clearAlpha: 1 });
     committed.textContent = text === '' ? '(empty) /（空）' : text;
     status.textContent = 'Owned Ahem selected; explicitly rendered. / 已选择自有 Ahem，已显式渲染。';
   }
@@ -120,7 +120,7 @@ async function run() {
     canvas.setAttribute('role', 'img');
     canvas.setAttribute('aria-label', 'Ahem test blocks; source text appears above / Ahem 测试方块，原文见上方');
     surface.append(canvas);
-    engine = await createEngine({ host: createCanvasHost({ canvas }) });
+    engine = await createEngineForProfile({ host: await createExampleHost({ canvas }) }, SHARED_FRAME_PROFILE_2D);
     if (closing) return;
     scope = engine.createScope();
     cache = createTextRasterCache(engine.assets, { provider: createCanvasTextRasterProvider() });

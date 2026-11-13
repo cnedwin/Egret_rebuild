@@ -140,10 +140,6 @@
       "criticalComment": true
     },
     {
-      "path": "tests/atlas-frame-boundary.test.mjs",
-      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
-    },
-    {
       "path": "tests/candidate-shared-frame-fixture.mjs",
       "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
     },
@@ -218,10 +214,6 @@
     {
       "path": "tests/resource-recovery-window-policy.test.mjs",
       "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
-    },
-    {
-      "path": "tests/resource-scene-browser-source.test.mjs",
-      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
     },
     {
       "path": "tests/shared-device-session.test.mjs",
@@ -366,11 +358,6 @@
     },
     {
       "path": "tools/prepared-resource-groups/oracle.mjs",
-      "originRole": "First-party bounded resource scene reference verification tool, independently authored with AI assistance under Apache-2.0.",
-      "criticalComment": true
-    },
-    {
-      "path": "tools/prepared-resource-groups/prepare-native-config.mjs",
       "originRole": "First-party bounded resource scene reference verification tool, independently authored with AI assistance under Apache-2.0.",
       "criticalComment": true
     },
@@ -791,10 +778,6 @@
       "path": "tools/shared-rendering/resource-recovery-window.mjs",
       "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
       "criticalComment": true
-    },
-    {
-      "path": "tools/verify-bitmap-resource-slot.mjs",
-      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
     },
     {
       "path": "tools/verify-resource-recovery.mjs",
