@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Physics under seek — 2026-11-14
+
+An original Spine fixture with a physics constraint now stands beside the seek tests. Six cases show that the constraint is simulated and remembers what came before, pin the rule that cuts an advance into sixtieths with the short remainder last, and find a seek equal to a straight run with physics: at the end of every step, inside every step, beyond the present and through an instance made by the reset slot. No code changed. The fixture is not an Editor export and no independent reference was used. [Guide](docs/spine-seek.md#physics)
+
 ## A page opened from the clean consumer — 2026-11-14
 
 `tools/verify-clean-consumer-page.mjs` goes on from the clean-consumer check: it serves the consumer directory alone, writes a page that imports the installed engine through an import map built from the installed manifests, and opens it in a real browser. The page draws a button and answers one injected press, and the frames the Host reads back are checked. It passed with WebGL2 under software rendering in headless Chromium, from 128 requests that all stayed inside the consumer. WebGPU, a hardware GPU and other browsers have not opened it, and its times are observations of one run, not a budget. [Guide](docs/clean-consumer.md#a-page-from-the-consumer)

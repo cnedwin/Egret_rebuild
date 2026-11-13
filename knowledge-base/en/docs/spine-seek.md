@@ -91,15 +91,28 @@ The commands of the failed advance are gone; issue them again if they are still 
 | `SPINE_INSTANCE_SEEK_FAILED` | The replay or the publication failed; the cause is attached. The instance is as it was. |
 | `SPINE_INSTANCE_SEEK_COMMITTED`, `_CANCELLED` | The ticket was used after it ended |
 
+## Physics
+
+A physics constraint makes the pose depend on every step that was simulated, not on the time alone: one loop of an animation later a bone that physics drags is somewhere else. The simulation also depends on how time is cut. An advance is cut into whole sixtieths with the short remainder last, so an advance of 0.04 second is exactly three advances of 1/60, 1/60 and the rest, and it is not three equal thirds. A seek is therefore only right if it cuts time as the run did, and it does: it replays the recorded steps under the same rule.
+
+- A seek to the end of a step, or to a moment inside one, equals a straight run that stopped there, physics included. The run that continues from the seek equals the straight run.
+- Beyond the present the seek advances in whole steps of sixtieths. A run that advanced in the same whole sixtieths stands in the same place.
+- A paused instance simulates nothing: what physics drags hangs where it was, and no time passes.
+- A new playback starts from rest. An instance made by the reset slot therefore starts as an instance created directly does, and a seek back to its time zero rebuilds exactly that.
+
 ## What was checked
 
 [`packages/spine/test/seek.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/packages/spine/test/seek.test.mjs) has 20 cases on original numerical fixtures. A seek to the end of each step of two scripts, one of mixed commands and one of finite plays and queues, equals the straight run value for value. So does every seek of twelve random scripts, and the run that continues after it. The other cases cover a target inside a step, forward seeks with and without their events, slices, both budgets, the bounds of the history, cancellation, pending commands, fault recovery, the reset slot, and a display that follows the commit.
 
-Forty-two faults were written into the built code one at a time and the tests caught thirty-eight. Two of the others release objects nobody can reach. One differs only at an exact coincidence of rounding. The last one is the open row below.
+[`packages/spine/test/physics.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/packages/spine/test/physics.test.mjs) has six cases on an original fixture with one physics constraint: a tail that lags a swinging root. They show that the constraint is simulated and remembers what came before, pin the rule that cuts an advance, and compare seeks with straight runs: to the end of every step with the cut-off steps applied again, to a moment inside every step, forward beyond the present with its events, and through an instance made by the reset slot.
+
+Forty-two faults were written into the built code one at a time and the seek tests caught thirty-eight. Two of the others release objects nobody can reach. One differs only at an exact coincidence of rounding. The last replays a reset step as an ordinary one.
+
+Fourteen further faults were written into the lines that step physics. The seek tests alone caught three of them; the physics tests catch eight. The other six change nothing that can be observed: four replace the physics reset of a playback that is new and so already at rest, among them the last fault of the paragraph above, and two change the length of the whole steps a forward seek advances in, which the rule that cuts every advance into sixtieths makes immaterial.
 
 ## Open
 
-- No fixture has a physics constraint. A reset step is replayed with the physics reset it was applied with, and no test can tell that from a plain pose update. Physics-bearing content needs an authorized fixture.
+- The physics fixture is original and has one constraint on one bone. No Editor export with physics and no independent reference renderer was used, so what is established is that a seek equals a straight run of this runtime, not that either matches the Editor.
 - Official or authorized Spine exports were not used. The fixtures are original and numerical.
 - A long-lived instance loses its history after 3600 advances by default. Checkpoints that would let it seek within a recent window are not implemented.
 - Seeking is not connected to the sequence controls or to an editor timeline.
