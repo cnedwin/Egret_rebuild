@@ -228,7 +228,6 @@ for (const [name, allowed] of Object.entries(expected)) {
       '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
       './webgpu': {types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'},
       './webgl2': {types:'./dist/web/webgl2.d.ts',import:'./dist/web/webgl2.js'},
-      './webgl2/scene3d': {types:'./dist/web/webgl2Scene3d.d.ts',import:'./dist/web/webgl2Scene3d.js'},
       './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
       './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
       './paragraph': {types:'./dist/paragraph.d.ts',import:'./dist/paragraph.js'},
@@ -244,14 +243,9 @@ for (const [name, allowed] of Object.entries(expected)) {
       './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
       './resources': {types:'./dist/resources.d.ts',import:'./dist/resources.js'},
       './web/resources': {types:'./dist/web/resources.d.ts',import:'./dist/web/resources.js'},
-      // S3D1_MAP_BEGIN
-      './scene3d': {types:'./dist/rendering/scene3d.d.ts',import:'./dist/rendering/scene3d.js'},
-      './webgpu/scene3d': {types:'./dist/web/scene3d.d.ts',import:'./dist/web/scene3d.js'},
-      // S3D1_MAP_END
     };
     textExports['./ui/editing'] = {types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'};
     if (name === 'engine') textExports['./web/editing'] = {types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'};
-    if (name === 'engine') textExports['./scene3d/authoring'] = {"types":"./dist/rendering/scene3dAuthoring.d.ts","import":"./dist/rendering/scene3dAuthoring.js"};
     // World3D: a DOM-free scene graph entry and one explicit entry per rendering backend.
     if (name === 'engine') {
       textExports['./world3d'] = {types:'./dist/rendering/world3d/index.d.ts',import:'./dist/rendering/world3d/index.js'};
@@ -484,8 +478,6 @@ for (const [entry, values, emittedEntry] of [
   ['web/text', await import('@egret/engine/web/text'), 'packages/engine/dist/web/text'],
   ['web/input', await import('@egret/engine/web/input'), 'packages/engine/dist/web/input'],
   ['web/image', await import('@egret/engine/web/image'), 'packages/engine/dist/web/image'],
-  ['scene3d', await import('@egret/engine/scene3d'), 'packages/engine/dist/rendering/scene3d'],
-  ['webgpu/scene3d', await import('@egret/engine/webgpu/scene3d'), 'packages/engine/dist/web/scene3d'],
 ]) {
   const code = readFileSync(path.join(root, emittedEntry + '.d.ts'), 'utf8') + '\n' + readFileSync(path.join(root, emittedEntry + '.js'), 'utf8');
   if (Object.values(values).includes(runtimeFacade.NineSliceBitmap) || /\b(?:NineSliceBitmap|NineSliceBitmapOptions)\b/.test(code)) throw new Error(entry + ': NLB1 panel surface belongs only to runtime/root');
@@ -556,7 +548,7 @@ const privateTexturedGPUModules = [
 ];
 const publicTexturedGPUTypes = ['TexturedWebGPUHost', 'TexturedWebGPUHostOptions', 'TexturedWebGPUHostStatus'];
 const sharedGPUTypes = ['SharedWebGPUHost','SharedWebGPUHostOptions','SharedWebGPUHostStatus','SharedWebGPUReadback'];
-const completeGPUValues = ['createSharedWebGPUHost','createTexturedWebGPUHost','createWebGPUHost'];
+const completeGPUValues = ['createSharedWebGPUHost'];
 for (const [entry, values, emittedEntry] of meshEntries) {
   const declaration = readFileSync(path.join(root, emittedEntry + '.d.ts'), 'utf8');
   const emitted = readFileSync(path.join(root, emittedEntry + '.js'), 'utf8');
@@ -639,9 +631,9 @@ const m15UploadTypes = ['SharedFrameUploadOptions','SharedFrameUploadReady','Sha
 const m15SharedHostTypes = [...m15SessionTypes,...m15UploadTypes];
 const m15SharedHostTypeClauses = "export type { SharedDeviceSessionState, SharedDeviceSessionStatus, SharedHostResourceStatus } from './sharedDeviceSession.js'; export type { SharedFrameUploadOptions, SharedFrameUploadReady, SharedFrameSubmission, SharedFrameUpload } from './sharedFrameUpload.js';";
 const expectedGPUTypeNames = [
-  'WebGPUHost', 'WebGPUHostState', 'WebGPUHostErrorCode', 'WebGPUHostFailure',
+  'WebGPUHostState', 'WebGPUHostErrorCode', 'WebGPUHostFailure',
   'WebGPUHostDiagnostic', 'WebGPUHostOptions', 'WebGPUReadback', 'WebGPUHostStatus',
-  ...publicTexturedGPUTypes, ...sharedGPUTypes, ...m15SharedHostTypes,
+  ...sharedGPUTypes, ...m15SharedHostTypes,
 ].sort();
 const gpuDeclaration = readFileSync(path.join(root, 'packages/engine/dist/web/webgpu.d.ts'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
 const actualGPUTypeNames = [...gpuDeclaration.matchAll(/export type\s*\{([^}]+)\}\s*from\s*["'][^"']+["'];?/g)].flatMap(match => match[1].split(',').map(name => name.trim())).sort();
@@ -1166,13 +1158,7 @@ for (const name of ['assetGroup', 'assetGroupTypes']) for (const [directory, suf
       || /\/\/\/\s*<reference\s+(?:lib\s*=\s*['"]dom(?:\.iterable)?['"]|types\s*=\s*['"]node['"])/i.test(raw)) throw new Error(`${file}: host ambient dependency`);
 }
 // RG1_BOUNDARY_END
-// S3D1_BOUNDARY_BEGIN
 // Separate explicit entries do not exempt any earlier private authority guard.
-const sceneCPUValues = ['createMatrix4','multiplyMatrix4','Math3DError','createMeshGeometry3D','isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin','createSceneFrame3D','isSceneFrame3D','Scene3DError','getScene3DErrorOrigin'];
-const sceneCPUTypes = ['Matrix4','Math3DErrorCode','MeshGeometry3DInput','MeshGeometry3D','MeshGeometry3DErrorCode','MeshGeometry3DErrorOrigin','SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin'];
-const sceneLegacyWebTypes = ['SceneWebGPUHostOptions','SceneWebGPUHostStatus','SceneWebGPUHost'];
-const sceneWebValues = ['createSceneWebGPUHost','createTexturedSceneWebGPUHost','createSharedSceneWebGPUHost'];
-const sceneWebTypes = [...sceneLegacyWebTypes,'TexturedSceneWebGPUHost','TexturedWebGPUHostOptions','SharedSceneWebGPUHost','SharedSceneWebGPUHostOptions',...m15SharedHostTypes];
 const sceneRead = file => assetGroupStrip(readFileSync(path.join(root,file),'utf8'));
 const sceneEqual = (a,b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
 function sceneExports(code, label) {
@@ -1206,204 +1192,19 @@ function sceneClauses(code, label, allowed) {
   const stripped=code.replace(/\b(?:import|export)(?:\s+type)?\s*\{[^}]+\}\s*from\s*['"][^'"]+['"]\s*;?/g,'');
   if (/\bimport\b|\bfrom\s*['"]/.test(stripped)) throw new Error('S3D1: scene entry imported outside approved closure: '+label);
 }
-function sceneForward(code, name, target, parameter, label) {
-  const imports=[...code.matchAll(/\bimport\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)]
-    .filter(match=>match[2]===target).flatMap(match=>match[1].split(',').map(value=>value.trim().split(/\s+as\s+/)));
-  const forwardName=name==='createSceneWebGPUHost'?'createB1WebGPUHost':name==='createTexturedSceneWebGPUHost'?'createTexturedB1WebGPUHost':name;
-  const importsForFactory=imports.filter(parts=>parts[0]===forwardName);
-  if (importsForFactory.length!==1) throw new Error(label+': exact direct factory forwarding mismatch');
-  const local=importsForFactory[0][1]??importsForFactory[0][0];
-  // Operand pairs retain exact order; the existing single-input check stays intact.
-  const parameters=Array.isArray(parameter)?parameter:[parameter];
-  const parameterList=Array.isArray(parameter)
-    ? parameter.map(value=>value+'(?:\\s*:[^,)]+)?').join('\\s*,\\s*')
-    : parameter+'(?:\\s*:[^)]*)?';
-  const functions=[...code.matchAll(new RegExp('export\\s+function\\s+'+name+'\\s*\\(\\s*'+parameterList+'\\s*\\)(?:\\s*:[^{]+)?\\s*\\{([^}]*)\\}','g'))];
-  if (functions.length!==1 || functions[0][1].replace(/\s+/g,'')!=='return'+local+'('+parameters.join(',')+');')
-    throw new Error(label+': exact direct factory forwarding mismatch');
-}
-function sceneOnlyProgram(code,kind,factories,localTypes,label) {
-  let rest=code.replace(/\b(?:import|export)(?:\s+type)?\s*\{[^}]+\}\s*from\s*['"][^'"]+['"]\s*;?/g,'');
-  for(const [name,signature,body]of localTypes) {
-    const match=rest.match(new RegExp('export\\s+(?:declare\\s+)?'+signature+'\\s*'+name+'\\b[^\\{;]*(?:\\{([^}]*)\\}|=([^;]+);)'));
-    if(!match || (match[1]??match[2]).replace(/\s+/g,'')!==body)throw new Error(label+': canonical authoring/Host type mismatch: '+name);
-    rest=rest.replace(match[0],'');
-  }
-  for(const [name,inputType,outputType,parameter]of factories) {
-    // Source/declaration operand types and emitted arity remain exact at this port.
-    const parameterList=Array.isArray(parameter)?parameter.join('\\s*,\\s*'):parameter;
-    const typedParameterList=Array.isArray(parameter)
-      ? parameter.map((value,index)=>value+'\\s*:\\s*'+inputType[index]).join('\\s*,\\s*')
-      : parameter+'\\s*:\\s*'+inputType;
-    const expression=kind==='emitted'
-      ? 'export\\s+function\\s+'+name+'\\s*\\(\\s*'+parameterList+'\\s*\\)\\s*\\{[^}]*\\}'
-      : kind==='declaration'
-      ? 'export\\s+declare\\s+function\\s+'+name+'\\s*\\(\\s*'+typedParameterList+'\\s*\\)\\s*:\\s*'+outputType+'\\s*;'
-      : 'export\\s+function\\s+'+name+'\\s*\\(\\s*'+typedParameterList+'\\s*\\)\\s*:\\s*'+outputType+'\\s*\\{[^}]*\\}';
-    const match=rest.match(new RegExp(expression));if(!match)throw new Error(label+': exact direct factory signature mismatch: '+name);
-    rest=rest.replace(match[0],'');
-  }
-  if(rest.trim())throw new Error('S3D1: facade contains non-forwarding module code: '+label);
-}
-function sceneCanonicalTypeReexports(code,label) {
-  const targets={Matrix4:'./matrix4.js',Math3DErrorCode:'./matrix4.js',MeshGeometry3D:'./meshGeometry3D.js',MeshGeometry3DErrorCode:'./meshGeometry3D.js',MeshGeometry3DErrorOrigin:'./meshGeometry3D.js'};
-  for(const name of ['SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin'])targets[name]='./sceneFrame3D.js';
-  const exports=[...code.matchAll(/\bexport\s+type\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)]
-    .flatMap(match=>match[1].split(',').map(name=>({name:name.trim(),target:match[2]})).filter(item=>item.name));
-  for(const [name,target]of Object.entries(targets)) {
-    const found=exports.filter(item=>item.name===name);
-    if(found.length!==1 || found[0].target!==target)throw new Error(label+': exact canonical type re-export mismatch: '+name);
-  }
-}
-function sceneWebCanonicalTypes(code,label) {
-  const exported=[...code.matchAll(/\bexport\s+type\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)]
-    .flatMap(match=>match[1].split(',').map(name=>({name:name.trim(),target:match[2]})).filter(item=>item.name));
-  const options=exported.filter(item=>item.name==='TexturedWebGPUHostOptions');
-  if(options.length!==1 || options[0].target!=='./webgpu.js')throw new Error(label+': exact canonical type re-export mismatch: TexturedWebGPUHostOptions');
-  const required={
-    '@egret/contracts':['RenderFrame2D','TexturedRenderFrame2D'],
-    '../rendering/scene3d.js':['SceneFrame3D'],
-    './webgpu.js':['WebGPUHost','WebGPUHostOptions','WebGPUHostStatus','TexturedWebGPUHost','TexturedWebGPUHostOptions'],
-  };
-  const imported=[...code.matchAll(/\bimport\s+type\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)]
-    .flatMap(match=>match[1].split(',').map(name=>({name:name.trim(),target:match[2]})).filter(item=>item.name));
-  for(const [target,names]of Object.entries(required))for(const name of names){
-    const found=imported.filter(item=>item.name===name);
-    if(found.length!==1 || found[0].target!==target)throw new Error(label+': exact public consumer type import mismatch: '+name);
-  }
-  const inheritance=[...code.matchAll(/\bexport\s+(?:declare\s+)?interface\s+TexturedSceneWebGPUHost\b([^\{]*)\{/g)];
-  if(inheritance.length!==1 || inheritance[0][1].replace(/\s+/g,'')!=='extendsTexturedWebGPUHost,SceneWebGPUHost')
-    throw new Error(label+': canonical authoring/Host type mismatch: TexturedSceneWebGPUHost');
-}
-const sceneCPU=await import('@egret/engine/scene3d');
-const sceneWeb=await import('@egret/engine/webgpu/scene3d');
-// Authored scene and GLB operations remain behind one separate DOM-free route.
-const authoredSceneValues=['createSceneAnimationClip3D','createSceneCamera3D','createSceneWorld3D','createSceneWorldCard3D','loadAnimatedGlbScene3D','loadStaticGlbScene3D','prepareLambertStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError'];
-const sceneAnimationTypes=['ImportedSceneAnimationClip3D','SceneAnimationClip3D','SceneAnimationClipInput3D','SceneAnimationTrackInput3D','SceneAnimationKey3D'];
-const authoredSceneTypes=['SceneWorldCamera3D','SceneWorldCameraInput3D','SceneWorldProjectionInput3D','SceneWorld3D','SceneWorldNodeInput3D','SceneWorldCard3D','SceneWorldCardInput3D','SceneDirectionalLighting3D','SceneLambertWorld3D','PreparedLambertStaticGlb3D','PreparedTexturedStaticGlb3D','StaticGlbImageBinding3D','StaticGlbImageRequest3D','StaticGlb3DErrorCode','SceneWorldNodeTransform3D','AnimatedGlbScene3D',...sceneAnimationTypes];
-const authoredScene=await import('@egret/engine/scene3d/authoring');
-if(!sceneEqual(Object.keys(authoredScene),authoredSceneValues))throw new Error('scene3d/authoring: exact runtime export surface mismatch');
-const authoredRules={'./sceneWorld3D.js':{value:['createSceneCamera3D','createSceneWorld3D'],type:[...authoredSceneTypes.slice(0,5),'SceneLambertWorld3D','SceneWorldNodeTransform3D']},
-  './sceneAnimation3D.js':{value:['createSceneAnimationClip3D'],type:sceneAnimationTypes},
-  './sceneFrame3D.js':{value:['createSceneWorldCard3D'],type:['SceneWorldCard3D','SceneWorldCardInput3D','SceneDirectionalLighting3D']},
-  './staticGlb3D.js':{value:['loadAnimatedGlbScene3D','readStaticGlbNodes3D','prepareLambertStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError'],type:['AnimatedGlbScene3D','PreparedLambertStaticGlb3D','PreparedTexturedStaticGlb3D','StaticGlbImageBinding3D','StaticGlbImageRequest3D','StaticGlb3DErrorCode']}};
-for(const [file,kind] of [['packages/engine/rendering/scene3dAuthoring.ts','source'],
-  ['packages/engine/dist/rendering/scene3dAuthoring.js','emitted'],['packages/engine/dist/rendering/scene3dAuthoring.d.ts','declaration']]){
-  const code=sceneRead(file);
-  sceneSurface(code,file,authoredSceneValues,kind==='emitted'?[]:authoredSceneTypes);
-  sceneClauses(code,file,authoredRules);
-  sceneOnlyProgram(code,kind,[['loadStaticGlbScene3D','Uint8Array','SceneWorld3D','bytes']],[],file);
-  if(kind!=='declaration'&&!/returncreateSceneWorld3D\(readStaticGlbNodes3D\(bytes\)\);/.test(code.replace(/\s+/g,'')))
-    throw new Error('scene3d/authoring: exact GLB assembly mismatch');
-}
-for(const [target,names] of [['sceneAnimation3D',['createSceneAnimationClip3D']],['sceneWorld3D',['createSceneCamera3D','createSceneWorld3D']],['sceneFrame3D',['createSceneWorldCard3D']],['staticGlb3D',['loadAnimatedGlbScene3D','prepareLambertStaticGlbScene3D','prepareTexturedStaticGlbScene3D','StaticGlb3DError']]]){
-  const original=await import(new URL('../packages/engine/dist/rendering/'+target+'.js',import.meta.url));
-  for(const name of names)if(authoredScene[name]!==original[name])throw new Error('scene3d/authoring: original module identity mismatch: '+name);
-}
-if (!sceneEqual(Object.keys(sceneCPU),sceneCPUValues)) throw new Error('scene3d: exact runtime export surface mismatch');
-if (!sceneEqual(Object.keys(sceneWeb),sceneWebValues)) throw new Error('webgpu/scene3d: exact runtime export surface mismatch');
-const sceneCPURules={
-  './matrix4.js':{value:['createMatrix4','multiplyMatrix4','Math3DError'],type:['Matrix4','Math3DErrorCode']},
-  './meshGeometry3D.js':{value:['createMeshGeometry3D','isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin'],type:['MeshGeometry3D','MeshGeometry3DErrorCode','MeshGeometry3DErrorOrigin']},
-  './sceneFrame3D.js':{value:['createSceneFrame3D','isSceneFrame3D','Scene3DError','getScene3DErrorOrigin'],type:['SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin']},
-};
-const sceneWebTypeRules={
-  './sharedDeviceSession.js':{type:m15SessionTypes},
-  './sharedFrameUpload.js':{type:m15UploadTypes},
-  '@egret/contracts':{type:['RenderFrame2D','TexturedRenderFrame2D']},
-  '../rendering/scene3d.js':{type:['SceneFrame3D']},
-  './webgpu.js':{type:['WebGPUHost','WebGPUHostOptions','WebGPUHostStatus','TexturedWebGPUHost','TexturedWebGPUHostOptions']},
-};
-for (const [label,file,kind] of [['scene3d source','packages/engine/rendering/scene3d.ts','source'],['scene3d','packages/engine/dist/rendering/scene3d.d.ts','declaration'],['scene3d emitted','packages/engine/dist/rendering/scene3d.js','emitted']]) {
-  const code=sceneRead(file);
-  sceneSurface(code,label,sceneCPUValues,kind==='emitted'?[]:sceneCPUTypes);
-  sceneClauses(code,label,sceneCPURules);
-  if (kind!=='declaration') {
-    sceneForward(code,'createMatrix4','./matrix4.js','input',label);
-    sceneForward(code,'multiplyMatrix4','./matrix4.js',['left','right'],label);
-    sceneForward(code,'createMeshGeometry3D','./meshGeometry3D.js','input',label);
-    sceneForward(code,'createSceneFrame3D','./sceneFrame3D.js','input',label);
-  }
-  if(kind!=='emitted')sceneCanonicalTypeReexports(code,label);
-  sceneOnlyProgram(code,kind,[['createMatrix4','readonly\\s+number\\[\\]','Matrix4','input'],['multiplyMatrix4',['Matrix4','Matrix4'],'Matrix4',['left','right']],['createMeshGeometry3D','MeshGeometry3DInput','MeshGeometry3D','input'],['createSceneFrame3D','SceneInput3D','SceneFrame3D','input']],kind==='emitted'?[]:[['MeshGeometry3DInput','interface','readonlypositions:readonlynumber[];readonlycolors:readonlynumber[];readonlyindices:readonlynumber[];']],label);
-  if (kind==='emitted' && sceneCPUTypes.some(name=>new RegExp('\\b'+name+'\\b').test(code))) throw new Error('scene3d: type-only runtime erasure mismatch');
-}
-for (const [label,file,kind] of [['webgpu/scene3d source','packages/engine/web/scene3d.ts','source'],['webgpu/scene3d','packages/engine/dist/web/scene3d.d.ts','declaration'],['webgpu/scene3d emitted','packages/engine/dist/web/scene3d.js','emitted']]) {
-  const code=sceneRead(file);
-  sharedForward(code,'createSharedSceneWebGPUHost',false,'./sharedB1.js',file);
-  if(kind!=='emitted')for(const name of ['SharedSceneWebGPUHost','SharedSceneWebGPUHostOptions'])sharedForward(code,name,true,'./WebGPUHost.js',file);
-  const privateDeclarationCode=code.replace(/export\s+type\s*\{\s*SharedSceneWebGPUHost\s*,\s*SharedSceneWebGPUHostOptions\s*\}\s*from\s*['"]\.\/WebGPUHost\.js['"]\s*;?/g,'');
-  if (kind==='declaration' && /\b(?:B1BuiltinProtocol|createB1WebGPUHostInternal|B1WebGPUHost|B1SceneStatus|TEXTURED_SCENE_MODE|TexturedB1WebGPUHost|createTexturedB1WebGPUHostInternal|createTexturedB1WebGPUHost|renderSceneTexturedOwnedFrame|packTexturedSubmission2D)\b|['"](?:\.\/b1|\.\/WebGPUHost|\.\.\/rendering\/sceneFrame3D)\.js['"]/.test(privateDeclarationCode))
-    throw new Error('webgpu/scene3d: private declaration dependency leaked');
-  sceneSurface(code,label,sceneWebValues,kind==='emitted'?[]:sceneWebTypes);
-  sceneClauses(code,label,{...sceneWebTypeRules,'./sharedB1.js':{value:['createSharedSceneWebGPUHost']},'./WebGPUHost.js':{type:['SharedSceneWebGPUHost','SharedSceneWebGPUHostOptions']},...(kind==='declaration'?{}:{'./b1.js':{value:['createB1WebGPUHost','createTexturedB1WebGPUHost']}})});
-  if (kind!=='declaration') {
-    sceneForward(code,'createSceneWebGPUHost','./b1.js','options',label);
-    sceneForward(code,'createTexturedSceneWebGPUHost','./b1.js','options',label);
-  }
-  if(kind!=='emitted')sceneWebCanonicalTypes(code,label);
-  sceneOnlyProgram(code,kind,[['createSceneWebGPUHost','SceneWebGPUHostOptions','SceneWebGPUHost','options'],['createTexturedSceneWebGPUHost','TexturedWebGPUHostOptions','TexturedSceneWebGPUHost','options']],kind==='emitted'?[]:[
-    ['SceneWebGPUHostOptions','type','WebGPUHostOptions'],
-    ['SceneWebGPUHostStatus','interface','readonlyhost:WebGPUHostStatus;readonlypendingSceneBytes:number;readonlypendingUniformBytes:number;readonlypendingDepthBytes:number;'],
-    ['SceneWebGPUHost','interface','renderSceneFrame(scene:SceneFrame3D,overlay:RenderFrame2D):undefined;getSceneStatus():SceneWebGPUHostStatus;'],
-    ['TexturedSceneWebGPUHost','interface','renderSceneTexturedFrame(scene:SceneFrame3D,overlay:TexturedRenderFrame2D):undefined;'],
-  ],label);
-  if (kind==='emitted' && [...sceneWebTypes,'SceneFrame3D','RenderFrame2D','TexturedRenderFrame2D','WebGPUHostOptions','WebGPUHostStatus','TexturedWebGPUHost'].some(name=>new RegExp('\\b'+name+'\\b').test(code)))
-    throw new Error('webgpu/scene3d: type-only runtime erasure mismatch');
-}
-// Original module values, including origin registration and identity predicates,
-// cannot be replaced by a facade-local class/function with a matching shape.
-for (const [target,names] of [['matrix4',['Math3DError']],['meshGeometry3D',['isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin']],['sceneFrame3D',['isSceneFrame3D','Scene3DError','getScene3DErrorOrigin']]]) {
-  const original=await import(new URL('../packages/engine/dist/rendering/'+target+'.js',import.meta.url));
-  for (const name of names) if (sceneCPU[name]!==original[name]) throw new Error('scene3d: original module identity mismatch: '+name);
-}
-const sceneNewNames=[...authoredSceneValues,...authoredSceneTypes,'isSceneWorld3D','createAuthoredSceneFrame3D','readStaticGlbNodes3D','readStaticGlbTexturePlan3D','createTexturedSceneWorld3D','createLambertSceneWorld3D','SceneLambertDraw3D','SceneLambertSurface3D','SceneMeshTexture3D','createMatrix4','multiplyMatrix4','Math3DError','Math3DErrorCode','MeshGeometry3DInput',...sceneWebValues,...sceneLegacyWebTypes,'TexturedSceneWebGPUHost','SharedSceneWebGPUHost','SharedSceneWebGPUHostOptions'];
-for (const [entry,values,emittedEntry] of [...textEntries,['project',projectFacade,'packages/project/dist/index']]) {
-  const text=[sceneRead(assetGroupSourceEntries[entry]),sceneRead(emittedEntry+'.js'),sceneRead(emittedEntry+'.d.ts')].join('\n');
-  for (const name of sceneNewNames) if (name in values || new RegExp('\\b'+name+'\\b').test(text)) throw new Error(entry+': explicit-only scene name leaked: '+name);
-}
-// The explicit facade alone forwards through this private b1 value. Its public
-// declarations still cannot name it; source/import shape is checked above.
-const sceneForbiddenNames=[...privateSharedGPU,...meshPrivate,...texturedPrivate,...privateTexturedGPU.filter(name=>name!=='createTexturedB1WebGPUHost'),...privateCapture,...privateCoordinates,...privateBounds,...assetGroupPublicTypes,'AssetGroupOperations',...assetGroupPrivateNames,'packMeshGeometry3D','PackedMeshGeometry3D','MeshPacking3DError','getMeshPacking3DErrorOrigin','B1BuiltinProtocol','getBuiltinB1Protocol','isBuiltinB1Protocol','createB1WebGPUHostInternal'];
-for (const [label,values,stem] of [['scene3d',sceneCPU,'packages/engine/dist/rendering/scene3d'],['webgpu/scene3d',sceneWeb,'packages/engine/dist/web/scene3d']]) {
-  const text=sceneRead(stem+'.d.ts')+'\n'+sceneRead(stem+'.js');
-  for (const name of sceneForbiddenNames) if (name in values || new RegExp('\\b'+name+'\\b').test(text)) throw new Error(label+': retained private authority leaked: '+name);
-}
-for (const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/dist'))]) {
-  if (!/\.(?:js|ts)$/.test(file)) continue;
-  const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/'),code=sceneRead(path.relative(root,file));
-  for (const match of code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)) {
-    if (!match[1].startsWith('.')) continue;
-    const target=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),match[1])).split(path.sep).join('/');
-    if(/^(?:dist\/)?rendering\/(?:scene3dAuthoring|sceneWorld3D|staticGlb3D|sceneAnimation3D)\.js$/.test(target)){
-      if(!/^(?:dist\/)?rendering\/(?:scene3dAuthoring|sceneWorld3D|staticGlb3D|sceneAnimation3D)\.(?:ts|d\.ts|js)$/.test(relative))
-        throw new Error('S3D1: authored scene imported outside approved closure: '+relative);
-      continue;
-    }
-    if (!['rendering/scene3d.js','dist/rendering/scene3d.js','web/scene3d.js','dist/web/scene3d.js'].includes(target)) continue;
-    const typeHost=['web/scene3d.ts','dist/web/scene3d.d.ts'].includes(relative) && ['rendering/scene3d.js','dist/rendering/scene3d.js'].includes(target);
-    const before=code.slice(0,match.index);
-    if (!typeHost || !/\bimport\s+type\s*\{\s*SceneFrame3D\s*\}\s*$/.test(before)) throw new Error('S3D1: scene entry imported outside approved closure: '+relative);
-  }
-}
+// Names no optional facade may publish.
+const sceneForbiddenNames=[...privateSharedGPU,...meshPrivate,...texturedPrivate,...privateTexturedGPU,...privateCapture,...privateCoordinates,...privateBounds,...assetGroupPublicTypes,'AssetGroupOperations',...assetGroupPrivateNames,'packMeshGeometry3D','PackedMeshGeometry3D','MeshPacking3DError','getMeshPacking3DErrorOrigin','B1BuiltinProtocol','getBuiltinB1Protocol','isBuiltinB1Protocol','createB1WebGPUHostInternal'];
 // M14_WEBGL2_BOUNDARY_BEGIN
-// Two explicit facades share the original CPU preparation and authority. These
-// finite additions leave all retained WebGPU closure/capture policies intact.
 const glValues = ['createSharedWebGL2Host'];
 const glTypes = ['SharedWebGL2HostOptions','SharedWebGL2Host','SharedWebGL2HostStatus','SharedWebGL2Readback','WebGL2HostState','WebGL2HostErrorCode','WebGL2HostFailure','WebGL2HostDiagnostic','WebGL2HostStatus'];
 const glLayerTypes = ['SharedLayerWebGL2Host','SharedWebGL2Layer2D','SharedWebGL2LayerEffect2D','SharedWebGL2LayerPlacement2D','SharedWebGL2LayerStatus'];
-const glSceneValues = ['createSharedSceneWebGL2Host'];
-const glSceneTypes = ['SharedSceneWebGL2Host','SharedSceneWebGL2HostOptions'];
 const glFacade = await import('@egret/engine/webgl2');
-const glSceneFacade = await import('@egret/engine/webgl2/scene3d');
 const glHostModule = await import(new URL('../packages/engine/dist/web/WebGL2Host.js',import.meta.url));
-if (!sceneEqual(Object.keys(glFacade),glValues) || !sceneEqual(Object.keys(glSceneFacade),glSceneValues)
-    || glFacade.createSharedWebGL2Host !== glHostModule.createSharedWebGL2Host
-    || glSceneFacade.createSharedSceneWebGL2Host !== glHostModule.createSharedSceneWebGL2HostInternal)
+if (!sceneEqual(Object.keys(glFacade),glValues) || !sceneEqual(Object.keys(glHostModule),glValues)
+    || glFacade.createSharedWebGL2Host !== glHostModule.createSharedWebGL2Host)
   throw new Error('M14: exact WebGL2 runtime facade mismatch');
 const glFacadeRules = [
   ['webgl2', "export { createSharedWebGL2Host } from './WebGL2Host.js';", "export type { SharedWebGL2HostOptions } from './sharedWebGL2Options.js'; export type { SharedWebGL2Host, SharedWebGL2HostStatus, SharedWebGL2Readback, WebGL2HostState, WebGL2HostErrorCode, WebGL2HostFailure, WebGL2HostDiagnostic, WebGL2HostStatus } from './webgl2Types.js';"],
-  ['webgl2Scene3d', "export { createSharedSceneWebGL2HostInternal as createSharedSceneWebGL2Host } from './WebGL2Host.js';", "export type { SharedSceneWebGL2Host } from './webgl2Types.js'; export type { SharedSceneWebGL2HostOptions } from './sharedWebGL2Options.js';"],
 ];
 for (const [stem,valueClause,typeClauses] of glFacadeRules) {
   for (const [directory,suffix] of [['web','.ts'],['dist/web','.js'],['dist/web','.d.ts']]) {
@@ -1413,25 +1214,22 @@ for (const [stem,valueClause,typeClauses] of glFacadeRules) {
     if (sceneRead(file).replace(/\s+/g,'')!==expected) throw new Error('M14: exact WebGL2 forwarding/type erasure mismatch: '+file);
   }
 }
-const glModuleNames = ['webgl2','webgl2Scene3d','WebGL2Host','webgl2Types','webgl2Native','sharedWebGL2Options','sharedWebGL2Arena','sharedWebGL2Shaders','sharedWebGL2Scene'];
-const glPrivateNames = ['createSharedSceneWebGL2HostInternal','SharedGLHost','GLNativeKind','GLNativeOwner','GLNativeSession','glFailure','isGLFailure',
+const glModuleNames = ['webgl2','WebGL2Host','webgl2Types','webgl2Native','sharedWebGL2Options','sharedWebGL2Arena','sharedWebGL2Shaders'];
+const glPrivateNames = ['SharedGLHost','GLNativeKind','GLNativeOwner','GLNativeSession','glFailure','isGLFailure',
   'SharedWebGL2Configuration','admitSharedWebGL2Options','SharedWebGL2ArenaStrides','SharedWebGL2ArenaPlan','SharedWebGL2ArenaOwner','qualifySharedWebGL2Alignment','planSharedWebGL2Arenas','checkSharedWebGL2ArenaCapacity',
-  'sharedWebGL2VertexSource','sharedWebGL2FragmentSource','sharedWebGL2ResolveVertexSource','sharedWebGL2ResolveFragmentSource','sharedWebGL2BlendFactors','sharedWebGL2LayerVertexSource','sharedWebGL2LayerFragmentSource','sharedWebGL2LayerEffectFragmentSource',
-  'SharedGLScenePreparationReason','SharedGLScenePreparationError','SharedGLSceneAdmission','SharedGLSceneDraw','PreparedSharedGLScene','admitSharedGLScene','prepareSharedGLScene','SHARED_GL_SCENE_LAYOUT','SHARED_GL_SCENE_VERTEX','SHARED_GL_SCENE_FRAGMENT',
-  'SharedGLSceneCardDraw','SHARED_GL_SCENE_CARD_VERTEX','SHARED_GL_SCENE_CARD_FRAGMENT','SHARED_GL_SCENE_TEXTURE_VERTEX','SHARED_GL_SCENE_TEXTURE_FRAGMENT','SHARED_GL_SCENE_LAMBERT_VERTEX','SHARED_GL_SCENE_LAMBERT_FRAGMENT'];
+  'sharedWebGL2VertexSource','sharedWebGL2FragmentSource','sharedWebGL2ResolveVertexSource','sharedWebGL2ResolveFragmentSource','sharedWebGL2BlendFactors','sharedWebGL2LayerVertexSource','sharedWebGL2LayerFragmentSource','sharedWebGL2LayerEffectFragmentSource'];
 const glOtherEntryFiles = [
   ...Object.entries(assetGroupSourceEntries).map(([name,source])=>[name,source]),
   ['engine/layout','packages/engine/src/layout.ts'],['engine/web/input','packages/engine/web/input.ts'],['engine/web/image','packages/engine/web/image.ts'],
-  ['engine/scene3d','packages/engine/rendering/scene3d.ts'],['engine/webgpu/scene3d','packages/engine/web/scene3d.ts'],
   ['project/spine','packages/project/src/spine/index.ts'],['project/atlas','packages/project/src/atlas/index.ts'],
 ];
 for (const [entry,source] of glOtherEntryFiles) {
   const emitted=source.replace('/src/','/dist/').replace('/web/','/dist/web/').replace('/rendering/','/dist/rendering/').replace(/\.ts$/,'');
   const text=[sceneRead(source),sceneRead(emitted+'.js'),sceneRead(emitted+'.d.ts')].join('\n');
-  for (const name of [...glValues,...glTypes,...glLayerTypes,...glSceneValues,...glSceneTypes,...glPrivateNames,...glModuleNames])
+  for (const name of [...glValues,...glTypes,...glLayerTypes,...glPrivateNames,...glModuleNames])
     if (new RegExp('\\b'+name+'\\b').test(text)) throw new Error('M14: explicit-only WebGL2 name leaked: '+entry+'/'+name);
 }
-for (const [entry,values,stem] of [['webgl2',glFacade,'packages/engine/dist/web/webgl2'],['webgl2/scene3d',glSceneFacade,'packages/engine/dist/web/webgl2Scene3d']]) {
+for (const [entry,values,stem] of [['webgl2',glFacade,'packages/engine/dist/web/webgl2']]) {
   const text=sceneRead(stem+'.d.ts')+'\n'+sceneRead(stem+'.js');
   for (const name of [...sceneForbiddenNames,...privateSharedModules])
     if (name in values || new RegExp('\\b'+name+'\\b').test(text)) throw new Error('M14: retained private authority leaked: '+entry+'/'+name);
@@ -1441,58 +1239,24 @@ for (const [entry,values,stem] of [['webgl2',glFacade,'packages/engine/dist/web/
 const glEdges = (statics,dynamics=[]) => [...statics.map(target=>['static',target]),...dynamics.map(target=>['dynamic',target])]
   .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 const m14WebGL2LiteralClosure = {
-  'packages/engine/web/webgl2.ts': glEdges(['./WebGL2Host.js','./sharedWebGL2Options.js','./webgl2Types.js']),
-  'packages/engine/dist/web/webgl2.js': glEdges(['./WebGL2Host.js']),
-  'packages/engine/dist/web/webgl2.d.ts': glEdges(['./WebGL2Host.js','./sharedWebGL2Options.js','./webgl2Types.js']),
-  'packages/engine/web/webgl2Scene3d.ts': glEdges(['./WebGL2Host.js','./webgl2Types.js','./sharedWebGL2Options.js']),
-  'packages/engine/dist/web/webgl2Scene3d.js': glEdges(['./WebGL2Host.js']),
-  'packages/engine/dist/web/webgl2Scene3d.d.ts': glEdges(['./WebGL2Host.js','./webgl2Types.js','./sharedWebGL2Options.js']),
-  'packages/engine/web/WebGL2Host.ts': glEdges([
-    '@egret/contracts','@egret/contracts','#egret-textured-frame-state','./sharedWebGL2Options.js','./sharedWebGL2Options.js','./webgl2Types.js','../rendering/sceneFrame3D.js','./sharedWebGL2Scene.js','./webgl2Types.js',
-    '../rendering/prepareSharedDraws2D.js','../rendering/prepareRectangles2D.js','../rendering/packSharedDraws2D.js','../rendering/preparedBatches2D.js','../rendering/preparedSharedBatches2D.js','../rendering/preparedSharedBatches2D.js','../rendering/sharedColor2D.js','../rendering/ownedPreparationFailure2D.js',
-    './sharedSubmissionStorage2D.js','./sharedSubmissionStorage2D.js','./sharedWebGL2Arena.js','./sharedWebGL2Arena.js','./sharedRetentionLedger.js','./sharedRetentionLedger.js','./webgl2Native.js','./webgl2Native.js','./sharedWebGL2Shaders.js',
-  ],['./sharedWebGL2Scene.js','./sharedWebGL2Scene.js']),
-  'packages/engine/dist/web/WebGL2Host.js': glEdges([
-    '@egret/contracts','#egret-textured-frame-state','./sharedWebGL2Options.js','../rendering/prepareSharedDraws2D.js','../rendering/prepareRectangles2D.js','../rendering/packSharedDraws2D.js','../rendering/preparedBatches2D.js','../rendering/preparedSharedBatches2D.js','../rendering/sharedColor2D.js','../rendering/ownedPreparationFailure2D.js',
-    './sharedSubmissionStorage2D.js','./sharedWebGL2Arena.js','./sharedRetentionLedger.js','./webgl2Native.js','./sharedWebGL2Shaders.js',
-  ],['./sharedWebGL2Scene.js']),
-  'packages/engine/dist/web/WebGL2Host.d.ts': glEdges(['./sharedWebGL2Options.js','./webgl2Types.js','./webgl2Types.js']),
-  'packages/engine/web/webgl2Types.ts': glEdges(['@egret/contracts','../rendering/sceneFrame3D.js']),
-  'packages/engine/dist/web/webgl2Types.js': glEdges([]),
-  'packages/engine/dist/web/webgl2Types.d.ts': glEdges(['@egret/contracts','../rendering/sceneFrame3D.js']),
-  'packages/engine/web/webgl2Native.ts': glEdges(['@egret/runtime','./webgl2Types.js']),
-  'packages/engine/dist/web/webgl2Native.js': glEdges(['@egret/runtime']),
-  'packages/engine/dist/web/webgl2Native.d.ts': glEdges(['@egret/runtime','./webgl2Types.js']),
-  'packages/engine/web/sharedWebGL2Options.ts': glEdges(['../rendering/prepareSharedDraws2D.js','./sharedSubmissionStorage2D.js','./webgl2Types.js']),
-  'packages/engine/dist/web/sharedWebGL2Options.js': glEdges([]),
-  'packages/engine/dist/web/sharedWebGL2Options.d.ts': glEdges(['../rendering/prepareSharedDraws2D.js','./sharedSubmissionStorage2D.js','./webgl2Types.js']),
-  'packages/engine/web/sharedWebGL2Arena.ts': glEdges(['../rendering/packSharedDraws2D.js','../rendering/ownedPreparationFailure2D.js','./sharedSubmissionStorage2D.js']),
+  'packages/engine/web/sharedWebGL2Arena.ts': glEdges(['../rendering/ownedPreparationFailure2D.js','../rendering/packSharedDraws2D.js','./sharedSubmissionStorage2D.js']),
   'packages/engine/dist/web/sharedWebGL2Arena.js': glEdges(['../rendering/ownedPreparationFailure2D.js','./sharedSubmissionStorage2D.js']),
   'packages/engine/dist/web/sharedWebGL2Arena.d.ts': glEdges(['../rendering/packSharedDraws2D.js']),
   'packages/engine/web/sharedWebGL2Shaders.ts': glEdges(['@egret/contracts']),
   'packages/engine/dist/web/sharedWebGL2Shaders.js': glEdges([]),
   'packages/engine/dist/web/sharedWebGL2Shaders.d.ts': glEdges(['@egret/contracts']),
-  'packages/engine/web/sharedWebGL2Scene.ts': glEdges(['../rendering/sceneFrame3D.js','../rendering/sceneFrame3D.js','../rendering/packSharedMeshGeometry3D.js','../rendering/packSharedMeshGeometry3D.js','../rendering/ownedPreparationFailure2D.js','./sharedSubmissionStorage2D.js']),
-  'packages/engine/dist/web/sharedWebGL2Scene.js': glEdges(['../rendering/sceneFrame3D.js','../rendering/packSharedMeshGeometry3D.js','../rendering/ownedPreparationFailure2D.js','./sharedSubmissionStorage2D.js']),
-  'packages/engine/dist/web/sharedWebGL2Scene.d.ts': glEdges(['../rendering/sceneFrame3D.js','../rendering/sceneFrame3D.js','../rendering/packSharedMeshGeometry3D.js']),
 };
 const glTargets = new Set(glModuleNames.flatMap(name=>['web/'+name+'.js','dist/web/'+name+'.js']));
+const glClosureFiles = new Set(glModuleNames.flatMap(name=>['packages/engine/web/'+name+'.ts','packages/engine/dist/web/'+name+'.js','packages/engine/dist/web/'+name+'.d.ts']));
 for (const directory of ['src','rendering','web','dist']) for (const file of files(path.join(root,'packages/engine',directory))) {
   if (!/\.(?:ts|js)$/.test(file)) continue;
   const relative=path.relative(root,file).split(path.sep).join('/'),code=sceneRead(relative);
   for (const [,imported] of sceneGraphEdges(code)) {
     if (!imported.startsWith('.')) continue;
     const target=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),imported)).split(path.sep).join('/');
-    if (glTargets.has(target) && !Object.hasOwn(m14WebGL2LiteralClosure,relative))
+    if (glTargets.has(target) && !glClosureFiles.has(relative))
       throw new Error('M14: WebGL2 module imported outside exact optional closure: '+relative);
   }
-}
-// One erased typeof import plus one guarded runtime import in source; only the
-// guarded runtime import remains after emission. No caller-provided scene plugin.
-for (const file of ['packages/engine/web/WebGL2Host.ts','packages/engine/dist/web/WebGL2Host.js']) {
-  const compact=sceneRead(file).replace(/\s+/g,'');
-  const guarded="if(this.sceneMode){this.sceneFunctions=awaitimport('./sharedWebGL2Scene.js');this.generationGate(token);}";
-  if (compact.split(guarded).length!==2) throw new Error('M14: scene module must remain in the fixed private mode guard: '+file);
 }
 const glNativeMethods = [
   'getContextAttributes','getError','isContextLost','getParameter','getShaderPrecisionFormat',
@@ -1540,376 +1304,7 @@ for (const file of ['packages/engine/web/webgl2Native.ts','packages/engine/dist/
 
 
 const sceneLiteralClosure = {
-  "packages/engine/rendering/sceneFrame3D.ts": [
-    [
-      "static",
-      "./matrix4.js"
-    ],
-    [
-      "static",
-      "./matrix4.js"
-    ],
-    [
-      "static",
-      "./meshGeometry3D.js"
-    ],
-    [
-      "static",
-      "./meshGeometry3D.js"
-    ],
-    [
-      "static",
-      "./projection3D.js"
-    ]
-  ],
-  "packages/engine/rendering/meshGeometry3D.ts": [],
-  "packages/engine/web/b1.ts": [
-    [
-      "static",
-      "../rendering/packMeshGeometry3D.js"
-    ],
-    [
-      "static",
-      "../rendering/sceneFrame3D.js"
-    ],
-    [
-      "static",
-      "../rendering/sceneFrame3D.js"
-    ],
-    [
-      "static",
-      "./WebGPUHost.js"
-    ],
-    [
-      "static",
-      "./WebGPUHost.js"
-    ],
-    [
-      "static",
-      "./webgpuMeshPass.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/rendering/matrix4.ts": [],
-  "packages/engine/rendering/projection3D.ts": [
-    [
-      "static",
-      "./matrix4.js"
-    ],
-    [
-      "static",
-      "./matrix4.js"
-    ]
-  ],
-  "packages/engine/rendering/packMeshGeometry3D.ts": [
-    [
-      "static",
-      "./meshGeometry3D.js"
-    ]
-  ],
-  "packages/engine/web/WebGPUHost.ts": [
-    [
-      "dynamic",
-      "./b1.js"
-    ],
-    [
-      "static",
-      "../rendering/admitTexturedFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/copyFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/copyMixedFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packImageVertices2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareMixedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareTexturedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./b1.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedSubmission2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedSubmission2D.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./webgpuBindingCache.js"
-    ],
-    [
-      "static",
-      "./webgpuBindingCache.js"
-    ],
-    [
-      "static",
-      "./webgpuBufferPool.js"
-    ],
-    [
-      "static",
-      "./webgpuBufferPool.js"
-    ],
-    [
-      "static",
-      "./webgpuImagePass.js"
-    ],
-    [
-      "static",
-      "./webgpuLifetime.js"
-    ],
-    [
-      "static",
-      "./webgpuLifetime.js"
-    ],
-    [
-      "static",
-      "./webgpuPass.js"
-    ],
-    [
-      "static",
-      "./webgpuTexturedPass.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "#egret-textured-frame-state"
-    ]
-  ],
-  "packages/engine/web/webgpuMeshPass.ts": [],
-  "packages/engine/rendering/admitTexturedFrame2D.ts": [
-    [
-      "static",
-      "./ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedDraws2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/rendering/copyFrame2D.ts": [
-    [
-      "static",
-      "./RectangleFrame2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/rendering/copyMixedFrame2D.ts": [
-    [
-      "static",
-      "./copyFrame2D.js"
-    ],
-    [
-      "static",
-      "./copyFrame2D.js"
-    ],
-    [
-      "static",
-      "./imageFrameBudget.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
   "packages/engine/rendering/ownedPreparationFailure2D.ts": [],
-  "packages/engine/rendering/packImageVertices2D.ts": [
-    [
-      "static",
-      "./ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "./packedOrientation.js"
-    ],
-    [
-      "static",
-      "./packedPosition2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareImages2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ]
-  ],
-  "packages/engine/rendering/packTexturedMesh2D.ts": [
-    [
-      "static",
-      "./ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "./packedOrientation.js"
-    ],
-    [
-      "static",
-      "./packedPosition2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ]
-  ],
-  "packages/engine/rendering/prepareMixedDraws2D.ts": [
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareImages2D.js"
-    ],
-    [
-      "static",
-      "./prepareImages2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
   "packages/engine/rendering/prepareRectangles2D.ts": [
     [
       "static",
@@ -1934,44 +1329,6 @@ const sceneLiteralClosure = {
     [
       "static",
       "robust-predicates"
-    ]
-  ],
-  "packages/engine/rendering/prepareTexturedDraws2D.ts": [
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareImages2D.js"
-    ],
-    [
-      "static",
-      "./prepareImages2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
     ]
   ],
   "packages/engine/rendering/texturedPreparationBudget2D.ts": [
@@ -2006,110 +1363,7 @@ const sceneLiteralClosure = {
       "@egret/contracts"
     ]
   ],
-  "packages/engine/web/prepareTexturedSubmission2D.ts": [
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packImageVertices2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packImageVertices2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareTexturedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./webgpuPass.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/web/texturedWebGPUOptions.ts": [
-    [
-      "static",
-      "./WebGPUHost.js"
-    ]
-  ],
-  "packages/engine/web/webgpuImagePass.ts": [],
-  "packages/engine/web/webgpuLifetime.ts": [],
-  "packages/engine/web/webgpuPass.ts": [
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packedOrientation.js"
-    ],
-    [
-      "static",
-      "../rendering/packedPosition2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareRectangles2D.js"
-    ]
-  ],
-  "packages/engine/web/webgpuTexturedPass.ts": [],
   "packages/engine/rendering/RectangleFrame2D.ts": [
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/rendering/imageFrameBudget.ts": [
-    [
-      "static",
-      "./copyFrame2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
     [
       "static",
       "@egret/contracts"
@@ -2125,463 +1379,8 @@ const sceneLiteralClosure = {
       "robust-predicates"
     ]
   ],
-  "packages/engine/rendering/packedPosition2D.ts": [
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ]
-  ],
-  "packages/engine/rendering/prepareImages2D.ts": [
-    [
-      "static",
-      "./ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/rendering/prepareTexturedMesh2D.ts": [
-    [
-      "static",
-      "./ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/sceneFrame3D.js": [
-    [
-      "static",
-      "./matrix4.js"
-    ],
-    [
-      "static",
-      "./meshGeometry3D.js"
-    ],
-    [
-      "static",
-      "./projection3D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/sceneFrame3D.d.ts": [
-    [
-      "static",
-      "./matrix4.js"
-    ],
-    [
-      "static",
-      "./meshGeometry3D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/meshGeometry3D.js": [],
-  "packages/engine/dist/rendering/meshGeometry3D.d.ts": [],
-  "packages/engine/dist/web/b1.js": [
-    [
-      "static",
-      "../rendering/packMeshGeometry3D.js"
-    ],
-    [
-      "static",
-      "../rendering/sceneFrame3D.js"
-    ],
-    [
-      "static",
-      "./WebGPUHost.js"
-    ],
-    [
-      "static",
-      "./webgpuMeshPass.js"
-    ]
-  ],
-  "packages/engine/dist/web/b1.d.ts": [
-    [
-      "static",
-      "../rendering/packMeshGeometry3D.js"
-    ],
-    [
-      "static",
-      "../rendering/sceneFrame3D.js"
-    ],
-    [
-      "static",
-      "../rendering/sceneFrame3D.js"
-    ],
-    [
-      "static",
-      "./WebGPUHost.js"
-    ],
-    [
-      "static",
-      "./webgpuMeshPass.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/matrix4.js": [],
-  "packages/engine/dist/rendering/matrix4.d.ts": [],
-  "packages/engine/dist/rendering/projection3D.js": [
-    [
-      "static",
-      "./matrix4.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/projection3D.d.ts": [
-    [
-      "static",
-      "./matrix4.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/packMeshGeometry3D.js": [
-    [
-      "static",
-      "./meshGeometry3D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/packMeshGeometry3D.d.ts": [
-    [
-      "static",
-      "./meshGeometry3D.js"
-    ]
-  ],
-  "packages/engine/dist/web/WebGPUHost.js": [
-    [
-      "dynamic",
-      "./b1.js"
-    ],
-    [
-      "static",
-      "../rendering/admitTexturedFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/copyFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/copyMixedFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packImageVertices2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareMixedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareTexturedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedSubmission2D.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./webgpuBindingCache.js"
-    ],
-    [
-      "static",
-      "./webgpuBufferPool.js"
-    ],
-    [
-      "static",
-      "./webgpuImagePass.js"
-    ],
-    [
-      "static",
-      "./webgpuLifetime.js"
-    ],
-    [
-      "static",
-      "./webgpuPass.js"
-    ],
-    [
-      "static",
-      "./webgpuTexturedPass.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "#egret-textured-frame-state"
-    ]
-  ],
-  "packages/engine/dist/web/WebGPUHost.d.ts": [
-    [
-      "static",
-      "./b1.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/web/webgpuMeshPass.js": [],
-  "packages/engine/dist/web/webgpuMeshPass.d.ts": [],
-  "packages/engine/dist/rendering/admitTexturedFrame2D.js": [
-    [
-      "static",
-      "./ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/admitTexturedFrame2D.d.ts": [
-    [
-      "static",
-      "./prepareTexturedDraws2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/copyFrame2D.js": [],
-  "packages/engine/dist/rendering/copyFrame2D.d.ts": [
-    [
-      "static",
-      "./RectangleFrame2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/copyMixedFrame2D.js": [
-    [
-      "static",
-      "./copyFrame2D.js"
-    ],
-    [
-      "static",
-      "./imageFrameBudget.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/copyMixedFrame2D.d.ts": [
-    [
-      "static",
-      "./copyFrame2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
   "packages/engine/dist/rendering/ownedPreparationFailure2D.js": [],
   "packages/engine/dist/rendering/ownedPreparationFailure2D.d.ts": [],
-  "packages/engine/dist/rendering/packImageVertices2D.js": [
-    [
-      "static",
-      "./ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "./packedOrientation.js"
-    ],
-    [
-      "static",
-      "./packedPosition2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/packImageVertices2D.d.ts": [
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareImages2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/packTexturedMesh2D.js": [
-    [
-      "static",
-      "./ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "./packedOrientation.js"
-    ],
-    [
-      "static",
-      "./packedPosition2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/packTexturedMesh2D.d.ts": [
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/prepareMixedDraws2D.js": [
-    [
-      "static",
-      "./prepareImages2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/prepareMixedDraws2D.d.ts": [
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareImages2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
   "packages/engine/dist/rendering/prepareRectangles2D.js": [
     [
       "static",
@@ -2604,46 +1403,6 @@ const sceneLiteralClosure = {
     [
       "static",
       "./RectangleFrame2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/prepareTexturedDraws2D.js": [
-    [
-      "static",
-      "./prepareImages2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedMesh2D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/prepareTexturedDraws2D.d.ts": [
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareImages2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
     ],
     [
       "static",
@@ -2686,125 +1445,8 @@ const sceneLiteralClosure = {
       "@egret/contracts"
     ]
   ],
-  "packages/engine/dist/web/prepareTexturedSubmission2D.js": [
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packImageVertices2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./webgpuPass.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/web/prepareTexturedSubmission2D.d.ts": [
-    [
-      "static",
-      "../rendering/packImageVertices2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareTexturedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./webgpuPass.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/web/texturedWebGPUOptions.js": [],
-  "packages/engine/dist/web/texturedWebGPUOptions.d.ts": [
-    [
-      "static",
-      "./WebGPUHost.js"
-    ]
-  ],
-  "packages/engine/dist/web/webgpuImagePass.js": [],
-  "packages/engine/dist/web/webgpuImagePass.d.ts": [],
-  "packages/engine/dist/web/webgpuLifetime.js": [],
-  "packages/engine/dist/web/webgpuLifetime.d.ts": [],
-  "packages/engine/dist/web/webgpuPass.js": [
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packedOrientation.js"
-    ],
-    [
-      "static",
-      "../rendering/packedPosition2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedFrameCache2D.js"
-    ]
-  ],
-  "packages/engine/dist/web/webgpuPass.d.ts": [
-    [
-      "static",
-      "../rendering/preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareRectangles2D.js"
-    ]
-  ],
-  "packages/engine/dist/web/webgpuTexturedPass.js": [],
-  "packages/engine/dist/web/webgpuTexturedPass.d.ts": [],
   "packages/engine/dist/rendering/RectangleFrame2D.js": [],
   "packages/engine/dist/rendering/RectangleFrame2D.d.ts": [
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/imageFrameBudget.js": [
-    [
-      "static",
-      "./copyFrame2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/imageFrameBudget.d.ts": [
     [
       "static",
       "@egret/contracts"
@@ -2822,94 +1464,6 @@ const sceneLiteralClosure = {
       "./prepareRectangles2D.js"
     ]
   ],
-  "packages/engine/dist/rendering/packedPosition2D.js": [],
-  "packages/engine/dist/rendering/packedPosition2D.d.ts": [
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/prepareImages2D.js": [
-    [
-      "static",
-      "./ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/prepareImages2D.d.ts": [
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/prepareTexturedMesh2D.js": [
-    [
-      "static",
-      "./ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/prepareTexturedMesh2D.d.ts": [
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/web/webgpuBufferPool.ts": [
-    [
-      "static",
-      "./webgpuLifetime.js"
-    ]
-  ],
-  "packages/engine/dist/web/webgpuBufferPool.js": [],
-  "packages/engine/dist/web/webgpuBufferPool.d.ts": [
-    [
-      "static",
-      "./webgpuLifetime.js"
-    ]
-  ],
   "packages/engine/web/webgpuBindingCache.ts": [
     [
       "static",
@@ -2923,35 +1477,9 @@ const sceneLiteralClosure = {
       "./webgpuBufferPool.js"
     ]
   ],
-  "packages/engine/rendering/preparedBatches2D.ts": [
-    [
-      "static",
-      "./packImageVertices2D.js"
-    ],
-    [
-      "static",
-      "./packTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
+  "packages/engine/rendering/preparedBatches2D.ts": [],
   "packages/engine/dist/rendering/preparedBatches2D.js": [],
-  "packages/engine/dist/rendering/preparedBatches2D.d.ts": [
-    [
-      "static",
-      "./packImageVertices2D.js"
-    ],
-    [
-      "static",
-      "./packTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
+  "packages/engine/dist/rendering/preparedBatches2D.d.ts": [],
   "packages/engine/rendering/preparedFrameCache2D.ts": [
     [
       "static",
@@ -3073,58 +1601,6 @@ const m13SharedRenderingLiteralClosure = {
       "./prepareSharedDraws2D.js"
     ]
   ],
-  "packages/engine/dist/rendering/packSharedMeshGeometry3D.d.ts": [
-    [
-      "static",
-      "./meshGeometry3D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/packSharedMeshGeometry3D.js": [
-    [
-      "static",
-      "./meshGeometry3D.js"
-    ],
-    [
-      "static",
-      "./sharedColor2D.js"
-    ]
-  ],
-  "packages/engine/dist/rendering/prepareSharedDraws2D.d.ts": [
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/prepareSharedDraws2D.js": [
-    [
-      "static",
-      "./ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./sharedColor2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
   "packages/engine/dist/rendering/preparedSharedBatches2D.d.ts": [
     [
       "static",
@@ -3136,281 +1612,6 @@ const m13SharedRenderingLiteralClosure = {
     ]
   ],
   "packages/engine/dist/rendering/preparedSharedBatches2D.js": [],
-  "packages/engine/dist/rendering/sharedColor2D.d.ts": [
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/sharedColor2D.js": [
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/web/WebGPUHost.d.ts": [
-    [
-      "static",
-      "./b1.js"
-    ],
-    [
-      "static",
-      "./sharedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./sharedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/web/WebGPUHost.js": [
-    [
-      "dynamic",
-      "./b1.js"
-    ],
-    [
-      "dynamic",
-      "./sharedB1.js"
-    ],
-    [
-      "static",
-      "../rendering/admitTexturedFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/copyFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/copyMixedFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packImageVertices2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedSharedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareMixedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareSharedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareTexturedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/sharedColor2D.js"
-    ],
-    [
-      "static",
-      "../rendering/texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./prepareSharedSubmission2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedSubmission2D.js"
-    ],
-    [
-      "static",
-      "./sharedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./webgpuBindingCache.js"
-    ],
-    [
-      "static",
-      "./webgpuImagePass.js"
-    ],
-    [
-      "static",
-      "./webgpuLifetime.js"
-    ],
-    [
-      "static",
-      "./webgpuPass.js"
-    ],
-    [
-      "static",
-      "./webgpuRetentionPool.js"
-    ],
-    [
-      "static",
-      "./webgpuSharedPass.js"
-    ],
-    [
-      "static",
-      "./webgpuSharedResolvePass.js"
-    ],
-    [
-      "static",
-      "./webgpuTexturedPass.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "#egret-textured-frame-state"
-    ]
-  ],
-  "packages/engine/dist/web/prepareSharedSubmission2D.d.ts": [
-    [
-      "static",
-      "../rendering/packSharedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareSharedDraws2D.js"
-    ],
-    [
-      "static",
-      "./sharedSubmissionStorage2D.js"
-    ],
-    [
-      "static",
-      "./sharedSubmissionStorage2D.js"
-    ],
-    [
-      "static",
-      "./sharedSubmissionStorage2D.js"
-    ],
-    [
-      "static",
-      "./sharedWebGPUOptions.js"
-    ]
-  ],
-  "packages/engine/dist/web/prepareSharedSubmission2D.js": [
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packSharedDraws2D.js"
-    ],
-    [
-      "static",
-      "./sharedSubmissionStorage2D.js"
-    ],
-    [
-      "static",
-      "./sharedSubmissionStorage2D.js"
-    ]
-  ],
-  "packages/engine/dist/web/sharedB1.d.ts": [
-    [
-      "static",
-      "../rendering/packSharedMeshGeometry3D.js"
-    ],
-    [
-      "static",
-      "../rendering/sceneFrame3D.js"
-    ],
-    [
-      "static",
-      "./WebGPUHost.js"
-    ],
-    [
-      "static",
-      "./webgpuSharedMeshPass.js"
-    ]
-  ],
-  "packages/engine/dist/web/sharedB1.js": [
-    [
-      "static",
-      "../rendering/packSharedMeshGeometry3D.js"
-    ],
-    [
-      "static",
-      "../rendering/sceneFrame3D.js"
-    ],
-    [
-      "static",
-      "./WebGPUHost.js"
-    ],
-    [
-      "static",
-      "./webgpuSharedMeshPass.js"
-    ]
-  ],
-  "packages/engine/dist/web/sharedWebGPUOptions.d.ts": [
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./WebGPUHost.js"
-    ]
-  ],
-  "packages/engine/dist/web/sharedWebGPUOptions.js": [],
   "packages/engine/dist/web/webgpuBufferPool.d.ts": [
     [
       "static",
@@ -3427,56 +1628,6 @@ const m13SharedRenderingLiteralClosure = {
       "./webgpuRetentionPool.js"
     ]
   ],
-  "packages/engine/dist/web/webgpuRetentionPool.d.ts": [
-    [
-      "static",
-      "./webgpuLifetime.js"
-    ]
-  ],
-  "packages/engine/dist/web/webgpuRetentionPool.js": [["static", "./sharedRetentionLedger.js"]],
-  "packages/engine/web/sharedSubmissionStorage2D.ts": [
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareSharedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/sharedColor2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ]
-  ],
-  "packages/engine/dist/web/sharedSubmissionStorage2D.js": [
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/sharedColor2D.js"
-    ]
-  ],
-  "packages/engine/dist/web/sharedSubmissionStorage2D.d.ts": [
-    [
-      "static",
-      "../rendering/prepareSharedDraws2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ]
-  ],
-  "packages/engine/web/sharedRetentionLedger.ts": [],
-  "packages/engine/dist/web/sharedRetentionLedger.js": [],
-  "packages/engine/dist/web/sharedRetentionLedger.d.ts": [],
-  "packages/engine/dist/web/webgpuSharedMeshPass.d.ts": [],
-  "packages/engine/dist/web/webgpuSharedMeshPass.js": [],
   "packages/engine/dist/web/webgpuSharedPass.d.ts": [
     [
       "static",
@@ -3500,50 +1651,6 @@ const m13SharedRenderingLiteralClosure = {
       "./prepareSharedDraws2D.js"
     ]
   ],
-  "packages/engine/rendering/packSharedMeshGeometry3D.ts": [
-    [
-      "static",
-      "./meshGeometry3D.js"
-    ],
-    [
-      "static",
-      "./sharedColor2D.js"
-    ]
-  ],
-  "packages/engine/rendering/prepareSharedDraws2D.ts": [
-    [
-      "static",
-      "./ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "./sharedColor2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
   "packages/engine/rendering/preparedSharedBatches2D.ts": [
     [
       "static",
@@ -3552,312 +1659,6 @@ const m13SharedRenderingLiteralClosure = {
     [
       "static",
       "./preparedBatches2D.js"
-    ]
-  ],
-  "packages/engine/rendering/sharedColor2D.ts": [
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/web/WebGPUHost.ts": [
-    [
-      "dynamic",
-      "./b1.js"
-    ],
-    [
-      "dynamic",
-      "./b1.js"
-    ],
-    [
-      "dynamic",
-      "./b1.js"
-    ],
-    [
-      "dynamic",
-      "./sharedB1.js"
-    ],
-    [
-      "dynamic",
-      "./sharedB1.js"
-    ],
-    [
-      "dynamic",
-      "./sharedB1.js"
-    ],
-    [
-      "static",
-      "../rendering/admitTexturedFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/copyFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/copyMixedFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packImageVertices2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packSharedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packTexturedMesh2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedSharedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedSharedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareMixedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareSharedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareTexturedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/sharedColor2D.js"
-    ],
-    [
-      "static",
-      "../rendering/texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./b1.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./prepareSharedSubmission2D.js"
-    ],
-    [
-      "static",
-      "./prepareSharedSubmission2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedSubmission2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedSubmission2D.js"
-    ],
-    [
-      "static",
-      "./sharedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./sharedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./sharedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./webgpuBindingCache.js"
-    ],
-    [
-      "static",
-      "./webgpuBindingCache.js"
-    ],
-    [
-      "static",
-      "./webgpuBufferPool.js"
-    ],
-    [
-      "static",
-      "./webgpuImagePass.js"
-    ],
-    [
-      "static",
-      "./webgpuLifetime.js"
-    ],
-    [
-      "static",
-      "./webgpuLifetime.js"
-    ],
-    [
-      "static",
-      "./webgpuPass.js"
-    ],
-    [
-      "static",
-      "./webgpuRetentionPool.js"
-    ],
-    [
-      "static",
-      "./webgpuRetentionPool.js"
-    ],
-    [
-      "static",
-      "./webgpuSharedPass.js"
-    ],
-    [
-      "static",
-      "./webgpuSharedResolvePass.js"
-    ],
-    [
-      "static",
-      "./webgpuTexturedPass.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "#egret-textured-frame-state"
-    ]
-  ],
-  "packages/engine/web/prepareSharedSubmission2D.ts": [
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packSharedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareSharedDraws2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./sharedSubmissionStorage2D.js"
-    ],
-    [
-      "static",
-      "./sharedSubmissionStorage2D.js"
-    ],
-    [
-      "static",
-      "./sharedSubmissionStorage2D.js"
-    ],
-    [
-      "static",
-      "./sharedSubmissionStorage2D.js"
-    ],
-    [
-      "static",
-      "./sharedWebGPUOptions.js"
-    ]
-  ],
-  "packages/engine/web/sharedB1.ts": [
-    [
-      "static",
-      "../rendering/packSharedMeshGeometry3D.js"
-    ],
-    [
-      "static",
-      "../rendering/sceneFrame3D.js"
-    ],
-    [
-      "static",
-      "./WebGPUHost.js"
-    ],
-    [
-      "static",
-      "./WebGPUHost.js"
-    ],
-    [
-      "static",
-      "./webgpuSharedMeshPass.js"
-    ]
-  ],
-  "packages/engine/web/sharedWebGPUOptions.ts": [
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./WebGPUHost.js"
     ]
   ],
   "packages/engine/web/webgpuBufferPool.ts": [
@@ -3874,148 +1675,13 @@ const m13SharedRenderingLiteralClosure = {
       "./webgpuRetentionPool.js"
     ]
   ],
-  "packages/engine/web/webgpuRetentionPool.ts": [
-    ["static", "./sharedRetentionLedger.js"],
-    ["static", "./webgpuLifetime.js"]
-  ],
-  "packages/engine/web/webgpuSharedMeshPass.ts": [],
   "packages/engine/web/webgpuSharedPass.ts": [
     [
       "static",
       "@egret/contracts"
     ]
   ],
-  "packages/engine/web/webgpuSharedResolvePass.ts": [],
-  "packages/runtime/dist/sharedFrameCapture.d.ts": [
-    [
-      "static",
-      "./Stage.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/runtime/dist/sharedFrameCapture.js": [
-    [
-      "static",
-      "./Bitmap.js"
-    ],
-    [
-      "static",
-      "./displayTransform.js"
-    ],
-    [
-      "static",
-      "./displayTreeState.js"
-    ],
-    [
-      "static",
-      "./displayVisualState.js"
-    ],
-    [
-      "static",
-      "./EgretError.js"
-    ],
-    [
-      "static",
-      "./meshCaptureSnapshot.js"
-    ],
-    [
-      "static",
-      "./meshDisplayState.js"
-    ],
-    [
-      "static",
-      "./ownership.js"
-    ],
-    [
-      "static",
-      "./textDisplayState.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/runtime/src/sharedFrameCapture.ts": [
-    [
-      "static",
-      "./Bitmap.js"
-    ],
-    [
-      "static",
-      "./bitmapDisplayState.js"
-    ],
-    [
-      "static",
-      "./DisplayObject.js"
-    ],
-    [
-      "static",
-      "./DisplayObjectContainer.js"
-    ],
-    [
-      "static",
-      "./displayTransform.js"
-    ],
-    [
-      "static",
-      "./displayTreeState.js"
-    ],
-    [
-      "static",
-      "./displayVisualState.js"
-    ],
-    [
-      "static",
-      "./displayVisualState.js"
-    ],
-    [
-      "static",
-      "./EgretError.js"
-    ],
-    [
-      "static",
-      "./meshCaptureSnapshot.js"
-    ],
-    [
-      "static",
-      "./meshDisplayState.js"
-    ],
-    [
-      "static",
-      "./meshDisplayState.js"
-    ],
-    [
-      "static",
-      "./ownership.js"
-    ],
-    [
-      "static",
-      "./ownership.js"
-    ],
-    [
-      "static",
-      "./Stage.js"
-    ],
-    [
-      "static",
-      "./textDisplayState.js"
-    ],
-    [
-      "static",
-      "./textDisplayState.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ]
+  "packages/engine/web/webgpuSharedResolvePass.ts": []
 };
 
 // M15 semantic successor: named source/emission/declaration import multisets only.
@@ -4030,18 +1696,9 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/engine/src/contentArtifacts.ts": [["static","@egret/runtime"],["static","@egret/runtime"]],
   "packages/engine/dist/contentArtifacts.js": [["static","@egret/runtime"]],
   "packages/engine/dist/contentArtifacts.d.ts": [["static","@egret/runtime"],["static","@egret/runtime"]],
-  "packages/engine/src/contentLoader.ts": [["static","./contentArtifacts.js"],["static","./contentArtifacts.js"],["static","./contentAtlasPages.js"],["static","./contentTypes.js"],["static","./Engine.js"],["static","./internal/contentFactoryState.js"],["static","./manifestResourceState.js"],["static","./manifestResourceTypes.js"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
-  "packages/engine/dist/contentLoader.js": [["static","./contentArtifacts.js"],["static","./contentAtlasPages.js"],["static","./internal/contentFactoryState.js"],["static","./manifestResourceState.js"],["static","@egret/contracts/resources"],["static","@egret/runtime"]],
-  "packages/engine/dist/contentLoader.d.ts": [["static","./contentTypes.js"],["static","./Engine.js"],["static","@egret/contracts/resources"]],
-  "packages/engine/src/internal/contentFactoryState.ts": [["static","../manifestResourceTypes.js"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
-  "packages/engine/dist/internal/contentFactoryState.js": [["static","@egret/runtime"]],
-  "packages/engine/dist/internal/contentFactoryState.d.ts": [["static","../manifestResourceTypes.js"],["static","@egret/contracts/resources"],["static","@egret/runtime"]],
   "packages/contracts/src/ResourceManifest.ts": [["static","./ProjectFormat.generated.js"]],
   "packages/contracts/dist/ResourceManifest.js": [],
   "packages/contracts/dist/ResourceManifest.d.ts": [["static","./ProjectFormat.generated.js"]],
-  "packages/contracts/src/resources/index.ts": [["static","../ResourceManifest.js"],["static","./manifestAdmission.js"]],
-  "packages/contracts/dist/resources/index.js": [["static","./manifestAdmission.js"]],
-  "packages/contracts/dist/resources/index.d.ts": [["static","../ResourceManifest.js"],["static","./manifestAdmission.js"]],
   "packages/contracts/src/resources/manifestAdmission.ts": [["static","../ProjectFormat.generated.js"],["static","../ResourceManifest.js"],["static","./sha256.js"]],
   "packages/contracts/dist/resources/manifestAdmission.js": [["static","./sha256.js"]],
   "packages/contracts/dist/resources/manifestAdmission.d.ts": [["static","../ResourceManifest.js"]],
@@ -4057,9 +1714,6 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/project/src/resources/manifest.ts": [["static","../api.js"],["static","../diagnostics.js"],["static","../limits.js"],["static","../public.js"],["static","../text-input.js"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"]],
   "packages/project/dist/resources/manifest.js": [["static","../api.js"],["static","../diagnostics.js"],["static","../limits.js"],["static","../text-input.js"],["static","@egret/contracts/resources"]],
   "packages/project/dist/resources/manifest.d.ts": [["static","../public.js"],["static","@egret/contracts"],["static","@egret/contracts/resources"]],
-  "packages/engine/src/resources.ts": [["static","./contentLoader.js"],["static","./contentTypes.js"],["static","./manifestResourceState.js"],["static","./manifestResourceTypes.js"]],
-  "packages/engine/dist/resources.js": [["static","./contentLoader.js"],["static","./manifestResourceState.js"]],
-  "packages/engine/dist/resources.d.ts": [["static","./contentLoader.js"],["static","./contentTypes.js"],["static","./manifestResourceState.js"],["static","./manifestResourceTypes.js"]],
   "packages/engine/src/manifestResourceTypes.ts": [["static","@egret/runtime"]],
   "packages/engine/dist/manifestResourceTypes.js": [],
   "packages/engine/dist/manifestResourceTypes.d.ts": [["static","@egret/runtime"]],
@@ -4069,15 +1723,9 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/engine/src/manifestAssetGroup.ts": [["static","./assetGroup.js"],["static","./manifestResourceState.js"],["static","./manifestResourceState.js"],["static","./manifestResourceTypes.js"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
   "packages/engine/dist/manifestAssetGroup.js": [["static","./manifestResourceState.js"],["static","@egret/contracts/resources"],["static","@egret/runtime"]],
   "packages/engine/dist/manifestAssetGroup.d.ts": [["static","./assetGroup.js"],["static","./manifestResourceTypes.js"],["static","@egret/runtime"]],
-  "packages/engine/src/Engine.ts": [["static","./assetGroup.js"],["static","./assetGroup.js"],["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./gameClock.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./manifestAssetGroup.js"],["static","./manifestAssetGroup.js"],["static","./manifestResourceTypes.js"],["static","./mouseInput.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./sequencePlayback.js"],["static","./sequencePlaybackTypes.js"],["static","./tween.js"],["static","./tween.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"]],
-  "packages/engine/dist/Engine.js": [["static","./assetGroup.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./gameClock.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./manifestAssetGroup.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./tween.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"]],
-  "packages/engine/dist/Engine.d.ts": [["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./manifestResourceTypes.js"],["static","./sequencePlaybackTypes.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
   "packages/engine/src/bitmapBindingTicket.ts": [["static","@egret/runtime"],["static","@egret/runtime"]],
   "packages/engine/dist/bitmapBindingTicket.js": [["static","@egret/runtime"]],
   "packages/engine/dist/bitmapBindingTicket.d.ts": [["static","@egret/runtime"],["static","@egret/runtime"]],
-  "packages/engine/web/resources.ts": [["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","@egret/contracts/resources"],["static","@egret/engine"],["static","@egret/engine/resources"],["static","@egret/engine/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
-  "packages/engine/dist/web/resources.js": [["static","./BrowserTextureProvider.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","@egret/engine/resources"],["static","@egret/runtime"]],
-  "packages/engine/dist/web/resources.d.ts": [["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","@egret/contracts/resources"],["static","@egret/engine"],["static","@egret/engine/resources"]],
   "packages/engine/web/ManifestByteSource.ts": [["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","#egret-manifest-resources"],["static","#egret-manifest-resources"]],
   "packages/engine/dist/web/ManifestByteSource.js": [["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","#egret-manifest-resources"]],
   "packages/engine/dist/web/ManifestByteSource.d.ts": [["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","#egret-manifest-resources"]],
@@ -4090,42 +1738,24 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/engine/web/sharedFrameUpload.ts": [["static","@egret/contracts"]],
   "packages/engine/dist/web/sharedFrameUpload.js": [],
   "packages/engine/dist/web/sharedFrameUpload.d.ts": [["static","@egret/contracts"]],
-  "packages/engine/web/WebGPUHost.ts": [["dynamic","./b1.js"],["dynamic","./b1.js"],["dynamic","./b1.js"],["dynamic","./sharedB1.js"],["dynamic","./sharedB1.js"],["dynamic","./sharedB1.js"],["static","../rendering/admitTexturedFrame2D.js"],["static","../rendering/copyFrame2D.js"],["static","../rendering/copyMixedFrame2D.js"],["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packImageVertices2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","../rendering/packTexturedMesh2D.js"],["static","../rendering/preparedBatches2D.js"],["static","../rendering/preparedBatches2D.js"],["static","../rendering/preparedFrameCache2D.js"],["static","../rendering/preparedSharedBatches2D.js"],["static","../rendering/preparedSharedBatches2D.js"],["static","../rendering/prepareMixedDraws2D.js"],["static","../rendering/prepareRectangles2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/prepareTexturedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","../rendering/sharedColor2D.js"],["static","../rendering/texturedPreparationBudget2D.js"],["static","./b1.js"],["static","./imageProjections2D.js"],["static","./imageProjections2D.js"],["static","./imageProjections2D.js"],["static","./prepareSharedSubmission2D.js"],["static","./prepareSharedSubmission2D.js"],["static","./prepareTexturedSubmission2D.js"],["static","./prepareTexturedSubmission2D.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedRetentionLedger.js"],["static","./sharedWebGPUOptions.js"],["static","./sharedWebGPUOptions.js"],["static","./sharedWebGPUOptions.js"],["static","./texturedWebGPUOptions.js"],["static","./texturedWebGPUOptions.js"],["static","./texturedWebGPUOptions.js"],["static","./webgpuBindingCache.js"],["static","./webgpuBindingCache.js"],["static","./webgpuBufferPool.js"],["static","./webgpuImagePass.js"],["static","./webgpuLifetime.js"],["static","./webgpuLifetime.js"],["static","./webgpuPass.js"],["static","./webgpuRetentionPool.js"],["static","./webgpuRetentionPool.js"],["static","./webgpuSharedPass.js"],["static","./webgpuSharedResolvePass.js"],["static","./webgpuTexturedPass.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/runtime"],["static","#egret-textured-frame-state"]],
-  "packages/engine/dist/web/WebGPUHost.js": [["dynamic","./b1.js"],["dynamic","./sharedB1.js"],["static","../rendering/admitTexturedFrame2D.js"],["static","../rendering/copyFrame2D.js"],["static","../rendering/copyMixedFrame2D.js"],["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packImageVertices2D.js"],["static","../rendering/packTexturedMesh2D.js"],["static","../rendering/preparedBatches2D.js"],["static","../rendering/preparedFrameCache2D.js"],["static","../rendering/preparedSharedBatches2D.js"],["static","../rendering/prepareMixedDraws2D.js"],["static","../rendering/prepareRectangles2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/prepareTexturedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","../rendering/texturedPreparationBudget2D.js"],["static","./imageProjections2D.js"],["static","./imageProjections2D.js"],["static","./prepareSharedSubmission2D.js"],["static","./prepareTexturedSubmission2D.js"],["static","./sharedWebGPUOptions.js"],["static","./texturedWebGPUOptions.js"],["static","./webgpuBindingCache.js"],["static","./webgpuImagePass.js"],["static","./webgpuLifetime.js"],["static","./webgpuPass.js"],["static","./webgpuRetentionPool.js"],["static","./webgpuSharedPass.js"],["static","./webgpuSharedResolvePass.js"],["static","./webgpuTexturedPass.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/runtime"],["static","#egret-textured-frame-state"]],
-  "packages/engine/dist/web/WebGPUHost.d.ts": [["static","./b1.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedWebGPUOptions.js"],["static","./sharedWebGPUOptions.js"],["static","./texturedWebGPUOptions.js"],["static","./texturedWebGPUOptions.js"],["static","@egret/contracts"],["static","@egret/contracts"]],
-  "packages/engine/web/webgpu.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"]],
-  "packages/engine/dist/web/webgpu.js": [["static","./WebGPUHost.js"],["static","./WebGPUHost.js"]],
-  "packages/engine/dist/web/webgpu.d.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"]],
-  "packages/engine/web/scene3d.ts": [["static","../rendering/scene3d.js"],["static","./b1.js"],["static","./sharedB1.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./webgpu.js"],["static","./webgpu.js"],["static","./WebGPUHost.js"],["static","@egret/contracts"]],
-  "packages/engine/dist/web/scene3d.js": [["static","./b1.js"],["static","./sharedB1.js"]],
-  "packages/engine/dist/web/scene3d.d.ts": [["static","../rendering/scene3d.js"],["static","./sharedB1.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./webgpu.js"],["static","./webgpu.js"],["static","./WebGPUHost.js"],["static","@egret/contracts"]],
-  "packages/engine/web/sharedWebGPUOptions.ts": [["static","./texturedWebGPUOptions.js"],["static","./WebGPUHost.js"]],
-  "packages/engine/dist/web/sharedWebGPUOptions.js": [],
-  "packages/engine/dist/web/sharedWebGPUOptions.d.ts": [["static","./texturedWebGPUOptions.js"],["static","./WebGPUHost.js"]],
+  "packages/engine/web/webgpu.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"]],
+  "packages/engine/dist/web/webgpu.js": [["static","./WebGPUHost.js"]],
+  "packages/engine/dist/web/webgpu.d.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"]],
   "packages/engine/web/webgpuLifetime.ts": [],
   "packages/engine/dist/web/webgpuLifetime.js": [],
   "packages/engine/dist/web/webgpuLifetime.d.ts": [],
   "packages/engine/web/webgpuRetentionPool.ts": [["static","./sharedRetentionLedger.js"],["static","./sharedRetentionLedger.js"],["static","./webgpuLifetime.js"]],
   "packages/engine/dist/web/webgpuRetentionPool.js": [["static","./sharedRetentionLedger.js"]],
   "packages/engine/dist/web/webgpuRetentionPool.d.ts": [["static","./sharedRetentionLedger.js"],["static","./webgpuLifetime.js"]],
-  "packages/engine/web/WebGL2Host.ts": [["dynamic","./sharedWebGL2Scene.js"],["dynamic","./sharedWebGL2Scene.js"],["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","../rendering/preparedBatches2D.js"],["static","../rendering/preparedSharedBatches2D.js"],["static","../rendering/preparedSharedBatches2D.js"],["static","../rendering/prepareRectangles2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sceneFrame3D.js"],["static","../rendering/sharedColor2D.js"],["static","../rendering/sharedColor2D.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedRetentionLedger.js"],["static","./sharedRetentionLedger.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGL2Arena.js"],["static","./sharedWebGL2Arena.js"],["static","./sharedWebGL2Options.js"],["static","./sharedWebGL2Options.js"],["static","./sharedWebGL2Scene.js"],["static","./sharedWebGL2Shaders.js"],["static","./webgl2Native.js"],["static","./webgl2Native.js"],["static","./webgl2Types.js"],["static","./webgl2Types.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","#egret-textured-frame-state"]],
-  "packages/engine/dist/web/WebGL2Host.js": [["dynamic","./sharedWebGL2Scene.js"],["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","../rendering/preparedBatches2D.js"],["static","../rendering/preparedSharedBatches2D.js"],["static","../rendering/prepareRectangles2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./sharedRetentionLedger.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGL2Arena.js"],["static","./sharedWebGL2Options.js"],["static","./sharedWebGL2Shaders.js"],["static","./webgl2Native.js"],["static","@egret/contracts"],["static","#egret-textured-frame-state"]],
-  "packages/engine/dist/web/WebGL2Host.d.ts": [["static","./sharedWebGL2Options.js"],["static","./webgl2Types.js"],["static","./webgl2Types.js"]],
-  "packages/engine/web/webgl2Types.ts": [["static","../rendering/sceneFrame3D.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","@egret/contracts"]],
+  "packages/engine/web/webgl2Types.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","@egret/contracts"]],
   "packages/engine/dist/web/webgl2Types.js": [],
-  "packages/engine/dist/web/webgl2Types.d.ts": [["static","../rendering/sceneFrame3D.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","@egret/contracts"]],
+  "packages/engine/dist/web/webgl2Types.d.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","@egret/contracts"]],
   "packages/engine/web/webgl2.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedWebGL2Options.js"],["static","./WebGL2Host.js"],["static","./webgl2Types.js"]],
   "packages/engine/dist/web/webgl2.js": [["static","./WebGL2Host.js"]],
   "packages/engine/dist/web/webgl2.d.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedWebGL2Options.js"],["static","./WebGL2Host.js"],["static","./webgl2Types.js"]],
-  "packages/engine/web/webgl2Scene3d.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedWebGL2Options.js"],["static","./WebGL2Host.js"],["static","./webgl2Types.js"]],
-  "packages/engine/dist/web/webgl2Scene3d.js": [["static","./WebGL2Host.js"]],
-  "packages/engine/dist/web/webgl2Scene3d.d.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedWebGL2Options.js"],["static","./WebGL2Host.js"],["static","./webgl2Types.js"]],
   "packages/runtime/src/Bitmap.ts": [["static","./AssetLease.js"],["static","./AssetLease.js"],["static","./atlasFrameLayout.js"],["static","./bitmapDisplayState.js"],["static","./bitmapDisplayState.js"],["static","./bitmapDisplayState.js"],["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ownership.js"],["static","./sequenceClip.js"],["static","./sharedFrameCapture.js"],["static","./sharedFrameCapture.js"],["static","./Stage.js"],["static","./Texture.js"],["static","./Texture.js"],["static","@egret/contracts"]],
   "packages/runtime/dist/Bitmap.js": [["static","./AssetLease.js"],["static","./AssetLease.js"],["static","./atlasFrameLayout.js"],["static","./bitmapDisplayState.js"],["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./sharedFrameCapture.js"],["static","./Texture.js"]],
   "packages/runtime/dist/Bitmap.d.ts": [["static","./AssetLease.js"],["static","./bitmapDisplayState.js"],["static","./bitmapDisplayState.js"],["static","./DisplayObject.js"],["static","./sequenceClip.js"],["static","./Texture.js"],["static","@egret/contracts"]],
-  "packages/runtime/src/sharedFrameCapture.ts": [["static","./Bitmap.js"],["static","./bitmapDisplayState.js"],["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayTransform.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./meshCaptureSnapshot.js"],["static","./meshDisplayState.js"],["static","./meshDisplayState.js"],["static","./ownership.js"],["static","./ownership.js"],["static","./Stage.js"],["static","./textDisplayState.js"],["static","./textDisplayState.js"],["static","@egret/contracts"],["static","@egret/contracts"]],
-  "packages/runtime/dist/sharedFrameCapture.js": [["static","./Bitmap.js"],["static","./displayTransform.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./meshCaptureSnapshot.js"],["static","./meshDisplayState.js"],["static","./ownership.js"],["static","./textDisplayState.js"],["static","@egret/contracts"]],
-  "packages/runtime/dist/sharedFrameCapture.d.ts": [["static","./bitmapDisplayState.js"],["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./Stage.js"],["static","@egret/contracts"]],
   "packages/runtime/src/bitmapDisplayState.ts": [["static","./AssetLease.js"],["static","./atlasFrameLayout.js"],["static","./DisplayObject.js"],["static","./displayVisualState.js"],["static","./Texture.js"],["static","@egret/contracts"]],
   "packages/runtime/dist/bitmapDisplayState.js": [["static","./displayVisualState.js"]],
   "packages/runtime/dist/bitmapDisplayState.d.ts": [["static","./AssetLease.js"],["static","./atlasFrameLayout.js"],["static","./DisplayObject.js"],["static","./Texture.js"],["static","@egret/contracts"]],
@@ -4133,37 +1763,25 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/runtime/dist/ownership.js": [["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"]],
   "packages/runtime/dist/ownership.d.ts": [["static","./AssetLease.js"],["static","./assetManagerOwnerState.js"],["static","./Bitmap.js"],["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayTreeState.js"],["static","./Scope.js"],["static","./sharedFrameCapture.js"],["static","./Stage.js"],["static","./Texture.js"],["static","@egret/contracts"]],
   // Diagnostics: exact existing owner and erased CPU-observation edges.
-  "packages/engine/web/webgl2Native.ts": [["static","./sharedRetentionLedger.js"],["static","./webgl2Types.js"],["static","@egret/runtime"]],
-  "packages/engine/dist/web/webgl2Native.js": [["static","@egret/runtime"]],
-  "packages/engine/dist/web/webgl2Native.d.ts": [["static","./sharedRetentionLedger.js"],["static","./webgl2Types.js"],["static","@egret/runtime"]],
+
   "packages/engine/web/sharedRetentionLedger.ts": [],
   "packages/engine/dist/web/sharedRetentionLedger.js": [],
   "packages/engine/dist/web/sharedRetentionLedger.d.ts": [],
   "packages/engine/rendering/sharedColor2D.ts": [["static","@egret/contracts"],["static","@egret/contracts"]],
   "packages/engine/dist/rendering/sharedColor2D.js": [["static","@egret/contracts"]],
   "packages/engine/dist/rendering/sharedColor2D.d.ts": [["static","@egret/contracts"]],
-  "packages/engine/web/sharedSubmissionStorage2D.ts": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","../rendering/sharedColor2D.js"],["static","./imageProjections2D.js"]],
-  "packages/engine/dist/web/sharedSubmissionStorage2D.js": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/sharedColor2D.js"]],
-  "packages/engine/dist/web/sharedSubmissionStorage2D.d.ts": [["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./imageProjections2D.js"]],
   "packages/engine/web/prepareSharedSubmission2D.ts": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./imageProjections2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGPUOptions.js"]],
   "packages/engine/dist/web/prepareSharedSubmission2D.js": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"]],
-  "packages/engine/dist/web/prepareSharedSubmission2D.d.ts": [["static","../rendering/packSharedDraws2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGPUOptions.js"]],
+  "packages/engine/dist/web/prepareSharedSubmission2D.d.ts": [["static","../rendering/packSharedDraws2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGPUOptions.js"]]
 };
 
 // M1.2 keeps the four retained tables above unchanged. The existing stock-ledger
 // check makes this one previously erased dependency a runtime static edge.
 const m12IncrementalRenderingLiteralClosure = {
-  "packages/engine/dist/rendering/prepareTexturedDraws2D.js": [["static","./prepareImages2D.js"],["static","./prepareRectangles2D.js"],["static","./prepareTexturedMesh2D.js"],["static","./texturedPreparationBudget2D.js"]],
 };
 
 // M3.1 finite named source/emission/declaration successor; retained tables stay intact.
 const m31UiLiteralClosure = {
-  "packages/engine/src/Engine.ts": [["static","./assetGroup.js"],["static","./assetGroup.js"],["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./gameClock.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./internal/uiFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./manifestAssetGroup.js"],["static","./manifestAssetGroup.js"],["static","./manifestResourceTypes.js"],["static","./mouseInput.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./sequencePlayback.js"],["static","./sequencePlaybackTypes.js"],["static","./tween.js"],["static","./tween.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"]],
-  "packages/engine/dist/Engine.js": [["static","./assetGroup.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./gameClock.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./internal/uiFactoryState.js"],["static","./manifestAssetGroup.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./tween.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"]],
-  "packages/engine/dist/Engine.d.ts": [["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./manifestResourceTypes.js"],["static","./sequencePlaybackTypes.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
-  "packages/runtime/src/DisplayObject.ts": [["static","./displayBounds.js"],["static","./displayBounds.js"],["static","./displayCoordinates.js"],["static","./displayCoordinates.js"],["static","./displayHitState.js"],["static","./DisplayObjectContainer.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./EventDispatcher.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"],["static","@egret/contracts"]],
-  "packages/runtime/dist/DisplayObject.js": [["static","./displayBounds.js"],["static","./displayCoordinates.js"],["static","./displayHitState.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./EventDispatcher.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"]],
-  "packages/runtime/dist/DisplayObject.d.ts": [["static","./displayBounds.js"],["static","./displayCoordinates.js"],["static","./DisplayObjectContainer.js"],["static","./EventDispatcher.js"],["static","./ownership.js"],["static","@egret/contracts"]],
   "packages/runtime/src/DisplayObjectContainer.ts": [["static","./displayHitState.js"],["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
   "packages/runtime/dist/DisplayObjectContainer.js": [["static","./displayHitState.js"],["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
   "packages/runtime/dist/DisplayObjectContainer.d.ts": [["static","./DisplayObject.js"],["static","./ownership.js"]],
@@ -4176,24 +1794,15 @@ const m31UiLiteralClosure = {
   "packages/runtime/src/displayTreeState.ts": [["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"],["static","./ownership.js"],["static","./Stage.js"]],
   "packages/runtime/dist/displayTreeState.js": [["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"],["static","./ownership.js"]],
   "packages/runtime/dist/displayTreeState.d.ts": [["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./Stage.js"]],
-  "packages/runtime/src/displayVisualState.ts": [["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"]],
-  "packages/runtime/dist/displayVisualState.js": [["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
-  "packages/runtime/dist/displayVisualState.d.ts": [["static","./DisplayObject.js"],["static","@egret/contracts"]],
   "packages/engine/src/pointerInput.ts": [["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./mouseInput.js"],["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/input"],["static","@egret/runtime/input"]],
   "packages/engine/dist/pointerInput.js": [["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","@egret/runtime"],["static","@egret/runtime/input"]],
   "packages/engine/dist/pointerInput.d.ts": [["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"]],
-  "packages/engine/src/internal/uiFactoryState.ts": [["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
-  "packages/engine/dist/internal/uiFactoryState.js": [["static","@egret/runtime"]],
-  "packages/engine/dist/internal/uiFactoryState.d.ts": [["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
   "packages/runtime/src/ui/index.ts": [["static","./displayCommit.js"],["static","./displayCommit.js"],["static","./heightIndex.js"],["static","./layout.js"],["static","./types.js"]],
   "packages/runtime/dist/ui/index.js": [["static","./displayCommit.js"],["static","./heightIndex.js"],["static","./layout.js"]],
   "packages/runtime/dist/ui/index.d.ts": [["static","./displayCommit.js"],["static","./displayCommit.js"],["static","./heightIndex.js"],["static","./layout.js"],["static","./types.js"]],
   "packages/runtime/src/ui/managedState.ts": [["static","../DisplayObject.js"],["static","../displayTreeState.js"],["static","../EgretError.js"]],
   "packages/runtime/dist/ui/managedState.js": [["static","../displayTreeState.js"],["static","../EgretError.js"]],
   "packages/runtime/dist/ui/managedState.d.ts": [["static","../DisplayObject.js"]],
-  "packages/runtime/src/ui/displayCommit.ts": [["static","../displayHitState.js"],["static","../DisplayObject.js"],["static","../DisplayObjectContainer.js"],["static","../displayTreeState.js"],["static","../displayTreeState.js"],["static","../displayVisualState.js"],["static","../EgretError.js"],["static","../ownership.js"],["static","../Scope.js"],["static","../Stage.js"],["static","./managedState.js"],["static","@egret/contracts"]],
-  "packages/runtime/dist/ui/displayCommit.js": [["static","../displayHitState.js"],["static","../DisplayObjectContainer.js"],["static","../displayTreeState.js"],["static","../displayVisualState.js"],["static","../EgretError.js"],["static","../ownership.js"],["static","../Scope.js"],["static","./managedState.js"]],
-  "packages/runtime/dist/ui/displayCommit.d.ts": [["static","../DisplayObject.js"],["static","../DisplayObjectContainer.js"],["static","../Scope.js"],["static","../Stage.js"],["static","@egret/contracts"]],
   "packages/runtime/src/ui/layout.ts": [["static","../EgretError.js"],["static","./types.js"]],
   "packages/runtime/dist/ui/layout.js": [["static","../EgretError.js"]],
   "packages/runtime/dist/ui/layout.d.ts": [["static","./types.js"]],
@@ -4203,308 +1812,13 @@ const m31UiLiteralClosure = {
   "packages/runtime/src/ui/types.ts": [],
   "packages/runtime/dist/ui/types.js": [],
   "packages/runtime/dist/ui/types.d.ts": [],
-  "packages/engine/src/ui/index.ts": [["static","./types.js"],["static","./uiRoot.js"]],
-  "packages/engine/dist/ui/index.js": [["static","./uiRoot.js"]],
-  "packages/engine/dist/ui/index.d.ts": [["static","./types.js"],["static","./uiRoot.js"]],
-  "packages/engine/src/ui/types.ts": [["static","../Engine.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
-  "packages/engine/dist/ui/types.js": [],
-  "packages/engine/dist/ui/types.d.ts": [["static","../Engine.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
-  "packages/engine/src/ui/uiRoot.ts": [["static","../internal/uiFactoryState.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","./keyboardFocus.js"],["static","./keyboardFocus.js"],["static","./leafContent.js"],["static","./leafContent.js"],["static","./types.js"],["static","./virtualList.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"],["static","@egret/runtime/ui"]],
-  "packages/engine/dist/ui/uiRoot.js": [["static","../internal/uiFactoryState.js"],["static","./keyboardFocus.js"],["static","./leafContent.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
-  "packages/engine/dist/ui/uiRoot.d.ts": [["static","./types.js"]],
   "packages/engine/src/ui/virtualList.ts": [["static","./types.js"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
   "packages/engine/dist/ui/virtualList.js": [["static","@egret/runtime"]],
-  "packages/engine/dist/ui/virtualList.d.ts": [["static","./types.js"],["static","@egret/runtime/ui"]],
+  "packages/engine/dist/ui/virtualList.d.ts": [["static","./types.js"],["static","@egret/runtime/ui"]]
 };
 
 // Exact reviewed sequence edges override only their current cooperating owners.
 const m22SequenceLiteralClosure = {
-  "packages/engine/src/Engine.ts": [
-    [
-      "static",
-      "./assetGroup.js"
-    ],
-    [
-      "static",
-      "./assetGroup.js"
-    ],
-    [
-      "static",
-      "./assetGroupTypes.js"
-    ],
-    [
-      "static",
-      "./bitmapBindingTicket.js"
-    ],
-    [
-      "static",
-      "./bitmapBindingTicket.js"
-    ],
-    [
-      "static",
-      "./bitmapResourceSlot.js"
-    ],
-    [
-      "static",
-      "./bitmapResourceSlot.js"
-    ],
-    [
-      "static",
-      "./closeHost.js"
-    ],
-    [
-      "static",
-      "./gameClock.js"
-    ],
-    [
-      "static",
-      "./gameClock.js"
-    ],
-    [
-      "static",
-      "./gameClockTypes.js"
-    ],
-    [
-      "static",
-      "./internal/contentFactoryState.js"
-    ],
-    [
-      "static",
-      "./internal/sequenceControllerFactoryState.js"
-    ],
-    [
-      "static",
-      "./internal/sequenceControllerFactoryState.js"
-    ],
-    [
-      "static",
-      "./internal/textFieldFactoryState.js"
-    ],
-    [
-      "static",
-      "./internal/texturedFrameState.js"
-    ],
-    [
-      "static",
-      "./internal/uiFactoryState.js"
-    ],
-    [
-      "static",
-      "./internal/uiFactoryState.js"
-    ],
-    [
-      "static",
-      "./manifestAssetGroup.js"
-    ],
-    [
-      "static",
-      "./manifestAssetGroup.js"
-    ],
-    [
-      "static",
-      "./manifestResourceTypes.js"
-    ],
-    [
-      "static",
-      "./mouseInput.js"
-    ],
-    [
-      "static",
-      "./mouseInput.js"
-    ],
-    [
-      "static",
-      "./sequencePlayback.js"
-    ],
-    [
-      "static",
-      "./sequencePlayback.js"
-    ],
-    [
-      "static",
-      "./sequencePlaybackTypes.js"
-    ],
-    [
-      "static",
-      "./sequenceTargetClaims.js"
-    ],
-    [
-      "static",
-      "./tween.js"
-    ],
-    [
-      "static",
-      "./tween.js"
-    ],
-    [
-      "static",
-      "./tweenTypes.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts/resources"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/Engine.js": [
-    [
-      "static",
-      "./assetGroup.js"
-    ],
-    [
-      "static",
-      "./bitmapBindingTicket.js"
-    ],
-    [
-      "static",
-      "./bitmapResourceSlot.js"
-    ],
-    [
-      "static",
-      "./closeHost.js"
-    ],
-    [
-      "static",
-      "./gameClock.js"
-    ],
-    [
-      "static",
-      "./internal/contentFactoryState.js"
-    ],
-    [
-      "static",
-      "./internal/sequenceControllerFactoryState.js"
-    ],
-    [
-      "static",
-      "./internal/textFieldFactoryState.js"
-    ],
-    [
-      "static",
-      "./internal/texturedFrameState.js"
-    ],
-    [
-      "static",
-      "./internal/uiFactoryState.js"
-    ],
-    [
-      "static",
-      "./manifestAssetGroup.js"
-    ],
-    [
-      "static",
-      "./mouseInput.js"
-    ],
-    [
-      "static",
-      "./sequencePlayback.js"
-    ],
-    [
-      "static",
-      "./sequenceTargetClaims.js"
-    ],
-    [
-      "static",
-      "./tween.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/Engine.d.ts": [
-    [
-      "static",
-      "./assetGroupTypes.js"
-    ],
-    [
-      "static",
-      "./bitmapBindingTicket.js"
-    ],
-    [
-      "static",
-      "./bitmapResourceSlot.js"
-    ],
-    [
-      "static",
-      "./gameClock.js"
-    ],
-    [
-      "static",
-      "./gameClockTypes.js"
-    ],
-    [
-      "static",
-      "./manifestResourceTypes.js"
-    ],
-    [
-      "static",
-      "./sequencePlaybackTypes.js"
-    ],
-    [
-      "static",
-      "./tweenTypes.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts/resources"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
   "packages/engine/src/sequencePlayback.ts": [
     [
       "static",
@@ -4619,122 +1933,6 @@ const m22SequenceLiteralClosure = {
       "@egret/runtime"
     ]
   ],
-  "packages/engine/src/animation/index.ts": [
-    [
-      "static",
-      "./sequenceController.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ]
-  ],
-  "packages/engine/dist/animation/index.js": [
-    [
-      "static",
-      "./sequenceController.js"
-    ]
-  ],
-  "packages/engine/dist/animation/index.d.ts": [
-    [
-      "static",
-      "./sequenceController.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ]
-  ],
-  "packages/engine/src/animation/sequenceController.ts": [
-    [
-      "static",
-      "../Engine.js"
-    ],
-    [
-      "static",
-      "../gameClockTypes.js"
-    ],
-    [
-      "static",
-      "../internal/sequenceControllerFactoryState.js"
-    ],
-    [
-      "static",
-      "../internal/sequenceControllerFactoryState.js"
-    ],
-    [
-      "static",
-      "./sequenceCoordinator.js"
-    ],
-    [
-      "static",
-      "./sequenceCoordinator.js"
-    ],
-    [
-      "static",
-      "./sequenceInput.js"
-    ],
-    [
-      "static",
-      "./sequenceInput.js"
-    ],
-    [
-      "static",
-      "./sequenceMath.js"
-    ],
-    [
-      "static",
-      "./sequenceMath.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/sequenceController.js": [
-    [
-      "static",
-      "../internal/sequenceControllerFactoryState.js"
-    ],
-    [
-      "static",
-      "./sequenceCoordinator.js"
-    ],
-    [
-      "static",
-      "./sequenceInput.js"
-    ],
-    [
-      "static",
-      "./sequenceMath.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/sequenceController.d.ts": [
-    [
-      "static",
-      "../Engine.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
   "packages/engine/src/animation/sequenceCoordinator.ts": [
     [
       "static",
@@ -4763,36 +1961,6 @@ const m22SequenceLiteralClosure = {
     [
       "static",
       "../internal/sequenceControllerFactoryState.js"
-    ]
-  ],
-  "packages/engine/src/animation/sequenceInput.ts": [
-    [
-      "static",
-      "./sequenceMath.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/sequenceInput.js": [
-    [
-      "static",
-      "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/animation/sequenceInput.d.ts": [
-    [
-      "static",
-      "./sequenceMath.js"
-    ],
-    [
-      "static",
-      "./types.js"
     ]
   ],
   "packages/engine/src/animation/sequenceMath.ts": [
@@ -4857,58 +2025,6 @@ const m32ParagraphLiteralClosure = {
       "@egret/runtime/paragraph"
     ]
   ],
-  "packages/engine/dist/ui/leafContent.d.ts": [
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "@egret/runtime/ui"
-    ]
-  ],
-  "packages/engine/dist/ui/leafContent.js": [
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime/ui"
-    ]
-  ],
-  "packages/engine/dist/ui/uiRoot.d.ts": [
-    [
-      "static",
-      "./types.js"
-    ]
-  ],
-  "packages/engine/dist/ui/uiRoot.js": [
-    [
-      "static",
-      "../internal/uiFactoryState.js"
-    ],
-    [
-      "static",
-      "./keyboardFocus.js"
-    ],
-    [
-      "static",
-      "./leafContent.js"
-    ],
-    [
-      "static",
-      "./virtualList.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime/ui"
-    ]
-  ],
   "packages/engine/dist/web/CanvasKitParagraphProvider.d.ts": [
     [
       "static",
@@ -4931,22 +2047,6 @@ const m32ParagraphLiteralClosure = {
     [
       "static",
       "@egret/runtime"
-    ]
-  ],
-  "packages/engine/dist/web/paragraph.d.ts": [
-    [
-      "static",
-      "./CanvasKitParagraphProvider.js"
-    ],
-    [
-      "static",
-      "./CanvasKitParagraphProvider.js"
-    ]
-  ],
-  "packages/engine/dist/web/paragraph.js": [
-    [
-      "static",
-      "./CanvasKitParagraphProvider.js"
     ]
   ],
   "packages/engine/src/paragraph.ts": [
@@ -4975,82 +2075,6 @@ const m32ParagraphLiteralClosure = {
       "@egret/runtime/paragraph"
     ]
   ],
-  "packages/engine/src/ui/leafContent.ts": [
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime/ui"
-    ],
-    [
-      "static",
-      "@egret/runtime/ui"
-    ]
-  ],
-  "packages/engine/src/ui/uiRoot.ts": [
-    [
-      "static",
-      "../internal/uiFactoryState.js"
-    ],
-    [
-      "static",
-      "../keyboardInputTypes.js"
-    ],
-    [
-      "static",
-      "../pointerInputTypes.js"
-    ],
-    [
-      "static",
-      "./keyboardFocus.js"
-    ],
-    [
-      "static",
-      "./keyboardFocus.js"
-    ],
-    [
-      "static",
-      "./leafContent.js"
-    ],
-    [
-      "static",
-      "./leafContent.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "./virtualList.js"
-    ],
-    [
-      "static",
-      "./virtualList.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime/ui"
-    ],
-    [
-      "static",
-      "@egret/runtime/ui"
-    ]
-  ],
   "packages/engine/web/CanvasKitParagraphProvider.ts": [
     [
       "static",
@@ -5075,16 +2099,6 @@ const m32ParagraphLiteralClosure = {
     [
       "static",
       "@egret/runtime"
-    ]
-  ],
-  "packages/engine/web/paragraph.ts": [
-    [
-      "static",
-      "./CanvasKitParagraphProvider.js"
-    ],
-    [
-      "static",
-      "./CanvasKitParagraphProvider.js"
     ]
   ],
   "packages/runtime/dist/paragraph/Paragraph.d.ts": [
@@ -6178,48 +3192,8 @@ const m34EffectLiteralClosure = {
   ],
   "packages/engine/web/WebGPUHost.ts": [
     [
-      "dynamic",
-      "./b1.js"
-    ],
-    [
-      "dynamic",
-      "./b1.js"
-    ],
-    [
-      "dynamic",
-      "./b1.js"
-    ],
-    [
-      "dynamic",
-      "./sharedB1.js"
-    ],
-    [
-      "dynamic",
-      "./sharedB1.js"
-    ],
-    [
-      "dynamic",
-      "./sharedB1.js"
-    ],
-    [
-      "static",
-      "../rendering/admitTexturedFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/copyFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/copyMixedFrame2D.js"
-    ],
-    [
       "static",
       "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packImageVertices2D.js"
     ],
     [
       "static",
@@ -6227,19 +3201,7 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
-      "../rendering/packTexturedMesh2D.js"
-    ],
-    [
-      "static",
       "../rendering/preparedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/preparedFrameCache2D.js"
     ],
     [
       "static",
@@ -6248,10 +3210,6 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "../rendering/preparedSharedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareMixedDraws2D.js"
     ],
     [
       "static",
@@ -6260,10 +3218,6 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "../rendering/prepareSharedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareTexturedDraws2D.js"
     ],
     [
       "static",
@@ -6279,22 +3233,6 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
-      "../rendering/texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./b1.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
       "./imageProjections2D.js"
     ],
     [
@@ -6304,14 +3242,6 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "./prepareSharedSubmission2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedSubmission2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedSubmission2D.js"
     ],
     [
       "static",
@@ -6347,18 +3277,6 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
       "./webgpuBindingCache.js"
     ],
     [
@@ -6371,19 +3289,11 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
-      "./webgpuImagePass.js"
-    ],
-    [
-      "static",
       "./webgpuLifetime.js"
     ],
     [
       "static",
       "./webgpuLifetime.js"
-    ],
-    [
-      "static",
-      "./webgpuPass.js"
     ],
     [
       "static",
@@ -6400,14 +3310,6 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "./webgpuSharedResolvePass.js"
-    ],
-    [
-      "static",
-      "./webgpuTexturedPass.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
     ],
     [
       "static",
@@ -6436,36 +3338,8 @@ const m34EffectLiteralClosure = {
   ],
   "packages/engine/dist/web/WebGPUHost.js": [
     [
-      "dynamic",
-      "./b1.js"
-    ],
-    [
-      "dynamic",
-      "./sharedB1.js"
-    ],
-    [
-      "static",
-      "../rendering/admitTexturedFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/copyFrame2D.js"
-    ],
-    [
-      "static",
-      "../rendering/copyMixedFrame2D.js"
-    ],
-    [
       "static",
       "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packImageVertices2D.js"
-    ],
-    [
-      "static",
-      "../rendering/packTexturedMesh2D.js"
     ],
     [
       "static",
@@ -6473,15 +3347,7 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
-      "../rendering/preparedFrameCache2D.js"
-    ],
-    [
-      "static",
       "../rendering/preparedSharedBatches2D.js"
-    ],
-    [
-      "static",
-      "../rendering/prepareMixedDraws2D.js"
     ],
     [
       "static",
@@ -6493,31 +3359,11 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
-      "../rendering/prepareTexturedDraws2D.js"
-    ],
-    [
-      "static",
       "../rendering/sharedColor2D.js"
     ],
     [
       "static",
-      "../rendering/texturedPreparationBudget2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
-      "./imageProjections2D.js"
-    ],
-    [
-      "static",
       "./prepareSharedSubmission2D.js"
-    ],
-    [
-      "static",
-      "./prepareTexturedSubmission2D.js"
     ],
     [
       "static",
@@ -6529,23 +3375,11 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
       "./webgpuBindingCache.js"
     ],
     [
       "static",
-      "./webgpuImagePass.js"
-    ],
-    [
-      "static",
       "./webgpuLifetime.js"
-    ],
-    [
-      "static",
-      "./webgpuPass.js"
     ],
     [
       "static",
@@ -6561,14 +3395,6 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
-      "./webgpuTexturedPass.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
       "@egret/contracts"
     ],
     [
@@ -6581,10 +3407,6 @@ const m34EffectLiteralClosure = {
     ]
   ],
   "packages/engine/dist/web/WebGPUHost.d.ts": [
-    [
-      "static",
-      "./b1.js"
-    ],
     [
       "static",
       "./sharedDeviceSession.js"
@@ -6603,30 +3425,10 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
       "@egret/contracts"
     ]
   ],
   "packages/engine/web/WebGL2Host.ts": [
-    [
-      "dynamic",
-      "./sharedWebGL2Scene.js"
-    ],
-    [
-      "dynamic",
-      "./sharedWebGL2Scene.js"
-    ],
     [
       "static",
       "../rendering/ownedPreparationFailure2D.js"
@@ -6654,10 +3456,6 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "../rendering/prepareSharedDraws2D.js"
-    ],
-    [
-      "static",
-      "../rendering/sceneFrame3D.js"
     ],
     [
       "static",
@@ -6721,10 +3519,6 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
-      "./sharedWebGL2Scene.js"
-    ],
-    [
-      "static",
       "./sharedWebGL2Shaders.js"
     ],
     [
@@ -6734,10 +3528,6 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "./webgl2Native.js"
-    ],
-    [
-      "static",
-      "./webgl2Types.js"
     ],
     [
       "static",
@@ -6757,10 +3547,6 @@ const m34EffectLiteralClosure = {
     ]
   ],
   "packages/engine/dist/web/WebGL2Host.js": [
-    [
-      "dynamic",
-      "./sharedWebGL2Scene.js"
-    ],
     [
       "static",
       "../rendering/ownedPreparationFailure2D.js"
@@ -6834,10 +3620,6 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "./webgl2Types.js"
-    ],
-    [
-      "static",
-      "./webgl2Types.js"
     ]
   ],
   "packages/engine/web/sharedEffectShaders.ts": [],
@@ -6846,19 +3628,11 @@ const m34EffectLiteralClosure = {
   "packages/engine/web/sharedWebGPUOptions.ts": [
     [
       "static",
-      "./texturedWebGPUOptions.js"
-    ],
-    [
-      "static",
       "./WebGPUHost.js"
     ]
   ],
   "packages/engine/dist/web/sharedWebGPUOptions.js": [],
   "packages/engine/dist/web/sharedWebGPUOptions.d.ts": [
-    [
-      "static",
-      "./texturedWebGPUOptions.js"
-    ],
     [
       "static",
       "./WebGPUHost.js"
@@ -8033,113 +4807,6 @@ function sceneGraphEdges(code) {
 }
 // M3.4 reviewed successor edges retain all predecessor closure records.
 const m34ThemeLiteralClosure = {
-  "packages/engine/src/ui/index.ts": [
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "./uiRoot.js"
-    ]
-  ],
-  "packages/engine/dist/ui/index.js": [
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./uiRoot.js"
-    ]
-  ],
-  "packages/engine/dist/ui/index.d.ts": [
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "./uiRoot.js"
-    ]
-  ],
-  "packages/engine/src/ui/types.ts": [
-    [
-      "static",
-      "../Engine.js"
-    ],
-    [
-      "static",
-      "../keyboardInputTypes.js"
-    ],
-    [
-      "static",
-      "../pointerInputTypes.js"
-    ],
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime/ui"
-    ]
-  ],
-  "packages/engine/dist/ui/types.js": [],
-  "packages/engine/dist/ui/types.d.ts": [
-    [
-      "static",
-      "../Engine.js"
-    ],
-    [
-      "static",
-      "../keyboardInputTypes.js"
-    ],
-    [
-      "static",
-      "../pointerInputTypes.js"
-    ],
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime/ui"
-    ]
-  ],
   "packages/engine/src/ui/leafContent.ts": [
     [
       "static",
@@ -8192,108 +4859,6 @@ const m34ThemeLiteralClosure = {
     [
       "static",
       "@egret/runtime/ui"
-    ]
-  ],
-  "packages/engine/src/ui/uiRoot.ts": [
-    [
-      "static",
-      "../internal/uiFactoryState.js"
-    ],
-    [
-      "static",
-      "../keyboardInputTypes.js"
-    ],
-    [
-      "static",
-      "../pointerInputTypes.js"
-    ],
-    [
-      "static",
-      "./keyboardFocus.js"
-    ],
-    [
-      "static",
-      "./keyboardFocus.js"
-    ],
-    [
-      "static",
-      "./leafContent.js"
-    ],
-    [
-      "static",
-      "./leafContent.js"
-    ],
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "./virtualList.js"
-    ],
-    [
-      "static",
-      "./virtualList.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime/ui"
-    ],
-    [
-      "static",
-      "@egret/runtime/ui"
-    ]
-  ],
-  "packages/engine/dist/ui/uiRoot.js": [
-    [
-      "static",
-      "../internal/uiFactoryState.js"
-    ],
-    [
-      "static",
-      "./keyboardFocus.js"
-    ],
-    [
-      "static",
-      "./leafContent.js"
-    ],
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./virtualList.js"
-    ],
-    [
-      "static",
-      "@egret/runtime"
-    ],
-    [
-      "static",
-      "@egret/runtime/ui"
-    ]
-  ],
-  "packages/engine/dist/ui/uiRoot.d.ts": [
-    [
-      "static",
-      "./types.js"
     ]
   ],
   "packages/engine/src/ui/theme.ts": [
@@ -8358,122 +4923,12 @@ const uiControlsLiteralClosure = {
       "static",
       "@egret/runtime"
     ]
-  ],
-  "packages/engine/src/ui/index.ts": [
-    [
-      "static",
-      "./controls.js"
-    ],
-    [
-      "static",
-      "./controls.js"
-    ],
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "./uiRoot.js"
-    ]
-  ],
-  "packages/engine/dist/ui/index.js": [
-    [
-      "static",
-      "./controls.js"
-    ],
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./uiRoot.js"
-    ]
-  ],
-  "packages/engine/dist/ui/index.d.ts": [
-    [
-      "static",
-      "./controls.js"
-    ],
-    [
-      "static",
-      "./controls.js"
-    ],
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./theme.js"
-    ],
-    [
-      "static",
-      "./types.js"
-    ],
-    [
-      "static",
-      "./uiRoot.js"
-    ]
   ]
 };
 
-const nativeEditingLiteralClosure = {"packages/engine/src/internal/uiRootState.ts":[["static","../ui/types.js"],["static","@egret/runtime"],["static","@egret/runtime"]],"packages/engine/dist/internal/uiRootState.js":[["static","@egret/runtime"]],"packages/engine/dist/internal/uiRootState.d.ts":[["static","../ui/types.js"],["static","@egret/runtime"]],"packages/engine/src/ui/editing.ts":[["static","./textEditor.js"],["static","./textEditorTypes.js"]],"packages/engine/dist/ui/editing.js":[["static","./textEditor.js"]],"packages/engine/dist/ui/editing.d.ts":[["static","./textEditor.js"],["static","./textEditorTypes.js"]],"packages/engine/src/ui/textEditor.ts":[["static","../internal/uiFactoryState.js"],["static","../internal/uiFactoryState.js"],["static","../internal/uiRootState.js"],["static","../internal/uiRootState.js"],["static","../paragraph.js"],["static","./textEditorTypes.js"],["static","./types.js"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/paragraph"],["static","@egret/runtime/ui/editing"],["static","@egret/runtime/ui/editing"]],"packages/engine/dist/ui/textEditor.js":[["static","../internal/uiFactoryState.js"],["static","../internal/uiFactoryState.js"],["static","../internal/uiRootState.js"],["static","../paragraph.js"],["static","@egret/runtime"],["static","@egret/runtime/ui/editing"]],"packages/engine/dist/ui/textEditor.d.ts":[["static","../internal/uiFactoryState.js"],["static","../internal/uiRootState.js"],["static","./textEditorTypes.js"],["static","./types.js"],["static","@egret/runtime/paragraph"],["static","@egret/runtime/ui/editing"]],"packages/engine/src/ui/textEditorTypes.ts":[["static","../Engine.js"],["static","./types.js"],["static","@egret/runtime"],["static","@egret/runtime/paragraph"],["static","@egret/runtime/ui/editing"],["static","@egret/runtime/ui/editing"]],"packages/engine/dist/ui/textEditorTypes.js":[],"packages/engine/dist/ui/textEditorTypes.d.ts":[["static","../Engine.js"],["static","./types.js"],["static","@egret/runtime"],["static","@egret/runtime/paragraph"],["static","@egret/runtime/ui/editing"],["static","@egret/runtime/ui/editing"]],"packages/engine/web/BrowserTextEditor.ts":[["static","./editorFonts.js"],["static","./editorFonts.js"],["static","@egret/engine/ui"],["static","@egret/engine/ui/editing"],["static","@egret/engine/web/keyboard"],["static","@egret/runtime"],["static","#egret-text-editor"],["static","#egret-text-editor"]],"packages/engine/dist/web/BrowserTextEditor.js":[["static","./editorFonts.js"],["static","@egret/runtime"],["static","#egret-text-editor"]],"packages/engine/dist/web/BrowserTextEditor.d.ts":[["static","./editorFonts.js"],["static","@egret/engine/ui"],["static","@egret/engine/ui/editing"],["static","@egret/engine/web/keyboard"]],"packages/engine/web/editing.ts":[["static","./BrowserTextEditor.js"],["static","./BrowserTextEditor.js"],["static","./editorFonts.js"],["static","./editorFonts.js"]],"packages/engine/dist/web/editing.js":[["static","./BrowserTextEditor.js"],["static","./editorFonts.js"]],"packages/engine/dist/web/editing.d.ts":[["static","./BrowserTextEditor.js"],["static","./BrowserTextEditor.js"],["static","./editorFonts.js"],["static","./editorFonts.js"]],"packages/engine/web/editorFonts.ts":[["static","./CanvasKitFontSetProvider.js"],["static","@egret/engine"],["static","@egret/engine/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","#egret-text-editor"]],"packages/engine/dist/web/editorFonts.js":[["static","@egret/runtime"],["static","#egret-text-editor"]],"packages/engine/dist/web/editorFonts.d.ts":[["static","./CanvasKitFontSetProvider.js"],["static","@egret/engine"],["static","@egret/engine/resources"],["static","@egret/runtime"]],"packages/runtime/src/ui/editing.ts":[["static","./textEditState.js"],["static","./textEditTypes.js"]],"packages/runtime/dist/ui/editing.js":[["static","./textEditState.js"]],"packages/runtime/dist/ui/editing.d.ts":[["static","./textEditState.js"],["static","./textEditTypes.js"]],"packages/runtime/src/ui/textEditState.ts":[["static","../EgretError.js"],["static","./textEditTypes.js"]],"packages/runtime/dist/ui/textEditState.js":[["static","../EgretError.js"]],"packages/runtime/dist/ui/textEditState.d.ts":[["static","./textEditTypes.js"]],"packages/runtime/src/ui/textEditTypes.ts":[],"packages/runtime/dist/ui/textEditTypes.js":[],"packages/runtime/dist/ui/textEditTypes.d.ts":[],"packages/engine/src/ui/uiRoot.ts":[["static","../internal/uiFactoryState.js"],["static","../internal/uiRootState.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","./keyboardFocus.js"],["static","./keyboardFocus.js"],["static","./leafContent.js"],["static","./leafContent.js"],["static","./theme.js"],["static","./theme.js"],["static","./types.js"],["static","./virtualList.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"],["static","@egret/runtime/ui"]],"packages/engine/dist/ui/uiRoot.js":[["static","../internal/uiFactoryState.js"],["static","../internal/uiRootState.js"],["static","./keyboardFocus.js"],["static","./leafContent.js"],["static","./theme.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime/ui"]]};
+const nativeEditingLiteralClosure = {"packages/engine/src/ui/editing.ts":[["static","./textEditor.js"],["static","./textEditorTypes.js"]],"packages/engine/dist/ui/editing.js":[["static","./textEditor.js"]],"packages/engine/dist/ui/editing.d.ts":[["static","./textEditor.js"],["static","./textEditorTypes.js"]],"packages/engine/src/ui/textEditor.ts":[["static","../internal/uiFactoryState.js"],["static","../internal/uiFactoryState.js"],["static","../internal/uiRootState.js"],["static","../internal/uiRootState.js"],["static","../paragraph.js"],["static","./textEditorTypes.js"],["static","./types.js"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/paragraph"],["static","@egret/runtime/ui/editing"],["static","@egret/runtime/ui/editing"]],"packages/engine/dist/ui/textEditor.js":[["static","../internal/uiFactoryState.js"],["static","../internal/uiFactoryState.js"],["static","../internal/uiRootState.js"],["static","../paragraph.js"],["static","@egret/runtime"],["static","@egret/runtime/ui/editing"]],"packages/engine/dist/ui/textEditor.d.ts":[["static","../internal/uiFactoryState.js"],["static","../internal/uiRootState.js"],["static","./textEditorTypes.js"],["static","./types.js"],["static","@egret/runtime/paragraph"],["static","@egret/runtime/ui/editing"]],"packages/engine/src/ui/textEditorTypes.ts":[["static","../Engine.js"],["static","./types.js"],["static","@egret/runtime"],["static","@egret/runtime/paragraph"],["static","@egret/runtime/ui/editing"],["static","@egret/runtime/ui/editing"]],"packages/engine/dist/ui/textEditorTypes.js":[],"packages/engine/dist/ui/textEditorTypes.d.ts":[["static","../Engine.js"],["static","./types.js"],["static","@egret/runtime"],["static","@egret/runtime/paragraph"],["static","@egret/runtime/ui/editing"],["static","@egret/runtime/ui/editing"]],"packages/engine/web/editing.ts":[["static","./BrowserTextEditor.js"],["static","./BrowserTextEditor.js"],["static","./editorFonts.js"],["static","./editorFonts.js"]],"packages/engine/dist/web/editing.js":[["static","./BrowserTextEditor.js"],["static","./editorFonts.js"]],"packages/engine/dist/web/editing.d.ts":[["static","./BrowserTextEditor.js"],["static","./BrowserTextEditor.js"],["static","./editorFonts.js"],["static","./editorFonts.js"]],"packages/engine/web/editorFonts.ts":[["static","./CanvasKitFontSetProvider.js"],["static","@egret/engine"],["static","@egret/engine/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","#egret-text-editor"]],"packages/engine/dist/web/editorFonts.js":[["static","@egret/runtime"],["static","#egret-text-editor"]],"packages/engine/dist/web/editorFonts.d.ts":[["static","./CanvasKitFontSetProvider.js"],["static","@egret/engine"],["static","@egret/engine/resources"],["static","@egret/runtime"]],"packages/runtime/src/ui/editing.ts":[["static","./textEditState.js"],["static","./textEditTypes.js"]],"packages/runtime/dist/ui/editing.js":[["static","./textEditState.js"]],"packages/runtime/dist/ui/editing.d.ts":[["static","./textEditState.js"],["static","./textEditTypes.js"]],"packages/runtime/src/ui/textEditState.ts":[["static","../EgretError.js"],["static","./textEditTypes.js"]],"packages/runtime/dist/ui/textEditState.js":[["static","../EgretError.js"]],"packages/runtime/dist/ui/textEditState.d.ts":[["static","./textEditTypes.js"]],"packages/runtime/src/ui/textEditTypes.ts":[],"packages/runtime/dist/ui/textEditTypes.js":[],"packages/runtime/dist/ui/textEditTypes.d.ts":[]};
 const uiLayerLiteralClosure = {"packages/runtime/src/ui/displayCommit.ts":[["static","../displayHitState.js"],["static","../DisplayObject.js"],["static","../DisplayObjectContainer.js"],["static","../displayTreeState.js"],["static","../displayTreeState.js"],["static","../displayVisualState.js"],["static","../EgretError.js"],["static","../ownership.js"],["static","../Scope.js"],["static","../Stage.js"],["static","./managedState.js"],["static","@egret/contracts"]],"packages/runtime/dist/ui/displayCommit.js":[["static","../displayHitState.js"],["static","../DisplayObjectContainer.js"],["static","../displayTreeState.js"],["static","../displayVisualState.js"],["static","../EgretError.js"],["static","../ownership.js"],["static","../Scope.js"],["static","./managedState.js"]],"packages/runtime/dist/ui/displayCommit.d.ts":[["static","../DisplayObject.js"],["static","../DisplayObjectContainer.js"],["static","../Scope.js"],["static","../Stage.js"],["static","@egret/contracts"]],"packages/engine/src/internal/uiFactoryState.ts":[["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],"packages/engine/dist/internal/uiFactoryState.js":[["static","@egret/runtime"]],"packages/engine/dist/internal/uiFactoryState.d.ts":[["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],"packages/engine/src/keyboardInput.ts":[["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./keyboardInputTypes.js"],["static","./keyboardInputTypes.js"],["static","./mouseInput.js"],["static","@egret/runtime"],["static","@egret/runtime"]],"packages/engine/dist/keyboardInput.js":[["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","@egret/runtime"]],"packages/engine/dist/keyboardInput.d.ts":[["static","./keyboardInputTypes.js"],["static","./keyboardInputTypes.js"]],"packages/engine/src/internal/uiRootState.ts":[["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","../ui/types.js"],["static","@egret/runtime"],["static","@egret/runtime"]],"packages/engine/dist/internal/uiRootState.js":[["static","@egret/runtime"]],"packages/engine/dist/internal/uiRootState.d.ts":[["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","../ui/types.js"],["static","@egret/runtime"]],"packages/engine/src/ui/uiRoot.ts":[["static","../internal/uiFactoryState.js"],["static","../internal/uiRootState.js"],["static","../internal/uiRootState.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","./keyboardFocus.js"],["static","./keyboardFocus.js"],["static","./leafContent.js"],["static","./leafContent.js"],["static","./theme.js"],["static","./theme.js"],["static","./types.js"],["static","./virtualList.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"],["static","@egret/runtime/ui"]],"packages/engine/dist/ui/uiRoot.js":[["static","../internal/uiFactoryState.js"],["static","../internal/uiRootState.js"],["static","./keyboardFocus.js"],["static","./leafContent.js"],["static","./theme.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],"packages/engine/dist/ui/uiRoot.d.ts":[["static","./types.js"]],"packages/engine/web/BrowserTextEditor.ts":[["static","./editorFonts.js"],["static","./editorFonts.js"],["static","@egret/engine/ui"],["static","@egret/engine/ui/editing"],["static","@egret/engine/web/keyboard"],["static","@egret/runtime"],["static","#egret-text-editor"],["static","#egret-text-editor"]],"packages/engine/dist/web/BrowserTextEditor.js":[["static","./editorFonts.js"],["static","@egret/runtime"],["static","#egret-text-editor"]],"packages/engine/dist/web/BrowserTextEditor.d.ts":[["static","./editorFonts.js"],["static","@egret/engine/ui"],["static","@egret/engine/ui/editing"],["static","@egret/engine/web/keyboard"]],"packages/engine/src/ui/types.ts":[["static","../Engine.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","./theme.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],"packages/engine/dist/ui/types.js":[],"packages/engine/dist/ui/types.d.ts":[["static","../Engine.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","./theme.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],"packages/engine/src/ui/layerTypes.ts":[["static","../Engine.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","./types.js"],["static","@egret/contracts"],["static","@egret/runtime"]],"packages/engine/dist/ui/layerTypes.js":[],"packages/engine/dist/ui/layerTypes.d.ts":[["static","../Engine.js"],["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","./types.js"],["static","@egret/contracts"],["static","@egret/runtime"]],"packages/engine/src/ui/layers.ts":[["static","../internal/uiFactoryState.js"],["static","../internal/uiRootState.js"],["static","../internal/uiRootState.js"],["static","../keyboardInputTypes.js"],["static","./layerTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"]],"packages/engine/dist/ui/layers.js":[["static","../internal/uiFactoryState.js"],["static","../internal/uiRootState.js"],["static","@egret/runtime"]],"packages/engine/dist/ui/layers.d.ts":[["static","./layerTypes.js"]],"packages/engine/src/ui/index.ts":[["static","./controls.js"],["static","./controls.js"],["static","./layers.js"],["static","./layerTypes.js"],["static","./theme.js"],["static","./theme.js"],["static","./types.js"],["static","./uiRoot.js"]],"packages/engine/dist/ui/index.js":[["static","./controls.js"],["static","./layers.js"],["static","./theme.js"],["static","./uiRoot.js"]],"packages/engine/dist/ui/index.d.ts":[["static","./controls.js"],["static","./controls.js"],["static","./layers.js"],["static","./layerTypes.js"],["static","./theme.js"],["static","./theme.js"],["static","./types.js"],["static","./uiRoot.js"]]};
-const authoredSceneLiteralClosure = {"packages/engine/rendering/scene3dAuthoring.ts":[["static","./sceneWorld3D.js"],["static","./sceneWorld3D.js"],["static","./sceneWorld3D.js"],["static","./sceneWorld3D.js"],["static","./staticGlb3D.js"],["static","./staticGlb3D.js"],["static","./staticGlb3D.js"]],"packages/engine/dist/rendering/scene3dAuthoring.js":[["static","./sceneWorld3D.js"],["static","./sceneWorld3D.js"],["static","./staticGlb3D.js"],["static","./staticGlb3D.js"]],"packages/engine/dist/rendering/scene3dAuthoring.d.ts":[["static","./sceneWorld3D.js"],["static","./sceneWorld3D.js"],["static","./sceneWorld3D.js"],["static","./staticGlb3D.js"],["static","./staticGlb3D.js"]],"packages/engine/rendering/sceneWorld3D.ts":[["static","./matrix4.js"],["static","./matrix4.js"],["static","./meshGeometry3D.js"],["static","./meshGeometry3D.js"],["static","./sceneFrame3D.js"],["static","./sceneFrame3D.js"]],"packages/engine/dist/rendering/sceneWorld3D.js":[["static","./matrix4.js"],["static","./meshGeometry3D.js"],["static","./sceneFrame3D.js"]],"packages/engine/dist/rendering/sceneWorld3D.d.ts":[["static","./meshGeometry3D.js"],["static","./sceneFrame3D.js"]],"packages/engine/rendering/staticGlb3D.ts":[["static","./meshGeometry3D.js"],["static","./meshGeometry3D.js"],["static","./sceneWorld3D.js"],["static","./sharedColor2D.js"]],"packages/engine/dist/rendering/staticGlb3D.js":[["static","./meshGeometry3D.js"],["static","./sharedColor2D.js"]],"packages/engine/dist/rendering/staticGlb3D.d.ts":[["static","./sceneWorld3D.js"]]};
-// B2 adds exact edges for card storage, native encoding and the explicit authoring facade.
-const worldCardSceneEdges = {
-  "rendering/sceneFrame3D.ts": ["@egret/contracts","@egret/contracts"],
-  "dist/rendering/sceneFrame3D.js": ["@egret/contracts"],
-  "dist/rendering/sceneFrame3D.d.ts": ["@egret/contracts"],
-  "web/WebGPUHost.ts": [["dynamic","./sharedB1.js"],["dynamic","./sharedB1.js"],"./sharedSubmissionStorage2D.js"],
-  "dist/web/WebGPUHost.js": ["./sharedSubmissionStorage2D.js"],
-  "dist/web/prepareSharedSubmission2D.d.ts": ["./imageProjections2D.js"],
-  "dist/web/sharedB1.d.ts": ["./webgpuSharedMeshPass.js"],
-  "dist/web/sharedB1.js": ["./webgpuSharedMeshPass.js"],
-  "web/sharedB1.ts": ["./webgpuSharedMeshPass.js"],
-  "web/sharedSubmissionStorage2D.ts": ["../rendering/sceneFrame3D.js"],
-  "dist/web/sharedSubmissionStorage2D.d.ts": ["../rendering/sceneFrame3D.js"],
-  "rendering/scene3dAuthoring.ts": ["./sceneFrame3D.js","./sceneFrame3D.js"],
-  "dist/rendering/scene3dAuthoring.js": ["./sceneFrame3D.js"],
-  "dist/rendering/scene3dAuthoring.d.ts": ["./sceneFrame3D.js","./sceneFrame3D.js"],
-};
-const currentSceneLiteralClosure = {...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure,...m34EffectLiteralClosure,...fontResourceLiteralClosure,...m34ThemeLiteralClosure,...sequenceResetLiteralClosure,...uiControlsLiteralClosure,...nativeEditingLiteralClosure,...uiLayerLiteralClosure,...authoredSceneLiteralClosure};
-const texturedSceneEdges = {
-  'web/WebGPUHost.ts': ['../rendering/packSharedMeshGeometry3D.js'],
-  'rendering/staticGlb3D.ts': ['./sceneFrame3D.js','./sceneWorld3D.js','@egret/contracts','@egret/contracts'],
-  'dist/rendering/staticGlb3D.js': ['./sceneWorld3D.js','@egret/contracts'],
-  'dist/rendering/staticGlb3D.d.ts': ['./meshGeometry3D.js','./sceneFrame3D.js','@egret/contracts'],
-};
-const animationSceneEdges = {
-  'rendering/scene3dAuthoring.ts': ['./sceneAnimation3D.js','./sceneAnimation3D.js'],
-  'dist/rendering/scene3dAuthoring.js': ['./sceneAnimation3D.js'],
-  'dist/rendering/scene3dAuthoring.d.ts': ['./sceneAnimation3D.js','./sceneAnimation3D.js'],
-  'rendering/sceneAnimation3D.ts': ['./sceneFrame3D.js','./sceneWorld3D.js','./sceneWorld3D.js'],
-  'dist/rendering/sceneAnimation3D.js': ['./sceneFrame3D.js','./sceneWorld3D.js'],
-  'dist/rendering/sceneAnimation3D.d.ts': ['./sceneWorld3D.js'],
-};
-const glbAnimationEdges = {
-  'rendering/staticGlb3D.ts': ['./sceneAnimation3D.js','./sceneAnimation3D.js'],
-  'dist/rendering/staticGlb3D.js': ['./sceneAnimation3D.js'],
-  'dist/rendering/staticGlb3D.d.ts': ['./sceneAnimation3D.js'],
-};
-for (const additions of [worldCardSceneEdges,texturedSceneEdges,animationSceneEdges,glbAnimationEdges]) {
-  for (const [file,added] of Object.entries(additions)) {
-    const path='packages/engine/'+file;
-    currentSceneLiteralClosure[path]=[...(currentSceneLiteralClosure[path]??[]),...added.map(edge=>typeof edge==='string'?['static',edge]:edge)]
-      .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
-  }
-}
+const currentSceneLiteralClosure = {...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure,...m34EffectLiteralClosure,...fontResourceLiteralClosure,...m34ThemeLiteralClosure,...sequenceResetLiteralClosure,...uiControlsLiteralClosure,...nativeEditingLiteralClosure,...uiLayerLiteralClosure};
 for (const [file,edges] of Object.entries(currentSceneLiteralClosure)) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
@@ -8481,7 +4936,6 @@ for (const [file,edges] of Object.entries(currentSceneLiteralClosure)) {
   if ((code.match(/\bimport\s*\(/g)??[]).length!==edges.filter(edge=>edge[0]==='dynamic').length) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
 }
 
-// S3D1_BOUNDARY_END
 
 // MI1_BOUNDARY_BEGIN
 // This finite opt-in policy adds no wildcard package/private-import permission.
@@ -8593,17 +5047,11 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
 // precedence stay intact; only the two root value inventories grow above.
 const byteWriterValues = ['BYTE_WRITER_LIMITS', 'ByteWriter'];
 const byteWriterModuleReference = /["'][^"']*(?:^|\/)ByteWriter\.js["']/;
-// Import optional namespaces here so this BW leak check is independent of the
-// deliberately removed S3D1 block in the retained predecessor comparator.
 const byteWriterEntries = [...textEntries,
   ['project', projectFacade, 'packages/project/dist/index'],
-  ['scene3d', await import('@egret/engine/scene3d'), 'packages/engine/dist/rendering/scene3d'],
-  ['webgpu/scene3d', await import('@egret/engine/webgpu/scene3d'), 'packages/engine/dist/web/scene3d'],
   ['web/input', mouseFacade, 'packages/engine/dist/web/input'],
 ];
 const byteWriterSourceEntries = {...assetGroupSourceEntries,
-  scene3d: 'packages/engine/rendering/scene3d.ts',
-  'webgpu/scene3d': 'packages/engine/web/scene3d.ts',
   'web/input': 'packages/engine/web/input.ts',
 };
 const byteWriterModule = await import(new URL('../packages/runtime/dist/ByteWriter.js', import.meta.url));
@@ -8756,8 +5204,6 @@ const ns1OptionalEntries = [
   ['text', '@egret/engine/text', 'packages/engine/src/text.ts', 'packages/engine/dist/text'],
   ['web/text', '@egret/engine/web/text', 'packages/engine/web/text.ts', 'packages/engine/dist/web/text'],
   ['web/input', '@egret/engine/web/input', 'packages/engine/web/input.ts', 'packages/engine/dist/web/input'],
-  ['scene3d', '@egret/engine/scene3d', 'packages/engine/rendering/scene3d.ts', 'packages/engine/dist/rendering/scene3d'],
-  ['webgpu/scene3d', '@egret/engine/webgpu/scene3d', 'packages/engine/web/scene3d.ts', 'packages/engine/dist/web/scene3d'],
 ];
 for (const [label, specifier, source, stem] of ns1OptionalEntries) {
   const values = await import(specifier);
@@ -8852,7 +5298,7 @@ for (const [source,stem,types] of m15ErasedLeaves) {
   if (sceneRead(stem+'.js').replace(/\s+/g,'')!=='export{};')
     throw new Error('M15: metadata type module contains runtime behavior: '+stem);
 }
-const m15HostFacades=['webgpu','scene3d','webgl2','webgl2Scene3d'];
+const m15HostFacades=['webgpu','webgl2'];
 for (const stem of m15HostFacades) for (const [directory,suffix] of [['web','.ts'],['dist/web','.d.ts'],['dist/web','.js']]) {
   const file='packages/engine/'+directory+'/'+stem+suffix,code=sceneRead(file);
   if (suffix==='.js') {
@@ -8867,7 +5313,7 @@ for (const stem of m15HostFacades) for (const [directory,suffix] of [['web','.ts
 const m15PublicSourceFiles=[...new Set([
   ...Object.values(assetGroupSourceEntries),
   'packages/engine/src/layout.ts','packages/engine/web/text.ts','packages/engine/web/input.ts','packages/engine/web/image.ts',
-  'packages/engine/rendering/scene3d.ts','packages/engine/web/scene3d.ts','packages/engine/web/webgl2.ts','packages/engine/web/webgl2Scene3d.ts',
+  'packages/engine/web/webgl2.ts',
   'packages/project/src/spine/index.ts','packages/project/src/atlas/index.ts',
 ])];
 const m15PrivateNames=[

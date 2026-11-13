@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { logicalPath, ownerRelativePath, samePhysicalPath } from './lib/file-identity.mjs';
 
 const root = path.resolve(fileURLToPath(new URL('../', import.meta.url)));
-const inventoryPath = 'tests/types/spritesheet-diagnostic-expectations.json';
+const inventoryPath = 'tests/types/spritesheet-2-diagnostic-expectations.json';
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const equal = (left, right) => JSON.stringify(left) === JSON.stringify(right);
 const fail = message => { throw Error('SpriteSheet types: ' + message); };

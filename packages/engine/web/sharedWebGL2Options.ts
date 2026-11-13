@@ -20,7 +20,6 @@ export interface SharedWebGL2HostOptions extends Partial<SharedWebGL2Configurati
     readonly canvas: HTMLCanvasElement;
     readonly onDiagnostic?: (diagnostic: WebGL2HostDiagnostic) => unknown;
 }
-export type SharedSceneWebGL2HostOptions = Omit<SharedWebGL2HostOptions, 'outputAlpha'> & { readonly outputAlpha: 'opaque' };
 
 const DEFAULTS: SharedWebGL2Configuration = Object.freeze({
     pixelRatio: 1, maxBackingPixels: 16777216, maxCommands: 65536, maxClipRectangles: 262144,
@@ -43,7 +42,7 @@ function object(value: unknown): value is Record<string, unknown> {
 }
 
 /** Capture all successful reads before semantics; preserve the first thrown getter value. */
-export function admitSharedWebGL2Options(input: SharedWebGL2HostOptions, scene: boolean): {
+export function admitSharedWebGL2Options(input: SharedWebGL2HostOptions): {
     surface: HTMLCanvasElement;
     configuration: SharedWebGL2Configuration;
     callback: ((diagnostic: WebGL2HostDiagnostic) => unknown) | undefined;
@@ -59,7 +58,7 @@ export function admitSharedWebGL2Options(input: SharedWebGL2HostOptions, scene: 
         if (key === 'enableReadback' || key === 'enableEffects') {
             if (typeof value !== 'boolean') throw new TypeError(key);
         } else if (key === 'outputAlpha') {
-            if ((value !== 'premultiplied' && value !== 'opaque') || (scene && value !== 'opaque')) throw new TypeError(key);
+            if (value !== 'premultiplied' && value !== 'opaque') throw new TypeError(key);
         } else {
             if (typeof value !== 'number' || !Number.isFinite(value) || (key !== 'pixelRatio' && !Number.isSafeInteger(value))) throw new TypeError(key);
             const maximum = key === 'restoreTimeoutMs' ? 30000 : DEFAULTS[key];

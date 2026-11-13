@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/authored-scene3d.md)
 
+> **Removed.** The `scene3d` entries and the WebGPU hosts for rectangle, image and textured frames have been removed from the SDK. This document is kept as a record of what they were and describes nothing in the current SDK. Current 2D rendering is the [shared render profile](shared-render-profile-contract.md); current 3D is [World3D](world3d.md).
+
 ## Scene, camera and asset ownership
 
 Egret's optional `@egret/engine/scene3d/authoring` entry creates immutable, editable scene revisions. A node has a stable ID, an optional parent, a column-major affine local transform and references to owned meshes. A revision resolves the hierarchy and keeps mesh identity across instances and edits. `withNodeTransform(id, matrix)` returns a new revision. Saved worlds, frames and the UI display list remain usable. The authored scene admits at most 64 combined mesh and card draws across at most 256 nodes, with the existing frame geometry and uniform budgets.

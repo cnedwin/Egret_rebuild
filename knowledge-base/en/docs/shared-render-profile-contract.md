@@ -2,6 +2,8 @@
 
 English | [中文](../../Cns/docs/shared-render-profile-contract.md)
 
+> **Scene mode removed.** `createSharedSceneWebGPUHost`, `createSharedSceneWebGL2Host`, `renderSceneSharedFrame`, `stageSceneSharedFrame`, `getSceneStatus` and the B1 path have been removed from the SDK. Passages below that describe them are a record and not current behavior.
+
 2026-10-18 · M1.3 · Implementation specification; execution and acceptance remain pending
 
 ## Purpose and compatibility

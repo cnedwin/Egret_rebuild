@@ -3,8 +3,7 @@
 // they neither authenticate native devices nor execute shaders.
 import assert from 'node:assert/strict';
 import { egret, withPorts, capture, admitted, submit, tick } from './gpu-shared-rendering.mjs';
-import { triangleScene } from './gpu-image-residency.mjs';
-export { egret, capture, admitted, submit, tick, triangleScene };
+export { egret, capture, admitted, submit, tick };
 export const MiB = 1048576;
 export const turn = () => new Promise(resolve => setTimeout(resolve, 0));
 export const hasCode = name => error => error instanceof egret.EgretError && error.code === 'WEBGPU_' + name;
@@ -27,8 +26,8 @@ export async function until(f, predicate, { settle = true, maps = true, rounds =
   }
   assert.ok(predicate(), 'owned operations did not reach the finite expected observation');
 }
-export function requireUpload(h, scene = false) {
-  assert.equal(typeof h[scene ? 'stageSceneSharedFrame' : 'stageSharedFrame'], 'function',
+export function requireUpload(h) {
+  assert.equal(typeof h.stageSharedFrame, 'function',
     'M15_GPU_UPLOAD_MISSING: genuine ordinary baseline completed; optional staging API absent');
 }
 export function requireSession(h) {
@@ -111,7 +110,7 @@ async function withAuthor(run) {
 }
 // Handles actual queued tasks before the existing fixture restores navigator.
 // All owned deferred native outcomes are settled, including after a test throws.
-export async function usingGpu(run, { scene = false, options = {} } = {}) {
+export async function usingGpu(run, { options = {} } = {}) {
   return withPorts(f => withAuthor(async a => {
     // Complete the owned writeBuffer port's optional range parameters. The base
     // fixture copies the observed payload; this adapter records the actual range
@@ -126,15 +125,14 @@ export async function usingGpu(run, { scene = false, options = {} } = {}) {
       originalWriteBuffer.call(this, buffer, offset, new Uint8Array(data.buffer ?? data, start, length));
     };
     a.solid();
-    const h = f.sharedHost(scene ? { outputAlpha: 'opaque', ...options } : options, scene);
-    const sceneFrame = scene ? triangleScene() : undefined;
-    const frame = a.capture(scene ? { outputAlpha: 'opaque', clearAlpha: 1 } : {});
+    const h = f.sharedHost(options);
+    const frame = a.capture({});
     try {
       await f.ready(h);
-      await submit(f, h, frame, scene ? value => h.renderSceneSharedFrame(sceneFrame, value) : undefined);
+      await submit(f, h, frame);
       assert.equal(h.getStatus().pendingFrames, 0);
       assert.equal(h.getStatus().lastSerial, 1, 'genuine ordinary submission precedes every optional API assertion');
-      return await run({ f, a, h, frame, sceneFrame });
+      return await run({ f, a, h, frame });
     } finally {
       for (const key of Object.keys(f.hooks)) delete f.hooks[key];
       const closing = f.hosts.map(host => observe(host.close()));

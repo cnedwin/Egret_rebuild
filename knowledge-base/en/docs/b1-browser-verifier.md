@@ -2,6 +2,8 @@
 
 [简体中文](../../Cns/docs/b1-browser-verifier.md) · [B1 Host contract](b1-host-contract.md)
 
+> **Removed.** The `scene3d` entries and the WebGPU hosts for rectangle, image and textured frames have been removed from the SDK. This document is kept as a record of what they were and describes nothing in the current SDK. Current 2D rendering is the [shared render profile](shared-render-profile-contract.md); current 3D is [World3D](world3d.md).
+
 `tools/verify-webgpu-b1.mjs` is a first-party, experimental browser verifier for the current B1 mesh Host. It uses real WebGPU compilation and raw pixel readback. Its fixture and independent literal oracle are in `tools/b1-webgpu/`; it needs no private execution helper or operating-system Job wrapper. The selected internal B1/geometry modules remain outside the stable package exports.
 
 ## Run the command

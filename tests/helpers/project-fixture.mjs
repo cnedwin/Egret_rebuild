@@ -60,9 +60,9 @@ export function isolated(action) {
     assert.deepEqual(readFileSync(path.join(root,'node_modules/@egret/engine/dist/manifestResourceState.js')),bindingBytes);
     write('node_modules/@egret/engine/dist/manifestResourceState.js',"export * from '../../../../packages/engine/dist/manifestResourceState.js';\n");
     assert.deepEqual(readFileSync(path.join(root,bindingEntry)),bindingBytes);
-    // The explicit scene and GL facades share original registries and Host factories.
+    // The explicit GL facade shares the original Host factory.
     // Bridge only the resolution copy; source and emitted package bytes stay real.
-    for(const name of ['rendering/matrix4','rendering/meshGeometry3D','rendering/sceneAnimation3D','rendering/sceneFrame3D','rendering/sceneWorld3D','rendering/staticGlb3D','web/WebGL2Host']) {
+    for(const name of ['web/WebGL2Host']) {
       const relative='packages/engine/dist/'+name+'.js';
       const actual=readFileSync(path.join(root,relative));
       const resolution='node_modules/@egret/engine/dist/'+name+'.js';

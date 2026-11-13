@@ -22,9 +22,9 @@ button:disabled{opacity:.5}
 <h1>Bitmap buttons<br><span lang="zh-CN">位图按钮</span></h1>
 <p>Press either red button with the primary mouse button. Blue means pressed; gray means disabled.<br>
 <span lang="zh-CN">用鼠标主键按下任一红色按钮。蓝色表示按下，灰色表示禁用。</span></p>
-<label>Renderer / 渲染器 <select id="backend"><option value="canvas">Canvas</option><option value="webgpu">WebGPU</option></select></label>
-<p class="note">Changing the renderer starts a fresh session. WebGPU requires browser support.<br>
-<span lang="zh-CN">切换渲染器将启动新会话。WebGPU 需要浏览器支持。</span></p>
+<label>Renderer / 渲染器 <select id="backend"><option value="canvas">Canvas</option></select></label>
+<p class="note">Changing the renderer starts a fresh session.<br>
+<span lang="zh-CN">切换渲染器将启动新会话。</span></p>
 <canvas id="scene" width="192" height="128" aria-label="Two shared-input bitmap buttons / 共享输入的两个位图按钮"></canvas>
 <div class="controls" aria-label="Example controls / 示例控制">
 <button id="enabled" disabled>Disable first / 禁用第一个</button>

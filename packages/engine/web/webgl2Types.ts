@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
 import type { SharedRenderFrame2D, SharedRenderHostAdapter } from '@egret/contracts';
-import type { SceneFrame3D } from '../rendering/sceneFrame3D.js';
 import type { SharedDeviceSessionStatus, SharedHostResourceStatus } from './sharedDeviceSession.js';
 import type { SharedFrameUpload, SharedFrameUploadOptions } from './sharedFrameUpload.js';
 
@@ -108,14 +107,4 @@ export interface SharedLayerWebGL2Host extends SharedWebGL2Host {
     createSharedLayer2D(): SharedWebGL2Layer2D;
     renderSharedFrameWithLayers(frame: SharedRenderFrame2D, layers: readonly SharedWebGL2LayerPlacement2D[]): undefined;
     getSharedLayerStatus(): SharedWebGL2LayerStatus;
-}
-export interface SharedSceneWebGL2Host extends SharedWebGL2Host {
-    renderSceneSharedFrame(scene: SceneFrame3D, overlay: SharedRenderFrame2D): undefined;
-    stageSceneSharedFrame(scene: SceneFrame3D, overlay: SharedRenderFrame2D, options?: SharedFrameUploadOptions): SharedFrameUpload;
-    getSceneStatus(): {
-        readonly host: WebGL2HostStatus;
-        readonly pendingSceneBytes: number;
-        readonly pendingUniformBytes: number;
-        readonly pendingDepthBytes: number;
-    };
 }

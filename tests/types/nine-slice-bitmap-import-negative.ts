@@ -10,8 +10,6 @@ import { NineSliceBitmap as ContractLeaf } from '@egret/contracts';
 import { NineSliceBitmap as CanvasLeaf } from '@egret/engine/web';
 // NLB_TYPE_CASE NLB-I05: the opt-in WebGPU entry owns no leaf value.
 import { NineSliceBitmap as WebGPULeaf } from '@egret/engine/webgpu';
-// NLB_TYPE_CASE NLB-I06: the existing scene facade gains no UI leaf.
-import { NineSliceBitmap as SceneLeaf } from '@egret/engine/scene3d';
 // NLB_TYPE_CASE NLB-I07: the explicit Engine text entry gains no panel leaf.
 import { NineSliceBitmap as EngineTextLeaf } from '@egret/engine/text';
 // NLB_TYPE_CASE NLB-I08: the explicit runtime text entry gains no panel leaf.

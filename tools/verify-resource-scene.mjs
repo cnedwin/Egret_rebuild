@@ -55,7 +55,7 @@ function newExternal(file) {
 const historicalCollectorSource = {bytes:25753,sha256:'10c52ae5f7c33d1550c9231956297bb041c7a8cb67af8c19b0fdf41842bc4cd4'};
 const m13CollectorSourceSuccessor = {"bytes":25784,"sha256":"bc0ce6ccb3ae4ceed8797a4350fa9a7c4303d5e1091b2d7847837d8073abec8b"};
 // M1.5 retains the predecessor identities and selects the reviewed exact resource-entry boundary.
-const m15CollectorSourceSuccessor = {bytes:26061,sha256:'3301aeba8e07cd037f86e621a3263accd990e305a1c0ecee3c0a43c9d1adb39e'};
+const m15CollectorSourceSuccessor = {bytes:23251,sha256:'9bbf24c5f8921dad8e456527c2e7d65ef35fac3fe21b25e3497955a25bfdae1e'};
 const boundary=rawInput(applicationRoot,'tools/resource-scene-boundary.mjs',m15CollectorSourceSuccessor);
 const oracleInput=rawInput(applicationRoot,'tools/resource-scene/oracle.mjs',{bytes:5536,sha256:'cbe5e58f681d032eecfb726bbe6e18945d4488b818f7b932f3f4606cd2e0c887'});
 const mainInput=rawInput(applicationRoot,'examples/resource-scene/main.mjs',{bytes:38946,sha256:'3621c5714c04efab75b7cb199c6ecb4b14d931d47acd167be3fb241729298bc5'});

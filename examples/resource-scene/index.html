@@ -29,15 +29,12 @@
       "@egret/engine/web/text": "../../packages/engine/dist/web/text.js",
       "@egret/engine/web/image": "../../packages/engine/dist/web/image.js",
       "@egret/engine/web/input": "../../packages/engine/dist/web/input.js",
-      "@egret/engine/scene3d": "../../packages/engine/dist/rendering/scene3d.js",
-      "@egret/engine/webgpu/scene3d": "../../packages/engine/dist/web/scene3d.js",
       "@egret/runtime": "../../packages/runtime/dist/index.js",
       "@egret/runtime/text": "../../packages/runtime/dist/text/index.js",
       "@egret/contracts": "../../packages/contracts/dist/index.js",
       "@egret/contracts/resources": "../../packages/contracts/dist/resources/index.js",
       "#egret-mouse-input": "../../packages/engine/dist/mouseInput.js",
-      "#egret-textured-frame-state": "../../packages/engine/dist/internal/texturedFrameState.js",
-      "robust-predicates": "../../packages/engine/node_modules/robust-predicates/index.js"
+      "#egret-textured-frame-state": "../../packages/engine/dist/internal/texturedFrameState.js"
     }
   }
   </script>
@@ -46,11 +43,7 @@
   <header>
     <h1>Resource scene / <span lang="zh-CN">资源场景</span></h1>
     <p>Two pilots share an animated atlas and change outfits independently. Select a pilot in the scene or use the controls below.<br><span lang="zh-CN">两名角色共享动画图集，可独立换装。点击场景中的角色，或使用下方控件选择。</span></p>
-    <nav aria-label="Rendering profile / 渲染模式">
-      <a id="profile-canvas" href="?profile=canvas-2d">Canvas 2D / 普通 Canvas</a>
-      <a id="profile-webgpu" href="?profile=webgpu-scene-textured">Experimental WebGPU scene / 实验性 WebGPU 场景</a>
-    </nav>
-    <p class="note">Canvas presents the 2D scene. The experimental WebGPU profile adds a fixed opaque 3D background with the same screen UI; it requires a supported browser.<br><span lang="zh-CN">Canvas 呈现二维场景。实验性 WebGPU 模式在同一屏幕 UI 后加入固定的不透明三维背景，需要浏览器支持。</span></p>
+    <p class="note">Canvas presents the scene.<br><span lang="zh-CN">场景由 Canvas 呈现。</span></p>
   </header>
   <main>
     <section aria-labelledby="scene-heading">

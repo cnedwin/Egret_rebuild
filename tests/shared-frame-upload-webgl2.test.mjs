@@ -403,40 +403,6 @@ test('GLU07 committed CPU bindings remain committed after staged candidate submi
   const ordinary = c.capture(); assert.equal(ordinary.pages[0].source,prepared.image);
 }))); // Controlled command failure establishes no presented pixels.
 
-test('GLU08 scene staging uses complete alignment-12 arenas and preserves scene/overlay order at submit', async () => hosted(async f => {
-  const before = f.ports.events.length, ticket = f.stageScene();
-  const status = f.host.getSceneStatus();
-  assert.ok(status.pendingSceneBytes > 0 && status.pendingUniformBytes > 0 && status.pendingDepthBytes > 0);
-  assert.equal(f.host.getStatus().pendingReadbackBytes,8*8*8);
-  await ticket.ready; assert.deepEqual(visibleRows(f.ports.events.slice(before)),[]);
-  const uploads = uploadRows(f.ports.events).length; await ticket.submit().completed; await f.host.whenIdle();
-  const events = f.ports.events.slice(before), draws = events.filter(row => row[0] === 'drawElements' || row[0] === 'drawArrays');
-  assert.deepEqual(draws.map(row => row[0]),['drawElements','drawArrays','drawArrays']);
-  assert.deepEqual(draws[0].slice(1),[f.ports.gl.TRIANGLES,3,f.ports.gl.UNSIGNED_INT,0]);
-  assert.equal(uploadRows(f.ports.events).length,uploads);
-  const ranges = events.filter(row => row[0] === 'bindBufferRange' && row[3] !== null);
-  assert.ok(ranges.some(row => row[4] === 132 && row[5] === 64));
-  assert.ok(ranges.every(row => row[4] % 12 === 0));
-  assert.deepEqual([f.host.getSceneStatus().pendingSceneBytes,f.host.getSceneStatus().pendingUniformBytes,f.host.getSceneStatus().pendingDepthBytes],[0,0,0]);
-}, {scene:true,ports:glPorts({alignment:12})}));
-
-test('GLU08 scene and overlay are genuine inputs before options and profile checks', async () => hosted(async f => {
-  let reads = 0; const options = {get signal(){reads++; throw Error('unreachable');}}, before = f.ports.events.length;
-  assert.throws(() => f.stageScene({...f.scene},f.frame(),options),code('FRAME_INVALID'));
-  assert.equal(reads,0); assert.equal(f.ports.events.length,before);
-  assert.throws(() => f.stageScene(f.scene,{...f.frame()},options),code('FRAME_PROFILE_UNSUPPORTED'));
-  assert.equal(reads,0); assert.equal(f.ports.events.length,before);
-  const wrong = f.engine.captureSharedFrame({width:8,height:8});
-  assert.throws(() => f.stageScene(f.scene,wrong),code('FRAME_PROFILE_UNSUPPORTED'));
-  assert.equal(f.ports.events.length,before);
-}, {scene:true}));
-
-test('GLU08 genuine scene depth charge rejects before native allocation', async () => hosted(async f => {
-  const overlay = f.frame(2049,2048), before = f.ports.events.length;
-  assert.throws(() => f.stageScene(f.scene,overlay),code('FRAME_BUDGET'));
-  assert.equal(f.ports.events.length,before); assert.equal(f.host.getStatus().pendingFrames,0);
-}, {scene:true,options:{enableReadback:false}}));
-
 test('GLH01 session status projects existing GL state and restoration barriers', async () => hosted(async f => {
   const status = f.host.getSessionStatus(); assert.ok(Object.isFrozen(status));
   assert.deepEqual(status,{state:'ready',generation:1,attempt:0,firstFailure:null,generationFailure:null});
@@ -475,16 +441,16 @@ test('GLH01 existing restoration timeout projects failed without another readine
   assert.equal(f.host.getSessionStatus().state,'failed'); assert.equal(f.ports.events.length,before);
 }, {options:{restoreTimeoutMs:15}}));
 
-for (const scene of [false,true]) test('GLH06/H07 stale held stage revokes on loss; fresh '+(scene ? 'scene' : 'ordinary')+' readiness is independent', async () => hosted(async f => {
-  const ticket = scene ? f.stageScene() : f.stage(); await ticket.ready;
+test('GLH06/H07 stale held stage revokes on loss; fresh readiness is independent', async () => hosted(async f => {
+  const ticket = f.stage(); await ticket.ready;
   const oldIdle = outcome(f.host.whenIdle()); await pending(oldIdle);
   f.ports.lose(); const barrier = f.host.whenReady();
   const lost = await oldIdle; assert.ok(code('CONTEXT_LOST')(lost.error));
   f.ports.restore(); await barrier;
   assert.throws(() => ticket.submit(),code('UPLOAD_STALE')); await ticket.ready;
-  const fresh = scene ? f.stageScene() : f.stage(); const ready = await fresh.ready; assert.equal(ready.generation,2);
+  const fresh = f.stage(); const ready = await fresh.ready; assert.equal(ready.generation,2);
   await fresh.submit().completed; await f.host.whenIdle(); assert.equal(f.host.getStatus().pendingFrames,0);
-}, {scene}));
+}));
 
 test('GLH06 old held upload fence cannot publish ready or pixels into a restored generation', async () => hosted(async f => {
   f.ports.autoSignal = false; const before = f.ports.events.length;

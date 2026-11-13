@@ -2,7 +2,7 @@
 import {createLinearLayoutSession} from './session.mjs';
 
 const query = new URL(location.href).searchParams;
-const backend = query.get('backend') === 'webgpu' ? 'webgpu' : 'canvas';
+const backend = 'canvas';
 const preset = query.get('preset') === 'verification' ? 'verification' : 'preview';
 const canvas = document.querySelector('#scene'), status = document.querySelector('#status');
 const selector = document.querySelector('#backend');
@@ -108,16 +108,13 @@ selector.addEventListener('change', () => {
 document.querySelector('#close').addEventListener('click', () => { void close().catch(failed); });
 window.addEventListener('pagehide', () => { void close().catch(() => {}); }, {once: true});
 try {
-  const entry = backend === 'webgpu'
-    ? await import('@egret/engine/webgpu') : await import('@egret/engine/web');
+  const entry = await import('@egret/engine/web');
   if (!closeRequested) {
     canvas.width = canvas.height = 24;
     canvas.style.width = canvas.style.height = '192px';
-    const host = backend === 'webgpu'
-      ? entry.createWebGPUHost({canvas, pixelRatio: 1, enableReadback: preset === 'verification'})
-      : entry.createCanvasHost({canvas, pixelRatio: 1});
+    const host = entry.createCanvasHost({canvas, pixelRatio: 1});
     renderHost = host;
-    const admittedHost = preset === 'verification' && backend === 'webgpu' ? verificationHost(host) : host;
+    const admittedHost = host;
     session = createLinearLayoutSession({
       host: admittedHost, preset, onUpdate: refresh,
       waitForStartupIdle: preset === 'verification' && backend === 'webgpu'

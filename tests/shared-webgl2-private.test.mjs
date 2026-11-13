@@ -23,7 +23,7 @@ const DEFAULTS = Object.freeze({
   maxFrameRegions: 4096, maxFramePageBytes: 67108864, maxReadyPageBytes: 134217728,
 });
 const canvas = Object.freeze({ getContext() { assert.fail('pure admission must not acquire a context'); } });
-const admit = (extra = {}, scene = false) => admitSharedWebGL2Options({ canvas, ...extra }, scene);
+const admit = (extra = {}) => admitSharedWebGL2Options({ canvas, ...extra });
 const numericCaps = Object.keys(DEFAULTS).filter(key => key.startsWith('max'));
 const owner = (pendingVertexArenaBytes = 0, pendingUniformArenaBytes = 0) =>
   Object.freeze({ pendingVertexArenaBytes, pendingUniformArenaBytes });
@@ -32,7 +32,6 @@ function draw(vertexCount = 3, marker = 1, regionWindow = -1) {
     data: new Float32Array(vertexCount * 13).fill(marker), vertexCount,
     uniform: new Uint8Array(128).fill(marker), regionWindow });
 }
-const sceneUniform = marker => new Float32Array(16).fill(marker);
 
 test('UNIT GLP01 options snapshot all named getters once and ignore unknown properties', () => {
   const trace = [], callback = () => {}, values = { canvas, onDiagnostic: callback };
@@ -41,7 +40,7 @@ test('UNIT GLP01 options snapshot all named getters once and ignore unknown prop
   }])));
   for (const key of ['device', 'context', 'attributes', 'extension'])
     Object.defineProperty(input, key, { get() { assert.fail('unknown option read: ' + key); } });
-  const result = admitSharedWebGL2Options(input, false);
+  const result = admitSharedWebGL2Options(input);
   assert.deepEqual(trace, TOP);
   assert.equal(result.surface, canvas);
   assert.equal(result.callback, callback);
@@ -62,7 +61,7 @@ test('UNIT GLP02 a getter cause precedes semantics and stops only later option r
         return key === 'canvas' ? canvas : key === 'maxBackingPixels' ? -1 : undefined;
       },
     }])));
-    assert.throws(() => admitSharedWebGL2Options(input, false), error => error === cause);
+    assert.throws(() => admitSharedWebGL2Options(input), error => error === cause);
     assert.deepEqual(trace, TOP.slice(0, TOP.indexOf(stop) + 1));
   }
 });
@@ -84,17 +83,14 @@ test('UNIT GLP03 option scalar domains preserve lowered caps without coercion', 
   const callback = () => {}; assert.equal(admit({ onDiagnostic: callback }).callback, callback);
   for (const value of [null, 1, {}, 'callback']) assert.throws(() => admit({ onDiagnostic: value }));
   for (const value of [undefined, null, false, 1, 'options', () => {}])
-    assert.throws(() => admitSharedWebGL2Options(value, false));
+    assert.throws(() => admitSharedWebGL2Options(value));
   for (const value of [undefined, null, false, 1, 'canvas', () => {}])
     assert.throws(() => admit({ canvas: value }));
 });
 
-test('UNIT GLP04 scene opacity is explicit and restore timeout has a distinct maximum', () => {
+test('UNIT GLP04 output alpha is one of two values and restore timeout has a distinct maximum', () => {
   assert.equal(admit().configuration.outputAlpha, 'premultiplied');
   assert.equal(admit({ outputAlpha: 'opaque' }).configuration.outputAlpha, 'opaque');
-  assert.equal(admit({ outputAlpha: 'opaque' }, true).configuration.outputAlpha, 'opaque');
-  for (const value of [undefined, 'premultiplied', null, 'opaque-ish'])
-    assert.throws(() => admit({ outputAlpha: value }, true));
   for (const value of [null, 'opaque-ish', 1]) assert.throws(() => admit({ outputAlpha: value }));
   assert.equal(admit().configuration.restoreTimeoutMs, 10000);
   for (const value of [1, 10000, 10001, 30000])
@@ -105,74 +101,65 @@ test('UNIT GLP04 scene opacity is explicit and restore timeout has a distinct ma
 
 test('UNIT GLP05 original payloads use literal whole-record ranges including final UBO padding', () => {
   const draws = Object.freeze([draw(3, 7), draw(6, 9)]);
-  const scene = Object.freeze([sceneUniform(2), sceneUniform(5)]);
-  const before = [...draws.flatMap(d => [Array.from(d.data), Array.from(d.uniform)]), ...scene.map(value => Array.from(value))];
+  const before = draws.flatMap(d => [Array.from(d.data), Array.from(d.uniform)]);
   const cases = [
-    [4, 128, 64, 384, [0, 128], [256, 320]],
-    [12, 132, 72, 408, [0, 132], [264, 336]],
-    [16, 128, 64, 384, [0, 128], [256, 320]],
-    [256, 256, 256, 1024, [0, 256], [512, 768]],
+    [4, 128, 256, [0, 128]],
+    [12, 132, 264, [0, 132]],
+    [16, 128, 256, [0, 128]],
+    [256, 256, 512, [0, 256]],
   ];
-  for (const [alignment, sharedStride, sceneStride, uniformBytes, sharedOffsets, sceneOffsets] of cases) {
-    assert.deepEqual(qualifySharedWebGL2Alignment(alignment), { sharedStride, sceneStride });
-    const plan = planSharedWebGL2Arenas(draws, scene, alignment);
+  for (const [alignment, sharedStride, uniformBytes, sharedOffsets] of cases) {
+    assert.deepEqual(qualifySharedWebGL2Alignment(alignment), { sharedStride });
+    const plan = planSharedWebGL2Arenas(draws, alignment);
     assert.equal(plan.vertexBytes, 468);
     assert.equal(plan.uniformBytes, uniformBytes);
     assert.equal(plan.regionTable, undefined);
     assert.deepEqual(plan.sharedRanges.map(r => [r.vertexOffset, r.firstVertex, r.uniformOffset, r.uniformSize]),
       [[0, 0, sharedOffsets[0], 128], [156, 3, sharedOffsets[1], 128]]);
-    assert.deepEqual(plan.sceneRanges.map(r => [r.uniformOffset, r.uniformSize]),
-      [[sceneOffsets[0], 64], [sceneOffsets[1], 64]]);
     for (let i = 0; i < draws.length; i++) assert.equal(plan.sharedRanges[i].draw, draws[i]);
-    for (let i = 0; i < scene.length; i++) assert.equal(plan.sceneRanges[i].uniform, scene[i]);
   }
-  assert.deepEqual([...draws.flatMap(d => [Array.from(d.data), Array.from(d.uniform)]), ...scene.map(value => Array.from(value))], before);
+  assert.deepEqual(draws.flatMap(d => [Array.from(d.data), Array.from(d.uniform)]), before);
 });
 
-test('UNIT GLP06 no-draw and scene-only layouts retain finite non-power-of-two admission', () => {
-  const empty = planSharedWebGL2Arenas([], [], 12);
-  assert.deepEqual([empty.vertexBytes, empty.uniformBytes, empty.sharedRanges, empty.sceneRanges], [0, 0, [], []]);
-  const scene = [sceneUniform(1), sceneUniform(2)], only = planSharedWebGL2Arenas([], scene, 12);
-  assert.equal(only.vertexBytes, 0); assert.equal(only.uniformBytes, 144);
-  assert.deepEqual(only.sharedRanges, []);
-  assert.deepEqual(only.sceneRanges.map(r => [r.uniformOffset, r.uniformSize]), [[0, 64], [72, 64]]);
+test('UNIT GLP06 a record without draws is planned, and an alignment outside the finite domain refuses', () => {
+  const empty = planSharedWebGL2Arenas([], 12);
+  assert.deepEqual([empty.vertexBytes, empty.uniformBytes, empty.sharedRanges, empty.regionTable], [0, 0, [], undefined]);
   for (const value of [3, 0, -4, 6, 257, 12.5, NaN, Infinity, '12']) {
     assert.throws(() => qualifySharedWebGL2Alignment(value));
-    assert.throws(() => planSharedWebGL2Arenas([], [], value));
+    assert.throws(() => planSharedWebGL2Arenas([], value));
   }
   // Individual native block-size qualification belongs to Host startup. U above
   // 128 bytes is valid metadata; MAX_UNIFORM_BLOCK_SIZE is not an arena cap.
 });
 
 test('UNIT GLP07 finite draw and byte arithmetic refuses overflow without large payload copies', () => {
-  const unit = draw(), uniform = sceneUniform(1);
-  const full = planSharedWebGL2Arenas(Array(65536).fill(unit), Array(64).fill(uniform), 256);
+  const unit = draw();
+  const full = planSharedWebGL2Arenas(Array(65536).fill(unit), 256);
   assert.equal(full.vertexBytes, 10223616);
-  assert.equal(full.uniformBytes, 16793600);
-  assert.equal(full.sharedRanges.length, 65536); assert.equal(full.sceneRanges.length, 64);
-  assert.equal(full.sceneRanges[63].uniformOffset, 16793344);
-  assert.throws(() => planSharedWebGL2Arenas(Array(65537).fill(unit), [], 256));
-  assert.throws(() => planSharedWebGL2Arenas([], Array(65).fill(uniform), 256));
+  assert.equal(full.uniformBytes, 16777216);
+  assert.equal(full.sharedRanges.length, 65536);
+  assert.equal(full.sharedRanges[65535].uniformOffset, 16776960);
+  assert.throws(() => planSharedWebGL2Arenas(Array(65537).fill(unit), 256));
   for (const bad of [
     { ...unit, vertexCount: 0 }, { ...unit, vertexCount: 4 },
     { ...unit, uniform: new Uint8Array(127) },
-  ]) assert.throws(() => planSharedWebGL2Arenas([bad], [], 12));
-  assert.throws(() => planSharedWebGL2Arenas([], [new Float32Array(15)], 12));
+  ]) assert.throws(() => planSharedWebGL2Arenas([bad], 12));
   // Numeric-only UNIT metadata, deliberately not uploadable SDK/native payloads.
   // The nominal V cap is not 52/156-byte aligned; no valid exact-cap frame is claimed.
   const numericDraw = bytes => ({ prepared: {}, data: { byteLength: bytes },
     vertexCount: bytes / 52, uniform: { byteLength: 128 } });
-  assert.equal(planSharedWebGL2Arenas([numericDraw(33554352)], [], 4).vertexBytes, 33554352);
+  assert.equal(planSharedWebGL2Arenas([numericDraw(33554352)], 4).vertexBytes, 33554352);
   for (const bytes of [33554508, Number.MAX_SAFE_INTEGER, Infinity, -156])
-    assert.throws(() => planSharedWebGL2Arenas([numericDraw(bytes)], [], 4));
+    assert.throws(() => planSharedWebGL2Arenas([numericDraw(bytes)], 4));
 });
 
 test('UNIT GLP08 pending arena checks are pure and must be repeated for a changed owner snapshot', () => {
-  const plan = planSharedWebGL2Arenas([draw(3), draw(6)], [sceneUniform(1), sceneUniform(2)], 12);
+  const plan = planSharedWebGL2Arenas([draw(3), draw(6)], 12);
   const snapshot = { vertexBytes: plan.vertexBytes, uniformBytes: plan.uniformBytes };
+  assert.deepEqual(snapshot, { vertexBytes: 468, uniformBytes: 264 });
   checkSharedWebGL2ArenaCapacity(plan, owner());
   // Exact-fit/+1 are arithmetic-only counter controls, not reachable Host frames.
-  const exact = owner(67108864 - 468, 33587200 - 408);
+  const exact = owner(67108864 - 468, 33554432 - 264);
   checkSharedWebGL2ArenaCapacity(plan, exact);
   assert.throws(() => checkSharedWebGL2ArenaCapacity(plan, owner(exact.pendingVertexArenaBytes + 1, 0)));
   assert.throws(() => checkSharedWebGL2ArenaCapacity(plan, owner(0, exact.pendingUniformArenaBytes + 1)));
@@ -180,7 +167,7 @@ test('UNIT GLP08 pending arena checks are pure and must be repeated for a change
     assert.throws(() => checkSharedWebGL2ArenaCapacity(plan, owner(bad, 0)));
     assert.throws(() => checkSharedWebGL2ArenaCapacity(plan, owner(0, bad)));
   }
-  assert.deepEqual(exact, owner(67108864 - 468, 33587200 - 408));
+  assert.deepEqual(exact, owner(67108864 - 468, 33554432 - 264));
   assert.deepEqual({ vertexBytes: plan.vertexBytes, uniformBytes: plan.uniformBytes }, snapshot);
   // Host controls must separately prove the final recheck happens before serial,
   // owner and native commit. This unit only establishes the reusable pure check.
@@ -189,11 +176,11 @@ test('UNIT GLP08 pending arena checks are pure and must be repeated for a change
 test('UNIT GLP09 the region table is planned in whole windows at aligned offsets, only for a record with a sampled draw', () => {
   const rows = count => Uint32Array.from({ length: 12 * count }, (_value, index) => index + 1);
   // No draw with a region: no table, whether or not rows are offered.
-  assert.equal(planSharedWebGL2Arenas([draw(3, 1)], [], 256, rows(5)).regionTable, undefined);
-  assert.equal(planSharedWebGL2Arenas([], [], 256, rows(5)).regionTable, undefined);
+  assert.equal(planSharedWebGL2Arenas([draw(3, 1)], 256, rows(5)).regionTable, undefined);
+  assert.equal(planSharedWebGL2Arenas([], 256, rows(5)).regionTable, undefined);
   // One window is always the whole 16,368-byte block, however few regions it holds.
   for (const alignment of [4, 12, 16, 256]) {
-    const table = rows(5), plan = planSharedWebGL2Arenas([draw(3, 1), draw(3, 2, 0)], [], alignment, table);
+    const table = rows(5), plan = planSharedWebGL2Arenas([draw(3, 1), draw(3, 2, 0)], alignment, table);
     assert.deepEqual([plan.regionTable.bytes, plan.regionTable.windows.length, plan.regionTable.windows[0].offset], [16368, 1, 0]);
     assert.deepEqual(Array.from(plan.regionTable.windows[0].data), Array.from(table));
     // The table is its own buffer and no part of the uniform arena.
@@ -201,19 +188,19 @@ test('UNIT GLP09 the region table is planned in whole windows at aligned offsets
   }
   // 341 regions fill one window; the 342nd starts the next, at the next aligned offset.
   for (const [alignment, stride] of [[4, 16368], [12, 16368], [16, 16368], [32, 16384], [256, 16384]]) {
-    const table = rows(700), plan = planSharedWebGL2Arenas([draw(3, 1, 0), draw(3, 2, 2)], [], alignment, table);
+    const table = rows(700), plan = planSharedWebGL2Arenas([draw(3, 1, 0), draw(3, 2, 2)], alignment, table);
     assert.equal(plan.regionTable.stride, stride);
     assert.equal(plan.regionTable.bytes, 2 * stride + 16368);
     assert.deepEqual(plan.regionTable.windows.map(part => [part.offset, part.data.length / 12]), [[0, 341], [stride, 341], [2 * stride, 18]]);
     assert.equal(plan.regionTable.windows[1].data[0], 12 * 341 + 1);
     assert.equal(plan.regionTable.windows[2].data[12 * 18 - 1], 12 * 700);
   }
-  assert.deepEqual(planSharedWebGL2Arenas([draw(3, 1, 0)], [], 256, rows(341)).regionTable.windows.map(part => part.data.length / 12), [341]);
-  assert.equal(planSharedWebGL2Arenas([draw(3, 1, 12)], [], 256, rows(4096)).regionTable.bytes, 12 * 16384 + 16368);
+  assert.deepEqual(planSharedWebGL2Arenas([draw(3, 1, 0)], 256, rows(341)).regionTable.windows.map(part => part.data.length / 12), [341]);
+  assert.equal(planSharedWebGL2Arenas([draw(3, 1, 12)], 256, rows(4096)).regionTable.bytes, 12 * 16384 + 16368);
   // A sampled draw needs the rows, and its window must be one the rows reach.
-  assert.throws(() => planSharedWebGL2Arenas([draw(3, 1, 0)], [], 256));
-  assert.throws(() => planSharedWebGL2Arenas([draw(3, 1, 0)], [], 256, rows(0)));
-  assert.throws(() => planSharedWebGL2Arenas([draw(3, 1, 1)], [], 256, rows(341)));
-  assert.throws(() => planSharedWebGL2Arenas([draw(3, 1, 0)], [], 256, rows(4097)));
-  assert.throws(() => planSharedWebGL2Arenas([draw(3, 1, 0)], [], 256, new Uint32Array(13)));
+  assert.throws(() => planSharedWebGL2Arenas([draw(3, 1, 0)], 256));
+  assert.throws(() => planSharedWebGL2Arenas([draw(3, 1, 0)], 256, rows(0)));
+  assert.throws(() => planSharedWebGL2Arenas([draw(3, 1, 1)], 256, rows(341)));
+  assert.throws(() => planSharedWebGL2Arenas([draw(3, 1, 0)], 256, rows(4097)));
+  assert.throws(() => planSharedWebGL2Arenas([draw(3, 1, 0)], 256, new Uint32Array(13)));
 });

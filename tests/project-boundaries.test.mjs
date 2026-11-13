@@ -97,7 +97,7 @@ test('strict public project consumers and unsuppressed diagnostic locations run 
   for(const name of ['contracts','runtime','engine','project'])shift(path.join(fixture.root,'packages',name,'dist'));
   assert.ok(moved>300,'every emitted declaration was rewritten: '+moved);
   const again=run(['tools/check-types.mjs'],fixture.root);assert.ifError(again.error);assert.equal(again.status,0,again.stdout+again.stderr);
-  for(const line of [/Project type fixtures PASS: 29 type-only exports/,/S3D1 type fixtures PASS/,/SpriteSheet types PASS/,/Shared WebGL2 strict negative PASS/,/Resource recovery types PASS/])assert.match(again.stdout,line);
+  for(const line of [/Project type fixtures PASS: 29 type-only exports/,/SpriteSheet types PASS/,/Shared WebGL2 strict negative PASS/,/Resource recovery types PASS/])assert.match(again.stdout,line);
 }));
 
 test('real compiler negatives with unchanged error count reject incorrect expected code and location',t=>isolated(({root,write})=>{
@@ -130,12 +130,12 @@ const m15StrictExpectedStdout=[
   'Resource recovery strict manifest-resource-diagnostics positive PASS: 0 actual diagnostics.',
   'Resource recovery strict manifest-resource-diagnostics negative PASS: 16 actual diagnostics.',
   'Resource recovery strict shared-frame-upload-gpu positive PASS: 0 actual diagnostics.',
-  'Resource recovery strict shared-frame-upload-gpu negative PASS: 20 actual diagnostics.',
+  'Resource recovery strict shared-frame-upload-gpu negative PASS: 17 actual diagnostics.',
   'Resource recovery strict shared-frame-upload-webgl2 positive PASS: 0 actual diagnostics.',
-  'Resource recovery strict shared-frame-upload-webgl2 negative PASS: 26 actual diagnostics.',
+  'Resource recovery strict shared-frame-upload-webgl2 negative PASS: 24 actual diagnostics.',
   'Resource recovery strict shared-host-resource-diagnostics positive PASS: 0 actual diagnostics.',
   'Resource recovery strict shared-host-resource-diagnostics negative PASS: 13 actual diagnostics.',
-  'Resource recovery types PASS: seven public consumer pairs, 117 exact unsuppressed refusals; runtime/native acceptance is separate.',
+  'Resource recovery types PASS: seven public consumer pairs, 112 exact unsuppressed refusals; runtime/native acceptance is separate.',
 ].join('\n')+'\n';
 const m15StrictHealthy=result=>{
   assert.ifError(result.error);
@@ -154,7 +154,7 @@ for(const control of [
   },
   {
     name:'same-count wrong diagnostic code',
-    file:'tests/types/resource-recovery-diagnostic-expectations.json',
+    file:'tests/types/resource-recovery-2-diagnostic-expectations.json',
     mutate:original=>{
       const value=JSON.parse(original.toString('utf8'));
       assert.equal(value.pairs[0].pair,'resources-group');
@@ -171,7 +171,7 @@ for(const control of [
   },
   {
     name:'missing diagnostic tuple',
-    file:'tests/types/resource-recovery-diagnostic-expectations.json',
+    file:'tests/types/resource-recovery-2-diagnostic-expectations.json',
     mutate:original=>{
       const value=JSON.parse(original.toString('utf8'));
       assert.equal(value.pairs[0].pair,'resources-group');

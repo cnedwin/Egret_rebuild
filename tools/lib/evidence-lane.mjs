@@ -38,7 +38,6 @@ export const EVIDENCE_TOOLS = Object.freeze([
 /** Test files whose subject is one of the tools above, or the recorded identities themselves. */
 export const EVIDENCE_TESTS = Object.freeze([
   'tests/atlas-import-boundary.test.mjs',
-  'tests/b1-webgpu-verifier.test.mjs',
   'tests/bitmap-binding-ticket-boundaries.test.mjs',
   'tests/browser-png-boundaries.test.mjs',
   'tests/browser-png-boundaries-2.test.mjs',

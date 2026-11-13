@@ -43,11 +43,6 @@
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
     },
     {
-      "path": "packages/engine/web/sharedWebGL2Scene.ts",
-      "criticalComment": true,
-      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
-    },
-    {
       "path": "packages/engine/web/sharedWebGL2Shaders.ts",
       "criticalComment": true,
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
@@ -59,11 +54,6 @@
     },
     {
       "path": "packages/engine/web/webgl2Native.ts",
-      "criticalComment": true,
-      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
-    },
-    {
-      "path": "packages/engine/web/webgl2Scene3d.ts",
       "criticalComment": true,
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
     },

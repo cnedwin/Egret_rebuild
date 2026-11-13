@@ -211,7 +211,7 @@ test('accepted runner schedule changes invalidate the earlier dependency catalog
 
 test('unbound example-import test closures remain shared in the current catalog',()=>{
  const catalog=JSON.parse(fs.readFileSync(new URL('../../tools/incremental-test-catalog.json',import.meta.url)));
- for(const name of ['prepared-outfit-coordinator-heldout','resource-scene-gpu','resource-scene-session','resource-scene-session-heldout']){
+ for(const name of ['prepared-outfit-coordinator-heldout','resource-scene-session','resource-scene-session-heldout']){
   const row=catalog.tests.find(x=>x.file.path==='tests/'+name+'.test.mjs');assert.equal(row.packages,null,name);
  }
 });
@@ -2402,10 +2402,29 @@ function m33BoundaryHistory(raw,owner){
  const previous=Buffer.from(text);assert.deepEqual(identity(previous),selected.predecessor);return previous;
 }
 
+// The four scene3d entries left the engine package after the world3d entries arrived. Put them back where they stood.
+function restoreScene3dEntries(raw){
+ const identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
+ if(JSON.stringify(identity(raw))!==JSON.stringify({bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'}))return raw;
+ const value=JSON.parse(raw),exports={};
+ for(const [key,entry]of Object.entries(value.exports)){
+  exports[key]=entry;
+  if(key==='./webgpu'){
+   exports['./scene3d']={types:'./dist/rendering/scene3d.d.ts',import:'./dist/rendering/scene3d.js'};
+   exports['./scene3d/authoring']={types:'./dist/rendering/scene3dAuthoring.d.ts',import:'./dist/rendering/scene3dAuthoring.js'};
+   exports['./webgpu/scene3d']={types:'./dist/web/scene3d.d.ts',import:'./dist/web/scene3d.js'};
+  }
+  if(key==='./webgpu/world3d')exports['./webgl2/scene3d']={types:'./dist/web/webgl2Scene3d.d.ts',import:'./dist/web/webgl2Scene3d.js'};
+ }
+ const prior=Buffer.from(JSON.stringify({...value,exports},null,2)+'\n');
+ assert.deepEqual(identity(prior),{bytes:4050,sha256:'c413bebdaafd1ab3bb9075a518122857aaabad560997c700f214b3b4f4dcb6ab'});
+ return prior;
+}
+
 // Historical metadata fixtures use the exact engine package that accompanied their tools.
 function m33BoundaryFixtureInput(file){
  let raw=m24SpinePrevious(fs.readFileSync(new URL('../../'+file,import.meta.url)),file);if(file!=='packages/engine/package.json')return raw;
- raw=projectWorld3dPackage(raw);
+ raw=projectWorld3dPackage(restoreScene3dEntries(raw));
  const editing={"base":{"path":"packages/engine/package.json","bytes":3172,"sha256":"93aa97c85bf7c58d9ff462851f1f63aa101aa3a73bf07d2b0518dc14189cec61"},"current":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"}};
  const authoredScenePackage = {"base":{"path":"packages/engine/package.json","bytes":3514,"sha256":"5a25b72eb6843c22f4b47e949f8c761dc679fee6865fe4dc6a7dc302b01228db"},"current":{"path":"packages/engine/package.json","bytes":3662,"sha256":"32bdc997a04e80bc65fc014a174a46e874b565960703d005850be6120811beec"}};
  const packageIdentity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
@@ -2913,7 +2932,7 @@ function withBaselineRunner(action){
   put('tools/check-test-baselines.mjs',fs.readFileSync(new URL('../../tools/check-test-baselines.mjs',import.meta.url)));
   put('tools/build.mjs',"import fs from 'node:fs';fs.writeFileSync('built','once');if(process.env.EGRET_BASELINE_BUILD_FAIL)process.exit(23);\n");
   const definitions=[
-   ['tests/boundaries.test.mjs','S3D1 canonical boundary policy baseline admits every retained surface'],
+   ['tests/boundaries.test.mjs','canonical boundary policy baseline admits every retained surface'],
    ['tests/project-boundaries.test.mjs','strict public project consumers and unsuppressed diagnostic locations run through the actual type gate'],
   ];
   for(const[name,title]of definitions)put(name,"import test from 'node:test';import fs from 'node:fs';test("+JSON.stringify(title)+",()=>{if(!fs.existsSync('built'))throw Error('BUILD_REQUIRED');if(process.env.EGRET_BASELINE_TEST_FAIL)throw Error('ASSIGNED_BASELINE_FAILURE');});test('unselected expensive matrix',()=>{throw Error('MATRIX_MUST_NOT_RUN');});\n");

@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/3d-foundation.md)
 
+> **Removed.** The `scene3d` entries and the WebGPU hosts for rectangle, image and textured frames have been removed from the SDK. This document is kept as a record of what they were and describes nothing in the current SDK. Current 2D rendering is the [shared render profile](shared-render-profile-contract.md); current 3D is [World3D](world3d.md).
+
 <!-- S3D1-DOC-0.32.0-BEGIN -->
 ## Current public scene checkpoint: 0.32.0 (S3D1)
 

@@ -226,10 +226,6 @@ export function readCompletion(suite,output,stdout){
   for(const name of ['example-before.png','example-after.png','acceptance.png'])if(!fs.statSync(path.join(output,name)).isFile()||fs.statSync(path.join(output,name)).size===0)throw Error('Missing Canvas artifact');
  }else if(suite==='shared-webgpu'){
   return sharedCompletion(receipt,output);
- }else if(suite==='webgpu'){
-  if(receipt.status!=='PASS'||!receipt.browser||receipt.originalProductPreserved!==true||receipt.fixtureFailures?.length!==0||!(receipt.counts?.rawChecks>0)||!(receipt.counts?.counterexamples>0))throw Error('Incomplete WebGPU receipt');
- }else if(suite==='b1'){
-  if(receipt.status!=='PASS'||receipt.exitCode!==0||!receipt.browserVersion||receipt.cleanupFailures?.length!==0||receipt.counts?.positiveFrames!==7||receipt.counts?.counterexamples!==5)throw Error('Incomplete B1 receipt');
  }else if(suite==='text'){
   if(receipt.status!=='PASS_WC1_CANVAS_SUBSET'||receipt.exitCode!==0||receipt.identitiesStable!==true)throw Error('Incomplete text subset receipt');
  }else if(suite==='hit-test'||suite==='mouse-input'){

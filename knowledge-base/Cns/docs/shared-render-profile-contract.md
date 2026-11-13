@@ -2,6 +2,8 @@
 
 [English](../../en/docs/shared-render-profile-contract.md) | 中文
 
+> **场景模式已移除。** `createSharedSceneWebGPUHost`、`createSharedSceneWebGL2Host`、`renderSceneSharedFrame`、`stageSceneSharedFrame`、`getSceneStatus` 及 B1 路径已从 SDK 中移除。下文中描述它们的段落是记录，不是当前行为。
+
 2026-10-18 · M1.3 · 实现规格；执行与验收尚待完成
 
 ## 目标与兼容

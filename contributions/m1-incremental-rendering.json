@@ -37,23 +37,11 @@
       "originRole": "First-party complete-owner source-admission controls, independently authored and reviewed with AI assistance; Apache-2.0."
     },
     {
-      "path": "tests/incremental-batch-private.test.mjs",
-      "originRole": "First-party incremental-rendering behavior and bounded UNIT fixtures, authored with AI assistance; Apache-2.0."
-    },
-    {
       "path": "tests/incremental-frame-cache-private.test.mjs",
       "originRole": "First-party incremental-rendering behavior and bounded UNIT fixtures, authored with AI assistance; Apache-2.0."
     },
     {
       "path": "tests/incremental-frame-capture.test.mjs",
-      "originRole": "First-party incremental-rendering behavior and bounded UNIT fixtures, authored with AI assistance; Apache-2.0."
-    },
-    {
-      "path": "tests/incremental-preparation-batching.test.mjs",
-      "originRole": "First-party incremental-rendering behavior and bounded UNIT fixtures, authored with AI assistance; Apache-2.0."
-    },
-    {
-      "path": "tests/incremental-preparation-private.test.mjs",
       "originRole": "First-party incremental-rendering behavior and bounded UNIT fixtures, authored with AI assistance; Apache-2.0."
     },
     {

@@ -54,60 +54,6 @@ test('native import reader refuses malformed regexes in the two added expression
 
 
 // Current source-closure controls; SDK modules are inert bytes, never evaluated.
-test('textured source profile admits the genuine current 143 while historical 128, 132, 134, 137, 139 and 142 still refuse', async () => {
-  const fs = await import('node:fs');
-  const { fileURLToPath } = await import('node:url');
-  const { collectPublicGraph, LIMITS, sourceCounterpart } = await import('../tools/textured-webgpu/native-files.mjs');
-  const root = fs.realpathSync(fileURLToPath(new URL('../', import.meta.url)));
-  assert.deepEqual(LIMITS, {modules:128,moduleBytes:1048576,graphBytes:4194304,artifactBytes:4194304,totalArtifactBytes:16777216,eventsPerWindow:128,requestsPerWindow:512});
-  const path = await import('node:path');
-  const capture = async profile => {
-    const pins = [];
-    const graph = await collectPublicGraph(root, (row, role) => pins.push({path:row.path,bytes:row.bytes,sha256:row.sha256,role}), profile);
-    return {graph,pins};
-  };
-  const before = await capture('m3-font-resources-textured');
-  assert.equal(before.graph.modules.size, 143);
-  assert.ok(before.graph.modules.has('packages/contracts/dist/resources/fontArtifact.js'));
-  assert.ok(before.graph.modules.has('packages/contracts/dist/resources/index.js'));
-  assert.ok(before.graph.modules.has('packages/runtime/dist/ui/managedState.js'));
-  assert.ok(before.graph.modules.has('packages/engine/dist/internal/uiFactoryState.js'));
-  assert.ok(!before.graph.modules.has('packages/engine/dist/ui/uiRoot.js'));
-  assert.ok(!before.graph.modules.has('packages/runtime/dist/ui/layout.js'));
-  assert.ok(before.graph.modules.has('packages/engine/dist/sequenceTargetClaims.js'));
-  assert.ok(before.graph.modules.has('packages/engine/dist/internal/sequenceControllerFactoryState.js'));
-  assert.ok(!before.graph.modules.has('packages/engine/dist/animation/sequenceController.js'));
-  for (const row of before.graph.modules.values()) {
-    for (const edge of row.edges) assert.ok(before.graph.modules.has(edge.url.slice(1)));
-    const source = sourceCounterpart(row.relative);
-    if (source) assert.ok(before.pins.some(pin => pin.role === 'original-source' && pin.path === path.join(root, source)));
-  }
-  const summary = value => ({modules:[...value.graph.modules.values()].map(row => [row.relative, row.bytes, row.sha256, row.edges]),inputs:value.pins});
-  const healthy = async () => assert.deepEqual(summary(await capture('m3-font-resources-textured')), summary(before));
-  const refusalWithBaseline = async (exercise, label) => {
-    const failures = [];
-    try { await healthy(); } catch (error) { failures.push(error); }
-    if (failures.length === 0) {
-      try { await exercise(); } catch (error) { failures.push(error); }
-    }
-    try { await healthy(); } catch (error) { failures.push(error); }
-    if (failures.length) throw new AggregateError(failures, label);
-  };
-  await refusalWithBaseline(
-    () => assert.rejects(collectPublicGraph(root, () => {}), error => error.reason === 'GRAPH_MODULE_COUNT'),
-    'default source profile refusal and complete baseline');
-  for (const historical of ['m15-textured', 'm12-recipe5', 'm31-textured', 'm22-sequence-textured', 'm24-spine-textured', 'm34-effects-textured']) {
-    await refusalWithBaseline(
-      () => assert.rejects(collectPublicGraph(root, () => {}, historical), error => error.reason === 'GRAPH_MODULE_COUNT'),
-      'historical source profile remains bounded: ' + historical);
-  }
-  for (const profile of ['unknown', 'm15-textured-extra', 'm31-textured-extra', 'm22-sequence-textured-extra', 'm24-spine-textured-extra', 'm34-effects-textured-extra', 'm3-font-resources-textured-extra', 134, 136, null]) {
-    await refusalWithBaseline(
-      () => assert.rejects(collectPublicGraph(root, () => {}, profile), error => error.reason === 'GRAPH_SOURCE_PROFILE'),
-      'closed source profile refusal and complete baseline: ' + String(profile));
-  }
-});
-
 test('textured 132/133 source boundary rejects an actual extra module and restores the complete fixture', async t => {
   const fs = await import('node:fs'), os = await import('node:os'), path = await import('node:path');
   const { collectPublicGraph } = await import('../tools/textured-webgpu/native-files.mjs');
@@ -229,35 +175,4 @@ test('textured 137/138 sequence successor source boundary rejects an actual extr
   try { fs.writeFileSync(last, original); } catch (error) { failures.push(error); }
   try { assert.deepEqual(summary(await collect()), summary(before)); } catch (error) { failures.push(error); }
   if (failures.length) throw new AggregateError(failures, '137/138 refusal, local restoration and complete baseline');
-});
-
-test('textured font 143/144 actual copied closure refuses overflow then restores',async t=>{
- const fs=await import('node:fs'),os=await import('node:os'),path=await import('node:path');
- const {fileURLToPath}=await import('node:url');const {collectPublicGraph,sourceCounterpart}=await import('../tools/textured-webgpu/native-files.mjs');
- const repository=fs.realpathSync(fileURLToPath(new URL('../',import.meta.url))),root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'egret-m24-textured-')));
- t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
- const actual=await collectPublicGraph(repository,()=>{},'m3-font-resources-textured');assert.equal(actual.modules.size,143);
- const put=(name,raw)=>{fs.mkdirSync(path.dirname(path.join(root,name)),{recursive:true});fs.writeFileSync(path.join(root,name),raw);};
- for(const row of actual.modules.values()){put(row.relative,row.body);const source=sourceCounterpart(row.relative);if(source)put(source,fs.readFileSync(path.join(repository,source)));}
- const collect=()=>collectPublicGraph(root,()=>{},'m3-font-resources-textured'),summary=graph=>[...graph.modules.values()].map(row=>[row.relative,row.bytes,row.sha256,row.edges]);
- const baseline=await collect();assert.deepEqual(summary(baseline),summary(actual));
- const target='packages/engine/dist/index.js',raw=fs.readFileSync(path.join(root,target));put('packages/engine/dist/m24Overflow.js','export const extra=true;\n');put('packages/engine/src/m24Overflow.ts','export const extra=true;\n');
- try{await collect();put(target,Buffer.concat([raw,Buffer.from('\nimport "./m24Overflow.js";\n')]));await assert.rejects(collect,error=>error.reason==='GRAPH_MODULE_COUNT');}finally{put(target,raw);}
- assert.deepEqual(summary(await collect()),summary(baseline));
- // Retain the M3.4 142/143 refusal using the copied graph with only the new font export omitted.
- const resourceIndex='packages/contracts/dist/resources/index.js',resourceRaw=fs.readFileSync(path.join(root,resourceIndex));
- const fontExport="export { inspectFontArtifact } from './fontArtifact.js';\n";
- assert.equal(resourceRaw.toString('utf8').split(fontExport).length-1,1);
- const historicalRaw=Buffer.from(resourceRaw.toString('utf8').replace(fontExport,''));
- const collectHistorical=()=>collectPublicGraph(root,()=>{},'m34-effects-textured');
- try{
-  put(resourceIndex,historicalRaw);const historical=await collectHistorical();assert.equal(historical.modules.size,142);
-  assert.equal(historical.modules.has('packages/contracts/dist/resources/fontArtifact.js'),false);
-  assert.deepEqual(summary(await collectHistorical()),summary(historical));
-  try{put(resourceIndex,resourceRaw);await assert.rejects(collectHistorical,error=>error.reason==='GRAPH_MODULE_COUNT');}
-  finally{put(resourceIndex,historicalRaw);}
-  assert.deepEqual(summary(await collectHistorical()),summary(historical));
- }finally{put(resourceIndex,resourceRaw);}
- assert.deepEqual(summary(await collect()),summary(baseline));
- // Byte-drift admission belongs to B1 S25; this collector captures identities and bounds the literal graph.
 });

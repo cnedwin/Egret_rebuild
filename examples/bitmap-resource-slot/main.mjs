@@ -6,7 +6,7 @@ import {
 import { createMouseInput, createBitmapButton } from '@egret/engine/web/input';
 
 const canvas = document.querySelector('#scene'), status = document.querySelector('#status');
-const backend = new URL(location.href).searchParams.get('backend') === 'webgpu' ? 'webgpu' : 'canvas';
+const backend = 'canvas';
 const FRAME = Object.freeze({ width: 32, height: 24, clearColor: 0, clearAlpha: 0 });
 const errors = [], diagnostics = [], requests = [], providerJobs = [], events = [], buttons = [];
 const pendingTickets = new Set(), tickets = [], timers = new Set(), providerDisposals = [];
@@ -165,11 +165,9 @@ function readback() {
 }
 
 async function initialize() {
-  const entry = backend === 'webgpu' ? await import('@egret/engine/webgpu') : await import('@egret/engine/web');
+  const entry = await import('@egret/engine/web');
   if (closeRequested) throw new Error('EXAMPLE_CLOSED');
-  host = backend === 'webgpu'
-    ? entry.createWebGPUHost({ canvas, pixelRatio: 1, enableReadback: true })
-    : entry.createCanvasHost({ canvas, pixelRatio: 1 });
+  host = entry.createCanvasHost({ canvas, pixelRatio: 1 });
   engine = await createEngine({ host: trackTimerHost(host), onDiagnostic: value => { diagnostics.push(value); } });
   if (closeRequested) throw new Error('EXAMPLE_CLOSED');
   scope = engine.createScope(); inputScope = engine.createScope();

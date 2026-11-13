@@ -2,6 +2,8 @@
 
 [English](../../en/docs/b1-browser-verifier.md) · [B1 Host 契约](b1-host-contract.md)
 
+> **已移除。** `scene3d` 入口以及矩形、图像和纹理帧的 WebGPU 宿主已从 SDK 中移除。本文档保留为当时的记录，不描述当前 SDK。当前的 2D 渲染见[共享渲染 Profile](shared-render-profile-contract.md)，当前的 3D 见 [World3D](world3d.md)。
+
 `tools/verify-webgpu-b1.mjs` 是首方编写的实验性浏览器验证器，用于当前 B1 网格主机。它执行真实 WebGPU 编译和原始像素读回，测试场景与独立字面量判定器位于 `tools/b1-webgpu/`。运行无需私有执行辅助程序或操作系统 Job 包装器。所选内部 B1／几何模块仍未纳入稳定的包导出。
 
 ## 运行命令

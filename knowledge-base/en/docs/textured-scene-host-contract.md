@@ -1,5 +1,7 @@
 # Textured scene host contract
 
+> **Removed.** The `scene3d` entries and the WebGPU hosts for rectangle, image and textured frames have been removed from the SDK. This document is kept as a record of what they were and describes nothing in the current SDK. Current 2D rendering is the [shared render profile](shared-render-profile-contract.md); current 3D is [World3D](world3d.md).
+
 Original design checkpoint for experimental development preview **0.39.0**: acceptance and release were pending. The contract below defines the developer interface; the later browser result is recorded separately at the end.
 
 Use one explicit WebGPU host to draw an opaque RGB 3D scene followed by an Engine-captured textured 2D overlay on the same canvas. The current scene path covers colored mesh geometry and captured transforms. Complete character rendering, textured materials, lighting and transparent scene sorting remain outside this preview.

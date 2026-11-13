@@ -1,16 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
-// Original first-party public-port controls, informed by the repository's image
-// and textured Host tests. These controls model GPU ports, never the Host/cache.
+// Controls of the GPU ports a WebGPU Host calls. They model the ports, never the Host or its caches.
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
-import { createWebGPUHost, createTexturedWebGPUHost } from '@egret/engine/webgpu';
-import { createMeshGeometry3D, createSceneFrame3D } from '@egret/engine/scene3d';
-import { createSceneWebGPUHost, createTexturedSceneWebGPUHost } from '@egret/engine/webgpu/scene3d';
 
 export { egret };
-export const BUDGET = 33554432;
-export const BIG = 4194304;
-export const MATRIX = Object.freeze({ a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
+const BUDGET = 33554432;
 export const tick = async () => { for (let i = 0; i < 40; i++) await Promise.resolve(); };
 export const code = name => error => error instanceof egret.EgretError && error.code === 'WEBGPU_' + name;
 export function deferred() {
@@ -19,32 +13,8 @@ export function deferred() {
   promise.catch(() => {});
   return { promise, resolve, reject };
 }
-export function watched(promise) {
-  const value = { settled: false, rejected: false };
-  promise.then(() => { value.settled = true; }, () => { value.settled = true; value.rejected = true; });
-  return value;
-}
 export function image(width = 1, height = 1, pixels = new Uint8Array(width * height * 4)) {
   return egret.createImageData2D({ width, height, pixels });
-}
-export function view(source = image(), crop = { x: 0, y: 0, width: source.width, height: source.height }) {
-  return { source, crop };
-}
-// Ordinary RenderFrame2D is the public structural protocol; ImageData2D values
-// are always genuine immutable SDK values. Textured frames use Engine capture.
-export function frame(views = [view()], changes = {}) {
-  const images = [...new Set(views.map(v => v.source))];
-  return { frameId: 1, width: 8, height: 8, clearColor: 0, clearAlpha: 0,
-    images, commands: views.map(v => ({ kind: 'image', matrix: MATRIX,
-      rect: { x: 0, y: 0, width: 4, height: 4 }, alpha: 1, clips: [],
-      imageIndex: images.indexOf(v.source), sourceRect: v.crop })), ...changes };
-}
-export function triangleScene(draws = 1) {
-  const geometry = createMeshGeometry3D({ positions: [0, 0, -1, 1, 0, -1, 0, 1, -1],
-    colors: [1, 0, 0, 0, 1, 0, 0, 0, 1], indices: [0, 1, 2] });
-  return createSceneFrame3D({ projection: { kind: 'orthographic', left: -1, right: 1,
-    bottom: -1, top: 1, near: 1, far: 3 }, draws: Array.from({ length: draws }, () => ({ geometry,
-    modelView: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1] })) });
 }
 export function createGpuFixture({ enforceBudget = true } = {}) {
   const savedNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
@@ -150,11 +120,6 @@ export function createGpuFixture({ enforceBudget = true } = {}) {
   const provider = { getPreferredCanvasFormat() { assert.equal(this, provider); log('format'); return 'rgba8unorm'; } };
   Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { gpu: provider } });
   const options = extra => ({ canvas, device: { kind: 'borrow', device }, ...extra });
-  const host = (extra = {}, kind = 'ordinary') => {
-    const factory = { ordinary: createWebGPUHost, textured: createTexturedWebGPUHost,
-      scene: createSceneWebGPUHost, combined: createTexturedSceneWebGPUHost }[kind];
-    const value = factory(options(extra)); hosts.push(value); return value;
-  };
   const settleScopes = (selected = scopes) => selected.forEach(d => d.resolve(null));
   const pump = async () => { for (let i = 0; i < 8; i++) {
     pipelines.forEach(p => p.resolve(p.value)); settleScopes(); fences.forEach(d => d.resolve()); maps.forEach(d => d.resolve()); await tick();
@@ -189,56 +154,11 @@ export function createGpuFixture({ enforceBudget = true } = {}) {
   };
   const restore = () => { if (savedNavigator) Object.defineProperty(globalThis, 'navigator', savedNavigator); else delete globalThis.navigator; };
   return { calls, textures, buffers, fences, scopes, maps, pipelines, trace, hooks, hosts, lost,
-    queue, device, limits, sampler, context, canvas, options, host, ready, close, pump, capture,
+    queue, device, limits, sampler, context, canvas, options, ready, close, pump, capture,
     settleScopes, emitError, cleanup, restore, mark, assertOracles, allowUnsafe: h => unsafeHosts.add(h),
     get open() { return open; }, get logicalBytes() { return logicalBytes; }, get peakBytes() { return peakBytes; } };
 }
-export async function withGpu(run, options) {
-  const f = createGpuFixture(options);
-  try { return await run(f); } finally { try { await f.cleanup(); } finally { f.restore(); } }
-}
-export const imagesOf = f => f.textures.filter(t => t.isImage);
-export const writesOf = f => f.calls.filter(c => c[0] === 'writeTexture');
-// Observe the actually selected texture on every draw, including reused bindings.
-// Native binding creation remains separately available as the 'binding' call log.
-export const bindingsOf = f => f.calls.filter(c => c[0] === 'setBindGroup').map(c => c[2].descriptor.entries[0].resource.texture);
 export function admitted(record) { if (record.threw) throw record.error; assert.equal(record.value, undefined); }
-export async function submitSafe(f, h, input, render = value => h.renderFrame(value)) {
-  const record = f.capture(() => render(input)); admitted(record); await record.finish(); await h.whenIdle(); return record;
-}
-export function snapshot(f, h) {
-  return { calls: f.calls.length, textures: f.textures.length, buffers: f.buffers.length,
-    width: f.canvas.width, height: f.canvas.height, status: h.getStatus(),
-    textured: h.getTexturedStatus?.(), scene: h.getSceneStatus?.(), logicalBytes: f.logicalBytes };
-}
-export function refused(f, h, run, expected) {
-  const before = snapshot(f, h); assert.throws(run, code(expected));
-  assert.deepEqual(snapshot(f, h), before, 'preflight refusal has no native, serial, ledger or surface effects');
-}
-// A public behavioral LRU oracle: the refusal names the first resident, and
-// pressure follows before replay can legitimately touch it. No cache internals
-// or expected-algorithm implementation are involved; victim identities are fixed.
-export async function refusalLruWitness(f, h, initial, rejections, render = value => h.renderFrame(value), beforeRejections = () => {}) {
-  const first = await submitSafe(f, h, initial, render), oldest = first.textures.filter(t => t.isImage);
-  assert.equal(oldest.length, 1);
-  const atlas = image(16, 16), tail = [], tailViews = Array.from({ length: 255 }, (_, i) =>
-    view(atlas, { x: i % 16, y: Math.floor(i / 16), width: 1, height: 1 }));
-  for (const item of tailViews) {
-    const record = await submitSafe(f, h, frame([item]));
-    const created = record.textures.filter(t => t.isImage); assert.equal(created.length, 1); tail.push(created[0]);
-  }
-  assert.ok([...oldest, ...tail].every(t => t.destroyed === 0), '256 genuine resident resources precede the rejected frame');
-  beforeRejections();
-  for (const { run, expected } of rejections) refused(f, h, run, expected);
-  const start = f.calls.length, pressure = f.capture(() => h.renderFrame(frame())); admitted(pressure);
-  assert.deepEqual(f.calls.slice(start).filter(c => c[0] === 'destroyTexture' && c[1].isImage).map(c => c[1]), oldest,
-    'refusal must preserve original LRU victim order before any replay touches the older resource');
-  assert.equal(oldest[0].destroyed, 1); assert.ok(tail.every(t => t.destroyed === 0));
-  await pressure.finish();
-  const replay = f.capture(() => h.renderFrame(frame([tailViews[0]]))); admitted(replay);
-  assert.equal(replay.textures.filter(t => t.isImage).length, 0); assert.equal(bindingsOf(f).at(-1), tail[0]); await replay.finish();
-  assert.equal(h.getStatus().state, 'active');
-}
 let sequence = 0;
 export async function authorFrame() {
   const engine = await egret.createEngine({ host: { surface: {}, start() {}, stop() {}, async close() {}, setTimeout() { return () => {}; } } });
@@ -257,89 +177,3 @@ export async function authorFrame() {
   return { engine, scope, source, texture, lease, ref, bitmap, mesh, geometry, capture, textured, close };
 }
 export async function withAuthored(run) { const a = await authorFrame(); try { return await run(a); } finally { await a.close(); } }
-
-// Finite literal inputs for the R3 256/255-ready traces. Sources are genuinely
-// independent; every group uses at most three large sources plus the small atlas.
-export function pressureInputs(smallCount = 248) {
-  const large = Array.from({ length: 7 }, () => view(image(1024, 1024)));
-  const atlas = image(16, 16), small = Array.from({ length: 256 }, (_, i) => view(atlas,
-    { x: i % 16, y: Math.floor(i / 16), width: 1, height: 1 }));
-  const prepared = [...large, ...small.slice(0, smallCount)];
-  const readers = smallCount === 248
-    ? [[...large.slice(1, 4), ...small.slice(0, 124)], [...large.slice(4, 7), ...small.slice(124, 248)]]
-    : [[...large.slice(1, 4), ...small.slice(0, 125)], [...large.slice(4, 7), ...small.slice(125, 249)]];
-  return { large, small, prepared, readers, filler: small[smallCount], cold: small[smallCount + 1], next: view(image(1024, 1024)) };
-}
-export async function prepareReady(f, h, inputs) {
-  for (const item of inputs.prepared) await submitSafe(f, h, frame([item]));
-  const actual = imagesOf(f); assert.equal(actual.length, inputs.prepared.length);
-  assert.ok(actual.every(t => t.destroyed === 0), 'genuine READY prerequisite: safe originals remain resident');
-  return actual;
-}
-// Original image retirement is exercised only by the private finite baseline.
-// The permanent suite calls this with buffer; READY images have longer lifetime.
-export async function retirementBaseline(kind) {
-  return withAuthored(a => withGpu(async f => {
-    const h = f.host({ maxPendingFrames: 4, enableReadback: kind === 'buffer' }); await f.ready(h);
-    const saved = a.capture(), nested = frame([view(image(1, 1, new Uint8Array([1, 2, 3, 255])))]);
-    let triggered = 0, pending, upload, inner;
-    f.hooks[kind === 'image' ? 'destroyTexture' : 'destroyBuffer'] = resource => {
-      if (triggered || (kind === 'image' ? !resource.isImage : resource.descriptor.usage !== 9)) return;
-      triggered++; pending = h.getStatus().pendingFrames; upload = h.getStatus().pendingUploadBytes;
-      inner = f.capture(() => h.renderFrame(nested)); admitted(inner);
-      assert.equal(h.getStatus().lastSerial, 2); assert.equal(h.getStatus().pendingFrames, 2);
-    };
-    // A genuine mapped readback buffer is transient even when vertex/uniform
-    // returns are reserved. The pre-bound ticket is never changed by reentry.
-    const ticket = kind === 'buffer' ? h.requestReadback() : undefined; ticket?.catch(() => {});
-    const outer = f.capture(() => h.renderFrame(saved)); admitted(outer);
-    await outer.finish(); if (ticket) await ticket;
-    assert.equal(triggered, 1, 'retirement hook must actually run');
-    assert.equal(pending, 1); assert.equal(upload, 112); assert.equal(h.getStatus().pendingFrames, 1);
-    if (kind === 'buffer') {
-      const staging = outer.buffers.find(buffer => buffer.descriptor.usage === 9);
-      assert.ok(staging); assert.equal(staging.destroyed, 1); assert.equal(staging.unmapped, 1);
-      const eligible = outer.buffers.filter(buffer => buffer.descriptor.usage !== 9);
-      assert.equal(eligible.length, 2); assert.ok(eligible.every(buffer => buffer.destroyed === 0));
-      assert.equal(inner.buffers.length, 2, 'cleanup reentry must create its own vertex and uniform while outer returns remain reserved');
-      assert.ok(inner.buffers.every(buffer => !eligible.includes(buffer)), 'retiring reservations are not reusable during cleanup');
-    } else {
-      assert.ok(outer.buffers.every(buffer => buffer.destroyed === 1)); assert.equal(outer.textures[0].destroyed, 1);
-    }
-    await inner.finish(); await h.whenIdle(); await f.close(h);
-    assert.ok(outer.buffers.every(buffer => buffer.destroyed === 1));
-    console.log(JSON.stringify({ baseline: kind, cleanupResource: kind === 'buffer' ? 'staging' : 'image', triggered,
-      outerPending: pending, outerUpload: upload, finalSerial: h.getStatus().lastSerial, borrowedDestroyed: 0 }));
-  }));
-}
-
-// Collection-only P1 witness for a future independently reviewed full-copy
-// mutation. Healthy synchronous eviction and the assigned retirement callback
-// are recorded separately; no healthy phase assertion can hide the latter.
-// The ordinary GREEN tests always keep the enforcing external Q ledger.
-export async function collectP1Witness() {
-  return withGpu(async f => {
-    const h = f.host({ maxPendingFrames: 4 }); await f.ready(h); f.allowUnsafe(h);
-    const p = pressureInputs(249), ready = await prepareReady(f, h, p);
-    const a = f.capture(() => h.renderFrame(frame(p.readers[0]))), b = f.capture(() => h.renderFrame(frame(p.readers[1]))); admitted(a); admitted(b);
-    const events = []; let phase = 'submit', nested;
-    f.hooks.destroyTexture = t => {
-      if (t !== ready[0]) return;
-      const before = { phase, q: f.mark('witness-nested-before'), serial: h.getStatus().lastSerial, pending: h.getStatus().pendingFrames };
-      nested = f.capture(() => h.renderFrame(frame([p.next])));
-      events.push({ ...before, afterQ: f.mark('witness-nested-after'), afterSerial: h.getStatus().lastSerial,
-        returnedUndefined: !nested.threw && nested.value === undefined, errorCode: nested.error?.code ?? null,
-        imageCreates: nested.textures.filter(t => t.isImage).length });
-    };
-    const cold = f.capture(() => h.renderFrame(frame([p.filler]))); phase = 'retirement';
-    await cold.finish(); if (nested) await nested.finish(); await a.finish(); await b.finish();
-    const result = { readyCount: ready.length, readyPrerequisite: true, events, coldThrew: cold.threw,
-      coldErrorCode: cold.error?.code ?? null, peakQ: f.peakBytes, trace: undefined, finalSerial: h.getStatus().lastSerial };
-    delete f.hooks.destroyTexture;
-    const closing = h.close(); closing.catch(() => {}); await f.pump();
-    try { await closing; result.close = 'safe'; } catch (error) { result.close = error.code; }
-    // Include terminal READY cleanup events after the close outcome is observed.
-    result.trace = [...f.trace];
-    return result;
-  }, { enforceBudget: false });
-}

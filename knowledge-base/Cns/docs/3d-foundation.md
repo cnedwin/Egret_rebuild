@@ -2,6 +2,8 @@
 
 [English](../../en/docs/3d-foundation.md) | 简体中文
 
+> **已移除。** `scene3d` 入口以及矩形、图像和纹理帧的 WebGPU 宿主已从 SDK 中移除。本文档保留为当时的记录，不描述当前 SDK。当前的 2D 渲染见[共享渲染 Profile](shared-render-profile-contract.md)，当前的 3D 见 [World3D](world3d.md)。
+
 <!-- S3D1-DOC-0.32.0-BEGIN -->
 ## 当前公共场景检查点：0.32.0 (S3D1)
 

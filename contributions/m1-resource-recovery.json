@@ -164,10 +164,6 @@
       "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
     },
     {
-      "path": "tests/legacy-smoke-resource-map.test.mjs",
-      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
-    },
-    {
       "path": "tests/manifest-asset-group-heldout.test.mjs",
       "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
     },

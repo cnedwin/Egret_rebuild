@@ -35,7 +35,6 @@ This agreement applies across the repository, including shared knowledge-base ex
 - Private geometry unit tests may import built `engine/dist/rendering` helpers directly. This does not permit private imports in public behavior tests.
 - For the adopted T1 fixtures, public controls also use built `@egret/engine/text`; `@egret/runtime/text` is limited to T02 entry identity/type/source checks. Private runtime imports in `tests/text-raster-private.test.mjs` are limited to `packages/runtime/dist/text/budget.js`, `packages/runtime/dist/text/request.js`, `packages/runtime/dist/text/plan.js` and `packages/runtime/dist/EgretError.js`, and must be reported as units.
 - `tests/text-raster-allocation.test.mjs` and `tests/text-raster-materialization.test.mjs` are controlled construction/counter-fault units with genuine setup and restored intercepted state. `tests/text-raster-residency-audit.test.mjs` may append only its read-only `__textRetainedAudit` to the actual compiled `packages/runtime/dist/text/TextRasterCache.js` in memory, deregister its one-module load hook and preserve on-disk bytes. These fixtures add no product export, grant no arbitrary private import and do not replace public behavior controls; logical counters/retained-reference observations establish neither physical memory/GC nor fonts/renderer acceptance.
-- The experimental `tools/verify-webgpu-b1.mjs` ordinary fixture imports built `@egret/engine`, `@egret/engine/scene3d` and `@egret/engine/webgpu/scene3d` through its exact generated import maps. Its only direct private product import is `packages/engine/dist/web/webgpuMeshPass.js` for the source-bound fixed native WGSL compilation/N4 diagnostic. Serving is limited to the verifier's explicit module allowlist and those public entries' bounded literal-import closure and fixed aliases; N1–N5 each alter exactly one recorded emitted file in repository-external disposable copies. S1/S2/SN1 are a separate genuine Engine/Stage/Scope/Bitmap composition stage; SN1 omits only the named parent clip. The original oracle and seven-baseline/five-control/eleven-render/8214-comparison schedule remain unchanged. This exception permits no private product imports in ordinary examples or public behavior tests and grants no new product export or arbitrary diagnostic hook.
 - When public behavior changes, update its specifications, source records and necessary regressions. Record actual environments, unverified items, counterexamples and repairs. Third-party research and historical tests do not replace independent product acceptance.
 
 <!-- BRS-0.56.0-POLICY-BEGIN -->
@@ -87,11 +86,9 @@ Affected rendering changes additionally require the corresponding real-browser g
 
 ```text
 node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>
-node tools/verify-webgpu.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>
-node tools/verify-webgpu-b1.mjs --playwright "<absolute-installed-playwright-package-directory>" --channel msedge --output "<absolute-new-output-directory-outside-repository>"
 ```
 
-The B1 command applies to affected B1 scene rendering; see its [bounded verifier](knowledge-base/en/docs/b1-browser-verifier.md). Use accepted pinned dependencies and default browser launch without extra flags. Retained unchanged-build evidence requires explicit identity comparison; a fresh complete integrated prepush remains required for the merge candidate.
+Use accepted pinned dependencies and default browser launch without extra flags. Retained unchanged-build evidence requires explicit identity comparison; a fresh complete integrated prepush remains required for the merge candidate.
 
 Discovery and registered inventory paths exclude private execution, dependency and generated trees case-insensitively on Windows; listings cannot override exclusions. Public AGENTS files remain valid. Only the two exact sealed Three r186 research build paths/hashes retain their documented exceptions.
 
@@ -118,8 +115,6 @@ The private buffer and binding helpers remain metadata-only; WebGPUHost is the s
 Only tests/webgpu-submission-buffer-private.test.mjs, tests/webgpu-submission-binding-private.test.mjs and the private binding-retention cases in tests/webgpu-submission-controls.test.mjs may import packages/engine/dist/web/webgpuBufferPool.js and webgpuBindingCache.js directly. These are labelled UNIT cases, with no product export, arbitrary loader or public-example permission. Their synchronous prototype controls restore exact descriptors in finally.
 
 tests/webgpu-submission-preparation.test.mjs and tests/webgpu-submission-precedence.test.mjs use genuine public SDK frames with controlled GPU ports. Their synchronous Float32Array/Uint8Array construction faults and crop counters restore original global descriptors; crop counting ends before native error-scope entry. They establish controlled operation order/counts, not physical OOM, total allocation or speed.
-
-The B1 source-inspection successor retains the historical 19 captures and admits exactly 21 complete original-method capture initializers in three named helper emissions. The former buffer facade is inspected as an unlinked module; that inspection does not imply runtime execution. Seven exact static-only import edges cover that facade and the shared B1 preparation helpers; every edge in the five original runtime entry closures still requires actual resolution evidence. Preserve native unlinked module construction, exact capture consumption, assigned lexical refusals and the original thirteen-case schedule. Collector request and receipt capacities are finite verification limits, separate from product budgets. This grants no dynamic code construction or generic Function exception.
 
 ## M1.2 incremental rendering units
 
@@ -152,7 +147,7 @@ Only `tests/shared-webgl2-private.test.mjs` may directly import built private `p
 
 ## M1.4 WebGL2 public behavior and source boundaries
 
-WebGL2 uses only the explicit built entries `@egret/engine/webgl2` and `@egret/engine/webgl2/scene3d`. The first exports `createSharedWebGL2Host`, the original nine erased types and five additional types for host-owned cached 2D layers and their bounded effect; the second exports `createSharedSceneWebGL2Host` and two erased types. The root and Canvas entry load no WebGL2 module. Scene mode is a fixed first-party assembly using the existing scene authority and packing helpers; only the private scene-enabled Host loads its exact scene module. No caller-supplied shader, scene plugin or native object is an SDK input.
+WebGL2 uses only the explicit built entry `@egret/engine/webgl2`. It exports `createSharedWebGL2Host`, the original nine erased types and five additional types for host-owned cached 2D layers and their bounded effect. The root and Canvas entry load no WebGL2 module. No caller-supplied shader or native object is an SDK input.
 
 `tests/shared-webgl2-controls.test.mjs` and `tests/fixtures/gl-shared-rendering.mjs` use built public SDK entries, genuine Engine captures and test-owned canvas, GL and event ports. Property getters, assigned failures, completion delays and reentrant callbacks are confined to those owned ports/options. Lookalike frames are refusal controls, never accepted fixtures. Apart from the exact clock control below, these units add no private product import, loader hook, global/prototype interception or test export. They establish controlled admission, command order, logical ownership and lifecycle outcomes; real browser pixels, native loss/restoration and performance require separate evidence. Existing option/arena, shared-storage and retention UNIT permissions remain unchanged.
 

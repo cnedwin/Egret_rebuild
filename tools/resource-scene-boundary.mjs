@@ -18,22 +18,18 @@ const MAP=Object.freeze({
   '@egret/engine/web/text':'../../packages/engine/dist/web/text.js',
   '@egret/engine/web/image':'../../packages/engine/dist/web/image.js',
   '@egret/engine/web/input':'../../packages/engine/dist/web/input.js',
-  '@egret/engine/scene3d':'../../packages/engine/dist/rendering/scene3d.js',
-  '@egret/engine/webgpu/scene3d':'../../packages/engine/dist/web/scene3d.js',
   '@egret/runtime':'../../packages/runtime/dist/index.js',
   '@egret/runtime/text':'../../packages/runtime/dist/text/index.js',
   '@egret/contracts':'../../packages/contracts/dist/index.js',
   '@egret/contracts/resources':'../../packages/contracts/dist/resources/index.js',
   '#egret-mouse-input':'../../packages/engine/dist/mouseInput.js',
   '#egret-textured-frame-state':'../../packages/engine/dist/internal/texturedFrameState.js',
-  'robust-predicates':'../../packages/engine/node_modules/robust-predicates/index.js',
 });
 const PUBLIC=new Set(Object.keys(MAP).filter(key=>key.startsWith('@egret/engine')));
-const APP_MODULES=new Set(['main.mjs','session.mjs','gpu-scene.mjs'].map(name=>EXAMPLE+name));
+const APP_MODULES=new Set(['main.mjs','session.mjs'].map(name=>EXAMPLE+name));
 const APP_PUBLIC=new Map([
  [EXAMPLE+'main.mjs',new Set(['@egret/engine','@egret/engine/web','@egret/engine/web/image','@egret/engine/web/text','@egret/engine/web/input'])],
  [EXAMPLE+'session.mjs',new Set(['@egret/engine','@egret/engine/text'])],
- [EXAMPLE+'gpu-scene.mjs',new Set(['@egret/engine','@egret/engine/scene3d','@egret/engine/webgpu/scene3d'])],
 ]);
 // Encoded originals are selected independently of the candidate's discovered files.
 const FROZEN=[
@@ -55,7 +51,7 @@ const APP_EVIDENCE=[
  'tools/resource-scene-boundary.mjs','tools/resource-scene/oracle.mjs','tools/resource-scene/author-assets.mjs',
  'tests/resource-scene-boundary.test.mjs','tests/resource-scene-assets.test.mjs',
  'tests/resource-scene-session.test.mjs','tests/resource-scene-session-heldout.test.mjs',
- 'tests/resource-scene-gpu.test.mjs','tests/resource-scene-browser-source.test.mjs',
+ 'tests/resource-scene-browser-source.test.mjs',
 ];
 function fail(code,message,cause){throw Object.assign(new Error(message,{cause}),{code});}
 function absoluteInput(value){
@@ -126,7 +122,6 @@ function moduleImports(source){
 // Fixed authored entry policy is shared by source collection and metadata refusal controls.
 export function validateResourceSceneEntries(metadata){
   for(const [name,target]of Object.entries(MAP)){
-    if(name==='robust-predicates')continue;
     const internal=name.startsWith('#'),packageName=internal?'engine':name.split('/')[1];
     const prefix='../../packages/'+packageName+'/';
     const subpath=name==='@egret/'+packageName?'.':'./'+name.slice(('@egret/'+packageName+'/').length);
@@ -157,7 +152,7 @@ export async function collectResourceSceneSource({repository,applicationRoot=rep
   if(physicalAPI.relative(helperPath,fileURLToPath(helperURL))!==''||helperRaw.length!==5065||hash(helperRaw)!==HELPER_SHA)fail('RS_BOOTSTRAP','File-identity bootstrap drift before import');
   const identity=await import(helperURL.href);
   const owners=new Map([['sdk',repository],['application',applicationRoot]]),inventory=new Map(),modules=new Map(),routes=new Map();
-  let moduleBytes=0,routeBytes=0,foundationAdmission;
+  let moduleBytes=0,routeBytes=0;
   function pinned(owner,relative,role){
     const root=owners.get(owner);let pin;
     try{pin=identity.fingerprintFile(root,relative);}catch(cause){fail('RS_INPUT','Missing or foreign input: '+owner+':'+relative,cause);}
@@ -178,7 +173,7 @@ export async function collectResourceSceneSource({repository,applicationRoot=rep
     routeBytes+=bytes.length;if(routeBytes>8_388_608)fail('RS_BUDGET','Served byte budget exceeded');
     routes.set(url,{bytes,contentType});
   }
-  const routeFor=(owner,relative)=>'/'+(owner==='foundation'?'packages/engine/node_modules/robust-predicates/':'')+relative.split('/').map(encodeURIComponent).join('/');
+  const routeFor=(owner,relative)=>'/'+relative.split('/').map(encodeURIComponent).join('/');
   const html=pinned('application',EXAMPLE+'index.html','original-authored-html'),htmlText=decode(html.bytes);
   const scripts=[...htmlText.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)];
   const maps=scripts.filter(match=>/\btype\s*=\s*(?:"importmap"|'importmap'|importmap)(?:\s|$)/i.test(match[1]));
@@ -205,24 +200,7 @@ export async function collectResourceSceneSource({repository,applicationRoot=rep
   for(const key of ['package.json','pnpm-lock.yaml','pnpm-workspace.yaml','tsconfig.base.json','tsconfig.json',
     'packages/engine/tsconfig.json','packages/engine/tsconfig.web.json','packages/engine/tsconfig.rendering.json',
     'packages/runtime/tsconfig.json','tools/build.mjs',HELPER,'LICENSE'])pinned('sdk',key,'build-or-source-provenance');
-  const aliases=new Map(Object.entries(MAP).filter(([name])=>name!=='robust-predicates').map(([name,target])=>[name,['sdk',path.posix.normalize(path.posix.join(EXAMPLE,target))]]));
-  function admitFoundation(){
-    if(owners.has('foundation'))return;
-    const alias='packages/engine/node_modules/robust-predicates';let physical=repository;
-    for(const [index,part]of alias.split('/').entries()){
-      if(!fs.readdirSync(physical).includes(part))fail('RS_FOUNDATION','Declared dependency spelling differs');
-      physical=physicalAPI.join(physical,part);const stat=fs.lstatSync(physical);
-      if(index<3&&(stat.isSymbolicLink()||!stat.isDirectory()))fail('RS_FOUNDATION','Dependency alias parent differs');
-    }
-    const root=fs.realpathSync(physical),stat=fs.lstatSync(root);
-    if(!stat.isDirectory()||stat.isSymbolicLink()||physicalAPI.relative(root,fs.realpathSync(root))!=='')fail('RS_FOUNDATION','Canonical foundational owner required');
-    owners.set('foundation',root);
-    const info=JSON.parse(pinned('foundation','package.json','original-dependency-package').bytes);
-    if(info.name!=='robust-predicates'||info.version!=='3.0.3')fail('RS_FOUNDATION','Unselected robust-predicates identity');
-    pinned('foundation','LICENSE','original-dependency-rights');
-    foundationAdmission={declaredBy:'sdk:packages/engine/package.json',alias,physicalOwner:root,name:info.name,version:info.version};
-    aliases.set('robust-predicates',['foundation','index.js']);
-  }
+  const aliases=new Map(Object.entries(MAP).map(([name,target])=>[name,['sdk',path.posix.normalize(path.posix.join(EXAMPLE,target))]]));
   function visit(owner,relative){
     identity.logicalPath(relative);const key=owner+':'+relative;if(modules.has(key))return modules.get(key);
     if(modules.size>=192||!(owner==='application'?APP_MODULES.has(relative):relative.endsWith('.js')))fail('RS_IMPORT','Unselected module: '+key);
@@ -238,19 +216,14 @@ export async function collectResourceSceneSource({repository,applicationRoot=rep
     }
     for(const edge of moduleImports(decode(input.bytes))){
       const {specifier,dynamic}=edge;let next;
-      if(dynamic){
-        const mainRecipe=owner==='application'&&relative===EXAMPLE+'main.mjs'&&specifier==='./gpu-scene.mjs';
-        const sdkProtocol=owner==='sdk'&&relative==='packages/engine/dist/web/WebGPUHost.js'&&(specifier==='./b1.js'||specifier==='./sharedB1.js');
-        if(!mainRecipe&&!sdkProtocol)fail('RS_IMPORT','Unselected dynamic import: '+key+' -> '+specifier);
-      }
+      if(dynamic)fail('RS_IMPORT','Unselected dynamic import: '+key+' -> '+specifier);
       if(/^\.\.?\//.test(specifier)){
         const file=path.resolve(owners.get(owner),path.dirname(relative),specifier);let target;
         try{target=identity.ownerRelativePath(owners.get(owner),file);}catch(cause){fail('RS_IMPORT','Relative module leaves its physical owner: '+specifier,cause);}
         next=[owner,target];
       }else{
         if(owner==='application'&&(!PUBLIC.has(specifier)||!APP_PUBLIC.get(relative).has(specifier)))fail('RS_IMPORT','Nonpublic or unselected application import: '+specifier);
-        if(owner==='foundation')fail('RS_IMPORT','Foreign foundational bare import: '+specifier);
-        if(specifier==='robust-predicates')admitFoundation();next=aliases.get(specifier);
+        next=aliases.get(specifier);
       }
       if(!next)fail('RS_IMPORT','Unselected bare import: '+specifier);
       const dependency=visit(...next);record.edges.push({...edge,target:next.join(':'),route:dependency.route});
@@ -258,15 +231,13 @@ export async function collectResourceSceneSource({repository,applicationRoot=rep
     addRoute(record.route,input.bytes,'text/javascript; charset=utf-8');return record;
   }
   const main=visit('application',EXAMPLE+'main.mjs');
-  const dynamic=main.edges.filter(edge=>edge.dynamic);
-  if(dynamic.length!==1||dynamic[0].target!=='application:'+EXAMPLE+'gpu-scene.mjs')fail('RS_IMPORT','One explicit dynamic GPU recipe required');
-  function closure(seed,includeDynamic){
+  function closure(seed){
     const found=new Set();function walk(record){const key=record.owner+':'+record.path;if(found.has(key))return;found.add(key);
-      for(const edge of record.edges)if(includeDynamic||!edge.dynamic)walk(modules.get(edge.target));}
+      for(const edge of record.edges)walk(modules.get(edge.target));}
     walk(seed);return [...found].sort();
   }
-  const closures={canvas:closure(main,false),gpu:closure(modules.get(dynamic[0].target),true),webgpu:closure(main,true)};
-  if(closures.canvas.some(key=>key.startsWith('foundation:')||/gpu-scene\.mjs|WebGPU|webgpu|\/scene3d\.js|\/b1\.js/.test(key)))fail('RS_IMPORT','Static Canvas closure crossed a GPU/foundational boundary');
+  const closures={canvas:closure(main)};
+  if(closures.canvas.some(key=>/WebGPU|webgpu|WebGL2|webgl2/.test(key)))fail('RS_IMPORT','Canvas closure crossed a GPU boundary');
   for(const [name,target]of Object.entries(MAP)){
     const url=path.posix.normalize('/'+EXAMPLE+target);
     if(!routes.has(url))fail('RS_ROUTE','Original import-map target has no collected route: '+name);
@@ -297,7 +268,7 @@ export async function collectResourceSceneSource({repository,applicationRoot=rep
   const snapshot={schemaVersion:1,kind:'RESOURCE_SCENE_SOURCE_SNAPSHOT_NO_BROWSER',sourceOnly:true,
     owners:Object.fromEntries(owners),helperBootstrap:{ownerRoot:repository,path:HELPER,bytes:5065,sha256:HELPER_SHA,physicalOwnerVerified:true,urlRoundTripVerified:true},
     collectorImplementation:{ownerRoot:implementationOwner,...implementation},
-    foundationAdmission,authoredImportMap:importMap,servedOriginalHTML:{path:EXAMPLE+'index.html',bytes:html.pin.bytes,sha256:html.pin.sha256,rewritten:false},
+    authoredImportMap:importMap,servedOriginalHTML:{path:EXAMPLE+'index.html',bytes:html.pin.bytes,sha256:html.pin.sha256,rewritten:false},
     inventory:[...inventory.values()].sort((a,b)=>(a.owner+':'+a.path).localeCompare(b.owner+':'+b.path)),
     modules:[...modules.values()].sort((a,b)=>(a.owner+':'+a.path).localeCompare(b.owner+':'+b.path)),closures,
     routes:[...routes].map(([url,value])=>({url,bytes:value.bytes.length,sha256:hash(value.bytes),contentType:value.contentType})).sort((a,b)=>a.url.localeCompare(b.url)),
@@ -313,7 +284,7 @@ async function cli(){
     const {snapshot}=await collectResourceSceneSource({repository});
     console.log(JSON.stringify({status:'SOURCE_BOUNDARY_PASS',modules:snapshot.modules.length,
       inputFiles:snapshot.inventory.length,canvasModules:snapshot.closures.canvas.length,
-      gpuModules:snapshot.closures.gpu.length,routes:snapshot.routes.length,sourceOnly:true,snapshotWritten:false}));
+      routes:snapshot.routes.length,sourceOnly:true,snapshotWritten:false}));
     return;
   }
   const args=new Map();

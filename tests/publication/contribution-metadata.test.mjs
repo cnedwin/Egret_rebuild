@@ -195,6 +195,26 @@ test('a merge candidate leaves every ledger untouched and is planned from the la
  }finally{f.close();}
 });
 
+test('a removed file leaves the planned ledgers with its source row and its document pair',()=>{
+ const f=fixture();try{
+  f.git('switch','-qc','removal');f.git('rm','-q','tool.mjs','guide.md','guide.zh-CN.md');
+  const before=ledgerBytes(f);
+  const result=checkMergeCandidate(f.root,{base:f.base});
+  assert.equal(result.ledgers,'unchanged');assert.deepEqual(result.changed,['guide.md','guide.zh-CN.md','tool.mjs']);
+  assert.deepEqual(ledgerBytes(f),before);
+  const origin=JSON.parse(result.outputs['source-origin.json']),localization=JSON.parse(result.outputs['localization.json']);
+  assert.deepEqual(origin.files.map(row=>row.path).sort(),['knowledge-base/documentation-layout.json','localization.json']);
+  assert.deepEqual(localization.documents,[]);
+  // When one half of a pair is removed, the pair leaves; the other half keeps its source row.
+  f.git('restore','--staged','--worktree','guide.zh-CN.md','tool.mjs');
+  const half=checkMergeCandidate(f.root,{base:f.base});
+  assert.deepEqual(JSON.parse(half.outputs['localization.json']).documents,[]);
+  assert.ok(JSON.parse(half.outputs['source-origin.json']).files.some(row=>row.path==='guide.zh-CN.md'));
+  // A declaration that names a removed file is refused, as any missing file is.
+  f.put('contributions/stale.json',JSON.stringify({schemaVersion:1,files:[{path:'guide.md',originRole:'Independently authored fixture; Apache-2.0.'}],documents:[]}));
+  assert.throws(()=>checkMergeCandidate(f.root,{base:f.base}));
+ }finally{f.close();}
+});
 test('a change that carries a ledger is the complete refresh and nothing else',()=>{
  const f=fixture();try{
   const names=['localization.json','knowledge-base/documentation-layout.json','source-origin.json'];

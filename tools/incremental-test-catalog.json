@@ -297,15 +297,6 @@
     },
     {
       "file": {
-        "path": "tests/b1-webgpu-verifier.test.mjs",
-        "bytes": 62450,
-        "sha256": "b1b11c09b48a8fc304b2de7bff75c289f07b951f743d8cb8d2e5335be53d843b"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/bitmap-binding-ticket-authority-unit.test.mjs",
         "bytes": 20548,
         "sha256": "9eef5857f805d4308cb23c8fab380308020297a83dc5b34cee6fcd4dce5cbd62"
@@ -1001,44 +992,6 @@
     },
     {
       "file": {
-        "path": "tests/geometry-webgpu-numeric.test.mjs",
-        "bytes": 12740,
-        "sha256": "3eb3173f6424cd7bfcc82eae5f758359b04c370f03555dc00267efe4e641c13e"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/geometry-webgpu.test.mjs",
-        "bytes": 13221,
-        "sha256": "d43d4a3ff503a773f094cb56ec55600f734d45e1ebadf3c4a5d8a9a67d9625a9"
-      },
-      "packages": [
-        "engine"
-      ],
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/gpu-image-residency-lifecycle.test.mjs",
-        "bytes": 29989,
-        "sha256": "a890415a8f4ae689c159d5e30a5cad4895b0fafdd0e24a8533bdc673c9d84d0b"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/gpu-image-residency.test.mjs",
-        "bytes": 26742,
-        "sha256": "d42063e09e2b099642eda439a78cd381edcf2b4484b8211f2b90cf0cf67177a1"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/hit-test-canvas-verifier.test.mjs",
         "bytes": 17974,
         "sha256": "44430e9798c6ad698c756cdccdd824a5ac6f4fdac66e0a4d2359cfff49261b8c"
@@ -1077,60 +1030,6 @@
     },
     {
       "file": {
-        "path": "tests/image-geometry-2d.test.mjs",
-        "bytes": 7322,
-        "sha256": "d9cbf647cc44810dd5a1a8cb4a8383e7b9e8a61317a13bbcaecffdf52f768f54"
-      },
-      "packages": [
-        "contracts",
-        "engine"
-      ],
-      "support": [
-        {
-          "path": "tests/fixtures/image-affine-oracles.mjs",
-          "bytes": 987,
-          "sha256": "fde9535e1b6fa9de954ca7c9eb81f4e651740ae9a485944ef27579323dd2e68b"
-        }
-      ]
-    },
-    {
-      "file": {
-        "path": "tests/image-mixed-draws.test.mjs",
-        "bytes": 10951,
-        "sha256": "b95962f4233ebfcd32e13b9ec6542307cc1d7ec6f27d5cbe5985b798d811d02b"
-      },
-      "packages": null,
-      "support": [
-        {
-          "path": "tests/fixtures/image-affine-oracles.mjs",
-          "bytes": 987,
-          "sha256": "fde9535e1b6fa9de954ca7c9eb81f4e651740ae9a485944ef27579323dd2e68b"
-        }
-      ]
-    },
-    {
-      "file": {
-        "path": "tests/image-projections-2d.test.mjs",
-        "bytes": 12247,
-        "sha256": "ab2f06a24df66be41c3503d757536b34cb4188bc61c24e9aee1bdbaa2c2c9378"
-      },
-      "packages": [
-        "contracts",
-        "engine"
-      ],
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/incremental-batch-private.test.mjs",
-        "bytes": 3038,
-        "sha256": "036de87124e62f882af652fceca9bc4abaf8e883d3c462a498de0181397dc5fb"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/incremental-frame-cache-private.test.mjs",
         "bytes": 17261,
         "sha256": "23c0e601c77a8a053bc706213328321c25cd90edeaa7adb9e117023b731b4349"
@@ -1143,24 +1042,6 @@
         "path": "tests/incremental-frame-capture.test.mjs",
         "bytes": 29613,
         "sha256": "bd97c27582cca96c3c44bfe57e5d7ed5c7fa5ee13475447e633a53bbef35dfe7"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/incremental-preparation-batching.test.mjs",
-        "bytes": 17661,
-        "sha256": "a4acc3b2319efe41e15974b7b89e331fcfe540eab02ce86fa6c3e7afcea568c9"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/incremental-preparation-private.test.mjs",
-        "bytes": 47463,
-        "sha256": "892ce338e61fa2c8d41e8e74394a0ec3813da163ffef73dc4ffaae1f655786b5"
       },
       "packages": null,
       "support": []
@@ -1246,15 +1127,6 @@
     },
     {
       "file": {
-        "path": "tests/matrix4.test.mjs",
-        "bytes": 17574,
-        "sha256": "b40dbdd65f856cafe680956c8e1d8985468c7b85ee32f60fb69ff4d01f116fc4"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/mesh-bounds.test.mjs",
         "bytes": 10437,
         "sha256": "548a8aae5ee0418542b810adefff56566f4952c3ee914d68e44d78855f27854e"
@@ -1289,15 +1161,6 @@
     },
     {
       "file": {
-        "path": "tests/mesh-geometry-3d.test.mjs",
-        "bytes": 17070,
-        "sha256": "5d842624a5a55fbb5e65f792d06d0af4bb318aad57b0bb2cf6b2195bd6b96466"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/mesh-legacy-capture.test.mjs",
         "bytes": 10402,
         "sha256": "4aec04fba77bc89675de9fb70efef4b6afa32e12dc500e094f26220649ff54f6"
@@ -1312,27 +1175,6 @@
           "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
         }
       ]
-    },
-    {
-      "file": {
-        "path": "tests/mesh-packing-3d.test.mjs",
-        "bytes": 16265,
-        "sha256": "eca21300ecfa475651f6107fd9a441d908c4dd80871e1e56fdb8519ddba44fd6"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/mixed-frame-2d.test.mjs",
-        "bytes": 18110,
-        "sha256": "0606c34108f4a54efb52cd3aaab47a8ed03e960fb7bbdb36e681e6ef746ee3f7"
-      },
-      "packages": [
-        "contracts",
-        "engine"
-      ],
-      "support": []
     },
     {
       "file": {
@@ -1600,15 +1442,6 @@
     },
     {
       "file": {
-        "path": "tests/projection3d.test.mjs",
-        "bytes": 18431,
-        "sha256": "3c7e4968fcbc00c320fce1e576eb6bbdb47f7f33d469702eaa7a27c4078930a6"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/resource-scene-assets.test.mjs",
         "bytes": 13012,
         "sha256": "a6b27c8c4c833ffdb2ca2af12c1a34998dc552522dd657ad2d8dacaea8f59b2b"
@@ -1630,15 +1463,6 @@
         "path": "tests/resource-scene-browser-source.test.mjs",
         "bytes": 7638,
         "sha256": "afb5953d3c53aa3e20f610623c6aea636cee110b7d2d9c8faf99461dc00b11b5"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/resource-scene-gpu.test.mjs",
-        "bytes": 10985,
-        "sha256": "bcc8add34ee3ce3abb900f813acea9121b63f285f093b31f86db20790391914b"
       },
       "packages": null,
       "support": []
@@ -1677,33 +1501,6 @@
           "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
         }
       ]
-    },
-    {
-      "file": {
-        "path": "tests/scene-frame-3d.test.mjs",
-        "bytes": 21555,
-        "sha256": "31faa4c3cac85ddf4dbfc87f08c01e2715d695e42397583db3602c4118af68fb"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/scene3d-public-host.test.mjs",
-        "bytes": 28336,
-        "sha256": "a4b7cfe4d76fefacfbbc662d2ced108a40bc312572476c73327f4c535a718ee8"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/scene3d-public.test.mjs",
-        "bytes": 20643,
-        "sha256": "f52d9b2c467a27687ac296cb774f4a6e108c253a08924c769b9f763b68b82001"
-      },
-      "packages": null,
-      "support": []
     },
     {
       "file": {
@@ -2181,23 +1978,6 @@
     },
     {
       "file": {
-        "path": "tests/texture-a1-integration.test.mjs",
-        "bytes": 5444,
-        "sha256": "85a75bc119436a4f01ffb2fd96277f297307a0f7e6422104b0ac3ab251faae5a"
-      },
-      "packages": [
-        "engine"
-      ],
-      "support": [
-        {
-          "path": "tests/helpers.mjs",
-          "bytes": 997,
-          "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
-        }
-      ]
-    },
-    {
-      "file": {
         "path": "tests/texture-bitmap.test.mjs",
         "bytes": 12451,
         "sha256": "f350cb833e3b2e0696e4b5137baa307e9d62e61904a918be3546254a70e607eb"
@@ -2262,24 +2042,6 @@
     },
     {
       "file": {
-        "path": "tests/textured-frame-admission.test.mjs",
-        "bytes": 59503,
-        "sha256": "3e39ceb66748c2b3bc00d01f7645ae0f877607b1ddfbdb2492b15b1abfa6a1f3"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/textured-frame-boundaries.test.mjs",
-        "bytes": 20844,
-        "sha256": "1b11825e913b6be7f02dd4ec4e6fc86f368a6de1081b86f8f2d1d965e86edfe2"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/textured-frame-capture.test.mjs",
         "bytes": 34129,
         "sha256": "e9070c7f8baee838c68bbbe177f5ffbc844e2cc29ca4c79215a405cb97db58b2"
@@ -2308,36 +2070,9 @@
     },
     {
       "file": {
-        "path": "tests/textured-frame-legacy-hosts.test.mjs",
-        "bytes": 23293,
-        "sha256": "3cc5d1073e7a0858ae8702b1c2151a2906d402198bc0ee6f2154ef64afd3e4e2"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/textured-frame-private-map.test.mjs",
-        "bytes": 9860,
-        "sha256": "52d414872a42baaf1b1caa641fadafcde8d8dfa62dc61df284261674763042fc"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/textured-geometry-2d.test.mjs",
         "bytes": 27604,
         "sha256": "2e5079c8537f3d91b378646a0b24dfb04f53016b2c64092d27737d8c3f49753f"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/textured-mesh-preparation.test.mjs",
-        "bytes": 31979,
-        "sha256": "e2da784978c3264536fb6847a240f16836a721bf938485638f8b60a61123a125"
       },
       "packages": null,
       "support": []
@@ -2353,45 +2088,9 @@
     },
     {
       "file": {
-        "path": "tests/textured-preparation-budget.test.mjs",
-        "bytes": 64061,
-        "sha256": "85973bcf1a4c9a2aa4ef9705f5b6dff73b788bec9dacaa0df5497126a27b36a3"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/textured-profile-engine.test.mjs",
         "bytes": 32600,
         "sha256": "603fa81b2da8cd2add961367a28e8d93e46ce5c0afc5029011e5a2a8c5bf8f81"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/textured-scene-webgpu-host.test.mjs",
-        "bytes": 34800,
-        "sha256": "5354c70c9c62445064f500f918e9feb1392b1b1eb3d2db67901ea3b2b172f218"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/textured-webgpu-host.test.mjs",
-        "bytes": 42885,
-        "sha256": "427065844f3bbedd4e7500986e06ea458926b4da80e72ab6e8c8474f638b360c"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/textured-webgpu-types.test.mjs",
-        "bytes": 10896,
-        "sha256": "a9804079b3c4e8136201e80335b997d2ff4ba3150d22055689084a388231f06f"
       },
       "packages": null,
       "support": []
@@ -2416,73 +2115,6 @@
     },
     {
       "file": {
-        "path": "tests/webgpu-host.test.mjs",
-        "bytes": 45715,
-        "sha256": "09e8f3bdefb7fdd1ee02d51339231890e64910f8553bd226e1b2970f393b80f8"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/webgpu-image-host.test.mjs",
-        "bytes": 40806,
-        "sha256": "99dd5ecda1e506ca21bd988559cc2c880cec56685c37b7f24b2133c4aa29f002"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/webgpu-image-pass.test.mjs",
-        "bytes": 5291,
-        "sha256": "e0379401b2eb73d952a9ae30e3867aa908916b8281c1daa7c97fe96371649760"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/webgpu-mesh-host.test.mjs",
-        "bytes": 108965,
-        "sha256": "5de19697d49760acf1f119f051d723615bb3354d1b69f9ed720d702bf7f6a822"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/webgpu-mesh-pass.test.mjs",
-        "bytes": 10302,
-        "sha256": "1250753c4b99fd40e549e4e45e758e54b5cf71e23c992877a5f88953484ff1bf"
-      },
-      "packages": [
-        "engine"
-      ],
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/webgpu-oracle.test.mjs",
-        "bytes": 1105,
-        "sha256": "74d07c9a7eb721a6d3cc4fd9c509d5516911f357c7e72a368c5734f2f592c4f1"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/webgpu-pass.test.mjs",
-        "bytes": 3279,
-        "sha256": "abdfac0fa59a7298a8b2520049f75cc79f9c656b34b247d44f72439b5212c00b"
-      },
-      "packages": [
-        "engine"
-      ],
-      "support": []
-    },
-    {
-      "file": {
         "path": "tests/webgpu-submission-binding-private.test.mjs",
         "bytes": 11757,
         "sha256": "49432ea8e639cf4e89642248874ae8670b7f25d733c77081c09a33386bdc1b56"
@@ -2495,60 +2127,6 @@
         "path": "tests/webgpu-submission-buffer-private.test.mjs",
         "bytes": 13219,
         "sha256": "e53bd0145018f6dd70a9f57871d675f17bfbdd6f4c98da3a4c901c3c9c449fcb"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/webgpu-submission-controls.test.mjs",
-        "bytes": 5369,
-        "sha256": "1ea6dff61918f607d9fa7689a5d148a5044facdaf6fed11350e1cf772fb2cb28"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/webgpu-submission-precedence.test.mjs",
-        "bytes": 14323,
-        "sha256": "9f5df2a37c38dd7609b25d807662b9a8c08325d2e06b9c00f5efa5f18304476e"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/webgpu-submission-preparation.test.mjs",
-        "bytes": 2308,
-        "sha256": "af40427a7f072e7ed3889406b5366944005722167fbda8a655c7a8aeb8cad31a"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/webgpu-submission-return-order.test.mjs",
-        "bytes": 2860,
-        "sha256": "4711f9a60370dfd1ee69f33950c705c6140fbaf680378cbcb9e51d53219aff4a"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/webgpu-submission-reuse-lifecycle.test.mjs",
-        "bytes": 16494,
-        "sha256": "a6bc1691b8cbcc7777b08f50071972b6b635f36c179b4a7f6ca1d7b6f0b7d5df"
-      },
-      "packages": null,
-      "support": []
-    },
-    {
-      "file": {
-        "path": "tests/webgpu-submission-reuse.test.mjs",
-        "bytes": 15871,
-        "sha256": "791ec8087e4b9930d682ca3eb2f08965c3ea38cf55d4ed7ee444d954b653ab75"
       },
       "packages": null,
       "support": []

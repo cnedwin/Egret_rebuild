@@ -46,19 +46,19 @@ Canvas DOM types and execution stay in the web subentry. Read the [display and f
 
 ## WebGPU use
 
-Supply an `HTMLCanvasElement` as `canvas`. Optional readback arms the next accepted frame; `renderFrame` returns `undefined` synchronously. `result.bytes` is caller-owned premultiplied RGBA, rather than browser composition. `whenIdle` snapshots submitted work; only successful `close` proves safe return. Engine wrapping preserves the original cause. See the [WebGPU example](../../examples/webgpu/README.md).
+Supply an `HTMLCanvasElement` as `canvas`. Optional readback arms the next accepted frame; `renderSharedFrame` returns `undefined` synchronously. `result.bytes` is caller-owned premultiplied RGBA, rather than browser composition. `whenIdle` snapshots submitted work; only successful `close` proves safe return. Engine wrapping preserves the original cause.
 
 ```ts
-import { createEngine, Sprite } from '@egret/engine';
-import { createWebGPUHost } from '@egret/engine/webgpu';
+import { createEngineForProfile, Sprite, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
+import { createSharedWebGPUHost } from '@egret/engine/webgpu';
 
-const host = createWebGPUHost({ canvas, enableReadback: true });
-const engine = await createEngine({ host });
+const host = createSharedWebGPUHost({ canvas, enableReadback: true });
+const engine = await createEngineForProfile({ host }, SHARED_FRAME_PROFILE_2D);
 const rect = new Sprite();
 rect.graphics.beginFill(0x00ff00).drawRect(4, 4, 16, 16);
 engine.stage.addChild(rect);
 const pixels = host.requestReadback();
-engine.renderFrame({ width: 48, height: 40, clearColor: 0, clearAlpha: 0 });
+engine.renderSharedFrame({ width: 48, height: 40, clearColor: 0, clearAlpha: 0 });
 const result = await pixels;
 await engine.dispose();
 ```

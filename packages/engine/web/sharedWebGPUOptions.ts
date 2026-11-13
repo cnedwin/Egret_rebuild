@@ -1,12 +1,13 @@
-import type { WebGPUHostDiagnostic } from './WebGPUHost.js';
+import type { WebGPUHostDiagnostic, WebGPUHostOptions } from './WebGPUHost.js';
 
-import type { TexturedWebGPUHostOptions, TexturedWebGPUConfiguration } from './texturedWebGPUOptions.js';
 /** Each may only lower the profile's own bound: 4,096 regions and 64 MiB of pages in a frame, 128 MiB of ready pages. */
 export interface SharedPageLimits2D { readonly maxFrameRegions: number; readonly maxFramePageBytes: number; readonly maxReadyPageBytes: number; }
-export interface SharedWebGPUHostOptions extends TexturedWebGPUHostOptions, Partial<SharedPageLimits2D> { readonly enableEffects?: boolean; readonly outputAlpha?: 'premultiplied' | 'opaque'; readonly recovery?: { readonly mode: 'manual' | 'automatic'; readonly timeoutMs?: number }; }
-export type SharedSceneWebGPUHostOptions = Omit<SharedWebGPUHostOptions, 'outputAlpha'> & { readonly outputAlpha: 'opaque' };
-export type SharedWebGPUConfiguration = TexturedWebGPUConfiguration & SharedPageLimits2D & { readonly enableEffects:boolean; readonly outputAlpha: 'premultiplied' | 'opaque'; readonly recovery: { readonly mode: 'manual' | 'automatic'; readonly timeoutMs: number } | undefined };
-const DEFAULTS: TexturedWebGPUConfiguration = Object.freeze({
+export interface SharedWebGPUHostOptions extends WebGPUHostOptions, Partial<SharedPageLimits2D> {
+    readonly maxSourceTriangles?: number; readonly maxFrameGeometryBytes?: number; readonly maxPendingGeometryBytes?: number; readonly maxTupleComparisons?: number;
+    readonly enableEffects?: boolean; readonly outputAlpha?: 'premultiplied' | 'opaque'; readonly recovery?: { readonly mode: 'manual' | 'automatic'; readonly timeoutMs?: number }; }
+type BaseConfiguration = Required<Omit<SharedWebGPUHostOptions, 'canvas' | 'device' | 'onDiagnostic' | 'enableEffects' | 'outputAlpha' | 'recovery' | keyof SharedPageLimits2D>>;
+export type SharedWebGPUConfiguration = BaseConfiguration & SharedPageLimits2D & { readonly enableEffects:boolean; readonly outputAlpha: 'premultiplied' | 'opaque'; readonly recovery: { readonly mode: 'manual' | 'automatic'; readonly timeoutMs: number } | undefined };
+const DEFAULTS: BaseConfiguration = Object.freeze({
     pixelRatio: 1, maxBackingPixels: 16777216, maxCommands: 65536, maxClipRectangles: 262144,
     maxPreparedVertices: 1048576, maxClipEdgeTests: 4194304, maxUploadBytes: 33554432,
     maxPendingUploadBytes: 67108864, maxPendingFrames: 2, maxReadbackBytes: 67108864, enableReadback: false,
@@ -21,7 +22,7 @@ const KEYS = ['canvas', 'device', 'onDiagnostic', 'pixelRatio', 'maxBackingPixel
 function object(value: unknown): value is Record<string, unknown> { return typeof value === 'object' && value !== null; }
 
 /** Snapshot every top-level read, then the selected policy reads, before any semantic refusal. */
-export function admitSharedWebGPUOptions(input: SharedWebGPUHostOptions, scene: boolean): {
+export function admitSharedWebGPUOptions(input: SharedWebGPUHostOptions): {
     surface: HTMLCanvasElement; configuration: SharedWebGPUConfiguration; borrowed: GPUDevice | undefined;
     callback: ((diagnostic: WebGPUHostDiagnostic) => unknown) | undefined;
 } {
@@ -44,8 +45,8 @@ export function admitSharedWebGPUOptions(input: SharedWebGPUHostOptions, scene: 
     if (!object(captured.canvas)) throw new TypeError('canvas');
     if (policy !== undefined && (!object(policy) || (kind !== 'acquire' && kind !== 'borrow') || (kind === 'borrow' && !object(borrowed)))) throw new TypeError('device policy');
     if (captured.onDiagnostic !== undefined && typeof captured.onDiagnostic !== 'function') throw new TypeError('diagnostic callback');
-    const configuration = {} as TexturedWebGPUConfiguration;
-    for (const key of Object.keys(DEFAULTS) as (keyof TexturedWebGPUConfiguration)[]) {
+    const configuration = {} as BaseConfiguration;
+    for (const key of Object.keys(DEFAULTS) as (keyof BaseConfiguration)[]) {
         const value = captured[key] === undefined ? DEFAULTS[key] : captured[key];
         if (key === 'enableReadback') { if (typeof value !== 'boolean') throw new TypeError(key); }
         else {
@@ -55,8 +56,8 @@ export function admitSharedWebGPUOptions(input: SharedWebGPUHostOptions, scene: 
         Object.defineProperty(configuration, key, { value, enumerable: true });
     }
     const enableEffects=captured.enableEffects??false;if(typeof enableEffects!=='boolean')throw new TypeError('enableEffects');
-    const outputAlpha = captured.outputAlpha === undefined && !scene ? 'premultiplied' : captured.outputAlpha;
-    if ((outputAlpha !== 'premultiplied' && outputAlpha !== 'opaque') || (scene && outputAlpha !== 'opaque')) throw new TypeError('outputAlpha');
+    const outputAlpha = captured.outputAlpha === undefined ? 'premultiplied' : captured.outputAlpha;
+    if (outputAlpha !== 'premultiplied' && outputAlpha !== 'opaque') throw new TypeError('outputAlpha');
     // Judged last, so their arrival changes no earlier refusal.
     const pages = {} as { -readonly [K in keyof SharedPageLimits2D]: number };
     for (const key of PAGE_KEYS) {

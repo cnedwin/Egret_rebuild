@@ -2,6 +2,8 @@
 
 [English](../../en/docs/webgl2-executor-contract.md) | 简体中文
 
+> **场景模式已移除。** `createSharedSceneWebGPUHost`、`createSharedSceneWebGL2Host`、`renderSceneSharedFrame`、`stageSceneSharedFrame`、`getSceneStatus` 及 B1 路径已从 SDK 中移除。下文中描述它们的段落是记录，不是当前行为。
+
 2026-10-18 · M1.4 实现契约草稿 · 完整验收与交付待完成
 
 ## 范围与证据
@@ -123,14 +125,14 @@ Engine 在调用 Host 前提交真实帧与 frame ID。因此 GL 的同步拒绝
 
 Shared 顶点 stride 为 52B，五个属性的 offset 为 0/8/16/32/44。128B uniform 在 0/16/32 是 float vec4，在 48/64/80/96/112 是 uint uvec4。带区域的绘制使用的程序在顶点阶段还有第二个 block，位于绑定点 1：区域表的一个窗口，1,023 个 uvec4，共 16,368 字节。不带区域的绘制使用没有这个 block 的程序。每个程序的每个 block，GLSL highp/std140 链接后的 offset 和 block size 都必须匹配。启动时要求 MAX_VERTEX_ATTRIBS ≥ 5、MAX_UNIFORM_BLOCK_SIZE ≥ 16,368、MAX_UNIFORM_BUFFER_BINDINGS ≥ 2、MAX_VERTEX_UNIFORM_BLOCKS ≥ 2，均在 OpenGL ES 3.0 的保证范围内。B1 保持 24B 顶点、64B uniform 和 Uint32 索引，包括索引 65,535。
 
-每个已接受 record 至多使用一个 shared vertex arena 和一个 shared/B1 联合 UBO arena。原 typed payload 上传到原生范围，不增加全帧 CPU concat。N 个 physical shared batch、M 个 scene draw 时，查询 A，要求安全整数且 `4 <= A <= 256 && A % 4 === 0`。使用 `s128=ceil(128/A)*A`、`s64=ceil(64/A)*A`；V 是原 payload 字节之和，U 为 `N*s128+M*s64`。UI 范围 i 从 `i*s128` 开始，scene 范围 j 从 `N*s128+j*s64` 开始，大小仍为 128/64。最后 padding 也分配、计费，但只上传原始字节。没有 draw 就没有 arena；MAX_UNIFORM_BLOCK_SIZE 限制单块，不限制整个 arena。不假设 alignment 是二次幂。
+每个已接受 record 至多使用一个 shared vertex arena 和一个 UBO arena。原 typed payload 上传到原生范围，不增加全帧 CPU concat。N 个 physical shared batch 时，查询 A，要求安全整数且 `4 <= A <= 256 && A % 4 === 0`。使用 `s128=ceil(128/A)*A`；V 是原 payload 字节之和，U 为 `N*s128`。范围 i 从 `i*s128` 开始，大小为 128 字节。最后 padding 也分配、计费，但只上传原始字节。没有 draw 就没有 arena；MAX_UNIFORM_BLOCK_SIZE 限制单块，不限制整个 arena。不假设 alignment 是二次幂。
 
 含有带区域绘制的 record 另外租用一个 uniform buffer 存放区域表，不属于上述两个 arena。取 `sW=ceil(16368/A)*A`，共 W 个窗口，窗口 w 从 `w*sW` 开始，buffer 大小为 `(W-1)*sW+16368` 字节，保证最后一个窗口也能整块绑定；只上传帧内各区域的行。W 最大为 13，对应 4,096 个区域。所有绘制都不带区域的 record 不租用这个 buffer。
 
 | 实际 arena 上限 | 每 record | 两个 pending record |
 | --- | ---: | ---: |
 | V | 33,554,432 B | 67,108,864 B |
-| U | 16,793,600 B | 33,587,200 B |
+| U | 16,777,216 B | 33,554,432 B |
 
 原联合 upload 与调用者更低的上限继续有效。整块 arena 在 record 的 fence/PBO/CPU 义务全部结束前保持独占。安全归还与其他 buffer/color/depth 竞争同一 32 MiB/4,096 idle-plus-reserved 预算；安全但超额的 owner 被删除。B1 至多增加 128 个 geometry buffer，每个 scene record 的 draw-related buffer 因而至多 130 个，不含页面/target/PBO/sync/固定状态。这些是账面/对象边界，不是实测速度或内存。保留每帧 64 页/16 MiB 逻辑需求、32 MiB/256 READY 页面、32 MiB 冷 CPU 峰值和 8 MiB batch scratch。
 
