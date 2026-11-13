@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "05a62d550e4987e2e39a92f30ea2945a6e25fce86796a6720c9411659e63b8c8",
-      "zhSha256": "e507c4aa8e6921ef1deb61ac8db0005b7e7720f8b245395dd8e97d14f95e20d3"
+      "enSha256": "2586cd97284d98957395b894d0ec95684fc0078fc77eb65dcda195a913b94b49",
+      "zhSha256": "de368a61ec6f12981a7bd131da604c4b8cbabdae2e1fc8a38b001f3d599741c5"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -540,8 +540,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "f2ca735be739214ac7692b40a062de8616c8a3606818e1127ff6a675e3c0e903",
-      "zhSha256": "93f37cc0756795a37a6392c603d0b153d5f102f8ab4fdb045fbdf8019c9f064d"
+      "enSha256": "e130fa9702d635a84c598128f0d0eaad6e55db9c835895b94f4efe895ad81b7c",
+      "zhSha256": "2dd9015565d0799c53c24a87f1edc2e64141b3834f669703835e14c2ef82ef69"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1016,8 +1016,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "d26e01fe9669350087fc029b02fa0ac9762270cc480a3e33dce817eee40ee7e1",
-      "zhSha256": "01cf145e849772456fc7263529642a50950748d1aa7e452a0017e6539f964c52"
+      "enSha256": "3daf0d757be8494267b47f26cb7da0015f242c5da8a4de21b15b426d11c39bc4",
+      "zhSha256": "12a2f1fa59b9a2a671090ae161b59e1fc976d54571741a0b9433b9662d2c946f"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -1928,8 +1928,8 @@
       "en": "knowledge-base/en/docs/m2-spine-content-plan.md",
       "zh": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
       "kind": "public_reading",
-      "enSha256": "7eb1c6da80bd95de475caa0d31436dc1dbe5d33f8831a2e7d05fdafd5ae51cc9",
-      "zhSha256": "516d560dd7a56bd18965a6e709a2625a1625bd95680575b0508f1158ab9ebe87"
+      "enSha256": "9768ab10c934517575d629f2c610085665f130d34ea22e9ec8fc715779fb8a90",
+      "zhSha256": "836e542b4057f497320ba62d58d9be0a942d3ec6e7189ff4e2cf35ad7e40cd4d"
     },
     {
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
@@ -2124,8 +2124,8 @@
       "en": "packages/spine/README.md",
       "zh": "packages/spine/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "d915d7cd728d0ff85a28da24cfd4ea60a056313977d9ff6876e78ef6464d5fc9",
-      "zhSha256": "296c71f1500a05e9a311f407305f240cfaafdcb821de47bf1c930141f52beadc"
+      "enSha256": "8ddd356b5125390f0758de70de65bdcec650689fe6e90b3d8e518ee3ca9b2313",
+      "zhSha256": "09ca823e480a896d5b6b71e857cf8383400b8ff413edd88d0c37cbe9a59ddb84"
     },
     {
       "en": "examples/animation-outfits/README.md",
@@ -2378,6 +2378,13 @@
       "kind": "public_reading",
       "enSha256": "ea44d5cff0ca79d13e0c5d888a755c11bfd3e6859f04a5d5cd476f36b76cb317",
       "zhSha256": "bc7004490ba5f675f3212281a0b493899be721ce94e70c7c030a2196db7fcba1"
+    },
+    {
+      "en": "knowledge-base/en/docs/spine-seek.md",
+      "zh": "knowledge-base/Cns/docs/spine-seek.md",
+      "kind": "public_reading",
+      "enSha256": "83aa4e404127ba84499d4993873d3eecb6cfeaed996ee4d7bccbc924d3c6277d",
+      "zhSha256": "3165540eaeed4dad2df9a49d00646a0b01ac37ed9af430c36bc8ca0d8621d3ea"
     }
   ],
   "registries": [
@@ -4031,7 +4038,7 @@
     },
     {
       "path": "packages/spine/src/index.ts",
-      "sha256": "92d6a947c507ded5adc780e51072de0ec9131b31e230446c90f809c75c4e962f"
+      "sha256": "67439dbcbf41f3fecf820b44aa7c51b22a7c270cf9fa19a2de5baa6f75fa56d4"
     },
     {
       "path": "packages/spine/src/jsonAdmission.ts",
@@ -4063,11 +4070,11 @@
     },
     {
       "path": "packages/spine/src/instance.ts",
-      "sha256": "3ac1eb81042517d4b531b1802c782318cfc9e2f5438762196b6f3dc2a121846c"
+      "sha256": "ad6151767c747b42ca69f4646740e8f354a53e6fe9d8f82dd2b5956037f0de99"
     },
     {
       "path": "packages/spine/src/instanceTypes.ts",
-      "sha256": "d9251c5fd3abcfe582b93a471046f1990b22ead6618ac5795e56fae593ad5aed"
+      "sha256": "9e3b8a2f1d0e855b09e33eb407595bb06c96bd75b7b8b4b53c73a668cd8074ef"
     },
     {
       "path": "packages/spine/src/renderAuthority.ts",
@@ -5016,6 +5023,10 @@
     {
       "path": "tests/ui-scroll-control.test.mjs",
       "sha256": "2774f7a5dfb8bf2396eb5830963de11713e7de14fbcba8311d1621af769287ee"
+    },
+    {
+      "path": "packages/spine/test/seek.test.mjs",
+      "sha256": "3b0bf892560c9d808eddb051e1a367d3dbb91a34f7f47a25dc740818bc387223"
     }
   ],
   "historicalSemanticReview": {
