@@ -1,29 +1,26 @@
 // SPDX-License-Identifier: Apache-2.0
-import {DisplayObjectContainer} from '@egret/engine';
+import {DisplayObjectContainer, Sprite} from '@egret/engine';
 import {createSequenceController} from '@egret/engine/animation';
-import {createMeshGeometry3D, createSceneFrame3D} from '@egret/engine/scene3d';
 import {createSpineDisplay, createSpineInstance, createSpineResetSlot} from '@egret/spine';
 import {skins} from './project.mjs';
 import {workload} from './workload.mjs';
 
 export const frameOptions = Object.freeze({width:960,height:520,clearColor:0x10192c,clearAlpha:1,outputAlpha:'opaque'});
 
-function backdrop() {
-  const identity = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
-  const quad = (left, right, bottom, top, z, color) => ({
-    geometry:createMeshGeometry3D({positions:[left,top,z,right,top,z,right,bottom,z,left,bottom,z],
-      colors:[...color,...color,...color,...color],indices:[0,1,2,0,2,3]}),
-    modelView:identity
-  });
-  return createSceneFrame3D({
-    projection:{kind:'orthographic',left:-1,right:1,bottom:-1,top:1,near:1,far:9},
-    draws:[quad(-.125,.875,-.625,.5,-3,[.1875,.3125,.5]),quad(-.25,.9375,-.75,.6875,-7,[.125,.1875,.3125])]
-  });
+/** Two flat panels behind the cast, placed in proportion to the frame. The nearer one is drawn last. */
+function backdrop(scope, width, height) {
+  const layer = scope.use(new DisplayObjectContainer());
+  for (const [left, right, bottom, top, color] of [[-.25,.9375,-.75,.6875,0x203050],[-.125,.875,-.625,.5,0x305080]]) {
+    const panel = scope.use(new Sprite());
+    panel.graphics.beginFill(color).drawRect((left+1)/2*width,(1-top)/2*height,(right-left)/2*width,(top-bottom)/2*height).endFill();
+    layer.addChild(panel);
+  }
+  return layer;
 }
 
 export function createStudioScene(engine, scope, characters, spineAssets, {sheet,clip}, profile) {
   const actors = new Map(), sequences = [];
-  const scene = backdrop();
+  engine.stage.addChildAt(backdrop(scope, profile?.width ?? frameOptions.width, profile?.height ?? frameOptions.height), 0);
   const root = profile ? scope.use(new DisplayObjectContainer()) : engine.stage;
   const camera = profile ? root.addChild(new DisplayObjectContainer()) : root;
   let map;
@@ -77,7 +74,7 @@ export function createStudioScene(engine, scope, characters, spineAssets, {sheet
   if (profile) layout(profile);
   let moved;
   return Object.freeze({
-    scene,root,layout,
+    root,layout,
     applyView(pose,selected,holds) {
       Object.assign(camera,{x:map.width/2+pose.x,y:map.height/2+pose.y,scaleX:pose.scale,scaleY:pose.scale,rotation:pose.rotation});
       if (moved && moved !== selected) actors.get(moved).target.x = actors.get(moved).x;

@@ -2,7 +2,7 @@
 import {createAnchoredAtlasSession} from './session.mjs';
 
 const query = new URL(location.href).searchParams;
-const backend = query.get('backend') === 'webgpu' ? 'webgpu' : 'canvas';
+const backend = 'canvas';
 const preset = query.get('preset') === 'verification' ? 'verification' : 'preview';
 const canvas = document.querySelector('#scene'), status = document.querySelector('#status');
 const selector = document.querySelector('#backend');
@@ -72,15 +72,14 @@ function failed(error) {
 document.querySelector("#close").addEventListener("click", () => { void close().catch(failed); });
 window.addEventListener("pagehide", () => { void close().catch(() => {}); }, {once: true});
 try {
-  const entry = backend === 'webgpu'
-    ? await import('@egret/engine/webgpu') : await import('@egret/engine/web');
+  const entry = await import('@egret/engine/web');
   if (!closeRequested) {
-  const host = backend === 'webgpu' ? entry.createWebGPUHost({canvas, enableReadback: preset === 'verification'}) : entry.createCanvasHost({canvas});
+  const host = entry.createCanvasHost({canvas});
   const edge = preset === 'verification' ? 24 : 192;
   canvas.style.width = edge + 'px';
   canvas.style.height = edge + 'px';
   renderHost = host;
-  const sessionHost = preset === 'verification' && backend === 'webgpu' ? verificationHost(host) : host;
+  const sessionHost = host;
   session = createAnchoredAtlasSession({host: sessionHost, preset});
   const operations = {
     step: () => session.step(), pause: () => session.pause(), resume: () => session.resume(),

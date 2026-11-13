@@ -310,7 +310,7 @@ jobs:
       - run: pnpm install --frozen-lockfile --ignore-scripts
       - run: pnpm build
       - name: Declared portable CPU suite
-        run: node --test tests/matrix4.test.mjs tests/display-tree.test.mjs
+        run: node --test tests/shared-batching.test.mjs tests/display-tree.test.mjs
       - run: node examples/headless.mjs
       # After a merge: name the product as built, report which evidence still holds and how far the
       # ledgers are behind. It never refuses for any of these.

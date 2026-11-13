@@ -19,7 +19,7 @@ const slow = [
   "tests/boundaries.test.mjs", "tests/project-boundaries.test.mjs", "tests/canvas-text-provider-boundaries.test.mjs", "tests/asset-group-boundaries.test.mjs",
   "tests/shared-retention-private.test.mjs", "tests/byte-reader-boundaries.test.mjs", "tests/text-field-boundaries.test.mjs", "tests/native-import-lexer.test.mjs",
   "tests/byte-writer-boundaries.test.mjs", "tests/tween-boundaries.test.mjs", "tests/shared-frame-upload-webgpu.test.mjs", "tests/project-restore.test.mjs",
-  "tests/shared-frame-upload-webgl2.test.mjs", "tests/webgpu-mesh-host.test.mjs", "tests/nine-slice-boundaries.test.mjs"
+  "tests/shared-frame-upload-webgl2.test.mjs", "tests/nine-slice-boundaries.test.mjs"
 ];
 let selected = files;
 if (shards.length === 1) {

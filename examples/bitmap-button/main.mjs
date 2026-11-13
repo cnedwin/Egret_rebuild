@@ -2,7 +2,7 @@
 import {createBitmapButtonSession} from './session.mjs';
 
 const query = new URL(location.href).searchParams;
-const backend = query.get('backend') === 'webgpu' ? 'webgpu' : 'canvas';
+const backend = 'canvas';
 const preset = query.get('preset') === 'verification' ? 'verification' : 'preview';
 const canvas = document.querySelector('#scene'), status = document.querySelector('#status');
 const selector = document.querySelector('#backend');
@@ -95,8 +95,7 @@ function operationFailed(error) {
 document.querySelector('#close').addEventListener('click', () => { void close().catch(failed); });
 window.addEventListener('pagehide', () => { void close().catch(() => {}); }, {once: true});
 try {
-  const entry = backend === 'webgpu'
-    ? await import('@egret/engine/webgpu') : await import('@egret/engine/web');
+  const entry = await import('@egret/engine/web');
   if (!closeRequested) {
     const width = preset === 'verification' ? 24 : 192;
     const height = preset === 'verification' ? 24 : 128;
@@ -105,11 +104,9 @@ try {
     // Border/padding stay zero; CSS and input use these same logical dimensions.
     canvas.style.width = width + 'px';
     canvas.style.height = height + 'px';
-    const host = backend === 'webgpu'
-      ? entry.createWebGPUHost({canvas, pixelRatio: 1, enableReadback: preset === 'verification'})
-      : entry.createCanvasHost({canvas, pixelRatio: 1});
+    const host = entry.createCanvasHost({canvas, pixelRatio: 1});
     renderHost = host;
-    const sessionHost = preset === 'verification' && backend === 'webgpu' ? verificationHost(host) : host;
+    const sessionHost = host;
     session = createBitmapButtonSession({host: sessionHost, preset, onUpdate: refresh});
     const operations = {
       enabled: () => session.toggleEnabled(),

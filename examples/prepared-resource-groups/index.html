@@ -21,8 +21,6 @@
     "@egret/engine/web/text":"../../packages/engine/dist/web/text.js",
     "@egret/engine/web/image":"../../packages/engine/dist/web/image.js",
     "@egret/engine/web/input":"../../packages/engine/dist/web/input.js",
-    "@egret/engine/scene3d":"../../packages/engine/dist/rendering/scene3d.js",
-    "@egret/engine/webgpu/scene3d":"../../packages/engine/dist/web/scene3d.js",
     "@egret/runtime":"../../packages/runtime/dist/index.js",
     "@egret/runtime/text":"../../packages/runtime/dist/text/index.js",
     "@egret/contracts":"../../packages/contracts/dist/index.js","@egret/contracts/resources":"../../packages/contracts/dist/resources/index.js",
@@ -35,10 +33,6 @@
 <body>
   <h1>Prepared outfits / <span lang="zh-CN">组合换装</span></h1>
   <p>Select a pilot and change its two-piece outfit. The other pilot keeps its outfit. Step the animation to see the next pose.<br><span lang="zh-CN">选择角色后更换两件组合服装，另一名角色保持原装。点击步进可查看下一姿势。</span></p>
-  <nav aria-label="Rendering profile / 渲染模式">
-    <a href="?profile=canvas-2d">Canvas 2D</a>
-    <a href="?profile=webgpu-scene-textured">Experimental WebGPU / 实验性 WebGPU</a>
-  </nav>
   <canvas id="scene" width="192" height="128" role="img" aria-label="Two selectable animated pilots / 两名可选择的动画角色">Canvas support required / 需要 Canvas 支持</canvas>
   <fieldset>
     <legend>Pilot controls / 角色操作</legend>

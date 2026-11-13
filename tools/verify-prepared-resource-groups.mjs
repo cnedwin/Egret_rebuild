@@ -92,7 +92,7 @@ function externalNew(target) {
 const historicalCollectorSource = {bytes:25753,sha256:'10c52ae5f7c33d1550c9231956297bb041c7a8cb67af8c19b0fdf41842bc4cd4'};
 const m13CollectorSourceSuccessor = {"bytes":25784,"sha256":"bc0ce6ccb3ae4ceed8797a4350fa9a7c4303d5e1091b2d7847837d8073abec8b"};
 // M1.5 retains the predecessor identities and selects the reviewed exact resource-entry boundary.
-const m15CollectorSourceSuccessor = {bytes:26061,sha256:'3301aeba8e07cd037f86e621a3263accd990e305a1c0ecee3c0a43c9d1adb39e'};
+const m15CollectorSourceSuccessor = {bytes:23251,sha256:'9bbf24c5f8921dad8e456527c2e7d65ef35fac3fe21b25e3497955a25bfdae1e'};
 const collector = read(repository, 'tools/resource-scene-boundary.mjs', m15CollectorSourceSuccessor);
 const { collectResourceSceneSource } = await import(pathToFileURL(path.join(repository, 'tools/resource-scene-boundary.mjs')).href);
 const collected = await collectResourceSceneSource({repository});

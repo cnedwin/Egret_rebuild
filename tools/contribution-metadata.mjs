@@ -345,7 +345,17 @@ export function planMetadata(root,{base}={}){
   }
   if(!registered.has(f)){const entry={path:f,originRole:'First-party contribution declarations; source and authorship statements are reviewed separately.'};origin.files.push(entry);registered.set(f,entry);}
  }
- const refresh=new Set([...changed,...declared,...declarationPaths]);
+ // A file that has left the tree leaves the ledgers with it: its source row, its document pair,
+ // its critical comment and its layout row. Nothing of it is read.
+ const gone=new Set(changed.filter(f=>!fs.existsSync(path.join(root,f))));
+ if(gone.size){
+  for(const f of gone){if(LEDGERS.includes(f))throw Error('A ledger cannot be removed: '+f);registered.delete(f);}
+  origin.files=origin.files.filter(row=>!gone.has(row.path));
+  loc.documents=loc.documents.filter(row=>!gone.has(row.en)&&!gone.has(row.zh));
+  if(loc.criticalComments)loc.criticalComments=loc.criticalComments.filter(row=>!gone.has(row.path));
+  layout.documents=layout.documents.filter(row=>!gone.has(row.newEn)&&!gone.has(row.newZh));
+ }
+ const refresh=new Set([...changed,...declared,...declarationPaths].filter(f=>!gone.has(f)));
  for(const f of refresh){
   if(LEDGERS.includes(f))continue;
   if(preserved(f)&&!frozen.has(f))throw Error('Changed preserved input requires a separate reviewed process: '+f);

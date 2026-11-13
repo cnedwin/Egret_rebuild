@@ -22,9 +22,9 @@ button:disabled{opacity:.5}
 <h1>Anchored atlas playground<br><span lang="zh-CN">锚点图集动画示例</span></h1>
 <p>Step through two original atlas frames. Pause the animation, then replay its saved first frame.<br>
 <span lang="zh-CN">逐步播放两帧原创图集动画；暂停动画后，可以重放保存的首帧。</span></p>
-<label>Renderer / 渲染器 <select id="backend"><option value="canvas">Canvas</option><option value="webgpu">WebGPU</option></select></label>
-<p class="note">Changing the renderer starts a fresh session. WebGPU must be available in your browser.<br>
-<span lang="zh-CN">切换渲染器将启动新会话。使用 WebGPU 需要浏览器支持。</span></p>
+<label>Renderer / 渲染器 <select id="backend"><option value="canvas">Canvas</option></select></label>
+<p class="note">Changing the renderer starts a fresh session.<br>
+<span lang="zh-CN">切换渲染器将启动新会话。</span></p>
 <canvas id="scene" width="192" height="192" aria-label="Red or blue atlas frame / 红色或蓝色图集帧"></canvas>
 <div class="controls" aria-label="Animation controls / 动画控制">
 <button id="step" disabled>Step 0.125 s / 前进</button>

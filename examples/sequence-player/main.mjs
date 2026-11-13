@@ -1,7 +1,7 @@
 import {createEngine,createImageData2D,createTexture,createAssetType,createAssetRef,isTexture,Bitmap,createSequenceClip,SequencePlayer} from '@egret/engine';
 
 const query=new URL(location.href).searchParams;
-const backend=query.get('backend')==='webgpu'?'webgpu':'canvas';
+const backend='canvas';
 const mode=query.get('mode')==='loop'?'loop':'once';
 const status=document.querySelector('#status'),canvas=document.querySelector('#scene');
 document.querySelector('#backend').value=backend;document.querySelector('#mode').value=mode;
@@ -26,8 +26,8 @@ async function close(){
   show('Closed / 已关闭');
 }
 try{
-  const entry=backend==='webgpu'?await import('@egret/engine/webgpu'):await import('@egret/engine/web');
-  renderHost=backend==='webgpu'?entry.createWebGPUHost({canvas}):entry.createCanvasHost({canvas});
+  const entry=await import('@egret/engine/web');
+  renderHost=entry.createCanvasHost({canvas});
   engine=await createEngine({host:renderHost});
   const pixels=new Uint8Array([
     255,0,0,255,255,0,0,255,0,255,0,255,0,0,255,255,0,0,255,255,0,0,255,255,
