@@ -103,11 +103,34 @@ await scenario('the wheel scrolls the list first and the page after', { viewport
   assert.ok(await page.evaluate(() => scrollY) < scrolled);
 });
 
+await scenario('the scrollbar thumb drags the list', { viewport: { width: 1000, height: 800 } }, async page => {
+  let now = await read(page);
+  // The thumb is as long as the share of the list that shows, on a track as long as the viewport.
+  const travel = 140 - now.thumb.length, ratio = now.limit / travel;
+  assert.ok(Math.abs(now.thumb.length - 140 * 140 / 336) < 1e-9); assert.equal(now.thumb.start, 0); assert.equal(now.dragging, false);
+  await page.mouse.move(...await at(page, [450, 130])); await page.waitForTimeout(30);
+  assert.equal((await read(page)).hovering, 'scrollbar');
+  await page.mouse.down(); await page.waitForTimeout(30); now = await read(page);
+  assert.equal(now.dragging, true); assert.equal(now.contacts, 1); assert.deepEqual(now.hovers, []);
+  await page.mouse.move(...await at(page, [450, 150])); await page.waitForTimeout(30); now = await read(page);
+  assert.ok(Math.abs(now.offset - 20 * ratio) < 1.5, 'offset ' + now.offset); assert.ok(Math.abs(now.thumb.start - now.offset / ratio) < 1e-9);
+  // The pointer may leave the bar sideways: the contact still belongs to the thumb, and the list stops at its end.
+  await page.mouse.move(...await at(page, [300, 295])); await page.waitForTimeout(30); now = await read(page);
+  assert.equal(now.offset, now.limit); assert.ok(Math.abs(now.thumb.start - travel) < 1e-9); assert.equal(now.dragging, true);
+  await page.mouse.up(); await page.waitForTimeout(30); now = await read(page);
+  assert.equal(now.dragging, false); assert.equal(now.offset, 196); assert.equal(now.contacts, 0);
+  // The wheel and the thumb move one offset.
+  await move(page, 'row1'); await page.mouse.wheel(0, -28); await page.waitForTimeout(80); now = await read(page);
+  assert.equal(now.offset, 168); assert.ok(Math.abs(now.thumb.start - 168 / ratio) < 1e-9);
+});
+
 await scenario('a narrower window scales the canvas and the mapping with it', { viewport: { width: 1000, height: 800 } }, async page => {
   await move(page, 'north');
   await page.setViewportSize({ width: 420, height: 800 }); await page.waitForTimeout(150);
   let now = await read(page);
-  assert.equal(now.lastLeave, 'viewport'); assert.ok(now.viewportRevision >= 1);
+  // The text above the canvas wraps anew, so the canvas may also slide out from under the resting pointer:
+  // either way the hover ended and the mapping is new.
+  assert.ok(['viewport', 'outside'].includes(now.lastLeave), now.lastLeave); assert.deepEqual(hoveredButtons(now), []); assert.ok(now.viewportRevision >= 1);
   assert.ok(await page.evaluate(() => document.querySelector('#scene').getBoundingClientRect().width) < 480);
   await move(page, 'south'); now = await read(page);
   assert.deepEqual(hoveredButtons(now), ['south']); assert.deepEqual(now.hovers, [{ pointerType: 'mouse', x: 380, y: 64, target: 'south' }]);

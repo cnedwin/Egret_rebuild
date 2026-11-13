@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0
-// Three buttons that light up under a mouse or a pen, and a list the wheel scrolls. Hover and wheel
-// come from `@egret/engine/web/hover`; presses come from `@egret/engine/web/pointer`. Both adapters
-// listen on the same canvas.
+// Three buttons that light up under a mouse or a pen, and a list the wheel and a scrollbar scroll.
+// Hover and wheel come from `@egret/engine/web/hover`; presses come from `@egret/engine/web/pointer`.
+// Both adapters listen on the same canvas. The scroll position is a `createScrollControl`.
 import { createEngineForProfile, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
+import { createScrollControl } from '@egret/engine/ui';
 import { createBrowserHoverInput } from '@egret/engine/web/hover';
 import { createBrowserPointerInput } from '@egret/engine/web/pointer';
 import { createExampleHost } from '../host.mjs';
 
 const WIDTH = 480, HEIGHT = 300, ROW = 28, ROWS = 12, VIEW = { x: 40, y: 120, width: 400, height: 140 };
-const COLORS = { idle: 0x3d4a63, hover: 0x6f8fd6, pressed: 0x2a3550, rowA: 0x2b2f3a, rowB: 0x343a48, rowHover: 0x57658a };
+const COLORS = { idle: 0x3d4a63, hover: 0x6f8fd6, pressed: 0x2a3550, rowA: 0x2b2f3a, rowB: 0x343a48, rowHover: 0x57658a, track: 0x20242e, thumb: 0x6b7896, thumbHeld: 0x9aa7c4 };
 const canvas = document.querySelector('#scene'), status = document.querySelector('#status'), state = document.querySelector('#state');
 const engine = await createEngineForProfile({ host: await createExampleHost({ canvas, pixelRatio: 1.5 }) }, SHARED_FRAME_PROFILE_2D);
 const scope = engine.createScope();
@@ -38,9 +39,13 @@ const rows = Array.from({ length: ROWS }, (_, index) => {
   for (let pip = 0; pip <= index; pip++) pips.graphics.beginFill(0x9aa7c4).drawRect(8 + pip * 10, 10, 6, 6).endFill();
   return { ...row, index };
 });
-const limit = ROWS * ROW - VIEW.height;
-let offset = 0, hovering = 'nothing', wheels = 0, consumed = 0, entered = 0, left = 0, lastLeave;
-const named = new Map([...buttons, ...rows, viewport].map(item => [item.sprite, item]));
+// The scrollbar: a track beside the list and a thumb that one contact drags along it.
+const track = root.addChild(scope.use(new Sprite()));
+track.x = VIEW.x + VIEW.width + 6; track.y = VIEW.y; track.graphics.beginFill(COLORS.track).drawRect(0, 0, 8, VIEW.height).endFill();
+const thumb = root.addChild(scope.use(new Sprite()));
+thumb.x = track.x; thumb.touchEnabled = true;
+let hovering = 'nothing', wheels = 0, consumed = 0, entered = 0, left = 0, lastLeave;
+const named = new Map([...buttons, ...rows, viewport, { name: 'scrollbar', sprite: thumb }].map(item => [item.sprite, item]));
 
 function paintButton(button) { button.paint(button.pressed ? COLORS.pressed : button.hovered ? COLORS.hover : COLORS.idle); }
 function show() {
@@ -65,18 +70,26 @@ for (const button of buttons) {
   button.sprite.on(hover.events.enter, () => { button.hovered = true; paintButton(button); });
   button.sprite.on(hover.events.leave, () => { button.hovered = false; paintButton(button); });
 }
-// The viewport hears the wheel of its rows as it bubbles. It takes the wheel only while the list can still move that way.
-viewport.sprite.on(hover.events.wheel, event => {
-  const { deltaY, unit } = event.payload, step = unit === 'pixel' ? deltaY : unit === 'line' ? deltaY * ROW : deltaY * VIEW.height;
-  const next = Math.max(0, Math.min(limit, offset + step));
-  if (next === offset) return;
-  offset = next; content.y = -offset;
-  event.preventDefault();
-  // The rows moved under a pointer that did not: pick again where it rests.
-  queueMicrotask(() => { hover.sync(); show(); });
-});
-
 const press = createBrowserPointerInput({ engine, scope, width: WIDTH, height: HEIGHT });
+// The control hears the wheel of the rows as it bubbles to the viewport, and takes it only while the list can still
+// move that way. It also turns a drag of the thumb into an offset.
+const scroll = createScrollControl({
+  viewportLength: VIEW.height, contentLength: ROWS * ROW,
+  wheel: { hover, target: viewport.sprite, lineLength: ROW },
+  thumb: { input: press, target: thumb, trackLength: VIEW.height },
+  onScroll(offset) {
+    content.y = -offset; placeThumb();
+    // The rows moved under a pointer that did not: pick again where it rests.
+    queueMicrotask(() => { hover.sync(); show(); });
+  },
+  onDragChange() { placeThumb(); show(); },
+});
+function placeThumb() {
+  const { start, length } = scroll.thumb;
+  thumb.y = VIEW.y + start; thumb.hitArea = { x: 0, y: 0, width: 8, height: length };
+  thumb.graphics.clear(); thumb.graphics.beginFill(scroll.dragging ? COLORS.thumbHeld : COLORS.thumb).drawRect(0, 0, 8, length).endFill();
+}
+placeThumb();
 for (const button of buttons) {
   button.sprite.on(press.events.begin, () => { button.pressed = true; paintButton(button); show(); });
   button.sprite.on(press.events.end, () => { if (button.pressed) button.presses++; button.pressed = false; paintButton(button); show(); });
@@ -91,7 +104,7 @@ canvas.addEventListener('wheel', () => queueMicrotask(show), { passive: true });
 /** What a check reads: plain values only. */
 export function readSnapshot() {
   return {
-    state: hover.state, hovering, entered, left, lastLeave, wheels, consumed, offset, limit, renders, failure,
+    state: hover.state, hovering, entered, left, lastLeave, wheels, consumed, offset: scroll.offset, limit: scroll.maximum, dragging: scroll.dragging, thumb: scroll.thumb, renders, failure,
     hovers: hover.hovers.map(({ point, target }) => ({ pointerType: point.pointerType, x: Math.round(point.globalX), y: Math.round(point.globalY), target: named.get(target)?.name })),
     buttons: Object.fromEntries(buttons.map(button => [button.name, { hovered: button.hovered, pressed: button.pressed, presses: button.presses }])),
     contacts: press.contacts.length, viewportRevision: hover.viewportRevision,
