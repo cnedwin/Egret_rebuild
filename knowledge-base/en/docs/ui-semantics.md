@@ -98,6 +98,24 @@ semantics.publish(rows.sync());
 
 `dispose()` removes the list node and every row. The helper adds no listener and changes nothing in the root except the focus a row is asked to take. A root of the application's own is read the same way if it has `id`, `snapshot()` and `list(id)` in the shape of `SemanticListSource`.
 
+### Boxes and layers of the managed UI
+
+`semanticBoxOf(root, id)` is the rectangle on the stage of a box the root laid out: a leaf, a row, a column or a list, by its id in the tree of the root. It is read from the last commit when it is called, so call it from `describe`. A box the root has not laid out has no size.
+
+A popup or a modal of the [layer manager](ui-layers.md) is a node of the application's own. It reads the layer: hidden while the layer is closed, and modal when the layer is.
+
+```js
+import { semanticBoxOf } from '@egret/engine/ui/semantics';
+
+const layer = () => layers.snapshot().layers.find(found => found.id === 'details');
+semantics.add({ id: 'details', role: 'dialog',
+  describe: () => ({ name: 'Details', modal: true, hidden: !layer().visible, bounds: semanticBoxOf(card, 'card') }) });
+semantics.add({ id: 'details/close', role: 'button', parent: 'details', onActivate: close,
+  describe: () => ({ name: 'Close', bounds: semanticBoxOf(card, 'close'), focused: keyboard.getSnapshot().focusedId === 'details-close' }) });
+```
+
+Nothing more is needed for the rest. The layer manager moves the root when it places the layer, so the box follows. It moves the focus into the layer and back, and the nodes read the focus. While a modal dialog is published the tree makes [everything outside it inert](#modal-dialogs), which is what the manager's barrier does to a press. Publish after `layers.sync()`.
+
 ### Focus
 
 `focused: true` marks the node that holds the keyboard focus of the application. One node may hold it. A second is refused with `UI_SEMANTICS_FOCUS`.
@@ -162,19 +180,20 @@ The projection adds no key handling. Keys arrive through the [keyboard input](ke
 | The projection against a stand-in for the page: 13 cases | Node | Pass |
 | A strict TypeScript consumer of both entries, with nine refused misuses | Node | Pass |
 | The example page: the computed accessibility tree, the active descendant under Tab and the arrow keys, each element over its control, requests made of the elements, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 4 scenarios beside the 7 of the controls |
-| The rows of a managed list: 12 cases on a genuine Engine and a genuine UI root, with a strict TypeScript consumer and six refused misuses | Node | Pass |
+| The rows of a managed list, the boxes of a root and a layer as a dialog: 14 cases on a genuine Engine, a genuine UI root and a genuine layer manager, with a strict TypeScript consumer and seven refused misuses | Node | Pass |
 | [The list example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics): the list box the browser computes for 8 of 50,000 rows, the active descendant through recycled rows, a jump to row 40,000, a scroll away from the focus, requests made of the options, a scaled and scrolled page, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
+| The same example with a modal layer of the layer manager: the dialog and its buttons over the card, the list behind it absent from the tree the browser computes, Tab kept inside, a press beside the card reaching nothing, Escape, and the focus back on its row | Headless Chromium 153, software WebGL2, injected input | Pass, 2 scenarios |
 
 Not run: a screen reader, voice control, switch access or any other assistive technology; a person; Edge as installed; Firefox; Safari; a real phone, where exploration by touch depends on the platform's accessibility service; hardware GPUs and WebGPU. A passing accessibility tree is not proof that the UI is usable with a screen reader.
 
 Run a page check with `node examples/ui-controls/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> software`, or the same with `examples/ui-list-semantics/verify.mjs`. Without `software` it launches the installed Edge headed.
 
-Operator faults were written into the built list helper one at a time: 61, and the cases caught all of them.
+Operator faults were written into the built list helper one at a time: 67, and the cases caught all of them.
 
 ## Not in this slice
 
 - Roles beyond the first control set: menus, tabs, sliders, trees, grids, headings and live regions.
 - Descriptions, error text and labelling one node by another.
-- Wiring to the layer manager and to the leaves of the managed UI outside a virtual list. The application adds and removes those nodes. The rows of a virtual list have [a helper](#a-managed-virtual-list).
+- Nodes for the leaves and the layers of the managed UI are the application's own, measured with [`semanticBoxOf`](#boxes-and-layers-of-the-managed-ui). The rows of a virtual list have [a helper](#a-managed-virtual-list).
 - A list with several selected rows, and rows in a grid.
 - A projection of the native editor itself. The editor is its own element.

@@ -98,6 +98,24 @@ semantics.publish(rows.sync());
 
 `dispose()` 移除列表节点和所有行。这个辅助对象不添加监听器，除了某一行被请求获得的焦点之外，不改变根里的任何东西。应用自己的根只要具有 `SemanticListSource` 形状的 `id`、`snapshot()` 和 `list(id)`，也可以用同样的方式读取。
 
+### 托管 UI 的盒与层
+
+`semanticBoxOf(root, id)` 给出根所布局的某个盒在舞台上的矩形：叶子、行、列或列表，用它在根的树中的 id 指定。它在被调用时读取最近一次提交，所以应在 `describe` 里调用。根尚未布局的盒没有大小。
+
+[层管理器](ui-layers.md)的弹出层或模态层是应用自己的一个节点。它读取该层：层关闭时隐藏，层为模态时节点也是模态。
+
+```js
+import { semanticBoxOf } from '@egret/engine/ui/semantics';
+
+const layer = () => layers.snapshot().layers.find(found => found.id === 'details');
+semantics.add({ id: 'details', role: 'dialog',
+  describe: () => ({ name: 'Details', modal: true, hidden: !layer().visible, bounds: semanticBoxOf(card, 'card') }) });
+semantics.add({ id: 'details/close', role: 'button', parent: 'details', onActivate: close,
+  describe: () => ({ name: 'Close', bounds: semanticBoxOf(card, 'close'), focused: keyboard.getSnapshot().focusedId === 'details-close' }) });
+```
+
+其余部分不需要额外处理。层管理器在放置层时移动它的根，所以盒随之移动。它把焦点移入该层再移回，节点读取的就是这个焦点。发布了模态对话框时，语义树让[它之外的一切变为 inert](#模态对话框)，这与管理器的屏障对按下所做的一致。应在 `layers.sync()` 之后发布。
+
 ### 焦点
 
 `focused: true` 标记持有应用键盘焦点的节点。只能有一个节点持有焦点，出现第二个时以 `UI_SEMANTICS_FOCUS` 拒绝。
@@ -162,19 +180,20 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 | 投射对照测试自备的页面替身：13 项 | Node | 通过 |
 | 两个入口的严格 TypeScript 使用方，含九种被拒绝的误用 | Node | 通过 |
 | 示例页面：浏览器计算出的无障碍树、Tab 和方向键下的活动后代、每个元素与其控件重合、对元素发出的请求、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，在控件的 7 个场景之外另有 4 个 |
-| 托管列表的行：真实 Engine 和真实 UI 根上的 12 项，另有严格 TypeScript 使用方和六种被拒绝的误用 | Node | 通过 |
+| 托管列表的行、根的盒，以及作为对话框的层：真实 Engine、真实 UI 根和真实层管理器上的 14 项，另有严格 TypeScript 使用方和七种被拒绝的误用 | Node | 通过 |
 | [列表示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics)：浏览器为 50,000 行中的 8 行计算出的列表框、穿过被回收行时的活动后代、跳到第 40,000 行、从焦点处滚走、对选项发出的请求、缩放并滚动后的页面、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
+| 同一示例加上层管理器的模态层：对话框及其按钮与卡片重合、浏览器计算出的树中不含它后面的列表、Tab 留在对话框内、按下卡片旁边不触达任何对象、Escape，以及焦点回到原来的行 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，2 个场景 |
 
 未运行：读屏软件、语音控制、开关控制或任何其他辅助技术；真人操作；已安装的 Edge；Firefox；Safari；真实手机（触摸探索取决于平台的无障碍服务）；硬件 GPU 和 WebGPU。无障碍树通过检查，并不证明界面在读屏软件下可用。
 
 页面检查的运行方式：`node examples/ui-controls/verify.mjs <Playwright index.mjs 的绝对路径> <新的绝对输出目录> software`，`examples/ui-list-semantics/verify.mjs` 的用法相同。不带 `software` 时启动已安装的 Edge（有界面）。
 
-向列表辅助对象的构建产物逐个写入了 61 个运算符错误，这些用例全部发现。
+向列表辅助对象的构建产物逐个写入了 67 个运算符错误，这些用例全部发现。
 
 ## 本次未包含
 
 - 首批控件集合之外的角色：菜单、标签页、滑块、树、表格、标题和实时区域。
 - 描述文字、错误文字，以及用一个节点为另一个节点命名。
-- 与层管理器的接线，以及托管 UI 中虚拟列表之外的叶子节点。这些节点由应用添加和移除。虚拟列表的行有[辅助对象](#托管虚拟列表)。
+- 托管 UI 的叶子和层对应的节点由应用自己添加，用 [`semanticBoxOf`](#托管-ui-的盒与层) 度量。虚拟列表的行有[辅助对象](#托管虚拟列表)。
 - 可多选的列表，以及按网格排列的行。
 - 原生编辑器自身的投射。编辑器本身就是一个元素。

@@ -5307,7 +5307,7 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
 // other entry has either.
 const semanticTypes=['SemanticAction','SemanticBounds','SemanticChecked','SemanticDescription','SemanticNode','SemanticNodeOptions','SemanticOrientation','SemanticPosition','SemanticRange','SemanticRole','SemanticSnapshot','SemanticSnapshotNode','SemanticsState','UiSemantics','UiSemanticsOptions','SemanticListRow','SemanticListSource','UiListSemantics','UiListSemanticsOptions'];
 const semanticBrowserTypes=['BrowserSemantics','BrowserSemanticsOptions'];
-const semanticValues=['createUiSemantics','semanticBoundsOf','createUiListSemantics'];
+const semanticValues=['createUiSemantics','semanticBoundsOf','createUiListSemantics','semanticBoxOf'];
 for(const [file,values,types] of [['packages/engine/src/semantics.ts',semanticValues,semanticTypes],['packages/engine/dist/semantics.js',semanticValues,[]],['packages/engine/dist/semantics.d.ts',semanticValues,semanticTypes],
  ['packages/engine/web/semantics.ts',['createBrowserSemantics'],semanticBrowserTypes],['packages/engine/dist/web/semantics.js',['createBrowserSemantics'],[]],['packages/engine/dist/web/semantics.d.ts',['createBrowserSemantics'],semanticBrowserTypes]]){
  const surface=mouseExports(uiRead(file),file);

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
-// A strict consumer of the list semantics: the root of the UI entry is its source as it is, and six things it may not write.
-import {createUiListSemantics,createUiSemantics} from '@egret/engine/ui/semantics';
-import type {SemanticListRow,SemanticListSource,UiListSemantics,UiListSemanticsOptions} from '@egret/engine/ui/semantics';
+// A strict consumer of the list semantics: the root of the UI entry is its source as it is, and seven things it may not write.
+import {createUiListSemantics,createUiSemantics,semanticBoxOf} from '@egret/engine/ui/semantics';
+import type {SemanticBounds,SemanticListRow,SemanticListSource,UiListSemantics,UiListSemanticsOptions} from '@egret/engine/ui/semantics';
 import type {UiRoot} from '@egret/engine/ui';
 declare const root:UiRoot;
 const semantics=createUiSemantics();
@@ -15,6 +15,10 @@ const id:string=rows.id,row:string=rows.rowId('k1');void id;void row;
 semantics.publish(rows.sync());
 rows.dispose();
 createUiListSemantics({semantics,root,list:'players'}).dispose();
+// A box of the root is measured for a node of the application's own.
+const title:SemanticBounds=semanticBoxOf(root,'title');void title;
+// @ts-expect-error a box is named by its id
+semanticBoxOf(root);
 // @ts-expect-error a list is named by its id in the tree of the root
 createUiListSemantics({semantics,root});
 // @ts-expect-error a root is read through its snapshot and its lists
