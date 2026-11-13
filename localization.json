@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "5abd46a84bb8a76b4ee64b9f257bb665e2395dd017563796c50bd6c49ccb98bd",
-      "zhSha256": "cfb00711b24e635812baeaea67787470c08253f69fa48a5ce10daf7c9e43060c"
+      "enSha256": "418dfa857d761d2700b19da9ab8a354fffd923f45ef0bd30e6bca9c313ffd52a",
+      "zhSha256": "73ef02beb5c807edb9944939a4069248cfc736017451e0383ee7e049189cbfc4"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -540,8 +540,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "82f3b912351460ddabf6c17ddf90beb40ed070c767942469339c1fe3b27e71a7",
-      "zhSha256": "ffc49c73e1b9f27de40fea0c21d0052dc5e35fc314277dada6b4743673fb73e8"
+      "enSha256": "9f596ab7e1ab7166a3cbe3a51271d5394ad7bb71f54755bdf148ce84befa331c",
+      "zhSha256": "c28502010a8212c36618ff03b0228246d7f44db70888171500585748060255ce"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -603,8 +603,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "982bcb6984855749d67d8a6e4fbe5630d32e34b045b24fb6bf59c1d67b7b043e",
-      "zhSha256": "36846c3467b49bff4072b7639d7ce192963afbab30c3f4a09e4463ea2623f99b"
+      "enSha256": "f52045668c1bbabf908077954c4fbf2dc39ad456201e9d883f2f6b8f34557b01",
+      "zhSha256": "a323abb6cc8154c6dd46e3b2bfd556ad450dc69fd242977a0b1c22fef269d38b"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -2173,8 +2173,8 @@
       "en": "knowledge-base/en/docs/spine-reset-slot.md",
       "zh": "knowledge-base/Cns/docs/spine-reset-slot.md",
       "kind": "public_reading",
-      "enSha256": "efee1c7d06038a98a705f4402b45b313cd728945e23f81437f4ad2f0cf8d37ed",
-      "zhSha256": "7c30cb80abab13a656e0d833088c8f5838f1822cb698eeb7e88acc3743d1f776"
+      "enSha256": "07b7882dd358f078c05de156863454813b9f391c9ac79f87d88c85611280baab",
+      "zhSha256": "0a46d0657b69f2a399ba75a5e07442c0253d00a40109b8d3f7cc83035352d889"
     },
     {
       "en": "examples/spine-reset/README.md",
@@ -4084,7 +4084,7 @@
     },
     {
       "path": "packages/spine/src/instance.ts",
-      "sha256": "ad6151767c747b42ca69f4646740e8f354a53e6fe9d8f82dd2b5956037f0de99"
+      "sha256": "eadacccf191c39b67acb9b398e82ac1d34b1790cd0f961413d6823abe66b96fb"
     },
     {
       "path": "packages/spine/src/instanceTypes.ts",
@@ -4092,7 +4092,7 @@
     },
     {
       "path": "packages/spine/src/renderAuthority.ts",
-      "sha256": "ab73a776252a4b3d77fc490735b3c5d31f1f0bf9294aa3931a8de4183a0f1517"
+      "sha256": "8fe6e9c3d8fd7e4ea995f1485bb96cc444c98b60f01b1eb83b2cb1b47ba0b165"
     },
     {
       "path": "packages/spine/src/displayTypes.ts",
@@ -4972,7 +4972,7 @@
     },
     {
       "path": "packages/spine/test/preserve.test.mjs",
-      "sha256": "80fbb904eced63326214856411ce22ab04028ad8233e217c254cb0e32a38a772"
+      "sha256": "ba68e04fb4de730a2fc3e53dd9fd265e07f81b8a8250a085410948933a122230"
     },
     {
       "path": "examples/spine-reset/verify-preserve.mjs",

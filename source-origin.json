@@ -582,8 +582,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 39758,
-      "sha256": "cfb00711b24e635812baeaea67787470c08253f69fa48a5ce10daf7c9e43060c",
+      "bytes": 40495,
+      "sha256": "73ef02beb5c807edb9944939a4069248cfc736017451e0383ee7e049189cbfc4",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -786,8 +786,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 25260,
-      "sha256": "ffc49c73e1b9f27de40fea0c21d0052dc5e35fc314277dada6b4743673fb73e8",
+      "bytes": 25266,
+      "sha256": "c28502010a8212c36618ff03b0228246d7f44db70888171500585748060255ce",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -1044,8 +1044,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/工程规划.md",
-      "bytes": 14098,
-      "sha256": "36846c3467b49bff4072b7639d7ce192963afbab30c3f4a09e4463ea2623f99b",
+      "bytes": 14092,
+      "sha256": "a323abb6cc8154c6dd46e3b2bfd556ad450dc69fd242977a0b1c22fef269d38b",
       "identityHistory": [
         {
           "bytes": 23962,
@@ -2072,7 +2072,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 137800,
-      "sha256": "40808adad4cb7769f4001eb245836e0c2db1a6e020e24a84885abc2c18a089bd",
+      "sha256": "1d1b5a2b361883b707948cd2289400a969ff34049f07549dde6ba9e61aee2982",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2113,8 +2113,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 44500,
-      "sha256": "5abd46a84bb8a76b4ee64b9f257bb665e2395dd017563796c50bd6c49ccb98bd",
+      "bytes": 45265,
+      "sha256": "418dfa857d761d2700b19da9ab8a354fffd923f45ef0bd30e6bca9c313ffd52a",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2506,8 +2506,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 28238,
-      "sha256": "82f3b912351460ddabf6c17ddf90beb40ed070c767942469339c1fe3b27e71a7",
+      "bytes": 28246,
+      "sha256": "9f596ab7e1ab7166a3cbe3a51271d5394ad7bb71f54755bdf148ce84befa331c",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -2644,8 +2644,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-plan.md",
-      "bytes": 16735,
-      "sha256": "982bcb6984855749d67d8a6e4fbe5630d32e34b045b24fb6bf59c1d67b7b043e",
+      "bytes": 16741,
+      "sha256": "f52045668c1bbabf908077954c4fbf2dc39ad456201e9d883f2f6b8f34557b01",
       "identityHistory": [
         {
           "bytes": 29962,
@@ -3746,7 +3746,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "2b2c5206c1d4b234d67bef9374d6619ced1757419f613b400bc55bf060a96667",
+      "sha256": "8bd28d43765154e10ceb6add0429be4d9be8959c7e4efe0f2cbb998c7acbdd9b",
       "bytes": 403467,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -13275,8 +13275,8 @@
     {
       "path": "packages/spine/src/instance.ts",
       "originRole": "Independently authored Egret Spine playback adapter, bounded ownership/time publication or original numerical tests; AI-assisted; Apache-2.0. Official Core4.3.13 remains a separately licensed dependency.",
-      "bytes": 37050,
-      "sha256": "ad6151767c747b42ca69f4646740e8f354a53e6fe9d8f82dd2b5956037f0de99"
+      "bytes": 38684,
+      "sha256": "eadacccf191c39b67acb9b398e82ac1d34b1790cd0f961413d6823abe66b96fb"
     },
     {
       "path": "packages/spine/src/instanceTypes.ts",
@@ -13299,8 +13299,8 @@
     {
       "path": "packages/spine/src/renderAuthority.ts",
       "originRole": "Independently authored optional Egret shared-rendering bridge, public behavior and original numerical/pixel references; AI-assisted; Apache-2.0. Pinned official Core remains a separately licensed dependency, with no vendor rendering source transplanted.",
-      "bytes": 2693,
-      "sha256": "ab73a776252a4b3d77fc490735b3c5d31f1f0bf9294aa3931a8de4183a0f1517"
+      "bytes": 3227,
+      "sha256": "8fe6e9c3d8fd7e4ea995f1485bb96cc444c98b60f01b1eb83b2cb1b47ba0b165"
     },
     {
       "path": "packages/spine/src/displayTypes.ts",
@@ -13665,14 +13665,14 @@
     {
       "path": "knowledge-base/en/docs/spine-reset-slot.md",
       "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained.",
-      "bytes": 14379,
-      "sha256": "efee1c7d06038a98a705f4402b45b313cd728945e23f81437f4ad2f0cf8d37ed"
+      "bytes": 15277,
+      "sha256": "07b7882dd358f078c05de156863454813b9f391c9ac79f87d88c85611280baab"
     },
     {
       "path": "knowledge-base/Cns/docs/spine-reset-slot.md",
       "originRole": "First-party CPU-only Spine asset RESET slot, original two-version geometric fixtures, verification and bilingual documentation; independently authored with AI assistance under Apache-2.0; existing Core 4.3.13 separate license retained.",
-      "bytes": 12542,
-      "sha256": "7c30cb80abab13a656e0d833088c8f5838f1822cb698eeb7e88acc3743d1f776"
+      "bytes": 13485,
+      "sha256": "0a46d0657b69f2a399ba75a5e07442c0253d00a40109b8d3f7cc83035352d889"
     },
     {
       "path": "examples/spine-reset/author.mjs",
@@ -16575,8 +16575,8 @@
     {
       "path": "packages/spine/test/preserve.test.mjs",
       "originRole": "First-party behaviour tests of Spine replacement that keeps playback, against the player it replaces; original programmatic fixtures; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 20920,
-      "sha256": "80fbb904eced63326214856411ce22ab04028ad8233e217c254cb0e32a38a772"
+      "bytes": 27187,
+      "sha256": "ba68e04fb4de730a2fc3e53dd9fd265e07f81b8a8250a085410948933a122230"
     },
     {
       "path": "examples/spine-reset/verify-preserve.mjs",
