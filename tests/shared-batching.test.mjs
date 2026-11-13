@@ -6,7 +6,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { prepareSharedDraws2D } from '../packages/engine/dist/rendering/prepareSharedDraws2D.js';
-import { packSharedDraws2D, packSharedRegions2D, SHARED_REGION_WINDOW_2D, SHARED_REGION_WINDOW_BYTES_2D, SHARED_VERTEX_BYTES_2D } from '../packages/engine/dist/rendering/packSharedDraws2D.js';
+import { packSharedDraws2D, packSharedRegions2D, SHARED_BATCH_PAGES_2D, SHARED_NO_PAGE_2D, SHARED_REGION_WINDOW_2D, SHARED_REGION_WINDOW_BYTES_2D, SHARED_VERTEX_BYTES_2D } from '../packages/engine/dist/rendering/packSharedDraws2D.js';
 import { prepareSharedBatches2D } from '../packages/engine/dist/rendering/preparedSharedBatches2D.js';
 import { PreparedBatchScratch2D } from '../packages/engine/dist/rendering/preparedBatches2D.js';
 
@@ -17,7 +17,9 @@ let stages = 0;
 async function stage(views, body) {
   const engine = await egret.createEngine({ host: { surface: {}, start() {}, stop() {}, async close() {}, setTimeout() { return () => {}; } } }), scope = engine.createScope();
   const images = new Map(), textures = new Map();
-  const image = page => { let made = images.get(page); if (!made) { made = egret.createImageData2D({ width: 64, height: 64, pixels: new Uint8Array(64 * 64 * 4).fill(200) }); images.set(page, made); } return made; };
+  // Page 'a' is 64 by 64. Every other page has a size of its own, so that a block that named a page's size would differ.
+  const image = page => { let made = images.get(page); if (!made) { const width = page === 'a' ? 64 : 64 + 8 * images.size, height = page === 'a' ? 64 : 32;
+    made = egret.createImageData2D({ width, height, pixels: new Uint8Array(width * height * 4).fill(200) }); images.set(page, made); } return made; };
   for (const [name, { page = 'a', ...descriptor }] of Object.entries(views)) textures.set(name, egret.createTextureView(image(page), descriptor));
   const type = egret.createAssetType('shared-batching-' + ++stages, egret.isTexture);
   engine.assets.register(type, { async load(ref) { return textures.get(ref.id); }, dispose(value) { value.dispose(); } });
@@ -67,10 +69,15 @@ test('BATCH B01 draws of different regions and opacities of one page are one bat
     assert.deepEqual(column(draw, 7), Array(6).fill(1));
     // The block names neither region nor opacity, so the six blocks are the same bytes.
     assert.deepEqual(Array.from(draw.uniform), Array.from(packed[0].uniform));
+    assert.deepEqual(draw.pages, [0]);
   });
   assert.deepEqual(Array.from(floats(batch).subarray(0, 4)), [256, 256, 0, 0]);
-  assert.deepEqual(Array.from(words(batch).subarray(12, 23)), Array(11).fill(0));
-  assert.deepEqual(Array.from(words(batch).subarray(28, 31)), [64, 64, 1]);
+  // The first unit holds the frame's one page. The block names no region and no page size.
+  assert.deepEqual(Array.from(words(batch).subarray(12, 20)), [0, ...Array(7).fill(SHARED_NO_PAGE_2D)]);
+  assert.deepEqual(Array.from(words(batch).subarray(20, 23)), [0, 0, 0]);
+  assert.deepEqual(Array.from(words(batch).subarray(28, 31)), [0, 0, 1]);
+  // A batch of one page is given the block of its first draw, not a copy.
+  assert.equal(batch.uniform, packed[0].uniform); assert.deepEqual(batch.pages, [0]);
 }));
 
 test('BATCH B02 the region table holds every region of the frame in frame order, with content extents in logical orientation', () => stage({
@@ -84,28 +91,29 @@ test('BATCH B02 the region table holds every region of the frame in frame order,
   assert.equal(table.length, 12 * 5);
   // Regions are numbered in the order the frame first uses them.
   assert.deepEqual(Array.from(table), [
-    10, 5, 1, 1, 9, 4, 40, 5, 3, 0, 0, 0,
-    64, 64, 0, 0, 64, 64, 0, 0, 0, 0, 0, 0,
-    9, 12, 2, 3, 5, 7, 16, 2, 0, 0, 0, 0,
-    9, 4, 0, 0, 9, 4, 24, 1, 1, 0, 0, 0,
-    6, 11, 1, 2, 4, 9, 30, 3, 2, 0, 0, 0,
+    10, 5, 1, 1, 9, 4, 40, 5, 3, 0, 64, 64,
+    64, 64, 0, 0, 64, 64, 0, 0, 0, 0, 64, 64,
+    9, 12, 2, 3, 5, 7, 16, 2, 0, 0, 64, 64,
+    9, 4, 0, 0, 9, 4, 24, 1, 1, 0, 64, 64,
+    6, 11, 1, 2, 4, 9, 30, 3, 2, 0, 64, 64,
   ]);
   frame.regions.forEach((region, index) => {
     const odd = region.quarterTurn % 2 === 1, row = Array.from(table.subarray(12 * index, 12 * index + 12));
     assert.deepEqual(row, [region.logicalWidth, region.logicalHeight, region.trimX, region.trimY,
-      odd ? region.packed.height : region.packed.width, odd ? region.packed.width : region.packed.height, region.packed.x, region.packed.y, region.quarterTurn, 0, 0, 0]);
+      odd ? region.packed.height : region.packed.width, odd ? region.packed.width : region.packed.height, region.packed.x, region.packed.y, region.quarterTurn,
+      region.pageIndex, frame.pages[region.pageIndex].source.width, frame.pages[region.pageIndex].source.height]);
   });
   assert.equal(SHARED_REGION_WINDOW_BYTES_2D, 48 * SHARED_REGION_WINDOW_2D);
 }));
 
-test('BATCH B03 a batch ends at another page, material, clip, kind of draw or boundary, and never reorders', () => stage({
+test('BATCH B03 a batch ends at another material, clip, kind of draw or boundary, and never reorders', () => stage({
   a: plain(0, 0), b: plain(8, 0), other: { page: 'b', ...plain(0, 0) },
 }, ({ engine, add, bitmap, rect, leases }) => {
   const reset = () => engine.stage.removeChildren();
   const spans = () => plan(engine).spans;
-  // Two pages: A, B, A keeps its order as three batches.
+  // Another page does not end a batch: page A, page B, page A are one batch in their order.
   bitmap('a'); bitmap('b'); bitmap('other'); bitmap('a'); bitmap('b');
-  assert.deepEqual(spans(), [[0, 2], [2, 1], [3, 2]]);
+  assert.deepEqual(spans(), [[0, 5]]);
   // Another material.
   reset(); bitmap('a'); bitmap('b', { sharedMaterial: egret.createSharedMaterial2D({ filter: 'linear', minFilter: 'linear', magFilter: 'linear' }) }); bitmap('a'); bitmap('b');
   assert.deepEqual(spans(), [[0, 1], [1, 1], [2, 2]]);
@@ -139,6 +147,64 @@ test('BATCH B03 a batch ends at another page, material, clip, kind of draw or bo
   const outside = plan(engine);
   assert.deepEqual(outside.packed.map(draw => draw.vertexCount), [6, 0, 6]);
   assert.deepEqual(outside.spans, [[0, 1], [2, 1]]);
+}));
+
+test('BATCH B07 a batch of several pages names them by texture unit, and every row of the region table names its page and the page size', () => stage({
+  a: plain(0, 0), a2: plain(8, 0), b: { page: 'b', ...plain(0, 0) }, c: { page: 'c', ...plain(4, 4) }, c2: { page: 'c', ...plain(16, 4) },
+}, ({ engine, bitmap }) => {
+  // Pages in the order the frame first uses them: c, a, b. Draws: c a b a2 c2 b.
+  ['c', 'a', 'b', 'a2', 'c2', 'b'].forEach((name, index) => bitmap(name, { x: 12 * index, alpha: 1 - index / 10 }));
+  const { frame, packed, draws, spans } = plan(engine);
+  assert.equal(frame.pages.length, 3); assert.equal(frame.regions.length, 5);
+  const sizes = frame.pages.map(page => [page.source.width, page.source.height]);
+  assert.equal(new Set(sizes.map(String)).size, 3);
+  assert.deepEqual(spans, [[0, 6]]); assert.equal(draws.length, 1);
+  const batch = draws[0];
+  // The units are the pages in the order the batch first draws them.
+  assert.deepEqual(batch.pages, [0, 1, 2]);
+  assert.deepEqual(Array.from(words(batch).subarray(12, 20)), [0, 1, 2, ...Array(5).fill(SHARED_NO_PAGE_2D)]);
+  // Each draw as it was packed names its own page alone, and its block is otherwise the batch's.
+  assert.deepEqual(packed.map(draw => draw.pages), [[0], [1], [2], [1], [0], [2]]);
+  packed.forEach(draw => {
+    assert.deepEqual(Array.from(words(draw).subarray(12, 20)), [draw.pages[0], ...Array(7).fill(SHARED_NO_PAGE_2D)]);
+    assert.deepEqual(Array.from(draw.uniform.subarray(0, 48)), Array.from(batch.uniform.subarray(0, 48)));
+    assert.deepEqual(Array.from(draw.uniform.subarray(80)), Array.from(batch.uniform.subarray(80)));
+  });
+  // The batch's block is its own; the first draw's block still names one page.
+  assert.notEqual(batch.uniform, packed[0].uniform); assert.notEqual(batch.uniform.buffer, packed[0].uniform.buffer);
+  // The rows are the six draws' own rows, unchanged: a vertex names its region, and the region's row its page.
+  assert.deepEqual(Array.from(batch.data), packed.flatMap(draw => Array.from(draw.data)));
+  const table = packSharedRegions2D(frame);
+  frame.regions.forEach((region, index) => assert.deepEqual(Array.from(table.subarray(12 * index + 9, 12 * index + 12)), [region.pageIndex, ...sizes[region.pageIndex]]));
+  assert.deepEqual(frame.commands.map(command => frame.regions[command.regionIndex].pageIndex), [0, 1, 2, 1, 0, 2]);
+}));
+
+test('BATCH B08 a batch holds eight pages; a ninth starts the next batch, which numbers its units anew', () => {
+  const views = {}; for (let page = 0; page < 10; page++) views['p' + page] = { page: 'page-' + page, ...plain(0, 0) };
+  return stage(views, ({ engine, bitmap }) => {
+    assert.equal(SHARED_BATCH_PAGES_2D, 8);
+    // Pages 0 to 7, page 3 again, then pages 8 and 9 and page 0 again.
+    const order = [0, 1, 2, 3, 4, 5, 6, 7, 3, 8, 9, 0];
+    order.forEach((page, index) => bitmap('p' + page, { x: 10 * index }));
+    const { frame, draws, spans } = plan(engine);
+    assert.equal(frame.pages.length, 10);
+    assert.deepEqual(spans, [[0, 9], [9, 3]]);
+    assert.deepEqual(draws[0].pages, [0, 1, 2, 3, 4, 5, 6, 7]);
+    assert.deepEqual(Array.from(words(draws[0]).subarray(12, 20)), [0, 1, 2, 3, 4, 5, 6, 7]);
+    assert.deepEqual(draws[1].pages, [8, 9, 0]);
+    assert.deepEqual(Array.from(words(draws[1]).subarray(12, 20)), [8, 9, 0, ...Array(5).fill(SHARED_NO_PAGE_2D)]);
+    assert.equal(draws[0].vertexCount, 54); assert.equal(draws[1].vertexCount, 18);
+  });
+});
+
+test('BATCH B09 a draw without a region names no page, and never shares a batch with one that has a region', () => stage({ a: plain(0, 0) }, ({ engine, bitmap, rect }) => {
+  rect(0x102030); rect(0x405060, { x: 10 }); bitmap('a', { x: 20 }); bitmap('a', { x: 30 }); rect(0x708090, { x: 40 });
+  const { packed, draws, spans } = plan(engine);
+  assert.deepEqual(spans, [[0, 2], [2, 2], [4, 1]]);
+  assert.deepEqual(packed.map(draw => draw.pages), [[], [], [0], [0], []]);
+  assert.deepEqual(draws.map(draw => draw.pages), [[], [0], []]);
+  // The block of a solid draw keeps eight zero words where a sampled one names its pages.
+  assert.deepEqual(Array.from(words(draws[0]).subarray(12, 20)), Array(8).fill(0));
 }));
 
 test('BATCH B04 solid rectangles of different colour and opacity are one batch and read no region table', () => stage({ a: plain(0, 0) }, ({ engine, rect }) => {
