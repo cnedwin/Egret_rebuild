@@ -30,13 +30,13 @@ R008/V006 is a complete migration obligation. Compilation or an isolated example
 
 ## Requirement-to-delivery map
 
-Current-source review: 2026-11-07 at main [f869b37](https://github.com/cnedwin/Egret_rebuild/commit/f869b3733366d1fea0c71adba2cdc3ea03fe7ba1). Requirement IDs and their confirmed scope are retained; this table does not upgrade historical registry acceptance.
+Current-source review on 2026-11-14 at main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39). Requirement IDs and their confirmed scope are retained; this table does not upgrade historical registry acceptance.
 
 | Requirements | Implemented basis | Remaining product outcome / existing owner |
 | --- | --- | --- |
 | R001, R006 | Project transactions, diagnostics and editable runtime examples | Actual AI-new-creator creation/change/undo/publication journey; later creator platform, consuming V003/V005 |
-| R002, R004, R020 | Shared 2D/UI rendering, sequences, optional Spine and bounded opaque 3D | Complete M2/M3/M4, then imported 3D scenes/characters/VFX; R020 keeps its full selected-version scope |
-| R003, R005 | M1 rendering/resources/recovery plus later integration | Original full-dirty 10.3 ms versus 8 ms remains open in #55; whole mixed/device/loading/memory/energy claims need actual results |
+| R002, R004, R020 | SharedFrame2D, managed UI, sequences, optional Spine and standalone World3D. Managed native editing and opt-in canvas text entry have separate contracts. | Qualify the mixed scene, its controls, real IMEs and selected-version Spine. Authoring, equivalent composition and wider device coverage remain open. |
+| R003, R005 | M1 rendering, resources and scoped recovery. E20 recorded 5.3 ms full-dirty Engine median-p95 against 8 ms and met the preparation bound. | Sparse/full-dirty wall-gap p95 was 17.2/17.3 ms against 16.7 ms. GPU time was unmeasured for E20. Mixed performance, devices, loading, memory and energy require their own measurements. [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) |
 | R007 | Reproducible selected content builds and public browser examples | Complete resource/3D variants and real host packaging/publication/update loops; M2, M4 and later host work |
 | R008 | Bounded legacy RES/MovieClip analysis and preserved familiar semantics | Complete old/new equivalence, Agent repair, continued editing and actual publication under V006 |
 | R009, R018, R019, R021 | Open repository/knowledge base, English/Cns, canonical text/identity, contribution and CI flows | Ongoing maintenance and independent human newcomer rehearsal #52; no inferred community/adoption outcome |

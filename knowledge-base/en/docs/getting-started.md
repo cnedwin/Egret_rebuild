@@ -89,22 +89,13 @@ The first command finds the newest commit on main's first-parent line that chang
 
 Between refreshes the ledgers on main describe an earlier state. The merge checks do not read them as current: they derive the current inventory from the last refresh and the files as they stand. The generator changes only current derived fields and registered additions; unrelated old source rows and all historical objects are retained. Deletions, renames, provenance changes to existing rows and historical/schema changes need a separate reviewed migration. Byte hashing remains exact. Generation does not certify translation quality, source rights or behavior.
 
-For current browser checks, install Playwright and playwright-core **1.62.1** in a separate tool directory and use Windows x64, Node **26.7.0** and installed Edge:
+For current browser checks, install Playwright and playwright-core **1.62.1** in a separate tool directory and use Windows x64, Node **26.7.0** and installed Edge.
 
 ```text
-node tools/browser-verify.mjs --suite canvas --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository>
+node tools/browser-verify.mjs --suite shared-webgpu --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository>
 ```
 
-Direct suites are canvas, webgpu, b1, text, hit-test, mouse-input, shared-webgpu and resource-recovery. The [resource recovery contract](resource-recovery-contract.md#run-the-integrated-recovery-collector) explains its separate seven-case foreground run, fixed limits and completion records. The shared suite runs the fixed 30-case pixel matrix and 11 assigned numerical controls; see the [shared rendering record](shared-rendering-evidence.md) for its finite scope. Resource-scene and bitmap-slot additionally require a reviewed source snapshot:
-
-```text
-node tools/browser-prepare.mjs --suite resource-scene --output <absolute-new-snapshot-file-outside-repository>
-node tools/browser-verify.mjs --suite resource-scene --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository> --snapshot <absolute-reviewed-snapshot-file> --snapshot-sha256 <reviewed-raw-sha256>
-```
-
-Use bitmap-slot in both commands for that suite. Build with the selected toolchain before preparation. Preparation does not launch a browser or approve its output: review the complete source closure, owners, imports and original oracle first, then provide the reviewed raw digest explicitly. The collector recomputes its complete closure before native execution; changed source/build inputs require a new snapshot and review. Do not automatically pipe an unreviewed generated digest into execution. Resource-scene retains its fixed Edge 155.0.4283.45/font reference; another browser version is not automatically accepted.
-
-Output parents must already exist and selected files/directories must be new and outside input owners. The entry refuses extra Node flags, NODE_OPTIONS/NODE_PATH, wrong versions, changed snapshots and missing completion receipts. It records failures, does not download browsers and preserves original pixel/control assertions. Desktop subsets do not prove mobile, general Chinese-font performance or complete engine capability. Consult tools/browser-tool-matrix.json: prepared-group, atlas, BIP1 PNG and five separately admitted literal-scene profiles use the [resource-family workflow](resource-browser-workflow.md) with separate fixture/configuration admission; the five texture/sequence/SpriteSheet domains use the separate [current historical-domain workflow](historical-browser-workflow.md). Original Node 24.19.0 receipts remain historical evidence; a migrated current entry does not rewrite them or certify a new product revision. Rendering changes still require their affected domains. Independent OS process retirement is not certified by the wrapper.
+The wrapper exposes `shared-webgpu` and `resource-recovery` in `tools/browser-tool-matrix.json`. Consult the [recovery contract](resource-recovery-contract.md) for the fixed foreground schedule. The [evidence lane](evidence-lane.md) explains when an exact-byte historical result still applies. For affected World3D and native canvas input, use their [3D verifier](world3d.md#example-and-checks) and [text input example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-input/README.md). Desktop browser runs establish only their recorded backend, scene and device coverage.
 
 ## Risk-selected local feedback
 

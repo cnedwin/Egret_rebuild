@@ -20,7 +20,7 @@ Main f869b37 has four foundation packages plus the separately enabled Spine pack
 | project | contracts plus declared jsonc-parser; transactions and current import/build tools |
 | spine | public engine/contracts and official Core 4.3.13; optional assets/player/display/RESET |
 
-The current @egret/engine/web entry is Canvas-only. WebGPU and WebGL2 use explicit /webgpu and /webgl2 entries; scene3d, UI, paragraph/resources/animation/input and browser adapters use their actual package exports. No default entry initializes optional Spine, paragraph WASM, 3D or native VM.
+SharedFrame2D rendering uses the explicit `@egret/engine/webgpu` and `@egret/engine/webgl2` entries. Canvas-backed text and image providers and the browser input adapters use their individual package exports. World3D uses `@egret/engine/world3d` and explicit backend entries. The default entry keeps optional Spine, paragraph WASM, World3D and native VMs lazy.
 
 The nine-package tree and DAG below are a future responsibility model, not the current directory authority or a mandate to split the core now. CLI/editor/MCP/native crates and /eui or /compat targets are not existing exports. Use package manifests and [core capabilities](core-progress.md) before consuming a name.
 
@@ -100,7 +100,7 @@ runtime/graphics/hosts must not depend on project, toolchain, editor, CLI, Agent
 
 Pure contracts trigger no DOM, GPU, files, networking, threads, timers, VM initialization, or global registration. Export type contracts separately from executable validators; public type imports must not automatically include all project-schema validators in bundles. Persistent JSON schemas, protocol schemas, and generated TS/Rust types have one authoritative source file. Generated artifacts are rebuildable; do not manually edit two separate copies of a contract.
 
-The future dependency graph does not make every export import whole packages. Current roots assemble instances/basic2D; explicit current backend/UI/text/animation entries follow package manifests, including the Canvas-only /web boundary above. Future /eui, /compat, host/graphics packages and independent release identities require their own implementation and consumer qualification.
+The future dependency graph does not make every export import whole packages. Current roots assemble instances/basic2D; explicit current backend/UI/text/animation entries follow package manifests. Future /eui, /compat, host/graphics packages and independent release identities require their own implementation and consumer qualification.
 
 Inject host capabilities through ports rather than asking “is this WeChat/Android?” in every layer. Performance hotspots may use explicit internal extension points, but arbitrary `internal` imports cannot bypass resource generations, device owners, or persistence-format versions.
 
@@ -121,9 +121,9 @@ Separate persistent object/asset IDs, runtime instance handles, GPU handles, asy
 
 ## 5. Rendering and backend responsibilities
 
-WebGPU is the main line for modern resource/pipeline/pass design; WebGL2 is a maintained compatibility executor. Evaluate WebGL1 only where target hosts/old samples establish necessity. Within one main surface, UI, 2D, and 3D share the selected backend's device and frame scheduling. Do not default to exchanging the entire main frame among WebGPU, WebGL, and Canvas every frame.
+WebGPU is the main line for modern resource/pipeline/pass design; WebGL2 is a maintained compatibility executor. Evaluate WebGL1 only where target hosts/old samples establish necessity. The target for a unified main surface is for UI, 2D, and 3D to share the selected backend’s device and frame scheduler. Today SharedFrame2D and World3D have separate rendering entries. The target avoids exchanging the entire main frame among WebGPU, WebGL, and Canvas every frame.
 
-Canvas providers supply text, some vectors, and offscreen content, uploading cache changes to the selected GPU. Canvas-only is an explicitly limited 2D profile, with no promise of complete 3D, arbitrary filters, or compute fallback. Native text uses system or selected public font/shaping dependencies through providers, sharing text/layout contracts without depending on browser Canvas.
+Canvas providers supply text, some vectors, and offscreen content, uploading cache changes to the selected GPU. Native text uses system or selected public font/shaping dependencies through providers, sharing text/layout contracts without depending on browser Canvas.
 
 Within graphics, first separate `frame/`, `resources/`, `pipelines/`, `passes/`, `backends/webgpu/`, and `backends/webgl/` by responsibility. Ordered UI/2D and 3D lists come from different extraction paths, sharing frame-resource, color, and composition contracts. Simple frame plans may be cached; multipass effects have budgets. Calling an asset a “component” does not imply a single draw.
 

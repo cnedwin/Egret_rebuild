@@ -16,7 +16,7 @@ M4.3 必须将交付范围表述为复杂 2D UI／动画／资源核心预览，
 
 ## 2. 当前基础与依赖
 
-复盘 main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e) 已交付可编辑换装工作室、固定 X-D60/1 与 X-MTouch/1 档位、双后端计时及有限 Android 真机结果。先推进 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91)，让换装工作室通过既有工程事务在浏览器中打开导出的工程。导入取消或被拒绝时应保留当前场景及其资源租约。选定内容及输入行为就绪后，使用固定档位完成 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92)。[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) 的干净环境交接准备可并行进行。 完整选定版本 Spine、其余控件及设备和性能指标仍待验收。
+复盘 main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39) 已有使用 SharedFrame2D 和平面 2D 背景的可编辑换装工作室。原 X-D60/1 与 X-MTouch/1 记录覆盖退役宿主上的 3D 背景场景。先推进 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91)，让浏览器通过既有工程事务打开导出的工程，取消或拒绝导入时保留当前场景与租约。开展 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) 正式采集前，沿当前路径恢复等效混合合成，或评审有版本的后继档位。[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) 可并行准备干净环境交接。选定 Spine、控件、设备及性能仍待验收。
 
 M3.2 已采用 CanvasKit／SkParagraph，早期 ICU／HarfBuzz／FreeType 表述指其段落服务，不是再建一套实现。M4.1 与 M3.2 尽早绑定真实 provider／字体产物并测量冷传输、初始化及分别驻留，M4.2 负责最终测量。所有已公布数值上限保留；不兼容场景／provider 变化须在采集前形成有理由的版本化后继，保留原档位／失败。
 
@@ -25,7 +25,7 @@ M3.2 已采用 CanvasKit／SkParagraph，早期 ICU／HarfBuzz／FreeType 表述
 | [架构工程计划](architecture-and-engineering-plan.md)的里程碑表及第 12 节 | M4 定义为混合场景/核心验收；更完整的 3D、宿主和创作工具分别后续推进。 |
 | [M1.2 正式证据](incremental-frame-preparation-evidence.md)，E20 | 固定桌面 CPU 与准备目标均达到。稀疏和全脏加权墙钟间隔 p95 分别为 17.2 和 17.3 ms，目标为 16.7 ms。GPU 时间未测，D60 仍未完成。 |
 | [资源恢复契约](resource-recovery-contract.md) | 共享 Host 代际、独立资源租约和分阶段替换已有明确所有权；M4 将其应用到新增内容。 |
-| [场景示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/scene3d/README.zh-CN.md)和[资源示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.zh-CN.md) | 现有程序化不透明 3D 与可编辑资源交互是集成起点，不是完整 3D 或 UI 产品。历史示例中的环境说明不作为当前安装指引。 |
+| [World3D 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/world3d/README.zh-CN.md)和[资源示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.zh-CN.md) | 当前 3D 与可编辑资源的集成起点。退役原型场景与结果留在历史记录。 |
 | [项目事务](工程事务核心合同.md) | 稳定 ID、版本检查和可恢复编辑已有有限项目内核；这不自动等于编辑器、模型适配器或完整项目到运行时编译器。 |
 
 M4.1 使用已经交付的 M2／M3 公共接口，其余功能继续完成；只有发生变化的边界才在所属工作包内重新约定。关闭 M4 需要选定 M2/M3 特性行完整通过，接口占位不能代替。
@@ -38,7 +38,7 @@ M1.2 的性能缺口不阻止独立的 M2/M3 正确性开发、示例编写、�
 | --- | --- |
 | 可编辑工程 → 运行中的游戏 | 持久项目保留 ID 和版本。运行时状态独立；试玩修改只有通过显式编辑才进入创作数据。复用 `packages/project/src/index.ts` 及其事务存储。 |
 | 动画/UI → 渲染 | 经 `packages/contracts/src/SharedRenderFrame2D.ts` 保留绘制顺序、裁剪、材质语义和资源引用。M2/M3 使用选定共享契约，不各自管理另一套 GPU 资源。 |
-| 场景与叠加层 | 复用 `packages/engine/rendering/scene3d.ts`、`packages/engine/web/scene3d.ts` 和 `packages/engine/web/webgl2Scene3d.ts`，保持其有限程序化不透明场景与有序叠加层语义。 |
+| 场景与叠加层 | 使用当前 SharedFrame2D 与 World3D 入口设计等效有序合成。归入冻结混合档位前，评审设备与目标所有权、深度、颜色及像素语义。 |
 | 资源构建 → Runtime | 复用 `packages/project/src/resources/index.ts`、`packages/engine/src/resources.ts` 和 `packages/engine/web/resources.ts`。URL 用于定位产物；已准入元数据和校验后的字节建立资源身份。 |
 | 替换与恢复 | 应用状态跨原生代际重建保留。替换内容先准备再提交，保留原有可用内容，抑制过期发布，只释放自己拥有的资源。资源就绪、显示就绪和交互就绪分别记录。 |
 | 时间与交互 | M2 动画和 M3 UI 使用选定的游戏时钟、输入规则。恢复不能重放已消费的动画/游戏事件，也不能制造无界补帧。焦点/IME 恢复遵循 M3 明确策略。 |
@@ -57,7 +57,7 @@ M1.2 的性能缺口不阻止独立的 M2/M3 正确性开发、示例编写、�
 
 **范围：**选定有限的装扮/角色管理场景，组合复杂 UI、独立 Spine 轨道/皮肤、序列帧效果、资源替换和现有不透明 3D 背景。约定 U/A 场景的子集，不把各自最大负载暗中相加。
 
-**集成位置：**`examples/resource-scene/`、`examples/prepared-resource-groups/`、`examples/scene3d/`，以及评审后的实际 M2/M3 公开入口。示例放在 `examples/` 下，不另建一个引擎包。
+**集成位置：**`examples/resource-scene/`、`examples/prepared-resource-groups/`、`examples/world3d/`，以及评审后的实际 M2/M3 公开入口。示例放在 `examples/` 下，不另建一个引擎包。
 
 **验收：**
 
