@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A page opened from the clean consumer — 2026-11-14
+
+`tools/verify-clean-consumer-page.mjs` goes on from the clean-consumer check: it serves the consumer directory alone, writes a page that imports the installed engine through an import map built from the installed manifests, and opens it in a real browser. The page draws a button and answers one injected press, and the frames the Host reads back are checked. It passed with WebGL2 under software rendering in headless Chromium, from 128 requests that all stayed inside the consumer. WebGPU, a hardware GPU and other browsers have not opened it, and its times are observations of one run, not a budget. [Guide](docs/clean-consumer.md#a-page-from-the-consumer)
+
 ## Semantics of a drawn UI — 2026-11-14
 
 `@egret/engine/ui/semantics` holds a tree that describes the controls an application draws: a role, a name, bounds and state for each, read from the control at every publication, with the activation and the focus request a press and a key already reach. `@egret/engine/web/semantics` projects it to the page: the canvas keeps the keyboard, owns an invisible container of elements laid over the controls, and names the focused one as its active descendant. A modal dialog makes everything outside it inert. The control example now describes its switch, its options and its button. The projection was checked against the accessibility tree of headless Chromium; no screen reader, other assistive technology or other browser was run. [Guide](docs/ui-semantics.md)

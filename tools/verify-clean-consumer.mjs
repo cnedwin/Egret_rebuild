@@ -12,6 +12,7 @@
 // Build first (node tools/build.mjs): the archives carry the built modules of this checkout.
 // The report is printed and written to <directory>/report.json. Rows it does not establish are
 // listed under "open"; a pass here is not a publication, a browser run or a human walkthrough.
+// tools/verify-clean-consumer-page.mjs goes on from here and opens a page of the consumer in a browser.
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
@@ -294,8 +295,8 @@ export function verifyCleanConsumer({ output, offline = false }) {
     'The packages are private at version 0.0.0 and are not published. The consumer names the archives; no registry install of the engine was run.',
     'The manifests of the three packages carry no "license" field. Each archive carries the Apache-2.0 text.',
     'No "files" list narrows the archives: sources, package tests and compiler configuration travel with the built modules.',
-    'No page was opened from the consumer. The web entries were loaded in Node only; neither back end drew from the installed copy.',
-    'First interaction was not measured. The sizes above are unbundled module sets, not a transfer over a network.',
+    'This check opens no page: the web entries are loaded in Node only. tools/verify-clean-consumer-page.mjs opens a page of the consumer in a browser and has a back end draw from the installed copy.',
+    'First interaction is not measured here; the page check observes one press. The sizes above are unbundled module sets, not a transfer over a network.',
     'A person new to the project has not walked through this. This is an automated rehearsal.',
     ...(offline ? ['The registry was not used. ' + THIRD_PARTY.name + ' came from the installed copy of this checkout.'] : []),
   ];
