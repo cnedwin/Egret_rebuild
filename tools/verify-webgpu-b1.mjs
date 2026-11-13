@@ -682,7 +682,16 @@ for (const [name, pin] of twoDCostModuleSuccessors) {
   assert.ok(m12FullDirtyModuleIdentities.has(name), "2D cost successor must retain B1 membership");
   assert.notEqual(pin.sha256, m12FullDirtyModuleIdentities.get(name).sha256);
 }
-const currentModuleIdentities = new Map([...m12FullDirtyModuleIdentities,...twoDCostModuleSuccessors]);
+const twoDCostModuleIdentities = new Map([...m12FullDirtyModuleIdentities,...twoDCostModuleSuccessors]);
+// Preserve the historical closure and advance only the reviewed byte conversion emission.
+const sharedColorModuleSuccessor = new Map([
+  ["packages/engine/dist/rendering/sharedColor2D.js", {"bytes":2861,"sha256":"754e47217b62c57ef5a6c61355dfb2794938d91aef0afc0c81b9195276000171"}],
+]);
+for (const [name, pin] of sharedColorModuleSuccessor) {
+  assert.ok(twoDCostModuleIdentities.has(name), "Shared color successor must retain B1 membership");
+  assert.notEqual(pin.sha256, twoDCostModuleIdentities.get(name).sha256);
+}
+const currentModuleIdentities = new Map([...twoDCostModuleIdentities,...sharedColorModuleSuccessor]);
 assert.equal(currentModuleIdentities.size,m3FontSourceModuleLimit,'Font resources current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Source/emission/declaration inspection only; no product evaluation or writes.
+import { selectSharedWebGL2FramePins } from './lib/shared-webgl2-frame-pins.mjs';
 import {readFileSync, readdirSync, realpathSync} from 'node:fs';
 import { projectWorld3dPackage, selectWorld3dGraphPins } from './lib/world3d-boundary.mjs';
 import path from 'node:path';
@@ -650,6 +651,7 @@ function m3PointerGraph(root,base,actual) {
     }
   }
   // 2D-COST-IDENTITY-END
+  graph=selectSharedWebGL2FramePins(root,graph,present);
   for(const row of graph){
     if(!present.has(row.path))refuse('ATLAS_SOURCE_FILES','Incomplete M3 pointer successor: '+row.path);
     const raw=readFileSync(path.join(root,row.path));if(raw.length!==row.bytes||digest(raw)!==row.sha256)return reject('M3 pointer whole-group raw identity differs: '+row.path);

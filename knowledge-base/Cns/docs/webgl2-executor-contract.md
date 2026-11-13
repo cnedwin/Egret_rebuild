@@ -30,6 +30,16 @@ M1.4 包含真实 WebGL context 恢复。M1.5 另行负责统一设备会话、�
 
 它不实现旧 `renderFrame` 或 `renderTexturedFrame` 兼容方法。现有 `createEngineForProfile` 直接完成协商，不新增 profile 或 core 分支。Scene Host 只增加 `renderSceneSharedFrame(scene: SceneFrame3D, overlay: SharedRenderFrame2D): undefined` 与 `getSceneStatus()`，后者返回不可变 `{host, pendingSceneBytes, pendingUniformBytes, pendingDepthBytes}`。两个输入必须是真实公共值；scene 输出与 overlay 均要求不透明。
 
+## 共享帧 CPU 计时
+
+创建 WebGL2 宿主时设置 `measureSharedFrames: true`。`getSharedFrameTiming()` 返回各阶段累计次数、累计耗时、单次最大耗时和最近 2,048 条样本。样本按完成顺序排列，单位为毫秒。默认配置返回 `null`。`dropped` 记录被环形缓冲区覆盖的旧样本数。对比帧间隔时，在渲染回调之外读取快照。
+
+样本分别记录冷纹理准备、原生纹理写入、工作与默认帧缓冲校验、同步提交、围栏轮询、完成阶段错误查询、帧记录回收和删除 Sync 后的错误查询。提交与回收包含各自内部阶段。时间来自宿主的单调时钟，每条样本记录上下文代次。已提交帧带提交序号，提交前的准备与上传使用空序号。这些值是调用线程的经过时间，同步查询可能包含等待浏览器或驱动工作的时间。
+
+在同一上下文代内，工作帧缓冲复用同一不可变颜色纹理和可选深度渲染缓冲的格式及完整性校验结果。新附件或上下文恢复会重新执行完整检查。每次绑定仍检查错误，默认画布附件在每次合成输出时继续校验。完成检查和 Sync 删除检查各自保留原有的资源和错误处理。
+
+WebGL2 和 WebGPU 共享一张固定 64 KiB 的查找表来转换冷 RGBA8 纹理页。每个字节沿用原有 Alpha 上限和 sRGB 舍入规则，源字节副本、规范化输出及其资源记账沿用原有生命周期。
+
 ## 可缓存的 2D 图层
 
 WebGL2 工厂返回 `SharedLayerWebGL2Host`，继承原有宿主接口。每个地图块或静态绘制组对应一个 `SharedWebGL2Layer2D`。`update(frame)` 接收不可变的 Engine 捕获帧，要求透明清屏、预乘输出、整数像素尺寸，支持正常 source-over 矩形、图像和普通裁剪。宿主用共享渲染路径按每源单位一纹素烘焙，复用常规绘制的图像页驻留。

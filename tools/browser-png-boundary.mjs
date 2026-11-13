@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // This source/data policy never imports the SDK or evaluates an adapter.
+import { selectSharedWebGL2FramePins } from './lib/shared-webgl2-frame-pins.mjs';
 import { readFileSync, readdirSync, lstatSync, realpathSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
@@ -431,7 +432,7 @@ function copiedSourceRows(root, id) {
   const roots = ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml',
     ...readdirSync(root).filter(name => /^tsconfig(?:\.[A-Za-z0-9-]+)?\.json$/.test(name)),
     'tools/browser-png-boundary.mjs', 'tools/lib/file-identity.mjs', 'tools/lib/sequence-preserve-pins.mjs',
-    'tools/lib/world3d-boundary.mjs',
+    'tools/lib/world3d-boundary.mjs', 'tools/lib/shared-webgl2-frame-pins.mjs',
     'tools/build.mjs', 'tools/generate-project-format.mjs'];
   for (const file of roots) rows.push(id.fingerprintFile(root, file));
   return ordered(rows);
@@ -842,6 +843,7 @@ function m3PointerGraph(root,base,actual) {
     }
   }
   // 2D-COST-IDENTITY-END
+  graph=selectSharedWebGL2FramePins(root,graph,present);
   for(const row of graph){
     if(!present.has(row.path))return {failure:issue('BIP_BOUNDARY_SOURCE_INVENTORY',row.path,'Incomplete M3 pointer successor: '+row.path)};
     if(!same(present.get(row.path),row))return {failure:issue('BIP_BOUNDARY_FINGERPRINT',row.path,'M3 pointer whole-group raw identity differs: '+row.path)};

@@ -59,7 +59,7 @@ function isolated(action){
   }
   for(const name of packages)copy(path.join(repository,'packages',name),'packages/'+name);
   const policy=JSON.parse(readFileSync(path.join(repository,'tests/types/atlas-import-diagnostic-expectations.json'),'utf8')).sourcePolicy;
-  const files=new Set(['tools/atlas-import-boundary.mjs','tools/lib/file-identity.mjs','tools/lib/world3d-boundary.mjs','tools/lib/sequence-preserve-pins.mjs','tests/types/atlas-import-diagnostic-expectations.json',...policy.configurationPins.map(pin=>pin.path)]);
+  const files=new Set(['tools/atlas-import-boundary.mjs','tools/lib/file-identity.mjs','tools/lib/world3d-boundary.mjs','tools/lib/shared-webgl2-frame-pins.mjs','tools/lib/sequence-preserve-pins.mjs','tests/types/atlas-import-diagnostic-expectations.json',...policy.configurationPins.map(pin=>pin.path)]);
   for(const file of files)if(!copied.some(row=>row.path===file))copy(path.join(repository,file),file);
   const resolver=createRequire(path.join(repository,'packages/project/package.json'));
   const jsonc=realpathSync(resolver.resolve('jsonc-parser'));

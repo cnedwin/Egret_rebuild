@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/lib/shared-webgl2-frame-pins.mjs",
+      "originRole": "First-party registration of the exact shared WebGL2 frame timing and attachment qualification source and emission successor; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

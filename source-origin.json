@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "2e0cbe679a10470e6abd36a70a4876bb46b4974a4b3506a478510c86d011e59f",
-      "bytes": 408726,
+      "sha256": "c38f2f038d0a32b4dcbd1c71861dc8302af6f6c0b98ef99ef5b40363c1bf1245",
+      "bytes": 408878,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -5478,8 +5478,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 390636,
-      "sha256": "dc7c432a261714c933e579d4da9a1db350e24e6d24eee087004f357b158ff332",
+      "bytes": 391824,
+      "sha256": "6f1f97198074e2d2c03833d887f24444f0dd14de66f601c430b0787d9aea897a",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -6382,8 +6382,8 @@
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 63037,
-      "sha256": "6bfc40016b7ecb3d63eca33b9f86d354e63ccbbda6aa011b01aa337cec280a8f",
+      "bytes": 63482,
+      "sha256": "cdb0f7a08a44ccd3295ec1efc3ac8d5396aad87642bb0adc0dd9a121e2898ddf",
       "identityHistory": [
         {
           "bytes": 17519,
@@ -7033,8 +7033,8 @@
     {
       "path": "tools/verify-webgpu-b1.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 102348,
-      "sha256": "19f99926aeba016d4b11057c5a80d00236dcd0aff4e9e2dbbeca13252e4d41a3",
+      "bytes": 102971,
+      "sha256": "949b8c361b10db9dd0bc6367be0845ef86f74365e5e0991a1b4a531cb19db91b",
       "identityHistory": [
         {
           "bytes": 38603,
@@ -9797,8 +9797,8 @@
     },
     {
       "path": "tests/spritesheet-boundaries.test.mjs",
-      "bytes": 21242,
-      "sha256": "6c54dac38de3766e6c65cadfc71a70b8d3b659b17f7aaa7b08e89cb3df536219",
+      "bytes": 21359,
+      "sha256": "3006d1277831a00a441285d14a513ad871584c8b4b7106f01ccdc702903920a9",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -9876,8 +9876,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 384152,
-      "sha256": "4cb64c559b19f80ae39665e90508ace0f6840dab2f1f069ab67f59670e4040f2",
+      "bytes": 384291,
+      "sha256": "600c3392ac652aef91621ff912052aec0b73877179ea877858b0e35c0260f693",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10099,8 +10099,8 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 394127,
-      "sha256": "2de0a95672cf5bca9d7b6025ba8e5f7303dc8c054428070b8d7ec08f2a288284",
+      "bytes": 394308,
+      "sha256": "0a856aa38406b66046f6070c0b4b2a23e3b4c8f8313e2f4e041207b63ab39124",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10161,8 +10161,8 @@
     },
     {
       "path": "tools/atlas-import-boundary.mjs",
-      "bytes": 288894,
-      "sha256": "e2a675af466e4147099b42b986798743c2d93aacffaf15f5162a95259340bc2b",
+      "bytes": 289033,
+      "sha256": "a7dee07dde0ab047a8f2e0178c50312abf4c75a33267c8e9f49f3d74710cc23c",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10321,8 +10321,8 @@
     },
     {
       "path": "tests/browser-png-boundaries.test.mjs",
-      "bytes": 24301,
-      "sha256": "1ee09c5fde11203b5143cad0e5ddac4a06bb0c6940baa024f5e73695ab3bdaaa",
+      "bytes": 24343,
+      "sha256": "590e2a62c61799f4b93ed3da362053dfa13a5f62fa105e36066f46f249253914",
       "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
     },
     {
@@ -10688,8 +10688,8 @@
     {
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 67060,
-      "sha256": "d5be1651377105940f22c04d4f8cb6db3e47776b052ac51c92ec3dbe64af6236"
+      "bytes": 68467,
+      "sha256": "cc9dacbb7909dc1cbcccd48185cb294647915a4d439115cc21351fb623423ca7"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -10778,8 +10778,8 @@
     {
       "path": "tests/atlas-import-boundary.test.mjs",
       "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
-      "bytes": 16823,
-      "sha256": "18ccb6147a0006d0d4d4fafbaf6d438751c5081a7a6de7f6844879b15b9723e1"
+      "bytes": 16864,
+      "sha256": "457dd07c6e2b94fc29dce960e460da6709d98e9de6475c5a62cf9c8125f2bb5e"
     },
     {
       "path": "tests/webgpu-submission-binding-private.test.mjs",
@@ -11042,8 +11042,8 @@
     {
       "path": "packages/engine/rendering/sharedColor2D.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 2797,
-      "sha256": "eb3a0e96e2a77f95da7dcba00ee398a7d64727f3a4e5d7e69cba2ba15b736ccc"
+      "bytes": 3208,
+      "sha256": "af0f9545d52147d5a042fa643acfdee6725d45c8b1714acd56e1759c5423f131"
     },
     {
       "path": "packages/engine/web/prepareSharedSubmission2D.ts",
@@ -11336,8 +11336,8 @@
     {
       "path": "knowledge-base/Cns/docs/webgl2-executor-contract.md",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 26235,
-      "sha256": "25a2e6f6a48bc0de07ef2897bc1b17f2278092933366dcfc7bbcdca617308686"
+      "bytes": 27716,
+      "sha256": "106b3cdf186b5735223ec2c3ec5f410b8fcbe14b8586ad9e553b58bcd6b2d65e"
     },
     {
       "path": "knowledge-base/Cns/docs/webgl2-executor-evidence.md",
@@ -11348,8 +11348,8 @@
     {
       "path": "knowledge-base/en/docs/webgl2-executor-contract.md",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 28473,
-      "sha256": "b35b26a493728584c909ee2c3334bc400a0ffa84d9e6117a0d52e7373c9dfc9c"
+      "bytes": 30267,
+      "sha256": "dcd92e62302ec8b1fb431e12227be4cc429730dc6aa99437c53ff183506df417"
     },
     {
       "path": "knowledge-base/en/docs/webgl2-executor-evidence.md",
@@ -11360,8 +11360,8 @@
     {
       "path": "packages/engine/web/WebGL2Host.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 114059,
-      "sha256": "33f663959b9608bc7b7cd365fa3816fcb30f246b059d6cc355297a59097946e2"
+      "bytes": 117891,
+      "sha256": "89e78b1e48c783acf3a0b25a03d631be6c0c9bf004cd78894884131c80323a49"
     },
     {
       "path": "packages/engine/web/sharedRetentionLedger.ts",
@@ -11384,8 +11384,8 @@
     {
       "path": "packages/engine/web/sharedWebGL2Options.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 3981,
-      "sha256": "fb93c16410adcea2978382e02125893cbe7fa7f5dfe715ad168bcdfde1a14cb9"
+      "bytes": 4384,
+      "sha256": "eb112266f700ee5a2d72e7e480862ce61103c0443044305a43714ae2fe346439"
     },
     {
       "path": "packages/engine/web/sharedWebGL2Scene.ts",
@@ -11402,14 +11402,14 @@
     {
       "path": "packages/engine/web/webgl2.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 843,
-      "sha256": "4035fe24f6a635b0606db205aa9647533a3ec3daa11739436e6a41169bae7277"
+      "bytes": 959,
+      "sha256": "2fcec09692bed4d97d33dfd782b67a84f4f2aa253b206a764cf07601d2d6b903"
     },
     {
       "path": "packages/engine/web/webgl2Native.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 16642,
-      "sha256": "2488fe3dba2225a7a6a195521a1e65fcf23d46cd6e707fc25b3e415e58496d73"
+      "bytes": 19169,
+      "sha256": "a61cb853529de906405c23d643a45cc6b292ed714c2ec71e2c8b9b4d0dd6b988"
     },
     {
       "path": "packages/engine/web/webgl2Scene3d.ts",
@@ -11420,8 +11420,8 @@
     {
       "path": "packages/engine/web/webgl2Types.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 6412,
-      "sha256": "0133ef15d217a8dac0939777e382ba2c8609838e414eb2b202aa731e12641347"
+      "bytes": 7455,
+      "sha256": "54688edee459507b6bd9d3749517b4c54b3feec3eb9f435f1441ec51946e2925"
     },
     {
       "path": "tests/fixtures/gl-shared-rendering.mjs",
@@ -11438,14 +11438,14 @@
     {
       "path": "tests/shared-storage-private.test.mjs",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 9342,
-      "sha256": "1ccf3bb2743bfc79b95d02545cd82cb7e42e995e439949e4f168cd4fcecf4de5"
+      "bytes": 10219,
+      "sha256": "e92af4719b6fe4aee9941383d9a78d2ce0ada57f31375c9f1b69b37478ff0efc"
     },
     {
       "path": "tests/shared-webgl2-controls.test.mjs",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 34500,
-      "sha256": "a897df8e05de14de50e0027ce65dd334799a677b2d9e8775f5c734f93d0a5d69"
+      "bytes": 42234,
+      "sha256": "fa9b02e448ad26538818127e8ee61c11faa89cf24e207a2c8922635f700f5183"
     },
     {
       "path": "tests/shared-webgl2-private.test.mjs",
@@ -11900,8 +11900,8 @@
     {
       "path": "tests/shared-frame-upload-webgl2.test.mjs",
       "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
-      "bytes": 34634,
-      "sha256": "86faac3b7be7532cfa60e19ed8462ab4a4476aa5082e6b5b10dd7d48530154ed"
+      "bytes": 36646,
+      "sha256": "e13d64ee30f3af1cce91b83c6980683f06a2efe4a2f8787c250153c64cc374c9"
     },
     {
       "path": "tests/shared-frame-upload-webgpu.test.mjs",
@@ -17212,6 +17212,18 @@
       "originRole": "Independently authored first-party Egret WebGL2 frame diagnostics. AI-assisted. Apache-2.0.",
       "bytes": 8536,
       "sha256": "a58b0c7e7f1dda5e18efd3461a2068f2091165e4390932d192c72e4e4b80d04c"
+    },
+    {
+      "path": "tools/lib/shared-webgl2-frame-pins.mjs",
+      "originRole": "First-party registration of the exact shared WebGL2 frame timing and attachment qualification source and emission successor; Apache-2.0.",
+      "bytes": 5198,
+      "sha256": "c408905b9c41b802bfb9998d0c683403e77c1433ee0246d95922ac5c8acf36b9"
+    },
+    {
+      "path": "contributions/shared-webgl2-frame-pins.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 320,
+      "sha256": "ad9b996f66e9b7ac53318774cef8629efe5a723a30c6ee3aa602b7206c0b886b"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

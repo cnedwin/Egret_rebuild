@@ -9,7 +9,7 @@ import type { SharedFrameUpload, SharedFrameUploadOptions, SharedFrameUploadRead
 import { readOwnedSharedFrame } from '#egret-textured-frame-state';
 import { admitSharedWebGL2Options } from './sharedWebGL2Options.js';
 import type { SharedWebGL2HostOptions, SharedSceneWebGL2HostOptions, SharedWebGL2Configuration } from './sharedWebGL2Options.js';
-import type { SharedSceneWebGL2Host } from './webgl2Types.js';
+import type { SharedSceneWebGL2Host, SharedWebGL2FrameTiming, SharedWebGL2TimingPhase, SharedWebGL2TimingSample } from './webgl2Types.js';
 import type { SceneFrame3D } from '../rendering/sceneFrame3D.js';
 import type { PreparedSharedGLScene } from './sharedWebGL2Scene.js';
 import type { SharedLayerWebGL2Host, SharedWebGL2Layer2D, SharedWebGL2LayerEffect2D, SharedWebGL2LayerPlacement2D, SharedWebGL2LayerStatus, SharedWebGL2Readback, SharedWebGL2HostStatus, WebGL2HostState, WebGL2HostStatus, WebGL2HostFailure, WebGL2HostErrorCode, WebGL2HostDiagnostic } from './webgl2Types.js';
@@ -40,6 +40,14 @@ function deferred<T>(): {promise:Promise<T>;resolve:(value:T)=>void;reject:(caus
 const schedule = globalThis.setTimeout.bind(globalThis), cancel = globalThis.clearTimeout.bind(globalThis);
 const invoke = Reflect.apply;
 const clock = ():number => performance.now();
+const TIMING_CAPACITY = 2048;
+const TIMING_PHASES = ['texture-prepare','texture-upload','working-framebuffer-validation','default-framebuffer-validation','submit','fence-poll',
+    'completion-error-query','retire','sync-delete-error-query'] as const satisfies readonly SharedWebGL2TimingPhase[];
+function createFrameTiming() {
+    const totals = Object.fromEntries(TIMING_PHASES.map(phase=>[phase,{count:0,totalMs:0,maxMs:0}])) as
+        Record<SharedWebGL2TimingPhase,{count:number;totalMs:number;maxMs:number}>;
+    return {totals,samples:[] as SharedWebGL2TimingSample[],next:0,dropped:0};
+}
 const ATTRIBUTES = Object.freeze({alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,preserveDrawingBuffer:false});
 interface Request { readonly id:number; readonly byteLength:number; readonly role:'vertex'|'uniform'|'color'|'depth'|'index'; readonly width:number; readonly height:number; }
 type Lease = LedgerLease<Request,GLNativeOwner>;
@@ -162,6 +170,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     private context:WebGL2RenderingContext|undefined;
     private lostNative:(()=>boolean)|undefined;
     // Fixed-size observations only; original records/native owners still authorize every transition.
+    private readonly frameTiming: ReturnType<typeof createFrameTiming> | undefined;
     private readonly resourceCpu:SharedPageCopyDiagnostics2D={canonicalBytes:0,scratchBytes:0,highCanonicalBytes:0,highScratchBytes:0,highTemporaryBytes:0,saturated:false};
     private readonly resourceUnknown:NativeUnknownDiagnostics={knownLogicalBytes:0,objects:0,highKnownLogicalBytes:0,highObjects:0,saturated:false};
     private readonly resourceReuse:RetentionLedgerDiagnostics={current:{idleBytes:0,idleEntries:0,leasedBytes:0,leasedEntries:0,reservedBytes:0,reservedEntries:0,detachedBytes:0,detachedEntries:0,unknownBytes:0,unknownEntries:0},highWater:{idleBytes:0,idleEntries:0,leasedBytes:0,leasedEntries:0,reservedBytes:0,reservedEntries:0,detachedBytes:0,detachedEntries:0,unknownBytes:0,unknownEntries:0},saturated:false,unknownNative:this.resourceUnknown};
@@ -207,7 +216,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     private retiredUnknownObjects = 0;
 
     public constructor(input:SharedWebGL2HostOptions,private readonly sceneMode=false) {
-        try { const admitted = admitSharedWebGL2Options(input,sceneMode); this.surface=admitted.surface;this.options=admitted.configuration;this.callback=admitted.callback; }
+        try { const admitted = admitSharedWebGL2Options(input,sceneMode); this.surface=admitted.surface;this.options=admitted.configuration;this.callback=admitted.callback;this.frameTiming=admitted.measureSharedFrames?createFrameTiming():undefined; }
         catch(cause) {throw glFailure('WEBGL2_OPTIONS_INVALID',cause);}
         Object.defineProperty(this,'surface',{writable:false,configurable:false});
         Object.defineProperty(this,'sharedFrameProfile',{writable:false,configurable:false});
@@ -218,6 +227,24 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         });
         this.cpu.resolve();
     }
+    private recordTiming(phase: SharedWebGL2TimingPhase, startMs: number, generation: number, serial: number|null): void {
+        const timing=this.frameTiming!, durationMs=clock()-startMs, total=timing.totals[phase];
+        if(!Number.isFinite(durationMs)||durationMs<0)return;
+        if(total.count<Number.MAX_SAFE_INTEGER){total.count++;total.totalMs+=durationMs;total.maxMs=Math.max(total.maxMs,durationMs);}
+        if(timing.samples.length===TIMING_CAPACITY)timing.dropped=Math.min(timing.dropped+1,Number.MAX_SAFE_INTEGER);
+        timing.samples[timing.next]={phase,startMs,durationMs,generation,serial};
+        timing.next=(timing.next+1)%TIMING_CAPACITY;
+    }
+
+    public getSharedFrameTiming(): SharedWebGL2FrameTiming | null {
+        const timing=this.frameTiming;
+        if(!timing)return null;
+        const first=timing.samples.length===TIMING_CAPACITY?timing.next:0;
+        const recent=Array.from({length:timing.samples.length},(_,index)=>Object.freeze({...timing.samples[(first+index)%TIMING_CAPACITY]!}));
+        const totals=Object.fromEntries(TIMING_PHASES.map(phase=>[phase,Object.freeze({...timing.totals[phase]})])) as SharedWebGL2FrameTiming['totals'];
+        return Object.freeze({totals:Object.freeze(totals),recent:Object.freeze(recent),dropped:timing.dropped});
+    }
+
     private reservePageDiagnostics(record:Record2D):void {
         this.resourceNative.reservedPageBytes+=record.reservedPageBytes;
         this.resourceNative.highReservedPageBytes=Math.max(this.resourceNative.highReservedPageBytes,this.resourceNative.reservedPageBytes);
@@ -405,7 +432,10 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             this.lostNative=context.isContextLost.bind(context);
             this.generationGate(token);
             if(!restoring)this.bindListeners();
-            const native=new GLNativeSession(context,()=>this.generationGate(token),this.resourceNative);this.native=native;
+            const generation=this.generation;
+            const native=new GLNativeSession(context,()=>this.generationGate(token),this.resourceNative,
+                this.frameTiming?(phase,started,serial)=>this.recordTiming(phase,started,generation,serial):undefined);
+            this.native=native;
             const gl=native.gl,attrs=gl.getContextAttributes();
             if(context.canvas!==this.surface||!attrs||Object.entries(ATTRIBUTES).some(([key,value])=>(attrs as unknown as Record<string,unknown>)[key]!==value))throw glFailure('WEBGL2_CONTEXT_ATTRIBUTES_UNSUPPORTED');
             // Explicitly request the one supported drawing-buffer color space when exposed.
@@ -690,7 +720,11 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 for(const group of prepared.effects.groups)if(group.maskPageIndex!==undefined)trackPage(group.maskPageIndex);
                 for(const index of cardViews)trackPage(index);
                 for(const index of attached?.textureViews.values()??[])trackPage(index);
-                const pages=materializeSharedPages2D(storage,cold,this.snapshot(),this.resourceCpu);materialized=pages.canonicalBytes;this.active();
+                const timingNative=cold.size?this.native:undefined, started=timingNative?.startTiming();
+                let pages:ReturnType<typeof materializeSharedPages2D>;
+                try{pages=materializeSharedPages2D(storage,cold,this.snapshot(),this.resourceCpu);}
+                finally{timingNative?.finishTiming('texture-prepare',started);}
+                materialized=pages.canonicalBytes;this.active();
                 checkSharedCapacity2D(storage,this.snapshot(),pages.canonicalBytes);
                 batch=prepareSharedBatches2D(packed,options.maxUploadBytes,this.scratch);this.active();
                 const arena=planSharedWebGL2Arenas(batch.draws,scene?.uniforms??[],limits.alignment);checkSharedWebGL2ArenaCapacity(arena,this.arenaOwner());
@@ -936,11 +970,12 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         if(control.phase!=='ready'||!control.record)throw glFailure('WEBGL2_UPLOAD_NOT_READY');
         if(this.serial>=Number.MAX_SAFE_INTEGER)throw glFailure('WEBGL2_SERIAL_EXHAUSTED');
         const record=control.record,work=record.upload!,native=record.native;
+        const submitted=native.startTiming();
         this.busy=true;this.cpu=deferred<void>();this.phase='render';
         try{
             this.generationGate(control.token);
             const ticket=this.ticket&&!this.ticket.bound?this.ticket:undefined;
-            record.serial=++this.serial;record.ticket=ticket;if(ticket)ticket.bound=true;
+            record.serial=++this.serial;if(this.frameTiming)native.timingSerial=record.serial;record.ticket=ticket;if(ticket)ticket.bound=true;
             record.completion=deferred<void>();control.transferred=true;control.phase='submitted';
             this.clearUploadAdmission(control);native.recordOwners=record.rawOwners;
             let issued=false;
@@ -957,7 +992,10 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             this.phase='poll';if(issued)this.issueUploadFence(record);else this.retire(record);native.recordOwners=undefined;
             this.schedulePump();if(record.failure){record.completion.reject(record.failure);throw record.failure;}
             return Object.freeze({generation:record.generation,frameId:control.frameId,serial:record.serial,completed:record.completion.promise});
-        }finally{native.recordOwners=undefined;this.phase=undefined;this.busy=false;this.retireLost();this.cpu.resolve();}
+        }finally{
+            if(submitted!==undefined){native.finishTiming('submit',submitted);native.timingSerial=null;}
+            native.recordOwners=undefined;this.phase=undefined;this.busy=false;this.retireLost();this.cpu.resolve();
+        }
     }
     private submit(p:PreparedRecord):undefined {
         const native=this.native!,gl=native.gl,{width,height}=p.storage.prepared;
@@ -972,6 +1010,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             for(const read of p.layerReads)read.revision.pins++;
         }
         native.recordOwners=record.rawOwners;
+        const submitted=native.startTiming();
+        if(submitted!==undefined)native.timingSerial=record.serial;
         try{
             this.pool.claim(plan);
             for(const victim of plan.victims)this.disposeHandle(victim,native,this.pool);
@@ -1017,6 +1057,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 if(!native.invalidated){this.unsafe=true;this.markUnknown(record);}}
             finally{this.phase=old;}
         }
+        if(submitted!==undefined){native.finishTiming('submit',submitted);native.timingSerial=null;}
         native.recordOwners=undefined;
         if(native.invalidated)this.retireLost();else if(!record.sync)this.retire(record);else this.schedulePump();
         if(record.failure)throw record.failure;
@@ -1139,7 +1180,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         const {vertex,uniform,color,depth,meshes,pageTextures}=layout;
             const colorTexture=(record.layerWrite?.revision?.owner??record.leases[color]!.handle.resource).value as WebGLTexture;
             gl.bindFramebuffer(gl.FRAMEBUFFER,this.framebuffer!);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,colorTexture,0);
-            gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,depth>=0?record.leases[depth]!.handle.resource.value as WebGLRenderbuffer:null);native.attachment(true);
+            const depthBuffer=depth>=0?record.leases[depth]!.handle.resource.value as WebGLRenderbuffer:null;
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,depthBuffer);native.workingAttachment(colorTexture,depthBuffer);
             gl.drawBuffers([gl.COLOR_ATTACHMENT0]);const c=frame.clearColor,a=frame.clearAlpha;
             gl.clearColor(a*decodeSharedSRGB(((c>>>16)&255)/255),a*decodeSharedSRGB(((c>>>8)&255)/255),a*decodeSharedSRGB((c&255)/255),a);gl.clear(gl.COLOR_BUFFER_BIT);
             if(record.scene){
@@ -1220,7 +1262,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             if(record.storage.prepared.effects.groups.length===0){for(const range of record.arena.sharedRanges)drawOne(range);}
             else{
                 const targets=layout.effectTargets.map(id=>record.leases[id]!.handle.resource.value as WebGLTexture);
-                const setTarget=(target:WebGLTexture,clear:boolean):void=>{gl.bindFramebuffer(gl.FRAMEBUFFER,this.framebuffer!);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,target,0);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,null);native.attachment(true);if(clear){gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);}};
+                const setTarget=(target:WebGLTexture,clear:boolean):void=>{gl.bindFramebuffer(gl.FRAMEBUFFER,this.framebuffer!);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,target,0);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,null);native.workingAttachment(target,null);if(clear){gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);}};
                 const groups=record.storage.prepared.effects.groups,enters=new Map(groups.map(g=>[g.enter,g])),exits=new Map(groups.map(g=>[g.exit,g]));
                 const ranges=new Map(record.arena.sharedRanges.map(range=>[range.draw.prepared.command.ordinal,range]));
                 const effectPass=(group:PreparedEffect2D,mode:SharedEffectPass,target:WebGLTexture,source:WebGLTexture):void=>{
@@ -1289,10 +1331,16 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             }
             if(!record.sync)continue;
             try{if(clock()>=record.deadline)throw glFailure('WEBGL2_SYNC_TIMEOUT');
-                const gl=record.native.gl,result=gl.clientWaitSync(record.sync.value as WebGLSync,0,0);
+                const native=record.native,gl=native.gl,started=native.startTiming();
+                let result:number;
+                if(started!==undefined)native.timingSerial=record.serial||null;
+                try{result=gl.clientWaitSync(record.sync.value as WebGLSync,0,0);}
+                finally{native.finishTiming('fence-poll',started);}
                 if(result===gl.TIMEOUT_EXPIRED){if(clock()<record.deadline)continue;throw glFailure('WEBGL2_SYNC_TIMEOUT');}
                 if(result!==gl.ALREADY_SIGNALED&&result!==gl.CONDITION_SATISFIED)throw glFailure('WEBGL2_SYNC_FAILED',result);
-                record.native.check();if(clock()>=record.deadline)throw glFailure('WEBGL2_SYNC_TIMEOUT');
+                const checked=native.startTiming();
+                try{native.check();}finally{native.finishTiming('completion-error-query',checked);}
+                if(clock()>=record.deadline)throw glFailure('WEBGL2_SYNC_TIMEOUT');
                 if(work&&!work.control.transferred){
                     const sync=record.sync;record.sync=undefined;
                     if(!record.native.cleanup(sync))throw glFailure('WEBGL2_CLOSE_UNSAFE',record.native.cleanupFailure?.cause);
@@ -1318,6 +1366,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             }catch(cause){record.failure??=this.note(isGLFailure(cause)?cause.code as WebGL2HostErrorCode:'WEBGL2_READBACK_FAILED',cause,'readback',record.serial||null);
                 if(!record.native.invalidated){this.unsafe=true;this.markUnknown(record);}
                 if(this.state==='active'){this.state='failed';this.revokeUploads(record.failure as Error);}}
+            finally{if(this.frameTiming)record.native.timingSerial=null;}
             this.retire(record);
         }}finally{this.phase=undefined;this.busy=false;this.retireLost();this.cpu.resolve();this.schedulePump();}
     }
@@ -1335,6 +1384,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     private retire(record:Record2D):void {
         if(record.retired)return;record.retired=true;
         const native=record.native,work=record.upload;
+        const started=native.startTiming(), previousSerial=native.timingSerial;
+        if(started!==undefined)native.timingSerial=record.serial||null;
         if(work){work.control.phase='retired';this.clearUploadAdmission(work.control);}
         try{
             if(work?.claimed)for(const victim of work.plan.victims)this.disposeHandle(victim,native,record.pool);
@@ -1382,6 +1433,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 if(work.control.signal)work.control.signal.control=undefined;
                 work.control.signal=undefined;work.control.record=undefined;work.writes.length=0;work.layout.pageTextures.clear();
             }
+            if(started!==undefined){native.finishTiming('retire',started);native.timingSerial=previousSerial;}
         }
     }
     public close():Promise<void> {

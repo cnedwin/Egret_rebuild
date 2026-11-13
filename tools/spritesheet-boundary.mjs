@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // First-party SS1 source/emission policy. Product modules are read, never executed.
 // Complete-copy ownership follows the existing sequence-playback policy scaffold.
+import { selectSharedWebGL2FramePins } from './lib/shared-webgl2-frame-pins.mjs';
 import { readFileSync, readdirSync, lstatSync, realpathSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
@@ -818,6 +819,7 @@ function m3PointerGraph(root,base,actual) {
     }
   }
   // 2D-COST-IDENTITY-END
+  graph=selectSharedWebGL2FramePins(root,graph,present);
   for(const row of graph){
     if(!present.has(row.path))return reject('Incomplete M3 pointer successor: '+row.path);
     const raw=readFileSync(path.join(root,row.path));if(raw.length!==row.bytes||digest(raw)!==row.sha256)return reject('M3 pointer whole-group raw identity differs: '+row.path);

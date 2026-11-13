@@ -9,7 +9,7 @@ const PROFILE = 'egret.shared-frame2d/1';
 const TOP = ['canvas','onDiagnostic','pixelRatio','maxBackingPixels','maxCommands','maxClipRectangles',
   'maxPreparedVertices','maxClipEdgeTests','maxUploadBytes','maxPendingUploadBytes','maxPendingFrames',
   'maxReadbackBytes','enableReadback','maxSourceTriangles','maxFrameGeometryBytes','maxPendingGeometryBytes',
-  'maxTupleComparisons','outputAlpha','restoreTimeoutMs'];
+  'maxTupleComparisons','outputAlpha','restoreTimeoutMs','measureSharedFrames'];
 const code = name => e => e instanceof egret.EgretError && e.code === 'WEBGL2_' + name;
 async function author(body) {
   const engine = await egret.createEngine({ host: { surface:{}, start(){}, stop(){}, async close(){}, setTimeout(){return ()=>{};} } });
@@ -92,6 +92,115 @@ test('GL G03 contained clips preserve packed attributes and exact tuple admissio
       }
     } finally { await h.close(); }
   }
+}));
+
+
+test('GL attachment validation follows owned targets and resets after context restoration', async () => author(async a => {
+  const f = glPorts(), h = createSharedWebGL2Host({canvas:f.canvas});
+  const draw = async (frame) => {
+    const before = f.events.length;
+    h.renderSharedFrame(frame);
+    await h.whenIdle();
+    const events = f.events.slice(before);
+    const color = events.find(row => row[0] === 'framebufferTexture2D' && row[4] !== null)?.[4];
+    const queries = events.filter(row => row[0] === 'getFramebufferAttachmentParameter');
+    return {
+      color,
+      working:queries.filter(row => row[2] === f.gl.COLOR_ATTACHMENT0).length,
+      default:queries.filter(row => row[2] === f.gl.BACK).length,
+      status:events.filter(row => row[0] === 'checkFramebufferStatus').length,
+    };
+  };
+  try {
+    await h.start();
+    const frame = a.frame(), resized = a.engine.captureSharedFrame({width:12,height:8});
+    const first = await draw(frame);
+    assert.ok(first.color);
+    assert.deepEqual(first, {color:first.color,working:6,default:6,status:1});
+    assert.deepEqual(await draw(frame), {color:first.color,working:0,default:6,status:0});
+    const larger = await draw(resized);
+    assert.notEqual(larger.color, first.color);
+    assert.deepEqual(larger, {color:larger.color,working:6,default:6,status:1});
+    assert.deepEqual(await draw(frame), {color:first.color,working:0,default:6,status:0});
+    f.lose();
+    const ready = h.whenReady();
+    f.restore();
+    await ready;
+    const restored = await draw(frame);
+    assert.notEqual(restored.color, first.color);
+    assert.deepEqual(restored, {color:restored.color,working:6,default:6,status:1});
+  } finally { await h.close(); }
+}));
+
+test('GL working validation distinguishes depth changes and preserves warm bind errors', async () => author(async a => {
+  const {createSharedSceneWebGL2Host} = await import('@egret/engine/webgl2/scene3d');
+  const {createSceneFrame3D} = await import('@egret/engine/scene3d');
+  const scene = createSceneFrame3D({projection:{kind:'orthographic',left:-1,right:1,bottom:-1,top:1,near:1,far:3},draws:[]});
+  const f = glPorts(), h = createSharedSceneWebGL2Host({canvas:f.canvas,outputAlpha:'opaque'});
+  const frame = a.engine.captureSharedFrame({width:8,height:8,outputAlpha:'opaque',clearAlpha:1});
+  const draw = async (withDepth) => {
+    const before = f.events.length;
+    if (withDepth) h.renderSceneSharedFrame(scene, frame); else h.renderSharedFrame(frame);
+    await h.whenIdle();
+    const events = f.events.slice(before);
+    return {
+      color:events.find(row => row[0] === 'framebufferTexture2D' && row[4] !== null)?.[4],
+      depth:events.find(row => row[0] === 'framebufferRenderbuffer')?.[4],
+      status:events.filter(row => row[0] === 'checkFramebufferStatus').length,
+    };
+  };
+  try {
+    await h.start();
+    const plain = await draw(false), withDepth = await draw(true);
+    assert.ok(plain.color && withDepth.depth);
+    assert.deepEqual(plain, {color:plain.color,depth:null,status:1});
+    assert.deepEqual(withDepth, {color:plain.color,depth:withDepth.depth,status:1});
+    assert.deepEqual(await draw(false), {...plain,status:0});
+    assert.deepEqual(await draw(true), {...withDepth,status:0});
+
+    // An error raised by rebinding a cached attachment must still fail the frame.
+    f.onCall = (name, args) => {
+      if (name === 'framebufferTexture2D' && args[3] === plain.color) f.errors.push(1285);
+    };
+    const before = f.events.length;
+    assert.throws(() => h.renderSharedFrame(frame), code('OUT_OF_MEMORY'));
+    assert.equal(f.events.slice(before).some(row => row[0] === 'drawArrays'), false);
+  } finally { f.onCall = undefined; await h.close(); }
+}));
+
+
+test('GL effect target switches qualify each distinct target once and refuse an incomplete new target', async () => author(async a => {
+  const f = glPorts(), h = createSharedWebGL2Host({canvas:f.canvas,enableEffects:true});
+  const checkFramebufferStatus = f.gl.checkFramebufferStatus;
+  let complete = true;
+  f.gl.checkFramebufferStatus = () => {
+    checkFramebufferStatus();
+    return complete ? f.gl.FRAMEBUFFER_COMPLETE : 36054; // FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+  };
+  const draw = async (frame) => {
+    const before = f.events.length;
+    h.renderSharedFrame(frame);
+    await h.whenIdle();
+    return f.events.slice(before);
+  };
+  try {
+    a.sprite.renderEffect = {blurRadius:1};
+    await h.start();
+    const frame = a.frame();
+    const first = await draw(frame);
+    const targets = first.filter(row => row[0] === 'framebufferTexture2D' && row[4] !== null);
+    assert.equal(new Set(targets.map(row => row[4])).size, 3);
+    assert.equal(first.filter(row => row[0] === 'checkFramebufferStatus').length, 3);
+    const warm = await draw(frame);
+    assert.deepEqual(warm.filter(row => row[0] === 'framebufferTexture2D' && row[4] !== null), targets);
+    assert.equal(warm.filter(row => row[0] === 'checkFramebufferStatus').length, 0);
+    complete = false;
+    const before = f.events.length;
+    const resized = a.engine.captureSharedFrame({width:12,height:8});
+    assert.throws(() => h.renderSharedFrame(resized), code('FORMAT_UNSUPPORTED'));
+    assert.equal(f.events.slice(before).filter(row => row[0] === 'checkFramebufferStatus').length, 1);
+    assert.equal(f.events.slice(before).some(row => row[0] === 'drawArrays'), false);
+  } finally { await h.close(); }
 }));
 
 test('GL G04 PBO copy is issued before a later submission; delayed extraction belongs to the first frame', async () => author(async a => {
@@ -419,6 +528,51 @@ test('GL G16 retirement cleanup preserves its exact cause, fails closed and keep
     await assert.rejects(h.close(), error => code('CLOSE_UNSAFE')(error) && error.cause === cause);
     assert.equal(h.getStatus().cleanupOutcome, 'unsafe');
   } finally { f.signalAll(); await h.close().catch(error => assert.ok(code('CLOSE_UNSAFE')(error))); }
+}));
+
+test('GL completion and Sync deletion preserve separate numeric error attribution', {timeout: 1000}, async () => author(async a => {
+  for (const [boundary, expectedCode, phase] of [
+    ['clientWaitSync', 'VALIDATION', 'readback'],
+    ['deleteSync', 'CLOSE_UNSAFE', 'cleanup'],
+  ]) {
+    const f = glPorts(), h = createSharedWebGL2Host({canvas:f.canvas,enableReadback:true});
+    const cause = f.gl.INVALID_OPERATION;
+    try {
+      await h.start(); f.autoSignal = false;
+      const ticket = h.requestReadback();
+      const readback = assert.rejects(ticket, code(expectedCode));
+      h.renderSharedFrame(a.frame());
+      const idle = assert.rejects(h.whenIdle(), code(expectedCode));
+      let injected = false;
+      f.onCall = name => {
+        if (injected || name !== boundary) return;
+        injected = true;
+        f.errors.push(cause);
+      };
+      f.signalAll();
+      await Promise.all([idle, readback]);
+      assert.equal(injected, true);
+      const {firstFailure, state} = h.getStatus();
+      assert.equal(state, 'failed');
+      assert.equal(firstFailure.code, 'WEBGL2_' + expectedCode);
+      assert.equal(firstFailure.phase, phase);
+      assert.equal(firstFailure.serial, 1);
+      assert.equal(boundary === 'deleteSync' ? firstFailure.cause : firstFailure.cause.cause, cause);
+      const calls = f.events.map(row => row[0]), {retention} = h.getSharedStatus();
+      if (boundary === 'clientWaitSync') {
+        assert.equal(calls.includes('getBufferSubData'), false);
+        assert.equal(calls.includes('deleteSync'), false);
+        assert.equal(retention.unknownNativeObjects, 2, 'completion failure retains the Sync and PBO');
+        assert.ok(retention.unknownEntries > 0, 'completion failure retains draw resources');
+      } else {
+        assert.ok(calls.indexOf('getBufferSubData') < calls.indexOf('deleteSync'));
+        assert.equal(calls.filter(name => name === 'deleteSync').length, 1);
+        assert.equal(retention.unknownNativeObjects, 1, 'failed deletion retains only the original Sync');
+        assert.equal(retention.unknownEntries, 0);
+      }
+      await assert.rejects(h.close(), code('CLOSE_UNSAFE'));
+    } finally { f.onCall = undefined; f.signalAll(); await h.close().catch(error => assert.ok(code('CLOSE_UNSAFE')(error))); }
+  }
 }));
 
 test('GL G17 a throwing native create keeps its unpublished allocation charged and preserves the original cause', { timeout: 1000 }, async () => author(async a => {
