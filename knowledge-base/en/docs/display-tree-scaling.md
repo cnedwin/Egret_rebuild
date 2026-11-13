@@ -206,18 +206,18 @@ The test that captures every frame both ways covers nodes at rest in each of its
 
 `node tools/bench-2d-gpu.mjs` draws seven fixed workloads through the shared WebGPU Host and the shared WebGL2 Host in a browser, at 1280 by 720. `tools/bench-2d.mjs` stops where the graphics API begins; this tool measures from there. It prints an address. Opening that address in a browser on the machine to be measured runs the workloads, and the tool prints the table when the page finishes. With `--playwright <installed module>` the tool opens the browser itself: `--channel msedge` names an installed browser, and the window is visible unless `--headless` is given, because a hidden window may not use the graphics card. `--quick` runs a shorter pass, `--json` prints the whole report, and `--backends` and `--only` narrow the run.
 
-Each workload is drawn first as fast as the Host finishes frames, then once per display frame. The table states, per frame:
+Each workload warms its resources, then records serialized CPU submission and a separate GPU timer batch. The paced pass attempts one draw on each animation callback. Only the GPU timer batch issues timing queries. The table reports:
 
-- **draws**: the draw calls the Host issued, the final copy to the canvas included.
-- **capture**: the Engine turning the display list into a frame record.
-- **submit**: the Host preparing, uploading and encoding that record.
-- **settle**: from the end of submit until the Host reports the frame finished.
-- **gpu**: the time the device spent in the render passes of the frame.
-- **interval** and **p95**: the median and the 95th percentile of the time between display frames, and **refused**: the frames the Host refused because two were still pending.
+- **draws** is the native draw count per serialized frame, including the final copy to the canvas.
+- **capture** covers Engine frame capture. **submit** covers synchronous Host preparation and submission. **settle** covers the following wait for Host completion.
+- **gpu** comes from an independent set of submissions. WebGPU sums the instrumented render passes. WebGL2 measures between the first draw and the closing fence call, using a nonzero timer counter. A disjoint invalidates the entire measurement batch. Unsupported, invalid or unavailable timing leaves the duration empty.
+- **interval** and **p95** describe browser animation callback intervals under load. **refused** counts Host backpressure in that pass. An animation callback alone does not establish physical presentation. Keep the page in the foreground.
 
-The device time comes from WebGPU timestamp queries, which need the `timestamp-query` feature, and from `EXT_disjoint_timer_query_webgl2`. Browsers round both to about 0.1 ms, and a browser that offers neither leaves the column empty. To read them, the tool lends the WebGPU Host a device whose command encoders it has wrapped, and wraps the WebGL2 context the Host obtains. The Hosts are unchanged, and the CPU figures include that wrapping.
+The GPU probe borrows the same warmed Host and resources, drains its queries, and disables timing before the paced pass. The Engine and Host implementations are unchanged. Browser timestamp precision and the two backends' different timing scopes apply. [WebGL2 timer extension](https://registry.khronos.org/webgl/extensions/EXT_disjoint_timer_query_webgl2/) · [WebGPU timestamp precision](https://www.w3.org/TR/webgpu/#timing-attacks)
 
-No run on a hardware GPU is recorded here. A quick pass in a headless Chromium with software rendering, on two shared cores, completed all fourteen rows. Its device times describe the software renderer and are not kept. Its draw counts and Host CPU times are the starting point of the WebGPU work:
+The original software-rendered experiment below used the prior timer wiring. Its counts and Host measurements are retained as historical evidence.
+
+A quick pass in a headless Chromium with software rendering, on two shared cores, completed all fourteen rows. Its device times describe the software renderer and are not kept. Its draw counts and Host CPU times are the starting point of the WebGPU work:
 
 | Workload | Draws | Submit, WebGPU | Submit, WebGL2 |
 | --- | --- | --- | --- |
