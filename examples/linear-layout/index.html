@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Egret explicit linear layout / 白鹭显式线性布局</title>
 <link rel="icon" href="/examples/canvas-scene/favicon.svg">
-<script type="importmap">{"imports":{"#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-mouse-input":"/packages/engine/dist/mouseInput.js","@egret/engine":"/packages/engine/dist/index.js","@egret/engine/layout":"/packages/engine/dist/layout.js","@egret/engine/web/input":"/packages/engine/dist/web/input.js","@egret/engine/web":"/packages/engine/dist/web/index.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/contracts":"/packages/contracts/dist/index.js","@egret/contracts/resources":"/packages/contracts/dist/resources/index.js","robust-predicates":"/packages/engine/node_modules/robust-predicates/index.js"}}</script>
+<script type="importmap">{"imports":{"#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-mouse-input":"/packages/engine/dist/mouseInput.js","@egret/engine":"/packages/engine/dist/index.js","@egret/engine/layout":"/packages/engine/dist/layout.js","@egret/engine/web/input":"/packages/engine/dist/web/input.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/engine/webgl2":"/packages/engine/dist/web/webgl2.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/contracts":"/packages/contracts/dist/index.js","@egret/contracts/resources":"/packages/contracts/dist/resources/index.js","robust-predicates":"/packages/engine/node_modules/robust-predicates/index.js"}}</script>
 <style>
 body{font:17px/1.6 system-ui;margin:0;background:#f2f5f9;color:#172033}
 main{max-width:860px;margin:auto;padding:28px 20px}h1{font-size:1.8rem;line-height:1.3}
@@ -20,7 +20,7 @@ button:disabled{opacity:.5}.controls{margin:16px 0}#status{white-space:pre-line;
 <h1>Explicit linear layout<br><span lang="zh-CN">显式线性布局</span></h1>
 <p>Choose a plan, then click the red bitmap buttons. Blue means pressed; gray means disabled.<br>
 <span lang="zh-CN">选择布局计划，再点击红色位图按钮。蓝色表示按下，灰色表示禁用。</span></p>
-<label>Renderer / 渲染器 <select id="backend"><option value="canvas">Canvas</option></select></label>
+<label>Renderer / 渲染器 <select id="backend"><option value="webgpu">WebGPU</option><option value="webgl2">WebGL2</option></select></label>
 <p class="note">Switching renderer safely closes the current Engine before starting a fresh page.<br>
 <span lang="zh-CN">切换渲染器会先安全关闭当前引擎，再启动新页面。</span></p>
 <canvas id="scene" width="24" height="24" aria-label="Two genuine bitmap buttons in nested clipped containers / 嵌套裁剪容器中的两个真实位图按钮"></canvas>

@@ -2,7 +2,7 @@
 import { createPreparedResourceApplication } from './application.mjs';
 
 const element = id => document.getElementById(id);
-const profile = new URL(location.href).searchParams.get('profile') ?? 'canvas-2d';
+const profile = new URL(location.href).searchParams.get('profile') ?? 'shared-2d';
 const application = createPreparedResourceApplication({ canvas: element('scene'), profile });
 let seconds = 0;
 const target = () => application.session.inspect().selectedId;

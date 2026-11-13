@@ -1,6 +1,6 @@
 // First-party public SDK example, with scalar-only collector observations. Apache-2.0.
-import { CancellationController, createEngine } from '@egret/engine';
-import { createCanvasHost } from '@egret/engine/web';
+import { CancellationController, createEngineForProfile, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
+import { createExampleHost } from '../host.mjs';
 import { createMouseInput } from '@egret/engine/web/input';
 import { createMouseScene } from './scene.mjs';
 
@@ -26,13 +26,14 @@ function nextInput() {
 async function initialize() {
   // Public import precedes prototype discovery; Engine assembly captures these observers.
   observer?.installSignal(CancellationController);
-  const nativeHost = createCanvasHost({ canvas, pixelRatio: 1 });
+  const nativeHost = await createExampleHost({ canvas, pixelRatio: 1 });
   const host = {
     surface: canvas,
     start() { hostTrace.push('host.start'); return nativeHost.start(); },
     stop() { hostTrace.push('host.stop'); return nativeHost.stop(); },
     close() { hostTrace.push('host.close'); return nativeHost.close(); },
-    renderFrame(frame) { return nativeHost.renderFrame(frame); },
+    sharedFrameProfile: SHARED_FRAME_PROFILE_2D,
+    renderSharedFrame(frame) { return nativeHost.renderSharedFrame(frame); },
     setTimeout(callback, delay) {
       let active = true; pendingHostTimers++;
       let cancel;
@@ -41,7 +42,7 @@ async function initialize() {
       return () => { if (active) { active = false; pendingHostTimers--; } cancel(); };
     },
   };
-  engine = await createEngine({ host, onDiagnostic: diagnostic });
+  engine = await createEngineForProfile({ host, onDiagnostic: diagnostic }, SHARED_FRAME_PROFILE_2D);
   scope = engine.createScope();
   scene = createMouseScene(engine, scope);
   nextInput(); phase = 'ready';

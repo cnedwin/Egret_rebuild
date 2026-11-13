@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Public SDK example composition. Node supplies normalized inputs; this module never parses metadata.
 import {
-  Sprite, createAssetRef, createAssetType, createEngine, createEngineForProfile,
-  createSequenceClip, createSpriteSheet, createTexture, isTexture, TEXTURED_FRAME_PROFILE_2D,
+  Sprite, createAssetRef, createAssetType, createEngine,
+  createSequenceClip, createSpriteSheet, createTexture, isTexture,
 } from '@egret/engine';
 
 const PROFILE = 'trim-rotation-v1';
@@ -27,15 +27,14 @@ function errorView(cause, seen = new Set(), depth = 0) {
 }
 
 export async function createAtlasImportSession({ host, profile, image, sequenceInput, spriteSheetFrames }) {
-  if (profile !== 'canvas-2d' && profile !== 'webgpu-textured-2d') {
+  if (profile !== 'shared-2d') {
     throw new TypeError('Fixed 2D profile required');
   }
   const diagnostics = [], ticks = [], cleanupErrors = [], leases = [], textures = [];
   const sheets = [], bitmaps = [], parents = [], controllers = [];
   const providerDisposalAttempts = [], providerDisposals = [];
   const options = { host, onDiagnostic(row) { diagnostics.push(row); } };
-  const engine = await (profile === 'canvas-2d'
-    ? createEngine(options) : createEngineForProfile(options, TEXTURED_FRAME_PROFILE_2D));
+  const engine = await createEngine(options);
   let displayScope, animationScope, actor, clip, closePromise;
   let state = 'starting', sourceSeconds = 0, initialized = false;
 
@@ -197,7 +196,7 @@ export async function createAtlasImportSession({ host, profile, image, sequenceI
     },
     capture() {
       open();
-      return profile === 'canvas-2d' ? engine.captureFrame(FRAME) : engine.captureTexturedFrame(FRAME);
+      return engine.captureSharedFrame(FRAME);
     },
   });
 }

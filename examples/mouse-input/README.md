@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+> **Now on the shared Hosts.** This example draws with the shared WebGPU Host by default and with the shared WebGL2 Host under `?backend=webgl2`. The Canvas Host it used before has been removed; the verifier commands named below were written for it and no longer apply. Statements below about the Canvas Host, about choosing Canvas, and about recorded Canvas checks describe earlier versions.
+
 This bounded example uses public `@egret/engine`, `@egret/engine/web` and `@egret/engine/web/input`. Its 160 × 100 logical scene appears at 320 × 200 CSS pixels. The green region covers part of the red region. Input dispatches typed begin, end and activation events; application rendering remains explicit.
 
 Build the SDK through the repository's normal verification workflow, then serve the repository root over HTTP and open `examples/mouse-input/`. The HTML import map includes the three public entry points and exactly four emitted SDK dependencies: `@egret/runtime`, `@egret/contracts`, `#egret-textured-frame-state` and `#egret-mouse-input`. Application JavaScript keeps the three public imports. The accepted profile requires an ordinary connected canvas with zero borders/padding, object-fit fill and no transformed ancestors. This example owns its Engine and Scope and borrows the canvas.

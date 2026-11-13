@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+> **Now on the shared Hosts.** This example draws with the shared WebGPU Host by default and with the shared WebGL2 Host under `?backend=webgl2`. The Canvas Host it used before has been removed; the verifier commands named below were written for it and no longer apply. Statements below about the Canvas Host, about choosing Canvas, and about recorded Canvas checks describe earlier versions.
+
 Engineering preview **0.30.0** composes the existing Stage query, typed events and CanvasHost in a small authored-rectangle application.
 
 ## Run from the repository root

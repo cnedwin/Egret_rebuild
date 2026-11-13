@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+> **已改用共享 Host。** 本示例默认用共享 WebGPU Host 绘制，加上 `?backend=webgl2` 时用共享 WebGL2 Host。此前使用的 Canvas Host 已移除；下文提到的验证命令为它编写，不再适用。下文关于 Canvas Host、选择 Canvas 以及已记录的 Canvas 检查的说明，描述的是早先的版本。
+
 本原创应用通过可选的已构建 `@egret/engine/layout` 入口规划两个位图 Button，再使用既有 display API 应用返回的局部坐标。单个真实 Engine、共享 MouseInput、分别所有的 Button Scope 及借用的程序化图集保留既有 bitmap-button 生命周期。
 
 ## 运行
