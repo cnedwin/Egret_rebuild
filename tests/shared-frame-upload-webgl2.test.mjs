@@ -403,6 +403,29 @@ test('GLU07 committed CPU bindings remain committed after staged candidate submi
   const ordinary = c.capture(); assert.equal(ordinary.pages[0].source,prepared.image);
 }))); // Controlled command failure establishes no presented pixels.
 
+test('GLU08 a staged frame uploads the rows it was prepared with, after later frames have written the rows of the batches the Host keeps', async () => hosted(async f => {
+  const { nodes } = await f.images(4, 4, 4); nodes.forEach((node, index) => { node.x = index; });
+  const gl = f.ports.gl;
+  // Every vertex byte written since `from`, in the order of its place in the buffer.
+  const vertexBytes = from => f.ports.events.slice(from).filter(row => row[0] === 'bufferSubData' && row[1] === gl.ARRAY_BUFFER).sort((a, b) => a[2] - b[2])
+    .flatMap(row => Array.from(new Uint8Array(row[3].buffer, row[3].byteOffset, row[3].byteLength)));
+  const ordinary = async () => { const from = f.ports.events.length; f.host.renderSharedFrame(f.frame()); const bytes = vertexBytes(from); await f.host.whenIdle(); return bytes; };
+  // Three ordinary frames: the draws rest, and the batch that joins the four bitmaps is kept.
+  await ordinary(); await ordinary(); const scene = await ordinary();
+  assert.equal(scene.length, 52 * 6 * 5, 'the rectangle of the fixture and four bitmaps');
+  // The same scene staged. None of its rows is written before the next ordinary frame.
+  const staged = f.stage(f.frame()), from = f.ports.events.length;
+  nodes[1].x += 2; nodes[2].y += 1;
+  f.host.renderSharedFrame(f.frame());
+  const changed = vertexBytes(from), after = f.ports.events.length;
+  assert.equal(changed.length, scene.length); assert.notDeepEqual(changed, scene);
+  await staged.ready;
+  assert.deepEqual(vertexBytes(after), scene, 'the staged frame wrote the rows of the scene it was prepared from');
+  await staged.submit().completed; await f.host.whenIdle();
+  // The ordinary frames go on from the changed scene: the kept batch has its rows.
+  assert.deepEqual(await ordinary(), changed);
+}));
+
 test('GLH01 session status projects existing GL state and restoration barriers', async () => hosted(async f => {
   const status = f.host.getSessionStatus(); assert.ok(Object.isFrozen(status));
   assert.deepEqual(status,{state:'ready',generation:1,attempt:0,firstFailure:null,generationFailure:null});

@@ -144,9 +144,12 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
         const page=pageIndex===undefined?undefined:frame.pages[pageIndex]!.source,geometry=command.kind==='mesh'?frame.geometries[command.geometryIndex]!:undefined;
         const found=retention?.find(command.ordinal,command,material,region,page,geometry);
         if(found!==undefined&&found.polygons!==undefined&&budget.tryReplayStageCost(found.geometryCost!)){
+            // The record of the last frame is given again while it would be the same in every field that is read.
+            let kept=retention!.rest(found,command,pageIndex);
+            if(kept===undefined){kept={kind:'draw',command,material,region,pageIndex,polygons:found.polygons,vertexReservation:found.vertexReservation};retention!.give(found,kept);}
             retention!.carry(command.ordinal,found,command,region);retained!.push(found);
             upload=add(upload,52*found.vertexReservation+128,Number.MAX_SAFE_INTEGER);
-            entries.push({kind:'draw',command,material,region,pageIndex,polygons:found.polygons,vertexReservation:found.vertexReservation});
+            entries.push(kept);
             continue;
         }
         const verticesBefore=budget.preparedVerticesCharged,predicatesBefore=budget.predicatesCharged,tuplesBefore=budget.tupleComparisonsCharged;
@@ -178,8 +181,9 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
             accept(points);
         }
         upload=add(upload,52*vertexReservation+128,Number.MAX_SAFE_INTEGER);
-        entries.push({kind:'draw',command,material,region,pageIndex,polygons,vertexReservation});
-        retained?.push(retention!.keep(command.ordinal,found,command,material,region,page,geometry,polygons,vertexReservation,
+        const made:PreparedSharedDraw2D={kind:'draw',command,material,region,pageIndex,polygons,vertexReservation};
+        entries.push(made);
+        retained?.push(retention!.keep(command.ordinal,found,command,material,region,page,geometry,made,
             budget.preparedVerticesCharged-verticesBefore,budget.predicatesCharged-predicatesBefore,budget.tupleComparisonsCharged-tuplesBefore));
     }
     }catch(cause){retention?.abandon();throw cause;}
