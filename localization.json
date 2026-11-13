@@ -323,8 +323,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "18943f595c1b58b41ea9af8979f74b1e4043f5c4b9706fca4ad5a00ee38f2dcc",
-      "zhSha256": "06f5646f5029a23641dbac3f6037e356bf3ed1fc3913619bb64ced3c206307ef"
+      "enSha256": "e7a45cd40b3cde349ba4e113787a7c6dee5069999621c8423b70278eeecbd9eb",
+      "zhSha256": "9d55512211afa9b5d4fa9f83c4b70a45aee592807a0e41195643848832aecf00"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "c2ddd5bc37185101130338292c60e459ec038df6573771916341d908521c2a9b",
-      "zhSha256": "4995333670efbb9d3dc7772874ff70aeb4d407f0e80b346855ac428e6864353a"
+      "enSha256": "05a62d550e4987e2e39a92f30ea2945a6e25fce86796a6720c9411659e63b8c8",
+      "zhSha256": "e507c4aa8e6921ef1deb61ac8db0005b7e7720f8b245395dd8e97d14f95e20d3"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -540,8 +540,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "a2117c939527e210a5e2c4914eba2ad9865465295a9cbb709c942057f9f9e9d2",
-      "zhSha256": "85fa6c848563f48755c75294a2e19c848b7748c2ffab43641081994a5f1a5513"
+      "enSha256": "f2ca735be739214ac7692b40a062de8616c8a3606818e1127ff6a675e3c0e903",
+      "zhSha256": "93f37cc0756795a37a6392c603d0b153d5f102f8ab4fdb045fbdf8019c9f064d"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1016,8 +1016,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "75731830af20fbfd2ec842b4bc2882dc3643b67d52f67ab7a37463bdff3afaf7",
-      "zhSha256": "43fb1ad30621715da1f8cd0a28875e655fb2c07c9d2d69c48cca2bd53846aa87"
+      "enSha256": "d26e01fe9669350087fc029b02fa0ac9762270cc480a3e33dce817eee40ee7e1",
+      "zhSha256": "01cf145e849772456fc7263529642a50950748d1aa7e452a0017e6539f964c52"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -1100,8 +1100,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "63ab4aef70de0386c955783fd7b45892aacdb0a0095f378b4af2ea6eb3e93186",
-      "zhSha256": "da041670dda6384b284e100c2d8a6297e4321b9d7ab3b9805a2d7be57c8caffb"
+      "enSha256": "4d8f2ffa6b37e00b1a76e2364312a44d5dd62747a370e53565a9382c67ba8d08",
+      "zhSha256": "5aeae87f8c52cd423e524b9f7e6b17a39a48acd7bef88ef729d4541a5e0a4c72"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1935,8 +1935,8 @@
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "3965b8f2b55b25e6c7d75cd0ab7d52083e404cc4c0d0097f31e39ed260a06fc9",
-      "zhSha256": "15779e0de55c7bf9b46149423a018677d2ee5e1a732f1ca06bdf864e0997d8a3"
+      "enSha256": "37f89adaacd3296e277bb81fe4e5825009705657c75c2b06563257a17af5564b",
+      "zhSha256": "096abf7d7a1856f4190f47e669109793cb2dccabc7c50cc82c16656f378b9ce3"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -1949,8 +1949,8 @@
       "en": "knowledge-base/en/docs/multi-pointer-input.md",
       "zh": "knowledge-base/Cns/docs/multi-pointer-input.md",
       "kind": "public_reading",
-      "enSha256": "b05a15f1d0b5eaa771774e4f43146bd4f841c6a3d7cfa4f95704417cfa667af4",
-      "zhSha256": "9af9457c038475ec80263bc2475a420d4ec3f32cd9928c0c7ca5db7395a1b831"
+      "enSha256": "ce3309d2ed90224f4e45af869ddc212dc2edda499acf588de746b2fb17dfa0e3",
+      "zhSha256": "5a884bcbd4b48208d34d5c237f216f757e645e9ac2ec8c06fe3e9e8f86d230ea"
     },
     {
       "en": "examples/multi-pointer/README.md",
@@ -2348,8 +2348,36 @@
       "en": "knowledge-base/en/docs/clean-consumer.md",
       "zh": "knowledge-base/Cns/docs/clean-consumer.md",
       "kind": "public_reading",
-      "enSha256": "af4642dd2eea19d29de11a4f4fc840c234fbd915e44b150b2000bbb608464a71",
-      "zhSha256": "16e1d68d165cd5cdb0fb850f733c9ade256642a187def03b7523b031e2998e75"
+      "enSha256": "118c2d2c4bf46fa680e79e7ea094d0f6d2257c9689ec53e24e0b6ee8890b5a75",
+      "zhSha256": "9ce346f7b522ec61147302786bca42a27239d196f05e064e73f49df0f63d6847"
+    },
+    {
+      "en": "knowledge-base/en/docs/pointer-hover.md",
+      "zh": "knowledge-base/Cns/docs/pointer-hover.md",
+      "kind": "public_reading",
+      "enSha256": "b71ff89318a57ebb2f51ecb4df3bdf4f8cb159bc9fb81a803384c56cc86d63af",
+      "zhSha256": "b7a35421f35c7b91f40d003cd9759fd1dbcde208127c5aa7345d6fe74df20385"
+    },
+    {
+      "en": "examples/pointer-hover/README.md",
+      "zh": "examples/pointer-hover/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "b7f58e4e72fcf0f16831881f713f002f01cd64e6e6251a5bee7b0d5f5ac39f30",
+      "zhSha256": "2aa193e8eb70ee402411a5fc358739da3e5deb86b570a5b953b17b5b8c9df647"
+    },
+    {
+      "en": "knowledge-base/en/docs/ui-controls.md",
+      "zh": "knowledge-base/Cns/docs/ui-controls.md",
+      "kind": "public_reading",
+      "enSha256": "7986404d2aabbd2aeac7880e914fd2b7e5eea8c0ffae48b0fed725eaf91821df",
+      "zhSha256": "4be0c68720969720f785ba8c6e731d0958fc9759370acc56bfe0097c68b10700"
+    },
+    {
+      "en": "examples/ui-controls/README.md",
+      "zh": "examples/ui-controls/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "ea44d5cff0ca79d13e0c5d888a755c11bfd3e6859f04a5d5cd476f36b76cb317",
+      "zhSha256": "bc7004490ba5f675f3212281a0b493899be721ce94e70c7c030a2196db7fcba1"
     }
   ],
   "registries": [
@@ -2947,11 +2975,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "6fde54999bce8668e87d027bdbb2226b0488a7c455db2164727093752c645dc1"
+      "sha256": "ac132ffb91a8d220e5f06ef7919fa8ac911f4a19d467d1ecce2c471ffb69478d"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "774c25e7e0769a7c158c113290cb1dc794e7293c8fa93a9c3932b7cc7b1082f3"
+      "sha256": "85235371d8742ffa607f503286b43d0346a60e9837a7c12e4e6ecf8fb90de061"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3587,7 +3615,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "98cb8ebd7e2f8cae99871ad6db40804333783ce17dfeb0999b498058f9961597"
+      "sha256": "979e36d0ffc8213f8cc364d0b5b2cd25c66f1eb08fdfa5ff62cc490aa214eadd"
     },
     {
       "path": "tools/incremental-dependencies.mjs",
@@ -3843,7 +3871,7 @@
     },
     {
       "path": "packages/engine/src/ui/index.ts",
-      "sha256": "2b79efa062ee359d6609c2909c99725eb9297a6f469382e0cd3222aa485fa47a"
+      "sha256": "789509b2c4be4a0864c3a06e1da9f6d3198c2216afc94e2e4d666636764c3383"
     },
     {
       "path": "packages/engine/src/ui/types.ts",
@@ -4928,6 +4956,66 @@
     {
       "path": "examples/spine-reset/verify-preserve.mjs",
       "sha256": "fef8eab25708b2c43b30afcb334d22531e5269ab47a35bf753d999e228606dc0"
+    },
+    {
+      "path": "packages/engine/src/hoverInputTypes.ts",
+      "sha256": "8d1ad13cd8ae306e2e399d128cf1bf3206d2971fa65217a113d1b8908e34cf4c"
+    },
+    {
+      "path": "packages/engine/src/hoverInput.ts",
+      "sha256": "b8f9034057d86fe1b17788d1bc133cd25ea61de659a6dd6cd712757d9c2dfb0b"
+    },
+    {
+      "path": "packages/engine/src/hover.ts",
+      "sha256": "cf9810d6fa92d0c04528328114f3fefc88d4ac104ff61f32cfa646bd840d785f"
+    },
+    {
+      "path": "packages/engine/web/BrowserHoverInput.ts",
+      "sha256": "0d1c9ef1b7398bd6e96b3a5e3d4c1ed94e1883767d0a031d94879ca01ee569e7"
+    },
+    {
+      "path": "packages/engine/web/hover.ts",
+      "sha256": "0b0a34bfb6339b7c3d820b6e8be793566ea1aa6891f6e3c02fd093c8bfc4debf"
+    },
+    {
+      "path": "tests/hover-input.test.mjs",
+      "sha256": "d03201055414ef6b7c4ad58d94da00249a9750faed509199f8184d37ebd0be0e"
+    },
+    {
+      "path": "tests/browser-hover.test.mjs",
+      "sha256": "add878ceb1362b121ab7546bb796040bcde77f5224d070ae26475d587c64f5e2"
+    },
+    {
+      "path": "examples/pointer-hover/main.mjs",
+      "sha256": "6973ef45b5feb722ab3da861f9e9fdc57a759c2f238f10feded89d8d0ccd8bf2"
+    },
+    {
+      "path": "examples/pointer-hover/verify.mjs",
+      "sha256": "796d0fb081515ef4273727c47a25fc0634bbe320efec9f427b2ff10d3c6bb528"
+    },
+    {
+      "path": "packages/engine/src/ui/stateControls.ts",
+      "sha256": "71c1fb919a7ae4f63d43bf7dab67dbc2efe5bbe2b6bad53e330442e447d85921"
+    },
+    {
+      "path": "tests/ui-state-controls.test.mjs",
+      "sha256": "86a758c11107ac3e8036c5105790e7416c5e0bc3f6c37d06476ba39327a499bb"
+    },
+    {
+      "path": "examples/ui-controls/main.mjs",
+      "sha256": "0acf9e379bb45c028ffe51c10e7a95fa2b0c32d1fbcd9d4bade52c09c0db4c64"
+    },
+    {
+      "path": "examples/ui-controls/verify.mjs",
+      "sha256": "98f835086939b6fda0fcdf3def5dfa6969db33fd601d08306aada06bccf61de2"
+    },
+    {
+      "path": "packages/engine/src/ui/scrollControl.ts",
+      "sha256": "801599a343d86682e3d6576dfb796503fde582d919f6fd671d1ff85d582067f7"
+    },
+    {
+      "path": "tests/ui-scroll-control.test.mjs",
+      "sha256": "2774f7a5dfb8bf2396eb5830963de11713e7de14fbcba8311d1621af769287ee"
     }
   ],
   "historicalSemanticReview": {
