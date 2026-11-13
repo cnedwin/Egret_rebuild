@@ -12,10 +12,15 @@ export interface SharedStorageLimits2D {
     readonly maxPendingFrames:number;
     readonly maxReadbackBytes:number;
     readonly maxPendingGeometryBytes:number;
+    /** Absent in a caller that predates the option: the profile's own 64 MiB. */
+    readonly maxFramePageBytes?:number;
 }
+// Page texture bytes awaiting completion, and conversion memory held at once, are each bounded by
+// two frames' worth of pages, as the number of accepted frames is bounded by two.
+const pendingPageBytes=(framePageBytes:number|undefined):number=>2*Math.min(67108864,framePageBytes??67108864);
 /** Append scene images to the existing page namespace without changing overlay indices. */
 export function attachSharedSceneSources2D(prepared: PreparedSharedFrame2D,
-    cards: readonly SceneCardDraw3D[], draws: readonly SceneDraw3D[]): {
+    cards: readonly SceneCardDraw3D[], draws: readonly SceneDraw3D[], options?: SharedStorageLimits2D): {
     prepared: PreparedSharedFrame2D; projectionPlan: ProjectionPlan2D;
     cardViews: readonly number[]; textureViews: ReadonlyMap<SceneDraw3D['geometry'], number>;
 } | undefined {
@@ -25,13 +30,15 @@ export function attachSharedSceneSources2D(prepared: PreparedSharedFrame2D,
     });
     const views = prepared.frame.pages.map(page => makeView(page.source));
     const ids = new Map(views.map((view, index) => [view.image, index]));
+    // Overlay pages and scene images together may fill what may be pending at once.
+    const sceneLimit = pendingPageBytes(options?.maxFramePageBytes);
     let extra = 0;
     function append(image: SceneCardDraw3D['source']): number {
         const existing = ids.get(image);
         if (existing !== undefined) return existing;
         const index = views.length, view = makeView(image);
         extra += view.byteLength;
-        if (!Number.isSafeInteger(extra) || prepared.pageBytes + extra > 33554432) fail('budget');
+        if (!Number.isSafeInteger(extra) || prepared.pageBytes + extra > sceneLimit) fail('budget');
         ids.set(image, index);
         views.push(view);
         return index;
@@ -93,9 +100,9 @@ export function checkSharedCapacity2D(storage:SharedStoragePlan2D,owner:SharedOw
     const {options,prepared,scene}=storage;
     const check=(used:number,amount:number,limit:number):void=>{if(!Number.isSafeInteger(used)||used<0||!Number.isSafeInteger(amount)||amount<0||amount>limit-used)fail('backpressure');};
     check(owner.pendingFrames,1,options.maxPendingFrames);check(owner.pendingUploadBytes,storage.upload,options.maxPendingUploadBytes);
-    check(owner.pendingReadbackBytes,storage.staging+storage.output,options.maxReadbackBytes);check(owner.pendingTextureBytes,prepared.pageBytes,33554432);
+    check(owner.pendingReadbackBytes,storage.staging+storage.output,options.maxReadbackBytes);const pagesAtOnce=pendingPageBytes(options.maxFramePageBytes);check(owner.pendingTextureBytes,prepared.pageBytes,pagesAtOnce);
     check(owner.pendingGeometryBytes,prepared.geometryBytes,options.maxPendingGeometryBytes);check(owner.pendingColorBytes,storage.colorBytes+storage.effectBytes,134217728);
-    if(canonicalBytes+sourceCopy>33554432)fail('budget');check(owner.pendingCanonicalBytes,canonicalBytes+sourceCopy,33554432);
+    if(canonicalBytes+sourceCopy>pagesAtOnce)fail('budget');check(owner.pendingCanonicalBytes,canonicalBytes+sourceCopy,pagesAtOnce);
     if(scene){check(owner.pendingSceneBytes,scene.sceneBytes,8388608);check(owner.pendingUniformBytes,scene.uniformBytes,8192);check(owner.pendingDepthBytes,scene.depthBytes,33554432);}
     if(!Number.isSafeInteger(owner.serial)||owner.serial<0||owner.serial>=Number.MAX_SAFE_INTEGER)fail('serial');
 }

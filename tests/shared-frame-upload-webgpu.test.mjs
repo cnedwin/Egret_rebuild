@@ -177,6 +177,24 @@ test('GPU U11 logical geometry upload and target budget refuse before native wor
   }, { options: { maxBackingPixels: 64 } });
 });
 
+test('GPU U11 page bytes and regions above the Host options refuse before native work', async () => {
+  await usingGpu(async ({ f, a, h }) => {
+    requireUpload(h); await a.bitmap(2, 2); await a.bitmap(2, 2);
+    const over = a.capture(); assert.equal(over.pages.length, 2);
+    refusal(f, h, () => h.stageSharedFrame(over), 'FRAME_BUDGET');
+  }, { options: { maxFramePageBytes: 31 } });
+  await usingGpu(async ({ f, a, h }) => {
+    requireUpload(h); await a.bitmap(2, 2); await a.bitmap(2, 2);
+    const fits = a.capture(); assert.equal(fits.pages.length, 2);
+    const ticket = h.stageSharedFrame(fits); await readyUpload(f, ticket); ticket.dispose();
+  }, { options: { maxFramePageBytes: 32 } });
+  await usingGpu(async ({ f, a, h }) => {
+    requireUpload(h); await a.bitmap(); await a.bitmap(); await a.bitmap();
+    const over = a.capture(); assert.equal(over.regions.length, 3);
+    refusal(f, h, () => h.stageSharedFrame(over), 'FRAME_BUDGET');
+  }, { options: { maxFrameRegions: 2 } });
+});
+
 test('GPU U12 aggregate chunk payload obeys 4 MiB markers and exact page rows', async () => {
   await usingGpu(async ({ f, a, h }) => {
     requireUpload(h); await a.bitmap(1024, 1024, 91); await a.bitmap(1024, 512, 183);

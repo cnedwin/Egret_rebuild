@@ -664,7 +664,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 if(!Number.isSafeInteger(width)||!Number.isSafeInteger(height)||width<=0||height<=0||width>4294967295||height>4294967295||width>Math.floor(options.maxBackingPixels/height))throw glFailure('WEBGL2_BACKING_LIMIT');
                 const sceneFees=withScene?this.sceneFunctions!.admitSharedGLScene(sceneInput,width,height):undefined;
                 const overlay=prepareSharedDraws2D(frame,width,height,options);
-                const attached = sceneFees ? attachSharedSceneSources2D(overlay, sceneFees.frame.cards ?? [], sceneFees.frame.draws) : undefined;
+                const attached = sceneFees ? attachSharedSceneSources2D(overlay, sceneFees.frame.cards ?? [], sceneFees.frame.draws, options) : undefined;
                 const prepared=attached?.prepared??overlay,cardViews=attached?.cardViews??[];
                 const ticket=!layerWrite&&!staging&&this.ticket&&!this.ticket.bound?this.ticket:undefined;
                 const reserve=staging?options.enableReadback:!!ticket;
@@ -1352,9 +1352,9 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                     if(existing===page)continue; // An existing residence adds no new bytes or entry.
                     if(existing){if(page.pins===0&&!native.cleanup(page.native))this.unsafe=true;continue;}
                     let bytes=0;for(const current of this.pages.values())bytes+=current.source.byteLength;
-                    for(const [key,victim] of this.pages){if((this.pages.size<256&&bytes+page.source.byteLength<=33554432)||victim.pins>0)continue;
+                    for(const [key,victim] of this.pages){if((this.pages.size<256&&bytes+page.source.byteLength<=this.options.maxReadyPageBytes)||victim.pins>0)continue;
                         this.pages.delete(key);bytes-=victim.source.byteLength;this.resourceReadyBytes-=victim.source.byteLength;this.resourceTotal('readyCapacityEvictions',1);this.sampleResourceImages();if(!native.cleanup(victim.native))this.unsafe=true;}
-                    if(!this.unsafe&&this.pages.size<256&&bytes+page.source.byteLength<=33554432){page.ready=true;this.pages.set(page.source,page);this.resourceReadyBytes+=page.source.byteLength;if(page.pins>0){this.resourcePinnedBytes+=page.source.byteLength;this.resourcePinnedEntries++;}this.sampleResourceImages();}
+                    if(!this.unsafe&&this.pages.size<256&&bytes+page.source.byteLength<=this.options.maxReadyPageBytes){page.ready=true;this.pages.set(page.source,page);this.resourceReadyBytes+=page.source.byteLength;if(page.pins>0){this.resourcePinnedBytes+=page.source.byteLength;this.resourcePinnedEntries++;}this.sampleResourceImages();}
                     else if(page.pins===0&&!native.cleanup(page.native))this.unsafe=true;
                 }else if(page.pins===0){if(this.pages.get(page.source)===page){this.pages.delete(page.source);this.resourceReadyBytes-=page.source.byteLength;this.sampleResourceImages();}if(!native.cleanup(page.native))this.unsafe=true;}
             }

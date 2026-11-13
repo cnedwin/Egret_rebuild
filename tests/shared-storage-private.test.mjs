@@ -12,8 +12,10 @@ import {
 import * as gpu from '../packages/engine/dist/web/prepareSharedSubmission2D.js';
 
 const MiB=1024*1024;
+// A Host that admits 16 MiB of pages in a frame: page textures and conversion memory are then
+// each bounded by twice that, the 32 MiB the cases below fill to the byte.
 const limits=Object.freeze({maxUploadBytes:32*MiB,maxPendingUploadBytes:64*MiB,
-  maxPendingFrames:2,maxReadbackBytes:64*MiB,maxPendingGeometryBytes:32*MiB});
+  maxPendingFrames:2,maxReadbackBytes:64*MiB,maxPendingGeometryBytes:32*MiB,maxFramePageBytes:16*MiB});
 const owner=()=>({pendingFrames:0,pendingUploadBytes:0,pendingReadbackBytes:0,
   pendingTextureBytes:0,pendingGeometryBytes:0,pendingColorBytes:0,
   pendingCanonicalBytes:0,pendingSceneBytes:0,pendingUniformBytes:0,
@@ -134,4 +136,18 @@ test('UNIT SST08 cold-page capacity refusal precedes every source-copy read',()=
   assert.equal(imageReads,0);
   assert.deepEqual(materializeSharedPages2D(s,new Set(),owner()),{projections:[undefined],canonicalBytes:0});
   assert.equal(imageReads,0);
+});
+
+test('UNIT SST09 pending pages and conversion memory are twice the frame page budget, at most twice the profile ceiling',()=>{
+  const base={maxUploadBytes:32*MiB,maxPendingUploadBytes:64*MiB,maxPendingFrames:2,maxReadbackBytes:64*MiB,maxPendingGeometryBytes:32*MiB};
+  // No option, the profile ceiling, and a request above it all leave 2 x 64 MiB; a lower option leaves twice itself.
+  for(const [frame,cap] of [[undefined,128*MiB],[64*MiB,128*MiB],[1024*MiB,128*MiB],[16*MiB,32*MiB],[1*MiB,2*MiB]]){
+    const s=tight(prepared(),frame===undefined?base:{...base,maxFramePageBytes:frame});
+    for(const key of ['pendingTextureBytes','pendingCanonicalBytes']){
+      assert.doesNotThrow(()=>checkSharedCapacity2D(s,{...owner(),[key]:cap-8},8,0),key+' exact fit at '+cap);
+      assert.throws(()=>checkSharedCapacity2D(s,{...owner(),[key]:cap-7},8,0),reason('backpressure'),key+' plus one at '+cap);
+    }
+    assert.doesNotThrow(()=>checkSharedCapacity2D(s,owner(),cap-8,8));
+    assert.throws(()=>checkSharedCapacity2D(s,owner(),cap-8,9),reason('budget'));
+  }
 });

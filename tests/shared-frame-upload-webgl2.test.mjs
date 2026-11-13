@@ -2,7 +2,7 @@
 // Genuine built public frames with owned GL ports; no native rendering/recovery acceptance.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { hosted, glPorts, createSharedWebGL2Host, code, outcome, pending, turn, until,
+import { egret, hosted, glPorts, createSharedWebGL2Host, code, outcome, pending, turn, until,
   signalPort, taskUploadMeter, uploadRows, visibleRows, MiB } from './shared-frame-upload-gl-fixture.mjs';
 import { fixture as candidateFixture, candidate } from './candidate-shared-frame-fixture.mjs';
 
@@ -48,9 +48,9 @@ for (const [name,options,make,expected] of [
   assert.equal(f.host.getStatus().lastSerial,status.lastSerial);
 }, {options}));
 
-test('GLU00 two genuine frames keep pending canonical pages plus original copy within 32 MiB', async () => hosted(async f => {
-  // Each public frame stays within Engine's 16 MiB source cap. The first holds
-  // 16 MiB; second admission needs 16 MiB canonical plus a 4 MiB original copy.
+test('GLU00 two genuine frames keep pending canonical pages plus original copy within twice the frame page budget', async () => hosted(async f => {
+  // This Host admits 16 MiB of pages in a frame, so conversion memory is bounded by 32 MiB. The
+  // first frame holds 16 MiB; second admission needs 16 MiB canonical plus a 4 MiB original copy.
   const firstPages = await f.images(4), firstFrame = f.frame(); assert.equal(firstFrame.pages.length,4);
   const held = f.stage(firstFrame); await held.ready;
   assert.equal(f.host.getSharedStatus().pendingCanonicalBytes,16 * MiB);
@@ -59,6 +59,48 @@ test('GLU00 two genuine frames keep pending canonical pages plus original copy w
   assert.equal(frame.pages.length,4); assert.notEqual(frame.pages[0].source,firstFrame.pages[0].source);
   assert.throws(() => f.stage(frame),code('BACKPRESSURE'));
   assert.equal(f.ports.events.length,before); assert.equal(f.host.getStatus().pendingFrames,1);
+}, {options:{maxFramePageBytes:16 * MiB}}));
+
+test('GLU00 the default frame page budget admits the same second frame', async () => hosted(async f => {
+  const firstPages = await f.images(4), firstFrame = f.frame();
+  const held = f.stage(firstFrame); await held.ready;
+  assert.equal(f.host.getSharedStatus().pendingCanonicalBytes,16 * MiB);
+  for (const node of firstPages.nodes) f.engine.stage.removeChild(node);
+  await f.images(4); const frame = f.frame();
+  assert.equal(frame.pages.length,4); assert.notEqual(frame.pages[0].source,firstFrame.pages[0].source);
+  const second = f.stage(frame); await second.ready;
+  assert.equal(f.host.getStatus().pendingFrames,2);
+  assert.equal(f.host.getSharedStatus().pendingCanonicalBytes,32 * MiB);
+  held.dispose(); second.dispose();
+}));
+
+test('GLU00 a frame that names more page bytes than the Host admits is refused before native work', async () => hosted(async f => {
+  await f.images(2); const frame = f.frame(), before = f.ports.events.length;
+  assert.equal(frame.pages.length,2);
+  assert.throws(() => f.stage(frame),code('FRAME_BUDGET'));
+  assert.equal(f.ports.events.length,before); assert.equal(f.host.getStatus().pendingFrames,0);
+}, {options:{maxFramePageBytes:8 * MiB - 1}}));
+
+test('GLU00 a frame that names more regions than the Host admits is refused before native work', async () => hosted(async f => {
+  await f.images(3,2,2); const frame = f.frame(), before = f.ports.events.length;
+  assert.equal(frame.regions.length,3);
+  assert.throws(() => f.stage(frame),code('FRAME_BUDGET'));
+  assert.equal(f.ports.events.length,before); assert.equal(f.host.getStatus().pendingFrames,0);
+}, {options:{maxFrameRegions:2}}));
+
+test('GLU00 a frame of 4096 distinct regions of one page is admitted, uploaded once and submitted', async () => hosted(async f => {
+  const { nodes, leases } = await f.images(1,64,64); nodes[0].visible = false;
+  for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
+    const bitmap = f.scope.use(new egret.Bitmap(leases[0])); bitmap.sourceRect = {x,y,width:1,height:1}; f.engine.stage.addChild(bitmap);
+  }
+  const frame = f.frame();
+  assert.equal(frame.pages.length,1); assert.equal(frame.regions.length,4096); assert.equal(frame.commands.length,4097);
+  const ticket = f.stage(frame); await ticket.ready;
+  const submission = ticket.submit(); await submission.completed;
+  await until(() => f.host.getStatus().pendingFrames === 0);
+  // Events are [name, ...arguments]; a page write names its width and height after its offsets.
+  const pageWrites = f.ports.events.filter(event => event[0] === 'texSubImage2D');
+  assert.equal(pageWrites.reduce((bytes,event) => bytes + event[5] * event[6] * 4,0),64 * 64 * 4);
 }));
 
 test('GLU01 aggregate scheduled upload tasks stay at 4 MiB with whole rows and original geometry units', async () => hosted(async f => {

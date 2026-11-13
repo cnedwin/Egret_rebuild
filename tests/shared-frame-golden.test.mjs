@@ -175,9 +175,9 @@ test('SHG01 captured frames, clipped geometry, vertex rows and batches reproduce
 });
 
 const code = action => { try { action(); return 'ok'; } catch (cause) { return cause instanceof egret.EgretError ? cause.code : 'THROWN:' + cause?.message; } };
-async function stageOf(body) {
+async function stageOf(body, size = 8) {
   const engine = await egret.createEngine({ host: { surface: {}, start() {}, stop() {}, async close() {}, setTimeout() { return () => {}; } } }), scope = engine.createScope();
-  const type = egret.createAssetType('shared-golden-order-' + (stageOf.count = (stageOf.count ?? 0) + 1), egret.isTexture), texture = egret.createTexture(image(8, 3));
+  const type = egret.createAssetType('shared-golden-order-' + (stageOf.count = (stageOf.count ?? 0) + 1), egret.isTexture), texture = egret.createTexture(image(size, 3));
   engine.assets.register(type, { async load() { return texture; }, dispose(value) { value.dispose(); } });
   try {
     const lease = scope.use(await engine.assets.acquire(egret.createAssetRef(type, 'page'), { signal: scope.signal }));
@@ -218,10 +218,10 @@ test('SHG03 the first refusal of visible content in drawing order is the one rep
   const a = scope.use(new egret.Sprite()), b = scope.use(new egret.Bitmap(lease));
   a.graphics.beginFill(1, 1).drawRect(0, 0, 4, 4).endFill();
   engine.stage.addChild(first); engine.stage.addChild(second); first.addChild(a); second.addChild(b);
-  // 129 distinct regions of one page exceed the regions one frame admits; the transform refusal comes first in drawing order.
+  // 4,097 distinct regions of one page exceed the regions one frame admits; the transform refusal comes first in drawing order.
   const regions = [];
-  for (const [width, height] of [[1, 1], [1, 2], [2, 1]]) for (let y = 0; y + height <= 8; y++) for (let x = 0; x + width <= 8; x++) regions.push({ x, y, width, height });
-  for (const region of regions.slice(0, 129)) { const bitmap = scope.use(new egret.Bitmap(lease)); bitmap.sourceRect = region; second.addChild(bitmap); }
+  for (let y = 0; y < 72; y++) for (let x = 0; x < 72; x++) regions.push({ x, y, width: 1, height: 1 });
+  for (const region of regions.slice(0, 4097)) { const bitmap = scope.use(new egret.Bitmap(lease)); bitmap.sourceRect = region; second.addChild(bitmap); }
   assert.equal(code(() => engine.captureSharedFrame({ width: 32, height: 32 })), 'FRAME_IMAGE_BUDGET');
   first.scaleX = 1e200; a.scaleX = 1e200;
   assert.equal(code(() => engine.captureSharedFrame({ width: 32, height: 32 })), 'FRAME_TRANSFORM_INVALID');
@@ -230,7 +230,7 @@ test('SHG03 the first refusal of visible content in drawing order is the one rep
   assert.equal(code(() => engine.captureSharedFrame({ width: 32, height: 32 })), 'FRAME_IMAGE_BUDGET');
   second.alpha = 0;
   assert.equal(code(() => engine.captureSharedFrame({ width: 32, height: 32 })), 'ok');
-}));
+}, 72));
 
 test('SHG04 every draw owns its own range of the frame\'s vertex rows and uniform blocks', async () => {
   await scene(5, 'mixed', engine => {
