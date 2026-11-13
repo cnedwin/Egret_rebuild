@@ -10,6 +10,8 @@ import type {Object3D} from './Object3D.js';
 import {ConvexHullShape3D} from './PhysicsHull3D.js';
 import {TriangleMeshShape3D} from './PhysicsMesh3D.js';
 
+export const raycastExcludingBody3D = Symbol('physics raycast excluding one body');
+
 export const PHYSICS3D_LIMITS = Object.freeze({maxBodies: 16384, maxSubSteps: 8, maxContactsPerPair: 8, maxCompoundChildren: 32, maxSolverSteps: 8} as const);
 export type BodyType3D = 'static' | 'kinematic' | 'dynamic';
 export type ShapeDefinition3D =
@@ -1916,13 +1918,17 @@ export class PhysicsWorld3D {
     // ---- queries ----------------------------------------------------------------
     /** Nearest solid body hit by a ray; triggers are skipped. `direction` need not be normalized. */
     raycast(origin: ArrayLike<number>, direction: ArrayLike<number>, maxDistance = Infinity, mask = -1): PhysicsRaycastHit3D | undefined {
+        return this[raycastExcludingBody3D](origin, direction, maxDistance, mask);
+    }
+    /** @internal Skip one body before selecting the nearest hit. */
+    [raycastExcludingBody3D](origin: ArrayLike<number>, direction: ArrayLike<number>, maxDistance: number, mask: number, excluded?: RigidBody3D): PhysicsRaycastHit3D | undefined {
         const length = Math.hypot(direction[0]!, direction[1]!, direction[2]!);
         if (!(length > 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'ray direction');
         const d = [direction[0]! / length, direction[1]! / length, direction[2]! / length], o = [origin[0]!, origin[1]!, origin[2]!];
         let best: PhysicsRaycastHit3D | undefined, limit = maxDistance;
         const normal = [0, 0, 0];
         const test = (body: RigidBody3D, within: number): number => {
-            if ((body.layer & mask) === 0 || body.isTrigger) return within;
+            if (body === excluded || (body.layer & mask) === 0 || body.isTrigger) return within;
             const distance = rayShape(body, o, d, within, normal);
             if (distance < 0 || distance > within) return within;
             best = {body, distance, point: [o[0]! + d[0]! * distance, o[1]! + d[1]! * distance, o[2]! + d[2]! * distance], normal: [normal[0]!, normal[1]!, normal[2]!]};
