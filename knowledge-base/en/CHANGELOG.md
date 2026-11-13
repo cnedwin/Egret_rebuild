@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A Spine replacement carries a mix under way — 2026-11-14
+
+`requestPreserving` on the Spine reset slot no longer refuses a player that is mixing from one animation into another. The entries a track is still mixing out of are carried with the current one: how far each mix has come, the direction each mixed rotation turns, and the holds an entry keeps. With an equal asset the copy stands in the pose of the original at every later tick, across seven kinds of mix replaced at nine moments each. An asset must now also have the animations that are only being mixed out of. What an ended animation left on a bone is still not carried, and is now said so. Hardware and WebGPU rows of this path remain unrun. [Guide](docs/spine-reset-slot.md#keeping-the-playback)
+
 ## Physics under seek — 2026-11-14
 
 An original Spine fixture with a physics constraint now stands beside the seek tests. Six cases show that the constraint is simulated and remembers what came before, pin the rule that cuts an advance into sixtieths with the short remainder last, and find a seek equal to a straight run with physics: at the end of every step, inside every step, beyond the present and through an instance made by the reset slot. No code changed. The fixture is not an Editor export and no independent reference was used. [Guide](docs/spine-seek.md#physics)
