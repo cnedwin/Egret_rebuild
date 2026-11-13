@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Browser side of tools/bench-2d-gpu.mjs: fixed 2D workloads drawn through the shared Hosts on this
 // machine's graphics device. Each workload is drawn through the public SDK, first as fast as the Host
-// accepts frames and then once per display frame.
+// accepts frames and then once per browser animation callback.
 //
 // What is measured, per frame:
 //   capture   the Engine turning the display list into a frame record (CPU)
@@ -10,7 +10,7 @@
 //   gpu       time the device spent in the render passes of the frame, where the browser can tell:
 //             WebGPU needs the `timestamp-query` feature, WebGL2 the EXT_disjoint_timer_query_webgl2
 //             extension. Browsers round both to about 0.1 ms.
-//   interval  time between display frames while the workload is drawn once per display frame
+//   interval  browser animation callback spacing while attempting one frame per callback
 // The figures describe this machine and this run; they are not acceptance thresholds.
 import * as sdk from '@egret/engine';
 
@@ -32,86 +32,135 @@ function atlasPixels(seed) {
 
 /** Counts draws and times the render passes of a WebGPU device the Host is about to borrow. */
 function instrumentWebGPU(device) {
-  const stats = { draws: 0, gpu: [], timed: device.features.has('timestamp-query'), pending: [] };
-  if (!stats.timed) {
-    const create = device.createCommandEncoder.bind(device);
-    device.createCommandEncoder = descriptor => {
-      const encoder = create(descriptor), begin = encoder.beginRenderPass.bind(encoder);
-      encoder.beginRenderPass = pass => { const opened = begin(pass), draw = opened.draw.bind(opened); opened.draw = (...args) => { stats.draws++; return draw(...args); }; return opened; };
-      return encoder;
-    };
-    return { stats, async settle() {} };
-  }
-  // One query set serves every encoder: its values are resolved inside the encoder that wrote them.
-  const PASSES = 64, set = device.createQuerySet({ type: 'timestamp', count: PASSES * 2 });
-  const resolved = device.createBuffer({ size: PASSES * 16, usage: GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.COPY_SRC });
-  const free = [], waiting = [];
+  const stats = { draws: 0, counting: false, gpu: [], timed: device.features.has('timestamp-query') };
+  const PASSES = 64;
+  let timer;
   const create = device.createCommandEncoder.bind(device), submit = device.queue.submit.bind(device.queue);
   device.createCommandEncoder = descriptor => {
-    const encoder = create(descriptor), begin = encoder.beginRenderPass.bind(encoder), finish = encoder.finish.bind(encoder);
+    const encoder = create(descriptor), measuring = timer;
+    if (!measuring && !stats.counting) return encoder;
+    const begin = encoder.beginRenderPass.bind(encoder);
     let passes = 0;
     encoder.beginRenderPass = pass => {
       const index = passes++;
-      const opened = begin(index < PASSES ? { ...pass, timestampWrites: { querySet: set, beginningOfPassWriteIndex: index * 2, endOfPassWriteIndex: index * 2 + 1 } } : pass);
-      const draw = opened.draw.bind(opened); opened.draw = (...args) => { stats.draws++; return draw(...args); };
+      const opened = measuring && index < PASSES ? begin({ ...pass, timestampWrites: { querySet: measuring.set,
+        beginningOfPassWriteIndex: index * 2, endOfPassWriteIndex: index * 2 + 1 } }) : begin(pass);
+      if (stats.counting) {
+        const draw = opened.draw.bind(opened);
+        opened.draw = (...args) => { stats.draws++; return draw(...args); };
+      }
       return opened;
     };
-    encoder.finish = descriptor2 => {
-      const count = Math.min(passes, PASSES) * 2;
-      if (count > 0) {
-        const target = free.pop() ?? device.createBuffer({ size: PASSES * 16, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
-        encoder.resolveQuerySet(set, 0, count, resolved, 0); encoder.copyBufferToBuffer(resolved, 0, target, 0, count * 8);
-        waiting.push({ target, count });
-      }
-      return finish(descriptor2);
-    };
+    if (measuring) {
+      const finish = encoder.finish.bind(encoder);
+      encoder.finish = descriptor2 => {
+        const count = Math.min(passes, PASSES) * 2;
+        if (count === 0) return finish(descriptor2);
+        let target = measuring.free.pop();
+        if (!target) {
+          target = device.createBuffer({ size: PASSES * 16, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
+          measuring.buffers.push(target);
+        }
+        encoder.resolveQuerySet(measuring.set, 0, count, measuring.resolved, 0);
+        encoder.copyBufferToBuffer(measuring.resolved, 0, target, 0, count * 8);
+        const commands = finish(descriptor2);
+        measuring.waiting.set(commands, { target, count });
+        return commands;
+      };
+    }
     return encoder;
   };
-  device.queue.submit = buffers => {
-    const result = submit(buffers);
-    for (const { target, count } of waiting.splice(0)) {
-      stats.pending.push(target.mapAsync(GPUMapMode.READ, 0, count * 8).then(() => {
-        const times = new BigUint64Array(target.getMappedRange(0, count * 8).slice(0));
-        let nanoseconds = 0n;
-        for (let i = 0; i < count; i += 2) if (times[i + 1] > times[i]) nanoseconds += times[i + 1] - times[i];
-        stats.gpu.push(Number(nanoseconds) / 1e6); target.unmap(); free.push(target);
-      }, () => {}));
+  if (stats.timed) device.queue.submit = buffers => {
+    const measuring = timer;
+    if (!measuring) return submit(buffers);
+    const commands = [...buffers];
+    const result = submit(commands);
+    for (const command of commands) {
+      const pending = measuring.waiting.get(command);
+      if (!pending) continue;
+      measuring.waiting.delete(command);
+      const { target, count } = pending;
+      measuring.pending.push(target.mapAsync(GPUMapMode.READ, 0, count * 8).then(() => {
+        try {
+          const times = new BigUint64Array(target.getMappedRange(0, count * 8));
+          let nanoseconds = 0n;
+          for (let i = 0; i < count; i += 2) if (times[i + 1] > times[i]) nanoseconds += times[i + 1] - times[i];
+          stats.gpu.push(Number(nanoseconds) / 1e6);
+        } finally { target.unmap(); }
+        measuring.free.push(target);
+      }).catch(() => { /* An unavailable mapping contributes no sample. */ }));
     }
     return result;
   };
-  return { stats, async settle() { await Promise.all(stats.pending.splice(0)); } };
+  return {
+    stats,
+    start() {
+      if (!stats.timed) return;
+      timer = { set: device.createQuerySet({ type: 'timestamp', count: PASSES * 2 }), resolved: undefined,
+        waiting: new WeakMap(), pending: [], free: [], buffers: [] };
+      timer.resolved = device.createBuffer({ size: PASSES * 16, usage: GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.COPY_SRC });
+    },
+    async settle() { if (timer) await Promise.all(timer.pending); },
+    stop() {
+      if (!timer) return;
+      const measuring = timer; timer = undefined;
+      for (const buffer of measuring.buffers) buffer.destroy();
+      measuring.resolved?.destroy();
+      measuring.set.destroy();
+    },
+  };
 }
 
-/** Counts draws and times the first draw to the closing fence of each frame of a WebGL2 context. */
+/** Counts draws and times the first draw to the closing fence of each measured WebGL2 frame. */
 function instrumentWebGL2(gl) {
-  const stats = { draws: 0, gpu: [], timed: false, pending: [] };
   const extension = gl.getExtension('EXT_disjoint_timer_query_webgl2');
-  stats.timed = extension !== null;
+  const stats = { draws: 0, counting: false, gpu: [], timed: Boolean(extension && gl.getQuery(extension.TIME_ELAPSED_EXT, extension.QUERY_COUNTER_BITS_EXT) > 0) };
   const draw = gl.drawArrays.bind(gl), fence = gl.fenceSync.bind(gl);
-  let active = null;
+  let measuring = false, active = null;
   const waiting = [];
   gl.drawArrays = (...args) => {
-    if (extension && active === null) { active = gl.createQuery(); gl.beginQuery(extension.TIME_ELAPSED_EXT, active); }
-    stats.draws++; return draw(...args);
+    if (measuring && active === null) {
+      active = gl.createQuery();
+      if (active !== null) gl.beginQuery(extension.TIME_ELAPSED_EXT, active);
+    }
+    if (stats.counting) stats.draws++;
+    return draw(...args);
   };
   gl.fenceSync = (...args) => {
     if (active !== null) { gl.endQuery(extension.TIME_ELAPSED_EXT); waiting.push(active); active = null; }
     return fence(...args);
   };
-  const collect = () => {
-    for (let i = waiting.length - 1; i >= 0; i--) {
-      const query = waiting[i];
-      if (!gl.getQueryParameter(query, gl.QUERY_RESULT_AVAILABLE)) continue;
-      // A disjoint event makes every value read since the last check unusable.
-      if (!gl.getParameter(extension.GPU_DISJOINT_EXT)) stats.gpu.push(gl.getQueryParameter(query, gl.QUERY_RESULT) / 1e6);
-      gl.deleteQuery(query); waiting.splice(i, 1);
-    }
+  return {
+    stats,
+    start() {
+      if (!stats.timed) return;
+      // This read clears earlier disjoint events before the measured cohort starts.
+      gl.getParameter(extension.GPU_DISJOINT_EXT);
+      measuring = true;
+    },
+    async settle() {
+      const newest = waiting.at(-1);
+      if (!newest) return;
+      for (let turn = 0; turn < 120; turn++) {
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        if (!gl.getQueryParameter(newest, gl.QUERY_RESULT_AVAILABLE)) continue;
+        // The newest available elapsed query also proves earlier results are available. A disjoint read
+        // consumes the flag for the whole cohort, so check once before accepting any result.
+        if (!gl.getParameter(extension.GPU_DISJOINT_EXT)) {
+          for (const query of waiting) {
+            const result = gl.getQueryParameter(query, gl.QUERY_RESULT);
+            if (Number.isFinite(result) && result >= 0) stats.gpu.push(result / 1e6);
+          }
+        }
+        return;
+      }
+    },
+    stop() {
+      measuring = false;
+      if (active !== null) { gl.endQuery(extension.TIME_ELAPSED_EXT); waiting.push(active); active = null; }
+      for (const query of waiting.splice(0)) gl.deleteQuery(query);
+    },
   };
-  return { stats, async settle() {
-    if (!extension) return;
-    for (let turn = 0; turn < 120 && waiting.length > 0; turn++) { await new Promise(resolve => requestAnimationFrame(resolve)); collect(); }
-    for (const query of waiting.splice(0)) gl.deleteQuery(query);
-  } };
 }
 
 const WORKLOADS = [
@@ -229,33 +278,60 @@ async function runWorkload(backend, workload, quick, offscreen) {
     };
     // The first frames build pipelines and upload the pages; they are not measured.
     for (let i = 0; i < 3; i++) await draw(i);
-    await probe.settle(); stats.gpu.length = 0; stats.draws = 0;
     const frames = quick ? 8 : workload.heavy ? 20 : 40, samples = [];
+    stats.counting = true;
     for (let i = 0; i < frames; i++) samples.push(await draw(i));
-    await probe.settle();
+    stats.counting = false;
     row.commands = samples[0].commands; row.draws = round(stats.draws / frames, 1);
     row.captureMs = round(mean(samples.map(sample => sample.capture))); row.submitMs = round(mean(samples.map(sample => sample.submit)));
-    row.settleMs = round(mean(samples.map(sample => sample.settle))); row.gpuMs = round(mean(stats.gpu), 3); row.gpuSamples = stats.gpu.length;
-    // Once per display frame. A frame the Host refuses because two are still pending is counted, not drawn.
-    const paced = quick ? 30 : 120, stamps = []; let refused = 0;
-    await new Promise((resolve, reject) => {
-      let index = 0;
-      const tick = stamp => {
-        stamps.push(stamp);
-        if (index === paced) { resolve(); return; }
-        try { step(index++); engine.renderSharedFrame(FRAME); }
-        catch (error) { if (/_BACKPRESSURE$/.test(String(error?.code)) || /_BACKPRESSURE$/.test(String(error?.cause?.code))) refused++; else { reject(error); return; } }
+    row.settleMs = round(mean(samples.map(sample => sample.settle)));
+    // Query resolve, readback and polling affect submission and pacing. Run the timer on its own
+    // repeat of the same warmed workload without collecting CPU or rAF measurements.
+    if (stats.timed) {
+      probe.start();
+      for (let i = 0; i < frames; i++) await draw(i);
+      await probe.settle();
+      probe.stop();
+    }
+    row.gpuMs = round(mean(stats.gpu), 3); row.gpuSamples = stats.gpu.length;
+    // Keep the original attempt on every callback and observe rejected work separately.
+    const paced = quick ? 30 : 120, stamps = [], attempts = [];
+    let hidden = document.visibilityState !== 'visible';
+    const observeVisibility = () => { hidden ||= document.visibilityState !== 'visible'; };
+    document.addEventListener('visibilitychange', observeVisibility);
+    try {
+      await new Promise((resolve, reject) => {
+        let index = 0;
+        const tick = stamp => {
+          observeVisibility();
+          stamps.push(stamp);
+          if (index === paced) { resolve(); return; }
+          const start = performance.now();
+          try { step(index++); } catch (error) { reject(error); return; }
+          const updated = performance.now();
+          let admitted = true;
+          try { engine.renderSharedFrame(FRAME); }
+          catch (error) {
+            if ([error?.code, error?.cause?.code].some(code => /_BACKPRESSURE$/.test(String(code)))) admitted = false;
+            else { reject(error); return; }
+          }
+          attempts.push({ admitted, mutationMs: updated - start, renderAttemptMs: performance.now() - updated });
+          requestAnimationFrame(tick);
+        };
         requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    });
-    await host.whenIdle(); await probe.settle();
-    const intervals = []; for (let i = 1; i < stamps.length; i++) intervals.push(stamps[i] - stamps[i - 1]);
-    row.intervalMs = round(quantile(intervals, 0.5)); row.intervalP95Ms = round(quantile(intervals, 0.95)); row.refused = refused;
+      });
+    } finally { document.removeEventListener('visibilitychange', observeVisibility); }
+    await host.whenIdle();
+    const intervals = stamps.slice(1).map((stamp, index) => stamp - stamps[index]);
+    row.pacing = { visibleThroughout: !hidden, callbacks: stamps.length, intervalsMs: intervals, attempts };
+    row.refused = attempts.filter(attempt => !attempt.admitted).length;
+    row.intervalMs = hidden ? null : round(quantile(intervals, 0.5));
+    row.intervalP95Ms = hidden ? null : round(quantile(intervals, 0.95));
     const failure = host.getStatus().firstFailure;
     if (failure) { row.status = 'failed'; row.reason = describe(failure); } else row.status = 'complete';
   } catch (error) { row.status = 'failed'; row.reason = describe(error) + (error?.cause ? ': ' + describe(error.cause) : ''); }
   finally {
+    try { opened?.probe?.stop(); } catch { /* the context or device may already be gone */ }
     try { scope?.dispose(); } catch { /* reported by the Engine */ }
     try { await engine?.dispose(); } catch { /* reported by the Engine */ }
     try { await opened?.host?.close(); } catch { /* reported by the Host */ }
