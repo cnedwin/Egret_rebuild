@@ -7,7 +7,7 @@ import type { SpineAsset } from './types.js';
 import type { SpineInstance, SpineInstanceOptions, SpineInstanceSnapshot, SpinePlaybackEvent, SpinePlaybackEventKind, SpineAnimationOptions, SpineQueuedAnimationOptions } from './instanceTypes.js';
 import { requireSpineAsset } from './assetAuthority.js';
 import { registerSpineRender } from './renderAuthority.js';
-import type { SpineDrawSink, SpineDrawCandidate } from './renderAuthority.js';
+import type { SpineDrawSink, SpineDrawCandidate, SpinePreservedEntry, SpinePreservedPlayback } from './renderAuthority.js';
 
 const freeze = Object.freeze;
 const MAX_COMMANDS = 256, MAX_ENTRIES = 128, MAX_TRACKS = 16;
@@ -16,6 +16,16 @@ type Command = { kind: 'animation'; track: number; name: string; loop: boolean; 
   | { kind: 'transform'; x: number; y: number; scaleX: number; scaleY: number }
   | { kind: 'rate'; value: number } | { kind: 'paused'; value: boolean };
 function fault(code: string, cause?: unknown): EgretError { return new EgretError('SPINE_INSTANCE_' + code, { cause }); }
+function refuse(code: string): EgretError { return new EgretError('SPINE_RESET_PRESERVE_' + code); }
+// Every scalar of a track entry's position. Links between entries and the mixing tables are rebuilt, not copied.
+const ENTRY_VALUES = ['loop', 'additive', 'reverse', 'shortestRotation', 'keepHold', 'eventThreshold', 'mixAttachmentThreshold', 'alphaAttachmentThreshold', 'mixDrawOrderThreshold',
+  'animationStart', 'animationEnd', 'animationLast', 'nextAnimationLast', 'delay', 'trackTime', 'trackLast', 'nextTrackLast', 'trackEnd', 'timeScale', 'alpha', 'mixTime', 'mixDuration', 'totalAlpha'] as const;
+/** The authored events of an animation in order, as time and name alternating. */
+function eventSchedule(animation: Core.Animation): (number | string)[] {
+  const schedule: (number | string)[] = [];
+  for (const timeline of animation.timelines) if (timeline instanceof Core.EventTimeline) for (const event of timeline.events) schedule.push(finite(event.time), text(event.data.name));
+  return schedule;
+}
 function number(value: unknown, min: number, max: number): value is number { return typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max; }
 // Vendor JSON fields remain untrusted until copied into the public primitive-only view.
 function text(value: unknown): string { if (typeof value !== 'string') throw fault('OUTPUT_INVALID'); return value; }
@@ -285,7 +295,68 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
   });
   try { unown = port.own(scope, instance); port.assertOpen(); }
   catch (cause) { dispose(); throw cause; }
-  registerSpineRender(instance,{asset:port,initializeReset(){
+  /** The animation of this asset that continues a carried entry: the same name, length and events. */
+  function continuation(row: SpinePreservedEntry): Core.Animation {
+    const found = skeleton!.data.findAnimation(row.name);
+    if (!found || found.duration !== row.duration) throw refuse('ANIMATION');
+    const schedule = eventSchedule(found);
+    if (schedule.length !== row.events.length || schedule.some((value, index) => value !== row.events[index])) throw refuse('ANIMATION');
+    return found;
+  }
+  function checkPreserve(source: SpinePreservedPlayback): void {
+    assertOpen();
+    for (const name of source.skins) if (!info.skins.includes(name)) throw refuse('SKIN');
+    for (const chain of source.tracks) if (chain) for (const row of chain) continuation(row);
+  }
+  registerSpineRender(instance,{asset:port,exportPlayback(){
+    // Between two advances only: a command not yet applied, or a mix under way, is not a position to continue from.
+    if (disposed || faulted || busy || admitting || commands.length) throw refuse('STATE');
+    port.assertOpen();
+    const current = skeleton!, tracks: (readonly SpinePreservedEntry[] | undefined)[] = [];
+    for (const head of state!.tracks) {
+      if (!head) { tracks.push(undefined); continue; }
+      if (head.mixingFrom || head.mixingTo) throw refuse('STATE');
+      const chain: SpinePreservedEntry[] = [];
+      for (let entry: Core.TrackEntry | null = head; entry; entry = entry.next) {
+        if (chain.length >= MAX_ENTRIES || !entry.animation) throw refuse('STATE');
+        const values: Record<string, number | boolean> = {};
+        for (const key of ENTRY_VALUES) { const value = entry[key]; if (typeof value === 'number' && !Number.isFinite(value) && key !== 'trackEnd') throw refuse('STATE'); values[key] = value; }
+        const policy = playback.get(entry);
+        chain.push(freeze({ name: text(entry.animation.name), duration: finite(entry.animation.duration), events: freeze(eventSchedule(entry.animation)), values: freeze(values), policy: policy ? freeze({ ...policy }) : undefined }));
+      }
+      tracks.push(freeze(chain));
+    }
+    return freeze({ tracks: freeze(tracks), skins, transform: freeze([current.x, current.y, current.scaleX, current.scaleY] as const), rate, paused, revision, tickId, clockElapsed, elapsedSeconds });
+  },checkPreserve,initializePreserve(source){
+    // Private fresh-candidate initialization, as for reset: no clock identity is invented, no listener
+    // runs, and the candidate's first advance continues from the tick the source last took.
+    assertOpen();if(busy||admitting||revision!==0||tickId!==0||drawSink||commands.length)throw fault('RESET_NOT_PRISTINE');
+    checkPreserve(source);
+    busy=true;
+    try{
+      const current=skeleton!,animation=state!,rebuilt:[Core.TrackEntry,SpinePreservedEntry][]=[];
+      if(source.skins.length)apply({kind:'skin',names:source.skins});
+      current.setPosition(source.transform[0],source.transform[1]);current.setScale(source.transform[2],source.transform[3]);
+      for(const [index,chain] of source.tracks.entries()){
+        if(!chain)continue;
+        for(const [position,row] of chain.entries()){
+          if(entries.size>=MAX_ENTRIES)throw fault('ENTRY_LIMIT');
+          const found=continuation(row),entry=position===0?animation.setAnimation(index,found,false):animation.addAnimation(index,found,false,0);
+          const values=entry as unknown as Record<string,number|boolean>;
+          for(const key of ENTRY_VALUES)values[key]=row.values[key]!;
+          entries.add(entry);rebuilt.push([entry,row]);
+        }
+      }
+      // This application poses the new skeleton. It finds again what the source's last one found, and Core
+      // announced the start of each rebuilt entry: all of that was delivered by the source when it happened,
+      // and is dropped here. Each entry receives its policy only afterwards, so that no play is counted twice.
+      animation.apply(current);current.updateWorldTransform(Core.Physics.reset);
+      for(const [entry,row] of rebuilt)if(row.policy)playback.set(entry,{...row.policy});
+      events=[];rate=source.rate;paused=source.paused;tickId=source.tickId;clockElapsed=source.clockElapsed;elapsedSeconds=source.elapsedSeconds;
+      revision=source.revision+1;committed=publish();
+    }catch(cause){faulted=true;commands=[];events=[];throw fault('RESET_FAILED',cause);}
+    finally{busy=false;}
+  },initializeReset(){
     // Private fresh-candidate initialization: no synthetic clock identity, listener or
     // history replay. Core consumes its time-zero cursor before any public advance.
     assertOpen();if(busy||admitting||revision!==0||tickId!==0||drawSink)throw fault('RESET_NOT_PRISTINE');
