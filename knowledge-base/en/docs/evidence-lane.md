@@ -30,6 +30,16 @@ A recorded hash proves one thing: these are the bytes that were checked. It does
 
 None of these compares a product file with a recorded hash.
 
+## Conditions removed from the retained type checks
+
+`check-types` recorded product bytes in three places. Each is gone:
+
+- The mesh lane chose its expected diagnostic by the hash of `Mesh2D.d.ts`. It now expects the diagnostic the generic declaration reports; a declaration that reports another one fails the comparison itself.
+- The scene lane compared every declaration in its compiler closure with a recorded hash, and the list of those declarations with a recorded list. It now holds only the compiler's own libraries, its fixtures and its configurations to recorded bytes.
+- The same lane recorded the line and column of 33 missing browser names inside browser declarations, which refused any edit that moved a line of one. It now requires that every diagnostic is one of the recorded codes inside a browser declaration of the engine, and that there is at least one. Its other five lanes are unchanged.
+
+The type gate case in `tests/project-boundaries.test.mjs` runs the whole gate a second time after giving every emitted declaration of the four packages one more first line and one more last line.
+
 ## Type lanes
 
 A type lane is one compiler configuration under `tests/types` and the exact lines the compiler prints for it. A positive lane prints nothing. A negative lane prints the errors a consumer must get. The table is `tests/types/type-lanes.json`.

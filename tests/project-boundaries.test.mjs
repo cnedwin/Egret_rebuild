@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync,existsSync} from 'node:fs';
+import {readFileSync,existsSync,readdirSync,writeFileSync} from 'node:fs';
 import path from 'node:path';
 import {repository,run,isolated,prepareTypeFixture} from './helpers/project-fixture.mjs';
 
@@ -85,6 +85,19 @@ test('strict public project consumers and unsuppressed diagnostic locations run 
   assert.match(result.stdout,/Shared WebGL2 strict negative PASS/);
   assert.match(result.stdout,/Resource recovery types PASS/);
   assert.doesNotMatch(result.stdout,/Sequence playback types PASS|Sequence RESET strict PASS/);
+  // No byte of an emitted declaration decides this gate, and no position inside one. Give every
+  // declaration of the four packages one more first line and one more last line: each of its
+  // lines moves, its bytes and hash change, and what a consumer may write does not.
+  let moved=0;
+  const shift=directory=>{for(const entry of readdirSync(directory,{withFileTypes:true})){
+    const file=path.join(directory,entry.name);
+    if(entry.isDirectory())shift(file);
+    else if(entry.name.endsWith('.d.ts')){writeFileSync(file,'// moved by one line\n'+readFileSync(file,'utf8')+'\n// one more last line\n');moved++;}
+  }};
+  for(const name of ['contracts','runtime','engine','project'])shift(path.join(fixture.root,'packages',name,'dist'));
+  assert.ok(moved>300,'every emitted declaration was rewritten: '+moved);
+  const again=run(['tools/check-types.mjs'],fixture.root);assert.ifError(again.error);assert.equal(again.status,0,again.stdout+again.stderr);
+  for(const line of [/Project type fixtures PASS: 29 type-only exports/,/S3D1 type fixtures PASS/,/SpriteSheet types PASS/,/Shared WebGL2 strict negative PASS/,/Resource recovery types PASS/])assert.match(again.stdout,line);
 }));
 
 test('real compiler negatives with unchanged error count reject incorrect expected code and location',t=>isolated(({root,write})=>{

@@ -2355,8 +2355,8 @@
       "en": "knowledge-base/en/docs/evidence-lane.md",
       "zh": "knowledge-base/Cns/docs/evidence-lane.md",
       "kind": "public_reading",
-      "enSha256": "8461f9a8670eed89ef7f07622c72553adac1166406b57fa1ff2de049d20aa11d",
-      "zhSha256": "069219cc797ed3a25cd3040780f21fee8c064620ec7900f2564449efd292193d"
+      "enSha256": "b310a2645c4d8be1595d8e1db8ffdf4a2a1970dd5bb7891d4d368272f70064d1",
+      "zhSha256": "9b9b7db50cb301fdfbf0f4e197dd63af96e65d25330eab25f7363f69d5b1e998"
     }
   ],
   "registries": [
@@ -3194,7 +3194,7 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "9d93edbaabb41e360bf7bb8cac45aa10cf649afaaa2144ae126b6c720792a5bd"
+      "sha256": "60e96449eb4008c3ef47ba60eb4e0f171457726c27e236d340dfe6a8fdc04a80"
     },
     {
       "path": "packages/runtime/src/NineSliceGeometry2D.ts",
@@ -3358,7 +3358,7 @@
     },
     {
       "path": "tests/project-boundaries.test.mjs",
-      "sha256": "117a53d285c57e69eb8575e5e2a48ed2123071d399d4802fec99c5ed4f70533f"
+      "sha256": "673e2d8809cc1862f24c2f78a924ab2a3f8b90ef6ec6e0f2d8be3d5bfe6a8541"
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/src/types.ts",

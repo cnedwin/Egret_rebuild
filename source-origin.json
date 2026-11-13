@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "0d70463581b1af93517eb164545d03fe60468b79173dcde7f5db60a7a9a2a78d",
+      "sha256": "76bea84c702e9f9d260f5754d17816a23c2110582a4ed9a3fb9e5886917bb5ca",
       "bytes": 410342,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -5537,8 +5537,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "bytes": 151752,
-      "sha256": "9d93edbaabb41e360bf7bb8cac45aa10cf649afaaa2144ae126b6c720792a5bd",
+      "bytes": 153600,
+      "sha256": "60e96449eb4008c3ef47ba60eb4e0f171457726c27e236d340dfe6a8fdc04a80",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -6615,8 +6615,8 @@
     {
       "path": "tests/project-boundaries.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 16121,
-      "sha256": "117a53d285c57e69eb8575e5e2a48ed2123071d399d4802fec99c5ed4f70533f",
+      "bytes": 17333,
+      "sha256": "673e2d8809cc1862f24c2f78a924ab2a3f8b90ef6ec6e0f2d8be3d5bfe6a8541",
       "identityHistory": [
         {
           "bytes": 13130,
@@ -17276,14 +17276,14 @@
     {
       "path": "knowledge-base/en/docs/evidence-lane.md",
       "originRole": "First-party description of the evidence lane and type lanes; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 7212,
-      "sha256": "8461f9a8670eed89ef7f07622c72553adac1166406b57fa1ff2de049d20aa11d"
+      "bytes": 8319,
+      "sha256": "b310a2645c4d8be1595d8e1db8ffdf4a2a1970dd5bb7891d4d368272f70064d1"
     },
     {
       "path": "knowledge-base/Cns/docs/evidence-lane.md",
       "originRole": "First-party description of the evidence lane and type lanes; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 6997,
-      "sha256": "069219cc797ed3a25cd3040780f21fee8c064620ec7900f2564449efd292193d"
+      "bytes": 8017,
+      "sha256": "9b9b7db50cb301fdfbf0f4e197dd63af96e65d25330eab25f7363f69d5b1e998"
     },
     {
       "path": "contributions/evidence-lane.json",

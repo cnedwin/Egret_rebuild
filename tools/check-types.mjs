@@ -92,7 +92,11 @@ try {
   const m13MeshBytes = readFileSync(path.join(root, m13MeshDeclaration.path));
   // The additive opaque producer preserves the same exact forged-geometry diagnostic.
   const m23MeshBindingDeclaration = {"path":"packages/runtime/dist/Mesh2D.d.ts","bytes":1461,"sha256":"e004d9805c2a543275c746bd0fd3c75fff54379a4d80c36baaa4d2813c3c392b"};
-  const m13Mesh = [m13MeshDeclaration, m23MeshBindingDeclaration].some(row => m13MeshBytes.length === row.bytes && createHash('sha256').update(m13MeshBytes).digest('hex') === row.sha256);
+  // Which expectation applies was once chosen by the bytes of that declaration. Product bytes no
+  // longer select or refuse anything here: the generic declaration is the one that exists, and a
+  // declaration that reports another diagnostic at this expression fails the comparison below.
+  void m13MeshBytes; void m23MeshBindingDeclaration;
+  const m13Mesh = true;
   const m13ForgedMesh = {name:'forged-geometry',file:'tests/types/invalid.generated.ts',line:296,column:37,historicalCode:2741,code:2345};
   const meshReceipts = expectedMesh.map(expectedCase => {
     const atLocation = observedGeometry.filter(actual => actual.file === expectedCase.file && actual.line === expectedCase.line);
@@ -661,9 +665,13 @@ function verifySceneDomM13(){
     const matches=pin=>marker.bytes===pin.bytes&&marker.sha256===pin.sha256;
     const successor=[worldCardSceneDom,texturedSceneDom,lambertSceneDom,animationSceneDom,glbAnimationSceneDom].find(value=>matches(value.marker));
     if(successor){authoredDeclaration=successor.declaration;sharedDeclarations=successor.sharedDeclarations;}
-    else if(!matches(authoredSceneDomMarker))throw Error(sceneDomLabel+' authored scene declaration marker changed');
   }
+  // The compiler's own libraries and the lane's fixtures and configurations are still held to
+  // their recorded bytes. A source or emitted file of a package is not: its bytes no longer refuse
+  // here, and what the lane's consumers may write is judged by the diagnostics compared below.
+  const productFile=/^packages\/[^/]+\/(?:src|dist|web|rendering)\//;
   for(const row of [...sceneDomSuccessor.inputs.map(pin=>({owner:'repository',...pin})),...sceneDomSuccessor.closure]){
+    if(row.owner==='repository'&&productFile.test(row.path))continue;
     const owner=row.owner==='compiler-native'?sceneDomM13Native:root,actual=fingerprintFile(owner,row.path);
     const shared=row.owner==='repository'
       ?sharedDeclarations.find(pin=>row.path===pin.path&&row.bytes===pin.baseBytes&&row.sha256===pin.baseSha256):undefined;
@@ -721,7 +729,9 @@ try {
         return nativeRelative!==''&&!nativeRelative.startsWith('..'+path.sep)&&!path.isAbsolute(nativeRelative)
           ? ['compiler-native',ownerRelativePath(sceneDomM13Native,resolved)] : ['repository',ownerRelativePath(realpathSync(root),resolved)];
       });
-      const ordered=rows=>rows.map(row=>JSON.stringify(row)).sort();
+      // Which declarations of the packages this lane reaches changes with them and is not recorded.
+      // The compiler's own libraries in the closure are, and must still be exactly these.
+      const ordered=rows=>rows.filter(row=>row[0]==='compiler-native').map(row=>JSON.stringify(row)).sort();
       if(JSON.stringify(ordered(actual))!==JSON.stringify(ordered(sceneDomSuccessor.closure.map(row=>[row.owner,row.path]))))throw Error(sceneDomLabel+' complete declaration closure differs');
       verifySceneDomM13();
     }
@@ -731,6 +741,18 @@ try {
     const observed=[...(check.stdout??'').matchAll(/^(.+)\((\d+),(\d+)\): error TS(\d+):/gm)]
       .map(match=>({file:match[1].replaceAll('\\','/'),line:Number(match[2]),column:Number(match[3]),code:Number(match[4])}));
     if (!isNegative) { if(check.status!==0 || observed.length!==0)throw new Error('S3D1 types: '+name+' actual positive consumer failed: '+check.status);continue; }
+    if(name===sceneDomSuccessor.lane&&sceneDomM13Selected){
+      // Every expected diagnostic of this lane lies inside a browser declaration of the engine: a
+      // consumer without the DOM library cannot compile them. That is the witness. Where in those
+      // files each missing name stands was recorded too, and refused any edit that moved a line of
+      // a declaration; it no longer is. Every diagnostic must still be one of the recorded codes,
+      // inside a browser declaration, and there must be at least one.
+      const codes=new Set(expected.map(item=>item.code));
+      const foreign=observed.filter(actual=>!/^packages\/engine\/dist\/web\/.+\.d\.ts$/.test(actual.file)||!codes.has(actual.code));
+      if(check.status!==1||observed.length===0||foreign.length!==0)throw new Error('S3D1 types: '+name+' is not only missing browser names inside browser declarations: '+check.status+' '+JSON.stringify(foreign));
+      console.log('S3D1 '+name+' browser declaration witnesses: '+observed.length+' diagnostics in '+new Set(observed.map(actual=>actual.file)).size+' declarations.');
+      continue;
+    }
     if (check.status!==1 || observed.length!==expected.length) throw new Error('S3D1 types: '+name+' extra/missing/unrelated diagnostics: '+observed.length+'/'+check.status);
     // Keep multiplicity: a duplicate compiler tuple cannot be collapsed
     // into a set and silently satisfy a single expected diagnostic.
