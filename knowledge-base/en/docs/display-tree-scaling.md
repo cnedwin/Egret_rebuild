@@ -98,4 +98,4 @@ The same tool on the same machine, earlier code first:
 | 4,000 siblings | 1,579.3 µs | 120.8 µs |
 | 16,000 siblings | 7,381.9 µs | 499.1 µs |
 
-These figures describe one machine and one pair of runs; they are not acceptance thresholds. Two limits recorded above are unchanged: bitmaps that show different frames of one atlas are still separate draws, and a frame still admits at most 128 distinct regions. Both belong to the shared render profile and its vertex and uniform formats, not to this round.
+These figures describe one machine and one pair of runs; they are not acceptance thresholds. Two limits recorded above were not changed by that round: bitmaps that show different frames of one atlas are still separate draws, and a frame admitted at most 128 distinct regions. The region bound has since been raised to 4,096 in the [shared render profile](shared-render-profile-contract.md); the separate draws remain and belong to its vertex and uniform formats.

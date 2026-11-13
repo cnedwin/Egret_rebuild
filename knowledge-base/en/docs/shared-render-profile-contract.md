@@ -26,7 +26,7 @@ Mesh2D gains a geometry type parameter defaulting to TexturedGeometry2D. Its get
 
 Optional entries add `createSharedWebGPUHost` and `createSharedSceneWebGPUHost`, with `renderSharedFrame` and `renderSceneSharedFrame` respectively. They reuse the internal Host/device/submission owner. New factories advertise only supported protocols; an unsupported old method refuses before reading its frame payload. The scene factory requires an explicit outputAlpha of opaque; its overlay must also be opaque. The general 2D factory defaults to premultiplied. Existing factories retain their behavior. Canvas remains isolated in `@egret/engine/web`; the default SDK adds no browser or Spine dependency.
 
-`SharedWebGPUHostOptions` adds only outputAlpha to the existing textured options. Its snapshot reads the 18 existing top-level fields, then outputAlpha, then the selected device policy. `SharedWebGPUReadback.alphaMode` reports premultiplied or opaque; the old readback type retains its original premultiplied literal. `getSharedStatus()` reports the existing Host status plus pendingGeometryBytes, pendingColorBytes and pendingCanonicalBytes. The last field counts accepted conversion outputs still held by submissions, not total temporary memory. Shared scene additionally retains the existing `getSceneStatus()` contract.
+`SharedWebGPUHostOptions` adds outputAlpha and three page bounds to the existing textured options: `maxFrameRegions`, `maxFramePageBytes` and `maxReadyPageBytes`. Its snapshot reads the 18 existing top-level fields, then outputAlpha, then the three page bounds, then the selected device policy. The page bounds are judged after every earlier option. `SharedWebGPUReadback.alphaMode` reports premultiplied or opaque; the old readback type retains its original premultiplied literal. `getSharedStatus()` reports the existing Host status plus pendingGeometryBytes, pendingColorBytes and pendingCanonicalBytes. The last field counts accepted conversion outputs still held by submissions, not total temporary memory. Shared scene additionally retains the existing `getSceneStatus()` contract.
 
 ## Input stages and errors
 
@@ -118,13 +118,13 @@ These are logical admission/ownership ledgers, not exact JavaScript heap or driv
 | Ledger | Bound |
 | --- | --- |
 | Source | Existing axis ≤4096, pixels ≤1,048,576 and bytes ≤4 MiB per image |
-| Frame pages | ≤64 unique sources; source bytes ≤16 MiB and canonical requested bytes ≤16 MiB separately, including ready hits |
-| Regions/materials | ≤128 distinct regions and ≤256 complete materials |
+| Frame pages | ≤64 unique sources; source bytes ≤64 MiB and canonical requested bytes ≤64 MiB separately, including ready hits. A Host admits at most its `maxFramePageBytes` |
+| Regions/materials | ≤4,096 distinct regions and ≤256 complete materials. A Host admits at most its `maxFrameRegions` regions |
 | Tree/commands | ≤65,536 nodes, authoring units, occurrence-charged source triangles and draw-plus-barrier commands; ≤262,144 ordered clip references |
 | Geometry | V≤65,536, I≤196,608; indices in triples; new payload 88V+4I bytes, old payload 64V+4I; each ≤4,980,736 bytes, ≤128 unique values/16 MiB per frame |
 | Preparation | ≤1,048,576 vertices, 4,194,304 predicates, 1,048,576 tuple comparisons, 64 clip polygon corners |
 | Upload | Default 32 MiB per call/64 MiB pending; 44-byte new 2D vertices and 128-byte non-dynamic draw uniforms, plus generated indices/B1 charges |
-| Page transient/ready | Pending texture ≤32 MiB; CPU conversion/upload scratch ≤32 MiB; all profiles share ready residence ≤32 MiB/256 entries |
+| Page transient/ready | Pending texture and CPU conversion/upload scratch are each at most twice the Host's `maxFramePageBytes`, so 128 MiB by default. A shared Host keeps ready pages up to its `maxReadyPageBytes`, 128 MiB by default, and 256 entries; a WebGPU Host of another profile keeps 32 MiB/256 entries |
 | Derived caches | Existing per-Stage 16 MiB/65,536-entry and per-Host 16 MiB/4,096-address totals; old/new profiles share them |
 | Active color targets | Four bytes per backing pixel, ≤64 MiB per frame and ≤128 MiB for at most two accepted frames; configured/device caps may be stricter |
 | Reusable retention | Buffers plus owned color/depth targets share one 32 MiB/4,096-entry idle-and-return-reservation authority |
@@ -138,7 +138,7 @@ Texture/page keys include real source identity, representation, format, usage, m
 
 The Host remains the sole native lifecycle owner. A shared private retention authority handles atomic reservations and identities only. Reserve return capacity before publishing idle resources; rollback preserves all owners still requiring native cleanup. Eviction uses global return FIFO. Oversized or overflow targets are transient rather than a new optional-pool rejection. Unknown destruction retains its charge, disables session reuse and stops acceptance; it is never treated as successful release. Unknown memory can exceed the idle limit and must be reported separately.
 
-Page conversion admission counts already-held shared canonical outputs, this call's unique cold outputs and the largest one-page source-copy temporary together, with a 32 MiB peak limit. An individual call exceeding that bound is WEBGPU_FRAME_BUDGET; excess caused by pending work is WEBGPU_BACKPRESSURE. Both refuse before native effects. A READY hit retains its logical page fees but requires no conversion copy. Two concurrent cold conversions of the same source each own and charge their outputs. A two-frame concurrency limit therefore does not promise admission for two maximum-size cold workloads. Mixed buffer/target claim and return reservations are atomic under the one retention authority.
+Page conversion admission counts already-held shared canonical outputs, this call's unique cold outputs and the largest one-page source-copy temporary together. The peak limit is twice the Host's `maxFramePageBytes`: 128 MiB by default. An individual call exceeding that bound is WEBGPU_FRAME_BUDGET; excess caused by pending work is WEBGPU_BACKPRESSURE. Both refuse before native effects. A READY hit retains its logical page fees but requires no conversion copy. Two concurrent cold conversions of the same source each own and charge their outputs. A two-frame concurrency limit therefore does not promise admission for two maximum-size cold workloads. Mixed buffer/target claim and return reservations are atomic under the one retention authority.
 
 ## Numeric qualification and verification
 

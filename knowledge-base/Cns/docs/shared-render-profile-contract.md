@@ -26,7 +26,7 @@ Mesh2D 的几何泛型默认 TexturedGeometry2D；clear/dispose 后 getter 保�
 
 可选入口增加 `createSharedWebGPUHost`、`createSharedSceneWebGPUHost`，分别提供 `renderSharedFrame`、`renderSceneSharedFrame`，复用内部 Host/设备/提交所有者。新工厂只声明支持的协议；不支持的旧方法在读取帧内容前拒绝。场景工厂要求显式 outputAlpha 为 opaque，overlay 也必须 opaque；通用二维工厂默认 premultiplied。旧工厂行为不变。Canvas 继续隔离在 `@egret/engine/web`；默认 SDK 不增加浏览器或 Spine 依赖。
 
-`SharedWebGPUHostOptions` 仅在既有 textured 选项上增加 outputAlpha。快照依次读取原有 18 个顶层字段、outputAlpha，再读取所选设备策略。`SharedWebGPUReadback.alphaMode` 如实返回 premultiplied 或 opaque；旧读回类型保留原有 premultiplied 字面值。`getSharedStatus()` 返回既有 Host 状态，以及 pendingGeometryBytes、pendingColorBytes 和 pendingCanonicalBytes；最后一项仅统计已接受且仍由提交保有的转换输出，不代表全部临时内存。共享场景另保留既有 `getSceneStatus()` 合同。
+`SharedWebGPUHostOptions` 在既有 textured 选项上增加 outputAlpha 和三个页上限：`maxFrameRegions`、`maxFramePageBytes`、`maxReadyPageBytes`。快照依次读取原有 18 个顶层字段、outputAlpha、三个页上限，再读取所选设备策略。页上限在所有更早的选项之后才做判定。`SharedWebGPUReadback.alphaMode` 如实返回 premultiplied 或 opaque；旧读回类型保留原有 premultiplied 字面值。`getSharedStatus()` 返回既有 Host 状态，以及 pendingGeometryBytes、pendingColorBytes 和 pendingCanonicalBytes；最后一项仅统计已接受且仍由提交保有的转换输出，不代表全部临时内存。共享场景另保留既有 `getSceneStatus()` 合同。
 
 ## 输入阶段与错误
 
@@ -119,13 +119,13 @@ WebGPU hardware linear 先解码 sRGB texel 再过滤。bounded region 路径接
 | 账本 | 上限 |
 | --- | --- |
 | 源 | 保留每轴≤4096、像素≤1,048,576、每图≤4 MiB |
-| 帧页表 | ≤64 个不同源；源字节≤16 MiB，canonical 请求字节另计≤16 MiB，包含 ready 命中 |
-| 区域/材质 | ≤128 个区域，≤256 个完整材质 |
+| 帧页表 | ≤64 个不同源；源字节≤64 MiB，canonical 请求字节另计≤64 MiB，包含 ready 命中。Host 最多接纳它的 `maxFramePageBytes` |
+| 区域/材质 | ≤4,096 个区域，≤256 个完整材质。Host 最多接纳它的 `maxFrameRegions` 个区域 |
 | 树/命令 | 节点、authoring units、按 occurrence 收费的源三角形、绘制加屏障各≤65,536；有序裁剪引用≤262,144 |
 | 几何 | V≤65,536、I≤196,608，索引为三元组；新载荷88V+4I、旧载荷64V+4I；单项≤4,980,736字节，每帧≤128项/16 MiB |
 | 准备 | 顶点≤1,048,576、谓词≤4,194,304、tuple 比较≤1,048,576、裁剪多边形角≤64 |
 | 上传 | 默认每次32 MiB/在途64 MiB；新二维顶点44字节、非动态 draw uniform 128字节，另计生成索引/B1 |
-| 页临时/驻留 | 在途纹理≤32 MiB，CPU 转换/上传临时≤32 MiB；全部配置共享 ready≤32 MiB/256项 |
+| 页临时/驻留 | 在途纹理和 CPU 转换/上传临时各自不超过 Host 的 `maxFramePageBytes` 的两倍，默认即 128 MiB。共享 Host 的 ready 页不超过它的 `maxReadyPageBytes`（默认 128 MiB）和 256 项；其他配置的 WebGPU Host 为 32 MiB/256 项 |
 | 派生缓存 | 既有每 Stage 16 MiB/65,536项、每 Host 16 MiB/4,096地址；新旧配置共用 |
 | 活跃颜色目标 | 每 backing 像素4字节，每帧≤64 MiB，最多两帧合计≤128 MiB；配置/设备可更严 |
 | 复用留存 | 缓冲与自有颜色/深度目标共用32 MiB/4,096项的 idle 加返还预留权威 |
@@ -139,7 +139,7 @@ WebGPU hardware linear 先解码 sRGB texel 再过滤。bounded region 路径接
 
 Host 保持唯一原生生命周期所有者；共享私有留存权威只处理原子预留和身份。发布 idle 前预留返还容量，回滚保留仍需原生清理的所有者；淘汰按全局返还 FIFO。过大或溢出目标作为临时资源处理，不新增可选池拒绝。销毁结果未知时保留费用、禁用该会话复用并停止接收，不当作成功释放；未知费用可超过 idle 上限，须单独报告。
 
-页转换准入同时统计已保有的共享 canonical 输出、本次调用各个冷页的输出，以及最大的单页源复制临时量，峰值上限为 32 MiB。单次调用自身超限报告 WEBGPU_FRAME_BUDGET；叠加待完成工作后超限报告 WEBGPU_BACKPRESSURE，两者均在原生副作用之前拒绝。READY 命中仍承担逻辑页费用，但不再复制转换。同一源的两次并发冷转换分别拥有输出并收费；允许最多两个并发帧，并不保证同时接收两个最大冷负载。缓冲与目标的领取、返还预留在同一个留存权威中原子完成。
+页转换准入同时统计已保有的共享 canonical 输出、本次调用各个冷页的输出，以及最大的单页源复制临时量。峰值上限为 Host 的 `maxFramePageBytes` 的两倍，默认即 128 MiB。单次调用自身超限报告 WEBGPU_FRAME_BUDGET；叠加待完成工作后超限报告 WEBGPU_BACKPRESSURE，两者均在原生副作用之前拒绝。READY 命中仍承担逻辑页费用，但不再复制转换。同一源的两次并发冷转换分别拥有输出并收费；允许最多两个并发帧，并不保证同时接收两个最大冷负载。缓冲与目标的领取、返还预留在同一个留存权威中原子完成。
 
 ## 数值资格与验证
 
