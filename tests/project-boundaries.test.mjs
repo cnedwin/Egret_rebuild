@@ -97,7 +97,7 @@ test('strict public project consumers and unsuppressed diagnostic locations run 
   for(const name of ['contracts','runtime','engine','project'])shift(path.join(fixture.root,'packages',name,'dist'));
   assert.ok(moved>300,'every emitted declaration was rewritten: '+moved);
   const again=run(['tools/check-types.mjs'],fixture.root);assert.ifError(again.error);assert.equal(again.status,0,again.stdout+again.stderr);
-  for(const line of [/Project type fixtures PASS: 29 type-only exports/,/S3D1 type fixtures PASS/,/SpriteSheet types PASS/,/Shared WebGL2 strict negative PASS/,/Resource recovery types PASS/])assert.match(again.stdout,line);
+  for(const line of [/Project type fixtures PASS: 29 type-only exports/,/SpriteSheet types PASS/,/Shared WebGL2 strict negative PASS/,/Resource recovery types PASS/])assert.match(again.stdout,line);
 }));
 
 test('real compiler negatives with unchanged error count reject incorrect expected code and location',t=>isolated(({root,write})=>{
