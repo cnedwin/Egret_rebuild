@@ -1,0 +1,52 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Performance monitor / 性能监控</title>
+  <link rel="icon" href="data:,">
+  <script type="importmap">
+  {"imports":{
+    "@egret/engine":"/packages/engine/dist/index.js",
+    "@egret/engine/webgl2":"/packages/engine/dist/web/webgl2.js",
+    "@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js",
+    "@egret/runtime":"/packages/runtime/dist/index.js",
+    "@egret/runtime/text":"/packages/runtime/dist/text/index.js",
+    "@egret/runtime/input":"/packages/runtime/dist/input/index.js",
+    "@egret/contracts":"/packages/contracts/dist/index.js",
+    "@egret/contracts/resources":"/packages/contracts/dist/resources/index.js",
+    "#egret-keyboard-input":"/packages/engine/dist/keyboardInput.js",
+    "#egret-manifest-resources":"/packages/engine/dist/manifestResourceState.js",
+    "#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js",
+    "robust-predicates":"/vendor/robust-predicates/index.js",
+    "@egret/devtools":"/devtools/dist/core/index.js",
+    "@egret/devtools/web":"/devtools/dist/web/index.js"
+  }}
+  </script>
+  <style>
+    body { margin: 24px; color: #243c3c; background: #f3f6f3; font: 16px/1.55 system-ui, sans-serif; }
+    main { max-width: 640px; margin: auto; }
+    h1 { line-height: 1.2; }
+    canvas { display: block; width: 100%; height: auto; background: #1d2433; }
+    button, a { font: inherit; margin: 12px 12px 0 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Performance monitor <span lang="zh-CN">/ 性能监控</span></h1>
+    <p>The monitor appears only in debug mode: add <code>?egretDebug=1</code> to the address. Press the backquote key, or touch with three fingers, to hide and show it.<br><span lang="zh-CN">监控只在调试模式显示：在地址后加 <code>?egretDebug=1</code>。按反引号键或三指触摸可隐藏和显示。</span></p>
+    <canvas id="stage" width="640" height="360" data-phase="loading"></canvas>
+    <button id="more" type="button">Add 200 sprites <span lang="zh-CN">/ 增加 200 个精灵</span></button>
+    <button id="hitch" type="button">Stall one frame <span lang="zh-CN">/ 卡住一帧</span></button>
+    <a id="backend" href="?backend=webgpu">WebGPU</a>
+    <p id="status" role="status">Loading <span lang="zh-CN">/ 正在加载</span></p>
+  </main>
+  <script type="module">
+    import('./main.mjs').catch(error => {
+      document.querySelector('#stage').dataset.phase = 'failed';
+      document.querySelector('#status').textContent = `Startup failed / 启动失败 · ${error.message}`;
+    });
+  </script>
+</body>
+</html>

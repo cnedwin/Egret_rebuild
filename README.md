@@ -46,6 +46,8 @@ Run the [World3D example and feature gallery](examples/world3d/README.md) to exp
 
 For optional tile-map, physics, audio, save, archive, KTX2 and localization support, see the [third-party integrations](integrations/README.md).
 
+For frame timing, shared-frame counts and a hitch log on screen while developing, see the [performance monitor](devtools/README.md). It appears only in debug mode.
+
 ## Development and community
 
 Read the [current capability map](knowledge-base/en/docs/core-progress.md) and [engineering plan](knowledge-base/en/docs/engineering-plan.md) to see delivered features and open acceptance criteria across the eleven M2–M4 packages.
