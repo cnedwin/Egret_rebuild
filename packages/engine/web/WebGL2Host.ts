@@ -11,6 +11,7 @@ import { admitSharedWebGL2Options } from './sharedWebGL2Options.js';
 import type { SharedWebGL2HostOptions, SharedWebGL2Configuration } from './sharedWebGL2Options.js';
 import type { SharedLayerWebGL2Host, SharedWebGL2Layer2D, SharedWebGL2LayerEffect2D, SharedWebGL2LayerPlacement2D, SharedWebGL2LayerStatus, SharedWebGL2Readback, SharedWebGL2HostStatus, WebGL2HostState, WebGL2HostStatus, WebGL2HostFailure, WebGL2HostErrorCode, WebGL2HostDiagnostic } from './webgl2Types.js';
 import { prepareSharedDraws2D, SharedPreparationError } from '../rendering/prepareSharedDraws2D.js';
+import { SharedPreparationRetention2D } from '../rendering/sharedPreparationRetention2D.js';
 import { GeometryPreparationError } from '../rendering/prepareRectangles2D.js';
 import { packSharedDraws2D, packSharedRegions2D, SHARED_BATCH_PAGES_2D, SHARED_REGION_WINDOW_BYTES_2D } from '../rendering/packSharedDraws2D.js';
 import { PreparedBatchScratch2D } from '../rendering/preparedBatches2D.js';
@@ -171,6 +172,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     private readonly resourceNative:GLNativeResourceDiagnostics={pageBytes:0,highPageBytes:0,reservedPageBytes:0,highReservedPageBytes:0,unknown:this.resourceUnknown,totals:this.resourceTotals,saturated:false};
     private pool = createRetentionLedger<Request,GLNativeOwner>(this.token,this.resourceReuse);
     private readonly scratch = new PreparedBatchScratch2D();
+    /** The prepared draws of the last ordinary frame. A Host that is not active keeps none. */
+    private readonly retention = new SharedPreparationRetention2D();
     private readonly records = new Set<Record2D>();
     private readonly settledHandles = new WeakSet<object>();
     private readonly pages = new Map<ImageData2D,Page>();
@@ -260,7 +263,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             this.state==='stopped'?'WEBGL2_STOPPED':this.state==='closing'||this.state==='closed'?'WEBGL2_CLOSED':this.state==='failed'?'WEBGL2_FAILED':'WEBGL2_NOT_STARTED';
         return glFailure(code,this.generationFailure?.cause);
     }
-    private active():void {if(this.state!=='active')throw this.stateError();}
+    private active():void {if(this.state!=='active'){this.retention.clear();throw this.stateError();}}
     private generationState(token:object):void {
         if(token!==this.token || this.state==='lost' || this.state==='closed')throw this.stateError();
         if((this.phase==='render'||this.phase==='upload')&&this.state!=='active')throw this.stateError();
@@ -645,7 +648,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 }
                 const width=Math.ceil(frame.width*options.pixelRatio),height=Math.ceil(frame.height*options.pixelRatio);
                 if(!Number.isSafeInteger(width)||!Number.isSafeInteger(height)||width<=0||height<=0||width>4294967295||height>4294967295||width>Math.floor(options.maxBackingPixels/height))throw glFailure('WEBGL2_BACKING_LIMIT');
-                const prepared=prepareSharedDraws2D(frame,width,height,options);
+                // A frame baked into a layer is another sequence of frames; it neither takes nor replaces what the ordinary frames keep.
+                const prepared=prepareSharedDraws2D(frame,width,height,options,layerWrite?undefined:this.retention);
                 const ticket=!layerWrite&&!staging&&this.ticket&&!this.ticket.bound?this.ticket:undefined;
                 const reserve=staging?options.enableReadback:!!ticket;
                 const fees=planSharedStorageFees2D(prepared,options),layout=withSharedReadbackLayout2D(fees,{rowPitch:reserve?4*width:0,staging:reserve?fees.colorBytes:0,output:reserve?fees.colorBytes:0});
@@ -1245,7 +1249,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     }
     public close():Promise<void> {
         if(this.closing)return this.closing;
-        const barrier=deferred<void>();this.closing=barrier.promise;this.state='closing';this.cleanupOutcome='pending';this.cancelRestore();
+        const barrier=deferred<void>();this.closing=barrier.promise;this.state='closing';this.cleanupOutcome='pending';this.cancelRestore();this.retention.clear();
         const failure=glFailure('WEBGL2_CLOSED');this.ready?.reject(failure);this.rejectUnbound(failure);this.revokeUploads(failure);
         for(const slot of this.layers.values())this.dropLayer(slot);
         this.layers.clear();

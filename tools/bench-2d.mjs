@@ -3,7 +3,9 @@
 // Usage: node tools/bench-2d.mjs [--json] [--quick]
 // It times the CPU work of a frame before anything reaches the graphics API: turning the
 // display list into a frame record (capture), and turning that record into vertex batches
-// (preparation). It also times container edits and the life of display objects.
+// (preparation). A capture after the first one finds the records each node kept; the rows marked
+// "kept" time the preparation of a frame whose draws a Host kept from the frame before.
+// It also times container edits and the life of display objects.
 // The figures describe this machine and this run; they are not acceptance thresholds.
 import { performance } from 'node:perf_hooks';
 import {
@@ -14,6 +16,7 @@ import { prepareSharedDraws2D } from '../packages/engine/dist/rendering/prepareS
 import { packSharedDraws2D } from '../packages/engine/dist/rendering/packSharedDraws2D.js';
 import { prepareSharedBatches2D } from '../packages/engine/dist/rendering/preparedSharedBatches2D.js';
 import { PreparedBatchScratch2D } from '../packages/engine/dist/rendering/preparedBatches2D.js';
+import { SharedPreparationRetention2D } from '../packages/engine/dist/rendering/sharedPreparationRetention2D.js';
 
 const quick = process.argv.includes('--quick');
 const FRAME = { width: 1280, height: 720 };
@@ -49,6 +52,15 @@ function prepare(label, frame, frames) {
   record('prepare', label + ', clipped geometry', round(time.geometry / frames), 'ms/frame');
   record('prepare', label + ', vertex rows', round(time.vertices / frames), 'ms/frame');
   record('prepare', label + ', draw batches', round(time.batches / frames), 'ms/frame', draws + ' draws');
+  // The same frame again, as a Host prepares it that kept the draws of the frame before.
+  const retention = new SharedPreparationRetention2D(), kept = { geometry: 0, vertices: 0 };
+  for (let i = 0; i <= frames; i++) {
+    const start = performance.now(), prepared = prepareSharedDraws2D(frame, FRAME.width, FRAME.height, PREPARE, retention), geometry = performance.now();
+    packSharedDraws2D(prepared);
+    if (i > 0) { kept.geometry += geometry - start; kept.vertices += performance.now() - geometry; }
+  }
+  record('prepare', label + ', clipped geometry, kept', round(kept.geometry / frames), 'ms/frame');
+  record('prepare', label + ', vertex rows, kept', round(kept.vertices / frames), 'ms/frame', retention.draws + ' draws kept');
 }
 
 async function sprites(count) {

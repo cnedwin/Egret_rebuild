@@ -44,7 +44,11 @@ export function packSharedRegions2D(frame:PreparedSharedFrame2D['frame']):Uint32
     }
     return table;
 }
-/** Backing coordinates stay backing coordinates until the fixed vertex shader. */
+/**
+ * Backing coordinates stay backing coordinates until the fixed vertex shader. A draw whose geometry was kept
+ * from the last frame takes the rows kept with it, once the charges recorded with those rows fit: the rows of
+ * a draw depend on its geometry alone, except the place of its region and its opacity, which are written anew.
+ */
 export function packSharedDraws2D(prepared:PreparedSharedFrame2D):PackedSharedEntry2D[] {
     // The vertex rows of one frame share one allocation, and its uniform blocks another; each draw's
     // `data` and `uniform` are views of its own range, with the same length and bytes as separate arrays.
@@ -53,13 +57,21 @@ export function packSharedDraws2D(prepared:PreparedSharedFrame2D):PackedSharedEn
     let capacity=0,draws=0;
     for(const draw of prepared.entries){if(draw.kind==='barrier')continue;draws++;for(const polygon of draw.polygons)if(polygon.length>2)capacity+=(polygon.length-2)*3;}
     const rows=new Float32Array(capacity*ROW),blocks=new ArrayBuffer(draws*BLOCK),blockBytes=new Uint8Array(blocks),blockFloats=new Float32Array(blocks),blockWords=new Uint32Array(blocks);
+    const retention=prepared.retention,retained=prepared.retained;
     let used=0,block=0;
-    for(const draw of prepared.entries){
+    for(let entry=0;entry<prepared.entries.length;entry++){
+        const draw=prepared.entries[entry]!;
         if(draw.kind==='barrier'){result.push({barrier:true,ordinal:draw.ordinal});continue;}
         const first=used;let vertices=0;
         const opacity=draw.command.opacity,index=draw.command.kind==='rect'?0:draw.command.regionIndex;
         const slot=index%SHARED_REGION_WINDOW_2D,regionWindow=draw.region?Math.floor(index/SHARED_REGION_WINDOW_2D):-1;
-        for(const polygon of draw.polygons){
+        const kept=retained?.[entry],keptRows=kept?.rows;
+        const predicatesBefore=budget.predicatesCharged;
+        if(keptRows!==undefined&&budget.tryReplayStageCost(kept!.rowsCost!)){
+            rows.set(keptRows,used);vertices=kept!.vertexCount;
+            for(let o=used+11,end=used+keptRows.length;o<end;o+=ROW){rows[o]=slot;rows[o+1]=opacity;}
+            used+=keptRows.length;
+        }else for(const polygon of draw.polygons){
             const count=polygon.length;
             if(count*ROW>corners.length)corners=new Float32Array(count*ROW);
             for(let i=0,o=0;i<count;i++,o+=ROW){
@@ -80,6 +92,8 @@ export function packSharedDraws2D(prepared:PreparedSharedFrame2D):PackedSharedEn
                 used+=3*ROW;vertices+=3;
             }
         }
+        // The orientation of each triangle is the one charge of this stage.
+        if(kept!==undefined&&keptRows===undefined)retention!.keepRows(kept,rows.subarray(first,used),vertices,{preparedVertices:0,predicates:budget.predicatesCharged-predicatesBefore,tupleComparisons:0});
         // Float and word indices of this draw's block: twelve floats, then twenty words from byte 48.
         // The block holds what is the same for a whole batch. The third float, once the opacity, stays zero: the
         // opacity is in each vertex. Of the first eleven words, once the region, the first eight name the pages

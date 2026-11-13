@@ -2875,6 +2875,10 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
+      "../rendering/sharedPreparationRetention2D.js"
+    ],
+    [
+      "static",
       "./imageProjections2D.js"
     ],
     [
@@ -3009,6 +3013,10 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
+      "../rendering/sharedPreparationRetention2D.js"
+    ],
+    [
+      "static",
       "./prepareSharedSubmission2D.js"
     ],
     [
@@ -3117,6 +3125,10 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
+      "../rendering/sharedPreparationRetention2D.js"
+    ],
+    [
+      "static",
       "./sharedDeviceSession.js"
     ],
     [
@@ -3220,6 +3232,10 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "../rendering/sharedColor2D.js"
+    ],
+    [
+      "static",
+      "../rendering/sharedPreparationRetention2D.js"
     ],
     [
       "static",
@@ -3433,6 +3449,10 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
+      "./sharedPreparationRetention2D.js"
+    ],
+    [
+      "static",
       "./texturedPreparationBudget2D.js"
     ],
     [
@@ -3478,6 +3498,10 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "./sharedEffects2D.js"
+    ],
+    [
+      "static",
+      "./sharedPreparationRetention2D.js"
     ],
     [
       "static",
