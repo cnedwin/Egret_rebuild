@@ -8,6 +8,7 @@ import * as sdk from '@egret/engine';
 import { createTextRasterCache, createTextField } from '@egret/engine/text';
 import { deferred, flush, host } from './helpers.mjs';
 import { literalProvider, request } from './text-raster-public-helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const MODULE = new URL('../examples/prepared-resource-groups/session.mjs', import.meta.url);
 const ASSETS = new URL('../examples/resource-scene/assets/', import.meta.url);
@@ -138,7 +139,7 @@ async function genuineBaseline(t) {
     engine.advanceTime(0); playback = engine.createSequencePlayback(scope, body, clip, { mode: 'loop' }); playback.start();
     engine.advanceTime(0.125); assert.deepEqual(body.sourceRect, ONE); assert.equal(playback.lastSample.frameIndex, 1);
     const field = createTextField(engine, scope, cache); field.setRequest(request()); await field.prepare(); engine.stage.addChild(field);
-    const frame = engine.captureFrame(FRAME);
+    const frame = captureDrawn(engine, FRAME);
     assert.equal(frame.width, 192); assert.equal(frame.height, 128);
     assert.ok(frame.commands.some(row => row.kind === 'image')); assert.ok(frame.images.includes(atlas.value.imageData));
     assert.equal(text.state.measure, 1);

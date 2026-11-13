@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 function capability() { assert.equal(typeof egret.DisplayObjectContainer.prototype.getChildIndex, 'function', 'DISPLAY_CONTAINER_GET_CHILD_INDEX_REQUIRED'); }
 function code(action, wanted) { assert.throws(action, cause => cause instanceof egret.EgretError && cause.code === wanted); }
@@ -142,7 +143,7 @@ test('CGI05 query keeps Scope owners leases listeners and owned frame values unc
   const lease = b.use(f.borrow(await f.engine.assets.acquire(egret.createAssetRef(type, 'blue'))));
   const bitmap = b.use(f.track(new egret.Bitmap(lease))); bitmap.x = 5; root.addChild(red); root.addChild(bitmap);
   const eventType = egret.createEventType('child-index-live-listener'); bitmap.on(eventType, () => calls++);
-  const saved = f.engine.captureFrame({ width: 8, height: 4 });
+  const saved = captureDrawn(f.engine, { width: 8, height: 4 });
   const expected = [{ kind:'rect', x:2, width:2 }, { kind:'image', x:5, width:1 }];
   const summarize = frame => frame.commands.map(command => ({ kind:command.kind, x:command.matrix.tx, width:command.rect.width }));
   assert.deepEqual(summarize(saved), expected); assert.equal(saved.images.length, 1);
@@ -155,7 +156,7 @@ test('CGI05 query keeps Scope owners leases listeners and owned frame values unc
   assert.deepEqual(f.port.trace, trace); assert.equal(f.port.timers.size, timers);
   code(() => a.use(bitmap), 'OWNERSHIP_CONFLICT'); assert.equal(root.getChildIndex(bitmap), 1);
   bitmap.dispatchEvent(new egret.Event(eventType, null)); assert.equal(calls, 1);
-  assert.deepEqual(summarize(f.engine.captureFrame({ width: 8, height: 4 })), expected);
+  assert.deepEqual(summarize(captureDrawn(f.engine, { width: 8, height: 4 })), expected);
   b.dispose(); assert.equal(disposals, 1); assert.equal(texture.isDisposed, true); code(() => lease.value, 'ASSET_LEASE_RELEASED');
   assert.equal(bitmap.isDisposed, true); assert.equal(root.numChildren, 1); code(() => root.getChildIndex(bitmap), 'OBJECT_DISPOSED');
   assert.equal(saved.commands, oldCommands); assert.equal(saved.images, oldImages); assert.deepEqual(summarize(saved), expected);

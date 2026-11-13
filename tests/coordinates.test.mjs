@@ -35,8 +35,8 @@ function near(value,x,y,tolerance=1e-10){
   assert.ok(Math.abs(value.y-y)<=tolerance,`y near ${y}`);return value;
 }
 async function withEngine(run,overrides={}){
-  const port=host(overrides),diagnostics=[];
-  const engine=await egret.createEngine({host:port.adapter,onDiagnostic:d=>diagnostics.push(d)});
+  const port=host({sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D,renderSharedFrame(){},...overrides}),diagnostics=[];
+  const engine=await egret.createEngineForProfile({host:port.adapter,onDiagnostic:d=>diagnostics.push(d)},egret.SHARED_FRAME_PROFILE_2D);
   try{return await run(engine,port,diagnostics);}finally{await engine.dispose();}
 }
 function hierarchy(){
@@ -240,14 +240,14 @@ test('C20 closing live objects reject while rendering cleanup waits for unwind',
   operation('localToGlobal');operation('globalToLocal');
   let engine,closing,reads=0;const detached=new egret.DisplayObject();
   const options={get maxNodes(){reads++;throw Error('unread');}};
-  const port=host({renderFrame(){
+  const port=host({sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D,renderSharedFrame(){
     closing=engine.dispose();assert.equal(engine.stage.isDisposed,false);
     code(()=>forward(engine.stage,0,0,options),'ENGINE_CLOSED');
     code(()=>inverse(detached,0,0,options),'ENGINE_CLOSED');return undefined;
   }});
-  engine=await egret.createEngine({host:port.adapter});
+  engine=await egret.createEngineForProfile({host:port.adapter},egret.SHARED_FRAME_PROFILE_2D);
   try{engine.stage.addChild(detached);engine.stage.removeChild(detached);
-    engine.renderFrame(FRAME);await closing;assert.equal(reads,0);
+    engine.renderSharedFrame(FRAME);await closing;assert.equal(reads,0);
   }finally{detached.dispose();await engine.dispose();}
 });
 
@@ -270,15 +270,15 @@ test('C22 separate Engines have separate Stage spaces with no implicit root',asy
 test('C23 render-state independence and no query frame/host/diagnostic work',async()=>{
   let draws=0;await withEngine(async(engine,port,diagnostics)=>{
     const parent=new egret.Sprite(),node=new egret.DisplayObject();parent.x=10;node.x=3;
-    parent.addChild(node);engine.stage.addChild(parent);const first=engine.captureFrame(FRAME);
+    parent.addChild(node);engine.stage.addChild(parent);const first=engine.captureSharedFrame(FRAME);
     parent.visible=false;parent.alpha=0;parent.clipRect={x:0,y:0,width:0,height:1};
     Object.defineProperty(port.adapter,'pixelRatio',{get(){throw Error('host pixel ratio read');}});
     point(forward(node,2,4),15,4);point(inverse(node,15,4),2,4);
     code(()=>forward(node,NaN,0),'COORDINATE_INPUT_INVALID');
-    const second=engine.captureFrame(FRAME);assert.equal(second.frameId,first.frameId+1);
+    const second=engine.captureSharedFrame(FRAME);assert.equal(second.frameId,first.frameId+1);
     assert.equal(draws,0);assert.equal(port.timers.size,0);assert.deepEqual(diagnostics,[]);
     assert.deepEqual(port.trace,['start']);
-  },{renderFrame(){draws++;}});
+  },{renderSharedFrame(){draws++;}});
 });
 
 test('C24 Bitmap geometry ignores released image entitlement',async()=>{
@@ -292,7 +292,7 @@ test('C24 Bitmap geometry ignores released image entitlement',async()=>{
     lease.release();const before={loads,retired};
     point(forward(node,4,2),-3,2);point(inverse(node,-3,2),4,2);
     assert.deepEqual({loads,retired},before);assert.equal(node.textureLease,lease);
-    code(()=>engine.captureFrame(FRAME),'ASSET_LEASE_RELEASED');
+    code(()=>engine.captureSharedFrame(FRAME),'ASSET_LEASE_RELEASED');
   });
 });
 
@@ -349,7 +349,7 @@ test('C31 forward world overflow rejects even the origin and preserves capture e
     node.graphics.beginFill(1).drawRect(0,0,1,1);parent.addChild(node);engine.stage.addChild(parent);
     code(()=>forward(node,0,0),'COORDINATE_ARITHMETIC_RANGE');
     code(()=>inverse(node,0,0),'COORDINATE_ARITHMETIC_RANGE');
-    code(()=>engine.captureFrame(FRAME),'FRAME_TRANSFORM_INVALID');
+    code(()=>engine.captureSharedFrame(FRAME),'FRAME_TRANSFORM_INVALID');
   });
 });
 
@@ -401,7 +401,7 @@ test('C37 exact cancellation uses observed public capture coefficients, never a 
   operation('globalToLocal');await withEngine(async engine=>{
     const parent=new egret.Sprite(),node=new egret.Sprite();parent.rotation=45;parent.scaleY=2**-120;node.rotation=45;
     node.graphics.beginFill(1).drawRect(0,0,1,1);parent.addChild(node);engine.stage.addChild(parent);
-    const frame=engine.captureFrame(FRAME);assert.equal(frame.commands.length,1);
+    const frame=engine.captureSharedFrame(FRAME);assert.equal(frame.commands.length,1);
     const m=frame.commands[0].matrix,u=2**-53;
     assert.deepEqual([m.a,m.b,m.c,m.d,m.tx,m.ty],[.5+u,.5,-.5,-.5+u,0,0],
       'pinned-runtime coefficient gate: failure requires a new public fixture, never silent skip');

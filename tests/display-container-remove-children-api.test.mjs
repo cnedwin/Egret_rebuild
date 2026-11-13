@@ -22,7 +22,7 @@ test('DCA00 old single detach baseline precedes the named missing batch member',
     child.dispatchEvent(new egret.Event(eventType, null)); assert.equal(calls, 1);
     assert.equal(lease.value, texture); assert.equal(root.addChild(child), child);
     assert.equal(root.getChildAt(0), child); assert.equal(root.numChildren, 1);
-    assert.deepEqual(engine.captureFrame({ width: 2, height: 2 }).commands.map(value => value.kind), ['image']);
+    assert.deepEqual(engine.captureSharedFrame({ width: 2, height: 2 }).commands.map(value => value.kind), ['image']);
   } catch (cause) { primaryPresent = true; primary = cause; }
   finally {
     for (const action of [() => scope?.dispose(), () => child?.dispose(), () => lease?.release(), () => root?.dispose()]) {

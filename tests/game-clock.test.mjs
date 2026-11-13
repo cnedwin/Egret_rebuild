@@ -11,7 +11,7 @@ test('GC01 initialized Engine owns an explicitly advanced clock', async () => {
     const sprite = scope.use(new Sprite());
     sprite.graphics.beginFill(0x2753a1).drawRect(0, 0, 2, 3);
     engine.stage.addChild(sprite);
-    const frame = engine.captureFrame({ width: 8, height: 8 });
+    const frame = engine.captureSharedFrame({ width: 8, height: 8 });
     assert.equal(frame.frameId, 1);
     assert.equal(frame.commands.length, 1);
     assert.deepEqual(frame.commands[0].rect, { x: 0, y: 0, width: 2, height: 3 });
@@ -34,12 +34,13 @@ test('GC01 initialized Engine owns an explicitly advanced clock', async () => {
 import {
   Bitmap, EgretError, SequencePlayer, createAssetRef, createAssetType,
   createEngineForProfile, createImageData2D, createSequenceClip, createTexture,
-  copyImageData2DPixels, isTexture, TEXTURED_FRAME_PROFILE_2D,
+  copyImageData2DPixels, isTexture, SHARED_FRAME_PROFILE_2D,
 } from '@egret/engine';
 import { deferred, flush } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const CLOCK_FRAME_OPTIONS = Object.freeze({ width: 8, height: 8, clearColor: 0, clearAlpha: 0 });
-const CLOCK_FRAME_METHODS = Object.freeze(['captureFrame', 'renderFrame', 'captureTexturedFrame', 'renderTexturedFrame']);
+const CLOCK_FRAME_METHODS = Object.freeze(['captureSharedFrame', 'renderSharedFrame']);
 
 function expectClockError(action, code, cause) {
   const checkCause = arguments.length === 3;
@@ -58,8 +59,8 @@ function clockObservations(clock) {
 }
 function clockProfileHost(overrides = {}) {
   return host({
-    texturedFrameProfile: TEXTURED_FRAME_PROFILE_2D,
-    renderFrame() {}, renderTexturedFrame() {}, ...overrides,
+    sharedFrameProfile: SHARED_FRAME_PROFILE_2D,
+    renderSharedFrame() {}, ...overrides,
   });
 }
 function unreadClockFrameOptions(counter) {
@@ -68,21 +69,22 @@ function unreadClockFrameOptions(counter) {
     get height() { counter.reads++; throw new Error('frame height must stay unread'); },
     get clearColor() { counter.reads++; throw new Error('frame color must stay unread'); },
     get clearAlpha() { counter.reads++; throw new Error('frame alpha must stay unread'); },
+    get outputAlpha() { counter.reads++; throw new Error('frame output must stay unread'); },
   };
 }
 const CLOCK_FACTORIES = Object.freeze([
   { name: 'ordinary', make: options => createEngine(options), makeHost: () => host() },
-  { name: 'profile', make: options => createEngineForProfile(options, TEXTURED_FRAME_PROFILE_2D), makeHost: () => clockProfileHost() },
+  { name: 'profile', make: options => createEngineForProfile(options, SHARED_FRAME_PROFILE_2D), makeHost: () => clockProfileHost() },
 ]);
 
 // GC02: the controlled host boundary records work; its close deadline is separate.
 test('GC02 constructing, subscribing and reading performs no implicit tick or render', async () => {
   let callbacks = 0, frames = 0, deadlineCalls = 0;
   const h = clockProfileHost({
-    renderFrame() { frames++; }, renderTexturedFrame() { frames++; },
+    renderSharedFrame() { frames++; },
     setTimeout() { deadlineCalls++; return () => {}; },
   });
-  const engine = await createEngineForProfile({ host: h.adapter }, TEXTURED_FRAME_PROFILE_2D);
+  const engine = await createEngineForProfile({ host: h.adapter }, SHARED_FRAME_PROFILE_2D);
   try {
     const scope = engine.createScope();
     const subscription = engine.clock.onTick(scope, () => { callbacks++; });
@@ -160,7 +162,8 @@ test('GC03 both factories snapshot valid clock options once and preserve admissi
     }
     for (const priority of ['renderer', 'timeout', 'diagnostic']) {
       const port = factory.makeHost(), cause = new Error('diagnostic option read'); let clockReads = 0;
-      if (priority === 'renderer') port.adapter.renderFrame = 7;
+      // Only the profile factory negotiates a render port.
+      if (priority === 'renderer') { if (factory.name !== 'profile') continue; port.adapter.renderSharedFrame = 7; }
       const options = { host: port.adapter, get clock() { clockReads++; throw new Error('late clock option'); } };
       if (priority === 'timeout') options.shutdownTimeoutMs = 0;
       if (priority === 'diagnostic') Object.defineProperty(options, 'onDiagnostic', { get() { throw cause; } });
@@ -370,7 +373,7 @@ test('GC12 closing inside a callback retires handles immediately and defers genu
       assert.equal(scope.state, 'open'); assert.equal(engine.stage.isDisposed, false); assert.equal(texture.isDisposed, false);
       expectClockError(() => engine.advanceTime(NaN), 'ENGINE_CLOSED');
       expectClockError(() => engine.clock.onTick({}, undefined), 'ENGINE_CLOSED');
-      const counter = { reads: 0 }; expectClockError(() => engine.captureFrame(unreadClockFrameOptions(counter)), 'ENGINE_CLOSED'); assert.equal(counter.reads, 0);
+      const counter = { reads: 0 }; expectClockError(() => engine.captureSharedFrame(unreadClockFrameOptions(counter)), 'ENGINE_CLOSED'); assert.equal(counter.reads, 0);
       assert.deepEqual(order, ['A-start', 'dispose-returned']); order.push('A-end');
     });
     b = engine.clock.onTick(scope, () => { order.push('B'); });
@@ -428,13 +431,13 @@ test('GC12 close does not await a callback return that is a forbidden pending Pr
 });
 test('GC13 time/frame phase guards precede payload reads and do not cross Engine instances', async () => {
   let engine, portCalls = 0;
-  const h = clockProfileHost({ renderFrame() {
+  const h = clockProfileHost({ renderSharedFrame() {
     portCalls++; expectClockError(() => engine.advanceTime(NaN), 'CLOCK_REENTRANT');
     for (const method of CLOCK_FRAME_METHODS) {
       const counter = { reads: 0 }; expectClockError(() => engine[method](unreadClockFrameOptions(counter)), 'FRAME_REENTRANT'); assert.equal(counter.reads, 0);
     }
   } });
-  engine = await createEngineForProfile({ host: h.adapter }, TEXTURED_FRAME_PROFILE_2D);
+  engine = await createEngineForProfile({ host: h.adapter }, SHARED_FRAME_PROFILE_2D);
   const other = await createEngine({ host: host().adapter });
   try {
     const otherTicks = []; other.clock.onTick(other.createScope(), tick => { otherTicks.push(tick); }); other.advanceTime(4);
@@ -448,8 +451,8 @@ test('GC13 time/frame phase guards precede payload reads and do not cross Engine
     });
     engine.advanceTime(10); assert.deepEqual(engine.advanceTime(10.125), { tickId: 1, elapsedSeconds: 0.125, deltaSeconds: 0.125 });
     assert.deepEqual([calls, portCalls, otherTicks.length, engine.clock.tickId, other.clock.tickId], [1, 0, 1, 1, 1]);
-    const frame = engine.renderFrame(CLOCK_FRAME_OPTIONS); assert.equal(frame.frameId, 1); assert.equal(portCalls, 1);
-    assert.equal(engine.captureFrame(CLOCK_FRAME_OPTIONS).frameId, 2); assert.equal(calls, 1);
+    const frame = engine.renderSharedFrame(CLOCK_FRAME_OPTIONS); assert.equal(frame.frameId, 1); assert.equal(portCalls, 1);
+    assert.equal(engine.captureSharedFrame(CLOCK_FRAME_OPTIONS).frameId, 2); assert.equal(calls, 1);
     assert.deepEqual(otherTicks[0], { tickId: 1, elapsedSeconds: 0.125, deltaSeconds: 0.125 });
     assert.deepEqual([engine.clock.elapsedSeconds, other.clock.elapsedSeconds], [0.125, 0.125]);
   } finally { await engine.dispose(); await other.dispose(); }
@@ -491,7 +494,7 @@ test('GC15 callback and diagnostic failures preserve commit, exact cause and no-
     assert.equal(engine.advanceTime(0.125), undefined); assert.deepEqual(order, ['A']); assert.equal(gameState, 1); assert.equal(diagnostics.length, 1);
     a.dispose(); assert.deepEqual(engine.advanceTime(0.25), { tickId: 2, elapsedSeconds: 0.25, deltaSeconds: 0.125 });
     assert.deepEqual(order, ['A', 'B']); assert.equal(diagnostics.length, 1);
-    assert.equal(engine.captureFrame(CLOCK_FRAME_OPTIONS).frameId, 1);
+    assert.equal(engine.captureSharedFrame(CLOCK_FRAME_OPTIONS).frameId, 1);
   } finally { await engine.dispose(); }
 });
 
@@ -573,16 +576,16 @@ test('GC17 an explicit clock consumer drives authentic SequencePlayer crops with
     assert.deepEqual(engine.advanceTime(0.125), { tickId: 1, elapsedSeconds: 0.125, deltaSeconds: 0.125 });
     assert.deepEqual(selections, [{ frameIndex: 1, region: CLOCK_GREEN, positionSeconds: 0.125, atEnd: false, stopped: false }]);
     assert.deepEqual(bitmap.sourceRect, CLOCK_GREEN); assert.deepEqual([bitmap.naturalWidth, bitmap.naturalHeight], [1, 2]);
-    savedFrame = engine.captureFrame(CLOCK_FRAME_OPTIONS);
+    savedFrame = captureDrawn(engine, CLOCK_FRAME_OPTIONS);
     assert.deepEqual(savedFrame.commands[0].sourceRect, CLOCK_GREEN); assert.deepEqual(savedFrame.commands[0].rect, { x: 0, y: 0, width: 1, height: 2 });
     assert.equal(selections.length, 1); assert.equal(player.lastSample, selections[0]);
     const third = player.applyAt(0.375);
     assert.deepEqual(third, { frameIndex: 2, region: CLOCK_BLUE, positionSeconds: 0.375, atEnd: false, stopped: false });
     assert.deepEqual([bitmap.naturalWidth, bitmap.naturalHeight], [3, 1]);
-    assert.deepEqual(engine.captureFrame(CLOCK_FRAME_OPTIONS).commands[0].sourceRect, CLOCK_BLUE);
+    assert.deepEqual(captureDrawn(engine, CLOCK_FRAME_OPTIONS).commands[0].sourceRect, CLOCK_BLUE);
     const backwards = player.applyAt(0);
     assert.deepEqual(backwards, { frameIndex: 0, region: CLOCK_RED, positionSeconds: 0, atEnd: false, stopped: false });
-    const backwardFrame = engine.captureFrame(CLOCK_FRAME_OPTIONS);
+    const backwardFrame = captureDrawn(engine, CLOCK_FRAME_OPTIONS);
     assert.deepEqual(backwardFrame.commands[0].sourceRect, CLOCK_RED); assert.deepEqual(backwardFrame.commands[0].rect, { x: 0, y: 0, width: 2, height: 2 });
     assert.deepEqual([bitmap.naturalWidth, bitmap.naturalHeight, engine.clock.elapsedSeconds, engine.clock.tickId, selections.length, loads, disposals], [2, 2, 0.125, 1, 1, 1, 0]);
     assert.equal(bitmap.textureLease, lease); assert.equal(peerLease.value, texture);

@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 import {
   Bitmap, createImageData2D, copyImageData2DPixels,
 } from '@egret/engine';
@@ -110,7 +111,7 @@ test('T20: exact authentic raster is retained by identity and independent pixels
   assert.deepEqual([...copyImageData2DPixels(owned).subarray(0, 4)], CHANNELS);
   const bitmap = new Bitmap(prepared.lease);
   f.engine.stage.addChild(bitmap);
-  const saved = f.engine.captureFrame({ width: 12, height: 10 });
+  const saved = captureDrawn(f.engine, { width: 12, height: 10 });
   assert.equal(saved.commands.length, 1);
   assert.equal(saved.commands[0].kind, 'image');
   assert.equal(saved.images[saved.commands[0].imageIndex], owned);

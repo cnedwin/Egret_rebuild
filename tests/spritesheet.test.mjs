@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 // Original SS1 literals. Transparent bottom-right pixels are intentional.
 const PIXELS = Object.freeze([
@@ -99,7 +100,7 @@ test('SS02 named icons own metadata and borrow the original real lease', async (
     assert.deepEqual(red.sourceRect, RED); assert.deepEqual(icon.sourceRect, BLUE);
     red.x = 1; red.y = 1; icon.x = 4; icon.y = 1;
     f.engine.stage.addChild(red); f.engine.stage.addChild(icon);
-    const captured = f.engine.captureFrame(FRAME);
+    const captured = captureDrawn(f.engine, FRAME);
     assert.equal(captured.commands.length, 2); assert.equal(captured.images.length, 1);
     assert.equal(captured.images[0], f.image);
     assert.deepEqual(captured.commands.map(command => command.sourceRect), [RED, BLUE]);

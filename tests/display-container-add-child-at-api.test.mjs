@@ -23,7 +23,7 @@ test('ADI00 genuine add reorder remove resource and cleanup precede missing-memb
     assert.equal(root.getChildAt(0), bitmap); assert.equal(root.getChildIndex(first), 1);
     assert.equal(root.removeChild(first), first); assert.equal(first.parent, undefined); assert.equal(first.isDisposed, false);
     assert.equal(root.addChild(first), first); assert.equal(root.numChildren, 2);
-    assert.deepEqual(engine.captureFrame({ width: 2, height: 2 }).commands.map(value => value.kind), ['image']);
+    assert.deepEqual(engine.captureSharedFrame({ width: 2, height: 2 }).commands.map(value => value.kind), ['image']);
     root.removeChildren(); assert.equal(root.numChildren, 0); assert.equal(bitmap.parent, undefined);
     assert.equal(bitmap.textureLease, lease); assert.equal(lease.value, texture); assert.equal(disposals, 0);
     root.addChild(first); root.addChild(bitmap);

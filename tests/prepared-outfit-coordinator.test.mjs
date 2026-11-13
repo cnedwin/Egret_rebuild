@@ -7,6 +7,7 @@ import { setImmediate as nextTurn } from 'node:timers/promises';
 import { Bitmap, EgretError, createEngine, createAssetType, createAssetRef,
   createImageData2D, createTexture, copyImageData2DPixels, isTexture } from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const MODULE = new URL('../examples/prepared-resource-groups/coordinator.mjs', import.meta.url);
 const ASSETS = new URL('../examples/resource-scene/assets/', import.meta.url);
@@ -34,7 +35,7 @@ function assertSnapshot(app, selection, encoded) {
   assert.equal(snapshot.pendingKey,null); assert.deepEqual(snapshot.logical,{sets:1,encodedBytes:encoded,decodedBytes:2048});
 }
 function assertFrame(engine, expected) {
-  const frame=engine.captureFrame({width:96,height:48});
+  const frame=captureDrawn(engine, {width:96,height:48});
   assert.equal(frame.commands.length,expected.length);
   assert.deepEqual(frame.images.map(image=>Array.from(copyImageData2DPixels(image).subarray(0,4))),expected);
 }

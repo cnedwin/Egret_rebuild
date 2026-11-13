@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 // These literal regions, colors and durations are independent of the new owner.
 const RED = Object.freeze({ x: 0, y: 0, width: 2, height: 2 });
@@ -29,9 +30,9 @@ function expectCode(action, code, expectedCause) {
 
 async function scene(maxDeltaSeconds = 0.5) {
   const renders = [], diagnostics = [];
-  const port = host({ renderFrame(frame) { renders.push(frame); return undefined; } });
-  const engine = await egret.createEngine({ host: port.adapter, clock: { maxDeltaSeconds },
-    onDiagnostic(diagnostic) { diagnostics.push(diagnostic); } });
+  const port = host({ sharedFrameProfile: egret.SHARED_FRAME_PROFILE_2D, renderSharedFrame(frame) { renders.push(frame); return undefined; } });
+  const engine = await egret.createEngineForProfile({ host: port.adapter, clock: { maxDeltaSeconds },
+    onDiagnostic(diagnostic) { diagnostics.push(diagnostic); } }, egret.SHARED_FRAME_PROFILE_2D);
   try {
     const resources = engine.createScope(), scope = engine.createScope();
     const pixels = new Uint8Array(PIXELS);
@@ -56,7 +57,7 @@ async function scene(maxDeltaSeconds = 0.5) {
     try { assert.deepEqual(manual.applyAt(0), {
       frameIndex: 0, region: RED, positionSeconds: 0, atEnd: false, stopped: false,
     }); } finally { manual.dispose(); }
-    const frame = engine.captureFrame(FRAME);
+    const frame = captureDrawn(engine, FRAME);
     assert.equal(frame.commands[0].kind, 'image');
     assert.deepEqual(frame.commands[0].sourceRect, RED);
     assert.equal(frame.images[0], image);
@@ -83,7 +84,7 @@ function selected(f, p, elapsed, index, region, position, atEnd = false) {
   assert.deepEqual(p.lastSample, { frameIndex: index, region, positionSeconds: position,
     atEnd, stopped: false });
   assert.ok(Object.isFrozen(p.lastSample) && Object.isFrozen(p.lastSample.region));
-  const frame = f.engine.captureFrame(FRAME);
+  const frame = captureDrawn(f.engine, FRAME);
   assert.equal(frame.commands.length, 1);
   assert.equal(frame.commands[0].imageIndex, 0);
   assert.deepEqual(frame.commands[0].sourceRect, region);
@@ -150,7 +151,7 @@ test('SQP03 repeated source, explicit rendering and default hitch refusal preser
   try {
     const p = playback(f, { mode: 'loop' }); p.start();
     const initial = p.lastSample;
-    f.engine.captureFrame(FRAME); f.engine.renderFrame(FRAME);
+    captureDrawn(f.engine, FRAME); f.engine.renderSharedFrame(FRAME);
     assert.equal(p.lastSample, initial); assert.equal(f.renders.length, 1);
     assert.equal(f.engine.advanceTime(10), undefined);
     assert.equal(f.engine.advanceTime(10), undefined); assert.equal(p.lastSample, initial);

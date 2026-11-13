@@ -6,6 +6,7 @@ import * as sdk from '@egret/engine';
 import { createTextRasterCache, createTextField } from '@egret/engine/text';
 import { deferred, flush, host } from './helpers.mjs';
 import { literalProvider, request } from './text-raster-public-helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const scenario = (name, run) => test(name, { timeout: 10000 }, run);
 const LEFT = 'pilot-left', RIGHT = 'pilot-right';
@@ -122,7 +123,7 @@ async function genuineBaseline() {
     const outfit = scope.use(new sdk.Bitmap(outfitLease)); engine.stage.addChild(outfit);
     slot = engine.createBitmapResourceSlot(scope, outfit); assert.equal(slot.state, 'idle');
     const field = createTextField(engine, scope, cache); field.setRequest(request()); await field.prepare(); engine.stage.addChild(field);
-    const frame = engine.captureFrame(FRAME); assert.equal(frame.width, 192); assert.equal(frame.height, 128);
+    const frame = captureDrawn(engine, FRAME); assert.equal(frame.width, 192); assert.equal(frame.height, 128);
     assert.ok(frame.commands.some(command => command.kind === 'image'));
     assert.ok(frame.images.includes(lease.value.imageData)); assert.equal(literal.state.measure, 1);
   } finally { cache.dispose(); await engine.dispose(); await cache.whenIdle(); }

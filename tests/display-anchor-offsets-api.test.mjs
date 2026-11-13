@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const KEYS = Object.freeze(['a','b','c','d','tx','ty']);
 // Encode only observed public matrix numbers, preserving their IEEE-754 sign bits.
@@ -21,8 +22,8 @@ function near(actual, expected) {
 // Genuine transforms, capture/submission, bounds, picking, resources and cleanup
 // precede the missing-accessor assertion. No anchor assignment occurs here.
 test('AO00 genuine old display/resource baseline finishes before named anchor RED', async () => {
-  const submitted = [], port = host({ renderFrame(frame) { submitted.push(frame); } });
-  const engine = await egret.createEngine({ host: port.adapter });
+  const submitted = [], port = host({ sharedFrameProfile: egret.SHARED_FRAME_PROFILE_2D, renderSharedFrame(frame) { submitted.push(frame); } });
+  const engine = await egret.createEngineForProfile({ host: port.adapter }, egret.SHARED_FRAME_PROFILE_2D);
   let scope, parent, child, signed, bitmap, texture, lease, saved;
   let loads = 0, disposals = 0, observed;
   let primaryPresent = false, primary;
@@ -47,11 +48,11 @@ test('AO00 genuine old display/resource baseline finishes before named anchor RE
     engine.assets.register(type,{async load(){loads++;return texture;},dispose(value){disposals++;value.dispose();}});
     lease=scope.use(await engine.assets.acquire(egret.createAssetRef(type,'blue')));
     bitmap=scope.use(new egret.Bitmap(lease)); bitmap.x=30; engine.stage.addChild(bitmap);
-    saved=engine.captureFrame({width:64,height:64});
+    saved=captureDrawn(engine, {width:64,height:64});
     assert.deepEqual(saved.commands.map(value=>value.kind),['rect','rect','image']);
     assert.ok(Object.isFrozen(saved)); assert.ok(Object.isFrozen(saved.commands[0].matrix));
     assert.deepEqual([...egret.copyImageData2DPixels(saved.images[0])],[0,0,255,255]);
-    const rendered=engine.renderFrame({width:64,height:64});
+    const rendered=engine.renderSharedFrame({width:64,height:64});
     assert.equal(submitted.length,1); assert.equal(submitted[0],rendered);
     assert.equal(bitmap.textureLease,lease); assert.equal(lease.value,texture);
     assert.equal(loads,1); assert.equal(disposals,0);

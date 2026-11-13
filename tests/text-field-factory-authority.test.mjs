@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { request, fixture, errorIs } from './text-raster-public-helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 // Factory-only authority is tested through genuine public objects. No private
 // constructor import, fake lease, state hook or new public error is introduced.
@@ -12,7 +13,7 @@ test('TF01 supplemental: reflected runtime constructor cannot grant field author
   base.engine.stage.addChild(field); field.setRequest(request());
   await field.prepare(); await base.cache.whenIdle();
   const before = field.getStatus();
-  const frame = base.engine.captureFrame({ width: 80, height: 80 });
+  const frame = captureDrawn(base.engine, { width: 80, height: 80 });
   assert.equal(frame.commands.length, 1);
   assert.equal(base.cache.getStatus().activeCallerLeases, 1);
   const Constructor = field.constructor;
@@ -29,12 +30,12 @@ test('TF01 supplemental: reflected runtime constructor cannot grant field author
   assert.deepEqual(field.getStatus(), before);
   assert.equal(base.cache.getStatus().activeCallerLeases, 1);
   assert.equal(base.state.measure, 1); assert.equal(base.state.raster, 1);
-  assert.equal(base.engine.captureFrame({ width: 80, height: 80 }).images[0], frame.images[0]);
+  assert.equal(captureDrawn(base.engine, { width: 80, height: 80 }).images[0], frame.images[0]);
   const otherScope = base.engine.createScope();
   const other = text.createTextField(base.engine, otherScope, base.cache);
   other.setRequest(request()); await other.prepare(); await base.cache.whenIdle();
   base.engine.stage.addChild(other);
-  const after = base.engine.captureFrame({ width: 80, height: 80 });
+  const after = captureDrawn(base.engine, { width: 80, height: 80 });
   assert.equal(after.commands.length, 2); assert.equal(after.images.length, 1);
   assert.equal(after.images[0], frame.images[0]);
   assert.equal(base.cache.getStatus().activeCallerLeases, 2);

@@ -2,19 +2,18 @@
 // A public composition example with a recording host, not a browser pixel test.
 import assert from 'node:assert/strict';
 import {
-  NineSliceBitmap, TEXTURED_FRAME_PROFILE_2D, createAssetRef, createAssetType,
+  NineSliceBitmap, SHARED_FRAME_PROFILE_2D, createAssetRef, createAssetType,
   createEngineForProfile, createImageData2D, createTexture, isTexture,
 } from '@egret/engine';
 
 const recorded = [], timers = new Set(), trace = [], diagnostics = [];
 const host = {
   surface: {},
-  texturedFrameProfile: TEXTURED_FRAME_PROFILE_2D,
+  sharedFrameProfile: SHARED_FRAME_PROFILE_2D,
   start() { trace.push('start'); },
   stop() { trace.push('stop'); },
   async close() { trace.push('close'); },
-  renderFrame(frame) { recorded.push(frame); },
-  renderTexturedFrame(frame) { recorded.push(frame); },
+  renderSharedFrame(frame) { recorded.push(frame); },
   setTimeout(callback, delayMs) {
     const timer = setTimeout(callback, delayMs); timers.add(timer);
     return () => { clearTimeout(timer); timers.delete(timer); };
@@ -22,7 +21,7 @@ const host = {
 };
 const engine = await createEngineForProfile({
   host, onDiagnostic(value) { diagnostics.push(value); },
-}, TEXTURED_FRAME_PROFILE_2D);
+}, SHARED_FRAME_PROFILE_2D);
 let resources, texture, lease, panel, loads = 0, disposals = 0;
 let primary, hasPrimary = false, managedDisposed = false;
 try {
@@ -44,10 +43,10 @@ try {
   // Reverse Scope cleanup retires the display leaf before the caller's borrow.
   resources.use(panel);
   engine.stage.addChild(panel);
-  const saved = engine.renderTexturedFrame({ width: 20, height: 20 });
+  const saved = engine.renderSharedFrame({ width: 20, height: 20 });
   const oldGeometry = saved.geometries[0];
   panel.resize(12, 16);
-  const resized = engine.renderTexturedFrame({ width: 20, height: 20 });
+  const resized = engine.renderSharedFrame({ width: 20, height: 20 });
   assert.deepEqual(panel.getBounds(), { x: 0, y: 0, width: 12, height: 16 });
   assert.notEqual(resized.geometries[0], oldGeometry);
   assert.equal(saved.geometries[0], oldGeometry);
