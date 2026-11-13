@@ -8,6 +8,10 @@
 
 SharedFrame2D 成为 WebGPU 和 WebGL2 的公共 2D 帧路径。旧 Canvas Host、旧帧捕获及早期 scene3d Host 已退役。共享路径已支持保持顺序的跨纹理页合批，以及稳定命令、打包和批次复用。集成像素对比使用软件渲染。可选调试面板和 GPU 计时工具报告各自可用的计数与时间来源。 [#187](https://github.com/cnedwin/Egret_rebuild/pull/187) · [#188](https://github.com/cnedwin/Egret_rebuild/pull/188) · [#190](https://github.com/cnedwin/Egret_rebuild/pull/190) · [#193](https://github.com/cnedwin/Egret_rebuild/pull/193)
 
+## 保留播放的 Spine 替换 — 2026-11-14
+
+Spine reset 槽新增 `requestPreserving`。新资源版本在候选被捕获时，从播放器所处的位置接续每条轨道的动画和队列，以及皮肤、速率、暂停和位置。资源必须以相同名称包含每个被保留的动画，长度和事件时间表相同；无法延续播放的资源在发布前被拒绝，正在混合的播放同样被拒绝。保留后的播放器已逐 tick 对照被替换的播放器检查，示例在软件渲染的无头 Chromium 上通过了 WebGL2 浏览器验证。WebGPU、硬件和手机各项尚未运行。[#86](https://github.com/cnedwin/Egret_rebuild/issues/86) · [契约](docs/spine-reset-slot.md#保留播放)
+
 ## 画布原生文字输入 — 2026-11-14
 
 可选浏览器适配层在游戏画布上方放置原生文本框。测试覆盖公开 API 行为及 Chromium 协议驱动的组合输入示例。托管编辑仍作为独立路径提供。此适配层的实体输入法、移动软键盘、Safari 和 Firefox 仍待验收。 [#195](https://github.com/cnedwin/Egret_rebuild/pull/195)
