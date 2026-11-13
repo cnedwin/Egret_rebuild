@@ -8,7 +8,7 @@ if(options.length>1||options.some(x=>x!=='--no-build'))throw new TypeError('Usag
 // These are existing independent positive controls, not replacement acceptance. The B1 emitted
 // closure control is bound to exact emitted bytes; it runs from the evidence lane, not here.
 const cases=[
- ['tests/boundaries.test.mjs','S3D1 canonical boundary policy baseline admits every retained surface'],
+ ['tests/boundaries.test.mjs','canonical boundary policy baseline admits every retained surface'],
  ['tests/project-boundaries.test.mjs','strict public project consumers and unsuppressed diagnostic locations run through the actual type gate'],
 ];
 const environment={...process.env};

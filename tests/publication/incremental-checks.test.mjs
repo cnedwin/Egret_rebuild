@@ -2932,7 +2932,7 @@ function withBaselineRunner(action){
   put('tools/check-test-baselines.mjs',fs.readFileSync(new URL('../../tools/check-test-baselines.mjs',import.meta.url)));
   put('tools/build.mjs',"import fs from 'node:fs';fs.writeFileSync('built','once');if(process.env.EGRET_BASELINE_BUILD_FAIL)process.exit(23);\n");
   const definitions=[
-   ['tests/boundaries.test.mjs','S3D1 canonical boundary policy baseline admits every retained surface'],
+   ['tests/boundaries.test.mjs','canonical boundary policy baseline admits every retained surface'],
    ['tests/project-boundaries.test.mjs','strict public project consumers and unsuppressed diagnostic locations run through the actual type gate'],
   ];
   for(const[name,title]of definitions)put(name,"import test from 'node:test';import fs from 'node:fs';test("+JSON.stringify(title)+",()=>{if(!fs.existsSync('built'))throw Error('BUILD_REQUIRED');if(process.env.EGRET_BASELINE_TEST_FAIL)throw Error('ASSIGNED_BASELINE_FAILURE');});test('unselected expensive matrix',()=>{throw Error('MATRIX_MUST_NOT_RUN');});\n");
