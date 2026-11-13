@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Semantics for the boxes and layers of the managed UI — 2026-11-14
+
+`semanticBoxOf` in `@egret/engine/ui/semantics` measures a box a managed UI root laid out, so a leaf or a whole card can be a node of the semantic tree. With it a popup or a modal of the layer manager is described as a dialog that is hidden while the layer is closed. The list example gains a modal card: in headless Chromium the tree the browser computes then has the dialog and its buttons and nothing of the list behind it, and the focus returns to its row when the card closes. No screen reader was run. Part of #90. [Guide](docs/ui-semantics.md#boxes-and-layers-of-the-managed-ui)
+
 ## Semantics for the rows of a managed list — 2026-11-14
 
 `createUiListSemantics` in `@egret/engine/ui/semantics` keeps the semantic tree in step with a virtual list of the managed UI: one node for the list and one for each row that shows, with its place on the stage and its position among all the records. The row with the focus is the focused node, and a row that scrolls away takes its node with it, so a projection never names an element that does not exist. A new example lists fifty thousand rows and publishes the eight that show. Checked on a genuine UI root and against the list box headless Chromium computes; no screen reader was run. Part of #90. [Guide](docs/ui-semantics.md#a-managed-virtual-list)

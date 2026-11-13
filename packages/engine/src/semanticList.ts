@@ -76,6 +76,17 @@ export interface UiListSemantics {
 
 interface Row { readonly node: SemanticNode; index: number; box: SemanticBounds; }
 
+/**
+ * The rectangle on the stage of a box a managed UI root laid out: a leaf, a row, a column or a
+ * list, by its id in the tree of the root. It is read from the last commit when it is called, so
+ * call it from `describe`. A box the root has not laid out has no size, at the origin of the root.
+ */
+export function semanticBoxOf(root: Pick<SemanticListSource, 'snapshot'>, id: string): SemanticBounds {
+  if (root === null || typeof root !== 'object' || typeof root.snapshot !== 'function' || !text(id)) throw new EgretError('UI_SEMANTICS_OPTIONS');
+  const { origin, boxes } = root.snapshot(), box = boxes.find(candidate => candidate.id === id);
+  return Object.freeze(box === undefined ? { x: origin.x, y: origin.y, width: 0, height: 0 } : { x: origin.x + box.x, y: origin.y + box.y, width: box.width, height: box.height });
+}
+
 const text = (value: unknown): value is string => typeof value === 'string' && value.length >= 1 && value.length <= 128 && !value.includes('\0');
 const optional = (value: unknown, type: string): boolean => value === undefined || typeof value === type;
 
@@ -116,7 +127,7 @@ export function createUiListSemantics(options: UiListSemanticsOptions): UiListSe
 
   function sync(): number {
     if (closed) throw new EgretError('UI_SEMANTICS_CLOSED');
-    const { committedRevision, origin, boxes } = root.snapshot(), listed = handle.snapshot(), box = boxes.find(candidate => candidate.id === list);
+    const { committedRevision, origin } = root.snapshot(), listed = handle.snapshot();
     const placed = (inner: SemanticBounds): SemanticBounds => ({ x: origin.x + inner.x, y: origin.y + inner.y, width: inner.width, height: inner.height });
     const showing = listed.rows.filter(row => row.visible), keys = new Set(showing.map(row => row.key)), added = new Map<string, Row>();
     // The rows that left go first, so that the tree never needs room for the old rows and the new ones together.
@@ -124,7 +135,7 @@ export function createUiListSemantics(options: UiListSemanticsOptions): UiListSe
     for (const { key, index, box: inner } of showing) { const known = rows.get(key); if (known !== undefined) { known.index = index; known.box = placed(inner); } }
     size = listed.counters.recordCount;
     // A list that is not laid out has no place, and its rows have no part that shows.
-    frame = box === undefined ? { x: origin.x, y: origin.y, width: 0, height: 0 } : placed(box);
+    frame = semanticBoxOf(root, list);
     try {
       for (const { key, index, box: inner } of showing) if (!rows.has(key)) added.set(key, addRow(key, index, placed(inner)));
     } catch (cause) {

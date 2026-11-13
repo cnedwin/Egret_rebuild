@@ -83,8 +83,9 @@ await scenario('the browser computes a list box of the rows that show, each with
     ...Array.from({ length: 8 }, (_, index) => '    - option "' + label(index) + '"' + (index === 2 ? ' [selected]' : ''))].join('\n'));
   assert.deepEqual(await options(page), Array.from({ length: 8 }, (_, index) => [label(index), index + 1, COUNT, String(index === 2)]));
   const now = await over(page);
-  // Nine rows are realized, one of them beyond the edge; the tree has the eight that show and the list.
-  assert.deepEqual([now.rows.length, now.records, now.semantics.nodes, now.semantics.held, now.semantics.layoutRevision], [8, COUNT, 9, 9, now.committed]);
+  // Nine rows are realized, one of them beyond the edge; the tree publishes the eight that show and the list.
+  // It holds three nodes more, for the dialog that is closed.
+  assert.deepEqual([now.rows.length, now.records, now.semantics.nodes, now.semantics.held, now.semantics.layoutRevision], [8, COUNT, 9, 12, now.committed]);
   assert.ok(now.realized >= 8 && now.realized <= 24);
   assert.deepEqual(await active(page), { id: null, exists: false });
   // The projection is not seen and is not what a pointer meets: a press reaches the row under it.
@@ -128,7 +129,7 @@ await scenario('a jump to row forty thousand publishes the rows there and none o
   const listed = await options(page);
   assert.equal(listed.length, 8); assert.ok(listed.every(row => row[2] === COUNT && row[1] >= 39993 && row[1] <= 40007));
   assert.deepEqual(listed.map(row => row[1]), Array.from({ length: 8 }, (_, index) => listed[0][1] + index), 'the options are in the order of the list');
-  assert.deepEqual([now.semantics.nodes, now.semantics.held], [9, 9]); assert.ok(now.realized <= 24);
+  assert.deepEqual([now.semantics.nodes, now.semantics.held], [9, 12]); assert.ok(now.realized <= 24);
   // Scrolling away without moving the focus: the row that held it leaves, and the canvas names nothing.
   await page.click('#top'); await settle(page);
   now = await over(page);
@@ -160,6 +161,81 @@ await scenario('on a phone the options lie over the rows and a tap goes through 
   const box = await option(page, 3).boundingBox();
   await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2); await settle(page);
   assert.equal((await read(page)).selected, 'k3'); assert.equal(await option(page, 3).getAttribute('aria-selected'), 'true');
+});
+
+/** What assistive technology is given: the tree the browser computed under the canvas, without what it ignores. */
+async function accessible(page) {
+  const session = await page.context().newCDPSession(page);
+  await session.send('Accessibility.enable');
+  const { nodes } = await session.send('Accessibility.getFullAXTree');
+  await session.detach();
+  const byId = new Map(nodes.map(found => [found.nodeId, found])), application = nodes.find(found => found.role?.value === 'application'), rows = [];
+  (function walk(found, depth) {
+    for (const id of found.childIds ?? []) {
+      const child = byId.get(id), shown = child !== undefined && !child.ignored && !['generic', 'none', 'StaticText', 'InlineTextBox'].includes(child.role?.value);
+      if (shown) rows.push([depth, child.role.value, child.name?.value ?? '']);
+      if (child !== undefined) walk(child, depth + (shown ? 1 : 0));
+    }
+  })(application, 0);
+  return rows;
+}
+const button = (page, name) => page.getByRole('button', { name, exact: true });
+const CHOOSE = 'Choose this server / 选择这台服务器', CLOSE = 'Close / 关闭';
+
+await scenario('a modal layer is a dialog, and while it is open nothing outside it is given to assistive technology', desktop, async page => {
+  assert.equal((await accessible(page)).some(row => row[1] === 'dialog'), false, 'a closed layer is not in the tree');
+  assert.equal(await page.getByRole('dialog').count(), 0);
+  await page.click('#details'); await settle(page);
+  let now = await read(page);
+  assert.deepEqual([now.details.open, now.details.of, now.details.stack, now.keyboard, now.semantics.focused], [true, 'k2', ['details'], 'details-choose', 'details/choose']);
+  // The tree the browser computes has the dialog and its two buttons, and not one option of the list behind it.
+  assert.deepEqual(await accessible(page), [[0, 'dialog', label(2)], [1, 'button', CHOOSE], [1, 'button', CLOSE]]);
+  assert.deepEqual(await page.evaluate(() => [...document.querySelectorAll('[inert]')].map(element => element.getAttribute('role'))), ['listbox']);
+  assert.equal(await page.getByRole('dialog', { name: label(2), exact: true }).getAttribute('aria-modal'), 'true');
+  // The dialog and its buttons lie over the card the layer manager centred.
+  for (const [element, drawn] of [[page.getByRole('dialog'), now.details.card], [button(page, CHOOSE), now.details.choose], [button(page, CLOSE), now.details.close]]) {
+    const box = await element.boundingBox(), [left, top] = await at(page, [drawn.x, drawn.y]), [right, bottom] = await at(page, [drawn.x + drawn.width, drawn.y + drawn.height]);
+    for (const [name, actual, expected] of [['left', box.x, left], ['top', box.y, top], ['right', box.x + box.width, right], ['bottom', box.y + box.height, bottom]])
+      assert.ok(Math.abs(actual - expected) < 0.51, name + ' ' + actual + ' ' + expected);
+  }
+  assert.deepEqual([now.details.card.x, now.details.card.y], [110, 75], 'centred in 480 by 300');
+  assert.deepEqual(await active(page), { id: await button(page, CHOOSE).evaluate(element => element.id), exists: true, place: 0, role: null });
+  // Tab stays inside the dialog.
+  await key(page, 'Tab'); assert.equal((await read(page)).keyboard, 'details-close');
+  await key(page, 'Tab'); assert.equal((await read(page)).keyboard, 'details-choose');
+  // A press on a row beside the card reaches nothing, and the dialog stays.
+  await page.mouse.click(...await at(page, [60, 255])); await settle(page); now = await read(page);
+  assert.deepEqual([now.selected, now.details.open], ['k2', true]);
+  // Escape closes it: the list is given again, and the dialog is gone from the tree.
+  await key(page, 'Escape'); now = await read(page);
+  assert.deepEqual([now.details.open, now.details.stack], [false, []]);
+  assert.equal((await accessible(page)).filter(row => row[1] === 'option').length, 8); assert.equal(await page.getByRole('dialog').count(), 0);
+  assert.deepEqual(await page.evaluate(() => document.querySelectorAll('[inert]').length), 0);
+});
+
+await scenario('the keyboard opens the details of a row, chooses from them, and the focus returns to the row', desktop, async page => {
+  await page.focus('#scene'); await key(page, 'Tab'); await key(page, 'ArrowDown'); await key(page, 'ArrowDown'); await key(page, 'ArrowDown'); await key(page, 'ArrowDown');
+  assert.equal((await read(page)).focus, 'k4');
+  await key(page, 'ArrowRight');
+  let now = await read(page);
+  assert.deepEqual([now.details.open, now.details.of, now.keyboard], [true, 'k4', 'details-choose']);
+  assert.equal(await page.getByRole('dialog', { name: label(4), exact: true }).count(), 1);
+  // Space on the first button, held and released: the row is chosen, the card closes, and the row has the focus again.
+  await page.keyboard.down('Space'); await settle(page); assert.deepEqual([(await read(page)).selected, (await read(page)).details.open], ['k2', true]);
+  await page.keyboard.up('Space'); await settle(page); now = await read(page);
+  assert.deepEqual([now.selected, now.details.open, now.focus, now.semantics.focused], ['k4', false, 'k4', 'servers/list/k4']);
+  assert.deepEqual(await active(page), { id: await option(page, 4).evaluate(element => element.id), exists: true, place: 5, role: 'option' });
+  assert.equal(await option(page, 4).getAttribute('aria-selected'), 'true');
+  // A request made of the button itself closes the card as a press does.
+  await key(page, 'ArrowRight'); assert.equal((await read(page)).details.open, true);
+  await button(page, CLOSE).evaluate(element => element.click()); await settle(page);
+  assert.deepEqual([(await read(page)).details.open, (await read(page)).focus], [false, 'k4']);
+  // A press on the button with a mouse.
+  await key(page, 'ArrowDown'); await key(page, 'ArrowRight'); now = await read(page);
+  assert.equal(now.details.of, 'k5');
+  await page.mouse.click(...await at(page, [now.details.choose.x + 20, now.details.choose.y + 15])); await settle(page);
+  assert.deepEqual([(await read(page)).selected, (await read(page)).details.open], ['k5', false]);
+  assert.equal(await page.evaluate(() => scrollY), 0); assert.equal(await page.evaluate(() => document.activeElement.id), 'scene');
 });
 
 fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');

@@ -3,9 +3,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createEngine,DisplayObjectContainer} from '@egret/engine';
-import {createKeyboardInput} from '@egret/engine/input';
-import {createUiRoot} from '@egret/engine/ui';
-import {createUiListSemantics,createUiSemantics} from '@egret/engine/ui/semantics';
+import {createKeyboardInput,createPointerInput} from '@egret/engine/input';
+import {createUiLayerManager,createUiRoot} from '@egret/engine/ui';
+import {createUiListSemantics,createUiSemantics,semanticBoxOf} from '@egret/engine/ui/semantics';
 import {spawnSync} from 'node:child_process';
 import {host} from './helpers.mjs';
 
@@ -204,9 +204,59 @@ test('LS11 what is not a tree, a root, a list or a description is refused, and n
  // The shortest and the longest names the tree takes are taken here too.
  const edge=createUiSemantics(),shortest=createUiListSemantics({semantics:edge,root:long,list:'l',id:'i'}),longest=createUiListSemantics({semantics:edge,root:long,list:'l'.repeat(128),id:'i'.repeat(128)});
  assert.deepEqual([shortest.id,longest.id.length,edge.size],['i',128,2]);
- assert.deepEqual(Object.keys(await import('@egret/engine/ui/semantics')).sort(),['createUiListSemantics','createUiSemantics','semanticBoundsOf']);
+ assert.deepEqual(Object.keys(await import('@egret/engine/ui/semantics')).sort(),['createUiListSemantics','createUiSemantics','semanticBoundsOf','semanticBoxOf']);
  assert.equal('createUiListSemantics' in await import('@egret/engine'),false);assert.equal('createUiListSemantics' in await import('@egret/engine/ui'),false);
 }));
+
+test('LS13 a box the root laid out is measured on the stage, as of the last commit',async()=>fixture(async({root,commit})=>{
+ assert.deepEqual(semanticBoxOf(root,'title'),{x:40,y:50,width:100,height:15});
+ assert.deepEqual(semanticBoxOf(root,'list'),{x:40,y:70,width:100,height:60});
+ assert.deepEqual(semanticBoxOf(root,'column'),{x:30,y:40,width:120,height:100});
+ assert.ok(Object.isFrozen(semanticBoxOf(root,'title')));
+ // The root moves: nothing changes before the commit, and the box follows with it.
+ root.setOrigin({x:0,y:5});assert.equal(semanticBoxOf(root,'title').x,40);
+ await commit();assert.deepEqual(semanticBoxOf(root,'title'),{x:10,y:15,width:100,height:15});
+ // A box the root does not have has no size, at the origin of the root.
+ assert.deepEqual(semanticBoxOf(root,'missing'),{x:0,y:5,width:0,height:0});
+ assert.deepEqual(semanticBoxOf({snapshot:()=>({committedRevision:1,origin:{x:3,y:4},boxes:[{id:'a',x:1,y:2,width:5,height:6}]})},'a'),{x:4,y:6,width:5,height:6});
+ for(const [source,id] of [[undefined,'title'],[null,'title'],[{},'title'],[root,undefined],[root,''],[root,7],[root,'a\0b'],[root,'i'.repeat(129)]])assert.throws(()=>semanticBoxOf(source,id),coded('UI_SEMANTICS_OPTIONS'));
+ assert.deepEqual(semanticBoxOf({snapshot:()=>({committedRevision:1,origin:{x:0,y:0},boxes:[{id:'i'.repeat(128),x:0,y:0,width:1,height:1}]})},'i'.repeat(128)).width,1);
+}));
+
+test('LS14 a layer of the layer manager is a dialog that is hidden while it is closed, and a modal one makes the rest inert',async()=>{
+ const engine=await createEngine({host:host().adapter}),scope=engine.createScope(),input=createPointerInput({engine,scope,width:400,height:300}),keyboard=createKeyboardInput({engine,scope});
+ try{
+  const panel=async(id,width,height,origin)=>{
+   const source={revision:1,records:['k0','k1'].map(key=>({key,contentVersion:1,estimatedHeight:40,value:key})),bind(context){return {content:context.scope.use(new DisplayObjectContainer()),measuredHeight:40};},unbind(){}};
+   const root=createUiRoot({engine,scope,id,origin,viewport:{width,height},density:1,input,keyboard:{input:keyboard,idPrefix:id},tree:{id:'rows',kind:'virtualList',source,explicitWidth:width,explicitHeight:height}});
+   const publish=async()=>{for(let round=0;round<12;round++){const token=await root.prepare();if(token.status!=='pending')return root.commit(token);}throw Error('Unstable fixture');};
+   await publish();return root;
+  };
+  const base=await panel('base',200,80,{x:10,y:10}),details=await panel('details',160,80,{x:0,y:0});
+  const layers=createUiLayerManager({engine,scope,input,keyboard,viewport:{x:0,y:0,width:400,height:300}});
+  layers.register({id:'base',root:base,kind:'base'});layers.register({id:'details',root:details,kind:'modal',initialFocus:{listId:'rows',key:'k0'}});layers.sync();
+  const semantics=createUiSemantics(),layer=id=>layers.snapshot().layers.find(found=>found.id===id);
+  const rows=createUiListSemantics({semantics,root:base,list:'rows',describeRow:key=>({name:key})});
+  semantics.add({id:'details',role:'dialog',describe:()=>({name:'Details',modal:layer('details').kind==='modal',hidden:!layer('details').visible,bounds:semanticBoxOf(details,'rows')})});
+  const inside=createUiListSemantics({semantics,root:details,list:'rows',id:'details/rows',parent:'details',focusable:true,describeRow:key=>({name:'Detail '+key})});
+  const publish=()=>{rows.sync();inside.sync();return semantics.publish(layers.snapshot().committedRevision);};
+  let snapshot=publish();
+  assert.deepEqual(ids(snapshot),['base/rows','base/rows/k0','base/rows/k1'],'a closed layer and what is inside it are not published');
+  assert.deepEqual(snapshot.nodes.map(node=>node.inert),[false,false,false]);
+  // Open: the manager centres the layer in its viewport, and the tree says the rest cannot be reached.
+  base.list('rows').focus('k1');layers.open('details');layers.sync();snapshot=publish();
+  assert.deepEqual(ids(snapshot),['base/rows','base/rows/k0','base/rows/k1','details','details/rows','details/rows/k0','details/rows/k1']);
+  assert.deepEqual(snapshot.nodes.map(node=>node.inert),[true,true,true,false,false,false,false]);
+  assert.deepEqual([named(snapshot,'details').modal,named(snapshot,'details').bounds],[true,{x:120,y:110,width:160,height:80}]);
+  assert.equal(snapshot.focused,'details/rows/k0','the focus the manager moved is the focused node');
+  assert.equal(semantics.perform('base/rows/k0','focus'),false,'an inert row is not asked');
+  assert.equal(semantics.perform('details/rows/k1','focus'),true);assert.equal(publish().focused,'details/rows/k1');
+  // Closed again: the dialog is gone, the rows of the base answer, and the focus is back where it was.
+  layers.close('details');layers.sync();snapshot=publish();
+  assert.deepEqual(ids(snapshot),['base/rows','base/rows/k0','base/rows/k1']);assert.deepEqual(snapshot.nodes.map(node=>node.inert),[false,false,false]);
+  assert.equal(snapshot.focused,'base/rows/k1');
+ }finally{await engine.dispose();}
+});
 
 test('LS12 a strict consumer compiles against the entry with the root of the UI entry, and the misuses it must not write are refused',()=>{
  const result=spawnSync(process.execPath,['node_modules/typescript/bin/tsc','--project','tests/types/ui-list-semantics.json','--pretty','false'],{cwd:new URL('..',import.meta.url),encoding:'utf8'});
