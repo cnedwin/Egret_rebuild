@@ -527,6 +527,53 @@ test('GPU G11 accepted target stays exclusive while any fence, scope or map rema
   }
 });
 
+// A pending GPU fence must not consume the CPU space needed to join the next frame.
+test('GPU G18 direct dense frames keep one batch while a preceding frame is pending', async () => {
+  await using(async (f, a) => {
+    const texture = await a.resource();
+    const count = 14_000;
+    const firstBitmap = a.bitmap(texture);
+    for (let index = 1; index < count; index++) a.bitmap(texture);
+    const h = f.sharedHost({ maxPendingFrames: 2 });
+    await f.ready(h);
+
+    const first = capture(f, () => h.renderSharedFrame(a.capture()));
+    admitted(first);
+    assert.equal(first.fences.length, 1);
+    first.scopes.forEach(scope => scope.resolve(null));
+    await tick();
+    assert.equal(h.getStatus().pendingFrames, 1);
+
+    firstBitmap.x = 1;
+    const frame = a.capture();
+    const second = capture(f, () => h.renderSharedFrame(frame));
+    admitted(second);
+    assert.equal(h.getStatus().pendingFrames, 2);
+    const [firstDraw] = uiPass(first).draws;
+    const [secondDraw] = uiPass(second).draws;
+    assert.equal(uiPass(first).draws.length, 1);
+    assert.equal(uiPass(second).draws.length, 1);
+    assert.notEqual(firstDraw.vertex, secondDraw.vertex);
+    assert.equal(firstDraw.vertex.destroyed, 0);
+
+    const rows = (record, draw) => {
+      const [write] = writes(record.events, draw.vertex);
+      const bytes = write[3];
+      assert.equal(bytes.byteLength, count * 6 * 52);
+      return bytes;
+    };
+    const before = rows(first, firstDraw), after = rows(second, secondDraw);
+    const firstSpriteSize = 6 * 52;
+    assert.notDeepEqual(before.subarray(0, firstSpriteSize), after.subarray(0, firstSpriteSize));
+    assert.deepEqual(before.subarray(firstSpriteSize), after.subarray(firstSpriteSize));
+    refusal(f, h, () => h.renderSharedFrame(frame), 'BACKPRESSURE');
+    await second.finish();
+    await first.finish();
+    await h.whenIdle();
+    assert.equal(h.getStatus().pendingFrames, 0);
+  });
+});
+
 // Break caught: never reuse a settled target, reuse stale uniform contents, or destroy pooled owners twice.
 test('GPU G12 settled target and buffers reuse while changed opacity uploads in the vertex rows and close destroys once', async () => {
   await using(async (f, a) => {

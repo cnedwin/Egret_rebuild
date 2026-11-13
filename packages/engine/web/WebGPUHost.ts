@@ -1314,6 +1314,11 @@ class WebGPUHostImplementation {
                 touchedQueue=true;submitted=this.drawSharedGPU(record,p,recipe,staging,ticket,gate);
             });
         }catch(cause){synchronous=cause instanceof ClassifiedWebGPUFailure?cause.publicError:this.fail('WEBGPU_RENDER_FAILED',cause,'frame',serial);record.failure=synchronous;}
+        finally {
+            // Direct uploads have copied the rows and draw encoding is synchronous.
+            // The submission still owns its native resources until completion.
+            this.batchScratch.release(batch);
+        }
         return this.finishSubmission(record,ticket,done,outcomes,touchedQueue,synchronous,submitted,staging,frame.frameId,width,height,storage.rowPitch,storage.output);
     }
     /** The pipeline of a draw: without a region, of one page, or of several pages. */

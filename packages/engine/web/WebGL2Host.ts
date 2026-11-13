@@ -121,12 +121,13 @@ interface UploadWork {
     readonly control:UploadControl;readonly requests:KeyedRetentionRequest<Request>[];
     readonly plan:LedgerPlan<Request,GLNativeOwner>;readonly layout:RecordLayout;
     readonly writes:UploadWrite[];
+    readonly arena:SharedWebGL2ArenaPlan;readonly batch:PreparedSharedBatchPlan2D;
     claimed:boolean;allocated:boolean;writeIndex:number;
 }
 interface StageInput {readonly options:SharedFrameUploadOptions|undefined;readonly token:object;readonly end:number;signal:UploadSignal|undefined;}
 interface Record2D {
     serial:number;readonly generation:number;readonly storage:SharedSubmissionStorage2D;
-    readonly arena:SharedWebGL2ArenaPlan;readonly batch:PreparedSharedBatchPlan2D;
+    readonly vertexArenaBytes:number;readonly uniformArenaBytes:number;
     readonly canonicalBytes:number; reservedPageBytes:number; projections:(Uint8Array<ArrayBuffer>|undefined)[];
     readonly done:ReturnType<typeof deferred<void>>;readonly leases:Lease[];readonly pages:Page[];
     readonly native:GLNativeSession;readonly pool:RetentionLedger<Request,GLNativeOwner>;
@@ -480,7 +481,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         return owner;
     }
     private arenaOwner():{pendingVertexArenaBytes:number;pendingUniformArenaBytes:number} {
-        let pendingVertexArenaBytes=0,pendingUniformArenaBytes=0;for(const r of this.records){pendingVertexArenaBytes+=r.arena.vertexBytes;pendingUniformArenaBytes+=r.arena.uniformBytes;}return {pendingVertexArenaBytes,pendingUniformArenaBytes};
+        let pendingVertexArenaBytes=0,pendingUniformArenaBytes=0;for(const r of this.records){pendingVertexArenaBytes+=r.vertexArenaBytes;pendingUniformArenaBytes+=r.uniformArenaBytes;}return {pendingVertexArenaBytes,pendingUniformArenaBytes};
     }
 
     public createSharedLayer2D():SharedWebGL2Layer2D {
@@ -824,10 +825,10 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         const {requests,plan,layout}=this.planRecord(p),native=this.native!;
         const control:UploadControl={token:input.token,generation:this.generation,frameId:p.storage.prepared.frame.frameId,end:input.end,
             ready:deferred<SharedFrameUploadReady>(),record:undefined,signal:input.signal,timer:undefined,phase:'admitted',transferred:false,revoked:false,failure:undefined};
-        const record:Record2D={serial:0,generation:this.generation,storage:p.storage,arena:p.arena,batch:p.batch,
+        const record:Record2D={serial:0,generation:this.generation,storage:p.storage,vertexArenaBytes:p.arena.vertexBytes,uniformArenaBytes:p.arena.uniformBytes,
             canonicalBytes:p.canonicalBytes,reservedPageBytes:p.canonicalBytes,projections:p.projections,done:deferred<void>(),leases:[],pages:[],native,pool:this.pool,
             rawOwners:[],readback:undefined,ticket:undefined,pbo:undefined,sync:undefined,failure:undefined,retired:false,deadline:0};
-        record.upload={control,requests,plan,layout,writes:[],claimed:false,allocated:false,writeIndex:0};
+        record.upload={control,requests,plan,layout,arena:p.arena,batch:p.batch,writes:[],claimed:false,allocated:false,writeIndex:0};
         control.record=record;this.records.add(record);p.batch.transferred=true;this.reservePageDiagnostics(record);
         try{
             const signal=input.signal;
@@ -882,8 +883,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             if(data.byteLength)work.writes.push({kind:'buffer',target,lease,offset,data,unit,cursor:0});
         };
         const {vertex,uniform,regions}=work.layout;
-        for(const range of record.arena.sharedRanges){buffer(gl.ARRAY_BUFFER,vertex,range.vertexOffset,range.draw.data,52);buffer(gl.UNIFORM_BUFFER,uniform,range.uniformOffset,range.draw.uniform,128);}
-        for(const part of record.arena.regionTable?.windows??[])buffer(gl.UNIFORM_BUFFER,regions,part.offset,part.data,48);
+        for(const range of work.arena.sharedRanges){buffer(gl.ARRAY_BUFFER,vertex,range.vertexOffset,range.draw.data,52);buffer(gl.UNIFORM_BUFFER,uniform,range.uniformOffset,range.draw.uniform,128);}
+        for(const part of work.arena.regionTable?.windows??[])buffer(gl.UNIFORM_BUFFER,regions,part.offset,part.data,48);
         for(let i=0;i<record.storage.prepared.effects.groups.length;i++)buffer(gl.UNIFORM_BUFFER,work.layout.effectUniforms[i]!,0,record.storage.prepared.effects.groups[i]!.uniform,16);
         work.allocated=true;
     }
@@ -962,7 +963,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 // resizing the visible target, and unwind unstarted transfer.
                 this.stageLife(control.token);if(record.failure)throw record.failure;
                 this.generationGate(control.token);issued=true;
-                this.prepareSurface(record);this.drawRecord(record,work.layout);
+                this.prepareSurface(record);this.drawRecord(record,work.layout,work.arena);
             }catch(cause){
                 record.failure??=!issued&&isGLFailure(cause)?cause:this.note(isGLFailure(cause)?cause.code as WebGL2HostErrorCode:'WEBGL2_RENDER_FAILED',isGLFailure(cause)?cause.cause:cause,'frame',record.serial);
                 if(this.state==='active'&&(issued||!isGLFailure(cause))){this.state='failed';this.revokeUploads(record.failure as Error);}
@@ -978,7 +979,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     private submit(p:PreparedRecord):undefined {
         const native=this.native!,gl=native.gl,{width,height}=p.storage.prepared;
         const {requests,plan,layout}=this.planRecord(p),{vertex,uniform,regions}=layout;
-        const record:Record2D={serial:this.serial+1,generation:this.generation,storage:p.storage,arena:p.arena,batch:p.batch,canonicalBytes:p.canonicalBytes,reservedPageBytes:p.canonicalBytes,projections:p.projections,done:deferred<void>(),leases:[],pages:[],native,pool:this.pool,rawOwners:[],readback:undefined,ticket:p.ticket,pbo:undefined,sync:undefined,failure:undefined,retired:false,deadline:clock()+30000};
+        const record:Record2D={serial:this.serial+1,generation:this.generation,storage:p.storage,vertexArenaBytes:p.arena.vertexBytes,uniformArenaBytes:p.arena.uniformBytes,canonicalBytes:p.canonicalBytes,reservedPageBytes:p.canonicalBytes,projections:p.projections,done:deferred<void>(),leases:[],pages:[],native,pool:this.pool,rawOwners:[],readback:undefined,ticket:p.ticket,pbo:undefined,sync:undefined,failure:undefined,retired:false,deadline:clock()+30000};
         for(const lease of plan.leases)record.leases[lease.requestId]=lease;
         this.records.add(record);this.serial=record.serial;p.batch.transferred=true;this.reservePageDiagnostics(record);
         if(p.ticket)p.ticket.bound=true;
@@ -1018,10 +1019,13 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             if(uniform>=0){gl.bindBuffer(gl.UNIFORM_BUFFER,record.leases[uniform]!.handle.resource.value as WebGLBuffer);for(const range of p.arena.sharedRanges)gl.bufferSubData(gl.UNIFORM_BUFFER,range.uniformOffset,range.draw.uniform);}
             if(regions>=0){gl.bindBuffer(gl.UNIFORM_BUFFER,record.leases[regions]!.handle.resource.value as WebGLBuffer);for(const part of p.arena.regionTable!.windows)gl.bufferSubData(gl.UNIFORM_BUFFER,part.offset,part.data);}
             for(let i=0;i<record.storage.prepared.effects.groups.length;i++){gl.bindBuffer(gl.UNIFORM_BUFFER,record.leases[layout.effectUniforms[i]!]!.handle.resource.value as WebGLBuffer);gl.bufferSubData(gl.UNIFORM_BUFFER,0,record.storage.prepared.effects.groups[i]!.uniform);}
-            this.drawRecord(record,layout);
+            this.drawRecord(record,layout,p.arena);
         }catch(cause){
             record.failure=this.note(isGLFailure(cause)?cause.code as WebGL2HostErrorCode:'WEBGL2_RENDER_FAILED',isGLFailure(cause)?cause.cause:cause,'frame',record.serial);
             if(this.state==='active'){this.state='failed';this.revokeUploads(record.failure as Error);}
+        }finally{
+            // bufferSubData has copied the CPU rows. Only the native leases and their fence remain pending.
+            this.scratch.release(p.batch);
         }
         // Even a partially issued draw owns a completion proof before resources can be reused.
         if(!native.invalidated){
@@ -1087,7 +1091,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         return variant;
     }
 
-    private drawRecord(record:Record2D,layout:RecordLayout):void {
+    private drawRecord(record:Record2D,layout:RecordLayout,arena:SharedWebGL2ArenaPlan):void {
         const native=record.native,gl=native.gl,{width,height,frame}=record.storage.prepared;
         const {vertex,uniform,regions,color,pageTextures}=layout;
             const colorTexture=(record.layerWrite?.revision?.owner??record.leases[color]!.handle.resource).value as WebGLTexture;
@@ -1099,7 +1103,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             let program:WebGLProgram|undefined,bound=-1;
             // The page each texture unit after the first holds. A unit keeps its page until a batch needs another there.
             const units:(number|undefined)[]=[];
-            const table=record.arena.regionTable;
+            const table=arena.regionTable;
             const bindDraw=():void=>{
                 program=this.program!;bound=-1;
                 gl.activeTexture(gl.TEXTURE0);gl.useProgram(program);gl.bindVertexArray(this.drawVAO!);
@@ -1121,12 +1125,12 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 const blend=sharedWebGL2BlendFactors(draw.prepared.material.blend);gl.blendFuncSeparate(...blend);gl.drawArrays(gl.TRIANGLES,range.firstVertex,draw.vertexCount);};
             this.drawLayers(record,width,height);
             bindDraw();
-            if(record.storage.prepared.effects.groups.length===0){for(const range of record.arena.sharedRanges)drawOne(range);}
+            if(record.storage.prepared.effects.groups.length===0){for(const range of arena.sharedRanges)drawOne(range);}
             else{
                 const targets=layout.effectTargets.map(id=>record.leases[id]!.handle.resource.value as WebGLTexture);
                 const setTarget=(target:WebGLTexture,clear:boolean):void=>{gl.bindFramebuffer(gl.FRAMEBUFFER,this.framebuffer!);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,target,0);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,null);native.workingAttachment(target,null);if(clear){gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);}};
                 const groups=record.storage.prepared.effects.groups,enters=new Map(groups.map(g=>[g.enter,g])),exits=new Map(groups.map(g=>[g.exit,g]));
-                const ranges=new Map(record.arena.sharedRanges.map(range=>[range.draw.prepared.command.ordinal,range]));
+                const ranges=new Map(arena.sharedRanges.map(range=>[range.draw.prepared.command.ordinal,range]));
                 const effectPass=(group:PreparedEffect2D,mode:SharedEffectPass,target:WebGLTexture,source:WebGLTexture):void=>{
                     setTarget(target,mode!=='composite');const program=this.effectPrograms.get(mode)!;
                     gl.useProgram(program);gl.bindVertexArray(this.resolveVAO!);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,source);gl.uniform1i(gl.getUniformLocation(program,'sourceTexture'),0);
@@ -1287,7 +1291,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             this.finishLayerRecord(record);
             if(this.unsafe){record.failure??=this.note('WEBGL2_CLOSE_UNSAFE',native.cleanupFailure?.cause,'cleanup',record.serial);
                 if(this.state!=='closing'&&this.state!=='closed'&&this.state!=='stopped'){this.state='failed';this.revokeUploads(record.failure as Error);}}
-            this.resourceCpu.canonicalBytes-=record.canonicalBytes;this.resourceNative.reservedPageBytes-=record.reservedPageBytes;record.reservedPageBytes=0;record.projections=[];this.scratch.release(record.batch);this.records.delete(record);
+            this.resourceCpu.canonicalBytes-=record.canonicalBytes;this.resourceNative.reservedPageBytes-=record.reservedPageBytes;record.reservedPageBytes=0;record.projections=[];if(work)this.scratch.release(work.batch);this.records.delete(record);
             if(record.ticket){if(record.failure)record.ticket.reject(record.failure);else if(record.readback)record.ticket.resolve(record.readback);else record.ticket.reject(glFailure('WEBGL2_READBACK_FAILED'));
                 if(this.ticket===record.ticket)this.ticket=undefined;}
             if(record.failure)record.done.reject(record.failure);else record.done.resolve();
