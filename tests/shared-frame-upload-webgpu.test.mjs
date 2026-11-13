@@ -240,6 +240,29 @@ test('GPU U12 aggregate chunk payload obeys 4 MiB markers and exact page rows', 
   });
 });
 
+test('GPU U12 one page of the largest area is written once, in whole rows, within the 4 MiB marker bound', async () => {
+  await usingGpu(async ({ f, a, h }) => {
+    requireUpload(h); await a.bitmap(2048, 2048, 91);
+    const frame = a.capture(), markers = [], rows = [];
+    assert.equal(frame.pages.length, 1); assert.equal(frame.pages[0].source.byteLength, 16 * MiB);
+    let bytes = 0, scheduled = false, tasks = 0;
+    const charge = amount => {
+      bytes += amount; assert.ok(bytes <= 4 * MiB, 'aggregate payload before the next ordinary task marker');
+      if (!scheduled) { scheduled = true; tasks++; markers.push(new Promise(resolve => setTimeout(() => { bytes = 0; scheduled = false; resolve(); }, 0))); }
+    };
+    f.hooks.writeBuffer = (buffer, offset, data) => charge(data.byteLength);
+    f.hooks.writeTexture = (destination, data, layout, size) => {
+      const width = size.width ?? size[0], height = size.height ?? size[1];
+      assert.equal(width, 2048); assert.ok(Number.isInteger(height) && height > 0);
+      charge(width * 4 * height); rows.push([destination.origin?.y ?? destination.origin?.[1] ?? 0, height]);
+    };
+    const stage = h.stageSharedFrame(frame); await readyUpload(f, stage); await Promise.all(markers);
+    assert.ok(tasks >= 4, 'a 16 MiB page cannot fit fewer than four 4 MiB tasks');
+    let next = 0; for (const [y, count] of rows) { assert.equal(y, next); next += count; } assert.equal(next, 2048);
+    await finishUpload(f, stage);
+  });
+});
+
 test('GPU U13 partial upload abort publishes refusal while original proof still owns the slot', async () => {
   await usingGpu(async ({ f, a, h }) => {
     requireUpload(h); await a.bitmap(1024, 1024);

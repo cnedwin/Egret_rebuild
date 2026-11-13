@@ -28,7 +28,7 @@ export const ATLAS_IMPORT_LIMITS: Readonly<AtlasImportLimits> = Object.freeze({
   "maxPageNameUtf8Bytes": 255,
   "maxFrames": 1024,
   "maxAtlasEdge": 4096,
-  "maxAtlasPixels": 1048576,
+  "maxAtlasPixels": 4194304,
   "maxSourceDimension": 65535,
   "maxDurationMilliseconds": 65535,
   "maxProvenanceFieldUtf8Bytes": 4096,

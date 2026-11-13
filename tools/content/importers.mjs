@@ -9,7 +9,7 @@ import {inspectFontArtifact} from '@egret/contracts/resources';
 const require=createRequire(import.meta.url);
 const {parseTree:parseJsonTree}=require('jsonc-parser');
 const PNGJS_VERSION=JSON.parse(readFileSync(require.resolve('pngjs/package.json'),'utf8')).version;
-const SOURCE_LIMIT=8388608,ARTIFACT_LIMIT=4194304,WORK_LIMIT=67108864,OUTPUT_LIMIT=134217728;
+const SOURCE_LIMIT=8388608,ARTIFACT_LIMIT=4194304,WORK_LIMIT=268435456,OUTPUT_LIMIT=536870912;
 const signature=[137,80,78,71,13,10,26,10];
 const mappings=Object.freeze({
   'egret.font':Object.freeze({kind:'font',format:'egret.font/1',reference:'none',dependency:undefined}),
@@ -64,7 +64,7 @@ function header(bytes){
   if(bytes.length<33||signature.some((n,i)=>bytes[i]!==n)||bytes.readUInt32BE(8)!==13||![73,72,68,82].every((value,index)=>bytes[12+index]===value))return undefined;
   const width=bytes.readUInt32BE(16),height=bytes.readUInt32BE(20),color=bytes[25];
   if(!width||!height||bytes[24]!==8||![2,6].includes(color)||bytes[26]!==0||bytes[27]!==0||bytes[28]!==0)return undefined;
-  if(width>4096||height>4096||width*height>1048576)throw fault('LIMIT','PNG exceeds the admitted 4096 edge or 1048576 pixel bound.');
+  if(width>4096||height>4096||width*height>4194304)throw fault('LIMIT','PNG exceeds the admitted 4096 edge or 4194304 pixel bound.');
   return {width,height,scanlineBytes:height*(1+width*(color===2?3:4)),rgbaBytes:width*height*4};
 }
 function dependencyFor(entry,dependencies,mapping){
@@ -102,7 +102,7 @@ function parseAtlas(bytes){
   let value,source;
   try{source=decodeText(bytes);value=JSON.parse(source);}catch(cause){if(cause?.code==='CONTENT_IMPORT_LIMIT')throw cause;throw fault('PROFILE','Atlas dependency must contain canonical egret.atlas/1 JSON.',cause);}
   const invalid=()=>{throw fault('PROFILE','Atlas dependency must contain the exact bounded normalized atlas and sequence schema.');};
-  if(!exact(value,['format','pageDependency','width','height','frames','sequenceInput'])||value.format!=='egret.atlas/1'||value.pageDependency!==0||!integer(value.width,1,4096)||!integer(value.height,1,4096)||value.width*value.height>1048576||!Array.isArray(value.frames)||!integer(value.frames.length,1,1024)||!exact(value.sequenceInput,['atlasWidth','atlasHeight','frames'])||value.sequenceInput.atlasWidth!==value.width||value.sequenceInput.atlasHeight!==value.height||!Array.isArray(value.sequenceInput.frames)||value.sequenceInput.frames.length!==value.frames.length)invalid();
+  if(!exact(value,['format','pageDependency','width','height','frames','sequenceInput'])||value.format!=='egret.atlas/1'||value.pageDependency!==0||!integer(value.width,1,4096)||!integer(value.height,1,4096)||value.width*value.height>4194304||!Array.isArray(value.frames)||!integer(value.frames.length,1,1024)||!exact(value.sequenceInput,['atlasWidth','atlasHeight','frames'])||value.sequenceInput.atlasWidth!==value.width||value.sequenceInput.atlasHeight!==value.height||!Array.isArray(value.sequenceInput.frames)||value.sequenceInput.frames.length!==value.frames.length)invalid();
   const names=new Set();let nameUnits=0,total=0;const first=value.frames[0]?.layout;
   for(let index=0;index<value.frames.length;index++){
     const frame=value.frames[index],sequence=value.sequenceInput.frames[index];

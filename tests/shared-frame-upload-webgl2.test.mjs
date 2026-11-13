@@ -124,6 +124,22 @@ test('GLU01 aggregate scheduled upload tasks stay at 4 MiB with whole rows and o
   } finally { await meter.finish(); }
 }, {ports:glPorts({alignment:12})}));
 
+test('GLU01 one page of the largest area is uploaded once, in whole rows, within the 4 MiB task bound', async () => hosted(async f => {
+  await f.images(1,2048,2048); const frame = f.frame(), meter = taskUploadMeter(f.ports);
+  try {
+    assert.equal(frame.pages.length,1); assert.equal(frame.pages[0].source.byteLength,16 * MiB);
+    const ticket = f.stage(frame); await ticket.ready; await meter.finish();
+    assert.ok(meter.groups.length >= 4,'a 16 MiB page cannot fit fewer than four 4 MiB tasks');
+    assert.ok(meter.groups.every(group => group.bytes > 0 && group.bytes <= 4 * MiB));
+    const imageRows = meter.groups.flatMap(group => group.rows).filter(row => row.name === 'texSubImage2D');
+    assert.equal(imageRows.reduce((n,row) => n + row.args[4] * row.args[5] * 4,0),16 * MiB);
+    assert.ok(imageRows.every(({args}) => args[4] === 2048 && Number.isInteger(args[3]) && Number.isInteger(args[5]) && args[5] > 0));
+    let next = 0; for (const {args} of imageRows) { assert.equal(args[3],next); next += args[5]; } assert.equal(next,2048);
+    const before = uploadRows(f.ports.events).length; await ticket.submit().completed;
+    assert.equal(uploadRows(f.ports.events).length,before,'submit reuses the admitted uploaded resources');
+  } finally { await meter.finish(); }
+}));
+
 test('GLU02 upload ready waits for a real controlled fence and never changes the visible target', async () => {
   const ports = glPorts(), sizes = []; let width = ports.canvas.width, height = ports.canvas.height;
   Object.defineProperties(ports.canvas, {

@@ -15,14 +15,16 @@ const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const get=r=>{assert.equal(r.ok,true,JSON.stringify(r.diagnostics));return r.value;};
 const clone=v=>JSON.parse(JSON.stringify(v));
 const provenance={origin:'first-party synthetic fixture',license:'Apache-2.0',notice:'Original authored pixels and synthetic metadata; not an Aseprite exporter qualification.'};
-function fixture(t,projectId='p_content'){
+function fixture(t,projectId='p_content',pageSize=[2,1],otherSize=[1,1]){
   const root=mkdtempSync(path.join(os.tmpdir(),'egret-content-build-'));
   t.after(()=>rmSync(root,{recursive:true,force:true}));
   for(const dir of ['sources','build','cache'])mkdirSync(path.join(root,dir));
-  const page=PNG.sync.write({width:2,height:1,data:Buffer.from([255,0,0,255,0,255,0,255])},{colorType:6,inputColorType:6,bitDepth:8});
-  const other=PNG.sync.write({width:1,height:1,data:Buffer.from([0,0,255,255])},{colorType:6,inputColorType:6,bitDepth:8});
+  // The default pages are two literal pixels and one; any other size is transparent black.
+  const pixels=([width,height],literal)=>literal.length===4*width*height?Buffer.from(literal):Buffer.alloc(4*width*height);
+  const page=PNG.sync.write({width:pageSize[0],height:pageSize[1],data:pixels(pageSize,[255,0,0,255,0,255,0,255])},{colorType:6,inputColorType:6,bitDepth:8});
+  const other=PNG.sync.write({width:otherSize[0],height:otherSize[1],data:pixels(otherSize,[0,0,255,255])},{colorType:6,inputColorType:6,bitDepth:8});
   const frame=(filename,x,duration)=>({filename,frame:{x,y:0,w:1,h:1},rotated:false,trimmed:false,spriteSourceSize:{x:0,y:0,w:1,h:1},sourceSize:{w:1,h:1},duration});
-  const metadata=Buffer.from(JSON.stringify({frames:[frame('red',0,125),frame('green',1,250)],meta:{app:'https://www.aseprite.org/',version:'1.3.18.6',image:'page.png',format:'RGBA8888',size:{w:2,h:1},scale:'1'}}));
+  const metadata=Buffer.from(JSON.stringify({frames:[frame('red',0,125),frame('green',1,250)],meta:{app:'https://www.aseprite.org/',version:'1.3.18.6',image:'page.png',format:'RGBA8888',size:{w:pageSize[0],h:pageSize[1]},scale:'1'}}));
   const files=[['page.png',page,'image/png'],['other.png',other,'image/png'],['atlas.json',metadata,'application/json']].map(([name,bytes,mediaType],index)=>{
     writeFileSync(path.join(root,'sources',name),bytes);return {id:['f_page','f_other','f_atlas'][index],path:'sources/'+name,role:'source',mediaType,sha256:sha(bytes),byteLength:bytes.length};
   });
@@ -34,6 +36,16 @@ function fixture(t,projectId='p_content'){
 }
 function entry(result,id){return result.manifest.entries.find(item=>item.id===id);}
 function artifact(result,root,id){return readFileSync(path.join(root,entry(result,id).artifact.path));}
+
+// Break caught: a page is held to the earlier area, or one run admits a single cold page of the
+// largest size: the two pages below need 67,115,008 bytes of scanline work, above the earlier 64 MiB.
+test('one cold run admits two pages of the largest area and charges both inflations of each',async t=>{
+  const f=fixture(t,'p_large',[2048,2048],[4096,1024]),r=await buildContentProject(f.options);
+  assert.equal(r.status,'adopted');
+  assert.equal(r.receipt.work.scanlineBytes,2*2048*(1+2048*4)+2*1024*(1+4096*4));
+  const atlas=JSON.parse(artifact(r,f.root,'e_atlas'));assert.equal(atlas.width,2048);assert.equal(atlas.height,2048);
+  assert.deepEqual(artifact(r,f.root,'e_page'),f.page);
+});
 
 test('cold source import publishes immutable generation then adopts one genuine project transaction',async t=>{
   const f=fixture(t),r=await buildContentProject(f.options);

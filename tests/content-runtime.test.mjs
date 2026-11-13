@@ -54,6 +54,15 @@ for(const failure of ['provider','schema','dimensions','sequence'])test('content
  const f=fixture(x=>{if(failure==='schema')x.atlas.extra=true;if(failure==='dimensions'){x.atlas.width=3;x.atlas.sequenceInput.atlasWidth=3;x.sequence.sequenceInput.atlasWidth=3;}if(failure==='sequence')x.sequence.sequenceInput.frames[0].durationSeconds=0.25;});
  const s=await setup(f,failure==='provider'?{fail:'e_sequence'}:{});try{const g=s.loader.load(s.engine.createScope(),['e_sequence']);await assert.rejects(g.ready,failure==='dimensions'?{code:'CONTENT_DIMENSIONS_FAILED'}:undefined);await flush();assert.throws(()=>g.getImage('e_page'));assert.ok(s.textures.every(t=>t.isDisposed));}finally{await s.close();}
 });
+// Break caught: an atlas artifact is still held to the earlier 1,048,576-pixel area, or to none.
+// The page here is 2 x 1, so an artifact within the area bound reaches the dimension comparison
+// and one beyond it is refused as an artifact first.
+test('an atlas artifact may describe the largest image area and no larger',async()=>{
+ const sized=(w,h)=>fixture(x=>{for(const target of [x.atlas,x.atlas.sequenceInput,x.sequence.sequenceInput]){if(target===x.atlas){target.width=w;target.height=h;}else{target.atlasWidth=w;target.atlasHeight=h;}}});
+ for(const [w,h,code]of [[2048,2048,'CONTENT_DIMENSIONS_FAILED'],[4096,1024,'CONTENT_DIMENSIONS_FAILED'],[2049,2048,'CONTENT_ARTIFACT_FAILED'],[4096,1025,'CONTENT_ARTIFACT_FAILED'],[4097,1,'CONTENT_ARTIFACT_FAILED']]){
+  const s=await setup(sized(w,h));try{const g=s.loader.load(s.engine.createScope(),['e_sequence']);await assert.rejects(g.ready,{code},w+' x '+h);await flush();assert.ok(s.textures.every(t=>t.isDisposed));}finally{await s.close();}
+ }
+});
 // Break caught: disposing a pending group can publish a late native result or leak its texture.
 for(const close of ['group','scope','engine','loader'])test('content pending '+close+' cancellation rejects and retires late values',async()=>{const s=await setup(fixture(),{hold:true});try{const scope=s.engine.createScope(),g=s.loader.load(scope,['e_sequence']);assert.equal(s.pending.length,1);const rejected=assert.rejects(g.ready);let closing;if(close==='group')g.dispose();if(close==='scope')scope.dispose();if(close==='loader')s.loader.dispose();if(close==='engine')closing=s.engine.dispose();await rejected;s.pending[0].d.resolve(s.pending[0].texture);await flush();await closing;assert.ok(s.textures.every(t=>t.isDisposed));assert.deepEqual(s.loads,['e_page']);assert.throws(()=>g.getImage('e_page'));}finally{await s.close();}});
 // Break caught: a new logical ID aliases the old generation, or a failed replacement damages it.
