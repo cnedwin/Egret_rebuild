@@ -2,7 +2,8 @@
 // One optional CPU RESET slot; Host staging and presentation remain caller-owned.
 import { Engine, Scope, DisplayObject, DisplayObjectContainer, EgretError } from '@egret/engine';
 import type { DisplaySubtreeTicket, SharedFrameOptions2D } from '@egret/engine';
-import type { SpineResetInitial, SpineResetRequest, SpineResetSlot, SpineResetActive, SpineResetTicket, SpineResetState } from './resetTypes.js';
+import type { SpineResetInitial, SpineResetRequest, SpinePreserveRequest, SpineResetSlot, SpineResetActive, SpineResetTicket, SpineResetState } from './resetTypes.js';
+import type { SpineInstance } from './instanceTypes.js';
 import type { SpineContentGroup, SpineContentLoader } from './types.js';
 import { createSpineInstance } from './instance.js';
 import { createSpineDisplay } from './display.js';
@@ -50,21 +51,15 @@ export function createSpineResetSlot(engine:Engine,scope:Scope,target:DisplayObj
     open();authenticateResetDisplay(active.display,active.instance);
     if(apply(count,target,[])!==1||apply(child,target,[0])!==active.display.node)throw fault('TARGET_CHANGED');
   }
-  const slot:SpineResetSlot=freeze({
-    get isDisposed(){return disposed;},
-    getActive(){open();return active;},
-    dispose(){
-      if(disposed)return;disposed=true;intent++;claims.delete(target);
-      const owned=activeScope;activeScope=undefined;const prior=pending;pending=undefined;
-      try{prior?.cancel();}finally{if(owned)apply(close,owned,[]);}
-    },
-    request(request:SpineResetRequest):SpineResetTicket{
+  // One admission for both policies. `preserve` carries the active playback into the candidate; `reset`
+  // starts the requested animation at time zero.
+  function demandReplacement(request:unknown,preserve:boolean):SpineResetTicket{
       idle();busy=true;
       let candidateScope:Scope|undefined;
       try{
         intact();
-        const row=record(request,['policy','version','loader','assetId','animation','skins','loop','plays','onEvent'],open);
-        if(row.policy!=='reset'||!label(row.version)||!label(row.assetId,512)||!label(row.animation,1024)
+        const row=record(request,preserve?['version','loader','assetId','onEvent']:['policy','version','loader','assetId','animation','skins','loop','plays','onEvent'],open);
+        if(!preserve&&(row.policy!=='reset'||!label(row.animation,1024))||!label(row.version)||!label(row.assetId,512)
             ||row.loop!==undefined&&typeof row.loop!=='boolean'
             ||row.plays!==undefined&&(!Number.isSafeInteger(row.plays)||(row.plays as number)<1||(row.plays as number)>1024||row.loop!==undefined)
             ||row.onEvent!==undefined&&typeof row.onEvent!=='function')throw fault('OPTIONS_INVALID');
@@ -80,9 +75,13 @@ export function createSpineResetSlot(engine:Engine,scope:Scope,target:DisplayObj
         candidateScope=apply(createScope,engine,[]) as Scope;
         const owned=candidateScope;
         authenticateResetLoader(row.loader as SpineContentLoader,owned);open();
+        // Playback that cannot be carried now is refused before the request is accepted.
+        if(preserve)requireSpineRender(active.instance).exportPlayback();
         // Admission is complete before superseding the previous accepted intent.
         const id=++intent,prior=pending;
         let state:SpineResetState='loading',group:SpineContentGroup|undefined,next:SpineResetActive|undefined,tree:DisplaySubtreeTicket|undefined;
+        // A preserving candidate has no pose until the final window: the active player may advance while it loads.
+        let carrier:SpineInstance|undefined;
         let resolve!:()=>void,reject!:(cause:unknown)=>void;
         const ready=new Promise<void>((yes,no)=>{resolve=yes;reject=no;});void ready.catch(()=>{});
         function current():void{open();if(id!==intent||state==='cancelled'||state==='failed'||state==='committed')throw fault('RETIRED');}
@@ -95,11 +94,17 @@ export function createSpineResetSlot(engine:Engine,scope:Scope,target:DisplayObj
         const ticket:SpineResetTicket=freeze({
           get ready(){return ready;},get state(){return state;},
           capture(options:SharedFrameOptions2D){
-            idle();current();intact();if(!next||state!=='ready')throw fault('NOT_READY');
+            idle();current();intact();if(!next&&!carrier||state!=='ready')throw fault('NOT_READY');
             busy=true;
             try{
               tree?.dispose();tree=undefined;state='ready';
-              tree=apply(prepare,engine,[owned,target,next.display.node]) as DisplaySubtreeTicket;
+              if(carrier){
+                // The active playback as it stands now, and nothing that happened to it earlier.
+                const instance=carrier;carrier=undefined;
+                requireSpineRender(instance).initializePreserve(requireSpineRender(active.instance).exportPlayback());
+                next=freeze({version:row.version as string,instance,display:createSpineDisplay(instance,owned,{colorProfile:'egret-shared-linear/1'}),ownership:'owned'});
+              }
+              tree=apply(prepare,engine,[owned,target,next!.display.node]) as DisplaySubtreeTicket;
               const frame=apply(capture,engine,[tree,options]);current();state='prepared';return frame;
             }catch(cause){throw fail(cause);}
             finally{busy=false;}
@@ -125,6 +130,14 @@ export function createSpineResetSlot(engine:Engine,scope:Scope,target:DisplayObj
             try{
               current();const asset=group!.getSpine(row.assetId as string);
               const instance=createSpineInstance(asset,owned,row.onEvent===undefined?undefined:{onEvent:row.onEvent as NonNullable<SpineResetRequest['onEvent']>});
+              if(preserve){
+                // An asset that cannot continue the playback as it stands now fails here, before the final window.
+                // Playback that is between commands at this moment is judged in that window alone.
+                let playback;
+                try{playback=requireSpineRender(active.instance).exportPlayback();}catch{playback=undefined;}
+                if(playback)requireSpineRender(instance).checkPreserve(playback);
+                current();carrier=instance;state='ready';resolve();return;
+              }
               if(skins)instance.setSkins(skins);
               instance.setAnimation(0,row.animation as string,{...(row.loop===undefined?{}:{loop:row.loop as boolean}),...(row.plays===undefined?{}:{plays:row.plays as number})});
               requireSpineRender(instance).initializeReset();
@@ -145,7 +158,17 @@ export function createSpineResetSlot(engine:Engine,scope:Scope,target:DisplayObj
         }
         return ticket;
       }finally{if(candidateScope)apply(close,candidateScope,[]);busy=false;}
+  }
+  const slot:SpineResetSlot=freeze({
+    get isDisposed(){return disposed;},
+    getActive(){open();return active;},
+    dispose(){
+      if(disposed)return;disposed=true;intent++;claims.delete(target);
+      const owned=activeScope;activeScope=undefined;const prior=pending;pending=undefined;
+      try{prior?.cancel();}finally{if(owned)apply(close,owned,[]);}
     },
+    request(request:SpineResetRequest):SpineResetTicket{return demandReplacement(request,false);},
+    requestPreserving(request:SpinePreserveRequest):SpineResetTicket{return demandReplacement(request,true);},
   });
   claims.set(target,slot);
   try{apply(use,scope,[slot]);open();}catch(cause){slot.dispose();throw cause;}

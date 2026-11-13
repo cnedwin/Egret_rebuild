@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/spine/test/preserve.test.mjs",
+      "originRole": "First-party behaviour tests of Spine replacement that keeps playback, against the player it replaces; original programmatic fixtures; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/spine-reset/verify-preserve.mjs",
+      "originRole": "First-party browser check of Spine replacement that keeps playback in the two-version example; independently authored with AI assistance; Apache-2.0. Uses existing attributed dependencies.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
