@@ -22,7 +22,7 @@ export function packSharedDraws2D(prepared:PreparedSharedFrame2D):PackedSharedEn
     let used=0,block=0;
     for(const draw of prepared.entries){
         if(draw.kind==='barrier'){result.push({barrier:true,ordinal:draw.ordinal});continue;}
-        const first=used;
+        const first=used;let vertices=0;
         for(const polygon of draw.polygons){
             const count=polygon.length;
             if(count*ROW>corners.length)corners=new Float32Array(count*ROW);
@@ -41,7 +41,7 @@ export function packSharedDraws2D(prepared:PreparedSharedFrame2D):PackedSharedEn
                 const sign=packedOrientation(corners[0]!,corners[1]!,corners[b]!,corners[b+1]!,corners[c]!,corners[c+1]!,budget);
                 if(!Number.isFinite(sign)||sign<0)sharedFailure('precision');if(sign===0)continue;
                 for(let k=0;k<ROW;k++){rows[used+k]=corners[k]!;rows[used+ROW+k]=corners[b+k]!;rows[used+2*ROW+k]=corners[c+k]!;}
-                used+=3*ROW;
+                used+=3*ROW;vertices+=3;
             }
         }
         // Float and word indices of this draw's block: twelve floats, then twenty words from byte 48.
@@ -63,7 +63,7 @@ export function packSharedDraws2D(prepared:PreparedSharedFrame2D):PackedSharedEn
             // Solid draws have canonical unused sampling fields, never a white page.
             blockWords[w]=1;blockWords[w+1]=1;blockWords[w+4]=1;blockWords[w+5]=1;blockWords[w+8]=1;blockWords[w+9]=1;blockWords[w+16]=1;blockWords[w+17]=1;
         }
-        result.push({prepared:draw,data:rows.subarray(first,used),vertexCount:(used-first)/ROW,uniform:blockBytes.subarray(block,block+BLOCK)});
+        result.push({prepared:draw,data:rows.subarray(first,used),vertexCount:vertices,uniform:blockBytes.subarray(block,block+BLOCK)});
         block+=BLOCK;
     }
     return result;

@@ -179,12 +179,12 @@ const m12FullDirtyBoundaryOwners = [
 const m12FullDirtyBoundaryBlock = /^([ ]*)\/\/ M12-FULL-DIRTY-IDENTITY-BEGIN\n[\s\S]*?^\1\/\/ M12-FULL-DIRTY-IDENTITY-END\n/gm;
 // Exact current owners may recover their pre-2D-cost bodies before the M1.2 inverse.
 const twoDCostBoundaryOwners = [
-  {"path":"tools/atlas-import-boundary.mjs","bytes":288873,"sha256":"d389a796bb7b4f1bbddcacc64aefed8cd84667c3199813e7d7647dba151063aa"},
+  {"path":"tools/atlas-import-boundary.mjs","bytes":288873,"sha256":"913c77e6ac989b608563e4cf8f2b7d14564f61d6453c74f557e8e91fb2b458bf"},
   {"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":97217,"sha256":"ff66aa02e5655e8f5bed47d7582ebe852e1a5336f16ae73945fde6a350873859"},
   {"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":90638,"sha256":"1907f8a098300b33f9d8f6f4935f19a6d19b1c732a9e820bef76a790b023e8ab"},
-  {"path":"tools/browser-png-boundary.mjs","bytes":394106,"sha256":"d95aa88d2c46349fab8470b0ab28e291980c75c4a0a79a9cd414f576a91b0df0"},
+  {"path":"tools/browser-png-boundary.mjs","bytes":394106,"sha256":"9d3e9a261bec665c6b34eac7a0a33a876270d3dd9bd6e60521914982701ebb74"},
   {"path":"tools/sequence-playback-boundary.mjs","bytes":95496,"sha256":"7c5d69e1d028c329e84361861083968a6bcde597e9143924766197d5ac626e02"},
-  {"path":"tools/spritesheet-boundary.mjs","bytes":384131,"sha256":"4d3454454679cd8254f4d1b4e444a29c085e77f8094dc18f4c8beb9a68ea4007"},
+  {"path":"tools/spritesheet-boundary.mjs","bytes":384131,"sha256":"f32938637f51058a1e96e97ed9a017c6fd2f63b060471760cc84e2f8272aa1c6"},
 ];
 const twoDCostBoundaryBlock = /^([ ]*)\/\/ 2D-COST-IDENTITY-BEGIN\n[\s\S]*?^\1\/\/ 2D-COST-IDENTITY-END\n/gm;
 export function world3dBoundaryPrevious(raw, file){

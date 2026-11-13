@@ -2757,7 +2757,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "e6549b53f86bea7e829e4b0ca766a040c5b52853121c69dc18c05038cc5ef036"
+      "sha256": "19f99926aeba016d4b11057c5a80d00236dcd0aff4e9e2dbbeca13252e4d41a3"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -3319,7 +3319,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "d95aa88d2c46349fab8470b0ab28e291980c75c4a0a79a9cd414f576a91b0df0"
+      "sha256": "9d3e9a261bec665c6b34eac7a0a33a876270d3dd9bd6e60521914982701ebb74"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3467,7 +3467,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "4d3454454679cd8254f4d1b4e444a29c085e77f8094dc18f4c8beb9a68ea4007"
+      "sha256": "f32938637f51058a1e96e97ed9a017c6fd2f63b060471760cc84e2f8272aa1c6"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3967,7 +3967,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "909dd549e9295bfa44391efb0af599ab86aa7db66d5e89166c395d009f847ab8"
+      "sha256": "45c9b371059fe3dbfe75fb7548e1bcfde0eedf89725cfb90d22519e04b9dee72"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4027,7 +4027,7 @@
     },
     {
       "path": "packages/engine/rendering/packSharedDraws2D.ts",
-      "sha256": "0654a341432c69846af65c5d6271ac4191e83eadcfe1ea809adc909fae909eee"
+      "sha256": "3552e04e6e9914ec6e07c5e15ace9503c0517e367f1df7a82c66067add4df216"
     },
     {
       "path": "packages/engine/rendering/packSharedMeshGeometry3D.ts",

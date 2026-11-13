@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "25709598f1a2af9aa2632c036f5d8a6d30041902a161876fa1fa5a96545e0096",
+      "sha256": "1502372376e43a0b4f9fd9654b8550137b6dd684039952b55bf5ed620e1a000e",
       "bytes": 408561,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -7034,7 +7034,7 @@
       "path": "tools/verify-webgpu-b1.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
       "bytes": 102348,
-      "sha256": "e6549b53f86bea7e829e4b0ca766a040c5b52853121c69dc18c05038cc5ef036",
+      "sha256": "19f99926aeba016d4b11057c5a80d00236dcd0aff4e9e2dbbeca13252e4d41a3",
       "identityHistory": [
         {
           "bytes": 38603,
@@ -9877,7 +9877,7 @@
     {
       "path": "tools/spritesheet-boundary.mjs",
       "bytes": 384131,
-      "sha256": "4d3454454679cd8254f4d1b4e444a29c085e77f8094dc18f4c8beb9a68ea4007",
+      "sha256": "f32938637f51058a1e96e97ed9a017c6fd2f63b060471760cc84e2f8272aa1c6",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10100,7 +10100,7 @@
     {
       "path": "tools/browser-png-boundary.mjs",
       "bytes": 394106,
-      "sha256": "d95aa88d2c46349fab8470b0ab28e291980c75c4a0a79a9cd414f576a91b0df0",
+      "sha256": "9d3e9a261bec665c6b34eac7a0a33a876270d3dd9bd6e60521914982701ebb74",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10162,7 +10162,7 @@
     {
       "path": "tools/atlas-import-boundary.mjs",
       "bytes": 288873,
-      "sha256": "d389a796bb7b4f1bbddcacc64aefed8cd84667c3199813e7d7647dba151063aa",
+      "sha256": "913c77e6ac989b608563e4cf8f2b7d14564f61d6453c74f557e8e91fb2b458bf",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10689,7 +10689,7 @@
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
       "bytes": 65754,
-      "sha256": "909dd549e9295bfa44391efb0af599ab86aa7db66d5e89166c395d009f847ab8"
+      "sha256": "45c9b371059fe3dbfe75fb7548e1bcfde0eedf89725cfb90d22519e04b9dee72"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -11018,8 +11018,8 @@
     {
       "path": "packages/engine/rendering/packSharedDraws2D.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5936,
-      "sha256": "0654a341432c69846af65c5d6271ac4191e83eadcfe1ea809adc909fae909eee"
+      "bytes": 5955,
+      "sha256": "3552e04e6e9914ec6e07c5e15ace9503c0517e367f1df7a82c66067add4df216"
     },
     {
       "path": "packages/engine/rendering/packSharedMeshGeometry3D.ts",
