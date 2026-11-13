@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Staged seek for Spine instances — 2026-11-14
+
+`instance.seek` moves a Spine instance to another elapsed time. The playback is rebuilt on a private copy from the setup pose by replaying the commands and deltas the instance accepted, in slices of bounded work, and the instance is untouched until the commit. Events are suppressed by default; a forward seek may replay them, capped and delivered only after it succeeds. History is bounded and dropped when it outgrows its limits, after which a seek is refused. A faulted instance is brought back by a seek to the time it last published. The tests use original numerical fixtures; none has a physics constraint. [Guide](docs/spine-seek.md) · [#84](https://github.com/cnedwin/Egret_rebuild/issues/84)
+
 ## Hover, toggle and selection state for controls — 2026-11-14
 
 `@egret/engine/ui` gains `createHoverControl`, `createToggleControl` and `createSelectionGroup` beside the movement and action controls. They hold the state of a control an application draws: hovered by a mouse or a pen over the target or a descendant, checked, and one selected key of several with movement among the enabled items. Keys reach the same methods a pointer reaches. The hover input now names the other end of an enter and a leave (`related`) and accepts late observers. A guide documents all five controls. The checks are unit tests on a genuine Engine and a real page in headless Chromium with software WebGL2 and injected input; nothing is announced to assistive technology yet. [Guide](docs/ui-controls.md) · [#90](https://github.com/cnedwin/Egret_rebuild/issues/90)

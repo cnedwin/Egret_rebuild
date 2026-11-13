@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## Spine 实例的分阶段跳转 — 2026-11-14
+
+`instance.seek` 把 Spine 实例移到另一个已用时间。播放在一个私有副本上从设置姿态重建：按有上限的分片重放实例接受过的命令和增量，提交之前实例不受影响。事件默认不派发；向前跳转可以重放事件，数量有上限，且只在成功之后派发。历史有上限，超出后被丢弃，此后的跳转会被拒绝。出错的实例可以通过跳转到它最后发布的时间恢复。测试使用原创的数值夹具，其中没有物理约束。[指南](docs/spine-seek.md) · [#84](https://github.com/cnedwin/Egret_rebuild/issues/84)
+
 ## 控件的悬停、开关和多选一状态 — 2026-11-14
 
 `@egret/engine/ui` 在移动和动作控件之外新增 `createHoverControl`、`createToggleControl` 和 `createSelectionGroup`。它们保存应用自己绘制的控件的状态：鼠标或手写笔在目标或其后代上时的悬停、是否选中，以及若干键中被选中的一个并可在可用项之间移动。按键走的是指针所走的同一批方法。悬停输入现在会指明 enter 和 leave 的另一端（`related`），并接受后加的观察者。新增的指南说明了全部五个控件。检查包括真实 Engine 上的单元测试，以及无头 Chromium 软件 WebGL2 中注入输入的真实页面；目前不向辅助技术通报任何内容。[指南](docs/ui-controls.md) · [#90](https://github.com/cnedwin/Egret_rebuild/issues/90)

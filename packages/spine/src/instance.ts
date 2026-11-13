@@ -4,7 +4,7 @@ import * as Core from '@esotericsoftware/spine-core';
 import { EgretError } from '@egret/engine';
 import type { GameClockTick, Scope } from '@egret/engine';
 import type { SpineAsset } from './types.js';
-import type { SpineInstance, SpineInstanceOptions, SpineInstanceSnapshot, SpinePlaybackEvent, SpinePlaybackEventKind, SpineAnimationOptions, SpineQueuedAnimationOptions } from './instanceTypes.js';
+import type { SpineInstance, SpineInstanceOptions, SpineInstanceSnapshot, SpinePlaybackEvent, SpinePlaybackEventKind, SpineAnimationOptions, SpineQueuedAnimationOptions, SpineSeekRequest, SpineSeekState, SpineSeekTicket } from './instanceTypes.js';
 import { requireSpineAsset } from './assetAuthority.js';
 import { registerSpineRender } from './renderAuthority.js';
 import type { SpineDrawSink, SpineDrawCandidate, SpinePreservedEntry, SpinePreservedPlayback } from './renderAuthority.js';
@@ -15,6 +15,16 @@ type Command = { kind: 'animation'; track: number; name: string; loop: boolean; 
   | { kind: 'clear'; track: number } | { kind: 'skin'; names: readonly string[] }
   | { kind: 'transform'; x: number; y: number; scaleX: number; scaleY: number }
   | { kind: 'rate'; value: number } | { kind: 'paused'; value: boolean };
+/** What one accepted advance applied: the commands it took, then the animation time it added. */
+type HistoryRecord = { readonly kind: 'advance' | 'reset'; readonly delta: number; readonly commands: readonly Command[] };
+type Policy = { plays: number | null; completed: number; finite: boolean; duration: number; nextBoundary: number; nextPlay: number; restart: boolean };
+/** One playback: Core's objects and what this adapter keeps beside them. */
+interface World {
+  readonly skeleton: Core.Skeleton; readonly state: Core.AnimationState;
+  readonly entries: Set<Core.TrackEntry>; readonly playback: Map<Core.TrackEntry, Policy>;
+  readonly skins: readonly string[]; readonly rate: number; readonly paused: boolean; readonly events: SpinePlaybackEvent[];
+}
+const segmentsOf = (delta: number): number => delta === 0 ? 0 : Math.ceil(delta * 60);
 function fault(code: string, cause?: unknown): EgretError { return new EgretError('SPINE_INSTANCE_' + code, { cause }); }
 function refuse(code: string): EgretError { return new EgretError('SPINE_RESET_PRESERVE_' + code); }
 // Every scalar of a track entry's position. Links between entries and the mixing tables are rebuilt, not copied.
@@ -47,7 +57,14 @@ function record(value: unknown, keys: readonly string[], open: () => void): Reco
 export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: SpineInstanceOptions): SpineInstance {
   const port = requireSpineAsset(asset);
   port.authenticate(scope);
-  const settings = options === undefined ? {} : record(options, ['maxSegments', 'maxEvents', 'onEvent'], () => { port.assertOpen(); port.authenticate(scope); });
+  const reopen = (): void => { port.assertOpen(); port.authenticate(scope); };
+  const settings = options === undefined ? {} : record(options, ['maxSegments', 'maxEvents', 'onEvent', 'seek'], reopen);
+  const seekSettings = settings.seek === undefined ? {} : record(settings.seek, ['maxSegments', 'sliceSegments', 'maxEvents', 'historyAdvances', 'historyCommands'], reopen);
+  // Checked just below, before any of them is used as the number it is declared to be.
+  const seekSegments = (seekSettings.maxSegments ?? 3600) as number, sliceSegments = (seekSettings.sliceSegments ?? 120) as number, seekEvents = (seekSettings.maxEvents ?? 1024) as number;
+  const historyAdvances = (seekSettings.historyAdvances ?? 3600) as number, historyCommandLimit = (seekSettings.historyCommands ?? 1024) as number;
+  for (const [value, most] of [[seekSegments, 36000], [sliceSegments, 3600], [seekEvents, 8192], [historyAdvances, 36000], [historyCommandLimit, 8192]] as const)
+    if (!Number.isSafeInteger(value) || !number(value, 1, most)) throw fault('OPTIONS_INVALID');
   const maxSegments = settings.maxSegments ?? 8, maxEvents = settings.maxEvents ?? 1024;
   if (!Number.isSafeInteger(maxSegments) || !number(maxSegments, 1, 120) || !Number.isSafeInteger(maxEvents) || !number(maxEvents, 1, 8192)
     || settings.onEvent !== undefined && typeof settings.onEvent !== 'function') throw fault('OPTIONS_INVALID');
@@ -55,16 +72,22 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
   let listener = settings.onEvent as ((event: SpinePlaybackEvent) => void) | undefined;
   port.assertOpen(); port.authenticate(scope);
   const info = port.getSetup().info;
-  let skeleton: Core.Skeleton | undefined = new Core.Skeleton(port.getSetup().data);
-  let state: Core.AnimationState | undefined = new Core.AnimationState(new Core.AnimationStateData(skeleton.data));
+  let skeleton: Core.Skeleton | undefined, state: Core.AnimationState | undefined;
   let disposed = false, faulted = false, busy = false, admitting = false, dispatching = false, paused = false, rate = 1;
   let revision = 0, tickId = 0, elapsedSeconds = 0, clockElapsed = 0;
   let unown: (() => void) | undefined;
   let drawSink: SpineDrawSink | undefined;
   let commands: Command[] = [], events: SpinePlaybackEvent[] = [];
   let skins: readonly string[] = freeze([]);
-  const entries = new Set<Core.TrackEntry>();
-  const playback = new Map<Core.TrackEntry, { plays: number | null; completed: number; finite: boolean; duration: number; nextBoundary: number; nextPlay: number; restart: boolean }>();
+  let entries = new Set<Core.TrackEntry>();
+  let playback = new Map<Core.TrackEntry, Policy>();
+  // A seek prepares a second playback beside this one. The functions below act on whichever is entered.
+  // 'quiet' keeps no event while history is replayed; 'collect' gathers the events a forward seek asked for.
+  let capturing: 'live' | 'quiet' | 'collect' = 'live';
+  // What was applied, in order, from the setup pose. Dropped for good once it outgrows its bounds.
+  let history: HistoryRecord[] | undefined = [], historyCommands = 0;
+  let seeking: { cancel(): void } | undefined;
+  function alive(): void { if (disposed) throw fault('DISPOSED'); port.assertOpen(); }
   function assertOpen(): void { if (disposed) throw fault('DISPOSED'); if (faulted) throw fault('FAULTED'); port.assertOpen(); }
   function admit(): void { assertOpen(); if (admitting || busy && !dispatching) throw fault('REENTRANT'); }
   function inputRecord(value: unknown, keys: readonly string[]): Record<string, unknown> {
@@ -76,18 +99,30 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
   function enqueue(command: Command): void { admit(); if (commands.length >= MAX_COMMANDS) throw fault('COMMAND_LIMIT'); commands.push(command); }
   function track(value: number): void { if (!Number.isSafeInteger(value) || value < 0 || value >= MAX_TRACKS) throw fault('TRACK_INVALID'); }
   function capture(kind: SpinePlaybackEventKind, entry: Core.TrackEntry, event?: Core.Event): void {
-    if (disposed || faulted) return;
+    // A playback that a seek is preparing is not the one that faulted.
+    if (disposed || faulted && capturing === 'live') return;
     if (kind === 'dispose') { entries.delete(entry); playback.delete(entry); }
     if (kind === 'complete') { const policy = playback.get(entry); if (policy) policy.completed++; }
-    if (events.length >= eventLimit) throw fault('EVENT_LIMIT');
+    if (capturing === 'quiet') return;
+    if (capturing === 'collect' ? events.length >= seekEvents : events.length >= eventLimit) throw fault(capturing === 'collect' ? 'SEEK_EVENT_LIMIT' : 'EVENT_LIMIT');
     if (event && !Number.isSafeInteger(event.intValue)) throw fault('OUTPUT_INVALID');
     const row: SpinePlaybackEvent = freeze({ kind, track: entry.trackIndex, animation: text(entry.animation?.name ?? ''), trackTime: finite(entry.trackTime),
       ...(event ? { event: freeze({ name: text(event.data.name), time: finite(event.time), intValue: event.intValue, floatValue: finite(event.floatValue), stringValue: event.stringValue === null ? null : text(event.stringValue) }) } : {}) });
     events.push(row);
   }
-  state.addListener({ start: entry => capture('start', entry), interrupt: entry => capture('interrupt', entry), end: entry => capture('end', entry),
-    dispose: entry => capture('dispose', entry), complete: entry => capture('complete', entry), event: (entry, event) => capture('event', entry, event) });
-  skeleton.updateWorldTransform(Core.Physics.reset);
+  const coreListener = { start: (entry: Core.TrackEntry) => capture('start', entry), interrupt: (entry: Core.TrackEntry) => capture('interrupt', entry), end: (entry: Core.TrackEntry) => capture('end', entry),
+    dispose: (entry: Core.TrackEntry) => capture('dispose', entry), complete: (entry: Core.TrackEntry) => capture('complete', entry), event: (entry: Core.TrackEntry, event: Core.Event) => capture('event', entry, event) };
+  /** A playback at the setup pose, at time zero. */
+  function createWorld(): World {
+    const fresh = new Core.Skeleton(port.getSetup().data), animation = new Core.AnimationState(new Core.AnimationStateData(fresh.data));
+    animation.addListener(coreListener);
+    fresh.updateWorldTransform(Core.Physics.reset);
+    return { skeleton: fresh, state: animation, entries: new Set(), playback: new Map(), skins: freeze([]), rate: 1, paused: false, events: [] };
+  }
+  function hold(): World { return { skeleton: skeleton!, state: state!, entries, playback, skins, rate, paused, events }; }
+  function enter(world: World): void { ({ skeleton, state, entries, playback, skins, rate, paused, events } = world); }
+  function discard(world: World): void { world.state.clearListeners(); world.state.clearTracks(); world.entries.clear(); world.playback.clear(); }
+  enter(createWorld());
   function publish(): SpineInstanceSnapshot {
     const current = skeleton!, animation = state!;
     const bones = current.bones.map(bone => {
@@ -208,8 +243,47 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
       if (remaining <= Number.EPSILON * delta * (steps + 1)) remaining = 0;
     }
   }
+  /** One accepted step of a playback: its commands, then its time. */
+  function run(kind: HistoryRecord['kind'], pending: readonly Command[], delta: number): void {
+    for (const command of pending) apply(command);
+    const current = skeleton!, animation = state!, segments = segmentsOf(delta);
+    if (kind === 'reset') { animation.update(0); animation.apply(current); current.updateWorldTransform(Core.Physics.reset); }
+    else if ([...playback.values()].some(policy => policy.finite)) advanceFinite(delta);
+    else if (segments === 0) { animation.update(0); animation.apply(current); current.updateWorldTransform(Core.Physics.pose); }
+    else for (let index = 0; index < segments; index++) {
+      const step = Math.min(1 / 60, delta - index / 60);
+      current.update(step); animation.update(step); animation.apply(current); current.updateWorldTransform(Core.Physics.update);
+    }
+  }
+  function remember(kind: HistoryRecord['kind'], pending: readonly Command[], delta: number): void {
+    if (history === undefined) return;
+    if (history.length >= historyAdvances || historyCommands + pending.length > historyCommandLimit) { history = undefined; historyCommands = 0; return; }
+    history.push(freeze({ kind, delta, commands: freeze([...pending]) })); historyCommands += pending.length;
+  }
+  /** What follows a committed change of playback: the picture, then the events, each failure kept apart. */
+  function deliver(): SpineInstanceSnapshot {
+    let candidate: SpineDrawCandidate | undefined;
+    // Only committed transitions reach callers. Reentrant commands wait until the next tick.
+    const delivered = committed.events; events = []; const errors: unknown[] = [];
+    // Graphics is a separate commit domain: keep semantic time/events after a draw refusal.
+    let renderingFailed = false;
+    try { candidate = drawSink?.prepare(skeleton!); candidate?.commit(); }
+    catch (cause) {
+      renderingFailed = true; errors.push(cause);
+      try { candidate?.abort(); } catch (cleanup) { errors.push(cleanup); }
+      candidate = undefined;
+    }
+    dispatching = true;
+    let cleanupFailed = false;
+    try { try { candidate?.retire?.(); } catch (cause) { cleanupFailed = true; errors.push(cause); }
+      for (const event of delivered) { if (disposed) break; try { listener?.(event); } catch (cause) { errors.push(cause); } } }
+    finally { dispatching = false; busy = false; }
+    if (errors.length) throw new EgretError(renderingFailed ? 'SPINE_INSTANCE_RENDER_FAILED' : cleanupFailed ? 'SPINE_INSTANCE_POSTCOMMIT_FAILED' : 'SPINE_INSTANCE_LISTENER_FAILED', { cause: errors[0], cleanupErrors: errors.slice(1) });
+    return instance.getSnapshot();
+  }
   function dispose(): void {
     if (disposed) return;
+    seeking?.cancel();
     disposed = true; commands.length = 0; events.length = 0; listener = undefined;
     // No upstream disposal events are exposed after the instance lifetime ends.
     try { const sink=drawSink; drawSink=undefined; try { sink?.dispose(); } finally { state?.clearListeners(); state?.clearTracks(); } }
@@ -253,44 +327,123 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
       let nextRate = rate, nextPaused = paused;
       for (const command of commands) { if (command.kind === 'rate') nextRate = command.value; if (command.kind === 'paused') nextPaused = command.value; }
       const delta = nextPaused ? 0 : value.deltaSeconds * nextRate;
-      const segments = delta === 0 ? 0 : Math.ceil(delta * 60);
-      if (!Number.isFinite(delta) || segments > maxSegments || elapsedSeconds + delta > Number.MAX_SAFE_INTEGER) throw fault('STEP_LIMIT');
+      if (!Number.isFinite(delta) || segmentsOf(delta) > maxSegments || elapsedSeconds + delta > Number.MAX_SAFE_INTEGER) throw fault('STEP_LIMIT');
       // Prevalidation above leaves both the pending commands and committed state intact.
       busy = true;
       const pending = commands; commands = []; events = [];
-      let candidate: SpineDrawCandidate | undefined;
       try {
-        for (const command of pending) apply(command);
-        const current = skeleton!, animation = state!;
-        if ([...playback.values()].some(policy => policy.finite)) advanceFinite(delta);
-        else if (segments === 0) { animation.update(0); animation.apply(current); current.updateWorldTransform(Core.Physics.pose); }
-        else for (let index = 0; index < segments; index++) {
-          const step = Math.min(1 / 60, delta - index / 60);
-          current.update(step); animation.update(step); animation.apply(current); current.updateWorldTransform(Core.Physics.update);
-        }
+        run('advance', pending, delta);
         revision++; tickId = value.tickId; clockElapsed = value.elapsedSeconds; elapsedSeconds += delta;
         committed = publish();
       } catch (cause) {
         faulted = true; commands.length = 0; events = []; busy = false;
         throw fault('ADVANCE_FAILED', cause);
       }
-      // Only committed transitions reach callers. Reentrant commands wait until the next tick.
-      const delivered = committed.events; events = []; const errors: unknown[] = [];
-      // Graphics is a separate commit domain: keep semantic time/events after a draw refusal.
-      let renderingFailed = false;
-      try { candidate = drawSink?.prepare(skeleton!); candidate?.commit(); }
-      catch (cause) {
-        renderingFailed = true; errors.push(cause);
-        try { candidate?.abort(); } catch (cleanup) { errors.push(cleanup); }
-        candidate = undefined;
+      remember('advance', pending, delta);
+      // The seek was planned against the playback this advance has just left behind.
+      seeking?.cancel();
+      return deliver();
+    },
+    seek(request: SpineSeekRequest): SpineSeekTicket {
+      // A faulted instance may seek: rebuilding from its history is how it is brought back.
+      alive(); if (busy || admitting) throw fault('REENTRANT');
+      admitting = true;
+      let value: Record<string, unknown>;
+      try { value = record(request, ['elapsedSeconds', 'events'], alive); } finally { admitting = false; }
+      const target = value.elapsedSeconds, mode = value.events ?? 'suppress';
+      if (!number(target, 0, Number.MAX_SAFE_INTEGER) || (mode !== 'suppress' && mode !== 'replay')) throw fault('SEEK_INVALID');
+      if (seeking) throw fault('SEEK_ACTIVE');
+      if (history === undefined) throw fault('SEEK_HISTORY');
+      // Events are never played backward.
+      if (mode === 'replay' && target < elapsedSeconds) throw fault('SEEK_BACKWARD_EVENTS');
+      // The plan: every accepted step that had ended by the target, a part of the step the target
+      // falls inside, and beyond the present, steps as long as an ordinary advance may be. A step
+      // that begins exactly at the target is not taken: its commands were applied after that moment.
+      const plan: HistoryRecord[] = [];
+      // Sums of the same deltas may differ in their last bits. A target that close to the end of a
+      // step is that end: otherwise rounding alone would decide whether the next commands are applied.
+      const slack = (): number => Number.EPSILON * Math.max(1, target) * (plan.length + 2);
+      let reached = 0;
+      for (const step of history) {
+        if (reached + step.delta > target + slack()) {
+          if (target - reached > slack()) { plan.push(freeze({ kind: step.kind, delta: target - reached, commands: step.commands })); reached = target; }
+          break;
+        }
+        plan.push(step); reached += step.delta;
       }
-      dispatching = true;
-      let cleanupFailed = false;
-      try { try { candidate?.retire?.(); } catch (cause) { cleanupFailed = true; errors.push(cause); }
-        for (const event of delivered) { if (disposed) break; try { listener?.(event); } catch (cause) { errors.push(cause); } } }
-      finally { dispatching = false; busy = false; }
-      if (errors.length) throw new EgretError(renderingFailed ? 'SPINE_INSTANCE_RENDER_FAILED' : cleanupFailed ? 'SPINE_INSTANCE_POSTCOMMIT_FAILED' : 'SPINE_INSTANCE_LISTENER_FAILED', { cause: errors[0], cleanupErrors: errors.slice(1) });
-      return instance.getSnapshot();
+      const known = plan.length;
+      const stride = (maxSegments as number) / 60, none: readonly Command[] = freeze([]);
+      // A remainder that is only rounding is not a step of its own.
+      while (target - reached > slack()) {
+        const delta = Math.min(stride, target - reached);
+        plan.push(freeze({ kind: 'advance', delta, commands: none })); reached += delta;
+      }
+      const totalSegments = plan.reduce((sum, step) => sum + segmentsOf(step.delta), 0);
+      if (totalSegments > seekSegments || plan.length > historyAdvances) throw fault('SEEK_LIMIT');
+      const from = revision;
+      let world: World | undefined = createWorld(), phase: SpineSeekState = 'staged', next = 0, completedSegments = 0;
+      function end(result: SpineSeekState): void {
+        phase = result;
+        if (world) { discard(world); world = undefined; }
+        if (seeking === ticket) seeking = undefined;
+      }
+      /** The instance must be as it was when the seek was planned. */
+      function current(): void {
+        if (phase !== 'staged' && phase !== 'ready') throw fault('SEEK_' + (phase === 'committed' ? 'COMMITTED' : phase === 'cancelled' ? 'CANCELLED' : 'FAILED'));
+        try { alive(); } catch (cause) { end('cancelled'); throw cause; }
+        if (busy || admitting) throw fault('REENTRANT');
+      }
+      const ticket: SpineSeekTicket & { cancel(): void } = freeze({
+        get state() { return phase; },
+        targetSeconds: target, totalSegments,
+        get completedSegments() { return completedSegments; },
+        step() {
+          current();
+          if (phase === 'ready') return true;
+          const live = hold();
+          busy = true; enter(world!);
+          try {
+            for (let budget = sliceSegments, first = true; next < plan.length; first = false) {
+              const step = plan[next]!, cost = segmentsOf(step.delta);
+              // A slice always moves, and never past its budget otherwise.
+              if (!first && cost > budget) break;
+              capturing = mode === 'replay' && next >= known ? 'collect' : 'quiet';
+              run(step.kind, step.commands, step.delta);
+              next++; budget -= cost; completedSegments += cost;
+            }
+            world = hold();
+          } catch (cause) {
+            world = hold(); enter(live); capturing = 'live'; busy = false;
+            end('failed');
+            throw cause instanceof EgretError && cause.code === 'SPINE_INSTANCE_SEEK_EVENT_LIMIT' ? cause : fault('SEEK_FAILED', cause);
+          }
+          enter(live); capturing = 'live'; busy = false;
+          if (next === plan.length) phase = 'ready';
+          return phase === 'ready';
+        },
+        commit() {
+          current();
+          if (phase !== 'ready') throw fault('SEEK_NOT_READY');
+          const live = hold(), before = elapsedSeconds;
+          busy = true; enter(world!);
+          try { revision++; elapsedSeconds = target; committed = publish(); }
+          catch (cause) {
+            // Nothing was replaced: the instance stands where it stood.
+            enter(live); revision = from; elapsedSeconds = before; busy = false;
+            end('failed');
+            throw fault('SEEK_FAILED', cause);
+          }
+          world = undefined; discard(live);
+          // A playback rebuilt from history carries no fault of the one it replaces.
+          faulted = false;
+          history = plan; historyCommands = plan.reduce((sum, step) => sum + step.commands.length, 0);
+          end('committed');
+          return deliver();
+        },
+        cancel() { if (phase === 'staged' || phase === 'ready') end('cancelled'); },
+      });
+      seeking = ticket;
+      return ticket;
     },
   });
   try { unown = port.own(scope, instance); port.assertOpen(); }
@@ -352,6 +505,8 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
       // and is dropped here. Each entry receives its policy only afterwards, so that no play is counted twice.
       animation.apply(current);current.updateWorldTransform(Core.Physics.reset);
       for(const [entry,row] of rebuilt)if(row.policy)playback.set(entry,{...row.policy});
+      // This playback did not begin at the setup pose: there is nothing to replay it from.
+      history=undefined;historyCommands=0;
       events=[];rate=source.rate;paused=source.paused;tickId=source.tickId;clockElapsed=source.clockElapsed;elapsedSeconds=source.elapsedSeconds;
       revision=source.revision+1;committed=publish();
     }catch(cause){faulted=true;commands=[];events=[];throw fault('RESET_FAILED',cause);}
@@ -363,9 +518,8 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
     busy=true;
     try{
       const pending=commands;commands=[];events=[];
-      for(const command of pending)apply(command);
-      state!.update(0);state!.apply(skeleton!);skeleton!.updateWorldTransform(Core.Physics.reset);
-      events=[];revision++;committed=publish();
+      run('reset',pending,0);
+      events=[];revision++;committed=publish();remember('reset',pending,0);
     }catch(cause){faulted=true;commands=[];events=[];throw fault('RESET_FAILED',cause);}
     finally{busy=false;}
   },attach(displayScope,sink){
