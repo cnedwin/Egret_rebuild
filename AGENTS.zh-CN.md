@@ -102,7 +102,7 @@ B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-
 <!-- SS1-PRIVILEGED-UNIT-POLICY-BEGIN -->
 ## SpriteSheet 原始操作单元
 
-`tests/spritesheet-fault.test.mjs` 与 `tests/spritesheet-fault-child.mjs` 组成隔离的 SS1 原始操作故障单元。子进程仅固定 `packages/runtime/dist/Bitmap.js` 与 `packages/runtime/dist/spriteSheet.js` 的身份；其单模块加载钩子仅可在内存中替换 Bitmap 唯一的原始操作捕获块，用于计数和一项指派故障／回调。SpriteSheet 经公共 `@egret/engine` 外观加载，磁盘字节保持不变。唯一的直接私有导入是子进程在公共外观加载之前导入已固定身份的 Bitmap 模块，以先取得真实原始类，再临时替换其原型的 `sourceRect` setter 与 `dispose` 方法。
+`tests/spritesheet-fault.test.mjs` 与 `tests/spritesheet-fault-child.mjs` 组成隔离的 SS1 原始操作故障单元。子进程在启动时读取一次 `packages/runtime/dist/Bitmap.js` 与 `packages/runtime/dist/spriteSheet.js` 构建后的身份，并在整个运行期间要求两者保持不变；它不记录任何更早的身份。其单模块加载钩子仅可在内存中替换 Bitmap 唯一的原始操作捕获块，用于计数和一项指派故障／回调。SpriteSheet 经公共 `@egret/engine` 外观加载，磁盘字节保持不变。唯一的直接私有导入是子进程在公共外观加载之前导入 Bitmap 模块，以先取得真实原始类，再临时替换其原型的 `sourceRect` setter 与 `dispose` 方法。
 
 每个用例须先在新子进程完成真实、无钩子的基线，再使用独立指派子进程，并在恢复后使用另一个新的无钩子基线子进程。注销钩子，在普通调用者／Scope／Engine 清理之前恢复原型描述符，并在每个子进程前后核对源码、编译产物、配置、单元与权限文件的完整字节以及属于当前克隆的包别名。注销钩子不卸载模块缓存。尚未取得句柄的构造故障不得虚构 Bitmap 退役；真实构造成功后发生裁剪／终止故障，只使用已捕获的原始 disposer，并保留主要原因与次要清理错误。这些单元不增加产品导出或依赖，不授权任意私有导入，也不授权普通示例／公开行为测试私有导入；不能证明物理 OOM、GC、安全性或渲染器验收。
 <!-- SS1-PRIVILEGED-UNIT-POLICY-END -->
@@ -237,3 +237,12 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/web
 `tests/display-container-add-child-at-verified.test.mjs` 是带标签的 UNIT。它唯一的私有导入是构建后的 `packages/runtime/dist/displayTreeState.js`：读取 `captureChildInsertion` 以观察接收者的树是否被遍历，并用容器的当前列表调用 `publishUiTree`，使按索引插入所记住的结果作废。所有的树都来自公开 SDK 构造的真实 Engine、Scope 和显示对象；该单元不伪造任何畸形边。
 
 `tests/shared-frame-golden.test.mjs` 是 CPU UNIT，适用已有的对构建后 `engine/dist/rendering` 辅助模块的许可。它导入 `prepareSharedDraws2D.js`、`packSharedDraws2D.js`、`preparedSharedBatches2D.js` 和 `preparedBatches2D.js`，按 Host 的方式在通过公开 Engine 捕获的帧上驱动它们，并与捕获和准备路径改动之前记录的摘要比较。会改变已记录数值的改动需要单独评审；不得为了让改动通过而刷新摘要。这些摘要证明的是 CPU 输出相同，不证明 GPU 执行或速度。
+
+## 证据通道
+
+拿某个包的源文件或构建产物和记录下来的字节做比较的检查，属于证据。它永远不决定一个改动能否合并。`tools/lib/evidence-lane.mjs` 列出这些工具和测试文件；`tools/verify.mjs` 与 `tools/test.mjs` 不包含它们，`node tools/evidence.mjs` 运行它们并报告哪些仍然成立。参见[证据通道](knowledge-base/Cns/docs/evidence-lane.md)。
+
+- 不要把这类检查加进合并序列，也不要为了让证据工具重新成立而给它加后继层。更新证据是一次单独评审的动作，否则就让它保持过期。
+- 重放已成为证据的十四个功能，其对外类型行为由 `tools/check-type-lanes.mjs` 和 `tests/types/type-lanes.json` 保持。只有在确实打算改变对外类型时才运行 `--record`，并审阅每一行变化。
+- 过期的证据检查既不是失败，也不是通过。永远不要把它报告成其中任何一种。
+- 非产品文件（第三方声明、冻结的编译器输入、台账）的哈希仍按原有规则。
