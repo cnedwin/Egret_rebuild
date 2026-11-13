@@ -1112,66 +1112,14 @@ try{
 }
 // NS1_TYPES_END
 
-// SEQP_TYPES_BEGIN
-// Delegate only after every retained type gate above has completed.
-await import('./sequence-playback-types.mjs');
-// SEQP_TYPES_END
+// The consumers of thirteen features were replayed here against recorded product bytes. Their
+// configurations are now compiled by tools/check-type-lanes.mjs, which records what the compiler
+// prints and no file identity; the byte-bound replays are evidence, run by tools/evidence.mjs.
 
 // SPRITESHEET_TYPES_BEGIN
 // Run the mandatory SpriteSheet lane only after every retained type gate has completed.
 await import('./spritesheet-types.mjs');
 // SPRITESHEET_TYPES_END
-
-// NLB_TYPES_BEGIN
-// Retain every previous strict lane before checking the new display leaf.
-await import('./nine-slice-bitmap-types.mjs');
-// NLB_TYPES_END
-
-// DCA_TYPES_BEGIN
-// Run both mandatory public consumer lanes after every retained strict type owner.
-await import('./display-container-remove-children-types.mjs');
-// DCA_TYPES_END
-
-// CGI_TYPES_BEGIN
-// Run the direct-child query consumers only after every retained strict type lane.
-await import('./display-container-child-index-types.mjs');
-// CGI_TYPES_END
-
-// ADI_TYPES_BEGIN
-// Run indexed insertion consumers after every retained strict type owner.
-await import('./display-container-add-child-at-types.mjs');
-// ADI_TYPES_END
-
-// AO_TYPES_BEGIN
-// Check inherited anchor scalars after every retained strict type owner.
-await import('./display-anchor-offsets-types.mjs');
-// AO_TYPES_END
-
-// BITMAP_BUTTON_TYPES_BEGIN
-// Preserve every retained strict lane before checking the optional Button contract.
-await import('./bitmap-button-types.mjs');
-// BITMAP_BUTTON_TYPES_END
-
-// LINEAR_LAYOUT_TYPES_BEGIN
-// Run the optional planner consumers only after every retained strict type lane.
-await import('./linear-layout-types.mjs');
-// LINEAR_LAYOUT_TYPES_END
-
-// BITMAP_RESOURCE_SLOT_TYPES_BEGIN
-// Preserve every retained strict lane before checking resource-slot consumers.
-await import('./bitmap-resource-slot-types.mjs');
-// BITMAP_RESOURCE_SLOT_TYPES_END
-
-// BITMAP_BINDING_TICKET_TYPES_BEGIN
-// Preserve retained strict lanes before replaying borrowed binding-ticket consumers.
-await import('./bitmap-binding-ticket-types.mjs');
-// BITMAP_BINDING_TICKET_TYPES_END
-
-// Preserve retained strict lanes before the explicit atlas-layout extension.
-await import('./atlas-frame-types.mjs');
-
-// Preserve every retained strict lane before the optional atlas importer.
-await (await import('./atlas-import-types.mjs')).runAtlasImportTypes();
 
 // Preserve every existing strict lane before the shared-profile consumers.
 await import('./shared-render-types.mjs');
@@ -1179,6 +1127,3 @@ await import('./shared-webgl2-types.mjs');
 
 // Preserve every retained strict lane before the seven M1.5 public consumer pairs.
 await import('./resource-recovery-types.mjs');
-
-// Preserve every retained lane before the optional sequence RESET consumers.
-await import('./sequence-reset-types.mjs');

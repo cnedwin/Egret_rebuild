@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Real Git changes prove conservative selection across all contributor states.
-import test from 'node:test';
+import nodeTest from 'node:test';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -14,6 +14,38 @@ import {isolatedGitEnvironment} from '../../tools/contribution-metadata.mjs';
 import {world3dBoundaryPrevious} from '../../tools/prepare-check-maintenance.mjs';
 import {m12FullDirtyCapturePrevious,world3dCompilerFixturePrevious} from '../../tools/prepare-compiler-maintenance.mjs';
 import {projectWorld3dPackage} from '../../tools/lib/world3d-boundary.mjs';
+// Cases that replay recorded tool or product bytes are evidence: they hold only for the bytes the
+// maintenance tools were written against. This file registers every other case. Its sibling
+// incremental-checks-evidence.test.mjs imports it with ?lane=evidence and registers only these.
+const evidenceLane=new URL(import.meta.url).searchParams.get('lane')==='evidence';
+const evidenceCases=new Set([
+ 'inline policy mode is explicit on preparation and freshness checking',
+ 'sealed inline declarations preserve digest strength source spans and conditional review limits',
+ 'M1.4 compiler maintenance admits only the exact appended WebGL2 checker revision',
+ 'any registered gate byte change refuses opt-in extraction and invalidates default freshness',
+ 'condition disagreements remain observations and never silently replace history',
+ 'inline fixture drift and missing inputs preserve raw comparisons without diagnostic execution',
+ 'M1.2 compiler maintenance keeps both complete sequence source pairs and saved diagnostics',
+ 'M1.4 strict bootstrap preserves complete sequence history and refuses unrelated bytes',
+ 'M1.5 strict bootstrap admits nine exact revisions and preserves both predecessor stages',
+ 'M1.5 inline maintenance preserves delegate and scene revisions with exact historical inverses',
+ 'M1.2 strict bootstrap keeps nine exact current sources and reverses only its one helper literal',
+ 'M3.1 current compiler metadata proves exact UI source inverses and refuses unknown wrapper bytes',
+ 'M3.3 keyboard strict preparation authenticates nine current wrappers before retained extraction',
+ 'M3.1 key-navigation compiler successor restores exact history and refuses inserted or unrelated drift',
+ 'M3.4 theme compiler successor retains historical extraction and rejects exact-receipt drift',
+ 'M2.4 RESET compiler successor preserves theme history and rejects unrelated or duplicate drift',
+ 'authored scene type input keeps the previous compiler observation and rejects altered owners',
+ 'M1.2 NineSlice source mapping is exact to owner history and current bytes',
+ 'M1.2 capture source mapping keeps twelve original strict owners and exact raw identity',
+ 'M2.4 finite current source inverses retain complete originals and reject drift',
+]);
+const registered=new Set();
+const test=(name,...rest)=>{
+ if(registered.has(name))throw Error('Duplicate case name: '+name);
+ registered.add(name);
+ return evidenceCases.has(name)===evidenceLane?nodeTest(name,...rest):undefined;
+};
 function fixture(){
  const root=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'egret incremental ')));
  const git=(...args)=>{const r=spawnSync('git',args,{cwd:root,encoding:'utf8',env:{...isolatedGitEnvironment(),GIT_CONFIG_GLOBAL:path.join(root,'.git','isolated-global.conf'),GIT_CONFIG_NOSYSTEM:'1'}});assert.equal(r.status,0,r.stderr);return r.stdout.trim();};
@@ -2176,7 +2208,9 @@ function withMergeRunner(body){
   const prepush=fs.readFileSync(new URL('../../tools/prepush.mjs',import.meta.url),'utf8');
   put('tools/prepush.mjs',prepush);
   put('tools/verify.mjs',fs.readFileSync(new URL('../../tools/verify.mjs',import.meta.url),'utf8'));
-  const gates=['check-repository-hygiene','contribution-metadata','check-publication','build','check-test-baselines','check-boundaries','check-spine-content','spritesheet-boundary','sequence-playback-boundary','browser-png-boundary','bitmap-resource-slot-boundary','bitmap-binding-ticket-boundary','resource-scene-boundary','atlas-frame/boundary','atlas-import-boundary','check-types','browser-png-types','test','verify-spine-f2-source'];
+  // The sequence reads the evidence lane to refuse it; the lane itself is never a child gate here.
+  put('tools/lib/evidence-lane.mjs',fs.readFileSync(new URL('../../tools/lib/evidence-lane.mjs',import.meta.url),'utf8'));
+  const gates=['check-repository-hygiene','contribution-metadata','check-publication','build','check-test-baselines','check-boundaries','check-spine-content','resource-scene-boundary','atlas-frame/boundary','check-type-lanes','check-types','test','verify-spine-f2-source'];
   function child(gate){
    const setup="import fs from 'node:fs';fs.appendFileSync('calls.jsonl',JSON.stringify({gate:"+JSON.stringify(gate)+",args:process.argv.slice(2)})+String.fromCharCode(10));if(process.env.EGRET_FIXTURE_FAILURE==="+JSON.stringify(gate)+")process.exit(23);";
    if(gate==='build')return setup+"fs.mkdirSync('dist',{recursive:true});fs.writeFileSync('dist/ready','controlled runner output');\n";
@@ -2206,7 +2240,7 @@ test('complete merge checks build once before publication from an empty output t
   const baseline=rows.findIndex(v=>v.gate==='check-test-baselines');assert.ok(build<baseline&&baseline<publication);
   assert.deepEqual(rows[baseline].args,['--no-build']);
   assert.ok(rows.some(v=>v.gate==='publication-test'),r.stdout+'\n'+JSON.stringify(rows));
-  for(const gate of ['check-types','browser-png-types','test','verify-spine-f2-source','headless','nine-slice-bitmap-headless','knowledge-base'])assert.ok(rows.some(v=>v.gate===gate),gate);
+  for(const gate of ['check-type-lanes','check-types','test','verify-spine-f2-source','headless','nine-slice-bitmap-headless','knowledge-base'])assert.ok(rows.some(v=>v.gate===gate),gate);
   assert.deepEqual(rows.find(v=>v.gate==='check-repository-hygiene').args,args.includes('--committed')?['--committed']:[]);
   assert.equal(rows.some(v=>v.gate==='contribution-metadata'),args.includes('--integrated'));
  });
@@ -2879,7 +2913,6 @@ function withBaselineRunner(action){
   put('tools/check-test-baselines.mjs',fs.readFileSync(new URL('../../tools/check-test-baselines.mjs',import.meta.url)));
   put('tools/build.mjs',"import fs from 'node:fs';fs.writeFileSync('built','once');if(process.env.EGRET_BASELINE_BUILD_FAIL)process.exit(23);\n");
   const definitions=[
-   ['tests/b1-webgpu-verifier.test.mjs','S07 the finite native collector admits the actual current emitted public closure'],
    ['tests/boundaries.test.mjs','S3D1 canonical boundary policy baseline admits every retained surface'],
    ['tests/project-boundaries.test.mjs','strict public project consumers and unsuppressed diagnostic locations run through the actual type gate'],
   ];
@@ -2889,8 +2922,8 @@ function withBaselineRunner(action){
   action({root,put,definitions,run});
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 }
-test('shared baseline selector builds once and executes only its three required controls',()=>withBaselineRunner(({run})=>{
- const r=run();assert.equal(r.status,0,r.stdout+r.stderr);assert.match(r.stdout,/Shared test baselines PASS \(3\/3\)/);
+test('shared baseline selector builds once and executes only its two required controls',()=>withBaselineRunner(({run})=>{
+ const r=run();assert.equal(r.status,0,r.stdout+r.stderr);assert.match(r.stdout,/Shared test baselines PASS \(2\/2\)/);
  assert.doesNotMatch(r.stdout+r.stderr,/MATRIX_MUST_NOT_RUN/);
 }));
 test('shared baseline no-build path requires actual prepared output and reuses it',()=>withBaselineRunner(({run,put,root})=>{
@@ -3014,4 +3047,9 @@ test('canonical geometry graph owners retain the exact sequence predecessor and 
   }
   assert.equal(m.verifyMaintenanceProposal(f.root,current),true);
  }finally{f.close();}
+});
+
+// A renamed evidence case would otherwise leave both lanes without notice.
+if(evidenceLane)nodeTest('every evidence case of this file is registered exactly once',()=>{
+ assert.deepEqual([...evidenceCases].filter(name=>!registered.has(name)),[]);
 });
