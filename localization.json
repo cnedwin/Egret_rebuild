@@ -323,8 +323,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "e7a45cd40b3cde349ba4e113787a7c6dee5069999621c8423b70278eeecbd9eb",
-      "zhSha256": "9d55512211afa9b5d4fa9f83c4b70a45aee592807a0e41195643848832aecf00"
+      "enSha256": "b4c1900c1d56318961fd10f3cf3601725762bfe028e81d168904da20208b5033",
+      "zhSha256": "e20e2741f245d0c9e485221c6d084951b9eef0a51ebf7ad58e8661a65c0823b1"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "2586cd97284d98957395b894d0ec95684fc0078fc77eb65dcda195a913b94b49",
-      "zhSha256": "de368a61ec6f12981a7bd131da604c4b8cbabdae2e1fc8a38b001f3d599741c5"
+      "enSha256": "418dfa857d761d2700b19da9ab8a354fffd923f45ef0bd30e6bca9c313ffd52a",
+      "zhSha256": "73ef02beb5c807edb9944939a4069248cfc736017451e0383ee7e049189cbfc4"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -540,8 +540,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "e130fa9702d635a84c598128f0d0eaad6e55db9c835895b94f4efe895ad81b7c",
-      "zhSha256": "2dd9015565d0799c53c24a87f1edc2e64141b3834f669703835e14c2ef82ef69"
+      "enSha256": "9f596ab7e1ab7166a3cbe3a51271d5394ad7bb71f54755bdf148ce84befa331c",
+      "zhSha256": "c28502010a8212c36618ff03b0228246d7f44db70888171500585748060255ce"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -603,8 +603,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "7412442eabb05476bf6b5c9fb22a968524d58af0adb951c62a96491dda2e2836",
-      "zhSha256": "77aa94394d46bb07853a352db28b1973ba80c81697d199e38476c44e0e1fa2ca"
+      "enSha256": "f52045668c1bbabf908077954c4fbf2dc39ad456201e9d883f2f6b8f34557b01",
+      "zhSha256": "a323abb6cc8154c6dd46e3b2bfd556ad450dc69fd242977a0b1c22fef269d38b"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -1016,8 +1016,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "3daf0d757be8494267b47f26cb7da0015f242c5da8a4de21b15b426d11c39bc4",
-      "zhSha256": "12a2f1fa59b9a2a671090ae161b59e1fc976d54571741a0b9433b9662d2c946f"
+      "enSha256": "36f6a3922fe2112554ce14b1d29d32b1b25e76a9a181694071ab893814dfe451",
+      "zhSha256": "29f41efebb1dc11d57e673587fd3669d4651461f2ac32dd285ce50b0b11ab196"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -1100,8 +1100,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "4d8f2ffa6b37e00b1a76e2364312a44d5dd62747a370e53565a9382c67ba8d08",
-      "zhSha256": "5aeae87f8c52cd423e524b9f7e6b17a39a48acd7bef88ef729d4541a5e0a4c72"
+      "enSha256": "047c0553b056ef0b9b164ade96038e0f43598812164537ee842b538dc4562891",
+      "zhSha256": "55a35d8fc1d76d76efe54a8b91e9ac7d7554734e89ac6ac08b13fa685c9b77fd"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1935,8 +1935,8 @@
       "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
       "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
       "kind": "public_reading",
-      "enSha256": "37f89adaacd3296e277bb81fe4e5825009705657c75c2b06563257a17af5564b",
-      "zhSha256": "096abf7d7a1856f4190f47e669109793cb2dccabc7c50cc82c16656f378b9ce3"
+      "enSha256": "b66190a168d266dab966147fe6881bd3e9a98caf7dba69912d5d36fd4e38a72d",
+      "zhSha256": "aa0cee2af086bc41312cd73432f7b9e6b68b56bcaa11c6099d33192025e5a1d8"
     },
     {
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
@@ -2173,8 +2173,8 @@
       "en": "knowledge-base/en/docs/spine-reset-slot.md",
       "zh": "knowledge-base/Cns/docs/spine-reset-slot.md",
       "kind": "public_reading",
-      "enSha256": "efee1c7d06038a98a705f4402b45b313cd728945e23f81437f4ad2f0cf8d37ed",
-      "zhSha256": "7c30cb80abab13a656e0d833088c8f5838f1822cb698eeb7e88acc3743d1f776"
+      "enSha256": "07b7882dd358f078c05de156863454813b9f391c9ac79f87d88c85611280baab",
+      "zhSha256": "0a46d0657b69f2a399ba75a5e07442c0253d00a40109b8d3f7cc83035352d889"
     },
     {
       "en": "examples/spine-reset/README.md",
@@ -2334,8 +2334,8 @@
       "en": "knowledge-base/en/docs/text-input.md",
       "zh": "knowledge-base/Cns/docs/text-input.md",
       "kind": "public_reading",
-      "enSha256": "c8622347f7da17595f444ddf009be00ca544f7a807a85cb6dc4adcb4cf5a94d6",
-      "zhSha256": "17fef5d1bd18c6eef46324d8b28ff86cf4f8e9d7bd3128018719be98717961bb"
+      "enSha256": "4c02551ce895a56bf512463c6d6edb4059009d667304fcbfe0478dd0c44c5a15",
+      "zhSha256": "2f95391885f1b41a88e9a917140435076ee13c074e56cb85fefbfdd558efa532"
     },
     {
       "en": "examples/text-input/README.md",
@@ -2348,8 +2348,8 @@
       "en": "knowledge-base/en/docs/clean-consumer.md",
       "zh": "knowledge-base/Cns/docs/clean-consumer.md",
       "kind": "public_reading",
-      "enSha256": "118c2d2c4bf46fa680e79e7ea094d0f6d2257c9689ec53e24e0b6ee8890b5a75",
-      "zhSha256": "9ce346f7b522ec61147302786bca42a27239d196f05e064e73f49df0f63d6847"
+      "enSha256": "d5dd0bc72b4aee42cd3de12143bcaecdabae248d6bc6ab2be1c479ecbc5af2f3",
+      "zhSha256": "90ec1601b8ab34104dd55e64aed57cc2d894b56e27dab78b5ff294a6ff5becc8"
     },
     {
       "en": "knowledge-base/en/docs/pointer-hover.md",
@@ -2369,22 +2369,36 @@
       "en": "knowledge-base/en/docs/ui-controls.md",
       "zh": "knowledge-base/Cns/docs/ui-controls.md",
       "kind": "public_reading",
-      "enSha256": "7986404d2aabbd2aeac7880e914fd2b7e5eea8c0ffae48b0fed725eaf91821df",
-      "zhSha256": "4be0c68720969720f785ba8c6e731d0958fc9759370acc56bfe0097c68b10700"
+      "enSha256": "6e919a2b190d6e52c6db03504fee1873711657dfe3e3a1e8939458d948e33ed1",
+      "zhSha256": "143b4bbdc6a32d9daddfa694ac8e80b5cc0c34765ddb113a98250da54b02c713"
     },
     {
       "en": "examples/ui-controls/README.md",
       "zh": "examples/ui-controls/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "ea44d5cff0ca79d13e0c5d888a755c11bfd3e6859f04a5d5cd476f36b76cb317",
-      "zhSha256": "bc7004490ba5f675f3212281a0b493899be721ce94e70c7c030a2196db7fcba1"
+      "enSha256": "c55b35815315f8728a0d07119ca820982e92bc2aff2a529c70cbcff4c491163c",
+      "zhSha256": "eeb931f375a0ba78049703a2e1de4eb11152e8e44d299015c4645a2dd5659116"
     },
     {
       "en": "knowledge-base/en/docs/spine-seek.md",
       "zh": "knowledge-base/Cns/docs/spine-seek.md",
       "kind": "public_reading",
-      "enSha256": "83aa4e404127ba84499d4993873d3eecb6cfeaed996ee4d7bccbc924d3c6277d",
-      "zhSha256": "3165540eaeed4dad2df9a49d00646a0b01ac37ed9af430c36bc8ca0d8621d3ea"
+      "enSha256": "836d7265e52f33e56d2ffc4037fb36db4a4544e1d9ff2d37798daac448ccbe9c",
+      "zhSha256": "8afae0bba56d626927ad397b2e47b4d43e072260f995dcad45620e26b91303db"
+    },
+    {
+      "en": "knowledge-base/en/docs/ui-semantics.md",
+      "zh": "knowledge-base/Cns/docs/ui-semantics.md",
+      "kind": "public_reading",
+      "enSha256": "2a27b6ee7889de47060d977d5321d63abf87c0a5c5b8a4ae2178a362436be93e",
+      "zhSha256": "8ab743dd768df252c4e72bda542efa383766da269082d7f4778b2dc9ccc5906c"
+    },
+    {
+      "en": "examples/ui-text-field/README.md",
+      "zh": "examples/ui-text-field/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "581bf1dec447557183d28c4c2ad5ed96d5515d36862c06ce8d3650c404d61f85",
+      "zhSha256": "57e702a357673d7ee493c515818d2ec906850f12b9632d800b089ae5dc90d220"
     }
   ],
   "registries": [
@@ -2982,11 +2996,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "ac132ffb91a8d220e5f06ef7919fa8ac911f4a19d467d1ecce2c471ffb69478d"
+      "sha256": "a40a9097d88e8e9be87aedd7b8e04e5f46bdbdbf7f8780a3eb7dc8df4ec7bbb6"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "85235371d8742ffa607f503286b43d0346a60e9837a7c12e4e6ecf8fb90de061"
+      "sha256": "fcb012676246b96097e4f66749c7b838cad34947f80719c85d8629e537da3bd2"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3622,7 +3636,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "979e36d0ffc8213f8cc364d0b5b2cd25c66f1eb08fdfa5ff62cc490aa214eadd"
+      "sha256": "540691476f71ca8bb5f765114e7720d7eb41645218d7045cd153ae12b2181a00"
     },
     {
       "path": "tools/incremental-dependencies.mjs",
@@ -3878,7 +3892,7 @@
     },
     {
       "path": "packages/engine/src/ui/index.ts",
-      "sha256": "789509b2c4be4a0864c3a06e1da9f6d3198c2216afc94e2e4d666636764c3383"
+      "sha256": "0067a3c6f47c15c3647c9a1c6003249ba5cd4e233fc4936d099068d90e4fb86a"
     },
     {
       "path": "packages/engine/src/ui/types.ts",
@@ -4070,7 +4084,7 @@
     },
     {
       "path": "packages/spine/src/instance.ts",
-      "sha256": "ad6151767c747b42ca69f4646740e8f354a53e6fe9d8f82dd2b5956037f0de99"
+      "sha256": "eadacccf191c39b67acb9b398e82ac1d34b1790cd0f961413d6823abe66b96fb"
     },
     {
       "path": "packages/spine/src/instanceTypes.ts",
@@ -4078,7 +4092,7 @@
     },
     {
       "path": "packages/spine/src/renderAuthority.ts",
-      "sha256": "ab73a776252a4b3d77fc490735b3c5d31f1f0bf9294aa3931a8de4183a0f1517"
+      "sha256": "8fe6e9c3d8fd7e4ea995f1485bb96cc444c98b60f01b1eb83b2cb1b47ba0b165"
     },
     {
       "path": "packages/spine/src/displayTypes.ts",
@@ -4938,11 +4952,11 @@
     },
     {
       "path": "tools/verify-clean-consumer.mjs",
-      "sha256": "8231af5051a93cc3a9ab247bc13ed4c786aca97559c728476b8604752258952a"
+      "sha256": "d65997d447e0b8691fa98148437d73102e8a079ad4d08c30115dbef6bb6c0159"
     },
     {
       "path": "tests/clean-consumer.test.mjs",
-      "sha256": "a35f7c0ce3285f8f1196788191aa85ec226de6c07585cf03923e349000078a65"
+      "sha256": "585c211374aaacbe5af5e7903047ddd949388a1866a4ce777b4181f54107d8e2"
     },
     {
       "path": "examples/layout-headless.mjs",
@@ -4958,7 +4972,7 @@
     },
     {
       "path": "packages/spine/test/preserve.test.mjs",
-      "sha256": "80fbb904eced63326214856411ce22ab04028ad8233e217c254cb0e32a38a772"
+      "sha256": "ba68e04fb4de730a2fc3e53dd9fd265e07f81b8a8250a085410948933a122230"
     },
     {
       "path": "examples/spine-reset/verify-preserve.mjs",
@@ -5010,11 +5024,11 @@
     },
     {
       "path": "examples/ui-controls/main.mjs",
-      "sha256": "0acf9e379bb45c028ffe51c10e7a95fa2b0c32d1fbcd9d4bade52c09c0db4c64"
+      "sha256": "77c7eb786f3429a6895b380c97944d7c8fffe66c6819ebb58407b829ea3a92e8"
     },
     {
       "path": "examples/ui-controls/verify.mjs",
-      "sha256": "98f835086939b6fda0fcdf3def5dfa6969db33fd601d08306aada06bccf61de2"
+      "sha256": "2c04b89dcc9fb138f62ba12a6df36a85f1a2ca53e1817bbada8adb8c51e42b54"
     },
     {
       "path": "packages/engine/src/ui/scrollControl.ts",
@@ -5026,7 +5040,63 @@
     },
     {
       "path": "packages/spine/test/seek.test.mjs",
-      "sha256": "3b0bf892560c9d808eddb051e1a367d3dbb91a34f7f47a25dc740818bc387223"
+      "sha256": "7cba530fe61c22abe67fe506204b5f7c224688ee8a2bc7cb9ca1d82736fee1b8"
+    },
+    {
+      "path": "tools/verify-clean-consumer-page.mjs",
+      "sha256": "9d05e66d5360f43fa92fa2ca8dd327c4887a79bafb7f3055c760ac8d1c539526"
+    },
+    {
+      "path": "packages/spine/test/physicsFixture.mjs",
+      "sha256": "713eb15756e8eb459d22204b67384e01e7caeadcefcad51972cdc8f9cca355b6"
+    },
+    {
+      "path": "packages/spine/test/physics.test.mjs",
+      "sha256": "00ac1ff9a177a4d002e52c7ac2def3f11566b5fbd1a358419c77d008f9201547"
+    },
+    {
+      "path": "packages/engine/src/semanticTypes.ts",
+      "sha256": "b0a9ef801e1fb08e2ab05b1abea7a8850eea2cd4dd3e85b6274e9aa974f3a844"
+    },
+    {
+      "path": "packages/engine/src/semanticTree.ts",
+      "sha256": "497e3a07932c2dcd060ec741e791f0d4002d1dce7474ab0c726f6f074b1dd6fa"
+    },
+    {
+      "path": "packages/engine/src/semantics.ts",
+      "sha256": "006308e7655c6601ce4d661bdbd7f611534fb2988706a3dfd65eaeca4a9e38af"
+    },
+    {
+      "path": "packages/engine/web/BrowserSemantics.ts",
+      "sha256": "01b86768c26d7e52406cbc5591be8dbd34aabbc3f165ba605068bdb354d4a1bc"
+    },
+    {
+      "path": "packages/engine/web/semantics.ts",
+      "sha256": "5ae7444b426ed91dccab114bed17187f1b13b32d21b30ee617ac69e659639e18"
+    },
+    {
+      "path": "tests/ui-semantics.test.mjs",
+      "sha256": "73b259828e5f75925053a0819bc8496a12b6ec2b30317590ea8c14a8683a736b"
+    },
+    {
+      "path": "tests/browser-semantics.test.mjs",
+      "sha256": "987cea70f8afaa5bf1f2e390331556b8cb6d925b72ff2d585761f901b167b6f8"
+    },
+    {
+      "path": "packages/engine/src/ui/textFieldControl.ts",
+      "sha256": "73864861bd13f876d0b8c4c3b90c02b1d7c986110a4a213e1e93a72a02388508"
+    },
+    {
+      "path": "tests/ui-text-field.test.mjs",
+      "sha256": "205a5cfe0d773998c739029e147fa18dc4f9d809a0fd5f33eb3ac83d21015ce8"
+    },
+    {
+      "path": "examples/ui-text-field/main.mjs",
+      "sha256": "6ded9ea19d27224eb624903ae32bda70c872a7a335a6f8dee4cee4ffb1015b24"
+    },
+    {
+      "path": "examples/ui-text-field/verify.mjs",
+      "sha256": "8c19c13482b5c4077516874f10b9d0b53e2e32ec6d634b4ecb1fde6bab77a2d7"
     }
   ],
   "historicalSemanticReview": {
