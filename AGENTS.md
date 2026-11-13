@@ -219,7 +219,7 @@ Only `tests/browser-text-input.test.mjs` may define its test-owned page stand-in
 
 ## Hover and wheel
 
-The optional `@egret/engine/input/hover` entry exports `createHoverInput` and fourteen erased types. The optional `@egret/engine/web/hover` entry exports `createBrowserHoverInput` and two erased types. The browser module imports the logical entry and the error type and nothing private, and no other entry has either factory. Follow the [guide](knowledge-base/en/docs/pointer-hover.md).
+The optional `@egret/engine/input/hover` entry exports `createHoverInput` and fifteen erased types. The optional `@egret/engine/web/hover` entry exports `createBrowserHoverInput` and two erased types. The browser module imports the logical entry and the error type and nothing private, and no other entry has either factory. Follow the [guide](knowledge-base/en/docs/pointer-hover.md).
 
 Only `tests/browser-hover.test.mjs` may define its test-owned page stand-in under the global names `window`, `document` and `reportError`, and it restores them after each case. The stand-in is the test's own objects; no native prototype is intercepted. These cases state what the adapter does with the events it is given. `examples/pointer-hover/verify.mjs` drives a mouse, a pen, a finger and the wheel through Chromium's protocol in a real page; a person at a real mouse, pen or trackpad, hardware GPUs, WebGPU, Safari and Firefox remain unchecked.
 

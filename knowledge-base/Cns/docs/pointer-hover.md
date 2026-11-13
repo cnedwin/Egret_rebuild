@@ -25,14 +25,16 @@ list.on(hover.events.wheel, event => { if (scrollBy(event.payload.deltaY)) event
 
 | 事件 | 时机 | 载荷 |
 | --- | --- | --- |
-| `events.enter` | 指针移到目标上 | 点 |
+| `events.enter` | 指针移到目标上 | 点；从另一个目标移来时还有 `related` |
 | `events.move` | 指针移动后仍在同一目标上 | 点 |
-| `events.leave` | 目标不再被悬停 | 点和 `reason` |
+| `events.leave` | 目标不再被悬停 | 点、`reason`；移向另一个目标时还有 `related` |
 | `events.wheel` | 滚轮在目标上转动 | 滚轮点。可取消。 |
 
 四种事件都会冒泡，容器能听到子对象上发生的事。enter、move 和 leave 不可取消。点包含 `pointerId`、`pointerType`（`'mouse'` 或 `'pen'`）、舞台单位的 `globalX` 和 `globalY`、`timestamp`、为本输入所有观察排序的 `sequence`，以及映射时所用的 `viewportRevision`。点是冻结的。
 
-选项里的 `onHover` 在每次 enter、move 和 leave 的目标路径之前运行。leave 时它给出失去悬停的对象，即使该对象已离开舞台；事件只在目标仍可到达时派发。
+属于同一次移动的 enter 和 leave 互相指明对方：leave 的载荷带有 `related`，即指针要去的对象；enter 的载荷带有 `related`，即指针离开的对象。没有另一端时就没有 `related`。
+
+选项里的 `onHover` 在每次 enter、move 和 leave 的目标路径之前运行。leave 时它给出失去悬停的对象，即使该对象已离开舞台；事件只在目标仍可到达时派发。`hover.observe(listener)` 可以在之后添加监听器。每条通知在其目标路径运行之后告知它，监听器自身的失败不会影响输入。
 
 leave 会说明原因：
 
@@ -95,5 +97,5 @@ Scope 释放和 Engine 关闭会结束输入：正在悬停的对象以 `dispose
 
 - 没有人使用真实的鼠标、手写笔或触控板操作过。所有输入都是注入的。
 - 没有在硬件 GPU、WebGPU、已安装的 Edge、Safari 和 Firefox 上运行。省略第三个参数时，验证工具会启动已安装的 Edge。
-- 托管 UI 控件的悬停皮肤尚未接入此输入。
+- `@egret/engine/ui` 的 `createHoverControl` 把此输入转成控件的悬停状态（[指南](ui-controls.md)）。托管 UI 根的布局节点和行尚未使用它。
 - 小游戏和原生宿主没有适配器，可以直接驱动 `createHoverInput`。

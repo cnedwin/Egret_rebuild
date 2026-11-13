@@ -27,6 +27,11 @@ export interface HoverPoint extends HoverSample {
   readonly sequence: number;
   readonly viewportRevision: number;
 }
+/** A point of an enter or a leave, with the other end of the movement when there is one. */
+export interface HoverTransition extends HoverPoint {
+  /** On an enter, what the pointer left in the same movement. On a leave, what it is going to. */
+  readonly related?: DisplayObject;
+}
 export interface WheelSample {
   readonly globalX: number;
   readonly globalY: number;
@@ -49,6 +54,8 @@ export interface HoverNotification {
   /** On a leave, the object that is no longer hovered, even when it has left the stage. */
   readonly target: DisplayObject;
   readonly reason?: HoverLeaveReason;
+  /** On an enter, what the pointer left in the same movement. On a leave, what it is going to. */
+  readonly related?: DisplayObject;
 }
 export interface WheelNotification {
   readonly point: WheelPoint;
@@ -70,9 +77,9 @@ export interface HoverInputOptions {
   readonly onWheel?: (notification: WheelNotification) => boolean | void;
 }
 export interface HoverInputEvents {
-  readonly enter: EventType<HoverPoint>;
+  readonly enter: EventType<HoverTransition>;
   readonly move: EventType<HoverPoint>;
-  readonly leave: EventType<HoverPoint & {readonly reason: HoverLeaveReason}>;
+  readonly leave: EventType<HoverTransition & {readonly reason: HoverLeaveReason}>;
   readonly wheel: EventType<WheelPoint>;
 }
 export interface HoverState {
@@ -98,6 +105,12 @@ export interface HoverInput {
   sync(): void;
   setViewportRevision(revision: number): void;
   setInteractive(interactive: boolean): void;
+  /**
+   * Every enter, move and leave from now on, each after its target path has run. A failure of
+   * the listener is kept from the input and from the other listeners. Returns a function that
+   * removes it.
+   */
+  observe(listener: (notification: HoverNotification) => void): () => void;
   /**
    * Runs the listener once when the input has closed, after what was hovered has been left. A
    * listener added later runs at once. Returns a function that removes it.

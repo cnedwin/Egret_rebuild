@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Hover, toggle and selection state for controls — 2026-11-14
+
+`@egret/engine/ui` gains `createHoverControl`, `createToggleControl` and `createSelectionGroup` beside the movement and action controls. They hold the state of a control an application draws: hovered by a mouse or a pen over the target or a descendant, checked, and one selected key of several with movement among the enabled items. Keys reach the same methods a pointer reaches. The hover input now names the other end of an enter and a leave (`related`) and accepts late observers. A guide documents all five controls. The checks are unit tests on a genuine Engine and a real page in headless Chromium with software WebGL2 and injected input; nothing is announced to assistive technology yet. [Guide](docs/ui-controls.md) · [#90](https://github.com/cnedwin/Egret_rebuild/issues/90)
+
 ## Hover and wheel routing — 2026-11-14
 
 Two optional entries route hover and the wheel over the display tree. `@egret/engine/input/hover` is the logical input; `@egret/engine/web/hover` listens on the canvas and shares it with the contact adapter. A target learns that a mouse or a pen entered, moved over or left it, with the reason of each leave, and a wheel goes to what is under it with a page policy the application chooses. The checks are unit tests on a genuine Engine and a real page in headless Chromium with software WebGL2 and injected input. A real mouse, pen or trackpad, hardware GPUs, WebGPU, Safari and Firefox were not run, and the managed controls do not use it yet. [Guide](docs/pointer-hover.md) · [#89](https://github.com/cnedwin/Egret_rebuild/issues/89)
