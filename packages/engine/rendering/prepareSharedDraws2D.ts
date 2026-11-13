@@ -153,8 +153,9 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
             }
             accept(points);
         }
-        upload=add(upload,44*vertexReservation+128,Number.MAX_SAFE_INTEGER);
+        upload=add(upload,52*vertexReservation+128,Number.MAX_SAFE_INTEGER);
         entries.push({kind:'draw',command,material,region,pageIndex,polygons,vertexReservation});
     }
-    return {effects,frame,width,height,entries,budget,geometryBytes,pageBytes,upload:upload+effects.uniformBytes};
+    // The region table is uploaded with the frame: 48 bytes for each of its regions.
+    return {effects,frame,width,height,entries,budget,geometryBytes,pageBytes,upload:upload+48*frame.regions.length+effects.uniformBytes};
 }
