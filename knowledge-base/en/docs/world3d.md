@@ -105,7 +105,7 @@ renderer.pollFrameTimings();
 console.table(frame.passes);
 ```
 
-Totals include the color, shadow, depth prepass, outline mask and post-process stages. Submitted triangles include instances and fullscreen draws. Pass sizes describe the render attachments. Post-processing reports the final output size. Shadow passes report the atlas size and the actual edge of each map or cascade. `renderer.info` keeps its per-render semantics.
+Totals include the color, shadow, depth prepass, outline mask and post-processing stages (`postprocess`). Submitted triangles include instances and fullscreen draws. Pass sizes describe the render attachments. Post-processing reports the final output size. Shadow passes report the atlas size and the actual edge of each map or cascade. `renderer.info` keeps its per-render semantics.
 
 CPU submission time includes render-list work and driver stalls. Per-stage CPU timing covers operations within that stage. GPU timing is opt-in and asynchronous. Re-read `pass.gpuTime` after polling to see the result or its status. Missing counters report unsupported. Disjoint and lost-context samples are discarded. Sampling is bounded and never waits for the GPU. [WebGL2 timer query specification](https://registry.khronos.org/webgl/extensions/EXT_disjoint_timer_query_webgl2/)
 

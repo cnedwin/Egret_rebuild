@@ -2,7 +2,7 @@
 import {World3DError} from '../../rendering/world3d/core3D.js';
 
 export type World3DViewKind = 'main' | 'reflection' | 'offscreen';
-export type World3DPassKind = 'color' | 'shadow' | 'depth-prepass' | 'outline-mask' | 'post-process';
+export type World3DPassKind = 'color' | 'shadow' | 'depth-prepass' | 'outline-mask' | 'postprocess';
 export type World3DGpuTiming =
     | {readonly status: 'ready'; readonly milliseconds: number}
     | {readonly status: 'disabled' | 'unsupported' | 'pending' | 'unavailable' | 'disjoint' | 'context-lost'};

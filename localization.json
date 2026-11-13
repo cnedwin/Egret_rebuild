@@ -2341,8 +2341,8 @@
       "en": "knowledge-base/en/docs/world3d.md",
       "zh": "knowledge-base/Cns/docs/world3d.md",
       "kind": "public_reading",
-      "enSha256": "f27210b63d2a837e4686a0221e236e511e568d07e26357e6f8c63e138419149e",
-      "zhSha256": "175e3ee4c54eb2ba6da5ffd97f5afbf5f9df49e214596ace400bc66436443ff6"
+      "enSha256": "7b3835793ca708293282b5532d8043e7f3ee321ab2bb45fb1d973adc77e39935",
+      "zhSha256": "f78520b3705e364380e04fd5ce3d873960535dff05469b967b2f92c1e3bd7e40"
     },
     {
       "en": "examples/world3d/README.md",
@@ -4983,7 +4983,7 @@
     },
     {
       "path": "packages/engine/web/world3d/WebGL2Renderer3D.ts",
-      "sha256": "29c3e045c7dcd1b7147e96279ba882eccf958cbdb70f683317976832a9ed2378"
+      "sha256": "a6cde8340097486d86aa5575068914aadc3275d31e84233e188dcd9942edb4bb"
     },
     {
       "path": "packages/engine/web/world3d/WebGPURenderer3D.ts",
@@ -5027,7 +5027,7 @@
     },
     {
       "path": "tools/lib/world3d-boundary.mjs",
-      "sha256": "acbf0fee5d32d08ee98197a9084b1fce965f649e44da5a2961ecd8b7ad0584e3"
+      "sha256": "73ffb3772fd5e4a1f0d1309ae167d29a52d2ffd3df35eb783f2f63fbfa086771"
     },
     {
       "path": "packages/engine/rendering/world3d/Curves3D.ts",
@@ -5231,7 +5231,7 @@
     },
     {
       "path": "packages/engine/web/world3d/webGL2FrameMetrics3D.ts",
-      "sha256": "6538d08136a09e7c6e96ad4cfa53397791bffff5cca0030ecb292d38a2173257"
+      "sha256": "a58b0c7e7f1dda5e18efd3461a2068f2091165e4390932d192c72e4e4b80d04c"
     }
   ],
   "historicalSemanticReview": {

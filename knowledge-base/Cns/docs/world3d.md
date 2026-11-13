@@ -103,7 +103,7 @@ renderer.pollFrameTimings();
 console.table(frame.passes);
 ```
 
-总数汇总颜色、阴影、深度预通道、轮廓遮罩和后处理阶段。提交的三角形包含实例倍数和全屏绘制。阶段尺寸对应渲染附件，后处理记录最终输出尺寸。阴影阶段提供图集尺寸，以及每张阴影图或级联实际使用的边长。`renderer.info` 保留原有单次渲染的统计口径。
+总数汇总颜色、阴影、深度预通道、轮廓遮罩和后处理（`postprocess`）阶段。提交的三角形包含实例倍数和全屏绘制。阶段尺寸对应渲染附件，后处理记录最终输出尺寸。阴影阶段提供图集尺寸，以及每张阴影图或级联实际使用的边长。`renderer.info` 保留原有单次渲染的统计口径。
 
 CPU 提交耗时包含渲染列表处理和驱动等待。分阶段 CPU 耗时只统计各阶段内部操作。GPU 计时需显式启用，查询异步完成。轮询后重新读取 `pass.gpuTime` 可获得结果或状态。缺少计时计数器时返回不支持。计时失效和上下文丢失的样本会被丢弃。采样有数量上限，且不会等待 GPU 完成。 [WebGL2 计时查询规范](https://registry.khronos.org/webgl/extensions/EXT_disjoint_timer_query_webgl2/)
 

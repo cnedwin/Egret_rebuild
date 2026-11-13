@@ -320,7 +320,7 @@ export class WebGL2Renderer3D implements Renderer3D {
             finally { camera.layerMask = saved.layerMask; scene.overrideMaterial = saved.override; scene.background = saved.background; this.shadowsEnabled = saved.shadows; Object.assign(this.info, counted); }
         }
         const sceneEntry = this.#resources.target(post.scene);
-        const postPass = this.#frameMetrics.begin(this.#viewKind, this.#viewIndex, 'post-process', width, height);
+        const postPass = this.#frameMetrics.begin(this.#viewKind, this.#viewIndex, 'postprocess', width, height);
         try {
             const draws = post.run(sceneEntry.color, sceneEntry.depthTexture, maskTexture, postViewFromCamera3D(camera), width, height, output, target !== undefined,
                 this.postProcess, target?.format === 'rgba16f' ? 'none' : this.toneMapping, this.#emptyVao ??= gl.createVertexArray());
