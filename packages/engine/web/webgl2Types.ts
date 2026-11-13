@@ -90,6 +90,22 @@ export interface SharedWebGL2LayerStatus {
     readonly readyLayers: number;
     readonly pendingLayers: number;
 }
+export type SharedWebGL2TimingPhase = 'texture-prepare' | 'texture-upload' | 'working-framebuffer-validation' | 'default-framebuffer-validation' | 'submit' | 'fence-poll' | 'completion-error-query' | 'retire' | 'sync-delete-error-query';
+export interface SharedWebGL2TimingSample {
+    readonly generation: number;
+    /** Null before a frame is assigned a submission serial. */
+    readonly serial: number | null;
+    readonly phase: SharedWebGL2TimingPhase;
+    readonly startMs: number;
+    readonly durationMs: number;
+}
+export interface SharedWebGL2FrameTiming {
+    readonly totals: Readonly<Record<SharedWebGL2TimingPhase, {readonly count: number; readonly totalMs: number; readonly maxMs: number}>>;
+    /** Latest 2,048 samples in completion order. Staged samples without a serial are generation-only. */
+    readonly recent: readonly SharedWebGL2TimingSample[];
+    readonly dropped: number;
+}
+
 export interface SharedWebGL2Host extends SharedRenderHostAdapter {
     readonly surface: HTMLCanvasElement;
     start(): Promise<void>;
@@ -100,6 +116,8 @@ export interface SharedWebGL2Host extends SharedRenderHostAdapter {
     requestReadback(): Promise<SharedWebGL2Readback>;
     getStatus(): WebGL2HostStatus;
     getSharedStatus(): SharedWebGL2HostStatus;
+    /** Bounded CPU elapsed timings, or null when measurement is disabled. */
+    getSharedFrameTiming(): SharedWebGL2FrameTiming | null;
     getSessionStatus(): SharedDeviceSessionStatus<WebGL2HostFailure>;
     stageSharedFrame(frame: SharedRenderFrame2D, options?: SharedFrameUploadOptions): SharedFrameUpload;
     setTimeout(callback: () => void, delayMs: number): () => void;
