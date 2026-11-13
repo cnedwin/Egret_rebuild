@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/spine/test/seek.test.mjs",
+      "originRole": "First-party behaviour tests of staged seek on Spine instances, against straight runs of the same scripts; original numerical fixtures; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/spine-seek.md",
+      "originRole": "First-party guide to seeking a Spine instance; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/spine-seek.md",
+      "originRole": "First-party Chinese guide to seeking a Spine instance; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/spine-seek.md",
+      "zh": "knowledge-base/Cns/docs/spine-seek.md"
+    }
+  ]
+}

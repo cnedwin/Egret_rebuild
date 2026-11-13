@@ -7,7 +7,7 @@ Plan and current status · 2026-11-14 · Reviewed main [06182ab](https://github.
 | Package | Implemented | Remaining |
 | --- | --- | --- |
 | M2.1 #83 | PNG/atlas/sequence build/runtime groups, multipage and font artifacts/sets; optional Spine JSON assets | Binary/variant products and selected-version rights/export/reference qualification |
-| M2.2 #84 | Independent Spine players, tracks/queues, combined skins and finite plays; sequence controls | Complete selected-version semantics and bounded seek/replay |
+| M2.2 #84 | Independent Spine players, tracks/queues, combined skins and finite plays; sequence controls; [staged seek with bounded history and forward event replay](spine-seek.md) | Complete selected-version semantics, physics-bearing seek references and checkpoints |
 | M2.3 #85 | Copied ordered shared display under egret-shared-linear/1 on WebGPU/WebGL2 | Complete attachment/clip/tint/blend/sampling references |
 | M2.4 #86 | Editable 20-Spine/200-sequence example, Spine and sequence RESET, compatible sequence state preservation, and selected desktop/Android recovery | Compatible Spine state preservation and final lifecycle and performance qualification |
 
@@ -34,7 +34,7 @@ These are current source observations, not new test executions.
 | AssetManager, AssetLease, Scope and manifestAssetGroup | Shared acquisition, dependency expansion, cancellation and scheduling | New admitted providers/artifacts; no second asset manager |
 | SharedMaterial2D/SharedRenderFrame2D, sharedFrameCapture and backend Hosts | Owned ordered geometry, complete color/page/clip identity and completion authority | Demonstrated graphics gaps only; no silent legacy color reinterpretation |
 | Current prepared subtrees, resource/sequence/Spine RESET slots and shared device session | Explicit candidate capture/CPU publication, separate Host staging and device generations | State-preserving replacement and complete lifecycle qualification |
-| Explicit game clock, SequencePlayer/controller and Spine instance | Current time, events, finite plays and failure isolation | Remaining bounded seek/replay policy and selected-version references |
+| Explicit game clock, SequencePlayer/controller and Spine instance | Current time, events, finite plays, failure isolation and staged seek | Checkpoints for long-lived instances and selected-version references |
 | knowledge-base/experiments/spine-* | Immutable historical fixtures, sources, licenses and original limits | Reference only; implemented product integration lives in packages/spine, not renamed experiments |
 
 The four foundation packages retain their dependency direction. The implemented optional @egret/spine depends on public Egret boundaries and official Core 4.3.13; default Engine imports do not depend on it. Project/build tools remain outside runtime dependencies.
@@ -107,7 +107,7 @@ Device recovery reconstructs only device-owned state. Preserve instance clocks, 
 | @egret/spine: createSpineResetSlot | Reset-policy candidate preparation and CPU publication; Host staging/submission remain separate |
 | @egret/engine/animation | Existing sequence controller and RESET slot; old sampling APIs retained |
 
-See their contracts for exact signatures and limits. Future binary/variant, seek/replay and preserve-mode interfaces are not exported by this plan. M2.1 owns artifact/diagnostic admission; M2.2 owns replay/history/failure; M2.3 owns draw/color publication; M2.4 owns compatible replacement. Freeze only a changed boundary in its existing Issue/PR before a dependent consumer merges; no second registry or whole-core freeze.
+See their contracts for exact signatures and limits. Seek and replay are exported as described in [seeking a Spine instance](spine-seek.md), and preserve mode in the [reset slot](spine-reset-slot.md#keeping-the-playback); future binary/variant interfaces are not exported by this plan. M2.1 owns artifact/diagnostic admission; M2.2 owns replay/history/failure; M2.3 owns draw/color publication; M2.4 owns compatible replacement. Freeze only a changed boundary in its existing Issue/PR before a dependent consumer merges; no second registry or whole-core freeze.
 
 M3 consumes asset identities, bounds, explicit hit shapes, clocks/events and replacement notifications. M4 reuses real consumers and the support matrix, not a separate demo implementation.
 

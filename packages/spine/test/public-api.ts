@@ -67,3 +67,19 @@ resetSlot.requestPreserving({policy:'reset',version:'v3',loader,assetId:'e_json'
 // @ts-expect-error The asset is required.
 resetSlot.requestPreserving({version:'v3',loader});
 resetSlot.dispose();
+
+import type {SpineSeekLimits,SpineSeekRequest,SpineSeekState,SpineSeekTicket} from '@egret/spine';
+const seekLimits:SpineSeekLimits={maxSegments:3600,sliceSegments:120,maxEvents:1024,historyAdvances:3600,historyCommands:1024};
+const seekable:SpineInstance=createSpineInstance(asset,scope,{seek:seekLimits});
+const seekRequest:SpineSeekRequest={elapsedSeconds:1.5,events:'replay'},seekTicket:SpineSeekTicket=seekable.seek(seekRequest);
+const seekReady:boolean=seekTicket.step(),seekState:SpineSeekState=seekTicket.state,seekWork:number=seekTicket.totalSegments-seekTicket.completedSegments+seekTicket.targetSeconds;
+const sought:SpineInstanceSnapshot=seekTicket.commit();seekTicket.cancel();
+void [seekReady,seekState,seekWork,sought.elapsedSeconds,seekable.seek({elapsedSeconds:0})];
+// @ts-expect-error A seek names the time it goes to.
+seekable.seek({events:'replay'});
+// @ts-expect-error Events are suppressed or replayed, nothing else.
+seekable.seek({elapsedSeconds:1,events:'reverse'});
+// @ts-expect-error The progress of a seek is read, not written.
+seekTicket.completedSegments=0;
+// @ts-expect-error The limits are numbers.
+createSpineInstance(asset,scope,{seek:{maxSegments:'3600'}});
