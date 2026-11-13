@@ -57,3 +57,18 @@ The remaining desktop successor completed on 2026-10-11: textured WebGPU passed 
 ## Complete final-source verification
 
 On 2026-10-11, the complete mandatory prepush command passed with **2,228/2,228 core tests**, **52/52 publication tests**, complete build/type/boundary checks, closed headless ownership and zero pending timers. Knowledge-base validation reported **153 records, 237 Markdown files and zero issues**. All three reviewed source/test identities remained unchanged. Independent finite source, English/Chinese meaning and saved-evidence review reported zero open findings; its original cutoff remains separate. This factual documentation successor changes no product code. The Git push hook must still repeat the mandatory checks; remote delivery and full product acceptance are not inferred.
+
+## Fixed 2D workloads
+
+`node tools/bench-2d.mjs` runs fixed 2D workloads in Node against the built SDK, with no browser and no GPU. It times the CPU work of a frame before anything reaches the graphics API, in the order a host performs it: capturing the display list into a shared frame record, then preparing that record as clipped geometry, vertex rows and draw batches. It also times edits to a container among 1,000, 4,000 and 16,000 siblings, and the creation, attachment, property access, event dispatch and disposal of display objects. `--json` prints the records as JSON and `--quick` runs a shorter pass.
+
+One run on the development machine, before any of the changes this tool was written to measure, recorded these figures. They describe that machine and that run; they are not acceptance thresholds.
+
+| Workload | Capture | Clipped geometry | Vertex rows | Draw batches | Draws |
+| --- | --- | --- | --- | --- | --- |
+| 1,000 filled rectangles | 3.80 ms | 12.11 ms | 5.25 ms | 1.51 ms | 1 |
+| 5,000 filled rectangles | 13.11 ms | 25.17 ms | 23.17 ms | 2.73 ms | 1 |
+| 20,000 filled rectangles | 81.85 ms | 83.08 ms | 69.62 ms | 9.26 ms | 1 |
+| 5,000 bitmaps showing 100 frames of one atlas | 23.69 ms | 19.43 ms | 18.62 ms | 0.65 ms | 5,000 |
+
+Capture cost the same whether every rectangle moved or none did. 5,000 bitmaps showing 200 frames of one atlas were refused with `FRAME_IMAGE_BUDGET`. `addChildAt(child, 0)` cost about 0.5 ms among 1,000 siblings, 1.7 ms among 4,000 and 7.7 ms among 16,000, while `addChild`, `setChildIndex` and `removeChild` stayed between 1 and 5 microseconds.

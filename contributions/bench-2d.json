@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/bench-2d.mjs",
+      "originRole": "First-party fixed 2D workloads for measuring frame capture, frame preparation and display-tree edits; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

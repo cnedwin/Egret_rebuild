@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "2a452de7edbd88a2afc8402910b9a0375a4e616c26ad3a8d90d0cfe441b28524",
-      "bytes": 408113,
+      "sha256": "3932b0c146d7aafc20f6b2548726ec0d23855e38c1ea6b67d34b656e97f38ff6",
+      "bytes": 408245,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -7542,14 +7542,14 @@
     {
       "path": "knowledge-base/en/docs/display-tree-scaling.md",
       "originRole": "AI-assisted independent first-party bounded display-tree documentation; no external implementation copied or new dependency.",
-      "bytes": 7699,
-      "sha256": "1b5b109e362e0acb1ac07855be9e7b820d1671be3f728e434d8a94a740ac9d3c"
+      "bytes": 9200,
+      "sha256": "e642bbb5d7707d84834fcbbbb3976514d5ae44709b5127ad911e39b0564af28c"
     },
     {
       "path": "knowledge-base/Cns/docs/显示树扩展性.md",
       "originRole": "AI-assisted independent first-party bounded display-tree documentation; no external implementation copied or new dependency.",
-      "bytes": 6811,
-      "sha256": "dc9fcd3a028c53459db1400d3663958127b8b8a6793b539ef0d8d0fd8cda8e98"
+      "bytes": 8349,
+      "sha256": "99365bbe210d3e183f83e5ebff636d321aa3db7dfaa2e89a74547d8fa0b19ec7"
     },
     {
       "path": "examples/canvas-text/README.md",
@@ -17176,6 +17176,18 @@
       "originRole": "Independently authored first-party Egret World3D scene graph, renderer, example, focused validation or bilingual guidance; architecture informed by publicly documented Three.js concepts with no borrowed implementation; AI-assisted; Apache-2.0.",
       "bytes": 5518,
       "sha256": "df65b85719f20c31cc059d1b985684679e36dee375c0a8b06f533672d9b5fe33"
+    },
+    {
+      "path": "tools/bench-2d.mjs",
+      "originRole": "First-party fixed 2D workloads for measuring frame capture, frame preparation and display-tree edits; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 9238,
+      "sha256": "73cc8eda701cf622fd9f2f84abc9af6ccfde60f643a059131d29675492374cbb"
+    },
+    {
+      "path": "contributions/bench-2d.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 320,
+      "sha256": "7b17099f4c00c9346cbcac813394f3fdd997de708205913ec2f8ae2fd3710f08"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
