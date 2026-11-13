@@ -151,6 +151,30 @@ await scenario('a finger presses and does not hover', { ...devices['Pixel 7'] },
   assert.equal(now.entered, 0); assert.deepEqual(now.hovers, []); assert.equal(now.buttons.north.presses, 1);
 });
 
+await scenario('the keys of the list scroll it, and at its end they scroll the page', { viewport: { width: 1000, height: 600 } }, async page => {
+  const press = async name => { await page.keyboard.press(name); await page.waitForTimeout(120); };
+  const scrolled = () => page.evaluate(() => scrollY);
+  await page.focus('#scene'); await press('Tab');
+  // The browser may have brought the canvas into view when it took the focus: the page is measured from there.
+  const rest = await scrolled();
+  let now = await read(page);
+  assert.equal(now.focus, 'list'); assert.equal(now.offset, 0);
+  await press('ArrowDown'); assert.equal((await read(page)).offset, 28);
+  await press('PageDown'); assert.equal((await read(page)).offset, 140);
+  await press('ArrowUp'); assert.equal((await read(page)).offset, 112);
+  await press('PageUp'); assert.equal((await read(page)).offset, 0);
+  await press('End'); now = await read(page);
+  assert.equal(now.offset, now.limit); assert.equal(now.thumb.start + now.thumb.length, 140);
+  await press('Home'); assert.equal((await read(page)).offset, 0);
+  // The arrows across the list are not its keys, and none of the keys it took moved the page.
+  await press('ArrowRight'); assert.equal((await read(page)).offset, 0);
+  assert.equal(await scrolled(), rest);
+  // At its end the list leaves the key to the page.
+  await press('End'); assert.equal(await scrolled(), rest);
+  await press('ArrowDown'); now = await read(page);
+  assert.equal(now.offset, now.limit); assert.ok(await scrolled() > rest, 'the page scrolls with the key the list left');
+});
+
 await scenario('suspending, resuming and disposing', { viewport: { width: 1000, height: 600 } }, async page => {
   await move(page, 'north');
   await page.evaluate(() => globalThis.__egretPointerHoverExample.suspend());

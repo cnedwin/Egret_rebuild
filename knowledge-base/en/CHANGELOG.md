@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## The usual keys of a control — 2026-11-14
+
+`createControlKeys` in `@egret/engine/ui` binds the usual keys of a drawn control at the display object that holds the focus: Space or Enter, released, for a button, a switch and a text field; the arrow keys, Home and End for a selection; those and Page Up and Page Down for a scroll position; the arrows and the W A S D positions for a movement. A held key is reported so that it can be painted, a hold that loses the focus activates nothing, a key taken nearer the focus is left alone, and a scroll at its end leaves the key to the page. The three control examples use it. Checked on a genuine Engine and in headless Chromium with software WebGL2 on a US layout; no physical keyboard, other layout or screen reader was run. Part of #90. [Guide](docs/ui-controls.md#keys)
+
 ## Physics under seek — 2026-11-14
 
 An original Spine fixture with a physics constraint now stands beside the seek tests. Six cases show that the constraint is simulated and remembers what came before, pin the rule that cuts an advance into sixtieths with the short remainder last, and find a seek equal to a straight run with physics: at the end of every step, inside every step, beyond the present and through an instance made by the reset slot. No code changed. The fixture is not an Editor export and no independent reference was used. [Guide](docs/spine-seek.md#physics)

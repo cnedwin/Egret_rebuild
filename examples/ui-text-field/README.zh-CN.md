@@ -28,7 +28,7 @@ node tools/serve-canvas.mjs
 
 `main.mjs` 为画布创建一个 `createBrowserTextInput`，并把它作为 `editor` 交给两个文本框。每个 `createTextFieldControl` 通过 `field()` 被问到它的框在舞台上的位置，以及平台输入框应有的外观。引擎绘制已提交的文字，并在控件处于 `editing` 时把它隐藏，因为此时文字由平台输入框显示。
 
-按键来自 `@egret/engine/web/keyboard`，交给获得焦点的显示对象。文本框在回车或空格松开时用 `edit()` 打开，这样这个键不会被输入进去。编辑结束时，页面把应用的焦点交还给这个文本框。
+按键来自 `@egret/engine/web/keyboard`，交给获得焦点的显示对象。一个 `'textField'` 类型的 `createControlKeys` 在回车或空格松开时用 `edit()` 打开文本框，这样这个键不会被输入进去。编辑结束时，页面把应用的焦点交还给这个文本框。
 
 `createUiSemantics` 描述这个表单：一个 group、两个带文字的 textbox 和一个 button。文本框在编辑期间，它的节点被隐藏，因为此时平台输入框就是这个文本框自己的元素，同一内容不应被朗读两次。
 

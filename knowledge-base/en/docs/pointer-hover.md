@@ -89,7 +89,7 @@ A sample or a wheel that arrives while another is being routed is refused with `
 | --- | --- |
 | [`tests/hover-input.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/hover-input.test.mjs), 16 cases | The logical input on a genuine Engine: routing, reasons, wheel, revisions, suspension, reentry, failure and disposal |
 | [`tests/browser-hover.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/browser-hover.test.mjs), 15 cases | The adapter against a test-owned stand-in for the page, a strict TypeScript consumer and the exact exports |
-| [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs), 8 scenarios | A real page in headless Chromium with software WebGL2: mouse, pen, touch and wheel injected through the automation protocol |
+| [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs), 9 scenarios | A real page in headless Chromium with software WebGL2: mouse, pen, touch and wheel injected through the automation protocol. One scenario checks the [keys of the list](ui-controls.md#keys) |
 
 Fifty-five faults were written into the built modules one at a time. The unit tests caught fifty-two. The other three change nothing a caller can see: a second eligibility check after a pick that already applies it, and two releases of references after close.
 

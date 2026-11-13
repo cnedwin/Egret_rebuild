@@ -4,7 +4,7 @@
 // method the platform has. A press, a key and a request of assistive technology all begin the same edit.
 import { createEngineForProfile, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
 import { createTextRasterCache, createTextField } from '@egret/engine/text';
-import { createActionControl, createTextFieldControl } from '@egret/engine/ui';
+import { createActionControl, createControlKeys, createTextFieldControl } from '@egret/engine/ui';
 import { createUiSemantics } from '@egret/engine/ui/semantics';
 import { createCanvasTextRasterProvider } from '@egret/engine/web/text';
 import { createBrowserTextInput } from '@egret/engine/web/text-input';
@@ -82,16 +82,14 @@ const save = createActionControl({ input: pointer, target: savePart.sprite, onPr
   status.textContent = 'Saved / 已保存'; redraw();
 } });
 
-// Keys: Tab moves between the three. Enter opens a field or presses the button when it is released,
-// and the key down is taken so that the page does not act on it.
+// Keys: Tab moves between the three. A binding opens a field or presses the button when Enter or Space
+// is released, and takes the key down so that the page does not act on it.
 const targets = { name: entries[0].part.sprite, motto: entries[1].part.sprite, save: savePart.sprite };
 const registrations = Object.fromEntries(Object.entries(targets).map(([id, target]) => [id, keyboard.registerTarget({ id, target })]));
-const activations = { name: () => { byKey = true; entries[0].control.edit(); }, motto: () => { byKey = true; entries[1].control.edit(); }, save: () => { save.press(); save.release(); } };
-const activates = code => code === 'Enter' || code === 'NumpadEnter' || code === 'Space';
-for (const [id, target] of Object.entries(targets)) {
-  target.on(keyboard.events.keyDown, event => { if (activates(event.payload.code)) event.preventDefault(); });
-  target.on(keyboard.events.keyUp, event => { if (activates(event.payload.code)) { event.preventDefault(); activations[id](); } });
-}
+// A binding takes anything with the methods of its kind: here the edit that began from a key is remembered.
+for (const item of entries) createControlKeys({ keyboard, target: item.part.sprite, kind: 'textField',
+  control: { get enabled() { return item.control.enabled; }, edit() { byKey = true; return item.control.edit(); } } });
+createControlKeys({ keyboard, target: targets.save, kind: 'action', control: save });
 // A press begins an edit that did not come from a key.
 canvas.addEventListener('pointerdown', () => { byKey = false; });
 
@@ -102,7 +100,7 @@ semantics.add({ id: 'form', role: 'group', describe: () => ({ name: '门派登�
 for (const item of entries) semantics.add({ id: item.id, role: 'textbox', parent: 'form',
   onActivate: () => { byKey = true; item.control.edit(); }, onFocus: () => keyboard.focus(item.id, { visible: true }),
   describe: () => ({ name: item.caption, bounds: item.box, value: item.control.value, multiline: item.options.multiline === true, hidden: item.control.editing, disabled: !item.control.enabled, focused: holds(item.id) }) });
-semantics.add({ id: 'save', role: 'button', parent: 'form', onActivate: activations.save, onFocus: () => keyboard.focus('save', { visible: true }),
+semantics.add({ id: 'save', role: 'button', parent: 'form', onActivate: () => { save.press(); save.release(); }, onFocus: () => keyboard.focus('save', { visible: true }),
   describe: () => ({ name: '保存 / Save', bounds: saveBox, disabled: !save.enabled, focused: holds('save') }) });
 const projection = createBrowserSemantics({ semantics, canvas, width: WIDTH, height: HEIGHT, label: 'Text fields / 文本框控件', onError: fail });
 

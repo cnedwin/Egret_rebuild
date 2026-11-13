@@ -6,7 +6,7 @@
 
 这些控件对看不见它们的人来说是什么，由[语义树](ui-semantics.md)描述，它读取的是同一份状态。
 
-它们只拥有状态。控件不添加页面监听器，不绘制任何东西，也不决定路由：它在显示对象上监听[触点输入](multi-pointer-input.md)或[悬停输入](pointer-hover.md)的事件，并通过回调报告变化。每种状态怎么画由应用决定，按键也由应用绑定到指针所走的同一批方法上。
+它们只拥有状态。控件不添加页面监听器，不绘制任何东西，也不决定路由：它在显示对象上监听[触点输入](multi-pointer-input.md)或[悬停输入](pointer-hover.md)的事件，并通过回调报告变化。每种状态怎么画由应用决定。`createControlKeys` 把控件的[常用按键](#按键)绑定到指针所到达的同一批方法上。
 
 | 工厂 | 保存的状态 | 驱动方式 |
 | --- | --- | --- |
@@ -125,20 +125,39 @@ const name = createTextFieldControl({
 
 ## 按键
 
-控件不监听键盘。[键盘输入](keyboard-focus-input.md)把按键交给获得焦点的显示对象，由应用调用控件：
+控件不监听键盘。[键盘输入](keyboard-focus-input.md)把按键交给获得焦点的显示对象，`createControlKeys` 在那里绑定一个控件的常用按键：
 
-| 控件 | 常用按键 | 调用 |
+```js
+import { createControlKeys } from '@egret/engine/ui';
+
+keyboard.registerTarget({ id: 'apply', target: button });
+const keys = createControlKeys({ keyboard, target: button, kind: 'action', control: apply, onPressChange: paint });
+```
+
+`keyboard` 是键盘输入。`target` 是获得焦点的显示对象，也可以是它上方的某个对象，因为按键沿显示树向上传递。`kind` 说明这是哪种控件，`control` 是该控件，或任何具有相同方法的对象。
+
+| `kind` | 按键 | 行为 |
 | --- | --- | --- |
-| 动作 | 空格或回车 | 先 `press()` 再 `release()` |
-| 开关 | 空格或回车 | `toggle()` |
-| 多选一 | 方向键、Home、End | `next()`、`previous()`、`first()`、`last()` |
-| 移动 | 方向键或 WASD | `setDirection(x, y)` |
-| 滚动 | 方向键、Page Up、Page Down、Home、End | `line()`、`page()`、`toStart()`、`toEnd()` |
-| 文本框 | 回车或空格，松开时 | `edit()` |
+| `'action'` | 空格、回车 | 松开时：先 `press()` 再 `release()`，一次激活 |
+| `'toggle'` | 空格、回车 | 松开时：`toggle()` |
+| `'textField'` | 空格、回车 | 松开时：`edit()` |
+| `'selection'` | 方向键、Home、End | 按下时，按住期间重复：`next()`、`previous()`、`first()`、`last()` |
+| `'scroll'` | 所在轴的方向键、Page Up、Page Down、Home、End | 按下时，按住期间重复：`line()`、`page()`、`toStart()`、`toEnd()` |
+| `'movement'` | 方向键和 W A S D 键位 | 按住期间：按当前按住的键调用 `setDirection(x, y)` |
 
-文本框在按键松开时打开，这样打开它的那个键不会被输入进去。打开期间按键属于平台输入框；编辑结束后，应用用 `keyboard.focus(id)` 把焦点交还给这个文本框。
+- **激活等到松开。**因此打开文本框的那个键不会被输入进去，按住时不断重复的键也只激活一次。键按住期间 `keys.pressed` 为 true，并且已通过 `onPressChange` 报告，所以按住的键可以和按下一样绘制：`control.pressed || keys.pressed`。按住期间失去焦点，或页面失去焦点，这次按住就此结束，不产生激活。同一时间只有一个键在激活。
+- **多选一**可以用 `orientation: 'horizontal'` 或 `'vertical'`，把与它垂直的方向键留给外面。即使在不回绕的一端，它的键也会被接管，与原生选项组一样，因此页面不会在它下面滚动。
+- **滚动**只在按键确实移动了它时才接管该键。到头以后，按键继续交给外层视口或页面，与滚轮一致。
+- **移动**把按住的键相加。相反的键互相抵消，斜向不会更快。`keys: 'arrows'` 或 `'wasd'` 只绑定其中一组。字母指的是键盘上的位置而不是字符，所以在任何键盘布局上都是同样的四个键。
+- **下方已接管的键，上方不再处理。**更靠近焦点的显示对象已经接管的键会被绑定跳过，所以滚动视口里的按钮、视口里的视口都各自得到自己的键。
+- **快捷键不属于控件。**与 Alt、Control 或平台键一起按下的键会被忽略。Shift 不算快捷键。
+- 被禁用的控件不接管任何键。绑定接管的键会让 `keyboard.keyDown` 返回 `true`，页面据此不再处理该键。
 
-示例为它的选项组注册了一个键盘停靠点，并把该停靠点移到被选中的项上，因此 Tab 进入和离开该组各一次。
+`dispose()` 结束当前的按住且不激活，停止按键正在操纵的移动，并不再监听。应先销毁绑定，再销毁它的控件。绑定不移动焦点：注册停靠点以及在它们之间移动属于[键盘输入](keyboard-focus-input.md)。
+
+文本框打开期间按键属于平台输入框。编辑结束后，应用用 `keyboard.focus(id)` 把焦点交还给这个文本框。
+
+示例为它的选项组注册了一个键盘停靠点，并把该停靠点移到被选中的项上，因此 Tab 进入和离开该组各一次。每个选项各有一个绑定，因为按键会到达当前持有焦点的那个选项。
 
 ## 绘制状态
 
@@ -151,16 +170,19 @@ const name = createTextFieldControl({
 | [`tests/ui-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-controls.test.mjs) | 真实 Engine 上的移动与动作 |
 | [`tests/ui-state-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-state-controls.test.mjs)，13 项 | 真实 Engine 上的悬停、开关和多选一，严格 TypeScript 消费者，以及导出 |
 | [`tests/ui-scroll-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-scroll-control.test.mjs)，13 项 | 真实 Engine 上的滚动位置：范围、滚轮单位、嵌套视口、滑块及其拖动，以及严格 TypeScript 消费者 |
-| [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs)，5 个场景 | 无头 Chromium 软件 WebGL2 的真实页面：鼠标、触摸和按键通过自动化协议注入。同一文件另有四个场景检查[语义投射](ui-semantics.md) |
-| [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs)，8 个场景 | 真实页面中的滚动控件：滚轮、交还给页面，以及拖动滑块 |
+| [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs)，6 个场景 | 无头 Chromium 软件 WebGL2 的真实页面：鼠标、触摸和按键通过自动化协议注入，其中包括按住一个键，以及按住期间失去焦点。同一文件另有四个场景检查[语义投射](ui-semantics.md) |
+| [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs)，9 个场景 | 真实页面中的滚动控件：滚轮、交还给页面、拖动滑块，以及它的按键和按键交还给页面 |
+| [`tests/ui-control-keys.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-control-keys.test.mjs)，16 项 | 真实 Engine 上的按键绑定，使用键盘输入和六种控件：按住、重复、失去焦点、快捷键、嵌套目标、销毁、出错的监听器，以及严格 TypeScript 使用方 |
 | [`tests/ui-text-field.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-text-field.test.mjs)，17 项 | 真实 Engine 上的文本框，使用测试自备的编辑器：会话、草稿、长度上限、共用编辑器、出错的编辑器和监听器、语义节点，以及以平台文字输入为编辑器的严格 TypeScript 使用方 |
 | [`examples/ui-text-field/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-text-field/verify.mjs)，6 个场景 | 无头 Chromium 软件 WebGL2 真实页面中的两个文本框：通过浏览器协议驱动的输入法组字、键盘、一个文本框把编辑器交给另一个、无障碍树、禁用，以及手机配置 |
 
-向悬停、开关和多选一的构建产物逐个写入了二十九个错误，单元测试全部发现。向滚动控件写入的三十二个错误中发现了三十个，其余两个不改变调用者能看到的任何行为。向文本框控件写入的 114 个运算符错误中发现了 112 个，其余两个只是省去一次循环的捷径，不改变任何结果。
+向悬停、开关和多选一的构建产物逐个写入了二十九个错误，单元测试全部发现。向滚动控件写入的三十二个错误中发现了三十个，其余两个不改变调用者能看到的任何行为。向文本框控件写入的 114 个运算符错误中发现了 112 个，其余两个只是省去一次循环的捷径，不改变任何结果。向按键绑定写入的 100 个运算符错误全部被发现。
 
 ## 尚未完成
 
 - 没有人操作过示例。所有输入都是注入的。
+- 按键绑定是用无头 Chromium 在美式布局下的按键运行的。没有运行其他键盘布局、实体键盘、游戏手柄，也没有运行读屏软件自己的按键命令。
+- 绑定按从左到右的阅读方向：右方向键是 `next()`。从右到左的选项组由应用自行绑定。
 - 这些控件没有在硬件 GPU、WebGPU、已安装的 Edge、Safari、Firefox 和真实手机上运行。
 - [语义投射](ui-semantics.md)为这些控件提供角色、名称和状态，并对照无头 Chromium 的无障碍树做了检查。没有运行任何读屏软件或其他辅助技术。
 - 手指不能平移滚动视口：这种手势及其与按下操作的仲裁仍在 #90。

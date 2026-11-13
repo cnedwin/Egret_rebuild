@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 // Three buttons that light up under a mouse or a pen, and a list the wheel and a scrollbar scroll.
 // Hover and wheel come from `@egret/engine/web/hover`; presses come from `@egret/engine/web/pointer`.
-// Both adapters listen on the same canvas. The scroll position is a `createScrollControl`.
+// Both adapters listen on the same canvas. The scroll position is a `createScrollControl`, and the keys of the
+// list are a `createControlKeys` over the keyboard input.
 import { createEngineForProfile, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
-import { createScrollControl } from '@egret/engine/ui';
+import { createControlKeys, createScrollControl } from '@egret/engine/ui';
 import { createBrowserHoverInput } from '@egret/engine/web/hover';
 import { createBrowserPointerInput } from '@egret/engine/web/pointer';
+import { createBrowserKeyboardInput } from '@egret/engine/web/keyboard';
 import { createExampleHost } from '../host.mjs';
 
 const WIDTH = 480, HEIGHT = 300, ROW = 28, ROWS = 12, VIEW = { x: 40, y: 120, width: 400, height: 140 };
@@ -29,6 +31,9 @@ function region(parent, name, x, y, width, height, color) {
 const root = engine.stage.addChild(scope.use(new Sprite()));
 const buttons = ['north', 'east', 'south'].map((name, index) => ({ ...region(root, name, 40 + index * 140, 40, 120, 48, COLORS.idle), hovered: false, pressed: false, presses: 0 }));
 // The list: a clipped viewport whose content moves under it. The viewport is what the wheel is over when no row is.
+// Behind it, a ring that shows while the keyboard is on the list.
+const ring = root.addChild(scope.use(new Sprite()));
+ring.x = VIEW.x - 3; ring.y = VIEW.y - 3; ring.visible = false; ring.graphics.beginFill(0xf2c14e).drawRect(0, 0, VIEW.width + 6, VIEW.height + 6).endFill();
 const viewport = region(root, 'list', VIEW.x, VIEW.y, VIEW.width, VIEW.height, 0x20242e);
 viewport.sprite.clipRect = { x: 0, y: 0, width: VIEW.width, height: VIEW.height };
 const content = viewport.sprite.addChild(scope.use(new Sprite()));
@@ -49,6 +54,8 @@ const named = new Map([...buttons, ...rows, viewport, { name: 'scrollbar', sprit
 
 function paintButton(button) { button.paint(button.pressed ? COLORS.pressed : button.hovered ? COLORS.hover : COLORS.idle); }
 function show() {
+  const focus = keyboard.getSnapshot();
+  if (scope.state === 'open') ring.visible = focus.focusVisible && focus.focusedId === 'list';
   status.textContent = failure ? 'Failed / 失败：' + failure : 'Over / 指向：' + hovering;
   state.textContent = JSON.stringify(readSnapshot(), null, 2);
   render();
@@ -84,6 +91,11 @@ const scroll = createScrollControl({
   },
   onDragChange() { placeThumb(); show(); },
 });
+// The list is one stop of the keyboard. Its arrow keys, Page Up, Page Down, Home and End scroll it, and a key
+// that could move it no further is left to the page, as the wheel is.
+const keyboard = createBrowserKeyboardInput({ engine, scope, onFocusChange: () => queueMicrotask(show) });
+keyboard.registerTarget({ id: 'list', target: viewport.sprite });
+createControlKeys({ keyboard, target: viewport.sprite, kind: 'scroll', control: scroll });
 function placeThumb() {
   const { start, length } = scroll.thumb;
   thumb.y = VIEW.y + start; thumb.hitArea = { x: 0, y: 0, width: 8, height: length };
@@ -107,7 +119,7 @@ export function readSnapshot() {
     state: hover.state, hovering, entered, left, lastLeave, wheels, consumed, offset: scroll.offset, limit: scroll.maximum, dragging: scroll.dragging, thumb: scroll.thumb, renders, failure,
     hovers: hover.hovers.map(({ point, target }) => ({ pointerType: point.pointerType, x: Math.round(point.globalX), y: Math.round(point.globalY), target: named.get(target)?.name })),
     buttons: Object.fromEntries(buttons.map(button => [button.name, { hovered: button.hovered, pressed: button.pressed, presses: button.presses }])),
-    contacts: press.contacts.length, viewportRevision: hover.viewportRevision,
+    contacts: press.contacts.length, viewportRevision: hover.viewportRevision, focus: keyboard.getSnapshot().focusedId,
   };
 }
 globalThis.__egretPointerHoverExample = { readSnapshot, suspend: () => hover.setInteractive(false), resume: () => hover.setInteractive(true), dispose: () => scope.dispose() };

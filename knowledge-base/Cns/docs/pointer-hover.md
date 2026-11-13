@@ -89,7 +89,7 @@ Scope 释放和 Engine 关闭会结束输入：正在悬停的对象以 `dispose
 | --- | --- |
 | [`tests/hover-input.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/hover-input.test.mjs)，16 项 | 真实 Engine 上的逻辑输入：路由、原因、滚轮、版本、暂停、重入、失败和释放 |
 | [`tests/browser-hover.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/browser-hover.test.mjs)，15 项 | 适配器对照测试自有的页面替身，严格 TypeScript 消费者，以及精确的导出 |
-| [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs)，8 个场景 | 无头 Chromium 软件 WebGL2 的真实页面：鼠标、手写笔、触摸和滚轮通过自动化协议注入 |
+| [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs)，9 个场景 | 无头 Chromium 软件 WebGL2 的真实页面：鼠标、手写笔、触摸和滚轮通过自动化协议注入。其中一个场景检查[列表的按键](ui-controls.md#按键) |
 
 向构建产物逐个写入了五十五个错误，单元测试发现了五十二个。其余三个不改变调用者能看到的任何行为：拾取之后重复的一次资格检查，以及关闭后的两处引用释放。
 
