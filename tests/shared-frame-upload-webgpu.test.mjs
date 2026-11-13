@@ -540,3 +540,26 @@ test('GPU U26 fulfilled validation fault keeps known stage cleanup safe', async 
     assert.ok(f.buffers.every(b => b.destroyed <= 1)); assert.ok(f.textures.every(t => t.destroyed <= 1));
   });
 });
+
+test('GPU U27 a staged frame writes the rows it was prepared with, after later frames have written the rows of the batches the Host keeps', async () => {
+  await usingGpu(async ({ f, a, h }) => {
+    const nodes = [a.solid(), a.solid(), a.solid()]; nodes.forEach((node, index) => { node.x = 2 * (index + 1); });
+    // Every vertex byte written since `from`: a write of whole 52-byte rows. A draw's block is 128 bytes.
+    const vertexBytes = from => f.calls.slice(from).filter(c => c[0] === 'writeBuffer' && c[3].byteLength % 52 === 0).flatMap(c => Array.from(c[3]));
+    const ordinary = async () => { const from = f.calls.length; await submit(f, h, a.capture()); return vertexBytes(from); };
+    // Three ordinary frames: the four rectangles rest, and the batch that joins them is kept.
+    await ordinary(); await ordinary(); const scene = await ordinary();
+    assert.equal(scene.length, 52 * 6 * 4);
+    // The same scene staged. None of its rows is written before the next ordinary frame.
+    const ticket = h.stageSharedFrame(a.capture()), from = f.calls.length;
+    nodes[1].x += 1; nodes[2].y += 1;
+    const changing = capture(f, () => h.renderSharedFrame(a.capture())); admitted(changing);
+    const changed = vertexBytes(from), after = f.calls.length;
+    assert.equal(changed.length, scene.length); assert.notDeepEqual(changed, scene);
+    await readyUpload(f, ticket);
+    assert.deepEqual(vertexBytes(after), scene, 'the staged frame wrote the rows of the scene it was prepared from');
+    await changing.finish(); await finishUpload(f, ticket); await h.whenIdle();
+    // The ordinary frames go on from the changed scene: the kept batch has its rows.
+    assert.deepEqual(await ordinary(), changed);
+  });
+});

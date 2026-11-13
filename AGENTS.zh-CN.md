@@ -223,7 +223,7 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2`。该入口导出 `cre
 
 `tests/shared-batching.test.mjs` 是 CPU UNIT，适用同一许可。它导入同样的四个辅助模块，在通过公开 Engine 捕获的帧上说明：哪些绘制合成一批，顶点行的最后两个值和区域表的各行存放什么，一批为各纹理单元指明哪些页，以及合批不退还任何逻辑费用。它证明的是 Host 执行的 CPU 计划，不证明 GPU 执行。
 
-`tests/shared-prepared-retention.test.mjs` 是 CPU UNIT，适用同一许可。它导入 `prepareSharedDraws2D.js`、`packSharedDraws2D.js` 和 `sharedPreparationRetention2D.js`，把每一帧准备两次：一次不使用保留的绘制，一次使用；几何、顶点行、收费和拒绝必须相同，既针对指明的改动，也针对随机改动的场景。它还说明哪些绘制被再次找到、绘制何时不带几何保留，以及保留内容的上限。它证明的是 CPU 输出相同，不证明 GPU 执行。
+`tests/shared-prepared-retention.test.mjs` 是 CPU UNIT，适用同一许可。它导入 `prepareSharedDraws2D.js`、`packSharedDraws2D.js`、`preparedSharedBatches2D.js`、`preparedBatches2D.js` 和 `sharedPreparationRetention2D.js`，把每一帧准备、打包并合批两次：一次不使用保留的记录，一次使用；几何、顶点行、批次、收费和拒绝必须相同，既针对指明的改动，也针对随机改动的场景。它还说明哪些绘制被再次找到、绘制何时不带几何保留、打包记录何时被再次给出、保留批次的哪些顶点行被写入、批次何时重新拼接，以及保留内容的上限。它证明的是 CPU 输出相同，不证明 GPU 执行。
 
 `tests/shared-capture-retention.test.mjs` 是 CPU UNIT。它通过公开 Engine 构建并改动场景，把每一帧捕获两次：一次使用构建后的私有模块 `packages/runtime/dist/sharedFrameCapture.js` 中不读写任何保留记录的收集器，一次通过 `captureSharedFrame`。只有这个测试可以导入该模块。两次捕获必须相同，包括拒绝，既针对指明的改动，也针对随机改动的场景；它还说明哪些命令记录被再次给出，以及保留的内容不替代任何检查。
 

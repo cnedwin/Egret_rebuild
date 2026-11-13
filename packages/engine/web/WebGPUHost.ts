@@ -990,7 +990,8 @@ class WebGPUHostImplementation {
                 const imagePlan=this.planImageResidency(storage.projectionPlan,demands,true);
                 const pages=materializeSharedPages2D(storage,new Set(imagePlan.use.candidates.keys()),this.sharedOwnerSnapshot(),this.resourceCpu);materialized=pages.canonicalBytes;this.active();
                 checkSharedCapacity2D(storage,this.sharedOwnerSnapshot(),pages.canonicalBytes);
-                batch=prepareSharedBatches2D(packed,this.limits.maxBufferSize,this.batchScratch);this.active();
+                // A staged frame writes its rows after later frames are prepared, so it is given batches of its own.
+                batch=prepareSharedBatches2D(packed,this.limits.maxBufferSize,this.batchScratch,staging?undefined:prepared.retention);this.active();
                 const regions=batch.draws.some(draw=>draw.regionWindow>=0)?packSharedRegionWindows2D(prepared.frame):undefined;
                 return {storage,imagePlan,...pages,ticket,batch,regions};
             },failure=>{ownedFailure=failure;});}

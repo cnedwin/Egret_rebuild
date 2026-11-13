@@ -274,20 +274,28 @@ test('SHG03 the first refusal of visible content in drawing order is the one rep
   assert.equal(code(() => engine.captureSharedFrame({ width: 32, height: 32 })), 'ok');
 }, 72));
 
-test('SHG04 every draw owns its own range of the frame\'s vertex rows and uniform blocks', async () => {
+test('SHG04 every draw owns its own range of the frame\'s vertex rows, and shares its uniform block only with draws that have every input of it', async () => {
   await scene(5, 'mixed', engine => {
     const frame = engine.captureSharedFrame({ width: 200, height: 120 });
     const packed = packSharedDraws2D(prepareSharedDraws2D(frame, 200, 120, { ...LIMITS, pixelRatio: 1 })).filter(entry => !('barrier' in entry));
     assert.ok(packed.length > 8 && packed.some(entry => entry.vertexCount > 0));
-    let rowsEnd = 0, blocksEnd = 0;
+    let rowsEnd = 0, shared = 0;
+    const blocks = new Map();
     for (const entry of packed) {
       assert.equal(entry.data.byteLength, entry.vertexCount * 52); assert.equal(entry.uniform.byteLength, 128);
       // Ranges follow one another in command order and never overlap, so writing one draw cannot change another.
       if (entry.data.byteLength > 0) { assert.ok(entry.data.byteOffset >= rowsEnd); rowsEnd = entry.data.byteOffset + entry.data.byteLength; }
-      assert.ok(entry.uniform.byteOffset >= blocksEnd); blocksEnd = entry.uniform.byteOffset + 128;
+      // A block is read and never written. Draws share one only with the same material, page and kind of draw, and no two blocks overlap.
+      const input = [entry.prepared.material, entry.prepared.pageIndex, entry.prepared.command.kind], owner = blocks.get(entry.uniform);
+      if (owner) { shared++; assert.deepEqual(input.map((value, index) => value === owner[index]), [true, true, true]); }
+      else {
+        for (const other of blocks.keys()) assert.ok(other.buffer !== entry.uniform.buffer || other.byteOffset + 128 <= entry.uniform.byteOffset || entry.uniform.byteOffset + 128 <= other.byteOffset);
+        blocks.set(entry.uniform, input);
+      }
       // A copy made through the view has exactly the draw's bytes, which is how the hosts upload it.
       assert.deepEqual(new Float32Array(entry.data), Float32Array.from(entry.data));
       assert.equal(new Uint8Array(entry.data.buffer, entry.data.byteOffset, entry.data.byteLength).length, entry.vertexCount * 52);
     }
+    assert.ok(shared > 0 && blocks.size > 1, shared + ' draws share one of ' + blocks.size + ' blocks');
   });
 });

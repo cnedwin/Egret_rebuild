@@ -4,8 +4,10 @@
 // It times the CPU work of a frame before anything reaches the graphics API: turning the
 // display list into a frame record (capture), and turning that record into vertex batches
 // (preparation). A capture after the first one finds the records each node kept; the rows marked
-// "kept" time the preparation of a frame whose draws a Host kept from the frame before.
+// "kept" time the preparation of a frame by a Host that kept the draws and batches of the frames before.
 // It also times container edits and the life of display objects.
+// A row marked "kept" is the median of its passes, because a kept frame is short enough for one pause of the
+// machine to outweigh it; every other row is a mean.
 // The figures describe this machine and this run; they are not acceptance thresholds.
 import { performance } from 'node:perf_hooks';
 import {
@@ -28,6 +30,7 @@ const results = [];
 const record = (group, name, value, unit, note) => results.push({ group, name, value, unit, ...(note ? { note } : {}) });
 const failure = error => 'failed: ' + (error?.code ?? error?.message ?? String(error));
 
+const median = values => [...values].sort((a, b) => a - b)[values.length >> 1];
 /** Mean milliseconds of `frame` over a run, after one unmeasured call. */
 function perFrame(frames, before, frame) {
   frame();
@@ -52,15 +55,39 @@ function prepare(label, frame, frames) {
   record('prepare', label + ', clipped geometry', round(time.geometry / frames), 'ms/frame');
   record('prepare', label + ', vertex rows', round(time.vertices / frames), 'ms/frame');
   record('prepare', label + ', draw batches', round(time.batches / frames), 'ms/frame', draws + ' draws');
-  // The same frame again, as a Host prepares it that kept the draws of the frame before.
-  const retention = new SharedPreparationRetention2D(), kept = { geometry: 0, vertices: 0 };
-  for (let i = 0; i <= frames; i++) {
-    const start = performance.now(), prepared = prepareSharedDraws2D(frame, FRAME.width, FRAME.height, PREPARE, retention), geometry = performance.now();
-    packSharedDraws2D(prepared);
-    if (i > 0) { kept.geometry += geometry - start; kept.vertices += performance.now() - geometry; }
+  // The same frame again, as a Host prepares it that kept the draws and batches of the frames before.
+  // The first pass keeps the geometry, the rows and the batches, the second the packed records; neither is measured.
+  // A kept frame is short, so more passes are timed.
+  const retention = new SharedPreparationRetention2D(), kept = { geometry: [], vertices: [], batches: [] };
+  frames = Math.max(frames, quick ? 5 : 40);
+  for (let i = 0; i <= frames + 1; i++) {
+    const scratch = new PreparedBatchScratch2D(), start = performance.now();
+    const prepared = prepareSharedDraws2D(frame, FRAME.width, FRAME.height, PREPARE, retention), geometry = performance.now();
+    const packed = packSharedDraws2D(prepared), vertices = performance.now();
+    const plan = prepareSharedBatches2D(packed, 33554432, scratch, retention), batches = performance.now();
+    scratch.release(plan);
+    if (i > 1) { kept.geometry.push(geometry - start); kept.vertices.push(vertices - geometry); kept.batches.push(batches - vertices); }
   }
-  record('prepare', label + ', clipped geometry, kept', round(kept.geometry / frames), 'ms/frame');
-  record('prepare', label + ', vertex rows, kept', round(kept.vertices / frames), 'ms/frame', retention.draws + ' draws kept');
+  record('prepare', label + ', clipped geometry, kept', round(median(kept.geometry)), 'ms/frame');
+  record('prepare', label + ', vertex rows, kept', round(median(kept.vertices)), 'ms/frame', retention.draws + ' draws kept');
+  record('prepare', label + ', draw batches, kept', round(median(kept.batches)), 'ms/frame', retention.batches + ' batches kept');
+}
+
+/** Times the three host stages together over frames that are each changed and captured anew, without and with what a Host keeps. */
+function changing(label, frames, change, capture) {
+  frames = Math.max(frames, quick ? 5 : 40);
+  for (const retention of [undefined, new SharedPreparationRetention2D()]) {
+    const times = [];
+    for (let i = 0; i <= frames + 1; i++) {
+      change();
+      const frame = capture(), scratch = new PreparedBatchScratch2D(), start = performance.now();
+      const plan = prepareSharedBatches2D(packSharedDraws2D(prepareSharedDraws2D(frame, FRAME.width, FRAME.height, PREPARE, retention)), 33554432, scratch, retention);
+      const end = performance.now();
+      scratch.release(plan);
+      if (i > 1) times.push(end - start);
+    }
+    record('prepare', label + ', three stages' + (retention ? ', kept' : ''), round(retention ? median(times) : times.reduce((sum, value) => sum + value, 0) / times.length), 'ms/frame');
+  }
 }
 
 async function sprites(count) {
@@ -93,8 +120,10 @@ async function atlas(count, regions) {
   const lease = scope.use(await engine.assets.acquire(createAssetRef(type, 'atlas'), { signal: scope.signal }));
   const label = count + ' bitmaps, ' + regions + ' frames of one atlas';
   try {
+    const bitmaps = [];
     for (let i = 0; i < count; i++) {
       const bitmap = scope.use(new Bitmap(lease)), cell = i % regions;
+      bitmaps.push(bitmap);
       bitmap.sourceRect = { x: (cell % 32) * 16, y: Math.floor(cell / 32) * 16, width: 16, height: 16 };
       bitmap.x = (i * 37) % 1200; bitmap.y = (i * 53) % 680;
       engine.stage.addChild(bitmap);
@@ -102,6 +131,8 @@ async function atlas(count, regions) {
     const frames = quick ? 3 : 15, capture = () => engine.captureSharedFrame(FRAME);
     record('capture', label, round(perFrame(frames, () => {}, capture)), 'ms/frame');
     prepare(label, capture(), Math.max(3, frames >> 2));
+    changing(label + ', a tenth moving', frames, () => { for (let i = 0; i < count; i += 10) bitmaps[i].x += 1; }, capture);
+    changing(label + ', one moving', frames, () => { bitmaps[count >> 1].x += 1; }, capture);
   } catch (error) { record('atlas', label, failure(error), ''); }
   scope.dispose(); await engine.dispose();
 }

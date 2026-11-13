@@ -149,9 +149,34 @@ A frame used to be captured and prepared in full, whatever had changed since the
 
 In another run, of 240 frames of 5,000 bitmaps, a tenth of them moving in each frame, the geometry took 1.8 ms against 6.0 ms and the rows 1.9 ms against 3.7 ms. With all of them moving, where nothing kept can be used, a Host that keeps draws took about 4 percent longer over the geometry than one that keeps none.
 
-What is still done for every frame: every node is counted, checked and charged, and every resource read; the rows of every draw are copied into the frame's buffer, batches are joined, and everything is uploaded. Keeping a whole batch, and its buffer on the device, is not done.
+What was still done for every frame at that point: every node is counted, checked and charged, and every resource read; the rows of every draw are copied into the frame's buffer, batches are joined, and everything is uploaded. [Packed records and batches kept between frames](#packed-records-and-batches-kept-between-frames) states what became of the rows and the batches.
 
 Two tests capture and prepare every frame both ways and require equal results, refusals included, for stated changes and for scenes changed at random: 640 captured frames and more than 250 prepared ones. Fifty-seven scenes of the pixel comparisons were each drawn three times by one Host, through both Hosts, in a headless Chromium with software rendering: once with some nodes moved, faded or hidden, and twice as they are. The third frame of all 114 runs is identical to the single frame of the build before this change. This is not a run on a hardware GPU.
+
+## Packed records and batches kept between frames
+
+A Host that kept the geometry and the rows of a draw still copied those rows into the frame's buffer for every frame, wrote a 128-byte block for every draw, compared every draw with the one before it, and copied all rows once more to join them into batches. Now a draw at rest is packed once, into a record the Host keeps, and a batch is joined once: after that, only the rows of the draws that changed are written, into the array the Host keeps for the batch. Draws next to each other with one material, page and kind of draw share one block. The [shared render profile](shared-render-profile-contract.md#kept-records) states the conditions. A frame is the same frame, batch for batch and row for row. No public interface changed.
+
+`tools/bench-2d.mjs` on the development machine, the median of 40 frames, a Host that keeps records before this change and after it:
+
+| Workload | Stage | Before | After |
+| --- | --- | --- | --- |
+| 5,000 filled rectangles, the same frame again | Vertex rows | 1.56 ms | 0.27 ms |
+| | Draw batches | 0.82 ms | 0.03 ms |
+| 20,000 filled rectangles, the same frame again | Vertex rows | 9.67 ms | 1.34 ms |
+| | Draw batches | 3.63 ms | 0.12 ms |
+| 5,000 bitmaps showing 100 frames of one atlas, the same frame again | Vertex rows | 1.62 ms | 0.29 ms |
+| | Draw batches | 0.84 ms | 0.04 ms |
+| The same bitmaps, one of them moving in every frame | Geometry, rows and batches | 2.83 ms | 0.90 ms |
+| The same bitmaps, a tenth of them moving in every frame | Geometry, rows and batches | 5.62 ms | 3.20 ms |
+
+The clipped geometry of a kept draw takes what it took. In another run, of 300 frames of the same bitmaps all moving, where no record can be given again, the rows took about a fifth less, because neighbouring draws share a block, and the batches took the same.
+
+A kept bitmap counts 1,136 bytes for its geometry and rows, 240 for its packed record and 328 in a kept batch, by the logical measure of the profile. The bound on what a Host keeps is therefore 48 MiB, up from 32 MiB, and a frame the largest limits admit still keeps less.
+
+What is still done for every frame: every node is counted, checked and charged, and every resource read, which is now most of the time of a frame in which nothing moved; every row of every batch is uploaded, changed or not. A draw whose number of rows changes, such as a sprite crossing the edge of the screen, has its batch joined anew for that frame.
+
+The test that prepares every frame both ways now packs and batches it both ways as well, and requires the same batches with the same rows, for stated changes and for scenes changed at random, some of them with little room for joined rows. A frame whose upload is staged reads its rows after later frames are prepared, so it is given batches of its own; one test for each Host draws a changed scene between the staging and the upload and requires the staged frame to upload the rows of its own scene. The 57 scenes of the pixel comparisons were drawn through both Hosts in a headless Chromium with software rendering in two ways. Drawn twice, then changed, then twice more as they are, the last frame of all 114 runs is identical to the single frame of the build before this change. Drawn three times and then changed, the changed frame of all 114 runs is identical to the changed scene drawn alone by the build before this change. This is not a run on a hardware GPU.
 
 ## Fixed 2D workloads on a graphics device
 

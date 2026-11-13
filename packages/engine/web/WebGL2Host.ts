@@ -707,7 +707,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 finally{timingNative?.finishTiming('texture-prepare',started);}
                 materialized=pages.canonicalBytes;this.active();
                 checkSharedCapacity2D(storage,this.snapshot(),pages.canonicalBytes);
-                batch=prepareSharedBatches2D(packed,options.maxUploadBytes,this.scratch);this.active();
+                // A staged frame writes its rows after later frames are prepared, so it is given batches of its own.
+                batch=prepareSharedBatches2D(packed,options.maxUploadBytes,this.scratch,staging?undefined:prepared.retention);this.active();
                 const arena=planSharedWebGL2Arenas(batch.draws,limits.alignment,batch.draws.some(draw=>draw.regionWindow>=0)?packSharedRegions2D(frame):undefined);checkSharedWebGL2ArenaCapacity(arena,this.arenaOwner());
                 return {storage,arena,batch,...pages,ticket,hits,layerWrite,layerReads};
             },failure=>{owned=failure;});}
