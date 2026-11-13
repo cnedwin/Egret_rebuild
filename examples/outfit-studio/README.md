@@ -23,6 +23,8 @@ Use the same server and choose **Fixed desktop** or **Mobile touch**. The defaul
 | X-D60/1, `?profile=x-d60&backend=webgpu` | 1024 × 768 at 1 | 32 visible rows, at most 48 containers |
 | X-MTouch/1, `?profile=x-mtouch&backend=webgl2` | 360 × 640 portrait or 640 × 360 landscape at 2 | 8 visible rows, at most 24 containers |
 
+On the mobile route, the backdrop scales with the frame when switching between portrait and landscape.
+
 Each fixed scene has 6,000 ordered authored display nodes, 600 visible UI nodes including active row descendants, eight nested clips, an alpha mask, a radius-two blur and 50,000 variable-height catalogue records. The eight Spine instances each use 120 bones, 96 slots, 2,000 weighted mesh vertices and two active tracks. They share the initial two atlas pages. Eighty independently phased sequences and two flat 2D backdrop panels complete the current scene. The form uses the existing CanvasKit/Noto set for English, Chinese, Arabic and the admitted 🆕 glyph. [Original weighted geometry](author-x.mjs)
 
 On a phone, hold **+** to move and use a second contact on **■** to act. Drag the scene with one finger or pan, pinch and rotate with two. The map keeps two gesture owners and refuses an additional map contact. Swipe the catalogue to scroll or tap the committed record to select. A drag at its edge can move the drawer by up to 12 logical pixels. Opening a modal cancels held contacts. Rotation rebinds the view and closes its transient draft while keeping the authored snapshot, catalogue position and animation state. The keyboard resizes the fitted view at the current logical orientation. CSS safe-area insets and letterboxing map to the logical surface independently of the render ratio.
