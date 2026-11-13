@@ -194,6 +194,8 @@ test('TI05 Enter commits, Escape cancels, and the field is gone before the game 
   node = field(); assert.equal(node.value, 'next'); assert.equal(page.document.activeElement, node);
   // Some platforms deliver the Enter that chose a candidate after the composition has ended, marked only by this key code.
   assert.equal(fire(node, 'keydown', { key: 'Enter', keyCode: 229 }).prevented, false); assert.equal(input.getSnapshot().state, 'open');
+  // The key that begins a composition arrives before the composition is announced, marked as part of it.
+  assert.equal(fire(node, 'keydown', { key: 'Enter', isComposing: true }).prevented, false); assert.equal(input.getSnapshot().state, 'open');
   assert.equal(fire(node, 'keydown', { key: 'Escape' }).prevented, true);
   assert.deepEqual(log.splice(0), [['cancel']]);
   assert.deepEqual(input.getSnapshot(), { state: 'idle', value: '', composing: false });
