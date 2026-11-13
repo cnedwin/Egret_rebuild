@@ -117,7 +117,7 @@ M2–M4 的十一个工作包均保留完整验收要求。下表确认已合并
 | 工作包／Issue | 已交付基础 | 剩余结果／协调责任 |
 | --- | --- | --- |
 | M2.1／[#83](https://github.com/cnedwin/Egret_rebuild/issues/83) | PNG、图集、多页、序列、字体构建／运行时及可选 Spine JSON 接入 | 二进制／变体构建、授权选定版本参考清单／内容维护者 |
-| M2.2／[#84](https://github.com/cnedwin/Egret_rebuild/issues/84) | 独立 Spine 实例、轨道／队列、皮肤、有限播放及序列控制；基于有界历史的[分阶段跳转](spine-seek.md) | 完整合格语义、带物理的跳转参考和检查点／动画维护者 |
+| M2.2／[#84](https://github.com/cnedwin/Egret_rebuild/issues/84) | 独立 Spine 实例、轨道／队列、皮肤、有限播放及序列控制；基于有界历史的[分阶段跳转](spine-seek.md)，在原创夹具上带物理时与直接运行相等 | 完整合格语义、独立的物理参考和检查点／动画维护者 |
 | M2.3／[#85](https://github.com/cnedwin/Egret_rebuild/issues/85) | 显式 egret-shared-linear/1 下的共享 Spine 几何 | 完整附件／裁剪／双色／混合／采样参考／渲染维护者 |
 | M2.4／[#86](https://github.com/cnedwin/Egret_rebuild/issues/86) | 可编辑 20-Spine／200-序列示例、RESET、兼容序列状态保留、保留播放（含进行中的混合）的 Spine 替换及选定恢复 | Spine 保留播放的硬件验证，以及组合动画生命周期／预算验收／资源动画维护者 |
 | M3.1／[#87](https://github.com/cnedwin/Egret_rebuild/issues/87) | 托管布局、稳定键虚拟化、锚点、焦点／定位、字体／主题整合及有界编辑行保留 | 完整一致 UI 场景／UI 维护者 |

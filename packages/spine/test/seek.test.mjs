@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Staged seek: a playback rebuilt from its history must be the playback a straight run produces.
-// Original numerical fixtures; none has a physics constraint.
+// Original numerical fixtures; none has a physics constraint. physics.test.mjs has one that does.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createEngine, DisplayObjectContainer } from '@egret/engine';
