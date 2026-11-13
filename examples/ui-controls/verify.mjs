@@ -5,7 +5,9 @@
 //
 // Without the third argument the installed Edge is launched headed. With `software` the browser that
 // Playwright bundles runs headless with software rendering. The report names which one ran.
-// Input is injected through the browser's automation protocol; no person pressed a key.
+// Input is injected through the browser's automation protocol; no person pressed a key. The
+// accessibility checks read the tree the browser computes; no screen reader or other assistive
+// technology was run.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -126,6 +128,121 @@ await scenario('a finger activates and hovers nothing', { ...devices['Pixel 7'] 
   for (const name of ['sound', 'easy', 'apply']) { await page.touchscreen.tap(...await at(page, spot[name])); await page.waitForTimeout(80); }
   const now = await read(page);
   assert.equal(now.sound.checked, false); assert.equal(now.level.selected, 'easy'); assert.equal(now.apply.activations, 1); assert.deepEqual(now.hovered, []);
+});
+
+// The semantic projection. Rectangles are the stage units the controls are drawn at.
+const drawn = { panel: [0, 0, 480, 300], sound: [40, 40, 140, 44], level: [40, 120, 400, 44], 'level-easy': [40, 120, 120, 44], 'level-normal': [180, 120, 120, 44], 'level-hard': [320, 120, 120, 44], apply: [40, 200, 140, 44] };
+const labels = { sound: ['switch', 'Sound / 声音'], 'level-easy': ['radio', 'Easy / 简单'], 'level-normal': ['radio', 'Normal / 普通'], 'level-hard': ['radio', 'Hard / 困难'], apply: ['button', 'Apply / 应用'] };
+const node = (page, id) => page.getByRole(labels[id][0], { name: labels[id][1], exact: true });
+const state = (page, id, name) => node(page, id).getAttribute(name);
+/** What assistive technology is given: the tree the browser computed, under the canvas. */
+async function accessible(page) {
+  const session = await page.context().newCDPSession(page);
+  await session.send('Accessibility.enable');
+  const { nodes } = await session.send('Accessibility.getFullAXTree');
+  await session.detach();
+  const byId = new Map(nodes.map(found => [found.nodeId, found])), value = (found, name) => found.properties?.find(property => property.name === name)?.value;
+  const application = nodes.find(found => found.role?.value === 'application'), rows = [];
+  (function walk(found, depth) {
+    for (const id of found.childIds ?? []) {
+      const child = byId.get(id), shown = child !== undefined && !child.ignored && !['generic', 'none', 'StaticText', 'InlineTextBox'].includes(child.role?.value);
+      if (shown) rows.push([depth, child.role.value, child.name?.value ?? '', value(child, 'checked')?.value, value(child, 'disabled')?.value === true]);
+      if (child !== undefined) walk(child, depth + (shown ? 1 : 0));
+    }
+  })(application, 0);
+  return { name: application.name?.value, focused: value(application, 'focused')?.value === true, active: value(application, 'activedescendant')?.relatedNodes?.[0]?.idref, rows };
+}
+const elementId = (page, id) => node(page, id).evaluate(element => element.id);
+/** A request made of the element itself, the way an accessibility interface makes it: no pointer is involved. */
+const request = async (page, id, action) => { await node(page, id).evaluate((element, name) => element[name](), action); await settle(page); };
+
+await scenario('the browser computes a tree of the controls under the canvas', desktop, async page => {
+  assert.equal(await page.locator('#surface').ariaSnapshot(), [
+    '- application "Control states / 控件状态":',
+    '  - group "Settings / 设置":',
+    '    - switch "Sound / 声音" [checked]',
+    '    - radiogroup "Level / 难度":',
+    '      - radio "Easy / 简单"',
+    '      - radio "Normal / 普通" [checked]',
+    '      - radio "Hard / 困难"',
+    '    - button "Apply / 应用"'].join('\n'));
+  let tree = await accessible(page);
+  assert.deepEqual(tree.rows, [[0, 'group', 'Settings / 设置', undefined, false], [1, 'switch', 'Sound / 声音', 'true', false], [1, 'radiogroup', 'Level / 难度', undefined, false],
+    [2, 'radio', 'Easy / 简单', 'false', false], [2, 'radio', 'Normal / 普通', 'true', false], [2, 'radio', 'Hard / 困难', 'false', false], [1, 'button', 'Apply / 应用', undefined, false]]);
+  assert.deepEqual([tree.name, tree.focused, tree.active], ['Control states / 控件状态', false, undefined]);
+  assert.deepEqual([await state(page, 'level-hard', 'aria-posinset'), await state(page, 'level-hard', 'aria-setsize')], ['3', '3']);
+  // The canvas keeps the keyboard and names the control that holds the focus.
+  await page.focus('#scene'); await key(page, 'Tab'); tree = await accessible(page);
+  assert.deepEqual([tree.focused, tree.active], [true, await elementId(page, 'sound')]); assert.equal((await read(page)).semantics.focused, 'sound');
+  await key(page, 'Space'); assert.equal(await state(page, 'sound', 'aria-checked'), 'false'); assert.equal((await accessible(page)).rows[1][3], 'false');
+  await key(page, 'Tab'); assert.equal((await accessible(page)).active, await elementId(page, 'level-normal'));
+  // The focus follows the selection inside the group.
+  await key(page, 'ArrowRight'); tree = await accessible(page);
+  assert.equal(tree.active, await elementId(page, 'level-hard')); assert.deepEqual(tree.rows.slice(3, 6).map(row => row[3]), ['false', 'false', 'true']);
+  await key(page, 'Tab'); assert.equal((await accessible(page)).active, await elementId(page, 'apply'));
+  assert.equal(await page.evaluate(() => document.activeElement.id), 'scene');
+  const now = await read(page);
+  assert.deepEqual([now.semantics.nodes, now.semantics.projection], [7, 'active']);
+});
+
+await scenario('each element lies over the control it describes, and a pointer goes through it', desktop, async page => {
+  const over = async () => {
+    for (const [id, [x, y, width, height]] of Object.entries(drawn).filter(([id]) => id in labels)) {
+      const box = await node(page, id).boundingBox(), [left, top] = await at(page, [x, y]), [right, bottom] = await at(page, [x + width, y + height]);
+      for (const [name, actual, expected] of [['left', box.x, left], ['top', box.y, top], ['right', box.x + box.width, right], ['bottom', box.y + box.height, bottom]])
+        assert.ok(Math.abs(actual - expected) < 0.51, id + ' ' + name + ' ' + actual + ' ' + expected);
+    }
+  };
+  await over();
+  // The projection is not seen and is not what a pointer meets.
+  const centre = async id => { const box = await node(page, id).boundingBox(); return [box.x + box.width / 2, box.y + box.height / 2]; };
+  assert.deepEqual(await page.evaluate(([x, y]) => { const style = getComputedStyle(document.querySelector('#scene').nextElementSibling); return [document.elementFromPoint(x, y).id, style.opacity, style.pointerEvents]; }, await centre('sound')), ['scene', '0', 'none']);
+  await page.mouse.click(...await centre('sound')); await settle(page);
+  assert.equal((await read(page)).sound.checked, false); assert.equal(await state(page, 'sound', 'aria-checked'), 'false');
+  await page.mouse.click(...await centre('level-easy')); await settle(page); assert.equal(await state(page, 'level-easy', 'aria-checked'), 'true');
+  // A narrower window makes the canvas smaller; the elements follow it. The page is then scrolled.
+  await page.setViewportSize({ width: 520, height: 500 }); await settle(page); await over();
+  await page.evaluate(() => scrollTo(0, 120)); await settle(page); await over();
+  await page.mouse.click(...await centre('apply')); await settle(page); assert.equal((await read(page)).apply.activations, 1);
+});
+
+await scenario('a request made of an element reaches the control a press and a key reach', desktop, async page => {
+  await request(page, 'sound', 'click');
+  let now = await read(page);
+  assert.equal(now.sound.checked, false); assert.equal(await state(page, 'sound', 'aria-checked'), 'false');
+  await request(page, 'level-hard', 'click'); await request(page, 'apply', 'click'); now = await read(page);
+  assert.deepEqual([now.level.selected, now.level.changes, now.apply.activations], ['hard', [['hard', 'normal']], 1]);
+  assert.deepEqual([await state(page, 'level-hard', 'aria-checked'), await state(page, 'level-normal', 'aria-checked')], ['true', 'false']);
+  // A request for the focus moves the focus of the application. The keyboard stays with the canvas, so a key follows.
+  await page.focus('#scene'); await request(page, 'apply', 'focus'); now = await read(page);
+  assert.deepEqual([now.focus, now.semantics.focused, await page.evaluate(() => document.activeElement.id)], ['apply', 'apply', 'scene']);
+  await key(page, 'Space'); assert.equal((await read(page)).apply.activations, 2);
+  await request(page, 'level-easy', 'focus'); now = await read(page);
+  assert.deepEqual([now.focus, now.semantics.focused, now.level.selected], ['level', 'level-hard', 'hard']);
+  assert.equal((await accessible(page)).active, await elementId(page, 'level-hard'));
+  // Disabled controls are published as disabled, offer no focus, and refuse the request as they refuse the press.
+  await page.click('#disable-hard'); await settle(page);
+  assert.equal(await state(page, 'level-hard', 'aria-disabled'), 'true'); assert.equal(await state(page, 'level-easy', 'aria-disabled'), null);
+  await page.click('#disable-all'); await settle(page);
+  for (const id of Object.keys(labels)) { assert.equal(await state(page, id, 'aria-disabled'), 'true', id); assert.equal(await state(page, id, 'tabindex'), null, id); }
+  assert.equal(await page.getByRole('radiogroup', { name: 'Level / 难度' }).getAttribute('aria-disabled'), 'true');
+  assert.deepEqual((await accessible(page)).rows.map(row => row[4]), [false, true, true, true, true, true, true]);
+  for (const id of ['sound', 'level-easy', 'apply']) await request(page, id, 'click');
+  now = await read(page);
+  assert.deepEqual([now.sound.checked, now.level.selected, now.apply.activations], [false, 'hard', 2]);
+  await page.click('#disable-all'); await settle(page); await request(page, 'sound', 'click');
+  assert.equal((await read(page)).sound.checked, true); assert.equal(await state(page, 'sound', 'aria-disabled'), null); assert.equal(await state(page, 'sound', 'tabindex'), '-1');
+});
+
+await scenario('on a phone the elements lie over the controls and a tap goes through them', { ...devices['Pixel 7'] }, async page => {
+  for (const [id, [x, y, width, height]] of Object.entries(drawn).filter(([id]) => id in labels)) {
+    const box = await node(page, id).boundingBox(), [left, top] = await at(page, [x, y]), [right, bottom] = await at(page, [x + width, y + height]);
+    assert.ok(Math.abs(box.x - left) < 0.51 && Math.abs(box.y - top) < 0.51 && Math.abs(box.x + box.width - right) < 0.51 && Math.abs(box.y + box.height - bottom) < 0.51, id);
+  }
+  const box = await node(page, 'sound').boundingBox();
+  await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2); await page.waitForTimeout(80);
+  assert.equal((await read(page)).sound.checked, false); assert.equal(await state(page, 'sound', 'aria-checked'), 'false');
+  await request(page, 'level-hard', 'click'); assert.equal((await read(page)).level.selected, 'hard');
 });
 
 fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');

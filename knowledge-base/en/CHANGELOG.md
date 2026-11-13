@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Semantics of a drawn UI — 2026-11-14
+
+`@egret/engine/ui/semantics` holds a tree that describes the controls an application draws: a role, a name, bounds and state for each, read from the control at every publication, with the activation and the focus request a press and a key already reach. `@egret/engine/web/semantics` projects it to the page: the canvas keeps the keyboard, owns an invisible container of elements laid over the controls, and names the focused one as its active descendant. A modal dialog makes everything outside it inert. The control example now describes its switch, its options and its button. The projection was checked against the accessibility tree of headless Chromium; no screen reader, other assistive technology or other browser was run. [Guide](docs/ui-semantics.md)
+
 ## Staged seek for Spine instances — 2026-11-14
 
 `instance.seek` moves a Spine instance to another elapsed time. The playback is rebuilt on a private copy from the setup pose by replaying the commands and deltas the instance accepted, in slices of bounded work, and the instance is untouched until the commit. Events are suppressed by default; a forward seek may replay them, capped and delivered only after it succeeds. History is bounded and dropped when it outgrows its limits, after which a seek is refused. A faulted instance is brought back by a seek to the time it last published. The tests use original numerical fixtures; none has a physics constraint. [Guide](docs/spine-seek.md) · [#84](https://github.com/cnedwin/Egret_rebuild/issues/84)

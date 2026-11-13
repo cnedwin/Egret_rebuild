@@ -12,7 +12,7 @@ The workspace packages are private at version 0.0.0 and are not published to a r
 | --- | --- | --- |
 | `egret-contracts-0.0.0.tgz` | Shared contracts | No, named in an override |
 | `egret-runtime-0.0.0.tgz` | Runtime | No, named in an override |
-| `egret-engine-0.0.0.tgz` | `@egret/engine` and its 25 entries | Yes, the only dependency |
+| `egret-engine-0.0.0.tgz` | `@egret/engine` and its 27 entries | Yes, the only dependency |
 
 The engine asks for the other two at version 0.0.0. Because no registry has them, the consumer names their archives under `overrides` in its `pnpm-workspace.yaml`. pnpm 11 reads overrides only from that file.
 
@@ -33,7 +33,7 @@ Add `--offline` to take `robust-predicates` from the installed copy of the check
 | --- | --- |
 | `archives` | Each archive holds every module and type file its package declares, the licence text, and dependencies written as versions. |
 | `install` | `pnpm install --ignore-scripts` succeeds in the new project. Four packages are installed and none of the optional ones. |
-| `entries` | All 25 entries of `@egret/engine` resolve to the declared file inside the consumer, have their type file, and load in Node. |
+| `entries` | All 27 entries of `@egret/engine` resolve to the declared file inside the consumer, have their type file, and load in Node. |
 | `separation` | An entry that is not a web entry loads no web module. An entry that is not a 3D entry loads no 3D module. Only `webgl2` and `webgpu` load `robust-predicates`. Nothing is loaded from outside the consumer. |
 | `examples` | The public examples, copied byte for byte, run in the consumer and print what they print in the checkout. |
 | `types` | A strict TypeScript consumer of the default entry and of `@egret/engine/layout` compiles against the installed types, and a wrong call is still an error. |
@@ -88,14 +88,14 @@ Entries by where they can do their work:
 | --- | --- | --- |
 | Default | `@egret/engine` | Example run and types compiled |
 | Headless, optional | `/layout` | Example run and types compiled |
-| Headless, optional | `/text`, `/resources`, `/input`, `/input/hover`, `/ui`, `/ui/editing`, `/animation`, `/paragraph`, `/world3d` | Resolved and loaded |
-| Browser, optional | `/webgl2`, `/webgpu`, `/web/input`, `/web/pointer`, `/web/keyboard`, `/web/image`, `/web/text`, `/web/paragraph`, `/web/resources`, `/web/editing`, `/web/text-input`, `/web/hover`, `/webgl2/world3d`, `/webgpu/world3d` | Resolved and loaded in Node. Not run in a browser. |
+| Headless, optional | `/text`, `/resources`, `/input`, `/input/hover`, `/ui`, `/ui/semantics`, `/ui/editing`, `/animation`, `/paragraph`, `/world3d` | Resolved and loaded |
+| Browser, optional | `/webgl2`, `/webgpu`, `/web/input`, `/web/pointer`, `/web/keyboard`, `/web/image`, `/web/text`, `/web/paragraph`, `/web/resources`, `/web/editing`, `/web/text-input`, `/web/hover`, `/web/semantics`, `/webgl2/world3d`, `/webgpu/world3d` | Resolved and loaded in Node. Not run in a browser. |
 
 What each capability does, and how far each one is tested in the checkout, is in [current capabilities](core-progress.md).
 
 ## Module sets
 
-Measured in the consumer on Linux x64 from the archives of main [215aa9e](https://github.com/cnedwin/Egret_rebuild/commit/215aa9eda94cdf25db50cd00ec598d1afb81887e) with this change. A set is every module that one import loads in Node, unbundled. Gzip is each file compressed at level 9, then summed. A bundler would produce other numbers, and `report.json` of a run holds a row for every entry. The two hover entries are newer than this measurement.
+Measured in the consumer on Linux x64 from the archives of main [215aa9e](https://github.com/cnedwin/Egret_rebuild/commit/215aa9eda94cdf25db50cd00ec598d1afb81887e) with this change. A set is every module that one import loads in Node, unbundled. Gzip is each file compressed at level 9, then summed. A bundler would produce other numbers, and `report.json` of a run holds a row for every entry. The two hover entries and the two semantics entries are newer than this measurement.
 
 | Entry | Modules | KiB | KiB gzip | Third party |
 | --- | ---: | ---: | ---: | --- |

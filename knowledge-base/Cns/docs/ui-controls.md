@@ -4,6 +4,8 @@
 
 `@egret/engine/ui` 有六个控件，各自保存玩家操作的一样东西的状态：虚拟摇杆、按钮、悬停、开关、多选一，以及滚动位置。它们属于 M3.4，[#90](https://github.com/cnedwin/Egret_rebuild/issues/90)。
 
+这些控件对看不见它们的人来说是什么，由[语义树](ui-semantics.md)描述，它读取的是同一份状态。
+
 它们只拥有状态。控件不添加页面监听器，不绘制任何东西，也不决定路由：它在显示对象上监听[触点输入](multi-pointer-input.md)或[悬停输入](pointer-hover.md)的事件，并通过回调报告变化。每种状态怎么画由应用决定，按键也由应用绑定到指针所走的同一批方法上。
 
 | 工厂 | 保存的状态 | 驱动方式 |
@@ -118,7 +120,7 @@ const scroll = createScrollControl({
 | [`tests/ui-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-controls.test.mjs) | 真实 Engine 上的移动与动作 |
 | [`tests/ui-state-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-state-controls.test.mjs)，13 项 | 真实 Engine 上的悬停、开关和多选一，严格 TypeScript 消费者，以及导出 |
 | [`tests/ui-scroll-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-scroll-control.test.mjs)，13 项 | 真实 Engine 上的滚动位置：范围、滚轮单位、嵌套视口、滑块及其拖动，以及严格 TypeScript 消费者 |
-| [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs)，5 个场景 | 无头 Chromium 软件 WebGL2 的真实页面：鼠标、触摸和按键通过自动化协议注入 |
+| [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs)，5 个场景 | 无头 Chromium 软件 WebGL2 的真实页面：鼠标、触摸和按键通过自动化协议注入。同一文件另有四个场景检查[语义投射](ui-semantics.md) |
 | [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs)，8 个场景 | 真实页面中的滚动控件：滚轮、交还给页面，以及拖动滑块 |
 
 向悬停、开关和多选一的构建产物逐个写入了二十九个错误，单元测试全部发现。向滚动控件写入的三十二个错误中发现了三十个，其余两个不改变调用者能看到的任何行为。
@@ -127,7 +129,7 @@ const scroll = createScrollControl({
 
 - 没有人操作过示例。所有输入都是注入的。
 - 这些控件没有在硬件 GPU、WebGPU、已安装的 Edge、Safari、Firefox 和真实手机上运行。
-- 不向辅助技术通报任何内容。面向读屏器的角色、名称和状态仍在 #90。
+- [语义投射](ui-semantics.md)为这些控件提供角色、名称和状态，并对照无头 Chromium 的无障碍树做了检查。没有运行任何读屏软件或其他辅助技术。
 - 手指不能平移滚动视口：这种手势及其与按下操作的仲裁仍在 #90。
 - 文本框和虚拟列表不是用这些控件构建的。
 - 在虚拟列表被回收的行上做选择属于列表自身，不属于这个选项组。

@@ -252,6 +252,11 @@ for (const [name, allowed] of Object.entries(expected)) {
       textExports['./input/hover'] = {types:'./dist/hover.d.ts',import:'./dist/hover.js'};
       textExports['./web/hover'] = {types:'./dist/web/hover.d.ts',import:'./dist/web/hover.js'};
     }
+    // Semantics: one DOM-free tree entry and one optional browser projection entry.
+    if (name === 'engine') {
+      textExports['./ui/semantics'] = {types:'./dist/semantics.d.ts',import:'./dist/semantics.js'};
+      textExports['./web/semantics'] = {types:'./dist/web/semantics.d.ts',import:'./dist/web/semantics.js'};
+    }
     // World3D: a DOM-free scene graph entry and one explicit entry per rendering backend.
     if (name === 'engine') {
       textExports['./world3d'] = {types:'./dist/rendering/world3d/index.d.ts',import:'./dist/rendering/world3d/index.js'};
@@ -324,6 +329,11 @@ for (const [name, allowed] of Object.entries(expected)) {
         const relative=path.relative(dir,file).split(path.sep).join('/');
         if(name!=='engine'||!['web/BrowserHoverInput.ts','dist/web/BrowserHoverInput.js','dist/web/BrowserHoverInput.d.ts'].includes(relative))
           throw new Error('Hover: logical hover entry imported outside the named browser module: '+relative);
+      } else if (imported === '@egret/engine/ui/semantics') {
+        // The browser projection reads the public tree entry for its types and holds nothing private.
+        const relative=path.relative(dir,file).split(path.sep).join('/');
+        if(name!=='engine'||!['web/BrowserSemantics.ts','dist/web/BrowserSemantics.d.ts'].includes(relative))
+          throw new Error('Semantics: tree entry imported outside the named browser module: '+relative);
       } else if (imported === '#egret-keyboard-input') {
         const relative=path.relative(dir,file).split(path.sep).join('/');
         if(name!=='engine'||!['web/keyboard.ts','web/BrowserKeyboardInput.ts','dist/web/keyboard.js','dist/web/keyboard.d.ts','dist/web/BrowserKeyboardInput.js','dist/web/BrowserKeyboardInput.d.ts'].includes(relative))
@@ -5285,6 +5295,52 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
   const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
   if(Object.hasOwn(hoverAllowed,resolved)&&!hoverAllowed[resolved].includes(relative))throw new Error('Hover: implementation module imported outside its entry: '+relative);
+ }
+}
+// Semantics: a DOM-free tree entry and a browser projection entry, each with one implementation
+// module. The tree is built on the runtime alone, the projection on the tree's types alone, and no
+// other entry has either.
+const semanticTypes=['SemanticAction','SemanticBounds','SemanticChecked','SemanticDescription','SemanticNode','SemanticNodeOptions','SemanticOrientation','SemanticPosition','SemanticRange','SemanticRole','SemanticSnapshot','SemanticSnapshotNode','SemanticsState','UiSemantics','UiSemanticsOptions'];
+const semanticBrowserTypes=['BrowserSemantics','BrowserSemanticsOptions'];
+const semanticValues=['createUiSemantics','semanticBoundsOf'];
+for(const [file,values,types] of [['packages/engine/src/semantics.ts',semanticValues,semanticTypes],['packages/engine/dist/semantics.js',semanticValues,[]],['packages/engine/dist/semantics.d.ts',semanticValues,semanticTypes],
+ ['packages/engine/web/semantics.ts',['createBrowserSemantics'],semanticBrowserTypes],['packages/engine/dist/web/semantics.js',['createBrowserSemantics'],[]],['packages/engine/dist/web/semantics.d.ts',['createBrowserSemantics'],semanticBrowserTypes]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,values)||!mouseSame(surface.types,types))throw new Error('Semantics: exact entry exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/ui/semantics')),semanticValues)||!mouseSame(Object.keys(await import('@egret/engine/web/semantics')),['createBrowserSemantics']))throw new Error('Semantics: optional runtime values mismatch');
+for(const [label,values,stem] of textEntries){
+ const body=uiRead(stem+'.d.ts');
+ for(const name of [...semanticTypes,...semanticBrowserTypes,...semanticValues,'createBrowserSemantics'])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Semantics: leaked to default/other entry: '+label+'/'+name);
+}
+const semanticImports={
+ 'src/semantics.ts':['./semanticTree.js','./semanticTypes.js'],
+ 'dist/semantics.js':['./semanticTree.js'],
+ 'dist/semantics.d.ts':['./semanticTree.js','./semanticTypes.js'],
+ 'src/semanticTree.ts':['@egret/runtime','@egret/runtime','./semanticTypes.js'],
+ 'dist/semanticTree.js':['@egret/runtime'],
+ 'dist/semanticTree.d.ts':['@egret/runtime','./semanticTypes.js'],
+ 'src/semanticTypes.ts':[],
+ 'dist/semanticTypes.js':[],
+ 'dist/semanticTypes.d.ts':[],
+ 'web/semantics.ts':['./BrowserSemantics.js','./BrowserSemantics.js'],
+ 'dist/web/semantics.js':['./BrowserSemantics.js'],
+ 'dist/web/semantics.d.ts':['./BrowserSemantics.js','./BrowserSemantics.js'],
+ 'web/BrowserSemantics.ts':['@egret/runtime','@egret/engine/ui/semantics'],
+ 'dist/web/BrowserSemantics.js':['@egret/runtime'],
+ 'dist/web/BrowserSemantics.d.ts':['@egret/engine/ui/semantics'],
+};
+for(const [file,expected] of Object.entries(semanticImports)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
+ if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Semantics: exact graph mismatch: '+file);
+ if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Semantics: acquired automatic host work: '+file);
+}
+const semanticAllowed={'src/semanticTree.js':['src/semantics.ts'],'dist/semanticTree.js':['dist/semantics.js','dist/semantics.d.ts'],'web/BrowserSemantics.js':['web/semantics.ts'],'dist/web/BrowserSemantics.js':['dist/web/semantics.js','dist/web/semantics.d.ts']};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
+ if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
+ for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
+  const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+  if(Object.hasOwn(semanticAllowed,resolved)&&!semanticAllowed[resolved].includes(relative))throw new Error('Semantics: implementation module imported outside its entry: '+relative);
  }
 }
 if(!/const primitives=captureMouseInputRuntimePrimitives\(\)/.test(uiRead('packages/engine/src/keyboardInput.ts'))||!/const INPUT_PARENT = Object.getOwnPropertyDescriptor\(DisplayObject.prototype, 'parent'\)/.test(uiRead('packages/engine/src/internal/mouseInputFactoryState.ts')))throw new Error('M3.3: original eager display admission capture missing');

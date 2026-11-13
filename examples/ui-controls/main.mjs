@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 // A switch, a group of three options and a button, drawn by the engine in each of their states.
-// The controls of `@egret/engine/ui` hold the state; this page paints it and binds the keys.
+// The controls of `@egret/engine/ui` hold the state; this page paints it, binds the keys, and
+// describes the same controls to assistive technology.
 import { createEngineForProfile, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
 import { createActionControl, createHoverControl, createSelectionGroup, createToggleControl } from '@egret/engine/ui';
+import { createUiSemantics } from '@egret/engine/ui/semantics';
 import { createBrowserHoverInput } from '@egret/engine/web/hover';
+import { createBrowserSemantics } from '@egret/engine/web/semantics';
 import { createBrowserPointerInput } from '@egret/engine/web/pointer';
 import { createBrowserKeyboardInput } from '@egret/engine/web/keyboard';
 import { createExampleHost } from '../host.mjs';
@@ -68,6 +71,26 @@ for (const key of levels) parts[key].sprite.on(keyboard.events.keyDown, event =>
 // changed the selection has been delivered.
 function followSelection() { queueMicrotask(() => { registrations.level.update({ target: parts[level.selected].sprite }); show(); }); }
 
+// What the controls are to someone who does not see them. Each node reads the control that is drawn, at
+// every publication, and its actions are the ones a press and a key already reach.
+const semantics = createUiSemantics();
+const area = part => ({ x: part.sprite.x, y: part.sprite.y, width: part.width, height: part.height });
+const holds = id => keyboard.getSnapshot().focusedId === id;
+const names = { easy: 'Easy / 简单', normal: 'Normal / 普通', hard: 'Hard / 困难' };
+semantics.add({ id: 'panel', role: 'group', describe: () => ({ name: 'Settings / 设置', bounds: { x: 0, y: 0, width: WIDTH, height: HEIGHT } }) });
+semantics.add({ id: 'sound', role: 'switch', parent: 'panel', onActivate: () => sound.toggle(), onFocus: () => keyboard.focus('sound', { visible: true }),
+  describe: () => ({ name: 'Sound / 声音', bounds: area(parts.sound), checked: sound.checked, disabled: !sound.enabled, focused: holds('sound') }) });
+semantics.add({ id: 'level', role: 'radiogroup', parent: 'panel', describe: () => ({ name: 'Level / 难度', bounds: { x: 40, y: 120, width: 400, height: 44 }, disabled: !level.enabled }) });
+for (const [index, key] of levels.entries()) semantics.add({ id: 'level-' + key, role: 'radio', parent: 'level',
+  onActivate: () => { level.select(key); },
+  // The group is one stop of the keyboard: the focus goes to the option that is selected.
+  onFocus: () => keyboard.focus('level', { visible: true }),
+  describe: () => ({ name: names[key], bounds: area(parts[key]), checked: level.selected === key, disabled: !level.enabled || !level.isItemEnabled(key),
+    focused: holds('level') && level.selected === key, position: { index: index + 1, size: levels.length } }) });
+semantics.add({ id: 'apply', role: 'button', parent: 'panel', onActivate: () => { apply.press(); apply.release(); }, onFocus: () => keyboard.focus('apply', { visible: true }),
+  describe: () => ({ name: 'Apply / 应用', bounds: area(parts.apply), disabled: !apply.enabled, focused: holds('apply') }) });
+const projection = createBrowserSemantics({ semantics, canvas, width: WIDTH, height: HEIGHT, label: 'Control states / 控件状态', onError: fail });
+
 let everything = true;
 document.querySelector('#disable-hard').addEventListener('click', () => { level.setItemEnabled('hard', !level.isItemEnabled('hard')); show(); });
 document.querySelector('#disable-all').addEventListener('click', () => {
@@ -87,6 +110,7 @@ export function readSnapshot() {
     apply: { pressed: apply.pressed, activations: apply.activationCount, enabled: apply.enabled },
     hovered: Object.entries(hovered).filter(([, control]) => control.hovered).map(([name]) => name),
     focus: focus.focusVisible ? focus.focusedId : undefined, focused: focus.focusedId, renders, failure,
+    semantics: { revision: semantics.snapshot.revision, focused: semantics.snapshot.focused, nodes: semantics.snapshot.nodes.length, projection: projection.state },
   };
 }
 function show() {
@@ -94,6 +118,8 @@ function show() {
   paint(parts.sound, { enabled: sound.enabled, pressed: sound.pressed, hovered: hovered.sound.hovered, on: sound.checked }, ringed === 'sound');
   for (const key of levels) paint(parts[key], { enabled: level.enabled && level.isItemEnabled(key), pressed: false, hovered: hovered[key].hovered, on: level.selected === key }, ringed === 'level' && level.selected === key);
   paint(parts.apply, { enabled: apply.enabled, pressed: apply.pressed, hovered: hovered.apply.hovered, on: false }, ringed === 'apply');
+  // Published with the frame that shows the same state.
+  semantics.publish();
   const snapshot = readSnapshot();
   status.textContent = failure ? 'Failed / 失败：' + failure : 'Sound / 声音：' + (snapshot.sound.checked ? 'on / 开' : 'off / 关') + ' · Level / 难度：' + snapshot.level.selected + ' · Applied / 已应用：' + snapshot.apply.activations;
   stateView.textContent = JSON.stringify(snapshot, null, 2);

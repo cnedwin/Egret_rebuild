@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-A switch, a group of three options and a button, drawn by the engine in each of their states. The controls of `@egret/engine/ui` hold the state. The page paints it and binds the keys.
+A switch, a group of three options and a button, drawn by the engine in each of their states. The controls of `@egret/engine/ui` hold the state. The page paints it and binds the keys, and describes the same controls to assistive technology.
 
 ## Run
 
@@ -22,6 +22,7 @@ Keep the host and port the server prints and open `/examples/ui-controls/index.h
 - Click the canvas, then use the keyboard. Tab moves between the switch, the group and the button, and a ring marks the one with the focus. Space or Enter activates. The arrow keys, Home and End move within the group.
 - Disable the third option with the page button. A press on it does nothing and the arrow keys skip it.
 - Disable everything. No control answers, and none is hovered.
+- Open the accessibility tree in the browser's developer tools. The canvas is an application that holds a group, a switch, a radio group of three and a button, each with its state, and it names the one with the focus.
 
 ## How it works
 
@@ -29,7 +30,9 @@ Keep the host and port the server prints and open `/examples/ui-controls/index.h
 
 Keys arrive from `@egret/engine/web/keyboard` at the display object with the focus. The page calls `toggle()`, `press()` with `release()`, or `next()`, `previous()`, `first()` and `last()`. The group is one keyboard stop, and the stop follows the selected option.
 
-See [the guide](../../knowledge-base/en/docs/ui-controls.md) for each control and what was checked.
+`createUiSemantics` describes the five controls: each node reads the control that is drawn when the page publishes, after it paints. `createBrowserSemantics` lays an invisible element over each control. The keyboard stays with the canvas.
+
+See [the guide](../../knowledge-base/en/docs/ui-controls.md) for each control and [the semantics guide](../../knowledge-base/en/docs/ui-semantics.md) for the description, with what was checked.
 
 ## Check
 
@@ -37,4 +40,4 @@ See [the guide](../../knowledge-base/en/docs/ui-controls.md) for each control an
 node examples/ui-controls/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
 ```
 
-Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Five scenarios drive a mouse, a finger and the keyboard through the automation protocol and write `report.json` with a screenshot of each. They passed in headless Chromium with software WebGL2. A hardware GPU, WebGPU, Edge, Safari, Firefox, a real phone and a person at the controls were not run.
+Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Five scenarios drive a mouse, a finger and the keyboard through the automation protocol, and four read the accessibility tree the browser computes and make requests of its elements. They write `report.json` with a screenshot of each. All nine passed in headless Chromium with software WebGL2. A hardware GPU, WebGPU, Edge, Safari, Firefox, a real phone, a person at the controls and any screen reader or other assistive technology were not run.
