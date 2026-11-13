@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/outfit-studio/verify-open.mjs",
+      "originRole": "First-party browser check of opening an exported project in Outfit Studio; independently authored with AI assistance; Apache-2.0. Uses existing attributed assets and dependencies.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/outfit-studio-open.test.mjs",
+      "originRole": "First-party unit of opening an exported Outfit Studio project over a live one; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

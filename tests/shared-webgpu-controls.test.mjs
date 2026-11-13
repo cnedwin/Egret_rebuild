@@ -527,6 +527,27 @@ test('GPU G11 accepted target stays exclusive while any fence, scope or map rema
   }
 });
 
+// Without authenticated recovery, a map abort retains its original terminal classification.
+test('GPU direct readback AbortError keeps unknown ownership when recovery is omitted', async () => {
+  await using(async (f, a) => {
+    fill(a.sprite());
+    const h = f.sharedHost({ enableReadback: true }); await f.ready(h);
+    const ticket = h.requestReadback();
+    const failure = new DOMException('mapping was aborted', 'AbortError');
+    const rendered = capture(f, () => h.renderSharedFrame(a.capture())); admitted(rendered);
+    const settled = assert.rejects(ticket, cause => cause.code === 'WEBGPU_READBACK_FAILED' && cause.cause === failure);
+    assert.equal(rendered.maps.length, 1);
+    f.allowUnsafe(h);
+    rendered.maps[0].reject(failure);
+    await tick();
+    assert.equal(h.getSessionStatus().state, 'failed');
+    assert.equal(h.getStatus().pendingFrames, 1);
+    await rendered.finish();
+    await settled;
+    await f.close(h, true, failure);
+  });
+});
+
 // A pending GPU fence must not consume the CPU space needed to join the next frame.
 test('GPU G18 direct dense frames keep one batch while a preceding frame is pending', async () => {
   await using(async (f, a) => {

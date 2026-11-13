@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Opening a project in Outfit Studio — 2026-11-14
+
+Outfit Studio opens an exported project in the running page. The file is admitted on a copy of the live project and written as one edit transaction, under the same stable character IDs. New palettes are loaded and taken by the Host while the previous frame stays on screen, and the project, actors and roster then change together. A refused file, a failed load or Cancel changes nothing. The WebGL2 rows of the new browser check passed in headless Chromium with software rendering; the WebGPU, hardware and phone rows have not been run. [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) · [Outfit Studio](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/README.md)
+
 ## SharedFrame2D and rendering diagnostics — 2026-11-14
 
 SharedFrame2D is the public 2D frame path for WebGPU and WebGL2. The older Canvas Host, legacy frame captures and prototype scene3d Host were retired. Ordered cross-page batching and retained command, packing and batch records are available on the shared path. The integrated pixel comparisons were software-rendered. The optional debug monitor and GPU timing harness report their available counters and timing sources. [#187](https://github.com/cnedwin/Egret_rebuild/pull/187) · [#188](https://github.com/cnedwin/Egret_rebuild/pull/188) · [#190](https://github.com/cnedwin/Egret_rebuild/pull/190) · [#193](https://github.com/cnedwin/Egret_rebuild/pull/193)
