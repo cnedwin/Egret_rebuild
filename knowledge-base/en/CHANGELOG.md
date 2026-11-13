@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A text field control over the platform text input — 2026-11-14
+
+`createTextFieldControl` in `@egret/engine/ui` holds the text of a field an application draws and whether it is being edited. A completed press, a key or a request of assistive technology opens an editor over the place the application names; the platform text input is such an editor as it is, so a player types Chinese into a drawn field with the platform's own input method. Several fields share one editor, a cancelled edit leaves the text as it was, and the length limit counts characters as a reader does. A new example draws a form of two fields and a button. Its composition was driven through Chromium's protocol; no real input method, on-screen keyboard or person was run. [Guide](docs/ui-controls.md#text-field)
+
 ## Semantics of a drawn UI — 2026-11-14
 
 `@egret/engine/ui/semantics` holds a tree that describes the controls an application draws: a role, a name, bounds and state for each, read from the control at every publication, with the activation and the focus request a press and a key already reach. `@egret/engine/web/semantics` projects it to the page: the canvas keeps the keyboard, owns an invisible container of elements laid over the controls, and names the focused one as its active descendant. A modal dialog makes everything outside it inert. The control example now describes its switch, its options and its button. The projection was checked against the accessibility tree of headless Chromium; no screen reader, other assistive technology or other browser was run. [Guide](docs/ui-semantics.md)
