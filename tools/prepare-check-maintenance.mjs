@@ -177,11 +177,31 @@ const m12FullDirtyBoundaryOwners = [
   {"path":"tools/spritesheet-boundary.mjs","bytes":380778,"sha256":"896160d7f2c9a9a3584c8c7e9ea593a90a7d8277f5aba1a14d6e2d2f08c82426"},
 ];
 const m12FullDirtyBoundaryBlock = /^([ ]*)\/\/ M12-FULL-DIRTY-IDENTITY-BEGIN\n[\s\S]*?^\1\/\/ M12-FULL-DIRTY-IDENTITY-END\n/gm;
+// Exact current owners may recover their pre-2D-cost bodies before the M1.2 inverse.
+const twoDCostBoundaryOwners = [
+  {"path":"tools/atlas-import-boundary.mjs","bytes":288873,"sha256":"d389a796bb7b4f1bbddcacc64aefed8cd84667c3199813e7d7647dba151063aa"},
+  {"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":97217,"sha256":"ff66aa02e5655e8f5bed47d7582ebe852e1a5336f16ae73945fde6a350873859"},
+  {"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":90638,"sha256":"1907f8a098300b33f9d8f6f4935f19a6d19b1c732a9e820bef76a790b023e8ab"},
+  {"path":"tools/browser-png-boundary.mjs","bytes":394106,"sha256":"d95aa88d2c46349fab8470b0ab28e291980c75c4a0a79a9cd414f576a91b0df0"},
+  {"path":"tools/sequence-playback-boundary.mjs","bytes":95496,"sha256":"7c5d69e1d028c329e84361861083968a6bcde597e9143924766197d5ac626e02"},
+  {"path":"tools/spritesheet-boundary.mjs","bytes":384131,"sha256":"4d3454454679cd8254f4d1b4e444a29c085e77f8094dc18f4c8beb9a68ea4007"},
+];
+const twoDCostBoundaryBlock = /^([ ]*)\/\/ 2D-COST-IDENTITY-BEGIN\n[\s\S]*?^\1\/\/ 2D-COST-IDENTITY-END\n/gm;
 export function world3dBoundaryPrevious(raw, file){
  const pair=world3dBoundaryOwners.find(row=>row.path===file);
  if(!pair)return raw;
  const matches=(bytes,pin)=>bytes.length===pin.bytes&&createHash('sha256').update(bytes).digest('hex')===pin.sha256;
  const fullDirty=m12FullDirtyBoundaryOwners.find(row=>row.path===file);
+ const twoDCost=twoDCostBoundaryOwners.find(row=>row.path===file);
+ if(twoDCost&&matches(raw,twoDCost)){
+  let text=raw.toString('utf8');
+  if([...text.matchAll(twoDCostBoundaryBlock)].length!==1)throw Error('2D cost owner block differs: '+file);
+  text=text.replace(twoDCostBoundaryBlock,'');
+  if(file==='tools/sequence-playback-boundary.mjs')text=text.replace("  pin = twoDCostSourcePin(root, pin, code);\n",'');
+  else if(file==='tools/bitmap-binding-ticket-boundary.mjs'||file==='tools/bitmap-resource-slot-boundary.mjs')text=text.replace("pin=twoDCostSourcePin(pin,code);",'');
+  raw=Buffer.from(text);
+  if(!fullDirty||!matches(raw,fullDirty))throw Error('2D cost boundary predecessor identity differs: '+file);
+ }
  if(fullDirty&&matches(raw,fullDirty)){
   let text=raw.toString('utf8');
   if([...text.matchAll(m12FullDirtyBoundaryBlock)].length!==1)throw Error('M1.2 full-dirty owner block differs: '+file);

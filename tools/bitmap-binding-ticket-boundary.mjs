@@ -249,7 +249,33 @@ function m12FullDirtyCapturePin(pin,code){
  return pair.current;
 }
 // M12-FULL-DIRTY-IDENTITY-END
-function pinCheck(pin,code){const raw=read(pin.path);pin=m31UiSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m22SequenceSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m33KeyboardSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m24SpineSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m34EffectInterfacePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=sharedContainedClipPairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m12FullDirtyCapturePin(pin,code);const worldCard=worldCardRawPairs.find(pair=>equal(pair.base,pin));if(worldCard&&raw.length===worldCard.current.bytes&&hash(raw)===worldCard.current.sha256)pin=worldCard.current;const texturedGlb=texturedGlbRawPairs.find(pair=>equal(pair.base,worldCard?.current??pin));if(texturedGlb&&raw.length===texturedGlb.current.bytes&&hash(raw)===texturedGlb.current.sha256)pin=texturedGlb.current;const lambertGlb=lambertGlbRawPairs.find(pair=>equal(pair.base,texturedGlb?.current??pin));if(lambertGlb&&raw.length===lambertGlb.current.bytes&&hash(raw)===lambertGlb.current.sha256)pin=lambertGlb.current;const content=m21ContentConfigurationPairs.find(pair=>equal(pair.base,pin));if(content&&raw.length===content.current.bytes&&hash(raw)===content.current.sha256)pin=content.current;if(m31UiPackageSuccessor(pin,raw)||m3PointerPackageSuccessor(pin,raw)||m15ResourcePackageSuccessor(pin,raw)||m14EnginePackageSuccessor(pin,raw)||bbtbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
+// 2D-COST-IDENTITY-BEGIN
+// Exact successors of the six previously admitted tree, capture and preparation identities.
+const twoDCostSourcePairs = [
+  {"base":{"path":"packages/runtime/src/displayTreeState.ts","bytes":20413,"sha256":"8e4506432b2419370544df25d3a04f6248055d37b17fcde58aafb09b48d716e9"},"current":{"path":"packages/runtime/src/displayTreeState.ts","bytes":22775,"sha256":"12b0c7c33ab2c34f569c620de4cac5f4cba68866129ddf1db320ca0817d6b4f8"}},
+  {"base":{"path":"packages/runtime/dist/displayTreeState.js","bytes":17568,"sha256":"95fd7624cf06ab8969d3864c33a468f835781880db8fab17f1972477858a8bbc"},"current":{"path":"packages/runtime/dist/displayTreeState.js","bytes":19914,"sha256":"b5e00bfab0be41c350061e8fbae47b740798a66ea979edb6032b482970d3527d"}},
+  {"base":{"path":"packages/runtime/src/sharedFrameCapture.ts","bytes":23703,"sha256":"e712da67bc21be71116085ce341172ee5e4ba3d7dc1a824c089047f685f06870"},"current":{"path":"packages/runtime/src/sharedFrameCapture.ts","bytes":26109,"sha256":"03db395eeff4d32012f12cf2c92a076f06a9c6de6d1c2ed839deed8743116359"}},
+  {"base":{"path":"packages/runtime/dist/sharedFrameCapture.js","bytes":21675,"sha256":"be6f4ef6ac9a98e2937279749e1fd70a98eadc9fcae836d2009a43f0bcb30e54"},"current":{"path":"packages/runtime/dist/sharedFrameCapture.js","bytes":24278,"sha256":"97cedf42ac29a8b11edbb7ec075b9afcc70fc61825d17b78f41f2f9f78907ced"}},
+  {"base":{"path":"packages/engine/rendering/prepareSharedDraws2D.ts","bytes":14356,"sha256":"d1382518ed5357bc2d9ab5cffb9e6ecd55dc072ca00afe6873025542269a350f"},"current":{"path":"packages/engine/rendering/prepareSharedDraws2D.ts","bytes":16973,"sha256":"611900ecc04208ade99907f81beb1df1cd54c99e1d90935dfcc246bc7ccb300e"}},
+  {"base":{"path":"packages/engine/dist/rendering/prepareSharedDraws2D.js","bytes":14216,"sha256":"3de9c4e3b1e89eba05d11b8a56220b2625168fe659604eed88d8019db3991c17"},"current":{"path":"packages/engine/dist/rendering/prepareSharedDraws2D.js","bytes":16810,"sha256":"ba92b37871f2fe3a2fefc8dc0551e8c549c3dd90ded23536c4ba81ef24ec605d"}},
+];
+function twoDCostSourcePin(pin,code){
+ const pair=twoDCostSourcePairs.find(row=>equal(row.base,pin));
+ if(!pair)return pin;
+ const marker=twoDCostSourcePairs[0].current;
+ const source=read(marker.path);
+ if(source.length!==marker.bytes||hash(source)!==marker.sha256)return pin;
+ for(const row of twoDCostSourcePairs){
+  if(row.base.path!==row.current.path||![m24SpineSourcePairs,m34EffectInterfacePairs,sharedContainedClipPairs].some(list=>list.some(prior=>equal(prior.current,row.base))))
+   bbtbFail(code,'2D cost predecessor differs: '+row.base.path);
+  const raw=row.current.path===marker.path?source:read(row.current.path);
+  if(raw.length!==row.current.bytes||hash(raw)!==row.current.sha256)
+   bbtbFail(code,'2D cost group differs: '+row.current.path);
+ }
+ return pair.current;
+}
+// 2D-COST-IDENTITY-END
+function pinCheck(pin,code){const raw=read(pin.path);pin=m31UiSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m22SequenceSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m33KeyboardSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m24SpineSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m34EffectInterfacePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=sharedContainedClipPairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m12FullDirtyCapturePin(pin,code);pin=twoDCostSourcePin(pin,code);const worldCard=worldCardRawPairs.find(pair=>equal(pair.base,pin));if(worldCard&&raw.length===worldCard.current.bytes&&hash(raw)===worldCard.current.sha256)pin=worldCard.current;const texturedGlb=texturedGlbRawPairs.find(pair=>equal(pair.base,worldCard?.current??pin));if(texturedGlb&&raw.length===texturedGlb.current.bytes&&hash(raw)===texturedGlb.current.sha256)pin=texturedGlb.current;const lambertGlb=lambertGlbRawPairs.find(pair=>equal(pair.base,texturedGlb?.current??pin));if(lambertGlb&&raw.length===lambertGlb.current.bytes&&hash(raw)===lambertGlb.current.sha256)pin=lambertGlb.current;const content=m21ContentConfigurationPairs.find(pair=>equal(pair.base,pin));if(content&&raw.length===content.current.bytes&&hash(raw)===content.current.sha256)pin=content.current;if(m31UiPackageSuccessor(pin,raw)||m3PointerPackageSuccessor(pin,raw)||m15ResourcePackageSuccessor(pin,raw)||m14EnginePackageSuccessor(pin,raw)||bbtbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
 const policyPin={"path":"tools/bitmap-binding-ticket-policy.json","bytes":17762,"sha256":"81fb8a30379ae85782fb4eff61c25a890ab1f4a79404b4ea9bb8b3f1468de6e5"};
 pinCheck(policyPin,'BBT_BOUNDARY_POLICY_IDENTITY');
 const policy=JSON.parse(read(policyPin.path));

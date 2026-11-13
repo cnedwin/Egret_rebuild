@@ -276,6 +276,33 @@ function m12FullDirtyCapturePin(root,pin,code){
  return pair.current;
 }
 // M12-FULL-DIRTY-IDENTITY-END
+// 2D-COST-IDENTITY-BEGIN
+// Exact successors of the six previously admitted tree, capture and preparation identities.
+const twoDCostSourcePairs = [
+  {"base":{"path":"packages/runtime/src/displayTreeState.ts","bytes":20413,"sha256":"8e4506432b2419370544df25d3a04f6248055d37b17fcde58aafb09b48d716e9"},"current":{"path":"packages/runtime/src/displayTreeState.ts","bytes":22775,"sha256":"12b0c7c33ab2c34f569c620de4cac5f4cba68866129ddf1db320ca0817d6b4f8"}},
+  {"base":{"path":"packages/runtime/dist/displayTreeState.js","bytes":17568,"sha256":"95fd7624cf06ab8969d3864c33a468f835781880db8fab17f1972477858a8bbc"},"current":{"path":"packages/runtime/dist/displayTreeState.js","bytes":19914,"sha256":"b5e00bfab0be41c350061e8fbae47b740798a66ea979edb6032b482970d3527d"}},
+  {"base":{"path":"packages/runtime/src/sharedFrameCapture.ts","bytes":23703,"sha256":"e712da67bc21be71116085ce341172ee5e4ba3d7dc1a824c089047f685f06870"},"current":{"path":"packages/runtime/src/sharedFrameCapture.ts","bytes":26109,"sha256":"03db395eeff4d32012f12cf2c92a076f06a9c6de6d1c2ed839deed8743116359"}},
+  {"base":{"path":"packages/runtime/dist/sharedFrameCapture.js","bytes":21675,"sha256":"be6f4ef6ac9a98e2937279749e1fd70a98eadc9fcae836d2009a43f0bcb30e54"},"current":{"path":"packages/runtime/dist/sharedFrameCapture.js","bytes":24278,"sha256":"97cedf42ac29a8b11edbb7ec075b9afcc70fc61825d17b78f41f2f9f78907ced"}},
+  {"base":{"path":"packages/engine/rendering/prepareSharedDraws2D.ts","bytes":14356,"sha256":"d1382518ed5357bc2d9ab5cffb9e6ecd55dc072ca00afe6873025542269a350f"},"current":{"path":"packages/engine/rendering/prepareSharedDraws2D.ts","bytes":16973,"sha256":"611900ecc04208ade99907f81beb1df1cd54c99e1d90935dfcc246bc7ccb300e"}},
+  {"base":{"path":"packages/engine/dist/rendering/prepareSharedDraws2D.js","bytes":14216,"sha256":"3de9c4e3b1e89eba05d11b8a56220b2625168fe659604eed88d8019db3991c17"},"current":{"path":"packages/engine/dist/rendering/prepareSharedDraws2D.js","bytes":16810,"sha256":"ba92b37871f2fe3a2fefc8dc0551e8c549c3dd90ded23536c4ba81ef24ec605d"}},
+];
+function twoDCostSourcePin(root,pin,code){
+ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+ const pair=twoDCostSourcePairs.find(row=>same(row.base,pin));
+ if(!pair)return pin;
+ const marker=twoDCostSourcePairs[0].current;
+ const source=seqpbRead(root,marker.path);
+ if(source.length!==marker.bytes||seqpbHash(source)!==marker.sha256)return pin;
+ for(const row of twoDCostSourcePairs){
+  if(row.base.path!==row.current.path||![m24SpineSourcePairs,m34EffectInterfacePairs,sharedContainedClipPairs].some(list=>list.some(prior=>same(prior.current,row.base))))
+   seqpbFail(code,'2D cost predecessor differs: '+row.base.path);
+  const raw=row.current.path===marker.path?source:seqpbRead(root,row.current.path);
+  if(raw.length!==row.current.bytes||seqpbHash(raw)!==row.current.sha256)
+   seqpbFail(code,'2D cost group differs: '+row.current.path);
+ }
+ return pair.current;
+}
+// 2D-COST-IDENTITY-END
 function seqpbPin(root, pin, code) {
   pin = m13SequencePin(root, pin);
   pin = m31UiSourcePairs.find(pair=>JSON.stringify(pair.base)===JSON.stringify(pin))?.current??pin;
@@ -285,6 +312,7 @@ function seqpbPin(root, pin, code) {
   pin = m34EffectInterfacePairs.find(pair=>JSON.stringify(pair.base)===JSON.stringify(pin))?.current??pin;
   pin = sharedContainedClipPin(pin);
   pin = m12FullDirtyCapturePin(root, pin, code);
+  pin = twoDCostSourcePin(root, pin, code);
   const bytes = seqpbRead(root, pin.path);
   const worldCard=worldCardRawPairs.find(pair=>JSON.stringify(pair.base)===JSON.stringify(pin));
   if(worldCard&&bytes.length===worldCard.current.bytes&&seqpbHash(bytes)===worldCard.current.sha256)pin=worldCard.current;

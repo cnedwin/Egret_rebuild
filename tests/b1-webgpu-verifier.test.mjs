@@ -385,7 +385,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   const { resolveB1Dependency } = await import(pathToFileURL(join(repository, 'tools/b1-webgpu/registryProvenance.mjs')).href);
   const served = new Map();
   // Evaluate only the verifier's policy declarations and collector, never emitted SDK code or main().
-  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, authoredSceneFrameModuleSuccessor, authoredSceneModuleIdentities, worldCardModuleSuccessors, worldCardModuleIdentities, texturedGlbModuleSuccessors, texturedGlbModuleIdentities, lambertGlbModuleSuccessors, lambertGlbModuleIdentities, m12FullDirtyModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m24CompatibleSequenceModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, uiLayerAuthorityModuleSuccessors, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
+  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, authoredSceneFrameModuleSuccessor, authoredSceneModuleIdentities, worldCardModuleSuccessors, worldCardModuleIdentities, texturedGlbModuleSuccessors, texturedGlbModuleIdentities, lambertGlbModuleSuccessors, lambertGlbModuleIdentities, m12FullDirtyModuleSuccessors, m12FullDirtyModuleIdentities, twoDCostModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, m31SourceModuleLimit, m22SourceModuleLimit, m24SourceModuleLimit, m34SourceModuleLimit, m34ModuleIdentities, m3FontSourceModuleLimit, m3FontModuleSuccessors, m3FontModuleAdditions, m3FontModuleIdentities, m24ResetModuleSuccessor, m24CompatibleSequenceModuleSuccessor, m34EffectModuleSuccessors, m34EffectModuleAdditions, m24SpineModuleSuccessors, m24SpineModuleAdditions, precedingModuleIdentities, m22SequenceModuleSuccessors, m22SequenceModuleAdditions, m33KeyboardAdmissionModuleSuccessor, m23SpineModuleSuccessor, uiLayerAuthorityModuleSuccessors, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
     repository: await realpath(repository), sep, assert, resolve, readFile: selectedReadFile, realpath, resolveB1Dependency, URL,
     served, identities: new Map(), hash: body => createHash('sha256').update(body).digest('hex'),
   }, { timeout: 1000 });
@@ -451,6 +451,16 @@ test('S07 the finite native collector admits the actual current emitted public c
   ]);
   for (const [name, expected] of policy.m12FullDirtyModuleSuccessors) {
     assert.notEqual(policy.lambertGlbModuleIdentities.get(name).sha256, expected.sha256);
+    assert.deepEqual(policy.currentModuleIdentities.get(name), expected);
+  }
+  assert.deepEqual([...policy.twoDCostModuleSuccessors.keys()], [
+    'packages/engine/dist/rendering/packSharedDraws2D.js',
+    'packages/engine/dist/rendering/prepareSharedDraws2D.js',
+    'packages/runtime/dist/displayTreeState.js',
+    'packages/runtime/dist/sharedFrameCapture.js',
+  ]);
+  for (const [name, expected] of policy.twoDCostModuleSuccessors) {
+    assert.notEqual(policy.m12FullDirtyModuleIdentities.get(name).sha256, expected.sha256);
     assert.deepEqual(policy.currentModuleIdentities.get(name), expected);
   }
   assert.equal(policy.allowedModules.has('packages/engine/dist/rendering/scene3dAuthoring.js'), false);

@@ -216,6 +216,8 @@ const m34EffectStrictAddition = {"path":"packages/runtime/dist/renderEffect.d.ts
 const m24SpineStrictAddition = {"path":"packages/engine/dist/displaySubtreeTicket.d.ts","bytes":1128,"sha256":"378e77f6c08b7f733e1df335ab42b14d96e6c5b8e49b214b6e35ee946b4278da"};
 // A current implementation-only capture successor keeps the retained declarations and observations.
 const m12FullDirtyCaptureSource = {"base":{"path":"packages/runtime/src/texturedFrameCapture.ts","bytes":15705,"sha256":"5389b3ae7dc94d8555cec79679a2cdd36b6538399b2751658d1ca8aefa0a067b"},"current":{"path":"packages/runtime/src/texturedFrameCapture.ts","bytes":16233,"sha256":"967cc1319248b49530c53b13ae1ae3eccbdddd471b2be510a8e213621315ddb0"}};
+// Implementation-only successors of the tree state and shared capture sources keep the retained declarations and observations.
+const twoDCostStrictSources = [{"base":{"path":"packages/runtime/src/displayTreeState.ts","bytes":20413,"sha256":"8e4506432b2419370544df25d3a04f6248055d37b17fcde58aafb09b48d716e9"},"current":{"path":"packages/runtime/src/displayTreeState.ts","bytes":22775,"sha256":"12b0c7c33ab2c34f569c620de4cac5f4cba68866129ddf1db320ca0817d6b4f8"}},{"base":{"path":"packages/runtime/src/sharedFrameCapture.ts","bytes":23703,"sha256":"e712da67bc21be71116085ce341172ee5e4ba3d7dc1a824c089047f685f06870"},"current":{"path":"packages/runtime/src/sharedFrameCapture.ts","bytes":26109,"sha256":"03db395eeff4d32012f12cf2c92a076f06a9c6de6d1c2ed839deed8743116359"}}];
 function m24SpineStrictPin(root,selected,id,row){
  if(selected!==M15_DATA||!IDS.includes(id))return row;
  const pair=m24SpineStrictPairs.find(pair=>equal(pair.base,row));
@@ -223,6 +225,8 @@ function m24SpineStrictPin(root,selected,id,row){
  const actual=fingerprintFile(root,row.path);
  if(equal(actual,pair.current))return pair.current;
  if(equal(pair.current,m12FullDirtyCaptureSource.base)&&equal(actual,m12FullDirtyCaptureSource.current))return m12FullDirtyCaptureSource.current;
+ const twoDCost=twoDCostStrictSources.find(next=>equal(next.base,pair.current));
+ if(twoDCost&&equal(actual,twoDCost.current))return twoDCost.current;
  const worldCard=worldCardStrictPairs.find(next=>equal(next.base,pair.current));
  if(worldCard&&equal(actual,worldCard.current))return worldCard.current;
  const texturedGlb=worldCard&&texturedGlbStrictPairs.find(next=>equal(next.base,worldCard.current));
