@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": { "rootDir": "src/core", "outDir": "dist/core", "lib": ["ES2022"], "tsBuildInfoFile": "tsconfig.core.tsbuildinfo" },
+  "include": ["src/core/**/*.ts"]
+}

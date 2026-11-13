@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": { "rootDir": "src/web", "outDir": "dist/web", "lib": ["ES2022", "DOM"], "tsBuildInfoFile": "tsconfig.web.tsbuildinfo" },
+  "references": [{ "path": "./tsconfig.core.json" }],
+  "include": ["src/web/**/*.ts"]
+}

@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "devtools/src/core/engineProbe.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
+      "criticalComment": true
+    },
+    {
+      "path": "devtools/src/core/frameStats.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
+      "criticalComment": true
+    },
+    {
+      "path": "devtools/src/core/handles.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
+      "criticalComment": true
+    },
+    {
+      "path": "devtools/src/core/hints.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
+      "criticalComment": true
+    },
+    {
+      "path": "devtools/src/core/index.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it."
+    },
+    {
+      "path": "devtools/src/core/monitor.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
+      "criticalComment": true
+    },
+    {
+      "path": "devtools/src/core/types.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it."
+    },
+    {
+      "path": "devtools/src/web/debugMode.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
+      "criticalComment": true
+    },
+    {
+      "path": "devtools/src/web/index.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it."
+    },
+    {
+      "path": "devtools/src/web/overlay.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
+      "criticalComment": true
+    },
+    {
+      "path": "devtools/src/web/sources.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
+      "criticalComment": true
+    },
+    {
+      "path": "devtools/tests/debug-mode.test.mjs",
+      "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries."
+    },
+    {
+      "path": "devtools/tests/engine-probe.test.mjs",
+      "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries."
+    },
+    {
+      "path": "devtools/tests/frame-stats.test.mjs",
+      "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries."
+    },
+    {
+      "path": "devtools/tests/hints.test.mjs",
+      "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries."
+    },
+    {
+      "path": "devtools/tests/monitor.test.mjs",
+      "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries."
+    },
+    {
+      "path": "devtools/example/index.html",
+      "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries."
+    },
+    {
+      "path": "devtools/example/main.mjs",
+      "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries."
+    },
+    {
+      "path": "devtools/tools/build.mjs",
+      "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries."
+    },
+    {
+      "path": "devtools/tools/example.mjs",
+      "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries."
+    },
+    {
+      "path": "devtools/tools/verify-browser.mjs",
+      "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries."
+    },
+    {
+      "path": "devtools/.gitignore",
+      "originRole": "First-party optional performance monitor package configuration, workflow or bilingual guidance authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "devtools/package.json",
+      "originRole": "First-party optional performance monitor package configuration, workflow or bilingual guidance authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "devtools/tsconfig.base.json",
+      "originRole": "First-party optional performance monitor package configuration, workflow or bilingual guidance authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "devtools/tsconfig.core.json",
+      "originRole": "First-party optional performance monitor package configuration, workflow or bilingual guidance authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "devtools/tsconfig.json",
+      "originRole": "First-party optional performance monitor package configuration, workflow or bilingual guidance authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "devtools/tsconfig.web.json",
+      "originRole": "First-party optional performance monitor package configuration, workflow or bilingual guidance authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "devtools/README.md",
+      "originRole": "First-party optional performance monitor package configuration, workflow or bilingual guidance authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "devtools/README.zh-CN.md",
+      "originRole": "First-party optional performance monitor package configuration, workflow or bilingual guidance authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": ".github/workflows/devtools.yml",
+      "originRole": "First-party optional performance monitor package configuration, workflow or bilingual guidance authored with AI assistance under Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "devtools/README.md",
+      "zh": "devtools/README.zh-CN.md"
+    }
+  ]
+}
