@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/display-container-add-child-at-verified.test.mjs",
+      "originRole": "First-party unit comparing remembered and fully walked indexed insertion; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/shared-frame-golden.test.mjs",
+      "originRole": "First-party recorded digests of shared frame capture, clipped geometry, vertex rows and draw batches; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

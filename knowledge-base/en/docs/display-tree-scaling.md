@@ -72,3 +72,30 @@ One run on the development machine, before any of the changes this tool was writ
 | 5,000 bitmaps showing 100 frames of one atlas | 23.69 ms | 19.43 ms | 18.62 ms | 0.65 ms | 5,000 |
 
 Capture cost the same whether every rectangle moved or none did. 5,000 bitmaps showing 200 frames of one atlas were refused with `FRAME_IMAGE_BUDGET`. `addChildAt(child, 0)` cost about 0.5 ms among 1,000 siblings, 1.7 ms among 4,000 and 7.7 ms among 16,000, while `addChild`, `setChildIndex` and `removeChild` stayed between 1 and 5 microseconds.
+
+## First round of 2D cost reductions
+
+Four changes reduce the CPU cost measured above. None changes a public interface, a frame record, a vertex, a uniform block, a logical charge, a refusal or the order of refusals.
+
+- **Indexed insertion.** `addChildAt` used to walk the receiver's whole tree on every call. A bound receiver whose whole tree one insertion has walked, and left bound to that Engine, is now remembered; later insertions into it walk only the incoming tree, because every record the repeated walk would produce is valid and carries that Engine. A node enters a remembered tree only through `addChild` or `addChildAt`, both of which bind the whole incoming tree to the receiver's Engine; detaching or disposing a node takes it out of the tree, and affinity does not change. The private UI commit and prepared-subtree list replacements drop the memory of every tree that contains their target, so the next insertion walks that receiver in full again. The incoming tree and the source direct edges are captured and validated on every call, as the [insertion contract](container-add-child-at-contract.md) requires, and a receiver without an Engine is still walked every time. The insertion still copies the receiver's child list twice, because it prepares a complete replacement list before it publishes, so the remaining cost grows with the number of siblings at a far smaller rate.
+- **Frame capture.** The shared capture walked the tree twice: once to admit every node, once to emit the commands of the nodes that are drawn. It now walks once. A refusal of visible content is held until the rest of the tree has been admitted, because an admission refusal anywhere outranks it, so the reported refusal is the same. Materials and regions are found by object and by number before any text key is built, and draws under one clip chain share one frozen clip list.
+- **Clipped geometry.** The corners of a draw are created once and moved to backing space where they are, instead of being copied at each step. A step that leaves a polygon unchanged returns it instead of a copy. The predicates, comparisons and their charges are the same calls in the same order.
+- **Vertex rows.** The rows of one frame are written straight into one allocation, and its uniform blocks into another; each draw's `data` and `uniform` are views of its own range, with the same length and bytes as the separate arrays they replace.
+
+`tests/shared-frame-golden.test.mjs` holds digests of the captured frame, the clipped geometry with its logical charges, the vertex rows and the draw batches of fixed scenes, recorded before these changes; the changed paths reproduce them. The same comparison over 5,952 further generated frames, run once against a build of the earlier code, found no difference. `tests/display-container-add-child-at-verified.test.mjs` runs random sequences of tree edits twice, once remembering and once walking every time, and compares every result, order and affinity.
+
+The same tool on the same machine, earlier code first:
+
+| Workload | Capture | Clipped geometry | Vertex rows | Draw batches |
+| --- | --- | --- | --- | --- |
+| 5,000 filled rectangles, all moving | 13.87 → 6.37 ms | 22.98 → 9.03 ms | 19.28 → 4.94 ms | 2.30 → 1.35 ms |
+| 20,000 filled rectangles, all moving | 74.81 → 27.92 ms | 93.52 → 31.13 ms | 59.70 → 16.44 ms | 7.98 → 6.60 ms |
+| 5,000 bitmaps showing 100 frames of one atlas | 17.99 → 8.83 ms | 24.54 → 10.70 ms | 24.85 → 6.93 ms | 0.69 → 0.36 ms |
+
+| `addChildAt(new child, 0)` among | Before | After |
+| --- | --- | --- |
+| 1,000 siblings | 552.5 µs | 48.9 µs |
+| 4,000 siblings | 1,579.3 µs | 120.8 µs |
+| 16,000 siblings | 7,381.9 µs | 499.1 µs |
+
+These figures describe one machine and one pair of runs; they are not acceptance thresholds. Two limits recorded above are unchanged: bitmaps that show different frames of one atlas are still separate draws, and a frame still admits at most 128 distinct regions. Both belong to the shared render profile and its vertex and uniform formats, not to this round.
