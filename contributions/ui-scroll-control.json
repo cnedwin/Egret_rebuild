@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/ui/scrollControl.ts",
+      "originRole": "First-party scroll position of one axis of a viewport, over the existing hover and contact inputs; independently authored with AI assistance; Apache-2.0. No third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-scroll-control.test.mjs",
+      "originRole": "First-party behaviour tests of the scroll position control on a genuine Engine; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/ui-scroll-control.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the scroll control; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/ui-scroll-control.ts",
+      "originRole": "First-party strict TypeScript consumer of the scroll control, with six refused misuses; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

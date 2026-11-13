@@ -2,7 +2,7 @@
 
 [English](../../en/docs/ui-controls.md) | 简体中文
 
-`@egret/engine/ui` 有五个控件，各自保存玩家操作的一样东西的状态：虚拟摇杆、按钮、悬停、开关，以及多选一。它们属于 M3.4，[#90](https://github.com/cnedwin/Egret_rebuild/issues/90)。
+`@egret/engine/ui` 有六个控件，各自保存玩家操作的一样东西的状态：虚拟摇杆、按钮、悬停、开关、多选一，以及滚动位置。它们属于 M3.4，[#90](https://github.com/cnedwin/Egret_rebuild/issues/90)。
 
 它们只拥有状态。控件不添加页面监听器，不绘制任何东西，也不决定路由：它在显示对象上监听[触点输入](multi-pointer-input.md)或[悬停输入](pointer-hover.md)的事件，并通过回调报告变化。每种状态怎么画由应用决定，按键也由应用绑定到指针所走的同一批方法上。
 
@@ -13,6 +13,7 @@
 | `createHoverControl` | 是否悬停 | 鼠标或手写笔在目标或其后代上 |
 | `createToggleControl` | 是否选中 | 一次激活使其翻转 |
 | `createSelectionGroup` | 若干键中被选中的一个 | 激活某一项，或在各项之间移动 |
+| `createScrollControl` | 视口某一轴的偏移 | 滚轮、拖动滚动条滑块，或直接调用 |
 
 每个控件都有 `enabled`、`setEnabled` 和 `dispose`。`dispose` 之后它的方法抛出 `UI_CONTROL_CLOSED`，订阅全部解除。不合法的选项以 `UI_CONTROL_OPTIONS` 拒绝。
 
@@ -70,6 +71,28 @@ const level = createSelectionGroup({
 
 被禁用的项会被移动跳过，并拒绝按下和 `select`。禁用已选中的项后它仍保持选中，就像被禁用的已选单选按钮一样。对整个组调用 `setEnabled(false)` 会拒绝一切选择方式。未知的键以 `UI_CONTROL_UNKNOWN_ITEM` 拒绝。
 
+## 滚动位置
+
+```js
+import { createScrollControl } from '@egret/engine/ui';
+
+const scroll = createScrollControl({
+  viewportLength: 140,
+  contentLength: rows * rowHeight,
+  wheel: { hover, target: viewport, lineLength: rowHeight },
+  thumb: { input, target: thumbSprite, trackLength: 140 },
+  onScroll: offset => { content.y = -offset; drawThumb(scroll.thumb); },
+});
+```
+
+控件保存一个轴上的偏移，默认是 `'y'`，`axis` 为 `'x'` 时是横向。`offset` 的范围是零到 `maximum`，即放不下的那部分内容。`scrollTo`、`scrollBy`、`line`、`page`、`toStart` 和 `toEnd` 返回偏移是否发生变化，每次变化 `onScroll` 只被告知一次。布局或内容变化之后调用 `setLengths(viewportLength, contentLength)`，偏移会被限制到新的范围内。内容由应用移动，视口由应用裁剪。
+
+给出 `wheel` 时，视口或其后代上的滚轮按该轴的增量滚动：像素增量原样使用，一行按 `lineLength`（默认 40），一页按视口长度。只有偏移确实移动了，控件才消费滚轮。到达任一端时它不碰滚轮，所以内层视口会把滚轮交给外层视口，最外层再按[滚轮策略](pointer-hover.md#滚轮)交给页面。带缩放修饰键的滚轮不算滚动。
+
+给出 `thumb` 时，滑块上的一个触点沿长度为 `trackLength` 的轨道拖动它，偏移按比例跟随；第二个触点会被拒绝。`scroll.thumb` 给出滑块该画在哪里：轨道上的 `start` 和 `length`。长度是可见内容所占的比例，不短于 `minimumLength`（默认 16），也不超过轨道。`dragging` 和 `onDragChange` 报告拖动状态。取消、禁用、释放以及滑块离开舞台都会结束拖动。
+
+用手指平移内容是一种手势，需要与视口内部的按下操作做仲裁，本控件不识别它。
+
 ## 按键
 
 控件不监听键盘。[键盘输入](keyboard-focus-input.md)把按键交给获得焦点的显示对象，由应用调用控件：
@@ -80,6 +103,7 @@ const level = createSelectionGroup({
 | 开关 | 空格或回车 | `toggle()` |
 | 多选一 | 方向键、Home、End | `next()`、`previous()`、`first()`、`last()` |
 | 移动 | 方向键或 WASD | `setDirection(x, y)` |
+| 滚动 | 方向键、Page Up、Page Down、Home、End | `line()`、`page()`、`toStart()`、`toEnd()` |
 
 示例为它的选项组注册了一个键盘停靠点，并把该停靠点移到被选中的项上，因此 Tab 进入和离开该组各一次。
 
@@ -93,14 +117,17 @@ const level = createSelectionGroup({
 | --- | --- |
 | [`tests/ui-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-controls.test.mjs) | 真实 Engine 上的移动与动作 |
 | [`tests/ui-state-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-state-controls.test.mjs)，13 项 | 真实 Engine 上的悬停、开关和多选一，严格 TypeScript 消费者，以及导出 |
+| [`tests/ui-scroll-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-scroll-control.test.mjs)，13 项 | 真实 Engine 上的滚动位置：范围、滚轮单位、嵌套视口、滑块及其拖动，以及严格 TypeScript 消费者 |
 | [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs)，5 个场景 | 无头 Chromium 软件 WebGL2 的真实页面：鼠标、触摸和按键通过自动化协议注入 |
+| [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs)，8 个场景 | 真实页面中的滚动控件：滚轮、交还给页面，以及拖动滑块 |
 
-向悬停、开关和多选一的构建产物逐个写入了二十九个错误，单元测试全部发现。
+向悬停、开关和多选一的构建产物逐个写入了二十九个错误，单元测试全部发现。向滚动控件写入的三十二个错误中发现了三十个，其余两个不改变调用者能看到的任何行为。
 
 ## 尚未完成
 
 - 没有人操作过示例。所有输入都是注入的。
 - 这些控件没有在硬件 GPU、WebGPU、已安装的 Edge、Safari、Firefox 和真实手机上运行。
 - 不向辅助技术通报任何内容。面向读屏器的角色、名称和状态仍在 #90。
-- 滚动视口、拖动滚动条、文本框和虚拟列表不是用这些控件构建的。
+- 手指不能平移滚动视口：这种手势及其与按下操作的仲裁仍在 #90。
+- 文本框和虚拟列表不是用这些控件构建的。
 - 在虚拟列表被回收的行上做选择属于列表自身，不属于这个选项组。

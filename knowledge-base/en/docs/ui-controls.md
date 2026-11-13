@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/ui-controls.md)
 
-`@egret/engine/ui` has five controls that hold the state of something a player operates: a virtual stick, a button, a hover, a switch, and one choice out of several. They belong to M3.4, [#90](https://github.com/cnedwin/Egret_rebuild/issues/90).
+`@egret/engine/ui` has six controls that hold the state of something a player operates: a virtual stick, a button, a hover, a switch, one choice out of several, and a scroll position. They belong to M3.4, [#90](https://github.com/cnedwin/Egret_rebuild/issues/90).
 
 They own state only. A control adds no listener of the page, draws nothing and decides no routing: it listens on a display object for the events of the [contact input](multi-pointer-input.md) or of the [hover input](pointer-hover.md), and reports changes through callbacks. The application paints each state and binds keys to the same methods a pointer reaches.
 
@@ -13,6 +13,7 @@ They own state only. A control adds no listener of the page, draws nothing and d
 | `createHoverControl` | Hovered | A mouse or a pen over the target or a descendant |
 | `createToggleControl` | Checked | An activation flips it |
 | `createSelectionGroup` | One selected key of several | An activation of an item, or movement among them |
+| `createScrollControl` | The offset of one axis of a viewport | The wheel, a drag of the scrollbar thumb, or a call |
 
 Every control has `enabled`, `setEnabled` and `dispose`. After `dispose` its methods throw `UI_CONTROL_CLOSED` and its subscriptions are gone. Options that are not sound are refused with `UI_CONTROL_OPTIONS`.
 
@@ -70,6 +71,28 @@ A completed press on an item selects it. `select(key)` does the same by name, an
 
 A disabled item is skipped by movement and refuses a press and `select`. Disabling the selected item leaves it selected, as a disabled checked radio button stays checked. `setEnabled(false)` on the group refuses every way of selecting. An unknown key is refused with `UI_CONTROL_UNKNOWN_ITEM`.
 
+## Scroll position
+
+```js
+import { createScrollControl } from '@egret/engine/ui';
+
+const scroll = createScrollControl({
+  viewportLength: 140,
+  contentLength: rows * rowHeight,
+  wheel: { hover, target: viewport, lineLength: rowHeight },
+  thumb: { input, target: thumbSprite, trackLength: 140 },
+  onScroll: offset => { content.y = -offset; drawThumb(scroll.thumb); },
+});
+```
+
+The control holds the offset of one axis, `'y'` unless `axis` is `'x'`. `offset` runs from zero to `maximum`, the content that does not fit. `scrollTo`, `scrollBy`, `line`, `page`, `toStart` and `toEnd` return whether the offset changed, and `onScroll` is told each change once. `setLengths(viewportLength, contentLength)` follows a layout or a change of content and clamps the offset to the new range. The application moves its content and clips its viewport.
+
+With `wheel`, a wheel over the viewport or a descendant scrolls by the deltas of that axis: pixel deltas as they are, a line as `lineLength` (40 by default), a page as the viewport. The control consumes a wheel only when the offset moved. At either end it leaves the wheel alone, so a viewport inside another hands the wheel to the outer one, and the outermost hands it to the page under the [wheel policy](pointer-hover.md#wheel). A wheel with the zoom modifier is not a scroll.
+
+With `thumb`, one contact on the thumb drags it along a track of `trackLength`, and the offset follows in proportion; a second contact is refused. `scroll.thumb` gives where to draw it: `start` and `length` on the track. The length is the share of the content that shows, never shorter than `minimumLength` (16 by default) nor longer than the track. `dragging` and `onDragChange` report the drag. Cancellation, disabling, disposal and a thumb that leaves the stage all end it.
+
+Panning the content with a finger is a gesture. It needs arbitration against the presses of what is inside the viewport, and is not recognized by this control.
+
 ## Keys
 
 The controls listen to no keyboard. The [keyboard input](keyboard-focus-input.md) delivers keys to the focused display object, and the application calls the control:
@@ -80,6 +103,7 @@ The controls listen to no keyboard. The [keyboard input](keyboard-focus-input.md
 | Toggle | Space or Enter | `toggle()` |
 | Selection group | Arrow keys, Home, End | `next()`, `previous()`, `first()`, `last()` |
 | Movement | Arrow keys or WASD | `setDirection(x, y)` |
+| Scroll | Arrow keys, Page Up, Page Down, Home, End | `line()`, `page()`, `toStart()`, `toEnd()` |
 
 The example registers one keyboard stop for its group and moves that stop to the selected item, so that Tab enters and leaves the group once.
 
@@ -93,14 +117,17 @@ A control reports state; the application chooses what it looks like. The [theme]
 | --- | --- |
 | [`tests/ui-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-controls.test.mjs) | Movement and action on a genuine Engine |
 | [`tests/ui-state-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-state-controls.test.mjs), 13 cases | Hover, toggle and selection on a genuine Engine, a strict TypeScript consumer and the exports |
+| [`tests/ui-scroll-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-scroll-control.test.mjs), 13 cases | The scroll position on a genuine Engine: range, wheel units, nested viewports, the thumb and its drag, and a strict TypeScript consumer |
 | [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs), 5 scenarios | A real page in headless Chromium with software WebGL2: mouse, touch and keys injected through the automation protocol |
+| [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs), 8 scenarios | The scroll control in a real page: the wheel, the hand-over to the page, and a drag of the thumb |
 
-Twenty-nine faults were written into the built hover, toggle and selection code one at a time, and the unit tests caught all of them.
+Twenty-nine faults were written into the built hover, toggle and selection code one at a time, and the unit tests caught all of them. Of thirty-two written into the scroll control they caught thirty; the other two change nothing a caller can see.
 
 ## Open
 
 - No person operated the example. Every input was injected.
 - Hardware GPUs, WebGPU, Edge as installed, Safari, Firefox and a real phone were not run for these controls.
 - Nothing is announced to assistive technology. Roles, names and states for a screen reader remain in #90.
-- Scroll viewports, drag scrollbars, text fields and the virtual list are not built from these controls.
+- A finger does not pan a scroll viewport: that gesture and its arbitration with presses remain in #90.
+- Text fields and the virtual list are not built from these controls.
 - A selection over the recycled rows of a virtual list is the list's own subject, not this group's.

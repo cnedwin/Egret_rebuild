@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 视口的滚动位置 — 2026-11-14
+
+`@egret/engine/ui` 的 `createScrollControl` 保存应用自己绘制的裁剪视口在一个轴上的偏移。滚轮经悬停输入滚动它，只有偏移确实移动时才被消费，所以内层视口会把滚轮向外交，最外层交给页面。一个触点可以拖动滚动条滑块，`line`、`page`、`toStart` 和 `toEnd` 供按键使用。悬停示例的列表现在用它滚动。用手指平移内容属于手势，本控件不识别。[指南](docs/ui-controls.md#滚动位置) · [#90](https://github.com/cnedwin/Egret_rebuild/issues/90)
+
 ## 控件的悬停、开关和多选一状态 — 2026-11-14
 
 `@egret/engine/ui` 在移动和动作控件之外新增 `createHoverControl`、`createToggleControl` 和 `createSelectionGroup`。它们保存应用自己绘制的控件的状态：鼠标或手写笔在目标或其后代上时的悬停、是否选中，以及若干键中被选中的一个并可在可用项之间移动。按键走的是指针所走的同一批方法。悬停输入现在会指明 enter 和 leave 的另一端（`related`），并接受后加的观察者。新增的指南说明了全部五个控件。检查包括真实 Engine 上的单元测试，以及无头 Chromium 软件 WebGL2 中注入输入的真实页面；目前不向辅助技术通报任何内容。[指南](docs/ui-controls.md) · [#90](https://github.com/cnedwin/Egret_rebuild/issues/90)
