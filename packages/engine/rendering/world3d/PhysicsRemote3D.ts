@@ -70,6 +70,11 @@ export interface RemoteRaycastHit3D {
 }
 
 type Message = {readonly t: string} & Record<string, unknown>;
+interface RayRequest3D {
+    resolve(hit: RemoteRaycastHit3D | undefined): void;
+    reject(error: unknown): void;
+}
+const ownsBody = Symbol('remote physics body ownership');
 const triple = (value: unknown, field: string): [number, number, number] => {
     const list = value as ArrayLike<number> | undefined;
     if (!list || list.length !== 3) throw new World3DError('WORLD3D_INPUT_INVALID', field);
@@ -91,18 +96,39 @@ function localShape(shape: RemoteShape3D): ShapeDefinition3D {
  */
 export function servePhysics3D(port: PhysicsPort3D, options: PhysicsWorldOptions3D = {}): PhysicsWorld3D {
     if (!port || typeof port.postMessage !== 'function') throw new World3DError('WORLD3D_INPUT_INVALID', 'port');
-    let world = new PhysicsWorld3D(options);
+    const world = new PhysicsWorld3D(options);
     const bodies = new Map<number, RigidBody3D>(), ids = new Map<RigidBody3D, number>(), joints = new Map<number, Joint3D>();
-    let began: number[] = [], ended: number[] = [];
-    const listen = (target: PhysicsWorld3D): void => {
-        target.onContactBegin = (a, b) => { const x = ids.get(a), y = ids.get(b); if (x !== undefined && y !== undefined) began.push(x, y); };
-        target.onContactEnd = (a, b) => { const x = ids.get(a), y = ids.get(b); if (x !== undefined && y !== undefined) ended.push(x, y); };
-    };
-    listen(world);
+    let began: number[] = [], ended: number[] = [], startup = true;
+    world.onContactBegin = (a, b) => { const x = ids.get(a), y = ids.get(b); if (x !== undefined && y !== undefined) began.push(x, y); };
+    world.onContactEnd = (a, b) => { const x = ids.get(a), y = ids.get(b); if (x !== undefined && y !== undefined) ended.push(x, y); };
     const body = (id: unknown): RigidBody3D => { const found = bodies.get(id as number); if (!found) throw new World3DError('WORLD3D_INPUT_INVALID', 'unknown body ' + String(id)); return found; };
     const handle = (m: Message): void => {
+        if (m.t === 'world') {
+            if (!startup) throw new World3DError('WORLD3D_INPUT_INVALID', 'world options are only accepted at startup');
+            const requested = m['options'] as PhysicsWorldOptions3D;
+            if (!requested || typeof requested !== 'object' || (requested.allowSleep !== undefined && typeof requested.allowSleep !== 'boolean')) {
+                throw new World3DError('WORLD3D_INPUT_INVALID', 'world options');
+            }
+            const gravity = requested.gravity === undefined ? undefined : triple(requested.gravity, 'gravity');
+            // Validate the configuration as a unit and keep the host's world and objects in place.
+            const config = new PhysicsWorld3D(requested);
+            if (!Number.isFinite(config.maxSubSteps) || !Number.isFinite(config.iterations) || !Number.isFinite(config.solverSteps)) {
+                throw new World3DError('WORLD3D_INPUT_INVALID', 'world solver options');
+            }
+            if (requested.fixedStep !== undefined) world.fixedStep = config.fixedStep;
+            if (requested.maxSubSteps !== undefined) world.maxSubSteps = config.maxSubSteps;
+            if (requested.iterations !== undefined) world.iterations = config.iterations;
+            if (requested.solverSteps !== undefined) world.solverSteps = config.solverSteps;
+            if (requested.allowSleep !== undefined) world.allowSleep = config.allowSleep;
+            if (gravity) {
+                world.gravity.set(gravity);
+                for (const one of world.bodies) one.wake();
+            }
+            startup = false;
+            return;
+        }
+        startup = false;
         switch (m.t) {
-            case 'world': if (bodies.size === 0) { world = new PhysicsWorld3D(m['options'] as PhysicsWorldOptions3D); listen(world); } break;
             case 'body': {
                 const o = m['options'] as RemoteBodyOptions3D, made = world.createBody({...o, shape: localShape(o.shape)});
                 bodies.set(m['id'] as number, made); ids.set(made, m['id'] as number);
@@ -155,7 +181,16 @@ export function servePhysics3D(port: PhysicsPort3D, options: PhysicsWorldOptions
     port.addEventListener('message', (event) => {
         const message = event.data as Message;
         // A request that cannot be carried out is reported back rather than left to stop the worker.
-        try { handle(message); } catch (error) { port.postMessage({t: 'error', about: message?.t, message: error instanceof Error ? error.message : String(error)}); }
+        try { handle(message); } catch (error) {
+            const text = error instanceof Error ? error.message : String(error);
+            if (message?.t !== 'raycast') {
+                port.postMessage({t: 'error', about: message?.t, message: text});
+                return;
+            }
+            const invalid = error instanceof World3DError && error.code === 'WORLD3D_INPUT_INVALID';
+            port.postMessage({t: 'error', about: 'raycast', message: text, request: message['request'],
+                code: invalid ? error.code : 'WORLD3D_RESOURCE_FAILED', detail: invalid ? error.detail : text});
+        }
     });
     port.start?.();
     return world;
@@ -184,7 +219,7 @@ export class RemoteBody3D {
         this.node = options.node; this.userData = options.userData;
     }
     get removed(): boolean { return !this.#alive; }
-    private send(message: Record<string, unknown>): void { if (this.#alive) this.#client.post({...message, id: this.id}); }
+    private send(message: Record<string, unknown>): void { if (this.#alive && this.#client[ownsBody](this)) this.#client.post({...message, id: this.id}); }
     /** Move the body there at once; this side shows it there straight away. */
     setPosition(x: number, y: number, z: number): this {
         this.position[0] = requireFinite3D(x, 'x'); this.position[1] = requireFinite3D(y, 'y'); this.position[2] = requireFinite3D(z, 'z'); this.previous.set(this.position);
@@ -222,7 +257,7 @@ export class RemoteJoint3D {
 export class PhysicsClient3D {
     readonly #port: PhysicsPort3D;
     readonly #bodies = new Map<number, RemoteBody3D>();
-    readonly #rays = new Map<number, (hit: RemoteRaycastHit3D | undefined) => void>();
+    readonly #rays = new Map<number, RayRequest3D>();
     #next = 1;
     #frame = 0;
     #answered = 0;
@@ -248,7 +283,8 @@ export class PhysicsClient3D {
     }
     get bodies(): IterableIterator<RemoteBody3D> { return this.#bodies.values(); }
     /** @internal */ post(message: Record<string, unknown>): void { if (!this.#closed) this.#port.postMessage(message); }
-    /** @internal */ forget(body: RemoteBody3D): void { this.#bodies.delete(body.id); }
+    [ownsBody](body: unknown): body is RemoteBody3D { return body instanceof RemoteBody3D && this.#bodies.get(body.id) === body; }
+    /** @internal */ forget(body: RemoteBody3D): void { if (this[ownsBody](body)) this.#bodies.delete(body.id); }
     createBody(options: RemoteBodyOptions3D): RemoteBody3D {
         if (!options?.shape) throw new World3DError('WORLD3D_INPUT_INVALID', 'shape');
         const {node, userData, ...sent} = options, body = new RemoteBody3D(this, this.#next++, options);
@@ -259,9 +295,11 @@ export class PhysicsClient3D {
         return body;
     }
     createJoint(options: RemoteJointOptions3D): RemoteJoint3D {
-        if (!(options?.bodyA instanceof RemoteBody3D) || (options.bodyB !== undefined && !(options.bodyB instanceof RemoteBody3D))) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint bodies');
+        if (!options) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint bodies');
+        const {bodyA, bodyB, ...rest} = options;
+        if (!this[ownsBody](bodyA) || (bodyB !== undefined && !this[ownsBody](bodyB))) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint bodies');
         const joint = new RemoteJoint3D(this, this.#next++);
-        this.post({t: 'joint', id: joint.id, options: {...options, bodyA: options.bodyA.id, ...(options.bodyB ? {bodyB: options.bodyB.id} : {})}});
+        this.post({t: 'joint', id: joint.id, options: {...rest, bodyA: bodyA.id, ...(bodyB ? {bodyB: bodyB.id} : {})}});
         return joint;
     }
     setGravity(x: number, y: number, z: number): void { this.post({t: 'gravity', value: [requireFinite3D(x, 'x'), requireFinite3D(y, 'y'), requireFinite3D(z, 'z')]}); }
@@ -279,10 +317,15 @@ export class PhysicsClient3D {
     /** The nearest solid body on a ray, as the world stands when the request arrives. */
     raycast(origin: ArrayLike<number>, direction: ArrayLike<number>, maxDistance?: number, mask?: number): Promise<RemoteRaycastHit3D | undefined> {
         const request = this.#next++;
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             if (this.#closed) { resolve(undefined); return; }
-            this.#rays.set(request, resolve);
-            this.post({t: 'raycast', request, origin: [origin[0], origin[1], origin[2]], direction: [direction[0], direction[1], direction[2]], ...(maxDistance === undefined ? {} : {maxDistance}), ...(mask === undefined ? {} : {mask})});
+            this.#rays.set(request, {resolve, reject});
+            try {
+                this.post({t: 'raycast', request, origin: [origin[0], origin[1], origin[2]], direction: [direction[0], direction[1], direction[2]], ...(maxDistance === undefined ? {} : {maxDistance}), ...(mask === undefined ? {} : {mask})});
+            } catch (error) {
+                this.#rays.delete(request);
+                reject(error);
+            }
         });
     }
     private receive(m: Message): void {
@@ -304,11 +347,19 @@ export class PhysicsClient3D {
             pairs(m['began'] as number[], this.onContactBegin); pairs(m['ended'] as number[], this.onContactEnd);
             this.onStep?.(this.#answered);
         } else if (m?.t === 'ray') {
-            const resolve = this.#rays.get(m['request'] as number), hit = m['hit'] as {id: number; distance: number; point: [number, number, number]; normal: [number, number, number]} | null;
+            const ray = this.#rays.get(m['request'] as number), hit = m['hit'] as {id: number; distance: number; point: [number, number, number]; normal: [number, number, number]} | null;
             this.#rays.delete(m['request'] as number);
             const body = hit ? this.#bodies.get(hit.id) : undefined;
-            resolve?.(hit && body ? {body, distance: hit.distance, point: hit.point, normal: hit.normal} : undefined);
-        } else if (m?.t === 'error') this.onError?.(String(m['message']), String(m['about']));
+            ray?.resolve(hit && body ? {body, distance: hit.distance, point: hit.point, normal: hit.normal} : undefined);
+        } else if (m?.t === 'error') {
+            if (m['about'] === 'raycast') {
+                const request = m['request'] as number, ray = this.#rays.get(request);
+                this.#rays.delete(request);
+                const detail = typeof m['detail'] === 'string' ? m['detail'] : undefined;
+                ray?.reject(new World3DError(m['code'] === 'WORLD3D_INPUT_INVALID' ? 'WORLD3D_INPUT_INVALID' : 'WORLD3D_RESOURCE_FAILED', detail));
+            }
+            this.onError?.(String(m['message']), String(m['about']));
+        }
     }
     /**
      * Place every body's node. `alpha` runs from 0, the step before last, to 1,
@@ -333,7 +384,7 @@ export class PhysicsClient3D {
     /** Stop listening and answer every waiting ray with nothing. The worker itself is the caller's to end. */
     dispose(): void {
         this.#closed = true; this.#port.removeEventListener('message', this.#listener);
-        for (const resolve of this.#rays.values()) resolve(undefined);
+        for (const ray of this.#rays.values()) ray.resolve(undefined);
         this.#rays.clear(); this.#bodies.clear();
     }
 }

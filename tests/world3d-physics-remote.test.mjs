@@ -113,6 +113,66 @@ test('a request the other end cannot carry out is reported, and the world carrie
   } finally { end(); }
 });
 
+test('a failed ray rejects its own request and leaves a queued valid ray usable', async () => {
+  const {client, close: end} = pair();
+  try {
+    const errors = [];
+    client.onError = (message, about) => errors.push([about, message]);
+    let disposition = 'pending', reason;
+    const invalid = client.raycast([0, 0, 0], [0, 0, 0]);
+    void invalid.then(() => { disposition = 'resolved'; }, error => { disposition = 'rejected'; reason = error; });
+    assert.equal(await reached(client), undefined);
+    assert.equal(disposition, 'rejected');
+    assert.ok(code('WORLD3D_INPUT_INVALID')(reason));
+    assert.match(reason.message, /ray direction/);
+    assert.deepEqual(errors, [['raycast', 'WORLD3D_INPUT_INVALID: ray direction']]);
+  } finally { end(); }
+});
+
+test('client startup options preserve the returned host world and its existing bodies', async () => {
+  const channel = new MessageChannel();
+  const world = servePhysics3D(channel.port1, {gravity: [0, 0, 0], iterations: 12, solverSteps: 2, allowSleep: false});
+  const floor = world.createBody({shape: {type: 'plane'}});
+  world.iterations = 12.5;
+  const client = connectPhysics3D(channel.port2, {gravity: [0, -20, 0], maxSubSteps: 3});
+  try {
+    const ball = client.createBody({shape: {type: 'sphere', radius: 0.5}, position: [0, 0.55, 0]});
+    await steps(client, 10);
+    assert.equal(world.bodies[0], floor);
+    assert.equal(world.bodies.length, 2);
+    assert.deepEqual([...world.gravity], [0, -20, 0]);
+    assert.deepEqual([world.maxSubSteps, world.iterations, world.solverSteps, world.allowSleep], [3, 12.5, 2, false]);
+    close(ball.position[1], 0.5, 0.04);
+    close(world.bodies[1].position[1], ball.position[1], 1e-6);
+  } finally { client.dispose(); channel.port1.close(); channel.port2.close(); }
+});
+
+test('remote joints require registered live bodies of the same client', async () => {
+  const local = pair(), other = pair();
+  try {
+    const shape = {type: 'sphere', radius: 1};
+    const body = local.client.createBody({shape});
+    const foreign = other.client.createBody({shape});
+    assert.equal(body.id, foreign.id);
+    assert.throws(() => local.client.createJoint({type: 'point', bodyA: foreign}), code('WORLD3D_INPUT_INVALID'));
+    assert.throws(() => local.client.createJoint({type: 'point', bodyA: body, bodyB: foreign}), code('WORLD3D_INPUT_INVALID'));
+    const fabricated = new RemoteBody3D(local.client, body.id, {shape});
+    assert.throws(() => local.client.createJoint({type: 'point', bodyA: fabricated}), code('WORLD3D_INPUT_INVALID'));
+    fabricated.remove();
+    const removed = local.client.createBody({shape});
+    removed.remove();
+    assert.throws(() => local.client.createJoint({type: 'point', bodyA: removed}), code('WORLD3D_INPUT_INVALID'));
+    await reached(local.client);
+    assert.equal(local.world.joints.length, 0);
+    let bodyReads = 0;
+    local.client.createJoint({type: 'point', get bodyA() { return ++bodyReads === 1 ? body : foreign; }});
+    assert.equal(bodyReads, 1);
+    await reached(local.client);
+    assert.equal(local.world.joints.length, 1);
+    assert.equal(local.world.joints[0].bodyA, local.world.bodies[0]);
+  } finally { local.close(); other.close(); }
+});
+
 test('a slow other end is not flooded, and shown positions blend between steps', async () => {
   const {client, close: end} = pair({gravity: [0, 0, 0]});
   try {
