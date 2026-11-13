@@ -98,4 +98,20 @@ The same tool on the same machine, earlier code first:
 | 4,000 siblings | 1,579.3 µs | 120.8 µs |
 | 16,000 siblings | 7,381.9 µs | 499.1 µs |
 
-These figures describe one machine and one pair of runs; they are not acceptance thresholds. Two limits recorded above were not changed by that round: bitmaps that show different frames of one atlas are still separate draws, and a frame admitted at most 128 distinct regions. The region bound has since been raised to 4,096 in the [shared render profile](shared-render-profile-contract.md); the separate draws remain and belong to its vertex and uniform formats.
+These figures describe one machine and one pair of runs; they are not acceptance thresholds. Two limits recorded above were not changed by that round: bitmaps that show different frames of one atlas are still separate draws, and a frame admitted at most 128 distinct regions. The region bound has since been raised to 4,096 in the [shared render profile](shared-render-profile-contract.md), and the separate draws are gone: the next section.
+
+## Batching across regions
+
+Consecutive draws of one page with one material now share one batch whatever their regions and opacities. A draw's region and opacity used to be in its 128-byte uniform block, so every bitmap that showed another frame of an atlas, or had another opacity, was a draw of its own. Each vertex now carries the place of its region in a table and the opacity of its draw, and the table of the frame's regions is uploaded once; the [shared render profile](shared-render-profile-contract.md) states both layouts. A batch still ends at another page, material or kind of draw, at a barrier, and where the next region is in another window of 341 regions of the table. No public interface, frame record or refusal changed. The vertex grew from 44 to 52 bytes, and a frame is charged 48 bytes for each of its regions.
+
+The same tool on the same machine, earlier code first:
+
+| Workload | Draws |
+| --- | --- |
+| 5,000 bitmaps showing 100 frames of one atlas | 5,000 → 1 |
+| 5,000 bitmaps showing 200 frames of one atlas | 5,000 → 1 |
+| 5,000 filled rectangles | 1 → 1 |
+
+The step that forms the batches took 0.4 ms before and 1.0 ms after for the two atlas workloads, because the rows of a merged batch are copied into one array; the other steps were within the variation between runs.
+
+What the output is was checked in three ways. `tests/shared-frame-golden.test.mjs` shows that the captured frame, the clipped geometry and the first eleven values of every vertex row are what they were. `tests/shared-batching.test.mjs` states which draws share a batch and what the new values hold. And 46 scenes were drawn by the build before this change and by the build with it, through both Hosts, in a headless Chromium with software rendering, and the bytes read back were compared: all 92 pairs are identical. The scenes are the 26 two-dimensional cases of `tools/shared-rendering/native-cases.json` and twenty generated ones with 120 to 1,500 sprites of one or two atlases, with trimmed and turned regions, fractional opacities, four sampling policies, four blends, clip rectangles, solid rectangles, meshes and nine-slices, and up to 804 regions in one frame. In the generated scenes of one atlas and one material the WebGL2 draw calls of a frame fell from about 390 to about 60; what remains is the clip rectangles of those scenes, each of which is a barrier. This comparison establishes equal pixels under one software renderer. It is not a run on a hardware GPU, and the saved native evidence of `tools/shared-rendering` was not collected again.

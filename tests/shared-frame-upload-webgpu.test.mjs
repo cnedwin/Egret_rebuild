@@ -210,9 +210,10 @@ test('GPU U12 aggregate chunk payload obeys 4 MiB markers and exact page rows', 
     f.hooks.writeBuffer = (buffer, offset, data) => {
       assert.equal(offset % 4, 0); assert.equal(data.byteLength % 4, 0);
       if (buffer.descriptor.usage === 40) {
-        assert.equal(offset % 44, 0); assert.equal(data.byteLength % 44, 0);
+        assert.equal(offset % 52, 0); assert.equal(data.byteLength % 52, 0);
       }
-      if (buffer.descriptor.usage === 72) assert.equal(data.byteLength % 128, 0);
+      // A uniform buffer is a draw's 128-byte block, or the one window of this frame's region table, written in whole uvec4 values.
+      if (buffer.descriptor.usage === 72) assert.equal(data.byteLength % (buffer.descriptor.size === 16368 ? 16 : 128), 0);
       charge(data.byteLength);
     };
     f.hooks.writeTexture = (destination, data, layout, size) => {

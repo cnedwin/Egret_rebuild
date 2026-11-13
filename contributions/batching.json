@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/shared-batching.test.mjs",
+      "originRole": "First-party unit of which shared draws share a batch and of the packed vertex row and region table; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

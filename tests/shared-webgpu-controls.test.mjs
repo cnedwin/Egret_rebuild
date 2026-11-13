@@ -109,6 +109,19 @@ function selectedResolveTarget(draw, target) {
   const sampled = draw.binding.descriptor.entries.filter(e => e.resource?.texture);
   assert.equal(sampled.length, 1); assert.equal(sampled[0].resource.texture, target);
 }
+/** The rows of the first `count` regions in the window a sampled draw has bound as its second group. */
+function regionRows(events, draw, count) {
+  assert.ok(draw.region, 'a sampled draw binds a window of the region table');
+  const entries = draw.region.descriptor.entries;
+  assert.deepEqual(entries.map(e => e.binding), [0]);
+  assert.equal(draw.region.descriptor.layout, draw.pipeline.getBindGroupLayout(1));
+  assert.deepEqual([entries[0].resource.offset % 16384, entries[0].resource.size], [0, 16368]);
+  const table = writes(events, entries[0].resource.buffer);
+  // One write of whole windows: the last is 16,368 bytes, each one before it 16,384.
+  assert.equal(table.length, 1); assert.equal(table[0][2], 0); assert.equal((table[0][3].byteLength - 16368) % 16384, 0);
+  const words = new Uint32Array(table[0][3].buffer, table[0][3].byteOffset + entries[0].resource.offset, 12 * count);
+  return Array.from({ length: count }, (_value, index) => [...words.subarray(12 * index, 12 * index + 12)]);
+}
 function expectUniform(bytes, floats, uints) {
   const data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   assert.equal(bytes.byteLength, 128); assert.equal(floats.length, 12); assert.equal(uints.length, 20);
@@ -230,9 +243,12 @@ test('GPU G04 two regions share one exact canonical page and READY replay upload
     assert.deepEqual([...cold[0][2]], [187, 0, 0, 128, 0, 255, 0, 255]);
     assert.deepEqual(cold[0][4], { width: 2, height: 1, depthOrArrayLayers: 1 });
     const sampled = uiPass(r).draws;
-    assert.equal(sampled.length, 2, 'different regions are not implicitly batch compatible');
+    assert.equal(sampled.length, 1, 'two regions of one page are one batch');
+    assert.deepEqual(sampled[0].args, [12]);
     const selected = sampled.map(draw => draw.binding.descriptor.entries.find(e => e.binding === 1).resource.texture);
-    assert.equal(selected[0], pageTextures(r.textures)[0]); assert.equal(selected[1], selected[0]);
+    assert.equal(selected[0], pageTextures(r.textures)[0]);
+    // The batch reads both regions through one window of the region table, bound as the second group.
+    assert.deepEqual(regionRows(r.events, sampled[0], 2), [[1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0], [1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]]);
     await r.finish(); await h.whenIdle();
     const warm = await submit(f, h, second);
     assert.equal(uploads(warm.events).length, 0); assert.equal(pageTextures(warm.textures).length, 0);
@@ -306,7 +322,7 @@ test('GPU G07 solid pass clears one linear working target and resolves once with
 });
 
 // Break caught: drop dark coefficients, mix alpha factors, reinterpret u32 uniform fields, or upload old32B ABI.
-test('GPU G08 sampled geometry selects exact 44B attributes and complete 128B uniform', async () => {
+test('GPU G08 sampled geometry selects exact 52B attributes, the 128B uniform of its batch and its row of the region table', async () => {
   await using(async (f, a) => {
     const page = source(new Array(32).fill(255), 4, 2);
     const item = await a.resource(page, { packed: { x: 1, y: 0, width: 2, height: 1 },
@@ -326,22 +342,26 @@ test('GPU G08 sampled geometry selects exact 44B attributes and complete 128B un
     const r = await submit(f, h, saved), draws = uiPass(r).draws;
     assert.equal(draws.length, 1); const draw = draws[0];
     const layout = draw.pipeline.descriptor.vertex.buffers[0];
-    assert.equal(layout.arrayStride, 44);
+    assert.equal(layout.arrayStride, 52);
     assert.deepEqual(layout.attributes.map(x => [x.shaderLocation, x.offset, x.format]),
-      [[0, 0, 'float32x2'], [1, 8, 'float32x2'], [2, 16, 'float32x4'], [3, 32, 'float32x3']]);
+      [[0, 0, 'float32x2'], [1, 8, 'float32x2'], [2, 16, 'float32x4'], [3, 32, 'float32x3'], [4, 44, 'float32x2']]);
     const vertex = writes(r.events, draw.vertex); assert.equal(vertex.length, 1);
     const values = [...new Float32Array(vertex[0][3].buffer, vertex[0][3].byteOffset, vertex[0][3].byteLength / 4)];
-    assert.equal(values.length, 33);
-    const rows = []; for (let i = 0; i < values.length; i += 11) rows.push(values.slice(i, i + 11));
+    assert.equal(values.length, 39);
+    const rows = []; for (let i = 0; i < values.length; i += 13) rows.push(values.slice(i, i + 13));
     rows.sort((x, y) => x[0] - y[0] || x[1] - y[1]);
+    // The last two values of a row: the region's place in its window, and the opacity of the draw.
     assert.deepEqual(rows, [
-      [1, 2, .125, .25, .5, .25, 1, .5, .25, .5, .75],
-      [1, 6, .125, .75, .5, .25, 1, .5, .25, .5, .75],
-      [5, 2, .875, .25, .5, .25, 1, .5, .25, .5, .75],
+      [1, 2, .125, .25, .5, .25, 1, .5, .25, .5, .75, 0, .25],
+      [1, 6, .125, .75, .5, .25, 1, .5, .25, .5, .75, 0, .25],
+      [5, 2, .875, .25, .5, .25, 1, .5, .25, .5, .75, 0, .25],
     ]);
+    // The block holds neither opacity nor region: only viewport, material, domain, sampler policy and page.
     expectUniform(selectedUniform(r.events, draw).bytes,
-      [8, 8, .25, 0, .5, .25, 1, .5, .25, .5, .75, 0],
-      [4, 3, 1, 1, 2, 1, 1, 0, 2, 1, 0, 0, 0, 0, 1, 1, 4, 2, 2, 3]);
+      [8, 8, 0, 0, .5, .25, 1, .5, .25, .5, .75, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 4, 2, 2, 3]);
+    // The region is its row of the table: logical extent and trim, content extent and packed origin, quarter turn.
+    assert.deepEqual(regionRows(r.events, draw, 1), [[4, 3, 1, 1, 2, 1, 1, 0, 0, 0, 0, 0]]);
     const entries = draw.binding.descriptor.entries;
     assert.deepEqual(entries.map(e => e.binding).sort((a, b) => a - b), [0, 1, 2]);
     assert.equal(entries.find(e => e.binding === 1).resource.texture, pageTextures(r.textures)[0]);
@@ -356,16 +376,21 @@ test('GPU G09 solid layout keeps primitive alpha separate and unused uniform fie
     const h = f.sharedHost(); await f.ready(h);
     const r = await submit(f, h, a.capture()), draws = uiPass(r).draws;
     assert.equal(draws.length, 1); const draw = draws[0];
-    assert.equal(draw.pipeline.descriptor.vertex.buffers[0].arrayStride, 44);
+    assert.equal(draw.pipeline.descriptor.vertex.buffers[0].arrayStride, 52);
     assert.deepEqual(draw.binding.descriptor.entries.map(e => e.binding), [0]);
     expectUniform(selectedUniform(r.events, draw).bytes,
-      [8, 8, .25, 0, 1, 1, 1, 1, 0, 0, 0, 0],
-      [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0]);
+      [8, 8, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0]);
     const upload = writes(r.events, draw.vertex); assert.equal(upload.length, 1);
     const v = new Float32Array(upload[0][3].buffer, upload[0][3].byteOffset, upload[0][3].byteLength / 4);
-    assert.equal(v.length, 66);
-    for (let i = 0; i < v.length; i += 11) assert.deepEqual([...v.slice(i + 4, i + 11)], [1, 0, 0, .5, 0, 0, 0]);
+    assert.equal(v.length, 78);
+    // The primitive's alpha stays the light alpha; the node's opacity is the last value of the row.
+    for (let i = 0; i < v.length; i += 13) assert.deepEqual([...v.slice(i + 4, i + 13)], [1, 0, 0, .5, 0, 0, 0, 0, .25]);
     assert.equal(pageTextures(r.textures).length, 0);
+    // A draw without a region binds no second group, and the frame uploads no region table.
+    assert.equal(draw.region, undefined);
+    assert.equal(r.events.filter(c => c[0] === 'setBindGroup' && c[1] === 1).length, 0);
+    assert.equal(writes(r.events).filter(c => c[3].byteLength >= 16368).length, 0);
   });
 });
 
@@ -383,7 +408,7 @@ test('GPU G10 adjacent merge retains A-B-A and explicit barriers with original l
         ['explicit-enter', 'explicit-exit']);
       const h = f.sharedHost(); await f.ready(h);
       const r = capture(f, () => h.renderSharedFrame(saved)); admitted(r);
-      assert.equal(h.getStatus().pendingUploadBytes, logical * 392, '6*44 + 128 per logical image');
+      assert.equal(h.getStatus().pendingUploadBytes, logical * 440 + saved.regions.length * 48, '6*52 + 128 per logical image, and 48 per region of the frame');
       const ds = uiPass(r).draws; assert.equal(ds.length, expectedDraws);
       const images = ds.map(d => d.binding.descriptor.entries.find(e => e.binding === 1).resource.texture);
       if (sequence.length === 3 && !sequence.includes('|')) {
@@ -391,6 +416,77 @@ test('GPU G10 adjacent merge retains A-B-A and explicit barriers with original l
       }
       if (sequence.length === 2) assert.equal(ds[0].args[0], 12, 'the actual merged draw submits twelve vertices');
       await r.finish(); await h.whenIdle();
+    });
+  }
+});
+
+// Break caught: keep the region or the opacity in the batch key, bind a window per draw, or read the table without one.
+test('GPU G10 draws of different regions and opacities of one page are one draw through one window of the region table', async () => {
+  await using(async (f, a) => {
+    const page = source([255, 0, 0, 255, 0, 255, 0, 255]);
+    const left = await a.resource(page, region(0)), right = await a.resource(page, region(1));
+    const opacities = [1, .5, .25];
+    [left, right, left].forEach((item, index) => { const node = a.bitmap(item); node.x = 2 * index; node.alpha = opacities[index]; });
+    const solid = a.sprite(); fill(solid); solid.alpha = .75;
+    const saved = a.capture();
+    assert.deepEqual(saved.commands.map(c => c.kind), ['image', 'image', 'image', 'rect']);
+    assert.equal(saved.regions.length, 2);
+    const h = f.sharedHost(); await f.ready(h);
+    const r = capture(f, () => h.renderSharedFrame(saved)); admitted(r);
+    // Fees are those of four logical draws and two regions, whatever is merged.
+    assert.equal(h.getStatus().pendingUploadBytes, 4 * 440 + 2 * 48);
+    const pass = uiPass(r), ds = pass.draws;
+    // Three images in one draw, then the rectangle with its own pipeline.
+    assert.deepEqual(ds.map(d => d.args), [[18], [6]]);
+    assert.notEqual(ds[0].pipeline, ds[1].pipeline);
+    // The window is bound once, for the sampled draw only.
+    assert.equal(pass.regions.length, 1); assert.equal(pass.bindings.length, 2);
+    assert.equal(ds[0].region, pass.regions[0]);
+    assert.deepEqual(regionRows(r.events, ds[0], 2), [[1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0], [1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]]);
+    assert.equal(ds[0].region.descriptor.entries[0].resource.offset, 0);
+    const upload = writes(r.events, ds[0].vertex); assert.equal(upload.length, 1);
+    const v = new Float32Array(upload[0][3].buffer, upload[0][3].byteOffset, upload[0][3].byteLength / 4);
+    assert.equal(v.length, 18 * 13);
+    // Each vertex names its region and the opacity of its draw.
+    assert.deepEqual(Array.from({ length: 18 }, (_value, vertex) => [v[13 * vertex + 11], v[13 * vertex + 12]]),
+      [0, 1, 2].flatMap(index => Array(6).fill([index === 1 ? 1 : 0, opacities[index]])));
+    const solidRows = writes(r.events, ds[1].vertex)[0][3], s = new Float32Array(solidRows.buffer, solidRows.byteOffset, solidRows.byteLength / 4);
+    assert.deepEqual([s[11], s[12]], [0, .75]);
+    await r.finish(); await h.whenIdle();
+  });
+});
+
+// Break caught: create the region table on a device whose largest buffer is smaller than one window.
+test('GPU G10 a device whose largest buffer cannot hold one window of the region table refuses a sampled frame before native work', async () => {
+  for (const [maxBufferSize, admitted] of [[16367, false], [16368, true]]) {
+    await using(async (f, a) => {
+      f.limits.maxBufferSize = maxBufferSize;
+      const node = a.bitmap(await a.resource()), sampled = a.capture();
+      node.visible = false; fill(a.sprite()); const solid = a.capture();
+      const h = f.sharedHost(); await f.ready(h);
+      if (admitted) assert.equal(uiPass(await submit(f, h, sampled)).draws.length, 1);
+      else refusal(f, h, () => h.renderSharedFrame(sampled), 'DEVICE_LIMIT');
+      // A frame without a draw that has a region needs no table.
+      assert.equal(uiPass(await submit(f, h, solid)).draws.length, 1);
+    });
+  }
+});
+
+// Break caught: start on a device that cannot hold a 52-byte vertex of five attributes or a second group for the region window.
+test('GPU G10 a device one below any limit the batched layout needs is refused at startup, before a pipeline is made', async () => {
+  const needed = { maxVertexAttributes: 5, maxVertexBufferArrayStride: 52, maxUniformBufferBindingSize: 16368, maxInterStageShaderVariables: 7,
+    maxBindGroups: 2, maxUniformBuffersPerShaderStage: 2, maxBindGroupsPlusVertexBuffers: 3 };
+  for (const [key, least] of Object.entries(needed)) {
+    await withPorts(async f => {
+      // The fixture's device has exactly the least value of each; a Host starts on it.
+      assert.equal(f.limits[key], least);
+      f.limits[key] = least - 1;
+      const h = f.sharedHost(), start = h.start(); start.catch(() => {});
+      await f.pump();
+      await assert.rejects(start, hasCode('DEVICE_LIMIT'), key);
+      assert.equal(f.pipelines.length, 0, key); assert.equal(f.textures.length, 0, key);
+      assert.equal(h.getStatus().state, 'failed');
+      await f.close(h);
     });
   }
 });
@@ -422,7 +518,7 @@ test('GPU G11 accepted target stays exclusive while any fence, scope or map rema
 });
 
 // Break caught: never reuse a settled target, reuse stale uniform contents, or destroy pooled owners twice.
-test('GPU G12 settled target and buffers reuse while changed opacity uploads and close destroys once', async () => {
+test('GPU G12 settled target and buffers reuse while changed opacity uploads in the vertex rows and close destroys once', async () => {
   await using(async (f, a) => {
     const node = a.sprite(); fill(node);
     const h = f.sharedHost(); await f.ready(h);
@@ -441,8 +537,13 @@ test('GPU G12 settled target and buffers reuse while changed opacity uploads and
     const warmDraw = uiPass(warm).draws[0], warmUniform = selectedUniform(warm.events, warmDraw);
     assert.ok(warmDraw.vertex, 'warm actual vertex selection is required');
     assert.equal(warmDraw.vertex, firstDraw.vertex); assert.equal(warmUniform.buffer, firstUniform.buffer);
-    assert.equal(new DataView(firstUniform.bytes.buffer, firstUniform.bytes.byteOffset, firstUniform.bytes.byteLength).getFloat32(8, true), 1);
-    assert.equal(new DataView(warmUniform.bytes.buffer, warmUniform.bytes.byteOffset, warmUniform.bytes.byteLength).getFloat32(8, true), .5);
+    // The opacity is the last value of every vertex row; the block is the same bytes in both frames.
+    assert.deepEqual([...warmUniform.bytes], [...firstUniform.bytes]);
+    const opacity = (record, draw) => { const rows = writes(record.events, draw.vertex); assert.equal(rows.length, 1);
+      const values = new Float32Array(rows[0][3].buffer, rows[0][3].byteOffset, rows[0][3].byteLength / 4);
+      return Array.from({ length: values.length / 13 }, (_value, vertex) => values[13 * vertex + 12]); };
+    assert.deepEqual(opacity(first, firstDraw), Array(6).fill(1));
+    assert.deepEqual(opacity(warm, warmDraw), Array(6).fill(.5));
     await f.close(h); await f.close(h);
     assert.ok(f.textures.length > 0); assert.ok(f.buffers.length > 0);
     assert.ok(f.textures.every(t => t.destroyed === 1)); assert.ok(f.buffers.every(b => b.destroyed === 1));

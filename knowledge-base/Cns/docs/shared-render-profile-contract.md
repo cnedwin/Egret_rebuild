@@ -106,11 +106,11 @@ WebGPU hardware linear 先解码 sRGB texel 再过滤。bounded region 路径接
 
 绘制顺序保持节点矩形、Bitmap、Mesh、已提交文字、子节点。命令保留连续 ordinal、源 occurrence、材质、透明度和有序裁剪。遍历到的 isolate 节点即使隐藏、alpha 零或无内容，仍保留 enter/exit；整个祖先子树被跳过时不生成后代事件。有效裁剪边界及经过验证的空/退化/全裁空内容保留屏障。这提供渲染边界，不表示完整 Spine slot 适配已实现。捕获只为其自身已证明为空的合格内容发出公共 empty 屏障；Host 后续裁剪保留保存帧及其表不变，将新发现的空绘制保留为私有有序准备边界。资源或能力拒绝仍是错误。
 
-只合批连续兼容绘制，保留完整原 ordinal 范围，不跨 A–B–A、不同区域、空事件或屏障。共享页不要求所有区域合成一次绘制。缓存命中仍执行当前资源/Scope 检查和完整逻辑收费；暂未缓存的部分可采用正确冷路径。
+只合批连续兼容绘制，保留完整原 ordinal 范围，不跨 A–B–A、空事件或屏障。同一页上连续的绘制可以合成一批，区域和透明度不同也可以，条件是它们的区域落在区域表的同一个窗口内。缓存命中仍执行当前资源/Scope 检查和完整逻辑收费；暂未缓存的部分可采用正确冷路径。
 
 新场景方法接收真实既有 SceneFrame3D 和 opaque 共享帧。保留有限 opaque 顶点 RGB 几何、现有 MVP/index 及反向深度 clear 0/greater/write。每个编码 RGB 顶点先解码，再 f32 打包并透视插值；旧编码 B1 着色器/参考独立保留。场景与 UI 原子规划，共用一个自有目标、一次清屏和一次 resolve；UI 不受三维深度影响，不支持的场景/alpha 组合在提交前拒绝。
 
-首版共享捕获与几何准备采用完整冷路径，既有派生缓存配置及地址规则保持不变，不另设缓存额度。相邻合批仍属于本阶段要求，并使用同一个 8 MiB 拼接所有者。兼容条件包含完整材质、区域、源、采样策略、透明度及有序裁剪；逻辑费用先于物理合并收取。冷路径正确性与性能验收分别判断。
+首版共享捕获与几何准备采用完整冷路径，既有派生缓存配置及地址规则保持不变，不另设缓存额度。相邻合批仍属于本阶段要求，并使用同一个 8 MiB 拼接所有者。兼容条件包含完整材质、绘制种类、源页、采样策略、区域表窗口及有序裁剪。区域和透明度不在其中：每个顶点自带区域在窗口内的位置和所属绘制的透明度。逻辑费用先于物理合并收取。冷路径正确性与性能验收分别判断。
 
 ## 预算与生命周期
 
@@ -124,14 +124,18 @@ WebGPU hardware linear 先解码 sRGB texel 再过滤。bounded region 路径接
 | 树/命令 | 节点、authoring units、按 occurrence 收费的源三角形、绘制加屏障各≤65,536；有序裁剪引用≤262,144 |
 | 几何 | V≤65,536、I≤196,608，索引为三元组；新载荷88V+4I、旧载荷64V+4I；单项≤4,980,736字节，每帧≤128项/16 MiB |
 | 准备 | 顶点≤1,048,576、谓词≤4,194,304、tuple 比较≤1,048,576、裁剪多边形角≤64 |
-| 上传 | 默认每次32 MiB/在途64 MiB；新二维顶点44字节、非动态 draw uniform 128字节，另计生成索引/B1 |
+| 上传 | 默认每次32 MiB/在途64 MiB；新二维顶点52字节、非动态 draw uniform 128字节、帧内每个区域48字节，另计生成索引/B1 |
 | 页临时/驻留 | 在途纹理和 CPU 转换/上传临时各自不超过 Host 的 `maxFramePageBytes` 的两倍，默认即 128 MiB。共享 Host 的 ready 页不超过它的 `maxReadyPageBytes`（默认 128 MiB）和 256 项；其他配置的 WebGPU Host 为 32 MiB/256 项 |
 | 派生缓存 | 既有每 Stage 16 MiB/65,536项、每 Host 16 MiB/4,096地址；新旧配置共用 |
 | 活跃颜色目标 | 每 backing 像素4字节，每帧≤64 MiB，最多两帧合计≤128 MiB；配置/设备可更严 |
 | 复用留存 | 缓冲与自有颜色/深度目标共用32 MiB/4,096项的 idle 加返还预留权威 |
 | 其他既有限制 | 合批拼接≤8 MiB；回读 staging 加输出默认≤64 MiB；原 B1 几何/uniform/深度限制保留，其中深度每次≤16 MiB/在途≤32 MiB |
 
-顶点 stride 为44字节：position float32x2 位于0，UV float32x2 位于8，light float32x4 位于16，dark float32x3 位于32。128字节 draw uniform 为八个对齐 vec4：viewport/opacity位于0，light/tint位于16，dark位于32，逻辑尺寸/trim位于48，内容尺寸/packed原点位于64，packed尺寸/转向/域位于80，采样策略位于96，页/执行数据位于112。未使用padding为零；opacity、顶点alpha和材质alpha各应用一次。即使合批减少物理分配，每个逻辑draw仍收128字节uniform费用。blend/output策略及资源/会话身份继续作为完整独立key字段。
+顶点 stride 为52字节：position float32x2 位于0，UV float32x2 位于8，light float32x4 位于16，dark float32x3 位于32，44处是一个 float32x2，存放该绘制的区域在区域表窗口内的位置，以及该绘制的透明度。这两个值在一次绘制的所有顶点上相同，不经插值直接到达片元阶段。128字节 draw uniform 为八个对齐 vec4，只放整批相同的内容：viewport位于0，light/tint位于16，dark位于32，采样域位于80处的最后一个值，采样策略位于96，页/执行数据位于112。48和64处的两块、0处的后两个值、80处的前三个值为零；在不同区域可以合批之前，这些位置放的是区域和透明度。未使用padding为零；opacity、顶点alpha和材质alpha各应用一次，顺序与原来相同。即使合批减少物理分配，每个逻辑draw仍收128字节uniform费用。
+
+区域表按帧内顺序为每个区域存放十二个 uint32：逻辑宽高、trim 的 x 和 y；按逻辑方向的内容宽高、packed 的 x 和 y；四分之一转数和三个零。帧内只要有带区域的绘制，区域表就随该帧上传一次，占一个 uniform buffer，按帧内每个区域48字节收费。绘制在顶点阶段通过一个窗口读取它，一个窗口是连续的341个区域，共16,368字节，这是每个 WebGL2 上下文都保证的 uniform block 大小能容纳的最大数量。不超过341个区域的帧只有一个窗口。更大的帧有多个窗口，下一个绘制的区域落在另一个窗口时，当前这一批结束。不带区域的绘制不读区域表；没有带区域绘制的帧不上传区域表。
+
+在 WebGPU 中，窗口是带区域绘制的第二个 bind group 里唯一的绑定，按帧内用到的每个 pipeline 和窗口各创建一个；各窗口在区域表 buffer 中从16,384字节的整数倍处开始。共享 WebGPU Host 要求 maxBindGroups ≥ 2、maxVertexAttributes ≥ 5、maxVertexBufferArrayStride ≥ 52、maxUniformBuffersPerShaderStage ≥ 2、maxUniformBufferBindingSize ≥ 16,368、maxBindGroupsPlusVertexBuffers ≥ 3、maxInterStageShaderVariables ≥ 7，均在 WebGPU 默认限制之内；设备低于这些值时，在配置任何目标之前拒绝。blend/output策略及资源/会话身份继续作为完整独立key字段。
 
 帧元数据另设32 MiB逻辑上限：header256，五张表各24+8*length，page96、region128、material192、draw192、barrier64，自有clip值80，clip-array为24+8*length。载荷单独计费，共享不可变clip值计一次但每个引用均收费。这不限制调用方保留帧总量，也不表示实际堆内存上界。
 

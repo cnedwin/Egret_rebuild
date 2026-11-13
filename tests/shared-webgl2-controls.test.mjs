@@ -49,6 +49,19 @@ test('GL G02 startup qualifies attributes, formats and actual non-power-of-two U
 });
 function constantsSRGB() { return 35904; }
 
+// Break caught: start on a context that cannot hold five attributes or a second uniform block for the region window.
+test('GL G02 a context one below any limit the batched layout needs is refused at startup; the least values start', async () => {
+  const needed = { MAX_VERTEX_ATTRIBS:5, MAX_UNIFORM_BLOCK_SIZE:16368, MAX_UNIFORM_BUFFER_BINDINGS:2, MAX_VERTEX_UNIFORM_BLOCKS:2 };
+  const least = glPorts({parameters:needed}), started = createSharedWebGL2Host({canvas:least.canvas});
+  await started.start(); assert.equal(started.getStatus().state, 'active'); await started.close(); assert.equal(least.live().length, 0);
+  for (const [name, value] of Object.entries(needed)) {
+    const f = glPorts({parameters:{...needed, [name]:value - 1}}), h = createSharedWebGL2Host({canvas:f.canvas});
+    await assert.rejects(h.start(), code('CONTEXT_LIMIT'), name);
+    assert.equal(f.events.filter(row => row[0] === 'createProgram').length, 0, name);
+    await h.close(); assert.equal(f.live().length, 0);
+  }
+});
+
 test('GL G03 genuine saved shared frames submit; lookalikes refuse before native allocation', async () => author(async a => {
   const f = glPorts(), h = createSharedWebGL2Host({canvas:f.canvas}); await h.start();
   const frame = a.frame(), before = f.events.length;
@@ -59,6 +72,60 @@ test('GL G03 genuine saved shared frames submit; lookalikes refuse before native
   assert.equal(f.events.filter(row => row[0] === 'drawArrays').length, 2, 'one solid draw and one final resolve');
   assert.ok(Object.isFrozen(h.getSharedStatus().retention));
   await h.close(); assert.equal(f.live().length, 0);
+}));
+
+// Break caught: keep the region or the opacity in the batch key, give a solid draw the region block, or bind a window per draw.
+test('GL G03 draws of different regions and opacities of one page are one draw through one window of the region table', async () => author(async a => {
+  for (const alignment of [16, 256]) {
+    const page = egret.createImageData2D({width:4,height:2,pixels:new Uint8Array(32).fill(255)}), textures = [];
+    const type = egret.createAssetType('gl-batch-' + alignment, egret.isTexture);
+    a.engine.assets.register(type, { async load(ref) { const texture = egret.createTextureView(page, {packed:{x:Number(ref.id.split(':')[1]),y:0,width:1,height:2},logicalWidth:1,logicalHeight:2,trimX:0,trimY:0,quarterTurn:0}); textures.push(texture); return texture; }, dispose(value) { value.dispose(); } });
+    const nodes = [], opacities = [1, .5, .25];
+    for (const [index, x] of [0, 2, 0].entries()) {
+      const lease = a.scope.use(await a.engine.assets.acquire(egret.createAssetRef(type, alignment + ':' + x), {signal:a.scope.signal}));
+      const node = a.scope.use(new egret.Bitmap(lease)); node.x = 2 * index; node.alpha = opacities[index]; a.engine.stage.addChild(node); nodes.push(node);
+    }
+    // The fixture's rectangle is drawn first; move it behind the images and give it an opacity of its own.
+    a.engine.stage.setChildIndex(a.sprite, 3); a.sprite.alpha = .75;
+    const frame = a.frame();
+    assert.deepEqual(frame.commands.map(command => command.kind), ['image', 'image', 'image', 'rect']); assert.equal(frame.regions.length, 2);
+    const f = glPorts({alignment}), h = createSharedWebGL2Host({canvas:f.canvas}); await h.start();
+    const programs = f.events.filter(row => row[0] === 'linkProgram').map(row => row[1]);
+    // The sampled program declares the region window at binding point 1; the solid program does not declare it.
+    const bindings = f.events.filter(row => row[0] === 'uniformBlockBinding').map(row => [programs.indexOf(row[1]), row[3]]);
+    assert.deepEqual(bindings.slice(0, 3), [[0, 0], [0, 1], [1, 0]]);
+    assert.ok(/uniform RegionWindow/.test(programs[0].shaders[0].source) && !/RegionWindow/.test(programs[1].shaders[0].source + programs[1].shaders[1].source));
+    const before = f.events.length; h.renderSharedFrame(frame); await h.whenIdle();
+    const events = f.events.slice(before), gl = f.gl;
+    // Three images are one draw of eighteen vertices; the rectangle follows with the other program; then the resolve.
+    assert.deepEqual(events.filter(row => row[0] === 'drawArrays').map(row => row.slice(1)), [[gl.TRIANGLES, 0, 18], [gl.TRIANGLES, 18, 6], [gl.TRIANGLES, 0, 3]]);
+    const order = events.filter(row => row[0] === 'useProgram' || row[0] === 'drawArrays').map(row => row[0] === 'drawArrays' ? 'draw' : programs.indexOf(row[1]));
+    assert.deepEqual(order.slice(0, order.indexOf('draw', order.indexOf('draw') + 1) + 1), [0, 'draw', 1, 'draw']);
+    // Five float attributes of one 52-byte row.
+    assert.deepEqual(events.filter(row => row[0] === 'vertexAttribPointer').slice(0, 5).map(row => [row[1], row[2], row[5], row[6]]), [[0, 2, 52, 0], [1, 2, 52, 8], [2, 4, 52, 16], [3, 3, 52, 32], [4, 2, 52, 44]]);
+    // Each batch is written to its own range of the vertex arena: eighteen rows at 0, six at 18 * 52.
+    const written = events.filter(row => row[0] === 'bufferSubData' && row[1] === gl.ARRAY_BUFFER);
+    assert.deepEqual(written.map(row => [row[2], row[3].length]), [[0, 18 * 13], [18 * 52, 6 * 13]]);
+    const rows = written.flatMap(row => [...row[3]]);
+    assert.deepEqual(Array.from({length:24}, (_value, vertex) => [rows[13 * vertex + 11], rows[13 * vertex + 12]]),
+      [...[0, 1, 2].flatMap(index => Array(6).fill([index === 1 ? 1 : 0, opacities[index]])), ...Array(6).fill([0, .75])]);
+    // The region table is one uniform buffer of one whole window; only the two regions' rows are written.
+    assert.deepEqual(events.filter(row => row[0] === 'bufferData' && row[1] === gl.UNIFORM_BUFFER).map(row => row[2]).sort((x, y) => x - y), [2 * Math.ceil(128 / alignment) * alignment, 16368]);
+    const table = events.filter(row => row[0] === 'bufferSubData' && row[1] === gl.UNIFORM_BUFFER && row[3] instanceof Uint32Array);
+    assert.deepEqual(table.map(row => [row[2], [...row[3]]]), [[0, [1, 2, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 1, 2, 2, 0, 0, 0, 0, 0]]]);
+    // The window is bound once, at binding point 1, in full.
+    assert.deepEqual(events.filter(row => row[0] === 'bindBufferRange' && row[2] === 1 && row[3] !== null).map(row => [row[4], row[5]]), [[0, 16368]]);
+    assert.deepEqual(events.filter(row => row[0] === 'bindBufferRange' && row[2] === 0 && row[3] !== null).map(row => row[5]), [128, 128]);
+    // A frame of the rectangle alone leases and binds no region table.
+    for (const node of nodes) node.visible = false;
+    const solid = f.events.length; h.renderSharedFrame(a.frame()); await h.whenIdle();
+    const after = f.events.slice(solid);
+    assert.deepEqual(after.filter(row => row[0] === 'drawArrays').map(row => row.slice(1)), [[gl.TRIANGLES, 0, 6], [gl.TRIANGLES, 0, 3]]);
+    assert.equal(after.filter(row => row[0] === 'bindBufferRange' && row[2] === 1 && row[3] !== null).length, 0);
+    assert.equal(after.filter(row => row[0] === 'bufferSubData' && row[3] instanceof Uint32Array).length, 0);
+    await h.close(); assert.equal(f.live().length, 0);
+    for (const node of nodes) node.dispose();
+  }
 }));
 
 test('GL G03 contained clips preserve packed attributes and exact tuple admission', async () => author(async a => {
@@ -81,7 +148,7 @@ test('GL G03 contained clips preserve packed attributes and exact tuple admissio
       };
       const expected = await draw(unclipped);
       assert.equal(expected.length, 1);
-      assert.equal(expected[0].length, 6 * 11);
+      assert.equal(expected[0].length, 6 * 13);
       if (maxTupleComparisons === tupleLimit) {
         assert.deepEqual(await draw(contained), expected);
       } else {

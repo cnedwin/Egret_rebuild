@@ -16,17 +16,28 @@ interface SceneRange {
     readonly uniformOffset: number;
     readonly uniformSize: 64 | 112 | 128;
 }
+/** The region table of one record: its own uniform buffer, one window after another, each at an aligned offset. */
+export interface SharedWebGL2RegionTable {
+    readonly bytes: number;
+    readonly stride: number;
+    /** The rows of each window, to be written at `offset`. */
+    readonly windows: readonly { readonly offset: number; readonly data: Uint32Array<ArrayBuffer> }[];
+}
 export interface SharedWebGL2ArenaPlan {
     readonly vertexBytes: number;
     readonly uniformBytes: number;
     readonly sharedRanges: readonly SharedRange[];
     readonly sceneRanges: readonly SceneRange[];
+    /** Present when a draw of the record has a region. Not part of `uniformBytes`. */
+    readonly regionTable: SharedWebGL2RegionTable | undefined;
 }
 export interface SharedWebGL2ArenaOwner {
     readonly pendingVertexArenaBytes: number;
     readonly pendingUniformArenaBytes: number;
 }
 
+// The packed layout: 52 bytes for one vertex; 341 regions of twelve u32 values, 16,368 bytes, for one window of the region table.
+const VERTEX = 52, WINDOW_REGIONS = 341, WINDOW_BYTES = 16368;
 const RECORD_VERTEX = 33554432, RECORD_UNIFORM = 16793600, RECORD_TOTAL = 50348032;
 const PENDING_VERTEX = 67108864, PENDING_UNIFORM = 33587200, PENDING_TOTAL = 100696064;
 function fail(reason: 'device' | 'budget' | 'backpressure'): never {
@@ -42,6 +53,7 @@ export function qualifySharedWebGL2Alignment(alignment: number): SharedWebGL2Are
 /** Plan only native addresses; existing private payload arrays remain their original owners. */
 export function planSharedWebGL2Arenas(
     draws: readonly PackedSharedDraw2D[], sceneUniforms: readonly Float32Array<ArrayBuffer>[], alignment: number,
+    regions?: Uint32Array<ArrayBuffer>,
 ): SharedWebGL2ArenaPlan {
     const { sharedStride, sceneStride } = qualifySharedWebGL2Alignment(alignment);
     const count = draws.length, scenes = sceneUniforms.length;
@@ -54,9 +66,9 @@ export function planSharedWebGL2Arenas(
     for (let i = 0; i < count; i++) {
         const draw = draws[i]!, bytes = draw.data.byteLength;
         if (!Number.isSafeInteger(draw.vertexCount) || draw.vertexCount <= 0
-            || !Number.isSafeInteger(bytes) || bytes <= 0 || bytes !== 44 * draw.vertexCount
+            || !Number.isSafeInteger(bytes) || bytes <= 0 || bytes !== VERTEX * draw.vertexCount
             || bytes > RECORD_VERTEX - vertexBytes || draw.uniform.byteLength !== 128) fail('budget');
-        sharedRanges.push({ draw, vertexOffset: vertexBytes, firstVertex: vertexBytes / 44,
+        sharedRanges.push({ draw, vertexOffset: vertexBytes, firstVertex: vertexBytes / VERTEX,
             uniformOffset: i * sharedStride, uniformSize: 128 });
         vertexBytes += bytes;
     }
@@ -69,7 +81,18 @@ export function planSharedWebGL2Arenas(
     }
     // Allocation includes final stride padding; range sizes above expose only original payloads.
     if (uniformBytes > RECORD_UNIFORM || uniformBytes > RECORD_TOTAL - vertexBytes) fail('budget');
-    return { vertexBytes, uniformBytes, sharedRanges, sceneRanges };
+    let regionTable: SharedWebGL2RegionTable | undefined;
+    if (draws.some(draw => draw.regionWindow >= 0)) {
+        // A bound window is always the whole block, so the last window is allocated in full too.
+        const rows = regions ? regions.length / 12 : 0, count = Math.ceil(rows / WINDOW_REGIONS);
+        if (!regions || !Number.isSafeInteger(rows) || rows <= 0 || rows > 4096
+            || draws.some(draw => draw.regionWindow >= count)) fail('budget');
+        const stride = Math.ceil(WINDOW_BYTES / alignment) * alignment, windows = [];
+        for (let i = 0; i < count; i++) windows.push({ offset: i * stride,
+            data: regions.subarray(12 * WINDOW_REGIONS * i, Math.min(regions.length, 12 * WINDOW_REGIONS * (i + 1))) });
+        regionTable = { bytes: (count - 1) * stride + WINDOW_BYTES, stride, windows };
+    }
+    return { vertexBytes, uniformBytes, sharedRanges, sceneRanges, regionTable };
 }
 
 function pending(used: number, amount: number, limit: number): void {
