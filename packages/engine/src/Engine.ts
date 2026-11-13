@@ -1,9 +1,9 @@
 import { createDisplaySubtreeTickets } from './displaySubtreeTicket.js';
 import type { DisplaySubtreeTicket } from './displaySubtreeTicket.js';
 import type { DisplayObject, DisplayObjectContainer } from '@egret/runtime';
-import { TEXTURED_FRAME_PROFILE_2D, SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
-import type { FrameOptions2D, RenderFrame2D, TexturedFrameProfile2D, TexturedRenderFrame2D, SharedFrameProfile2D, SharedFrameOptions2D, SharedRenderFrame2D } from '@egret/contracts';
-import { collectFrameContent, collectTexturedFrameContent, collectSharedFrameContent } from '@egret/runtime';
+import { SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
+import type { SharedFrameProfile2D, SharedFrameOptions2D, SharedRenderFrame2D } from '@egret/contracts';
+import { collectSharedFrameContent } from '@egret/runtime';
 import type { Diagnostic, DiagnosticHandler, HostAdapter } from "@egret/contracts";
 import { EgretError, createScope, createStage, createAssetManager, reportDiagnostic, createDisplayInputOperations } from "@egret/runtime";
 import type { AssetGroupOperations, AssetManager, AssetRef, Scope, Stage } from "@egret/runtime";
@@ -13,7 +13,7 @@ import type { BitmapResourceSlot, BitmapResourceSlotOwner } from './bitmapResour
 import { createBitmapBindingOwner } from './bitmapBindingTicket.js';
 import type { BitmapBindingOwner, BitmapBindingTicket } from './bitmapBindingTicket.js';
 import { closeHost } from "./closeHost.js";
-import { registerTexturedFrame, registerSharedFrame } from './internal/texturedFrameState.js';
+import { registerSharedFrame } from './internal/texturedFrameState.js';
 import { createGameClockOwner } from './gameClock.js';
 import type { AdmittedGameClockOptions, GameClockOwner } from './gameClock.js';
 import type { GameClock, GameClockOptions, GameClockTick } from './gameClockTypes.js';
@@ -49,11 +49,8 @@ export interface EngineOptions {
 }
 
 export interface CapturedEngineFramePorts {
-  readonly legacy: ((frame: RenderFrame2D) => unknown) | undefined;
-  readonly textured: ((frame: TexturedRenderFrame2D) => unknown) | undefined;
-  readonly profile: TexturedFrameProfile2D | undefined;
-  readonly shared?: ((frame: SharedRenderFrame2D) => unknown) | undefined;
-  readonly sharedProfile?: SharedFrameProfile2D | undefined;
+  readonly shared: ((frame: SharedRenderFrame2D) => unknown) | undefined;
+  readonly sharedProfile: SharedFrameProfile2D | undefined;
 }
 export let constructEngine: (options: EngineOptions, timeoutMs: number, surface: object, releaseSurface: () => void, ports: CapturedEngineFramePorts, clockOptions: AdmittedGameClockOptions) => Engine;
 const freezeSharedFrame = Object.freeze;
@@ -93,9 +90,7 @@ export class Engine {
   private nextFrameId = 1;
   private frameIdle: Promise<void> | undefined;
   private releaseFrame: (() => void) | undefined;
-  private readonly renderer: ((frame: RenderFrame2D) => unknown) | undefined;
   private readonly sharedRenderer: ((frame: SharedRenderFrame2D) => unknown) | undefined;
-  private readonly texturedRenderer: ((frame: TexturedRenderFrame2D) => unknown) | undefined;
    #currentState: "open" | "closing" | "closed" = "open";
   private readonly scopes = new Set<Scope>();
   private readonly cleanupErrors: unknown[] = [];
@@ -108,17 +103,13 @@ export class Engine {
   public readonly stage: Stage;
   public readonly assets: AssetManager;
   public readonly sharedFrameProfile: SharedFrameProfile2D | undefined;
-  public readonly texturedFrameProfile: TexturedFrameProfile2D | undefined;
   public readonly clock: GameClock;
 
   private constructor(options: EngineOptions, timeoutMs: number, surface: object, releaseSurface: () => void, ports: CapturedEngineFramePorts, clockOptions: AdmittedGameClockOptions, token: typeof CREATION_TOKEN) {
     if (token !== CREATION_TOKEN) throw new EgretError("ENGINE_FACTORY_REQUIRED");
     this.host = options.host;
-    this.renderer = ports.legacy;
     this.sharedRenderer = ports.shared;
     this.sharedFrameProfile = ports.sharedProfile;
-    this.texturedRenderer = ports.textured;
-    this.texturedFrameProfile = ports.profile;
     this.timeoutMs = timeoutMs;
     this.onDiagnostic = options.onDiagnostic;
     this.releaseSurface = releaseSurface;
@@ -239,22 +230,6 @@ export class Engine {
     return this.#gameClockOwner.advance(sourceSeconds);
   }
 
-  public captureFrame(options: FrameOptions2D): RenderFrame2D {
-    return this.executeFrame(options, false, false);
-  }
-
-  public renderFrame(options: FrameOptions2D): RenderFrame2D {
-    return this.executeFrame(options, true, false);
-  }
-
-  public captureTexturedFrame(options: FrameOptions2D): TexturedRenderFrame2D {
-    return this.executeFrame(options, false, true);
-  }
-
-  public renderTexturedFrame(options: FrameOptions2D): TexturedRenderFrame2D {
-    return this.executeFrame(options, true, true);
-  }
-
   public captureSharedFrame(options: SharedFrameOptions2D): SharedRenderFrame2D {
     return this.executeSharedFrame(options, false);
   }
@@ -282,7 +257,7 @@ export class Engine {
     return this.executeSharedFrame(options, true);
   }
 
-  /** Share the existing lifecycle barrier and ID sequence without changing old options. */
+  /** Busy precedes all external reads; cleanup waits for the finally barrier. */
   private executeSharedFrame(options: SharedFrameOptions2D, render: boolean, candidate?: readonly [BitmapBindingTicket], displayCandidate?: readonly [DisplaySubtreeTicket]): SharedRenderFrame2D {
     this.#context.assertOpen();
     if (this.frameBusy) throw new EgretError('FRAME_REENTRANT');
@@ -345,76 +320,6 @@ export class Engine {
         }
       }
       return frame;
-    } finally {
-      this.frameBusy = false;
-      const release = this.releaseFrame;
-      this.releaseFrame = undefined;
-      this.frameIdle = undefined;
-      release?.();
-    }
-  }
-
-  /** Busy precedes all external reads; cleanup waits for the finally barrier. */
-  private executeFrame(options: FrameOptions2D, render: boolean, textured: false): RenderFrame2D;
-  private executeFrame(options: FrameOptions2D, render: boolean, textured: true): TexturedRenderFrame2D;
-  private executeFrame(options: FrameOptions2D, render: boolean, textured: boolean): RenderFrame2D | TexturedRenderFrame2D {
-    this.#context.assertOpen();
-    if (this.frameBusy) throw new EgretError("FRAME_REENTRANT");
-    if (this.#gameClockOwner.isBusy()) throw new EgretError('CLOCK_REENTRANT');
-    this.frameBusy = true;
-    this.frameIdle = new Promise<void>(resolve => { this.releaseFrame = resolve; });
-    try {
-      const renderer = textured ? this.texturedRenderer : this.renderer;
-      if (render && renderer === undefined) throw new EgretError("RENDERER_REQUIRED");
-      let width: number;
-      let height: number;
-      let clearColor: number;
-      let clearAlpha: number;
-      try {
-        width = options.width;
-        height = options.height;
-        const color = options.clearColor;
-        const alpha = options.clearAlpha;
-        // Null is invalid rather than an omitted optional value.
-        clearColor = color === undefined ? 0 : color;
-        clearAlpha = alpha === undefined ? 0 : alpha;
-        if (typeof width !== "number" || !Number.isFinite(width) || width <= 0
-          || typeof height !== "number" || !Number.isFinite(height) || height <= 0
-          || typeof clearColor !== "number" || !Number.isInteger(clearColor)
-          || clearColor < 0 || clearColor > 0xffffff
-          || typeof clearAlpha !== "number" || !Number.isFinite(clearAlpha)
-          || clearAlpha < 0 || clearAlpha > 1) {
-          throw new EgretError("INVALID_FRAME_OPTIONS");
-        }
-      } catch (cause) {
-        if (cause instanceof EgretError) throw cause;
-        throw new EgretError("INVALID_FRAME_OPTIONS", { cause });
-      }
-      this.#context.assertOpen();
-      const content = textured ? collectTexturedFrameContent(this.stage) : collectFrameContent(this.stage);
-      this.#context.assertOpen();
-      if (!Number.isSafeInteger(this.nextFrameId) || this.nextFrameId <= 0) {
-        throw new EgretError("FRAME_ID_EXHAUSTED");
-      }
-      const frame = Object.freeze({
-        ...(textured ? { profile: TEXTURED_FRAME_PROFILE_2D } : {}),
-        frameId: this.nextFrameId++, width, height, clearColor, clearAlpha, ...content,
-      });
-      // Only the Engine registers a fully captured, frozen new-profile record.
-      if (textured) registerTexturedFrame(frame as TexturedRenderFrame2D);
-      if (render) {
-        try {
-          const result = Reflect.apply(renderer!, this.host, [frame]);
-          if (result !== undefined) {
-            observeRejectedRenderResult(result);
-            throw new EgretError("INVALID_RENDERER");
-          }
-        } catch (cause) {
-          this.#context.report({ code: "FRAME_RENDER_FAILED", phase: "graphics", severity: "error", cause });
-          throw new EgretError("FRAME_RENDER_FAILED", { cause });
-        }
-      }
-      return frame as RenderFrame2D | TexturedRenderFrame2D;
     } finally {
       this.frameBusy = false;
       const release = this.releaseFrame;

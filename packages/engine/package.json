@@ -12,10 +12,6 @@
       "types": "./dist/web/webgpu.d.ts",
       "import": "./dist/web/webgpu.js"
     },
-    "./web": {
-      "types": "./dist/web/index.d.ts",
-      "import": "./dist/web/index.js"
-    },
     "./text": {
       "types": "./dist/text.d.ts",
       "import": "./dist/text.js"

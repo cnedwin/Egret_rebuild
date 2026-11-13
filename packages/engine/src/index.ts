@@ -15,15 +15,13 @@ export type { CancellationListener, CancellationSignal, Disposable, Releasable, 
 export { AssetManager, AssetLease, createAssetType, createAssetRef } from "@egret/runtime";
 export type { AssetProvider, AssetAcquireOptions, AssetLoadContext, AssetType, AssetRef } from "@egret/runtime";
 export { Sprite, Graphics } from '@egret/runtime';
-export type { Matrix2D, Rectangle2D, ClipRectangle2D, RectangleCommand2D, ImageCommand2D, RenderCommand2D, FrameOptions2D, RenderFrame2D, RenderHostAdapter } from '@egret/contracts';
+export type { Matrix2D, Rectangle2D, ClipRectangle2D } from '@egret/contracts';
 export { IMAGE_LIMITS_2D, createImageData2D, isImageData2D, copyImageData2DPixels } from '@egret/contracts';
 export type { ImageData2DInput, ImageData2D, TextureRegion2D } from '@egret/contracts';
 export { createTexturedGeometry2D, isTexturedGeometry2D } from '@egret/contracts';
 export type { TexturedFloatArray2D, TexturedIndexArray2D, TexturedGeometry2DInput, TexturedGeometry2D } from '@egret/contracts';
 export { createSharedMaterial2D, createSharedGeometry2D } from '@egret/contracts';
 export type { SharedMaterialInput2D, SharedMaterial2D, SharedFloatArray2D, SharedIndexArray2D, SharedGeometryInput2D, SharedGeometry2D, TextureViewRegionInput2D, TextureViewRegion2D } from '@egret/contracts';
-export { TEXTURED_FRAME_PROFILE_2D } from '@egret/contracts';
-export type { TexturedFrameProfile2D, TexturedMeshCommand2D, TexturedRenderCommand2D, TexturedRenderFrame2D, TexturedRenderHostAdapter } from '@egret/contracts';
 export { SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
 export type { SharedFrameProfile2D, SharedOutputAlpha2D, SharedFrameOptions2D, SharedPage2D, SharedRegion2D, SharedDrawState2D, SharedRectangleCommand2D, SharedImageCommand2D, SharedMeshCommand2D, SharedBarrierCommand2D,
   SharedEffect2D, SharedRenderCommand2D, SharedRenderFrame2D, SharedRenderHostAdapter } from '@egret/contracts';

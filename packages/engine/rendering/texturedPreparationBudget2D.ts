@@ -1,5 +1,5 @@
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
-import type { PreparedStageCost2D } from './preparedFrameCache2D.js';
+import type { PreparedStageCost2D } from './prepareRectangles2D.js';
 import { GeometryPreparationError, coordinate, finishPolygonWinding2D } from './prepareRectangles2D.js';
 import type { Preparation, PreparedPoint2D, PreparationBudget2D, PolygonClipPolicy2D } from './prepareRectangles2D.js';
 

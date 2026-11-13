@@ -4,7 +4,6 @@ import type { DisplayObject } from "./DisplayObject.js";
 import { assertLive, isDisplayNode } from "./displayTreeState.js";
 import { engineOf } from "./ownership.js";
 import { EgretError } from "./EgretError.js";
-import { invalidateCaptureNode } from "./frameCaptureCache.js";
 
 import type { RenderEffect2D } from './renderEffect.js';
 
@@ -62,7 +61,6 @@ export function recordVisualChange(node: object, changes: number): void {
     || ((changes & VISUAL_APPEARANCE) !== 0 && state.appearanceRevision >= REVISION_RESTART)
     || ((changes & VISUAL_CONTENT) !== 0 && state.contentRevision >= REVISION_RESTART)
     || ((changes & VISUAL_BINDING) !== 0 && state.bindingRevision >= REVISION_RESTART)) {
-    invalidateCaptureNode(node as DisplayObject);
     state.structureRevision = 0;
     state.transformRevision = 0;
     state.appearanceRevision = 0;
