@@ -10,12 +10,14 @@
     "@egret/engine": "/packages/engine/dist/index.js",
     "@egret/engine/webgpu": "/packages/engine/dist/web/webgpu.js",
     "@egret/engine/webgl2": "/packages/engine/dist/web/webgl2.js",
+    "@egret/engine/ui": "/packages/engine/dist/ui/index.js",
     "@egret/engine/input/hover": "/packages/engine/dist/hover.js",
     "@egret/engine/web/hover": "/packages/engine/dist/web/hover.js",
     "@egret/engine/input": "/packages/engine/dist/input.js",
     "@egret/engine/web/pointer": "/packages/engine/dist/web/pointer.js",
     "@egret/runtime": "/packages/runtime/dist/index.js",
     "@egret/runtime/input": "/packages/runtime/dist/input/index.js",
+    "@egret/runtime/ui": "/packages/runtime/dist/ui/index.js",
     "@egret/contracts": "/packages/contracts/dist/index.js",
     "@egret/contracts/resources": "/packages/contracts/dist/resources/index.js",
     "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js",
@@ -33,8 +35,8 @@
 </head>
 <body>
   <h1>Hover and wheel / 悬停与滚轮</h1>
-  <p>Move a mouse or a pen over the three buttons and the list. Turn the wheel over the list: it scrolls the list until the list ends, and then the page.<br>把鼠标或手写笔移到三个按钮和列表上。在列表上转动滚轮：先滚动列表，列表到头后滚动页面。</p>
-  <div id="surface"><canvas id="scene" width="720" height="450" role="img" aria-label="Three buttons and a scrolling list / 三个按钮和一个可滚动的列表"></canvas></div>
+  <p>Move a mouse or a pen over the three buttons and the list. Turn the wheel over the list, or drag the bar beside it: the wheel scrolls the list until the list ends, and then the page.<br>把鼠标或手写笔移到三个按钮和列表上。在列表上转动滚轮，或拖动旁边的滚动条：滚轮先滚动列表，列表到头后滚动页面。</p>
+  <div id="surface"><canvas id="scene" width="720" height="450" role="img" aria-label="Three buttons and a scrolling list with its scrollbar / 三个按钮和一个带滚动条的列表"></canvas></div>
   <p id="status" role="status" aria-live="polite">Starting… / 正在启动…</p>
   <pre id="state"></pre>
   <p><a href="./README.md">English instructions</a> · <a href="./README.zh-CN.md">中文说明</a></p>
