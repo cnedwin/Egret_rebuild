@@ -25,14 +25,24 @@ export function skins(outfit) {
   return ['default', outfit];
 }
 
-export function openStudioProject(text) {
-  const snapshot = unwrap(parseProjectSnapshot(text, {maxSnapshotUtf8Bytes:64 * 1024}));
+/** A project file is at most this long. The page checks a chosen file against it before reading the file. */
+export const maxProjectBytes = 64 * 1024;
+
+function refusal(code, message) { return Object.assign(new Error(message), {code}); }
+
+function admit(text) {
+  const snapshot = unwrap(parseProjectSnapshot(text, {maxSnapshotUtf8Bytes:maxProjectBytes}));
   if (snapshot.projectId !== 'p_outfit_studio' || ![2,8].includes(snapshot.roots.length) ||
       snapshot.entities.length !== snapshot.roots.length || snapshot.files.length || snapshot.entities.some(entity =>
         entity.kind !== 'outfit-character' || entity.dataSchemaVersion !== '1.0' || entity.references.length)) {
     throw new Error('Expected an Outfit Studio project with two or eight characters');
   }
   snapshot.entities.forEach(character);
+  return snapshot;
+}
+
+export function openStudioProject(text) {
+  const snapshot = admit(text);
   const store = unwrap(createProjectStore(snapshot));
 
   function get(id) {
@@ -64,6 +74,41 @@ export function openStudioProject(text) {
       });
       if (result.status !== 'committed') throw new Error(result.diagnostics[0]?.code ?? 'Project edit refused');
       return character(get(id));
+    },
+    /**
+     * Gives this project the content of an exported project: every character's name, outfit and palette,
+     * and the project's name, written as one edit transaction. The file must hold the same characters, by
+     * their stable IDs and in the same order, and the same version pins. Returns the characters that
+     * changed, as they were and as they are; an empty list means nothing was written.
+     */
+    adopt(text) {
+      const incoming = admit(text), current = store.getSnapshot();
+      for (const key of ['engineVersion','resourceFormatVersion','toolProtocolVersion']) {
+        if (incoming.versions[key] !== current.versions[key]) throw refusal('STUDIO_OPEN_VERSIONS', 'The file was saved with other versions');
+      }
+      if (incoming.roots.length !== current.roots.length || incoming.roots.some((id,index) => id !== current.roots[index])) {
+        throw refusal('STUDIO_OPEN_CHARACTERS', 'The file holds other characters than this project');
+      }
+      const changes = [], operations = [];
+      for (const id of current.roots) {
+        const previous = get(id), before = character(previous), after = character(incoming.entities.find(row => row.id === id));
+        if (before.name === after.name && before.outfit === after.outfit && before.palette === after.palette) continue;
+        changes.push(Object.freeze({id,before,after}));
+        operations.push({op:'putEntity',entity:{...previous,name:after.name,data:{...previous.data,outfit:after.outfit,palette:after.palette}}});
+      }
+      const renamed = incoming.name !== current.name;
+      if (renamed) operations.push({op:'setMetadata',name:incoming.name,versions:current.versions});
+      if (!operations.length) return Object.freeze(changes);
+      const baseRevision = current.revision;
+      const result = store.commit({
+        command:'edit', toolProtocolVersion:'1.0', projectId:current.projectId,
+        transactionId:`t_studio_${baseRevision + 1}`, baseRevision,
+        source:{actorId:'studio',actorKind:'creator',intent:'Open project',toolId:'outfit-studio',toolVersion:'1'},
+        scope:{entityIds:changes.map(row => row.id),fileIds:[],metadata:renamed,roots:false},
+        operations
+      });
+      if (result.status !== 'committed') throw new Error(result.diagnostics[0]?.code ?? 'Project open refused');
+      return Object.freeze(changes);
     },
     serialize() { return unwrap(serializeProjectSnapshot(store.getSnapshot())) + '\n'; }
   });

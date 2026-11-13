@@ -10,9 +10,18 @@
 
 修改 `project.json` 后重启服务即可看到变化。两个稳定实体 ID 标识角色及各自的 `name`、`outfit`、`palette` 字段。「导出工程」会下载当前已提交的快照。通过 `node examples/outfit-studio/serve.mjs --project <快照路径>` 可以打开该文件。播放时间、选择和草稿属于本次会话。示例复用现有工程存储和共享资源管理器。[示例工程](project.json)
 
+「打开工程」在正在运行的工作室里打开已导出的快照。文件先在当前工程的副本上准入，并作为一次编辑事务写入。随后加载每个新配色，由 Host 接收，期间保留原画面。全部就绪后，工程、角色和列表一起切换。
+
+- **角色必须相同。**文件须包含当前工程的角色，稳定 ID 相同、顺序相同，版本固定值也相同。各角色的 `name`、`outfit`、`palette` 以及工程名称取自文件。固定场景会为两个角色的导出文件补上六个参考角色，与服务启动时一致。
+- **失败和取消不改变任何东西。**工作室拒绝的文件、字体无法显示的名称、加载失败的内容，或点击「取消打开」，都会让工程、角色及其播放保持原样，同一个文件可以再次选择。
+- **配色改变的角色会重新开始动画**，沿用与切换配色相同的 RESET 策略。其他角色继续原来的播放。
+- **文件最大 64 KiB。**更长的文件在读取之前即被拒绝。
+
 工作室沿用 `animation-outfits` 的原创程序化 Spine 和序列帧素材。第二套配色交换现有两张图集页的颜色，并构建新的清单身份。工作室代码及原创场景几何采用 Apache-2.0。[换装素材出处](../animation-outfits/PROVENANCE.zh-CN.md) · [CanvasKit 和 Noto 素材](../paragraph-panel/vendor/README.zh-CN.md) · [Spine 运行时条款](../../third-party/spine-core-4.3.13.LICENSE) · [JSONC 解析器署名](../../third-party/jsonc-parser-3.3.1.LICENSE)
 
 使用 Playwright 1.62.1 和已安装的 Edge，运行 `node examples/outfit-studio/verify.mjs <Playwright 包绝对路径> <新的绝对输出目录>`。同批验证覆盖两个真实浏览器后端、鼠标与键盘、名称拒绝、拖出原行再释放、配色失败与重试、导出重开和退出清理。每个后端采集三次冷 HTTP 启动，截止到首帧完成并允许交互。记录的传输是本地回环未压缩 HTTP。[验证摘要](verification-summary.json)
+
+打开工程的验证运行 `node examples/outfit-studio/verify-open.mjs <Playwright 包绝对路径> <新的绝对输出目录>`。每个后端通过页面导出两次，通过页面的文件字段打开导出文件，让一次加载失败，取消一次，再重试，提交七个必须被拒绝的文件，并在固定桌面场景打开一个精简导出。第三个参数 `software` 改用 Playwright 自带的浏览器和软件渲染，代替已安装的 Edge。2026-11-14 以这种方式在无头 Chromium 153 上通过了 WebGL2 各项：精简场景八项，固定场景一项。**WebGPU 各项以及所有硬件和手机项均未运行**：该机器的软件 WebGPU 适配器无法启动工作室，与本次改动无关。
 
 ## 固定场景配置
 

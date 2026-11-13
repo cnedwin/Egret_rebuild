@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 换装工作室打开工程 — 2026-11-14
+
+换装工作室可在运行中的页面内打开已导出的工程。文件先在当前工程的副本上准入，并作为一次编辑事务写入，角色的稳定 ID 不变。新配色在加载并由 Host 接收期间保留原画面，随后工程、角色和列表一起切换。被拒绝的文件、加载失败或取消都不改变任何东西。新增浏览器验证的 WebGL2 各项已在软件渲染的无头 Chromium 上通过；WebGPU、硬件和手机各项尚未运行。[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) · [换装工作室](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/README.zh-CN.md)
+
 ## SharedFrame2D 与渲染诊断 — 2026-11-14
 
 SharedFrame2D 成为 WebGPU 和 WebGL2 的公共 2D 帧路径。旧 Canvas Host、旧帧捕获及早期 scene3d Host 已退役。共享路径已支持保持顺序的跨纹理页合批，以及稳定命令、打包和批次复用。集成像素对比使用软件渲染。可选调试面板和 GPU 计时工具报告各自可用的计数与时间来源。 [#187](https://github.com/cnedwin/Egret_rebuild/pull/187) · [#188](https://github.com/cnedwin/Egret_rebuild/pull/188) · [#190](https://github.com/cnedwin/Egret_rebuild/pull/190) · [#193](https://github.com/cnedwin/Egret_rebuild/pull/193)
