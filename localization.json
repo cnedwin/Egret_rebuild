@@ -323,8 +323,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "5f3a568762b45582424ab57a116b0ace81ec87c049255a4ee6693b731c088ba1",
-      "zhSha256": "fc45aa0752a421b4b93259ec334abeec58462049d4cf4296caff72dad48b6589"
+      "enSha256": "18943f595c1b58b41ea9af8979f74b1e4043f5c4b9706fca4ad5a00ee38f2dcc",
+      "zhSha256": "06f5646f5029a23641dbac3f6037e356bf3ed1fc3913619bb64ced3c206307ef"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -1100,8 +1100,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "74e19d78fb388cd3599ab215c72362b1dd390e05aa101e5e35cfeaa6f3db798c",
-      "zhSha256": "32ca262b0902418e368d85f9559e88950c6b6888f5f5498325e1972e33092fe1"
+      "enSha256": "93143c5fbf5ddc137695a19349aea9d3cf02932266937a86f5929d32f082d594",
+      "zhSha256": "30c53fdfccaf3cafba30b939155f0738f5373baac72de85255e4b809f293cac1"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -2329,6 +2329,20 @@
       "kind": "public_reading",
       "enSha256": "e82994ee213fb66135106521ba1ff6be7f69da484c569a66b4179691eee77d22",
       "zhSha256": "29717cfa3ac8efa798e1a9c2cb235c41c29f9a2b43b685bf24484b9fdc179ae1"
+    },
+    {
+      "en": "knowledge-base/en/docs/text-input.md",
+      "zh": "knowledge-base/Cns/docs/text-input.md",
+      "kind": "public_reading",
+      "enSha256": "c8622347f7da17595f444ddf009be00ca544f7a807a85cb6dc4adcb4cf5a94d6",
+      "zhSha256": "17fef5d1bd18c6eef46324d8b28ff86cf4f8e9d7bd3128018719be98717961bb"
+    },
+    {
+      "en": "examples/text-input/README.md",
+      "zh": "examples/text-input/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "9b8063c09bcb58b96aab4ddcd521295cdb0969b7ea287a3ef81b7a5f789f273e",
+      "zhSha256": "b1833ab77637e74db8f644dcada87d13bfed5ebb87b00191f2179307ff7d36c0"
     }
   ],
   "registries": [
@@ -2926,11 +2940,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "6afdf12c5223962667edd34ff967247668e3640588ee37ed62e25df749d5b7a3"
+      "sha256": "6fde54999bce8668e87d027bdbb2226b0488a7c455db2164727093752c645dc1"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "ac303f1a34611e8ddc1512e8ae6b0b4ca5ad3ff794ab0e7b04a3b1b00a7915d3"
+      "sha256": "774c25e7e0769a7c158c113290cb1dc794e7293c8fa93a9c3932b7cc7b1082f3"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3566,7 +3580,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "37b6e5b146f14bb6d54d696a701df801fbf3b6d80e8ba00ee9b6320788478576"
+      "sha256": "98cb8ebd7e2f8cae99871ad6db40804333783ce17dfeb0999b498058f9961597"
     },
     {
       "path": "tools/incremental-dependencies.mjs",
@@ -4859,6 +4873,26 @@
     {
       "path": "devtools/src/web/sources.ts",
       "sha256": "fbaff8438827f8cef660765b884c97d31cc496ac230da903668297a116da0046"
+    },
+    {
+      "path": "packages/engine/web/BrowserTextInput.ts",
+      "sha256": "57e661f014483f48cc064a5ad4775b333b97dad5edf454854f29af23933ad2a5"
+    },
+    {
+      "path": "packages/engine/web/textInput.ts",
+      "sha256": "ef008b073466e27d9dca3dc87eab424e6e345ac9689ff1ce6804a4eb0a96e260"
+    },
+    {
+      "path": "tests/browser-text-input.test.mjs",
+      "sha256": "a5f6ea9070c5113e42e6a60efe3087391b79bc6b71e090bbeaf20c7f718f666d"
+    },
+    {
+      "path": "examples/text-input/main.mjs",
+      "sha256": "fa89c0517abe55865a1306969bfa95d38945bc6865fc9881c91b05f9042df76e"
+    },
+    {
+      "path": "examples/text-input/verify.mjs",
+      "sha256": "52967bd6d169693f5ce888d00dcecb271664d0f963e5845b8c62ea2520eb1b07"
     }
   ],
   "historicalSemanticReview": {
