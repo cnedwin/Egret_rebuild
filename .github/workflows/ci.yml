@@ -221,7 +221,7 @@ jobs:
         run: |
           node tools/check-repository-hygiene.mjs --committed
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          node tools/contribution-metadata.mjs --check --base $env:EGRET_METADATA_BASE
+          node tools/contribution-metadata.mjs --merge --base $env:EGRET_METADATA_BASE
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           node tools/check-publication.mjs --contribution
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -300,6 +300,9 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
+          # The report after a merge reads history back to the last ledger refresh.
+          # 合并后的报告需要读取到上一次台账刷新为止的历史。
+          fetch-depth: ${{ github.event_name == 'push' && '0' || '1' }}
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
@@ -309,9 +312,10 @@ jobs:
       - name: Declared portable CPU suite
         run: node --test tests/matrix4.test.mjs tests/display-tree.test.mjs
       - run: node examples/headless.mjs
-      # After a merge: name the product as built and report which evidence still holds. It never refuses.
-      # 合并之后：给出构建产物的身份，并报告哪些证据仍然成立。它从不拒绝。
-      - name: Product identity and evidence report
+      # After a merge: name the product as built, report which evidence still holds and how far the
+      # ledgers are behind. It never refuses for any of these.
+      # 合并之后：给出构建产物的身份，报告哪些证据仍然成立，以及台账落后了多少。它不会因此拒绝。
+      - name: Product identity, evidence and ledger report
         if: ${{ github.event_name == 'push' && matrix.os == 'ubuntu-latest' }}
         run: |
           {
@@ -319,6 +323,7 @@ jobs:
             node tools/current-identities.mjs --write
             node tools/evidence.mjs --tools
             node tools/current-identities.mjs
+            node tools/contribution-metadata.mjs --pending --base HEAD
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
   merge-ready:

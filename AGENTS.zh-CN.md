@@ -109,7 +109,7 @@ B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-
 
 ## M0 当前元数据集成
 
-贡献者修改内容和独立的 contributions/*.json 声明。普通完整 prepush 只读验证推导出的当前元数据，不修改共享账本；维护者对最终候选运行 tools/contribution-metadata.mjs --base <target-base> --write 和 --check。不符合纯文档路径的候选还须运行 tools/prepush.mjs --integrated。EGRET_METADATA_BASE 为 prepush 选择同一确切基线，CI 使用 PR 基线 SHA。生成器仅作为 localization.json、knowledge-base/documentation-layout.json 与 source-origin.json 的受限规范写入入口，保留历史对象，拒绝受保护/私有输入，不刷新无关过期来源行。内容/基线变化会使集成失效。完整 hooks、独立来源与双语评审仍为必需。当前浏览器套件使用 tools/browser-verify.mjs；进阶/历史工具保留独立验收范围。参见[贡献流程](knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)。
+贡献者修改内容和独立的 contributions/*.json 声明。改动永远不携带 localization.json、knowledge-base/documentation-layout.json 或 source-origin.json：tools/prepush.mjs --integrated 和 CI 运行 tools/contribution-metadata.mjs --merge，它要求这三份文件与基线中的完全一致，并从上一次账本刷新开始规划元数据，但不写入。账本在合并之后由一个不携带其他任何内容的改动刷新：在从当前 main 拉出的分支上运行 tools/contribution-metadata.mjs --since-ledgers --write，再运行 --merge。不要在功能改动或文档改动里重新生成账本，也不要手工合并账本冲突；重新生成这次刷新即可。EGRET_METADATA_BASE 为 prepush 选择基线，CI 使用 PR 基线 SHA。生成器仅作为 localization.json、knowledge-base/documentation-layout.json 与 source-origin.json 的受限规范写入入口，保留历史对象，拒绝受保护/私有输入，不要手工刷新任何行。两次刷新之间，main 上的账本描述的是较早的状态；检查会自行推导当前清单。完整 hooks、独立来源与双语评审仍为必需。当前浏览器套件使用 tools/browser-verify.mjs；进阶/历史工具保留独立验收范围。参见[贡献流程](knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)。
 
 ## M1.1 热提交 UNIT
 
