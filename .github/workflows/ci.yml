@@ -309,6 +309,18 @@ jobs:
       - name: Declared portable CPU suite
         run: node --test tests/matrix4.test.mjs tests/display-tree.test.mjs
       - run: node examples/headless.mjs
+      # After a merge: name the product as built and report which evidence still holds. It never refuses.
+      # 合并之后：给出构建产物的身份，并报告哪些证据仍然成立。它从不拒绝。
+      - name: Product identity and evidence report
+        if: ${{ github.event_name == 'push' && matrix.os == 'ubuntu-latest' }}
+        run: |
+          {
+            echo '```text'
+            node tools/current-identities.mjs --write
+            node tools/evidence.mjs --tools
+            node tools/current-identities.mjs
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
   merge-ready:
     name: M0 / merge-ready
     if: ${{ always() }}

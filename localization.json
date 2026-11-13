@@ -323,8 +323,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "65b45724d3863604efc9a585439092c7d9d2b5ba52e0efa1d616de133a9deb13",
-      "zhSha256": "c1a5e09157973f8ea920eba414794b82e924b49be300cdedada40d601a9ca48b"
+      "enSha256": "be58cf5650a44098577efe50b398632e7a5be87335b61c179cb4a2434acf1b5b",
+      "zhSha256": "eeace2c3fb4b6bd5a09b716e766e247db55f5b7e26250f717245c80bb2c3fc4e"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -1844,8 +1844,8 @@
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "989102d7cdf06d61248850af8e4aaa2eb9edbd661e73f651481e27c13d38e3eb",
-      "zhSha256": "ca4c23b3c6acabbda44fcb61a4cebd0a90bcb292ae10582dfa4e017c0ee57d21"
+      "enSha256": "de21cab1ad70c5d9075aa1f233f3a9e141d4633ab95083a92cf57fa972fa41e4",
+      "zhSha256": "648ef67062ba75b4a21eaafd3f4cb38e17ad55c729b3aa88e3db208d65d4b970"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -1865,15 +1865,15 @@
       "en": "knowledge-base/en/docs/dependency-aware-checks.md",
       "zh": "knowledge-base/Cns/docs/dependency-aware-checks.md",
       "kind": "public_reading",
-      "enSha256": "95db2f429585b1e977f5e5b69012fff7ffa82e0d2091c4a82b1a162110ae6630",
-      "zhSha256": "b76df36fbf7901b99b6353538f34db4a549aaf82d36f0211ea859498dac13b21"
+      "enSha256": "4848fa698bab00cf6fdbf1f6e66d66a78458f2e5f0126e0e4a3978880ee17a4f",
+      "zhSha256": "f85b0bd7cfe27d9aec3be1f66f79a171ae5c1be98353b1346e5fe5be072ed3d4"
     },
     {
       "en": "knowledge-base/en/docs/check-maintenance.md",
       "zh": "knowledge-base/Cns/docs/check-maintenance.md",
       "kind": "public_reading",
-      "enSha256": "f0986d3dec776aac44fe9b18385cab9ff8f23fa8516dbf17f172b6eb7d641638",
-      "zhSha256": "21207e56298531b0a975d5a04c7c8e4e8c124427059432025204d1b2e18f9e57"
+      "enSha256": "7d611143b7a88b1f632ecf66a6ad723eadabcda46a6f1c82cc097942ac2ad265",
+      "zhSha256": "57818367c79e9c47a8769ca8ce64afe06c5a8d2c021d4373daca8e215a0815e4"
     },
     {
       "en": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
@@ -2350,6 +2350,13 @@
       "kind": "public_reading",
       "enSha256": "e1a7cca611db1de04ce467b57f7b9a7207a414d8f66bc4b47d94d4c20ce55584",
       "zhSha256": "37597a188966cc645af6a91d4d99334c5ae44647f478cb65289b49629a168c4b"
+    },
+    {
+      "en": "knowledge-base/en/docs/evidence-lane.md",
+      "zh": "knowledge-base/Cns/docs/evidence-lane.md",
+      "kind": "public_reading",
+      "enSha256": "b310a2645c4d8be1595d8e1db8ffdf4a2a1970dd5bb7891d4d368272f70064d1",
+      "zhSha256": "9b9b7db50cb301fdfbf0f4e197dd63af96e65d25330eab25f7363f69d5b1e998"
     }
   ],
   "registries": [
@@ -3187,7 +3194,7 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "80af965aa300ad2f880c801cd4f4c4566179bb5c09f81ef35827c68397af269d"
+      "sha256": "60e96449eb4008c3ef47ba60eb4e0f171457726c27e236d340dfe6a8fdc04a80"
     },
     {
       "path": "packages/runtime/src/NineSliceGeometry2D.ts",
@@ -3351,7 +3358,7 @@
     },
     {
       "path": "tests/project-boundaries.test.mjs",
-      "sha256": "4847a058dd3526ad19855c9872f028f754cf3f55650f33c711255d2d982990c9"
+      "sha256": "673e2d8809cc1862f24c2f78a924ab2a3f8b90ef6ec6e0f2d8be3d5bfe6a8541"
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/src/types.ts",
@@ -3655,7 +3662,7 @@
     },
     {
       "path": "tools/verify.mjs",
-      "sha256": "462903675ffa40375122a7cbe29bff38b8fe4758c8dc7e88a3fb35a51d1718f8"
+      "sha256": "07dc12d0be05255504c1cab1619d7067cfa66553c833e285304e82e94040b457"
     },
     {
       "path": "examples/resource-scene/gpu-scene.mjs",
@@ -3771,11 +3778,11 @@
     },
     {
       "path": "tests/spritesheet-fault-child.mjs",
-      "sha256": "33f07e85c98fdad64dda0b249b9ec6586fc8b5011878205c1c42cf4bc22119d9"
+      "sha256": "23e01118a9390d6a0481ff3d6a35f53cab4dbb37dede7feb1ef6d27da7e17f94"
     },
     {
       "path": "tests/spritesheet-fault.test.mjs",
-      "sha256": "93bcff76c3bd781929d783a47c6b945fc9d23397750ad6d1358ab64634ddce18"
+      "sha256": "351a384a3d1e4ddc7b8a41e207b1a07e99ea0d15503e8095f7ed5b0c4ef87ff2"
     },
     {
       "path": "tools/bitmap-binding-ticket-boundary.mjs",
@@ -3939,7 +3946,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "002ed40cf00461fb7830c64e0785b1865d836634f3fcdbc9470d4e5deb8829f7"
+      "sha256": "fb4b5c6c2b3f8843a1f453182b8f054e87f6e74619f5f9bcf1eb7b86b671cd3c"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -4679,7 +4686,7 @@
     },
     {
       "path": "tools/check-test-baselines.mjs",
-      "sha256": "c53cbb86b68144e027b1b985860d2554d7471415f2c2c286bc131d27fa4f20b8"
+      "sha256": "b73a41a2aae9c5048a40cfc9ee4c774e03c2e494d666ec1db34fec08c8f272cf"
     },
     {
       "path": "skills/egret-windows-ci/scripts/summarize-windows-failure.mjs",
@@ -5228,6 +5235,46 @@
     {
       "path": "tools/bench-2d.mjs",
       "sha256": "73cc8eda701cf622fd9f2f84abc9af6ccfde60f643a059131d29675492374cbb"
+    },
+    {
+      "path": "tools/lib/evidence-lane.mjs",
+      "sha256": "d34c1c8b4c2e3e7da6910929a7979bf34dfc8c9a453b0a0e892d9ce12de43dee"
+    },
+    {
+      "path": "tools/evidence.mjs",
+      "sha256": "6cb1d48c41febddcfc25adcf286636f5c38c8850776b92a91837ea1b0099e2b9"
+    },
+    {
+      "path": "tools/current-identities.mjs",
+      "sha256": "a3d1e3ae16bc1ae3e9dcb1f69a1b8d2eda86e4adab4f2d034536e3c38e4f4e87"
+    },
+    {
+      "path": "tools/check-type-lanes.mjs",
+      "sha256": "1f89c5763215d8251256efbad54be941c7d3cb3eea5fd2f4a0f76344801728fe"
+    },
+    {
+      "path": "tests/type-lanes.test.mjs",
+      "sha256": "c97e776b1665e00ef0fcb57c09df6b682df8edd1e1e9bc08c151167df82ce0a5"
+    },
+    {
+      "path": "tests/current-identities.test.mjs",
+      "sha256": "015bffb1ca73ba8633dc0a70f88425be536e5a294a01e299a20898e1976ec51c"
+    },
+    {
+      "path": "tests/evidence-lane.test.mjs",
+      "sha256": "c85cb5509b38fb2436550112b7646317cc6d416db3054d23e84382a6e36725fb"
+    },
+    {
+      "path": "tests/helpers/project-fixture.mjs",
+      "sha256": "e028bcd58e3ea2be7946d7afd531d74b4fedfbd20152587a9d67b1931193186b"
+    },
+    {
+      "path": "tests/strict-successor-boundaries.test.mjs",
+      "sha256": "6ca3a6cfcdd6e80861e43d4511fb14588287711e1264dd865594aa934fac3125"
+    },
+    {
+      "path": "tests/publication/incremental-checks-evidence.test.mjs",
+      "sha256": "d2bacd8f8d5425a95601efe50628de9199dda7f61f29d3b2fb5f180d3dc6823d"
     }
   ],
   "historicalSemanticReview": {

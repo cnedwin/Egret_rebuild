@@ -12,16 +12,10 @@ const [stage, caseId, ...extra] = process.argv.slice(2);
 assert.ok(stages.has(stage) && cases.has(caseId) && extra.length === 0, 'SS1_UNIT_ARGUMENTS_INVALID');
 const bitmapUrl = new URL('../packages/runtime/dist/Bitmap.js', import.meta.url);
 const sheetUrl = new URL('../packages/runtime/dist/spriteSheet.js', import.meta.url);
-const historicalPins = [
-  [bitmapUrl, 20300, '473606fd7d65c1c41c1d6bb4625cf5f3f5b2c0fc90adf5e94b80dac4f75a8892'],
-  [sheetUrl, 11792, 'e7cd446abde11eb22e77881768a685067ea2d83ff2a0d10d62de784fefbcd7fd'],
-];
 function digest(bytes) { return createHash('sha256').update(bytes).digest('hex'); }
-const m13Pins = [[bitmapUrl,21049,'b7d91499cb36d73c6b0b0767ec90080b2acaec52a2d0ccf0a785d793b48b6544'],[sheetUrl,11824,'5f15aca4af6961cfd65f0e4c5243f7f81ccac9267056815d2401226b4d8dd00d']];
-// Admit the same complete M1.5 pair as the parent before installing the original one-module hook.
-const m15Pins = [[bitmapUrl,23075,'075a6f146714c98fec748aeabe52e3cf38d0213eb6a4f868d7fb846bb59196b8'],[sheetUrl,11824,'5f15aca4af6961cfd65f0e4c5243f7f81ccac9267056815d2401226b4d8dd00d']];
-const pins = [historicalPins,m13Pins,m15Pins].find(pair=>pair.every(([url,bytes,sha])=>{const raw=readFileSync(url);return raw.length===bytes&&digest(raw)===sha;}));
-assert.ok(pins, 'SS1_UNIT_COMPLETE_QUALIFIED_PAIR');
+// The pair as it is on disk when this process starts. It is read once and held for the whole run;
+// no earlier identity is recorded, so a rebuilt module is admitted while its anchor is still unique.
+const pins = [bitmapUrl, sheetUrl].map(url => { const raw = readFileSync(url); return [url, raw.length, digest(raw)]; });
 function assertDisk() {
   for (const [url, bytes, sha] of pins) {
     const actual = readFileSync(url);
