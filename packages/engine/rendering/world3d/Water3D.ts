@@ -15,6 +15,8 @@ import {colorFromHex, mat4Invert, quatFromRotationMatrix} from './math3D.js';
 /** Anything that can draw a scene into a render target: both first-party renderers qualify. */
 export interface ReflectionRenderer3D {
     render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean;
+    /** Allows renderers to label mirror draws separately in application-frame metrics. */
+    renderReflection?(scene: Scene3D, camera: Camera3D, target: RenderTarget3D): boolean;
     /** When present, post-processing is switched off while the mirror image is drawn. */
     readonly postProcess?: {enabled: boolean};
     /** When present, shadows can be left out of the mirror image. */
@@ -131,7 +133,9 @@ export class PlanarReflection3D {
             if (disableShadows) { touchedShadows = true; renderer.shadowsEnabled = false; }
             for (const object of hidden) { touchedHidden++; object.visible = false; }
             if (post) { touchedPost = true; post.enabled = false; }
-            result = renderer.render(scene, this.camera, this.target);
+            result = renderer.renderReflection
+                ? renderer.renderReflection(scene, this.camera, this.target)
+                : renderer.render(scene, this.camera, this.target);
         } catch (cause) { primary = {cause}; }
 
         // Restore every owned setting, even when setup, rendering or another restoration fails.
