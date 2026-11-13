@@ -13,7 +13,7 @@ const repository=fileURLToPath(new URL('../',import.meta.url));
 const example='examples/resource-scene/';
 // A projection contains application originals only. SDK files always come from repository.
 const files=[
- ...['index.html','main.mjs','session.mjs','gpu-scene.mjs'].map(name=>example+name),
+ ...['index.html','main.mjs','session.mjs'].map(name=>example+name),
  ...['atlas-v1.png','atlas-v2.png','outfit-A.png','outfit-B.png','outfit-C.png','outfit-D.png',
    'NotoSansSC-fixed.woff2','NotoSansSC.source.css','NotoSansSC-OFL.txt','provenance.json'].map(name=>example+'assets/'+name),
  'tools/browser-png/assets/rgb-red-green.png',
@@ -22,7 +22,7 @@ const files=[
  'tools/resource-scene/reference/left.rgba','tools/resource-scene/reference/right.rgba','tools/resource-scene/reference/manifest.json',
  'tests/resource-scene-boundary.test.mjs','tests/resource-scene-assets.test.mjs',
  'tests/resource-scene-session.test.mjs','tests/resource-scene-session-heldout.test.mjs',
- 'tests/resource-scene-gpu.test.mjs','tests/resource-scene-browser-source.test.mjs',
+ 'tests/resource-scene-browser-source.test.mjs',
 ];
 const read=(root,key)=>fs.readFileSync(path.join(root,key));
 function originalProjection(){
@@ -53,23 +53,11 @@ function assertHealthy(value,applicationRoot){
   assert.ok(value.snapshot.modules.length>20&&value.snapshot.modules.length<=192);
   assert.ok(value.snapshot.closures.canvas.includes('application:'+example+'main.mjs'));
   assert.ok(value.snapshot.closures.canvas.includes('application:'+example+'session.mjs'));
-  assert.ok(!value.snapshot.closures.canvas.some(key=>/gpu-scene|WebGPU|webgpu|foundation:/.test(key)));
-  assert.ok(value.snapshot.closures.gpu.includes('application:'+example+'gpu-scene.mjs'));
-  assert.ok(value.snapshot.closures.gpu.includes('sdk:packages/engine/dist/web/scene3d.js'));
-  const b1='sdk:packages/engine/dist/web/b1.js',sharedB1='sdk:packages/engine/dist/web/sharedB1.js';
-  const host=value.snapshot.modules.find(row=>row.owner==='sdk'&&row.path==='packages/engine/dist/web/WebGPUHost.js');
-  assert.ok(host,'the genuine emitted WebGPUHost is in the collected closure');
-  assert.deepEqual(host.edges.filter(edge=>edge.dynamic),[
-    {specifier:'./sharedB1.js',dynamic:true,target:sharedB1,route:'/packages/engine/dist/web/sharedB1.js'},
-    {specifier:'./b1.js',dynamic:true,target:b1,route:'/packages/engine/dist/web/b1.js'},
-  ]);
-  for(const key of [b1,sharedB1]) {
-    assert.ok(value.snapshot.closures.gpu.includes(key));assert.ok(value.snapshot.closures.webgpu.includes(key));
-    assert.ok(!value.snapshot.closures.canvas.includes(key));
-    assert.ok(value.routes.has('/'+key.slice('sdk:'.length)));
-  }
-  assert.equal(value.snapshot.foundationAdmission.name,'robust-predicates');assert.equal(value.snapshot.foundationAdmission.version,'3.0.3');
-  assert.ok(value.routes.has('/packages/engine/node_modules/robust-predicates/index.js'));
+  assert.ok(!value.snapshot.closures.canvas.some(key=>/WebGPU|webgpu|WebGL2|webgl2/.test(key)));
+  assert.deepEqual(Object.keys(value.snapshot.closures),['canvas']);
+  assert.equal(value.snapshot.closures.canvas.length,value.snapshot.modules.length);
+  assert.ok(value.snapshot.modules.every(row=>row.edges.every(edge=>!edge.dynamic)));
+  assert.ok(![...value.routes.keys()].some(key=>key.includes('robust-predicates')));
   assert.ok([...value.routes.keys()].every(key=>!key.startsWith('/m/')));
   assert.ok(![...value.routes.keys()].some(key=>key.startsWith('/tools/resource-scene/reference/')));
   for(const key of ['sdk:tools/lib/file-identity.mjs','sdk:pnpm-lock.yaml','sdk:packages/engine/src/Engine.ts',
@@ -93,7 +81,7 @@ async function sourceControl(change,code,detail){
 }
 const alter=(root,key,change)=>fs.writeFileSync(path.join(root,key),change(read(root,key).toString('utf8')));
 
-test('source collector keeps original routes and separates the static Canvas and optional GPU closures',async()=>{
+test('source collector keeps original routes and one Canvas closure without a GPU module',async()=>{
   const projection=originalProjection();try{
     const collected=await collectResourceSceneSource({repository,applicationRoot:projection.root});assertHealthy(collected,projection.root);
     // The served buffers are independent retained originals, not later filesystem reads.
@@ -113,9 +101,9 @@ test('duplicate import-map keys are refused before mapping',()=>sourceControl(ro
 test('frozen original PNG byte drift is refused',()=>sourceControl(root=>{
   const key=example+'assets/outfit-A.png',bytes=read(root,key);bytes[bytes.length-1]^=1;fs.writeFileSync(path.join(root,key),bytes);
 },'RS_FROZEN_INPUT','assets/outfit-A.png'));
-test('missing original GPU module is refused',()=>sourceControl(root=>{
-  fs.unlinkSync(path.join(root,example+'gpu-scene.mjs'));
-},'RS_INPUT','application:'+example+'gpu-scene.mjs'));
+test('missing original application module is refused',()=>sourceControl(root=>{
+  fs.unlinkSync(path.join(root,example+'session.mjs'));
+},'RS_INPUT','application:'+example+'session.mjs'));
 test('application imports cannot broaden to a private SDK package',()=>sourceControl(root=>{
   alter(root,example+'main.mjs',text=>"import '@egret/runtime';\n"+text);
 },'RS_IMPORT','application import: @egret/runtime'));
@@ -125,12 +113,12 @@ test('relative imports cannot escape the selected application modules',()=>sourc
 test('a computed dynamic import is refused rather than guessed',()=>sourceControl(root=>{
   alter(root,example+'main.mjs',text=>text+'\nimport(globalThis.__unselectedModule);\n');
 },'RS_IMPORT','Only simple literal imports'));
-test('an additional literal Main dynamic import is refused',()=>sourceControl(root=>{
+test('a literal Main dynamic import is refused',()=>sourceControl(root=>{
   alter(root,example+'main.mjs',text=>text+"\nimport('./session.mjs');\n");
 },'RS_IMPORT','Unselected dynamic import: application:'+example+'main.mjs -> ./session.mjs'));
-test('the GPU recipe cannot become a static Canvas dependency',()=>sourceControl(root=>{
-  alter(root,example+'main.mjs',text=>"import './gpu-scene.mjs';\n"+text);
-},'RS_IMPORT','Static Canvas closure crossed'));
+test('a GPU Host cannot become a dependency of the Canvas scene',()=>sourceControl(root=>{
+  alter(root,example+'main.mjs',text=>"import '../../packages/engine/dist/web/webgl2.js';\n"+text);
+},'RS_IMPORT','Unselected module'));
 
 test('selected resource public entry refuses wrong runtime/types targets without broad fallback',()=>{
   assert.equal(typeof resourceSceneBoundary.validateResourceSceneEntries,'function','M15_RESOURCE_SCENE_ENTRY_POLICY_MISSING');

@@ -234,17 +234,7 @@
     "tests/types/browser-png-import-negative.ts(86,15): error TS2305: Module '\"@egret/engine/webgpu\"' has no exported member 'BrowserPngDecodeOptions'.",
     "tests/types/browser-png-import-negative.ts(88,15): error TS2305: Module '\"@egret/engine/webgpu\"' has no exported member 'BrowserPngPorts'.",
     "tests/types/browser-png-import-negative.ts(90,15): error TS2305: Module '\"@egret/engine/webgpu\"' has no exported member 'BrowserTextureProviderOptions'.",
-    "tests/types/browser-png-import-negative.ts(92,15): error TS2305: Module '\"@egret/engine/webgpu\"' has no exported member 'BrowserTextureProvider'.",
-    "tests/types/browser-png-import-negative.ts(94,10): error TS2305: Module '\"@egret/engine/scene3d\"' has no exported member 'createBrowserTextureProvider'.",
-    "tests/types/browser-png-import-negative.ts(96,15): error TS2305: Module '\"@egret/engine/scene3d\"' has no exported member 'BrowserPngDecodeOptions'.",
-    "tests/types/browser-png-import-negative.ts(98,15): error TS2305: Module '\"@egret/engine/scene3d\"' has no exported member 'BrowserPngPorts'.",
-    "tests/types/browser-png-import-negative.ts(100,15): error TS2305: Module '\"@egret/engine/scene3d\"' has no exported member 'BrowserTextureProviderOptions'.",
-    "tests/types/browser-png-import-negative.ts(102,15): error TS2305: Module '\"@egret/engine/scene3d\"' has no exported member 'BrowserTextureProvider'.",
-    "tests/types/browser-png-import-negative.ts(104,10): error TS2305: Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'createBrowserTextureProvider'.",
-    "tests/types/browser-png-import-negative.ts(106,15): error TS2305: Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'BrowserPngDecodeOptions'.",
-    "tests/types/browser-png-import-negative.ts(108,15): error TS2305: Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'BrowserPngPorts'.",
-    "tests/types/browser-png-import-negative.ts(110,15): error TS2305: Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'BrowserTextureProviderOptions'.",
-    "tests/types/browser-png-import-negative.ts(112,15): error TS2305: Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'BrowserTextureProvider'."
+    "tests/types/browser-png-import-negative.ts(92,15): error TS2305: Module '\"@egret/engine/webgpu\"' has no exported member 'BrowserTextureProvider'."
    ]
   },
   {
@@ -447,9 +437,8 @@
     "tests/types/nine-slice-bitmap-import-negative.ts(8,10): error TS2305: Module '\"@egret/contracts\"' has no exported member 'NineSliceBitmap'.",
     "tests/types/nine-slice-bitmap-import-negative.ts(10,10): error TS2305: Module '\"@egret/engine/web\"' has no exported member 'NineSliceBitmap'.",
     "tests/types/nine-slice-bitmap-import-negative.ts(12,10): error TS2305: Module '\"@egret/engine/webgpu\"' has no exported member 'NineSliceBitmap'.",
-    "tests/types/nine-slice-bitmap-import-negative.ts(14,10): error TS2305: Module '\"@egret/engine/scene3d\"' has no exported member 'NineSliceBitmap'.",
-    "tests/types/nine-slice-bitmap-import-negative.ts(16,10): error TS2305: Module '\"@egret/engine/text\"' has no exported member 'NineSliceBitmap'.",
-    "tests/types/nine-slice-bitmap-import-negative.ts(18,10): error TS2305: Module '\"@egret/runtime/text\"' has no exported member 'NineSliceBitmap'."
+    "tests/types/nine-slice-bitmap-import-negative.ts(14,10): error TS2305: Module '\"@egret/engine/text\"' has no exported member 'NineSliceBitmap'.",
+    "tests/types/nine-slice-bitmap-import-negative.ts(16,10): error TS2305: Module '\"@egret/runtime/text\"' has no exported member 'NineSliceBitmap'."
    ]
   },
   {

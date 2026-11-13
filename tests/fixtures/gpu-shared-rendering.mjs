@@ -4,27 +4,24 @@ import assert from 'node:assert/strict';
 import { createGpuFixture, deferred, egret, tick, admitted } from
   './gpu-image-residency.mjs';
 import * as gpu from '@egret/engine/webgpu';
-import * as sceneGpu from '@egret/engine/webgpu/scene3d';
 export { egret, tick, admitted };
 
-export function requireFactory(scene = false) {
-  const name = scene ? 'createSharedSceneWebGPUHost' : 'createSharedWebGPUHost';
-  const factory = (scene ? sceneGpu : gpu)[name];
+export function requireFactory() {
+  const name = 'createSharedWebGPUHost';
+  const factory = gpu[name];
   assert.equal(typeof factory, 'function', name + ' availability; this is not a semantic RED');
   return factory;
 }
 export async function withPorts(body) {
   const f = createGpuFixture();
-  // The existing fixture describes the old 32B/three-attribute profile. These are exactly what a shared Host
-  // requires: five attributes in 52 bytes, and a second bind group for one 16,368-byte window of the region table.
+  // Exactly what a shared Host requires: five attributes in 52 bytes, and a second bind group for one 16,368-byte window of the region table.
   Object.assign(f.limits, { maxVertexAttributes: 5, maxVertexBufferArrayStride: 52,
     maxUniformBufferBindingSize: 16368, maxInterStageShaderVariables: 7, maxBindGroups: 2,
     maxUniformBuffersPerShaderStage: 2, maxBindGroupsPlusVertexBuffers: 3 });
   f.device.createRenderPipelineAsync = function (descriptor) {
     assert.equal(this, f.device);
     const stride = descriptor.vertex.buffers?.[0]?.arrayStride;
-    const kind = descriptor.depthStencil ? 'scene' : stride === undefined ? 'resolve'
-      : stride === 52 ? 'shared' : 'legacy';
+    const kind = stride === undefined ? 'resolve' : 'shared';
     // Group 0 is the draw's own layout object, as before; any other group has one layout object of its own.
     const d = deferred(), layout = { kind, descriptor }, others = new Map(), value = { kind, descriptor,
       getBindGroupLayout(index) {
@@ -52,8 +49,8 @@ export async function withPorts(body) {
     };
     return texture;
   };
-  f.sharedHost = (options = {}, scene = false) => {
-    const host = requireFactory(scene)(f.options(options)); f.hosts.push(host); return host;
+  f.sharedHost = (options = {}) => {
+    const host = requireFactory()(f.options(options)); f.hosts.push(host); return host;
   };
   try { return await body(f); }
   finally { try { await f.cleanup(); } finally { f.restore(); } }

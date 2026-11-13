@@ -90,23 +90,3 @@ import type { BrowserPngPorts as WebGPUBrowserPngPorts } from '@egret/engine/web
 import type { BrowserTextureProviderOptions as WebGPUBrowserTextureProviderOptions } from '@egret/engine/webgpu';
 // BIP_TYPE_CASE BIP1-I44: the @egret/engine/webgpu entry has no BrowserTextureProvider type.
 import type { BrowserTextureProvider as WebGPUBrowserTextureProvider } from '@egret/engine/webgpu';
-// BIP_TYPE_CASE BIP1-I45: the @egret/engine/scene3d entry has no browser image factory.
-import { createBrowserTextureProvider as SceneImageFactory } from '@egret/engine/scene3d';
-// BIP_TYPE_CASE BIP1-I46: the @egret/engine/scene3d entry has no BrowserPngDecodeOptions type.
-import type { BrowserPngDecodeOptions as SceneBrowserPngDecodeOptions } from '@egret/engine/scene3d';
-// BIP_TYPE_CASE BIP1-I47: the @egret/engine/scene3d entry has no BrowserPngPorts type.
-import type { BrowserPngPorts as SceneBrowserPngPorts } from '@egret/engine/scene3d';
-// BIP_TYPE_CASE BIP1-I48: the @egret/engine/scene3d entry has no BrowserTextureProviderOptions type.
-import type { BrowserTextureProviderOptions as SceneBrowserTextureProviderOptions } from '@egret/engine/scene3d';
-// BIP_TYPE_CASE BIP1-I49: the @egret/engine/scene3d entry has no BrowserTextureProvider type.
-import type { BrowserTextureProvider as SceneBrowserTextureProvider } from '@egret/engine/scene3d';
-// BIP_TYPE_CASE BIP1-I50: the @egret/engine/webgpu/scene3d entry has no browser image factory.
-import { createBrowserTextureProvider as WebGPUSceneImageFactory } from '@egret/engine/webgpu/scene3d';
-// BIP_TYPE_CASE BIP1-I51: the @egret/engine/webgpu/scene3d entry has no BrowserPngDecodeOptions type.
-import type { BrowserPngDecodeOptions as WebGPUSceneBrowserPngDecodeOptions } from '@egret/engine/webgpu/scene3d';
-// BIP_TYPE_CASE BIP1-I52: the @egret/engine/webgpu/scene3d entry has no BrowserPngPorts type.
-import type { BrowserPngPorts as WebGPUSceneBrowserPngPorts } from '@egret/engine/webgpu/scene3d';
-// BIP_TYPE_CASE BIP1-I53: the @egret/engine/webgpu/scene3d entry has no BrowserTextureProviderOptions type.
-import type { BrowserTextureProviderOptions as WebGPUSceneBrowserTextureProviderOptions } from '@egret/engine/webgpu/scene3d';
-// BIP_TYPE_CASE BIP1-I54: the @egret/engine/webgpu/scene3d entry has no BrowserTextureProvider type.
-import type { BrowserTextureProvider as WebGPUSceneBrowserTextureProvider } from '@egret/engine/webgpu/scene3d';

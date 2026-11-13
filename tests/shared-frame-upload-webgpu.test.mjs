@@ -6,10 +6,9 @@ import assert from 'node:assert/strict';
 import {
   usingGpu, requireUpload, requireSession, readyUpload, finishUpload, observe,
   until, turn, tick, hasCode, expectCode, refusal, presentation, ownSignal,
-  capture, admitted, submit, triangleScene, MiB,
+  capture, admitted, submit, MiB,
 } from './fixtures/shared-frame-upload-gpu.mjs';
 import { passes } from './fixtures/gpu-shared-rendering.mjs';
-import { createSceneCamera3D, createSceneWorld3D, createSceneWorldCard3D } from '@egret/engine/scene3d/authoring';
 
 test('GPU U00 genuine ordinary baseline remains available before staging', async () => {
   await usingGpu(async ({ h }) => {
@@ -375,78 +374,6 @@ test('GPU U19b submit refuses an elapsed deadline before the overdue timer can r
     await until(f, () => idle.settled && h.getStatus().pendingFrames === 0);
     assert.equal(idle.rejected, true); assert.ok(hasCode('UPLOAD_EXPIRED')(idle.error));
   });
-});
-
-test('GPU U20 genuine scene staging retains depth and presents scene then overlay once', async () => {
-  await usingGpu(async ({ f, h, frame, sceneFrame }) => {
-    requireUpload(h, true); let optionReads = 0;
-    refusal(f, h, () => h.stageSceneSharedFrame({ ...sceneFrame }, frame,
-      { get signal() { optionReads++; throw undefined; } }), 'FRAME_INVALID');
-    assert.equal(optionReads, 0);
-    const before = f.calls.length, stage = h.stageSceneSharedFrame(sceneFrame, frame);
-    await readyUpload(f, stage);
-    assert.deepEqual(presentation(f.calls.slice(before)), []);
-    assert.ok(h.getSceneStatus().pendingSceneBytes > 0); assert.ok(h.getSceneStatus().pendingDepthBytes > 0);
-    const submitStart = f.calls.length; await finishUpload(f, stage);
-    const events = f.calls.slice(submitStart);
-    assert.equal(events.filter(c => c[0] === 'pass').length, 3);
-    assert.equal(events.filter(c => c[0] === 'drawIndexed').length, 1);
-    assert.equal(events.filter(c => c[0] === 'submit').length, 1);
-    assert.equal(events.filter(c => ['writeBuffer', 'writeTexture'].includes(c[0])).length, 0);
-    await until(f, () => h.getStatus().pendingFrames === 0);
-    assert.equal(h.getSceneStatus().pendingDepthBytes, 0);
-  }, { scene: true });
-});
-
-test('GPU staged world cards share the HUD page and submit without another upload', async () => {
-  await usingGpu(async ({ f, a, h, sceneFrame }) => {
-    const { bitmap, source } = await a.bitmap(2, 1, 211);
-    const cards = [0, 1].map(x => createSceneWorldCard3D({
-      source, width: 1, height: 1, region: { x, y: 0, width: 1, height: 1 }, alphaCutoff: 128,
-    }));
-    const camera = createSceneCamera3D({ eye: [0, 0, 2], target: [0, 0, 0],
-      projection: { kind: 'orthographic', height: 2, aspect: 1, near: 1, far: 3 } });
-    const scene = createSceneWorld3D([{ id: 'atlas-cards', cards,
-      localMatrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1] }]).capture(camera);
-    const overlay = a.capture({ outputAlpha: 'opaque', clearAlpha: 1 });
-    const start = f.calls.length, stage = h.stageSceneSharedFrame(scene, overlay);
-    await readyUpload(f, stage);
-    const prepared = f.calls.slice(start);
-    assert.deepEqual(presentation(prepared), []);
-    const images = prepared.filter(call => call[0] === 'writeTexture');
-    assert.equal(images.length, 1);
-    assert.equal(images[0][2].byteLength, 8);
-    const uniforms = prepared.filter(call => call[0] === 'writeBuffer' && call[3].byteLength === 112);
-    assert.equal(uniforms.length, 2);
-    assert.deepEqual(uniforms.map(([, , , bytes]) => Array.from(new Float32Array(bytes.buffer, bytes.byteOffset, 28).slice(20, 25))),
-      [[0, 0, 1, 1, Math.fround(128 / 255)], [1, 0, 1, 1, Math.fround(128 / 255)]]);
-    assert.equal(h.getSceneStatus().pendingUniformBytes, 224);
-
-    const submitStart = f.calls.length;
-    await finishUpload(f, stage);
-    const submitted = f.calls.slice(submitStart), encoded = passes(submitted);
-    assert.equal(encoded.length, 3);
-    const [depth, hud, resolve] = encoded;
-    assert.ok(depth.descriptor.depthStencilAttachment);
-    assert.deepEqual(depth.draws.map(draw => draw.args), [[6], [6]]);
-    assert.ok(!hud.descriptor.depthStencilAttachment && !resolve.descriptor.depthStencilAttachment);
-    const image = images[0][1].texture;
-    const pageOf = draw => draw.binding.descriptor.entries.find(entry => entry.binding === 1)?.resource.texture;
-    assert.ok(depth.draws.every(draw => pageOf(draw) === image));
-    assert.equal(hud.draws.filter(draw => pageOf(draw) === image).length, 1);
-    assert.equal(submitted.filter(call => call[0] === 'submit').length, 1);
-    assert.equal(submitted.filter(call => ['writeBuffer', 'writeTexture'].includes(call[0])).length, 0);
-    assert.equal(h.getSceneStatus().pendingUniformBytes, 0);
-
-    const legacy = f.host({}, 'scene');
-    await f.ready(legacy);
-    bitmap.visible = false;
-    const legacyOverlay = a.engine.captureFrame({ width: 8, height: 8, clearAlpha: 1 });
-    await submit(f, legacy, legacyOverlay, frame => legacy.renderSceneFrame(sceneFrame, frame));
-    const before = { calls: f.calls.length, status: legacy.getSceneStatus() };
-    expectCode(() => legacy.renderSceneFrame(scene, legacyOverlay), 'FRAME_INVALID');
-    assert.deepEqual({ calls: f.calls.length, status: legacy.getSceneStatus() }, before);
-  }, { scene: true });
 });
 
 test('GPU U21 ready-held resident page survives complete count-pressure turnover', async () => {

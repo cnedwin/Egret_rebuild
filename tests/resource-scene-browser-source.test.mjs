@@ -19,20 +19,15 @@ const expectedMap=Object.freeze({
   '@egret/engine/web/text':'../../packages/engine/dist/web/text.js',
   '@egret/engine/web/image':'../../packages/engine/dist/web/image.js',
   '@egret/engine/web/input':'../../packages/engine/dist/web/input.js',
-  '@egret/engine/scene3d':'../../packages/engine/dist/rendering/scene3d.js',
-  '@egret/engine/webgpu/scene3d':'../../packages/engine/dist/web/scene3d.js',
   '@egret/runtime':'../../packages/runtime/dist/index.js',
   '@egret/runtime/text':'../../packages/runtime/dist/text/index.js',
   '@egret/contracts':'../../packages/contracts/dist/index.js',
   '@egret/contracts/resources':'../../packages/contracts/dist/resources/index.js',
   '#egret-mouse-input':'../../packages/engine/dist/mouseInput.js',
   '#egret-textured-frame-state':'../../packages/engine/dist/internal/texturedFrameState.js',
-  'robust-predicates':'../../packages/engine/node_modules/robust-predicates/index.js',
 });
 const publicEntries=new Set(['@egret/engine','@egret/engine/web','@egret/engine/text',
-  '@egret/engine/web/text','@egret/engine/web/image','@egret/engine/web/input',
-  '@egret/engine/scene3d','@egret/engine/webgpu/scene3d']);
-const gpuEntries=new Set(['@egret/engine/scene3d','@egret/engine/webgpu/scene3d']);
+  '@egret/engine/web/text','@egret/engine/web/image','@egret/engine/web/input']);
 
 function originalMap(html){
   const scripts=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)]
@@ -71,8 +66,8 @@ function imports(source){
 }
 function publicExampleEdges(){
   const visited=new Set();
-  function visit(key,canvasStatic){
-    const identity=key+'|'+canvasStatic;if(visited.has(identity))return;visited.add(identity);
+  function visit(key){
+    if(visited.has(key))return;visited.add(key);
     assert.ok(key.startsWith(example)&&!key.includes('\\'),'example modules stay inside their own logical subtree');
     assert.match(key,/\.(?:mjs|js)$/);
     for(const edge of imports(read(key))){
@@ -80,15 +75,14 @@ function publicExampleEdges(){
       if(specifier.startsWith('.')){
         const target=path.posix.normalize(path.posix.join(path.posix.dirname(key),specifier));
         assert.ok(target.startsWith(example),'no relative private SDK/package escape');
-        if(canvasStatic&&!edge.dynamic)assert.notEqual(path.posix.basename(target),'gpu-scene.mjs','GPU recipe must not be a static Canvas dependency');
-        visit(target,canvasStatic&&!edge.dynamic);
+        assert.equal(edge.dynamic,false,'the Canvas scene loads no module on demand');
+        visit(target);
       }else{
         assert.ok(publicEntries.has(specifier),'only the selected public Engine entries: '+specifier);
-        if(canvasStatic&&!edge.dynamic)assert.ok(!gpuEntries.has(specifier),'ordinary Canvas source has no static 3D entry');
       }
     }
   }
-  visit(example+'main.mjs',true);
+  visit(example+'main.mjs');
 }
 
 test('P02 browser composition has genuine public prerequisites and finite source boundaries',async t=>{

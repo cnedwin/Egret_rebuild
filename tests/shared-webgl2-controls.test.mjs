@@ -277,38 +277,11 @@ test('GL G10 event-delayed actual loss inside retirement deletion still settles 
   assert.equal(h.close(), closing);
 }));
 
-test('GL S01 optional genuine scene uses one matrix arena, uint32 indices and ordered overlay', async () => author(async a => {
-  const sceneEntry=await import('@egret/engine/webgl2/scene3d');
-  assert.deepEqual(Object.keys(sceneEntry),['createSharedSceneWebGL2Host']);
-  const {createMeshGeometry3D,createSceneFrame3D,createMatrix4}=await import('@egret/engine/scene3d');
-  const mesh=createMeshGeometry3D({positions:[0,0,-1,1,0,-1,0,1,-1],colors:[1,0,0,0,1,0,0,0,1],indices:[0,1,2]});
-  const scene=createSceneFrame3D({projection:{kind:'orthographic',left:-1,right:1,bottom:-1,top:1,near:1,far:3},draws:[{geometry:mesh,modelView:createMatrix4([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1])}]});
-  const f=glPorts({alignment:12});
-  assert.throws(()=>sceneEntry.createSharedSceneWebGL2Host({canvas:f.canvas}),code('OPTIONS_INVALID'));
-  const h=sceneEntry.createSharedSceneWebGL2Host({canvas:f.canvas,outputAlpha:'opaque'});await h.start();
-  const frame=a.engine.captureSharedFrame({width:8,height:8,outputAlpha:'opaque',clearAlpha:1});
-  const before=f.events.length;
-  assert.throws(()=>h.renderSceneSharedFrame({...scene},frame),code('FRAME_INVALID'));assert.equal(f.events.length,before);
-  h.renderSceneSharedFrame(scene,frame);await h.whenIdle();
-  const events=f.events.slice(before),draws=events.filter(e=>e[0]==='drawElements'||e[0]==='drawArrays');
-  assert.deepEqual(draws.map(e=>e[0]),['drawElements','drawArrays','drawArrays']);
-  assert.deepEqual(draws[0].slice(1),[f.gl.TRIANGLES,3,f.gl.UNSIGNED_INT,0]);
-  const ranges=events.filter(e=>e[0]==='bindBufferRange'&&e[3]!==null);
-  assert.deepEqual(ranges.map(e=>e.slice(4)),[[132,64],[0,128]]);
-  const uniformAlloc=events.filter(e=>e[0]==='bufferData'&&e[1]===f.gl.UNIFORM_BUFFER);
-  assert.deepEqual(uniformAlloc.map(e=>e[2]),[204]);
-  assert.ok(events.some(e=>e[0]==='depthFunc'&&e[1]===f.gl.GREATER));
-  assert.ok(events.some(e=>e[0]==='depthRange'&&e[1]===0&&e[2]===1));
-  assert.deepEqual([h.getSceneStatus().pendingSceneBytes,h.getSceneStatus().pendingUniformBytes,h.getSceneStatus().pendingDepthBytes],[0,0,0]);
-  await h.close();assert.equal(f.live().length,0);
-}));
-
-
-test('GL G11 both assemblies detach retained container references before completion and release the current program at close', { timeout: 2000 }, async () => author(async a => {
-  for (const sceneMode of [false, true]) {
+test('GL G11 the Host detaches retained container references before completion and releases the current program at close', { timeout: 2000 }, async () => author(async a => {
+  {
     const f = glPorts(), gl = f.gl, violations = [], vaos = new Map(), fbos = new Map();
     let vao = null, array = null, drawFBO = null, readFBO = null, currentProgram = null;
-    let populatedAttributes = 0, populatedDepth = 0, populatedIndices = 0, fences = 0;
+    let populatedAttributes = 0, fences = 0;
     const vertexState = key => { if (!vaos.has(key)) vaos.set(key, { attributes:new Map(), element:null }); return vaos.get(key); };
     const targetFBO = target => target === gl.READ_FRAMEBUFFER ? readFBO : drawFBO;
     const attachments = key => { if (!fbos.has(key)) fbos.set(key, new Map()); return fbos.get(key); };
@@ -316,7 +289,7 @@ test('GL G11 both assemblies detach retained container references before complet
       if (name === 'bindVertexArray') vao = args[0];
       if (name === 'bindBuffer') {
         if (args[0] === gl.ARRAY_BUFFER) array = args[1];
-        if (args[0] === gl.ELEMENT_ARRAY_BUFFER) { vertexState(vao).element = args[1]; if (args[1]) populatedIndices++; }
+        if (args[0] === gl.ELEMENT_ARRAY_BUFFER) vertexState(vao).element = args[1];
       }
       if (name === 'vertexAttribPointer') {
         vertexState(vao).attributes.set(args[0], array);
@@ -329,7 +302,6 @@ test('GL G11 both assemblies detach retained container references before complet
       }
       if (name === 'framebufferTexture2D' || name === 'framebufferRenderbuffer') {
         attachments(targetFBO(args[0])).set(args[1], args[3]);
-        if (name === 'framebufferRenderbuffer' && args[1] === gl.DEPTH_ATTACHMENT && args[3]) populatedDepth++;
       }
       if (name === 'useProgram') currentProgram = args[0];
       if (name === 'fenceSync') {
@@ -353,21 +325,12 @@ test('GL G11 both assemblies detach retained container references before complet
       if (name === 'deleteVertexArray') vaos.delete(args[0]);
       if (name === 'deleteFramebuffer') fbos.delete(args[0]);
     };
-    let h, submit;
-    if (sceneMode) {
-      const {createSharedSceneWebGL2Host} = await import('@egret/engine/webgl2/scene3d');
-      const {createMeshGeometry3D,createSceneFrame3D,createMatrix4} = await import('@egret/engine/scene3d');
-      const geometry = createMeshGeometry3D({positions:[0,0,-1,1,0,-1,0,1,-1],colors:[1,0,0,0,1,0,0,0,1],indices:[0,1,2]});
-      const scene = createSceneFrame3D({projection:{kind:'orthographic',left:-1,right:1,bottom:-1,top:1,near:1,far:3},draws:[{geometry,modelView:createMatrix4([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1])}]});
-      h = createSharedSceneWebGL2Host({canvas:f.canvas,outputAlpha:'opaque'});
-      submit = () => h.renderSceneSharedFrame(scene,a.engine.captureSharedFrame({width:8,height:8,outputAlpha:'opaque',clearAlpha:1}));
-    } else { h = createSharedWebGL2Host({canvas:f.canvas}); submit = () => h.renderSharedFrame(a.frame()); }
+    const h = createSharedWebGL2Host({canvas:f.canvas}), submit = () => h.renderSharedFrame(a.frame());
     try {
       await h.start(); f.autoSignal = false; submit(); h.stop();
       const idle = h.whenIdle(); f.signalAll(); await idle; await h.close();
       assert.equal(fences, 1); assert.ok(populatedAttributes > 0);
-      if (sceneMode) { assert.ok(populatedDepth > 0); assert.ok(populatedIndices > 0); }
-      assert.deepEqual(violations, [], sceneMode ? 'scene and overlay containers' : 'shared 2D containers');
+      assert.deepEqual(violations, []);
       assert.equal(f.live().length, 0);
     } finally { f.signalAll(); await h.close(); f.onCall = undefined; }
   }

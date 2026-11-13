@@ -10,8 +10,6 @@ import {
   egret, tick, admitted, requireFactory, withPorts, pageTextures, colorTargets,
   bytesOfTexture, writes, uploads, passes, capture, submit,
 } from './fixtures/gpu-shared-rendering.mjs';
-import { createMeshGeometry3D, createSceneFrame3D, isSceneFrame3D } from
-  '@egret/engine/scene3d';
 
 const PROFILE = 'egret.shared-frame2d/1';
 const FRAME = Object.freeze({ width: 8, height: 8 });
@@ -172,19 +170,6 @@ test('GPU G01 page options may only lower the profile bounds and refuse before n
     for (const value of [{ maxFrameRegions: 1, maxFramePageBytes: 1, maxReadyPageBytes: 1 }, bounds]) {
       const h = f.sharedHost(value, false); await f.ready(h); await f.close(h);
     }
-  });
-});
-
-// Break caught: scene factory silently defaults or coerces a transparent configuration.
-test('GPU G02 shared scene requires explicit opaque options before native startup', async () => {
-  await withPorts(async f => {
-    const make = requireFactory(true), before = f.calls.length;
-    for (const value of [undefined, 'premultiplied', null, 'opaque-ish'])
-      expectCode(() => make(f.options({ outputAlpha: value })), 'OPTIONS_INVALID');
-    assert.equal(f.calls.length, before);
-    const h = f.sharedHost({ outputAlpha: 'opaque' }, true); await f.ready(h);
-    assert.equal(f.calls.filter(c => c[0] === 'configure').at(-1)[1].alphaMode, 'opaque');
-    assert.equal(typeof h.renderSceneSharedFrame, 'function'); await f.close(h);
   });
 });
 
@@ -577,52 +562,6 @@ test('GPU G13 shared retention is jointly bounded and terminal faults retain uns
       expectCode(() => h.renderSharedFrame(a.capture()), 'CLOSED');
     });
   }
-});
-
-// Break caught: accept a forged scene, use the old encoded vertex payload, clear twice, or resolve twice.
-test('GPU G14 linear B1 retains scene authority and emits scene, UI, then one resolve', async () => {
-  await using(async (f, a) => {
-    const geometry = createMeshGeometry3D({ positions: [0, 0, -1, 1, 0, -1, 0, 1, -1],
-      colors: [.5, .25, .75, .25, .75, .5, .75, .5, .25], indices: [0, 1, 2] });
-    const scene = createSceneFrame3D({ projection: { kind: 'orthographic', left: -1, right: 1,
-      bottom: -1, top: 1, near: 1, far: 3 }, draws: [{ geometry,
-      modelView: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1] }] });
-    assert.equal(isSceneFrame3D(scene), true);
-    const sprite = a.sprite(); fill(sprite, 0xff0000, .5);
-    const overlay = a.capture({ ...FRAME, outputAlpha: 'opaque', clearAlpha: 1 });
-    const h = f.sharedHost({ outputAlpha: 'opaque' }, true); await f.ready(h);
-    let reads = 0; const fake = { ...scene };
-    Object.defineProperty(fake, 'draws', { get() { reads++; throw new Error('fake scene'); } });
-    refusal(f, h, () => h.renderSceneSharedFrame(fake, overlay), 'FRAME_INVALID');
-    refusal(f, h, () => h.renderSceneSharedFrame(scene, a.capture()), 'FRAME_PROFILE_UNSUPPORTED');
-    assert.equal(reads, 0);
-    const r = await submit(f, h, overlay, value => h.renderSceneSharedFrame(scene, value));
-    const ps = passes(r.events); assert.equal(ps.length, 3);
-    const working = colorTargets(r.textures); assert.equal(working.length, 1);
-    assert.equal(ps[0].descriptor.colorAttachments[0].view.texture, working[0]);
-    assert.equal(ps[0].descriptor.colorAttachments[0].loadOp, 'clear');
-    assert.equal(ps[0].descriptor.depthStencilAttachment.depthClearValue, 0);
-    assert.equal(ps[1].descriptor.depthStencilAttachment, undefined);
-    assert.equal(ps[1].descriptor.colorAttachments[0].loadOp, 'load');
-    assert.equal(ps[1].descriptor.colorAttachments[0].view.texture, working[0]);
-    assert.equal(ps[2].descriptor.colorAttachments[0].view, f.canvasViews.at(-1));
-    assert.equal(ps[0].draws.length, 1); assert.equal(ps[0].draws[0].kind, 'drawIndexed');
-    assert.equal(ps[1].draws.length, 1); assert.equal(ps[2].draws.length, 1);
-    selectedResolveTarget(ps[2].draws[0], working[0]);
-    const sceneDraw = ps[0].draws[0];
-    assert.equal(sceneDraw.pipeline.descriptor.depthStencil.depthCompare, 'greater');
-    assert.equal(sceneDraw.pipeline.descriptor.depthStencil.depthWriteEnabled, true);
-    assert.equal(sceneDraw.pipeline.descriptor.fragment.targets[0].format, 'rgba8unorm-srgb');
-    const w = writes(r.events, sceneDraw.vertex); assert.equal(w.length, 1);
-    const v = [...new Float32Array(w[0][3].buffer, w[0][3].byteOffset, w[0][3].byteLength / 4)];
-    assert.equal(v.length, 18);
-    assert.deepEqual(v.slice(3, 6), [.21404114365577698, .05087608844041824, .5225215554237366]);
-    assert.deepEqual(v.slice(9, 12), [.05087608844041824, .5225215554237366, .21404114365577698]);
-    assert.deepEqual(v.slice(15, 18), [.5225215554237366, .21404114365577698, .05087608844041824]);
-    assert.equal(r.events.filter(c => c[0] === 'submit').length, 1);
-    assert.deepEqual([h.getSceneStatus().pendingSceneBytes, h.getSceneStatus().pendingUniformBytes,
-      h.getSceneStatus().pendingDepthBytes], [0, 0, 0]);
-  });
 });
 
 // Evidence boundaries:
