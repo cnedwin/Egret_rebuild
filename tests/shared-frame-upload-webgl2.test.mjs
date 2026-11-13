@@ -117,7 +117,7 @@ test('GLU01 aggregate scheduled upload tasks stay at 4 MiB with whole rows and o
     // A bounded implementation may put whole pages in separate tasks. This
     // control requires the aggregate cap, not a particular packing order.
     for (const {name,args} of rows) if (name === 'bufferSubData' && args[0] === f.ports.gl.ARRAY_BUFFER) {
-      assert.equal(args[1] % 44,0); assert.equal(args[2].byteLength % 44,0);
+      assert.equal(args[1] % 52,0); assert.equal(args[2].byteLength % 52,0);
     }
     const before = uploadRows(f.ports.events).length; await ticket.submit().completed;
     assert.equal(uploadRows(f.ports.events).length,before,'submit reuses the admitted uploaded resources');
