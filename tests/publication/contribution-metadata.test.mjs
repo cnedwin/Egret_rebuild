@@ -7,7 +7,8 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {planMetadata,writeMetadata,checkIntegrated,isolatedGitEnvironment} from '../../tools/contribution-metadata.mjs';
+import {fileURLToPath} from 'node:url';
+import {planMetadata,writeMetadata,checkIntegrated,isolatedGitEnvironment,ledgerBase,planSinceLedgers,checkMergeCandidate} from '../../tools/contribution-metadata.mjs';
 const hash=b=>createHash('sha256').update(b).digest('hex');
 function fixture(){
  const root=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'egret 贡献 ledger ')));
@@ -146,4 +147,94 @@ test('reviewed optional paragraph legal originals register once and cannot be re
   f.put(relative,Buffer.concat([bytes,Buffer.from('changed')]));declaration.frozenInputs[0].bytes+=7;declaration.frozenInputs[0].sha256=hash(fs.readFileSync(path.join(f.root,relative)));f.put('contributions/paragraph-legal.json',JSON.stringify(declaration));
   assert.throws(()=>planMetadata(f.root,{base:f.base}),/Reviewed paragraph legal identity differs/);
  }finally{f.close();}
+});
+
+// Ledgers are refreshed after merges. The cases below build that history with real commits.
+const commit=(f,message)=>{f.git('add','.');f.git('-c','user.name=Fixture','-c','user.email=fixture@example.invalid','commit','-qm',message);return f.git('rev-parse','HEAD');};
+const ledgerBytes=f=>['localization.json','knowledge-base/documentation-layout.json','source-origin.json'].map(file=>fs.readFileSync(path.join(f.root,file)));
+const pinned=(f,text,file)=>JSON.parse(text).files.find(row=>row.path===file).sha256;
+
+test('the ledger base is the newest first-parent commit that changed a ledger',()=>{
+ const f=fixture();try{
+  assert.equal(ledgerBase(f.root,f.base),f.base);
+  f.put('tool.mjs','export const value=2;\n');const feature=commit(f,'feature without ledgers');
+  assert.equal(ledgerBase(f.root,feature),f.base);
+  // A refresh made on a side branch reaches the main line through its merge commit.
+  f.git('switch','-qc','refresh');writeMetadata(f.root,planSinceLedgers(f.root,{base:feature}));const side=commit(f,'refresh');
+  f.git('switch','-q','-');f.git('-c','user.name=Fixture','-c','user.email=fixture@example.invalid','merge','-q','--no-ff','--no-edit','refresh');
+  const merged=f.git('rev-parse','HEAD');assert.notEqual(merged,side);
+  assert.equal(ledgerBase(f.root,merged),merged);
+  f.put('guide.md','# Guide after the refresh\n');const later=commit(f,'later feature');
+  assert.equal(ledgerBase(f.root,later),merged);
+  assert.equal(ledgerBase(f.root,feature),f.base);
+  for(const invalid of ['--all','a b','HEAD~1;x',''])assert.throws(()=>ledgerBase(f.root,invalid),/Invalid Git base/);
+ }finally{f.close();}
+});
+
+test('a merge candidate leaves every ledger untouched and is planned from the last refresh',()=>{
+ const f=fixture();try{
+  // An earlier change merged without ledgers: its row is behind on the main line.
+  f.put('tool.mjs','export const value=2;\n');const merged=commit(f,'earlier feature');
+  f.git('switch','-qc','candidate');f.put('guide.md','# Guide updated\n');f.put('guide.zh-CN.md','# 指南更新\n');
+  const before=ledgerBytes(f);
+  const result=checkMergeCandidate(f.root,{base:merged});
+  assert.equal(result.ledgers,'unchanged');assert.equal(result.since,f.base);assert.equal(result.base,f.base);
+  assert.deepEqual(result.changed,['guide.md','guide.zh-CN.md','tool.mjs']);
+  assert.deepEqual(ledgerBytes(f),before);
+  // Planned from the candidate's own base, the earlier file would keep its old identity.
+  const own=planMetadata(f.root,{base:merged});
+  assert.deepEqual(own.changed,['guide.md','guide.zh-CN.md']);
+  assert.equal(pinned(f,own.outputs['source-origin.json'],'tool.mjs'),hash('export const value=1;\n'));
+  assert.equal(pinned(f,result.outputs['source-origin.json'],'tool.mjs'),hash('export const value=2;\n'));
+  assert.equal(pinned(f,result.outputs['source-origin.json'],'guide.md'),hash('# Guide updated\n'));
+  // A new file still needs its declaration, although no ledger is written.
+  f.put('extra.mjs','// An original fixture module.\nexport {};\n');
+  assert.throws(()=>checkMergeCandidate(f.root,{base:merged}),/declaration/);
+  f.put('contributions/extra.json',JSON.stringify({schemaVersion:1,files:[{path:'extra.mjs',originRole:'Independently authored fixture; Apache-2.0.'}],documents:[]}));
+  assert.equal(checkMergeCandidate(f.root,{base:merged}).ledgers,'unchanged');
+ }finally{f.close();}
+});
+
+test('a change that carries a ledger is the complete refresh and nothing else',()=>{
+ const f=fixture();try{
+  const names=['localization.json','knowledge-base/documentation-layout.json','source-origin.json'];
+  f.put('tool.mjs','export const value=2;\n');f.put('guide.md','# Guide updated\n');f.put('guide.zh-CN.md','# 指南更新\n');
+  const merged=commit(f,'earlier feature without ledgers');
+  f.git('switch','-qc','refresh');
+  const untouched=ledgerBytes(f),restore=()=>{for(const [index,file] of names.entries())fs.writeFileSync(path.join(f.root,file),untouched[index]);};
+  const complete=planSinceLedgers(f.root,{base:merged});
+  assert.deepEqual(complete.changed,['guide.md','guide.zh-CN.md','tool.mjs']);
+  // One refreshed ledger beside others left as the base has them is neither admitted shape.
+  fs.writeFileSync(path.join(f.root,'localization.json'),complete.outputs['localization.json']);
+  assert.throws(()=>checkMergeCandidate(f.root,{base:merged}),/complete refresh since [0-9a-f]{40}; changed: localization\.json\. Current metadata not integrated: source-origin\.json/);
+  restore();
+  // A hand-edited row is not the generated refresh either.
+  const edited=JSON.parse(complete.outputs['source-origin.json']);edited.files.find(row=>row.path==='tool.mjs').sha256='f'.repeat(64);
+  writeMetadata(f.root,complete);f.put('source-origin.json',JSON.stringify(edited,null,2)+'\n');
+  assert.throws(()=>checkMergeCandidate(f.root,{base:merged}),/complete refresh/);
+  restore();
+  writeMetadata(f.root,planSinceLedgers(f.root,{base:merged}));
+  const refreshed=checkMergeCandidate(f.root,{base:merged});
+  assert.equal(refreshed.ledgers,'refreshed');assert.equal(refreshed.since,f.base);
+  // The same complete refresh beside authored content is refused, whether that content is tracked or new.
+  f.put('tool.mjs','export const value=3;\n');
+  assert.throws(()=>checkMergeCandidate(f.root,{base:merged}),/carries a ledger carries nothing else; it also changes: tool\.mjs/);
+  f.put('tool.mjs','export const value=2;\n');f.put('note.md','# Note\n');
+  assert.throws(()=>checkMergeCandidate(f.root,{base:merged}),/carries nothing else; it also changes: note\.md/);
+  fs.unlinkSync(path.join(f.root,'note.md'));
+  assert.equal(checkMergeCandidate(f.root,{base:merged}).ledgers,'refreshed');
+  // After the refresh is merged, the next candidate is planned from it.
+  const refresh=commit(f,'refresh');
+  f.put('tool.mjs','export const value=3;\n');
+  const next=checkMergeCandidate(f.root,{base:refresh});
+  assert.equal(next.ledgers,'unchanged');assert.equal(next.since,refresh);assert.deepEqual(next.changed,['tool.mjs']);
+ }finally{f.close();}
+});
+
+test('the command refuses repeated or unknown options',()=>{
+ const tool=fileURLToPath(new URL('../../tools/contribution-metadata.mjs',import.meta.url));
+ for(const args of [['--merge','--merge'],['--since-ledgers','--since-ledgers'],['--merge','--check'],['--refresh']]){
+  const result=spawnSync(process.execPath,[tool,...args],{encoding:'utf8',windowsHide:true});
+  assert.notEqual(result.status,0,args.join(' '));assert.match(result.stderr,/Usage: node tools\/contribution-metadata\.mjs/);
+ }
 });

@@ -1,7 +1,7 @@
 import {readFile,readdir,stat,lstat} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
-import {planMetadata} from './contribution-metadata.mjs';
+import {planSinceLedgers} from './contribution-metadata.mjs';
 import {fileURLToPath} from 'node:url';
 import {logicalPath,fingerprintFile,samePhysicalPath,ownerRelativePath} from './lib/file-identity.mjs';
 const sha=b=>createHash('sha256').update(b).digest('hex');
@@ -185,7 +185,9 @@ if(process.argv[1]&&samePhysicalPath(path.resolve(process.argv[1]),script)){
  const args=process.argv.slice(2);
  if(args.length>1||args.length===1&&args[0]!=='--contribution')throw Error('Only --contribution is supported');
  const root=fileURLToPath(new URL('..',import.meta.url));
- const derived=args.length?JSON.parse(planMetadata(root,{base:process.env.EGRET_METADATA_BASE||undefined}).outputs['localization.json']):undefined;
+ // Ledgers are refreshed after merges, so the working copy can be behind. Derive the current
+ // inventory from everything that changed since they were last brought up to date.
+ const derived=args.length?JSON.parse(planSinceLedgers(root,{base:process.env.EGRET_METADATA_BASE||undefined}).outputs['localization.json']):undefined;
  const result=await checkPublication(root,derived);
  if(result.issues.length){console.error(JSON.stringify(result,null,2));process.exitCode=1;}
  else console.log(JSON.stringify({...result,scope:'Structural identities/parity/links only; author review supplies translation meaning and public-content authorization.'}));
