@@ -2,6 +2,9 @@
 import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
+import {Bitmap} from '@egret/engine';
+import {createStudioScene} from '../examples/outfit-studio/scene.mjs';
+import {scene as sequenceScene} from './sequence-controller-fixture.mjs';
 import {buildStressSkeleton} from '../examples/outfit-studio/author-x.mjs';
 import {fixedProfile, vaultRecords, workload} from '../examples/outfit-studio/workload.mjs';
 import {expandStudioProject, openStudioProject} from '../examples/outfit-studio/project.mjs';
@@ -44,4 +47,36 @@ test('fixed studio layouts keep their independent desktop and mobile load declar
     assert.notEqual(records[0].estimatedHeight, records[1].estimatedHeight);
   }
   assert.deepEqual(workload.mutations, {static:0,sparse:60,full:6000});
+});
+
+test('studio backdrop follows the frame on repeated mobile layout changes', async () => {
+  const fixture = await sequenceScene();
+  const {engine, scope, lease, clip} = fixture;
+  const portrait = fixedProfile('x-mtouch');
+  const landscape = fixedProfile('x-mtouch', true);
+  try {
+    const scene = createStudioScene(engine, scope, [], new Map(), {
+      sheet: {createBitmap: () => new Bitmap(lease)},
+      clip,
+    }, portrait);
+    const backdrop = engine.stage.getChildAt(0);
+    const extents = profile => {
+      const expected = [[.375, .15625, .96875, .875], [.4375, .25, .9375, .8125]];
+      for (const [index, [left, top, right, bottom]] of expected.entries()) {
+        const panel = backdrop.getChildAt(index);
+        const bounds = panel.getBounds();
+        const first = panel.localToGlobal(bounds.x, bounds.y);
+        const last = panel.localToGlobal(bounds.x + bounds.width, bounds.y + bounds.height);
+        assert.deepEqual([first.x, first.y, last.x, last.y],
+          [left * profile.width, top * profile.height, right * profile.width, bottom * profile.height]);
+      }
+    };
+    extents(portrait);
+    scene.layout(landscape);
+    extents(landscape);
+    scene.layout(portrait);
+    extents(portrait);
+  } finally {
+    await fixture.close();
+  }
 });
