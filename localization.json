@@ -1100,8 +1100,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "bf015888ee903fda31917f8d9975df31af7e6e10d261fee8571fe62a63625481",
-      "zhSha256": "f126e15e998853650417f145602aea4006948bc033cd476e594aa504bb8e707d"
+      "enSha256": "74e19d78fb388cd3599ab215c72362b1dd390e05aa101e5e35cfeaa6f3db798c",
+      "zhSha256": "32ca262b0902418e368d85f9559e88950c6b6888f5f5498325e1972e33092fe1"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -2322,6 +2322,13 @@
       "kind": "public_reading",
       "enSha256": "e9ef2e2488e16188c5a13a95f741ab40c70d70d0d9205d9dd79885c52870505d",
       "zhSha256": "6be165b0dcdc9dff14eb047f66d9fa1532d8f3ef985003cecf7ca687c22cb27a"
+    },
+    {
+      "en": "devtools/README.md",
+      "zh": "devtools/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "e82994ee213fb66135106521ba1ff6be7f69da484c569a66b4179691eee77d22",
+      "zhSha256": "29717cfa3ac8efa798e1a9c2cb235c41c29f9a2b43b685bf24484b9fdc179ae1"
     }
   ],
   "registries": [
@@ -4820,6 +4827,38 @@
     {
       "path": "packages/engine/rendering/sharedPreparationRetention2D.ts",
       "sha256": "122052ccab646bee24eeb438849cb6115ea9d0b51bc38aee51bca2a8ea0f0ffe"
+    },
+    {
+      "path": "devtools/src/core/engineProbe.ts",
+      "sha256": "1f3e25ca0a0cf844b5374e99e3365addbd6d98da7906f6dd38eb475e6d633c05"
+    },
+    {
+      "path": "devtools/src/core/frameStats.ts",
+      "sha256": "7ea03707ae88b26bba5cd2bf22c5efefa000d731532a2c81a6e33844d514a03d"
+    },
+    {
+      "path": "devtools/src/core/handles.ts",
+      "sha256": "0cb54fc58aa9d38bc32ca5d061dc0912a2554d2b0c2f089c106f41794c5aa1f3"
+    },
+    {
+      "path": "devtools/src/core/hints.ts",
+      "sha256": "25ab178a265f62242a65d81c54fc57ef1e3eedf5d928dc7c17055477abe1f32f"
+    },
+    {
+      "path": "devtools/src/core/monitor.ts",
+      "sha256": "f1c31525ae70900507bacb3bef664e5fff579e15c78b7a17ef8a4aaccd043581"
+    },
+    {
+      "path": "devtools/src/web/debugMode.ts",
+      "sha256": "87956a01a6bb6a8db0596f233a11b47606d5afc2f348e6d9e55d981d7cb7f4bc"
+    },
+    {
+      "path": "devtools/src/web/overlay.ts",
+      "sha256": "51d731a8ef3576e3bbeffda664cd48f3fe28427ef6372460d07508dc1cc71301"
+    },
+    {
+      "path": "devtools/src/web/sources.ts",
+      "sha256": "fbaff8438827f8cef660765b884c97d31cc496ac230da903668297a116da0046"
     }
   ],
   "historicalSemanticReview": {
