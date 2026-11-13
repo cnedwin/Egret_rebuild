@@ -6,7 +6,7 @@ English | [简体中文](../../Cns/docs/ui-controls.md)
 
 What these controls are to someone who cannot see them is described by the [semantic tree](ui-semantics.md), which reads the same state.
 
-They own state only. A control adds no listener of the page, draws nothing and decides no routing: it listens on a display object for the events of the [contact input](multi-pointer-input.md) or of the [hover input](pointer-hover.md), and reports changes through callbacks. The application paints each state and binds keys to the same methods a pointer reaches.
+They own state only. A control adds no listener of the page, draws nothing and decides no routing: it listens on a display object for the events of the [contact input](multi-pointer-input.md) or of the [hover input](pointer-hover.md), and reports changes through callbacks. The application paints each state. `createControlKeys` binds the [usual keys](#keys) of a control to the same methods a pointer reaches.
 
 | Factory | Holds | Driven by |
 | --- | --- | --- |
@@ -125,20 +125,39 @@ An editor of the application's own has `open(request)`, `commit()`, `cancel()` a
 
 ## Keys
 
-The controls listen to no keyboard. The [keyboard input](keyboard-focus-input.md) delivers keys to the focused display object, and the application calls the control:
+The controls listen to no keyboard. The [keyboard input](keyboard-focus-input.md) delivers keys to the display object that holds the focus, and `createControlKeys` binds the usual keys of one control there:
 
-| Control | Usual keys | Call |
+```js
+import { createControlKeys } from '@egret/engine/ui';
+
+keyboard.registerTarget({ id: 'apply', target: button });
+const keys = createControlKeys({ keyboard, target: button, kind: 'action', control: apply, onPressChange: paint });
+```
+
+`keyboard` is the keyboard input. `target` is the display object that takes the focus, or one above it, because keys rise through the tree. `kind` says which control it is, and `control` is that control or anything with the same methods.
+
+| `kind` | Keys | What happens |
 | --- | --- | --- |
-| Action | Space or Enter | `press()` then `release()` |
-| Toggle | Space or Enter | `toggle()` |
-| Selection group | Arrow keys, Home, End | `next()`, `previous()`, `first()`, `last()` |
-| Movement | Arrow keys or WASD | `setDirection(x, y)` |
-| Scroll | Arrow keys, Page Up, Page Down, Home, End | `line()`, `page()`, `toStart()`, `toEnd()` |
-| Text field | Enter or Space, released | `edit()` |
+| `'action'` | Space, Enter | Released: `press()` then `release()`, one activation |
+| `'toggle'` | Space, Enter | Released: `toggle()` |
+| `'textField'` | Space, Enter | Released: `edit()` |
+| `'selection'` | Arrow keys, Home, End | Pressed, and again while held: `next()`, `previous()`, `first()`, `last()` |
+| `'scroll'` | The arrow keys of its axis, Page Up, Page Down, Home, End | Pressed, and again while held: `line()`, `page()`, `toStart()`, `toEnd()` |
+| `'movement'` | Arrow keys and the W A S D positions | While down: `setDirection(x, y)` from the keys that are held |
 
-A text field is opened when the key is released, so that the key that opened it types nothing into it. While it is open the keys belong to the platform field, and when the edit ends the application gives the focus back to the field with `keyboard.focus(id)`.
+- **Activation waits for the release.** The key that opens a text field therefore types nothing into it, and a key that repeats while it is held activates once. While the key is down `keys.pressed` is true and `onPressChange` has reported it, so that a held key is painted as a press is: `control.pressed || keys.pressed`. A hold that loses the focus, or whose page loses it, ends without an activation. One key activates at a time.
+- **A selection** takes `orientation: 'horizontal'` or `'vertical'` to keep the arrows across it for whatever is outside. Its keys are taken also at an end that does not wrap, as in a native group, so the page does not scroll under it.
+- **A scroll** takes a key only when the key moved it. At its end the key goes on to a viewport outside it, or to the page, as the wheel does.
+- **A movement** adds up the keys that are down. Opposite keys cancel each other and a diagonal is no faster. `keys: 'arrows'` or `'wasd'` binds one set only. The letters are positions of the keyboard, not characters, so they are the same four keys on every layout.
+- **A key taken below is left alone above.** A binding skips a key that a display object nearer the focus has already taken, so a button inside a scrolling viewport and a viewport inside another each get their own keys.
+- **Shortcuts are not the control's.** A key held with Alt, Control or the platform key is ignored. Shift is not a shortcut.
+- A disabled control takes no key. A key the binding took returns `true` from `keyboard.keyDown`, which is what stops the page from acting on it.
 
-The example registers one keyboard stop for its group and moves that stop to the selected item, so that Tab enters and leaves the group once.
+`dispose()` ends a hold without an activation, stops a movement the keys were steering, and listens no more. Dispose the binding before its control. The binding moves no focus: registering stops and moving between them is the [keyboard input](keyboard-focus-input.md)'s.
+
+While a text field is open the keys belong to the platform field. When the edit ends the application gives the focus back to the field with `keyboard.focus(id)`.
+
+The example registers one keyboard stop for its group and moves that stop to the selected item, so that Tab enters and leaves the group once. Each option has a binding, because the keys arrive at whichever option holds the focus.
 
 ## Painting states
 
@@ -151,16 +170,19 @@ A control reports state; the application chooses what it looks like. The [theme]
 | [`tests/ui-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-controls.test.mjs) | Movement and action on a genuine Engine |
 | [`tests/ui-state-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-state-controls.test.mjs), 13 cases | Hover, toggle and selection on a genuine Engine, a strict TypeScript consumer and the exports |
 | [`tests/ui-scroll-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-scroll-control.test.mjs), 13 cases | The scroll position on a genuine Engine: range, wheel units, nested viewports, the thumb and its drag, and a strict TypeScript consumer |
-| [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs), 5 scenarios | A real page in headless Chromium with software WebGL2: mouse, touch and keys injected through the automation protocol. Four further scenarios of the same file check the [semantic projection](ui-semantics.md) |
-| [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs), 8 scenarios | The scroll control in a real page: the wheel, the hand-over to the page, and a drag of the thumb |
+| [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs), 6 scenarios | A real page in headless Chromium with software WebGL2: mouse, touch and keys injected through the automation protocol, among them a key that is held and a hold that loses the focus. Four further scenarios of the same file check the [semantic projection](ui-semantics.md) |
+| [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs), 9 scenarios | The scroll control in a real page: the wheel, the hand-over to the page, a drag of the thumb, and its keys with their hand-over to the page |
+| [`tests/ui-control-keys.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-control-keys.test.mjs), 16 cases | The key bindings on a genuine Engine with the keyboard input and the six controls: holds, repeats, lost focus, shortcuts, nested targets, disposal, failing listeners, and a strict TypeScript consumer |
 | [`tests/ui-text-field.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-text-field.test.mjs), 17 cases | The text field on a genuine Engine with a test-owned editor: sessions, drafts, limits, shared editors, failing editors and listeners, the semantic node, and a strict TypeScript consumer with the platform text input as its editor |
 | [`examples/ui-text-field/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-text-field/verify.mjs), 6 scenarios | Two text fields in a real page in headless Chromium with software WebGL2: a composition of an input method driven through the browser's protocol, the keyboard, one field handing the editor to the other, the accessibility tree, disabling, and a phone profile |
 
-Twenty-nine faults were written into the built hover, toggle and selection code one at a time, and the unit tests caught all of them. Of thirty-two written into the scroll control they caught thirty; the other two change nothing a caller can see. Of 114 operator faults in the text field control they caught 112; the other two are a shortcut that saves a loop and changes no result.
+Twenty-nine faults were written into the built hover, toggle and selection code one at a time, and the unit tests caught all of them. Of thirty-two written into the scroll control they caught thirty; the other two change nothing a caller can see. Of 114 operator faults in the text field control they caught 112; the other two are a shortcut that saves a loop and changes no result. Of 100 operator faults in the key bindings they caught all.
 
 ## Open
 
 - No person operated the example. Every input was injected.
+- The key bindings were run with the keys of headless Chromium on a US layout. No other keyboard layout, no physical keyboard, no game controller and no screen reader's own key commands were run.
+- The bindings follow left-to-right reading: Arrow Right is `next()`. A right-to-left group is bound by the application.
 - Hardware GPUs, WebGPU, Edge as installed, Safari, Firefox and a real phone were not run for these controls.
 - The [semantic projection](ui-semantics.md) gives these controls roles, names and states, checked against the accessibility tree of headless Chromium. No screen reader or other assistive technology was run.
 - A finger does not pan a scroll viewport: that gesture and its arbitration with presses remain in #90.

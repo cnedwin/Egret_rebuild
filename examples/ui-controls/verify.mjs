@@ -42,6 +42,11 @@ const settle = page => page.waitForTimeout(40);
 const move = async (page, name) => { await page.mouse.move(...await at(page, spot[name])); await settle(page); };
 const click = async (page, name) => { await page.mouse.click(...await at(page, spot[name])); await settle(page); };
 const key = async (page, name) => { await page.keyboard.press(name); await settle(page); };
+/** What the page shows of the fill of a control, away from its mark: a few pixels of the screen, as bytes. */
+async function pixel(page, name) {
+  const [x, y] = await at(page, [spot[name][0] + 40, spot[name][1] - 10]);
+  return (await page.screenshot({ clip: { x, y, width: 4, height: 4 } })).toString('base64');
+}
 async function scenario(name, options, body) {
   const context = await browser.newContext(options), page = await context.newPage(), row = { name, status: 'INCOMPLETE', errors: [] };
   report.cases.push(row);
@@ -68,9 +73,9 @@ await scenario('a mouse toggles, selects and activates', desktop, async page => 
   assert.equal(now.sound.checked, true); assert.equal(now.level.selected, 'normal'); assert.equal(now.apply.activations, 0);
   await move(page, 'sound'); await page.mouse.down(); await settle(page); now = await read(page);
   // Held: pressed, not yet changed, and no longer hovered because the pointer is now a contact.
-  assert.deepEqual(now.sound, { checked: true, pressed: true, enabled: true }); assert.deepEqual(now.hovered, []);
+  assert.deepEqual(now.sound, { checked: true, pressed: true, held: false, enabled: true }); assert.deepEqual(now.hovered, []);
   await page.mouse.up(); await settle(page); now = await read(page);
-  assert.deepEqual(now.sound, { checked: false, pressed: false, enabled: true }); assert.deepEqual(now.hovered, ['sound']);
+  assert.deepEqual(now.sound, { checked: false, pressed: false, held: false, enabled: true }); assert.deepEqual(now.hovered, ['sound']);
   await click(page, 'sound'); assert.equal((await read(page)).sound.checked, true);
   await click(page, 'hard'); await click(page, 'hard'); await click(page, 'easy'); now = await read(page);
   assert.equal(now.level.selected, 'easy'); assert.deepEqual(now.level.changes, [['hard', 'normal'], ['easy', 'hard']]);
@@ -101,6 +106,32 @@ await scenario('the keyboard reaches the same controls', desktop, async page => 
   assert.equal(now.apply.activations, 2); assert.equal(now.level.selected, 'normal');
   assert.equal(await page.evaluate(() => scrollY), 0);
   await page.keyboard.press('Shift+Tab'); await settle(page); assert.equal((await read(page)).focus, 'level');
+});
+
+await scenario('a key that is held paints a press, and a hold that loses the focus activates nothing', desktop, async page => {
+  await page.focus('#scene');
+  await key(page, 'Tab'); await key(page, 'Tab'); await key(page, 'Tab'); assert.equal((await read(page)).focus, 'apply');
+  const idle = await pixel(page, 'apply');
+  await page.keyboard.down('Space'); await settle(page); let now = await read(page);
+  assert.equal(now.apply.held, true); assert.equal(now.apply.activations, 0, 'nothing happens before the release');
+  const held = await pixel(page, 'apply');
+  assert.notDeepEqual(held, idle, 'the held key is painted');
+  await page.keyboard.up('Space'); await settle(page); now = await read(page);
+  assert.equal(now.apply.held, false); assert.equal(now.apply.activations, 1);
+  assert.deepEqual(await pixel(page, 'apply'), idle);
+  // Shift+Tab while Enter is down: the focus leaves, the hold ends, and the release that follows is nobody's.
+  await page.keyboard.down('Enter'); await settle(page); assert.equal((await read(page)).apply.held, true);
+  await page.keyboard.press('Shift+Tab'); await settle(page); now = await read(page);
+  assert.equal(now.focus, 'level'); assert.equal(now.apply.held, false);
+  await page.keyboard.up('Enter'); await settle(page); now = await read(page);
+  assert.equal(now.apply.activations, 1); assert.equal(now.level.selected, 'normal');
+  // The switch waits for its release too, and a key that repeats flips it once.
+  await page.keyboard.press('Shift+Tab'); await settle(page); assert.equal((await read(page)).focus, 'sound');
+  await page.keyboard.down('Space'); await page.keyboard.down('Space'); await page.keyboard.down('Space'); await settle(page); now = await read(page);
+  assert.equal(now.sound.held, true); assert.equal(now.sound.checked, true);
+  await page.keyboard.up('Space'); await settle(page); now = await read(page);
+  assert.equal(now.sound.held, false); assert.equal(now.sound.checked, false);
+  assert.equal(await page.evaluate(() => scrollY), 0);
 });
 
 await scenario('a disabled option and a disabled panel refuse every input', desktop, async page => {

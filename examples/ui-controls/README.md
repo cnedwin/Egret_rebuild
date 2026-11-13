@@ -20,6 +20,7 @@ Keep the host and port the server prints and open `/examples/ui-controls/index.h
 - Move the pointer over each control. It lightens. The switch and the button darken while a press is held.
 - Press the switch, an option and the button. The status line under the canvas follows.
 - Click the canvas, then use the keyboard. Tab moves between the switch, the group and the button, and a ring marks the one with the focus. Space or Enter activates. The arrow keys, Home and End move within the group.
+- Hold Space on the button. It is painted as pressed and nothing happens until you let go. Hold it again and press Tab: the hold ends and nothing is applied.
 - Disable the third option with the page button. A press on it does nothing and the arrow keys skip it.
 - Disable everything. No control answers, and none is hovered.
 - Open the accessibility tree in the browser's developer tools. The canvas is an application that holds a group, a switch, a radio group of three and a button, each with its state, and it names the one with the focus.
@@ -28,7 +29,7 @@ Keep the host and port the server prints and open `/examples/ui-controls/index.h
 
 `main.mjs` creates a `createToggleControl`, a `createSelectionGroup` and a `createActionControl` on the contact input, and a `createHoverControl` on the hover input for each of the five surfaces. Every callback repaints. One function decides the colour of a state: unavailable first, then held, then set or pointed at.
 
-Keys arrive from `@egret/engine/web/keyboard` at the display object with the focus. The page calls `toggle()`, `press()` with `release()`, or `next()`, `previous()`, `first()` and `last()`. The group is one keyboard stop, and the stop follows the selected option.
+Keys arrive from `@egret/engine/web/keyboard` at the display object with the focus, where a `createControlKeys` binds the usual keys of each control: Space or Enter, released, toggles the switch and activates the button, and the arrow keys, Home and End move within the group. A key that is held paints the control as a press does, and a hold that loses the focus activates nothing. The group is one keyboard stop, and the stop follows the selected option.
 
 `createUiSemantics` describes the five controls: each node reads the control that is drawn when the page publishes, after it paints. `createBrowserSemantics` lays an invisible element over each control. The keyboard stays with the canvas.
 
@@ -40,4 +41,4 @@ See [the guide](../../knowledge-base/en/docs/ui-controls.md) for each control an
 node examples/ui-controls/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
 ```
 
-Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Five scenarios drive a mouse, a finger and the keyboard through the automation protocol, and four read the accessibility tree the browser computes and make requests of its elements. They write `report.json` with a screenshot of each. All nine passed in headless Chromium with software WebGL2. A hardware GPU, WebGPU, Edge, Safari, Firefox, a real phone, a person at the controls and any screen reader or other assistive technology were not run.
+Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Six scenarios drive a mouse, a finger and the keyboard through the automation protocol, and four read the accessibility tree the browser computes and make requests of its elements. They write `report.json` with a screenshot of each. All ten passed in headless Chromium with software WebGL2. A hardware GPU, WebGPU, Edge, Safari, Firefox, a real phone, a person at the controls and any screen reader or other assistive technology were not run.

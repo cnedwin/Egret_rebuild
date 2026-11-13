@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/ui/controlKeys.ts",
+      "originRole": "First-party bindings of the usual keys of drawn controls over the events of the existing keyboard input; independently authored with AI assistance; Apache-2.0. The key assignments follow common platform conventions and no third-party source or dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-control-keys.test.mjs",
+      "originRole": "First-party behaviour tests of the key bindings on a genuine Engine with the keyboard input and the six controls; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/ui-control-keys.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the key bindings; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/ui-control-keys.ts",
+      "originRole": "First-party strict TypeScript consumer of the key bindings, with seven refused misuses; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

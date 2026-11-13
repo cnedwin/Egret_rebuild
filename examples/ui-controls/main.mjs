@@ -3,7 +3,7 @@
 // The controls of `@egret/engine/ui` hold the state; this page paints it, binds the keys, and
 // describes the same controls to assistive technology.
 import { createEngineForProfile, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
-import { createActionControl, createHoverControl, createSelectionGroup, createToggleControl } from '@egret/engine/ui';
+import { createActionControl, createControlKeys, createHoverControl, createSelectionGroup, createToggleControl } from '@egret/engine/ui';
 import { createUiSemantics } from '@egret/engine/ui/semantics';
 import { createBrowserHoverInput } from '@egret/engine/web/hover';
 import { createBrowserSemantics } from '@egret/engine/web/semantics';
@@ -51,22 +51,17 @@ const level = createSelectionGroup({ input: pointer, items: levels.map(key => ({
 const apply = createActionControl({ input: pointer, target: parts.apply.sprite, onActivate: () => show(), onPressChange: () => show() });
 const hovered = Object.fromEntries(Object.entries(parts).map(([name, part]) => [name, createHoverControl({ hover, target: part.sprite, onHoverChange: () => show() })]));
 
-// Keys reach the same methods a pointer reaches. Space or Enter activates when the key is released,
-// and the key down is taken so that the page does not scroll.
+// Keys reach the same methods a pointer reaches. A binding takes the usual keys of its control from the
+// display object that holds the focus: Space or Enter activates when the key is released, the arrows,
+// Home and End move the selection, and a key that was taken does not scroll the page.
 const stops = { sound: parts.sound.sprite, level: parts.normal.sprite, apply: parts.apply.sprite };
 const registrations = Object.fromEntries(Object.entries(stops).map(([id, target]) => [id, keyboard.registerTarget({ id, target })]));
-const activates = code => code === 'Space' || code === 'Enter' || code === 'NumpadEnter';
-for (const [target, activate] of [[stops.sound, () => sound.toggle()], [stops.apply, () => { apply.press(); apply.release(); }]]) {
-  target.on(keyboard.events.keyDown, event => { if (activates(event.payload.code)) event.preventDefault(); });
-  target.on(keyboard.events.keyUp, event => { if (activates(event.payload.code)) { event.preventDefault(); activate(); } });
-}
-const moves = { ArrowRight: 'next', ArrowDown: 'next', ArrowLeft: 'previous', ArrowUp: 'previous', Home: 'first', End: 'last' };
-// The group is one stop. Its keys arrive at whichever option holds the focus, so every option listens.
-for (const key of levels) parts[key].sprite.on(keyboard.events.keyDown, event => {
-  const action = moves[event.payload.code];
-  if (action === undefined) return;
-  event.preventDefault(); level[action]();
-});
+const keys = {
+  sound: createControlKeys({ keyboard, target: stops.sound, kind: 'toggle', control: sound, onPressChange: () => show() }),
+  apply: createControlKeys({ keyboard, target: stops.apply, kind: 'action', control: apply, onPressChange: () => show() }),
+};
+// The group is one stop. Its keys arrive at whichever option holds the focus, so every option is bound.
+for (const key of levels) createControlKeys({ keyboard, target: parts[key].sprite, kind: 'selection', control: level });
 // The focus follows the selection, as it does in a native radio group. The stop is moved after the key that
 // changed the selection has been delivered.
 function followSelection() { queueMicrotask(() => { registrations.level.update({ target: parts[level.selected].sprite }); show(); }); }
@@ -105,9 +100,9 @@ document.querySelector('#disable-all').addEventListener('click', () => {
 export function readSnapshot() {
   const focus = keyboard.getSnapshot();
   return {
-    sound: { checked: sound.checked, pressed: sound.pressed, enabled: sound.enabled },
+    sound: { checked: sound.checked, pressed: sound.pressed, held: keys.sound.pressed, enabled: sound.enabled },
     level: { selected: level.selected, enabled: level.enabled, items: Object.fromEntries(levels.map(key => [key, level.isItemEnabled(key)])), changes: [...changes] },
-    apply: { pressed: apply.pressed, activations: apply.activationCount, enabled: apply.enabled },
+    apply: { pressed: apply.pressed, held: keys.apply.pressed, activations: apply.activationCount, enabled: apply.enabled },
     hovered: Object.entries(hovered).filter(([, control]) => control.hovered).map(([name]) => name),
     focus: focus.focusVisible ? focus.focusedId : undefined, focused: focus.focusedId, renders, failure,
     semantics: { revision: semantics.snapshot.revision, focused: semantics.snapshot.focused, nodes: semantics.snapshot.nodes.length, projection: projection.state },
@@ -115,9 +110,10 @@ export function readSnapshot() {
 }
 function show() {
   const focus = keyboard.getSnapshot(), ringed = focus.focusVisible ? focus.focusedId : undefined;
-  paint(parts.sound, { enabled: sound.enabled, pressed: sound.pressed, hovered: hovered.sound.hovered, on: sound.checked }, ringed === 'sound');
+  // A key that is held paints as a press does.
+  paint(parts.sound, { enabled: sound.enabled, pressed: sound.pressed || keys.sound.pressed, hovered: hovered.sound.hovered, on: sound.checked }, ringed === 'sound');
   for (const key of levels) paint(parts[key], { enabled: level.enabled && level.isItemEnabled(key), pressed: false, hovered: hovered[key].hovered, on: level.selected === key }, ringed === 'level' && level.selected === key);
-  paint(parts.apply, { enabled: apply.enabled, pressed: apply.pressed, hovered: hovered.apply.hovered, on: false }, ringed === 'apply');
+  paint(parts.apply, { enabled: apply.enabled, pressed: apply.pressed || keys.apply.pressed, hovered: hovered.apply.hovered, on: false }, ringed === 'apply');
   // Published with the frame that shows the same state.
   semantics.publish();
   const snapshot = readSnapshot();

@@ -28,7 +28,7 @@ Keep the host and port the server prints and open `/examples/ui-text-field/index
 
 `main.mjs` creates one `createBrowserTextInput` for the canvas and gives it to both fields as their `editor`. Each `createTextFieldControl` is asked through `field()` where its box is on the stage and how the platform field should look. The engine draws the committed text and hides it while the control is `editing`, because the platform field shows the text then.
 
-Keys arrive from `@egret/engine/web/keyboard` at the display object with the focus. A field is opened with `edit()` when Enter or Space is released, so that the key types nothing into it. When an edit ends the page gives the focus of the application back to the field.
+Keys arrive from `@egret/engine/web/keyboard` at the display object with the focus, where a `createControlKeys` of kind `'textField'` opens a field with `edit()` when Enter or Space is released, so that the key types nothing into it. When an edit ends the page gives the focus of the application back to the field.
 
 `createUiSemantics` describes the form: a group, two text boxes with their text, and a button. The node of a field is hidden while the field is edited, because the platform field is then the field's own element and nothing should be announced twice.
 

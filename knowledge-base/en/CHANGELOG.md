@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## The usual keys of a control — 2026-11-14
+
+`createControlKeys` in `@egret/engine/ui` binds the usual keys of a drawn control at the display object that holds the focus: Space or Enter, released, for a button, a switch and a text field; the arrow keys, Home and End for a selection; those and Page Up and Page Down for a scroll position; the arrows and the W A S D positions for a movement. A held key is reported so that it can be painted, a hold that loses the focus activates nothing, a key taken nearer the focus is left alone, and a scroll at its end leaves the key to the page. The three control examples use it. Checked on a genuine Engine and in headless Chromium with software WebGL2 on a US layout; no physical keyboard, other layout or screen reader was run. Part of #90. [Guide](docs/ui-controls.md#keys)
+
 ## A Spine replacement carries a mix under way — 2026-11-14
 
 `requestPreserving` on the Spine reset slot no longer refuses a player that is mixing from one animation into another. The entries a track is still mixing out of are carried with the current one: how far each mix has come, the direction each mixed rotation turns, and the holds an entry keeps. With an equal asset the copy stands in the pose of the original at every later tick, across seven kinds of mix replaced at nine moments each. An asset must now also have the animations that are only being mixed out of. What an ended animation left on a bone is still not carried, and is now said so. Hardware and WebGPU rows of this path remain unrun. [Guide](docs/spine-reset-slot.md#keeping-the-playback)
