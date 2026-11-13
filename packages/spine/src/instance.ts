@@ -459,27 +459,43 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
   function checkPreserve(source: SpinePreservedPlayback): void {
     assertOpen();
     for (const name of source.skins) if (!info.skins.includes(name)) throw refuse('SKIN');
-    for (const chain of source.tracks) if (chain) for (const row of chain) continuation(row);
+    for (const chain of [...source.tracks, ...source.mixing]) if (chain) for (const row of chain) continuation(row);
+  }
+  /** Gives an entry the position of the one it continues. */
+  function place(entry: Core.TrackEntry, row: SpinePreservedEntry): void {
+    const values = entry as unknown as Record<string, number | boolean>;
+    for (const key of ENTRY_VALUES) values[key] = row.values[key]!;
+    const rotations = entry.timelinesRotation;
+    rotations.length = 0;
+    for (const [index, value] of row.rotations.entries()) if (value !== undefined) rotations[index] = value;
+    rotations.length = row.rotations.length;
+    // Core works these out again from the chain, except the holds of an entry that was told to keep them.
+    entry.timelineMode.length = 0;
+    entry.timelineMode.push(...row.modes);
   }
   registerSpineRender(instance,{asset:port,exportPlayback(){
-    // Between two advances only: a command not yet applied, or a mix under way, is not a position to continue from.
+    // Between two advances only: a command not yet applied is not a position to continue from.
     if (disposed || faulted || busy || admitting || commands.length) throw refuse('STATE');
     port.assertOpen();
-    const current = skeleton!, tracks: (readonly SpinePreservedEntry[] | undefined)[] = [];
+    const current = skeleton!, tracks: (readonly SpinePreservedEntry[] | undefined)[] = [], mixing: (readonly SpinePreservedEntry[])[] = [];
+    let carried = 0;
+    const record = (entry: Core.TrackEntry): SpinePreservedEntry => {
+      if (++carried > MAX_ENTRIES || !entry.animation) throw refuse('STATE');
+      const values: Record<string, number | boolean> = {};
+      for (const key of ENTRY_VALUES) { const value = entry[key]; if (typeof value === 'number' && !Number.isFinite(value) && key !== 'trackEnd') throw refuse('STATE'); values[key] = value; }
+      const policy = playback.get(entry);
+      return freeze({ name: text(entry.animation.name), duration: finite(entry.animation.duration), events: freeze(eventSchedule(entry.animation)), values: freeze(values),
+        rotations: freeze(Array.from(entry.timelinesRotation as (number | undefined)[])), modes: freeze([...entry.timelineMode]), policy: policy ? freeze({ ...policy }) : undefined });
+    };
     for (const head of state!.tracks) {
-      if (!head) { tracks.push(undefined); continue; }
-      if (head.mixingFrom || head.mixingTo) throw refuse('STATE');
-      const chain: SpinePreservedEntry[] = [];
-      for (let entry: Core.TrackEntry | null = head; entry; entry = entry.next) {
-        if (chain.length >= MAX_ENTRIES || !entry.animation) throw refuse('STATE');
-        const values: Record<string, number | boolean> = {};
-        for (const key of ENTRY_VALUES) { const value = entry[key]; if (typeof value === 'number' && !Number.isFinite(value) && key !== 'trackEnd') throw refuse('STATE'); values[key] = value; }
-        const policy = playback.get(entry);
-        chain.push(freeze({ name: text(entry.animation.name), duration: finite(entry.animation.duration), events: freeze(eventSchedule(entry.animation)), values: freeze(values), policy: policy ? freeze({ ...policy }) : undefined }));
-      }
-      tracks.push(freeze(chain));
+      if (!head) { tracks.push(undefined); mixing.push(freeze([])); continue; }
+      // A mix under way is carried: what the current entry is mixing out of, back to the oldest.
+      const out: SpinePreservedEntry[] = [], chain: SpinePreservedEntry[] = [];
+      for (let entry = head.mixingFrom; entry; entry = entry.mixingFrom) out.unshift(record(entry));
+      for (let entry: Core.TrackEntry | null = head; entry; entry = entry.next) chain.push(record(entry));
+      tracks.push(freeze(chain)); mixing.push(freeze(out));
     }
-    return freeze({ tracks: freeze(tracks), skins, transform: freeze([current.x, current.y, current.scaleX, current.scaleY] as const), rate, paused, revision, tickId, clockElapsed, elapsedSeconds });
+    return freeze({ tracks: freeze(tracks), mixing: freeze(mixing), skins, transform: freeze([current.x, current.y, current.scaleX, current.scaleY] as const), rate, paused, revision, tickId, clockElapsed, elapsedSeconds });
   },checkPreserve,initializePreserve(source){
     // Private fresh-candidate initialization, as for reset: no clock identity is invented, no listener
     // runs, and the candidate's first advance continues from the tick the source last took.
@@ -492,14 +508,19 @@ export function createSpineInstance(asset: SpineAsset, scope: Scope, options?: S
       current.setPosition(source.transform[0],source.transform[1]);current.setScale(source.transform[2],source.transform[3]);
       for(const [index,chain] of source.tracks.entries()){
         if(!chain)continue;
-        for(const [position,row] of chain.entries()){
+        // The entries being mixed out of are set first, the oldest first, and then the current one: Core
+        // makes each a mix from the one before it. Queued entries follow the current one.
+        const out=source.mixing[index]??[];
+        for(const [position,row] of [...out,...chain].entries()){
           if(entries.size>=MAX_ENTRIES)throw fault('ENTRY_LIMIT');
-          const found=continuation(row),entry=position===0?animation.setAnimation(index,found,false):animation.addAnimation(index,found,false,0);
-          const values=entry as unknown as Record<string,number|boolean>;
-          for(const key of ENTRY_VALUES)values[key]=row.values[key]!;
+          const found=continuation(row),entry=position>out.length?animation.addAnimation(index,found,false,0):animation.setAnimation(index,found,false);
+          // Placed before the next is set: Core replaces an entry it takes for never applied instead of mixing from it.
+          place(entry,row);
           entries.add(entry);rebuilt.push([entry,row]);
         }
       }
+      // Setting an entry began its mix anew and cleared the rotations the one before it remembered.
+      for(const [entry,row] of rebuilt)place(entry,row);
       // This application poses the new skeleton. It finds again what the source's last one found, and Core
       // announced the start of each rebuilt entry: all of that was delivered by the source when it happened,
       // and is dropped here. Each entry receives its policy only afterwards, so that no play is counted twice.
