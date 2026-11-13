@@ -114,6 +114,7 @@ interface GenerationOwner {
         buffer:GPUDevice['createBuffer'];texture:GPUDevice['createTexture'];bindGroup:GPUDevice['createBindGroup'];encoder:GPUDevice['createCommandEncoder'];
         configure:GPUCanvasContext['configure'];unconfigure:GPUCanvasContext['unconfigure'];currentTexture:GPUCanvasContext['getCurrentTexture']};
     invalidated:boolean; unknown:boolean;diagnosticUnknown?:boolean;
+    finishReadbackLossWait?:()=>void;
 }
 /** `regions` is the region table as its buffer holds it, present when a draw of the frame has a region. */
 type SharedPlan={storage:SharedSubmissionStorage2D;imagePlan:ImageResidencyPlan;projections:(Uint8Array<ArrayBuffer>|undefined)[];canonicalBytes:number;ticket:Ticket|undefined;batch:PreparedSharedBatchPlan2D;regions:Uint32Array<ArrayBuffer>|undefined};
@@ -431,6 +432,7 @@ class WebGPUHostImplementation {
     private nativeLoss(owner:GenerationOwner,cause:unknown):void {
         if(this.owner!==owner||owner.invalidated||this.state==='closed')return;
         owner.invalidated=true;
+        owner.finishReadbackLossWait?.();
         if(owner.unknown||this.unsafe){this.revokeStages(error('WEBGPU_DEVICE_LOST',cause));return;}
         const wasReady=this.state==='active'&&!this.readinessPending;
         if(wasReady)this.episodeAttempts=0;
@@ -597,7 +599,7 @@ class WebGPUHostImplementation {
                 const owner:GenerationOwner={number:++this.generation,device,pool:this.bufferPool,cache:this.bindingCache,epoch:this.imageEpoch,format:this.format,alpha:SHARED_OPTIONS.get(this)!.outputAlpha,fence:this.fence!,pop:this.pop!,native:{write:this.write!,writeTexture:this.writeTexture!,submit:this.submit!,push:this.push!,buffer:this.buffer!,texture:this.texture!,bindGroup:this.bindGroup!,encoder:this.encoder!,configure:this.configure!,unconfigure:this.unconfigure!,currentTexture:this.currentTexture!},invalidated:false,unknown:false};
                 this.owner=owner;this.usedDevices.add(device);if(recovery)this.borrowed=undefined;
                 const cell=this.lossCell;
-                if(recovery){cell.notify=cause=>this.nativeLoss(owner,cause);cell.unknown=cause=>{if(this.owner===owner){owner.unknown=true;const failure=this.fail('WEBGPU_DEVICE_LOST',cause,'device',null,true);this.revokeRecovery(failure);this.revokeStages(failure);}};observeAuthenticatedWebGPUDeviceLoss(lost,cell);}
+                if(recovery){cell.notify=cause=>this.nativeLoss(owner,cause);cell.unknown=cause=>{if(this.owner===owner){owner.unknown=true;owner.finishReadbackLossWait?.();const failure=this.fail('WEBGPU_DEVICE_LOST',cause,'device',null,true);this.revokeRecovery(failure);this.revokeStages(failure);}};observeAuthenticatedWebGPUDeviceLoss(lost,cell);}
                 else{cell.notify=cause=>{this.fail('WEBGPU_DEVICE_LOST',cause,'device',null,true);this.revokeStages(error('WEBGPU_DEVICE_LOST',cause));};observeWebGPUDeviceLoss(lost,cell);}
             }
             gate();stage='WEBGPU_START_FAILED';
@@ -1457,18 +1459,52 @@ class WebGPUHostImplementation {
         }));
         if(synchronous)throw synchronous;return undefined;
     }
+    private async rejectReadbackMapping(record:Submission,cause:unknown):Promise<never> {
+        const owner=record.owner,recovery=SHARED_OPTIONS.get(this)?.recovery;
+        if(recovery&&owner&&owner===this.owner&&!record.stage&&!owner.invalidated&&!owner.unknown&&!record.unsafe&&!this.unsafe){
+            let abort=false;
+            try{
+                const name=Object.getOwnPropertyDescriptor(DOMException.prototype,'name')?.get;
+                abort=name!==undefined&&Reflect.apply(name,cause,[])==='AbortError';
+            }catch{
+                // Missing platform support or a non-DOMException must take the original failure path.
+            }
+            if(abort){
+                // A native map abort can arrive before the authenticated loss notification.
+                // It is never loss proof on its own. Do not subscribe again to device.lost.
+                await new Promise<void>(resolve=>{
+                    let cancel:(()=>void)|undefined,settled=false;
+                    const finish=():void=>{
+                        if(settled)return;
+                        settled=true;
+                        delete owner.finishReadbackLossWait;
+                        try{cancel?.();}catch{
+                            // A failed cancellation cannot keep this waiter or obstruct genuine loss.
+                        }
+                        resolve();
+                    };
+                    owner.finishReadbackLossWait=finish;
+                    try{cancel=this.ownedTimeout(finish,Math.min(recovery.timeoutMs,1000));}
+                    catch{finish();}
+                });
+            }
+        }
+        throw this.recordAsyncFailure(record,'WEBGPU_READBACK_FAILED',cause,'readback');
+    }
     private readPixels(staging:OwnedWebGPUBuffer,record:Submission,frameId:number,width:number,height:number,rowPitch:number,output:number):Promise<WebGPUReadback|SharedWebGPUReadback> {
         const owner=record.owner,format=owner?.format??this.format,alpha=owner?.alpha??'premultiplied';
         const mapping=observed(staging.map(1));
         return observed(mapping.then(()=>{
-            if(owner?.invalidated)throw record.failure??error('WEBGPU_DEVICE_LOST');
-            staging.mapped=true;const mapped=new Uint8Array(staging.mappedRange()),bytes=new Uint8Array(output);
-            if(owner?.invalidated)throw record.failure??error('WEBGPU_DEVICE_LOST');
-            for(let y=0;y<height;y++)bytes.set(mapped.subarray(y*rowPitch,y*rowPitch+width*4),y*width*4);
-            if(format==='bgra8unorm')for(let i=0;i<bytes.length;i+=4){const blue=bytes[i]!;bytes[i]=bytes[i+2]!;bytes[i+2]=blue;}
-            const value={serial:record.serial,frameId,width,height,format:'rgba8unorm' as const,sourceFormat:format,colorSpace:'srgb' as const,alphaMode:alpha,bytes};
-            return owner?Object.freeze({...value,generation:owner.number}):Object.freeze({...value,alphaMode:'premultiplied' as const});
-        }).catch(cause=>{throw this.recordAsyncFailure(record,'WEBGPU_READBACK_FAILED',cause,'readback');}));
+            try {
+                if(owner?.invalidated)throw record.failure??error('WEBGPU_DEVICE_LOST');
+                staging.mapped=true;const mapped=new Uint8Array(staging.mappedRange()),bytes=new Uint8Array(output);
+                if(owner?.invalidated)throw record.failure??error('WEBGPU_DEVICE_LOST');
+                for(let y=0;y<height;y++)bytes.set(mapped.subarray(y*rowPitch,y*rowPitch+width*4),y*width*4);
+                if(format==='bgra8unorm')for(let i=0;i<bytes.length;i+=4){const blue=bytes[i]!;bytes[i]=bytes[i+2]!;bytes[i+2]=blue;}
+                const value={serial:record.serial,frameId,width,height,format:'rgba8unorm' as const,sourceFormat:format,colorSpace:'srgb' as const,alphaMode:alpha,bytes};
+                return owner?Object.freeze({...value,generation:owner.number}):Object.freeze({...value,alphaMode:'premultiplied' as const});
+            } catch(cause) { throw this.recordAsyncFailure(record,'WEBGPU_READBACK_FAILED',cause,'readback'); }
+        },cause=>this.rejectReadbackMapping(record,cause)));
     }
     private retire(record: Submission): void {
         if (record.retired || record.retiring) return;
