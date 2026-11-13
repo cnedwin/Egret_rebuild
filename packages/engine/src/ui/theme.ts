@@ -95,6 +95,27 @@ export function createUiTheme(descriptor: UiThemeDescriptor): UiTheme {
     themes.set(result, JSON.stringify([result.spacing, result.typography]));
     return result;
 }
+/** The states of a control that a skin may have a name for. */
+export type UiSkinStateName = Exclude<keyof UiThemeSkin, 'default'>;
+export type UiSkinState = { readonly [Name in UiSkinStateName]?: boolean };
+const skinStates: readonly UiSkinStateName[] = freeze(['disabled', 'pressed', 'checked', 'selected', 'expanded', 'focus', 'hover']);
+/**
+ * The name a skin gives to the state of a control: of the states that hold, the first in `order`
+ * that the skin has a name for, and `default` when it has none. The usual order is the one a player
+ * reads a control in: unavailable, held, set, focused, pointed at. A state left out of `order` is
+ * never chosen.
+ */
+export function selectUiSkin(skin: UiThemeSkin, state: UiSkinState = {}, order: readonly UiSkinStateName[] = skinStates): string {
+    const asked: readonly UiSkinStateName[] = order;
+    if (skin === null || typeof skin !== 'object' || typeof skin.default !== 'string' || state === null || typeof state !== 'object' || !Array.isArray(order)
+        || asked.some((entry, index) => !skinStates.includes(entry) || asked.indexOf(entry) !== index)) invalid();
+    for (const entry of skinStates) if (state[entry] !== undefined && typeof state[entry] !== 'boolean') invalid();
+    for (const entry of asked) {
+        const named = skin[entry];
+        if (state[entry] === true && named !== undefined) return named;
+    }
+    return skin.default;
+}
 export function requireUiTheme(value: UiTheme | undefined): void {
     if (value !== undefined && !themes.has(value)) invalid();
 }

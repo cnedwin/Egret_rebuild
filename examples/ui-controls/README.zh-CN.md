@@ -27,7 +27,7 @@ node tools/serve-canvas.mjs
 
 ## 工作方式
 
-`main.mjs` 在触点输入上创建一个 `createToggleControl`、一个 `createSelectionGroup` 和一个 `createActionControl`，并在悬停输入上为五个表面各创建一个 `createHoverControl`。每个回调都会重绘。一个函数决定状态对应的颜色：先看是否不可用，再看是否按住，然后是已设置或被指向。
+`main.mjs` 在触点输入上创建一个 `createToggleControl`、一个 `createSelectionGroup` 和一个 `createActionControl`，并在悬停输入上为五个表面各创建一个 `createHoverControl`。每个回调都会重绘。颜色来自一个 `createUiTheme`：皮肤为每个状态命名一种颜色，`selectUiSkin` 在成立的状态中选择，先看是否不可用，再看是否按住，然后是被指向。已设置的控件使用单独的皮肤，所以被指向时仍保持已设置的外观。
 
 按键来自 `@egret/engine/web/keyboard`，交给获得焦点的显示对象，`createControlKeys` 在那里绑定每个控件的常用按键：空格或回车松开时翻转开关、激活按钮，方向键、Home 和 End 在选项组内移动。按住的键让控件像被按下一样绘制，按住期间失去焦点则不激活。选项组是一个键盘停靠点，停靠点跟随被选中的选项。
 
@@ -41,4 +41,4 @@ node tools/serve-canvas.mjs
 node examples/ui-controls/verify.mjs <Playwright index.mjs 的绝对路径> <新的输出目录的绝对路径> [software]
 ```
 
-省略第三个参数时启动已安装的 Edge（有界面）。使用 `software` 时由 Playwright 自带的浏览器以无头方式和软件渲染运行。六个场景通过自动化协议驱动鼠标、手指和键盘，另有四个场景读取浏览器计算出的无障碍树并对其中的元素发出请求。它们写出 `report.json` 和每个场景的截图。十个场景都在无头 Chromium 的软件 WebGL2 上通过。硬件 GPU、WebGPU、Edge、Safari、Firefox、真实手机和真人操作都没有运行。
+省略第三个参数时启动已安装的 Edge（有界面）。使用 `software` 时由 Playwright 自带的浏览器以无头方式和软件渲染运行。七个场景通过自动化协议驱动鼠标、手指和键盘，其中一个读取每种状态实际绘制出的颜色，另有四个场景读取浏览器计算出的无障碍树并对其中的元素发出请求。它们写出 `report.json` 和每个场景的截图。十一个场景都在无头 Chromium 的软件 WebGL2 上通过。硬件 GPU、WebGPU、Edge、Safari、Firefox、真实手机和真人操作都没有运行。

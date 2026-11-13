@@ -3,7 +3,7 @@
 // The controls of `@egret/engine/ui` hold the state; this page paints it, binds the keys, and
 // describes the same controls to assistive technology.
 import { createEngineForProfile, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
-import { createActionControl, createControlKeys, createHoverControl, createSelectionGroup, createToggleControl } from '@egret/engine/ui';
+import { createActionControl, createControlKeys, createHoverControl, createSelectionGroup, createToggleControl, createUiTheme, selectUiSkin } from '@egret/engine/ui';
 import { createUiSemantics } from '@egret/engine/ui/semantics';
 import { createBrowserHoverInput } from '@egret/engine/web/hover';
 import { createBrowserSemantics } from '@egret/engine/web/semantics';
@@ -30,12 +30,13 @@ function surface(x, y, width, height) {
   ring.graphics.beginFill(PAINT.ring).drawRect(0, 0, width + 6, height + 6).endFill();
   return { sprite, ring, mark, width, height };
 }
-/** The colour of a state, in the order a player reads it: unavailable, held, pointed at, set. */
+// What each state looks like is the theme's: a skin names a paint for each state it has one for. A control
+// that is set has a skin of its own, so that it stays set under the pointer.
+const theme = createUiTheme({ id: 'controls', colors: { idle: PAINT.idle, hover: PAINT.hover, pressed: PAINT.pressed, on: PAINT.on, onHover: PAINT.onHover, disabled: PAINT.disabled },
+  skins: { control: { default: 'idle', hover: 'hover', pressed: 'pressed', disabled: 'disabled' }, controlOn: { default: 'on', hover: 'onHover', pressed: 'pressed', disabled: 'disabled' } } });
+/** The colour of a state. `selectUiSkin` reads the states in the order a player does: unavailable, held, pointed at. */
 function fill(state) {
-  if (!state.enabled) return PAINT.disabled;
-  if (state.pressed) return PAINT.pressed;
-  if (state.on) return state.hovered ? PAINT.onHover : PAINT.on;
-  return state.hovered ? PAINT.hover : PAINT.idle;
+  return theme.colors[selectUiSkin(theme.skins[state.on ? 'controlOn' : 'control'], { disabled: !state.enabled, pressed: state.pressed, hover: state.hovered })];
 }
 function paint(part, state, focused) {
   part.sprite.graphics.clear(); part.sprite.graphics.beginFill(fill(state)).drawRect(0, 0, part.width, part.height).endFill();

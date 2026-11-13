@@ -161,7 +161,7 @@ The projection adds no key handling. Keys arrive through the [keyboard input](ke
 | The tree: 19 cases | Node | Pass |
 | The projection against a stand-in for the page: 13 cases | Node | Pass |
 | A strict TypeScript consumer of both entries, with nine refused misuses | Node | Pass |
-| The example page: the computed accessibility tree, the active descendant under Tab and the arrow keys, each element over its control, requests made of the elements, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 4 scenarios beside the 6 of the controls |
+| The example page: the computed accessibility tree, the active descendant under Tab and the arrow keys, each element over its control, requests made of the elements, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 4 scenarios beside the 7 of the controls |
 | The rows of a managed list: 12 cases on a genuine Engine and a genuine UI root, with a strict TypeScript consumer and six refused misuses | Node | Pass |
 | [The list example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics): the list box the browser computes for 8 of 50,000 rows, the active descendant through recycled rows, a jump to row 40,000, a scroll away from the focus, requests made of the options, a scaled and scrolled page, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
 

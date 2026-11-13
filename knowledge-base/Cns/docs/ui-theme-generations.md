@@ -8,7 +8,7 @@
 
 `createUiTheme({ id, colors?, spacing?, typography?, skins? })` 返回独立、冻结的 `UiTheme` 身份。相同描述也产生不同代际；ID 只是标签，不是权限或全局版本号。嵌套记录被复制并冻结，每组最多 64 个 token。标识符以 ASCII 字母开头，后续允许字母、数字、下划线、点或连字符，最长 64 字符。只接受普通数据记录；访问器、Symbol 和未知字段被拒绝，getter 不会执行。
 
-颜色为 0 至 0xffffff 的整数 RGB 值；间距为 0–4096 的有限数。排版提供非空、不含控制字符、最长 256 字符的字体族，字号 1–512，行高 1–2048。皮肤记录必需 `default`，可选 `hover`、`pressed`、`disabled`、`focus`、`checked`、`selected`、`expanded` 名称。这些名称由应用映射至已有的类型化资源引用，不是 URL 或隐式加载指令。状态选择及无障碍控件行为仍由现有控件或应用负责。
+颜色为 0 至 0xffffff 的整数 RGB 值；间距为 0–4096 的有限数。排版提供非空、不含控制字符、最长 256 字符的字体族，字号 1–512，行高 1–2048。皮肤记录必需 `default`，可选 `hover`、`pressed`、`disabled`、`focus`、`checked`、`selected`、`expanded` 名称。这些名称由应用映射至已有的类型化资源引用，不是 URL 或隐式加载指令。状态选择及无障碍控件行为仍由现有控件或应用负责。[`selectUiSkin(skin, state)`](ui-controls.md#绘制状态) 给出控件当前成立的状态所对应的名称：先看不可用，再看按住、已设置、获得焦点和被指向；皮肤对它们都没有命名时取 `default`。
 
 `UiRootOptions.theme` 指定初始期望代际；`root.setTheme(theme | undefined)` 暂存变更；`root.snapshot().theme` 只返回已提交代际。即便字段相同，仿造对象也会被拒绝。`LayoutNode.theme` 可将 `fill` 绑定颜色 token，将 `padding`/`gap` 绑定间距 token。引用缺失在接受意图前失败；主题为 undefined 时回退至节点字面值。fill 绑定只允许叶节点，虚拟列表不允许绑定 padding/gap。
 

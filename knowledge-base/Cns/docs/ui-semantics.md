@@ -161,7 +161,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 | 语义树：19 项 | Node | 通过 |
 | 投射对照测试自备的页面替身：13 项 | Node | 通过 |
 | 两个入口的严格 TypeScript 使用方，含九种被拒绝的误用 | Node | 通过 |
-| 示例页面：浏览器计算出的无障碍树、Tab 和方向键下的活动后代、每个元素与其控件重合、对元素发出的请求、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，在控件的 6 个场景之外另有 4 个 |
+| 示例页面：浏览器计算出的无障碍树、Tab 和方向键下的活动后代、每个元素与其控件重合、对元素发出的请求、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，在控件的 7 个场景之外另有 4 个 |
 | 托管列表的行：真实 Engine 和真实 UI 根上的 12 项，另有严格 TypeScript 使用方和六种被拒绝的误用 | Node | 通过 |
 | [列表示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics)：浏览器为 50,000 行中的 8 行计算出的列表框、穿过被回收行时的活动后代、跳到第 40,000 行、从焦点处滚走、对选项发出的请求、缩放并滚动后的页面、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
 

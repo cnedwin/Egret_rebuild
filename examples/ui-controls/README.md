@@ -27,7 +27,7 @@ Keep the host and port the server prints and open `/examples/ui-controls/index.h
 
 ## How it works
 
-`main.mjs` creates a `createToggleControl`, a `createSelectionGroup` and a `createActionControl` on the contact input, and a `createHoverControl` on the hover input for each of the five surfaces. Every callback repaints. One function decides the colour of a state: unavailable first, then held, then set or pointed at.
+`main.mjs` creates a `createToggleControl`, a `createSelectionGroup` and a `createActionControl` on the contact input, and a `createHoverControl` on the hover input for each of the five surfaces. Every callback repaints. The colours are those of a `createUiTheme`: a skin names a paint for each state, and `selectUiSkin` chooses among the states that hold, unavailable first, then held, then pointed at. A control that is set has a skin of its own, so that it stays set under the pointer.
 
 Keys arrive from `@egret/engine/web/keyboard` at the display object with the focus, where a `createControlKeys` binds the usual keys of each control: Space or Enter, released, toggles the switch and activates the button, and the arrow keys, Home and End move within the group. A key that is held paints the control as a press does, and a hold that loses the focus activates nothing. The group is one keyboard stop, and the stop follows the selected option.
 
@@ -41,4 +41,4 @@ See [the guide](../../knowledge-base/en/docs/ui-controls.md) for each control an
 node examples/ui-controls/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
 ```
 
-Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Six scenarios drive a mouse, a finger and the keyboard through the automation protocol, and four read the accessibility tree the browser computes and make requests of its elements. They write `report.json` with a screenshot of each. All ten passed in headless Chromium with software WebGL2. A hardware GPU, WebGPU, Edge, Safari, Firefox, a real phone, a person at the controls and any screen reader or other assistive technology were not run.
+Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Seven scenarios drive a mouse, a finger and the keyboard through the automation protocol, one of them reading the colour each state is painted with, and four read the accessibility tree the browser computes and make requests of its elements. They write `report.json` with a screenshot of each. All eleven passed in headless Chromium with software WebGL2. A hardware GPU, WebGPU, Edge, Safari, Firefox, a real phone, a person at the controls and any screen reader or other assistive technology were not run.

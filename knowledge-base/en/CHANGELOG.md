@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## The name a skin gives to a state — 2026-11-14
+
+`selectUiSkin` in `@egret/engine/ui` gives the name a theme skin has for the states of a control that hold now. When several hold, the first in the order a player reads a control wins: unavailable, held, set, focused, pointed at; a state the skin has no name for falls to the next, and then to `default`. The controls example takes its colours from a theme through it, and its real-browser check reads the colour each state is painted with. Checked in Node and in headless Chromium with software WebGL2. Part of #90. [Guide](docs/ui-controls.md#painting-states)
+
 ## Semantics for the rows of a managed list — 2026-11-14
 
 `createUiListSemantics` in `@egret/engine/ui/semantics` keeps the semantic tree in step with a virtual list of the managed UI: one node for the list and one for each row that shows, with its place on the stage and its position among all the records. The row with the focus is the focused node, and a row that scrolls away takes its node with it, so a projection never names an element that does not exist. A new example lists fifty thousand rows and publishes the eight that show. Checked on a genuine UI root and against the list box headless Chromium computes; no screen reader was run. Part of #90. [Guide](docs/ui-semantics.md#a-managed-virtual-list)
