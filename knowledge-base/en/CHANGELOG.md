@@ -7,6 +7,7 @@ Version labels below identify engineering checkpoints; workspace packages remain
 ## Staged seek for Spine instances — 2026-11-14
 
 `instance.seek` moves a Spine instance to another elapsed time. The playback is rebuilt on a private copy from the setup pose by replaying the commands and deltas the instance accepted, in slices of bounded work, and the instance is untouched until the commit. Events are suppressed by default; a forward seek may replay them, capped and delivered only after it succeeds. History is bounded and dropped when it outgrows its limits, after which a seek is refused. A faulted instance is brought back by a seek to the time it last published. The tests use original numerical fixtures; none has a physics constraint. [Guide](docs/spine-seek.md) · [#84](https://github.com/cnedwin/Egret_rebuild/issues/84)
+
 ## Scroll position for viewports — 2026-11-14
 
 `createScrollControl` in `@egret/engine/ui` holds the offset of one axis of a clipped viewport an application draws. The wheel scrolls it through the hover input and is consumed only when the offset moved, so a viewport inside another hands the wheel outward and the outermost hands it to the page. One contact drags the scrollbar thumb, and `line`, `page`, `toStart` and `toEnd` serve the keys. The hover example now scrolls its list with it. Panning the content with a finger is a gesture and is not recognized. [Guide](docs/ui-controls.md#scroll-position) · [#90](https://github.com/cnedwin/Egret_rebuild/issues/90)
