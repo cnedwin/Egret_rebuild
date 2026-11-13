@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/rendering/sharedPreparationRetention2D.ts",
+      "originRole": "First-party source: the prepared draws a shared Host keeps of its last frame, with the comparison of a draw's inputs, the replayed charges and the bound on what is kept; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/shared-capture-retention.test.mjs",
+      "originRole": "First-party test: frames captured with the records each display node keeps, against frames captured without them; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/shared-prepared-retention.test.mjs",
+      "originRole": "First-party test: frames prepared with the draws a Host keeps, against frames prepared without them; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}
