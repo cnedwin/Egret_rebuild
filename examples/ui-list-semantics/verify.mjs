@@ -108,6 +108,14 @@ await scenario('the keyboard moves through the list, and the element the canvas 
   now = await over(page);
   assert.deepEqual([now.focus, now.rows.at(-1).key, now.scrollOffset, now.semantics.nodes], ['k12', 'k12', 150, 9]);
   assert.equal(await page.getByRole('option', { name: label(0), exact: true }).count(), 0, 'a row that was recycled has no element');
+  // The list is one stop: Tab leaves the canvas for the next control of the page. Shift+Tab comes back to the
+  // canvas, and once more into the list at the same row.
+  await key(page, 'Tab');
+  assert.deepEqual([await page.evaluate(() => document.activeElement.id), (await read(page)).focus, (await active(page)).exists], ['details', undefined, false]);
+  await page.keyboard.press('Shift+Tab'); await settle(page);
+  assert.deepEqual([await page.evaluate(() => document.activeElement.id), (await read(page)).focus], ['scene', undefined]);
+  await page.keyboard.press('Shift+Tab'); await settle(page);
+  assert.deepEqual([await page.evaluate(() => document.activeElement.id), (await read(page)).focus, (await active(page)).place], ['scene', 'k12', 13]);
   // Space chooses the row with the focus when it is released.
   await page.keyboard.down('Space'); await settle(page); assert.equal((await read(page)).selected, 'k2');
   await page.keyboard.up('Space'); await settle(page); assert.equal((await read(page)).selected, 'k12');
