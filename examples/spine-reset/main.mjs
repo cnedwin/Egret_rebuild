@@ -24,6 +24,17 @@ export async function prepare(version='v2',animation='move'){
  try{await local.ready;if(ticket!==local)throw Error('SUPERSEDED');nextFrame=local.capture(options);upload=host.stageSharedFrame(nextFrame);const ready=await upload.ready;if(ticket!==local)throw Error('SUPERSEDED');uploadReady=ready;phase='staged';describe();return {ready,...inspect()};}
  catch(error){if(ticket===local){upload?.dispose();local.dispose();phase='live';lastError=error.code??String(error);describe();}throw error;}
 }
+// As prepare, keeping the playback: the candidate takes up the active player's tracks where they stand
+// when it is captured, and CPU commit and Submit then proceed as for reset.
+export async function preserve(version='v2'){
+ flow?.cancel();upload?.dispose();ticket?.dispose();lastError=undefined;
+ let local;
+ try{local=slot.requestPreserving({version,loader:loaders[version],assetId:'e_character',onEvent:e=>events.push({owner:'replacement',...e})});}
+ catch(error){phase='live';lastError=error.code??String(error);describe();throw error;}
+ ticket=local;phase='loading';describe();
+ try{await local.ready;if(ticket!==local)throw Error('SUPERSEDED');nextFrame=local.capture(options);upload=host.stageSharedFrame(nextFrame);const ready=await upload.ready;if(ticket!==local)throw Error('SUPERSEDED');uploadReady=ready;phase='staged';describe();return {ready,...inspect()};}
+ catch(error){if(ticket===local){upload?.dispose();local.dispose();phase='live';lastError=error.code??String(error);describe();}throw error;}
+}
 export async function fail(){try{await prepare('v2','missing-exact-name');}catch{}return inspect();}
 export async function cancel(){flow?.cancel();upload?.dispose();ticket?.dispose();await host.whenIdle();phase='live';describe();return inspect();}
 function checkUploadGeneration(){const session=host.getSessionStatus();if(session.state!=='ready'||uploadReady?.generation!==session.generation)throw Object.assign(Error('FLOW_STALE_GENERATION'),{code:'FLOW_STALE_GENERATION'});}
@@ -71,6 +82,6 @@ export const ready=(async()=>{
  flow=createRecoveryFlow({engine,host,slot,frameOptions:options});
  oldFrame=engine.captureSharedFrame(options);const pixels=await present(oldFrame);phase='live';describe();return pixels;
 })();void ready.catch(error=>{lastError=String(error);phase='failed';describe();});
-const actions={step,recover,prepare,commit,submit,cancel,fail,stale,replace,replayOld,replayCandidate,replayRetired,close};
+const actions={step,recover,prepare,preserve,commit,submit,cancel,fail,stale,replace,replayOld,replayCandidate,replayRetired,close};
 for(const button of document.querySelectorAll('[data-action]'))button.addEventListener('click',()=>{Promise.resolve().then(()=>actions[button.dataset.action]()).catch(error=>{lastError=error.code??String(error);describe();});});
 window.addEventListener('pagehide',()=>{void close();},{once:true});

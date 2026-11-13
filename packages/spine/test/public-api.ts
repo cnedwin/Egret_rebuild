@@ -54,4 +54,16 @@ const resetRequest:SpineResetRequest={policy:'reset',version:'v2',loader,assetId
 const resetTicket:SpineResetTicket=resetSlot.request(resetRequest);
 const resetState:SpineResetState=resetTicket.state,resetFrame:SharedRenderFrame2D=resetTicket.capture({width:64,height:64});
 const resetActive:SpineResetActive=resetTicket.commit();resetSlot.getActive().instance.advance({tickId:90,elapsedSeconds:10,deltaSeconds:0.05});
-void [resetState,resetFrame,resetActive,resetTicket.ready,resetSlot.isDisposed];resetSlot.dispose();
+void [resetState,resetFrame,resetActive,resetTicket.ready,resetSlot.isDisposed];
+
+import type {SpinePreserveRequest} from '@egret/spine';
+const preserveRequest:SpinePreserveRequest={version:'v3',loader,assetId:'e_json',onEvent:(event:SpinePlaybackEvent)=>{void event;}};
+const preserveTicket:SpineResetTicket=resetSlot.requestPreserving(preserveRequest),preserved:SpineResetActive=preserveTicket.commit();
+void [preserveTicket.ready,preserveTicket.state,preserved.instance.getSnapshot().tracks];
+// @ts-expect-error The playback is the active player's: a preserving request names no animation.
+resetSlot.requestPreserving({version:'v3',loader,assetId:'e_json',animation:'walk'});
+// @ts-expect-error A preserving request has no policy field; reset requests go through request.
+resetSlot.requestPreserving({policy:'reset',version:'v3',loader,assetId:'e_json'});
+// @ts-expect-error The asset is required.
+resetSlot.requestPreserving({version:'v3',loader});
+resetSlot.dispose();

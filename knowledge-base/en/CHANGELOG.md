@@ -16,6 +16,10 @@ Outfit Studio opens an exported project in the running page. The file is admitte
 
 SharedFrame2D is the public 2D frame path for WebGPU and WebGL2. The older Canvas Host, legacy frame captures and prototype scene3d Host were retired. Ordered cross-page batching and retained command, packing and batch records are available on the shared path. The integrated pixel comparisons were software-rendered. The optional debug monitor and GPU timing harness report their available counters and timing sources. [#187](https://github.com/cnedwin/Egret_rebuild/pull/187) · [#188](https://github.com/cnedwin/Egret_rebuild/pull/188) · [#190](https://github.com/cnedwin/Egret_rebuild/pull/190) · [#193](https://github.com/cnedwin/Egret_rebuild/pull/193)
 
+## Spine replacement that keeps playback — 2026-11-14
+
+The Spine reset slot gains `requestPreserving`. A new asset version takes up each track's animation and queue, the skins, rate, pause and placement where the player stands when the candidate is captured. The asset must have each carried animation under the same name, with the same length and event schedule; one that cannot continue the playback is refused before publication, and so is playback that is mixing. The preserved player was held tick by tick to the player it replaces, and the example passed its WebGL2 browser check in headless Chromium with software rendering. WebGPU, hardware and phone rows have not been run. [#86](https://github.com/cnedwin/Egret_rebuild/issues/86) · [Contract](docs/spine-reset-slot.md#keeping-the-playback)
+
 ## Native canvas text entry — 2026-11-14
 
 An opt-in browser adapter places a native field over the game canvas. Its tests cover public API behavior and a Chromium protocol-driven composition example. The managed editing path remains available separately. Physical input methods, mobile keyboards for this adapter, Safari and Firefox remain to be qualified. [#195](https://github.com/cnedwin/Egret_rebuild/pull/195)
