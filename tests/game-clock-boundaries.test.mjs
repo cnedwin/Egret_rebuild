@@ -52,7 +52,7 @@ function isolated(action){
 test('GC18 actual public roots have no executable clock factories/types/brands',async()=>{
   // Contracts has no repository consumer alias; use its actual built public root,
   // as the production checker does, without granting any private module import.
-  for(const specifier of ['../packages/contracts/dist/index.js','@egret/runtime','@egret/engine','@egret/engine/web','@egret/engine/webgpu','@egret/engine/text','@egret/runtime/text','@egret/project']){
+  for(const specifier of ['../packages/contracts/dist/index.js','@egret/runtime','@egret/engine','@egret/engine/webgl2','@egret/engine/webgpu','@egret/engine/text','@egret/runtime/text','@egret/project']){
     const values=await import(specifier);
     for(const name of ['GameClockOptions','GameClockState','GameClockTick','GameClockHandler','GameClock','GameClockSubscription','admitGameClockOptions','createGameClockOwner','AdmittedGameClockOptions','GameClockContext','GameClockOwner','clockBrand','subscriptionBrand','createGameClock']) assert.equal(Object.hasOwn(values,name),false,specifier+': '+name);
   }
@@ -65,7 +65,7 @@ const mutations=[
   ['admission-helper','packages/engine/dist/index.d.ts',raw=>raw+"\nexport {admitGameClockOptions} from './gameClock.js';\n",'root: private clock authority leaked: admitGameClockOptions'],
   ['owner-helper','packages/engine/dist/text.d.ts',raw=>raw+"\nexport {createGameClockOwner} from './gameClock.js';\n",'engine/text: private clock authority leaked: createGameClockOwner'],
   ['admitted-options','packages/contracts/dist/index.d.ts',raw=>raw+'\nexport interface AdmittedGameClockOptions {}\n','contracts: private clock authority leaked: AdmittedGameClockOptions'],
-  ['owner-context','packages/engine/dist/web/index.d.ts',raw=>raw+'\nexport interface GameClockContext {}\n','web: private clock authority leaked: GameClockContext'],
+  ['owner-context','packages/engine/dist/web/resources.d.ts',raw=>raw+'\nexport interface GameClockContext {}\n','engine/web/resources: private clock authority leaked: GameClockContext'],
   ['owner-type','packages/runtime/dist/index.d.ts',raw=>raw+'\nexport interface GameClockOwner {}\n','runtime: private clock authority leaked: GameClockOwner'],
   ['aliased-private-module','packages/engine/dist/index.d.ts',raw=>raw+"\nexport type * as EscapedClock from './gameClock.js';\n",'root: private clock module leaked'],
   ['clock-brand-facade','packages/engine/dist/index.d.ts',raw=>raw+'\nexport declare const clockBrand: unique symbol;\n','root: private clock authority leaked: clockBrand'],

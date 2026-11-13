@@ -82,20 +82,20 @@ const invalidSequenceMode:SequencePlaybackMode='stop';
 import {sampleSequenceClip} from '@egret/engine';
 void invalidSequenceFrame;void invalidSequenceInput;void invalidSequenceMode;
 
-import type {RenderFrame2D, RenderHostAdapter} from '@egret/engine';
-declare const capturedFrame:RenderFrame2D;
+import type {SharedRenderFrame2D, SharedRenderHostAdapter} from '@egret/engine';
+declare const capturedFrame:SharedRenderFrame2D;
 // @ts-expect-error Frames are immutable headers.
 capturedFrame.width=10;
 // @ts-expect-error Commands are readonly snapshots.
 capturedFrame.commands.push(capturedFrame.commands[0]!);
-// @ts-expect-error Geometry is immutable.
-capturedFrame.commands[0]!.matrix.tx=1;
-declare const baseRenderHost:RenderHostAdapter;
+// @ts-expect-error Regions are immutable.
+capturedFrame.regions[0]!.trimX=1;
+declare const baseRenderHost:SharedRenderHostAdapter;
 // @ts-expect-error Async rendering cannot satisfy the synchronous submission port.
-const asyncRenderHost:RenderHostAdapter={...baseRenderHost,async renderFrame(){}};
+const asyncRenderHost:SharedRenderHostAdapter={...baseRenderHost,async renderSharedFrame(){}};
 
 import {createImageData2D} from '@egret/engine';
-import type {ImageData2D, ImageCommand2D, RenderCommand2D} from '@egret/engine';
+import type {ImageData2D, SharedImageCommand2D, SharedRenderCommand2D} from '@egret/engine';
 // @ts-expect-error IMAGE_CASE forged-nominal TS2741: metadata cannot forge the private image brand.
 const forgedImage:ImageData2D={width:1,height:1,bytesPerRow:4,byteLength:4,format:'rgba8unorm',colorSpace:'srgb',alphaMode:'straight',origin:'top-left'};
 // @ts-expect-error IMAGE_CASE shared-input TS2322: shared storage cannot be an owned-image input.
@@ -107,11 +107,11 @@ declare const ownedImage:ImageData2D;
 ownedImage.width=2;
 // @ts-expect-error IMAGE_CASE wrong-format TS2322: only the fixed CPU format is admitted.
 createImageData2D({width:1,height:1,pixels:new Uint8Array(new ArrayBuffer(4)),format:'bgra8unorm'});
-// @ts-expect-error IMAGE_CASE missing-region TS2741: every image command has an explicit source rectangle.
-const incompleteImageCommand:ImageCommand2D={kind:'image',matrix:{a:1,b:0,c:0,d:1,tx:0,ty:0},rect:{x:0,y:0,width:1,height:1},alpha:1,clips:[],imageIndex:0};
-declare const mixedCommand:RenderCommand2D;
+declare const completeImageCommand:SharedImageCommand2D, mixedCommand:SharedRenderCommand2D;
+// @ts-expect-error IMAGE_CASE missing-region TS2741: every image command names its region.
+const incompleteImageCommand:SharedImageCommand2D=(({regionIndex,...rest})=>rest)(completeImageCommand);
 // @ts-expect-error IMAGE_CASE unnarrowed-color TS2339: a mixed command needs kind narrowing.
-mixedCommand.color;
+mixedCommand.fillColor;
 void forgedImage;void incompleteImageCommand;
 
 import {Texture,Bitmap} from '@egret/engine';
@@ -133,15 +133,15 @@ const structuralTexture:Texture={imageData:ownedImage,sourceRect:{x:0,y:0,width:
 void structuralTexture;
 
 // @ts-expect-error CAPTURE_CASE engine-port TS2305: low-level capture stays runtime-only.
-import {collectFrameContent} from '@egret/engine';
+import {collectSharedFrameContent} from '@egret/engine';
 // @ts-expect-error CAPTURE_CASE engine-type TS2305: low-level content stays runtime-only.
-import type {CapturedContent2D} from '@egret/engine';
-import type {CapturedContent2D as RuntimeContent} from '../../packages/runtime/dist/index.js';
+import type {CapturedSharedContent2D} from '@egret/engine';
+import type {CapturedSharedContent2D as RuntimeContent} from '../../packages/runtime/dist/index.js';
 declare const runtimeContent:RuntimeContent;
 // @ts-expect-error CAPTURE_CASE readonly-commands TS2540: captured command arrays cannot be replaced.
 runtimeContent.commands=[];
-// @ts-expect-error CAPTURE_CASE readonly-images TS2339: saved image tables cannot be appended to.
-runtimeContent.images!.push(ownedImage);
+// @ts-expect-error CAPTURE_CASE readonly-pages TS2339: saved page tables cannot be appended to.
+runtimeContent.pages.push(runtimeContent.pages[0]!);
 
 // Append to R/tests/types/negative.ts; the existing checker removes these suppressions.
 import type {Bitmap as RegionNegativeBitmap} from '@egret/engine';
@@ -315,39 +315,39 @@ meshNegativeNode.naturalWidth;
 // @ts-expect-error MESH_CASE no-max-triangles-option TS2353
 meshNegativeNode.getBounds({maxTriangles: 1});
 
-// Task 5: each predicted code requires one actual unsuppressed receipt at root.
-import {TEXTURED_FRAME_PROFILE_2D as NegativeProfileLiteral, createEngineForProfile as NegativeProfileFactory} from '@egret/engine';
-import type {Engine as NegativeProfileEngine, EngineOptions as NegativeProfileEngineOptions, TexturedRenderFrame2D as NegativeProfileFrame, TexturedMeshCommand2D as NegativeProfileMesh, TexturedRenderHostAdapter as NegativeProfileHost, RenderFrame2D as NegativeProfileLegacyFrame, RenderCommand2D as NegativeProfileLegacyCommand} from '@egret/engine';
+// The shared profile is the only one. Each predicted code requires one actual unsuppressed receipt at root.
+import {SHARED_FRAME_PROFILE_2D as NegativeProfileLiteral, createEngineForProfile as NegativeProfileFactory} from '@egret/engine';
+import type {Engine as NegativeProfileEngine, EngineOptions as NegativeProfileEngineOptions, SharedRenderFrame2D as NegativeProfileFrame, SharedRenderHostAdapter as NegativeProfileHost} from '@egret/engine';
 declare const negativeProfileEngine: NegativeProfileEngine;
 declare const negativeProfileEngineOptions: NegativeProfileEngineOptions;
 declare const negativeProfileFrame: NegativeProfileFrame;
-declare const negativeProfileMesh: NegativeProfileMesh;
-// @ts-expect-error TEXTURED_FRAME_CASE unsupported-profile TS2345
-NegativeProfileFactory(negativeProfileEngineOptions, 'egret.textured-frame2d/2');
-// @ts-expect-error TEXTURED_FRAME_CASE factory-missing-profile TS2554
+declare const negativeProfileFields: Omit<NegativeProfileFrame, Extract<keyof NegativeProfileFrame, symbol>>;
+// @ts-expect-error FRAME_PROFILE_CASE unsupported-profile TS2345
+NegativeProfileFactory(negativeProfileEngineOptions, 'egret.shared-frame2d/2');
+// @ts-expect-error FRAME_PROFILE_CASE removed-textured-profile TS2345
+NegativeProfileFactory(negativeProfileEngineOptions, 'egret.textured-frame2d/1');
+// @ts-expect-error FRAME_PROFILE_CASE factory-missing-profile TS2554
 NegativeProfileFactory(negativeProfileEngineOptions);
-// @ts-expect-error TEXTURED_FRAME_CASE factory-extra-argument TS2554
+// @ts-expect-error FRAME_PROFILE_CASE factory-extra-argument TS2554
 NegativeProfileFactory(negativeProfileEngineOptions, NegativeProfileLiteral, {});
-// @ts-expect-error TEXTURED_FRAME_CASE readonly-engine-profile TS2540
-negativeProfileEngine.texturedFrameProfile = NegativeProfileLiteral;
-// @ts-expect-error TEXTURED_FRAME_CASE wrong-frame-options TS2353
-negativeProfileEngine.captureTexturedFrame({width: 1, height: 1, maxTriangles: 1});
-// @ts-expect-error TEXTURED_FRAME_CASE plain-frame-missing-brand TS2741
-const negativeProfilePlainFrame: NegativeProfileFrame = {profile: NegativeProfileLiteral, frameId: 1, width: 1, height: 1, clearColor: 0, clearAlpha: 0, commands: [], images: [], geometries: []};
-// @ts-expect-error TEXTURED_FRAME_CASE textured-frame-to-legacy TS2322
-const negativeProfileLegacyFrame: NegativeProfileLegacyFrame = negativeProfileFrame;
-// @ts-expect-error TEXTURED_FRAME_CASE mesh-command-to-legacy TS2322
-const negativeProfileLegacyCommand: NegativeProfileLegacyCommand = negativeProfileMesh;
-// @ts-expect-error TEXTURED_FRAME_CASE missing-required-tables TS2739
-const negativeProfileMissingTables: Omit<NegativeProfileFrame, Extract<keyof NegativeProfileFrame, symbol>> = {profile: NegativeProfileLiteral, frameId: 1, width: 1, height: 1, clearColor: 0, clearAlpha: 0, commands: []};
-// @ts-expect-error TEXTURED_FRAME_CASE readonly-table-push TS2339
+// @ts-expect-error FRAME_PROFILE_CASE readonly-engine-profile TS2540
+negativeProfileEngine.sharedFrameProfile = NegativeProfileLiteral;
+// @ts-expect-error FRAME_PROFILE_CASE wrong-frame-options TS2353
+negativeProfileEngine.captureSharedFrame({width: 1, height: 1, maxTriangles: 1});
+// @ts-expect-error FRAME_PROFILE_CASE plain-frame-missing-brand TS2741
+const negativeProfilePlainFrame: NegativeProfileFrame = {...negativeProfileFields};
+// @ts-expect-error FRAME_PROFILE_CASE removed-legacy-capture TS2339
+negativeProfileEngine.captureFrame({width: 1, height: 1});
+// @ts-expect-error FRAME_PROFILE_CASE removed-textured-capture TS2551
+negativeProfileEngine.captureTexturedFrame({width: 1, height: 1});
+// @ts-expect-error FRAME_PROFILE_CASE readonly-table-push TS2339
 negativeProfileFrame.geometries.push();
-// @ts-expect-error TEXTURED_FRAME_CASE readonly-frame-field TS2540
+// @ts-expect-error FRAME_PROFILE_CASE readonly-frame-field TS2540
 negativeProfileFrame.frameId = 2;
-// @ts-expect-error TEXTURED_FRAME_CASE async-host-port TS2322
-const negativeProfileAsyncPort: NegativeProfileHost['renderTexturedFrame'] = async (_frame: NegativeProfileFrame) => undefined;
-void negativeProfilePlainFrame; void negativeProfileLegacyFrame; void negativeProfileLegacyCommand;
-void negativeProfileMissingTables; void negativeProfileAsyncPort;
+// @ts-expect-error FRAME_PROFILE_CASE async-host-port TS2322
+const negativeProfileAsyncPort: NegativeProfileHost['renderSharedFrame'] = async (_frame: NegativeProfileFrame) => undefined;
+void negativeProfilePlainFrame;
+void negativeProfileAsyncPort;
 
 // Predictions are frozen before compilation and checked individually unsuppressed.
 import * as ClockNegativePublic from '@egret/engine';

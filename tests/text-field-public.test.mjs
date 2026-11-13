@@ -557,24 +557,4 @@ test('TF08: hidden leaf node admission and field output/clip units retain exact 
       assert.equal(capture(base).frameId, valid.frameId + 1);
     } finally { for (let index = nodes.length - 1; index >= 0; index--) nodes[index].dispose(); }
   });
-  // These are the caps of the textured capture. The caps of the shared capture are in shared-capture-budgets.
-  await t.test('field shares 65536 authoring/output and 262144 clip-reference units', async (t) => {
-    const base = await fixture(t, {}, { maxResidentEntries: 0 });
-    const { field } = await createField(base); field.setRequest(request()); await field.prepare();
-    const parents = []; let parent = base.engine.stage;
-    for (let index = 0; index < 4; index++) { const node = new publicEngine.Sprite(); node.clipRect = { x: 0, y: 0, width: 10, height: 10 }; parents.push(node); parent.addChild(node); parent = node; }
-    parent.addChild(field); parent.graphics.beginFill(1);
-    for (let index = 0; index < 65535; index++) parent.graphics.drawRect(0, 0, 1, 1);
-    const valid = base.engine.captureTexturedFrame(FRAME); assert.equal(valid.commands.length, 65536);
-    assert.equal(valid.commands[65535].kind, 'image');
-    assert.equal(valid.commands.reduce((sum, command) => sum + command.clips.length, 0), 262144);
-    field.clipRect = { x: 0, y: 0, width: 10, height: 10 };
-    assert.throws(() => base.engine.captureTexturedFrame(FRAME), errorIs('FRAME_BUDGET_EXCEEDED'), '65535*4 + field*5 = 262145');
-    field.clipRect = undefined; parent.graphics.drawRect(0, 0, 1, 1);
-    field.visible = false;
-    assert.throws(() => base.engine.captureTexturedFrame(FRAME), errorIs('FRAME_BUDGET_EXCEEDED'), 'hidden text still consumes its authoring unit');
-    parent.graphics.clear(); assert.equal(base.engine.captureTexturedFrame(FRAME).commands.length, 0);
-    field.visible = true; assert.equal(base.engine.captureTexturedFrame(FRAME).commands.length, 1);
-    for (let index = parents.length - 1; index >= 0; index--) parents[index].dispose();
-  });
 });

@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as gpu from '@egret/engine/webgpu';
-import * as canvas from '@egret/engine/web';
+import * as webgl2 from '@egret/engine/webgl2';
 import {
   usingGpu, requireUpload, requireSession, observe, until, tick, turn,
   hasCode, expectCode, capture, admitted, submit, readyUpload, egret,
@@ -148,7 +148,7 @@ test('GPU H08 a readback names its generation and no entry gains a session name 
     assert.equal(sharedValue.generation, h.getSessionStatus().generation);
     const originalKeys = ['alphaMode', 'bytes', 'colorSpace', 'format', 'frameId', 'height', 'serial', 'sourceFormat', 'width'];
     assert.deepEqual(Object.keys(sharedValue).sort(), [...originalKeys, 'generation'].sort());
-    for (const entry of [egret, canvas, gpu])
+    for (const entry of [egret, webgl2, gpu])
       for (const name of ['SharedDeviceSessionState', 'SharedDeviceSessionStatus', 'SharedFrameUploadOptions',
         'SharedFrameUploadReady', 'SharedFrameSubmission', 'SharedFrameUpload'])
         assert.equal(Object.hasOwn(entry, name), false, name + ' remains erased');

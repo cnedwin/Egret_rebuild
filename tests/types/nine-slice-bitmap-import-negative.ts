@@ -6,8 +6,6 @@ import { NineSliceBitmapOptions as EngineOptionsValue } from '@egret/engine';
 import { NineSliceBitmapOptions as RuntimeOptionsValue } from '@egret/runtime';
 // NLB_TYPE_CASE NLB-I03: the dependency-free contracts entry owns no display leaf.
 import { NineSliceBitmap as ContractLeaf } from '@egret/contracts';
-// NLB_TYPE_CASE NLB-I04: the Canvas entry owns no leaf value.
-import { NineSliceBitmap as CanvasLeaf } from '@egret/engine/web';
 // NLB_TYPE_CASE NLB-I05: the opt-in WebGPU entry owns no leaf value.
 import { NineSliceBitmap as WebGPULeaf } from '@egret/engine/webgpu';
 // NLB_TYPE_CASE NLB-I07: the explicit Engine text entry gains no panel leaf.

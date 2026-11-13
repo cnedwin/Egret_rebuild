@@ -6,7 +6,7 @@ import * as sdk from '@egret/engine';
 import { createTextRasterCache, createTextField } from '@egret/engine/text';
 import { deferred, flush, host } from './helpers.mjs';
 import { literalProvider, request } from './text-raster-public-helpers.mjs';
-import { captureDrawn } from './helpers/drawn-frame.mjs';
+import { captureDrawn, drawnFrame } from './helpers/drawn-frame.mjs';
 
 const scenario = (name, run) => test(name, { timeout: 10000 }, run);
 const LEFT = 'pilot-left', RIGHT = 'pilot-right';
@@ -146,7 +146,7 @@ async function starting(t, options = {}) {
     return context.createPlan({ baselineOffset: 5, lines: value.sourceLines.map(() => ({
       advance: 8, hasInk: true, inkLeft: -1, inkTop: -4, inkRight: 7, inkBottom: 2 })) });
   } } : {});
-  const port = host(options.hostOverrides), session = create({ host: port.adapter, profile: options.profile ?? 'canvas-2d',
+  const port = host(options.hostOverrides), session = create({ host: port.adapter, profile: options.profile ?? 'shared-2d',
     textureProvider: textures.provider, textProvider: literal.provider,
     fontFamilies: { ahem: 'P02 CPU Ahem substitute', cjk: 'P02 CPU CJK substitute' },
     ...(options.restore === undefined ? {} : { restore: options.restore }) });
@@ -183,7 +183,7 @@ function oldVisible(f, old, id = LEFT) {
   const current = bindings(f, id); assert.equal(current.root, old.root); assert.equal(current.outfit, old.outfit);
   assert.equal(current.outfitLease, old.outfitLease); assert.deepEqual(current.outfit.sourceRect, FULL);
   assert.deepEqual([current.outfit.naturalWidth, current.outfit.naturalHeight], [16, 16]);
-  const frame = f.session.capture(); assert.ok(frame.images.includes(old.outfitLease.value.imageData));
+  const frame = drawnFrame(f.session.capture()); assert.ok(frame.images.includes(old.outfitLease.value.imageData));
 }
 function survivor(f, old) {
   const current = bindings(f, RIGHT);
@@ -206,7 +206,7 @@ scenario('RS02 two genuine actors independently lease the same atlas; initial sl
   assert.equal(f.textures.loads('atlas-v1'), 1); assert.equal(left.body.textureLease, left.lease);
   assert.equal(right.body.textureLease, right.lease); assert.equal(left.playback.state, 'running'); assert.equal(right.playback.state, 'running');
   assert.deepEqual(left.body.sourceRect, POSE0); assert.deepEqual(right.body.sourceRect, POSE0);
-  const frame = f.session.capture(), badgeImage = f.session.scene.badgeLease.value.imageData;
+  const frame = drawnFrame(f.session.capture()), badgeImage = f.session.scene.badgeLease.value.imageData;
   const badgeCommand = frame.commands.find(command => command.kind === 'image'
     && frame.images[command.imageIndex] === badgeImage);
   assert.ok(badgeCommand, 'The ordinary frame must include the borrowed badge image');
@@ -278,7 +278,7 @@ scenario('RS11 latest D commits, target identity stays, and old owned B is revok
   assert.equal(f.snapshot().committedOutfit, 'D'); assert.equal(f.session.inspect().selectedId, RIGHT);
   assert.deepEqual(f.actor().outfit.sourceRect, FULL); code(() => bLease.value, 'ASSET_LEASE_RELEASED');
   assert.equal(f.textures.disposed(bValue), 1); survivor(f, right);
-  assert.ok(f.session.capture().images.includes(f.actor().outfit.textureLease.value.imageData));
+  assert.ok(drawnFrame(f.session.capture()).images.includes(f.actor().outfit.textureLease.value.imageData));
 });
 
 scenario('RS12 already-delivered stale B lease retires without revoking its independent waiter', async t => {
@@ -374,7 +374,7 @@ scenario('RS18 real anchor/clip/rotation and captured painter order preserve sep
   assert.deepEqual([actor.root.anchorOffsetX, actor.root.anchorOffsetY], [8, 16]);
   assert.deepEqual(actor.root.hitArea, FULL); assert.equal(actor.root.touchEnabled, true); assert.equal(actor.root.touchChildren, false);
   f.session.setView(LEFT, { clip: true, rotation: 0 }); assert.deepEqual(actor.root.clipRect, { x: 0, y: 0, width: 8, height: 16 });
-  let frame = f.session.capture();
+  let frame = drawnFrame(f.session.capture());
   const bodyImage = actor.lease.value.imageData, outfitImage = actor.outfit.textureLease.value.imageData;
   const bodyCommand = frame.commands.findIndex(command => command.kind === 'image' && frame.images[command.imageIndex] === bodyImage);
   const outfitCommand = frame.commands.findIndex(command => command.kind === 'image' && frame.images[command.imageIndex] === outfitImage);
@@ -383,7 +383,7 @@ scenario('RS18 real anchor/clip/rotation and captured painter order preserve sep
   assert.deepEqual(actor.root.localToGlobal(8, 8), { x: 80, y: 96 });
   f.session.setView(LEFT, { clip: false, rotation: 0 });
   assert.deepEqual(actor.root.localToGlobal(8, 8), { x: 56, y: 72 });
-  frame = f.session.capture(); assert.equal(frame.width, 192); assert.deepEqual(actor.outfit.sourceRect, FULL);
+  frame = drawnFrame(f.session.capture()); assert.equal(frame.width, 192); assert.deepEqual(actor.outfit.sourceRect, FULL);
 });
 
 scenario('RS20 closed business snapshot reconstructs new owners at phase zero, retaining pause choice', async t => {
@@ -455,11 +455,10 @@ scenario('RS21 thrown undefined remains a primary occurrence beside the original
   await closing.done; assertClose(closing); assert.equal(f.session.inspect().state, 'closed');
 });
 
-scenario('RS22 an ordinary injected Host refuses genuine textured negotiation without starting', async () => {
+scenario('RS22 an injected Host that does not state the shared profile is refused without starting', async () => {
   await (baselinePromise ??= genuineBaseline());
   const port = host();
-  await assert.rejects(sdk.createEngineForProfile({ host: port.adapter }, sdk.TEXTURED_FRAME_PROFILE_2D),
+  await assert.rejects(sdk.createEngineForProfile({ host: port.adapter }, sdk.SHARED_FRAME_PROFILE_2D),
     error => error.code === 'ENGINE_RENDER_PROFILE_UNSUPPORTED');
   assert.deepEqual(port.trace, []); assert.equal(port.timers.size, 0);
-  // Real Canvas and application profile refusal are separate browser/main witnesses.
 });

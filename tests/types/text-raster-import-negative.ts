@@ -2,7 +2,7 @@
 import {createTextRasterCache as rootFactory} from '@egret/engine';
 // TEXT_RASTER_IMPORT_CASE runtime-root-factory TS2305
 import {createTextRasterCache as runtimeRootFactory} from '@egret/runtime';
-// TEXT_RASTER_IMPORT_CASE canvas-factory TS2305
+// TEXT_RASTER_IMPORT_CASE canvas-factory TS2307
 import {createTextRasterCache as canvasFactory} from '@egret/engine/web';
 // TEXT_RASTER_IMPORT_CASE gpu-factory TS2305
 import {createTextRasterCache as gpuFactory} from '@egret/engine/webgpu';

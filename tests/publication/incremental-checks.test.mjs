@@ -488,75 +488,6 @@ test('JSON selectors fail closed and decode duplicate keys without losing litera
 });
 
 
-// Synthetic snapshot comparison units are separate from actual collector evidence.
-const snapshotTool=()=>import('../../tools/prepare-snapshot-maintenance.mjs');
-function snapshotFixture(){
- const pin={path:'same.js',bytes:1,sha256:'a'.repeat(64)};
- return {schemaVersion:1,sourceOnly:true,owners:Object.fromEntries(['repository','compiler','compiler-native','project-json','foundation'].map(x=>[x,path.resolve('synthetic',x)])),aliases:[],buildResolutions:[],importMap:{},inventory:[{owner:'repository',...pin},{owner:'foundation',...pin}],modules:[],routes:[]};
-}
-test('snapshot comparison retains owner identity and reports added removed and changed inputs',async()=>{
- const {compareSnapshots}=await snapshotTool(),before=snapshotFixture(),after=structuredClone(before);
- after.inventory[0].sha256='b'.repeat(64);after.inventory.splice(1,1);after.inventory.push({...before.inventory[1],path:'new.js'});
- const r=compareSnapshots('atlas-frame',before,after);
- assert.deepEqual(r.changes.map(x=>[x.owner,x.path,x.change]),[['foundation','new.js','added'],['foundation','same.js','removed'],['repository','same.js','changed']]);
- assert.equal(r.counts.changed,1);assert.equal(r.counts.removed,1);assert.equal(r.counts.added,1);
-});
-test('snapshot comparison has no implied changes without a baseline',async()=>{
- const {compareSnapshots}=await snapshotTool();const r=compareSnapshots('atlas-frame',null,snapshotFixture());
- assert.equal(r.comparison,'not-provided');assert.deepEqual(r.changes,[]);assert.equal(r.counts.observed,2);
-});
-test('snapshot owners and non-inventory structure remain independent review differences',async()=>{
- const {compareSnapshots}=await snapshotTool(),before=snapshotFixture(),after=structuredClone(before);
- after.owners.foundation=path.resolve('relocated');after.aliases.push({alias:'observed change'});after.routes.push({route:'/changed'});
- const r=compareSnapshots('atlas-frame',before,after);
- assert.equal(r.ownerChanges.length,1);assert.equal(r.ownerChanges[0].owner,'foundation');assert.deepEqual(r.structureChanges,['aliases','routes']);assert.deepEqual(r.changes,[]);
-});
-test('snapshot identity refuses duplicates foreign owners path aliases and unsupported schemas',async()=>{
- const {compareSnapshots}=await snapshotTool();assert.throws(()=>compareSnapshots(['atlas-frame'],null,snapshotFixture()));
- for(const mutate of [s=>s.inventory.push(s.inventory[0]),s=>s.inventory[0].sha256=['a'.repeat(64)],s=>s.inventory[0].owner='foreign',s=>s.inventory[0].path='../escape',s=>s.inventory[0].path='dir\\same.js',s=>s.sourceOnly=false,s=>s.owners.foreign=path.resolve('foreign'),s=>s.extra=true,s=>s.modules.push({owner:'foreign',path:'same.js'})]){
-  const s=snapshotFixture();mutate(s);assert.throws(()=>compareSnapshots('atlas-frame',null,s));
- }
-});
-test('resource snapshot row roles remain visible even when raw bytes agree',async()=>{
- const {compareSnapshots}=await snapshotTool();
- const s={schemaVersion:1,kind:'RESOURCE_SCENE_SOURCE_SNAPSHOT_NO_BROWSER',sourceOnly:true,owners:Object.fromEntries(['sdk','application','foundation'].map(x=>[x,path.resolve('synthetic',x)])),helperBootstrap:{},collectorImplementation:{},foundationAdmission:{},authoredImportMap:{},servedOriginalHTML:{},inventory:[{owner:'sdk',path:'same.js',bytes:1,sha256:'a'.repeat(64),roles:['source']}],modules:[],closures:{},routes:[],limits:{},moduleBytes:1,routeBytes:1,acceptance:{}};
- const after=structuredClone(s);after.inventory[0].roles.push('module');after.acceptance.changed=true;
- const r=compareSnapshots('resource-scene',s,after);assert.equal(r.changes[0].change,'changed');assert.deepEqual(r.structureChanges,['acceptance']);
-});
-test('baseline proposal is comparison data and never follows nested artifact or owner paths',async()=>{
- const {readSnapshotBaseline}=await snapshotTool();const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'egret snapshot ')));
- try{
-  const file=path.join(root,'baseline.json'),snapshot=snapshotFixture();
-  fs.writeFileSync(file,JSON.stringify({kind:'snapshot-maintenance',schemaVersion:1,family:'atlas-frame',status:'untrusted-success',snapshot,baseline:{path:path.join(root,'does-not-exist.json')}}));
-  const r=readSnapshotBaseline('atlas-frame',file);assert.deepEqual(r.snapshot,snapshot);assert.equal(r.pin.bytes,fs.statSync(file).size);
-  fs.writeFileSync(file,'{"schemaVersion":1,"schema\\u0056ersion":1}');assert.throws(()=>readSnapshotBaseline('atlas-frame',file),/Duplicate/);
- }finally{fs.rmSync(root,{recursive:true,force:true});}
-});
-test('snapshot options allow only explicit families baseline and check modes',async()=>{
- const {parseSnapshotOptions}=await snapshotTool();
- assert.deepEqual(parseSnapshotOptions(['--family','atlas-frame']),{family:'atlas-frame'});
- assert.deepEqual(parseSnapshotOptions(['--check',path.resolve('proposal.json')]),{check:path.resolve('proposal.json')});
- for(const args of [[],['--family','foreign'],['--family','atlas-frame','--family','atlas-frame'],['--family','atlas-frame','--baseline','relative.json'],['--check',path.resolve('proposal.json'),'--family','atlas-frame'],['--family','atlas-frame','--collector',path.resolve('evil.mjs')]])assert.throws(()=>parseSnapshotOptions(args));
-});
-
-test('snapshot collection is CLI-only and refuses preloaded Node processes',async()=>{
- const tool=await snapshotTool();assert.equal(tool.prepareSnapshotReview,undefined);assert.equal(tool.runSnapshotMaintenance,undefined);
- const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'egret snapshot preload ')));
- try{
-  const preload=path.join(root,'preload.mjs');fs.writeFileSync(preload,'export {};');
-  const {pathToFileURL,fileURLToPath}=await import('node:url');
-  const run=spawnSync(process.execPath,['--import',pathToFileURL(preload).href,fileURLToPath(new URL('../../tools/prepare-snapshot-maintenance.mjs',import.meta.url)),'--family','resource-scene'],{encoding:'utf8'});
-  assert.notEqual(run.status,0);assert.match(run.stderr,/Fresh Node CLI/);assert.equal(run.stdout,'');
- }finally{fs.rmSync(root,{recursive:true,force:true});}
-});
-
-
-test('split application selection requires explicit absolute resource-family authority',async()=>{
- const {parseSnapshotOptions}=await snapshotTool(),app=path.resolve('separate app'),proposal=path.resolve('proposal.json');
- assert.deepEqual(parseSnapshotOptions(['--family','resource-scene','--application-root',app]),{family:'resource-scene','application-root':app});
- assert.deepEqual(parseSnapshotOptions(['--check',proposal,'--application-root',app]),{check:proposal,'application-root':app});
- for(const args of [['--family','atlas-frame','--application-root',app],['--family','resource-scene','--application-root','relative'],['--check',proposal,'--application-root','relative']])assert.throws(()=>parseSnapshotOptions(args));
-});
 const compilerTool=()=>import('../../tools/prepare-compiler-maintenance.mjs');
 function compilerFixture(){
  const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'egret compiler maintenance ')));
@@ -1755,8 +1686,20 @@ function worldCardHostPrevious(raw,file){
  }
  return raw;
 }
+// REMOVED-LEGACY-CAPTURE-HISTORY-BEGIN
+// The Engine declaration lost the members of the legacy and textured captures. This exact inverse restores its predecessor.
+const removedLegacyCaptureHistory = [{"path":"packages/engine/dist/Engine.d.ts","predecessor":{"path":"packages/engine/dist/Engine.d.ts","bytes":5576,"sha256":"77a535493e1224c3df9364cbf7578d041a3f35bf882ef748407e2286291bbabd"},"current":{"path":"packages/engine/dist/Engine.d.ts","bytes":4765,"sha256":"d3ef46dc3a1a664cb75c04cab500c0633bb973072f56b2097375ba5df9c6d2a1"},"inverse":[{"from":"    private executeSharedFrame;","to":"    private executeFrame;"},{"from":"    renderSharedFrame(options: SharedFrameOptions2D): SharedRenderFrame2D;","to":"    renderSharedFrame(options: SharedFrameOptions2D): SharedRenderFrame2D;\n    /** Share the existing lifecycle barrier and ID sequence without changing old options. */\n    private executeSharedFrame;"},{"from":"    advanceTime(sourceSeconds: number): GameClockTick | undefined;","to":"    advanceTime(sourceSeconds: number): GameClockTick | undefined;\n    captureFrame(options: FrameOptions2D): RenderFrame2D;\n    renderFrame(options: FrameOptions2D): RenderFrame2D;\n    captureTexturedFrame(options: FrameOptions2D): TexturedRenderFrame2D;\n    renderTexturedFrame(options: FrameOptions2D): TexturedRenderFrame2D;"},{"from":"    readonly sharedFrameProfile: SharedFrameProfile2D | undefined;","to":"    readonly sharedFrameProfile: SharedFrameProfile2D | undefined;\n    readonly texturedFrameProfile: TexturedFrameProfile2D | undefined;"},{"from":"    private readonly sharedRenderer;","to":"    private readonly sharedRenderer;\n    private readonly texturedRenderer;"},{"from":"    private releaseFrame;","to":"    private releaseFrame;\n    private readonly renderer;"},{"from":"    readonly shared: ((frame: SharedRenderFrame2D) => unknown) | undefined;\n    readonly sharedProfile: SharedFrameProfile2D | undefined;","to":"    readonly legacy: ((frame: RenderFrame2D) => unknown) | undefined;\n    readonly textured: ((frame: TexturedRenderFrame2D) => unknown) | undefined;\n    readonly profile: TexturedFrameProfile2D | undefined;\n    readonly shared?: ((frame: SharedRenderFrame2D) => unknown) | undefined;\n    readonly sharedProfile?: SharedFrameProfile2D | undefined;"},{"from":"import type { SharedFrameProfile2D, SharedFrameOptions2D, SharedRenderFrame2D } from '@egret/contracts';","to":"import type { FrameOptions2D, RenderFrame2D, TexturedFrameProfile2D, TexturedRenderFrame2D, SharedFrameProfile2D, SharedFrameOptions2D, SharedRenderFrame2D } from '@egret/contracts';"}]}];
+function removedLegacyCapturePrevious(raw,file){
+ const selected=removedLegacyCaptureHistory.find(row=>row.path===file);if(!selected)return raw;
+ const identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
+ if(JSON.stringify(identity(raw))!==JSON.stringify(selected.current))return raw;
+ let text=raw.toString('utf8');for(const inverse of selected.inverse){if(text.split(inverse.from).length!==2)throw Error('Exact legacy capture inverse differs');text=text.replace(inverse.from,()=>inverse.to);}
+ const previous=Buffer.from(text);if(JSON.stringify(identity(previous))!==JSON.stringify(selected.predecessor))throw Error('Complete legacy capture predecessor differs');return previous;
+}
+// REMOVED-LEGACY-CAPTURE-HISTORY-END
+
 function m24SpinePrevious(raw,file){
- raw=m12FullDirtyCapturePrevious(raw,file);
+ raw=m12FullDirtyCapturePrevious(removedLegacyCapturePrevious(raw,file),file);
  raw=worldCardHostPrevious(m34ThemePrevious(raw,file),file);
  const selected=m24SpineSourceHistory.find(row=>row.path===file);if(!selected)return raw;
  const identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
@@ -2210,7 +2153,7 @@ function withMergeRunner(body){
   put('tools/verify.mjs',fs.readFileSync(new URL('../../tools/verify.mjs',import.meta.url),'utf8'));
   // The sequence reads the evidence lane to refuse it; the lane itself is never a child gate here.
   put('tools/lib/evidence-lane.mjs',fs.readFileSync(new URL('../../tools/lib/evidence-lane.mjs',import.meta.url),'utf8'));
-  const gates=['check-repository-hygiene','contribution-metadata','check-publication','build','check-test-baselines','check-boundaries','check-spine-content','resource-scene-boundary','atlas-frame/boundary','check-type-lanes','check-types','test','verify-spine-f2-source'];
+  const gates=['check-repository-hygiene','contribution-metadata','check-publication','build','check-test-baselines','check-boundaries','check-spine-content','check-type-lanes','check-types','test','verify-spine-f2-source'];
   function child(gate){
    const setup="import fs from 'node:fs';fs.appendFileSync('calls.jsonl',JSON.stringify({gate:"+JSON.stringify(gate)+",args:process.argv.slice(2)})+String.fromCharCode(10));if(process.env.EGRET_FIXTURE_FAILURE==="+JSON.stringify(gate)+")process.exit(23);";
    if(gate==='build')return setup+"fs.mkdirSync('dist',{recursive:true});fs.writeFileSync('dist/ready','controlled runner output');\n";
@@ -2403,7 +2346,21 @@ function m33BoundaryHistory(raw,owner){
 }
 
 // The four scene3d entries left the engine package after the world3d entries arrived. Put them back where they stood.
+// The package lost its `./web` entry with the Canvas Host. The inverse restores the package that preceded that removal.
+function restoreWebEntry(raw){
+ const identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
+ if(JSON.stringify(identity(raw))!==JSON.stringify({bytes:3440,sha256:'4070930d06e98f8213c69ef3e1b2e8f7b850933d86950fe0ce2b851b6c976f78'}))return raw;
+ const value=JSON.parse(raw),exports={};
+ for(const [key,entry]of Object.entries(value.exports)){
+  exports[key]=entry;
+  if(key==='./webgpu')exports['./web']={types:'./dist/web/index.d.ts',import:'./dist/web/index.js'};
+ }
+ const prior=Buffer.from(JSON.stringify({...value,exports},null,2)+'\n');
+ assert.deepEqual(identity(prior),{bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'});
+ return prior;
+}
 function restoreScene3dEntries(raw){
+ raw=restoreWebEntry(raw);
  const identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
  if(JSON.stringify(identity(raw))!==JSON.stringify({bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'}))return raw;
  const value=JSON.parse(raw),exports={};

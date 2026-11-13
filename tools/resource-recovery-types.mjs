@@ -8,7 +8,7 @@ import {fileURLToPath} from 'node:url';
 import {fingerprintFile,ownerRelativePath,samePhysicalPath} from './lib/file-identity.mjs';
 
 const root=realpathSync(fileURLToPath(new URL('..',import.meta.url)));
-const inventoryPath='tests/types/resource-recovery-2-diagnostic-expectations.json';
+const inventoryPath='tests/types/resource-recovery-3-diagnostic-expectations.json';
 const inventory=JSON.parse(readFileSync(path.join(root,inventoryPath),'utf8'));
 const pairs=[
   ['resources-group',11,true],

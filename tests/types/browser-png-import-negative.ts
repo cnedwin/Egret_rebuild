@@ -40,16 +40,6 @@ import type { BrowserPngPorts as ContractsBrowserPngPorts } from '@egret/contrac
 import type { BrowserTextureProviderOptions as ContractsBrowserTextureProviderOptions } from '@egret/contracts';
 // BIP_TYPE_CASE BIP1-I19: the @egret/contracts entry has no BrowserTextureProvider type.
 import type { BrowserTextureProvider as ContractsBrowserTextureProvider } from '@egret/contracts';
-// BIP_TYPE_CASE BIP1-I20: the @egret/engine/web entry has no browser image factory.
-import { createBrowserTextureProvider as CanvasImageFactory } from '@egret/engine/web';
-// BIP_TYPE_CASE BIP1-I21: the @egret/engine/web entry has no BrowserPngDecodeOptions type.
-import type { BrowserPngDecodeOptions as CanvasBrowserPngDecodeOptions } from '@egret/engine/web';
-// BIP_TYPE_CASE BIP1-I22: the @egret/engine/web entry has no BrowserPngPorts type.
-import type { BrowserPngPorts as CanvasBrowserPngPorts } from '@egret/engine/web';
-// BIP_TYPE_CASE BIP1-I23: the @egret/engine/web entry has no BrowserTextureProviderOptions type.
-import type { BrowserTextureProviderOptions as CanvasBrowserTextureProviderOptions } from '@egret/engine/web';
-// BIP_TYPE_CASE BIP1-I24: the @egret/engine/web entry has no BrowserTextureProvider type.
-import type { BrowserTextureProvider as CanvasBrowserTextureProvider } from '@egret/engine/web';
 // BIP_TYPE_CASE BIP1-I25: the @egret/engine/text entry has no browser image factory.
 import { createBrowserTextureProvider as TextImageFactory } from '@egret/engine/text';
 // BIP_TYPE_CASE BIP1-I26: the @egret/engine/text entry has no BrowserPngDecodeOptions type.

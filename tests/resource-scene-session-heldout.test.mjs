@@ -7,7 +7,7 @@ import * as sdk from '@egret/engine';
 import { createTextRasterCache, createTextField } from '@egret/engine/text';
 import { deferred, flush, host } from './helpers.mjs';
 import { literalProvider, request } from './text-raster-public-helpers.mjs';
-import { captureDrawn } from './helpers/drawn-frame.mjs';
+import { captureDrawn, drawnFrame } from './helpers/drawn-frame.mjs';
 
 const LEFT = 'pilot-left', RIGHT = 'pilot-right';
 const AREA = Object.freeze({ x: 0, y: 0, width: 16, height: 16 });
@@ -106,7 +106,7 @@ async function healthyScene(t) {
   const { createResourceSceneSession } = await import('../examples/resource-scene/session.mjs');
   assert.equal(typeof createResourceSceneSession, 'function');
   const sources = sourceController(), port = host(), literal = literalProvider();
-  const session = createResourceSceneSession({ host: port.adapter, profile: 'canvas-2d',
+  const session = createResourceSceneSession({ host: port.adapter, profile: 'shared-2d',
     textureProvider: sources.provider, textProvider: literal.provider,
     fontFamilies: { ahem: 'Heldout CPU Ahem substitute', cjk: 'Heldout CPU CJK substitute' } });
   const ready = watch(session.ready);
@@ -129,7 +129,7 @@ async function healthyScene(t) {
   const left = session.scene.actors[LEFT], right = session.scene.actors[RIGHT];
   assert.ok(left && right); assert.notEqual(left.root, right.root);
   assert.notEqual(left.lease, right.lease); assert.equal(left.lease.value, right.lease.value);
-  assert.equal(session.capture().width, 192);
+  assert.equal(drawnFrame(session.capture()).width, 192);
   assert.equal(session.inspect().pendingSources, 0);
   console.log('RESOURCE_SCENE_HELDOUT_FRESH_SESSION_BASELINE_COMPLETE');
   return f;
@@ -203,5 +203,5 @@ test('P02 heldout old atlas provider cleanup failure preserves the committed new
   assert.equal(f.session.snapshot().actors[LEFT].present, true);
   assert.equal(f.session.snapshot().actors[LEFT].atlasKey, 'v2');
   assert.ok(f.session.inspect().diagnostics.some(value => value.code === 'ASSET_CLEANUP_FAILED' && value.cause === marker));
-  assert.ok(f.session.capture().images.includes(current.lease.value.imageData));
+  assert.ok(drawnFrame(f.session.capture()).images.includes(current.lease.value.imageData));
 });

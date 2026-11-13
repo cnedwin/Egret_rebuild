@@ -154,7 +154,7 @@ for(const control of [
   },
   {
     name:'same-count wrong diagnostic code',
-    file:'tests/types/resource-recovery-2-diagnostic-expectations.json',
+    file:'tests/types/resource-recovery-3-diagnostic-expectations.json',
     mutate:original=>{
       const value=JSON.parse(original.toString('utf8'));
       assert.equal(value.pairs[0].pair,'resources-group');
@@ -171,7 +171,7 @@ for(const control of [
   },
   {
     name:'missing diagnostic tuple',
-    file:'tests/types/resource-recovery-2-diagnostic-expectations.json',
+    file:'tests/types/resource-recovery-3-diagnostic-expectations.json',
     mutate:original=>{
       const value=JSON.parse(original.toString('utf8'));
       assert.equal(value.pairs[0].pair,'resources-group');

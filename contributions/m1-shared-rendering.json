@@ -97,10 +97,6 @@
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
     {
-      "path": "tests/resource-scene-boundary.test.mjs",
-      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
-    },
-    {
       "path": "tests/shared-capture-budgets.test.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
@@ -193,10 +189,6 @@
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
     {
-      "path": "tools/resource-scene-boundary.mjs",
-      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
-    },
-    {
       "path": "tools/shared-render-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
@@ -226,14 +218,6 @@
     },
     {
       "path": "tools/shared-rendering/oracle.mjs",
-      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
-    },
-    {
-      "path": "tools/verify-prepared-resource-groups.mjs",
-      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
-    },
-    {
-      "path": "tools/verify-resource-scene.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
     },
     {

@@ -228,7 +228,6 @@ for (const [name, allowed] of Object.entries(expected)) {
       '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
       './webgpu': {types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'},
       './webgl2': {types:'./dist/web/webgl2.d.ts',import:'./dist/web/webgl2.js'},
-      './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
       './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
       './paragraph': {types:'./dist/paragraph.d.ts',import:'./dist/paragraph.js'},
       './web/paragraph': {types:'./dist/web/paragraph.d.ts',import:'./dist/web/paragraph.js'},
@@ -326,9 +325,9 @@ for (const [name, allowed] of Object.entries(expected)) {
         if(name!=='engine'||!['web/input.ts','web/MouseInput.ts','dist/web/input.js','dist/web/input.d.ts','dist/web/MouseInput.js','dist/web/MouseInput.d.ts'].includes(relative))
           throw new Error('MI1: private mouse input alias imported outside exact browser ports: '+relative);
       } else if (imported === '#egret-textured-frame-state') {
-        // Only these three first-party adapters may share the Engine-owned registry.
+        // Only these two first-party adapters may share the Engine-owned registry.
         const relative = path.relative(dir, file).split(path.sep).join('/');
-        if (name !== 'engine' || !['web/CanvasHost.ts', 'web/WebGPUHost.ts', 'web/WebGL2Host.ts', 'dist/web/CanvasHost.js', 'dist/web/WebGPUHost.js', 'dist/web/WebGL2Host.js'].includes(relative)) throw new Error(`${file}: private textured registry import outside approved adapters`);
+        if (name !== 'engine' || !['web/WebGPUHost.ts', 'web/WebGL2Host.ts', 'dist/web/WebGPUHost.js', 'dist/web/WebGL2Host.js'].includes(relative)) throw new Error(`${file}: private textured registry import outside approved adapters`);
       } else if (imported === '@egret/runtime/paragraph' || imported === '@egret/engine/paragraph') {
         const relative=path.relative(root,file).split(path.sep).join('/');
         const clause=code.slice(0,match.index).match(/\b(import|export)(\s+type)?\s*\{([^{}]+)\}\s*$/);
@@ -408,7 +407,6 @@ for(const file of [...files(path.join(root,'packages/project/src')),...files(pat
 }
 // SP1_A_BOUNDARY_END
 const facade = await import("@egret/engine");
-const webFacade = await import('@egret/engine/web');
 const gpuFacade = await import('@egret/engine/webgpu');
 const contractsFacade = await import(new URL('../packages/contracts/dist/index.js', import.meta.url));
 const runtimeFacade = await import(new URL('../packages/runtime/dist/index.js', import.meta.url));
@@ -425,7 +423,6 @@ const meshEntries = [
   ...m15ResourceEntries,
   ['contracts', contractsFacade, 'packages/contracts/dist/index'],
   ['root', facade, 'packages/engine/dist/index'],
-  ['web', webFacade, 'packages/engine/dist/web/index'],
   ['webgpu', gpuFacade, 'packages/engine/dist/web/webgpu'],
   ['runtime', runtimeFacade, 'packages/runtime/dist/index'],
 ];
@@ -438,7 +435,7 @@ for (const [entry, values, emittedEntry] of meshEntries) {
 if (typeof runtimeFacade.Mesh2D !== 'function') throw new Error('runtime: public Mesh2D singleton missing');
 if (typeof facade.Mesh2D !== 'function') throw new Error('root: public Mesh2D singleton missing');
 if (facade.Mesh2D !== runtimeFacade.Mesh2D) throw new Error('root: Mesh2D runtime identity mismatch');
-for (const [entry, values] of [['contracts', contractsFacade], ['web', webFacade], ['webgpu', gpuFacade]]) if ('Mesh2D' in values) throw new Error(`${entry}: public Mesh2D value belongs only to runtime/root`);
+for (const [entry, values] of [['contracts', contractsFacade], ['webgpu', gpuFacade]]) if ('Mesh2D' in values) throw new Error(`${entry}: public Mesh2D value belongs only to runtime/root`);
 for (const [entry, declarationPath, target] of [
   ['root', 'packages/engine/dist/index.d.ts', '@egret/runtime'],
   ['runtime', 'packages/runtime/dist/index.d.ts', './Mesh2D.js'],
@@ -469,7 +466,6 @@ for (const [entry, values, prefix, target] of [
 for (const [entry, values, emittedEntry] of [
   ...m15ResourceEntries,
   ['contracts', contractsFacade, 'packages/contracts/dist/index'],
-  ['web', webFacade, 'packages/engine/dist/web/index'],
   ['webgpu', gpuFacade, 'packages/engine/dist/web/webgpu'],
   ['project', projectFacade, 'packages/project/dist/index'],
   ['project/spine', spinePlanFacade, 'packages/project/dist/spine/index'],
@@ -501,9 +497,9 @@ const meshStateDeclaration = readFileSync(path.join(root, 'packages/runtime/dist
 const meshStateNames = [...meshStateDeclaration.matchAll(/\bexport\s+(?:declare\s+)?(?:type|interface|function|const|class|enum)\s+(\w+)/g)].map(match => match[1]).sort();
 if (JSON.stringify(meshStateNames) !== JSON.stringify([...meshPrivate].sort())) throw new Error('runtime: Mesh state private declaration surface mismatch');
 // Task 5 entry controls; Mesh guards above retain their existing reasons.
-const texturedPrivate = ['registerSharedFrame', 'readOwnedSharedFrame', 'sharedRenderFrame2DBrand', 'registerTexturedFrame', 'readOwnedTexturedFrame', 'texturedRenderFrame2DBrand', 'createTexturedRenderFrame2D', 'CapturedEngineFramePorts', 'startEngine', 'TexturedCaptureBudget', 'admitTree', 'referencedTuples', 'flattenClips', 'readMeshCaptureImage', 'observeRejectedRenderResult'];
-const texturedPrivateModules = ['texturedFrameState', 'texturedFrameBudget', 'meshCaptureSnapshot'];
-const texturedWorkspaceNames = ['collectTexturedFrameContent', 'CapturedTexturedContent2D', 'collectSharedFrameContent', 'CapturedSharedContent2D'];
+const texturedPrivate = ['registerSharedFrame', 'readOwnedSharedFrame', 'sharedRenderFrame2DBrand', 'CapturedEngineFramePorts', 'startEngine', 'referencedTuples', 'flattenClips', 'readMeshCaptureImage', 'observeRejectedRenderResult'];
+const texturedPrivateModules = ['texturedFrameState', 'meshCaptureSnapshot'];
+const texturedWorkspaceNames = ['collectSharedFrameContent', 'CapturedSharedContent2D'];
 for (const [entry, values, emittedEntry] of meshEntries) {
   const declaration = readFileSync(path.join(root, emittedEntry + '.d.ts'), 'utf8');
   const emitted = readFileSync(path.join(root, emittedEntry + '.js'), 'utf8');
@@ -560,39 +556,27 @@ for (const [entry, values, emittedEntry] of meshEntries) {
 if (JSON.stringify(Object.keys(gpuFacade)) !== JSON.stringify(completeGPUValues)) throw new Error('webgpu facade leaks private helpers');
 const gpuExport = JSON.parse(readFileSync(path.join(root, 'packages/engine/package.json'), 'utf8')).exports['./webgpu'];
 if (JSON.stringify(gpuExport) !== JSON.stringify({types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'})) throw new Error('webgpu export mapping mismatch');
-if (completeGPUValues.some(name => name in facade || name in webFacade)) throw new Error('GPU factory leaks root/Canvas boundary');
-if (JSON.stringify(Object.keys(webFacade)) !== JSON.stringify(['createCanvasHost'])) throw new Error('web facade leaks internal ports');
-if ('createCanvasHost' in facade) throw new Error('root facade leaks Canvas entry');
+if (completeGPUValues.some(name => name in facade)) throw new Error('GPU factory leaks into the root entry');
 const imageValues = ['IMAGE_LIMITS_2D', 'copyImageData2DPixels', 'createImageData2D', 'isImageData2D'];
 const geometryValues = ['createTexturedGeometry2D', 'isTexturedGeometry2D'];
 const geometryTypes = ['TexturedFloatArray2D', 'TexturedIndexArray2D', 'TexturedGeometry2DInput', 'TexturedGeometry2D'];
-const contractValues = [...imageValues, ...geometryValues, 'TEXTURED_FRAME_PROFILE_2D'].sort();
+const contractValues = [...imageValues, ...geometryValues].sort();
 const sharedContractValues = ['createSharedMaterial2D','createSharedGeometry2D','isSharedMaterial2D','isSharedGeometry2D','SHARED_FRAME_PROFILE_2D'];
 const completeContractValues = [...contractValues,...sharedContractValues].sort();
 if (JSON.stringify(Object.keys(contractsFacade)) !== JSON.stringify(completeContractValues)) throw new Error('contracts: executable image/geometry export surface mismatch');
 for (const name of imageValues) if (facade[name] !== contractsFacade[name]) throw new Error(`engine: image contract identity mismatch: ${name}`);
 for (const name of geometryValues) if (typeof contractsFacade[name] !== 'function' || facade[name] !== contractsFacade[name]) throw new Error(`engine: geometry contract identity mismatch: ${name}`);
-// Literal equality checks the protocol value; owned-frame singleton evidence
-// requires actual Engine captures and first-party host refusal in later stages.
-if (contractsFacade.TEXTURED_FRAME_PROFILE_2D !== 'egret.textured-frame2d/1' || facade.TEXTURED_FRAME_PROFILE_2D !== contractsFacade.TEXTURED_FRAME_PROFILE_2D) throw new Error('engine: textured profile literal mismatch');
 // Exact accepted Mesh root plus the opt-in factory and shared literal.
-const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'TEXTURED_FRAME_PROFILE_2D', 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'NineSliceBitmap', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS', 'createNineSliceGeometry2D','createSpriteSheet'].sort();
+const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'NineSliceBitmap', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS', 'createNineSliceGeometry2D','createSpriteSheet'].sort();
 const completeRootValues = [...texturedRootValues,'createSharedMaterial2D','createSharedGeometry2D','SHARED_FRAME_PROFILE_2D','createTextureView'].sort();
 if (typeof facade.createEngineForProfile !== 'function' || JSON.stringify(Object.keys(facade)) !== JSON.stringify(completeRootValues)) throw new Error('root: executable textured-frame export surface mismatch');
-const texturedTypes = ['TexturedFrameProfile2D', 'TexturedMeshCommand2D', 'TexturedRenderCommand2D', 'TexturedRenderFrame2D', 'TexturedRenderHostAdapter'];
-for (const [entry, values, declarationPath] of [['contracts', contractsFacade, 'packages/contracts/dist/index.d.ts'], ['root', facade, 'packages/engine/dist/index.d.ts']]) {
+// The legacy and textured frame records were removed; no entry may present their names again.
+const removedFrameTypes = ['RenderFrame2D', 'RenderCommand2D', 'RectangleCommand2D', 'ImageCommand2D', 'RenderHostAdapter', 'TexturedFrameProfile2D', 'TexturedMeshCommand2D', 'TexturedRenderCommand2D', 'TexturedRenderFrame2D', 'TexturedRenderHostAdapter', 'TEXTURED_FRAME_PROFILE_2D'];
+for (const [entry, values, declarationPath] of [['contracts', contractsFacade, 'packages/contracts/dist/index.d.ts'], ['root', facade, 'packages/engine/dist/index.d.ts'], ['runtime', runtimeFacade, 'packages/runtime/dist/index.d.ts']]) {
   const declaration = readFileSync(path.join(root, declarationPath), 'utf8');
-  const names = [...declaration.matchAll(/export type\s*\{([^}]+)\}\s*from\s*["'][^"']+["'];?/g)].flatMap(match => match[1].split(',').map(name => name.trim()));
-  for (const name of texturedTypes) if (name in values || names.filter(value => value === name).length !== 1) throw new Error(`${entry}: textured-frame type-only export mismatch: ${name}`);
-}
-const texturedModuleDeclaration = readFileSync(path.join(root, 'packages/contracts/dist/TexturedRenderFrame2D.d.ts'), 'utf8');
-const texturedModuleNames = [...texturedModuleDeclaration.matchAll(/\bexport\s+(?:declare\s+)?(?:type|interface|function|const|class|enum)\s+(\w+)/g)].map(match => match[1]).sort();
-if (JSON.stringify(texturedModuleNames) !== JSON.stringify(['TEXTURED_FRAME_PROFILE_2D', ...texturedTypes].sort())) throw new Error('contracts: textured-frame declaration surface mismatch');
-const texturedRuntimeDeclaration = readFileSync(path.join(root, 'packages/runtime/dist/index.d.ts'), 'utf8');
-const texturedRuntimePorts = [...texturedRuntimeDeclaration.matchAll(/export(\s+type)?\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?/g)].flatMap(match => match[2].split(',').map(name => ({name:name.trim(),typeOnly:!!match[1],target:match[3]})));
-for (const [name, typeOnly] of [['collectTexturedFrameContent', false], ['CapturedTexturedContent2D', true]]) {
-  const ports = texturedRuntimePorts.filter(port => port.name === name);
-  if (ports.length !== 1 || ports[0].typeOnly !== typeOnly || ports[0].target !== './texturedFrameCapture.js' || (typeOnly ? name in runtimeFacade : typeof runtimeFacade[name] !== 'function')) throw new Error(`runtime: low-level textured capture port mismatch: ${name}`);
+  // Exported names only: Matrix2D, Rectangle2D and ClipRectangle2D still come from the module RenderFrame2D.
+  const names = [...declaration.matchAll(/export(?:\s+type)?\s*\{([^}]+)\}/g)].flatMap(match => match[1].split(',').map(name => name.trim().split(/\s+as\s+/).pop()));
+  for (const name of removedFrameTypes) if (name in values || names.includes(name)) throw new Error(`${entry}: removed frame record presented again: ${name}`);
 }
 
 for (const [entry, values, declarationPath] of [
@@ -614,13 +598,13 @@ const privateRendering = ['RectangleFrame2D', 'copyFrame2D', 'copyCanvasFrame', 
 const privateCapture = ['isStageRoot', 'CaptureImageBudget', 'BitmapCaptureState', 'bitmapCaptureState', 'readBitmapImage', 'TextureSnapshot2D', 'readTextureSnapshot', 'isAssetLease', 'readAssetLeaseValue'];
 const privateCoordinates = ['composeDisplayTransform', 'queryDisplayPoint', 'invertCoordinatePoint', 'decodeFiniteDyadic', 'sumDyadicProducts', 'roundDyadicRatio', 'Dyadic'];
 const privateBounds = ['queryDisplayBounds', 'hasBitmapState', 'readBitmapState', 'writeBitmapState', 'childCountOf', 'childAtOf'];
-for (const [entry, values] of [['contracts', contractsFacade], ['root', facade], ['web', webFacade], ['webgpu', gpuFacade]]) {
-  const declarationPath = entry === 'contracts' ? 'packages/contracts/dist/index.d.ts' : entry === 'root' ? 'packages/engine/dist/index.d.ts' : `packages/engine/dist/web/${entry === 'web' ? 'index' : 'webgpu'}.d.ts`;
+for (const [entry, values] of [['contracts', contractsFacade], ['root', facade], ['webgpu', gpuFacade]]) {
+  const declarationPath = entry === 'contracts' ? 'packages/contracts/dist/index.d.ts' : entry === 'root' ? 'packages/engine/dist/index.d.ts' : 'packages/engine/dist/web/webgpu.d.ts';
   const declaration = readFileSync(path.join(root, declarationPath), 'utf8');
   for (const name of [...privateRendering, ...privateCapture, ...privateCoordinates, ...privateBounds]) if (name in values || new RegExp(`\\b${name}\\b`).test(declaration)) throw new Error(`${entry}: private rendering port leaked: ${name}`);
 }
 const runtimeDeclaration = readFileSync(path.join(root, 'packages/runtime/dist/index.d.ts'), 'utf8');
-if (typeof runtimeFacade.collectFrameContent !== 'function' || !/export type\s*\{\s*CapturedContent2D\s*\}/.test(runtimeDeclaration)) throw new Error('runtime: low-level capture port missing');
+if (typeof runtimeFacade.collectSharedFrameContent !== 'function' || !/export type\s*\{\s*CapturedSharedContent2D\s*\}/.test(runtimeDeclaration)) throw new Error('runtime: low-level capture port missing');
 for (const name of [...privateCapture, ...privateCoordinates, ...privateBounds]) if (name in runtimeFacade || new RegExp(`\\b${name}\\b`).test(runtimeDeclaration)) throw new Error(`runtime: private authority leaked: ${name}`);
 for (const internal of ["collectFrameCommands", "createScope", "createStage", "constructEngine", "createAssetManager", "createAssetLease", "revokeAssetLease", "assertAssetRef", "assertAssetType", "reportDiagnostic", "bind", "engineOf", "ownerOf"]) {
   if (internal in facade) throw new Error(`Internal lifecycle port leaked: ${internal}`);
@@ -779,8 +763,8 @@ for (const [entry,values,emittedEntry] of textEntries) {
 }
 const expectedRuntimeValues=['CancellationController','EgretError','Scope','createScope','Event','createEventType',
   'EventDispatcher','DisplayObject','DisplayObjectContainer','Stage','createStage','createDisplayInputOperations','reportDiagnostic','AssetManager',
-  'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','collectFrameCommands',
-  'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','NineSliceBitmap','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS','ByteWriter','BYTE_WRITER_LIMITS','createNineSliceGeometry2D','createSpriteSheet'].sort();
+  'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics',
+  'Texture','createTexture','isTexture','Bitmap','Mesh2D','NineSliceBitmap','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS','ByteWriter','BYTE_WRITER_LIMITS','createNineSliceGeometry2D','createSpriteSheet'].sort();
 const completeRuntimeValues = [...expectedRuntimeValues,'createTextureView','collectSharedFrameContent'].sort();
 if (JSON.stringify(Object.keys(runtimeFacade)) !== JSON.stringify(completeRuntimeValues)) throw new Error('runtime: unchanged default-root export surface mismatch');
 for (const [entry,values,emittedEntry,valueTarget,typeTarget] of [
@@ -1056,7 +1040,7 @@ const assetGroupPublicTypes = ['AssetGroup', 'AssetGroupState', 'AssetGroupOptio
 const assetGroupPrivateNames = ['createAssetGroup', 'createAssetGroupOwner', 'AssetGroupOwner', 'AssetGroupContext', 'assetGroupBrand', 'registerAssetGroupOperations', 'requireAssetManagerOwner', 'registerAssetManagerOwner'];
 const assetGroupSourceEntries = {
   contracts: 'packages/contracts/src/index.ts', root: 'packages/engine/src/index.ts',
-  runtime: 'packages/runtime/src/index.ts', web: 'packages/engine/web/index.ts',
+  runtime: 'packages/runtime/src/index.ts',
   webgpu: 'packages/engine/web/webgpu.ts', 'runtime/text': 'packages/runtime/src/text/index.ts',
   'engine/text': 'packages/engine/src/text.ts', 'engine/web/text': 'packages/engine/web/text.ts',
   project: 'packages/project/src/index.ts',
@@ -1312,18 +1296,6 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./RectangleFrame2D.js"
-    ],
-    [
-      "static",
       "@egret/contracts"
     ],
     [
@@ -1338,7 +1310,7 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
-      "./preparedFrameCache2D.js"
+      "./prepareRectangles2D.js"
     ],
     [
       "static",
@@ -1350,20 +1322,6 @@ const sceneLiteralClosure = {
     ]
   ],
   "packages/engine/web/imageProjections2D.ts": [
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/rendering/RectangleFrame2D.ts": [
     [
       "static",
       "@egret/contracts"
@@ -1388,22 +1346,10 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
       "robust-predicates"
     ]
   ],
   "packages/engine/dist/rendering/prepareRectangles2D.d.ts": [
-    [
-      "static",
-      "./preparedFrameCache2D.js"
-    ],
-    [
-      "static",
-      "./RectangleFrame2D.js"
-    ],
     [
       "static",
       "@egret/contracts"
@@ -1422,31 +1368,15 @@ const sceneLiteralClosure = {
   "packages/engine/dist/rendering/texturedPreparationBudget2D.d.ts": [
     [
       "static",
-      "./preparedFrameCache2D.js"
+      "./prepareRectangles2D.js"
     ],
     [
       "static",
       "./prepareRectangles2D.js"
     ]
   ],
-  "packages/engine/dist/web/imageProjections2D.js": [
-    [
-      "static",
-      "../rendering/ownedPreparationFailure2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
+  "packages/engine/dist/web/imageProjections2D.js": [],
   "packages/engine/dist/web/imageProjections2D.d.ts": [
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/RectangleFrame2D.js": [],
-  "packages/engine/dist/rendering/RectangleFrame2D.d.ts": [
     [
       "static",
       "@egret/contracts"
@@ -1479,28 +1409,7 @@ const sceneLiteralClosure = {
   ],
   "packages/engine/rendering/preparedBatches2D.ts": [],
   "packages/engine/dist/rendering/preparedBatches2D.js": [],
-  "packages/engine/dist/rendering/preparedBatches2D.d.ts": [],
-  "packages/engine/rendering/preparedFrameCache2D.ts": [
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/engine/dist/rendering/preparedFrameCache2D.js": [],
-  "packages/engine/dist/rendering/preparedFrameCache2D.d.ts": [
-    [
-      "static",
-      "./prepareRectangles2D.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ]
+  "packages/engine/dist/rendering/preparedBatches2D.d.ts": []
 };
 
 // M1.3 replaces only these exact edge rows; the complete historical table remains above.
@@ -1791,8 +1700,8 @@ const m31UiLiteralClosure = {
   "packages/runtime/src/displayHitState.ts": [["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"]],
   "packages/runtime/dist/displayHitState.js": [["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
   "packages/runtime/dist/displayHitState.d.ts": [["static","./DisplayObject.js"],["static","@egret/contracts"]],
-  "packages/runtime/src/displayTreeState.ts": [["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"],["static","./ownership.js"],["static","./Stage.js"]],
-  "packages/runtime/dist/displayTreeState.js": [["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"],["static","./ownership.js"]],
+  "packages/runtime/src/displayTreeState.ts": [["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./Stage.js"]],
+  "packages/runtime/dist/displayTreeState.js": [["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./ownership.js"]],
   "packages/runtime/dist/displayTreeState.d.ts": [["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./Stage.js"]],
   "packages/engine/src/pointerInput.ts": [["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./mouseInput.js"],["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/input"],["static","@egret/runtime/input"]],
   "packages/engine/dist/pointerInput.js": [["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","@egret/runtime"],["static","@egret/runtime/input"]],
@@ -2721,10 +2630,6 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
-      "./frameCaptureCache.js"
-    ],
-    [
-      "static",
       "./ownership.js"
     ],
     [
@@ -2748,10 +2653,6 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "./EgretError.js"
-    ],
-    [
-      "static",
-      "./frameCaptureCache.js"
     ],
     [
       "static",
@@ -2918,68 +2819,6 @@ const m34EffectLiteralClosure = {
       "@egret/contracts"
     ]
   ],
-  "packages/runtime/src/frameCapture.ts": [
-    [
-      "static",
-      "./Bitmap.js"
-    ],
-    [
-      "static",
-      "./bitmapAtlasPlacement.js"
-    ],
-    [
-      "static",
-      "./DisplayObject.js"
-    ],
-    [
-      "static",
-      "./displayTransform.js"
-    ],
-    [
-      "static",
-      "./displayTreeState.js"
-    ],
-    [
-      "static",
-      "./displayVisualState.js"
-    ],
-    [
-      "static",
-      "./EgretError.js"
-    ],
-    [
-      "static",
-      "./frameCaptureCache.js"
-    ],
-    [
-      "static",
-      "./frameCaptureCache.js"
-    ],
-    [
-      "static",
-      "./imageFrameBudget.js"
-    ],
-    [
-      "static",
-      "./meshDisplayState.js"
-    ],
-    [
-      "static",
-      "./ownership.js"
-    ],
-    [
-      "static",
-      "./Stage.js"
-    ],
-    [
-      "static",
-      "./textDisplayState.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
   "packages/runtime/dist/frameCapture.js": [
     [
       "static",
@@ -3030,92 +2869,6 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "./Stage.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
-    ]
-  ],
-  "packages/runtime/src/texturedFrameCapture.ts": [
-    [
-      "static",
-      "./Bitmap.js"
-    ],
-    [
-      "static",
-      "./bitmapAtlasPlacement.js"
-    ],
-    [
-      "static",
-      "./DisplayObject.js"
-    ],
-    [
-      "static",
-      "./DisplayObjectContainer.js"
-    ],
-    [
-      "static",
-      "./displayTransform.js"
-    ],
-    [
-      "static",
-      "./displayTreeState.js"
-    ],
-    [
-      "static",
-      "./displayVisualState.js"
-    ],
-    [
-      "static",
-      "./displayVisualState.js"
-    ],
-    [
-      "static",
-      "./EgretError.js"
-    ],
-    [
-      "static",
-      "./frameCaptureCache.js"
-    ],
-    [
-      "static",
-      "./frameCaptureCache.js"
-    ],
-    [
-      "static",
-      "./imageFrameBudget.js"
-    ],
-    [
-      "static",
-      "./meshCaptureSnapshot.js"
-    ],
-    [
-      "static",
-      "./meshDisplayState.js"
-    ],
-    [
-      "static",
-      "./ownership.js"
-    ],
-    [
-      "static",
-      "./ownership.js"
-    ],
-    [
-      "static",
-      "./Stage.js"
-    ],
-    [
-      "static",
-      "./textDisplayState.js"
-    ],
-    [
-      "static",
-      "./texturedFrameBudget.js"
-    ],
-    [
-      "static",
-      "@egret/contracts"
     ],
     [
       "static",
@@ -4977,7 +4730,7 @@ for(const [file,hasTypes]of [['packages/engine/web/input.ts',true],['packages/en
     throw new Error('MI1: exact optional forwarding mismatch: '+file);
   if(code.replace(/\bexport(?:\s+type)?\s*\{[^}]+\}\s*from\s*['"][^'"]+['"]\s*;?/g,'').trim())throw new Error('MI1: input barrel performs module work: '+file);
 }
-const mouseEntryFiles=[['root',facade,'packages/engine/dist/index'],['web',webFacade,'packages/engine/dist/web/index'],['webgpu',gpuFacade,'packages/engine/dist/web/webgpu'],['runtime',runtimeFacade,'packages/runtime/dist/index'],['text',engineText,'packages/engine/dist/text']];
+const mouseEntryFiles=[['root',facade,'packages/engine/dist/index'],['webgpu',gpuFacade,'packages/engine/dist/web/webgpu'],['runtime',runtimeFacade,'packages/runtime/dist/index'],['text',engineText,'packages/engine/dist/text']];
 for(const [label,values,entry]of mouseEntryFiles) {
   const declared=mouseRead(entry+'.d.ts');
   const prohibited=[...mousePublicTypes,...buttonPublicTypes,...inputPublicValues,...mousePrivateNames,...buttonPrivateNames,...(label==='runtime'?[]:['createDisplayInputOperations','DisplayInputOperations'])];
@@ -5199,7 +4952,6 @@ const ns1OptionalEntries = [
   ['project', '@egret/project', 'packages/project/src/index.ts', 'packages/project/dist/index'],
   ['project/spine', '@egret/project/spine', 'packages/project/src/spine/index.ts', 'packages/project/dist/spine/index'],
   ['runtime/text', '@egret/runtime/text', 'packages/runtime/src/text/index.ts', 'packages/runtime/dist/text/index'],
-  ['web', '@egret/engine/web', 'packages/engine/web/index.ts', 'packages/engine/dist/web/index'],
   ['webgpu', '@egret/engine/webgpu', 'packages/engine/web/webgpu.ts', 'packages/engine/dist/web/webgpu'],
   ['text', '@egret/engine/text', 'packages/engine/src/text.ts', 'packages/engine/dist/text'],
   ['web/text', '@egret/engine/web/text', 'packages/engine/web/text.ts', 'packages/engine/dist/web/text'],

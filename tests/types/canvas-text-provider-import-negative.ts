@@ -1,7 +1,7 @@
 // Isolated absent imports cannot affect the valid ordinary consumer's types.
 // CANVAS_TEXT_IMPORT_CASE root-factory TS2305
 import { createCanvasTextRasterProvider as rootFactory } from '@egret/engine';
-// CANVAS_TEXT_IMPORT_CASE web-factory TS2305
+// CANVAS_TEXT_IMPORT_CASE web-factory TS2307
 import { createCanvasTextRasterProvider as webFactory } from '@egret/engine/web';
 // CANVAS_TEXT_IMPORT_CASE gpu-factory TS2305
 import { createCanvasTextRasterProvider as gpuFactory } from '@egret/engine/webgpu';

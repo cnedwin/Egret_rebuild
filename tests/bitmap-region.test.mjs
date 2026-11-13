@@ -3,7 +3,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
-import {collectFrameCommands} from '../packages/runtime/dist/index.js';
 import {createSequenceClip, sampleSequenceClip} from '../packages/runtime/dist/sequenceClip.js';
 import {host} from './helpers.mjs';
 import { captureDrawn, drawnFrame } from './helpers/drawn-frame.mjs';
@@ -414,17 +413,5 @@ test('B22 disposal clears crop and sizes before reentrant listener cleanup',asyn
     f.node.dispose();assert.equal(cleanups,1);
     assert.equal(f.lease.value,f.texture);assert.deepEqual(f.counts(),{loads:1,disposals:0});
     errorCode(()=>setRegion(f.node,undefined),'OBJECT_DISPOSED');
-  } finally { await f.engine.dispose(); }
-});
-
-// Break: selected-crop geometry or lease errors losing legacy precedence.
-test('B23 legacy capture keeps geometry then entitlement then unsupported order',async()=>{
-  const f=await fixture();
-  try {
-    setRegion(f.node,GREEN);
-    errorCode(()=>collectFrameCommands(f.engine.stage),'FRAME_IMAGE_UNSUPPORTED');
-    f.lease.release();errorCode(()=>collectFrameCommands(f.engine.stage),'ASSET_LEASE_RELEASED');
-    f.node.scaleY=Number.MAX_VALUE;errorCode(()=>collectFrameCommands(f.engine.stage),'FRAME_TRANSFORM_INVALID');
-    f.node.textureLease=undefined;assert.deepEqual(collectFrameCommands(f.engine.stage),[]);
   } finally { await f.engine.dispose(); }
 });

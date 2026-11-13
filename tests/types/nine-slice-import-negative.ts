@@ -11,12 +11,6 @@ void Runtime.NineSliceInsets2D;
 // NSI runtime-options-not-value
 void Runtime.NineSliceGeometry2DOptions;
 
-// NSI canvas-no-factory
-import { createNineSliceGeometry2D as canvasFactory } from "@egret/engine/web";
-// NSI canvas-no-insets-type
-import type { NineSliceInsets2D as CanvasInsets } from "@egret/engine/web";
-// NSI canvas-no-options-type
-import type { NineSliceGeometry2DOptions as CanvasOptions } from "@egret/engine/web";
 // NSI webgpu-no-factory
 import { createNineSliceGeometry2D as webGPUFactory } from "@egret/engine/webgpu";
 // NSI webgpu-no-insets-type
@@ -64,11 +58,11 @@ import { createNineSliceGeometry2D as runtimeSourceFactory } from "@egret/runtim
 // NSI engine-source-not-public
 import { createNineSliceGeometry2D as engineSourceFactory } from "@egret/engine/src/NineSliceGeometry2D.js";
 
-void canvasFactory; void webGPUFactory;
+void webGPUFactory;
 void engineTextFactory; void runtimeTextFactory; void inputFactory; void canvasTextFactory;
 void contractsFactory; void runtimeSubpathFactory; void engineSubpathFactory;
 void runtimeSourceFactory; void engineSourceFactory;
-export type { CanvasInsets, CanvasOptions, WebGPUInsets, WebGPUOptions,
+export type { WebGPUInsets, WebGPUOptions,
   EngineTextInsets, EngineTextOptions,
   RuntimeTextInsets, RuntimeTextOptions, InputInsets, InputOptions, CanvasTextInsets, CanvasTextOptions,
   ContractsInsets, ContractsOptions };
