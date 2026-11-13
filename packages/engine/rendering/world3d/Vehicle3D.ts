@@ -5,7 +5,7 @@
 // to drive, brake and resist sliding sideways. DOM-free and backend-independent.
 import {World3DError, requireFinite3D, requirePositive3D} from './core3D.js';
 import type {Object3D} from './Object3D.js';
-import type {PhysicsWorld3D, RigidBody3D} from './Physics3D.js';
+import {raycastExcludingBody3D, type PhysicsWorld3D, type RigidBody3D} from './Physics3D.js';
 
 export const VEHICLE3D_LIMITS = Object.freeze({maxWheels: 16} as const);
 
@@ -145,9 +145,7 @@ export class Vehicle3D {
             const a = wheel.position;
             from[0] = p[0]! + r[0]! * a[0]! + r[1]! * a[1]! + r[2]! * a[2]!; from[1] = p[1]! + r[3]! * a[0]! + r[4]! * a[1]! + r[5]! * a[2]!; from[2] = p[2]! + r[6]! * a[0]! + r[7]! * a[1]! + r[8]! * a[2]!;
             const reach = wheel.restLength + wheel.travel + wheel.radius;
-            let hit = this.world.raycast(from, down, reach, this.mask);
-            // The chassis is no ground for its own wheels.
-            if (hit && hit.body === body) hit = undefined;
+            const hit = this.world[raycastExcludingBody3D](from, down, reach, this.mask, body);
             wheel.grounded = hit !== undefined; wheel.ground = hit?.body; wheel.load = 0;
             wheel.length = hit ? Math.max(hit.distance - wheel.radius, wheel.restLength - wheel.travel) : wheel.restLength + wheel.travel;
             let forwardSpeed = this.speed;
