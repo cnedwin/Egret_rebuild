@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/en/docs/browser-png-contract.md",
+      "originRole": "First-party browser PNG texture provider contract that predates its source row; registered when its image area bound was revised; authorship as in repository history."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/浏览器PNG纹理Provider契约.md",
+      "originRole": "First-party Chinese reading of the browser PNG texture provider contract that predates its source row; registered when its image area bound was revised; authorship as in repository history."
+    },
+    {
+      "path": "tests/browser-png.test.mjs",
+      "originRole": "First-party browser PNG provider behavior tests that predate their source row; registered when an endpoint case moved to the new image area bound; authorship as in repository history."
+    }
+  ],
+  "documents": []
+}

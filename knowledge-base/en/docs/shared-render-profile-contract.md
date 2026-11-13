@@ -117,7 +117,7 @@ These are logical admission/ownership ledgers, not exact JavaScript heap or driv
 
 | Ledger | Bound |
 | --- | --- |
-| Source | Existing axis ≤4096, pixels ≤1,048,576 and bytes ≤4 MiB per image |
+| Source | Axis ≤4096, pixels ≤4,194,304 and bytes ≤16 MiB per image |
 | Frame pages | ≤64 unique sources; source bytes ≤64 MiB and canonical requested bytes ≤64 MiB separately, including ready hits. A Host admits at most its `maxFramePageBytes` |
 | Regions/materials | ≤4,096 distinct regions and ≤256 complete materials. A Host admits at most its `maxFrameRegions` regions |
 | Tree/commands | ≤65,536 nodes, authoring units, occurrence-charged source triangles and draw-plus-barrier commands; ≤262,144 ordered clip references |
