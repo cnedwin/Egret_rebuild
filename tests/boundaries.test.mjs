@@ -13,7 +13,7 @@ const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectType, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, spineImportMutation, sharedMutation, sequenceMutation }, run) {
+function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectType, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, textInputMutation, spineImportMutation, sharedMutation, sequenceMutation }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -61,6 +61,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       } : name === 'project' ? {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./spine':{types:'./dist/spine/index.d.ts',import:'./dist/spine/index.js'},'./atlas':{types:'./dist/atlas/index.d.ts',import:'./dist/atlas/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}} : {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}};
       if(name==='runtime'||name==='engine')packageExports['./ui/editing']={types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'};
       if(name==='engine')packageExports['./web/editing']={types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'};
+      if(name==='engine')packageExports['./web/text-input']={types:'./dist/web/textInput.d.ts',import:'./dist/web/textInput.js'};
       write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(packageExports === undefined ? {} : {exports:packageExports}) });
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
@@ -1315,7 +1316,9 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       'dist/keyboardInput.js','dist/keyboardInput.d.ts','dist/keyboardInputTypes.js','dist/keyboardInputTypes.d.ts',
       'dist/input.js','dist/input.d.ts','dist/web/BrowserKeyboardInput.js','dist/web/BrowserKeyboardInput.d.ts','dist/web/keyboard.js','dist/web/keyboard.d.ts',
     ];
-    for(const relative of keyboardGraphFiles){
+    // Text input: the same inert copies of its two modules, so that its exact graph is checked.
+    const textInputGraphFiles=['web/BrowserTextInput.ts','web/textInput.ts','dist/web/BrowserTextInput.js','dist/web/BrowserTextInput.d.ts','dist/web/textInput.js','dist/web/textInput.d.ts'];
+    for(const relative of [...keyboardGraphFiles,...textInputGraphFiles]){
       const file='packages/engine/'+relative,original=readFileSync(path.join(repository,file),'utf8');
       if(!file.endsWith('.js')){write(file,original);continue;}
       const clean=original.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
@@ -1328,6 +1331,9 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     write(keyboardResolverFile,{...keyboardResolver,exports:{...keyboardResolver.exports,'./input':'./keyboard-input.js','./web/keyboard':'./keyboard-browser.js'}});
     write('node_modules/@egret/engine/keyboard-input.js','export function createPointerInput() {}\nexport function createKeyboardInput() {}\n');
     write('node_modules/@egret/engine/keyboard-browser.js','export function createBrowserKeyboardInput() {}\n');
+    const textInputResolver=JSON.parse(readFileSync(path.join(root,keyboardResolverFile),'utf8'));
+    write(keyboardResolverFile,{...textInputResolver,exports:{...textInputResolver.exports,'./web/text-input':'./text-input-browser.js'}});
+    write('node_modules/@egret/engine/text-input-browser.js','export function createBrowserTextInput() {}\n');
     // Native editing keeps an inert, exact policy graph; these are not behavior tests.
     const nativeEditingGraphFiles=["packages/engine/src/internal/uiRootState.ts","packages/engine/dist/internal/uiRootState.js","packages/engine/dist/internal/uiRootState.d.ts","packages/engine/src/ui/editing.ts","packages/engine/dist/ui/editing.js","packages/engine/dist/ui/editing.d.ts","packages/engine/src/ui/textEditor.ts","packages/engine/dist/ui/textEditor.js","packages/engine/dist/ui/textEditor.d.ts","packages/engine/src/ui/textEditorTypes.ts","packages/engine/dist/ui/textEditorTypes.js","packages/engine/dist/ui/textEditorTypes.d.ts","packages/engine/web/BrowserTextEditor.ts","packages/engine/dist/web/BrowserTextEditor.js","packages/engine/dist/web/BrowserTextEditor.d.ts","packages/engine/web/editing.ts","packages/engine/dist/web/editing.js","packages/engine/dist/web/editing.d.ts","packages/engine/web/editorFonts.ts","packages/engine/dist/web/editorFonts.js","packages/engine/dist/web/editorFonts.d.ts","packages/runtime/src/ui/editing.ts","packages/runtime/dist/ui/editing.js","packages/runtime/dist/ui/editing.d.ts","packages/runtime/src/ui/textEditState.ts","packages/runtime/dist/ui/textEditState.js","packages/runtime/dist/ui/textEditState.d.ts","packages/runtime/src/ui/textEditTypes.ts","packages/runtime/dist/ui/textEditTypes.js","packages/runtime/dist/ui/textEditTypes.d.ts"];
     const nativeEditingNamedTargets=new Set(['#egret-text-editor','@egret/runtime/ui/editing','@egret/engine/ui/editing','@egret/engine/ui','@egret/engine/web/keyboard','@egret/engine/resources','@egret/engine','@egret/runtime/paragraph']);
@@ -2112,6 +2118,16 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       write(file,before===''?original+after:original.replace(before,after));
     }
     // MI1_MUTATION_END
+    if(textInputMutation){
+      const edits={
+        'escaped-module':['packages/engine/web/ProbeTextInput.ts',"import {createBrowserTextInput} from './BrowserTextInput.js';\nvoid createBrowserTextInput;\n"],
+        'extra-export':['packages/engine/web/textInput.ts','export const extra=1;\n'],
+        'engine-import':['packages/engine/web/BrowserTextInput.ts',"import './keyboard.js';\n"],
+        'timer':['packages/engine/web/BrowserTextInput.ts','setTimeout(()=>{},0);\n'],
+      };
+      const edit=edits[textInputMutation];assert.ok(edit,'finite text input assigned mutation');const [file,added]=edit;
+      write(file,(existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'')+added);
+    }
     // SP1-A_POLICY_MUTATION_BEGIN
     if(spineImportMutation){
       const edits={
@@ -2187,6 +2203,14 @@ for(const [name,reason]of [
   fixture({imported:'robust-predicates',mouseInputMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
 });
 // MI1_POLICY_TESTS_END
+for(const [name,reason] of [
+  ['escaped-module','Text input: implementation module imported outside its entry'],
+  ['extra-export','Text input: exact browser text input exports mismatch'],
+  ['engine-import','Text input: exact graph mismatch'],
+  ['timer','Text input: acquired automatic host work'],
+])test('text input policy '+name+' is refused for its own reason',()=>{
+  fixture({imported:'robust-predicates',textInputMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
+});
 
 // Run this focused positive gate first, before the retained suite and controls.
 test('canonical boundary policy baseline admits every retained surface',()=>{
