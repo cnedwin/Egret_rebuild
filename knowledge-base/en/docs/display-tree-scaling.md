@@ -115,3 +115,29 @@ The same tool on the same machine, earlier code first:
 The step that forms the batches took 0.4 ms before and 1.0 ms after for the two atlas workloads, because the rows of a merged batch are copied into one array; the other steps were within the variation between runs.
 
 What the output is was checked in three ways. `tests/shared-frame-golden.test.mjs` shows that the captured frame, the clipped geometry and the first eleven values of every vertex row are what they were. `tests/shared-batching.test.mjs` states which draws share a batch and what the new values hold. And 46 scenes were drawn by the build before this change and by the build with it, through both Hosts, in a headless Chromium with software rendering, and the bytes read back were compared: all 92 pairs are identical. The scenes are the 26 two-dimensional cases of `tools/shared-rendering/native-cases.json` and twenty generated ones with 120 to 1,500 sprites of one or two atlases, with trimmed and turned regions, fractional opacities, four sampling policies, four blends, clip rectangles, solid rectangles, meshes and nine-slices, and up to 804 regions in one frame. In the generated scenes of one atlas and one material the WebGL2 draw calls of a frame fell from about 390 to about 60; what remains is the clip rectangles of those scenes, each of which is a barrier. This comparison establishes equal pixels under one software renderer. It is not a run on a hardware GPU, and the saved native evidence of `tools/shared-rendering` was not collected again.
+
+## Fixed 2D workloads on a graphics device
+
+`node tools/bench-2d-gpu.mjs` draws seven fixed workloads through the shared WebGPU Host and the shared WebGL2 Host in a browser, at 1280 by 720. `tools/bench-2d.mjs` stops where the graphics API begins; this tool measures from there. It prints an address. Opening that address in a browser on the machine to be measured runs the workloads, and the tool prints the table when the page finishes. With `--playwright <installed module>` the tool opens the browser itself: `--channel msedge` names an installed browser, and the window is visible unless `--headless` is given, because a hidden window may not use the graphics card. `--quick` runs a shorter pass, `--json` prints the whole report, and `--backends` and `--only` narrow the run.
+
+Each workload is drawn first as fast as the Host finishes frames, then once per display frame. The table states, per frame:
+
+- **draws**: the draw calls the Host issued, the final copy to the canvas included.
+- **capture**: the Engine turning the display list into a frame record.
+- **submit**: the Host preparing, uploading and encoding that record.
+- **settle**: from the end of submit until the Host reports the frame finished.
+- **gpu**: the time the device spent in the render passes of the frame.
+- **interval** and **p95**: the median and the 95th percentile of the time between display frames, and **refused**: the frames the Host refused because two were still pending.
+
+The device time comes from WebGPU timestamp queries, which need the `timestamp-query` feature, and from `EXT_disjoint_timer_query_webgl2`. Browsers round both to about 0.1 ms, and a browser that offers neither leaves the column empty. To read them, the tool lends the WebGPU Host a device whose command encoders it has wrapped, and wraps the WebGL2 context the Host obtains. The Hosts are unchanged, and the CPU figures include that wrapping.
+
+No run on a hardware GPU is recorded here. A quick pass in a headless Chromium with software rendering, on two shared cores, completed all fourteen rows. Its device times describe the software renderer and are not kept. Its draw counts and Host CPU times are the starting point of the WebGPU work:
+
+| Workload | Draws | Submit, WebGPU | Submit, WebGL2 |
+| --- | --- | --- | --- |
+| 5,000 bitmaps of one atlas, all moving | 2 | 24.03 ms | 17.35 ms |
+| 5,000 bitmaps of one atlas, none moving | 2 | 11.19 ms | 16.98 ms |
+| 5,000 bitmaps taking 8 atlases in turn, all moving | 5,001 | 79.33 ms | 37.52 ms |
+| 20,000 bitmaps of one atlas, all moving | 2 | 77.01 ms | 60.39 ms |
+
+Bitmaps that take their atlases in turn are not batched, and a frame in which nothing moved is captured and prepared again in full.
