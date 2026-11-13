@@ -79,9 +79,12 @@ for(const [name,change,reason]of mutations) test(`isolated actual package mutati
 test('strict public project consumers and unsuppressed diagnostic locations run through the actual type gate',()=>isolated(fixture=>{
   prepareTypeFixture(fixture);
   const result=run(['tools/check-types.mjs'],fixture.root);assert.ifError(result.error);assert.equal(result.status,0,result.stdout+result.stderr);assert.match(result.stdout,/Project type fixtures PASS: 29 type-only exports/);
-  assert.match(result.stdout,/Sequence playback types PASS/);
+  // The gate ends with the retained replays. The replays bound to recorded product bytes are
+  // evidence; their consumers are compiled by check-type-lanes and are not replayed here.
   assert.match(result.stdout,/SpriteSheet types PASS/);
-  assert.ok(result.stdout.includes('Sequence RESET strict PASS: complete positive/negative compiler closures and four exact unsuppressed diagnostics'));
+  assert.match(result.stdout,/Shared WebGL2 strict negative PASS/);
+  assert.match(result.stdout,/Resource recovery types PASS/);
+  assert.doesNotMatch(result.stdout,/Sequence playback types PASS|Sequence RESET strict PASS/);
 }));
 
 test('real compiler negatives with unchanged error count reject incorrect expected code and location',t=>isolated(({root,write})=>{
