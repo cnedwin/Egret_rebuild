@@ -189,6 +189,8 @@ CPU 提交耗时包含渲染列表处理和驱动等待。分阶段 CPU 耗时�
 
 `servePhysics3D(port)` 和 `connectPhysics3D(port, worldOptions)` 让世界在另一个线程运行。工作线程的全部脚本是 `import {servePhysics3D} from '@egret/engine/world3d'; servePhysics3D(self);`。页面把 `Worker` 传给 `connectPhysics3D`，得到一个带有 `createBody`、`createJoint`、`setGravity`、`raycast`（返回 Promise）、`onContactBegin`、`onContactEnd` 和 `onError` 的客户端。它的刚体是替身，带有 `position`、`quaternion`、`isSleeping`、`node`、`setPosition`、`setQuaternion`、`setLinearVelocity`、`setAngularVelocity`、`applyImpulse`、`applyForce` 和 `remove`。每帧调用一次 `client.step(deltaSeconds)`，并调用 `client.update(alpha)` 放置节点；`alpha` 在最近两步之间混合。还有两步没有得到答复时，`step` 不发送并返回 false，因此较慢的工作线程会在时间上落后，而不是堆积工作。形状在消息中描述：球、盒子、胶囊、平面、它们的组合体，以及由 `points` 给出的凸包。显示的内容比模拟落后大约一步。三角网格刚体、角色控制器、载具、布娃娃、形状扫掠和 `onContact` 的细节不通过端口传递；请在工作线程一侧使用 `servePhysics3D` 返回的世界来运行它们。两端只需要 `postMessage` 和消息监听，因此 `MessagePort` 与工作线程同样可用。
 
+服务端始终使用它返回的同一物理世界。客户端可在启动时覆盖一次明确指定的选项。未指定的选项、宿主侧已有刚体和世界身份均保留。关节接受同一客户端中已注册且仍有效的刚体句柄。射线查询失败时，对应 Promise 以 `World3DError` 拒绝，同时触发 `onError`。射线未命中或客户端销毁时，Promise 以 `undefined` 兑现。
+
 ## 曲线、轮廓与更多几何体
 
 曲线（`LineCurve3D`、`QuadraticBezierCurve3D`、`CubicBezierCurve3D`、`CatmullRomCurve3D`、`CurvePath3D`）提供 `getPoint(t)`、匀速的 `getPointAt(u)`、切线、长度和无扭转的标架。`Path2D3D` 和 `Shape3D` 用 `moveTo`、`lineTo`、`quadraticCurveTo`、`bezierCurveTo` 和 `arc` 构造平面轮廓；形状可以带孔。
