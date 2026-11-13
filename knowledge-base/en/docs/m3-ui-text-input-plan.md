@@ -2,7 +2,7 @@
 
 English | [中文](../../Cns/docs/m3-ui-text-input-plan.md)
 
-Architecture and delivery plan · 2026-11-13 · Reviewed main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e). Parent tracking issue [#57](https://github.com/cnedwin/Egret_rebuild/issues/57). The four work packages cover managed UI with native single/multiline editing and owned layers. The contracts track remaining IME, device and assistive-technology qualification.
+Architecture and delivery plan · 2026-11-14 · Reviewed main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39). Parent tracking issue [#57](https://github.com/cnedwin/Egret_rebuild/issues/57). The four work packages cover managed UI with native single/multiline editing and owned layers. The contracts track remaining IME, device and assistive-technology qualification.
 
 M3 delivers a usable UI system on the existing Engine, display tree, Scope and resource owners. It includes automatic layout, variable-height virtual lists, styled paragraph text, pointer/keyboard input, focus, basic native text editing and browser accessibility. It does not complete legacy EUI/EXML migration, all platform integrations or M4 production acceptance.
 

@@ -6,7 +6,7 @@ English | [简体中文](../../Cns/docs/m2-m4-delivery-plan.md)
 
 ## Purpose and current baseline
 
-Reviewed main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e).
+Reviewed main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39).
 
 Make the current shared core usable for animation-rich, complex-interface games, then qualify its complete declared scope. The eleven existing packages remain unchanged. [Current capabilities](core-progress.md) provides the as-built map; [engineering](engineering-plan.md) gives the next complete increments; [M2](m2-spine-content-plan.md), [M3](m3-ui-text-input-plan.md) and [M4](m4-core-acceptance-plan.md) own their detailed contracts.
 
@@ -32,7 +32,7 @@ Full M4 closure requires the declared functionality, unchanged performance targe
 | Build complete optional subsystems over shared display/resource/rendering authority | Preserves familiar APIs and tested lifetimes while allowing internals to improve | Select |
 | Replace the core and simultaneously build full 3D, native SDKs and the editor | Delays usable scenarios and discards regression foundations | Defer those product lines |
 
-The renderers remain WebGPU plus WebGL2 with explicit capabilities; Canvas retains its limited contract. Spine does not acquire a separate GPU context. UI does not own a second asset manager. Build services do not enter runtime dependencies. New features may require reviewed internal changes to rendering, but cannot silently reinterpret old snapshots or raise existing admission limits.
+The 2D renderers use SharedFrame2D on WebGPU and WebGL2 with explicit capabilities. Canvas remains available to text and image providers. Spine does not acquire a separate GPU context. UI does not own a second asset manager. Build services do not enter runtime dependencies. New features may require reviewed internal changes to rendering, but cannot silently reinterpret old snapshots or raise existing admission limits.
 
 ## System boundaries and shared contracts
 

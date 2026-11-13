@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-A panel drawn by the engine with two fields a player can type into: a name of at most eight characters, and a motto of several lines. Any input method the platform offers works, because the field being edited is the platform's own.
+A panel drawn by the engine with two fields a player can type into: a name of at most eight characters, and a motto of several lines. Editing uses a native browser field so the operating system can provide keyboard and composition input. See the checks below for verified coverage.
 
 ## Run
 
@@ -34,4 +34,4 @@ See [the guide](../../knowledge-base/en/docs/text-input.md) for the request, the
 node examples/text-input/verify.mjs <directory from which "playwright" resolves>
 ```
 
-This runs the page in headless Chromium, with a mouse and with an emulated phone, and drives a composition through the browser's protocol. It does not use a physical input method or a real phone.
+The command runs headless Chromium with mouse input and phone emulation and drives composition through the browser protocol. A separate hardware check passed three cases per backend on Windows Edge 157 (RTX 5090 Laptop) and Galaxy Z Fold7 Chrome 157 (Adreno 830). The Samsung keyboard appeared on the phone, and the visual viewport shrank from 813.7 to 423.2 CSS px. Text was entered through CDP. Human CJK composition and candidate selection, iPhone Safari, desktop Firefox and desktop Safari still need verification. [Input qualification #89](https://github.com/cnedwin/Egret_rebuild/issues/89)

@@ -25,8 +25,8 @@ Egret is an open-source TypeScript engine for Web games. The display, event and 
 | Rendering and resources | Shared WebGPU/WebGL2 rendering, ordered preparation, resource groups and selected device recovery. The fixed M1.2 full-dirty Engine median-p95 is 5.3 ms against 8 ms. | Broader host/device qualification and the remaining [M1.2 pacing target](https://github.com/cnedwin/Egret_rebuild/issues/55) |
 | Content and animation | PNG/atlas/sequence builds, multipage atlases and font artifacts, optional Spine playback/display and RESET, compatible sequence playback preservation | Complete selected-version Spine references and state preservation, texture variants, integrated lifecycle and performance qualification |
 | UI and text | Variable-height lists, focus/navigation, multilingual styled paragraphs, text geometry, font/theme switching, masks/blur, owned popup/modal layers and optional native single/multiline editing | Actual IME, remaining controls/semantics and broader script/device qualification |
-| 3D | [Optional World3D](knowledge-base/en/docs/world3d.md) covers glTF, lighting and shadows, post-processing, animation, text, automatic instancing and accelerated picking. The physics preview includes shape sweeps, compound bodies, solver slices and gameplay helpers. The shared host supports bounded 3D backgrounds with 2D composition. | Broader asset and device qualification and project authoring integration |
-| Integration | [Editable Outfit Studio](examples/outfit-studio/README.md) with a compact desktop scene, fixed mixed workloads and a mobile multitouch profile | Selected feature coverage, full performance/device qualification and the core preview handoff |
+| 3D | [Optional World3D](knowledge-base/en/docs/world3d.md) covers glTF, lighting and shadows, post-processing, animation, text, automatic instancing and accelerated picking. The physics preview includes shape sweeps, compound bodies, solver slices and gameplay helpers. | Broader asset and device qualification and project authoring integration |
+| Integration | [Editable Outfit Studio](examples/outfit-studio/README.md) with an editable SharedFrame2D scene and desktop/mobile workload variants | Selected feature coverage, full performance/device qualification and the core preview handoff |
 
 [Android observations](knowledge-base/en/docs/android-device-validation.md) cover specific component and mixed-scene cases on the tested phones. See the [current capability map](knowledge-base/en/docs/core-progress.md) for device, input and performance coverage.
 
@@ -68,6 +68,11 @@ Merged engineering increments for the current preview. 当前工程预览已合�
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#195](https://github.com/cnedwin/Egret_rebuild/pull/195) | Optional canvas text input with a native browser field and composition support | 可选画布文字输入，接入浏览器原生文本框与组合输入 |
+| [#193](https://github.com/cnedwin/Egret_rebuild/pull/193) | Opt-in frame and hitch monitor for game debugging | 可选帧时与卡顿调试面板 |
+| [#187](https://github.com/cnedwin/Egret_rebuild/pull/187) · [#188](https://github.com/cnedwin/Egret_rebuild/pull/188) · [#190](https://github.com/cnedwin/Egret_rebuild/pull/190) | SharedFrame2D becomes the sole 2D frame path and retains stable capture, packing and batches | SharedFrame2D 成为统一 2D 帧路径，复用稳定捕获、打包与批次 |
+| [#179](https://github.com/cnedwin/Egret_rebuild/pull/179) · [#185](https://github.com/cnedwin/Egret_rebuild/pull/185) | World3D shadow allocation and SharedFrame2D texture and timing diagnostics with scoped hardware observations | World3D 阴影分配、SharedFrame2D 纹理和计时诊断及有限真机观察 |
+| [#177](https://github.com/cnedwin/Egret_rebuild/pull/177) | Browser-playable demo collection | 浏览器游戏试玩入口 |
 | [#168](https://github.com/cnedwin/Egret_rebuild/pull/168) | World3D physics helpers for ragdolls, arcade vehicles, rope and cloth, plus a message-port simulation client | World3D 增加布娃娃、街机式载具、绳索和布料辅助组件，以及消息端口物理客户端 |
 | [#166](https://github.com/cnedwin/Egret_rebuild/pull/166)–[#167](https://github.com/cnedwin/Egret_rebuild/pull/167) | Shape sweeps, compound bodies, joints and contacts, plus static-body hierarchy and solver slices | 新增形状扫掠、组合刚体、关节和接触报告，扩展静态刚体层级及分片求解 |
 | [#163](https://github.com/cnedwin/Egret_rebuild/pull/163) | Automatic instancing, accelerated picking and reduced per-frame allocation | 自动实例化、加速拾取并减少逐帧分配 |

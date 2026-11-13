@@ -6,7 +6,7 @@
 
 ## 目标与当前基线
 
-复盘 main [20cc6f6](https://github.com/cnedwin/Egret_rebuild/commit/20cc6f61796238bd8e792b9a8984ac237331050e)。
+复盘 main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39)。
 
 让当前共享核心支撑动画丰富、界面复杂的游戏，再完成声明范围的完整资格。保留原十一个工作包。[当前能力](core-progress.md)给出实际实现，[工程计划](工程规划.md)说明下一批完整增量，[M2](m2-spine-content-plan.md)、[M3](m3-ui-text-input-plan.md)、[M4](m4-core-acceptance-plan.md)负责详细契约。
 
@@ -32,7 +32,7 @@ M2 已有 PNG／多页图集／序列／字体的构建与运行时路径、可�
 | 在共享显示／资源／渲染权威之上构建完整可选子系统 | 保留熟悉的 API 和已验证生命周期，同时允许内部优化 | 采用 |
 | 重写核心，同时开发完整 3D、原生 SDK 和编辑器 | 推迟可用场景，丢失回归基础 | 这些产品线后续推进 |
 
-渲染器继续采用能力明确的 WebGPU 与 WebGL2；Canvas 保留受限契约。Spine 不获取独立 GPU 上下文，UI 不另建资源管理器，构建服务不进入运行时依赖。新能力可以带来经评审的渲染内部改造，但不能暗中重新解释旧快照或提高既有准入上限。
+2D 渲染器通过能力明确的 WebGPU 与 WebGL2 执行 SharedFrame2D。文字和图像提供者仍可使用 Canvas。Spine 不获取独立 GPU 上下文，UI 不另建资源管理器，构建服务不进入运行时依赖。新能力可以带来经评审的渲染内部改造，但不能暗中重新解释旧快照或提高既有准入上限。
 
 ## 系统边界与共享契约
 
