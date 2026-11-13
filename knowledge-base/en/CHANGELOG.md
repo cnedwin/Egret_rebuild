@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Clean-consumer check of the default engine — 2026-11-14
+
+`tools/verify-clean-consumer.mjs` packs the three packages of the default engine with the pinned pnpm, installs them into a new project outside the checkout and uses them there. The unmodified public examples run, all 23 entries resolve and load from the installed copy, the minimal route loads no web, 3D or optional module, and a strict TypeScript consumer compiles. The check runs in Node. The packages remain unpublished, and a browser run from a consumer, first interaction and the human walkthrough remain open. [Guide](docs/clean-consumer.md) · [#93](https://github.com/cnedwin/Egret_rebuild/issues/93)
+
 ## Opening a project in Outfit Studio — 2026-11-14
 
 Outfit Studio opens an exported project in the running page. The file is admitted on a copy of the live project and written as one edit transaction, under the same stable character IDs. New palettes are loaded and taken by the Host while the previous frame stays on screen, and the project, actors and roster then change together. A refused file, a failed load or Cancel changes nothing. The WebGL2 rows of the new browser check passed in headless Chromium with software rendering; the WebGPU, hardware and phone rows have not been run. [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) · [Outfit Studio](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/README.md)

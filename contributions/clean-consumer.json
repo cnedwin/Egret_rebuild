@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/verify-clean-consumer.mjs",
+      "originRole": "First-party check of the packed default engine from a new project outside the checkout: archives, install, entries, separation, examples, types and notices; independently authored with AI assistance; Apache-2.0. Uses the pinned package manager and compiler.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/clean-consumer.test.mjs",
+      "originRole": "First-party tests of the clean-consumer check: its parts on made-up inputs, and the whole offline run against the built packages; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/layout-headless.mjs",
+      "originRole": "First-party Node example of the default engine entry with the optional layout entry; independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/clean-consumer.md",
+      "originRole": "First-party guide to using the preview from a clean project, with its support matrix, notices and open rows; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/clean-consumer.md",
+      "originRole": "First-party Chinese guide to using the preview from a clean project; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/clean-consumer.md",
+      "zh": "knowledge-base/Cns/docs/clean-consumer.md"
+    }
+  ]
+}
