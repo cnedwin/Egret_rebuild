@@ -83,19 +83,17 @@ test('P02 playback that cannot be carried now, and options of the other policy, 
  s.instance.setRate(2);
  refused(()=>s.slot.requestPreserving({version:'v3',loader:v2.loader,assetId:'e_json'}),'SPINE_RESET_PRESERVE_STATE');
  s.instance.advance(s.tick(.01));
- // A mix under way.
- s.instance.setAnimation(0,'move',{loop:true,mixSeconds:.1});s.instance.advance(s.tick(.02));
- refused(()=>s.slot.requestPreserving({version:'v3',loader:v2.loader,assetId:'e_json'}),'SPINE_RESET_PRESERVE_STATE');
  for(const changes of [{policy:'preserve'},{policy:'reset'},{animation:'walk'},{skins:['default']},{loop:true},{plays:2},{version:''},{assetId:''},{onEvent:1}])
   refused(()=>s.slot.requestPreserving({version:'v3',loader:v2.loader,assetId:'e_json',...changes}),'SPINE_RESET_OPTIONS_INVALID');
  refused(()=>s.slot.requestPreserving({version:'v3',loader:{load(){throw Error('touched');}},assetId:'e_json'}),'SPINE_RESET_LOADER_INVALID');
  // None of these superseded the request that was accepted.
  assert.equal(pending.state,'ready');
- // The accepted request is judged in its final window, and a mix is still under way there.
+ // The accepted request is judged in its final window, and a command is waiting there.
+ s.instance.setRate(.5);
  assert.throws(()=>pending.capture(frameOptions),error=>codes(error).includes('SPINE_RESET_PRESERVE_STATE'));
  assert.equal(pending.state,'failed');assert.equal(s.slot.getActive().instance,s.instance);
- // When the mix has ended the same request is accepted and published.
- for(let index=0;index<8;index++)s.instance.advance(s.tick(.02));
+ // Once the command has been applied a new request is accepted and published, with a mix under way.
+ s.instance.setAnimation(0,'move',{loop:true,mixSeconds:.1});s.instance.advance(s.tick(.02));
  const {next}=await preserve(s,v2.loader);
  assert.deepEqual(playback(next.getSnapshot()).tracks,playback(s.instance.getSnapshot()).tracks);
 });
@@ -241,7 +239,7 @@ function random(seed){let state=seed>>>0;return ()=>{state=(Math.imul(state,1664
 for(const seed of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])test('P09 players driven at random stay equal across repeated replacement, seed '+seed,async t=>{
  const s=await setup(t),versions=[s.version(revised()),s.version(original())],next=random(seed),names=['walk','move','hold','rise','idle'];
  const pick=list=>list[Math.floor(next()*list.length)];
- let copy,replaced=0,refused=0;
+ let copy,replaced=0;
  for(let step=0;step<260;step++){
   // Every value is drawn before the command is made, so that the original and its copy receive the same one.
   const commands=[];
@@ -263,13 +261,96 @@ for(const seed of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])test('P09 players dri
   if(next()<.12){
    // The slot carries its active player: the original the first time, then each copy in turn. Every copy is
    // held to the original, which the slot only borrowed and which plays on.
-   let ticket;
-   try{ticket=s.slot.requestPreserving({version:'r'+step,loader:versions[replaced%2].loader,assetId:'e_json'});}
-   catch(error){assert.equal(error.code,'SPINE_RESET_PRESERVE_STATE');refused++;continue;}
+   // A mix under way at that moment is carried like everything else: no replacement is refused.
+   const ticket=s.slot.requestPreserving({version:'r'+step,loader:versions[replaced%2].loader,assetId:'e_json'});
    await ticket.ready;ticket.capture(frameOptions);copy=ticket.commit().instance;replaced++;
    assert.deepEqual(playback(copy.getSnapshot()),{...playback(a),events:[]},'seed '+seed+' step '+step);
   }
  }
  assert.ok(replaced>8,'replaced '+replaced);
- t.diagnostic('replaced '+replaced+', refused while mixing '+refused);
+ t.diagnostic('replaced '+replaced);
+});
+
+/** The fixture with two animations that turn the same bone the long way round, so that a mix has a direction to keep. */
+function turning(){
+ const s=original();
+ s.animations.turn={bones:{child:{rotate:[{time:0,value:10},{time:.3,value:170}]},root:{translate:[{time:0,y:0},{time:.3,y:20}]}}};
+ s.animations.back={bones:{child:{rotate:[{time:0,value:-170},{time:.3,value:-20}]},root:{scale:[{time:0,x:1,y:1},{time:.3,x:2,y:.5}]}}};
+ s.animations.lift={bones:{child:{translate:[{time:0,y:10},{time:.3,y:30}]}}};
+ return s;
+}
+const mixes=[
+ ['one mix',i=>{i.setAnimation(0,'walk',{loop:true});},i=>{i.setAnimation(0,'move',{loop:true,mixSeconds:.2});}],
+ ['a mix that interrupted another',i=>{i.setAnimation(0,'walk',{loop:true});},i=>{i.setAnimation(0,'turn',{loop:true,mixSeconds:.3});},i=>{i.setAnimation(0,'back',{loop:true,mixSeconds:.3});}],
+ ['three under way at once',i=>{i.setAnimation(0,'turn',{loop:true});},i=>{i.setAnimation(0,'walk',{loop:true,mixSeconds:.5});},i=>{i.setAnimation(0,'back',{loop:true,mixSeconds:.5});},i=>{i.setAnimation(0,'move',{loop:true,mixSeconds:.5});}],
+ ['a turn the long way round',i=>{i.setAnimation(0,'turn',{loop:true});},i=>{i.setAnimation(0,'back',{loop:true,mixSeconds:.4});}],
+ ['two tracks and a queue',i=>{i.setAnimation(0,'walk',{loop:true});i.setAnimation(1,'rise',{loop:true});},i=>{i.setAnimation(0,'turn',{mixSeconds:.2,plays:2});i.addAnimation(0,'move',{loop:true,mixSeconds:.1});i.setAnimation(1,'hold',{loop:true,mixSeconds:.15});}],
+ // The oldest shares nothing with the one that follows it and is gone once its mix has ended. What follows it
+ // then keeps holding, against the newest, what it held while the oldest was there.
+ ['a hold kept after the oldest has gone',i=>{i.setAnimation(0,'move',{loop:true});},i=>{i.setAnimation(0,'rise',{loop:true,mixSeconds:.1});},i=>{i.setAnimation(0,'lift',{loop:true,mixSeconds:.6});}],
+ ['a mix to nothing',i=>{i.setAnimation(0,'turn',{loop:true});i.setAnimation(1,'rise',{loop:true});},i=>{i.setAnimation(1,'idle',{mixSeconds:.2});}],
+];
+for(const [name,...stages] of mixes)test('P11 a mix under way is carried, and goes on as the original goes on: '+name,async t=>{
+ const pose=({bones,slots})=>({bones,slots});
+ let compared=0;
+ // Replaced after each number of ticks into the last mix, from its first tick to after its end.
+ for(const ticksIn of [0,1,2,3,5,8,13,21,34]){
+  const s=await setup(t,turning()),same=s.version(turning());
+  // Each stage is begun and runs for a while, so that an earlier mix is still under way when the next begins.
+  for(const stage of stages.slice(0,-1)){stage(s.instance);for(let index=0;index<3;index++)s.instance.advance(s.tick(.03));}
+  stages.at(-1)(s.instance);s.instance.advance(s.tick(0));
+  for(let index=0;index<ticksIn;index++)s.instance.advance(s.tick(.016));
+  const {next,heard}=await preserve(s,same.loader);
+  assert.deepEqual(pose(next.getSnapshot()),pose(s.instance.getSnapshot()),name+', replaced '+ticksIn+' ticks in');
+  assert.deepEqual(playback(next.getSnapshot()),{...playback(s.instance.getSnapshot()),events:[]});assert.deepEqual(heard,[]);
+  s.heard.length=0;
+  for(let index=0;index<50;index++){
+   // Part of the way on, the players are given another mix to begin from the one they are in.
+   if(index===20)for(const player of [s.instance,next])player.setAnimation(0,'walk',{loop:true,mixSeconds:.12});
+   const tick=s.tick(index%7===3?.033:.016),a=s.instance.advance(tick),b=next.advance(tick);
+   assert.deepEqual(pose(b),pose(a),name+', replaced '+ticksIn+' ticks in, '+index+' ticks later');assert.deepEqual(playback(b),playback(a));compared++;
+  }
+  assert.deepEqual(heard.map(heardAs),s.heard.map(heardAs));
+ }
+ assert.equal(compared,450);
+});
+
+test('P12 the copy of a mix is mixed again: replaced at every tick of a mix, each copy stands where the original stands',async t=>{
+ const s=await setup(t,turning()),versions=[s.version(turning()),s.version(turning())],pose=({bones,slots})=>({bones,slots});
+ s.instance.setAnimation(0,'turn',{loop:true});for(let index=0;index<3;index++)s.instance.advance(s.tick(.03));
+ s.instance.setAnimation(0,'back',{loop:true,mixSeconds:.3});s.instance.advance(s.tick(.02));
+ s.instance.setAnimation(0,'walk',{loop:true,mixSeconds:.4});
+ let copy;
+ for(let index=0;index<40;index++){
+  const tick=s.tick(.016),a=s.instance.advance(tick);
+  if(copy)assert.deepEqual(pose(copy.advance(tick)),pose(a),'tick '+index);
+  // The slot carries its active player, so each copy is made from the copy before it.
+  copy=(await preserve(s,versions[index%2].loader,{version:'m'+index})).next;
+  assert.deepEqual(pose(copy.getSnapshot()),pose(a),'copy '+index);
+ }
+});
+
+test('P13 what is being mixed out of must be continued too: a later version without it is refused',async t=>{
+ const s=await setup(t,turning()),without=turning();delete without.animations.turn;
+ const v2=s.version(without);
+ s.instance.setAnimation(0,'turn',{loop:true});s.instance.advance(s.tick(.03));
+ s.instance.setAnimation(0,'walk',{loop:true,mixSeconds:.1});s.instance.advance(s.tick(.02));
+ // The current animation is there; the one it is still mixing out of is not.
+ const before=s.instance.getSnapshot(),pending=s.slot.requestPreserving({version:'v2',loader:v2.loader,assetId:'e_json'});
+ await assert.rejects(pending.ready,error=>error.code==='SPINE_RESET_PRESERVE_ANIMATION');
+ assert.equal(pending.state,'failed');assert.equal(s.slot.getActive().instance,s.instance);assert.deepEqual(s.instance.getSnapshot(),before);
+ // When the mix has ended nothing of that animation is carried, and the version is accepted.
+ for(let index=0;index<8;index++)s.instance.advance(s.tick(.02));
+ const {next}=await preserve(s,v2.loader,{version:'v3'});
+ assert.deepEqual(playback(next.getSnapshot()).tracks,playback(s.instance.getSnapshot()).tracks);
+});
+
+test('P14 what an ended animation left behind is not carried: the copy is posed by what is playing',async t=>{
+ const s=await setup(t,turning()),same=s.version(turning());
+ s.instance.setAnimation(0,'move');for(let index=0;index<5;index++)s.instance.advance(s.tick(.03));
+ s.instance.clearTrack(0);const left=s.instance.advance(s.tick(.03));
+ // The original keeps the root where the animation left it. Nothing plays, so nothing poses the copy.
+ assert.equal(left.tracks.length,0);assert.notEqual(left.bones[0].x,0);
+ const {next}=await preserve(s,same.loader);
+ assert.equal(next.getSnapshot().bones[0].x,0);assert.deepEqual(next.getSnapshot().tracks,[]);
 });
