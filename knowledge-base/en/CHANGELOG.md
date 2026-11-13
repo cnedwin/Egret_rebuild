@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Semantics of a drawn UI — 2026-11-14
+
+`@egret/engine/ui/semantics` holds a tree that describes the controls an application draws: a role, a name, bounds and state for each, read from the control at every publication, with the activation and the focus request a press and a key already reach. `@egret/engine/web/semantics` projects it to the page: the canvas keeps the keyboard, owns an invisible container of elements laid over the controls, and names the focused one as its active descendant. A modal dialog makes everything outside it inert. The control example now describes its switch, its options and its button. The projection was checked against the accessibility tree of headless Chromium; no screen reader, other assistive technology or other browser was run. [Guide](docs/ui-semantics.md)
+
 ## Scroll position for viewports — 2026-11-14
 
 `createScrollControl` in `@egret/engine/ui` holds the offset of one axis of a clipped viewport an application draws. The wheel scrolls it through the hover input and is consumed only when the offset moved, so a viewport inside another hands the wheel outward and the outermost hands it to the page. One contact drags the scrollbar thumb, and `line`, `page`, `toStart` and `toEnd` serve the keys. The hover example now scrolls its list with it. Panning the content with a finger is a gesture and is not recognized. [Guide](docs/ui-controls.md#scroll-position) · [#90](https://github.com/cnedwin/Egret_rebuild/issues/90)

@@ -223,6 +223,12 @@ The optional `@egret/engine/input/hover` entry exports `createHoverInput` and fi
 
 Only `tests/browser-hover.test.mjs` may define its test-owned page stand-in under the global names `window`, `document` and `reportError`, and it restores them after each case. The stand-in is the test's own objects; no native prototype is intercepted. These cases state what the adapter does with the events it is given. `examples/pointer-hover/verify.mjs` drives a mouse, a pen, a finger and the wheel through Chromium's protocol in a real page; a person at a real mouse, pen or trackpad, hardware GPUs, WebGPU, Safari and Firefox remain unchecked.
 
+## Semantics
+
+The optional `@egret/engine/ui/semantics` entry exports `createUiSemantics`, `semanticBoundsOf` and fifteen erased types. The optional `@egret/engine/web/semantics` entry exports `createBrowserSemantics` and two erased types. The tree imports the runtime alone and touches no page. The browser module imports the tree entry for its types and the error type and nothing private, and no other entry has any of the three. Follow the [guide](knowledge-base/en/docs/ui-semantics.md).
+
+Only `tests/browser-semantics.test.mjs` may define its test-owned page stand-in under the global names `window`, `document` and `reportError`, and it restores them after each case. The stand-in is the test's own objects; no native prototype is intercepted. These cases state what the projection writes and what it does with the events it is given. `examples/ui-controls/verify.mjs` reads the accessibility tree Chromium computes for a real page. No screen reader or other assistive technology, Safari or Firefox was run, and a passing tree is not a claim that the UI is usable with one.
+
 ## Authorized Android development sessions
 
 When keeping an authorized phone awake is part of the task, hold one bounded USB-only wake lease across the entire development/test session, including coding gaps. Observe actual awake/unlocked state and recheck before every device input; page visibility is insufficient. Capture the exact original setting or absence, close owned phone cases before ending the outer lease, and restore the original setting at completion, cancellation or error while preserving unrelated external changes. Keep the existing shared phone lease and exact-target rules. Do not change security lock or bypass credentials; locked, disconnected or unknown state stops automated input. See the [device-session policy](knowledge-base/en/docs/android-native-text-editing.md#device-ownership-and-wake-policy).

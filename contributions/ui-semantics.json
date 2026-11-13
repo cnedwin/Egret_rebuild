@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/semanticTypes.ts",
+      "originRole": "First-party public types of the semantic tree of a drawn UI; independently authored with AI assistance; Apache-2.0. Role names follow WAI-ARIA 1.2 vocabulary; no specification text is copied.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/semanticTree.ts",
+      "originRole": "First-party DOM-free semantic tree: roles, names, bounds and state read from the drawn controls at each publication, with their actions; independently authored with AI assistance; Apache-2.0. No third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/semantics.ts",
+      "originRole": "First-party optional entry of the semantic tree; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/BrowserSemantics.ts",
+      "originRole": "First-party browser projection of the semantic tree to elements the canvas owns; independently authored with AI assistance; Apache-2.0. Attribute names follow WAI-ARIA 1.2; no specification text or third-party code is copied.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/semantics.ts",
+      "originRole": "First-party optional browser entry of the semantic projection; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-semantics.test.mjs",
+      "originRole": "First-party behaviour tests of the semantic tree, alone and over the existing controls on a genuine Engine; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/browser-semantics.test.mjs",
+      "originRole": "First-party tests of the browser projection against a test-owned stand-in for the page; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/semantics.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the semantics entries; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/semantics.ts",
+      "originRole": "First-party strict TypeScript consumer of the two semantics entries, with nine refused misuses; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/ui-semantics.md",
+      "originRole": "First-party guide to the semantic tree and its browser projection; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/ui-semantics.md",
+      "originRole": "First-party Simplified Chinese guide to the semantic tree and its browser projection; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/ui-semantics.md",
+      "zh": "knowledge-base/Cns/docs/ui-semantics.md"
+    }
+  ]
+}

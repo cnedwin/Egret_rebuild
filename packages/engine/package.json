@@ -103,6 +103,14 @@
     "./web/hover": {
       "types": "./dist/web/hover.d.ts",
       "import": "./dist/web/hover.js"
+    },
+    "./ui/semantics": {
+      "types": "./dist/semantics.d.ts",
+      "import": "./dist/semantics.js"
+    },
+    "./web/semantics": {
+      "types": "./dist/web/semantics.d.ts",
+      "import": "./dist/web/semantics.js"
     }
   },
   "dependencies": {

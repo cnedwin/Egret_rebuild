@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-一个开关、一组三个选项和一个按钮，由引擎按各自的状态绘制。状态由 `@egret/engine/ui` 的控件保存，页面负责绘制并绑定按键。
+一个开关、一组三个选项和一个按钮，由引擎按各自的状态绘制。状态由 `@egret/engine/ui` 的控件保存，页面负责绘制并绑定按键，同时向辅助技术描述同一批控件。
 
 ## 运行
 
@@ -22,6 +22,7 @@ node tools/serve-canvas.mjs
 - 点一下画布，然后使用键盘。Tab 在开关、选项组和按钮之间移动，获得焦点的那个有一圈标记。空格或回车激活。方向键、Home 和 End 在选项组内移动。
 - 用页面上的按钮禁用第三个选项。按它没有反应，方向键会跳过它。
 - 全部禁用。没有控件响应，也没有控件处于悬停。
+- 在浏览器开发者工具中打开无障碍树。画布是一个 application，其中有一个 group、一个 switch、含三项的 radiogroup 和一个 button，各带自己的状态，并指明持有焦点的那一个。
 
 ## 工作方式
 
@@ -29,7 +30,9 @@ node tools/serve-canvas.mjs
 
 按键来自 `@egret/engine/web/keyboard`，交给获得焦点的显示对象。页面调用 `toggle()`、`press()` 加 `release()`，或 `next()`、`previous()`、`first()` 和 `last()`。选项组是一个键盘停靠点，停靠点跟随被选中的选项。
 
-每个控件的说明和已检查的内容见[指南](../../knowledge-base/Cns/docs/ui-controls.md)。
+`createUiSemantics` 描述这五个控件：页面在绘制之后发布，每个节点在发布时读取所绘的控件。`createBrowserSemantics` 在每个控件上方覆盖一个不可见的元素。键盘仍属于画布。
+
+每个控件的说明见[指南](../../knowledge-base/Cns/docs/ui-controls.md)，这份描述见[语义指南](../../knowledge-base/Cns/docs/ui-semantics.md)，两者都列出了已检查的内容。
 
 ## 检查
 
@@ -37,4 +40,4 @@ node tools/serve-canvas.mjs
 node examples/ui-controls/verify.mjs <Playwright index.mjs 的绝对路径> <新的输出目录的绝对路径> [software]
 ```
 
-省略第三个参数时启动已安装的 Edge（有界面）。使用 `software` 时由 Playwright 自带的浏览器以无头方式和软件渲染运行。五个场景通过自动化协议驱动鼠标、手指和键盘，并写出 `report.json` 和每个场景的截图。它们在无头 Chromium 的软件 WebGL2 上通过。硬件 GPU、WebGPU、Edge、Safari、Firefox、真实手机和真人操作都没有运行。
+省略第三个参数时启动已安装的 Edge（有界面）。使用 `software` 时由 Playwright 自带的浏览器以无头方式和软件渲染运行。五个场景通过自动化协议驱动鼠标、手指和键盘，另有四个场景读取浏览器计算出的无障碍树并对其中的元素发出请求。它们写出 `report.json` 和每个场景的截图。九个场景都在无头 Chromium 的软件 WebGL2 上通过。硬件 GPU、WebGPU、Edge、Safari、Firefox、真实手机和真人操作都没有运行。

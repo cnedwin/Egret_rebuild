@@ -2380,8 +2380,19 @@ function withoutHoverEntries(raw){
  assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3559,sha256:'47f30da0710131fd945cbc85d57ec19abc29a99f8d6b36502cf7c04da49b091d'});
  return prior;
 }
+// The two semantics entries are the newest. Taking them out gives the package as the hover entries left it.
+function withoutSemanticsEntries(raw){
+ const value=JSON.parse(raw);
+ if(!Object.hasOwn(value.exports,'./ui/semantics')&&!Object.hasOwn(value.exports,'./web/semantics'))return raw;
+ assert.deepEqual(value.exports['./ui/semantics'],{types:'./dist/semantics.d.ts',import:'./dist/semantics.js'});
+ assert.deepEqual(value.exports['./web/semantics'],{types:'./dist/web/semantics.d.ts',import:'./dist/web/semantics.js'});
+ delete value.exports['./ui/semantics'];delete value.exports['./web/semantics'];
+ const prior=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3765,sha256:'ca1aad9f66558f25c0e4e26ec74ec7cf4f7cf963654d5e096daf09f52c05fa9b'});
+ return prior;
+}
 function restoreScene3dEntries(raw){
- raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(raw)));
+ raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(raw))));
  const identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
  if(JSON.stringify(identity(raw))!==JSON.stringify({bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'}))return raw;
  const value=JSON.parse(raw),exports={};

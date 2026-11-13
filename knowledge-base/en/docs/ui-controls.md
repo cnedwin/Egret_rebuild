@@ -4,6 +4,8 @@ English | [简体中文](../../Cns/docs/ui-controls.md)
 
 `@egret/engine/ui` has six controls that hold the state of something a player operates: a virtual stick, a button, a hover, a switch, one choice out of several, and a scroll position. They belong to M3.4, [#90](https://github.com/cnedwin/Egret_rebuild/issues/90).
 
+What these controls are to someone who cannot see them is described by the [semantic tree](ui-semantics.md), which reads the same state.
+
 They own state only. A control adds no listener of the page, draws nothing and decides no routing: it listens on a display object for the events of the [contact input](multi-pointer-input.md) or of the [hover input](pointer-hover.md), and reports changes through callbacks. The application paints each state and binds keys to the same methods a pointer reaches.
 
 | Factory | Holds | Driven by |
@@ -118,7 +120,7 @@ A control reports state; the application chooses what it looks like. The [theme]
 | [`tests/ui-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-controls.test.mjs) | Movement and action on a genuine Engine |
 | [`tests/ui-state-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-state-controls.test.mjs), 13 cases | Hover, toggle and selection on a genuine Engine, a strict TypeScript consumer and the exports |
 | [`tests/ui-scroll-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-scroll-control.test.mjs), 13 cases | The scroll position on a genuine Engine: range, wheel units, nested viewports, the thumb and its drag, and a strict TypeScript consumer |
-| [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs), 5 scenarios | A real page in headless Chromium with software WebGL2: mouse, touch and keys injected through the automation protocol |
+| [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs), 5 scenarios | A real page in headless Chromium with software WebGL2: mouse, touch and keys injected through the automation protocol. Four further scenarios of the same file check the [semantic projection](ui-semantics.md) |
 | [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs), 8 scenarios | The scroll control in a real page: the wheel, the hand-over to the page, and a drag of the thumb |
 
 Twenty-nine faults were written into the built hover, toggle and selection code one at a time, and the unit tests caught all of them. Of thirty-two written into the scroll control they caught thirty; the other two change nothing a caller can see.
@@ -127,7 +129,7 @@ Twenty-nine faults were written into the built hover, toggle and selection code 
 
 - No person operated the example. Every input was injected.
 - Hardware GPUs, WebGPU, Edge as installed, Safari, Firefox and a real phone were not run for these controls.
-- Nothing is announced to assistive technology. Roles, names and states for a screen reader remain in #90.
+- The [semantic projection](ui-semantics.md) gives these controls roles, names and states, checked against the accessibility tree of headless Chromium. No screen reader or other assistive technology was run.
 - A finger does not pan a scroll viewport: that gesture and its arbitration with presses remain in #90.
 - Text fields and the virtual list are not built from these controls.
 - A selection over the recycled rows of a virtual list is the list's own subject, not this group's.

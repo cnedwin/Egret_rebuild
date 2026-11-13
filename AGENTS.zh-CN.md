@@ -223,6 +223,12 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2`。该入口导出 `cre
 
 只有 `tests/browser-hover.test.mjs` 可以在 `window`、`document` 和 `reportError` 这几个全局名称下定义测试自有的页面替身，并在每个用例之后恢复它们。替身是测试自己的对象，不拦截任何原生原型。这些用例说明适配器如何处理交给它的事件。`examples/pointer-hover/verify.mjs` 在真实页面中通过 Chromium 的协议驱动鼠标、手写笔、手指和滚轮；真人使用真实鼠标、手写笔或触控板，以及硬件 GPU、WebGPU、Safari 和 Firefox 仍未检查。
 
+## 语义
+
+可选入口 `@egret/engine/ui/semantics` 导出 `createUiSemantics`、`semanticBoundsOf` 和十五个擦除类型。可选入口 `@egret/engine/web/semantics` 导出 `createBrowserSemantics` 和两个擦除类型。语义树只导入 runtime，不接触页面。浏览器模块只为类型导入语义树入口，另导入错误类型，不导入任何私有内容，其他入口也不包含这三者。遵循[指南](knowledge-base/Cns/docs/ui-semantics.md)。
+
+只有 `tests/browser-semantics.test.mjs` 可以在 `window`、`document` 和 `reportError` 这几个全局名称下定义测试自有的页面替身，并在每个用例之后恢复它们。替身是测试自己的对象，不拦截任何原生原型。这些用例说明投射写入了什么、如何处理交给它的事件。`examples/ui-controls/verify.mjs` 读取 Chromium 为真实页面计算出的无障碍树。没有运行读屏软件或其他辅助技术，也没有运行 Safari 或 Firefox；无障碍树通过检查不等于界面在读屏软件下可用。
+
 ## 已授权 Android 开发会话
 
 任务包含保持已授权手机唤醒时，在整段开发／测试会话（包括编写代码的间隔）持有一个有时限的 USB 唤醒租约。核查真实亮屏／解锁状态，每次设备输入前复查，页面可见不足以代表就绪。记录原设置的准确值或缺失状态；先关闭自有手机用例，再结束外层租约，在完成、取消或异常时恢复原值，并保留无关外部修改。继续遵循共享手机租约和准确目标规则。不改变安全锁或绕过认证；锁定、断连或状态不明时停止自动输入。见[设备会话规范](knowledge-base/Cns/docs/android-native-text-editing.md#设备所有权与保持唤醒)。
