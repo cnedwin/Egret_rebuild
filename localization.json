@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "5f420248728a5e09d2b1dfe8391a64960d5cd81c46bd7974023ca3ef388cd325",
-      "zhSha256": "ae9aee088b389a79f222cd777c0275a2ef11a8f0d435693174c9ced8e7fcf287"
+      "enSha256": "bf015888ee903fda31917f8d9975df31af7e6e10d261fee8571fe62a63625481",
+      "zhSha256": "f126e15e998853650417f145602aea4006948bc033cd476e594aa504bb8e707d"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",

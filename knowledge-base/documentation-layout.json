@@ -964,8 +964,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "ae9aee088b389a79f222cd777c0275a2ef11a8f0d435693174c9ced8e7fcf287",
-      "currentEnSha256": "5f420248728a5e09d2b1dfe8391a64960d5cd81c46bd7974023ca3ef388cd325",
+      "currentZhSha256": "f126e15e998853650417f145602aea4006948bc033cd476e594aa504bb8e707d",
+      "currentEnSha256": "bf015888ee903fda31917f8d9975df31af7e6e10d261fee8571fe62a63625481",
       "currentEngineeringPreview": "0.61.0"
     },
     {
