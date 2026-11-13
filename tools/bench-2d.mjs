@@ -6,8 +6,8 @@
 // (preparation). A capture after the first one finds the records each node kept; the rows marked
 // "kept" time the preparation of a frame by a Host that kept the draws and batches of the frames before.
 // It also times container edits and the life of display objects.
-// A row marked "kept" is the median of its passes, because a kept frame is short enough for one pause of the
-// machine to outweigh it; every other row is a mean.
+// A capture row and a row marked "kept" are the median of their frames, because such a frame is short enough
+// for one pause of the machine to outweigh it; every other row is a mean.
 // The figures describe this machine and this run; they are not acceptance thresholds.
 import { performance } from 'node:perf_hooks';
 import {
@@ -31,12 +31,12 @@ const record = (group, name, value, unit, note) => results.push({ group, name, v
 const failure = error => 'failed: ' + (error?.code ?? error?.message ?? String(error));
 
 const median = values => [...values].sort((a, b) => a - b)[values.length >> 1];
-/** Mean milliseconds of `frame` over a run, after one unmeasured call. */
+/** Median milliseconds of `frame` over a run, after two unmeasured calls: the second finds what the first kept. */
 function perFrame(frames, before, frame) {
-  frame();
-  const start = performance.now();
-  for (let i = 0; i < frames; i++) { before(i); frame(); }
-  return (performance.now() - start) / frames;
+  before(0); frame(); before(0); frame();
+  const times = [];
+  for (let i = 0; i < frames; i++) { before(i); const start = performance.now(); frame(); times.push(performance.now() - start); }
+  return median(times);
 }
 /** Times the three host stages of one frame record: clipped geometry, vertex rows and draw batches. */
 function prepare(label, frame, frames) {
@@ -99,7 +99,7 @@ async function sprites(count) {
     sprite.x = (i * 37) % 1200; sprite.y = (i * 53) % 680;
     layers[i % 20].addChild(sprite); all.push(sprite);
   }
-  const frames = quick ? 5 : count >= 20000 ? 8 : 30, capture = () => engine.captureSharedFrame(FRAME);
+  const frames = quick ? 5 : count >= 20000 ? 20 : 40, capture = () => engine.captureSharedFrame(FRAME);
   const label = count + ' rectangles';
   try {
     record('capture', label + ', all moving', round(perFrame(frames, () => { for (const sprite of all) sprite.x += 1; }, capture)), 'ms/frame');
@@ -128,7 +128,7 @@ async function atlas(count, regions) {
       bitmap.x = (i * 37) % 1200; bitmap.y = (i * 53) % 680;
       engine.stage.addChild(bitmap);
     }
-    const frames = quick ? 3 : 15, capture = () => engine.captureSharedFrame(FRAME);
+    const frames = quick ? 3 : 40, capture = () => engine.captureSharedFrame(FRAME);
     record('capture', label, round(perFrame(frames, () => {}, capture)), 'ms/frame');
     prepare(label, capture(), Math.max(3, frames >> 2));
     changing(label + ', a tenth moving', frames, () => { for (let i = 0; i < count; i += 10) bitmaps[i].x += 1; }, capture);

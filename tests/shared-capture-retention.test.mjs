@@ -143,6 +143,51 @@ test('KEEP K04 nothing kept stands for a check: a node whose resource, text or t
   assert.equal(nodes.length, 64);
 }));
 
+test('KEEP K06 a node at rest is still checked: a texture or a node disposed behind it is refused as without kept records', () => stage(async ({ engine, scope, bitmap, rect, add, leases, type }) => {
+  for (let i = 0; i < 6; i++) bitmap(0, i, { x: 12 * i });
+  const group = add(new egret.DisplayObjectContainer(), { x: 5 });
+  rect(0x336699, { x: 3 }, group); const inner = bitmap(1, 2, { y: 30 }, group);
+  // Three captures: every node gives its commands, then gives them again, at rest.
+  const first = both(engine), second = both(engine), third = both(engine);
+  third.commands.forEach((command, index) => { assert.equal(command, second.commands[index]); assert.equal(command, first.commands[index]); });
+  // A texture disposed behind a bitmap that did not change.
+  const own = engine.createScope(), lease = own.use(await engine.assets.acquire(egret.createAssetRef(type, '1:6'), { signal: scope.signal }));
+  const leased = add(new egret.Bitmap(lease), { x: 90 });
+  both(engine); both(engine);
+  lease.value.dispose();
+  assert.equal(both(engine), 'refused:TEXTURE_DISPOSED'); assert.equal(both(engine), 'refused:TEXTURE_DISPOSED');
+  engine.stage.removeChild(leased); own.dispose();
+  const after = both(engine);
+  after.commands.forEach((command, index) => assert.equal(command, third.commands[index], 'the nodes before it rest as they did'));
+  // A node disposed where it stands, behind nodes that did not change.
+  const short = engine.createScope(), node = short.use(new egret.Sprite());
+  node.graphics.beginFill(0x112233, 1).drawRect(0, 0, 4, 4).endFill(); group.addChild(node);
+  both(engine); both(engine);
+  short.dispose();
+  const disposed = both(engine);
+  assert.ok(disposed === 'refused:OBJECT_DISPOSED' || typeof disposed === 'object', String(disposed));
+  if (node.parent) node.parent.removeChild(node);
+  assert.equal(typeof both(engine), 'object'); assert.equal(inner.y, 30);
+}));
+
+test('KEEP K07 a node at rest is still charged: draws that no longer fit the frame behind a change before them are refused as without kept records', { timeout: 120000 }, () => stage(({ engine, rect, add }) => {
+  // One draw outside every clip, then 32,768 draws under eight clips: eight clip references each, the most a frame admits.
+  const outside = add(new egret.DisplayObjectContainer()), mover = rect(0x445566, { x: 1 }, outside);
+  let innermost = engine.stage;
+  for (let depth = 0; depth < 8; depth++) innermost = add(new egret.DisplayObjectContainer(), { clipRect: { x: 0, y: 0, width: 200 + depth, height: 200 } }, innermost);
+  for (let i = 0; i < 32768; i++) rect(0x778899, { x: i % 180, y: (i >> 8) % 180 }, innermost);
+  const first = both(engine); assert.equal(typeof first, 'object');
+  const second = both(engine);
+  assert.equal(second.commands[20000], first.commands[20000]); assert.equal(second.commands.length, 1 + 16 + 32768);
+  // The first draw moves under the eight clips, to the front of the others. Every other draw has the place and the
+  // inputs it had, and rests; with eight more clip references before them, the last of them no longer fits.
+  innermost.addChildAt(mover, 0);
+  assert.equal(both(engine), 'refused:FRAME_BUDGET_EXCEEDED'); assert.equal(both(engine), 'refused:FRAME_BUDGET_EXCEEDED');
+  outside.addChild(mover);
+  const back = both(engine); assert.equal(typeof back, 'object');
+  assert.equal(back.commands[20000], first.commands[20000]);
+}));
+
 function random(seed) {
   let state = seed >>> 0;
   const next = () => { state = Math.imul(state ^ (state >>> 15), 0x2c1b3c6d) + 0x9e3779b9 >>> 0; return state >>> 8; };

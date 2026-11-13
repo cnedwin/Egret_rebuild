@@ -174,9 +174,33 @@ The clipped geometry of a kept draw takes what it took. In another run, of 300 f
 
 A kept bitmap counts 1,136 bytes for its geometry and rows, 240 for its packed record and 328 in a kept batch, by the logical measure of the profile. The bound on what a Host keeps is therefore 48 MiB, up from 32 MiB, and a frame the largest limits admit still keeps less.
 
-What is still done for every frame: every node is counted, checked and charged, and every resource read, which is now most of the time of a frame in which nothing moved; every row of every batch is uploaded, changed or not. A draw whose number of rows changes, such as a sprite crossing the edge of the screen, has its batch joined anew for that frame.
+What was still done for every frame at that point: every node is counted, checked and charged, and every resource read, which was then most of the time of a frame in which nothing moved, and of which [Nodes at rest](#nodes-at-rest) states what became; every row of every batch is uploaded, changed or not. A draw whose number of rows changes, such as a sprite crossing the edge of the screen, has its batch joined anew for that frame.
 
 The test that prepares every frame both ways now packs and batches it both ways as well, and requires the same batches with the same rows, for stated changes and for scenes changed at random, some of them with little room for joined rows. A frame whose upload is staged reads its rows after later frames are prepared, so it is given batches of its own; one test for each Host draws a changed scene between the staging and the upload and requires the staged frame to upload the rows of its own scene. The 57 scenes of the pixel comparisons were drawn through both Hosts in a headless Chromium with software rendering in two ways. Drawn twice, then changed, then twice more as they are, the last frame of all 114 runs is identical to the single frame of the build before this change. Drawn three times and then changed, the changed frame of all 114 runs is identical to the changed scene drawn alone by the build before this change. This is not a run on a hardware GPU.
+
+## Nodes at rest
+
+The capture kept what it had derived from each node, and still compared every value of the node with what it kept, looked its material and its region up in the frame's tables, and compared the command it would make with the one it had made. A node for which no change was recorded, under a parent that gives it the same matrix, opacity, clips and material, at the same place in the frame, now gives its commands again without any of that. It is still counted, checked and charged, and its lease is still read. The [shared render profile](shared-render-profile-contract.md#kept-records) states the conditions. The frame is the same frame. No public interface changed.
+
+A capture also remembered every node it had visited in a set of its own, to refuse a node met twice. It now leaves its number on the node, which is the same check without the set.
+
+`tools/bench-2d.mjs` on the development machine, capture alone, the median frame of each run and the middle run of three:
+
+| Workload | Moving in every frame | Before | After |
+| --- | --- | --- | --- |
+| 5,000 filled rectangles | Nothing | 3.19 ms | 0.86 ms |
+| | A tenth | 3.40 ms | 1.34 ms |
+| | All | 5.56 ms | 4.62 ms |
+| 20,000 filled rectangles | Nothing | 17.37 ms | 5.60 ms |
+| | A tenth | 21.90 ms | 9.25 ms |
+| | All | 27.27 ms | 22.69 ms |
+| 5,000 bitmaps showing 100 frames of one atlas | Nothing | 3.80 ms | 1.51 ms |
+
+The runs differ from one another by as much as a third on this machine, which is why the table gives the middle one. A bitmap at rest costs more than a rectangle at rest because its lease is read.
+
+What is still done for every frame: every node is visited, checked for being a live node of this engine under its parent, and charged, and the lease of every bitmap is read. A node with a clip of its own, a boundary, an effect, a mesh or text never rests; the nodes below it may. Skipping a whole subtree that did not change is not done: it would mean not visiting its nodes, and so not checking them.
+
+The test that captures every frame both ways covers nodes at rest in each of its cases, the random one included. Two cases were added: a texture or a node disposed behind nodes at rest is refused as without kept records, and 32,768 draws at rest that no longer fit the frame, after one draw before them moved under eight clips, are refused as without kept records. The 57 scenes of the pixel comparisons were drawn through both Hosts in three sequences: twice, changed, and twice more as they are; three times and then changed; changed and then twice as they are. The last frame of all 342 runs is identical to the same frame of the builds before. This is not a run on a hardware GPU.
 
 ## Fixed 2D workloads on a graphics device
 
