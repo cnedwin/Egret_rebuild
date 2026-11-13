@@ -66,7 +66,7 @@ M2.1 owns exact artifact/source/runtime identities, fixture rights and variant a
 
 M2.3 owns copied ordered geometry and exact alpha/color/sampling. Failed drawing preserves its last owned visual without pretending committed animation events were rolled back. M2.4 owns resource/instance candidate preparation, compatibility policy, CPU commit and Host-generation integration.
 
-A sequence controller can carry position, loop, rate, pause state and marker numbering across ContentLoader clips with identical ordered frame boundaries. Compatible Spine replacement [defines that mapping](spine-reset-slot.md#keeping-the-playback): each carried animation by name, length and event schedule, each selected skin by name. An asset that cannot continue the playback is refused before publication, and a mix in progress is refused, not approximated. Independent instances and the global clock keep running, with resource, instance and device generations checked separately.
+A sequence controller can carry position, loop, rate, pause state and marker numbering across ContentLoader clips with identical ordered frame boundaries. Compatible Spine replacement [defines that mapping](spine-reset-slot.md#keeping-the-playback): each carried animation by name, length and event schedule, each selected skin by name. An asset that cannot continue the playback is refused before publication, and a mix in progress is carried on from where it stands. Independent instances and the global clock keep running, with resource, instance and device generations checked separately.
 
 ## Retain, change and defer
 
