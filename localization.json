@@ -323,8 +323,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "13fe351d139b8c4be7bda9582824fa9095f59da441a11a3bcf291279a31cb1a9",
-      "zhSha256": "b57bc13853ab52e5cd32b3b1251bf8e1edb381193e8feffa4e70e0c1f662c4a1"
+      "enSha256": "5f3a568762b45582424ab57a116b0ace81ec87c049255a4ee6693b731c088ba1",
+      "zhSha256": "fc45aa0752a421b4b93259ec334abeec58462049d4cf4296caff72dad48b6589"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -1240,8 +1240,8 @@
       "zh": "knowledge-base/Cns/docs/显示树扩展性.md",
       "en": "knowledge-base/en/docs/display-tree-scaling.md",
       "kind": "public_reading",
-      "enSha256": "221f0e159ec281fe4ebc284b7816cd4760aa1dc74f63378126d7c21f3e7190bf",
-      "zhSha256": "67a7c393df0d9cedc921ffdc60812290145e57963b0032558658ff442f97d31e"
+      "enSha256": "ee99d80e13fba49d9a0a46e49f128b741ef6287543daba7aadd51a865d12323c",
+      "zhSha256": "5d4b5ab8acdcfb51b994f28e6f4c959635e221aa1234177a97120756419b58a1"
     },
     {
       "zh": "knowledge-base/Cns/docs/Canvas文字WC1.md",
@@ -1879,8 +1879,8 @@
       "en": "knowledge-base/en/docs/shared-render-profile-contract.md",
       "zh": "knowledge-base/Cns/docs/shared-render-profile-contract.md",
       "kind": "public_reading",
-      "enSha256": "bc11dfbe00633f859353334922b99c5949d69ad6180913f0137fe901e0d1f6a8",
-      "zhSha256": "ef170631a947de341d20aaaa38858ce9c5c6bbf0c7978eac6c9fb6b3f209bb97"
+      "enSha256": "c7ca5b2df25131b55dcc5fbff5251bd34b19f5744ca631f0ef22d94b0455b47e",
+      "zhSha256": "76d069eee8a5873bbad8b06389e67fb7fc18d7d808094ef464b9351fd2f5e6d4"
     },
     {
       "en": "knowledge-base/en/docs/shared-rendering-evidence.md",
@@ -2417,7 +2417,7 @@
     },
     {
       "path": "packages/engine/web/WebGPUHost.ts",
-      "sha256": "71b15951c26b8fa308f0cf99646640f079445f2e5701a63df4c5f82fe59093ce"
+      "sha256": "80bff4cce8e1ed7c90881f458995d1fc707b7619014dfeb2d135ab264ba4b901"
     },
     {
       "path": "packages/engine/web/imageProjections2D.ts",
@@ -2561,7 +2561,7 @@
     },
     {
       "path": "packages/runtime/src/Bitmap.ts",
-      "sha256": "8bfbaffa087e502b6b53863f7ae2e63ee00db7eb3642db9b15c1ad2b20917868"
+      "sha256": "a138943610cb46a98137dd5fd5b13256ffd19f079991885eb8302b38e56d9b93"
     },
     {
       "path": "packages/runtime/src/CancellationController.ts",
@@ -2605,7 +2605,7 @@
     },
     {
       "path": "packages/runtime/src/Texture.ts",
-      "sha256": "3dbaac58fd9f2b744896801039d247a45e51e64d2afa51c1a2a6acf8bc47159f"
+      "sha256": "6e54c4b601c2dd32b1d8f7aa087ffed800612314fdcf5a6bcf3d44a90c876395"
     },
     {
       "path": "packages/runtime/src/assetState.ts",
@@ -2621,7 +2621,7 @@
     },
     {
       "path": "packages/runtime/src/displayVisualState.ts",
-      "sha256": "860162720b0b63f3197ed3e60fc117f4c9877f2e5827994639657442d08ed7fc"
+      "sha256": "5ca1632eb96bb416b81ff989deb02128004bcd125c42f102b2b2a2195b07c1d5"
     },
     {
       "path": "packages/runtime/src/ownership.ts",
@@ -3603,15 +3603,15 @@
     },
     {
       "path": "packages/engine/rendering/packSharedDraws2D.ts",
-      "sha256": "c8dd9c9b723ce42821be5740c6bbb675395ba6e7f55d8f78ca7530a4bc495802"
+      "sha256": "43965d275a7dc7c73f4ed06b8064e65ecc0b87840242bc9bb363e9aa4ea30f7a"
     },
     {
       "path": "packages/engine/rendering/preparedSharedBatches2D.ts",
-      "sha256": "777c269e1d99c72995541caaa46e99b1fe7e7b5b93e68ff8a965a8e6924527e0"
+      "sha256": "1de83bb11927775757880d7e702a71102d8366dd750721eca2ca08c07edaf016"
     },
     {
       "path": "packages/engine/rendering/prepareSharedDraws2D.ts",
-      "sha256": "52ae8ac118a69f3fedcac8aa1552aff735d0c0db0f4eca40c58f9689330a9843"
+      "sha256": "8e3ab2c554b26686df6554c2702f3523f23adf1d3e8ec41b28677480141dc35d"
     },
     {
       "path": "packages/engine/rendering/sharedColor2D.ts",
@@ -3639,11 +3639,11 @@
     },
     {
       "path": "packages/runtime/src/sharedFrameCapture.ts",
-      "sha256": "05207a16badcb539d03cb81226b9d25d8433cd690a1d4d91c4212d12ec45796e"
+      "sha256": "c31d88e6c7ed1f1a5d11bb1a417bf627fc3f79f2c574f278df07ee63994ae4da"
     },
     {
       "path": "packages/engine/web/WebGL2Host.ts",
-      "sha256": "302599779c63a722086e188bda7b5ffbbdc908ca50a1b25c94438503f20e7294"
+      "sha256": "722776dbecec89a1eace97bf6a2120e7a80131a7066eb71d9f4e80483580e35b"
     },
     {
       "path": "packages/engine/web/sharedRetentionLedger.ts",
@@ -4751,11 +4751,11 @@
     },
     {
       "path": "tests/shared-frame-golden.test.mjs",
-      "sha256": "372d51405e84a5a67469b7c46181b5f70530861949087c2c6c1892256345b589"
+      "sha256": "f99d37b1f2b777ca6f204f21d300ace9a97bcef05e4b1136422fb33ce604ec6e"
     },
     {
       "path": "tools/bench-2d.mjs",
-      "sha256": "d0a53e24ce03e11ec0ed5858ed7cd236bc48e8b0d75ac514c93482b1558e98b8"
+      "sha256": "5b44992b93c1cd63a39f515b1d614b6e257501bc37cf70b43008b274fe042053"
     },
     {
       "path": "packages/engine/web/world3d/webGL2FrameMetrics3D.ts",
@@ -4819,7 +4819,7 @@
     },
     {
       "path": "packages/engine/rendering/sharedPreparationRetention2D.ts",
-      "sha256": "0897326cfe59120d8276d83f865c3076a3d06427badb220273a0b6d91a63ac6c"
+      "sha256": "122052ccab646bee24eeb438849cb6115ea9d0b51bc38aee51bca2a8ea0f0ffe"
     }
   ],
   "historicalSemanticReview": {
