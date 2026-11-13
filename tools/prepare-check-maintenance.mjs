@@ -187,10 +187,23 @@ const twoDCostBoundaryOwners = [
   {"path":"tools/spritesheet-boundary.mjs","bytes":384131,"sha256":"f32938637f51058a1e96e97ed9a017c6fd2f63b060471760cc84e2f8272aa1c6"},
 ];
 const twoDCostBoundaryBlock = /^([ ]*)\/\/ 2D-COST-IDENTITY-BEGIN\n[\s\S]*?^\1\/\/ 2D-COST-IDENTITY-END\n/gm;
+// Reconstruct the reviewed boundary owner before the frame metrics successor.
+const world3dFrameMetricsBoundaryOwners = [
+  {"path":"tools/atlas-import-boundary.mjs","base":{"bytes":288873,"sha256":"913c77e6ac989b608563e4cf8f2b7d14564f61d6453c74f557e8e91fb2b458bf"},"current":{"bytes":288894,"sha256":"e2a675af466e4147099b42b986798743c2d93aacffaf15f5162a95259340bc2b"}},
+  {"path":"tools/browser-png-boundary.mjs","base":{"bytes":394106,"sha256":"9d3e9a261bec665c6b34eac7a0a33a876270d3dd9bd6e60521914982701ebb74"},"current":{"bytes":394127,"sha256":"2de0a95672cf5bca9d7b6025ba8e5f7303dc8c054428070b8d7ec08f2a288284"}},
+  {"path":"tools/spritesheet-boundary.mjs","base":{"bytes":384131,"sha256":"f32938637f51058a1e96e97ed9a017c6fd2f63b060471760cc84e2f8272aa1c6"},"current":{"bytes":384152,"sha256":"4cb64c559b19f80ae39665e90508ace0f6840dab2f1f069ab67f59670e4040f2"}},
+];
 export function world3dBoundaryPrevious(raw, file){
  const pair=world3dBoundaryOwners.find(row=>row.path===file);
  if(!pair)return raw;
  const matches=(bytes,pin)=>bytes.length===pin.bytes&&createHash('sha256').update(bytes).digest('hex')===pin.sha256;
+ const frameMetrics=world3dFrameMetricsBoundaryOwners.find(row=>row.path===file);
+ if(frameMetrics&&matches(raw,frameMetrics.current)){
+  raw=Buffer.from(raw.toString('utf8')
+   .replace('selectWorld3dGraphPins }', 'world3dGraphPins }')
+   .replace('...selectWorld3dGraphPins(present)', '...world3dGraphPins'));
+  if(!matches(raw,frameMetrics.base))throw Error('World3D frame metrics boundary predecessor identity differs: '+file);
+ }
  const fullDirty=m12FullDirtyBoundaryOwners.find(row=>row.path===file);
  const twoDCost=twoDCostBoundaryOwners.find(row=>row.path===file);
  if(twoDCost&&matches(raw,twoDCost)){

@@ -15,6 +15,10 @@ import {colorFromHex, mat4Invert, quatFromRotationMatrix} from './math3D.js';
 /** Anything that can draw a scene into a render target: both first-party renderers qualify. */
 export interface ReflectionRenderer3D {
     render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean;
+    /** Allows renderers to label mirror draws separately in application-frame metrics. */
+    renderReflection?(scene: Scene3D, camera: Camera3D, target: RenderTarget3D): boolean;
+    /** Allows the renderer to verify and record reuse of the previous mirror result. */
+    reuseReflection?(target: RenderTarget3D): boolean;
     /** When present, post-processing is switched off while the mirror image is drawn. */
     readonly postProcess?: {enabled: boolean};
     /** When present, shadows can be left out of the mirror image. */
@@ -119,7 +123,8 @@ export class PlanarReflection3D {
         const scheduled = this.#calls === 0;
         this.#calls = (this.#calls + 1) % interval;
         const drawn = this.#drawn;
-        if (!scheduled && drawn?.renderer === renderer && drawn.scene === scene && drawn.version === this.target.version) return true;
+        if (!scheduled && drawn?.renderer === renderer && drawn.scene === scene && drawn.version === this.target.version
+            && (renderer.reuseReflection?.(this.target) ?? true)) return true;
         this.#drawn = undefined;
 
         const shadowsEnabled = renderer.shadowsEnabled, post = renderer.postProcess, postEnabled = post?.enabled;
@@ -131,7 +136,9 @@ export class PlanarReflection3D {
             if (disableShadows) { touchedShadows = true; renderer.shadowsEnabled = false; }
             for (const object of hidden) { touchedHidden++; object.visible = false; }
             if (post) { touchedPost = true; post.enabled = false; }
-            result = renderer.render(scene, this.camera, this.target);
+            result = renderer.renderReflection
+                ? renderer.renderReflection(scene, this.camera, this.target)
+                : renderer.render(scene, this.camera, this.target);
         } catch (cause) { primary = {cause}; }
 
         // Restore every owned setting, even when setup, rendering or another restoration fails.

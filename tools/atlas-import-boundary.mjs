@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Source/emission/declaration inspection only; no product evaluation or writes.
 import {readFileSync, readdirSync, realpathSync} from 'node:fs';
-import { projectWorld3dPackage, world3dGraphPins } from './lib/world3d-boundary.mjs';
+import { projectWorld3dPackage, selectWorld3dGraphPins } from './lib/world3d-boundary.mjs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
@@ -597,7 +597,7 @@ function m3PointerGraph(root,base,actual) {
     }
   }
   // IMPORTED-GLB-ANIMATION-GRAPH-END
-  if(retainedPackage!==authoredPackage)graph=[...graph,...world3dGraphPins];
+  if(retainedPackage!==authoredPackage)graph=[...graph,...selectWorld3dGraphPins(present)];
   // M12-FULL-DIRTY-IDENTITY-BEGIN
   // The fixed-scene capture revision selects only these retained closure rows.
   const fullDirtyPairs = [
