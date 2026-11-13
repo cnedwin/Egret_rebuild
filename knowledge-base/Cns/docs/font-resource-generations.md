@@ -10,7 +10,7 @@
 
 构建器检查有界 SFNT 目录、必需表与声明格式，字形语义由原生解码器负责。这不是完整的不可信字体清洗器，也不提供可变字体轴 API、集合／WOFF 解码、字体转换或子集化。源字体必须具有实际使用与再分发权利。
 
-单个字体最大 32 MiB，整次构建的源输入／输出预算仍为 64/128 MiB。明确的 font-sfnt/1 存储与浏览器传输配置准入较大字体，默认 PNG／元数据限制不变。浏览器字节源在交给无 DOM 的加载器前校验精确长度及 SHA-256。并行编码传输额度最大 64 MiB，每个文件按两倍大小预留；该额度不代表物理内存保证。
+单个字体最大 32 MiB，整次构建的源输入／输出预算为 64/512 MiB。普通存储单个 blob 最大 16 MiB；明确的 font-sfnt/1 存储与浏览器传输配置准入更大的字体，最大 32 MiB。默认 PNG／元数据限制以内容构建流水线为准。浏览器字节源在交给无 DOM 的加载器前校验精确长度及 SHA-256。并行编码传输额度最大 64 MiB，每个文件按两倍大小预留；该额度不代表物理内存保证。
 
 @egret/engine/resources 的 createFontContentLoader 使用已有 AssetManager 和真实 ManifestGroup／Scope。目录最多 128 项，每组 1–16 个唯一字体和唯一别名、合计最大 32 MiB；最多八个组及 64 MiB 逻辑源字节。就绪组的 getFonts 返回不可变描述；组及所属 Scope 有效时，copyBytes 返回独立副本。销毁 Scope 会取消待完成加载并退役该组。浏览器便利接口 createManifestFontContentLoader 提供 loader、source 以及异步 close。
 

@@ -24,7 +24,9 @@ test('font build preserves source bytes, provenance, adoption and deterministic 
  assert.equal(built.status,'adopted');assert.equal(store.getSnapshot().revision,1);
  for(const entry of manifest.entries){const original=originals.get(entry.id);assert.deepEqual(fs.readFileSync(path.join(root,entry.artifact.path)),original);assert.equal(entry.artifact.sha256,sha(original));assert.equal(entry.provenance.license,'OFL-1.1');assert.equal(inspectFontArtifact(original).format,entry.settings.options.flavor);}
  const warm=await buildContentProject({...options,transactionId:'t_warm'});assert.ok(warm.receipt.resources.every(row=>row.cache==='hit'));assert.equal(warm.generationId,built.generationId);
- const legacy=openContentStore(path.join(root,'cache'));try{assert.throws(()=>legacy.putBlob(originals.get('e_cjk')),e=>e.code==='CONTENT_STORE_INPUT');}finally{legacy.close();}
+ // An ordinary store holds one blob of at most 16 MiB, which the CJK face is under; one byte more is refused there and admitted by the font profile.
+ const ordinary=openContentStore(path.join(root,'cache')),above=new Uint8Array(16777217);try{assert.equal(originals.get('e_cjk').length<16777216,true);assert.throws(()=>ordinary.putBlob(above),e=>e.code==='CONTENT_STORE_INPUT');}finally{ordinary.close();}
+ const profiled=openContentStore(path.join(root,'cache'),{profile:'font-sfnt/1'});try{assert.equal(profiled.putBlob(above).byteLength,16777217);}finally{profiled.close();}
  const malformed=Uint8Array.from(originals.get('e_latin'));malformed[0]=0x77;assert.throws(()=>inspectFontArtifact(malformed));assert.throws(()=>inspectFontArtifact(new Uint16Array(100)));assert.throws(()=>inspectFontArtifact(new Uint8Array(new SharedArrayBuffer(100))));
 });
 test('managed fonts coalesce groups, return detached bytes and retire on genuine scopes',async t=>{
