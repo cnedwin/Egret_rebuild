@@ -2,7 +2,7 @@
 import {createEngineForProfile} from '@egret/engine';
 import {createParagraphCache} from '@egret/engine/paragraph';
 import {createStudioAssets, fetchStudio} from './assets.mjs';
-import {openStudioProject, outfits} from './project.mjs';
+import {expandStudioProject, maxProjectBytes, openStudioProject, outfits} from './project.mjs';
 import {createStudioScene, frameOptions} from './scene.mjs';
 import {createStudioUi} from './ui.mjs';
 import {createStudioWorkload,createStudioReferenceView} from './reference.mjs';
@@ -14,6 +14,8 @@ const canvas = document.querySelector('canvas');
 const status = document.querySelector('#status');
 const pause = document.querySelector('#pause');
 const download = document.querySelector('#download');
+const openButton = document.querySelector('#open');
+const projectFile = document.querySelector('#project-file');
 const closeButton = document.querySelector('#close');
 const params = new URL(location.href).searchParams;
 const backend = params.get('backend') ?? 'webgpu';
@@ -41,6 +43,7 @@ let host, engine, scope, assets, cache, cast, ui, project, selected, draftId, up
 let state = 'loading', elapsed = 0, playing = true, raf = 0, lastFrame;
 let pendingActions = 0, palettePending = false, paintQueued = false, paintDirty = false;
 let replacement, nameRefusal, closing, loads = [], tail = Promise.resolve();
+let opening, opened;
 
 const message = (en, zh) => { status.textContent = `${en} / ${zh}`; };
 function report(error) {
@@ -64,7 +67,7 @@ function inspect() {
       surface:{width:frame.width,height:frame.height,ratio:profile.ratio,dpr:devicePixelRatio,
         backing:[canvas.width,canvas.height],css:{x:bounds.x,y:bounds.y,width:bounds.width,height:bounds.height}},
       frames,presented,resources:state === 'ready' ? host.getSharedStatus().resources : undefined} : {}),
-    cast:cast?.inspect() ?? retiredCast,ui:state === 'ready' ? ui.inspect() : undefined,replacement,nameRefusal,cleanup,errors:[...errors],
+    cast:cast?.inspect() ?? retiredCast,ui:state === 'ready' ? ui.inspect() : undefined,replacement,nameRefusal,opened,cleanup,errors:[...errors],
     interactive:performance.getEntriesByName('egret-studio-interactive')[0]?.startTime};
 }
 
@@ -182,6 +185,114 @@ async function replacePalette(character) {
   }
 }
 
+const openFailures = {
+  STUDIO_OPEN_CHARACTERS:['This file holds other characters. Your project is unchanged.', '该文件的角色与当前工程不同，当前工程未改变。'],
+  STUDIO_OPEN_VERSIONS:['This file was saved with other versions. Your project is unchanged.', '该文件由其他版本保存，当前工程未改变。'],
+  STUDIO_OPEN_FILE:['This is not an Outfit Studio project file. Your project is unchanged.', '这不是换装工作室的工程文件，当前工程未改变。'],
+  STUDIO_OPEN_NAME:['A name in this file could not be displayed. Your project is unchanged.', '该文件中有无法显示的名称，当前工程未改变。']
+};
+
+/**
+ * Opens an exported project over the live one. Everything that can fail or be cancelled happens first, on
+ * private candidates, while the previous frame stays on screen. Only then do the project, the cast and the
+ * interface change, together and without a pause between them.
+ */
+async function openProject(file, control) {
+  const stop = () => control.abort();
+  signal.addEventListener('abort', stop, {once:true});
+  if (signal.aborted) stop();
+  // Cancel may arrive before this turn of the queue, or at any wait below.
+  const cancelled = new Promise((resolve, reject) => {
+    const refuse = () => reject(Object.assign(new Error('Opening cancelled'), {code:'STUDIO_OPEN_CANCELLED'}));
+    if (control.signal.aborted) refuse(); else control.signal.addEventListener('abort', refuse, {once:true});
+  });
+  void cancelled.catch(() => {});
+  const wait = promise => Promise.race([promise, cancelled]);
+  const coded = (code, action) => { try { return action(); } catch (error) { throw Object.assign(error, {code:error.code ?? code}); } };
+  const tickets = [];
+  let published = false;
+  opened = {file:file.name,phase:'loading',revision:project.revision};
+  try {
+    await wait(Promise.resolve());
+    if (file.size > maxProjectBytes) throw Object.assign(new Error('The file is too long'), {code:'STUDIO_OPEN_FILE'});
+    let text = await wait(file.text());
+    // The fixed routes show eight characters. A two-character export gains the same six as at start-up.
+    if (profile) text = coded('STUDIO_OPEN_FILE', () => expandStudioProject(text));
+    // Admit the file privately: one edit transaction on a copy of the live project.
+    const next = openStudioProject(project.serialize());
+    const changes = coded('STUDIO_OPEN_FILE', () => next.adopt(text));
+    if (next.revision === project.revision) {
+      opened = {...opened,phase:'unchanged',changed:[]};
+      message('This project is already open', '工程内容与当前一致');
+      return;
+    }
+    // A saved name must remain renderable with this example's own font set.
+    for (const {before,after} of changes) {
+      if (before.name !== after.name) await wait(ui.prepareName(after.name)).catch(error => { throw Object.assign(error, {code:error.code === 'STUDIO_OPEN_CANCELLED' ? error.code : 'STUDIO_OPEN_NAME'}); });
+    }
+    for (const {before,after} of changes) {
+      if (before.palette === after.palette) continue;
+      const {loader} = await wait(assets.library(after.palette));
+      const ticket = cast.requestPalette(after, after.palette, loader);
+      tickets.push({ticket,id:after.id});
+      await wait(ticket.ready);
+    }
+    // This queue owns the final window: the clock stands still from the first capture to the last commit.
+    // The Host takes each candidate before anything is published. Nothing is submitted here.
+    for (const {ticket} of tickets) {
+      upload = host.stageSharedFrame(ticket.capture(frame));
+      const staged = await wait(upload.ready);
+      const session = host.getSessionStatus();
+      if (session.state !== 'ready' || session.generation !== staged.generation) throw new Error('Studio project generation expired');
+      upload.dispose();
+      upload = undefined;
+    }
+    await wait(Promise.resolve());
+
+    // Publication. Nothing below waits until the project, the cast and the interface have changed together.
+    try {
+      for (const {ticket,id} of tickets) { ticket.commit(); cast.retireBorrowed(id); }
+    } catch (error) {
+      // A candidate that held a moment ago was refused. The cast no longer matches either project.
+      if (tickets.some(({ticket}) => ticket.state === 'committed')) { opened = {...opened,phase:'inconsistent'}; void close('failed'); }
+      throw error;
+    }
+    for (const {before,after} of changes) if (before.outfit !== after.outfit) cast.setOutfit(after.id, after.outfit);
+    if (ui.layer === 'rename') ui.cancelRename();
+    draftId = nameRefusal = undefined;
+    project = next;
+    published = true;
+    ui.update(characters(), selected);
+    if (changes.some(({before,after}) => before.outfit !== after.outfit || (profile && before.palette !== after.palette))) advance(1 / 120);
+    opened = {...opened,phase:'published',revision:project.revision,changed:changes.map(row => row.id)};
+    await draw();
+    opened = {...opened,phase:'ready'};
+    message(`Project opened. Characters updated: ${changes.length}`, `已打开工程，更新了 ${changes.length} 个角色`);
+  } catch (error) {
+    const code = String(error?.code ?? error?.name ?? 'Error');
+    if (published) {
+      opened = {...opened,phase:'presentation-failed',reason:code};
+      if (!signal.aborted) message('Project opened. Refresh the preview to show it.', '工程已打开，请刷新预览。');
+    } else if (opened.phase !== 'inconsistent') {
+      const cancel = code === 'STUDIO_OPEN_CANCELLED';
+      opened = {...opened,phase:cancel ? 'cancelled' : 'failed',reason:code,detail:String(error?.message ?? error).slice(0,200)};
+      if (signal.aborted) return;
+      if (cancel) message('Opening cancelled. Your project is unchanged.', '已取消打开，当前工程未改变。');
+      else message(...(openFailures[code] ?? ['The project could not be loaded. Your project is unchanged. Try again.', '工程加载失败，当前工程未改变，可以重试。']));
+    }
+  } finally {
+    upload?.dispose();
+    upload = undefined;
+    // A ticket that was not committed gives back its candidate; a committed one has nothing left to give.
+    for (const {ticket} of tickets) ticket.dispose();
+    opened = {...opened,candidates:tickets.map(({ticket}) => ticket.state)};
+    signal.removeEventListener('abort', stop);
+    opening = undefined;
+    openButton.textContent = 'Open project / 打开工程';
+    lastFrame = undefined;
+  }
+}
+
 async function act(key) {
   const current = project.character(selected);
   const layer = ui.layer;
@@ -242,7 +353,7 @@ async function act(key) {
 }
 
 function onAction(key) {
-  if (state !== 'ready' || reflowQueued || pendingActions >= 8 || (key === 'palette' && palettePending)) return;
+  if (state !== 'ready' || reflowQueued || opening || pendingActions >= 8 || (key === 'palette' && palettePending)) return;
   const source = ui, sourceLayer = source.layer;
   pendingActions++;
   if (key === 'palette') palettePending = true;
@@ -336,6 +447,7 @@ async function open() {
   state = 'ready';
   pause.disabled = false;
   download.disabled = false;
+  openButton.disabled = false;
   performance.mark('egret-studio-interactive');
   message('Choose a character to begin', '请选择角色');
   if (mobile) {
@@ -356,6 +468,7 @@ function close(finalState = 'closed') {
   lifetime.abort();
   pause.disabled = true;
   download.disabled = true;
+  openButton.disabled = true;
   closeButton.disabled = true;
   closing = (async () => {
     const failures = [];
@@ -414,6 +527,22 @@ download.addEventListener('click', () => {
   link.download = 'outfit-studio.json';
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 0);
+});
+openButton.addEventListener('click', () => {
+  if (opening) opening.abort();
+  else if (state === 'ready') projectFile.click();
+});
+projectFile.addEventListener('change', () => {
+  const file = projectFile.files[0];
+  // The same file may be chosen again after a failure.
+  projectFile.value = '';
+  if (!file || state !== 'ready' || opening) return;
+  const control = opening = new AbortController();
+  openButton.textContent = 'Cancel opening / 取消打开';
+  message('Opening project…', '正在打开工程…');
+  void enqueue(() => openProject(file, control)).catch(report).finally(() => {
+    if (opening === control) { opening = undefined; openButton.textContent = 'Open project / 打开工程'; }
+  });
 });
 closeButton.addEventListener('click', () => { void close(); });
 window.addEventListener('pagehide', () => { void close(); }, {once:true});

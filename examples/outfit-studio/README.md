@@ -10,9 +10,18 @@ Swap palette stages a new Spine asset through the shared scene Host. The previou
 
 Edit `project.json` and restart the server to see the change. The two stable entity IDs identify the characters and their `name`, `outfit` and `palette` fields. `Export project` downloads the current committed snapshot. To open it, run `node examples/outfit-studio/serve.mjs --project <path-to-snapshot>`. Playback time, selection and the draft belong to the current session. The sample reuses the existing project store and shared resource manager. [Example project](project.json)
 
+`Open project` opens an exported snapshot in the running Studio. The file is admitted on a copy of the live project and written as one edit transaction. Each new palette is then loaded and taken by the Host while the previous frame stays on screen. When every part is ready, the project, the actors and the roster change together.
+
+- **Same characters.** The file must hold the characters of the running project, by their stable IDs and in the same order, with the same version pins. Their `name`, `outfit` and `palette`, and the project's name, are taken from the file. The fixed routes add their six reference actors to a two-character export, as the server does at start-up.
+- **Failure and Cancel change nothing.** A file the Studio refuses, a name outside its fonts, content that does not load, or `Cancel opening` leaves the project, the actors and their playback as they were, and the same file can be chosen again.
+- **An actor whose palette changes starts its animation again**, through the same RESET policy as Swap palette. The other actors keep playing where they were.
+- **A file is at most 64 KiB.** A longer one is refused before it is read.
+
 The Studio uses the original programmatic Spine and sequence sources from `animation-outfits`. The second palette exchanges the two existing page colors and builds a fresh manifest identity. The studio code and original scene geometry are Apache-2.0. [Animation provenance](../animation-outfits/PROVENANCE.md) · [CanvasKit and Noto assets](../paragraph-panel/vendor/README.md) · [Spine runtime terms](../../third-party/spine-core-4.3.13.LICENSE) · [JSONC parser attribution](../../third-party/jsonc-parser-3.3.1.LICENSE)
 
 Run `node examples/outfit-studio/verify.mjs <absolute-Playwright-package> <new-absolute-output-directory>` with Playwright 1.62.1 and installed Edge. The batch exercises both actual browser backends, mouse and keyboard, rejected names, drag-out releases, palette failure and retry, export and reopen, and cleanup. It records three cold HTTP samples per backend through the first completed frame with interaction enabled. The recorded transfer is uncompressed loopback HTTP. [Verification summary](verification-summary.json)
+
+Run `node examples/outfit-studio/verify-open.mjs <absolute-Playwright-package> <new-absolute-output-directory>` for opening a project. For each backend it exports twice through the page, opens the exports through the page's file field, fails one load, cancels one, retries, offers seven files that must be refused, and opens a compact export on the fixed desktop route. A third argument, `software`, uses the browser bundled with Playwright and software rendering in place of installed Edge. On 2026-11-14 the WebGL2 rows passed that way in headless Chromium 153: eight checks on the compact route and one on the fixed route. **The WebGPU rows and every hardware and phone row have not been run**: the software WebGPU adapter of that machine cannot start the Studio, with or without this change.
 
 ## Fixed scene profiles
 
