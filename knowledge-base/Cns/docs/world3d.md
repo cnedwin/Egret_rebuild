@@ -358,7 +358,7 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 ## 待完成事项
 
-- 物理辅助组件的对比使用软件渲染离屏场景。远程物理世界测试使用 MessageChannel 和 Node 工作线程。浏览器 Worker 传输、载具和布娃娃实际交互、实体设备及性能仍待验收。API 专项跟踪远程请求结束与所有权、布娃娃激活回滚以及悬挂射线过滤。 [#169](https://github.com/cnedwin/Egret_rebuild/issues/169) [#168](https://github.com/cnedwin/Egret_rebuild/pull/168)
+- 原物理辅助组件对比使用软件渲染离屏场景，原远程物理测试使用 MessageChannel 和 Node 工作线程。Windows Edge 和 Galaxy Z Fold7 Chrome 的专用浏览器 Worker 各通过三项用例，覆盖射线请求结算、宿主世界身份和远程刚体所有权。两台设备的浏览器 API 检查覆盖布娃娃激活回滚和车轮射线跳过自身车身。World3D 示例在 Fold7 上用 WebGPU 和 WebGL2 验证了 CDP 双触点缩放、Android Home 后返回及正常销毁。载具与布娃娃实际玩法、更广设备覆盖和性能仍待验收。 [#169](https://github.com/cnedwin/Egret_rebuild/issues/169) · [#168](https://github.com/cnedwin/Egret_rebuild/pull/168) · [#201](https://github.com/cnedwin/Egret_rebuild/pull/201) · [#202](https://github.com/cnedwin/Egret_rebuild/pull/202)
 
 - 桌面复审强制触发 WebGL2 上下文丢失并恢复了目标像素，也强制触发 WebGPU 设备丢失，确认收到通知并拒绝后续操作。更广泛的设备与恢复场景仍待验证。
 - 一台运行 Chrome 157 的 Android 真机已呈现两个后端，响应了自动触发的阴影开关，并在释放后停止更新帧。本次复审还在同类真机的 WebGL2 和 WebGPU 上检查了屏幕空间效果、顶点位移与阴影，以及斜切投影深度。
