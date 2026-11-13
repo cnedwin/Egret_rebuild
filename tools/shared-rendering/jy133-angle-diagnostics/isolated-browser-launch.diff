@@ -1,0 +1,33 @@
+diff --git a/chrome/android/java/src/org/chromium/chrome/browser/base/SplitCompatApplication.java b/chrome/android/java/src/org/chromium/chrome/browser/base/SplitCompatApplication.java
+index aad78d8592..651551e726 100644
+--- a/chrome/android/java/src/org/chromium/chrome/browser/base/SplitCompatApplication.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/base/SplitCompatApplication.java
+@@ -20,6 +20,7 @@ import androidx.annotation.VisibleForTesting;
+ import org.chromium.base.ApplicationState;
+ import org.chromium.base.ApplicationStatus;
+ import org.chromium.base.BundleUtils;
++import org.chromium.base.CommandLine;
+ import org.chromium.base.CommandLineInitUtil;
+ import org.chromium.base.ContextUtils;
+ import org.chromium.base.EarlyTraceEvent;
+@@ -68,7 +69,7 @@ public class SplitCompatApplication extends Application {
+     public static final String CHROME_SPLIT_NAME = "chrome";
+     public static final String ON_DEMAND_SPLIT_NAME = "on_demand";
+     private static final String TAG = "SplitCompatApp";
+-    private static final String COMMAND_LINE_FILE = "chrome-command-line";
++    private static final String COMMAND_LINE_FILE = "egret-jy133-command-line";
+     private static final String ATTACH_BASE_CONTEXT_EVENT = "ChromeApplication.attachBaseContext";
+     // Public to allow use in ChromeBackupAgent
+     public static final String PRIVATE_DATA_DIRECTORY_SUFFIX = "chrome";
+@@ -228,6 +229,11 @@ public class SplitCompatApplication extends Application {
+             // (see ChildProcessService.java).
+             CommandLineInitUtil.initCommandLine(
+                     COMMAND_LINE_FILE, SplitCompatApplication::shouldUseDebugFlags);
++            // Keep lab startup independent of the installed Chrome application's flags.
++            CommandLine.getInstance().appendSwitch("enable-gpu-service-tracing");
++            CommandLine.getInstance().appendSwitch("disable-fre");
++            CommandLine.getInstance().appendSwitchWithValue(
++                    "remote-debugging-socket-name", "egret_jy133_devtools_remote");
+             PathUtils.setPrivateDataDirectorySuffix(PRIVATE_DATA_DIRECTORY_SUFFIX);
+             // Register for activity lifecycle callbacks. Must be done before any activities are
+             // created and is needed only by processes that use the ApplicationStatus api (which

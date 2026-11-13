@@ -1,0 +1,45 @@
+buffers { size_kb: 65536 fill_policy: RING_BUFFER }
+duration_ms: 25000
+builtin_data_sources { primary_trace_clock: BUILTIN_CLOCK_BOOTTIME }
+data_sources {
+  config {
+    name: "linux.ftrace"
+    ftrace_config {
+      compact_sched { enabled: true }
+      buffer_size_kb: 4096
+      drain_period_ms: 100
+      symbolize_ksyms: true
+      ftrace_events: "sched/sched_switch"
+      ftrace_events: "sched/sched_waking"
+      ftrace_events: "sched/sched_wakeup_new"
+      ftrace_events: "sched/sched_blocked_reason"
+      ftrace_events: "task/task_newtask"
+      ftrace_events: "task/task_rename"
+      ftrace_events: "ftrace/print"
+      ftrace_events: "dma_fence/dma_fence_wait_start"
+      ftrace_events: "dma_fence/dma_fence_wait_end"
+      ftrace_events: "dma_fence/dma_fence_signaled"
+      ftrace_events: "kgsl/adreno_drawctxt_wait_start"
+      ftrace_events: "kgsl/adreno_drawctxt_wait_done"
+      ftrace_events: "kgsl/adreno_cmdbatch_submitted"
+      ftrace_events: "kgsl/adreno_cmdbatch_retired"
+      ftrace_events: "kgsl/kgsl_mmu_pagefault"
+    }
+  }
+}
+data_sources {
+  config {
+    name: "linux.process_stats"
+    process_stats_config { scan_all_processes_on_start: true }
+  }
+}
+
+data_sources {
+  config {
+    name: "linux.perf"
+    perf_event_config {
+      timebase { frequency: 499 counter: SW_CPU_CLOCK timestamp_clock: PERF_CLOCK_MONOTONIC }
+      callstack_sampling { scope { target_pid: JY_GPU_PID } }
+    }
+  }
+}
