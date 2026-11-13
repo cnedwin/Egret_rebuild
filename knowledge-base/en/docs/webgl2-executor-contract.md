@@ -38,6 +38,8 @@ The samples distinguish cold texture preparation, native texture writes, working
 
 Within one context generation, the working framebuffer reuses its successful format and completeness proof for the same immutable color texture and optional depth renderbuffer. New attachment objects and context restoration trigger full qualification. Each working bind retains its error check, and the default canvas attachment still qualifies on every resolve. Completion validation and Sync deletion validation retain their separate resource and failure handling.
 
+Cold RGBA8 pages use a fixed 64 KiB lookup shared by both backends. It applies the same alpha cap and sRGB rounding to every byte. The per-page source copy, canonical output and their accounting retain their existing ownership.
+
 ## Cached 2D layers
 
 The WebGL2 factory returns `SharedLayerWebGL2Host`, which extends the existing host interface. Use one `SharedWebGL2Layer2D` per map chunk or static draw group. Each `update(frame)` accepts an immutable Engine capture with transparent clear, premultiplied output, integral pixel dimensions, normal source-over rectangles and images, and ordinary clipping. The host bakes at one texel per source unit using the shared painter and the same image-page residency as ordinary draws.
