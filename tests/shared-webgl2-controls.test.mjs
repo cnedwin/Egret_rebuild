@@ -332,6 +332,39 @@ test('GL G04 PBO copy is issued before a later submission; delayed extraction be
   await h.close(); assert.equal(f.live().length, 0);
 }));
 
+test('GL direct draws keep the same batching while the previous GPU fence remains pending', async () => author(async a => {
+  const f = glPorts(), h = createSharedWebGL2Host({canvas:f.canvas});
+  const count = 14000;
+  for (let i = 1; i < count; i++) a.sprite.graphics.beginFill(0xff0000).drawRect(0,0,4,4).endFill();
+  const frame = a.frame(), bytes = count * 6 * 52;
+  const observe = () => {
+    const start = f.events.length;
+    h.renderSharedFrame(frame);
+    const events = f.events.slice(start);
+    return {
+      uploads: events.filter(row => row[0] === 'bufferSubData' && row[1] === f.gl.ARRAY_BUFFER).map(row => row[3].byteLength),
+      draws: events.filter(row => row[0] === 'drawArrays').map(row => row.slice(1)),
+    };
+  };
+  await h.start();
+  f.autoSignal = false;
+  try {
+    const first = observe(), second = observe();
+    assert.equal(h.getStatus().pendingFrames, 2);
+    assert.throws(() => h.renderSharedFrame(frame), code('BACKPRESSURE'));
+    assert.equal(first.uploads.length, 1);
+    assert.equal(first.uploads[0], bytes);
+    assert.deepEqual(first.draws, [[f.gl.TRIANGLES,0,count * 6], [f.gl.TRIANGLES,0,3]]);
+    assert.equal(second.uploads.length, 1, 'the earlier fence must not consume the CPU batch budget');
+    assert.deepEqual(second, first);
+  } finally {
+    f.signalAll();
+    await h.whenIdle();
+    await h.close();
+  }
+  assert.equal(f.live().length, 0);
+}));
+
 test('GL G05 loss keeps old outcomes rejected and recovery publishes one fresh readiness generation', async () => author(async a => {
   const f = glPorts(), h = createSharedWebGL2Host({canvas:f.canvas,enableReadback:true}); await h.start(); f.autoSignal = false;
   const frame = a.frame(), ticket = h.requestReadback(); h.renderSharedFrame(frame); const oldIdle = h.whenIdle();
