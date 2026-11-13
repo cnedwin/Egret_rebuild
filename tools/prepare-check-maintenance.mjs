@@ -193,10 +193,24 @@ const world3dFrameMetricsBoundaryOwners = [
   {"path":"tools/browser-png-boundary.mjs","base":{"bytes":394106,"sha256":"9d3e9a261bec665c6b34eac7a0a33a876270d3dd9bd6e60521914982701ebb74"},"current":{"bytes":394127,"sha256":"2de0a95672cf5bca9d7b6025ba8e5f7303dc8c054428070b8d7ec08f2a288284"}},
   {"path":"tools/spritesheet-boundary.mjs","base":{"bytes":384131,"sha256":"f32938637f51058a1e96e97ed9a017c6fd2f63b060471760cc84e2f8272aa1c6"},"current":{"bytes":384152,"sha256":"4cb64c559b19f80ae39665e90508ace0f6840dab2f1f069ab67f59670e4040f2"}},
 ];
+// Preserve the exact owner before admitting the shared WebGL2 frame successor.
+const sharedWebGL2FrameBoundaryOwners = [
+  {"path":"tools/atlas-import-boundary.mjs","base":{"bytes":288894,"sha256":"e2a675af466e4147099b42b986798743c2d93aacffaf15f5162a95259340bc2b"},"current":{"bytes":289033,"sha256":"a7dee07dde0ab047a8f2e0178c50312abf4c75a33267c8e9f49f3d74710cc23c"}},
+  {"path":"tools/browser-png-boundary.mjs","base":{"bytes":394127,"sha256":"2de0a95672cf5bca9d7b6025ba8e5f7303dc8c054428070b8d7ec08f2a288284"},"current":{"bytes":394308,"sha256":"0a856aa38406b66046f6070c0b4b2a23e3b4c8f8313e2f4e041207b63ab39124"}},
+  {"path":"tools/spritesheet-boundary.mjs","base":{"bytes":384152,"sha256":"4cb64c559b19f80ae39665e90508ace0f6840dab2f1f069ab67f59670e4040f2"},"current":{"bytes":384291,"sha256":"600c3392ac652aef91621ff912052aec0b73877179ea877858b0e35c0260f693"}},
+];
 export function world3dBoundaryPrevious(raw, file){
  const pair=world3dBoundaryOwners.find(row=>row.path===file);
  if(!pair)return raw;
  const matches=(bytes,pin)=>bytes.length===pin.bytes&&createHash('sha256').update(bytes).digest('hex')===pin.sha256;
+ const sharedFrame=sharedWebGL2FrameBoundaryOwners.find(row=>row.path===file);
+ if(sharedFrame&&matches(raw,sharedFrame.current)){
+  raw=Buffer.from(raw.toString('utf8')
+   .replace("import { selectSharedWebGL2FramePins } from './lib/shared-webgl2-frame-pins.mjs';\n", '')
+   .replace("  graph=selectSharedWebGL2FramePins(root,graph,present);\n", '')
+   .replace(", \'tools/lib/shared-webgl2-frame-pins.mjs\'", ''));
+  if(!matches(raw,sharedFrame.base))throw Error('Shared WebGL2 frame boundary predecessor identity differs: '+file);
+ }
  const frameMetrics=world3dFrameMetricsBoundaryOwners.find(row=>row.path===file);
  if(frameMetrics&&matches(raw,frameMetrics.current)){
   raw=Buffer.from(raw.toString('utf8')

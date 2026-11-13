@@ -1392,6 +1392,9 @@ for (const file of [...files(path.join(root,'packages/engine/src')),...files(pat
 const glValues = ['createSharedWebGL2Host'];
 const glTypes = ['SharedWebGL2HostOptions','SharedWebGL2Host','SharedWebGL2HostStatus','SharedWebGL2Readback','WebGL2HostState','WebGL2HostErrorCode','WebGL2HostFailure','WebGL2HostDiagnostic','WebGL2HostStatus'];
 const glLayerTypes = ['SharedLayerWebGL2Host','SharedWebGL2Layer2D','SharedWebGL2LayerEffect2D','SharedWebGL2LayerPlacement2D','SharedWebGL2LayerStatus'];
+const glTimingTypes = ['SharedWebGL2FrameTiming','SharedWebGL2TimingPhase','SharedWebGL2TimingSample'];
+const glTimingClause = "export type { "+glTimingTypes.join(', ')+" } from './webgl2Types.js';";
+const hasGLTiming = /\bmeasureSharedFrames\?\s*:\s*boolean\s*;/.test(sceneRead('packages/engine/web/sharedWebGL2Options.ts'));
 const glSceneValues = ['createSharedSceneWebGL2Host'];
 const glSceneTypes = ['SharedSceneWebGL2Host','SharedSceneWebGL2HostOptions'];
 const glFacade = await import('@egret/engine/webgl2');
@@ -1409,7 +1412,8 @@ for (const [stem,valueClause,typeClauses] of glFacadeRules) {
   for (const [directory,suffix] of [['web','.ts'],['dist/web','.js'],['dist/web','.d.ts']]) {
     const file='packages/engine/'+directory+'/'+stem+suffix;
     const currentTypes=stem==='webgl2'?typeClauses.replace('SharedWebGL2Host,','SharedWebGL2Host,'+glLayerTypes.join(',')+','):typeClauses;
-    const expected=(valueClause+(suffix==='.js'?'':currentTypes+m15SharedHostTypeClauses)).replace(/\s+/g,'');
+    const timingTypes = stem==='webgl2' && hasGLTiming ? glTimingClause : '';
+    const expected=(valueClause+(suffix==='.js'?'':currentTypes+timingTypes+m15SharedHostTypeClauses)).replace(/\s+/g,'');
     if (sceneRead(file).replace(/\s+/g,'')!==expected) throw new Error('M14: exact WebGL2 forwarding/type erasure mismatch: '+file);
   }
 }
@@ -1428,7 +1432,7 @@ const glOtherEntryFiles = [
 for (const [entry,source] of glOtherEntryFiles) {
   const emitted=source.replace('/src/','/dist/').replace('/web/','/dist/web/').replace('/rendering/','/dist/rendering/').replace(/\.ts$/,'');
   const text=[sceneRead(source),sceneRead(emitted+'.js'),sceneRead(emitted+'.d.ts')].join('\n');
-  for (const name of [...glValues,...glTypes,...glLayerTypes,...glSceneValues,...glSceneTypes,...glPrivateNames,...glModuleNames])
+  for (const name of [...glValues,...glTypes,...glLayerTypes,...glTimingTypes,...glSceneValues,...glSceneTypes,...glPrivateNames,...glModuleNames])
     if (new RegExp('\\b'+name+'\\b').test(text)) throw new Error('M14: explicit-only WebGL2 name leaked: '+entry+'/'+name);
 }
 for (const [entry,values,stem] of [['webgl2',glFacade,'packages/engine/dist/web/webgl2'],['webgl2/scene3d',glSceneFacade,'packages/engine/dist/web/webgl2Scene3d']]) {
@@ -1525,11 +1529,17 @@ for (const file of ['packages/engine/web/webgl2Native.ts','packages/engine/dist/
     "if(state.totals.pageWriteCalls===Number.MAX_SAFE_INTEGER||bytes>Number.MAX_SAFE_INTEGER-state.totals.pageWriteBytes)state.saturated=true;"+
     "state.totals.pageWriteCalls=Math.min(Number.MAX_SAFE_INTEGER,state.totals.pageWriteCalls+1);"+
     "state.totals.pageWriteBytes=Math.min(Number.MAX_SAFE_INTEGER,state.totals.pageWriteBytes+bytes);}";
-  const capture = "for(const name of [...METHODS,...KINDS.flatMap(kind=>[kind==='Sync'?'fenceSync':'create'+kind,'delete'+kind])]){"+
+  const capturePrefix = "for(const name of [...METHODS,...KINDS.flatMap(kind=>[kind==='Sync'?'fenceSync':'create'+kind,'delete'+kind])]){"+
     (typed?"const candidate=(context as unknown as Record<string,unknown>)[name];":"const candidate=context[name];")+
-    "gate();if(typeof candidate!=='function')throw new TypeError(name);"+
-    (typed?"const call=candidate.bind(context) as (...args:unknown[])=>unknown;":"const call=candidate.bind(context);")+
-    "this.calls.set(name,call);Object.defineProperty(captured,name,{value:"+
+    "gate();if(typeof candidate!=='function')throw new TypeError(name);";
+  const signature=typed?" as (...args:unknown[])=>unknown;":";";
+  const timingCapture = "const raw=candidate.bind(context)"+signature+"this.calls.set(name,raw);"+
+    "const call=timing&&name==='texSubImage2D'?"+
+    (typed?"(...args:unknown[]):unknown=>":"(...args)=>")+
+    "{const start=this.recordOwners?this.startTiming():undefined;"+
+    "try{return raw(...args);}finally{this.finishTiming('texture-upload',start);}}:raw;";
+  const ordinaryCapture = "const call=candidate.bind(context)"+signature+"this.calls.set(name,call);";
+  const capture = capturePrefix+(hasGLTiming?timingCapture:ordinaryCapture)+"Object.defineProperty(captured,name,{value:"+
     (typed?"(...args:unknown[]):unknown=>":"(...args)=>")+
     "{gate();const value=call(...args);"+pageWriteObservation+"gate();return value;}});}";
   if (code.replace(/\s+/g,'').split(capture.replace(/\s+/g,'')).length!==2
@@ -8473,6 +8483,10 @@ for (const additions of [worldCardSceneEdges,texturedSceneEdges,animationSceneEd
     currentSceneLiteralClosure[path]=[...(currentSceneLiteralClosure[path]??[]),...added.map(edge=>typeof edge==='string'?['static',edge]:edge)]
       .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
   }
+}
+if (hasGLTiming) for (const file of ['packages/engine/web/webgl2.ts','packages/engine/dist/web/webgl2.d.ts']) {
+  currentSceneLiteralClosure[file] = [...currentSceneLiteralClosure[file],['static','./webgl2Types.js']]
+    .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
 for (const [file,edges] of Object.entries(currentSceneLiteralClosure)) {
   const code=sceneRead(file);

@@ -110,6 +110,7 @@ function isolated(action) {
     copy(realpathSync(path.join(path.dirname(nativeMetadata), executable)), 'dependency-evidence/typescript-native/' + executable);
     copy(gate, 'tools/spritesheet-boundary.mjs');
     copy(path.join(repository, 'tools/lib/world3d-boundary.mjs'), 'tools/lib/world3d-boundary.mjs');
+    copy(path.join(repository, 'tools/lib/shared-webgl2-frame-pins.mjs'), 'tools/lib/shared-webgl2-frame-pins.mjs');
     const baseline = inventory(fixture);
     writeFileSync(path.join(fixture, '.spritesheet-policy-copy.json'), JSON.stringify({
       kind: 'GENUINE_SPRITESHEET_POLICY_COPY', token, root: fixture, parent,

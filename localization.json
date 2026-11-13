@@ -1928,8 +1928,8 @@
       "en": "knowledge-base/en/docs/webgl2-executor-contract.md",
       "zh": "knowledge-base/Cns/docs/webgl2-executor-contract.md",
       "kind": "public_reading",
-      "enSha256": "b35b26a493728584c909ee2c3334bc400a0ffa84d9e6117a0d52e7373c9dfc9c",
-      "zhSha256": "25a2e6f6a48bc0de07ef2897bc1b17f2278092933366dcfc7bbcdca617308686"
+      "enSha256": "dcd92e62302ec8b1fb431e12227be4cc429730dc6aa99437c53ff183506df417",
+      "zhSha256": "106b3cdf186b5735223ec2c3ec5f410b8fcbe14b8586ad9e553b58bcd6b2d65e"
     },
     {
       "en": "knowledge-base/en/docs/webgl2-executor-evidence.md",
@@ -2757,7 +2757,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "19f99926aeba016d4b11057c5a80d00236dcd0aff4e9e2dbbeca13252e4d41a3"
+      "sha256": "949b8c361b10db9dd0bc6367be0845ef86f74365e5e0991a1b4a531cb19db91b"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2769,7 +2769,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "6bfc40016b7ecb3d63eca33b9f86d354e63ccbbda6aa011b01aa337cec280a8f"
+      "sha256": "cdb0f7a08a44ccd3295ec1efc3ac8d5396aad87642bb0adc0dd9a121e2898ddf"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -3175,7 +3175,7 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "dc7c432a261714c933e579d4da9a1db350e24e6d24eee087004f357b158ff332"
+      "sha256": "6f1f97198074e2d2c03833d887f24444f0dd14de66f601c430b0787d9aea897a"
     },
     {
       "path": "tests/boundaries.test.mjs",
@@ -3319,7 +3319,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "2de0a95672cf5bca9d7b6025ba8e5f7303dc8c054428070b8d7ec08f2a288284"
+      "sha256": "0a856aa38406b66046f6070c0b4b2a23e3b4c8f8313e2f4e041207b63ab39124"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3467,7 +3467,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "4cb64c559b19f80ae39665e90508ace0f6840dab2f1f069ab67f59670e4040f2"
+      "sha256": "600c3392ac652aef91621ff912052aec0b73877179ea877858b0e35c0260f693"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3967,7 +3967,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "d5be1651377105940f22c04d4f8cb6db3e47776b052ac51c92ec3dbe64af6236"
+      "sha256": "cc9dacbb7909dc1cbcccd48185cb294647915a4d439115cc21351fb623423ca7"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -4043,7 +4043,7 @@
     },
     {
       "path": "packages/engine/rendering/sharedColor2D.ts",
-      "sha256": "eb3a0e96e2a77f95da7dcba00ee398a7d64727f3a4e5d7e69cba2ba15b736ccc"
+      "sha256": "af0f9545d52147d5a042fa643acfdee6725d45c8b1714acd56e1759c5423f131"
     },
     {
       "path": "packages/engine/web/prepareSharedSubmission2D.ts",
@@ -4091,7 +4091,7 @@
     },
     {
       "path": "packages/engine/web/WebGL2Host.ts",
-      "sha256": "33f663959b9608bc7b7cd365fa3816fcb30f246b059d6cc355297a59097946e2"
+      "sha256": "89e78b1e48c783acf3a0b25a03d631be6c0c9bf004cd78894884131c80323a49"
     },
     {
       "path": "packages/engine/web/sharedRetentionLedger.ts",
@@ -4107,7 +4107,7 @@
     },
     {
       "path": "packages/engine/web/sharedWebGL2Options.ts",
-      "sha256": "fb93c16410adcea2978382e02125893cbe7fa7f5dfe715ad168bcdfde1a14cb9"
+      "sha256": "eb112266f700ee5a2d72e7e480862ce61103c0443044305a43714ae2fe346439"
     },
     {
       "path": "packages/engine/web/sharedWebGL2Scene.ts",
@@ -4119,11 +4119,11 @@
     },
     {
       "path": "packages/engine/web/webgl2.ts",
-      "sha256": "4035fe24f6a635b0606db205aa9647533a3ec3daa11739436e6a41169bae7277"
+      "sha256": "2fcec09692bed4d97d33dfd782b67a84f4f2aa253b206a764cf07601d2d6b903"
     },
     {
       "path": "packages/engine/web/webgl2Native.ts",
-      "sha256": "2488fe3dba2225a7a6a195521a1e65fcf23d46cd6e707fc25b3e415e58496d73"
+      "sha256": "a61cb853529de906405c23d643a45cc6b292ed714c2ec71e2c8b9b4d0dd6b988"
     },
     {
       "path": "packages/engine/web/webgl2Scene3d.ts",
@@ -4131,7 +4131,7 @@
     },
     {
       "path": "packages/engine/web/webgl2Types.ts",
-      "sha256": "0133ef15d217a8dac0939777e382ba2c8609838e414eb2b202aa731e12641347"
+      "sha256": "54688edee459507b6bd9d3749517b4c54b3feec3eb9f435f1441ec51946e2925"
     },
     {
       "path": "tools/check-push.mjs",
@@ -5232,6 +5232,10 @@
     {
       "path": "packages/engine/web/world3d/webGL2FrameMetrics3D.ts",
       "sha256": "a58b0c7e7f1dda5e18efd3461a2068f2091165e4390932d192c72e4e4b80d04c"
+    },
+    {
+      "path": "tools/lib/shared-webgl2-frame-pins.mjs",
+      "sha256": "c408905b9c41b802bfb9998d0c683403e77c1433ee0246d95922ac5c8acf36b9"
     }
   ],
   "historicalSemanticReview": {
