@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Physics under seek — 2026-11-14
+
+An original Spine fixture with a physics constraint now stands beside the seek tests. Six cases show that the constraint is simulated and remembers what came before, pin the rule that cuts an advance into sixtieths with the short remainder last, and find a seek equal to a straight run with physics: at the end of every step, inside every step, beyond the present and through an instance made by the reset slot. No code changed. The fixture is not an Editor export and no independent reference was used. [Guide](docs/spine-seek.md#physics)
+
 ## Semantics of a drawn UI — 2026-11-14
 
 `@egret/engine/ui/semantics` holds a tree that describes the controls an application draws: a role, a name, bounds and state for each, read from the control at every publication, with the activation and the focus request a press and a key already reach. `@egret/engine/web/semantics` projects it to the page: the canvas keeps the keyboard, owns an invisible container of elements laid over the controls, and names the focused one as its active descendant. A modal dialog makes everything outside it inert. The control example now describes its switch, its options and its button. The projection was checked against the accessibility tree of headless Chromium; no screen reader, other assistive technology or other browser was run. [Guide](docs/ui-semantics.md)
