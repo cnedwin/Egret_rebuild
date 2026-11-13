@@ -2369,8 +2369,19 @@ function withoutTextInputEntry(raw){
  assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3440,sha256:'4070930d06e98f8213c69ef3e1b2e8f7b850933d86950fe0ce2b851b6c976f78'});
  return prior;
 }
+// The two hover entries are newer still. Taking them out gives the package as the text input entry left it.
+function withoutHoverEntries(raw){
+ const value=JSON.parse(raw);
+ if(!Object.hasOwn(value.exports,'./input/hover')&&!Object.hasOwn(value.exports,'./web/hover'))return raw;
+ assert.deepEqual(value.exports['./input/hover'],{types:'./dist/hover.d.ts',import:'./dist/hover.js'});
+ assert.deepEqual(value.exports['./web/hover'],{types:'./dist/web/hover.d.ts',import:'./dist/web/hover.js'});
+ delete value.exports['./input/hover'];delete value.exports['./web/hover'];
+ const prior=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3559,sha256:'47f30da0710131fd945cbc85d57ec19abc29a99f8d6b36502cf7c04da49b091d'});
+ return prior;
+}
 function restoreScene3dEntries(raw){
- raw=restoreWebEntry(withoutTextInputEntry(raw));
+ raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(raw)));
  const identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
  if(JSON.stringify(identity(raw))!==JSON.stringify({bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'}))return raw;
  const value=JSON.parse(raw),exports={};

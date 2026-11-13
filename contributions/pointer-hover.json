@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/hoverInputTypes.ts",
+      "originRole": "First-party public types of hover and wheel routing; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/hoverInput.ts",
+      "originRole": "First-party hover and wheel routing over the display tree of a started Engine, as a logical stream; independently authored with AI assistance; Apache-2.0. No third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/hover.ts",
+      "originRole": "First-party optional entry of the logical hover and wheel input; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/BrowserHoverInput.ts",
+      "originRole": "First-party browser adapter of hover and wheel for a canvas, built on the logical entry; independently authored with AI assistance; Apache-2.0. No third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/hover.ts",
+      "originRole": "First-party optional entry of the browser hover and wheel adapter; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/hover-input.test.mjs",
+      "originRole": "First-party behaviour tests of hover and wheel routing on a genuine Engine; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/browser-hover.test.mjs",
+      "originRole": "First-party unit of the browser hover and wheel adapter against a test-owned stand-in for the page; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/hover.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the hover entries; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/hover.ts",
+      "originRole": "First-party strict TypeScript consumer of the hover entries, with seven refused misuses; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/pointer-hover/index.html",
+      "originRole": "First-party page of the hover and wheel example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/pointer-hover/main.mjs",
+      "originRole": "First-party hover and wheel example: three buttons and a scrolling list drawn by the engine; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/pointer-hover/verify.mjs",
+      "originRole": "First-party browser check of the hover and wheel example, with mouse, pen, touch and wheel injected through the browser's protocol; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/pointer-hover/README.md",
+      "originRole": "First-party instructions of the hover and wheel example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/pointer-hover/README.zh-CN.md",
+      "originRole": "First-party Chinese instructions of the hover and wheel example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/pointer-hover.md",
+      "originRole": "First-party guide to hover and wheel routing; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/pointer-hover.md",
+      "originRole": "First-party Chinese guide to hover and wheel routing; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/pointer-hover.md",
+      "zh": "knowledge-base/Cns/docs/pointer-hover.md"
+    },
+    {
+      "en": "examples/pointer-hover/README.md",
+      "zh": "examples/pointer-hover/README.zh-CN.md"
+    }
+  ]
+}

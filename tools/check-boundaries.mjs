@@ -247,6 +247,11 @@ for (const [name, allowed] of Object.entries(expected)) {
     if (name === 'engine') textExports['./web/editing'] = {types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'};
     // Platform text entry over a canvas: one optional browser entry.
     if (name === 'engine') textExports['./web/text-input'] = {types:'./dist/web/textInput.d.ts',import:'./dist/web/textInput.js'};
+    // Hover and wheel: one DOM-free entry and one optional browser entry.
+    if (name === 'engine') {
+      textExports['./input/hover'] = {types:'./dist/hover.d.ts',import:'./dist/hover.js'};
+      textExports['./web/hover'] = {types:'./dist/web/hover.d.ts',import:'./dist/web/hover.js'};
+    }
     // World3D: a DOM-free scene graph entry and one explicit entry per rendering backend.
     if (name === 'engine') {
       textExports['./world3d'] = {types:'./dist/rendering/world3d/index.d.ts',import:'./dist/rendering/world3d/index.js'};
@@ -314,6 +319,11 @@ for (const [name, allowed] of Object.entries(expected)) {
         const clause=code.slice(0,match.index).match(/\b(import|export)(\s+type)?\s*\{([^{}]+)\}\s*$/);
         const row=clause && {operation:clause[1],kind:clause[2]?'type':'value',members:clause[3].split(',').map(member=>member.trim().replace(/\s+/g,' ')).filter(Boolean),target:imported};
         if(!row || !(nativeEditingDeepClauses[relative]??[]).some(expected=>m15ClauseKey(expected)===m15ClauseKey(row))) throw new Error('M3.3: unapproved editor assembly clause: '+relative);
+      } else if (imported === '@egret/engine/input/hover') {
+        // The browser adapter of hover and wheel is built on the public logical entry and on nothing private.
+        const relative=path.relative(dir,file).split(path.sep).join('/');
+        if(name!=='engine'||!['web/BrowserHoverInput.ts','dist/web/BrowserHoverInput.js','dist/web/BrowserHoverInput.d.ts'].includes(relative))
+          throw new Error('Hover: logical hover entry imported outside the named browser module: '+relative);
       } else if (imported === '#egret-keyboard-input') {
         const relative=path.relative(dir,file).split(path.sep).join('/');
         if(name!=='engine'||!['web/keyboard.ts','web/BrowserKeyboardInput.ts','dist/web/keyboard.js','dist/web/keyboard.d.ts','dist/web/BrowserKeyboardInput.js','dist/web/BrowserKeyboardInput.d.ts'].includes(relative))
@@ -4713,7 +4723,7 @@ for(const file of ['packages/runtime/src/displayInputOperations.ts','packages/ru
 // Exact new target ownership; unrelated files never acquire input authority by
 // importing a dormant value, an erased type, or a dynamic relative edge.
 const mouseApprovedTargets={
-  'src/mouseInput.js':['src/Engine.ts','src/internal/mouseInputFactoryState.ts','src/bitmapButton.ts','src/pointerInput.ts','src/keyboardInput.ts'],
+  'src/mouseInput.js':['src/Engine.ts','src/internal/mouseInputFactoryState.ts','src/bitmapButton.ts','src/pointerInput.ts','src/keyboardInput.ts','src/hoverInput.ts'],
   'dist/mouseInput.js':['dist/Engine.js','dist/Engine.d.ts','dist/internal/mouseInputFactoryState.js','dist/internal/mouseInputFactoryState.d.ts','dist/bitmapButton.js','dist/bitmapButton.d.ts'],
   'src/mouseInputTypes.js':['src/mouseInput.ts','src/bitmapButton.ts','src/bitmapButtonTypes.ts','src/internal/mouseInputFactoryState.ts'],
   'dist/mouseInputTypes.js':['dist/mouseInput.js','dist/mouseInput.d.ts','dist/bitmapButton.js','dist/bitmapButton.d.ts','dist/bitmapButtonTypes.d.ts','dist/internal/mouseInputFactoryState.d.ts'],
@@ -4721,8 +4731,8 @@ const mouseApprovedTargets={
   'dist/bitmapButton.js':['dist/mouseInput.js','dist/mouseInput.d.ts'],
   'src/bitmapButtonTypes.js':['src/mouseInput.ts','src/bitmapButton.ts'],
   'dist/bitmapButtonTypes.js':['dist/mouseInput.d.ts','dist/bitmapButton.d.ts'],
-  'src/internal/mouseInputFactoryState.js':['src/mouseInput.ts','src/startEngine.ts','src/bitmapButton.ts','src/pointerInput.ts','src/keyboardInput.ts'],
-  'dist/internal/mouseInputFactoryState.js':['dist/mouseInput.js','dist/mouseInput.d.ts','dist/startEngine.js','dist/bitmapButton.js','dist/pointerInput.js','dist/keyboardInput.js'],
+  'src/internal/mouseInputFactoryState.js':['src/mouseInput.ts','src/startEngine.ts','src/bitmapButton.ts','src/pointerInput.ts','src/keyboardInput.ts','src/hoverInput.ts'],
+  'dist/internal/mouseInputFactoryState.js':['dist/mouseInput.js','dist/mouseInput.d.ts','dist/startEngine.js','dist/bitmapButton.js','dist/pointerInput.js','dist/keyboardInput.js','dist/hoverInput.js'],
 };
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/dist'))]) {
   if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/'),code=assetGroupStrip(readFileSync(file,'utf8'));
@@ -5092,8 +5102,8 @@ for(const [label,values,stem]of textEntries){
     if(name in values||new RegExp('\\b'+name+'\\b').test(declaration))throw new Error('M3.1: optional UI leaked outside its entry: '+label+'/'+name);
 }
 const uiFactoryAllowed={
-  'src/Engine.ts':1,'src/pointerInput.ts':1,'src/keyboardInput.ts':1,'src/ui/uiRoot.ts':1,'src/ui/textEditor.ts':2,'src/ui/layers.ts':1,
-  'dist/Engine.js':1,'dist/pointerInput.js':1,'dist/keyboardInput.js':1,'dist/ui/uiRoot.js':1,'dist/ui/textEditor.js':2,'dist/ui/layers.js':1,'dist/ui/textEditor.d.ts':1,
+  'src/Engine.ts':1,'src/pointerInput.ts':1,'src/keyboardInput.ts':1,'src/hoverInput.ts':1,'src/ui/uiRoot.ts':1,'src/ui/textEditor.ts':2,'src/ui/layers.ts':1,
+  'dist/Engine.js':1,'dist/pointerInput.js':1,'dist/keyboardInput.js':1,'dist/hoverInput.js':1,'dist/ui/uiRoot.js':1,'dist/ui/textEditor.js':2,'dist/ui/layers.js':1,'dist/ui/textEditor.d.ts':1,
 };
 const managedStateAllowed=['DisplayObject','DisplayObjectContainer','Scope','displayHitState','displayVisualState','preparedDisplaySubtree','paragraph/Paragraph'];
 for(const pkg of ['runtime','engine'])for(const file of [...files(path.join(root,'packages',pkg,'src')),...files(path.join(root,'packages',pkg,'dist'))]){
@@ -5225,6 +5235,50 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
   const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
   if(Object.hasOwn(textInputAllowed,resolved)&&!textInputAllowed[resolved].includes(relative))throw new Error('Text input: implementation module imported outside its entry: '+relative);
+ }
+}
+// Hover and wheel: a DOM-free entry and a browser entry, each with one implementation module. The
+// browser module is built on the logical entry alone, and no other entry has either.
+const hoverTypes=['HoverInput','HoverInputEvents','HoverInputOptions','HoverInputState','HoverLeaveReason','HoverNotification','HoverPoint','HoverPointerType','HoverSample','HoverState','WheelNotification','WheelPoint','WheelSample','WheelUnit'];
+const hoverBrowserTypes=['BrowserHoverInputOptions','WheelPagePolicy'];
+for(const [file,value,types] of [['packages/engine/src/hover.ts','createHoverInput',hoverTypes],['packages/engine/dist/hover.js','createHoverInput',[]],['packages/engine/dist/hover.d.ts','createHoverInput',hoverTypes],
+ ['packages/engine/web/hover.ts','createBrowserHoverInput',hoverBrowserTypes],['packages/engine/dist/web/hover.js','createBrowserHoverInput',[]],['packages/engine/dist/web/hover.d.ts','createBrowserHoverInput',hoverBrowserTypes]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,[value])||!mouseSame(surface.types,types))throw new Error('Hover: exact entry exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/input/hover')),['createHoverInput'])||!mouseSame(Object.keys(await import('@egret/engine/web/hover')),['createBrowserHoverInput']))throw new Error('Hover: optional runtime values mismatch');
+for(const [label,values,stem] of textEntries){
+ const body=uiRead(stem+'.d.ts');
+ for(const name of [...hoverTypes,...hoverBrowserTypes,'createHoverInput','createBrowserHoverInput'])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Hover: leaked to default/other entry: '+label+'/'+name);
+}
+const hoverImports={
+ 'src/hover.ts':['./hoverInput.js','./hoverInputTypes.js'],
+ 'dist/hover.js':['./hoverInput.js'],
+ 'dist/hover.d.ts':['./hoverInput.js','./hoverInputTypes.js'],
+ 'src/hoverInput.ts':['@egret/runtime','./mouseInput.js','./internal/mouseInputFactoryState.js','./internal/uiFactoryState.js','./hoverInputTypes.js','./hoverInputTypes.js'],
+ 'dist/hoverInput.js':['@egret/runtime','./internal/mouseInputFactoryState.js','./internal/uiFactoryState.js'],
+ 'dist/hoverInput.d.ts':['./hoverInputTypes.js','./hoverInputTypes.js'],
+ 'src/hoverInputTypes.ts':['@egret/runtime','./Engine.js'],
+ 'dist/hoverInputTypes.js':[],
+ 'dist/hoverInputTypes.d.ts':['@egret/runtime','./Engine.js'],
+ 'web/hover.ts':['./BrowserHoverInput.js','./BrowserHoverInput.js'],
+ 'dist/web/hover.js':['./BrowserHoverInput.js'],
+ 'dist/web/hover.d.ts':['./BrowserHoverInput.js','./BrowserHoverInput.js'],
+ 'web/BrowserHoverInput.ts':['@egret/runtime','@egret/engine/input/hover','@egret/engine/input/hover'],
+ 'dist/web/BrowserHoverInput.js':['@egret/runtime','@egret/engine/input/hover'],
+ 'dist/web/BrowserHoverInput.d.ts':['@egret/engine/input/hover'],
+};
+for(const [file,expected] of Object.entries(hoverImports)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
+ if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Hover: exact graph mismatch: '+file);
+ if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Hover: acquired automatic host work: '+file);
+}
+const hoverAllowed={'src/hoverInput.js':['src/hover.ts'],'dist/hoverInput.js':['dist/hover.js','dist/hover.d.ts'],'web/BrowserHoverInput.js':['web/hover.ts'],'dist/web/BrowserHoverInput.js':['dist/web/hover.js','dist/web/hover.d.ts']};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
+ if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
+ for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
+  const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+  if(Object.hasOwn(hoverAllowed,resolved)&&!hoverAllowed[resolved].includes(relative))throw new Error('Hover: implementation module imported outside its entry: '+relative);
  }
 }
 if(!/const primitives=captureMouseInputRuntimePrimitives\(\)/.test(uiRead('packages/engine/src/keyboardInput.ts'))||!/const INPUT_PARENT = Object.getOwnPropertyDescriptor\(DisplayObject.prototype, 'parent'\)/.test(uiRead('packages/engine/src/internal/mouseInputFactoryState.ts')))throw new Error('M3.3: original eager display admission capture missing');

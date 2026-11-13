@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 悬停与滚轮路由 — 2026-11-14
+
+两个可选入口在显示树上路由悬停和滚轮。`@egret/engine/input/hover` 是逻辑输入；`@egret/engine/web/hover` 监听画布，并与触点适配器共用它。目标能得知鼠标或手写笔进入、在其上移动或离开，每次离开都带原因；滚轮交给它下面的对象，页面是否滚动由应用选择的策略决定。检查包括真实 Engine 上的单元测试，以及无头 Chromium 软件 WebGL2 中注入输入的真实页面。没有使用真实的鼠标、手写笔或触控板，也没有在硬件 GPU、WebGPU、Safari 和 Firefox 上运行；托管控件尚未使用它。[指南](docs/pointer-hover.md) · [#89](https://github.com/cnedwin/Egret_rebuild/issues/89)
+
 ## 默认引擎的干净消费者检查 — 2026-11-14
 
 `tools/verify-clean-consumer.mjs` 用固定版本的 pnpm 打包默认引擎的三个包，安装到仓库之外的新工程并在那里使用。未经修改的公开示例可以运行，23 个入口都从已安装的副本解析并加载，最小路线不加载 Web、3D 或可选模块，严格的 TypeScript 消费者可以编译。检查在 Node 中进行。这些包仍未发布，从消费者一侧的浏览器运行、首次可交互和真人演练仍然开放。[指南](docs/clean-consumer.md) · [#93](https://github.com/cnedwin/Egret_rebuild/issues/93)

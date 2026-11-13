@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Hover and wheel routing — 2026-11-14
+
+Two optional entries route hover and the wheel over the display tree. `@egret/engine/input/hover` is the logical input; `@egret/engine/web/hover` listens on the canvas and shares it with the contact adapter. A target learns that a mouse or a pen entered, moved over or left it, with the reason of each leave, and a wheel goes to what is under it with a page policy the application chooses. The checks are unit tests on a genuine Engine and a real page in headless Chromium with software WebGL2 and injected input. A real mouse, pen or trackpad, hardware GPUs, WebGPU, Safari and Firefox were not run, and the managed controls do not use it yet. [Guide](docs/pointer-hover.md) · [#89](https://github.com/cnedwin/Egret_rebuild/issues/89)
+
 ## Clean-consumer check of the default engine — 2026-11-14
 
 `tools/verify-clean-consumer.mjs` packs the three packages of the default engine with the pinned pnpm, installs them into a new project outside the checkout and uses them there. The unmodified public examples run, all 23 entries resolve and load from the installed copy, the minimal route loads no web, 3D or optional module, and a strict TypeScript consumer compiles. The check runs in Node. The packages remain unpublished, and a browser run from a consumer, first interaction and the human walkthrough remain open. [Guide](docs/clean-consumer.md) · [#93](https://github.com/cnedwin/Egret_rebuild/issues/93)
