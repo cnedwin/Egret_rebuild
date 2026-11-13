@@ -8,11 +8,11 @@ import {workload} from './workload.mjs';
 export const frameOptions = Object.freeze({width:960,height:520,clearColor:0x10192c,clearAlpha:1,outputAlpha:'opaque'});
 
 /** Two flat panels behind the cast, placed in proportion to the frame. The nearer one is drawn last. */
-function backdrop(scope, width, height) {
+function createBackdrop(scope) {
   const layer = scope.use(new DisplayObjectContainer());
   for (const [left, right, bottom, top, color] of [[-.25,.9375,-.75,.6875,0x203050],[-.125,.875,-.625,.5,0x305080]]) {
     const panel = scope.use(new Sprite());
-    panel.graphics.beginFill(color).drawRect((left+1)/2*width,(1-top)/2*height,(right-left)/2*width,(top-bottom)/2*height).endFill();
+    panel.graphics.beginFill(color).drawRect((left+1)/2,(1-top)/2,(right-left)/2,(top-bottom)/2).endFill();
     layer.addChild(panel);
   }
   return layer;
@@ -20,7 +20,12 @@ function backdrop(scope, width, height) {
 
 export function createStudioScene(engine, scope, characters, spineAssets, {sheet,clip}, profile) {
   const actors = new Map(), sequences = [];
-  engine.stage.addChildAt(backdrop(scope, profile?.width ?? frameOptions.width, profile?.height ?? frameOptions.height), 0);
+  const backdrop = createBackdrop(scope);
+  engine.stage.addChildAt(backdrop, 0);
+  function fitBackdrop({width, height}) {
+    backdrop.scaleX = width;
+    backdrop.scaleY = height;
+  }
   const root = profile ? scope.use(new DisplayObjectContainer()) : engine.stage;
   const camera = profile ? root.addChild(new DisplayObjectContainer()) : root;
   let map;
@@ -56,6 +61,7 @@ export function createStudioScene(engine, scope, characters, spineAssets, {sheet
   });
 
   function layout(value) {
+    fitBackdrop(value);
     map = value.map;
     Object.assign(root,{x:map.x,y:map.y,clipRect:{x:0,y:0,width:map.width,height:map.height}});
     const scale = Math.min(map.width/176,map.height/118);
@@ -72,6 +78,7 @@ export function createStudioScene(engine, scope, characters, spineAssets, {sheet
     camera.y = map.height/2;
   }
   if (profile) layout(profile);
+  else fitBackdrop(frameOptions);
   let moved;
   return Object.freeze({
     root,layout,
