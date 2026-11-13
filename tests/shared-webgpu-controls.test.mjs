@@ -107,6 +107,12 @@ function selectedResolveTarget(draw, target) {
   const sampled = draw.binding.descriptor.entries.filter(e => e.resource?.texture);
   assert.equal(sampled.length, 1); assert.equal(sampled[0].resource.texture, target);
 }
+/** The page textures a batch of several pages binds for its eight units, in unit order: binding 1, then bindings 3 to 9. */
+function unitTextures(draw) {
+  const entries = draw.binding.descriptor.entries;
+  assert.deepEqual(entries.map(e => e.binding).sort((a, b) => a - b), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  return [1, 3, 4, 5, 6, 7, 8, 9].map(binding => entries.find(e => e.binding === binding).resource.texture);
+}
 /** The rows of the first `count` regions in the window a sampled draw has bound as its second group. */
 function regionRows(events, draw, count) {
   assert.ok(draw.region, 'a sampled draw binds a window of the region table');
@@ -231,7 +237,10 @@ test('GPU G04 two regions share one exact canonical page and READY replay upload
     const selected = sampled.map(draw => draw.binding.descriptor.entries.find(e => e.binding === 1).resource.texture);
     assert.equal(selected[0], pageTextures(r.textures)[0]);
     // The batch reads both regions through one window of the region table, bound as the second group.
-    assert.deepEqual(regionRows(r.events, sampled[0], 2), [[1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0], [1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]]);
+    // Each row ends with the region's page and that page's size: page 0, two texels by one.
+    assert.deepEqual(regionRows(r.events, sampled[0], 2), [[1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 2, 1], [1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 2, 1]]);
+    // A batch of one page binds a block, that page and a sampler, as its pipeline declares.
+    assert.deepEqual(sampled[0].binding.descriptor.entries.map(e => e.binding).sort((a, b) => a - b), [0, 1, 2]);
     await r.finish(); await h.whenIdle();
     const warm = await submit(f, h, second);
     assert.equal(uploads(warm.events).length, 0); assert.equal(pageTextures(warm.textures).length, 0);
@@ -252,7 +261,14 @@ test('GPU G05 equal pixel bytes from different genuine sources remain separate p
     const pages = pageTextures(r.textures), actual = uploads(r.events);
     assert.equal(pages.length, 2); assert.equal(actual.length, 2);
     assert.notEqual(pages[0], pages[1]); assert.deepEqual(actual[0][2], actual[1][2]);
-    assert.deepEqual(new Set(uiPass(r).draws.map(d => d.binding.descriptor.entries.find(e => e.binding === 1).resource.texture)), new Set(pages));
+    // The two bitmaps are one batch of two pages: the first two units hold the two owners, the other units the first again.
+    const draws = uiPass(r).draws; assert.equal(draws.length, 1); assert.deepEqual(draws[0].args, [12]);
+    const units = unitTextures(draws[0]);
+    assert.deepEqual(new Set(units.slice(0, 2)), new Set(pages)); assert.notEqual(units[0], units[1]);
+    assert.deepEqual(units.slice(2), Array(6).fill(units[0]));
+    const words = new Uint32Array(selectedUniform(r.events, draws[0]).bytes.slice().buffer, 48, 8);
+    assert.deepEqual([...words], [0, 1, ...Array(6).fill(4294967295)]);
+    assert.deepEqual(regionRows(r.events, draws[0], 2).map(row => row.slice(8)), [[0, 0, 2, 1], [0, 1, 2, 1]]);
   });
 });
 
@@ -339,12 +355,15 @@ test('GPU G08 sampled geometry selects exact 52B attributes, the 128B uniform of
       [1, 6, .125, .75, .5, .25, 1, .5, .25, .5, .75, 0, .25],
       [5, 2, .875, .25, .5, .25, 1, .5, .25, .5, .75, 0, .25],
     ]);
-    // The block holds neither opacity nor region: only viewport, material, domain, sampler policy and page.
+    // The block holds neither opacity, region nor page size: only viewport, material, the pages of the eight units,
+    // domain, sampler policy, and the kind of draw and its sampling strategy.
+    const none = 4294967295;
     expectUniform(selectedUniform(r.events, draw).bytes,
       [8, 8, 0, 0, .5, .25, 1, .5, .25, .5, .75, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 4, 2, 2, 3]);
-    // The region is its row of the table: logical extent and trim, content extent and packed origin, quarter turn.
-    assert.deepEqual(regionRows(r.events, draw, 1), [[4, 3, 1, 1, 2, 1, 1, 0, 0, 0, 0, 0]]);
+      [0, none, none, none, none, none, none, none, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 2, 3]);
+    // The region is its row of the table: logical extent and trim, content extent and packed origin, quarter turn,
+    // then its page and the page's width and height.
+    assert.deepEqual(regionRows(r.events, draw, 1), [[4, 3, 1, 1, 2, 1, 1, 0, 0, 0, 4, 2]]);
     const entries = draw.binding.descriptor.entries;
     assert.deepEqual(entries.map(e => e.binding).sort((a, b) => a - b), [0, 1, 2]);
     assert.equal(entries.find(e => e.binding === 1).resource.texture, pageTextures(r.textures)[0]);
@@ -378,8 +397,8 @@ test('GPU G09 solid layout keeps primitive alpha separate and unused uniform fie
 });
 
 // Break caught: sort A-B-A, merge through isolate, or refund logical uniforms after a physical merge.
-test('GPU G10 adjacent merge retains A-B-A and explicit barriers with original logical fees', async () => {
-  for (const [sequence, expectedDraws] of [[['A', 'A'], 1], [['A', 'B', 'A'], 3], [['A', '|', 'A'], 2]]) {
+test('GPU G10 adjacent merge joins A-B-A across pages, keeps explicit barriers, and charges the original logical fees', async () => {
+  for (const [sequence, expectedDraws] of [[['A', 'A'], 1], [['A', 'B', 'A'], 1], [['A', '|', 'A'], 2]]) {
     await using(async (f, a) => {
       const aa = await a.resource(source()), bb = await a.resource(source());
       for (const symbol of sequence) {
@@ -393,9 +412,16 @@ test('GPU G10 adjacent merge retains A-B-A and explicit barriers with original l
       const r = capture(f, () => h.renderSharedFrame(saved)); admitted(r);
       assert.equal(h.getStatus().pendingUploadBytes, logical * 440 + saved.regions.length * 48, '6*52 + 128 per logical image, and 48 per region of the frame');
       const ds = uiPass(r).draws; assert.equal(ds.length, expectedDraws);
-      const images = ds.map(d => d.binding.descriptor.entries.find(e => e.binding === 1).resource.texture);
       if (sequence.length === 3 && !sequence.includes('|')) {
-        assert.equal(images[0], images[2]); assert.notEqual(images[0], images[1]);
+        // One draw of eighteen vertices; page A is the first unit and page B the second, in the order they are first drawn.
+        assert.equal(ds[0].args[0], 18);
+        const units = unitTextures(ds[0]), pages = pageTextures(r.textures);
+        assert.equal(pages.length, 2); assert.notEqual(units[0], units[1]);
+        assert.deepEqual(new Set(units.slice(0, 2)), new Set(pages)); assert.deepEqual(units.slice(2), Array(6).fill(units[0]));
+        assert.deepEqual(regionRows(r.events, ds[0], 2).map(row => row[9]), [0, 1]);
+        const upload = writes(r.events, ds[0].vertex)[0][3], v = new Float32Array(upload.buffer, upload.byteOffset, upload.byteLength / 4);
+        // The vertices name regions 0, 1, 0: the row of a region names its page.
+        assert.deepEqual(Array.from({ length: 3 }, (_value, index) => v[13 * 6 * index + 11]), [0, 1, 0]);
       }
       if (sequence.length === 2) assert.equal(ds[0].args[0], 12, 'the actual merged draw submits twelve vertices');
       await r.finish(); await h.whenIdle();
@@ -425,7 +451,7 @@ test('GPU G10 draws of different regions and opacities of one page are one draw 
     // The window is bound once, for the sampled draw only.
     assert.equal(pass.regions.length, 1); assert.equal(pass.bindings.length, 2);
     assert.equal(ds[0].region, pass.regions[0]);
-    assert.deepEqual(regionRows(r.events, ds[0], 2), [[1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0], [1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]]);
+    assert.deepEqual(regionRows(r.events, ds[0], 2), [[1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 2, 1], [1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 2, 1]]);
     assert.equal(ds[0].region.descriptor.entries[0].resource.offset, 0);
     const upload = writes(r.events, ds[0].vertex); assert.equal(upload.length, 1);
     const v = new Float32Array(upload[0][3].buffer, upload[0][3].byteOffset, upload[0][3].byteLength / 4);
@@ -455,10 +481,11 @@ test('GPU G10 a device whose largest buffer cannot hold one window of the region
   }
 });
 
-// Break caught: start on a device that cannot hold a 52-byte vertex of five attributes or a second group for the region window.
+// Break caught: start on a device that cannot hold a 52-byte vertex of five attributes, a second group for the region window,
+// or the eight pages of a batch.
 test('GPU G10 a device one below any limit the batched layout needs is refused at startup, before a pipeline is made', async () => {
-  const needed = { maxVertexAttributes: 5, maxVertexBufferArrayStride: 52, maxUniformBufferBindingSize: 16368, maxInterStageShaderVariables: 7,
-    maxBindGroups: 2, maxUniformBuffersPerShaderStage: 2, maxBindGroupsPlusVertexBuffers: 3 };
+  const needed = { maxVertexAttributes: 5, maxVertexBufferArrayStride: 52, maxUniformBufferBindingSize: 16368, maxInterStageShaderVariables: 8,
+    maxBindGroups: 2, maxUniformBuffersPerShaderStage: 2, maxBindGroupsPlusVertexBuffers: 3, maxBindingsPerBindGroup: 10, maxSampledTexturesPerShaderStage: 8 };
   for (const [key, least] of Object.entries(needed)) {
     await withPorts(async f => {
       // The fixture's device has exactly the least value of each; a Host starts on it.

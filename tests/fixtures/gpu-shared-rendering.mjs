@@ -14,10 +14,12 @@ export function requireFactory() {
 }
 export async function withPorts(body) {
   const f = createGpuFixture();
-  // Exactly what a shared Host requires: five attributes in 52 bytes, and a second bind group for one 16,368-byte window of the region table.
+  // Exactly what a shared Host requires: five attributes in 52 bytes, a second bind group for one 16,368-byte window of the
+  // region table, and a first group of a block, a sampler and the eight pages of a batch.
   Object.assign(f.limits, { maxVertexAttributes: 5, maxVertexBufferArrayStride: 52,
-    maxUniformBufferBindingSize: 16368, maxInterStageShaderVariables: 7, maxBindGroups: 2,
-    maxUniformBuffersPerShaderStage: 2, maxBindGroupsPlusVertexBuffers: 3 });
+    maxUniformBufferBindingSize: 16368, maxInterStageShaderVariables: 8, maxBindGroups: 2,
+    maxUniformBuffersPerShaderStage: 2, maxBindGroupsPlusVertexBuffers: 3,
+    maxBindingsPerBindGroup: 10, maxSampledTexturesPerShaderStage: 8 });
   f.device.createRenderPipelineAsync = function (descriptor) {
     assert.equal(this, f.device);
     const stride = descriptor.vertex.buffers?.[0]?.arrayStride;

@@ -40,16 +40,17 @@ void main() {
 }`;
 
 // The 128-byte payload is three float vectors followed by five uint vectors, and holds what is the same
-// for every draw of a batch. `reserved0` and `reserved1` are zero, as are the last two values of
-// `viewport` and the first three of `domain`: the opacity they once held is in each vertex, and the region
-// in the region table.
+// for every draw of a batch. `pageUnits0` and `pageUnits1` name the pages of the eight texture units: the
+// index of the page in the frame, or 0xffffffff for a unit without one. The last two values of `viewport`,
+// the first three of `domain` and the first two of `pageExecution` are zero: the opacity is in each vertex,
+// the region in the region table, and the page's size in the region's row.
 // Keep this identical in both stages; the Host verifies active offsets and block size.
 const DRAW_UNIFORM = `layout(std140) uniform DrawUniform {
     vec4 viewport;
     vec4 materialLight;
     vec4 materialDark;
-    uvec4 reserved0;
-    uvec4 reserved1;
+    uvec4 pageUnits0;
+    uvec4 pageUnits1;
     uvec4 domain;
     uvec4 samplerPolicy;
     uvec4 pageExecution;
@@ -100,12 +101,19 @@ flat out float drawOpacity;
 flat out uvec4 logicalTrim;
 flat out uvec4 contentOrigin;
 flat out uint quarterTurn;
+// The texture unit that holds the page of the region, and the page's width and height.
+flat out uvec3 pageOfRegion;
 void main() {
 ${POSITION}
     int row = 3 * int(slotOpacity.x);
     logicalTrim = regions[row];
     contentOrigin = regions[row + 1];
-    quarterTurn = regions[row + 2].x;
+    uvec4 last = regions[row + 2];
+    quarterTurn = last.x;
+    uint unit = 0u;
+    for (int i = 1; i < 4; i++) { if (pageUnits0[i] == last.y) { unit = uint(i); } }
+    for (int i = 0; i < 4; i++) { if (pageUnits1[i] == last.y) { unit = uint(i + 4); } }
+    pageOfRegion = uvec3(unit, last.zw);
 }
 `;
 
@@ -142,11 +150,15 @@ ${TINTED}
 void main() { fragmentColor = tinted(vec4(1.0)); }
 `;
 
-export const sharedWebGL2FragmentSource = `#version 300 es
+/**
+ * The fragment stage of a sampled draw. The program of a batch of one page has one page sampler and reads it
+ * directly; the program of a batch of several pages has eight and selects by the unit of the region's page.
+ */
+const sampledFragmentSource = (paged: boolean): string => `#version 300 es
 precision highp float;
 precision highp int;
 ${DRAW_UNIFORM}
-uniform highp sampler2D page;
+${paged ? [0, 1, 2, 3, 4, 5, 6, 7].map(unit => `uniform highp sampler2D page${unit};`).join('\n') : 'uniform highp sampler2D page;'}
 in vec2 vertexUV;
 in vec4 vertexLight;
 in vec3 vertexDark;
@@ -154,6 +166,7 @@ flat in float drawOpacity;
 flat in uvec4 logicalTrim;
 flat in uvec4 contentOrigin;
 flat in uint quarterTurn;
+flat in uvec3 pageOfRegion;
 layout(location = 0) out vec4 fragmentColor;
 
 vec3 decoded(vec3 value) {
@@ -163,7 +176,12 @@ vec3 decoded(vec3 value) {
 
 vec4 decodedPageTap(ivec2 index) {
     // Canonical rows retain their CPU order on upload. RGBA8 performs no sRGB decode.
-    vec4 value = texelFetch(page, index, 0);
+    // Every read of a page is this one fetch${paged ? ' from the unit that holds the region\'s page' : ''}.
+${paged ? `    vec4 value;
+    switch (pageOfRegion.x) {
+${[1, 2, 3, 4, 5, 6, 7].map(unit => `        case ${unit}u: value = texelFetch(page${unit}, index, 0); break;`).join('\n')}
+        default: value = texelFetch(page0, index, 0); break;
+    }` : '    vec4 value = texelFetch(page, index, 0);'}
     return vec4(decoded(value.rgb), value.a);
 }
 
@@ -181,8 +199,8 @@ int addressed(int value, int extent, uint mode) {
 }
 
 vec4 pageTap(ivec2 index, uvec2 modes) {
-    return decodedPageTap(ivec2(addressed(index.x, int(pageExecution.x), modes.x),
-        addressed(index.y, int(pageExecution.y), modes.y)));
+    return decodedPageTap(ivec2(addressed(index.x, int(pageOfRegion.y), modes.x),
+        addressed(index.y, int(pageOfRegion.z), modes.y)));
 }
 
 vec4 linearPage(vec2 positionInTexels, uvec2 modes) {
@@ -212,7 +230,7 @@ vec4 regionTap(ivec2 logical) {
 vec4 sampled(vec2 coordinate) {
     if (domain.w == 1u) {
         // Existing preparation bounds these interpolated texel coordinates to 8192 or 2^20.
-        vec2 q = coordinate * vec2(pageExecution.xy);
+        vec2 q = coordinate * vec2(pageOfRegion.yz);
         if (samplerPolicy.z == 1u) { return linearPage(q, samplerPolicy.xy); }
         return pageTap(ivec2(floor(q)), samplerPolicy.xy);
     }
@@ -247,6 +265,8 @@ vec4 sampled(vec2 coordinate) {
 ${TINTED}
 void main() { fragmentColor = tinted(sampled(vertexUV)); }
 `;
+export const sharedWebGL2FragmentSource = sampledFragmentSource(false);
+export const sharedWebGL2PagedFragmentSource = sampledFragmentSource(true);
 
 export const sharedWebGL2ResolveVertexSource = `#version 300 es
 precision highp float;

@@ -1,11 +1,12 @@
 import type { SharedMaterial2D } from '@egret/contracts';
 export const SHARED_BLENDS = ['normal', 'add-accumulate', 'add-preserve', 'multiply-factor', 'screen'] as const;
-// The 128-byte block holds what is the same for every draw of a batch. `reserved0` and `reserved1` are zero,
-// as are the last two values of `viewport` and the first three of `domain`: the opacity they once held is in
-// each vertex, and the region in the region table.
+// The 128-byte block holds what is the same for every draw of a batch. `pageUnits0` and `pageUnits1` name the
+// pages of the eight texture units: the index of the page in the frame, or 0xffffffff for a unit without one.
+// The last two values of `viewport`, the first three of `domain` and the first two of `pageExecution` are zero:
+// the opacity is in each vertex, the region in the region table, and the page's size in the region's row.
 const BLOCK = `struct DrawUniform {
     viewport: vec4<f32>, materialLight: vec4<f32>, materialDark: vec4<f32>,
-    reserved0: vec4<u32>, reserved1: vec4<u32>, domain: vec4<u32>,
+    pageUnits0: vec4<u32>, pageUnits1: vec4<u32>, domain: vec4<u32>,
     samplerPolicy: vec4<u32>, pageExecution: vec4<u32>,
 }
 @group(0) @binding(0) var<uniform> draw: DrawUniform;
@@ -34,14 +35,16 @@ const SOLID = BLOCK + TINT + `struct VertexOutput {
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4<f32> { return tint(vec4<f32>(1.0), input.light, input.dark, input.opacity); }
 `;
 // The vertex stage of a sampled draw reads its region from the bound window of the region table, three
-// vec4<u32> for each of 341 regions, and hands it to every fragment of the triangle unchanged.
-const HEADER = BLOCK + TINT + `struct RegionWindow { regions: array<vec4<u32>, 1023> }
+// vec4<u32> for each of 341 regions, and hands it to every fragment of the triangle unchanged. The row names
+// the region's page; `page` is the texture unit that holds that page, and the page's width and height.
+// A batch of one page has that page in the first unit, and its pipeline looks for no other.
+const header = (paged: boolean): string => BLOCK + TINT + `struct RegionWindow { regions: array<vec4<u32>, 1023> }
 @group(1) @binding(0) var<uniform> regionWindow: RegionWindow;
 struct VertexOutput {
     @builtin(position) position: vec4<f32>, @location(0) uv: vec2<f32>,
     @location(1) light: vec4<f32>, @location(2) dark: vec3<f32>, @location(3) @interpolate(flat) opacity: f32,
     @location(4) @interpolate(flat) logicalTrim: vec4<u32>, @location(5) @interpolate(flat) contentOrigin: vec4<u32>,
-    @location(6) @interpolate(flat) quarterTurn: u32,
+    @location(6) @interpolate(flat) quarterTurn: u32, @location(7) @interpolate(flat) page: vec3<u32>,
 }
 @vertex fn vertexMain(@location(0) position: vec2<f32>, @location(1) uv: vec2<f32>,
     @location(2) light: vec4<f32>, @location(3) dark: vec3<f32>, @location(4) slotOpacity: vec2<f32>) -> VertexOutput {
@@ -51,12 +54,31 @@ struct VertexOutput {
     result.uv = uv; result.light = light; result.dark = dark; result.opacity = slotOpacity.y;
     let row = 3u * u32(slotOpacity.x);
     result.logicalTrim = regionWindow.regions[row]; result.contentOrigin = regionWindow.regions[row + 1u];
-    result.quarterTurn = regionWindow.regions[row + 2u].x; return result;
+    let last = regionWindow.regions[row + 2u];
+    result.quarterTurn = last.x;
+    var unit = 0u;${paged ? `
+    for (var i = 1u; i < 4u; i++) { if (draw.pageUnits0[i] == last.y) { unit = i; } }
+    for (var i = 0u; i < 4u; i++) { if (draw.pageUnits1[i] == last.y) { unit = i + 4u; } }` : ''}
+    result.page = vec3<u32>(unit, last.zw); return result;
 }
 `;
-const SAMPLED = `@group(0) @binding(1) var page: texture_2d<f32>;
+// Every read of a page goes through one of these two functions. Both sample an explicit level, so neither
+// needs the derivatives that only uniform control flow provides. The pipeline of a batch of one page has one
+// page texture and reads it directly; the pipeline of a batch of several pages has eight and selects by unit.
+const units = (read: (page: string) => string): string => `    switch unit {
+${[1, 2, 3, 4, 5, 6, 7].map(unit => `        case ${unit}u: { return ${read('page' + unit)}; }`).join('\n')}
+        default: { return ${read('page0')}; }
+    }`;
+const pages = (paged: boolean): string => `@group(0) @binding(1) var page0: texture_2d<f32>;
 @group(0) @binding(2) var pageSampler: sampler;
-fn addressed(value: i32, extent: i32, mode: u32) -> i32 {
+${paged ? [1, 2, 3, 4, 5, 6, 7].map(unit => `@group(0) @binding(${2 + unit}) var page${unit}: texture_2d<f32>;`).join('\n') + '\n' : ''}fn pageLoad(unit: u32, at: vec2<i32>) -> vec4<f32> {
+${paged ? units(page => `textureLoad(${page}, at, 0)`) : '    return textureLoad(page0, at, 0);'}
+}
+fn pageSample(unit: u32, at: vec2<f32>) -> vec4<f32> {
+${paged ? units(page => `textureSampleLevel(${page}, pageSampler, at, 0.0)`) : '    return textureSampleLevel(page0, pageSampler, at, 0.0);'}
+}
+`;
+const SAMPLED = `fn addressed(value: i32, extent: i32, mode: u32) -> i32 {
     if (mode == 0u) { return clamp(value, 0, extent - 1); }
     if (mode == 1u) { return ((value % extent) + extent) % extent; }
     let period = 2 * extent; let index = ((value % period) + period) % period;
@@ -74,17 +96,17 @@ fn regionTap(logical: vec2<i32>, input: VertexOutput) -> vec4<f32> {
         case 3u: { packed = vec2<i32>(local.y, size.x - 1 - local.x); }
         default: {}
     }
-    return textureLoad(page, vec2<i32>(input.contentOrigin.zw) + packed, 0);
+    return pageLoad(input.page.x, vec2<i32>(input.contentOrigin.zw) + packed);
 }
 fn sampled(input: VertexOutput) -> vec4<f32> {
     let uv = input.uv;
-    let pageSize = vec2<f32>(draw.pageExecution.xy);
+    let pageSize = vec2<f32>(input.page.yz);
     if (draw.domain.w == 1u) {
-        if (draw.samplerPolicy.z == 1u) { return textureSampleLevel(page, pageSampler, uv, 0.0); }
+        if (draw.samplerPolicy.z == 1u) { return pageSample(input.page.x, uv); }
         let q = uv * pageSize;
         let index = vec2<i32>(floor(q));
-        return textureLoad(page, vec2<i32>(addressed(index.x, i32(draw.pageExecution.x), draw.samplerPolicy.x),
-            addressed(index.y, i32(draw.pageExecution.y), draw.samplerPolicy.y)), 0);
+        return pageLoad(input.page.x, vec2<i32>(addressed(index.x, i32(input.page.y), draw.samplerPolicy.x),
+            addressed(index.y, i32(input.page.z), draw.samplerPolicy.y)));
     }
     let extent = vec2<f32>(input.logicalTrim.xy);
     // Clamp only after fragment interpolation, before any integer conversion.
@@ -107,7 +129,7 @@ fn sampled(input: VertexOutput) -> vec4<f32> {
         case 3u: { packed = vec2<f32>(local.y, size.x - local.x); }
         default: {}
     }
-    return textureSampleLevel(page, pageSampler, (vec2<f32>(input.contentOrigin.zw) + packed) / pageSize, 0.0)
+    return pageSample(input.page.x, (vec2<f32>(input.contentOrigin.zw) + packed) / pageSize)
         * (coverage.x * coverage.y);
 }
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4<f32> { return tint(sampled(input), input.light, input.dark, input.opacity); }
@@ -119,10 +141,12 @@ function blendState(blend: SharedMaterial2D['blend']): GPUBlendState {
     return { color: { operation: 'add', srcFactor: blend === 'multiply-factor' ? 'dst' : 'one',
         dstFactor: blend === 'screen' ? 'one-minus-src' : 'one-minus-src-alpha' }, alpha };
 }
+/** The pipelines of a draw without a region, of a batch of one page, and of a batch of several pages. */
+export const SHARED_PIPELINE_KINDS = ['solid', 'sampled', 'paged'] as const;
 /** All shaders and promises are immediately owned by the Host's captured startup boundaries. */
 export function createSharedWebGPUPipeline(shader: (d: GPUShaderModuleDescriptor) => GPUShaderModule,
-    pipeline: (d: GPURenderPipelineDescriptor) => Promise<GPURenderPipeline>, sampled: boolean, blend: SharedMaterial2D['blend']): Promise<GPURenderPipeline> {
-    const module = shader({ code: sampled ? HEADER + SAMPLED : SOLID });
+    pipeline: (d: GPURenderPipelineDescriptor) => Promise<GPURenderPipeline>, kind: typeof SHARED_PIPELINE_KINDS[number], blend: SharedMaterial2D['blend']): Promise<GPURenderPipeline> {
+    const module = shader({ code: kind === 'solid' ? SOLID : header(kind === 'paged') + pages(kind === 'paged') + SAMPLED });
     return pipeline({ layout: 'auto', vertex: { module, entryPoint: 'vertexMain', buffers: [{ arrayStride: 52, stepMode: 'vertex', attributes: [
         { shaderLocation: 0, offset: 0, format: 'float32x2' }, { shaderLocation: 1, offset: 8, format: 'float32x2' },
         { shaderLocation: 2, offset: 16, format: 'float32x4' }, { shaderLocation: 3, offset: 32, format: 'float32x3' },

@@ -1,8 +1,12 @@
 import type { PreparedSharedDraw2D, PreparedSharedFrame2D, SharedPoint2D } from './prepareSharedDraws2D.js';
 import { qualifySharedUV, sharedFailure } from './prepareSharedDraws2D.js';
 import { packedOrientation } from './packedOrientation.js';
-/** `regionWindow` is the window of the region table this draw's region is in, or -1 for a draw without a region. */
-export interface PackedSharedDraw2D { readonly prepared:PreparedSharedDraw2D; readonly data:Float32Array<ArrayBuffer>; readonly vertexCount:number; readonly uniform:Uint8Array<ArrayBuffer>; readonly regionWindow:number; }
+/**
+ * `regionWindow` is the window of the region table this draw's region is in, or -1 for a draw without a region.
+ * `pages` are the pages of the frame the draw samples, in the order of the texture units that hold them: the
+ * one page of a draw as it is packed, up to eight for a batch, none for a draw without a region.
+ */
+export interface PackedSharedDraw2D { readonly prepared:PreparedSharedDraw2D; readonly data:Float32Array<ArrayBuffer>; readonly vertexCount:number; readonly uniform:Uint8Array<ArrayBuffer>; readonly regionWindow:number; readonly pages:readonly number[]; }
 export type PackedSharedEntry2D = PackedSharedDraw2D | { readonly barrier:true; readonly ordinal:number };
 /**
  * One vertex is thirteen f32 values: x y u v r g b a dr dg db slot opacity. `slot` is the place of the
@@ -12,12 +16,18 @@ export type PackedSharedEntry2D = PackedSharedDraw2D | { readonly barrier:true; 
 export const SHARED_VERTEX_BYTES_2D=52;
 /**
  * The region table holds twelve u32 values for every region of a frame, in frame order: logical width and
- * height, trim x and y; content width and height, packed x and y; quarter turn and three zeros. A draw
- * reads it through a window of 341 consecutive regions, the most that fit the 16,384 bytes every WebGL2
- * context gives one uniform block.
+ * height, trim x and y; content width and height, packed x and y; quarter turn, the index of the region's
+ * page in the frame, and the width and height of that page. A draw reads it through a window of 341
+ * consecutive regions, the most that fit the 16,384 bytes every WebGL2 context gives one uniform block.
  */
 export const SHARED_REGION_WINDOW_2D=341,SHARED_REGION_WINDOW_BYTES_2D=16368;
-const ROW=SHARED_VERTEX_BYTES_2D/4,BLOCK=128;
+/**
+ * A batch samples at most this many pages. Words 12 to 19 of its block name them: the word of a texture
+ * unit is the index in the frame of the page that unit holds, and 0xffffffff for a unit that holds none.
+ * A vertex finds its page's unit by the page index in its region's row of the region table.
+ */
+export const SHARED_BATCH_PAGES_2D=8,SHARED_NO_PAGE_2D=0xffffffff;
+const ROW=SHARED_VERTEX_BYTES_2D/4,BLOCK=128,NO_PAGES:readonly number[]=Object.freeze([]);
 // One polygon's represented corners. Packing is synchronous and calls no caller code, so the storage is shared.
 let corners=new Float32Array(64*ROW);
 // Qualification reads the two represented texture coordinates of this one reused point.
@@ -27,9 +37,10 @@ const address=(value:string):number=>value==='repeat'?1:value==='mirror-repeat'?
 export function packSharedRegions2D(frame:PreparedSharedFrame2D['frame']):Uint32Array<ArrayBuffer> {
     const regions=frame.regions,table=new Uint32Array(12*regions.length);
     for(let i=0,o=0;i<regions.length;i++,o+=12){
-        const region=regions[i]!,p=region.packed,odd=region.quarterTurn===1||region.quarterTurn===3;
+        const region=regions[i]!,p=region.packed,odd=region.quarterTurn===1||region.quarterTurn===3,page=frame.pages[region.pageIndex]!.source;
         table[o]=region.logicalWidth;table[o+1]=region.logicalHeight;table[o+2]=region.trimX;table[o+3]=region.trimY;
-        table[o+4]=odd?p.height:p.width;table[o+5]=odd?p.width:p.height;table[o+6]=p.x;table[o+7]=p.y;table[o+8]=region.quarterTurn;
+        table[o+4]=odd?p.height:p.width;table[o+5]=odd?p.width:p.height;table[o+6]=p.x;table[o+7]=p.y;
+        table[o+8]=region.quarterTurn;table[o+9]=region.pageIndex;table[o+10]=page.width;table[o+11]=page.height;
     }
     return table;
 }
@@ -70,24 +81,28 @@ export function packSharedDraws2D(prepared:PreparedSharedFrame2D):PackedSharedEn
             }
         }
         // Float and word indices of this draw's block: twelve floats, then twenty words from byte 48.
-        // The block holds what is the same for a whole batch. The third float, once the opacity, and the first
-        // eleven words, once the region, stay zero: the opacity is in each vertex and the region in the region table.
+        // The block holds what is the same for a whole batch. The third float, once the opacity, stays zero: the
+        // opacity is in each vertex. Of the first eleven words, once the region, the first eight name the pages
+        // of the texture units and the next three stay zero: the region is in the region table.
         const f=block>>2,w=f+12,material=draw.material,light=material.light,dark=material.dark;
         if(light.length===4&&dark.length===3){
             blockFloats[f]=prepared.width;blockFloats[f+1]=prepared.height;blockFloats[f+2]=0;blockFloats[f+3]=0;
             blockFloats[f+4]=light[0];blockFloats[f+5]=light[1];blockFloats[f+6]=light[2];blockFloats[f+7]=light[3];
             blockFloats[f+8]=dark[0];blockFloats[f+9]=dark[1];blockFloats[f+10]=dark[2];blockFloats[f+11]=0;
         }else new Float32Array(blocks,block,12).set([prepared.width,prepared.height,0,0,...light,...dark,0]);
-        if(draw.region){const page=frame.pages[draw.pageIndex!]!.source;
+        if(draw.region){
+            // A draw as it is packed samples one page, held by the first unit. The page's size is in the row of
+            // its region, so that draws of pages of different sizes have equal blocks.
+            blockWords[w]=draw.pageIndex!;for(let unit=1;unit<SHARED_BATCH_PAGES_2D;unit++)blockWords[w+unit]=SHARED_NO_PAGE_2D;
             const strategy=material.filter==='nearest'?0:material.samplingDomain==='page'?1:material.regionIsolation==='strict'?3:2;
             blockWords[w+11]=material.samplingDomain==='page'?1:0;blockWords[w+12]=address(material.addressU);blockWords[w+13]=address(material.addressV);
-            blockWords[w+14]=material.filter==='linear'?1:0;blockWords[w+15]=material.regionIsolation==='strict'?1:0;blockWords[w+16]=page.width;blockWords[w+17]=page.height;
+            blockWords[w+14]=material.filter==='linear'?1:0;blockWords[w+15]=material.regionIsolation==='strict'?1:0;
             blockWords[w+18]=draw.command.kind==='mesh'?2:1;blockWords[w+19]=strategy;
         }else{
             // Solid draws have canonical unused sampling fields, never a white page.
             blockWords[w+16]=1;blockWords[w+17]=1;
         }
-        result.push({prepared:draw,data:rows.subarray(first,used),vertexCount:vertices,uniform:blockBytes.subarray(block,block+BLOCK),regionWindow});
+        result.push({prepared:draw,data:rows.subarray(first,used),vertexCount:vertices,uniform:blockBytes.subarray(block,block+BLOCK),regionWindow,pages:draw.region?[draw.pageIndex!]:NO_PAGES});
         block+=BLOCK;
     }
     return result;

@@ -11,10 +11,11 @@ import { prepareSharedDraws2D, SharedPreparationError } from '../rendering/prepa
 import { planSharedSubmission2D, packSharedSubmission2D, packSharedRegionWindows2D, SHARED_REGION_WINDOW_STRIDE_2D, SHARED_REGION_WINDOW_BYTES_2D, materializeSharedPages2D, checkSharedCapacity2D, SharedStorageError2D } from './prepareSharedSubmission2D.js';
 import type { SharedSubmissionStorage2D, SharedOwnerSnapshot2D } from './prepareSharedSubmission2D.js';
 import type { PackedSharedDraw2D } from '../rendering/packSharedDraws2D.js';
+import { SHARED_BATCH_PAGES_2D } from '../rendering/packSharedDraws2D.js';
 import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js';
 import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatches2D.js';
 import { decodeSharedSRGB } from '../rendering/sharedColor2D.js';
-import { createSharedWebGPUPipeline, SHARED_BLENDS } from './webgpuSharedPass.js';
+import { createSharedWebGPUPipeline, SHARED_BLENDS, SHARED_PIPELINE_KINDS } from './webgpuSharedPass.js';
 import { createSharedEffectPipeline, EFFECT_PASSES } from './sharedEffectShaders.js';
 import type { SharedEffectPass } from './sharedEffectShaders.js';
 import type { PreparedEffect2D } from '../rendering/sharedEffects2D.js';
@@ -417,7 +418,7 @@ class WebGPUHostImplementation {
         const limitsObject=limitsGetter.call(device) as GPUSupportedLimits;gate();
         const limits:Record<string,number>={};
         for(const key of DEVICE_LIMIT_KEYS){limits[key]=limitsObject[key];gate();if(!Number.isSafeInteger(limits[key])||limits[key]!<=0)throw new TypeError('Device limit');}
-        if(limits['maxVertexBuffers']!<1||limits['maxVertexAttributes']!<5||limits['maxVertexBufferArrayStride']!<52||limits['maxColorAttachments']!<1||limits['maxColorAttachmentBytesPerSample']!<4||limits['maxBindGroups']!<2||limits['maxBindingsPerBindGroup']!<3||limits['maxSampledTexturesPerShaderStage']!<1||limits['maxSamplersPerShaderStage']!<1||limits['maxUniformBuffersPerShaderStage']!<2||limits['maxUniformBufferBindingSize']!<SHARED_REGION_WINDOW_BYTES_2D||limits['maxBindGroupsPlusVertexBuffers']!<3||limits['maxInterStageShaderVariables']!<7)throw new TypeError('Device capabilities');
+        if(limits['maxVertexBuffers']!<1||limits['maxVertexAttributes']!<5||limits['maxVertexBufferArrayStride']!<52||limits['maxColorAttachments']!<1||limits['maxColorAttachmentBytesPerSample']!<4||limits['maxBindGroups']!<2||limits['maxBindingsPerBindGroup']!<2+SHARED_BATCH_PAGES_2D||limits['maxSampledTexturesPerShaderStage']!<SHARED_BATCH_PAGES_2D||limits['maxSamplersPerShaderStage']!<1||limits['maxUniformBuffersPerShaderStage']!<2||limits['maxUniformBufferBindingSize']!<SHARED_REGION_WINDOW_BYTES_2D||limits['maxBindGroupsPlusVertexBuffers']!<3||limits['maxInterStageShaderVariables']!<8)throw new TypeError('Device capabilities');
         const queue=device.queue;gate();
         const capture=<K extends keyof GPUDevice>(key:K):GPUDevice[K]=>this.method(device,key,gate);
         return {device,lost,limits,add:capture('addEventListener'),remove:capture('removeEventListener'),
@@ -600,7 +601,7 @@ class WebGPUHostImplementation {
             const observedOwner=this.owner;
             const listener=(event:Event):void=>{if(observedOwner&&this.owner!==observedOwner)return;this.fail('WEBGPU_UNCAPTURED_ERROR',(event as GPUUncapturedErrorEvent).error,'device',null);};
             this.removeListener=()=>remove('uncapturederror',listener);add('uncapturederror',listener);gate();
-            if (captured['maxVertexBuffers']! < 1 || captured['maxVertexAttributes']! < 5 || captured['maxVertexBufferArrayStride']! < 52 || captured['maxColorAttachments']! < 1 || captured['maxColorAttachmentBytesPerSample']! < 4 || captured['maxBindGroups']! < 2 || captured['maxBindingsPerBindGroup']! < 3 || captured['maxSampledTexturesPerShaderStage']! < 1 || captured['maxSamplersPerShaderStage']! < 1 || captured['maxUniformBuffersPerShaderStage']! < 2 || captured['maxUniformBufferBindingSize']! < SHARED_REGION_WINDOW_BYTES_2D || captured['maxBindGroupsPlusVertexBuffers']! < 3 || captured['maxInterStageShaderVariables']! < 7) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
+            if (captured['maxVertexBuffers']! < 1 || captured['maxVertexAttributes']! < 5 || captured['maxVertexBufferArrayStride']! < 52 || captured['maxColorAttachments']! < 1 || captured['maxColorAttachmentBytesPerSample']! < 4 || captured['maxBindGroups']! < 2 || captured['maxBindingsPerBindGroup']! < 2 + SHARED_BATCH_PAGES_2D || captured['maxSampledTexturesPerShaderStage']! < SHARED_BATCH_PAGES_2D || captured['maxSamplersPerShaderStage']! < 1 || captured['maxUniformBuffersPerShaderStage']! < 2 || captured['maxUniformBufferBindingSize']! < SHARED_REGION_WINDOW_BYTES_2D || captured['maxBindGroupsPlusVertexBuffers']! < 3 || captured['maxInterStageShaderVariables']! < 8) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
             if(SHARED_OPTIONS.get(this)?.enableEffects&&(captured['maxUniformBufferBindingSize']!<448||captured['maxSampledTexturesPerShaderStage']!<2))throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
             this.limits = { maxTextureDimension2D: captured['maxTextureDimension2D']!, maxBufferSize: captured['maxBufferSize']! };
             const scopes: Promise<void>[] = [];
@@ -616,7 +617,7 @@ class WebGPUHostImplementation {
             let synchronous: { readonly cause: unknown } | undefined;
             try {
                 this.scoped(null, 'startup', scopes, gate, () => {
-                        for(const sampled of [false,true])for(const blend of SHARED_BLENDS)createSharedWebGPUPipeline(capturedShader,capturedPipeline,sampled,blend);
+                        for(const kind of SHARED_PIPELINE_KINDS)for(const blend of SHARED_BLENDS)createSharedWebGPUPipeline(capturedShader,capturedPipeline,kind,blend);
                         createSharedResolvePipeline(capturedShader,capturedPipeline,this.format,SHARED_OPTIONS.get(this)!.outputAlpha==='opaque');
                         if(SHARED_OPTIONS.get(this)!.enableEffects)for(const mode of EFFECT_PASSES)createSharedEffectPipeline(capturedShader,capturedPipeline,mode);
                         for(const filter of ['nearest','linear'] as const)for(const u of ['clamp-to-edge','repeat','mirror-repeat'] as const)for(const v of ['clamp-to-edge','repeat','mirror-repeat'] as const){
@@ -637,7 +638,7 @@ class WebGPUHostImplementation {
             // Scope outcomes do not select pipeline roles; the pipelines' own ordered results do.
             const roles = outcomes.slice(scopes.length) as PromiseFulfilledResult<GPURenderPipeline>[];
             {
-                let index=0;for(const sampled of [false,true])for(const blend of SHARED_BLENDS){const value=roles[index++]!.value;const layout=this.method(value,'getBindGroupLayout',gate)(0);gate();const regions=sampled?this.method(value,'getBindGroupLayout',gate)(1):undefined;gate();this.sharedPipelines.set((sampled?'sampled:':'solid:')+blend,{pipeline:value,layout,regions});}
+                let index=0;for(const kind of SHARED_PIPELINE_KINDS)for(const blend of SHARED_BLENDS){const value=roles[index++]!.value;const layout=this.method(value,'getBindGroupLayout',gate)(0);gate();const regions=kind!=='solid'?this.method(value,'getBindGroupLayout',gate)(1):undefined;gate();this.sharedPipelines.set(kind+':'+blend,{pipeline:value,layout,regions});}
                 this.resolvePipeline=roles[index++]!.value;this.resolveLayout=this.method(this.resolvePipeline,'getBindGroupLayout',gate)(0);gate();
                 if(SHARED_OPTIONS.get(this)!.enableEffects)for(const mode of EFFECT_PASSES){const pipeline=roles[index++]!.value,layout=this.method(pipeline,'getBindGroupLayout',gate)(0);gate();this.effectPipelines.set(mode,{pipeline,layout});}
             }
@@ -1311,20 +1312,30 @@ class WebGPUHostImplementation {
         }catch(cause){synchronous=cause instanceof ClassifiedWebGPUFailure?cause.publicError:this.fail('WEBGPU_RENDER_FAILED',cause,'frame',serial);record.failure=synchronous;}
         return this.finishSubmission(record,ticket,done,outcomes,touchedQueue,synchronous,submitted,staging,frame.frameId,width,height,storage.rowPitch,storage.output);
     }
+    /** The pipeline of a draw: without a region, of one page, or of several pages. */
+    private sharedRole(draw:PackedSharedDraw2D):{pipeline:GPURenderPipeline;layout:GPUBindGroupLayout;regions:GPUBindGroupLayout|undefined} {
+        return this.sharedPipelines.get((draw.pages.length===0?'solid:':draw.pages.length>1?'paged:':'sampled:')+draw.prepared.material.blend)!;
+    }
     private prepareSharedGPU(record:Submission,p:SharedPlan,colorId:number,gate:()=>void):SharedRecipe {
         const {batch}=p,imageUse=record.imageUse!;
                 const realized=new Map<number,{texture:GPUTexture;view:GPUTextureView}>();
-                for(const draw of batch.draws){const index=draw.prepared.pageIndex;if(index!==undefined&&!realized.has(index))realized.set(index,this.realizeImageResidency(record,imageUse,index,gate));}
+                for(const draw of batch.draws)for(const index of draw.pages)if(!realized.has(index))realized.set(index,this.realizeImageResidency(record,imageUse,index,gate));
                 for(const group of p.storage.prepared.effects.groups){const index=group.maskPageIndex;if(index!==undefined&&!realized.has(index))realized.set(index,this.realizeImageResidency(record,imageUse,index,gate));}
                 let requestId=0;const vertices=new Map<PackedSharedDraw2D,OwnedWebGPUBuffer>(),bindings=new Map<PackedSharedDraw2D,GPUBindGroup>();
                 for(const draw of batch.draws){const vertex=this.submissionBuffer(record,requestId++,gate).handle.resource,lease=this.submissionBuffer(record,requestId++,gate),uniform=lease.handle.resource;
                     vertices.set(draw,vertex);this.sharedWrite(record,vertex.buffer,draw.data,52);gate();this.sharedWrite(record,uniform.buffer,draw.uniform,128);gate();
-                    const source=draw.prepared,index=source.pageIndex,sampled=index!==undefined,role=this.sharedPipelines.get((sampled?'sampled:':'solid:')+source.material.blend)!;
+                    const source=draw.prepared,index=source.pageIndex,sampled=index!==undefined,role=this.sharedRole(draw);
                     const image=sampled?imageUse.hits.get(index)??imageUse.candidates.get(index)!.entry:undefined;
                     const view=sampled?realized.get(index)!.view:undefined,sampler=sampled?this.sharedSamplers.get(source.material.filter+':'+source.material.addressU+':'+source.material.addressV):undefined;
                     const key:DrawBindingKey={session:this.imageEpoch,layout:role.layout,texture:image?.identity,view,sampler,uniform:lease.handle,offset:0,size:128};
-                    const entries:GPUBindGroupEntry[]=[{binding:0,resource:{buffer:uniform.buffer,offset:0,size:128}}];if(sampled)entries.push({binding:1,resource:view!},{binding:2,resource:sampler!});
-                    bindings.set(draw,this.submissionBinding(record,key,entries,image,gate));
+                    const entries:GPUBindGroupEntry[]=[{binding:0,resource:{buffer:uniform.buffer,offset:0,size:128}}];
+                    if(sampled)entries.push({binding:1,resource:view!},{binding:2,resource:sampler!});
+                    // A batch of several pages has a view for each of the eight units of its pipeline. A unit the batch does not name
+                    // holds the first page again; no vertex selects it. The cache knows a group by one page, so this group is made
+                    // for the record and kept by it alone.
+                    if(draw.pages.length>1){for(let unit=1;unit<SHARED_BATCH_PAGES_2D;unit++)entries.push({binding:2+unit,resource:unit<draw.pages.length?realized.get(draw.pages[unit]!)!.view:view!});
+                        const binding=(record.owner?.native.bindGroup??this.bindGroup!)({layout:role.layout,entries});record.bindings.push(binding);gate();bindings.set(draw,binding);}
+                    else bindings.set(draw,this.submissionBinding(record,key,entries,image,gate));
                 }
                 // One buffer holds the region table of the record. A sampled draw binds its window of it as a second
                 // group, made once for each pipeline and window the record uses and kept by the record alone.
@@ -1332,7 +1343,7 @@ class WebGPUHostImplementation {
                 if(p.regions){const table=this.submissionBuffer(record,requestId++,gate).handle.resource;this.sharedWrite(record,table.buffer,p.regions,16);gate();
                     const made=new Map<GPUBindGroupLayout,Map<number,GPUBindGroup>>();
                     for(const draw of batch.draws){if(draw.regionWindow<0)continue;
-                        const layout=this.sharedPipelines.get('sampled:'+draw.prepared.material.blend)!.regions!;
+                        const layout=this.sharedRole(draw).regions!;
                         let byWindow=made.get(layout);if(!byWindow){byWindow=new Map();made.set(layout,byWindow);}
                         let binding=byWindow.get(draw.regionWindow);
                         if(!binding){binding=(record.owner?.native.bindGroup??this.bindGroup!)({layout,entries:[{binding:0,resource:{buffer:table.buffer,offset:draw.regionWindow*SHARED_REGION_WINDOW_STRIDE_2D,size:SHARED_REGION_WINDOW_BYTES_2D}}]});record.bindings.push(binding);gate();byWindow.set(draw.regionWindow,binding);}
@@ -1368,7 +1379,7 @@ class WebGPUHostImplementation {
                     return {pass:capture(raw,['setPipeline','setViewport','setScissorRect','setVertexBuffer','setBindGroup','draw']),end:this.method(raw,'end',gate)};
                 };
                 let active=openPass(color.view,false,true);
-                const drawOne=(draw:PackedSharedDraw2D):void=>{const role=this.sharedPipelines.get((draw.prepared.pageIndex===undefined?'solid:':'sampled:')+draw.prepared.material.blend)!;
+                const drawOne=(draw:PackedSharedDraw2D):void=>{const role=this.sharedRole(draw);
                     active.pass.setPipeline(role.pipeline);active.pass.setViewport(0,0,width,height,0,1);active.pass.setScissorRect(0,0,width,height);active.pass.setVertexBuffer(0,vertices.get(draw)!.buffer);active.pass.setBindGroup(0,bindings.get(draw)!);if(draw.regionWindow>=0)active.pass.setBindGroup(1,recipe.regionBindings.get(draw)!);active.pass.draw(draw.vertexCount);};
                 if(storage.prepared.effects.groups.length===0){for(const draw of batch.draws)drawOne(draw);}
                 else{

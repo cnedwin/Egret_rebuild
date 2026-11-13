@@ -49,9 +49,54 @@ test('GL G02 startup qualifies attributes, formats and actual non-power-of-two U
 });
 function constantsSRGB() { return 35904; }
 
-// Break caught: start on a context that cannot hold five attributes or a second uniform block for the region window.
+// Break caught: end a batch at another page, bind every page to the first unit, or leave a page bound to a later unit.
+test('GL G03 bitmaps of two pages in turn are one draw; each page has its own texture unit and none stays bound', async () => author(async a => {
+  const sizes = [[4, 2], [2, 6]], pages = sizes.map(([width, height]) => egret.createImageData2D({width, height, pixels:new Uint8Array(4 * width * height).fill(255)}));
+  const type = egret.createAssetType('gl-two-pages', egret.isTexture);
+  a.engine.assets.register(type, { async load(ref) { return egret.createTextureView(pages[Number(ref.id)], {packed:{x:0,y:0,width:1,height:2},logicalWidth:1,logicalHeight:2,trimX:0,trimY:0,quarterTurn:0}); }, dispose(value) { value.dispose(); } });
+  const leases = []; for (const id of ['0', '1']) leases.push(a.scope.use(await a.engine.assets.acquire(egret.createAssetRef(type, id), {signal:a.scope.signal})));
+  a.sprite.visible = false;
+  for (const [index, page] of [0, 1, 0, 1].entries()) { const node = a.scope.use(new egret.Bitmap(leases[page])); node.x = 2 * index; a.engine.stage.addChild(node); }
+  const frame = a.frame();
+  assert.equal(frame.pages.length, 2); assert.deepEqual(frame.commands.map(command => frame.regions[command.regionIndex].pageIndex), [0, 1, 0, 1]);
+  const f = glPorts(), h = createSharedWebGL2Host({canvas:f.canvas}); await h.start();
+  // The program of a batch of several pages is linked at startup, after the others, and its eight page samplers name the eight units then.
+  const programs = f.events.filter(row => row[0] === 'linkProgram').map(row => row[1]), paged = programs.at(-1);
+  assert.ok(/uniform highp sampler2D page7;/.test(paged.shaders[1].source) && !/sampler2D page7/.test(programs[0].shaders[1].source));
+  assert.deepEqual(f.events.filter(row => row[0] === 'uniform1i').map(row => [row[1].program === paged, row[1].name, row[2]]), Array.from({length:8}, (_value, unit) => [true, 'page' + unit, unit]));
+  const before = f.events.length; h.renderSharedFrame(frame); await h.whenIdle();
+  const events = f.events.slice(before), gl = f.gl;
+  // One draw of the four bitmaps, by that program, then the resolve.
+  assert.deepEqual(events.filter(row => row[0] === 'drawArrays').map(row => row.slice(1)), [[gl.TRIANGLES, 0, 24], [gl.TRIANGLES, 0, 3]]);
+  const used = events.slice(0, events.findIndex(row => row[0] === 'drawArrays')).filter(row => row[0] === 'useProgram').at(-1);
+  assert.equal(used[1], paged);
+  // The block of the batch names page 0 for the first unit and page 1 for the second.
+  const block = events.filter(row => row[0] === 'bufferSubData' && row[1] === gl.UNIFORM_BUFFER && !(row[3] instanceof Uint32Array));
+  assert.equal(block.length, 1);
+  const bytes = new Uint8Array(block[0][3].buffer, block[0][3].byteOffset, block[0][3].byteLength);
+  assert.deepEqual([...new Uint32Array(bytes.slice(48, 80).buffer)], [0, 1, ...Array(6).fill(4294967295)]);
+  // Both rows of the region table name their page and its size.
+  const table = events.filter(row => row[0] === 'bufferSubData' && row[1] === gl.UNIFORM_BUFFER && row[3] instanceof Uint32Array);
+  assert.deepEqual([...table[0][3]].filter((_value, index) => index % 12 >= 8), [0, 0, 4, 2, 0, 1, 2, 6]);
+  // Between the start of the frame's draws and the draw itself: the second unit is selected once, given a
+  // texture that is not the first unit's, and the first unit is selected again before the draw.
+  const draw = events.findIndex(row => row[0] === 'drawArrays'), leading = events.slice(0, draw);
+  const units = leading.filter(row => row[0] === 'activeTexture').map(row => row[1] - gl.TEXTURE0);
+  assert.deepEqual(units.slice(-2), [1, 0]); assert.equal(units.filter(unit => unit > 1).length, 0);
+  const selected = leading.map((row, index) => [row, index]).filter(([row]) => row[0] === 'activeTexture'), last = selected.at(-2)[1];
+  const second = leading[last + 1]; assert.equal(second[0], 'bindTexture'); assert.equal(second[1], gl.TEXTURE_2D); assert.ok(second[2]);
+  const first = leading.slice(0, last).filter(row => row[0] === 'bindTexture' && row[1] === gl.TEXTURE_2D && row[2]).at(-1);
+  assert.notEqual(first[2], second[2]);
+  // After the draw the second unit holds nothing, and the first unit is the selected one for the resolve.
+  const trailing = events.slice(draw + 1), resolve = trailing.findIndex(row => row[0] === 'drawArrays');
+  const after = trailing.slice(0, resolve).filter(row => row[0] === 'activeTexture' || row[0] === 'bindTexture');
+  assert.deepEqual(after.slice(0, 3).map(row => row[0] === 'activeTexture' ? row[1] - gl.TEXTURE0 : row[2]), [1, null, 0]);
+  await h.close(); assert.equal(f.live().length, 0);
+}));
+
+// Break caught: start on a context that cannot hold five attributes, a second uniform block for the region window, or the eight pages of a batch.
 test('GL G02 a context one below any limit the batched layout needs is refused at startup; the least values start', async () => {
-  const needed = { MAX_VERTEX_ATTRIBS:5, MAX_UNIFORM_BLOCK_SIZE:16368, MAX_UNIFORM_BUFFER_BINDINGS:2, MAX_VERTEX_UNIFORM_BLOCKS:2 };
+  const needed = { MAX_VERTEX_ATTRIBS:5, MAX_UNIFORM_BLOCK_SIZE:16368, MAX_UNIFORM_BUFFER_BINDINGS:2, MAX_VERTEX_UNIFORM_BLOCKS:2, MAX_TEXTURE_IMAGE_UNITS:8 };
   const least = glPorts({parameters:needed}), started = createSharedWebGL2Host({canvas:least.canvas});
   await started.start(); assert.equal(started.getStatus().state, 'active'); await started.close(); assert.equal(least.live().length, 0);
   for (const [name, value] of Object.entries(needed)) {
@@ -112,7 +157,10 @@ test('GL G03 draws of different regions and opacities of one page are one draw t
     // The region table is one uniform buffer of one whole window; only the two regions' rows are written.
     assert.deepEqual(events.filter(row => row[0] === 'bufferData' && row[1] === gl.UNIFORM_BUFFER).map(row => row[2]).sort((x, y) => x - y), [2 * Math.ceil(128 / alignment) * alignment, 16368]);
     const table = events.filter(row => row[0] === 'bufferSubData' && row[1] === gl.UNIFORM_BUFFER && row[3] instanceof Uint32Array);
-    assert.deepEqual(table.map(row => [row[2], [...row[3]]]), [[0, [1, 2, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 1, 2, 2, 0, 0, 0, 0, 0]]]);
+    assert.deepEqual(table.map(row => [row[2], [...row[3]]]), [[0, [1, 2, 0, 0, 1, 2, 0, 0, 0, 0, 4, 2, 1, 2, 0, 0, 1, 2, 2, 0, 0, 0, 4, 2]]]);
+    // A batch of one page is drawn by the program of one page sampler, on the first unit; no other unit is selected.
+    assert.deepEqual(events.filter(row => row[0] === 'uniform1i' && /^page/.test(row[1].name)).map(row => [programs.indexOf(row[1].program), row[1].name, row[2]]), [[0, 'page', 0]]);
+    assert.deepEqual(events.filter(row => row[0] === 'activeTexture').map(row => row[1] - gl.TEXTURE0).filter(unit => unit !== 0), []);
     // The window is bound once, at binding point 1, in full.
     assert.deepEqual(events.filter(row => row[0] === 'bindBufferRange' && row[2] === 1 && row[3] !== null).map(row => [row[4], row[5]]), [[0, 16368]]);
     assert.deepEqual(events.filter(row => row[0] === 'bindBufferRange' && row[2] === 0 && row[3] !== null).map(row => row[5]), [128, 128]);

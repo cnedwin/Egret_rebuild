@@ -219,9 +219,9 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2`。该入口导出 `cre
 
 `tests/display-container-add-child-at-verified.test.mjs` 是带标签的 UNIT。它唯一的私有导入是构建后的 `packages/runtime/dist/displayTreeState.js`：读取 `captureChildInsertion` 以观察接收者的树是否被遍历，并用容器的当前列表调用 `publishUiTree`，使按索引插入所记住的结果作废。所有的树都来自公开 SDK 构造的真实 Engine、Scope 和显示对象；该单元不伪造任何畸形边。
 
-`tests/shared-frame-golden.test.mjs` 是 CPU UNIT，适用已有的对构建后 `engine/dist/rendering` 辅助模块的许可。它导入 `prepareSharedDraws2D.js`、`packSharedDraws2D.js`、`preparedSharedBatches2D.js` 和 `preparedBatches2D.js`，按 Host 的方式在通过公开 Engine 捕获的帧上驱动它们，并与两份记录比较。第一份包含捕获的帧、裁剪后的几何，以及顶点行一直都有的十一个值；它记录于同一页的绘制跨区域合批之前，所用的构建能重现捕获和准备路径改动之前记录的摘要。第二份包含实际上传的顶点行、uniform block 和批次，记录于合批之后。会改变已记录数值的改动需要单独评审；不得为了让改动通过而刷新摘要。这些摘要证明的是 CPU 输出相同，不证明 GPU 执行或速度。
+`tests/shared-frame-golden.test.mjs` 是 CPU UNIT，适用已有的对构建后 `engine/dist/rendering` 辅助模块的许可。它导入 `prepareSharedDraws2D.js`、`packSharedDraws2D.js`、`preparedSharedBatches2D.js` 和 `preparedBatches2D.js`，按 Host 的方式在通过公开 Engine 捕获的帧上驱动它们，并与两份记录比较。第一份包含捕获的帧、裁剪后的几何，以及顶点行一直都有的十一个值；它记录于同一页的绘制跨区域合批之前，所用的构建能重现捕获和准备路径改动之前记录的摘要。第二份包含实际上传的顶点行、uniform block 和批次；它记录于合批之后，并在一批可以包含多张页时重新记录过一次，那次改变的是 uniform block 和批次，顶点行没有变。会改变已记录数值的改动需要单独评审；不得为了让改动通过而刷新摘要。这些摘要证明的是 CPU 输出相同，不证明 GPU 执行或速度。
 
-`tests/shared-batching.test.mjs` 是 CPU UNIT，适用同一许可。它导入同样的四个辅助模块，在通过公开 Engine 捕获的帧上说明：哪些绘制合成一批，顶点行的最后两个值和区域表的各行存放什么，以及合批不退还任何逻辑费用。它证明的是 Host 执行的 CPU 计划，不证明 GPU 执行。
+`tests/shared-batching.test.mjs` 是 CPU UNIT，适用同一许可。它导入同样的四个辅助模块，在通过公开 Engine 捕获的帧上说明：哪些绘制合成一批，顶点行的最后两个值和区域表的各行存放什么，一批为各纹理单元指明哪些页，以及合批不退还任何逻辑费用。它证明的是 Host 执行的 CPU 计划，不证明 GPU 执行。
 
 ## 证据通道
 

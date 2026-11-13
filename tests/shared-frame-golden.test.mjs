@@ -3,7 +3,8 @@
 // The captured frame, the clipped geometry and the eleven values a vertex has always had were recorded
 // before the capture and preparation paths were made cheaper, and again unchanged before draws of one
 // page were batched across regions: a change to those paths has to reproduce every value, property order
-// and refusal. The rows as they are uploaded, the uniform blocks and the batches were recorded with batching.
+// and refusal. The rows as they are uploaded, the uniform blocks and the batches were recorded with batching,
+// and again when a batch came to hold several pages: the rows did not change then, the blocks and batches did.
 // The private imports are built engine/dist/rendering helpers, as AGENTS permits for geometry units.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -71,7 +72,7 @@ function stages(engine, size, pixelRatio) {
     return values;
   };
   out.push('rows11 ' + text({ entries: packed.map(entry => 'barrier' in entry ? entry : { command: entry.prepared.command.ordinal, data: first11(entry), vertexCount: entry.vertexCount }), budget: prepared.budget.snapshot() }));
-  const row = entry => 'barrier' in entry ? entry : { command: entry.prepared.command.ordinal, data: entry.data, vertexCount: entry.vertexCount, uniform: entry.uniform, regionWindow: entry.regionWindow };
+  const row = entry => 'barrier' in entry ? entry : { command: entry.prepared.command.ordinal, data: entry.data, vertexCount: entry.vertexCount, uniform: entry.uniform, regionWindow: entry.regionWindow, pages: entry.pages };
   out.push('rows ' + text({ entries: packed.map(row), budget: prepared.budget.snapshot() }));
   const scratch = new PreparedBatchScratch2D(), plan = prepareSharedBatches2D(packed, 33554432, scratch);
   out.push('batches ' + text({ draws: plan.draws.map(row), spans: plan.logicalSpans, bytes: plan.bytes }));
@@ -190,18 +191,18 @@ const EXPECTED_BEFORE = [
 ];
 // The rows, uniform blocks and batches as they are uploaded, recorded with batching across regions.
 const EXPECTED = [
-  '62827d015e92874d71b8c09b0cdfc1f785feb7c047651db341e7ed87afe73c0b',
-  '1ba9dd1b74478885d729196355f4e57f79be269a04c9a5c1662a96dec62e5553',
-  'a0d2c4f43d957b4676a8ef25660c8541bc912b8255e9f73b66d9f98a21258715',
-  '77309d2d50ce07a9358bc51f06b006bc38a7854ecb25923a51f0391d6ea63fe7',
-  '9b468a34a125d1d3d09b6d8c24d1808616a6eef4556278cc476cd71a83474d8e',
-  '5bbbaa1fe568f361feca2cae1d7dd99b01289c2fe40f92c46da2717600ae7f6d',
-  '4f54f3b6e2a1462e4270dabd007cbd8feb679125fff42cf7106df1001b641b6e',
-  'd78f01d523e07ce05e2805659c69896e9fabc75adf0a24e173e4fed65e01c51a',
-  'bd71695fd9b26ea8fa95b97d493b9667a762049dc2504eb7f49cfbb598298ac8',
-  'a03839efe329102771a227501b593669219e6dafcda6afff34ed73126845a677',
-  'e9780090cb50619f379fa9f302c6f76181ce6dbaf20149cd982eb71a62157732',
-  'dcbc4ca04250ea07ab042d06f8661fdc6bd2f9bb8a44110b1a948663a2a2218d',
+  'f72520f13c962871f29672572a8e7b0361dd5603772a1c1c2f4d2794ac2d6b4e',
+  '65252485cea874456fa6d2cbd3c14370690c83a58a165563b2473558ed0aa492',
+  'cc0473a13420d3bdd082f6bee2c198e998af6f60070a9e2136c07efb7b403ea7',
+  'fb61788f26e7a3cf1ff70b933fcc579c51dfebf3fb0c991ef40bee65a413fa09',
+  'db18e5a9d41d5030aa12ee83d0d3e61cbe037b2d36ffed795ebfed194b3ec103',
+  'd3eb8b6207a7b459c225b17885f3c7c546f21b18de2c372c80c3b1d36693752b',
+  '247b24e22fba5b0701054c458b16c337b9b27c2f050d39ab464ee5c558dfd382',
+  '3dfbdb6b8d5bb1d04eed820fa80dea754c2c9ed92c6d4b5ee9cf1efca6c18499',
+  'bee283d1332f29537bef99cc857df89e2493515aa44942fd9a66ebc88d74c501',
+  '476f7edcb96dc2b2155cba7b0560b7e65bd9a3c33f74330f17fce64c0e9bf4d6',
+  '68ea6f2d88092229beea433f45b29b7cac334356bad9669a2850f8325939f884',
+  'e3ecbf3cb832adcb4be43cb9062d2672dad89a8b342e013368dba32f3a2e078f',
 ];
 
 test('SHG01 captured frames, clipped geometry, vertex rows and batches reproduce the recorded values', async () => {

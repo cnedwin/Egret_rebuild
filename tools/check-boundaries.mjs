@@ -1520,7 +1520,12 @@ const m13SharedRenderingLiteralClosure = {
       "./preparedBatches2D.js"
     ]
   ],
-  "packages/engine/dist/rendering/preparedSharedBatches2D.js": [],
+  "packages/engine/dist/rendering/preparedSharedBatches2D.js": [
+    [
+      "static",
+      "./packSharedDraws2D.js"
+    ]
+  ],
   "packages/engine/dist/web/webgpuBufferPool.d.ts": [
     [
       "static",
@@ -1561,6 +1566,10 @@ const m13SharedRenderingLiteralClosure = {
     ]
   ],
   "packages/engine/rendering/preparedSharedBatches2D.ts": [
+    [
+      "static",
+      "./packSharedDraws2D.js"
+    ],
     [
       "static",
       "./packSharedDraws2D.js"
@@ -2830,6 +2839,10 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
+      "../rendering/packSharedDraws2D.js"
+    ],
+    [
+      "static",
       "../rendering/preparedBatches2D.js"
     ],
     [
@@ -2969,6 +2982,10 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "../rendering/ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packSharedDraws2D.js"
     ],
     [
       "static",
