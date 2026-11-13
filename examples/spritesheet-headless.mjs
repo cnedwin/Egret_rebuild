@@ -2,8 +2,8 @@
 // This recording host demonstrates public composition; it does not draw pixels.
 import assert from 'node:assert/strict';
 import {
-  createAssetRef, createAssetType, createEngine, createImageData2D,
-  createSequenceClip, createSpriteSheet, createTexture, isTexture,
+  createAssetRef, createAssetType, createEngineForProfile, createImageData2D,
+  createSequenceClip, createSpriteSheet, createTexture, isTexture, SHARED_FRAME_PROFILE_2D,
 } from '@egret/engine';
 
 const pixels = new Uint8Array([
@@ -22,17 +22,18 @@ const host = {
   start() { trace.push('start'); },
   stop() { trace.push('stop'); },
   async close() { trace.push('close'); },
-  renderFrame(frame) { recorded.push(frame); },
+  sharedFrameProfile: SHARED_FRAME_PROFILE_2D,
+  renderSharedFrame(frame) { recorded.push(frame); },
   setTimeout(callback, delayMs) {
     const timer = setTimeout(callback, delayMs);
     timers.add(timer);
     return () => { clearTimeout(timer); timers.delete(timer); };
   },
 };
-const engine = await createEngine({
+const engine = await createEngineForProfile({
   host, clock: { maxDeltaSeconds: 0.5 },
   onDiagnostic(value) { diagnostics.push(value); },
-});
+}, SHARED_FRAME_PROFILE_2D);
 let loads = 0, disposals = 0, sheet, lease, actor, icon, once, loop;
 const observations = [];
 try {
@@ -66,17 +67,18 @@ try {
   once = engine.createSequencePlayback(animation, actor, clip, { mode: 'once' });
   once.start();
   function record(label, playback) {
-    const frame = engine.renderFrame({ width: 8, height: 4, clearColor: 0, clearAlpha: 0 });
+    const frame = engine.renderSharedFrame({ width: 8, height: 4, clearColor: 0, clearAlpha: 0 });
+    const crop = command => frame.regions[command.regionIndex].packed;
     assert.equal(frame.commands.length, 2);
-    assert.equal(frame.images.length, 1);
-    assert.equal(frame.images[0], image);
+    assert.equal(frame.pages.length, 1);
+    assert.equal(frame.pages[0].source, image);
     assert.equal(actor.textureLease, lease);
     assert.equal(icon.textureLease, lease);
-    assert.deepEqual(frame.commands[1].sourceRect, { x: 3, y: 0, width: 3, height: 1 });
+    assert.deepEqual(crop(frame.commands[1]), { x: 3, y: 0, width: 3, height: 1 });
     observations.push({
       label, state: playback.state, elapsedSeconds: playback.elapsedSeconds,
       sample: playback.lastSample, frameId: frame.frameId,
-      actorCrop: frame.commands[0].sourceRect, iconCrop: frame.commands[1].sourceRect,
+      actorCrop: crop(frame.commands[0]), iconCrop: crop(frame.commands[1]),
     });
     return frame;
   }
