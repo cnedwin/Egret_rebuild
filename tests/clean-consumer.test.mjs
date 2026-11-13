@@ -97,9 +97,11 @@ test('CC04 the built packages work in a new project outside the checkout', { tim
     for (const item of row('examples').examples) assert.ok(item.outputBytes > 0);
     assert.deepEqual(row('notices').notices.map(item => [item.package, item.files.includes('LICENSE')]), [['@egret/contracts', true], ['@egret/runtime', true], ['@egret/engine', true], [THIRD_PARTY.name, true]]);
     // The consumer holds copies, not links into the checkout.
+    // On another drive the relative path is an absolute one.
     const installed = fs.realpathSync(path.join(output, 'consumer/node_modules/@egret/engine'));
-    assert.ok(path.relative(fs.realpathSync(repository), installed).startsWith('..'));
-    assert.ok(!path.relative(fs.realpathSync(output), installed).startsWith('..'));
+    const inside = (parent, child) => { const relative = path.relative(fs.realpathSync(parent), child); return !relative.startsWith('..') && !path.isAbsolute(relative); };
+    assert.equal(inside(repository, installed), false);
+    assert.equal(inside(output, installed), true);
     assert.ok(report.open.length >= 6 && report.open.some(line => /registry was not used/.test(line)));
     // A second run never writes over the first.
     refused('CLEAN_CONSUMER_OUTPUT_USED', () => verifyCleanConsumer({ output, offline: true }));
