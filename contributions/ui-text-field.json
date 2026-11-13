@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/ui/textFieldControl.ts",
+      "originRole": "First-party text field control state over the existing action control and an editor the application supplies; independently authored with AI assistance; Apache-2.0. No third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-text-field.test.mjs",
+      "originRole": "First-party behaviour tests of the text field control on a genuine Engine with a test-owned editor; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/ui-text-field.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the text field control; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/ui-text-field.ts",
+      "originRole": "First-party strict TypeScript consumer of the text field control, with seven refused misuses; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-text-field/index.html",
+      "originRole": "First-party page of the text field example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/ui-text-field/main.mjs",
+      "originRole": "First-party text field example: a form of two fields and a button drawn by the engine, edited through the platform text input, with keys bound and semantics published; independently authored with AI assistance; Apache-2.0. Original example text.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-text-field/verify.mjs",
+      "originRole": "First-party real-browser check of the text field example, with a composition driven through the automation protocol; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-text-field/README.md",
+      "originRole": "First-party instructions for the text field example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-text-field/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the text field example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/ui-text-field/README.md",
+      "zh": "examples/ui-text-field/README.zh-CN.md"
+    }
+  ]
+}

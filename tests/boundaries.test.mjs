@@ -807,7 +807,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // The optional UI entry now publishes the control module; the fixture keeps its exact bytes.
     for(const file of ['packages/engine/src/ui/controls.ts','packages/engine/dist/ui/controls.js','packages/engine/dist/ui/controls.d.ts',
       'packages/engine/src/ui/stateControls.ts','packages/engine/dist/ui/stateControls.js','packages/engine/dist/ui/stateControls.d.ts',
-      'packages/engine/src/ui/scrollControl.ts','packages/engine/dist/ui/scrollControl.js','packages/engine/dist/ui/scrollControl.d.ts'])
+      'packages/engine/src/ui/scrollControl.ts','packages/engine/dist/ui/scrollControl.js','packages/engine/dist/ui/scrollControl.d.ts',
+      'packages/engine/src/ui/textFieldControl.ts','packages/engine/dist/ui/textFieldControl.js','packages/engine/dist/ui/textFieldControl.d.ts'])
       write(file, readFileSync(path.join(repository,file)));
     for(const [file,edges]of Object.entries(m31FixtureGraph)){
       const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
@@ -2278,7 +2279,7 @@ for(const [name,reason] of [
   ['private-import','Semantics: exact graph mismatch'],
   ['timer','Semantics: acquired automatic host work'],
   // The tree is core: the rule that keeps the page out of the core covers it.
-  ['page-in-tree','packages/engine/src/semanticTree.ts: host ambient dependency'],
+  ['page-in-tree','semanticTree.ts: host ambient dependency'],
 ])test('semantics policy '+name+' is refused for its own reason',()=>{
   fixture({imported:'robust-predicates',semanticsMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
 });
