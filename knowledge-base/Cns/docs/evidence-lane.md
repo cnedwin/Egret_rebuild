@@ -63,7 +63,6 @@ node tools/check-type-lanes.mjs --record
 | --- | --- |
 | 源码和产物身份 | SpriteSheet、序列播放、浏览器 PNG、位图资源槽、位图绑定票据、图集导入这六个边界工具，以及它们的测试文件 |
 | 类型重放 | 十四个绑定到已记录的源码和声明身份的 `*-types` 工具，`tests/strict-successor-boundaries.test.mjs` 和 `tests/sequence-reset-types.test.mjs` |
-| B1 验证器 | `tests/b1-webgpu-verifier.test.mjs` |
 | 维护历史 | `tests/publication/incremental-checks-evidence.test.mjs`：按记录的字节重建工具早期版本的那些用例 |
 
 维护历史用例绑定的不只是产品文件的字节，还有工具的字节：它们重放 `tools/check-types.mjs` 和各边界工具过去的样子。

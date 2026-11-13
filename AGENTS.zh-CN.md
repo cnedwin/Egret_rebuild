@@ -35,7 +35,6 @@
 - 私有几何单元测试可直接导入构建后的 `engine/dist/rendering` 辅助模块，此例外不适用于公开行为测试。
 - 在已采纳的 T1 测试范围内，公开控制还使用构建后的 `@egret/engine/text`；`@egret/runtime/text` 仅用于 T02 入口身份／类型／源码检查。`tests/text-raster-private.test.mjs` 的私有 runtime 导入仅限 `packages/runtime/dist/text/budget.js`、`packages/runtime/dist/text/request.js`、`packages/runtime/dist/text/plan.js` 与 `packages/runtime/dist/EgretError.js`，必须按单元测试记录。
 - `tests/text-raster-allocation.test.mjs` 与 `tests/text-raster-materialization.test.mjs` 是使用真实初始化并恢复被拦截状态的受控构造／计数器故障单元。`tests/text-raster-residency-audit.test.mjs` 仅可在内存中为实际编译的 `packages/runtime/dist/text/TextRasterCache.js` 追加既有只读 `__textRetainedAudit`，注销其单模块加载钩子并保持磁盘字节不变。这些测试不新增产品导出、不授权任意私有导入，也不替代公开行为控制；逻辑计数／保留引用观察不能证明物理内存／GC、字体或渲染器验收。
-- 实验性 `tools/verify-webgpu-b1.mjs` 的普通样例通过精确生成的 import map 导入构建后的 `@egret/engine`、`@egret/engine/scene3d`、`@egret/engine/webgpu/scene3d`。唯一直接私有产品导入为 `packages/engine/dist/web/webgpuMeshPass.js`，仅用于绑定源码的固定原生 WGSL 编译／N4 诊断。服务范围仅限验证器显式模块白名单、这些公共入口的有限字面量导入闭包及固定别名；N1–N5 各自在仓库外的一次性副本中只修改一个已记录的构建文件。S1／S2／SN1 是独立的真实 Engine／Stage／Scope／Bitmap 组合阶段，SN1 只遗漏指定父节点裁剪。原有 oracle 与七正例／五控制／十一次绘制／8214 次比较的计划保持不变。本例外不允许普通示例或公开行为测试私有导入产品模块，也不授权新的产品导出或任意诊断钩子。
 - 公共行为变化同步规格、来源记录与必要回归。记录实际环境、未验证项、反例及修复；第三方研究或历史测试不替代自主产品验收。
 
 <!-- BRS-0.56.0-POLICY-BEGIN -->
@@ -87,11 +86,9 @@ AI 辅助贡献注明实际范围、资料与作者复核。保留参考出处�
 
 ```text
 node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>
-node tools/verify-webgpu.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>
-node tools/verify-webgpu-b1.mjs --playwright "<absolute-installed-playwright-package-directory>" --channel msedge --output "<absolute-new-output-directory-outside-repository>"
 ```
 
-B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-base/Cns/docs/b1-browser-verifier.md)。使用已接受的固定依赖，浏览器默认启动且不附加 flags。沿用未变构建的已有证据时须明确比对身份；合并候选仍须重新通过完整集成 prepush。
+使用已接受的固定依赖，浏览器默认启动且不附加 flags。沿用未变构建的已有证据时须明确比对身份；合并候选仍须重新通过完整集成 prepush。
 
 发现与登记路径在 Windows 按大小写不敏感方式排除私有执行、依赖及生成目录，清单不能覆盖排除规则。普通公开 AGENTS 文件仍有效；只有两个封存的 Three r186 研究构建精确路径／哈希保留既定例外。
 
@@ -118,8 +115,6 @@ B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-
 仅 tests/webgpu-submission-buffer-private.test.mjs、tests/webgpu-submission-binding-private.test.mjs，以及 tests/webgpu-submission-controls.test.mjs 中的私有绑定保留案例，可直接导入 packages/engine/dist/web/webgpuBufferPool.js 与 webgpuBindingCache.js。这些明确标为 UNIT，不增加产品导出、任意 loader 或公开示例权限。同步 prototype 控制必须在 finally 中恢复精确 descriptor。
 
 tests/webgpu-submission-preparation.test.mjs 与 tests/webgpu-submission-precedence.test.mjs 使用真实公开 SDK 帧和受控 GPU 端口。同步 Float32Array／Uint8Array 构造故障与裁剪计数必须恢复原全局 descriptor；裁剪计数在进入原生 error scope 前结束。其结果只证明受控操作顺序／次数，不证明物理 OOM、总分配或速度。
-
-B1 源码检查后继保留历史上的 19 个捕获，当前仅准入三个指定辅助模块发射文件中的 21 个完整原生方法捕获 initializer。原缓冲区门面作为未链接模块接受检查；该检查不代表运行时执行。七条精确的仅静态导入边覆盖该门面及共享 B1 准备辅助模块；原有五个运行时入口闭包中的每条导入边仍须有实际解析证据。保留原生未链接模块构造、精确捕获消费、指定词法拒绝和原有十三案例调度。采集器的请求与收据容量是有限的验证边界，与产品资源预算分开。该许可不允许动态代码构造，也不是通用 Function 例外。
 
 ## M1.2 增量渲染单元
 
@@ -152,7 +147,7 @@ B1 源码检查后继保留历史上的 19 个捕获，当前仅准入三个指�
 
 ## M1.4 WebGL2 公开行为与源码边界
 
-WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/webgl2/scene3d`。前者导出 `createSharedWebGL2Host`、原有九个擦除类型，以及宿主管理的 2D 图层缓存和有界效果所需的五个附加类型，后者导出 `createSharedSceneWebGL2Host` 及两个擦除类型。根入口与 Canvas 入口不加载 WebGL2 模块。场景模式采用固定的第一方装配，复用既有场景身份验证与打包辅助模块；仅启用私有场景模式的 Host 加载该精确场景模块。调用者提供的 shader、场景插件或原生对象均不是 SDK 输入。
+WebGL2 仅使用显式构建入口 `@egret/engine/webgl2`。该入口导出 `createSharedWebGL2Host`、原有九个擦除类型，以及宿主管理的 2D 图层缓存和有界效果所需的五个附加类型。根入口与 Canvas 入口不加载 WebGL2 模块。调用者提供的 shader 或原生对象均不是 SDK 输入。
 
 `tests/shared-webgl2-controls.test.mjs` 与 `tests/fixtures/gl-shared-rendering.mjs` 使用构建后的公开 SDK 入口、真实 Engine 捕获，以及测试自有的 canvas、GL 和事件端口。属性 getter、指定故障、完成延迟与重入回调仅作用于这些自有端口／选项。形似帧的对象只用于拒绝对照，不能作为已接受夹具。除下述精确时钟对照外，这些单元不增加私有产品导入、加载钩子、全局／原型拦截或测试导出。它们证明受控准入、命令顺序、逻辑所有权与生命周期结果；真实浏览器像素、原生丢失／恢复及性能需要独立证据。既有选项／arena、共享存储与保留资源 UNIT 权限保持不变。
 

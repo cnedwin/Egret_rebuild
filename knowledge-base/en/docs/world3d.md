@@ -4,7 +4,7 @@ English | [简体中文](../../Cns/docs/world3d.md)
 
 ## Purpose and scope
 
-World3D is Egret's optional retained 3D scene graph. An application builds a tree of cameras, lights and meshes, edits it freely between frames and hands it to a renderer. It complements the immutable [authored 3D scenes](authored-scene3d.md), which stay the route for bounded 3D backgrounds that share one host with ordered 2D content.
+World3D is Egret's optional retained 3D scene graph. An application builds a tree of cameras, lights and meshes, edits it freely between frames and hands it to a renderer.
 
 The module has three explicit entries. Nothing in them is loaded by the default Engine, Canvas or shared 2D entries.
 

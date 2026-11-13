@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/incremental-frame-preparation-contract.md)
 
+> **Hosts removed.** The WebGPU hosts for rectangle, image and textured frames, for which this contract was written and tested, have been removed from the SDK. This document is kept as a record. Current 2D rendering is the [shared render profile](shared-render-profile-contract.md).
+
 M1.2 reduces repeated capture and preparation work and combines adjacent compatible 2D draws. The display tree, committed resource bindings and existing submission owner remain authoritative. This contract defines implementation boundaries and the fixed capacity-paced protocol. Current Windows and Android results are recorded in the [evidence](incremental-frame-preparation-evidence.md).
 
 ## Public behavior and immutable values

@@ -63,7 +63,6 @@ The lanes were recorded from the tree in which the earlier byte-bound type repla
 | --- | --- |
 | Source and emission identity | The SpriteSheet, sequence playback, browser PNG, bitmap resource slot, bitmap binding ticket and atlas import boundary tools, and their test files |
 | Type replays | Fourteen `*-types` tools bound to recorded source and declaration identities, `tests/strict-successor-boundaries.test.mjs` and `tests/sequence-reset-types.test.mjs` |
-| B1 verifier | `tests/b1-webgpu-verifier.test.mjs` |
 | Maintenance history | `tests/publication/incremental-checks-evidence.test.mjs`: the cases that rebuild earlier revisions of tools from recorded bytes |
 
 The maintenance history cases are bound to recorded bytes of tools, not only of product files: they replay `tools/check-types.mjs` and the boundary tools as they once were.

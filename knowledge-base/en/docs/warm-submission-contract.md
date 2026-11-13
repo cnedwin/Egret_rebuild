@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/warm-submission-contract.md) · [Evidence](warm-submission-evidence.md) · [M1 plan](m1-rendering-resource-plan.md)
 
+> **Hosts removed.** The WebGPU hosts for rectangle, image and textured frames, for which this contract was written and tested, have been removed from the SDK. This document is kept as a record. Current 2D rendering is the [shared render profile](shared-render-profile-contract.md).
+
 M1.1 reduces repeated work when rendering a frame whose images and native allocations can be safely reused. The existing ordinary, textured, B1 scene with ordinary overlay, and combined textured-scene routes share one Host submission and retirement authority. Public APIs, frame profiles, shaders, color interpretation, package entries and Host protocol remain unchanged.
 
 ## Image preparation

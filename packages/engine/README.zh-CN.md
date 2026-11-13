@@ -46,19 +46,19 @@ Canvas DOM 类型与执行保留在 web 子入口。具体行为见[显示与帧
 
 ## WebGPU 使用
 
-将 `HTMLCanvasElement` 作为 `canvas`。可选 readback 绑定下一次通过预检的帧；`renderFrame` 同步返回 `undefined`。`result.bytes` 是调用者所有的预乘 RGBA，与浏览器合成结果不同。`whenIdle` 截取已提交工作；只有 `close` 成功才证明安全归还，Engine 包装保留原 cause。见 [WebGPU 示例](../../examples/webgpu/README.zh-CN.md)。
+将 `HTMLCanvasElement` 作为 `canvas`。可选 readback 绑定下一次通过预检的帧；`renderSharedFrame` 同步返回 `undefined`。`result.bytes` 是调用者所有的预乘 RGBA，与浏览器合成结果不同。`whenIdle` 截取已提交工作；只有 `close` 成功才证明安全归还，Engine 包装保留原 cause。
 
 ```ts
-import { createEngine, Sprite } from '@egret/engine';
-import { createWebGPUHost } from '@egret/engine/webgpu';
+import { createEngineForProfile, Sprite, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
+import { createSharedWebGPUHost } from '@egret/engine/webgpu';
 
-const host = createWebGPUHost({ canvas, enableReadback: true });
-const engine = await createEngine({ host });
+const host = createSharedWebGPUHost({ canvas, enableReadback: true });
+const engine = await createEngineForProfile({ host }, SHARED_FRAME_PROFILE_2D);
 const rect = new Sprite();
 rect.graphics.beginFill(0x00ff00).drawRect(4, 4, 16, 16);
 engine.stage.addChild(rect);
 const pixels = host.requestReadback();
-engine.renderFrame({ width: 48, height: 40, clearColor: 0, clearAlpha: 0 });
+engine.renderSharedFrame({ width: 48, height: 40, clearColor: 0, clearAlpha: 0 });
 const result = await pixels;
 await engine.dispose();
 ```

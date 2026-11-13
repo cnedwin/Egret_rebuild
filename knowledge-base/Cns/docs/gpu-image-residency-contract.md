@@ -2,6 +2,8 @@
 
 [English](../../en/docs/gpu-image-residency-contract.md) | 简体中文 · [证据与限制](gpu-image-residency-evidence.md)
 
+> **宿主已移除。** 本契约所针对并据以测试的矩形、图像和纹理帧 WebGPU 宿主已从 SDK 中移除。本文档保留为当时的记录。当前的 2D 渲染见[共享渲染 Profile](shared-render-profile-contract.md)。
+
 工程预览 **0.61.0** 增加由各 WebGPU Host 独立管理的内部图像缓存，复用先前提交已安全完成的精确裁剪 GPU 图像。机制位于 `WebGPUHost` 内部，不增加包入口、导出、选项、公开状态、错误码或依赖。工作区包仍为 private、版本 **0.0.0**，Host 协议仍为 **1.0**。公开准入与渲染行为继续遵循既有 [WebGPU 契约](WebGPU矩形执行合同.md)和[纹理几何契约](自有纹理几何与Mesh2D契约.md)。
 
 本契约规定逻辑所有权和有限复用。操作次数对照与浏览器像素、物理 GPU 内存、性能验收分别记录。新增缓存专用浏览器矩阵延期并保持 OPEN；实际验证截止点见配套证据。

@@ -2,6 +2,8 @@
 
 [English](../../en/docs/3d-webgpu-mesh-contract.md) | 简体中文
 
+> **已移除。** `scene3d` 入口以及矩形、图像和纹理帧的 WebGPU 宿主已从 SDK 中移除。本文档保留为当时的记录，不描述当前 SDK。当前的 2D 渲染见[共享渲染 Profile](shared-render-profile-contract.md)，当前的 3D 见 [World3D](world3d.md)。
+
 白鹭的固定网格辅助函数表达一个小而可检查的 GPU 接口：一种坐标/RGB 顶点布局、一个列主序 MVP uniform，以及使用调用者所给资源的有序索引绘制。`createWebGPUMeshPipeline` 经捕获的回调传入固定着色器/描述器文本；`encodeWebGPUMesh` 在所给 pass 中记录状态及绘制。[实现证据](3d-webgpu-mesh-evidence.md)区分已接受源码/模拟行为与原生执行。
 
 历史文档候选版本 0.1。公开发布、场景/UI 宿主整合、原生 WGSL/设备/像素及性能继续 **HELD**。这些内部辅助函数不新增公开包入口，也不发布宿主实现。
