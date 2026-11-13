@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/shared-rendering/jy133-angle-diagnostics/README.md",
+      "originRole": "First-party English status and resumption record for the paused JY battle 133 Android ANGLE investigation; authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/jy133-angle-diagnostics/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese status and resumption record for the paused JY battle 133 Android ANGLE investigation; authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/jy133-angle-diagnostics/analyze-angle-stacks.mjs",
+      "originRole": "First-party offline alignment and driver-stack analysis for JY battle 133 traces; authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/shared-rendering/jy133-angle-diagnostics/build-diagnostic.sh",
+      "originRole": "First-party reproducible build driver for a pinned Android Chromium and ANGLE diagnostic APK; authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/shared-rendering/jy133-angle-diagnostics/install-diagnostic.mjs",
+      "originRole": "First-party diagnostic APK identity and shared Android device lease checks; authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/shared-rendering/jy133-angle-diagnostics/isolated-browser-launch.diff",
+      "originRole": "First-party diagnostic launcher edits with BSD-3-Clause upstream Chromium patch context at 4b3d0dabb8250b6f152d2d85d79e7706e309d087; retains the upstream file license."
+    },
+    {
+      "path": "tools/shared-rendering/jy133-angle-diagnostics/jy133-angle-native-dispatch-diagnostic.diff",
+      "originRole": "First-party diagnostic trace probes with BSD-3-Clause upstream ANGLE patch context at c56e2a4a9b8cb0040920c995a268be559ba53f1c; retains the upstream file licenses."
+    },
+    {
+      "path": "tools/shared-rendering/jy133-angle-diagnostics/jy133-perfetto-stacks.pbtx",
+      "originRole": "First-party Perfetto CPU stack and scheduler capture configuration scoped to the JY diagnostic GPU process; authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "tools/shared-rendering/jy133-angle-diagnostics/README.md",
+      "zh": "tools/shared-rendering/jy133-angle-diagnostics/README.zh-CN.md"
+    }
+  ]
+}
