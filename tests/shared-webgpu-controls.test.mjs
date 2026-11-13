@@ -146,6 +146,22 @@ test('GPU G01 shared options finish ordered reads and default to premultiplied',
   });
 });
 
+// Break caught: a page option is coerced, or admitted above what the profile lets a frame hold.
+test('GPU G01 page options may only lower the profile bounds and refuse before native startup', async () => {
+  await withPorts(async f => {
+    const make = requireFactory(false), before = f.calls.length;
+    const bounds = { maxFrameRegions: 4096, maxFramePageBytes: 67108864, maxReadyPageBytes: 134217728 };
+    for (const [key, bound] of Object.entries(bounds)) {
+      for (const value of [0, -1, 0.5, NaN, Infinity, bound + 1, '1', null])
+        expectCode(() => make(f.options({ [key]: value })), 'OPTIONS_INVALID');
+    }
+    assert.equal(f.calls.length, before);
+    for (const value of [{ maxFrameRegions: 1, maxFramePageBytes: 1, maxReadyPageBytes: 1 }, bounds]) {
+      const h = f.sharedHost(value, false); await f.ready(h); await f.close(h);
+    }
+  });
+});
+
 // Break caught: scene factory silently defaults or coerces a transparent configuration.
 test('GPU G02 shared scene requires explicit opaque options before native startup', async () => {
   await withPorts(async f => {
@@ -175,6 +191,23 @@ test('GPU G03 clone, proxy and wrong profile refuse before payload and native ef
     assert.equal(reads, 0);
     const accepted = await submit(f, h, saved);
     assert.equal(passes(accepted.events).length, 2); assert.equal(h.getStatus().lastSerial, 1);
+  });
+});
+
+// Break caught: a Host table or loop still sized for the earlier 128 regions of one frame.
+test('GPU G03 a frame of 4096 distinct regions of one page is admitted and submitted', async () => {
+  await using(async (f, a) => {
+    const h = f.sharedHost(); await f.ready(h);
+    const page = egret.createImageData2D({ width: 4096, height: 1, pixels: new Uint8Array(4096 * 4).fill(255) });
+    for (let x = 0; x < 4096; x++) a.bitmap(await a.resource(page, region(x)));
+    const frame = a.capture();
+    assert.equal(frame.pages.length, 1); assert.equal(frame.regions.length, 4096); assert.equal(frame.commands.length, 4096);
+    const accepted = await submit(f, h, frame);
+    assert.equal(h.getStatus().pendingFrames, 0); assert.equal(h.getStatus().lastSerial, 1);
+    assert.ok(passes(accepted.events).length >= 1);
+    // One more distinct region is refused where the frame is made, before any Host sees it.
+    a.bitmap(await a.resource(page, { ...region(0), logicalWidth: 2 }));
+    assert.throws(() => a.capture(), e => e instanceof egret.EgretError && e.code === 'FRAME_IMAGE_BUDGET');
   });
 });
 

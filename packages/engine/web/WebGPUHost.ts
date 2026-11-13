@@ -1010,7 +1010,8 @@ class WebGPUHostImplementation {
         const protectedHits = new Set(hits.values()), victims: ImageResidencyEntry[] = [];
         let available = this.allocatedImageBytes + this.reservedImageBytes, count = this.readyCount;
         for (let entry = this.imageOldest; entry; entry = entry.next) {
-            if (available + bytes <= 33554432 && count + candidates.size <= 256) break;
+            // Every profile of this Host shares one ready residence; a shared Host may lower its bytes.
+            if (available + bytes <= (SHARED_OPTIONS.get(this)?.maxReadyPageBytes ?? 33554432) && count + candidates.size <= 256) break;
             if (entry.epoch !== this.imageEpoch || entry.state !== 'ready' || entry.pinCount !== 0 || protectedHits.has(entry)) continue;
             victims.push(entry); available -= entry.bytes; count--;
         }
@@ -1567,7 +1568,7 @@ class WebGPUHostImplementation {
                 if(hasScene){try{scene=this.admitScene(sceneInput,true,true);}catch(cause){if(cause instanceof ClassifiedWebGPUFailure)trusted.add(cause);throw cause;}scene.depthBytes=4*width*height;}
                 const overlay=prepareSharedDraws2D(frame,width,height,options),ticket=this.ticket&&!this.ticket.bound?this.ticket:undefined;
                 const cards=scene?.scene.cards;
-                const attached=scene?attachSharedSceneSources2D(overlay,cards??[],scene.scene.draws):undefined;
+                const attached=scene?attachSharedSceneSources2D(overlay,cards??[],scene.scene.draws,SHARED_OPTIONS.get(this)):undefined;
                 const prepared=attached?.prepared??overlay;
                 // Joint logical fees include scene geometry, uniforms, and merged image pages before native work.
                 const sceneBufferBytes=scene?scene.scene.geometries.flatMap(geometry=>{

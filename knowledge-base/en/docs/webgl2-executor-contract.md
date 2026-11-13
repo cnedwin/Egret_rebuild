@@ -64,11 +64,13 @@ Run `node tools/verify-webgl2-layer-light.mjs <playwright-root> <fresh-output>` 
 | maxUploadBytes / maxPendingUploadBytes | 33,554,432 / 67,108,864 |
 | maxFrameGeometryBytes / maxPendingGeometryBytes | 16,777,216 / 33,554,432 |
 | maxPendingFrames / maxReadbackBytes | 2 / 67,108,864 |
+| maxFrameRegions | 4,096 |
+| maxFramePageBytes / maxReadyPageBytes | 67,108,864 / 134,217,728 |
 | enableReadback | false; boolean only |
 | outputAlpha | `'premultiplied'` by default; or `'opaque'` |
 | restoreTimeoutMs | 10,000 default; positive safe integer at most 30,000 |
 
-Scene options require explicit `outputAlpha: 'opaque'`. Numeric caps can only be lowered; except pixelRatio, numeric options are positive safe integers. Unknown properties are not read. Successful reads occur once, before validation, in this order: `canvas`, `onDiagnostic`, `pixelRatio`, `maxBackingPixels`, `maxCommands`, `maxClipRectangles`, `maxPreparedVertices`, `maxClipEdgeTests`, `maxUploadBytes`, `maxPendingUploadBytes`, `maxPendingFrames`, `maxReadbackBytes`, `enableReadback`, `maxSourceTriangles`, `maxFrameGeometryBytes`, `maxPendingGeometryBytes`, `maxTupleComparisons`, `outputAlpha`, `restoreTimeoutMs`. Getter failures preserve their original cause under `WEBGL2_OPTIONS_INVALID`.
+Scene options require explicit `outputAlpha: 'opaque'`. Numeric caps can only be lowered; except pixelRatio, numeric options are positive safe integers. Unknown properties are not read. Successful reads occur once, before validation, in this order: `canvas`, `onDiagnostic`, `pixelRatio`, `maxBackingPixels`, `maxCommands`, `maxClipRectangles`, `maxPreparedVertices`, `maxClipEdgeTests`, `maxUploadBytes`, `maxPendingUploadBytes`, `maxPendingFrames`, `maxReadbackBytes`, `enableReadback`, `maxSourceTriangles`, `maxFrameGeometryBytes`, `maxPendingGeometryBytes`, `maxTupleComparisons`, `outputAlpha`, `restoreTimeoutMs`, `maxFrameRegions`, `maxFramePageBytes`, `maxReadyPageBytes`. The last three are also judged last. Getter failures preserve their original cause under `WEBGL2_OPTIONS_INVALID`.
 
 The Host requests `canvas.getContext('webgl2', {alpha:true, premultipliedAlpha:true, antialias:false, depth:false, stencil:false, preserveDrawingBuffer:false})`, verifies actual attributes and capabilities, and establishes all used state. Both output modes retain alpha storage; opaque writes alpha one. The caller grants exclusive GL state access during the lease. The browser may return an existing same-type context; historical exclusivity cannot be detected. No raw-context/device option, arbitrary attributes, extension selector, power preference, shader or resource-provider callback is accepted.
 

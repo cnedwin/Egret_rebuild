@@ -28,7 +28,7 @@
 
 ## 逻辑预算与确定性驱逐
 
-图像分配/预留池为 **32 MiB（33554432 bytes）**。每个裁剪图像按 `4 × width × height` 记账；这是逻辑额度，不是实测 VRAM。最多 **256 个 ready 条目**可供查找；该目录限制不等于所有在途 candidate 的数量限制。
+图像分配/预留池为 **32 MiB（33554432 bytes）**。共享 Host 改用它的 `maxReadyPageBytes` 选项，默认 128 MiB；参见[共享渲染 profile](shared-render-profile-contract.md)。每个裁剪图像按 `4 × width × height` 记账；这是逻辑额度，不是实测 VRAM。最多 **256 个 ready 条目**可供查找；该目录限制不等于所有在途 candidate 的数量限制。
 
 既有限制保持不变：每帧 projection 16 MiB、pending projection 32 MiB、128 views，以及既有 source/table/scratch/device/scene/geometry/upload/readback 限制。缓存命中或无覆盖 view 不退还原 frame 的完整逻辑 projection 额度。`pendingUploadBytes` 保持原 buffer/uniform 定义。普通与 B1 Host 的 `maxPendingFrames` 默认值仍为 2，并保留允许更大 positive safe integer 的原规则；textured 和 textured-scene 选项仍最多为 2。
 

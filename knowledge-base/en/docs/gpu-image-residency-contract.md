@@ -28,7 +28,7 @@ Concurrent cold submissions do not share an unfinished candidate. If another saf
 
 ## Logical budgets and deterministic eviction
 
-The image allocation/reservation pool is **32 MiB (33554432 bytes)**. Each cropped image is charged `4 × width × height`; this is logical accounting, not measured VRAM. At most **256 ready entries** are searchable. This directory limit does not count all in-flight candidates.
+The image allocation/reservation pool is **32 MiB (33554432 bytes)**. A shared Host uses its `maxReadyPageBytes` option instead, 128 MiB by default; see the [shared render profile](shared-render-profile-contract.md). Each cropped image is charged `4 × width × height`; this is logical accounting, not measured VRAM. At most **256 ready entries** are searchable. This directory limit does not count all in-flight candidates.
 
 Existing limits remain: 16 MiB projection per frame, 32 MiB pending projection, 128 views and the existing source/table/scratch/device/scene/geometry/upload/readback limits. Cache hits and uncovered views do not refund the original frame's complete logical projection charge. `pendingUploadBytes` keeps its existing buffer/uniform definition. Ordinary and B1 Hosts retain default `maxPendingFrames=2` and their existing allowance for larger positive safe integers; textured and textured-scene options retain their maximum of 2.
 

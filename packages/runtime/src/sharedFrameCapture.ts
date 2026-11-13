@@ -75,8 +75,9 @@ class CaptureBudget {
   public source(value: ImageData2D): void {
     if (this.sourceOwners.has(value)) return;
     debit(this.sourceOwners.size, 1, 64, 'FRAME_IMAGE_BUDGET');
-    const source = debit(this.sourceBytes, value.byteLength, 16777216, 'FRAME_IMAGE_BUDGET');
-    const canonical = debit(this.canonicalBytes, value.byteLength, 16777216, 'FRAME_IMAGE_BUDGET');
+    // 64 MiB of distinct pages in one frame. A Host may be configured to admit less.
+    const source = debit(this.sourceBytes, value.byteLength, 67108864, 'FRAME_IMAGE_BUDGET');
+    const canonical = debit(this.canonicalBytes, value.byteLength, 67108864, 'FRAME_IMAGE_BUDGET');
     this.sourceBytes = source; this.canonicalBytes = canonical;
     this.sourceOwners.add(value);
   }
@@ -252,7 +253,8 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
       const candidate = bucket[position]!;
       if (sameRegion(regions[candidate]!, value)) return candidate;
     }
-    debit(regions.length, 1, 128, 'FRAME_IMAGE_BUDGET');
+    // 4,096 distinct regions in one frame. A Host may be configured to admit fewer.
+    debit(regions.length, 1, 4096, 'FRAME_IMAGE_BUDGET');
     let pageIndex = pageIndexes.get(image);
     if (pageIndex === undefined) {
       budget.metadataBytes(96 + 8);
