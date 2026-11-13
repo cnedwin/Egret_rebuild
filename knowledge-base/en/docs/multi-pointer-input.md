@@ -30,7 +30,7 @@ A viewport revision change cancels all current sessions under the old revision b
 
 The browser profile requires a connected same-realm Canvas, ordinary untransformed ancestors, normal zoom, zero Canvas border/padding and object-fit fill. Positive CSS bounds map once to logical coordinates; DPR affects rendering, not input. Resize, scroll, orientation and visual-viewport changes cancel contacts before using the new mapping. Unsupported transforms are refused. The adapter applies `touch-action: none` only to its Canvas before contact begins and restores the prior inline declaration on cleanup. It listens only to Pointer Events, avoiding a second compatibility-mouse activation path.
 
-Window blur, hidden documents, pagehide, pointercancel and loss of an active native capture clear contacts. Scope disposal and Engine close retire the bridge and its listeners; Engine close starts this cleanup before awaiting host completion. Reconnection requires fresh downs. Native editing focus changes do not count as window-focus loss. Mini-game/native adapters and browser hover/wheel/keyboard/IME integration retain their separate M3.3 qualification rows.
+Window blur, hidden documents, pagehide, pointercancel and loss of an active native capture clear contacts. Scope disposal and Engine close retire the bridge and its listeners; Engine close starts this cleanup before awaiting host completion. Reconnection requires fresh downs. Native editing focus changes do not count as window-focus loss. Hover and wheel have their own optional entries and [guide](pointer-hover.md), and share the canvas with this bridge. Mini-game/native adapters and browser keyboard/IME integration retain their separate M3.3 qualification rows.
 
 ## Evidence and remaining acceptance
 

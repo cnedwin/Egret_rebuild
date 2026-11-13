@@ -95,6 +95,14 @@
     "./web/editing": {
       "types": "./dist/web/editing.d.ts",
       "import": "./dist/web/editing.js"
+    },
+    "./input/hover": {
+      "types": "./dist/hover.d.ts",
+      "import": "./dist/hover.js"
+    },
+    "./web/hover": {
+      "types": "./dist/web/hover.d.ts",
+      "import": "./dist/web/hover.js"
     }
   },
   "dependencies": {

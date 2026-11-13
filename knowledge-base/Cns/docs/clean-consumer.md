@@ -12,7 +12,7 @@
 | --- | --- | --- |
 | `egret-contracts-0.0.0.tgz` | 共享契约 | 否，写在 overrides 里 |
 | `egret-runtime-0.0.0.tgz` | Runtime | 否，写在 overrides 里 |
-| `egret-engine-0.0.0.tgz` | `@egret/engine` 及其 23 个入口 | 是，唯一的依赖 |
+| `egret-engine-0.0.0.tgz` | `@egret/engine` 及其 25 个入口 | 是，唯一的依赖 |
 
 引擎要求另外两个包的 0.0.0 版本。注册表里没有它们，所以消费者在自己的 `pnpm-workspace.yaml` 的 `overrides` 下写明这两个归档。pnpm 11 只从这个文件读取 overrides。
 
@@ -33,7 +33,7 @@ pnpm exec node tools/verify-clean-consumer.mjs <仓库之外的新目录的绝�
 | --- | --- |
 | `archives` | 每个归档包含该包声明的全部模块和类型文件、许可证文本，依赖写成版本号。 |
 | `install` | 新工程里 `pnpm install --ignore-scripts` 成功。安装了四个包，可选包一个也没有。 |
-| `entries` | `@egret/engine` 的 23 个入口都解析到消费者内部的声明文件，类型文件存在，并且能在 Node 中加载。 |
+| `entries` | `@egret/engine` 的 25 个入口都解析到消费者内部的声明文件，类型文件存在，并且能在 Node 中加载。 |
 | `separation` | 非 Web 入口不加载 Web 模块。非 3D 入口不加载 3D 模块。只有 `webgl2` 和 `webgpu` 加载 `robust-predicates`。没有任何模块来自消费者之外。 |
 | `examples` | 公开示例逐字节复制到消费者后可以运行，输出与在仓库里运行时相同。 |
 | `types` | 使用默认入口和 `@egret/engine/layout` 的严格 TypeScript 消费者能按已安装的类型编译，错误的调用仍然报错。 |
@@ -88,14 +88,14 @@ overrides:
 | --- | --- | --- |
 | 默认 | `@egret/engine` | 运行了示例，编译了类型 |
 | 无头，可选 | `/layout` | 运行了示例，编译了类型 |
-| 无头，可选 | `/text`、`/resources`、`/input`、`/ui`、`/ui/editing`、`/animation`、`/paragraph`、`/world3d` | 已解析并加载 |
-| 浏览器，可选 | `/webgl2`、`/webgpu`、`/web/input`、`/web/pointer`、`/web/keyboard`、`/web/image`、`/web/text`、`/web/paragraph`、`/web/resources`、`/web/editing`、`/web/text-input`、`/webgl2/world3d`、`/webgpu/world3d` | 已在 Node 中解析并加载。没有在浏览器中运行。 |
+| 无头，可选 | `/text`、`/resources`、`/input`、`/input/hover`、`/ui`、`/ui/editing`、`/animation`、`/paragraph`、`/world3d` | 已解析并加载 |
+| 浏览器，可选 | `/webgl2`、`/webgpu`、`/web/input`、`/web/pointer`、`/web/keyboard`、`/web/image`、`/web/text`、`/web/paragraph`、`/web/resources`、`/web/editing`、`/web/text-input`、`/web/hover`、`/webgl2/world3d`、`/webgpu/world3d` | 已在 Node 中解析并加载。没有在浏览器中运行。 |
 
 每项能力做什么、在仓库里测试到什么程度，见[当前能力](core-progress.md)。
 
 ## 模块集合
 
-在 Linux x64 的消费者中测得，归档来自 main [215aa9e](https://github.com/cnedwin/Egret_rebuild/commit/215aa9eda94cdf25db50cd00ec598d1afb81887e) 加上本次变更。一个集合是一次导入在 Node 中加载的全部模块，未经打包。gzip 是每个文件按 9 级压缩后求和。打包器会得出别的数字，每次运行的 `report.json` 含全部 23 行。
+在 Linux x64 的消费者中测得，归档来自 main [215aa9e](https://github.com/cnedwin/Egret_rebuild/commit/215aa9eda94cdf25db50cd00ec598d1afb81887e) 加上本次变更。一个集合是一次导入在 Node 中加载的全部模块，未经打包。gzip 是每个文件按 9 级压缩后求和。打包器会得出别的数字，每次运行的 `report.json` 为每个入口各有一行。两个悬停入口晚于这次测量。
 
 | 入口 | 模块数 | KiB | gzip 后 KiB | 第三方 |
 | --- | ---: | ---: | ---: | --- |

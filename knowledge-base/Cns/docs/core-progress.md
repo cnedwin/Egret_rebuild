@@ -122,7 +122,7 @@ M2–M4 的十一个工作包均保留完整验收要求。下表确认已合并
 | M2.4／[#86](https://github.com/cnedwin/Egret_rebuild/issues/86) | 可编辑 20-Spine／200-序列示例、RESET、兼容序列状态保留、保留播放的 Spine 替换及选定恢复 | Spine 保留播放的硬件验证、进行中的混合，以及组合动画生命周期／预算验收／资源动画维护者 |
 | M3.1／[#87](https://github.com/cnedwin/Egret_rebuild/issues/87) | 托管布局、稳定键虚拟化、锚点、焦点／定位、字体／主题整合及有界编辑行保留 | 完整一致 UI 场景／UI 维护者 |
 | M3.2／[#88](https://github.com/cnedwin/Egret_rebuild/issues/88) | 只读多样式文字、几何和字体代次 | 必需独立参考及 provider 成本／恢复资格／文字维护者 |
-| M3.3／[#89](https://github.com/cnedwin/Egret_rebuild/issues/89) | 触点路由、键盘／焦点、行整合及原生单／多行纯文本编辑 | 真实 IME／移动键盘、剪贴板及无障碍资格／输入宿主维护者 |
+| M3.3／[#89](https://github.com/cnedwin/Egret_rebuild/issues/89) | 触点路由、[悬停与滚轮路由](pointer-hover.md)、键盘／焦点、行整合及原生单／多行纯文本编辑 | 真实 IME／移动键盘、真实鼠标／手写笔／触控板会话、剪贴板及无障碍资格／输入宿主维护者 |
 | M3.4／[#90](https://github.com/cnedwin/Egret_rebuild/issues/90) | 遮罩／模糊、主题及社区移动／动作状态 | 其余控件、层级、手势和语义／UI 维护者与现有触摸贡献者 |
 | M4.1／[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) | 可编辑精简与固定 X 换装场景、浏览器内打开已导出工程、双后端计时和有界 Android 证据 | 打开工程的硬件验证、选定能力覆盖与正式 X 验收／集成与验收维护者 |
 | M4.2／[#92](https://github.com/cnedwin/Egret_rebuild/issues/92) | 固定桌面恢复、Android 组件证据及共享裁剪／几何构造的短时对照 | 完整混合生命周期、性能和必需设备验收／性能平台维护者 |

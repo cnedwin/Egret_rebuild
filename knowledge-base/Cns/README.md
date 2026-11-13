@@ -21,7 +21,7 @@
 | --- | --- |
 | 渲染／资源 | [M1](docs/m1-rendering-resource-plan.md) · [共享渲染](docs/shared-render-profile-contract.md) · [WebGL2](docs/webgl2-executor-contract.md) · [恢复](docs/resource-recovery-contract.md) |
 | 内容／动画 | [M2](docs/m2-spine-content-plan.md) · [构建／运行时](docs/content-build-pipeline.md) · [Spine](docs/spine-content-ingress.md) · [序列 RESET](docs/序列动画RESET替换.md) |
-| UI／文字／输入 | [M3](docs/m3-ui-text-input-plan.md) · [托管 UI](docs/ui-data-panel.md) · [段落](docs/readonly-paragraph-sdk.md) · [字体](docs/font-resource-generations.md) · [特效](docs/shared-ui-effects.md) |
+| UI／文字／输入 | [M3](docs/m3-ui-text-input-plan.md) · [托管 UI](docs/ui-data-panel.md) · [段落](docs/readonly-paragraph-sdk.md) · [字体](docs/font-resource-generations.md) · [特效](docs/shared-ui-effects.md) · [悬停与滚轮](docs/pointer-hover.md) |
 | 混合整合 | [M4](docs/m4-core-acceptance-plan.md) · [Android 范围](docs/android-device-validation.md) · [干净消费者](docs/clean-consumer.md) |
 | 3D | [有界 3D 与 2D 合成](docs/authored-scene3d.md) · [独立 World3D](docs/world3d.md) |
 | 后续工具／兼容 | [工程事务](docs/工程事务核心合同.md) · [AI／工程接口](docs/AI创作与工程接口.md) · [完整迁移](docs/旧工程迁移.md) |
