@@ -225,7 +225,7 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2`。该入口导出 `cre
 
 ## 语义
 
-可选入口 `@egret/engine/ui/semantics` 导出 `createUiSemantics`、`semanticBoundsOf`、`createUiListSemantics` 和十九个擦除类型。列表辅助对象通过结构类型读取托管 UI 根，不导入 UI 入口的任何内容。可选入口 `@egret/engine/web/semantics` 导出 `createBrowserSemantics` 和两个擦除类型。语义树只导入 runtime，不接触页面。浏览器模块只为类型导入语义树入口，另导入错误类型，不导入任何私有内容，其他入口也不包含这四者。遵循[指南](knowledge-base/Cns/docs/ui-semantics.md)。
+可选入口 `@egret/engine/ui/semantics` 导出 `createUiSemantics`、`semanticBoundsOf`、`createUiListSemantics`、`semanticBoxOf` 和十九个擦除类型。列表辅助对象和盒的度量通过结构类型读取托管 UI 根，不导入 UI 入口的任何内容。可选入口 `@egret/engine/web/semantics` 导出 `createBrowserSemantics` 和两个擦除类型。语义树只导入 runtime，不接触页面。浏览器模块只为类型导入语义树入口，另导入错误类型，不导入任何私有内容，其他入口也不包含这五者。遵循[指南](knowledge-base/Cns/docs/ui-semantics.md)。
 
 只有 `tests/browser-semantics.test.mjs` 可以在 `window`、`document` 和 `reportError` 这几个全局名称下定义测试自有的页面替身，并在每个用例之后恢复它们。替身是测试自己的对象，不拦截任何原生原型。这些用例说明投射写入了什么、如何处理交给它的事件。`examples/ui-controls/verify.mjs` 读取 Chromium 为真实页面计算出的无障碍树。没有运行读屏软件或其他辅助技术，也没有运行 Safari 或 Firefox；无障碍树通过检查不等于界面在读屏软件下可用。
 

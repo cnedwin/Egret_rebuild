@@ -363,7 +363,7 @@ test('SM17 the tree describes the controls that are drawn, and activates them th
 });
 
 test('SM18 the entry has the tree, its measure and the list helper, and the root entry has none of them',async()=>{
- assert.deepEqual(Object.keys(await import('@egret/engine/ui/semantics')).sort(),['createUiListSemantics','createUiSemantics','semanticBoundsOf']);
+ assert.deepEqual(Object.keys(await import('@egret/engine/ui/semantics')).sort(),['createUiListSemantics','createUiSemantics','semanticBoundsOf','semanticBoxOf']);
  const root=await import('@egret/engine'),ui=await import('@egret/engine/ui');
- for(const name of ['createUiSemantics','semanticBoundsOf','createUiListSemantics','createBrowserSemantics'])assert.equal(name in root||name in ui,false,name);
+ for(const name of ['createUiSemantics','semanticBoundsOf','createUiListSemantics','semanticBoxOf','createBrowserSemantics'])assert.equal(name in root||name in ui,false,name);
 });

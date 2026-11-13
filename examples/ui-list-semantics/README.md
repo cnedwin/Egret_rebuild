@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-A list of fifty thousand servers drawn by the engine. The managed UI realizes the eight rows that show, and `createUiListSemantics` keeps one semantic node for each of them, so assistive technology is given a list box whose options say where they stand among the fifty thousand. A press, a key and a request of assistive technology all reach the same selection.
+A list of fifty thousand servers drawn by the engine. The managed UI realizes the eight rows that show, and `createUiListSemantics` keeps one semantic node for each of them, so assistive technology is given a list box whose options say where they stand among the fifty thousand. A press, a key and a request of assistive technology all reach the same selection. The details of a server open in a modal layer, which assistive technology is given as a dialog.
 
 ## Run
 
@@ -19,6 +19,7 @@ Keep the host and port the server prints and open `/examples/ui-list-semantics/i
 
 - Press a row. It turns green: it is the chosen server.
 - Click the canvas, then press Tab. A ring marks the row with the focus. The arrow keys, Page Up, Page Down, Home and End move through the whole list, which scrolls under the focus. Space or Enter chooses the row when the key is released.
+- Press Arrow Right on a row, or **Details of the chosen server**. A card opens over the list with two buttons. Tab stays inside it, a press beside it reaches nothing, and Escape closes it. The focus returns to the row.
 - Press **Go to row 40,000**. The list jumps there and the focus is on that row.
 - Press **Scroll to the top** while a row far below has the focus. The row leaves, and nothing has the focus.
 - With a screen reader, move into the list. Each option is announced with its number of fifty thousand. This was not run by the project: see below.
@@ -43,7 +44,9 @@ semantics.publish(rows.sync());
 
 Each realized row has a `createControlKeys` binding for Space and Enter. The arrow keys ask the root to reveal the next row, and the focus is given after the commit that realizes it.
 
-See [the semantics guide](../../knowledge-base/en/docs/ui-semantics.md#a-managed-virtual-list) and [the managed UI guide](../../knowledge-base/en/docs/ui-data-panel.md).
+The card is a second root, registered with `createUiLayerManager` as a modal layer. Its semantic node is a dialog of the page's own: hidden while the layer is closed, and placed with `semanticBoxOf(card, 'card')`. While it is published the tree makes the list inert, so the browser gives assistive technology the dialog and its two buttons and nothing behind them.
+
+See [the semantics guide](../../knowledge-base/en/docs/ui-semantics.md#a-managed-virtual-list), [the layer guide](../../knowledge-base/en/docs/ui-layers.md) and [the managed UI guide](../../knowledge-base/en/docs/ui-data-panel.md).
 
 ## Check
 
@@ -51,6 +54,6 @@ See [the semantics guide](../../knowledge-base/en/docs/ui-semantics.md#a-managed
 node examples/ui-list-semantics/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
 ```
 
-Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Six scenarios write `report.json` with a screenshot of each: the list box the browser computes, the keyboard through recycled rows, a jump to row 40,000 and a scroll away from the focus, requests made of the options, a narrower window with a scrolled page, and a phone profile. They passed in headless Chromium with software WebGL2.
+Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Eight scenarios write `report.json` with a screenshot of each: the list box the browser computes, the keyboard through recycled rows, a jump to row 40,000 and a scroll away from the focus, requests made of the options, a narrower window with a scrolled page, a phone profile, the modal card as the only thing in the tree the browser computes, and the keyboard through the card and back to the row. They passed in headless Chromium with software WebGL2.
 
 A screen reader or other assistive technology, a person at the keyboard, a hardware GPU, WebGPU, Edge, Safari, Firefox and a real phone were not run. A list box the browser computes correctly is not proof that the list is usable with a screen reader.
