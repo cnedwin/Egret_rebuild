@@ -31,6 +31,8 @@ Creating the input adds nothing to the page. A field exists only between `open` 
 
 [The example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-input/README.md) draws a panel with a single-line and a multi-line field.
 
+A game that uses the engine's pointer and keyboard inputs does not have to open sessions by hand: [`createTextFieldControl`](ui-controls.md#text-field) holds the text of a drawn field and opens this input over it on a press, a key or a request of assistive technology.
+
 ## The request
 
 Every length is in logical stage units, the units of the display tree and of pointer positions. Every colour is `0xRRGGBB`.

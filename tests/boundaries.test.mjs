@@ -807,7 +807,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // The optional UI entry now publishes the control module; the fixture keeps its exact bytes.
     for(const file of ['packages/engine/src/ui/controls.ts','packages/engine/dist/ui/controls.js','packages/engine/dist/ui/controls.d.ts',
       'packages/engine/src/ui/stateControls.ts','packages/engine/dist/ui/stateControls.js','packages/engine/dist/ui/stateControls.d.ts',
-      'packages/engine/src/ui/scrollControl.ts','packages/engine/dist/ui/scrollControl.js','packages/engine/dist/ui/scrollControl.d.ts'])
+      'packages/engine/src/ui/scrollControl.ts','packages/engine/dist/ui/scrollControl.js','packages/engine/dist/ui/scrollControl.d.ts',
+      'packages/engine/src/ui/textFieldControl.ts','packages/engine/dist/ui/textFieldControl.js','packages/engine/dist/ui/textFieldControl.d.ts'])
       write(file, readFileSync(path.join(repository,file)));
     for(const [file,edges]of Object.entries(m31FixtureGraph)){
       const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';

@@ -118,9 +118,38 @@ contracts、runtime 和 engine 的归档分别为 61 KiB、334 KiB 和 1710 KiB�
 
 仓库的 [NOTICE](https://github.com/cnedwin/Egret_rebuild/blob/main/NOTICE) 文件写明了同一个依赖，但它不在归档里。Spine 运行时和 `jsonc-parser` 属于可选包，这条路线不会安装它们。
 
+## 从消费者打开页面
+
+第二个工具从检查结束的地方继续。它只对消费者目录提供服务，写入一个属于消费者自己的页面，并在真实浏览器中打开它：
+
+```text
+pnpm exec node tools/verify-clean-consumer-page.mjs <Playwright index.mjs 的绝对路径> <仓库之外的新的绝对目录> [software] [--offline]
+```
+
+不带 `software` 时启动已安装的 Edge（有界面），两个后端都必须完成绘制。带 `software` 时运行 Playwright 自带的浏览器，无头，软件渲染。它在 `report.json` 旁写出 `page-report.json` 和每个后端的一张截图。[工具](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/verify-clean-consumer-page.mjs)
+
+- **不使用打包器。**页面通过 import map 加载已安装的模块，这份 import map 由工具根据已安装各包的清单写出：36 个入口，引擎的六个私有名称只在引擎内部有效。每个地址都是消费者内部的文件。
+- **只用公开入口。**页面导入 `@egret/engine`、`@egret/engine/ui`、`@egret/engine/web/pointer` 和一个后端，用引擎绘制一个按钮，并通过引擎的指针输入和动作控件响应一次按下。
+- **通过的标准。**Host 回读的帧显示按钮位于背景之上。在按钮处注入一次按下，按钮恰好激活一次，随后回读的帧显示按下后的颜色。每个请求都由消费者内部提供，没有请求离开消费者。
+
+| 后端 | 浏览器 | 结果 |
+| --- | --- | --- |
+| WebGL2 | Playwright 自带的 Chromium 153，无头，软件渲染，Linux x64 | 通过 |
+| WebGPU | 同上 | 未运行：在软件渲染下，该浏览器没有能启动 Host 的 WebGPU |
+| 两者 | 已安装的 Edge，硬件 GPU | 未运行 |
+
 ## 首次可交互
 
-首次可交互没有从消费者一侧测量。检查只在 Node 中加载模块，不打开页面，所以它不说明下载时间、启动或第一帧。现有的启动记录属于从仓库经本地回环提供的示例。[验收计划](m4-core-acceptance-plan.md)中 M1 和 M4 的目标仍需针对实际的产物、内容和网络条件测量。
+从消费者冷启动打开 WebGL2 页面四次，基于 main [9303cf4](https://github.com/cnedwin/Egret_rebuild/commit/9303cf49bf8327e010061a7ed8dd70b341374001) 加上本次变更：
+
+| 观察项 | 数值 |
+| --- | --- |
+| 到第一帧和按下完成为止的请求数 | 128，全部来自消费者 |
+| 提供的字节数，未打包、未压缩 | 1,052 KiB：engine 596、runtime 319、contracts 55、robust-predicates 71、页面自身 10 |
+| 从导航开始到回读第一帧 | 0.43 至 0.57 秒 |
+| 从按下到显示它的那一帧 | 10 至 19 毫秒 |
+
+这些是在开发容器中经本地回环、使用软件渲染的四次运行的观察值，不是预算，不是网络测量，也不是设备结果；使用打包器会改变请求数和字节数。[验收计划](m4-core-acceptance-plan.md)中 M1 和 M4 的目标仍需针对实际的产物、内容和网络条件测量。
 
 ## 迁移说明
 
@@ -138,7 +167,7 @@ contracts、runtime 和 engine 的归档分别为 61 KiB、334 KiB 和 1710 KiB�
 - 这些包没有发布。没有运行过从注册表安装引擎，工具的注册表路线也没有在开发容器中运行，该容器没有网络。
 - 三个包的清单没有 `license` 字段。许可证文本在每个归档里。
 - 没有 `files` 列表收窄归档。源码、一个包内测试和编译器配置随构建产物一起分发。
-- 没有从消费者打开过页面。两个后端都没有用已安装的副本绘制过，任何浏览器或手机上都没有。
-- 没有测量首次可交互，也没有测量打包器下的包体积。
+- 从消费者打开的页面只在无头 Chromium 的软件渲染下用 WebGL2 完成了绘制并响应了一次按下。WebGPU、硬件 GPU、Edge、Firefox、Safari 和手机都没有打开过它。
+- 首次可交互只在这一种配置下观察过，没有针对网络或设备测量。没有测量打包器下的包体积。
 - 还没有新贡献者照着本页操作过。这项检查是自动演练，不能关闭该项。
 - 最终交接仍依赖 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) 和 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92)。

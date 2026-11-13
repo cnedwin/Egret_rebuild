@@ -8,6 +8,7 @@ import os from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { EXAMPLES, OPTIONAL_PACKAGES, PACKAGES, THIRD_PARTY, admitOutput, readArchive, repository, separationFaults, verifyCleanConsumer } from '../tools/verify-clean-consumer.mjs';
+import { SCENE, importMapOf, matches, pageFiles, serveConsumer, summarize } from '../tools/verify-clean-consumer-page.mjs';
 
 /** One record of a tar stream: a header block, then the body padded to whole blocks. */
 function record(name, body, type = '0', prefix = '') {
@@ -103,7 +104,56 @@ test('CC04 the built packages work in a new project outside the checkout', { tim
     assert.equal(inside(repository, installed), false);
     assert.equal(inside(output, installed), true);
     assert.ok(report.open.length >= 6 && report.open.some(line => /registry was not used/.test(line)));
+    // The import map of a page of this consumer: every entry of every installed package, each a file inside the consumer.
+    const consumer = fs.realpathSync(path.join(output, 'consumer')), { root, map, packages } = importMapOf(consumer);
+    assert.equal(root, consumer);
+    assert.deepEqual(packages.map(item => [item.name, item.entries, item.privateNames]), [['@egret/engine', Object.keys(manifest.exports).length, Object.keys(manifest.imports).length], ['@egret/runtime', 6, 0], ['@egret/contracts', 2, 0], [THIRD_PARTY.name, 1, 0]]);
+    assert.deepEqual(Object.keys(map.imports).slice(0, Object.keys(manifest.exports).length), Object.keys(manifest.exports).map(subpath => '@egret/engine' + subpath.slice(1)));
+    assert.deepEqual(Object.keys(map.scopes), [packages[0].directory]);
+    assert.deepEqual(Object.keys(map.scopes[packages[0].directory]), Object.keys(manifest.imports));
+    const addresses = [...Object.values(map.imports), ...Object.values(map.scopes[packages[0].directory])];
+    for (const address of addresses) {
+      assert.match(address, /^\/node_modules\/[^\\]+\.js$/, address);
+      const file = path.join(consumer, ...address.slice(1).split('/').map(decodeURIComponent));
+      assert.ok(fs.statSync(file).isFile() && inside(consumer, fs.realpathSync(file)), address);
+    }
+    assert.equal(new Set(Object.values(map.imports)).size, Object.keys(map.imports).length, 'no two entries share a module');
     // A second run never writes over the first.
     refused('CLEAN_CONSUMER_OUTPUT_USED', () => verifyCleanConsumer({ output, offline: true }));
   } finally { fs.rmSync(base, { recursive: true, force: true }); }
+});
+
+test('CC05 a colour read back from a frame is the one that was drawn, to within two steps', () => {
+  assert.equal(matches([0x10, 0x20, 0x30, 255], SCENE.clear), true);
+  assert.equal(matches([0x12, 0x1e, 0x30, 255], SCENE.clear), true);
+  for (const sample of [[0x13, 0x20, 0x30, 255], [0x10, 0x1d, 0x30, 255], [0x10, 0x20, 0x33, 255], [0x10, 0x20, 0x30, 254], [0x10, 0x20, 0x30], [0x10, 0x20, 0x30, 255, 0], undefined, null, 'x']) assert.equal(matches(sample, SCENE.clear), false, JSON.stringify(sample));
+  assert.equal(matches([0x3d, 0x4a, 0x63, 255], SCENE.idle), true);
+  assert.equal(matches([0x3d, 0x4a, 0x63, 255], SCENE.activated), false);
+});
+
+test('CC06 the page of the consumer names the installed engine by its public entries alone', () => {
+  const map = { imports: { '@egret/engine': '/node_modules/x/index.js' }, scopes: {} }, files = pageFiles(map);
+  assert.deepEqual(Object.keys(files), ['page/index.html', 'page/main.mjs']);
+  assert.ok(files['page/index.html'].includes('<script type="importmap">' + JSON.stringify(map) + '</script>'));
+  const named = [...files['page/main.mjs'].matchAll(/(?:from\s*|import\(\s*)'([^']+)'/g)].map(match => match[1]);
+  assert.deepEqual(named, ['@egret/engine', '@egret/engine/ui', '@egret/engine/web/pointer', '@egret/engine/webgpu', '@egret/engine/webgl2']);
+  // Nothing of the checkout and nothing private is named, and the scene is the one the check reads back.
+  assert.equal(/node_modules|packages\/|\.\.\/|#egret/.test(files['page/main.mjs']), false);
+  for (const value of [SCENE.width, SCENE.height, SCENE.clear, SCENE.idle, SCENE.activated, SCENE.button.x, SCENE.button.width]) assert.ok(files['page/main.mjs'].includes(String(value)), String(value));
+});
+
+test('CC07 the server of the consumer serves that directory and nothing else, and keeps what was asked', async () => {
+  const base = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'egret-consumer-serve-'))), root = path.join(base, 'consumer');
+  fs.mkdirSync(path.join(root, 'page'), { recursive: true }); fs.mkdirSync(path.join(root, 'node_modules', 'a b+c@1'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'page', 'index.html'), '<p>page</p>'); fs.writeFileSync(path.join(root, 'node_modules', 'a b+c@1', 'index.js'), 'export {};'); fs.writeFileSync(path.join(base, 'secret.txt'), 'outside');
+  const server = serveConsumer(root), origin = await server.listen();
+  try {
+    const get = async address => { const response = await fetch(origin + address); return [response.status, response.headers.get('content-type'), await response.text()]; };
+    assert.deepEqual(await get('/page/index.html'), [200, 'text/html', '<p>page</p>']);
+    assert.deepEqual(await get('/node_modules/' + encodeURIComponent('a b+c@1') + '/index.js'), [200, 'text/javascript', 'export {};']);
+    for (const address of ['/missing.js', '/page', '/page/', '/%2e%2e/secret.txt', '/page/..%2f..%2fsecret.txt', '/page/..%5c..%5csecret.txt', '/%zz']) assert.equal((await get(address))[0], 404, address);
+    assert.deepEqual(server.requests.map(request => [request.status, request.bytes]), [[200, 11], [200, 10], [404, 0], [404, 0], [404, 0], [404, 0], [404, 0], [404, 0], [404, 0]]);
+    const packages = [{ name: 'a', directory: '/node_modules/' + encodeURIComponent('a b+c@1') + '/' }];
+    assert.deepEqual(summarize(server.requests.slice(0, 3), packages), { requests: 3, bytes: 21, failed: ['/missing.js'], groups: { a: { requests: 1, bytes: 10 }, page: { requests: 2, bytes: 11 } } });
+  } finally { await server.close(); fs.rmSync(base, { recursive: true, force: true }); }
 });
