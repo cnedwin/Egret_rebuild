@@ -160,7 +160,22 @@ test('world3d WebGL2 reuses shadow atlases across reflection, restore and dispos
             [['reflection', 'color', 16, 16], ['main', 'shadow', 64, 64], ['main', 'color', 16, 16]]);
         assert.deepEqual(frame.passes[1].shadowMapSizes, [32]);
         assert.equal(mirrorCalls, 1);
-        for (let i = 1; i < 4; i++) draw();
+        assert.deepEqual(frame.reflections, {rendered: 1, reused: 0});
+        reflection.interval = 3;
+        const cadence = [];
+        for (let i = 0; i < 6; i++) {
+            const frame = renderer.measureFrame(() => {
+                assert.ok(reflection.render(renderer, scene, camera, [0, 1, 0, 0]));
+                assert.ok(renderer.render(scene, camera));
+            });
+            assert.equal(frame.passes.filter(pass => pass.view === 'reflection').length, frame.reflections.rendered);
+            cadence.push(frame.reflections);
+        }
+        assert.deepEqual(cadence, Array.from({length: 6}, (_, i) => i % 3 === 0 ? {rendered: 1, reused: 0} : {rendered: 0, reused: 1}));
+        assert.equal(mirrorCalls, 3);
+        const rejected = renderer.measureFrame(() => assert.equal(reflection.render(renderer, scene, camera, [0, -1, 0, 0]), false));
+        assert.deepEqual(rejected.reflections, {rendered: 0, reused: 0});
+        reflection.interval = 1;
         assert.deepEqual([...textures.values()].sort((a, b) => a - b), [1, 64]);
         assert.equal(shadowFramebuffers.size, 2);
         assert.deepEqual([deletedTextures.length, deletedFramebuffers.length], [0, 0]);
@@ -168,17 +183,22 @@ test('world3d WebGL2 reuses shadow atlases across reflection, restore and dispos
         lose();
         assert.equal(renderer.render(scene, camera), false);
         restore();
-        draw();
-        assert.deepEqual([...textures.values()].sort((a, b) => a - b), [1, 1, 64, 64]);
-        assert.equal(shadowFramebuffers.size, 4);
+        reflection.interval = 3;
+        const captureReflection = () => renderer.measureFrame(draw);
+        assert.deepEqual(captureReflection().reflections, {rendered: 1, reused: 0});
+        lose();
+        restore();
+        assert.deepEqual(captureReflection().reflections, {rendered: 1, reused: 0});
+        assert.deepEqual([...textures.values()].sort((a, b) => a - b), [1, 1, 1, 64, 64, 64]);
+        assert.equal(shadowFramebuffers.size, 6);
         assert.deepEqual([deletedTextures.length, deletedFramebuffers.length], [0, 0]);
 
         renderer.dispose();
         renderer.dispose();
         assert.equal(deletedTextures.length, 2);
         assert.equal(deletedFramebuffers.length, 2);
-        assert.deepEqual(new Set(deletedTextures), new Set([...textures.keys()].slice(2)));
-        assert.deepEqual(new Set(deletedFramebuffers), new Set([...shadowFramebuffers].slice(2)));
+        assert.deepEqual(new Set(deletedTextures), new Set([...textures.keys()].slice(-2)));
+        assert.deepEqual(new Set(deletedFramebuffers), new Set([...shadowFramebuffers].slice(-2)));
     } finally {
         renderer.dispose();
         reflection.dispose();

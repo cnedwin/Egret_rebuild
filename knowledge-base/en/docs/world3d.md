@@ -93,7 +93,7 @@ Both renderers fold repeated meshes into instanced draws by themselves. After so
 
 ### WebGL2 application-frame metrics
 
-Call `measureFrame` around the synchronous render work for one application frame. `PlanarReflection3D` identifies its mirror draw automatically. Direct renders to other targets are reported as offscreen views.
+Call `measureFrame` around the synchronous render work for one application frame. `PlanarReflection3D` identifies its mirror draw automatically. Direct renders to other targets are reported as offscreen views. `frame.reflections.rendered` counts successful planar reflection renders. `frame.reflections.reused` counts interval skips that keep a prior reflection texture. A reused texture adds no reflection pass or draw calls.
 
 ```ts
 const frame = renderer.measureFrame(() => {

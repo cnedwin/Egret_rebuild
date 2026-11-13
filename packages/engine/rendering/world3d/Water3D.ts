@@ -17,6 +17,8 @@ export interface ReflectionRenderer3D {
     render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean;
     /** Allows renderers to label mirror draws separately in application-frame metrics. */
     renderReflection?(scene: Scene3D, camera: Camera3D, target: RenderTarget3D): boolean;
+    /** Allows the renderer to verify and record reuse of the previous mirror result. */
+    reuseReflection?(target: RenderTarget3D): boolean;
     /** When present, post-processing is switched off while the mirror image is drawn. */
     readonly postProcess?: {enabled: boolean};
     /** When present, shadows can be left out of the mirror image. */
@@ -121,7 +123,8 @@ export class PlanarReflection3D {
         const scheduled = this.#calls === 0;
         this.#calls = (this.#calls + 1) % interval;
         const drawn = this.#drawn;
-        if (!scheduled && drawn?.renderer === renderer && drawn.scene === scene && drawn.version === this.target.version) return true;
+        if (!scheduled && drawn?.renderer === renderer && drawn.scene === scene && drawn.version === this.target.version
+            && (renderer.reuseReflection?.(this.target) ?? true)) return true;
         this.#drawn = undefined;
 
         const shadowsEnabled = renderer.shadowsEnabled, post = renderer.postProcess, postEnabled = post?.enabled;

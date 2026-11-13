@@ -29,6 +29,8 @@ export interface World3DFrameMetrics {
     /** Time in renderer calls, including render list preparation and WebGL submission. */
     readonly cpuSubmissionMs: number;
     readonly passes: readonly World3DFramePass[];
+    /** Successful planar reflection draws and scheduled reuse of an existing reflection. */
+    readonly reflections: {readonly rendered: number; readonly reused: number};
 }
 
 type TimerExtension = {
@@ -46,6 +48,7 @@ interface Capture {
     readonly gpu: boolean;
     cpuSubmissionMs: number;
     viewIndex: number;
+    readonly reflections: {rendered: number; reused: number};
 }
 interface ActivePass {
     readonly pass: MutablePass;
@@ -67,7 +70,7 @@ export class WebGL2FrameMetrics3D {
     capture(draw: () => void, gpu: boolean): World3DFrameMetrics {
         if (this.#capture) throw new World3DError('WORLD3D_INPUT_INVALID', 'nested frame measurement');
         if (gpu || this.#pending.length > 0) this.poll();
-        const capture: Capture = {passes: [], gpu, cpuSubmissionMs: 0, viewIndex: 0};
+        const capture: Capture = {passes: [], gpu, cpuSubmissionMs: 0, viewIndex: 0, reflections: {rendered: 0, reused: 0}};
         this.#capture = capture;
         try {
             const result: unknown = draw();
@@ -78,10 +81,14 @@ export class WebGL2FrameMetrics3D {
             const passes = Object.freeze(capture.passes);
             let drawCalls = 0, triangles = 0;
             for (const pass of passes) { drawCalls += pass.drawCalls; triangles += pass.triangles; }
-            return Object.freeze({drawCalls, triangles, cpuSubmissionMs: capture.cpuSubmissionMs, passes});
+            return Object.freeze({drawCalls, triangles, cpuSubmissionMs: capture.cpuSubmissionMs, passes, reflections: Object.freeze(capture.reflections)});
         } finally {
             this.#capture = undefined;
         }
+    }
+
+    recordReflection(kind: 'rendered' | 'reused'): void {
+        if (this.#capture) this.#capture.reflections[kind]++;
     }
 
     beginView(): number {

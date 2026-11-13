@@ -71,6 +71,7 @@ export class WebGL2Renderer3D implements Renderer3D {
     readonly #frameMetrics: WebGL2FrameMetrics3D;
     #viewKind: World3DViewKind = 'main';
     #reflectionTarget: RenderTarget3D | undefined;
+    #validReflections = new WeakSet<RenderTarget3D>();
     #viewIndex = -1;
     #frameToneMapping: ToneMapping3D = 'none';
     readonly info: Renderer3DInfo = {frame: 0, drawCalls: 0, triangles: 0, visited: 0, culled: 0, shadowMaps: 0, programs: 0, geometries: 0, textures: 0};
@@ -130,6 +131,7 @@ export class WebGL2Renderer3D implements Renderer3D {
             event.preventDefault();
             this.#lost = true;
             this.#frameMetrics.reset(true);
+            this.#validReflections = new WeakSet();
             options.onContextLost?.();
         };
         this.#onRestored = (): void => {
@@ -198,8 +200,21 @@ export class WebGL2Renderer3D implements Renderer3D {
     renderReflection(scene: Scene3D, camera: Camera3D, target: RenderTarget3D): boolean {
         const saved = this.#reflectionTarget;
         this.#reflectionTarget = target;
-        try { return this.render(scene, camera, target); }
-        finally { this.#reflectionTarget = saved; }
+        try {
+            const rendered = this.render(scene, camera, target);
+            if (rendered) {
+                this.#validReflections.add(target);
+                this.#frameMetrics.recordReflection('rendered');
+            }
+            return rendered;
+        } finally { this.#reflectionTarget = saved; }
+    }
+
+    /** The retained mirror image must still belong to the live WebGL2 context. */
+    reuseReflection(target: RenderTarget3D): boolean {
+        if (this.#disposed || this.isContextLost || !this.#validReflections.has(target)) return false;
+        this.#frameMetrics.recordReflection('reused');
+        return true;
     }
 
     private renderMeasuredView(scene: Scene3D, camera: Camera3D, target: RenderTarget3D | undefined, kind: World3DViewKind): boolean {

@@ -91,7 +91,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 ### WebGL2 应用帧统计
 
-用 `measureFrame` 包裹一帧应用的同步渲染操作。`PlanarReflection3D` 自动标记镜像绘制。直接绘制到其他渲染目标会记为离屏视图。
+用 `measureFrame` 包裹一帧应用的同步渲染操作。`PlanarReflection3D` 自动标记镜像绘制。直接绘制到其他渲染目标会记为离屏视图。`frame.reflections.rendered` 统计成功的平面反射绘制，`frame.reflections.reused` 统计因更新间隔而复用上一张纹理的次数。复用帧不增加反射通道或绘制次数。
 
 ```ts
 const frame = renderer.measureFrame(() => {
