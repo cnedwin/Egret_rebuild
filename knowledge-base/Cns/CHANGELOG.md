@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 控件的悬停、开关和多选一状态 — 2026-11-14
+
+`@egret/engine/ui` 在移动和动作控件之外新增 `createHoverControl`、`createToggleControl` 和 `createSelectionGroup`。它们保存应用自己绘制的控件的状态：鼠标或手写笔在目标或其后代上时的悬停、是否选中，以及若干键中被选中的一个并可在可用项之间移动。按键走的是指针所走的同一批方法。悬停输入现在会指明 enter 和 leave 的另一端（`related`），并接受后加的观察者。新增的指南说明了全部五个控件。检查包括真实 Engine 上的单元测试，以及无头 Chromium 软件 WebGL2 中注入输入的真实页面；目前不向辅助技术通报任何内容。[指南](docs/ui-controls.md) · [#90](https://github.com/cnedwin/Egret_rebuild/issues/90)
+
 ## 悬停与滚轮路由 — 2026-11-14
 
 两个可选入口在显示树上路由悬停和滚轮。`@egret/engine/input/hover` 是逻辑输入；`@egret/engine/web/hover` 监听画布，并与触点适配器共用它。目标能得知鼠标或手写笔进入、在其上移动或离开，每次离开都带原因；滚轮交给它下面的对象，页面是否滚动由应用选择的策略决定。检查包括真实 Engine 上的单元测试，以及无头 Chromium 软件 WebGL2 中注入输入的真实页面。没有使用真实的鼠标、手写笔或触控板，也没有在硬件 GPU、WebGPU、Safari 和 Firefox 上运行；托管控件尚未使用它。[指南](docs/pointer-hover.md) · [#89](https://github.com/cnedwin/Egret_rebuild/issues/89)

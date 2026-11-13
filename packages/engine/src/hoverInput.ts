@@ -3,8 +3,8 @@ import {DisplayObject,DisplayObjectContainer,EgretError,Event,createEventType} f
 import type {MouseInputEnginePort} from './mouseInput.js';
 import {requireMouseInputEngine} from './internal/mouseInputFactoryState.js';
 import {captureUiInputDelivery} from './internal/uiFactoryState.js';
-import type {HoverInput,HoverInputEvents,HoverInputOptions,HoverInputState,HoverLeaveReason,HoverNotification,HoverPoint,HoverSample,HoverState,WheelNotification,WheelPoint,WheelSample} from './hoverInputTypes.js';
-export type {HoverInput,HoverInputEvents,HoverInputOptions,HoverInputState,HoverLeaveReason,HoverNotification,HoverPoint,HoverPointerType,HoverSample,HoverState,WheelNotification,WheelPoint,WheelSample,WheelUnit} from './hoverInputTypes.js';
+import type {HoverInput,HoverInputEvents,HoverInputOptions,HoverInputState,HoverLeaveReason,HoverNotification,HoverPoint,HoverSample,HoverState,HoverTransition,WheelNotification,WheelPoint,WheelSample} from './hoverInputTypes.js';
+export type {HoverInput,HoverInputEvents,HoverInputOptions,HoverInputState,HoverLeaveReason,HoverNotification,HoverPoint,HoverPointerType,HoverSample,HoverState,HoverTransition,WheelNotification,WheelPoint,WheelSample,WheelUnit} from './hoverInputTypes.js';
 
 const getter=(prototype:object,key:string): ((this:DisplayObject)=>unknown)=>Object.getOwnPropertyDescriptor(prototype,key)!.get!;
 const parent=getter(DisplayObject.prototype,'parent'),visible=getter(DisplayObject.prototype,'visible');
@@ -32,13 +32,15 @@ export function createHoverInput(options:HoverInputOptions):HoverInput {
   owner.assertReady();scope.assertOpen();
   let operations:MouseInputEnginePort['operations']|undefined=owner.operations;
   const events:HoverInputEvents=Object.freeze({
-    enter:createEventType<HoverPoint>('egret.pointer.enter',{bubbles:true,cancelable:false}),
+    enter:createEventType<HoverTransition>('egret.pointer.enter',{bubbles:true,cancelable:false}),
     move:createEventType<HoverPoint>('egret.pointer.hover',{bubbles:true,cancelable:false}),
-    leave:createEventType<HoverPoint & {readonly reason:HoverLeaveReason}>('egret.pointer.leave',{bubbles:true,cancelable:false}),
+    leave:createEventType<HoverTransition & {readonly reason:HoverLeaveReason}>('egret.pointer.leave',{bubbles:true,cancelable:false}),
     wheel:createEventType<WheelPoint>('egret.pointer.wheel',{bubbles:true,cancelable:true}),
   });
   const entries=new Map<number,Entry>();
   const closers=new Set<()=>void>();
+  // Late subscribers to the same stream. They see what happened; they cannot fail it.
+  const listeners=new Set<(notification:HoverNotification)=>void>();
   let input:HoverInput,state:HoverInputState='active',closed=false,releaseEngine:(()=>void)|undefined;
   let revision=0,sequence=0,observedTime=0,sampling=0,calls=0,failure:EgretError|undefined;
 
@@ -61,7 +63,7 @@ export function createHoverInput(options:HoverInputOptions):HoverInput {
     const callbacks=[...closers];closers.clear();
     let first:unknown,failed=false;const cleanup:unknown[]=[];
     for(const callback of callbacks)try{callback();}catch(cause){if(!failed){first=cause;failed=true;}else cleanup.push(cause);}
-    owner=undefined;scope=undefined;operations=undefined;onHover=undefined;onWheel=undefined;
+    owner=undefined;scope=undefined;operations=undefined;onHover=undefined;onWheel=undefined;listeners.clear();
     if(failed)throw new EgretError('HOVER_INPUT_CLEANUP_FAILED',{cause:first,cleanupErrors:cleanup});
   }
   /** Every public operation: the first failure of a callback is kept, and a closed input lets go of the Engine. */
@@ -84,12 +86,20 @@ export function createHoverInput(options:HoverInputOptions):HoverInput {
     return Object.freeze({...value,sequence:++sequence,viewportRevision:revision});
   }
   /** One observation: the observer first, then the target path while the target can still be reached. */
-  function publish(kind:HoverNotification['kind'],point:HoverPoint,target:DisplayObject,reason?:HoverLeaveReason):void {
+  function publish(kind:HoverNotification['kind'],point:HoverPoint,target:DisplayObject,reason?:HoverLeaveReason,related?:DisplayObject):void {
     deliver(()=>{
-      onHover?.(Object.freeze({kind,point,target,...(reason===undefined?{}:{reason})}));
-      if(operations===undefined||!eligible(target))return;
-      if(kind==='leave')operations.dispatch(target,Object.freeze(new Event(events.leave,Object.freeze({...point,reason:reason!}))),maxNodes);
-      else operations.dispatch(target,Object.freeze(new Event(events[kind],point)),maxNodes);
+      const notification:HoverNotification=Object.freeze({kind,point,target,...(reason===undefined?{}:{reason}),...(related===undefined?{}:{related})});
+      try{
+        onHover?.(notification);
+        if(operations===undefined||!eligible(target))return;
+        const other=related===undefined?{}:{related};
+        if(kind==='leave')operations.dispatch(target,Object.freeze(new Event(events.leave,Object.freeze({...point,reason:reason!,...other}))),maxNodes);
+        else if(kind==='enter')operations.dispatch(target,Object.freeze(new Event(events.enter,related===undefined?point:Object.freeze({...point,...other}))),maxNodes);
+        else operations.dispatch(target,Object.freeze(new Event(events.move,point)),maxNodes);
+      }finally{
+        // Told whatever the target path did, so that a subscriber never keeps a hover the input has dropped.
+        for(const listener of [...listeners])try{listener(notification);}catch{/* isolated */}
+      }
     });
   }
   // A failed callback closes the input. What was hovered is told once, with every later failure kept apart.
@@ -122,11 +132,11 @@ export function createHoverInput(options:HoverInputOptions):HoverInput {
     if(previous===next){if(next!==undefined)guarded(()=>publish('move',point,next));return;}
     // Over nothing while the old target is told: a listener that ends this hover must not leave a target that was never entered.
     entry.target=undefined;
-    if(previous!==undefined)guarded(()=>publish('leave',point,previous,reason));
+    if(previous!==undefined)guarded(()=>publish('leave',point,previous,reason,next));
     // A leave listener may have removed this pointer or closed the input.
     if(next===undefined||state!=='active'||entries.get(id)!==entry||entry.point!==point)return;
     entry.target=next;
-    guarded(()=>publish('enter',point,next));
+    guarded(()=>publish('enter',point,next,undefined,previous));
   }
   function drop(id:number,reason:HoverLeaveReason):boolean {
     const entry=entries.get(id);
@@ -224,6 +234,11 @@ export function createHoverInput(options:HoverInputOptions):HoverInput {
       if(interactive)state='active';
       else{state='suspended';dropAll('suspended');}
     }),
+    observe:(listener:(notification:HoverNotification)=>void):(()=>void)=>{
+      if(typeof listener!=='function')throw new EgretError('HOVER_INPUT_OPTIONS_INVALID');
+      if(closed)return ()=>{};
+      listeners.add(listener);return ()=>{listeners.delete(listener);};
+    },
     onClose:(listener:()=>void):(()=>void)=>{
       if(typeof listener!=='function')throw new EgretError('HOVER_INPUT_OPTIONS_INVALID');
       if(closed){listener();return ()=>{};}

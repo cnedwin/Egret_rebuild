@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/ui/stateControls.ts",
+      "originRole": "First-party hover, toggle and single-selection control state over the existing contact and hover inputs; independently authored with AI assistance; Apache-2.0. No third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-state-controls.test.mjs",
+      "originRole": "First-party behaviour tests of hover, toggle and selection control state on a genuine Engine; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/ui-state-controls.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the state controls; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/ui-state-controls.ts",
+      "originRole": "First-party strict TypeScript consumer of the state controls, with six refused misuses; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-controls/index.html",
+      "originRole": "First-party page of the control state example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/ui-controls/main.mjs",
+      "originRole": "First-party control state example: a switch, three options and a button drawn by the engine, with keys bound; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-controls/verify.mjs",
+      "originRole": "First-party browser check of the control state example, with mouse, touch and keys injected through the browser's protocol; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-controls/README.md",
+      "originRole": "First-party instructions of the control state example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-controls/README.zh-CN.md",
+      "originRole": "First-party Chinese instructions of the control state example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/ui-controls.md",
+      "originRole": "First-party guide to control state: movement, action, hover, toggle and selection; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/ui-controls.md",
+      "originRole": "First-party Chinese guide to control state; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/ui-controls.md",
+      "zh": "knowledge-base/Cns/docs/ui-controls.md"
+    },
+    {
+      "en": "examples/ui-controls/README.md",
+      "zh": "examples/ui-controls/README.zh-CN.md"
+    }
+  ]
+}

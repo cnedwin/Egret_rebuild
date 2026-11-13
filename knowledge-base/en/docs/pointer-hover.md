@@ -25,14 +25,16 @@ A target is hovered under the same rules as a press: it is attached, `touchEnabl
 
 | Event | When | Payload |
 | --- | --- | --- |
-| `events.enter` | The pointer came over the target | The point |
+| `events.enter` | The pointer came over the target | The point, and `related` when it came from another target |
 | `events.move` | It moved and is still over the same target | The point |
-| `events.leave` | The target is no longer hovered | The point and `reason` |
+| `events.leave` | The target is no longer hovered | The point, `reason`, and `related` when it goes to another target |
 | `events.wheel` | The wheel turned over the target | The wheel point. Cancelable. |
 
 All four bubble, so a container hears what happens to its children. Enter, move and leave cannot be cancelled. A point carries `pointerId`, `pointerType` (`'mouse'` or `'pen'`), `globalX`, `globalY` in stage units, `timestamp`, a `sequence` that orders every observation of this input, and the `viewportRevision` it was mapped under. Points are frozen.
 
-`onHover` in the options runs before the target path of each enter, move and leave. On a leave it names the object that lost the hover even when that object has left the stage; the event is dispatched only while the target can still be reached.
+An enter and a leave that belong to one movement name each other: the payload of the leave has `related`, the object the pointer is going to, and the payload of the enter has `related`, the object it left. Without another end there is no `related`.
+
+`onHover` in the options runs before the target path of each enter, move and leave. On a leave it names the object that lost the hover even when that object has left the stage; the event is dispatched only while the target can still be reached. `hover.observe(listener)` adds a listener later. It is told each notification after its target path has run, and a failure of the listener is kept from the input.
 
 A leave says why:
 
@@ -95,5 +97,5 @@ Fifty-five faults were written into the built modules one at a time. The unit te
 
 - No person moved a real mouse, pen or trackpad. Every input was injected.
 - Hardware GPUs, WebGPU, Edge as installed, Safari and Firefox were not run. The verifier launches the installed Edge when its third argument is omitted.
-- Hover skins of the managed UI controls are not connected to this input yet.
+- `createHoverControl` from `@egret/engine/ui` turns this input into the hovered state of a control ([guide](ui-controls.md)). The layout nodes and rows of the managed UI root do not use it yet.
 - Mini-game and native hosts have no adapter. They can drive `createHoverInput`.

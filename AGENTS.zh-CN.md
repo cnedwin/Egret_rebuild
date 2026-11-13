@@ -219,7 +219,7 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2`。该入口导出 `cre
 
 ## 悬停与滚轮
 
-可选入口 `@egret/engine/input/hover` 导出 `createHoverInput` 和十四个擦除类型。可选入口 `@egret/engine/web/hover` 导出 `createBrowserHoverInput` 和两个擦除类型。浏览器模块只导入逻辑入口和错误类型，不导入任何私有内容，其他入口也不包含这两个工厂。遵循[指南](knowledge-base/Cns/docs/pointer-hover.md)。
+可选入口 `@egret/engine/input/hover` 导出 `createHoverInput` 和十五个擦除类型。可选入口 `@egret/engine/web/hover` 导出 `createBrowserHoverInput` 和两个擦除类型。浏览器模块只导入逻辑入口和错误类型，不导入任何私有内容，其他入口也不包含这两个工厂。遵循[指南](knowledge-base/Cns/docs/pointer-hover.md)。
 
 只有 `tests/browser-hover.test.mjs` 可以在 `window`、`document` 和 `reportError` 这几个全局名称下定义测试自有的页面替身，并在每个用例之后恢复它们。替身是测试自己的对象，不拦截任何原生原型。这些用例说明适配器如何处理交给它的事件。`examples/pointer-hover/verify.mjs` 在真实页面中通过 Chromium 的协议驱动鼠标、手写笔、手指和滚轮；真人使用真实鼠标、手写笔或触控板，以及硬件 GPU、WebGPU、Safari 和 Firefox 仍未检查。
 
