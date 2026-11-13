@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { AssetLease, Bitmap, EgretError, Scope, copyImageData2DPixels, createAssetRef, createAssetType, createEngine, createImageData2D, createTexture, isTexture } from '@egret/engine';
 import { deferred, flush, host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 // Public CPU witnesses use genuine managers, references, leases and Scopes.
 // Provider delays are explicit application inputs, never fake manager authority.
@@ -382,7 +383,7 @@ test('RG09 group members refuse Scope re-adoption while genuine Bitmap borrows r
     expectError(() => scope.use(member), 'OWNERSHIP_CONFLICT');
     expectError(() => other.use(member), 'OWNERSHIP_CONFLICT');
     const bitmap = scope.use(new Bitmap(member)); engine.stage.addChild(bitmap);
-    const frame = engine.captureFrame({ width: 2, height: 2 });
+    const frame = captureDrawn(engine, { width: 2, height: 2 });
     assert.equal(frame.commands.length, 1); assert.equal(frame.images.length, 1);
     assert.equal(frame.commands[0].kind, 'image');
     scope.dispose(); assert.equal(group.state, 'disposed'); assert.equal(disposed, 1);
@@ -509,7 +510,7 @@ test('RG12 two provider-backed textures capture a real CPU scene and retire with
     const group = engine.createAssetGroup(scope, [createAssetRef(type, 'red'), createAssetRef(type, 'blue')]);
     const members = await group.ready, red = scope.use(new Bitmap(members[0])), blue = scope.use(new Bitmap(members[1]));
     blue.x = 1; engine.stage.addChild(red); engine.stage.addChild(blue);
-    const frame = engine.captureFrame({ width: 2, height: 1 });
+    const frame = captureDrawn(engine, { width: 2, height: 1 });
     assert.deepEqual(frame.commands.map(command => [command.kind, command.imageIndex, command.matrix.tx]), [['image', 0, 0], ['image', 1, 1]]);
     assert.deepEqual(frame.images.map(image => Array.from(copyImageData2DPixels(image))), [[220, 40, 40, 255], [40, 80, 220, 255]]);
     scope.dispose();

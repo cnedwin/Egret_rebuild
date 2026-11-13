@@ -5,6 +5,7 @@ import * as sdk from '@egret/engine';
 import * as input from '@egret/engine/web/input';
 import {controlledBrowser} from './mouse-input.test.mjs';
 import {withScene, UP, AREA, FRAME} from './bitmap-button-api.test.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 test('LL00 genuine shipped Button/resource/input/capture and full cleanup before layout entry', async () => {
   let button, display, saved, image;
@@ -30,12 +31,12 @@ test('LL00 genuine shipped Button/resource/input/capture and full cleanup before
     f.up();
     assert.equal(button.state, 'up');
     assert.equal(activations, 1);
-    saved = f.engine.captureFrame(FRAME);
+    saved = captureDrawn(f.engine, FRAME);
     image = f.texture.imageData;
     assert.equal(saved.commands.length, 1);
     assert.deepEqual(saved.commands[0].sourceRect, UP);
     assert.equal(Object.isFrozen(saved), true);
-    f.engine.renderFrame(FRAME);
+    f.engine.renderSharedFrame(FRAME);
     assert.equal(f.renders.length, 1);
     assert.deepEqual(f.diagnostics, []);
   });

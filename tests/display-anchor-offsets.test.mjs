@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const OPTIONS=Object.freeze({width:64,height:64});
 const AXES=Object.freeze(['anchorOffsetX','anchorOffsetY']);
@@ -29,19 +30,18 @@ function matrixBytes(matrix) {
     return [...bytes].map(value=>value.toString(16).padStart(2,'0')).join('');
   });
 }
-function bothMatrices(engine,expected) {
-  for(const frame of [engine.captureFrame(OPTIONS),engine.captureTexturedFrame(OPTIONS)]) {
+function capturedMatrix(engine,expected) {
+  for(const frame of [captureDrawn(engine,OPTIONS)]) {
     assert.equal(frame.commands.length,1);near(frame.commands[0].matrix,expected);
   }
 }
 async function fixture(body) {
-  const descriptors=accessors(),submitted=[],textured=[],diagnostics=[];
-  const port=host({texturedFrameProfile:egret.TEXTURED_FRAME_PROFILE_2D,
-    renderFrame(frame){submitted.push(frame);},renderTexturedFrame(frame){textured.push(frame);}});
+  const descriptors=accessors(),submitted=[],diagnostics=[];
+  const port=host({sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D,renderSharedFrame(frame){submitted.push(frame);}});
   const engine=await egret.createEngineForProfile({host:port.adapter,onDiagnostic:value=>diagnostics.push(value)},
-    egret.TEXTURED_FRAME_PROFILE_2D);
+    egret.SHARED_FRAME_PROFILE_2D);
   const scope=engine.createScope(),nodes=[],leases=[],textures=[];
-  const f={engine,scope,port,descriptors,submitted,textured,diagnostics,nodes,leases,textures,
+  const f={engine,scope,port,descriptors,submitted,diagnostics,nodes,leases,textures,
     own(node){nodes.push(node);scope.use(node);return node;},
     loose(node){nodes.push(node);return node;},
     sprite(parent=engine.stage){const node=this.own(new egret.Sprite());parent.addChild(node);return node;}};
@@ -92,12 +92,12 @@ test('AO02 every finite primitive is stored exactly and axes remain independent'
 // comparisons, including signed zero, rather than predicted baseline receipts.
 test('AO03 both zero offsets preserve exact current public matrix bytes',async()=>fixture(f=>{
   const node=f.sprite();node.x=-0;node.y=-0;node.scaleX=-1;rect(node,2,3);
-  const saved=f.engine.captureFrame(OPTIONS), bytes=matrixBytes(saved.commands[0].matrix);
+  const saved=captureDrawn(f.engine,OPTIONS), bytes=matrixBytes(saved.commands[0].matrix);
   assert.equal(Object.is(saved.commands[0].matrix.b,-0),true);
   for(const x of [0,-0]) for(const y of [0,-0]) {
     node.anchorOffsetX=x;node.anchorOffsetY=y;
     f.engine.stage.anchorOffsetX=y;f.engine.stage.anchorOffsetY=x;
-    for(const frame of [f.engine.captureFrame(OPTIONS),f.engine.captureTexturedFrame(OPTIONS)])
+    for(const frame of [captureDrawn(f.engine,OPTIONS)])
       assert.deepEqual(matrixBytes(frame.commands[0].matrix),bytes);
   }
   assert.deepEqual(matrixBytes(saved.commands[0].matrix),bytes);
@@ -151,13 +151,13 @@ test('AO08 unbound negative and outside-content pivot leaves own bounds local',a
   near(node.localToGlobal(-4,2),{x:20,y:30});near(node.localToGlobal(0,0),{x:28,y:28});
   near(node.globalToLocal(20,30),{x:-4,y:2});near(node.getBounds(),{x:0,y:0,width:8,height:6});
 }));
-test('AO09 accepted hand example agrees in bounds coordinates and both captures',async()=>fixture(f=>{
+test('AO09 accepted hand example agrees in bounds coordinates and the capture',async()=>fixture(f=>{
   const {parent,child}=handScene(f);
   near(child.localToGlobal(4,3),{x:25,y:37});near(child.localToGlobal(0,0),{x:17,y:34});
   near(child.globalToLocal(25,37),{x:4,y:3});
   near(child.getBounds(),{x:0,y:0,width:8,height:6});
   near(parent.getBounds(),{x:12,y:27,width:16,height:6});
-  bothMatrices(f.engine,{a:2,b:0,c:0,d:1,tx:17,ty:34});
+  capturedMatrix(f.engine,{a:2,b:0,c:0,d:1,tx:17,ty:34});
 }));
 test('AO10 nested pivots and negative scale include ancestor pivots once',async()=>fixture(f=>{
   const parent=f.sprite();parent.x=10;parent.y=20;parent.scaleX=2;parent.scaleY=3;
@@ -169,7 +169,7 @@ test('AO10 nested pivots and negative scale include ancestor pivots once',async(
   near(child.getBounds(),{x:0,y:0,width:4,height:2});
   near(parent.getBounds(),{x:1,y:2,width:4,height:4});
   near(f.engine.stage.getBounds(),{x:10,y:20,width:8,height:12});
-  bothMatrices(f.engine,{a:-2,b:0,c:0,d:6,tx:18,ty:20});
+  capturedMatrix(f.engine,{a:-2,b:0,c:0,d:6,tx:18,ty:20});
 }));
 test('AO11 rotation around the authored pivot uses bounded floating tolerance',async()=>fixture(f=>{
   const node=f.sprite();node.x=10;node.y=20;node.scaleX=2;node.rotation=90;
@@ -179,16 +179,16 @@ test('AO11 rotation around the authored pivot uses bounded floating tolerance',a
   near(node.localToGlobal(8,6),{x:7,y:28});near(node.globalToLocal(7,28),{x:8,y:6});
   near(f.engine.stage.getBounds(),{x:7,y:12,width:6,height:16});
   assert.equal(f.engine.stage.hitTest(10,20),node);
-  bothMatrices(f.engine,{a:0,b:2,c:-1,d:0,tx:13,ty:12});
+  capturedMatrix(f.engine,{a:0,b:2,c:-1,d:0,tx:13,ty:12});
 }));
-test('AO12 local clip and explicit hit region stay coherent with both capture matrices',async()=>fixture(f=>{
+test('AO12 local clip and explicit hit region stay coherent with the captured matrices',async()=>fixture(f=>{
   const {child}=handScene(f);child.touchEnabled=true;child.hitArea={x:0,y:0,width:8,height:6};
   child.clipRect={x:0,y:0,width:4,height:6};
   assert.equal(f.engine.stage.hitTest(19,35),child);
   assert.equal(f.engine.stage.hitTest(25,35),undefined);
   assert.equal(f.engine.stage.hitTest(26,35),undefined);
   near(child.getBounds(),{x:0,y:0,width:8,height:6});
-  for(const frame of [f.engine.captureFrame(OPTIONS),f.engine.captureTexturedFrame(OPTIONS)]) {
+  for(const frame of [captureDrawn(f.engine,OPTIONS)]) {
     const command=frame.commands[0];assert.equal(frame.commands.length,1);
     near(command.matrix,{a:2,b:0,c:0,d:1,tx:17,ty:34});
     assert.equal(command.clips.length,1);
@@ -204,7 +204,7 @@ test('AO13 Stage pivot participates in world transforms while its bounds stay re
   near(stage.localToGlobal(1,2),{x:10,y:20});near(node.localToGlobal(1,1),{x:14,y:26});
   near(node.getBounds(),{x:0,y:0,width:2,height:2});
   near(stage.getBounds(),{x:2,y:3,width:2,height:2});
-  bothMatrices(f.engine,{a:2,b:0,c:0,d:3,tx:12,ty:23});
+  capturedMatrix(f.engine,{a:2,b:0,c:0,d:3,tx:12,ty:23});
 }));
 
 // Finite storage can overflow later arithmetic. Refusal must publish no frame,
@@ -212,30 +212,27 @@ test('AO13 Stage pivot participates in world transforms while its bounds stay re
 test('AO14 extreme finite pivot preserves existing consumer errors and atomic frame publication',async()=>fixture(f=>{
   const parent=f.sprite(),node=f.sprite(parent);rect(node,1,1);node.scaleX=2;
   node.touchEnabled=true;node.hitArea={x:0,y:0,width:1,height:1};
-  const before=f.engine.captureFrame(OPTIONS);node.anchorOffsetX=Number.MAX_VALUE;
+  const before=captureDrawn(f.engine,OPTIONS);node.anchorOffsetX=Number.MAX_VALUE;
   assert.equal(node.anchorOffsetX,Number.MAX_VALUE);
   near(node.getBounds(),{x:0,y:0,width:1,height:1});
   code(()=>parent.getBounds(),'BOUNDS_ARITHMETIC_RANGE');
   code(()=>node.localToGlobal(0,0),'COORDINATE_ARITHMETIC_RANGE');
   code(()=>node.globalToLocal(0,0),'COORDINATE_ARITHMETIC_RANGE');
   code(()=>f.engine.stage.hitTest(0,0),'HIT_TEST_ARITHMETIC_RANGE');
-  for(const operation of [()=>f.engine.captureFrame(OPTIONS),()=>f.engine.renderFrame(OPTIONS),
-    ()=>f.engine.captureTexturedFrame(OPTIONS),()=>f.engine.renderTexturedFrame(OPTIONS)])
+  for(const operation of [()=>f.engine.captureSharedFrame(OPTIONS),()=>f.engine.renderSharedFrame(OPTIONS)])
     code(operation,'FRAME_TRANSFORM_INVALID');
-  assert.equal(f.submitted.length,0);assert.equal(f.textured.length,0);assert.equal(f.diagnostics.length,0);
-  node.anchorOffsetX=0;assert.equal(f.engine.captureFrame(OPTIONS).frameId,before.frameId+1);
+  assert.equal(f.submitted.length,0);assert.equal(f.diagnostics.length,0);
+  node.anchorOffsetX=0;assert.equal(captureDrawn(f.engine,OPTIONS).frameId,before.frameId+1);
 }));
 test('AO15 hidden and zero-alpha suppression retains each existing consumer boundary',async()=>fixture(f=>{
   const node=f.sprite();rect(node,1,1);node.scaleX=2;node.anchorOffsetX=Number.MAX_VALUE;
   node.touchEnabled=true;node.hitArea={x:0,y:0,width:1,height:1};
   node.visible=false;
-  assert.equal(f.engine.captureFrame(OPTIONS).commands.length,0);
-  assert.equal(f.engine.captureTexturedFrame(OPTIONS).commands.length,0);
+  assert.equal(captureDrawn(f.engine,OPTIONS).commands.length,0);
   assert.equal(f.engine.stage.hitTest(0,0),undefined);
   code(()=>f.engine.stage.getBounds(),'BOUNDS_ARITHMETIC_RANGE');
   node.visible=true;node.alpha=0;
-  assert.equal(f.engine.captureFrame(OPTIONS).commands.length,0);
-  assert.equal(f.engine.captureTexturedFrame(OPTIONS).commands.length,0);
+  assert.equal(captureDrawn(f.engine,OPTIONS).commands.length,0);
   code(()=>f.engine.stage.hitTest(0,0),'HIT_TEST_ARITHMETIC_RANGE');
   code(()=>f.engine.stage.getBounds(),'BOUNDS_ARITHMETIC_RANGE');
   near(node.getBounds(),{x:0,y:0,width:1,height:1});
@@ -260,7 +257,7 @@ test('AO16 genuine scalar accessors and consumers ignore ordinary getter shadows
   near(node.localToGlobal(5,3),{x:10,y:20});near(node.localToGlobal(0,0),{x:0,y:17});
   near(node.globalToLocal(10,20),{x:5,y:3});near(node.getBounds(),{x:0,y:0,width:8,height:6});
   assert.equal(f.engine.stage.hitTest(2,18),node);
-  bothMatrices(f.engine,{a:2,b:0,c:0,d:1,tx:0,ty:17});
+  capturedMatrix(f.engine,{a:2,b:0,c:0,d:1,tx:0,ty:17});
   assert.equal(reads,0);assert.equal(hooks,0);
   armed=false;
 }));
@@ -280,10 +277,10 @@ test('AO17 real Scope Bitmap lease events and saved image retain their boundarie
   bitmap.sourceRect={x:0,y:0,width:1,height:1};bitmap.x=8;bitmap.y=8;
   assert.equal(Object.is(bitmap.anchorOffsetX,0),true);assert.equal(Object.is(bitmap.anchorOffsetY,0),true);
   const eventType=egret.createEventType('anchor-no-event');bitmap.on(eventType,()=>{events++;});
-  const crop=bitmap.sourceRect,saved=f.engine.captureFrame(OPTIONS),savedCommand=saved.commands[0];
+  const crop=bitmap.sourceRect,saved=captureDrawn(f.engine,OPTIONS),savedCommand=saved.commands[0];
   const savedBytes=matrixBytes(savedCommand.matrix),savedImage=saved.images[0];
   bitmap.scaleX=2;bitmap.anchorOffsetX=1;bitmap.anchorOffsetY=1;
-  bothMatrices(f.engine,{a:2,b:0,c:0,d:1,tx:6,ty:7});
+  capturedMatrix(f.engine,{a:2,b:0,c:0,d:1,tx:6,ty:7});
   assert.equal(bitmap.textureLease,lease);assert.equal(bitmap.sourceRect,crop);
   assert.equal(lease.value,texture);assert.equal(loads,1);assert.equal(disposals,0);assert.equal(events,0);
   const other=f.engine.createScope();
@@ -291,7 +288,7 @@ test('AO17 real Scope Bitmap lease events and saved image retain their boundarie
   bitmap.dispatchEvent(new egret.Event(eventType,null));assert.equal(events,1);
   assert.ok(Object.isFrozen(saved));assert.ok(Object.isFrozen(savedCommand));
   assert.equal(saved.images[0],savedImage);assert.deepEqual(matrixBytes(savedCommand.matrix),savedBytes);
-  f.port.adapter.renderFrame(saved);assert.equal(f.submitted.at(-1),saved);
+  f.port.adapter.renderSharedFrame(saved.frame);assert.equal(f.submitted.at(-1),saved.frame);
   f.scope.dispose();
   assert.equal(bitmap.isDisposed,true);assert.equal(f.scope.state,'closed');
   assert.equal(loads,1);assert.equal(disposals,1);assert.equal(texture.isDisposed,true);

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createEngine,DisplayObjectContainer} from '@egret/engine';
+import {createEngine,createEngineForProfile,SHARED_FRAME_PROFILE_2D,DisplayObjectContainer} from '@egret/engine';
 import {createPointerInput} from '@egret/engine/input';
 import {host} from './helpers.mjs';
 const ui=await import('@egret/engine/ui').catch(error=>({missing:error.message}));
@@ -98,13 +98,13 @@ test('M3 UI factory/commit use original Scope lifetime and close before ordinary
  await engine.dispose();
 });
 test('M3 UI Engine frame observation excludes commit and releases on completion',async()=>{
- let root,token,calls=0;const engine=await createEngine({host:host({renderFrame(){calls++;assert.throws(()=>root.commit(token),code('UI_BUSY'));}}).adapter});
- try{root=rootFor(engine,engine.createScope());token=await root.prepare();engine.renderFrame({width:120,height:80});
+ let root,token,calls=0;const engine=await createEngineForProfile({host:host({sharedFrameProfile:SHARED_FRAME_PROFILE_2D,renderSharedFrame(){calls++;assert.throws(()=>root.commit(token),code('UI_BUSY'));}}).adapter},SHARED_FRAME_PROFILE_2D);
+ try{root=rootFor(engine,engine.createScope());token=await root.prepare();engine.renderSharedFrame({width:120,height:80});
  assert.equal(calls,1);assert.equal(root.snapshot().committedRevision,0);assert.equal(root.commit(token).kind,'committed');root.dispose();
  }finally{await engine.dispose();}
 });
 test('M3 UI preparation excludes commit from caller-controlled frame option reads',async()=>owned(async(engine,scope)=>{
  const root=rootFor(engine,scope),token=await root.prepare();let reads=0;
- engine.captureFrame({get width(){reads++;assert.throws(()=>root.commit(token),code('UI_BUSY'));return 120;},height:80});
+ engine.captureSharedFrame({get width(){reads++;assert.throws(()=>root.commit(token),code('UI_BUSY'));return 120;},height:80});
  assert.equal(reads,1);assert.equal(root.commit(token).kind,'committed');root.dispose();
 }));

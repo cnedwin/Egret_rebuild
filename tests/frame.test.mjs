@@ -3,31 +3,32 @@ import {host as makeHost} from './helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 test('image capture faults consume no IDs or renderer diagnostics and options precede traversal',async()=>{
   let calls=0;const diagnostics=[];
-  const engine=await egret.createEngine({host:makeHost({renderFrame(){calls++;}}).adapter,onDiagnostic:d=>diagnostics.push(d)});
+  const engine=await egret.createEngineForProfile({host:makeHost({sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D,renderSharedFrame(){calls++;}}).adapter,onDiagnostic:d=>diagnostics.push(d)},egret.SHARED_FRAME_PROFILE_2D);
   const type=egret.createAssetType('frame-texture',egret.isTexture);
   const texture=egret.createTexture(egret.createImageData2D({width:1,height:1,pixels:new Uint8Array([1,2,3,4])}));
   engine.assets.register(type,{load:async()=>texture,dispose:t=>t.dispose()});
   const lease=await engine.assets.acquire(egret.createAssetRef(type,'frame'));
   const bitmap=new egret.Bitmap(lease);engine.stage.addChild(bitmap);lease.release();
-  assert.throws(()=>engine.renderFrame({width:0,height:1}),{code:'INVALID_FRAME_OPTIONS'});
-  assert.throws(()=>engine.renderFrame({width:1,height:1}),{code:'ASSET_LEASE_RELEASED'});
+  assert.throws(()=>engine.renderSharedFrame({width:0,height:1}),{code:'INVALID_FRAME_OPTIONS'});
+  assert.throws(()=>engine.renderSharedFrame({width:1,height:1}),{code:'ASSET_LEASE_RELEASED'});
   assert.equal(calls,0);assert.deepEqual(diagnostics,[]);
-  bitmap.textureLease=undefined;assert.equal(engine.renderFrame({width:1,height:1}).frameId,1);
+  bitmap.textureLease=undefined;assert.equal(engine.renderSharedFrame({width:1,height:1}).frameId,1);
   assert.equal(calls,1);await engine.dispose();
 });
 
-test('rectangle and clear-only capture omit the images property and preserve ID exhaustion',async()=>{
+test('rectangle and clear-only capture hold no page and preserve ID exhaustion',async()=>{
   const engine=await egret.createEngine({host:makeHost().adapter});
-  assert.equal(Object.hasOwn(engine.captureFrame({width:1,height:1}),'images'),false);
+  assert.deepEqual(engine.captureSharedFrame({width:1,height:1}).pages,[]);
   const rect=new egret.Sprite();rect.graphics.beginFill(1).drawRect(0,0,1,1);engine.stage.addChild(rect);
-  assert.equal(Object.hasOwn(engine.captureFrame({width:1,height:1}),'images'),false);
+  assert.deepEqual(engine.captureSharedFrame({width:1,height:1}).pages,[]);
   engine.nextFrameId=Number.MAX_SAFE_INTEGER;
-  assert.equal(engine.captureFrame({width:1,height:1}).frameId,Number.MAX_SAFE_INTEGER);
-  assert.throws(()=>engine.captureFrame({width:1,height:1}),{code:'FRAME_ID_EXHAUSTED'});
-  await engine.dispose();assert.throws(()=>engine.captureFrame({get width(){throw Error('unread');}}),{code:'ENGINE_CLOSED'});
+  assert.equal(captureDrawn(engine, {width:1,height:1}).frameId,Number.MAX_SAFE_INTEGER);
+  assert.throws(()=>captureDrawn(engine, {width:1,height:1}),{code:'FRAME_ID_EXHAUSTED'});
+  await engine.dispose();assert.throws(()=>captureDrawn(engine, {get width(){throw Error('unread');}}),{code:'ENGINE_CLOSED'});
 });
 
 test('literal world geometry and immutable painter snapshots', async () => {
@@ -37,7 +38,7 @@ test('literal world geometry and immutable painter snapshots', async () => {
   const child = new egret.Sprite(); child.x=3; child.y=4; child.rotation=90;
   parent.addChild(child); engine.stage.addChild(parent);
   child.graphics.beginFill(0xff0000).drawRect(1,2,3,4).endFill();
-  const frame=engine.captureFrame({width:100,height:100});
+  const frame=captureDrawn(engine, {width:100,height:100});
   const c=frame.commands[0];
   for (const [k,v] of Object.entries({a:0,b:1,c:-2,d:0,tx:16,ty:24})) assert.ok(Math.abs(c.matrix[k]-v)<1e-10);
   for (const [x,y,X,Y] of [[1,2,12,25],[4,2,12,28],[4,6,4,28],[1,6,4,25]]) {
@@ -52,18 +53,18 @@ test('literal world geometry and immutable painter snapshots', async () => {
 
 test('frame backend uses original receiver and waits for unwind before close', async () => {
   let engine, closing, stopped=false;
-  const host={...makeHost().adapter, renderFrame(frame){assert.equal(this,host); closing=engine.dispose(); assert.equal(stopped,false); assert.equal(engine.stage.isDisposed,false);}, stop(){stopped=true;}, async close(){}};
-  engine=await egret.createEngine({host});
-  const original=host.renderFrame; original.call=()=>{throw Error('hostile call');}; host.renderFrame=()=>{throw Error('replacement');};
-  assert.equal(engine.renderFrame({width:1,height:1}).frameId,1);
+  const host={...makeHost().adapter, sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D, renderSharedFrame(frame){assert.equal(this,host); closing=engine.dispose(); assert.equal(stopped,false); assert.equal(engine.stage.isDisposed,false);}, stop(){stopped=true;}, async close(){}};
+  engine=await egret.createEngineForProfile({host},egret.SHARED_FRAME_PROFILE_2D);
+  const original=host.renderSharedFrame; original.call=()=>{throw Error('hostile call');}; host.renderSharedFrame=()=>{throw Error('replacement');};
+  assert.equal(engine.renderSharedFrame({width:1,height:1}).frameId,1);
   await closing; assert.equal(stopped,true);
 });
 
 test('options reentry, failure and missing port preserve capture sequence', async () => {
   const engine=await egret.createEngine({host:makeHost().adapter});
-  assert.throws(()=>engine.captureFrame({get width(){assert.throws(()=>engine.captureFrame({width:1,height:1}),{code:'FRAME_REENTRANT'});return NaN;},height:1}),{code:'INVALID_FRAME_OPTIONS'});
-  assert.throws(()=>engine.renderFrame({width:1,height:1}),{code:'RENDERER_REQUIRED'});
-  assert.equal(engine.captureFrame({width:1,height:1}).frameId,1);
+  assert.throws(()=>captureDrawn(engine, {get width(){assert.throws(()=>captureDrawn(engine, {width:1,height:1}),{code:'FRAME_REENTRANT'});return NaN;},height:1}),{code:'INVALID_FRAME_OPTIONS'});
+  assert.throws(()=>engine.renderSharedFrame({width:1,height:1}),{code:'RENDERER_REQUIRED'});
+  assert.equal(captureDrawn(engine, {width:1,height:1}).frameId,1);
   await engine.dispose();
 });
 
@@ -74,43 +75,43 @@ test('fill snapshots, clips, ancestor suppression and atomic validation', async(
  p.graphics.beginFill(1).drawRect(0,0,2,2); c.graphics.beginFill(2,.5).drawRect(0,0,2,2).beginFill(3).drawRect(0,0,3,3).endFill();
  assert.throws(()=>c.graphics.drawRect(0,0,1,1),{code:'GRAPHICS_FILL_REQUIRED'});
  c.graphics.beginFill(4).drawRect(0,0,0,1).beginFill(5,0).drawRect(0,0,1,1);
- let f=engine.captureFrame({width:10,height:10});assert.deepEqual(f.commands.map(x=>[x.color,x.alpha]),[[1,.5],[2,.125],[3,.25]]);assert.equal(f.commands[1].clips[0].rect.width,10);assert.ok(Object.isFrozen(f.commands[1].clips));
+ let f=captureDrawn(engine, {width:10,height:10});assert.deepEqual(f.commands.map(x=>[x.color,x.alpha]),[[1,.5],[2,.125],[3,.25]]);assert.equal(f.commands[1].clips[0].rect.width,10);assert.ok(Object.isFrozen(f.commands[1].clips));
  for(const bad of [NaN,Infinity,'1',new Number(1),null]) {assert.throws(()=>{c.x=bad;},{code:'DISPLAY_VALUE_INVALID'});assert.equal(c.x,0);assert.throws(()=>c.graphics.beginFill(bad),{code:'GRAPHICS_VALUE_INVALID'});}
  for(const bad of [-1,1.1,Infinity]) assert.throws(()=>{c.alpha=bad;},{code:'DISPLAY_VALUE_INVALID'});
  assert.throws(()=>{c.visible=1;},{code:'DISPLAY_VALUE_INVALID'});assert.throws(()=>{c.clipRect={x:0,y:0,width:-1,height:1};},{code:'DISPLAY_VALUE_INVALID'});
- p.visible=false;assert.equal(engine.captureFrame({width:1,height:1}).commands.length,0);p.visible=true;p.alpha=0;assert.equal(engine.captureFrame({width:1,height:1}).commands.length,0);
+ p.visible=false;assert.equal(captureDrawn(engine, {width:1,height:1}).commands.length,0);p.visible=true;p.alpha=0;assert.equal(captureDrawn(engine, {width:1,height:1}).commands.length,0);
  p.alpha=.5; p.removeChild(c);await engine.dispose();assert.throws(()=>{c.x=1;},{code:'ENGINE_CLOSED'});assert.throws(()=>c.graphics.clear(),{code:'ENGINE_CLOSED'});c.dispose();
 });
 
 test('hostile visual getters are ignored and derived overflow rejects before backend',async()=>{
- let calls=0;const engine=await egret.createEngine({host:makeHost({renderFrame(){calls++;}}).adapter});const s=new egret.Sprite();s.graphics.beginFill(1).drawRect(0,0,2,2);engine.stage.addChild(s);
+ let calls=0;const engine=await egret.createEngineForProfile({host:makeHost({sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D,renderSharedFrame(){calls++;}}).adapter},egret.SHARED_FRAME_PROFILE_2D);const s=new egret.Sprite();s.graphics.beginFill(1).drawRect(0,0,2,2);engine.stage.addChild(s);
  for(const key of ['x','visible','alpha','clipRect','numChildren']) Object.defineProperty(s,key,{get(){throw Error('public getter');}});
- assert.equal(engine.renderFrame({width:1,height:1}).commands.length,1);
+ assert.equal(engine.renderSharedFrame({width:1,height:1}).commands.length,1);
  const p=new egret.Sprite(),c=new egret.Sprite();p.scaleX=Number.MAX_VALUE;c.scaleX=2;p.addChild(c);engine.stage.addChild(p);
- assert.throws(()=>engine.renderFrame({width:1,height:1}),{code:'FRAME_TRANSFORM_INVALID'});assert.equal(calls,1);engine.stage.removeChild(p);assert.equal(engine.captureFrame({width:1,height:1}).frameId,2);await engine.dispose();
+ assert.throws(()=>engine.renderSharedFrame({width:1,height:1}),{code:'FRAME_TRANSFORM_INVALID'});assert.equal(calls,1);engine.stage.removeChild(p);assert.equal(captureDrawn(engine, {width:1,height:1}).frameId,2);await engine.dispose();
 });
 
 test('option disposal waits until reads unwind and null clear values reject',async()=>{
- const engine=await egret.createEngine({host:makeHost().adapter});for(const key of ['clearAlpha','clearColor'])assert.throws(()=>engine.captureFrame({width:1,height:1,[key]:null}),{code:'INVALID_FRAME_OPTIONS'});
- let closing;assert.throws(()=>engine.captureFrame({get width(){closing=engine.dispose();assert.equal(engine.stage.isDisposed,false);return 1;},height:1}),{code:'ENGINE_CLOSED'});await closing;
+ const engine=await egret.createEngine({host:makeHost().adapter});for(const key of ['clearAlpha','clearColor'])assert.throws(()=>captureDrawn(engine, {width:1,height:1,[key]:null}),{code:'INVALID_FRAME_OPTIONS'});
+ let closing;assert.throws(()=>captureDrawn(engine, {get width(){closing=engine.dispose();assert.equal(engine.stage.isDisposed,false);return 1;},height:1}),{code:'ENGINE_CLOSED'});await closing;
 });
 
 test('renderer getter rejection occurs before surface reservation',async()=>{
- const surface={};const bad=makeHost({surface}).adapter;Object.defineProperty(bad,'renderFrame',{get(){throw Error('getter');}});await assert.rejects(egret.createEngine({host:bad}),{code:'INVALID_RENDERER'});const engine=await egret.createEngine({host:makeHost({surface}).adapter});await engine.dispose();
+ const surface={};const bad=makeHost({surface,sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D}).adapter;Object.defineProperty(bad,'renderSharedFrame',{get(){throw Error('getter');}});await assert.rejects(egret.createEngineForProfile({host:bad},egret.SHARED_FRAME_PROFILE_2D),{code:'INVALID_RENDERER'});const engine=await egret.createEngine({host:makeHost({surface}).adapter});await engine.dispose();
 });
 
 
 test('backend failures isolate diagnostics and observe native async rejection',async()=>{
  const cause=Error('backend');let mode=0,diagnostics=[];
- const engine=await egret.createEngine({host:makeHost({renderFrame(){if(mode===0)throw cause;if(mode===1)return 42;return Promise.reject(cause);}}).adapter,onDiagnostic(d){diagnostics.push(d);throw Error('observer');}});
- for(mode=0;mode<3;mode++)assert.throws(()=>engine.renderFrame({width:1,height:1}),{code:'FRAME_RENDER_FAILED'});
- await new Promise(resolve=>setImmediate(resolve));assert.equal(diagnostics[0].cause,cause);assert.equal(diagnostics[0].phase,'graphics');assert.equal(engine.captureFrame({width:1,height:1}).frameId,4);await engine.dispose();
+ const engine=await egret.createEngineForProfile({host:makeHost({sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D,renderSharedFrame(){if(mode===0)throw cause;if(mode===1)return 42;return Promise.reject(cause);}}).adapter,onDiagnostic(d){diagnostics.push(d);throw Error('observer');}},egret.SHARED_FRAME_PROFILE_2D);
+ for(mode=0;mode<3;mode++)assert.throws(()=>engine.renderSharedFrame({width:1,height:1}),{code:'FRAME_RENDER_FAILED'});
+ await new Promise(resolve=>setImmediate(resolve));assert.equal(diagnostics[0].cause,cause);assert.equal(diagnostics[0].phase,'graphics');assert.equal(captureDrawn(engine, {width:1,height:1}).frameId,4);await engine.dispose();
 });
 
 test('deep traversal does not depend on public recursion',async()=>{
  const engine=await egret.createEngine({host:makeHost().adapter});const nodes=[];let current=engine.stage;
  for(let i=0;i<1200;i++){const next=new egret.Sprite();current.addChild(next);nodes.push(next);current=next;}
- current.graphics.beginFill(7).drawRect(1,2,3,4);assert.equal(engine.captureFrame({width:1,height:1}).commands[0].color,7);
+ current.graphics.beginFill(7).drawRect(1,2,3,4);assert.equal(captureDrawn(engine, {width:1,height:1}).commands[0].color,7);
  for(let i=nodes.length-1;i>=0;i--){nodes[i].dispose();}await engine.dispose();
 });
 
@@ -119,7 +120,7 @@ test('each sprite keeps one stable graphics facade',()=>{
 });
 
 test('unclipped commands also freeze their empty clip chain',async()=>{
- const engine=await egret.createEngine({host:makeHost().adapter});const s=new egret.Sprite();engine.stage.addChild(s);s.graphics.beginFill(1).drawRect(0,0,1,1);const frame=engine.captureFrame({width:1,height:1});assert.ok(Object.isFrozen(frame.commands[0].clips));await engine.dispose();
+ const engine=await egret.createEngine({host:makeHost().adapter});const s=new egret.Sprite();engine.stage.addChild(s);s.graphics.beginFill(1).drawRect(0,0,1,1);const frame=captureDrawn(engine, {width:1,height:1});assert.ok(Object.isFrozen(frame.commands[0].clips));await engine.dispose();
 });
 
 test('clip getter disposal prevents committing a copied rectangle',async()=>{
@@ -128,13 +129,13 @@ test('clip getter disposal prevents committing a copied rectangle',async()=>{
 });
 
 test('host identity is captured once for rendering and shutdown',async()=>{
- const first=makeHost({renderFrame(){assert.equal(this,first.adapter);}}),second=makeHost();let reads=0;
- const engine=await egret.createEngine({get host(){return reads++===0?first.adapter:second.adapter;}});engine.renderFrame({width:1,height:1});await engine.dispose();assert.equal(reads,1);assert.deepEqual(first.trace,['start','stop','close']);assert.deepEqual(second.trace,[]);
+ const first=makeHost({sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D,renderSharedFrame(){assert.equal(this,first.adapter);}}),second=makeHost();let reads=0;
+ const engine=await egret.createEngineForProfile({get host(){return reads++===0?first.adapter:second.adapter;}},egret.SHARED_FRAME_PROFILE_2D);engine.renderSharedFrame({width:1,height:1});await engine.dispose();assert.equal(reads,1);assert.deepEqual(first.trace,['start','stop','close']);assert.deepEqual(second.trace,[]);
 });
 
 test('all public structural mutations reject detached bound nodes while closing',async()=>{
  let engine;const p=new egret.Sprite(),a=new egret.Sprite(),b=new egret.Sprite();p.addChild(a);p.addChild(b);
- engine=await egret.createEngine({host:makeHost({renderFrame(){const closing=engine.dispose();assert.throws(()=>p.removeChild(a),{code:'ENGINE_CLOSED'});assert.throws(()=>p.setChildIndex(b,0),{code:'ENGINE_CLOSED'});return undefined;}}).adapter});engine.stage.addChild(p);engine.stage.removeChild(p);engine.renderFrame({width:1,height:1});await engine.dispose();p.dispose();
+ engine=await egret.createEngineForProfile({host:makeHost({sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D,renderSharedFrame(){const closing=engine.dispose();assert.throws(()=>p.removeChild(a),{code:'ENGINE_CLOSED'});assert.throws(()=>p.setChildIndex(b,0),{code:'ENGINE_CLOSED'});return undefined;}}).adapter},egret.SHARED_FRAME_PROFILE_2D);engine.stage.addChild(p);engine.stage.removeChild(p);engine.renderSharedFrame({width:1,height:1});await engine.dispose();p.dispose();
 });
 
 
@@ -143,7 +144,7 @@ test('foreign native and thenable backend rejections are observed without async 
   // allowing node:test's own rejection tracking to obscure the frame outcome.
   const source = `
     import vm from 'node:vm';
-    import { createEngine } from '@egret/engine';
+    import { createEngine, createEngineForProfile, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
     import { host } from './tests/helpers.mjs';
     const unhandled = [];
     process.on('unhandledRejection', cause => unhandled.push(cause.message));
@@ -154,7 +155,8 @@ test('foreign native and thenable backend rejections are observed without async 
     let thenableObserved = false;
     let calls = 0;
     const adapter = host({
-      renderFrame() {
+      sharedFrameProfile: SHARED_FRAME_PROFILE_2D,
+      renderSharedFrame() {
         calls++;
         if (calls === 1) {
           closing = engine.dispose();
@@ -165,16 +167,16 @@ test('foreign native and thenable backend rejections are observed without async 
       },
       stop() { stopped = true; }
     }).adapter;
-    const engine = await createEngine({host: adapter, onDiagnostic(d) { diagnostics.push(d); }});
+    const engine = await createEngineForProfile({host: adapter, onDiagnostic(d) { diagnostics.push(d); }},SHARED_FRAME_PROFILE_2D);
     let code;
-    try { engine.renderFrame({width:1,height:1}); } catch(error) { code = error.code; }
+    try { engine.renderSharedFrame({width:1,height:1}); } catch(error) { code = error.code; }
     await closing;
-    const other = await createEngine({host: host({renderFrame() {
+    const other = await createEngineForProfile({host: host({sharedFrameProfile: SHARED_FRAME_PROFILE_2D, renderSharedFrame() {
       return {then(resolve,reject) {thenableObserved=true;reject(Error('thenable rejection'));}};
-    }}).adapter});
+    }}).adapter},SHARED_FRAME_PROFILE_2D);
     let thenableCode;
-    try { other.renderFrame({width:1,height:1}); } catch(error) {thenableCode=error.code;}
-    const nextId = other.captureFrame({width:1,height:1}).frameId;
+    try { other.renderSharedFrame({width:1,height:1}); } catch(error) {thenableCode=error.code;}
+    const nextId = other.captureSharedFrame({width:1,height:1}).frameId;
     await new Promise(resolve => setImmediate(resolve));
     await other.dispose();
     console.log(JSON.stringify({code,thenableCode,nextId,stopped,beforeCleanup,thenableObserved,diagnostic:diagnostics[0].code,phase:diagnostics[0].phase,unhandled}));
@@ -186,5 +188,3 @@ test('foreign native and thenable backend rejections are observed without async 
     stopped:true, beforeCleanup:{stopped:false,disposed:false}, thenableObserved:true, diagnostic:'FRAME_RENDER_FAILED', phase:'graphics', unhandled:[]
   });
 });
-
-

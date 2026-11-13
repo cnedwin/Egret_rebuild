@@ -7,6 +7,7 @@ import {
   createImageData2D, createTexture, copyImageData2DPixels, isTexture,
 } from '@egret/engine';
 import { deferred, flush, host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const ART = Object.freeze({
   'old-left': { width: 2, height: 2, color: [239, 17, 31, 255], view: { x: 0, y: 0, width: 2, height: 2 } },
@@ -62,7 +63,7 @@ function published(targets, members, ids = ['next-left', 'next-right']) {
   }
 }
 function literalFrame(engine, ids) {
-  const frame = engine.captureFrame({ width: 32, height: 16 });
+  const frame = captureDrawn(engine, { width: 32, height: 16 });
   assert.equal(frame.commands.length, ids.length);
   assert.ok(frame.commands.every(command => command.kind === 'image'));
   assert.deepEqual(frame.images.map(image => [image.width, image.height]),
@@ -243,7 +244,7 @@ test('PGB04 prepare cannot replace a successful plan and successful commit is co
     errorCode(attempt(() => ticket.prepare(poison)), 'BITMAP_BINDING_STATE_INVALID');
     assert.equal(reads, 0); unchanged(f.targets, before);
     let frameCommit;
-    f.engine.captureFrame({
+    captureDrawn(f.engine, {
       get width() { frameCommit = attempt(() => ticket.commit()); return 32; }, height: 16,
     });
     successful(frameCommit); published(f.targets, next.members); const committed = f.targets.map(fields);
@@ -431,7 +432,7 @@ test('PGB15 Engine closing clears every publication before group callbacks and t
         close: attempt(() => f.engine.dispose()) });
     }
     f.hooks.abort = () => observe('provider abort'); f.hooks.dispose = () => observe('provider dispose');
-    const frame = attempt(() => f.engine.captureFrame({
+    const frame = attempt(() => captureDrawn(f.engine, {
       get width() { closing = f.engine.dispose(); widthObservation = attempt(() => [...f.targets, ...other].map(fields)); return 32; },
       height: 16,
     }));

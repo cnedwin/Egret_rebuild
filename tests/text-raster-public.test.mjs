@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 import { AssetManager, AssetLease, Bitmap, DisplayObject, EgretError,
   createAssetType, createAssetRef, copyImageData2DPixels, isTexture } from '@egret/engine';
 import { REQUEST, ROW, EMPTY_ROW, OPTION_KEYS, PROVIDER_KEYS, REQUEST_KEYS,
@@ -310,7 +311,7 @@ test('T14: literal signed ink geometry has exact density 1 and 1.5 raster placem
     assert.equal(f.state.rasterContexts.at(-1).reservedImageBytes, bytes);
     assert.equal(f.state.rasterContexts.at(-1).reservedScratchBytes, scratch);
     const bitmap = new Bitmap(result.lease); f.engine.stage.addChild(bitmap);
-    const frame = f.engine.captureFrame({ width: 32, height: 32 });
+    const frame = captureDrawn(f.engine, { width: 32, height: 32 });
     assert.equal(frame.commands.length, 1); assert.equal(frame.commands[0].kind, 'image');
     assert.equal(frame.images[frame.commands[0].imageIndex], result.lease.value.imageData);
     f.engine.stage.removeChild(bitmap); bitmap.dispose(); release(result);
@@ -668,7 +669,7 @@ test('T32: cache close is terminal but preserves genuine caller entitlement and 
   const result = await f.cache.acquire(request()), texture = assertImage(result), savedImage = texture.imageData;
   const savedMetrics = result.metrics, pixels = copyImageData2DPixels(savedImage);
   const bitmap = new Bitmap(result.lease); f.engine.stage.addChild(bitmap);
-  const frame = f.engine.captureFrame({ width: 32, height: 32 }); await f.cache.whenIdle();
+  const frame = captureDrawn(f.engine, { width: 32, height: 32 }); await f.cache.whenIdle();
   assert.equal(f.cache.getStatus().residentEntries, 1); f.cache.dispose(); f.cache.dispose();
   assert.equal(f.cache.getStatus().closed, true); assert.equal(f.cache.getStatus().residentEntries, 0);
   assert.equal(result.lease.value, texture); assert.equal(result.metrics, savedMetrics);

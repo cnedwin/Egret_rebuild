@@ -4,6 +4,7 @@ import * as egret from '@egret/engine';
 import * as runtime from '../packages/runtime/dist/index.js';
 import {visualOf} from '../packages/runtime/dist/displayVisualState.js';
 import {host} from './helpers.mjs';
+import {captureDrawn,drawnFrame} from './helpers/drawn-frame.mjs';
 
 const options={width:10,height:10};
 const literal=[255,0,1,0,7,128,254,255];
@@ -29,7 +30,7 @@ const makeEngine=()=>egret.createEngine({host:host().adapter});
 test('mixed painter capture uses literal order and first-emission identity indices',async()=>{
   const e=await makeEngine();const rect=new egret.Sprite();rect.graphics.beginFill(9).drawRect(0,0,1,1);e.stage.addChild(rect);
   const a=image(),b=image();await add(e,a);await add(e,b);await add(e,a,{x:1,y:0,width:1,height:1});
-  const frame=e.captureFrame(options);
+  const frame=captureDrawn(e, options);
   assert.deepEqual(frame.commands.map(c=>c.kind),['rect','image','image','image']);
   assert.deepEqual(frame.commands.slice(1).map(c=>c.imageIndex),[0,1,0]);
   assert.deepEqual(frame.images,[a,b]);
@@ -45,14 +46,14 @@ test('saved pixels and metadata survive mutation release invalidation disposal a
   const rectangle=new egret.Sprite();rectangle.graphics.beginFill(3).drawRect(0,0,1,1);e.stage.addChild(rectangle);
   const item=await add(e,owned,region);region.width=1;input.fill(99);
   e.stage.addChild(new egret.Bitmap(item.lease));
-  const saved=e.captureFrame(options);assert.ok(Array.isArray(saved.images),'captured image table required');assert.deepEqual(pixels(saved.images[0]),literal);
-  item.lease.release();code(()=>e.captureFrame(options),'ASSET_LEASE_RELEASED');
+  const saved=captureDrawn(e, options);assert.ok(Array.isArray(saved.images),'captured image table required');assert.deepEqual(pixels(saved.images[0]),literal);
+  item.lease.release();code(()=>captureDrawn(e, options),'ASSET_LEASE_RELEASED');
   e.assets.invalidate(item.ref);item.texture.dispose();await e.dispose();
   const records=[];
   // Replay is submission of the immutable saved value, with no live resolution.
-  const adapter=host({renderFrame(frame){records.push({kinds:frame.commands.map(c=>c.kind),bytes:frame.images.map(pixels),regions:frame.commands.map(c=>c.sourceRect)});}}).adapter;
-  const second=await egret.createEngine({host:adapter});
-  adapter.renderFrame(saved);
+  const adapter=host({sharedFrameProfile:egret.SHARED_FRAME_PROFILE_2D,renderSharedFrame(frame){const drawn=drawnFrame(frame);records.push({kinds:drawn.commands.map(c=>c.kind),bytes:drawn.images.map(pixels),regions:drawn.commands.map(c=>c.sourceRect)});}}).adapter;
+  const second=await egret.createEngineForProfile({host:adapter},egret.SHARED_FRAME_PROFILE_2D);
+  adapter.renderSharedFrame(saved.frame);
   assert.deepEqual(records,[{kinds:['rect','image','image'],bytes:[literal],regions:[undefined,{x:0,y:0,width:2,height:1},{x:0,y:0,width:2,height:1}]}]);
   await second.dispose();assert.deepEqual(pixels(saved.images[0]),literal);
 });
@@ -60,18 +61,18 @@ test('saved pixels and metadata survive mutation release invalidation disposal a
 test('release revokes only the exact borrow while a shared active lease still captures',async()=>{
   const e=await makeEngine(),texture=egret.createTexture(image());const {ref,lease:a}=await borrow(e,texture);const b=await e.assets.acquire(ref);
   const first=new egret.Bitmap(a),second=new egret.Bitmap(b);e.stage.addChild(first);e.stage.addChild(second);
-  const saved=e.captureFrame(options);a.release();code(()=>e.captureFrame(options),'ASSET_LEASE_RELEASED');
-  first.visible=false;assert.equal(e.captureFrame(options).commands.length,1);assert.deepEqual(pixels(saved.images[0]),literal);
-  b.release();code(()=>e.captureFrame(options),'ASSET_LEASE_RELEASED');await e.dispose();
+  const saved=captureDrawn(e, options);a.release();code(()=>captureDrawn(e, options),'ASSET_LEASE_RELEASED');
+  first.visible=false;assert.equal(captureDrawn(e, options).commands.length,1);assert.deepEqual(pixels(saved.images[0]),literal);
+  b.release();code(()=>captureDrawn(e, options),'ASSET_LEASE_RELEASED');await e.dispose();
 });
 
 test('suppressed branches and cleared slots never consult released entitlement',async()=>{
   for(const suppress of [b=>{b.visible=false;},b=>{b.alpha=0;},b=>{b.clipRect={x:0,y:0,width:0,height:1};},b=>{b.textureLease=undefined;}]){
     const e=await makeEngine();const {bitmap,lease}=await add(e);lease.release();suppress(bitmap);
-    const f=e.captureFrame(options);assert.deepEqual(f.commands,[]);assert.equal(Object.hasOwn(f,'images'),false);await e.dispose();
+    const f=captureDrawn(e, options);assert.deepEqual(f.commands,[]);assert.deepEqual(f.images,[]);await e.dispose();
   }
   const e=await makeEngine(),parent=new egret.Sprite();parent.clipRect={x:0,y:0,width:1,height:0};e.stage.addChild(parent);
-  const {bitmap,lease}=await add(e);parent.addChild(bitmap);lease.release();assert.equal(e.captureFrame(options).commands.length,0);await e.dispose();
+  const {bitmap,lease}=await add(e);parent.addChild(bitmap);lease.release();assert.equal(captureDrawn(e, options).commands.length,0);await e.dispose();
 });
 
 test('cached image geometry precedes inherited zero-alpha suppression and entitlement',async()=>{
@@ -84,7 +85,7 @@ test('cached image geometry precedes inherited zero-alpha suppression and entitl
 
 test('singular image transforms remain captured for subsequent preparation',async()=>{
   const e=await makeEngine();const {bitmap}=await add(e);bitmap.scaleX=0;
-  const f=e.captureFrame(options);assert.equal(f.commands.length,1);assert.equal(f.commands[0].kind,'image');assert.equal(f.commands[0].matrix.a,0);assert.equal(f.images.length,1);await e.dispose();
+  const f=captureDrawn(e, options);assert.equal(f.commands.length,1);assert.equal(f.commands[0].kind,'image');assert.equal(f.commands[0].matrix.a,0);assert.equal(f.images.length,1);await e.dispose();
 });
 
 test('new Stage authentication rejects proxies and lookalikes without public reads',async()=>{
@@ -118,15 +119,15 @@ test('capture ignores public Bitmap Texture and lease getters in favor of privat
   for(const key of ['imageData','sourceRect','width','height','isDisposed'])Object.defineProperty(texture,key,{get(){throw Error('public Texture getter');}});
   const prior=Object.getOwnPropertyDescriptor(egret.AssetLease.prototype,'value');
   Object.defineProperty(egret.AssetLease.prototype,'value',{get(){throw Error('public lease getter');},configurable:true});
-  try{const f=e.captureFrame(options);assert.deepEqual(pixels(f.images[0]),literal);assert.deepEqual(f.commands[0].rect,{x:0,y:0,width:2,height:1});}
+  try{const f=captureDrawn(e, options);assert.deepEqual(pixels(f.images[0]),literal);assert.deepEqual(f.commands[0].rect,{x:0,y:0,width:2,height:1});}
   finally{Object.defineProperty(egret.AssetLease.prototype,'value',prior);await e.dispose();}
 });
 
 test('earlier painter geometry errors win over later lease errors and budgets',async()=>{
   const e=await makeEngine(),rect=new egret.Sprite();rect.scaleX=Number.MAX_VALUE;rect.graphics.beginFill(1).drawRect(0,0,2,1);e.stage.addChild(rect);
-  const {lease,bitmap}=await add(e);lease.release();code(()=>e.captureFrame(options),'FRAME_TRANSFORM_INVALID');
-  rect.visible=false;code(()=>e.captureFrame(options),'ASSET_LEASE_RELEASED');bitmap.visible=false;
-  for(let i=0;i<65;i++)await add(e,image(1,1));code(()=>e.captureFrame(options),'FRAME_IMAGE_BUDGET');await e.dispose();
+  const {lease,bitmap}=await add(e);lease.release();code(()=>captureDrawn(e, options),'FRAME_TRANSFORM_INVALID');
+  rect.visible=false;code(()=>captureDrawn(e, options),'ASSET_LEASE_RELEASED');bitmap.visible=false;
+  for(let i=0;i<65;i++)await add(e,image(1,1));code(()=>captureDrawn(e, options),'FRAME_IMAGE_BUDGET');await e.dispose();
 });
 
 test('legacy malformed Stage behavior stays exact and image validity precedes unsupported',async()=>{
@@ -140,7 +141,7 @@ test('single shared traversal reads each actual private visible record once',asy
   const e=await makeEngine(),p=new egret.Sprite(),rect=new egret.Sprite();rect.graphics.beginFill(1).drawRect(0,0,1,1);e.stage.addChild(p);p.addChild(rect);
   const {bitmap}=await add(e);p.addChild(bitmap);const counts=[0,0,0,0];
   [e.stage,p,rect,bitmap].forEach((node,i)=>Object.defineProperty(visualOf(node),'visible',{get(){counts[i]++;return true;}}));
-  assert.deepEqual(e.captureFrame(options).commands.map(c=>c.kind),['rect','image']);assert.deepEqual(counts,[1,1,1,1]);await e.dispose();
+  assert.deepEqual(captureDrawn(e, options).commands.map(c=>c.kind),['rect','image']);assert.deepEqual(counts,[1,1,1,1]);await e.dispose();
 });
 
 test('distinct image count admits 64 and rejects 65 before legacy budgeting',async()=>{

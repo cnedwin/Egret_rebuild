@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 // Genuine existing reorder/detach/resource operations and cleanup precede RED.
 test('CGI00 old ordered-child baseline precedes the named missing index query', async () => {
@@ -24,7 +25,7 @@ test('CGI00 old ordered-child baseline precedes the named missing index query', 
     assert.equal(root.removeChild(bitmap), bitmap); assert.equal(bitmap.parent, undefined); assert.equal(bitmap.isDisposed, false);
     bitmap.dispatchEvent(new egret.Event(eventType, null)); assert.equal(calls, 1); assert.equal(lease.value, texture);
     root.addChild(bitmap); assert.equal(root.getChildAt(0), leaf); assert.equal(root.getChildAt(1), bitmap);
-    const saved = engine.captureFrame({ width: 2, height: 2 });
+    const saved = captureDrawn(engine, { width: 2, height: 2 });
     assert.deepEqual(saved.commands.map(command => command.kind), ['image']); assert.equal(saved.images.length, 1);
   } catch (cause) { primaryPresent = true; primary = cause; }
   finally {

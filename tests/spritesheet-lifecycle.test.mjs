@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { host } from './helpers.mjs';
+import { captureDrawn, drawnFrame } from './helpers/drawn-frame.mjs';
 
 // The original palette and sample expectations are independent of SS1 and its clock.
 const PIXELS = Object.freeze([
@@ -34,9 +35,9 @@ function refusal(action, code) {
 
 async function scene() {
   const submissions = [], diagnostics = [];
-  const port = host({ renderFrame(frame) { submissions.push(frame); return undefined; } });
-  const engine = await egret.createEngine({ host: port.adapter, clock: { maxDeltaSeconds: 0.5 },
-    onDiagnostic(value) { diagnostics.push(value); } });
+  const port = host({ sharedFrameProfile: egret.SHARED_FRAME_PROFILE_2D, renderSharedFrame(frame) { submissions.push(frame); return undefined; } });
+  const engine = await egret.createEngineForProfile({ host: port.adapter, clock: { maxDeltaSeconds: 0.5 },
+    onDiagnostic(value) { diagnostics.push(value); } }, egret.SHARED_FRAME_PROFILE_2D);
   try {
     const resources = engine.createScope(), scope = engine.createScope();
     const image = egret.createImageData2D({ width: 6, height: 2, pixels: new Uint8Array(PIXELS) });
@@ -138,7 +139,7 @@ test('SS06 invalidate preserves the old lease and never retargets its sheet to a
     const newBitmap = f.scope.use(newSheet.createBitmap('red'));
     oldBitmap.x = 1; newBitmap.x = 4;
     f.engine.stage.addChild(oldBitmap); f.engine.stage.addChild(newBitmap);
-    const captured = f.engine.captureFrame(FRAME);
+    const captured = captureDrawn(f.engine, FRAME);
     assert.equal(oldBitmap.textureLease, f.lease); assert.equal(newBitmap.textureLease, newLease);
     assert.equal(captured.images.length, 2);
     assert.equal(captured.images[0], f.image); assert.equal(captured.images[1], f.nextImage);
@@ -164,7 +165,7 @@ test('SS06 independently acquired same-generation leases retain their separate e
     assert.equal(firstSheet.isDisposed, false);
     refusal(() => firstSheet.createBitmap('red'), 'ASSET_LEASE_RELEASED');
     const bitmap = f.scope.use(secondSheet.createBitmap('blue')); f.engine.stage.addChild(bitmap);
-    assert.equal(bitmap.textureLease, second); assert.equal(f.engine.captureFrame(FRAME).images[0], f.image);
+    assert.equal(bitmap.textureLease, second); assert.equal(captureDrawn(f.engine, FRAME).images[0], f.image);
     assert.deepEqual(f.counts(), { loads: 1, disposals: 0 });
   } finally { await close(f); }
 });
@@ -179,10 +180,10 @@ test('SS07 disposing the sheet preserves both caller Bitmaps; exact lease releas
     assert.equal(sheet.isDisposed, true); metadata(sheet, names, region);
     assert.equal(red.isDisposed, false); assert.equal(blue.isDisposed, false);
     assert.equal(red.textureLease, f.lease); assert.equal(blue.textureLease, f.lease);
-    assert.equal(f.engine.captureFrame(FRAME).images[0], f.image);
+    assert.equal(captureDrawn(f.engine, FRAME).images[0], f.image);
     refusal(() => sheet.createBitmap(''), 'SPRITE_SHEET_DISPOSED');
     f.lease.release();
-    refusal(() => f.engine.captureFrame(FRAME), 'ASSET_LEASE_RELEASED');
+    refusal(() => captureDrawn(f.engine, FRAME), 'ASSET_LEASE_RELEASED');
     assert.equal(red.isDisposed, false); assert.equal(blue.isDisposed, false);
     assert.deepEqual(f.counts(), { loads: 1, disposals: 1 });
   } finally { await close(f); }
@@ -214,9 +215,9 @@ test('SS08 saved owned icon capture survives all live resource and Engine retire
     const actor = f.scope.use(sheet.createBitmap('red')), icon = f.scope.use(sheet.createBitmap('__proto__'));
     actor.x = 1; actor.y = 1; icon.x = 4; icon.y = 1;
     f.engine.stage.addChild(actor); f.engine.stage.addChild(icon);
-    saved = f.engine.renderFrame(FRAME);
-    assert.equal(f.submissions[0], saved);
-    assert.ok(Object.isFrozen(saved) && Object.isFrozen(saved.commands) && Object.isFrozen(saved.images));
+    const rendered = f.engine.renderSharedFrame(FRAME); saved = drawnFrame(rendered);
+    assert.equal(f.submissions[0], rendered);
+    assert.ok(Object.isFrozen(rendered) && Object.isFrozen(rendered.commands) && Object.isFrozen(rendered.pages));
     actor.sourceRect = BLUE; actor.x = 6; icon.dispose(); sheet.dispose();
     await f.engine.dispose();
     assert.equal(actor.isDisposed, true); assert.equal(f.textures[0].isDisposed, true);
@@ -246,7 +247,7 @@ test('SS09 named frames compose once and loop playback using six literal absolut
     const captures = [];
     function capture(region) {
       const before = [f.engine.clock.elapsedSeconds, f.engine.clock.tickId];
-      const value = f.engine.captureFrame(FRAME); captures.push(value);
+      const value = captureDrawn(f.engine, FRAME); captures.push(value);
       assert.deepEqual(value.commands.map(command => command.sourceRect), [region, BLUE]);
       assert.equal(value.images[0], f.image); assert.equal(actor.textureLease, f.lease); assert.equal(icon.textureLease, f.lease);
       assert.deepEqual([actor.naturalWidth, actor.naturalHeight], [region.width, region.height]);

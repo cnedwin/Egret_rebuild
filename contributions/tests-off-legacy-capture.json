@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/helpers/drawn-frame.mjs",
+      "originRole": "First-party test helper that describes a captured shared frame draw by draw for display tests; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/nine-slice-bitmap-headless.mjs",
+      "originRole": "First-party headless example of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/atlas-frame-heldout.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-binding-ticket-authority-unit.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-binding-ticket-heldout.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-binding-ticket.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-button-api.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-button.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-resource-slot-api.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-resource-slot-authority-unit.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-resource-slot-behavior.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-resource-slot-binding-revocation.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-resource-slot-fixtures.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-resource-slot-lifecycle.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-resource-slot.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/browser-png-assets.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/display-anchor-offsets-api.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/display-anchor-offsets.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/display-container-add-child-at-api.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/display-container-add-child-at.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/display-container-child-index-api.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/display-container-child-index.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/display-container-remove-children-api.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/display-container-remove-children.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/linear-layout-api.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/nine-slice-bitmap-api.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/nine-slice-bitmap.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/prepared-outfit-coordinator-heldout.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/prepared-outfit-coordinator.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/prepared-resource-scene-session.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/resource-scene-session-heldout.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/resource-scene-session.test.mjs",
+      "originRole": "First-party test of the Egret SDK, registered here because this change edits it; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

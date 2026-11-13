@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEngine, createImageData2D } from '@egret/engine';
+import { createEngineForProfile, createImageData2D, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
 import { createTextRasterCache } from '@egret/engine/text';
 import { deferred, host } from './helpers.mjs';
 
@@ -12,13 +12,13 @@ for (const closingDuringFrame of [false, true]) {
   test(`release settlement preserves owner-close reason: closing=${closingDuringFrame}`, async () => {
     const gate = deferred(), entered = deferred();
     let engine, closing, releases = 0;
-    const adapter = host({ renderFrame() {
+    const adapter = host({ sharedFrameProfile: SHARED_FRAME_PROFILE_2D, renderSharedFrame() {
       // The cache observes real thenable cleanup settlement before the Engine's
       // frame-idle close continuation. No manager or lease is substituted.
       gate.resolve();
       if (closingDuringFrame) closing = engine.dispose();
     } }).adapter;
-    engine = await createEngine({ host: adapter });
+    engine = await createEngineForProfile({ host: adapter }, SHARED_FRAME_PROFILE_2D);
     const cache = createTextRasterCache(engine.assets, { maxResidentEntries: 0, provider: {
       identity: 'release.closing.t1', profile: 'canvas-explicit-lines-v1',
       async measure(_request, context) {
@@ -33,7 +33,7 @@ for (const closingDuringFrame of [false, true]) {
     const acquired = cache.acquire(request).then(value => ({ value }), error => ({ error }));
     try {
       await entered.promise;
-      engine.renderFrame({ width: 1, height: 1 });
+      engine.renderSharedFrame({ width: 1, height: 1 });
       const outcome = await acquired;
       if (closingDuringFrame) {
         assert.ok('error' in outcome);

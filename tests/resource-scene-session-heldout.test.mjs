@@ -7,6 +7,7 @@ import * as sdk from '@egret/engine';
 import { createTextRasterCache, createTextField } from '@egret/engine/text';
 import { deferred, flush, host } from './helpers.mjs';
 import { literalProvider, request } from './text-raster-public-helpers.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 const LEFT = 'pilot-left', RIGHT = 'pilot-right';
 const AREA = Object.freeze({ x: 0, y: 0, width: 16, height: 16 });
@@ -91,7 +92,7 @@ async function freshPublicBaseline() {
     const outfit = scope.use(new sdk.Bitmap(outfitLease)); engine.stage.addChild(outfit);
     slot = engine.createBitmapResourceSlot(scope, outfit); assert.equal(slot.state, 'idle');
     const text = createTextField(engine, scope, cache); text.setRequest(request()); await text.prepare(); engine.stage.addChild(text);
-    const frame = engine.captureFrame(FRAME); assert.equal(frame.width, 192);
+    const frame = captureDrawn(engine, FRAME); assert.equal(frame.width, 192);
     assert.ok(frame.images.includes(first.value.imageData));
   } finally { cache.dispose(); await engine.dispose(); await cache.whenIdle(); }
   assert.equal(playback.isDisposed, true); assert.equal(slot.state, 'disposed');

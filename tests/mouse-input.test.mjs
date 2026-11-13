@@ -149,12 +149,12 @@ export async function withInputFixture(run,{create=true,beforeEngine,afterScope,
   const sdk=await loadPublicSDK(true),browser=controlledBrowser();
   const {host}=await import(pathToFileURL(path.join(repository,'tests/helpers.mjs')));
   browser.install();const hostFixture=host({surface:browser.canvas,...hostOverrides});
-  const diagnostics=[],frames=[];hostFixture.adapter.renderFrame=frame=>{frames.push(frame);};
+  const diagnostics=[],frames=[];hostFixture.adapter.sharedFrameProfile=sdk.SHARED_FRAME_PROFILE_2D;hostFixture.adapter.renderSharedFrame=frame=>{frames.push(frame);};
   let engine,scope,input,failure={present:false};const expectedClose={present:false};
   const restorers=[];
   try {
     await beforeEngine?.({browser,sdk,restorers});
-    engine=await sdk.createEngine({host:hostFixture.adapter,onDiagnostic:d=>diagnostics.push(d)});
+    engine=await sdk.createEngineForProfile({host:hostFixture.adapter,onDiagnostic:d=>diagnostics.push(d)},sdk.SHARED_FRAME_PROFILE_2D);
     scope=engine.createScope();afterScope?.({engine,scope,browser,sdk,diagnostics,restorers});
     const stage=engine.stage,panel=scope.use(new sdk.Sprite()),lower=scope.use(new sdk.Sprite()),upper=scope.use(new sdk.Sprite());
     panel.x=10;panel.y=5;lower.graphics.beginFill(0x112233).drawRect(0,0,50,30).endFill();
@@ -202,7 +202,7 @@ function registerBehaviorTests() {
       assert.deepEqual(Object.keys(f.input.events).sort(),['activate','begin','cancel','end']);
       for(const name of ['begin','end','activate','cancel']){const type=f.input.events[name];assert.equal(type.key,'egret.mouse.'+name);assert.equal(type.bubbles,true);assert.equal(type.cancelable,name==='begin'||name==='end');assert.equal(Object.isFrozen(type),true);}
       assert.equal(Object.isFrozen(f.input),true);assert.equal(Object.isFrozen(f.input.events),true);
-      const frame=f.engine.renderFrame({width:100,height:80});assert.equal(frame.commands.length,2);
+      const frame=f.engine.renderSharedFrame({width:100,height:80});assert.equal(frame.commands.length,2);
       const native=down(f);assert.equal(native.defaultPrevented,false);assert.equal(f.input.state,'pressed');up(f);
       assert.deepEqual(begin,goldenRoute('pressed'));assert.deepEqual(end,goldenRoute('idle'));assert.deepEqual(activate,goldenRoute('idle'));
       assert.equal(new Set(events).size,3);for(const event of new Set(events)){assert.ok(event instanceof f.sdk.Event);assert.equal(Object.isFrozen(event),true);assert.equal(Object.isFrozen(event.payload),true);assert.deepEqual(event.payload,{pointerId:7,globalX:35,globalY:20,pointerType:'mouse',button:0});}
@@ -216,7 +216,7 @@ function registerBehaviorTests() {
     await withInputFixture(f=>{const trace=[];f.upper.on(f.input.events.end,e=>trace.push(['end',e.target===f.upper,e.payload.globalX,e.payload.globalY,f.input.state]));f.upper.on(f.input.events.activate,()=>trace.push('activate'));down(f);up(f,release);assert.deepEqual(trace,[['end',true,(release.clientX-10)/2,(release.clientY-20)/2,'idle']]);assert.deepEqual(f.diagnostics,[]);});
   });
   for(const change of ['hide','transform','clip','touchChildren','cover','order'])test('MI1 Q2 uses same point after end '+change,async()=>{
-    await withInputFixture(f=>{const trace=[];f.upper.on(f.input.events.end,()=>{trace.push('end');if(change==='hide')f.upper.visible=false;if(change==='transform')f.upper.x=80;if(change==='clip')f.panel.clipRect={x:0,y:0,width:5,height:5};if(change==='touchChildren')f.panel.touchChildren=false;if(change==='order')f.panel.setChildIndex(f.lower,1);if(change==='cover'){const cover=f.scope.use(new f.sdk.Sprite());cover.touchEnabled=true;cover.hitArea={x:0,y:0,width:100,height:80};cover.graphics.beginFill(0).drawRect(0,0,100,80).endFill();f.stage.addChild(cover);}f.engine.renderFrame({width:100,height:80});});f.upper.on(f.input.events.activate,()=>trace.push('activate'));down(f);f.browser.clearReads();up(f);assert.deepEqual(trace,['end']);assert.equal(f.browser.reads.filter(x=>x==='clientX').length,1);assert.equal(f.browser.reads.filter(x=>x==='clientY').length,1);assert.equal(f.frames.length,1);assert.deepEqual(f.diagnostics,[]);});
+    await withInputFixture(f=>{const trace=[];f.upper.on(f.input.events.end,()=>{trace.push('end');if(change==='hide')f.upper.visible=false;if(change==='transform')f.upper.x=80;if(change==='clip')f.panel.clipRect={x:0,y:0,width:5,height:5};if(change==='touchChildren')f.panel.touchChildren=false;if(change==='order')f.panel.setChildIndex(f.lower,1);if(change==='cover'){const cover=f.scope.use(new f.sdk.Sprite());cover.touchEnabled=true;cover.hitArea={x:0,y:0,width:100,height:80};cover.graphics.beginFill(0).drawRect(0,0,100,80).endFill();f.stage.addChild(cover);}f.engine.renderSharedFrame({width:100,height:80});});f.upper.on(f.input.events.activate,()=>trace.push('activate'));down(f);f.browser.clearReads();up(f);assert.deepEqual(trace,['end']);assert.equal(f.browser.reads.filter(x=>x==='clientX').length,1);assert.equal(f.browser.reads.filter(x=>x==='clientY').length,1);assert.equal(f.frames.length,1);assert.deepEqual(f.diagnostics,[]);});
   });
   test('MI1 original target uses current route after reparent',async()=>{
     await withInputFixture(f=>{const trace=[],other=f.scope.use(new f.sdk.Sprite());f.stage.addChild(other);other.x=30;other.y=15;f.upper.on(f.input.events.end,e=>trace.push(['upper',e.target===f.upper]));other.on(f.input.events.end,()=>trace.push(['new-parent']));f.panel.on(f.input.events.end,()=>trace.push(['old-parent']));down(f);other.addChild(f.upper);up(f,{clientX:190,clientY:140});assert.deepEqual(trace,[['upper',true],['new-parent']]);});

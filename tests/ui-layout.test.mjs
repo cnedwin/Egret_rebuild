@@ -22,7 +22,7 @@ test('UI hand-authored boxes and dirty reuse use genuine Engine ownership', asyn
         root.invalidate('a', 'measure');
         root.commit(await root.prepare());
         assert.deepEqual([a, b], [2, 1]);
-        const frame = engine.captureFrame({ width: 100, height: 80 });
+        const frame = engine.captureSharedFrame({ width: 100, height: 80 });
         assert.ok(frame.commands.length > 0);
     }
     finally {

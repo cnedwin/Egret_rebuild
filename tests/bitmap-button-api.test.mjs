@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as sdk from '@egret/engine';
 import { controlledBrowser } from './mouse-input.test.mjs';
+import { captureDrawn } from './helpers/drawn-frame.mjs';
 
 export { sdk };
 export const UP=Object.freeze({x:0,y:0,width:8,height:6});
@@ -35,12 +36,12 @@ export async function withScene(run,{beforeOptional}={}){
   const browser=controlledBrowser(),trace=[],timers=new Set(),renders=[],diagnostics=[];
   const counts={loads:0,disposals:0},restorers=[],buttons=[];
   let engine,resourceScope,scope,input,lease,texture,inputAPI,failure={threw:false};
-  const host={surface:browser.canvas,start(){trace.push('start');},stop(){trace.push('stop');},async close(){trace.push('close');},renderFrame(frame){renders.push(frame);},setTimeout(callback,delayMs){const timer={callback,delayMs};timers.add(timer);return()=>timers.delete(timer);}};
+  const host={surface:browser.canvas,start(){trace.push('start');},stop(){trace.push('stop');},async close(){trace.push('close');},sharedFrameProfile:sdk.SHARED_FRAME_PROFILE_2D,renderSharedFrame(frame){renders.push(frame);},setTimeout(callback,delayMs){const timer={callback,delayMs};timers.add(timer);return()=>timers.delete(timer);}};
   browser.install();
   try{
     await beforeOptional?.({sdk,restorers});
     inputAPI=await import('@egret/engine/web/input');
-    engine=await sdk.createEngine({host,onDiagnostic:d=>diagnostics.push(d)});
+    engine=await sdk.createEngineForProfile({host,onDiagnostic:d=>diagnostics.push(d)},sdk.SHARED_FRAME_PROFILE_2D);
     resourceScope=engine.createScope();scope=engine.createScope();
     const type=sdk.createAssetType('bitmap-button-fixture-atlas',sdk.isTexture);
     engine.assets.register(type,{async load(){counts.loads++;texture=atlas();return texture;},dispose(value){assert.equal(value,texture);counts.disposals++;value.dispose();}});
@@ -77,9 +78,9 @@ async function baselineFirstAPI(){
     assert.deepEqual(bitmap.getBounds(),AREA);assert.deepEqual(f.stage.getBounds(),{x:8,y:9,width:8,height:6});assert.equal(f.stage.hitTest(12,12),bitmap);
     const route=[];for(const phase of ['begin','end','activate'])bitmap.on(f.input.events[phase],()=>route.push([phase,f.input.state]));
     f.down();f.up();assert.deepEqual(route,[['begin','pressed'],['end','idle'],['activate','idle']]);
-    saved=f.engine.captureFrame(FRAME);assert.equal(saved.commands.length,1);assert.deepEqual(saved.commands[0].sourceRect,UP);assert.equal(Object.isFrozen(saved),true);
+    saved=captureDrawn(f.engine, FRAME);assert.equal(saved.commands.length,1);assert.deepEqual(saved.commands[0].sourceRect,UP);assert.equal(Object.isFrozen(saved),true);
     image=f.texture.imageData;assert.equal(sdk.copyImageData2DPixels(image).length,24*6*4);
-    f.engine.renderFrame(FRAME);assert.equal(f.renders.length,1);assert.deepEqual(f.diagnostics,[]);
+    f.engine.renderSharedFrame(FRAME);assert.equal(f.renders.length,1);assert.deepEqual(f.diagnostics,[]);
   });
   // All genuine old operations AND complete fixture cleanup precede this assertion.
   assert.deepEqual(saved.commands[0].sourceRect,UP);assert.equal(sdk.copyImageData2DPixels(image)[0],255);

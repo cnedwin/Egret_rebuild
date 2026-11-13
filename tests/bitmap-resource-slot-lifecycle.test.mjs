@@ -2,6 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { sdk, scene, visible, commit, observe, rejected, fulfilled, code, captureCall, callbackWitness, assertCallback, flush, FRAME, CROP_A, FULL, PIXELS } from './bitmap-resource-slot-fixtures.mjs';
+import { captureDrawn, drawnFrame } from './helpers/drawn-frame.mjs';
 
 test('BRS20 dispose clears only the owned exact current binding before abort/release reentry', async () => {
   const f = await scene(); const seen = [], abortSnapshots = [], releaseSnapshots = [];
@@ -140,7 +141,7 @@ test('BRS23 Engine closing retires slot state/binding before the active frame-op
     });
     Object.defineProperty(f.engine, 'currentState', { configurable: true, value: 'open' });
     Object.defineProperty(f.engine, 'context', { configurable: true, value: { assertOpen() {} } });
-    code(() => f.engine.captureFrame({
+    code(() => captureDrawn(f.engine, {
       get width() { return widthRead.callback(); }, height: 32,
     }), 'ENGINE_CLOSED');
     assertCallback(aborted); assertCallback(widthRead);
@@ -164,14 +165,15 @@ test('BRS23 renderer-triggered Engine disposal retains the already captured save
     saved = frame; closing = f.engine.dispose();
     snapshots.push({ state: f.slot.state, binding: f.bitmap.textureLease });
   });
-  f = await scene({ hostOverrides: { renderFrame: rendered.callback } });
+  f = await scene({ hostOverrides: { renderSharedFrame: rendered.callback } });
   try {
     await commit(f, 'B'); const pending = f.replace('C');
-    assert.equal(f.engine.renderFrame(FRAME), saved);
+    assert.equal(f.engine.renderSharedFrame(FRAME), saved);
     assertCallback(rendered); assert.deepEqual(snapshots, [{ state: 'disposed', binding: undefined }]);
     await rejected(pending, 'BITMAP_RESOURCE_DISPOSED'); await closing;
-    assert.deepEqual(Array.from(sdk.copyImageData2DPixels(saved.images[0])), PIXELS.B);
-    assert.deepEqual(saved.commands[0].sourceRect, FULL.B); assert.equal(f.slot.state, 'disposed');
+    const drawn = drawnFrame(saved);
+    assert.deepEqual(Array.from(sdk.copyImageData2DPixels(drawn.images[0])), PIXELS.B);
+    assert.deepEqual(drawn.commands[0].sourceRect, FULL.B); assert.equal(f.slot.state, 'disposed');
   } finally { await f.close(); }
 });
 
@@ -259,28 +261,29 @@ test('BRS29 same-target sequence crop conflicts and old player detects new exact
 
 test('BRS31 renderer failure after binding success does not roll back or reject the commit', async () => {
   const sentinel = Object.freeze({ renderer: 'assigned failure' });
-  const f = await scene({ hostOverrides: { renderFrame() { throw sentinel; } } });
+  const f = await scene({ hostOverrides: { renderSharedFrame() { throw sentinel; } } });
   try {
     const accepted = await commit(f, 'B'), owned = f.bitmap.textureLease;
-    const error = code(() => f.engine.renderFrame(FRAME), 'FRAME_RENDER_FAILED'); assert.equal(error.cause, sentinel);
+    const error = code(() => f.engine.renderSharedFrame(FRAME), 'FRAME_RENDER_FAILED'); assert.equal(error.cause, sentinel);
     assert.equal(accepted.state, 'fulfilled'); assert.equal(f.slot.state, 'ready'); assert.equal(f.bitmap.textureLease, owned);
     assert.equal(owned.value, f.values.get('B')); visible(f, 'B');
     assert.equal(f.diagnostics.filter(row => row.code === 'FRAME_RENDER_FAILED').length, 1);
   } finally { await f.close(); }
 });
 
-test('BRS31 whole-frame view budget refusal does not undo a successful slot binding', async () => {
+test('BRS31 whole-frame region budget refusal does not undo a successful slot binding', async () => {
   const f = await scene();
   try {
     const accepted = await commit(f, 'B'), owned = f.bitmap.textureLease;
-    const image = sdk.createImageData2D({ width: 128, height: 1, pixels: new Uint8Array(128 * 4) });
+    // One frame holds 4096 regions. The slot's own Bitmap is one more.
+    const image = sdk.createImageData2D({ width: 64, height: 64, pixels: new Uint8Array(64 * 64 * 4) });
     const atlas = sdk.createTexture(image), take = f.engine.assets.acquire(f.ref('views'));
     f.job('views').resolve(atlas); const lease = f.initialScope.use(await take), parent = new sdk.Sprite();
     f.engine.stage.addChild(parent);
-    for (let x = 0; x < 128; x++) {
-      const node = new sdk.Bitmap(lease); node.sourceRect = { x, y: 0, width: 1, height: 1 }; parent.addChild(node);
+    for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
+      const node = new sdk.Bitmap(lease); node.sourceRect = { x, y, width: 1, height: 1 }; parent.addChild(node);
     }
-    code(() => f.engine.captureFrame(FRAME), 'FRAME_IMAGE_BUDGET');
+    code(() => captureDrawn(f.engine, FRAME), 'FRAME_IMAGE_BUDGET');
     assert.equal(accepted.state, 'fulfilled'); assert.equal(f.slot.state, 'ready'); assert.equal(f.bitmap.textureLease, owned);
     assert.equal(owned.value, f.values.get('B')); parent.visible = false; visible(f, 'B');
   } finally { await f.close(); }
