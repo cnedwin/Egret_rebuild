@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/BrowserTextInput.ts",
+      "originRole": "First-party platform text entry over a canvas: a native field placed on a rectangle of the stage, for input methods and on-screen keyboards; independently authored with AI assistance; Apache-2.0. No third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/textInput.ts",
+      "originRole": "First-party optional entry of the platform text entry over a canvas; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/browser-text-input.test.mjs",
+      "originRole": "First-party unit of the platform text entry against a test-owned stand-in for the page; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/text-input.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the text input entry; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/text-input.ts",
+      "originRole": "First-party strict TypeScript consumer of the text input entry, with five refused misuses; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/text-input/index.html",
+      "originRole": "First-party page of the text input example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/text-input/main.mjs",
+      "originRole": "First-party text input example: a panel drawn by the engine with a single-line and a multi-line field; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/text-input/verify.mjs",
+      "originRole": "First-party browser check of the text input example, driving a composition through the browser's protocol; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/text-input/README.md",
+      "originRole": "First-party instructions of the text input example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/text-input/README.zh-CN.md",
+      "originRole": "First-party Chinese instructions of the text input example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/text-input.md",
+      "originRole": "First-party guide to text input over a canvas; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/text-input.md",
+      "originRole": "First-party Chinese guide to text input over a canvas; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/text-input.md",
+      "zh": "knowledge-base/Cns/docs/text-input.md"
+    },
+    {
+      "en": "examples/text-input/README.md",
+      "zh": "examples/text-input/README.zh-CN.md"
+    }
+  ]
+}
