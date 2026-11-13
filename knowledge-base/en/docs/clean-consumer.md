@@ -118,9 +118,38 @@ The archives of contracts, runtime and engine were 61 KiB, 334 KiB and 1710 KiB.
 
 The [NOTICE](https://github.com/cnedwin/Egret_rebuild/blob/main/NOTICE) file of the repository names the same dependency. It does not travel inside the archives. The Spine runtime and `jsonc-parser` belong to the optional packages and are not installed on this route.
 
+## A page from the consumer
+
+A second tool goes on where the check stops. It serves the consumer directory alone, writes a page of the consumer's own, and opens it in a real browser:
+
+```text
+pnpm exec node tools/verify-clean-consumer-page.mjs <absolute Playwright index.mjs> <new absolute directory outside the checkout> [software] [--offline]
+```
+
+Without `software` it launches the installed Edge headed, and both back ends must draw. With `software` it runs the browser Playwright bundles, headless, with software rendering. It writes `page-report.json` and a screenshot for each back end beside `report.json`. [The tool](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/verify-clean-consumer-page.mjs)
+
+- **No bundler.** The page loads the installed modules through an import map the tool writes from the manifests of the installed packages: 36 entries, and the six private names of the engine inside the engine only. Every address is a file inside the consumer.
+- **Public entries only.** The page imports `@egret/engine`, `@egret/engine/ui`, `@egret/engine/web/pointer` and one back end. It draws a button with the engine and answers a press through the engine's pointer input and action control.
+- **What passes.** The frame the Host reads back shows the button on its background. One press injected at the button activates it once, and the next frame read back shows the pressed colour. Every request was served from inside the consumer, and none left it.
+
+| Back end | Browser | Result |
+| --- | --- | --- |
+| WebGL2 | Chromium 153 bundled with Playwright, headless, software rendering, Linux x64 | Pass |
+| WebGPU | The same | Not run: under software rendering this browser has no WebGPU that starts the Host |
+| Both | Edge as installed, on a hardware GPU | Not run |
+
 ## First interaction
 
-First interaction was not measured from a consumer. The check loads modules in Node and opens no page, so it says nothing about download time, start-up or the first frame. The start-up records that exist belong to examples served from the checkout over loopback, and the targets of M1 and M4 in the [acceptance plan](m4-core-acceptance-plan.md) remain to be measured against an actual artifact, content and network profile.
+Four cold runs of the WebGL2 page from the consumer, on main [9303cf4](https://github.com/cnedwin/Egret_rebuild/commit/9303cf49bf8327e010061a7ed8dd70b341374001) with this change:
+
+| Observation | Value |
+| --- | --- |
+| Requests until the first frame and the press were done | 128, all from the consumer |
+| Bytes served, unbundled and uncompressed | 1,052 KiB: engine 596, runtime 319, contracts 55, robust-predicates 71, the page itself 10 |
+| First frame read back, from the start of navigation | 0.43 to 0.57 s |
+| From the press to the frame that shows it | 10 to 19 ms |
+
+These are observations of four runs over loopback in a development container with software rendering. They are not a budget, a network measurement or a device result, and a bundler would change the request count and the bytes. The targets of M1 and M4 in the [acceptance plan](m4-core-acceptance-plan.md) remain to be measured against an actual artifact, content and network profile.
 
 ## Migration notes
 
@@ -138,7 +167,7 @@ Differences from the legacy Egret API are in [legacy project migration](legacy-p
 - The packages are not published. No install of the engine from a registry was run, and the registry route of the tool was not run in the development container, which has no network.
 - The manifests of the three packages have no `license` field. The licence text is in each archive.
 - No `files` list narrows the archives. Sources, one package test and compiler configuration travel with the built modules.
-- No page was opened from the consumer. Neither back end drew from the installed copy, on any browser or phone.
-- First interaction and bundle size under a bundler were not measured.
+- A page from the consumer drew and answered a press with WebGL2 under software rendering in headless Chromium only. WebGPU, a hardware GPU, Edge, Firefox, Safari and a phone have not opened it.
+- First interaction was observed in that one configuration, not measured against a network or a device. Bundle size under a bundler was not measured.
 - A person new to the project has not followed this page. The check is an automated rehearsal and does not close that row.
 - The final handoff still depends on [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) and [#92](https://github.com/cnedwin/Egret_rebuild/issues/92).

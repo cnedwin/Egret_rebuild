@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A page opened from the clean consumer — 2026-11-14
+
+`tools/verify-clean-consumer-page.mjs` goes on from the clean-consumer check: it serves the consumer directory alone, writes a page that imports the installed engine through an import map built from the installed manifests, and opens it in a real browser. The page draws a button and answers one injected press, and the frames the Host reads back are checked. It passed with WebGL2 under software rendering in headless Chromium, from 128 requests that all stayed inside the consumer. WebGPU, a hardware GPU and other browsers have not opened it, and its times are observations of one run, not a budget. [Guide](docs/clean-consumer.md#a-page-from-the-consumer)
+
 ## A text field control over the platform text input — 2026-11-14
 
 `createTextFieldControl` in `@egret/engine/ui` holds the text of a field an application draws and whether it is being edited. A completed press, a key or a request of assistive technology opens an editor over the place the application names; the platform text input is such an editor as it is, so a player types Chinese into a drawn field with the platform's own input method. Several fields share one editor, a cancelled edit leaves the text as it was, and the length limit counts characters as a reader does. A new example draws a form of two fields and a button. Its composition was driven through Chromium's protocol; no real input method, on-screen keyboard or person was run. [Guide](docs/ui-controls.md#text-field)

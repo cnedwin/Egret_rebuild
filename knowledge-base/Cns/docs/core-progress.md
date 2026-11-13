@@ -126,7 +126,7 @@ M2–M4 的十一个工作包均保留完整验收要求。下表确认已合并
 | M3.4／[#90](https://github.com/cnedwin/Egret_rebuild/issues/90) | 遮罩／模糊、主题、社区移动／动作状态，[悬停、开关、多选一、滚动和文本框状态](ui-controls.md)，以及[语义树及其浏览器投射](ui-semantics.md) | 其余控件与整合场景、层级、手势、语义与托管 UI 的接线，以及真实辅助技术会话／UI 维护者与现有触摸贡献者 |
 | M4.1／[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) | 可编辑精简与固定 X 换装场景、浏览器内打开已导出工程、双后端计时和有界 Android 证据 | 打开工程的硬件验证、选定能力覆盖与正式 X 验收／集成与验收维护者 |
 | M4.2／[#92](https://github.com/cnedwin/Egret_rebuild/issues/92) | 固定桌面恢复、Android 组件证据及共享裁剪／几何构造的短时对照 | 完整混合生命周期、性能和必需设备验收／性能平台维护者 |
-| M4.3／[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) | 可观察预览失败／取消／重载、公开贡献入口，以及对打包后的默认引擎在 Node 中的自动[干净消费者检查](clean-consumer.md) | 已发布的分发物、从消费者一侧的浏览器运行和首次可交互、真人演练与合格交接／发布维护者 |
+| M4.3／[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) | 可观察预览失败／取消／重载、公开贡献入口，以及对打包后的默认引擎在 Node 中的自动[干净消费者检查](clean-consumer.md)，含一个在软件渲染下用 WebGL2 完成绘制并响应按下的消费者页面 | 已发布的分发物、消费者页面在 WebGPU、硬件和其他浏览器上的运行、实测的首次可交互、真人演练与合格交接／发布维护者 |
 
 角色表示责任，不代表人员配置或自动分派志愿者。保留既有触摸／控件贡献边界，其余工作消费对应接口。
 
