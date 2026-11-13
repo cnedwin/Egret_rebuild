@@ -1,5 +1,7 @@
 # Owned textured geometry and Mesh2D: bounded contract
 
+> **Partly removed.** The textured frame profile described here — `captureTexturedFrame`, `TexturedRenderFrame2D` and its Hosts — has been removed from the SDK. `Mesh2D` and `TexturedGeometry2D` remain, and are drawn through [the shared render profile](shared-render-profile-contract.md). The parts of this document about the textured profile are kept as a record.
+
 English | [简体中文](../../Cns/docs/自有纹理几何与Mesh2D契约.md) · [Evidence and checkpoints](textured-geometry-and-mesh2d-evidence.md)
 
 The package gives developers immutable indexed XY/UV/light-RGBA geometry, a textured display leaf, retained ordered frames and an explicit rendering profile. CPU ownership can be accepted separately. Package completion requires a real browser to draw a deformable textured Mesh2D between existing rectangles and Bitmaps, preserving order, clipping, tint, alpha and retained-frame ownership.

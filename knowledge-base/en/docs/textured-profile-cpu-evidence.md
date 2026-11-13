@@ -1,5 +1,7 @@
 # Textured profile: CPU and desktop GPU evidence
 
+> **Removed.** `captureFrame`, `captureTexturedFrame`, the frame records they produced and the Canvas Host (`@egret/engine/web`) have been removed from the SDK. This document is kept as a record of what they were and does not describe the current SDK. For current 2D rendering see [the shared render profile](shared-render-profile-contract.md).
+
 English | [简体中文](../../Cns/docs/纹理Profile的CPU证据与待完成门禁.md) · [Contract](textured-geometry-and-mesh2d-contract.md) · [Geometry/Mesh evidence](textured-geometry-and-mesh2d-evidence.md)
 
 Engineering checkpoint **0.23.0**, prepared 2026-10-11. Owned textured geometry, Mesh2D, immutable profile frames and the explicit WebGPU host have bounded CPU, strict-type and desktop native evidence. The native run passed all 11 calibration and 10 held-out windows, with all 16 assigned windows detecting their 12 independently copied faults. Independent saved-result review accepted this one recorded Windows/Edge/NVIDIA environment. Public reproduction tooling, final paired-material review, current complete pre-push and remote delivery are separately recorded; this document does not infer them from a native PASS.

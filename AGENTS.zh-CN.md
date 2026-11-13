@@ -31,7 +31,7 @@
 
 - 核心按白鹭自己的规格独立实现。沿用熟悉的白鹭领域命名，遵循既有模块、API 与代码规范。机制研究、第三方依赖、白鹭适配与第一方实现分别登记来源及版本。
 - 保持包依赖图：engine 依赖 runtime/contracts，runtime 仅依赖 contracts，contracts 不依赖其他包。保留包 exports、strict 配置及不含 DOM/Node 环境全局的核心边界。公开示例与行为测试通过 `@egret/engine` 公共入口使用构建产物。
-- `@egret/engine/web` 保持 Canvas-only，不请求 WebGPU 或 robust-predicates 模块；WebGPU 使用显式 `@egret/engine/webgpu` 入口。rendering 独立编译项目保持无 DOM，仅引用 contracts。engine 精确固定的外部依赖 `robust-predicates` 3.0.3 仅允许在 rendering 通过包根入口的公共 `orient2d` 导入，适用 Unlicense，并与内部包依赖图和项目引用分别检查。
+- engine 有两个浏览器宿主入口，均须显式导入：`@egret/engine/webgpu` 与 `@egret/engine/webgl2`；根入口不加载其中任何一个。rendering 独立编译项目保持无 DOM，仅引用 contracts。engine 精确固定的外部依赖 `robust-predicates` 3.0.3 仅允许在 rendering 通过包根入口的公共 `orient2d` 导入，适用 Unlicense，并与内部包依赖图和项目引用分别检查。
 - 私有几何单元测试可直接导入构建后的 `engine/dist/rendering` 辅助模块，此例外不适用于公开行为测试。
 - 在已采纳的 T1 测试范围内，公开控制还使用构建后的 `@egret/engine/text`；`@egret/runtime/text` 仅用于 T02 入口身份／类型／源码检查。`tests/text-raster-private.test.mjs` 的私有 runtime 导入仅限 `packages/runtime/dist/text/budget.js`、`packages/runtime/dist/text/request.js`、`packages/runtime/dist/text/plan.js` 与 `packages/runtime/dist/EgretError.js`，必须按单元测试记录。
 - `tests/text-raster-allocation.test.mjs` 与 `tests/text-raster-materialization.test.mjs` 是使用真实初始化并恢复被拦截状态的受控构造／计数器故障单元。`tests/text-raster-residency-audit.test.mjs` 仅可在内存中为实际编译的 `packages/runtime/dist/text/TextRasterCache.js` 追加既有只读 `__textRetainedAudit`，注销其单模块加载钩子并保持磁盘字节不变。这些测试不新增产品导出、不授权任意私有导入，也不替代公开行为控制；逻辑计数／保留引用观察不能证明物理内存／GC、字体或渲染器验收。
@@ -43,7 +43,6 @@
 - 已构建 `@egret/engine` 根入口增加 `Engine.createBitmapResourceSlot(scope, bitmap)`，以及准确两个擦除类型 `BitmapResourceSlot` 与 `BitmapResourceSlotState`。保持包依赖图、无 DOM/Node 核心、私有装配 authority 和既有 Host 协议。槽借用初始有效绑定，仅拥有自己获取的新替换租约，只允许最新已接受意图提交。遵循[所选规格](knowledge-base/Cns/docs/位图资源槽规格.md)、[证据记录](knowledge-base/Cns/docs/位图资源槽核验.md)及[公共示例](examples/bitmap-resource-slot/README.zh-CN.md)。
 - `tests/bitmap-resource-slot-authority-unit.test.mjs`、`tests/bitmap-binding-ticket-authority-unit.test.mjs` 与 `tests/bitmap-resource-slot-authority-supplement.test.mjs` 是限定 UNIT 夹具，可通过已构建公共 `@egret/runtime` 契约与真实公共 runtime 对象构造自定义 context，并观察该构造登记的操作；外部目标对照使用真实公共 Engine。这项权限不增加 SDK 私有导入、加载 hook、原型拦截或产品导出，普通公共行为夹具及示例继续使用公共 SDK。
 - `tools/bitmap-resource-slot-types.mjs` 与 `tools/bitmap-resource-slot-boundary.mjs` 的专用 strict 和源码边界义务须与既有完整检查共同执行。冻结实际未抑制的诊断元组；每项指定类型／策略变异都须先取得全新完整基线，再单独观察拒绝。保持准确的选定公共类型、私有捕获／提交／清理桥、源码／产物身份及已声明依赖边界。
-- 原生组合须先独立审阅完整输入闭包快照，再由 `tools/verify-bitmap-resource-slot.mjs` 使用固定 Playwright 1.62.1、默认 Edge 且无额外 flags 执行。保留原始 import-map 反例、完整普通上下文及独立错误颜色上下文、未修改 RGBA 原始产物与清理记录。像素比较范围为六个字面采样点，完整帧留存用于复核。源码、UNIT、行为、strict／策略、浏览器、完整门禁与 PR/Main 交付分别记状态；完整 UI、Spine R020/V020 和迁移 R008/V006 保持 OPEN。
 <!-- BRS-0.56.0-POLICY-END -->
 
 <!-- LL-0.55.0-POLICY-BEGIN -->
@@ -85,7 +84,7 @@ AI 辅助贡献注明实际范围、资料与作者复核。保留参考出处�
 渲染变更按影响另行执行相应真实浏览器门禁：
 
 ```text
-node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>
+node tools/browser-verify.mjs --suite shared-webgpu --playwright <installed-playwright-module> --output <private-output-directory>
 ```
 
 使用已接受的固定依赖，浏览器默认启动且不附加 flags。沿用未变构建的已有证据时须明确比对身份；合并候选仍须重新通过完整集成 prepush。
@@ -116,17 +115,6 @@ node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channe
 
 tests/webgpu-submission-preparation.test.mjs 与 tests/webgpu-submission-precedence.test.mjs 使用真实公开 SDK 帧和受控 GPU 端口。同步 Float32Array／Uint8Array 构造故障与裁剪计数必须恢复原全局 descriptor；裁剪计数在进入原生 error scope 前结束。其结果只证明受控操作顺序／次数，不证明物理 OOM、总分配或速度。
 
-## M1.2 增量渲染单元
-
-`tests/incremental-batch-private.test.mjs` 是 CPU UNIT，只使用构建后的私有 `engine/dist/rendering/preparedBatches2D.js` helper。合成 packed 数组验证拼接保留上限和有序来源关系，不证明公开准入或原生性能。在 `tests/incremental-preparation-batching.test.mjs` 中，仅明确标注的构造故障单元可以同步拦截 `Float32Array`，目标限于八图合批的精确拼接分配或原四元素 uniform 构造；必须在 `finally` 中恢复完整全局 descriptor，再进行异步完成观察和正常清理。公开行为使用真实 SDK 值及受控 GPU 端口。该权限不增加产品导出、任意 loader 或物理内存耗尽结论。
-
-新增 CPU UNIT 文件仅允许导入以下精确的已构建私有模块：
-
-- `tests/incremental-frame-cache-private.test.mjs`：`packages/runtime/dist/frameCaptureCache.js` 与 `packages/runtime/dist/displayVisualState.js`。所有权来自公开 SDK 构造的真实 Engine、Stage 和 Sprite。读取辅助模块的逻辑账本，以及在溢出前设置私有修订号，仅限这些 UNIT 用例。字节额度可能先于条目额度生效，须如实记录实际触达的限制。
-- `tests/incremental-preparation-private.test.mjs`：`packages/engine/dist/rendering/preparedFrameCache2D.js`、同一 rendering 目录中的 `prepareMixedDraws2D.js`、`prepareTexturedDraws2D.js`、`prepareRectangles2D.js`、`prepareImages2D.js`、`prepareTexturedMesh2D.js`、`packImageVertices2D.js`、`packTexturedMesh2D.js`、`texturedPreparationBudget2D.js`，以及 `packages/engine/dist/web/webgpuPass.js`。资源通过公开 SDK 构造。测试验证真实准备流程、完整键、本帧索引、逻辑计费、原子预算回放与终止失效。
-
-上述权限不允许加载器拦截、增加产品导出或在普通公开示例中导入私有模块。逻辑计费不证明实际内存用量或运行速度。
-
 ## M1.3 共享保留资源单元验证
 
 仅 `tests/shared-retention-private.test.mjs` 可直接导入构建后的私有辅助模块 `packages/engine/dist/web/webgpuRetentionPool.js`。这些明确标注的元数据 UNIT 用例使用不执行原生操作的自有资源端口，验证统一字节与数量上限、精确兼容性、归还预留顺序、真实租约和终止后的清理归属。它们不调用原生 GPU 方法，不增加产品导出或加载拦截，也不证明物理分配或浏览器验收。普通公开行为测试与示例继续使用公开 SDK 入口。
@@ -147,7 +135,7 @@ tests/webgpu-submission-preparation.test.mjs 与 tests/webgpu-submission-precede
 
 ## M1.4 WebGL2 公开行为与源码边界
 
-WebGL2 仅使用显式构建入口 `@egret/engine/webgl2`。该入口导出 `createSharedWebGL2Host`、原有九个擦除类型，以及宿主管理的 2D 图层缓存和有界效果所需的五个附加类型。根入口与 Canvas 入口不加载 WebGL2 模块。调用者提供的 shader 或原生对象均不是 SDK 输入。
+WebGL2 仅使用显式构建入口 `@egret/engine/webgl2`。该入口导出 `createSharedWebGL2Host`、原有九个擦除类型，以及宿主管理的 2D 图层缓存和有界效果所需的五个附加类型。根入口不加载 WebGL2 模块。调用者提供的 shader 或原生对象均不是 SDK 输入。
 
 `tests/shared-webgl2-controls.test.mjs` 与 `tests/fixtures/gl-shared-rendering.mjs` 使用构建后的公开 SDK 入口、真实 Engine 捕获，以及测试自有的 canvas、GL 和事件端口。属性 getter、指定故障、完成延迟与重入回调仅作用于这些自有端口／选项。形似帧的对象只用于拒绝对照，不能作为已接受夹具。除下述精确时钟对照外，这些单元不增加私有产品导入、加载钩子、全局／原型拦截或测试导出。它们证明受控准入、命令顺序、逻辑所有权与生命周期结果；真实浏览器像素、原生丢失／恢复及性能需要独立证据。既有选项／arena、共享存储与保留资源 UNIT 权限保持不变。
 

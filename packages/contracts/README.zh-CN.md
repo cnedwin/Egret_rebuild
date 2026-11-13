@@ -12,9 +12,9 @@
 
 `HostAdapter.surface` 表示稳定对象身份，物理资源由宿主负责。`close()` 仅在安全归还 surface 并完成宿主在途工作后 resolve；拒绝时 Engine 保留独占预留。注入的毫秒 deadline 端口应支持同步取消。类型合同本身不验证真实宿主。
 
-[显示与帧合同](../../knowledge-base/Cns/docs/显示与帧执行合同.md)定义 `Matrix2D`、`Rectangle2D`、`ClipRectangle2D`、`RectangleCommand2D`、`FrameOptions2D`、`RenderFrame2D` 与 `RenderHostAdapter`。`renderFrame` 同步返回 `undefined`；宿主 `close` 仍证明在途工作完成，CPU 帧不能充当设备完成栅栏。
+[共享渲染 Profile 契约](../../knowledge-base/Cns/docs/shared-render-profile-contract.md)定义 `SharedRenderFrame2D` 及其命令、页与区域，以及 `SharedFrameOptions2D` 与 `SharedRenderHostAdapter`；`Matrix2D`、`Rectangle2D`、`ClipRectangle2D` 是它们使用的几何类型。`renderSharedFrame` 同步返回 `undefined`；宿主 `close` 仍证明在途工作完成，CPU 帧不能充当设备完成栅栏。
 
-通过引擎门面，`DisplayObject` 提供 `x`、`y`、`scaleX`、`scaleY`、`rotation`、`alpha`、`visible` 与 `clipRect`；`Sprite.graphics` 拥有矩形填充，`Engine.captureFrame`／`renderFrame` 捕获／提交不可变帧。`createCanvasHost` 位于独立 `@egret/engine/web` 入口，根入口保持无 DOM。
+通过引擎门面，`DisplayObject` 提供 `x`、`y`、`scaleX`、`scaleY`、`rotation`、`alpha`、`visible` 与 `clipRect`；`Sprite.graphics` 拥有矩形填充，`Engine.captureSharedFrame`／`renderSharedFrame` 捕获／提交不可变帧。浏览器宿主位于独立的 `@egret/engine/webgpu` 与 `@egret/engine/webgl2` 入口，根入口保持无 DOM。
 
 ## 验证与范围
 

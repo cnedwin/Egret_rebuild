@@ -12,9 +12,9 @@ The existing readonly `Rectangle2D` is reused by receiver-local content measurem
 
 `HostAdapter.surface` denotes stable object identity; the host owns physical resources. `close()` resolves only after safely returning the surface and completing in-flight host work. If it rejects, Engine retains the exclusive reservation. The injected millisecond-deadline port should support synchronous cancellation. Type contracts do not verify a real host.
 
-The [display and frame contract](../../knowledge-base/en/docs/display-and-frame-execution-contract.md) defines `Matrix2D`, `Rectangle2D`, `ClipRectangle2D`, `RectangleCommand2D`, `FrameOptions2D`, `RenderFrame2D` and `RenderHostAdapter`. `renderFrame` synchronously returns `undefined`; host `close` still proves completion of in-flight work. A CPU frame does not serve as a device completion fence.
+The [shared render profile contract](../../knowledge-base/en/docs/shared-render-profile-contract.md) defines `SharedRenderFrame2D`, its commands, pages and regions, `SharedFrameOptions2D` and `SharedRenderHostAdapter`; `Matrix2D`, `Rectangle2D` and `ClipRectangle2D` are the geometry they use. `renderSharedFrame` synchronously returns `undefined`; host `close` still proves completion of in-flight work. A CPU frame does not serve as a device completion fence.
 
-Through the engine facade, `DisplayObject` provides `x`, `y`, `scaleX`, `scaleY`, `rotation`, `alpha`, `visible` and `clipRect`; `Sprite.graphics` owns rectangle fills, and `Engine.captureFrame`/`renderFrame` capture/submit immutable frames. `createCanvasHost` belongs to the separate `@egret/engine/web` entry; the root remains DOM-free.
+Through the engine facade, `DisplayObject` provides `x`, `y`, `scaleX`, `scaleY`, `rotation`, `alpha`, `visible` and `clipRect`; `Sprite.graphics` owns rectangle fills, and `Engine.captureSharedFrame`/`renderSharedFrame` capture/submit immutable frames. The browser Hosts belong to the separate `@egret/engine/webgpu` and `@egret/engine/webgl2` entries; the root remains DOM-free.
 
 ## Verification and scope
 
