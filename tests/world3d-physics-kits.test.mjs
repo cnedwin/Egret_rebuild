@@ -81,6 +81,41 @@ test('ragdoll parts are validated', () => {
   assert.throws(() => createRagdoll3D(world, root, [{bone: 'hips', shape: {type: 'plane'}}]), code('WORLD3D_INPUT_INVALID'));
 });
 
+test('ragdoll activation rolls back its bodies and joints when a later part is refused', () => {
+  const world = createPhysicsWorld3D(), {root, parts} = figure();
+  const kept = world.createBody({shape: {type: 'sphere', radius: 1}});
+  const keptJoint = world.createJoint({type: 'point', bodyA: kept});
+  const radius = {type: 'sphere', radius: -1};
+  const axis = [0, 0, 0];
+  const afterRefusal = ragdoll => {
+    assert.throws(() => ragdoll.activate(), code('WORLD3D_INPUT_INVALID'));
+    assert.equal(ragdoll.active, false);
+    assert.deepEqual(ragdoll.bodies, []);
+    assert.deepEqual(ragdoll.joints, []);
+    assert.deepEqual(world.bodies, [kept]);
+    assert.deepEqual(world.joints, [keptJoint]);
+    assert.doesNotThrow(() => ragdoll.update());
+  };
+
+  const shapeRagdoll = createRagdoll3D(world, root, [parts[0], {...parts[1], shape: radius}]);
+  afterRefusal(shapeRagdoll);
+  radius.radius = 0.2;
+  shapeRagdoll.activate();
+  assert.equal(shapeRagdoll.bodies.length, 2);
+  shapeRagdoll.deactivate();
+
+  const jointRagdoll = createRagdoll3D(world, root, [parts[0], parts[1],
+    {...parts[2], joint: {type: 'hinge', axis}},
+  ]);
+  afterRefusal(jointRagdoll);
+  axis[1] = 1;
+  jointRagdoll.activate();
+  assert.equal(jointRagdoll.joints.length, 2);
+  jointRagdoll.dispose();
+  assert.deepEqual(world.bodies, [kept]);
+  assert.deepEqual(world.joints, [keptJoint]);
+});
+
 function car(world, options = {}) {
   const chassis = world.createBody({mass: 800, shape: {type: 'box', halfExtents: [0.9, 0.3, 2]}, position: [0, 1.2, 0], linearDamping: 0.05, angularDamping: 0.3});
   const wheel = (x, z, front) => ({position: [x, -0.2, z], radius: 0.35, restLength: 0.35, travel: 0.2, steered: front, driven: !front, node: new Object3D()});
@@ -88,6 +123,22 @@ function car(world, options = {}) {
   const vehicle = createVehicle3D(world, chassis, {wheels: [wheel(-0.8, -1.4, true), wheel(0.8, -1.4, true), wheel(-0.8, 1.4, false), wheel(0.8, 1.4, false)], engineForce: 6000, brakeForce: 12000, ...options});
   return {chassis, vehicle};
 }
+
+test('wheel rays pass through their chassis while respecting ordinary collision layers', () => {
+  const world = createPhysicsWorld3D();
+  const floor = world.createBody({shape: {type: 'plane'}, layer: 1});
+  const chassis = world.createBody({shape: {type: 'sphere', radius: 0.7}, position: [0, 1, 0], layer: 1});
+  const vehicle = createVehicle3D(world, chassis, {wheels: [{position: [0, -0.2, 0], restLength: 0.5, travel: 0.2, radius: 0.35}]});
+  const ordinary = world.raycast([0, 0.8, 0], [0, -1, 0], 1.05);
+  assert.equal(ordinary.body, chassis);
+  assert.equal(ordinary.distance, 0);
+  vehicle.update(1 / 60);
+  assert.equal(vehicle.groundedWheels, 1);
+  assert.equal(vehicle.wheels[0].ground, floor);
+  vehicle.mask = 2;
+  vehicle.update(1 / 60);
+  assert.equal(vehicle.groundedWheels, 0);
+});
 
 test('a vehicle settles on its suspension with its weight shared by the wheels', () => {
   const world = createPhysicsWorld3D();
