@@ -260,6 +260,8 @@ for (const [name, allowed] of Object.entries(expected)) {
     if (name === 'engine') textExports['./particles'] = {types:'./dist/particles.d.ts',import:'./dist/particles.js'};
     // Physics2d: one DOM-free entry.
     if (name === 'engine') textExports['./physics2d'] = {types:'./dist/physics2d.d.ts',import:'./dist/physics2d.js'};
+    // Bitmapfont: one DOM-free entry.
+    if (name === 'engine') textExports['./bitmapfont'] = {types:'./dist/bitmapfont.d.ts',import:'./dist/bitmapfont.js'};
     // Gamepad: one DOM-free entry and one optional browser entry.
     if (name === 'engine') {
       textExports['./input/gamepad'] = {types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};
@@ -5434,6 +5436,32 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
   const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
   if(Object.hasOwn(physics2dAllowed,resolved)&&!physics2dAllowed[resolved].includes(relative))throw new Error('Physics2d: implementation module imported outside its entry: '+relative);
+ }
+}
+// Bitmapfont: one DOM-free entry built on the runtime alone. It starts no timer or request, and no other entry has it.
+const bitmapfontTypes=["BitmapFont", "BitmapGlyph", "BitmapText", "BitmapTextGlyph", "BitmapTextLayout", "BitmapTextLayoutOptions", "BitmapTextLine", "BitmapTextOptions"];
+const bitmapfontValues=["parseBitmapFont", "createBitmapText", "layoutBitmapText"];
+for(const [file,values,types] of [['packages/engine/src/bitmapfont.ts',bitmapfontValues,bitmapfontTypes],['packages/engine/dist/bitmapfont.js',bitmapfontValues,[]],['packages/engine/dist/bitmapfont.d.ts',bitmapfontValues,bitmapfontTypes]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,values)||!mouseSame(surface.types,types))throw new Error('Bitmapfont: exact entry exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/bitmapfont')),bitmapfontValues))throw new Error('Bitmapfont: optional runtime values mismatch');
+for(const [label,values,stem] of textEntries){
+ const body=uiRead(stem+'.d.ts');
+ for(const name of [...bitmapfontTypes,...bitmapfontValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Bitmapfont: leaked to default/other entry: '+label+'/'+name);
+}
+const bitmapfontImports={"src/bitmapfont.ts": ["./bitmapFontParse.js", "./bitmapText.js", "./bitmapFontTypes.js"], "dist/bitmapfont.js": ["./bitmapFontParse.js", "./bitmapText.js"], "dist/bitmapfont.d.ts": ["./bitmapFontParse.js", "./bitmapText.js", "./bitmapFontTypes.js"], "src/bitmapFontParse.ts": ["@egret/runtime", "./bitmapFontTypes.js"], "dist/bitmapFontParse.js": ["@egret/runtime"], "dist/bitmapFontParse.d.ts": ["./bitmapFontTypes.js"], "src/bitmapText.ts": ["@egret/runtime", "@egret/runtime", "@egret/contracts", "./bitmapFontParse.js", "./bitmapFontTypes.js"], "dist/bitmapText.js": ["@egret/runtime", "@egret/contracts", "./bitmapFontParse.js"], "dist/bitmapText.d.ts": ["./bitmapFontTypes.js"], "src/bitmapFontTypes.ts": ["@egret/runtime"], "dist/bitmapFontTypes.js": [], "dist/bitmapFontTypes.d.ts": ["@egret/runtime"]};
+for(const [file,expected] of Object.entries(bitmapfontImports)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
+ if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Bitmapfont: exact graph mismatch: '+file);
+ if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Bitmapfont: acquired automatic host work: '+file);
+}
+const bitmapfontAllowed={"src/bitmapFontParse.js": ["src/bitmapfont.ts", "src/bitmapText.ts"], "dist/bitmapFontParse.js": ["dist/bitmapfont.js", "dist/bitmapfont.d.ts", "dist/bitmapText.js"], "src/bitmapText.js": ["src/bitmapfont.ts"], "dist/bitmapText.js": ["dist/bitmapfont.js", "dist/bitmapfont.d.ts"]};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
+ if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
+ for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
+  const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+  if(Object.hasOwn(bitmapfontAllowed,resolved)&&!bitmapfontAllowed[resolved].includes(relative))throw new Error('Bitmapfont: implementation module imported outside its entry: '+relative);
  }
 }
 // Gamepad: a DOM-free entry with the input and the keys it drives, and a browser entry with one

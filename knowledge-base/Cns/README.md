@@ -24,7 +24,7 @@
 | UI／文字／输入 | [M3](docs/m3-ui-text-input-plan.md) · [托管 UI](docs/ui-data-panel.md) · [段落](docs/readonly-paragraph-sdk.md) · [字体](docs/font-resource-generations.md) · [特效](docs/shared-ui-effects.md) · [悬停与滚轮](docs/pointer-hover.md) · [控件状态](docs/ui-controls.md) · [语义](docs/ui-semantics.md) · [界面示例索引](docs/ui-examples.md) |
 | 声音 | [2D 游戏的声音](docs/audio.md) |
 | 手柄 | [手柄](docs/gamepad.md) |
-| 2D 世界 | [相机](docs/camera-2d.md) · [瓦片地图](docs/tilemap.md) · [粒子](docs/particles.md) · [碰撞与物理](docs/physics-2d.md) |
+| 2D 世界 | [相机](docs/camera-2d.md) · [瓦片地图](docs/tilemap.md) · [粒子](docs/particles.md) · [碰撞与物理](docs/physics-2d.md) · [位图字体](docs/bitmap-font.md) |
 | 混合整合 | [M4](docs/m4-core-acceptance-plan.md) · [Android 范围](docs/android-device-validation.md) · [干净消费者](docs/clean-consumer.md) |
 | 3D | [有界 3D 与 2D 合成](docs/authored-scene3d.md) · [独立 World3D](docs/world3d.md) |
 | 后续工具／兼容 | [工程事务](docs/工程事务核心合同.md) · [AI／工程接口](docs/AI创作与工程接口.md) · [完整迁移](docs/旧工程迁移.md) |

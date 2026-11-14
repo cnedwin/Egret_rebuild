@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 位图字体 — 2026-11-14
+
+`@egret/engine/bitmapfont` 是可选入口。`parseBitmapFont` 读取 BMFont 的文本、XML 和 JSON 格式（AngelCode 生成器、Hiero、Glyph Designer 和 Littera 保存的格式），以及 Egret 纹理合并工具写出的帧格式字体，并用各自的代码拒绝无法读取的内容。`layoutBitmapText` 按字体的字距调整、行距和字间距排版，按宽度在空格之后和表意文字之间换行——不在 `，。！？」` 等闭合标点之前换行——并左、中、右对齐。`createBitmapText` 按字体的每一页把文字绘制为一个网格，以所见颜色着色，并在文字或选项改变时重新排版。新示例 `examples/bitmap-font` 用页面绘制的两种字体显示标题、对话框和得分。已在 Node、真实引擎和无头 Chromium 的软件 WebGL2 中验证；没有读取由生成工具本身保存的字体。属于 #266。[指南](docs/bitmap-font.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-font/README.zh-CN.md)
+
 ## 2D 碰撞与简单物理 — 2026-11-14
 
 `@egret/engine/physics2d` 是可选入口。由圆、矩形和凸多边形组成的世界——刚体可以是动态、运动学或静态的——在重力下按固定步长推进，按质量用弹性和摩擦把刚体推开，让堆叠稳定下来，并在速度低于阈值时不再弹起，使静止的东西保持静止。它通知接触的开始和结束（传感器也一样），按层和掩码过滤，并能查询某个点、某个矩形内以及射线上第一个遇到的刚体。`moveAndSlide` 移动角色，使其沿墙滑动而不会穿墙；`addTileColliders` 把网格的实心格子合并成少量静态矩形。刚体不会自行旋转。新示例 `examples/physics-2d` 是一间有弟子、石头、斜坡和池塘的练功房。已在 Node 和无头 Chromium 的软件 WebGL2 中验证；没有运行硬件 GPU 或手机。属于 #266。[指南](docs/physics-2d.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/physics-2d/README.zh-CN.md)
