@@ -21,9 +21,9 @@ const skins = { control: { default: 'surface', hover: 'surfaceHover', pressed: '
   controlOn: { default: 'on', hover: 'onHover', pressed: 'surfacePressed', disabled: 'surfaceOff' } };
 const THEMES = {
   dark: createUiTheme({ id: 'dark', skins, colors: { page: 0x161a22, panel: 0x1f2633, surface: 0x3d4a63, surfaceHover: 0x56689a, surfacePressed: 0x27314a, surfaceOff: 0x2a2d33,
-    on: 0x2f8f6b, onHover: 0x3fae84, field: 0x10141b, row: 0x2b2f3a, rowAlt: 0x343a48, rowChosen: 0x2f8f6b, ink: 0xf3e9d2, hint: 0x9aa7c4, ring: 0xf2c14e } }),
+    on: 0x2f8f6b, onHover: 0x3fae84, field: 0x10141b, row: 0x2b2f3a, rowAlt: 0x343a48, rowHover: 0x454c5e, rowPressed: 0x232730, rowChosen: 0x2f8f6b, ink: 0xf3e9d2, hint: 0x9aa7c4, ring: 0xf2c14e } }),
   light: createUiTheme({ id: 'light', skins, colors: { page: 0xe9edf5, panel: 0xffffff, surface: 0xc9d3e6, surfaceHover: 0xaebcd8, surfacePressed: 0x8fa0c2, surfaceOff: 0xdcdfe6,
-    on: 0x4cb58b, onHover: 0x3fa37b, field: 0xf4f6fa, row: 0xf0f2f7, rowAlt: 0xe2e7f0, rowChosen: 0x4cb58b, ink: 0x172033, hint: 0x5b6577, ring: 0xc77d00 } }),
+    on: 0x4cb58b, onHover: 0x3fa37b, field: 0xf4f6fa, row: 0xf0f2f7, rowAlt: 0xe2e7f0, rowHover: 0xd3dae8, rowPressed: 0xbfc8da, rowChosen: 0x4cb58b, ink: 0x172033, hint: 0x5b6577, ring: 0xc77d00 } }),
 };
 const DEFAULTS = { sound: true, level: 'normal', name: '侠客', volume: 60 };
 const LEVELS = ['easy', 'normal', 'hard'], LEVEL_NAMES = { easy: '易 Easy', normal: '中 Normal', hard: '难 Hard' };
@@ -40,8 +40,10 @@ const scope = engine.createScope();
 const cache = createTextRasterCache(engine.assets, { provider: createCanvasTextRasterProvider() });
 let textQueue = Promise.resolve();
 const inTurn = work => { const next = textQueue.then(work); textQueue = next.catch(() => {}); return next; };
-let renders = 0, mixedFrames = 0, painted, failure, loaded, pressedRow, byKey = false, switching = false, busy = Promise.resolve(), layersReady = false, wanted = THEMES.dark;
+let renders = 0, mixedFrames = 0, painted, failure, loaded, queued = false, byKey = false, switching = false, busy = Promise.resolve(), layersReady = false, wanted = THEMES.dark;
 const fail = cause => { failure = String(cause?.code ?? cause); };
+/** Paints once after the callbacks that are running: a row reports its hover and its press from inside the input, and from inside a commit when it is recycled. */
+const later = () => { if (queued) return; queued = true; queueMicrotask(() => { queued = false; show(); }); };
 const pointer = createBrowserPointerInput({ engine, scope, width: WIDTH, height: HEIGHT });
 const hover = createBrowserHoverInput({ engine, scope, canvas, width: WIDTH, height: HEIGHT, onError: fail });
 const keyboard = createBrowserKeyboardInput({ engine, scope, onFocusChange: () => queueMicrotask(show) });
@@ -136,11 +138,14 @@ const source = {
     const { key, index, width } = context, colors = (context.theme ?? THEMES.dark).colors, content = context.scope.use(new DisplayObjectContainer()), back = content.addChild(context.scope.use(new Sprite()));
     const text = line(content, 8, 4, 13, '存档 ' + (index + 1) + ' · ' + profileOf(index).name, 'ink', context.scope);
     await text.prepare(colors);
+    // The row takes the pointer through the display object its binding is given: pointed at, held, and chosen by a completed press.
+    const pointed = createHoverControl({ hover, target: context.target, onHoverChange: later });
+    const held = createActionControl({ input: pointer, target: context.target, onActivate: () => load(key), onPressChange: later });
     const paint = () => {
       const focus = list.getFocus(), focused = focus.focusVisible && focus.key === key;
       back.graphics.clear();
       if (focused) back.graphics.beginFill(colors.ring).drawRect(0, 0, width, ROW - 2).endFill();
-      back.graphics.beginFill(key === loaded ? colors.rowChosen : index % 2 ? colors.rowAlt : colors.row).drawRect(focused ? 2 : 0, focused ? 2 : 0, width - (focused ? 4 : 0), ROW - 2 - (focused ? 4 : 0)).endFill();
+      back.graphics.beginFill(held.pressed ? colors.rowPressed : key === loaded ? colors.rowChosen : pointed.hovered ? colors.rowHover : index % 2 ? colors.rowAlt : colors.row).drawRect(focused ? 2 : 0, focused ? 2 : 0, width - (focused ? 4 : 0), ROW - 2 - (focused ? 4 : 0)).endFill();
     };
     const bound = createControlKeys({ keyboard, target: content, kind: 'action', control: { enabled: true, press() {}, release() { load(key); } } });
     const moves = { ArrowDown: index + 1, ArrowUp: index - 1, PageDown: index + 9, PageUp: index - 9, Home: 0, End: COUNT - 1 };
@@ -150,7 +155,7 @@ const source = {
     });
     // A theme change binds the row again before the old binding is let go: the newest one that is committed is the row.
     paint();
-    pending.set(key + ':' + context.bindingGeneration, { paint, dispose() { stop(); bound.dispose(); } });
+    pending.set(key + ':' + context.bindingGeneration, { paint, hovered: () => pointed.hovered, dispose() { stop(); bound.dispose(); held.dispose(); pointed.dispose(); } });
     return { content, measuredHeight: ROW };
   },
   // Called for a binding that was recycled, replaced or never committed.
@@ -167,11 +172,6 @@ const root = createUiRoot({
   tree: { id: 'list', kind: 'virtualList', source, explicitWidth: LIST.width, explicitHeight: LIST.height },
   keyboard: { input: keyboard, idPrefix: 'profiles', tabStop: 7 }, limits: { overscan: 1, residentCap: 24 },
   input: pointer,
-  onRowPointer(notification) {
-    if (notification.kind === 'begin') pressedRow = notification.key;
-    else if (notification.kind === 'end') { if (pressedRow === notification.key) load(notification.key); pressedRow = undefined; }
-    else if (notification.kind === 'cancel') pressedRow = undefined;
-  },
 });
 const list = root.list('list');
 /** After a commit: the rows that show are the newest bindings of their keys. */
@@ -275,6 +275,8 @@ function publish() {
     await settle(root); await settle(card);
     adopt(); wireCard();
     if (layersReady) layers.sync();
+    // A pointer that rests while the rows change under it sends nothing: the input picks again where it is.
+    hover.sync();
   };
   busy = busy.then(run).then(show, cause => { fail(cause); show(); });
   return busy;
@@ -305,6 +307,7 @@ export function readSnapshot() {
     focus: focus.focusedId, focusVisible: focus.focusVisible, row: list.getFocus().key,
     rows: ui.rows.filter(row => row.visible).map(row => ({ key: row.key, index: row.index, x: LIST.x + row.box.x, y: LIST.y + row.box.y, width: row.box.width, height: row.box.height })),
     confirm: { open: confirmOpen(), card: semanticBoxOf(card, 'card'), yes: semanticBoxOf(card, 'yes'), no: semanticBoxOf(card, 'no') },
+    hoveredRows: [...realized].filter(([, row]) => row.hovered()).map(([key]) => key),
     renders, mixedFrames, failure, realized: realized.size,
     semantics: { focused: semantics.snapshot.focused, nodes: semantics.snapshot.nodes.length, projection: projection.state },
   };

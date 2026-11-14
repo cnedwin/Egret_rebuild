@@ -31,7 +31,7 @@ node tools/serve-canvas.mjs
 | 开关、选项、按钮、文本框、滑动条 | `@egret/engine/ui` 的 `createToggleControl`、`createSelectionGroup`、`createActionControl`、`createTextFieldControl`、`createRangeControl`，指针悬停用 `createHoverControl` |
 | 按键 | 每个控件和每一行各有一个 `createControlKeys`。明确的停靠点序号决定顺序；根的 `keyboard.tabStop` 让列表成为一个停靠点 |
 | 颜色 | 两个 `createUiTheme` 代际。`selectUiSkin` 给出皮肤为控件状态提供的名称 |
-| 存档 | 带虚拟列表的 `createUiRoot`。每一行自己绘制文字 |
+| 存档 | 带虚拟列表的 `createUiRoot`。每一行自己绘制文字，并通过绑定的 `context.target` 接收指针：`createHoverControl` 和 `createActionControl` 让行在指针下面变亮、按住时变暗，完成一次按下就选中它 |
 | 卡片 | 第二个根，由 `createUiLayerManager` 作为模态层显示 |
 | 文字 | `@egret/engine/text` 的 `createTextField` 加画布栅格化提供方；名字在 `createBrowserTextInput` 中输入 |
 | 语义 | `createUiSemantics`、用于各行的 `createUiListSemantics`、用于卡片的 `semanticBoxOf`，由 `createBrowserSemantics` 投射 |

@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 设置示例的存档行可以悬停和按住 — 2026-11-14
+
+`examples/ui-settings` 中存档列表的行在指针下面会变亮，按住时变暗，两套主题都是如此，做法是使用行绑定得到的显示对象。只涉及示例。属于 #90。[指南](docs/ui-controls.md#托管列表的行)
+
 ## 在列表中同时选中多行 — 2026-11-14
 
 语义树的列表框接受 `multiple`，`createUiListSemantics` 会把它传下去，所以可以选中多行的列表会被如实告知辅助技术。新示例 `examples/ui-multi-select` 可以通过按下、在获得焦点的行上按空格或辅助技术的请求，从四十名成员中选出任意多人并派出；已经外出的成员是被禁用的选项。属于 #90。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-multi-select/README.zh-CN.md)
