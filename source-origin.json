@@ -582,8 +582,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 52027,
-      "sha256": "b1b3707d851d9c5351d509fae80c1509c2130836095fd73ba618296f1f244465",
+      "bytes": 52780,
+      "sha256": "d3cdeaf419cd399114dc0cefc68c35ccfbf9eebbb19bba8be8e75eb2bf44c2e0",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -786,8 +786,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 26750,
-      "sha256": "5e38bf9e124bc1147a904acb82ae9d518ef32c938687dedda2468cb2a8960895",
+      "bytes": 27233,
+      "sha256": "b3fb4267aa6feb84de9d96924e1ca221f54a026d5264f9e659c1429b71bb931f",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -1044,8 +1044,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/工程规划.md",
-      "bytes": 14075,
-      "sha256": "bdeee5e5fb574b6347edeac6a2cbbbcc9a1908937fea93f2757e4e071caf1e5e",
+      "bytes": 14378,
+      "sha256": "9a8cc186115066a5afd2936987ed87a132d0ff75618f89f5b36949168c167b70",
       "identityHistory": [
         {
           "bytes": 23962,
@@ -2072,7 +2072,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 137800,
-      "sha256": "c792afa5ed3f86ff4b57430422c9d6bb76694b4c5ce72488a5adda97de65aa38",
+      "sha256": "62b53f7838d721cf44b6b55de65320e7bfca8e05a11505b3f4308f9dfd5a5947",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2113,8 +2113,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 57307,
-      "sha256": "6b3cf8e750a2264639dc36fa0701dafb30580076f24833c9f77b35cdce348c5c",
+      "bytes": 58048,
+      "sha256": "f42036bc5a5b7158f8e4e25570d5c5f0d237fd8577ecf2547fd2e7729942f646",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2506,8 +2506,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 29810,
-      "sha256": "4df73be230391cf244a1158b6e1b0304b631624ac4fcbf8dfd546fd88e290f2d",
+      "bytes": 30299,
+      "sha256": "56ad52b8b600aed0b4be8c669c01b85991a3c171c4e8d067a28fc6fd4a40e1e2",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -2644,8 +2644,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-plan.md",
-      "bytes": 16632,
-      "sha256": "b4fc4ce2e27e94fcea072255a5ac33024651f8bc96131237b69888db75b60683",
+      "bytes": 16999,
+      "sha256": "826194366d085d3ccf44452a194263d4ae9b8d2ef86f26f5df217c47ed1eaf00",
       "identityHistory": [
         {
           "bytes": 29962,
@@ -3746,8 +3746,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "9802aee7863efaf5f3917d761d3361560a30c3477abc22251feca040fba210bc",
-      "bytes": 409043,
+      "sha256": "bce011446339b8543de3ed4b6699892979d7bd1d3f9417a50f9d8a265c1b47c6",
+      "bytes": 409960,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -5328,8 +5328,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 299990,
-      "sha256": "bdff849f2be66135d056f8b56734fbe53566cc9fc1b9b6c0ef74288eb2a17d54",
+      "bytes": 300007,
+      "sha256": "433e1e3c2fc64fbaab719b6c6ce77ededb4065eaff9f93e04e44703e8844cd55",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -11313,14 +11313,14 @@
     {
       "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 36504,
-      "sha256": "b60cfa48535d768198baaeea05ce0c503543dc05c3ee8f079a9105b82fc3a4db"
+      "bytes": 36750,
+      "sha256": "d74e6bb3172704074d254ef72e42c735d44fbbec05e1db7da25b5aa4dcdb1e59"
     },
     {
       "path": "knowledge-base/Cns/docs/m4-core-acceptance-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 30659,
-      "sha256": "05c26b4dcd0c3cedf50ff96a2811ee4fe9acf2fc26298f7b6671854506c134a3"
+      "bytes": 30868,
+      "sha256": "46807edac7de79139789170f46ca71d175ba338dda79b79534a67564504ff64d"
     },
     {
       "path": "contributions/m2-m4-design.json",
@@ -14475,8 +14475,8 @@
     {
       "path": "examples/outfit-studio/serve.mjs",
       "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
-      "bytes": 6101,
-      "sha256": "c08fcfa06109b7f9c7234bf3c622355637b3bb1ffdfaf45ee2bc4c1998b561b2"
+      "bytes": 6138,
+      "sha256": "5040c80939a8e0500d1f32c403f2771cd3a6fdb94abe42663072e728f2604acd"
     },
     {
       "path": "examples/outfit-studio/assets.mjs",
@@ -14487,32 +14487,32 @@
     {
       "path": "examples/outfit-studio/scene.mjs",
       "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
-      "bytes": 6343,
-      "sha256": "31bc05285155a9b76f3754286d2335bc6361a0f2e5671d7f161cd9a60103a947"
+      "bytes": 6400,
+      "sha256": "36ffda1110a4690e8cd0817324f0a934703df89865c85c3ba28278d6f9b03bf3"
     },
     {
       "path": "examples/outfit-studio/ui.mjs",
       "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
-      "bytes": 11241,
-      "sha256": "4faba7946c0b08dccb453b1fa2e64a6894b9cf6ebcb846e66ad1eaaa1c2c0f5b"
+      "bytes": 11912,
+      "sha256": "8c83ad7966b158aeef59b9f958d7e554026e409602009161b5710972515901de"
     },
     {
       "path": "examples/outfit-studio/main.mjs",
       "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
-      "bytes": 27097,
-      "sha256": "1b252fcd7626afcd906ebd5e9ae94eef7e7814fd50310b697396fc3925b31771"
+      "bytes": 32792,
+      "sha256": "e207c4b78e9ede4f3d77e2dc3abc622703e59d140c4628227153a465572394bd"
     },
     {
       "path": "examples/outfit-studio/index.html",
       "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
-      "bytes": 4551,
-      "sha256": "3ff5d23232a07c7a0fbafb24710479bede7e06d56009a0d68e126b82cd0708ef"
+      "bytes": 4971,
+      "sha256": "b35cfc5d2a4ec8630d91196020d3ba697e290c3325544976f045b56e9bfd3e1f"
     },
     {
       "path": "examples/outfit-studio/style.css",
       "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
-      "bytes": 2002,
-      "sha256": "b45a141b43413909a121add235093e195e2f7b73ba8a7b83c83652a01c591ec5"
+      "bytes": 2323,
+      "sha256": "854c2b1157c57b1c9e470175306182e2e088d4901f574f1a2241ff5f91834d45"
     },
     {
       "path": "examples/outfit-studio/verify.mjs",
@@ -14523,14 +14523,14 @@
     {
       "path": "examples/outfit-studio/README.md",
       "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
-      "bytes": 10583,
-      "sha256": "290fb96a3e089d515741c65d65bb8657008ba28a1a0f9facb89d715dadace3e5"
+      "bytes": 14921,
+      "sha256": "071432eb51152bb35f62947be7a69e4efd45d3cb169706b64e386d6cb953b872"
     },
     {
       "path": "examples/outfit-studio/README.zh-CN.md",
       "originRole": "First-party Egret example, authored project, verification or paired guide, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
-      "bytes": 9569,
-      "sha256": "0bd7e457fcca9335630234ea8dec60720acde077bb903f50452ef6e42d38a890"
+      "bytes": 13347,
+      "sha256": "56ae984ac85c957090436fde73581a18c23281609ac3292f767a39fa5bdf7c8f"
     },
     {
       "path": "examples/outfit-studio/verification-summary.json",
@@ -14547,14 +14547,14 @@
     {
       "path": "tests/outfit-studio-workload.test.mjs",
       "originRole": "First-party Egret fixed scene, controls, or scoped evidence, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
-      "bytes": 4526,
-      "sha256": "41794d3fd88db32733049d3b9e5c8cf339d6981c90c4b0f1efdb84cebe30ca45"
+      "bytes": 5711,
+      "sha256": "4d1056c063fa1de9e461eafd07745b524d01305c2640325cdd3c7c5ad12ab0d5"
     },
     {
       "path": "examples/outfit-studio/workload.mjs",
       "originRole": "First-party Egret fixed scene, controls, or scoped evidence, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies.",
-      "bytes": 1673,
-      "sha256": "a1a34bd690d7990f34626bef5a3fdaa4420ad8c713c09daa88779267d5a3b049"
+      "bytes": 2028,
+      "sha256": "9a517586e4df6430ee72526aff407311622138baa8a407b25be287e5e72253ae"
     },
     {
       "path": "examples/outfit-studio/author-x.mjs",
@@ -16851,26 +16851,26 @@
     {
       "path": "packages/engine/src/semanticTypes.ts",
       "originRole": "First-party public types of the semantic tree of a drawn UI; independently authored with AI assistance; Apache-2.0. Role names follow WAI-ARIA 1.2 vocabulary; no specification text is copied.",
-      "bytes": 7213,
-      "sha256": "e2dfb24417eb53c4a97d1b66c107d5a6e63f5add56e83ec15451c08367430ba1"
+      "bytes": 7678,
+      "sha256": "340c509fff7d682cd4a773eb902c5c126d83b48b5843e0cecf432d43fca433d8"
     },
     {
       "path": "packages/engine/src/semanticTree.ts",
       "originRole": "First-party DOM-free semantic tree: roles, names, bounds and state read from the drawn controls at each publication, with their actions; independently authored with AI assistance; Apache-2.0. No third-party dependency or asset.",
-      "bytes": 19516,
-      "sha256": "cdf5e4309ab5ece821b55b5049029182681b6cfb9f0ba55b410b012a44582d90"
+      "bytes": 20358,
+      "sha256": "96eaa9bc29043e30ab370dbb79939b574b981da4b16d5029b5fa61a4a179929d"
     },
     {
       "path": "packages/engine/src/semantics.ts",
       "originRole": "First-party optional entry of the semantic tree; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 709,
-      "sha256": "25c9593efcd810bf45a67a6cf2efb31f565395bc9386ad0d036540754ceae791"
+      "bytes": 725,
+      "sha256": "762ac05e5dca08f3ccd957ed142c634267b20197f6c3439f1bd855645f95082f"
     },
     {
       "path": "packages/engine/web/BrowserSemantics.ts",
       "originRole": "First-party browser projection of the semantic tree to elements the canvas owns; independently authored with AI assistance; Apache-2.0. Attribute names follow WAI-ARIA 1.2; no specification text or third-party code is copied.",
-      "bytes": 16739,
-      "sha256": "de5c506e5d2c9ffbc49a029ebe05370a1a43fb62a49972d6d93a05ea62692a91"
+      "bytes": 17350,
+      "sha256": "5742275aab1c9746dea27c7556c493766231254a8009e63dc3d2eeee60237967"
     },
     {
       "path": "packages/engine/web/semantics.ts",
@@ -16881,14 +16881,14 @@
     {
       "path": "tests/ui-semantics.test.mjs",
       "originRole": "First-party behaviour tests of the semantic tree, alone and over the existing controls on a genuine Engine; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 41309,
-      "sha256": "04d12fbd05fbad1998b59405f5da1e959a1be0280361e3d956e4f323c83d89a0"
+      "bytes": 45365,
+      "sha256": "b27c0a9aa198e17dcc65be5e6dfa88013a98fe4363b1e912a2b2ed9570083305"
     },
     {
       "path": "tests/browser-semantics.test.mjs",
       "originRole": "First-party tests of the browser projection against a test-owned stand-in for the page; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 40811,
-      "sha256": "5db6b6c4f0ab6850f1c2dbfd12318bc560210859754a886de6c8f8c8b47e7b9c"
+      "bytes": 42530,
+      "sha256": "d7e4b1a4928c028d7fc6bfa139fd269b4da76104ac5346da9b96057da9e1eeaa"
     },
     {
       "path": "tests/types/semantics.json",
@@ -16899,20 +16899,20 @@
     {
       "path": "tests/types/semantics.ts",
       "originRole": "First-party strict TypeScript consumer of the two semantics entries, with nine refused misuses; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 4932,
-      "sha256": "8b4aec2f5fefa4d18f447cce10b51921decca408ad1e4eae3f81b59d6dc23043"
+      "bytes": 4956,
+      "sha256": "10b24b1dff0c24a7297c0820bd7a4facd07c1856ffbaaf3fdf7b2da0065ef7e0"
     },
     {
       "path": "knowledge-base/en/docs/ui-semantics.md",
       "originRole": "First-party guide to the semantic tree and its browser projection; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 26255,
-      "sha256": "18c263263a984844d8340f73e565e632d2286fc07b8439c38450de560084eb59"
+      "bytes": 29072,
+      "sha256": "826a87b6f7dc7d7e40b7bfedab559ccd8d4da44312432a10bb1ad6595a604c49"
     },
     {
       "path": "knowledge-base/Cns/docs/ui-semantics.md",
       "originRole": "First-party Simplified Chinese guide to the semantic tree and its browser projection; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 25567,
-      "sha256": "3c533d88619bfc73e6713d1058f0fd8740ecf0eaba6fa9cedaf8f36d40a4d46c"
+      "bytes": 28351,
+      "sha256": "4dd8e8f90596323fb7d2996bdbc6d477efd742e9db9ab9d8ff7afaf8abebbd46"
     },
     {
       "path": "contributions/ui-semantics.json",
@@ -17375,6 +17375,60 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 1383,
       "sha256": "fbbd6611bbfbae044b814ea40dda16b842c3241b21e505f46eda91b1670ae47d"
+    },
+    {
+      "path": "examples/outfit-studio/mixed-background.mjs",
+      "originRole": "First-party World3D fixture and native renderer lifetime adapter for the Outfit Studio mixed profiles; independently authored with AI assistance using Egret's historical Outfit Studio quad data; Apache-2.0. No new third-party assets.",
+      "bytes": 8197,
+      "sha256": "595180b4ad20ee53cd1cc914aa8725f464b95623878e1337cd3c77ff43bbe098"
+    },
+    {
+      "path": "examples/outfit-studio/mixed-preview.mjs",
+      "originRole": "First-party dual-renderer submission, application epoch and recovery coordination for the Outfit Studio mixed profiles; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 3041,
+      "sha256": "3e1e1915125153f657ce18ce2eff05aa2c14fc6df939c3938736c0fbfc3a1bc8"
+    },
+    {
+      "path": "contributions/outfit-studio-mixed.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 721,
+      "sha256": "d25c85608f75acd90c2698af1c65fe5eadfdd800504a754ee33d7b94c08aa957"
+    },
+    {
+      "path": "examples/ui-inventory/index.html",
+      "originRole": "First-party page of the bag example; independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "bytes": 3326,
+      "sha256": "0af5ec4fdfe4876ad422cae0f662047d6f1af3c1b8edcb0b1292fc4db16bf171"
+    },
+    {
+      "path": "examples/ui-inventory/main.mjs",
+      "originRole": "First-party example of a bag of items as a grid with a cursor moved in two directions, with semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "bytes": 16435,
+      "sha256": "ab36ee095d3ec2eeaf86ca0209e09c6f8d806e78a376f01c1cfc633249b4b880"
+    },
+    {
+      "path": "examples/ui-inventory/verify.mjs",
+      "originRole": "First-party real-browser check of the bag example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 19859,
+      "sha256": "caeef1aee9fa50853e45111c3c8a598840254808f000b832a4e00847b9d49be2"
+    },
+    {
+      "path": "examples/ui-inventory/README.md",
+      "originRole": "First-party instructions for the bag example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 4738,
+      "sha256": "dcb018bcec02ff4696dc724528032565488bc5011b9e6af3e1b45ef48d7fbb53"
+    },
+    {
+      "path": "examples/ui-inventory/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the bag example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 4602,
+      "sha256": "8de17aa2ae41c9eba5b34641888e69b7e4ca9e4e783aed534850b1433f7effaf"
+    },
+    {
+      "path": "contributions/ui-inventory-example.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 1363,
+      "sha256": "4cb7c9b5c2971f022b8d10bdb4c9faf7d2e1315bd0a5965bacb6fd2877d3b72e"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
