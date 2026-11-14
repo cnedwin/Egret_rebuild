@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "packages/engine/src/particles.ts", "originRole": "First-party optional entry of 2D particles; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/src/particleEmitter.ts", "originRole": "First-party 2D particle emitter drawn as one mesh, with seeded emission, motion under gravity and drag, and properties from birth to death; independently authored with AI assistance; Apache-2.0. No third-party dependency.", "criticalComment": true},
+    {"path": "packages/engine/src/particleTypes.ts", "originRole": "First-party types of 2D particles; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/particles.test.mjs", "originRole": "First-party Node tests of 2D particle emitters on a real Engine; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/types/particles.json", "originRole": "First-party compiler configuration of the strict consumer of the particles entry; independently authored with AI assistance; Apache-2.0."},
+    {"path": "tests/types/particles.ts", "originRole": "First-party strict TypeScript consumer of the particles entry, with five refused misuses; independently authored with AI assistance; Apache-2.0."},
+    {"path": "examples/particles/index.html", "originRole": "First-party page of the particles example; independently authored with AI assistance; Apache-2.0. No third-party asset."},
+    {"path": "examples/particles/main.mjs", "originRole": "First-party example of three particle streams over a dot painted by the page; independently authored with AI assistance; Apache-2.0. Original example text; no third-party asset.", "criticalComment": true},
+    {"path": "examples/particles/verify.mjs", "originRole": "First-party real-browser check of the particles example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "examples/particles/README.md", "originRole": "First-party instructions for the particles example; independently authored with AI assistance; Apache-2.0."},
+    {"path": "examples/particles/README.zh-CN.md", "originRole": "First-party Simplified Chinese instructions for the particles example; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/en/docs/particles.md", "originRole": "First-party guide to 2D particles, with what was run and what was not; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/Cns/docs/particles.md", "originRole": "First-party Chinese guide to 2D particles; independently authored with AI assistance; Apache-2.0."}
+  ],
+  "documents": [
+    {"en": "examples/particles/README.md", "zh": "examples/particles/README.zh-CN.md"},
+    {"en": "knowledge-base/en/docs/particles.md", "zh": "knowledge-base/Cns/docs/particles.md"}
+  ]
+}
