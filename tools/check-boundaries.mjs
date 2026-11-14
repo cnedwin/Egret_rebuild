@@ -264,6 +264,8 @@ for (const [name, allowed] of Object.entries(expected)) {
     if (name === 'engine') textExports['./bitmapfont'] = {types:'./dist/bitmapfont.d.ts',import:'./dist/bitmapfont.js'};
     // Video: one DOM-free entry and one optional browser entry.
     if (name === 'engine') { textExports['./video'] = {types:'./dist/video.d.ts',import:'./dist/video.js'}; textExports['./web/video'] = {types:'./dist/web/video.d.ts',import:'./dist/web/video.js'}; }
+    // Frame loop: one optional browser entry.
+    if (name === 'engine') textExports['./web/loop'] = {types:'./dist/web/loop.d.ts',import:'./dist/web/loop.js'};
     // Gamepad: one DOM-free entry and one optional browser entry.
     if (name === 'engine') {
       textExports['./input/gamepad'] = {types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};
@@ -5261,6 +5263,33 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
   const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
   if(Object.hasOwn(particlesAllowed,resolved)&&!particlesAllowed[resolved].includes(relative))throw new Error('Particles: implementation module imported outside its entry: '+relative);
+ }
+}
+// Frame loop: one optional browser entry built on the runtime's error alone. No other entry has it.
+const loopTypes=['BrowserFrameLoop','BrowserFrameLoopOptions','BrowserFrameLoopSnapshot','BrowserFrameLoopState','FrameLoopEngine','FrameLoopHost'];
+for(const [file,types] of [['packages/engine/web/loop.ts',loopTypes],['packages/engine/dist/web/loop.js',[]],['packages/engine/dist/web/loop.d.ts',loopTypes]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,['createBrowserFrameLoop'])||!mouseSame(surface.types,types))throw new Error('Frame loop: exact browser entry exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/web/loop')),['createBrowserFrameLoop']))throw new Error('Frame loop: optional browser values mismatch');
+for(const [label,values,stem] of textEntries){
+ const body=uiRead(stem+'.d.ts');
+ for(const name of [...loopTypes,'createBrowserFrameLoop'])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Frame loop: leaked to default/other entry: '+label+'/'+name);
+}
+const loopImports={'web/loop.ts':['./BrowserFrameLoop.js','./BrowserFrameLoop.js'],'dist/web/loop.js':['./BrowserFrameLoop.js'],'dist/web/loop.d.ts':['./BrowserFrameLoop.js','./BrowserFrameLoop.js'],
+ 'web/BrowserFrameLoop.ts':['@egret/runtime'],'dist/web/BrowserFrameLoop.js':['@egret/runtime'],'dist/web/BrowserFrameLoop.d.ts':[]};
+for(const [file,expected] of Object.entries(loopImports)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
+ if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Frame loop: exact graph mismatch: '+file);
+ // The display's frame callback is the loop's one source of time: it starts no timer and makes no request.
+ if(/\b(?:setTimeout|setInterval|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Frame loop: acquired automatic host work: '+file);
+}
+const loopAllowed={'web/BrowserFrameLoop.js':['web/loop.ts'],'dist/web/BrowserFrameLoop.js':['dist/web/loop.js','dist/web/loop.d.ts']};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
+ if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
+ for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
+  const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+  if(Object.hasOwn(loopAllowed,resolved)&&!loopAllowed[resolved].includes(relative))throw new Error('Frame loop: implementation module imported outside its entry: '+relative);
  }
 }
 // Physics2d: one DOM-free entry built on the runtime alone. It starts no timer or request, and no other entry has it.
