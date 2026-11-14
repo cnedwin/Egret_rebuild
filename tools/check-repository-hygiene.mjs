@@ -122,7 +122,9 @@ export async function checkRepositoryHygiene(inputRoot, { git = 'git', committed
   try {
     const attributes = decode(await readFile(path.join(root, '.gitattributes'))).split('\n')
       .map(line => line.trim()).filter(line => line && !line.startsWith('#'));
-    if (JSON.stringify(attributes) !== JSON.stringify(['* -text'])) issues.push('raw byte .gitattributes policy differs');
+    // Besides the raw byte rule, the two changelogs alone take the union merge, which changes no byte of a checkout.
+    if (JSON.stringify(attributes) !== JSON.stringify(['* -text', 'knowledge-base/en/CHANGELOG.md merge=union', 'knowledge-base/Cns/CHANGELOG.md merge=union']))
+      issues.push('raw byte .gitattributes policy differs');
     const editor = decode(await readFile(path.join(root, '.editorconfig')));
     for (const setting of ['root = true','charset = utf-8','end_of_line = lf','insert_final_newline = true']) {
       if (!editor.includes(setting)) issues.push('missing editor setting: ' + setting);
