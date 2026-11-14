@@ -300,7 +300,7 @@ export function shapeFits(vertices: number, indices: number): boolean {
   return vertices <= GRAPHICS_SHAPE_LIMITS.maxVertices && indices <= GRAPHICS_SHAPE_LIMITS.maxIndices && 88 * vertices + 4 * indices <= GRAPHICS_SHAPE_LIMITS.maxLogicalBytes;
 }
 
-// Shapes drawn the same way, on any number of nodes, are one geometry: a frame admits 128 of them.
+// Shapes drawn the same way, on any number of nodes, are one geometry: a frame admits 4,096 of them.
 const shared = new Map<string, ResolvedShape>();
 /** The geometry and bounds of a node's shapes, or undefined while they hold no triangle. */
 export function resolveShape(shape: ShapeState): ResolvedShape | undefined {

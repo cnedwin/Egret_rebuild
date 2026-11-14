@@ -86,7 +86,7 @@ const ZH_WRITTEN = {
   ENGINE_MISMATCH: '对象属于另一个 Engine。显示树、作用域及其资源都只属于一个 Engine。',
   SCOPE_CLOSED: '作用域已销毁，它拥有的一切也随之销毁。请新建一个作用域。',
   FRAME_RENDER_FAILED: 'Host 拒绝或未能绘制这一帧。原因在 cause 中：以 _BACKPRESSURE 结尾的错误码表示 Host 还在处理之前的帧，使用 @egret/engine/web/loop 的帧循环可以避免。',
-  FRAME_BUDGET_EXCEEDED: '舞台上的内容超出了一帧的上限：65,536 个节点或命令、256 种材质、128 个几何体或 65,536 个网格三角形。绘制不同形状的 sprite 各算一个几何体。',
+  FRAME_BUDGET_EXCEEDED: '舞台上的内容超出了一帧的上限：65,536 个节点或命令、256 种材质、4,096 个不同的几何体或 65,536 个网格三角形。半径 40 的圆是 32 个三角形。',
   FRAME_IMAGE_BUDGET: '这一帧使用的图片超出上限：64 页、4,096 个区域或 64 MiB 的不同像素。请把图片合并到更少的图集中。',
   FRAME_TRANSFORM_INVALID: '某个显示对象被放到了角点不是有限数字的位置。请检查它及其父级的 x、y、缩放和旋转。',
   FRAME_STAGE_INVALID: '帧是从 Engine 的舞台捕获的，而这不是一个舞台。',

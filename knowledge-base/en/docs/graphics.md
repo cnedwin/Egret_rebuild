@@ -97,13 +97,13 @@ A sprite that draws only filled rectangles keeps them as rectangles, as before. 
 
 | Limit | Value | What happens beyond it |
 | --- | --- | --- |
-| Different drawings in one frame | 128 | The frame is refused with `FRAME_BUDGET_EXCEEDED` |
+| Different drawings in one frame | 4,096 | The frame is refused with `FRAME_BUDGET_EXCEEDED` |
 | Triangles in one frame, of all meshes | 65,536 | The frame is refused with `FRAME_BUDGET_EXCEEDED` |
 | Points of one path being drawn | 8,192 | The call throws `GRAPHICS_BUDGET` and the sprite keeps what it had |
 | Width of a line | 1,024 | `GRAPHICS_VALUE_INVALID` |
 | Dashes of one line | 16,384 | The call throws `GRAPHICS_BUDGET` and the sprite keeps what it had |
 | Triangles of one fill with holes or crossings | 16,384 | `GRAPHICS_BUDGET` when the path is finished, by `endFill` or the next fill, line or shape. The path is dropped and what was drawn before it stays |
 
-Sprites that draw exactly the same thing share one drawing, however many they are: 300 bullets drawn as the same circle count once. Sprites that each draw something different count each. For many different shapes, draw them into one sprite, or use bitmaps.
+Sprites that draw exactly the same thing share one drawing, however many they are: 300 bullets drawn as the same circle count once. Sprites that each draw something different count each. In practice the triangles are what runs out first: 65,536 in a frame is some 2,000 circles of radius 40, or 500 of radius 600. A drawing is counted once however many sprites show it, but its triangles are counted for each sprite that shows it.
 
 `getBounds()` covers the shapes and the width of their lines. Hit testing does not read the drawing: it uses `hitArea`, as before.

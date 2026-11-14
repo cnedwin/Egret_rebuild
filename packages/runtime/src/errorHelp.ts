@@ -89,7 +89,7 @@ const WRITTEN: Readonly<Record<string, string>> = {
   ENGINE_MISMATCH: 'The object belongs to another Engine. A display tree, a scope and their resources all belong to one Engine.',
   SCOPE_CLOSED: 'The scope was disposed, and everything it owned with it. Create a new scope.',
   FRAME_RENDER_FAILED: 'The Host refused or failed to draw the frame. The reason is in cause: a code ending in _BACKPRESSURE means the Host was still busy with earlier frames, which the frame loop of @egret/engine/web/loop avoids.',
-  FRAME_BUDGET_EXCEEDED: 'The stage holds more than one frame takes: 65,536 nodes or commands, 256 materials, 128 geometries or 65,536 mesh triangles. Sprites that draw different shapes each count as one geometry.',
+  FRAME_BUDGET_EXCEEDED: 'The stage holds more than one frame takes: 65,536 nodes or commands, 256 materials, 4,096 different geometries or 65,536 mesh triangles. A circle of radius 40 is 32 triangles.',
   FRAME_IMAGE_BUDGET: 'The frame uses more images than it takes: 64 pages, 4,096 regions or 64 MiB of distinct pixels. Pack images into fewer atlases.',
   FRAME_TRANSFORM_INVALID: 'A display object is placed where its corners are not finite numbers. Check its x, y, scale and rotation, and those of its parents.',
   FRAME_STAGE_INVALID: 'A frame is captured from the stage of an Engine, and this is not one.',

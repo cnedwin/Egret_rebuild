@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A frame takes 4,096 different drawings, not 128 — 2026-11-15
+
+A frame used to admit 128 different geometries, so 200 sprites that each drew a circle of its own size were refused with `FRAME_BUDGET_EXCEEDED`. The table now holds 4,096, as many as a frame's regions. What a frame costs is still held by its other limits: 65,536 mesh triangles and 16 MiB of geometry. The Hosts keep nothing for each geometry, so nothing else changes. The graphics example draws 300 discs of different sizes with `&many=300`, and its check reads them from the canvas with software WebGL2.
+
 ## Graphics: line ends and corners, dashes, holes and gradients — 2026-11-15
 
 `lineStyle` takes a fourth argument: `caps` (`'none'`, `'round'`, `'square'`), `joints` (`'miter'`, `'round'`, `'bevel'`), `miterLimit` and `dash`. `beginLinearGradientFill` and `beginRadialGradientFill` fill with a gradient of two to sixteen stops, mixed as sRGB values; `beginGradientFill` takes the colours, alphas, ratios and matrix that older code passes. The parts of one path are now filled together by the non-zero rule, so a part drawn the other way round inside another is a hole, and overlapping parts and outlines that cross themselves are painted once. Three things changed for code written against the first version: the parts of a path used to be filled each by itself; a mitre longer than four half-widths is now cut flat instead of being shortened; and a line's pieces now meet in one inside point with a separate outside, so a cornered line has more vertices. Bitmap fills and gradients on lines are not there. See the [graphics guide](docs/graphics.md).

@@ -125,7 +125,8 @@ class CaptureBudget {
     if (!isTexturedGeometry2D(value) && !isSharedGeometry2D(value)) throw new EgretError('MESH_GEOMETRY_INVALID');
     this.triangles = debit(this.triangles, value.triangleCount, 65536);
     if (this.geometryOwners.has(value)) return;
-    debit(this.geometryOwners.size, 1, 128);
+    // A frame's table of geometries is as long as its table of regions. What they cost is held by the triangles and bytes above.
+    debit(this.geometryOwners.size, 1, 4096);
     this.geometryBytes = debit(this.geometryBytes, value.logicalByteLength, 16777216);
     this.geometryOwners.add(value);
   }

@@ -108,7 +108,7 @@ test('GS04 shapes are drawn in order in one mesh, and rectangles drawn before th
  node.graphics.beginFill(1).drawRect(0,0,1,1);assert.equal(frame().commands[0].kind,'rect');
 }));
 
-test('GS05 the same drawing on many nodes is one geometry; a frame takes 128 different ones',()=>withStage(({engine,scope,sprite,frame})=>{
+test('GS05 the same drawing on many nodes is one geometry; a frame takes thousands of different ones, up to its triangles',()=>withStage(({engine,scope,sprite,frame})=>{
  const nodes=[];
  for(let i=0;i<300;i++){const node=sprite();node.x=i;node.graphics.beginFill(0xffcc00).drawCircle(0,0,6).endFill();nodes.push(node);}
  let now=frame();
@@ -116,7 +116,11 @@ test('GS05 the same drawing on many nodes is one geometry; a frame takes 128 dif
  // 127 more drawings, each its own.
  for(let i=1;i<=127;i++){nodes[i].graphics.clear();nodes[i].graphics.beginFill(0xffcc00).drawCircle(0,0,6+i).endFill();}
  now=frame();assert.equal(now.geometries.length,128);
+ // A 129th different drawing is drawn like the others: what a frame holds is counted in triangles.
  nodes[128].graphics.clear();nodes[128].graphics.beginFill(0xffcc00).drawCircle(0,0,500).endFill();
+ now=frame();assert.equal(now.geometries.length,129);
+ // 65,536 triangles in all: 600 more circles of 126 triangles each do not fit.
+ for(let i=0;i<600;i++){const node=sprite();node.graphics.beginFill(1).drawCircle(0,0,600+i).endFill();}
  assert.throws(frame,coded('FRAME_BUDGET_EXCEEDED'));
  void engine;void scope;
 }));

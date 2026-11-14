@@ -96,7 +96,7 @@ const NO_CLIPS:readonly (readonly PreparedPoint2D[])[]=[];
  */
 export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,height:number,options:SharedPreparationOptions2D,retention?:SharedPreparationRetention2D):PreparedSharedFrame2D {
     if(frame.profile!=='egret.shared-frame2d/1'||frame.colorRecipe!=='egret.linear-srgb-pma/1'||frame.targetRepresentation!=='egret.srgb-pma8-target/1')sharedFailure('profile');
-    if(frame.commands.length>options.maxCommands||frame.commands.length>65536||frame.pages.length>64||frame.regions.length>Math.min(SHARED_FRAME_REGIONS_2D,options.maxFrameRegions??SHARED_FRAME_REGIONS_2D)||frame.materials.length>256||frame.geometries.length>128)sharedFailure('budget');
+    if(frame.commands.length>options.maxCommands||frame.commands.length>65536||frame.pages.length>64||frame.regions.length>Math.min(SHARED_FRAME_REGIONS_2D,options.maxFrameRegions??SHARED_FRAME_REGIONS_2D)||frame.materials.length>256||frame.geometries.length>4096)sharedFailure('budget');
     const pageLimit=Math.min(SHARED_FRAME_PAGE_BYTES_2D,options.maxFramePageBytes??SHARED_FRAME_PAGE_BYTES_2D);
     const effects=prepareEffects2D(frame,options.pixelRatio,options.enableEffects===true);
     const budget=new TexturedPreparationBudget2D(options);let geometryBytes=0,pageBytes=0,clipsCount=0;

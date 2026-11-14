@@ -37,6 +37,10 @@ sprite().graphics.beginFill(COLOURS.frame)
 // A dashed line: 16 on, 12 off, each dash with round ends.
 sprite().graphics.lineStyle(6, COLOURS.dash, 1, { dash: [16, 12], caps: 'round' }).moveTo(20, 252).lineTo(460, 252);
 
+// With ?many=300 in the address, that many more discs, each of its own size: every one is a drawing of its own.
+const many = Math.min(2000, Math.max(0, Number(new URLSearchParams(location.search).get('many') ?? 0) | 0));
+for (let i = 0; i < many; i++) sprite().graphics.beginFill(COLOURS.dash).drawCircle(8 + 16 * (i % 30), 8 + 16 * Math.floor(i / 30), 3 + i / many).endFill();
+
 // A ring of four wedges: each is a path of an outer arc one way and an inner arc back.
 const ring = sprite();
 function drawRing() {
@@ -62,5 +66,5 @@ function show() {
 function tick() { try { show(); } catch (cause) { failure = String(cause?.code ?? cause?.message ?? cause); } if (scope.state === 'open') requestAnimationFrame(tick); }
 requestAnimationFrame(tick);
 
-globalThis.__egretGraphicsExample = { readSnapshot: () => ({ backend, colours: COLOURS, turns, failure }) };
+globalThis.__egretGraphicsExample = { readSnapshot: () => ({ backend, colours: COLOURS, turns, failure, many }) };
 show();

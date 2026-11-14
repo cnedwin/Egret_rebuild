@@ -33,7 +33,7 @@
 | `ENGINE_MISMATCH` | 对象属于另一个 Engine。显示树、作用域及其资源都只属于一个 Engine。 |
 | `DISPLAY_VALUE_INVALID` | 交给显示对象的值无效：位置、缩放和旋转是有限数字，alpha 在 0 到 1 之间，visible 是布尔值。 |
 | `FRAME_TRANSFORM_INVALID` | 某个显示对象被放到了角点不是有限数字的位置。请检查它及其父级的 x、y、缩放和旋转。 |
-| `FRAME_BUDGET_EXCEEDED` | 舞台上的内容超出了一帧的上限：65,536 个节点或命令、256 种材质、128 个几何体或 65,536 个网格三角形。绘制不同形状的 sprite 各算一个几何体。 |
+| `FRAME_BUDGET_EXCEEDED` | 舞台上的内容超出了一帧的上限：65,536 个节点或命令、256 种材质、4,096 个不同的几何体或 65,536 个网格三角形。半径 40 的圆是 32 个三角形。 |
 | `FRAME_IMAGE_BUDGET` | 这一帧使用的图片超出上限：64 页、4,096 个区域或 64 MiB 的不同像素。请把图片合并到更少的图集中。 |
 | `GRAPHICS_FILL_REQUIRED` | 形状需要填充或线条。请在绘制前调用 beginFill 或 lineStyle。 |
 | `GRAPHICS_VALUE_INVALID` | 交给 graphics 的值无效：坐标是有限数字，尺寸不能为负，颜色在 0 到 0xffffff 之间，alpha 在 0 到 1 之间。 |
@@ -370,7 +370,7 @@
 
 | 错误码 | 含义 |
 | --- | --- |
-| `FRAME_BUDGET_EXCEEDED` | 舞台上的内容超出了一帧的上限：65,536 个节点或命令、256 种材质、128 个几何体或 65,536 个网格三角形。绘制不同形状的 sprite 各算一个几何体。 |
+| `FRAME_BUDGET_EXCEEDED` | 舞台上的内容超出了一帧的上限：65,536 个节点或命令、256 种材质、4,096 个不同的几何体或 65,536 个网格三角形。半径 40 的圆是 32 个三角形。 |
 | `FRAME_ID_EXHAUSTED` | 帧的 `id` 计数器用尽了。请新建一个。 |
 | `FRAME_IMAGE_BUDGET` | 这一帧使用的图片超出上限：64 页、4,096 个区域或 64 MiB 的不同像素。请把图片合并到更少的图集中。 |
 | `FRAME_PROFILE_METADATA_UNSUPPORTED` | 帧不支持 `profile metadata`。 |
