@@ -36,7 +36,7 @@ open(id)、close(id) 和 setViewport(rect) 仅记录意图。关闭覆盖层也�
 
 现有[原生编辑表单](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.zh-CN.md)提供 layers=1 可选模式：列表 → 资料详情 → 重命名 → 详情或列表。重命名使用草稿模型，保存才写入原始字段，取消保留原值。UI 根与原生编辑器共享已有字体替换和生命周期；默认与固定夹具分别保留。
 
-[下拉示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.zh-CN.md)把一个弹出层锚定在滚动列表中被激活的那一行上，使用 align end，并且每换一行就重新注册一次。下面的设备结果早于 align 和这个示例。
+[下拉示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.zh-CN.md)把一个弹出层锚定在滚动列表中被激活的那一行上，使用 align end。它在开始时就以关闭状态注册这个弹出层，之后每换一行重新注册一次：没有注册为层的根只是一个普通的根，会绘制在自己所在的位置，键盘也能到达它。下面的设备结果早于 align 和这个示例。
 
 ## 证据与剩余工作
 

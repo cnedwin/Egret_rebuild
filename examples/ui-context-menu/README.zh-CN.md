@@ -31,11 +31,13 @@ node tools/serve-canvas.mjs
 | 名册 | 带四十条记录虚拟列表的 `createUiRoot`，并用 `keyboard.tabStop` 让它成为一个停靠点 |
 | 哪个按键按下了行 | 根的 `onRowPointer`。通知中带有这次接触，`event.payload.buttons & 2` 表示次要按键处于按下状态 |
 | 页面自己的菜单 | 画布阻止 `contextmenu` 的默认行为，否则浏览器的菜单会盖住绘制出来的菜单 |
-| 菜单 | 第二个 `createUiRoot`，带三条记录的虚拟列表；每次打开时以 `popup` 注册到 `createUiLayerManager`，使用 `anchor: { root, target: { kind: 'row', listId, key }, align: 'end' }`、`closeOnEscape`，以及落在第一个可执行动作上的 `initialFocus` |
+| 菜单 | 第二个 `createUiRoot`，带三条记录的虚拟列表；开始时就以关闭状态作为 `popup` 注册到 `createUiLayerManager`，每次打开时重新注册，使用 `anchor: { root, target: { kind: 'row', listId, key }, align: 'end' }`、`closeOnEscape`，以及落在第一个可执行动作上的 `initialFocus` |
 | 菜单项 | 每个绑定的 `context.target`，加上 `createHoverControl` 和 `createActionControl`；`'action'` 类型的 `createControlKeys`；方向键调用 `list.focus` |
 | 一个动作 | 换一个新的数据源，其中这条记录的 `contentVersion` 不同：这一行带着新的文字重新绑定。然后调用 `layers.close` |
 | 菜单键 | 由页面从行的按键事件中读取：`ContextMenu`，或按住 Shift 的 `F10` |
 | 语义 | 名册是一个 `listbox`。菜单是 `role: 'menu'` 的 `createUiListSemantics`，在层打开之前保持隐藏；菜单项无事可做时说明自己 `disabled`。按钮在菜单打开期间说明自己 `expanded` |
+
+**菜单在第一次打开之前就已经是层。**没有注册为层的根只是一个普通的根：它会绘制在自己所在的位置，它的行也是键盘停靠点。所以菜单在开始时就以关闭状态注册，由层把它保持在屏幕之外，直到被打开。按钮被禁用期间不是键盘停靠点。
 
 **层的变更放在输入之外。**按下和按键是在路由回调内部到达的，那里不能注册或打开层。所以打开操作排在正在进行的提交之后执行。
 
@@ -51,6 +53,6 @@ node tools/serve-canvas.mjs
 node examples/ui-context-menu/verify.mjs <Playwright index.mjs 的绝对路径> <新的输出目录的绝对路径> [software]
 ```
 
-省略第三个参数时启动已安装的 Edge（有界面）。使用 `software` 时由 Playwright 自带的浏览器以无头方式和软件渲染运行。六个场景各写出一张截图和 `report.json`：菜单关闭时浏览器计算出的树；鼠标右键，包括页面自己的菜单被阻止、菜单在所属行下方和上方的位置、变暗并拒绝的菜单项、一个动作，以及按下其他地方；只用键盘，包括菜单键、Shift+F10、各项循环、Escape 和按钮；被选中的行滚走后被带回，以及所属行离开时菜单关闭；辅助技术的请求；以及手机配置，其中手指选中成员并使用按钮。它们在无头 Chromium 的软件 WebGL2 上通过。
+省略第三个参数时启动已安装的 Edge（有界面）。使用 `software` 时由 Playwright 自带的浏览器以无头方式和软件渲染运行。六个场景各写出一张截图和 `report.json`：菜单关闭时浏览器计算出的树，并且在它从未打开之前，屏幕上没有绘制它的任何部分，它的菜单项和被禁用的按钮都不是键盘停靠点；鼠标右键，包括页面自己的菜单被阻止、菜单在所属行下方和上方的位置、变暗并拒绝的菜单项、一个动作，以及按下其他地方；只用键盘，包括菜单键、Shift+F10、各项循环、Escape 和按钮；被选中的行滚走后被带回，以及所属行离开时菜单关闭；辅助技术的请求；以及手机配置，其中手指选中成员并使用按钮。它们在无头 Chromium 的软件 WebGL2 上通过。
 
 输入是通过自动化协议注入的。没有运行真人操作、实体鼠标、手指或键盘、长按、读屏软件或其他辅助技术、硬件 GPU、WebGPU、Edge、Safari、Firefox 和真实手机。手指长按不会打开菜单：手指使用按钮。没有子菜单，没有带勾选状态的菜单项，也不能用首字母跳到某一项。

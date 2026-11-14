@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 两个示例的弹出层在第一次打开之前 — 2026-11-14
+
+`examples/ui-dropdown` 和 `examples/ui-context-menu` 中的弹出层原先只在第一次打开时才注册为层。在那之前，它的根只是一个普通的根：被绘制在舞台左上角，它的行也是键盘停靠点。现在两个示例都在开始时以关闭状态注册它，菜单示例的按钮在被禁用期间也不再是键盘停靠点。语义树自始至终是正确的，所以原有的检查没有发现问题；现在检查会在任何东西打开之前读取屏幕角落的颜色，并走一遍 Tab 顺序。只涉及示例。属于 #90。[指南](docs/ui-layers.md#生命周期与示例)
+
 ## 行的动作菜单 — 2026-11-14
 
 语义树新增 `menu` 和 `menuitem` 两个角色，`createUiListSemantics` 接受 `role: 'menu'`，于是弹出层里的托管列表会作为菜单告知辅助技术，其中的菜单项可以执行，或说明自己不能执行。新示例 `examples/ui-context-menu` 把这样的菜单挂在滚动名册的行上，用鼠标右键、菜单键、Shift+F10、一个按钮或一次请求打开。已在 Node 和无头 Chromium 的软件 WebGL2 上检查。属于 #90。[指南](docs/ui-semantics.md#菜单) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-context-menu/README.zh-CN.md)

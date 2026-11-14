@@ -36,7 +36,7 @@ Each registered overlay owns one backdrop in its own Scope. Repeated open/close 
 
 The existing [native editing form](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.md) offers an opt-in layers=1 mode: list → profile details → rename → details/list. The rename model is a draft; Save updates the original field, Cancel leaves it intact. Both UI roots and the native editor share the existing font replacement and lifecycle. Default/fixed fixtures remain separately declared.
 
-The [dropdown example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.md) anchors one popup to whichever row of a scrolling list was activated, with align end, and registers it again for each row. The device results below predate align and that example.
+The [dropdown example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.md) anchors one popup to whichever row of a scrolling list was activated, with align end. It registers the popup once at the start, closed, and again for each row: a root that is not registered as a layer is an ordinary root, drawn where it stands and reached by the keyboard. The device results below predate align and that example.
 
 ## Evidence and remaining work
 

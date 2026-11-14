@@ -95,6 +95,12 @@ await scenario('closed, the screen is a list of members and nothing else', deskt
     return [bar.getAttribute('aria-valuenow'), bar.getAttribute('aria-valuemin'), bar.getAttribute('aria-valuemax'), bar.getAttribute('aria-orientation'), list.getAttribute('role'), list.getAttribute('aria-label')]; }),
     ['0', '0', '960', 'vertical', 'list', '名册 / Roster']);
   assert.deepEqual(await page.evaluate(() => [...document.querySelectorAll('[role=listitem]')].slice(0, 2).map(element => [element.getAttribute('aria-posinset'), element.getAttribute('aria-setsize')])), [['1', '40'], ['2', '40']]);
+  // The jobs were never opened: they are not drawn anywhere, and their options are not stops of the keyboard.
+  assert.deepEqual([await colour(page, [6, 6]), await colour(page, [100, 36])], ['161a22', '161a22']);
+  await page.focus('#scene'); const stops = [];
+  for (let count = 0; count < 3; count++) { await key(page, 'Tab'); stops.push(String((await read(page)).focus)); }
+  assert.equal(stops.some(stop => stop.startsWith('jobs:')), false, stops.join(' '));
+  assert.equal((await read(page)).failure, undefined);
 });
 
 await scenario('a press opens the jobs under the chip of its row, and a press on a job gives it to the member', desktop, async page => {
