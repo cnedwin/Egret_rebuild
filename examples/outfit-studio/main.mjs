@@ -21,11 +21,20 @@ const params = new URL(location.href).searchParams;
 const backend = params.get('backend') ?? 'webgpu';
 const profileName = params.get('profile');
 const mode = params.get('load') ?? 'sparse';
-const mobile = profileName === 'x-mtouch';
+const mobile = profileName === 'x-mtouch' || profileName === 'x-mtouch-2';
 const viewport = document.querySelector('.viewport');
 const landscape = () => screen.orientation?.type?.startsWith('landscape') ?? matchMedia('(orientation:landscape)').matches;
 let profile = fixedProfile(profileName,landscape()), frame = frameOptions;
 const timing = profile && params.get('trace') === '1' ? createStudioTiming(mode) : undefined;
+const backgroundCanvas = profile?.mixed ? document.createElement('canvas') : undefined;
+if (backgroundCanvas) {
+  backgroundCanvas.className = 'studio-background';
+  backgroundCanvas.setAttribute('aria-hidden','true');
+  viewport.append(backgroundCanvas);
+  viewport.classList.add('studio-waiting');
+  viewport.inert = true;
+  document.documentElement.classList.add('studio-mixed');
+}
 const touch = studioTouchState(), selection = {scroll:0,drawer:0};
 let viewScope,view,fixed,fonts,layoutRevision = 0,reflowQueued = false,frames = 0,presented;
 let retiredCast,retiredWorkload;
@@ -43,11 +52,11 @@ let host, engine, scope, assets, cache, cast, ui, project, selected, draftId, up
 let state = 'loading', elapsed = 0, playing = true, raf = 0, lastFrame;
 let pendingActions = 0, palettePending = false, paintQueued = false, paintDirty = false;
 let replacement, nameRefusal, closing, loads = [], tail = Promise.resolve();
-let opening, opened;
+let opening, opened, mixed, restoreCanvasFocus = false;
 
 const message = (en, zh) => { status.textContent = `${en} / ${zh}`; };
 function report(error) {
-  if (signal.aborted) return;
+  if (signal.aborted || (state === 'recovering' && isGraphicsInterruption(error))) return;
   errors.push({code:error?.code ?? error?.name ?? 'Error',message:String(error?.message ?? error)});
   if (errors.length > 32) errors.shift();
   message('The action could not finish. Try again.', '操作未完成，请重试。');
@@ -67,27 +76,54 @@ function inspect() {
       surface:{width:frame.width,height:frame.height,ratio:profile.ratio,dpr:devicePixelRatio,
         backing:[canvas.width,canvas.height],css:{x:bounds.x,y:bounds.y,width:bounds.width,height:bounds.height}},
       frames,presented,resources:state === 'ready' ? host.getSharedStatus().resources : undefined} : {}),
+    ...(mixed ? {mixed:mixed.inspect(state,host?.getSessionStatus().generation ?? cleanup?.host?.generation)} : {}),
     cast:cast?.inspect() ?? retiredCast,ui:state === 'ready' ? ui.inspect() : undefined,replacement,nameRefusal,opened,cleanup,errors:[...errors],
     interactive:performance.getEntriesByName('egret-studio-interactive')[0]?.startTime};
 }
 
-async function draw(readback = false, sample) {
+const waitForMixed = pending => mixed ? mixed.wait(pending) : pending;
+
+function mixedInterrupted() {
+  return Object.assign(new Error('Studio mixed frame expired'), {code:'STUDIO_MIXED_INTERRUPTED'});
+}
+
+function isGraphicsInterruption(error) {
+  return ['STUDIO_MIXED_INTERRUPTED','WEBGL2_CONTEXT_LOST','WEBGL2_CONTEXT_RESTORING','WEBGPU_DEVICE_LOST'].includes(error?.code);
+}
+
+async function draw(readback = false, sample, recovering = false) {
+  const epoch = mixed?.epoch;
+  function checkMixed() {
+    if (mixed && (mixed.epoch !== epoch || (state === 'recovering' && !recovering))) throw mixedInterrupted();
+  }
+  checkMixed();
   const uiStart = sample && performance.now();
   const vaultChanged = await view?.publish();
   const uiChanged = await ui.publish();
   signal.throwIfAborted();
+  checkMixed();
   if (fixed && (uiChanged || vaultChanged || frames === 0)) fixed.sync(cast.root);
   if (view) { cast.applyView(touch.camera,selected,touch.holds); view.drawControls(); }
   const action = touch.lastAction;
   const captureStart = sample && performance.now();
-  const reading = readback ? host.requestReadback() : undefined;
-  void reading?.catch(() => {});
   const captured = engine.captureSharedFrame(frame);
   const hostStart = sample && performance.now();
-  host.renderSharedFrame(captured);
-  const submittedAt = sample && performance.now();
-  const pixels = await reading;
-  await host.whenIdle();
+  const receipt = mixed?.begin(layoutRevision,host.getSessionStatus().generation);
+  let pixels, submittedAt;
+  try {
+    const reading = readback ? host.requestReadback() : undefined;
+    void reading?.catch(() => {});
+    host.renderSharedFrame(captured);
+    submittedAt = sample && performance.now();
+    pixels = await waitForMixed(reading);
+    await waitForMixed(host.whenIdle());
+    signal.throwIfAborted();
+    checkMixed();
+  } catch (error) {
+    if (receipt) mixed.partial();
+    throw error;
+  }
+  if (receipt) mixed.complete(receipt);
   const completedAt = performance.now();
   frames++;
   if (action && presented?.action !== action.number) {
@@ -108,7 +144,7 @@ function animate(time) {
   raf = 0;
   if (state !== 'ready' || !playing) return;
   void enqueue(async () => {
-    if (!playing) return;
+    if (state !== 'ready' || !playing || reflowQueued) return;
     const mutationStart = timing && performance.now();
     fixed?.mutate(mode);
     const animationStart = timing && performance.now();
@@ -119,7 +155,11 @@ function animate(time) {
     const sample = timing ? {raf:time,mutationMs:animationStart-mutationStart,
       animationMs:performance.now()-animationStart,frame:frames+1} : undefined;
     await draw(false,sample);
-  }).then(schedule, error => { if (!signal.aborted) { playing = false; report(error); } });
+  }).then(schedule, error => {
+    if (signal.aborted || (mixed && isGraphicsInterruption(error))) return;
+    playing = false;
+    report(error);
+  });
 }
 
 function schedule() {
@@ -131,7 +171,7 @@ function requestDraw() {
   paintDirty = true;
   if (paintQueued) return;
   paintQueued = true;
-  void enqueue(async () => { paintDirty = false; await draw(); }).catch(report).finally(() => {
+  void enqueue(async () => { paintDirty = false; if (state === 'ready') await draw(); }).catch(report).finally(() => {
     paintQueued = false;
     if (paintDirty) requestDraw();
   });
@@ -143,21 +183,23 @@ async function replacePalette(character) {
   message('Loading palette…', '正在加载配色…');
   let ticket;
   let committed = false;
+  const epoch = mixed?.epoch;
   try {
     // Admit the authored edit privately before publishing the live candidate.
     const nextProject = openStudioProject(project.serialize());
     nextProject.edit(character.id, {palette});
-    const {loader} = await assets.library(palette);
+    const {loader} = await waitForMixed(assets.library(palette));
     signal.throwIfAborted();
     ticket = cast.requestPalette(character, palette, loader);
-    await ticket.ready;
+    await waitForMixed(ticket.ready);
     signal.throwIfAborted();
 
     // This queue owns the final capture window. The previous frame stays visible through loading and staging.
     upload = host.stageSharedFrame(ticket.capture(frame));
-    const staged = await upload.ready;
+    const staged = await waitForMixed(upload.ready);
     signal.throwIfAborted();
     const session = host.getSessionStatus();
+    if (mixed?.epoch !== epoch) throw mixedInterrupted();
     if (session.state !== 'ready' || session.generation !== staged.generation) throw new Error('Studio palette generation expired');
     try { ticket.commit(); }
     finally {
@@ -167,13 +209,19 @@ async function replacePalette(character) {
         cast.retireBorrowed(character.id);
       }
     }
-    await upload.submit().completed;
-    await host.whenIdle();
+    if (mixed) {
+      // The staged proof admitted the palette. Only the paired draw presents it on /2.
+      upload.dispose();
+      upload = undefined;
+    } else {
+      await upload.submit().completed;
+      await host.whenIdle();
+    }
     replacement = {...replacement,phase:'ready'};
     message('Palette applied', '已应用配色');
   } catch (error) {
     replacement = {...replacement,phase:committed ? 'presentation-failed' : 'failed',reason:String(error?.code ?? error?.message ?? error)};
-    if (!signal.aborted) {
+    if (!signal.aborted && state !== 'recovering') {
       if (committed) message('Palette saved. Refresh the preview to show it.', '配色已保存，请刷新预览。');
       else message('Palette unavailable. Your previous outfit is still active.', '配色无法加载，原装扮仍可使用。');
     }
@@ -211,6 +259,7 @@ async function openProject(file, control) {
   const coded = (code, action) => { try { return action(); } catch (error) { throw Object.assign(error, {code:error.code ?? code}); } };
   const tickets = [];
   let published = false;
+  const epoch = mixed?.epoch;
   opened = {file:file.name,phase:'loading',revision:project.revision};
   try {
     await wait(Promise.resolve());
@@ -250,6 +299,7 @@ async function openProject(file, control) {
     await wait(Promise.resolve());
 
     if (control.signal.aborted) await cancelled;
+    if (mixed?.epoch !== epoch) throw mixedInterrupted();
 
     // End cancellation at the synchronous publication boundary.
     openButton.disabled = true;
@@ -277,11 +327,11 @@ async function openProject(file, control) {
     const code = String(error?.code ?? error?.name ?? 'Error');
     if (published) {
       opened = {...opened,phase:'presentation-failed',reason:code};
-      if (!signal.aborted) message('Project opened. Refresh the preview to show it.', '工程已打开，请刷新预览。');
+      if (!signal.aborted && state !== 'recovering') message('Project opened. Refresh the preview to show it.', '工程已打开，请刷新预览。');
     } else if (opened.phase !== 'inconsistent') {
       const cancel = code === 'STUDIO_OPEN_CANCELLED';
       opened = {...opened,phase:cancel ? 'cancelled' : 'failed',reason:code,detail:String(error?.message ?? error).slice(0,200)};
-      if (signal.aborted) return;
+      if (signal.aborted || state === 'recovering') return;
       if (cancel) message('Opening cancelled. Your project is unchanged.', '已取消打开，当前工程未改变。');
       else message(...(openFailures[code] ?? ['The project could not be loaded. Your project is unchanged. Try again.', '工程加载失败，当前工程未改变，可以重试。']));
     }
@@ -297,6 +347,7 @@ async function openProject(file, control) {
 }
 
 async function act(key) {
+  const epoch = mixed?.epoch;
   const current = project.character(selected);
   const layer = ui.layer;
   if (layer === 'roster') {
@@ -329,11 +380,12 @@ async function act(key) {
       }
       try {
         // A saved snapshot must remain renderable with this example's own font set.
-        await ui.prepareName(name);
+        await waitForMixed(ui.prepareName(name));
         signal.throwIfAborted();
+        if (mixed?.epoch !== epoch) throw mixedInterrupted();
         project.edit(draftId, {name});
       } catch (error) {
-        if (signal.aborted) throw error;
+        if (signal.aborted || mixed?.epoch !== epoch) throw error;
         nameRefusal = {revision:project.revision,code:error?.code ?? error?.name};
         ui.resetDraft(project.character(draftId).name);
         message('This name could not be displayed. Try a different name.', '这个名称无法显示，请换一个名称。');
@@ -357,11 +409,11 @@ async function act(key) {
 
 function onAction(key) {
   if (state !== 'ready' || reflowQueued || opening || pendingActions >= 8 || (key === 'palette' && palettePending)) return;
-  const source = ui, sourceLayer = source.layer;
+  const source = ui, sourceLayer = source.layer, epoch = mixed?.epoch;
   pendingActions++;
   if (key === 'palette') palettePending = true;
   // Apply queued input only while its originating layer still owns the action.
-  void enqueue(() => { if (ui === source && !reflowQueued && source.layer === sourceLayer) return act(key); }).catch(report).finally(() => {
+  void enqueue(() => { if (state === 'ready' && mixed?.epoch === epoch && ui === source && !reflowQueued && source.layer === sourceLayer) return act(key); }).catch(report).finally(() => {
     pendingActions--;
     if (key === 'palette') palettePending = false;
   });
@@ -377,6 +429,10 @@ function fitSurface() {
   if (ui?.input.state === 'active') ui.input.cancelAll('viewport');
   canvas.style.width = width;
   canvas.style.height = height;
+  if (backgroundCanvas) {
+    backgroundCanvas.style.width = width;
+    backgroundCanvas.style.height = height;
+  }
 }
 
 async function mountView() {
@@ -385,7 +441,91 @@ async function mountView() {
   ui = await createStudioUi({engine,scope:viewScope,canvas,cache,fonts:fonts.set,initial:{characters:characters(),selected},
     onAction,onError:report,requestDraw,signal,profile});
   view = profile ? createStudioReferenceView({engine,scope:viewScope,input:ui.input,profile,state:touch,selection,onAction,invalidate:requestDraw}) : undefined;
+  if (mixed && (state !== 'ready' || reflowQueued)) suspendMixedInput();
   layoutRevision++;
+}
+
+function setFrameSize() {
+  const alpha = backgroundCanvas ? {clearAlpha:0,outputAlpha:'premultiplied'} : {};
+  if (profile) frame = {...frameOptions,...alpha,width:profile.width,height:profile.height};
+  mixed?.resize(profile);
+}
+
+async function changeOrientation() {
+  // The new view consumes one geometry revision while the authored scene and resources stay live.
+  if (ui.layer === 'rename') ui.cancelRename();
+  draftId = undefined;
+  viewScope.dispose();
+  ui = view = undefined;
+  profile = fixedProfile(profileName,landscape());
+  setFrameSize();
+  fitSurface();
+  fixed.layout(profile);
+  cast.layout(profile);
+  await mountView();
+}
+
+function suspendMixedInput() {
+  restoreCanvasFocus ||= document.activeElement === canvas;
+  ui?.setInteractive(false);
+  viewport.inert = true;
+  viewport.classList.add('studio-waiting');
+  viewport.setAttribute('aria-busy','true');
+  pause.disabled = download.disabled = openButton.disabled = true;
+}
+
+function restoreMixedInput() {
+  ui.setInteractive(true);
+  viewport.inert = false;
+  viewport.classList.remove('studio-waiting');
+  viewport.removeAttribute('aria-busy');
+  if (restoreCanvasFocus && document.activeElement === document.body) canvas.focus({preventScroll:true});
+  restoreCanvasFocus = false;
+  pause.disabled = download.disabled = false;
+  openButton.disabled = Boolean(opening);
+}
+
+function recoverMixed() {
+  if (state !== 'ready' || signal.aborted) return;
+  state = 'recovering';
+  cancelAnimationFrame(raf);
+  raf = 0;
+  lastFrame = undefined;
+  opening?.abort();
+  suspendMixedInput();
+  message('Recovering graphics…', '正在恢复图形…');
+  void enqueue(async () => {
+    // A second loss can supersede the first recovery without replacing the editable scene.
+    for (;;) {
+      const epoch = mixed.epoch;
+      try {
+        await mixed.restore(host);
+        signal.throwIfAborted();
+        if (mixed.epoch !== epoch) continue;
+        if (mobile && fixedProfile(profileName,landscape()) !== profile) {
+          await changeOrientation();
+        }
+        fitSurface();
+        if (mixed.epoch !== epoch) continue;
+        await draw(false,undefined,true);
+        if (mixed.epoch !== epoch) continue;
+        state = 'ready';
+        restoreMixedInput();
+        message('Graphics restored', '图形已恢复');
+        reflow();
+        schedule();
+        return;
+      } catch (error) {
+        if (signal.aborted || mixed.epoch === epoch) throw error;
+      }
+    }
+  }).catch(error => {
+    if (signal.aborted) return;
+    state = 'failed';
+    report(error);
+    message('Graphics could not recover. Reload to retry.', '图形恢复失败，请重新载入。');
+    void close('failed');
+  });
 }
 
 function reflow() {
@@ -393,28 +533,22 @@ function reflow() {
   if (fixedProfile(profileName,landscape()) === profile) { fitSurface(); return; }
   reflowQueued = true;
   ui.input.cancelAll('viewport');
-  ui.input.setInteractive(false);
+  if (mixed) suspendMixedInput(); else ui.input.setInteractive(false);
   void enqueue(async () => {
-    // Geometry ownership changes as one session. The authored project and shared assets stay live.
-    if (ui.layer === 'rename') ui.cancelRename();
-    draftId = undefined;
-    const previous = viewScope;
-    previous.dispose();
-    ui = view = undefined;
-    profile = fixedProfile(profileName,landscape());
-    frame = {...frameOptions,width:profile.width,height:profile.height};
-    fitSurface();
-    fixed.layout(profile);
-    cast.layout(profile);
-    await mountView();
+    if (state !== 'ready') return;
+    await changeOrientation();
     await draw();
-  }).catch(error => { report(error); if (!signal.aborted) void close('failed'); })
-    .finally(() => { reflowQueued = false; reflow(); });
+    if (mixed && state === 'ready') restoreMixedInput();
+  }).catch(error => {
+    if (state === 'recovering' || signal.aborted) return;
+    report(error);
+    void close('failed');
+  }).finally(() => { reflowQueued = false; reflow(); schedule(); });
 }
 
 async function open() {
   if (profile && !Object.hasOwn(workload.mutations,mode)) throw new Error('Choose static, sparse or full');
-  if (profile) frame = {...frameOptions,width:profile.width,height:profile.height};
+  setFrameSize();
   fitSurface();
   if (backend !== 'webgpu' && backend !== 'webgl2') throw new Error('Choose WebGPU or WebGL2');
   const hostModule = backend === 'webgpu'
@@ -427,9 +561,17 @@ async function open() {
   ]);
   project = openStudioProject(authored);
   selected = characters()[0].id;
-  host = factory({canvas,pixelRatio:profile?.ratio ?? 1,outputAlpha:'opaque',enableReadback:true,...(profile ? {enableEffects:true} : {})});
+  if (backgroundCanvas) {
+    const {createMixedPreview} = await import('./mixed-preview.mjs');
+    signal.throwIfAborted();
+    mixed = createMixedPreview({canvas:backgroundCanvas,backend,signal,onLost:recoverMixed});
+  }
+  host = factory({canvas,pixelRatio:profile?.ratio ?? 1,outputAlpha:frame.outputAlpha,enableReadback:true,
+    ...(profile ? {enableEffects:true} : {}),
+    ...(mixed ? {onDiagnostic:mixed.onOverlayDiagnostic,...(backend === 'webgpu' ? {recovery:{mode:'manual'}} : {})} : {})});
   engine = await createEngineForProfile({host}, 'egret.shared-frame2d/1');
   signal.throwIfAborted();
+  if (mixed) { await mixed.start(); setFrameSize(); }
   scope = engine.createScope();
   assets = createStudioAssets(engine,scope,signal,Boolean(profile));
   loads = [
@@ -445,9 +587,10 @@ async function open() {
   engine.advanceTime(0);
   if (profile) advance(workload.clockStep);
   await mountView();
-  await draw(true);
+  await draw(!mixed);
   signal.throwIfAborted();
   state = 'ready';
+  if (mixed) restoreMixedInput();
   pause.disabled = false;
   download.disabled = false;
   openButton.disabled = false;
@@ -479,6 +622,11 @@ function close(finalState = 'closed') {
     // Cancel owned requests and UI before waiting for work already in progress.
     await attempt(() => upload?.dispose());
     await attempt(() => ui?.input.state === 'active' && ui.input.cancelAll('owner'));
+    // Wake the recovery waiters before waiting on the application queue.
+    if (mixed) {
+      await attempt(() => mixed.close());
+      await attempt(() => host?.stop());
+    }
     await attempt(() => viewScope?.dispose());
     await attempt(() => scope?.dispose());
     await Promise.allSettled([ready,tail,...loads]);
@@ -508,13 +656,14 @@ void ready.catch(error => {
 });
 
 pause.addEventListener('click', () => {
+  if (state !== 'ready' || pause.disabled) return;
   playing = !playing;
   lastFrame = undefined;
   pause.textContent = playing ? 'Pause preview / 暂停预览' : 'Resume preview / 继续预览';
   schedule();
 });
 canvas.addEventListener('wheel',event => {
-  if (!view || state !== 'ready' || ui.layer !== 'roster') return;
+  if (!view || state !== 'ready' || reflowQueued || ui.layer !== 'roster') return;
   const {x,y,width,height} = canvas.getBoundingClientRect();
   const logicalX = (event.clientX-x)*frame.width/width, logicalY = (event.clientY-y)*frame.height/height;
   const region = view.inspect().vault;
@@ -524,6 +673,7 @@ canvas.addEventListener('wheel',event => {
   view.scrollBy(delta);
 },{passive:false,signal});
 download.addEventListener('click', () => {
+  if (state !== 'ready' || download.disabled) return;
   const url = URL.createObjectURL(new Blob([project.serialize()], {type:'application/json'}));
   const link = document.createElement('a');
   link.href = url;
@@ -540,7 +690,7 @@ projectFile.addEventListener('change', () => {
   const file = projectFile.files[0];
   // The same file may be chosen again after a failure.
   projectFile.value = '';
-  if (!file || state !== 'ready' || opening) return;
+  if (!file || state !== 'ready' || reflowQueued || opening || openButton.disabled) return;
   const control = opening = new AbortController();
   openButton.textContent = 'Cancel opening / 取消打开';
   message('Opening project…', '正在打开工程…');
@@ -548,7 +698,7 @@ projectFile.addEventListener('change', () => {
     if (opening !== control) return;
     opening = undefined;
     openButton.textContent = 'Open project / 打开工程';
-    openButton.disabled = state !== 'ready';
+    openButton.disabled = state !== 'ready' || reflowQueued;
   });
 });
 closeButton.addEventListener('click', () => { void close(); });
