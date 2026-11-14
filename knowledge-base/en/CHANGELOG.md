@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A focused editor row under a late font and a theme change — 2026-11-14
+
+A CPU-level integrated case checks that the rows of a managed list, the focus, the editor's text geometry and the semantic tree stay in step while the font of a focused editor row arrives late, the theme changes, or both happen with a new value. Tests only; the native element and real fonts remain a browser run. Part of #87. [Guide](docs/native-text-editing.md#verification-and-remaining-qualification)
+
 ## Runs of rows with Shift, and everyone with Control+A — 2026-11-14
 
 In the multiple selection example a movement key held with Shift chooses every member from the row it leaves to the row it reaches, and Control+A chooses everyone who is here. Example only. Part of #90. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-multi-select/README.md)
