@@ -112,7 +112,8 @@ function occurrence(operation) {
 }
 function refusal(error, code, cause, cleanupErrors = []) {
   assert.equal(error?.code, code);
-  assert.equal(error.message, code);
+  // The message is the code, or the code and a sentence about it.
+  assert.equal(error.message.split(': ')[0], code);
   assert.equal(Object.hasOwn(error, 'cause'), true);
   assert.equal(error.cause, cause);
   assert.deepEqual(error.cleanupErrors, cleanupErrors);
