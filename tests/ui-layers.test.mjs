@@ -35,6 +35,25 @@ test('popup uses committed clipped anchor, outside dismissal and parent stack re
  f.layers.open('popup');f.layers.sync();assert.deepEqual(f.popup.root.snapshot().origin,{x:10,y:54});const contact=f.input.begin(sample(350,250));assert.ok(contact);f.input.end(contact,{...sample(350,250),buttons:0,timestamp:2});f.layers.sync();assert.deepEqual(f.layers.snapshot().openStack,[]);
  f.layers.open('popup');f.layers.sync();f.layers.open('modal');f.layers.sync();f.base.list.setSource({...f.base.source,revision:2,records:[f.base.source.records[1]]});await f.base.publish();f.layers.sync();assert.deepEqual(f.layers.snapshot().openStack,[]);
 }));
+test('a popup meets its anchor at the start, the centre or the end, and stays inside the viewport',async()=>owned(async f=>{
+ // A row of 120 at x 200, and overlays that are narrower and wider than it.
+ const side=await f.panel('side',200,10,120,80);f.layers.register({id:'side',root:side.root,kind:'base'});
+ const anchor=align=>({root:side.root,target:{kind:'row',listId:'side-rows',key:'k0'},...(align===undefined?{}:{align})});
+ const placed=async(id,width,align)=>{const made=await f.panel(id,0,0,width,80),registration=f.layers.register({id,root:made.root,kind:'popup',anchor:anchor(align)});
+  f.layers.open(id);assert.equal(f.layers.sync().kind,'committed');const origin=made.root.snapshot().origin;f.layers.close(id);f.layers.sync();registration.dispose();return origin;};
+ assert.deepEqual(await placed('a',100,undefined),{x:200,y:54});assert.deepEqual(await placed('b',100,'start'),{x:200,y:54});
+ assert.deepEqual(await placed('c',100,'end'),{x:220,y:54});assert.deepEqual(await placed('d',100,'center'),{x:210,y:54});
+ assert.deepEqual(await placed('e',160,'end'),{x:160,y:54});assert.deepEqual(await placed('g',160,'center'),{x:180,y:54});
+ // Past an edge of the viewport it is brought back inside.
+ assert.deepEqual(await placed('h',300,'start'),{x:100,y:54});assert.deepEqual(await placed('i',380,'end'),{x:0,y:54});assert.deepEqual(await placed('j',390,'center'),{x:10,y:54});
+ const spare=await f.panel('spare',0,0,100,80);
+ for(const bad of ['left','',7,true])assert.throws(()=>f.layers.register({id:'bad',root:spare.root,kind:'popup',anchor:anchor(bad)}),code('UI_LAYER_ANCHOR_INVALID'));
+ // A side the overlay cannot stand on, and an anchor in a root that is no layer, are refused each on its own.
+ assert.throws(()=>f.layers.register({id:'bad',root:spare.root,kind:'popup',anchor:{...anchor('end'),placement:'left'}}),code('UI_LAYER_ANCHOR_INVALID'));
+ const stray=await f.panel('stray',0,0,100,80);
+ assert.throws(()=>f.layers.register({id:'bad',root:spare.root,kind:'popup',anchor:{...anchor('end'),root:stray.root}}),code('UI_LAYER_ANCHOR_INVALID'));
+ f.layers.register({id:'spare',root:spare.root,kind:'popup',anchor:{...anchor('end'),placement:'above'}}).dispose();
+}));
 test('pending content never prevents closing a committed layer',async()=>owned(async f=>{
  f.layers.open('modal');f.layers.sync();f.modal.root.setViewport({width:180,height:120},1);f.layers.close('modal');assert.equal(f.layers.sync().kind,'committed');assert.deepEqual(f.layers.snapshot().openStack,[]);await f.modal.publish();assert.equal(f.layers.sync().kind,'unchanged');assert.deepEqual(f.layers.snapshot().openStack,[]);
 }));

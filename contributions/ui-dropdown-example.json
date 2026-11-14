@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/ui-dropdown/index.html",
+      "originRole": "First-party page of the dropdown example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/ui-dropdown/main.mjs",
+      "originRole": "First-party example of a dropdown for each row of a managed list: a popup layer anchored to the row, with keys, a wheel and semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-dropdown/verify.mjs",
+      "originRole": "First-party real-browser check of the dropdown example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-dropdown/README.md",
+      "originRole": "First-party instructions for the dropdown example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-dropdown/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the dropdown example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/ui-dropdown/README.md",
+      "zh": "examples/ui-dropdown/README.zh-CN.md"
+    }
+  ]
+}
