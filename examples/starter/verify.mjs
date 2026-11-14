@@ -17,7 +17,7 @@ if (!playwrightPath || !out || !path.isAbsolute(playwrightPath) || !path.isAbsol
   throw new Error('Usage: node examples/starter/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]');
 fs.mkdirSync(out, { recursive: true });
 const { chromium, devices } = await import(pathToFileURL(playwrightPath).href);
-const types = { '.html': 'text/html', '.mjs': 'text/javascript', '.js': 'text/javascript', '.json': 'application/json', '.md': 'text/markdown' };
+const types = { '.html': 'text/html', '.mjs': 'text/javascript', '.js': 'text/javascript', '.json': 'application/json', '.md': 'text/markdown', '.png': 'image/png' };
 const server = http.createServer((request, response) => {
   const file = path.join(root, decodeURIComponent(new URL(request.url, 'http://localhost').pathname));
   if (!file.startsWith(root) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) { response.writeHead(404, { connection: 'close' }); response.end(); return; }
@@ -35,6 +35,7 @@ async function at(page, [x, y]) {
   const box = await page.evaluate(() => { const bounds = document.querySelector('#scene').getBoundingClientRect(); return [bounds.left, bounds.top, bounds.width, bounds.height]; });
   return [box[0] + x * box[2] / 480, box[1] + y * box[3] / 270];
 }
+const clickAt = async (page, place) => { const [x, y] = await at(page, place); await page.mouse.click(x, y); };
 /** The colour the page shows at a place of the stage, read from a screenshot the page decodes itself. */
 async function colour(page, place) {
   const [x, y] = await at(page, place);
@@ -46,11 +47,12 @@ async function colour(page, place) {
     return ((red << 16) | (green << 8) | blue).toString(16).padStart(6, '0');
   }, shot);
 }
-async function scenario(name, context, body, query = '?backend=webgl2&manual') {
+async function scenario(name, context, body, query = '?backend=webgl2&manual', before) {
   const owned = await browser.newContext(context), page = await owned.newPage(), row = { name, status: 'INCOMPLETE', errors: [] };
   report.cases.push(row);
   page.on('pageerror', error => row.errors.push(String(error))); page.on('console', message => { if (message.type() === 'error') row.errors.push(message.text()); });
   try {
+    if (before) await page.addInitScript(before);
     await page.goto('http://127.0.0.1:' + server.address().port + '/examples/starter/index.html' + query);
     await page.waitForFunction(() => globalThis.__egretStarterExample !== undefined);
     await drawn(page);
@@ -110,12 +112,31 @@ await scenario('webgl2: with ?stats a panel over the canvas counts the frames an
   assert.match(text, /^webgl2\nfps \d+\.\d  longest \d+\.\d ms\ncommands 6  triangles 12\n/);
 }, '?backend=webgl2&stats');
 
-await scenario('without ?backend the page chooses one itself and draws', desktop, async page => {
+// Left to choose, the page asks the browser for a WebGPU adapter before it touches the canvas. The two ways of having
+// none are checked here. The way of having one is not: this browser's software WebGPU adapter loses its device or never
+// finishes a frame, with ?backend=webgpu as well, so a page that chose it here says nothing about the choice.
+for (const [label, before] of [
+  ['a browser without WebGPU', () => { Object.defineProperty(Navigator.prototype, 'gpu', { get: () => undefined, configurable: true }); }],
+  ['a browser whose WebGPU gives no adapter', () => { Object.defineProperty(Navigator.prototype, 'gpu', { get: () => ({ requestAdapter: async () => null }), configurable: true }); }],
+]) await scenario('without ?backend, ' + label + ' is given WebGL2 and draws', desktop, async page => {
   const now = await until(page, s => s.frames >= 2, 'two frames');
-  assert.ok(['webgpu', 'webgl2'].includes(now.backend), now.backend);
+  assert.equal(now.backend, 'webgl2');
   assert.equal(now.stats, undefined);
-  report.chosen = now.backend;
-}, '');
+}, '', before);
+
+await scenario('webgl2: an image is loaded by its address and counts the taps on it; a coin fades when it is picked up', desktop, async page => {
+  let now = await until(page, s => s.frames >= 2, 'two frames');
+  assert.equal(now.taps, 0);
+  // The image is 32 by 16 at the right of the top, two small figures on nothing: one of them is drawn at (445, 14),
+  // and a click anywhere on the image's rectangle is a tap, on a figure or between them.
+  assert.notEqual(await colour(page, [445, 14]), CLEAR, 'the image is drawn');
+  await clickAt(page, [456, 16]);
+  now = await until(page, s => s.taps === 1, 'one tap');
+  // A click beside it is no tap on it.
+  await clickAt(page, [420, 40]);
+  await until(page, s => s.frames > now.frames + 2, 'frames after the second click');
+  assert.equal((await read(page)).taps, 1);
+}, '?backend=webgl2&image=/examples/resource-scene/assets/atlas-v1.png');
 
 await scenario('on a phone a tap sends the square to a coin', phone, async page => {
   await until(page, s => s.frames >= 2, 'two frames');

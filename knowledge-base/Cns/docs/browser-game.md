@@ -4,7 +4,7 @@
 
 `@egret/engine/web/game` 用一次调用在页面里启动一个 2D 游戏，并带有一个显示游戏开销的面板。
 
-**核对了什么，没核对什么。** 选项和面板在 Node 中核对。[起步示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.zh-CN.md)运行在 `createBrowserGame` 之上，并在无头 Chromium 中用软件渲染核对：能绘制，能响应点击、按键和触摸，加上 `?stats` 能显示面板，以上都使用 WebGL2。让它自己选择时，该浏览器从软件适配器取得了 WebGPU，循环绘制了若干帧且没有失败；那次运行没有读取像素。没有在硬件 GPU 和手机上运行。
+**核对了什么，没核对什么。** 选项和面板在 Node 中核对。[起步示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.zh-CN.md)运行在 `createBrowserGame` 之上，并在无头 Chromium 中用软件渲染核对，全部使用 WebGL2：能绘制，能响应点击、按键和触摸，能按地址加载图片，加上 `?stats` 能显示面板。自动选择核对了两种情况：浏览器没有 WebGPU，以及浏览器的 WebGPU 不给适配器，两者都得到 WebGL2。选中 WebGPU 的情况没有核对：该浏览器的软件 WebGPU 适配器会丢失设备或永远画不完一帧，用 `?backend=webgpu` 时也一样，所以这里早先写的“绘制了若干帧且没有失败”说得比实际看到的多。没有在硬件 GPU 和手机上运行。
 
 ## 用法
 
@@ -35,7 +35,7 @@ hero.graphics.beginFill(0x4a7bd0).drawRect(0, 0, 24, 24).endFill();
 | 帧循环 | `game.loop` | `createBrowserFrameLoop`，见[帧循环](frame-loop.md) |
 | 面板（如果要求） | `game.stats` | `createBrowserStatsPanel`，见下文 |
 
-`game.frame` 是循环绘制的那一帧；`game.toStage(clientX, clientY)` 把页面上的位置（页面的指针事件给出的坐标）换算成舞台上的位置。
+`await game.loadTexture(url)` 加载一张 PNG 图片并给出其纹理的租约，可用于 `new Bitmap(lease)` 或 `graphics.beginBitmapFill(lease)`；租约属于 `game.scope`，同一地址加载两次得到同一张纹理。其他格式不能读取，请使用[内容构建](content-build-pipeline.md)。`game.host` 是 Host，可读取它的状态。`game.frame` 是循环绘制的那一帧；`game.toStage(clientX, clientY)` 把页面上的位置（页面的指针事件给出的坐标）换算成舞台上的位置。
 
 ## 选项
 

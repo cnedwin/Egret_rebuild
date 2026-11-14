@@ -72,7 +72,7 @@
 | `RES.getRes('name')`、`RES.getResAsync` | `await engine.assets.acquire(ref, { signal: scope.signal })` | ref 指明类型和键：`createAssetRef(type, key)`。用 `scope.use` 把租约交给作用域 |
 | `RES.loadConfig`、`RES.loadGroup`、资源组进度事件 | 基于已构建清单的内容加载器：`@egret/engine/resources` 的 `createContentLoader`，在页面里配合 `@egret/engine/web/resources` | 见[内容构建](content-build-pipeline.md)和[资源组](资源批量获取.md) |
 | `default.res.json` | 内容构建写出的清单 | [旧 RES 声明](legacy-res-declarations.md)介绍读取旧配置的分析器 |
-| 按 URL 加载一张图片 | `@egret/engine/web/image` 的 `createBrowserTextureProvider` | |
+| 按 URL 加载一张图片 | `await game.loadTexture(url)` | PNG。不用 `createBrowserGame` 时：`@egret/engine/web/image` 的 `createBrowserTextureProvider` |
 | `egret.SpriteSheet`、纹理图集 | 通过内容加载器使用图集；位图显示其中一个区域 | 见[图集帧](atlas-frame-layout-contract.md) |
 | `bitmap.scale9Grid` | `NineSliceBitmap` | 见[九宫格位图](九宫格位图契约.md) |
 | `bitmap.fillMode = REPEAT` | 不是位图的属性 | 用 `Sprite` 的 `graphics.beginBitmapFill(lease)` 加一个 `drawRect` 可以画出平铺的图片 |
@@ -94,10 +94,12 @@
 
 | 白鹭 5 | 现在 | 说明 |
 | --- | --- | --- |
-| `egret.Tween.get(obj).to({ x: 100 }, 500, egret.Ease.quadOut)` | `engine.createTween(scope, { from: obj.x, to: 100, durationSeconds: 0.5, easing: 'quadOut', onUpdate: v => { obj.x = v; } }).start()` | 一个缓动驱动一个数字，时间单位是秒，调用 `start()` 后才运行；另有 `pause()`、`resume()` 和 `stop()`。缓动函数：`'linear'`、`'quadIn'`、`'quadOut'`、`'quadInOut'` |
-| `.to(...).to(...)`、`.wait()`、`.call()` | 在 `onComplete` 里启动下一个缓动 | 没有链式调用 |
-| `{ loop: true }` | 在 `onComplete` 里再启动一次 | |
-| `egret.Tween.removeTweens(obj)` | `tween.dispose()`，或销毁它的作用域 | |
+| `egret.Tween.get(obj).to({ x: 100, alpha: 0 }, 500, egret.Ease.quadOut)` | `animate(engine, scope, obj).to({ x: 100, alpha: 0 }, 0.5, 'quadOut').start()` | 来自 `@egret/engine`。单位是秒不是毫秒，调用 `start()` 后才运行 |
+| `.to(...).wait(200).call(fn).to(...)` | 同样的链：`.to(...).wait(0.2).call(fn).to(...)` | 各步要在 `start()` 之前加好 |
+| `{ loop: true }` | `.loop()`，或 `.loop(3)` 表示共运行三遍 | |
+| `egret.Ease.*` | 名字：`'linear'`、`'quadIn'`、`'quadOut'`、`'quadInOut'`，`cubic`、`quart`、`sine`、`expo`、`back` 同理；`'elasticOut'`、`'bounceOut'`；或一个把 0–1 映射到 0–1 的函数 | |
+| `egret.Tween.removeTweens(obj)` | 保存返回的对象并调用 `stop()`，或销毁它的作用域 | 对象被销毁时动画也会停止 |
+| 带回调的单个数字 | `engine.createTween(scope, { from, to, durationSeconds, easing, onUpdate }).start()` | `animate` 所基于的标量缓动 |
 | `egret.MovieClip` | 帧序列：`@egret/engine/animation` 的 `createSequenceController` | 见[序列控制](sequence-controls.md)。[旧 MovieClip](legacy-movieclip-contract.md)介绍如何读取旧数据 |
 | DragonBones | 不支持 | 支持 Spine：`@egret/spine`，JSON 或二进制。见 [Spine 支持](Spine动画支持需求与验收.md) |
 | 粒子（`particle.GravityParticleSystem`） | `@egret/engine/particles` 的 `createParticleEmitter` | 见[粒子](particles.md) |
@@ -155,7 +157,7 @@ function createMenu(game, onStart) {
   button.graphics.beginFill(0x4a7bd0).drawRoundRect(0, 0, 160, 48, 16).endFill();
   button.touchEnabled = true;
   button.on(game.pointer.events.tap, onStart);
-  game.engine.createTween(scope, { from: 1, to: 0.5, durationSeconds: 0.3, onUpdate: v => { button.alpha = v; } }).start();
+  animate(game.engine, scope, button).to({ alpha: 0.5 }, 0.3).start();
   game.stage.addChild(menu);
   // 关闭界面：一次调用移除按钮、它的监听器和它的缓动。
   return () => scope.dispose();

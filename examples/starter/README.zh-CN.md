@@ -11,7 +11,7 @@ node tools/build.mjs
 node tools/serve-canvas.mjs
 ```
 
-在服务器打印出的主机和端口上打开 `/examples/starter/index.html`。加上 `?backend=webgl2` 或 `?backend=webgpu` 可以指定后端，加上 `?stats` 会显示一个面板：每秒帧数和一帧的内容。
+在服务器打印出的主机和端口上打开 `/examples/starter/index.html`。加上 `?backend=webgl2` 或 `?backend=webgpu` 可以指定后端，加上 `?stats` 会显示一个面板：每秒帧数和一帧的内容。`?image=/examples/resource-scene/assets/atlas-v1.png` 会用 `game.loadTexture` 加载这张 PNG，并统计在它上面的点击次数。
 
 ## 里面有什么
 
@@ -24,6 +24,7 @@ node tools/serve-canvas.mjs
 | 输入 | `game.pointer` 和 `game.keyboard` 面向显示对象。本示例监听画布上页面自己的 `pointerdown` 和 `keydown`，并用 `game.toStage` 把页面上的位置换算成舞台单位 |
 | 循环 | `game.loop`：推进 Engine 的时钟、调用 `update(seconds)` 并绘制 |
 | 舞台 | `engine.stage.addChild(...)`；`Sprite` 用 `graphics` 绘制，用 `x`、`y` 定位 |
+| 动画 | 拾取金币时 `animate(engine, scope, coin).to({ scaleX: 2, scaleY: 2, alpha: 0 }, 0.2, 'quadOut').call(...)` |
 
 [一次调用启动页面里的游戏](../../knowledge-base/Cns/docs/browser-game.md)说明各个选项，以及游戏需要自己创建这些对象时怎么做。
 

@@ -245,6 +245,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 
 | Code | Meaning |
 | --- | --- |
+| `BROWSER_GAME_IMAGE_FAILED` | The image of createBrowserGame failed. The cause is in cause. |
 | `BROWSER_GAME_OPTIONS_INVALID` | The options given to createBrowserGame are not valid: one is missing, of the wrong type or out of range. |
 
 ### BROWSER_STATS
@@ -534,6 +535,13 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `MESH_BINDING_DISPOSED` | This was disposed and takes nothing more: a mesh binding. |
 | `MESH_BINDING_FACTORY_REQUIRED` | One of these is made by its factory function, not with new: a mesh binding. |
 | `MESH_BINDING_STALE` | What was given to a mesh binding has been replaced by a newer one. |
+
+### MOTION
+
+| Code | Meaning |
+| --- | --- |
+| `MOTION_ALREADY_STARTED` | This was already started: a motion. |
+| `MOTION_OPTIONS_INVALID` | The options given to a motion are not valid: one is missing, of the wrong type or out of range. |
 
 ### MOUSE_INPUT
 

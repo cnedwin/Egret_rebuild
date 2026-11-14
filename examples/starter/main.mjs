@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // A starting point for a 2D game: one Engine, one stage, a frame loop, pointer and keyboard input, and a rule.
 // Copy this folder, keep the import map of index.html, and replace what is between the two "Game" lines.
-import { DisplayObjectContainer, Sprite } from '@egret/engine';
+import { animate, Bitmap, DisplayObjectContainer, Sprite } from '@egret/engine';
 import { createBrowserGame } from '@egret/engine/web/game';
 
 // The stage is 480 by 270 units whatever the size of the canvas on the page.
@@ -20,7 +20,8 @@ const game = await createBrowserGame({
     update(seconds);
     status.textContent = 'Coins / 金币 ' + score + ' / ' + PLACES.length + ' · ' + game.backend;
   },
-  onError(cause) { failure = String(cause?.code ?? cause?.message ?? cause); status.textContent = 'Failed / 失败：' + failure; },
+  // An error has a code, and often the error that caused it, which has one too.
+  onError(cause) { failure = String(cause?.code ?? cause?.message ?? cause) + (cause?.cause?.code ? ' ← ' + cause.cause.code : ''); status.textContent = 'Failed / 失败：' + failure; },
 });
 const { engine, scope } = game;
 
@@ -69,11 +70,22 @@ function update(seconds) {
     if (reach) target = undefined;
   }
   for (const coin of coins) {
-    if (coin.sprite.isDisposed || Math.abs(coin.x - hero.x) > (HERO_SIZE + COIN_SIZE) / 2 || Math.abs(coin.y - hero.y) > (HERO_SIZE + COIN_SIZE) / 2) continue;
-    coin.sprite.dispose(); score++;
+    if (coin.taken || Math.abs(coin.x - hero.x) > (HERO_SIZE + COIN_SIZE) / 2 || Math.abs(coin.y - hero.y) > (HERO_SIZE + COIN_SIZE) / 2) continue;
+    // A coin that is picked up grows and fades for a fifth of a second, then goes. `taken` keeps it from counting twice.
+    coin.taken = true; score++;
+    animate(engine, scope, coin.sprite).to({ scaleX: 2, scaleY: 2, alpha: 0 }, 0.2, 'quadOut').call(() => coin.sprite.dispose()).start();
   }
 }
 // ---- Game: end -----------------------------------------------------------------------------------------------
+
+// With ?image=<address of a PNG> in the address, that image is loaded and shown in the corner, and counts the taps on
+// it: one call loads it, and a bitmap that is touch enabled is hit on its rectangle without more being said.
+let taps = 0;
+if (query.has('image')) {
+  const picture = engine.stage.addChild(scope.use(new Bitmap(await game.loadTexture(query.get('image')))));
+  picture.x = WIDTH - 40; picture.y = 8; picture.touchEnabled = true;
+  picture.on(game.pointer.events.tap, () => { taps++; });
+}
 
 // 2. Place everything, then start the loop.
 start();
@@ -81,5 +93,5 @@ game.loop.start();
 
 // What a check reads; a game does not need it.
 globalThis.__egretStarterExample = {
-  readSnapshot: () => ({ backend: game.backend, stats: game.stats?.snapshot(), hero: { x: hero.x, y: hero.y }, score, coins: coins.filter(c => !c.sprite.isDisposed).map(c => [c.x, c.y]), frames: game.loop.snapshot().frames, failure }),
+  readSnapshot: () => ({ backend: game.backend, stats: game.stats?.snapshot(), hero: { x: hero.x, y: hero.y }, score, coins: coins.filter(c => !c.taken).map(c => [c.x, c.y]), taps, frames: game.loop.snapshot().frames, failure }),
 };
