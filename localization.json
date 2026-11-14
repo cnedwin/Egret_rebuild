@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "ff9ab6c09e3c938f8fee4dc353dc26eda74b72b7bd169b1772f569beeed610e0",
-      "zhSha256": "f2aaee7288d03a2eae9cf4d06c504b7f11afd998731d4aba92a50b5fb844ba50"
+      "enSha256": "3621cfddacebdeffa10f97924816d10b77f7a63f04a056138024d568bc772bb1",
+      "zhSha256": "b0b809c3039582e71ba075bfce3b7f4dde7dec104f607922db70782eadab6106"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -540,8 +540,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "e7885ffa7cfc7e04b3300fd34376ac37d5711dd940518ed0b7235ebc0b9a1391",
-      "zhSha256": "d87a959141b3dabdf9f630e1d4ad36122d35d40f0d28aff261592f3173eb0ea7"
+      "enSha256": "318b1700e78e58b880dc1336dda25acc98661b3be6febf501858ef6d31f471d5",
+      "zhSha256": "e314100ae2126923575ea01c0ac156ad946fca8b39bd34fb3c21b1c9307dddb2"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1016,8 +1016,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "035e0f96c9507270f7a405e3f1c02595b30030975ff1d8b73387ae9e28f98353",
-      "zhSha256": "221ad2ccb29fd84b5169a492632b24a8759cf6d99669aa40b470c31f17553293"
+      "enSha256": "9f847941e4d45ac5696afbaf9ac4039d11719b25c5928b884a9d21221f8a5a61",
+      "zhSha256": "8e7cffbb95f1c439c4fdb102f88322c489b25eee1d9583982d0dd1a4770208ea"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -2523,8 +2523,8 @@
       "en": "knowledge-base/en/docs/particles.md",
       "zh": "knowledge-base/Cns/docs/particles.md",
       "kind": "public_reading",
-      "enSha256": "ca42a3ef43b274aef2ad051514e198963594bfd3a7ef7df27b1eea9b4e5c80fa",
-      "zhSha256": "0dabc59206a4a2528ae9134fafe9917ec7c2ab58a730879a1b42b4eb6bed7671"
+      "enSha256": "c8355ae1abcbb4d11ad7e3a54a201fdadd21a4ef8945b0a1695f9465b21327d7",
+      "zhSha256": "c953a601a36c402f7a5896e5e7021b89479498230d2766adf7e482fe7fc8e55f"
     },
     {
       "en": "examples/tilemap/README.md",
@@ -2553,6 +2553,20 @@
       "kind": "public_reading",
       "enSha256": "f2c663cf9051105f9bb94ffc14924c228703503177a9d9c9ff0a1299775db553",
       "zhSha256": "e929d27c59ddf8c0a6aa6859c2b83c52d0a1cecdb8daaec0331d361b4c474d48"
+    },
+    {
+      "en": "examples/bitmap-font/README.md",
+      "zh": "examples/bitmap-font/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "270f67e5d99c772b8f3026ce1544d666e4f28d3cf4eeb0ebe612527e4cf7c19c",
+      "zhSha256": "763d3edc2acd087d1042a52d53fece2074f5e64ac0a38ec6f128ff72010a86a4"
+    },
+    {
+      "en": "knowledge-base/en/docs/bitmap-font.md",
+      "zh": "knowledge-base/Cns/docs/bitmap-font.md",
+      "kind": "public_reading",
+      "enSha256": "2ed3275ba8b64795c4afbcb5d63f7df9900e819cb51228d25e4053034ee46c22",
+      "zhSha256": "71e8d2362b9e17f62085ae517f46fc48e06d1aca26c91f3d12547e6c29941f86"
     }
   ],
   "registries": [
@@ -3150,11 +3164,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "2432deb84bde6f684fe3022c543fc38b9c570073d2dfc0b36e76d87e0509d2e8"
+      "sha256": "e24c3eaab504df3f916331ee97031c17a82d52501de7a57d7c5532a7d982c4d8"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "63502db8961f83043d6bb980bde7c0c456fe6295cce1a38e09b7bd2853df627d"
+      "sha256": "afb4e3d214aacea4fc66ae471561848c68532c15a5c65083fc0e4975c280984f"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3790,7 +3804,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "8c6f62c8413006894bfaef7f76e3e35a1d39ff9123c4213076db47560237f362"
+      "sha256": "574ff8c0667e02591ed41e322a2bce563e6f41fb8d3d2f66623715b79936a1c7"
     },
     {
       "path": "tools/incremental-dependencies.mjs",
@@ -5482,7 +5496,7 @@
     },
     {
       "path": "packages/engine/src/particleEmitter.ts",
-      "sha256": "25582fc7e35f612d9ca5912b0fe8a273b399efe0cadd16a20a4ce8133b3787d1"
+      "sha256": "76813a1be4d5cd2501a73e21063e6189c8fad657abf63b1797bf1d873a6a0768"
     },
     {
       "path": "packages/engine/src/particleTypes.ts",
@@ -5490,7 +5504,7 @@
     },
     {
       "path": "tests/particles.test.mjs",
-      "sha256": "8e673494fd77f4a3da7d8222a2459e8fb62603e1aa499aad0e1cae58f81f301c"
+      "sha256": "85331df92d4d9f1746ecdba0d5904d5e20f9c13ac25fbc16ac539051bd6c8ce4"
     },
     {
       "path": "examples/particles/main.mjs",
@@ -5555,6 +5569,34 @@
     {
       "path": "examples/physics-2d/verify.mjs",
       "sha256": "36a2d5f6342f72a8083397c4954472870c27e61904a6cab2311e54ae18935d27"
+    },
+    {
+      "path": "packages/engine/src/bitmapfont.ts",
+      "sha256": "97391658785e70fc465e9cda28ebd1f58e8a47094d669de4dc07fe1fe8f1eea5"
+    },
+    {
+      "path": "packages/engine/src/bitmapFontParse.ts",
+      "sha256": "68b867a383e310e84a15d2434f9806084c510b6f2ec9878252418aaa2811e6ed"
+    },
+    {
+      "path": "packages/engine/src/bitmapText.ts",
+      "sha256": "31202bcdbb6549ad4cc0a301da5c4d7261208834a28220030bc0bb330cd25037"
+    },
+    {
+      "path": "packages/engine/src/bitmapFontTypes.ts",
+      "sha256": "2acfa448572501ac762593f6a05eeeb0d0d1d092ca3fbc65f09c8280de5401a4"
+    },
+    {
+      "path": "tests/bitmap-font.test.mjs",
+      "sha256": "af2ae90c7160806934064c95c07290c21dfa5259b42bc852f3dfcd7247f2b28c"
+    },
+    {
+      "path": "examples/bitmap-font/main.mjs",
+      "sha256": "abb2b59eab267a29121270609aaca6745d39a863bcc47c26d6dfc317633dc4e7"
+    },
+    {
+      "path": "examples/bitmap-font/verify.mjs",
+      "sha256": "9433b14a5b3706ccd6e609941d689c43d734b22d278c38ae17a84c30be57d905"
     }
   ],
   "historicalSemanticReview": {
