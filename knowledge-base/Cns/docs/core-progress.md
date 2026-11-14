@@ -33,7 +33,7 @@ SharedFrame2D 是当前唯一的 2D 帧路径。示例通过 `captureSharedFrame
 | 画布原生文字输入 | 独立适配层在 Windows Edge 157（RTX 5090 Laptop）与 Galaxy Z Fold7 Chrome 157（Adreno 830）上每个后端均通过三项用例。三星原生键盘实际弹出，可视视口从 813.7 缩至 423.2 CSS px。文字通过 CDP 输入。 | 真人中日韩组合输入、候选确认及取消，以及 iPhone Safari、桌面 Firefox 和 Safari 仍待验证。 [#89](https://github.com/cnedwin/Egret_rebuild/issues/89) · [#195](https://github.com/cnedwin/Egret_rebuild/pull/195) |
 | 托管原生编辑器 | Windows Edge 与 Fold7 Chrome 各完成 12 轮打开与结束，每个后端六轮，交替覆盖原生单行和多行字段。Fold7 每轮实际显示和收起软键盘，可视视口从 487.2 恢复到 813.7 CSS px。关闭正在编辑的页面时，两个后端均释放原生节点、编辑器租约、已加载字体和段落缓存。 | 原生剪贴板、更广输入法、真人操作和辅助技术继续单独验收。 [#89](https://github.com/cnedwin/Egret_rebuild/issues/89) · [#90](https://github.com/cnedwin/Egret_rebuild/issues/90) |
 | World3D | 独立浏览器 Worker 在 Windows Edge 与 Fold7 Chrome 上分别通过远程物理修复的三项用例。布娃娃和载具在两个设备的浏览器中分别通过两项 API 用例。前序 Rally 阴影统计与软件渲染物理场景各有独立记录。 | [#169](https://github.com/cnedwin/Egret_rebuild/issues/169) 记录已合入的五项修复。更广玩法、设备性能及 GPU 计时仍待验收。 [#168](https://github.com/cnedwin/Egret_rebuild/pull/168) · [#179](https://github.com/cnedwin/Egret_rebuild/pull/179) · [#201](https://github.com/cnedwin/Egret_rebuild/pull/201) · [#202](https://github.com/cnedwin/Egret_rebuild/pull/202) |
-| 混合验收 | 旧 X-D60/1 和 X-MTouch/1 保留含 3D 背景的负载及未达标记录。当前平面 2D 组件的 WebGPU／WebGL2 完成帧间隔 p95 的三个五秒窗口中位数在 Windows 为 26.0／26.4 毫秒，在 Fold7 为 61.2／91.3 毫秒。已合入的旋转重排修复在 Edge 和 Fold7 真机的两个后端均通过背景像素检查。 | 在硬件 WebGPU 和 WebGL2 上运行浏览器内打开工程，并在正式采集前恢复等效混合合成或评审版本化后继档位。保留原阈值及证据。 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) · [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) · [#200](https://github.com/cnedwin/Egret_rebuild/pull/200) |
+| 混合验收 | 旧 X-D60/1 和 X-MTouch/1 保留含 3D 背景的负载及未达标记录。当前平面 2D 组件的 WebGPU／WebGL2 完成帧间隔 p95 的三个五秒窗口中位数在 Windows 为 26.0／26.4 毫秒，在 Fold7 为 61.2／91.3 毫秒。已合入的旋转重排修复在 Edge 和 Fold7 真机的两个后端均通过背景像素检查。 | Windows Edge 已通过 WebGPU 和 WebGL2 的工程打开验证。完成 Fold7 复验，并在正式采集前恢复等效混合合成或评审版本化后继档位。保留原阈值及证据。 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) · [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) · [#200](https://github.com/cnedwin/Egret_rebuild/pull/200) |
 
 ## 可选 World3D — 2026-11-13
 
@@ -72,6 +72,8 @@ SharedFrame2D 是当前唯一的 2D 帧路径。示例通过 `captureSharedFrame
 ## 精简桌面参考场景增量 — 2026-11-08
 
 原换装工作室检查点通过同一个 Engine 组合两个独立控制的 Spine 角色、序列帧、带原生重命名的托管 UI 及不透明 3D 背景。配色候选复用 Spine RESET 与共享 Host 准备流程。导出的快照重新打开后保留稳定 ID 和创作值。每个后端通过十项检查，覆盖字体拒绝、拖出原行再释放、替换失败、重试及退出清理。[换装工作室](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/README.zh-CN.md)
+
+浏览器在校验稳定 ID、顺序和版本固定值后，通过一次现有编辑事务打开工程。每套配色的初始 Spine 资源组保留租约，直到最后一个使用它的初始角色完成替换。加载器沿用既有上限。取消在发布前结束，首帧绘制期间「打开工程」按钮保持禁用。Windows Edge 157 两后端各通过十项，Fold7 复验待完成。 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) · [#204](https://github.com/cnedwin/Egret_rebuild/pull/204)
 
 六次本地回环冷启动观测中，WebGPU 和 WebGL2 的传输分别为 28.91 MiB 和 28.73 MiB。浏览器记录三份字体 16.36 MiB，CanvasKit WASM 8.20 MiB。当前桌面到首个可交互帧的中位数分别为 885 ms 和 744 ms。正式压缩、限速及设备配置仍由 #92 验收。
 
@@ -124,7 +126,7 @@ M2–M4 的十一个工作包均保留完整验收要求。下表确认已合并
 | M3.2／[#88](https://github.com/cnedwin/Egret_rebuild/issues/88) | 只读多样式文字、几何和字体代次 | 必需独立参考及 provider 成本／恢复资格／文字维护者 |
 | M3.3／[#89](https://github.com/cnedwin/Egret_rebuild/issues/89) | 触点路由、[悬停与滚轮路由](pointer-hover.md)、键盘／焦点、行整合及原生单／多行纯文本编辑 | 真实 IME／移动键盘、真实鼠标／手写笔／触控板会话、剪贴板及无障碍资格／输入宿主维护者 |
 | M3.4／[#90](https://github.com/cnedwin/Egret_rebuild/issues/90) | 遮罩／模糊、主题、社区移动／动作状态，[悬停、开关、多选一、范围、滚动和文本框状态](ui-controls.md)及[它们的常用按键](ui-controls.md#按键)，以及[语义树及其浏览器投射](ui-semantics.md)，它跟随[托管列表的行](ui-semantics.md#托管虚拟列表)，并描述[它的盒与层](ui-semantics.md#托管-ui-的盒与层)。一个[设置界面](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/README.zh-CN.md)把这些与主题、文本框、托管列表和模态层放在一起，另有一个[下拉选择](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.zh-CN.md)把弹出层锚定在滚动列表的一行上，[带进度条的标签页](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-tabs/README.zh-CN.md)也有了相应的角色 | 整合场景中的遮罩与模糊组及设备恢复、U 夹具、手势，以及真实辅助技术会话／UI 维护者与现有触摸贡献者 |
-| M4.1／[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) | 可编辑精简与固定 X 换装场景、浏览器内打开已导出工程、双后端计时和有界 Android 证据 | 打开工程的硬件验证、选定能力覆盖与正式 X 验收／集成与验收维护者 |
+| M4.1／[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) | 可编辑精简与固定 X 换装场景、浏览器内打开已导出工程、双后端计时和有界 Android 证据 | Fold7 的打开工程验证、选定能力覆盖与正式 X 验收／集成与验收维护者 |
 | M4.2／[#92](https://github.com/cnedwin/Egret_rebuild/issues/92) | 固定桌面恢复、Android 组件证据及共享裁剪／几何构造的短时对照 | 完整混合生命周期、性能和必需设备验收／性能平台维护者 |
 | M4.3／[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) | 可观察预览失败／取消／重载、公开贡献入口，以及对打包后的默认引擎在 Node 中的自动[干净消费者检查](clean-consumer.md)，含一个在软件渲染下用 WebGL2 完成绘制并响应按下的消费者页面 | 已发布的分发物、消费者页面在 WebGPU、硬件和其他浏览器上的运行、实测的首次可交互、真人演练与合格交接／发布维护者 |
 
@@ -142,7 +144,7 @@ M0 的[独立新贡献者演练 #52](https://github.com/cnedwin/Egret_rebuild/is
 
 ## 下一开发阶段
 
-换装工作室现已支持在运行中的页面内打开已导出的工程。文件作为一次编辑事务写入当前工程；取消或导入失败时保留场景和资源，同一文件可以再次选择。WebGL2 各项已在软件渲染的无头 Chromium 上通过，硬件 WebGPU、WebGL2 和手机各项尚未运行。[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) 继续补齐其余选定能力。#55 用原负载和原始回调记录定位剩余的稀疏与全脏墙钟间隔尾部。#92 先处理实测瓶颈，待 #91 选定能力及等效混合合成或经评审的后继档位就绪后开展正式验收。
+换装工作室现已支持在运行中的页面内打开已导出的工程。文件作为一次编辑事务写入当前工程；准备阶段取消或失败时保留场景和资源，同一文件可以再次选择。后续已通过 Windows Edge 的 WebGPU 和 WebGL2 验证，Fold7 复验待完成。[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) 继续补齐其余选定能力。#55 用原负载和原始回调记录定位剩余的稀疏与全脏墙钟间隔尾部。#92 先处理实测瓶颈，待 #91 选定能力及等效混合合成或经评审的后继档位就绪后开展正式验收。
 
 #86 已有[保留播放的 Spine 替换](spine-reset-slot.md#保留播放)，已逐 tick 对照被替换的播放器检查，并在软件渲染 Chromium 的 WebGL2 上通过。其硬件验证和组合动画生命周期继续并行推进。#89／#90 处理剩余输入法、控件与语义。#93 已有对默认引擎及其入口和声明的自动干净消费者检查。从消费者一侧的浏览器运行、首次可交互和真人演练尚未完成，完整交接仍依赖 #91／#92。[工程计划](工程规划.md)列出依赖和退出标准。
 
