@@ -10,7 +10,7 @@ export const ZH_AREAS: readonly (readonly [string, string])[] = [
   ['CONTENT_GROUP', '内容组'], ['CONTENT_LOADER', '内容加载器'], ['CONTENT', '内容加载'], ['COORDINATE', '坐标查询'], ['DISPLAY_EFFECT', '渲染效果'], ['DISPLAY_SUBTREE', '预备的显示子树'],
   ['DISPLAY_TREE', '显示树'], ['DISPLAY', '显示对象'], ['ENGINE', 'Engine'], ['EVENT', '事件'], ['FONT_CONTENT', '字体内容'], ['FRAME_LOOP', '帧循环'], ['FRAME', '帧'],
   ['GAMEPAD', '手柄输入'], ['GRAPHICS', 'graphics'], ['HIT_TEST', '命中测试'], ['HOVER_INPUT', '悬停输入'], ['KEYBOARD_FOCUS_SCOPE', '键盘焦点范围'], ['KEYBOARD_INPUT', '键盘输入'],
-  ['KEYBOARD', '键盘'], ['LAYOUT', '布局'], ['MANIFEST_BINDING', '清单绑定'], ['MANIFEST_GROUP', '清单组'], ['MESH_BINDING', '网格绑定'], ['MESH', '网格'], ['MOUSE_INPUT', '鼠标输入'],
+  ['KEYBOARD', '键盘'], ['LAYOUT', '布局'], ['MANIFEST_BINDING', '清单绑定'], ['MANIFEST_GROUP', '清单组'], ['MOTION', '动画链'], ['MESH_BINDING', '网格绑定'], ['MESH', '网格'], ['MOUSE_INPUT', '鼠标输入'],
   ['NINE_SLICE_BITMAP', '九宫格位图'], ['PARAGRAPH_CACHE', '段落缓存'], ['PARAGRAPH_FONT_SET', '段落字体集'], ['PARAGRAPH_FONT', '段落字体'], ['PARAGRAPH_PROVIDER', '段落提供者'],
   ['PARAGRAPH', '段落'], ['PARTICLE', '粒子发射器'], ['PHYSICS', '物理世界'], ['POINTER_INPUT', '指针输入'], ['SCOPE', '作用域'], ['SEQUENCE_RESET', '序列重置槽'],
   ['SEQ_PLAYBACK', '序列播放'], ['SEQ_PLAYER', '序列播放器'], ['SEQ', '序列'], ['SHARED_MATERIAL', '共享材质'], ['SPINE_DISPLAY', 'Spine 显示对象'], ['SPINE_INSTANCE', 'Spine 实例'],

@@ -4,7 +4,7 @@ English | [简体中文](../../Cns/docs/browser-game.md)
 
 `@egret/engine/web/game` starts a 2D game in a page with one call, and has a panel that shows what the game takes.
 
-**What is checked and what is not.** The options and the panel are checked in Node. The [starter example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.md) runs on `createBrowserGame` and is checked in headless Chromium with software rendering: it draws, takes clicks, keys and taps, and shows the panel with `?stats`, all with WebGL2. Left to choose, that browser took WebGPU from its software adapter and the loop drew frames without failing; the pixels of that run were not read. A hardware GPU and a phone were not run.
+**What is checked and what is not.** The options and the panel are checked in Node. The [starter example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.md) runs on `createBrowserGame` and is checked in headless Chromium with software rendering, all with WebGL2: it draws, takes clicks, keys and taps, loads an image by its address, and shows the panel with `?stats`. The automatic choice is checked for a browser without WebGPU and for one whose WebGPU gives no adapter: both are given WebGL2. The choice of WebGPU is not checked: that browser's software WebGPU adapter loses its device or never finishes a frame, with `?backend=webgpu` as well, so an earlier note here that it "drew frames without failing" said more than was seen. A hardware GPU and a phone were not run.
 
 ## Use
 
@@ -35,7 +35,7 @@ That is a whole game: the square moves. `await game.dispose()` ends it.
 | The frame loop | `game.loop` | `createBrowserFrameLoop`, see [the frame loop](frame-loop.md) |
 | The panel, if asked for | `game.stats` | `createBrowserStatsPanel`, below |
 
-`game.frame` is the frame the loop draws, and `game.toStage(clientX, clientY)` turns a place on the page, as a pointer event of the page gives it, into a place on the stage.
+`await game.loadTexture(url)` loads a PNG image and gives the lease of its texture, for `new Bitmap(lease)` or `graphics.beginBitmapFill(lease)`; the lease belongs to `game.scope`, and one address loaded twice is one texture. Other formats are not read: use the [content build](content-build-pipeline.md) for them. `game.host` is the Host, for its status. `game.frame` is the frame the loop draws, and `game.toStage(clientX, clientY)` turns a place on the page, as a pointer event of the page gives it, into a place on the stage.
 
 ## Options
 

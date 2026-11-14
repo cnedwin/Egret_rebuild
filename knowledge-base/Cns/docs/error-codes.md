@@ -245,6 +245,7 @@
 
 | 错误码 | 含义 |
 | --- | --- |
+| `BROWSER_GAME_IMAGE_FAILED` | createBrowserGame 的 `image` 失败了。原因在 cause 中。 |
 | `BROWSER_GAME_OPTIONS_INVALID` | 交给createBrowserGame 的选项无效：缺少某一项、类型不对或超出范围。 |
 
 ### BROWSER_STATS
@@ -534,6 +535,13 @@
 | `MESH_BINDING_DISPOSED` | 网格绑定已销毁，不再接受任何操作。 |
 | `MESH_BINDING_FACTORY_REQUIRED` | 网格绑定要用它的工厂函数创建，不能用 new。 |
 | `MESH_BINDING_STALE` | 交给网格绑定的内容已被更新的版本取代。 |
+
+### MOTION
+
+| 错误码 | 含义 |
+| --- | --- |
+| `MOTION_ALREADY_STARTED` | 动画链已经开始过了。 |
+| `MOTION_OPTIONS_INVALID` | 交给动画链的选项无效：缺少某一项、类型不对或超出范围。 |
 
 ### MOUSE_INPUT
 

@@ -22,9 +22,9 @@ function files(dir) {
 }
 // M15: exact named metadata port and one private browser bridge. No deep-path wildcard.
 const m15DeepClauses = {
-"packages/engine/web/BrowserGame.ts":[{"operation":"import","kind":"value","members":["createEngineForProfile","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["Engine","Scope","Stage","SharedFrameOptions2D","SharedRenderFrame2D"],"target":"@egret/engine"}],
-"packages/engine/dist/web/BrowserGame.js":[{"operation":"import","kind":"value","members":["createEngineForProfile","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"}],
-"packages/engine/dist/web/BrowserGame.d.ts":[{"operation":"import","kind":"type","members":["Engine","Scope","Stage","SharedFrameOptions2D"],"target":"@egret/engine"}],
+"packages/engine/web/BrowserGame.ts":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createEngineForProfile","isTexture","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","Engine","Scope","Stage","SharedFrameOptions2D","SharedRenderFrame2D","Texture"],"target":"@egret/engine"}],
+"packages/engine/dist/web/BrowserGame.js":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createEngineForProfile","isTexture","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"}],
+"packages/engine/dist/web/BrowserGame.d.ts":[{"operation":"import","kind":"type","members":["AssetLease","Engine","Scope","Stage","SharedFrameOptions2D","Texture"],"target":"@egret/engine"}],
 "packages/engine/web/BrowserStatsPanel.ts":[{"operation":"import","kind":"type","members":["SharedRenderFrame2D"],"target":"@egret/engine"}],
 "packages/engine/dist/web/BrowserStatsPanel.d.ts":[{"operation":"import","kind":"type","members":["SharedRenderFrame2D"],"target":"@egret/engine"}],
 "packages/engine/src/fontContentLoader.ts":[{"operation":"import","kind":"value","members":["isAdmittedResourceManifest","inspectFontArtifact"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"}],
@@ -635,7 +635,7 @@ if (JSON.stringify(Object.keys(contractsFacade)) !== JSON.stringify(completeCont
 for (const name of imageValues) if (facade[name] !== contractsFacade[name]) throw new Error(`engine: image contract identity mismatch: ${name}`);
 for (const name of geometryValues) if (typeof contractsFacade[name] !== 'function' || facade[name] !== contractsFacade[name]) throw new Error(`engine: geometry contract identity mismatch: ${name}`);
 // Exact accepted Mesh root plus the opt-in factory and shared literal.
-const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'describeErrorCode', 'setErrorLanguage', 'getErrorLanguage', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'NineSliceBitmap', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS', 'createNineSliceGeometry2D','createSpriteSheet'].sort();
+const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'animate', 'CancellationController', 'EgretError', 'describeErrorCode', 'setErrorLanguage', 'getErrorLanguage', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'NineSliceBitmap', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS', 'createNineSliceGeometry2D','createSpriteSheet'].sort();
 const completeRootValues = [...texturedRootValues,'createSharedMaterial2D','createSharedGeometry2D','SHARED_FRAME_PROFILE_2D','createTextureView'].sort();
 if (typeof facade.createEngineForProfile !== 'function' || JSON.stringify(Object.keys(facade)) !== JSON.stringify(completeRootValues)) throw new Error('root: executable textured-frame export surface mismatch');
 // The legacy and textured frame records were removed; no entry may present their names again.
@@ -5313,15 +5313,16 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...gameTypes,...gameValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Browser game: leaked to default/other entry: '+label+'/'+name);
 }
-const gameEntries=['./loop.js','./pointer.js','./keyboard.js','./BrowserStatsPanel.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine'];
+const gameEntries=['./loop.js','./pointer.js','./keyboard.js','./image.js','./BrowserStatsPanel.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine'];
 const gameImports={'web/game.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.js':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.d.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],
  'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./loop.js','./pointer.js','./keyboard.js','./BrowserStatsPanel.js','@egret/engine'],
  'web/BrowserStatsPanel.ts':['@egret/runtime','@egret/engine'],'dist/web/BrowserStatsPanel.js':['@egret/runtime'],'dist/web/BrowserStatsPanel.d.ts':['@egret/engine']};
 for(const [file,expected] of Object.entries(gameImports)){
  const body=uiRead('packages/engine/'+file),observed=[...new Set(uiGraphEdges(body).map(([,target])=>target))];
  if(!mouseSame(observed,expected))throw new Error('Browser game: exact graph mismatch: '+file);
- // The panel and the game read what they are given: no timer, request or stored state of their own.
- if(/\b(?:setTimeout|setInterval|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Browser game: acquired automatic host work: '+file);
+ // The panel and the game start no timer, worker or stored state of their own. The game asks the page for an image only
+ // when `loadTexture` is called; the panel makes no request at all.
+ if(new RegExp('\\b(?:setTimeout|setInterval|Worker|XMLHttpRequest|localStorage'+(file.includes('BrowserGame')?'':'|fetch')+')\\b').test(body))throw new Error('Browser game: acquired automatic host work: '+file);
 }
 const gameAllowed={'web/BrowserGame.js':['web/game.ts'],'dist/web/BrowserGame.js':['dist/web/game.js','dist/web/game.d.ts'],
  'web/BrowserStatsPanel.js':['web/game.ts','web/BrowserGame.ts'],'dist/web/BrowserStatsPanel.js':['dist/web/game.js','dist/web/game.d.ts','dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts']};

@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Motion in one chain, and an image in one call — 2026-11-15
+
+`animate(engine, scope, object).to({ x: 100, alpha: 0 }, 0.5, 'quadOut').wait(0.2).call(fn).loop(2).start()` moves several numbers of one object together, step after step, on the Engine's clock; 21 easings by name, or a function. It is built on the scalar tween, which stays. A motion ends with its scope, and when its object is disposed. `game.loadTexture(url)` of `createBrowserGame` loads a PNG and gives the lease of its texture; `game.host` is the Host. The starter example fades a coin as it is picked up and, with `?image=`, loads an image and counts the taps on it. A correction: the note that the software WebGPU adapter "drew frames without failing" said more than was seen. That adapter loses its device or never finishes a frame here; the starter's check now covers the two ways a browser has no adapter, and says the choice of WebGPU is not checked.
+
 ## A drawn button is hit where it is drawn, and a tap is one event — 2026-11-15
 
 A display object with `touchEnabled` and no `hitArea` used never to be hit. It is now hit on what it draws: a triangle of its shapes, one of its filled rectangles, or its bitmap's rectangle. A circle is not hit in the corners of its bounds, and a hole is not hit. A `hitArea`, where set, is used as before. Pointer input has a fourth event, `events.tap`, dispatched after an end on the target the contact began on, within 12 stage units of where it began. A button is now `touchEnabled = true` and one listener. See [pointer input](docs/multi-pointer-input.md).

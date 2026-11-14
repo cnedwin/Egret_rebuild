@@ -5,6 +5,8 @@ export type { Tween, TweenState, TweenOptions, TweenEasing } from './tweenTypes.
 export type { AssetGroup, AssetGroupState, AssetGroupOptions } from './assetGroupTypes.js';
 export { createEngine } from "./createEngine.js";
 export { createEngineForProfile } from './createEngineForProfile.js';
+export { animate } from './motion.js';
+export type { Motion, MotionEasing, MotionEasingName, MotionState } from './motion.js';
 export { describeErrorCode, setErrorLanguage, getErrorLanguage } from "@egret/runtime";
 export type { ErrorLanguage } from "@egret/runtime";
 export { CancellationController, EgretError, Event, createEventType, EventDispatcher, DisplayObject, DisplayObjectContainer, Scope, Stage } from "@egret/runtime";
