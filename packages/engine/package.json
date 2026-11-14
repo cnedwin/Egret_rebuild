@@ -120,6 +120,10 @@
       "types": "./dist/tilemap.d.ts",
       "import": "./dist/tilemap.js"
     },
+    "./particles": {
+      "types": "./dist/particles.d.ts",
+      "import": "./dist/particles.js"
+    },
     "./audio": {
       "types": "./dist/audio.d.ts",
       "import": "./dist/audio.js"

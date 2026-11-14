@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 2D 粒子 — 2026-11-14
+
+`@egret/engine/particles` 是可选入口。发射器按速率、成批或在一段时间内产生粒子；每个粒子在点、矩形或圆内出生，以某个角度和速度出发，在任意步长下都以同样方式受重力和阻力影响，并从出生时的缩放、颜色、透明度和旋转过渡到消亡时的值。一个发射器的粒子在共享渲染器上以一张纹理绘制为一个网格，每次更新重建；同样的种子产生同样的粒子。新示例 `examples/particles` 有燃烧的火盆、飘落的花瓣和点击处迸出的火花。已在 Node 中的真实引擎上和无头 Chromium 的软件 WebGL2 中验证；没有运行硬件 GPU 或手机，目前也还没有加法混合。属于 #266。[指南](docs/particles.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/particles/README.zh-CN.md)
+
 ## 瓦片地图，以及用 Tiled 制作的地图 — 2026-11-14
 
 `@egret/engine/tilemap` 是可选入口。`importTiledMap` 把 Tiled 以 JSON 保存的正交地图——有限或无限、以数组或不压缩 base64 保存的图块层、地图内或单独文件中的图块集、分组、对象层、属性，以及作为数据的图块动画——读成冻结的数据，并用各自的代码拒绝无法读取的内容。`createTileMap` 用图块集的图片把图块层绘制成网格区块，每个区块每个图块集一个网格，支持边距、间距、翻转和比格子高的图块；可以按格子读取和修改图块，只重新绘制所在区块，并只显示与视野相交的区块。新示例 `examples/tilemap` 让一名弟子在 64×40 格的庭院中行走，并通过相机观看。已在 Node 中的真实引擎上和无头 Chromium 的软件 WebGL2 中验证；示例地图由脚本按 Tiled 的格式写出，不是 Tiled 本身保存的。属于 #266。[指南](docs/tilemap.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/tilemap/README.zh-CN.md)
