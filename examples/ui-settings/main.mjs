@@ -66,8 +66,8 @@ function line(parent, x, y, fontSize, text, tone = 'ink', owner = scope) {
   return item;
 }
 /** A surface a pointer can press, with a focus ring behind it and its hover. */
-function surface(id, box) {
-  const ring = engine.stage.addChild(scope.use(new Sprite())), sprite = engine.stage.addChild(scope.use(new Sprite()));
+function surface(id, box, parent = engine.stage) {
+  const ring = parent.addChild(scope.use(new Sprite())), sprite = parent.addChild(scope.use(new Sprite()));
   ring.x = box.x - 3; ring.y = box.y - 3; sprite.x = box.x; sprite.y = box.y; sprite.touchEnabled = true; sprite.hitArea = { x: 0, y: 0, width: box.width, height: box.height };
   const part = { id, box, sprite, ring, hover: createHoverControl({ hover, target: sprite, onHoverChange: () => show() }),
     paint(colors, fill, focused) {
@@ -82,14 +82,16 @@ const paintOf = (colors, on, state) => colors[selectUiSkin(theme().skins[on ? 'c
 // The settings.
 const labels = [line(engine.stage, 20, 10, 18, '设置 / Settings'), line(engine.stage, 20, 50, 14, '声音 / Sound', 'hint'), line(engine.stage, 20, 88, 14, '难度 / Level', 'hint'),
   line(engine.stage, 20, 148, 14, '名字 / Name', 'hint'), line(engine.stage, 20, 216, 14, '深色 / Dark', 'hint'), line(engine.stage, 270, 14, 14, '存档 / Profiles', 'hint')];
-const parts = { sound: surface('sound', { x: 150, y: 44, width: 90, height: 28 }), easy: surface('easy', { x: 20, y: 108, width: 70, height: 28 }), normal: surface('normal', { x: 95, y: 108, width: 70, height: 28 }),
-  hard: surface('hard', { x: 170, y: 108, width: 70, height: 28 }), name: surface('name', { x: 20, y: 168, width: 220, height: 32 }), dark: surface('dark', { x: 150, y: 210, width: 90, height: 28 }),
+// The three options are inside one display object, which is what the keyboard stops at.
+const options = engine.stage.addChild(scope.use(new Sprite()));
+const parts = { sound: surface('sound', { x: 150, y: 44, width: 90, height: 28 }), easy: surface('easy', { x: 20, y: 108, width: 70, height: 28 }, options), normal: surface('normal', { x: 95, y: 108, width: 70, height: 28 }, options),
+  hard: surface('hard', { x: 170, y: 108, width: 70, height: 28 }, options), name: surface('name', { x: 20, y: 168, width: 220, height: 32 }), dark: surface('dark', { x: 150, y: 210, width: 90, height: 28 }),
   reset: surface('reset', { x: 20, y: 262, width: 100, height: 32 }) };
 const captions = { easy: line(engine.stage, 28, 114, 13, LEVEL_NAMES.easy), normal: line(engine.stage, 100, 114, 13, LEVEL_NAMES.normal), hard: line(engine.stage, 178, 114, 13, LEVEL_NAMES.hard),
   name: line(engine.stage, 28, 174, 16, DEFAULTS.name), reset: line(engine.stage, 34, 269, 14, '重置 / Reset') };
 labels.push(...Object.values(captions));
 const sound = createToggleControl({ input: pointer, target: parts.sound.sprite, checked: DEFAULTS.sound, onChange: () => edited(), onPressChange: () => show() });
-const level = createSelectionGroup({ input: pointer, items: LEVELS.map(key => ({ key, target: parts[key].sprite })), selected: DEFAULTS.level, onChange: () => { followLevel(); edited(); } });
+const level = createSelectionGroup({ input: pointer, items: LEVELS.map(key => ({ key, target: parts[key].sprite })), selected: DEFAULTS.level, onChange: () => edited() });
 const name = createTextFieldControl({ input: pointer, target: parts.name.sprite, editor, value: DEFAULTS.name, maxLength: 8, label: '名字 / Name',
   field: () => ({ ...parts.name.box, locale: 'zh-CN', fontFamily: '"' + FAMILY + '"', fontSize: 16, lineHeight: 21, color: theme().colors.ink, padding: 8 }),
   onChange: () => edited(), onPressChange: () => show(),
@@ -108,7 +110,7 @@ function assign(values) { sound.setChecked(values.sound); level.select(values.le
 canvas.addEventListener('pointerdown', () => { byKey = false; });
 
 // The keyboard: each control is a stop with its place, and the list is one stop after them.
-const stops = { sound: parts.sound.sprite, level: parts[DEFAULTS.level].sprite, name: parts.name.sprite, dark: parts.dark.sprite, reset: parts.reset.sprite };
+const stops = { sound: parts.sound.sprite, level: options, name: parts.name.sprite, dark: parts.dark.sprite, reset: parts.reset.sprite };
 const registrations = Object.fromEntries(Object.entries(stops).map(([id, target], index) => [id, keyboard.registerTarget({ id, target, tabIndex: index + 1 })]));
 const keys = {
   sound: createControlKeys({ keyboard, target: stops.sound, kind: 'toggle', control: sound, onPressChange: () => show() }),
@@ -117,9 +119,9 @@ const keys = {
   name: createControlKeys({ keyboard, target: stops.name, kind: 'textField', onPressChange: () => show(),
     control: { get enabled() { return name.enabled; }, edit() { byKey = true; return name.edit(); } } }),
 };
-for (const key of LEVELS) createControlKeys({ keyboard, target: parts[key].sprite, kind: 'selection', control: level, orientation: 'horizontal' });
-// The group is one stop that follows the selection, moved after the key that changed it has been delivered.
-function followLevel() { queueMicrotask(() => { registrations.level.update({ target: parts[level.selected].sprite }); show(); }); }
+// The group is one stop and one binding, on the display object that holds its options: the focus stays on the
+// group while the selection moves inside it, and the ring is drawn on the option that is selected.
+createControlKeys({ keyboard, target: options, kind: 'selection', control: level, orientation: 'horizontal' });
 
 // The profiles: a managed list. Each row draws its own text in the ink of the theme it was bound with.
 const realized = new Map();

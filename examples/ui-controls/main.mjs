@@ -24,8 +24,8 @@ const hover = createBrowserHoverInput({ engine, scope, canvas, width: WIDTH, hei
 const keyboard = createBrowserKeyboardInput({ engine, scope, onFocusChange: () => queueMicrotask(show) });
 
 /** A surface of a control: a focus ring behind a filled rectangle that can be pointed at. */
-function surface(x, y, width, height) {
-  const ring = engine.stage.addChild(scope.use(new Sprite())), sprite = engine.stage.addChild(scope.use(new Sprite())), mark = sprite.addChild(scope.use(new Sprite()));
+function surface(x, y, width, height, parent = engine.stage) {
+  const ring = parent.addChild(scope.use(new Sprite())), sprite = parent.addChild(scope.use(new Sprite())), mark = sprite.addChild(scope.use(new Sprite()));
   ring.x = x - 3; ring.y = y - 3; sprite.x = x; sprite.y = y; sprite.touchEnabled = true; sprite.hitArea = { x: 0, y: 0, width, height };
   ring.graphics.beginFill(PAINT.ring).drawRect(0, 0, width + 6, height + 6).endFill();
   return { sprite, ring, mark, width, height };
@@ -45,27 +45,28 @@ function paint(part, state, focused) {
   part.mark.graphics.clear(); part.mark.graphics.beginFill(state.on ? PAINT.mark : PAINT.markOff).drawRect(state.on ? part.width - 22 : 8, part.height / 2 - 7, 14, 14).endFill();
 }
 
-const parts = { sound: surface(40, 40, 140, 44), easy: surface(40, 120, 120, 44), normal: surface(180, 120, 120, 44), hard: surface(320, 120, 120, 44), apply: surface(40, 200, 140, 44) };
+// The three options are inside one display object, which is what the keyboard stops at.
+const group = engine.stage.addChild(scope.use(new Sprite()));
+const parts = { sound: surface(40, 40, 140, 44), easy: surface(40, 120, 120, 44, group), normal: surface(180, 120, 120, 44, group), hard: surface(320, 120, 120, 44, group), apply: surface(40, 200, 140, 44) };
 const levels = ['easy', 'normal', 'hard'], changes = [];
 const sound = createToggleControl({ input: pointer, target: parts.sound.sprite, checked: true, onChange: () => show(), onPressChange: () => show() });
-const level = createSelectionGroup({ input: pointer, items: levels.map(key => ({ key, target: parts[key].sprite })), selected: 'normal', onChange: (selected, previous) => { changes.push([selected, previous]); followSelection(); show(); } });
+const level = createSelectionGroup({ input: pointer, items: levels.map(key => ({ key, target: parts[key].sprite })), selected: 'normal', onChange: (selected, previous) => { changes.push([selected, previous]); show(); } });
 const apply = createActionControl({ input: pointer, target: parts.apply.sprite, onActivate: () => show(), onPressChange: () => show() });
 const hovered = Object.fromEntries(Object.entries(parts).map(([name, part]) => [name, createHoverControl({ hover, target: part.sprite, onHoverChange: () => show() })]));
 
 // Keys reach the same methods a pointer reaches. A binding takes the usual keys of its control from the
 // display object that holds the focus: Space or Enter activates when the key is released, the arrows,
 // Home and End move the selection, and a key that was taken does not scroll the page.
-const stops = { sound: parts.sound.sprite, level: parts.normal.sprite, apply: parts.apply.sprite };
+const stops = { sound: parts.sound.sprite, level: group, apply: parts.apply.sprite };
 const registrations = Object.fromEntries(Object.entries(stops).map(([id, target]) => [id, keyboard.registerTarget({ id, target })]));
 const keys = {
   sound: createControlKeys({ keyboard, target: stops.sound, kind: 'toggle', control: sound, onPressChange: () => show() }),
   apply: createControlKeys({ keyboard, target: stops.apply, kind: 'action', control: apply, onPressChange: () => show() }),
 };
-// The group is one stop. Its keys arrive at whichever option holds the focus, so every option is bound.
-for (const key of levels) createControlKeys({ keyboard, target: parts[key].sprite, kind: 'selection', control: level });
-// The focus follows the selection, as it does in a native radio group. The stop is moved after the key that
-// changed the selection has been delivered.
-function followSelection() { queueMicrotask(() => { registrations.level.update({ target: parts[level.selected].sprite }); show(); }); }
+// The group is one stop and one binding, on the display object that holds its options. The focus stays on the
+// group while the selection moves inside it, so a held arrow key goes on through the options, and the ring is
+// drawn on the option that is selected, as it is in a native radio group.
+createControlKeys({ keyboard, target: group, kind: 'selection', control: level });
 
 // What the controls are to someone who does not see them. Each node reads the control that is drawn, at
 // every publication, and its actions are the ones a press and a key already reach.

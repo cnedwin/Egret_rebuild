@@ -116,6 +116,10 @@ await scenario('the keyboard alone changes every setting, types a name, and choo
   await key(page, 'Space'); assert.equal((await read(page)).settings.sound, false);
   await key(page, 'Tab'); assert.deepEqual(await active(page), ['radio', '中 Normal']);
   await key(page, 'ArrowRight'); assert.deepEqual([(await read(page)).settings.level, await active(page)], ['hard', ['radio', '难 Hard']]);
+  // A held arrow key repeats through the options, past the end and round again.
+  await page.keyboard.down('ArrowLeft'); await page.keyboard.down('ArrowLeft'); await page.keyboard.down('ArrowLeft'); await settle(page);
+  assert.deepEqual([(await read(page)).settings.level, await active(page)], ['hard', ['radio', '难 Hard']]);
+  await page.keyboard.up('ArrowLeft'); await settle(page);
   await key(page, 'ArrowLeft'); await key(page, 'ArrowLeft'); assert.equal((await read(page)).settings.level, 'easy');
   await key(page, 'Tab'); assert.deepEqual(await active(page), ['textbox', '名字 / Name']);
   // Enter opens the platform field over the box; what is typed there becomes the name, and the focus comes back.
