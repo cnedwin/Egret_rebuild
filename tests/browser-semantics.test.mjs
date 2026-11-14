@@ -111,6 +111,8 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  add('tabs','tablist',{name:'Sect'});add('one','tab',{name:'Members',selected:true,controls:'pane',position:{index:1,size:2}},{parent:'tabs',onActivate(){},onFocus(){}});add('two','tab',{name:'Stores',selected:false,disabled:true},{parent:'tabs',onFocus(){}});
  add('pane','tabpanel',{name:'Members'});add('work','progressbar',{name:'Training',range:{now:30,min:0,max:100}},{parent:'pane'});add('busy','progressbar',{name:'Loading'},{parent:'pane'});
  add('bag','grid',{name:'Bag',extent:{rows:4,columns:6},multiple:true});add('r2','row',{position:{index:2,size:4}},{parent:'bag'});add('cell','gridcell',{name:'Herbs, 12',selected:true,position:{index:3,size:6}},{parent:'r2',onActivate(){},onFocus(){}});add('slot','gridcell',{name:'Empty',selected:false,disabled:true},{parent:'r2'});
+ add('table','grid',{name:'Roster',extent:{rows:41,columns:2}});add('head','row',{position:{index:1,size:41}},{parent:'table'});add('byname','columnheader',{name:'Name',sort:'ascending',position:{index:1,size:2}},{parent:'head',onActivate(){},onFocus(){}});add('bynote','columnheader',{name:'Note'},{parent:'head'});
+ add('line','row',{selected:true,position:{index:2,size:41}},{parent:'table'});add('who','gridcell',{name:'Qingfeng',position:{index:1,size:2}},{parent:'line'});
  add('herbs','spinbutton',{name:'Herbs',range:{now:20,min:0,max:60}},{onFocus(){}});add('left','status',{});add('fault','alert',{name:'Not enough'});
  add('volume','slider',{name:'Volume',range:{now:60,min:0,max:100}},{onFocus(){}});add('zoom','slider',{name:'Zoom',range:{now:1,min:0.5,max:4},orientation:'vertical',disabled:true},{onFocus(){}});
  const browser=create();
@@ -140,6 +142,9 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  assert.deepEqual([read('bag'),read('r2')],[{role:'grid','aria-label':'Bag','aria-multiselectable':'true','aria-rowcount':'4','aria-colcount':'6'},{role:'row','aria-rowindex':'2'}]);
  assert.deepEqual([read('cell'),read('slot'),browser.elementOf('cell').parentNode===browser.elementOf('r2'),browser.elementOf('r2').parentNode===browser.elementOf('bag')],
   [{type:'button',role:'gridcell','aria-label':'Herbs, 12','aria-selected':'true','aria-colindex':'3',tabindex:'-1'},{type:'button',role:'gridcell','aria-label':'Empty','aria-disabled':'true','aria-selected':'false',tabindex:'-1'},true,true]);
+ // A header is a native button in its row that says which column it is and how the rows are sorted by it. A row may be what is selected, and a cell then says nothing of it.
+ assert.deepEqual([read('byname'),read('bynote'),browser.elementOf('byname').parentNode===browser.elementOf('head')],[{type:'button',role:'columnheader','aria-label':'Name','aria-colindex':'1','aria-sort':'ascending',tabindex:'-1'},{type:'button',role:'columnheader','aria-label':'Note',tabindex:'-1'},true]);
+ assert.deepEqual([read('line'),read('who')],[{role:'row','aria-selected':'true','aria-rowindex':'2'},{type:'button',role:'gridcell','aria-label':'Qingfeng','aria-colindex':'1',tabindex:'-1'}]);
  // A spin button has its value and its ends and no direction. A message is its text, and is there, empty, before the first one.
  assert.deepEqual(read('herbs'),{role:'spinbutton','aria-label':'Herbs','aria-valuenow':'20','aria-valuemin':'0','aria-valuemax':'60',tabindex:'-1'});
  assert.deepEqual([read('left'),browser.elementOf('left').textContent,browser.elementOf('left').tagName,read('fault'),browser.elementOf('fault').textContent],[{role:'status'},'','DIV',{role:'alert'},'Not enough']);
@@ -156,6 +161,7 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  described.bag.extent={rows:5,columns:6};assert.equal(writes(),1);assert.equal(read('bag')['aria-rowcount'],'5');described.r2.position={index:3,size:5};described.cell.position={index:4,size:6};described.cell.selected=false;assert.equal(writes(),3);
  assert.deepEqual([read('r2'),read('cell')['aria-colindex'],read('cell')['aria-selected'],'aria-posinset' in read('cell'),'aria-setsize' in read('r2')],[{role:'row','aria-rowindex':'3'},'4','false',false,false]);
  described.bag.extent=undefined;described.bag.multiple=false;assert.equal(writes(),3);assert.deepEqual(read('bag'),{role:'grid','aria-label':'Bag'});
+ described.byname.sort='descending';assert.equal(writes(),1);assert.equal(read('byname')['aria-sort'],'descending');described.byname.sort=undefined;described.line.selected=false;assert.equal(writes(),2);assert.deepEqual(['aria-sort' in read('byname'),read('line')['aria-selected']],[false,'false']);
  described.team.multiple=false;assert.equal(writes(),1);assert.deepEqual(read('team'),{role:'listbox','aria-label':'Team'});
  described.work.range={now:40,min:0,max:100};assert.equal(writes(),1);described.busy.range={now:1,min:0,max:4};assert.equal(writes(),3);described.busy.range=undefined;assert.equal(writes(),3);assert.deepEqual(read('busy'),{role:'progressbar','aria-label':'Loading'});
  described.one.selected=false;described.one.controls=undefined;described.two.selected=true;assert.equal(writes(),3);assert.deepEqual([read('one')['aria-selected'],read('one')['aria-controls'],read('two')['aria-selected']],['false',undefined,'true']);

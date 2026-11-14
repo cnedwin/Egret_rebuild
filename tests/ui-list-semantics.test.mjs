@@ -262,6 +262,45 @@ test('LS17 a list may be a menu: its rows are menu items that are named, placed,
  assert.throws(()=>createUiListSemantics({semantics,root,list:'list',id:'many',role:'menu',multiple:true,describeRow:()=>({name:'x'})}),coded('UI_SEMANTICS_OPTIONS'));
 }));
 
+test('LS18 the rows of a list may be the rows of a grid, under rows the application publishes itself',async()=>fixture(async({semantics,root,list,scroll})=>{
+ const added=[],chosen=new Set(['k1']);
+ const rows=createUiListSemantics({semantics,root,list:'list',id:'table',role:'grid',name:'Roster',columns:3,rowOffset:1,multiple:true,focusable:true,
+  describeRow:key=>({selected:chosen.has(key),disabled:key==='k2'}),onActivateRow:key=>{if(!chosen.delete(key))chosen.add(key);},onRowAdded:(key,id)=>added.push(key+'@'+id)});
+ // The header is the application's: a row of the same grid, before the rows of the list.
+ semantics.add({id:'table/head',role:'row',parent:'table',describe:()=>({bounds:{x:40,y:55,width:100,height:15},position:{index:1,size:50001},order:-1})});
+ semantics.add({id:'table/head/name',role:'columnheader',parent:'table/head',describe:()=>({bounds:{x:40,y:55,width:50,height:15},name:'Name',sort:'ascending',position:{index:1,size:3}})});
+ let snapshot=semantics.publish(rows.sync());
+ assert.deepEqual(named(snapshot,'table').extent,{rows:50001,columns:3});assert.equal(named(snapshot,'table').multiple,true);
+ assert.deepEqual(snapshot.nodes.map(node=>[node.id,node.role,node.position?.index,node.selected,node.disabled]),[['table','grid',undefined,undefined,false],['table/head','row',1,undefined,false],['table/head/name','columnheader',1,undefined,false],
+  ['table/k0','row',2,false,false],['table/k1','row',3,true,false],['table/k2','row',4,false,true]]);
+ assert.deepEqual([named(snapshot,'table/k0').position,named(snapshot,'table/k0').name,added],[{index:2,size:50001},'',['k0@table/k0','k1@table/k1','k2@table/k2']]);
+ // A cell is the application's node inside its row, measured from the part of the row that shows.
+ assert.deepEqual([rows.rowBounds('k1'),rows.rowBounds('k9'),Object.isFrozen(rows.rowBounds('k1'))],[{x:40,y:90,width:100,height:20},undefined,true]);
+ const cell=key=>semantics.add({id:rows.rowId(key)+'/name',role:'gridcell',parent:rows.rowId(key),describe:()=>({bounds:{...rows.rowBounds(key),width:50},name:'Member '+key,position:{index:1,size:3}})});
+ cell('k1');snapshot=semantics.publish(rows.sync());assert.deepEqual([named(snapshot,'table/k1/name').bounds,named(snapshot,'table/k1/name').selected,named(snapshot,'table/k1/name').parent],[{x:40,y:90,width:50,height:20},undefined,'table/k1']);
+ // A row is activated and focused like any other, and one that is disabled refuses.
+ assert.equal(semantics.perform('table/k0','activate'),true);assert.equal(semantics.perform('table/k2','activate'),false);assert.equal(semantics.perform('table/k0','focus'),true);
+ snapshot=semantics.publish(rows.sync());assert.deepEqual([named(snapshot,'table/k0').selected,snapshot.focused,list.getFocus().key],[true,'table/k0','k0']);
+ // Scrolled, the rows say where they are in the whole table, and a row that is cut is measured by what shows. The cell went with its row.
+ await scroll(1000*20+10);snapshot=semantics.publish(rows.sync());
+ assert.deepEqual(snapshot.nodes.filter(node=>node.role==='row').map(node=>node.position.index),[1,1002,1003,1004,1005]);
+ assert.deepEqual([rows.rowBounds('k1000'),rows.rowBounds('k1'),snapshot.nodes.some(node=>node.id==='table/k1/name')],[{x:40,y:70,width:100,height:10},undefined,false]);
+ // What a grid needs and what only a grid has.
+ const make=more=>createUiListSemantics({semantics,root,list:'list',id:'bad',...more});
+ for(const bad of [{role:'grid'},{role:'grid',columns:0},{role:'grid',columns:1.5},{role:'grid',columns:'3'},{role:'grid',columns:3,rowOffset:-1},{role:'grid',columns:3,rowOffset:0.5},{columns:3},{role:'listbox',describeRow:()=>({name:'x'}),columns:3},{role:'list',rowOffset:1},{role:'menu',describeRow:()=>({name:'x'}),multiple:true}])
+  assert.throws(()=>make(bad),coded('UI_SEMANTICS_OPTIONS'),JSON.stringify(bad));
+ // A grid needs no description of its rows, and with no row at all it has no extent.
+ const plain=make({role:'grid',columns:2});plain.sync();assert.equal(named(semantics.publish(),'bad/k1000').selected,undefined);assert.deepEqual(named(semantics.publish(),'bad').extent,{rows:50000,columns:2});plain.dispose();
+}));
+
+test('LS19 a grid over a list with no records has no extent, and gets one with its first row',async()=>fixture(async({semantics,root,list,source,commit})=>{
+ // One column and no row above are the least a grid can have, and are a grid.
+ const rows=createUiListSemantics({semantics,root,list:'list',id:'table',role:'grid',columns:1,rowOffset:0});
+ let snapshot=semantics.publish(rows.sync());assert.deepEqual([snapshot.nodes.map(node=>node.id),named(snapshot,'table').extent],[['table'],undefined]);
+ list.setSource({...source,revision:1,records:[{key:'only',contentVersion:0,estimatedHeight:20,value:0}]});await commit();
+ snapshot=semantics.publish(rows.sync());assert.deepEqual([named(snapshot,'table').extent,named(snapshot,'table/only').position],[{rows:1,columns:1},{index:1,size:1}]);
+},{count:0}));
+
 test('LS13 a box the root laid out is measured on the stage, as of the last commit',async()=>fixture(async({root,commit})=>{
  assert.deepEqual(semanticBoxOf(root,'title'),{x:40,y:50,width:100,height:15});
  assert.deepEqual(semanticBoxOf(root,'list'),{x:40,y:70,width:100,height:60});

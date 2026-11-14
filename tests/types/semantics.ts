@@ -17,7 +17,7 @@ const role:SemanticRole='switch';
 const options:SemanticNodeOptions={id:'sound',role,parent:'panel',describe:()=>({bounds:semanticBoundsOf(target),name:'Sound',checked:toggle.checked}),onActivate:()=>toggle.toggle(),onFocus:()=>{}};
 const node:SemanticNode=semantics.add(options);
 // Tabs with the panel of the one that is selected, and work that is under way.
-const tabRoles:readonly SemanticRole[]=['tablist','tab','tabpanel','progressbar','menu','menuitem','spinbutton','status','alert','grid','row','gridcell'];void tabRoles;
+const tabRoles:readonly SemanticRole[]=['tablist','tab','tabpanel','progressbar','menu','menuitem','spinbutton','status','alert','grid','row','gridcell','columnheader'];void tabRoles;
 semantics.add({id:'tab',role:'tab',parent:'tabs',describe:()=>({bounds:semanticBoundsOf(target),name:'Members',selected:true,controls:'pane',position:{index:1,size:3}})});
 semantics.add({id:'work',role:'progressbar',describe:()=>({bounds:semanticBoundsOf(target),name:'Training',range:{now:30,min:0,max:100}})});
 const identity:readonly [string,SemanticRole,string|undefined,boolean]=[node.id,node.role,node.parent,node.attached];void identity;

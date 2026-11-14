@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A table of a managed list that sorts — 2026-11-14
+
+`createUiListSemantics` takes `role: 'grid'` with `columns` and `rowOffset`: the rows of a managed list are published as the rows of a grid, the application adds the cells inside each and a row of headers above them, and `rowBounds` measures a cell from its row. The semantic tree gains `columnheader` with `sort`, and a `row` or a `gridcell` says `selected` only where it is what is selected. A new example, `examples/ui-roster-table`, sorts forty members by four columns from their headers and selects a row. Checked in Node and in headless Chromium with software WebGL2; no reader was run. Part of #90. [Guide](docs/ui-semantics.md#a-table-of-a-managed-list) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-roster-table/README.md)
+
 ## A scroll to where the list is, after a new source — 2026-11-14
 
 `setScrollOffset` of a managed list dropped a scroll to the offset the list was already at, also when a source replacement waited in the same turn. The list then followed its anchor to another offset, against the rule that an explicit scroll overrides anchor preservation: a list at its top that was given a new order and told to stay at its top did not. Such a scroll is now kept whenever something else waits to be committed. Checked in Node on a genuine Engine and UI root. Part of #87. [Guide](docs/ui-data-panel.md)
