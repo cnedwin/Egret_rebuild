@@ -48,7 +48,7 @@ export async function createStudioServer(projectFile = path.join(import.meta.dir
 
   file(base + 'index.html', 'examples/outfit-studio/index.html', 'text/html; charset=utf-8');
   file(base + 'style.css', 'examples/outfit-studio/style.css', 'text/css; charset=utf-8');
-  for (const name of ['main', 'project', 'assets', 'scene', 'ui', 'workload', 'reference', 'touch', 'timing']) file(base + name + '.mjs', `examples/outfit-studio/${name}.mjs`, javascript);
+  for (const name of ['main', 'project', 'assets', 'scene', 'ui', 'workload', 'reference', 'touch', 'timing', 'mixed-background', 'mixed-preview']) file(base + name + '.mjs', `examples/outfit-studio/${name}.mjs`, javascript);
   resource(base + 'project.json', Buffer.from(project.serialize()), applicationJson);
   resource(base + 'project-x.json', Buffer.from(expandStudioProject(project.serialize())), applicationJson);
   resource(base + 'config.json', json({fontConfig:font.configPath}), applicationJson);

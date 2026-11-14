@@ -23,11 +23,16 @@ const layouts = {
 };
 for (const value of Object.values(layouts)) { Object.freeze(value.rowHeights); Object.freeze(value); }
 
+const mixedLayouts = Object.freeze(Object.fromEntries(Object.entries(layouts).map(([key,layout]) =>
+  [key,Object.freeze({...layout,id:layout.id.replace('/1','/2'),mixed:true})])));
+
 export function fixedProfile(name, landscape = false) {
   if (name === 'x-d60') return layouts.desktop;
   if (name === 'x-mtouch') return landscape ? layouts.landscape : layouts.portrait;
+  if (name === 'x-d60-2') return mixedLayouts.desktop;
+  if (name === 'x-mtouch-2') return landscape ? mixedLayouts.landscape : mixedLayouts.portrait;
   if (name === null) return undefined;
-  throw new Error('Choose x-d60 or x-mtouch');
+  throw new Error('Choose x-d60, x-mtouch, x-d60-2 or x-mtouch-2');
 }
 
 export function vaultRecords({rowHeights}) {

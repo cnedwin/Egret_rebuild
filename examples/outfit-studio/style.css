@@ -18,6 +18,11 @@ button:disabled { opacity: .58; }
 .toolbar a { align-self: center; }
 :focus-visible { outline: 3px solid #3285d7; outline-offset: 2px; }
 canvas:focus-visible { outline-offset: -3px; }
+.studio-mixed .viewport { display: grid; isolation: isolate; }
+.studio-mixed .viewport canvas { grid-area: 1 / 1; }
+.studio-mixed .viewport canvas:not(.studio-background) { z-index: 1; }
+.studio-mixed .studio-background { pointer-events: none; }
+.studio-mixed .studio-waiting canvas { opacity: 0; pointer-events: none; }
 #status { min-height: 24px; color: #315170; }
 
 .touch-hint { display: none; }

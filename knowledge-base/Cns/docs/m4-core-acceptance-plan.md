@@ -16,7 +16,7 @@ M4.3 必须将交付范围表述为复杂 2D UI／动画／资源核心预览，
 
 ## 2. 当前基础与依赖
 
-复盘 main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39) 已有使用 SharedFrame2D 和平面 2D 背景的可编辑换装工作室。原 X-D60/1 与 X-MTouch/1 记录覆盖退役宿主上的 3D 背景场景。先推进 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91)，让浏览器通过既有工程事务打开导出的工程，取消或拒绝导入时保留当前场景与租约。开展 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) 正式采集前，沿当前路径恢复等效混合合成，或评审有版本的后继档位。[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) 可并行准备干净环境交接。选定 Spine、控件、设备及性能仍待验收。
+换装工作室提供精简和平面固定路径，以及 X-D60/2 与 X-MTouch/2 混合路径。World3D 在透明 SharedFrame2D 覆盖层下方绘制两块不透明四边形。[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) 负责正确性和恢复检查，包括现有工程事务。[#92](https://github.com/cnedwin/Egret_rebuild/issues/92) 负责经评审后继档位的正式采集。早期混合 X-D60/1 与 X-MTouch/1 记录仍绑定退役宿主。[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) 可并行准备干净环境交接。
 
 M3.2 已采用 CanvasKit／SkParagraph，早期 ICU／HarfBuzz／FreeType 表述指其段落服务，不是再建一套实现。M4.1 与 M3.2 尽早绑定真实 provider／字体产物并测量冷传输、初始化及分别驻留，M4.2 负责最终测量。所有已公布数值上限保留；不兼容场景／provider 变化须在采集前形成有理由的版本化后继，保留原档位／失败。
 
@@ -38,7 +38,7 @@ M1.2 的性能缺口不阻止独立的 M2/M3 正确性开发、示例编写、�
 | --- | --- |
 | 可编辑工程 → 运行中的游戏 | 持久项目保留 ID 和版本。运行时状态独立；试玩修改只有通过显式编辑才进入创作数据。复用 `packages/project/src/index.ts` 及其事务存储。 |
 | 动画/UI → 渲染 | 经 `packages/contracts/src/SharedRenderFrame2D.ts` 保留绘制顺序、裁剪、材质语义和资源引用。M2/M3 使用选定共享契约，不各自管理另一套 GPU 资源。 |
-| 场景与叠加层 | 使用当前 SharedFrame2D 与 World3D 入口设计等效有序合成。归入冻结混合档位前，评审设备与目标所有权、深度、颜色及像素语义。 |
+| 场景与叠加层 | X-D60/2 与 X-MTouch/2 配对相同尺寸和后端的两个画布。World3D 负责不透明背景和深度，SharedFrame2D 负责透明覆盖层、输入及 2D 特效。正式采集前评审设备所有权、当前代次恢复与浏览器合成像素。 |
 | 资源构建 → Runtime | 复用 `packages/project/src/resources/index.ts`、`packages/engine/src/resources.ts` 和 `packages/engine/web/resources.ts`。URL 用于定位产物；已准入元数据和校验后的字节建立资源身份。 |
 | 替换与恢复 | 应用状态跨原生代际重建保留。替换内容先准备再提交，保留原有可用内容，抑制过期发布，只释放自己拥有的资源。资源就绪、显示就绪和交互就绪分别记录。 |
 | 时间与交互 | M2 动画和 M3 UI 使用选定的游戏时钟、输入规则。恢复不能重放已消费的动画/游戏事件，也不能制造无界补帧。焦点/IME 恢复遵循 M3 明确策略。 |
@@ -53,7 +53,7 @@ M1.2 的性能缺口不阻止独立的 M2/M3 正确性开发、示例编写、�
 
 **结果：**一个可复现工程，包含选定完整交互循环、源素材、可编辑代码/数据、预期状态变化及中英文指南。
 
-首个桌面换装工作室已使用 M2／M3 公共接口接通角色选择、独立装扮、配色替换和原生重命名，并提供两个后端的有界结果和首轮冷传输记录。同一工程现可运行固定 X-D60/1 与 X-MTouch/1，包含八个创作角色、完整规定目录与桌面／移动控件布局。已采集桌面双后端和有界 Android 真机结果。未达标的计时与响应行、真人与 iPhone 检查、正式启动和生命周期预算继续归 M4.2 验收。[换装工作室](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/README.zh-CN.md)
+首个桌面换装工作室已使用 M2／M3 公共接口接通角色选择、独立装扮、配色替换和原生重命名，并提供两个后端的有界结果和首轮冷传输记录。早期混合 X-D60/1 与 X-MTouch/1 的桌面和 Android 证据保留在历史记录中。X-D60/2 与 X-MTouch/2 保留八个创作角色、完整规定目录与桌面／移动控件布局。X-D60/2 已在 Windows Edge 的两个后端完成限定检查，涵盖分别触发两层图形丢失。Fold7 真机 Chrome 的 X-MTouch/2 两个后端已通过最终横屏输入、工程取消与重试及分层丢失检查，系统竖屏覆盖双画布对齐、合成像素及输入。前一候选另有完整竖屏检查。未达标的计时与响应行、真人与 iPhone 检查、正式启动和生命周期预算继续归 M4.2 验收。[换装工作室](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/README.zh-CN.md)
 
 **范围：**选定有限的装扮/角色管理场景，组合复杂 UI、独立 Spine 轨道/皮肤、序列帧效果、资源替换和现有不透明 3D 背景。约定 U/A 场景的子集，不把各自最大负载暗中相加。
 
