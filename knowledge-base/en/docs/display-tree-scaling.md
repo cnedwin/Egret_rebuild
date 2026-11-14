@@ -270,3 +270,18 @@ Each process below prepares one captured frame 200 times and reports the median.
 | Bitmaps, vertex rows | 3.27 ms | 3.19 ms | 2.32 ms |
 
 On this machine `tools/bench-2d.mjs` varied by more than these differences between runs, so its rows are not given for this change. These are Node figures and not a browser or GPU measurement.
+
+### Rectangles of moved nodes
+
+Capture keeps, for each node, the rectangles of its primitives and of its bitmap, and gave them again only while the node's matrix stayed the same. The value of such a rectangle comes from the primitive or the bitmap alone: the matrix only decides whether its four placed corners are finite. A node that moved now keeps its rectangles too. Each one is checked again under the new matrix before it is given, and the kept rectangles count as checked under that matrix only once all of them have passed. A moved node therefore allocates and freezes no new rectangle. Its commands are still new, because their matrix is.
+
+`tests/shared-capture-moved-rectangles.test.mjs` moves a sprite of two primitives and a bitmap. It requires the same frozen rectangle values under the new matrices, and a refusal, given twice in a row, under a finite matrix that places a corner at an infinity. Removing either new check makes it fail. Before this change, 4 seeded runs of 12 scenes of sprites and bitmaps were captured by a main build and by this one. Over 30 frames each, nodes moved, turned, mirrored, hid, faded, changed material, redrew their graphics, changed their source rectangles and overflowed. The 4 runs produced identical digests of every frame and every refusal. Three more runs with scales that overflow did too.
+
+Capturing 5,000 nodes in 20 containers, all of them moving in every frame, median of 300 frames, the two builds taking turns, the lowest of three:
+
+| All moving | Before | After |
+| --- | --- | --- |
+| 5,000 filled rectangles | 3.91 ms | 3.15 ms |
+| 5,000 bitmaps of 100 frames of one atlas | 3.87 ms | 3.61 ms |
+
+These are Node figures and not a browser or GPU measurement.
