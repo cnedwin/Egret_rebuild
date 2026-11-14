@@ -582,8 +582,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 44502,
-      "sha256": "be502a13eb2685789fe5a2030e16668f50594ae76b2609fb627d7a2f257ef17d",
+      "bytes": 44960,
+      "sha256": "820d0959148db257279882dd79739a2a581453f9b0bf687325458c9008e278aa",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -2072,7 +2072,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 137800,
-      "sha256": "3039c58b2ec97fbc21b3ee5419301e77a667ec89006a14551a82eced4961902f",
+      "sha256": "52e3728e8226acb569fb7f7aa09e2c943e196e2e61621170f8c4ee2da33f2f13",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2113,8 +2113,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 49517,
-      "sha256": "df077f189a9256837e7bf570f68b23acc17b5f40a70c7203b807f5c1e0ecc1ce",
+      "bytes": 49965,
+      "sha256": "0c4f8b9a6df1464f71c3cce89868bf9429468953211431a31fb02d623d19d68f",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -3746,7 +3746,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "33d4b655492cc148b5bd2c4600fd9f4a3264a19dbe48fb4bc85da60472e461a3",
+      "sha256": "2e92bbc6ab58ebdc5d64733fd2cde6f50f82c8cadf2b9c3f612ba96383437f9f",
       "bytes": 405428,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -16725,38 +16725,38 @@
     {
       "path": "examples/ui-controls/main.mjs",
       "originRole": "First-party control state example: a switch, three options and a button drawn by the engine, with keys bound; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 11047,
-      "sha256": "c2cbb7fb41690987240274578ab69c39e4369bf52bd625245f7f6a08e0d392a9"
+      "bytes": 11061,
+      "sha256": "7d301cff3a9d3cfa863112ce3c38f46bad3b390fd0dc76b5feceb3977f2eb89a"
     },
     {
       "path": "examples/ui-controls/verify.mjs",
       "originRole": "First-party browser check of the control state example, with mouse, touch and keys injected through the browser's protocol; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 25115,
-      "sha256": "9357643d2eb898c0a3fb5692d4d2dbbb8774bd4972f22ae40a0142c7bb7ab55d"
+      "bytes": 25563,
+      "sha256": "543731efc49dd3f5036236b3180cdd3fd1e05486f36886669125e14f390aabc4"
     },
     {
       "path": "examples/ui-controls/README.md",
       "originRole": "First-party instructions of the control state example; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 3795,
-      "sha256": "22fe90a9fa1604a99f7d7d6ae13ccef9a423b3b2289146d269d434f1a0f3d677"
+      "bytes": 3993,
+      "sha256": "33582d2d6f773baacfadb5b4aa2d152c14938e28a99e7a646d3d372f8ddb1136"
     },
     {
       "path": "examples/ui-controls/README.zh-CN.md",
       "originRole": "First-party Chinese instructions of the control state example; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 3625,
-      "sha256": "aa7fcf917a5e8c2ac82c2f553d74a144681d4e75069c40c0c2934c0b8ec486f6"
+      "bytes": 3820,
+      "sha256": "b1c8ce82de7be50fb780b749374b677ebdba8ae393431485cf62f67b61252595"
     },
     {
       "path": "knowledge-base/en/docs/ui-controls.md",
       "originRole": "First-party guide to control state: movement, action, hover, toggle and selection; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 20429,
-      "sha256": "2af027f726ec54da83d75defdc59524cc25eb94ef93b856de13b31565f2429d1"
+      "bytes": 20642,
+      "sha256": "0ff3cfbbe0d1f09c0a9af55c43ba606b30caa652104b1abac1f6469811a90120"
     },
     {
       "path": "knowledge-base/Cns/docs/ui-controls.md",
       "originRole": "First-party Chinese guide to control state; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 19709,
-      "sha256": "6fe2eded756e599589be02485271e99e843cdfd16fc445d6e5dcab34c5ae3216"
+      "bytes": 19910,
+      "sha256": "9076fa294b2eb58699973e7408f31bbc591bdbbef802a86883f36a7d3f3ab8b0"
     },
     {
       "path": "contributions/ui-control-states.json",
@@ -17079,14 +17079,14 @@
     {
       "path": "examples/ui-settings/main.mjs",
       "originRole": "First-party settings screen example that joins the drawn controls, their keys, a text field, two theme generations, a managed list, a modal layer and semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented profile names; no third-party asset.",
-      "bytes": 27269,
-      "sha256": "f599f70d25ee4cad2feb20711f9daf7ed93d151dc9c85c0793ed43a77018c77b"
+      "bytes": 27353,
+      "sha256": "62ea62ba97c675b21a32225d89639e32323a185ba9345d6226259034ee485ab1"
     },
     {
       "path": "examples/ui-settings/verify.mjs",
       "originRole": "First-party real-browser check of the settings screen example, with a composition driven through the automation protocol and colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 22064,
-      "sha256": "c021e76acfe1d0896bf03ba9fbd2f28469a50c92330e3dec277a0f3ee8290ccf"
+      "bytes": 22453,
+      "sha256": "2a4996d2f8cbe07d067130415336d21c7bf9dfc7c0ab51d7199714a6b4701d5a"
     },
     {
       "path": "examples/ui-settings/README.md",
