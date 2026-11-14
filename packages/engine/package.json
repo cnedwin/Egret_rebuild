@@ -132,6 +132,14 @@
       "types": "./dist/bitmapfont.d.ts",
       "import": "./dist/bitmapfont.js"
     },
+    "./video": {
+      "types": "./dist/video.d.ts",
+      "import": "./dist/video.js"
+    },
+    "./web/video": {
+      "types": "./dist/web/video.d.ts",
+      "import": "./dist/web/video.js"
+    },
     "./audio": {
       "types": "./dist/audio.d.ts",
       "import": "./dist/audio.js"

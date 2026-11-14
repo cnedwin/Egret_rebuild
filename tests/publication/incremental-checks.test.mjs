@@ -2391,7 +2391,18 @@ function withoutSemanticsEntries(raw){
  assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3765,sha256:'ca1aad9f66558f25c0e4e26ec74ec7cf4f7cf963654d5e096daf09f52c05fa9b'});
  return prior;
 }
-// The bitmapfont entry is the newest. Taking it out gives the package as the physics2d entry left it.
+// The video entries are the newest. Taking them out gives the package as the bitmapfont entry left it.
+function withoutVideoEntry(raw){
+ const value=JSON.parse(raw);
+ if(!Object.hasOwn(value.exports,'./video')&&!Object.hasOwn(value.exports,'./web/video'))return raw;
+ assert.deepEqual(value.exports['./video'],{types:'./dist/video.d.ts',import:'./dist/video.js'});
+ assert.deepEqual(value.exports['./web/video'],{types:'./dist/web/video.d.ts',import:'./dist/web/video.js'});
+ delete value.exports['./video'];delete value.exports['./web/video'];
+ const prior=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:4928,sha256:'e7f51a8ffefa4c5716a049be112b604f2881d0c8da75e62d67294fa33bcba4ef'});
+ return prior;
+}
+// Taking the bitmapfont entry out gives the package as the physics2d entry left it.
 function withoutBitmapfontEntry(raw){
  const value=JSON.parse(raw);
  if(!Object.hasOwn(value.exports,'./bitmapfont'))return raw;
@@ -2464,7 +2475,7 @@ function withoutAudioEntries(raw){
  return prior;
 }
 function restoreScene3dEntries(raw){
- raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(withoutAudioEntries(withoutGamepadEntries(withoutCameraEntry(withoutTilemapEntry(withoutParticlesEntry(withoutPhysics2dEntry(withoutBitmapfontEntry(raw)))))))))));
+ raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(withoutAudioEntries(withoutGamepadEntries(withoutCameraEntry(withoutTilemapEntry(withoutParticlesEntry(withoutPhysics2dEntry(withoutBitmapfontEntry(withoutVideoEntry(raw))))))))))));
  const identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
  if(JSON.stringify(identity(raw))!==JSON.stringify({bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'}))return raw;
  const value=JSON.parse(raw),exports={};

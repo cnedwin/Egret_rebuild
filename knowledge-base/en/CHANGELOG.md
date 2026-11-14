@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Video as a display object — 2026-11-14
+
+`@egret/engine/video` shows the pictures of a source as a display object: each new picture becomes, through the Engine's assets, the texture of one Bitmap, and the one before is let go. `update()` takes the newest picture once a frame and never queues pictures. `@egret/engine/web/video` makes the source from a video element of the page — a file, a stream such as a canvas's or a camera's, or the page's own element — reading each presented picture back at up to `maxWidth`. A new example, `examples/video`, shows a canvas's stream live and four seconds the page records as WebM, checked from the canvas in headless Chromium with software WebGL2. Each picture is read back and uploaded whole; a path straight to the GPU is not in this change. Part of #266. [Guide](docs/video.md) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/video/README.md)
+
 ## Filters: colour matrix, glow, drop shadow and outline — 2026-11-14
 
 `DisplayObject.renderEffect` takes Egret's twenty-number `colorMatrix`, a `glow` (Egret's GlowFilter, with `inner`, `knockout` and an offset for a drop shadow) and an `outline` up to 8 pixels wide. They run in the existing effect group after the blur, on both shared hosts: one more pass spreads the group's alpha across into its scratch target, and the composite spreads it down, applies the matrix to colour as it is seen and draws the glow under or inside the group. A group's uniform grows from 448 to 576 bytes; the other limits are unchanged. A new example, `examples/filters`, is checked at sixteen places around each of six tiles against values worked out independently, in headless Chromium with software WebGL2; WebGPU was not drawn in a browser here. Part of #266. [Guide](docs/filters.md) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/filters/README.md)

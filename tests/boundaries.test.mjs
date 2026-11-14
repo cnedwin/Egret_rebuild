@@ -13,7 +13,7 @@ const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectType, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, textInputMutation, hoverMutation, semanticsMutation, audioMutation, gamepadMutation, bitmapfontMutation, physics2dMutation, particlesMutation, tilemapMutation, cameraMutation, spineImportMutation, sharedMutation, sequenceMutation }, run) {
+function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectType, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, textInputMutation, hoverMutation, semanticsMutation, audioMutation, gamepadMutation, videoMutation, bitmapfontMutation, physics2dMutation, particlesMutation, tilemapMutation, cameraMutation, spineImportMutation, sharedMutation, sequenceMutation }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -64,7 +64,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       if(name==='engine')packageExports['./web/text-input']={types:'./dist/web/textInput.d.ts',import:'./dist/web/textInput.js'};
       if(name==='engine'){packageExports['./input/hover']={types:'./dist/hover.d.ts',import:'./dist/hover.js'};packageExports['./web/hover']={types:'./dist/web/hover.d.ts',import:'./dist/web/hover.js'};
         packageExports['./ui/semantics']={types:'./dist/semantics.d.ts',import:'./dist/semantics.js'};packageExports['./web/semantics']={types:'./dist/web/semantics.d.ts',import:'./dist/web/semantics.js'};
-        packageExports['./camera']={types:'./dist/camera.d.ts',import:'./dist/camera.js'};packageExports['./tilemap']={types:'./dist/tilemap.d.ts',import:'./dist/tilemap.js'};packageExports['./particles']={types:'./dist/particles.d.ts',import:'./dist/particles.js'};packageExports['./physics2d']={types:'./dist/physics2d.d.ts',import:'./dist/physics2d.js'};packageExports['./bitmapfont']={types:'./dist/bitmapfont.d.ts',import:'./dist/bitmapfont.js'};packageExports['./input/gamepad']={types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};packageExports['./web/gamepad']={types:'./dist/web/gamepad.d.ts',import:'./dist/web/gamepad.js'};
+        packageExports['./camera']={types:'./dist/camera.d.ts',import:'./dist/camera.js'};packageExports['./tilemap']={types:'./dist/tilemap.d.ts',import:'./dist/tilemap.js'};packageExports['./particles']={types:'./dist/particles.d.ts',import:'./dist/particles.js'};packageExports['./physics2d']={types:'./dist/physics2d.d.ts',import:'./dist/physics2d.js'};packageExports['./bitmapfont']={types:'./dist/bitmapfont.d.ts',import:'./dist/bitmapfont.js'};packageExports['./video']={types:'./dist/video.d.ts',import:'./dist/video.js'};packageExports['./web/video']={types:'./dist/web/video.d.ts',import:'./dist/web/video.js'};packageExports['./input/gamepad']={types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};packageExports['./web/gamepad']={types:'./dist/web/gamepad.d.ts',import:'./dist/web/gamepad.js'};
         packageExports['./audio']={types:'./dist/audio.d.ts',import:'./dist/audio.js'};packageExports['./web/audio']={types:'./dist/web/audio.d.ts',import:'./dist/web/audio.js'};}
       write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(packageExports === undefined ? {} : {exports:packageExports}) });
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
@@ -1353,7 +1353,9 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     const physics2dGraphFiles=["src/physics2d.ts", "src/physics2dWorld.ts", "src/physics2dGeometry.ts", "src/physics2dTypes.ts", "dist/physics2d.js", "dist/physics2d.d.ts", "dist/physics2dWorld.js", "dist/physics2dWorld.d.ts", "dist/physics2dGeometry.js", "dist/physics2dGeometry.d.ts", "dist/physics2dTypes.js", "dist/physics2dTypes.d.ts"];
     // Bitmapfont: inert copies of its modules and their build output, for the same reason.
     const bitmapfontGraphFiles=["src/bitmapfont.ts", "src/bitmapFontParse.ts", "src/bitmapText.ts", "src/bitmapFontTypes.ts", "dist/bitmapfont.js", "dist/bitmapfont.d.ts", "dist/bitmapFontParse.js", "dist/bitmapFontParse.d.ts", "dist/bitmapText.js", "dist/bitmapText.d.ts", "dist/bitmapFontTypes.js", "dist/bitmapFontTypes.d.ts"];
-    for(const relative of [...keyboardGraphFiles,...textInputGraphFiles,...hoverGraphFiles,...semanticGraphFiles,...audioGraphFiles,...gamepadGraphFiles,...bitmapfontGraphFiles,...physics2dGraphFiles,...particlesGraphFiles,...tilemapGraphFiles,...cameraGraphFiles]){
+    // Video: inert copies of its modules and their build output, for the same reason.
+    const videoGraphFiles=["src/video.ts", "src/videoPlayer.ts", "src/videoTypes.ts", "dist/video.js", "dist/video.d.ts", "dist/videoPlayer.js", "dist/videoPlayer.d.ts", "dist/videoTypes.js", "dist/videoTypes.d.ts", "web/video.ts", "web/BrowserVideo.ts", "dist/web/video.js", "dist/web/video.d.ts", "dist/web/BrowserVideo.js", "dist/web/BrowserVideo.d.ts"];
+    for(const relative of [...keyboardGraphFiles,...textInputGraphFiles,...hoverGraphFiles,...semanticGraphFiles,...audioGraphFiles,...gamepadGraphFiles,...videoGraphFiles,...bitmapfontGraphFiles,...physics2dGraphFiles,...particlesGraphFiles,...tilemapGraphFiles,...cameraGraphFiles]){
       const file='packages/engine/'+relative,original=readFileSync(path.join(repository,file),'utf8');
       if(!file.endsWith('.js')){write(file,original);continue;}
       const clean=original.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
@@ -1385,6 +1387,10 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     write(keyboardResolverFile,{...gamepadResolver,exports:{...gamepadResolver.exports,'./input/gamepad':'./gamepad-input.js','./web/gamepad':'./gamepad-browser.js'}});
     write('node_modules/@egret/engine/gamepad-input.js','export function createGamepadInput() {}\nexport function bindGamepadKeys() {}\n');
     write('node_modules/@egret/engine/gamepad-browser.js','export function createBrowserGamepadInput() {}\n');
+    const videoResolver=JSON.parse(readFileSync(path.join(root,keyboardResolverFile),'utf8'));
+    write(keyboardResolverFile,{...videoResolver,exports:{...videoResolver.exports,'./video':'./video-entry.js','./web/video':'./video-browser.js'}});
+    write('node_modules/@egret/engine/video-browser.js','export function createBrowserVideo() {}\n');
+    write('node_modules/@egret/engine/video-entry.js','export function createVideo() {}\n');
     const bitmapfontResolver=JSON.parse(readFileSync(path.join(root,keyboardResolverFile),'utf8'));
     write(keyboardResolverFile,{...bitmapfontResolver,exports:{...bitmapfontResolver.exports,'./bitmapfont':'./bitmapfont-entry.js'}});
     write('node_modules/@egret/engine/bitmapfont-entry.js','export function parseBitmapFont() {}\nexport function createBitmapText() {}\nexport function layoutBitmapText() {}\n');
@@ -2254,6 +2260,17 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       const edit=edits[gamepadMutation];assert.ok(edit,'finite gamepad assigned mutation');const [file,added]=edit;
       write(file,(existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'')+added);
     }
+    if(videoMutation){
+      const edits={
+        'escaped-core-module':['packages/engine/src/probeVideo.ts',"import {createVideo} from './videoPlayer.js';\nvoid createVideo;\n"],
+        'extra-core-export':['packages/engine/src/video.ts',"export const extra=1;\n"],
+        'private-import':['packages/engine/src/videoPlayer.ts',"import './pointerInput.js';\n"],
+        'timer':['packages/engine/src/videoPlayer.ts',"setTimeout(()=>{},0);\n"],
+        'page-in-core':['packages/engine/src/videoPlayer.ts',"void globalThis.document;\n"],
+      };
+      const edit=edits[videoMutation];assert.ok(edit,'finite video assigned mutation');const [file,added]=edit;
+      write(file,(existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'')+added);
+    }
     if(bitmapfontMutation){
       const edits={
         'escaped-core-module':['packages/engine/src/probeBitmapfont.ts',"import {parseBitmapFont} from './bitmapFontParse.js';\nvoid parseBitmapFont;\n"],
@@ -2489,6 +2506,15 @@ for(const [name,reason] of [
   ['page-in-core','bitmapFontParse.ts: host ambient dependency'],
 ])test('bitmapfont policy '+name+' is refused for its own reason',()=>{
   fixture({imported:'robust-predicates',bitmapfontMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
+});
+for(const [name,reason] of [
+  ['escaped-core-module','Video: implementation module imported outside its entry'],
+  ['extra-core-export','Video: exact entry exports mismatch'],
+  ['private-import','Video: exact graph mismatch'],
+  ['timer','Video: acquired automatic host work'],
+  ['page-in-core','videoPlayer.ts: host ambient dependency'],
+])test('video policy '+name+' is refused for its own reason',()=>{
+  fixture({imported:'robust-predicates',videoMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
 });
 test('gamepad policy page-in-input is refused by the rule that keeps the page out of the core',()=>{
   const [name,reason]=['page-in-input','gamepadInput.ts: host ambient dependency'];
