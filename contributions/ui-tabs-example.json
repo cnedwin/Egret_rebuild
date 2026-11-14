@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/ui-tabs/index.html",
+      "originRole": "First-party page of the tabs example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/ui-tabs/main.mjs",
+      "originRole": "First-party example of drawn tabs with their panels and progress bars, with keys and semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-tabs/verify.mjs",
+      "originRole": "First-party real-browser check of the tabs example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-tabs/README.md",
+      "originRole": "First-party instructions for the tabs example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-tabs/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the tabs example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/ui-tabs/README.md",
+      "zh": "examples/ui-tabs/README.zh-CN.md"
+    }
+  ]
+}

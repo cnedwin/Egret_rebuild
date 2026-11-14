@@ -52,12 +52,16 @@ The set is the first control set of the UI. A role that is not listed is refused
 | `listitem` | A row | `position` | `list` |
 | `scrollbar` | The scroll position of a viewport | `range` (required), `orientation`, `controls`, `disabled` | |
 | `slider` | One value out of a range | `range` (required), `orientation`, `disabled` | |
+| `progressbar` | How far some work has come | `range`; without it the length of the work is not known | |
+| `tablist` | A row of tabs | `orientation`, `disabled` | |
+| `tab` | One of those tabs | `selected` (required), `controls`, `position`, `disabled` | `tablist` |
+| `tabpanel` | What a tab shows | | |
 | `dialog` | A dialog | `modal` | |
 | `textbox` | A text field that is not being edited | `value`, `multiline`, `disabled` | |
 
-Every node has `bounds`, and may have `name`, `hidden`, `focused` and `order`. A name is required except on `group`, `radiogroup`, `listbox`, `list` and `listitem`. `image`, `text`, `button`, `checkbox`, `switch`, `radio`, `option`, `scrollbar`, `slider` and `textbox` are read as one thing and hold no nodes.
+Every node has `bounds`, and may have `name`, `hidden`, `focused` and `order`. A name is required except on `group`, `radiogroup`, `listbox`, `list`, `listitem` and `tablist`. `image`, `text`, `button`, `checkbox`, `switch`, `radio`, `option`, `scrollbar`, `slider`, `progressbar`, `tab` and `textbox` are read as one thing and hold no nodes.
 
-A `slider` lies along the line unless `orientation` says `'vertical'`; a `scrollbar` stands beside what it scrolls unless it says `'horizontal'`. A slider is moved by [its keys](ui-controls.md#keys) once it holds the focus, so its node takes `onFocus` and needs no activation.
+A `slider` and a `tablist` lie along the line unless `orientation` says `'vertical'`; a `scrollbar` stands beside what it scrolls unless it says `'horizontal'`. A slider is moved by [its keys](ui-controls.md#keys) once it holds the focus, so its node takes `onFocus` and needs no activation.
 
 State a role does not have is refused, so a mistake is found when it is made. A refused description throws `UI_SEMANTICS_DESCRIPTION`, and its `cause` names the node and the field: `sound: checked`.
 
@@ -131,7 +135,27 @@ While a dialog with `modal: true` is published, every node outside it is `inert`
 
 ### Relations
 
-A `scrollbar` may name the node it scrolls with `controls`. The named node must be published in the same snapshot, or the publication is refused with `UI_SEMANTICS_RELATION`.
+A `scrollbar` may name the node it scrolls with `controls`, and a `tab` the `tabpanel` it shows. The named node must be published in the same snapshot, or the publication is refused with `UI_SEMANTICS_RELATION`. A panel that is not shown is usually hidden or not there at all, so only the selected tab names one.
+
+### Tabs and progress
+
+A row of tabs is a [selection group](ui-controls.md#one-of-several) to the application and a `tablist` to a reader. Each `tab` says whether it is `selected`, and the selected one names its `tabpanel`:
+
+```js
+semantics.add({ id: 'tabs', role: 'tablist', describe: () => ({ name: 'Sect', bounds: stripBounds }) });
+for (const [index, key] of keys.entries()) semantics.add({ id: 'tab-' + key, role: 'tab', parent: 'tabs',
+  onActivate: () => { group.select(key); },
+  onFocus: () => { group.select(key); keyboard.focus('tabs', { visible: true }); },
+  describe: () => ({ name: names[key], bounds: boxes[key], selected: group.selected === key, position: { index: index + 1, size: keys.length },
+    focused: keyboard.getSnapshot().focusedId === 'tabs' && group.selected === key,
+    ...(group.selected === key ? { controls: 'panel-' + key } : {}) }) });
+for (const key of keys) semantics.add({ id: 'panel-' + key, role: 'tabpanel',
+  describe: () => ({ name: names[key], hidden: group.selected !== key, bounds: panelBounds }) });
+```
+
+The tabs are [one keyboard stop](ui-controls.md#keys) with the keys of a selection: the arrow keys move the selection and the panel follows it, so a tab that is asked to take the focus is selected with it. What a panel holds is added under its node and is hidden with it.
+
+A `progressbar` reports and takes no action. With a `range` it says how far the work has come; without one it says that work is under way and its length is not known.
 
 ### Actions
 
@@ -187,6 +211,7 @@ The projection adds no key handling. Keys arrive through the [keyboard input](ke
 | The example page: the computed accessibility tree, the active descendant under Tab and the arrow keys, each element over its control, requests made of the elements, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 4 scenarios beside the 7 of the controls |
 | The rows of a managed list, a list that is hidden, the boxes of a root and a layer as a dialog: 15 cases on a genuine Engine, a genuine UI root and a genuine layer manager, with a strict TypeScript consumer and seven refused misuses | Node | Pass |
 | [The list example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics): the list box the browser computes for 8 of 50,000 rows, the active descendant through recycled rows, a jump to row 40,000, a scroll away from the focus, requests made of the options, a scaled and scrolled page, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
+| [The tabs example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-tabs): the row of tabs and the one panel the browser computes, the relation from the selected tab to its panel, the values of progress bars, the active descendant on the selected tab, and requests made of tabs | Headless Chromium 153, software WebGL2, injected input | Pass, 5 scenarios |
 | [The dropdown example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-dropdown): a list box that is in the computed tree only while its popup is open, the active descendant moving from the row into the jobs and back, and requests made of rows and options | Headless Chromium 153, software WebGL2, injected input | Pass, 8 scenarios |
 | The same example with a modal layer of the layer manager: the dialog and its buttons over the card, the list behind it absent from the tree the browser computes, Tab kept inside, a press beside the card reaching nothing, Escape, and the focus back on its row | Headless Chromium 153, software WebGL2, injected input | Pass, 2 scenarios |
 
@@ -198,7 +223,7 @@ Operator faults were written into the built list helper one at a time: 67, and t
 
 ## Not in this slice
 
-- Roles beyond the first control set: menus, tabs, trees, grids, headings and live regions.
+- Roles beyond the first control set: menus, trees, grids, headings and live regions. A slider, tabs and a progress bar were added to it.
 - Descriptions, error text and labelling one node by another.
 - Nodes for the leaves and the layers of the managed UI are the application's own, measured with [`semanticBoxOf`](#boxes-and-layers-of-the-managed-ui). The rows of a virtual list have [a helper](#a-managed-virtual-list).
 - A list with several selected rows, and rows in a grid.

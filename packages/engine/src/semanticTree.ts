@@ -29,6 +29,10 @@ const rules: Readonly<Record<SemanticRole, Rule>> = Object.freeze({
   listitem: { leaf: false, named: false, inside: 'list', fields: ['position'] },
   scrollbar: { leaf: true, named: true, fields: ['disabled', 'range', 'orientation', 'controls'] },
   slider: { leaf: true, named: true, fields: ['disabled', 'range', 'orientation'] },
+  progressbar: { leaf: true, named: true, fields: ['range'] },
+  tablist: { leaf: false, named: false, fields: ['disabled', 'orientation'] },
+  tab: { leaf: true, named: true, inside: 'tablist', fields: ['disabled', 'selected', 'position', 'controls'] },
+  tabpanel: { leaf: false, named: true, fields: [] },
   dialog: { leaf: false, named: true, fields: ['modal'] },
   textbox: { leaf: true, named: true, fields: ['disabled', 'value', 'multiline'] },
 });
@@ -150,11 +154,12 @@ export function createUiSemantics(options: UiSemanticsOptions = {}): UiSemantics
     if (!flag(multiline)) throw refuse('multiline');
     const checkable = rule.fields.includes('checked');
     if (checkable ? typeof checked !== 'boolean' && !(checked === 'mixed' && entry.role === 'checkbox') : checked !== undefined) throw refuse('checked');
-    if (entry.role === 'option' ? typeof selected !== 'boolean' : selected !== undefined) throw refuse('selected');
+    if (rule.fields.includes('selected') ? typeof selected !== 'boolean' : selected !== undefined) throw refuse('selected');
     if (value !== undefined && (typeof value !== 'string' || value.length > 16384)) throw refuse('value');
+    // A scroll bar and a slider are somewhere in their range. A progress bar without one shows work of unknown length.
     const ranged = entry.role === 'scrollbar' || entry.role === 'slider';
-    if (ranged ? (range === null || typeof range !== 'object' || !finite(range.now) || !finite(range.min) || !finite(range.max)
-      || range.min > range.now || range.now > range.max) : range !== undefined) throw refuse('range');
+    if (ranged || range !== undefined ? (range === null || typeof range !== 'object' || !finite(range.now) || !finite(range.min) || !finite(range.max)
+      || range.min > range.now || range.now > range.max) : false) throw refuse('range');
     if (orientation !== undefined && orientation !== 'horizontal' && orientation !== 'vertical') throw refuse('orientation');
     if (controls !== undefined && (!identifier(controls) || controls === entry.id)) throw refuse('controls');
     if (position !== undefined && (position === null || typeof position !== 'object' || !Number.isSafeInteger(position.index)
@@ -171,8 +176,8 @@ export function createUiSemantics(options: UiSemanticsOptions = {}): UiSemantics
         modal: entry.role === 'dialog' ? modal === true : undefined,
         multiline: entry.role === 'textbox' ? multiline === true : undefined,
         range: range === undefined ? undefined : Object.freeze({ now: range.now, min: range.min, max: range.max }) as SemanticRange,
-        // A scroll bar stands beside what it scrolls; a slider lies along the line it is read in.
-        orientation: ranged ? (orientation ?? (entry.role === 'scrollbar' ? 'vertical' : 'horizontal')) as SemanticOrientation : undefined,
+        // A scroll bar stands beside what it scrolls; a slider and a row of tabs lie along the line they are read in.
+        orientation: rule.fields.includes('orientation') ? (orientation ?? (entry.role === 'scrollbar' ? 'vertical' : 'horizontal')) as SemanticOrientation : undefined,
         controls,
         position: position === undefined ? undefined : Object.freeze({ index: position.index, size: position.size }) as SemanticPosition,
       },

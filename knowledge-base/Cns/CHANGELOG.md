@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 标签页与进度条 — 2026-11-14
+
+语义树新增 `tablist`、`tab`、`tabpanel` 和 `progressbar` 角色。标签说明自己是否被选中，并可以指明它显示的面板；进度条说明工作进行到哪里，或者工作量未知。新示例 `examples/ui-tabs` 把三个标签画成一个选择组和一个键盘停靠点，其中一个面板里有进度条。这些角色不在 #90 的首批控件集合之内。属于 #90。[指南](docs/ui-semantics.md#标签页与进度)
+
 ## 列表每一行的下拉选择 — 2026-11-14
 
 新示例 `examples/ui-dropdown` 在滚动的托管列表中被激活的那一行下面打开一个弹出选择层，按下、键盘和辅助技术都可以激活；这一行滚走后它会关闭。为此增加了两处小功能：层管理器的锚点接受 `align: 'start' | 'center' | 'end'`，弹出层可以挂在一行的末尾；`createUiListSemantics` 接受 `hidden`，已关闭的层中的列表不进入语义树。属于 #90。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.zh-CN.md)

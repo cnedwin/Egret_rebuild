@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Tabs and progress bars — 2026-11-14
+
+The semantic tree has the roles `tablist`, `tab`, `tabpanel` and `progressbar`. A tab says whether it is selected and may name the panel it shows; a progress bar says how far its work has come, or that its length is not known. A new example, `examples/ui-tabs`, draws three tabs as one selection group and one keyboard stop, with a panel of progress bars. These roles are beyond the first control set of #90. Part of #90. [Guide](docs/ui-semantics.md#tabs-and-progress)
+
 ## A dropdown for each row of a list — 2026-11-14
 
 A new example, `examples/ui-dropdown`, opens a popup layer of choices under whichever row of a scrolling managed list was activated, by a press, the keyboard or assistive technology, and closes it when the row scrolls away. Two small additions carry it: an anchor of the layer manager takes `align: 'start' | 'center' | 'end'`, so that a popup can hang from the end of a row, and `createUiListSemantics` takes `hidden`, so that the list of a closed layer is left out of the semantic tree. Part of #90. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.md)

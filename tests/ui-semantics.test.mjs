@@ -89,7 +89,7 @@ test('SM04 a node is refused where its role means nothing',()=>{
  assert.throws(()=>semantics.add({id:'group',role:'group',describe:()=>({bounds:box()})}),coded('UI_SEMANTICS_DUPLICATE'));
  const describe=()=>({bounds:box()});
  for(const options of [null,[],'x',{id:'',role:'group',describe},{id:'a'.repeat(129),role:'group',describe},{id:'a\0',role:'group',describe},{id:1,role:'group',describe},
-  {id:'a',role:'tab',describe},{id:'a',role:'toString',describe},{id:'a',role:'group'},{id:'a',role:'group',describe,parent:''},{id:'a',role:'group',describe,onActivate:1},{id:'a',role:'group',describe,onFocus:'x'}])
+  {id:'a',role:'menu',describe},{id:'a',role:'toString',describe},{id:'a',role:'group'},{id:'a',role:'group',describe,parent:''},{id:'a',role:'group',describe,onActivate:1},{id:'a',role:'group',describe,onFocus:'x'}])
   assert.throws(()=>semantics.add(options),coded('UI_SEMANTICS_OPTIONS'));
  assert.equal(semantics.size,4);
  for(const [id,role,parent] of [['r','radio','group'],['o','option','box'],['i','listitem','list'],['t','text','i']])semantics.add({id,role,parent,describe});
@@ -102,9 +102,9 @@ test('SM04 a node is refused where its role means nothing',()=>{
 });
 
 test('SM04b every role holds nodes or is read as one thing, and is named where a reader needs a name',()=>{
- const holds=['group','radiogroup','listbox','list','listitem','dialog'],unnamed=['group','radiogroup','listbox','list','listitem'];
- const inside={radio:'radiogroup',option:'listbox',listitem:'list'},needs={checkbox:{checked:false},switch:{checked:false},radio:{checked:false},option:{selected:false},scrollbar:{range:{now:0,min:0,max:0}},slider:{range:{now:0,min:0,max:0}}};
- const roles=['group','image','text','button','checkbox','switch','radiogroup','radio','listbox','option','list','listitem','scrollbar','slider','dialog','textbox'];
+ const holds=['group','radiogroup','listbox','list','listitem','tablist','tabpanel','dialog'],unnamed=['group','radiogroup','listbox','list','listitem','tablist'];
+ const inside={radio:'radiogroup',option:'listbox',listitem:'list',tab:'tablist'},needs={checkbox:{checked:false},switch:{checked:false},radio:{checked:false},option:{selected:false},tab:{selected:false},scrollbar:{range:{now:0,min:0,max:0}},slider:{range:{now:0,min:0,max:0}}};
+ const roles=['group','image','text','button','checkbox','switch','radiogroup','radio','listbox','option','list','listitem','scrollbar','slider','progressbar','tablist','tab','tabpanel','dialog','textbox'];
  for(const role of roles){
   const {semantics,state,add}=tree();
   if(inside[role])add('holder',inside[role]);
@@ -167,6 +167,30 @@ test('SM06 the state a role has is required, defaulted or refused by that role',
  // A scrollbar at either end of its range, and one with nothing to scroll.
  for(const range of [{now:0,min:0,max:150},{now:150,min:0,max:150},{now:0,min:0,max:0}]){state.bar.range=range;assert.deepEqual(node('bar').range,range);}
  assert.equal(node('field').value,'张三');state.field.value='a'.repeat(16384);assert.equal(node('field').value.length,16384);
+});
+
+test('SM06b tabs are selected one by one and name their panel; a progress bar is somewhere in its work or of unknown length',()=>{
+ const {semantics,state,add}=tree();
+ add('tabs','tablist',{name:'Sect'});add('members','tab',{name:'Members',selected:true,controls:'panel',position:{index:1,size:2}},{parent:'tabs'});add('stores','tab',{name:'Stores',selected:false,disabled:true},{parent:'tabs'});
+ add('panel','tabpanel',{name:'Members'});add('work','progressbar',{name:'Training',range:{now:30,min:0,max:100}},{parent:'panel'});add('busy','progressbar',{name:'Loading'},{parent:'panel'});
+ const node=id=>semantics.publish().nodes.find(found=>found.id===id);
+ assert.deepEqual([node('tabs').orientation,node('tabs').disabled,node('members').selected,node('members').controls,node('members').position,node('members').orientation],['horizontal',false,true,'panel',{index:1,size:2},undefined]);
+ assert.deepEqual([node('stores').selected,node('stores').disabled,node('stores').controls,node('panel').parent,node('work').parent],[false,true,undefined,undefined,'panel']);
+ assert.deepEqual([node('work').range,node('work').orientation,node('busy').range,node('busy').orientation],[{now:30,min:0,max:100},undefined,undefined,undefined]);
+ state.tabs.orientation='vertical';assert.equal(node('tabs').orientation,'vertical');
+ const refused=(id,change,field)=>{const saved={...state[id]};Object.assign(state[id],change);assert.throws(()=>semantics.publish(),about('UI_SEMANTICS_DESCRIPTION',id+': '+field),id+' '+JSON.stringify(change));state[id]=saved;};
+ for(const selected of [undefined,'true',1])refused('members',{selected},'selected');
+ for(const [id,change,field] of [['tabs',{orientation:'diagonal'},'orientation'],['tabs',{selected:true},'selected'],['tabs',{range:{now:0,min:0,max:1}},'range'],['members',{checked:true},'checked'],['members',{controls:'members'},'controls'],['members',{orientation:'vertical'},'orientation'],
+  ['members',{position:{index:3,size:2}},'position'],['panel',{disabled:true},'disabled'],['panel',{selected:true},'selected'],['panel',{name:' '},'name'],['work',{range:{now:101,min:0,max:100}},'range'],['work',{range:null},'range'],['work',{range:{now:1,min:0}},'range'],
+  ['work',{orientation:'horizontal'},'orientation'],['work',{disabled:true},'disabled'],['work',{controls:'panel'},'controls'],['busy',{name:''},'name']])refused(id,change,field);
+ // The panel a tab names is published with it, and a tab is a tab of a row of tabs.
+ state.panel.hidden=true;assert.throws(()=>semantics.publish(),about('UI_SEMANTICS_RELATION','members: controls'));state.panel.hidden=false;
+ assert.throws(()=>semantics.add({id:'loose',role:'tab',describe:()=>({bounds:box(),name:'Loose',selected:false})}),coded('UI_SEMANTICS_PARENT'));
+ assert.throws(()=>semantics.add({id:'loose',role:'tab',parent:'panel',describe:()=>({bounds:box(),name:'Loose',selected:false})}),coded('UI_SEMANTICS_PARENT'));
+ // A tab is activated and takes the focus; a progress bar only reports.
+ const seen=[];semantics.add({id:'log',role:'tab',parent:'tabs',onActivate:()=>seen.push('log'),onFocus:()=>seen.push('focus'),describe:()=>({bounds:box(),name:'Log',selected:false})});
+ assert.deepEqual(node('log').actions,['activate','focus']);assert.equal(semantics.perform('log','activate'),true);assert.equal(semantics.perform('log','focus'),true);assert.deepEqual(seen,['log','focus']);
+ assert.deepEqual(node('work').actions,[]);
 });
 
 test('SM07 one node holds the focus',()=>{

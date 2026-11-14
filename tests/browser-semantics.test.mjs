@@ -106,6 +106,8 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  add('all','checkbox',{name:'All',checked:'mixed',disabled:true});add('list','listbox',{name:'Colours'});add('red','option',{name:'Red',selected:true,position:{index:3,size:9}},{parent:'list'});
  add('view','group',{name:'Messages'});add('bar','scrollbar',{name:'Scroll',range:{now:20,min:0,max:150},orientation:'horizontal',controls:'view'},{onFocus(){}});
  add('field','textbox',{name:'Name',value:'张三',multiline:true},{onActivate(){}});add('menu','button',{name:'More',expanded:true});add('ask','dialog',{name:'Rename',modal:false});
+ add('tabs','tablist',{name:'Sect'});add('one','tab',{name:'Members',selected:true,controls:'pane',position:{index:1,size:2}},{parent:'tabs',onActivate(){},onFocus(){}});add('two','tab',{name:'Stores',selected:false,disabled:true},{parent:'tabs',onFocus(){}});
+ add('pane','tabpanel',{name:'Members'});add('work','progressbar',{name:'Training',range:{now:30,min:0,max:100}},{parent:'pane'});add('busy','progressbar',{name:'Loading'},{parent:'pane'});
  add('volume','slider',{name:'Volume',range:{now:60,min:0,max:100}},{onFocus(){}});add('zoom','slider',{name:'Zoom',range:{now:1,min:0.5,max:4},orientation:'vertical',disabled:true},{onFocus(){}});
  const browser=create();
  assert.equal(browser.container.children.length,0);
@@ -114,6 +116,13 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  assert.deepEqual(read('all'),{type:'button',role:'checkbox','aria-label':'All','aria-disabled':'true','aria-checked':'mixed'});
  assert.deepEqual(read('red'),{type:'button',role:'option','aria-label':'Red','aria-selected':'true','aria-posinset':'3','aria-setsize':'9'});
  assert.deepEqual(read('bar'),{role:'scrollbar','aria-label':'Scroll','aria-valuenow':'20','aria-valuemin':'0','aria-valuemax':'150','aria-orientation':'horizontal',tabindex:'-1','aria-controls':browser.elementOf('view').id});
+ // A row of tabs: each tab is a native button that carries its role, and the one that is selected names its panel.
+ assert.deepEqual(read('tabs'),{role:'tablist','aria-label':'Sect','aria-orientation':'horizontal'});
+ assert.deepEqual(read('one'),{type:'button',role:'tab','aria-label':'Members','aria-selected':'true','aria-posinset':'1','aria-setsize':'2',tabindex:'-1','aria-controls':browser.elementOf('pane').id});
+ assert.deepEqual(read('two'),{type:'button',role:'tab','aria-label':'Stores','aria-disabled':'true','aria-selected':'false'});
+ assert.deepEqual([read('pane'),browser.elementOf('work').parentNode===browser.elementOf('pane')],[{role:'tabpanel','aria-label':'Members'},true]);
+ // A progress bar has its value, or none while the length of the work is not known.
+ assert.deepEqual(read('work'),{role:'progressbar','aria-label':'Training','aria-valuenow':'30','aria-valuemin':'0','aria-valuemax':'100'});assert.deepEqual(read('busy'),{role:'progressbar','aria-label':'Loading'});
  // A slider is a plain element with its value and its ends. One that takes the focus can be pointed at, unless it is disabled.
  assert.deepEqual(read('volume'),{role:'slider','aria-label':'Volume','aria-valuenow':'60','aria-valuemin':'0','aria-valuemax':'100','aria-orientation':'horizontal',tabindex:'-1'});
  assert.deepEqual(read('zoom'),{role:'slider','aria-label':'Zoom','aria-disabled':'true','aria-valuenow':'1','aria-valuemin':'0.5','aria-valuemax':'4','aria-orientation':'vertical'});
@@ -124,6 +133,8 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  assert.equal(writes(),0);
  described.bar.range={now:21,min:0,max:150};assert.equal(writes(),1);assert.equal(read('bar')['aria-valuenow'],'21');
  described.volume.range={now:65,min:0,max:100};assert.equal(writes(),1);assert.equal(read('volume')['aria-valuenow'],'65');
+ described.work.range={now:40,min:0,max:100};assert.equal(writes(),1);described.busy.range={now:1,min:0,max:4};assert.equal(writes(),3);described.busy.range=undefined;assert.equal(writes(),3);assert.deepEqual(read('busy'),{role:'progressbar','aria-label':'Loading'});
+ described.one.selected=false;described.one.controls=undefined;described.two.selected=true;assert.equal(writes(),3);assert.deepEqual([read('one')['aria-selected'],read('one')['aria-controls'],read('two')['aria-selected']],['false',undefined,'true']);
  described.all.checked=false;described.all.disabled=false;assert.equal(writes(),2);assert.deepEqual(read('all'),{type:'button',role:'checkbox','aria-label':'All','aria-checked':'false'});
  described.field.value='';described.field.multiline=false;described.menu.expanded=false;described.red.selected=false;described.red.position=undefined;described.bar.controls=undefined;
  semantics.publish();

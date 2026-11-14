@@ -52,12 +52,16 @@ semantics.publish();
 | `listitem` | 一行 | `position` | `list` |
 | `scrollbar` | 视口的滚动位置 | `range`（必填）、`orientation`、`controls`、`disabled` | |
 | `slider` | 范围内的一个值 | `range`（必填）、`orientation`、`disabled` | |
+| `progressbar` | 某项工作进行到哪里 | `range`；没有它表示工作量未知 | |
+| `tablist` | 一排标签 | `orientation`、`disabled` | |
+| `tab` | 其中一个标签 | `selected`（必填）、`controls`、`position`、`disabled` | `tablist` |
+| `tabpanel` | 标签所显示的内容 | | |
 | `dialog` | 对话框 | `modal` | |
 | `textbox` | 未处于编辑状态的文本框 | `value`、`multiline`、`disabled` | |
 
-每个节点都有 `bounds`，还可以有 `name`、`hidden`、`focused` 和 `order`。除 `group`、`radiogroup`、`listbox`、`list` 和 `listitem` 外，名称必填。`image`、`text`、`button`、`checkbox`、`switch`、`radio`、`option`、`scrollbar`、`slider` 和 `textbox` 被当作一个整体朗读，内部不能再有节点。
+每个节点都有 `bounds`，还可以有 `name`、`hidden`、`focused` 和 `order`。除 `group`、`radiogroup`、`listbox`、`list`、`listitem` 和 `tablist` 外，名称必填。`image`、`text`、`button`、`checkbox`、`switch`、`radio`、`option`、`scrollbar`、`slider`、`progressbar`、`tab` 和 `textbox` 被当作一个整体朗读，内部不能再有节点。
 
-`slider` 默认沿文字方向横放，除非 `orientation` 为 `'vertical'`；`scrollbar` 默认竖立在它滚动的内容旁边，除非为 `'horizontal'`。滑动条在获得焦点后由[它的按键](ui-controls.md#按键)移动，所以它的节点接受 `onFocus`，不需要激活。
+`slider` 和 `tablist` 默认沿文字方向横放，除非 `orientation` 为 `'vertical'`；`scrollbar` 默认竖立在它滚动的内容旁边，除非为 `'horizontal'`。滑动条在获得焦点后由[它的按键](ui-controls.md#按键)移动，所以它的节点接受 `onFocus`，不需要激活。
 
 角色不具有的状态会被拒绝，这样错误在写下时就能发现。被拒绝的描述抛出 `UI_SEMANTICS_DESCRIPTION`，其 `cause` 指明节点和字段，例如 `sound: checked`。
 
@@ -131,7 +135,27 @@ semantics.add({ id: 'details/close', role: 'button', parent: 'details', onActiva
 
 ### 关系
 
-`scrollbar` 可以用 `controls` 指明它滚动的节点。被指明的节点必须在同一份快照中发布，否则发布以 `UI_SEMANTICS_RELATION` 被拒绝。
+`scrollbar` 可以用 `controls` 指明它滚动的节点，`tab` 可以用它指明自己显示的 `tabpanel`。被指明的节点必须在同一份快照中发布，否则发布以 `UI_SEMANTICS_RELATION` 被拒绝。没有显示的面板通常是隐藏的或根本不存在，所以只有被选中的标签指明面板。
+
+### 标签页与进度
+
+一排标签对应用来说是一个[选择组](ui-controls.md#多选一)，对读屏用户来说是 `tablist`。每个 `tab` 说明自己是否 `selected`，被选中的那个指明它的 `tabpanel`：
+
+```js
+semantics.add({ id: 'tabs', role: 'tablist', describe: () => ({ name: 'Sect', bounds: stripBounds }) });
+for (const [index, key] of keys.entries()) semantics.add({ id: 'tab-' + key, role: 'tab', parent: 'tabs',
+  onActivate: () => { group.select(key); },
+  onFocus: () => { group.select(key); keyboard.focus('tabs', { visible: true }); },
+  describe: () => ({ name: names[key], bounds: boxes[key], selected: group.selected === key, position: { index: index + 1, size: keys.length },
+    focused: keyboard.getSnapshot().focusedId === 'tabs' && group.selected === key,
+    ...(group.selected === key ? { controls: 'panel-' + key } : {}) }) });
+for (const key of keys) semantics.add({ id: 'panel-' + key, role: 'tabpanel',
+  describe: () => ({ name: names[key], hidden: group.selected !== key, bounds: panelBounds }) });
+```
+
+这些标签是[一个键盘停靠点](ui-controls.md#按键)，使用选择组的按键：方向键移动选择，面板随之切换，所以被要求获得焦点的标签会同时被选中。面板里的内容加在它的节点之下，并随它一起隐藏。
+
+`progressbar` 只报告，不接受任何动作。有 `range` 时它说明工作进行到哪里；没有时表示工作正在进行，而工作量未知。
 
 ### 动作
 
@@ -187,6 +211,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 | 示例页面：浏览器计算出的无障碍树、Tab 和方向键下的活动后代、每个元素与其控件重合、对元素发出的请求、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，在控件的 7 个场景之外另有 4 个 |
 | 托管列表的行、被隐藏的列表、根的盒，以及作为对话框的层：真实 Engine、真实 UI 根和真实层管理器上的 15 项，另有严格 TypeScript 使用方和七种被拒绝的误用 | Node | 通过 |
 | [列表示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics)：浏览器为 50,000 行中的 8 行计算出的列表框、穿过被回收行时的活动后代、跳到第 40,000 行、从焦点处滚走、对选项发出的请求、缩放并滚动后的页面、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
+| [标签页示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-tabs)：浏览器计算出的一排标签和唯一的面板、被选中标签到其面板的关系、进度条的数值、被选中标签上的活动后代，以及对标签提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，5 个场景 |
 | [下拉示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-dropdown)：只有弹出层打开时才出现在计算出的树中的列表框，活动后代从行移入职务列表再移回，以及对行和选项提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，8 个场景 |
 | 同一示例加上层管理器的模态层：对话框及其按钮与卡片重合、浏览器计算出的树中不含它后面的列表、Tab 留在对话框内、按下卡片旁边不触达任何对象、Escape，以及焦点回到原来的行 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，2 个场景 |
 
@@ -198,7 +223,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 
 ## 本次未包含
 
-- 首批控件集合之外的角色：菜单、标签页、树、表格、标题和实时区域。
+- 首批控件集合之外的角色：菜单、树、表格、标题和实时区域。滑动条、标签页和进度条已加入。
 - 描述文字、错误文字，以及用一个节点为另一个节点命名。
 - 托管 UI 的叶子和层对应的节点由应用自己添加，用 [`semanticBoxOf`](#托管-ui-的盒与层) 度量。虚拟列表的行有[辅助对象](#托管虚拟列表)。
 - 可多选的列表，以及按网格排列的行。
