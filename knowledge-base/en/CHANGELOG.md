@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## The profiles of the settings example are pointed at and held — 2026-11-14
+
+The rows of the profile list in `examples/ui-settings` are lit under a pointer and darker while held, in both themes, through the display object a row binding is given. Example only. Part of #90. [Guide](docs/ui-controls.md#rows-of-a-managed-list)
+
 ## Several rows of a list chosen at once — 2026-11-14
 
 A list box of the semantic tree takes `multiple`, and `createUiListSemantics` passes it on, so a list in which several rows are chosen is told to assistive technology as one. A new example, `examples/ui-multi-select`, chooses any number of forty members by a press, by Space on the focused row or by a request, and sends them out; a member who is away is a disabled option. Part of #90. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-multi-select/README.md)

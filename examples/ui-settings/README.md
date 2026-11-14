@@ -31,7 +31,7 @@ Keep the host and port the server prints and open `/examples/ui-settings/index.h
 | Switch, options, button, text field, slider | `createToggleControl`, `createSelectionGroup`, `createActionControl`, `createTextFieldControl`, `createRangeControl` of `@egret/engine/ui`, with `createHoverControl` for the pointer |
 | Keys | `createControlKeys` for each control and each row. Explicit stop indices give the order; `keyboard.tabStop` of the root makes the list one stop |
 | Paint | Two `createUiTheme` generations. `selectUiSkin` gives the name a skin has for a control's state |
-| Profiles | `createUiRoot` with a virtual list. Each row draws its own text |
+| Profiles | `createUiRoot` with a virtual list. Each row draws its own text, and takes the pointer through `context.target` of its binding: a `createHoverControl` and a `createActionControl` light the row under a pointer, darken it while it is held and choose it on a completed press |
 | The card | A second root, shown as a modal layer by `createUiLayerManager` |
 | Text | `createTextField` of `@egret/engine/text` with the canvas raster provider; the name is typed in `createBrowserTextInput` |
 | Semantics | `createUiSemantics`, `createUiListSemantics` for the rows, `semanticBoxOf` for the card, projected by `createBrowserSemantics` |
