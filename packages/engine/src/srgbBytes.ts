@@ -3,7 +3,8 @@
 // c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4 for c = byte / 255,
 // written out as numbers. The power is not computed when a game runs, because JavaScript engines differ in its last
 // bit, and a frame prepared from the same scene must hold the same numbers in every one of them.
-// packages/engine/rendering/srgbBytes.ts holds the same table; tests/srgb-byte-table.test.mjs requires the two to be equal.
+// packages/engine/rendering/srgbBytes.ts and packages/runtime/src/srgbBytes.ts hold the same table: the three sources may
+// not import each other, and tests/srgb-byte-table.test.mjs requires them to be equal.
 const TABLE: readonly number[] = Object.freeze([
   0, 0.0003035269835488375, 0.000607053967097675, 0.0009105809506465125,
   0.00121410793419535, 0.0015176349177441874, 0.001821161901293025, 0.0021246888848418626,

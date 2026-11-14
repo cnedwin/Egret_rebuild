@@ -1,0 +1,39 @@
+# Graphics
+
+English | [简体中文](README.zh-CN.md)
+
+Shapes drawn with a sprite's `graphics`: a circle, an ellipse, a rounded rectangle with a line, a translucent disc over it, a filled path with a notch, a line with a corner, a curve, and a ring of four wedges drawn with arcs.
+
+## Run
+
+```text
+node tools/build.mjs
+node tools/serve-canvas.mjs
+```
+
+Open `/examples/graphics/index.html` on the host and port the server prints. Add `?backend=webgl2` or `?backend=webgpu` to choose a backend.
+
+## What to try
+
+- Look at the edges: curves are straight pieces and edges are not smoothed.
+- Press the button: the ring is cleared and drawn again with its two colours changed over.
+
+## How it works
+
+| Part | From |
+| --- | --- |
+| Circle, ellipse, rounded rectangle | `drawCircle`, `drawEllipse`, `drawRoundRect` after `beginFill`, the last also after `lineStyle` |
+| Translucent disc | A second sprite with `beginFill(color, 0.5)` |
+| Notched shape | `moveTo` and `lineTo` under a fill, closed by `endFill` |
+| Line and curve | `lineStyle`, then `moveTo`, `lineTo` and `curveTo`, with no fill |
+| Wedges | `moveTo`, an outer `drawArc` one way and an inner `drawArc` back, under a fill |
+
+See the [graphics guide](../../knowledge-base/en/docs/graphics.md).
+
+## Check
+
+```text
+node examples/graphics/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
+```
+
+It reads colours from the canvas inside and outside each outline, and where the translucent disc lies over the panel and over the background, each compared with the value worked out from the colours. It runs WebGL2 alone. No person pressed anything, and WebGPU was not run.

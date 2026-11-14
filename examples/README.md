@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-The 54 examples of this checkout, by what they show. Each has its own page with how to run it and what to try. "Checked" means the example has a `verify.mjs` that drives it in a real browser and reads the result; its page says what that check covers.
+The 55 examples of this checkout, by what they show. Each has its own page with how to run it and what to try. "Checked" means the example has a `verify.mjs` that drives it in a real browser and reads the result; its page says what that check covers.
 
 Each example's page gives the command it is run with. Most are served like this, from the repository root:
 
@@ -28,6 +28,7 @@ Then open `/examples/<name>/index.html` on the host and port the server prints.
 | --- | --- | --- |
 | [Blend modes](blend-modes/README.md) | `blend-modes` | Yes |
 | [Filters](filters/README.md) | `filters` | Yes |
+| [Graphics](graphics/README.md) | `graphics` | Yes |
 | [Display picking example](hit-test/README.md) | `hit-test` | — |
 | [Isometric map with WebGL2](isometric-map/README.md) | `isometric-map` | — |
 | [Prepared subtree example](prepared-subtree/README.md) | `prepared-subtree` | Yes |

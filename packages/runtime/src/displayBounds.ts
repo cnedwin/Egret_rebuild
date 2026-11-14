@@ -1,3 +1,4 @@
+import { resolveShape } from './graphicsShape.js';
 import type { Matrix2D, Rectangle2D } from '@egret/contracts';
 import type { DisplayObject } from './DisplayObject.js';
 import { readBitmapState } from './bitmapDisplayState.js';
@@ -92,6 +93,8 @@ export function queryDisplayBounds(receiver: unknown, options: unknown): Rectang
       const rect = primitives[index]!.rect;
       rectangle(matrix, rect.x, rect.y, rect.width, rect.height);
     }
+    const shapeState = visualOf(current).shape, shape = shapeState === undefined ? undefined : resolveShape(shapeState);
+    if (shape !== undefined) { admitItem(); rectangle(matrix, shape.bounds.x, shape.bounds.y, shape.bounds.width, shape.bounds.height); }
     const bitmap = readBitmapState(current);
     if (bitmap !== undefined) {
       admitItem(); rectangle(matrix, 0, 0, bitmap.width, bitmap.height);

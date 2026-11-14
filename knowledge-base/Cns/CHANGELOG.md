@@ -4,6 +4,9 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## Graphics：圆、圆角矩形、路径、曲线和线条 — 2026-11-15
+
+sprite 的 `graphics` 现在可以绘制 `drawCircle`、`drawEllipse`、`drawRoundRect`，用 `moveTo`、`lineTo`、`curveTo`、`cubicCurveTo` 和 `drawArc` 绘制路径，用 `lineStyle` 绘制线条，方法名与白鹭一致。以前它只能画填充矩形。只画填充矩形的 sprite 没有变化；任何其他形状都会把它的绘图变成一个由带颜色三角形组成的网格，和其他内容一样跟随 sprite。曲线是与真实曲线相差不超过四分之一单位的直线段，边缘没有抗锯齿，线条是平头端点和尖角转角。绘图相同的 sprite 共用一份绘图；一帧可容纳 128 份不同的绘图。在 Node 中验证，并在无头 Chromium 的软件 WebGL2 中从画布验证；未运行 WebGPU。属于 #289。[指南](docs/graphics.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/graphics/README.zh-CN.md)
 ## 页面中游戏的帧循环 — 2026-11-15
 
 `@egret/engine/web/loop` 提供 `createBrowserFrameLoop`：显示器每显示一帧，它就推进 Engine 的时钟、调用 `update(seconds)` 并绘制。一步不会超过 `maxStepSeconds`，所以标签页被隐藏后回来，时钟不再拒绝这段时间。Host 已持有它能接受的帧数时，这一帧被跳过并计数，所以慢设备不再让手写循环以 `FRAME_RENDER_FAILED` 结束。起步示例已改用它。在 Node 中验证，并通过起步示例在无头 Chromium 的软件 WebGL2 中验证；未运行 WebGPU。属于 #289。[指南](docs/frame-loop.md)
