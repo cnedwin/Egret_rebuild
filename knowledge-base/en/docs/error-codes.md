@@ -416,7 +416,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 
 | Code | Meaning |
 | --- | --- |
-| `GRAPHICS_BUDGET` | The drawing is more than one sprite holds: a path of 8,192 points, a line of 16,384 dashes, or a fill with holes or crossings of 16,384 triangles. What the sprite had drawn before stays. Draw the rest into another sprite. |
+| `GRAPHICS_BUDGET` | The drawing is more than one sprite holds: a path of 8,192 points, a line of 16,384 dashes, a fill with holes or crossings of 16,384 triangles, 16 meshes, or an image repeated beyond 8,192 of its pixels. What the sprite had drawn before stays. Draw the rest into another sprite. |
 | `GRAPHICS_FILL_REQUIRED` | A shape needs a fill or a line. Call beginFill or lineStyle before drawing it. |
 | `GRAPHICS_VALUE_INVALID` | A value given to graphics is not valid: coordinates are finite numbers, sizes are not negative, a colour is 0 to 0xffffff and an alpha is 0 to 1. |
 

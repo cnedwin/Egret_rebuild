@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/graphics.md)
 
-A `Sprite` draws with its `graphics`: filled rectangles, circles, ellipses and rounded rectangles, paths of lines and curves with holes, arcs, gradients, and lines of any width with round or square ends, round or flat corners, and dashes. The names and arguments are Egret's.
+A `Sprite` draws with its `graphics`: filled rectangles, circles, ellipses and rounded rectangles, paths of lines and curves with holes, arcs, gradients, image fills, and lines of any width with round or square ends, round or flat corners, and dashes. The names and arguments are Egret's.
 
 **What is checked and what is not.** The triangles each call gives are checked in Node. The [example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/graphics/README.md) is checked from the canvas in headless Chromium with software WebGL2: each shape's colour inside its outline, the background outside it, and a translucent shape over another. WebGPU was not run.
 
@@ -27,6 +27,7 @@ Every call returns the graphics, so calls chain. `clear()` removes everything dr
 | `beginLinearGradientFill(x0, y0, x1, y1, stops)` | A fill whose colour runs from one point to another |
 | `beginRadialGradientFill(x, y, radius, stops, radiusY = radius)` | A fill whose colour runs from a centre out to a circle, or an ellipse |
 | `beginGradientFill(type, colors, alphas, ratios, matrix?)` | A gradient fill as older code gives it |
+| `beginBitmapFill(lease, matrix?, repeat = true)` | A fill of an image |
 | `lineStyle(thickness, color = 0, alpha = 1, options?)` | Sets the line of what is drawn next. No thickness, or 0, ends the line. `options` are below |
 | `drawRect(x, y, width, height)` | A rectangle |
 | `drawCircle(x, y, radius)` | A circle round a centre |
@@ -75,6 +76,22 @@ sprite.graphics.beginRadialGradientFill(50, 50, 40, [{ offset: 0, color: 0xfffff
 - `beginGradientFill` takes what older code passes: `'linear'` or `'radial'`, colours, alphas, ratios from 0 to 255, and a matrix `{ a, b, c, d, tx, ty }` that places the gradient's own square, 1638.4 units wide and centred on the origin, in the sprite. For a box of a width and height at a corner, with no rotation, that matrix is `{ a: width / 1638.4, b: 0, c: 0, d: height / 1638.4, tx: x + width / 2, ty: y + height / 2 }`.
 - A line has one colour. There is no gradient for lines.
 
+## Image fills
+
+`beginBitmapFill(lease, matrix, repeat)` fills with an image. `lease` is the lease of a texture, as a `Bitmap` takes.
+
+```js
+// Each pixel of the image two units wide, the image starting at (140, 104) and repeating across the shape.
+sprite.graphics.beginBitmapFill(lease, { a: 2, b: 0, c: 0, d: 2, tx: 140, ty: 104 }).drawRoundRect(140, 104, 96, 32, 16).endFill();
+```
+
+- `matrix` places the image in the sprite: its pixel (x, y) is drawn at `a·x + c·y + tx`, `b·x + d·y + ty`. Without it a pixel is one unit and the image starts at the sprite's origin.
+- The image repeats in both directions. With `repeat` false its edge pixels go on outwards instead; it is not cut off at its edge.
+- The texture must be a whole image. A part of an atlas is refused with `GRAPHICS_VALUE_INVALID`, because the image around it would show when it repeats.
+- A repeating image is drawn no farther than 8,192 of its own pixels from where it starts. A shape that reaches beyond that is refused with `GRAPHICS_BUDGET`.
+- Keep the lease for as long as the drawing is shown. A frame with a drawing whose lease was released is refused.
+- A line has one colour; an image fills, it does not line.
+
 ## How fills, lines and paths go together
 
 - A shape is drawn with the fill and the line that are set when it is drawn. Its line is centred on its outline and drawn over its fill.
@@ -86,12 +103,11 @@ sprite.graphics.beginRadialGradientFill(50, 50, 40, [{ offset: 0, color: 0xfffff
 
 ## What a frame carries
 
-A sprite that draws only filled rectangles keeps them as rectangles, as before. Any other shape, or any line, turns the sprite's whole drawing into one mesh of coloured triangles, in drawing order, with one white pixel as its texture. It follows the sprite's position, scale, rotation, alpha, clip, blend mode and filters like any other content.
+A sprite that draws only filled rectangles keeps them as rectangles, as before. Any other shape, or any line, turns the sprite's whole drawing into one mesh of coloured triangles, in drawing order, with one white pixel as its texture. An image fill is a mesh of its own over its image, so a sprite that draws a colour, then an image, then a colour is three meshes in that order; at most 16. It follows the sprite's position, scale, rotation, alpha, clip, blend mode and filters like any other content.
 
 - **Curves are straight pieces**, each within a quarter of a unit of the true curve: 16 for a circle of radius 10, 32 for radius 40, at most 128. A circle scaled up many times shows its corners; draw it larger instead.
 - **Edges are not smoothed.** A slanted or curved edge is stepped at the size of a pixel.
 - **A path with several parts, or one that crosses itself,** takes more triangles than a simple outline: it is cut into bands at every corner and crossing.
-- **Bitmap fills are not there.** A fill is one colour or a gradient.
 
 ## Limits
 
@@ -101,6 +117,7 @@ A sprite that draws only filled rectangles keeps them as rectangles, as before. 
 | Triangles in one frame, of all meshes | 65,536 | The frame is refused with `FRAME_BUDGET_EXCEEDED` |
 | Points of one path being drawn | 8,192 | The call throws `GRAPHICS_BUDGET` and the sprite keeps what it had |
 | Width of a line | 1,024 | `GRAPHICS_VALUE_INVALID` |
+| Meshes of one sprite: each change between an image fill and anything else begins one | 16 | The call throws `GRAPHICS_BUDGET` and the sprite keeps what it had |
 | Dashes of one line | 16,384 | The call throws `GRAPHICS_BUDGET` and the sprite keeps what it had |
 | Triangles of one fill with holes or crossings | 16,384 | `GRAPHICS_BUDGET` when the path is finished, by `endFill` or the next fill, line or shape. The path is dropped and what was drawn before it stays |
 

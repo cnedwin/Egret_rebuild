@@ -2,11 +2,11 @@
 // Shapes drawn with a sprite's graphics: a circle, an ellipse, a rounded rectangle with a line, a translucent disc,
 // a filled path, lines and curves, a ring of wedges drawn with arcs and drawn again when a button turns them, a
 // gradient, a path with a hole, and a dashed line with round ends.
-import { createEngineForProfile, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
+import { createAssetRef, createAssetType, createEngineForProfile, createImageData2D, createTexture, isTexture, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
 import { createExampleHost, chooseBackend } from '../host.mjs';
 
 const WIDTH = 480, HEIGHT = 270;
-export const COLOURS = { clear: 0x1b1f2a, circle: 0xe05050, ellipse: 0x50b0e0, panel: 0x2b3550, line: 0xf0c030, glass: 0xffffff, arrow: 0x8040c0, stroke: 0x60d080, wedgeA: 0xf08030, wedgeB: 0x3080f0, from: 0xff0000, to: 0x0000ff, frame: 0x40c0a0, dash: 0xe0e0e0 };
+export const COLOURS = { clear: 0x1b1f2a, circle: 0xe05050, ellipse: 0x50b0e0, panel: 0x2b3550, line: 0xf0c030, glass: 0xffffff, arrow: 0x8040c0, stroke: 0x60d080, wedgeA: 0xf08030, wedgeB: 0x3080f0, from: 0xff0000, to: 0x0000ff, frame: 0x40c0a0, dash: 0xe0e0e0, tileA: 0xd0a060, tileB: 0x805030 };
 const canvas = document.querySelector('#scene'), status = document.querySelector('#status'), backend = chooseBackend();
 const engine = await createEngineForProfile({ host: await createExampleHost({ canvas, pixelRatio: 1.5 }, backend) }, SHARED_FRAME_PROFILE_2D);
 const scope = engine.createScope();
@@ -34,6 +34,17 @@ sprite().graphics.beginLinearGradientFill(400, 0, 460, 0, [{ offset: 0, color: C
 sprite().graphics.beginFill(COLOURS.frame)
   .moveTo(390, 60).lineTo(470, 60).lineTo(470, 130).lineTo(390, 130).lineTo(390, 60)
   .moveTo(410, 80).lineTo(410, 110).lineTo(450, 110).lineTo(450, 80).lineTo(410, 80).endFill();
+// An image as a fill. This one is made here: eight pixels square, four squares of two colours. A game would load one.
+const pixels = new Uint8Array(8 * 8 * 4);
+for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) {
+  const colour = (x < 4) === (y < 4) ? COLOURS.tileA : COLOURS.tileB;
+  pixels.set([colour >> 16 & 255, colour >> 8 & 255, colour & 255, 255], 4 * (8 * y + x));
+}
+const tileType = createAssetType('graphics-example-tile', isTexture), tile = createTexture(createImageData2D({ width: 8, height: 8, pixels }));
+engine.assets.register(tileType, { async load() { return tile; }, dispose(value) { value.dispose(); } });
+const tileLease = scope.use(await engine.assets.acquire(createAssetRef(tileType, 'tile'), { signal: scope.signal }));
+// The matrix draws each pixel two units wide and starts the image at (140, 104); the image repeats across the shape.
+sprite().graphics.beginBitmapFill(tileLease, { a: 2, b: 0, c: 0, d: 2, tx: 140, ty: 104 }).drawRoundRect(140, 104, 96, 32, 16).endFill();
 // A dashed line: 16 on, 12 off, each dash with round ends.
 sprite().graphics.lineStyle(6, COLOURS.dash, 1, { dash: [16, 12], caps: 'round' }).moveTo(20, 252).lineTo(460, 252);
 
@@ -60,7 +71,7 @@ document.querySelector('#spin').addEventListener('click', () => {
 });
 
 function show() {
-  status.textContent = failure ? 'Failed / 失败：' + failure : 'Shapes / 形状 11 · turns / 转动 ' + turns + ' · ' + backend;
+  status.textContent = failure ? 'Failed / 失败：' + failure : 'Shapes / 形状 12 · turns / 转动 ' + turns + ' · ' + backend;
   if (scope.state === 'open') engine.renderSharedFrame(frame);
 }
 function tick() { try { show(); } catch (cause) { failure = String(cause?.code ?? cause?.message ?? cause); } if (scope.state === 'open') requestAnimationFrame(tick); }

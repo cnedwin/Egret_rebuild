@@ -6,38 +6,71 @@ import type { ImageData2D, Rectangle2D, SharedGeometry2D } from '@egret/contract
 import { decodeSRGBByte } from './srgbBytes.js';
 import { fillNonZero, gradientColor, outlineCrosses, refineForGradient } from './graphicsFill.js';
 import type { ShapeGradient } from './graphicsFill.js';
+import type { AssetLease } from './AssetLease.js';
+import type { Texture } from './Texture.js';
 
-export interface ShapePaint { readonly color: number; readonly alpha: number; readonly gradient?: ShapeGradient | undefined; }
+/**
+ * An image as a fill: the lease of its texture, whether it repeats, and the map from a node's units to the image, in
+ * which 0 to 1 is once across it: `u = a·x + c·y + tx` and `v = b·x + d·y + ty`.
+ */
+export interface ShapeBitmap { readonly lease: AssetLease<Texture>; readonly repeat: boolean; readonly width: number; readonly height: number;
+  readonly a: number; readonly b: number; readonly c: number; readonly d: number; readonly tx: number; readonly ty: number; }
+export interface ShapePaint { readonly color: number; readonly alpha: number; readonly gradient?: ShapeGradient | undefined; readonly bitmap?: ShapeBitmap | undefined; }
 export type LineCaps = 'none' | 'round' | 'square';
 export type LineJoints = 'miter' | 'round' | 'bevel';
 /** A line: its width, how its ends and corners are drawn, and the lengths of its dashes and gaps in turn, if it is dashed. */
 export interface ShapeLine extends ShapePaint { readonly width: number; readonly caps: LineCaps; readonly joints: LineJoints; readonly miterLimit: number; readonly dash: readonly number[] | undefined; }
 /** A path being drawn with moveTo and lineTo: its paints, and each subpath as x, y pairs. */
 export interface ShapePath { readonly fill: ShapePaint | undefined; readonly line: ShapeLine | undefined; readonly subpaths: number[][]; }
-export interface ShapeState {
-  /** x, y of each vertex; linear-light r, g, b and alpha of each vertex; three vertex numbers for each triangle. */
-  positions: number[]; colors: number[]; indices: number[];
+/**
+ * Triangles that are drawn together: x, y of each vertex; linear-light r, g, b and alpha of each vertex; where each
+ * vertex is in its image; three vertex numbers for each triangle. They are over one white pixel, or over an image.
+ */
+export interface ShapeBatch { positions: number[]; colors: number[]; uvs: number[]; indices: number[]; bitmap: ShapeBitmap | undefined; }
+/** A drawing in order: the batches that are finished, and the one being added to. A fill of another image begins a batch. */
+export interface ShapeDrawing extends ShapeBatch { done: ShapeBatch[]; }
+export interface ShapeState extends ShapeDrawing {
   path: ShapePath | undefined;
   /** What the lists and the path give, made when capture or bounds first ask after a change. */
   resolved: ResolvedShape | undefined;
 }
-export interface ResolvedShape { readonly geometry: SharedGeometry2D; readonly bounds: Rectangle2D; }
+/** One geometry for each batch that has a triangle, in drawing order, with the image it is drawn over if it has one. */
+export interface ResolvedPart { readonly geometry: SharedGeometry2D; readonly bitmap: ShapeBitmap | undefined; }
+export interface ResolvedShape { readonly parts: readonly ResolvedPart[]; readonly bounds: Rectangle2D; }
 
 /** The most one node's shapes may hold: what one shared geometry takes. */
-export const GRAPHICS_SHAPE_LIMITS = Object.freeze({ maxVertices: 65536, maxIndices: 196608, maxLogicalBytes: 4980736, maxPathPoints: 8192, maxLineWidth: 1024, maxDashes: 16384, maxGradientStops: 16, maxFillTriangles: 16384 });
+export const GRAPHICS_SHAPE_LIMITS = Object.freeze({ maxVertices: 65536, maxIndices: 196608, maxLogicalBytes: 4980736, maxPathPoints: 8192, maxLineWidth: 1024, maxDashes: 16384, maxGradientStops: 16, maxFillTriangles: 16384, maxBatches: 16, maxRepeatPixels: 8192 });
 
 /** The one white pixel every shape samples: its colour is the colour of its vertices. */
 export const SHAPE_PAGE: ImageData2D = createImageData2D({ width: 1, height: 1, pixels: new Uint8Array([255, 255, 255, 255]) });
 export const SHAPE_REGION = Object.freeze({ packed: Object.freeze({ x: 0, y: 0, width: 1, height: 1 }), logicalWidth: 1, logicalHeight: 1, trimX: 0, trimY: 0, quarterTurn: 0 as const });
 
-export function createShapeState(): ShapeState { return { positions: [], colors: [], indices: [], path: undefined, resolved: undefined }; }
+export function createShapeState(): ShapeState { return { positions: [], colors: [], uvs: [], indices: [], bitmap: undefined, done: [], path: undefined, resolved: undefined }; }
+/** A copy that can be drawn on without changing the drawing it was made from. */
+export function copyDrawing(from: ShapeDrawing): ShapeDrawing {
+  return { positions: from.positions.slice(), colors: from.colors.slice(), uvs: from.uvs.slice(), indices: from.indices.slice(), bitmap: from.bitmap, done: from.done.slice() };
+}
+/** Makes the batch being added to one over this image, or over the white pixel: the one it is, if it is, and otherwise a new one after it. */
+function batchFor(target: Target, bitmap: ShapeBitmap | undefined): void {
+  const now = target.bitmap;
+  if (now === bitmap || (now !== undefined && bitmap !== undefined && now.lease === bitmap.lease && now.repeat === bitmap.repeat)) return;
+  if (target.indices.length !== 0) {
+    target.done.push({ positions: target.positions, colors: target.colors, uvs: target.uvs, indices: target.indices, bitmap: now });
+    target.positions = []; target.colors = []; target.uvs = []; target.indices = [];
+  } else { target.positions.length = 0; target.colors.length = 0; target.uvs.length = 0; }
+  target.bitmap = bitmap;
+}
 
-interface Target { positions: number[]; colors: number[]; indices: number[]; }
+type Target = ShapeDrawing;
 function paint(target: Target, points: readonly number[], color: ShapePaint): number {
   const first = target.positions.length / 2;
   const r = decodeSRGBByte(color.color >> 16), g = decodeSRGBByte(color.color >> 8), b = decodeSRGBByte(color.color);
   for (let i = 0; i < points.length; i += 2) {
-    target.positions.push(points[i]!, points[i + 1]!);
+    const x = points[i]!, y = points[i + 1]!, bitmap = color.bitmap;
+    target.positions.push(x, y);
+    // Over an image a vertex is white and says where in the image it is; over the white pixel it is the pixel's middle.
+    if (bitmap !== undefined) { target.colors.push(1, 1, 1, 1); target.uvs.push(bitmap.a * x + bitmap.c * y + bitmap.tx, bitmap.b * x + bitmap.d * y + bitmap.ty); continue; }
+    target.uvs.push(0.5, 0.5);
     if (color.gradient === undefined) target.colors.push(r, g, b, color.alpha); else gradientColor(color.gradient, points[i]!, points[i + 1]!, target.colors, target.colors.length);
   }
   return first;
@@ -104,7 +137,7 @@ function addTriangles(target: Target, triangles: readonly number[], color: Shape
 function takeTriangles(target: Target, vertices: number, indices: number): number[] {
   const out: number[] = [];
   for (let i = indices; i < target.indices.length; i++) { const v = target.indices[i]!; out.push(target.positions[2 * v]!, target.positions[2 * v + 1]!); }
-  target.positions.length = 2 * vertices; target.colors.length = 4 * vertices; target.indices.length = indices;
+  target.positions.length = 2 * vertices; target.colors.length = 4 * vertices; target.uvs.length = 2 * vertices; target.indices.length = indices;
   return out;
 }
 /**
@@ -114,6 +147,7 @@ function takeTriangles(target: Target, vertices: number, indices: number): numbe
  * False when the fill would take more triangles than one fill may.
  */
 export function fillOutlines(target: Target, outlines: readonly (readonly number[])[], convex: boolean, color: ShapePaint): boolean {
+  batchFor(target, color.bitmap);
   const vertices = target.positions.length / 2, indices = target.indices.length, max = GRAPHICS_SHAPE_LIMITS.maxFillTriangles;
   const closed = outlines.map(points => distinct(points, true)).filter(points => points.length >= 6);
   if (closed.length === 0) return true;
@@ -124,6 +158,10 @@ export function fillOutlines(target: Target, outlines: readonly (readonly number
     addTriangles(target, triangles, color);
   }
   if (color.gradient !== undefined) addTriangles(target, refineForGradient(takeTriangles(target, vertices, indices), color.gradient, max), color);
+  // An image that repeats is drawn no farther than this many of its pixels from its start: beyond it a frame cannot place it exactly.
+  const bitmap = color.bitmap;
+  if (bitmap !== undefined) for (let i = 2 * vertices; i < target.uvs.length; i += 2)
+    if (Math.abs(target.uvs[i]! * bitmap.width) > GRAPHICS_SHAPE_LIMITS.maxRepeatPixels || Math.abs(target.uvs[i + 1]! * bitmap.height) > GRAPHICS_SHAPE_LIMITS.maxRepeatPixels) return false;
   return true;
 }
 
@@ -162,6 +200,7 @@ export function strokeLine(target: Target, line: readonly number[], closed: bool
   return true;
 }
 function strokeSolid(target: Target, points: readonly number[], loop: boolean, style: ShapeLine): void {
+  batchFor(target, undefined);
   const count = points.length / 2, half = style.width / 2, segments = loop ? count : count - 1, arc = curveSegments(half);
   const out: number[] = [], triangles: number[] = [];
   const add = (x: number, y: number): number => { out.push(x, y); return out.length / 2 - 1; };
@@ -301,26 +340,38 @@ export function shapeFits(vertices: number, indices: number): boolean {
 }
 
 // Shapes drawn the same way, on any number of nodes, are one geometry: a frame admits 4,096 of them.
-const shared = new Map<string, ResolvedShape>();
-/** The geometry and bounds of a node's shapes, or undefined while they hold no triangle. */
+const shared = new Map<string, ResolvedShape>(), leases = new WeakMap<object, number>();
+let nextLease = 1;
+const leaseNumber = (lease: object): number => { let n = leases.get(lease); if (n === undefined) { n = nextLease++; leases.set(lease, n); } return n; };
+/** Whether a drawing is one a node may hold: every batch within what one geometry takes, and no more batches than a node has. */
+export function drawingFits(drawing: ShapeDrawing): boolean {
+  if (drawing.done.length >= GRAPHICS_SHAPE_LIMITS.maxBatches) return false;
+  return shapeFits(drawing.positions.length / 2, drawing.indices.length);
+}
+/** The geometries and bounds of a node's shapes, or undefined while they hold no triangle. */
 export function resolveShape(shape: ShapeState): ResolvedShape | undefined {
   if (shape.resolved !== undefined) return shape.resolved;
-  let target: Target = shape;
+  let target: ShapeDrawing = shape;
   if (shape.path !== undefined) {
-    target = { positions: shape.positions.slice(), colors: shape.colors.slice(), indices: shape.indices.slice() };
+    target = copyDrawing(shape);
     // A path still being drawn that has grown past what a node may hold is not drawn; Graphics refuses it when it is finished.
-    if (!addPath(target, shape.path) || !shapeFits(target.positions.length / 2, target.indices.length)) target = shape;
+    if (!addPath(target, shape.path) || !drawingFits(target)) target = shape;
   }
-  const { positions, colors, indices } = target, vertices = positions.length / 2;
-  if (indices.length === 0 || !shapeFits(vertices, indices.length)) return undefined;
-  const key = positions.join() + '|' + colors.join() + '|' + indices.join();
+  const batches = [...target.done, target].filter(batch => batch.indices.length !== 0 && shapeFits(batch.positions.length / 2, batch.indices.length));
+  if (batches.length === 0) return undefined;
+  const key = batches.map(batch => batch.positions.join() + '|' + batch.colors.join() + '|' + batch.indices.join()
+    + (batch.bitmap === undefined ? '' : '|' + batch.uvs.join() + '|' + leaseNumber(batch.bitmap.lease) + (batch.bitmap.repeat ? 'r' : 'c'))).join('/');
   let resolved = shared.get(key);
   if (resolved === undefined) {
     let left = Infinity, top = Infinity, right = -Infinity, bottom = -Infinity;
-    for (let i = 0; i < positions.length; i += 2) { const x = positions[i]!, y = positions[i + 1]!; if (x < left) left = x; if (x > right) right = x; if (y < top) top = y; if (y > bottom) bottom = y; }
-    const geometry = createSharedGeometry2D({ positions: Float64Array.from(positions), uvs: new Float64Array(positions.length).fill(0.5), lightColors: Float64Array.from(colors),
-      darkColors: new Float64Array(3 * vertices), indices: vertices > 65535 ? Uint32Array.from(indices) : Uint16Array.from(indices) });
-    resolved = Object.freeze({ geometry, bounds: Object.freeze({ x: left, y: top, width: right - left, height: bottom - top }) });
+    const parts: ResolvedPart[] = [];
+    for (const { positions, colors, uvs, indices, bitmap } of batches) {
+      const vertices = positions.length / 2;
+      for (let i = 0; i < positions.length; i += 2) { const x = positions[i]!, y = positions[i + 1]!; if (x < left) left = x; if (x > right) right = x; if (y < top) top = y; if (y > bottom) bottom = y; }
+      parts.push(Object.freeze({ bitmap, geometry: createSharedGeometry2D({ positions: Float64Array.from(positions), uvs: Float64Array.from(uvs), lightColors: Float64Array.from(colors),
+        darkColors: new Float64Array(3 * vertices), indices: vertices > 65535 ? Uint32Array.from(indices) : Uint16Array.from(indices) }) }));
+    }
+    resolved = Object.freeze({ parts: Object.freeze(parts), bounds: Object.freeze({ x: left, y: top, width: right - left, height: bottom - top }) });
     if (shared.size >= 512) shared.clear();
     shared.set(key, resolved);
   }

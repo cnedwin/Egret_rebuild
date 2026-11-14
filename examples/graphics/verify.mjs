@@ -110,6 +110,12 @@ await scenario('webgl2: every shape is filled and lined in its own colours, insi
   // The frame is filled and its hole is not.
   within(await colour(page, [400, 95]), shown(linear(C.frame)), 'frame');
   within(await colour(page, [430, 95]), shown(clear), 'the hole in the frame');
+  // The image fill: squares of eight units in two colours in turn, the image starting at (140, 104) and repeating.
+  within(await colour(page, [160, 108]), shown(linear(C.tileA)), 'tile, first square of the second repeat');
+  within(await colour(page, [168, 108]), shown(linear(C.tileB)), 'tile, the square beside it');
+  within(await colour(page, [160, 116]), shown(linear(C.tileB)), 'tile, the square under it');
+  within(await colour(page, [216, 132]), shown(linear(C.tileA)), 'tile, far along and in its second row');
+  within(await colour(page, [141, 105]), shown(clear), 'the rounded corner of the image fill');
   // The dashed line: a dash from 20 to 36, a gap to 48 that the round ends reach three units into.
   within(await colour(page, [28, 252]), shown(linear(C.dash)), 'first dash');
   within(await colour(page, [42, 252]), shown(clear), 'first gap');

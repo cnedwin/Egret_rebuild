@@ -59,7 +59,8 @@ Five things change in every file. Knowing them saves most of the guessing.
 | `moveTo`, `lineTo`, `curveTo`, `cubicCurveTo` | The same | |
 | `lineStyle(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit, lineDash)` | `lineStyle(thickness, color, alpha, { caps, joints, miterLimit, dash })` | The fourth argument is an object. Without it a line has flat ends and mitred corners. Where the old line had round ends or corners, pass `{ caps: 'round', joints: 'round' }` |
 | `beginGradientFill(type, colors, alphas, ratios, matrix)` | The same call, or `beginLinearGradientFill` and `beginRadialGradientFill` | `matrix` is a plain `{ a, b, c, d, tx, ty }` |
-| `lineGradientStyle`, `beginBitmapFill` | Not there | |
+| `beginBitmapFill(bitmapData, matrix, repeat)` | `beginBitmapFill(lease, matrix, repeat)` | It takes the lease of a texture that is a whole image. With `repeat` false the edge pixels go on outwards |
+| `lineGradientStyle` | Not there | |
 
 Edges are not smoothed, and a curve is drawn as straight pieces. See the [graphics guide](graphics.md).
 
@@ -74,8 +75,8 @@ Edges are not smoothed, and a curve is drawn as straight pieces. See the [graphi
 | Loading one image by URL | `createBrowserTextureProvider` from `@egret/engine/web/image` | |
 | `egret.SpriteSheet`, a texture atlas | Atlases through the content loader; a bitmap shows a region | See [atlas frames](atlas-frame-layout-contract.md) |
 | `bitmap.scale9Grid` | `NineSliceBitmap` | See [nine-slice bitmaps](nine-slice-bitmap-contract.md) |
-| `bitmap.fillMode = REPEAT` | Not as a property of a bitmap | A `Mesh2D` with a shared material that repeats draws a tiled image |
-| `RES.destroyRes` | `lease.dispose()`, or dispose the scope that holds it | A texture is released when its last lease is |
+| `bitmap.fillMode = REPEAT` | Not as a property of a bitmap | A `Sprite` with `graphics.beginBitmapFill(lease)` and a `drawRect` draws a tiled image |
+| `RES.destroyRes` | `lease.release()`, or dispose the scope that holds it | A texture is released when its last lease is |
 
 ## Input
 
