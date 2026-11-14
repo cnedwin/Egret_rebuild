@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Particle colours as they are seen — 2026-11-14
+
+The colours of `@egret/engine/particles` are now given to the renderer in its linear light, as bitmap text gives its tint, so a white particle texture shows the colour given; before, tints showed lighter than given. Found while checking the tint of bitmap text in the browser. Part of #266. [Guide](docs/particles.md)
+
 ## Bitmap fonts — 2026-11-14
 
 `@egret/engine/bitmapfont` is optional. `parseBitmapFont` reads the text, XML and JSON forms of BMFont, as AngelCode's generator, Hiero, Glyph Designer and Littera save them, and the fonts of frames that Egret's texture merger wrote, and refuses what it cannot read with its own code. `layoutBitmapText` lays text out in a font with its kerning, line spacing and letter spacing, breaks lines to a width after spaces and between ideographs — never before a closing mark such as `，。！？」` — and aligns them left, centre or right. `createBitmapText` draws the text as one mesh for each page of the font, tinted by a colour as it is seen, and lays it out again whenever its text or options change. A new example, `examples/bitmap-font`, has a title, a dialog and a score in two fonts the page paints. Checked in Node, on a real Engine and in headless Chromium with software WebGL2; no font saved by a generator itself was read. Part of #266. [Guide](docs/bitmap-font.md) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-font/README.md)

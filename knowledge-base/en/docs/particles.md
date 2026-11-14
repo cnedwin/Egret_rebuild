@@ -39,7 +39,7 @@ A range is a number, or two numbers between which each particle picks evenly.
 
 `x` and `y` are the place of the emitter inside its display; a particle stays where it was born when the emitter moves. `start()`, `stop()` (those alive live out their lives), `burst(count)`, `clear()`, `alive`, `snapshot()` and `particles()` (each particle alive, for checks and tools).
 
-The colour and alpha of a particle are the colour of its vertices, which the renderer multiplies with the texture. Blending is the renderer's ordinary blending: there is no additive blending yet, so overlapping flames are as bright as the brightest, not brighter.
+The colour and alpha of a particle are the colour of its vertices, which the renderer multiplies with the texture. Colours are given as they are seen and turned into the renderer's linear light, so a white texture shows the colour given. Blending is the renderer's ordinary blending: there is no additive blending yet, so overlapping flames are as bright as the brightest, not brighter.
 
 ## Errors
 

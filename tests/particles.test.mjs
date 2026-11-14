@@ -127,7 +127,9 @@ test('PA07 the mesh is one quad a particle, turned and scaled about its place, t
  const corners=Array.from(g.positions.slice(0,8)).map(v=>Math.round(v*1e9)/1e9);
  assert.deepEqual(corners,[104,40,104,60,96,60,96,40]);
  assert.deepEqual(Array.from(g.uvs.slice(0,8)),[0,0,1,0,1,1,0,1]);
- assert.deepEqual(Array.from(g.lightColors.slice(0,4)).map(v=>Math.round(v*1000)/1000),[0.2,0.4,0.6,0.5]);
+ // The colour as it is seen, in the linear light the renderer multiplies by; the alpha as it is.
+ const linear=c=>c<=0.04045?c/12.92:((c+0.055)/1.055)**2.4;
+ assert.deepEqual(Array.from(g.lightColors.slice(0,4)),[linear(0x33/255),linear(0x66/255),linear(0x99/255),0.5]);
  // With none alive the mesh is hidden; it shows again with the next.
  emitter.update(3);
  assert.equal(mesh.visible,false);
