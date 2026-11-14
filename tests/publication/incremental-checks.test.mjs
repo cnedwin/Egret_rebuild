@@ -2391,7 +2391,17 @@ function withoutSemanticsEntries(raw){
  assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3765,sha256:'ca1aad9f66558f25c0e4e26ec74ec7cf4f7cf963654d5e096daf09f52c05fa9b'});
  return prior;
 }
-// The particles entry is the newest. Taking it out gives the package as the tilemap entry left it.
+// The physics2d entry is the newest. Taking it out gives the package as the particles entry left it.
+function withoutPhysics2dEntry(raw){
+ const value=JSON.parse(raw);
+ if(!Object.hasOwn(value.exports,'./physics2d'))return raw;
+ assert.deepEqual(value.exports['./physics2d'],{types:'./dist/physics2d.d.ts',import:'./dist/physics2d.js'});
+ delete value.exports['./physics2d'];
+ const prior=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:4713,sha256:'73dcbf0640d11df06218006c873a3b53fa3f9e357eb675ce8fe831c5e3410158'});
+ return prior;
+}
+// Taking the particles entry out gives the package as the tilemap entry left it.
 function withoutParticlesEntry(raw){
  const value=JSON.parse(raw);
  if(!Object.hasOwn(value.exports,'./particles'))return raw;
@@ -2444,7 +2454,7 @@ function withoutAudioEntries(raw){
  return prior;
 }
 function restoreScene3dEntries(raw){
- raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(withoutAudioEntries(withoutGamepadEntries(withoutCameraEntry(withoutTilemapEntry(withoutParticlesEntry(raw)))))))));
+ raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(withoutAudioEntries(withoutGamepadEntries(withoutCameraEntry(withoutTilemapEntry(withoutParticlesEntry(withoutPhysics2dEntry(raw))))))))));
  const identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
  if(JSON.stringify(identity(raw))!==JSON.stringify({bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'}))return raw;
  const value=JSON.parse(raw),exports={};

@@ -124,6 +124,10 @@
       "types": "./dist/particles.d.ts",
       "import": "./dist/particles.js"
     },
+    "./physics2d": {
+      "types": "./dist/physics2d.d.ts",
+      "import": "./dist/physics2d.js"
+    },
     "./audio": {
       "types": "./dist/audio.d.ts",
       "import": "./dist/audio.js"

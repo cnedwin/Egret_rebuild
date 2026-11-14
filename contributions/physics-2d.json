@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "packages/engine/src/physics2d.ts", "originRole": "First-party optional entry of 2D collision and simple physics; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/src/physics2dWorld.ts", "originRole": "First-party 2D physics world with fixed steps, impulse contacts, sensors, queries, rays, character sliding and grid colliders; independently authored with AI assistance; Apache-2.0. No third-party dependency.", "criticalComment": true},
+    {"path": "packages/engine/src/physics2dGeometry.ts", "originRole": "First-party 2D shape geometry: placement, bounds, area, convexity, separating axes, containment and segment casts; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/src/physics2dTypes.ts", "originRole": "First-party types of 2D physics; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/physics-2d.test.mjs", "originRole": "First-party Node tests of the 2D physics world; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/types/physics2d.json", "originRole": "First-party compiler configuration of the strict consumer of the physics2d entry; independently authored with AI assistance; Apache-2.0."},
+    {"path": "tests/types/physics2d.ts", "originRole": "First-party strict TypeScript consumer of the physics2d entry, with five refused misuses; independently authored with AI assistance; Apache-2.0."},
+    {"path": "examples/physics-2d/index.html", "originRole": "First-party page of the 2D physics example; independently authored with AI assistance; Apache-2.0. No third-party asset."},
+    {"path": "examples/physics-2d/main.mjs", "originRole": "First-party example of a training hall in 2D physics with images painted by the page; independently authored with AI assistance; Apache-2.0. Original example text; no third-party asset.", "criticalComment": true},
+    {"path": "examples/physics-2d/verify.mjs", "originRole": "First-party real-browser check of the 2D physics example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "examples/physics-2d/README.md", "originRole": "First-party instructions for the 2D physics example; independently authored with AI assistance; Apache-2.0."},
+    {"path": "examples/physics-2d/README.zh-CN.md", "originRole": "First-party Simplified Chinese instructions for the 2D physics example; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/en/docs/physics-2d.md", "originRole": "First-party guide to 2D collision and simple physics, with what was run and what was not; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/Cns/docs/physics-2d.md", "originRole": "First-party Chinese guide to 2D collision and simple physics; independently authored with AI assistance; Apache-2.0."}
+  ],
+  "documents": [
+    {"en": "examples/physics-2d/README.md", "zh": "examples/physics-2d/README.zh-CN.md"},
+    {"en": "knowledge-base/en/docs/physics-2d.md", "zh": "knowledge-base/Cns/docs/physics-2d.md"}
+  ]
+}

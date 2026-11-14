@@ -258,6 +258,8 @@ for (const [name, allowed] of Object.entries(expected)) {
     if (name === 'engine') textExports['./tilemap'] = {types:'./dist/tilemap.d.ts',import:'./dist/tilemap.js'};
     // Particles: one DOM-free entry.
     if (name === 'engine') textExports['./particles'] = {types:'./dist/particles.d.ts',import:'./dist/particles.js'};
+    // Physics2d: one DOM-free entry.
+    if (name === 'engine') textExports['./physics2d'] = {types:'./dist/physics2d.d.ts',import:'./dist/physics2d.js'};
     // Gamepad: one DOM-free entry and one optional browser entry.
     if (name === 'engine') {
       textExports['./input/gamepad'] = {types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};
@@ -5406,6 +5408,32 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
   const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
   if(Object.hasOwn(particlesAllowed,resolved)&&!particlesAllowed[resolved].includes(relative))throw new Error('Particles: implementation module imported outside its entry: '+relative);
+ }
+}
+// Physics2d: one DOM-free entry built on the runtime alone. It starts no timer or request, and no other entry has it.
+const physics2dTypes=["PhysicsBody", "PhysicsBodyKind", "PhysicsBodyOptions", "PhysicsContact", "PhysicsMoveResult", "PhysicsRayHit", "PhysicsShape", "PhysicsSnapshot", "PhysicsTileColliders", "PhysicsVector", "PhysicsWorld", "PhysicsWorldOptions"];
+const physics2dValues=["createPhysicsWorld"];
+for(const [file,values,types] of [['packages/engine/src/physics2d.ts',physics2dValues,physics2dTypes],['packages/engine/dist/physics2d.js',physics2dValues,[]],['packages/engine/dist/physics2d.d.ts',physics2dValues,physics2dTypes]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,values)||!mouseSame(surface.types,types))throw new Error('Physics2d: exact entry exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/physics2d')),physics2dValues))throw new Error('Physics2d: optional runtime values mismatch');
+for(const [label,values,stem] of textEntries){
+ const body=uiRead(stem+'.d.ts');
+ for(const name of [...physics2dTypes,...physics2dValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Physics2d: leaked to default/other entry: '+label+'/'+name);
+}
+const physics2dImports={"src/physics2d.ts": ["./physics2dWorld.js", "./physics2dTypes.js"], "dist/physics2d.js": ["./physics2dWorld.js"], "dist/physics2d.d.ts": ["./physics2dWorld.js", "./physics2dTypes.js"], "src/physics2dWorld.ts": ["@egret/runtime", "./physics2dGeometry.js", "./physics2dGeometry.js", "./physics2dTypes.js"], "dist/physics2dWorld.js": ["@egret/runtime", "./physics2dGeometry.js"], "dist/physics2dWorld.d.ts": ["./physics2dTypes.js"], "src/physics2dGeometry.ts": ["./physics2dTypes.js"], "dist/physics2dGeometry.js": [], "dist/physics2dGeometry.d.ts": ["./physics2dTypes.js"], "src/physics2dTypes.ts": ["@egret/runtime"], "dist/physics2dTypes.js": [], "dist/physics2dTypes.d.ts": ["@egret/runtime"]};
+for(const [file,expected] of Object.entries(physics2dImports)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
+ if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Physics2d: exact graph mismatch: '+file);
+ if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Physics2d: acquired automatic host work: '+file);
+}
+const physics2dAllowed={"src/physics2dWorld.js": ["src/physics2d.ts"], "dist/physics2dWorld.js": ["dist/physics2d.js", "dist/physics2d.d.ts"], "src/physics2dGeometry.js": ["src/physics2dWorld.ts"], "dist/physics2dGeometry.js": ["dist/physics2dWorld.js", "dist/physics2dWorld.d.ts"]};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
+ if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
+ for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
+  const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+  if(Object.hasOwn(physics2dAllowed,resolved)&&!physics2dAllowed[resolved].includes(relative))throw new Error('Physics2d: implementation module imported outside its entry: '+relative);
  }
 }
 // Gamepad: a DOM-free entry with the input and the keys it drives, and a browser entry with one
