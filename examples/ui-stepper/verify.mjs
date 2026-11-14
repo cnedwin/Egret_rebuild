@@ -159,6 +159,10 @@ await scenario('the keyboard alone moves an amount by a step, by four, and to it
   await key(page, 'Space'); now = await read(page);
   assert.deepEqual([amountsOf(now), now.enabled.even, now.focus], [[25, 25, 25, 25], false, 'amount-alchemy']);
   assert.equal(await page.evaluate(() => scrollY), 0, 'no key that was taken moved the page');
+  // Past the last stop Tab leaves the canvas: the buttons beside the amounts are elements of the page, and none of them takes it on the way.
+  for (let count = 0; count < 4; count++) await key(page, 'Tab');
+  assert.deepEqual(await active(page), ['button', '重置 / Reset']);
+  await key(page, 'Tab'); assert.equal(await page.evaluate(() => document.activeElement.id === 'scene'), false);
 });
 
 await scenario('a message is said by changing the text of an element that was already there', desktop, async page => {

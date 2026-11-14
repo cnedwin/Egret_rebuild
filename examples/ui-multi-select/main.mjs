@@ -29,7 +29,7 @@ const scope = engine.createScope();
 const cache = createTextRasterCache(engine.assets, { provider: createCanvasTextRasterProvider() });
 let textQueue = Promise.resolve();
 const inTurn = work => { const next = textQueue.then(work); textQueue = next.catch(() => {}); return next; };
-let renders = 0, failure, queued = false, busy = Promise.resolve(), revision = 0, sent = 0;
+let renders = 0, failure, queued = false, tidying = false, busy = Promise.resolve(), revision = 0, sent = 0;
 const fail = cause => { failure = String(cause?.code ?? cause?.message ?? cause); };
 /** Paints once after the callbacks that are running: a row reports its hover and its press from inside the input, and from inside a commit when it is recycled. */
 const later = () => { if (queued) return; queued = true; queueMicrotask(() => { queued = false; show(); }); };
@@ -127,7 +127,7 @@ function button(id, box, text, tabIndex, act) {
       const fill = !part.action.enabled ? COLORS.buttonOff : part.action.pressed || part.keys.pressed ? COLORS.buttonPressed : part.pointed.hovered ? COLORS.buttonHover : COLORS.button;
       sprite.graphics.clear(); sprite.graphics.beginFill(fill).drawRect(0, 0, box.width, box.height).endFill();
     } };
-  keyboard.registerTarget({ id, target: sprite, tabIndex });
+  part.stop = keyboard.registerTarget({ id, target: sprite, tabIndex }); part.off = false;
   part.keys = createControlKeys({ keyboard, target: sprite, kind: 'action', control: part.action, onPressChange: later });
   return part;
 }
@@ -199,14 +199,28 @@ export function readSnapshot() {
     renders, failure, realized: realized.size, semantics: { focused: semantics.snapshot.focused, nodes: semantics.snapshot.nodes.length, projection: projection.state },
   };
 }
+/**
+ * A button that is disabled is no stop of the keyboard. A key may be what disabled it, and the stops are not changed
+ * from inside a key: this runs after it.
+ */
+function tidy() {
+  tidying = false;
+  if (scope.state !== 'open') return;
+  for (const part of Object.values(buttons)) if (part.off === part.action.enabled) { part.off = !part.action.enabled; part.stop.update({ disabled: part.off }); }
+}
 function show() {
   if (scope.state !== 'open') return;
   // A button that has nothing to do is disabled. One that held the focus then gives it to the roster's first stop that can take it.
   const wanted = { all: chosen.size < free().length, clear: chosen.size > 0, send: chosen.size > 0 };
   for (const [id, part] of Object.entries(buttons)) if (part.action.enabled !== wanted[id]) {
     part.action.setEnabled(wanted[id]);
-    if (!wanted[id] && holds(id)) keyboard.focus(Object.keys(buttons).find(other => wanted[other]) ?? 'all', { visible: keyboard.getSnapshot().focusVisible });
+    if (!wanted[id] && holds(id)) {
+      // With no button left that can act, the focus goes to the roster.
+      const next = Object.keys(buttons).find(other => wanted[other]), visible = keyboard.getSnapshot().focusVisible, row = root.snapshot().rows.find(found => found.visible);
+      if (next !== undefined) keyboard.focus(next, { visible }); else if (row !== undefined) list.focus(row.key, { visible });
+    }
   }
+  if (!tidying && Object.values(buttons).some(part => part.off === part.action.enabled)) { tidying = true; queueMicrotask(tidy); }
   page.graphics.clear(); page.graphics.beginFill(COLORS.page).drawRect(0, 0, WIDTH, HEIGHT).beginFill(COLORS.panel).drawRect(LIST.x - 4, LIST.y - 4, LIST.width + 28, LIST.height + 8)
     .beginFill(COLORS.track).drawRect(TRACK.x, TRACK.y, TRACK.width, TRACK.height).endFill();
   const { start, length } = scroll.thumb;

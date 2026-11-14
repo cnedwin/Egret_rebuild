@@ -19,7 +19,7 @@ Keep the host and port the server prints and open `/examples/ui-tabs/index.html`
 
 - Press a tab. Its panel takes the place of the one before it.
 - Click the canvas, then use the keyboard alone. Tab stops at the tabs once; Arrow Left and Arrow Right move the selection, round past either end, and Home and End go to the first and the last. The panel changes with the selection, without another key.
-- On **修炼 / Training**, Tab goes on to the button. Enter or Space trains: each bar advances by its own amount and stops at its end. When every bar is full the button is disabled, and a focus it held goes to the tabs.
+- On **修炼 / Training**, Tab goes on to the button. Enter or Space trains: each bar advances by its own amount and stops at its end. When every bar is full the button is disabled and is no stop of the keyboard any more, and a focus it held goes to the tabs.
 - On the other two tabs there is nothing to stop at, so Tab leaves the canvas.
 
 ## How it works

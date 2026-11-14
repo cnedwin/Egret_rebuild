@@ -154,6 +154,8 @@ await scenario('the keyboard alone moves through the tabs, and the panel follows
   for (let session = 3; session <= 8; session++) await key(page, 'Enter');
   const now = await read(page);
   assert.deepEqual([now.sessions, now.trainEnabled, now.focus, now.focusVisible, await active(page)], [8, false, 'tabs', true, ['tab', NAMES.training]]);
+  // The button that is disabled is no stop any more: from the tabs Tab leaves the canvas, also with its panel showing.
+  await key(page, 'Tab'); assert.deepEqual([(await read(page)).focus, await page.evaluate(() => document.activeElement.id === 'scene')], [undefined, false]);
 });
 
 await scenario('a request of assistive technology selects a tab, focuses one, and trains', desktop, async page => {

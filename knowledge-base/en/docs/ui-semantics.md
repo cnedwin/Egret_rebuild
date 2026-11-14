@@ -213,7 +213,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 
 `width` and `height` are the logical size the bounds are given in. The projection puts an invisible container after the canvas, laid over it, with one element for each published node, and follows every publication. It writes only what changed.
 
-- **The canvas keeps the keyboard.** The canvas gets `role="application"`, the label, and `aria-owns` naming the container, so the nodes are read as what is inside it. The node that is `focused` is named by `aria-activedescendant`. No element of the projection is a Tab stop: the keys of the application go on working exactly as they did.
+- **The canvas keeps the keyboard.** The canvas gets `role="application"`, the label, and `aria-owns` naming the container, so the nodes are read as what is inside it. The node that is `focused` is named by `aria-activedescendant`. No element of the projection is a Tab stop: a native button carries `tabindex="-1"` from the moment it is made, whatever it can do, and a plain element carries it only where a request may give it the focus. The keys of the application go on working exactly as they did, and past its last stop Tab leaves the canvas.
 - **Elements.** `button`, `checkbox`, `switch`, `radio`, `option`, `tab` and `menuitem` are native buttons carrying their role. The rest are plain elements with a role, and `text`, `status` and `alert` are their text. State is written as the ARIA attribute of that state: `aria-checked`, `aria-selected`, `aria-expanded`, `aria-disabled`, `aria-modal`, `aria-multiline`, `aria-multiselectable`, `aria-valuenow` with its bounds, `aria-orientation`, `aria-controls`, `aria-posinset` and `aria-setsize`. The outermost inert element gets the `inert` attribute, and the page keeps everything under it away from every user.
 - **Geometry.** Each element lies over the control it describes, so a reader's highlight and exploration by touch find it where it is drawn. The container holds logical units and one scale maps it onto the rectangle of the canvas. It follows a resize, a scroll and a change of the visual viewport. `projection.sync()` measures again after a change of layout that came with no event. While the canvas has no size the projection is hidden.
 - **Pointers go through.** The container takes no pointer. A mouse or a finger meets the canvas as before.
@@ -238,7 +238,7 @@ The projection adds no key handling. Keys arrive through the [keyboard input](ke
 | Check | Where | Result |
 | --- | --- | --- |
 | The tree: 23 cases | Node | Pass |
-| The projection against a stand-in for the page: 16 cases | Node | Pass |
+| The projection against a stand-in for the page: 17 cases | Node | Pass |
 | A strict TypeScript consumer of both entries, with nine refused misuses | Node | Pass |
 | The example page: the computed accessibility tree, the active descendant under Tab and the arrow keys, each element over its control, requests made of the elements, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 4 scenarios beside the 7 of the controls |
 | The rows of a managed list, a list that is hidden, a list box with several selections, a list as a menu, the boxes of a root and a layer as a dialog: 17 cases on a genuine Engine, a genuine UI root and a genuine layer manager, with a strict TypeScript consumer and seven refused misuses | Node | Pass |

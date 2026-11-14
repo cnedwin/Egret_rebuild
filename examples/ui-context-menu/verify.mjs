@@ -95,6 +95,9 @@ await scenario('closed, the screen is a list box, its scroll bar and a button th
   await page.focus('#scene'); const stops = [];
   for (let count = 0; count < 2; count++) { await key(page, 'Tab'); stops.push(String((await read(page)).focus)); }
   assert.deepEqual(stops, ['roster:m0', 'undefined']);
+  // Past the roster Tab leaves the canvas: the element of the disabled button does not take it on the way. The page follows the focus down.
+  assert.equal(await page.evaluate(() => document.activeElement.id === 'scene'), false);
+  await page.evaluate(() => scrollTo(0, 0)); await settle(page);
   // Once a member is selected the button is the stop after the roster.
   await click(page, rowSpot(2)); await page.focus('#scene'); await key(page, 'Tab'); stops.push((await read(page)).focus); await key(page, 'Tab');
   const last = await read(page); assert.deepEqual([stops[2], last.selected, last.focus, last.buttonEnabled], ['roster:m0', 'm1', 'open', true]);

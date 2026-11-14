@@ -289,11 +289,11 @@ await scenario('a request made of an element reaches the control a press and a k
   await request(page, 'level-easy', 'focus'); now = await read(page);
   assert.deepEqual([now.focus, now.semantics.focused, now.level.selected], ['level', 'level-hard', 'hard']);
   assert.equal((await accessible(page)).active, await elementId(page, 'level-hard'));
-  // Disabled controls are published as disabled, offer no focus, and refuse the request as they refuse the press.
+  // Disabled controls are published as disabled and refuse the request as they refuse the press. Their native buttons stay out of the Tab order of the page, as every button of the projection does.
   await page.click('#disable-hard'); await settle(page);
   assert.equal(await state(page, 'level-hard', 'aria-disabled'), 'true'); assert.equal(await state(page, 'level-easy', 'aria-disabled'), null);
   await page.click('#disable-all'); await settle(page);
-  for (const id of Object.keys(labels)) { assert.equal(await state(page, id, 'aria-disabled'), 'true', id); assert.equal(await state(page, id, 'tabindex'), null, id); }
+  for (const id of Object.keys(labels)) { assert.equal(await state(page, id, 'aria-disabled'), 'true', id); assert.equal(await state(page, id, 'tabindex'), '-1', id); }
   assert.equal(await page.getByRole('radiogroup', { name: 'Level / 难度' }).getAttribute('aria-disabled'), 'true');
   assert.deepEqual((await accessible(page)).rows.map(row => row[4]), [false, true, true, true, true, true, true]);
   for (const id of ['sound', 'level-easy', 'apply']) await request(page, id, 'click');

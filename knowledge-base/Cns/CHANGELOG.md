@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 经过无法获得焦点的按钮时，Tab 可以离开画布 — 2026-11-14
+
+浏览器投射为每个可按下的节点生成一个原生按钮，但只有在节点可以应请求获得焦点时，才把它标记为非 Tab 停靠点。于是被禁用的按钮，或者没有焦点动作的按钮，成了页面的停靠点：过了应用的最后一个停靠点，Tab 落在这个隐藏的元素上，投射又把焦点交还给画布，键盘因此无法离开画布。现在每个原生按钮从一开始就带有 `tabindex="-1"`。在 `examples/ui-multi-select` 和 `examples/ui-tabs` 中，被禁用的按钮也不再是应用的停靠点。已在 Node 中检查，并在无头 Chromium 的软件 WebGL2 上用 Tab 键实际走出画布。属于 #90。[指南](docs/ui-semantics.md#投射)
+
 ## 按步改变的数量，以及会被朗读的消息 — 2026-11-14
 
 语义树新增 `spinbutton`、`status` 和 `alert` 三个角色，浏览器投射会写出它们：带有范围、按步改变的数量，以及文字变化时由读屏软件朗读的两种消息。新示例 `examples/ui-stepper` 用范围的按键和两侧的按钮把一个固定的总数分给四个数量，说明还剩多少，并说明某个数量为什么没有增加。已在 Node 和无头 Chromium 的软件 WebGL2 上检查；没有运行读屏软件。属于 #90。[指南](docs/ui-semantics.md#消息) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-stepper/README.zh-CN.md)

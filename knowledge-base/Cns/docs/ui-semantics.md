@@ -213,7 +213,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 
 `width` 和 `height` 是范围所用的逻辑尺寸。投射在画布之后放置一个不可见的容器，覆盖在画布上方，每个已发布的节点对应其中一个元素，并跟随每一次发布。它只写入发生变化的内容。
 
-- **键盘仍属于画布。**画布获得 `role="application"`、标签，以及指向容器的 `aria-owns`，于是这些节点被读作画布内部的内容。`focused` 的节点由 `aria-activedescendant` 指明。投射中的元素都不是 Tab 停靠点，应用原有的按键照常工作。
+- **键盘仍属于画布。**画布获得 `role="application"`、标签，以及指向容器的 `aria-owns`，于是这些节点被读作画布内部的内容。`focused` 的节点由 `aria-activedescendant` 指明。投射中的元素都不是 Tab 停靠点：原生按钮从创建时起就带有 `tabindex="-1"`，无论它能做什么；普通元素只有在可以应请求获得焦点时才带有它。应用原有的按键照常工作，过了最后一个停靠点，Tab 会离开画布。
 - **元素。**`button`、`checkbox`、`switch`、`radio`、`option`、`tab` 和 `menuitem` 是带有相应角色的原生按钮，其余是带角色的普通元素，`text`、`status` 和 `alert` 则是它们的文字。状态写成对应的 ARIA 属性：`aria-checked`、`aria-selected`、`aria-expanded`、`aria-disabled`、`aria-modal`、`aria-multiline`、`aria-multiselectable`、`aria-valuenow` 及其上下限、`aria-orientation`、`aria-controls`、`aria-posinset` 和 `aria-setsize`。最外层的 `inert` 元素带有 `inert` 属性，页面会让它内部的一切对所有用户都不可达。
 - **几何。**每个元素都覆盖在它所描述的控件上，读屏软件的高亮和触摸探索能在控件绘制的位置找到它。容器内部使用逻辑单位，由一个缩放映射到画布的矩形。它跟随窗口缩放、滚动和可视视口的变化；没有事件的布局变化之后可以调用 `projection.sync()` 重新测量。画布没有尺寸时，投射被隐藏。
 - **指针穿透。**容器不接收指针，鼠标和手指仍然落在画布上。
@@ -238,7 +238,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 | 检查 | 环境 | 结果 |
 | --- | --- | --- |
 | 语义树：23 项 | Node | 通过 |
-| 投射对照测试自备的页面替身：16 项 | Node | 通过 |
+| 投射对照测试自备的页面替身：17 项 | Node | 通过 |
 | 两个入口的严格 TypeScript 使用方，含九种被拒绝的误用 | Node | 通过 |
 | 示例页面：浏览器计算出的无障碍树、Tab 和方向键下的活动后代、每个元素与其控件重合、对元素发出的请求、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，在控件的 7 个场景之外另有 4 个 |
 | 托管列表的行、被隐藏的列表、可多选的列表框、作为菜单的列表、根的盒，以及作为对话框的层：真实 Engine、真实 UI 根和真实层管理器上的 17 项，另有严格 TypeScript 使用方和七种被拒绝的误用 | Node | 通过 |
