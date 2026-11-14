@@ -90,6 +90,14 @@ await scenario('closed, the screen is a list box, its scroll bar and a button th
   const now = await read(page);
   assert.deepEqual([now.selected, now.open, now.menu, now.buttonEnabled, now.semantics.projection], [undefined, false, undefined, false, 'active']);
   assert.equal(await page.getByRole('button', { name: '操作 / Actions', exact: true }).getAttribute('aria-expanded'), 'false');
+  // The menu was never opened: it is not drawn anywhere, and its items are not stops of the keyboard. Nor is the button, which is disabled.
+  assert.deepEqual([await colour(page, [6, 6]), await colour(page, [100, 36])], ['161a22', '161a22']);
+  await page.focus('#scene'); const stops = [];
+  for (let count = 0; count < 2; count++) { await key(page, 'Tab'); stops.push(String((await read(page)).focus)); }
+  assert.deepEqual(stops, ['roster:m0', 'undefined']);
+  // Once a member is selected the button is the stop after the roster.
+  await click(page, rowSpot(2)); await page.focus('#scene'); await key(page, 'Tab'); stops.push((await read(page)).focus); await key(page, 'Tab');
+  const last = await read(page); assert.deepEqual([stops[2], last.selected, last.focus, last.buttonEnabled], ['roster:m0', 'm1', 'open', true]);
 });
 
 await scenario('the right button opens the menu of its row, and a press on an item acts for that member', desktop, async page => {

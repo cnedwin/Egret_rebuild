@@ -248,5 +248,7 @@ await line(title, 20, 10, 18, '名册 / Roster', COLORS.ink, scope);
 await line(title, 270, 14, 14, '职务 / Job', COLORS.hint, scope);
 await publish();
 layers.register({ id: 'roster', root, kind: 'base' });
+// The jobs are a layer from the start, closed. A root that is no layer is drawn where it stands and takes the keyboard like any other.
+registration = layers.register({ id: 'jobs', root: popup, kind: 'popup', closeOnEscape: true });
 layersReady = true;
 await publish();

@@ -163,7 +163,8 @@ const buttonRing = engine.stage.addChild(scope.use(new Sprite())), buttonFace = 
 buttonRing.x = BUTTON.x - 3; buttonRing.y = BUTTON.y - 3; buttonFace.x = BUTTON.x; buttonFace.y = BUTTON.y; buttonFace.touchEnabled = true; buttonFace.hitArea = { x: 0, y: 0, width: BUTTON.width, height: BUTTON.height };
 const buttonHover = createHoverControl({ hover, target: buttonFace, onHoverChange: later });
 const button = createActionControl({ input: pointer, target: buttonFace, onActivate: () => { void openMenu(selected); }, onPressChange: later });
-keyboard.registerTarget({ id: 'open', target: buttonFace, tabIndex: 2 });
+// Until a member is selected the button has nothing to open, and is no stop of the keyboard.
+const buttonStop = keyboard.registerTarget({ id: 'open', target: buttonFace, tabIndex: 2, disabled: true });
 const buttonKeys = createControlKeys({ keyboard, target: buttonFace, kind: 'action', control: button, onPressChange: later });
 
 // What the screen is to someone who does not see it.
@@ -246,7 +247,8 @@ export function readSnapshot() {
 }
 function show() {
   if (scope.state !== 'open') return;
-  if (button.enabled !== (selected !== undefined)) button.setEnabled(selected !== undefined);
+  // A key may be what selected the member, and the stops of the keyboard are not changed from inside a key: that waits until it is over.
+  if (button.enabled !== (selected !== undefined)) { button.setEnabled(selected !== undefined); queueMicrotask(() => { if (scope.state === 'open') buttonStop.update({ disabled: !button.enabled }); }); }
   page.graphics.clear(); page.graphics.beginFill(COLORS.page).drawRect(0, 0, WIDTH, HEIGHT).beginFill(COLORS.panel).drawRect(LIST.x - 4, LIST.y - 4, LIST.width + 28, LIST.height + 8)
     .beginFill(COLORS.track).drawRect(TRACK.x, TRACK.y, TRACK.width, TRACK.height).endFill();
   const { start, length } = scroll.thumb;
@@ -268,5 +270,7 @@ await line(engine.stage, 20, 10, 18, '名册 / Roster', COLORS.ink);
 await line(engine.stage, BUTTON.x + 12, BUTTON.y + 6, 14, '操作 / Actions', COLORS.ink);
 await publish();
 layers.register({ id: 'roster', root, kind: 'base' });
+// The menu is a layer from the start, closed. A root that is no layer is drawn where it stands and takes the keyboard like any other.
+registration = layers.register({ id: 'menu', root: menu, kind: 'popup', closeOnEscape: true });
 layersReady = true;
 await publish();
