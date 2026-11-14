@@ -53,6 +53,12 @@ export interface RowBindContext<T> {
     readonly density: number;
     readonly scope: Scope;
     readonly signal: CancellationSignal;
+    /**
+     * The display object of the row: what a press on the row and a pointer over it reach once the
+     * row is committed, and the `target` of its pointer notifications. A control of the application
+     * may listen on it. It belongs to the root: add nothing to it, and do not move or dispose it.
+     */
+    readonly target: DisplayObject;
 }
 /** Detached content is prepared at the leaf's available inner width. */
 export interface UiLeafPrepareContext {

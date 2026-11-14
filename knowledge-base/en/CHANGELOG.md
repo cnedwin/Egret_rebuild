@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A row of a managed list is pointed at and held — 2026-11-14
+
+The binding of a row of a managed list is given `target`, the display object of its row. A hover control and an action control listen on it, so a row is lit under a pointer, darker while it is held, and activated by a completed press, as a drawn button is. The dropdown example paints its rows and its options this way. Part of #90. [Guide](docs/ui-controls.md#rows-of-a-managed-list)
+
 ## Tabs and progress bars — 2026-11-14
 
 The semantic tree has the roles `tablist`, `tab`, `tabpanel` and `progressbar`. A tab says whether it is selected and may name the panel it shows; a progress bar says how far its work has come, or that its length is not known. A new example, `examples/ui-tabs`, draws three tabs as one selection group and one keyboard stop, with a panel of progress bars. These roles are beyond the first control set of #90. Part of #90. [Guide](docs/ui-semantics.md#tabs-and-progress)
