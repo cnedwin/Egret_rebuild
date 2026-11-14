@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+import { decodeSRGBByte } from './srgbBytes.js';
 import { AssetLease, DisplayObjectContainer, EgretError, Mesh2D } from '@egret/runtime';
 import type { Texture } from '@egret/runtime';
 import { createTexturedGeometry2D } from '@egret/contracts';
@@ -9,7 +10,7 @@ const finite = (value: unknown): value is number => typeof value === 'number' &&
 const record = (value: unknown): value is Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value);
 const invalid = (): EgretError => new EgretError('BITMAP_TEXT_OPTIONS_INVALID');
 /** A channel of a colour as it is seen, in the linear light the renderer multiplies a texture by, so that white drawn in a colour shows that colour. */
-const linear = (channel: number): number => { const c = channel / 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+const linear = decodeSRGBByte;
 /** The most characters one page can draw in one mesh: four corners each, and no more corners than a mesh may have. */
 const MOST_PER_PAGE = 16384;
 
