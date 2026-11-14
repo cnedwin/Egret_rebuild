@@ -76,6 +76,7 @@ Image/text vertices use identity coefficients. Graphics can use white source, Lv
 | add-preserve | S + C | ad |
 | multiply-factor | S*C + C(1 − as) | as + ad(1 − as) |
 | screen | S + C(1 − S) | as + ad(1 − as) |
+| erase | C(1 − as) | ad(1 − as) |
 
 The target subsequently saturates and quantizes. Add-preserve requires opaque output with an alpha-one clear; transparent output refuses it before presentation. Multiply-factor denotes this factor equation, not CSS multiply. These linear recipes do not promise pixel identity with an encoded-space Spine renderer.
 

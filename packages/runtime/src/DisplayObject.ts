@@ -1,7 +1,7 @@
 import { setRenderEffect } from './renderEffect.js';
 import type { RenderEffect2D } from './renderEffect.js';
 import { assertManagedMutable } from './ui/managedState.js';
-import { isSharedMaterial2D } from '@egret/contracts';
+import { createSharedMaterial2D, isSharedMaterial2D } from '@egret/contracts';
 import type { Point2D, Rectangle2D, SharedMaterial2D } from '@egret/contracts';
 import { registerDisplayHitNode, readDisplayHitState, writeDisplayHitArea, writeDisplayTouchEnabled } from './displayHitState.js';
 import { queryDisplayBounds } from './displayBounds.js';
@@ -15,6 +15,8 @@ import { ASSERT_ATTACHABLE, ASSERT_BINDABLE, OWNERSHIP_CHILDREN } from "./owners
 import type { DisplayObjectContainer } from "./DisplayObjectContainer.js";
 import { assertLive, isTerminated, parentOf, registerNode, terminateNode } from "./displayTreeState.js";
 
+/** Egret's names of blend modes, and the blends of the shared material they are. */
+const BLENDS = Object.freeze({ normal: 'normal', add: 'add-accumulate', multiply: 'multiply-factor', screen: 'screen', erase: 'erase' } as const);
 // Equality is checked only after the original validation; signed zero stays distinct.
 const sameVisualValue = Object.is;
 
@@ -99,6 +101,27 @@ export class DisplayObject extends EventDispatcher {
     const state = visualOf(this), changed = state.sharedMaterial !== value;
     state.sharedMaterial = value;
     if (changed) recordVisualChange(this, VISUAL_APPEARANCE);
+  }
+  /**
+   * How what this object and its children draw is combined with what is under it, by Egret's names: `add` brightens,
+   * `multiply` darkens, `screen` lightens softly and `erase` takes away by its alpha. It is the blend of `sharedMaterial`:
+   * setting it keeps the material's tints and replaces only its blend, and a child with a material of its own keeps that.
+   */
+  public get blendMode(): 'normal' | 'add' | 'multiply' | 'screen' | 'erase' {
+    const blend = visualOf(this).sharedMaterial?.blend ?? 'normal';
+    return blend === 'add-accumulate' || blend === 'add-preserve' ? 'add' : blend === 'multiply-factor' ? 'multiply' : blend;
+  }
+  public set blendMode(value: 'normal' | 'add' | 'multiply' | 'screen' | 'erase') {
+    assertVisualMutable(this);
+    if (typeof value !== 'string' || !Object.hasOwn(BLENDS, value)) throw new EgretError('DISPLAY_VALUE_INVALID');
+    const blend = BLENDS[value];
+    const state = visualOf(this), base = state.sharedMaterial;
+    if (base === null && blend === 'normal') return;
+    if (base !== null && base.blend === blend) return;
+    const next = createSharedMaterial2D({ light: base?.light, dark: base?.dark, blend, samplingDomain: base?.samplingDomain, filter: base?.filter,
+      addressU: base?.addressU, addressV: base?.addressV, regionIsolation: base?.regionIsolation, minFilter: base?.minFilter, magFilter: base?.magFilter });
+    state.sharedMaterial = next;
+    recordVisualChange(this, VISUAL_APPEARANCE);
   }
   /** Shared backends execute effects; legacy captures explicitly refuse them. */
   public get renderEffect(): RenderEffect2D | undefined { return visualOf(this).renderEffect; }

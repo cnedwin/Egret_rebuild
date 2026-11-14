@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 沿用 Egret 名称的混合模式 — 2026-11-14
+
+`DisplayObject.blendMode` 可取 `normal`、`add`、`multiply`、`screen` 或 `erase`，作用于对象及其子对象，除非子对象设置了自己的模式。它就是对象共享材质的混合方式，因此着色会保留。`erase` 是材质合同中新增的混合方式，两个宿主都支持：绘制的内容按其 alpha 从目标中擦除。粒子和位图文字可用 `display.blendMode = 'add'` 发光。新示例 `examples/blend-modes` 在无头 Chromium 的软件 WebGL2 中逐像素与每个公式核对；这里没有在浏览器中绘制 WebGPU。属于 #266。[指南](docs/blend-modes.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/blend-modes/README.zh-CN.md)
+
 ## 粒子颜色按所见颜色显示 — 2026-11-14
 
 `@egret/engine/particles` 的颜色现在像位图文字的着色一样，以渲染器的线性光照交给渲染器，所以白色粒子纹理显示为所给的颜色；此前着色显示得比所给颜色更浅。这是在浏览器中检查位图文字着色时发现的。属于 #266。[指南](docs/particles.md)

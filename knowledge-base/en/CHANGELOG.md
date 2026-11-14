@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Blend modes by Egret's names — 2026-11-14
+
+`DisplayObject.blendMode` is `normal`, `add`, `multiply`, `screen` or `erase`, and applies to an object and its children unless a child sets its own. It is the blend of the object's shared material, so tints are kept. `erase` is new in the material contract, in both hosts: what is drawn takes away from the target by its alpha. Particles and bitmap text glow with `display.blendMode = 'add'`. A new example, `examples/blend-modes`, is checked pixel by pixel against each equation in headless Chromium with software WebGL2; WebGPU was not drawn in a browser here. Part of #266. [Guide](docs/blend-modes.md) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/blend-modes/README.md)
+
 ## Particle colours as they are seen — 2026-11-14
 
 The colours of `@egret/engine/particles` are now given to the renderer in its linear light, as bitmap text gives its tint, so a white particle texture shows the colour given; before, tints showed lighter than given. Found while checking the tint of bitmap text in the browser. Part of #266. [Guide](docs/particles.md)

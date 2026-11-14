@@ -2,7 +2,7 @@
 // CPU data; their identity grants no asset, frame or GPU authority.
 declare const sharedMaterial2DBrand: unique symbol;
 
-type Blend = 'normal' | 'add-accumulate' | 'add-preserve' | 'multiply-factor' | 'screen';
+type Blend = 'normal' | 'add-accumulate' | 'add-preserve' | 'multiply-factor' | 'screen' | 'erase';
 type Domain = 'page' | 'region';
 type Filter = 'nearest' | 'linear';
 type Address = 'clamp-to-edge' | 'repeat' | 'mirror-repeat';
@@ -142,7 +142,7 @@ export function createSharedMaterial2D(input: SharedMaterialInput2D): SharedMate
     const dark = color(darkValues, 3) as SharedMaterial2D['dark'];
     const blend = blendInput === undefined ? 'normal' : blendInput;
     if (blend !== 'normal' && blend !== 'add-accumulate' && blend !== 'add-preserve' &&
-        blend !== 'multiply-factor' && blend !== 'screen') throw new TypeFault('Shared material option is unsupported');
+        blend !== 'multiply-factor' && blend !== 'screen' && blend !== 'erase') throw new TypeFault('Shared material option is unsupported');
     const samplingDomain = domainInput === undefined ? 'region' : domainInput;
     if (samplingDomain !== 'page' && samplingDomain !== 'region') throw new TypeFault('Shared material option is unsupported');
     const selectedFilter = filter(filterInput === undefined ? 'nearest' : filterInput);
