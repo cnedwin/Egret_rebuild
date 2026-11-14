@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "packages/engine/web/BrowserFrameLoop.ts", "originRole": "First-party frame loop of a page: clock, step, draw, bounded steps and skipped frames; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/web/loop.ts", "originRole": "First-party optional browser entry of the frame loop; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/frame-loop.test.mjs", "originRole": "First-party Node tests of the frame loop with a display the test drives and with a real Engine clock; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/types/loop.ts", "originRole": "First-party strict consumer of the frame loop entry, with four refused misuses; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/types/loop.json", "originRole": "First-party compiler configuration of the frame loop consumer; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/en/docs/frame-loop.md", "originRole": "First-party guide to the frame loop, with what was run and what was not; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/Cns/docs/frame-loop.md", "originRole": "First-party Chinese guide to the frame loop; independently authored with AI assistance; Apache-2.0."}
+  ],
+  "documents": [
+    {"en": "knowledge-base/en/docs/frame-loop.md", "zh": "knowledge-base/Cns/docs/frame-loop.md"}
+  ]
+}
