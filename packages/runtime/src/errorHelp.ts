@@ -146,7 +146,7 @@ const WRITTEN: Readonly<Record<string, string>> = {
   INVALID_DISPLAY_CONTAINER: 'What was given is not a display container made by this SDK.',
   GRAPHICS_VALUE_INVALID: 'A value given to graphics is not valid: coordinates are finite numbers, sizes are not negative, a colour is 0 to 0xffffff and an alpha is 0 to 1.',
   GRAPHICS_FILL_REQUIRED: 'A shape needs a fill or a line. Call beginFill or lineStyle before drawing it.',
-  GRAPHICS_BUDGET: 'The drawing is more than one sprite holds: a path of 8,192 points, a line of 16,384 dashes, or a fill with holes or crossings of 16,384 triangles. What the sprite had drawn before stays. Draw the rest into another sprite.',
+  GRAPHICS_BUDGET: 'The drawing is more than one sprite holds: a path of 8,192 points, a line of 16,384 dashes, a fill with holes or crossings of 16,384 triangles, 16 meshes, or an image repeated beyond 8,192 of its pixels. What the sprite had drawn before stays. Draw the rest into another sprite.',
   CLOCK_DELTA_LIMIT: 'The time given to engine.advanceTime is further from the last one than the clock takes in one step. Give it smaller steps, as the frame loop of @egret/engine/web/loop does after a tab was hidden.',
   CLOCK_SOURCE_BACKWARDS: 'The time given to engine.advanceTime is earlier than the last one. It takes seconds that never go back.',
   CLOCK_SOURCE_INVALID: 'The time given to engine.advanceTime is not a finite number of seconds, zero or more.',

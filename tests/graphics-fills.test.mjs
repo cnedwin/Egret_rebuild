@@ -170,3 +170,59 @@ test('GF06 what is not a line style or a gradient is refused',()=>withStage(({sp
  // A refused call leaves the fill and the line as they were.
  assert.throws(()=>g.drawRect(0,0,1,1),coded('GRAPHICS_FILL_REQUIRED'));
 }));
+
+test('GF07 an image is a fill: its own mesh in drawing order, over the image as a page that repeats',()=>withStage(async({engine,scope,sprite,frame})=>{
+ const type=egret.createAssetType('graphics-fill-image',egret.isTexture);
+ const texture=egret.createTexture(egret.createImageData2D({width:8,height:4,pixels:new Uint8Array(128).fill(200)}));
+ engine.assets.register(type,{async load(){return texture;},dispose(value){value.dispose();}});
+ try{
+  const lease=scope.use(await engine.assets.acquire(egret.createAssetRef(type,'tile'),{signal:scope.signal}));
+  // A red square, then a rectangle of the image with a line, then a blue square: three meshes, in that order.
+  const node=sprite();
+  node.graphics.beginFill(0xff0000).drawRect(0,0,10,10).beginBitmapFill(lease).lineStyle(2,0x00ff00).drawRect(20,0,16,8).lineStyle().beginFill(0x0000ff).drawRect(40,0,10,10).endFill();
+  const now=frame(),meshes=now.commands.filter(command=>command.kind==='mesh');
+  // The red square; the image; then its line and the blue square together, since both are over the white pixel.
+  assert.equal(meshes.length,3);
+  const [red,image,rest]=meshes.map(command=>({geometry:now.geometries[command.geometryIndex],region:now.regions[command.regionIndex],material:now.materials[command.materialIndex]}));
+  assert.deepEqual([red.geometry.triangleCount,image.geometry.triangleCount,rest.geometry.triangleCount],[2,2,16+2]);
+  // The image's mesh samples the image itself, as a whole page that repeats; the others the one white pixel.
+  assert.equal(now.pages[image.region.pageIndex].source.width,8);
+  assert.equal(now.pages[red.region.pageIndex].source.width,1);assert.equal(red.region.pageIndex,rest.region.pageIndex);
+  assert.deepEqual([image.material.samplingDomain,image.material.addressU,image.material.addressV],['page','repeat','repeat']);
+  assert.equal(red.material.samplingDomain,'region');
+  // Where each corner is in the image: one unit is one pixel, so 16 by 8 units from (20, 0) is 2.5 to 4.5 and 0 to 2 times across it.
+  const corners=[];for(let n=0;n<4;n++)corners.push([image.geometry.positions[2*n],image.geometry.positions[2*n+1],image.geometry.uvs[2*n],image.geometry.uvs[2*n+1]]);
+  assert.deepEqual(corners,[[20,0,2.5,0],[36,0,4.5,0],[36,8,4.5,2],[20,8,2.5,2]]);
+  for(let n=0;n<4;n++)assert.deepEqual([...image.geometry.lightColors.slice(4*n,4*n+4)],[1,1,1,1]);
+  assert.deepEqual(node.getBounds(),{x:0,y:-1,width:50,height:11});
+  // A matrix places the image: twice the size, starting at (20, 0), so the same rectangle is once across it and held at its edge.
+  const placed=sprite();placed.graphics.beginBitmapFill(lease,{a:2,b:0,c:0,d:2,tx:20,ty:0},false).drawRect(20,0,16,8).endFill();
+  const second=frame(),command=second.commands.filter(c=>c.kind==='mesh').at(-1),geometry=second.geometries[command.geometryIndex];
+  assert.deepEqual([...geometry.uvs],[0,0,1,0,1,1,0,1]);
+  assert.deepEqual([second.materials[command.materialIndex].addressU,second.materials[command.materialIndex].samplingDomain],['clamp-to-edge','page']);
+  // The node's blend mode is the image's too.
+  placed.blendMode='add';
+  const third=frame();
+  assert.notEqual(third.materials[third.commands.filter(c=>c.kind==='mesh').at(-1).materialIndex].blend,second.materials[command.materialIndex].blend);
+  // A path with a hole is filled with an image like with a colour.
+  const ring=sprite();ring.graphics.beginBitmapFill(lease).moveTo(0,20).lineTo(30,20).lineTo(30,50).lineTo(0,50).lineTo(0,20).moveTo(10,30).lineTo(10,40).lineTo(20,40).lineTo(20,30).lineTo(10,30).endFill();
+  const holed=only(frame());near(triangles(holed).area,800,1e-4,'image ring');assert.ok(!covers(holed,15,35));
+  // What is not an image, a part of an atlas, or a matrix that cannot be turned back is refused; so is an image repeated too far.
+  const g=sprite().graphics;
+  for(const bad of [()=>g.beginBitmapFill(texture),()=>g.beginBitmapFill({}),()=>g.beginBitmapFill(lease,{a:0,b:0,c:0,d:0,tx:0,ty:0}),()=>g.beginBitmapFill(lease,{a:1,b:0,c:0,d:NaN,tx:0,ty:0}),()=>g.beginBitmapFill(lease,undefined,'yes')])
+   assert.throws(bad,coded('GRAPHICS_VALUE_INVALID'));
+  g.beginBitmapFill(lease);
+  assert.throws(()=>g.drawRect(0,0,9000,4),coded('GRAPHICS_BUDGET'));
+  g.drawRect(0,0,8000,4);
+  // More different fills in turn than a node has batches for are refused, and the node keeps what it had.
+  const many=sprite().graphics;
+  let refusedAt=-1;
+  for(let i=0;i<40&&refusedAt<0;i++)try{if(i%2===0)many.beginFill(1);else many.beginBitmapFill(lease);many.drawRect(i,0,1,1);}catch(error){assert.equal(error.code,'GRAPHICS_BUDGET');refusedAt=i;}
+  assert.equal(refusedAt,16);
+  assert.equal(frame().commands.filter(c=>c.kind==='mesh').length>=16,true);
+  // A drawing whose lease was released is not drawn: the frame is refused.
+  lease.release();
+  assert.throws(frame,error=>typeof error?.code==='string');
+  try{frame();}catch(error){assert.match(error.code,/LEASE|TEXTURE/);}
+ }finally{if(!texture.isDisposed)texture.dispose();}
+}));

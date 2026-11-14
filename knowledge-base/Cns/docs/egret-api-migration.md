@@ -59,7 +59,8 @@
 | `moveTo`、`lineTo`、`curveTo`、`cubicCurveTo` | 相同 | |
 | `lineStyle(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit, lineDash)` | `lineStyle(thickness, color, alpha, { caps, joints, miterLimit, dash })` | 第四个参数是一个对象。省略时线条是平头端点和尖角转角。旧线条是圆头或圆角的，请传 `{ caps: 'round', joints: 'round' }` |
 | `beginGradientFill(type, colors, alphas, ratios, matrix)` | 同一个调用，或 `beginLinearGradientFill` 和 `beginRadialGradientFill` | `matrix` 是普通的 `{ a, b, c, d, tx, ty }` |
-| `lineGradientStyle`、`beginBitmapFill` | 没有 | |
+| `beginBitmapFill(bitmapData, matrix, repeat)` | `beginBitmapFill(lease, matrix, repeat)` | 接受一整张图片的纹理租约。`repeat` 为 false 时边缘像素向外延伸 |
+| `lineGradientStyle` | 没有 | |
 
 边缘没有抗锯齿，曲线由直线段组成。见[绘图指南](graphics.md)。
 
@@ -74,8 +75,8 @@
 | 按 URL 加载一张图片 | `@egret/engine/web/image` 的 `createBrowserTextureProvider` | |
 | `egret.SpriteSheet`、纹理图集 | 通过内容加载器使用图集；位图显示其中一个区域 | 见[图集帧](atlas-frame-layout-contract.md) |
 | `bitmap.scale9Grid` | `NineSliceBitmap` | 见[九宫格位图](九宫格位图契约.md) |
-| `bitmap.fillMode = REPEAT` | 不是位图的属性 | 带重复寻址共享材质的 `Mesh2D` 可以画出平铺的图片 |
-| `RES.destroyRes` | `lease.dispose()`，或销毁持有它的作用域 | 最后一个租约释放时纹理才释放 |
+| `bitmap.fillMode = REPEAT` | 不是位图的属性 | 用 `Sprite` 的 `graphics.beginBitmapFill(lease)` 加一个 `drawRect` 可以画出平铺的图片 |
+| `RES.destroyRes` | `lease.release()`，或销毁持有它的作用域 | 最后一个租约释放时纹理才释放 |
 
 ## 输入
 
