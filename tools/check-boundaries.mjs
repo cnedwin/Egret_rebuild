@@ -252,6 +252,11 @@ for (const [name, allowed] of Object.entries(expected)) {
       textExports['./input/hover'] = {types:'./dist/hover.d.ts',import:'./dist/hover.js'};
       textExports['./web/hover'] = {types:'./dist/web/hover.d.ts',import:'./dist/web/hover.js'};
     }
+    // Gamepad: one DOM-free entry and one optional browser entry.
+    if (name === 'engine') {
+      textExports['./input/gamepad'] = {types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};
+      textExports['./web/gamepad'] = {types:'./dist/web/gamepad.d.ts',import:'./dist/web/gamepad.js'};
+    }
     // Sound: one DOM-free mixer entry and one optional Web Audio entry.
     if (name === 'engine') {
       textExports['./audio'] = {types:'./dist/audio.d.ts',import:'./dist/audio.js'};
@@ -334,6 +339,11 @@ for (const [name, allowed] of Object.entries(expected)) {
         const relative=path.relative(dir,file).split(path.sep).join('/');
         if(name!=='engine'||!['web/BrowserHoverInput.ts','dist/web/BrowserHoverInput.js','dist/web/BrowserHoverInput.d.ts'].includes(relative))
           throw new Error('Hover: logical hover entry imported outside the named browser module: '+relative);
+      } else if (imported === '@egret/engine/input/gamepad') {
+        // The browser adapter of the pads is built on the public logical entry and on nothing private.
+        const relative=path.relative(dir,file).split(path.sep).join('/');
+        if(name!=='engine'||!['web/BrowserGamepadInput.ts','dist/web/BrowserGamepadInput.js','dist/web/BrowserGamepadInput.d.ts'].includes(relative))
+          throw new Error('Gamepad: logical entry imported outside the named browser module: '+relative);
       } else if (imported === '@egret/engine/audio') {
         // The Web Audio adapter is built on the public mixer entry and on nothing private.
         const relative=path.relative(dir,file).split(path.sep).join('/');
@@ -5312,6 +5322,56 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
   const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
   if(Object.hasOwn(hoverAllowed,resolved)&&!hoverAllowed[resolved].includes(relative))throw new Error('Hover: implementation module imported outside its entry: '+relative);
+ }
+}
+// Gamepad: a DOM-free entry with the input and the keys it drives, and a browser entry with one
+// implementation module. The logical modules are built on the runtime alone, the browser module on
+// the logical entry alone, none starts a timer or a request, and no other entry has any of them.
+const gamepadTypes=['GamepadButtonChange','GamepadButtonName','GamepadButtonSample','GamepadConnectionChange','GamepadInput','GamepadInputOptions','GamepadKeyAction','GamepadKeys','GamepadKeysOptions','GamepadKeyTarget','GamepadPad','GamepadSample','GamepadStick','GamepadStickName'];
+const gamepadBrowserTypes=['BrowserGamepadInput','BrowserGamepadInputOptions','GamepadRumble'];
+const gamepadValues=['createGamepadInput','bindGamepadKeys'];
+for(const [file,values,types] of [['packages/engine/src/gamepad.ts',gamepadValues,gamepadTypes],['packages/engine/dist/gamepad.js',gamepadValues,[]],['packages/engine/dist/gamepad.d.ts',gamepadValues,gamepadTypes],
+ ['packages/engine/web/gamepad.ts',['createBrowserGamepadInput'],gamepadBrowserTypes],['packages/engine/dist/web/gamepad.js',['createBrowserGamepadInput'],[]],['packages/engine/dist/web/gamepad.d.ts',['createBrowserGamepadInput'],gamepadBrowserTypes]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,values)||!mouseSame(surface.types,types))throw new Error('Gamepad: exact entry exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/input/gamepad')),gamepadValues)||!mouseSame(Object.keys(await import('@egret/engine/web/gamepad')),['createBrowserGamepadInput']))throw new Error('Gamepad: optional runtime values mismatch');
+for(const [label,values,stem] of textEntries){
+ const body=uiRead(stem+'.d.ts');
+ for(const name of [...gamepadTypes,...gamepadBrowserTypes,...gamepadValues,'createBrowserGamepadInput'])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Gamepad: leaked to default/other entry: '+label+'/'+name);
+}
+const gamepadImports={
+ 'src/gamepad.ts':['./gamepadInput.js','./gamepadKeys.js','./gamepadTypes.js'],
+ 'dist/gamepad.js':['./gamepadInput.js','./gamepadKeys.js'],
+ 'dist/gamepad.d.ts':['./gamepadInput.js','./gamepadKeys.js','./gamepadTypes.js'],
+ 'src/gamepadInput.ts':['@egret/runtime','./gamepadTypes.js'],
+ 'dist/gamepadInput.js':['@egret/runtime'],
+ 'dist/gamepadInput.d.ts':['./gamepadTypes.js'],
+ 'src/gamepadKeys.ts':['@egret/runtime','./gamepadTypes.js'],
+ 'dist/gamepadKeys.js':['@egret/runtime'],
+ 'dist/gamepadKeys.d.ts':['./gamepadTypes.js'],
+ 'src/gamepadTypes.ts':[],
+ 'dist/gamepadTypes.js':[],
+ 'dist/gamepadTypes.d.ts':[],
+ 'web/gamepad.ts':['./BrowserGamepadInput.js','./BrowserGamepadInput.js'],
+ 'dist/web/gamepad.js':['./BrowserGamepadInput.js'],
+ 'dist/web/gamepad.d.ts':['./BrowserGamepadInput.js','./BrowserGamepadInput.js'],
+ 'web/BrowserGamepadInput.ts':['@egret/runtime','@egret/engine/input/gamepad','@egret/engine/input/gamepad'],
+ 'dist/web/BrowserGamepadInput.js':['@egret/runtime','@egret/engine/input/gamepad'],
+ 'dist/web/BrowserGamepadInput.d.ts':['@egret/engine/input/gamepad'],
+};
+for(const [file,expected] of Object.entries(gamepadImports)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
+ if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Gamepad: exact graph mismatch: '+file);
+ if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Gamepad: acquired automatic host work: '+file);
+}
+const gamepadAllowed={'src/gamepadInput.js':['src/gamepad.ts'],'dist/gamepadInput.js':['dist/gamepad.js','dist/gamepad.d.ts'],'src/gamepadKeys.js':['src/gamepad.ts'],'dist/gamepadKeys.js':['dist/gamepad.js','dist/gamepad.d.ts'],
+ 'web/BrowserGamepadInput.js':['web/gamepad.ts'],'dist/web/BrowserGamepadInput.js':['dist/web/gamepad.js','dist/web/gamepad.d.ts']};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
+ if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
+ for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
+  const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+  if(Object.hasOwn(gamepadAllowed,resolved)&&!gamepadAllowed[resolved].includes(relative))throw new Error('Gamepad: implementation module imported outside its entry: '+relative);
  }
 }
 // Sound: a DOM-free mixer entry and a Web Audio entry, each with one implementation module. The

@@ -47,11 +47,12 @@ async function pixel(page, name) {
   const [x, y] = await at(page, [spot[name][0] + 40, spot[name][1] - 10]);
   return (await page.screenshot({ clip: { x, y, width: 4, height: 4 } })).toString('base64');
 }
-async function scenario(name, options, body) {
+async function scenario(name, options, body, prepare) {
   const context = await browser.newContext(options), page = await context.newPage(), row = { name, status: 'INCOMPLETE', errors: [] };
   report.cases.push(row);
   page.on('pageerror', error => row.errors.push(String(error))); page.on('console', message => { if (message.type() === 'error') row.errors.push(message.text()); });
   try {
+    await prepare?.(page, row);
     await page.goto('http://127.0.0.1:' + server.address().port + '/examples/ui-controls/index.html?backend=webgl2');
     await page.waitForFunction(() => globalThis.__egretUiControlsExample !== undefined);
     await body(page);
@@ -152,6 +153,51 @@ async function colour(page, name) {
 }
 // The paints the theme of the page names: a control that is off, and one that is on.
 const PAINTS = { idle: 0x3d4a63, hover: 0x56689a, pressed: 0x27314a, on: 0x2f8f6b, onHover: 0x3fae84, disabled: 0x2a2d33 };
+
+// No pad is held here. The page is given a list of pads the check writes, in place of the one the browser
+// keeps: what is shown is the way from what a pad says, through the adapter and the keys, to the controls.
+await scenario('a gamepad walks the controls: the cross is the arrows, an arrow nobody took moves the focus', desktop, async page => {
+  const hold = async (held = {}, axes = [0, 0, 0, 0]) => { await page.evaluate(([buttons, sticks]) => globalThis.__scriptedPad.set(buttons, sticks), [held, axes]); await page.waitForTimeout(60); };
+  const tap = async held => { await hold(held); await hold(); };
+  let now = await read(page);
+  assert.deepEqual([now.pads, now.focused, now.padKeys], [['Scripted pad'], undefined, []]);
+  // Down (button 13): nothing has the focus, so nobody takes the arrow and the focus goes to the first control.
+  await tap({ 13: 1 }); assert.equal((await read(page)).focus, 'sound');
+  // The lower face button (0) is Enter: held it paints a press, let go it toggles.
+  await hold({ 0: 1 }); now = await read(page); assert.deepEqual([now.sound.held, now.sound.checked, now.padKeys], [true, true, ['Enter']]);
+  await hold(); now = await read(page); assert.deepEqual([now.sound.held, now.sound.checked, now.padKeys], [false, false, []]);
+  await tap({ 13: 1 }); assert.equal((await read(page)).focus, 'level');
+  // Inside the group the arrows are the group's: right (15) and the left stick move the selection, and the focus stays.
+  await tap({ 15: 1 }); now = await read(page); assert.deepEqual([now.level.selected, now.focus], ['hard', 'level']);
+  await hold({}, [-1, 0, 0, 0]); await hold(); now = await read(page); assert.deepEqual([now.level.selected, now.focus], ['normal', 'level']);
+  // The right shoulder (5) moves the focus on, whatever has it; the left one (4) moves it back, and round from the first to the last.
+  await tap({ 5: 1 }); assert.equal((await read(page)).focus, 'apply');
+  await tap({ 0: 1 }); assert.equal((await read(page)).apply.activations, 1);
+  await tap({ 4: 1 }); await tap({ 4: 1 }); await tap({ 4: 1 }); assert.equal((await read(page)).focus, 'apply');
+  // A direction that is held repeats: right (15) held for a short while goes on through the options. How many
+  // repeats a page's frames give is not fixed, so what is checked is that the one press changed the selection again.
+  await tap({ 4: 1 }); now = await read(page); assert.equal(now.focus, 'level');
+  const before = now.level.changes.length;
+  await hold({ 14: 1 }); await page.waitForTimeout(650); await hold(); now = await read(page);
+  assert.ok(now.level.changes.length - before >= 2, 'one held press moved the selection ' + (now.level.changes.length - before) + ' times');
+  assert.deepEqual(now.padKeys, []);
+  // A pad that is taken away lets go of what it held.
+  await page.evaluate(() => globalThis.__egretUiControlsExample.focus?.('apply'));
+  while ((await read(page)).focus !== 'apply') await tap({ 5: 1 });
+  await hold({ 0: 1 }); assert.equal((await read(page)).apply.held, true);
+  await page.evaluate(() => globalThis.__scriptedPad.remove()); await page.waitForTimeout(60); now = await read(page);
+  assert.deepEqual([now.pads, now.padKeys, now.apply.held, now.apply.activations], [[], [], false, 2]);
+}, async (page, row) => {
+  row.pad = 'scripted: the list of pads of the page was written by the check; no pad was held';
+  await page.addInitScript(() => {
+    let pads = [];
+    const make = (held, axes) => [{ index: 0, id: 'Scripted pad', mapping: 'standard', connected: true, timestamp: performance.now(), axes,
+      buttons: Array.from({ length: 17 }, (_, at) => ({ pressed: (held[at] ?? 0) > 0, touched: (held[at] ?? 0) > 0, value: held[at] ?? 0 })) }];
+    pads = make({}, [0, 0, 0, 0]);
+    Object.defineProperty(navigator, 'getGamepads', { configurable: true, value: () => pads });
+    globalThis.__scriptedPad = { set(held, axes) { pads = make(held, axes); }, remove() { pads = [null]; } };
+  });
+});
 
 await scenario('each state is painted with the paint its skin names for it', desktop, async page => {
   const shown = async (name, expected) => assert.equal((await colour(page, name)).toString(16), expected.toString(16), name);

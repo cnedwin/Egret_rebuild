@@ -13,7 +13,7 @@ const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectType, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, textInputMutation, hoverMutation, semanticsMutation, audioMutation, spineImportMutation, sharedMutation, sequenceMutation }, run) {
+function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectType, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, textInputMutation, hoverMutation, semanticsMutation, audioMutation, gamepadMutation, spineImportMutation, sharedMutation, sequenceMutation }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -64,6 +64,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       if(name==='engine')packageExports['./web/text-input']={types:'./dist/web/textInput.d.ts',import:'./dist/web/textInput.js'};
       if(name==='engine'){packageExports['./input/hover']={types:'./dist/hover.d.ts',import:'./dist/hover.js'};packageExports['./web/hover']={types:'./dist/web/hover.d.ts',import:'./dist/web/hover.js'};
         packageExports['./ui/semantics']={types:'./dist/semantics.d.ts',import:'./dist/semantics.js'};packageExports['./web/semantics']={types:'./dist/web/semantics.d.ts',import:'./dist/web/semantics.js'};
+        packageExports['./input/gamepad']={types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};packageExports['./web/gamepad']={types:'./dist/web/gamepad.d.ts',import:'./dist/web/gamepad.js'};
         packageExports['./audio']={types:'./dist/audio.d.ts',import:'./dist/audio.js'};packageExports['./web/audio']={types:'./dist/web/audio.d.ts',import:'./dist/web/audio.js'};}
       write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(packageExports === undefined ? {} : {exports:packageExports}) });
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
@@ -1338,7 +1339,11 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     const audioGraphFiles=['src/audio.ts','src/audioMixer.ts','src/audioTypes.ts','web/audio.ts','web/BrowserAudio.ts',
       'dist/audio.js','dist/audio.d.ts','dist/audioMixer.js','dist/audioMixer.d.ts','dist/audioTypes.js','dist/audioTypes.d.ts',
       'dist/web/audio.js','dist/web/audio.d.ts','dist/web/BrowserAudio.js','dist/web/BrowserAudio.d.ts'];
-    for(const relative of [...keyboardGraphFiles,...textInputGraphFiles,...hoverGraphFiles,...semanticGraphFiles,...audioGraphFiles]){
+    // Gamepad: inert copies of its six modules and their build output, for the same reason.
+    const gamepadGraphFiles=['src/gamepad.ts','src/gamepadInput.ts','src/gamepadKeys.ts','src/gamepadTypes.ts','web/gamepad.ts','web/BrowserGamepadInput.ts',
+      'dist/gamepad.js','dist/gamepad.d.ts','dist/gamepadInput.js','dist/gamepadInput.d.ts','dist/gamepadKeys.js','dist/gamepadKeys.d.ts','dist/gamepadTypes.js','dist/gamepadTypes.d.ts',
+      'dist/web/gamepad.js','dist/web/gamepad.d.ts','dist/web/BrowserGamepadInput.js','dist/web/BrowserGamepadInput.d.ts'];
+    for(const relative of [...keyboardGraphFiles,...textInputGraphFiles,...hoverGraphFiles,...semanticGraphFiles,...audioGraphFiles,...gamepadGraphFiles]){
       const file='packages/engine/'+relative,original=readFileSync(path.join(repository,file),'utf8');
       if(!file.endsWith('.js')){write(file,original);continue;}
       const clean=original.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
@@ -1366,6 +1371,10 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     write(keyboardResolverFile,{...audioResolver,exports:{...audioResolver.exports,'./audio':'./audio-mixer.js','./web/audio':'./audio-browser.js'}});
     write('node_modules/@egret/engine/audio-mixer.js','export function createAudioMixer() {}\n');
     write('node_modules/@egret/engine/audio-browser.js','export function createBrowserAudio() {}\n');
+    const gamepadResolver=JSON.parse(readFileSync(path.join(root,keyboardResolverFile),'utf8'));
+    write(keyboardResolverFile,{...gamepadResolver,exports:{...gamepadResolver.exports,'./input/gamepad':'./gamepad-input.js','./web/gamepad':'./gamepad-browser.js'}});
+    write('node_modules/@egret/engine/gamepad-input.js','export function createGamepadInput() {}\nexport function bindGamepadKeys() {}\n');
+    write('node_modules/@egret/engine/gamepad-browser.js','export function createBrowserGamepadInput() {}\n');
     // Native editing keeps an inert, exact policy graph; these are not behavior tests.
     const nativeEditingGraphFiles=["packages/engine/src/internal/uiRootState.ts","packages/engine/dist/internal/uiRootState.js","packages/engine/dist/internal/uiRootState.d.ts","packages/engine/src/ui/editing.ts","packages/engine/dist/ui/editing.js","packages/engine/dist/ui/editing.d.ts","packages/engine/src/ui/textEditor.ts","packages/engine/dist/ui/textEditor.js","packages/engine/dist/ui/textEditor.d.ts","packages/engine/src/ui/textEditorTypes.ts","packages/engine/dist/ui/textEditorTypes.js","packages/engine/dist/ui/textEditorTypes.d.ts","packages/engine/web/BrowserTextEditor.ts","packages/engine/dist/web/BrowserTextEditor.js","packages/engine/dist/web/BrowserTextEditor.d.ts","packages/engine/web/editing.ts","packages/engine/dist/web/editing.js","packages/engine/dist/web/editing.d.ts","packages/engine/web/editorFonts.ts","packages/engine/dist/web/editorFonts.js","packages/engine/dist/web/editorFonts.d.ts","packages/runtime/src/ui/editing.ts","packages/runtime/dist/ui/editing.js","packages/runtime/dist/ui/editing.d.ts","packages/runtime/src/ui/textEditState.ts","packages/runtime/dist/ui/textEditState.js","packages/runtime/dist/ui/textEditState.d.ts","packages/runtime/src/ui/textEditTypes.ts","packages/runtime/dist/ui/textEditTypes.js","packages/runtime/dist/ui/textEditTypes.d.ts"];
     const nativeEditingNamedTargets=new Set(['#egret-text-editor','@egret/runtime/ui/editing','@egret/engine/ui/editing','@egret/engine/ui','@egret/engine/web/keyboard','@egret/engine/resources','@egret/engine','@egret/runtime/paragraph']);
@@ -2204,6 +2213,22 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       const edit=edits[audioMutation];assert.ok(edit,'finite sound assigned mutation');const [file,added]=edit;
       write(file,(existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'')+added);
     }
+    if(gamepadMutation){
+      const edits={
+        'escaped-browser-module':['packages/engine/web/ProbeGamepad.ts',"import {createBrowserGamepadInput} from './BrowserGamepadInput.js';\nvoid createBrowserGamepadInput;\n"],
+        'escaped-core-module':['packages/engine/src/probeGamepad.ts',"import {createGamepadInput} from './gamepadInput.js';\nvoid createGamepadInput;\n"],
+        'escaped-keys-module':['packages/engine/src/probeGamepadKeys.ts',"import {bindGamepadKeys} from './gamepadKeys.js';\nvoid bindGamepadKeys;\n"],
+        'logical-entry-elsewhere':['packages/engine/web/ProbeGamepadEntry.ts',"import type {GamepadInput} from '@egret/engine/input/gamepad';\nexport type Probe=GamepadInput;\n"],
+        'extra-export':['packages/engine/web/gamepad.ts','export const extra=1;\n'],
+        'extra-core-export':['packages/engine/src/gamepad.ts','export const extra=1;\n'],
+        'private-import':['packages/engine/web/BrowserGamepadInput.ts',"import './keyboard.js';\n"],
+        'timer':['packages/engine/src/gamepadKeys.ts','setTimeout(()=>{},0);\n'],
+        'frame':['packages/engine/web/BrowserGamepadInput.ts','void requestAnimationFrame;\n'],
+        'page-in-input':['packages/engine/src/gamepadInput.ts','void globalThis.document;\n'],
+      };
+      const edit=edits[gamepadMutation];assert.ok(edit,'finite gamepad assigned mutation');const [file,added]=edit;
+      write(file,(existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'')+added);
+    }
     // SP1-A_POLICY_MUTATION_BEGIN
     if(spineImportMutation){
       const edits={
@@ -2326,6 +2351,23 @@ for(const [name,reason] of [
   ['page-in-mixer','audioMixer.ts: host ambient dependency'],
 ])test('sound policy '+name+' is refused for its own reason',()=>{
   fixture({imported:'robust-predicates',audioMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
+});
+for(const [name,reason] of [
+  ['escaped-browser-module','Gamepad: implementation module imported outside its entry'],
+  ['escaped-core-module','Gamepad: implementation module imported outside its entry'],
+  ['escaped-keys-module','Gamepad: implementation module imported outside its entry'],
+  ['logical-entry-elsewhere','Gamepad: logical entry imported outside the named browser module'],
+  ['extra-export','Gamepad: exact entry exports mismatch'],
+  ['extra-core-export','Gamepad: exact entry exports mismatch'],
+  ['private-import','Gamepad: exact graph mismatch'],
+  ['timer','Gamepad: acquired automatic host work'],
+  ['frame','Gamepad: acquired automatic host work'],
+])test('gamepad policy '+name+' is refused for its own reason',()=>{
+  fixture({imported:'robust-predicates',gamepadMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
+});
+test('gamepad policy page-in-input is refused by the rule that keeps the page out of the core',()=>{
+  const [name,reason]=['page-in-input','gamepadInput.ts: host ambient dependency'];
+  fixture({imported:'robust-predicates',gamepadMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
 });
 
 // Run this focused positive gate first, before the retained suite and controls.

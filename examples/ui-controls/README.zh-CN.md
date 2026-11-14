@@ -21,6 +21,7 @@ node tools/serve-canvas.mjs
 - 按下开关、某个选项和按钮。画布下方的状态行随之变化。
 - 点一下画布，然后使用键盘。Tab 在开关、选项组和按钮之间移动，获得焦点的那个有一圈标记。空格或回车激活。方向键、Home 和 End 在选项组内移动。
 - 在按钮上按住空格。按钮画成按下的样子，松开之前什么都不发生。再按住一次并按 Tab：按住结束，什么都没有应用。
+- 连接一个手柄，按任意键让浏览器把它交给页面。十字键和左摇杆在控件和选项之间移动，下方面键激活，肩键移动焦点。“应用”会让支持震动的手柄震动一下。
 - 用页面上的按钮禁用第三个选项。按它没有反应，方向键会跳过它。
 - 全部禁用。没有控件响应，也没有控件处于悬停。
 - 在浏览器开发者工具中打开无障碍树。画布是一个 application，其中有一个 group、一个 switch、含三项的 radiogroup 和一个 button，各带自己的状态，并指明持有焦点的那一个。
@@ -30,6 +31,8 @@ node tools/serve-canvas.mjs
 `main.mjs` 在触点输入上创建一个 `createToggleControl`、一个 `createSelectionGroup` 和一个 `createActionControl`，并在悬停输入上为五个表面各创建一个 `createHoverControl`。每个回调都会重绘。颜色来自一个 `createUiTheme`：皮肤为每个状态命名一种颜色，`selectUiSkin` 在成立的状态中选择，先看是否不可用，再看是否按住，然后是被指向。已设置的控件使用单独的皮肤，所以被指向时仍保持已设置的外观。
 
 按键来自 `@egret/engine/web/keyboard`，交给获得焦点的显示对象，`createControlKeys` 在那里绑定每个控件的常用按键：空格或回车松开时翻转开关、激活按钮，方向键、Home 和 End 在选项组内移动。按住的键让控件像被按下一样绘制，按住期间失去焦点则不激活。三个选项放在同一个显示对象里，它就是选项组的键盘停靠点，也只在它上面做一次绑定。选择在组内移动时焦点一直留在组上，所以按住方向键可以连续经过各个选项，焦点框画在被选中的那一个上。
+
+来自 `@egret/engine/web/gamepad` 的手柄每帧读取一次，`bindGamepadKeys` 把它变成同样的按键；见[手柄指南](../../knowledge-base/Cns/docs/gamepad.md)。
 
 `createUiSemantics` 描述这五个控件：页面在绘制之后发布，每个节点在发布时读取所绘的控件。`createBrowserSemantics` 在每个控件上方覆盖一个不可见的元素。键盘仍属于画布。
 

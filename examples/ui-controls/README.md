@@ -21,6 +21,7 @@ Keep the host and port the server prints and open `/examples/ui-controls/index.h
 - Press the switch, an option and the button. The status line under the canvas follows.
 - Click the canvas, then use the keyboard. Tab moves between the switch, the group and the button, and a ring marks the one with the focus. Space or Enter activates. The arrow keys, Home and End move within the group.
 - Hold Space on the button. It is painted as pressed and nothing happens until you let go. Hold it again and press Tab: the hold ends and nothing is applied.
+- Connect a gamepad and press any button so the browser shows it to the page. The cross and the left stick walk the controls and the options, the lower face button activates, and the shoulders move the focus. Applying shakes a pad that can shake.
 - Disable the third option with the page button. A press on it does nothing and the arrow keys skip it.
 - Disable everything. No control answers, and none is hovered.
 - Open the accessibility tree in the browser's developer tools. The canvas is an application that holds a group, a switch, a radio group of three and a button, each with its state, and it names the one with the focus.
@@ -30,6 +31,8 @@ Keep the host and port the server prints and open `/examples/ui-controls/index.h
 `main.mjs` creates a `createToggleControl`, a `createSelectionGroup` and a `createActionControl` on the contact input, and a `createHoverControl` on the hover input for each of the five surfaces. Every callback repaints. The colours are those of a `createUiTheme`: a skin names a paint for each state, and `selectUiSkin` chooses among the states that hold, unavailable first, then held, then pointed at. A control that is set has a skin of its own, so that it stays set under the pointer.
 
 Keys arrive from `@egret/engine/web/keyboard` at the display object with the focus, where a `createControlKeys` binds the usual keys of each control: Space or Enter, released, toggles the switch and activates the button, and the arrow keys, Home and End move within the group. A key that is held paints the control as a press does, and a hold that loses the focus activates nothing. The three options are inside one display object, which is the keyboard stop of the group and has its one binding. The focus stays on the group while the selection moves inside it, so a held arrow key goes on through the options, and the ring is drawn on the selected one.
+
+A gamepad from `@egret/engine/web/gamepad` is looked at once a frame, and `bindGamepadKeys` turns it into the same keys; see [the gamepad guide](../../knowledge-base/en/docs/gamepad.md).
 
 `createUiSemantics` describes the five controls: each node reads the control that is drawn when the page publishes, after it paints. `createBrowserSemantics` lays an invisible element over each control. The keyboard stays with the canvas.
 

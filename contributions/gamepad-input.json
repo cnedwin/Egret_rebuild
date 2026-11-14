@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "packages/engine/src/gamepad.ts", "originRole": "First-party optional entry of the DOM-free gamepad input; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/src/gamepadInput.ts", "originRole": "First-party DOM-free gamepad input: pads as looks a host gives, with presses, connections, sticks with a dead zone and letting go; independently authored with AI assistance; Apache-2.0. No third-party dependency.", "criticalComment": true},
+    {"path": "packages/engine/src/gamepadKeys.ts", "originRole": "First-party binding of gamepads to the keys of a keyboard input, with repeats and moves of the focus; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/src/gamepadTypes.ts", "originRole": "First-party types of the gamepad input and its key binding; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/web/gamepad.ts", "originRole": "First-party optional browser entry of the gamepad input; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/web/BrowserGamepadInput.ts", "originRole": "First-party browser adapter of the gamepad input on the standard Gamepad API: polling, letting go when the page is hidden, and rumble; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/gamepad-input.test.mjs", "originRole": "First-party Node tests of the gamepad input and its key binding, with the genuine keyboard input of an Engine; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/browser-gamepad.test.mjs", "originRole": "First-party Node tests of the browser gamepad adapter against a stand-in page, with the strict consumer and the exports; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/types/gamepad.json", "originRole": "First-party compiler configuration of the strict consumer of the gamepad entries; independently authored with AI assistance; Apache-2.0."},
+    {"path": "tests/types/gamepad.ts", "originRole": "First-party strict TypeScript consumer of the two gamepad entries, with nine refused misuses; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/en/docs/gamepad.md", "originRole": "First-party guide to gamepads: the input, the keys for a UI, the browser adapter, what was run and what was not; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/Cns/docs/gamepad.md", "originRole": "First-party Chinese guide to gamepads; independently authored with AI assistance; Apache-2.0."}
+  ],
+  "documents": [
+    {"en": "knowledge-base/en/docs/gamepad.md", "zh": "knowledge-base/Cns/docs/gamepad.md"}
+  ]
+}

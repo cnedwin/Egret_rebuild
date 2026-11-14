@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Gamepads — 2026-11-14
+
+Two optional entries read gamepads. `@egret/engine/input/gamepad` takes what pads say at each look and tells each press, each letting go and each pad that arrives or is taken away; it reads buttons by their place in the standard layout and sticks with a dead zone. `bindGamepadKeys` drives a keyboard input from the pads, so a UI that answers keys answers a pad: the cross and the left stick are the arrows and move the focus when no control takes them, `a` is Enter, `b` is Escape, the shoulders move the focus, and directions repeat while held. `@egret/engine/web/gamepad` asks the pads of a page once a frame, lets every button go when the page is hidden or the window loses the person, and shakes a pad that can be shaken. The controls example takes a pad. Checked in Node and in headless Chromium with a scripted list of pads; no pad was held. Part of #266. [Guide](docs/gamepad.md)
+
 ## Long music from a stream — 2026-11-14
 
 `mixer.stream(url)` opens a file that is played as it is read, so long music holds no decoded samples in memory. A stream is a sound like the others: it is the music, fades, pauses, and is turned up and down. It has one voice at a time and says its own place. On a page it is a media element brought into the graph; the adapter pauses it whenever the output does not run, because a suspended output does not stop it, and starts it inside the first touch. A page hidden and shown, or a game paused and resumed, in the same turn now ends sounding: the output is asked to run again even while it still runs, so that a suspension on its way is not the last word. Checked in Node and in headless Chromium with the browser's own media element; no phone, Safari or Firefox was run. Part of #266. [Guide](docs/audio.md#long-music-from-a-stream)
