@@ -33,13 +33,13 @@ interface Projected { readonly id: string; readonly role: SemanticRole; readonly
 interface Pair { readonly target: EventTarget; readonly type: string; readonly listener: EventListener; readonly options: AddEventListenerOptions; }
 
 /** Roles a native button carries well: it is activated by a click from any assistive technology. */
-const pressable: readonly SemanticRole[] = ['button', 'checkbox', 'switch', 'radio', 'option', 'tab', 'menuitem', 'gridcell', 'columnheader'];
+const pressable: readonly SemanticRole[] = ['button', 'checkbox', 'switch', 'radio', 'option', 'tab', 'menuitem', 'gridcell', 'columnheader', 'treeitem'];
 const aria: Readonly<Partial<Record<SemanticRole, string>>> = {
   group: 'group', image: 'img', checkbox: 'checkbox', switch: 'switch', radiogroup: 'radiogroup', radio: 'radio', listbox: 'listbox',
-  option: 'option', list: 'list', listitem: 'listitem', scrollbar: 'scrollbar', slider: 'slider', spinbutton: 'spinbutton', progressbar: 'progressbar', tablist: 'tablist', tab: 'tab', tabpanel: 'tabpanel', menu: 'menu', menuitem: 'menuitem', dialog: 'dialog', textbox: 'textbox', status: 'status', alert: 'alert', grid: 'grid', row: 'row', gridcell: 'gridcell', columnheader: 'columnheader',
+  option: 'option', list: 'list', listitem: 'listitem', scrollbar: 'scrollbar', slider: 'slider', spinbutton: 'spinbutton', progressbar: 'progressbar', tablist: 'tablist', tab: 'tab', tabpanel: 'tabpanel', menu: 'menu', menuitem: 'menuitem', dialog: 'dialog', textbox: 'textbox', status: 'status', alert: 'alert', grid: 'grid', row: 'row', gridcell: 'gridcell', columnheader: 'columnheader', tree: 'tree', treeitem: 'treeitem', heading: 'heading',
 };
 /** Roles whose name is their content: a reader reads the text, and says a message when the text changes. */
-const worded: readonly SemanticRole[] = ['text', 'status', 'alert'];
+const worded: readonly SemanticRole[] = ['text', 'status', 'alert', 'heading'];
 const ownedSurfaces = new WeakSet<object>();
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
 let containers = 0;
@@ -185,6 +185,7 @@ export function createBrowserSemantics(options: BrowserSemanticsOptions): Browse
       write(item, 'aria-rowcount', text(node.extent?.rows));
       write(item, 'aria-colcount', text(node.extent?.columns));
       write(item, 'aria-sort', node.sort);
+      write(item, 'aria-level', text(node.level));
       // Set on the outermost inert element: the page then keeps everything under it away from every user.
       write(item, 'inert', node.inert && parent?.inert !== true ? '' : undefined);
       // Reachable by a request of assistive technology, never by the Tab key. A native button says so from the start, whatever it can do.

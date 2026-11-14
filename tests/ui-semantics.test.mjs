@@ -35,7 +35,7 @@ test('SM01 a publication is one frozen snapshot, a parent before what is inside 
  assert.equal(snapshot,semantics.snapshot);assert.equal(snapshot.revision,1);assert.deepEqual(ids(snapshot),['panel','title','sound','close']);
  assert.ok(Object.isFrozen(snapshot)&&Object.isFrozen(snapshot.nodes)&&snapshot.nodes.every(node=>Object.isFrozen(node)&&Object.isFrozen(node.bounds)&&Object.isFrozen(node.actions)));
  assert.deepEqual(snapshot.nodes[2],{id:'sound',role:'checkbox',parent:'panel',name:'Sound',bounds:box(20,40,80,24),disabled:false,focused:false,inert:false,actions:['activate','focus'],
-  value:undefined,checked:true,selected:undefined,expanded:undefined,modal:undefined,multiline:undefined,multiple:undefined,extent:undefined,sort:undefined,range:undefined,orientation:undefined,controls:undefined,position:undefined});
+  value:undefined,checked:true,selected:undefined,expanded:undefined,modal:undefined,multiline:undefined,multiple:undefined,extent:undefined,sort:undefined,level:undefined,range:undefined,orientation:undefined,controls:undefined,position:undefined});
  assert.deepEqual(snapshot.nodes.map(node=>node.actions),[[],[],['activate','focus'],['activate']]);
  assert.deepEqual([snapshot.nodes[0].name,snapshot.nodes[1].name,snapshot.nodes[1].parent],['Settings','Sound and music','panel']);
 });
@@ -89,7 +89,7 @@ test('SM04 a node is refused where its role means nothing',()=>{
  assert.throws(()=>semantics.add({id:'group',role:'group',describe:()=>({bounds:box()})}),coded('UI_SEMANTICS_DUPLICATE'));
  const describe=()=>({bounds:box()});
  for(const options of [null,[],'x',{id:'',role:'group',describe},{id:'a'.repeat(129),role:'group',describe},{id:'a\0',role:'group',describe},{id:1,role:'group',describe},
-  {id:'a',role:'tree',describe},{id:'a',role:'toString',describe},{id:'a',role:'group'},{id:'a',role:'group',describe,parent:''},{id:'a',role:'group',describe,onActivate:1},{id:'a',role:'group',describe,onFocus:'x'}])
+  {id:'a',role:'toolbar',describe},{id:'a',role:'toString',describe},{id:'a',role:'group'},{id:'a',role:'group',describe,parent:''},{id:'a',role:'group',describe,onActivate:1},{id:'a',role:'group',describe,onFocus:'x'}])
   assert.throws(()=>semantics.add(options),coded('UI_SEMANTICS_OPTIONS'));
  assert.equal(semantics.size,4);
  for(const [id,role,parent] of [['r','radio','group'],['o','option','box'],['i','listitem','list'],['t','text','i']])semantics.add({id,role,parent,describe});
@@ -102,9 +102,9 @@ test('SM04 a node is refused where its role means nothing',()=>{
 });
 
 test('SM04b every role holds nodes or is read as one thing, and is named where a reader needs a name',()=>{
- const holds=['group','radiogroup','listbox','list','listitem','tablist','tabpanel','menu','dialog','grid','row'],unnamed=['group','radiogroup','listbox','list','listitem','tablist','menu','status','alert','grid','row'];
- const inside={radio:'radiogroup',option:'listbox',listitem:'list',tab:'tablist',menuitem:'menu',row:'grid',gridcell:'row',columnheader:'row'},needs={checkbox:{checked:false},switch:{checked:false},radio:{checked:false},option:{selected:false},tab:{selected:false},scrollbar:{range:{now:0,min:0,max:0}},slider:{range:{now:0,min:0,max:0}},spinbutton:{range:{now:0,min:0,max:0}}};
- const roles=['group','image','text','button','checkbox','switch','radiogroup','radio','listbox','option','list','listitem','scrollbar','slider','spinbutton','progressbar','tablist','tab','tabpanel','menu','menuitem','dialog','textbox','status','alert','grid','row','gridcell','columnheader'];
+ const holds=['group','radiogroup','listbox','list','listitem','tablist','tabpanel','menu','dialog','grid','row','tree'],unnamed=['group','radiogroup','listbox','list','listitem','tablist','menu','status','alert','grid','row','tree'];
+ const inside={radio:'radiogroup',option:'listbox',listitem:'list',tab:'tablist',menuitem:'menu',row:'grid',gridcell:'row',columnheader:'row',treeitem:'tree'},needs={checkbox:{checked:false},switch:{checked:false},radio:{checked:false},option:{selected:false},tab:{selected:false},scrollbar:{range:{now:0,min:0,max:0}},slider:{range:{now:0,min:0,max:0}},spinbutton:{range:{now:0,min:0,max:0}},treeitem:{level:1}};
+ const roles=['group','image','text','button','checkbox','switch','radiogroup','radio','listbox','option','list','listitem','scrollbar','slider','spinbutton','progressbar','tablist','tab','tabpanel','menu','menuitem','dialog','textbox','status','alert','grid','row','gridcell','columnheader','tree','treeitem','heading'];
  for(const role of roles){
   const {semantics,state,add}=tree();
   // A cell is inside a row, which is inside a grid.
@@ -291,6 +291,34 @@ test('SM06g a table has a row of headers that say how it is sorted, and rows tha
  const seen=[];semantics.add({id:'level',role:'columnheader',parent:'head',onActivate:()=>seen.push('sort'),onFocus:()=>seen.push('focus'),describe:()=>({bounds:box(),name:'Level',sort:'none',disabled:seen.length>1})});
  assert.deepEqual(node('level').actions,['activate','focus']);assert.equal(semantics.perform('level','activate'),true);assert.equal(semantics.perform('level','focus'),true);semantics.publish();
  assert.equal(semantics.perform('level','activate'),false,'a disabled header refuses');assert.deepEqual(seen,['sort','focus']);
+});
+
+test('SM06h the items of a tree say how deep they are and whether what is under them shows, and a heading says its rank',()=>{
+ const {semantics,state,add}=tree();
+ add('title','heading',{name:'Sect',level:1});add('sub','heading',{name:'Halls'});
+ add('sect','tree',{name:'Sect'});add('hall','treeitem',{name:'Alchemy',level:1,expanded:true,position:{index:1,size:4}},{parent:'sect'});
+ add('squad','treeitem',{name:'First squad',level:2,expanded:false,selected:false,position:{index:1,size:2}},{parent:'sect'});add('who','treeitem',{name:'Qingfeng',level:3,selected:true},{parent:'sect'});
+ const node=id=>semantics.publish().nodes.find(found=>found.id===id);
+ assert.deepEqual([node('title').level,node('title').name,node('sub').level,node('sect').level,node('sect').multiple],[1,'Sect',undefined,undefined,false]);
+ // An item that has nothing under it does not say whether it is open, and one of a tree where nothing is selected does not say that either.
+ assert.deepEqual([node('hall').level,node('hall').expanded,node('hall').selected,node('hall').position,node('hall').parent],[1,true,undefined,{index:1,size:4},'sect']);
+ assert.deepEqual([node('squad').level,node('squad').expanded,node('squad').selected,node('who').level,node('who').expanded,node('who').selected],[2,false,false,3,undefined,true]);
+ const first=semantics.publish();state.hall.expanded=false;const second=semantics.publish();assert.notEqual(second,first);state.who.level=2;assert.notEqual(semantics.publish(),second);state.who.level=3;
+ state.sect.multiple=true;assert.equal(node('sect').multiple,true);
+ const refused=(id,change,field)=>{const saved={...state[id]};Object.assign(state[id],change);assert.throws(()=>semantics.publish(),about('UI_SEMANTICS_DESCRIPTION',id+': '+field),id+' '+JSON.stringify(change));state[id]=saved;};
+ for(const level of [undefined,0,1.5,'2',null])refused('hall',{level},'level');
+ for(const level of [0,7,2.5,'1',null])refused('title',{level},'level');
+ for(const [id,change,field] of [['sect',{level:1},'level'],['sect',{expanded:true},'expanded'],['sect',{selected:true},'selected'],['hall',{expanded:'yes'},'expanded'],['hall',{selected:null},'selected'],['hall',{checked:true},'checked'],['hall',{name:''},'name'],
+  ['hall',{position:{index:5,size:4}},'position'],['hall',{sort:'none'},'sort'],['title',{selected:true},'selected'],['title',{disabled:true},'disabled'],['title',{name:' '},'name'],['title',{expanded:true},'expanded'],['title',{position:{index:1,size:1}},'position']])refused(id,change,field);
+ // A deep tree is deep: there is no sixth rank to stop at, as there is for a heading.
+ state.who.level=40;assert.equal(node('who').level,40);
+ // An item is an item of a tree, at the top of it, and is read as one thing; a heading takes no action and holds nothing.
+ assert.throws(()=>semantics.add({id:'loose',role:'treeitem',describe:()=>({bounds:box(),name:'Loose',level:1})}),coded('UI_SEMANTICS_PARENT'));
+ assert.throws(()=>semantics.add({id:'under',role:'treeitem',parent:'hall',describe:()=>({bounds:box(),name:'Under',level:2})}),coded('UI_SEMANTICS_PARENT'));
+ assert.throws(()=>semantics.add({id:'inner',role:'text',parent:'title',describe:()=>({bounds:box(),name:'Inner'})}),coded('UI_SEMANTICS_PARENT'));
+ const seen=[];semantics.add({id:'forge',role:'treeitem',parent:'sect',onActivate:()=>seen.push('toggle'),onFocus:()=>seen.push('focus'),describe:()=>({bounds:box(),name:'Forge',level:1,expanded:false,disabled:seen.length>1})});
+ assert.deepEqual(node('forge').actions,['activate','focus']);assert.equal(semantics.perform('forge','activate'),true);assert.equal(semantics.perform('forge','focus'),true);semantics.publish();
+ assert.equal(semantics.perform('forge','activate'),false,'a disabled item refuses');assert.deepEqual([seen,node('title').actions],[['toggle','focus'],[]]);
 });
 
 test('SM07 one node holds the focus',()=>{

@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A tree that opens and closes, and headings — 2026-11-14
+
+The semantic tree gains the roles `tree`, `treeitem` and `heading`, with `level` for the depth of an item and the rank of a heading, and `createUiListSemantics` takes `role: 'tree'`: the rows that show are the items of a tree, each at the depth it says and at its place among the items under the same item. A new example, `examples/ui-tree`, is a sect of halls, squads and members that opens and closes by a press and by the arrow keys, under a heading. Checked in Node and in headless Chromium with software WebGL2; no reader was run. Part of #90. [Guide](docs/ui-semantics.md#a-tree) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-tree/README.md)
+
 ## A table of a managed list that sorts — 2026-11-14
 
 `createUiListSemantics` takes `role: 'grid'` with `columns` and `rowOffset`: the rows of a managed list are published as the rows of a grid, the application adds the cells inside each and a row of headers above them, and `rowBounds` measures a cell from its row. The semantic tree gains `columnheader` with `sort`, and a `row` or a `gridcell` says `selected` only where it is what is selected. A new example, `examples/ui-roster-table`, sorts forty members by four columns from their headers and selects a row. Checked in Node and in headless Chromium with software WebGL2; no reader was run. Part of #90. [Guide](docs/ui-semantics.md#a-table-of-a-managed-list) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-roster-table/README.md)

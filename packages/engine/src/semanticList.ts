@@ -32,10 +32,16 @@ export interface SemanticListSource {
 export interface SemanticListRow {
   /** What the row is called. An option and a menu item need a name; a list item may leave it to the nodes inside it. */
   readonly name?: string;
-  /** Options, where one that does not say is not selected, and the rows of a grid, where saying it means that rows are what is selected. */
+  /** Options, where one that does not say is not selected, and the rows of a grid and the items of a tree, where saying it means that they are what is selected. */
   readonly selected?: boolean;
-  /** Options, menu items and the rows of a grid. */
+  /** Options, menu items, the rows of a grid and the items of a tree. */
   readonly disabled?: boolean;
+  /** The items of a tree, which need it: how deep the item is, from one. */
+  readonly level?: number;
+  /** The items of a tree: whether what is under the item shows. One with nothing under it does not say. */
+  readonly expanded?: boolean;
+  /** The items of a tree: where the item stands among those under the same item, which is not where its row stands in the list. */
+  readonly position?: { readonly index: number; readonly size: number };
 }
 
 export interface UiListSemanticsOptions {
@@ -48,12 +54,13 @@ export interface UiListSemanticsOptions {
   /** The node the list is inside. */
   readonly parent?: string;
   /**
-   * A 'list' of list items, which may hold other nodes, a 'listbox' of options, a 'menu' of menu items, or a 'grid'
-   * whose rows are the rows of the list and hold the cells the application adds. Defaults to 'list'.
+   * A 'list' of list items, which may hold other nodes, a 'listbox' of options, a 'menu' of menu items, a 'grid'
+   * whose rows are the rows of the list and hold the cells the application adds, or a 'tree' whose items are the
+   * rows that show, each at the depth it says. Defaults to 'list'.
    */
-  readonly role?: 'list' | 'listbox' | 'menu' | 'grid';
+  readonly role?: 'list' | 'listbox' | 'menu' | 'grid' | 'tree';
   readonly name?: string;
-  /** A list box or a grid only: several of its options or rows may be selected at once. Each still says whether it is. Defaults to false. */
+  /** A list box, a grid or a tree only: several of its options, rows or items may be selected at once. Each still says whether it is. Defaults to false. */
   readonly multiple?: boolean;
   /** A grid only, which needs it: how many columns it has. */
   readonly columns?: number;
@@ -110,12 +117,12 @@ export function createUiListSemantics(options: UiListSemanticsOptions): UiListSe
   if (options === null || typeof options !== 'object') throw new EgretError('UI_SEMANTICS_OPTIONS');
   const { semantics, root, list, parent, role = 'list', name, multiple, columns, rowOffset = 0, hidden, describeRow, onActivateRow, focusable = false, onRowAdded } = options;
   if (semantics === null || typeof semantics !== 'object' || typeof semantics.add !== 'function' || root === null || typeof root !== 'object' || typeof root.snapshot !== 'function'
-    || typeof root.list !== 'function' || !text(list) || (role !== 'list' && role !== 'listbox' && role !== 'menu' && role !== 'grid') || !optional(name, 'string') || !optional(parent, 'string')
+    || typeof root.list !== 'function' || !text(list) || (role !== 'list' && role !== 'listbox' && role !== 'menu' && role !== 'grid' && role !== 'tree') || !optional(name, 'string') || !optional(parent, 'string')
     || !optional(hidden, 'function') || !optional(describeRow, 'function') || !optional(onActivateRow, 'function') || !optional(onRowAdded, 'function') || typeof focusable !== 'boolean'
     // An option and a menu item are read as one thing and need a name of their own.
-    || ((role === 'listbox' || role === 'menu') && describeRow === undefined)
-    // Only a list box and a grid have a selection for there to be several of.
-    || !optional(multiple, 'boolean') || (multiple !== undefined && role !== 'listbox' && role !== 'grid')
+    || ((role === 'listbox' || role === 'menu' || role === 'tree') && describeRow === undefined)
+    // Only a list box, a grid and a tree have a selection for there to be several of.
+    || !optional(multiple, 'boolean') || (multiple !== undefined && role !== 'listbox' && role !== 'grid' && role !== 'tree')
     // A grid says how many columns it has, and nothing else has columns or rows above its own.
     || (role === 'grid' ? !Number.isSafeInteger(columns) || columns! < 1 || !Number.isSafeInteger(rowOffset) || rowOffset < 0 : columns !== undefined || options.rowOffset !== undefined)) throw new EgretError('UI_SEMANTICS_OPTIONS');
   const id = options.id ?? root.id + '/' + list;
@@ -136,10 +143,12 @@ export function createUiListSemantics(options: UiListSemanticsOptions): UiListSe
 
   function addRow(key: string, index: number, box: SemanticBounds): Row {
     const row: Row = { index, box, node: semantics.add({
-      id: rowId(key), role: role === 'list' ? 'listitem' : role === 'listbox' ? 'option' : role === 'menu' ? 'menuitem' : 'row', parent: id,
+      id: rowId(key), role: role === 'list' ? 'listitem' : role === 'listbox' ? 'option' : role === 'menu' ? 'menuitem' : role === 'grid' ? 'row' : 'treeitem', parent: id,
       describe: () => {
         const described = describeRow?.(key, row.index) ?? {};
-        return { ...described, ...(role === 'listbox' ? { selected: described.selected ?? false } : {}), bounds: visiblePart(row.box), position: { index: row.index + 1 + rowOffset, size: size + rowOffset }, focused: handle.getFocus().key === key, order: row.index };
+        return { ...described, ...(role === 'listbox' ? { selected: described.selected ?? false } : {}), bounds: visiblePart(row.box),
+          // The place of an item of a tree is among the items under the same item, which only the application knows.
+          ...(role === 'tree' ? {} : { position: { index: row.index + 1 + rowOffset, size: size + rowOffset } }), focused: handle.getFocus().key === key, order: row.index };
       },
       ...(onActivateRow === undefined ? {} : { onActivate: () => onActivateRow(key) }),
       ...(focusable ? { onFocus: () => handle.focus(key, { visible: true }) } : {}),

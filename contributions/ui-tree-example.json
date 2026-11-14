@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/ui-tree/index.html",
+      "originRole": "First-party page of the tree example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/ui-tree/main.mjs",
+      "originRole": "First-party example of a tree of items that opens and closes, shown as a managed list, with semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-tree/verify.mjs",
+      "originRole": "First-party real-browser check of the tree example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-tree/README.md",
+      "originRole": "First-party instructions for the tree example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-tree/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the tree example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/ui-tree/README.md",
+      "zh": "examples/ui-tree/README.zh-CN.md"
+    }
+  ]
+}
