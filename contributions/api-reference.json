@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "tools/api-reference.mjs", "originRole": "First-party generator of the API reference from the built declarations; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/api-reference.test.mjs", "originRole": "First-party tests that the API reference finds every export and is current; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "knowledge-base/en/docs/api-reference.md", "originRole": "First-party generated list of every export of every entry of the engine package; AI-assisted; Apache-2.0."},
+    {"path": "knowledge-base/Cns/docs/api-reference.md", "originRole": "First-party generated Chinese reading of the list of every export of every entry of the engine package; AI-assisted; Apache-2.0."}
+  ],
+  "documents": [
+    {"en": "knowledge-base/en/docs/api-reference.md", "zh": "knowledge-base/Cns/docs/api-reference.md"}
+  ]
+}

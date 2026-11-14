@@ -52,6 +52,16 @@ sprite().graphics.lineStyle(6, COLOURS.dash, 1, { dash: [16, 12], caps: 'round' 
 const many = Math.min(2000, Math.max(0, Number(new URLSearchParams(location.search).get('many') ?? 0) | 0));
 for (let i = 0; i < many; i++) sprite().graphics.beginFill(COLOURS.dash).drawCircle(8 + 16 * (i % 30), 8 + 16 * Math.floor(i / 30), 3 + i / many).endFill();
 
+// With ?smooth in the address, two discs over a cleared patch: the first with the stair of pixels at its edge, the
+// second with `smoothing`, whose edge fades over that many units.
+if (new URLSearchParams(location.search).has('smooth')) {
+  const pair = sprite().graphics;
+  pair.beginFill(COLOURS.clear).drawRect(150, 85, 200, 100).endFill();
+  pair.beginFill(COLOURS.circle).drawCircle(200, 135, 30).endFill();
+  pair.smoothing = 4;
+  pair.beginFill(COLOURS.circle).drawCircle(290, 135, 30).endFill();
+}
+
 // A ring of four wedges: each is a path of an outer arc one way and an inner arc back.
 const ring = sprite();
 function drawRing() {

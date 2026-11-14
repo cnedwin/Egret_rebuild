@@ -32,13 +32,32 @@ const size = (...values: readonly unknown[]): void => { for (const value of valu
 /**
  * Drawing state belongs to one node; every shape snapshots its fill and its line. A node that draws only filled
  * rectangles keeps them as rectangles. Any other shape, and any line, makes the node's drawing one list of triangles
- * in drawing order: edges are not smoothed, and a curve is drawn as straight pieces within a quarter unit of it.
+ * in drawing order, and a curve is drawn as straight pieces within a quarter unit of it. Edges are a stair of pixels
+ * unless `smoothing` is set.
  */
 export class Graphics {
   private fill: ShapePaint | undefined;
   private line: ShapeLine | undefined;
+  private soft = 0;
 
   public constructor(private readonly owner: DisplayObject) {}
+
+  /**
+   * How far, in the node's units, the edge of each shape and line drawn from now on fades to nothing: 0, which it is
+   * at first, to 8. One unit smooths an edge at the size it was drawn. A band of triangles is added around the shape,
+   * which is that much larger. A fill under a line has no band of its own. Filled rectangles alone stay rectangles,
+   * and an image fill has no band.
+   */
+  public get smoothing(): number { return this.soft; }
+  public set smoothing(value: number) {
+    assertVisualMutable(this.owner);
+    if (!finite(value) || value < 0 || value > 8) throw invalid();
+    this.finishPath();
+    this.soft = value;
+  }
+  private edged<T extends ShapePaint>(paint: T | undefined): T | undefined {
+    return paint === undefined || this.soft === 0 ? paint : { ...paint, feather: this.soft };
+  }
 
   public beginFill(value: number, alpha = 1): this {
     assertVisualMutable(this.owner);
@@ -251,7 +270,7 @@ export class Graphics {
   }
   private path(): ShapeState["path"] & object {
     const shape = this.shape();
-    return shape.path ??= { fill: this.fill, line: this.line, subpaths: [] };
+    return shape.path ??= { fill: this.edged(this.fill), line: this.edged(this.line), subpaths: [] };
   }
   /** The part of the path being drawn; a path that was not begun with moveTo begins at the origin. */
   private current(): number[] {
@@ -276,7 +295,7 @@ export class Graphics {
   private outline(points: number[], convex: boolean): this {
     this.finishPath();
     const mark = this.mark();
-    if (!addOutline(this.shape(), points, convex, this.fill, this.line)) { mark(); throw new EgretError("GRAPHICS_BUDGET"); }
+    if (!addOutline(this.shape(), points, convex, this.edged(this.fill), this.edged(this.line))) { mark(); throw new EgretError("GRAPHICS_BUDGET"); }
     return this.changed(mark);
   }
   /** What the node's drawing is before a shape or a point is added, so that one that does not fit can be taken back. */

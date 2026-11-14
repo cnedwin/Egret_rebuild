@@ -140,6 +140,20 @@ await scenario('webgl2: three hundred discs of different sizes are three hundred
   for (const i of [0, 29, 299]) within(await colour(page, [8 + 16 * (i % 30), 8 + 16 * Math.floor(i / 30)]), shown(linear(now.colours.dash)), 'disc ' + i);
 }, '?backend=webgl2&many=300');
 
+await scenario('webgl2: a smoothed disc fades at its edge between its colour and what is under it, and the other does not', desktop, async page => {
+  const C = (await read(page)).colours, red = async place => parseInt((await colour(page, place)).slice(0, 2), 16), full = C.circle >> 16, under = C.clear >> 16;
+  // The plain disc: its colour inside its edge, and what is under it just outside.
+  near(await red([200 + 27, 135]), full, 3, 'inside the plain disc');
+  near(await red([200 + 33, 135]), under, 3, 'outside the plain disc');
+  // The smoothed disc: its colour inside, in between in the middle of its band of four units, and nothing past the band.
+  near(await red([290 + 27, 135]), full, 3, 'inside the smoothed disc');
+  for (const [dx, dy] of [[32, 0], [-32, 0], [0, 32], [0, -32]]) {
+    const middle = await red([290 + dx, 135 + dy]);
+    assert.ok(middle > under + 20 && middle < full - 20, 'the band at ' + dx + ',' + dy + ' is ' + middle);
+  }
+  near(await red([290 + 37, 135]), under, 3, 'past the band');
+}, '?backend=webgl2&smooth');
+
 await scenario('on a phone the page draws the shapes and a tap turns the wedges', phone, async page => {
   const C = (await read(page)).colours;
   within(await colour(page, [60, 60]), shown(linear(C.circle)), 'circle centre', 3);

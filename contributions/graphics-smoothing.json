@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "tests/graphics-smoothing.test.mjs", "originRole": "First-party tests of the band that smooths the edge of a Graphics shape or line; independently authored with AI assistance; Apache-2.0.", "criticalComment": true}
+  ],
+  "documents": []
+}

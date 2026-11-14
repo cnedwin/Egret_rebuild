@@ -4,6 +4,17 @@ English | [简体中文](../Cns/README.md)
 
 Use this entry to find product and engineering documents for the community rebuild. [Current capabilities](docs/core-progress.md) records the reviewed source baseline and verification scope.
 
+## Write a game
+
+These are the guides: what to call and what comes back. The other documents on this page are contracts, plans and evidence, written for those who change the engine.
+
+| To | Read |
+| --- | --- |
+| Start | [Getting started](docs/getting-started.md) · [One call for a game](docs/browser-game.md) · [What to import](docs/entry-points.md) · [Coming from Egret 5](docs/egret-api-migration.md) |
+| Draw and move | [Graphics](docs/graphics.md) · [The frame loop](docs/frame-loop.md) · [Camera](docs/camera-2d.md) · [Tile maps](docs/tilemap.md) · [Particles](docs/particles.md) · [Bitmap fonts](docs/bitmap-font.md) · [Blend modes](docs/blend-modes.md) · [Filters](docs/filters.md) |
+| Collide, sound and control | [Collision and physics](docs/physics-2d.md) · [Sound for a 2D game](docs/audio.md) · [Video](docs/video.md) · [Gamepads](docs/gamepad.md) |
+| Read an error, look up a name | [Error codes](docs/error-codes.md) · [API reference](docs/api-reference.md) |
+
 ## Start with the current project
 
 | Question | Read |
