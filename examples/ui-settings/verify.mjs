@@ -39,14 +39,16 @@ async function at(page, [x, y]) {
 }
 // Stage units: the centre of each control, a row of the list by its number from one, and a place where nothing is.
 // `paint` is a corner of the first option where its caption is not.
-const spot = { paint: [86, 111], sound: [195, 58], easy: [55, 122], normal: [130, 122], hard: [205, 122], name: [130, 184], dark: [195, 224], reset: [70, 278], empty: [130, 300], margin: [6, 6] };
+const spot = { paint: [86, 111], sound: [195, 58], easy: [55, 122], normal: [130, 122], hard: [205, 122], name: [130, 184], dark: [195, 224], reset: [70, 282], empty: [130, 301], margin: [6, 6] };
+// The track of the volume runs from 120 to 240: a place along it by the volume that is there.
+const volumeSpot = value => [120 + value * 1.2, 252];
 const rowSpot = number => [365, 40 + (number - 1) * 25 + 12];
 const key = async (page, name) => { await page.keyboard.press(name); await settle(page); };
 const click = async (page, place) => { await page.mouse.click(...await at(page, typeof place === 'string' ? spot[place] : place)); await settle(page); };
 const move = async (page, place) => { await page.mouse.move(...await at(page, typeof place === 'string' ? spot[place] : place)); await settle(page); };
-const profile = index => ({ sound: index % 2 === 0, level: ['easy', 'normal', 'hard'][index % 3], name: ['青锋', '白露', '玄霜', '赤霄', '紫电'][index % 5] + (index + 1) });
+const profile = index => ({ sound: index % 2 === 0, level: ['easy', 'normal', 'hard'][index % 3], name: ['青锋', '白露', '玄霜', '赤霄', '紫电'][index % 5] + (index + 1), volume: index * 15 % 105 });
 const optionName = index => '存档 ' + (index + 1) + ' ' + profile(index).name;
-const DEFAULTS = { sound: true, level: 'normal', name: '侠客' };
+const DEFAULTS = { sound: true, level: 'normal', name: '侠客', volume: 60 };
 /** The colour the page shows at a place of the stage, read from a screenshot the page decodes itself. */
 async function colour(page, place) {
   const [x, y] = await at(page, typeof place === 'string' ? spot[place] : place);
@@ -100,7 +102,7 @@ const desktop = { viewport: { width: 1000, height: 1000 } };
 
 await scenario('the browser computes one tree for the whole screen', desktop, async page => {
   assert.equal(await page.locator('#surface').ariaSnapshot(), ['- application "Settings / 设置":', '  - group "设置 / Settings":', '    - switch "声音 / Sound" [checked]', '    - radiogroup "难度 / Level":',
-    '      - radio "易 Easy"', '      - radio "中 Normal" [checked]', '      - radio "难 Hard"', '    - textbox "名字 / Name"', '    - switch "深色 / Dark" [checked]', '    - button "重置 / Reset"',
+    '      - radio "易 Easy"', '      - radio "中 Normal" [checked]', '      - radio "难 Hard"', '    - textbox "名字 / Name"', '    - switch "深色 / Dark" [checked]', '    - slider "音量 / Volume"', '    - button "重置 / Reset"',
     '  - listbox "存档 / Profiles":', ...Array.from({ length: 10 }, (_, index) => '    - option "' + optionName(index) + '"')].join('\n'));
   const now = await read(page);
   assert.deepEqual([now.settings, now.loaded, now.theme, now.rows.length, now.confirm.open, now.semantics.projection], [DEFAULTS, undefined, 'dark', 10, false, 'active']);
@@ -128,6 +130,8 @@ await scenario('the keyboard alone changes every setting, types a name, and choo
   await page.keyboard.press('Control+A'); await page.keyboard.type('Li Bai'); await key(page, 'Enter'); now = await read(page);
   assert.deepEqual([now.editing, now.settings.name, now.focus, await page.evaluate(() => document.activeElement.id)], [false, 'Li Bai', 'name', 'scene']);
   await key(page, 'Tab'); assert.deepEqual(await active(page), ['switch', '深色 / Dark']);
+  await key(page, 'Tab'); assert.deepEqual(await active(page), ['slider', '音量 / Volume']);
+  await key(page, 'ArrowRight'); await key(page, 'ArrowUp'); assert.equal((await read(page)).settings.volume, 70);
   await key(page, 'Tab'); assert.deepEqual(await active(page), ['button', '重置 / Reset']);
   await key(page, 'Tab'); assert.deepEqual([await active(page), (await read(page)).row], [['option', optionName(0)], 'p0']);
   // The arrow keys move among the rows; the list scrolls under the focus.
@@ -179,6 +183,48 @@ await scenario('the name takes a composition of an input method', desktop, async
   assert.equal((await read(page)).settings.name, '一二三四五六七八');
 });
 
+await scenario('the volume follows a press, a drag and the keys of a slider', desktop, async page => {
+  const slider = page.getByRole('slider', { name: '音量 / Volume', exact: true });
+  const told = async () => Promise.all(['aria-valuenow', 'aria-valuemin', 'aria-valuemax', 'aria-orientation'].map(name => slider.getAttribute(name)));
+  assert.deepEqual([(await read(page)).settings.volume, await told()], [60, ['60', '0', '100', 'horizontal']]);
+  // A press on the track puts the volume there: the nearest of its steps of five.
+  await click(page, volumeSpot(25)); assert.deepEqual([(await read(page)).settings.volume, await told()], [25, ['25', '0', '100', 'horizontal']]);
+  await click(page, volumeSpot(51)); assert.equal((await read(page)).settings.volume, 50);
+  // Drawn as it is: filled up to the thumb, the thumb in the ink, and the track beyond it. The pointer is over the track.
+  assert.deepEqual([hex(await colour(page, volumeSpot(15))), hex(await colour(page, [180, 258])), hex(await colour(page, volumeSpot(85)))], ['2f8f6b', 'f3e9d2', '56689a']);
+  await move(page, 'empty'); assert.equal(hex(await colour(page, volumeSpot(85))), '3d4a63');
+  // The button that pressed drags the thumb, also outside the track and past its ends.
+  await page.mouse.move(...await at(page, volumeSpot(50))); await page.mouse.down(); await settle(page);
+  assert.deepEqual([(await read(page)).dragging, hex(await colour(page, volumeSpot(85)))], [true, '27314a']);
+  await page.mouse.move(...await at(page, [volumeSpot(80)[0], 200]), { steps: 4 }); await settle(page); assert.equal((await read(page)).settings.volume, 80);
+  await page.mouse.move(...await at(page, [400, 300]), { steps: 4 }); await settle(page); assert.equal((await read(page)).settings.volume, 100);
+  await page.mouse.move(...await at(page, [30, 252]), { steps: 4 }); await settle(page); assert.equal((await read(page)).settings.volume, 0);
+  await page.mouse.move(...await at(page, volumeSpot(35)), { steps: 4 }); await page.mouse.up(); await settle(page);
+  let now = await read(page);
+  assert.deepEqual([now.settings.volume, now.dragging, await told()], [35, false, ['35', '0', '100', 'horizontal']]);
+  await page.mouse.move(...await at(page, volumeSpot(90))); await settle(page); assert.equal((await read(page)).settings.volume, 35, 'a pointer that is not down drags nothing');
+  // Asked to take the focus by assistive technology, the slider takes the keyboard, and the keys of a slider move it.
+  await page.focus('#scene'); await slider.evaluate(element => element.focus()); await settle(page);
+  assert.deepEqual([(await read(page)).focus, await active(page)], ['volume', ['slider', '音量 / Volume']]);
+  await key(page, 'ArrowRight'); assert.equal((await read(page)).settings.volume, 40);
+  await key(page, 'ArrowDown'); await key(page, 'ArrowLeft'); assert.equal((await read(page)).settings.volume, 30);
+  await key(page, 'PageUp'); assert.equal((await read(page)).settings.volume, 50);
+  await key(page, 'PageDown'); await key(page, 'PageDown'); assert.equal((await read(page)).settings.volume, 10);
+  await key(page, 'PageDown'); assert.equal((await read(page)).settings.volume, 0, 'a page past the end stops at the end');
+  await key(page, 'End'); assert.deepEqual([(await read(page)).settings.volume, await told()], [100, ['100', '0', '100', 'horizontal']]);
+  // At its end the keys are still the slider's: nothing scrolls under it.
+  await key(page, 'ArrowRight'); await key(page, 'PageUp'); await key(page, 'End'); assert.deepEqual([(await read(page)).settings.volume, await page.evaluate(() => scrollY)], [100, 0]);
+  await key(page, 'Home'); assert.equal((await read(page)).settings.volume, 0);
+  // A held key repeats.
+  await page.keyboard.down('ArrowRight'); await page.keyboard.down('ArrowRight'); await page.keyboard.down('ArrowRight'); await page.keyboard.up('ArrowRight'); await settle(page);
+  assert.equal((await read(page)).settings.volume, 15);
+  // A profile has a volume, and one moved by hand is no longer that profile.
+  await click(page, rowSpot(3)); now = await read(page);
+  assert.deepEqual([now.loaded, now.settings, await told()], ['p2', profile(2), ['30', '0', '100', 'horizontal']]);
+  await click(page, volumeSpot(75)); now = await read(page);
+  assert.deepEqual([now.loaded, now.settings.volume], [undefined, 75]);
+});
+
 await scenario('a theme is changed for the whole screen in one frame', desktop, async page => {
   const places = { page: 'margin', sound: 'sound', idle: 'paint', row: [450, rowSpot(1)[1]], rowAlt: [450, rowSpot(2)[1]], field: [230, 190] };
   const seen = async () => Object.fromEntries(await Promise.all(Object.entries(places).map(async ([name, place]) => [name, hex(await colour(page, place))])));
@@ -209,7 +255,7 @@ await scenario('a theme is changed for the whole screen in one frame', desktop, 
 
 await scenario('a reset asks first, in a modal card that is all assistive technology is given', desktop, async page => {
   await click(page, rowSpot(4)); assert.equal((await read(page)).loaded, 'p3');
-  await page.focus('#scene'); for (let press = 0; press < 5; press++) await key(page, 'Tab');
+  await page.focus('#scene'); for (let press = 0; press < 6; press++) await key(page, 'Tab');
   assert.deepEqual(await active(page), ['button', '重置 / Reset']);
   await key(page, 'Enter'); let now = await read(page);
   assert.deepEqual([now.confirm.open, now.focus, now.settings], [true, 'confirm-yes', profile(3)]);
@@ -258,6 +304,16 @@ await scenario('on a phone a finger works every control', { ...devices['Pixel 7'
   const tap = async place => { await page.touchscreen.tap(...await at(page, typeof place === 'string' ? spot[place] : place)); await settle(page); };
   await tap('sound'); await tap('hard'); let now = await read(page);
   assert.deepEqual([now.settings.sound, now.settings.level, now.hovered], [false, 'hard', []]);
+  // A tap on the track, and a finger that drags along it.
+  await tap(volumeSpot(20)); assert.equal((await read(page)).settings.volume, 20);
+  const session = await page.context().newCDPSession(page), touch = async (type, place) => {
+    const [x, y] = await at(page, place);
+    await session.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y, id: 1 }] }); await settle(page);
+  };
+  await touch('touchStart', volumeSpot(40)); assert.deepEqual([(await read(page)).settings.volume, (await read(page)).dragging], [40, true]);
+  await touch('touchMove', volumeSpot(65)); await touch('touchMove', [volumeSpot(90)[0], 230]); assert.equal((await read(page)).settings.volume, 90);
+  await touch('touchEnd', volumeSpot(90)); assert.deepEqual([(await read(page)).settings.volume, (await read(page)).dragging], [90, false]);
+  await session.detach();
   await tap(rowSpot(3)); now = await read(page);
   assert.deepEqual([now.loaded, now.settings], ['p2', profile(2)]);
   await tap('dark'); assert.equal((await read(page)).theme, 'light');

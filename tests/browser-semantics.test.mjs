@@ -106,6 +106,7 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  add('all','checkbox',{name:'All',checked:'mixed',disabled:true});add('list','listbox',{name:'Colours'});add('red','option',{name:'Red',selected:true,position:{index:3,size:9}},{parent:'list'});
  add('view','group',{name:'Messages'});add('bar','scrollbar',{name:'Scroll',range:{now:20,min:0,max:150},orientation:'horizontal',controls:'view'},{onFocus(){}});
  add('field','textbox',{name:'Name',value:'张三',multiline:true},{onActivate(){}});add('menu','button',{name:'More',expanded:true});add('ask','dialog',{name:'Rename',modal:false});
+ add('volume','slider',{name:'Volume',range:{now:60,min:0,max:100}},{onFocus(){}});add('zoom','slider',{name:'Zoom',range:{now:1,min:0.5,max:4},orientation:'vertical',disabled:true},{onFocus(){}});
  const browser=create();
  assert.equal(browser.container.children.length,0);
  semantics.publish();
@@ -113,12 +114,16 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  assert.deepEqual(read('all'),{type:'button',role:'checkbox','aria-label':'All','aria-disabled':'true','aria-checked':'mixed'});
  assert.deepEqual(read('red'),{type:'button',role:'option','aria-label':'Red','aria-selected':'true','aria-posinset':'3','aria-setsize':'9'});
  assert.deepEqual(read('bar'),{role:'scrollbar','aria-label':'Scroll','aria-valuenow':'20','aria-valuemin':'0','aria-valuemax':'150','aria-orientation':'horizontal',tabindex:'-1','aria-controls':browser.elementOf('view').id});
+ // A slider is a plain element with its value and its ends. One that takes the focus can be pointed at, unless it is disabled.
+ assert.deepEqual(read('volume'),{role:'slider','aria-label':'Volume','aria-valuenow':'60','aria-valuemin':'0','aria-valuemax':'100','aria-orientation':'horizontal',tabindex:'-1'});
+ assert.deepEqual(read('zoom'),{role:'slider','aria-label':'Zoom','aria-disabled':'true','aria-valuenow':'1','aria-valuemin':'0.5','aria-valuemax':'4','aria-orientation':'vertical'});
  assert.deepEqual(read('field'),{role:'textbox','aria-label':'Name','aria-multiline':'true'});assert.equal(browser.elementOf('field').textContent,'张三');
  assert.deepEqual(read('menu'),{type:'button','aria-label':'More','aria-expanded':'true'});assert.deepEqual(read('ask'),{role:'dialog','aria-label':'Rename'});
  // One changed value is one write.
  const writes=()=>{const before=state.writes;semantics.publish();return state.writes-before;};
  assert.equal(writes(),0);
  described.bar.range={now:21,min:0,max:150};assert.equal(writes(),1);assert.equal(read('bar')['aria-valuenow'],'21');
+ described.volume.range={now:65,min:0,max:100};assert.equal(writes(),1);assert.equal(read('volume')['aria-valuenow'],'65');
  described.all.checked=false;described.all.disabled=false;assert.equal(writes(),2);assert.deepEqual(read('all'),{type:'button',role:'checkbox','aria-label':'All','aria-checked':'false'});
  described.field.value='';described.field.multiline=false;described.menu.expanded=false;described.red.selected=false;described.red.position=undefined;described.bar.controls=undefined;
  semantics.publish();

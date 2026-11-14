@@ -51,10 +51,13 @@ semantics.publish();
 | `list` | 由行组成的列表 | | |
 | `listitem` | 一行 | `position` | `list` |
 | `scrollbar` | 视口的滚动位置 | `range`（必填）、`orientation`、`controls`、`disabled` | |
+| `slider` | 范围内的一个值 | `range`（必填）、`orientation`、`disabled` | |
 | `dialog` | 对话框 | `modal` | |
 | `textbox` | 未处于编辑状态的文本框 | `value`、`multiline`、`disabled` | |
 
-每个节点都有 `bounds`，还可以有 `name`、`hidden`、`focused` 和 `order`。除 `group`、`radiogroup`、`listbox`、`list` 和 `listitem` 外，名称必填。`image`、`text`、`button`、`checkbox`、`switch`、`radio`、`option`、`scrollbar` 和 `textbox` 被当作一个整体朗读，内部不能再有节点。
+每个节点都有 `bounds`，还可以有 `name`、`hidden`、`focused` 和 `order`。除 `group`、`radiogroup`、`listbox`、`list` 和 `listitem` 外，名称必填。`image`、`text`、`button`、`checkbox`、`switch`、`radio`、`option`、`scrollbar`、`slider` 和 `textbox` 被当作一个整体朗读，内部不能再有节点。
+
+`slider` 默认沿文字方向横放，除非 `orientation` 为 `'vertical'`；`scrollbar` 默认竖立在它滚动的内容旁边，除非为 `'horizontal'`。滑动条在获得焦点后由[它的按键](ui-controls.md#按键)移动，所以它的节点接受 `onFocus`，不需要激活。
 
 角色不具有的状态会被拒绝，这样错误在写下时就能发现。被拒绝的描述抛出 `UI_SEMANTICS_DESCRIPTION`，其 `cause` 指明节点和字段，例如 `sound: checked`。
 
@@ -192,7 +195,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 
 ## 本次未包含
 
-- 首批控件集合之外的角色：菜单、标签页、滑块、树、表格、标题和实时区域。
+- 首批控件集合之外的角色：菜单、标签页、树、表格、标题和实时区域。
 - 描述文字、错误文字，以及用一个节点为另一个节点命名。
 - 托管 UI 的叶子和层对应的节点由应用自己添加，用 [`semanticBoxOf`](#托管-ui-的盒与层) 度量。虚拟列表的行有[辅助对象](#托管虚拟列表)。
 - 可多选的列表，以及按网格排列的行。

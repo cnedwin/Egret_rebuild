@@ -2,7 +2,7 @@
 
 [English](../../en/docs/ui-controls.md) | 简体中文
 
-`@egret/engine/ui` 有七个控件，各自保存玩家操作的一样东西的状态：虚拟摇杆、按钮、悬停、开关、多选一、滚动位置，以及文本框。它们属于 M3.4，[#90](https://github.com/cnedwin/Egret_rebuild/issues/90)。
+`@egret/engine/ui` 有八个控件，各自保存玩家操作的一样东西的状态：虚拟摇杆、按钮、悬停、开关、多选一、范围内的一个值、滚动位置，以及文本框。它们属于 M3.4，[#90](https://github.com/cnedwin/Egret_rebuild/issues/90)。
 
 这些控件对看不见它们的人来说是什么，由[语义树](ui-semantics.md)描述，它读取的是同一份状态。
 
@@ -15,6 +15,7 @@
 | `createHoverControl` | 是否悬停 | 鼠标或手写笔在目标或其后代上 |
 | `createToggleControl` | 是否选中 | 一次激活使其翻转 |
 | `createSelectionGroup` | 若干键中被选中的一个 | 激活某一项，或在各项之间移动 |
+| `createRangeControl` | 范围内的一个值 | 按在轨道上、从那里拖动，或调用 |
 | `createScrollControl` | 视口某一轴的偏移 | 滚轮、拖动滚动条滑块，或直接调用 |
 | `createTextFieldControl` | 文本框的文字，以及是否正在编辑 | 一次激活在它上方打开编辑器 |
 
@@ -73,6 +74,29 @@ const level = createSelectionGroup({
 在某一项上完成一次按下会选中它。`select(key)` 按名称做同样的事，`next()`、`previous()`、`first()` 和 `last()` 在可用的项之间移动选择。它们都返回选择是否发生了变化。移动越过任一端时会绕回，除非 `wrap` 为 false。什么都没选中时，`next()` 从第一个可用项开始，`previous()` 从最后一个开始。
 
 被禁用的项会被移动跳过，并拒绝按下和 `select`。禁用已选中的项后它仍保持选中，就像被禁用的已选单选按钮一样。对整个组调用 `setEnabled(false)` 会拒绝一切选择方式。未知的键以 `UI_CONTROL_UNKNOWN_ITEM` 拒绝。
+
+## 范围内的一个值
+
+```js
+import { createControlKeys, createRangeControl } from '@egret/engine/ui';
+
+const volume = createRangeControl({
+  input, target: track, length: 120, min: 0, max: 100, step: 5, value: settings.volume,
+  onChange: value => { settings.volume = value; redraw(); },
+  onDragChange: () => redraw(),
+});
+keyboard.registerTarget({ id: 'volume', target: track });
+createControlKeys({ keyboard, target: track, kind: 'range', control: volume, page: 4 });
+```
+
+这是滑动条：范围内的一个值，例如音量、比例或数量。`target` 是轨道。按在轨道上，值就移到按下的位置；同一个触点随后拖动它，离开轨道也继续，直到松开。拖动期间第二个触点被拒绝。应用根据 `value` 或 `fraction` 绘制轨道和滑块，`fraction` 是该值在范围中所占的份额，从 0 到 1。
+
+- **轨道**按 `target` 自己的坐标读取，所以轨道被移动或缩放，或者位于被缩放的对象之内，都不需要额外处理。`length` 是轨道的长度，`start` 是它开始的位置，不写时为 0。`axis: 'y'` 是竖直的轨道，值向上增大。
+- **取值。**范围从 `min` 到 `max`，不写时为 0 和 100。可取的值是 `min` 以及从它起每隔一个 `step` 的值，`step` 不写时为 1；远端始终是一个可取的值，即使整数步到不了那里。落在两个值之间的数取较近的一个，正好在中间时取较大的一个。
+- **`setValue(n)`** 由应用设置值，控件被禁用时也可以设置，并把这个数归到范围内可取的值上。`stepBy(steps)`、`toMin()` 和 `toMax()` 供按键和脚本调用，控件被禁用时不起作用。它们都返回值是否改变，只有改变时才通知 `onChange(value, previous)`。
+- **`dragging`** 从按下到松开期间为 true，并通过 `onDragChange` 报告，这样滑块可以画成被按住的样子。禁用或销毁控件会结束拖动。
+
+它的按键与原生滑动条相同，列在[按键](#按键)一节。对看不到它的人来说，它是带有 `range` 的 [`slider`](ui-semantics.md)。
 
 ## 滚动位置
 
@@ -142,11 +166,13 @@ const keys = createControlKeys({ keyboard, target: button, kind: 'action', contr
 | `'toggle'` | 空格、回车 | 松开时：`toggle()` |
 | `'textField'` | 空格、回车 | 松开时：`edit()` |
 | `'selection'` | 方向键、Home、End | 按下时，按住期间重复：`next()`、`previous()`、`first()`、`last()` |
+| `'range'` | 方向键、Page Up、Page Down、Home、End | 按下时，按住期间重复：`stepBy(1)` 或 `stepBy(-1)`、`stepBy(page)` 或 `stepBy(-page)`、`toMin()`、`toMax()` |
 | `'scroll'` | 所在轴的方向键、Page Up、Page Down、Home、End | 按下时，按住期间重复：`line()`、`page()`、`toStart()`、`toEnd()` |
 | `'movement'` | 方向键和 W A S D 键位 | 按住期间：按当前按住的键调用 `setDirection(x, y)` |
 
 - **激活等到松开。**因此打开文本框的那个键不会被输入进去，按住时不断重复的键也只激活一次。键按住期间 `keys.pressed` 为 true，并且已通过 `onPressChange` 报告，所以按住的键可以和按下一样绘制：`control.pressed || keys.pressed`。按住期间失去焦点，或页面失去焦点，这次按住就此结束，不产生激活。同一时间只有一个键在激活。
 - **多选一**可以用 `orientation: 'horizontal'` 或 `'vertical'`，把与它垂直的方向键留给外面。即使在不回绕的一端，它的键也会被接管，与原生选项组一样，因此页面不会在它下面滚动。
+- **范围**用右方向键和上方向键增大，用左方向键和下方向键减小，每次一步。Page Up 和 Page Down 移动 `page` 步，不写时为十步。`orientation` 把与它垂直的方向键留给外面。即使在两端，它的键也会被接管，与原生滑动条一样，因此页面不会在它下面滚动。
 - **滚动**只在按键确实移动了它时才接管该键。到头以后，按键继续交给外层视口或页面，与滚轮一致。
 - **移动**把按住的键相加。相反的键互相抵消，斜向不会更快。`keys: 'arrows'` 或 `'wasd'` 只绑定其中一组。字母指的是键盘上的位置而不是字符，所以在任何键盘布局上都是同样的四个键。
 - **下方已接管的键，上方不再处理。**更靠近焦点的显示对象已经接管的键会被绑定跳过，所以滚动视口里的按钮、视口里的视口都各自得到自己的键。
@@ -183,19 +209,21 @@ const name = selectUiSkin(theme.skins.button, {
 | [`tests/ui-scroll-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-scroll-control.test.mjs)，13 项 | 真实 Engine 上的滚动位置：范围、滚轮单位、嵌套视口、滑块及其拖动，以及严格 TypeScript 消费者 |
 | [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs)，7 个场景 | 无头 Chromium 软件 WebGL2 的真实页面：鼠标、触摸和按键通过自动化协议注入，其中包括按住一个键、按住期间失去焦点，以及每种状态实际绘制出的颜色。同一文件另有四个场景检查[语义投射](ui-semantics.md) |
 | [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs)，9 个场景 | 真实页面中的滚动控件：滚轮、交还给页面、拖动滑块，以及它的按键和按键交还给页面 |
+| [`tests/ui-range-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-range-control.test.mjs)，11 项 | 真实 Engine 上的范围内的值：按下、拖动及其两端、第二个触点、内缩的、竖直的和被缩放的轨道、远端不在整数步上的范围的取值、步进、被禁用的控件、经键盘输入送达的按键、语义节点，以及严格 TypeScript 消费者 |
 | [`tests/ui-control-keys.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-control-keys.test.mjs)，16 项 | 真实 Engine 上的按键绑定，使用键盘输入和六种控件：按住、重复、失去焦点、快捷键、嵌套目标、销毁、出错的监听器，以及严格 TypeScript 使用方 |
 | [`tests/ui-skin-states.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-skin-states.test.mjs)，6 项 | 皮肤给出的名称：每个状态单独成立、每两个状态同时成立、缺失的名称、应用自己的顺序、被拒绝的参数，以及严格 TypeScript 使用方 |
 | [`tests/ui-text-field.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-text-field.test.mjs)，17 项 | 真实 Engine 上的文本框，使用测试自备的编辑器：会话、草稿、长度上限、共用编辑器、出错的编辑器和监听器、语义节点，以及以平台文字输入为编辑器的严格 TypeScript 使用方 |
 | [`examples/ui-text-field/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-text-field/verify.mjs)，6 个场景 | 无头 Chromium 软件 WebGL2 真实页面中的两个文本框：通过浏览器协议驱动的输入法组字、键盘、一个文本框把编辑器交给另一个、无障碍树、禁用，以及手机配置 |
-| [`examples/ui-settings/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/verify.mjs)，8 个场景 | 把控件、按键、文本框、两套主题、托管列表、模态层和语义放在一起的[一个界面](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/README.zh-CN.md)，在无头 Chromium 的软件 WebGL2 中：只用键盘、按下、输入法组字、主题在一帧内切换、模态卡片、辅助技术的请求，以及手机配置 |
+| [`examples/ui-settings/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/verify.mjs)，9 个场景 | 把控件、按键、文本框、两套主题、托管列表、模态层和语义放在一起的[一个界面](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/README.zh-CN.md)，在无头 Chromium 的软件 WebGL2 中：只用键盘、按下、输入法组字、主题在一帧内切换、模态卡片、辅助技术的请求，以及手机配置。其中一个场景针对滑动条：按下、拖过轨道两端、它的每个按键、按住的键、无障碍树得到的数值，以及手指拖动 |
 
-向悬停、开关和多选一的构建产物逐个写入了二十九个错误，单元测试全部发现。向滚动控件写入的三十二个错误中发现了三十个，其余两个不改变调用者能看到的任何行为。向文本框控件写入的 114 个运算符错误中发现了 112 个，其余两个只是省去一次循环的捷径，不改变任何结果。向按键绑定写入的 100 个运算符错误全部被发现，向皮肤名称选择写入的 22 个也全部被发现。
+向悬停、开关和多选一的构建产物逐个写入了二十九个错误，单元测试全部发现。向滚动控件写入的三十二个错误中发现了三十个，其余两个不改变调用者能看到的任何行为。向文本框控件写入的 114 个运算符错误中发现了 112 个，其余两个只是省去一次循环的捷径，不改变任何结果。向按键绑定写入的 100 个运算符错误全部被发现，向皮肤名称选择写入的 22 个也全部被发现。向范围控件写入的 95 个运算符错误中发现了 94 个，剩下的一个不改变任何结果，因为正好落在远端的一步无论如何都是远端。向范围按键写入的 15 个错误全部发现。
 
 ## 尚未完成
 
 - 没有人操作过示例。所有输入都是注入的。
 - 按键绑定是用无头 Chromium 在美式布局下的按键运行的。没有运行其他键盘布局、实体键盘、游戏手柄，也没有运行读屏软件自己的按键命令。
-- 绑定按从左到右的阅读方向：右方向键是 `next()`。从右到左的选项组由应用自行绑定。
+- 绑定按从左到右的阅读方向：右方向键是 `next()`，在滑动条上是增大。从右到左的选项组或滑动条由应用自行绑定。
+- 滑动条在获得焦点后通过它的按键移动，读屏软件也是这样移动 ARIA 滑动条的。一些手机辅助技术会发送指定数值的请求，这种请求没有传递。
 - 这些控件没有在硬件 GPU、WebGPU、已安装的 Edge、Safari、Firefox 和真实手机上运行。
 - [语义投射](ui-semantics.md)为这些控件提供角色、名称和状态，并对照无头 Chromium 的无障碍树做了检查。没有运行任何读屏软件或其他辅助技术。
 - 手指不能平移滚动视口：这种手势及其与按下操作的仲裁仍在 #90。

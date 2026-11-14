@@ -32,8 +32,8 @@ const page:BrowserSemanticsOptions={semantics,canvas,width:480,height:300,label:
 const browser:BrowserSemantics=createBrowserSemantics(page);
 const container:HTMLElement=browser.container,element:HTMLElement|undefined=browser.elementOf('sound'),projected:'active'|'closed'=browser.state;void container;void element;void projected;
 browser.sync();browser.dispose();node.remove();semantics.dispose();
-// @ts-expect-error a role is one of the first control set
-semantics.add({id:'a',role:'slider',describe:()=>({bounds})});
+// @ts-expect-error a role is one the tree knows
+semantics.add({id:'a',role:'tab',describe:()=>({bounds})});
 // @ts-expect-error a node says how it is read
 semantics.add({id:'a',role:'button'});
 // @ts-expect-error a description has its bounds

@@ -4,7 +4,7 @@
  * control set of the UI, and each role is projected to the page in one known way.
  */
 export type SemanticRole = 'group' | 'image' | 'text' | 'button' | 'checkbox' | 'switch' | 'radiogroup' | 'radio'
-  | 'listbox' | 'option' | 'list' | 'listitem' | 'scrollbar' | 'dialog' | 'textbox';
+  | 'listbox' | 'option' | 'list' | 'listitem' | 'scrollbar' | 'slider' | 'dialog' | 'textbox';
 /** What assistive technology may ask of a node: its activation, or the keyboard focus. */
 export type SemanticAction = 'activate' | 'focus';
 export type SemanticChecked = boolean | 'mixed';
@@ -54,7 +54,7 @@ export interface SemanticDescription {
   readonly modal?: boolean;
   /** `textbox`. */
   readonly multiline?: boolean;
-  /** `scrollbar`. */
+  /** `scrollbar` and `slider`. */
   readonly range?: SemanticRange;
   readonly orientation?: SemanticOrientation;
   /** `scrollbar`: the id of the node it scrolls, which must be published with it. */

@@ -89,7 +89,7 @@ test('SM04 a node is refused where its role means nothing',()=>{
  assert.throws(()=>semantics.add({id:'group',role:'group',describe:()=>({bounds:box()})}),coded('UI_SEMANTICS_DUPLICATE'));
  const describe=()=>({bounds:box()});
  for(const options of [null,[],'x',{id:'',role:'group',describe},{id:'a'.repeat(129),role:'group',describe},{id:'a\0',role:'group',describe},{id:1,role:'group',describe},
-  {id:'a',role:'slider',describe},{id:'a',role:'toString',describe},{id:'a',role:'group'},{id:'a',role:'group',describe,parent:''},{id:'a',role:'group',describe,onActivate:1},{id:'a',role:'group',describe,onFocus:'x'}])
+  {id:'a',role:'tab',describe},{id:'a',role:'toString',describe},{id:'a',role:'group'},{id:'a',role:'group',describe,parent:''},{id:'a',role:'group',describe,onActivate:1},{id:'a',role:'group',describe,onFocus:'x'}])
   assert.throws(()=>semantics.add(options),coded('UI_SEMANTICS_OPTIONS'));
  assert.equal(semantics.size,4);
  for(const [id,role,parent] of [['r','radio','group'],['o','option','box'],['i','listitem','list'],['t','text','i']])semantics.add({id,role,parent,describe});
@@ -103,8 +103,8 @@ test('SM04 a node is refused where its role means nothing',()=>{
 
 test('SM04b every role holds nodes or is read as one thing, and is named where a reader needs a name',()=>{
  const holds=['group','radiogroup','listbox','list','listitem','dialog'],unnamed=['group','radiogroup','listbox','list','listitem'];
- const inside={radio:'radiogroup',option:'listbox',listitem:'list'},needs={checkbox:{checked:false},switch:{checked:false},radio:{checked:false},option:{selected:false},scrollbar:{range:{now:0,min:0,max:0}}};
- const roles=['group','image','text','button','checkbox','switch','radiogroup','radio','listbox','option','list','listitem','scrollbar','dialog','textbox'];
+ const inside={radio:'radiogroup',option:'listbox',listitem:'list'},needs={checkbox:{checked:false},switch:{checked:false},radio:{checked:false},option:{selected:false},scrollbar:{range:{now:0,min:0,max:0}},slider:{range:{now:0,min:0,max:0}}};
+ const roles=['group','image','text','button','checkbox','switch','radiogroup','radio','listbox','option','list','listitem','scrollbar','slider','dialog','textbox'];
  for(const role of roles){
   const {semantics,state,add}=tree();
   if(inside[role])add('holder',inside[role]);

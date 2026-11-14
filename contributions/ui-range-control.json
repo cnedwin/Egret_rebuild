@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/ui/rangeControl.ts",
+      "originRole": "First-party state of one value out of a range for a slider an application draws, over the events of the existing contact input; independently authored with AI assistance; Apache-2.0. The behaviour follows common platform conventions for sliders and no third-party source or dependency.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-range-control.test.mjs",
+      "originRole": "First-party behaviour tests of the range control on a genuine Engine with the contact input, the keyboard input and the semantic tree; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/ui-range-control.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the range control; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/ui-range-control.ts",
+      "originRole": "First-party strict TypeScript consumer of the range control, its keys and its semantic node, with six refused misuses; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}
