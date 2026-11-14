@@ -14,23 +14,9 @@ Years later, as times change and technology advances, many developers continue t
 
 **浏览器试玩。** 体验用新白鹭引擎制作的游戏，合集内提供在线试玩链接。 [游戏试玩合集](https://github.com/cnedwin/PortedGamesEgret)
 
-## 当前白鹭引擎
-
-白鹭是面向 Web 游戏的开源 TypeScript 引擎。显示、事件与资源接口配合 WebGPU 和 WebGL2 共享渲染，支持 2D 动画与复杂界面。可选 World3D 提供独立 3D 渲染与物理。一体化 AI 辅助创作及更多原生和小游戏宿主已列入路线图。 [World3D 契约](knowledge-base/Cns/docs/world3d.md)
-
-**工程预览阶段。** 可从公开示例开始体验，并查阅对应契约了解适用平台、功能与验收范围。工作区包为 private 0.0.0。
-
-| 领域 | 主干已有能力 | 仍需完成 |
-| --- | --- | --- |
-| 渲染与资源 | WebGPU／WebGL2 共享渲染、有序准备、资源组及选定设备恢复路径。历史固定 M1.2 全脏 Engine p95 中位数为 5.3 ms，目标为 8 ms。 | 更广泛的宿主／设备验收和剩余 [M1.2 帧节奏目标](https://github.com/cnedwin/Egret_rebuild/issues/55) |
-| 内容与动画 | PNG、多页图集、序列帧和字体构建。可选 Spine JSON 支持共享渲染、有界跳转／重放和播放保留替换，包含已支持的混合状态。 | 更广的 Spine 参考、导出器及纹理变体，以及真机生命周期验收 |
-| UI 与文字 | 变高列表、主题控件、键盘导航和语义投影。多语言多样式段落、共享特效、弹出层／模态层和可选原生编辑。 | 真人输入法与辅助技术、最新控件的硬件和手机验证，以及更广文字与场景验收 |
-| 3D | [可选 World3D](knowledge-base/Cns/docs/world3d.md) 支持 glTF、光照与阴影、后处理、动画、文字、自动实例化和加速拾取。物理预览包含形状扫掠、组合刚体、分片求解和玩法辅助组件。 | 更多资产、设备性能和工程创作整合 |
-| 集成 | [换装工作室](examples/outfit-studio/README.zh-CN.md)可在运行中的浏览器内打开与导出工程。引擎包已在干净工程中完成软件 WebGL2 浏览器冒烟检查。 | 工程打开的稳定性和移动端验证、正式混合场景验收及预览交接 |
-
-[Android 真机观察](knowledge-base/Cns/docs/android-device-validation.md)覆盖已测试手机上的特定组件和混合场景。设备、输入及性能的验收范围见[当前能力图](knowledge-base/Cns/docs/core-progress.md)。
-
 ## 运行示例
+
+**开始做自己的游戏。** 复制[起步示例](examples/starter/README.zh-CN.md)：一百行代码，包含 Host、Engine、舞台、输入和帧循环。[该引哪个入口](knowledge-base/Cns/docs/entry-points.md)列出每件事需要 `@egret/engine` 的哪个入口。
 
 使用 **Node.js 26.7.0** 和 **pnpm 11.25.0**，在仓库根目录运行：
 
@@ -47,6 +33,22 @@ Years later, as times change and technology advances, many developers continue t
 地图、物理、音频、存档、解包、KTX2 和多语言可按需启用，详见[第三方集成](integrations/README.zh-CN.md)。
 
 开发时要在屏幕上查看帧耗时、共享帧统计和卡顿记录，详见[性能监控](devtools/README.zh-CN.md)。它只在调试模式显示。
+
+## 当前白鹭引擎
+
+白鹭是面向 Web 游戏的开源 TypeScript 引擎。显示、事件与资源接口配合 WebGPU 和 WebGL2 共享渲染，支持 2D 动画与复杂界面。可选 World3D 提供独立 3D 渲染与物理。一体化 AI 辅助创作及更多原生和小游戏宿主已列入路线图。 [World3D 契约](knowledge-base/Cns/docs/world3d.md)
+
+**工程预览阶段。** 可从公开示例开始体验，并查阅对应契约了解适用平台、功能与验收范围。工作区包为 private 0.0.0。
+
+| 领域 | 主干已有能力 | 仍需完成 |
+| --- | --- | --- |
+| 渲染与资源 | WebGPU／WebGL2 共享渲染、有序准备、资源组及选定设备恢复路径。历史固定 M1.2 全脏 Engine p95 中位数为 5.3 ms，目标为 8 ms。 | 更广泛的宿主／设备验收和剩余 [M1.2 帧节奏目标](https://github.com/cnedwin/Egret_rebuild/issues/55) |
+| 内容与动画 | PNG、多页图集、序列帧和字体构建。可选 Spine JSON 支持共享渲染、有界跳转／重放和播放保留替换，包含已支持的混合状态。 | 更广的 Spine 参考、导出器及纹理变体，以及真机生命周期验收 |
+| UI 与文字 | 变高列表、主题控件、键盘导航和语义投影。多语言多样式段落、共享特效、弹出层／模态层和可选原生编辑。 | 真人输入法与辅助技术、最新控件的硬件和手机验证，以及更广文字与场景验收 |
+| 3D | [可选 World3D](knowledge-base/Cns/docs/world3d.md) 支持 glTF、光照与阴影、后处理、动画、文字、自动实例化和加速拾取。物理预览包含形状扫掠、组合刚体、分片求解和玩法辅助组件。 | 更多资产、设备性能和工程创作整合 |
+| 集成 | [换装工作室](examples/outfit-studio/README.zh-CN.md)可在运行中的浏览器内打开与导出工程。引擎包已在干净工程中完成软件 WebGL2 浏览器冒烟检查。 | 工程打开的稳定性和移动端验证、正式混合场景验收及预览交接 |
+
+[Android 真机观察](knowledge-base/Cns/docs/android-device-validation.md)覆盖已测试手机上的特定组件和混合场景。设备、输入及性能的验收范围见[当前能力图](knowledge-base/Cns/docs/core-progress.md)。
 
 ## 开发与社区参与
 
