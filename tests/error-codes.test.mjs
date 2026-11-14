@@ -82,7 +82,10 @@ test('EC05 the sentence of a message is in the language that was set, and the co
     assert.equal(new egret.EgretError('ZZ_NOT_A_CODE').message, 'ZZ_NOT_A_CODE');
     // Put together from an area and an ending, like the English one.
     assert.equal(describeErrorCode('TWEEN_NOT_STARTED'), '缓动还没有开始。');
-    assert.match(describeErrorCode('TWEEN_NOT_STARTED', 'en'), /not been started/);
+    assert.equal(describeErrorCode('TWEEN_NOT_STARTED', 'en'), 'A tween has not been started.');
+    // An area that begins a sentence begins with a capital, and one inside it does not.
+    assert.equal(describeErrorCode('AUDIO_CLOSED', 'en'), 'The audio mixer was closed and takes nothing more.');
+    assert.equal(describeErrorCode('AUDIO_OPTIONS_INVALID', 'en'), 'The options given to the audio mixer are not valid: one is missing, of the wrong type or out of range.');
     assert.throws(() => setErrorLanguage('fr'), TypeError);
     assert.equal(getErrorLanguage(), 'zh');
   } finally { setErrorLanguage('en'); }

@@ -23,7 +23,7 @@ test('BG01 what is not a game is refused before a Host is made', async () => {
     { ...good, update: 1 }, { ...good, onError: 'no' }, { ...good, pointer: 1 }, { ...good, keyboard: 'yes' }, { ...good, stats: 1 }, { ...good, autoStart: 0 }, { ...good, fit: 'fill' }, { ...good, fitTo: 'body' }])
     await assert.rejects(createBrowserGame(bad), coded('BROWSER_GAME_OPTIONS_INVALID'));
   // The message says what the code means.
-  await assert.rejects(createBrowserGame({}), /^EgretError: BROWSER_GAME_OPTIONS_INVALID: The options given to createBrowserGame are not valid/);
+  await assert.rejects(createBrowserGame({}), /^EgretError: BROWSER_GAME_OPTIONS_INVALID: The options given to the browser game are not valid/);
 });
 
 test('BG02 the panel lies over its canvas and shows what a frame holds and how busy the Host is', async () => {
@@ -66,4 +66,10 @@ test('BG03 what is not a panel or a sample is refused', () => {
   assert.throws(() => panel.sample(null), coded('BROWSER_STATS_OPTIONS_INVALID'));
   assert.throws(() => panel.sample({ now: NaN }), coded('BROWSER_STATS_OPTIONS_INVALID'));
   panel.dispose();
+});
+
+test('BG04 a strict consumer compiles against the entry with the calls a game makes, and seven misuses are refused', async () => {
+  const { spawnSync } = await import('node:child_process');
+  const result = spawnSync(process.execPath, ['node_modules/typescript/bin/tsc', '--project', 'tests/types/game.json', '--pretty', 'false'], { cwd: new URL('..', import.meta.url), encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stdout + result.stderr);
 });

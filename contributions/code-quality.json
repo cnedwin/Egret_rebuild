@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "tests/types/game.ts", "originRole": "First-party strict consumer of the browser game entry, the motion chain and the new display members; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/types/game.json", "originRole": "First-party compiler configuration of the browser game consumer; independently authored with AI assistance; Apache-2.0."}
+  ],
+  "documents": []
+}

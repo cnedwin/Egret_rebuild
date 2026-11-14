@@ -5310,7 +5310,7 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
 }
 // Browser game: one optional browser entry. It is made of other entries, never of their implementation modules, and
 // loads a Host's entry only when that backend is chosen. No other entry has it.
-const gameTypes=['BrowserGame','BrowserGameBackend','BrowserGameOptions','BrowserStatsPanel','BrowserStatsPanelOptions','BrowserStatsSample','BrowserStatsSnapshot'],gameValues=['createBrowserGame','createBrowserStatsPanel'];
+const gameTypes=['BrowserGame','BrowserGameBackend','BrowserGameFit','BrowserGameLabel','BrowserGameLabelOptions','BrowserGameOptions','BrowserStatsPanel','BrowserStatsPanelOptions','BrowserStatsSample','BrowserStatsSnapshot'],gameValues=['createBrowserGame','createBrowserStatsPanel'];
 for(const [file,types] of [['packages/engine/web/game.ts',gameTypes],['packages/engine/dist/web/game.js',[]],['packages/engine/dist/web/game.d.ts',gameTypes]]){
  const surface=mouseExports(uiRead(file),file);
  if(!mouseSame(surface.values,gameValues)||!mouseSame(surface.types,types))throw new Error('Browser game: exact browser entry exports mismatch: '+file);

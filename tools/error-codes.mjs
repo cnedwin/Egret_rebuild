@@ -20,9 +20,9 @@ function* sources(directory) {
   }
 }
 /**
- * The codes the sources name whole: the first argument of `new EgretError(`, and every other capital literal that the
- * runtime has a sentence for, since most parts throw through a helper of their own. A code that a part puts together
- * from its area and a short name while running is not found here; its message carries its sentence all the same.
+ * The codes of the sources: the first argument of `new EgretError(`, every other capital literal that the runtime has
+ * a sentence for, since most parts throw through a helper of their own, and the codes such a helper puts together from
+ * the part's name and a short name written at its call. A short name that is only known while running is not found.
  */
 export function collectErrorCodes() {
   const codes = new Set();
@@ -31,6 +31,12 @@ export function collectErrorCodes() {
     const text = fs.readFileSync(path.join(root, file), 'utf8');
     for (const match of text.matchAll(/new EgretError\(\s*['"]([A-Z][A-Z0-9_]*[A-Z0-9])['"]/g)) codes.add(match[1]);
     for (const match of text.matchAll(/['"]([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+)['"]/g)) if (describeErrorCode(match[1], 'en') !== '') codes.add(match[1]);
+    // A part that throws through a helper of its own, which puts the part's name before a short one: the helper is the
+    // function on whose line the prefix is joined to its argument, and the codes are its calls with a short name written out.
+    for (const helper of text.matchAll(/(?:const|let|function)\s+(\w+)\b[^\n]{0,200}?new EgretError\(\s*['"]([A-Z][A-Z0-9_]*_)['"]\s*\+\s*\w+\s*[,)]/g)) {
+      const calls = new RegExp('\\b' + helper[1] + '\\(\\s*[\'"]([A-Z][A-Z0-9_]*[A-Z0-9])[\'"]', 'g');
+      for (const call of text.matchAll(calls)) codes.add(helper[2] + call[1]);
+    }
   }
   return [...codes].sort();
 }
