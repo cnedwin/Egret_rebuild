@@ -33,10 +33,10 @@ interface Projected { readonly id: string; readonly role: SemanticRole; readonly
 interface Pair { readonly target: EventTarget; readonly type: string; readonly listener: EventListener; readonly options: AddEventListenerOptions; }
 
 /** Roles a native button carries well: it is activated by a click from any assistive technology. */
-const pressable: readonly SemanticRole[] = ['button', 'checkbox', 'switch', 'radio', 'option', 'tab'];
+const pressable: readonly SemanticRole[] = ['button', 'checkbox', 'switch', 'radio', 'option', 'tab', 'menuitem'];
 const aria: Readonly<Partial<Record<SemanticRole, string>>> = {
   group: 'group', image: 'img', checkbox: 'checkbox', switch: 'switch', radiogroup: 'radiogroup', radio: 'radio', listbox: 'listbox',
-  option: 'option', list: 'list', listitem: 'listitem', scrollbar: 'scrollbar', slider: 'slider', progressbar: 'progressbar', tablist: 'tablist', tab: 'tab', tabpanel: 'tabpanel', dialog: 'dialog', textbox: 'textbox',
+  option: 'option', list: 'list', listitem: 'listitem', scrollbar: 'scrollbar', slider: 'slider', progressbar: 'progressbar', tablist: 'tablist', tab: 'tab', tabpanel: 'tabpanel', menu: 'menu', menuitem: 'menuitem', dialog: 'dialog', textbox: 'textbox',
 };
 const ownedSurfaces = new WeakSet<object>();
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
@@ -169,6 +169,7 @@ export function createBrowserSemantics(options: BrowserSemanticsOptions): Browse
       write(item, 'aria-expanded', text(node.expanded));
       write(item, 'aria-modal', node.modal === true ? 'true' : undefined);
       write(item, 'aria-multiline', node.multiline === true ? 'true' : undefined);
+      write(item, 'aria-multiselectable', node.multiple === true ? 'true' : undefined);
       write(item, 'aria-valuenow', text(node.range?.now));
       write(item, 'aria-valuemin', text(node.range?.min));
       write(item, 'aria-valuemax', text(node.range?.max));

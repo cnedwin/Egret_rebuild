@@ -4,6 +4,38 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## The popups of two examples before they first open — 2026-11-14
+
+In `examples/ui-dropdown` and `examples/ui-context-menu` the popup was registered as a layer only when it first opened. Until then its root was an ordinary root: it was drawn in the top left corner of the stage and its rows were keyboard stops. Both examples now register it at the start, closed, and the button of the menu example is no keyboard stop while it is disabled. The semantic tree was right throughout, which is why the checks had passed; they now read the corner of the screen and walk the Tab order before anything is opened. Examples only. Part of #90. [Guide](docs/ui-layers.md#lifetime-and-example)
+
+## A menu of actions for a row — 2026-11-14
+
+The semantic tree gains the roles `menu` and `menuitem`, and `createUiListSemantics` takes `role: 'menu'`, so a managed list in a popup is told to assistive technology as a menu whose items act or say that they cannot. A new example, `examples/ui-context-menu`, hangs such a menu from a row of a scrolling roster and opens it with the right mouse button, the Menu key, Shift+F10, a button or a request. Checked in Node and in headless Chromium with software WebGL2. Part of #90. [Guide](docs/ui-semantics.md#a-menu) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-context-menu/README.md)
+
+## A focused editor row under a late font and a theme change — 2026-11-14
+
+A CPU-level integrated case checks that the rows of a managed list, the focus, the editor's text geometry and the semantic tree stay in step while the font of a focused editor row arrives late, the theme changes, or both happen with a new value. Tests only; the native element and real fonts remain a browser run. Part of #87. [Guide](docs/native-text-editing.md#verification-and-remaining-qualification)
+
+## Runs of rows with Shift, and everyone with Control+A — 2026-11-14
+
+In the multiple selection example a movement key held with Shift chooses every member from the row it leaves to the row it reaches, and Control+A chooses everyone who is here. Example only. Part of #90. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-multi-select/README.md)
+
+## The profiles of the settings example are pointed at and held — 2026-11-14
+
+The rows of the profile list in `examples/ui-settings` are lit under a pointer and darker while held, in both themes, through the display object a row binding is given. Example only. Part of #90. [Guide](docs/ui-controls.md#rows-of-a-managed-list)
+
+## Several rows of a list chosen at once — 2026-11-14
+
+A list box of the semantic tree takes `multiple`, and `createUiListSemantics` passes it on, so a list in which several rows are chosen is told to assistive technology as one. A new example, `examples/ui-multi-select`, chooses any number of forty members by a press, by Space on the focused row or by a request, and sends them out; a member who is away is a disabled option. Part of #90. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-multi-select/README.md)
+
+## A scroll bar a finger can drag, on a managed list — 2026-11-14
+
+The roster of the dropdown example has a scroll bar whose thumb is dragged by a mouse or a finger, and a `scrollbar` node that names the list it scrolls. A finger still cannot pan the rows, which is a gesture; the thumb is how a phone reaches the rest of a list until then. Example and documentation only. Part of #90. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.md)
+
+## A row of a managed list is pointed at and held — 2026-11-14
+
+The binding of a row of a managed list is given `target`, the display object of its row. A hover control and an action control listen on it, so a row is lit under a pointer, darker while it is held, and activated by a completed press, as a drawn button is. The dropdown example paints its rows and its options this way. Part of #90. [Guide](docs/ui-controls.md#rows-of-a-managed-list)
+
 ## Tabs and progress bars — 2026-11-14
 
 The semantic tree has the roles `tablist`, `tab`, `tabpanel` and `progressbar`. A tab says whether it is selected and may name the panel it shows; a progress bar says how far its work has come, or that its length is not known. A new example, `examples/ui-tabs`, draws three tabs as one selection group and one keyboard stop, with a panel of progress bars. These roles are beyond the first control set of #90. Part of #90. [Guide](docs/ui-semantics.md#tabs-and-progress)

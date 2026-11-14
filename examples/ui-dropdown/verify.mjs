@@ -43,6 +43,8 @@ const JOBS = ['idle', 'herbs', 'forge', 'guard', 'study'], JOB_NAMES = { idle: '
 const HEROES = ['青锋', '白露', '玄霜', '赤霄', '紫电'];
 const rowSpot = number => [120, 44 + (number - 1) * 30 + 14], chipSpot = number => [300, 44 + (number - 1) * 30 + 8], empty = [460, 300];
 const optionSpot = (popup, job) => [popup.x + 130, popup.y + JOBS.indexOf(job) * 26 + 13];
+// A place on a row between the name and the chip, where the paint of the row itself shows.
+const rowPaint = number => [240, 44 + (number - 1) * 30 + 14];
 const itemName = (index, job = JOBS[index % 5]) => '弟子 ' + (index + 1) + ' ' + HEROES[index % 5] + '，' + JOB_NAMES[job];
 const key = async (page, name) => { await page.keyboard.press(name); await settle(page); };
 const click = async (page, place) => { await page.mouse.click(...await at(page, place)); await settle(page); };
@@ -63,7 +65,7 @@ const active = page => page.evaluate(() => {
   return element === null ? null : [element.getAttribute('role') ?? element.tagName.toLowerCase(), element.getAttribute('aria-label') ?? element.textContent];
 });
 const tree = page => page.locator('#surface').ariaSnapshot();
-const rosterLines = (names) => ['- application "Roster / 名册":', '  - list "名册 / Roster":', ...names.map(name => '    - listitem "' + name + '"')];
+const rosterLines = (names) => ['- application "Roster / 名册":', '  - list "名册 / Roster":', ...names.map(name => '    - listitem "' + name + '"'), '  - scrollbar "名册滚动 / Roster scroll"'];
 const jobLines = chosen => ['  - listbox "职务 / Job":', ...JOBS.map(job => '    - option "' + JOB_NAMES[job] + '"' + (job === chosen ? ' [selected]' : ''))];
 async function scenario(name, context, body) {
   const owned = await browser.newContext(context), page = await owned.newPage(), row = { name, status: 'INCOMPLETE', errors: [] };
@@ -87,8 +89,18 @@ const first = Array.from({ length: 8 }, (_, index) => itemName(index));
 await scenario('closed, the screen is a list of members and nothing else', desktop, async page => {
   assert.equal(await tree(page), rosterLines(first).join('\n'));
   const now = await read(page);
-  assert.deepEqual([now.open, now.opened, now.popup, now.rows.length, now.semantics.nodes, now.semantics.projection], [false, undefined, undefined, 8, 9, 'active']);
+  assert.deepEqual([now.open, now.opened, now.popup, now.rows.length, now.semantics.nodes, now.semantics.projection], [false, undefined, undefined, 8, 10, 'active']);
+  // The scroll bar says where the roster is, and names the list as what it scrolls.
+  assert.deepEqual(await page.evaluate(() => { const bar = document.querySelector('[role=scrollbar]'), list = document.getElementById(bar.getAttribute('aria-controls'));
+    return [bar.getAttribute('aria-valuenow'), bar.getAttribute('aria-valuemin'), bar.getAttribute('aria-valuemax'), bar.getAttribute('aria-orientation'), list.getAttribute('role'), list.getAttribute('aria-label')]; }),
+    ['0', '0', '960', 'vertical', 'list', '名册 / Roster']);
   assert.deepEqual(await page.evaluate(() => [...document.querySelectorAll('[role=listitem]')].slice(0, 2).map(element => [element.getAttribute('aria-posinset'), element.getAttribute('aria-setsize')])), [['1', '40'], ['2', '40']]);
+  // The jobs were never opened: they are not drawn anywhere, and their options are not stops of the keyboard.
+  assert.deepEqual([await colour(page, [6, 6]), await colour(page, [100, 36])], ['161a22', '161a22']);
+  await page.focus('#scene'); const stops = [];
+  for (let count = 0; count < 3; count++) { await key(page, 'Tab'); stops.push(String((await read(page)).focus)); }
+  assert.equal(stops.some(stop => stop.startsWith('jobs:')), false, stops.join(' '));
+  assert.equal((await read(page)).failure, undefined);
 });
 
 await scenario('a press opens the jobs under the chip of its row, and a press on a job gives it to the member', desktop, async page => {
@@ -102,6 +114,21 @@ await scenario('a press opens the jobs under the chip of its row, and a press on
   assert.deepEqual([now.open, now.opened, now.popup, now.jobs.slice(0, 4)], [false, undefined, undefined, ['idle', 'guard', 'forge', 'guard']]);
   assert.equal(await tree(page), rosterLines(first.map((name, index) => index === 1 ? itemName(1, 'guard') : name)).join('\n'));
   assert.equal(await colour(page, chipSpot(2)), '3d4a63');
+  // A row that is pointed at is lit, and darker while it is held; the rows beside it are as they were.
+  await page.mouse.move(...await at(page, rowSpot(4))); await settle(page); now = await read(page);
+  assert.deepEqual([now.hovered, await colour(page, rowPaint(4)), await colour(page, rowPaint(3)), await colour(page, rowPaint(5))], [['m3'], '454c5e', '2b2f3a', '2b2f3a']);
+  await page.mouse.down(); await settle(page); assert.equal(await colour(page, rowPaint(4)), '232730');
+  // The release is the activation. With the pointer away again the row is as it was.
+  await page.mouse.up(); await settle(page); assert.deepEqual([(await read(page)).open, (await read(page)).opened], [true, 'm3']);
+  await click(page, empty); now = await read(page);
+  assert.deepEqual([now.open, now.hovered, await colour(page, rowPaint(4))], [false, [], '343a48']);
+  // The jobs are pointed at and held in the same way.
+  await click(page, rowSpot(1)); now = await read(page);
+  await page.mouse.move(...await at(page, optionSpot(now.popup, 'forge'))); await settle(page);
+  assert.deepEqual([(await read(page)).hoveredOption, await colour(page, optionSpot(now.popup, 'forge')), await colour(page, optionSpot(now.popup, 'idle'))], [['forge'], '56689a', '2f8f6b']);
+  await page.mouse.down(); await settle(page); assert.equal(await colour(page, optionSpot(now.popup, 'forge')), '27314a');
+  await page.mouse.up(); await settle(page); now = await read(page);
+  assert.deepEqual([now.open, now.jobs[0]], [false, 'forge']);
   // The job it has now is the one marked when the jobs open again; choosing the same job changes nothing.
   await click(page, rowSpot(2)); now = await read(page);
   assert.equal(await colour(page, optionSpot(now.popup, 'guard')), '2f8f6b');
@@ -175,12 +202,46 @@ await scenario('the wheel scrolls the roster, the jobs follow their row, and clo
   // Scrolled until the row has left the roster, the jobs are closed and gone from the tree.
   await page.mouse.wheel(0, 100); await settle(page); now = await read(page);
   assert.ok(now.offset === 140 && !now.rows.some(row => row.key === 'm2'));
+  // The pointer has not moved, and the row that came under it is the one that is lit.
+  const under = now.rows.find(row => row.y <= rowSpot(5)[1] && rowSpot(5)[1] < row.y + row.height).key;
+  assert.deepEqual([now.hovered, await colour(page, rowPaint(5))], [[under], '454c5e']);
   assert.deepEqual([now.open, now.opened, now.popup], [false, undefined, undefined]);
   assert.equal((await tree(page)).includes('listbox'), false);
   assert.equal(await page.evaluate(() => scrollY), 0, 'the wheel that scrolled the roster did not scroll the page');
   // The rows that show now open their own jobs.
   await click(page, rowSpot(1)); now = await read(page);
   assert.equal(now.opened, now.rows.find(row => row.y <= rowSpot(1)[1] && rowSpot(1)[1] < row.y + row.height).key);
+});
+
+await scenario('the thumb of the scroll bar is dragged, and the jobs of a row that was out of reach open', desktop, async page => {
+  let now = await read(page);
+  // The roster shows a fifth of its length, so the thumb is a fifth of the track: 48 of 240, with 192 to travel for 960.
+  assert.deepEqual([now.thumb, now.offset], [{ x: 446, y: 44, width: 14, height: 48 }, 0]);
+  const grip = [453, 68];
+  await page.mouse.move(...await at(page, grip)); await settle(page); assert.equal(await colour(page, grip), '7385b8', 'the thumb is pointed at');
+  await page.mouse.down(); await settle(page); assert.deepEqual([(await read(page)).dragging, await colour(page, grip)], [true, '9aa7c4']);
+  // Sixty along the track is three hundred of the roster: ten rows.
+  await page.mouse.move(...await at(page, [453, 128]), { steps: 6 }); await settle(page); now = await read(page);
+  assert.deepEqual([now.offset, now.thumb.y, now.rows[0].key, now.rows.length], [300, 104, 'm10', 8]);
+  assert.equal(await page.getByRole('scrollbar').getAttribute('aria-valuenow'), '300');
+  // The drag goes on beside the track and stops at its ends.
+  await page.mouse.move(...await at(page, [300, 400]), { steps: 6 }); await settle(page); now = await read(page);
+  assert.deepEqual([now.offset, now.thumb.y, now.rows.at(-1).key], [960, 236, 'm39']);
+  await page.mouse.move(...await at(page, [453, 20]), { steps: 6 }); await settle(page); assert.equal((await read(page)).offset, 0);
+  await page.mouse.move(...await at(page, [453, 116]), { steps: 6 }); await page.mouse.up(); await settle(page); now = await read(page);
+  assert.deepEqual([now.dragging, now.offset, now.rows[0].key], [false, 240, 'm8']);
+  await page.mouse.move(...await at(page, [453, 200])); await settle(page); assert.equal((await read(page)).offset, 240, 'a pointer that is not down drags nothing');
+  // A row that could not be reached before opens its jobs.
+  await click(page, rowSpot(2)); now = await read(page);
+  assert.deepEqual([now.open, now.opened], [true, 'm9']);
+  // With the jobs open, a press on the thumb is a press outside them: it closes them and drags nothing.
+  const drag = async () => { const from = (await read(page)).thumb.y + 10;
+    await page.mouse.move(...await at(page, [453, from])); await page.mouse.down(); await page.mouse.move(...await at(page, [453, from + 110]), { steps: 6 }); await page.mouse.up(); await settle(page); };
+  await drag(); now = await read(page);
+  assert.deepEqual([now.open, now.opened, now.offset], [false, undefined, 240]);
+  await drag(); now = await read(page);
+  assert.ok(now.offset > 240 && !now.rows.some(row => row.key === 'm9'));
+  assert.equal(await page.evaluate(() => scrollY), 0);
 });
 
 await scenario('a request of assistive technology opens the jobs and chooses one', desktop, async page => {
@@ -206,6 +267,19 @@ await scenario('on a phone a finger opens the jobs and chooses', { ...devices['P
   await tap(optionSpot(now.popup, 'study')); now = await read(page);
   assert.deepEqual([now.open, now.jobs[3]], [false, 'study']);
   await tap(rowSpot(4)); await tap(empty); assert.equal((await read(page)).open, false);
+  // A finger does not pan the rows, but it drags the thumb, which is how the rest of the roster is reached on a phone.
+  const session = await page.context().newCDPSession(page), touch = async (type, place) => {
+    const [x, y] = await at(page, place);
+    await session.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y, id: 1 }] }); await settle(page);
+  };
+  await touch('touchStart', [453, 68]); assert.equal((await read(page)).dragging, true);
+  await touch('touchMove', [453, 100]); await touch('touchMove', [440, 164]); now = await read(page);
+  assert.deepEqual([Math.round(now.offset), now.rows[0].key], [480, 'm16']);
+  await touch('touchEnd', [440, 164]); assert.equal((await read(page)).dragging, false);
+  await session.detach();
+  await tap(rowSpot(3)); now = await read(page);
+  assert.deepEqual([now.open, now.opened], [true, 'm18']);
+  await tap(optionSpot(now.popup, 'guard')); assert.equal((await read(page)).jobs[18], 'guard');
 });
 
 fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');

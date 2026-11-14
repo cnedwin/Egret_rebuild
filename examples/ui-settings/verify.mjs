@@ -166,6 +166,13 @@ await scenario('a press chooses a profile, and a setting changed by hand is no l
   await move(page, 'sound'); assert.equal(hex(await colour(page, 'sound')), '3fae84');
   await move(page, 'easy'); assert.equal(hex(await colour(page, 'paint')), '56689a');
   await move(page, 'empty'); assert.equal(hex(await colour(page, 'paint')), '3d4a63');
+  // A profile is lit under the pointer and darker while it is held; the one that is chosen keeps its paint.
+  const side = number => [450, rowSpot(number)[1]];
+  await move(page, rowSpot(7)); now = await read(page);
+  assert.deepEqual([now.hoveredRows, hex(await colour(page, side(7))), hex(await colour(page, side(6))), hex(await colour(page, side(5)))], [['p6'], '454c5e', '343a48', '2f8f6b']);
+  await page.mouse.down(); await settle(page); assert.equal(hex(await colour(page, side(7))), '232730');
+  await page.mouse.up(); await settle(page); now = await read(page);
+  assert.deepEqual([now.loaded, hex(await colour(page, side(7))), hex(await colour(page, side(5)))], ['p6', '2f8f6b', '2b2f3a']);
 });
 
 await scenario('the name takes a composition of an input method', desktop, async page => {

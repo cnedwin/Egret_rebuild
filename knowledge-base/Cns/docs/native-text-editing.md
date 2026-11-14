@@ -46,6 +46,8 @@ createBrowserEditorFontProvider 将同一不可变 FontContentLoader 根传给�
 
 原[结果汇总](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/verification-summary.json)保留每后端 20 项桌面记录。[Android 补充验证](android-native-text-editing.md)记录最终桌面每后端固定 21 项及响应式八项、核心与最终版本相同但示例为前序字节的三星实际软键盘观察，以及两后端最终准确源码的 Android 生命周期检查。明确区分源码复用、事件可信属性和受控注入。
 
+CPU 层面的一个用例 [`tests/ui-editor-row-integration.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-editor-row-integration.test.mjs) 让虚拟列表中的编辑器行持有焦点，同时字体迟到、主题改变，或者两者与新的文本值一起发生。四项测试检查各行的高度和位置、逻辑焦点和键盘焦点、编辑器的文字几何，以及行内带有文本框节点的[语义树](ui-semantics.md)保持一致：字体到达之前，已提交的内容不发生任何移动；主题改变会重新绑定每一行，但读屏用户得到的内容没有任何位移；被后来的请求超过的准备以 `UI_STALE` 被拒绝。字体由一个字面量段落提供方代替。原生输入元素、真实字体和浏览器投射不在这个文件中；整合用例的这一部分仍需在浏览器中运行。
+
 其他中日韩／死键输入法、iPhone、真人手指、系统剪贴板和辅助技术继续开放。随附 Noto 集合没有合格 Emoji fallback；删除／文本恢复不代表 Emoji 渲染资格。Native SDK／小游戏宿主需要各自适配器。M1.2 的 10.3 ms 对 8 ms 目标和完整 M3／M4 保持 OPEN。现有触摸贡献者的范围不变。
 
 协议依据 [Input Events Level 2](https://www.w3.org/TR/input-events-2/)、[UI Events](https://www.w3.org/TR/uievents/)、[HTML 文本控件选区](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#textFieldSelection) 和 [CSS Font Loading](https://drafts.csswg.org/css-font-loading/) 独立实现。现有已署名 CanvasKit／Noto 产物及许可未变；标准参考不等于浏览器／IME 验收。

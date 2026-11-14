@@ -4,6 +4,38 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 两个示例的弹出层在第一次打开之前 — 2026-11-14
+
+`examples/ui-dropdown` 和 `examples/ui-context-menu` 中的弹出层原先只在第一次打开时才注册为层。在那之前，它的根只是一个普通的根：被绘制在舞台左上角，它的行也是键盘停靠点。现在两个示例都在开始时以关闭状态注册它，菜单示例的按钮在被禁用期间也不再是键盘停靠点。语义树自始至终是正确的，所以原有的检查没有发现问题；现在检查会在任何东西打开之前读取屏幕角落的颜色，并走一遍 Tab 顺序。只涉及示例。属于 #90。[指南](docs/ui-layers.md#生命周期与示例)
+
+## 行的动作菜单 — 2026-11-14
+
+语义树新增 `menu` 和 `menuitem` 两个角色，`createUiListSemantics` 接受 `role: 'menu'`，于是弹出层里的托管列表会作为菜单告知辅助技术，其中的菜单项可以执行，或说明自己不能执行。新示例 `examples/ui-context-menu` 把这样的菜单挂在滚动名册的行上，用鼠标右键、菜单键、Shift+F10、一个按钮或一次请求打开。已在 Node 和无头 Chromium 的软件 WebGL2 上检查。属于 #90。[指南](docs/ui-semantics.md#菜单) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-context-menu/README.zh-CN.md)
+
+## 字体迟到和主题改变之下持有焦点的编辑器行 — 2026-11-14
+
+一个 CPU 层面的整合用例检查：持有焦点的编辑器行在字体迟到、主题改变，或两者与新的文本值同时发生时，托管列表的各行、焦点、编辑器的文字几何和语义树保持一致。只涉及测试；原生输入元素和真实字体仍需在浏览器中运行。属于 #87。[指南](docs/native-text-editing.md#验证与剩余资格)
+
+## 用 Shift 选中一段行，用 Control+A 选中所有人 — 2026-11-14
+
+在多选示例中，按住 Shift 再按移动键，会选中从离开的那一行到到达的那一行之间的所有成员；Control+A 选中所有在场的人。只涉及示例。属于 #90。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-multi-select/README.zh-CN.md)
+
+## 设置示例的存档行可以悬停和按住 — 2026-11-14
+
+`examples/ui-settings` 中存档列表的行在指针下面会变亮，按住时变暗，两套主题都是如此，做法是使用行绑定得到的显示对象。只涉及示例。属于 #90。[指南](docs/ui-controls.md#托管列表的行)
+
+## 在列表中同时选中多行 — 2026-11-14
+
+语义树的列表框接受 `multiple`，`createUiListSemantics` 会把它传下去，所以可以选中多行的列表会被如实告知辅助技术。新示例 `examples/ui-multi-select` 可以通过按下、在获得焦点的行上按空格或辅助技术的请求，从四十名成员中选出任意多人并派出；已经外出的成员是被禁用的选项。属于 #90。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-multi-select/README.zh-CN.md)
+
+## 托管列表上手指可以拖动的滚动条 — 2026-11-14
+
+下拉示例的名册有了滚动条，它的滑块可以用鼠标或手指拖动，另有一个 `scrollbar` 节点指明它所滚动的列表。手指仍然不能平移各行，那属于手势；在此之前，手机通过滑块到达列表的其余部分。只涉及示例和文档。属于 #90。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.zh-CN.md)
+
+## 托管列表的行可以悬停和按住 — 2026-11-14
+
+托管列表中一行的绑定会得到 `target`，即这一行的显示对象。悬停控件和动作控件在它上面监听，所以行在指针下面会变亮，按住时变暗，完成一次按下就被激活，与自绘按钮一样。下拉示例用这种方式绘制它的行和选项。属于 #90。[指南](docs/ui-controls.md#托管列表的行)
+
 ## 标签页与进度条 — 2026-11-14
 
 语义树新增 `tablist`、`tab`、`tabpanel` 和 `progressbar` 角色。标签说明自己是否被选中，并可以指明它显示的面板；进度条说明工作进行到哪里，或者工作量未知。新示例 `examples/ui-tabs` 把三个标签画成一个选择组和一个键盘停靠点，其中一个面板里有进度条。这些角色不在 #90 的首批控件集合之内。属于 #90。[指南](docs/ui-semantics.md#标签页与进度)

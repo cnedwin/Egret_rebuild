@@ -21,7 +21,7 @@
 
 使用 Playwright 1.62.1 和已安装的 Edge，运行 `node examples/outfit-studio/verify.mjs <Playwright 包绝对路径> <新的绝对输出目录>`。同批验证覆盖两个真实浏览器后端、鼠标与键盘、名称拒绝、拖出原行再释放、配色失败与重试、导出重开和退出清理。每个后端采集三次冷 HTTP 启动，截止到首帧完成并允许交互。记录的传输是本地回环未压缩 HTTP。[验证摘要](verification-summary.json)
 
-打开工程的验证运行 `node examples/outfit-studio/verify-open.mjs <Playwright 包绝对路径> <新的绝对输出目录>`。每个后端通过页面导出两次，通过页面的文件字段打开导出文件，让一次加载失败，取消一次，再重试，提交七个必须被拒绝的文件，并在固定桌面场景打开一个精简导出。固定桌面场景还会替换八个角色的配色、重新打开原工程，并在故意延迟首帧时检查取消按钮不可用。第三个参数 `software` 改用 Playwright 自带的浏览器和软件渲染，代替已安装的 Edge。2026-11-14 以这种方式在无头 Chromium 153 上通过了 WebGL2 各项：精简场景八项，固定场景一项。后续在搭载 NVIDIA RTX 5090 Laptop GPU 的 Windows 上使用 Edge 157，两后端各通过十项。Fold7 各项待测。
+打开工程的验证运行 `node examples/outfit-studio/verify-open.mjs <Playwright 包绝对路径> <新的绝对输出目录>`。每个后端通过页面导出两次，通过页面的文件字段打开导出文件，让一次加载失败，取消一次，再重试，提交七个必须被拒绝的文件，并在固定桌面场景打开一个精简导出。固定桌面场景还会替换八个角色的配色、重新打开原工程，并在故意延迟首帧时检查取消按钮不可用。第三个参数 `software` 改用 Playwright 自带的浏览器和软件渲染，代替已安装的 Edge。2026-11-14 以这种方式在无头 Chromium 153 上通过了 WebGL2 各项：精简场景八项，固定场景一项。后续在搭载 NVIDIA RTX 5090 Laptop GPU 的 Windows 上使用 Edge 157，两后端各通过十项。Galaxy Z Fold7 真机使用 Chrome 157 与 Adreno 830，在 X-MTouch/1 档位下每个后端各通过五项。点按按钮可取消延迟导入，同一文件可重试，八个角色打开原工程后保留稳定 ID。提交后，打开按钮禁用至首帧结束。测试将浏览器文件对象交给页面输入框，Android 系统文件选择器留待单独验证。
 
 ## 固定场景配置
 

@@ -17,7 +17,7 @@ const role:SemanticRole='switch';
 const options:SemanticNodeOptions={id:'sound',role,parent:'panel',describe:()=>({bounds:semanticBoundsOf(target),name:'Sound',checked:toggle.checked}),onActivate:()=>toggle.toggle(),onFocus:()=>{}};
 const node:SemanticNode=semantics.add(options);
 // Tabs with the panel of the one that is selected, and work that is under way.
-const tabRoles:readonly SemanticRole[]=['tablist','tab','tabpanel','progressbar'];void tabRoles;
+const tabRoles:readonly SemanticRole[]=['tablist','tab','tabpanel','progressbar','menu','menuitem'];void tabRoles;
 semantics.add({id:'tab',role:'tab',parent:'tabs',describe:()=>({bounds:semanticBoundsOf(target),name:'Members',selected:true,controls:'pane',position:{index:1,size:3}})});
 semantics.add({id:'work',role:'progressbar',describe:()=>({bounds:semanticBoundsOf(target),name:'Training',range:{now:30,min:0,max:100}})});
 const identity:readonly [string,SemanticRole,string|undefined,boolean]=[node.id,node.role,node.parent,node.attached];void identity;
@@ -37,7 +37,7 @@ const browser:BrowserSemantics=createBrowserSemantics(page);
 const container:HTMLElement=browser.container,element:HTMLElement|undefined=browser.elementOf('sound'),projected:'active'|'closed'=browser.state;void container;void element;void projected;
 browser.sync();browser.dispose();node.remove();semantics.dispose();
 // @ts-expect-error a role is one the tree knows
-semantics.add({id:'a',role:'menu',describe:()=>({bounds})});
+semantics.add({id:'a',role:'grid',describe:()=>({bounds})});
 // @ts-expect-error a node says how it is read
 semantics.add({id:'a',role:'button'});
 // @ts-expect-error a description has its bounds

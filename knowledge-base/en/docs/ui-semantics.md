@@ -46,7 +46,7 @@ The set is the first control set of the UI. A role that is not listed is refused
 | `switch` | An on or off switch | `checked` (required), `disabled` | |
 | `radiogroup` | One choice of several | `disabled` | |
 | `radio` | One of those choices | `checked` (required), `disabled`, `position` | `radiogroup` |
-| `listbox` | A list with one selection | `disabled` | |
+| `listbox` | A list with a selection: one option, or several with `multiple` | `multiple`, `disabled` | |
 | `option` | An item of that list | `selected` (required), `disabled`, `position` | `listbox` |
 | `list` | A list of rows | | |
 | `listitem` | A row | `position` | `list` |
@@ -56,12 +56,14 @@ The set is the first control set of the UI. A role that is not listed is refused
 | `tablist` | A row of tabs | `orientation`, `disabled` | |
 | `tab` | One of those tabs | `selected` (required), `controls`, `position`, `disabled` | `tablist` |
 | `tabpanel` | What a tab shows | | |
+| `menu` | A menu of actions | `orientation`, `disabled` | |
+| `menuitem` | One of those actions | `disabled`, `position` | `menu` |
 | `dialog` | A dialog | `modal` | |
 | `textbox` | A text field that is not being edited | `value`, `multiline`, `disabled` | |
 
-Every node has `bounds`, and may have `name`, `hidden`, `focused` and `order`. A name is required except on `group`, `radiogroup`, `listbox`, `list`, `listitem` and `tablist`. `image`, `text`, `button`, `checkbox`, `switch`, `radio`, `option`, `scrollbar`, `slider`, `progressbar`, `tab` and `textbox` are read as one thing and hold no nodes.
+Every node has `bounds`, and may have `name`, `hidden`, `focused` and `order`. A name is required except on `group`, `radiogroup`, `listbox`, `list`, `listitem`, `tablist` and `menu`. `image`, `text`, `button`, `checkbox`, `switch`, `radio`, `option`, `scrollbar`, `slider`, `progressbar`, `tab`, `menuitem` and `textbox` are read as one thing and hold no nodes.
 
-A `slider` and a `tablist` lie along the line unless `orientation` says `'vertical'`; a `scrollbar` stands beside what it scrolls unless it says `'horizontal'`. A slider is moved by [its keys](ui-controls.md#keys) once it holds the focus, so its node takes `onFocus` and needs no activation.
+A `slider` and a `tablist` lie along the line unless `orientation` says `'vertical'`; a `scrollbar` stands beside what it scrolls, and the items of a `menu` stand one under another, unless it says `'horizontal'`. A slider is moved by [its keys](ui-controls.md#keys) once it holds the focus, so its node takes `onFocus` and needs no activation.
 
 State a role does not have is refused, so a mistake is found when it is made. A refused description throws `UI_SEMANTICS_DESCRIPTION`, and its `cause` names the node and the field: `sound: checked`.
 
@@ -97,7 +99,7 @@ semantics.publish(rows.sync());
 `root` is the root `createUiRoot` returned and `list` is the id of the virtual list in its tree. `sync()` reads what the root committed: it removes the nodes of the rows that no longer show, moves those that stayed, adds those that show now, and returns the committed revision, which is what `publish` takes. A commit alone changes nothing in the tree.
 
 - **Places.** A row's bounds are the part of it the list shows, on the stage. Its `position` is its index in the whole list and the number of records, and its `order` is its index.
-- **Roles.** `'list'` publishes list items, which may hold other nodes; `'listbox'` publishes options, which need a name from `describeRow`. An option that does not say is not selected.
+- **Roles.** `'list'` publishes list items, which may hold other nodes; `'listbox'` publishes options, which need a name from `describeRow`. An option that does not say is not selected. With `multiple: true` the list box says that several options may be selected at once; each option still says whether it is, and the application keeps the set of selected keys, because the list has rows only for what shows. The [multiple selection example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-multi-select) does this. `'menu'` publishes menu items, which need a name as options do and are never selected.
 - **Ids.** The list node is `id`, by default the id of the root, a slash and the id of the list. A row adds a slash and its key, and `rows.rowId(key)` says it.
 - **Focus.** The row that holds the focus of the root is the focused node. With `focusable: true` a row can be asked to take the focus, which needs a root with a keyboard. A row that scrolls away loses the focus in the root and its node in the tree together, so a projection never names an element that does not exist.
 - **Nodes inside a row.** `onRowAdded(key, id)` is called after the node of a row was added. Nodes added there with `parent: id` go when the row does, and the callback is called again when the row is realized again.
@@ -157,6 +159,22 @@ The tabs are [one keyboard stop](ui-controls.md#keys) with the keys of a selecti
 
 A `progressbar` reports and takes no action. With a `range` it says how far the work has come; without one it says that work is under way and its length is not known.
 
+### A menu
+
+A menu of actions for something is a `menu`, and each action a `menuitem` that is activated as a button is. An item that has nothing to do says `disabled` and stays in the menu, so the menu reads the same wherever it is opened. Nothing in a menu is selected.
+
+A menu is usually a popup of the [layer manager](ui-layers.md) that holds a managed list, so it is a list with `role: 'menu'` that is [hidden](#boxes-and-layers-of-the-managed-ui) until its layer is open. A button that opens it says `expanded` while it is:
+
+```js
+const items = createUiListSemantics({ semantics, root: menu, list: 'actions', id: 'menu', role: 'menu', name: 'Actions', focusable: true,
+  hidden: () => !layers.snapshot().openStack.includes('menu'),
+  describeRow: key => ({ name: names[key], disabled: !can(key, member) }), onActivateRow: act });
+semantics.add({ id: 'open', role: 'button', onActivate: open,
+  describe: () => ({ name: 'Actions', bounds: buttonBounds, expanded: layers.snapshot().openStack.includes('menu') }) });
+```
+
+The keys are the application's, as everywhere: the arrow keys move the focus among the items and wrap, Enter or Space activates, and Escape closes through the layer, which gives the focus back to where it was. The [row menu example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-context-menu) opens one from the right mouse button, the Menu key, Shift+F10 and a button. Submenus, and items that are checked, are not in this slice.
+
 ### Actions
 
 `semantics.perform(id, 'activate')` and `perform(id, 'focus')` call `onActivate` and `onFocus` of the node as it was last published. It returns false, and calls nothing, when the node is not published, was removed since, is disabled or inert, or has no handler for the action. An id that was removed and used again is not performed until it is published again.
@@ -182,7 +200,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 `width` and `height` are the logical size the bounds are given in. The projection puts an invisible container after the canvas, laid over it, with one element for each published node, and follows every publication. It writes only what changed.
 
 - **The canvas keeps the keyboard.** The canvas gets `role="application"`, the label, and `aria-owns` naming the container, so the nodes are read as what is inside it. The node that is `focused` is named by `aria-activedescendant`. No element of the projection is a Tab stop: the keys of the application go on working exactly as they did.
-- **Elements.** `button`, `checkbox`, `switch`, `radio` and `option` are native buttons carrying their role. The rest are plain elements with a role, and `text` is its text. State is written as the ARIA attribute of that state: `aria-checked`, `aria-selected`, `aria-expanded`, `aria-disabled`, `aria-modal`, `aria-multiline`, `aria-valuenow` with its bounds, `aria-orientation`, `aria-controls`, `aria-posinset` and `aria-setsize`. The outermost inert element gets the `inert` attribute, and the page keeps everything under it away from every user.
+- **Elements.** `button`, `checkbox`, `switch`, `radio`, `option`, `tab` and `menuitem` are native buttons carrying their role. The rest are plain elements with a role, and `text` is its text. State is written as the ARIA attribute of that state: `aria-checked`, `aria-selected`, `aria-expanded`, `aria-disabled`, `aria-modal`, `aria-multiline`, `aria-multiselectable`, `aria-valuenow` with its bounds, `aria-orientation`, `aria-controls`, `aria-posinset` and `aria-setsize`. The outermost inert element gets the `inert` attribute, and the page keeps everything under it away from every user.
 - **Geometry.** Each element lies over the control it describes, so a reader's highlight and exploration by touch find it where it is drawn. The container holds logical units and one scale maps it onto the rectangle of the canvas. It follows a resize, a scroll and a change of the visual viewport. `projection.sync()` measures again after a change of layout that came with no event. While the canvas has no size the projection is hidden.
 - **Pointers go through.** The container takes no pointer. A mouse or a finger meets the canvas as before.
 - **Requests.** A click made of an element, the way an accessibility interface makes it, performs `activate`. A request to focus an element performs `focus`, and the focus of the page is given back to the canvas.
@@ -205,26 +223,28 @@ The projection adds no key handling. Keys arrive through the [keyboard input](ke
 
 | Check | Where | Result |
 | --- | --- | --- |
-| The tree: 19 cases | Node | Pass |
-| The projection against a stand-in for the page: 13 cases | Node | Pass |
+| The tree: 22 cases | Node | Pass |
+| The projection against a stand-in for the page: 16 cases | Node | Pass |
 | A strict TypeScript consumer of both entries, with nine refused misuses | Node | Pass |
 | The example page: the computed accessibility tree, the active descendant under Tab and the arrow keys, each element over its control, requests made of the elements, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 4 scenarios beside the 7 of the controls |
-| The rows of a managed list, a list that is hidden, the boxes of a root and a layer as a dialog: 15 cases on a genuine Engine, a genuine UI root and a genuine layer manager, with a strict TypeScript consumer and seven refused misuses | Node | Pass |
+| The rows of a managed list, a list that is hidden, a list box with several selections, a list as a menu, the boxes of a root and a layer as a dialog: 17 cases on a genuine Engine, a genuine UI root and a genuine layer manager, with a strict TypeScript consumer and seven refused misuses | Node | Pass |
 | [The list example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics): the list box the browser computes for 8 of 50,000 rows, the active descendant through recycled rows, a jump to row 40,000, a scroll away from the focus, requests made of the options, a scaled and scrolled page, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
 | [The tabs example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-tabs): the row of tabs and the one panel the browser computes, the relation from the selected tab to its panel, the values of progress bars, the active descendant on the selected tab, and requests made of tabs | Headless Chromium 153, software WebGL2, injected input | Pass, 5 scenarios |
-| [The dropdown example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-dropdown): a list box that is in the computed tree only while its popup is open, the active descendant moving from the row into the jobs and back, and requests made of rows and options | Headless Chromium 153, software WebGL2, injected input | Pass, 8 scenarios |
+| [The multiple selection example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-multi-select): a list box the browser computes as multiselectable, options selected and let go one by one, options that are disabled, runs chosen with Shift, and requests made of them | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
+| [The dropdown example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-dropdown): a list box that is in the computed tree only while its popup is open, the active descendant moving from the row into the jobs and back, requests made of rows and options, and a scroll bar that names the list it scrolls | Headless Chromium 153, software WebGL2, injected input | Pass, 9 scenarios |
+| [The row menu example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-context-menu): a menu that is in the computed tree only while it is open, with its disabled items, the button that says it is expanded, the active descendant moving from the row into the items and back, and requests made of the button and the items | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
 | The same example with a modal layer of the layer manager: the dialog and its buttons over the card, the list behind it absent from the tree the browser computes, Tab kept inside, a press beside the card reaching nothing, Escape, and the focus back on its row | Headless Chromium 153, software WebGL2, injected input | Pass, 2 scenarios |
 
 Not run: a screen reader, voice control, switch access or any other assistive technology; a person; Edge as installed; Firefox; Safari; a real phone, where exploration by touch depends on the platform's accessibility service; hardware GPUs and WebGPU. A passing accessibility tree is not proof that the UI is usable with a screen reader.
 
 Run a page check with `node examples/ui-controls/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> software`, or the same with `examples/ui-list-semantics/verify.mjs`. Without `software` it launches the installed Edge headed.
 
-Operator faults were written into the built list helper one at a time: 67, and the cases caught all of them.
+Operator faults were written into the built list helper one at a time: 79, and the cases caught all of them.
 
 ## Not in this slice
 
-- Roles beyond the first control set: menus, trees, grids, headings and live regions. A slider, tabs and a progress bar were added to it.
+- Roles beyond the first control set: trees, grids, headings and live regions. A slider, tabs, a progress bar and a menu of actions were added to it; a menu bar, submenus, and menu items that are checked were not.
 - Descriptions, error text and labelling one node by another.
 - Nodes for the leaves and the layers of the managed UI are the application's own, measured with [`semanticBoxOf`](#boxes-and-layers-of-the-managed-ui). The rows of a virtual list have [a helper](#a-managed-virtual-list).
-- A list with several selected rows, and rows in a grid.
+- Rows in a grid. Selecting a range of rows at once, as with Shift and the arrow keys, is the application's; the multiple selection example shows one way.
 - A projection of the native editor itself. The editor is its own element.

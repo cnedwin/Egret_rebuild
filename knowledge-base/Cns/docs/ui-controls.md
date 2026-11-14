@@ -46,6 +46,25 @@ const over = createHoverControl({ hover, target: button, onHoverChange: hovered 
 
 被禁用的控件不处于悬停。指针可能仍在它上面，重新启用时控件会发现它仍在那里。目标或某个后代在指针下方离开舞台时，控件仍会得知悬停结束：它除了监听目标上的事件，还跟随 `hover.observe`。
 
+### 托管列表的行
+
+[托管列表](ui-data-panel.md)中一行的绑定会得到 `context.target`，即这一行的显示对象。控件在它上面监听，与在其他对象上一样：
+
+```js
+bind(context) {
+  const pointed = createHoverControl({ hover, target: context.target, onHoverChange: repaint });
+  const held = createActionControl({ input, target: context.target, onActivate: () => open(context.key), onPressChange: repaint });
+  rows.set(context.key + ':' + context.bindingGeneration, { pointed, held });
+  return { content, measuredHeight };
+},
+unbind({ key, bindingGeneration }) {
+  const row = rows.get(key + ':' + bindingGeneration);
+  row.held.dispose(); row.pointed.dispose(); rows.delete(key + ':' + bindingGeneration);
+},
+```
+
+应在 `unbind` 中销毁这些控件。行是在根的一次提交中被回收的，它的悬停也在那时结束，所以负责重绘的回调应等到提交结束之后再执行，例如使用 `queueMicrotask`。列表滚动时静止不动的指针不会发出任何事件：提交之后调用 `hover.sync()`，来到指针下面的那一行就成为被指向的行。[下拉示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.zh-CN.md)包含了以上全部做法。
+
 ## 开关
 
 ```js
@@ -208,6 +227,7 @@ const name = selectUiSkin(theme.skins.button, {
 | --- | --- |
 | [`tests/ui-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-controls.test.mjs) | 真实 Engine 上的移动与动作 |
 | [`tests/ui-state-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-state-controls.test.mjs)，13 项 | 真实 Engine 上的悬停、开关和多选一，严格 TypeScript 消费者，以及导出 |
+| [`tests/ui-row-target.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-row-target.test.mjs)，4 项 | 真实 Engine 和真实 UI 根上，在行绑定得到的显示对象上使用悬停控件和动作控件：滚走的行、重新绑定的行，以及严格 TypeScript 消费者 |
 | [`tests/ui-scroll-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-scroll-control.test.mjs)，13 项 | 真实 Engine 上的滚动位置：范围、滚轮单位、嵌套视口、滑块及其拖动，以及严格 TypeScript 消费者 |
 | [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs)，7 个场景 | 无头 Chromium 软件 WebGL2 的真实页面：鼠标、触摸和按键通过自动化协议注入，其中包括按住一个键、按住期间失去焦点，以及每种状态实际绘制出的颜色。同一文件另有四个场景检查[语义投射](ui-semantics.md) |
 | [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs)，9 个场景 | 真实页面中的滚动控件：滚轮、交还给页面、拖动滑块，以及它的按键和按键交还给页面 |
