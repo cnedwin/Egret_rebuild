@@ -145,8 +145,11 @@ await scenario('the trees are a layer of their own that can be hidden', desktop,
 await scenario('in real time the keyboard walks the disciple', desktop, async page => {
   await page.focus('#scene');
   const before = await read(page);
-  await page.keyboard.down('KeyS'); await page.waitForTimeout(600); await page.keyboard.up('KeyS'); await page.waitForTimeout(300);
-  const after = await read(page);
+  // The key is held until the disciple has walked, however long a busy machine takes over each frame.
+  await page.keyboard.down('KeyS');
+  let after = before;
+  for (const end = Date.now() + 8000; after.hero.y - before.hero.y <= 30 && Date.now() < end;) { await page.waitForTimeout(50); after = await read(page); }
+  await page.keyboard.up('KeyS');
   assert.ok(after.hero.y - before.hero.y > 30, 'walked ' + (after.hero.y - before.hero.y));
 }, '?backend=webgl2');
 
