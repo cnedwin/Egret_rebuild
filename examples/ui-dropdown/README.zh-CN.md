@@ -23,6 +23,7 @@ node tools/serve-canvas.mjs
 - 打开职务列表后按在别处。它会关闭，而这次按下不会传到它后面的任何对象。
 - 点一下画布，然后只用键盘。Tab 进入名册，方向键、Page Up、Page Down、Home 和 End 在其中移动，回车或空格打开职务列表，焦点落在该成员现在的职务上。方向键、Home 和 End 在职务之间移动，回车选择，Escape 关闭，焦点回到这一行。
 - 打开职务列表后转动滚轮。名册滚动，职务列表跟随它所在的行；这一行离开名册后它就关闭。
+- 用鼠标或手指拖动滚动条的滑块。离开轨道后拖动仍然继续，到两端为止。
 
 ## 工作方式
 
@@ -34,8 +35,8 @@ node tools/serve-canvas.mjs
 | 弹出层 | `createUiLayerManager`。每次激活一行时，把职务注册为 `popup`，使用 `anchor: { root, target: { kind: 'row', listId, key }, align: 'end' }`，并把 `initialFocus` 设为该成员现在的职务，然后打开 |
 | 职务改变 | 给名册换一个新的数据源，其中这条记录的 `contentVersion` 不同：这一行被重新绑定，并保留焦点 |
 | 按键 | 每一行用 `createControlKeys` 处理回车和空格；方向键显示并聚焦下一行。`keyboard.tabStop` 让名册成为一个停靠点 |
-| 滚轮 | 使用悬停输入的 `createScrollControl`，由它设置列表的滚动偏移 |
-| 语义 | 两次 `createUiListSemantics`：名册是 `list`，职务是带有 `hidden: () => !open` 的 `listbox`，所以只有弹出层打开时它才在树中 |
+| 滚轮和滚动条 | `createScrollControl`，滚轮使用悬停输入，拖动使用 `thumb`。由它设置列表的滚动偏移，页面根据 `scroll.thumb` 绘制滑块 |
+| 语义 | 两次 `createUiListSemantics`：名册是 `list`，职务是带有 `hidden: () => !open` 的 `listbox`，所以只有弹出层打开时它才在树中。`scrollbar` 节点给出偏移，并用 `controls` 指明名册 |
 
 **层的变更在路由回调之外进行。**按下和按键是在输入自己的分发过程中到达的，层管理器在那里拒绝注册和发布。因此 `openFor` 和 `choose` 排在正在进行的提交之后运行，与发布使用同一条 promise 链。
 
@@ -49,6 +50,6 @@ node tools/serve-canvas.mjs
 node examples/ui-dropdown/verify.mjs <Playwright index.mjs 的绝对路径> <新的输出目录的绝对路径> [software]
 ```
 
-省略第三个参数时启动已安装的 Edge（有界面）。使用 `software` 时由 Playwright 自带的浏览器以无头方式和软件渲染运行。八个场景各写出一张截图和 `report.json`：职务列表关闭时浏览器计算出的树；按下后在职务框下面打开并按下选择，颜色从屏幕读取；弹出层伸到名册裁剪范围之下、出现在靠近底部的行上方、盖住后面的行；按在别处；只用键盘；滚轮滚动时职务列表跟随所在的行并在该行消失后关闭；辅助技术的请求；以及手机配置。它们在无头 Chromium 的软件 WebGL2 上通过。
+省略第三个参数时启动已安装的 Edge（有界面）。使用 `software` 时由 Playwright 自带的浏览器以无头方式和软件渲染运行。九个场景各写出一张截图和 `report.json`：职务列表关闭时浏览器计算出的树；按下后在职务框下面打开并按下选择，颜色从屏幕读取；弹出层伸到名册裁剪范围之下、出现在靠近底部的行上方、盖住后面的行；按在别处；只用键盘；滚轮滚动时职务列表跟随所在的行并在该行消失后关闭；用鼠标拖动滚动条的滑块；辅助技术的请求；以及手机配置。它们在无头 Chromium 的软件 WebGL2 上通过。
 
-输入是通过自动化协议注入的。没有运行真人操作、实体鼠标、滚轮、手指或键盘、读屏软件或其他辅助技术、硬件 GPU、WebGPU、Edge、Safari、Firefox 和真实手机。手指不能平移名册：平移属于手势，这里没有识别任何手势，所以在手机上不用键盘只能够到当前显示的行。
+输入是通过自动化协议注入的。没有运行真人操作、实体鼠标、滚轮、手指或键盘、读屏软件或其他辅助技术、硬件 GPU、WebGPU、Edge、Safari、Firefox 和真实手机。手指不能平移名册的行：平移属于手势，这里没有识别任何手势。在手机上通过拖动滑块到达名册的其余部分，手机场景用注入的触摸做了这件事。

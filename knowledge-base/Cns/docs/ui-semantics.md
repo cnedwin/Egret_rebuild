@@ -212,7 +212,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 | 托管列表的行、被隐藏的列表、根的盒，以及作为对话框的层：真实 Engine、真实 UI 根和真实层管理器上的 15 项，另有严格 TypeScript 使用方和七种被拒绝的误用 | Node | 通过 |
 | [列表示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics)：浏览器为 50,000 行中的 8 行计算出的列表框、穿过被回收行时的活动后代、跳到第 40,000 行、从焦点处滚走、对选项发出的请求、缩放并滚动后的页面、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
 | [标签页示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-tabs)：浏览器计算出的一排标签和唯一的面板、被选中标签到其面板的关系、进度条的数值、被选中标签上的活动后代，以及对标签提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，5 个场景 |
-| [下拉示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-dropdown)：只有弹出层打开时才出现在计算出的树中的列表框，活动后代从行移入职务列表再移回，以及对行和选项提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，8 个场景 |
+| [下拉示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-dropdown)：只有弹出层打开时才出现在计算出的树中的列表框，活动后代从行移入职务列表再移回，对行和选项提出的请求，以及指明自己所滚动列表的滚动条 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，9 个场景 |
 | 同一示例加上层管理器的模态层：对话框及其按钮与卡片重合、浏览器计算出的树中不含它后面的列表、Tab 留在对话框内、按下卡片旁边不触达任何对象、Escape，以及焦点回到原来的行 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，2 个场景 |
 
 未运行：读屏软件、语音控制、开关控制或任何其他辅助技术；真人操作；已安装的 Edge；Firefox；Safari；真实手机（触摸探索取决于平台的无障碍服务）；硬件 GPU 和 WebGPU。无障碍树通过检查，并不证明界面在读屏软件下可用。

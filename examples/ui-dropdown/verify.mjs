@@ -65,7 +65,7 @@ const active = page => page.evaluate(() => {
   return element === null ? null : [element.getAttribute('role') ?? element.tagName.toLowerCase(), element.getAttribute('aria-label') ?? element.textContent];
 });
 const tree = page => page.locator('#surface').ariaSnapshot();
-const rosterLines = (names) => ['- application "Roster / 名册":', '  - list "名册 / Roster":', ...names.map(name => '    - listitem "' + name + '"')];
+const rosterLines = (names) => ['- application "Roster / 名册":', '  - list "名册 / Roster":', ...names.map(name => '    - listitem "' + name + '"'), '  - scrollbar "名册滚动 / Roster scroll"'];
 const jobLines = chosen => ['  - listbox "职务 / Job":', ...JOBS.map(job => '    - option "' + JOB_NAMES[job] + '"' + (job === chosen ? ' [selected]' : ''))];
 async function scenario(name, context, body) {
   const owned = await browser.newContext(context), page = await owned.newPage(), row = { name, status: 'INCOMPLETE', errors: [] };
@@ -89,7 +89,11 @@ const first = Array.from({ length: 8 }, (_, index) => itemName(index));
 await scenario('closed, the screen is a list of members and nothing else', desktop, async page => {
   assert.equal(await tree(page), rosterLines(first).join('\n'));
   const now = await read(page);
-  assert.deepEqual([now.open, now.opened, now.popup, now.rows.length, now.semantics.nodes, now.semantics.projection], [false, undefined, undefined, 8, 9, 'active']);
+  assert.deepEqual([now.open, now.opened, now.popup, now.rows.length, now.semantics.nodes, now.semantics.projection], [false, undefined, undefined, 8, 10, 'active']);
+  // The scroll bar says where the roster is, and names the list as what it scrolls.
+  assert.deepEqual(await page.evaluate(() => { const bar = document.querySelector('[role=scrollbar]'), list = document.getElementById(bar.getAttribute('aria-controls'));
+    return [bar.getAttribute('aria-valuenow'), bar.getAttribute('aria-valuemin'), bar.getAttribute('aria-valuemax'), bar.getAttribute('aria-orientation'), list.getAttribute('role'), list.getAttribute('aria-label')]; }),
+    ['0', '0', '960', 'vertical', 'list', '名册 / Roster']);
   assert.deepEqual(await page.evaluate(() => [...document.querySelectorAll('[role=listitem]')].slice(0, 2).map(element => [element.getAttribute('aria-posinset'), element.getAttribute('aria-setsize')])), [['1', '40'], ['2', '40']]);
 });
 
@@ -203,6 +207,37 @@ await scenario('the wheel scrolls the roster, the jobs follow their row, and clo
   assert.equal(now.opened, now.rows.find(row => row.y <= rowSpot(1)[1] && rowSpot(1)[1] < row.y + row.height).key);
 });
 
+await scenario('the thumb of the scroll bar is dragged, and the jobs of a row that was out of reach open', desktop, async page => {
+  let now = await read(page);
+  // The roster shows a fifth of its length, so the thumb is a fifth of the track: 48 of 240, with 192 to travel for 960.
+  assert.deepEqual([now.thumb, now.offset], [{ x: 446, y: 44, width: 14, height: 48 }, 0]);
+  const grip = [453, 68];
+  await page.mouse.move(...await at(page, grip)); await settle(page); assert.equal(await colour(page, grip), '7385b8', 'the thumb is pointed at');
+  await page.mouse.down(); await settle(page); assert.deepEqual([(await read(page)).dragging, await colour(page, grip)], [true, '9aa7c4']);
+  // Sixty along the track is three hundred of the roster: ten rows.
+  await page.mouse.move(...await at(page, [453, 128]), { steps: 6 }); await settle(page); now = await read(page);
+  assert.deepEqual([now.offset, now.thumb.y, now.rows[0].key, now.rows.length], [300, 104, 'm10', 8]);
+  assert.equal(await page.getByRole('scrollbar').getAttribute('aria-valuenow'), '300');
+  // The drag goes on beside the track and stops at its ends.
+  await page.mouse.move(...await at(page, [300, 400]), { steps: 6 }); await settle(page); now = await read(page);
+  assert.deepEqual([now.offset, now.thumb.y, now.rows.at(-1).key], [960, 236, 'm39']);
+  await page.mouse.move(...await at(page, [453, 20]), { steps: 6 }); await settle(page); assert.equal((await read(page)).offset, 0);
+  await page.mouse.move(...await at(page, [453, 116]), { steps: 6 }); await page.mouse.up(); await settle(page); now = await read(page);
+  assert.deepEqual([now.dragging, now.offset, now.rows[0].key], [false, 240, 'm8']);
+  await page.mouse.move(...await at(page, [453, 200])); await settle(page); assert.equal((await read(page)).offset, 240, 'a pointer that is not down drags nothing');
+  // A row that could not be reached before opens its jobs.
+  await click(page, rowSpot(2)); now = await read(page);
+  assert.deepEqual([now.open, now.opened], [true, 'm9']);
+  // With the jobs open, a press on the thumb is a press outside them: it closes them and drags nothing.
+  const drag = async () => { const from = (await read(page)).thumb.y + 10;
+    await page.mouse.move(...await at(page, [453, from])); await page.mouse.down(); await page.mouse.move(...await at(page, [453, from + 110]), { steps: 6 }); await page.mouse.up(); await settle(page); };
+  await drag(); now = await read(page);
+  assert.deepEqual([now.open, now.opened, now.offset], [false, undefined, 240]);
+  await drag(); now = await read(page);
+  assert.ok(now.offset > 240 && !now.rows.some(row => row.key === 'm9'));
+  assert.equal(await page.evaluate(() => scrollY), 0);
+});
+
 await scenario('a request of assistive technology opens the jobs and chooses one', desktop, async page => {
   const ask = async (role, name, action) => { await page.getByRole(role, { name, exact: true }).evaluate((element, method) => element[method](), action); await settle(page); };
   await ask('listitem', itemName(4), 'click'); let now = await read(page);
@@ -226,6 +261,19 @@ await scenario('on a phone a finger opens the jobs and chooses', { ...devices['P
   await tap(optionSpot(now.popup, 'study')); now = await read(page);
   assert.deepEqual([now.open, now.jobs[3]], [false, 'study']);
   await tap(rowSpot(4)); await tap(empty); assert.equal((await read(page)).open, false);
+  // A finger does not pan the rows, but it drags the thumb, which is how the rest of the roster is reached on a phone.
+  const session = await page.context().newCDPSession(page), touch = async (type, place) => {
+    const [x, y] = await at(page, place);
+    await session.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y, id: 1 }] }); await settle(page);
+  };
+  await touch('touchStart', [453, 68]); assert.equal((await read(page)).dragging, true);
+  await touch('touchMove', [453, 100]); await touch('touchMove', [440, 164]); now = await read(page);
+  assert.deepEqual([Math.round(now.offset), now.rows[0].key], [480, 'm16']);
+  await touch('touchEnd', [440, 164]); assert.equal((await read(page)).dragging, false);
+  await session.detach();
+  await tap(rowSpot(3)); now = await read(page);
+  assert.deepEqual([now.open, now.opened], [true, 'm18']);
+  await tap(optionSpot(now.popup, 'guard')); assert.equal((await read(page)).jobs[18], 'guard');
 });
 
 fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
