@@ -554,7 +554,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       SharedMaterial2D:['SharedMaterialInput2D','SharedMaterial2D'],
       SharedGeometry2D:['SharedFloatArray2D','SharedIndexArray2D','SharedGeometryInput2D','SharedGeometry2D'],
       TextureViewRegion2D:['TextureViewRegionInput2D','TextureViewRegion2D'],
-      SharedRenderFrame2D:['SharedFrameProfile2D','SharedOutputAlpha2D','SharedFrameOptions2D','SharedPage2D','SharedRegion2D','SharedDrawState2D','SharedRectangleCommand2D','SharedImageCommand2D','SharedMeshCommand2D','SharedBarrierCommand2D','SharedEffect2D','SharedRenderCommand2D','SharedRenderFrame2D','SharedRenderHostAdapter'],
+      SharedRenderFrame2D:['SharedFrameProfile2D','SharedOutputAlpha2D','SharedFrameOptions2D','SharedPage2D','SharedRegion2D','SharedDrawState2D','SharedRectangleCommand2D','SharedImageCommand2D','SharedMeshCommand2D','SharedBarrierCommand2D','SharedEffect2D','SharedGlow2D','SharedRenderCommand2D','SharedRenderFrame2D','SharedRenderHostAdapter'],
     };
     const append=(file,text)=>write(file,(existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'')+text);
     for(const [leaf,names]of Object.entries(sharedTypes)) {

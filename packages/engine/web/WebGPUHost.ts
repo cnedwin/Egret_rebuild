@@ -17,7 +17,7 @@ import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js'
 import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatches2D.js';
 import { decodeSharedSRGB } from '../rendering/sharedColor2D.js';
 import { createSharedWebGPUPipeline, SHARED_BLENDS, SHARED_PIPELINE_KINDS } from './webgpuSharedPass.js';
-import { createSharedEffectPipeline, EFFECT_PASSES } from './sharedEffectShaders.js';
+import { createSharedEffectPipeline, EFFECT_PASSES, EFFECT_UNIFORM_BYTES } from './sharedEffectShaders.js';
 import type { SharedEffectPass } from './sharedEffectShaders.js';
 import type { PreparedEffect2D } from '../rendering/sharedEffects2D.js';
 import { createSharedResolvePipeline } from './webgpuSharedResolvePass.js';
@@ -607,7 +607,7 @@ class WebGPUHostImplementation {
             const listener=(event:Event):void=>{if(observedOwner&&this.owner!==observedOwner)return;this.fail('WEBGPU_UNCAPTURED_ERROR',(event as GPUUncapturedErrorEvent).error,'device',null);};
             this.removeListener=()=>remove('uncapturederror',listener);add('uncapturederror',listener);gate();
             if (captured['maxVertexBuffers']! < 1 || captured['maxVertexAttributes']! < 5 || captured['maxVertexBufferArrayStride']! < 52 || captured['maxColorAttachments']! < 1 || captured['maxColorAttachmentBytesPerSample']! < 4 || captured['maxBindGroups']! < 2 || captured['maxBindingsPerBindGroup']! < 2 + SHARED_BATCH_PAGES_2D || captured['maxSampledTexturesPerShaderStage']! < SHARED_BATCH_PAGES_2D || captured['maxSamplersPerShaderStage']! < 1 || captured['maxUniformBuffersPerShaderStage']! < 2 || captured['maxUniformBufferBindingSize']! < SHARED_REGION_WINDOW_BYTES_2D || captured['maxBindGroupsPlusVertexBuffers']! < 3 || captured['maxInterStageShaderVariables']! < 8) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
-            if(SHARED_OPTIONS.get(this)?.enableEffects&&(captured['maxUniformBufferBindingSize']!<448||captured['maxSampledTexturesPerShaderStage']!<2))throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
+            if(SHARED_OPTIONS.get(this)?.enableEffects&&(captured['maxUniformBufferBindingSize']!<EFFECT_UNIFORM_BYTES||captured['maxSampledTexturesPerShaderStage']!<3))throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
             this.limits = { maxTextureDimension2D: captured['maxTextureDimension2D']!, maxBufferSize: captured['maxBufferSize']! };
             const scopes: Promise<void>[] = [];
             const pipelines: Promise<GPURenderPipeline>[] = [];
@@ -1366,8 +1366,8 @@ class WebGPUHostImplementation {
                 const effects=new Map<PreparedEffect2D,Map<SharedEffectPass,GPUBindGroup>>();
                 for(const group of p.storage.prepared.effects.groups){
                     const bindings=new Map<SharedEffectPass,GPUBindGroup>(),source=effectTargets[(group.depth-1)*2]!,scratch=effectTargets[(group.depth-1)*2+1]!;
-                    for(const mode of EFFECT_PASSES){const role=this.effectPipelines.get(mode)!;const entries:GPUBindGroupEntry[]=[{binding:0,resource:{buffer:effectUniforms.get(group)!.buffer,offset:0,size:448}},{binding:1,resource:(mode==='vertical'?scratch:source).view}];
-                        if(mode==='composite')entries.push({binding:2,resource:group.maskPageIndex===undefined?source.view:realized.get(group.maskPageIndex)!.view});
+                    for(const mode of EFFECT_PASSES){const role=this.effectPipelines.get(mode)!;const entries:GPUBindGroupEntry[]=[{binding:0,resource:{buffer:effectUniforms.get(group)!.buffer,offset:0,size:EFFECT_UNIFORM_BYTES}},{binding:1,resource:(mode==='vertical'?scratch:source).view}];
+                        if(mode==='composite')entries.push({binding:2,resource:group.maskPageIndex===undefined?source.view:realized.get(group.maskPageIndex)!.view},{binding:3,resource:scratch.view});
                         const binding=record.owner!.native.bindGroup({layout:role.layout,entries});record.bindings.push(binding);gate();bindings.set(mode,binding);}
                     effects.set(group,bindings);
                 }
@@ -1402,6 +1402,7 @@ class WebGPUHostImplementation {
                         if(enter){active.end();gate();active=openPass(recipe.effectTargets[(enter.depth-1)*2]!.view,true);}
                         else if(exit){active.end();gate();const source=recipe.effectTargets[(exit.depth-1)*2]!,scratch=recipe.effectTargets[(exit.depth-1)*2+1]!;
                             if(exit.radius>0){effectPass(exit,'horizontal',scratch.view,true);effectPass(exit,'vertical',source.view,true);}
+                            if(exit.spread>=0)effectPass(exit,'spread',scratch.view,true);
                             const parent=exit.depth===1?color:recipe.effectTargets[(exit.depth-2)*2]!;effectPass(exit,'composite',parent.view,false);active=openPass(parent.view,false);
                         }else{const draw=byOrdinal.get(command.ordinal);if(draw)drawOne(draw);}
                     }

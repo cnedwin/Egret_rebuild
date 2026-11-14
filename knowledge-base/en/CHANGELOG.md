@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Filters: colour matrix, glow, drop shadow and outline — 2026-11-14
+
+`DisplayObject.renderEffect` takes Egret's twenty-number `colorMatrix`, a `glow` (Egret's GlowFilter, with `inner`, `knockout` and an offset for a drop shadow) and an `outline` up to 8 pixels wide. They run in the existing effect group after the blur, on both shared hosts: one more pass spreads the group's alpha across into its scratch target, and the composite spreads it down, applies the matrix to colour as it is seen and draws the glow under or inside the group. A group's uniform grows from 448 to 576 bytes; the other limits are unchanged. A new example, `examples/filters`, is checked at sixteen places around each of six tiles against values worked out independently, in headless Chromium with software WebGL2; WebGPU was not drawn in a browser here. Part of #266. [Guide](docs/filters.md) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/filters/README.md)
+
 ## Blend modes by Egret's names — 2026-11-14
 
 `DisplayObject.blendMode` is `normal`, `add`, `multiply`, `screen` or `erase`, and applies to an object and its children unless a child sets its own. It is the blend of the object's shared material, so tints are kept. `erase` is new in the material contract, in both hosts: what is drawn takes away from the target by its alpha. Particles and bitmap text glow with `display.blendMode = 'add'`. A new example, `examples/blend-modes`, is checked pixel by pixel against each equation in headless Chromium with software WebGL2; WebGPU was not drawn in a browser here. Part of #266. [Guide](docs/blend-modes.md) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/blend-modes/README.md)

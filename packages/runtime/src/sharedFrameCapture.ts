@@ -1,5 +1,5 @@
 import { createSharedMaterial2D, isSharedGeometry2D, isTexturedGeometry2D } from '@egret/contracts';
-import type { ClipRectangle2D, ImageData2D, Matrix2D, Rectangle2D, SharedBarrierCommand2D,
+import type { ClipRectangle2D, ImageData2D, Matrix2D, Rectangle2D, SharedBarrierCommand2D, SharedGlow2D,
   SharedGeometry2D, SharedMaterial2D, SharedPage2D, SharedRegion2D, SharedRenderCommand2D,
   TexturedGeometry2D, TextureRegion2D, TextureViewRegion2D } from '@egret/contracts';
 import type { Stage } from './Stage.js';
@@ -81,6 +81,17 @@ function nodeCapture(): NodeCapture {
 const is = Object.is;
 const freeze = Object.freeze;
 const defaultMaterial = createSharedMaterial2D({});
+/** The glow or outline of an effect as the frame carries it: one kind of spread from the alpha of the group. */
+type Effect = NonNullable<VisualState['renderEffect']>;
+const glows = new WeakMap<Effect, SharedGlow2D | undefined>();
+function effectGlow(settings: Effect): SharedGlow2D | undefined {
+  if (glows.has(settings)) return glows.get(settings);
+  const g = settings.glow, o = settings.outline;
+  const value = g !== undefined ? freeze({ kind: 'glow' as const, color: g.color, alpha: g.alpha ?? 1, spread: g.blur ?? 6, strength: g.strength ?? 2, inner: g.inner === true, knockout: g.knockout === true, offsetX: g.offsetX ?? 0, offsetY: g.offsetY ?? 0 })
+    : o !== undefined ? freeze({ kind: 'outline' as const, color: o.color, alpha: o.alpha ?? 1, spread: o.width, strength: 1, inner: false, knockout: false, offsetX: 0, offsetY: 0 }) : undefined;
+  glows.set(settings, value);
+  return value;
+}
 const identity: Matrix2D = freeze({ a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
 
 function debit(used: number, count: number, limit: number, code = 'FRAME_BUDGET_EXCEEDED'): number {
@@ -430,8 +441,10 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
         budget.source(image);maskPageIndex=regions[regionIndex(image,region)]!.pageIndex;
       }
       effect={occurrenceId:nextOccurrence++,boundaryId:nextBoundary++};
+      const glow=effectGlow(settings);
       budget.emission(undefined,true);budget.metadataBytes(128+80*(clips?.depth??0));
-      commands.push(freeze({kind:'barrier',ordinal:commands.length,...effect,reason:'effect-enter',effect:freeze({blurRadius:settings.blurRadius??0,maskPageIndex,maskRect:settings.maskRect,matrix,clips:flattenClips(clips)})}));
+      commands.push(freeze({kind:'barrier',ordinal:commands.length,...effect,reason:'effect-enter',effect:freeze({blurRadius:settings.blurRadius??0,maskPageIndex,maskRect:settings.maskRect,matrix,clips:flattenClips(clips),
+        ...(settings.colorMatrix===undefined?{}:{colorMatrix:settings.colorMatrix}),...(glow===undefined?{}:{glow})})}));
       // Parent clips apply to the composited result, not intermediate blur taps.
       clips=undefined;
     }

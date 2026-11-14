@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { sharedEffectGLSL, EFFECT_PASSES } from './sharedEffectShaders.js';
+import { sharedEffectGLSL, EFFECT_PASSES, EFFECT_UNIFORM_BYTES } from './sharedEffectShaders.js';
 import type { SharedEffectPass } from './sharedEffectShaders.js';
 import type { PreparedEffect2D } from '../rendering/sharedEffects2D.js';
 import { SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
@@ -1131,19 +1131,21 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 const setTarget=(target:WebGLTexture,clear:boolean):void=>{gl.bindFramebuffer(gl.FRAMEBUFFER,this.framebuffer!);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,target,0);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,null);native.workingAttachment(target,null);if(clear){gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);}};
                 const groups=record.storage.prepared.effects.groups,enters=new Map(groups.map(g=>[g.enter,g])),exits=new Map(groups.map(g=>[g.exit,g]));
                 const ranges=new Map(arena.sharedRanges.map(range=>[range.draw.prepared.command.ordinal,range]));
-                const effectPass=(group:PreparedEffect2D,mode:SharedEffectPass,target:WebGLTexture,source:WebGLTexture):void=>{
+                const effectPass=(group:PreparedEffect2D,mode:SharedEffectPass,target:WebGLTexture,source:WebGLTexture,glow?:WebGLTexture):void=>{
                     setTarget(target,mode!=='composite');const program=this.effectPrograms.get(mode)!;
                     gl.useProgram(program);gl.bindVertexArray(this.resolveVAO!);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,source);gl.uniform1i(gl.getUniformLocation(program,'sourceTexture'),0);
-                    if(mode==='composite'){gl.activeTexture(gl.TEXTURE1);gl.bindSampler(1,null);gl.bindTexture(gl.TEXTURE_2D,group.maskPageIndex===undefined?source:pageTextures.get(group.maskPageIndex)!.native.value as WebGLTexture);gl.uniform1i(gl.getUniformLocation(program,'maskTexture'),1);gl.activeTexture(gl.TEXTURE0);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.ONE,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);}else gl.disable(gl.BLEND);
-                    gl.bindBufferRange(gl.UNIFORM_BUFFER,0,record.leases[layout.effectUniforms[groups.indexOf(group)]!]!.handle.resource.value as WebGLBuffer,0,448);gl.drawArrays(gl.TRIANGLES,0,3);
-                    gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,null);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,null);
+                    if(mode==='composite'){gl.activeTexture(gl.TEXTURE1);gl.bindSampler(1,null);gl.bindTexture(gl.TEXTURE_2D,group.maskPageIndex===undefined?source:pageTextures.get(group.maskPageIndex)!.native.value as WebGLTexture);gl.uniform1i(gl.getUniformLocation(program,'maskTexture'),1);gl.activeTexture(gl.TEXTURE0+2);gl.bindSampler(2,null);gl.bindTexture(gl.TEXTURE_2D,glow??source);gl.uniform1i(gl.getUniformLocation(program,'glowTexture'),2);gl.activeTexture(gl.TEXTURE0);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.ONE,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);}else gl.disable(gl.BLEND);
+                    gl.bindBufferRange(gl.UNIFORM_BUFFER,0,record.leases[layout.effectUniforms[groups.indexOf(group)]!]!.handle.resource.value as WebGLBuffer,0,EFFECT_UNIFORM_BYTES);gl.drawArrays(gl.TRIANGLES,0,3);
+                    gl.activeTexture(gl.TEXTURE0+2);gl.bindTexture(gl.TEXTURE_2D,null);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,null);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,null);
                 };
                 for(const command of frame.commands){const enter=enters.get(command.ordinal),exit=exits.get(command.ordinal);
                     if(enter){setTarget(targets[(enter.depth-1)*2]!,true);bindDraw();}
                     else if(exit){const source=targets[(exit.depth-1)*2]!,scratch=targets[(exit.depth-1)*2+1]!;
                         if(exit.radius>0){effectPass(exit,'horizontal',scratch,source);effectPass(exit,'vertical',source,scratch);}
+                        // A glow or outline: the group's alpha spread across into the scratch target; the composite spreads it down.
+                        if(exit.spread>=0)effectPass(exit,'spread',scratch,source);
                         const parent=exit.depth===1?colorTexture:targets[(exit.depth-2)*2]!;
-                        effectPass(exit,'composite',parent,source);bindDraw();
+                        effectPass(exit,'composite',parent,source,scratch);bindDraw();
                     }else{const range=ranges.get(command.ordinal);if(range)drawOne(range);}
                 }
             }
