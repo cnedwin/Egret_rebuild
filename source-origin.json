@@ -582,8 +582,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 62165,
-      "sha256": "f2aaee7288d03a2eae9cf4d06c504b7f11afd998731d4aba92a50b5fb844ba50",
+      "bytes": 63593,
+      "sha256": "b0b809c3039582e71ba075bfce3b7f4dde7dec104f607922db70782eadab6106",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -786,8 +786,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 29601,
-      "sha256": "d87a959141b3dabdf9f630e1d4ad36122d35d40f0d28aff261592f3173eb0ea7",
+      "bytes": 29637,
+      "sha256": "e314100ae2126923575ea01c0ac156ad946fca8b39bd34fb3c21b1c9307dddb2",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -1380,8 +1380,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 4230,
-      "sha256": "221ad2ccb29fd84b5169a492632b24a8759cf6d99669aa40b470c31f17553293",
+      "bytes": 4269,
+      "sha256": "8e7cffbb95f1c439c4fdb102f88322c489b25eee1d9583982d0dd1a4770208ea",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -2072,7 +2072,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 137800,
-      "sha256": "40614454e4759b1ed9b1c8faaffad9c771c58fbe64b7b7fb690802a9b13f7e1e",
+      "sha256": "c4f6585bc182a33c41c1f6af0bcf56524f0e4d9ad312e59c9afed35b5a9f7054",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2113,8 +2113,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 67550,
-      "sha256": "ff9ab6c09e3c938f8fee4dc353dc26eda74b72b7bd169b1772f569beeed610e0",
+      "bytes": 69030,
+      "sha256": "3621cfddacebdeffa10f97924816d10b77f7a63f04a056138024d568bc772bb1",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2506,8 +2506,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 32896,
-      "sha256": "e7885ffa7cfc7e04b3300fd34376ac37d5711dd940518ed0b7235ebc0b9a1391",
+      "bytes": 32918,
+      "sha256": "318b1700e78e58b880dc1336dda25acc98661b3be6febf501858ef6d31f471d5",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3052,8 +3052,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 4741,
-      "sha256": "035e0f96c9507270f7a405e3f1c02595b30030975ff1d8b73387ae9e28f98353",
+      "bytes": 4780,
+      "sha256": "9f847941e4d45ac5696afbaf9ac4039d11719b25c5928b884a9d21221f8a5a61",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -3746,8 +3746,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "b056ad1720016f2e95f1046960954a50b23b032f365d577d8ad2e3057d442ce1",
-      "bytes": 421468,
+      "sha256": "050b77598de9aa1e416347b41d229a0edd0a0afb126896d72a35296512f1e034",
+      "bytes": 423131,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4083,8 +4083,8 @@
     },
     {
       "path": "packages/engine/package.json",
-      "bytes": 4819,
-      "sha256": "a6c323927a4402321b68e5c4f2a6039315fea136dbb7f61bcf8d20ae80f1b486",
+      "bytes": 4928,
+      "sha256": "e7f51a8ffefa4c5716a049be112b604f2881d0c8da75e62d67294fa33bcba4ef",
       "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset.",
       "identityHistory": [
         {
@@ -5079,8 +5079,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 255396,
-      "sha256": "63502db8961f83043d6bb980bde7c0c456fe6295cce1a38e09b7bd2853df627d",
+      "bytes": 257829,
+      "sha256": "afb4e3d214aacea4fc66ae471561848c68532c15a5c65083fc0e4975c280984f",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -5328,8 +5328,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 324052,
-      "sha256": "2432deb84bde6f684fe3022c543fc38b9c570073d2dfc0b36e76d87e0509d2e8",
+      "bytes": 327845,
+      "sha256": "e24c3eaab504df3f916331ee97031c17a82d52501de7a57d7c5532a7d982c4d8",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -9345,8 +9345,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1633984,
-      "sha256": "8c6f62c8413006894bfaef7f76e3e35a1d39ff9123c4213076db47560237f362"
+      "bytes": 1634636,
+      "sha256": "574ff8c0667e02591ed41e322a2bce563e6f41fb8d3d2f66623715b79936a1c7"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -17805,8 +17805,8 @@
     {
       "path": "packages/engine/src/particleEmitter.ts",
       "originRole": "First-party 2D particle emitter drawn as one mesh, with seeded emission, motion under gravity and drag, and properties from birth to death; independently authored with AI assistance; Apache-2.0. No third-party dependency.",
-      "bytes": 10745,
-      "sha256": "25582fc7e35f612d9ca5912b0fe8a273b399efe0cadd16a20a4ce8133b3787d1"
+      "bytes": 11017,
+      "sha256": "76813a1be4d5cd2501a73e21063e6189c8fad657abf63b1797bf1d873a6a0768"
     },
     {
       "path": "packages/engine/src/particleTypes.ts",
@@ -17817,8 +17817,8 @@
     {
       "path": "tests/particles.test.mjs",
       "originRole": "First-party Node tests of 2D particle emitters on a real Engine; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 12412,
-      "sha256": "8e673494fd77f4a3da7d8222a2459e8fb62603e1aa499aad0e1cae58f81f301c"
+      "bytes": 12577,
+      "sha256": "85331df92d4d9f1746ecdba0d5904d5e20f9c13ac25fbc16ac539051bd6c8ce4"
     },
     {
       "path": "tests/types/particles.json",
@@ -17865,14 +17865,14 @@
     {
       "path": "knowledge-base/en/docs/particles.md",
       "originRole": "First-party guide to 2D particles, with what was run and what was not; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 4530,
-      "sha256": "ca42a3ef43b274aef2ad051514e198963594bfd3a7ef7df27b1eea9b4e5c80fa"
+      "bytes": 4653,
+      "sha256": "c8355ae1abcbb4d11ad7e3a54a201fdadd21a4ef8945b0a1695f9465b21327d7"
     },
     {
       "path": "knowledge-base/Cns/docs/particles.md",
       "originRole": "First-party Chinese guide to 2D particles; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 4541,
-      "sha256": "0dabc59206a4a2528ae9134fafe9917ec7c2ab58a730879a1b42b4eb6bed7671"
+      "bytes": 4661,
+      "sha256": "c953a601a36c402f7a5896e5e7021b89479498230d2766adf7e482fe7fc8e55f"
     },
     {
       "path": "contributions/particles-2d.json",
@@ -18065,6 +18065,96 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 3286,
       "sha256": "a9fb248e0a3477ee994a811cfd15b3086f0b87188399e239448013289cd74101"
+    },
+    {
+      "path": "packages/engine/src/bitmapfont.ts",
+      "originRole": "First-party optional entry of bitmap fonts; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 463,
+      "sha256": "97391658785e70fc465e9cda28ebd1f58e8a47094d669de4dc07fe1fe8f1eea5"
+    },
+    {
+      "path": "packages/engine/src/bitmapFontParse.ts",
+      "originRole": "First-party reader of BMFont text, XML and JSON fonts and Egret fonts of frames; independently authored with AI assistance; Apache-2.0. Reads the published file forms; no third-party code.",
+      "bytes": 10161,
+      "sha256": "68b867a383e310e84a15d2434f9806084c510b6f2ec9878252418aaa2811e6ed"
+    },
+    {
+      "path": "packages/engine/src/bitmapText.ts",
+      "originRole": "First-party layout of text in bitmap fonts, with kerning, line breaking and alignment, drawn as one mesh for each page; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 13052,
+      "sha256": "31202bcdbb6549ad4cc0a301da5c4d7261208834a28220030bc0bb330cd25037"
+    },
+    {
+      "path": "packages/engine/src/bitmapFontTypes.ts",
+      "originRole": "First-party types of bitmap fonts; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 4660,
+      "sha256": "2acfa448572501ac762593f6a05eeeb0d0d1d092ca3fbc65f09c8280de5401a4"
+    },
+    {
+      "path": "tests/bitmap-font.test.mjs",
+      "originRole": "First-party Node tests of bitmap fonts, their layout and their meshes on a real Engine; independently authored with AI assistance; Apache-2.0. The fonts are written by the test.",
+      "bytes": 21526,
+      "sha256": "af2ae90c7160806934064c95c07290c21dfa5259b42bc852f3dfcd7247f2b28c"
+    },
+    {
+      "path": "tests/types/bitmapfont.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the bitmapfont entry; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 192,
+      "sha256": "bbfb9cda873582a95e0cd8fe57cedbdae0abb2b598cdd0d13330aac92ccd1962"
+    },
+    {
+      "path": "tests/types/bitmapfont.ts",
+      "originRole": "First-party strict TypeScript consumer of the bitmapfont entry, with five refused misuses; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 1707,
+      "sha256": "c97c7d64784c75b5725e0072a1e63a486795dac8229e16f7558ce14b5623c856"
+    },
+    {
+      "path": "examples/bitmap-font/index.html",
+      "originRole": "First-party page of the bitmap font example; independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "bytes": 3110,
+      "sha256": "7cc0fb6c79e37e21b1e682e7893c5172b6408bf2d51974e7f5f61fa6686ab758"
+    },
+    {
+      "path": "examples/bitmap-font/main.mjs",
+      "originRole": "First-party example of two bitmap fonts painted by the page from an original pixel alphabet; independently authored with AI assistance; Apache-2.0. Original example text and letter shapes; no third-party asset.",
+      "bytes": 10940,
+      "sha256": "abb2b59eab267a29121270609aaca6745d39a863bcc47c26d6dfc317633dc4e7"
+    },
+    {
+      "path": "examples/bitmap-font/verify.mjs",
+      "originRole": "First-party real-browser check of the bitmap font example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 9693,
+      "sha256": "9433b14a5b3706ccd6e609941d689c43d734b22d278c38ae17a84c30be57d905"
+    },
+    {
+      "path": "examples/bitmap-font/README.md",
+      "originRole": "First-party instructions for the bitmap font example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 1818,
+      "sha256": "270f67e5d99c772b8f3026ce1544d666e4f28d3cf4eeb0ebe612527e4cf7c19c"
+    },
+    {
+      "path": "examples/bitmap-font/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the bitmap font example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 1800,
+      "sha256": "763d3edc2acd087d1042a52d53fece2074f5e64ac0a38ec6f128ff72010a86a4"
+    },
+    {
+      "path": "knowledge-base/en/docs/bitmap-font.md",
+      "originRole": "First-party guide to bitmap fonts, with what was run and what was not; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 6225,
+      "sha256": "2ed3275ba8b64795c4afbcb5d63f7df9900e819cb51228d25e4053034ee46c22"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/bitmap-font.md",
+      "originRole": "First-party Chinese guide to bitmap fonts; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 6146,
+      "sha256": "71e8d2362b9e17f62085ae517f46fc48e06d1aca26c91f3d12547e6c29941f86"
+    },
+    {
+      "path": "contributions/bitmap-font.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 3332,
+      "sha256": "54c1e32ac9c0f70330f56c4e0524dfab8e46f9c4902568813f42c70e61f7ab49"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
