@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "packages/engine/src/camera.ts", "originRole": "First-party optional entry of the 2D camera; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/src/camera2d.ts", "originRole": "First-party 2D camera over a world container: follow with a dead zone, bounds, zoom, rotation, trauma shake on seeded smooth noise, pans and parallax layers; independently authored with AI assistance; Apache-2.0. No third-party dependency.", "criticalComment": true},
+    {"path": "packages/engine/src/cameraTypes.ts", "originRole": "First-party types of the 2D camera; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/camera-2d.test.mjs", "originRole": "First-party Node tests of the 2D camera over a real display tree; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/types/camera.json", "originRole": "First-party compiler configuration of the strict consumer of the camera entry; independently authored with AI assistance; Apache-2.0."},
+    {"path": "tests/types/camera.ts", "originRole": "First-party strict TypeScript consumer of the camera entry, with six refused misuses; independently authored with AI assistance; Apache-2.0."},
+    {"path": "examples/camera-2d/index.html", "originRole": "First-party page of the 2D camera example; independently authored with AI assistance; Apache-2.0. No third-party asset."},
+    {"path": "examples/camera-2d/main.mjs", "originRole": "First-party example of a courtyard seen through the 2D camera, drawn from rectangles; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.", "criticalComment": true},
+    {"path": "examples/camera-2d/verify.mjs", "originRole": "First-party real-browser check of the 2D camera example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "examples/camera-2d/README.md", "originRole": "First-party instructions for the 2D camera example; independently authored with AI assistance; Apache-2.0."},
+    {"path": "examples/camera-2d/README.zh-CN.md", "originRole": "First-party Simplified Chinese instructions for the 2D camera example; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/en/docs/camera-2d.md", "originRole": "First-party guide to the 2D camera, with what was run and what was not; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/Cns/docs/camera-2d.md", "originRole": "First-party Chinese guide to the 2D camera; independently authored with AI assistance; Apache-2.0."}
+  ],
+  "documents": [
+    {"en": "examples/camera-2d/README.md", "zh": "examples/camera-2d/README.zh-CN.md"},
+    {"en": "knowledge-base/en/docs/camera-2d.md", "zh": "knowledge-base/Cns/docs/camera-2d.md"}
+  ]
+}

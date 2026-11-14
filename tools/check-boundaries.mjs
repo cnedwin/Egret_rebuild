@@ -252,6 +252,8 @@ for (const [name, allowed] of Object.entries(expected)) {
       textExports['./input/hover'] = {types:'./dist/hover.d.ts',import:'./dist/hover.js'};
       textExports['./web/hover'] = {types:'./dist/web/hover.d.ts',import:'./dist/web/hover.js'};
     }
+    // Camera: one DOM-free entry.
+    if (name === 'engine') textExports['./camera'] = {types:'./dist/camera.d.ts',import:'./dist/camera.js'};
     // Gamepad: one DOM-free entry and one optional browser entry.
     if (name === 'engine') {
       textExports['./input/gamepad'] = {types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};
@@ -5322,6 +5324,32 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
   const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
   if(Object.hasOwn(hoverAllowed,resolved)&&!hoverAllowed[resolved].includes(relative))throw new Error('Hover: implementation module imported outside its entry: '+relative);
+ }
+}
+// Camera: one DOM-free entry built on the runtime alone. It starts no timer or request, and no other entry has it.
+const cameraTypes=["Camera2D", "Camera2DOptions", "CameraFollowOptions", "CameraLayerOptions", "CameraPoint", "CameraRect", "CameraShakeOptions", "CameraSnapshot", "CameraTarget"];
+const cameraValues=["createCamera2D"];
+for(const [file,values,types] of [['packages/engine/src/camera.ts',cameraValues,cameraTypes],['packages/engine/dist/camera.js',cameraValues,[]],['packages/engine/dist/camera.d.ts',cameraValues,cameraTypes]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,values)||!mouseSame(surface.types,types))throw new Error('Camera: exact entry exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/camera')),cameraValues))throw new Error('Camera: optional runtime values mismatch');
+for(const [label,values,stem] of textEntries){
+ const body=uiRead(stem+'.d.ts');
+ for(const name of [...cameraTypes,...cameraValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Camera: leaked to default/other entry: '+label+'/'+name);
+}
+const cameraImports={"src/camera.ts": ["./camera2d.js", "./cameraTypes.js"], "dist/camera.js": ["./camera2d.js"], "dist/camera.d.ts": ["./camera2d.js", "./cameraTypes.js"], "src/camera2d.ts": ["@egret/runtime", "./cameraTypes.js"], "dist/camera2d.js": ["@egret/runtime"], "dist/camera2d.d.ts": ["./cameraTypes.js"], "src/cameraTypes.ts": ["@egret/runtime"], "dist/cameraTypes.js": [], "dist/cameraTypes.d.ts": ["@egret/runtime"]};
+for(const [file,expected] of Object.entries(cameraImports)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
+ if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Camera: exact graph mismatch: '+file);
+ if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Camera: acquired automatic host work: '+file);
+}
+const cameraAllowed={"src/camera2d.js": ["src/camera.ts"], "dist/camera2d.js": ["dist/camera.js", "dist/camera.d.ts"]};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
+ if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
+ for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
+  const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+  if(Object.hasOwn(cameraAllowed,resolved)&&!cameraAllowed[resolved].includes(relative))throw new Error('Camera: implementation module imported outside its entry: '+relative);
  }
 }
 // Gamepad: a DOM-free entry with the input and the keys it drives, and a browser entry with one
