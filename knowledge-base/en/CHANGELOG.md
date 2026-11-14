@@ -4,6 +4,9 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Errors say what happened — 2026-11-15
+
+An `EgretError` used to carry its code as its whole message, so `FRAME_RENDER_FAILED` on a console said nothing more. Its message is now the code and a sentence: what went wrong and, for the codes a game meets most, what to do. `error.code` is unchanged and is still what a program compares. The new [error code reference](docs/error-codes.md) lists 696 codes by area with their meanings; it is written by `node tools/error-codes.mjs` from the sources, and a test fails when a code is added without a sentence or the reference falls behind. A program that compared `error.message` with a code must compare `error.code`.
 ## Graphics: circles, rounded rectangles, paths, curves and lines — 2026-11-15
 
 A sprite's `graphics` now draws `drawCircle`, `drawEllipse`, `drawRoundRect`, paths with `moveTo`, `lineTo`, `curveTo`, `cubicCurveTo` and `drawArc`, and lines with `lineStyle`, by Egret's names. It drew filled rectangles only. A sprite of filled rectangles is unchanged; any other shape makes its drawing one mesh of coloured triangles that follows the sprite like other content. Curves are straight pieces within a quarter unit, edges are not smoothed, and lines have flat ends and mitred corners. Sprites that draw the same thing share one drawing; a frame takes 128 different ones. Checked in Node and from the canvas in headless Chromium with software WebGL2; WebGPU was not run. Part of #289. [Guide](docs/graphics.md) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/graphics/README.md)
