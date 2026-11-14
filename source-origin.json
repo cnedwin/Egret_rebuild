@@ -582,8 +582,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 48053,
-      "sha256": "5e8a7acb6b9a363127daafbf814f01a67e5bd6aae746b48d9cd0b54d3c422452",
+      "bytes": 48363,
+      "sha256": "599fd9e4d5dda1da7c6c190193aa282e26efbc9af2541197c4f3001b2f5c0743",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -2072,7 +2072,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 137800,
-      "sha256": "be98285e1d5fa2be620aaf3fd820df3de20e1551159ae26b8faff5e254db8803",
+      "sha256": "1299dc9308cab6c2ee040839dc035f263b9b96ec62ab9b112a390d4ad4c94349",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2113,8 +2113,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 53240,
-      "sha256": "d5a3a7d9004ede1ae3510b9cc565bdac6060c2ad9908e7ef97908c7ef355f5d3",
+      "bytes": 53569,
+      "sha256": "4dce2d8f99120258973d0538040cbbc073dc17e34621cec70027f803dfe16296",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -3746,7 +3746,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "0f0efb4e82cbac70e53ca9159750ebdb28aa635f540430e49e80a25558fabdf6",
+      "sha256": "eb6c138fdd13055c5e35a633d1d40ce8985a7af2d41997dd1c1cc264293ae615",
       "bytes": 407673,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -17079,26 +17079,26 @@
     {
       "path": "examples/ui-settings/main.mjs",
       "originRole": "First-party settings screen example that joins the drawn controls, their keys, a text field, two theme generations, a managed list, a modal layer and semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented profile names; no third-party asset.",
-      "bytes": 29083,
-      "sha256": "bc89f9055aff298d8f0367766c07f607142cce9094d8a2bd325d6b7bd41fa8bd"
+      "bytes": 29855,
+      "sha256": "a6f8a5cadaf60110bac28a1faf355f14c7912a2ba59dfa3859063adb0045729c"
     },
     {
       "path": "examples/ui-settings/verify.mjs",
       "originRole": "First-party real-browser check of the settings screen example, with a composition driven through the automation protocol and colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 28104,
-      "sha256": "24f6d5cb0917d366b8e261a75f6d13fc965124ba06be779e61bb2165826ca3ff"
+      "bytes": 28806,
+      "sha256": "2a3044e2702542c678ba51baaee9c1d146c6d82f280757981ea4a35383115a59"
     },
     {
       "path": "examples/ui-settings/README.md",
       "originRole": "First-party instructions for the settings screen example; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5045,
-      "sha256": "b61411b529aae52a4a6686ebf8eebcd87daac5a00b5e902b26aa3f6d820ee486"
+      "bytes": 5253,
+      "sha256": "be127d398478072f20e9e7082c29e151de812f2e782ff90e49aad708a62b5572"
     },
     {
       "path": "examples/ui-settings/README.zh-CN.md",
       "originRole": "First-party Simplified Chinese instructions for the settings screen example; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 4795,
-      "sha256": "31249f814c1fdf9c626f7427f45486130971dee6f14bd53fa765f0202c01286f"
+      "bytes": 4974,
+      "sha256": "fd202e64eba9cd1c337b23a766114b3aa9832ffffa2e183250b05d3539e17005"
     },
     {
       "path": "contributions/ui-settings-example.json",
