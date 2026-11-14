@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "4b302924a03d7c53aec53a843e8f8d5a92b3240f6ad29224d3879b74090925a9",
-      "zhSha256": "d4f9ac50a6ea8bdc39da2d1fec47447958f08d465dbfea17590e2625152594f2"
+      "enSha256": "7b234d7a4a06dbbf90f5239362794216a15ac949197cf6761dd679eb08010385",
+      "zhSha256": "d6d6b0ab9748f78f2e2a256f2b5d1a01cf834f810559cf526fa6717a4d0c1633"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -540,8 +540,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "cb8b14190bd2a302f8aa0561a6ca380f729a5252afc18cfdee41848f6348168e",
-      "zhSha256": "763a3607daea39e1d6bef453d3ff8411721b4c4f63ecacf34ad3d201d442564f"
+      "enSha256": "9c102ba7b950e70c66b48e5e4a9fb828f5248ac9098f840d0c3de26a2d8f2303",
+      "zhSha256": "227430229961ff90a1a7d4c20610d741486a76dfd65bd1eb675b78f9caf16a38"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1016,8 +1016,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "c4a639d5d4d3b43fc70575108abd9be8684656c9a28456e9c5590c41dd3334c3",
-      "zhSha256": "db46424ef60184511274c586095e95333d17dc33c8aa716a6d685c22e9786659"
+      "enSha256": "5fefbc49e75c10a46983cf1f6c13dd533aece5e3b25821086297ffe7ce08f117",
+      "zhSha256": "0cbfb1768548b988d7798bcdfdd72e64cbdeb2d6955ffb641bd359f615b476a7"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -2511,6 +2511,34 @@
       "kind": "public_reading",
       "enSha256": "ad2a73faef52dcd3d4bfe223e44093fcdfaa57220a247487ec78e630968d581a",
       "zhSha256": "1d033b6b0c9b92974822e8f23151fa7b35c417f3da786532144b273079f4fb43"
+    },
+    {
+      "en": "examples/particles/README.md",
+      "zh": "examples/particles/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "e2e9d30f4eb56cf1576d19dc44f90d0c7d93debffd42a3a699631e6c5cde7ab5",
+      "zhSha256": "7eb0403d4320fcd35a51ec1c8ab04add0d81e9412401d5cbeedf77b116ad3c92"
+    },
+    {
+      "en": "knowledge-base/en/docs/particles.md",
+      "zh": "knowledge-base/Cns/docs/particles.md",
+      "kind": "public_reading",
+      "enSha256": "ca42a3ef43b274aef2ad051514e198963594bfd3a7ef7df27b1eea9b4e5c80fa",
+      "zhSha256": "0dabc59206a4a2528ae9134fafe9917ec7c2ab58a730879a1b42b4eb6bed7671"
+    },
+    {
+      "en": "examples/tilemap/README.md",
+      "zh": "examples/tilemap/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "281506343b34ee6153725214763b7cae602f065cb6d59debbd81410685365da2",
+      "zhSha256": "95d53b4bc5db97b1992f561c76072df173da41cd050c959979496005783a04a2"
+    },
+    {
+      "en": "knowledge-base/en/docs/tilemap.md",
+      "zh": "knowledge-base/Cns/docs/tilemap.md",
+      "kind": "public_reading",
+      "enSha256": "820f6c30cb6012fb3038c397c8e09a9b89655d8bd01ee2a7e6b079c582cf8e93",
+      "zhSha256": "55a4510cbfb15b191c53897f898cb30a54b544ad2e7080b1fd19c71a83cfaea3"
     }
   ],
   "registries": [
@@ -3108,11 +3136,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "5424f6c89fc8fe758f54050ed87d99f3cd979dbf7504ce31875cd0617e58d6ad"
+      "sha256": "7ea449f5ca27a17e1962631afe047713591c5d6392bc7ff9c602f46e07dac87d"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "c1c5ab1f6636029bf0d3b3cffc2b88f1bfe7371b113df826b0b354013038a054"
+      "sha256": "a745106a4bb734a63209439db36046fcef56c7c336fc9c991e172b9a57561e8f"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3748,7 +3776,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "91199c8239d9cb1a9e45cd6a38455d5a1185ec8886272d67620c195a7c6c051e"
+      "sha256": "e10cb3214e1008fb0905c7f99d6cd0fa47f8ffef563683eca683ba91ff35cc62"
     },
     {
       "path": "tools/incremental-dependencies.mjs",
@@ -5433,6 +5461,58 @@
     {
       "path": "tests/browser-gamepad.test.mjs",
       "sha256": "935ecb0c03ac6c45a91991710e1e01d3caff26fe3110a9633700b51175c08131"
+    },
+    {
+      "path": "packages/engine/src/particles.ts",
+      "sha256": "4974af69c410b5a3b089c7bca28b082ab261bdc70e7b3f520caf16685a3fe5d2"
+    },
+    {
+      "path": "packages/engine/src/particleEmitter.ts",
+      "sha256": "25582fc7e35f612d9ca5912b0fe8a273b399efe0cadd16a20a4ce8133b3787d1"
+    },
+    {
+      "path": "packages/engine/src/particleTypes.ts",
+      "sha256": "75aa3ddee1a69aac930e94d85174d1ec446493cb06d65e1a0c5e692ede874055"
+    },
+    {
+      "path": "tests/particles.test.mjs",
+      "sha256": "8e673494fd77f4a3da7d8222a2459e8fb62603e1aa499aad0e1cae58f81f301c"
+    },
+    {
+      "path": "examples/particles/main.mjs",
+      "sha256": "aefce4a6fb5e7b5f3cfa233157ed1ce9f0b8853438c224e23e98773088046a48"
+    },
+    {
+      "path": "examples/particles/verify.mjs",
+      "sha256": "2f7ca816c891e0c1875d483ca05af3465732bc96dffccbc46975b5de915b3775"
+    },
+    {
+      "path": "packages/engine/src/tilemap.ts",
+      "sha256": "6040c1ef4ef650439355729710f7084183fb200f95a620e4acf7af5593834fce"
+    },
+    {
+      "path": "packages/engine/src/tiledImport.ts",
+      "sha256": "133856f6e852b703f4b8e4357d586d1e9db27b9e802de0d755d9e184e54df88c"
+    },
+    {
+      "path": "packages/engine/src/tileMapDraw.ts",
+      "sha256": "f1bae3def07636eafb6e7ddfefd61330023ec69060832c61b65faf713eea65cf"
+    },
+    {
+      "path": "packages/engine/src/tilemapTypes.ts",
+      "sha256": "3885dbff22dfebe7d329ebeec893710d3d1096e219d747fa05c029c95b99b970"
+    },
+    {
+      "path": "tests/tilemap.test.mjs",
+      "sha256": "24282dbea63b386faa9ae89bf4d48b290f1e6f7418a46ad0c2cb634095df72c4"
+    },
+    {
+      "path": "examples/tilemap/main.mjs",
+      "sha256": "87c64e280e369ae3029544cb4c57bf847f9157a68e08b44011c03135fba27cb5"
+    },
+    {
+      "path": "examples/tilemap/verify.mjs",
+      "sha256": "5eca1d6a3dde202fe6ce4c938decab846913dca102ab6e047600af2e3eacdf12"
     }
   ],
   "historicalSemanticReview": {

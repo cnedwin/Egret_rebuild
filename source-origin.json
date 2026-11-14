@@ -582,8 +582,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 59136,
-      "sha256": "d4f9ac50a6ea8bdc39da2d1fec47447958f08d465dbfea17590e2625152594f2",
+      "bytes": 61133,
+      "sha256": "d6d6b0ab9748f78f2e2a256f2b5d1a01cf834f810559cf526fa6717a4d0c1633",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -786,8 +786,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 29340,
-      "sha256": "763a3607daea39e1d6bef453d3ff8411721b4c4f63ecacf34ad3d201d442564f",
+      "bytes": 29470,
+      "sha256": "227430229961ff90a1a7d4c20610d741486a76dfd65bd1eb675b78f9caf16a38",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -1380,8 +1380,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 4123,
-      "sha256": "db46424ef60184511274c586095e95333d17dc33c8aa716a6d685c22e9786659",
+      "bytes": 4189,
+      "sha256": "0cbfb1768548b988d7798bcdfdd72e64cbdeb2d6955ffb641bd359f615b476a7",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -2072,7 +2072,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 137800,
-      "sha256": "28defd6f92b5fbd9b3cec0508319413c08a592d34480d486df24b95c280c94bf",
+      "sha256": "bfb93049f049e6870aa1dc9b8b634e3ec1285b8b32d4b7e9700ee79a86319c1a",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2113,8 +2113,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 64456,
-      "sha256": "4b302924a03d7c53aec53a843e8f8d5a92b3240f6ad29224d3879b74090925a9",
+      "bytes": 66482,
+      "sha256": "7b234d7a4a06dbbf90f5239362794216a15ac949197cf6761dd679eb08010385",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2506,8 +2506,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 32607,
-      "sha256": "cb8b14190bd2a302f8aa0561a6ca380f729a5252afc18cfdee41848f6348168e",
+      "bytes": 32746,
+      "sha256": "9c102ba7b950e70c66b48e5e4a9fb828f5248ac9098f840d0c3de26a2d8f2303",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3052,8 +3052,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 4628,
-      "sha256": "c4a639d5d4d3b43fc70575108abd9be8684656c9a28456e9c5590c41dd3334c3",
+      "bytes": 4694,
+      "sha256": "5fefbc49e75c10a46983cf1f6c13dd533aece5e3b25821086297ffe7ce08f117",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -3746,8 +3746,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "006892faacdb419ffd8b3b99f0cceaee1e794f07f5c51c13d3054f6156b9c3d0",
-      "bytes": 416683,
+      "sha256": "c8c8277d9413635f5b49f3cc00f7583b50a5da5d216dcf6c08a336f12630d11b",
+      "bytes": 419808,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4083,8 +4083,8 @@
     },
     {
       "path": "packages/engine/package.json",
-      "bytes": 4507,
-      "sha256": "74243cafe1f034e2c880b5408ee8063ce5b0ef82598e1a3604a38a82e97bb0df",
+      "bytes": 4713,
+      "sha256": "73dcbf0640d11df06218006c873a3b53fa3f9e357eb675ce8fe831c5e3410158",
       "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset.",
       "identityHistory": [
         {
@@ -5079,8 +5079,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 248470,
-      "sha256": "c1c5ab1f6636029bf0d3b3cffc2b88f1bfe7371b113df826b0b354013038a054",
+      "bytes": 253049,
+      "sha256": "a745106a4bb734a63209439db36046fcef56c7c336fc9c991e172b9a57561e8f",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -5328,8 +5328,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 313356,
-      "sha256": "5424f6c89fc8fe758f54050ed87d99f3cd979dbf7504ce31875cd0617e58d6ad",
+      "bytes": 320385,
+      "sha256": "7ea449f5ca27a17e1962631afe047713591c5d6392bc7ff9c602f46e07dac87d",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -9345,8 +9345,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1632073,
-      "sha256": "91199c8239d9cb1a9e45cd6a38455d5a1185ec8886272d67620c195a7c6c051e"
+      "bytes": 1633340,
+      "sha256": "e10cb3214e1008fb0905c7f99d6cd0fa47f8ffef563683eca683ba91ff35cc62"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -17795,6 +17795,186 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 2943,
       "sha256": "4da313b108d2ba052fe9a323b5543efde14333af1cab6084eea5eee8c24024cc"
+    },
+    {
+      "path": "packages/engine/src/particles.ts",
+      "originRole": "First-party optional entry of 2D particles; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 346,
+      "sha256": "4974af69c410b5a3b089c7bca28b082ab261bdc70e7b3f520caf16685a3fe5d2"
+    },
+    {
+      "path": "packages/engine/src/particleEmitter.ts",
+      "originRole": "First-party 2D particle emitter drawn as one mesh, with seeded emission, motion under gravity and drag, and properties from birth to death; independently authored with AI assistance; Apache-2.0. No third-party dependency.",
+      "bytes": 10745,
+      "sha256": "25582fc7e35f612d9ca5912b0fe8a273b399efe0cadd16a20a4ce8133b3787d1"
+    },
+    {
+      "path": "packages/engine/src/particleTypes.ts",
+      "originRole": "First-party types of 2D particles; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 4113,
+      "sha256": "75aa3ddee1a69aac930e94d85174d1ec446493cb06d65e1a0c5e692ede874055"
+    },
+    {
+      "path": "tests/particles.test.mjs",
+      "originRole": "First-party Node tests of 2D particle emitters on a real Engine; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 12412,
+      "sha256": "8e673494fd77f4a3da7d8222a2459e8fb62603e1aa499aad0e1cae58f81f301c"
+    },
+    {
+      "path": "tests/types/particles.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the particles entry; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 191,
+      "sha256": "f2252ecd7efba3324123430d0d4c400066a0d5e514886caeafbc4d91934a44e5"
+    },
+    {
+      "path": "tests/types/particles.ts",
+      "originRole": "First-party strict TypeScript consumer of the particles entry, with five refused misuses; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 1687,
+      "sha256": "2a30835786b181c777a49c5675f2f7e4f2d1d91a22a893238ed5fd74fd1e7731"
+    },
+    {
+      "path": "examples/particles/index.html",
+      "originRole": "First-party page of the particles example; independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "bytes": 3050,
+      "sha256": "daa4236a0cfc75c740a6dfaa7dc993de9db7e6bee0d73c3d6ba687ad01b7d8e5"
+    },
+    {
+      "path": "examples/particles/main.mjs",
+      "originRole": "First-party example of three particle streams over a dot painted by the page; independently authored with AI assistance; Apache-2.0. Original example text; no third-party asset.",
+      "bytes": 5609,
+      "sha256": "aefce4a6fb5e7b5f3cfa233157ed1ce9f0b8853438c224e23e98773088046a48"
+    },
+    {
+      "path": "examples/particles/verify.mjs",
+      "originRole": "First-party real-browser check of the particles example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 8867,
+      "sha256": "2f7ca816c891e0c1875d483ca05af3465732bc96dffccbc46975b5de915b3775"
+    },
+    {
+      "path": "examples/particles/README.md",
+      "originRole": "First-party instructions for the particles example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "e2e9d30f4eb56cf1576d19dc44f90d0c7d93debffd42a3a699631e6c5cde7ab5"
+    },
+    {
+      "path": "examples/particles/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the particles example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 1860,
+      "sha256": "7eb0403d4320fcd35a51ec1c8ab04add0d81e9412401d5cbeedf77b116ad3c92"
+    },
+    {
+      "path": "knowledge-base/en/docs/particles.md",
+      "originRole": "First-party guide to 2D particles, with what was run and what was not; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 4530,
+      "sha256": "ca42a3ef43b274aef2ad051514e198963594bfd3a7ef7df27b1eea9b4e5c80fa"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/particles.md",
+      "originRole": "First-party Chinese guide to 2D particles; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 4541,
+      "sha256": "0dabc59206a4a2528ae9134fafe9917ec7c2ab58a730879a1b42b4eb6bed7671"
+    },
+    {
+      "path": "contributions/particles-2d.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 2967,
+      "sha256": "d13fc5e64802dc25efb3eb98d31cd5d95d3601dc379cb5e6376b966d1af9ea62"
+    },
+    {
+      "path": "packages/engine/src/tilemap.ts",
+      "originRole": "First-party optional entry of tile maps; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 528,
+      "sha256": "6040c1ef4ef650439355729710f7084183fb200f95a620e4acf7af5593834fce"
+    },
+    {
+      "path": "packages/engine/src/tiledImport.ts",
+      "originRole": "First-party reader of maps saved by Tiled as JSON into frozen data; written from the published description of the format, with no code of Tiled; independently authored with AI assistance; Apache-2.0. No third-party dependency.",
+      "bytes": 16160,
+      "sha256": "133856f6e852b703f4b8e4357d586d1e9db27b9e802de0d755d9e184e54df88c"
+    },
+    {
+      "path": "packages/engine/src/tileMapDraw.ts",
+      "originRole": "First-party tile map drawn as chunks of meshes on the shared renderer, with flips, tall tiles, changes by cell and culling; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 13117,
+      "sha256": "f1bae3def07636eafb6e7ddfefd61330023ec69060832c61b65faf713eea65cf"
+    },
+    {
+      "path": "packages/engine/src/tilemapTypes.ts",
+      "originRole": "First-party types of tile maps; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 6221,
+      "sha256": "3885dbff22dfebe7d329ebeec893710d3d1096e219d747fa05c029c95b99b970"
+    },
+    {
+      "path": "tests/tilemap.test.mjs",
+      "originRole": "First-party Node tests of the Tiled reader and the drawn tile map on a real Engine; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 25952,
+      "sha256": "24282dbea63b386faa9ae89bf4d48b290f1e6f7418a46ad0c2cb634095df72c4"
+    },
+    {
+      "path": "tests/types/tilemap.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the tile map entry; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 189,
+      "sha256": "b47cd1091eee4e3e560f08fcce0de7ab312ff9fdaf6dc2e600debd34cb20861c"
+    },
+    {
+      "path": "tests/types/tilemap.ts",
+      "originRole": "First-party strict TypeScript consumer of the tile map entry, with five refused misuses; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 2236,
+      "sha256": "96a57822e9e4cee0c3dcce307070f8c4739fd66856c6a75861fb03ace3088e5c"
+    },
+    {
+      "path": "examples/tilemap/index.html",
+      "originRole": "First-party page of the tile map example; independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "bytes": 3279,
+      "sha256": "e688a9ed23221bcd7baca142fac29234df56fb1c2fa781eb325fdfc433e9e52b"
+    },
+    {
+      "path": "examples/tilemap/main.mjs",
+      "originRole": "First-party example of a Tiled map read, drawn and walked through the 2D camera, with tileset images painted by the page; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "bytes": 8299,
+      "sha256": "87c64e280e369ae3029544cb4c57bf847f9157a68e08b44011c03135fba27cb5"
+    },
+    {
+      "path": "examples/tilemap/courtyard.tmj",
+      "originRole": "First-party example map in the JSON form Tiled writes, generated by a script for this example; independently authored with AI assistance; Apache-2.0. Invented layout; no third-party asset.",
+      "bytes": 25978,
+      "sha256": "b893d06dd766b31d835f13d3260f82403a23215d38c9eb068daefedc6a1c09a6"
+    },
+    {
+      "path": "examples/tilemap/verify.mjs",
+      "originRole": "First-party real-browser check of the tile map example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 10862,
+      "sha256": "5eca1d6a3dde202fe6ce4c938decab846913dca102ab6e047600af2e3eacdf12"
+    },
+    {
+      "path": "examples/tilemap/README.md",
+      "originRole": "First-party instructions for the tile map example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 2087,
+      "sha256": "281506343b34ee6153725214763b7cae602f065cb6d59debbd81410685365da2"
+    },
+    {
+      "path": "examples/tilemap/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the tile map example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 2029,
+      "sha256": "95d53b4bc5db97b1992f561c76072df173da41cd050c959979496005783a04a2"
+    },
+    {
+      "path": "knowledge-base/en/docs/tilemap.md",
+      "originRole": "First-party guide to tile maps and the Tiled reader, with what was run and what was not; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 6677,
+      "sha256": "820f6c30cb6012fb3038c397c8e09a9b89655d8bd01ee2a7e6b079c582cf8e93"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/tilemap.md",
+      "originRole": "First-party Chinese guide to tile maps; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 6602,
+      "sha256": "55a4510cbfb15b191c53897f898cb30a54b544ad2e7080b1fd19c71a83cfaea3"
+    },
+    {
+      "path": "contributions/tilemap.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 3549,
+      "sha256": "a4df4544a4fd7f5f65f1813ab1e5c484e568abcf311c5e5bc5d1445ff3383017"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
