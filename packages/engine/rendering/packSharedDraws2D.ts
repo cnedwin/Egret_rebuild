@@ -1,5 +1,5 @@
-import type { PreparedSharedDraw2D, PreparedSharedFrame2D, SharedPoint2D } from './prepareSharedDraws2D.js';
-import { qualifySharedUV, sharedFailure } from './prepareSharedDraws2D.js';
+import type { PreparedSharedDraw2D, PreparedSharedFrame2D } from './prepareSharedDraws2D.js';
+import { qualifySharedUVIn, sharedFailure, sharedUVDomain } from './prepareSharedDraws2D.js';
 import { packedOrientation } from './packedOrientation.js';
 /**
  * `regionWindow` is the window of the region table this draw's region is in, or -1 for a draw without a region.
@@ -32,8 +32,6 @@ export const SHARED_BATCH_PAGES_2D=8,SHARED_NO_PAGE_2D=0xffffffff;
 const ROW=SHARED_VERTEX_BYTES_2D/4,BLOCK=128,NO_PAGES:readonly number[]=Object.freeze([]);
 // One polygon's represented corners. Packing is synchronous and calls no caller code, so the storage is shared.
 let corners=new Float32Array(64*ROW);
-// Qualification reads the two represented texture coordinates of this one reused point.
-const represented={x:0,y:0,u:0,v:0,r:0,g:0,b:0,a:0,dr:0,dg:0,db:0},representedPoint:SharedPoint2D=represented;
 const address=(value:string):number=>value==='repeat'?1:value==='mirror-repeat'?2:0;
 /** The region table of one frame. Every region is written, whether or not a draw of the frame uses it. */
 export function packSharedRegions2D(frame:PreparedSharedFrame2D['frame']):Uint32Array<ArrayBuffer> {
@@ -147,7 +145,7 @@ export function packSharedDraws2D(prepared:PreparedSharedFrame2D):PackedSharedEn
             rows.set(keptRows,used);vertices=kept!.vertexCount;
             for(let o=used+11,end=used+keptRows.length;o<end;o+=ROW){rows[o]=slot;rows[o+1]=opacity;}
             used+=keptRows.length;
-        }else for(const polygon of draw.polygons){
+        }else{const uvDomain=sharedUVDomain(draw,frame);for(const polygon of draw.polygons){
             const count=polygon.length;
             if(count*ROW>corners.length)corners=new Float32Array(count*ROW);
             for(let i=0,o=0;i<count;i++,o+=ROW){
@@ -155,8 +153,12 @@ export function packSharedDraws2D(prepared:PreparedSharedFrame2D):PackedSharedEn
                 // A typed store rounds to f32 exactly as Math.fround does.
                 corners[o]=p.x;corners[o+1]=p.y;corners[o+2]=p.u;corners[o+3]=p.v;corners[o+4]=p.r;corners[o+5]=p.g;
                 corners[o+6]=p.b;corners[o+7]=p.a;corners[o+8]=p.dr;corners[o+9]=p.dg;corners[o+10]=p.db;corners[o+11]=slot;corners[o+12]=opacity;
-                for(let k=0;k<ROW;k++)if(!Number.isFinite(corners[o+k]!))sharedFailure('precision');
-                represented.u=corners[o+2]!;represented.v=corners[o+3]!;qualifySharedUV(representedPoint,draw,frame);
+                // Every value is finite exactly when their sum is: a NaN or an infinity carries into it, and thirteen
+                // finite f32 values cannot add up to an infinity in f64.
+                if(!Number.isFinite(corners[o]!+corners[o+1]!+corners[o+2]!+corners[o+3]!+corners[o+4]!+corners[o+5]!+corners[o+6]!
+                    +corners[o+7]!+corners[o+8]!+corners[o+9]!+corners[o+10]!+corners[o+11]!+corners[o+12]!))sharedFailure('precision');
+                // Qualification reads the two represented texture coordinates.
+                if(uvDomain!==undefined)qualifySharedUVIn(corners[o+2]!,corners[o+3]!,uvDomain);
             }
             for(let i=1;i+1<count;i++){
                 const b=i*ROW,c=b+ROW;
@@ -167,7 +169,7 @@ export function packSharedDraws2D(prepared:PreparedSharedFrame2D):PackedSharedEn
                 for(let k=0;k<ROW;k++){rows[used+k]=corners[k]!;rows[used+ROW+k]=corners[b+k]!;rows[used+2*ROW+k]=corners[c+k]!;}
                 used+=3*ROW;vertices+=3;
             }
-        }
+        }}
         // The orientation of each triangle is the one charge of this stage.
         if(kept!==undefined&&keptRows===undefined)retention!.keepRows(kept,rows.subarray(first,used),vertices,{preparedVertices:0,predicates:budget.predicatesCharged-predicatesBefore,tupleComparisons:0});
         fresh={prepared:draw,data:rows.subarray(first,used),vertexCount:vertices,uniform:blockOf(draw,fresh),regionWindow,pages};

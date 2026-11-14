@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Fewer checks per corner in shared preparation — 2026-11-14
+
+The sampling domain that a draw's texture coordinates are qualified against is found once a draw instead of once a corner. The vertex rows stage checks the finiteness of a corner's thirteen values through their sum. Checks, order and refusals are unchanged. For 5,000 bitmaps, the clipped geometry of a frame took 3.7 ms instead of 4.2, and its vertex rows 2.3 ms instead of 3.2. Part of #266. [Details](docs/display-tree-scaling.md#texture-coordinates-and-finite-rows)
+
 ## Faster clipped geometry for quads without rotation — 2026-11-14
 
 Rectangles and bitmaps placed without rotation or shear skip the orientation and normalization tests of the clipped geometry stage. Their outcome is known in advance, and the stage makes the same charges in one admission. Any case it cannot show to be the same is left to the general path. Geometry, charges and refusals are unchanged. In `tools/bench-2d.mjs`, 5,000 bitmaps of one atlas took 5.3 ms instead of 11.8, and 20,000 rectangles 34 ms instead of 44. Part of #266. [Details](docs/display-tree-scaling.md#quads-without-rotation)

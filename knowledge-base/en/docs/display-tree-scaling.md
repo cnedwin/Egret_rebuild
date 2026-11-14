@@ -253,3 +253,20 @@ Most draws of a 2D game are rectangles and bitmaps placed without rotation or sh
 | 5,000 bitmaps of 200 frames, a tenth moving, nothing kept | 14.24 → 8.48 ms |
 
 The tool measures each fresh stage over a few frames, so single rows vary between runs by about a fifth. Kept draws take what they took. In a longer run of 5,000 rectangles prepared 200 times from one captured frame, the median went from 6.4 to 3.0–4.3 ms. These are Node figures on the development machine. They are not a browser or GPU measurement.
+
+### Texture coordinates and finite rows
+
+Address qualification checks each corner's texture coordinates against the width, height and limit of its draw's sampling domain. That domain is the same for every corner of a draw, so it is now found once for each draw instead of once for each corner. This happens twice in the clipped geometry stage and once in the vertex rows stage. The vertex rows stage also checked the thirteen values of each corner one by one for finiteness. It now checks their sum, which is finite exactly when every value is: a NaN or an infinity carries into it, and thirteen finite f32 values cannot reach an infinity in f64. The checks, their order and their refusals are unchanged.
+
+`tests/shared-uv-qualification.test.mjs` refuses and admits coordinates on either side of the 8,192 limit of a repeating page and of the 1,048,576 limit otherwise, for page and region domains, with each frame prepared and packed. The outcomes were recorded before this change. Turning either limit off fails it. The 900 generated frames above, now also packed, show no difference in rows, blocks, vertex counts, windows or pages against the earlier build.
+
+Each process below prepares one captured frame 200 times and reports the median. The builds took turns, three processes each, and the lowest median of each is shown:
+
+| 5,000 draws, one frame prepared again | Main before quads | Quads without rotation | This change |
+| --- | --- | --- | --- |
+| Rectangles, clipped geometry | 5.41 ms | 3.22 ms | 2.99 ms |
+| Bitmaps, clipped geometry | 5.79 ms | 4.19 ms | 3.73 ms |
+| Rectangles, vertex rows | 2.84 ms | 3.10 ms | 1.78 ms |
+| Bitmaps, vertex rows | 3.27 ms | 3.19 ms | 2.32 ms |
+
+On this machine `tools/bench-2d.mjs` varied by more than these differences between runs, so its rows are not given for this change. These are Node figures and not a browser or GPU measurement.
