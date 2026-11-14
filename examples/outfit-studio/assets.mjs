@@ -92,12 +92,12 @@ export function createStudioAssets(engine, scope, signal, fixed = false) {
     return {sheet,clip:createSequenceClip(group.get(clip).value)};
   }
 
-  async function spine(palette) {
+  async function spineGroup(palette) {
     const {loader} = await library(palette);
     signal.throwIfAborted();
     const group = loader.load(scope, ['e_character']);
     await group.ready;
-    return group.getSpine('e_character');
+    return group;
   }
 
   async function close() {
@@ -111,5 +111,5 @@ export function createStudioAssets(engine, scope, signal, fixed = false) {
     if (failures.length) throw new AggregateError(failures, 'Studio resource cleanup failed');
   }
 
-  return {fonts,sequence,spine,library,close,fontStatus:() => editorFonts?.getStatus()};
+  return {fonts,sequence,spineGroup,library,close,fontStatus:() => editorFonts?.getStatus()};
 }

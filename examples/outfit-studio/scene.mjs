@@ -18,8 +18,8 @@ function createBackdrop(scope) {
   return layer;
 }
 
-export function createStudioScene(engine, scope, characters, spineAssets, {sheet,clip}, profile) {
-  const actors = new Map(), sequences = [];
+export function createStudioScene(engine, scope, characters, spineGroups, {sheet,clip}, profile) {
+  const actors = new Map(), sequences = [], initialBorrowers = new Map();
   const backdrop = createBackdrop(scope);
   engine.stage.addChildAt(backdrop, 0);
   function fitBackdrop({width, height}) {
@@ -36,7 +36,10 @@ export function createStudioScene(engine, scope, characters, spineAssets, {sheet
     const target = scope.use(new DisplayObjectContainer());
     Object.assign(target, {x:530+240*index,y:272,scaleX:4,scaleY:4});
     const animation = index%2 ? 'rise' : 'sway';
-    const instance = createSpineInstance(spineAssets.get(character.palette), borrowed);
+    const initialPalette = character.palette;
+    const group = spineGroups.get(initialPalette);
+    const instance = createSpineInstance(group.getSpine('e_character'), borrowed);
+    initialBorrowers.set(initialPalette, (initialBorrowers.get(initialPalette) ?? 0) + 1);
     instance.setSkins(skins(character.outfit));
     instance.setAnimation(0, animation, {loop:true});
     if (profile) instance.setAnimation(1,'trim',{loop:true});
@@ -44,7 +47,7 @@ export function createStudioScene(engine, scope, characters, spineAssets, {sheet
     target.addChild(display.node);
     camera.addChild(target);
     const slot = createSpineResetSlot(engine, scope, target, {version:character.palette,instance,display});
-    actors.set(character.id, {borrowed,slot,animation,target,index,x:target.x});
+    actors.set(character.id, {borrowed,initialPalette,slot,animation,target,index,x:target.x});
   }
   const sequenceCount = profile ? workload.sequences : 1;
   for (let index = 0; index < sequenceCount; index++) {
@@ -97,8 +100,19 @@ export function createStudioScene(engine, scope, characters, spineAssets, {sheet
     retireBorrowed(id) {
       // A RESET slot owns its replacement. The application retires its original borrowed instance.
       const actor = actors.get(id);
-      actor.borrowed?.dispose();
-      actor.borrowed = undefined;
+      if (actor.borrowed) {
+        actor.borrowed.dispose();
+        actor.borrowed = undefined;
+        const palette = actor.initialPalette;
+        const remaining = initialBorrowers.get(palette) - 1;
+        if (remaining === 0) {
+          // The group owns its instances. Release it only after its last original borrower retires.
+          initialBorrowers.delete(palette);
+          const group = spineGroups.get(palette);
+          spineGroups.delete(palette);
+          group.dispose();
+        } else initialBorrowers.set(palette, remaining);
+      }
       if (profile) actor.slot.getActive().instance.setAnimation(1,'trim',{loop:true});
     },
     inspect() {
