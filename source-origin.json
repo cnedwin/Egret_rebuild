@@ -582,8 +582,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 46147,
-      "sha256": "6c293ee248ef37ac369622f2231c49a45f91d52dbd0a5d66ab29068bc612d58c",
+      "bytes": 47058,
+      "sha256": "2f5fe3a20fbc0af3f0deb3e6658b1ff28e33a9392a364436250860febd497f07",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -786,8 +786,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 25800,
-      "sha256": "39dddfcc5e913fdeefefbbe9a9aea7c89331f9f81e28d54b57707d900e0b17cf",
+      "bytes": 25938,
+      "sha256": "e43a874561fcebc415d5e5db44eb366d9eb3f0f3957742a33806fd80122eedce",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -2072,7 +2072,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 137800,
-      "sha256": "679fd1fd9e748e01397d08747f25d035bcd4db45733d8e810a9d198527999308",
+      "sha256": "b1ce9b748c471d9f78616fac43543d85daca6337b442d16c548d0e4c03c35214",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2113,8 +2113,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 51251,
-      "sha256": "af0f15ebca98293828b6bb0aa823ced8e771e1073aa0aed4739f28c5ca3cc3d6",
+      "bytes": 52216,
+      "sha256": "c5d3c2d6c863de08463f447c86782a1bcaef173c106a32c0dc9dd4b76fde672a",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2506,8 +2506,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 28801,
-      "sha256": "8ad145ac88048875890910427c4d7869dd129b40118cde309319533982928ccf",
+      "bytes": 28928,
+      "sha256": "8e6d17943c5bbe0d73ee2ae811e014e75576b624137f6563e58fa7204d787a2e",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3746,8 +3746,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "41d789fccc51e376baf84042a089f0f7718f6452d70054a04398052e42d1058d",
-      "bytes": 406327,
+      "sha256": "91f2b06f67a6d977f7afb44cbe0a6559588e7eb292dd7575ac189e784de8309d",
+      "bytes": 407055,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -11721,14 +11721,14 @@
     {
       "path": "knowledge-base/Cns/docs/ui-data-panel.md",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 14488,
-      "sha256": "efd75fa075b46fb1ee8660524ff8c5148c083aa940040f0f7cc49ddda0553e39"
+      "bytes": 14933,
+      "sha256": "061ca66bf772288204d3b3a62f3a5897fb7cc9c79e6e20be409174e6272b2a4f"
     },
     {
       "path": "knowledge-base/en/docs/ui-data-panel.md",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 16765,
-      "sha256": "44257ac789c4819aae1d88e03c1c3181070f1cfbd2f53e4fad873488348ff1bd"
+      "bytes": 17215,
+      "sha256": "32abd3a6e66592af99e8835bdc185d5f02db09e71785e4a6fb1a79c8cb9e31c7"
     },
     {
       "path": "packages/engine/src/internal/uiFactoryState.ts",
@@ -11745,14 +11745,14 @@
     {
       "path": "packages/engine/src/ui/types.ts",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 8999,
-      "sha256": "d58ad5d1b4bad6d7a7687a9e05dbcf083ff3a602e986bdb7733fa56439c9e8c1"
+      "bytes": 9350,
+      "sha256": "3547af76e3be5048d8df930afad07c80257eca680c13eb7a5e0d74e36304b400"
     },
     {
       "path": "packages/engine/src/ui/uiRoot.ts",
       "originRole": "First-party managed UI panel implementation, integration, reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 69144,
-      "sha256": "2df0439fd97cbf651608229a83f853421dfbd0936bc18b80374cae9afc200065"
+      "bytes": 69173,
+      "sha256": "47db2eb616f70861ee102f25dbbb19b8032be40f2384f1b3000ad731824d6c7f"
     },
     {
       "path": "packages/engine/src/ui/virtualList.ts",
@@ -16749,14 +16749,14 @@
     {
       "path": "knowledge-base/en/docs/ui-controls.md",
       "originRole": "First-party guide to control state: movement, action, hover, toggle and selection; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 24470,
-      "sha256": "7f1df7d66ca50e64c1926fca64fd95f8da82abc324dccc816fbbf239cb6850ae"
+      "bytes": 26467,
+      "sha256": "274cae3cf15bd435d6d9735f637f27f276959097a59295fa5a9ec4fb8bf75872"
     },
     {
       "path": "knowledge-base/Cns/docs/ui-controls.md",
       "originRole": "First-party Chinese guide to control state; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 23680,
-      "sha256": "22d3c51f71a442c28c1bb1515c2d56f5b39ff71c66d543a3f367e6d8c6cefb77"
+      "bytes": 25690,
+      "sha256": "bcaefa966d47844c11b93a285f3bc1abdcb4576a2a7e8de8ee9fb5823fbe11d0"
     },
     {
       "path": "contributions/ui-control-states.json",
@@ -16851,14 +16851,14 @@
     {
       "path": "packages/engine/src/semanticTypes.ts",
       "originRole": "First-party public types of the semantic tree of a drawn UI; independently authored with AI assistance; Apache-2.0. Role names follow WAI-ARIA 1.2 vocabulary; no specification text is copied.",
-      "bytes": 6680,
-      "sha256": "2bf723016af7dee282e10f1d49576d59efad6d883b3a14af9b43e44e60ce7a7f"
+      "bytes": 6904,
+      "sha256": "7ec680a35f93845188f7c5b4a8ecf1cc67e97409ae981142a6103b97ae873753"
     },
     {
       "path": "packages/engine/src/semanticTree.ts",
       "originRole": "First-party DOM-free semantic tree: roles, names, bounds and state read from the drawn controls at each publication, with their actions; independently authored with AI assistance; Apache-2.0. No third-party dependency or asset.",
-      "bytes": 18263,
-      "sha256": "5ff53dba535e2bfc9c626c9d0a22e219470d4beb7214ba387e66d27988120752"
+      "bytes": 18759,
+      "sha256": "62a2c53cc1489731efdec0f787c62ec3a796764ea4ee4b68ed01f90976dbd985"
     },
     {
       "path": "packages/engine/src/semantics.ts",
@@ -16869,8 +16869,8 @@
     {
       "path": "packages/engine/web/BrowserSemantics.ts",
       "originRole": "First-party browser projection of the semantic tree to elements the canvas owns; independently authored with AI assistance; Apache-2.0. Attribute names follow WAI-ARIA 1.2; no specification text or third-party code is copied.",
-      "bytes": 16028,
-      "sha256": "f57f3f4ade2e3cd76fdf755b8e48df21f04ad4ef8f2c9539cc01a33fdc0f285a"
+      "bytes": 16117,
+      "sha256": "6f07460939f9a95e011791daca22d8e6b91f973a0821f42e0f4fbaf961e5e721"
     },
     {
       "path": "packages/engine/web/semantics.ts",
@@ -16881,14 +16881,14 @@
     {
       "path": "tests/ui-semantics.test.mjs",
       "originRole": "First-party behaviour tests of the semantic tree, alone and over the existing controls on a genuine Engine; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 31788,
-      "sha256": "2f164d4b0e5432172e4de643d3817aff404e6dbf662ecba566e899737ac5c585"
+      "bytes": 35332,
+      "sha256": "72674a5e3d6c56d312fbe1a58c952054d209c434f2e4db9d05c83951906dbfaf"
     },
     {
       "path": "tests/browser-semantics.test.mjs",
       "originRole": "First-party tests of the browser projection against a test-owned stand-in for the page; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 34780,
-      "sha256": "41b6ddd340b8d01590ea37f8bcb203468df77de1b5fd631b21ffbd595b618582"
+      "bytes": 36748,
+      "sha256": "de29e8f88ed18743ef34a6957f00feaf9bb786327c52e24e2e6edfabca3b0229"
     },
     {
       "path": "tests/types/semantics.json",
@@ -16899,20 +16899,20 @@
     {
       "path": "tests/types/semantics.ts",
       "originRole": "First-party strict TypeScript consumer of the two semantics entries, with nine refused misuses; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 4393,
-      "sha256": "f759c36a78ab4b2160fe9599010a1c3c3aa4f3a9cae80dd1fee94038d68eed64"
+      "bytes": 4884,
+      "sha256": "8f896ac6e4c66a1f9d72b257e8c4b68f79cece01bdeabb19f93275d1b297e263"
     },
     {
       "path": "knowledge-base/en/docs/ui-semantics.md",
       "originRole": "First-party guide to the semantic tree and its browser projection; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 18454,
-      "sha256": "12849d35ad1a4fdb5fece68e4747fcd5e01083a3b838f7d190cb5d8c3deb16fd"
+      "bytes": 20861,
+      "sha256": "d1fa114d76224a652e094dce7475f5c16ca7ea64cfc3f11c73387315e736b710"
     },
     {
       "path": "knowledge-base/Cns/docs/ui-semantics.md",
       "originRole": "First-party Simplified Chinese guide to the semantic tree and its browser projection; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 17870,
-      "sha256": "5667346d91dddea200a9095470f23769005371e7e0f42f4aa2196b7ab2e986c5"
+      "bytes": 20245,
+      "sha256": "643cac9a9f62e4ce8767495dc198dedf23cce8f57a80ea333f85136038120b62"
     },
     {
       "path": "contributions/ui-semantics.json",
@@ -17169,32 +17169,92 @@
     {
       "path": "examples/ui-dropdown/main.mjs",
       "originRole": "First-party example of a dropdown for each row of a managed list: a popup layer anchored to the row, with keys, a wheel and semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
-      "bytes": 17355,
-      "sha256": "d5b685de2fb11d8ce7f83687bd7f76451db7d22c2382bef395da82aee3f9b6b2"
+      "bytes": 18449,
+      "sha256": "760676679477663ff0671a457182adc68f53cb24078e189df0a9d7761c7142f2"
     },
     {
       "path": "examples/ui-dropdown/verify.mjs",
       "originRole": "First-party real-browser check of the dropdown example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 17136,
-      "sha256": "60f00e7000105752e31694ed8253745a7bc1f9953a4e45ca4312d609f236a0f6"
+      "bytes": 19078,
+      "sha256": "6892823d2b22631a782f0892693efb6f834ca3d4446255f3e60a0397a7ce66ef"
     },
     {
       "path": "examples/ui-dropdown/README.md",
       "originRole": "First-party instructions for the dropdown example; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 4736,
-      "sha256": "9d9425ea7622349d405aff8ea8f821857ac0ac5a182fe2aa71451350cee8f887"
+      "bytes": 4931,
+      "sha256": "0b554ffadc5a18f55e54372558439a246cd645d0df39e521674d854dc9dc6409"
     },
     {
       "path": "examples/ui-dropdown/README.zh-CN.md",
       "originRole": "First-party Simplified Chinese instructions for the dropdown example; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 4647,
-      "sha256": "a8359e909635ff0ca8f45d61c49acd65d800248e754c1de2d1df24eb1e65bb66"
+      "bytes": 4805,
+      "sha256": "0061af0b2c398b0a8f579cf58dd1605c0a168487f7ef6049f200adef273d14b1"
     },
     {
       "path": "contributions/ui-dropdown-example.json",
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 1408,
       "sha256": "5919f6bea681784740ba465e3c410034b70d823e1e09bd2f16f026c40ee36c27"
+    },
+    {
+      "path": "tests/ui-row-target.test.mjs",
+      "originRole": "First-party behaviour tests of the display object a row binding of a managed list is given, with a hover control and an action control on a genuine Engine and a genuine UI root; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 6066,
+      "sha256": "3a129a37883fc9185283b293cf16fb2d646cc9cf9ac75dc9a71a9f13455e295e"
+    },
+    {
+      "path": "tests/types/ui-row-target.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the row target; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 201,
+      "sha256": "493319850300e6fcdb19e1b7c48e84b8b012beae04398bc56c9bb9e28ba3ecde"
+    },
+    {
+      "path": "tests/types/ui-row-target.ts",
+      "originRole": "First-party strict TypeScript consumer of the target of a row binding, with two refused misuses; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 1335,
+      "sha256": "b32468d1272ca4a44d539c42198c7e053ac304aea6eac7375945a23de2a01f9d"
+    },
+    {
+      "path": "contributions/ui-row-target.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 854,
+      "sha256": "7f262d3b3bf02598a5880e983cc7b14c70cc534ff5350d4a88d5d0ea8462d30b"
+    },
+    {
+      "path": "examples/ui-tabs/index.html",
+      "originRole": "First-party page of the tabs example; independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "bytes": 3272,
+      "sha256": "6609e6d857af166589de790d5e28d4c1849ea4372ee75a7d97a37b5546579985"
+    },
+    {
+      "path": "examples/ui-tabs/main.mjs",
+      "originRole": "First-party example of drawn tabs with their panels and progress bars, with keys and semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "bytes": 11445,
+      "sha256": "cde4e364db08e0c0af5ca551d116ce894f0774a139062dcdfc45714eba375374"
+    },
+    {
+      "path": "examples/ui-tabs/verify.mjs",
+      "originRole": "First-party real-browser check of the tabs example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 16115,
+      "sha256": "9b74ba4b872c10ef8b3fdce2baedd1842760afef481fa879290d8a2ca4263de8"
+    },
+    {
+      "path": "examples/ui-tabs/README.md",
+      "originRole": "First-party instructions for the tabs example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 3320,
+      "sha256": "26dc2d0092e69e5147b670bce60f252509d86fcaac32860c91e3dab79732e2cb"
+    },
+    {
+      "path": "examples/ui-tabs/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the tabs example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 3282,
+      "sha256": "d2f712feaa1e6fe463191bfc3c77b32aedfc94e7ba304729ed73d2239ac898b7"
+    },
+    {
+      "path": "contributions/ui-tabs-example.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 1325,
+      "sha256": "7c1d0f0637eb310acf618e5f7380f17303a98a971f660df8c29ce844ef969992"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
