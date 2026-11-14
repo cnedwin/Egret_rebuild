@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Egret tile map / 瓦片地图</title>
+  <link rel="icon" href="data:,">
+  <script type="importmap">{
+  "imports": {
+    "@egret/engine": "/packages/engine/dist/index.js",
+    "@egret/engine/webgpu": "/packages/engine/dist/web/webgpu.js",
+    "@egret/engine/webgl2": "/packages/engine/dist/web/webgl2.js",
+    "@egret/engine/ui": "/packages/engine/dist/ui/index.js",
+    "@egret/engine/input": "/packages/engine/dist/input.js",
+    "@egret/engine/input/hover": "/packages/engine/dist/hover.js",
+    "@egret/engine/web/hover": "/packages/engine/dist/web/hover.js",
+    "@egret/engine/ui/semantics": "/packages/engine/dist/semantics.js",
+    "@egret/engine/web/semantics": "/packages/engine/dist/web/semantics.js",
+    "@egret/engine/web/pointer": "/packages/engine/dist/web/pointer.js",
+    "@egret/engine/web/keyboard": "/packages/engine/dist/web/keyboard.js",
+    "@egret/engine/camera": "/packages/engine/dist/camera.js",
+    "@egret/engine/tilemap": "/packages/engine/dist/tilemap.js",
+    "@egret/runtime": "/packages/runtime/dist/index.js",
+    "@egret/runtime/ui": "/packages/runtime/dist/ui/index.js",
+    "@egret/runtime/input": "/packages/runtime/dist/input/index.js",
+    "@egret/contracts": "/packages/contracts/dist/index.js",
+    "@egret/contracts/resources": "/packages/contracts/dist/resources/index.js",
+    "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js",
+    "#egret-pointer-input": "/packages/engine/dist/pointerInput.js",
+    "#egret-keyboard-input": "/packages/engine/dist/keyboardInput.js",
+    "robust-predicates": "/packages/engine/node_modules/robust-predicates/index.js"
+  }
+}</script>
+  <style>
+    body { font: 1rem/1.5 system-ui, sans-serif; margin: 2rem auto; padding: 0 1rem; max-width: 48rem; color: #172033; background: #f4f6fa; }
+    #surface { margin: 1rem 0; }
+    canvas { display: block; width: 100%; max-width: 720px; height: auto; border: 0; padding: 0; object-fit: fill; }
+    button { margin: 0 .5rem .5rem 0; padding: .5rem .9rem; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <h1>A tile map / 瓦片地图</h1>
+  <p>A sect courtyard of 64 by 40 cells, made in Tiled and read from its JSON. The arrow keys or WASD walk the disciple; the camera follows, and only the chunks in view are drawn. Click a cell of grass to plant flowers or take them away.<br>一个 64×40 格的门派庭院，用 Tiled 制作并从其 JSON 读入。方向键或 WASD 让弟子行走；相机跟随，只绘制视野内的区块。点击草地上的一格可以种花或拔掉。</p>
+  <div id="surface"><canvas id="scene" width="720" height="405" tabindex="0"></canvas></div>
+  <p><button id="zoom-in" type="button">放大 / Zoom in</button><button id="zoom-out" type="button">缩小 / Zoom out</button><button id="trees" type="button" aria-pressed="true">树木 / Trees</button></p>
+  <p id="status">Starting… / 正在启动…</p>
+  <pre id="state"></pre>
+  <p><a href="./README.md">English instructions</a> · <a href="./README.zh-CN.md">中文说明</a></p>
+  <script type="module" src="./main.mjs"></script>
+</body>
+</html>
