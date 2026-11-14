@@ -11,7 +11,7 @@ node tools/build.mjs
 node tools/serve-canvas.mjs
 ```
 
-Open `/examples/starter/index.html` on the host and port the server prints. Add `?backend=webgl2` or `?backend=webgpu` to choose a backend, and `?stats` for a panel of frames a second and what a frame holds.
+Open `/examples/starter/index.html` on the host and port the server prints. Add `?backend=webgl2` or `?backend=webgpu` to choose a backend, and `?stats` for a panel of frames a second and what a frame holds. `?image=/examples/resource-scene/assets/atlas-v1.png` loads that PNG with `game.loadTexture` and counts the taps on it.
 
 ## What is in it
 
@@ -24,6 +24,7 @@ Open `/examples/starter/index.html` on the host and port the server prints. Add 
 | Input | `game.pointer` and `game.keyboard` for display objects. This example listens to the page's own `pointerdown` and `keydown` on the canvas, and `game.toStage` turns a place on the page into stage units |
 | The loop | `game.loop`: it moves the Engine's clock, calls `update(seconds)` and draws |
 | The stage | `engine.stage.addChild(...)`; a `Sprite` draws with `graphics`, and `x`, `y` place it |
+| Motion | `animate(engine, scope, coin).to({ scaleX: 2, scaleY: 2, alpha: 0 }, 0.2, 'quadOut').call(...)` when a coin is picked up |
 
 [One call for a game in a page](../../knowledge-base/en/docs/browser-game.md) describes the options and what to do when a game needs to make these itself.
 

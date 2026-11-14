@@ -76,7 +76,7 @@ export class CharacterMotor3D {
             if (ny < -0.2) this.#supported = true;
             if (this.#pushScale <= 0 || body.type !== 'dynamic' || Math.abs(ny) > 0.5) return;
             // Push no harder than needed to move the body at the character's own pace.
-            const size = Math.hypot(nx, nz) || 1, x = nx / size, z = nz / size, v = this.velocity, carry = this.#carry;
+            const size = Math.sqrt(nx * nx + nz * nz) || 1, x = nx / size, z = nz / size, v = this.velocity, carry = this.#carry;
             const closing = (v[0]! + carry[0]! - body.linearVelocity[0]!) * x + (v[2]! + carry[2]! - body.linearVelocity[2]!) * z;
             const impulse = Math.min(this.pushForce * this.#pushScale, closing * body.mass);
             if (impulse > 0) body.applyImpulse(x * impulse, 0, z * impulse);
@@ -148,10 +148,10 @@ export class CharacterMotor3D {
             v[0]! += carry[0]!; v[2]! += carry[2]!; v[1]! += Math.max(carry[1]!, 0);
         } else if (!grounded) v[1] = Math.max(v[1]! - this.gravity * dt, -this.maxFallSpeed);
         // 3. Horizontal motion: head toward the wished velocity, quickly on the ground and weakly in the air.
-        const rate = this.acceleration * (grounded && !this.jumped ? 1 : this.airControl) * dt, ax = wishX - v[0]!, az = wishZ - v[2]!, gap = Math.hypot(ax, az);
+        const rate = this.acceleration * (grounded && !this.jumped ? 1 : this.airControl) * dt, ax = wishX - v[0]!, az = wishZ - v[2]!, gap = Math.sqrt(ax * ax + az * az);
         if (gap <= rate || !(rate < Infinity)) { v[0] = wishX; v[2] = wishZ; } else { v[0]! += ax / gap * rate; v[2]! += az / gap * rate; }
         // 4. Move, climbing a step when a low ledge blocks the way.
-        const dx = v[0]! * dt, dz = v[2]! * dt, dy = v[1]! * dt, wanted = Math.hypot(dx, dz);
+        const dx = v[0]! * dt, dz = v[2]! * dt, dy = v[1]! * dt, wanted = Math.sqrt(dx * dx + dz * dz);
         const startX = p[0]!, startY = p[1]!, startZ = p[2]!;
         this.#pushScale = dt;
         let standing = this.settle(dx, dy, dz), ground = this.#ground, ceiling = c.hitCeiling;

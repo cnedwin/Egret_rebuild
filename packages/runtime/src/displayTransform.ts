@@ -6,10 +6,13 @@ export function composeDisplayTransform(p: Matrix2D, s: VisualState): Matrix2D {
   const angle = (s.rotation % 360) * Math.PI / 180;
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
-  const a = cos * s.scaleX;
-  const b = sin * s.scaleX;
-  const c = -sin * s.scaleY;
-  const d = cos * s.scaleY;
+  // Without skew the two axes turn together, by the expressions this always used. With skew, the x axis is turned by
+  // the rotation and skewY, and the y axis by the rotation and skewX.
+  let a = cos * s.scaleX, b = sin * s.scaleX, c = -sin * s.scaleY, d = cos * s.scaleY;
+  if (s.skewX !== 0 || s.skewY !== 0) {
+    const xAxis = ((s.rotation + s.skewY) % 360) * Math.PI / 180, yAxis = ((s.rotation + s.skewX) % 360) * Math.PI / 180;
+    a = Math.cos(xAxis) * s.scaleX; b = Math.sin(xAxis) * s.scaleX; c = -Math.sin(yAxis) * s.scaleY; d = Math.cos(yAxis) * s.scaleY;
+  }
   // Keep the original zero-pivot expressions, including signed-zero behavior.
   if (s.anchorOffsetX === 0 && s.anchorOffsetY === 0) return {
     a: p.a * a + p.c * b,

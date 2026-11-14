@@ -4,7 +4,7 @@
 
 `@egret/engine/web/game` 用一次调用在页面里启动一个 2D 游戏，并带有一个显示游戏开销的面板。
 
-**核对了什么，没核对什么。** 选项和面板在 Node 中核对。[起步示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.zh-CN.md)运行在 `createBrowserGame` 之上，并在无头 Chromium 中用软件渲染核对：能绘制，能响应点击、按键和触摸，加上 `?stats` 能显示面板，以上都使用 WebGL2。让它自己选择时，该浏览器从软件适配器取得了 WebGPU，循环绘制了若干帧且没有失败；那次运行没有读取像素。没有在硬件 GPU 和手机上运行。
+**核对了什么，没核对什么。** 选项和面板在 Node 中核对。[起步示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.zh-CN.md)运行在 `createBrowserGame` 之上，并在无头 Chromium 中用软件渲染核对，全部使用 WebGL2：能绘制，能响应点击、按键和触摸，能按地址加载图片，加上 `?stats` 能显示面板。自动选择核对了两种情况：浏览器没有 WebGPU，以及浏览器的 WebGPU 不给适配器，两者都得到 WebGL2。选中 WebGPU 的情况没有核对：该浏览器的软件 WebGPU 适配器会丢失设备或永远画不完一帧，用 `?backend=webgpu` 时也一样，所以这里早先写的“绘制了若干帧且没有失败”说得比实际看到的多。没有在硬件 GPU 和手机上运行。
 
 ## 用法
 
@@ -35,6 +35,11 @@ hero.graphics.beginFill(0x4a7bd0).drawRect(0, 0, 24, 24).endFill();
 | 帧循环 | `game.loop` | `createBrowserFrameLoop`，见[帧循环](frame-loop.md) |
 | 面板（如果要求） | `game.stats` | `createBrowserStatsPanel`，见下文 |
 
+`await game.loadTexture(url)` 加载一张 PNG 图片并给出其纹理的租约，可用于 `new Bitmap(lease)` 或 `graphics.beginBitmapFill(lease)`；租约属于 `game.scope`，同一地址加载两次得到同一张纹理。其他格式不能读取，请使用[内容构建](content-build-pipeline.md)。`game.host` 是 Host，可读取它的状态。
+
+**文本。** `const label = await game.createLabel({ text: '金币 0', fontSize: 14, color: 0xf0c030, locale: 'zh' })` 创建一行文本；把 `label.display` 加到舞台上并定位，之后文字变化时设置 `label.text`。新文字准备好后才画出来，在此之前保留旧文字；`await label.ready` 可以等它完成。字体用页面自己的：系统字体族，或页面已加载的字体。第一个 label 会加载页面的文本光栅化器，所以 import map 需要 `@egret/engine/text`、`@egret/engine/web/text` 和 `@egret/runtime/text`。
+
+**画布适配。** 给了 `fit` 之后，游戏会把画布居中放在它的元素里，并在该元素大小变化时重新调整。这个元素需要有自己的大小：高度由画布撑开的元素没有可适配的尺寸。`'cover'` 时画布比元素大，元素应当隐藏溢出的部分。任何模式下舞台都保持自己单位的宽高，指针位置跟随画布。
 `game.frame` 是循环绘制的那一帧；`game.toStage(clientX, clientY)` 把页面上的位置（页面的指针事件给出的坐标）换算成舞台上的位置。
 
 ## 选项
@@ -50,6 +55,7 @@ hero.graphics.beginFill(0x4a7bd0).drawRect(0, 0, 24, 24).endFill();
 | `onError(error)` | 循环被什么停下时通知一次 | 失败会抛出到控制台能看到的地方 |
 | `pointer`、`keyboard` | 给 `false` 则不创建该输入 | 两者都创建 |
 | `stats` | 给 `true` 则显示面板 | 没有面板 |
+| `fit`、`fitTo` | 画布怎样填充一个元素：`'contain'` 完整放入，`'cover'` 盖满，`'stretch'` 拉伸成它的形状。`fitTo` 就是那个元素 | `'none'`，以及画布的父元素 |
 | `autoStart` | 给 `false` 则由 `game.loop.start()` 启动循环 | 循环立即启动 |
 
 无效的选项在创建任何东西之前就以 `BROWSER_GAME_OPTIONS_INVALID` 被拒绝。

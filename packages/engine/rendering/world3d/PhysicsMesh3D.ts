@@ -105,7 +105,7 @@ export class TriangleMeshShape3D {
     triangleNormal(triangle: number, out: number[]): number[] {
         const p = this.positions, a = this.indices[triangle * 3]! * 3, b = this.indices[triangle * 3 + 1]! * 3, c = this.indices[triangle * 3 + 2]! * 3;
         const ux = p[b]! - p[a]!, uy = p[b + 1]! - p[a + 1]!, uz = p[b + 2]! - p[a + 2]!, vx = p[c]! - p[a]!, vy = p[c + 1]! - p[a + 1]!, vz = p[c + 2]! - p[a + 2]!;
-        const x = uy * vz - uz * vy, y = uz * vx - ux * vz, z = ux * vy - uy * vx, length = Math.hypot(x, y, z) || 1;
+        const x = uy * vz - uz * vy, y = uz * vx - ux * vz, z = ux * vy - uy * vx, length = Math.sqrt(x * x + y * y + z * z) || 1;
         out[0] = x / length; out[1] = y / length; out[2] = z / length;
         return out;
     }

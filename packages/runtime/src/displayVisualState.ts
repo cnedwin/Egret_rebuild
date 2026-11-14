@@ -27,6 +27,10 @@ export interface VisualState {
   scaleX: number;
   scaleY: number;
   rotation: number;
+  /** Degrees by which the y axis and the x axis are turned beyond the rotation; 0 and 0 is no skew. */
+  skewX: number; skewY: number;
+  /** A name the application gives, for getChildByName. */
+  name: string;
   alpha: number;
   visible: boolean;
   sharedMaterial: SharedMaterial2D | null;
@@ -87,7 +91,7 @@ export function recordVisualChange(node: object, changes: number): void {
 export function registerVisual(node: DisplayObject): void {
   states.set(node, {
     structureRevision: 0, transformRevision: 0, appearanceRevision: 0, contentRevision: 0, bindingRevision: 0,
-    x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, alpha: 1,
+    x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, skewX: 0, skewY: 0, name: '', alpha: 1,
     anchorOffsetX: 0, anchorOffsetY: 0,
     visible: true, renderEffect: undefined, sharedMaterial: null, renderBoundary: 'none', clipRect: undefined, primitives: [], shape: undefined,
     sharedCapture: undefined, changes: 0, seenBy: 0,

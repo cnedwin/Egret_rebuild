@@ -23,7 +23,7 @@
 | `egret.runEgret({ ... })` 和 `Main` 文档类 | `@egret/engine/web/game` 的 `await createBrowserGame({ canvas, width, height, update })` | 见[一次调用启动页面里的游戏](browser-game.md) |
 | `this.stage` | `game.stage` 或 `engine.stage` | 一个 Engine 一个舞台 |
 | `stage.stageWidth`、`stage.stageHeight` | 你给出的 `width` 和 `height` | 舞台大小固定，使用自己的单位 |
-| `index.html` 里的 `scaleMode`、`orientation` | 画布上的 CSS | 画布大小由页面决定；舞台整个画进画布 |
+| `index.html` 里的 `scaleMode` | `createBrowserGame` 的 `fit`：`'contain'`（showAll）、`'cover'`（noBorder）、`'stretch'`（exactFit） | 舞台保持自己的单位和大小；会改变舞台大小的模式没有提供。`orientation` 由页面设置 |
 | `egret.startTick(fn)`、`Event.ENTER_FRAME` | `createBrowserGame` 或[帧循环](frame-loop.md)的 `update(seconds)` | `seconds` 是距上一步的时间，最多 0.1 |
 | `egret.Timer`、`egret.setTimeout` | 在 `update` 里累计秒数，或用页面自己的 `setTimeout` | 没有计时器类 |
 | `egret.getTimer()` | `performance.now()`，或累加 `update` 的 `seconds` | |
@@ -36,16 +36,16 @@
 | `egret.DisplayObjectContainer` | `DisplayObjectContainer` | `addChild`、`addChildAt`、`removeChild`、`removeChildren`、`getChildAt`、`getChildIndex`、`setChildIndex`、`numChildren` 都有 |
 | `egret.Sprite`、`egret.Shape` | `Sprite` | 没有 `Shape`。`Sprite` 有 `graphics`，也能放子对象 |
 | `x`、`y`、`scaleX`、`scaleY`、`rotation`、`alpha`、`visible`、`anchorOffsetX`、`anchorOffsetY` | 名字相同 | `rotation` 仍然是角度 |
-| `width`、`height` | 读取用 `getBounds()`。要改大小，设置 `scaleX` 和 `scaleY`，或直接按该大小绘制 | 没有 `width`、`height` 的 setter |
-| `skewX`、`skewY` | 没有 | |
-| `name`、`getChildByName` | 没有。自己保存引用，或用一个 `Map` | |
+| `width`、`height` | 名字相同 | 在父级上的大小：对象及其子对象画出的范围乘以缩放。设置其中一个会设置 `scaleX` 或 `scaleY`；什么都没画的对象拒绝设置大小（`DISPLAY_SIZE_UNAVAILABLE`） |
+| `skewX`、`skewY` | 名字相同，单位是角度 | |
+| `name`、`getChildByName` | 名字相同 | `getChildByName` 只查直接子对象 |
 | `removeChildAt`、`swapChildren`、`contains` | `removeChild(getChildAt(i))`；`setChildIndex`；沿 `parent` 向上查 | |
 | `mask = 矩形`、`scrollRect` | `clipRect = { x, y, width, height }` | 矩形使用对象自己的单位 |
 | `mask = 显示对象` | 没有 | 只能用矩形裁剪 |
 | `blendMode` | `blendMode`：`'normal'`、`'add'`、`'multiply'`、`'screen'`、`'erase'` | 见[混合模式](blend-modes.md) |
 | `filters = [new egret.GlowFilter(...)]` | `renderEffect` | 有哪些效果见[滤镜](filters.md) |
 | `cacheAsBitmap` | 没有 | |
-| `touchEnabled`、`touchChildren` | 名字相同，配合 `hitArea` | 命中测试读取 `hitArea`，不读取绘图 |
+| `touchEnabled`、`touchChildren` | 名字相同 | 开启 touch 的对象按它画出的内容命中：形状的三角形、矩形、位图的矩形。设置了 `hitArea` 时改用 `hitArea` |
 | `hitTestPoint` | `stage.hitTest(x, y)` | |
 | `localToGlobal`、`globalToLocal` | 名字相同 | 返回 `{ x, y }` |
 | `egret.Point`、`egret.Rectangle`、`egret.Matrix` | 普通对象：`{ x, y }`、`{ x, y, width, height }` | 没有这些类 |
@@ -72,7 +72,7 @@
 | `RES.getRes('name')`、`RES.getResAsync` | `await engine.assets.acquire(ref, { signal: scope.signal })` | ref 指明类型和键：`createAssetRef(type, key)`。用 `scope.use` 把租约交给作用域 |
 | `RES.loadConfig`、`RES.loadGroup`、资源组进度事件 | 基于已构建清单的内容加载器：`@egret/engine/resources` 的 `createContentLoader`，在页面里配合 `@egret/engine/web/resources` | 见[内容构建](content-build-pipeline.md)和[资源组](资源批量获取.md) |
 | `default.res.json` | 内容构建写出的清单 | [旧 RES 声明](legacy-res-declarations.md)介绍读取旧配置的分析器 |
-| 按 URL 加载一张图片 | `@egret/engine/web/image` 的 `createBrowserTextureProvider` | |
+| 按 URL 加载一张图片 | `await game.loadTexture(url)` | PNG。不用 `createBrowserGame` 时：`@egret/engine/web/image` 的 `createBrowserTextureProvider` |
 | `egret.SpriteSheet`、纹理图集 | 通过内容加载器使用图集；位图显示其中一个区域 | 见[图集帧](atlas-frame-layout-contract.md) |
 | `bitmap.scale9Grid` | `NineSliceBitmap` | 见[九宫格位图](九宫格位图契约.md) |
 | `bitmap.fillMode = REPEAT` | 不是位图的属性 | 用 `Sprite` 的 `graphics.beginBitmapFill(lease)` 加一个 `drawRect` 可以画出平铺的图片 |
@@ -84,7 +84,7 @@
 | --- | --- | --- |
 | `egret.TouchEvent.TOUCH_BEGIN`、`TOUCH_MOVE`、`TOUCH_END` | `pointer.events.begin`、`.move`、`.end`，`pointer` 来自 `game.pointer` 或 `createBrowserPointerInput` | 鼠标、触摸和笔。见[指针输入](multi-pointer-input.md) |
 | `TOUCH_RELEASE_OUTSIDE`、`TOUCH_CANCEL` | `pointer.events.cancel`，带 `reason` | |
-| `TOUCH_TAP` | 同一个对象上的一次 begin 和一次 end，或 `@egret/engine/ui` 的 action 控件 | 没有单独的点击事件 |
+| `TOUCH_TAP` | `pointer.events.tap` | 在接触开始时所在的对象上结束，且距开始位置不超过 12 个舞台单位 |
 | `event.stageX`、`event.stageY`、`event.localX` | `event.payload.globalX`、`event.payload.globalY`；对象自己的单位用 `target.globalToLocal(x, y)` | |
 | 鼠标悬停、滚轮 | `@egret/engine/web/hover` 的 `createBrowserHoverInput` | 见[悬停](pointer-hover.md) |
 | 键盘（白鹭工程里的 `document.addEventListener('keydown')`） | `game.keyboard` 或 `createBrowserKeyboardInput` | 见[键盘输入](keyboard-focus-input.md) |
@@ -94,10 +94,12 @@
 
 | 白鹭 5 | 现在 | 说明 |
 | --- | --- | --- |
-| `egret.Tween.get(obj).to({ x: 100 }, 500, egret.Ease.quadOut)` | `engine.createTween(scope, { from: obj.x, to: 100, durationSeconds: 0.5, easing: 'quadOut', onUpdate: v => { obj.x = v; } }).start()` | 一个缓动驱动一个数字，时间单位是秒，调用 `start()` 后才运行；另有 `pause()`、`resume()` 和 `stop()`。缓动函数：`'linear'`、`'quadIn'`、`'quadOut'`、`'quadInOut'` |
-| `.to(...).to(...)`、`.wait()`、`.call()` | 在 `onComplete` 里启动下一个缓动 | 没有链式调用 |
-| `{ loop: true }` | 在 `onComplete` 里再启动一次 | |
-| `egret.Tween.removeTweens(obj)` | `tween.dispose()`，或销毁它的作用域 | |
+| `egret.Tween.get(obj).to({ x: 100, alpha: 0 }, 500, egret.Ease.quadOut)` | `animate(engine, scope, obj).to({ x: 100, alpha: 0 }, 0.5, 'quadOut').start()` | 来自 `@egret/engine`。单位是秒不是毫秒，调用 `start()` 后才运行 |
+| `.to(...).wait(200).call(fn).to(...)` | 同样的链：`.to(...).wait(0.2).call(fn).to(...)` | 各步要在 `start()` 之前加好 |
+| `{ loop: true }` | `.loop()`，或 `.loop(3)` 表示共运行三遍 | |
+| `egret.Ease.*` | 名字：`'linear'`、`'quadIn'`、`'quadOut'`、`'quadInOut'`，`cubic`、`quart`、`sine`、`expo`、`back` 同理；`'elasticOut'`、`'bounceOut'`；或一个把 0–1 映射到 0–1 的函数 | |
+| `egret.Tween.removeTweens(obj)` | 保存返回的对象并调用 `stop()`，或销毁它的作用域 | 对象被销毁时动画也会停止 |
+| 带回调的单个数字 | `engine.createTween(scope, { from, to, durationSeconds, easing, onUpdate }).start()` | `animate` 所基于的标量缓动 |
 | `egret.MovieClip` | 帧序列：`@egret/engine/animation` 的 `createSequenceController` | 见[序列控制](sequence-controls.md)。[旧 MovieClip](legacy-movieclip-contract.md)介绍如何读取旧数据 |
 | DragonBones | 不支持 | 支持 Spine：`@egret/spine`，JSON 或二进制。见 [Spine 支持](Spine动画支持需求与验收.md) |
 | 粒子（`particle.GravityParticleSystem`） | `@egret/engine/particles` 的 `createParticleEmitter` | 见[粒子](particles.md) |
@@ -106,7 +108,7 @@
 
 | 白鹭 5 | 现在 | 说明 |
 | --- | --- | --- |
-| `new egret.TextField()`、`.text = ...` | `@egret/engine/text` 的 `createTextField(engine, scope, cache)`，然后 `field.setRequest({ ... })` 并 `await field.prepare()` | 文本先光栅化再显示；`@egret/engine/web/text` 提供页面的光栅化器 |
+| `new egret.TextField()`、`.text = ...` | `const label = await game.createLabel({ text, fontSize, color })`，然后 `label.text = ...` | `label.display` 是舞台上的对象。底层是 `@egret/engine/text` 的 `createTextField`，配合 `setRequest` 和 `prepare` |
 | `textFlow`、混合样式、换行 | `@egret/engine/paragraph` 的 `createParagraph` | 见[段落](paragraph-layout-controls.md) |
 | `egret.BitmapText` | `@egret/engine/bitmapfont` 的 `createBitmapText` | 见[位图字体](bitmap-font.md) |
 | `type = egret.TextFieldType.INPUT` | `@egret/engine/web/text-input` 的 `createBrowserTextInput` | 盖在舞台上的平台文本框 |
@@ -153,16 +155,13 @@ function createMenu(game, onStart) {
   const scope = game.engine.createScope(), menu = scope.use(new DisplayObjectContainer());
   const button = menu.addChild(scope.use(new Sprite()));
   button.graphics.beginFill(0x4a7bd0).drawRoundRect(0, 0, 160, 48, 16).endFill();
-  button.touchEnabled = true; button.hitArea = { x: 0, y: 0, width: 160, height: 48 };
-  let pressed = false;
-  button.on(game.pointer.events.begin, () => { pressed = true; });
-  button.on(game.pointer.events.end, () => { if (pressed) onStart(); pressed = false; });
-  button.on(game.pointer.events.cancel, () => { pressed = false; });
-  game.engine.createTween(scope, { from: 1, to: 0.5, durationSeconds: 0.3, onUpdate: v => { button.alpha = v; } }).start();
+  button.touchEnabled = true;
+  button.on(game.pointer.events.tap, onStart);
+  animate(game.engine, scope, button).to({ alpha: 0.5 }, 0.3).start();
   game.stage.addChild(menu);
   // 关闭界面：一次调用移除按钮、它的监听器和它的缓动。
   return () => scope.dispose();
 }
 ```
 
-第二段在第一段依赖全局对象的地方更长，在第一段需要清理的地方更短：其中没有任何东西需要手工移除。
+第二段在第一段依赖全局对象的地方写明了 Engine，其中没有任何东西需要手工移除。

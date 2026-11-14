@@ -245,6 +245,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 
 | Code | Meaning |
 | --- | --- |
+| `BROWSER_GAME_IMAGE_FAILED` | The image of createBrowserGame failed. The cause is in cause. |
 | `BROWSER_GAME_OPTIONS_INVALID` | The options given to createBrowserGame are not valid: one is missing, of the wrong type or out of range. |
 
 ### BROWSER_STATS
@@ -328,6 +329,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `DISPLAY_ACTIVE` | This is still active: a display object. |
 | `DISPLAY_CHILD_CLEANUP_FAILED` | Cleaning up a display object failed. Each cause is in cleanupErrors. |
 | `DISPLAY_CYCLE` | A container cannot be added to itself or to one of its own descendants. |
+| `DISPLAY_SIZE_UNAVAILABLE` | The object draws nothing, so it has no width or height to scale to a size. Draw it first, or set scaleX and scaleY. |
 | `DISPLAY_VALUE_INVALID` | A value given to a display object is not valid: positions, scales and rotation are finite numbers, alpha is 0 to 1 and visible is a boolean. |
 
 ### DISPLAY_EFFECT
@@ -534,6 +536,13 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `MESH_BINDING_DISPOSED` | This was disposed and takes nothing more: a mesh binding. |
 | `MESH_BINDING_FACTORY_REQUIRED` | One of these is made by its factory function, not with new: a mesh binding. |
 | `MESH_BINDING_STALE` | What was given to a mesh binding has been replaced by a newer one. |
+
+### MOTION
+
+| Code | Meaning |
+| --- | --- |
+| `MOTION_ALREADY_STARTED` | This was already started: a motion. |
+| `MOTION_OPTIONS_INVALID` | The options given to a motion are not valid: one is missing, of the wrong type or out of range. |
 
 ### MOUSE_INPUT
 
