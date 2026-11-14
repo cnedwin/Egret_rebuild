@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A drawn button is hit where it is drawn, and a tap is one event — 2026-11-15
+
+A display object with `touchEnabled` and no `hitArea` used never to be hit. It is now hit on what it draws: a triangle of its shapes, one of its filled rectangles, or its bitmap's rectangle. A circle is not hit in the corners of its bounds, and a hole is not hit. A `hitArea`, where set, is used as before. Pointer input has a fourth event, `events.tap`, dispatched after an end on the target the contact began on, within 12 stage units of where it began. A button is now `touchEnabled = true` and one listener. See [pointer input](docs/multi-pointer-input.md).
+
 ## Graphics: image fills — 2026-11-15
 
 `beginBitmapFill(lease, matrix, repeat)` fills a shape or a path with an image, repeating unless told not to; `matrix` places the image in the sprite. An image fill is a mesh of its own over its image, so a sprite's drawing is now up to 16 meshes in drawing order instead of always one. The texture must be a whole image, not a part of an atlas, and a repeating image is drawn no farther than 8,192 of its pixels from its start. The graphics example fills a rounded panel with an eight-pixel image, and its check reads four of the repeated squares from the canvas with software WebGL2. This completes what Graphics was missing except gradients on lines. See the [graphics guide](docs/graphics.md). The migration map said a lease is ended with `dispose()`; it is `release()`, and the map now says so.

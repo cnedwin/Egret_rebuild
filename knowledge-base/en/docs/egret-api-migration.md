@@ -45,7 +45,7 @@ Five things change in every file. Knowing them saves most of the guessing.
 | `blendMode` | `blendMode`: `'normal'`, `'add'`, `'multiply'`, `'screen'`, `'erase'` | See [blend modes](blend-modes.md) |
 | `filters = [new egret.GlowFilter(...)]` | `renderEffect` | See [filters](filters.md) for which effects there are |
 | `cacheAsBitmap` | Not there | |
-| `touchEnabled`, `touchChildren` | The same names, with `hitArea` | Hit testing reads `hitArea`, not the drawing |
+| `touchEnabled`, `touchChildren` | The same names | A touch enabled object is hit on what it draws: its shapes' triangles, its rectangles, its bitmap's rectangle. `hitArea`, when set, is used instead |
 | `hitTestPoint` | `stage.hitTest(x, y)` | |
 | `localToGlobal`, `globalToLocal` | The same names | They return `{ x, y }` |
 | `egret.Point`, `egret.Rectangle`, `egret.Matrix` | Plain objects: `{ x, y }`, `{ x, y, width, height }` | No classes |
@@ -84,7 +84,7 @@ Edges are not smoothed, and a curve is drawn as straight pieces. See the [graphi
 | --- | --- | --- |
 | `egret.TouchEvent.TOUCH_BEGIN`, `TOUCH_MOVE`, `TOUCH_END` | `pointer.events.begin`, `.move`, `.end`, with `pointer` from `game.pointer` or `createBrowserPointerInput` | Mouse, touch and pen. See [pointer input](multi-pointer-input.md) |
 | `TOUCH_RELEASE_OUTSIDE`, `TOUCH_CANCEL` | `pointer.events.cancel`, with its `reason` | |
-| `TOUCH_TAP` | A begin and an end on the same object, or an action control of `@egret/engine/ui` | No tap event of its own |
+| `TOUCH_TAP` | `pointer.events.tap` | After an end on the object the contact began on, within 12 stage units of where it began |
 | `event.stageX`, `event.stageY`, `event.localX` | `event.payload.globalX`, `event.payload.globalY`; `target.globalToLocal(x, y)` for the object's own units | |
 | Mouse over, mouse wheel | `createBrowserHoverInput` from `@egret/engine/web/hover` | See [hover](pointer-hover.md) |
 | Keyboard (`document.addEventListener('keydown')` in Egret projects) | `game.keyboard` or `createBrowserKeyboardInput` | See [keyboard input](keyboard-focus-input.md) |
@@ -153,11 +153,8 @@ function createMenu(game, onStart) {
   const scope = game.engine.createScope(), menu = scope.use(new DisplayObjectContainer());
   const button = menu.addChild(scope.use(new Sprite()));
   button.graphics.beginFill(0x4a7bd0).drawRoundRect(0, 0, 160, 48, 16).endFill();
-  button.touchEnabled = true; button.hitArea = { x: 0, y: 0, width: 160, height: 48 };
-  let pressed = false;
-  button.on(game.pointer.events.begin, () => { pressed = true; });
-  button.on(game.pointer.events.end, () => { if (pressed) onStart(); pressed = false; });
-  button.on(game.pointer.events.cancel, () => { pressed = false; });
+  button.touchEnabled = true;
+  button.on(game.pointer.events.tap, onStart);
   game.engine.createTween(scope, { from: 1, to: 0.5, durationSeconds: 0.3, onUpdate: v => { button.alpha = v; } }).start();
   game.stage.addChild(menu);
   // Closing the screen: one call removes the button, its listeners and its tween.
@@ -165,4 +162,4 @@ function createMenu(game, onStart) {
 }
 ```
 
-The second is longer where the first leaned on globals, and shorter where the first needed cleanup: nothing in it has to be removed by hand.
+The second names its Engine where the first leaned on globals, and nothing in it has to be removed by hand.

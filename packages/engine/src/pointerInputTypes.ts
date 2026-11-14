@@ -26,6 +26,8 @@ export interface PointerInputEvents {
   readonly move: EventType<PointerContact>;
   readonly end: EventType<PointerContact>;
   readonly cancel: EventType<PointerContact & {readonly reason: PointerCancelReason}>;
+  /** After an `end` on the target its contact began on, no more than 12 stage units from where it began. */
+  readonly tap: EventType<PointerContact>;
 }
 /** Scope-owned input for an explicitly supplied logical host stream. */
 export interface PointerInput extends PointerRouter<DisplayObject> {
