@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A scroll to where the list is, after a new source — 2026-11-14
+
+`setScrollOffset` of a managed list dropped a scroll to the offset the list was already at, also when a source replacement waited in the same turn. The list then followed its anchor to another offset, against the rule that an explicit scroll overrides anchor preservation: a list at its top that was given a new order and told to stay at its top did not. Such a scroll is now kept whenever something else waits to be committed. Checked in Node on a genuine Engine and UI root. Part of #87. [Guide](docs/ui-data-panel.md)
+
 ## A grid of cells, and a bag of items — 2026-11-14
 
 The semantic tree gains the roles `grid`, `row` and `gridcell`, with `extent` for the rows and columns of a grid, and the browser projection writes them with their counts and indices. A new example, `examples/ui-inventory`, is a bag of twenty-four slots: one keyboard stop with a cursor that the arrow keys, Home, End, Page Up and Page Down move in two directions, a panel for the item under the cursor, buttons that use, drop and sort, and a status line. Checked in Node and in headless Chromium with software WebGL2; no reader was run. Part of #90. [Guide](docs/ui-semantics.md#a-grid) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-inventory/README.md)

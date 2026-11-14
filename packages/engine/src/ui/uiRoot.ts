@@ -1011,7 +1011,9 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         setScrollOffset(value: number) {
             admit('scroll', () => {
                 const scroll = number(value, -Number.MAX_VALUE, Number.MAX_VALUE);
-                if (revealIntent === undefined && (explicitScroll === scroll || explicitScroll === undefined && snapshot.scrollOffset === scroll))
+                // A scroll to where the list is changes nothing while nothing else waits. After a new source in the same turn it is not
+                // nothing: the list would follow its anchor to another offset, and this says where it is to be instead.
+                if (revealIntent === undefined && (explicitScroll === scroll || explicitScroll === undefined && snapshot.scrollOffset === scroll && desired === committed))
                     return;
                 revealIntent = undefined;
                 explicitScroll = scroll;
