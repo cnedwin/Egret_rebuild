@@ -76,6 +76,7 @@ as = o * tv * tm * a
 | add-preserve | S + C | ad |
 | multiply-factor | S*C + C(1 − as) | as + ad(1 − as) |
 | screen | S + C(1 − S) | as + ad(1 − as) |
+| erase | C(1 − as) | ad(1 − as) |
 
 目标随后执行饱和与量化。add-preserve 要求 opaque 输出并以 alpha 1 清屏；透明输出在呈现前拒绝。multiply-factor 表示此因子方程，不代表 CSS multiply。线性配方不承诺与编码空间 Spine renderer 像素一致。
 

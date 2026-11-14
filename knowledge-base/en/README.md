@@ -24,7 +24,7 @@ Use this entry to find product and engineering documents for the community rebui
 | UI/text/input | [M3](docs/m3-ui-text-input-plan.md) · [Managed UI](docs/ui-data-panel.md) · [Paragraphs](docs/readonly-paragraph-sdk.md) · [Fonts](docs/font-resource-generations.md) · [Effects](docs/shared-ui-effects.md) · [Hover and wheel](docs/pointer-hover.md) · [Control state](docs/ui-controls.md) · [Semantics](docs/ui-semantics.md) · [Screens to start from](docs/ui-examples.md) |
 | Sound | [Sound for a 2D game](docs/audio.md) |
 | Gamepads | [Gamepads](docs/gamepad.md) |
-| 2D world | [Camera](docs/camera-2d.md) · [Tile maps](docs/tilemap.md) · [Particles](docs/particles.md) · [Collision and physics](docs/physics-2d.md) · [Bitmap fonts](docs/bitmap-font.md) |
+| 2D world | [Camera](docs/camera-2d.md) · [Tile maps](docs/tilemap.md) · [Particles](docs/particles.md) · [Collision and physics](docs/physics-2d.md) · [Bitmap fonts](docs/bitmap-font.md) · [Blend modes](docs/blend-modes.md) |
 | Mixed integration | [M4](docs/m4-core-acceptance-plan.md) · [Android scope](docs/android-device-validation.md) · [Clean consumer](docs/clean-consumer.md) |
 | 3D | [Bounded 3D and 2D composition](docs/authored-scene3d.md) · [Standalone World3D](docs/world3d.md) |
 | Future tools/compatibility | [Project transactions](docs/project-transaction-core-contract.md) · [AI/project interfaces](docs/ai-creation-and-engineering-interfaces.md) · [Complete migration](docs/legacy-project-migration.md) |

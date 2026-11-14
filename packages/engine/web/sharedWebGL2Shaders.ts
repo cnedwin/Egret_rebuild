@@ -310,6 +310,8 @@ export function sharedWebGL2BlendFactors(blend: SharedMaterial2D['blend']): read
         case 'add-preserve': return [1, 1, 0, 1];
         case 'multiply-factor': return [774, 771, 1, 771];
         case 'screen': return [1, 769, 1, 771];
+        // What is drawn takes away from what is there, by its alpha, and adds nothing.
+        case 'erase': return [0, 771, 0, 771];
         default: throw new TypeError('Unsupported shared blend');
     }
 }
