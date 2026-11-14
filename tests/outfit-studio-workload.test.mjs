@@ -80,3 +80,31 @@ test('studio backdrop follows the frame on repeated mobile layout changes', asyn
     await fixture.close();
   }
 });
+
+test('mixed profiles keep the fixed workload and replace only the flat backdrop', async () => {
+  for (const [flatName,mixedName,landscape] of [
+    ['x-d60','x-d60-2',false],['x-mtouch','x-mtouch-2',false],['x-mtouch','x-mtouch-2',true]
+  ]) {
+    const flat = fixedProfile(flatName,landscape);
+    const {mixed,id,...layout} = fixedProfile(mixedName,landscape);
+    assert.equal(mixed,true);
+    assert.equal(id,flat.id.replace('/1','/2'));
+    const {id:historicalId,...historicalLayout} = flat;
+    assert.equal(historicalId.endsWith('/1'),true);
+    assert.deepEqual(layout,historicalLayout);
+  }
+  const fixture = await sequenceScene();
+  try {
+    const {engine,scope,lease,clip} = fixture;
+    const baseline = engine.stage.numChildren;
+    const scene = createStudioScene(engine,scope,[],new Map(),{
+      sheet:{createBitmap:() => new Bitmap(lease)},clip,
+    },fixedProfile('x-mtouch-2'));
+    assert.equal(engine.stage.numChildren,baseline+1);
+    assert.equal(engine.stage.getChildAt(baseline),scene.root);
+    scene.layout(fixedProfile('x-mtouch-2',true));
+    assert.equal(engine.stage.getChildAt(baseline),scene.root);
+  } finally {
+    await fixture.close();
+  }
+});

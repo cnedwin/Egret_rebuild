@@ -20,11 +20,10 @@ function createBackdrop(scope) {
 
 export function createStudioScene(engine, scope, characters, spineGroups, {sheet,clip}, profile) {
   const actors = new Map(), sequences = [], initialBorrowers = new Map();
-  const backdrop = createBackdrop(scope);
-  engine.stage.addChildAt(backdrop, 0);
+  const backdrop = profile?.mixed ? undefined : createBackdrop(scope);
+  if (backdrop) engine.stage.addChildAt(backdrop, 0);
   function fitBackdrop({width, height}) {
-    backdrop.scaleX = width;
-    backdrop.scaleY = height;
+    if (backdrop) { backdrop.scaleX = width; backdrop.scaleY = height; }
   }
   const root = profile ? scope.use(new DisplayObjectContainer()) : engine.stage;
   const camera = profile ? root.addChild(new DisplayObjectContainer()) : root;

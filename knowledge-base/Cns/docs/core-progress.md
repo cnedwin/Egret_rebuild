@@ -23,7 +23,7 @@
 
 ## 当前图形与设备验证 — 2026-11-14
 
-SharedFrame2D 是当前唯一的 2D 帧路径。示例通过 `captureSharedFrame` 使用共享 WebGPU 或 WebGL2 Host。原 Canvas Host、早期 WebGPU Host 及 scene3d 原型宿主均已退役，Canvas 文字和图像提供者继续使用。World3D 提供独立的可选渲染器，支持的画布分层与屏幕层合成见其契约。换装工作室现通过 SharedFrame2D 绘制两块平面背景，原含 3D 背景的记录对应前序实现。 [#180](https://github.com/cnedwin/Egret_rebuild/pull/180) · [#182](https://github.com/cnedwin/Egret_rebuild/pull/182) · [#187](https://github.com/cnedwin/Egret_rebuild/pull/187)
+SharedFrame2D 是当前唯一的 2D 帧路径。示例通过 `captureSharedFrame` 使用共享 WebGPU 或 WebGL2 Host。原 Canvas Host、早期 WebGPU Host 及 scene3d 原型宿主均已退役，Canvas 文字和图像提供者继续使用。World3D 提供独立的可选渲染器，支持的画布分层与屏幕层合成见其契约。换装工作室的 `/1` 组件路径通过 SharedFrame2D 绘制两块平面背景。`/2` 混合路径将不透明 World3D 画布置于透明 SharedFrame2D 覆盖层下方。早期含 3D 背景的记录对应已退役宿主。 [#180](https://github.com/cnedwin/Egret_rebuild/pull/180) · [#182](https://github.com/cnedwin/Egret_rebuild/pull/182) · [#187](https://github.com/cnedwin/Egret_rebuild/pull/187)
 
 | 范围 | 已记录证据 | 仍需验收 |
 | --- | --- | --- |
@@ -33,7 +33,7 @@ SharedFrame2D 是当前唯一的 2D 帧路径。示例通过 `captureSharedFrame
 | 画布原生文字输入 | 独立适配层在 Windows Edge 157（RTX 5090 Laptop）与 Galaxy Z Fold7 Chrome 157（Adreno 830）上每个后端均通过三项用例。三星原生键盘实际弹出，可视视口从 813.7 缩至 423.2 CSS px。文字通过 CDP 输入。 | 真人中日韩组合输入、候选确认及取消，以及 iPhone Safari、桌面 Firefox 和 Safari 仍待验证。 [#89](https://github.com/cnedwin/Egret_rebuild/issues/89) · [#195](https://github.com/cnedwin/Egret_rebuild/pull/195) |
 | 托管原生编辑器 | Windows Edge 与 Fold7 Chrome 各完成 12 轮打开与结束，每个后端六轮，交替覆盖原生单行和多行字段。Fold7 每轮实际显示和收起软键盘，可视视口从 487.2 恢复到 813.7 CSS px。关闭正在编辑的页面时，两个后端均释放原生节点、编辑器租约、已加载字体和段落缓存。 | 原生剪贴板、更广输入法、真人操作和辅助技术继续单独验收。 [#89](https://github.com/cnedwin/Egret_rebuild/issues/89) · [#90](https://github.com/cnedwin/Egret_rebuild/issues/90) |
 | World3D | 独立浏览器 Worker 在 Windows Edge 与 Fold7 Chrome 上分别通过远程物理修复的三项用例。布娃娃和载具在两个设备的浏览器中分别通过两项 API 用例。前序 Rally 阴影统计与软件渲染物理场景各有独立记录。 | [#169](https://github.com/cnedwin/Egret_rebuild/issues/169) 记录已合入的五项修复。更广玩法、设备性能及 GPU 计时仍待验收。 [#168](https://github.com/cnedwin/Egret_rebuild/pull/168) · [#179](https://github.com/cnedwin/Egret_rebuild/pull/179) · [#201](https://github.com/cnedwin/Egret_rebuild/pull/201) · [#202](https://github.com/cnedwin/Egret_rebuild/pull/202) |
-| 混合验收 | 旧 X-D60/1 和 X-MTouch/1 保留含 3D 背景的负载及未达标记录。当前平面 2D 组件的 WebGPU／WebGL2 完成帧间隔 p95 的三个五秒窗口中位数在 Windows 为 26.0／26.4 毫秒，在 Fold7 为 61.2／91.3 毫秒。已合入的旋转重排修复在 Edge 和 Fold7 真机的两个后端均通过背景像素检查。 | #236 的打开工程用例已在 Windows 和 Fold7 通过限定验证。正式采集前恢复等效混合合成，或评审版本化后继档位。保留原阈值及证据。 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) · [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) · [#200](https://github.com/cnedwin/Egret_rebuild/pull/200) |
+| 混合验收 | 旧 X-D60/1 和 X-MTouch/1 保留含 3D 背景的负载及未达标记录。当前平面 2D 组件的 WebGPU／WebGL2 完成帧间隔 p95 的三个五秒窗口中位数在 Windows 为 26.0／26.4 毫秒，在 Fold7 为 61.2／91.3 毫秒。已合入的旋转重排修复在 Edge 和 Fold7 真机的两个后端均通过背景像素检查。 | #236 的打开工程用例已在 Windows 和 Fold7 通过限定验证。X-D60/2 已在 Windows Edge 的两个后端通过限定合成、键盘、阻塞导入取消与重试和分层丢失恢复检查。Windows WebGPU 还在导入请求阻塞期间恢复了背景层。Fold7 X-MTouch/2 最终横屏检查覆盖 CDP 触控、取消重试及两层丢失，系统竖屏覆盖对齐、合成像素与输入；前一候选另有完整竖屏检查。#92 保留原阈值、历史未达标结果及完整正式验收。 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) · [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) · [#200](https://github.com/cnedwin/Egret_rebuild/pull/200) |
 
 ## 可选 World3D — 2026-11-13
 
@@ -144,7 +144,7 @@ M0 的[独立新贡献者演练 #52](https://github.com/cnedwin/Egret_rebuild/is
 
 ## 下一开发阶段
 
-换装工作室在运行中的页面内以一次编辑事务打开已导出的工程。原始打开工程用例已在软件 WebGL2 通过。[#236](https://github.com/cnedwin/Egret_rebuild/pull/236) 后续修复已在 Windows 和 Fold7 通过 WebGPU 与 WebGL2 限定验证。[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) 随后继续补齐选定混合能力。#55 需为稀疏与全脏墙钟间隔固定基于相同输入的 SharedFrame2D 成对测量方案。#92 在 #91 选定能力、等效混合合成或经评审的后继档位就绪后开展正式验收。
+换装工作室在运行中的页面内以一次编辑事务打开已导出的工程。原始打开工程用例已在软件 WebGL2 通过。[#236](https://github.com/cnedwin/Egret_rebuild/pull/236) 后续修复已在 Windows 和 Fold7 通过 WebGPU 与 WebGL2 限定验证。[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) 已有 X-D60/2 与 X-MTouch/2 双画布负载在 Windows 和 Fold7 上的限定功能证据。#55 需为稀疏与全脏墙钟间隔固定基于相同输入的 SharedFrame2D 成对测量方案。#92 在 #91 选定能力和经评审的后继档位就绪后开展正式验收。
 
 #86 已有[保留播放的 Spine 替换](spine-reset-slot.md#保留播放)，已逐 tick 对照被替换的播放器检查，并在软件渲染 Chromium 的 WebGL2 上通过。其硬件验证和组合动画生命周期继续并行推进。#89／#90 处理剩余输入法、控件与语义。#93 已有对默认引擎及其入口和声明的自动干净消费者检查。打包后的消费者工程也已通过软件 WebGL2 浏览器冒烟检查。硬件与 WebGPU 运行、选定预览产物的首次交互正式验收和真人演练仍待补齐。完整交接仍依赖 #91／#92。[工程计划](工程规划.md)列出依赖和退出标准。
 

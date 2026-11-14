@@ -26,7 +26,7 @@ export async function createStudioUi({engine,scope,canvas,cache,fonts,initial,on
   const presses = new WeakMap();
   let revision = 0;
   let dirty = true, layoutDirty = false;
-  let native;
+  let native, savedKeyboard;
   const invalidate = () => { dirty = true; };
   function activate(point) {
     if (native?.snapshot().state === 'settling') { onAction('draft'); return; }
@@ -210,6 +210,18 @@ export async function createStudioUi({engine,scope,canvas,cache,fonts,initial,on
 
   return {
     update,publish,input,
+    setInteractive(value) {
+      const focus = keyboard.getSnapshot();
+      if (!value && focus.state === 'active') savedKeyboard = focus;
+      native.setInteractive(value);
+      if ((input.state === 'active') !== value) input.setInteractive(value);
+      if ((focus.state === 'active') !== value) keyboard.setInteractive(value);
+      if (value && savedKeyboard?.focusedId) {
+        try { keyboard.focus(savedKeyboard.focusedId, {visible:savedKeyboard.focusVisible}); }
+        catch (error) { if (error.code !== 'KEYBOARD_TARGET_INELIGIBLE') throw error; }
+      }
+      if (value) savedKeyboard = undefined;
+    },
     get layer() { return layers.snapshot().desiredStack.at(-1) ?? 'roster'; },
     details() { layers.open('details'); },
     back() { layers.close('details'); },
@@ -225,7 +237,7 @@ export async function createStudioUi({engine,scope,canvas,cache,fonts,initial,on
         await publish();
       }
       signal.throwIfAborted();
-      if (layers.snapshot().desiredStack.at(-1) === 'rename') native.activate();
+      if (native.snapshot().interactive && layers.snapshot().desiredStack.at(-1) === 'rename') native.activate();
     },
     closeRename() { layers.close('rename'); },
     cancelRename() { native.cancel(); layers.close('rename'); },
