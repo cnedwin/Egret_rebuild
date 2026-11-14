@@ -45,7 +45,7 @@
 | `blendMode` | `blendMode`：`'normal'`、`'add'`、`'multiply'`、`'screen'`、`'erase'` | 见[混合模式](blend-modes.md) |
 | `filters = [new egret.GlowFilter(...)]` | `renderEffect` | 有哪些效果见[滤镜](filters.md) |
 | `cacheAsBitmap` | 没有 | |
-| `touchEnabled`、`touchChildren` | 名字相同，配合 `hitArea` | 命中测试读取 `hitArea`，不读取绘图 |
+| `touchEnabled`、`touchChildren` | 名字相同 | 开启 touch 的对象按它画出的内容命中：形状的三角形、矩形、位图的矩形。设置了 `hitArea` 时改用 `hitArea` |
 | `hitTestPoint` | `stage.hitTest(x, y)` | |
 | `localToGlobal`、`globalToLocal` | 名字相同 | 返回 `{ x, y }` |
 | `egret.Point`、`egret.Rectangle`、`egret.Matrix` | 普通对象：`{ x, y }`、`{ x, y, width, height }` | 没有这些类 |
@@ -84,7 +84,7 @@
 | --- | --- | --- |
 | `egret.TouchEvent.TOUCH_BEGIN`、`TOUCH_MOVE`、`TOUCH_END` | `pointer.events.begin`、`.move`、`.end`，`pointer` 来自 `game.pointer` 或 `createBrowserPointerInput` | 鼠标、触摸和笔。见[指针输入](multi-pointer-input.md) |
 | `TOUCH_RELEASE_OUTSIDE`、`TOUCH_CANCEL` | `pointer.events.cancel`，带 `reason` | |
-| `TOUCH_TAP` | 同一个对象上的一次 begin 和一次 end，或 `@egret/engine/ui` 的 action 控件 | 没有单独的点击事件 |
+| `TOUCH_TAP` | `pointer.events.tap` | 在接触开始时所在的对象上结束，且距开始位置不超过 12 个舞台单位 |
 | `event.stageX`、`event.stageY`、`event.localX` | `event.payload.globalX`、`event.payload.globalY`；对象自己的单位用 `target.globalToLocal(x, y)` | |
 | 鼠标悬停、滚轮 | `@egret/engine/web/hover` 的 `createBrowserHoverInput` | 见[悬停](pointer-hover.md) |
 | 键盘（白鹭工程里的 `document.addEventListener('keydown')`） | `game.keyboard` 或 `createBrowserKeyboardInput` | 见[键盘输入](keyboard-focus-input.md) |
@@ -153,11 +153,8 @@ function createMenu(game, onStart) {
   const scope = game.engine.createScope(), menu = scope.use(new DisplayObjectContainer());
   const button = menu.addChild(scope.use(new Sprite()));
   button.graphics.beginFill(0x4a7bd0).drawRoundRect(0, 0, 160, 48, 16).endFill();
-  button.touchEnabled = true; button.hitArea = { x: 0, y: 0, width: 160, height: 48 };
-  let pressed = false;
-  button.on(game.pointer.events.begin, () => { pressed = true; });
-  button.on(game.pointer.events.end, () => { if (pressed) onStart(); pressed = false; });
-  button.on(game.pointer.events.cancel, () => { pressed = false; });
+  button.touchEnabled = true;
+  button.on(game.pointer.events.tap, onStart);
   game.engine.createTween(scope, { from: 1, to: 0.5, durationSeconds: 0.3, onUpdate: v => { button.alpha = v; } }).start();
   game.stage.addChild(menu);
   // 关闭界面：一次调用移除按钮、它的监听器和它的缓动。
@@ -165,4 +162,4 @@ function createMenu(game, onStart) {
 }
 ```
 
-第二段在第一段依赖全局对象的地方更长，在第一段需要清理的地方更短：其中没有任何东西需要手工移除。
+第二段在第一段依赖全局对象的地方写明了 Engine，其中没有任何东西需要手工移除。

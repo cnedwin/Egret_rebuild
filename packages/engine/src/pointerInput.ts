@@ -26,6 +26,8 @@ export function bindPointerSurface(input:PointerInput):SurfaceBinding {
   return binding;
 }
 
+/** How far, in stage units, a contact may end from where it began and still be a tap. */
+const TAP_SLOP=12;
 export function createPointerInput(options:PointerInputOptions):PointerInput {
   if(options===null||typeof options!=='object'||Array.isArray(options))throw new EgretError('POINTER_INPUT_OPTIONS_INVALID');
   const engine=options.engine;
@@ -45,6 +47,7 @@ export function createPointerInput(options:PointerInputOptions):PointerInput {
     move:createEventType<PointerContact>('egret.pointer.move',{bubbles:true,cancelable:true}),
     end:createEventType<PointerContact>('egret.pointer.end',{bubbles:true,cancelable:true}),
     cancel:createEventType<PointerContact & {readonly reason:PointerCancelReason}>('egret.pointer.cancel',{bubbles:true,cancelable:false}),
+    tap:createEventType<PointerContact>('egret.pointer.tap',{bubbles:true,cancelable:false}),
   });
   const closers=new Set<()=>void>();
   const activeEvents=new Map<PointerSession,Event<PointerContact>>();
@@ -86,6 +89,8 @@ export function createPointerInput(options:PointerInputOptions):PointerInput {
     return value as T;
   }
   function retire():void {invoke(()=>router.dispose());}
+  // Where each contact began and on what, for a tap: an end on the same target within TAP_SLOP units of its begin.
+  const begun=new Map<PointerContact['session'],{readonly target:DisplayObject;readonly x:number;readonly y:number}>();
   router=createPointerRouter<DisplayObject>({
     ...(options.capacity===undefined?{}:{capacity:options.capacity}),
     pick:(x,y)=>{owner!.assertReady();scope!.assertOpen();return operations!.pick(x,y,maxNodes);},eligible,
@@ -108,14 +113,20 @@ export function createPointerInput(options:PointerInputOptions):PointerInput {
         // A callback may synchronously cancel or close the session before target delivery.
         if((kind==='begin'||kind==='move')&&!router.contacts.some(value=>value.session===contact.session))return;
         delivered=true;
+        if(kind==='begin')begun.set(contact.session,{target,x:contact.globalX,y:contact.globalY});
         if(kind==='cancel')operations!.dispatch(target,Object.freeze(new Event(events.cancel,Object.freeze({...contact,reason:reason!}))),maxNodes);
         else {
           const event=Object.freeze(new Event(events[kind],contact));
           if(kind==='begin'||kind==='move')activeEvents.set(contact.session,event);
           try{operations!.dispatch(target,event,maxNodes);}
           finally{if(activeEvents.get(contact.session)===event)activeEvents.delete(contact.session);}
+          // A tap follows the end it completes, on the target both were on, unless a listener closed the input.
+          const start=kind==='end'?begun.get(contact.session):undefined;
+          if(start!==undefined&&start.target===target&&Math.hypot(contact.globalX-start.x,contact.globalY-start.y)<=TAP_SLOP&&router.state!=='closed'&&eligible(target))
+            operations!.dispatch(target,Object.freeze(new Event(events.tap,contact)),maxNodes);
         }
       }finally{
+        if(kind==='end'||kind==='cancel')begun.delete(contact.session);
         // `delivered` records that a target path was attempted, not that a particular control ran.
         if(kind==='end'){
           const observed=Object.freeze({...notification,delivered});

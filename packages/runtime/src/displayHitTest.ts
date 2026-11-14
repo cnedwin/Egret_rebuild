@@ -9,6 +9,8 @@ import { assertLive, childAtOf, childCountOf, isDisplayNode, isStageRoot, parent
 import { finite, visualOf } from './displayVisualState.js';
 import { engineOf } from './ownership.js';
 import type { EngineContext } from './ownership.js';
+import { readBitmapState } from './bitmapDisplayState.js';
+import { resolveShape } from './graphicsShape.js';
 
 /** Receiver-inclusive whole-tree admission precedes all hit arithmetic. */
 export interface HitTestOptions { readonly maxNodes?: number; }
@@ -91,10 +93,36 @@ function contains(rectangle: Rectangle2D, point: Point2D): boolean {
     && point.y >= rectangle.y && point.y < rectangle.y + rectangle.height;
 }
 
+/**
+ * Whether a point, in a node's own units, is on what the node itself draws: one of its filled rectangles, a triangle
+ * of its shapes, or its bitmap's rectangle. A node that is touch enabled and has no hit area is hit by this.
+ */
+function onContent(node: DisplayObject, point: Point2D): boolean {
+  const visual = visualOf(node), x = point.x, y = point.y;
+  for (const { rect } of visual.primitives) if (rect.width > 0 && rect.height > 0 && contains(rect, point)) return true;
+  const bitmap = readBitmapState(node);
+  if (bitmap !== undefined && x >= 0 && y >= 0 && x < bitmap.width && y < bitmap.height) return true;
+  const shape = visual.shape === undefined ? undefined : resolveShape(visual.shape);
+  if (shape === undefined) return false;
+  const bounds = shape.bounds;
+  if (x < bounds.x || y < bounds.y || x > bounds.x + bounds.width || y > bounds.y + bounds.height) return false;
+  for (const { geometry } of shape.parts) {
+    const positions = geometry.positions, indices = geometry.indices;
+    for (let i = 0; i < geometry.indexCount; i += 3) {
+      const a = 2 * indices[i]!, b = 2 * indices[i + 1]!, c = 2 * indices[i + 2]!;
+      const ax = positions[a]!, ay = positions[a + 1]!, bx = positions[b]!, by = positions[b + 1]!, cx = positions[c]!, cy = positions[c + 1]!;
+      const d1 = (bx - ax) * (y - ay) - (by - ay) * (x - ax), d2 = (cx - bx) * (y - by) - (cy - by) * (x - bx), d3 = (ax - cx) * (y - cy) - (ay - cy) * (x - cx);
+      if ((d1 >= 0 && d2 >= 0 && d3 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0)) return true;
+    }
+  }
+  return false;
+}
+
 interface NumericalCursor {
   readonly node: DisplayObject;
   readonly matrix: Matrix2D;
-  readonly area: Rectangle2D | undefined;
+  /** The authored hit area; `true` for a touch enabled node without one, which is hit on what it draws. */
+  readonly area: Rectangle2D | true | undefined;
   localPoint: Point2D | undefined;
   nextChild: number;
 }
@@ -136,8 +164,9 @@ export function queryDisplayHit(receiver: unknown, x: unknown, y: unknown, optio
     }
     const state = readDisplayHitState(node);
     const authored = state.hitArea;
-    const area = node !== root && state.touchEnabled && authored !== undefined
-      && authored.width > 0 && authored.height > 0 ? authored : undefined;
+    // An authored area of no size stays what it was: nothing to hit. Without an area, the node's own drawing is the area.
+    const area = node === root || !state.touchEnabled ? undefined : authored === undefined ? true as const
+      : authored.width > 0 && authored.height > 0 ? authored : undefined;
     stack.push({ node, matrix, area, localPoint, nextChild: state.touchChildren === false ? -1 : childCountOf(node) - 1 });
   }
 
@@ -154,7 +183,7 @@ export function queryDisplayHit(receiver: unknown, x: unknown, y: unknown, optio
       const localPoint = cursor.localPoint ?? inversePoint(cursor.matrix, globalX, globalY);
       // Keep evaluating every eligible candidate after the first winner so a
       // topmost hit cannot hide another active branch's arithmetic failure.
-      if (contains(cursor.area, localPoint) && winner === undefined) winner = cursor.node;
+      if (winner === undefined && (cursor.area === true ? onContent(cursor.node, localPoint) : contains(cursor.area, localPoint))) winner = cursor.node;
     }
     stack.pop();
   }
