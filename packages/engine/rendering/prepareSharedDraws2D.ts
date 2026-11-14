@@ -7,7 +7,7 @@ import type { PolygonClipPolicy2D, CrossingAttributes, PreparedPoint2D, ClipRect
 import { TexturedPreparationBudget2D } from './texturedPreparationBudget2D.js';
 import type { TexturedPreparationLimits2D } from './texturedPreparationBudget2D.js';
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
-import { decodeSharedSRGB } from './sharedColor2D.js';
+import { decodeSharedSRGBByte } from './sharedColor2D.js';
 import type { RetainedSharedDraw2D, SharedPreparationRetention2D } from './sharedPreparationRetention2D.js';
 export class SharedPreparationError extends Error {
     public constructor(public readonly reason: 'frame' | 'profile' | 'precision' | 'budget') { super('Shared preparation ' + reason); }
@@ -121,15 +121,44 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
     // Shared polygons retain attributed corners and charge the same XY comparisons as TEXTURED meshes.
     const intersect=(polygon:SharedPoint2D[],clip:readonly PreparedPoint2D[]):SharedPoint2D[]=>
         preparation.tryContainedClip(polygon,clip,'mesh')??clipPolygon2D(preparation,polygon,clip,normalize,attach,policy,'mesh');
+    // A quad of a matrix without rotation or shear, whose corners stay apart once placed, needs none of the general
+    // path's tests to be known: its three signs agree and its four corners are distinct, so normalizing keeps them in
+    // order, reversed when the placed winding is negative. The general path's charges for those tests (seven predicates
+    // and ten corner comparisons) are made at once; when they do not fit, or anything else differs, the general path runs
+    // instead and decides the first failure itself. The result is the same polygon, made of the same corner objects.
+    const QUAD_COST={preparedVertices:0,predicates:7,tupleComparisons:10};
+    const axisQuad=(points:OwnedPoint[]):SharedPoint2D[]|undefined=>{
+        if(m.b!==0||m.c!==0||m.a===0||m.d===0)return undefined;
+        const p0=points[0]!,p1=points[1]!,p2=points[2]!,p3=points[3]!;
+        // The corners as the rectangle path makes them: top-left, top-right, bottom-right, bottom-left, with x<right and y<bottom.
+        if(!(p0.x<p1.x)||p1.x!==p2.x||p3.x!==p0.x||!(p0.y<p2.y)||p1.y!==p0.y||p3.y!==p2.y)return undefined;
+        if(QUAD_COST.predicates>options.maxClipEdgeTests-preparation.edgeTests)return undefined;
+        // Placed, the corners keep the same x for the same authored x and the same y for the same authored y.
+        // A corner placed out of range is left to the general path, which reports it after the charges it makes first.
+        let x0:number,x1:number,y0:number,y1:number;
+        try{x0=placeX(p0.x);x1=placeX(p1.x);y0=placeY(p0.y);y1=placeY(p2.y);}catch{return undefined;}
+        if(x0===x1||y0===y1)return undefined;
+        const sign=(x1>x0)===(y1>y0)?1:-1,rank=(m.a>0)===(m.d>0)?1:-1;
+        if(sign!==rank||!budget.tryReplayStageCost(QUAD_COST))return undefined;
+        preparation.edgeTests+=QUAD_COST.predicates;
+        p0.x=x0;p0.y=y0;p1.x=x1;p1.y=y0;p2.x=x1;p2.y=y1;p3.x=x0;p3.y=y1;
+        for(const q of points){q.x=coordinate(q.x);q.y=coordinate(q.y);q.u=uv(q.u);q.v=uv(q.v);q.r=unit(q.r);q.g=unit(q.g);q.b=unit(q.b);q.a=unit(q.a);q.dr=unit(q.dr);q.dg=unit(q.dg);q.db=unit(q.db);}
+        return sign<0?[p3,p2,p1,p0]:[p0,p1,p2,p3];
+    };
+    // The same steps as `transform` for a matrix without rotation or shear: the cross terms are zero.
+    const placeX=(x:number):number=>coordinate(coordinate(coordinate(coordinate(m.a*x)+coordinate(m.c*0))+m.tx)*ratio);
+    const placeY=(y:number):number=>coordinate(coordinate(coordinate(coordinate(m.b*0)+coordinate(m.d*y))+m.ty)*ratio);
     // `points` are fresh authored corners; they become the backing-space corners in place.
     const accept=(points:OwnedPoint[]):void=>{
         for(const p of points)qualifySharedUV(p,descriptor,frame);
+        let polygon=points.length===4?axisQuad(points):undefined;
+        if(polygon===undefined){
         const authored=preparation.sign(points[0]!,points[1]!,points[2]!);if(authored===0)return;
         axisX.x=m.a;axisX.y=m.b;axisY.x=m.c;axisY.y=m.d;
         const rank=preparation.sign(ORIGIN,axisX,axisY);if(rank===0)return;
         for(const p of points)transform(p,m,ratio);
         const sign=preparation.sign(points[0]!,points[1]!,points[2]!);if(sign===0)return;if(sign!==authored*rank)sharedFailure('precision');
-        let polygon=normalizeOwned(preparation,points);for(const clip of clips)polygon=intersect(polygon,clip);
+        polygon=normalizeOwned(preparation,points);}for(const clip of clips)polygon=intersect(polygon,clip);
         polygon=intersect(polygon,viewport!);
         for(const p of polygon)qualifySharedUV(p,descriptor,frame);
         if(polygon.length<3||command.opacity===0)return;const count=(polygon.length-2)*3;budget.admitPreparedVertices(count);vertexReservation+=count;polygons.push(polygon);
@@ -166,7 +195,7 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
             coordinate(rect.x);coordinate(rect.y);coordinate(rect.width);coordinate(rect.height);
             const color=command.kind==='rect'?command.fillColor:0xffffff,a=command.kind==='rect'?unit(command.fillAlpha):1;
             // Decoding is a pure function of the colour; consecutive draws of one colour decode it once.
-            if(color!==lastColor){red=decodeSharedSRGB(((color>>>16)&255)/255);green=decodeSharedSRGB(((color>>>8)&255)/255);blue=decodeSharedSRGB((color&255)/255);lastColor=color;}
+            if(color!==lastColor){red=decodeSharedSRGBByte(color>>>16);green=decodeSharedSRGBByte(color>>>8);blue=decodeSharedSRGBByte(color);lastColor=color;}
             const points:OwnedPoint[]=[];
             for(let corner=0;corner<4;corner++){
                 // Corner order: top-left, top-right, bottom-right, bottom-left.

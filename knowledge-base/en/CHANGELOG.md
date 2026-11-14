@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Faster clipped geometry for quads without rotation — 2026-11-14
+
+Rectangles and bitmaps placed without rotation or shear skip the orientation and normalization tests of the clipped geometry stage. Their outcome is known in advance, and the stage makes the same charges in one admission. Any case it cannot show to be the same is left to the general path. Geometry, charges and refusals are unchanged. In `tools/bench-2d.mjs`, 5,000 bitmaps of one atlas took 5.3 ms instead of 11.8, and 20,000 rectangles 34 ms instead of 44. Part of #266. [Details](docs/display-tree-scaling.md#quads-without-rotation)
+
 ## Video as a display object — 2026-11-14
 
 `@egret/engine/video` shows the pictures of a source as a display object: each new picture becomes, through the Engine's assets, the texture of one Bitmap, and the one before is let go. `update()` takes the newest picture once a frame and never queues pictures. `@egret/engine/web/video` makes the source from a video element of the page — a file, a stream such as a canvas's or a camera's, or the page's own element — reading each presented picture back at up to `maxWidth`. A new example, `examples/video`, shows a canvas's stream live and four seconds the page records as WebM, checked from the canvas in headless Chromium with software WebGL2. Each picture is read back and uploaded whole; a path straight to the GPU is not in this change. Part of #266. [Guide](docs/video.md) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/video/README.md)

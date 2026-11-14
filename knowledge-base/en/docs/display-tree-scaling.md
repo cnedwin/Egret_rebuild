@@ -231,3 +231,25 @@ A quick pass in a headless Chromium with software rendering, on two shared cores
 | 20,000 bitmaps of one atlas, all moving | 2 | 77.01 ms | 60.39 ms |
 
 Bitmaps that take their atlases in turn are not batched, and a frame in which nothing moved is captured and prepared again in full.
+
+## Quads without rotation
+
+Most draws of a 2D game are rectangles and bitmaps placed without rotation or shear: their matrix has no cross terms. For such a quad, the tests the clipped geometry stage makes before clipping are known in advance. Its three orientation signs agree, its four placed corners are distinct, and normalizing keeps them in order, reversed when the placed winding is negative. The stage now places the four corners directly and skips those tests. It still makes the same charges, seven predicates and ten corner comparisons for each quad, in one admission. Where that admission does not fit, where a placed corner would be out of range, or where two corners meet once placed, the general path runs instead and reports its own first refusal. Clipping, the viewport and everything after are unchanged. The polygon is the same, made of the same corner objects. A rectangle's colour is decoded from a table of the 256 byte values, which gives the same number as the function.
+
+`tests/shared-axis-quad-preparation.test.mjs` holds corners, orders and charges recorded from the general path. They cover mirrored and scaled quads, one that collapses once placed, quads cut by the viewport, a second pixel ratio and refusals one charge short. `tests/shared-frame-golden.test.mjs` reproduces its recorded digests. Before the change, 900 generated frames of rectangles and bitmaps, mirrored, scaled, rotated, skewed, clipped and refused at fifteen sets of limits, were prepared by a build of the earlier code and by this one; they found no difference in geometry, charges or refusals.
+
+`tools/bench-2d.mjs`, two runs of each build, the lower figure of each:
+
+| Workload | Clipped geometry |
+| --- | --- |
+| 5,000 filled rectangles | 13.34 → 10.61 ms |
+| 20,000 filled rectangles | 43.55 → 34.31 ms |
+| 5,000 bitmaps showing 100 frames of one atlas | 11.81 → 5.26 ms |
+| 5,000 bitmaps showing 200 frames of one atlas | 9.16 → 6.27 ms |
+
+| Workload | Geometry, rows and batches |
+| --- | --- |
+| 5,000 bitmaps of 100 frames, one moving, nothing kept | 13.92 → 9.05 ms |
+| 5,000 bitmaps of 200 frames, a tenth moving, nothing kept | 14.24 → 8.48 ms |
+
+The tool measures each fresh stage over a few frames, so single rows vary between runs by about a fifth. Kept draws take what they took. In a longer run of 5,000 rectangles prepared 200 times from one captured frame, the median went from 6.4 to 3.0–4.3 ms. These are Node figures on the development machine. They are not a browser or GPU measurement.

@@ -2,6 +2,11 @@
   "schemaVersion": 1,
   "files": [
     {
+      "path": "tests/shared-axis-quad-preparation.test.mjs",
+      "originRole": "First-party unit of quads prepared without the general path's tests, against corners and charges recorded from that path; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
       "path": "tests/display-container-add-child-at-verified.test.mjs",
       "originRole": "First-party unit comparing remembered and fully walked indexed insertion; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
