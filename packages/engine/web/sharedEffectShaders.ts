@@ -115,8 +115,8 @@ fn encodeColor(c:vec3<f32>)->vec3<f32>{return select(1.055*pow(c,vec3<f32>(1.0/2
  }
  return c*alpha;
 `:mode==='spread'?`
- let r=i32(params.values[28].z);let kind=i32(params.values[28].y+0.5);let from=at-vec2<i32>(i32(params.values[30].x),i32(params.values[30].y));var g=0.0;
- for(var i=-16;i<=16;i++){if(abs(i)>r){continue;}let t=alphaAt(from+vec2<i32>(i,0),size);if(kind==2){g=max(g,t);}else{g+=t;}}
+ let r=i32(params.values[28].z);let kind=i32(params.values[28].y+0.5);let sampleOrigin=at-vec2<i32>(i32(params.values[30].x),i32(params.values[30].y));var g=0.0;
+ for(var i=-16;i<=16;i++){if(abs(i)>r){continue;}let t=alphaAt(sampleOrigin+vec2<i32>(i,0),size);if(kind==2){g=max(g,t);}else{g+=t;}}
  if(kind==1){g=g/f32(2*r+1);}
  return vec4<f32>(0.0,0.0,0.0,g);
 `:`

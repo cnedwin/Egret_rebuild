@@ -6,7 +6,9 @@ import { createExampleHost } from '../host.mjs';
 
 const WIDTH = 480, HEIGHT = 270;
 const canvas = document.querySelector('#scene'), status = document.querySelector('#status');
-const engine = await createEngineForProfile({ host: await createExampleHost({ canvas, pixelRatio: 1, enableEffects: true }) }, SHARED_FRAME_PROFILE_2D);
+const verify = new URLSearchParams(location.search).get('verify') === '1';
+const host = await createExampleHost({ canvas, pixelRatio: 1, enableEffects: true, enableReadback: verify });
+const engine = await createEngineForProfile({ host }, SHARED_FRAME_PROFILE_2D);
 const scope = engine.createScope();
 const frame = Object.freeze({ width: WIDTH, height: HEIGHT, clearColor: 0x1b1f2a, clearAlpha: 1 });
 let failure;
@@ -44,6 +46,11 @@ function tick() { try { show(); } catch (cause) { failure = String(cause?.code ?
 requestAnimationFrame(tick);
 
 globalThis.__egretFiltersExample = {
+  // Sample the next GPU-completed backing frame at integer texels, independently of browser composition.
+  ...(verify ? { async pixels() {
+    const result = await host.requestReadback();
+    return { width: result.width, height: result.height, data: Array.from(result.bytes) };
+  } } : {}),
   readSnapshot: () => ({ on, size: SIZE, tile: TILE, tiles: tiles.map(t => ({ name: t.name, x: t.holder.x, y: t.holder.y, effect: t.holder.renderEffect ?? null })), failure }),
 };
 show();
