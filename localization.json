@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "60786f25b1d963b4b36290273108b05e0fd14c2cc718059ce0046a30c3a1dca1",
-      "zhSha256": "843e5d722c8a102fe842bbb7c07bd17620542b7307d7d8d206be699bb8314548"
+      "enSha256": "4b302924a03d7c53aec53a843e8f8d5a92b3240f6ad29224d3879b74090925a9",
+      "zhSha256": "d4f9ac50a6ea8bdc39da2d1fec47447958f08d465dbfea17590e2625152594f2"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -540,8 +540,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "bd28fb97de9abc08fd85cfaf0aacbf3e6783b9b08fbbe1423a6d1a4d9229f41d",
-      "zhSha256": "a9c10b3db710b16b00893591cccaa7d4229da77616943edc76eb301ce3150b6e"
+      "enSha256": "cb8b14190bd2a302f8aa0561a6ca380f729a5252afc18cfdee41848f6348168e",
+      "zhSha256": "763a3607daea39e1d6bef453d3ff8411721b4c4f63ecacf34ad3d201d442564f"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1016,8 +1016,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "3ff42dcb3441c78e9176182890e2ec53165cc8cf783adf926aff3a2cf0c4c4d6",
-      "zhSha256": "3bc797373e825e2fb4a583e1d5e742a37f2031692e353d8ce814915b82948b03"
+      "enSha256": "c4a639d5d4d3b43fc70575108abd9be8684656c9a28456e9c5590c41dd3334c3",
+      "zhSha256": "db46424ef60184511274c586095e95333d17dc33c8aa716a6d685c22e9786659"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -2376,8 +2376,8 @@
       "en": "examples/ui-controls/README.md",
       "zh": "examples/ui-controls/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "33582d2d6f773baacfadb5b4aa2d152c14938e28a99e7a646d3d372f8ddb1136",
-      "zhSha256": "b1c8ce82de7be50fb780b749374b677ebdba8ae393431485cf62f67b61252595"
+      "enSha256": "caebb81b19569291b11d1ff45b9d90fbb0c8950c255469c2c8005b4c0fd12795",
+      "zhSha256": "d143bf394c4efd50adcdd737c19635a92c7d313d0a6482bbe6b3237433bb9d19"
     },
     {
       "en": "knowledge-base/en/docs/spine-seek.md",
@@ -2490,6 +2490,27 @@
       "kind": "public_reading",
       "enSha256": "293e426909b035ced6bd35f95d65a8f6660f4bf6e7e636f2ff7479b08643b6bb",
       "zhSha256": "caa7e31d9cf9318f2c9a46be0d7d1e1d0844aed9d8cf9a950cff1194142af521"
+    },
+    {
+      "en": "examples/camera-2d/README.md",
+      "zh": "examples/camera-2d/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "62bd6b250cc4bd12dcd920075766e13c653eafbf3e0e4f20d28c8ed7664aff61",
+      "zhSha256": "7c3bd1ee4dd52ffbd124cd73ae6eeced9f5ed42e46bbb97326084f98cf3a7cde"
+    },
+    {
+      "en": "knowledge-base/en/docs/camera-2d.md",
+      "zh": "knowledge-base/Cns/docs/camera-2d.md",
+      "kind": "public_reading",
+      "enSha256": "e40a6d3ed3486281a651286683fadd19b873cf23ac84325225cdb13a89dfc572",
+      "zhSha256": "b782dbba4392f3301a8a9a835dc8e1be9d2c4453cce9f206a6d370eb47590e8c"
+    },
+    {
+      "en": "knowledge-base/en/docs/gamepad.md",
+      "zh": "knowledge-base/Cns/docs/gamepad.md",
+      "kind": "public_reading",
+      "enSha256": "ad2a73faef52dcd3d4bfe223e44093fcdfaa57220a247487ec78e630968d581a",
+      "zhSha256": "1d033b6b0c9b92974822e8f23151fa7b35c417f3da786532144b273079f4fb43"
     }
   ],
   "registries": [
@@ -3087,11 +3108,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "e9d0eb3ee010b28f0549f5e4be1076dac75c27c3351123ec0fff8bbd6c24755a"
+      "sha256": "5424f6c89fc8fe758f54050ed87d99f3cd979dbf7504ce31875cd0617e58d6ad"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "eefea160e034bad713f1a278320f5447f572ecb34c1ecdcfa364fe4eac697e2c"
+      "sha256": "c1c5ab1f6636029bf0d3b3cffc2b88f1bfe7371b113df826b0b354013038a054"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3727,7 +3748,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "62fb0c6a1914185e67dd8da0e478c260ad0373bef1953178a585ae7e247efdc8"
+      "sha256": "91199c8239d9cb1a9e45cd6a38455d5a1185ec8886272d67620c195a7c6c051e"
     },
     {
       "path": "tools/incremental-dependencies.mjs",
@@ -5115,11 +5136,11 @@
     },
     {
       "path": "examples/ui-controls/main.mjs",
-      "sha256": "7d301cff3a9d3cfa863112ce3c38f46bad3b390fd0dc76b5feceb3977f2eb89a"
+      "sha256": "ba5a037f1e6a30789e828860fe87918b85ae4faef76db0751d0aa853ec0fa9da"
     },
     {
       "path": "examples/ui-controls/verify.mjs",
-      "sha256": "ec4c772b57fc885b2cec186fbadb0147b48edea086c4ba2393bfd2639e36a72a"
+      "sha256": "f29085f6496d546fe54f608ba2952e48717b0926bf67e0c77683daae1b867f18"
     },
     {
       "path": "packages/engine/src/ui/scrollControl.ts",
@@ -5356,6 +5377,62 @@
     {
       "path": "examples/audio-mixer/verify.mjs",
       "sha256": "9376af7308dc6b2abb23edcd8523b08ed71f8b1005163deb9407db14450fbfa3"
+    },
+    {
+      "path": "packages/engine/src/camera.ts",
+      "sha256": "8861377e632949328c2f4a1c9ad9a36d05f442fd737e4aefb2aded6a29784509"
+    },
+    {
+      "path": "packages/engine/src/camera2d.ts",
+      "sha256": "b5d3356e317295ed606ff298d0573b555bd4abd668f62d1f55f0d0e8f0246db7"
+    },
+    {
+      "path": "packages/engine/src/cameraTypes.ts",
+      "sha256": "8156b7aae43c8d8c224da4225a0a41145abee36d8cf16db91a52f7036939a129"
+    },
+    {
+      "path": "tests/camera-2d.test.mjs",
+      "sha256": "ffc1a6a7e1d4be99b21f16e393c3980cbd3c2e7701046975fa23a41748391c3e"
+    },
+    {
+      "path": "examples/camera-2d/main.mjs",
+      "sha256": "dc482b50329a78c938084ae6d2165f6977fd323b63c85f57400f3322767621b4"
+    },
+    {
+      "path": "examples/camera-2d/verify.mjs",
+      "sha256": "a4c6ce79c86df40d8856b15a4f9d941315eb012b1f727a83dced63dcdd063b14"
+    },
+    {
+      "path": "packages/engine/src/gamepad.ts",
+      "sha256": "9d82384602b25ad721419f7df983da60acfaaa3a3588dfd200e1062fc9e61f5f"
+    },
+    {
+      "path": "packages/engine/src/gamepadInput.ts",
+      "sha256": "47d423fed699a2c0c70da1a37d3049d63c6756775a52333d0ddf9ae608d2695c"
+    },
+    {
+      "path": "packages/engine/src/gamepadKeys.ts",
+      "sha256": "3826694a12fd81cd89357be224b2b23de2e43894db59e668f5838786c5c4b108"
+    },
+    {
+      "path": "packages/engine/src/gamepadTypes.ts",
+      "sha256": "0330b420a584963258171747031bac43f4264f461b3f9f262a25085ceac414d4"
+    },
+    {
+      "path": "packages/engine/web/gamepad.ts",
+      "sha256": "ac791304f31764cd8c0f3a019fa81c320d1972f41d01d4548838b3b71035903e"
+    },
+    {
+      "path": "packages/engine/web/BrowserGamepadInput.ts",
+      "sha256": "2b785c3a7072a8e416d517a4a306983fc6d34aac4987b54f582d44b1b0ed6278"
+    },
+    {
+      "path": "tests/gamepad-input.test.mjs",
+      "sha256": "39076f796aa65d3c6d9f4f9ac1f4debf1bfbd5269e6786e028234fed33cf633e"
+    },
+    {
+      "path": "tests/browser-gamepad.test.mjs",
+      "sha256": "935ecb0c03ac6c45a91991710e1e01d3caff26fe3110a9633700b51175c08131"
     }
   ],
   "historicalSemanticReview": {
