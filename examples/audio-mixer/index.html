@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Egret music and effects / 音乐与音效</title>
+  <link rel="icon" href="data:,">
+  <script type="importmap">{
+  "imports": {
+    "@egret/engine/audio": "/packages/engine/dist/audio.js",
+    "@egret/engine/web/audio": "/packages/engine/dist/web/audio.js",
+    "@egret/runtime": "/packages/runtime/dist/index.js",
+    "@egret/contracts": "/packages/contracts/dist/index.js",
+    "@egret/contracts/resources": "/packages/contracts/dist/resources/index.js"
+  }
+}</script>
+  <style>
+    body { font: 1rem/1.5 system-ui, sans-serif; margin: 2rem auto; padding: 0 1rem; max-width: 48rem; color: #172033; background: #f4f6fa; }
+    fieldset { margin: 1rem 0; border: 1px solid #c3cbdb; border-radius: .4rem; }
+    button { margin: 0 .5rem .5rem 0; padding: .5rem .9rem; }
+    label { display: inline-block; margin: 0 1rem .5rem 0; }
+    input[type=range] { vertical-align: middle; width: 10rem; }
+    meter { width: 100%; height: 1rem; }
+    #status { font-weight: 600; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <h1>Music and effects / 音乐与音效</h1>
+  <p>A page may not sound before it has been touched. The music is asked for at once and waits; press anywhere, or any key, and it starts.<br>网页在被触碰之前不允许发声。音乐一开始就已请求播放并在等待；在任意位置点一下或按任意键，它就会开始。</p>
+  <p id="status" role="status">Starting… / 正在启动…</p>
+  <meter id="level" min="0" max="0.5" value="0" aria-label="Output level / 输出电平"></meter>
+  <fieldset>
+    <legend>Music / 音乐</legend>
+    <button id="music-a">山门 / Gate</button>
+    <button id="music-b">演武 / Drill</button>
+    <button id="music-stop">停止 / Stop</button>
+  </fieldset>
+  <fieldset>
+    <legend>Effects / 音效</legend>
+    <button id="bell-left">左钟 / Bell left</button>
+    <button id="bell">钟 / Bell</button>
+    <button id="bell-right">右钟 / Bell right</button>
+    <button id="tick">点击声 / Tick</button>
+  </fieldset>
+  <fieldset>
+    <legend>Volumes / 音量</legend>
+    <label>总音量 / Master <input id="volume-master" type="range" min="0" max="100" step="5"></label>
+    <label><input id="mute-master" type="checkbox"> 静音 / Mute</label><br>
+    <label>音乐 / Music <input id="volume-music" type="range" min="0" max="100" step="5"></label>
+    <label><input id="mute-music" type="checkbox"> 静音 / Mute</label><br>
+    <label>音效 / Effects <input id="volume-effects" type="range" min="0" max="100" step="5"></label>
+    <label><input id="mute-effects" type="checkbox"> 静音 / Mute</label>
+  </fieldset>
+  <fieldset>
+    <legend>Game / 游戏</legend>
+    <button id="pause" aria-pressed="false">暂停 / Pause</button>
+  </fieldset>
+  <pre id="state"></pre>
+  <p><a href="./README.md">English instructions</a> · <a href="./README.zh-CN.md">中文说明</a></p>
+  <script type="module" src="./main.mjs"></script>
+</body>
+</html>

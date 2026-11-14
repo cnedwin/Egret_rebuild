@@ -252,6 +252,11 @@ for (const [name, allowed] of Object.entries(expected)) {
       textExports['./input/hover'] = {types:'./dist/hover.d.ts',import:'./dist/hover.js'};
       textExports['./web/hover'] = {types:'./dist/web/hover.d.ts',import:'./dist/web/hover.js'};
     }
+    // Sound: one DOM-free mixer entry and one optional Web Audio entry.
+    if (name === 'engine') {
+      textExports['./audio'] = {types:'./dist/audio.d.ts',import:'./dist/audio.js'};
+      textExports['./web/audio'] = {types:'./dist/web/audio.d.ts',import:'./dist/web/audio.js'};
+    }
     // Semantics: one DOM-free tree entry and one optional browser projection entry.
     if (name === 'engine') {
       textExports['./ui/semantics'] = {types:'./dist/semantics.d.ts',import:'./dist/semantics.js'};
@@ -329,6 +334,11 @@ for (const [name, allowed] of Object.entries(expected)) {
         const relative=path.relative(dir,file).split(path.sep).join('/');
         if(name!=='engine'||!['web/BrowserHoverInput.ts','dist/web/BrowserHoverInput.js','dist/web/BrowserHoverInput.d.ts'].includes(relative))
           throw new Error('Hover: logical hover entry imported outside the named browser module: '+relative);
+      } else if (imported === '@egret/engine/audio') {
+        // The Web Audio adapter is built on the public mixer entry and on nothing private.
+        const relative=path.relative(dir,file).split(path.sep).join('/');
+        if(name!=='engine'||!['web/BrowserAudio.ts','dist/web/BrowserAudio.js','dist/web/BrowserAudio.d.ts'].includes(relative))
+          throw new Error('Audio: mixer entry imported outside the named browser module: '+relative);
       } else if (imported === '@egret/engine/ui/semantics') {
         // The browser projection reads the public tree entry for its types and holds nothing private.
         const relative=path.relative(dir,file).split(path.sep).join('/');
@@ -5302,6 +5312,51 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
   const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
   if(Object.hasOwn(hoverAllowed,resolved)&&!hoverAllowed[resolved].includes(relative))throw new Error('Hover: implementation module imported outside its entry: '+relative);
+ }
+}
+// Sound: a DOM-free mixer entry and a Web Audio entry, each with one implementation module. The
+// mixer is built on the runtime alone, the browser module on the mixer entry alone, neither starts
+// a timer or a request, and no other entry has either.
+const audioTypes=['AudioBackend','AudioBackendBus','AudioBackendSound','AudioBackendStart','AudioBackendVoice','AudioBus','AudioBusOptions','AudioBusSnapshot','AudioEndReason','AudioFade','AudioMixer','AudioMixerOptions','AudioMixerSnapshot','AudioMixerState','AudioMusicOptions','AudioPlayOptions','AudioSound','AudioVoice','AudioVoiceState'];
+const audioBrowserTypes=['BrowserAudio','BrowserAudioOptions'];
+for(const [file,value,types] of [['packages/engine/src/audio.ts','createAudioMixer',audioTypes],['packages/engine/dist/audio.js','createAudioMixer',[]],['packages/engine/dist/audio.d.ts','createAudioMixer',audioTypes],
+ ['packages/engine/web/audio.ts','createBrowserAudio',audioBrowserTypes],['packages/engine/dist/web/audio.js','createBrowserAudio',[]],['packages/engine/dist/web/audio.d.ts','createBrowserAudio',audioBrowserTypes]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,[value])||!mouseSame(surface.types,types))throw new Error('Audio: exact entry exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/audio')),['createAudioMixer'])||!mouseSame(Object.keys(await import('@egret/engine/web/audio')),['createBrowserAudio']))throw new Error('Audio: optional runtime values mismatch');
+for(const [label,values,stem] of textEntries){
+ const body=uiRead(stem+'.d.ts');
+ for(const name of [...audioTypes,...audioBrowserTypes,'createAudioMixer','createBrowserAudio'])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Audio: leaked to default/other entry: '+label+'/'+name);
+}
+const audioImports={
+ 'src/audio.ts':['./audioMixer.js','./audioTypes.js'],
+ 'dist/audio.js':['./audioMixer.js'],
+ 'dist/audio.d.ts':['./audioMixer.js','./audioTypes.js'],
+ 'src/audioMixer.ts':['@egret/runtime','./audioTypes.js'],
+ 'dist/audioMixer.js':['@egret/runtime'],
+ 'dist/audioMixer.d.ts':['./audioTypes.js'],
+ 'src/audioTypes.ts':[],
+ 'dist/audioTypes.js':[],
+ 'dist/audioTypes.d.ts':[],
+ 'web/audio.ts':['./BrowserAudio.js','./BrowserAudio.js'],
+ 'dist/web/audio.js':['./BrowserAudio.js'],
+ 'dist/web/audio.d.ts':['./BrowserAudio.js','./BrowserAudio.js'],
+ 'web/BrowserAudio.ts':['@egret/runtime','@egret/engine/audio','@egret/engine/audio'],
+ 'dist/web/BrowserAudio.js':['@egret/runtime','@egret/engine/audio'],
+ 'dist/web/BrowserAudio.d.ts':['@egret/engine/audio'],
+};
+for(const [file,expected] of Object.entries(audioImports)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
+ if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Audio: exact graph mismatch: '+file);
+ if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Audio: acquired automatic host work: '+file);
+}
+const audioAllowed={'src/audioMixer.js':['src/audio.ts'],'dist/audioMixer.js':['dist/audio.js','dist/audio.d.ts'],'web/BrowserAudio.js':['web/audio.ts'],'dist/web/BrowserAudio.js':['dist/web/audio.js','dist/web/audio.d.ts']};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
+ if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
+ for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
+  const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+  if(Object.hasOwn(audioAllowed,resolved)&&!audioAllowed[resolved].includes(relative))throw new Error('Audio: implementation module imported outside its entry: '+relative);
  }
 }
 // Semantics: a DOM-free tree entry and a browser projection entry, each with one implementation

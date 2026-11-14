@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/audio.ts",
+      "originRole": "First-party optional entry of the DOM-free sound mixer; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/src/audioMixer.ts",
+      "originRole": "First-party DOM-free sound mixer: decoded sounds under a budget, voices, one music, named volumes, limits and silence by name, over a backend port; independently authored with AI assistance; Apache-2.0. No third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/audioTypes.ts",
+      "originRole": "First-party types of the sound mixer and of the backend port a host implements; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/audio.ts",
+      "originRole": "First-party optional browser entry of the sound mixer; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/BrowserAudio.ts",
+      "originRole": "First-party Web Audio backend of the sound mixer: gains for volumes, a two-sided balance for a pan, the first press that lets a page sound, and silence while the page is hidden; independently authored with AI assistance; Apache-2.0. Uses the standard Web Audio API of the browser only; no third-party dependency or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/audio-mixer.test.mjs",
+      "originRole": "First-party Node tests of the sound mixer against a recording backend, and of a scope of a real Engine owning a mixer and a sound; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/browser-audio.test.mjs",
+      "originRole": "First-party Node tests of the Web Audio backend against a stand-in page and output, with the strict consumer and the exports of both entries; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/types/audio.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the sound entries; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/audio.ts",
+      "originRole": "First-party strict TypeScript consumer of the two sound entries, with ten refused misuses; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/audio-mixer/index.html",
+      "originRole": "First-party page of the music and effects example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/audio-mixer/main.mjs",
+      "originRole": "First-party example of music, effects, volumes, a pause and the first press of a page; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/audio-mixer/sounds.mjs",
+      "originRole": "First-party generator of the sounds of the example: WAV bytes built from sine waves in the page, so that the repository carries no recording; independently authored with AI assistance; Apache-2.0. The tunes are invented sequences of pitches; no third-party music, sample or asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/audio-mixer/render-check.mjs",
+      "originRole": "First-party measurements of what the mixer makes a browser render ahead of time, sample by sample; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/audio-mixer/verify.mjs",
+      "originRole": "First-party real-browser check of the music and effects example, with input through the automation protocol and levels read from rendered samples; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/audio-mixer/README.md",
+      "originRole": "First-party instructions for the music and effects example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/audio-mixer/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the music and effects example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/audio.md",
+      "originRole": "First-party guide to sound for a 2D game: the mixer, its Web Audio backend, what was run and what was not; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/audio.md",
+      "originRole": "First-party Chinese guide to sound for a 2D game; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/audio-mixer/README.md",
+      "zh": "examples/audio-mixer/README.zh-CN.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/audio.md",
+      "zh": "knowledge-base/Cns/docs/audio.md"
+    }
+  ]
+}

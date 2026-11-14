@@ -13,7 +13,7 @@ const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectType, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, textInputMutation, hoverMutation, semanticsMutation, spineImportMutation, sharedMutation, sequenceMutation }, run) {
+function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectType, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, textInputMutation, hoverMutation, semanticsMutation, audioMutation, spineImportMutation, sharedMutation, sequenceMutation }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -63,7 +63,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       if(name==='engine')packageExports['./web/editing']={types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'};
       if(name==='engine')packageExports['./web/text-input']={types:'./dist/web/textInput.d.ts',import:'./dist/web/textInput.js'};
       if(name==='engine'){packageExports['./input/hover']={types:'./dist/hover.d.ts',import:'./dist/hover.js'};packageExports['./web/hover']={types:'./dist/web/hover.d.ts',import:'./dist/web/hover.js'};
-        packageExports['./ui/semantics']={types:'./dist/semantics.d.ts',import:'./dist/semantics.js'};packageExports['./web/semantics']={types:'./dist/web/semantics.d.ts',import:'./dist/web/semantics.js'};}
+        packageExports['./ui/semantics']={types:'./dist/semantics.d.ts',import:'./dist/semantics.js'};packageExports['./web/semantics']={types:'./dist/web/semantics.d.ts',import:'./dist/web/semantics.js'};
+        packageExports['./audio']={types:'./dist/audio.d.ts',import:'./dist/audio.js'};packageExports['./web/audio']={types:'./dist/web/audio.d.ts',import:'./dist/web/audio.js'};}
       write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(packageExports === undefined ? {} : {exports:packageExports}) });
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
@@ -1333,7 +1334,11 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     const semanticGraphFiles=['src/semantics.ts','src/semanticTree.ts','src/semanticList.ts','src/semanticTypes.ts','web/semantics.ts','web/BrowserSemantics.ts',
       'dist/semantics.js','dist/semantics.d.ts','dist/semanticTree.js','dist/semanticTree.d.ts','dist/semanticList.js','dist/semanticList.d.ts','dist/semanticTypes.js','dist/semanticTypes.d.ts',
       'dist/web/semantics.js','dist/web/semantics.d.ts','dist/web/BrowserSemantics.js','dist/web/BrowserSemantics.d.ts'];
-    for(const relative of [...keyboardGraphFiles,...textInputGraphFiles,...hoverGraphFiles,...semanticGraphFiles]){
+    // Sound: inert copies of its five modules and their build output, for the same reason.
+    const audioGraphFiles=['src/audio.ts','src/audioMixer.ts','src/audioTypes.ts','web/audio.ts','web/BrowserAudio.ts',
+      'dist/audio.js','dist/audio.d.ts','dist/audioMixer.js','dist/audioMixer.d.ts','dist/audioTypes.js','dist/audioTypes.d.ts',
+      'dist/web/audio.js','dist/web/audio.d.ts','dist/web/BrowserAudio.js','dist/web/BrowserAudio.d.ts'];
+    for(const relative of [...keyboardGraphFiles,...textInputGraphFiles,...hoverGraphFiles,...semanticGraphFiles,...audioGraphFiles]){
       const file='packages/engine/'+relative,original=readFileSync(path.join(repository,file),'utf8');
       if(!file.endsWith('.js')){write(file,original);continue;}
       const clean=original.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
@@ -1357,6 +1362,10 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     write(keyboardResolverFile,{...semanticResolver,exports:{...semanticResolver.exports,'./ui/semantics':'./semantics-tree.js','./web/semantics':'./semantics-browser.js'}});
     write('node_modules/@egret/engine/semantics-tree.js','export function createUiSemantics() {}\nexport function semanticBoundsOf() {}\nexport function createUiListSemantics() {}\nexport function semanticBoxOf() {}\n');
     write('node_modules/@egret/engine/semantics-browser.js','export function createBrowserSemantics() {}\n');
+    const audioResolver=JSON.parse(readFileSync(path.join(root,keyboardResolverFile),'utf8'));
+    write(keyboardResolverFile,{...audioResolver,exports:{...audioResolver.exports,'./audio':'./audio-mixer.js','./web/audio':'./audio-browser.js'}});
+    write('node_modules/@egret/engine/audio-mixer.js','export function createAudioMixer() {}\n');
+    write('node_modules/@egret/engine/audio-browser.js','export function createBrowserAudio() {}\n');
     // Native editing keeps an inert, exact policy graph; these are not behavior tests.
     const nativeEditingGraphFiles=["packages/engine/src/internal/uiRootState.ts","packages/engine/dist/internal/uiRootState.js","packages/engine/dist/internal/uiRootState.d.ts","packages/engine/src/ui/editing.ts","packages/engine/dist/ui/editing.js","packages/engine/dist/ui/editing.d.ts","packages/engine/src/ui/textEditor.ts","packages/engine/dist/ui/textEditor.js","packages/engine/dist/ui/textEditor.d.ts","packages/engine/src/ui/textEditorTypes.ts","packages/engine/dist/ui/textEditorTypes.js","packages/engine/dist/ui/textEditorTypes.d.ts","packages/engine/web/BrowserTextEditor.ts","packages/engine/dist/web/BrowserTextEditor.js","packages/engine/dist/web/BrowserTextEditor.d.ts","packages/engine/web/editing.ts","packages/engine/dist/web/editing.js","packages/engine/dist/web/editing.d.ts","packages/engine/web/editorFonts.ts","packages/engine/dist/web/editorFonts.js","packages/engine/dist/web/editorFonts.d.ts","packages/runtime/src/ui/editing.ts","packages/runtime/dist/ui/editing.js","packages/runtime/dist/ui/editing.d.ts","packages/runtime/src/ui/textEditState.ts","packages/runtime/dist/ui/textEditState.js","packages/runtime/dist/ui/textEditState.d.ts","packages/runtime/src/ui/textEditTypes.ts","packages/runtime/dist/ui/textEditTypes.js","packages/runtime/dist/ui/textEditTypes.d.ts"];
     const nativeEditingNamedTargets=new Set(['#egret-text-editor','@egret/runtime/ui/editing','@egret/engine/ui/editing','@egret/engine/ui','@egret/engine/web/keyboard','@egret/engine/resources','@egret/engine','@egret/runtime/paragraph']);
@@ -2180,6 +2189,21 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       const edit=edits[semanticsMutation];assert.ok(edit,'finite semantics assigned mutation');const [file,added]=edit;
       write(file,(existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'')+added);
     }
+    if(audioMutation){
+      const edits={
+        'escaped-browser-module':['packages/engine/web/ProbeAudio.ts',"import {createBrowserAudio} from './BrowserAudio.js';\nvoid createBrowserAudio;\n"],
+        'escaped-core-module':['packages/engine/src/probeAudio.ts',"import {createAudioMixer} from './audioMixer.js';\nvoid createAudioMixer;\n"],
+        'mixer-entry-elsewhere':['packages/engine/web/ProbeAudioEntry.ts',"import type {AudioMixer} from '@egret/engine/audio';\nexport type Probe=AudioMixer;\n"],
+        'extra-export':['packages/engine/web/audio.ts','export const extra=1;\n'],
+        'extra-core-export':['packages/engine/src/audio.ts','export const extra=1;\n'],
+        'private-import':['packages/engine/web/BrowserAudio.ts',"import './pointer.js';\n"],
+        'timer':['packages/engine/src/audioMixer.ts','setTimeout(()=>{},0);\n'],
+        'request':['packages/engine/web/BrowserAudio.ts','void fetch;\n'],
+        'page-in-mixer':['packages/engine/src/audioMixer.ts','void globalThis.document;\n'],
+      };
+      const edit=edits[audioMutation];assert.ok(edit,'finite sound assigned mutation');const [file,added]=edit;
+      write(file,(existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'')+added);
+    }
     // SP1-A_POLICY_MUTATION_BEGIN
     if(spineImportMutation){
       const edits={
@@ -2288,6 +2312,20 @@ for(const [name,reason] of [
   ['page-in-tree','semanticTree.ts: host ambient dependency'],
 ])test('semantics policy '+name+' is refused for its own reason',()=>{
   fixture({imported:'robust-predicates',semanticsMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
+});
+for(const [name,reason] of [
+  ['escaped-browser-module','Audio: implementation module imported outside its entry'],
+  ['escaped-core-module','Audio: implementation module imported outside its entry'],
+  ['mixer-entry-elsewhere','Audio: mixer entry imported outside the named browser module'],
+  ['extra-export','Audio: exact entry exports mismatch'],
+  ['extra-core-export','Audio: exact entry exports mismatch'],
+  ['private-import','Audio: exact graph mismatch'],
+  ['timer','Audio: acquired automatic host work'],
+  ['request','Audio: acquired automatic host work'],
+  // The mixer is core: the rule that keeps the page out of the core covers it.
+  ['page-in-mixer','audioMixer.ts: host ambient dependency'],
+])test('sound policy '+name+' is refused for its own reason',()=>{
+  fixture({imported:'robust-predicates',audioMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
 });
 
 // Run this focused positive gate first, before the retained suite and controls.
