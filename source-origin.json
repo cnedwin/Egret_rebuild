@@ -582,8 +582,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 48738,
-      "sha256": "1c1e55a8d7e7cfa217514003861b546dc00c0f812d4dbdcca5485fa10008dd33",
+      "bytes": 49203,
+      "sha256": "86a9b00cc60a6d20791605160c880afcd1b165deedb8dc91a6e609754c400f06",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -2072,7 +2072,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 137800,
-      "sha256": "47c5efb482c6faf12ea2decc0e3a66aacba8de11d962664bf6e2a6f0be00c0fa",
+      "sha256": "33e09448a3f0401ce867f5b6fb6045f8cb41864fe814fd3e1c120ab9c5bff10f",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2113,8 +2113,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 53942,
-      "sha256": "e583b64921f9c5e2ee159e6124c16b6a12f1dd4b1bee66b0ac8bd51f1f93f638",
+      "bytes": 54425,
+      "sha256": "b314a3864557bac39b2cb63606650ca65868906bafe2a0784905fed2f494fef1",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -3746,8 +3746,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "f917022731d9c662fc434a660f8f2cefe041f32d69b271fff21a0f13a4fa1c8e",
-      "bytes": 407673,
+      "sha256": "d04cdd1a88638cfde5fde8cd7cde3cd7deb972f4e4b29ea8111c8ba94c3c9294",
+      "bytes": 407827,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -14349,14 +14349,14 @@
     {
       "path": "knowledge-base/en/docs/native-text-editing.md",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 9486,
-      "sha256": "95d6071fff2f2bbcd4e932fa171ad06921730983eeb2e6d556afef5534bf9412"
+      "bytes": 10360,
+      "sha256": "97daafdd96425c6f2841d7ae4d138bdc321fb7713b794fdeca1b133923ff85bf"
     },
     {
       "path": "knowledge-base/Cns/docs/native-text-editing.md",
       "originRole": "First-party paired native-editing integration documentation, example and bounded verification summary; AI-assisted; Apache-2.0.",
-      "bytes": 8360,
-      "sha256": "5fa5926ff976337f867cdae15d5bc4bc65e58db2fedfac6fd9fd31e976bc805f"
+      "bytes": 9229,
+      "sha256": "2043462667777ffe8371894b40bbc59f577e8666e3a99212871fc7f7a793aebc"
     },
     {
       "path": "examples/text-editing/README.md",
@@ -17291,6 +17291,18 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 1450,
       "sha256": "3d77d3e27142d789fa1fdbabe9ecd3d806940feb618d2e14ed10d334bb55d35c"
+    },
+    {
+      "path": "tests/ui-editor-row-integration.test.mjs",
+      "originRole": "First-party CPU-level integrated case of a focused editor row of a managed list under a late font and a theme change, with a literal paragraph provider, the keyboard input and the semantic tree; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 10311,
+      "sha256": "3ea3b7fc65161fc3b58bf00481e4d54c6150c8ab1cf66cf29ebe61b4fdaa6cd7"
+    },
+    {
+      "path": "contributions/ui-editor-row-integration.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 435,
+      "sha256": "bffdbbd98465e4113061c18237484c4cb82be39869b3f4189423716e03f5154f"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
