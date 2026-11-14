@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "e691a116921b917af3e923468f26a9e04fe2ce6ff6ecf6ce39a3ef7624540878",
-      "zhSha256": "0e9aa316714ef5c468c6946813b996c7019ca7f757cba9f6c5d7276ae645bb67"
+      "enSha256": "60786f25b1d963b4b36290273108b05e0fd14c2cc718059ce0046a30c3a1dca1",
+      "zhSha256": "843e5d722c8a102fe842bbb7c07bd17620542b7307d7d8d206be699bb8314548"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -540,8 +540,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "78f526e97d4607c60d3dd9461f9062b1f4e187a52edd8e0b1fc3b71dc27bbb22",
-      "zhSha256": "fca393e2e3639bb1b6aa69c55e5bf77cca512943041df73ab254e9d6df1b9eeb"
+      "enSha256": "bd28fb97de9abc08fd85cfaf0aacbf3e6783b9b08fbbe1423a6d1a4d9229f41d",
+      "zhSha256": "a9c10b3db710b16b00893591cccaa7d4229da77616943edc76eb301ce3150b6e"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1016,8 +1016,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "c086b5dbcc1839f4a8688788cbd31a7d77d7ace21f818edf63ecb1513a92be14",
-      "zhSha256": "16a23632d574944c8ea3d61265693f01c552bf680c2f27923258a7875ff48be1"
+      "enSha256": "3ff42dcb3441c78e9176182890e2ec53165cc8cf783adf926aff3a2cf0c4c4d6",
+      "zhSha256": "3bc797373e825e2fb4a583e1d5e742a37f2031692e353d8ce814915b82948b03"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -1942,8 +1942,8 @@
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
       "zh": "knowledge-base/Cns/docs/m4-core-acceptance-plan.md",
       "kind": "public_reading",
-      "enSha256": "d74e6bb3172704074d254ef72e42c735d44fbbec05e1db7da25b5aa4dcdb1e59",
-      "zhSha256": "46807edac7de79139789170f46ca71d175ba338dda79b79534a67564504ff64d"
+      "enSha256": "85659525a7775ba375085b4dddc709349e98cd4b65c3d7c9eabf4047a5df0b03",
+      "zhSha256": "d29bc2e13f5d5477e44e08ff4e897053d945f96dc2d945e00c5bc2b8ff50a90b"
     },
     {
       "en": "knowledge-base/en/docs/multi-pointer-input.md",
@@ -2476,6 +2476,20 @@
       "kind": "public_reading",
       "enSha256": "10bd421604eba29dd4ce4c1acec0ecf7f516f26309135bb1d15315b1cfc7e428",
       "zhSha256": "efc66bfdaf68fc2228b274ef82e39bf7dcbec7f90599cff7bb57c3491b3f2be0"
+    },
+    {
+      "en": "examples/audio-mixer/README.md",
+      "zh": "examples/audio-mixer/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "93529f9faec06576b47cbffb3396e090f1d930ce80ea77ee298e15feadf52009",
+      "zhSha256": "53c1b2cd68876490116b2498e1f689115b26a023d8806575edf016b2d17ab82d"
+    },
+    {
+      "en": "knowledge-base/en/docs/audio.md",
+      "zh": "knowledge-base/Cns/docs/audio.md",
+      "kind": "public_reading",
+      "enSha256": "293e426909b035ced6bd35f95d65a8f6660f4bf6e7e636f2ff7479b08643b6bb",
+      "zhSha256": "caa7e31d9cf9318f2c9a46be0d7d1e1d0844aed9d8cf9a950cff1194142af521"
     }
   ],
   "registries": [
@@ -3073,11 +3087,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "3448ab195be4f9bbc9e746013f7ec45020145bac0dad83b0b81053eb4e0c76aa"
+      "sha256": "e9d0eb3ee010b28f0549f5e4be1076dac75c27c3351123ec0fff8bbd6c24755a"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "1726bdb3d26e2753d207a7fe656a129d0281fe4d450d85080195f22d67d32772"
+      "sha256": "eefea160e034bad713f1a278320f5447f572ecb34c1ecdcfa364fe4eac697e2c"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3713,7 +3727,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "540691476f71ca8bb5f765114e7720d7eb41645218d7045cd153ae12b2181a00"
+      "sha256": "62fb0c6a1914185e67dd8da0e478c260ad0373bef1953178a585ae7e247efdc8"
     },
     {
       "path": "tools/incremental-dependencies.mjs",
@@ -3741,7 +3755,7 @@
     },
     {
       "path": "packages/contracts/src/SharedGeometry2D.ts",
-      "sha256": "c25ee64856b5023927d131bf16de82904cfa584f4c9070ed237530cc76ec4ad6"
+      "sha256": "0e63fe29295d202ca1fc36b9d5115c2ffb8190d05d8b7be6ba1a8468c6d7c10c"
     },
     {
       "path": "packages/contracts/src/SharedMaterial2D.ts",
@@ -5298,6 +5312,50 @@
     {
       "path": "examples/ui-tree/verify.mjs",
       "sha256": "46a29b0c6ff5638cdbb9f4c15f2f8c60052f707464b27ab568babc03ffd65f51"
+    },
+    {
+      "path": "packages/engine/src/audio.ts",
+      "sha256": "466ccaaad24a5d1aa15274a1aff7beb169d38ea8cea09970ae3a726f3bd43605"
+    },
+    {
+      "path": "packages/engine/src/audioMixer.ts",
+      "sha256": "494b121d0b138e8683783fac8e7c173b21a781728f12052301e2ea41ae5e7075"
+    },
+    {
+      "path": "packages/engine/src/audioTypes.ts",
+      "sha256": "9d1afd8d0e68b6e2ffd2ecbd7846c72a0ef18c057a669dab015cb25c806d6406"
+    },
+    {
+      "path": "packages/engine/web/audio.ts",
+      "sha256": "b37612554fe5b880bfbc76902e1c006b885de3ae543200697a7a51184c9a5e8d"
+    },
+    {
+      "path": "packages/engine/web/BrowserAudio.ts",
+      "sha256": "1ace2f0a2231e591ed7a4fd37dd8f00ea911b3be2d47864478817e46cfd93909"
+    },
+    {
+      "path": "tests/audio-mixer.test.mjs",
+      "sha256": "a339471f133d32dea4b70b56da9d70722b7e4b3185f441a792547135e9e19f09"
+    },
+    {
+      "path": "tests/browser-audio.test.mjs",
+      "sha256": "571f450d244da06c6dcd9e00a2a8989027843cb66a29717a164ddfbd2c427070"
+    },
+    {
+      "path": "examples/audio-mixer/main.mjs",
+      "sha256": "b6afdfb20309d31d1398b1c181e093d2537847ac4dc670689d6daf6c6687e561"
+    },
+    {
+      "path": "examples/audio-mixer/sounds.mjs",
+      "sha256": "f3a8388558ccacc0e6eaa685918d07533fb859191ebd2b36bcea27187de2eda4"
+    },
+    {
+      "path": "examples/audio-mixer/render-check.mjs",
+      "sha256": "fd9bdd4ec3f1d70f5e04d2a9f187969d00a8daa6e3e22064ee6fdebd4d4e664d"
+    },
+    {
+      "path": "examples/audio-mixer/verify.mjs",
+      "sha256": "9376af7308dc6b2abb23edcd8523b08ed71f8b1005163deb9407db14450fbfa3"
     }
   ],
   "historicalSemanticReview": {
