@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "cb6498eca8f02471f2a05e7cdf5c4cda92dd3391180953bfa0f7c1ed8491d13a",
-      "zhSha256": "82608444c648f57e1454314260ce05eac5ea0b7dee9bc16aaf7f38351e60470d"
+      "enSha256": "af0f15ebca98293828b6bb0aa823ced8e771e1073aa0aed4739f28c5ca3cc3d6",
+      "zhSha256": "6c293ee248ef37ac369622f2231c49a45f91d52dbd0a5d66ab29068bc612d58c"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -540,8 +540,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "6ca91ecf99d92bec9dba38c7a81b99ec516a46205fb33c0c41e147458b31fad0",
-      "zhSha256": "c83ceb4d983c91edeb9397df2f6c07b68e2aecf2a5a361a4dda43f12649f592e"
+      "enSha256": "8ad145ac88048875890910427c4d7869dd129b40118cde309319533982928ccf",
+      "zhSha256": "39dddfcc5e913fdeefefbbe9a9aea7c89331f9f81e28d54b57707d900e0b17cf"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -2271,8 +2271,8 @@
       "en": "knowledge-base/en/docs/ui-layers.md",
       "zh": "knowledge-base/Cns/docs/ui-layers.md",
       "kind": "public_reading",
-      "enSha256": "6532443f5f82bffb7e21ec91e8ceaefda85d7811222c20836892f46682fed421",
-      "zhSha256": "48fa49375bda33d2e29a01357b75846a9db8001ec919fb2032e922bf551853d4"
+      "enSha256": "a66f4716afb16edf5ba8397e4363323ab990494f0653f55171d1aa78f241df61",
+      "zhSha256": "0514f3a16b9ec5edf4d82cba67504bc6de760aa53fa17115c5df4b006145f7ea"
     },
     {
       "en": "examples/outfit-studio/README.md",
@@ -2390,8 +2390,8 @@
       "en": "knowledge-base/en/docs/ui-semantics.md",
       "zh": "knowledge-base/Cns/docs/ui-semantics.md",
       "kind": "public_reading",
-      "enSha256": "30828af68d45abbca143b26a1392f8a665b91d640518cdd5d37b7f06493a2a09",
-      "zhSha256": "af8d6e14cf128e889a55876aed78c9d83f8a6db888631c2eb50cf744445af898"
+      "enSha256": "12849d35ad1a4fdb5fece68e4747fcd5e01083a3b838f7d190cb5d8c3deb16fd",
+      "zhSha256": "5667346d91dddea200a9095470f23769005371e7e0f42f4aa2196b7ab2e986c5"
     },
     {
       "en": "examples/ui-text-field/README.md",
@@ -2413,6 +2413,13 @@
       "kind": "public_reading",
       "enSha256": "b61411b529aae52a4a6686ebf8eebcd87daac5a00b5e902b26aa3f6d820ee486",
       "zhSha256": "31249f814c1fdf9c626f7427f45486130971dee6f14bd53fa765f0202c01286f"
+    },
+    {
+      "en": "examples/ui-dropdown/README.md",
+      "zh": "examples/ui-dropdown/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "9d9425ea7622349d405aff8ea8f821857ac0ac5a182fe2aa71451350cee8f887",
+      "zhSha256": "a8359e909635ff0ca8f45d61c49acd65d800248e754c1de2d1df24eb1e65bb66"
     }
   ],
   "registries": [
@@ -4410,15 +4417,15 @@
     },
     {
       "path": "tests/ui-layers.test.mjs",
-      "sha256": "3359777d5085a20e7211df7919542363fa9366666493879d7ef94862b0803206"
+      "sha256": "a6bb81c2ec247c0e6bee4e27e5489f926b0067e35a9c8c9289947e6642f1155b"
     },
     {
       "path": "packages/engine/src/ui/layerTypes.ts",
-      "sha256": "4ffd01a7bd7352eafb542923cf031fece0e1de6d7cfe0951ecf9b35e3d15adf3"
+      "sha256": "501fb4095b0cc59e7245ae9b1cd07f8dbe7111d0c2de7c9df5e16079224c08e9"
     },
     {
       "path": "packages/engine/src/ui/layers.ts",
-      "sha256": "a5ceecc17b837b59d028bc05c6f95580c0d065b94d7d6b957f016439a7f90032"
+      "sha256": "403fad8954c7ea1717c5fcd244dcca2a0eb384e7ff5dc21191bb8920510d6cad"
     },
     {
       "path": "examples/text-editing/layers.mjs",
@@ -5122,11 +5129,11 @@
     },
     {
       "path": "packages/engine/src/semanticList.ts",
-      "sha256": "5ae5ffbd8b1887e0cf3fdc9ea32de8af0da44dd5d6fbaaaf9bd5fab0b7a31530"
+      "sha256": "ad50f4fb1c559fa8b6da6dd49aad3c334cd55837ffad240b9821b60a27d80a37"
     },
     {
       "path": "tests/ui-list-semantics.test.mjs",
-      "sha256": "2e14bbf41d3d41c65384033b694dac6a7f2dab86423e3971964f5791970a1e46"
+      "sha256": "adf299551ada4385a101f349d22bb87383e5f6ef875f85065d7f6e4483b268cc"
     },
     {
       "path": "examples/ui-list-semantics/main.mjs",
@@ -5155,6 +5162,14 @@
     {
       "path": "tests/ui-range-control.test.mjs",
       "sha256": "542ea91f0f06f72ea50ead5bd5185edf9f7fe3d91f8ffd3166a6edc7c7072cc5"
+    },
+    {
+      "path": "examples/ui-dropdown/main.mjs",
+      "sha256": "d5b685de2fb11d8ce7f83687bd7f76451db7d22c2382bef395da82aee3f9b6b2"
+    },
+    {
+      "path": "examples/ui-dropdown/verify.mjs",
+      "sha256": "60f00e7000105752e31694ed8253745a7bc1f9953a4e45ca4312d609f236a0f6"
     }
   ],
   "historicalSemanticReview": {
