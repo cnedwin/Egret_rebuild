@@ -582,8 +582,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 55388,
-      "sha256": "0e9aa316714ef5c468c6946813b996c7019ca7f757cba9f6c5d7276ae645bb67",
+      "bytes": 57419,
+      "sha256": "843e5d722c8a102fe842bbb7c07bd17620542b7307d7d8d206be699bb8314548",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -786,8 +786,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 27398,
-      "sha256": "fca393e2e3639bb1b6aa69c55e5bf77cca512943041df73ab254e9d6df1b9eeb",
+      "bytes": 29122,
+      "sha256": "a9c10b3db710b16b00893591cccaa7d4229da77616943edc76eb301ce3150b6e",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -1380,8 +1380,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 3991,
-      "sha256": "16a23632d574944c8ea3d61265693f01c552bf680c2f27923258a7875ff48be1",
+      "bytes": 4040,
+      "sha256": "3bc797373e825e2fb4a583e1d5e742a37f2031692e353d8ce814915b82948b03",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -2072,7 +2072,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 137800,
-      "sha256": "8ae3af9db64ef216bcb0e796f62a4b4f995fbf19a3d41de218e2d735e15aa594",
+      "sha256": "9764e9e64c39eb2e70a3c657e9d9f65245fdf97bedd335111e5bee670fece2bc",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2113,8 +2113,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 60646,
-      "sha256": "e691a116921b917af3e923468f26a9e04fe2ce6ff6ecf6ce39a3ef7624540878",
+      "bytes": 62634,
+      "sha256": "60786f25b1d963b4b36290273108b05e0fd14c2cc718059ce0046a30c3a1dca1",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2506,8 +2506,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 30476,
-      "sha256": "78f526e97d4607c60d3dd9461f9062b1f4e187a52edd8e0b1fc3b71dc27bbb22",
+      "bytes": 32377,
+      "sha256": "bd28fb97de9abc08fd85cfaf0aacbf3e6783b9b08fbbe1423a6d1a4d9229f41d",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3052,8 +3052,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 4493,
-      "sha256": "c086b5dbcc1839f4a8688788cbd31a7d77d7ace21f818edf63ecb1513a92be14",
+      "bytes": 4542,
+      "sha256": "3ff42dcb3441c78e9176182890e2ec53165cc8cf783adf926aff3a2cf0c4c4d6",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -3746,8 +3746,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "9192849316491160ec262cbdc913f1098bd22d7854450fd0de3c1196355af9f4",
-      "bytes": 411487,
+      "sha256": "58e02682e819595fb7600620c3be9014a9b4fab61e6391a95e43d91d0bb83689",
+      "bytes": 413705,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4083,8 +4083,8 @@
     },
     {
       "path": "packages/engine/package.json",
-      "bytes": 3992,
-      "sha256": "b1bf9947c0a409f27ffa0179c03daccfa999332ae069de91bdba4a61e8010cb6",
+      "bytes": 4192,
+      "sha256": "9f795a87d30012d315be17332f559567b2e558d32b6ff0ecb4cee20439f4ecbd",
       "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset.",
       "identityHistory": [
         {
@@ -5079,8 +5079,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 238903,
-      "sha256": "1726bdb3d26e2753d207a7fe656a129d0281fe4d450d85080195f22d67d32772",
+      "bytes": 242235,
+      "sha256": "eefea160e034bad713f1a278320f5447f572ecb34c1ecdcfa364fe4eac697e2c",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -5328,8 +5328,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 300022,
-      "sha256": "3448ab195be4f9bbc9e746013f7ec45020145bac0dad83b0b81053eb4e0c76aa",
+      "bytes": 304821,
+      "sha256": "e9d0eb3ee010b28f0549f5e4be1076dac75c27c3351123ec0fff8bbd6c24755a",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -9345,8 +9345,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1629782,
-      "sha256": "540691476f71ca8bb5f765114e7720d7eb41645218d7045cd153ae12b2181a00"
+      "bytes": 1630597,
+      "sha256": "62fb0c6a1914185e67dd8da0e478c260ad0373bef1953178a585ae7e247efdc8"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -9597,8 +9597,8 @@
     {
       "path": "packages/contracts/src/SharedGeometry2D.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 10084,
-      "sha256": "c25ee64856b5023927d131bf16de82904cfa584f4c9070ed237530cc76ec4ad6"
+      "bytes": 10148,
+      "sha256": "0e63fe29295d202ca1fc36b9d5115c2ffb8190d05d8b7be6ba1a8468c6d7c10c"
     },
     {
       "path": "packages/contracts/src/SharedMaterial2D.ts",
@@ -9711,8 +9711,8 @@
     {
       "path": "tests/shared-render-inputs-entry.test.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 4501,
-      "sha256": "ee41c62005181c4cd1999ea4f58fb30dff609492c86433b897a99f4858aa1b69"
+      "bytes": 4810,
+      "sha256": "5d698c9aebd5c40b9ff31d5331217af1cad6efd5d404e27cb2eca767a7c8ec08"
     },
     {
       "path": "tests/shared-render-inputs.test.mjs",
@@ -11313,14 +11313,14 @@
     {
       "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 36750,
-      "sha256": "d74e6bb3172704074d254ef72e42c735d44fbbec05e1db7da25b5aa4dcdb1e59"
+      "bytes": 44674,
+      "sha256": "85659525a7775ba375085b4dddc709349e98cd4b65c3d7c9eabf4047a5df0b03"
     },
     {
       "path": "knowledge-base/Cns/docs/m4-core-acceptance-plan.md",
       "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 30868,
-      "sha256": "46807edac7de79139789170f46ca71d175ba338dda79b79534a67564504ff64d"
+      "bytes": 37805,
+      "sha256": "d29bc2e13f5d5477e44e08ff4e897053d945f96dc2d945e00c5bc2b8ff50a90b"
     },
     {
       "path": "contributions/m2-m4-design.json",
@@ -17519,6 +17519,120 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 1332,
       "sha256": "7c0e093f404169832acf45d8036cc4cde4bb404a78bba48b3d570f195e39e237"
+    },
+    {
+      "path": "packages/engine/src/audio.ts",
+      "originRole": "First-party optional entry of the DOM-free sound mixer; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 546,
+      "sha256": "466ccaaad24a5d1aa15274a1aff7beb169d38ea8cea09970ae3a726f3bd43605"
+    },
+    {
+      "path": "packages/engine/src/audioMixer.ts",
+      "originRole": "First-party DOM-free sound mixer: decoded sounds under a budget, voices, one music, named volumes, limits and silence by name, over a backend port; independently authored with AI assistance; Apache-2.0. No third-party dependency or asset.",
+      "bytes": 25446,
+      "sha256": "494b121d0b138e8683783fac8e7c173b21a781728f12052301e2ea41ae5e7075"
+    },
+    {
+      "path": "packages/engine/src/audioTypes.ts",
+      "originRole": "First-party types of the sound mixer and of the backend port a host implements; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 9395,
+      "sha256": "9d1afd8d0e68b6e2ffd2ecbd7846c72a0ef18c057a669dab015cb25c806d6406"
+    },
+    {
+      "path": "packages/engine/web/audio.ts",
+      "originRole": "First-party optional browser entry of the sound mixer; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 252,
+      "sha256": "b37612554fe5b880bfbc76902e1c006b885de3ae543200697a7a51184c9a5e8d"
+    },
+    {
+      "path": "packages/engine/web/BrowserAudio.ts",
+      "originRole": "First-party Web Audio backend of the sound mixer: gains for volumes, a two-sided balance for a pan, the first press that lets a page sound, and silence while the page is hidden; independently authored with AI assistance; Apache-2.0. Uses the standard Web Audio API of the browser only; no third-party dependency or asset.",
+      "bytes": 17366,
+      "sha256": "1ace2f0a2231e591ed7a4fd37dd8f00ea911b3be2d47864478817e46cfd93909"
+    },
+    {
+      "path": "tests/audio-mixer.test.mjs",
+      "originRole": "First-party Node tests of the sound mixer against a recording backend, and of a scope of a real Engine owning a mixer and a sound; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 50594,
+      "sha256": "a339471f133d32dea4b70b56da9d70722b7e4b3185f441a792547135e9e19f09"
+    },
+    {
+      "path": "tests/browser-audio.test.mjs",
+      "originRole": "First-party Node tests of the Web Audio backend against a stand-in page and output, with the strict consumer and the exports of both entries; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 42653,
+      "sha256": "571f450d244da06c6dcd9e00a2a8989027843cb66a29717a164ddfbd2c427070"
+    },
+    {
+      "path": "tests/types/audio.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the sound entries; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 193,
+      "sha256": "a7518c7c18febc1179d1cc472f26d785e632541025e08ba01f2a71ac2084db32"
+    },
+    {
+      "path": "tests/types/audio.ts",
+      "originRole": "First-party strict TypeScript consumer of the two sound entries, with ten refused misuses; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 5295,
+      "sha256": "4ce65724a4cfaa0da7a560e7b9d8bc6f58cc0994c4e3bf7aecddbfe8a5e8f953"
+    },
+    {
+      "path": "examples/audio-mixer/index.html",
+      "originRole": "First-party page of the music and effects example; independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "bytes": 3252,
+      "sha256": "e9f4653763bbaf9ae1da68ced7a12c92805c1b035c9f45b3c6306021be476644"
+    },
+    {
+      "path": "examples/audio-mixer/main.mjs",
+      "originRole": "First-party example of music, effects, volumes, a pause and the first press of a page; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "bytes": 6364,
+      "sha256": "b6afdfb20309d31d1398b1c181e093d2537847ac4dc670689d6daf6c6687e561"
+    },
+    {
+      "path": "examples/audio-mixer/sounds.mjs",
+      "originRole": "First-party generator of the sounds of the example: WAV bytes built from sine waves in the page, so that the repository carries no recording; independently authored with AI assistance; Apache-2.0. The tunes are invented sequences of pitches; no third-party music, sample or asset.",
+      "bytes": 2717,
+      "sha256": "f3a8388558ccacc0e6eaa685918d07533fb859191ebd2b36bcea27187de2eda4"
+    },
+    {
+      "path": "examples/audio-mixer/render-check.mjs",
+      "originRole": "First-party measurements of what the mixer makes a browser render ahead of time, sample by sample; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 7825,
+      "sha256": "fd9bdd4ec3f1d70f5e04d2a9f187969d00a8daa6e3e22064ee6fdebd4d4e664d"
+    },
+    {
+      "path": "examples/audio-mixer/verify.mjs",
+      "originRole": "First-party real-browser check of the music and effects example, with input through the automation protocol and levels read from rendered samples; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 20828,
+      "sha256": "9376af7308dc6b2abb23edcd8523b08ed71f8b1005163deb9407db14450fbfa3"
+    },
+    {
+      "path": "examples/audio-mixer/README.md",
+      "originRole": "First-party instructions for the music and effects example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 4053,
+      "sha256": "93529f9faec06576b47cbffb3396e090f1d930ce80ea77ee298e15feadf52009"
+    },
+    {
+      "path": "examples/audio-mixer/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the music and effects example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 4145,
+      "sha256": "53c1b2cd68876490116b2498e1f689115b26a023d8806575edf016b2d17ab82d"
+    },
+    {
+      "path": "knowledge-base/en/docs/audio.md",
+      "originRole": "First-party guide to sound for a 2D game: the mixer, its Web Audio backend, what was run and what was not; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 15502,
+      "sha256": "293e426909b035ced6bd35f95d65a8f6660f4bf6e7e636f2ff7479b08643b6bb"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/audio.md",
+      "originRole": "First-party Chinese guide to sound for a 2D game; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 15762,
+      "sha256": "caa7e31d9cf9318f2c9a46be0d7d1e1d0844aed9d8cf9a950cff1194142af521"
+    },
+    {
+      "path": "contributions/audio-mixer.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 5184,
+      "sha256": "e4f0c30490f3ca5755d73214c66c7531b37cde08e6ced20a9b6230b7b438e657"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
