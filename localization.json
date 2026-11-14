@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "b314a3864557bac39b2cb63606650ca65868906bafe2a0784905fed2f494fef1",
-      "zhSha256": "86a9b00cc60a6d20791605160c880afcd1b165deedb8dc91a6e609754c400f06"
+      "enSha256": "e0d59e6c5e9731bb918c0af77df82a7614529be590cad77a6af4621169ae55a0",
+      "zhSha256": "973f499c98f872cbccd131e59dad150f7368e3f35e12ce3aa652d71fa3afcc64"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -2390,8 +2390,8 @@
       "en": "knowledge-base/en/docs/ui-semantics.md",
       "zh": "knowledge-base/Cns/docs/ui-semantics.md",
       "kind": "public_reading",
-      "enSha256": "29e0b26de6c694956948a1805b7906bbc376e5759d65bc1a5f62eb4edb209196",
-      "zhSha256": "0d190612c5ac772a22eee1b4cfbc2b291afc160cd3fb7376167d028ad853f2ab"
+      "enSha256": "f38d4d45a7eb2202fdaed29c34c4f6c26d0c5f8ea6588235221a1f326ecca877",
+      "zhSha256": "64a4b689fad7e084810c67e170b436cdf0db1793384a2f7b575913332b78cadb"
     },
     {
       "en": "examples/ui-text-field/README.md",
@@ -2434,6 +2434,13 @@
       "kind": "public_reading",
       "enSha256": "bbea0c8bfe2905feb0d3dfa201c464ce83d90a5e48c6df2bf8e6277339fd9c7f",
       "zhSha256": "256ec775888a73bd12818e0e644fc7f2e96e58d1e36342606954399c8311aa97"
+    },
+    {
+      "en": "examples/ui-context-menu/README.md",
+      "zh": "examples/ui-context-menu/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "717b8178bb7fbf41b5ee19ad90b849cad33ff2540bb6903270b31edf9d5a7502",
+      "zhSha256": "914ff7c089efce5072053c4b2c6f80cef93a83ca8e5b15e37de66d8e117cbf9f"
     }
   ],
   "registries": [
@@ -5091,11 +5098,11 @@
     },
     {
       "path": "packages/engine/src/semanticTypes.ts",
-      "sha256": "a5c5d978035f7576ce1fd537577a4376bddd95aff83bae62c7360e28aa4409d8"
+      "sha256": "1b32489ff87ee58cbfd270b4e14647ad20a7a4c11a4b27b43b0d262ef2f5380b"
     },
     {
       "path": "packages/engine/src/semanticTree.ts",
-      "sha256": "378782818932c986c6db8c653f7d85f321192b7c13751e4180686ee04d56a401"
+      "sha256": "6982073d02730827cf6f028c962f32640dc03c3dbf31a09233dd0a863f0e1c25"
     },
     {
       "path": "packages/engine/src/semantics.ts",
@@ -5103,7 +5110,7 @@
     },
     {
       "path": "packages/engine/web/BrowserSemantics.ts",
-      "sha256": "3952dbb2a6796fda76b56f263997016a1addad507cefc142735492720fdcb60b"
+      "sha256": "992b3a407aac638b8bc2ccda11c37e64d3c422d173679a141d655dc6bd2ae715"
     },
     {
       "path": "packages/engine/web/semantics.ts",
@@ -5111,11 +5118,11 @@
     },
     {
       "path": "tests/ui-semantics.test.mjs",
-      "sha256": "98050fefaf9aea791c0012bb6fb64033988d92feb078aed1f97203115ad8fc0e"
+      "sha256": "e6019368944ab18d0817ca2eb7a6d4187d1228fcd516f8e9873a4b09602d31f1"
     },
     {
       "path": "tests/browser-semantics.test.mjs",
-      "sha256": "24cd2f1e816185f611ec6df798334a218f6339c1844f5474ddaca5f1473c10cf"
+      "sha256": "6cb7bbb9df8ff4f111a6d5d157d8d510a1d326d500e5fdee23d8b4061fcd44fb"
     },
     {
       "path": "packages/engine/src/ui/textFieldControl.ts",
@@ -5143,11 +5150,11 @@
     },
     {
       "path": "packages/engine/src/semanticList.ts",
-      "sha256": "e3b3ad53f33d64349a8e26123f3d0a93a8972692147bb065e386c43da6c4f911"
+      "sha256": "f8d73b4b79831e460905b5148e1b6f9b589e0c82b01b9556bd0075d95f5a1fbc"
     },
     {
       "path": "tests/ui-list-semantics.test.mjs",
-      "sha256": "90a962b26864163e54aed03ff7ff4149e54243b6d20e468076b1f839c2f3c25d"
+      "sha256": "250da8fec1f5eedf7716b5c7991653f76b4d76886b404839fccf46be833e7f8a"
     },
     {
       "path": "examples/ui-list-semantics/main.mjs",
@@ -5208,6 +5215,14 @@
     {
       "path": "tests/ui-editor-row-integration.test.mjs",
       "sha256": "3ea3b7fc65161fc3b58bf00481e4d54c6150c8ab1cf66cf29ebe61b4fdaa6cd7"
+    },
+    {
+      "path": "examples/ui-context-menu/main.mjs",
+      "sha256": "33036054c9fa297681b8798a273075ad29271b1b88d7d6f02c3aa7c393794f52"
+    },
+    {
+      "path": "examples/ui-context-menu/verify.mjs",
+      "sha256": "fe85ce95c5079a4a6839644c3091941b7dc6fd6556148fd3da64a5f0d0ce580c"
     }
   ],
   "historicalSemanticReview": {
