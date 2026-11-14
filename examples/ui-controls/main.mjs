@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // A switch, a group of three options and a button, drawn by the engine in each of their states.
 // The controls of `@egret/engine/ui` hold the state; this page paints it, binds the keys, and
-// describes the same controls to assistive technology.
+// describes the same controls to assistive technology. A gamepad drives the same keys.
 import { createEngineForProfile, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
 import { createActionControl, createControlKeys, createHoverControl, createSelectionGroup, createToggleControl, createUiTheme, selectUiSkin } from '@egret/engine/ui';
 import { createUiSemantics } from '@egret/engine/ui/semantics';
@@ -9,6 +9,8 @@ import { createBrowserHoverInput } from '@egret/engine/web/hover';
 import { createBrowserSemantics } from '@egret/engine/web/semantics';
 import { createBrowserPointerInput } from '@egret/engine/web/pointer';
 import { createBrowserKeyboardInput } from '@egret/engine/web/keyboard';
+import { bindGamepadKeys } from '@egret/engine/input/gamepad';
+import { createBrowserGamepadInput } from '@egret/engine/web/gamepad';
 import { createExampleHost } from '../host.mjs';
 
 const WIDTH = 480, HEIGHT = 300;
@@ -51,7 +53,8 @@ const parts = { sound: surface(40, 40, 140, 44), easy: surface(40, 120, 120, 44,
 const levels = ['easy', 'normal', 'hard'], changes = [];
 const sound = createToggleControl({ input: pointer, target: parts.sound.sprite, checked: true, onChange: () => show(), onPressChange: () => show() });
 const level = createSelectionGroup({ input: pointer, items: levels.map(key => ({ key, target: parts[key].sprite })), selected: 'normal', onChange: (selected, previous) => { changes.push([selected, previous]); show(); } });
-const apply = createActionControl({ input: pointer, target: parts.apply.sprite, onActivate: () => show(), onPressChange: () => show() });
+// Applying is felt on a pad that can shake.
+const apply = createActionControl({ input: pointer, target: parts.apply.sprite, onActivate: () => { for (const pad of pads.input.pads) pads.rumble(pad.index, { duration: 80 }); show(); }, onPressChange: () => show() });
 const hovered = Object.fromEntries(Object.entries(parts).map(([name, part]) => [name, createHoverControl({ hover, target: part.sprite, onHoverChange: () => show() })]));
 
 // Keys reach the same methods a pointer reaches. A binding takes the usual keys of its control from the
@@ -63,6 +66,10 @@ const keys = {
   sound: createControlKeys({ keyboard, target: stops.sound, kind: 'toggle', control: sound, onPressChange: () => show() }),
   apply: createControlKeys({ keyboard, target: stops.apply, kind: 'action', control: apply, onPressChange: () => show() }),
 };
+// A gamepad is another way to the same keys: the cross and the left stick are the arrows, and an arrow nobody
+// took moves the focus; the lower face button is Enter, the right one Escape, the shoulders move the focus.
+const pads = scope.use(createBrowserGamepadInput({ onError: fail, onConnection: () => show() }));
+const padKeys = bindGamepadKeys({ gamepad: pads.input, keyboard });
 // The group is one stop and one binding, on the display object that holds its options. The focus stays on the
 // group while the selection moves inside it, so a held arrow key goes on through the options, and the ring is
 // drawn on the option that is selected, as it is in a native radio group.
@@ -107,6 +114,7 @@ export function readSnapshot() {
     apply: { pressed: apply.pressed, held: keys.apply.pressed, activations: apply.activationCount, enabled: apply.enabled },
     hovered: Object.entries(hovered).filter(([, control]) => control.hovered).map(([name]) => name),
     focus: focus.focusVisible ? focus.focusedId : undefined, focused: focus.focusedId, renders, failure,
+    pads: pads.input.pads.map(pad => pad.id), padKeys: [...padKeys.held],
     semantics: { revision: semantics.snapshot.revision, focused: semantics.snapshot.focused, nodes: semantics.snapshot.nodes.length, projection: projection.state },
   };
 }
@@ -125,3 +133,9 @@ function show() {
 }
 globalThis.__egretUiControlsExample = { readSnapshot };
 show();
+// A browser tells nothing of a pad by itself, so the page looks once a frame, from the first frame it has drawn.
+(function look(time) {
+  if (scope.state !== 'open') return;
+  try { pads.poll(time); } catch (cause) { fail(cause); show(); }
+  requestAnimationFrame(look);
+})(performance.now());

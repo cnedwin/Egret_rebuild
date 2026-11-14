@@ -104,6 +104,14 @@
       "types": "./dist/web/hover.d.ts",
       "import": "./dist/web/hover.js"
     },
+    "./input/gamepad": {
+      "types": "./dist/gamepad.d.ts",
+      "import": "./dist/gamepad.js"
+    },
+    "./web/gamepad": {
+      "types": "./dist/web/gamepad.d.ts",
+      "import": "./dist/web/gamepad.js"
+    },
     "./audio": {
       "types": "./dist/audio.d.ts",
       "import": "./dist/audio.js"

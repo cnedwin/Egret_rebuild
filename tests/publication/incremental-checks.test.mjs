@@ -2391,7 +2391,18 @@ function withoutSemanticsEntries(raw){
  assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3765,sha256:'ca1aad9f66558f25c0e4e26ec74ec7cf4f7cf963654d5e096daf09f52c05fa9b'});
  return prior;
 }
-// The two sound entries are the newest. Taking them out gives the package as the semantics entries left it.
+// The two gamepad entries are the newest. Taking them out gives the package as the sound entries left it.
+function withoutGamepadEntries(raw){
+ const value=JSON.parse(raw);
+ if(!Object.hasOwn(value.exports,'./input/gamepad')&&!Object.hasOwn(value.exports,'./web/gamepad'))return raw;
+ assert.deepEqual(value.exports['./input/gamepad'],{types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'});
+ assert.deepEqual(value.exports['./web/gamepad'],{types:'./dist/web/gamepad.d.ts',import:'./dist/web/gamepad.js'});
+ delete value.exports['./input/gamepad'];delete value.exports['./web/gamepad'];
+ const prior=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:4192,sha256:'9f795a87d30012d315be17332f559567b2e558d32b6ff0ecb4cee20439f4ecbd'});
+ return prior;
+}
+// Taking the two sound entries out gives the package as the semantics entries left it.
 function withoutAudioEntries(raw){
  const value=JSON.parse(raw);
  if(!Object.hasOwn(value.exports,'./audio')&&!Object.hasOwn(value.exports,'./web/audio'))return raw;
@@ -2403,7 +2414,7 @@ function withoutAudioEntries(raw){
  return prior;
 }
 function restoreScene3dEntries(raw){
- raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(withoutAudioEntries(raw)))));
+ raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(withoutAudioEntries(withoutGamepadEntries(raw))))));
  const identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
  if(JSON.stringify(identity(raw))!==JSON.stringify({bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'}))return raw;
  const value=JSON.parse(raw),exports={};
