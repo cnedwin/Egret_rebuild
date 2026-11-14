@@ -123,4 +123,4 @@ A sprite that draws only filled rectangles keeps them as rectangles, as before. 
 
 Sprites that draw exactly the same thing share one drawing, however many they are: 300 bullets drawn as the same circle count once. Sprites that each draw something different count each. In practice the triangles are what runs out first: 65,536 in a frame is some 2,000 circles of radius 40, or 500 of radius 600. A drawing is counted once however many sprites show it, but its triangles are counted for each sprite that shows it.
 
-`getBounds()` covers the shapes and the width of their lines. Hit testing does not read the drawing: it uses `hitArea`, as before.
+`getBounds()` covers the shapes and the width of their lines. A sprite with `touchEnabled` and no `hitArea` is hit on its drawing: inside a triangle of its shapes, so a circle is not hit in the corners of its bounds and a hole is not hit at all. With a `hitArea` that rectangle is used instead.

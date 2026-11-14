@@ -12,6 +12,17 @@ The browser factory obtains the authentic Engine surface through a private assem
 
 The two-region example (`examples/multi-pointer/index.html` in the repository) uses authored hit areas and simultaneous independent contacts. It is an input fixture, not a reusable joystick or a gesture recognizer.
 
+## Taps, and what is hit
+
+`input.events.tap` is dispatched after an `end` when the contact ends on the target it began on, no more than 12 stage units from where it began. It bubbles like the other pointer events. A contact that was cancelled, or that ended on another target, gives no tap.
+
+```js
+button.touchEnabled = true;
+button.on(input.events.tap, () => start());
+```
+
+A display object with `touchEnabled` is a target where it is hit. With a `hitArea` that is the rectangle; without one it is what the object itself draws: a triangle of its shapes, one of its filled rectangles, or its bitmap's rectangle. So a drawn button needs no `hitArea`, a circle is not hit in the corners of its bounds, and an object that draws nothing is not hit. Earlier, an object without a `hitArea` was never hit.
+
 ## Sessions and routing
 
 Each accepted down returns an opaque immutable session, with a bridge generation, monotonically increasing contact ID and the reported host pointer ID/type. Pointer IDs may be reused after termination; an older session cannot update a newer one. Mouse, touch and pen are admitted without filtering secondary fingers. Capacity defaults to 10 and accepts an explicit integer from 5 to 32. Overflow raises `POINTER_INPUT_CAPACITY` without replacing active contacts; the browser reports it and continues their input.
