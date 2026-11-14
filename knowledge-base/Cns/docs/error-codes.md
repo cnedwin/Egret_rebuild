@@ -241,6 +241,18 @@
 | `BOUNDS_RECEIVER_INVALID` | 交给边界查询的 `receiver` 无效。 |
 | `BOUNDS_TREE_LIMIT` | 超出了边界查询的 `tree` 上限。 |
 
+### BROWSER_GAME
+
+| 错误码 | 含义 |
+| --- | --- |
+| `BROWSER_GAME_OPTIONS_INVALID` | 交给createBrowserGame 的选项无效：缺少某一项、类型不对或超出范围。 |
+
+### BROWSER_STATS
+
+| 错误码 | 含义 |
+| --- | --- |
+| `BROWSER_STATS_OPTIONS_INVALID` | 交给调试面板的选项无效：缺少某一项、类型不对或超出范围。 |
+
 ### CAMERA
 
 | 错误码 | 含义 |

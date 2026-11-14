@@ -39,7 +39,7 @@ export function collectErrorCodes() {
 const ZH_AREAS = [
   ['ANIMATION', '动画协调器'], ['ASSET_GROUP', '资源组'], ['ASSET_LEASE', '资源租约'], ['ASSET_MANAGER', '资源管理器'], ['ASSET_PROVIDER', '资源提供者'], ['ASSET', '资源管理器'],
   ['AUDIO', '音频混音器'], ['BITMAP_BINDING', '位图绑定'], ['BITMAP_BUTTON', '位图按钮'], ['BITMAP_FONT', '位图字体'], ['BITMAP_RESOURCE', '位图资源槽'], ['BITMAP_TEXT', '位图文本'],
-  ['BITMAP', '位图'], ['BOUNDS', '边界查询'], ['BROWSER_TEXT_EDITOR', '浏览器文本编辑器'], ['BROWSER_TEXT_INPUT', '浏览器文本输入'], ['CAMERA', '相机'], ['CLOCK', '游戏时钟'],
+  ['BITMAP', '位图'], ['BOUNDS', '边界查询'], ['BROWSER_GAME', 'createBrowserGame '], ['BROWSER_STATS', '调试面板'], ['BROWSER_TEXT_EDITOR', '浏览器文本编辑器'], ['BROWSER_TEXT_INPUT', '浏览器文本输入'], ['CAMERA', '相机'], ['CLOCK', '游戏时钟'],
   ['CONTENT_GROUP', '内容组'], ['CONTENT_LOADER', '内容加载器'], ['CONTENT', '内容加载'], ['COORDINATE', '坐标查询'], ['DISPLAY_EFFECT', '渲染效果'], ['DISPLAY_SUBTREE', '预备的显示子树'],
   ['DISPLAY_TREE', '显示树'], ['DISPLAY', '显示对象'], ['ENGINE', 'Engine'], ['EVENT', '事件'], ['FONT_CONTENT', '字体内容'], ['FRAME_LOOP', '帧循环'], ['FRAME', '帧'],
   ['GAMEPAD', '手柄输入'], ['GRAPHICS', 'graphics'], ['HIT_TEST', '命中测试'], ['HOVER_INPUT', '悬停输入'], ['KEYBOARD_FOCUS_SCOPE', '键盘焦点范围'], ['KEYBOARD_INPUT', '键盘输入'],

@@ -2391,7 +2391,17 @@ function withoutSemanticsEntries(raw){
  assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3765,sha256:'ca1aad9f66558f25c0e4e26ec74ec7cf4f7cf963654d5e096daf09f52c05fa9b'});
  return prior;
 }
-// The frame loop entry is the newest. Taking it out gives the package as the video entries left it.
+// The browser game entry is the newest. Taking it out gives the package as the frame loop entry left it.
+function withoutGameEntry(raw){
+ const value=JSON.parse(raw);
+ if(!Object.hasOwn(value.exports,'./web/game'))return raw;
+ assert.deepEqual(value.exports['./web/game'],{types:'./dist/web/game.d.ts',import:'./dist/web/game.js'});
+ delete value.exports['./web/game'];
+ const prior=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:5231,sha256:'f7346ba3e0283c2fc1800b939ea2034665b20cd3a035d4acd3e58ea617bf5af2'});
+ return prior;
+}
+// Taking the frame loop entry out gives the package as the video entries left it.
 function withoutLoopEntry(raw){
  const value=JSON.parse(raw);
  if(!Object.hasOwn(value.exports,'./web/loop'))return raw;
@@ -2485,7 +2495,7 @@ function withoutAudioEntries(raw){
  return prior;
 }
 function restoreScene3dEntries(raw){
- raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(withoutAudioEntries(withoutGamepadEntries(withoutCameraEntry(withoutTilemapEntry(withoutParticlesEntry(withoutPhysics2dEntry(withoutBitmapfontEntry(withoutVideoEntry(withoutLoopEntry(raw)))))))))))));
+ raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(withoutAudioEntries(withoutGamepadEntries(withoutCameraEntry(withoutTilemapEntry(withoutParticlesEntry(withoutPhysics2dEntry(withoutBitmapfontEntry(withoutVideoEntry(withoutLoopEntry(withoutGameEntry(raw))))))))))))));
  const identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
  if(JSON.stringify(identity(raw))!==JSON.stringify({bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'}))return raw;
  const value=JSON.parse(raw),exports={};

@@ -241,6 +241,18 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `BOUNDS_RECEIVER_INVALID` | The receiver given to a bounds query is not valid. |
 | `BOUNDS_TREE_LIMIT` | The tree limit of a bounds query was passed. |
 
+### BROWSER_GAME
+
+| Code | Meaning |
+| --- | --- |
+| `BROWSER_GAME_OPTIONS_INVALID` | The options given to createBrowserGame are not valid: one is missing, of the wrong type or out of range. |
+
+### BROWSER_STATS
+
+| Code | Meaning |
+| --- | --- |
+| `BROWSER_STATS_OPTIONS_INVALID` | The options given to the stats panel are not valid: one is missing, of the wrong type or out of range. |
+
 ### CAMERA
 
 | Code | Meaning |

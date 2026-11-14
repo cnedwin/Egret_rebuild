@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "packages/engine/web/BrowserGame.ts", "originRole": "First-party one-call composition of a Host, an Engine, a scope, input and a frame loop for a game in a page; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/web/BrowserStatsPanel.ts", "originRole": "First-party panel of frames a second, what a frame holds and how busy the Host is; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/web/game.ts", "originRole": "First-party optional browser entry for the one-call game and its panel; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/browser-game.test.mjs", "originRole": "First-party Node tests of the one-call game's options and of the stats panel; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "knowledge-base/en/docs/browser-game.md", "originRole": "First-party guide to the one-call game entry and its panel, with what was run and what was not; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/Cns/docs/browser-game.md", "originRole": "First-party Chinese guide to the one-call game entry and its panel; independently authored with AI assistance; Apache-2.0."}
+  ],
+  "documents": [
+    {"en": "knowledge-base/en/docs/browser-game.md", "zh": "knowledge-base/Cns/docs/browser-game.md"}
+  ]
+}

@@ -8,7 +8,7 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['ANIMATION', 'the animation coordinator'], ['ASSET_GROUP', 'an asset group'], ['ASSET_LEASE', 'an asset lease'], ['ASSET_MANAGER', 'the asset manager'],
   ['ASSET_PROVIDER', 'an asset provider'], ['ASSET', 'the asset manager'], ['AUDIO', 'the audio mixer'], ['BITMAP_BINDING', 'a bitmap binding'],
   ['BITMAP_BUTTON', 'a bitmap button'], ['BITMAP_FONT', 'a bitmap font'], ['BITMAP_RESOURCE', 'a bitmap resource slot'], ['BITMAP_TEXT', 'bitmap text'],
-  ['BITMAP', 'a bitmap'], ['BOUNDS', 'a bounds query'], ['BROWSER_TEXT_EDITOR', 'the browser text editor'], ['BROWSER_TEXT_INPUT', 'the browser text input'],
+  ['BITMAP', 'a bitmap'], ['BOUNDS', 'a bounds query'], ['BROWSER_GAME', 'createBrowserGame'], ['BROWSER_STATS', 'the stats panel'], ['BROWSER_TEXT_EDITOR', 'the browser text editor'], ['BROWSER_TEXT_INPUT', 'the browser text input'],
   ['CAMERA', 'the camera'], ['CLOCK', 'the game clock'], ['CONTENT_GROUP', 'a content group'], ['CONTENT_LOADER', 'a content loader'], ['CONTENT', 'content loading'],
   ['COORDINATE', 'a coordinate query'], ['DISPLAY_EFFECT', 'a render effect'], ['DISPLAY_SUBTREE', 'a prepared display subtree'], ['DISPLAY_TREE', 'the display tree'],
   ['DISPLAY', 'a display object'], ['ENGINE', 'the Engine'], ['EVENT', 'an event'], ['FONT_CONTENT', 'font content'], ['FRAME_LOOP', 'the frame loop'], ['FRAME', 'a frame'],
