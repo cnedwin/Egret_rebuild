@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
-// One screen that joins the pieces of the UI: a switch, a group of options, a text field, a button, a
+// One screen that joins the pieces of the UI: a switch, a group of options, a text field, a slider, a button, a
 // managed list of two hundred profiles, and a modal card that asks before a reset. A theme names every
 // paint, and changing it repaints the drawn controls and both managed roots in one frame. Every control
 // answers a press, its usual keys, and a request of assistive technology through the same state.
 import { createEngineForProfile, DisplayObjectContainer, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
 import { createTextRasterCache, createTextField } from '@egret/engine/text';
-import { createActionControl, createControlKeys, createHoverControl, createSelectionGroup, createTextFieldControl, createToggleControl, createUiLayerManager, createUiRoot, createUiTheme, selectUiSkin } from '@egret/engine/ui';
+import { createActionControl, createControlKeys, createHoverControl, createRangeControl, createSelectionGroup, createTextFieldControl, createToggleControl, createUiLayerManager, createUiRoot, createUiTheme, selectUiSkin } from '@egret/engine/ui';
 import { createUiListSemantics, createUiSemantics, semanticBoxOf } from '@egret/engine/ui/semantics';
 import { createCanvasTextRasterProvider } from '@egret/engine/web/text';
 import { createBrowserTextInput } from '@egret/engine/web/text-input';
@@ -25,11 +25,11 @@ const THEMES = {
   light: createUiTheme({ id: 'light', skins, colors: { page: 0xe9edf5, panel: 0xffffff, surface: 0xc9d3e6, surfaceHover: 0xaebcd8, surfacePressed: 0x8fa0c2, surfaceOff: 0xdcdfe6,
     on: 0x4cb58b, onHover: 0x3fa37b, field: 0xf4f6fa, row: 0xf0f2f7, rowAlt: 0xe2e7f0, rowChosen: 0x4cb58b, ink: 0x172033, hint: 0x5b6577, ring: 0xc77d00 } }),
 };
-const DEFAULTS = { sound: true, level: 'normal', name: '侠客' };
+const DEFAULTS = { sound: true, level: 'normal', name: '侠客', volume: 60 };
 const LEVELS = ['easy', 'normal', 'hard'], LEVEL_NAMES = { easy: '易 Easy', normal: '中 Normal', hard: '难 Hard' };
 const HEROES = ['青锋', '白露', '玄霜', '赤霄', '紫电'];
 /** The settings a profile holds. They are made up from its number. */
-const profileOf = index => ({ sound: index % 2 === 0, level: LEVELS[index % 3], name: HEROES[index % 5] + (index + 1) });
+const profileOf = index => ({ sound: index % 2 === 0, level: LEVELS[index % 3], name: HEROES[index % 5] + (index + 1), volume: index * 15 % 105 });
 const keyOf = index => 'p' + index, indexOf = key => Number(key.slice(1));
 
 const canvas = document.querySelector('#scene'), status = document.querySelector('#status'), stateView = document.querySelector('#state');
@@ -81,14 +81,14 @@ const paintOf = (colors, on, state) => colors[selectUiSkin(theme().skins[on ? 'c
 
 // The settings.
 const labels = [line(engine.stage, 20, 10, 18, '设置 / Settings'), line(engine.stage, 20, 50, 14, '声音 / Sound', 'hint'), line(engine.stage, 20, 88, 14, '难度 / Level', 'hint'),
-  line(engine.stage, 20, 148, 14, '名字 / Name', 'hint'), line(engine.stage, 20, 216, 14, '深色 / Dark', 'hint'), line(engine.stage, 270, 14, 14, '存档 / Profiles', 'hint')];
+  line(engine.stage, 20, 148, 14, '名字 / Name', 'hint'), line(engine.stage, 20, 216, 14, '深色 / Dark', 'hint'), line(engine.stage, 20, 243, 14, '音量 / Volume', 'hint'), line(engine.stage, 270, 14, 14, '存档 / Profiles', 'hint')];
 // The three options are inside one display object, which is what the keyboard stops at.
 const options = engine.stage.addChild(scope.use(new Sprite()));
 const parts = { sound: surface('sound', { x: 150, y: 44, width: 90, height: 28 }), easy: surface('easy', { x: 20, y: 108, width: 70, height: 28 }, options), normal: surface('normal', { x: 95, y: 108, width: 70, height: 28 }, options),
   hard: surface('hard', { x: 170, y: 108, width: 70, height: 28 }, options), name: surface('name', { x: 20, y: 168, width: 220, height: 32 }), dark: surface('dark', { x: 150, y: 210, width: 90, height: 28 }),
-  reset: surface('reset', { x: 20, y: 262, width: 100, height: 32 }) };
+  volume: surface('volume', { x: 120, y: 244, width: 120, height: 16 }), reset: surface('reset', { x: 20, y: 268, width: 100, height: 28 }) };
 const captions = { easy: line(engine.stage, 28, 114, 13, LEVEL_NAMES.easy), normal: line(engine.stage, 100, 114, 13, LEVEL_NAMES.normal), hard: line(engine.stage, 178, 114, 13, LEVEL_NAMES.hard),
-  name: line(engine.stage, 28, 174, 16, DEFAULTS.name), reset: line(engine.stage, 34, 269, 14, '重置 / Reset') };
+  name: line(engine.stage, 28, 174, 16, DEFAULTS.name), reset: line(engine.stage, 34, 273, 14, '重置 / Reset') };
 labels.push(...Object.values(captions));
 const sound = createToggleControl({ input: pointer, target: parts.sound.sprite, checked: DEFAULTS.sound, onChange: () => edited(), onPressChange: () => show() });
 const level = createSelectionGroup({ input: pointer, items: LEVELS.map(key => ({ key, target: parts[key].sprite })), selected: DEFAULTS.level, onChange: () => edited() });
@@ -101,16 +101,18 @@ const name = createTextFieldControl({ input: pointer, target: parts.name.sprite,
     show();
   } });
 const dark = createToggleControl({ input: pointer, target: parts.dark.sprite, checked: true, onChange: checked => { void applyTheme(checked ? THEMES.dark : THEMES.light); }, onPressChange: () => show() });
+// The track is the surface: a press on it moves the volume there, and the same finger drags it.
+const volume = createRangeControl({ input: pointer, target: parts.volume.sprite, length: parts.volume.box.width, min: 0, max: 100, step: 5, value: DEFAULTS.volume, onChange: () => edited(), onDragChange: () => show() });
 const reset = createActionControl({ input: pointer, target: parts.reset.sprite, onActivate: () => { void openConfirm(); }, onPressChange: () => show() });
 /** A setting changed by hand: the picture no longer shows a profile as it was saved. */
 function edited() { if (loaded !== undefined && !sameAs(profileOf(indexOf(loaded)))) loaded = undefined; show(); }
-const current = () => ({ sound: sound.checked, level: level.selected, name: name.value });
-const sameAs = other => { const now = current(); return now.sound === other.sound && now.level === other.level && now.name === other.name; };
-function assign(values) { sound.setChecked(values.sound); level.select(values.level); name.setValue(values.name); }
+const current = () => ({ sound: sound.checked, level: level.selected, name: name.value, volume: volume.value });
+const sameAs = other => { const now = current(); return now.sound === other.sound && now.level === other.level && now.name === other.name && now.volume === other.volume; };
+function assign(values) { sound.setChecked(values.sound); level.select(values.level); name.setValue(values.name); volume.setValue(values.volume); }
 canvas.addEventListener('pointerdown', () => { byKey = false; });
 
 // The keyboard: each control is a stop with its place, and the list is one stop after them.
-const stops = { sound: parts.sound.sprite, level: options, name: parts.name.sprite, dark: parts.dark.sprite, reset: parts.reset.sprite };
+const stops = { sound: parts.sound.sprite, level: options, name: parts.name.sprite, dark: parts.dark.sprite, volume: parts.volume.sprite, reset: parts.reset.sprite };
 const registrations = Object.fromEntries(Object.entries(stops).map(([id, target], index) => [id, keyboard.registerTarget({ id, target, tabIndex: index + 1 })]));
 const keys = {
   sound: createControlKeys({ keyboard, target: stops.sound, kind: 'toggle', control: sound, onPressChange: () => show() }),
@@ -122,6 +124,8 @@ const keys = {
 // The group is one stop and one binding, on the display object that holds its options: the focus stays on the
 // group while the selection moves inside it, and the ring is drawn on the option that is selected.
 createControlKeys({ keyboard, target: options, kind: 'selection', control: level, orientation: 'horizontal' });
+// The arrows move the volume by a step, Page Up and Page Down by four, Home and End to its ends.
+createControlKeys({ keyboard, target: stops.volume, kind: 'range', control: volume, page: 4 });
 
 // The profiles: a managed list. Each row draws its own text in the ink of the theme it was bound with.
 const realized = new Map();
@@ -161,7 +165,7 @@ const pending = new Map();
 const root = createUiRoot({
   engine, scope, id: 'profiles', theme: THEMES.dark, viewport: { width: LIST.width, height: LIST.height }, origin: { x: LIST.x, y: LIST.y }, density: 1,
   tree: { id: 'list', kind: 'virtualList', source, explicitWidth: LIST.width, explicitHeight: LIST.height },
-  keyboard: { input: keyboard, idPrefix: 'profiles', tabStop: 6 }, limits: { overscan: 1, residentCap: 24 },
+  keyboard: { input: keyboard, idPrefix: 'profiles', tabStop: 7 }, limits: { overscan: 1, residentCap: 24 },
   input: pointer,
   onRowPointer(notification) {
     if (notification.kind === 'begin') pressedRow = notification.key;
@@ -242,6 +246,9 @@ semantics.add({ id: 'name', role: 'textbox', parent: 'settings', onActivate: () 
   describe: () => ({ name: '名字 / Name', bounds: parts.name.box, value: name.value, hidden: name.editing, focused: holds('name') }) });
 semantics.add({ id: 'dark', role: 'switch', parent: 'settings', onActivate: () => dark.toggle(), onFocus: () => keyboard.focus('dark', { visible: true }),
   describe: () => ({ name: '深色 / Dark', bounds: parts.dark.box, checked: dark.checked, focused: holds('dark') }) });
+// A slider is moved by its keys, as a native one is: a request to focus it puts the keyboard there.
+semantics.add({ id: 'volume', role: 'slider', parent: 'settings', onFocus: () => keyboard.focus('volume', { visible: true }),
+  describe: () => ({ name: '音量 / Volume', bounds: parts.volume.box, range: { now: volume.value, min: volume.min, max: volume.max }, focused: holds('volume') }) });
 semantics.add({ id: 'reset', role: 'button', parent: 'settings', onActivate: () => { reset.press(); reset.release(); }, onFocus: () => keyboard.focus('reset', { visible: true }),
   describe: () => ({ name: '重置 / Reset', bounds: parts.reset.box, focused: holds('reset') }) });
 const rows = createUiListSemantics({ semantics, root, list: 'list', id: 'profiles', role: 'listbox', name: '存档 / Profiles', focusable: true,
@@ -293,7 +300,7 @@ function closeConfirm() { layers.close('confirm'); return publish(); }
 export function readSnapshot() {
   const ui = root.snapshot(), focus = keyboard.getSnapshot();
   return {
-    settings: current(), loaded, theme: theme().id, wanted: wanted.id, editing: name.editing, draft: name.draft,
+    settings: current(), loaded, theme: theme().id, wanted: wanted.id, editing: name.editing, draft: name.draft, dragging: volume.dragging,
     held: Object.fromEntries(Object.entries(keys).map(([id, bound]) => [id, bound.pressed])), hovered: Object.values(parts).filter(part => part.hover.hovered).map(part => part.id),
     focus: focus.focusedId, focusVisible: focus.focusVisible, row: list.getFocus().key,
     rows: ui.rows.filter(row => row.visible).map(row => ({ key: row.key, index: row.index, x: LIST.x + row.box.x, y: LIST.y + row.box.y, width: row.box.width, height: row.box.height })),
@@ -312,6 +319,10 @@ function show() {
   for (const key of LEVELS) parts[key].paint(colors, paintOf(colors, level.selected === key, { hover: parts[key].hover.hovered }), ringed('level') && level.selected === key);
   parts.name.paint(colors, name.pressed || keys.name.pressed ? colors.surfacePressed : colors.field, ringed('name') || name.editing);
   parts.dark.paint(colors, paintOf(colors, dark.checked, { pressed: dark.pressed || keys.dark.pressed, hover: parts.dark.hover.hovered }), ringed('dark'));
+  // The track, the part of it that is filled, and the thumb.
+  const track = parts.volume.box, thumb = Math.round(volume.fraction * (track.width - 6));
+  parts.volume.paint(colors, colors[selectUiSkin(skins.control, { pressed: volume.dragging, hover: parts.volume.hover.hovered })], ringed('volume'));
+  parts.volume.sprite.graphics.beginFill(colors.on).drawRect(0, 4, thumb, track.height - 8).beginFill(colors.ink).drawRect(thumb, 0, 6, track.height).endFill();
   parts.reset.paint(colors, paintOf(colors, false, { pressed: reset.pressed || keys.reset.pressed, hover: parts.reset.hover.hovered }), ringed('reset'));
   for (const row of realized.values()) row.paint();
   for (const part of Object.values(cardParts)) part.paint();
@@ -321,7 +332,7 @@ function show() {
   try { rows.sync(); semantics.publish(layers.snapshot().committedRevision); } catch (cause) { fail(cause); }
   const now = current();
   status.textContent = failure ? 'Failed / 失败：' + failure
-    : (now.sound ? '声音开' : '声音关') + ' · ' + LEVEL_NAMES[now.level] + ' · ' + now.name + ' · ' + (loaded === undefined ? '未存档 / not a profile' : '存档 / profile ' + (indexOf(loaded) + 1)) + ' · ' + theme().id;
+    : (now.sound ? '声音开' : '声音关') + ' ' + now.volume + ' · ' + LEVEL_NAMES[now.level] + ' · ' + now.name + ' · ' + (loaded === undefined ? '未存档 / not a profile' : '存档 / profile ' + (indexOf(loaded) + 1)) + ' · ' + theme().id;
   stateView.textContent = JSON.stringify(readSnapshot(), null, 2);
   frame();
 }

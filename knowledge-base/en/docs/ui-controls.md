@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/ui-controls.md)
 
-`@egret/engine/ui` has seven controls that hold the state of something a player operates: a virtual stick, a button, a hover, a switch, one choice out of several, a scroll position, and a text field. They belong to M3.4, [#90](https://github.com/cnedwin/Egret_rebuild/issues/90).
+`@egret/engine/ui` has eight controls that hold the state of something a player operates: a virtual stick, a button, a hover, a switch, one choice out of several, one value out of a range, a scroll position, and a text field. They belong to M3.4, [#90](https://github.com/cnedwin/Egret_rebuild/issues/90).
 
 What these controls are to someone who cannot see them is described by the [semantic tree](ui-semantics.md), which reads the same state.
 
@@ -15,6 +15,7 @@ They own state only. A control adds no listener of the page, draws nothing and d
 | `createHoverControl` | Hovered | A mouse or a pen over the target or a descendant |
 | `createToggleControl` | Checked | An activation flips it |
 | `createSelectionGroup` | One selected key of several | An activation of an item, or movement among them |
+| `createRangeControl` | One value out of a range | A press on the track, a drag from there, or a call |
 | `createScrollControl` | The offset of one axis of a viewport | The wheel, a drag of the scrollbar thumb, or a call |
 | `createTextFieldControl` | The text of a field, and whether it is being edited | An activation opens an editor over it |
 
@@ -73,6 +74,29 @@ This is the state of a radio group, a segmented control or a listbox with a sing
 A completed press on an item selects it. `select(key)` does the same by name, and `next()`, `previous()`, `first()` and `last()` move the selection among the enabled items. Each returns whether the selection changed. Movement wraps past either end unless `wrap` is false. With nothing selected, `next()` starts at the first enabled item and `previous()` at the last.
 
 A disabled item is skipped by movement and refuses a press and `select`. Disabling the selected item leaves it selected, as a disabled checked radio button stays checked. `setEnabled(false)` on the group refuses every way of selecting. An unknown key is refused with `UI_CONTROL_UNKNOWN_ITEM`.
+
+## Value in a range
+
+```js
+import { createControlKeys, createRangeControl } from '@egret/engine/ui';
+
+const volume = createRangeControl({
+  input, target: track, length: 120, min: 0, max: 100, step: 5, value: settings.volume,
+  onChange: value => { settings.volume = value; redraw(); },
+  onDragChange: () => redraw(),
+});
+keyboard.registerTarget({ id: 'volume', target: track });
+createControlKeys({ keyboard, target: track, kind: 'range', control: volume, page: 4 });
+```
+
+A slider: one value out of a range, such as a volume, a share or an amount. `target` is the track. A press on it moves the value to where it was pressed, and the same contact then drags it, also outside the track, until it is released. A second contact is refused while one drags. The application draws the track and the thumb from `value`, or from `fraction`, which is the value as a share of the range from 0 to 1.
+
+- **The track** is read in the coordinates of `target`, so a track that is moved or scaled, or that sits inside something scaled, needs nothing more. `length` is how long it is, and `start` where it begins, which is 0 unless said. `axis: 'y'` is a vertical track, on which the value grows upward.
+- **Values.** The range runs from `min` to `max`, which are 0 and 100 unless said. Its values are `min` and every `step` from it, 1 unless said, and the far end is always a value, also when no whole step reaches it. A number between two values goes to the nearer, and one halfway goes up.
+- **`setValue(n)`** sets the value from the application, also while the control is disabled, and brings the number to a value of the range. `stepBy(steps)`, `toMin()` and `toMax()` are what keys and scripts call, and do nothing while it is disabled. Each returns whether the value changed, and `onChange(value, previous)` is told only then.
+- **`dragging`** is true from the press to the release, and `onDragChange` reports it, so that a thumb is painted as held. Disabling or disposing the control ends a drag.
+
+Its keys are those of a native slider, listed under [Keys](#keys). To someone who cannot see it, it is a [`slider`](ui-semantics.md) with its `range`.
 
 ## Scroll position
 
@@ -142,11 +166,13 @@ const keys = createControlKeys({ keyboard, target: button, kind: 'action', contr
 | `'toggle'` | Space, Enter | Released: `toggle()` |
 | `'textField'` | Space, Enter | Released: `edit()` |
 | `'selection'` | Arrow keys, Home, End | Pressed, and again while held: `next()`, `previous()`, `first()`, `last()` |
+| `'range'` | Arrow keys, Page Up, Page Down, Home, End | Pressed, and again while held: `stepBy(1)` or `stepBy(-1)`, `stepBy(page)` or `stepBy(-page)`, `toMin()`, `toMax()` |
 | `'scroll'` | The arrow keys of its axis, Page Up, Page Down, Home, End | Pressed, and again while held: `line()`, `page()`, `toStart()`, `toEnd()` |
 | `'movement'` | Arrow keys and the W A S D positions | While down: `setDirection(x, y)` from the keys that are held |
 
 - **Activation waits for the release.** The key that opens a text field therefore types nothing into it, and a key that repeats while it is held activates once. While the key is down `keys.pressed` is true and `onPressChange` has reported it, so that a held key is painted as a press is: `control.pressed || keys.pressed`. A hold that loses the focus, or whose page loses it, ends without an activation. One key activates at a time.
 - **A selection** takes `orientation: 'horizontal'` or `'vertical'` to keep the arrows across it for whatever is outside. Its keys are taken also at an end that does not wrap, as in a native group, so the page does not scroll under it.
+- **A range** goes up with Arrow Right and Arrow Up and down with Arrow Left and Arrow Down, one step each. Page Up and Page Down move it `page` steps, ten unless said. `orientation` keeps the arrows across it for whatever is outside. Its keys are taken also at an end, as in a native slider, so the page does not scroll under it.
 - **A scroll** takes a key only when the key moved it. At its end the key goes on to a viewport outside it, or to the page, as the wheel does.
 - **A movement** adds up the keys that are down. Opposite keys cancel each other and a diagonal is no faster. `keys: 'arrows'` or `'wasd'` binds one set only. The letters are positions of the keyboard, not characters, so they are the same four keys on every layout.
 - **A key taken below is left alone above.** A binding skips a key that a display object nearer the focus has already taken, so a button inside a scrolling viewport and a viewport inside another each get their own keys.
@@ -183,19 +209,21 @@ A skin has one name for each state, not one for each combination. A control that
 | [`tests/ui-scroll-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-scroll-control.test.mjs), 13 cases | The scroll position on a genuine Engine: range, wheel units, nested viewports, the thumb and its drag, and a strict TypeScript consumer |
 | [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs), 7 scenarios | A real page in headless Chromium with software WebGL2: mouse, touch and keys injected through the automation protocol, among them a key that is held, a hold that loses the focus, and the colour each state is painted with. Four further scenarios of the same file check the [semantic projection](ui-semantics.md) |
 | [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs), 9 scenarios | The scroll control in a real page: the wheel, the hand-over to the page, a drag of the thumb, and its keys with their hand-over to the page |
+| [`tests/ui-range-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-range-control.test.mjs), 11 cases | The value in a range on a genuine Engine: the press, the drag and its ends, a second contact, tracks that are inset, vertical and scaled, the values of a range whose far end is no whole step, steps, a disabled control, its keys through the keyboard input, its semantic node, and a strict TypeScript consumer |
 | [`tests/ui-control-keys.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-control-keys.test.mjs), 16 cases | The key bindings on a genuine Engine with the keyboard input and the six controls: holds, repeats, lost focus, shortcuts, nested targets, disposal, failing listeners, and a strict TypeScript consumer |
 | [`tests/ui-skin-states.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-skin-states.test.mjs), 6 cases | The name a skin gives: each state alone, every pair of states, missing names, an order of the application's own, refused arguments, and a strict TypeScript consumer |
 | [`tests/ui-text-field.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-text-field.test.mjs), 17 cases | The text field on a genuine Engine with a test-owned editor: sessions, drafts, limits, shared editors, failing editors and listeners, the semantic node, and a strict TypeScript consumer with the platform text input as its editor |
 | [`examples/ui-text-field/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-text-field/verify.mjs), 6 scenarios | Two text fields in a real page in headless Chromium with software WebGL2: a composition of an input method driven through the browser's protocol, the keyboard, one field handing the editor to the other, the accessibility tree, disabling, and a phone profile |
-| [`examples/ui-settings/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/verify.mjs), 8 scenarios | [One screen](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/README.md) that joins the controls, their keys, a text field, two themes, a managed list, a modal layer and semantics, in headless Chromium with software WebGL2: the keyboard alone, presses, a composition, a theme changed in one frame, the modal card, requests of assistive technology and a phone profile |
+| [`examples/ui-settings/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/verify.mjs), 9 scenarios | [One screen](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/README.md) that joins the controls, their keys, a text field, two themes, a managed list, a modal layer and semantics, in headless Chromium with software WebGL2: the keyboard alone, presses, a composition, a theme changed in one frame, the modal card, requests of assistive technology and a phone profile. One scenario is the slider: a press, a drag past both ends of the track, each of its keys, a held key, the values the accessibility tree is given, and a finger that drags it |
 
-Twenty-nine faults were written into the built hover, toggle and selection code one at a time, and the unit tests caught all of them. Of thirty-two written into the scroll control they caught thirty; the other two change nothing a caller can see. Of 114 operator faults in the text field control they caught 112; the other two are a shortcut that saves a loop and changes no result. Of 100 operator faults in the key bindings they caught all, and all 22 in the choice of a skin name.
+Twenty-nine faults were written into the built hover, toggle and selection code one at a time, and the unit tests caught all of them. Of thirty-two written into the scroll control they caught thirty; the other two change nothing a caller can see. Of 114 operator faults in the text field control they caught 112; the other two are a shortcut that saves a loop and changes no result. Of 100 operator faults in the key bindings they caught all, and all 22 in the choice of a skin name. Of 95 in the range control they caught 94; the other one changes no result, because a step that lands on the far end is the far end either way. All 15 written into the keys of a range were caught.
 
 ## Open
 
 - No person operated the example. Every input was injected.
 - The key bindings were run with the keys of headless Chromium on a US layout. No other keyboard layout, no physical keyboard, no game controller and no screen reader's own key commands were run.
-- The bindings follow left-to-right reading: Arrow Right is `next()`. A right-to-left group is bound by the application.
+- The bindings follow left-to-right reading: Arrow Right is `next()`, and more on a slider. A right-to-left group or slider is bound by the application.
+- A slider is moved through its keys once it holds the focus, which is how a reader moves an ARIA slider. A request that names a value, as some assistive technology on phones sends, is not carried.
 - Hardware GPUs, WebGPU, Edge as installed, Safari, Firefox and a real phone were not run for these controls.
 - The [semantic projection](ui-semantics.md) gives these controls roles, names and states, checked against the accessibility tree of headless Chromium. No screen reader or other assistive technology was run.
 - A finger does not pan a scroll viewport: that gesture and its arbitration with presses remain in #90.

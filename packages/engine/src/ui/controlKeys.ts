@@ -61,6 +61,16 @@ export interface ScrollKeysOptions extends ControlKeysTarget {
     readonly control: { readonly enabled: boolean; readonly axis: 'x' | 'y'; line(direction: 1 | -1): boolean; page(direction: 1 | -1): boolean; toStart(): boolean; toEnd(): boolean };
 }
 
+/** Arrow keys move the value by one step, Page Up and Page Down by a page of steps, Home and End go to its ends. A held key repeats. */
+export interface RangeKeysOptions extends ControlKeysTarget {
+    readonly kind: 'range';
+    readonly control: { readonly enabled: boolean; stepBy(steps: number): boolean; toMin(): boolean; toMax(): boolean };
+    /** Which arrow keys move it: Right and Left, Up and Down, or all four. Defaults to 'both'. Right and Up raise the value. */
+    readonly orientation?: 'horizontal' | 'vertical' | 'both';
+    /** How many steps Page Up and Page Down move. Defaults to 10. */
+    readonly page?: number;
+}
+
 /** The keys that are down give the direction; opposite keys cancel each other. */
 export interface MovementKeysOptions extends ControlKeysTarget {
     readonly kind: 'movement';
@@ -70,7 +80,7 @@ export interface MovementKeysOptions extends ControlKeysTarget {
     readonly onPressChange?: (pressed: boolean) => void;
 }
 
-export type ControlKeysOptions = ActionKeysOptions | ToggleKeysOptions | TextFieldKeysOptions | SelectionKeysOptions | ScrollKeysOptions | MovementKeysOptions;
+export type ControlKeysOptions = ActionKeysOptions | ToggleKeysOptions | TextFieldKeysOptions | SelectionKeysOptions | ScrollKeysOptions | RangeKeysOptions | MovementKeysOptions;
 
 export interface ControlKeys {
     /** Whether a key of this binding is held: an activation that waits for its release, or a direction. */
@@ -84,7 +94,7 @@ const LETTERS: Readonly<Record<string, Vector>> = { KeyA: [-1, 0], KeyD: [1, 0],
 const ACTIVATES: readonly string[] = ['Space', 'Enter', 'NumpadEnter'];
 const METHODS: Readonly<Record<ControlKeysOptions['kind'], readonly string[]>> = {
     action: ['press', 'release'], toggle: ['toggle'], textField: ['edit'], selection: ['next', 'previous', 'first', 'last'],
-    scroll: ['line', 'page', 'toStart', 'toEnd'], movement: ['setDirection'],
+    scroll: ['line', 'page', 'toStart', 'toEnd'], range: ['stepBy', 'toMin', 'toMax'], movement: ['setDirection'],
 };
 
 interface KeyEvent<Payload> { readonly payload: Payload; readonly defaultPrevented: boolean; preventDefault(): void; }
@@ -99,7 +109,7 @@ export function createControlKeys(options: ControlKeysOptions): ControlKeys {
         || target === null || typeof target !== 'object' || typeof target.on !== 'function' || methods === undefined
         || control === null || typeof control !== 'object' || methods.some(name => typeof (control as unknown as Record<string, unknown>)[name] !== 'function'))
         throw new EgretError('UI_CONTROL_OPTIONS');
-    const onPressChange = options.kind === 'selection' || options.kind === 'scroll' ? undefined : options.onPressChange;
+    const onPressChange = options.kind === 'selection' || options.kind === 'scroll' || options.kind === 'range' ? undefined : options.onPressChange;
     if (onPressChange !== undefined && typeof onPressChange !== 'function') throw new EgretError('UI_CONTROL_OPTIONS');
 
     let closed = false;
@@ -151,6 +161,19 @@ export function createControlKeys(options: ControlKeysOptions): ControlKeys {
             if (move === undefined || shortcut(event.payload) || !control.enabled) return;
             // At its end the viewport leaves the key to a viewport outside it, or to the page.
             if (move()) event.preventDefault();
+        };
+    } else if (options.kind === 'range') {
+        const range = options.control, orientation = options.orientation ?? 'both', page = options.page ?? 10;
+        if ((orientation !== 'horizontal' && orientation !== 'vertical' && orientation !== 'both') || !Number.isSafeInteger(page) || page < 1) throw new EgretError('UI_CONTROL_OPTIONS');
+        const moves: Record<string, () => boolean> = { PageUp: () => range.stepBy(page), PageDown: () => range.stepBy(-page), Home: () => range.toMin(), End: () => range.toMax() };
+        if (orientation !== 'vertical') { moves.ArrowRight = () => range.stepBy(1); moves.ArrowLeft = () => range.stepBy(-1); }
+        if (orientation !== 'horizontal') { moves.ArrowUp = () => range.stepBy(1); moves.ArrowDown = () => range.stepBy(-1); }
+        down = event => {
+            const move = Object.hasOwn(moves, event.payload.code) ? moves[event.payload.code] : undefined;
+            if (move === undefined || shortcut(event.payload) || !control.enabled) return;
+            // The key is the slider's also at an end, as it is in a native one: the page does not scroll under it.
+            event.preventDefault();
+            move();
         };
     } else {
         const movement = options.control, keys = options.keys ?? 'both';

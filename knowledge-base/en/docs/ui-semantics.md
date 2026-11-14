@@ -51,10 +51,13 @@ The set is the first control set of the UI. A role that is not listed is refused
 | `list` | A list of rows | | |
 | `listitem` | A row | `position` | `list` |
 | `scrollbar` | The scroll position of a viewport | `range` (required), `orientation`, `controls`, `disabled` | |
+| `slider` | One value out of a range | `range` (required), `orientation`, `disabled` | |
 | `dialog` | A dialog | `modal` | |
 | `textbox` | A text field that is not being edited | `value`, `multiline`, `disabled` | |
 
-Every node has `bounds`, and may have `name`, `hidden`, `focused` and `order`. A name is required except on `group`, `radiogroup`, `listbox`, `list` and `listitem`. `image`, `text`, `button`, `checkbox`, `switch`, `radio`, `option`, `scrollbar` and `textbox` are read as one thing and hold no nodes.
+Every node has `bounds`, and may have `name`, `hidden`, `focused` and `order`. A name is required except on `group`, `radiogroup`, `listbox`, `list` and `listitem`. `image`, `text`, `button`, `checkbox`, `switch`, `radio`, `option`, `scrollbar`, `slider` and `textbox` are read as one thing and hold no nodes.
+
+A `slider` lies along the line unless `orientation` says `'vertical'`; a `scrollbar` stands beside what it scrolls unless it says `'horizontal'`. A slider is moved by [its keys](ui-controls.md#keys) once it holds the focus, so its node takes `onFocus` and needs no activation.
 
 State a role does not have is refused, so a mistake is found when it is made. A refused description throws `UI_SEMANTICS_DESCRIPTION`, and its `cause` names the node and the field: `sound: checked`.
 
@@ -192,7 +195,7 @@ Operator faults were written into the built list helper one at a time: 67, and t
 
 ## Not in this slice
 
-- Roles beyond the first control set: menus, tabs, sliders, trees, grids, headings and live regions.
+- Roles beyond the first control set: menus, tabs, trees, grids, headings and live regions.
 - Descriptions, error text and labelling one node by another.
 - Nodes for the leaves and the layers of the managed UI are the application's own, measured with [`semanticBoxOf`](#boxes-and-layers-of-the-managed-ui). The rows of a virtual list have [a helper](#a-managed-virtual-list).
 - A list with several selected rows, and rows in a grid.

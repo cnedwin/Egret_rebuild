@@ -277,18 +277,21 @@ test('CK14 what is not a keyboard, a target, a kind or its control is refused be
   {...good,keyboard:{events:{...keyboard.events,keyDown:undefined}}},{...good,keyboard:{events:{...keyboard.events,keyUp:null}}},{...good,keyboard:{events:{...keyboard.events,cancel:'cancel'}}},
   {...good,target:undefined},{...good,target:null},{...good,target:{}},{...good,kind:undefined},{...good,kind:'button'},{...good,kind:'toString'},{...good,kind:7},
   {...good,control:undefined},{...good,control:null},{...good,control:{enabled:true,press(){}}},{...good,control:{enabled:true,release(){}}},{...good,onPressChange:'paint'},
-  {...good,kind:'toggle'},{...good,kind:'textField'},{...good,kind:'selection'},{...good,kind:'scroll'},{...good,kind:'movement'},
+  {...good,kind:'toggle'},{...good,kind:'textField'},{...good,kind:'selection'},{...good,kind:'scroll'},{...good,kind:'movement'},{...good,kind:'range'},
   {...good,kind:'selection',control:group,orientation:'diagonal'},{...good,kind:'movement',control:movement,keys:'numpad'},{...good,kind:'movement',control:movement,onPressChange:7},
   {...good,kind:'scroll',control:{enabled:true,axis:'z',line(){},page(){},toStart(){},toEnd(){}}},
   {...good,kind:'scroll',control:{enabled:true,axis:'y',line(){},page(){},toStart(){}}},
-  {...good,kind:'selection',control:{enabled:true,next(){},previous(){},first(){}}}])
+  {...good,kind:'selection',control:{enabled:true,next(){},previous(){},first(){}}},
+  {...good,kind:'range',control:{enabled:true,stepBy(){},toMin(){}}},{...good,kind:'range',control:{enabled:true,stepBy(){},toMin(){},toMax(){}},page:0},
+  {...good,kind:'range',control:{enabled:true,stepBy(){},toMin(){},toMax(){}},orientation:'diagonal'}])
   assert.throws(()=>createControlKeys(bad===null||typeof bad!=='object'?bad:{...bad,target:bad.target===a?spy:bad.target}),coded('UI_CONTROL_OPTIONS'),JSON.stringify(bad,(name,value)=>typeof value==='object'&&value!==null&&name!==''&&name!=='control'?'[object]':value));
  assert.deepEqual(listened,[],'a refused binding listens to nothing');
  // Every kind binds to the control made for it, and to anything else with the same methods.
  for(const options of [good,{...good,kind:'toggle',control:{enabled:true,toggle(){}}},{...good,kind:'textField',control:{enabled:true,edit(){return true;}}},
   {...good,kind:'selection',control:group},{...good,kind:'scroll',control:scroll},{...good,kind:'movement',control:movement},
   // The callback of a press is not read where nothing is held.
-  {...good,kind:'selection',control:group,onPressChange:7},{...good,kind:'scroll',control:scroll,onPressChange:7}])createControlKeys(options).dispose();
+  {...good,kind:'selection',control:group,onPressChange:7},{...good,kind:'scroll',control:scroll,onPressChange:7},
+  {...good,kind:'range',control:{enabled:true,stepBy(){return true;},toMin(){return true;},toMax(){return true;}},onPressChange:7}])createControlKeys(options).dispose();
  assert.deepEqual(Object.keys(await import('@egret/engine/ui')).includes('createControlKeys'),true);
  assert.equal('createControlKeys' in await import('@egret/engine'),false,'the default entry does not carry the bindings');
 }));

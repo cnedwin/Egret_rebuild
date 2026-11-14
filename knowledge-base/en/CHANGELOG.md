@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A slider: one value out of a range — 2026-11-14
+
+`createRangeControl` of `@egret/engine/ui` holds one value out of a range for a slider an application draws: a press on the track moves the value there, the same contact drags it, and the value keeps to the steps of the range. `createControlKeys` has the kind `'range'` with the keys of a native slider, and the semantic tree has the role `slider`, projected with its value and its ends. The settings example has a volume. A slider is beyond the first control set of #90, and was added because a settings screen needs one. Part of #90. [Guide](docs/ui-controls.md#value-in-a-range)
+
 ## A group of options as one stop, without moving it — 2026-11-14
 
 The control examples no longer move a keyboard stop from option to option. The options of a group sit inside one display object, which is the stop and has the one key binding; the focus stays there while the selection moves, so a held arrow key now repeats through the options. The guide says how. Examples and documentation only. Part of #90. [Guide](docs/ui-controls.md#keys)

@@ -36,7 +36,7 @@ interface Pair { readonly target: EventTarget; readonly type: string; readonly l
 const pressable: readonly SemanticRole[] = ['button', 'checkbox', 'switch', 'radio', 'option'];
 const aria: Readonly<Partial<Record<SemanticRole, string>>> = {
   group: 'group', image: 'img', checkbox: 'checkbox', switch: 'switch', radiogroup: 'radiogroup', radio: 'radio', listbox: 'listbox',
-  option: 'option', list: 'list', listitem: 'listitem', scrollbar: 'scrollbar', dialog: 'dialog', textbox: 'textbox',
+  option: 'option', list: 'list', listitem: 'listitem', scrollbar: 'scrollbar', slider: 'slider', dialog: 'dialog', textbox: 'textbox',
 };
 const ownedSurfaces = new WeakSet<object>();
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);

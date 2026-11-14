@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-One screen that joins the pieces of the UI: a switch, a group of three options, a text field, a theme switch, a button that asks before it resets, and a managed list of two hundred profiles. Every control answers a press, its usual keys and a request of assistive technology through the same state, and a theme repaints all of it in one frame.
+One screen that joins the pieces of the UI: a switch, a group of three options, a text field, a theme switch, a volume slider, a button that asks before it resets, and a managed list of two hundred profiles. Every control answers a press, its usual keys and a request of assistive technology through the same state, and a theme repaints all of it in one frame.
 
 ## Run
 
@@ -19,7 +19,8 @@ Keep the host and port the server prints and open `/examples/ui-settings/index.h
 
 - Press the switch, an option, a profile. Choosing a profile makes its settings the settings; changing one by hand means the screen no longer shows that profile.
 - Press the name and type, with an input method if you use one. Enter commits. At most eight characters are taken, and one Chinese character counts once.
-- Click the canvas, then use the keyboard alone. Tab visits the switch, the options, the name, the theme switch and the button in that order, and then the list as one stop. Space or Enter activates, the arrow keys move within the options and through the list, and one more Tab leaves the canvas.
+- Press the track of the volume, or press and drag along it. The volume keeps to steps of five, and the drag goes on outside the track.
+- Click the canvas, then use the keyboard alone. Tab visits the switch, the options, the name, the theme switch, the volume and the button in that order, and then the list as one stop. Space or Enter activates, the arrow keys move within the options and through the list and move the volume by a step, Page Up and Page Down move it by four, Home and End take it to its ends, and one more Tab leaves the canvas.
 - Turn **Dark** off. The whole screen changes paint at once: the drawn controls, the rows of the list, the text, and the card that is not open.
 - Press **Reset**. A card asks first. Tab stays inside it, a press on anything behind it reaches nothing, Escape cancels, and the focus returns to the button.
 
@@ -27,7 +28,7 @@ Keep the host and port the server prints and open `/examples/ui-settings/index.h
 
 | Part | From |
 | --- | --- |
-| Switch, options, button, text field | `createToggleControl`, `createSelectionGroup`, `createActionControl`, `createTextFieldControl` of `@egret/engine/ui`, with `createHoverControl` for the pointer |
+| Switch, options, button, text field, slider | `createToggleControl`, `createSelectionGroup`, `createActionControl`, `createTextFieldControl`, `createRangeControl` of `@egret/engine/ui`, with `createHoverControl` for the pointer |
 | Keys | `createControlKeys` for each control and each row. Explicit stop indices give the order; `keyboard.tabStop` of the root makes the list one stop |
 | Paint | Two `createUiTheme` generations. `selectUiSkin` gives the name a skin has for a control's state |
 | Profiles | `createUiRoot` with a virtual list. Each row draws its own text |
@@ -47,6 +48,6 @@ See the guides for [control state](../../knowledge-base/en/docs/ui-controls.md),
 node examples/ui-settings/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
 ```
 
-Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Eight scenarios write `report.json` with a screenshot of each: the tree the browser computes for the whole screen; the keyboard alone through every control, a typed name and a chosen profile; presses and the paints of states; a composition of an input method; a theme changed by a press and by a key, read from the colours on the screen; the modal card; requests of assistive technology; and a phone profile. They passed in headless Chromium with software WebGL2.
+Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Nine scenarios write `report.json` with a screenshot of each: the tree the browser computes for the whole screen; the keyboard alone through every control, a typed name and a chosen profile; presses and the paints of states; a composition of an input method; the slider under a press, a drag, its keys and a request to focus it; a theme changed by a press and by a key, read from the colours on the screen; the modal card; requests of assistive technology; and a phone profile. They passed in headless Chromium with software WebGL2.
 
 The composition is driven through Chromium's protocol. A real input method, a real on-screen keyboard, a screen reader or other assistive technology, a person, a hardware GPU, WebGPU, Edge, Safari, Firefox and a real phone were not run. The screen has no alpha mask or blur group, and no recovery from a lost device is exercised here: those parts of an integrated UI scenario are checked in their own examples.

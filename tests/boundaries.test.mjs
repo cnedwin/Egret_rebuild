@@ -809,7 +809,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       'packages/engine/src/ui/stateControls.ts','packages/engine/dist/ui/stateControls.js','packages/engine/dist/ui/stateControls.d.ts',
       'packages/engine/src/ui/scrollControl.ts','packages/engine/dist/ui/scrollControl.js','packages/engine/dist/ui/scrollControl.d.ts',
       'packages/engine/src/ui/textFieldControl.ts','packages/engine/dist/ui/textFieldControl.js','packages/engine/dist/ui/textFieldControl.d.ts',
-      'packages/engine/src/ui/controlKeys.ts','packages/engine/dist/ui/controlKeys.js','packages/engine/dist/ui/controlKeys.d.ts'])
+      'packages/engine/src/ui/controlKeys.ts','packages/engine/dist/ui/controlKeys.js','packages/engine/dist/ui/controlKeys.d.ts',
+      'packages/engine/src/ui/rangeControl.ts','packages/engine/dist/ui/rangeControl.js','packages/engine/dist/ui/rangeControl.d.ts'])
       write(file, readFileSync(path.join(repository,file)));
     for(const [file,edges]of Object.entries(m31FixtureGraph)){
       const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';

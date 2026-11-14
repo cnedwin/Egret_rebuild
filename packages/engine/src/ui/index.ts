@@ -12,8 +12,10 @@ export { createScrollControl } from './scrollControl.js';
 export type { ScrollAxis, ScrollControl, ScrollControlOptions, ScrollThumb, ScrollThumbOptions, ScrollWheelOptions } from './scrollControl.js';
 export { createTextFieldControl } from './textFieldControl.js';
 export type { TextFieldChange, TextFieldControl, TextFieldControlOptions, TextFieldEditor, TextFieldRectangle, TextFieldSession } from './textFieldControl.js';
+export { createRangeControl } from './rangeControl.js';
+export type { RangeAxis, RangeControl, RangeControlOptions } from './rangeControl.js';
 export { createControlKeys } from './controlKeys.js';
-export type { ActionKeysOptions, ControlKeys, ControlKeysOptions, ControlKeysSource, MovementKeysOptions, ScrollKeysOptions, SelectionKeysOptions, TextFieldKeysOptions, ToggleKeysOptions } from './controlKeys.js';
+export type { ActionKeysOptions, ControlKeys, ControlKeysOptions, ControlKeysSource, MovementKeysOptions, RangeKeysOptions, ScrollKeysOptions, SelectionKeysOptions, TextFieldKeysOptions, ToggleKeysOptions } from './controlKeys.js';
 
 export { createUiLayerManager } from './layers.js';
 export type { UiLayerTarget, UiLayerAnchor, UiLayerManagerOptions, UiLayerOptions, UiLayerRegistration, UiLayerCommitResult, UiLayerSnapshot, UiLayerManager } from './layerTypes.js';
