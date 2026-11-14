@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Graphics: circles, rounded rectangles, paths, curves and lines — 2026-11-15
+
+A sprite's `graphics` now draws `drawCircle`, `drawEllipse`, `drawRoundRect`, paths with `moveTo`, `lineTo`, `curveTo`, `cubicCurveTo` and `drawArc`, and lines with `lineStyle`, by Egret's names. It drew filled rectangles only. A sprite of filled rectangles is unchanged; any other shape makes its drawing one mesh of coloured triangles that follows the sprite like other content. Curves are straight pieces within a quarter unit, edges are not smoothed, and lines have flat ends and mitred corners. Sprites that draw the same thing share one drawing; a frame takes 128 different ones. Checked in Node and from the canvas in headless Chromium with software WebGL2; WebGPU was not run. Part of #289. [Guide](docs/graphics.md) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/graphics/README.md)
+
 ## A starter example and a page on what to import — 2026-11-15
 
 `examples/starter` is a starting point for a 2D game in about a hundred lines: a Host, an Engine, a scope, a stage, pointer and keyboard input and a frame loop that skips a frame while the Host holds two. It is checked from the canvas in headless Chromium with software WebGL2; WebGPU was not run. [What to import](docs/entry-points.md) lists, by task, which of the 38 entries of `@egret/engine` to use. Part of #289. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.md)

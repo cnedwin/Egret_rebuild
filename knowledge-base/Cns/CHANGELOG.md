@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## Graphics：圆、圆角矩形、路径、曲线和线条 — 2026-11-15
+
+sprite 的 `graphics` 现在可以绘制 `drawCircle`、`drawEllipse`、`drawRoundRect`，用 `moveTo`、`lineTo`、`curveTo`、`cubicCurveTo` 和 `drawArc` 绘制路径，用 `lineStyle` 绘制线条，方法名与白鹭一致。以前它只能画填充矩形。只画填充矩形的 sprite 没有变化；任何其他形状都会把它的绘图变成一个由带颜色三角形组成的网格，和其他内容一样跟随 sprite。曲线是与真实曲线相差不超过四分之一单位的直线段，边缘没有抗锯齿，线条是平头端点和尖角转角。绘图相同的 sprite 共用一份绘图；一帧可容纳 128 份不同的绘图。在 Node 中验证，并在无头 Chromium 的软件 WebGL2 中从画布验证；未运行 WebGPU。属于 #289。[指南](docs/graphics.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/graphics/README.zh-CN.md)
+
 ## 起步示例和入口对照页 — 2026-11-15
 
 `examples/starter` 是一个约一百行的 2D 游戏起点：Host、Engine、作用域、舞台、指针和键盘输入，以及在 Host 已持有两帧时跳过一帧的帧循环。它在无头 Chromium 的软件 WebGL2 中从画布核对；未运行 WebGPU。[该引哪个入口](docs/entry-points.md)按要做的事列出 `@egret/engine` 的 38 个入口该用哪一个。属于 #289。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.zh-CN.md)

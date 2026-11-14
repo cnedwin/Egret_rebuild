@@ -16,6 +16,8 @@ import { finite, visualOf } from './displayVisualState.js';
 import { composeDisplayTransform } from './displayTransform.js';
 import { bitmapCaptureState, readBitmapImage, readBitmapSource } from './Bitmap.js';
 import { readMeshState } from './meshDisplayState.js';
+import { SHAPE_PAGE, SHAPE_REGION, resolveShape } from './graphicsShape.js';
+import type { ResolvedShape } from './graphicsShape.js';
 import { readMeshCaptureImage } from './meshCaptureSnapshot.js';
 import { assertTextFieldScope, readTextFieldState } from './textDisplayState.js';
 import { EgretError } from './EgretError.js';
@@ -400,7 +402,7 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
   }
   /** The commands of one drawn node. Returns false when the node and everything below it are not drawn. */
   function draw(node: DisplayObject, state: ReturnType<typeof visualOf>, primitives: readonly Primitive[], primitiveCount: number,
-    bitmap: BitmapCaptureState | undefined, mesh: MeshCaptureState | undefined, text: TextFieldDisplayState | undefined,
+    bitmap: BitmapCaptureState | undefined, mesh: MeshCaptureState | undefined, text: TextFieldDisplayState | undefined, shape: ResolvedShape | undefined,
     parentMatrix: Matrix2D, parentAlpha: number, inheritedClips: ClipChain | undefined, inheritedMaterial: SharedMaterial2D): boolean {
     const firstOrdinal = commands.length, firstOccurrence = nextOccurrence;
     const explicit = state.renderBoundary === 'isolate' ? open('explicit-enter') : undefined;
@@ -453,7 +455,7 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
       clips=undefined;
     }
     // The place of the next command among those this node gives, and whether it has given draws alone.
-    let given = 0, plain = explicit === undefined && clip === undefined && effect === undefined && mesh === undefined && text === undefined;
+    let given = 0, plain = explicit === undefined && clip === undefined && effect === undefined && mesh === undefined && text === undefined && shape === undefined;
     // The places in the tables of the material and the region of its draws.
     let usedMaterial = -1, usedRegion = -1;
     let rects: Rectangle2D[] | undefined;
@@ -486,6 +488,16 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
     }
     // Only once every kept rectangle has been checked under it does the matrix become theirs.
     if (!rectsChecked) kept!.rectsMatrix = matrix;
+    if (shape !== undefined) {
+      // A node's shapes are one geometry of coloured triangles over the one white pixel, in the place of its rectangles.
+      const occurrenceId = nextOccurrence++;
+      referencedTuples(matrix, shape.geometry);
+      budget.source(SHAPE_PAGE);
+      const sharedRegionIndex = regionIndex(SHAPE_PAGE, SHAPE_REGION), sharedGeometryIndex = geometryIndex(shape.geometry);
+      budget.emission(clips, false);
+      commands.push(freeze({ kind: 'mesh', ordinal: commands.length, occurrenceId, materialIndex: materialIndex(material), matrix, opacity: alpha,
+        clips: flattenClips(clips), regionIndex: sharedRegionIndex, geometryIndex: sharedGeometryIndex }));
+    }
     if (bitmap !== undefined) {
       const occurrenceId = nextOccurrence++;
       let rect: Rectangle2D;
@@ -603,15 +615,17 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
     if (resting) { budget.authoring(kept.restUnits); if (rest(node, kept)) return; }
     const primitives = state.primitives, primitiveCount = primitives.length;
     const bitmap = readBitmap(node), mesh = resting ? undefined : readMeshState(node), text = resting ? undefined : readTextFieldState(node);
+    const shape = state.shape === undefined ? undefined : resolveShape(state.shape);
     if (!resting) {
       budget.authoring(primitiveCount);
       if (bitmap !== undefined) budget.authoring(1);
       if (mesh !== undefined) { budget.authoring(1); budget.geometry(mesh.geometry); }
+      if (shape !== undefined) { budget.authoring(1); budget.geometry(shape.geometry); }
       if (text?.committed !== undefined) budget.authoring(1);
     }
     if (drawn && !refused) {
       try {
-        if (draw(node, state, primitives, primitiveCount, bitmap, mesh, text, parentMatrix, parentAlpha, inheritedClips, inheritedMaterial)) return;
+        if (draw(node, state, primitives, primitiveCount, bitmap, mesh, text, shape, parentMatrix, parentAlpha, inheritedClips, inheritedMaterial)) return;
       } catch (cause) { refused = true; refusal = cause; }
     }
     push(node, false, identity, 0, undefined, defaultMaterial, undefined, undefined, undefined);
