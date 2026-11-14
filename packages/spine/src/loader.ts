@@ -38,10 +38,10 @@ export function createSpineContentLoader(engine:Engine,ownerScope:Scope,manifest
   if(options!==undefined){if(!options||typeof options!=='object')throw spineFault('OPTIONS','');for(const key of Reflect.ownKeys(options)){scopeOpen();const row=Object.getOwnPropertyDescriptor(options,key);scopeOpen();if(!row||!Object.hasOwn(row,'value'))throw spineFault('OPTIONS','');if(key==='allowPrerelease'&&typeof row.value==='boolean')allowPrerelease=row.value;else if(key==='maxSetupBytes'&&Number.isSafeInteger(row.value)&&!Object.is(row.value,-0)&&row.value>=0&&row.value<=67108864)maximum=row.value;else throw spineFault('OPTIONS','');}}
   scopeOpen();
   let catalog:ReturnType<typeof admitSpineCatalog>|undefined=admitSpineCatalog(manifest),admitted:AdmittedResourceManifest|undefined=manifest;const bindings=new Map<string,ManifestBinding>(),cacheRefs=new Map<string,AssetRef<SetupValue>>(),skeletonByRef=new Map<string,ResourceManifestEntry>();
-  const textures=createAssetType<Texture>('egret.spine.page',isTexture),metadata=createAssetType<string>('egret.spine.metadata',v=>typeof v==='string');
+  const textures=createAssetType<Texture>('egret.spine.page',isTexture),metadata=createAssetType<string|Uint8Array>('egret.spine.metadata',v=>typeof v==='string'||v instanceof Uint8Array);
   const setupValues=new WeakSet<object>(),setup=createAssetType<SetupValue>('egret.spine.setup',(v:unknown):v is SetupValue=>typeof v==='object'&&v!==null&&setupValues.has(v));
   const descriptions:SpineContentBinding[]=[];
-  for(const entry of catalog.selected){const kind=entry.resourceKind==='image'?'image':'metadata';
+  for(const entry of catalog.selected){const kind=entry.resourceKind==='image'?'image':entry.importer.id==='egret.spine-binary'?'binary':'metadata';
     const binding=kind==='image'?createManifestAssetBinding(manifest,entry.id,textures):createManifestAssetBinding(manifest,entry.id,metadata);bindings.set(entry.id,binding);descriptions.push(FREEZE({id:entry.id,kind,binding}));
   }
   // Genuine source ref identities include the manifest binding's type token, so overlapping
@@ -50,7 +50,7 @@ export function createSpineContentLoader(engine:Engine,ownerScope:Scope,manifest
   scopeOpen();if(typeof factory!=='function')throw spineFault('PROVIDERS','');const result:unknown=APPLY(factory,undefined,[FREEZE(descriptions)]);scopeOpen();
   if(!result||typeof result!=='object'||Reflect.ownKeys(result).length!==2)throw spineFault('PROVIDERS','');
   const port=(key:PortKind):unknown=>{const row=Object.getOwnPropertyDescriptor(result,key);if(!row||!Object.hasOwn(row,'value'))throw spineFault('PROVIDERS','');return row.value;};
-  let ports:SpineContentProviders|undefined={textures:provider<Texture>(port('textures')),metadata:provider<string>(port('metadata'))};scopeOpen();
+  let ports:SpineContentProviders|undefined={textures:provider<Texture>(port('textures')),metadata:provider<string|Uint8Array>(port('metadata'))};scopeOpen();
   const managerDescriptor=Object.getOwnPropertyDescriptor(engine,'assets');if(!managerDescriptor||!Object.hasOwn(managerDescriptor,'value'))throw spineFault('MANAGER','');const manager=managerDescriptor.value as AssetManager;
   let liveInstances=0;
   let disposed=false,activeSourceLoads=0,liveSourceValues=0,pendingSetups=0,liveSetups=0,setupBytes=0,closePromise:Promise<void>|undefined;
@@ -60,7 +60,7 @@ export function createSpineContentLoader(engine:Engine,ownerScope:Scope,manifest
   function track<T>(promise:Promise<T>):Promise<T>{work.add(promise);void promise.finally(()=>work.delete(promise)).catch(()=>{});return promise;}
   function managed<T>(kind:PortKind):AssetProvider<T>{return {load(ref,context){const current=ports?.[kind] as AssetProvider<T>|undefined;if(!current||disposed)return Promise.reject(spineFault('LOADER_DISPOSED',ref.id));activeSourceLoads++;
     return track((async()=>{try{const value=await current.load(ref,context);liveSourceValues++;return value;}finally{activeSourceLoads--;dropPorts();}})());},dispose(value){const current=ports?.[kind] as AssetProvider<T>|undefined;try{if(!current)throw spineFault('PROVIDER_RETIRED','');current.dispose(value);}finally{liveSourceValues--;dropPorts();}}};}
-  APPLY(REGISTER,manager,[textures,managed<Texture>('textures')]);APPLY(REGISTER,manager,[metadata,managed<string>('metadata')]);
+  APPLY(REGISTER,manager,[textures,managed<Texture>('textures')]);APPLY(REGISTER,manager,[metadata,managed<string|Uint8Array>('metadata')]);
   const binding=<T>(id:string):ManifestAssetBinding<T>=>bindings.get(id) as ManifestAssetBinding<T>;
   function reserve(amount:number,id:string):void{if(!Number.isSafeInteger(amount)||amount<0||setupBytes+amount>maximum)throw spineFault('SETUP_BUDGET',id);setupBytes+=amount;}
   function checkContext(context:AssetLoadContext):void{if(disposed||context.signal.aborted)throw spineFault('CANCELLED','',context.signal.reason);}
@@ -73,8 +73,10 @@ export function createSpineContentLoader(engine:Engine,ownerScope:Scope,manifest
         // These exact sources are already resident in a ready raw ManifestGroup.
         // Direct acquisitions retain them without nesting the fair group scheduler.
         for(const id of ids){checkContext(context);const lease=await APPLY(ACQUIRE,manager,[binding<unknown>(id).ref,{signal:context.signal}]) as AssetLease<unknown>;acquired.push(lease);checkContext(context);}
-        const raw=leaseValue(acquired[0]!),atlasText=leaseValue(acquired[1]!);if(typeof atlasText!=='string'||typeof raw!=='string')throw spineFault('SOURCE',source.id);
-        const sourceData=raw,sourceFee=sourceData.length*2+atlasText.length*2;reserve(sourceFee,source.id);fee=sourceFee;
+        const raw=leaseValue(acquired[0]!),atlasText=leaseValue(acquired[1]!),binary=source.importer.id==='egret.spine-binary';
+        if(typeof atlasText!=='string'||(binary?!(raw instanceof Uint8Array):typeof raw!=='string'))throw spineFault('SOURCE',source.id);
+        // A binary source is charged by its bytes, a text by its UTF-16 units.
+        const sourceData=raw as string|Uint8Array,sourceFee=(typeof sourceData==='string'?sourceData.length*2:sourceData.byteLength)+atlasText.length*2;reserve(sourceFee,source.id);fee=sourceFee;
         for(let i=2;i<acquired.length;i++)pages.push(acquired[i]! as AssetLease<Texture>);
         parsed=parseSpineSetup(source.id,sourceData,atlasText,atlas.settings.pageNames as readonly string[],atlas.dependencies,pages,allowPrerelease);checkContext(context);
         const extra=parsed.info.boneCount*32+parsed.info.slotCount*32+parsed.atlas.regions.length*64+parsed.info.animations.length*128;reserve(extra,source.id);fee+=extra;

@@ -9,12 +9,14 @@ export interface SpineContentOptions {
 }
 export interface SpineContentBinding {
   readonly id: string;
-  readonly kind: 'image' | 'metadata';
+  /** A binary skeleton is metadata delivered as bytes: the metadata provider gives a Uint8Array for it. */
+  readonly kind: 'image' | 'metadata' | 'binary';
   readonly binding: ManifestBinding;
 }
 export interface SpineContentProviders {
   readonly textures: AssetProvider<Texture>;
-  readonly metadata: AssetProvider<string>;
+  /** Text for an atlas or a JSON skeleton; the bytes of the file for a binary one. */
+  readonly metadata: AssetProvider<string | Uint8Array>;
 }
 export type SpineContentProviderFactory = (bindings: readonly SpineContentBinding[]) => SpineContentProviders;
 export interface SpinePageInfo {
@@ -27,7 +29,7 @@ export interface SpinePageInfo {
 export interface SpineAssetInfo {
   readonly coreVersion: '4.3.13';
   readonly exportVersion: string;
-  readonly format: 'json';
+  readonly format: 'json' | 'binary';
   readonly prerelease: boolean;
   readonly boneCount: number;
   readonly slotCount: number;

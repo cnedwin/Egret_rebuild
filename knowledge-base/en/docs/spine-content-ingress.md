@@ -19,10 +19,11 @@ Use an existing admitted `egret.resource-manifest/1` from the generic manifest/b
 | Resource kind | Importer (version 1.0.0) | Artifact format | Media type | Ordered dependencies/settings |
 | --- | --- | --- | --- | --- |
 | spine | egret.spine-json | spine-json/4.3-1 | application/json | One atlas; coreVersion: 4.3.13 |
+| spine | egret.spine-binary | spine-binary/4.3-1 | application/octet-stream | One atlas; coreVersion: 4.3.13 |
 | spine-atlas | egret.spine-atlas | spine-atlas/4.3-1 | text/plain | One to sixteen distinct PNGs; coreVersion: 4.3.13 and ordered pageNames |
 | image | egret.png | png/1 | image/png | No dependencies; existing PNG profile |
 
-Only these exact Spine/atlas settings are accepted. Product binary profiles are refused during catalog admission, before factory/provider work. The private binary format-read prototype is retained separately: Core's binary API supplies no count budget, and source-byte limits alone do not bound its allocation. A bounded binary parser boundary remains OPEN in M2.1; the SDK does not silently fall back to unbounded parsing. Unrelated manifest resources remain available to other loaders. Page names are case-sensitive Unicode scalar strings, one to 255 UTF-16 units without ASCII control characters. Their order and actual atlas page names must match image dependency order exactly. A name is a binding label, never a filesystem path.
+Only these exact Spine/atlas settings are accepted. A binary skeleton (`.skel`, at most 4 MiB) is read by Core's own binary reader through a bounded admission, since Core's binary API supplies no count budget and source-byte limits alone do not bound its allocation: while Core reads, every count, index and string length — each a positive variable-length integer — must fit in the bytes left of the file (with 64 KiB of slack), and the numeric storage Core makes for timelines and vertices is charged against sixteen elements a byte of the file. Either breach refuses with `SPINE_BINARY_LIMIT_FAILED` before the storage is made; the checks are installed for that synchronous read alone and removed after it. The factory is told a binary skeleton binding has the kind `binary`, and the metadata provider gives its bytes as a `Uint8Array`; the setup fee is its byte length. The same version, setup limits and page rules as JSON apply, and `info.format` is `binary`. Unrelated manifest resources remain available to other loaders. Page names are case-sensitive Unicode scalar strings, one to 255 UTF-16 units without ASCII control characters. Their order and actual atlas page names must match image dependency order exactly. A name is a binding label, never a filesystem path.
 
 The original atlas is parsed by Core. Its 90-degree rotation means counterclockwise in the [Spine format](https://esotericsoftware.com/spine-atlas-format); Egret's generic SpriteSheet profile uses packed clockwise rotation. No cast or UV conversion between these profiles is performed. This ingress supports straight-alpha PNG pages only; PMA pages are refused explicitly. Sampling/color equivalence, PMA normalization, mips and actual drawing remain M2.3 qualification.
 
@@ -50,7 +51,7 @@ The [verification record](https://github.com/cnedwin/Egret_rebuild/blob/main/ver
 
 Full selected-version Spine support, independently authored pose/event/pixel references, stable authorized export provenance, full playback qualification, shared graphics/color variants, Android/iPhone, native hosts and performance remain open. M1.2 remains 10.3 ms against the 8 ms target. Asset ingress advances M2.1 within issue #83; the playback increment below advances M2.2 within issue #84; the existing eleven M2–M4 work packages remain intact.
 
-Binary ingress requires a separately bounded parser before admission; this is an explicit remaining M2.1 obligation.
+Binary ingress is admitted through the bounded reader above. Its fixtures are written field by field in the order Core 4.3.13 reads them — bones, slots, a default skin of region attachments and bone rotation timelines — not saved by the Spine Editor; other parts of the format are read by Core but not exercised by these fixtures.
 
 The optional leaf declares its browser-resource project dependency explicitly, so a clean checkout builds without relying on previously emitted files.
 

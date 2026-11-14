@@ -21,7 +21,7 @@ let inspected=0;
 for(const folder of ['src','dist'])for(const file of fs.readdirSync(path.join(base,folder))){
  if(!/\.(?:ts|js)$/.test(file))continue;
  const raw=fs.readFileSync(path.join(base,folder,file),'utf8'),code=raw.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
- const isWeb=file.startsWith('web.'),isParser=['parse.','instance.','renderAuthority.','drawGeometry.','display.'].some(prefix=>file.startsWith(prefix));
+ const isWeb=file.startsWith('web.'),isParser=['parse.','binaryAdmission.','instance.','renderAuthority.','drawGeometry.','display.'].some(prefix=>file.startsWith(prefix));
  assert.ok(!/\b(?:require|process|Buffer|eval)\b|["']node:|\bimport\s*\(/.test(code),folder+'/'+file+': forbidden host/dynamic import');
  if(!isWeb)assert.ok(!/\b(?:window|document|HTML\w*Element|GPUDevice|ImageBitmap|TextDecoder)\b/.test(code),folder+'/'+file+': core host access');
  for(const m of code.matchAll(/\b(?:import|export)\s+[\s\S]*?\s+from\s+['"]([^'"]+)['"]/g)){

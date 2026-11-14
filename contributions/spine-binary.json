@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "packages/spine/src/binaryAdmission.ts", "originRole": "First-party bounded admission of Spine binary skeletons around the official Core reader; independently authored with AI assistance; Apache-2.0. Calls the pinned spine-core dependency; copies none of its code.", "criticalComment": true},
+    {"path": "packages/spine/test/binaryFixture.mjs", "originRole": "First-party programmatic writer of the test skeleton in the Spine binary form, field by field in Core's reading order; independently authored with AI assistance; Apache-2.0. Original data, not an Editor export.", "criticalComment": true},
+    {"path": "packages/spine/test/binary.test.mjs", "originRole": "First-party Node tests of Spine binary skeleton admission and playback parity with JSON; independently authored with AI assistance; Apache-2.0.", "criticalComment": true}
+  ],
+  "documents": []
+}

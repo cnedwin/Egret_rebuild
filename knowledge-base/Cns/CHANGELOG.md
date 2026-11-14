@@ -8,6 +8,10 @@
 
 `@egret/engine/video` 把源的画面作为显示对象显示：每帧新画面都通过引擎的资源系统成为一个 Bitmap 的纹理，并释放上一帧。`update()` 每帧取最新画面，不会堆积画面。`@egret/engine/web/video` 从页面的视频元素创建源——文件、流（例如画布或摄像头的流）或页面自己的元素——按不超过 `maxWidth` 的尺寸读回每一帧呈现的画面。新示例 `examples/video` 实时显示画布的流，并回放页面录制的四秒 WebM，在无头 Chromium 的软件 WebGL2 中从画布核对。每帧画面都被完整读回并上传；直接送到 GPU 的路径不在本次改动中。属于 #266。[指南](docs/video.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/video/README.zh-CN.md)
 
+## Spine 二进制骨骼 — 2026-11-14
+
+`@egret/spine` 在 JSON 之外接受二进制骨骼（`egret.spine-binary`、`spine-binary/4.3-1`、`application/octet-stream`，最大 4 MiB）。它们由 Core 自己的二进制读取器通过受约束的准入读取：每个数量、索引和字符串长度都必须能放进文件剩余的字节，Core 创建的数值存储按文件大小设定的预算计费，因此伪造的数量会在创建存储之前被拒绝。工厂会得知二进制绑定的种类，元数据 provider 给出其字节，浏览器加载器保持字节形式。二进制骨骼与对应 JSON 得到相同的设置，并在相同时间得到相同的姿态。其测试数据由测试按二进制格式写出，不是由 Spine 编辑器保存的。属于 #266。[指南](docs/spine-content-ingress.md)
+
 ## 滤镜：颜色矩阵、发光、投影和描边 — 2026-11-14
 
 `DisplayObject.renderEffect` 支持 Egret 的二十数 `colorMatrix`、`glow`（对应 Egret 的 GlowFilter，可设 `inner`、`knockout`，带偏移即为投影）以及宽度最多 8 像素的 `outline`。它们在现有效果组中位于模糊之后执行，两个共享宿主都支持：新增一个通道把组的 alpha 横向扩散到临时目标，合成时再纵向扩散，并在所见颜色上应用矩阵，把发光绘制在组的下方或内部。每组 uniform 从 448 字节增至 576 字节，其他上限不变。新示例 `examples/filters` 在无头 Chromium 的软件 WebGL2 中，于六个方块周围各十六处与独立算出的值核对；这里没有在浏览器中绘制 WebGPU。属于 #266。[指南](docs/filters.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/filters/README.zh-CN.md)
