@@ -18,7 +18,7 @@ import { packSharedDraws2D, packSharedRegions2D, SHARED_BATCH_PAGES_2D, SHARED_R
 import { PreparedBatchScratch2D } from '../rendering/preparedBatches2D.js';
 import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js';
 import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatches2D.js';
-import { decodeSharedSRGB } from '../rendering/sharedColor2D.js';
+import { decodeSharedSRGBByte } from '../rendering/sharedColor2D.js';
 import type { SharedPageCopyDiagnostics2D } from '../rendering/sharedColor2D.js';
 import { runOwnedPreparationScope } from '../rendering/ownedPreparationFailure2D.js';
 import { planSharedStorageFees2D, withSharedReadbackLayout2D, checkSharedCapacity2D, materializeSharedPages2D, SharedStorageError2D } from './sharedSubmissionStorage2D.js';
@@ -1098,7 +1098,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             gl.bindFramebuffer(gl.FRAMEBUFFER,this.framebuffer!);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,colorTexture,0);
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,null);native.workingAttachment(colorTexture,null);
             gl.drawBuffers([gl.COLOR_ATTACHMENT0]);const c=frame.clearColor,a=frame.clearAlpha;
-            gl.clearColor(a*decodeSharedSRGB(((c>>>16)&255)/255),a*decodeSharedSRGB(((c>>>8)&255)/255),a*decodeSharedSRGB((c&255)/255),a);gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.clearColor(a*decodeSharedSRGBByte(c>>>16),a*decodeSharedSRGBByte(c>>>8),a*decodeSharedSRGBByte(c),a);gl.clear(gl.COLOR_BUFFER_BIT);
             // The program and the window of the region table that are current; both change only between batches.
             let program:WebGLProgram|undefined,bound=-1;
             // The page each texture unit after the first holds. A unit keeps its page until a batch needs another there.

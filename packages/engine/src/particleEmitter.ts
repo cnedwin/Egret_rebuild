@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
+import { decodeSRGBByte } from './srgbBytes.js';
 import { DisplayObjectContainer, EgretError, Mesh2D } from '@egret/runtime';
 import { createTexturedGeometry2D } from '@egret/contracts';
 import type { ParticleEmitter, ParticleEmitterOptions, ParticleRange, ParticleShape, ParticleSnapshot, ParticleView } from './particleTypes.js';
 
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
-const linear = (channel: number): number => { const c = channel / 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+const linear = decodeSRGBByte;
 const record = (value: unknown): value is Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value);
 type Pair = readonly [number, number];
 function range(value: unknown, otherwise: Pair, least = -Infinity): Pair {

@@ -1754,8 +1754,8 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/engine/web/sharedRetentionLedger.ts": [],
   "packages/engine/dist/web/sharedRetentionLedger.js": [],
   "packages/engine/dist/web/sharedRetentionLedger.d.ts": [],
-  "packages/engine/rendering/sharedColor2D.ts": [["static","@egret/contracts"],["static","@egret/contracts"]],
-  "packages/engine/dist/rendering/sharedColor2D.js": [["static","@egret/contracts"]],
+  "packages/engine/rendering/sharedColor2D.ts": [["static","./srgbBytes.js"],["static","@egret/contracts"],["static","@egret/contracts"]],
+  "packages/engine/dist/rendering/sharedColor2D.js": [["static","./srgbBytes.js"],["static","@egret/contracts"]],
   "packages/engine/dist/rendering/sharedColor2D.d.ts": [["static","@egret/contracts"]],
   "packages/engine/web/prepareSharedSubmission2D.ts": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./imageProjections2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGPUOptions.js"]],
   "packages/engine/dist/web/prepareSharedSubmission2D.js": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"]],
@@ -3485,10 +3485,14 @@ const m34EffectLiteralClosure = {
   "packages/engine/rendering/sharedEffects2D.ts": [
     [
       "static",
+      "./srgbBytes.js"
+    ],
+    [
+      "static",
       "@egret/contracts"
     ]
   ],
-  "packages/engine/dist/rendering/sharedEffects2D.js": [],
+  "packages/engine/dist/rendering/sharedEffects2D.js": [["static","./srgbBytes.js"]],
   "packages/engine/dist/rendering/sharedEffects2D.d.ts": [
     [
       "static",
@@ -5405,7 +5409,7 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...particlesTypes,...particlesValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Particles: leaked to default/other entry: '+label+'/'+name);
 }
-const particlesImports={"src/particles.ts": ["./particleEmitter.js", "./particleTypes.js"], "dist/particles.js": ["./particleEmitter.js"], "dist/particles.d.ts": ["./particleEmitter.js", "./particleTypes.js"], "src/particleEmitter.ts": ["@egret/runtime", "@egret/contracts", "./particleTypes.js"], "dist/particleEmitter.js": ["@egret/runtime", "@egret/contracts"], "dist/particleEmitter.d.ts": ["./particleTypes.js"], "src/particleTypes.ts": ["@egret/runtime"], "dist/particleTypes.js": [], "dist/particleTypes.d.ts": ["@egret/runtime"]};
+const particlesImports={"src/particles.ts": ["./particleEmitter.js", "./particleTypes.js"], "dist/particles.js": ["./particleEmitter.js"], "dist/particles.d.ts": ["./particleEmitter.js", "./particleTypes.js"], "src/particleEmitter.ts": ["./srgbBytes.js", "@egret/runtime", "@egret/contracts", "./particleTypes.js"], "dist/particleEmitter.js": ["./srgbBytes.js", "@egret/runtime", "@egret/contracts"], "dist/particleEmitter.d.ts": ["./particleTypes.js"], "src/particleTypes.ts": ["@egret/runtime"], "dist/particleTypes.js": [], "dist/particleTypes.d.ts": ["@egret/runtime"]};
 for(const [file,expected] of Object.entries(particlesImports)){
  const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
  if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Particles: exact graph mismatch: '+file);
@@ -5457,7 +5461,7 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...bitmapfontTypes,...bitmapfontValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Bitmapfont: leaked to default/other entry: '+label+'/'+name);
 }
-const bitmapfontImports={"src/bitmapfont.ts": ["./bitmapFontParse.js", "./bitmapText.js", "./bitmapFontTypes.js"], "dist/bitmapfont.js": ["./bitmapFontParse.js", "./bitmapText.js"], "dist/bitmapfont.d.ts": ["./bitmapFontParse.js", "./bitmapText.js", "./bitmapFontTypes.js"], "src/bitmapFontParse.ts": ["@egret/runtime", "./bitmapFontTypes.js"], "dist/bitmapFontParse.js": ["@egret/runtime"], "dist/bitmapFontParse.d.ts": ["./bitmapFontTypes.js"], "src/bitmapText.ts": ["@egret/runtime", "@egret/runtime", "@egret/contracts", "./bitmapFontParse.js", "./bitmapFontTypes.js"], "dist/bitmapText.js": ["@egret/runtime", "@egret/contracts", "./bitmapFontParse.js"], "dist/bitmapText.d.ts": ["./bitmapFontTypes.js"], "src/bitmapFontTypes.ts": ["@egret/runtime"], "dist/bitmapFontTypes.js": [], "dist/bitmapFontTypes.d.ts": ["@egret/runtime"]};
+const bitmapfontImports={"src/bitmapfont.ts": ["./bitmapFontParse.js", "./bitmapText.js", "./bitmapFontTypes.js"], "dist/bitmapfont.js": ["./bitmapFontParse.js", "./bitmapText.js"], "dist/bitmapfont.d.ts": ["./bitmapFontParse.js", "./bitmapText.js", "./bitmapFontTypes.js"], "src/bitmapFontParse.ts": ["@egret/runtime", "./bitmapFontTypes.js"], "dist/bitmapFontParse.js": ["@egret/runtime"], "dist/bitmapFontParse.d.ts": ["./bitmapFontTypes.js"], "src/bitmapText.ts": ["./srgbBytes.js", "@egret/runtime", "@egret/runtime", "@egret/contracts", "./bitmapFontParse.js", "./bitmapFontTypes.js"], "dist/bitmapText.js": ["./srgbBytes.js", "@egret/runtime", "@egret/contracts", "./bitmapFontParse.js"], "dist/bitmapText.d.ts": ["./bitmapFontTypes.js"], "src/bitmapFontTypes.ts": ["@egret/runtime"], "dist/bitmapFontTypes.js": [], "dist/bitmapFontTypes.d.ts": ["@egret/runtime"]};
 for(const [file,expected] of Object.entries(bitmapfontImports)){
  const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
  if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Bitmapfont: exact graph mismatch: '+file);
