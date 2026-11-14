@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/ui-inventory/index.html",
+      "originRole": "First-party page of the bag example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/ui-inventory/main.mjs",
+      "originRole": "First-party example of a bag of items as a grid with a cursor moved in two directions, with semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-inventory/verify.mjs",
+      "originRole": "First-party real-browser check of the bag example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-inventory/README.md",
+      "originRole": "First-party instructions for the bag example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-inventory/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the bag example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/ui-inventory/README.md",
+      "zh": "examples/ui-inventory/README.zh-CN.md"
+    }
+  ]
+}

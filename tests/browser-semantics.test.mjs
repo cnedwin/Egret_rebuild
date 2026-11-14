@@ -110,6 +110,7 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  add('actions','menu',{name:'Member'});add('send','menuitem',{name:'Send',position:{index:1,size:2}},{parent:'actions',onActivate(){},onFocus(){}});add('dismiss','menuitem',{name:'Dismiss',disabled:true},{parent:'actions',onFocus(){}});
  add('tabs','tablist',{name:'Sect'});add('one','tab',{name:'Members',selected:true,controls:'pane',position:{index:1,size:2}},{parent:'tabs',onActivate(){},onFocus(){}});add('two','tab',{name:'Stores',selected:false,disabled:true},{parent:'tabs',onFocus(){}});
  add('pane','tabpanel',{name:'Members'});add('work','progressbar',{name:'Training',range:{now:30,min:0,max:100}},{parent:'pane'});add('busy','progressbar',{name:'Loading'},{parent:'pane'});
+ add('bag','grid',{name:'Bag',extent:{rows:4,columns:6},multiple:true});add('r2','row',{position:{index:2,size:4}},{parent:'bag'});add('cell','gridcell',{name:'Herbs, 12',selected:true,position:{index:3,size:6}},{parent:'r2',onActivate(){},onFocus(){}});add('slot','gridcell',{name:'Empty',selected:false,disabled:true},{parent:'r2'});
  add('herbs','spinbutton',{name:'Herbs',range:{now:20,min:0,max:60}},{onFocus(){}});add('left','status',{});add('fault','alert',{name:'Not enough'});
  add('volume','slider',{name:'Volume',range:{now:60,min:0,max:100}},{onFocus(){}});add('zoom','slider',{name:'Zoom',range:{now:1,min:0.5,max:4},orientation:'vertical',disabled:true},{onFocus(){}});
  const browser=create();
@@ -135,6 +136,10 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  // A slider is a plain element with its value and its ends. One that takes the focus can be pointed at, unless it is disabled.
  assert.deepEqual(read('volume'),{role:'slider','aria-label':'Volume','aria-valuenow':'60','aria-valuemin':'0','aria-valuemax':'100','aria-orientation':'horizontal',tabindex:'-1'});
  assert.deepEqual(read('zoom'),{role:'slider','aria-label':'Zoom','aria-disabled':'true','aria-valuenow':'1','aria-valuemin':'0.5','aria-valuemax':'4','aria-orientation':'vertical'});
+ // A grid says how many rows and columns it has, a row which row it is, and a cell which column it is in. A cell is a native button that carries its role, inside its row.
+ assert.deepEqual([read('bag'),read('r2')],[{role:'grid','aria-label':'Bag','aria-multiselectable':'true','aria-rowcount':'4','aria-colcount':'6'},{role:'row','aria-rowindex':'2'}]);
+ assert.deepEqual([read('cell'),read('slot'),browser.elementOf('cell').parentNode===browser.elementOf('r2'),browser.elementOf('r2').parentNode===browser.elementOf('bag')],
+  [{type:'button',role:'gridcell','aria-label':'Herbs, 12','aria-selected':'true','aria-colindex':'3',tabindex:'-1'},{type:'button',role:'gridcell','aria-label':'Empty','aria-disabled':'true','aria-selected':'false',tabindex:'-1'},true,true]);
  // A spin button has its value and its ends and no direction. A message is its text, and is there, empty, before the first one.
  assert.deepEqual(read('herbs'),{role:'spinbutton','aria-label':'Herbs','aria-valuenow':'20','aria-valuemin':'0','aria-valuemax':'60',tabindex:'-1'});
  assert.deepEqual([read('left'),browser.elementOf('left').textContent,browser.elementOf('left').tagName,read('fault'),browser.elementOf('fault').textContent],[{role:'status'},'','DIV',{role:'alert'},'Not enough']);
@@ -148,6 +153,9 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  // A message that changes is one write into the element that was already there, which is what makes a reader say it.
  const live=browser.elementOf('left');described.left.name='40 left';assert.equal(writes(),1);assert.deepEqual([browser.elementOf('left')===live,live.textContent,read('left')],[true,'40 left',{role:'status'}]);
  described.left.name='';assert.equal(writes(),1);assert.equal(live.textContent,'');described.herbs.range={now:21,min:0,max:60};assert.equal(writes(),1);assert.equal(read('herbs')['aria-valuenow'],'21');
+ described.bag.extent={rows:5,columns:6};assert.equal(writes(),1);assert.equal(read('bag')['aria-rowcount'],'5');described.r2.position={index:3,size:5};described.cell.position={index:4,size:6};described.cell.selected=false;assert.equal(writes(),3);
+ assert.deepEqual([read('r2'),read('cell')['aria-colindex'],read('cell')['aria-selected'],'aria-posinset' in read('cell'),'aria-setsize' in read('r2')],[{role:'row','aria-rowindex':'3'},'4','false',false,false]);
+ described.bag.extent=undefined;described.bag.multiple=false;assert.equal(writes(),3);assert.deepEqual(read('bag'),{role:'grid','aria-label':'Bag'});
  described.team.multiple=false;assert.equal(writes(),1);assert.deepEqual(read('team'),{role:'listbox','aria-label':'Team'});
  described.work.range={now:40,min:0,max:100};assert.equal(writes(),1);described.busy.range={now:1,min:0,max:4};assert.equal(writes(),3);described.busy.range=undefined;assert.equal(writes(),3);assert.deepEqual(read('busy'),{role:'progressbar','aria-label':'Loading'});
  described.one.selected=false;described.one.controls=undefined;described.two.selected=true;assert.equal(writes(),3);assert.deepEqual([read('one')['aria-selected'],read('one')['aria-controls'],read('two')['aria-selected']],['false',undefined,'true']);

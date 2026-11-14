@@ -5,7 +5,7 @@
  */
 export type SemanticRole = 'group' | 'image' | 'text' | 'button' | 'checkbox' | 'switch' | 'radiogroup' | 'radio'
   | 'listbox' | 'option' | 'list' | 'listitem' | 'scrollbar' | 'slider' | 'spinbutton' | 'progressbar' | 'tablist' | 'tab' | 'tabpanel' | 'menu' | 'menuitem' | 'dialog' | 'textbox'
-  | 'status' | 'alert';
+  | 'status' | 'alert' | 'grid' | 'row' | 'gridcell';
 /** What assistive technology may ask of a node: its activation, or the keyboard focus. */
 export type SemanticAction = 'activate' | 'focus';
 export type SemanticChecked = boolean | 'mixed';
@@ -23,6 +23,11 @@ export interface SemanticRange {
   readonly now: number;
   readonly min: number;
   readonly max: number;
+}
+/** How many rows and columns a grid has in all, whether or not all of them are published. */
+export interface SemanticExtent {
+  readonly rows: number;
+  readonly columns: number;
 }
 /** Where an item stands in its whole set, from one. A virtual list reports the set, not what is realized. */
 export interface SemanticPosition {
@@ -47,7 +52,7 @@ export interface SemanticDescription {
   readonly focused?: boolean;
   /** `checkbox`, `switch` and `radio`. Only a checkbox may be 'mixed'. */
   readonly checked?: SemanticChecked;
-  /** `option` and `tab`. */
+  /** `option`, `tab` and `gridcell`. */
   readonly selected?: boolean;
   /** `button`: whether what it opens is open. */
   readonly expanded?: boolean;
@@ -55,15 +60,17 @@ export interface SemanticDescription {
   readonly modal?: boolean;
   /** `textbox`. */
   readonly multiline?: boolean;
-  /** `listbox`: whether several of its options may be selected at once. */
+  /** `listbox` and `grid`: whether several of its options or cells may be selected at once. */
   readonly multiple?: boolean;
+  /** `grid`: its rows and columns in all. */
+  readonly extent?: SemanticExtent;
   /** `scrollbar`, `slider` and `spinbutton`, which need it, and `progressbar`, which without it shows work of unknown length. */
   readonly range?: SemanticRange;
   /** `scrollbar`, `slider`, `tablist` and `menu`. */
   readonly orientation?: SemanticOrientation;
   /** `scrollbar`: the id of the node it scrolls. `tab`: the id of its panel. The node must be published with it. */
   readonly controls?: string;
-  /** `radio`, `option`, `listitem`, `tab` and `menuitem`. */
+  /** `radio`, `option`, `listitem`, `tab` and `menuitem`. For a `row` it is which row of the grid it is, and for a `gridcell` which column it is in. */
   readonly position?: SemanticPosition;
   /** Reading order among the nodes of one parent, lowest first. Equal values keep the order of addition. */
   readonly order?: number;
@@ -111,6 +118,7 @@ export interface SemanticSnapshotNode {
   readonly modal: boolean | undefined;
   readonly multiline: boolean | undefined;
   readonly multiple: boolean | undefined;
+  readonly extent: SemanticExtent | undefined;
   readonly range: SemanticRange | undefined;
   readonly orientation: SemanticOrientation | undefined;
   readonly controls: string | undefined;

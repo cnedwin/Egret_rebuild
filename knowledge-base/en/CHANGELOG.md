@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A grid of cells, and a bag of items — 2026-11-14
+
+The semantic tree gains the roles `grid`, `row` and `gridcell`, with `extent` for the rows and columns of a grid, and the browser projection writes them with their counts and indices. A new example, `examples/ui-inventory`, is a bag of twenty-four slots: one keyboard stop with a cursor that the arrow keys, Home, End, Page Up and Page Down move in two directions, a panel for the item under the cursor, buttons that use, drop and sort, and a status line. Checked in Node and in headless Chromium with software WebGL2; no reader was run. Part of #90. [Guide](docs/ui-semantics.md#a-grid) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-inventory/README.md)
+
 ## Tab leaves the canvas past a button that cannot take the focus — 2026-11-14
 
 The browser projection made a native button for every pressable node but marked it as no Tab stop only while the node could be asked to take the focus. A button that was disabled, or had no focus action, was therefore a stop of the page: past the last stop of the application Tab landed on that hidden element, the projection gave the focus back to the canvas, and the keyboard could not leave the canvas. Every native button now carries `tabindex="-1"` from the start. In `examples/ui-multi-select` and `examples/ui-tabs` a disabled button is also no stop of the application any more. Checked in Node and, with the Tab key walked out of the canvas, in headless Chromium with software WebGL2. Part of #90. [Guide](docs/ui-semantics.md#the-projection)

@@ -35,7 +35,7 @@ test('SM01 a publication is one frozen snapshot, a parent before what is inside 
  assert.equal(snapshot,semantics.snapshot);assert.equal(snapshot.revision,1);assert.deepEqual(ids(snapshot),['panel','title','sound','close']);
  assert.ok(Object.isFrozen(snapshot)&&Object.isFrozen(snapshot.nodes)&&snapshot.nodes.every(node=>Object.isFrozen(node)&&Object.isFrozen(node.bounds)&&Object.isFrozen(node.actions)));
  assert.deepEqual(snapshot.nodes[2],{id:'sound',role:'checkbox',parent:'panel',name:'Sound',bounds:box(20,40,80,24),disabled:false,focused:false,inert:false,actions:['activate','focus'],
-  value:undefined,checked:true,selected:undefined,expanded:undefined,modal:undefined,multiline:undefined,multiple:undefined,range:undefined,orientation:undefined,controls:undefined,position:undefined});
+  value:undefined,checked:true,selected:undefined,expanded:undefined,modal:undefined,multiline:undefined,multiple:undefined,extent:undefined,range:undefined,orientation:undefined,controls:undefined,position:undefined});
  assert.deepEqual(snapshot.nodes.map(node=>node.actions),[[],[],['activate','focus'],['activate']]);
  assert.deepEqual([snapshot.nodes[0].name,snapshot.nodes[1].name,snapshot.nodes[1].parent],['Settings','Sound and music','panel']);
 });
@@ -89,7 +89,7 @@ test('SM04 a node is refused where its role means nothing',()=>{
  assert.throws(()=>semantics.add({id:'group',role:'group',describe:()=>({bounds:box()})}),coded('UI_SEMANTICS_DUPLICATE'));
  const describe=()=>({bounds:box()});
  for(const options of [null,[],'x',{id:'',role:'group',describe},{id:'a'.repeat(129),role:'group',describe},{id:'a\0',role:'group',describe},{id:1,role:'group',describe},
-  {id:'a',role:'grid',describe},{id:'a',role:'toString',describe},{id:'a',role:'group'},{id:'a',role:'group',describe,parent:''},{id:'a',role:'group',describe,onActivate:1},{id:'a',role:'group',describe,onFocus:'x'}])
+  {id:'a',role:'tree',describe},{id:'a',role:'toString',describe},{id:'a',role:'group'},{id:'a',role:'group',describe,parent:''},{id:'a',role:'group',describe,onActivate:1},{id:'a',role:'group',describe,onFocus:'x'}])
   assert.throws(()=>semantics.add(options),coded('UI_SEMANTICS_OPTIONS'));
  assert.equal(semantics.size,4);
  for(const [id,role,parent] of [['r','radio','group'],['o','option','box'],['i','listitem','list'],['t','text','i']])semantics.add({id,role,parent,describe});
@@ -102,12 +102,13 @@ test('SM04 a node is refused where its role means nothing',()=>{
 });
 
 test('SM04b every role holds nodes or is read as one thing, and is named where a reader needs a name',()=>{
- const holds=['group','radiogroup','listbox','list','listitem','tablist','tabpanel','menu','dialog'],unnamed=['group','radiogroup','listbox','list','listitem','tablist','menu','status','alert'];
- const inside={radio:'radiogroup',option:'listbox',listitem:'list',tab:'tablist',menuitem:'menu'},needs={checkbox:{checked:false},switch:{checked:false},radio:{checked:false},option:{selected:false},tab:{selected:false},scrollbar:{range:{now:0,min:0,max:0}},slider:{range:{now:0,min:0,max:0}},spinbutton:{range:{now:0,min:0,max:0}}};
- const roles=['group','image','text','button','checkbox','switch','radiogroup','radio','listbox','option','list','listitem','scrollbar','slider','spinbutton','progressbar','tablist','tab','tabpanel','menu','menuitem','dialog','textbox','status','alert'];
+ const holds=['group','radiogroup','listbox','list','listitem','tablist','tabpanel','menu','dialog','grid','row'],unnamed=['group','radiogroup','listbox','list','listitem','tablist','menu','status','alert','grid','row'];
+ const inside={radio:'radiogroup',option:'listbox',listitem:'list',tab:'tablist',menuitem:'menu',row:'grid',gridcell:'row'},needs={checkbox:{checked:false},switch:{checked:false},radio:{checked:false},option:{selected:false},tab:{selected:false},scrollbar:{range:{now:0,min:0,max:0}},slider:{range:{now:0,min:0,max:0}},spinbutton:{range:{now:0,min:0,max:0}},gridcell:{selected:false}};
+ const roles=['group','image','text','button','checkbox','switch','radiogroup','radio','listbox','option','list','listitem','scrollbar','slider','spinbutton','progressbar','tablist','tab','tabpanel','menu','menuitem','dialog','textbox','status','alert','grid','row','gridcell'];
  for(const role of roles){
   const {semantics,state,add}=tree();
-  if(inside[role])add('holder',inside[role]);
+  // A cell is inside a row, which is inside a grid.
+  if(inside[role]){const outer=inside[inside[role]];if(outer)add('outer',outer);add('holder',inside[role],{},{parent:outer?'outer':undefined});}
   add('node',role,{name:'Named',...needs[role]},{parent:inside[role]?'holder':undefined});
   const child=()=>semantics.add({id:'child',role:'text',parent:'node',describe:()=>({bounds:box(),name:'Inside'})});
   if(holds.includes(role))assert.equal(child().attached,true,role);else assert.throws(child,coded('UI_SEMANTICS_PARENT'),role);
@@ -237,6 +238,33 @@ test('SM06e a spin button is somewhere in its range, and a message is there befo
  // A spin button is changed by its keys once it has the focus; a message takes no action.
  const seen=[];semantics.add({id:'ore',role:'spinbutton',onFocus:()=>seen.push('focus'),describe:()=>({bounds:box(),name:'Ore',range:{now:0,min:0,max:5},focused:seen.length>0})});
  assert.deepEqual(node('ore').actions,['focus']);assert.equal(semantics.perform('ore','focus'),true);assert.equal(semantics.publish().focused,'ore');assert.deepEqual(node('left').actions,[]);
+});
+
+test('SM06f a grid has rows of cells: a row is which row it is, a cell which column it is in and whether it is selected',()=>{
+ const {semantics,state,add}=tree();
+ add('bag','grid',{name:'Bag',extent:{rows:4,columns:6}});add('r2','row',{position:{index:2,size:4}},{parent:'bag'});
+ add('herb','gridcell',{name:'Herbs, 12',selected:true,position:{index:1,size:6}},{parent:'r2'});add('empty','gridcell',{name:'Empty',selected:false,disabled:true,position:{index:2,size:6}},{parent:'r2'});
+ const node=id=>semantics.publish().nodes.find(found=>found.id===id);
+ assert.deepEqual([node('bag').extent,node('bag').multiple,node('bag').disabled,node('r2').position,node('r2').name,node('r2').extent],[{rows:4,columns:6},false,false,{index:2,size:4},'',undefined]);
+ assert.deepEqual([node('herb').selected,node('herb').position,node('herb').parent,node('empty').selected,node('empty').disabled,node('herb').multiple],[true,{index:1,size:6},'r2',false,true,undefined]);
+ assert.ok(Object.isFrozen(node('bag').extent));
+ // The extent is part of what is published: one that changes is a new publication, and the same one is not.
+ const first=semantics.publish();assert.equal(semantics.publish(),first);
+ state.bag.extent={rows:5,columns:6};const second=semantics.publish();assert.notEqual(second,first);state.bag.extent={rows:5,columns:7};assert.notEqual(semantics.publish(),second);
+ state.bag.multiple=true;assert.equal(node('bag').multiple,true);state.bag.extent=undefined;assert.equal(node('bag').extent,undefined);
+ const refused=(id,change,field)=>{const saved={...state[id]};Object.assign(state[id],change);assert.throws(()=>semantics.publish(),about('UI_SEMANTICS_DESCRIPTION',id+': '+field),id+' '+JSON.stringify(change));state[id]=saved;};
+ for(const extent of [null,7,{rows:0,columns:6},{rows:4,columns:0},{rows:1.5,columns:6},{rows:4,columns:'6'},{rows:4},{columns:6}])refused('bag',{extent},'extent');
+ for(const selected of [undefined,'true',1])refused('herb',{selected},'selected');
+ for(const [id,change,field] of [['bag',{selected:true},'selected'],['bag',{position:{index:1,size:1}},'position'],['bag',{orientation:'vertical'},'orientation'],['r2',{extent:{rows:1,columns:1}},'extent'],['r2',{selected:true},'selected'],['r2',{disabled:true},'disabled'],
+  ['r2',{position:{index:5,size:4}},'position'],['herb',{extent:{rows:1,columns:1}},'extent'],['herb',{checked:true},'checked'],['herb',{multiple:true},'multiple'],['herb',{name:' '},'name'],['herb',{position:{index:0,size:6}},'position'],['herb',{expanded:true},'expanded']])refused(id,change,field);
+ // A row is a row of a grid and a cell a cell of a row; a cell is read as one thing.
+ assert.throws(()=>semantics.add({id:'loose',role:'row',describe:()=>({bounds:box()})}),coded('UI_SEMANTICS_PARENT'));
+ assert.throws(()=>semantics.add({id:'stray',role:'gridcell',parent:'bag',describe:()=>({bounds:box(),name:'Stray',selected:false})}),coded('UI_SEMANTICS_PARENT'));
+ assert.throws(()=>semantics.add({id:'inner',role:'text',parent:'herb',describe:()=>({bounds:box(),name:'Inner'})}),coded('UI_SEMANTICS_PARENT'));
+ const seen=[];semantics.add({id:'pill',role:'gridcell',parent:'r2',onActivate:()=>seen.push('use'),onFocus:()=>seen.push('focus'),describe:()=>({bounds:box(),name:'Pills, 3',selected:false,position:{index:3,size:6}})});
+ assert.deepEqual(node('pill').actions,['activate','focus']);assert.equal(semantics.perform('pill','activate'),true);assert.equal(semantics.perform('pill','focus'),true);assert.deepEqual(seen,['use','focus']);
+ semantics.add({id:'gone',role:'gridcell',parent:'r2',onActivate:()=>seen.push('gone'),describe:()=>({bounds:box(),name:'Gone',selected:false,disabled:true})});semantics.publish();
+ assert.equal(semantics.perform('gone','activate'),false,'a disabled cell refuses');
 });
 
 test('SM07 one node holds the focus',()=>{
