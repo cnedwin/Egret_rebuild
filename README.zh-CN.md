@@ -16,7 +16,7 @@ Years later, as times change and technology advances, many developers continue t
 
 ## 运行示例
 
-**开始做自己的游戏。** 复制[起步示例](examples/starter/README.zh-CN.md)：不到一百行代码，由一次调用创建 Host、Engine、输入和帧循环。[该引哪个入口](knowledge-base/Cns/docs/entry-points.md)列出每件事需要 `@egret/engine` 的哪个入口。[示例索引](examples/README.zh-CN.md)按展示的内容列出全部示例。
+**开始做自己的游戏。** 复制[起步示例](examples/starter/README.zh-CN.md)：不到一百行代码，由一次调用创建 Host、Engine、输入和帧循环。[该引哪个入口](knowledge-base/Cns/docs/entry-points.md)列出每件事需要 `@egret/engine` 的哪个入口，[从白鹭 5 到本 SDK](knowledge-base/Cns/docs/egret-api-migration.md)说明哪个调用换成哪个。[示例索引](examples/README.zh-CN.md)按展示的内容列出全部示例。
 
 使用 **Node.js 26.7.0** 和 **pnpm 11.25.0**，在仓库根目录运行：
 

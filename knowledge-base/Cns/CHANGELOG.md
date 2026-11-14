@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 白鹭 5 API 到本 SDK 的对照表 — 2026-11-15
+
+[从白鹭 5 到本 SDK](docs/egret-api-migration.md)逐个调用说明 `egret.runEgret`、`egret.Shape`、`TouchEvent`、`egret.Tween`、`RES`、`egret.TextField`、`eui` 等换成什么，以及哪些没有提供：skew、`name`、非矩形遮罩、`cacheAsBitmap`、缓动链式调用、EXML 和 DragonBones。开头是每个文件里都不同的五件事，结尾是同一个界面的两种写法。每一行的新写法都对照本仓库核对过；写这份对照表时没有实际转换过白鹭 5 工程。
+
 ## 一次调用启动页面里的游戏，并带有显示开销的面板 — 2026-11-15
 
 `@egret/engine/web/game` 提供 `createBrowserGame({ canvas, width, height, update })`。浏览器能给出适配器时它选择 WebGPU，否则选择 WebGL2，并创建 Host、Engine、作用域、指针和键盘输入以及帧循环，每一样都与各自入口创建的相同；`game.dispose()` 一并结束它们。给 `stats: true` 时，画布上方会出现一个面板，显示每秒帧数、相邻两帧的最长间隔、一帧的命令数和三角形数，以及 Host 持有的帧数和循环跳过的帧数；自己启动的游戏可以用 `createBrowserStatsPanel` 创建这个面板。起步示例现在用这种方式启动，加上 `?stats` 可以看到面板。面板统计的是 Engine 的命令数，不是 Host 的绘制调用次数。参见[一次调用启动页面里的游戏](docs/browser-game.md)。
