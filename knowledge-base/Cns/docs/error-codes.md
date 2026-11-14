@@ -254,6 +254,37 @@
 | --- | --- |
 | `BROWSER_STATS_OPTIONS_INVALID` | 交给调试面板的选项无效：缺少某一项、类型不对或超出范围。 |
 
+### BROWSER_TEXT_EDITOR
+
+| 错误码 | 含义 |
+| --- | --- |
+| `BROWSER_TEXT_EDITOR_ACTIVATION_CANCELLED` | 浏览器文本编辑器的 `activation` 被取消了。 |
+| `BROWSER_TEXT_EDITOR_BUSY` | 浏览器文本编辑器还在处理之前的请求。 |
+| `BROWSER_TEXT_EDITOR_CLOSED` | 浏览器文本编辑器已关闭，不再接受任何操作。 |
+| `BROWSER_TEXT_EDITOR_COMPOSING` | 浏览器文本编辑器正在用输入法组字。请等它结束。 |
+| `BROWSER_TEXT_EDITOR_ELEMENT_DETACHED` | 浏览器文本编辑器的元素已经不在页面中。 |
+| `BROWSER_TEXT_EDITOR_FOCUS` | 浏览器文本编辑器无法取得或保持焦点。 |
+| `BROWSER_TEXT_EDITOR_FONT_GENERATION` | 交给浏览器文本编辑器的字体不是它期望的那一代。 |
+| `BROWSER_TEXT_EDITOR_INACTIVE` | 浏览器文本编辑器当前未激活。 |
+| `BROWSER_TEXT_EDITOR_OPTIONS` | 交给浏览器文本编辑器的选项无效。 |
+| `BROWSER_TEXT_EDITOR_PLACEMENT_UNSUPPORTED` | 浏览器文本编辑器不支持 `placement`。 |
+| `BROWSER_TEXT_EDITOR_PRESENTATION_PENDING` | 浏览器文本编辑器的 `presentation` 尚未完成。 |
+| `BROWSER_TEXT_EDITOR_REENTRANT` | 在浏览器文本编辑器自己的回调里又调用了它。 |
+| `BROWSER_TEXT_EDITOR_SURFACE` | 交给浏览器文本编辑器的画布不是它能使用的画布。 |
+| `BROWSER_TEXT_EDITOR_TARGET` | 交给浏览器文本编辑器的目标无效。 |
+| `BROWSER_TEXT_EDITOR_UNSUPPORTED` | 浏览器文本编辑器不支持这种用法。 |
+
+### BROWSER_TEXT_INPUT
+
+| 错误码 | 含义 |
+| --- | --- |
+| `BROWSER_TEXT_INPUT_DISPOSED` | 浏览器文本输入已销毁，不再接受任何操作。 |
+| `BROWSER_TEXT_INPUT_IDLE` | 浏览器文本输入当前没有进行中的请求。 |
+| `BROWSER_TEXT_INPUT_OPTIONS` | 交给浏览器文本输入的选项无效。 |
+| `BROWSER_TEXT_INPUT_REENTRANT` | 在浏览器文本输入自己的回调里又调用了它。 |
+| `BROWSER_TEXT_INPUT_REQUEST` | 交给浏览器文本输入的请求无效。 |
+| `BROWSER_TEXT_INPUT_SURFACE` | 交给浏览器文本输入的画布不是它能使用的画布。 |
+
 ### CAMERA
 
 | 错误码 | 含义 |
@@ -344,9 +375,17 @@
 
 | 错误码 | 含义 |
 | --- | --- |
+| `DISPLAY_SUBTREE_LIMIT` | 超出了预备的显示子树的一项上限。 |
+| `DISPLAY_SUBTREE_NODE_INVALID` | 交给预备的显示子树的 `node` 无效。 |
+| `DISPLAY_SUBTREE_OVERLAP` | 两个预备的显示子树共用了同一个节点。 |
+| `DISPLAY_SUBTREE_OWNER_CLOSED` | 预备的显示子树的 `owner` 已关闭，不再接受任何操作。 |
+| `DISPLAY_SUBTREE_OWNER_INVALID` | 交给预备的显示子树的 `owner` 无效。 |
 | `DISPLAY_SUBTREE_REENTRANT` | 在预备的显示子树自己的回调里又调用了它。 |
 | `DISPLAY_SUBTREE_RETIRED` | 预备的显示子树已经退役，不能再使用。 |
+| `DISPLAY_SUBTREE_ROOT_INVALID` | 交给预备的显示子树的 `root` 无效。 |
 | `DISPLAY_SUBTREE_SCOPE_INVALID` | 交给预备的显示子树的作用域不是这个 Engine 的一个打开的作用域。 |
+| `DISPLAY_SUBTREE_STALE` | 交给预备的显示子树的内容已被更新的版本取代。 |
+| `DISPLAY_SUBTREE_TARGET_DETACHED` | 预备的显示子树的目标已经不在舞台上。 |
 | `DISPLAY_SUBTREE_TICKET_INVALID` | 交给预备的显示子树的 `ticket` 无效。 |
 
 ### DISPLAY_TREE
@@ -379,6 +418,26 @@
 | `EVENT_LIMIT` | 超出了事件的一项上限。 |
 | `EVENT_LISTENER_CLEANUP_FAILED` | 清理事件时失败。各个原因在 cleanupErrors 中。 |
 | `EVENT_SUBSCRIPTION_FAILED` | 事件的 `subscription` 失败了。原因在 cause 中。 |
+
+### FONT_CONTENT
+
+| 错误码 | 含义 |
+| --- | --- |
+| `FONT_CONTENT_ASSET` | 交给字体内容的资源无效。 |
+| `FONT_CONTENT_BYTES` | 交给字体内容的字节无效。 |
+| `FONT_CONTENT_CANCELLED` | 字体内容被取消了。 |
+| `FONT_CONTENT_CLOSED` | 字体内容已关闭，不再接受任何操作。 |
+| `FONT_CONTENT_FLAVOR` | 交给字体内容的字体格式无效。 |
+| `FONT_CONTENT_GROUP` | 交给字体内容的组无效。 |
+| `FONT_CONTENT_INPUT` | 交给字体内容的输入无效。 |
+| `FONT_CONTENT_LIMIT` | 超出了字体内容的一项上限。 |
+| `FONT_CONTENT_LOADER` | 交给字体内容的加载器无效。 |
+| `FONT_CONTENT_NOT_READY` | 字体内容还没有就绪。 |
+| `FONT_CONTENT_PROFILE` | 交给字体内容的规格无效。 |
+| `FONT_CONTENT_PROVIDER` | 交给字体内容的提供者无效。 |
+| `FONT_CONTENT_REF` | 交给字体内容的引用无效。 |
+| `FONT_CONTENT_ROOTS` | 交给字体内容的根列表无效。 |
+| `FONT_CONTENT_SCOPE` | 交给字体内容的作用域无效。 |
 
 ### FRAME
 
@@ -621,6 +680,13 @@
 
 | 错误码 | 含义 |
 | --- | --- |
+| `PARAGRAPH_FONT_SET_CANCELLED` | 段落字体集被取消了。 |
+| `PARAGRAPH_FONT_SET_CLOSED` | 段落字体集已关闭，不再接受任何操作。 |
+| `PARAGRAPH_FONT_SET_DECODE_REFUSED` | 段落字体集的 `decode` 被拒绝了。 |
+| `PARAGRAPH_FONT_SET_IDENTITY_COLLISION` | 段落字体集中有两个字体的标识相同。 |
+| `PARAGRAPH_FONT_SET_LIMIT` | 超出了段落字体集的一项上限。 |
+| `PARAGRAPH_FONT_SET_OPTIONS` | 交给段落字体集的选项无效。 |
+| `PARAGRAPH_FONT_SET_PROVIDER` | 交给段落字体集的提供者无效。 |
 | `PARAGRAPH_FONT_SET_RETIRED` | 段落字体集已经退役，不能再使用。 |
 
 ### PARAGRAPH_PROVIDER
@@ -700,10 +766,24 @@
 
 | 错误码 | 含义 |
 | --- | --- |
+| `SEQUENCE_RESET_CANCELLED` | 序列重置槽被取消了。 |
+| `SEQUENCE_RESET_CLEANUP_FAILED` | 清理序列重置槽时失败。各个原因在 cleanupErrors 中。 |
+| `SEQUENCE_RESET_CONTROLLER_CHANGED` | 请求进行期间序列重置槽的 `controller` 发生了变化。 |
+| `SEQUENCE_RESET_DISPOSED` | 序列重置槽已销毁，不再接受任何操作。 |
 | `SEQUENCE_RESET_INITIAL_INVALID` | 交给序列重置槽的 `initial` 无效。 |
 | `SEQUENCE_RESET_LOADER_INVALID` | 交给序列重置槽的 `loader` 无效。 |
+| `SEQUENCE_RESET_NOT_PREPARED` | 序列重置槽还没有预备。 |
+| `SEQUENCE_RESET_NOT_READY` | 序列重置槽还没有就绪。 |
+| `SEQUENCE_RESET_OPTIONS_INVALID` | 交给序列重置槽的选项无效：缺少某一项、类型不对或超出范围。 |
+| `SEQUENCE_RESET_POSTCOMMIT_FAILED` | 序列重置槽的 `postcommit` 失败了。原因在 cause 中。 |
 | `SEQUENCE_RESET_PRESERVE_STATE` | 只有在序列正在播放或已暂停、且没有等待中的命令时，才能在保留位置的情况下重置它。 |
+| `SEQUENCE_RESET_PRESERVE_TIMELINE` | 这次序列重置无法保留时间线。 |
+| `SEQUENCE_RESET_REENTRANT` | 在序列重置槽自己的回调里又调用了它。 |
 | `SEQUENCE_RESET_RESOURCE_MISMATCH` | 交给序列重置槽的 `resource` 不匹配。 |
+| `SEQUENCE_RESET_RETIRED` | 序列重置槽已经退役，不能再使用。 |
+| `SEQUENCE_RESET_TARGET_CHANGED` | 请求进行期间序列重置槽的 `target` 发生了变化。 |
+| `SEQUENCE_RESET_TARGET_CLAIMED` | 序列重置槽的目标已被另一个占用。 |
+| `SEQUENCE_RESET_TARGET_INVALID` | 交给序列重置槽的 `target` 无效。 |
 
 ### SEQ_PLAYBACK
 
@@ -751,25 +831,74 @@
 | 错误码 | 含义 |
 | --- | --- |
 | `SPINE_DISPLAY_CLEANUP_FAILED` | 清理Spine 显示对象时失败。各个原因在 cleanupErrors 中。 |
+| `SPINE_DISPLAY_COMMAND_LIMIT` | 超出了Spine 显示对象的 `command` 上限。 |
+| `SPINE_DISPLAY_GEOMETRY_INVALID` | 交给Spine 显示对象的 `geometry` 无效。 |
+| `SPINE_DISPLAY_GEOMETRY_LIMIT` | 超出了Spine 显示对象的 `geometry` 上限。 |
 | `SPINE_DISPLAY_INSTANCE_INVALID` | 交给Spine 显示对象的 `instance` 无效。 |
+| `SPINE_DISPLAY_PAGE_OR_BLEND_INVALID` | 交给Spine 显示对象的 `page or blend` 无效。 |
+| `SPINE_DISPLAY_SAMPLING_UNSUPPORTED` | Spine 显示对象不支持 `sampling`。 |
 
 ### SPINE_INSTANCE
 
 | 错误码 | 含义 |
 | --- | --- |
+| `SPINE_INSTANCE_ADVANCE_FAILED` | Spine 实例的 `advance` 失败了。原因在 cause 中。 |
+| `SPINE_INSTANCE_ANIMATION_INVALID` | 交给Spine 实例的 `animation` 无效。 |
 | `SPINE_INSTANCE_ASSET_INVALID` | 交给Spine 实例的 `asset` 无效。 |
+| `SPINE_INSTANCE_COMMAND_LIMIT` | 超出了Spine 实例的 `command` 上限。 |
+| `SPINE_INSTANCE_DISPLAY_ACTIVE` | Spine 实例的 `display` 仍在活动中。 |
+| `SPINE_INSTANCE_DISPOSED` | Spine 实例已销毁，不再接受任何操作。 |
+| `SPINE_INSTANCE_ENTRY_LIMIT` | 超出了Spine 实例的 `entry` 上限。 |
+| `SPINE_INSTANCE_FAULTED` | 这个 Spine 实例此前已经失败，不能再使用。 |
 | `SPINE_INSTANCE_LISTENER_FAILED` | 应用交给Spine 实例的监听器抛出了异常。抛出的内容在 cause 中。 |
+| `SPINE_INSTANCE_NONFINITE_POSE` | Spine 实例的某个姿态中有不是有限数字的值。 |
+| `SPINE_INSTANCE_OPTIONS_INVALID` | 交给Spine 实例的选项无效：缺少某一项、类型不对或超出范围。 |
+| `SPINE_INSTANCE_OUTPUT_INVALID` | 交给Spine 实例的 `output` 无效。 |
+| `SPINE_INSTANCE_PAUSED_INVALID` | 交给Spine 实例的 `paused` 无效。 |
+| `SPINE_INSTANCE_PLAYBACK_STEP_LIMIT` | 超出了Spine 实例的 `playback step` 上限。 |
 | `SPINE_INSTANCE_POSTCOMMIT_FAILED` | Spine 实例的 `postcommit` 失败了。原因在 cause 中。 |
+| `SPINE_INSTANCE_RATE_INVALID` | 交给Spine 实例的 `rate` 无效。 |
+| `SPINE_INSTANCE_REENTRANT` | 在Spine 实例自己的回调里又调用了它。 |
 | `SPINE_INSTANCE_RENDER_FAILED` | Spine 实例的 `render` 失败了。原因在 cause 中。 |
+| `SPINE_INSTANCE_RESET_FAILED` | Spine 实例的 `reset` 失败了。原因在 cause 中。 |
+| `SPINE_INSTANCE_RESET_NOT_PRISTINE` | 这个 Spine 实例不能这样重置：它已经不是刚创建时的状态。 |
+| `SPINE_INSTANCE_SEEK_ACTIVE` | Spine 实例的 `seek` 仍在活动中。 |
+| `SPINE_INSTANCE_SEEK_BACKWARD_EVENTS` | 向后跳转会经过 Spine 实例的事件，而事件不会倒着播放。 |
 | `SPINE_INSTANCE_SEEK_EVENT_LIMIT` | 超出了Spine 实例的 `seek event` 上限。 |
+| `SPINE_INSTANCE_SEEK_FAILED` | Spine 实例的 `seek` 失败了。原因在 cause 中。 |
+| `SPINE_INSTANCE_SEEK_HISTORY` | Spine 实例无法跳回那么远：它的历史没有保存到那里。 |
+| `SPINE_INSTANCE_SEEK_INVALID` | 交给Spine 实例的 `seek` 无效。 |
+| `SPINE_INSTANCE_SEEK_LIMIT` | 超出了Spine 实例的 `seek` 上限。 |
+| `SPINE_INSTANCE_SEEK_NOT_READY` | Spine 实例的 `seek` 还没有就绪。 |
+| `SPINE_INSTANCE_SKINS_INVALID` | 交给Spine 实例的 `skins` 无效。 |
+| `SPINE_INSTANCE_SKIN_INVALID` | 交给Spine 实例的 `skin` 无效。 |
+| `SPINE_INSTANCE_STEP_LIMIT` | 超出了Spine 实例的 `step` 上限。 |
+| `SPINE_INSTANCE_TICK_INVALID` | 交给Spine 实例的 `tick` 无效。 |
+| `SPINE_INSTANCE_TRACK_INVALID` | 交给Spine 实例的 `track` 无效。 |
+| `SPINE_INSTANCE_TRANSFORM_INVALID` | 交给Spine 实例的 `transform` 无效。 |
 
 ### SPINE_RESET
 
 | 错误码 | 含义 |
 | --- | --- |
+| `SPINE_RESET_CANCELLED` | Spine 重置槽被取消了。 |
 | `SPINE_RESET_CLEANUP_FAILED` | 清理Spine 重置槽时失败。各个原因在 cleanupErrors 中。 |
+| `SPINE_RESET_DISPOSED` | Spine 重置槽已销毁，不再接受任何操作。 |
 | `SPINE_RESET_INITIAL_INVALID` | 交给Spine 重置槽的 `initial` 无效。 |
 | `SPINE_RESET_LOADER_INVALID` | 交给Spine 重置槽的 `loader` 无效。 |
+| `SPINE_RESET_NOT_PREPARED` | Spine 重置槽还没有预备。 |
+| `SPINE_RESET_NOT_READY` | Spine 重置槽还没有就绪。 |
+| `SPINE_RESET_OPTIONS_INVALID` | 交给Spine 重置槽的选项无效：缺少某一项、类型不对或超出范围。 |
+| `SPINE_RESET_POSTCOMMIT_FAILED` | Spine 重置槽的 `postcommit` 失败了。原因在 cause 中。 |
+| `SPINE_RESET_PRESERVE_ANIMATION` | 这次 Spine 显示对象的重置无法保留动画。 |
+| `SPINE_RESET_PRESERVE_SKIN` | 这次 Spine 显示对象的重置无法保留皮肤。 |
+| `SPINE_RESET_PRESERVE_STATE` | 这次 Spine 显示对象的重置无法保留状态。 |
+| `SPINE_RESET_REENTRANT` | 在Spine 重置槽自己的回调里又调用了它。 |
+| `SPINE_RESET_RETIRED` | Spine 重置槽已经退役，不能再使用。 |
+| `SPINE_RESET_SCOPE_CLOSED` | Spine 重置槽的 `scope` 已关闭，不再接受任何操作。 |
+| `SPINE_RESET_TARGET_CHANGED` | 请求进行期间Spine 重置槽的 `target` 发生了变化。 |
+| `SPINE_RESET_TARGET_CLAIMED` | Spine 重置槽的目标已被另一个占用。 |
+| `SPINE_RESET_TARGET_INVALID` | 交给Spine 重置槽的 `target` 无效。 |
 
 ### SPRITE_SHEET
 
@@ -802,6 +931,14 @@
 | `TEXT_ACQUIRE_CANCELLED` | 文本的 `acquire` 被取消了。 |
 | `TEXT_ASSETS_INVALID` | 交给文本的 `assets` 无效。 |
 | `TEXT_COUNTER_EXHAUSTED` | 文本的 `counter` 计数器用尽了。请新建一个。 |
+| `TEXT_EDIT_ACTIVE` | 文本的 `edit` 仍在活动中。 |
+| `TEXT_EDIT_CLOSED` | 文本的 `edit` 已关闭，不再接受任何操作。 |
+| `TEXT_EDIT_COMPOSING` | 文本正在用输入法组字，在它结束之前不能进行这次编辑。 |
+| `TEXT_EDIT_OPTIONS` | 交给文本的选项无效。 |
+| `TEXT_EDIT_REVISION_EXHAUSTED` | 文本的 `edit revision` 计数器用尽了。请新建一个。 |
+| `TEXT_EDIT_SELECTION` | 交给文本编辑的选区无效。 |
+| `TEXT_EDIT_STALE` | 交给文本的 `edit` 已被更新的版本取代。 |
+| `TEXT_EDIT_VALUE` | 交给文本编辑的值无效。 |
 | `TEXT_MEASURE_FAILED` | 文本的 `measure` 失败了。原因在 cause 中。 |
 | `TEXT_PROVIDER_INVALID` | 交给文本的 `provider` 无效。 |
 | `TEXT_RASTER_FAILED` | 文本的 `raster` 失败了。原因在 cause 中。 |
@@ -909,6 +1046,16 @@
 | `UI_CONTENT_INVALID` | 交给UI的 `content` 无效。 |
 | `UI_DUPLICATE_ID` | UI 的两个部分使用了同一个 id。 |
 | `UI_DUPLICATE_KEY` | 列表的两行使用了同一个 key。 |
+| `UI_EDITOR_FONTS_CANCELLED` | UI的 `editor fonts` 被取消了。 |
+| `UI_EDITOR_FONTS_CLOSED` | UI的 `editor fonts` 已关闭，不再接受任何操作。 |
+| `UI_EDITOR_FONTS_DECODE` | UI 文本编辑器的某个字体无法解码。 |
+| `UI_EDITOR_FONTS_FAMILY` | 交给 UI 文本编辑器的字体族无效。 |
+| `UI_EDITOR_FONTS_INVALID` | 交给UI的 `editor fonts` 无效。 |
+| `UI_EDITOR_FONTS_LIMIT` | 超出了UI的 `editor fonts` 上限。 |
+| `UI_EDITOR_FONTS_OPTIONS` | 交给UI的选项无效。 |
+| `UI_EDITOR_FONTS_PROFILE` | 交给 UI 文本编辑器的字体不属于它能读取的规格。 |
+| `UI_EDITOR_FONTS_TIMEOUT` | UI的 `editor fonts` 耗时过长。 |
+| `UI_EDITOR_FONTS_UNSUPPORTED` | UI不支持 `editor fonts`。 |
 | `UI_ENGINE_INVALID` | 交给UI的 `engine` 无效。 |
 | `UI_INPUT_BUSY` | UI的 `input` 还在处理之前的请求。 |
 | `UI_INPUT_CLOSED` | UI的 `input` 已关闭，不再接受任何操作。 |
@@ -1000,8 +1147,18 @@
 
 | 错误码 | 含义 |
 | --- | --- |
+| `UI_TEXT_EDITOR_CLOSED` | UI 文本编辑器已关闭，不再接受任何操作。 |
+| `UI_TEXT_EDITOR_COMPOSING` | UI 文本编辑器正在用输入法组字。请等它结束。 |
+| `UI_TEXT_EDITOR_HOST_IN_USE` | 交给UI 文本编辑器的 `host` 已经在使用中。 |
+| `UI_TEXT_EDITOR_INVALID` | 交给UI 文本编辑器的内容无效。 |
+| `UI_TEXT_EDITOR_LIMIT` | 超出了UI 文本编辑器的一项上限。 |
+| `UI_TEXT_EDITOR_OPTIONS` | 交给UI 文本编辑器的选项无效。 |
+| `UI_TEXT_EDITOR_PLACEMENT_UNSUPPORTED` | UI 文本编辑器不支持 `placement`。 |
+| `UI_TEXT_EDITOR_REVISION_EXHAUSTED` | UI 文本编辑器的 `revision` 计数器用尽了。请新建一个。 |
 | `UI_TEXT_EDITOR_ROOT_CLOSED` | UI 文本编辑器的 `root` 已关闭，不再接受任何操作。 |
 | `UI_TEXT_EDITOR_ROOT_INVALID` | 交给UI 文本编辑器的 `root` 无效。 |
+| `UI_TEXT_EDITOR_STALE` | 交给UI 文本编辑器的内容已被更新的版本取代。 |
+| `UI_TEXT_EDITOR_STYLE` | 交给 UI 文本编辑器的样式无效。 |
 
 ### UI_THEME
 
@@ -1176,8 +1333,26 @@
 
 | 错误码 | 含义 |
 | --- | --- |
+| `WEB_RESOURCE_BINDINGS_INVALID` | 交给浏览器资源来源的 `bindings` 无效。 |
+| `WEB_RESOURCE_BODY_FAILED` | 浏览器资源来源的 `body` 失败了。原因在 cause 中。 |
+| `WEB_RESOURCE_CANCELLED` | 浏览器资源来源被取消了。 |
 | `WEB_RESOURCE_CLOSE_INCOMPLETE` | 浏览器资源来源已关闭，但它持有的东西没能全部释放。各个原因在 cleanupErrors 中。 |
+| `WEB_RESOURCE_CONTEXT_INVALID` | 交给浏览器资源来源的 `context` 无效。 |
+| `WEB_RESOURCE_DEADLINE_EXCEEDED` | 浏览器资源来源的一次请求超过了它的期限。 |
+| `WEB_RESOURCE_FETCH_FAILED` | 浏览器资源来源的 `fetch` 失败了。原因在 cause 中。 |
+| `WEB_RESOURCE_HTTP_STATUS` | 服务器对浏览器资源来源的一次请求返回了非成功的状态码。 |
+| `WEB_RESOURCE_INPUT_LIMIT` | 超出了浏览器资源来源的 `input` 上限。 |
+| `WEB_RESOURCE_INTEGRITY_MISMATCH` | 交给浏览器资源来源的 `integrity` 不匹配。 |
+| `WEB_RESOURCE_LENGTH_MISMATCH` | 交给浏览器资源来源的 `length` 不匹配。 |
+| `WEB_RESOURCE_MANIFEST_INVALID` | 交给浏览器资源来源的 `manifest` 无效。 |
 | `WEB_RESOURCE_OPTIONS_INVALID` | 交给浏览器资源来源的选项无效：缺少某一项、类型不对或超出范围。 |
+| `WEB_RESOURCE_QUEUE_LIMIT` | 超出了浏览器资源来源的 `queue` 上限。 |
+| `WEB_RESOURCE_REF_INVALID` | 交给浏览器资源来源的 `ref` 无效。 |
+| `WEB_RESOURCE_RESPONSE_INVALID` | 交给浏览器资源来源的 `response` 无效。 |
+| `WEB_RESOURCE_SOURCE_CLOSED` | 浏览器资源来源的 `source` 已关闭，不再接受任何操作。 |
+| `WEB_RESOURCE_SOURCE_INVALID` | 交给浏览器资源来源的 `source` 无效。 |
+| `WEB_RESOURCE_UNAVAILABLE` | 浏览器资源来源在这里不可用。 |
+| `WEB_RESOURCE_URL_INVALID` | 交给浏览器资源来源的 `url` 无效。 |
 
 ### WEB_TEXT
 

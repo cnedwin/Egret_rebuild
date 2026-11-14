@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Clearer error sentences, 160 more codes in the reference, and three debts paid — 2026-11-15
+
+English sentences that were put together as "This has not been started: a tween." now read "A tween has not been started."; 29 templates changed. The error code reference follows the helpers through which parts throw, and lists 862 codes where it listed 702; the 48 of those that would have had only a fallback sentence have sentences of their own in both languages. The Spine web loader threw plain `Error` objects with a code as their message; they are `EgretError` now. A gradient's colour between two bytes is read from the written sRGB table instead of a power, so it is the same number on every JavaScript engine, within 1e-5 of the curve. A shape's shared geometry is found by a short mixed key and checked number by number, instead of by a key as long as the drawing. `tests/types/game.ts` compiles the calls a game makes against `@egret/engine/web/game`, and found three of its types missing from the entry: `BrowserGameFit`, `BrowserGameLabel` and `BrowserGameLabelOptions` are exported now.
+
 ## Display objects have skew, a name, a width and a height; a game fits its element and has labels — 2026-11-15
 
 `skewX` and `skewY`, in degrees, lean the two axes of a display object on top of its rotation. `name` and `container.getChildByName(name)` find a child. `width` and `height` are the size an object takes on its parent, and setting one sets `scaleX` or `scaleY`. `createBrowserGame` takes `fit`: `'contain'`, `'cover'` or `'stretch'` sizes the canvas inside its element, and again when the element changes size. `game.createLabel({ text, fontSize, color })` makes a line of text whose `text` can be set like a value. The starter example shows its score as a label in Chinese, and its check covers the three fits and the label with software WebGL2. Masks that are not rectangles are still not there.

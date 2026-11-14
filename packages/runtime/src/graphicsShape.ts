@@ -341,6 +341,22 @@ export function shapeFits(vertices: number, indices: number): boolean {
 
 // Shapes drawn the same way, on any number of nodes, are one geometry: a frame admits 4,096 of them.
 const shared = new Map<string, ResolvedShape>(), leases = new WeakMap<object, number>();
+// What each shared drawing was made from, to tell a true match of its key from a chance one.
+const sources = new WeakMap<ResolvedShape, readonly ShapeBatch[]>();
+function sameNumbers(a: readonly number[], b: readonly number[]): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
+function sameDrawing(made: readonly ShapeBatch[] | undefined, batches: readonly ShapeBatch[]): boolean {
+  if (made === undefined || made.length !== batches.length) return false;
+  for (let i = 0; i < made.length; i++) {
+    const a = made[i]!, b = batches[i]!;
+    if (a.bitmap?.lease !== b.bitmap?.lease || a.bitmap?.repeat !== b.bitmap?.repeat || !sameNumbers(a.positions, b.positions) || !sameNumbers(a.colors, b.colors)
+      || !sameNumbers(a.indices, b.indices) || (b.bitmap !== undefined && !sameNumbers(a.uvs, b.uvs))) return false;
+  }
+  return true;
+}
 let nextLease = 1;
 const leaseNumber = (lease: object): number => { let n = leases.get(lease); if (n === undefined) { n = nextLease++; leases.set(lease, n); } return n; };
 /** Whether a drawing is one a node may hold: every batch within what one geometry takes, and no more batches than a node has. */
@@ -359,9 +375,23 @@ export function resolveShape(shape: ShapeState): ResolvedShape | undefined {
   }
   const batches = [...target.done, target].filter(batch => batch.indices.length !== 0 && shapeFits(batch.positions.length / 2, batch.indices.length));
   if (batches.length === 0) return undefined;
-  const key = batches.map(batch => batch.positions.join() + '|' + batch.colors.join() + '|' + batch.indices.join()
-    + (batch.bitmap === undefined ? '' : '|' + batch.uvs.join() + '|' + leaseNumber(batch.bitmap.lease) + (batch.bitmap.repeat ? 'r' : 'c'))).join('/');
+  // Two drawings are the same when their numbers are. A key of all the numbers written out would be as long as the
+  // drawing each time it changes; a short key is mixed from them instead, and a match is checked number by number.
+  let h1 = 0x811c9dc5, h2 = 0x1b873593, count = 0;
+  const mix = (value: number): void => {
+    // The value as two whole numbers that tell any two different doubles apart in practice: its integer and scaled fraction parts.
+    const whole = Math.trunc(value), part = Math.round((value - whole) * 4294967296);
+    h1 = Math.imul(h1 ^ (whole | 0), 0x01000193) ^ (part | 0); h2 = Math.imul(h2 + (part | 0), 0x85ebca6b) ^ (whole | 0) ^ (h2 >>> 15);
+    count++;
+  };
+  for (const batch of batches) {
+    for (const list of [batch.positions, batch.colors, batch.indices]) { mix(list.length); for (let i = 0; i < list.length; i++) mix(list[i]!); }
+    if (batch.bitmap !== undefined) { for (let i = 0; i < batch.uvs.length; i++) mix(batch.uvs[i]!); mix(leaseNumber(batch.bitmap.lease)); mix(batch.bitmap.repeat ? 1 : 2); }
+  }
+  const key = count + ':' + (h1 >>> 0) + ':' + (h2 >>> 0);
   let resolved = shared.get(key);
+  // A key that matches a different drawing is not that drawing: it is made anew and takes the key.
+  if (resolved !== undefined && !sameDrawing(sources.get(resolved), batches)) resolved = undefined;
   if (resolved === undefined) {
     let left = Infinity, top = Infinity, right = -Infinity, bottom = -Infinity;
     const parts: ResolvedPart[] = [];
@@ -374,6 +404,7 @@ export function resolveShape(shape: ShapeState): ResolvedShape | undefined {
     resolved = Object.freeze({ parts: Object.freeze(parts), bounds: Object.freeze({ x: left, y: top, width: right - left, height: bottom - top }) });
     if (shared.size >= 512) shared.clear();
     shared.set(key, resolved);
+    sources.set(resolved, batches.map(batch => ({ positions: batch.positions.slice(), colors: batch.colors.slice(), uvs: batch.bitmap === undefined ? [] : batch.uvs.slice(), indices: batch.indices.slice(), bitmap: batch.bitmap })));
   }
   return shape.resolved = resolved;
 }

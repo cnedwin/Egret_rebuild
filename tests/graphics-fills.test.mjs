@@ -33,6 +33,7 @@ function covers(geometry,x,y){
 }
 const near=(actual,expected,tolerance,label)=>assert.ok(Math.abs(actual-expected)<=tolerance,label+': '+actual+' is not within '+tolerance+' of '+expected);
 const linear=byte=>{const c=byte/255;return c<=0.04045?c/12.92:((c+0.055)/1.055)**2.4;};
+// A gradient's colour between two bytes is read between the two entries of the written table, within 1e-5 of the curve.
 /** The colour between two sRGB colours, mixed as sRGB values, in linear light. */
 const mixed=(from,to,f)=>[16,8,0].map(shift=>linear((from>>shift&255)+((to>>shift&255)-(from>>shift&255))*f));
 const only=frame=>frame.geometries.at(-1);
@@ -129,7 +130,7 @@ test('GF05 a gradient is the colours of the corners, mixed as sRGB values and cl
  assert.equal(now.commands[0].kind,'mesh');
  near(triangles(geometry).area,5600,1e-3,'area');
  const want=(x)=>{const f=Math.min(1,Math.max(0,(x-20)/100));return [...mixed(0xff0000,0x0000ff,f),1-0.5*f];};
- for(let n=0;n<geometry.vertexCount;n++){const w=want(geometry.positions[2*n]);for(let k=0;k<4;k++)near(geometry.lightColors[4*n+k],w[k],1e-6,'corner colour');}
+ for(let n=0;n<geometry.vertexCount;n++){const w=want(geometry.positions[2*n]);for(let k=0;k<4;k++)near(geometry.lightColors[4*n+k],w[k],1e-5,'corner colour');}
  // Between corners the colour a frame mixes stays close to the gradient: within four parts in 255 as an eye sees it.
  assert.ok(geometry.triangleCount>20&&geometry.triangleCount<2000,'triangles '+geometry.triangleCount);
  for(const [a,b,c] of triangles(geometry).list){
@@ -148,7 +149,7 @@ test('GF05 a gradient is the colours of the corners, mixed as sRGB values and cl
  const box={a:100/1638.4,b:0,c:0,d:40/1638.4,tx:70,ty:20};
  const old=sprite();old.graphics.beginGradientFill('linear',[0xff0000,0x0000ff],[1,0.5],[0,255],box).drawRect(0,0,140,40);
  const older=only(frame());
- for(let n=0;n<older.vertexCount;n++){const w=want(older.positions[2*n]);for(let k=0;k<4;k++)near(older.lightColors[4*n+k],w[k],1e-6,'older call');}
+ for(let n=0;n<older.vertexCount;n++){const w=want(older.positions[2*n]);for(let k=0;k<4;k++)near(older.lightColors[4*n+k],w[k],1e-5,'older call');}
  const disc=sprite();disc.graphics.beginGradientFill('radial',[0xffffff,0x000000],[1,1],[0,255],{a:80/1638.4,b:0,c:0,d:80/1638.4,tx:50,ty:50}).drawCircle(50,50,40);
  const circle=only(frame());
  for(let n=0;n<circle.vertexCount;n++){const t=Math.min(1,Math.hypot(circle.positions[2*n]-50,circle.positions[2*n+1]-50)/40),w=mixed(0xffffff,0,t);near(circle.lightColors[4*n],w[0],1e-5,'older radial');}
