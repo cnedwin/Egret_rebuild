@@ -35,6 +35,8 @@ SharedFrame2D 是当前唯一的 2D 帧路径。示例通过 `captureSharedFrame
 | World3D | 独立浏览器 Worker 在 Windows Edge 与 Fold7 Chrome 上分别通过远程物理修复的三项用例。布娃娃和载具在两个设备的浏览器中分别通过两项 API 用例。前序 Rally 阴影统计与软件渲染物理场景各有独立记录。 | [#169](https://github.com/cnedwin/Egret_rebuild/issues/169) 记录已合入的五项修复。更广玩法、设备性能及 GPU 计时仍待验收。 [#168](https://github.com/cnedwin/Egret_rebuild/pull/168) · [#179](https://github.com/cnedwin/Egret_rebuild/pull/179) · [#201](https://github.com/cnedwin/Egret_rebuild/pull/201) · [#202](https://github.com/cnedwin/Egret_rebuild/pull/202) |
 | 混合验收 | 旧 X-D60/1 和 X-MTouch/1 保留含 3D 背景的负载及未达标记录。当前平面 2D 组件的 WebGPU／WebGL2 完成帧间隔 p95 的三个五秒窗口中位数在 Windows 为 26.0／26.4 毫秒，在 Fold7 为 61.2／91.3 毫秒。已合入的旋转重排修复在 Edge 和 Fold7 真机的两个后端均通过背景像素检查。 | #236 的打开工程用例已在 Windows 和 Fold7 通过限定验证。X-D60/2 已在 Windows Edge 的两个后端通过限定合成、键盘、阻塞导入取消与重试和分层丢失恢复检查。Windows WebGPU 还在导入请求阻塞期间恢复了背景层。Fold7 X-MTouch/2 最终横屏检查覆盖 CDP 触控、取消重试及两层丢失，系统竖屏覆盖对齐、合成像素与输入；前一候选另有完整竖屏检查。#92 保留原阈值、历史未达标结果及完整正式验收。 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) · [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) · [#200](https://github.com/cnedwin/Egret_rebuild/pull/200) |
 
+/2 全脏对照定位了 Spine 几何构造开销。WebGPU／WebGL2 的应用完成帧间隔 p95 在 Windows Edge 降至 21.1／24.3 毫秒，在 Fold7 Chrome 降至 54.6／61.0 毫秒，四组均仍高于 16.7 毫秒。Fold7 在 #255 参考构建中完成了每个后端十轮主动触发的图形丢失与恢复。 [M4.2 测量范围](m4-core-acceptance-plan.md#混合场景帧间隔诊断--2026-11-14)
+
 ## 可选 World3D — 2026-11-13
 
 [#147](https://github.com/cnedwin/Egret_rebuild/pull/147) 合入独立渲染器。[#148](https://github.com/cnedwin/Egret_rebuild/pull/148) 和 [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) 扩展材质、场景、纹理和碰撞。[#151](https://github.com/cnedwin/Egret_rebuild/pull/151) 新增折射、光照贴图、景深、合批、文字几何体、变换操纵器及物理能力。[#152](https://github.com/cnedwin/Egret_rebuild/pull/152) 新增功能展厅，扩展 CPU 回归负载、阴影准备和碰撞路径。
