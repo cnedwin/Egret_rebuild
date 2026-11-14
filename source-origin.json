@@ -582,8 +582,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 61133,
-      "sha256": "d6d6b0ab9748f78f2e2a256f2b5d1a01cf834f810559cf526fa6717a4d0c1633",
+      "bytes": 62165,
+      "sha256": "f2aaee7288d03a2eae9cf4d06c504b7f11afd998731d4aba92a50b5fb844ba50",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -786,8 +786,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 29470,
-      "sha256": "227430229961ff90a1a7d4c20610d741486a76dfd65bd1eb675b78f9caf16a38",
+      "bytes": 29601,
+      "sha256": "d87a959141b3dabdf9f630e1d4ad36122d35d40f0d28aff261592f3173eb0ea7",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -1380,8 +1380,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 4189,
-      "sha256": "0cbfb1768548b988d7798bcdfdd72e64cbdeb2d6955ffb641bd359f615b476a7",
+      "bytes": 4230,
+      "sha256": "221ad2ccb29fd84b5169a492632b24a8759cf6d99669aa40b470c31f17553293",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -2072,7 +2072,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 137800,
-      "sha256": "bfb93049f049e6870aa1dc9b8b634e3ec1285b8b32d4b7e9700ee79a86319c1a",
+      "sha256": "40614454e4759b1ed9b1c8faaffad9c771c58fbe64b7b7fb690802a9b13f7e1e",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2113,8 +2113,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 66482,
-      "sha256": "7b234d7a4a06dbbf90f5239362794216a15ac949197cf6761dd679eb08010385",
+      "bytes": 67550,
+      "sha256": "ff9ab6c09e3c938f8fee4dc353dc26eda74b72b7bd169b1772f569beeed610e0",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2506,8 +2506,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 32746,
-      "sha256": "9c102ba7b950e70c66b48e5e4a9fb828f5248ac9098f840d0c3de26a2d8f2303",
+      "bytes": 32896,
+      "sha256": "e7885ffa7cfc7e04b3300fd34376ac37d5711dd940518ed0b7235ebc0b9a1391",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -3052,8 +3052,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 4694,
-      "sha256": "5fefbc49e75c10a46983cf1f6c13dd533aece5e3b25821086297ffe7ce08f117",
+      "bytes": 4741,
+      "sha256": "035e0f96c9507270f7a405e3f1c02595b30030975ff1d8b73387ae9e28f98353",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -3746,8 +3746,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "c8c8277d9413635f5b49f3cc00f7583b50a5da5d216dcf6c08a336f12630d11b",
-      "bytes": 419808,
+      "sha256": "b056ad1720016f2e95f1046960954a50b23b032f365d577d8ad2e3057d442ce1",
+      "bytes": 421468,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4083,8 +4083,8 @@
     },
     {
       "path": "packages/engine/package.json",
-      "bytes": 4713,
-      "sha256": "73dcbf0640d11df06218006c873a3b53fa3f9e357eb675ce8fe831c5e3410158",
+      "bytes": 4819,
+      "sha256": "a6c323927a4402321b68e5c4f2a6039315fea136dbb7f61bcf8d20ae80f1b486",
       "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset.",
       "identityHistory": [
         {
@@ -5079,8 +5079,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 253049,
-      "sha256": "a745106a4bb734a63209439db36046fcef56c7c336fc9c991e172b9a57561e8f",
+      "bytes": 255396,
+      "sha256": "63502db8961f83043d6bb980bde7c0c456fe6295cce1a38e09b7bd2853df627d",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -5328,8 +5328,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 320385,
-      "sha256": "7ea449f5ca27a17e1962631afe047713591c5d6392bc7ff9c602f46e07dac87d",
+      "bytes": 324052,
+      "sha256": "2432deb84bde6f684fe3022c543fc38b9c570073d2dfc0b36e76d87e0509d2e8",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -9345,8 +9345,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1633340,
-      "sha256": "e10cb3214e1008fb0905c7f99d6cd0fa47f8ffef563683eca683ba91ff35cc62"
+      "bytes": 1633984,
+      "sha256": "8c6f62c8413006894bfaef7f76e3e35a1d39ff9123c4213076db47560237f362"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -17975,6 +17975,96 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 3549,
       "sha256": "a4df4544a4fd7f5f65f1813ab1e5c484e568abcf311c5e5bc5d1445ff3383017"
+    },
+    {
+      "path": "packages/engine/src/physics2d.ts",
+      "originRole": "First-party optional entry of 2D collision and simple physics; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 454,
+      "sha256": "f2b63460b7fdb4eefeba980f1a2f89b921c75f4d4707ed13a8dd9008f4d0ea98"
+    },
+    {
+      "path": "packages/engine/src/physics2dWorld.ts",
+      "originRole": "First-party 2D physics world with fixed steps, impulse contacts, sensors, queries, rays, character sliding and grid colliders; independently authored with AI assistance; Apache-2.0. No third-party dependency.",
+      "bytes": 23427,
+      "sha256": "da2ba64a98257016cb93ae0847eba419fa041caf14162793fffcc34610efc07e"
+    },
+    {
+      "path": "packages/engine/src/physics2dGeometry.ts",
+      "originRole": "First-party 2D shape geometry: placement, bounds, area, convexity, separating axes, containment and segment casts; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 8785,
+      "sha256": "3b5d7b56fff5507c529a8badd2a5d7f0e36d9e8ae979f5a6626e149121eec436"
+    },
+    {
+      "path": "packages/engine/src/physics2dTypes.ts",
+      "originRole": "First-party types of 2D physics; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 6634,
+      "sha256": "472e549935626bed30445e0bcfa8df7fecf18ec0ce40d47f1cbddb326dbf1088"
+    },
+    {
+      "path": "tests/physics-2d.test.mjs",
+      "originRole": "First-party Node tests of the 2D physics world; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 29019,
+      "sha256": "c5158270bd20a916be70247f2332d66b345e2dc038c9fbf0de9399fe8f2b85f2"
+    },
+    {
+      "path": "tests/types/physics2d.json",
+      "originRole": "First-party compiler configuration of the strict consumer of the physics2d entry; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 191,
+      "sha256": "bac7097a06228f640895f3acf1eafb828716b94355e6c985e9c2e12ec76a2aef"
+    },
+    {
+      "path": "tests/types/physics2d.ts",
+      "originRole": "First-party strict TypeScript consumer of the physics2d entry, with five refused misuses; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 2291,
+      "sha256": "1d041bd4d66e56894a79b3082e8807aac784beeb1f7907bb1824c9ceb09eca41"
+    },
+    {
+      "path": "examples/physics-2d/index.html",
+      "originRole": "First-party page of the 2D physics example; independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "bytes": 3227,
+      "sha256": "eede98bf0e60b70906719422cd902bb40d1a5238180b25f1a4d9a84b328b6df4"
+    },
+    {
+      "path": "examples/physics-2d/main.mjs",
+      "originRole": "First-party example of a training hall in 2D physics with images painted by the page; independently authored with AI assistance; Apache-2.0. Original example text; no third-party asset.",
+      "bytes": 8221,
+      "sha256": "d823f341d6ab7fbdbd487421288e9508a3124c467e220e453e0a9feede14ef23"
+    },
+    {
+      "path": "examples/physics-2d/verify.mjs",
+      "originRole": "First-party real-browser check of the 2D physics example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 11479,
+      "sha256": "36a2d5f6342f72a8083397c4954472870c27e61904a6cab2311e54ae18935d27"
+    },
+    {
+      "path": "examples/physics-2d/README.md",
+      "originRole": "First-party instructions for the 2D physics example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 2057,
+      "sha256": "0ae10b1d886ea98d8933b20f32e73fc0726f04920cf802ae91bb32009d41eae0"
+    },
+    {
+      "path": "examples/physics-2d/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the 2D physics example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 2021,
+      "sha256": "fbc8e6be5f5233c86cf97c53eb247922a730afd590777b5acbf9e613b8759efd"
+    },
+    {
+      "path": "knowledge-base/en/docs/physics-2d.md",
+      "originRole": "First-party guide to 2D collision and simple physics, with what was run and what was not; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 7477,
+      "sha256": "f2c663cf9051105f9bb94ffc14924c228703503177a9d9c9ff0a1299775db553"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/physics-2d.md",
+      "originRole": "First-party Chinese guide to 2D collision and simple physics; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 7367,
+      "sha256": "e929d27c59ddf8c0a6aa6859c2b83c52d0a1cecdb8daaec0331d361b4c474d48"
+    },
+    {
+      "path": "contributions/physics-2d.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 3286,
+      "sha256": "a9fb248e0a3477ee994a811cfd15b3086f0b87188399e239448013289cd74101"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

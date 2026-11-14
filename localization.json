@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "7b234d7a4a06dbbf90f5239362794216a15ac949197cf6761dd679eb08010385",
-      "zhSha256": "d6d6b0ab9748f78f2e2a256f2b5d1a01cf834f810559cf526fa6717a4d0c1633"
+      "enSha256": "ff9ab6c09e3c938f8fee4dc353dc26eda74b72b7bd169b1772f569beeed610e0",
+      "zhSha256": "f2aaee7288d03a2eae9cf4d06c504b7f11afd998731d4aba92a50b5fb844ba50"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -540,8 +540,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "9c102ba7b950e70c66b48e5e4a9fb828f5248ac9098f840d0c3de26a2d8f2303",
-      "zhSha256": "227430229961ff90a1a7d4c20610d741486a76dfd65bd1eb675b78f9caf16a38"
+      "enSha256": "e7885ffa7cfc7e04b3300fd34376ac37d5711dd940518ed0b7235ebc0b9a1391",
+      "zhSha256": "d87a959141b3dabdf9f630e1d4ad36122d35d40f0d28aff261592f3173eb0ea7"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -1016,8 +1016,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "5fefbc49e75c10a46983cf1f6c13dd533aece5e3b25821086297ffe7ce08f117",
-      "zhSha256": "0cbfb1768548b988d7798bcdfdd72e64cbdeb2d6955ffb641bd359f615b476a7"
+      "enSha256": "035e0f96c9507270f7a405e3f1c02595b30030975ff1d8b73387ae9e28f98353",
+      "zhSha256": "221ad2ccb29fd84b5169a492632b24a8759cf6d99669aa40b470c31f17553293"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -2539,6 +2539,20 @@
       "kind": "public_reading",
       "enSha256": "820f6c30cb6012fb3038c397c8e09a9b89655d8bd01ee2a7e6b079c582cf8e93",
       "zhSha256": "55a4510cbfb15b191c53897f898cb30a54b544ad2e7080b1fd19c71a83cfaea3"
+    },
+    {
+      "en": "examples/physics-2d/README.md",
+      "zh": "examples/physics-2d/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "0ae10b1d886ea98d8933b20f32e73fc0726f04920cf802ae91bb32009d41eae0",
+      "zhSha256": "fbc8e6be5f5233c86cf97c53eb247922a730afd590777b5acbf9e613b8759efd"
+    },
+    {
+      "en": "knowledge-base/en/docs/physics-2d.md",
+      "zh": "knowledge-base/Cns/docs/physics-2d.md",
+      "kind": "public_reading",
+      "enSha256": "f2c663cf9051105f9bb94ffc14924c228703503177a9d9c9ff0a1299775db553",
+      "zhSha256": "e929d27c59ddf8c0a6aa6859c2b83c52d0a1cecdb8daaec0331d361b4c474d48"
     }
   ],
   "registries": [
@@ -3136,11 +3150,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "7ea449f5ca27a17e1962631afe047713591c5d6392bc7ff9c602f46e07dac87d"
+      "sha256": "2432deb84bde6f684fe3022c543fc38b9c570073d2dfc0b36e76d87e0509d2e8"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "a745106a4bb734a63209439db36046fcef56c7c336fc9c991e172b9a57561e8f"
+      "sha256": "63502db8961f83043d6bb980bde7c0c456fe6295cce1a38e09b7bd2853df627d"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3776,7 +3790,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "e10cb3214e1008fb0905c7f99d6cd0fa47f8ffef563683eca683ba91ff35cc62"
+      "sha256": "8c6f62c8413006894bfaef7f76e3e35a1d39ff9123c4213076db47560237f362"
     },
     {
       "path": "tools/incremental-dependencies.mjs",
@@ -5513,6 +5527,34 @@
     {
       "path": "examples/tilemap/verify.mjs",
       "sha256": "5eca1d6a3dde202fe6ce4c938decab846913dca102ab6e047600af2e3eacdf12"
+    },
+    {
+      "path": "packages/engine/src/physics2d.ts",
+      "sha256": "f2b63460b7fdb4eefeba980f1a2f89b921c75f4d4707ed13a8dd9008f4d0ea98"
+    },
+    {
+      "path": "packages/engine/src/physics2dWorld.ts",
+      "sha256": "da2ba64a98257016cb93ae0847eba419fa041caf14162793fffcc34610efc07e"
+    },
+    {
+      "path": "packages/engine/src/physics2dGeometry.ts",
+      "sha256": "3b5d7b56fff5507c529a8badd2a5d7f0e36d9e8ae979f5a6626e149121eec436"
+    },
+    {
+      "path": "packages/engine/src/physics2dTypes.ts",
+      "sha256": "472e549935626bed30445e0bcfa8df7fecf18ec0ce40d47f1cbddb326dbf1088"
+    },
+    {
+      "path": "tests/physics-2d.test.mjs",
+      "sha256": "c5158270bd20a916be70247f2332d66b345e2dc038c9fbf0de9399fe8f2b85f2"
+    },
+    {
+      "path": "examples/physics-2d/main.mjs",
+      "sha256": "d823f341d6ab7fbdbd487421288e9508a3124c467e220e453e0a9feede14ef23"
+    },
+    {
+      "path": "examples/physics-2d/verify.mjs",
+      "sha256": "36a2d5f6342f72a8083397c4954472870c27e61904a6cab2311e54ae18935d27"
     }
   ],
   "historicalSemanticReview": {
