@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 2D 碰撞与简单物理 — 2026-11-14
+
+`@egret/engine/physics2d` 是可选入口。由圆、矩形和凸多边形组成的世界——刚体可以是动态、运动学或静态的——在重力下按固定步长推进，按质量用弹性和摩擦把刚体推开，让堆叠稳定下来，并在速度低于阈值时不再弹起，使静止的东西保持静止。它通知接触的开始和结束（传感器也一样），按层和掩码过滤，并能查询某个点、某个矩形内以及射线上第一个遇到的刚体。`moveAndSlide` 移动角色，使其沿墙滑动而不会穿墙；`addTileColliders` 把网格的实心格子合并成少量静态矩形。刚体不会自行旋转。新示例 `examples/physics-2d` 是一间有弟子、石头、斜坡和池塘的练功房。已在 Node 和无头 Chromium 的软件 WebGL2 中验证；没有运行硬件 GPU 或手机。属于 #266。[指南](docs/physics-2d.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/physics-2d/README.zh-CN.md)
+
 ## 2D 粒子 — 2026-11-14
 
 `@egret/engine/particles` 是可选入口。发射器按速率、成批或在一段时间内产生粒子；每个粒子在点、矩形或圆内出生，以某个角度和速度出发，在任意步长下都以同样方式受重力和阻力影响，并从出生时的缩放、颜色、透明度和旋转过渡到消亡时的值。一个发射器的粒子在共享渲染器上以一张纹理绘制为一个网格，每次更新重建；同样的种子产生同样的粒子。新示例 `examples/particles` 有燃烧的火盆、飘落的花瓣和点击处迸出的火花。已在 Node 中的真实引擎上和无头 Chromium 的软件 WebGL2 中验证；没有运行硬件 GPU 或手机，目前也还没有加法混合。属于 #266。[指南](docs/particles.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/particles/README.zh-CN.md)
