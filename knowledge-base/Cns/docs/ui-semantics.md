@@ -212,7 +212,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 | 托管列表的行、被隐藏的列表、可多选的列表框、根的盒，以及作为对话框的层：真实 Engine、真实 UI 根和真实层管理器上的 16 项，另有严格 TypeScript 使用方和七种被拒绝的误用 | Node | 通过 |
 | [列表示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics)：浏览器为 50,000 行中的 8 行计算出的列表框、穿过被回收行时的活动后代、跳到第 40,000 行、从焦点处滚走、对选项发出的请求、缩放并滚动后的页面、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
 | [标签页示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-tabs)：浏览器计算出的一排标签和唯一的面板、被选中标签到其面板的关系、进度条的数值、被选中标签上的活动后代，以及对标签提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，5 个场景 |
-| [多选示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-multi-select)：浏览器计算为可多选的列表框、逐个选中和取消的选项、被禁用的选项，以及对它们提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，5 个场景 |
+| [多选示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-multi-select)：浏览器计算为可多选的列表框、逐个选中和取消的选项、被禁用的选项、用 Shift 选中的一段，以及对它们提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
 | [下拉示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-dropdown)：只有弹出层打开时才出现在计算出的树中的列表框，活动后代从行移入职务列表再移回，对行和选项提出的请求，以及指明自己所滚动列表的滚动条 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，9 个场景 |
 | 同一示例加上层管理器的模态层：对话框及其按钮与卡片重合、浏览器计算出的树中不含它后面的列表、Tab 留在对话框内、按下卡片旁边不触达任何对象、Escape，以及焦点回到原来的行 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，2 个场景 |
 
@@ -227,5 +227,5 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 - 首批控件集合之外的角色：菜单、树、表格、标题和实时区域。滑动条、标签页和进度条已加入。
 - 描述文字、错误文字，以及用一个节点为另一个节点命名。
 - 托管 UI 的叶子和层对应的节点由应用自己添加，用 [`semanticBoxOf`](#托管-ui-的盒与层) 度量。虚拟列表的行有[辅助对象](#托管虚拟列表)。
-- 按网格排列的行。一次选中一段连续的行（例如 Shift 加方向键）由应用自行处理。
+- 按网格排列的行。一次选中一段连续的行（例如 Shift 加方向键）由应用自行处理，多选示例给出了一种做法。
 - 原生编辑器自身的投射。编辑器本身就是一个元素。

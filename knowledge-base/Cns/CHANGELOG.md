@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 用 Shift 选中一段行，用 Control+A 选中所有人 — 2026-11-14
+
+在多选示例中，按住 Shift 再按移动键，会选中从离开的那一行到到达的那一行之间的所有成员；Control+A 选中所有在场的人。只涉及示例。属于 #90。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-multi-select/README.zh-CN.md)
+
 ## 设置示例的存档行可以悬停和按住 — 2026-11-14
 
 `examples/ui-settings` 中存档列表的行在指针下面会变亮，按住时变暗，两套主题都是如此，做法是使用行绑定得到的显示对象。只涉及示例。属于 #90。[指南](docs/ui-controls.md#托管列表的行)

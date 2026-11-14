@@ -18,7 +18,7 @@ Keep the host and port the server prints and open `/examples/ui-multi-select/ind
 ## What to try
 
 - Press several members. Each press chooses one more or lets one go; the others stay as they are.
-- Click the canvas, then use the keyboard alone. Tab enters the roster; the arrow keys, Page Up, Page Down, Home and End move the focus and leave the choice alone; Space or Enter flips the row that holds the focus. Tab goes on to the three buttons.
+- Click the canvas, then use the keyboard alone. Tab enters the roster; the arrow keys, Page Up, Page Down, Home and End move the focus and leave the choice alone; Space or Enter flips the row that holds the focus. Held with Shift, a movement key chooses every member from the row it leaves to the row it reaches, and Control+A chooses everyone who is here. Tab goes on to the three buttons.
 - **全选 / All** chooses everyone who is here, **清除 / Clear** nobody. A button that has nothing to do is disabled.
 - **派遣 / Send** sends the chosen members out. Their rows say so, are dimmed, and can no longer be chosen.
 - Turn the wheel or drag the thumb of the scroll bar. Members who were chosen stay chosen while their rows are not there.
@@ -30,7 +30,7 @@ Keep the host and port the server prints and open `/examples/ui-multi-select/ind
 | The roster | `createUiRoot` with a virtual list of forty records |
 | The choice | A `Set` of keys in the application. A row paints itself from it when it is bound and whenever the screen is painted |
 | The pointer on a row | `context.target` of the binding, with a `createHoverControl` and a `createActionControl`. They are disabled on a row whose member is away |
-| Keys | `createControlKeys` of kind `'action'` on each row; the arrow keys reveal and focus the next row. `keyboard.tabStop` makes the roster one stop |
+| Keys | `createControlKeys` of kind `'action'` on each row; the arrow keys reveal and focus the next row. `keyboard.tabStop` makes the roster one stop. Shift and Control+A are read from the key events of the row by the page itself |
 | A member who is sent | A new source whose record has another `contentVersion`: that row is bound again with its new text |
 | Semantics | `createUiListSemantics` with `role: 'listbox'` and `multiple: true`; each row says `selected` and `disabled`. The count is a `text` node, and a `scrollbar` names the roster |
 
@@ -46,6 +46,6 @@ See the guides for [the managed list](../../knowledge-base/en/docs/ui-data-panel
 node examples/ui-multi-select/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
 ```
 
-Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Five scenarios write `report.json` with a screenshot of each: the list box the browser computes, with `aria-multiselectable`; presses that choose several members and let one go, the send, and the three buttons, with the paints read from the screen; the keyboard alone; requests of assistive technology; and a phone profile, where a finger drags the scroll bar to reach more members. They passed in headless Chromium with software WebGL2.
+Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Six scenarios write `report.json` with a screenshot of each: the list box the browser computes, with `aria-multiselectable`; presses that choose several members and let one go, the send, and the three buttons, with the paints read from the screen; the keyboard alone; runs chosen with Shift and everyone with Control+A; requests of assistive technology; and a phone profile, where a finger drags the scroll bar to reach more members. They passed in headless Chromium with software WebGL2.
 
-Input was injected through the automation protocol. A person, a physical mouse, finger or keyboard, a screen reader or other assistive technology, a hardware GPU, WebGPU, Edge, Safari, Firefox and a real phone were not run. A range of rows is not chosen at once: there is no Shift with the arrow keys and no Control+A, and a finger does not pan the rows.
+Input was injected through the automation protocol. A person, a physical mouse, finger or keyboard, a screen reader or other assistive technology, a hardware GPU, WebGPU, Edge, Safari, Firefox and a real phone were not run. A run chosen with Shift only adds members: it has no anchor and lets nobody go, and a press with Shift is a press like any other. A finger does not pan the rows.

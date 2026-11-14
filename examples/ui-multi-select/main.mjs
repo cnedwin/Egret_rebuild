@@ -79,8 +79,16 @@ function rosterSource() {
       const bound = createControlKeys({ keyboard, target: content, kind: 'action', control: { enabled: true, press() {}, release() { flip(key); } } });
       const moves = { ArrowDown: index + 1, ArrowUp: index - 1, PageDown: index + 7, PageUp: index - 7, Home: 0, End: COUNT - 1 };
       const stop = content.on(keyboard.events.keyDown, event => {
-        if (event.defaultPrevented || !Object.hasOwn(moves, event.payload.code)) return;
-        event.preventDefault(); void go(Math.min(COUNT - 1, Math.max(0, moves[event.payload.code])));
+        const { code, shiftKey, ctrlKey, metaKey, altKey } = event.payload;
+        if (event.defaultPrevented || altKey) return;
+        // Control+A, or the platform key with A, chooses everyone who is here. Taken, it does not select the text of the page.
+        if (ctrlKey || metaKey) { if (code === 'KeyA') { event.preventDefault(); chooseAll(); } return; }
+        if (!Object.hasOwn(moves, code)) return;
+        event.preventDefault();
+        const to = Math.min(COUNT - 1, Math.max(0, moves[code]));
+        // With Shift a movement key chooses every member from the row it leaves to the row it reaches. It lets nobody go.
+        if (shiftKey) { for (let at = Math.min(index, to); at <= Math.max(index, to); at++) if (!away.has(keyOf(at))) chosen.add(keyOf(at)); show(); }
+        void go(to);
       });
       paint();
       pending.set(key + ':' + context.bindingGeneration, { paint, hovered: () => pointed.hovered, dispose() { stop(); bound.dispose(); held.dispose(); pointed.dispose(); } });
@@ -98,6 +106,7 @@ const root = createUiRoot({
   keyboard: { input: keyboard, idPrefix: 'roster', tabStop: 1 }, limits: { overscan: 1, residentCap: 24 },
 });
 const list = root.list('members');
+function chooseAll() { for (const key of free()) chosen.add(key); show(); }
 /** One member is chosen or let go. The others stay as they are. */
 function flip(key) { if (away.has(key)) return; if (!chosen.delete(key)) chosen.add(key); show(); }
 
@@ -124,7 +133,7 @@ function button(id, box, text, tabIndex, act) {
 }
 const free = () => versions.map((_, index) => keyOf(index)).filter(key => !away.has(key));
 const buttons = {
-  all: button('all', { x: 346, y: 84, width: 114, height: 30 }, '全选 / All', 2, () => { for (const key of free()) chosen.add(key); show(); }),
+  all: button('all', { x: 346, y: 84, width: 114, height: 30 }, '全选 / All', 2, chooseAll),
   clear: button('clear', { x: 346, y: 122, width: 114, height: 30 }, '清除 / Clear', 3, () => { chosen.clear(); show(); }),
   send: button('send', { x: 346, y: 176, width: 114, height: 36 }, '派遣 / Send', 4, () => { void send(); }),
 };
