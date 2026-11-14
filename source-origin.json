@@ -582,8 +582,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 48363,
-      "sha256": "599fd9e4d5dda1da7c6c190193aa282e26efbc9af2541197c4f3001b2f5c0743",
+      "bytes": 48738,
+      "sha256": "1c1e55a8d7e7cfa217514003861b546dc00c0f812d4dbdcca5485fa10008dd33",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -786,8 +786,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 25938,
-      "sha256": "e43a874561fcebc415d5e5db44eb366d9eb3f0f3957742a33806fd80122eedce",
+      "bytes": 26561,
+      "sha256": "52befd626a0d046781a75c702a81d6fe9bfc2151c9e6aa84b760b8fc983a0760",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -1044,8 +1044,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/工程规划.md",
-      "bytes": 14092,
-      "sha256": "a323abb6cc8154c6dd46e3b2bfd556ad450dc69fd242977a0b1c22fef269d38b",
+      "bytes": 14059,
+      "sha256": "9710adace5ecc75a31aee871af5e827d21c5fb2919fb02a16d241201b3085265",
       "identityHistory": [
         {
           "bytes": 23962,
@@ -2072,7 +2072,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 137800,
-      "sha256": "1299dc9308cab6c2ee040839dc035f263b9b96ec62ab9b112a390d4ad4c94349",
+      "sha256": "47c5efb482c6faf12ea2decc0e3a66aacba8de11d962664bf6e2a6f0be00c0fa",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2113,8 +2113,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 53569,
-      "sha256": "4dce2d8f99120258973d0538040cbbc073dc17e34621cec70027f803dfe16296",
+      "bytes": 53942,
+      "sha256": "e583b64921f9c5e2ee159e6124c16b6a12f1dd4b1bee66b0ac8bd51f1f93f638",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2506,8 +2506,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 28928,
-      "sha256": "8e6d17943c5bbe0d73ee2ae811e014e75576b624137f6563e58fa7204d787a2e",
+      "bytes": 29603,
+      "sha256": "78ae8bc494a3a84d7085e74857d2b1711b1b92b5274e39b4a0000fa4765f180d",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -2644,8 +2644,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-plan.md",
-      "bytes": 16741,
-      "sha256": "f52045668c1bbabf908077954c4fbf2dc39ad456201e9d883f2f6b8f34557b01",
+      "bytes": 16601,
+      "sha256": "7d2bf8820e8c3911fcc56705f2f7d56368c2f9fe85bea3fd8d6260f8320a4a68",
       "identityHistory": [
         {
           "bytes": 29962,
@@ -3746,7 +3746,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "eb6c138fdd13055c5e35a633d1d40ce8985a7af2d41997dd1c1cc264293ae615",
+      "sha256": "f917022731d9c662fc434a660f8f2cefe041f32d69b271fff21a0f13a4fa1c8e",
       "bytes": 407673,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -4768,8 +4768,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "d301e944259e2d52950105d141f4bbc37dac5d456fbcaf624f0e6dd804c3553c",
-      "bytes": 24286,
+      "sha256": "945093a444c60357505663e737891f4d092c0b960d2f1914c4d54829768821a5",
+      "bytes": 27827,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -4911,8 +4911,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "c449c44b91d981a7d40c27b5a06ac390133b739179a85e1e71ee1cb7b8428b26",
-      "bytes": 23580,
+      "sha256": "835a4ffa7fc8bcf958d8bd813c0f2fad94cfdd8fa23dc61f0091dc8f26063821",
+      "bytes": 27090,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -16905,14 +16905,14 @@
     {
       "path": "knowledge-base/en/docs/ui-semantics.md",
       "originRole": "First-party guide to the semantic tree and its browser projection; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 21749,
-      "sha256": "9e134feac480f333d20c340c638ab1fb5a5cb4c545399faea24abde6809b4afb"
+      "bytes": 21819,
+      "sha256": "29e0b26de6c694956948a1805b7906bbc376e5759d65bc1a5f62eb4edb209196"
     },
     {
       "path": "knowledge-base/Cns/docs/ui-semantics.md",
       "originRole": "First-party Simplified Chinese guide to the semantic tree and its browser projection; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 21099,
-      "sha256": "1b460e1766d746d25d2fb4a364265d3bb913d024b9e710ed4978dc3b885ffa31"
+      "bytes": 21163,
+      "sha256": "0d190612c5ac772a22eee1b4cfbc2b291afc160cd3fb7376167d028ad853f2ab"
     },
     {
       "path": "contributions/ui-semantics.json",
@@ -17265,26 +17265,26 @@
     {
       "path": "examples/ui-multi-select/main.mjs",
       "originRole": "First-party example of several rows of a managed list chosen at once, with keys, a scroll bar and semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
-      "bytes": 17140,
-      "sha256": "267a685b29e2a57baad0639799267bd2cffb07502174eba2bb51319d37122f7d"
+      "bytes": 17780,
+      "sha256": "76a5e3f4dc93cc0804bbc20b455766d8a674e2dfe4022787bb6cf15f5d031816"
     },
     {
       "path": "examples/ui-multi-select/verify.mjs",
       "originRole": "First-party real-browser check of the multiple selection example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 15356,
-      "sha256": "6175adf3717e86c010715cb6e61ce38325c3c0425a6396441740e8d94644b42c"
+      "bytes": 17798,
+      "sha256": "974cf95d9bdcc52fe4f15a1159d678e4218a8d9cd0f30f7a1b0439f0e61936f9"
     },
     {
       "path": "examples/ui-multi-select/README.md",
       "originRole": "First-party instructions for the multiple selection example; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 3997,
-      "sha256": "5e4914708220c9dce2bab9b6b32f1f273d5fef83b573961c05823e94dc35aeb1"
+      "bytes": 4302,
+      "sha256": "bbea0c8bfe2905feb0d3dfa201c464ce83d90a5e48c6df2bf8e6277339fd9c7f"
     },
     {
       "path": "examples/ui-multi-select/README.zh-CN.md",
       "originRole": "First-party Simplified Chinese instructions for the multiple selection example; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 3862,
-      "sha256": "2f27e587a5c96dae98fcb0b9daf0231ad467f4da5af69faa4b93d52fface8154"
+      "bytes": 4172,
+      "sha256": "256ec775888a73bd12818e0e644fc7f2e96e58d1e36342606954399c8311aa97"
     },
     {
       "path": "contributions/ui-multi-select-example.json",
