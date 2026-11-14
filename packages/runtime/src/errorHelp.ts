@@ -137,6 +137,7 @@ const WRITTEN: Readonly<Record<string, string>> = {
   RENDERER_REQUIRED: 'The Engine was asked to draw and was created without a Host that draws. Give createEngine a Host from createSharedWebGL2Host or createSharedWebGPUHost.',
   OWNERSHIP_CONFLICT: 'The object already belongs to another scope. An object is given to one scope with scope.use, once.',
   DISPLAY_VALUE_INVALID: 'A value given to a display object is not valid: positions, scales and rotation are finite numbers, alpha is 0 to 1 and visible is a boolean.',
+  DISPLAY_SIZE_UNAVAILABLE: 'The object draws nothing, so it has no width or height to scale to a size. Draw it first, or set scaleX and scaleY.',
   DISPLAY_CYCLE: 'A container cannot be added to itself or to one of its own descendants.',
   DISPLAY_TREE_INVARIANT: 'The display tree changed while it was being walked, or a node was reached twice. Do not change the tree from inside a capture or a query.',
   STAGE_ROOT_ONLY: 'The stage is the root of the tree: it cannot be added to a container or disposed by itself.',

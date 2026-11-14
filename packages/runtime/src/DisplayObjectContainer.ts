@@ -109,6 +109,13 @@ export class DisplayObjectContainer extends DisplayObject {
     detachChildren(this);
   }
 
+  /** The first child with this name, or undefined. Children's own children are not looked at. */
+  public getChildByName(name: string): DisplayObject | undefined {
+    if (typeof name !== 'string') throw new EgretError('DISPLAY_VALUE_INVALID');
+    for (let index = 0, count = childCountOf(this); index < count; index++) { const child = childAtOf(this, index); if (child !== undefined && child.name === name) return child; }
+    return undefined;
+  }
+
   public getChildAt(index: number): DisplayObject {
     this.validateIndex(index);
     const child = childAtOf(this, index);

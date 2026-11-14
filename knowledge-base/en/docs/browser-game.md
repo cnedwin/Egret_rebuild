@@ -35,7 +35,12 @@ That is a whole game: the square moves. `await game.dispose()` ends it.
 | The frame loop | `game.loop` | `createBrowserFrameLoop`, see [the frame loop](frame-loop.md) |
 | The panel, if asked for | `game.stats` | `createBrowserStatsPanel`, below |
 
-`await game.loadTexture(url)` loads a PNG image and gives the lease of its texture, for `new Bitmap(lease)` or `graphics.beginBitmapFill(lease)`; the lease belongs to `game.scope`, and one address loaded twice is one texture. Other formats are not read: use the [content build](content-build-pipeline.md) for them. `game.host` is the Host, for its status. `game.frame` is the frame the loop draws, and `game.toStage(clientX, clientY)` turns a place on the page, as a pointer event of the page gives it, into a place on the stage.
+`await game.loadTexture(url)` loads a PNG image and gives the lease of its texture, for `new Bitmap(lease)` or `graphics.beginBitmapFill(lease)`; the lease belongs to `game.scope`, and one address loaded twice is one texture. Other formats are not read: use the [content build](content-build-pipeline.md) for them. `game.host` is the Host, for its status.
+
+**Text.** `const label = await game.createLabel({ text: '金币 0', fontSize: 14, color: 0xf0c030, locale: 'zh' })` makes a line of text; add `label.display` to the stage and place it, then set `label.text` whenever the words change. The new words are drawn when they are ready and the old ones stay until then; `await label.ready` waits for them. The fonts are the page's own: a system family, or one the page has loaded. The first label loads the page's text rasterizer, so the import map needs `@egret/engine/text`, `@egret/engine/web/text` and `@egret/runtime/text`.
+
+**Fitting the canvas.** With `fit`, the game sizes the canvas inside its element now and whenever that element changes size, centred. The element needs a size of its own: one that takes its height from the canvas has nothing to fit to. With `'cover'` the canvas is larger than the element, which should hide what overflows. The stage keeps its width and height in its own units in every mode, and pointer places follow the canvas.
+ `game.frame` is the frame the loop draws, and `game.toStage(clientX, clientY)` turns a place on the page, as a pointer event of the page gives it, into a place on the stage.
 
 ## Options
 
@@ -50,6 +55,7 @@ That is a whole game: the square moves. `await game.dispose()` ends it.
 | `onError(error)` | Told once of what stopped the loop | The failure is thrown where the console shows it |
 | `pointer`, `keyboard` | `false` leaves that input out | Both are made |
 | `stats` | `true` shows the panel | No panel |
+| `fit`, `fitTo` | How the canvas fills an element: `'contain'` whole inside it, `'cover'` covering it, `'stretch'` to its shape. `fitTo` is that element | `'none'`, and the canvas's parent |
 | `autoStart` | `false` leaves the loop for `game.loop.start()` to start | The loop starts at once |
 
 What is not a valid option is refused with `BROWSER_GAME_OPTIONS_INVALID` before anything is made.

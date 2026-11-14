@@ -329,6 +329,7 @@
 | `DISPLAY_ACTIVE` | 显示对象仍在活动中。 |
 | `DISPLAY_CHILD_CLEANUP_FAILED` | 清理显示对象时失败。各个原因在 cleanupErrors 中。 |
 | `DISPLAY_CYCLE` | 容器不能添加到它自己或它的后代中。 |
+| `DISPLAY_SIZE_UNAVAILABLE` | 该对象没有画任何内容，所以没有可以缩放到指定大小的宽或高。请先绘制，或者直接设置 scaleX 和 scaleY。 |
 | `DISPLAY_VALUE_INVALID` | 交给显示对象的值无效：位置、缩放和旋转是有限数字，alpha 在 0 到 1 之间，visible 是布尔值。 |
 
 ### DISPLAY_EFFECT

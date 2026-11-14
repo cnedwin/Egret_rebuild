@@ -329,6 +329,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `DISPLAY_ACTIVE` | This is still active: a display object. |
 | `DISPLAY_CHILD_CLEANUP_FAILED` | Cleaning up a display object failed. Each cause is in cleanupErrors. |
 | `DISPLAY_CYCLE` | A container cannot be added to itself or to one of its own descendants. |
+| `DISPLAY_SIZE_UNAVAILABLE` | The object draws nothing, so it has no width or height to scale to a size. Draw it first, or set scaleX and scaleY. |
 | `DISPLAY_VALUE_INVALID` | A value given to a display object is not valid: positions, scales and rotation are finite numbers, alpha is 0 to 1 and visible is a boolean. |
 
 ### DISPLAY_EFFECT

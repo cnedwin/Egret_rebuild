@@ -101,6 +101,7 @@ export const ZH_WRITTEN: Readonly<Record<string, string>> = {
   RENDERER_REQUIRED: '要求 Engine 绘制，但创建它时没有给能绘制的 Host。请把 createSharedWebGL2Host 或 createSharedWebGPUHost 得到的 Host 交给 createEngine。',
   OWNERSHIP_CONFLICT: '对象已经属于另一个作用域。一个对象只能用 scope.use 交给一个作用域，且只交一次。',
   DISPLAY_VALUE_INVALID: '交给显示对象的值无效：位置、缩放和旋转是有限数字，alpha 在 0 到 1 之间，visible 是布尔值。',
+  DISPLAY_SIZE_UNAVAILABLE: '该对象没有画任何内容，所以没有可以缩放到指定大小的宽或高。请先绘制，或者直接设置 scaleX 和 scaleY。',
   DISPLAY_CYCLE: '容器不能添加到它自己或它的后代中。',
   DISPLAY_TREE_INVARIANT: '显示树在遍历过程中发生了变化，或者某个节点被到达了两次。不要在捕获或查询的过程中修改显示树。',
   STAGE_ROOT_ONLY: '舞台是显示树的根：不能把它添加到容器中，也不能单独销毁它。',

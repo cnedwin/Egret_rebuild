@@ -20,6 +20,13 @@ const BLENDS = Object.freeze({ normal: 'normal', add: 'add-accumulate', multiply
 // Equality is checked only after the original validation; signed zero stays distinct.
 const sameVisualValue = Object.is;
 
+/** The scale that gives a size on the parent from a size in the object's own units, with the sign the scale had. */
+function sizeScale(value: unknown, own: number, scale: number): number {
+  if (!finite(value) || (value as number) < 0) throw new EgretError('DISPLAY_VALUE_INVALID');
+  if (own === 0) { if (value === 0) return scale; throw new EgretError('DISPLAY_SIZE_UNAVAILABLE'); }
+  return (scale < 0 ? -1 : 1) * (value as number) / own;
+}
+
 /** A live display node; detach and terminal dispose are separate operations. */
 export class DisplayObject extends EventDispatcher {
   public constructor() { super(); registerNode(this); registerVisual(this); registerDisplayHitNode(this); }
@@ -77,6 +84,41 @@ export class DisplayObject extends EventDispatcher {
     state.rotation = value;
     if (changed) recordVisualChange(this, VISUAL_TRANSFORM);
   }
+  /** Degrees by which the y axis is turned beyond the rotation, so that upright lines lean. 0 unless set. */
+  public get skewX(): number { return visualOf(this).skewX; }
+  public set skewX(value: number) {
+    assertVisualMutable(this);
+    if (!finite(value)) throw new EgretError('DISPLAY_VALUE_INVALID');
+    const state = visualOf(this), changed = !sameVisualValue(state.skewX, value);
+    state.skewX = value;
+    if (changed) recordVisualChange(this, VISUAL_TRANSFORM);
+  }
+  /** Degrees by which the x axis is turned beyond the rotation, so that level lines slope. 0 unless set. */
+  public get skewY(): number { return visualOf(this).skewY; }
+  public set skewY(value: number) {
+    assertVisualMutable(this);
+    if (!finite(value)) throw new EgretError('DISPLAY_VALUE_INVALID');
+    const state = visualOf(this), changed = !sameVisualValue(state.skewY, value);
+    state.skewY = value;
+    if (changed) recordVisualChange(this, VISUAL_TRANSFORM);
+  }
+  /** A name the application gives the object, for `getChildByName`. Empty unless set; it changes nothing that is drawn. */
+  public get name(): string { return visualOf(this).name; }
+  public set name(value: string) {
+    assertVisualMutable(this);
+    if (typeof value !== 'string') throw new EgretError('DISPLAY_VALUE_INVALID');
+    visualOf(this).name = value;
+  }
+  /**
+   * The width the object takes on its parent: the width of what it and its children draw, in its own units, times its
+   * scaleX without the sign. Setting it sets scaleX, keeping its sign, so that the width becomes the value; an object
+   * that draws nothing has no width to scale and refuses any but 0.
+   */
+  public get width(): number { return this.getBounds().width * Math.abs(visualOf(this).scaleX); }
+  public set width(value: number) { this.scaleX = sizeScale(value, this.getBounds().width, visualOf(this).scaleX); }
+  /** As `width`, down the object and with scaleY. */
+  public get height(): number { return this.getBounds().height * Math.abs(visualOf(this).scaleY); }
+  public set height(value: number) { this.scaleY = sizeScale(value, this.getBounds().height, visualOf(this).scaleY); }
   public get alpha():number { return visualOf(this).alpha; }
   public set alpha(value: number) {
     assertVisualMutable(this);
