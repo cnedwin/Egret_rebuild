@@ -22,11 +22,11 @@ Years later, as times change and technology advances, many developers continue t
 
 | 领域 | 主干已有能力 | 仍需完成 |
 | --- | --- | --- |
-| 渲染与资源 | WebGPU／WebGL2 共享渲染、有序准备、资源组及选定设备恢复路径。固定 M1.2 全脏 Engine p95 中位数为 5.3 ms，目标为 8 ms。 | 更广泛的宿主／设备验收和剩余 [M1.2 帧节奏目标](https://github.com/cnedwin/Egret_rebuild/issues/55) |
-| 内容与动画 | PNG／图集／序列帧构建、多页图集和字体产物，可选 Spine 播放／显示与 RESET，兼容资源替换时保留序列播放状态 | 完整选定版本 Spine 参考与状态保留、纹理变体、组合生命周期和性能验收 |
-| UI 与文字 | 变高列表、焦点／导航、多语言多样式段落、文字几何、字体／主题切换、遮罩／模糊、受管弹出层／模态层及可选原生单／多行编辑 | 真实 IME、其余控件／语义以及更多文字与设备验收 |
+| 渲染与资源 | WebGPU／WebGL2 共享渲染、有序准备、资源组及选定设备恢复路径。历史固定 M1.2 全脏 Engine p95 中位数为 5.3 ms，目标为 8 ms。 | 更广泛的宿主／设备验收和剩余 [M1.2 帧节奏目标](https://github.com/cnedwin/Egret_rebuild/issues/55) |
+| 内容与动画 | PNG、多页图集、序列帧和字体构建。可选 Spine JSON 支持共享渲染、有界跳转／重放和播放保留替换，包含已支持的混合状态。 | 更广的 Spine 参考、导出器及纹理变体，以及真机生命周期验收 |
+| UI 与文字 | 变高列表、主题控件、键盘导航和语义投影。多语言多样式段落、共享特效、弹出层／模态层和可选原生编辑。 | 真人输入法与辅助技术、最新控件的硬件和手机验证，以及更广文字与场景验收 |
 | 3D | [可选 World3D](knowledge-base/Cns/docs/world3d.md) 支持 glTF、光照与阴影、后处理、动画、文字、自动实例化和加速拾取。物理预览包含形状扫掠、组合刚体、分片求解和玩法辅助组件。 | 更多资产、设备性能和工程创作整合 |
-| 集成 | [可编辑换装工作室](examples/outfit-studio/README.zh-CN.md)，含可编辑 SharedFrame2D 场景及桌面／移动负载变体 | 选定功能覆盖、完整性能／设备验收和核心预览交接 |
+| 集成 | [换装工作室](examples/outfit-studio/README.zh-CN.md)可在运行中的浏览器内打开与导出工程。引擎包已在干净工程中完成软件 WebGL2 浏览器冒烟检查。 | 工程打开的稳定性和移动端验证、正式混合场景验收及预览交接 |
 
 [Android 真机观察](knowledge-base/Cns/docs/android-device-validation.md)覆盖已测试手机上的特定组件和混合场景。设备、输入及性能的验收范围见[当前能力图](knowledge-base/Cns/docs/core-progress.md)。
 
@@ -38,7 +38,7 @@ Years later, as times change and technology advances, many developers continue t
     pnpm check:quick
     pnpm example:browser
 
-[上手指南](knowledge-base/Cns/docs/getting-started.md)说明环境、预期结果和排错方法。可体验[换装工作室](examples/outfit-studio/README.zh-CN.md)、[响应式示例](examples/mobile/README.zh-CN.md)、[UI 段落](examples/paragraph-panel/README.zh-CN.md)和[序列替换](examples/sequence-reset/README.zh-CN.md)。固定档位用于验收，响应式预览用于体验界面。
+[上手指南](knowledge-base/Cns/docs/getting-started.md)说明环境、预期结果和排错方法。可体验[换装工作室](examples/outfit-studio/README.zh-CN.md)、[响应式示例](examples/mobile/README.zh-CN.md)、[UI 段落](examples/paragraph-panel/README.zh-CN.md)、[序列替换](examples/sequence-reset/README.zh-CN.md)和[综合设置页](examples/ui-settings/README.zh-CN.md)。固定档位用于验收，响应式预览用于体验界面。
 
 [WebGL2 等距地图示例](examples/isometric-map/README.zh-CN.md)展示小型网格场景的深度排序和帧提交。
 
@@ -56,9 +56,9 @@ Years later, as times change and technology advances, many developers continue t
 
 - **面向辅助技术的语义：**`@egret/engine/ui/semantics` 描述游戏所绘的控件，`@egret/engine/web/semantics` 把角色、名称和状态投射到页面，键盘仍属于画布。`createUiListSemantics` 跟随托管虚拟列表的各行。已对照无头 Chromium 的无障碍树检查，未使用读屏软件验证。见[指南](knowledge-base/Cns/docs/ui-semantics.md)、[控件示例](examples/ui-controls/README.zh-CN.md)和[列表示例](examples/ui-list-semantics/README.zh-CN.md)。
 - **悬停与滚轮：**`@egret/engine/web/hover` 告诉游戏鼠标或手写笔正指向哪个显示对象，并把滚轮交给它，与触点输入共用同一个画布。见[指南](knowledge-base/Cns/docs/pointer-hover.md)和[示例](examples/pointer-hover/README.zh-CN.md)。
-- **画布上的文字输入：**`@egret/engine/web/text-input` 把平台文本框盖在舞台的一个矩形上，玩家可以输入中文以及平台能输入的任何文字，2D 和 3D 游戏都适用。见[指南](knowledge-base/Cns/docs/text-input.md)和[示例](examples/text-input/README.zh-CN.md)。`@egret/engine/ui` 的 `createTextFieldControl` 保存自绘文本框的文字，并在按下或按键时打开这个输入，见[表单示例](examples/ui-text-field/README.zh-CN.md)。
+- **画布上的文字输入：**`@egret/engine/web/text-input` 把平台文本框盖在舞台的一个矩形上，供 2D 和 3D 游戏使用平台文字输入。实测范围以浏览器和输入法为准。见[指南](knowledge-base/Cns/docs/text-input.md)和[示例](examples/text-input/README.zh-CN.md)。`@egret/engine/ui` 的 `createTextFieldControl` 保存自绘文本框的文字，并在按下或按键时打开这个输入，见[表单示例](examples/ui-text-field/README.zh-CN.md)。
 - **原生编辑切片：**[单／多行编辑与托管 UI（#89）](https://github.com/cnedwin/Egret_rebuild/issues/89)复用段落几何、焦点及资源生命周期。见[契约](knowledge-base/Cns/docs/native-text-editing.md)、[响应式表单](examples/text-editing/README.zh-CN.md)和[三星 Android 键盘／生命周期观察](knowledge-base/Cns/docs/android-native-text-editing.md)；其他输入法／设备、剪贴板、无障碍及完整工作包继续开放。
-- **集成与动画**。在[可编辑混合示例（#91）](https://github.com/cnedwin/Egret_rebuild/issues/91)上补齐选定功能，或根据[Spine RESET 契约](knowledge-base/Cns/docs/spine-reset-slot.md)与[序列兼容替换契约](knowledge-base/Cns/docs/序列动画RESET替换.md)完善[动画生命周期与 Spine 兼容替换（#86）](https://github.com/cnedwin/Egret_rebuild/issues/86)。
+- **下一阶段。**完成[工程打开的稳定性和设备检查](https://github.com/cnedwin/Egret_rebuild/issues/91)，评审[当前渲染器的帧节奏协议](https://github.com/cnedwin/Egret_rebuild/issues/55)，准备[混合场景验收](https://github.com/cnedwin/Egret_rebuild/issues/92)。[干净工程的硬件检查](https://github.com/cnedwin/Egret_rebuild/issues/93)与 [Spine 生命周期验收](https://github.com/cnedwin/Egret_rebuild/issues/86)可并行推进。
 - **可独立参与**。欢迎授权素材与参考夹具、可复现问题、聚焦代码、翻译和[独立新贡献者演练（#52）](https://github.com/cnedwin/Egret_rebuild/issues/52)。共享输入接口的修改沿用 #89 和 #90，覆盖受影响的桌面和移动端用例。
 - **按完整工作包推进：**[M2 内容／动画](https://github.com/cnedwin/Egret_rebuild/issues/56)、[M3 UI／文字／输入](https://github.com/cnedwin/Egret_rebuild/issues/57)和[M4 集成](https://github.com/cnedwin/Egret_rebuild/issues/58)。增量合并不会自动关闭整个工作包的验收要求。
 
@@ -70,6 +70,14 @@ Merged engineering increments for the current preview. 当前工程预览已合�
 
 | Delivery / 交付 | Main change | 主要变化 |
 | --- | --- | --- |
+| [#225](https://github.com/cnedwin/Egret_rebuild/pull/225) · [#226](https://github.com/cnedwin/Egret_rebuild/pull/226) · [#228](https://github.com/cnedwin/Egret_rebuild/pull/228) · [#230](https://github.com/cnedwin/Egret_rebuild/pull/230) · [#232](https://github.com/cnedwin/Egret_rebuild/pull/232) · [#234](https://github.com/cnedwin/Egret_rebuild/pull/234) · [#235](https://github.com/cnedwin/Egret_rebuild/pull/235) · [#238](https://github.com/cnedwin/Egret_rebuild/pull/238) · [#240](https://github.com/cnedwin/Egret_rebuild/pull/240) · [#242](https://github.com/cnedwin/Egret_rebuild/pull/242) | Integrated settings, keyboard focus groups, sliders, tabs, progress semantics, row dropdowns, scrollbars and multi-select | 整合设置页、键盘焦点组、滑条、标签页、进度语义、行下拉、滚动条与多选 |
+| [#209](https://github.com/cnedwin/Egret_rebuild/pull/209) · [#215](https://github.com/cnedwin/Egret_rebuild/pull/215) · [#216](https://github.com/cnedwin/Egret_rebuild/pull/216) · [#222](https://github.com/cnedwin/Egret_rebuild/pull/222) · [#223](https://github.com/cnedwin/Egret_rebuild/pull/223) | Hover and wheel routing, canvas text fields and semantic projection for controls, lists and layers | 悬停与滚轮路由、画布文本框，以及控件、列表和图层的语义投影 |
+| [#213](https://github.com/cnedwin/Egret_rebuild/pull/213) · [#218](https://github.com/cnedwin/Egret_rebuild/pull/218) · [#219](https://github.com/cnedwin/Egret_rebuild/pull/219) | Bounded Spine seek/replay, an original physics-constraint fixture and playback-preserving replacement during a mix | Spine 有界跳转／重放、物理约束原创测试夹具，以及混合过程中的播放保留替换 |
+| [#207](https://github.com/cnedwin/Egret_rebuild/pull/207) · [#217](https://github.com/cnedwin/Egret_rebuild/pull/217) | Packed engine checked from a clean project in Node and a software WebGL2 browser smoke | 在干净工程中通过 Node 验证引擎包，并完成软件 WebGL2 浏览器冒烟检查 |
+| [#205](https://github.com/cnedwin/Egret_rebuild/pull/205) | Pending direct WebGPU readback recovers from confirmed device loss on Windows Edge and Fold7 Chrome | Windows Edge 与 Fold7 Chrome 验证直接 WebGPU 回读在确认设备丢失后恢复 |
+| [#204](https://github.com/cnedwin/Egret_rebuild/pull/204) · [#200](https://github.com/cnedwin/Egret_rebuild/pull/200) | Browser project opening in Outfit Studio and orientation reflow for its mobile backdrop | 换装工作室在浏览器内打开工程，移动背景支持旋转重排 |
+| [#201](https://github.com/cnedwin/Egret_rebuild/pull/201) · [#202](https://github.com/cnedwin/Egret_rebuild/pull/202) · [#203](https://github.com/cnedwin/Egret_rebuild/pull/203) | World3D Worker, ragdoll and vehicle fixes, with scoped Windows and Fold7 observations | 修复 World3D Worker、布娃娃与载具问题，并记录 Windows 和 Fold7 的限定验证 |
+| [#198](https://github.com/cnedwin/Egret_rebuild/pull/198) · [#199](https://github.com/cnedwin/Egret_rebuild/pull/199) | Separate GPU timer queries from paced benchmarking and release direct 2D batch scratch after submission | 将 GPU 计时查询与帧节奏基准分开，并在直接提交后释放 2D 合批暂存 |
 | [#195](https://github.com/cnedwin/Egret_rebuild/pull/195) | Optional canvas text input with a native browser field and composition support | 可选画布文字输入，接入浏览器原生文本框与组合输入 |
 | [#193](https://github.com/cnedwin/Egret_rebuild/pull/193) | Opt-in frame and hitch monitor for game debugging | 可选帧时与卡顿调试面板 |
 | [#187](https://github.com/cnedwin/Egret_rebuild/pull/187) · [#188](https://github.com/cnedwin/Egret_rebuild/pull/188) · [#190](https://github.com/cnedwin/Egret_rebuild/pull/190) | SharedFrame2D becomes the sole 2D frame path and retains stable capture, packing and batches | SharedFrame2D 成为统一 2D 帧路径，复用稳定捕获、打包与批次 |
