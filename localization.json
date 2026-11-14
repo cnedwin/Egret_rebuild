@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "c5d3c2d6c863de08463f447c86782a1bcaef173c106a32c0dc9dd4b76fde672a",
-      "zhSha256": "2f5fe3a20fbc0af3f0deb3e6658b1ff28e33a9392a364436250860febd497f07"
+      "enSha256": "896e8b393a44abbed2c04543362a20ee415c3251e04528ccaa3641d722fc7df2",
+      "zhSha256": "f948d9bc4bb823a41984d26ea0ece60039f12ef38b0a953073fa56a99edad977"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -2390,8 +2390,8 @@
       "en": "knowledge-base/en/docs/ui-semantics.md",
       "zh": "knowledge-base/Cns/docs/ui-semantics.md",
       "kind": "public_reading",
-      "enSha256": "d1fa114d76224a652e094dce7475f5c16ca7ea64cfc3f11c73387315e736b710",
-      "zhSha256": "643cac9a9f62e4ce8767495dc198dedf23cce8f57a80ea333f85136038120b62"
+      "enSha256": "da6464a6af4a2cc9a0faeece30e11527a7b51ab96207a71beaa36f01e8363e1a",
+      "zhSha256": "ad264e680ba2af7e351c32edd8abc0aec8ce59d9ec95da448728627725ca037a"
     },
     {
       "en": "examples/ui-text-field/README.md",
@@ -2418,8 +2418,8 @@
       "en": "examples/ui-dropdown/README.md",
       "zh": "examples/ui-dropdown/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "0b554ffadc5a18f55e54372558439a246cd645d0df39e521674d854dc9dc6409",
-      "zhSha256": "0061af0b2c398b0a8f579cf58dd1605c0a168487f7ef6049f200adef273d14b1"
+      "enSha256": "52b3fdc83abbf1b15a17b29a3bb4717fa325b43a4e6c2c10d5885a4c42fd61b5",
+      "zhSha256": "e493ec2275ef5b20226a5a1889b8708737d0ea8dc0ae37d9bc2cd2677ea8308a"
     },
     {
       "en": "examples/ui-tabs/README.md",
@@ -5172,11 +5172,11 @@
     },
     {
       "path": "examples/ui-dropdown/main.mjs",
-      "sha256": "760676679477663ff0671a457182adc68f53cb24078e189df0a9d7761c7142f2"
+      "sha256": "d271e0e06a0f589797d3c2ef8bd027f822167320437dc65b939eb10632dec18b"
     },
     {
       "path": "examples/ui-dropdown/verify.mjs",
-      "sha256": "6892823d2b22631a782f0892693efb6f834ca3d4446255f3e60a0397a7ce66ef"
+      "sha256": "71265e860a4811a206f32f7583ef8a958b2a178df1666bdd2bea708a379b29b9"
     },
     {
       "path": "tests/ui-row-target.test.mjs",
