@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## One settings screen that joins the UI — 2026-11-14
+
+A new example puts the pieces of the UI on one screen: a switch, a group of options, a text field that takes Chinese, a theme switch, a button that asks in a modal card before it resets, and a managed list of two hundred profiles as one stop of the keyboard. Every control answers a press, its usual keys and a request of assistive technology through the same state. Changing the theme repaints the drawn controls, the rows, the text and the closed card in one frame. Eight scenarios pass in headless Chromium with software WebGL2; no hardware GPU, phone, input method or screen reader was run. It has no mask or blur group and exercises no device recovery. Part of #90. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/README.md)
+
 ## A managed list as one stop of the keyboard — 2026-11-14
 
 `keyboard: {input, idPrefix, tabStop}` of a managed UI root makes the rows of its list one stop of the keyboard. Tab enters the list at the row that last held the focus, or at the first that shows, and leaves it from there, as it does a native list box; the application moves the focus among the rows. Without `tabStop` every row that shows remains a stop of its own. The list example uses it, and its real-browser check leaves the canvas with Tab and returns to the same row. Part of #89. [Guide](docs/ui-data-panel.md#managed-virtual-row-keyboard-focus)

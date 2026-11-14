@@ -187,6 +187,7 @@ const name = selectUiSkin(theme.skins.button, {
 | [`tests/ui-skin-states.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-skin-states.test.mjs)，6 项 | 皮肤给出的名称：每个状态单独成立、每两个状态同时成立、缺失的名称、应用自己的顺序、被拒绝的参数，以及严格 TypeScript 使用方 |
 | [`tests/ui-text-field.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-text-field.test.mjs)，17 项 | 真实 Engine 上的文本框，使用测试自备的编辑器：会话、草稿、长度上限、共用编辑器、出错的编辑器和监听器、语义节点，以及以平台文字输入为编辑器的严格 TypeScript 使用方 |
 | [`examples/ui-text-field/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-text-field/verify.mjs)，6 个场景 | 无头 Chromium 软件 WebGL2 真实页面中的两个文本框：通过浏览器协议驱动的输入法组字、键盘、一个文本框把编辑器交给另一个、无障碍树、禁用，以及手机配置 |
+| [`examples/ui-settings/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/verify.mjs)，8 个场景 | 把控件、按键、文本框、两套主题、托管列表、模态层和语义放在一起的[一个界面](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/README.zh-CN.md)，在无头 Chromium 的软件 WebGL2 中：只用键盘、按下、输入法组字、主题在一帧内切换、模态卡片、辅助技术的请求，以及手机配置 |
 
 向悬停、开关和多选一的构建产物逐个写入了二十九个错误，单元测试全部发现。向滚动控件写入的三十二个错误中发现了三十个，其余两个不改变调用者能看到的任何行为。向文本框控件写入的 114 个运算符错误中发现了 112 个，其余两个只是省去一次循环的捷径，不改变任何结果。向按键绑定写入的 100 个运算符错误全部被发现，向皮肤名称选择写入的 22 个也全部被发现。
 
