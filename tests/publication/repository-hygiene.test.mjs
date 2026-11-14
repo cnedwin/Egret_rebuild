@@ -85,7 +85,7 @@ async function fixture(autocrlf, body) {
       if (value === undefined) delete process.env[name]; else process.env[name] = value;
     }
     gitRead(root, ['init', '--initial-branch=main', '--template=' + template]);
-    put(root, '.gitattributes', Buffer.from('* -text\n'));
+    put(root, '.gitattributes', Buffer.from('* -text\nknowledge-base/en/CHANGELOG.md merge=union\nknowledge-base/Cns/CHANGELOG.md merge=union\n'));
     put(root, '.editorconfig', Buffer.from(
       'root = true\n\n[*]\ncharset = utf-8\nend_of_line = lf\n'
       + 'insert_final_newline = true\ntrim_trailing_whitespace = false\n',
@@ -122,7 +122,7 @@ async function fixture(autocrlf, body) {
     assert.equal(gitRead(root, ['config', '--get', 'core.autocrlf']).toString('utf8').trim(), autocrlf);
     assert.equal(gitRead(root, ['status', '--porcelain=v1', '-z', '-uall']).length, 0);
     for (const [relative, bytes] of [
-      ['.gitattributes', Buffer.from('* -text\n')], ['src/owned.ts', sourceBytes],
+      ['.gitattributes', Buffer.from('* -text\nknowledge-base/en/CHANGELOG.md merge=union\nknowledge-base/Cns/CHANGELOG.md merge=union\n')], ['src/owned.ts', sourceBytes],
       ['legacy/original.txt', legacyBytes], ['assets/original.bin', binaryBytes],
       ['third-party/upstream.LICENSE', licenseBytes],
     ]) {
