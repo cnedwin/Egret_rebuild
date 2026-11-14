@@ -2,10 +2,11 @@
 // A dropdown for each row of a managed list: a roster of forty members, each with a job. Activating a
 // row opens a second managed root as a popup layer anchored to that row, outside the clip of the
 // roster. The popup is a listbox of the jobs. A press, the keyboard and a request of assistive
-// technology all reach the same two functions: `openFor` and `choose`.
+// technology all reach the same two functions: `openFor` and `choose`. Each row takes the pointer through
+// the display object its binding is given: a hover control and an action control listen on it.
 import { createEngineForProfile, DisplayObjectContainer, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
 import { createTextRasterCache, createTextField } from '@egret/engine/text';
-import { createControlKeys, createScrollControl, createUiLayerManager, createUiRoot } from '@egret/engine/ui';
+import { createActionControl, createControlKeys, createHoverControl, createScrollControl, createUiLayerManager, createUiRoot } from '@egret/engine/ui';
 import { createUiListSemantics, createUiSemantics } from '@egret/engine/ui/semantics';
 import { createCanvasTextRasterProvider } from '@egret/engine/web/text';
 import { createBrowserSemantics } from '@egret/engine/web/semantics';
@@ -15,7 +16,8 @@ import { createBrowserKeyboardInput } from '@egret/engine/web/keyboard';
 import { createExampleHost } from '../host.mjs';
 
 const WIDTH = 480, HEIGHT = 320, FAMILY = 'Arial', ROW = 30, COUNT = 40, OPTION = 26, LIST = { x: 20, y: 44, width: 420, height: 240 }, CHIP = { x: 260, width: 160 };
-const COLORS = { page: 0x161a22, panel: 0x1f2633, row: 0x2b2f3a, rowAlt: 0x343a48, chip: 0x3d4a63, chipOpen: 0x56689a, option: 0x3d4a63, optionChosen: 0x2f8f6b, ink: 0xf3e9d2, hint: 0x9aa7c4, ring: 0xf2c14e, thumb: 0x56689a };
+const COLORS = { page: 0x161a22, panel: 0x1f2633, row: 0x2b2f3a, rowAlt: 0x343a48, rowHover: 0x454c5e, rowPressed: 0x232730, chip: 0x3d4a63, chipOpen: 0x56689a,
+  option: 0x3d4a63, optionHover: 0x56689a, optionPressed: 0x27314a, optionChosen: 0x2f8f6b, ink: 0xf3e9d2, hint: 0x9aa7c4, ring: 0xf2c14e, thumb: 0x56689a };
 const JOBS = ['idle', 'herbs', 'forge', 'guard', 'study'], JOB_NAMES = { idle: '待命 Idle', herbs: '采药 Herbs', forge: '锻造 Forge', guard: '守山 Guard', study: '修习 Study' };
 const HEROES = ['青锋', '白露', '玄霜', '赤霄', '紫电'];
 const keyOf = index => 'm' + index, indexOf = key => Number(key.slice(1)), nameOf = index => '弟子 ' + (index + 1) + ' ' + HEROES[index % 5];
@@ -29,8 +31,10 @@ const scope = engine.createScope();
 const cache = createTextRasterCache(engine.assets, { provider: createCanvasTextRasterProvider() });
 let textQueue = Promise.resolve();
 const inTurn = work => { const next = textQueue.then(work); textQueue = next.catch(() => {}); return next; };
-let renders = 0, failure, opened, registration, pressedRow, pressedOption, busy = Promise.resolve(), layersReady = false, revision = 0;
+let renders = 0, failure, opened, registration, queued = false, busy = Promise.resolve(), layersReady = false, revision = 0;
 const fail = cause => { failure = String(cause?.code ?? cause?.message ?? cause); };
+/** Paints once after the callbacks that are running: a row reports its hover and its press from inside the input, and from inside a commit when it is recycled. */
+const later = () => { if (queued) return; queued = true; queueMicrotask(() => { queued = false; show(); }); };
 const pointer = createBrowserPointerInput({ engine, scope, width: WIDTH, height: HEIGHT });
 const hover = createBrowserHoverInput({ engine, scope, canvas, width: WIDTH, height: HEIGHT, onError: fail });
 const keyboard = createBrowserKeyboardInput({ engine, scope, onFocusChange: () => queueMicrotask(show) });
@@ -71,11 +75,14 @@ function rosterSource() {
       const { key, index, width } = context, content = context.scope.use(new DisplayObjectContainer()), back = content.addChild(context.scope.use(new Sprite()));
       await line(content, 10, 6, 14, nameOf(index), COLORS.ink, context.scope);
       await line(content, CHIP.x + 8, 6, 14, JOB_NAMES[jobs[index]], COLORS.ink, context.scope);
+      // The row takes the pointer through its own display object: pointed at, held, and activated by a completed press.
+      const pointed = createHoverControl({ hover, target: context.target, onHoverChange: later });
+      const held = createActionControl({ input: pointer, target: context.target, onActivate: () => { void openFor(key); }, onPressChange: later });
       const paint = () => {
         const focus = list.getFocus(), focused = focus.focusVisible && focus.key === key && opened === undefined;
         back.graphics.clear();
         if (focused) back.graphics.beginFill(COLORS.ring).drawRect(0, 0, width, ROW - 2).endFill();
-        back.graphics.beginFill(index % 2 ? COLORS.rowAlt : COLORS.row).drawRect(focused ? 2 : 0, focused ? 2 : 0, width - (focused ? 4 : 0), ROW - 2 - (focused ? 4 : 0))
+        back.graphics.beginFill(held.pressed ? COLORS.rowPressed : pointed.hovered ? COLORS.rowHover : index % 2 ? COLORS.rowAlt : COLORS.row).drawRect(focused ? 2 : 0, focused ? 2 : 0, width - (focused ? 4 : 0), ROW - 2 - (focused ? 4 : 0))
           .beginFill(opened === key ? COLORS.chipOpen : COLORS.chip).drawRect(CHIP.x, 4, CHIP.width, ROW - 10).beginFill(COLORS.ink).drawRect(CHIP.x + CHIP.width - 16, 12, 8, 2).drawRect(CHIP.x + CHIP.width - 14, 14, 4, 2).endFill();
       };
       // Enter or Space opens the jobs of the row; the arrow keys move through the roster, which scrolls under the focus.
@@ -86,7 +93,7 @@ function rosterSource() {
         event.preventDefault(); void go(Math.min(COUNT - 1, Math.max(0, moves[event.payload.code])));
       });
       paint();
-      members.pending.set(key + ':' + context.bindingGeneration, { paint, dispose() { stop(); bound.dispose(); } });
+      members.pending.set(key + ':' + context.bindingGeneration, { paint, hovered: () => pointed.hovered, dispose() { stop(); bound.dispose(); held.dispose(); pointed.dispose(); } });
       return { content, measuredHeight: ROW };
     },
     unbind: members.unbind };
@@ -95,11 +102,6 @@ const root = createUiRoot({
   engine, scope, id: 'roster', viewport: { width: LIST.width, height: LIST.height }, origin: { x: LIST.x, y: LIST.y }, density: 1,
   tree: { id: 'members', kind: 'virtualList', source: rosterSource(), explicitWidth: LIST.width, explicitHeight: LIST.height },
   keyboard: { input: keyboard, idPrefix: 'roster', tabStop: 1 }, limits: { overscan: 1, residentCap: 24 }, input: pointer,
-  onRowPointer(notification) {
-    if (notification.kind === 'begin') pressedRow = notification.key;
-    else if (notification.kind === 'end') { if (pressedRow === notification.key) void openFor(notification.key); pressedRow = undefined; }
-    else if (notification.kind === 'cancel') pressedRow = undefined;
-  },
 });
 const list = root.list('members');
 
@@ -112,11 +114,13 @@ const popup = createUiRoot({
     async bind(context) {
       const { key, index, width } = context, content = context.scope.use(new DisplayObjectContainer()), back = content.addChild(context.scope.use(new Sprite()));
       await line(content, 8, 4, 14, JOB_NAMES[key], COLORS.ink, context.scope);
+      const pointed = createHoverControl({ hover, target: context.target, onHoverChange: later });
+      const held = createActionControl({ input: pointer, target: context.target, onActivate: () => { void choose(key); }, onPressChange: later });
       const paint = () => {
         const focus = options.getFocus(), focused = focus.focusVisible && focus.key === key, chosen = opened !== undefined && jobs[indexOf(opened)] === key;
         back.graphics.clear();
         if (focused) back.graphics.beginFill(COLORS.ring).drawRect(0, 0, width, OPTION).endFill();
-        back.graphics.beginFill(chosen ? COLORS.optionChosen : COLORS.option).drawRect(focused ? 2 : 0, focused ? 2 : 0, width - (focused ? 4 : 0), OPTION - (focused ? 4 : 0)).endFill();
+        back.graphics.beginFill(held.pressed ? COLORS.optionPressed : pointed.hovered ? COLORS.optionHover : chosen ? COLORS.optionChosen : COLORS.option).drawRect(focused ? 2 : 0, focused ? 2 : 0, width - (focused ? 4 : 0), OPTION - (focused ? 4 : 0)).endFill();
       };
       const bound = createControlKeys({ keyboard, target: content, kind: 'action', control: { enabled: true, press() {}, release() { void choose(key); } } });
       const moves = { ArrowDown: index + 1, ArrowUp: index - 1, Home: 0, End: JOBS.length - 1 };
@@ -126,15 +130,10 @@ const popup = createUiRoot({
         event.preventDefault(); options.focus(JOBS[Math.min(JOBS.length - 1, Math.max(0, moves[event.payload.code]))], { visible: true }); show();
       });
       paint();
-      choices.pending.set(key + ':' + context.bindingGeneration, { paint, dispose() { stop(); bound.dispose(); } });
+      choices.pending.set(key + ':' + context.bindingGeneration, { paint, hovered: () => pointed.hovered, dispose() { stop(); bound.dispose(); held.dispose(); pointed.dispose(); } });
       return { content, measuredHeight: OPTION };
     },
     unbind: choices.unbind } },
-  onRowPointer(notification) {
-    if (notification.kind === 'begin') pressedOption = notification.key;
-    else if (notification.kind === 'end') { if (pressedOption === notification.key) void choose(notification.key); pressedOption = undefined; }
-    else if (notification.kind === 'cancel') pressedOption = undefined;
-  },
 });
 const options = popup.list('options');
 // The popup may lie anywhere on the stage, so it escapes the clip of the roster; it flips above a row near the bottom.
@@ -171,6 +170,8 @@ function publish() {
     // A popup that was dismissed, or whose row is gone, is closed by the layers: the row is then no longer the open one.
     if (opened !== undefined && !popupOpen()) opened = undefined;
     scroll.scrollTo(list.snapshot().scrollOffset);
+    // A pointer that rests while the rows move under it sends nothing: the input picks again where it is.
+    hover.sync();
   };
   busy = busy.then(run).then(show, cause => { fail(cause); show(); });
   return busy;
@@ -212,6 +213,7 @@ export function readSnapshot() {
     focus: focus.focusedId, focusVisible: focus.focusVisible, row: list.getFocus().key, option: options.getFocus().key,
     rows: ui.rows.filter(row => row.visible).map(row => ({ key: row.key, index: row.index, x: LIST.x + row.box.x, y: LIST.y + row.box.y, width: row.box.width, height: row.box.height })),
     popup: layer === undefined || !layer.visible ? undefined : { x: place.origin.x, y: place.origin.y, width: CHIP.width, height: JOBS.length * OPTION },
+    hovered: [...members.realized].filter(([, row]) => row.hovered()).map(([key]) => key), hoveredOption: [...choices.realized].filter(([, row]) => row.hovered()).map(([key]) => key),
     renders, failure, realized: members.realized.size,
     semantics: { focused: semantics.snapshot.focused, nodes: semantics.snapshot.nodes.length, projection: projection.state },
   };

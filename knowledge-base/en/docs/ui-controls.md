@@ -46,6 +46,25 @@ const over = createHoverControl({ hover, target: button, onHoverChange: hovered 
 
 A disabled control is not hovered. The pointer may still be over it, and enabling the control again finds it there. When the target or a descendant leaves the stage under the pointer, the control still learns that the hover ended: it follows `hover.observe` as well as the events on its target.
 
+### Rows of a managed list
+
+The binding of a row of a [managed list](ui-data-panel.md) is given `context.target`, the display object of that row. The controls listen on it as on any other:
+
+```js
+bind(context) {
+  const pointed = createHoverControl({ hover, target: context.target, onHoverChange: repaint });
+  const held = createActionControl({ input, target: context.target, onActivate: () => open(context.key), onPressChange: repaint });
+  rows.set(context.key + ':' + context.bindingGeneration, { pointed, held });
+  return { content, measuredHeight };
+},
+unbind({ key, bindingGeneration }) {
+  const row = rows.get(key + ':' + bindingGeneration);
+  row.held.dispose(); row.pointed.dispose(); rows.delete(key + ':' + bindingGeneration);
+},
+```
+
+Dispose the controls in `unbind`. A row is recycled inside a commit of the root and its hover ends there, so a callback that repaints should wait until the commit is over, as with `queueMicrotask`. A pointer that rests while the list scrolls sends nothing: call `hover.sync()` after the commit, and the row that came under the pointer is the one pointed at. The [dropdown example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.md) does all of this.
+
 ## Toggle
 
 ```js
@@ -208,6 +227,7 @@ A skin has one name for each state, not one for each combination. A control that
 | --- | --- |
 | [`tests/ui-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-controls.test.mjs) | Movement and action on a genuine Engine |
 | [`tests/ui-state-controls.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-state-controls.test.mjs), 13 cases | Hover, toggle and selection on a genuine Engine, a strict TypeScript consumer and the exports |
+| [`tests/ui-row-target.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-row-target.test.mjs), 4 cases | A hover control and an action control on the display object a row binding is given, on a genuine Engine and a genuine UI root: a row that scrolls away, a row that is bound again, and a strict TypeScript consumer |
 | [`tests/ui-scroll-control.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-scroll-control.test.mjs), 13 cases | The scroll position on a genuine Engine: range, wheel units, nested viewports, the thumb and its drag, and a strict TypeScript consumer |
 | [`examples/ui-controls/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-controls/verify.mjs), 7 scenarios | A real page in headless Chromium with software WebGL2: mouse, touch and keys injected through the automation protocol, among them a key that is held, a hold that loses the focus, and the colour each state is painted with. Four further scenarios of the same file check the [semantic projection](ui-semantics.md) |
 | [`examples/pointer-hover/verify.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/pointer-hover/verify.mjs), 9 scenarios | The scroll control in a real page: the wheel, the hand-over to the page, a drag of the thumb, and its keys with their hand-over to the page |

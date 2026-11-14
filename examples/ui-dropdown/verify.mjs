@@ -43,6 +43,8 @@ const JOBS = ['idle', 'herbs', 'forge', 'guard', 'study'], JOB_NAMES = { idle: '
 const HEROES = ['青锋', '白露', '玄霜', '赤霄', '紫电'];
 const rowSpot = number => [120, 44 + (number - 1) * 30 + 14], chipSpot = number => [300, 44 + (number - 1) * 30 + 8], empty = [460, 300];
 const optionSpot = (popup, job) => [popup.x + 130, popup.y + JOBS.indexOf(job) * 26 + 13];
+// A place on a row between the name and the chip, where the paint of the row itself shows.
+const rowPaint = number => [240, 44 + (number - 1) * 30 + 14];
 const itemName = (index, job = JOBS[index % 5]) => '弟子 ' + (index + 1) + ' ' + HEROES[index % 5] + '，' + JOB_NAMES[job];
 const key = async (page, name) => { await page.keyboard.press(name); await settle(page); };
 const click = async (page, place) => { await page.mouse.click(...await at(page, place)); await settle(page); };
@@ -102,6 +104,21 @@ await scenario('a press opens the jobs under the chip of its row, and a press on
   assert.deepEqual([now.open, now.opened, now.popup, now.jobs.slice(0, 4)], [false, undefined, undefined, ['idle', 'guard', 'forge', 'guard']]);
   assert.equal(await tree(page), rosterLines(first.map((name, index) => index === 1 ? itemName(1, 'guard') : name)).join('\n'));
   assert.equal(await colour(page, chipSpot(2)), '3d4a63');
+  // A row that is pointed at is lit, and darker while it is held; the rows beside it are as they were.
+  await page.mouse.move(...await at(page, rowSpot(4))); await settle(page); now = await read(page);
+  assert.deepEqual([now.hovered, await colour(page, rowPaint(4)), await colour(page, rowPaint(3)), await colour(page, rowPaint(5))], [['m3'], '454c5e', '2b2f3a', '2b2f3a']);
+  await page.mouse.down(); await settle(page); assert.equal(await colour(page, rowPaint(4)), '232730');
+  // The release is the activation. With the pointer away again the row is as it was.
+  await page.mouse.up(); await settle(page); assert.deepEqual([(await read(page)).open, (await read(page)).opened], [true, 'm3']);
+  await click(page, empty); now = await read(page);
+  assert.deepEqual([now.open, now.hovered, await colour(page, rowPaint(4))], [false, [], '343a48']);
+  // The jobs are pointed at and held in the same way.
+  await click(page, rowSpot(1)); now = await read(page);
+  await page.mouse.move(...await at(page, optionSpot(now.popup, 'forge'))); await settle(page);
+  assert.deepEqual([(await read(page)).hoveredOption, await colour(page, optionSpot(now.popup, 'forge')), await colour(page, optionSpot(now.popup, 'idle'))], [['forge'], '56689a', '2f8f6b']);
+  await page.mouse.down(); await settle(page); assert.equal(await colour(page, optionSpot(now.popup, 'forge')), '27314a');
+  await page.mouse.up(); await settle(page); now = await read(page);
+  assert.deepEqual([now.open, now.jobs[0]], [false, 'forge']);
   // The job it has now is the one marked when the jobs open again; choosing the same job changes nothing.
   await click(page, rowSpot(2)); now = await read(page);
   assert.equal(await colour(page, optionSpot(now.popup, 'guard')), '2f8f6b');
@@ -175,6 +192,9 @@ await scenario('the wheel scrolls the roster, the jobs follow their row, and clo
   // Scrolled until the row has left the roster, the jobs are closed and gone from the tree.
   await page.mouse.wheel(0, 100); await settle(page); now = await read(page);
   assert.ok(now.offset === 140 && !now.rows.some(row => row.key === 'm2'));
+  // The pointer has not moved, and the row that came under it is the one that is lit.
+  const under = now.rows.find(row => row.y <= rowSpot(5)[1] && rowSpot(5)[1] < row.y + row.height).key;
+  assert.deepEqual([now.hovered, await colour(page, rowPaint(5))], [[under], '454c5e']);
   assert.deepEqual([now.open, now.opened, now.popup], [false, undefined, undefined]);
   assert.equal((await tree(page)).includes('listbox'), false);
   assert.equal(await page.evaluate(() => scrollY), 0, 'the wheel that scrolled the roster did not scroll the page');

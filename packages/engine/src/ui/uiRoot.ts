@@ -485,7 +485,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             width: w.width,
             density,
             scope: scope.scope,
-            signal: scope.signal
+            signal: scope.signal,
+            target: wrapper
         });
         binding.entered = true;
         bindTotal++;

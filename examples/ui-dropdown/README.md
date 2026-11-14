@@ -17,6 +17,7 @@ Keep the host and port the server prints and open `/examples/ui-dropdown/index.h
 
 ## What to try
 
+- Move a mouse over the roster and over the jobs: the row under it is lit, and darker while it is held.
 - Press a member. The jobs open under the chip at the end of the row, with the member's job marked. Press a job: the row shows it and the jobs close.
 - Press a member near the bottom. There is no room below, so the jobs stand above the row.
 - Open the jobs and press anywhere else. They close, and that press reaches nothing behind them.
@@ -27,7 +28,8 @@ Keep the host and port the server prints and open `/examples/ui-dropdown/index.h
 
 | Part | From |
 | --- | --- |
-| The roster | `createUiRoot` with a virtual list of forty records. A row is pressed whole, through `onRowPointer` |
+| The roster | `createUiRoot` with a virtual list of forty records |
+| The pointer on a row | The binding of a row is given `context.target`, the display object of the row. A `createHoverControl` and a `createActionControl` listen on it, so a row is pointed at, held and activated as a button is |
 | The jobs | A second `createUiRoot` with five rows |
 | The popup | `createUiLayerManager`. Each time a row is activated the jobs are registered as a `popup` with `anchor: { root, target: { kind: 'row', listId, key }, align: 'end' }` and `initialFocus` on the member's job, then opened |
 | A changed job | A new source for the roster whose record has another `contentVersion`: that row is bound again and keeps the focus |
@@ -49,4 +51,4 @@ node examples/ui-dropdown/verify.mjs <absolute Playwright index.mjs> <new absolu
 
 Without the third argument the installed Edge is launched headed. With `software` the browser that Playwright bundles runs headless with software rendering. Eight scenarios write `report.json` with a screenshot of each: the tree the browser computes while the jobs are closed; a press that opens them under the chip and a press that chooses, with the paints read from the screen; the popup below the clip of the roster, above a row near the bottom, and over the rows behind it; a press elsewhere; the keyboard alone; the wheel, with the jobs following their row and closing when it is gone; requests of assistive technology; and a phone profile. They passed in headless Chromium with software WebGL2.
 
-Input was injected through the automation protocol. A person, a physical mouse, wheel, finger or keyboard, a screen reader or other assistive technology, a hardware GPU, WebGPU, Edge, Safari, Firefox and a real phone were not run. A finger does not pan the roster: panning is a gesture, and none is recognized here, so on a phone the rows that show are the ones that can be reached without a keyboard. A pointer over a row of a managed list is not reported, so the jobs have no paint for it.
+Input was injected through the automation protocol. A person, a physical mouse, wheel, finger or keyboard, a screen reader or other assistive technology, a hardware GPU, WebGPU, Edge, Safari, Firefox and a real phone were not run. A finger does not pan the roster: panning is a gesture, and none is recognized here, so on a phone the rows that show are the ones that can be reached without a keyboard.

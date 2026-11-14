@@ -18,7 +18,7 @@ Managed root, shell and row wrappers reject direct geometry, hit-region, reparen
 
 ## Data, preparation and recycling
 
-A source supplies an immutable revision with unique string keys, content versions, estimated heights and values, plus a paired `bind`/`unbind`. A binding receives a genuine Scope, cancellation signal, key, generation, width and density. It returns detached, fully ready content and a measured height. Existing text and image owners remain responsible for raster preparation and resource leases; UI adds no asset manager.
+A source supplies an immutable revision with unique string keys, content versions, estimated heights and values, plus a paired `bind`/`unbind`. A binding receives a genuine Scope, cancellation signal, key, generation, width and density. It returns detached, fully ready content and a measured height. It also receives `target`, the display object of its row: what a press on the row and a pointer over it reach once the row is committed, and the `target` of its pointer notifications. A control of the application may listen on it, so a row is [pointed at, held and activated](ui-controls.md#rows-of-a-managed-list) as a drawn button is. It belongs to the root: add nothing to it, and do not move or dispose it. A row that is bound again has another. Existing text and image owners remain responsible for raster preparation and resource leases; UI adds no asset manager.
 
 A setter may accept a newer desired revision, finish retiring staged rows, then throw `UI_CLEANUP_FAILED` for directly observed cleanup failures. That error does not roll back accepted intent; the previously committed presentation remains unchanged. An interrupted preparation rejects `UI_STALE` with its cleanup causes.
 
