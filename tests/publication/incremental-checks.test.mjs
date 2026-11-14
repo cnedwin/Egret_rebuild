@@ -2380,7 +2380,7 @@ function withoutHoverEntries(raw){
  assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3559,sha256:'47f30da0710131fd945cbc85d57ec19abc29a99f8d6b36502cf7c04da49b091d'});
  return prior;
 }
-// The two semantics entries are the newest. Taking them out gives the package as the hover entries left it.
+// Taking the two semantics entries out gives the package as the hover entries left it.
 function withoutSemanticsEntries(raw){
  const value=JSON.parse(raw);
  if(!Object.hasOwn(value.exports,'./ui/semantics')&&!Object.hasOwn(value.exports,'./web/semantics'))return raw;
@@ -2391,8 +2391,19 @@ function withoutSemanticsEntries(raw){
  assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3765,sha256:'ca1aad9f66558f25c0e4e26ec74ec7cf4f7cf963654d5e096daf09f52c05fa9b'});
  return prior;
 }
+// The two sound entries are the newest. Taking them out gives the package as the semantics entries left it.
+function withoutAudioEntries(raw){
+ const value=JSON.parse(raw);
+ if(!Object.hasOwn(value.exports,'./audio')&&!Object.hasOwn(value.exports,'./web/audio'))return raw;
+ assert.deepEqual(value.exports['./audio'],{types:'./dist/audio.d.ts',import:'./dist/audio.js'});
+ assert.deepEqual(value.exports['./web/audio'],{types:'./dist/web/audio.d.ts',import:'./dist/web/audio.js'});
+ delete value.exports['./audio'];delete value.exports['./web/audio'];
+ const prior=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3992,sha256:'b1bf9947c0a409f27ffa0179c03daccfa999332ae069de91bdba4a61e8010cb6'});
+ return prior;
+}
 function restoreScene3dEntries(raw){
- raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(raw))));
+ raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(withoutAudioEntries(raw)))));
  const identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
  if(JSON.stringify(identity(raw))!==JSON.stringify({bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'}))return raw;
  const value=JSON.parse(raw),exports={};

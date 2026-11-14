@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Sound for a 2D game — 2026-11-14
+
+Two optional entries give a 2D game its sound. `@egret/engine/audio` is a mixer free of the DOM: sounds decoded from bytes and counted against a budget, voices with a volume, a rate, a balance between the two sides, fades, a pause and a place, one music at a time that gives way to the next across a fade, named volumes under a master volume, and limits that make the oldest voice give its place. `@egret/engine/web/audio` is its backend on Web Audio: it keeps the mixer locked until the first press, key or tap lets the page sound, and silent while the page is hidden. A scope of the Engine can own a mixer and a sound. A new example, `examples/audio-mixer`, plays music and effects made in the page. Checked in Node and in headless Chromium, where the samples the browser renders are measured; nothing listened to a loudspeaker, and no phone, Safari or Firefox was run. Long music is decoded whole: playing it from a stream is not in this step. [Guide](docs/audio.md) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/audio-mixer/README.md)
+
 ## Screens to start from — 2026-11-14
 
 A page lists the UI example screens by what a screen is: controls, text fields, settings, tabs, long lists, a dropdown and a menu for a row, several selected rows, a table that sorts, a tree, a bag and amounts in steps. It says what they have in common and what to check before a screen is done, each point a defect that was found in one of them. Documents only. Part of #90. [Guide](docs/ui-examples.md)
