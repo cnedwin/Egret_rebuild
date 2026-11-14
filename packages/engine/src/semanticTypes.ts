@@ -5,7 +5,7 @@
  */
 export type SemanticRole = 'group' | 'image' | 'text' | 'button' | 'checkbox' | 'switch' | 'radiogroup' | 'radio'
   | 'listbox' | 'option' | 'list' | 'listitem' | 'scrollbar' | 'slider' | 'spinbutton' | 'progressbar' | 'tablist' | 'tab' | 'tabpanel' | 'menu' | 'menuitem' | 'dialog' | 'textbox'
-  | 'status' | 'alert' | 'grid' | 'row' | 'gridcell' | 'columnheader';
+  | 'status' | 'alert' | 'grid' | 'row' | 'gridcell' | 'columnheader' | 'tree' | 'treeitem' | 'heading';
 /** What assistive technology may ask of a node: its activation, or the keyboard focus. */
 export type SemanticAction = 'activate' | 'focus';
 export type SemanticChecked = boolean | 'mixed';
@@ -43,7 +43,7 @@ export interface SemanticPosition {
  */
 export interface SemanticDescription {
   readonly bounds: SemanticBounds;
-  /** The accessible name. For a `text` node it is the text itself, and for a `status` or an `alert` the message, which may be empty. */
+  /** The accessible name. For a `text` node and a `heading` it is the text itself, and for a `status` or an `alert` the message, which may be empty. */
   readonly name?: string;
   /** The text of a `textbox`. */
   readonly value?: string;
@@ -54,18 +54,20 @@ export interface SemanticDescription {
   readonly focused?: boolean;
   /** `checkbox`, `switch` and `radio`. Only a checkbox may be 'mixed'. */
   readonly checked?: SemanticChecked;
-  /** `option` and `tab`, which need it. A `row` and a `gridcell` say it where rows or cells are what is selected. */
+  /** `option` and `tab`, which need it. A `row`, a `gridcell` and a `treeitem` say it where they are what is selected. */
   readonly selected?: boolean;
-  /** `button`: whether what it opens is open. */
+  /** `button`: whether what it opens is open. `treeitem`: whether what is under it shows; one with nothing under it does not say. */
   readonly expanded?: boolean;
   /** `dialog`: while a modal dialog is published, everything outside it is inert. */
   readonly modal?: boolean;
   /** `textbox`. */
   readonly multiline?: boolean;
-  /** `listbox` and `grid`: whether several of its options or cells may be selected at once. */
+  /** `listbox`, `grid` and `tree`: whether several of its options, rows or items may be selected at once. */
   readonly multiple?: boolean;
   /** `grid`: its rows and columns in all. */
   readonly extent?: SemanticExtent;
+  /** `treeitem`, which needs it: how deep it is, from one. `heading`: its rank, from one to six. */
+  readonly level?: number;
   /** `columnheader`: whether the rows are ordered by this column, and which way. One that does not say cannot be sorted by. */
   readonly sort?: SemanticSort;
   /** `scrollbar`, `slider` and `spinbutton`, which need it, and `progressbar`, which without it shows work of unknown length. */
@@ -124,6 +126,7 @@ export interface SemanticSnapshotNode {
   readonly multiple: boolean | undefined;
   readonly extent: SemanticExtent | undefined;
   readonly sort: SemanticSort | undefined;
+  readonly level: number | undefined;
   readonly range: SemanticRange | undefined;
   readonly orientation: SemanticOrientation | undefined;
   readonly controls: string | undefined;

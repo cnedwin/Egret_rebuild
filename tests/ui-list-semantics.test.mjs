@@ -301,6 +301,27 @@ test('LS19 a grid over a list with no records has no extent, and gets one with i
  snapshot=semantics.publish(rows.sync());assert.deepEqual([named(snapshot,'table').extent,named(snapshot,'table/only').position],[{rows:1,columns:1},{index:1,size:1}]);
 },{count:0}));
 
+test('LS20 the rows that show may be the items of a tree, each at its depth and among the items under the same item',async()=>fixture(async({semantics,root,list})=>{
+ // Three rows show: a hall that is open, and the two squads under it, of which the second is closed.
+ const shape={k0:{name:'Alchemy',level:1,expanded:true,position:{index:1,size:4}},k1:{name:'First squad',level:2,expanded:false,position:{index:1,size:2},selected:true},k2:{name:'Second squad',level:2,expanded:false,position:{index:2,size:2},disabled:true}},done=[];
+ const rows=createUiListSemantics({semantics,root,list:'list',id:'org',role:'tree',name:'Sect',multiple:true,focusable:true,describeRow:key=>shape[key],onActivateRow:key=>done.push(key)});
+ let snapshot=semantics.publish(rows.sync());
+ assert.deepEqual(snapshot.nodes.map(node=>[node.id,node.role,node.level,node.expanded,node.selected,node.disabled,node.position]),[['org','tree',undefined,undefined,undefined,false,undefined],
+  ['org/k0','treeitem',1,true,undefined,false,{index:1,size:4}],['org/k1','treeitem',2,false,true,false,{index:1,size:2}],['org/k2','treeitem',2,false,undefined,true,{index:2,size:2}]]);
+ assert.deepEqual([named(snapshot,'org').multiple,named(snapshot,'org/k1').parent,named(snapshot,'org/k1').bounds],[true,'org',{x:40,y:90,width:100,height:20}]);
+ // The place of an item is the application's to say: where its row stands in the list is not where it stands among its own.
+ delete shape.k1.position;assert.equal(named(semantics.publish(rows.sync()),'org/k1').position,undefined);
+ assert.equal(semantics.perform('org/k0','activate'),true);assert.equal(semantics.perform('org/k2','activate'),false);assert.equal(semantics.perform('org/k1','focus'),true);
+ snapshot=semantics.publish(rows.sync());assert.deepEqual([done,snapshot.focused,list.getFocus().key],[['k0'],'org/k1','k1']);
+ // An item of a tree needs its depth, which the tree refuses when it is published, and a tree needs a description of its rows.
+ delete shape.k2.level;assert.throws(()=>semantics.publish(rows.sync()),error=>error?.code==='UI_SEMANTICS_DESCRIPTION'&&error.cause.message==='org/k2: level');shape.k2.level=2;
+ assert.throws(()=>createUiListSemantics({semantics,root,list:'list',id:'bare',role:'tree'}),coded('UI_SEMANTICS_OPTIONS'));
+ assert.throws(()=>createUiListSemantics({semantics,root,list:'list',id:'wide',role:'tree',columns:2,describeRow:key=>shape[key]}),coded('UI_SEMANTICS_OPTIONS'));
+ // The depth and the opening of a row are a tree's: a list box that is given them is refused by the tree.
+ const flat=createUiListSemantics({semantics,root,list:'list',id:'flat',role:'listbox',describeRow:()=>({name:'x',level:1})});flat.sync();
+ assert.throws(()=>semantics.publish(rows.sync()),error=>error?.code==='UI_SEMANTICS_DESCRIPTION'&&error.cause.message==='flat/k0: level');flat.dispose();
+}));
+
 test('LS13 a box the root laid out is measured on the stage, as of the last commit',async()=>fixture(async({root,commit})=>{
  assert.deepEqual(semanticBoxOf(root,'title'),{x:40,y:50,width:100,height:15});
  assert.deepEqual(semanticBoxOf(root,'list'),{x:40,y:70,width:100,height:60});
