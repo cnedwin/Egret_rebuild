@@ -144,6 +144,34 @@ await scenario('the keyboard alone chooses rows that are apart, and sends them',
   assert.equal(await page.evaluate(() => scrollY), 0, 'no key that was taken moved the page');
 });
 
+await scenario('the keyboard chooses a run of rows with Shift, and everyone with Control and A', desktop, async page => {
+  const run = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => 'm' + (from + index));
+  await page.focus('#scene'); await key(page, 'Tab');
+  // Shift with a movement key chooses from the row it leaves to the row it reaches.
+  await key(page, 'Shift+ArrowDown'); await key(page, 'Shift+ArrowDown'); let now = await read(page);
+  assert.deepEqual([now.chosen, now.row, await active(page)], [run(0, 2), 'm2', ['option', optionName(2)]]);
+  await key(page, 'Shift+PageDown'); now = await read(page);
+  assert.deepEqual([now.chosen, now.row], [run(0, 9), 'm9']);
+  // Going back over chosen rows lets nobody go, and without Shift the keys only move.
+  await key(page, 'Shift+ArrowUp'); await key(page, 'ArrowDown'); await key(page, 'ArrowDown'); await key(page, 'ArrowDown'); now = await read(page);
+  assert.deepEqual([now.chosen, now.row], [run(0, 9), 'm11']);
+  await key(page, 'Shift+ArrowDown'); now = await read(page);
+  assert.deepEqual([now.chosen, now.row], [[...run(0, 9), 'm11', 'm12'], 'm12']);
+  assert.deepEqual(await page.evaluate(() => [...document.querySelectorAll('[role=option][aria-selected=true]')].map(element => element.getAttribute('aria-posinset'))), ['6', '7', '8', '9', '10', '12', '13'], 'of the eight rows that show, all but the eleventh');
+  // They are sent. A run through rows that are away chooses none of them.
+  await key(page, 'Tab'); await key(page, 'Tab'); await key(page, 'Tab'); await key(page, 'Enter'); now = await read(page);
+  assert.deepEqual([now.away.length, now.chosen, now.focus], [12, [], 'all']);
+  await page.keyboard.press('Shift+Tab'); await settle(page); assert.equal((await read(page)).row, 'm12');
+  await key(page, 'Shift+ArrowUp'); now = await read(page);
+  assert.deepEqual([now.chosen, now.row], [[], 'm11']);
+  await key(page, 'Shift+ArrowUp'); now = await read(page);
+  assert.deepEqual([now.chosen, now.row], [['m10'], 'm10'], 'the one member of the run who is here');
+  // Control and A chooses everyone who is here, and the page selects nothing of its own.
+  await key(page, 'Control+a'); now = await read(page);
+  assert.deepEqual([now.chosen.length, now.chosen.some(member => now.away.includes(member)), now.enabled.all], [28, false, false]);
+  assert.deepEqual(await page.evaluate(() => [String(getSelection()), scrollY]), ['', 0]);
+});
+
 await scenario('a request of assistive technology selects options one by one and sends them', desktop, async page => {
   const ask = async (role, name, action) => { await page.getByRole(role, { name, exact: true }).evaluate((element, method) => element[method](), action); await settle(page); };
   await ask('option', optionName(1), 'click'); await ask('option', optionName(6), 'click');

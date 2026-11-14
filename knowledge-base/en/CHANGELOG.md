@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Runs of rows with Shift, and everyone with Control+A — 2026-11-14
+
+In the multiple selection example a movement key held with Shift chooses every member from the row it leaves to the row it reaches, and Control+A chooses everyone who is here. Example only. Part of #90. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-multi-select/README.md)
+
 ## The profiles of the settings example are pointed at and held — 2026-11-14
 
 The rows of the profile list in `examples/ui-settings` are lit under a pointer and darker while held, in both themes, through the display object a row binding is given. Example only. Part of #90. [Guide](docs/ui-controls.md#rows-of-a-managed-list)
