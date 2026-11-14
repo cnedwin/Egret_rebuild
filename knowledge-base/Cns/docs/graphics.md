@@ -97,13 +97,13 @@ sprite.graphics.beginRadialGradientFill(50, 50, 40, [{ offset: 0, color: 0xfffff
 
 | 限制 | 数值 | 超出时 |
 | --- | --- | --- |
-| 一帧中不同的绘图 | 128 | 该帧以 `FRAME_BUDGET_EXCEEDED` 被拒绝 |
+| 一帧中不同的绘图 | 4,096 | 该帧以 `FRAME_BUDGET_EXCEEDED` 被拒绝 |
 | 一帧中所有网格的三角形 | 65,536 | 该帧以 `FRAME_BUDGET_EXCEEDED` 被拒绝 |
 | 一条正在绘制的路径的点数 | 8,192 | 调用抛出 `GRAPHICS_BUDGET`，sprite 保持原有内容 |
 | 线条宽度 | 1,024 | `GRAPHICS_VALUE_INVALID` |
 | 一条线的虚线段数 | 16,384 | 调用抛出 `GRAPHICS_BUDGET`，sprite 保持原有内容 |
 | 一次带孔或自相交的填充的三角形数 | 16,384 | 路径结束时（`endFill`，或下一次填充、线条或形状）抛出 `GRAPHICS_BUDGET`。该路径被丢弃，之前画的内容保留 |
 
-绘图完全相同的 sprite 共用一份绘图，无论有多少个：300 颗画成同一个圆的子弹只算一份。各自画不同内容的 sprite 则各算一份。需要很多不同形状时，把它们画进同一个 sprite，或者使用位图。
+绘图完全相同的 sprite 共用一份绘图，无论有多少个：300 颗画成同一个圆的子弹只算一份。各自画不同内容的 sprite 则各算一份。实际上先用完的是三角形：一帧 65,536 个，大约是 2,000 个半径 40 的圆，或 500 个半径 600 的圆。一份绘图无论被多少个 sprite 显示都只算一份，但它的三角形按显示它的每个 sprite 各算一次。
 
 `getBounds()` 涵盖形状及其线条的宽度。命中测试不读取绘图：它和以前一样使用 `hitArea`。

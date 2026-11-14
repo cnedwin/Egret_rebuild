@@ -127,6 +127,13 @@ await scenario('webgl2: the wedges are drawn with arcs, and drawn again when the
   for (let i = 0; i < 4; i++) within(await colour(page, places[i]), shown(linear(i % 2 === 0 ? C.wedgeB : C.wedgeA)), 'turned wedge ' + i);
 }, '?backend=webgl2');
 
+await scenario('webgl2: three hundred discs of different sizes are three hundred drawings in one frame', desktop, async page => {
+  const now = await read(page);
+  assert.equal(now.many, 300);
+  // The first, the last of the first row and the last of all, each at its own place in rows of thirty.
+  for (const i of [0, 29, 299]) within(await colour(page, [8 + 16 * (i % 30), 8 + 16 * Math.floor(i / 30)]), shown(linear(now.colours.dash)), 'disc ' + i);
+}, '?backend=webgl2&many=300');
+
 await scenario('on a phone the page draws the shapes and a tap turns the wedges', phone, async page => {
   const C = (await read(page)).colours;
   within(await colour(page, [60, 60]), shown(linear(C.circle)), 'circle centre', 3);

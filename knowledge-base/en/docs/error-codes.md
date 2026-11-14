@@ -33,7 +33,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `ENGINE_MISMATCH` | The object belongs to another Engine. A display tree, a scope and their resources all belong to one Engine. |
 | `DISPLAY_VALUE_INVALID` | A value given to a display object is not valid: positions, scales and rotation are finite numbers, alpha is 0 to 1 and visible is a boolean. |
 | `FRAME_TRANSFORM_INVALID` | A display object is placed where its corners are not finite numbers. Check its x, y, scale and rotation, and those of its parents. |
-| `FRAME_BUDGET_EXCEEDED` | The stage holds more than one frame takes: 65,536 nodes or commands, 256 materials, 128 geometries or 65,536 mesh triangles. Sprites that draw different shapes each count as one geometry. |
+| `FRAME_BUDGET_EXCEEDED` | The stage holds more than one frame takes: 65,536 nodes or commands, 256 materials, 4,096 different geometries or 65,536 mesh triangles. A circle of radius 40 is 32 triangles. |
 | `FRAME_IMAGE_BUDGET` | The frame uses more images than it takes: 64 pages, 4,096 regions or 64 MiB of distinct pixels. Pack images into fewer atlases. |
 | `GRAPHICS_FILL_REQUIRED` | A shape needs a fill or a line. Call beginFill or lineStyle before drawing it. |
 | `GRAPHICS_VALUE_INVALID` | A value given to graphics is not valid: coordinates are finite numbers, sizes are not negative, a colour is 0 to 0xffffff and an alpha is 0 to 1. |
@@ -370,7 +370,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 
 | Code | Meaning |
 | --- | --- |
-| `FRAME_BUDGET_EXCEEDED` | The stage holds more than one frame takes: 65,536 nodes or commands, 256 materials, 128 geometries or 65,536 mesh triangles. Sprites that draw different shapes each count as one geometry. |
+| `FRAME_BUDGET_EXCEEDED` | The stage holds more than one frame takes: 65,536 nodes or commands, 256 materials, 4,096 different geometries or 65,536 mesh triangles. A circle of radius 40 is 32 triangles. |
 | `FRAME_ID_EXHAUSTED` | The id counter of a frame ran out. Make a new one. |
 | `FRAME_IMAGE_BUDGET` | The frame uses more images than it takes: 64 pages, 4,096 regions or 64 MiB of distinct pixels. Pack images into fewer atlases. |
 | `FRAME_PROFILE_METADATA_UNSUPPORTED` | The profile metadata is not supported by a frame. |

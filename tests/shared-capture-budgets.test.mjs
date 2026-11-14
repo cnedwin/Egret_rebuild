@@ -125,11 +125,11 @@ test('CAPTURE B03 hidden triangle occurrences charge shared geometry each time a
   });
 });
 
-test('CAPTURE B04 hidden unique geometry identities accept 128 plus an identity reuse, then reject 129', async () => {
+test('CAPTURE B04 hidden unique geometry identities accept 4,096 plus an identity reuse, then reject one more', async () => {
   await scene(async f => {
     const item = await f.resource(), parent = f.sprite(); parent.visible = false;
     const owned = [];
-    for (let index = 0; index < 128; index++) {
+    for (let index = 0; index < 4096; index++) {
       const value = oldGeometry(0, 0); owned.push(value);
       f.add(new egret.Mesh2D(item.lease, value), parent);
     }
