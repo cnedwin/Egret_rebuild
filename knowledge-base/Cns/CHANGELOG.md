@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 起步示例和入口对照页 — 2026-11-15
+
+`examples/starter` 是一个约一百行的 2D 游戏起点：Host、Engine、作用域、舞台、指针和键盘输入，以及在 Host 已持有两帧时跳过一帧的帧循环。它在无头 Chromium 的软件 WebGL2 中从画布核对；未运行 WebGPU。[该引哪个入口](docs/entry-points.md)按要做的事列出 `@egret/engine` 的 38 个入口该用哪一个。属于 #289。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.zh-CN.md)
+
 ## 所有 JavaScript 引擎里颜色一致 — 2026-11-15
 
 sRGB 字节对应的线性光值，现在是一张写明的 256 个数的表。矩形填充、位图文本和粒子的着色、发光颜色、清屏颜色都读这张表。以前它是运行时计算的幂，而不同 JavaScript 引擎算出的幂在最后一位上不同：Node 22 和 Node 26 对部分字节给出不同的数，所以同一场景预处理出的帧在两者中并不相同。表里是 Node 26 算出的值，所以在 Node 26 上没有任何变化。`tests/shared-frame-golden.test.mjs` 现在在 Node 22 上也能重现摘要。属于 #289。
