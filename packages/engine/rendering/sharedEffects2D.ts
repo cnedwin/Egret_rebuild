@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
 import type { Matrix2D, Rectangle2D, SharedRenderFrame2D } from '@egret/contracts';
+import { decodeSRGBByte } from './srgbBytes.js';
 /** A schedule contains no native handles and borrows only immutable captured data. */
 /** `spread` is the radius in backing pixels of a glow or outline, whose alpha a pass spreads into the group's scratch target, or -1 for neither. */
 export interface PreparedEffect2D {readonly enter:number;readonly exit:number;readonly depth:number;readonly maskPageIndex:number|undefined;readonly radius:number;readonly spread:number;readonly uniform:Float32Array<ArrayBuffer>;}
 /** The bytes of one group's uniform: 36 vectors of four floats. */
 export const EFFECT_UNIFORM_BYTES=576;
-const decode=(c:number):number=>c<=0.04045?c/12.92:((c+0.055)/1.055)**2.4;
 export interface PreparedEffects2D {readonly groups:readonly PreparedEffect2D[];readonly depth:number;readonly targetCount:number;readonly uniformBytes:number;}
 function fail():never{throw new RangeError('Shared effect limits or geometry are unsupported');}
 function inverse(m:Matrix2D,rect:Rectangle2D,ratio:number):number[]{
@@ -41,7 +41,7 @@ export function prepareEffects2D(frame:SharedRenderFrame2D,ratio:number,enabled:
         spread=g.kind==='outline'?Math.min(16,Math.max(1,Math.round(g.spread*ratio))):Math.min(16,Math.ceil(g.spread*ratio));
         if(!Number.isInteger(spread)||spread<0||!Number.isInteger(g.color)||g.color<0||g.color>0xffffff)fail();
         uniform[113]=g.kind==='outline'?2:1;uniform[114]=spread;uniform[115]=g.strength;
-        uniform[116]=decode(((g.color>>16)&255)/255);uniform[117]=decode(((g.color>>8)&255)/255);uniform[118]=decode((g.color&255)/255);uniform[119]=g.alpha;
+        uniform[116]=decodeSRGBByte(g.color>>16);uniform[117]=decodeSRGBByte(g.color>>8);uniform[118]=decodeSRGBByte(g.color);uniform[119]=g.alpha;
         uniform[120]=Math.round(g.offsetX*ratio);uniform[121]=Math.round(g.offsetY*ratio);uniform[122]=g.inner?1:0;uniform[123]=g.knockout?1:0;
       }
       if(e.maskPageIndex!==undefined){

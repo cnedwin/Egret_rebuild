@@ -15,7 +15,7 @@ import type { PackedSharedDraw2D } from '../rendering/packSharedDraws2D.js';
 import { SHARED_BATCH_PAGES_2D } from '../rendering/packSharedDraws2D.js';
 import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js';
 import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatches2D.js';
-import { decodeSharedSRGB } from '../rendering/sharedColor2D.js';
+import { decodeSharedSRGBByte } from '../rendering/sharedColor2D.js';
 import { createSharedWebGPUPipeline, SHARED_BLENDS, SHARED_PIPELINE_KINDS } from './webgpuSharedPass.js';
 import { createSharedEffectPipeline, EFFECT_PASSES, EFFECT_UNIFORM_BYTES } from './sharedEffectShaders.js';
 import type { SharedEffectPass } from './sharedEffectShaders.js';
@@ -1382,7 +1382,7 @@ class WebGPUHostImplementation {
                 const texture=record.owner!.native.currentTexture();gate();const canvasView=this.method(texture,'createView',gate)();gate();
                 const encoder=record.owner!.native.encoder();gate();const begin=this.method(encoder,'beginRenderPass',gate),finish=this.method(encoder,'finish',gate),copy=ticket?this.method(encoder,'copyTextureToBuffer',gate):undefined;
                 const c=frame.clearColor,a=frame.clearAlpha;
-                const attachment:GPURenderPassColorAttachment={view:color.view,loadOp:'clear',storeOp:'store',clearValue:{r:a*decodeSharedSRGB(((c>>>16)&255)/255),g:a*decodeSharedSRGB(((c>>>8)&255)/255),b:a*decodeSharedSRGB((c&255)/255),a}};
+                const attachment:GPURenderPassColorAttachment={view:color.view,loadOp:'clear',storeOp:'store',clearValue:{r:a*decodeSharedSRGBByte(c>>>16),g:a*decodeSharedSRGBByte(c>>>8),b:a*decodeSharedSRGBByte(c),a}};
                 const capture=(pass:GPURenderPassEncoder,keys:readonly (keyof GPURenderPassEncoder)[]):GPURenderPassEncoder=>{const captured={} as GPURenderPassEncoder;for(const key of keys){const method=this.method(pass,key,gate) as (...args:unknown[])=>unknown;Object.defineProperty(captured,key,{value:(...args:unknown[])=>{gate();const result=method(...args);gate();return result;}});}return captured;};
                 const openPass=(view:GPUTextureView,clear:boolean,initial=false)=>{
                     const colors:GPURenderPassColorAttachment=initial?attachment:{view,loadOp:clear?'clear':'load',storeOp:'store',...(clear?{clearValue:{r:0,g:0,b:0,a:0}}:{})};
