@@ -70,9 +70,10 @@ async function open(page, text, phase) {
   return state;
 }
 
-async function start(browser, origin, query, row) {
+async function start(browser, origin, query, row, setup) {
   const context = await browser.newContext({viewport:{width:1180,height:860},deviceScaleFactor:1,serviceWorkers:'block',acceptDownloads:true});
   const page = await context.newPage();
+  if (setup) await setup(page);
   page.on('pageerror',error => row.pageErrors.push(error.message));
   await page.goto(`${origin}${folder}index.html?${query}`, {waitUntil:'load',timeout:45000});
   await page.waitForFunction(() => globalThis.__egretOutfitStudio, undefined, {timeout:15000});
@@ -224,6 +225,84 @@ async function fixed(page, backend, row) {
   await finish(page);
 }
 
+
+async function delayPresentation(page) {
+  await page.addInitScript(() => {
+    const presenting = () => globalThis.__egretOutfitStudio?.inspect().opened?.phase === 'published';
+    let release;
+    const held = new Promise(resolve => { release = resolve; });
+    let holding = true;
+    globalThis.__studioPresentationHeld = false;
+    globalThis.__releaseStudioPresentation = () => { holding = false; release(); };
+    const queue = globalThis.GPUQueue?.prototype;
+    if (queue) {
+      const waitForGPU = queue.onSubmittedWorkDone;
+      queue.onSubmittedWorkDone = function () {
+        const completion = waitForGPU.call(this);
+        if (!holding || !presenting()) return completion;
+        globalThis.__studioPresentationHeld = true;
+        return completion.then(() => held);
+      };
+    }
+    const gl = WebGL2RenderingContext.prototype;
+    const waitForGL = gl.clientWaitSync;
+    gl.clientWaitSync = function (...args) {
+      const result = waitForGL.apply(this,args);
+      if (holding && presenting() && (result === this.ALREADY_SIGNALED || result === this.CONDITION_SATISFIED)) {
+        globalThis.__studioPresentationHeld = true;
+        return this.TIMEOUT_EXPIRED;
+      }
+      return result;
+    };
+  });
+}
+
+async function fixedRoundTrip(page, backend, row) {
+  const initialRevision = (await inspect(page)).revision;
+  const original = await exported(page,path.join(output,backend + '-eight-original.json'));
+  const authored = openStudioProject(original);
+  const ids = authored.characters().map(character => character.id);
+  assert.equal(ids.length,8);
+  for (const id of ids) authored.edit(id,{palette:'alternate'});
+  const target = authored.serialize();
+
+  await page.locator('#project-file').setInputFiles({name:'eight-alternate.json',mimeType:'application/json',buffer:Buffer.from(target)});
+  let toolbar;
+  try {
+    await wait(page, () => globalThis.__studioPresentationHeld && globalThis.__egretOutfitStudio.inspect().opened?.phase === 'published');
+    toolbar = await page.locator('#open').evaluate(button => ({disabled:button.disabled,label:button.textContent}));
+  } finally {
+    await page.evaluate(() => globalThis.__releaseStudioPresentation());
+  }
+  await wait(page, () => globalThis.__egretOutfitStudio.inspect().opened?.phase === 'ready');
+  const alternate = await inspect(page);
+  assert.equal(alternate.revision,initialRevision+1);
+  assert.deepEqual(alternate.opened.changed,ids);
+  assert.deepEqual(alternate.cast.actors.map(actor => actor.palette),Array(8).fill('alternate'));
+
+  // Exercise the original palette even if the toolbar assertion above would fail.
+  await page.locator('#project-file').setInputFiles({name:'eight-original.json',mimeType:'application/json',buffer:Buffer.from(original)});
+  await wait(page, () => {
+    const opened = globalThis.__egretOutfitStudio.inspect().opened;
+    return opened?.file === 'eight-original.json' && ['ready','failed'].includes(opened.phase)
+      && document.querySelector('#open').textContent.startsWith('Open project');
+  });
+  const restored = await inspect(page);
+  row.roundTrip = {toolbar,phase:restored.opened.phase,detail:restored.opened.detail,
+    candidates:restored.opened.candidates,actorIds:restored.cast.actors.map(actor => actor.id)};
+  assert.equal(restored.opened.phase,'ready',JSON.stringify(row.roundTrip));
+  assert.equal(restored.revision,initialRevision+2);
+  assert.deepEqual(restored.opened.changed,ids);
+  assert.deepEqual(restored.characters,openStudioProject(original).characters());
+  assert.deepEqual(restored.cast.actors.map(actor => actor.id),ids);
+  assert.deepEqual(restored.cast.actors.map(actor => actor.palette),Array(8).fill('studio'));
+  assert.equal(toolbar.disabled,true,JSON.stringify(toolbar));
+  assert.match(toolbar.label,/^Presenting project/);
+  assert.deepEqual(restored.errors,[]);
+  await finish(page);
+  row.checks.push('All eight actors return to the original palette; the toolbar cannot cancel a published project');
+}
+
 const software = ['--enable-unsafe-webgpu','--enable-features=Vulkan','--use-webgpu-adapter=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist'];
 const report = {scope:'Outfit Studio: opening an exported project in the browser',status:'INCOMPLETE',environment:{platform:os.platform(),release:os.release(),
   cpu:os.cpus()[0].model,node:process.version,playwright:playwrightVersion,browser:undefined,
@@ -236,13 +315,18 @@ try {
   const origin = `http://127.0.0.1:${server.address().port}`;
   browser = await chromium.launch(renderer === 'software' ? {args:software} : {channel:'msedge',headless:true});
   report.environment.browser = browser.version();
+  const system = await browser.newBrowserCDPSession();
+  try {
+    const {gpu} = await system.send('SystemInfo.getInfo');
+    report.environment.graphics = {devices:gpu.devices,renderer:gpu.auxAttributes?.glRenderer};
+  } finally { await system.detach(); }
   for (const backend of ['webgpu','webgl2']) {
     const row = {backend,status:'INCOMPLETE',checks:[],pageErrors:[]};
     report.backends.push(row);
     let context;
     try {
-      for (const [query,scenario] of [[`backend=${backend}`,compact],[`profile=x-d60&backend=${backend}&load=static`,fixed]]) {
-        const session = await start(browser,origin,query,row);
+      for (const [query,scenario,setup] of [[`backend=${backend}`,compact],[`profile=x-d60&backend=${backend}&load=static`,fixed],[`profile=x-d60&backend=${backend}&load=static`,fixedRoundTrip,delayPresentation]]) {
+        const session = await start(browser,origin,query,row,setup);
         context = session.context;
         await scenario(session.page,backend,row);
         await context.close();

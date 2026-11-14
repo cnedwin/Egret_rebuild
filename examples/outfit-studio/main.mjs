@@ -249,6 +249,11 @@ async function openProject(file, control) {
     }
     await wait(Promise.resolve());
 
+    if (control.signal.aborted) await cancelled;
+
+    // End cancellation at the synchronous publication boundary.
+    openButton.disabled = true;
+    openButton.textContent = 'Presenting project… / 正在呈现工程…';
     // Publication. Nothing below waits until the project, the cast and the interface have changed together.
     try {
       for (const {ticket,id} of tickets) { ticket.commit(); cast.retireBorrowed(id); }
@@ -287,8 +292,6 @@ async function openProject(file, control) {
     for (const {ticket} of tickets) ticket.dispose();
     opened = {...opened,candidates:tickets.map(({ticket}) => ticket.state)};
     signal.removeEventListener('abort', stop);
-    opening = undefined;
-    openButton.textContent = 'Open project / 打开工程';
     lastFrame = undefined;
   }
 }
@@ -431,14 +434,14 @@ async function open() {
   assets = createStudioAssets(engine,scope,signal,Boolean(profile));
   loads = [
     assets.fonts(config.fontConfig), assets.sequence(),
-    Promise.all([...new Set(characters().map(row => row.palette))].map(async key => [key,await assets.spine(key)])).then(rows => new Map(rows))
+    Promise.all([...new Set(characters().map(row => row.palette))].map(async key => [key,await assets.spineGroup(key)])).then(rows => new Map(rows))
   ];
-  const [initialFonts,sequence,spineAssets] = await Promise.all(loads);
+  const [initialFonts,sequence,spineGroups] = await Promise.all(loads);
   fonts = initialFonts;
   signal.throwIfAborted();
   cache = scope.use(createParagraphCache(engine.assets, {provider:fonts.paragraphProvider,maxImageBytes:8 * 1024 * 1024}));
   if (profile) { fixed = await createStudioWorkload(engine,scope); fixed.layout(profile); }
-  cast = createStudioScene(engine,scope,characters(),spineAssets,sequence,profile);
+  cast = createStudioScene(engine,scope,characters(),spineGroups,sequence,profile);
   engine.advanceTime(0);
   if (profile) advance(workload.clockStep);
   await mountView();
@@ -529,6 +532,7 @@ download.addEventListener('click', () => {
   setTimeout(() => URL.revokeObjectURL(url), 0);
 });
 openButton.addEventListener('click', () => {
+  if (openButton.disabled) return;
   if (opening) opening.abort();
   else if (state === 'ready') projectFile.click();
 });
@@ -541,7 +545,10 @@ projectFile.addEventListener('change', () => {
   openButton.textContent = 'Cancel opening / 取消打开';
   message('Opening project…', '正在打开工程…');
   void enqueue(() => openProject(file, control)).catch(report).finally(() => {
-    if (opening === control) { opening = undefined; openButton.textContent = 'Open project / 打开工程'; }
+    if (opening !== control) return;
+    opening = undefined;
+    openButton.textContent = 'Open project / 打开工程';
+    openButton.disabled = state !== 'ready';
   });
 });
 closeButton.addEventListener('click', () => { void close(); });
