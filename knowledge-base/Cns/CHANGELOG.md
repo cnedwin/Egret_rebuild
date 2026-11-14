@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 无旋转四边形的裁剪几何提速 — 2026-11-14
+
+无旋转、无切变放置的矩形和位图，跳过裁剪几何阶段的方向测试和规范化测试。这些测试的结果事先可知，该阶段改为一次性记入相同的计数。无法证明结果相同的情况仍交给通用路径。几何、计数和拒绝都没有变化。在 `tools/bench-2d.mjs` 中，同一图集的 5,000 个位图从 11.8 ms 降到 5.3 ms，20,000 个矩形从 44 ms 降到 34 ms。属于 #266。[详情](../en/docs/display-tree-scaling.md#quads-without-rotation)
+
 ## 作为显示对象的视频 — 2026-11-14
 
 `@egret/engine/video` 把源的画面作为显示对象显示：每帧新画面都通过引擎的资源系统成为一个 Bitmap 的纹理，并释放上一帧。`update()` 每帧取最新画面，不会堆积画面。`@egret/engine/web/video` 从页面的视频元素创建源——文件、流（例如画布或摄像头的流）或页面自己的元素——按不超过 `maxWidth` 的尺寸读回每一帧呈现的画面。新示例 `examples/video` 实时显示画布的流，并回放页面录制的四秒 WebM，在无头 Chromium 的软件 WebGL2 中从画布核对。每帧画面都被完整读回并上传；直接送到 GPU 的路径不在本次改动中。属于 #266。[指南](docs/video.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/video/README.zh-CN.md)

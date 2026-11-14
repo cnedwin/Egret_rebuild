@@ -2,6 +2,9 @@ import { copyImageData2DPixels } from '@egret/contracts';
 import type { ImageData2D } from '@egret/contracts';
 /** Selected sRGB transfer. Alpha and tint coefficients are never gamma converted. */
 export function decodeSharedSRGB(value: number): number { return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4; }
+const decodedBytes = Float64Array.from({ length: 256 }, (_, code) => decodeSharedSRGB(code / 255));
+/** `decodeSharedSRGB(code / 255)` for a byte `code`, the same number, looked up from a table made once. */
+export function decodeSharedSRGBByte(code: number): number { return decodedBytes[code & 255]!; }
 export function encodeSharedSRGB(value: number): number { return value <= 0.0031308 ? 12.92 * value : 1.055 * value ** (1 / 2.4) - 0.055; }
 const caps = Object.freeze(Array.from({ length: 256 }, (_, alpha) => {
     let code = 0; while (code < 255 && decodeSharedSRGB((code + 1) / 255) <= alpha / 255) code++; return code;
