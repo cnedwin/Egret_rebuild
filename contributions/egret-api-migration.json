@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "knowledge-base/en/docs/egret-api-migration.md", "originRole": "First-party map from the public API of Egret Engine 5 to this SDK, written from this checkout's sources and from Egret 5's public API names; independently authored with AI assistance; Apache-2.0. No Egret source, sample or document text is copied."},
+    {"path": "knowledge-base/Cns/docs/egret-api-migration.md", "originRole": "First-party Chinese map from the public API of Egret Engine 5 to this SDK; independently authored with AI assistance; Apache-2.0. No Egret source, sample or document text is copied."}
+  ],
+  "documents": [
+    {"en": "knowledge-base/en/docs/egret-api-migration.md", "zh": "knowledge-base/Cns/docs/egret-api-migration.md"}
+  ]
+}

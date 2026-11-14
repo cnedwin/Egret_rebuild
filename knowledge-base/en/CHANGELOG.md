@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A map from Egret 5's API to this SDK — 2026-11-15
+
+[From Egret 5 to this SDK](docs/egret-api-migration.md) says, call by call, what replaces `egret.runEgret`, `egret.Shape`, `TouchEvent`, `egret.Tween`, `RES`, `egret.TextField`, `eui` and the rest, and what is not there: skew, `name`, masks that are not rectangles, `cacheAsBitmap`, tween chains, EXML and DragonBones. It opens with the five things that differ in every file, and ends with one screen written both ways. The new side of every row was checked against this checkout; no Egret 5 project was converted to write it.
+
 ## One call starts a game in a page, with a panel of what it takes — 2026-11-15
 
 `@egret/engine/web/game` gives `createBrowserGame({ canvas, width, height, update })`. It chooses WebGPU where the browser gives an adapter and WebGL2 otherwise, and makes the Host, the Engine, a scope, pointer and keyboard input and the frame loop, each as its own entry makes it; `game.dispose()` ends them all. With `stats: true` a panel over the canvas shows frames a second, the longest time between frames, the commands and triangles of a frame, and how many frames the Host holds or the loop skipped; `createBrowserStatsPanel` makes the panel for a game that starts itself. The starter example now starts this way, and `?stats` shows the panel. The panel counts the Engine's commands, not the Host's draw calls. See [one call for a game in a page](docs/browser-game.md).
