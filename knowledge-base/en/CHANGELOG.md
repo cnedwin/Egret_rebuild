@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A 2D camera — 2026-11-14
+
+`@egret/engine/camera` is an optional view of a 2D world. It places the container that holds the world so that it is seen from where the camera looks, and follows a target anywhere inside it with smoothing that does not depend on the frame rate and a dead zone; stays inside bounds; zooms and turns around the middle of the view; pans to a place; shakes along seeded smooth noise that dies away; and moves layers in front of or behind the world at their own speed and share of the zoom. It converts points both ways and says what can be seen. A new example, `examples/camera-2d`, walks a disciple round a courtyard. Checked in Node over a real display tree and in headless Chromium with software WebGL2; no hardware GPU or phone was run. Part of #266. [Guide](docs/camera-2d.md) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/camera-2d/README.md)
+
 ## Gamepads — 2026-11-14
 
 Two optional entries read gamepads. `@egret/engine/input/gamepad` takes what pads say at each look and tells each press, each letting go and each pad that arrives or is taken away; it reads buttons by their place in the standard layout and sticks with a dead zone. `bindGamepadKeys` drives a keyboard input from the pads, so a UI that answers keys answers a pad: the cross and the left stick are the arrows and move the focus when no control takes them, `a` is Enter, `b` is Escape, the shoulders move the focus, and directions repeat while held. `@egret/engine/web/gamepad` asks the pads of a page once a frame, lets every button go when the page is hidden or the window loses the person, and shakes a pad that can be shaken. The controls example takes a pad. Checked in Node and in headless Chromium with a scripted list of pads; no pad was held. Part of #266. [Guide](docs/gamepad.md)
