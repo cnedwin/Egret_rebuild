@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "packages/engine/src/video.ts", "originRole": "First-party optional entry of video as a display object; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/src/videoPlayer.ts", "originRole": "First-party video player that leases each new picture of a source as the texture of one Bitmap; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/src/videoTypes.ts", "originRole": "First-party types of video and its sources; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/web/video.ts", "originRole": "First-party optional browser entry of video; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/engine/web/BrowserVideo.ts", "originRole": "First-party video source over a video element of the page, reading back each presented picture; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/video.test.mjs", "originRole": "First-party Node tests of the video player with a driven source; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/types/video.json", "originRole": "First-party compiler configuration of the strict consumer of the video entries; independently authored with AI assistance; Apache-2.0."},
+    {"path": "tests/types/video.ts", "originRole": "First-party strict TypeScript consumer of the video entries, with five refused misuses; independently authored with AI assistance; Apache-2.0."},
+    {"path": "examples/video/index.html", "originRole": "First-party page of the video example; independently authored with AI assistance; Apache-2.0. No third-party asset."},
+    {"path": "examples/video/main.mjs", "originRole": "First-party example of a live canvas stream and a recording the page makes, shown as video; independently authored with AI assistance; Apache-2.0. No third-party asset or video file.", "criticalComment": true},
+    {"path": "examples/video/verify.mjs", "originRole": "First-party real-browser check of the video example, reading the canvas; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "examples/video/README.md", "originRole": "First-party instructions for the video example; independently authored with AI assistance; Apache-2.0."},
+    {"path": "examples/video/README.zh-CN.md", "originRole": "First-party Simplified Chinese instructions for the video example; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/en/docs/video.md", "originRole": "First-party guide to video, with what was run and what was not; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/Cns/docs/video.md", "originRole": "First-party Chinese guide to video; independently authored with AI assistance; Apache-2.0."}
+  ],
+  "documents": [
+    {"en": "examples/video/README.md", "zh": "examples/video/README.zh-CN.md"},
+    {"en": "knowledge-base/en/docs/video.md", "zh": "knowledge-base/Cns/docs/video.md"}
+  ]
+}

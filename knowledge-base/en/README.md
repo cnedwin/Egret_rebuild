@@ -22,7 +22,7 @@ Use this entry to find product and engineering documents for the community rebui
 | Rendering/resources | [M1](docs/m1-rendering-resource-plan.md) · [Shared rendering](docs/shared-render-profile-contract.md) · [WebGL2](docs/webgl2-executor-contract.md) · [Recovery](docs/resource-recovery-contract.md) |
 | Content/animation | [M2](docs/m2-spine-content-plan.md) · [Build/runtime](docs/content-build-pipeline.md) · [Spine](docs/spine-content-ingress.md) · [Spine seek](docs/spine-seek.md) · [Sequence RESET](docs/sequence-reset.md) |
 | UI/text/input | [M3](docs/m3-ui-text-input-plan.md) · [Managed UI](docs/ui-data-panel.md) · [Paragraphs](docs/readonly-paragraph-sdk.md) · [Fonts](docs/font-resource-generations.md) · [Effects](docs/shared-ui-effects.md) · [Hover and wheel](docs/pointer-hover.md) · [Control state](docs/ui-controls.md) · [Semantics](docs/ui-semantics.md) · [Screens to start from](docs/ui-examples.md) |
-| Sound | [Sound for a 2D game](docs/audio.md) |
+| Sound and video | [Sound for a 2D game](docs/audio.md) · [Video](docs/video.md) |
 | Gamepads | [Gamepads](docs/gamepad.md) |
 | 2D world | [Camera](docs/camera-2d.md) · [Tile maps](docs/tilemap.md) · [Particles](docs/particles.md) · [Collision and physics](docs/physics-2d.md) · [Bitmap fonts](docs/bitmap-font.md) · [Blend modes](docs/blend-modes.md) · [Filters](docs/filters.md) |
 | Mixed integration | [M4](docs/m4-core-acceptance-plan.md) · [Android scope](docs/android-device-validation.md) · [Clean consumer](docs/clean-consumer.md) |

@@ -262,6 +262,8 @@ for (const [name, allowed] of Object.entries(expected)) {
     if (name === 'engine') textExports['./physics2d'] = {types:'./dist/physics2d.d.ts',import:'./dist/physics2d.js'};
     // Bitmapfont: one DOM-free entry.
     if (name === 'engine') textExports['./bitmapfont'] = {types:'./dist/bitmapfont.d.ts',import:'./dist/bitmapfont.js'};
+    // Video: one DOM-free entry and one optional browser entry.
+    if (name === 'engine') { textExports['./video'] = {types:'./dist/video.d.ts',import:'./dist/video.js'}; textExports['./web/video'] = {types:'./dist/web/video.d.ts',import:'./dist/web/video.js'}; }
     // Gamepad: one DOM-free entry and one optional browser entry.
     if (name === 'engine') {
       textExports['./input/gamepad'] = {types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};
@@ -354,6 +356,11 @@ for (const [name, allowed] of Object.entries(expected)) {
         const relative=path.relative(dir,file).split(path.sep).join('/');
         if(name!=='engine'||!['web/BrowserGamepadInput.ts','dist/web/BrowserGamepadInput.js','dist/web/BrowserGamepadInput.d.ts'].includes(relative))
           throw new Error('Gamepad: logical entry imported outside the named browser module: '+relative);
+      } else if (imported === '@egret/engine/video') {
+        // The browser video is built on the public video entry and on nothing private.
+        const relative=path.relative(dir,file).split(path.sep).join('/');
+        if(name!=='engine'||!['web/BrowserVideo.ts','dist/web/BrowserVideo.js','dist/web/BrowserVideo.d.ts'].includes(relative))
+          throw new Error('Video: video entry imported outside the named browser module: '+relative);
       } else if (imported === '@egret/engine/audio') {
         // The Web Audio adapter is built on the public mixer entry and on nothing private.
         const relative=path.relative(dir,file).split(path.sep).join('/');
@@ -5462,6 +5469,37 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
   const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
   if(Object.hasOwn(bitmapfontAllowed,resolved)&&!bitmapfontAllowed[resolved].includes(relative))throw new Error('Bitmapfont: implementation module imported outside its entry: '+relative);
+ }
+}
+// Video: one DOM-free entry built on the runtime alone. It starts no timer or request, and no other entry has it.
+const videoTypes=["Video", "VideoFrame", "VideoOptions", "VideoSnapshot", "VideoSource", "VideoSourceState", "VideoState"];
+const videoValues=["createVideo"];
+for(const [file,values,types] of [['packages/engine/src/video.ts',videoValues,videoTypes],['packages/engine/dist/video.js',videoValues,[]],['packages/engine/dist/video.d.ts',videoValues,videoTypes]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,values)||!mouseSame(surface.types,types))throw new Error('Video: exact entry exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/video')),videoValues))throw new Error('Video: optional runtime values mismatch');
+for(const [file,types] of [['packages/engine/web/video.ts',['BrowserVideo','BrowserVideoOptions']],['packages/engine/dist/web/video.js',[]],['packages/engine/dist/web/video.d.ts',['BrowserVideo','BrowserVideoOptions']]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,['createBrowserVideo'])||!mouseSame(surface.types,types))throw new Error('Video: exact browser entry exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/web/video')),['createBrowserVideo']))throw new Error('Video: optional browser values mismatch');
+for(const [label,values,stem] of textEntries){
+ const body=uiRead(stem+'.d.ts');
+ for(const name of [...videoTypes,...videoValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Video: leaked to default/other entry: '+label+'/'+name);
+}
+const videoImports={"src/video.ts": ["./videoPlayer.js", "./videoTypes.js"], "dist/video.js": ["./videoPlayer.js"], "dist/video.d.ts": ["./videoPlayer.js", "./videoTypes.js"], "src/videoPlayer.ts": ["@egret/runtime", "@egret/runtime", "./videoTypes.js"], "dist/videoPlayer.js": ["@egret/runtime"], "dist/videoPlayer.d.ts": ["./videoTypes.js"], "src/videoTypes.ts": ["@egret/runtime", "@egret/contracts"], "dist/videoTypes.js": [], "dist/videoTypes.d.ts": ["@egret/runtime", "@egret/contracts"], "web/video.ts": ["./BrowserVideo.js", "./BrowserVideo.js"], "dist/web/video.js": ["./BrowserVideo.js"], "dist/web/video.d.ts": ["./BrowserVideo.js", "./BrowserVideo.js"], "web/BrowserVideo.ts": ["@egret/runtime", "@egret/contracts", "@egret/engine/video", "@egret/engine/video", "@egret/runtime"], "dist/web/BrowserVideo.js": ["@egret/runtime", "@egret/contracts", "@egret/engine/video"], "dist/web/BrowserVideo.d.ts": ["@egret/engine/video", "@egret/runtime"]};
+for(const [file,expected] of Object.entries(videoImports)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
+ if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Video: exact graph mismatch: '+file);
+ if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Video: acquired automatic host work: '+file);
+}
+const videoAllowed={"src/videoPlayer.js": ["src/video.ts"], "dist/videoPlayer.js": ["dist/video.js", "dist/video.d.ts"], "web/BrowserVideo.js": ["web/video.ts"], "dist/web/BrowserVideo.js": ["dist/web/video.js", "dist/web/video.d.ts"]};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
+ if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
+ for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
+  const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+  if(Object.hasOwn(videoAllowed,resolved)&&!videoAllowed[resolved].includes(relative))throw new Error('Video: implementation module imported outside its entry: '+relative);
  }
 }
 // Gamepad: a DOM-free entry with the input and the keys it drives, and a browser entry with one
