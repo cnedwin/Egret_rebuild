@@ -4,7 +4,7 @@
  * control set of the UI, and each role is projected to the page in one known way.
  */
 export type SemanticRole = 'group' | 'image' | 'text' | 'button' | 'checkbox' | 'switch' | 'radiogroup' | 'radio'
-  | 'listbox' | 'option' | 'list' | 'listitem' | 'scrollbar' | 'slider' | 'dialog' | 'textbox';
+  | 'listbox' | 'option' | 'list' | 'listitem' | 'scrollbar' | 'slider' | 'progressbar' | 'tablist' | 'tab' | 'tabpanel' | 'dialog' | 'textbox';
 /** What assistive technology may ask of a node: its activation, or the keyboard focus. */
 export type SemanticAction = 'activate' | 'focus';
 export type SemanticChecked = boolean | 'mixed';
@@ -46,7 +46,7 @@ export interface SemanticDescription {
   readonly focused?: boolean;
   /** `checkbox`, `switch` and `radio`. Only a checkbox may be 'mixed'. */
   readonly checked?: SemanticChecked;
-  /** `option`. */
+  /** `option` and `tab`. */
   readonly selected?: boolean;
   /** `button`: whether what it opens is open. */
   readonly expanded?: boolean;
@@ -54,12 +54,13 @@ export interface SemanticDescription {
   readonly modal?: boolean;
   /** `textbox`. */
   readonly multiline?: boolean;
-  /** `scrollbar` and `slider`. */
+  /** `scrollbar` and `slider`, which need it, and `progressbar`, which without it shows work of unknown length. */
   readonly range?: SemanticRange;
+  /** `scrollbar`, `slider` and `tablist`. */
   readonly orientation?: SemanticOrientation;
-  /** `scrollbar`: the id of the node it scrolls, which must be published with it. */
+  /** `scrollbar`: the id of the node it scrolls. `tab`: the id of its panel. The node must be published with it. */
   readonly controls?: string;
-  /** `radio`, `option` and `listitem`. */
+  /** `radio`, `option`, `listitem` and `tab`. */
   readonly position?: SemanticPosition;
   /** Reading order among the nodes of one parent, lowest first. Equal values keep the order of addition. */
   readonly order?: number;

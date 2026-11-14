@@ -69,11 +69,13 @@ const level = createSelectionGroup({
 });
 ```
 
-This is the state of a radio group, a segmented control or a listbox with a single selection. `items` are one to 256 entries with distinct keys and distinct targets, in the order movement follows. Without `selected` nothing is selected until an item is chosen; after that one item always is.
+This is the state of a radio group, a segmented control, a row of tabs or a listbox with a single selection. `items` are one to 256 entries with distinct keys and distinct targets, in the order movement follows. Without `selected` nothing is selected until an item is chosen; after that one item always is.
 
 A completed press on an item selects it. `select(key)` does the same by name, and `next()`, `previous()`, `first()` and `last()` move the selection among the enabled items. Each returns whether the selection changed. Movement wraps past either end unless `wrap` is false. With nothing selected, `next()` starts at the first enabled item and `previous()` at the last.
 
 A disabled item is skipped by movement and refuses a press and `select`. Disabling the selected item leaves it selected, as a disabled checked radio button stays checked. `setEnabled(false)` on the group refuses every way of selecting. An unknown key is refused with `UI_CONTROL_UNKNOWN_ITEM`.
+
+**Tabs** are this control with a panel for each key: show the panel of `selected` and hide the others. An object that is not visible takes no press and no focus, so nothing more is needed to keep a hidden panel quiet. The [tabs example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-tabs/README.md) does this, and the [semantic tree](ui-semantics.md#tabs-and-progress) has the roles for it.
 
 ## Value in a range
 
