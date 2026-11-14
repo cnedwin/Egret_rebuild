@@ -2391,7 +2391,17 @@ function withoutSemanticsEntries(raw){
  assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:3765,sha256:'ca1aad9f66558f25c0e4e26ec74ec7cf4f7cf963654d5e096daf09f52c05fa9b'});
  return prior;
 }
-// The camera entry is the newest. Taking it out gives the package as the two gamepad entries left it.
+// The tilemap entry is the newest. Taking it out gives the package as the camera entry left it.
+function withoutTilemapEntry(raw){
+ const value=JSON.parse(raw);
+ if(!Object.hasOwn(value.exports,'./tilemap'))return raw;
+ assert.deepEqual(value.exports['./tilemap'],{types:'./dist/tilemap.d.ts',import:'./dist/tilemap.js'});
+ delete value.exports['./tilemap'];
+ const prior=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ assert.deepEqual({bytes:prior.length,sha256:createHash('sha256').update(prior).digest('hex')},{bytes:4507,sha256:'74243cafe1f034e2c880b5408ee8063ce5b0ef82598e1a3604a38a82e97bb0df'});
+ return prior;
+}
+// Taking the camera entry out gives the package as the two gamepad entries left it.
 function withoutCameraEntry(raw){
  const value=JSON.parse(raw);
  if(!Object.hasOwn(value.exports,'./camera'))return raw;
@@ -2424,7 +2434,7 @@ function withoutAudioEntries(raw){
  return prior;
 }
 function restoreScene3dEntries(raw){
- raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(withoutAudioEntries(withoutGamepadEntries(withoutCameraEntry(raw)))))));
+ raw=restoreWebEntry(withoutTextInputEntry(withoutHoverEntries(withoutSemanticsEntries(withoutAudioEntries(withoutGamepadEntries(withoutCameraEntry(withoutTilemapEntry(raw))))))));
  const identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
  if(JSON.stringify(identity(raw))!==JSON.stringify({bytes:3540,sha256:'fc0fe11e0cbebec73f4a4da71e49c94678450cfc536397f94b1fc06a65f1c8fe'}))return raw;
  const value=JSON.parse(raw),exports={};

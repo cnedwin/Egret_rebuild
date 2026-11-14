@@ -254,6 +254,8 @@ for (const [name, allowed] of Object.entries(expected)) {
     }
     // Camera: one DOM-free entry.
     if (name === 'engine') textExports['./camera'] = {types:'./dist/camera.d.ts',import:'./dist/camera.js'};
+    // Tilemap: one DOM-free entry.
+    if (name === 'engine') textExports['./tilemap'] = {types:'./dist/tilemap.d.ts',import:'./dist/tilemap.js'};
     // Gamepad: one DOM-free entry and one optional browser entry.
     if (name === 'engine') {
       textExports['./input/gamepad'] = {types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};
@@ -5350,6 +5352,32 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
   const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
   if(Object.hasOwn(cameraAllowed,resolved)&&!cameraAllowed[resolved].includes(relative))throw new Error('Camera: implementation module imported outside its entry: '+relative);
+ }
+}
+// Tilemap: one DOM-free entry built on the runtime alone. It starts no timer or request, and no other entry has it.
+const tilemapTypes=["ObjectLayerData", "TileAnimationFrame", "TiledImportOptions", "TileInfo", "TileLayerData", "TileMap", "TileMapChunk", "TileMapData", "TileMapLayer", "TileMapLayerData", "TileMapObject", "TileMapOptions", "TileMapProperties", "TileMapPropertyValue", "TileSetData"];
+const tilemapValues=["importTiledMap", "TILE_FLIP_MASK", "createTileMap"];
+for(const [file,values,types] of [['packages/engine/src/tilemap.ts',tilemapValues,tilemapTypes],['packages/engine/dist/tilemap.js',tilemapValues,[]],['packages/engine/dist/tilemap.d.ts',tilemapValues,tilemapTypes]]){
+ const surface=mouseExports(uiRead(file),file);
+ if(!mouseSame(surface.values,values)||!mouseSame(surface.types,types))throw new Error('Tilemap: exact entry exports mismatch: '+file);
+}
+if(!mouseSame(Object.keys(await import('@egret/engine/tilemap')),tilemapValues))throw new Error('Tilemap: optional runtime values mismatch');
+for(const [label,values,stem] of textEntries){
+ const body=uiRead(stem+'.d.ts');
+ for(const name of [...tilemapTypes,...tilemapValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Tilemap: leaked to default/other entry: '+label+'/'+name);
+}
+const tilemapImports={"src/tilemap.ts": ["./tiledImport.js", "./tileMapDraw.js", "./tilemapTypes.js"], "dist/tilemap.js": ["./tiledImport.js", "./tileMapDraw.js"], "dist/tilemap.d.ts": ["./tiledImport.js", "./tileMapDraw.js", "./tilemapTypes.js"], "src/tiledImport.ts": ["@egret/runtime", "./tilemapTypes.js"], "dist/tiledImport.js": ["@egret/runtime"], "dist/tiledImport.d.ts": ["./tilemapTypes.js"], "src/tileMapDraw.ts": ["@egret/runtime", "@egret/runtime", "@egret/contracts", "@egret/contracts", "./tiledImport.js", "./tilemapTypes.js"], "dist/tileMapDraw.js": ["@egret/runtime", "@egret/contracts", "./tiledImport.js"], "dist/tileMapDraw.d.ts": ["./tilemapTypes.js"], "src/tilemapTypes.ts": ["@egret/runtime", "@egret/contracts"], "dist/tilemapTypes.js": [], "dist/tilemapTypes.d.ts": ["@egret/runtime", "@egret/contracts"]};
+for(const [file,expected] of Object.entries(tilemapImports)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
+ if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Tilemap: exact graph mismatch: '+file);
+ if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Tilemap: acquired automatic host work: '+file);
+}
+const tilemapAllowed={"src/tiledImport.js": ["src/tilemap.ts", "src/tileMapDraw.ts"], "dist/tiledImport.js": ["dist/tilemap.js", "dist/tilemap.d.ts", "dist/tileMapDraw.js"], "src/tileMapDraw.js": ["src/tilemap.ts"], "dist/tileMapDraw.js": ["dist/tilemap.js", "dist/tilemap.d.ts"]};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
+ if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
+ for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
+  const resolved=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+  if(Object.hasOwn(tilemapAllowed,resolved)&&!tilemapAllowed[resolved].includes(relative))throw new Error('Tilemap: implementation module imported outside its entry: '+relative);
  }
 }
 // Gamepad: a DOM-free entry with the input and the keys it drives, and a browser entry with one
