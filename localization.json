@@ -2327,8 +2327,8 @@
       "en": "devtools/README.md",
       "zh": "devtools/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "17398a6499b893695f16fc1ff289f9ac0f2f3e300301f5dfd3739542713f950e",
-      "zhSha256": "a51e0118a9d2c6b7aa291f4f53babf91fd85b587c5a4d76decce1fc77d7451f8"
+      "enSha256": "e82994ee213fb66135106521ba1ff6be7f69da484c569a66b4179691eee77d22",
+      "zhSha256": "29717cfa3ac8efa798e1a9c2cb235c41c29f9a2b43b685bf24484b9fdc179ae1"
     },
     {
       "en": "knowledge-base/en/docs/text-input.md",
@@ -2609,69 +2609,6 @@
       "kind": "public_reading",
       "enSha256": "5527f60f93317310d0c93e1c913f670e2ad6dbee8550555a422000c14cc00f54",
       "zhSha256": "eed05dbcd6c8534829ffc7a94002871359874a09def97336954512b66e6894b7"
-    },
-    {
-      "en": "knowledge-base/en/docs/browser-game.md",
-      "zh": "knowledge-base/Cns/docs/browser-game.md",
-      "kind": "public_reading",
-      "enSha256": "8db4b2dd761ca9ea4a7d4e2fb1136e5e489e6e181ea8daf5d7b3e457094f55c1",
-      "zhSha256": "25b970aa829f4c3572c3cad9250b8f5ad1d069e81fb6b71e04c18af821a79d67"
-    },
-    {
-      "en": "knowledge-base/en/docs/egret-api-migration.md",
-      "zh": "knowledge-base/Cns/docs/egret-api-migration.md",
-      "kind": "public_reading",
-      "enSha256": "438402149c8191b5513a9557a862f7f2e98404325be23b391322c3b36caf92ec",
-      "zhSha256": "c6ef74b5d9126dca23e1cb772db868f0e4d07496c745a80fc3601d0f238c8460"
-    },
-    {
-      "en": "knowledge-base/en/docs/error-codes.md",
-      "zh": "knowledge-base/Cns/docs/error-codes.md",
-      "kind": "public_reading",
-      "enSha256": "0fe803d06e9c964ed3edef739d9e771465736440332f7b978841dff3b63fc534",
-      "zhSha256": "f75f63ee034d4b93f456422e5b01ab27a920984ff5263cc04e3988da23f9c82c"
-    },
-    {
-      "en": "examples/README.md",
-      "zh": "examples/README.zh-CN.md",
-      "kind": "public_reading",
-      "enSha256": "fa42e1861904e2830d87b20656d54b0ae1fff586b6cf9d19cb70585b62befaa5",
-      "zhSha256": "150e471d108546afb4e33b13c9cc5dbffa0df7b2442786f454acb49ffd1e8541"
-    },
-    {
-      "en": "knowledge-base/en/docs/frame-loop.md",
-      "zh": "knowledge-base/Cns/docs/frame-loop.md",
-      "kind": "public_reading",
-      "enSha256": "cef0e9fbec417bb5d073fd200d90308139c95efa33238db426c3ea0a1b069517",
-      "zhSha256": "ea764d25ab829e3b488822b7a428726d4243278b0cbd942cdafc507be6a5c680"
-    },
-    {
-      "en": "examples/graphics/README.md",
-      "zh": "examples/graphics/README.zh-CN.md",
-      "kind": "public_reading",
-      "enSha256": "7ef4f50315f4dd9a564da7755e639fe44d7d389f365075def9b87489b25d37df",
-      "zhSha256": "45cf374bbe6a3ae0f37d38e1de7dcb7d11feda3d2dad72213389ad4820802627"
-    },
-    {
-      "en": "knowledge-base/en/docs/graphics.md",
-      "zh": "knowledge-base/Cns/docs/graphics.md",
-      "kind": "public_reading",
-      "enSha256": "a2d96ffe79d8f591f31c610ab1d337723c15fc4cbad1fc9cf17fd8c4a4dec754",
-      "zhSha256": "aea4d5de4b86a7fdd214365c0cd1cffc817e0042ffa0640aa074f3eaa3d653fb"
-    },
-    {
-      "en": "examples/starter/README.md",
-      "zh": "examples/starter/README.zh-CN.md",
-      "kind": "public_reading",
-      "enSha256": "4ff34ce94b92e97eb52eca83383fa277260d2032c5ec28a867122aac53d944eb",
-      "zhSha256": "d9b085d3c0ccce06738b8a31442c21f6619a740658f3e4c0807703d678455ac1"
-    },
-    {
-      "en": "knowledge-base/en/docs/entry-points.md",
-      "zh": "knowledge-base/Cns/docs/entry-points.md",
-      "kind": "public_reading",
-      "enSha256": "04828dc74211f8aadb000981d06923162a10a571178a95512786b1a4abeaf19b",
-      "zhSha256": "6c5f070b0e407b876c3d794bfccc05356c90b2585ffe5b16e2f8094314064b73"
     }
   ],
   "registries": [
@@ -3909,7 +3846,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "0d5f33f7210a7775aef175d2b8e1250b96a8956718693d332f8b00170222d478"
+      "sha256": "2d4f3b50182aa014ccd448b7d8680ad1b298afa16748a497c77b7b3e437db8df"
     },
     {
       "path": "tools/incremental-dependencies.mjs",
@@ -3961,11 +3898,11 @@
     },
     {
       "path": "packages/engine/rendering/prepareSharedDraws2D.ts",
-      "sha256": "6afb341a14dc8052796349e6c704aef7ef09f9e75ddc35884e5191f9648fbe2f"
+      "sha256": "ce4edeafeacd4f38ed0ce835b2bb5a6cd9a2b92b9a5924c7ab2ee203ce5151d5"
     },
     {
       "path": "packages/engine/rendering/sharedColor2D.ts",
-      "sha256": "970e0f724210c5626754a2d92a8c4479407be79816eb7cd31a86d8ce24b7885c"
+      "sha256": "efe5940a95777299ed6e9fe1e75794f8a1106cd106d96c96228a7d5dcc648faf"
     },
     {
       "path": "packages/engine/web/prepareSharedSubmission2D.ts",
@@ -3989,11 +3926,11 @@
     },
     {
       "path": "packages/runtime/src/sharedFrameCapture.ts",
-      "sha256": "6a54ce1ea9891875bd1f51160a420e5b4f056aa0f151caaa2d9d935dc76b41ad"
+      "sha256": "141fedb79a91cc2310db48ff3949d2e6fdf9270df1b1e7d901432385cfb45904"
     },
     {
       "path": "packages/engine/web/WebGL2Host.ts",
-      "sha256": "282c6b78dc95c094184a3b25381ed9a43a63cf658e74893d0ae42caabf4562a7"
+      "sha256": "cd8ddfc382058977efb4ca1ccff9b0906d27ea21d32e948775d4e7a20e820f99"
     },
     {
       "path": "packages/engine/web/sharedRetentionLedger.ts",
@@ -4465,7 +4402,7 @@
     },
     {
       "path": "packages/engine/rendering/sharedEffects2D.ts",
-      "sha256": "c24a9077a372144093b9538941b6d440fb6cab5e745cf7403f06916e815599e2"
+      "sha256": "ab2aa227449c7f3403e8b135c8bd513e6200051aa7c75b878ae20fc66f219490"
     },
     {
       "path": "packages/engine/web/sharedEffectShaders.ts",
@@ -5105,7 +5042,7 @@
     },
     {
       "path": "tools/bench-2d.mjs",
-      "sha256": "915a3e1e0642ad28cdda7366b6f10ec582252a3ddc60d51a208b1bf3dcf52ba3"
+      "sha256": "5b44992b93c1cd63a39f515b1d614b6e257501bc37cf70b43008b274fe042053"
     },
     {
       "path": "packages/engine/web/world3d/webGL2FrameMetrics3D.ts",
@@ -5173,11 +5110,11 @@
     },
     {
       "path": "devtools/src/core/engineProbe.ts",
-      "sha256": "52db1160a9cb86e093989d8d670ae2c4aefe02c86ec6fbbfd10edbf2f4aaa1d2"
+      "sha256": "1f3e25ca0a0cf844b5374e99e3365addbd6d98da7906f6dd38eb475e6d633c05"
     },
     {
       "path": "devtools/src/core/frameStats.ts",
-      "sha256": "e5003aeb4f03c357e84ed7dbce2366fbf175beb072324f2b2d231167600ea596"
+      "sha256": "7ea03707ae88b26bba5cd2bf22c5efefa000d731532a2c81a6e33844d514a03d"
     },
     {
       "path": "devtools/src/core/handles.ts",
@@ -5185,7 +5122,7 @@
     },
     {
       "path": "devtools/src/core/hints.ts",
-      "sha256": "6856f1fac88ba87d3a21bde803391b30c2162d8d17da5647218fbe766a43776e"
+      "sha256": "25ab178a265f62242a65d81c54fc57ef1e3eedf5d928dc7c17055477abe1f32f"
     },
     {
       "path": "devtools/src/core/monitor.ts",
@@ -5197,7 +5134,7 @@
     },
     {
       "path": "devtools/src/web/overlay.ts",
-      "sha256": "ec2fb5b7ebffae466a2eddf122e7eeea96a4bef124b69b9c6716f50ffcfced18"
+      "sha256": "51d731a8ef3576e3bbeffda664cd48f3fe28427ef6372460d07508dc1cc71301"
     },
     {
       "path": "devtools/src/web/sources.ts",
@@ -5601,7 +5538,7 @@
     },
     {
       "path": "packages/engine/src/particleEmitter.ts",
-      "sha256": "176e57806a1cdbf009620ec49ddaa23bf8a9821b6335b01e4fbfb9e88f91e684"
+      "sha256": "76813a1be4d5cd2501a73e21063e6189c8fad657abf63b1797bf1d873a6a0768"
     },
     {
       "path": "packages/engine/src/particleTypes.ts",
@@ -5645,7 +5582,7 @@
     },
     {
       "path": "examples/tilemap/verify.mjs",
-      "sha256": "e26e3da838f73f08acbce30177d507275089c0509259cffee0d8e07ab762d380"
+      "sha256": "5eca1d6a3dde202fe6ce4c938decab846913dca102ab6e047600af2e3eacdf12"
     },
     {
       "path": "packages/engine/src/physics2d.ts",
@@ -5685,7 +5622,7 @@
     },
     {
       "path": "packages/engine/src/bitmapText.ts",
-      "sha256": "88d24d0ba5e828bf85608865f4df9569bedf59251bf802396b51e09cc1274326"
+      "sha256": "31202bcdbb6549ad4cc0a301da5c4d7261208834a28220030bc0bb330cd25037"
     },
     {
       "path": "packages/engine/src/bitmapFontTypes.ts",
@@ -5781,107 +5718,7 @@
     },
     {
       "path": "examples/video/verify.mjs",
-      "sha256": "242f829a54c0d62a286c9b8346462e7d67e08158c611750c2a2943767d41a849"
-    },
-    {
-      "path": "packages/engine/web/BrowserGame.ts",
-      "sha256": "796692b0485a7b1e893dbedb154fc984eff587fc78ec1e8419c34a4af2c0c979"
-    },
-    {
-      "path": "packages/engine/web/BrowserStatsPanel.ts",
-      "sha256": "470c222ae83ed85199a359101afb5e71c510703c95f26cb5fd8d6c11b2e20b37"
-    },
-    {
-      "path": "packages/engine/web/game.ts",
-      "sha256": "239d4349f3a9b800052a49ca10c137cab63938ff130d33b54011531cf49690e5"
-    },
-    {
-      "path": "tests/browser-game.test.mjs",
-      "sha256": "e02e21669da4841a74c4f1167e6a01de157067abc6147daf2818dbc29e5ae1a6"
-    },
-    {
-      "path": "devtools/src/core/loopSource.ts",
-      "sha256": "e7135b56a0a365cecfb80b411e162c1fca930ae76ad959c5ce5b7223dd36ef38"
-    },
-    {
-      "path": "packages/runtime/src/errorHelp.ts",
-      "sha256": "6ec40c8308ec04baffeb49642622e4734c18b5fd22d06bc8c181200c95d645b2"
-    },
-    {
-      "path": "packages/runtime/src/errorHelpZh.ts",
-      "sha256": "615e387b48b544066b930d2d4a72153e220cbcc093b806a6cf9ebf653a9fca8e"
-    },
-    {
-      "path": "tools/error-codes.mjs",
-      "sha256": "69d5c379a51e5d27831c0202e1aa94d1aeeef9c2ae22babdc2c63eba4a802cde"
-    },
-    {
-      "path": "tests/error-codes.test.mjs",
-      "sha256": "8dcde1465a5e52a1c1d9d0db5f5fd1feda80b1b2d9dab6b26df4b8193c53b314"
-    },
-    {
-      "path": "packages/engine/web/BrowserFrameLoop.ts",
-      "sha256": "9a070ae30bca96b61782437cac1e046deaf69709d28d3fe07170c1a65b6e3913"
-    },
-    {
-      "path": "packages/engine/web/loop.ts",
-      "sha256": "1d6251eac360245d992ab3d3e9a80d0b9da77ea0c80b5f252d7472541630bd01"
-    },
-    {
-      "path": "tests/frame-loop.test.mjs",
-      "sha256": "91838eeba82650366e3a18dacff97c1e8388ecf897535be687ff96c1fe7cbe59"
-    },
-    {
-      "path": "tests/types/loop.ts",
-      "sha256": "a173301ddec75306037412a1d8d133e6ac45ef725751f8ab1253bce9e3ef4ecb"
-    },
-    {
-      "path": "packages/runtime/src/graphicsFill.ts",
-      "sha256": "760431c7a23bf49bcf025e8171021d78b5ed1242f00c0bbe52984046d8a2367b"
-    },
-    {
-      "path": "tests/graphics-fills.test.mjs",
-      "sha256": "b28156e64ef9634ed472e6b285513185e0a05a763f28793579a60e8977cebc4e"
-    },
-    {
-      "path": "packages/runtime/src/graphicsShape.ts",
-      "sha256": "5752dd5cc7c34c469f55203b4d458cc7c65f3b1adac4bbab64e56c28c0a52e79"
-    },
-    {
-      "path": "packages/runtime/src/srgbBytes.ts",
-      "sha256": "c94f930c10fb51f3bff97a63c69d2cd6b2e321c2e6d54fc4dff1e3e697df1b66"
-    },
-    {
-      "path": "tests/graphics-shapes.test.mjs",
-      "sha256": "f4f05b15e2ee57ab7edb85a7cf29ac82e9412dcb20a3055a0c69cbd6aa54ccb0"
-    },
-    {
-      "path": "examples/graphics/main.mjs",
-      "sha256": "97c7c0e95aba4af278815d11afc6871238b4516b222fe07190a5cdc4a941300f"
-    },
-    {
-      "path": "examples/graphics/verify.mjs",
-      "sha256": "79bf57994d56620b2d44f27d5fdc47d55169267fce0fcf5dd452a4e625ed4fdf"
-    },
-    {
-      "path": "packages/engine/rendering/srgbBytes.ts",
-      "sha256": "684d7f493547c05f4856c98ce785af94767535727dee23c272fcfe657f124c34"
-    },
-    {
-      "path": "packages/engine/src/srgbBytes.ts",
-      "sha256": "28bb23c29fca1016bff6ca6448fbf0b314420642064bdc72441ec080a5ce6146"
-    },
-    {
-      "path": "tests/srgb-byte-table.test.mjs",
-      "sha256": "e9825426adf456ae2722d257a2d127dded8a6b1d0fab41f8995eb48675194c02"
-    },
-    {
-      "path": "examples/starter/main.mjs",
-      "sha256": "a23cc603c71476d6af1627eb0846c5dd11bf3590b662681ac20e762474521d9a"
-    },
-    {
-      "path": "examples/starter/verify.mjs",
-      "sha256": "8765664d5ca5efcd9a312c80170c4830258d9ad6ecd02cf395bdd255e91f3a31"
+      "sha256": "429d6744647a7fefc16b3c27e061b77d0229a0cfab6d1184acdd433db3a5b01b"
     }
   ],
   "historicalSemanticReview": {
