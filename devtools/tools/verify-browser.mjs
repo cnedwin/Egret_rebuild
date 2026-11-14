@@ -57,7 +57,9 @@ try {
       row.fps = Math.round(state.snapshot.fps * 10) / 10;
       row.interval = state.snapshot.interval;
       row.checks.frameCounts = state.snapshot.frame !== null && state.snapshot.frame.images === 200 && state.snapshot.frame.triangles === 400;
-      row.checks.sections = ['logic', 'clock', 'capture', 'submit'].every((name) => state.snapshot.sections.some((entry) => entry.name === name));
+      row.checks.sections = ['update', 'clock', 'capture', 'submit'].every((name) => state.snapshot.sections.some((entry) => entry.name === name));
+      row.checks.loopSource = state.snapshot.sources.loop?.state === 'running' && state.snapshot.sources.loop?.frames > 0 && typeof state.snapshot.sources.loop?.skippedShare === 'number';
+      row.checks.frameWork = state.snapshot.work !== null && state.snapshot.frame !== null && typeof state.snapshot.frame.effectKinds?.blur === 'number';
       row.checks.hostSource = state.snapshot.sources.host?.state === 'active' || typeof state.snapshot.sources.host?.pendingFrames === 'number';
       row.checks.handles = state.snapshot.sources.handles?.scopes === 1 && state.snapshot.sources.handles?.assetGroups === 1;
       row.checks.hostTiming = backend === 'webgpu' || typeof state.snapshot.sources['webgl2 ms (mean / max)']?.submit === 'string';
@@ -87,14 +89,14 @@ try {
 
       // A stalled frame reaches the hitch log with the section that caused it.
       await page.click('#hitch');
-      await page.waitForFunction(() => globalThis.__devtoolsExample.handle.monitor.hitches().some((hitch) => hitch.sections.logic >= 70), null, { timeout: 10000 });
+      await page.waitForFunction(() => globalThis.__devtoolsExample.handle.monitor.hitches().some((hitch) => hitch.sections.update >= 70), null, { timeout: 10000 });
       row.checks.hitchLogged = true;
       // The long frame can be opened in the hitch list after it has passed.
       await page.locator(selector).locator('.tabs button[data-tab="hitches"]').click();
       const hitchRow = page.locator(selector).locator('.hitch').first();
       await hitchRow.click();
       await page.waitForTimeout(600);
-      row.checks.hitchBrowsable = await hitchRow.getAttribute('aria-expanded') === 'true' && /logic/.test(await page.locator(selector).locator('.body').textContent());
+      row.checks.hitchBrowsable = await hitchRow.getAttribute('aria-expanded') === 'true' && /update/.test(await page.locator(selector).locator('.body').textContent());
       await page.screenshot({ path: path.join(output, backend + '-hitches.png') });
 
       // Pause holds what the panel shows while the monitor keeps counting.
@@ -141,7 +143,7 @@ try {
       await ready();
       row.checks.leavesDebug = await page.evaluate((s) => document.querySelector(s) === null, selector);
     } catch (error) { row.errors.push(String(error?.stack ?? error)); }
-    row.pass = row.errors.length === 0 && Object.keys(row.checks).length === 22 && Object.values(row.checks).every(Boolean);
+    row.pass = row.errors.length === 0 && Object.keys(row.checks).length === 24 && Object.values(row.checks).every(Boolean);
     await context.close();
   }
 } finally {

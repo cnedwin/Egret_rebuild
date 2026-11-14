@@ -3746,8 +3746,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "7be6ae8b602fe76e42b349a31e2b249207c66d57fcfc95b6d583b778dc5c1acf",
-      "bytes": 427904,
+      "sha256": "cc0096acb05f0a76d53d0fd0fd76a1243aaa05497aadb5f9dd50401b7fbe8ca8",
+      "bytes": 434363,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -9345,8 +9345,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1635445,
-      "sha256": "2d4f3b50182aa014ccd448b7d8680ad1b298afa16748a497c77b7b3e437db8df"
+      "bytes": 1636703,
+      "sha256": "0d5f33f7210a7775aef175d2b8e1250b96a8956718693d332f8b00170222d478"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -9633,14 +9633,14 @@
     {
       "path": "packages/engine/rendering/prepareSharedDraws2D.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 23844,
-      "sha256": "ce4edeafeacd4f38ed0ce835b2bb5a6cd9a2b92b9a5924c7ab2ee203ce5151d5"
+      "bytes": 23845,
+      "sha256": "6afb341a14dc8052796349e6c704aef7ef09f9e75ddc35884e5191f9648fbe2f"
     },
     {
       "path": "packages/engine/rendering/sharedColor2D.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 3513,
-      "sha256": "efe5940a95777299ed6e9fe1e75794f8a1106cd106d96c96228a7d5dcc648faf"
+      "bytes": 3464,
+      "sha256": "970e0f724210c5626754a2d92a8c4479407be79816eb7cd31a86d8ce24b7885c"
     },
     {
       "path": "packages/engine/web/prepareSharedSubmission2D.ts",
@@ -9681,8 +9681,8 @@
     {
       "path": "packages/runtime/src/sharedFrameCapture.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 41882,
-      "sha256": "141fedb79a91cc2310db48ff3949d2e6fdf9270df1b1e7d901432385cfb45904"
+      "bytes": 43086,
+      "sha256": "6a54ce1ea9891875bd1f51160a420e5b4f056aa0f151caaa2d9d935dc76b41ad"
     },
     {
       "path": "tests/fixtures/gpu-shared-rendering.mjs",
@@ -9693,8 +9693,8 @@
     {
       "path": "tests/shared-capture-budgets.test.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 13371,
-      "sha256": "73276514c2ce45a288f908b72067322096358f1176a755752e70f361a1463f46"
+      "bytes": 13379,
+      "sha256": "8bab18d4749fc9ac5f041241a81d0c81d9739e68640e2a1e7a52ce7c70e8a330"
     },
     {
       "path": "tests/shared-frame-capture.test.mjs",
@@ -9921,8 +9921,8 @@
     {
       "path": "packages/engine/web/WebGL2Host.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 107415,
-      "sha256": "cd8ddfc382058977efb4ca1ccff9b0906d27ea21d32e948775d4e7a20e820f99"
+      "bytes": 107397,
+      "sha256": "282c6b78dc95c094184a3b25381ed9a43a63cf658e74893d0ae42caabf4562a7"
     },
     {
       "path": "packages/engine/web/sharedRetentionLedger.ts",
@@ -13815,8 +13815,8 @@
     {
       "path": "packages/engine/rendering/sharedEffects2D.ts",
       "originRole": "Independently authored first-party shared Alpha masks, bounded box blur, existing UI integration and procedural references; Apache-2.0. Existing attributed font/runtime assets unchanged.",
-      "bytes": 4571,
-      "sha256": "ab2aa227449c7f3403e8b135c8bd513e6200051aa7c75b878ae20fc66f219490"
+      "bytes": 4535,
+      "sha256": "c24a9077a372144093b9538941b6d440fb6cab5e745cf7403f06916e815599e2"
     },
     {
       "path": "packages/engine/web/sharedEffectShaders.ts",
@@ -15591,8 +15591,8 @@
     {
       "path": "tools/bench-2d.mjs",
       "originRole": "First-party fixed 2D workloads for measuring frame capture, frame preparation and display-tree edits; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 12532,
-      "sha256": "5b44992b93c1cd63a39f515b1d614b6e257501bc37cf70b43008b274fe042053"
+      "bytes": 14820,
+      "sha256": "915a3e1e0642ad28cdda7366b6f10ec582252a3ddc60d51a208b1bf3dcf52ba3"
     },
     {
       "path": "contributions/bench-2d.json",
@@ -16257,14 +16257,14 @@
     {
       "path": "devtools/src/core/engineProbe.ts",
       "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
-      "bytes": 5432,
-      "sha256": "1f3e25ca0a0cf844b5374e99e3365addbd6d98da7906f6dd38eb475e6d633c05"
+      "bytes": 7935,
+      "sha256": "52db1160a9cb86e093989d8d670ae2c4aefe02c86ec6fbbfd10edbf2f4aaa1d2"
     },
     {
       "path": "devtools/src/core/frameStats.ts",
       "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
-      "bytes": 5361,
-      "sha256": "7ea03707ae88b26bba5cd2bf22c5efefa000d731532a2c81a6e33844d514a03d"
+      "bytes": 6919,
+      "sha256": "e5003aeb4f03c357e84ed7dbce2366fbf175beb072324f2b2d231167600ea596"
     },
     {
       "path": "devtools/src/core/handles.ts",
@@ -16275,14 +16275,14 @@
     {
       "path": "devtools/src/core/hints.ts",
       "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
-      "bytes": 5015,
-      "sha256": "25ab178a265f62242a65d81c54fc57ef1e3eedf5d928dc7c17055477abe1f32f"
+      "bytes": 6050,
+      "sha256": "6856f1fac88ba87d3a21bde803391b30c2162d8d17da5647218fbe766a43776e"
     },
     {
       "path": "devtools/src/core/index.ts",
       "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
-      "bytes": 862,
-      "sha256": "9bce8773502f8979651070c7385fb85f741a4d79fcc902845f284e3d7a6e0b5a"
+      "bytes": 1037,
+      "sha256": "e503ec8b74067791757f9a54feee368c0922bdfe8121a4cb2183a99781927fbf"
     },
     {
       "path": "devtools/src/core/monitor.ts",
@@ -16311,8 +16311,8 @@
     {
       "path": "devtools/src/web/overlay.ts",
       "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
-      "bytes": 34552,
-      "sha256": "51d731a8ef3576e3bbeffda664cd48f3fe28427ef6372460d07508dc1cc71301"
+      "bytes": 36053,
+      "sha256": "ec2fb5b7ebffae466a2eddf122e7eeea96a4bef124b69b9c6716f50ffcfced18"
     },
     {
       "path": "devtools/src/web/sources.ts",
@@ -16341,8 +16341,8 @@
     {
       "path": "devtools/tests/hints.test.mjs",
       "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries.",
-      "bytes": 6569,
-      "sha256": "e54e97b6cb286039602aa87cc2bf47412fde08488cb59d7b2832d0b719748914"
+      "bytes": 6577,
+      "sha256": "3c5a47c2f38a5e92593af560f222d3cac25a8eb8536c71e922c2fb3dd23b08b6"
     },
     {
       "path": "devtools/tests/monitor.test.mjs",
@@ -16353,14 +16353,14 @@
     {
       "path": "devtools/example/index.html",
       "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries.",
-      "bytes": 2755,
-      "sha256": "05e8fd4027ac0899db0caead9da83242264b29bd7ad42b2f36dcb196c9cc3e83"
+      "bytes": 2821,
+      "sha256": "7ac3b1215a017eee68370c0e21258b32229c6fcda7a192d4d3fbc4421f8ca067"
     },
     {
       "path": "devtools/example/main.mjs",
       "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries.",
-      "bytes": 6073,
-      "sha256": "2e41e8ac06d0e196da0829909853b6e1a145bbd41ce4fb375547e5dd324bde8c"
+      "bytes": 5756,
+      "sha256": "546dd83c25a3cc549888e77b2ec9858ff9ed36c1fce763f1440b591eb6311663"
     },
     {
       "path": "devtools/tools/build.mjs",
@@ -16377,8 +16377,8 @@
     {
       "path": "devtools/tools/verify-browser.mjs",
       "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries.",
-      "bytes": 10603,
-      "sha256": "ab2c4cb7fb49494cc775c26539541e1c1f25a66812232bdedeae60d22f2102e1"
+      "bytes": 10948,
+      "sha256": "71b52683e3d4df54cc882f7f96d9b2cbc7d955b732a0d12986df373c719343cb"
     },
     {
       "path": "devtools/.gitignore",
@@ -16419,14 +16419,14 @@
     {
       "path": "devtools/README.md",
       "originRole": "First-party optional performance monitor package configuration, workflow or bilingual guidance authored with AI assistance under Apache-2.0.",
-      "bytes": 6758,
-      "sha256": "e82994ee213fb66135106521ba1ff6be7f69da484c569a66b4179691eee77d22"
+      "bytes": 8370,
+      "sha256": "17398a6499b893695f16fc1ff289f9ac0f2f3e300301f5dfd3739542713f950e"
     },
     {
       "path": "devtools/README.zh-CN.md",
       "originRole": "First-party optional performance monitor package configuration, workflow or bilingual guidance authored with AI assistance under Apache-2.0.",
-      "bytes": 6460,
-      "sha256": "29717cfa3ac8efa798e1a9c2cb235c41c29f9a2b43b685bf24484b9fdc179ae1"
+      "bytes": 8012,
+      "sha256": "a51e0118a9d2c6b7aa291f4f53babf91fd85b587c5a4d76decce1fc77d7451f8"
     },
     {
       "path": ".github/workflows/devtools.yml",
@@ -16437,8 +16437,8 @@
     {
       "path": "contributions/devtools-performance-monitor.json",
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
-      "bytes": 7529,
-      "sha256": "aa75de9e3d2c372fc5aa01a07eee00f3407d650b3f4014479b47f6f9084372a8"
+      "bytes": 8060,
+      "sha256": "a34c910371bf6b996d81535756c4f28754321053154c332ea3e131d4e625c4d7"
     },
     {
       "path": "packages/engine/web/BrowserTextInput.ts",
@@ -17805,8 +17805,8 @@
     {
       "path": "packages/engine/src/particleEmitter.ts",
       "originRole": "First-party 2D particle emitter drawn as one mesh, with seeded emission, motion under gravity and drag, and properties from birth to death; independently authored with AI assistance; Apache-2.0. No third-party dependency.",
-      "bytes": 11017,
-      "sha256": "76813a1be4d5cd2501a73e21063e6189c8fad657abf63b1797bf1d873a6a0768"
+      "bytes": 10959,
+      "sha256": "176e57806a1cdbf009620ec49ddaa23bf8a9821b6335b01e4fbfb9e88f91e684"
     },
     {
       "path": "packages/engine/src/particleTypes.ts",
@@ -17943,8 +17943,8 @@
     {
       "path": "examples/tilemap/verify.mjs",
       "originRole": "First-party real-browser check of the tile map example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 10862,
-      "sha256": "5eca1d6a3dde202fe6ce4c938decab846913dca102ab6e047600af2e3eacdf12"
+      "bytes": 11047,
+      "sha256": "e26e3da838f73f08acbce30177d507275089c0509259cffee0d8e07ab762d380"
     },
     {
       "path": "examples/tilemap/README.md",
@@ -18081,8 +18081,8 @@
     {
       "path": "packages/engine/src/bitmapText.ts",
       "originRole": "First-party layout of text in bitmap fonts, with kerning, line breaking and alignment, drawn as one mesh for each page; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 13052,
-      "sha256": "31202bcdbb6549ad4cc0a301da5c4d7261208834a28220030bc0bb330cd25037"
+      "bytes": 12994,
+      "sha256": "88d24d0ba5e828bf85608865f4df9569bedf59251bf802396b51e09cc1274326"
     },
     {
       "path": "packages/engine/src/bitmapFontTypes.ts",
@@ -18369,8 +18369,8 @@
     {
       "path": "examples/video/verify.mjs",
       "originRole": "First-party real-browser check of the video example, reading the canvas; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 9017,
-      "sha256": "429d6744647a7fefc16b3c27e061b77d0229a0cfab6d1184acdd433db3a5b01b"
+      "bytes": 9056,
+      "sha256": "242f829a54c0d62a286c9b8346462e7d67e08158c611750c2a2943767d41a849"
     },
     {
       "path": "examples/video/README.md",
@@ -18401,6 +18401,342 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 3240,
       "sha256": "3ab3bf88e2ebd232d2a08993fb997e7b0859182949c697da22f99068431ec22e"
+    },
+    {
+      "path": "packages/engine/web/BrowserGame.ts",
+      "originRole": "First-party one-call composition of a Host, an Engine, a scope, input and a frame loop for a game in a page; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 8613,
+      "sha256": "796692b0485a7b1e893dbedb154fc984eff587fc78ec1e8419c34a4af2c0c979"
+    },
+    {
+      "path": "packages/engine/web/BrowserStatsPanel.ts",
+      "originRole": "First-party panel of frames a second, what a frame holds and how busy the Host is; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 6628,
+      "sha256": "470c222ae83ed85199a359101afb5e71c510703c95f26cb5fd8d6c11b2e20b37"
+    },
+    {
+      "path": "packages/engine/web/game.ts",
+      "originRole": "First-party optional browser entry for the one-call game and its panel; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 535,
+      "sha256": "239d4349f3a9b800052a49ca10c137cab63938ff130d33b54011531cf49690e5"
+    },
+    {
+      "path": "tests/browser-game.test.mjs",
+      "originRole": "First-party Node tests of the one-call game's options and of the stats panel; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 5642,
+      "sha256": "e02e21669da4841a74c4f1167e6a01de157067abc6147daf2818dbc29e5ae1a6"
+    },
+    {
+      "path": "knowledge-base/en/docs/browser-game.md",
+      "originRole": "First-party guide to the one-call game entry and its panel, with what was run and what was not; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 5761,
+      "sha256": "8db4b2dd761ca9ea4a7d4e2fb1136e5e489e6e181ea8daf5d7b3e457094f55c1"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/browser-game.md",
+      "originRole": "First-party Chinese guide to the one-call game entry and its panel; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 5804,
+      "sha256": "25b970aa829f4c3572c3cad9250b8f5ad1d069e81fb6b71e04c18af821a79d67"
+    },
+    {
+      "path": "contributions/browser-game.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 1517,
+      "sha256": "9e2bc46cf8a5ffe59a1bb60038fd3c84cd6a5f08ce30663f70b3dcd1cf33e476"
+    },
+    {
+      "path": "devtools/src/core/loopSource.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
+      "bytes": 2957,
+      "sha256": "e7135b56a0a365cecfb80b411e162c1fca930ae76ad959c5ce5b7223dd36ef38"
+    },
+    {
+      "path": "devtools/tests/frame-loop.test.mjs",
+      "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries.",
+      "bytes": 9610,
+      "sha256": "41b4e75dc731afdcdd5dbfc845ceb3c7ffda5eecd7c0efbb74c2f9ad3bd6a525"
+    },
+    {
+      "path": "knowledge-base/en/docs/egret-api-migration.md",
+      "originRole": "First-party map from the public API of Egret Engine 5 to this SDK, written from this checkout's sources and from Egret 5's public API names; independently authored with AI assistance; Apache-2.0. No Egret source, sample or document text is copied.",
+      "bytes": 12823,
+      "sha256": "438402149c8191b5513a9557a862f7f2e98404325be23b391322c3b36caf92ec"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/egret-api-migration.md",
+      "originRole": "First-party Chinese map from the public API of Egret Engine 5 to this SDK; independently authored with AI assistance; Apache-2.0. No Egret source, sample or document text is copied.",
+      "bytes": 12775,
+      "sha256": "c6ef74b5d9126dca23e1cb772db868f0e4d07496c745a80fc3601d0f238c8460"
+    },
+    {
+      "path": "contributions/egret-api-migration.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 771,
+      "sha256": "126c9aac95db0042c8bdd87770d387b4f2f45e809bd8bbeaa53f02f0ad4fa501"
+    },
+    {
+      "path": "packages/runtime/src/errorHelp.ts",
+      "originRole": "First-party sentences for error codes, written and put together from each code's area and ending; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 25526,
+      "sha256": "6ec40c8308ec04baffeb49642622e4734c18b5fd22d06bc8c181200c95d645b2"
+    },
+    {
+      "path": "packages/runtime/src/errorHelpZh.ts",
+      "originRole": "First-party Chinese sentences for error codes, by the same rules as the English ones; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 20982,
+      "sha256": "615e387b48b544066b930d2d4a72153e220cbcc093b806a6cf9ebf653a9fca8e"
+    },
+    {
+      "path": "tools/error-codes.mjs",
+      "originRole": "First-party tool that writes the two error code references from the sources, with the Chinese sentences; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 9443,
+      "sha256": "69d5c379a51e5d27831c0202e1aa94d1aeeef9c2ae22babdc2c63eba4a802cde"
+    },
+    {
+      "path": "tests/error-codes.test.mjs",
+      "originRole": "First-party unit of error messages and of the two error code references against the sources; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 5920,
+      "sha256": "8dcde1465a5e52a1c1d9d0db5f5fd1feda80b1b2d9dab6b26df4b8193c53b314"
+    },
+    {
+      "path": "knowledge-base/en/docs/error-codes.md",
+      "originRole": "First-party reference of error codes, written by tools/error-codes.mjs; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 75432,
+      "sha256": "0fe803d06e9c964ed3edef739d9e771465736440332f7b978841dff3b63fc534"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/error-codes.md",
+      "originRole": "First-party Chinese reference of error codes, written by tools/error-codes.mjs; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 70620,
+      "sha256": "f75f63ee034d4b93f456422e5b01ab27a920984ff5263cc04e3988da23f9c82c"
+    },
+    {
+      "path": "contributions/error-messages.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 1528,
+      "sha256": "2323478a602e6d211f39a7917196b34b9380612f910d099ac77bd249f74b3f02"
+    },
+    {
+      "path": "examples/README.md",
+      "originRole": "First-party index of the examples by what they show; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 5296,
+      "sha256": "fa42e1861904e2830d87b20656d54b0ae1fff586b6cf9d19cb70585b62befaa5"
+    },
+    {
+      "path": "examples/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese index of the examples by what they show; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 5569,
+      "sha256": "150e471d108546afb4e33b13c9cc5dbffa0df7b2442786f454acb49ffd1e8541"
+    },
+    {
+      "path": "contributions/examples-index.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 478,
+      "sha256": "63335eec3335407851763555dac0f1053349c398c12d795383b281a6b485345d"
+    },
+    {
+      "path": "packages/engine/web/BrowserFrameLoop.ts",
+      "originRole": "First-party frame loop of a page: clock, step, draw, bounded steps and skipped frames; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 6625,
+      "sha256": "9a070ae30bca96b61782437cac1e046deaf69709d28d3fe07170c1a65b6e3913"
+    },
+    {
+      "path": "packages/engine/web/loop.ts",
+      "originRole": "First-party optional browser entry of the frame loop; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 377,
+      "sha256": "1d6251eac360245d992ab3d3e9a80d0b9da77ea0c80b5f252d7472541630bd01"
+    },
+    {
+      "path": "tests/frame-loop.test.mjs",
+      "originRole": "First-party Node tests of the frame loop with a display the test drives and with a real Engine clock; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 9050,
+      "sha256": "91838eeba82650366e3a18dacff97c1e8388ecf897535be687ff96c1fe7cbe59"
+    },
+    {
+      "path": "tests/types/loop.ts",
+      "originRole": "First-party strict consumer of the frame loop entry, with four refused misuses; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 1803,
+      "sha256": "a173301ddec75306037412a1d8d133e6ac45ef725751f8ab1253bce9e3ef4ecb"
+    },
+    {
+      "path": "tests/types/loop.json",
+      "originRole": "First-party compiler configuration of the frame loop consumer; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 252,
+      "sha256": "0e0243348562fb9dd1080d9c1e1228af8eea762a615d90544d3c2557e32be4a2"
+    },
+    {
+      "path": "knowledge-base/en/docs/frame-loop.md",
+      "originRole": "First-party guide to the frame loop, with what was run and what was not; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 3949,
+      "sha256": "cef0e9fbec417bb5d073fd200d90308139c95efa33238db426c3ea0a1b069517"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/frame-loop.md",
+      "originRole": "First-party Chinese guide to the frame loop; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 3754,
+      "sha256": "ea764d25ab829e3b488822b7a428726d4243278b0cbd942cdafc507be6a5c680"
+    },
+    {
+      "path": "contributions/frame-loop.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 1600,
+      "sha256": "992bfd8d90499e4627b660318738189a883abce678044cba676b9e3c116cc49d"
+    },
+    {
+      "path": "packages/runtime/src/graphicsFill.ts",
+      "originRole": "First-party non-zero fill of outlines in bands, and gradients as vertex colours by cutting triangles; independently authored with AI assistance; Apache-2.0. The non-zero rule and sRGB mixing follow the public HTML canvas specification; no code or data from it or from any engine.",
+      "bytes": 11646,
+      "sha256": "760431c7a23bf49bcf025e8171021d78b5ed1242f00c0bbe52984046d8a2367b"
+    },
+    {
+      "path": "tests/graphics-fills.test.mjs",
+      "originRole": "First-party Node tests of line ends, corners, dashes, fills with holes and crossings, and gradients, as the triangles a frame carries; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 13423,
+      "sha256": "b28156e64ef9634ed472e6b285513185e0a05a763f28793579a60e8977cebc4e"
+    },
+    {
+      "path": "contributions/graphics-fills.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 716,
+      "sha256": "00bcb4493110cecc72802ec44116d839f2f0f99dcf52daa930047d6d9be06ce2"
+    },
+    {
+      "path": "packages/runtime/src/graphicsShape.ts",
+      "originRole": "First-party tessellation of Graphics shapes, paths and lines into coloured triangles; independently authored with AI assistance; Apache-2.0. Ear cutting, mitred lines and de Casteljau subdivision written from their definitions; no third-party code.",
+      "bytes": 23246,
+      "sha256": "5752dd5cc7c34c469f55203b4d458cc7c65f3b1adac4bbab64e56c28c0a52e79"
+    },
+    {
+      "path": "packages/runtime/src/srgbBytes.ts",
+      "originRole": "First-party written table of the linear-light value of each sRGB byte, for Graphics shapes; independently authored with AI assistance; Apache-2.0. Numbers computed from the sRGB transfer function.",
+      "bytes": 6234,
+      "sha256": "c94f930c10fb51f3bff97a63c69d2cd6b2e321c2e6d54fc4dff1e3e697df1b66"
+    },
+    {
+      "path": "tests/graphics-shapes.test.mjs",
+      "originRole": "First-party Node tests of Graphics shapes, paths and lines as the triangles a frame carries; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 14724,
+      "sha256": "f4f05b15e2ee57ab7edb85a7cf29ac82e9412dcb20a3055a0c69cbd6aa54ccb0"
+    },
+    {
+      "path": "examples/graphics/index.html",
+      "originRole": "First-party page of the graphics example; independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "bytes": 2983,
+      "sha256": "d85e95b467e846b8a129bb31a1be7e4ee399438ac8cb422a32cbf918d10eecce"
+    },
+    {
+      "path": "examples/graphics/main.mjs",
+      "originRole": "First-party example of shapes, paths, lines, curves and arcs drawn with Graphics; independently authored with AI assistance; Apache-2.0. Original example text; no third-party asset.",
+      "bytes": 4856,
+      "sha256": "97c7c0e95aba4af278815d11afc6871238b4516b222fe07190a5cdc4a941300f"
+    },
+    {
+      "path": "examples/graphics/verify.mjs",
+      "originRole": "First-party real-browser check of the graphics example, reading colours inside and outside each outline; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 11032,
+      "sha256": "79bf57994d56620b2d44f27d5fdc47d55169267fce0fcf5dd452a4e625ed4fdf"
+    },
+    {
+      "path": "examples/graphics/README.md",
+      "originRole": "First-party instructions for the graphics example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 2168,
+      "sha256": "7ef4f50315f4dd9a564da7755e639fe44d7d389f365075def9b87489b25d37df"
+    },
+    {
+      "path": "examples/graphics/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the graphics example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 2112,
+      "sha256": "45cf374bbe6a3ae0f37d38e1de7dcb7d11feda3d2dad72213389ad4820802627"
+    },
+    {
+      "path": "knowledge-base/en/docs/graphics.md",
+      "originRole": "First-party guide to Graphics shapes, paths and lines, with what was run and what was not; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 9188,
+      "sha256": "a2d96ffe79d8f591f31c610ab1d337723c15fc4cbad1fc9cf17fd8c4a4dec754"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/graphics.md",
+      "originRole": "First-party Chinese guide to Graphics shapes, paths and lines; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 8878,
+      "sha256": "aea4d5de4b86a7fdd214365c0cd1cffc817e0042ffa0640aa074f3eaa3d653fb"
+    },
+    {
+      "path": "contributions/graphics-shapes.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 2580,
+      "sha256": "182632c58276da91a74386483905a7d9f500916f4e985431e926140540a0cf2e"
+    },
+    {
+      "path": "packages/engine/rendering/srgbBytes.ts",
+      "originRole": "First-party written table of the linear-light value of each sRGB byte, for shared preparation and the Hosts; independently authored with AI assistance; Apache-2.0. Numbers computed from the sRGB transfer function.",
+      "bytes": 6229,
+      "sha256": "684d7f493547c05f4856c98ce785af94767535727dee23c272fcfe657f124c34"
+    },
+    {
+      "path": "packages/engine/src/srgbBytes.ts",
+      "originRole": "First-party written table of the linear-light value of each sRGB byte, for bitmap text and particles; independently authored with AI assistance; Apache-2.0. Numbers computed from the sRGB transfer function.",
+      "bytes": 6235,
+      "sha256": "28bb23c29fca1016bff6ca6448fbf0b314420642064bdc72441ec080a5ce6146"
+    },
+    {
+      "path": "tests/srgb-byte-table.test.mjs",
+      "originRole": "First-party unit of the two written sRGB byte tables against their recorded digest and the transfer function; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 2065,
+      "sha256": "e9825426adf456ae2722d257a2d127dded8a6b1d0fab41f8995eb48675194c02"
+    },
+    {
+      "path": "contributions/srgb-byte-table.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 927,
+      "sha256": "b3ea0edca7459351c24200159c8d0bad0ad6e3d97b9b4b3e5430e0e7242872ad"
+    },
+    {
+      "path": "examples/starter/index.html",
+      "originRole": "First-party page of the starter example; independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "bytes": 2864,
+      "sha256": "51ad1084e58af1299d3d9b4b639b7aed9da658df55944bb85f628870d9fc8f76"
+    },
+    {
+      "path": "examples/starter/main.mjs",
+      "originRole": "First-party starting point for a 2D game: Host, Engine, scope, stage, input and frame loop; independently authored with AI assistance; Apache-2.0. Original example text; no third-party asset.",
+      "bytes": 5053,
+      "sha256": "a23cc603c71476d6af1627eb0846c5dd11bf3590b662681ac20e762474521d9a"
+    },
+    {
+      "path": "examples/starter/verify.mjs",
+      "originRole": "First-party real-browser check of the starter example, reading the canvas; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 9250,
+      "sha256": "8765664d5ca5efcd9a312c80170c4830258d9ad6ecd02cf395bdd255e91f3a31"
+    },
+    {
+      "path": "examples/starter/README.md",
+      "originRole": "First-party instructions for the starter example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 3114,
+      "sha256": "4ff34ce94b92e97eb52eca83383fa277260d2032c5ec28a867122aac53d944eb"
+    },
+    {
+      "path": "examples/starter/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the starter example; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 3154,
+      "sha256": "d9b085d3c0ccce06738b8a31442c21f6619a740658f3e4c0807703d678455ac1"
+    },
+    {
+      "path": "knowledge-base/en/docs/entry-points.md",
+      "originRole": "First-party table of which package entry a task needs; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 6512,
+      "sha256": "04828dc74211f8aadb000981d06923162a10a571178a95512786b1a4abeaf19b"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/entry-points.md",
+      "originRole": "First-party Chinese table of which package entry a task needs; independently authored with AI assistance; Apache-2.0.",
+      "bytes": 6547,
+      "sha256": "6c5f070b0e407b876c3d794bfccc05356c90b2585ffe5b16e2f8094314064b73"
+    },
+    {
+      "path": "contributions/starter.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 1656,
+      "sha256": "b6bd3693c15adc7b0f74f7c542364b05d104f705aa0a6cff2a56ce2e3f413e85"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

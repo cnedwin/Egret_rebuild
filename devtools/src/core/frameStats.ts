@@ -21,6 +21,16 @@ interface SharedCommandLike {
     readonly geometryIndex?: number;
     readonly clips?: unknown;
     readonly reason?: string;
+    readonly effect?: { readonly blurRadius?: unknown; readonly colorMatrix?: unknown; readonly glow?: { readonly kind?: unknown } | undefined; readonly maskPageIndex?: unknown };
+}
+
+/** What the effect groups of a frame ask for. One group may ask for several. */
+export interface SharedFrameEffectKinds {
+    readonly blur: number;
+    readonly colorMatrix: number;
+    readonly glow: number;
+    readonly outline: number;
+    readonly mask: number;
 }
 
 /** Why two neighbouring draws could not share one run. */
@@ -41,8 +51,11 @@ export interface SharedFrameStats {
     readonly images: number;
     readonly meshes: number;
     readonly barriers: number;
-    /** Barriers that enter a blur or mask effect; each needs an offscreen pass. */
+    /** Barriers that enter an effect group; each group is drawn offscreen. */
     readonly effects: number;
+    readonly effectKinds: SharedFrameEffectKinds;
+    /** Draws whose material blends other than normally: add, multiply, screen or erase. */
+    readonly blendedDraws: number;
     readonly triangles: number;
     readonly pages: number;
     readonly regions: number;
@@ -73,6 +86,8 @@ export function analyzeSharedFrame(frame: SharedFrameLike): SharedFrameStats {
     const geometries: readonly unknown[] = Array.isArray(frame.geometries) ? frame.geometries : [];
     let rects = 0, images = 0, meshes = 0, barriers = 0, effects = 0, triangles = 0, runs = 0;
     let material = 0, page = 0, region = 0, clip = 0, barrier = 0;
+    let blur = 0, colorMatrix = 0, glow = 0, outline = 0, mask = 0, blendedDraws = 0;
+    const materials: readonly unknown[] = Array.isArray(frame.materials) ? frame.materials : [];
     let open = false, afterBarrier = false;
     let lastMaterial = -1, lastRegion = -1, lastPage = -1;
     let lastClips: unknown;
@@ -80,7 +95,16 @@ export function analyzeSharedFrame(frame: SharedFrameLike): SharedFrameStats {
         const kind = command.kind;
         if (kind === 'barrier') {
             barriers++;
-            if (command.reason === 'effect-enter') effects++;
+            if (command.reason === 'effect-enter') {
+                effects++;
+                const effect = command.effect;
+                if (effect !== undefined && effect !== null) {
+                    if (finite(effect.blurRadius) > 0) blur++;
+                    if (Array.isArray(effect.colorMatrix)) colorMatrix++;
+                    if (effect.glow?.kind === 'glow') glow++; else if (effect.glow?.kind === 'outline') outline++;
+                    if (typeof effect.maskPageIndex === 'number') mask++;
+                }
+            }
             if (open) afterBarrier = true;
             continue;
         }
@@ -96,6 +120,8 @@ export function analyzeSharedFrame(frame: SharedFrameLike): SharedFrameStats {
         const pageIndex = regionIndex < 0 ? -1 : finite((regions[regionIndex] as { readonly pageIndex?: unknown } | undefined)?.pageIndex);
         const materialIndex = finite(command.materialIndex);
         const clips = command.clips;
+        const blend = (materials[materialIndex] as { readonly blend?: unknown } | undefined)?.blend;
+        if (typeof blend === 'string' && blend !== 'normal') blendedDraws++;
         if (!open) { open = true; runs++; }
         else if (afterBarrier) { barrier++; runs++; }
         else {
@@ -116,8 +142,9 @@ export function analyzeSharedFrame(frame: SharedFrameLike): SharedFrameStats {
     }
     return Object.freeze({
         frameId: finite(frame.frameId), width: finite(frame.width), height: finite(frame.height),
-        commands: commands.length, rects, images, meshes, barriers, effects, triangles,
-        pages: count(frame.pages), regions: regions.length, materials: count(frame.materials), geometries: geometries.length,
+        commands: commands.length, rects, images, meshes, barriers, effects,
+        effectKinds: Object.freeze({ blur, colorMatrix, glow, outline, mask }), blendedDraws, triangles,
+        pages: count(frame.pages), regions: regions.length, materials: materials.length, geometries: geometries.length,
         pageBytes, runs,
         switches: Object.freeze({ material, page, region, clip, barrier }),
     });
