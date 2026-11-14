@@ -21,7 +21,7 @@ Use this entry to find product and engineering documents for the community rebui
 | --- | --- |
 | Rendering/resources | [M1](docs/m1-rendering-resource-plan.md) · [Shared rendering](docs/shared-render-profile-contract.md) · [WebGL2](docs/webgl2-executor-contract.md) · [Recovery](docs/resource-recovery-contract.md) |
 | Content/animation | [M2](docs/m2-spine-content-plan.md) · [Build/runtime](docs/content-build-pipeline.md) · [Spine](docs/spine-content-ingress.md) · [Spine seek](docs/spine-seek.md) · [Sequence RESET](docs/sequence-reset.md) |
-| UI/text/input | [M3](docs/m3-ui-text-input-plan.md) · [Managed UI](docs/ui-data-panel.md) · [Paragraphs](docs/readonly-paragraph-sdk.md) · [Fonts](docs/font-resource-generations.md) · [Effects](docs/shared-ui-effects.md) · [Hover and wheel](docs/pointer-hover.md) · [Control state](docs/ui-controls.md) · [Semantics](docs/ui-semantics.md) |
+| UI/text/input | [M3](docs/m3-ui-text-input-plan.md) · [Managed UI](docs/ui-data-panel.md) · [Paragraphs](docs/readonly-paragraph-sdk.md) · [Fonts](docs/font-resource-generations.md) · [Effects](docs/shared-ui-effects.md) · [Hover and wheel](docs/pointer-hover.md) · [Control state](docs/ui-controls.md) · [Semantics](docs/ui-semantics.md) · [Screens to start from](docs/ui-examples.md) |
 | Mixed integration | [M4](docs/m4-core-acceptance-plan.md) · [Android scope](docs/android-device-validation.md) · [Clean consumer](docs/clean-consumer.md) |
 | 3D | [Bounded 3D and 2D composition](docs/authored-scene3d.md) · [Standalone World3D](docs/world3d.md) |
 | Future tools/compatibility | [Project transactions](docs/project-transaction-core-contract.md) · [AI/project interfaces](docs/ai-creation-and-engineering-interfaces.md) · [Complete migration](docs/legacy-project-migration.md) |

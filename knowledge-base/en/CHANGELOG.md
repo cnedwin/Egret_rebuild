@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Screens to start from — 2026-11-14
+
+A page lists the UI example screens by what a screen is: controls, text fields, settings, tabs, long lists, a dropdown and a menu for a row, several selected rows, a table that sorts, a tree, a bag and amounts in steps. It says what they have in common and what to check before a screen is done, each point a defect that was found in one of them. Documents only. Part of #90. [Guide](docs/ui-examples.md)
+
 ## A tree that opens and closes, and headings — 2026-11-14
 
 The semantic tree gains the roles `tree`, `treeitem` and `heading`, with `level` for the depth of an item and the rank of a heading, and `createUiListSemantics` takes `role: 'tree'`: the rows that show are the items of a tree, each at the depth it says and at its place among the items under the same item. A new example, `examples/ui-tree`, is a sect of halls, squads and members that opens and closes by a press and by the arrow keys, under a heading. Checked in Node and in headless Chromium with software WebGL2; no reader was run. Part of #90. [Guide](docs/ui-semantics.md#a-tree) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-tree/README.md)
