@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "files": [
     {"path": "packages/runtime/src/errorHelp.ts", "originRole": "First-party sentences for error codes, written and put together from each code's area and ending; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "packages/runtime/src/errorHelpZh.ts", "originRole": "First-party Chinese sentences for error codes, by the same rules as the English ones; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
     {"path": "tools/error-codes.mjs", "originRole": "First-party tool that writes the two error code references from the sources, with the Chinese sentences; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
     {"path": "tests/error-codes.test.mjs", "originRole": "First-party unit of error messages and of the two error code references against the sources; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
     {"path": "knowledge-base/en/docs/error-codes.md", "originRole": "First-party reference of error codes, written by tools/error-codes.mjs; independently authored with AI assistance; Apache-2.0."},

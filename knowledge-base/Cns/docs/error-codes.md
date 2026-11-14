@@ -9,13 +9,13 @@
 | 部分 | 内容 |
 | --- | --- |
 | `error.code` | 大写的错误码。它是稳定的：程序用它来比较 |
-| `error.message` | 错误码，以及有说明时的一句英文说明。它是给人看的，措辞可能调整；本页给出对应的中文 |
+| `error.message` | 错误码加一句说明，默认是英文。先调用 `@egret/engine` 的 `setErrorLanguage('zh')`，之后创建的错误就带本页的中文说明。它是给人看的，措辞可能调整 |
 | `error.cause` | 导致这个错误的原因（如果有）：`FRAME_RENDER_FAILED` 背后 Host 自己的错误，或应用回调抛出的内容 |
 | `error.cleanupErrors` | 出错后清理时又出现的问题（如果有） |
 
 错误码由"哪个部分"和"出了什么问题"组成。开头表示部分，结尾表示发生了什么：`..._OPTIONS_INVALID` 表示选项无效，`..._CLOSED` 和 `..._DISPOSED` 表示在结束之后还在使用，`..._REENTRANT` 表示在自己的回调里又调用了自己，`..._LIMIT` 和 `..._BUDGET` 表示超出了上限，`..._FAILED` 表示失败，原因在 `cause` 中。
 
-游戏最常遇到的错误码有专门写的说明，其中包含该怎么做。其余说明由部分和结尾拼成。标为 — 的错误码还没有说明，它的 message 只有错误码本身。
+游戏最常遇到的错误码有专门写的说明，其中包含该怎么做。其余说明由部分和结尾拼成；结尾不属于常见种类的错误码则逐个写了说明。`describeErrorCode(code, 'en' | 'zh')` 把某个错误码的说明交给程序。
 
 表中各行是源码里完整写出的错误码。有些部分在运行时用自己的前缀加一个短名拼出错误码，所以可能抛出本页没有列出的错误码；它的 message 仍然带有按同样规则生成的说明。
 
@@ -59,7 +59,7 @@
 | `ANIMATION_CALLBACK_RETURN_INVALID` | 交给动画协调器的 `callback return` 无效。 |
 | `ANIMATION_CLEANUP_FAILED` | 清理动画协调器时失败。各个原因在 cleanupErrors 中。 |
 | `ANIMATION_COMMANDS_PENDING` | 动画协调器的 `commands` 尚未完成。 |
-| `ANIMATION_COMMANDS_REPLACED` | 动画协调器出现问题：`commands replaced`。 |
+| `ANIMATION_COMMANDS_REPLACED` | 这一拍交给动画的命令在执行之前被后来的命令取代了。 |
 | `ANIMATION_COMMAND_INVALID` | 交给动画协调器的 `command` 无效。 |
 | `ANIMATION_COMMAND_LIMIT` | 超出了动画协调器的 `command` 上限。 |
 | `ANIMATION_CONTROLLER_INVALID` | 交给动画协调器的 `controller` 无效。 |
@@ -74,14 +74,14 @@
 | `ANIMATION_OPTIONS_INVALID` | 交给动画协调器的选项无效：缺少某一项、类型不对或超出范围。 |
 | `ANIMATION_PRECISION_LIMIT` | 超出了动画协调器的 `precision` 上限。 |
 | `ANIMATION_RATE_INVALID` | 交给动画协调器的 `rate` 无效。 |
-| `ANIMATION_RATE_ZERO` | 动画协调器出现问题：`rate zero`。 |
+| `ANIMATION_RATE_ZERO` | 给动画的速率是 0。速率只能大于或小于零：要让动画停住，请暂停它。 |
 | `ANIMATION_REENTRANT` | 在动画协调器自己的回调里又调用了它。 |
 | `ANIMATION_SCOPE_INVALID` | 交给动画协调器的作用域不是这个 Engine 的一个打开的作用域。 |
 | `ANIMATION_SEEK_BACKWARDS` | 交给动画协调器的 `seek` 早于上一次。 |
 | `ANIMATION_SEEK_INVALID` | 交给动画协调器的 `seek` 无效。 |
 | `ANIMATION_TARGET_BUSY` | 动画协调器的 `target` 还在处理之前的请求。 |
 | `ANIMATION_TERMINAL` | 动画协调器已经结束，不能再使用。 |
-| `ANIMATION_TERMINAL_COMMAND` | 动画协调器出现问题：`terminal command`。 |
+| `ANIMATION_TERMINAL_COMMAND` | 向已经结束的动画发出了命令。 |
 | `ANIMATION_TICK_INVALID` | 交给动画协调器的 `tick` 无效。 |
 | `ANIMATION_TIME_LIMIT` | 超出了动画协调器的 `time` 上限。 |
 
@@ -95,7 +95,7 @@
 | `ASSET_DISPOSED` | 资源管理器已销毁，不再接受任何操作。 |
 | `ASSET_ID_EXHAUSTED` | 资源管理器的 `id` 计数器用尽了。请新建一个。 |
 | `ASSET_LOAD_FAILED` | 提供者加载资源失败。它抛出的内容在 cause 中。 |
-| `ASSET_NO_DEMAND` | 资源管理器出现问题：`no demand`。 |
+| `ASSET_NO_DEMAND` | 资源的加载被停止了，因为所有请求它的地方都已放弃。 |
 | `ASSET_REF_INVALID` | 交给资源管理器的 `ref` 无效。 |
 | `ASSET_SIGNAL_FAILED` | 资源管理器的 `signal` 失败了。原因在 cause 中。 |
 | `ASSET_TYPE_INVALID` | 交给资源管理器的 `type` 无效。 |
@@ -409,7 +409,7 @@
 | `GAMEPAD_LISTENER_FAILED` | 应用交给手柄输入的监听器抛出了异常。抛出的内容在 cause 中。 |
 | `GAMEPAD_OPTIONS_INVALID` | 交给手柄输入的选项无效：缺少某一项、类型不对或超出范围。 |
 | `GAMEPAD_REENTRANT` | 在手柄输入自己的回调里又调用了它。 |
-| `GAMEPAD_SAMPLE` | 手柄输入出现问题：`sample`。 |
+| `GAMEPAD_SAMPLE` | 交给手柄输入的不是手柄采样。 |
 | `GAMEPAD_STICK_UNKNOWN` | 手柄输入中没有这样的 `stick`。 |
 
 ### GRAPHICS
@@ -441,20 +441,20 @@
 | `HOVER_INPUT_EVENT_INVALID` | 交给悬停输入的 `event` 无效。 |
 | `HOVER_INPUT_EXHAUSTED` | 悬停输入的一个计数器用尽了。请新建一个。 |
 | `HOVER_INPUT_OPTIONS_INVALID` | 交给悬停输入的选项无效：缺少某一项、类型不对或超出范围。 |
-| `HOVER_INPUT_REASON` | 悬停输入出现问题：`reason`。 |
+| `HOVER_INPUT_REASON` | 交给悬停输入的离开原因不是它认识的原因。 |
 | `HOVER_INPUT_REENTRANT` | 在悬停输入自己的回调里又调用了它。 |
-| `HOVER_INPUT_SAMPLE` | 悬停输入出现问题：`sample`。 |
+| `HOVER_INPUT_SAMPLE` | 交给悬停输入的采样不是带有指针 id、指针类型、全局坐标和时间戳的对象。 |
 | `HOVER_INPUT_SETUP_FAILED` | 建立悬停输入时失败。原因在 cause 中。 |
 | `HOVER_INPUT_SURFACE_BUSY` | 悬停输入的 `surface` 还在处理之前的请求。 |
 | `HOVER_INPUT_SURFACE_INVALID` | 交给悬停输入的 `surface` 无效。 |
-| `HOVER_INPUT_VIEWPORT` | 悬停输入出现问题：`viewport`。 |
+| `HOVER_INPUT_VIEWPORT` | 交给悬停输入的视口版本号不是比上一次更大的整数。 |
 
 ### KEYBOARD
 
 | 错误码 | 含义 |
 | --- | --- |
 | `KEYBOARD_REGISTRATION_CLOSED` | 键盘的 `registration` 已关闭，不再接受任何操作。 |
-| `KEYBOARD_TARGET_INELIGIBLE` | 键盘出现问题：`target ineligible`。 |
+| `KEYBOARD_TARGET_INELIGIBLE` | 该键盘目标现在不能获得焦点，例如它被禁用或不在舞台上。 |
 | `KEYBOARD_TARGET_INVALID` | 交给键盘的 `target` 无效。 |
 
 ### KEYBOARD_FOCUS_SCOPE
@@ -656,13 +656,13 @@
 | `POINTER_INPUT_NATIVE_FAILED` | 指针输入的 `native` 失败了。原因在 cause 中。 |
 | `POINTER_INPUT_OPTIONS` | 交给指针输入的选项无效。 |
 | `POINTER_INPUT_OPTIONS_INVALID` | 交给指针输入的选项无效：缺少某一项、类型不对或超出范围。 |
-| `POINTER_INPUT_REASON` | 指针输入出现问题：`reason`。 |
+| `POINTER_INPUT_REASON` | 交给指针输入的取消原因不是它认识的原因。 |
 | `POINTER_INPUT_REENTRANT` | 在指针输入自己的回调里又调用了它。 |
-| `POINTER_INPUT_SAMPLE` | 指针输入出现问题：`sample`。 |
+| `POINTER_INPUT_SAMPLE` | 交给指针输入的不是指针采样。 |
 | `POINTER_INPUT_SETUP_FAILED` | 建立指针输入时失败。原因在 cause 中。 |
 | `POINTER_INPUT_SURFACE_BUSY` | 指针输入的 `surface` 还在处理之前的请求。 |
 | `POINTER_INPUT_SURFACE_INVALID` | 交给指针输入的 `surface` 无效。 |
-| `POINTER_INPUT_VIEWPORT` | 指针输入出现问题：`viewport`。 |
+| `POINTER_INPUT_VIEWPORT` | 交给指针输入的视口版本号不是比上一次更大的整数。 |
 
 ### SCOPE
 
@@ -693,7 +693,7 @@
 | --- | --- |
 | `SEQUENCE_RESET_INITIAL_INVALID` | 交给序列重置槽的 `initial` 无效。 |
 | `SEQUENCE_RESET_LOADER_INVALID` | 交给序列重置槽的 `loader` 无效。 |
-| `SEQUENCE_RESET_PRESERVE_STATE` | 序列重置槽出现问题：`preserve state`。 |
+| `SEQUENCE_RESET_PRESERVE_STATE` | 只有在序列正在播放或已暂停、且没有等待中的命令时，才能在保留位置的情况下重置它。 |
 | `SEQUENCE_RESET_RESOURCE_MISMATCH` | 交给序列重置槽的 `resource` 不匹配。 |
 
 ### SEQ_PLAYBACK
@@ -730,7 +730,7 @@
 | 错误码 | 含义 |
 | --- | --- |
 | `SPINE_GROUP_RELEASE_FAILED` | Spine的 `group release` 失败了。原因在 cause 中。 |
-| `SPINE_LOADER_RECEIVER` | Spine出现问题：`loader receiver`。 |
+| `SPINE_LOADER_RECEIVER` | Spine 加载器的方法被脱离加载器调用了。请在加载器上调用：loader.load(...)。 |
 | `SPINE_LOADER_RELEASE_FAILED` | Spine的 `loader release` 失败了。原因在 cause 中。 |
 | `SPINE_METADATA_LIMIT` | 超出了Spine的 `metadata` 上限。 |
 | `SPINE_SETUP_FAILED` | 建立Spine时失败。原因在 cause 中。 |
@@ -881,7 +881,7 @@
 | `TWEEN_COMPLETE_FAILED` | 缓动的 `complete` 失败了。原因在 cause 中。 |
 | `TWEEN_INVALID` | 交给缓动的内容无效。 |
 | `TWEEN_NOT_STARTED` | 缓动还没有开始。 |
-| `TWEEN_OPTIONS_INVALID` | 缓动选项无效：需要大于零的 duration 和一个 update 函数。 |
+| `TWEEN_OPTIONS_INVALID` | 缓动选项无效：from 和 to 是有限数字，durationSeconds 大于零，onUpdate 是不返回任何值的函数。 |
 | `TWEEN_RANGE_INVALID` | 交给缓动的 `range` 无效。 |
 | `TWEEN_REENTRANT` | 在缓动自己的回调里又调用了它。 |
 | `TWEEN_SCOPE_INVALID` | 交给缓动的作用域不是这个 Engine 的一个打开的作用域。 |
@@ -906,7 +906,7 @@
 | `UI_INPUT_INVALID` | 交给UI的 `input` 无效。 |
 | `UI_INVALID` | 交给UI的内容无效。 |
 | `UI_LAYOUT_CYCLE` | UI 的布局依赖于它自己：某个尺寸由它所决定的另一个尺寸给出。 |
-| `UI_LAYOUT_UNSTABLE` | UI出现问题：`layout unstable`。 |
+| `UI_LAYOUT_UNSTABLE` | UI 的布局经过八轮仍未稳定：某个尺寸一直在改变它所依赖的东西。 |
 | `UI_LIMIT` | 超出了UI的一项上限。 |
 | `UI_LIST_NOT_FOUND` | UI 中没有这个 id 的列表。 |
 | `UI_MANAGED_GEOMETRY` | 这个对象的位置和尺寸由 UI 管理。请修改它的布局，而不是它的 x、y 或缩放。 |
@@ -916,15 +916,15 @@
 | `UI_PREPARATION_INVALID` | 交给UI的 `preparation` 无效。 |
 | `UI_PREPARE_FAILED` | UI的 `prepare` 失败了。原因在 cause 中。 |
 | `UI_REVISION_EXHAUSTED` | UI的 `revision` 计数器用尽了。请新建一个。 |
-| `UI_ROW_NOT_REALIZED` | UI出现问题：`row not realized`。 |
-| `UI_ROW_RETAINED` | UI出现问题：`row retained`。 |
+| `UI_ROW_NOT_REALIZED` | 该行现在不在屏幕上，没有可以操作的对象。请先把它滚动到可见范围。 |
+| `UI_ROW_RETAINED` | 一个正在使用的行被从列表中移除，或者在使用期间被改动了。 |
 | `UI_SCOPE_INVALID` | 交给UI的作用域不是这个 Engine 的一个打开的作用域。 |
 | `UI_SOURCE_INVALID` | 交给UI的 `source` 无效。 |
-| `UI_SOURCE_REVISION` | UI出现问题：`source revision`。 |
+| `UI_SOURCE_REVISION` | UI 在同一个版本号下读取列表的行时，这些行发生了变化。 |
 | `UI_STAGE_TRANSFORM_UNSUPPORTED` | UI不支持 `stage transform`。 |
 | `UI_STALE` | 交给UI的内容已被更新的版本取代。 |
-| `UI_STALE_PREPARATION` | UI出现问题：`stale preparation`。 |
-| `UI_TREE_SHAPE` | UI出现问题：`tree shape`。 |
+| `UI_STALE_PREPARATION` | 预备好的 UI 已经与它所针对的 UI 不一致。请重新预备。 |
+| `UI_TREE_SHAPE` | 新的 UI 描述与它要更新的树相比，节点不同，或者某个节点的种类不同。 |
 | `UI_UNKNOWN_KEY` | 列表中没有这个 key 的行。 |
 | `UI_UNKNOWN_LIST` | UI 中没有这个 id 的列表。 |
 | `UI_VALUE_INVALID` | 交给UI的 `value` 无效。 |
@@ -934,9 +934,9 @@
 | 错误码 | 含义 |
 | --- | --- |
 | `UI_CONTROL_CLOSED` | UI 控件已关闭，不再接受任何操作。 |
-| `UI_CONTROL_DIRECTION` | UI 控件出现问题：`direction`。 |
+| `UI_CONTROL_DIRECTION` | 交给 UI 控件的方向不是两个有限数字。 |
 | `UI_CONTROL_OPTIONS` | 交给UI 控件的选项无效。 |
-| `UI_CONTROL_RADIUS` | UI 控件出现问题：`radius`。 |
+| `UI_CONTROL_RADIUS` | 交给 UI 控件的半径不是大于零的有限数字。 |
 | `UI_CONTROL_UNKNOWN_ITEM` | 控件中没有这个 id 的项。 |
 
 ### UI_KEYBOARD
@@ -955,14 +955,14 @@
 | 错误码 | 含义 |
 | --- | --- |
 | `UI_LAYER_ANCHOR_INVALID` | 交给UI 层的 `anchor` 无效。 |
-| `UI_LAYER_BASE` | UI 层出现问题：`base`。 |
+| `UI_LAYER_BASE` | UI 的基础层始终是打开的，不能按名字打开或关闭。 |
 | `UI_LAYER_CLEANUP_FAILED` | 清理UI 层时失败。各个原因在 cleanupErrors 中。 |
 | `UI_LAYER_CLOSED` | UI 层已关闭，不再接受任何操作。 |
 | `UI_LAYER_ID_DUPLICATE` | 同一个 `id` 向UI 层提供了两次。 |
 | `UI_LAYER_ID_INVALID` | 交给UI 层的 `id` 无效。 |
 | `UI_LAYER_INPUT_MISMATCH` | 交给UI 层的 `input` 不匹配。 |
-| `UI_LAYER_MANAGER_OWNED` | UI 层出现问题：`manager owned`。 |
-| `UI_LAYER_ROOT_OWNED` | UI 层出现问题：`root owned`。 |
+| `UI_LAYER_MANAGER_OWNED` | 这个 Engine 已经有一个 UI 层管理器。一个 Engine 只有一个。 |
+| `UI_LAYER_ROOT_OWNED` | 这个 UI 根已经属于某个层。 |
 | `UI_LAYER_UNKNOWN` | UI 层不认识所指的内容。 |
 | `UI_LAYER_VIEWPORT_TOO_SMALL` | 交给UI 层的 `viewport` 太小。 |
 
@@ -974,16 +974,16 @@
 | `UI_SEMANTICS_CLEANUP_FAILED` | 清理UI 语义时失败。各个原因在 cleanupErrors 中。 |
 | `UI_SEMANTICS_CLOSED` | UI 语义已关闭，不再接受任何操作。 |
 | `UI_SEMANTICS_DESCRIBE_FAILED` | UI 语义的 `describe` 失败了。原因在 cause 中。 |
-| `UI_SEMANTICS_DESCRIPTION` | UI 语义出现问题：`description`。 |
+| `UI_SEMANTICS_DESCRIPTION` | UI 语义条目的某个字段无效。条目和字段在 cause 中。 |
 | `UI_SEMANTICS_DUPLICATE` | 同一内容向UI 语义提供了两次。 |
 | `UI_SEMANTICS_EXHAUSTED` | UI 语义的一个计数器用尽了。请新建一个。 |
-| `UI_SEMANTICS_FOCUS` | UI 语义出现问题：`focus`。 |
+| `UI_SEMANTICS_FOCUS` | UI 语义中有多个条目获得焦点，或者获得焦点的条目是 inert 的。条目在 cause 中。 |
 | `UI_SEMANTICS_LISTENER_FAILED` | 应用交给UI 语义的监听器抛出了异常。抛出的内容在 cause 中。 |
 | `UI_SEMANTICS_OPTIONS` | 交给UI 语义的选项无效。 |
-| `UI_SEMANTICS_PARENT` | UI 语义出现问题：`parent`。 |
+| `UI_SEMANTICS_PARENT` | UI 语义的某个条目没有放在它的角色所要求的那种条目之内。 |
 | `UI_SEMANTICS_REENTRANT` | 在UI 语义自己的回调里又调用了它。 |
-| `UI_SEMANTICS_RELATION` | UI 语义出现问题：`relation`。 |
-| `UI_SEMANTICS_REVISION` | UI 语义出现问题：`revision`。 |
+| `UI_SEMANTICS_RELATION` | UI 语义的某个条目引用了树中不存在的条目。条目在 cause 中。 |
+| `UI_SEMANTICS_REVISION` | 交给 UI 语义的版本号比它已有的更旧。 |
 | `UI_SEMANTICS_SURFACE_BUSY` | UI 语义的 `surface` 还在处理之前的请求。 |
 | `UI_SEMANTICS_SURFACE_INVALID` | 交给UI 语义的 `surface` 无效。 |
 
@@ -1022,7 +1022,7 @@
 | `WEBGL2_BACKING_LIMIT` | 超出了WebGL2 Host的 `backing` 上限。 |
 | `WEBGL2_BACKPRESSURE` | WebGL2 Host持有的未完成帧已达上限。请稍后再绘制下一帧。 |
 | `WEBGL2_CLOSED` | WebGL2 Host已关闭，不再接受任何操作。 |
-| `WEBGL2_CLOSE_UNSAFE` | WebGL2 Host出现问题：`close unsafe`。 |
+| `WEBGL2_CLOSE_UNSAFE` | WebGL2 Host 关闭时没能释放它创建的全部对象。原因在 cause 中。 |
 | `WEBGL2_CONTEXT_ATTRIBUTES_UNSUPPORTED` | WebGL2 Host不支持 `context attributes`。 |
 | `WEBGL2_CONTEXT_LIMIT` | 超出了WebGL2 Host的 `context` 上限。 |
 | `WEBGL2_CONTEXT_LOST` | 浏览器收回了 WebGL2 上下文。浏览器归还后 Host 会恢复；在此之前帧会被拒绝。 |
@@ -1050,7 +1050,7 @@
 | `WEBGL2_STOPPED` | WebGL2 Host已停止，不再接受任何操作。 |
 | `WEBGL2_SYNC_FAILED` | WebGL2 Host的 `sync` 失败了。原因在 cause 中。 |
 | `WEBGL2_SYNC_TIMEOUT` | WebGL2 Host的 `sync` 耗时过长。 |
-| `WEBGL2_VALIDATION` | WebGL2 Host出现问题：`validation`。 |
+| `WEBGL2_VALIDATION` | WebGL2 认为 Host 的某个操作无效并拒绝了它。原因在 cause 中。 |
 
 ### WEBGL2_LAYER
 
@@ -1092,7 +1092,7 @@
 | `WEBGPU_BACKING_LIMIT` | 超出了WebGPU Host的 `backing` 上限。 |
 | `WEBGPU_BACKPRESSURE` | WebGPU Host持有的未完成帧已达上限。请稍后再绘制下一帧。 |
 | `WEBGPU_CLOSED` | WebGPU Host已关闭，不再接受任何操作。 |
-| `WEBGPU_CLOSE_UNSAFE` | WebGPU Host出现问题：`close unsafe`。 |
+| `WEBGPU_CLOSE_UNSAFE` | WebGPU Host 关闭时没能释放它创建的全部对象。原因在 cause 中。 |
 | `WEBGPU_CONTEXT_UNAVAILABLE` | WebGPU Host的 `context` 在这里不可用。 |
 | `WEBGPU_DEVICE_FAILED` | WebGPU Host的 `device` 失败了。原因在 cause 中。 |
 | `WEBGPU_DEVICE_LIMIT` | 超出了WebGPU Host的 `device` 上限。 |
@@ -1105,7 +1105,7 @@
 | `WEBGPU_FRAME_PROFILE_UNSUPPORTED` | WebGPU Host不支持 `frame profile`。 |
 | `WEBGPU_GENERATION_EXHAUSTED` | WebGPU Host的 `generation` 计数器用尽了。请新建一个。 |
 | `WEBGPU_GEOMETRY_RANGE` | `geometry` 超出了WebGPU Host的范围。 |
-| `WEBGPU_INTERNAL` | WebGPU Host出现问题：`internal`。 |
+| `WEBGPU_INTERNAL` | WebGPU 报告了内部错误。原因在 cause 中。 |
 | `WEBGPU_NOT_STARTED` | Host 还没有启动。Engine 会启动它的 Host；请等 createEngine 完成后再绘制。 |
 | `WEBGPU_OPTIONS_INVALID` | 交给WebGPU Host的选项无效：缺少某一项、类型不对或超出范围。 |
 | `WEBGPU_OUT_OF_MEMORY` | 图形设备内存不足。请减少纹理数量或尺寸。 |
@@ -1120,7 +1120,7 @@
 | `WEBGPU_STOPPED` | WebGPU Host已停止，不再接受任何操作。 |
 | `WEBGPU_UNAVAILABLE` | 浏览器没有 WebGPU。请改用 WebGL2 Host。 |
 | `WEBGPU_UNCAPTURED_ERROR` | WebGPU 设备在 Host 的操作之外报告了错误。报告的内容在 cause 中。 |
-| `WEBGPU_VALIDATION` | WebGPU Host出现问题：`validation`。 |
+| `WEBGPU_VALIDATION` | WebGPU 认为 Host 的某个操作无效并拒绝了它。原因在 cause 中。 |
 
 ### WEBGPU_READBACK
 
@@ -1159,7 +1159,7 @@
 | 错误码 | 含义 |
 | --- | --- |
 | `WEB_PNG_CLEANUP_FAILED` | 清理浏览器图片提供者时失败。各个原因在 cleanupErrors 中。 |
-| `WEB_PNG_CLOSE_INCOMPLETE` | 浏览器图片提供者出现问题：`close incomplete`。 |
+| `WEB_PNG_CLOSE_INCOMPLETE` | 浏览器图片提供者已关闭，但它持有的东西没能全部释放。各个原因在 cleanupErrors 中。 |
 | `WEB_PNG_DESCRIPTOR_READ_FAILED` | 浏览器图片提供者的 `descriptor read` 失败了。原因在 cause 中。 |
 | `WEB_PNG_RASTER_FAILED` | 浏览器图片提供者的 `raster` 失败了。原因在 cause 中。 |
 
@@ -1167,7 +1167,7 @@
 
 | 错误码 | 含义 |
 | --- | --- |
-| `WEB_RESOURCE_CLOSE_INCOMPLETE` | 浏览器资源来源出现问题：`close incomplete`。 |
+| `WEB_RESOURCE_CLOSE_INCOMPLETE` | 浏览器资源来源已关闭，但它持有的东西没能全部释放。各个原因在 cleanupErrors 中。 |
 | `WEB_RESOURCE_OPTIONS_INVALID` | 交给浏览器资源来源的选项无效：缺少某一项、类型不对或超出范围。 |
 
 ### WEB_TEXT

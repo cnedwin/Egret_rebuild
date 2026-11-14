@@ -132,12 +132,12 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // Profile Task 5: complete valid executable/declaration surfaces first.
     const engineFixturePackage = JSON.parse(readFileSync(path.join(root,'packages/engine/package.json'),'utf8'));
     write('packages/engine/package.json', {...engineFixturePackage, imports:{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'},'#egret-mouse-input':{types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'},'#egret-manifest-resources':{types:'./dist/manifestResourceState.d.ts',import:'./dist/manifestResourceState.js'},'#egret-pointer-input':{types:'./dist/pointerInput.d.ts',import:'./dist/pointerInput.js'},'#egret-keyboard-input':{types:'./dist/keyboardInput.d.ts',import:'./dist/keyboardInput.js'}}});
-    const profileRootValues = ['Engine','createEngine','createEngineForProfile','CancellationController','EgretError','Event','createEventType','EventDispatcher','DisplayObject','DisplayObjectContainer','Scope','Stage','AssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','Texture','createTexture','isTexture','Bitmap','createSequenceClip','SequencePlayer'];
+    const profileRootValues = ['Engine','createEngine','createEngineForProfile','CancellationController','EgretError','describeErrorCode','setErrorLanguage','getErrorLanguage','Event','createEventType','EventDispatcher','DisplayObject','DisplayObjectContainer','Scope','Stage','AssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','Texture','createTexture','isTexture','Bitmap','createSequenceClip','SequencePlayer'];
     const profileRootFile = 'node_modules/@egret/engine/index.js';
     write(profileRootFile, readFileSync(path.join(root, profileRootFile), 'utf8') + profileRootValues.map(name => `export function ${name}() {}\n`).join(''));
     // T1 scaffolds are synthetic policy surfaces, never genuine assets or cache behavior.
     // Retain the three existing runtime values and every old mutation of them.
-    const runtimeRootValues = ['CancellationController','EgretError','Scope','createScope','Event','createEventType',
+    const runtimeRootValues = ['CancellationController','EgretError','describeErrorCode','setErrorLanguage','getErrorLanguage','Scope','createScope','Event','createEventType',
       'EventDispatcher','DisplayObject','DisplayObjectContainer','Stage','createStage','reportDiagnostic','AssetManager',
       'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics',
       'Texture','createTexture','isTexture','Bitmap','createSequenceClip','SequencePlayer'];

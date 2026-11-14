@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Error sentences in Chinese at run time, and no more fallback sentences — 2026-11-15
+
+`setErrorLanguage('zh')` from `@egret/engine` puts the Chinese sentence in the message of every error made after it; `error.code` is the same in both languages. `describeErrorCode(code, 'en' | 'zh')` gives a code's sentence to a program. The 37 codes whose sentence was only "A problem with X: y." now have sentences written for them, in both languages, and a test refuses a new code that would fall back to that form. The sentence of `TWEEN_OPTIONS_INVALID` named options a tween does not have; it now names `from`, `to`, `durationSeconds` and `onUpdate`. The Chinese sentences moved from the documentation tool into the runtime, so the [error code reference](docs/error-codes.md) and the messages are one text.
+
 ## A map from Egret 5's API to this SDK — 2026-11-15
 
 [From Egret 5 to this SDK](docs/egret-api-migration.md) says, call by call, what replaces `egret.runEgret`, `egret.Shape`, `TouchEvent`, `egret.Tween`, `RES`, `egret.TextField`, `eui` and the rest, and what is not there: skew, `name`, masks that are not rectangles, `cacheAsBitmap`, tween chains, EXML and DragonBones. It opens with the five things that differ in every file, and ends with one screen written both ways. The new side of every row was checked against this checkout; no Egret 5 project was converted to write it.
