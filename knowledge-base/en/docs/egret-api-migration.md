@@ -23,7 +23,7 @@ Five things change in every file. Knowing them saves most of the guessing.
 | `egret.runEgret({ ... })` and a `Main` document class | `await createBrowserGame({ canvas, width, height, update })` from `@egret/engine/web/game` | See [one call for a game in a page](browser-game.md) |
 | `this.stage` | `game.stage`, or `engine.stage` | One stage for an Engine |
 | `stage.stageWidth`, `stage.stageHeight` | The `width` and `height` you gave | The stage has a fixed size in its own units |
-| `scaleMode`, `orientation` in `index.html` | CSS on the canvas | The page sizes the canvas; the stage is drawn into it whole |
+| `scaleMode` in `index.html` | `fit` of `createBrowserGame`: `'contain'` (showAll), `'cover'` (noBorder), `'stretch'` (exactFit) | The stage keeps its size in its own units; modes that change the stage's size are not there. `orientation` is the page's to set |
 | `egret.startTick(fn)`, `Event.ENTER_FRAME` | `update(seconds)` of `createBrowserGame` or of [the frame loop](frame-loop.md) | `seconds` is the time since the step before, at most 0.1 |
 | `egret.Timer`, `egret.setTimeout` | Count seconds in `update`, or the page's own `setTimeout` | No timer class |
 | `egret.getTimer()` | `performance.now()`, or sum the `seconds` of `update` | |
@@ -36,9 +36,9 @@ Five things change in every file. Knowing them saves most of the guessing.
 | `egret.DisplayObjectContainer` | `DisplayObjectContainer` | `addChild`, `addChildAt`, `removeChild`, `removeChildren`, `getChildAt`, `getChildIndex`, `setChildIndex`, `numChildren` are there |
 | `egret.Sprite`, `egret.Shape` | `Sprite` | There is no `Shape`. A `Sprite` has `graphics` and can hold children |
 | `x`, `y`, `scaleX`, `scaleY`, `rotation`, `alpha`, `visible`, `anchorOffsetX`, `anchorOffsetY` | The same names | `rotation` is in degrees, as before |
-| `width`, `height` | `getBounds()` to read. To size, set `scaleX` and `scaleY`, or draw at the size | No `width` or `height` setter |
-| `skewX`, `skewY` | Not there | |
-| `name`, `getChildByName` | Not there. Keep your own references or a `Map` | |
+| `width`, `height` | The same names | The size on the parent: what the object and its children draw, times the scale. Setting one sets `scaleX` or `scaleY`; an object that draws nothing refuses a size (`DISPLAY_SIZE_UNAVAILABLE`) |
+| `skewX`, `skewY` | The same names, in degrees | |
+| `name`, `getChildByName` | The same names | `getChildByName` looks at direct children |
 | `removeChildAt`, `swapChildren`, `contains` | `removeChild(getChildAt(i))`; `setChildIndex`; walk `parent` | |
 | `mask = rectangle`, `scrollRect` | `clipRect = { x, y, width, height }` | A rectangle in the object's own units |
 | `mask = displayObject` | Not there | Only rectangles clip |
@@ -108,7 +108,7 @@ Edges are not smoothed, and a curve is drawn as straight pieces. See the [graphi
 
 | Egret 5 | Now | Notes |
 | --- | --- | --- |
-| `new egret.TextField()`, `.text = ...` | `createTextField(engine, scope, cache)` from `@egret/engine/text`, then `field.setRequest({ ... })` and `await field.prepare()` | Text is rasterized before it is shown; `@egret/engine/web/text` gives the page's rasterizer |
+| `new egret.TextField()`, `.text = ...` | `const label = await game.createLabel({ text, fontSize, color })`, then `label.text = ...` | `label.display` is the object on the stage. Underneath: `createTextField` from `@egret/engine/text`, with `setRequest` and `prepare` |
 | `textFlow`, mixed styles, wrapping | `createParagraph` from `@egret/engine/paragraph` | See [paragraphs](paragraph-layout-controls.md) |
 | `egret.BitmapText` | `createBitmapText` from `@egret/engine/bitmapfont` | See [bitmap fonts](bitmap-font.md) |
 | `type = egret.TextFieldType.INPUT` | `createBrowserTextInput` from `@egret/engine/web/text-input` | A platform text field over the stage |

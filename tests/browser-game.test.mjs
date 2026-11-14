@@ -20,7 +20,7 @@ test('BG01 what is not a game is refused before a Host is made', async () => {
   const { canvas } = page(), good = { canvas, width: 480, height: 270 };
   for (const bad of [undefined, null, 'game', {}, { ...good, canvas: undefined }, { ...good, canvas: {} }, { ...good, width: 0 }, { ...good, width: 1.5 }, { ...good, height: -1 }, { ...good, height: '270' },
     { ...good, backend: 'canvas' }, { ...good, pixelRatio: 0 }, { ...good, pixelRatio: Infinity }, { ...good, clearColor: 0x1000000 }, { ...good, clearColor: 1.5 }, { ...good, clearAlpha: 2 },
-    { ...good, update: 1 }, { ...good, onError: 'no' }, { ...good, pointer: 1 }, { ...good, keyboard: 'yes' }, { ...good, stats: 1 }, { ...good, autoStart: 0 }])
+    { ...good, update: 1 }, { ...good, onError: 'no' }, { ...good, pointer: 1 }, { ...good, keyboard: 'yes' }, { ...good, stats: 1 }, { ...good, autoStart: 0 }, { ...good, fit: 'fill' }, { ...good, fitTo: 'body' }])
     await assert.rejects(createBrowserGame(bad), coded('BROWSER_GAME_OPTIONS_INVALID'));
   // The message says what the code means.
   await assert.rejects(createBrowserGame({}), /^EgretError: BROWSER_GAME_OPTIONS_INVALID: The options given to createBrowserGame are not valid/);

@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 显示对象有了 skew、name、width 和 height；游戏可以适配容器并有了文本标签 — 2026-11-15
+
+`skewX` 和 `skewY`（角度）在旋转之上让显示对象的两条轴倾斜。`name` 和 `container.getChildByName(name)` 用来查找子对象。`width` 和 `height` 是对象在父级上的大小，设置其中一个会设置 `scaleX` 或 `scaleY`。`createBrowserGame` 增加 `fit`：`'contain'`、`'cover'` 或 `'stretch'` 把画布放进它的元素，并在元素大小变化时重新调整。`game.createLabel({ text, fontSize, color })` 创建一行文本，它的 `text` 可以像普通值一样设置。起步示例用中文标签显示分数，它的核对脚本用软件 WebGL2 覆盖了三种适配方式和标签。仍然没有非矩形遮罩。
+
 ## 一条链写动画，一次调用加载图片 — 2026-11-15
 
 `animate(engine, scope, object).to({ x: 100, alpha: 0 }, 0.5, 'quadOut').wait(0.2).call(fn).loop(2).start()` 让一个对象的多个数字一起变化，一步接一步，运行在 Engine 的时钟上；有 21 种按名字选择的缓动函数，也可以传函数。它建立在标量缓动之上，标量缓动保持不变。动画随它的作用域结束，对象被销毁时也会结束。`createBrowserGame` 的 `game.loadTexture(url)` 加载一张 PNG 并给出纹理的租约；`game.host` 是 Host。起步示例在拾取金币时让它淡出，加上 `?image=` 会加载一张图片并统计在它上面的点击。一处更正：此前写软件 WebGPU 适配器“绘制了若干帧且没有失败”，说得比实际看到的多。在这里该适配器会丢失设备或永远画不完一帧；起步示例的核对现在覆盖浏览器没有适配器的两种情况，并说明选中 WebGPU 的情况没有核对。

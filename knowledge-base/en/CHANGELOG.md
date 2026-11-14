@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Display objects have skew, a name, a width and a height; a game fits its element and has labels — 2026-11-15
+
+`skewX` and `skewY`, in degrees, lean the two axes of a display object on top of its rotation. `name` and `container.getChildByName(name)` find a child. `width` and `height` are the size an object takes on its parent, and setting one sets `scaleX` or `scaleY`. `createBrowserGame` takes `fit`: `'contain'`, `'cover'` or `'stretch'` sizes the canvas inside its element, and again when the element changes size. `game.createLabel({ text, fontSize, color })` makes a line of text whose `text` can be set like a value. The starter example shows its score as a label in Chinese, and its check covers the three fits and the label with software WebGL2. Masks that are not rectangles are still not there.
+
 ## Motion in one chain, and an image in one call — 2026-11-15
 
 `animate(engine, scope, object).to({ x: 100, alpha: 0 }, 0.5, 'quadOut').wait(0.2).call(fn).loop(2).start()` moves several numbers of one object together, step after step, on the Engine's clock; 21 easings by name, or a function. It is built on the scalar tween, which stays. A motion ends with its scope, and when its object is disposed. `game.loadTexture(url)` of `createBrowserGame` loads a PNG and gives the lease of its texture; `game.host` is the Host. The starter example fades a coin as it is picked up and, with `?image=`, loads an image and counts the taps on it. A correction: the note that the software WebGPU adapter "drew frames without failing" said more than was seen. That adapter loses its device or never finishes a frame here; the starter's check now covers the two ways a browser has no adapter, and says the choice of WebGPU is not checked.

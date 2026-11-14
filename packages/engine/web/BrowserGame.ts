@@ -5,6 +5,8 @@ import { EgretError } from '@egret/runtime';
 import { createAssetRef, createAssetType, createEngineForProfile, isTexture, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
 import type { AssetLease, Engine, Scope, Stage, SharedFrameOptions2D, SharedRenderFrame2D, Texture } from '@egret/engine';
 import { createBrowserTextureProvider } from './image.js';
+import { createTextField, createTextRasterCache } from '@egret/engine/text';
+import type { TextField, TextRasterCache } from '@egret/engine/text';
 import { createBrowserFrameLoop } from './loop.js';
 import type { BrowserFrameLoop } from './loop.js';
 import { createBrowserPointerInput } from './pointer.js';
@@ -15,6 +17,36 @@ import { createBrowserStatsPanel } from './BrowserStatsPanel.js';
 import type { BrowserStatsPanel } from './BrowserStatsPanel.js';
 
 export type BrowserGameBackend = 'webgpu' | 'webgl2';
+/** How the canvas fills the element it is in: not at all, whole inside it, covering it, or stretched to it. */
+export type BrowserGameFit = 'none' | 'contain' | 'cover' | 'stretch';
+export interface BrowserGameLabelOptions {
+  readonly text?: string;
+  /** A font the page has: a family of the system, or one the page loaded. "sans-serif" unless given. */
+  readonly fontFamily?: string;
+  /** In stage units: 24 unless given. */
+  readonly fontSize?: number;
+  readonly fontWeight?: number;
+  readonly italic?: boolean;
+  /** In stage units: a quarter more than the font size unless given. */
+  readonly lineHeight?: number;
+  /** 0xffffff unless given. */
+  readonly color?: number;
+  /** The language of the text, such as "zh" or "en": "en" unless given. */
+  readonly locale?: string;
+  readonly direction?: 'ltr' | 'rtl';
+}
+/** A line of text on the stage whose words can be set like a value. */
+export interface BrowserGameLabel {
+  /** The text on the stage: place it with `display.x` and `display.y`, add it where it belongs. */
+  readonly display: TextField;
+  /** Setting it draws the new words when they are ready; until then the old ones stay. */
+  text: string;
+  /** Settles when the words last set are on the stage, and rejects if they could not be drawn. */
+  readonly ready: Promise<void>;
+  /** Changes any of the options; what is left out stays. */
+  set(options: BrowserGameLabelOptions): void;
+  dispose(): void;
+}
 export interface BrowserGameOptions {
   /** The canvas the game is drawn on. The page gives it its size on the screen. */
   readonly canvas: HTMLCanvasElement;
@@ -37,6 +69,9 @@ export interface BrowserGameOptions {
   readonly keyboard?: boolean;
   /** A panel over the canvas with frames a second, what a frame holds and how busy the Host is. Not made unless true is given. */
   readonly stats?: boolean;
+  /** "none" unless given. The canvas is sized inside `fitTo`, or its parent element, and again whenever that changes size. */
+  readonly fit?: BrowserGameFit;
+  readonly fitTo?: HTMLElement;
   /** The loop starts at once unless false is given; then `game.loop.start()` starts it. */
   readonly autoStart?: boolean;
 }
@@ -60,6 +95,8 @@ export interface BrowserGame {
    * `graphics.beginBitmapFill(lease)`. The lease belongs to the game's scope. The same address loaded twice is one texture.
    */
   loadTexture(url: string): Promise<AssetLease<Texture>>;
+  /** A line of text for the stage. The first call loads the page's text rasterizer. */
+  createLabel(options?: BrowserGameLabelOptions): Promise<BrowserGameLabel>;
   /** A place in the page, as a pointer event gives it in `clientX` and `clientY`, as a place on the stage. */
   toStage(clientX: number, clientY: number): { x: number; y: number };
   /** Stops the loop and ends the input, the scope, the Engine and its Host. */
@@ -90,7 +127,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     || (asked !== 'auto' && asked !== 'webgpu' && asked !== 'webgl2') || typeof pixelRatio !== 'number' || !(pixelRatio > 0) || !Number.isFinite(pixelRatio)
     || !Number.isInteger(clearColor) || clearColor < 0 || clearColor > 0xffffff || typeof clearAlpha !== 'number' || !(clearAlpha >= 0 && clearAlpha <= 1)
     || (update !== undefined && typeof update !== 'function') || (onError !== undefined && typeof onError !== 'function')
-    || [options.pointer, options.keyboard, options.autoStart, options.stats].some(flag => flag !== undefined && typeof flag !== 'boolean')) throw invalid();
+    || [options.pointer, options.keyboard, options.autoStart, options.stats].some(flag => flag !== undefined && typeof flag !== 'boolean')
+    || !['none', 'contain', 'cover', 'stretch'].includes(options.fit ?? 'none') || (options.fitTo !== undefined && (options.fitTo === null || typeof options.fitTo !== 'object'))) throw invalid();
   const backend = await chooseBackend(asked);
   // Only the chosen backend's module is loaded.
   const host = backend === 'webgpu' ? (await import('./webgpu.js')).createSharedWebGPUHost({ canvas, pixelRatio }) : (await import('./webgl2.js')).createSharedWebGL2Host({ canvas, pixelRatio });
@@ -129,8 +167,53 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       } finally { context.signal.removeEventListener('abort', abort); }
     } });
     engine.assets.register(imageType, images);
+    // The canvas in its element: sized now and whenever the element changes size. The stage keeps its own units.
+    const fit = options.fit ?? 'none', holder = options.fitTo ?? canvas.parentElement;
+    let watcher: ResizeObserver | undefined;
+    if (fit !== 'none' && holder !== null) {
+      const place = (): void => {
+        const box = holder.getBoundingClientRect(), wide = box.width / width, tall = box.height / height;
+        const scaleX = fit === 'stretch' ? wide : fit === 'contain' ? Math.min(wide, tall) : Math.max(wide, tall), scaleY = fit === 'stretch' ? tall : scaleX;
+        const style = canvas.style;
+        style.width = width * scaleX + 'px'; style.height = height * scaleY + 'px';
+        // Centred in its element; with "cover" what does not fit is outside it, for the element to cut off.
+        style.marginLeft = (box.width - width * scaleX) / 2 + 'px'; style.marginTop = (box.height - height * scaleY) / 2 + 'px';
+      };
+      place();
+      watcher = new ResizeObserver(place);
+      watcher.observe(holder);
+    }
+    // Text: one cache for the Engine, made with the page's rasterizer when the first label is asked for.
+    let textCache: Promise<TextRasterCache> | undefined;
+    async function createLabel(given: BrowserGameLabelOptions = {}): Promise<BrowserGameLabel> {
+      if (given === null || typeof given !== 'object') throw invalid();
+      textCache ??= import('./text.js').then(text => createTextRasterCache(engine.assets, { provider: text.createCanvasTextRasterProvider() }));
+      const field = createTextField(engine, scope, await textCache);
+      let now: Required<BrowserGameLabelOptions> = { text: '', fontFamily: 'sans-serif', fontSize: 24, fontWeight: 400, italic: false, lineHeight: 0, color: 0xffffff, locale: 'en', direction: 'ltr' };
+      let ready: Promise<void> = Promise.resolve();
+      const apply = (next: BrowserGameLabelOptions): void => {
+        if (next === null || typeof next !== 'object') throw invalid();
+        now = { ...now, ...next };
+        field.setRequest({ text: now.text, fontFamily: now.fontFamily, fontSize: now.fontSize, fontWeight: now.fontWeight, fontStyle: now.italic ? 'italic' : 'normal',
+          lineHeight: now.lineHeight > 0 ? now.lineHeight : now.fontSize * 1.25, locale: now.locale, direction: now.direction, density: pixelRatio, fillColor: now.color });
+        const pending = field.prepare().then(() => {});
+        // A failure is the label's to tell through `ready`; it is not left unheard.
+        pending.catch(() => {});
+        ready = pending;
+      };
+      apply(given);
+      return Object.freeze({
+        display: field,
+        get text() { return now.text; },
+        set text(value: string) { if (value !== now.text) apply({ text: value }); },
+        get ready() { return ready; },
+        set: apply,
+        dispose() { field.dispose(); },
+      });
+    }
     const game: BrowserGame = Object.freeze({
       backend, engine, host, stage: engine.stage, scope, frame, loop: made, pointer, keyboard, stats: panel,
+      createLabel,
       async loadTexture(url: string) {
         if (typeof url !== 'string' || url === '') throw invalid();
         return scope.use(await engine.assets.acquire(createAssetRef(imageType, url), { signal: scope.signal }));
@@ -141,7 +224,13 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       },
       dispose() {
         // The scope ends the input it was given; the Engine ends its scopes and its Host.
-        return disposal ??= (async () => { made.dispose(); panel?.dispose(); await engine.dispose(); await images.close(); })();
+        return disposal ??= (async () => {
+          made.dispose(); panel?.dispose(); watcher?.disconnect();
+          // The scope ends the labels; then the cache they were drawn from can end, before the Engine does.
+          scope.dispose();
+          if (textCache !== undefined) { const cache = await textCache.catch(() => undefined); cache?.dispose(); await cache?.whenIdle(); }
+          await engine.dispose(); await images.close();
+        })();
       },
     });
     if (options.autoStart !== false) made.start();

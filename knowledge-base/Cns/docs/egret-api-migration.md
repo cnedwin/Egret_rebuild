@@ -23,7 +23,7 @@
 | `egret.runEgret({ ... })` 和 `Main` 文档类 | `@egret/engine/web/game` 的 `await createBrowserGame({ canvas, width, height, update })` | 见[一次调用启动页面里的游戏](browser-game.md) |
 | `this.stage` | `game.stage` 或 `engine.stage` | 一个 Engine 一个舞台 |
 | `stage.stageWidth`、`stage.stageHeight` | 你给出的 `width` 和 `height` | 舞台大小固定，使用自己的单位 |
-| `index.html` 里的 `scaleMode`、`orientation` | 画布上的 CSS | 画布大小由页面决定；舞台整个画进画布 |
+| `index.html` 里的 `scaleMode` | `createBrowserGame` 的 `fit`：`'contain'`（showAll）、`'cover'`（noBorder）、`'stretch'`（exactFit） | 舞台保持自己的单位和大小；会改变舞台大小的模式没有提供。`orientation` 由页面设置 |
 | `egret.startTick(fn)`、`Event.ENTER_FRAME` | `createBrowserGame` 或[帧循环](frame-loop.md)的 `update(seconds)` | `seconds` 是距上一步的时间，最多 0.1 |
 | `egret.Timer`、`egret.setTimeout` | 在 `update` 里累计秒数，或用页面自己的 `setTimeout` | 没有计时器类 |
 | `egret.getTimer()` | `performance.now()`，或累加 `update` 的 `seconds` | |
@@ -36,9 +36,9 @@
 | `egret.DisplayObjectContainer` | `DisplayObjectContainer` | `addChild`、`addChildAt`、`removeChild`、`removeChildren`、`getChildAt`、`getChildIndex`、`setChildIndex`、`numChildren` 都有 |
 | `egret.Sprite`、`egret.Shape` | `Sprite` | 没有 `Shape`。`Sprite` 有 `graphics`，也能放子对象 |
 | `x`、`y`、`scaleX`、`scaleY`、`rotation`、`alpha`、`visible`、`anchorOffsetX`、`anchorOffsetY` | 名字相同 | `rotation` 仍然是角度 |
-| `width`、`height` | 读取用 `getBounds()`。要改大小，设置 `scaleX` 和 `scaleY`，或直接按该大小绘制 | 没有 `width`、`height` 的 setter |
-| `skewX`、`skewY` | 没有 | |
-| `name`、`getChildByName` | 没有。自己保存引用，或用一个 `Map` | |
+| `width`、`height` | 名字相同 | 在父级上的大小：对象及其子对象画出的范围乘以缩放。设置其中一个会设置 `scaleX` 或 `scaleY`；什么都没画的对象拒绝设置大小（`DISPLAY_SIZE_UNAVAILABLE`） |
+| `skewX`、`skewY` | 名字相同，单位是角度 | |
+| `name`、`getChildByName` | 名字相同 | `getChildByName` 只查直接子对象 |
 | `removeChildAt`、`swapChildren`、`contains` | `removeChild(getChildAt(i))`；`setChildIndex`；沿 `parent` 向上查 | |
 | `mask = 矩形`、`scrollRect` | `clipRect = { x, y, width, height }` | 矩形使用对象自己的单位 |
 | `mask = 显示对象` | 没有 | 只能用矩形裁剪 |
@@ -108,7 +108,7 @@
 
 | 白鹭 5 | 现在 | 说明 |
 | --- | --- | --- |
-| `new egret.TextField()`、`.text = ...` | `@egret/engine/text` 的 `createTextField(engine, scope, cache)`，然后 `field.setRequest({ ... })` 并 `await field.prepare()` | 文本先光栅化再显示；`@egret/engine/web/text` 提供页面的光栅化器 |
+| `new egret.TextField()`、`.text = ...` | `const label = await game.createLabel({ text, fontSize, color })`，然后 `label.text = ...` | `label.display` 是舞台上的对象。底层是 `@egret/engine/text` 的 `createTextField`，配合 `setRequest` 和 `prepare` |
 | `textFlow`、混合样式、换行 | `@egret/engine/paragraph` 的 `createParagraph` | 见[段落](paragraph-layout-controls.md) |
 | `egret.BitmapText` | `@egret/engine/bitmapfont` 的 `createBitmapText` | 见[位图字体](bitmap-font.md) |
 | `type = egret.TextFieldType.INPUT` | `@egret/engine/web/text-input` 的 `createBrowserTextInput` | 盖在舞台上的平台文本框 |

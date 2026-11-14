@@ -336,7 +336,9 @@ for (const [name, allowed] of Object.entries(expected)) {
           const relative=path.relative(dir,file).split(path.sep).join('/');
           const providerTarget=['web/CanvasTextRasterProvider.js','dist/web/CanvasTextRasterProvider.js'].includes(target);
           const providerBarrel=['web/text.ts','dist/web/text.js','dist/web/text.d.ts'].includes(relative);
-          if ((providerTarget && !providerBarrel) || ['web/text.js','dist/web/text.js'].includes(target)) throw new Error(`${file}: Canvas text opt-in module imported outside its barrel`);
+          // The browser game entry loads the barrel itself, and only when a label is first asked for.
+          const gameLabel=['web/BrowserGame.ts','dist/web/BrowserGame.js'].includes(relative) && new RegExp("import\\(\\s*['\"]\\./text\\.js['\"]\\s*\\)").test(code) && !new RegExp("from\\s*['\"]\\./text\\.js['\"]").test(code);
+          if ((providerTarget && !providerBarrel) || (['web/text.js','dist/web/text.js'].includes(target) && !gameLabel)) throw new Error(`${file}: Canvas text opt-in module imported outside its barrel`);
           const paragraphProviderTarget=['web/CanvasKitParagraphProvider.js','dist/web/CanvasKitParagraphProvider.js'].includes(target);
           if (paragraphProviderTarget && !['web/paragraph.ts','dist/web/paragraph.js','dist/web/paragraph.d.ts','web/CanvasKitFontSetProvider.ts','dist/web/CanvasKitFontSetProvider.js','dist/web/CanvasKitFontSetProvider.d.ts'].includes(relative)) throw new Error(`${file}: paragraph provider imported outside its optional barrel`);
         }
@@ -415,8 +417,13 @@ for (const [name, allowed] of Object.entries(expected)) {
         const clause = code.slice(0, match.index).match(/\bimport\s+type\s*\{([^{}]+)\}\s*$/);
         const types = ['TextLineMetricsInput','TextMeasureContext','TextRasterContext','TextRasterPlan','TextRasterProvider','TextRasterRequest'];
         const names = clause?.[1].split(',').map(value=>value.trim()).filter(Boolean);
-        if (name !== 'engine' || !['web/CanvasTextRasterProvider.ts','dist/web/CanvasTextRasterProvider.d.ts'].includes(relative)
-            || !names?.length || names.some(value=>!types.includes(value)) || new Set(names).size!==names.length)
+        // The browser game entry makes labels with the text entry's two factories, and names two of its types.
+        const gameClause = code.slice(0, match.index).match(/\bimport(\s+type)?\s*\{([^{}]+)\}\s*$/);
+        const gameNames = gameClause?.[2].split(',').map(value=>value.trim()).filter(Boolean);
+        const gameText = name === 'engine' && ['web/BrowserGame.ts','dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts'].includes(relative) && gameNames !== undefined && gameNames.length !== 0
+          && gameNames.every(value=>(gameClause[1] ? ['TextField','TextRasterCache'] : ['createTextField','createTextRasterCache']).includes(value)) && new Set(gameNames).size===gameNames.length;
+        if (!gameText && (name !== 'engine' || !['web/CanvasTextRasterProvider.ts','dist/web/CanvasTextRasterProvider.d.ts'].includes(relative)
+            || !names?.length || names.some(value=>!types.includes(value)) || new Set(names).size!==names.length))
           throw new Error(`${file}: unapproved/deep package import ${imported}`);
       } else if (!allowed.includes(imported) && !((rendering || projectFoundation) && Object.hasOwn(external, name) && Object.hasOwn(externalAllowed, imported))) throw new Error(`${file}: unapproved/deep package import ${imported}`);
     }
@@ -5313,9 +5320,9 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...gameTypes,...gameValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Browser game: leaked to default/other entry: '+label+'/'+name);
 }
-const gameEntries=['./loop.js','./pointer.js','./keyboard.js','./image.js','./BrowserStatsPanel.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine'];
+const gameEntries=['./loop.js','./pointer.js','./keyboard.js','./image.js','./text.js','./BrowserStatsPanel.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
 const gameImports={'web/game.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.js':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.d.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],
- 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./loop.js','./pointer.js','./keyboard.js','./BrowserStatsPanel.js','@egret/engine'],
+ 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./loop.js','./pointer.js','./keyboard.js','./BrowserStatsPanel.js','@egret/engine','@egret/engine/text'],
  'web/BrowserStatsPanel.ts':['@egret/runtime','@egret/engine'],'dist/web/BrowserStatsPanel.js':['@egret/runtime'],'dist/web/BrowserStatsPanel.d.ts':['@egret/engine']};
 for(const [file,expected] of Object.entries(gameImports)){
  const body=uiRead('packages/engine/'+file),observed=[...new Set(uiGraphEdges(body).map(([,target])=>target))];

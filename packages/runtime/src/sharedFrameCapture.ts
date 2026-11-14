@@ -53,7 +53,7 @@ interface Cursor {
  */
 interface NodeCapture {
   // The matrix of the node, from its parent's matrix and its own seven numbers.
-  parentMatrix: Matrix2D | undefined; x: number; y: number; scaleX: number; scaleY: number; rotation: number; anchorOffsetX: number; anchorOffsetY: number;
+  parentMatrix: Matrix2D | undefined; x: number; y: number; scaleX: number; scaleY: number; rotation: number; skewX: number; skewY: number; anchorOffsetX: number; anchorOffsetY: number;
   matrix: Matrix2D | undefined;
   // The clip of the node, from its clip rectangle, its matrix and the clips above it; null for a rectangle without area.
   clipSource: Rectangle2D | undefined; clipMatrix: Matrix2D | undefined; clipAbove: ClipChain | undefined; clipChain: ClipChain | null;
@@ -74,7 +74,7 @@ interface NodeCapture {
   restRegionIndex: number; restTableRegion: TextureViewRegion2D | undefined;
 }
 function nodeCapture(): NodeCapture {
-  return { parentMatrix: undefined, x: 0, y: 0, scaleX: 0, scaleY: 0, rotation: 0, anchorOffsetX: 0, anchorOffsetY: 0, matrix: undefined,
+  return { parentMatrix: undefined, x: 0, y: 0, scaleX: 0, scaleY: 0, rotation: 0, skewX: 0, skewY: 0, anchorOffsetX: 0, anchorOffsetY: 0, matrix: undefined,
     clipSource: undefined, clipMatrix: undefined, clipAbove: undefined, clipChain: null, primitives: undefined, rectsMatrix: undefined, rects: [],
     bitmap: undefined, bitmapMatrix: undefined, bitmapDomain: undefined, bitmapRect: undefined, regionOf: undefined, region: undefined, regionHash: 0, commands: [],
     restChanges: -1, restParentAlpha: 0, restClips: undefined, restInherited: undefined, restOrdinal: 0, restOccurrence: 0, restCount: 0, restUnits: 0, restChildless: false,
@@ -423,13 +423,13 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
     let kept = keeping ? state.sharedCapture as NodeCapture | undefined : undefined;
     let matrix: Matrix2D;
     if (kept !== undefined && kept.parentMatrix === parentMatrix && is(kept.x, state.x) && is(kept.y, state.y) && is(kept.scaleX, state.scaleX) && is(kept.scaleY, state.scaleY)
-      && is(kept.rotation, state.rotation) && is(kept.anchorOffsetX, state.anchorOffsetX) && is(kept.anchorOffsetY, state.anchorOffsetY)) matrix = kept.matrix!;
+      && is(kept.rotation, state.rotation) && is(kept.skewX, state.skewX) && is(kept.skewY, state.skewY) && is(kept.anchorOffsetX, state.anchorOffsetX) && is(kept.anchorOffsetY, state.anchorOffsetY)) matrix = kept.matrix!;
     else {
       matrix = checkedMatrix(composeDisplayTransform(parentMatrix, state));
       if (keeping) {
         if (kept === undefined) state.sharedCapture = kept = nodeCapture();
         kept.parentMatrix = parentMatrix; kept.x = state.x; kept.y = state.y; kept.scaleX = state.scaleX; kept.scaleY = state.scaleY;
-        kept.rotation = state.rotation; kept.anchorOffsetX = state.anchorOffsetX; kept.anchorOffsetY = state.anchorOffsetY; kept.matrix = matrix;
+        kept.rotation = state.rotation; kept.skewX = state.skewX; kept.skewY = state.skewY; kept.anchorOffsetX = state.anchorOffsetX; kept.anchorOffsetY = state.anchorOffsetY; kept.matrix = matrix;
       }
     }
     let clips = inheritedClips, clip: Boundary | undefined;

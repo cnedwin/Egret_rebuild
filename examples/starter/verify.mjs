@@ -85,6 +85,9 @@ await scenario('webgl2: a click sends the square to that place, where it picks u
   // The coin is gone and the square stands where it was.
   assert.equal(await colour(page, [240, 135]), HERO);
   assert.equal(await colour(page, [40, 135]), CLEAR);
+  // The score on the stage follows: new words were drawn after the first ones.
+  const later = await until(page, s => s.label === '金币 1 / 5' && s.labelShown >= 2, 'the new score drawn');
+  assert.equal(later.failure, undefined);
 }, '?backend=webgl2');
 
 await scenario('webgl2: the arrow keys walk the square, the walls stop it, and the button starts again', desktop, async page => {
@@ -104,12 +107,12 @@ await scenario('webgl2: the arrow keys walk the square, the walls stop it, and t
 }, '?backend=webgl2');
 
 await scenario('webgl2: with ?stats a panel over the canvas counts the frames and what one holds', desktop, async page => {
-  const now = await until(page, s => s.frames >= 2 && s.stats?.fps > 0 && s.stats.commands === 6, 'a refreshed panel');
-  // The square and five coins: six rectangles, two triangles each, and no geometry or page of their own.
-  assert.deepEqual([now.stats.commands, now.stats.triangles, now.stats.geometries, now.stats.pages], [6, 12, 0, 0]);
+  const now = await until(page, s => s.frames >= 2 && s.stats?.fps > 0 && s.stats.commands === 7, 'a refreshed panel');
+  // The square and five coins are six rectangles, and the score is an image on a page of its own: two triangles each.
+  assert.deepEqual([now.stats.commands, now.stats.triangles, now.stats.geometries, now.stats.pages], [7, 14, 0, 1]);
   assert.ok(now.stats.frames >= 2 && now.stats.pendingFrames <= 2);
   const text = await page.evaluate(() => document.body.lastElementChild.textContent);
-  assert.match(text, /^webgl2\nfps \d+\.\d  longest \d+\.\d ms\ncommands 6  triangles 12\n/);
+  assert.match(text, /^webgl2\nfps \d+\.\d  longest \d+\.\d ms\ncommands 7  triangles 14\n/);
 }, '?backend=webgl2&stats');
 
 // Left to choose, the page asks the browser for a WebGPU adapter before it touches the canvas. The two ways of having
@@ -132,11 +135,23 @@ await scenario('webgl2: an image is loaded by its address and counts the taps on
   assert.notEqual(await colour(page, [445, 14]), CLEAR, 'the image is drawn');
   await clickAt(page, [456, 16]);
   now = await until(page, s => s.taps === 1, 'one tap');
+  // The score is text on the stage, in Chinese: it was drawn once at the start.
+  assert.equal(now.label, '金币 0 / 5'); assert.ok(now.labelShown >= 1, 'the label was drawn');
   // A click beside it is no tap on it.
   await clickAt(page, [420, 40]);
   await until(page, s => s.frames > now.frames + 2, 'frames after the second click');
   assert.equal((await read(page)).taps, 1);
 }, '?backend=webgl2&image=/examples/resource-scene/assets/atlas-v1.png');
+
+for (const [fit, expected] of [['contain', [400, 225, 0, 37.5]], ['cover', [533.33, 300, -66.67, 0]], ['stretch', [400, 300, 0, 0]]])
+  await scenario('webgl2: with ?fit=' + fit + ' the canvas fills its element that way, and a click still lands where it is seen', desktop, async page => {
+    await until(page, s => s.frames >= 2, 'two frames');
+    const box = await page.evaluate(() => { const canvas = document.querySelector('#scene').getBoundingClientRect(), holder = document.querySelector('#scene').parentElement.getBoundingClientRect(); return [canvas.width, canvas.height, canvas.left - holder.left, canvas.top - holder.top]; });
+    for (let i = 0; i < 4; i++) assert.ok(Math.abs(box[i] - expected[i]) < 0.6, fit + ': ' + box + ' is not ' + expected);
+    // The coin at the middle of the stage is at the middle of the canvas, whatever its shape on the page.
+    await clickAt(page, [240, 135]);
+    await until(page, s => s.score === 1 && s.hero.x === 240 && s.hero.y === 135, 'the square at the middle coin');
+  }, '?backend=webgl2&fit=' + fit);
 
 await scenario('on a phone a tap sends the square to a coin', phone, async page => {
   await until(page, s => s.frames >= 2, 'two frames');
