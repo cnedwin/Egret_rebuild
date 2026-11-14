@@ -11,18 +11,21 @@ node tools/build.mjs
 node tools/serve-canvas.mjs
 ```
 
-Open `/examples/starter/index.html` on the host and port the server prints. Add `?backend=webgl2` or `?backend=webgpu` to choose a backend.
+Open `/examples/starter/index.html` on the host and port the server prints. Add `?backend=webgl2` or `?backend=webgpu` to choose a backend, and `?stats` for a panel of frames a second and what a frame holds.
 
 ## What is in it
 
 | Step | In `main.mjs` |
 | --- | --- |
-| A Host | `createSharedWebGPUHost` or `createSharedWebGL2Host` on the canvas, whichever the browser has |
-| An Engine | `createEngineForProfile({ host }, SHARED_FRAME_PROFILE_2D)` |
-| A scope | `engine.createScope()`; `scope.use(new Sprite())` gives the scope what the game creates, and disposing the scope disposes it |
+| The game | `await createBrowserGame({ canvas, width, height, update })` from `@egret/engine/web/game`. One call makes the five things below |
+| A Host | WebGPU where the browser gives an adapter, WebGL2 otherwise: `game.backend` says which |
+| An Engine | `game.engine`, with its stage as `game.stage` |
+| A scope | `game.scope`; `scope.use(new Sprite())` gives the scope what the game creates, and disposing the game disposes it |
+| Input | `game.pointer` and `game.keyboard` for display objects. This example listens to the page's own `pointerdown` and `keydown` on the canvas, and `game.toStage` turns a place on the page into stage units |
+| The loop | `game.loop`: it moves the Engine's clock, calls `update(seconds)` and draws |
 | The stage | `engine.stage.addChild(...)`; a `Sprite` draws with `graphics`, and `x`, `y` place it |
-| Input | The page's own `pointerdown` and `keydown` on the canvas, turned into stage units |
-| The loop | `createBrowserFrameLoop` from `@egret/engine/web/loop`: it moves the Engine's clock, calls `update(seconds)` and draws |
+
+[One call for a game in a page](../../knowledge-base/en/docs/browser-game.md) describes the options and what to do when a game needs to make these itself.
 
 The [frame loop](../../knowledge-base/en/docs/frame-loop.md) takes care of two things that are easy to miss by hand. A step is at most a tenth of a second, so a tab that was hidden does not come back with one enormous step. And a Host holds at most two frames it has not finished: the loop skips drawing a frame while there are two, instead of being refused.
 

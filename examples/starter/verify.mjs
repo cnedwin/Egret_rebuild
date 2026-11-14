@@ -101,6 +101,22 @@ await scenario('webgl2: the arrow keys walk the square, the walls stop it, and t
   assert.deepEqual(again.hero, { x: 40, y: 135 });
 }, '?backend=webgl2');
 
+await scenario('webgl2: with ?stats a panel over the canvas counts the frames and what one holds', desktop, async page => {
+  const now = await until(page, s => s.frames >= 2 && s.stats?.fps > 0 && s.stats.commands === 6, 'a refreshed panel');
+  // The square and five coins: six rectangles, two triangles each, and no geometry or page of their own.
+  assert.deepEqual([now.stats.commands, now.stats.triangles, now.stats.geometries, now.stats.pages], [6, 12, 0, 0]);
+  assert.ok(now.stats.frames >= 2 && now.stats.pendingFrames <= 2);
+  const text = await page.evaluate(() => document.body.lastElementChild.textContent);
+  assert.match(text, /^webgl2\nfps \d+\.\d  longest \d+\.\d ms\ncommands 6  triangles 12\n/);
+}, '?backend=webgl2&stats');
+
+await scenario('without ?backend the page chooses one itself and draws', desktop, async page => {
+  const now = await until(page, s => s.frames >= 2, 'two frames');
+  assert.ok(['webgpu', 'webgl2'].includes(now.backend), now.backend);
+  assert.equal(now.stats, undefined);
+  report.chosen = now.backend;
+}, '');
+
 await scenario('on a phone a tap sends the square to a coin', phone, async page => {
   await until(page, s => s.frames >= 2, 'two frames');
   const [x, y] = await at(page, [80, 210]);

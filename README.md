@@ -16,7 +16,7 @@ Years later, as times change and technology advances, many developers continue t
 
 ## Run an example
 
-**Start a game of your own.** Copy the [starter example](examples/starter/README.md): a hundred lines with a Host, an Engine, a stage, input and a frame loop. [What to import](knowledge-base/en/docs/entry-points.md) lists which entry of `@egret/engine` each task needs. The [examples index](examples/README.md) lists all the examples by what they show.
+**Start a game of your own.** Copy the [starter example](examples/starter/README.md): under a hundred lines, started by one call that makes the Host, the Engine, the input and the frame loop. [What to import](knowledge-base/en/docs/entry-points.md) lists which entry of `@egret/engine` each task needs. The [examples index](examples/README.md) lists all the examples by what they show.
 
 Use **Node.js 26.7.0** and **pnpm 11.25.0**. From the repository root:
 

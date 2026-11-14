@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## One call starts a game in a page, with a panel of what it takes — 2026-11-15
+
+`@egret/engine/web/game` gives `createBrowserGame({ canvas, width, height, update })`. It chooses WebGPU where the browser gives an adapter and WebGL2 otherwise, and makes the Host, the Engine, a scope, pointer and keyboard input and the frame loop, each as its own entry makes it; `game.dispose()` ends them all. With `stats: true` a panel over the canvas shows frames a second, the longest time between frames, the commands and triangles of a frame, and how many frames the Host holds or the loop skipped; `createBrowserStatsPanel` makes the panel for a game that starts itself. The starter example now starts this way, and `?stats` shows the panel. The panel counts the Engine's commands, not the Host's draw calls. See [one call for a game in a page](docs/browser-game.md).
+
 ## A frame takes 4,096 different drawings, not 128 — 2026-11-15
 
 A frame used to admit 128 different geometries, so 200 sprites that each drew a circle of its own size were refused with `FRAME_BUDGET_EXCEEDED`. The table now holds 4,096, as many as a frame's regions. What a frame costs is still held by its other limits: 65,536 mesh triangles and 16 MiB of geometry. The Hosts keep nothing for each geometry, so nothing else changes. The graphics example draws 300 discs of different sizes with `&many=300`, and its check reads them from the canvas with software WebGL2.

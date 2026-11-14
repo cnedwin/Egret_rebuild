@@ -2,7 +2,7 @@
 
 [English](../../en/docs/entry-points.md) | 简体中文
 
-`@egret/engine` 有一个主入口和 38 个较小的入口。本页说明做一件事需要哪一个。[起步示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.zh-CN.md)只用到前四行。
+`@egret/engine` 有一个主入口和 39 个较小的入口。本页说明做一件事需要哪一个。[起步示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.zh-CN.md)只用到主入口和 `@egret/engine/web/game`（它会替游戏加载 Host），没有别的。
 
 ## 入口是怎么划分的
 
@@ -20,6 +20,8 @@
 | 启动 Engine 并绘制舞台 | `createEngineForProfile`、`SHARED_FRAME_PROFILE_2D`、`Sprite`、`Bitmap`、`DisplayObjectContainer` | `@egret/engine` |
 | 用 WebGPU 绘制 | `createSharedWebGPUHost` | `@egret/engine/webgpu` |
 | 用 WebGL2 绘制 | `createSharedWebGL2Host` | `@egret/engine/webgl2` |
+| 一次调用启动页面里的游戏：Host、Engine、输入和循环 | `createBrowserGame` | `@egret/engine/web/game` |
+| ……并查看每秒帧数和一帧的内容 | `createBrowserStatsPanel`，或 `stats: true` | `@egret/engine/web/game` |
 | 显示器每显示一帧就驱动一次游戏 | `createBrowserFrameLoop` | `@egret/engine/web/loop` |
 | 把图片加载为纹理 | `createBrowserTextureProvider` | `@egret/engine/web/image` |
 | 从构建好的清单加载图集、序列帧和字体 | `createContentLoader`、`createFontContentLoader`、`createManifestAssetBinding` | `@egret/engine/resources` |

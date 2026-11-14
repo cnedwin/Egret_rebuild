@@ -1,24 +1,28 @@
 // SPDX-License-Identifier: Apache-2.0
 // A starting point for a 2D game: one Engine, one stage, a frame loop, pointer and keyboard input, and a rule.
 // Copy this folder, keep the import map of index.html, and replace what is between the two "Game" lines.
-import { createEngineForProfile, DisplayObjectContainer, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
-import { createBrowserFrameLoop } from '@egret/engine/web/loop';
+import { DisplayObjectContainer, Sprite } from '@egret/engine';
+import { createBrowserGame } from '@egret/engine/web/game';
 
 // The stage is 480 by 270 units whatever the size of the canvas on the page.
 const WIDTH = 480, HEIGHT = 270;
-const canvas = document.querySelector('#scene'), status = document.querySelector('#status');
-
-// 1. A Host draws for the Engine: WebGPU where the browser has it, WebGL2 otherwise. `?backend=` chooses one.
-const asked = new URLSearchParams(location.search).get('backend');
-const backend = asked ?? (navigator.gpu ? 'webgpu' : 'webgl2');
-const host = backend === 'webgpu'
-  ? (await import('@egret/engine/webgpu')).createSharedWebGPUHost({ canvas, pixelRatio: 1.5 })
-  : (await import('@egret/engine/webgl2')).createSharedWebGL2Host({ canvas, pixelRatio: 1.5 });
-const engine = await createEngineForProfile({ host }, SHARED_FRAME_PROFILE_2D);
-// 2. A scope owns what the game creates; disposing the scope disposes all of it.
-const scope = engine.createScope();
-const frame = Object.freeze({ width: WIDTH, height: HEIGHT, clearColor: 0x1b1f2a, clearAlpha: 1 });
+const canvas = document.querySelector('#scene'), status = document.querySelector('#status'), query = new URLSearchParams(location.search);
 let failure;
+
+// 1. One call makes the game: a Host that draws (WebGPU where the browser gives an adapter, WebGL2 otherwise; `?backend=`
+// chooses one), an Engine, a scope that owns what the game creates, pointer and keyboard input, and a frame loop. On each
+// frame the display shows, the loop moves the Engine's clock, calls `update` and draws; it keeps a step short after the
+// tab was hidden, and skips a frame while the Host has not finished the two it holds. `?stats` shows a panel of numbers.
+const game = await createBrowserGame({
+  canvas, width: WIDTH, height: HEIGHT, clearColor: 0x1b1f2a, pixelRatio: 1.5,
+  backend: query.get('backend') ?? 'auto', stats: query.has('stats'), autoStart: false,
+  update(seconds) {
+    update(seconds);
+    status.textContent = 'Coins / 金币 ' + score + ' / ' + PLACES.length + ' · ' + game.backend;
+  },
+  onError(cause) { failure = String(cause?.code ?? cause?.message ?? cause); status.textContent = 'Failed / 失败：' + failure; },
+});
+const { engine, scope } = game;
 
 // ---- Game: state ---------------------------------------------------------------------------------------------
 export const HERO = 0x4a7bd0, COIN = 0xf0c030, SPEED = 160, HERO_SIZE = 24, COIN_SIZE = 12;
@@ -40,10 +44,9 @@ function start() {
 }
 
 // ---- Game: input ---------------------------------------------------------------------------------------------
-// A place on the page becomes a place on the stage by the canvas's own rectangle.
+// `toStage` turns a place on the page into a place on the stage.
 canvas.addEventListener('pointerdown', event => {
-  const box = canvas.getBoundingClientRect();
-  target = { x: (event.clientX - box.left) * WIDTH / box.width, y: (event.clientY - box.top) * HEIGHT / box.height };
+  target = game.toStage(event.clientX, event.clientY);
   canvas.focus();
 });
 const ARROWS = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
@@ -72,20 +75,11 @@ function update(seconds) {
 }
 // ---- Game: end -----------------------------------------------------------------------------------------------
 
-// 3. The loop: on each frame the display shows, it moves the Engine's clock, calls `update` and draws. It keeps a
-// step short after the tab was hidden, and skips a frame while the Host has not finished the two it holds.
-const loop = createBrowserFrameLoop({
-  engine, host, frame,
-  update(seconds) {
-    update(seconds);
-    status.textContent = 'Coins / 金币 ' + score + ' / ' + PLACES.length + ' · ' + backend;
-  },
-  onError(cause) { failure = String(cause?.code ?? cause?.message ?? cause); status.textContent = 'Failed / 失败：' + failure; },
-});
+// 2. Place everything, then start the loop.
 start();
-loop.start();
+game.loop.start();
 
 // What a check reads; a game does not need it.
 globalThis.__egretStarterExample = {
-  readSnapshot: () => ({ backend, hero: { x: hero.x, y: hero.y }, score, coins: coins.filter(c => !c.sprite.isDisposed).map(c => [c.x, c.y]), frames: loop.snapshot().frames, failure }),
+  readSnapshot: () => ({ backend: game.backend, stats: game.stats?.snapshot(), hero: { x: hero.x, y: hero.y }, score, coins: coins.filter(c => !c.sprite.isDisposed).map(c => [c.x, c.y]), frames: game.loop.snapshot().frames, failure }),
 };
