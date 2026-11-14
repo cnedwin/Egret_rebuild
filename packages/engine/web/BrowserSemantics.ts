@@ -132,7 +132,8 @@ export function createBrowserSemantics(options: BrowserSemanticsOptions): Browse
   function create(node: SemanticSnapshotNode): Projected {
     const native = pressable.includes(node.role), element = page.createElement(native ? 'button' : 'div');
     element.id = container!.id + '-' + ++elements;
-    if (native) element.setAttribute('type', 'button');
+    // A native button is a stop of the Tab key unless it says otherwise, and no element here is one: the canvas keeps the keyboard.
+    if (native) { element.setAttribute('type', 'button'); element.setAttribute('tabindex', '-1'); }
     const role = aria[node.role];
     if (role !== undefined) element.setAttribute('role', role);
     const item: Projected = { id: node.id, role: node.role, element, written: new Map() };
@@ -180,8 +181,8 @@ export function createBrowserSemantics(options: BrowserSemanticsOptions): Browse
       write(item, 'aria-setsize', text(node.position?.size));
       // Set on the outermost inert element: the page then keeps everything under it away from every user.
       write(item, 'inert', node.inert && parent?.inert !== true ? '' : undefined);
-      // Reachable by a request of assistive technology, never by the Tab key: the canvas keeps the keyboard.
-      write(item, 'tabindex', node.actions.includes('focus') && !node.disabled ? '-1' : undefined);
+      // Reachable by a request of assistive technology, never by the Tab key. A native button says so from the start, whatever it can do.
+      if (!pressable.includes(node.role)) write(item, 'tabindex', node.actions.includes('focus') && !node.disabled ? '-1' : undefined);
     }
     // A relation is written once every element it can name exists.
     for (const node of snapshot.nodes) write(projected.get(node.id)!, 'aria-controls', node.controls === undefined ? undefined : projected.get(node.controls)!.element.id);

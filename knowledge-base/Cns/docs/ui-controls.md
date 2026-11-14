@@ -201,6 +201,7 @@ const keys = createControlKeys({ keyboard, target: button, kind: 'action', contr
 - **下方已接管的键，上方不再处理。**更靠近焦点的显示对象已经接管的键会被绑定跳过，所以滚动视口里的按钮、视口里的视口都各自得到自己的键。
 - **快捷键不属于控件。**与 Alt、Control 或平台键一起按下的键会被忽略。Shift 不算快捷键。
 - 被禁用的控件不接管任何键。绑定接管的键会让 `keyboard.keyDown` 返回 `true`，页面据此不再处理该键。
+- **被禁用的控件也不应该是停靠点。**绑定并不拥有停靠点，所以由应用来说明：保存 `keyboard.registerTarget` 的返回值，在控件被禁用时调用 `update({ disabled: true })`。持有焦点的停靠点此时会失去焦点，所以要先把焦点移走。禁用控件的可能正是一次按键，而停靠点不能在按键处理过程中修改：应在按键结束之后再做，例如放在微任务里。[数值调节示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-stepper/README.zh-CN.md)就是这样做的。
 
 `dispose()` 结束当前的按住且不激活，停止按键正在操纵的移动，并不再监听。应先销毁绑定，再销毁它的控件。绑定不移动焦点：注册停靠点以及在它们之间移动属于[键盘输入](keyboard-focus-input.md)。
 

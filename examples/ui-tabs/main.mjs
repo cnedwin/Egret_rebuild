@@ -75,7 +75,7 @@ const train = surface(panels.training, { x: PANEL.x + 16, y: PANEL.y + 140, widt
 await line(panels.training, PANEL.x + 30, PANEL.y + 147, 14, '修炼 / Train');
 const training = createActionControl({ input: pointer, target: train.sprite, onPressChange: () => show(),
   onActivate() { sessions++; for (const skill of SKILLS) progress[skill.key] = Math.min(100, progress[skill.key] + skill.gain); show(); } });
-keyboard.registerTarget({ id: 'train', target: train.sprite, tabIndex: 2 });
+const trainStop = keyboard.registerTarget({ id: 'train', target: train.sprite, tabIndex: 2 });
 const trainKeys = createControlKeys({ keyboard, target: train.sprite, kind: 'action', control: training, onPressChange: () => show() });
 const done = () => SKILLS.every(skill => progress[skill.key] === 100);
 
@@ -109,7 +109,11 @@ function show() {
   if (scope.state !== 'open') return;
   for (const { key } of TABS) panels[key].visible = group.selected === key;
   // Trained to the end, the button has nothing more to do. A button that held the focus gives it to the tabs.
-  if (training.enabled === done()) { training.setEnabled(!done()); if (done() && holds('train')) keyboard.focus('tabs', { visible: keyboard.getSnapshot().focusVisible }); }
+  if (training.enabled === done()) {
+    training.setEnabled(!done()); if (done() && holds('train')) keyboard.focus('tabs', { visible: keyboard.getSnapshot().focusVisible });
+    // Disabled, it is no stop of the keyboard either. A key may be what trained to the end, and the stops are not changed from inside a key.
+    queueMicrotask(() => { if (scope.state === 'open') trainStop.update({ disabled: !training.enabled }); });
+  }
   page.graphics.clear(); page.graphics.beginFill(COLORS.page).drawRect(0, 0, WIDTH, HEIGHT).beginFill(COLORS.panel).drawRect(PANEL.x, PANEL.y - 4, PANEL.width, PANEL.height + 4).endFill();
   for (const { key } of TABS) tabs[key].paint(group.selected === key ? COLORS.tabOn : tabs[key].hover.hovered ? COLORS.tabHover : COLORS.tab, ringed('tabs') && group.selected === key);
   for (const skill of SKILLS) {

@@ -91,6 +91,12 @@ await scenario('the browser computes a list box in which several options may be 
   const now = await read(page);
   assert.deepEqual([now.chosen, now.away, now.enabled, now.semantics.projection], [[], [], { all: true, clear: false, send: false }, 'active']);
   assert.deepEqual([await colour(page, corner.all), await colour(page, corner.clear), await colour(page, corner.send)], ['3d4a63', '2a2d33', '2a2d33']);
+  // A button that is disabled is no stop of the keyboard: with nobody chosen, All is the last stop of the canvas.
+  await page.focus('#scene'); const stops = [];
+  for (let count = 0; count < 3; count++) { await key(page, 'Tab'); stops.push(String((await read(page)).focus)); }
+  assert.deepEqual(stops, ['roster:m0', 'all', 'undefined']);
+  // Past the last stop Tab leaves the canvas: no element of the projection takes it on the way.
+  assert.equal(await page.evaluate(() => document.activeElement.id === 'scene'), false);
 });
 
 await scenario('presses choose several members and let one go, and the chosen are sent', desktop, async page => {

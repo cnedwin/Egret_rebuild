@@ -201,6 +201,7 @@ const keys = createControlKeys({ keyboard, target: button, kind: 'action', contr
 - **A key taken below is left alone above.** A binding skips a key that a display object nearer the focus has already taken, so a button inside a scrolling viewport and a viewport inside another each get their own keys.
 - **Shortcuts are not the control's.** A key held with Alt, Control or the platform key is ignored. Shift is not a shortcut.
 - A disabled control takes no key. A key the binding took returns `true` from `keyboard.keyDown`, which is what stops the page from acting on it.
+- **A disabled control should be no stop either.** The binding does not own the stop, so the application says it: keep what `keyboard.registerTarget` returned and call `update({ disabled: true })` when the control is disabled. A stop that holds the focus loses it then, so move the focus first. A key may be what disabled the control, and the stops are not changed from inside a key: do it after the key, as in a microtask. The [stepper example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-stepper/README.md) does this.
 
 `dispose()` ends a hold without an activation, stops a movement the keys were steering, and listens no more. Dispose the binding before its control. The binding moves no focus: registering stops and moving between them is the [keyboard input](keyboard-focus-input.md)'s.
 

@@ -36,7 +36,7 @@ Keep the host and port the server prints and open `/examples/ui-multi-select/ind
 
 **The keys of a row that is away are still taken.** A binding whose control is disabled takes no key, and Space left to the page scrolls it. The row therefore keeps its binding and its activation does nothing.
 
-**A button that is disabled under the focus gives it away.** After a send nothing is chosen, so the button that was just pressed has nothing more to do; the page moves the focus to a button that can act.
+**A button that is disabled is no stop of the keyboard, and gives the focus away if it held it.** After a send nothing is chosen, so the button that was just pressed has nothing more to do; the page moves the focus to a button that can act, or to the roster when none can. The stop itself is disabled with `registration.update({ disabled })` once the key that caused it is over.
 
 See the guides for [the managed list](../../knowledge-base/en/docs/ui-data-panel.md), [control state](../../knowledge-base/en/docs/ui-controls.md) and [semantics](../../knowledge-base/en/docs/ui-semantics.md).
 

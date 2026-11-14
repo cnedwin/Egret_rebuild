@@ -94,9 +94,9 @@ test('BS01 the canvas owns an invisible container with one element for each publ
   ['div',{role:'group','aria-label':'Settings'},[
    ['div',{},'Sound and music'],
    ['button',{type:'button',role:'switch','aria-label':'Sound','aria-checked':'true',tabindex:'-1'}],
-   ['div',{role:'radiogroup','aria-label':'Size'},[['button',{type:'button',role:'radio','aria-label':'Small','aria-checked':'false','aria-posinset':'1','aria-setsize':'2'}]]]]],
+   ['div',{role:'radiogroup','aria-label':'Size'},[['button',{type:'button',role:'radio','aria-label':'Small','aria-checked':'false','aria-posinset':'1','aria-setsize':'2',tabindex:'-1'}]]]]],
   ['div',{role:'img','aria-label':'Portrait'}],
-  ['button',{type:'button','aria-label':'Close'}]]);
+  ['button',{type:'button','aria-label':'Close',tabindex:'-1'}]]);
  const sound=browser.elementOf('sound');
  assert.equal(sound,container.children[0].children[1]);assert.match(sound.id,new RegExp('^'+container.id+'-\\d+$'));assert.equal(browser.elementOf('missing'),undefined);
  assert.equal(new Set(semantics.snapshot.nodes.map(node=>browser.elementOf(node.id).id)).size,7,'every element has its own id');
@@ -116,19 +116,19 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  assert.equal(browser.container.children.length,0);
  semantics.publish();
  const read=id=>attributes(browser.elementOf(id));
- assert.deepEqual(read('all'),{type:'button',role:'checkbox','aria-label':'All','aria-disabled':'true','aria-checked':'mixed'});
- assert.deepEqual(read('red'),{type:'button',role:'option','aria-label':'Red','aria-selected':'true','aria-posinset':'3','aria-setsize':'9'});
+ assert.deepEqual(read('all'),{type:'button',role:'checkbox','aria-label':'All','aria-disabled':'true','aria-checked':'mixed',tabindex:'-1'});
+ assert.deepEqual(read('red'),{type:'button',role:'option','aria-label':'Red','aria-selected':'true','aria-posinset':'3','aria-setsize':'9',tabindex:'-1'});
  assert.deepEqual(read('bar'),{role:'scrollbar','aria-label':'Scroll','aria-valuenow':'20','aria-valuemin':'0','aria-valuemax':'150','aria-orientation':'horizontal',tabindex:'-1','aria-controls':browser.elementOf('view').id});
  // A list box in which several options may be selected says so; one with a single selection says nothing.
  assert.deepEqual([read('team'),read('single')],[{role:'listbox','aria-label':'Team','aria-multiselectable':'true'},{role:'listbox','aria-label':'One'}]);
  // A menu and its items: an item is a native button that carries its role.
  assert.deepEqual(read('actions'),{role:'menu','aria-label':'Member','aria-orientation':'vertical'});
  assert.deepEqual(read('send'),{type:'button',role:'menuitem','aria-label':'Send','aria-posinset':'1','aria-setsize':'2',tabindex:'-1'});
- assert.deepEqual(read('dismiss'),{type:'button',role:'menuitem','aria-label':'Dismiss','aria-disabled':'true'});
+ assert.deepEqual(read('dismiss'),{type:'button',role:'menuitem','aria-label':'Dismiss','aria-disabled':'true',tabindex:'-1'});
  // A row of tabs: each tab is a native button that carries its role, and the one that is selected names its panel.
  assert.deepEqual(read('tabs'),{role:'tablist','aria-label':'Sect','aria-orientation':'horizontal'});
  assert.deepEqual(read('one'),{type:'button',role:'tab','aria-label':'Members','aria-selected':'true','aria-posinset':'1','aria-setsize':'2',tabindex:'-1','aria-controls':browser.elementOf('pane').id});
- assert.deepEqual(read('two'),{type:'button',role:'tab','aria-label':'Stores','aria-disabled':'true','aria-selected':'false'});
+ assert.deepEqual(read('two'),{type:'button',role:'tab','aria-label':'Stores','aria-disabled':'true','aria-selected':'false',tabindex:'-1'});
  assert.deepEqual([read('pane'),browser.elementOf('work').parentNode===browser.elementOf('pane')],[{role:'tabpanel','aria-label':'Members'},true]);
  // A progress bar has its value, or none while the length of the work is not known.
  assert.deepEqual(read('work'),{role:'progressbar','aria-label':'Training','aria-valuenow':'30','aria-valuemin':'0','aria-valuemax':'100'});assert.deepEqual(read('busy'),{role:'progressbar','aria-label':'Loading'});
@@ -139,7 +139,7 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  assert.deepEqual(read('herbs'),{role:'spinbutton','aria-label':'Herbs','aria-valuenow':'20','aria-valuemin':'0','aria-valuemax':'60',tabindex:'-1'});
  assert.deepEqual([read('left'),browser.elementOf('left').textContent,browser.elementOf('left').tagName,read('fault'),browser.elementOf('fault').textContent],[{role:'status'},'','DIV',{role:'alert'},'Not enough']);
  assert.deepEqual(read('field'),{role:'textbox','aria-label':'Name','aria-multiline':'true'});assert.equal(browser.elementOf('field').textContent,'张三');
- assert.deepEqual(read('menu'),{type:'button','aria-label':'More','aria-expanded':'true'});assert.deepEqual(read('ask'),{role:'dialog','aria-label':'Rename'});
+ assert.deepEqual(read('menu'),{type:'button','aria-label':'More','aria-expanded':'true',tabindex:'-1'});assert.deepEqual(read('ask'),{role:'dialog','aria-label':'Rename'});
  // One changed value is one write.
  const writes=()=>{const before=state.writes;semantics.publish();return state.writes-before;};
  assert.equal(writes(),0);
@@ -151,15 +151,30 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  described.team.multiple=false;assert.equal(writes(),1);assert.deepEqual(read('team'),{role:'listbox','aria-label':'Team'});
  described.work.range={now:40,min:0,max:100};assert.equal(writes(),1);described.busy.range={now:1,min:0,max:4};assert.equal(writes(),3);described.busy.range=undefined;assert.equal(writes(),3);assert.deepEqual(read('busy'),{role:'progressbar','aria-label':'Loading'});
  described.one.selected=false;described.one.controls=undefined;described.two.selected=true;assert.equal(writes(),3);assert.deepEqual([read('one')['aria-selected'],read('one')['aria-controls'],read('two')['aria-selected']],['false',undefined,'true']);
- described.all.checked=false;described.all.disabled=false;assert.equal(writes(),2);assert.deepEqual(read('all'),{type:'button',role:'checkbox','aria-label':'All','aria-checked':'false'});
+ described.all.checked=false;described.all.disabled=false;assert.equal(writes(),2);assert.deepEqual(read('all'),{type:'button',role:'checkbox','aria-label':'All','aria-checked':'false',tabindex:'-1'});
  described.field.value='';described.field.multiline=false;described.menu.expanded=false;described.red.selected=false;described.red.position=undefined;described.bar.controls=undefined;
  semantics.publish();
  assert.equal(browser.elementOf('field').textContent,'');assert.deepEqual(read('field'),{role:'textbox','aria-label':'Name'});assert.equal(read('menu')['aria-expanded'],'false');
- assert.deepEqual(read('red'),{type:'button',role:'option','aria-label':'Red','aria-selected':'false'});assert.equal('aria-controls' in read('bar'),false);
+ assert.deepEqual(read('red'),{type:'button',role:'option','aria-label':'Red','aria-selected':'false',tabindex:'-1'});assert.equal('aria-controls' in read('bar'),false);
  described.ask.modal=true;semantics.publish();assert.deepEqual(read('ask'),{role:'dialog','aria-label':'Rename','aria-modal':'true'});assert.equal(read('red').inert,undefined);assert.equal(read('list').inert,'');
  // A focusable node that is disabled is not offered to a request for the focus.
  described.ask.modal=false;described.bar.disabled=true;semantics.publish();assert.equal('tabindex' in read('bar'),false);assert.equal(read('bar')['aria-disabled'],'true');
  described.view.name='';semantics.publish();assert.equal('aria-label' in read('view'),false);
+}));
+
+test('BS02b no element of the projection is a stop of the Tab key, whatever it can do',()=>fixture(({semantics,described,add,create,attributes})=>{
+ // A native button is a stop of the page unless it says otherwise. One that is disabled, or that cannot be asked to take the focus, says so like any other.
+ add('plain','button',{name:'Plain'});add('off','button',{name:'Off',disabled:true},{onActivate(){},onFocus(){}});add('on','button',{name:'On'},{onFocus(){}});
+ add('menu','menu',{name:'Menu'});add('item','menuitem',{name:'Item',disabled:true},{parent:'menu'});add('box','checkbox',{name:'Box',checked:false});
+ add('words','text',{name:'Words'});add('bar','slider',{name:'Bar',range:{now:0,min:0,max:1}});add('held','slider',{name:'Held',range:{now:0,min:0,max:1}},{onFocus(){}});
+ const browser=create();semantics.publish();
+ const stop=id=>attributes(browser.elementOf(id)).tabindex;
+ assert.deepEqual(['plain','off','on','item','box'].map(id=>[browser.elementOf(id).tagName,stop(id)]),Array(5).fill(['BUTTON','-1']));
+ // A plain element is no stop of the page by itself: it says so only where a request may give it the focus.
+ assert.deepEqual(['menu','words','bar','held'].map(id=>[browser.elementOf(id).tagName,stop(id)]),[['DIV',undefined],['DIV',undefined],['DIV',undefined],['DIV','-1']]);
+ // It stays so through every change of what the node can do.
+ described.off.disabled=false;described.on.disabled=true;described.held.disabled=true;described.item.disabled=false;semantics.publish();
+ assert.deepEqual(['plain','off','on','item','box','held'].map(stop),['-1','-1','-1','-1','-1',undefined]);
 }));
 
 test('BS03 bounds are logical inside the container, and one scale maps it onto the canvas',()=>fixture(({canvas,window,semantics,described,add,create,state,emit})=>{
