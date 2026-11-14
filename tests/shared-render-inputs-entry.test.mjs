@@ -61,7 +61,7 @@ test('shared geometry owns dark coefficients and out-of-region UV without acquir
 test('shared geometry owns numeric indices when a descriptor replaces array hooks', () => {
   const positions = new Float32Array([0, 0, 1, 0, 0, 1]);
   const unexpected = () => { throw new Error('Caller array hook was invoked'); };
-  const hooks = [[Array, 'from'], [Array.prototype, '0'], [Object.prototype, Symbol.iterator]];
+  const hooks = [[Array, 'from'], [Object, 'setPrototypeOf'], [Array.prototype, '0'], [Object.prototype, Symbol.iterator]];
   const saved = hooks.map(([owner, key]) => Object.getOwnPropertyDescriptor(owner, key));
   const input = {
     get positions() {
@@ -85,7 +85,13 @@ test('shared geometry owns numeric indices when a descriptor replaces array hook
     }
   }
   assert.deepEqual(geometry.indices, [0, 1, 2]);
-  assert.deepEqual(Object.getOwnPropertyDescriptor(geometry.positions, '0'), {
-    value: 0, writable: false, enumerable: true, configurable: false,
-  });
+  for (const field of ['positions', 'uvs', 'lightColors', 'darkColors', 'indices']) {
+    const array = geometry[field];
+    assert.equal(Object.getPrototypeOf(array), Array.prototype);
+    assert.equal(Object.keys(array).length, array.length);
+    assert.deepEqual(Object.getOwnPropertyDescriptor(array, '0'), {
+      value: 0, writable: false, enumerable: true, configurable: false,
+    });
+    assert.ok(Object.isFrozen(array));
+  }
 });

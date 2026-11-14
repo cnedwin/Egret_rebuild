@@ -192,6 +192,55 @@ Camera motion rebuilt zero cached chunks. One inn ground edit rebuilt 1 of 32 ch
 
 The desktop observations support selective use for local edits and upload reduction. They show similar warm frame intervals and higher cold cost and residence. GPU timer queries and physical GPU memory were unmeasured. The KYS fixture and its media remain private. This comparison is supplementary to [#92](https://github.com/cnedwin/Egret_rebuild/issues/92), whose fixed X profile and device rows remain open.
 
+### Mixed-scene frame-time diagnostic · 2026-11-14
+
+The Windows and Fold7 runs used the full-dirty `/2` workload from [#255](https://github.com/cnedwin/Egret_rebuild/pull/255), source tree `b42e46ce`. Each backend ran 5 seconds of warm-up and three 8-second windows. Each value is the median of the three per-window percentiles. Both layers drew; the interval marks application frame completion after the SharedFrame2D overlay completed and World3D submitted. No scripted input or loss ran in this timing probe.
+
+| Device and profile | Backend | App interval p95 / p99 (ms) | Animation elapsed p95 (ms) | Mixed Host elapsed p95 (ms) |
+| --- | --- | ---: | ---: | ---: |
+| Windows Edge, X-D60/2 | WebGPU | 23.9 / 26.0 | 7.1 | 8.5 |
+| Windows Edge, X-D60/2 | WebGL2 | 28.0 / 31.5 | 7.3 | 9.6 |
+| Fold7 Chrome, X-MTouch/2 portrait | WebGPU | 63.1 / 82.2 | 24.6 | 22.2 |
+| Fold7 Chrome, X-MTouch/2 portrait | WebGL2 | 82.4 / 89.0 | 37.6 | 28.4 |
+
+Windows used Windows 11 build 26300, Core Ultra 9 275HX and Edge 157.0.4341.46. The RTX 5090 Laptop was listed first with NVIDIA driver 32.0.16.2101. Logical and backing dimensions were 1024 × 768, render ratio 1 and observed DPR 1.0000000298023224. Fold7 used Android 17, Chrome 157.0.8103.78 and Adreno 830, with a 360 × 640 logical surface, render ratio 2, backing size 720 × 1280 and observed DPR 2.625. The Fold7 diagnostic used the phone's current display mode. A fixed 60 Hz configuration was not established.
+
+The p95 intervals in this probe exceeded the 16.7 ms formal target on all four rows. Fold7 also exceeded the 33.4 ms p99 target. The short full-dirty probe did not execute the formal schedule. Whole-engine active CPU, pure preparation and GPU execution time remain unmeasured. The synchronous Host span includes both submissions and cannot isolate preparation. The completion mark does not measure GPU execution or display scanout. Formal [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) stays open, with the original workload requirements, thresholds and historical results preserved.
+
+#### Windows partial renderer-thread CPU
+
+A separate instrumented Edge run on X-D60/2 full-dirty used the same 5-second warm-up and three 8-second windows. Chromium trace thread-clock deltas yielded 1,190 WebGPU and 1,026 WebGL2 complete frame samples. Each value below is the median of three per-window p95s.
+
+| Backend | Tracked renderer CPU (ms) | Animation (ms) | Capture (ms) | World3D submit (ms) | SharedFrame2D Host (ms) | Marked 2D preparation (ms) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| WebGPU | 17.123 | 6.923 | 2.228 | 0.142 | 7.970 | 7.418 |
+| WebGL2 | 16.004 | 6.784 | 2.075 | 0.089 | 7.494 | 7.024 |
+
+The tracked total sums nonoverlapping synchronous spans per frame and includes a marked view-update segment. The preparation marker is nested inside the overlay Host span and is counted once. Input, deferred and worker CPU, the full asynchronous UI path and GPU execution lie outside this capture. External fixture mutation was recorded separately. These are partial renderer CPU measurements, with whole-engine CPU, complete preparation and GPU still open for formal qualification.
+
+#### Fold7 induced loss and profiling
+
+On the physical Fold7 in X-MTouch/2 static portrait, Chrome 157 completed ten real induced losses per backend, alternating five background and five overlay losses. WebGL2 used the browser's context-loss/restore extension. WebGPU destroyed the owned devices and recorded loss notifications and replacement configuration. Both layers reached generation 6, the app reached epoch 11, and each cycle completed a matching new-epoch overlay frame after background submission. The Studio then closed all eight actors and reported zero pending font/cache jobs and editor/caller leases. The device's wake settings, prior tabs and owned transport/lease cleanup were verified. This row covers controlled, retained-source recovery. Recovery latency, sustained lifecycle, network faults and iPhone acceptance remain separate.
+
+A separate X-MTouch/2 full-dirty portrait WebGL2 profiler capture sampled for 12.318 seconds. V8 self sample time was 2,689 ms in `createSharedGeometry2D`, 565 ms in its conversion mapper and 533 ms in `copySpineDraws`. These values locate work inside the sampled interval and do not establish whole-engine active CPU or per-frame budgets.
+
+#### Controlled immutable-geometry comparison
+
+The candidate changes how the shared geometry constructor fills its owned numeric arrays. The comparison used the same full-dirty `/2` profiles on the build from `caaadd46`, serving either the original or candidate geometry module, with 5 seconds of warm-up and three 8-second windows per backend. This is a separate before/after comparison. Values are the medians of the per-window percentiles.
+
+| Device and profile | Backend | App interval p95 (ms) | App interval p99 (ms) | Animation elapsed p95 (ms) |
+| --- | --- | ---: | ---: | ---: |
+| Windows Edge, X-D60/2 | WebGPU | 24.7 → 21.1 | 27.9 → 23.1 | 7.8 → 3.8 |
+| Windows Edge, X-D60/2 | WebGL2 | 28.2 → 24.3 | 29.2 → 25.7 | 7.3 → 3.3 |
+| Fold7 Chrome, X-MTouch/2 portrait | WebGPU | 69.2 → 54.6 | 77.0 → 63.2 | 27.0 → 12.0 |
+| Fold7 Chrome, X-MTouch/2 portrait | WebGL2 | 80.2 → 61.0 | 86.2 → 67.0 | 32.5 → 14.0 |
+
+Each before/after pair contained 380 recorded response identities. After aligning the generated font run directory names, 378 response lengths and SHA-256 hashes matched, including the font configuration, manifest and font payloads. The other two responses were the geometry module under test and the root configuration that points to the generated font directory. The root configuration digest was reproduced for all four runs. Normalizing its run directory name yields the same configuration. The fixture definitions and example source hashes matched, and the reports recorded no source errors.
+
+The observed app interval p95 improved in all four rows and remained above 16.7 ms. Fold7 p99 remained above 33.4 ms. The probe covers application completion and animation elapsed time. Whole-engine active CPU, full preparation, GPU time, 60 Hz Fold7 timing and the complete [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) schedule remain open.
+
+The candidate passed 55 focused contract, Spine and recovery tests. The current Spine browser collector passed 22 fixed cases and rejected eight assigned negative controls per backend in Windows Edge. The older shared-WebGPU collector stopped before browser launch because its import map still references the retired scene3d entry.
+
 ## 7. Connection to the all-in-one creation platform
 
 The longer-term platform combines coding, debugging, main canvas, UI/animation editing, 3D scenes/VFX, worlds/characters and target publication. Visual, code and natural-language editing should share project identity, versioned changes, diagnostics, preview and undo. Compatible editor surfaces may be combined after their workflows are evaluated.
