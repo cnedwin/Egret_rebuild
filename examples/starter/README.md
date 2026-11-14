@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-A starting point for a 2D game: one Engine, one stage, a frame loop, pointer and keyboard input and one rule. A blue square walks to where you tap, or where the arrow keys send it, and picks up five coins. `main.mjs` is about a hundred lines, and the part to replace is between two lines marked "Game".
+A starting point for a 2D game: one Engine, one stage, a frame loop, pointer and keyboard input and one rule. A blue square walks to where you tap, or where the arrow keys send it, and picks up five coins. `main.mjs` is under a hundred lines, and the part to replace is between two lines marked "Game".
 
 ## Run
 
@@ -22,9 +22,9 @@ Open `/examples/starter/index.html` on the host and port the server prints. Add 
 | A scope | `engine.createScope()`; `scope.use(new Sprite())` gives the scope what the game creates, and disposing the scope disposes it |
 | The stage | `engine.stage.addChild(...)`; a `Sprite` draws with `graphics`, and `x`, `y` place it |
 | Input | The page's own `pointerdown` and `keydown` on the canvas, turned into stage units |
-| The loop | `requestAnimationFrame`: one step of the game, then `engine.renderSharedFrame(frame)` |
+| The loop | `createBrowserFrameLoop` from `@egret/engine/web/loop`: it moves the Engine's clock, calls `update(seconds)` and draws |
 
-Two things in the loop are easy to miss. A step is at most a tenth of a second, so a tab that was hidden does not come back with one enormous step. And a Host holds at most two frames it has not finished: the loop reads `host.getStatus().pendingFrames` and skips drawing a frame while there are two, instead of being refused.
+The [frame loop](../../knowledge-base/en/docs/frame-loop.md) takes care of two things that are easy to miss by hand. A step is at most a tenth of a second, so a tab that was hidden does not come back with one enormous step. And a Host holds at most two frames it has not finished: the loop skips drawing a frame while there are two, instead of being refused.
 
 ## Make it yours
 

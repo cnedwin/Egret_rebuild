@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A frame loop for a game in a page — 2026-11-15
+
+`@egret/engine/web/loop` gives `createBrowserFrameLoop`: on each frame the display shows, it moves the Engine's clock, calls `update(seconds)` and draws. A step is never longer than `maxStepSeconds`, so a tab that was hidden no longer makes the clock refuse the time. A frame is skipped, and counted, while the Host holds the frames it takes, so a slow device no longer ends a hand-written loop with `FRAME_RENDER_FAILED`. The starter example runs on it. Checked in Node and, through the starter, in headless Chromium with software WebGL2; WebGPU was not run. Part of #289. [Guide](docs/frame-loop.md)
+
 ## A starter example and a page on what to import — 2026-11-15
 
 `examples/starter` is a starting point for a 2D game in about a hundred lines: a Host, an Engine, a scope, a stage, pointer and keyboard input and a frame loop that skips a frame while the Host holds two. It is checked from the canvas in headless Chromium with software WebGL2; WebGPU was not run. [What to import](docs/entry-points.md) lists, by task, which of the 38 entries of `@egret/engine` to use. Part of #289. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.md)

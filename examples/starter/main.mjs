@@ -2,6 +2,7 @@
 // A starting point for a 2D game: one Engine, one stage, a frame loop, pointer and keyboard input, and a rule.
 // Copy this folder, keep the import map of index.html, and replace what is between the two "Game" lines.
 import { createEngineForProfile, DisplayObjectContainer, SHARED_FRAME_PROFILE_2D, Sprite } from '@egret/engine';
+import { createBrowserFrameLoop } from '@egret/engine/web/loop';
 
 // The stage is 480 by 270 units whatever the size of the canvas on the page.
 const WIDTH = 480, HEIGHT = 270;
@@ -71,24 +72,20 @@ function update(seconds) {
 }
 // ---- Game: end -----------------------------------------------------------------------------------------------
 
-// 3. The loop: one step and one frame for each frame the display shows.
-let last, frames = 0;
-function tick(now) {
-  try {
-    // A tab that was hidden comes back with a long gap; a step is at most a tenth of a second.
-    update(Math.min(0.1, last === undefined ? 0 : (now - last) / 1000)); last = now;
-    status.textContent = failure ? 'Failed / 失败：' + failure : 'Coins / 金币 ' + score + ' / ' + PLACES.length + ' · ' + backend;
-    // A Host holds at most two frames it has not finished and refuses a third. On a slow device this frame is
-    // skipped: the game still took its step, and the next frame draws where things are by then.
-    if (host.getStatus().pendingFrames < 2) { engine.renderSharedFrame(frame); frames++; }
-  } catch (cause) { failure = String(cause?.code ?? cause?.message ?? cause); }
-  if (scope.state === 'open' && failure === undefined) requestAnimationFrame(tick);
-  else status.textContent = 'Failed / 失败：' + failure;
-}
+// 3. The loop: on each frame the display shows, it moves the Engine's clock, calls `update` and draws. It keeps a
+// step short after the tab was hidden, and skips a frame while the Host has not finished the two it holds.
+const loop = createBrowserFrameLoop({
+  engine, host, frame,
+  update(seconds) {
+    update(seconds);
+    status.textContent = 'Coins / 金币 ' + score + ' / ' + PLACES.length + ' · ' + backend;
+  },
+  onError(cause) { failure = String(cause?.code ?? cause?.message ?? cause); status.textContent = 'Failed / 失败：' + failure; },
+});
 start();
-requestAnimationFrame(tick);
+loop.start();
 
 // What a check reads; a game does not need it.
 globalThis.__egretStarterExample = {
-  readSnapshot: () => ({ backend, hero: { x: hero.x, y: hero.y }, score, coins: coins.filter(c => !c.sprite.isDisposed).map(c => [c.x, c.y]), frames, failure }),
+  readSnapshot: () => ({ backend, hero: { x: hero.x, y: hero.y }, score, coins: coins.filter(c => !c.sprite.isDisposed).map(c => [c.x, c.y]), frames: loop.snapshot().frames, failure }),
 };

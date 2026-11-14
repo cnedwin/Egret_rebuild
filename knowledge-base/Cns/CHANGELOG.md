@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 页面中游戏的帧循环 — 2026-11-15
+
+`@egret/engine/web/loop` 提供 `createBrowserFrameLoop`：显示器每显示一帧，它就推进 Engine 的时钟、调用 `update(seconds)` 并绘制。一步不会超过 `maxStepSeconds`，所以标签页被隐藏后回来，时钟不再拒绝这段时间。Host 已持有它能接受的帧数时，这一帧被跳过并计数，所以慢设备不再让手写循环以 `FRAME_RENDER_FAILED` 结束。起步示例已改用它。在 Node 中验证，并通过起步示例在无头 Chromium 的软件 WebGL2 中验证；未运行 WebGPU。属于 #289。[指南](docs/frame-loop.md)
+
 ## 起步示例和入口对照页 — 2026-11-15
 
 `examples/starter` 是一个约一百行的 2D 游戏起点：Host、Engine、作用域、舞台、指针和键盘输入，以及在 Host 已持有两帧时跳过一帧的帧循环。它在无头 Chromium 的软件 WebGL2 中从画布核对；未运行 WebGPU。[该引哪个入口](docs/entry-points.md)按要做的事列出 `@egret/engine` 的 38 个入口该用哪一个。属于 #289。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.zh-CN.md)

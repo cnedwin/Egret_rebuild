@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/entry-points.md)
 
-`@egret/engine` has one main entry and 37 smaller ones. This page says which one a task needs. The [starter example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.md) uses the first three rows and nothing else.
+`@egret/engine` has one main entry and 38 smaller ones. This page says which one a task needs. The [starter example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.md) uses the first four rows and nothing else.
 
 ## How the entries are arranged
 
@@ -20,6 +20,7 @@ Every factory is named `create...` and returns an object with `dispose()`.
 | Start an Engine and draw a stage | `createEngineForProfile`, `SHARED_FRAME_PROFILE_2D`, `Sprite`, `Bitmap`, `DisplayObjectContainer` | `@egret/engine` |
 | Draw with WebGPU | `createSharedWebGPUHost` | `@egret/engine/webgpu` |
 | Draw with WebGL2 | `createSharedWebGL2Host` | `@egret/engine/webgl2` |
+| Run the game on each frame the display shows | `createBrowserFrameLoop` | `@egret/engine/web/loop` |
 | Load an image as a texture | `createBrowserTextureProvider` | `@egret/engine/web/image` |
 | Load atlases, sequences and fonts from a built manifest | `createContentLoader`, `createFontContentLoader`, `createManifestAssetBinding` | `@egret/engine/resources` |
 | ... and fetch their bytes in a page | `createManifestByteSource`, `createManifestFontContentLoader` | `@egret/engine/web/resources` |

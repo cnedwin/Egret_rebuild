@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-一个 2D 游戏的起点：一个 Engine、一个舞台、一个帧循环、指针和键盘输入，再加一条规则。蓝色方块会走到你点击的位置，或者按方向键指的方向走，并拾取五枚金币。`main.mjs` 大约一百行，需要替换的部分在两行标着 "Game" 的注释之间。
+一个 2D 游戏的起点：一个 Engine、一个舞台、一个帧循环、指针和键盘输入，再加一条规则。蓝色方块会走到你点击的位置，或者按方向键指的方向走，并拾取五枚金币。`main.mjs` 不到一百行，需要替换的部分在两行标着 "Game" 的注释之间。
 
 ## 运行
 
@@ -22,9 +22,9 @@ node tools/serve-canvas.mjs
 | 作用域 | `engine.createScope()`；`scope.use(new Sprite())` 把游戏创建的对象交给作用域，销毁作用域时一并销毁 |
 | 舞台 | `engine.stage.addChild(...)`；`Sprite` 用 `graphics` 绘制，用 `x`、`y` 定位 |
 | 输入 | 画布上页面自己的 `pointerdown` 和 `keydown`，换算成舞台单位 |
-| 循环 | `requestAnimationFrame`：游戏走一步，然后 `engine.renderSharedFrame(frame)` |
+| 循环 | `@egret/engine/web/loop` 的 `createBrowserFrameLoop`：推进 Engine 的时钟、调用 `update(seconds)` 并绘制 |
 
-循环里有两处容易忽略。一步最多十分之一秒，所以标签页从隐藏状态回来时不会走出巨大的一步。另外，Host 最多同时持有两帧尚未完成的画面：循环读取 `host.getStatus().pendingFrames`，已有两帧时跳过这一帧的绘制，而不是等着被拒绝。
+[帧循环](../../knowledge-base/Cns/docs/frame-loop.md)替你处理了两处手写时容易忽略的事。一步最多十分之一秒，所以标签页从隐藏状态回来时不会走出巨大的一步。另外，Host 最多同时持有两帧尚未完成的画面：已有两帧时循环跳过这一帧的绘制，而不是等着被拒绝。
 
 ## 改成你自己的
 
