@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Capture keeps the rectangles of moved nodes — 2026-11-14
+
+A node that moved keeps the rectangles of its primitives and its bitmap. Their values do not depend on the matrix, and each is checked again under the new one. Frames and refusals are unchanged. Capturing 5,000 moving rectangles took 3.2 ms instead of 3.9. Part of #266. [Details](docs/display-tree-scaling.md#rectangles-of-moved-nodes)
+
 ## Fewer checks per corner in shared preparation — 2026-11-14
 
 The sampling domain that a draw's texture coordinates are qualified against is found once a draw instead of once a corner. The vertex rows stage checks the finiteness of a corner's thirteen values through their sum. Checks, order and refusals are unchanged. For 5,000 bitmaps, the clipped geometry of a frame took 3.7 ms instead of 4.2, and its vertex rows 2.3 ms instead of 3.2. Part of #266. [Details](docs/display-tree-scaling.md#texture-coordinates-and-finite-rows)

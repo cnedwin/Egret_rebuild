@@ -198,11 +198,15 @@ function point(matrix: Matrix2D, x: number, y: number): void {
   if (!finite(x) || !finite(y) || !finite(matrix.a * x + matrix.c * y + matrix.tx)
     || !finite(matrix.b * x + matrix.d * y + matrix.ty)) throw new EgretError('FRAME_TRANSFORM_INVALID');
 }
-function rectangle(matrix: Matrix2D, rect: Rectangle2D): Rectangle2D {
+/** The checks of `rectangle`: the four corners of `rect` placed by `matrix` are finite. */
+function checkRectangle(matrix: Matrix2D, rect: Rectangle2D): void {
   const right = rect.x + rect.width, bottom = rect.y + rect.height;
   if (!finite(right) || !finite(bottom)) throw new EgretError('FRAME_TRANSFORM_INVALID');
   point(matrix, rect.x, rect.y); point(matrix, right, rect.y);
   point(matrix, right, bottom); point(matrix, rect.x, bottom);
+}
+function rectangle(matrix: Matrix2D, rect: Rectangle2D): Rectangle2D {
+  checkRectangle(matrix, rect);
   return freeze({ x: rect.x, y: rect.y, width: rect.width, height: rect.height });
 }
 function referencedTuples(matrix: Matrix2D, geometry: Geometry): void {
@@ -453,14 +457,19 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
     // The places in the tables of the material and the region of its draws.
     let usedMaterial = -1, usedRegion = -1;
     let rects: Rectangle2D[] | undefined;
+    // A rectangle's value is its primitive's own; only its checks depend on the matrix. The kept values of the same
+    // primitives are given again, each checked under a matrix it was not checked under.
+    let rectsChecked = true;
     if (kept !== undefined && primitiveCount !== 0) {
-      if (kept.primitives !== primitives || kept.rectsMatrix !== matrix) { kept.primitives = primitives; kept.rectsMatrix = matrix; kept.rects = []; }
+      if (kept.primitives !== primitives) { kept.primitives = primitives; kept.rectsMatrix = matrix; kept.rects = []; }
+      else if (kept.rectsMatrix !== matrix) rectsChecked = false;
       rects = kept.rects;
     }
     for (let index = 0; index < primitiveCount; index++) {
       const primitive = primitives[index]!, occurrenceId = nextOccurrence++;
       let rect = rects?.[index];
       if (rect === undefined) { rect = rectangle(matrix, primitive.rect); if (rects !== undefined) rects[index] = rect; }
+      else if (!rectsChecked) checkRectangle(matrix, rect);
       const effective = alpha * primitive.alpha;
       if (rect.width === 0 || rect.height === 0 || effective === 0) { empty(occurrenceId); plain = false; continue; }
       budget.emission(clips, false);
@@ -475,11 +484,16 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
       }
       given++;
     }
+    // Only once every kept rectangle has been checked under it does the matrix become theirs.
+    if (!rectsChecked) kept!.rectsMatrix = matrix;
     if (bitmap !== undefined) {
       const occurrenceId = nextOccurrence++;
       let rect: Rectangle2D;
       if (kept !== undefined && kept.bitmap === bitmap && kept.bitmapMatrix === matrix && kept.bitmapDomain === material.samplingDomain) rect = kept.bitmapRect!;
-      else {
+      else if (kept !== undefined && kept.bitmap === bitmap && kept.bitmapDomain === material.samplingDomain && kept.bitmapRect !== undefined) {
+        // The same bitmap in the same domain has the same rectangle; it is checked under the new matrix.
+        rect = kept.bitmapRect; checkRectangle(matrix, rect); kept.bitmapMatrix = matrix;
+      } else {
         rect = rectangle(matrix, bitmapRect(bitmap, material));
         if (kept !== undefined) { kept.bitmap = bitmap; kept.bitmapMatrix = matrix; kept.bitmapDomain = material.samplingDomain; kept.bitmapRect = rect; }
       }

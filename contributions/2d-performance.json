@@ -2,6 +2,11 @@
   "schemaVersion": 1,
   "files": [
     {
+      "path": "tests/shared-capture-moved-rectangles.test.mjs",
+      "originRole": "First-party unit of the rectangles a moved node keeps in shared frame capture and their checks under each new matrix; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
       "path": "tests/shared-uv-qualification.test.mjs",
       "originRole": "First-party unit of texture coordinate address qualification at the limits of each sampling domain, through clipped geometry and vertex rows; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
