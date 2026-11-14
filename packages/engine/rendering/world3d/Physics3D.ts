@@ -169,7 +169,7 @@ export class RigidBody3D {
             for (const child of shape.children) {
                 const kind = child?.shape?.type;
                 if (kind !== 'sphere' && kind !== 'box' && kind !== 'capsule' && kind !== 'convex') throw new World3DError('WORLD3D_INPUT_INVALID', 'compound parts are spheres, boxes, capsules or convex hulls');
-                const at = child.position ?? [0, 0, 0], turn = child.quaternion ?? [0, 0, 0, 1], size = Math.hypot(turn[0], turn[1], turn[2], turn[3]);
+                const at = child.position ?? [0, 0, 0], turn = child.quaternion ?? [0, 0, 0, 1], size = Math.sqrt(turn[0] * turn[0] + turn[1] * turn[1] + turn[2] * turn[2] + turn[3] * turn[3]);
                 for (const value of at) requireFinite3D(value, 'compound child position');
                 if (!(size > 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'compound child quaternion');
                 // The part is validated by building it; it never joins a world of its own.
@@ -217,7 +217,7 @@ export class RigidBody3D {
     wake(): void { this.isSleeping = false; this.sleepTime = 0; }
     setPosition(x: number, y: number, z: number): this { this.position[0] = x; this.position[1] = y; this.position[2] = z; this.wake(); this.refresh(); this.world?.staticMoved(this); return this; }
     setQuaternion(x: number, y: number, z: number, w: number): this {
-        const length = Math.hypot(x, y, z, w) || 1;
+        const length = Math.sqrt(x * x + y * y + z * z + w * w) || 1;
         this.quaternion[0] = x / length; this.quaternion[1] = y / length; this.quaternion[2] = z / length; this.quaternion[3] = w / length;
         this.wake(); this.refresh(); this.world?.staticMoved(this);
         return this;
@@ -365,7 +365,7 @@ function sphereBox(m: Manifold, x: number, y: number, z: number, radius: number,
         depth = best + radius;
     } else {
         lx = local[0]! - closest[0]!; ly = local[1]! - closest[1]!; lz = local[2]! - closest[2]!;
-        const d = Math.hypot(lx, ly, lz);
+        const d = Math.sqrt(lx * lx + ly * ly + lz * lz);
         if (d >= radius) return;
         lx /= d; ly /= d; lz /= d; depth = radius - d;
     }
@@ -455,7 +455,7 @@ function boxBox(m: Manifold, a: RigidBody3D, b: RigidBody3D): void {
     let best = Infinity, bestDepth = 0, bestIndex = -1;
     // Separating-axis test over the 6 face normals and 9 edge cross products.
     const test = (x: number, y: number, z: number, bias: number, index: number): boolean => {
-        const length = Math.hypot(x, y, z);
+        const length = Math.sqrt(x * x + y * y + z * z);
         if (length < 1e-6) return true;
         axisScratch[0] = x / length; axisScratch[1] = y / length; axisScratch[2] = z / length;
         const overlap = boxProjection(a, axisScratch) + boxProjection(b, axisScratch) - Math.abs(dot(axisScratch, d));
@@ -564,7 +564,7 @@ function toMeshLocal(out: number[], body: RigidBody3D, x: number, y: number, z: 
 function sphereTriangle(mesh: TriangleMeshShape3D, triangle: number, x: number, y: number, z: number, radius: number, feature: number): void {
     const face = mesh.closestPoint(triangle, x, y, z, meshPoint);
     let nx = meshPoint[0]! - x, ny = meshPoint[1]! - y, nz = meshPoint[2]! - z;
-    const distance = Math.hypot(nx, ny, nz);
+    const distance = Math.sqrt(nx * nx + ny * ny + nz * nz);
     if (distance >= radius) return;
     mesh.triangleNormal(triangle, meshNormal);
     let depth = radius - distance;
@@ -602,12 +602,17 @@ function emitMeshContacts(m: Manifold, meshBody: RigidBody3D): void {
             r[0]! * c.nx + r[1]! * c.ny + r[2]! * c.nz, r[3]! * c.nx + r[4]! * c.ny + r[5]! * c.nz, r[6]! * c.nx + r[7]! * c.ny + r[8]! * c.nz, c.depth);
     }
 }
+// The sphere being tested, kept here so one visitor serves every query instead of a new closure per pair.
+let sphereQueryMesh: TriangleMeshShape3D | undefined, sphereQueryX = 0, sphereQueryY = 0, sphereQueryZ = 0, sphereQueryRadius = 0, sphereQueryFeature = 0;
+const visitSphereTriangle = (triangle: number): void => sphereTriangle(sphereQueryMesh!, triangle, sphereQueryX, sphereQueryY, sphereQueryZ, sphereQueryRadius, sphereQueryFeature + (triangle & 1023));
 function sphereMesh(m: Manifold, x: number, y: number, z: number, radius: number, meshBody: RigidBody3D, feature: number): void {
     const mesh = (meshBody.shape as {mesh: TriangleMeshShape3D}).mesh;
     toMeshLocal(meshSegA, meshBody, x, y, z);
     const lx = meshSegA[0]!, ly = meshSegA[1]!, lz = meshSegA[2]!;
     candidateCount = 0;
-    mesh.query(lx - radius, ly - radius, lz - radius, lx + radius, ly + radius, lz + radius, triangle => sphereTriangle(mesh, triangle, lx, ly, lz, radius, feature + (triangle & 1023)));
+    sphereQueryMesh = mesh; sphereQueryX = lx; sphereQueryY = ly; sphereQueryZ = lz; sphereQueryRadius = radius; sphereQueryFeature = feature;
+    mesh.query(lx - radius, ly - radius, lz - radius, lx + radius, ly + radius, lz + radius, visitSphereTriangle);
+    sphereQueryMesh = undefined;
     emitMeshContacts(m, meshBody);
 }
 function capsuleMesh(m: Manifold, capsule: RigidBody3D, meshBody: RigidBody3D): void {
@@ -758,7 +763,7 @@ function solidEdges(m: Manifold, a: RigidBody3D, b: RigidBody3D): void {
             if (gap >= best) continue;
             const fx = otherB[0]! - otherA[0]!, fy = otherB[1]! - otherA[1]!, fz = otherB[2]! - otherA[2]!;
             let cx = dy * fz - dz * fy, cy = dz * fx - dx * fz, cz = dx * fy - dy * fx;
-            const length = Math.hypot(cx, cy, cz);
+            const length = Math.sqrt(cx * cx + cy * cy + cz * cz);
             if (length < 1e-9) continue;   // parallel edges: a face or corner contact describes it better
             cx /= length; cy /= length; cz /= length;
             // b's inside lies beyond its edge, which fixes the direction from a to b.
@@ -1012,11 +1017,11 @@ export class Joint3D {
         } else if (options.stiffness !== undefined || options.damping !== undefined) throw new World3DError('WORLD3D_INPUT_INVALID', 'springs need a distance joint');
         if (options.maxMotorForce !== undefined && this.type !== 'slider') throw new World3DError('WORLD3D_INPUT_INVALID', 'maxMotorForce needs a slider joint');
         if (this.type === 'hinge' || this.type === 'point' || this.type === 'slider') {
-            const axis = options.axis ?? [0, 1, 0], size = Math.hypot(axis[0], axis[1], axis[2]);
+            const axis = options.axis ?? [0, 1, 0], size = Math.sqrt(axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
             if (!(size > 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint axis');
             const x = axis[0] / size, y = axis[1] / size, z = axis[2] / size;
             // Any direction across the axis serves as the zero mark for measuring the angle.
-            const seed = Math.abs(x) < 0.57 ? [1, 0, 0] : [0, 1, 0], side = cross(v3(), [x, y, z], seed), length = Math.hypot(side[0]!, side[1]!, side[2]!);
+            const seed = Math.abs(x) < 0.57 ? [1, 0, 0] : [0, 1, 0], side = cross(v3(), [x, y, z], seed), length = Math.sqrt(side[0]! * side[0]! + side[1]! * side[1]! + side[2]! * side[2]!);
             side[0]! /= length; side[1]! /= length; side[2]! /= length;
             const turn = (body: RigidBody3D | undefined, out: Vec, wx: number, wy: number, wz: number): void => {
                 if (!body) { out[0] = wx; out[1] = wy; out[2] = wz; return; }
@@ -1043,7 +1048,7 @@ export class Joint3D {
         else if (this.type === 'point') add(anchor[0], anchor[1], anchor[2]);
         else if (this.type === 'hinge') {
             // Two pivots along the pin leave exactly one free rotation: about the pin.
-            const axis = options.axis ?? [0, 1, 0], size = Math.hypot(axis[0], axis[1], axis[2]);
+            const axis = options.axis ?? [0, 1, 0], size = Math.sqrt(axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
             if (!(size > 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'joint axis');
             const k = 0.5 / size;
             add(anchor[0] - axis[0] * k, anchor[1] - axis[1] * k, anchor[2] - axis[2] * k); add(anchor[0] + axis[0] * k, anchor[1] + axis[1] * k, anchor[2] + axis[2] * k);
@@ -1367,7 +1372,7 @@ export class PhysicsWorld3D {
                     rotateInto(jointA, a, joint.axisA);
                     if (b) rotateInto(jointB, b, joint.axisB); else jointB.set(joint.axisB);
                     cross(row, jointA, jointB);
-                    const size = Math.hypot(row[0]!, row[1]!, row[2]!);
+                    const size = Math.sqrt(row[0]! * row[0]! + row[1]! * row[1]! + row[2]! * row[2]!);
                     joint.current = Math.atan2(size, dot(jointA, jointB));
                     if (size > 1e-6) { row[0]! /= size; row[1]! /= size; row[2]! /= size; joint.rowHigh = joint.current - joint.coneLimit!; } else active = false;
                 }
@@ -1387,7 +1392,7 @@ export class PhysicsWorld3D {
                     const n = joint.slide, inverse = point.inverse;
                     if (point === joint.points[0]) { const along = quadratic(k, n, n); joint.slideMass = along > 1e-12 ? 1 / along : 0; }
                     cross(jointA, n, Math.abs(n[0]!) < 0.57 ? [1, 0, 0] : [0, 1, 0]);
-                    const size = Math.hypot(jointA[0]!, jointA[1]!, jointA[2]!);
+                    const size = Math.sqrt(jointA[0]! * jointA[0]! + jointA[1]! * jointA[1]! + jointA[2]! * jointA[2]!);
                     jointA[0]! /= size; jointA[1]! /= size; jointA[2]! /= size;
                     cross(jointB, n, jointA);
                     const k11 = quadratic(k, jointA, jointA), k12 = quadratic(k, jointA, jointB), k22 = quadratic(k, jointB, jointB), det = k11 * k22 - k12 * k12;
@@ -1430,7 +1435,7 @@ export class PhysicsWorld3D {
             let x = body.position[0]! - pivot[0]!, y = body.position[1]! - pivot[1]!, z = body.position[2]! - pivot[2]!;
             const along = x * u[0]! + y * u[1]! + z * u[2]!;
             x -= u[0]! * along; y -= u[1]! * along; z -= u[2]! * along;
-            const offset = Math.hypot(x, y, z), inertia = spin > 1e-12 ? 1 / spin : Infinity, mobility = 1 / (inertia + body.mass * offset * offset);
+            const offset = Math.sqrt(x * x + y * y + z * z), inertia = spin > 1e-12 ? 1 / spin : Infinity, mobility = 1 / (inertia + body.mass * offset * offset);
             if (mobility <= best) continue;
             best = mobility;
             if (offset > 1e-4 && inertia < Infinity) { arm = offset + inertia / (body.mass * offset); ex = x / offset; ey = y / offset; ez = z / offset; } else arm = 0;
@@ -1439,7 +1444,7 @@ export class PhysicsWorld3D {
         if (arm === 0) {
             // Centered on the pivot: a far-away push acts as a pure twist.
             cross(jointB, u, Math.abs(u[0]!) < 0.57 ? [1, 0, 0] : [0, 1, 0]);
-            const size = Math.hypot(jointB[0]!, jointB[1]!, jointB[2]!);
+            const size = Math.sqrt(jointB[0]! * jointB[0]! + jointB[1]! * jointB[1]! + jointB[2]! * jointB[2]!);
             ex = jointB[0]! / size; ey = jointB[1]! / size; ez = jointB[2]! / size; arm = 1000;
         }
         const t = cross(joint.rowDirection, u, [ex, ey, ez]), px = pivot[0]! + ex * arm, py = pivot[1]! + ey * arm, pz = pivot[2]! + ez * arm;
@@ -1511,7 +1516,7 @@ export class PhysicsWorld3D {
                 // One equation along the line between the two attachments.
                 let nx = (b ? b.position[0]! + point.rb[0]! : point.localB[0]!) - a.position[0]! - point.ra[0]!, ny = (b ? b.position[1]! + point.rb[1]! : point.localB[1]!) - a.position[1]! - point.ra[1]!;
                 let nz = (b ? b.position[2]! + point.rb[2]! : point.localB[2]!) - a.position[2]! - point.ra[2]!;
-                const length = Math.hypot(nx, ny, nz);
+                const length = Math.sqrt(nx * nx + ny * ny + nz * nz);
                 if (length < 1e-9 || (joint.rope && length <= joint.length)) continue;
                 nx /= length; ny /= length; nz /= length;
                 jointA[0] = nx; jointA[1] = ny; jointA[2] = nz;
@@ -1638,7 +1643,7 @@ export class PhysicsWorld3D {
                     const x = q[0]!, y = q[1]!, z = q[2]!, r = q[3]!, half = 0.5 * h;
                     q[0] = x + half * (w[0]! * r + w[1]! * z - w[2]! * y); q[1] = y + half * (w[1]! * r + w[2]! * x - w[0]! * z);
                     q[2] = z + half * (w[2]! * r + w[0]! * y - w[1]! * x); q[3] = r - half * (w[0]! * x + w[1]! * y + w[2]! * z);
-                    const length = Math.hypot(q[0]!, q[1]!, q[2]!, q[3]!) || 1;
+                    const length = Math.sqrt(q[0]! * q[0]! + q[1]! * q[1]! + q[2]! * q[2]! + q[3]! * q[3]!) || 1;
                     q[0]! /= length; q[1]! /= length; q[2]! /= length; q[3]! /= length;
                 }
                 body.refresh();
@@ -1713,7 +1718,7 @@ export class PhysicsWorld3D {
      * next step finds the contact and answers it with the body's full speed.
      */
     private sweep(body: RigidBody3D, dt: number): number {
-        const v = body.linearVelocity, speed = Math.hypot(v[0]!, v[1]!, v[2]!), travel = speed * dt, inner = thinnestHalf(body.shape);
+        const v = body.linearVelocity, speed = Math.sqrt(v[0]! * v[0]! + v[1]! * v[1]! + v[2]! * v[2]!), travel = speed * dt, inner = thinnestHalf(body.shape);
         // Slow enough that the ordinary overlap test cannot miss anything.
         if (travel <= inner * 0.5 || travel === 0) return 1;
         const p = body.position, ox = p[0]!, oy = p[1]!, oz = p[2]!;
@@ -1842,7 +1847,7 @@ export class PhysicsWorld3D {
             const n = [c.nx, c.ny, c.nz];
             // Any vector not parallel to the normal seeds the tangent basis.
             cross(c.t1, n, Math.abs(c.nx) < 0.57 ? [1, 0, 0] : [0, 1, 0]);
-            const length = Math.hypot(c.t1[0]!, c.t1[1]!, c.t1[2]!);
+            const length = Math.sqrt(c.t1[0]! * c.t1[0]! + c.t1[1]! * c.t1[1]! + c.t1[2]! * c.t1[2]!);
             c.t1[0]! /= length; c.t1[1]! /= length; c.t1[2]! /= length;
             cross(c.t2, n, c.t1);
             c.ima = a.type === 'dynamic' && !a.isSleeping ? a.inverseMass : 0; c.imb = b.type === 'dynamic' && !b.isSleeping ? b.inverseMass : 0;
@@ -1922,7 +1927,7 @@ export class PhysicsWorld3D {
     }
     /** @internal Skip one body before selecting the nearest hit. */
     [raycastExcludingBody3D](origin: ArrayLike<number>, direction: ArrayLike<number>, maxDistance: number, mask: number, excluded?: RigidBody3D): PhysicsRaycastHit3D | undefined {
-        const length = Math.hypot(direction[0]!, direction[1]!, direction[2]!);
+        const length = Math.sqrt(direction[0]! * direction[0]! + direction[1]! * direction[1]! + direction[2]! * direction[2]!);
         if (!(length > 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'ray direction');
         const d = [direction[0]! / length, direction[1]! / length, direction[2]! / length], o = [origin[0]!, origin[1]!, origin[2]!];
         let best: PhysicsRaycastHit3D | undefined, limit = maxDistance;
@@ -1955,7 +1960,7 @@ export class PhysicsWorld3D {
      */
     shapeCast(shape: ShapeDefinition3D, origin: ArrayLike<number>, direction: ArrayLike<number>, maxDistance: number, mask = -1, quaternion?: ArrayLike<number>): PhysicsShapeCastHit3D | undefined {
         const dx = requireFinite3D(direction[0], 'direction'), dy = requireFinite3D(direction[1], 'direction'), dz = requireFinite3D(direction[2], 'direction');
-        if (Math.abs(Math.hypot(dx, dy, dz) - 1) > 1e-3) throw new World3DError('WORLD3D_INPUT_INVALID', 'direction must have unit length');
+        if (Math.abs(Math.sqrt(dx * dx + dy * dy + dz * dz) - 1) > 1e-3) throw new World3DError('WORLD3D_INPUT_INVALID', 'direction must have unit length');
         const reach = requireFinite3D(maxDistance, 'maxDistance');
         if (!(reach >= 0)) throw new World3DError('WORLD3D_INPUT_INVALID', 'maxDistance');
         if (shape?.type === 'plane' || shape?.type === 'mesh') throw new World3DError('WORLD3D_INPUT_INVALID', 'only solid shapes can be cast');
@@ -2128,7 +2133,7 @@ export class CharacterController3D {
     move(dx: number, dy: number, dz: number): void {
         requireFinite3D(dx + dy + dz, 'displacement');
         // Split long moves so one step never exceeds the radius and tunnels through thin walls.
-        const distance = Math.hypot(dx, dy, dz), steps = Math.min(Math.max(Math.ceil(distance / (this.radius * 0.9)), 1), 32);
+        const distance = Math.sqrt(dx * dx + dy * dy + dz * dz), steps = Math.min(Math.max(Math.ceil(distance / (this.radius * 0.9)), 1), 32);
         const p = this.position, probe = this.#probe, walkable = Math.cos(this.slopeLimit);
         this.isGrounded = false; this.groundBody = undefined; this.hitCeiling = false;
         for (let step = 0; step < steps; step++) {
