@@ -128,6 +128,10 @@
       "types": "./dist/physics2d.d.ts",
       "import": "./dist/physics2d.js"
     },
+    "./bitmapfont": {
+      "types": "./dist/bitmapfont.d.ts",
+      "import": "./dist/bitmapfont.js"
+    },
     "./audio": {
       "types": "./dist/audio.d.ts",
       "import": "./dist/audio.js"
