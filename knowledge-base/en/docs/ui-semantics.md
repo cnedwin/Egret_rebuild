@@ -52,6 +52,7 @@ The set is the first control set of the UI. A role that is not listed is refused
 | `listitem` | A row | `position` | `list` |
 | `scrollbar` | The scroll position of a viewport | `range` (required), `orientation`, `controls`, `disabled` | |
 | `slider` | One value out of a range | `range` (required), `orientation`, `disabled` | |
+| `spinbutton` | One value changed by steps | `range` (required), `disabled` | |
 | `progressbar` | How far some work has come | `range`; without it the length of the work is not known | |
 | `tablist` | A row of tabs | `orientation`, `disabled` | |
 | `tab` | One of those tabs | `selected` (required), `controls`, `position`, `disabled` | `tablist` |
@@ -60,10 +61,12 @@ The set is the first control set of the UI. A role that is not listed is refused
 | `menuitem` | One of those actions | `disabled`, `position` | `menu` |
 | `dialog` | A dialog | `modal` | |
 | `textbox` | A text field that is not being edited | `value`, `multiline`, `disabled` | |
+| `status` | A message that is said when it changes, after what is being said | | |
+| `alert` | A message that is said at once | | |
 
-Every node has `bounds`, and may have `name`, `hidden`, `focused` and `order`. A name is required except on `group`, `radiogroup`, `listbox`, `list`, `listitem`, `tablist` and `menu`. `image`, `text`, `button`, `checkbox`, `switch`, `radio`, `option`, `scrollbar`, `slider`, `progressbar`, `tab`, `menuitem` and `textbox` are read as one thing and hold no nodes.
+Every node has `bounds`, and may have `name`, `hidden`, `focused` and `order`. A name is required except on `group`, `radiogroup`, `listbox`, `list`, `listitem`, `tablist` and `menu`, and on `status` and `alert`, whose name is the message and may be empty. `image`, `text`, `button`, `checkbox`, `switch`, `radio`, `option`, `scrollbar`, `slider`, `spinbutton`, `progressbar`, `tab`, `menuitem`, `textbox`, `status` and `alert` are read as one thing and hold no nodes.
 
-A `slider` and a `tablist` lie along the line unless `orientation` says `'vertical'`; a `scrollbar` stands beside what it scrolls, and the items of a `menu` stand one under another, unless it says `'horizontal'`. A slider is moved by [its keys](ui-controls.md#keys) once it holds the focus, so its node takes `onFocus` and needs no activation.
+A `slider` and a `tablist` lie along the line unless `orientation` says `'vertical'`; a `scrollbar` stands beside what it scrolls, and the items of a `menu` stand one under another, unless it says `'horizontal'`. A slider and a spin button are moved by [their keys](ui-controls.md#keys) once they hold the focus, so their nodes take `onFocus` and need no activation.
 
 State a role does not have is refused, so a mistake is found when it is made. A refused description throws `UI_SEMANTICS_DESCRIPTION`, and its `cause` names the node and the field: `sound: checked`.
 
@@ -175,6 +178,17 @@ semantics.add({ id: 'open', role: 'button', onActivate: open,
 
 The keys are the application's, as everywhere: the arrow keys move the focus among the items and wrap, Enter or Space activates, and Escape closes through the layer, which gives the focus back to where it was. The [row menu example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-context-menu) opens one from the right mouse button, the Menu key, Shift+F10 and a button. Submenus, and items that are checked, are not in this slice.
 
+### Messages
+
+A `status` or an `alert` is a message for someone who is not looking at the place where it is drawn: how much is left, that the game was saved, why a change was refused. Its `name` is the message. A reader says a message when the text of a node it already knows changes, so add the node once and keep it published, with an empty name while there is nothing to say:
+
+```js
+semantics.add({ id: 'left', role: 'status', describe: () => ({ name: left + ' left', bounds: lineBounds }) });
+semantics.add({ id: 'fault', role: 'alert', describe: () => ({ name: fault, bounds: faultBounds }) });
+```
+
+A `status` waits for what the reader is saying; an `alert` interrupts it, so keep an alert for what cannot wait. The same text published again is no change and is not said again: empty the message when what it was about is over, and it is said the next time. A message takes no action and holds no nodes. The [stepper example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-stepper) has both beside its spin buttons.
+
 ### Actions
 
 `semantics.perform(id, 'activate')` and `perform(id, 'focus')` call `onActivate` and `onFocus` of the node as it was last published. It returns false, and calls nothing, when the node is not published, was removed since, is disabled or inert, or has no handler for the action. An id that was removed and used again is not performed until it is published again.
@@ -200,7 +214,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 `width` and `height` are the logical size the bounds are given in. The projection puts an invisible container after the canvas, laid over it, with one element for each published node, and follows every publication. It writes only what changed.
 
 - **The canvas keeps the keyboard.** The canvas gets `role="application"`, the label, and `aria-owns` naming the container, so the nodes are read as what is inside it. The node that is `focused` is named by `aria-activedescendant`. No element of the projection is a Tab stop: the keys of the application go on working exactly as they did.
-- **Elements.** `button`, `checkbox`, `switch`, `radio`, `option`, `tab` and `menuitem` are native buttons carrying their role. The rest are plain elements with a role, and `text` is its text. State is written as the ARIA attribute of that state: `aria-checked`, `aria-selected`, `aria-expanded`, `aria-disabled`, `aria-modal`, `aria-multiline`, `aria-multiselectable`, `aria-valuenow` with its bounds, `aria-orientation`, `aria-controls`, `aria-posinset` and `aria-setsize`. The outermost inert element gets the `inert` attribute, and the page keeps everything under it away from every user.
+- **Elements.** `button`, `checkbox`, `switch`, `radio`, `option`, `tab` and `menuitem` are native buttons carrying their role. The rest are plain elements with a role, and `text`, `status` and `alert` are their text. State is written as the ARIA attribute of that state: `aria-checked`, `aria-selected`, `aria-expanded`, `aria-disabled`, `aria-modal`, `aria-multiline`, `aria-multiselectable`, `aria-valuenow` with its bounds, `aria-orientation`, `aria-controls`, `aria-posinset` and `aria-setsize`. The outermost inert element gets the `inert` attribute, and the page keeps everything under it away from every user.
 - **Geometry.** Each element lies over the control it describes, so a reader's highlight and exploration by touch find it where it is drawn. The container holds logical units and one scale maps it onto the rectangle of the canvas. It follows a resize, a scroll and a change of the visual viewport. `projection.sync()` measures again after a change of layout that came with no event. While the canvas has no size the projection is hidden.
 - **Pointers go through.** The container takes no pointer. A mouse or a finger meets the canvas as before.
 - **Requests.** A click made of an element, the way an accessibility interface makes it, performs `activate`. A request to focus an element performs `focus`, and the focus of the page is given back to the canvas.
@@ -223,7 +237,7 @@ The projection adds no key handling. Keys arrive through the [keyboard input](ke
 
 | Check | Where | Result |
 | --- | --- | --- |
-| The tree: 22 cases | Node | Pass |
+| The tree: 23 cases | Node | Pass |
 | The projection against a stand-in for the page: 16 cases | Node | Pass |
 | A strict TypeScript consumer of both entries, with nine refused misuses | Node | Pass |
 | The example page: the computed accessibility tree, the active descendant under Tab and the arrow keys, each element over its control, requests made of the elements, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 4 scenarios beside the 7 of the controls |
@@ -233,9 +247,10 @@ The projection adds no key handling. Keys arrive through the [keyboard input](ke
 | [The multiple selection example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-multi-select): a list box the browser computes as multiselectable, options selected and let go one by one, options that are disabled, runs chosen with Shift, and requests made of them | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
 | [The dropdown example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-dropdown): a list box that is in the computed tree only while its popup is open, the active descendant moving from the row into the jobs and back, requests made of rows and options, and a scroll bar that names the list it scrolls | Headless Chromium 153, software WebGL2, injected input | Pass, 9 scenarios |
 | [The row menu example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-context-menu): a menu that is in the computed tree only while it is open, with its disabled items, the button that says it is expanded, the active descendant moving from the row into the items and back, and requests made of the button and the items | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
+| [The stepper example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-stepper): spin buttons with their values and ends, a status and an alert that are elements of the page from the start and whose text changes in place, the active descendant on an amount, and requests made of the buttons beside it | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
 | The same example with a modal layer of the layer manager: the dialog and its buttons over the card, the list behind it absent from the tree the browser computes, Tab kept inside, a press beside the card reaching nothing, Escape, and the focus back on its row | Headless Chromium 153, software WebGL2, injected input | Pass, 2 scenarios |
 
-Not run: a screen reader, voice control, switch access or any other assistive technology; a person; Edge as installed; Firefox; Safari; a real phone, where exploration by touch depends on the platform's accessibility service; hardware GPUs and WebGPU. A passing accessibility tree is not proof that the UI is usable with a screen reader.
+Not run: a screen reader, voice control, switch access or any other assistive technology; a person; Edge as installed; Firefox; Safari; a real phone, where exploration by touch depends on the platform's accessibility service; hardware GPUs and WebGPU. A passing accessibility tree is not proof that the UI is usable with a screen reader, and a message whose text changed in the page was not heard said.
 
 Run a page check with `node examples/ui-controls/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> software`, or the same with `examples/ui-list-semantics/verify.mjs`. Without `software` it launches the installed Edge headed.
 
@@ -243,7 +258,7 @@ Operator faults were written into the built list helper one at a time: 79, and t
 
 ## Not in this slice
 
-- Roles beyond the first control set: trees, grids, headings and live regions. A slider, tabs, a progress bar and a menu of actions were added to it; a menu bar, submenus, and menu items that are checked were not.
+- Roles beyond the first control set: trees, grids and headings. A slider, a spin button, tabs, a progress bar, a menu of actions and the two messages were added to it; a menu bar, submenus, menu items that are checked, and live regions other than `status` and `alert` were not.
 - Descriptions, error text and labelling one node by another.
 - Nodes for the leaves and the layers of the managed UI are the application's own, measured with [`semanticBoxOf`](#boxes-and-layers-of-the-managed-ui). The rows of a virtual list have [a helper](#a-managed-virtual-list).
 - Rows in a grid. Selecting a range of rows at once, as with Shift and the arrow keys, is the application's; the multiple selection example shows one way.

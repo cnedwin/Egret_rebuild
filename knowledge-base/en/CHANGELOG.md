@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Amounts in steps, and messages that are said — 2026-11-14
+
+The semantic tree gains the roles `spinbutton`, `status` and `alert`, and the browser projection writes them: an amount changed by steps with its range, and two messages whose text a reader says when it changes. A new example, `examples/ui-stepper`, shares a fixed total among four amounts with the keys of a range and a button on either side, says how much is left, and says why an amount did not go up. Checked in Node and in headless Chromium with software WebGL2; no reader was run. Part of #90. [Guide](docs/ui-semantics.md#messages) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-stepper/README.md)
+
 ## The popups of two examples before they first open — 2026-11-14
 
 In `examples/ui-dropdown` and `examples/ui-context-menu` the popup was registered as a layer only when it first opened. Until then its root was an ordinary root: it was drawn in the top left corner of the stage and its rows were keyboard stops. Both examples now register it at the start, closed, and the button of the menu example is no keyboard stop while it is disabled. The semantic tree was right throughout, which is why the checks had passed; they now read the corner of the screen and walk the Tab order before anything is opened. Examples only. Part of #90. [Guide](docs/ui-layers.md#lifetime-and-example)
