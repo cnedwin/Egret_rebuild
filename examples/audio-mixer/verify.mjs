@@ -42,12 +42,12 @@ async function until(page, test, label) {
   throw new Error('never happened: ' + label + ' — ' + JSON.stringify(await read(page)));
 }
 const NOT_RUN = Symbol('not run');
-async function scenario(name, context, body, start = true) {
+async function scenario(name, context, body, start = true, query = '') {
   const owned = await browser.newContext(context), page = await owned.newPage(), row = { name, status: 'INCOMPLETE', errors: [] };
   report.cases.push(row);
   page.on('pageerror', error => row.errors.push(String(error))); page.on('console', message => { if (message.type() === 'error') row.errors.push(message.text()); });
   try {
-    await page.goto(address());
+    await page.goto(address() + query);
     // The page is given time to start by a clock outside it: asking it anything counts as a touch to this browser.
     await new Promise(resolve => setTimeout(resolve, 1500));
     if (start) { await page.mouse.click(5, 5); await until(page, now => now.state === 'running', 'the page sounds'); }
@@ -133,6 +133,56 @@ await scenario('the next music takes over across a fade, and the same music aske
   await page.click('#music-a'); now = await until(page, state => state.level > 0.01, 'music again');
   assert.equal(now.music, 'gate');
 });
+
+await scenario('long music is played as it is read: it takes over across a fade, says where it is, and stops by the clock of the output', desktop, async page => {
+  await until(page, state => state.level > 0.01, 'the music is heard');
+  const before = await read(page);
+  // Twelve seconds that hold no place among the decoded samples.
+  assert.deepEqual(before.streamed.slice(0, 2), [true, 0]); near(before.streamed[2], 12, 0.01, 'the length of the stream');
+  await page.click('#music-c');
+  let now = await read(page);
+  assert.deepEqual([now.music, now.voices, now.decodedBytes], ['scroll', 2, before.decodedBytes]);
+  now = await until(page, state => state.voices === 1 && state.level > 0.01, 'the stream is heard alone');
+  const later = await until(page, state => state.position > now.position + 0.3, 'the place in the stream moves');
+  // Asked for again, it goes on.
+  await page.click('#music-c'); assert.ok((await read(page)).position >= later.position);
+  // Held, it is silent and stays where it is; let go, it goes on from there.
+  await page.click('#music-hold');
+  const held = await until(page, state => state.level < 0.0005, 'the held music is silent');
+  assert.deepEqual([held.musicState, held.voices, await page.getAttribute('#music-hold', 'aria-pressed')], ['paused', 1, 'true']);
+  await wait(page, 400); assert.equal((await read(page)).position, held.position);
+  await page.click('#music-hold');
+  now = await until(page, state => state.level > 0.01 && state.position > held.position + 0.2, 'the music goes on');
+  assert.ok(now.position < held.position + 3 && now.musicState === 'playing');
+  // A paused game: an output that sleeps does not stop a media element by itself, so its place is what shows that it was stopped.
+  await page.click('#pause');
+  await until(page, state => state.output === 'suspended', 'the output sleeps');
+  const asleep = await read(page);
+  await wait(page, 500);
+  assert.equal((await read(page)).position, asleep.position);
+  await page.click('#pause');
+  await until(page, state => state.output === 'running' && state.level > 0.01 && state.position > asleep.position + 0.2, 'the stream goes on with the game');
+  // Decoded music takes over from it across a fade, and the stream ends when the fade does.
+  await page.click('#music-a');
+  now = await read(page);
+  assert.deepEqual([now.music, now.voices], ['gate', 2]);
+  await until(page, state => state.voices === 1 && state.level > 0.01, 'the stream has faded out');
+  // Stopped over a fade by itself.
+  await page.click('#music-c'); await until(page, state => state.voices === 1 && state.music === 'scroll', 'the stream is the music again');
+  await page.click('#music-stop');
+  now = await read(page);
+  assert.deepEqual([now.music, now.voices], [null, 1]);
+  await until(page, state => state.voices === 0 && state.level < 0.0005, 'the stream has faded out and ended');
+});
+
+await scenario('music played as it is read waits for the first press too', desktop, async page => {
+  await page.mouse.click(5, 5);
+  const now = await until(page, state => state.state === 'running' && state.level > 0.01, 'the stream is heard');
+  assert.deepEqual([now.history, now.music, now.voices], [['locked', 'input', 'running'], 'scroll', 1]);
+  // It did not run while the page was locked: it is near its start.
+  assert.ok(now.position > 0 && now.position < 2.5, 'the place of the stream: ' + now.position);
+  await until(page, state => state.position > now.position + 0.3, 'the place in the stream moves');
+}, false, '?music=scroll');
 
 await scenario('a paused game is silent and the clock of its sound stands still', desktop, async page => {
   await until(page, state => state.level > 0.01, 'the music is heard');

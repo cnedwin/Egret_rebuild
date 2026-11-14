@@ -11,7 +11,7 @@ const coded=code=>error=>error?.code===code;
 const bytes=(n=4)=>new Uint8Array(n).fill(7);
 /** A backend whose clock the test moves. Every request is kept in the order it was made. */
 function fake(){
- const state={time:0,duration:2,channels:2,sampleRate:48000,fail:new Set(),log:[],buses:[],voices:[],sounds:[],decodes:[],hold:undefined,early:false,bad:undefined};
+ const state={opened:[],place:undefined,time:0,duration:2,channels:2,sampleRate:48000,fail:new Set(),log:[],buses:[],voices:[],sounds:[],decodes:[],hold:undefined,early:false,bad:undefined};
  const backend={
   get time(){if(state.fail.has('time'))throw new Error('time');return state.time;},
   async decode(view){
@@ -20,6 +20,13 @@ function fake(){
    if(state.fail.has('decode'))throw new Error('decode');
    if(state.bad!==undefined)return state.bad;
    const sound={duration:state.duration,channels:state.channels,sampleRate:state.sampleRate,released:0,release(){this.released++;state.log.push('sound.release');if(state.fail.has('sound.release'))throw new Error('sound.release');}};
+   state.sounds.push(sound);return sound;},
+  async openStream(url){
+   state.opened.push(url);
+   if(state.hold)await state.hold;
+   if(state.fail.has('open'))throw new Error('open');
+   if(state.bad!==undefined)return state.bad;
+   const sound={duration:state.duration,channels:2,sampleRate:state.sampleRate,streamed:true,released:0,release(){this.released++;state.log.push('sound.release');}};
    state.sounds.push(sound);return sound;},
   createBus(parent){
    if(state.fail.has('bus')&&state.buses.length===state.failAt)throw new Error('bus');
@@ -31,6 +38,7 @@ function fake(){
    if(state.fail.has('voice'))return {};
    const voice={request,ended,calls:[],setGain(value,seconds){if(state.fail.has('gain'))throw new Error('gain');this.calls.push(['gain',value,seconds]);},setRate(value){if(state.fail.has('rate'))throw new Error('rate');this.calls.push(['rate',value]);},
     setPan(value){if(state.fail.has('pan'))throw new Error('pan');this.calls.push(['pan',value]);},stop(seconds){this.calls.push(['stop',seconds]);if(state.fail.has('stop'))throw new Error('stop');}};
+   if(state.place!==undefined)voice.position=()=>{if(state.fail.has('place'))throw new Error('place');return state.place;};
    state.voices.push(voice);return voice;},
   suspend(){state.log.push('suspend');if(state.fail.has('suspend'))throw new Error('suspend');},
   resume(){state.log.push('resume');if(state.fail.has('resume'))throw new Error('resume');},
@@ -759,3 +767,118 @@ test('AM33 a scope of an Engine owns a mixer and a sound through their own clean
  assert.deepEqual([mixer.state,kept.state,other.endReason,state.log.at(-1)],['closed','released','closed','close']);
  await engine.dispose();
 });
+
+test('AM34 a file is opened to be played as it is read, and counts as a sound without samples',async()=>{
+ const {state,backend}=fake();
+ const mixer=createAudioMixer({backend,maxSounds:2,maxDecodedBytes:10});
+ state.duration=200;
+ const music=await mixer.stream('music/gate.ogg');
+ assert.deepEqual(state.opened,['music/gate.ogg']);
+ assert.deepEqual([music.duration,music.channels,music.sampleRate,music.decodedBytes,music.streamed,music.state],[200,2,48000,0,true,'ready']);
+ assert.ok(Object.isFrozen(music));
+ assert.deepEqual([mixer.snapshot().sounds,mixer.snapshot().decodedBytes],[1,0]);
+ for(const url of [undefined,null,7,'',{},'x'.repeat(4097)])await assert.rejects(mixer.stream(url),coded('AUDIO_URL_INVALID'));
+ assert.equal(state.opened.length,1);
+ state.fail.add('open');
+ await assert.rejects(mixer.stream('x'.repeat(4096)),error=>error.code==='AUDIO_STREAM_FAILED'&&error.cause.message==='open');
+ state.fail.clear();
+ // It is a sound: it holds a place among the sounds, also while it is being opened.
+ let release;state.hold=new Promise(resolve=>{release=resolve;});
+ const second=mixer.stream('b');
+ await assert.rejects(mixer.stream('c'),coded('AUDIO_SOUND_LIMIT'));
+ await assert.rejects(mixer.decode(bytes()),coded('AUDIO_SOUND_LIMIT'));
+ release();state.hold=undefined;
+ (await second).release();
+ // What the backend gives has to say what it is, either way.
+ state.duration=0.00001;
+ const decoded=await mixer.decode(bytes());
+ assert.deepEqual([decoded.streamed,decoded.decodedBytes],[false,8]);
+ decoded.release();
+ let released=0;const good={duration:1,channels:1,sampleRate:8000,release(){released++;}};
+ for(const bad of [{...good},{...good,streamed:false},{...good,streamed:1},{...good,streamed:true,duration:Infinity},{...good,streamed:true,duration:0}]){state.bad=bad;await assert.rejects(mixer.stream('d'),coded('AUDIO_BACKEND_FAILED'),JSON.stringify(bad));}
+ state.bad={...good,streamed:true};
+ await assert.rejects(mixer.decode(bytes()),coded('AUDIO_BACKEND_FAILED'));
+ assert.equal(released,6);
+ state.bad=undefined;
+ // Released, it gives its place back; a closed mixer opens nothing, and gives back what was being opened.
+ music.release();
+ assert.deepEqual([music.state,state.sounds[0].released,mixer.snapshot().sounds],['released',1,0]);
+ state.hold=new Promise(resolve=>{release=resolve;});
+ const late=mixer.stream('late');
+ mixer.dispose();
+ release();
+ await assert.rejects(late,coded('AUDIO_CLOSED'));
+ assert.equal(state.sounds.at(-1).released,1);
+ await assert.rejects(mixer.stream('e'),coded('AUDIO_CLOSED'));
+ // A host that cannot play a file as it reads it says so.
+ const plain=fake();delete plain.backend.openStream;
+ const other=createAudioMixer({backend:plain.backend});
+ await assert.rejects(other.stream('f'),coded('AUDIO_STREAM_UNSUPPORTED'));
+ other.dispose();
+});
+
+test('AM35 a stream has one place: a new voice of it ends the one before, the music too',async()=>fixture(async({state,mixer,sound})=>{
+ const stream=await mixer.stream('long.ogg');
+ const first=mixer.play(stream,{loop:true});
+ const second=mixer.play(stream);
+ assert.deepEqual([first.endReason,second.state,mixer.snapshot().voices],['stolen','playing',1]);
+ assert.deepEqual(state.voices[0].calls,[['stop',0]]);
+ // As the music, started again: the one before cannot fade under itself.
+ const music=mixer.playMusic(stream,{fade:2});
+ assert.deepEqual([second.endReason,mixer.music],['stolen',music]);
+ assert.equal(mixer.playMusic(stream,{fade:2}),music);
+ const again=mixer.playMusic(stream,{fade:2,restart:true});
+ assert.deepEqual([music.endReason,music.state,mixer.music,again.state,state.voices.at(-2).calls],['stolen','ended',again,'playing',[['stop',0]]]);
+ // A number of voices asked for is beside the point.
+ const third=mixer.play(stream,{maxInstances:5});
+ assert.deepEqual([again.endReason,mixer.music,third.state,mixer.snapshot().voices],['stolen',undefined,'playing',1]);
+ // Another sound takes over from it across a fade as from any music.
+ const streamed=mixer.playMusic(stream),next=mixer.playMusic(sound,{fade:1});
+ assert.deepEqual([third.endReason,streamed.state,mixer.music],['stolen','stopping',next]);
+ assert.deepEqual(state.voices.at(-2).calls,[['gain',0,1],['stop',1]]);
+ assert.deepEqual(mixer.snapshot().dropped,{silent:0,limit:0,stolen:5});
+}));
+
+test('AM36 with every place taken a stream still has its own, and without one it starts nothing',async()=>fixture(async({mixer,sound})=>{
+ const stream=await mixer.stream('long.ogg');
+ const a=mixer.play(stream,{loop:true}),b=mixer.play(sound,{loop:true});
+ // Its own voice is the place it takes.
+ const c=mixer.play(stream,{loop:true});
+ assert.deepEqual([a.endReason,b.state,c.state,mixer.snapshot().voices],['stolen','playing','playing',2]);
+ c.stop();
+ const d=mixer.play(sound,{loop:true}),e=mixer.play(stream);
+ assert.deepEqual([d.state,e.endReason,mixer.snapshot().voices],['playing','limit',2]);
+},{mixer:{maxVoices:2}}));
+
+test('AM37 a host that reads a sound as it plays says where it is',async()=>fixture(async({state,mixer,sound})=>{
+ state.place=12.5;state.duration=60;
+ const stream=await mixer.stream('long.ogg'),voice=mixer.play(stream,{offset:3});
+ state.time=500;
+ assert.equal(voice.position,12.5);
+ state.place=59;
+ assert.equal(voice.position,59);
+ // Not past the end, whatever the host says.
+ state.place=61;
+ assert.equal(voice.position,60);
+ for(const place of [-1,NaN,Infinity,'3',undefined]){state.place=place;assert.throws(()=>voice.position,coded('AUDIO_BACKEND_FAILED'),String(place));}
+ state.place=30;state.fail.add('place');
+ assert.throws(()=>voice.position,error=>error.code==='AUDIO_BACKEND_FAILED'&&error.cause.message==='place');
+ state.fail.clear();
+ // A pause keeps the place the host said, and the voice goes on from it.
+ voice.pause();
+ state.place=0;
+ assert.deepEqual([voice.state,voice.position],['paused',30]);
+ voice.resume();
+ assert.equal(state.voices.at(-1).request.offset,30);
+ state.place=31;
+ voice.setRate(2);
+ state.place=40;
+ assert.equal(voice.position,40);
+ voice.stop();
+ assert.equal(voice.position,40);
+ // Asked at the end, a pause is the end.
+ const last=mixer.play(stream);
+ state.place=60;
+ last.pause();
+ assert.deepEqual([last.state,last.endReason],['ended','finished']);
+}));

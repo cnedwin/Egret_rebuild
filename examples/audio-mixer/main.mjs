@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Music and effects for a page. The mixer has a volume for music and one for effects under a master
 // volume, plays one music at a time and fades from one to the next, keeps a sound that is asked for
-// again and again to two voices, and is silent while the game is paused or the page is hidden. The
+// again and again to two voices, and is silent while the game is paused or the page is hidden. One
+// of its three musics is long and is played as it is read, without its samples in memory. The
 // controls are the page's own: the example is about what is heard.
 import { createBrowserAudio } from '@egret/engine/web/audio';
 import { chime, tune } from './sounds.mjs';
@@ -38,8 +39,12 @@ function heard() {
 const [gate, drill, bell, tick] = await Promise.all([
   tune([220, 276, 330, 440, 330, 276]), tune([330, 392, 494, 392, 294, 392], 0.25), chime(), chime(1760, 0.5, 0.35),
 ].map(bytes => mixer.decode(bytes)));
+// Long music is not decoded whole. It is opened as a file the browser plays as it reads it: here a file made in the page.
+const longTune = tune(Array.from({ length: 48 }, (_, note) => [196, 220, 262, 294, 330, 392][(note * 5 + (note >> 3)) % 6]), 0.25, 0.3);
+const scroll = await mixer.stream(URL.createObjectURL(new Blob([longTune], { type: 'audio/wav' })));
+const nameOf = sound => sound === gate ? 'gate' : sound === drill ? 'drill' : 'scroll';
 // Asked for before anybody touched the page: it waits, and is heard from its start when the page may sound.
-mixer.playMusic(gate, { fade: 1 });
+mixer.playMusic(new URLSearchParams(location.search).get('music') === 'scroll' ? scroll : gate, { fade: 1 });
 
 function keep() {
   try { localStorage.setItem(KEY, JSON.stringify(Object.fromEntries(NAMES.map(name => [name, { volume: busOf(name).volume, muted: busOf(name).muted }])))); } catch { /* nothing is kept */ }
@@ -54,7 +59,8 @@ function show() {
   const picture = mixer.snapshot();
   status.textContent = failure === undefined ? TEXT[picture.state] + (picture.suspendedBy.length > 0 ? ' (' + picture.suspendedBy.join(', ') + ')' : '') : 'Failed / 失败: ' + failure;
   element('pause').setAttribute('aria-pressed', String(picture.suspendedBy.includes('game')));
-  stateView.textContent = JSON.stringify({ ...picture, music: mixer.music === undefined ? null : mixer.music.sound === gate ? 'gate' : 'drill' }, null, 2);
+  element('music-hold').setAttribute('aria-pressed', String(mixer.music?.state === 'paused'));
+  stateView.textContent = JSON.stringify({ ...picture, music: mixer.music === undefined ? null : nameOf(mixer.music.sound) }, null, 2);
 }
 for (const name of NAMES) {
   const slider = element('volume-' + name), box = element('mute-' + name), bus = busOf(name);
@@ -66,7 +72,10 @@ for (const name of NAMES) {
 const act = (id, action) => element(id).addEventListener('click', () => { try { action(); } catch (cause) { fail(cause); } show(); });
 act('music-a', () => mixer.playMusic(gate, { fade: 1 }));
 act('music-b', () => mixer.playMusic(drill, { fade: 1 }));
+act('music-c', () => mixer.playMusic(scroll, { fade: 1 }));
 act('music-stop', () => mixer.stopMusic({ fade: 1 }));
+// The music alone is held where it is, and goes on from there.
+act('music-hold', () => { const music = mixer.music; if (music?.state === 'paused') music.resume(); else music?.pause(); });
 for (const [id, pan] of [['bell-left', -1], ['bell', 0], ['bell-right', 1]]) act(id, () => { mixer.play(bell, { pan }).ended.then(show); });
 // Pressed quickly, the oldest of two gives its place: a sound does not pile up on itself.
 act('tick', () => { mixer.play(tick, { maxInstances: 2, rate: 0.9 + Math.random() * 0.2 }).ended.then(show); });
@@ -81,6 +90,7 @@ show();
 globalThis.__egretAudioExample = {
   readSnapshot: () => ({
     ...mixer.snapshot(), history: [...history], failure, level: heard(), time: audio.context.currentTime, output: audio.context.state, visibility: document.visibilityState,
-    music: mixer.music === undefined ? null : mixer.music.sound === gate ? 'gate' : 'drill', position: mixer.music?.position ?? null, status: status.textContent,
+    music: mixer.music === undefined ? null : nameOf(mixer.music.sound), position: mixer.music?.position ?? null, status: status.textContent,
+    streamed: [scroll.streamed, scroll.decodedBytes, scroll.duration], musicState: mixer.music?.state ?? null,
   }),
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// A strict consumer of the two sound entries: what it may write, and ten things it may not.
+// A strict consumer of the two sound entries: what it may write, and eleven things it may not.
 import {createAudioMixer} from '@egret/engine/audio';
 import type {AudioBackend,AudioBackendBus,AudioBackendSound,AudioBackendStart,AudioBackendVoice,AudioBus,AudioBusOptions,AudioBusSnapshot,AudioEndReason,AudioFade,AudioMixer,AudioMixerOptions,AudioMixerSnapshot,AudioMixerState,AudioMusicOptions,AudioPlayOptions,AudioSound,AudioVoice,AudioVoiceState} from '@egret/engine/audio';
 import {createBrowserAudio} from '@egret/engine/web/audio';
@@ -10,7 +10,10 @@ declare const scope:Scope,bytes:Uint8Array,buffer:ArrayBuffer,context:OfflineAud
 const held:AudioBackendSound={duration:1,channels:2,sampleRate:48000,release(){}};
 const gain:AudioBackendBus={setGain(value:number,seconds:number){void value;void seconds;},release(){}};
 const sounding:AudioBackendVoice={setGain(){},setRate(){},setPan(){},stop(seconds:number){void seconds;}};
+const reading:AudioBackendVoice={...sounding,position:()=>0};void reading;
+const file:AudioBackendSound={...held,streamed:true};
 const backend:AudioBackend={time:0,decode:async()=>held,createBus:(parent:AudioBackendBus|undefined)=>{void parent;return gain;},
+ openStream:async(url:string)=>{void url;return file;},
  start:(request:AudioBackendStart,ended:()=>void)=>{const offset:number=request.offset,loop:boolean=request.loop;void offset;void loop;void ended;return sounding;},suspend(){},resume(){},close(){}};
 const named:AudioBusOptions={name:'voice',volume:0.5,muted:false};
 const options:AudioMixerOptions={backend,buses:['music','effects',named],volume:1,muted:false,locked:true,maxVoices:16,maxSounds:64,maxDecodedBytes:1<<26};
@@ -22,6 +25,8 @@ const level:number=bus.volume,quiet:boolean=bus.muted,count:number=bus.voices;vo
 async function play():Promise<void>{
  const sound:AudioSound=scope.use(await mixer.decode(bytes)),other:AudioSound=await mixer.decode(buffer);
  const ready:'ready'|'released'=sound.state,size:number=sound.decodedBytes;void ready;void size;
+ const long:AudioSound=scope.use(await mixer.stream('music/long.ogg')),read:boolean=long.streamed;void read;
+ mixer.playMusic(long,{fade:2});
  const once:AudioPlayOptions={bus:'effects',volume:0.5,rate:1.5,pan:-1,loop:false,offset:0.1,fadeIn:0.2,maxInstances:2,whileSilent:'start'};
  const voice:AudioVoice=mixer.play(sound,once);
  const playing:AudioVoiceState=voice.state,reason:AudioEndReason|undefined=voice.endReason,place:number=voice.position;void playing;void reason;void place;
@@ -59,3 +64,5 @@ picture.voices=0;
 const wrong:AudioEndReason='bored';void wrong;
 // @ts-expect-error the page gives no way to fetch a file
 audio.load('music.ogg');
+// @ts-expect-error a stream is opened by where it is, not by its bytes
+void mixer.stream(bytes);

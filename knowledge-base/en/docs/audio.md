@@ -14,7 +14,8 @@ import { createBrowserAudio } from '@egret/engine/web/audio';
 const audio = scope.use(createBrowserAudio({ buses: [{ name: 'music', volume: 0.6 }, 'effects'] }));
 const mixer = audio.mixer;
 const bytes = async url => new Uint8Array(await (await fetch(url)).arrayBuffer());
-const [theme, click] = await Promise.all([mixer.decode(await bytes('theme.ogg')), mixer.decode(await bytes('click.wav'))]);
+const click = await mixer.decode(await bytes('click.wav'));   // short: decoded into memory
+const theme = await mixer.stream('music/theme.ogg');          // long: played as it is read
 
 mixer.playMusic(theme, { fade: 1 });      // waits for the first press if the page may not sound yet
 button.onActivate = () => mixer.play(click, { maxInstances: 2 });
@@ -22,7 +23,7 @@ button.onActivate = () => mixer.play(click, { maxInstances: 2 });
 
 `createBrowserAudio` makes an `AudioContext`, or uses the one given as `context` and leaves it open. It returns `mixer`, the `context`, `output` (the node every sound passes on its way out, where an analyser of the page can listen) and `dispose()`.
 
-The adapter fetches nothing. A game reads the bytes of a file the way it reads its other files and gives them to `decode`.
+The adapter fetches nothing for `decode`: a game reads the bytes of a file the way it reads its other files and gives them to it. A stream is the one thing it is given an address for, because the browser reads that file itself.
 
 **The first press.** A browser lets a page sound only after the person has touched it. Until then `mixer.state` is `'locked'`. The adapter listens for `pointerdown`, `pointerup`, `touchend`, `keydown` and `click` on the document, or on `unlockTarget`, and asks the output to start inside the first of them. When the output runs the state becomes `'running'` and the listeners are removed. An output the system takes away later, as a phone does for a call, locks the mixer again until it is back or the next press brings it back.
 
@@ -32,11 +33,33 @@ What fails where nothing can be returned, in a listener of the page or after the
 
 ## Sounds
 
-`mixer.decode(bytes)` takes the bytes of one encoded file, as a `Uint8Array` or an `ArrayBuffer`, and settles with a sound. The bytes stay the caller's and unchanged. Which formats decode is the browser's matter: WAV, MP3 and AAC in MP4 decode in every current browser, Ogg Vorbis and Opus in most.
+`mixer.decode(bytes)` takes the bytes of one encoded file, as a `Uint8Array` or an `ArrayBuffer`, and settles with a sound that is decoded whole. The bytes stay the caller's and unchanged. Which formats decode is the browser's matter: WAV, MP3 and AAC in MP4 decode in every current browser, Ogg Vorbis and Opus in most.
 
-A sound is decoded samples in memory. `sound.decodedBytes` is what it counts as: seconds × sample rate × channels × 4. Three minutes of stereo at 44.1 kHz are about 63.5 MB. The mixer holds at most `maxDecodedBytes` (128 MiB unless said otherwise) and `maxSounds` (256); a decode that would pass either is refused and its samples given back. Keep music short, in one channel or at a lower rate where it can be, and release what a scene no longer needs.
+A sound is decoded samples in memory. `sound.decodedBytes` is what it counts as: seconds × sample rate × channels × 4. Three minutes of stereo at 44.1 kHz are about 63.5 MB. The mixer holds at most `maxDecodedBytes` (128 MiB unless said otherwise) and `maxSounds` (256); a decode that would pass either is refused and its samples given back. Decode what is short and has to start at once or loop without a seam; play long music [from a stream](#long-music-from-a-stream); and release what a scene no longer needs.
 
-`sound.release()` ends the voices of the sound and gives the samples back. A scope can own a sound: `sceneScope.use(await mixer.decode(bytes))` releases it when the scene's scope is disposed.
+### Long music from a stream
+
+```js
+const theme = await mixer.stream('music/theme.ogg');
+mixer.playMusic(theme, { fade: 1 });
+```
+
+`mixer.stream(url)` opens a file that is played as it is read. It settles with a sound once the file has said how long it is. Such a sound is `streamed`, counts as nothing against the budget of decoded samples, and is played, faded, paused, panned and turned up and down like any other.
+
+What is different:
+
+- **One place.** A stream is read at one place, so it has one voice at a time: a new voice of it ends the one before with `'stolen'`, the music too. Starting the same stream again cannot fade from itself.
+- **Its place is the file's.** `voice.position` is where the browser is in the file. The loop of a stream may have a short gap where a decoded loop has none; music that has to loop without a seam is decoded.
+- **Another origin.** The file is asked for with `crossOrigin = 'anonymous'`. A file of another origin has to be served with the headers that allow that, or it is refused.
+- **Its own lock.** A browser may refuse to start a media element outside a touch even when the output already runs. The voice then waits, the adapter listens for a touch again, and the next one starts it.
+
+On a page a stream is an `<audio>` element brought into the graph. A suspended output does not stop a media element by itself, so the adapter pauses it whenever the output does not run and plays it when it does: a paused game or a hidden page leaves it where it was. A fade out ends by the clock of the output, as it does for a decoded voice.
+
+A host whose backend has no `openStream` refuses with `AUDIO_STREAM_UNSUPPORTED`. An output that renders ahead of time has none.
+
+### Releasing
+
+`sound.release()` ends the voices of the sound and gives the samples back, or lets the file of a stream go. A scope can own a sound: `sceneScope.use(await mixer.decode(bytes))` releases it when the scene's scope is disposed.
 
 ## Effects
 
@@ -109,7 +132,7 @@ At most `maxVoices` voices are not over at once (32 unless said otherwise, up to
 
 ## Another host
 
-`createAudioMixer({ backend, ... })` takes anything that implements `AudioBackend`: a clock in seconds that stands still while the output is suspended, `decode`, `createBus`, `start`, `suspend`, `resume` and `close`. A host that is not a page writes those and has the same mixer. `locked: true` and `mixer.setLocked(...)` are how a host says whether it lets the output start.
+`createAudioMixer({ backend, ... })` takes anything that implements `AudioBackend`: a clock in seconds that stands still while the output is suspended, `decode`, `createBus`, `start`, `suspend`, `resume` and `close`. `openStream` is optional, and so is `position` of a voice, for a host that knows better than the clock where a sound is. A host that is not a page writes those and has the same mixer. `locked: true` and `mixer.setLocked(...)` are how a host says whether it lets the output start.
 
 ## Errors
 
@@ -122,6 +145,9 @@ Every error is an `EgretError` with one of these codes.
 | `AUDIO_BUS_UNKNOWN` | No bus has that name |
 | `AUDIO_BYTES_INVALID` | `decode` was given no bytes |
 | `AUDIO_DECODE_FAILED` | The backend could not decode the bytes; `cause` is what it said |
+| `AUDIO_URL_INVALID` | `stream` was given no address, or one longer than 4096 characters |
+| `AUDIO_STREAM_UNSUPPORTED` | The backend cannot play a file as it reads it |
+| `AUDIO_STREAM_FAILED` | The file could not be opened; `cause` is what the backend said |
 | `AUDIO_BUDGET`, `AUDIO_SOUND_LIMIT` | The decoded samples or the number of sounds would pass what the mixer may hold |
 | `AUDIO_SOUND_INVALID`, `AUDIO_SOUND_RELEASED` | The value is no sound of this mixer, or one that was released |
 | `AUDIO_REASON_INVALID`, `AUDIO_REASON_LIMIT` | A name for silence is not a string of 1 to 32 characters, or eight names already ask |
@@ -135,19 +161,19 @@ Every error is an `EgretError` with one of these codes.
 
 | What | Where | Result |
 | --- | --- | --- |
-| The mixer against a recording backend, and a scope of a real Engine owning a mixer and a sound | Node, [`tests/audio-mixer.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/audio-mixer.test.mjs) | 33 cases |
-| The Web Audio adapter against a stand-in page and output, a strict TypeScript consumer of both entries with ten refused misuses, and the exports of both entries | Node, [`tests/browser-audio.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/browser-audio.test.mjs) | 24 cases |
-| Every comparison, boolean and logical operator of both modules changed one at a time | Node | 279 changes, 274 caught. The 5 left change nothing that can be observed: a voice that never started has nothing to silence, and a line of volume read exactly at one of its ends has the same value either way |
-| The [example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/audio-mixer/README.md): locked until the first press, key or tap; effects over music; two voices of one sound; volumes and mutes heard; one music giving way to the next; a paused game; volumes kept for the next visit; a phone profile | Headless Chromium 153 | 8 scenarios |
+| The mixer against a recording backend, and a scope of a real Engine owning a mixer and a sound | Node, [`tests/audio-mixer.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/audio-mixer.test.mjs) | 37 cases |
+| The Web Audio adapter against a stand-in page and output, a media element of the page for a stream, a strict TypeScript consumer of both entries with eleven refused misuses, and the exports of both entries | Node, [`tests/browser-audio.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/browser-audio.test.mjs) | 31 cases |
+| Every comparison, boolean and logical operator of both modules changed one at a time | Node | 314 changes, 309 caught. The 5 left change nothing that can be observed: a voice that never started has nothing to silence, and a line of volume read exactly at one of its ends has the same value either way |
+| The [example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/audio-mixer/README.md): locked until the first press, key or tap; effects over music; two voices of one sound; volumes and mutes heard; one music giving way to the next; a paused game; long music from a stream that takes over across a fade, is held, stands still with a paused game and stops over a fade; a stream that waits for the first press; volumes kept for the next visit; a phone profile | Headless Chromium 153 | 10 scenarios |
 | Rendered ahead of time and measured sample by sample: the level through a voice, a bus and the master; the two sides of a pan, also changed while playing; a fade in and a fade out; a loop; the pitch at two rates; a start part way in; one music giving way to the next; a mute and a fade of a bus; a pause | Headless Chromium 153, `OfflineAudioContext` | 1 scenario, 57 checks |
 | A hidden page | Headless Chromium 153 | Not run: a browser without a window keeps its page visible. The adapter's part is covered against the stand-in page |
-| What a person hears from a loudspeaker; a phone or a tablet; Safari and Firefox; an output taken away by a call | — | Not run |
+| What a person hears from a loudspeaker; a phone or a tablet; Safari and Firefox; an output taken away by a call; a stream of another origin; formats other than WAV | — | Not run |
 
 The lock is checked with the policy of an ordinary browser asked for by name (`--autoplay-policy=document-user-activation-required`), and the page is given time to start by a clock outside it, because this browser counts a question from the automation protocol as a touch.
 
 ## Not in this slice
 
-- **Streamed music.** Every sound is decoded whole. Long music played from a stream, without its samples in memory, is the next step of this entry.
+- **A stream on a phone.** Whether a media element starts with the first touch on iOS and Android, and how it behaves after a call, was not run.
 - **Sound in the resource manifest.** The bytes of a sound are read by the game; the manifest and its byte source do not know sound files yet.
 - **Positions in space.** A 2D pan is a balance between two sides. World3D has its own listener and positional sound.
 - Effects on a bus such as reverb or a filter, lowering the music under a voice line, several sounds in one file, and recording.

@@ -175,10 +175,17 @@ export function createAudioMixer(options: AudioMixerOptions): AudioMixer {
   }
 
   function positionOf(voice: Voice): number {
-    if (voice.backend === undefined) return voice.anchorPosition;
+    const raw = voice.backend;
+    if (raw === undefined) return voice.anchorPosition;
     const duration = voice.sound.backend.duration;
-    const raw = voice.anchorPosition + Math.max(0, now() - voice.anchorTime) * voice.rate;
-    return voice.loop ? raw % duration : Math.min(raw, duration);
+    if (typeof raw.position === 'function') {
+      // A host that reads the sound as it plays knows the place itself.
+      const place = guard(() => raw.position!());
+      if (!within(place, 0, Number.MAX_VALUE)) throw new EgretError('AUDIO_BACKEND_FAILED');
+      return Math.min(place, duration);
+    }
+    const place = voice.anchorPosition + Math.max(0, now() - voice.anchorTime) * voice.rate;
+    return voice.loop ? place % duration : Math.min(place, duration);
   }
   /** The one place a voice ends. The host is asked to silence it only after the mixer has let go of it. */
   function end(voice: Voice, reason: AudioEndReason, halt: boolean): void {
@@ -314,7 +321,9 @@ export function createAudioMixer(options: AudioMixerOptions): AudioMixer {
     if (request.whileSilent === 'drop' && current() !== 'running') { end(voice, 'silent', false); return voice; }
     // The oldest voice that may give its place: never the music, and a loop only to its own sound.
     const victims: Voice[] = [];
-    if (request.maxInstances !== undefined) {
+    // A stream has one place: whatever plays it gives way, the music too.
+    if (sound.backend.streamed === true) victims.push(...sound.voices);
+    else if (request.maxInstances !== undefined) {
       const own = [...sound.voices].filter(other => !other.music);
       if (sound.voices.size >= request.maxInstances) {
         const surplus = sound.voices.size - request.maxInstances + 1;
@@ -345,28 +354,22 @@ export function createAudioMixer(options: AudioMixerOptions): AudioMixer {
     return voice;
   }
 
-  async function decode(bytes: Uint8Array | ArrayBuffer): Promise<AudioSound> {
-    open();
-    const view = bytes instanceof ArrayBuffer ? new Uint8Array(bytes) : bytes;
-    if (!(view instanceof Uint8Array) || view.byteLength === 0) throw new EgretError('AUDIO_BYTES_INVALID');
-    if (sounds.size + decoding >= maxSounds) throw new EgretError('AUDIO_SOUND_LIMIT');
-    decoding++;
-    let raw: AudioBackendSound;
-    try { raw = await backend.decode(view); } catch (cause) { throw new EgretError('AUDIO_DECODE_FAILED', { cause }); } finally { decoding--; }
+  /** What the backend gave is checked, counted and made a sound, or given back. */
+  function adopt(raw: AudioBackendSound, streamed: boolean): AudioSound {
     const discard = (code: string): never => {
       const cleanupErrors: unknown[] = [];
       if (record(raw) && typeof raw.release === 'function') try { raw.release(); } catch (cause) { cleanupErrors.push(cause); }
       throw new EgretError(code, { cleanupErrors });
     };
     if (!record(raw) || typeof raw.release !== 'function' || !within(raw.duration, Number.MIN_VALUE, 86400) || !whole(raw.channels, 1, 32)
-      || !within(raw.sampleRate, 1, 768000)) return discard('AUDIO_BACKEND_FAILED');
-    const size = Math.ceil(raw.duration * raw.sampleRate) * raw.channels * 4;
+      || !within(raw.sampleRate, 1, 768000) || (raw.streamed === true) !== streamed) return discard('AUDIO_BACKEND_FAILED');
+    const size = streamed ? 0 : Math.ceil(raw.duration * raw.sampleRate) * raw.channels * 4;
     if (closed) return discard('AUDIO_CLOSED');
     if (decodedBytes + size > maxDecodedBytes) return discard('AUDIO_BUDGET');
     const sound: Sound = {
       backend: raw, bytes: size, voices: new Set(), released: false,
       face: Object.freeze({
-        duration: raw.duration, channels: raw.channels, sampleRate: raw.sampleRate, decodedBytes: size,
+        duration: raw.duration, channels: raw.channels, sampleRate: raw.sampleRate, decodedBytes: size, streamed,
         get state(): 'ready' | 'released' { return sound.released ? 'released' : 'ready'; },
         release(): void {
           if (sound.released) return;
@@ -377,6 +380,26 @@ export function createAudioMixer(options: AudioMixerOptions): AudioMixer {
     };
     sounds.add(sound); known.set(sound.face, sound); decodedBytes += size;
     return sound.face;
+  }
+  async function decode(bytes: Uint8Array | ArrayBuffer): Promise<AudioSound> {
+    open();
+    const view = bytes instanceof ArrayBuffer ? new Uint8Array(bytes) : bytes;
+    if (!(view instanceof Uint8Array) || view.byteLength === 0) throw new EgretError('AUDIO_BYTES_INVALID');
+    if (sounds.size + decoding >= maxSounds) throw new EgretError('AUDIO_SOUND_LIMIT');
+    decoding++;
+    let raw: AudioBackendSound;
+    try { raw = await backend.decode(view); } catch (cause) { throw new EgretError('AUDIO_DECODE_FAILED', { cause }); } finally { decoding--; }
+    return adopt(raw, false);
+  }
+  async function stream(url: string): Promise<AudioSound> {
+    open();
+    if (typeof url !== 'string' || url.length === 0 || url.length > 4096) throw new EgretError('AUDIO_URL_INVALID');
+    if (typeof backend.openStream !== 'function') throw new EgretError('AUDIO_STREAM_UNSUPPORTED');
+    if (sounds.size + decoding >= maxSounds) throw new EgretError('AUDIO_SOUND_LIMIT');
+    decoding++;
+    let raw: AudioBackendSound;
+    try { raw = await backend.openStream(url); } catch (cause) { throw new EgretError('AUDIO_STREAM_FAILED', { cause }); } finally { decoding--; }
+    return adopt(raw, true);
   }
   /** Ends the voices of a sound and gives its samples back. What failed is returned, not thrown. */
   function retire(sound: Sound, reason: AudioEndReason): unknown[] {
@@ -396,6 +419,7 @@ export function createAudioMixer(options: AudioMixerOptions): AudioMixer {
     get music(): AudioVoice | undefined { return music?.face; },
     bus: (name: string): AudioBus => busOf(name).face,
     decode,
+    stream,
     play(sound: AudioSound, playOptions?: AudioPlayOptions): AudioVoice {
       open();
       const entry = soundOf(sound);
