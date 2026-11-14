@@ -241,6 +241,12 @@ The observed app interval p95 improved in all four rows and remained above 16.7 
 
 The candidate passed 55 focused contract, Spine and recovery tests. The current Spine browser collector passed 22 fixed cases and rejected eight assigned negative controls per backend in Windows Edge. The older shared-WebGPU collector stopped before browser launch because its import map still references the retired scene3d entry.
 
+#### Lifecycle and foreground follow-up
+
+The candidate completed ten actual loss/rebuild cycles per backend in Windows Edge. Each backend also completed 25 palette replacement/restore cases, 25 in-flight cancel/retry cases, and 25 real local HTTP 503/retry cases with closure checks. Windows minimization did not produce a document visibility transition, so the 25 required background cases per backend remain open. A Windows WebGPU five-window timing run is excluded from qualification because the OS reported another foreground window in 272 of 330 observations.
+
+The first Fold7 WebGPU sustained run ended after 292.6 seconds when the debugger connection failed. The second recorded 1,800.6 seconds in the foreground with 89 observations and 32,932 completed application frames during the sample span. JS heap readings ranged from 97.4 to 188 MB. The app closed all eight actors and released its wake lock, and the final controller confirmed the original tabs and removal of the owned tab. The browser cleanup receipt also recorded a target-inventory mismatch and a redundant close refusal. The overall run remains incomplete with the sustained-window evidence preserved. WebGL2 soak, complete memory and startup budgets, and the formal device matrix remain open. [#92](https://github.com/cnedwin/Egret_rebuild/issues/92)
+
 ## 7. Connection to the all-in-one creation platform
 
 The longer-term platform combines coding, debugging, main canvas, UI/animation editing, 3D scenes/VFX, worlds/characters and target publication. Visual, code and natural-language editing should share project identity, versioned changes, diagnostics, preview and undo. Compatible editor surfaces may be combined after their workflows are evaluated.

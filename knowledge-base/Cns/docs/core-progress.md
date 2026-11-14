@@ -37,6 +37,12 @@ SharedFrame2D 是当前唯一的 2D 帧路径。示例通过 `captureSharedFrame
 
 /2 全脏对照定位了 Spine 几何构造开销。WebGPU／WebGL2 的应用完成帧间隔 p95 在 Windows Edge 降至 21.1／24.3 毫秒，在 Fold7 Chrome 降至 54.6／61.0 毫秒，四组均仍高于 16.7 毫秒。Fold7 在 #255 参考构建中完成了每个后端十轮主动触发的图形丢失与恢复。 [M4.2 测量范围](m4-core-acceptance-plan.md#混合场景帧间隔诊断--2026-11-14)
 
+### UI 与消费者真机进度
+
+Windows Edge 和 Fold7 Chrome 在源码树 `906895d9` 上分别通过 13 个示例、两个硬件后端的共 26 项聚焦检查。采集包含浏览器无障碍树、原生完成帧回读及受控鼠标或触摸。Windows 原完整套件保留 75／93 结果。定向复验确认了树形标记内部实色、按 DOM 实收增量的滚轮消费，以及指针离开前步进器悬停帧的精确像素。集成 UI、读屏语音、真人输入、Firefox 和 Safari 继续开放。 [#90](https://github.com/cnedwin/Egret_rebuild/issues/90)
+
+Windows Edge 和 Fold7 Chrome 均通过同一份已安装打包消费者的两个后端。保留播放进度的 Spine 替换在两个设备的每个后端均通过原有九项断言。Fold7 的 Spine 截图采用整数物理像素放大，区分了原采样颜色和合成插值。 [#86](https://github.com/cnedwin/Egret_rebuild/issues/86) · [#93](https://github.com/cnedwin/Egret_rebuild/issues/93)
+
 ## 可选 World3D — 2026-11-13
 
 [#147](https://github.com/cnedwin/Egret_rebuild/pull/147) 合入独立渲染器。[#148](https://github.com/cnedwin/Egret_rebuild/pull/148) 和 [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) 扩展材质、场景、纹理和碰撞。[#151](https://github.com/cnedwin/Egret_rebuild/pull/151) 新增折射、光照贴图、景深、合批、文字几何体、变换操纵器及物理能力。[#152](https://github.com/cnedwin/Egret_rebuild/pull/152) 新增功能展厅，扩展 CPU 回归负载、阴影准备和碰撞路径。

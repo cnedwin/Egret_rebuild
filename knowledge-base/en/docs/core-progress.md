@@ -37,6 +37,12 @@ SharedFrame2D is the only current 2D frame path. Examples use `captureSharedFram
 
 The /2 full-dirty comparison traced Spine geometry construction and reduced application-frame p95 on Windows Edge to 21.1/24.3 ms and on Fold7 Chrome to 54.6/61.0 ms for WebGPU/WebGL2. The four rows remain above 16.7 ms. Fold7 completed ten induced graphics-loss cycles per backend on the #255 reference build. [M4.2 measurement scope](m4-core-acceptance-plan.md#mixed-scene-frame-time-diagnostic--2026-11-14)
 
+### UI and consumer hardware checkpoint
+
+Windows Edge and Fold7 Chrome on source tree `906895d9` each passed 26 focused checks across 13 examples and two hardware backends. The probes recorded browser accessibility trees, completed native readbacks and controlled mouse or touch. The original full Windows suites still recorded 75 passes in 93 cases. Focused follow-ups verified the tree marker's solid interior, wheel consumption using the DOM-delivered delta, and the stepper's exact hover frame before a later pointer leave. The integrated UI, screen-reader speech, human input, Firefox and Safari remain open. [#90](https://github.com/cnedwin/Egret_rebuild/issues/90)
+
+Windows Edge and Fold7 Chrome each passed both backends for the same archived clean-consumer installation and all nine original assertions per backend for playback-preserving Spine replacement. Fold7's Spine screenshot sampling used integer physical-pixel screenshot magnification to distinguish the original color witnesses from compositor interpolation. [#86](https://github.com/cnedwin/Egret_rebuild/issues/86) · [#93](https://github.com/cnedwin/Egret_rebuild/issues/93)
+
 ## Optional World3D — 2026-11-13
 
 [#147](https://github.com/cnedwin/Egret_rebuild/pull/147) integrated the standalone renderers. [#148](https://github.com/cnedwin/Egret_rebuild/pull/148) and [#149](https://github.com/cnedwin/Egret_rebuild/pull/149) expanded the material, scene, texture and collision paths. [#151](https://github.com/cnedwin/Egret_rebuild/pull/151) added refraction, light maps, depth of field, batching, text geometry, a transform gizmo and physics features. [#152](https://github.com/cnedwin/Egret_rebuild/pull/152) added the feature gallery and extended the CPU regression workloads, shadow preparation and collision paths.
