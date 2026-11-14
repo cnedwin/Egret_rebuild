@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 数据源替换之后，滚动到列表当前所在的位置 — 2026-11-14
+
+托管列表的 `setScrollOffset` 会丢弃滚动到列表当前偏移的请求，即使同一轮里还有一次数据源替换在等待提交。列表随后跟随锚点去了另一个偏移，这违反了“显式滚动覆盖锚点保留”的规则：处于顶部的列表在换了新的顺序并被要求留在顶部之后，并没有留在顶部。现在只要还有其他变更待提交，这样的滚动就会被保留。已在 Node 中用真实 Engine 和 UI 根检查。属于 #87。[指南](docs/ui-data-panel.md)
+
 ## 单元格网格，以及一个行囊 — 2026-11-14
 
 语义树新增 `grid`、`row` 和 `gridcell` 三个角色，并用 `extent` 表示网格的行数和列数；浏览器投射会连同行列数和序号一起写出它们。新示例 `examples/ui-inventory` 是一个二十四格的行囊：一个键盘停靠点，带有由方向键、Home、End、Page Up 和 Page Down 沿两个方向移动的光标，一个显示光标所在物品的面板，使用、丢弃和整理三个按钮，以及一行 status。已在 Node 和无头 Chromium 的软件 WebGL2 上检查；没有运行读屏软件。属于 #90。[指南](docs/ui-semantics.md#网格) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-inventory/README.zh-CN.md)
