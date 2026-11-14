@@ -1,0 +1,43 @@
+# Starter
+
+English | [简体中文](README.zh-CN.md)
+
+A starting point for a 2D game: one Engine, one stage, a frame loop, pointer and keyboard input and one rule. A blue square walks to where you tap, or where the arrow keys send it, and picks up five coins. `main.mjs` is about a hundred lines, and the part to replace is between two lines marked "Game".
+
+## Run
+
+```text
+node tools/build.mjs
+node tools/serve-canvas.mjs
+```
+
+Open `/examples/starter/index.html` on the host and port the server prints. Add `?backend=webgl2` or `?backend=webgpu` to choose a backend.
+
+## What is in it
+
+| Step | In `main.mjs` |
+| --- | --- |
+| A Host | `createSharedWebGPUHost` or `createSharedWebGL2Host` on the canvas, whichever the browser has |
+| An Engine | `createEngineForProfile({ host }, SHARED_FRAME_PROFILE_2D)` |
+| A scope | `engine.createScope()`; `scope.use(new Sprite())` gives the scope what the game creates, and disposing the scope disposes it |
+| The stage | `engine.stage.addChild(...)`; a `Sprite` draws with `graphics`, and `x`, `y` place it |
+| Input | The page's own `pointerdown` and `keydown` on the canvas, turned into stage units |
+| The loop | `requestAnimationFrame`: one step of the game, then `engine.renderSharedFrame(frame)` |
+
+Two things in the loop are easy to miss. A step is at most a tenth of a second, so a tab that was hidden does not come back with one enormous step. And a Host holds at most two frames it has not finished: the loop reads `host.getStatus().pendingFrames` and skips drawing a frame while there are two, instead of being refused.
+
+## Make it yours
+
+1. Copy the folder beside the other examples and open its `index.html` the same way.
+2. Keep the import map of `index.html`. It tells the browser where each `@egret/...` name is in the built checkout. For another entry, such as `@egret/engine/particles`, add its line; [what to import](../../knowledge-base/en/docs/entry-points.md) lists them.
+3. Replace the three "Game" parts of `main.mjs`: the state, the input and the step.
+
+For a project outside this checkout, with a package manager and a bundler instead of an import map, see [using the preview from a clean project](../../knowledge-base/en/docs/clean-consumer.md).
+
+## Check
+
+```text
+node examples/starter/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
+```
+
+It reads the colours of the square and the coins from the canvas, clicks, holds the arrow keys, presses the button and, on a phone profile, taps. It runs WebGL2 alone, in headless Chromium with software rendering when `software` is given. No person pressed anything, and WebGPU was not run.

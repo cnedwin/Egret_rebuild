@@ -9,7 +9,7 @@
 | 问题 | 阅读入口 |
 | --- | --- |
 | 现在能运行什么？ | [核心能力与剩余工作](docs/core-progress.md) |
-| 怎样上手或参与？ | [上手指南](docs/getting-started.md) · [贡献指南](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.zh-CN.md) |
+| 怎样上手或参与？ | [上手指南](docs/getting-started.md) · [该引哪个入口](docs/entry-points.md) · [贡献指南](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.zh-CN.md) |
 | 接下来开发什么？ | [工程计划](docs/工程规划.md) · [M2–M4 路线图](docs/m2-m4-delivery-plan.md) |
 | 完整产品是什么？ | [产品需求](docs/产品需求说明书.md) · [产品组成](docs/产品组成.md) · [定位](docs/设计理念与定位.md) |
 | 技术如何组织？ | [白皮书](docs/技术白皮书.md) · [架构计划](docs/architecture-and-engineering-plan.md) · [实际／未来包结构](docs/工程技术架构与项目结构.md) |
