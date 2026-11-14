@@ -119,6 +119,8 @@ A slider: one value out of a range, such as a volume, a share or an amount. `tar
 
 Its keys are those of a native slider, listed under [Keys](#keys). To someone who cannot see it, it is a [`slider`](ui-semantics.md) with its `range`.
 
+An amount that is changed by steps and has no track needs no control of its own. The keys of a range take any object with `enabled`, `stepBy`, `toMin` and `toMax`, so the application binds them to its own amount, puts a button on either side for a pointer, and describes the amount as a [`spinbutton`](ui-semantics.md). The [stepper example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-stepper/README.md) shares a fixed total among four amounts this way.
+
 ## Scroll position
 
 ```js

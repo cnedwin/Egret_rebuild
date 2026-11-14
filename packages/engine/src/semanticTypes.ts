@@ -4,7 +4,8 @@
  * control set of the UI, and each role is projected to the page in one known way.
  */
 export type SemanticRole = 'group' | 'image' | 'text' | 'button' | 'checkbox' | 'switch' | 'radiogroup' | 'radio'
-  | 'listbox' | 'option' | 'list' | 'listitem' | 'scrollbar' | 'slider' | 'progressbar' | 'tablist' | 'tab' | 'tabpanel' | 'menu' | 'menuitem' | 'dialog' | 'textbox';
+  | 'listbox' | 'option' | 'list' | 'listitem' | 'scrollbar' | 'slider' | 'spinbutton' | 'progressbar' | 'tablist' | 'tab' | 'tabpanel' | 'menu' | 'menuitem' | 'dialog' | 'textbox'
+  | 'status' | 'alert';
 /** What assistive technology may ask of a node: its activation, or the keyboard focus. */
 export type SemanticAction = 'activate' | 'focus';
 export type SemanticChecked = boolean | 'mixed';
@@ -35,7 +36,7 @@ export interface SemanticPosition {
  */
 export interface SemanticDescription {
   readonly bounds: SemanticBounds;
-  /** The accessible name. For a `text` node it is the text itself. */
+  /** The accessible name. For a `text` node it is the text itself, and for a `status` or an `alert` the message, which may be empty. */
   readonly name?: string;
   /** The text of a `textbox`. */
   readonly value?: string;
@@ -56,7 +57,7 @@ export interface SemanticDescription {
   readonly multiline?: boolean;
   /** `listbox`: whether several of its options may be selected at once. */
   readonly multiple?: boolean;
-  /** `scrollbar` and `slider`, which need it, and `progressbar`, which without it shows work of unknown length. */
+  /** `scrollbar`, `slider` and `spinbutton`, which need it, and `progressbar`, which without it shows work of unknown length. */
   readonly range?: SemanticRange;
   /** `scrollbar`, `slider`, `tablist` and `menu`. */
   readonly orientation?: SemanticOrientation;

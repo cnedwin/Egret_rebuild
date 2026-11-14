@@ -119,6 +119,8 @@ createControlKeys({ keyboard, target: track, kind: 'range', control: volume, pag
 
 它的按键与原生滑动条相同，列在[按键](#按键)一节。对看不到它的人来说，它是带有 `range` 的 [`slider`](ui-semantics.md)。
 
+按步改变、没有轨道的数量不需要专门的控件。范围的按键接受任何带有 `enabled`、`stepBy`、`toMin` 和 `toMax` 的对象，所以应用把这些按键绑定到自己的数量上，在两侧各放一个给指针用的按钮，并把这个数量描述为 [`spinbutton`](ui-semantics.md)。[数值调节示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-stepper/README.zh-CN.md)用这种方式把一个固定的总数分给四个数量。
+
 ## 滚动位置
 
 ```js

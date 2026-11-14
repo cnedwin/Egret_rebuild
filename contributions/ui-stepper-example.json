@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/ui-stepper/index.html",
+      "originRole": "First-party page of the stepper example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/ui-stepper/main.mjs",
+      "originRole": "First-party example of amounts changed by steps with the keys of a range, a status message and an alert, with semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-stepper/verify.mjs",
+      "originRole": "First-party real-browser check of the stepper example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-stepper/README.md",
+      "originRole": "First-party instructions for the stepper example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-stepper/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the stepper example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/ui-stepper/README.md",
+      "zh": "examples/ui-stepper/README.zh-CN.md"
+    }
+  ]
+}

@@ -29,6 +29,7 @@ const rules: Readonly<Record<SemanticRole, Rule>> = Object.freeze({
   listitem: { leaf: false, named: false, inside: 'list', fields: ['position'] },
   scrollbar: { leaf: true, named: true, fields: ['disabled', 'range', 'orientation', 'controls'] },
   slider: { leaf: true, named: true, fields: ['disabled', 'range', 'orientation'] },
+  spinbutton: { leaf: true, named: true, fields: ['disabled', 'range'] },
   progressbar: { leaf: true, named: true, fields: ['range'] },
   tablist: { leaf: false, named: false, fields: ['disabled', 'orientation'] },
   tab: { leaf: true, named: true, inside: 'tablist', fields: ['disabled', 'selected', 'position', 'controls'] },
@@ -37,6 +38,9 @@ const rules: Readonly<Record<SemanticRole, Rule>> = Object.freeze({
   menuitem: { leaf: true, named: true, inside: 'menu', fields: ['disabled', 'position'] },
   dialog: { leaf: false, named: true, fields: ['modal'] },
   textbox: { leaf: true, named: true, fields: ['disabled', 'value', 'multiline'] },
+  // A message that is said when it changes. Its name is the message, and it is there, empty, before the first one.
+  status: { leaf: true, named: false, fields: [] },
+  alert: { leaf: true, named: false, fields: [] },
 });
 /** State that belongs to some roles only. A description that sets one its role does not have is refused. */
 const particular = ['disabled', 'checked', 'selected', 'expanded', 'modal', 'multiline', 'multiple', 'range', 'orientation', 'controls', 'position', 'value'] as const;
@@ -159,8 +163,8 @@ export function createUiSemantics(options: UiSemanticsOptions = {}): UiSemantics
     if (checkable ? typeof checked !== 'boolean' && !(checked === 'mixed' && entry.role === 'checkbox') : checked !== undefined) throw refuse('checked');
     if (rule.fields.includes('selected') ? typeof selected !== 'boolean' : selected !== undefined) throw refuse('selected');
     if (value !== undefined && (typeof value !== 'string' || value.length > 16384)) throw refuse('value');
-    // A scroll bar and a slider are somewhere in their range. A progress bar without one shows work of unknown length.
-    const ranged = entry.role === 'scrollbar' || entry.role === 'slider';
+    // A scroll bar, a slider and a spin button are somewhere in their range. A progress bar without one shows work of unknown length.
+    const ranged = entry.role === 'scrollbar' || entry.role === 'slider' || entry.role === 'spinbutton';
     if (ranged || range !== undefined ? (range === null || typeof range !== 'object' || !finite(range.now) || !finite(range.min) || !finite(range.max)
       || range.min > range.now || range.now > range.max) : false) throw refuse('range');
     if (orientation !== undefined && orientation !== 'horizontal' && orientation !== 'vertical') throw refuse('orientation');

@@ -36,8 +36,10 @@ interface Pair { readonly target: EventTarget; readonly type: string; readonly l
 const pressable: readonly SemanticRole[] = ['button', 'checkbox', 'switch', 'radio', 'option', 'tab', 'menuitem'];
 const aria: Readonly<Partial<Record<SemanticRole, string>>> = {
   group: 'group', image: 'img', checkbox: 'checkbox', switch: 'switch', radiogroup: 'radiogroup', radio: 'radio', listbox: 'listbox',
-  option: 'option', list: 'list', listitem: 'listitem', scrollbar: 'scrollbar', slider: 'slider', progressbar: 'progressbar', tablist: 'tablist', tab: 'tab', tabpanel: 'tabpanel', menu: 'menu', menuitem: 'menuitem', dialog: 'dialog', textbox: 'textbox',
+  option: 'option', list: 'list', listitem: 'listitem', scrollbar: 'scrollbar', slider: 'slider', spinbutton: 'spinbutton', progressbar: 'progressbar', tablist: 'tablist', tab: 'tab', tabpanel: 'tabpanel', menu: 'menu', menuitem: 'menuitem', dialog: 'dialog', textbox: 'textbox', status: 'status', alert: 'alert',
 };
+/** Roles whose name is their content: a reader reads the text, and says a message when the text changes. */
+const worded: readonly SemanticRole[] = ['text', 'status', 'alert'];
 const ownedSurfaces = new WeakSet<object>();
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
 let containers = 0;
@@ -158,7 +160,7 @@ export function createBrowserSemantics(options: BrowserSemanticsOptions): Browse
       const { bounds } = node;
       write(item, 'style', 'position:absolute;box-sizing:border-box;margin:0;padding:0;border:0;left:' + (bounds.x - (parent?.bounds.x ?? 0)) + 'px;top:'
         + (bounds.y - (parent?.bounds.y ?? 0)) + 'px;width:' + bounds.width + 'px;height:' + bounds.height + 'px');
-      if (node.role === 'text') write(item, 'text', node.name);
+      if (worded.includes(node.role)) write(item, 'text', node.name);
       else {
         write(item, 'aria-label', node.name === '' ? undefined : node.name);
         if (node.role === 'textbox') write(item, 'text', node.value);
