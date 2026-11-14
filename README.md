@@ -14,23 +14,9 @@ Years later, as times change and technology advances, many developers continue t
 
 **Play in your browser.** Explore games built with the new Egret Engine. The collection includes links to play online. [Game demos](https://github.com/cnedwin/PortedGamesEgret)
 
-## Egret today
-
-Egret is an open-source TypeScript engine for Web games. The display, event and resource APIs support 2D animation and complex interfaces through shared WebGPU and WebGL2 rendering. Optional World3D adds standalone 3D rendering and physics. The roadmap includes integrated AI-assisted creation and additional native and mini-game hosts. [World3D contract](knowledge-base/en/docs/world3d.md)
-
-**Engineering preview.** Start from a runnable example and use its capability contract for supported platforms, features and validation scope. Workspace packages are private at 0.0.0.
-
-| Area | Available on main | Remaining work |
-| --- | --- | --- |
-| Rendering and resources | Shared WebGPU/WebGL2 rendering, ordered preparation, resource groups and selected device recovery. The historical fixed M1.2 full-dirty Engine median-p95 was 5.3 ms against 8 ms. | Broader host/device qualification and the remaining [M1.2 pacing target](https://github.com/cnedwin/Egret_rebuild/issues/55) |
-| Content and animation | PNG, multipage atlas, sequence and font builds. Optional Spine JSON supports shared rendering, bounded seek/replay and playback-preserving replacement, including supported mixes. | Broader Spine references, exporter and texture variants, and hardware lifecycle qualification |
-| UI and text | Variable-height lists, themed controls, keyboard navigation and semantic projection. Styled multilingual paragraphs, shared effects, popup/modal layers and optional native editing. | Human IME and assistive technology, hardware and phone validation for the latest controls, and broader script and scene qualification |
-| 3D | [Optional World3D](knowledge-base/en/docs/world3d.md) covers glTF, lighting and shadows, post-processing, animation, text, automatic instancing and accelerated picking. The physics preview includes shape sweeps, compound bodies, solver slices and gameplay helpers. | Broader asset and device qualification and project authoring integration |
-| Integration | [Outfit Studio](examples/outfit-studio/README.md) opens and exports a project in the running browser. The packed engine has a clean-consumer browser smoke on software WebGL2. | Project-open hardening and mobile follow-up, formal mixed-scene qualification and preview handoff |
-
-[Android observations](knowledge-base/en/docs/android-device-validation.md) cover specific component and mixed-scene cases on the tested phones. See the [current capability map](knowledge-base/en/docs/core-progress.md) for device, input and performance coverage.
-
 ## Run an example
+
+**Start a game of your own.** Copy the [starter example](examples/starter/README.md): a hundred lines with a Host, an Engine, a stage, input and a frame loop. [What to import](knowledge-base/en/docs/entry-points.md) lists which entry of `@egret/engine` each task needs.
 
 Use **Node.js 26.7.0** and **pnpm 11.25.0**. From the repository root:
 
@@ -47,6 +33,22 @@ Run the [World3D example and feature gallery](examples/world3d/README.md) to exp
 For optional tile-map, physics, audio, save, archive, KTX2 and localization support, see the [third-party integrations](integrations/README.md).
 
 For frame timing, shared-frame counts and a hitch log on screen while developing, see the [performance monitor](devtools/README.md). It appears only in debug mode.
+
+## Egret today
+
+Egret is an open-source TypeScript engine for Web games. The display, event and resource APIs support 2D animation and complex interfaces through shared WebGPU and WebGL2 rendering. Optional World3D adds standalone 3D rendering and physics. The roadmap includes integrated AI-assisted creation and additional native and mini-game hosts. [World3D contract](knowledge-base/en/docs/world3d.md)
+
+**Engineering preview.** Start from a runnable example and use its capability contract for supported platforms, features and validation scope. Workspace packages are private at 0.0.0.
+
+| Area | Available on main | Remaining work |
+| --- | --- | --- |
+| Rendering and resources | Shared WebGPU/WebGL2 rendering, ordered preparation, resource groups and selected device recovery. The historical fixed M1.2 full-dirty Engine median-p95 was 5.3 ms against 8 ms. | Broader host/device qualification and the remaining [M1.2 pacing target](https://github.com/cnedwin/Egret_rebuild/issues/55) |
+| Content and animation | PNG, multipage atlas, sequence and font builds. Optional Spine JSON supports shared rendering, bounded seek/replay and playback-preserving replacement, including supported mixes. | Broader Spine references, exporter and texture variants, and hardware lifecycle qualification |
+| UI and text | Variable-height lists, themed controls, keyboard navigation and semantic projection. Styled multilingual paragraphs, shared effects, popup/modal layers and optional native editing. | Human IME and assistive technology, hardware and phone validation for the latest controls, and broader script and scene qualification |
+| 3D | [Optional World3D](knowledge-base/en/docs/world3d.md) covers glTF, lighting and shadows, post-processing, animation, text, automatic instancing and accelerated picking. The physics preview includes shape sweeps, compound bodies, solver slices and gameplay helpers. | Broader asset and device qualification and project authoring integration |
+| Integration | [Outfit Studio](examples/outfit-studio/README.md) opens and exports a project in the running browser. The packed engine has a clean-consumer browser smoke on software WebGL2. | Project-open hardening and mobile follow-up, formal mixed-scene qualification and preview handoff |
+
+[Android observations](knowledge-base/en/docs/android-device-validation.md) cover specific component and mixed-scene cases on the tested phones. See the [current capability map](knowledge-base/en/docs/core-progress.md) for device, input and performance coverage.
 
 ## Development and community
 
