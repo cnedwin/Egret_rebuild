@@ -3,4 +3,4 @@
 export { createUiSemantics, semanticBoundsOf } from './semanticTree.js';
 export { createUiListSemantics, semanticBoxOf } from './semanticList.js';
 export type { SemanticListRow, SemanticListSource, UiListSemantics, UiListSemanticsOptions } from './semanticList.js';
-export type { SemanticAction, SemanticBounds, SemanticChecked, SemanticDescription, SemanticNode, SemanticNodeOptions, SemanticOrientation, SemanticPosition, SemanticRange, SemanticRole, SemanticSnapshot, SemanticSnapshotNode, SemanticsState, UiSemantics, UiSemanticsOptions } from './semanticTypes.js';
+export type { SemanticAction, SemanticBounds, SemanticChecked, SemanticDescription, SemanticExtent, SemanticNode, SemanticNodeOptions, SemanticOrientation, SemanticPosition, SemanticRange, SemanticRole, SemanticSnapshot, SemanticSnapshotNode, SemanticsState, UiSemantics, UiSemanticsOptions } from './semanticTypes.js';

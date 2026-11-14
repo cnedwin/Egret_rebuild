@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 单元格网格，以及一个行囊 — 2026-11-14
+
+语义树新增 `grid`、`row` 和 `gridcell` 三个角色，并用 `extent` 表示网格的行数和列数；浏览器投射会连同行列数和序号一起写出它们。新示例 `examples/ui-inventory` 是一个二十四格的行囊：一个键盘停靠点，带有由方向键、Home、End、Page Up 和 Page Down 沿两个方向移动的光标，一个显示光标所在物品的面板，使用、丢弃和整理三个按钮，以及一行 status。已在 Node 和无头 Chromium 的软件 WebGL2 上检查；没有运行读屏软件。属于 #90。[指南](docs/ui-semantics.md#网格) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-inventory/README.zh-CN.md)
+
 ## 经过无法获得焦点的按钮时，Tab 可以离开画布 — 2026-11-14
 
 浏览器投射为每个可按下的节点生成一个原生按钮，但只有在节点可以应请求获得焦点时，才把它标记为非 Tab 停靠点。于是被禁用的按钮，或者没有焦点动作的按钮，成了页面的停靠点：过了应用的最后一个停靠点，Tab 落在这个隐藏的元素上，投射又把焦点交还给画布，键盘因此无法离开画布。现在每个原生按钮从一开始就带有 `tabindex="-1"`。在 `examples/ui-multi-select` 和 `examples/ui-tabs` 中，被禁用的按钮也不再是应用的停靠点。已在 Node 中检查，并在无头 Chromium 的软件 WebGL2 上用 Tab 键实际走出画布。属于 #90。[指南](docs/ui-semantics.md#投射)
