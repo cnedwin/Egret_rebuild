@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "tests/filters.test.mjs", "originRole": "First-party Node tests of colour matrix, glow, drop shadow and outline filters; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "examples/filters/index.html", "originRole": "First-party page of the filters example; independently authored with AI assistance; Apache-2.0. No third-party asset."},
+    {"path": "examples/filters/main.mjs", "originRole": "First-party example of six filtered tiles; independently authored with AI assistance; Apache-2.0. Original example text; no third-party asset.", "criticalComment": true},
+    {"path": "examples/filters/verify.mjs", "originRole": "First-party real-browser check of the filters example against values worked out independently; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "examples/filters/README.md", "originRole": "First-party instructions for the filters example; independently authored with AI assistance; Apache-2.0."},
+    {"path": "examples/filters/README.zh-CN.md", "originRole": "First-party Simplified Chinese instructions for the filters example; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/en/docs/filters.md", "originRole": "First-party guide to filters, with what was run and what was not; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/Cns/docs/filters.md", "originRole": "First-party Chinese guide to filters; independently authored with AI assistance; Apache-2.0."}
+  ],
+  "documents": [
+    {"en": "examples/filters/README.md", "zh": "examples/filters/README.zh-CN.md"},
+    {"en": "knowledge-base/en/docs/filters.md", "zh": "knowledge-base/Cns/docs/filters.md"}
+  ]
+}

@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 滤镜：颜色矩阵、发光、投影和描边 — 2026-11-14
+
+`DisplayObject.renderEffect` 支持 Egret 的二十数 `colorMatrix`、`glow`（对应 Egret 的 GlowFilter，可设 `inner`、`knockout`，带偏移即为投影）以及宽度最多 8 像素的 `outline`。它们在现有效果组中位于模糊之后执行，两个共享宿主都支持：新增一个通道把组的 alpha 横向扩散到临时目标，合成时再纵向扩散，并在所见颜色上应用矩阵，把发光绘制在组的下方或内部。每组 uniform 从 448 字节增至 576 字节，其他上限不变。新示例 `examples/filters` 在无头 Chromium 的软件 WebGL2 中，于六个方块周围各十六处与独立算出的值核对；这里没有在浏览器中绘制 WebGPU。属于 #266。[指南](docs/filters.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/filters/README.zh-CN.md)
+
 ## 沿用 Egret 名称的混合模式 — 2026-11-14
 
 `DisplayObject.blendMode` 可取 `normal`、`add`、`multiply`、`screen` 或 `erase`，作用于对象及其子对象，除非子对象设置了自己的模式。它就是对象共享材质的混合方式，因此着色会保留。`erase` 是材质合同中新增的混合方式，两个宿主都支持：绘制的内容按其 alpha 从目标中擦除。粒子和位图文字可用 `display.blendMode = 'add'` 发光。新示例 `examples/blend-modes` 在无头 Chromium 的软件 WebGL2 中逐像素与每个公式核对；这里没有在浏览器中绘制 WebGPU。属于 #266。[指南](docs/blend-modes.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/blend-modes/README.zh-CN.md)

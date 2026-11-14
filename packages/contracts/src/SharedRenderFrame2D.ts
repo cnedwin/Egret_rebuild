@@ -61,10 +61,26 @@ export interface SharedMeshCommand2D extends SharedDrawState2D {
 /** Frozen effect inputs captured with the same frame and image ownership. */
 export interface SharedEffect2D {
   readonly blurRadius:number;
+  /** Egret's twenty numbers, applied to colour as it is seen after the blur. */
+  readonly colorMatrix?:readonly number[];
+  /** A glow or a hard outline from the alpha of the group, in logical pixels. */
+  readonly glow?:SharedGlow2D;
   readonly maskPageIndex:number|undefined;
   readonly maskRect:Rectangle2D|undefined;
   readonly matrix:Matrix2D;
   readonly clips:readonly ClipRectangle2D[];
+}
+export interface SharedGlow2D {
+  readonly kind:'glow'|'outline';
+  readonly color:number;
+  readonly alpha:number;
+  /** How far it spreads: the blur of a glow, the width of an outline. */
+  readonly spread:number;
+  readonly strength:number;
+  readonly inner:boolean;
+  readonly knockout:boolean;
+  readonly offsetX:number;
+  readonly offsetY:number;
 }
 export interface SharedBarrierCommand2D {
   readonly effect?:SharedEffect2D;

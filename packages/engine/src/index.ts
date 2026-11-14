@@ -24,7 +24,7 @@ export { createSharedMaterial2D, createSharedGeometry2D } from '@egret/contracts
 export type { SharedMaterialInput2D, SharedMaterial2D, SharedFloatArray2D, SharedIndexArray2D, SharedGeometryInput2D, SharedGeometry2D, TextureViewRegionInput2D, TextureViewRegion2D } from '@egret/contracts';
 export { SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
 export type { SharedFrameProfile2D, SharedOutputAlpha2D, SharedFrameOptions2D, SharedPage2D, SharedRegion2D, SharedDrawState2D, SharedRectangleCommand2D, SharedImageCommand2D, SharedMeshCommand2D, SharedBarrierCommand2D,
-  SharedEffect2D, SharedRenderCommand2D, SharedRenderFrame2D, SharedRenderHostAdapter } from '@egret/contracts';
+  SharedEffect2D, SharedGlow2D, SharedRenderCommand2D, SharedRenderFrame2D, SharedRenderHostAdapter } from '@egret/contracts';
 export { Texture, createTexture, createTextureView, isTexture, Bitmap, Mesh2D } from '@egret/runtime';
 export { createSequenceClip, SequencePlayer } from '@egret/runtime';
 export type { SequenceFrameInput, SequenceClipInput, SequenceClip, SequenceRegion, SequenceSample, SequencePlaybackMode } from '@egret/runtime';
@@ -45,4 +45,4 @@ export type { AtlasFrameLayout } from '@egret/runtime';
 
 export type { DisplaySubtreeTicket } from './displaySubtreeTicket.js';
 
-export type { RenderEffect2D } from '@egret/runtime';
+export type { RenderEffect2D, RenderGlow2D, RenderOutline2D } from '@egret/runtime';
