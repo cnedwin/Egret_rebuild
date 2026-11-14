@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/en/docs/ui-examples.md",
+      "originRole": "First-party index of the UI example screens, with what each shows and what to check before a screen is done; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/ui-examples.md",
+      "originRole": "First-party Chinese index of the UI example screens; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/ui-examples.md",
+      "zh": "knowledge-base/Cns/docs/ui-examples.md"
+    }
+  ]
+}
