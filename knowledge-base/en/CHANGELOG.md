@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A starter example and a page on what to import — 2026-11-15
+
+`examples/starter` is a starting point for a 2D game in about a hundred lines: a Host, an Engine, a scope, a stage, pointer and keyboard input and a frame loop that skips a frame while the Host holds two. It is checked from the canvas in headless Chromium with software WebGL2; WebGPU was not run. [What to import](docs/entry-points.md) lists, by task, which of the 38 entries of `@egret/engine` to use. Part of #289. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.md)
+
 ## The same colours in every JavaScript engine — 2026-11-15
 
 The linear-light value of an sRGB byte is now a written table of 256 numbers. Rectangle fills, bitmap text and particle tints, glow colours and the clear colour all read it. It was a power computed at run time, and JavaScript engines differ in the last bit of a power: Node 22 and Node 26 gave different numbers for some bytes, so a frame prepared from one scene was not the same in both. The table holds the values Node 26 computed, so nothing changes there. `tests/shared-frame-golden.test.mjs` now reproduces its digests on Node 22 as well. Part of #289.
