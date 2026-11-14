@@ -84,6 +84,44 @@ const ENDINGS: readonly (readonly [string, string, string?])[] = [
 ];
 /** Codes with a sentence of their own. */
 const WRITTEN: Readonly<Record<string, string>> = {
+  ANIMATION_COMMANDS_REPLACED: 'The commands given to an animation for this tick were replaced by later ones before they ran.',
+  ANIMATION_RATE_ZERO: 'A rate of 0 was given to an animation. A rate is above or below zero: pause the animation to hold it still.',
+  ANIMATION_TERMINAL_COMMAND: 'A command was given for an animation that has ended.',
+  ASSET_NO_DEMAND: 'The load of an asset was stopped because everything that had asked for it gave it up.',
+  GAMEPAD_SAMPLE: 'The sample given to gamepad input is not a gamepad sample.',
+  HOVER_INPUT_REASON: 'The reason given to hover input for a leave is not one it knows.',
+  HOVER_INPUT_SAMPLE: 'The sample given to hover input is not an object with a pointer id, a pointer type, global coordinates and a timestamp.',
+  HOVER_INPUT_VIEWPORT: 'The viewport revision given to hover input is not a whole number above the last one.',
+  POINTER_INPUT_REASON: 'The reason given to pointer input for a cancel is not one it knows.',
+  POINTER_INPUT_SAMPLE: 'The sample given to pointer input is not a pointer sample.',
+  POINTER_INPUT_VIEWPORT: 'The viewport revision given to pointer input is not a whole number above the last one.',
+  KEYBOARD_TARGET_INELIGIBLE: 'The keyboard target cannot take focus now, for instance because it is disabled or not on the stage.',
+  SEQUENCE_RESET_PRESERVE_STATE: 'A sequence is reset keeping its place only while it is running or paused, with no command waiting.',
+  SPINE_LOADER_RECEIVER: 'A method of the Spine loader was called apart from the loader. Call it on the loader: loader.load(...).',
+  UI_CONTROL_DIRECTION: 'The direction given to a UI control is not two finite numbers.',
+  UI_CONTROL_RADIUS: 'The radius given to a UI control is not a finite number above zero.',
+  UI_LAYER_BASE: 'The base layer of a UI is always open. It is not opened or closed by name.',
+  UI_LAYER_MANAGER_OWNED: 'This Engine already has a UI layer manager. An Engine has one.',
+  UI_LAYER_ROOT_OWNED: 'This UI root already belongs to a layer.',
+  UI_LAYOUT_UNSTABLE: 'The layout of the UI did not settle in eight rounds: a size keeps changing something it depends on.',
+  UI_ROW_NOT_REALIZED: 'The row is not on screen now, so there is nothing of it to act on. Scroll it into view first.',
+  UI_ROW_RETAINED: 'A row that is in use was removed from its list or changed under it.',
+  UI_SEMANTICS_DESCRIPTION: 'A field of a UI semantics entry is not valid. The entry and the field are in cause.',
+  UI_SEMANTICS_FOCUS: 'More than one entry of UI semantics is focused, or the focused one is inert. The entry is in cause.',
+  UI_SEMANTICS_PARENT: 'An entry of UI semantics is not inside the kind of entry its role needs.',
+  UI_SEMANTICS_RELATION: 'An entry of UI semantics names another entry that is not in the tree. The entry is in cause.',
+  UI_SEMANTICS_REVISION: 'The revision given to UI semantics is older than the one it has.',
+  UI_SOURCE_REVISION: 'The rows of a list changed while the UI was reading them under one revision.',
+  UI_STALE_PREPARATION: 'The prepared UI no longer matches the UI it was prepared for. Prepare it again.',
+  UI_TREE_SHAPE: 'A new description of the UI has other nodes, or a node of another kind, than the tree it updates.',
+  WEBGL2_CLOSE_UNSAFE: 'The WebGL2 Host could not release everything it made while closing. The cause is in cause.',
+  WEBGL2_VALIDATION: 'WebGL2 refused an operation of the Host as not valid. The cause is in cause.',
+  WEBGPU_CLOSE_UNSAFE: 'The WebGPU Host could not release everything it made while closing. The cause is in cause.',
+  WEBGPU_INTERNAL: 'WebGPU reported an internal error. The cause is in cause.',
+  WEBGPU_VALIDATION: 'WebGPU refused an operation of the Host as not valid. The cause is in cause.',
+  WEB_PNG_CLOSE_INCOMPLETE: 'The browser image provider closed, but not everything it held could be released. The reasons are in cleanupErrors.',
+  WEB_RESOURCE_CLOSE_INCOMPLETE: 'The browser resource source closed, but not everything it held could be released. The reasons are in cleanupErrors.',
+  TWEEN_OPTIONS_INVALID: 'The options of a tween are not valid: from and to are finite numbers, durationSeconds is above zero, and onUpdate is a function that returns nothing.',
   OBJECT_DISPOSED: 'The object was disposed and can no longer be changed or added. Make a new one, or stop using it after its scope is disposed.',
   ENGINE_CLOSED: 'The Engine was closed. Nothing made with it can be used any more.',
   ENGINE_MISMATCH: 'The object belongs to another Engine. A display tree, a scope and their resources all belong to one Engine.',
@@ -114,7 +152,6 @@ const WRITTEN: Readonly<Record<string, string>> = {
   CLOCK_SOURCE_INVALID: 'The time given to engine.advanceTime is not a finite number of seconds, zero or more.',
   CLOCK_REENTRANT: 'engine.advanceTime was called from inside a tick or while a frame was being captured.',
   FRAME_LOOP_CLOSED: 'The frame loop was disposed. Create a new one.',
-  TWEEN_OPTIONS_INVALID: 'The tween options are not valid: it needs a duration above zero and an update function.',
   ASSET_LOAD_FAILED: 'A provider failed to load the asset. What it threw is in cause.',
   ASSET_PROVIDER_MISSING: 'No provider is registered for this type of asset. Register one with engine.assets.register before acquiring it.',
   ASSET_PROVIDER_REGISTERED: 'A provider is already registered for this type of asset.',
@@ -164,27 +201,47 @@ const WRITTEN: Readonly<Record<string, string>> = {
   WEBGPU_NOT_STARTED: 'The Host has not started. An Engine starts its Host; wait for createEngine to resolve before drawing.',
 };
 
-const words = (tokens: readonly string[]): string => tokens.join(' ').toLowerCase();
-const cache = new Map<string, string>();
+import { ZH_AREAS, ZH_ENDINGS, ZH_WRITTEN } from './errorHelpZh.js';
+
+/** The languages an error's sentence can be in. */
+export type ErrorLanguage = 'en' | 'zh';
+interface Tables { readonly areas: readonly (readonly [string, string])[]; readonly endings: readonly (readonly [string, string, string?])[]; readonly written: Readonly<Record<string, string>>;
+  readonly other: (area: string, rest: string) => string; readonly cache: Map<string, string>; }
+const TABLES: Readonly<Record<ErrorLanguage, Tables>> = {
+  en: { areas: AREAS, endings: ENDINGS, written: WRITTEN, other: (area, rest) => 'A problem with ' + area + ': ' + rest + '.', cache: new Map() },
+  zh: { areas: ZH_AREAS, endings: ZH_ENDINGS, written: ZH_WRITTEN, other: (area, rest) => area + '出现问题：`' + rest + '`。', cache: new Map() },
+};
+let language: ErrorLanguage = 'en';
 /**
- * A sentence for an error code, in English: what went wrong and, for the codes a game meets most, what to do. A code
- * this SDK does not know gives an empty string.
+ * The language of the sentence in the message of every error made from now on: English unless set. The code of an
+ * error is the same in every language.
  */
-export function describeErrorCode(code: string): string {
-  if (typeof code !== 'string') return '';
-  const known = cache.get(code);
+export function setErrorLanguage(value: ErrorLanguage): void {
+  if (value !== 'en' && value !== 'zh') throw new TypeError('The language of errors is "en" or "zh".');
+  language = value;
+}
+export function getErrorLanguage(): ErrorLanguage { return language; }
+const words = (tokens: readonly string[]): string => tokens.join(' ').toLowerCase();
+/**
+ * A sentence for an error code: what went wrong and, for the codes a game meets most, what to do. It is in the
+ * language given, or the one set by `setErrorLanguage`. A code this SDK does not know gives an empty string.
+ */
+export function describeErrorCode(code: string, inLanguage: ErrorLanguage = language): string {
+  const tables = TABLES[inLanguage];
+  if (typeof code !== 'string' || tables === undefined) return '';
+  const cache = tables.cache, known = cache.get(code);
   if (known !== undefined) return known;
-  let text = WRITTEN[code] ?? '';
+  let text = tables.written[code] ?? '';
   if (text === '' && /^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+$/.test(code)) {
-    const area = AREAS.find(([prefix]) => code === prefix || code.startsWith(prefix + '_'));
+    const area = tables.areas.find(([prefix]) => code === prefix || code.startsWith(prefix + '_'));
     // A code without a known area has a sentence only when it is written above.
     if (area === undefined) { if (cache.size < 2048) cache.set(code, ''); return ''; }
     const name = area[1], rest = code.slice(area[0].length + 1).split('_').filter(part => part !== '');
-    const ending = ENDINGS.find(([suffix]) => { const parts = suffix.split('_'); return rest.length >= parts.length && rest.slice(-parts.length).join('_') === suffix; });
+    const ending = tables.endings.find(([suffix]) => { const parts = suffix.split('_'); return rest.length >= parts.length && rest.slice(-parts.length).join('_') === suffix; });
     if (ending !== undefined) {
       const object = words(rest.slice(0, rest.length - ending[0].split('_').length));
       text = (object !== '' && ending[2] !== undefined ? ending[2] : ending[1]).replaceAll('{a}', name).replaceAll('{o}', object);
-    } else if (rest.length !== 0) text = 'A problem with ' + name + ': ' + words(rest) + '.';
+    } else if (rest.length !== 0) text = tables.other(name, words(rest));
   }
   if (cache.size < 2048) cache.set(code, text);
   return text;

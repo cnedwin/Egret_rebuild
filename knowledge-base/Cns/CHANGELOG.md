@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 运行时中文错误说明，不再有兜底句 — 2026-11-15
+
+调用 `@egret/engine` 的 `setErrorLanguage('zh')` 之后创建的错误，message 里是中文说明；`error.code` 在两种语言下相同。`describeErrorCode(code, 'en' | 'zh')` 把某个错误码的说明交给程序。原来只有某部分出现问题：xxx这种兜底句的 37 个错误码，现在都有了专门写的中英文说明，并且测试会拒绝新出现的、只能落到兜底句的错误码。`TWEEN_OPTIONS_INVALID` 的说明原先提到了缓动没有的选项，现在写的是 `from`、`to`、`durationSeconds` 和 `onUpdate`。中文说明从文档工具移到了运行时，所以[错误码对照表](docs/error-codes.md)和 message 是同一份文字。
+
 ## 白鹭 5 API 到本 SDK 的对照表 — 2026-11-15
 
 [从白鹭 5 到本 SDK](docs/egret-api-migration.md)逐个调用说明 `egret.runEgret`、`egret.Shape`、`TouchEvent`、`egret.Tween`、`RES`、`egret.TextField`、`eui` 等换成什么，以及哪些没有提供：skew、`name`、非矩形遮罩、`cacheAsBitmap`、缓动链式调用、EXML 和 DragonBones。开头是每个文件里都不同的五件事，结尾是同一个界面的两种写法。每一行的新写法都对照本仓库核对过；写这份对照表时没有实际转换过白鹭 5 工程。

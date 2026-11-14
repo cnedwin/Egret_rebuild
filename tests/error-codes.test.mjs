@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as egret from '@egret/engine';
 import { collectErrorCodes, buildErrorCodeDocument, ERROR_CODE_DOCUMENTS } from '../tools/error-codes.mjs';
-import { describeErrorCode } from '../packages/runtime/dist/errorHelp.js';
+const { describeErrorCode, setErrorLanguage, getErrorLanguage } = egret;
 
 const host = { surface: {}, start() {}, stop() {}, async close() {}, setTimeout() { return () => {}; } };
 const thrown = run => { try { run(); } catch (cause) { return cause; } return undefined; };
@@ -50,6 +50,10 @@ test('EC03 every code the sources name has a sentence, a period at its end and n
   const without = codes.filter(code => describeErrorCode(code) === '');
   assert.deepEqual(without, [], 'write a sentence in packages/runtime/src/errorHelp.ts for each');
   for (const code of codes) assert.match(describeErrorCode(code), /^[^\n|]+\.$/, code);
+  // In Chinese too, and in neither language the short form that only spells the code out again.
+  const vague = codes.filter(code => describeErrorCode(code, 'zh') === '' || describeErrorCode(code, 'zh').includes('出现问题') || describeErrorCode(code, 'en').startsWith('A problem with'));
+  assert.deepEqual(vague, [], 'a code whose ending is not one of the usual kinds needs a sentence of its own, in errorHelp.ts and errorHelpZh.ts');
+  for (const code of codes) assert.match(describeErrorCode(code, 'zh'), /^[^\n|]+。$/, code);
 });
 
 test('EC04 the two error code documents are what the tool writes now', () => {
@@ -61,4 +65,27 @@ test('EC04 the two error code documents are what the tool writes now', () => {
     for (const code of codes) assert.ok(written.includes('| `' + code + '` | '), language + ' ' + code);
     assert.ok(!written.includes('| — |'), language);
   }
+});
+
+test('EC05 the sentence of a message is in the language that was set, and the code is the same in both', () => {
+  assert.equal(getErrorLanguage(), 'en');
+  const english = new egret.EgretError('FRAME_RENDER_FAILED');
+  try {
+    setErrorLanguage('zh');
+    assert.equal(getErrorLanguage(), 'zh');
+    const chinese = new egret.EgretError('FRAME_RENDER_FAILED');
+    assert.equal(chinese.code, english.code);
+    assert.equal(chinese.message, 'FRAME_RENDER_FAILED: ' + describeErrorCode('FRAME_RENDER_FAILED', 'zh'));
+    assert.match(chinese.message, /Host 拒绝或未能绘制这一帧/);
+    // An error made before keeps the message it was made with, and a code this SDK does not know has no sentence.
+    assert.match(english.message, /^FRAME_RENDER_FAILED: The Host refused/);
+    assert.equal(new egret.EgretError('ZZ_NOT_A_CODE').message, 'ZZ_NOT_A_CODE');
+    // Put together from an area and an ending, like the English one.
+    assert.equal(describeErrorCode('TWEEN_NOT_STARTED'), '缓动还没有开始。');
+    assert.match(describeErrorCode('TWEEN_NOT_STARTED', 'en'), /not been started/);
+    assert.throws(() => setErrorLanguage('fr'), TypeError);
+    assert.equal(getErrorLanguage(), 'zh');
+  } finally { setErrorLanguage('en'); }
+  assert.equal(new egret.EgretError('FRAME_RENDER_FAILED').message, english.message);
+  assert.equal(describeErrorCode('FRAME_RENDER_FAILED', 'de'), '');
 });
