@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A group of options as one stop, without moving it — 2026-11-14
+
+The control examples no longer move a keyboard stop from option to option. The options of a group sit inside one display object, which is the stop and has the one key binding; the focus stays there while the selection moves, so a held arrow key now repeats through the options. The guide says how. Examples and documentation only. Part of #90. [Guide](docs/ui-controls.md#keys)
+
 ## One settings screen that joins the UI — 2026-11-14
 
 A new example puts the pieces of the UI on one screen: a switch, a group of options, a text field that takes Chinese, a theme switch, a button that asks in a modal card before it resets, and a managed list of two hundred profiles as one stop of the keyboard. Every control answers a press, its usual keys and a request of assistive technology through the same state. Changing the theme repaints the drawn controls, the rows, the text and the closed card in one frame. Eight scenarios pass in headless Chromium with software WebGL2; no hardware GPU, phone, input method or screen reader was run. It has no mask or blur group and exercises no device recovery. Part of #90. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/README.md)

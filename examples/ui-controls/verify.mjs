@@ -100,6 +100,11 @@ await scenario('the keyboard reaches the same controls', desktop, async page => 
   await key(page, 'Home'); assert.equal((await read(page)).level.selected, 'easy');
   await key(page, 'End'); assert.equal((await read(page)).level.selected, 'hard');
   await key(page, 'ArrowUp'); assert.equal((await read(page)).level.selected, 'normal');
+  // A held arrow key repeats: the focus stays on the group while the selection moves through it.
+  await page.keyboard.down('ArrowRight'); await page.keyboard.down('ArrowRight'); await settle(page); now = await read(page);
+  assert.deepEqual([now.level.selected, now.focus], ['easy', 'level']);
+  await page.keyboard.up('ArrowRight'); await settle(page);
+  await key(page, 'ArrowRight'); assert.equal((await read(page)).level.selected, 'normal');
   // Space is not a key of the group, and the page did not scroll for any key that was taken.
   await key(page, 'Tab'); assert.equal((await read(page)).focus, 'apply');
   await key(page, 'Space'); await key(page, 'Enter'); now = await read(page);

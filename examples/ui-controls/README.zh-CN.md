@@ -29,7 +29,7 @@ node tools/serve-canvas.mjs
 
 `main.mjs` 在触点输入上创建一个 `createToggleControl`、一个 `createSelectionGroup` 和一个 `createActionControl`，并在悬停输入上为五个表面各创建一个 `createHoverControl`。每个回调都会重绘。颜色来自一个 `createUiTheme`：皮肤为每个状态命名一种颜色，`selectUiSkin` 在成立的状态中选择，先看是否不可用，再看是否按住，然后是被指向。已设置的控件使用单独的皮肤，所以被指向时仍保持已设置的外观。
 
-按键来自 `@egret/engine/web/keyboard`，交给获得焦点的显示对象，`createControlKeys` 在那里绑定每个控件的常用按键：空格或回车松开时翻转开关、激活按钮，方向键、Home 和 End 在选项组内移动。按住的键让控件像被按下一样绘制，按住期间失去焦点则不激活。选项组是一个键盘停靠点，停靠点跟随被选中的选项。
+按键来自 `@egret/engine/web/keyboard`，交给获得焦点的显示对象，`createControlKeys` 在那里绑定每个控件的常用按键：空格或回车松开时翻转开关、激活按钮，方向键、Home 和 End 在选项组内移动。按住的键让控件像被按下一样绘制，按住期间失去焦点则不激活。三个选项放在同一个显示对象里，它就是选项组的键盘停靠点，也只在它上面做一次绑定。选择在组内移动时焦点一直留在组上，所以按住方向键可以连续经过各个选项，焦点框画在被选中的那一个上。
 
 `createUiSemantics` 描述这五个控件：页面在绘制之后发布，每个节点在发布时读取所绘的控件。`createBrowserSemantics` 在每个控件上方覆盖一个不可见的元素。键盘仍属于画布。
 

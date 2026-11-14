@@ -157,7 +157,7 @@ const keys = createControlKeys({ keyboard, target: button, kind: 'action', contr
 
 While a text field is open the keys belong to the platform field. When the edit ends the application gives the focus back to the field with `keyboard.focus(id)`.
 
-The example registers one keyboard stop for its group and moves that stop to the selected item, so that Tab enters and leaves the group once. Each option has a binding, because the keys arrive at whichever option holds the focus.
+**A group is one stop.** Put the options inside one display object, register that object as the stop, and bind the group's keys there once. The focus then stays on the group while the selection moves inside it: Tab enters and leaves the group once, a held arrow key goes on through the options, and the application draws the focus ring on the option that is selected. The semantic node of that option is the focused one. The examples do this.
 
 ## Painting states
 
