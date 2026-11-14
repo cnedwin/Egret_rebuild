@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/ui-roster-table/index.html",
+      "originRole": "First-party page of the table example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/ui-roster-table/main.mjs",
+      "originRole": "First-party example of a managed list as a table that sorts by its headers, with semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-roster-table/verify.mjs",
+      "originRole": "First-party real-browser check of the table example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-roster-table/README.md",
+      "originRole": "First-party instructions for the table example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-roster-table/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the table example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/ui-roster-table/README.md",
+      "zh": "examples/ui-roster-table/README.zh-CN.md"
+    }
+  ]
+}

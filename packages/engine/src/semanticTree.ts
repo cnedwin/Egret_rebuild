@@ -3,7 +3,7 @@ import { EgretError } from '@egret/runtime';
 import type { DisplayObject } from '@egret/runtime';
 import type {
   SemanticAction, SemanticBounds, SemanticChecked, SemanticDescription, SemanticExtent, SemanticNode, SemanticNodeOptions, SemanticOrientation,
-  SemanticPosition, SemanticRange, SemanticRole, SemanticSnapshot, SemanticSnapshotNode, SemanticsState, UiSemantics, UiSemanticsOptions,
+  SemanticPosition, SemanticRange, SemanticRole, SemanticSnapshot, SemanticSort, SemanticSnapshotNode, SemanticsState, UiSemantics, UiSemanticsOptions,
 } from './semanticTypes.js';
 
 interface Rule {
@@ -13,6 +13,8 @@ interface Rule {
   /** The role its parent must have. */
   readonly inside?: SemanticRole;
   readonly fields: readonly string[];
+  /** Fields a node of the role may leave out, where the other roles that have them must say. */
+  readonly loose?: readonly string[];
 }
 const rules: Readonly<Record<SemanticRole, Rule>> = Object.freeze({
   group: { leaf: false, named: false, fields: ['disabled'] },
@@ -43,11 +45,13 @@ const rules: Readonly<Record<SemanticRole, Rule>> = Object.freeze({
   alert: { leaf: true, named: false, fields: [] },
   // Cells in rows and columns. A row is which row it is, and a cell which column it is in.
   grid: { leaf: false, named: false, fields: ['disabled', 'multiple', 'extent'] },
-  row: { leaf: false, named: false, inside: 'grid', fields: ['position'] },
-  gridcell: { leaf: true, named: true, inside: 'row', fields: ['disabled', 'selected', 'position'] },
+  // Rows are what is selected in a table, and cells in a board: either says so where it is the one.
+  row: { leaf: false, named: false, inside: 'grid', fields: ['disabled', 'selected', 'position'], loose: ['selected'] },
+  gridcell: { leaf: true, named: true, inside: 'row', fields: ['disabled', 'selected', 'position'], loose: ['selected'] },
+  columnheader: { leaf: true, named: true, inside: 'row', fields: ['disabled', 'position', 'sort'] },
 });
 /** State that belongs to some roles only. A description that sets one its role does not have is refused. */
-const particular = ['disabled', 'checked', 'selected', 'expanded', 'modal', 'multiline', 'multiple', 'extent', 'range', 'orientation', 'controls', 'position', 'value'] as const;
+const particular = ['disabled', 'checked', 'selected', 'expanded', 'modal', 'multiline', 'multiple', 'extent', 'sort', 'range', 'orientation', 'controls', 'position', 'value'] as const;
 const offers: Readonly<Record<string, readonly SemanticAction[]>> = Object.freeze({
   '': Object.freeze([]), a: Object.freeze(['activate']), f: Object.freeze(['focus']), af: Object.freeze(['activate', 'focus']),
 } as Record<string, readonly SemanticAction[]>);
@@ -76,7 +80,7 @@ function sameNode(a: SemanticSnapshotNode, b: SemanticSnapshotNode): boolean {
     && a.bounds.x === b.bounds.x && a.bounds.y === b.bounds.y && a.bounds.width === b.bounds.width && a.bounds.height === b.bounds.height
     && a.range?.now === b.range?.now && a.range?.min === b.range?.min && a.range?.max === b.range?.max
     && a.position?.index === b.position?.index && a.position?.size === b.position?.size
-    && a.extent?.rows === b.extent?.rows && a.extent?.columns === b.extent?.columns;
+    && a.extent?.rows === b.extent?.rows && a.extent?.columns === b.extent?.columns && a.sort === b.sort;
 }
 
 /**
@@ -150,7 +154,7 @@ export function createUiSemantics(options: UiSemanticsOptions = {}): UiSemantics
     const refuse = (field: string): EgretError => new EgretError('UI_SEMANTICS_DESCRIPTION', { cause: new TypeError(entry.id + ': ' + field) });
     if (described === null || typeof described !== 'object' || Array.isArray(described)) throw refuse('description');
     const rule = rules[entry.role];
-    const { bounds, name = '', hidden, focused, order = 0, disabled, checked, selected, expanded, modal, multiline, multiple, extent, range, orientation, controls, position, value } = described;
+    const { bounds, name = '', hidden, focused, order = 0, disabled, checked, selected, expanded, modal, multiline, multiple, extent, sort, range, orientation, controls, position, value } = described;
     if (!flag(hidden)) throw refuse('hidden');
     if (hidden === true) return undefined;
     for (const field of particular) if (described[field] !== undefined && !rule.fields.includes(field)) throw refuse(field);
@@ -166,7 +170,8 @@ export function createUiSemantics(options: UiSemanticsOptions = {}): UiSemantics
     if (!flag(multiple)) throw refuse('multiple');
     const checkable = rule.fields.includes('checked');
     if (checkable ? typeof checked !== 'boolean' && !(checked === 'mixed' && entry.role === 'checkbox') : checked !== undefined) throw refuse('checked');
-    if (rule.fields.includes('selected') ? typeof selected !== 'boolean' : selected !== undefined) throw refuse('selected');
+    if (rule.fields.includes('selected') ? typeof selected !== 'boolean' && !(selected === undefined && rule.loose?.includes('selected') === true) : selected !== undefined) throw refuse('selected');
+    if (sort !== undefined && sort !== 'ascending' && sort !== 'descending' && sort !== 'none') throw refuse('sort');
     if (value !== undefined && (typeof value !== 'string' || value.length > 16384)) throw refuse('value');
     // A scroll bar, a slider and a spin button are somewhere in their range. A progress bar without one shows work of unknown length.
     const ranged = entry.role === 'scrollbar' || entry.role === 'slider' || entry.role === 'spinbutton';
@@ -191,6 +196,7 @@ export function createUiSemantics(options: UiSemanticsOptions = {}): UiSemantics
         multiline: entry.role === 'textbox' ? multiline === true : undefined,
         multiple: rule.fields.includes('multiple') ? multiple === true : undefined,
         extent: extent === undefined ? undefined : Object.freeze({ rows: extent.rows, columns: extent.columns }) as SemanticExtent,
+        sort: sort as SemanticSort | undefined,
         range: range === undefined ? undefined : Object.freeze({ now: range.now, min: range.min, max: range.max }) as SemanticRange,
         // A scroll bar stands beside what it scrolls and a menu lists its items downward; a slider and a row of tabs lie along the line they are read in.
         orientation: rule.fields.includes('orientation') ? (orientation ?? (entry.role === 'scrollbar' || entry.role === 'menu' ? 'vertical' : 'horizontal')) as SemanticOrientation : undefined,

@@ -60,14 +60,15 @@ The set is the first control set of the UI. A role that is not listed is refused
 | `menu` | A menu of actions | `orientation`, `disabled` | |
 | `menuitem` | One of those actions | `disabled`, `position` | `menu` |
 | `grid` | Cells in rows and columns | `extent`, `multiple`, `disabled` | |
-| `row` | One row of a grid | `position` | `grid` |
-| `gridcell` | One cell of a row | `selected` (required), `disabled`, `position` | `row` |
+| `row` | One row of a grid | `position`, `selected`, `disabled` | `grid` |
+| `gridcell` | One cell of a row | `selected`, `disabled`, `position` | `row` |
+| `columnheader` | The header of a column, in a row of headers | `sort`, `position`, `disabled` | `row` |
 | `dialog` | A dialog | `modal` | |
 | `textbox` | A text field that is not being edited | `value`, `multiline`, `disabled` | |
 | `status` | A message that is said when it changes, after what is being said | | |
 | `alert` | A message that is said at once | | |
 
-Every node has `bounds`, and may have `name`, `hidden`, `focused` and `order`. A name is required except on `group`, `radiogroup`, `listbox`, `list`, `listitem`, `tablist`, `menu`, `grid` and `row`, and on `status` and `alert`, whose name is the message and may be empty. `image`, `text`, `button`, `checkbox`, `switch`, `radio`, `option`, `scrollbar`, `slider`, `spinbutton`, `progressbar`, `tab`, `menuitem`, `gridcell`, `textbox`, `status` and `alert` are read as one thing and hold no nodes.
+Every node has `bounds`, and may have `name`, `hidden`, `focused` and `order`. A name is required except on `group`, `radiogroup`, `listbox`, `list`, `listitem`, `tablist`, `menu`, `grid` and `row`, and on `status` and `alert`, whose name is the message and may be empty. `image`, `text`, `button`, `checkbox`, `switch`, `radio`, `option`, `scrollbar`, `slider`, `spinbutton`, `progressbar`, `tab`, `menuitem`, `gridcell`, `columnheader`, `textbox`, `status` and `alert` are read as one thing and hold no nodes.
 
 A `slider` and a `tablist` lie along the line unless `orientation` says `'vertical'`; a `scrollbar` stands beside what it scrolls, and the items of a `menu` stand one under another, unless it says `'horizontal'`. A slider and a spin button are moved by [their keys](ui-controls.md#keys) once they hold the focus, so their nodes take `onFocus` and need no activation.
 
@@ -105,7 +106,7 @@ semantics.publish(rows.sync());
 `root` is the root `createUiRoot` returned and `list` is the id of the virtual list in its tree. `sync()` reads what the root committed: it removes the nodes of the rows that no longer show, moves those that stayed, adds those that show now, and returns the committed revision, which is what `publish` takes. A commit alone changes nothing in the tree.
 
 - **Places.** A row's bounds are the part of it the list shows, on the stage. Its `position` is its index in the whole list and the number of records, and its `order` is its index.
-- **Roles.** `'list'` publishes list items, which may hold other nodes; `'listbox'` publishes options, which need a name from `describeRow`. An option that does not say is not selected. With `multiple: true` the list box says that several options may be selected at once; each option still says whether it is, and the application keeps the set of selected keys, because the list has rows only for what shows. The [multiple selection example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-multi-select) does this. `'menu'` publishes menu items, which need a name as options do and are never selected.
+- **Roles.** `'list'` publishes list items, which may hold other nodes; `'listbox'` publishes options, which need a name from `describeRow`. An option that does not say is not selected. With `multiple: true` the list box says that several options may be selected at once; each option still says whether it is, and the application keeps the set of selected keys, because the list has rows only for what shows. The [multiple selection example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-multi-select) does this. `'menu'` publishes menu items, which need a name as options do and are never selected. `'grid'` publishes the rows of [a table](#a-table-of-a-managed-list).
 - **Ids.** The list node is `id`, by default the id of the root, a slash and the id of the list. A row adds a slash and its key, and `rows.rowId(key)` says it.
 - **Focus.** The row that holds the focus of the root is the focused node. With `focusable: true` a row can be asked to take the focus, which needs a root with a keyboard. A row that scrolls away loses the focus in the root and its node in the tree together, so a projection never names an element that does not exist.
 - **Nodes inside a row.** `onRowAdded(key, id)` is called after the node of a row was added. Nodes added there with `parent: id` go when the row does, and the callback is called again when the row is realized again.
@@ -183,7 +184,7 @@ The keys are the application's, as everywhere: the arrow keys move the focus amo
 
 ### A grid
 
-A `grid` is things in rows and columns that are reached in two directions: the slots of a bag, a board, a calendar. It holds `row` nodes, a row holds `gridcell` nodes, and each cell says whether it is `selected`:
+A `grid` is things in rows and columns that are reached in two directions: the slots of a bag, a board, a calendar. It holds `row` nodes and a row holds `gridcell` nodes. Where cells are what is selected, as here, each cell says whether it is `selected`; where rows are, each row says it and the cells say nothing of it:
 
 ```js
 semantics.add({ id: 'bag', role: 'grid', describe: () => ({ name: 'Bag', bounds: bagBounds, extent: { rows: 4, columns: 6 } }) });
@@ -198,7 +199,35 @@ for (let index = 0; index < 24; index++) semantics.add({ id: 'bag/' + index, rol
 
 `extent` is how many rows and columns the grid has in all. The `position` of a row says which row it is and that of a cell which column it is in, both counted from one. A reader needs them when not every row is published, and they cost nothing when all are. A cell has a name: an empty one says that it is empty.
 
-A grid is one keyboard stop with a cursor of its own, as a row of tabs is one stop with its selection. The arrow keys move the cursor in two directions and stop at the edges; Home and End go to the ends of the row, and with Control to the ends of the grid. The cell under the cursor is the focused node, so a cell that is asked to take the focus gets the cursor and the grid the focus. The keys are the application's, and the [bag example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-inventory) binds them. Headers of rows and columns, cells that span several, and a grid made of the rows of a managed list are not in this slice.
+A grid is one keyboard stop with a cursor of its own, as a row of tabs is one stop with its selection. The arrow keys move the cursor in two directions and stop at the edges; Home and End go to the ends of the row, and with Control to the ends of the grid. The cell under the cursor is the focused node, so a cell that is asked to take the focus gets the cursor and the grid the focus. The keys are the application's, and the [bag example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-inventory) binds them. Headers of rows and cells that span several are not in this slice.
+
+### A table of a managed list
+
+The rows of a [managed list](#a-managed-virtual-list) are the rows of a grid with `role: 'grid'`. The helper publishes the grid with its `extent` and one `row` for each row that shows, with its place among all the rows. The cells inside a row are the application's: they are added when the row is, and go with it. A row of headers above the list is the application's too, as a `row` of the same grid:
+
+```js
+const rows = createUiListSemantics({
+  semantics, root, list: 'members', id: 'roster', role: 'grid', name: 'Roster', columns: 4, rowOffset: 1, focusable: true,
+  describeRow: key => ({ selected: key === selected }), onActivateRow: select,
+  onRowAdded(key, id) {
+    for (const [at, column] of columns.entries()) semantics.add({ id: id + '/' + column.key, role: 'gridcell', parent: id, describe: () => {
+      const part = rows.rowBounds(key);
+      return { name: column.text(key), bounds: { x: part.x + column.x, y: part.y, width: column.width, height: part.height }, position: { index: at + 1, size: 4 }, order: at };
+    } });
+  },
+});
+semantics.add({ id: 'roster/head', role: 'row', parent: 'roster', describe: () => ({ bounds: headBounds, position: { index: 1, size: count + 1 }, order: -1 }) });
+for (const [at, column] of columns.entries()) semantics.add({ id: 'roster/head/' + column.key, role: 'columnheader', parent: 'roster/head',
+  onActivate: () => sortBy(column.key), onFocus: () => keyboard.focus('head-' + column.key, { visible: true }),
+  describe: () => ({ name: column.name, bounds: column.headBounds, sort: sorted.column === column.key ? sorted.way : 'none', position: { index: at + 1, size: 4 } }) });
+```
+
+- **`columns`** is how many columns the grid has, and a grid needs it. **`rowOffset`** is how many rows the application publishes above the first row of the list, 0 unless said: with one row of headers the first record is the second row of the grid, and the grid has one row more than the list has records.
+- **`rows.rowBounds(key)`** is the part of a row that the list shows, on the stage, as of the last `sync()`. A cell is measured from it, so a row that is cut by the edge of the list has cells that are cut the same way.
+- **Rows are what is selected** when `describeRow` says `selected`: every row then says whether it is, and with `multiple: true` the grid says that several may be. Without it no row says anything of selection.
+- **A header** is a `columnheader` in a row. `sort` says whether the rows are ordered by its column: `'ascending'`, `'descending'`, or `'none'` for a column they could be ordered by and are not. A header that does not say cannot be sorted by. It is activated as a button is.
+
+When the order changes, give the list its records in the new order with `setSource` and then say where it should be, as with `setScrollOffset(0)`: [a list keeps its anchor in view](ui-data-panel.md) through a new source unless it is told otherwise. The [table example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-roster-table) sorts forty members by four columns this way.
 
 ### Messages
 
@@ -236,7 +265,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 `width` and `height` are the logical size the bounds are given in. The projection puts an invisible container after the canvas, laid over it, with one element for each published node, and follows every publication. It writes only what changed.
 
 - **The canvas keeps the keyboard.** The canvas gets `role="application"`, the label, and `aria-owns` naming the container, so the nodes are read as what is inside it. The node that is `focused` is named by `aria-activedescendant`. No element of the projection is a Tab stop: a native button carries `tabindex="-1"` from the moment it is made, whatever it can do, and a plain element carries it only where a request may give it the focus. The keys of the application go on working exactly as they did, and past its last stop Tab leaves the canvas.
-- **Elements.** `button`, `checkbox`, `switch`, `radio`, `option`, `tab`, `menuitem` and `gridcell` are native buttons carrying their role. The rest are plain elements with a role, and `text`, `status` and `alert` are their text. State is written as the ARIA attribute of that state: `aria-checked`, `aria-selected`, `aria-expanded`, `aria-disabled`, `aria-modal`, `aria-multiline`, `aria-multiselectable`, `aria-valuenow` with its bounds, `aria-orientation`, `aria-controls`, `aria-posinset` and `aria-setsize`, and in a grid `aria-rowcount`, `aria-colcount`, `aria-rowindex` and `aria-colindex`. The outermost inert element gets the `inert` attribute, and the page keeps everything under it away from every user.
+- **Elements.** `button`, `checkbox`, `switch`, `radio`, `option`, `tab`, `menuitem`, `gridcell` and `columnheader` are native buttons carrying their role. The rest are plain elements with a role, and `text`, `status` and `alert` are their text. State is written as the ARIA attribute of that state: `aria-checked`, `aria-selected`, `aria-expanded`, `aria-disabled`, `aria-modal`, `aria-multiline`, `aria-multiselectable`, `aria-valuenow` with its bounds, `aria-orientation`, `aria-controls`, `aria-posinset` and `aria-setsize`, and in a grid `aria-rowcount`, `aria-colcount`, `aria-rowindex`, `aria-colindex` and `aria-sort`. The outermost inert element gets the `inert` attribute, and the page keeps everything under it away from every user.
 - **Geometry.** Each element lies over the control it describes, so a reader's highlight and exploration by touch find it where it is drawn. The container holds logical units and one scale maps it onto the rectangle of the canvas. It follows a resize, a scroll and a change of the visual viewport. `projection.sync()` measures again after a change of layout that came with no event. While the canvas has no size the projection is hidden.
 - **Pointers go through.** The container takes no pointer. A mouse or a finger meets the canvas as before.
 - **Requests.** A click made of an element, the way an accessibility interface makes it, performs `activate`. A request to focus an element performs `focus`, and the focus of the page is given back to the canvas.
@@ -259,11 +288,11 @@ The projection adds no key handling. Keys arrive through the [keyboard input](ke
 
 | Check | Where | Result |
 | --- | --- | --- |
-| The tree: 24 cases | Node | Pass |
+| The tree: 25 cases | Node | Pass |
 | The projection against a stand-in for the page: 17 cases | Node | Pass |
 | A strict TypeScript consumer of both entries, with nine refused misuses | Node | Pass |
 | The example page: the computed accessibility tree, the active descendant under Tab and the arrow keys, each element over its control, requests made of the elements, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 4 scenarios beside the 7 of the controls |
-| The rows of a managed list, a list that is hidden, a list box with several selections, a list as a menu, the boxes of a root and a layer as a dialog: 17 cases on a genuine Engine, a genuine UI root and a genuine layer manager, with a strict TypeScript consumer and seven refused misuses | Node | Pass |
+| The rows of a managed list, a list that is hidden, a list box with several selections, a list as a menu, a list as a grid under rows of the application's own, the boxes of a root and a layer as a dialog: 19 cases on a genuine Engine, a genuine UI root and a genuine layer manager, with a strict TypeScript consumer and seven refused misuses | Node | Pass |
 | [The list example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics): the list box the browser computes for 8 of 50,000 rows, the active descendant through recycled rows, a jump to row 40,000, a scroll away from the focus, requests made of the options, a scaled and scrolled page, a phone profile | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
 | [The tabs example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-tabs): the row of tabs and the one panel the browser computes, the relation from the selected tab to its panel, the values of progress bars, the active descendant on the selected tab, and requests made of tabs | Headless Chromium 153, software WebGL2, injected input | Pass, 5 scenarios |
 | [The multiple selection example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-multi-select): a list box the browser computes as multiselectable, options selected and let go one by one, options that are disabled, runs chosen with Shift, and requests made of them | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
@@ -271,18 +300,19 @@ The projection adds no key handling. Keys arrive through the [keyboard input](ke
 | [The row menu example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-context-menu): a menu that is in the computed tree only while it is open, with its disabled items, the button that says it is expanded, the active descendant moving from the row into the items and back, and requests made of the button and the items | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
 | [The stepper example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-stepper): spin buttons with their values and ends, a status and an alert that are elements of the page from the start and whose text changes in place, the active descendant on an amount, and requests made of the buttons beside it | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
 | [The bag example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-inventory): a grid of four rows of six cells with its counts and indices, the one selected cell, the active descendant following the cursor in two directions, a status whose text changes in place, and requests made of cells and buttons | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
+| [The table example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-roster-table): a grid of forty-one rows of which eight are in the page, the headers with how the rows are sorted, the index each row has in the whole table as it scrolls, the selected row through a new order, the active descendant on a header and on a row, and requests made of headers and rows | Headless Chromium 153, software WebGL2, injected input | Pass, 6 scenarios |
 | The same example with a modal layer of the layer manager: the dialog and its buttons over the card, the list behind it absent from the tree the browser computes, Tab kept inside, a press beside the card reaching nothing, Escape, and the focus back on its row | Headless Chromium 153, software WebGL2, injected input | Pass, 2 scenarios |
 
 Not run: a screen reader, voice control, switch access or any other assistive technology; a person; Edge as installed; Firefox; Safari; a real phone, where exploration by touch depends on the platform's accessibility service; hardware GPUs and WebGPU. A passing accessibility tree is not proof that the UI is usable with a screen reader, and a message whose text changed in the page was not heard said.
 
 Run a page check with `node examples/ui-controls/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> software`, or the same with `examples/ui-list-semantics/verify.mjs`. Without `software` it launches the installed Edge headed.
 
-Operator faults were written into the built list helper one at a time: 79, and the cases caught all of them.
+Operator faults were written into the built list helper one at a time: 100, and the cases caught all of them.
 
 ## Not in this slice
 
-- Roles beyond the first control set: trees and headings. A slider, a spin button, tabs, a progress bar, a menu of actions, the two messages and a grid of cells were added to it; headers and spanning cells of a grid, a menu bar, submenus, menu items that are checked, and live regions other than `status` and `alert` were not.
+- Roles beyond the first control set: trees and headings. A slider, a spin button, tabs, a progress bar, a menu of actions, the two messages, a grid of cells and the headers of its columns were added to it; headers of rows and spanning cells of a grid, a menu bar, submenus, menu items that are checked, and live regions other than `status` and `alert` were not.
 - Descriptions, error text and labelling one node by another.
 - Nodes for the leaves and the layers of the managed UI are the application's own, measured with [`semanticBoxOf`](#boxes-and-layers-of-the-managed-ui). The rows of a virtual list have [a helper](#a-managed-virtual-list).
-- The rows of a managed list as the rows of a grid. Selecting a range of rows at once, as with Shift and the arrow keys, is the application's; the multiple selection example shows one way.
+- Selecting a range of rows at once, as with Shift and the arrow keys, is the application's; the multiple selection example shows one way.
 - A projection of the native editor itself. The editor is its own element.

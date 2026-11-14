@@ -33,10 +33,10 @@ interface Projected { readonly id: string; readonly role: SemanticRole; readonly
 interface Pair { readonly target: EventTarget; readonly type: string; readonly listener: EventListener; readonly options: AddEventListenerOptions; }
 
 /** Roles a native button carries well: it is activated by a click from any assistive technology. */
-const pressable: readonly SemanticRole[] = ['button', 'checkbox', 'switch', 'radio', 'option', 'tab', 'menuitem', 'gridcell'];
+const pressable: readonly SemanticRole[] = ['button', 'checkbox', 'switch', 'radio', 'option', 'tab', 'menuitem', 'gridcell', 'columnheader'];
 const aria: Readonly<Partial<Record<SemanticRole, string>>> = {
   group: 'group', image: 'img', checkbox: 'checkbox', switch: 'switch', radiogroup: 'radiogroup', radio: 'radio', listbox: 'listbox',
-  option: 'option', list: 'list', listitem: 'listitem', scrollbar: 'scrollbar', slider: 'slider', spinbutton: 'spinbutton', progressbar: 'progressbar', tablist: 'tablist', tab: 'tab', tabpanel: 'tabpanel', menu: 'menu', menuitem: 'menuitem', dialog: 'dialog', textbox: 'textbox', status: 'status', alert: 'alert', grid: 'grid', row: 'row', gridcell: 'gridcell',
+  option: 'option', list: 'list', listitem: 'listitem', scrollbar: 'scrollbar', slider: 'slider', spinbutton: 'spinbutton', progressbar: 'progressbar', tablist: 'tablist', tab: 'tab', tabpanel: 'tabpanel', menu: 'menu', menuitem: 'menuitem', dialog: 'dialog', textbox: 'textbox', status: 'status', alert: 'alert', grid: 'grid', row: 'row', gridcell: 'gridcell', columnheader: 'columnheader',
 };
 /** Roles whose name is their content: a reader reads the text, and says a message when the text changes. */
 const worded: readonly SemanticRole[] = ['text', 'status', 'alert'];
@@ -178,12 +178,13 @@ export function createBrowserSemantics(options: BrowserSemanticsOptions): Browse
       write(item, 'aria-valuemax', text(node.range?.max));
       write(item, 'aria-orientation', node.orientation);
       // A row says which row of the grid it is and a cell which column it is in; the grid says how many there are. Elsewhere a position is a place in a set.
-      const placed = node.role === 'row' ? 'aria-rowindex' : node.role === 'gridcell' ? 'aria-colindex' : undefined;
+      const placed = node.role === 'row' ? 'aria-rowindex' : node.role === 'gridcell' || node.role === 'columnheader' ? 'aria-colindex' : undefined;
       write(item, 'aria-posinset', placed === undefined ? text(node.position?.index) : undefined);
       write(item, 'aria-setsize', placed === undefined ? text(node.position?.size) : undefined);
       if (placed !== undefined) write(item, placed, text(node.position?.index));
       write(item, 'aria-rowcount', text(node.extent?.rows));
       write(item, 'aria-colcount', text(node.extent?.columns));
+      write(item, 'aria-sort', node.sort);
       // Set on the outermost inert element: the page then keeps everything under it away from every user.
       write(item, 'inert', node.inert && parent?.inert !== true ? '' : undefined);
       // Reachable by a request of assistive technology, never by the Tab key. A native button says so from the start, whatever it can do.

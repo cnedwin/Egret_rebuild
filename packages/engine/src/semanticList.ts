@@ -32,9 +32,9 @@ export interface SemanticListSource {
 export interface SemanticListRow {
   /** What the row is called. An option and a menu item need a name; a list item may leave it to the nodes inside it. */
   readonly name?: string;
-  /** Options only. An option that does not say is not selected. */
+  /** Options, where one that does not say is not selected, and the rows of a grid, where saying it means that rows are what is selected. */
   readonly selected?: boolean;
-  /** Options and menu items. */
+  /** Options, menu items and the rows of a grid. */
   readonly disabled?: boolean;
 }
 
@@ -47,11 +47,18 @@ export interface UiListSemanticsOptions {
   readonly id?: string;
   /** The node the list is inside. */
   readonly parent?: string;
-  /** A 'list' of list items, which may hold other nodes, a 'listbox' of options, or a 'menu' of menu items. Defaults to 'list'. */
-  readonly role?: 'list' | 'listbox' | 'menu';
+  /**
+   * A 'list' of list items, which may hold other nodes, a 'listbox' of options, a 'menu' of menu items, or a 'grid'
+   * whose rows are the rows of the list and hold the cells the application adds. Defaults to 'list'.
+   */
+  readonly role?: 'list' | 'listbox' | 'menu' | 'grid';
   readonly name?: string;
-  /** A list box only: several of its options may be selected at once. Each option still says whether it is. Defaults to false. */
+  /** A list box or a grid only: several of its options or rows may be selected at once. Each still says whether it is. Defaults to false. */
   readonly multiple?: boolean;
+  /** A grid only, which needs it: how many columns it has. */
+  readonly columns?: number;
+  /** A grid only: how many rows the application publishes above the first row of the list, such as a row of headers. Defaults to 0. */
+  readonly rowOffset?: number;
   /**
    * Read at each publication. A list that says it is hidden is left out with its rows: the list of a
    * popup or a modal layer while that layer is closed. Its rows are then not asked.
@@ -71,6 +78,8 @@ export interface UiListSemantics {
   readonly id: string;
   /** The id of the node of a row, whether or not the row shows now. */
   rowId(key: string): string;
+  /** The part of a row that the list shows, on the stage, as of the last synchronization: what a cell inside it is measured from. Nothing for a row that does not show. */
+  rowBounds(key: string): SemanticBounds | undefined;
   /**
    * Brings the nodes to the rows of the last commit: removes those that no longer show, moves those
    * that stayed, adds those that show now. Returns the committed revision, which is what `publish`
@@ -99,14 +108,16 @@ const optional = (value: unknown, type: string): boolean => value === undefined 
 
 export function createUiListSemantics(options: UiListSemanticsOptions): UiListSemantics {
   if (options === null || typeof options !== 'object') throw new EgretError('UI_SEMANTICS_OPTIONS');
-  const { semantics, root, list, parent, role = 'list', name, multiple, hidden, describeRow, onActivateRow, focusable = false, onRowAdded } = options;
+  const { semantics, root, list, parent, role = 'list', name, multiple, columns, rowOffset = 0, hidden, describeRow, onActivateRow, focusable = false, onRowAdded } = options;
   if (semantics === null || typeof semantics !== 'object' || typeof semantics.add !== 'function' || root === null || typeof root !== 'object' || typeof root.snapshot !== 'function'
-    || typeof root.list !== 'function' || !text(list) || (role !== 'list' && role !== 'listbox' && role !== 'menu') || !optional(name, 'string') || !optional(parent, 'string')
+    || typeof root.list !== 'function' || !text(list) || (role !== 'list' && role !== 'listbox' && role !== 'menu' && role !== 'grid') || !optional(name, 'string') || !optional(parent, 'string')
     || !optional(hidden, 'function') || !optional(describeRow, 'function') || !optional(onActivateRow, 'function') || !optional(onRowAdded, 'function') || typeof focusable !== 'boolean'
     // An option and a menu item are read as one thing and need a name of their own.
-    || (role !== 'list' && describeRow === undefined)
-    // Only a list box has a selection for there to be several of.
-    || !optional(multiple, 'boolean') || (multiple !== undefined && role !== 'listbox')) throw new EgretError('UI_SEMANTICS_OPTIONS');
+    || ((role === 'listbox' || role === 'menu') && describeRow === undefined)
+    // Only a list box and a grid have a selection for there to be several of.
+    || !optional(multiple, 'boolean') || (multiple !== undefined && role !== 'listbox' && role !== 'grid')
+    // A grid says how many columns it has, and nothing else has columns or rows above its own.
+    || (role === 'grid' ? !Number.isSafeInteger(columns) || columns! < 1 || !Number.isSafeInteger(rowOffset) || rowOffset < 0 : columns !== undefined || options.rowOffset !== undefined)) throw new EgretError('UI_SEMANTICS_OPTIONS');
   const id = options.id ?? root.id + '/' + list;
   if (!text(id)) throw new EgretError('UI_SEMANTICS_OPTIONS');
   const handle = root.list(list), rows = new Map<string, Row>();
@@ -119,14 +130,16 @@ export function createUiListSemantics(options: UiListSemanticsOptions): UiListSe
     const x = Math.max(box.x, frame.x), y = Math.max(box.y, frame.y);
     return { x, y, width: Math.max(0, Math.min(box.x + box.width, frame.x + frame.width) - x), height: Math.max(0, Math.min(box.y + box.height, frame.y + frame.height) - y) };
   }
-  const node = semantics.add({ id, role, ...(parent === undefined ? {} : { parent }), describe: () => ({ bounds: frame, ...(name === undefined ? {} : { name }), ...(hidden === undefined ? {} : { hidden: hidden() }), ...(multiple === true ? { multiple } : {}) }) });
+  const node = semantics.add({ id, role, ...(parent === undefined ? {} : { parent }), describe: () => ({ bounds: frame, ...(name === undefined ? {} : { name }), ...(hidden === undefined ? {} : { hidden: hidden() }), ...(multiple === true ? { multiple } : {}),
+    // A grid with no row at all has no extent to speak of.
+    ...(role === 'grid' && size + rowOffset > 0 ? { extent: { rows: size + rowOffset, columns: columns! } } : {}) }) });
 
   function addRow(key: string, index: number, box: SemanticBounds): Row {
     const row: Row = { index, box, node: semantics.add({
-      id: rowId(key), role: role === 'list' ? 'listitem' : role === 'listbox' ? 'option' : 'menuitem', parent: id,
+      id: rowId(key), role: role === 'list' ? 'listitem' : role === 'listbox' ? 'option' : role === 'menu' ? 'menuitem' : 'row', parent: id,
       describe: () => {
         const described = describeRow?.(key, row.index) ?? {};
-        return { ...described, ...(role === 'listbox' ? { selected: described.selected ?? false } : {}), bounds: visiblePart(row.box), position: { index: row.index + 1, size }, focused: handle.getFocus().key === key, order: row.index };
+        return { ...described, ...(role === 'listbox' ? { selected: described.selected ?? false } : {}), bounds: visiblePart(row.box), position: { index: row.index + 1 + rowOffset, size: size + rowOffset }, focused: handle.getFocus().key === key, order: row.index };
       },
       ...(onActivateRow === undefined ? {} : { onActivate: () => onActivateRow(key) }),
       ...(focusable ? { onFocus: () => handle.focus(key, { visible: true }) } : {}),
@@ -158,6 +171,7 @@ export function createUiListSemantics(options: UiListSemanticsOptions): UiListSe
 
   return Object.freeze({
     id, rowId, sync,
+    rowBounds(key: string): SemanticBounds | undefined { const row = rows.get(key); return row === undefined ? undefined : Object.freeze(visiblePart(row.box)); },
     dispose() {
       if (closed) return;
       closed = true;

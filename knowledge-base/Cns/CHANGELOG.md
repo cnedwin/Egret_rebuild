@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 可排序的托管列表表格 — 2026-11-14
+
+`createUiListSemantics` 接受 `role: 'grid'` 以及 `columns` 和 `rowOffset`：托管列表的行作为网格的行发布，应用在每一行里添加单元格，并在它们上方添加一行表头，`rowBounds` 让单元格可以根据所在的行来度量。语义树新增带 `sort` 的 `columnheader`；`row` 和 `gridcell` 只有在自己是被选中的对象时才说明 `selected`。新示例 `examples/ui-roster-table` 通过表头按四列对四十名成员排序，并可以选中一行。已在 Node 和无头 Chromium 的软件 WebGL2 上检查；没有运行读屏软件。属于 #90。[指南](docs/ui-semantics.md#托管列表的表格) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-roster-table/README.zh-CN.md)
+
 ## 数据源替换之后，滚动到列表当前所在的位置 — 2026-11-14
 
 托管列表的 `setScrollOffset` 会丢弃滚动到列表当前偏移的请求，即使同一轮里还有一次数据源替换在等待提交。列表随后跟随锚点去了另一个偏移，这违反了“显式滚动覆盖锚点保留”的规则：处于顶部的列表在换了新的顺序并被要求留在顶部之后，并没有留在顶部。现在只要还有其他变更待提交，这样的滚动就会被保留。已在 Node 中用真实 Engine 和 UI 根检查。属于 #87。[指南](docs/ui-data-panel.md)
