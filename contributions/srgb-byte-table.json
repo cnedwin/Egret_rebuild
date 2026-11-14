@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "packages/engine/rendering/srgbBytes.ts", "originRole": "First-party written table of the linear-light value of each sRGB byte, for shared preparation and the Hosts; independently authored with AI assistance; Apache-2.0. Numbers computed from the sRGB transfer function.", "criticalComment": true},
+    {"path": "packages/engine/src/srgbBytes.ts", "originRole": "First-party written table of the linear-light value of each sRGB byte, for bitmap text and particles; independently authored with AI assistance; Apache-2.0. Numbers computed from the sRGB transfer function.", "criticalComment": true},
+    {"path": "tests/srgb-byte-table.test.mjs", "originRole": "First-party unit of the two written sRGB byte tables against their recorded digest and the transfer function; independently authored with AI assistance; Apache-2.0.", "criticalComment": true}
+  ],
+  "documents": []
+}
