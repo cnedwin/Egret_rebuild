@@ -1,8 +1,25 @@
 import type { DisplayObject } from "./DisplayObject.js";
 import { EgretError } from "./EgretError.js";
 import { assertVisualMutable, color, unit, finite, copyRect, visualOf, recordVisualChange, VISUAL_CONTENT } from "./displayVisualState.js";
-import { GRAPHICS_SHAPE_LIMITS, addOutline, addPath, arcPoints, bezierPoints, createShapeState, ellipseOutline, roundRectOutline } from "./graphicsShape.js";
-import type { ShapeLine, ShapePaint, ShapeState } from "./graphicsShape.js";
+import { GRAPHICS_SHAPE_LIMITS, addOutline, addPath, arcPoints, bezierPoints, createShapeState, curveSegments, ellipseOutline, roundRectOutline, shapeFits } from "./graphicsShape.js";
+import type { LineCaps, LineJoints, ShapeLine, ShapePaint, ShapeState } from "./graphicsShape.js";
+import type { GradientStop, ShapeGradient } from "./graphicsFill.js";
+
+/** How a line's ends and corners are drawn, and its dashes. */
+export interface LineStyleOptions {
+  /** The ends of an open line: flat at the point ("none", as before), a half circle, or a half square. */
+  readonly caps?: LineCaps;
+  /** The outside of a corner: a point ("miter", as before), an arc, or a flat cut. */
+  readonly joints?: LineJoints;
+  /** A mitre longer than this many half-widths is cut flat. 4 unless given; at least 1. */
+  readonly miterLimit?: number;
+  /** The lengths of a dash and of a gap, in turn, in the node's units. An odd count is taken twice over. */
+  readonly dash?: readonly number[];
+}
+/** A colour of a gradient: where it is, from 0 at the start to 1 at the end, its colour, and its alpha, 1 unless given. */
+export interface GradientColorStop { readonly offset: number; readonly color: number; readonly alpha?: number; }
+/** The matrix of an older gradient call: it places a square 1638.4 units wide, centred on the origin, in the node. */
+export interface GradientBoxMatrix { readonly a: number; readonly b: number; readonly c: number; readonly d: number; readonly tx: number; readonly ty: number; }
 
 const invalid = (): EgretError => new EgretError("GRAPHICS_VALUE_INVALID");
 const numbers = (...values: readonly unknown[]): void => { for (const value of values) if (!finite(value)) throw invalid(); };
@@ -28,13 +45,60 @@ export class Graphics {
   }
 
   /** The line of the shapes drawn after it: its width in the node's units, colour and alpha. No width, or 0, ends the line. */
-  public lineStyle(thickness?: number, value = 0, alpha = 1): this {
+  public lineStyle(thickness?: number, value = 0, alpha = 1, options: LineStyleOptions = {}): this {
     assertVisualMutable(this.owner);
     if (thickness !== undefined && (!finite(thickness) || thickness < 0 || thickness > GRAPHICS_SHAPE_LIMITS.maxLineWidth)) throw invalid();
-    if (!color(value) || !unit(alpha)) throw invalid();
+    if (!color(value) || !unit(alpha) || typeof options !== "object" || options === null) throw invalid();
+    const caps = options.caps ?? "none", joints = options.joints ?? "miter", miterLimit = options.miterLimit ?? 4, given = options.dash;
+    if ((caps !== "none" && caps !== "round" && caps !== "square") || (joints !== "miter" && joints !== "round" && joints !== "bevel") || !finite(miterLimit) || miterLimit < 1) throw invalid();
+    let dash: number[] | undefined;
+    if (given !== undefined) {
+      if (!Array.isArray(given) || given.length > 16) throw invalid();
+      let sum = 0;
+      for (const length of given) { if (!finite(length) || length < 0) throw invalid(); sum += length; }
+      // No lengths, or lengths of nothing, are no dashes.
+      if (sum > 0) dash = given.slice();
+    }
     this.finishPath();
-    this.line = thickness === undefined || thickness === 0 ? undefined : { width: thickness, color: value, alpha };
+    this.line = thickness === undefined || thickness === 0 ? undefined : { width: thickness, color: value, alpha, caps, joints, miterLimit, dash };
     return this;
+  }
+
+  /** A fill whose colour runs along the line from one point to another, and stays the end colours beyond them. */
+  public beginLinearGradientFill(x0: number, y0: number, x1: number, y1: number, stops: readonly GradientColorStop[]): this {
+    assertVisualMutable(this.owner);
+    numbers(x0, y0, x1, y1);
+    const dx = x1 - x0, dy = y1 - y0, square = dx * dx + dy * dy;
+    if (!(square > 0) || !finite(1 / square)) throw invalid();
+    return this.gradient({ radial: false, a: dx / square, c: dy / square, tx: -(x0 * dx + y0 * dy) / square, b: 0, d: 0, ty: 0, stops: gradientStops(stops) });
+  }
+
+  /** A fill whose colour runs from a centre out to a circle, or to an ellipse when `radiusY` is given, and stays the last colour beyond it. */
+  public beginRadialGradientFill(x: number, y: number, radius: number, stops: readonly GradientColorStop[], radiusY = radius): this {
+    assertVisualMutable(this.owner);
+    numbers(x, y, radius, radiusY);
+    if (!(radius > 0) || !(radiusY > 0) || !finite(1 / radius) || !finite(1 / radiusY)) throw invalid();
+    return this.gradient({ radial: true, a: 1 / radius, c: 0, tx: -x / radius, b: 0, d: 1 / radiusY, ty: -y / radiusY, stops: gradientStops(stops) });
+  }
+
+  /**
+   * A gradient fill as older code gives it: "linear" or "radial", colours, alphas, ratios from 0 to 255, and a matrix
+   * that places the gradient's square of 1638.4 units, centred on the origin, in the node. Without a matrix that
+   * square is where it is.
+   */
+  public beginGradientFill(type: "linear" | "radial", colors: readonly number[], alphas: readonly number[], ratios: readonly number[], matrix?: GradientBoxMatrix): this {
+    assertVisualMutable(this.owner);
+    if ((type !== "linear" && type !== "radial") || !Array.isArray(colors) || !Array.isArray(alphas) || !Array.isArray(ratios) || colors.length !== alphas.length || colors.length !== ratios.length) throw invalid();
+    const m = matrix ?? { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+    if (typeof m !== "object" || m === null) throw invalid();
+    numbers(m.a, m.b, m.c, m.d, m.tx, m.ty);
+    for (const ratio of ratios) if (!finite(ratio) || ratio < 0 || ratio > 255) throw invalid();
+    const det = m.a * m.d - m.b * m.c, stops = gradientStops(colors.map((value, i) => ({ offset: (ratios[i] as number) / 255, color: value, alpha: alphas[i] as number })));
+    if (det === 0 || !finite(1 / det)) throw invalid();
+    // The node's point in the square's units, then along the square for a linear gradient or out from its centre for a radial one.
+    const ia = m.d / det, ic = -m.c / det, itx = (m.c * m.ty - m.d * m.tx) / det, ib = -m.b / det, id = m.a / det, ity = (m.b * m.tx - m.a * m.ty) / det;
+    if (type === "linear") return this.gradient({ radial: false, a: ia / 1638.4, c: ic / 1638.4, tx: itx / 1638.4 + 0.5, b: 0, d: 0, ty: 0, stops });
+    return this.gradient({ radial: true, a: ia / 819.2, c: ic / 819.2, tx: itx / 819.2, b: ib / 819.2, d: id / 819.2, ty: ity / 819.2, stops });
   }
 
   public drawRect(x: number, y: number, width: number, height: number): this {
@@ -43,7 +107,7 @@ export class Graphics {
     this.paintRequired();
     const state = visualOf(this.owner);
     // Filled rectangles alone stay rectangles, which a frame draws without a geometry.
-    if (state.shape === undefined && this.line === undefined) { state.primitives.push({ rect, ...this.fill! }); recordVisualChange(this.owner, VISUAL_CONTENT); return this; }
+    if (state.shape === undefined && this.line === undefined && this.fill!.gradient === undefined) { state.primitives.push({ rect, ...this.fill! }); recordVisualChange(this.owner, VISUAL_CONTENT); return this; }
     return this.outline([x, y, x + width, y, x + width, y + height, x, y + height], true);
   }
 
@@ -131,6 +195,13 @@ export class Graphics {
     if (changed) recordVisualChange(this.owner, VISUAL_CONTENT);
   }
 
+  private gradient(gradient: ShapeGradient): this {
+    for (const value of [gradient.a, gradient.b, gradient.c, gradient.d, gradient.tx, gradient.ty]) if (!finite(value)) throw invalid();
+    this.finishPath();
+    const first = gradient.stops[0]!;
+    this.fill = { color: first.color, alpha: first.alpha, gradient };
+    return this;
+  }
   private paintRequired(): void {
     if (this.fill === undefined && this.line === undefined) throw new EgretError("GRAPHICS_FILL_REQUIRED");
   }
@@ -160,14 +231,19 @@ export class Graphics {
   private finishPath(): void {
     const shape = visualOf(this.owner).shape;
     if (shape === undefined || shape.path === undefined) return;
-    addPath(shape, shape.path);
+    const path = shape.path, positions = shape.positions.length, colors = shape.colors.length, indices = shape.indices.length;
     shape.path = undefined;
     shape.resolved = undefined;
+    if (addPath(shape, path) && shapeFits(shape.positions.length / 2, shape.indices.length)) return;
+    // A path that became more than the node may hold is dropped whole; what was drawn before it stays.
+    shape.positions.length = positions; shape.colors.length = colors; shape.indices.length = indices;
+    recordVisualChange(this.owner, VISUAL_CONTENT);
+    throw new EgretError("GRAPHICS_BUDGET");
   }
   private outline(points: number[], convex: boolean): this {
     this.finishPath();
     const mark = this.mark();
-    addOutline(this.shape(), points, convex, this.fill, this.line);
+    if (!addOutline(this.shape(), points, convex, this.fill, this.line)) { mark(); throw new EgretError("GRAPHICS_BUDGET"); }
     return this.changed(mark);
   }
   /** What the node's drawing is before a shape or a point is added, so that one that does not fit can be taken back. */
@@ -184,15 +260,51 @@ export class Graphics {
   }
   /** Refuses a drawing one geometry could not hold, leaving the node as it was, then publishes the change. */
   private changed(undo: () => void): this {
-    const shape = visualOf(this.owner).shape!;
-    let pending = 0;
-    if (shape.path !== undefined) for (const points of shape.path.subpaths) pending += points.length / 2;
-    // A path point gives at most three vertices and nine indices: its fill, and both sides of its line.
-    const vertices = shape.positions.length / 2 + 3 * pending, indices = shape.indices.length + 9 * pending;
-    if (pending > GRAPHICS_SHAPE_LIMITS.maxPathPoints || vertices > GRAPHICS_SHAPE_LIMITS.maxVertices || indices > GRAPHICS_SHAPE_LIMITS.maxIndices
-      || 88 * vertices + 4 * indices > GRAPHICS_SHAPE_LIMITS.maxLogicalBytes) { undo(); throw new EgretError("GRAPHICS_BUDGET"); }
+    const shape = visualOf(this.owner).shape!, path = shape.path;
+    let pending = 0, parts = 0, length = 0;
+    if (path !== undefined) for (const points of path.subpaths) {
+      pending += points.length / 2; parts++;
+      if (path.line?.dash !== undefined) for (let i = 2; i < points.length; i += 2) length += Math.hypot(points[i]! - points[i - 2]!, points[i + 1]! - points[i - 1]!);
+    }
+    if (pending > GRAPHICS_SHAPE_LIMITS.maxPathPoints) { undo(); throw new EgretError("GRAPHICS_BUDGET"); }
+    // The most a path point can give: a vertex and a triangle of its fill, and for its line the two triangles of a
+    // piece and its corner. A dash adds two ends. A fill by the non-zero rule, or of a gradient, has no such count
+    // before it is made.
+    let vertices = shape.positions.length / 2, indices = shape.indices.length;
+    if (path !== undefined) {
+      const line = path.line, round = line === undefined ? 0 : curveSegments(line.width / 2) / 2 + 2;
+      if (path.fill !== undefined) { vertices += pending; indices += 3 * pending; }
+      if (line !== undefined) {
+        const corner = line.joints === "round" ? round : line.joints === "miter" ? 2 : 1, end = line.caps === "round" ? round : 0;
+        let dashes = 0;
+        if (line.dash !== undefined) { let period = 0; for (const part of line.dash) period += part; dashes = Math.ceil(length / period + 1) * Math.ceil(line.dash.length / 2) + parts; }
+        const ends = 2 * (parts + dashes);
+        vertices += pending * (2 + corner) + ends * (2 + end); indices += pending * (6 + 3 * corner) + ends * 3 * end;
+      }
+    }
+    // Past that count the path is made, to see what it really takes.
+    if (!shapeFits(vertices, indices) && path !== undefined) {
+      const trial = { positions: shape.positions.slice(), colors: shape.colors.slice(), indices: shape.indices.slice() };
+      if (addPath(trial, path)) { vertices = trial.positions.length / 2; indices = trial.indices.length; }
+    }
+    if (!shapeFits(vertices, indices)) { undo(); throw new EgretError("GRAPHICS_BUDGET"); }
     shape.resolved = undefined;
     recordVisualChange(this.owner, VISUAL_CONTENT);
     return this;
   }
+}
+
+/** Two to sixteen colours in order of their places, as a gradient keeps them. */
+function gradientStops(stops: readonly GradientColorStop[]): GradientStop[] {
+  if (!Array.isArray(stops) || stops.length < 2 || stops.length > GRAPHICS_SHAPE_LIMITS.maxGradientStops) throw invalid();
+  const out: GradientStop[] = [];
+  let before = 0;
+  for (const stop of stops) {
+    if (typeof stop !== "object" || stop === null) throw invalid();
+    const offset = stop.offset, alpha = stop.alpha ?? 1;
+    if (!finite(offset) || offset < before || offset > 1 || !color(stop.color) || !unit(alpha)) throw invalid();
+    out.push({ offset, color: stop.color, alpha });
+    before = offset;
+  }
+  return out;
 }

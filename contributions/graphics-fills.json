@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "packages/runtime/src/graphicsFill.ts", "originRole": "First-party non-zero fill of outlines in bands, and gradients as vertex colours by cutting triangles; independently authored with AI assistance; Apache-2.0. The non-zero rule and sRGB mixing follow the public HTML canvas specification; no code or data from it or from any engine.", "criticalComment": true},
+    {"path": "tests/graphics-fills.test.mjs", "originRole": "First-party Node tests of line ends, corners, dashes, fills with holes and crossings, and gradients, as the triangles a frame carries; independently authored with AI assistance; Apache-2.0.", "criticalComment": true}
+  ],
+  "documents": []
+}

@@ -23,6 +23,7 @@ export { createAssetType, createAssetRef } from "./AssetRef.js";
 export type { AssetType, AssetRef } from "./AssetRef.js";
 export { Sprite } from './Sprite.js';
 export { Graphics } from './Graphics.js';
+export type { LineStyleOptions, GradientColorStop, GradientBoxMatrix } from './Graphics.js';
 export { collectSharedFrameContent } from './sharedFrameCapture.js';
 export type { CapturedSharedContent2D } from './sharedFrameCapture.js';
 export { Texture, createTexture, createTextureView, isTexture } from './Texture.js';

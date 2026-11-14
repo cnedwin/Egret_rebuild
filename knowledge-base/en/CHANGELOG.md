@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Graphics: line ends and corners, dashes, holes and gradients — 2026-11-15
+
+`lineStyle` takes a fourth argument: `caps` (`'none'`, `'round'`, `'square'`), `joints` (`'miter'`, `'round'`, `'bevel'`), `miterLimit` and `dash`. `beginLinearGradientFill` and `beginRadialGradientFill` fill with a gradient of two to sixteen stops, mixed as sRGB values; `beginGradientFill` takes the colours, alphas, ratios and matrix that older code passes. The parts of one path are now filled together by the non-zero rule, so a part drawn the other way round inside another is a hole, and overlapping parts and outlines that cross themselves are painted once. Three things changed for code written against the first version: the parts of a path used to be filled each by itself; a mitre longer than four half-widths is now cut flat instead of being shortened; and a line's pieces now meet in one inside point with a separate outside, so a cornered line has more vertices. Bitmap fills and gradients on lines are not there. See the [graphics guide](docs/graphics.md).
+
 ## Errors say what happened — 2026-11-15
 
 An `EgretError` used to carry its code as its whole message, so `FRAME_RENDER_FAILED` on a console said nothing more. Its message is now the code and a sentence: what went wrong and, for the codes a game meets most, what to do. `error.code` is unchanged and is still what a program compares. The new [error code reference](docs/error-codes.md) lists 696 codes by area with their meanings; it is written by `node tools/error-codes.mjs` from the sources, and a test fails when a code is added without a sentence or the reference falls behind. A program that compared `error.message` with a code must compare `error.code`.

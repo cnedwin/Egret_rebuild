@@ -4,9 +4,14 @@
 import { createImageData2D, createSharedGeometry2D } from '@egret/contracts';
 import type { ImageData2D, Rectangle2D, SharedGeometry2D } from '@egret/contracts';
 import { decodeSRGBByte } from './srgbBytes.js';
+import { fillNonZero, gradientColor, outlineCrosses, refineForGradient } from './graphicsFill.js';
+import type { ShapeGradient } from './graphicsFill.js';
 
-export interface ShapePaint { readonly color: number; readonly alpha: number; }
-export interface ShapeLine extends ShapePaint { readonly width: number; }
+export interface ShapePaint { readonly color: number; readonly alpha: number; readonly gradient?: ShapeGradient | undefined; }
+export type LineCaps = 'none' | 'round' | 'square';
+export type LineJoints = 'miter' | 'round' | 'bevel';
+/** A line: its width, how its ends and corners are drawn, and the lengths of its dashes and gaps in turn, if it is dashed. */
+export interface ShapeLine extends ShapePaint { readonly width: number; readonly caps: LineCaps; readonly joints: LineJoints; readonly miterLimit: number; readonly dash: readonly number[] | undefined; }
 /** A path being drawn with moveTo and lineTo: its paints, and each subpath as x, y pairs. */
 export interface ShapePath { readonly fill: ShapePaint | undefined; readonly line: ShapeLine | undefined; readonly subpaths: number[][]; }
 export interface ShapeState {
@@ -19,7 +24,7 @@ export interface ShapeState {
 export interface ResolvedShape { readonly geometry: SharedGeometry2D; readonly bounds: Rectangle2D; }
 
 /** The most one node's shapes may hold: what one shared geometry takes. */
-export const GRAPHICS_SHAPE_LIMITS = Object.freeze({ maxVertices: 65536, maxIndices: 196608, maxLogicalBytes: 4980736, maxPathPoints: 8192, maxLineWidth: 1024 });
+export const GRAPHICS_SHAPE_LIMITS = Object.freeze({ maxVertices: 65536, maxIndices: 196608, maxLogicalBytes: 4980736, maxPathPoints: 8192, maxLineWidth: 1024, maxDashes: 16384, maxGradientStops: 16, maxFillTriangles: 16384 });
 
 /** The one white pixel every shape samples: its colour is the colour of its vertices. */
 export const SHAPE_PAGE: ImageData2D = createImageData2D({ width: 1, height: 1, pixels: new Uint8Array([255, 255, 255, 255]) });
@@ -31,7 +36,10 @@ interface Target { positions: number[]; colors: number[]; indices: number[]; }
 function paint(target: Target, points: readonly number[], color: ShapePaint): number {
   const first = target.positions.length / 2;
   const r = decodeSRGBByte(color.color >> 16), g = decodeSRGBByte(color.color >> 8), b = decodeSRGBByte(color.color);
-  for (let i = 0; i < points.length; i += 2) { target.positions.push(points[i]!, points[i + 1]!); target.colors.push(r, g, b, color.alpha); }
+  for (let i = 0; i < points.length; i += 2) {
+    target.positions.push(points[i]!, points[i + 1]!);
+    if (color.gradient === undefined) target.colors.push(r, g, b, color.alpha); else gradientColor(color.gradient, points[i]!, points[i + 1]!, target.colors, target.colors.length);
+  }
   return first;
 }
 /** Twice the signed area of a polygon given as x, y pairs. */
@@ -79,34 +87,144 @@ export function fillPolygon(target: Target, outline: readonly number[], color: S
   // What no ear could be cut from is closed as a fan, so that a degenerate outline still ends.
   for (let i = 1; i + 1 < ring.length; i++) target.indices.push(first + ring[0]!, first + ring[i]!, first + ring[i + 1]!);
 }
+/** Triangles given as x, y of each corner, added with one vertex for each different corner. */
+function addTriangles(target: Target, triangles: readonly number[], color: ShapePaint): void {
+  const known = new Map<string, number>(), one = [0, 0], corner = [0, 0, 0];
+  for (let i = 0; i < triangles.length; i += 6) {
+    for (let k = 0; k < 3; k++) {
+      const x = triangles[i + 2 * k]!, y = triangles[i + 2 * k + 1]!, key = x + ',' + y;
+      let index = known.get(key);
+      if (index === undefined) { one[0] = x; one[1] = y; index = paint(target, one, color); known.set(key, index); }
+      corner[k] = index;
+    }
+    if (corner[0] !== corner[1] && corner[1] !== corner[2] && corner[2] !== corner[0]) target.indices.push(corner[0]!, corner[1]!, corner[2]!);
+  }
+}
+/** The triangles added to a target since a mark, taken back out of it as x, y of each corner. */
+function takeTriangles(target: Target, vertices: number, indices: number): number[] {
+  const out: number[] = [];
+  for (let i = indices; i < target.indices.length; i++) { const v = target.indices[i]!; out.push(target.positions[2 * v]!, target.positions[2 * v + 1]!); }
+  target.positions.length = 2 * vertices; target.colors.length = 4 * vertices; target.indices.length = indices;
+  return out;
+}
 /**
- * A line of a width along points, with flat ends and mitred corners. A corner sharper than a mitre four half-widths
- * long is cut at that length. Segments share their corners, so a translucent line is not darker at a corner.
+ * What closed outlines cover, filled. One outline that does not cross itself is cut into ears; several, or one that
+ * crosses itself, are filled by the non-zero rule, so an outline drawn the other way round inside another is a hole.
+ * A gradient is given as the colours of the corners, with triangles cut until that is close enough.
+ * False when the fill would take more triangles than one fill may.
  */
-export function strokeLine(target: Target, line: readonly number[], closed: boolean, style: ShapeLine): void {
-  const points = distinct(line, closed), count = points.length / 2;
-  if (count < 2 || style.width <= 0) return;
-  const loop = closed && count >= 3, half = style.width / 2, sides: number[] = [];
-  const normal = (from: number, to: number): [number, number] => {
-    const dx = points[2 * to]! - points[2 * from]!, dy = points[2 * to + 1]! - points[2 * from + 1]!, length = Math.hypot(dx, dy);
-    return [-dy / length, dx / length];
-  };
-  for (let i = 0; i < count; i++) {
-    const before = i > 0 ? normal(i - 1, i) : loop ? normal(count - 1, 0) : undefined;
-    const after = i + 1 < count ? normal(i, i + 1) : loop ? normal(i, 0) : undefined;
-    const a = before ?? after!, b = after ?? before!;
-    let mx = a[0] + b[0], my = a[1] + b[1];
-    const length = Math.hypot(mx, my);
-    // A line that turns straight back has no mitre; its corner is squared across the segment before it.
-    if (length < 1e-9) { mx = a[0]; my = a[1]; } else { mx /= length; my /= length; }
-    const scale = Math.min(4, 1 / Math.max(1e-9, mx * a[0] + my * a[1])) * half, x = points[2 * i]!, y = points[2 * i + 1]!;
-    sides.push(x + mx * scale, y + my * scale, x - mx * scale, y - my * scale);
+export function fillOutlines(target: Target, outlines: readonly (readonly number[])[], convex: boolean, color: ShapePaint): boolean {
+  const vertices = target.positions.length / 2, indices = target.indices.length, max = GRAPHICS_SHAPE_LIMITS.maxFillTriangles;
+  const closed = outlines.map(points => distinct(points, true)).filter(points => points.length >= 6);
+  if (closed.length === 0) return true;
+  if (closed.length === 1 && (convex || !outlineCrosses(closed[0]!))) (convex ? fillConvex : fillPolygon)(target, closed[0]!, color);
+  else {
+    const triangles = fillNonZero(closed, max);
+    if (triangles === undefined) return false;
+    addTriangles(target, triangles, color);
   }
-  const first = paint(target, sides, style);
+  if (color.gradient !== undefined) addTriangles(target, refineForGradient(takeTriangles(target, vertices, indices), color.gradient, max), color);
+  return true;
+}
+
+/** The pieces of a line that its dashes cover, each a line of its own; undefined when there are too many. */
+function dashPieces(points: readonly number[], loop: boolean, dash: readonly number[]): number[][] | undefined {
+  const pattern = dash.length % 2 === 0 ? dash : [...dash, ...dash], count = points.length / 2, pieces: number[][] = [];
+  let entry = 0, left = pattern[0]!, piece: number[] | undefined = [points[0]!, points[1]!];
   for (let i = 0; i + 1 < count || (loop && i < count); i++) {
-    const a = first + 2 * i, b = first + 2 * ((i + 1) % count);
-    target.indices.push(a, a + 1, b + 1, a, b + 1, b);
+    const ax = points[2 * i]!, ay = points[2 * i + 1]!, j = (i + 1) % count, bx = points[2 * j]!, by = points[2 * j + 1]!, length = Math.hypot(bx - ax, by - ay);
+    let done = 0;
+    while (length - done > left) {
+      done += left;
+      const x = ax + (bx - ax) * done / length, y = ay + (by - ay) * done / length;
+      if (piece !== undefined) { piece.push(x, y); pieces.push(piece); piece = undefined; if (pieces.length > GRAPHICS_SHAPE_LIMITS.maxDashes) return undefined; } else piece = [x, y];
+      entry = (entry + 1) % pattern.length; left = pattern[entry]!;
+    }
+    left -= length - done;
+    if (piece !== undefined) piece.push(bx, by);
   }
+  if (piece !== undefined && piece.length >= 4) pieces.push(piece);
+  return pieces;
+}
+/**
+ * A line of a width along points. Two pieces meet at a corner in one point on its inside, so a translucent line is not
+ * darker there; its outside is a mitre, cut to a bevel when longer than `miterLimit` half-widths, a bevel or an arc.
+ * An open line ends flat, in a half square or in a half circle. False when its dashes are more than a line may have.
+ */
+export function strokeLine(target: Target, line: readonly number[], closed: boolean, style: ShapeLine): boolean {
+  const points = distinct(line, closed);
+  if (points.length < 4 || style.width <= 0) return true;
+  const loop = closed && points.length >= 6;
+  if (style.dash === undefined) { strokeSolid(target, points, loop, style); return true; }
+  const pieces = dashPieces(points, loop, style.dash);
+  if (pieces === undefined) return false;
+  for (const piece of pieces) { const part = distinct(piece, false); if (part.length >= 4) strokeSolid(target, part, false, style); }
+  return true;
+}
+function strokeSolid(target: Target, points: readonly number[], loop: boolean, style: ShapeLine): void {
+  const count = points.length / 2, half = style.width / 2, segments = loop ? count : count - 1, arc = curveSegments(half);
+  const out: number[] = [], triangles: number[] = [];
+  const add = (x: number, y: number): number => { out.push(x, y); return out.length / 2 - 1; };
+  // Each piece's unit direction and length; its normal is that direction turned a quarter.
+  const dx: number[] = [], dy: number[] = [], lengths: number[] = [];
+  for (let i = 0; i < segments; i++) {
+    const j = (i + 1) % count, x = points[2 * j]! - points[2 * i]!, y = points[2 * j + 1]! - points[2 * i + 1]!, length = Math.hypot(x, y);
+    dx.push(x / length); dy.push(y / length); lengths.push(length);
+  }
+  /** A fan about a centre from one direction to another, the short way round by `sweep` radians, between two vertices already there. */
+  const fan = (hub: number, cx: number, cy: number, fromX: number, fromY: number, sweep: number, first: number, last: number): void => {
+    const steps = Math.max(1, Math.ceil(arc * Math.abs(sweep) / (2 * Math.PI)));
+    let before = first;
+    for (let i = 1; i < steps; i++) {
+      const angle = sweep * i / steps, cos = Math.cos(angle), sin = Math.sin(angle), now = add(cx + fromX * cos - fromY * sin, cy + fromX * sin + fromY * cos);
+      triangles.push(hub, before, now); before = now;
+    }
+    triangles.push(hub, before, last);
+  };
+  // For each piece, the vertices on its normal's side and on the other, at its start and at its end.
+  const startPlus: number[] = [], startMinus: number[] = [], endPlus: number[] = [], endMinus: number[] = [];
+  for (let i = 0; i < count; i++) {
+    const before = i > 0 ? i - 1 : loop ? segments - 1 : -1, after = i < segments ? i : loop ? 0 : -1, x = points[2 * i]!, y = points[2 * i + 1]!;
+    if (before < 0 || after < 0) {
+      // An end of an open line.
+      const piece = before < 0 ? after : before, away = before < 0 ? -1 : 1, nx = -dy[piece]! * half, ny = dx[piece]! * half;
+      const ex = style.caps === 'square' ? x + away * dx[piece]! * half : x, ey = style.caps === 'square' ? y + away * dy[piece]! * half : y;
+      const plus = add(ex + nx, ey + ny), minus = add(ex - nx, ey - ny);
+      if (before < 0) { startPlus[piece] = plus; startMinus[piece] = minus; } else { endPlus[piece] = plus; endMinus[piece] = minus; }
+      if (style.caps === 'round') fan(add(x, y), x, y, nx, ny, away * -Math.PI, plus, minus);
+      continue;
+    }
+    const ax = -dy[before]!, ay = dx[before]!, bx = -dy[after]!, by = dx[after]!, cross = dx[before]! * dy[after]! - dy[before]! * dx[after]!, dot = dx[before]! * dx[after]! + dy[before]! * dy[after]!;
+    if (Math.abs(cross) < 1e-9 && dot > 0) {
+      // Straight on: the two pieces share both vertices.
+      endPlus[before] = startPlus[after] = add(x + ax * half, y + ay * half); endMinus[before] = startMinus[after] = add(x - ax * half, y - ay * half);
+      continue;
+    }
+    if (Math.abs(cross) < 1e-9) {
+      // Straight back: each piece ends square, and a round corner is a half circle about the point.
+      const plus = endPlus[before] = add(x + ax * half, y + ay * half), minus = endMinus[before] = add(x - ax * half, y - ay * half);
+      startPlus[after] = minus; startMinus[after] = plus;
+      if (style.joints === 'round') fan(add(x, y), x, y, ax * half, ay * half, -Math.PI, plus, minus);
+      continue;
+    }
+    // The inside of the corner is on the normal's side when the line turns that way.
+    const side = cross > 0 ? 1 : -1;
+    let mx = ax + bx, my = ay + by;
+    const length = Math.hypot(mx, my); mx /= length; my /= length;
+    const ratio = 1 / (mx * ax + my * ay);
+    // The inside point is kept on the pieces it joins, however sharp the corner.
+    const reach = Math.min(ratio * half, Math.hypot(half, Math.min(lengths[before]!, lengths[after]!)));
+    const inside = add(x + side * mx * reach, y + side * my * reach);
+    const outA = add(x - side * ax * half, y - side * ay * half), outB = add(x - side * bx * half, y - side * by * half);
+    if (side > 0) { endPlus[before] = inside; endMinus[before] = outA; startPlus[after] = inside; startMinus[after] = outB; }
+    else { endMinus[before] = inside; endPlus[before] = outA; startMinus[after] = inside; startPlus[after] = outB; }
+    if (style.joints === 'round') fan(inside, x, y, -side * ax * half, -side * ay * half, Math.atan2(cross, dot), outA, outB);
+    else if (style.joints === 'miter' && ratio <= style.miterLimit) { const tip = add(x - side * mx * ratio * half, y - side * my * ratio * half); triangles.push(inside, outA, tip, inside, tip, outB); }
+    else triangles.push(inside, outA, outB);
+  }
+  for (let i = 0; i < segments; i++) triangles.push(startPlus[i]!, startMinus[i]!, endMinus[i]!, startPlus[i]!, endMinus[i]!, endPlus[i]!);
+  const first = paint(target, out, style);
+  for (const index of triangles) target.indices.push(first + index);
 }
 
 /** How many straight pieces a curve of this radius is drawn with: each is within a quarter unit of the curve. */
@@ -164,18 +282,22 @@ export function bezierPoints(from: readonly [number, number], controls: readonly
   return out;
 }
 
-/** A shape drawn at once: its fill under its line. */
-export function addOutline(target: Target, outline: readonly number[], convex: boolean, fill: ShapePaint | undefined, line: ShapeLine | undefined): void {
-  if (fill !== undefined) (convex ? fillConvex : fillPolygon)(target, outline, fill);
-  if (line !== undefined) strokeLine(target, outline, true, line);
+/** A shape drawn at once: its fill under its line. False when it is more than a fill or a line may be. */
+export function addOutline(target: Target, outline: readonly number[], convex: boolean, fill: ShapePaint | undefined, line: ShapeLine | undefined): boolean {
+  return (fill === undefined || fillOutlines(target, [outline], convex, fill)) && (line === undefined || strokeLine(target, outline, true, line));
 }
-/** The triangles of a path: every subpath filled as a closed outline, then lined, closed only where its ends meet. */
-export function addPath(target: Target, path: ShapePath): void {
-  for (const points of path.subpaths) if (path.fill !== undefined) fillPolygon(target, points, path.fill);
+/** The triangles of a path: its parts filled together as closed outlines, then each lined, closed only where its ends meet. */
+export function addPath(target: Target, path: ShapePath): boolean {
+  if (path.fill !== undefined && !fillOutlines(target, path.subpaths, false, path.fill)) return false;
   if (path.line !== undefined) for (const points of path.subpaths) {
     const n = points.length;
-    strokeLine(target, points, n >= 6 && points[0] === points[n - 2] && points[1] === points[n - 1], path.line);
+    if (!strokeLine(target, points, n >= 6 && points[0] === points[n - 2] && points[1] === points[n - 1], path.line)) return false;
   }
+  return true;
+}
+/** Whether a drawing of this many vertices and indices is one a node may hold. */
+export function shapeFits(vertices: number, indices: number): boolean {
+  return vertices <= GRAPHICS_SHAPE_LIMITS.maxVertices && indices <= GRAPHICS_SHAPE_LIMITS.maxIndices && 88 * vertices + 4 * indices <= GRAPHICS_SHAPE_LIMITS.maxLogicalBytes;
 }
 
 // Shapes drawn the same way, on any number of nodes, are one geometry: a frame admits 128 of them.
@@ -184,11 +306,13 @@ const shared = new Map<string, ResolvedShape>();
 export function resolveShape(shape: ShapeState): ResolvedShape | undefined {
   if (shape.resolved !== undefined) return shape.resolved;
   let target: Target = shape;
-  if (shape.path !== undefined) { target = { positions: shape.positions.slice(), colors: shape.colors.slice(), indices: shape.indices.slice() }; addPath(target, shape.path); }
+  if (shape.path !== undefined) {
+    target = { positions: shape.positions.slice(), colors: shape.colors.slice(), indices: shape.indices.slice() };
+    // A path still being drawn that has grown past what a node may hold is not drawn; Graphics refuses it when it is finished.
+    if (!addPath(target, shape.path) || !shapeFits(target.positions.length / 2, target.indices.length)) target = shape;
+  }
   const { positions, colors, indices } = target, vertices = positions.length / 2;
-  // Graphics refuses a drawing beyond these limits when it is drawn, so only an empty one gives nothing here.
-  if (indices.length === 0 || vertices > GRAPHICS_SHAPE_LIMITS.maxVertices || indices.length > GRAPHICS_SHAPE_LIMITS.maxIndices
-    || 88 * vertices + 4 * indices.length > GRAPHICS_SHAPE_LIMITS.maxLogicalBytes) return undefined;
+  if (indices.length === 0 || !shapeFits(vertices, indices.length)) return undefined;
   const key = positions.join() + '|' + colors.join() + '|' + indices.join();
   let resolved = shared.get(key);
   if (resolved === undefined) {

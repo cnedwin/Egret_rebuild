@@ -57,23 +57,28 @@ test('GS02 a circle is one mesh of triangles within a quarter unit of it, in its
 test('GS03 a line has a width, flat ends and mitred corners, and is drawn without an endFill',()=>withStage(({sprite,frame})=>{
  const node=sprite();node.graphics.lineStyle(4,0x00ff00,0.5).moveTo(10,20).lineTo(60,20);
  let geometry=frame().geometries[0];
- assert.deepEqual([...geometry.positions],[10,22,10,18,60,22,60,18]);
- assert.deepEqual([...geometry.indices],[0,1,3,0,3,2]);
+ const corners=g=>{const out=[];for(let i=0;i<g.vertexCount;i++)out.push(g.positions[2*i]+','+g.positions[2*i+1]);return out.sort();};
+ assert.deepEqual(corners(geometry),['10,18','10,22','60,18','60,22']);
+ assert.equal(geometry.triangleCount,2);near(triangles(geometry).area,200,1e-4,'line area');
  assert.deepEqual(node.getBounds(),{x:10,y:18,width:50,height:4});
- // The path goes on from where it is, and the corner is one shared pair of vertices: a mitre.
+ // The path goes on from where it is. The two pieces meet in one point inside the corner and a mitre outside it, and
+ // no triangle lies over another: their areas add up to the area of the line.
  node.graphics.lineTo(60,70);
  geometry=frame().geometries[0];
- assert.deepEqual([...geometry.positions].map(v=>+v.toFixed(6)),[10,22,10,18,58,22,62,18,58,70,62,70]);
- assert.equal(geometry.triangleCount,4);
+ assert.deepEqual(corners(geometry),['10,18','10,22','58,22','58,70','60,18','62,18','62,20','62,70']);
+ assert.equal(geometry.triangleCount,6);near(triangles(geometry).area,400,1e-4,'cornered line area');
  // A path whose ends meet is closed: every corner is mitred and no end is flat.
  const box=sprite();box.graphics.lineStyle(2,0xffffff).moveTo(0,0).lineTo(10,0).lineTo(10,10).lineTo(0,10).lineTo(0,0);
  geometry=frame().geometries[1];
- assert.deepEqual([geometry.vertexCount,geometry.triangleCount],[8,8]);
+ assert.deepEqual([geometry.vertexCount,geometry.triangleCount],[16,16]);near(triangles(geometry).area,80,1e-4,'box line area');
  assert.deepEqual(box.getBounds(),{x:-1,y:-1,width:12,height:12});
- // A corner sharper than the mitre limit is cut at four half-widths.
+ // A corner whose mitre would be longer than four half-widths is cut flat: nothing is farther from it than a half-width.
  const sharp=sprite();sharp.graphics.lineStyle(2,0).moveTo(0,0).lineTo(100,0).lineTo(0,1);
- geometry=frame().geometries[2];
- near(Math.hypot(geometry.positions[4]-100,geometry.positions[5]-0),4,1e-5,'mitre length');
+ near(sharp.getBounds().x+sharp.getBounds().width,100.01,1e-3,'bevelled corner');
+ // With a limit that admits it, the mitre is drawn out to its point.
+ const pointed=sprite();pointed.graphics.lineStyle(2,0,1,{miterLimit:1000}).moveTo(0,0).lineTo(100,0).lineTo(0,1);
+ assert.ok(pointed.getBounds().x+pointed.getBounds().width>250);
+ sharp.graphics.clear();pointed.graphics.clear();
  // No width ends the line.
  const none=sprite();none.graphics.lineStyle(3,0).lineStyle().beginFill(1).drawRect(0,0,4,4);
  assert.equal(frame().commands.at(-1).kind,'rect');
@@ -96,7 +101,7 @@ test('GS04 shapes are drawn in order in one mesh, and rectangles drawn before th
  // A fill and a line on one shape: the fill's triangles, then the line's.
  const both=sprite();both.graphics.beginFill(0x202020).lineStyle(2,0xffffff).drawRect(0,0,10,10);
  const g=frame().geometries[1];
- assert.deepEqual([g.vertexCount,g.triangleCount],[12,10]);
+ assert.deepEqual([g.vertexCount,g.triangleCount],[20,18]);
  // clear returns the node to nothing, and to rectangles.
  node.graphics.clear();both.graphics.clear();
  assert.deepEqual([frame().commands.length,node.getBounds()],[0,{x:0,y:0,width:0,height:0}]);
@@ -116,7 +121,7 @@ test('GS05 the same drawing on many nodes is one geometry; a frame takes 128 dif
  void engine;void scope;
 }));
 
-test('GS06 a path is filled as a closed outline, concave or not, and each part by itself',()=>withStage(({sprite,frame})=>{
+test('GS06 a path is filled as a closed outline, concave or not, and so is each of its parts',()=>withStage(({sprite,frame})=>{
  // An arrow head: concave at (20,20). Its area is 1200 by the shoelace sum.
  const node=sprite();node.graphics.beginFill(0x8040c0).moveTo(0,0).lineTo(40,0).lineTo(40,40).lineTo(20,20).lineTo(0,40).endFill();
  let {list,area}=triangles(frame().geometries[0]);
@@ -148,7 +153,7 @@ test('GS07 ellipses, rounded rectangles, arcs and curves end where they are told
  const pill=sprite();pill.graphics.beginFill(1).drawRoundRect(0,0,40,20,100);
  assert.deepEqual(pill.getBounds(),{x:0,y:0,width:40,height:20});
  const square=sprite();square.graphics.beginFill(1).lineStyle(1,0).drawRoundRect(0,0,8,8,0);
- assert.equal(frame().geometries[3].vertexCount,4+8);
+ assert.equal(frame().geometries[3].vertexCount,4+16);
  // A quarter arc from the right to the bottom, clockwise on the screen, lined.
  const arc=sprite();arc.graphics.lineStyle(2,0).drawArc(50,50,30,0,Math.PI/2);
  // Its ends are flat, across the arc: the line reaches a unit past the arc at its right and bottom, and stops at its two ends.
@@ -179,7 +184,8 @@ test('GS08 what is not a drawing is refused, and a drawing too large leaves the 
  for(let i=1;i<=9000&&refusedAt<0;i++)try{path.lineTo(i,i%2);}catch(error){assert.equal(error.code,'GRAPHICS_BUDGET');refusedAt=i;}
  assert.equal(refusedAt,8192);
  const kept=frame().geometries[0];
- assert.equal(kept.vertexCount,2*8192);
+ // Two vertices at each end, and four at each of the corners between: the inside, both outsides and the mitre.
+ assert.equal(kept.vertexCount,4+4*8190);
  assert.throws(()=>path.lineTo(1,1),coded('GRAPHICS_BUDGET'));
  assert.equal(frame().geometries[0],kept);
  // A disposed node takes no drawing.

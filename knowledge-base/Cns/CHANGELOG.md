@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## Graphics：线条端点与转角、虚线、孔和渐变 — 2026-11-15
+
+`lineStyle` 增加第四个参数：`caps`（`'none'`、`'round'`、`'square'`）、`joints`（`'miter'`、`'round'`、`'bevel'`）、`miterLimit` 和 `dash`。`beginLinearGradientFill` 和 `beginRadialGradientFill` 用 2 到 16 个色标的渐变填充，按 sRGB 数值混合；`beginGradientFill` 接受旧代码传入的颜色、透明度、比例和矩阵。同一条路径的各部分现在按非零规则一起填充：画在另一部分内部且方向相反的部分是一个孔，互相重叠的部分和自相交的轮廓只涂一次。对按第一版写的代码有三处变化：路径的各部分以前是各自单独填充的；超过四个半宽的尖角现在改为平切，而不是缩短；线条的两段现在在内侧共用一点、外侧单独绘制，所以带转角的线条顶点更多。尚不支持位图填充和线条渐变。参见[绘图指南](docs/graphics.md)。
+
 ## 错误会说明发生了什么 — 2026-11-15
 
 以前 `EgretError` 的 message 就是错误码本身，控制台上的 `FRAME_RENDER_FAILED` 什么也没说明。现在 message 是错误码加一句说明：出了什么问题；对游戏最常遇到的错误码，还会说明该怎么做。`error.code` 不变，程序仍然用它来比较。新增的[错误码对照表](docs/error-codes.md)按部分列出 696 个错误码及其中文含义；它由 `node tools/error-codes.mjs` 根据源码生成，新增错误码而没有说明、或者对照表落后于源码时，测试会失败。以前用 `error.message` 与错误码比较的程序，要改为比较 `error.code`。
