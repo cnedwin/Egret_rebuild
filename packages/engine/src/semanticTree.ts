@@ -23,7 +23,7 @@ const rules: Readonly<Record<SemanticRole, Rule>> = Object.freeze({
   switch: { leaf: true, named: true, fields: ['disabled', 'checked'] },
   radiogroup: { leaf: false, named: false, fields: ['disabled'] },
   radio: { leaf: true, named: true, inside: 'radiogroup', fields: ['disabled', 'checked', 'position'] },
-  listbox: { leaf: false, named: false, fields: ['disabled'] },
+  listbox: { leaf: false, named: false, fields: ['disabled', 'multiple'] },
   option: { leaf: true, named: true, inside: 'listbox', fields: ['disabled', 'selected', 'position'] },
   list: { leaf: false, named: false, fields: [] },
   listitem: { leaf: false, named: false, inside: 'list', fields: ['position'] },
@@ -37,7 +37,7 @@ const rules: Readonly<Record<SemanticRole, Rule>> = Object.freeze({
   textbox: { leaf: true, named: true, fields: ['disabled', 'value', 'multiline'] },
 });
 /** State that belongs to some roles only. A description that sets one its role does not have is refused. */
-const particular = ['disabled', 'checked', 'selected', 'expanded', 'modal', 'multiline', 'range', 'orientation', 'controls', 'position', 'value'] as const;
+const particular = ['disabled', 'checked', 'selected', 'expanded', 'modal', 'multiline', 'multiple', 'range', 'orientation', 'controls', 'position', 'value'] as const;
 const offers: Readonly<Record<string, readonly SemanticAction[]>> = Object.freeze({
   '': Object.freeze([]), a: Object.freeze(['activate']), f: Object.freeze(['focus']), af: Object.freeze(['activate', 'focus']),
 } as Record<string, readonly SemanticAction[]>);
@@ -62,7 +62,7 @@ const identifier = (value: unknown): value is string => typeof value === 'string
 function sameNode(a: SemanticSnapshotNode, b: SemanticSnapshotNode): boolean {
   return a.id === b.id && a.role === b.role && a.parent === b.parent && a.name === b.name && a.disabled === b.disabled && a.focused === b.focused
     && a.inert === b.inert && a.actions === b.actions && a.value === b.value && a.checked === b.checked && a.selected === b.selected
-    && a.expanded === b.expanded && a.modal === b.modal && a.multiline === b.multiline && a.orientation === b.orientation && a.controls === b.controls
+    && a.expanded === b.expanded && a.modal === b.modal && a.multiline === b.multiline && a.multiple === b.multiple && a.orientation === b.orientation && a.controls === b.controls
     && a.bounds.x === b.bounds.x && a.bounds.y === b.bounds.y && a.bounds.width === b.bounds.width && a.bounds.height === b.bounds.height
     && a.range?.now === b.range?.now && a.range?.min === b.range?.min && a.range?.max === b.range?.max
     && a.position?.index === b.position?.index && a.position?.size === b.position?.size;
@@ -139,7 +139,7 @@ export function createUiSemantics(options: UiSemanticsOptions = {}): UiSemantics
     const refuse = (field: string): EgretError => new EgretError('UI_SEMANTICS_DESCRIPTION', { cause: new TypeError(entry.id + ': ' + field) });
     if (described === null || typeof described !== 'object' || Array.isArray(described)) throw refuse('description');
     const rule = rules[entry.role];
-    const { bounds, name = '', hidden, focused, order = 0, disabled, checked, selected, expanded, modal, multiline, range, orientation, controls, position, value } = described;
+    const { bounds, name = '', hidden, focused, order = 0, disabled, checked, selected, expanded, modal, multiline, multiple, range, orientation, controls, position, value } = described;
     if (!flag(hidden)) throw refuse('hidden');
     if (hidden === true) return undefined;
     for (const field of particular) if (described[field] !== undefined && !rule.fields.includes(field)) throw refuse(field);
@@ -152,6 +152,7 @@ export function createUiSemantics(options: UiSemanticsOptions = {}): UiSemantics
     if (!flag(expanded)) throw refuse('expanded');
     if (!flag(modal)) throw refuse('modal');
     if (!flag(multiline)) throw refuse('multiline');
+    if (!flag(multiple)) throw refuse('multiple');
     const checkable = rule.fields.includes('checked');
     if (checkable ? typeof checked !== 'boolean' && !(checked === 'mixed' && entry.role === 'checkbox') : checked !== undefined) throw refuse('checked');
     if (rule.fields.includes('selected') ? typeof selected !== 'boolean' : selected !== undefined) throw refuse('selected');
@@ -175,6 +176,7 @@ export function createUiSemantics(options: UiSemanticsOptions = {}): UiSemantics
         checked: checked as SemanticChecked | undefined, selected, expanded,
         modal: entry.role === 'dialog' ? modal === true : undefined,
         multiline: entry.role === 'textbox' ? multiline === true : undefined,
+        multiple: entry.role === 'listbox' ? multiple === true : undefined,
         range: range === undefined ? undefined : Object.freeze({ now: range.now, min: range.min, max: range.max }) as SemanticRange,
         // A scroll bar stands beside what it scrolls; a slider and a row of tabs lie along the line they are read in.
         orientation: rule.fields.includes('orientation') ? (orientation ?? (entry.role === 'scrollbar' ? 'vertical' : 'horizontal')) as SemanticOrientation : undefined,

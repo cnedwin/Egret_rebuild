@@ -169,6 +169,7 @@ export function createBrowserSemantics(options: BrowserSemanticsOptions): Browse
       write(item, 'aria-expanded', text(node.expanded));
       write(item, 'aria-modal', node.modal === true ? 'true' : undefined);
       write(item, 'aria-multiline', node.multiline === true ? 'true' : undefined);
+      write(item, 'aria-multiselectable', node.multiple === true ? 'true' : undefined);
       write(item, 'aria-valuenow', text(node.range?.now));
       write(item, 'aria-valuemin', text(node.range?.min));
       write(item, 'aria-valuemax', text(node.range?.max));

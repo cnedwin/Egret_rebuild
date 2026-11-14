@@ -7,7 +7,7 @@ declare const root:UiRoot;
 const semantics=createUiSemantics();
 // The managed root is a source without an adapter.
 const source:SemanticListSource=root;void source;
-const options:UiListSemanticsOptions={semantics,root,list:'players',id:'players',parent:'screen',role:'listbox',name:'Players',focusable:true,hidden:():boolean=>false,
+const options:UiListSemanticsOptions={semantics,root,list:'players',id:'players',parent:'screen',role:'listbox',name:'Players',focusable:true,multiple:true,hidden:():boolean=>false,
  describeRow:(key:string,index:number):SemanticListRow=>({name:key+index,selected:index===0,disabled:false}),
  onActivateRow:(key:string)=>{void key;},onRowAdded:(key:string,id:string)=>{void key;void id;}};
 const rows:UiListSemantics=createUiListSemantics(options);

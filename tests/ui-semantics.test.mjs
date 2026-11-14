@@ -35,7 +35,7 @@ test('SM01 a publication is one frozen snapshot, a parent before what is inside 
  assert.equal(snapshot,semantics.snapshot);assert.equal(snapshot.revision,1);assert.deepEqual(ids(snapshot),['panel','title','sound','close']);
  assert.ok(Object.isFrozen(snapshot)&&Object.isFrozen(snapshot.nodes)&&snapshot.nodes.every(node=>Object.isFrozen(node)&&Object.isFrozen(node.bounds)&&Object.isFrozen(node.actions)));
  assert.deepEqual(snapshot.nodes[2],{id:'sound',role:'checkbox',parent:'panel',name:'Sound',bounds:box(20,40,80,24),disabled:false,focused:false,inert:false,actions:['activate','focus'],
-  value:undefined,checked:true,selected:undefined,expanded:undefined,modal:undefined,multiline:undefined,range:undefined,orientation:undefined,controls:undefined,position:undefined});
+  value:undefined,checked:true,selected:undefined,expanded:undefined,modal:undefined,multiline:undefined,multiple:undefined,range:undefined,orientation:undefined,controls:undefined,position:undefined});
  assert.deepEqual(snapshot.nodes.map(node=>node.actions),[[],[],['activate','focus'],['activate']]);
  assert.deepEqual([snapshot.nodes[0].name,snapshot.nodes[1].name,snapshot.nodes[1].parent],['Settings','Sound and music','panel']);
 });
@@ -191,6 +191,18 @@ test('SM06b tabs are selected one by one and name their panel; a progress bar is
  const seen=[];semantics.add({id:'log',role:'tab',parent:'tabs',onActivate:()=>seen.push('log'),onFocus:()=>seen.push('focus'),describe:()=>({bounds:box(),name:'Log',selected:false})});
  assert.deepEqual(node('log').actions,['activate','focus']);assert.equal(semantics.perform('log','activate'),true);assert.equal(semantics.perform('log','focus'),true);assert.deepEqual(seen,['log','focus']);
  assert.deepEqual(node('work').actions,[]);
+});
+
+test('SM06c a list box says whether several of its options may be selected, and nothing else does',()=>{
+ const {semantics,state,add}=tree();
+ add('team','listbox',{name:'Team',multiple:true});add('a','option',{name:'A',selected:true},{parent:'team'});add('b','option',{name:'B',selected:true},{parent:'team'});
+ add('one','listbox',{name:'One'});add('c','option',{name:'C',selected:false},{parent:'one'});add('rows','list');add('panel','group');
+ const node=id=>semantics.publish().nodes.find(found=>found.id===id);
+ assert.deepEqual([node('team').multiple,node('one').multiple,node('a').multiple,node('rows').multiple,node('a').selected,node('b').selected],[true,false,undefined,undefined,true,true]);
+ const first=semantics.snapshot.revision;state.team.multiple=false;assert.equal(node('team').multiple,false);assert.equal(semantics.snapshot.revision,first+1,'a change of it is a change of the tree');
+ const refused=(id,change,field)=>{const saved={...state[id]};Object.assign(state[id],change);assert.throws(()=>semantics.publish(),about('UI_SEMANTICS_DESCRIPTION',id+': '+field),id+' '+JSON.stringify(change));state[id]=saved;};
+ for(const multiple of ['true',1,null])refused('team',{multiple},'multiple');
+ for(const id of ['a','rows','panel'])for(const multiple of [true,false])refused(id,{multiple},'multiple');
 });
 
 test('SM07 one node holds the focus',()=>{
