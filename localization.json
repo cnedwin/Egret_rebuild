@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "6b3cf8e750a2264639dc36fa0701dafb30580076f24833c9f77b35cdce348c5c",
-      "zhSha256": "b1b3707d851d9c5351d509fae80c1509c2130836095fd73ba618296f1f244465"
+      "enSha256": "f42036bc5a5b7158f8e4e25570d5c5f0d237fd8577ecf2547fd2e7729942f646",
+      "zhSha256": "d3cdeaf419cd399114dc0cefc68c35ccfbf9eebbb19bba8be8e75eb2bf44c2e0"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -540,8 +540,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "4df73be230391cf244a1158b6e1b0304b631624ac4fcbf8dfd546fd88e290f2d",
-      "zhSha256": "5e38bf9e124bc1147a904acb82ae9d518ef32c938687dedda2468cb2a8960895"
+      "enSha256": "56ad52b8b600aed0b4be8c669c01b85991a3c171c4e8d067a28fc6fd4a40e1e2",
+      "zhSha256": "b3fb4267aa6feb84de9d96924e1ca221f54a026d5264f9e659c1429b71bb931f"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -603,8 +603,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "b4fc4ce2e27e94fcea072255a5ac33024651f8bc96131237b69888db75b60683",
-      "zhSha256": "bdeee5e5fb574b6347edeac6a2cbbbcc9a1908937fea93f2757e4e071caf1e5e"
+      "enSha256": "826194366d085d3ccf44452a194263d4ae9b8d2ef86f26f5df217c47ed1eaf00",
+      "zhSha256": "9a8cc186115066a5afd2936987ed87a132d0ff75618f89f5b36949168c167b70"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -1942,8 +1942,8 @@
       "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
       "zh": "knowledge-base/Cns/docs/m4-core-acceptance-plan.md",
       "kind": "public_reading",
-      "enSha256": "b60cfa48535d768198baaeea05ce0c503543dc05c3ee8f079a9105b82fc3a4db",
-      "zhSha256": "05c26b4dcd0c3cedf50ff96a2811ee4fe9acf2fc26298f7b6671854506c134a3"
+      "enSha256": "d74e6bb3172704074d254ef72e42c735d44fbbec05e1db7da25b5aa4dcdb1e59",
+      "zhSha256": "46807edac7de79139789170f46ca71d175ba338dda79b79534a67564504ff64d"
     },
     {
       "en": "knowledge-base/en/docs/multi-pointer-input.md",
@@ -2278,8 +2278,8 @@
       "en": "examples/outfit-studio/README.md",
       "zh": "examples/outfit-studio/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "290fb96a3e089d515741c65d65bb8657008ba28a1a0f9facb89d715dadace3e5",
-      "zhSha256": "0bd7e457fcca9335630234ea8dec60720acde077bb903f50452ef6e42d38a890"
+      "enSha256": "071432eb51152bb35f62947be7a69e4efd45d3cb169706b64e386d6cb953b872",
+      "zhSha256": "56ae984ac85c957090436fde73581a18c23281609ac3292f767a39fa5bdf7c8f"
     },
     {
       "en": "examples/isometric-map/README.md",
@@ -2390,8 +2390,8 @@
       "en": "knowledge-base/en/docs/ui-semantics.md",
       "zh": "knowledge-base/Cns/docs/ui-semantics.md",
       "kind": "public_reading",
-      "enSha256": "18c263263a984844d8340f73e565e632d2286fc07b8439c38450de560084eb59",
-      "zhSha256": "3c533d88619bfc73e6713d1058f0fd8740ecf0eaba6fa9cedaf8f36d40a4d46c"
+      "enSha256": "826a87b6f7dc7d7e40b7bfedab559ccd8d4da44312432a10bb1ad6595a604c49",
+      "zhSha256": "4dd8e8f90596323fb7d2996bdbc6d477efd742e9db9ab9d8ff7afaf8abebbd46"
     },
     {
       "en": "examples/ui-text-field/README.md",
@@ -2448,6 +2448,13 @@
       "kind": "public_reading",
       "enSha256": "e1a7ad583fe00c95ba3c4491ec7bd9c7e1766a5939d3ea90667b7a4eedfa18e2",
       "zhSha256": "408f88252c336bc876716c5f84aa27eec41ca669b913fcfc3f06b0547ec58b37"
+    },
+    {
+      "en": "examples/ui-inventory/README.md",
+      "zh": "examples/ui-inventory/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "dcb018bcec02ff4696dc724528032565488bc5011b9e6af3e1b45ef48d7fbb53",
+      "zhSha256": "8de17aa2ae41c9eba5b34641888e69b7e4ca9e4e783aed534850b1433f7effaf"
     }
   ],
   "registries": [
@@ -3045,7 +3052,7 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "bdff849f2be66135d056f8b56734fbe53566cc9fc1b9b6c0ef74288eb2a17d54"
+      "sha256": "433e1e3c2fc64fbaab719b6c6ce77ededb4065eaff9f93e04e44703e8844cd55"
     },
     {
       "path": "tests/boundaries.test.mjs",
@@ -4469,19 +4476,19 @@
     },
     {
       "path": "examples/outfit-studio/serve.mjs",
-      "sha256": "c08fcfa06109b7f9c7234bf3c622355637b3bb1ffdfaf45ee2bc4c1998b561b2"
+      "sha256": "5040c80939a8e0500d1f32c403f2771cd3a6fdb94abe42663072e728f2604acd"
     },
     {
       "path": "examples/outfit-studio/scene.mjs",
-      "sha256": "31bc05285155a9b76f3754286d2335bc6361a0f2e5671d7f161cd9a60103a947"
+      "sha256": "36ffda1110a4690e8cd0817324f0a934703df89865c85c3ba28278d6f9b03bf3"
     },
     {
       "path": "examples/outfit-studio/ui.mjs",
-      "sha256": "4faba7946c0b08dccb453b1fa2e64a6894b9cf6ebcb846e66ad1eaaa1c2c0f5b"
+      "sha256": "8c83ad7966b158aeef59b9f958d7e554026e409602009161b5710972515901de"
     },
     {
       "path": "examples/outfit-studio/main.mjs",
-      "sha256": "1b252fcd7626afcd906ebd5e9ae94eef7e7814fd50310b697396fc3925b31771"
+      "sha256": "e207c4b78e9ede4f3d77e2dc3abc622703e59d140c4628227153a465572394bd"
     },
     {
       "path": "examples/outfit-studio/verify.mjs",
@@ -5105,19 +5112,19 @@
     },
     {
       "path": "packages/engine/src/semanticTypes.ts",
-      "sha256": "e2dfb24417eb53c4a97d1b66c107d5a6e63f5add56e83ec15451c08367430ba1"
+      "sha256": "340c509fff7d682cd4a773eb902c5c126d83b48b5843e0cecf432d43fca433d8"
     },
     {
       "path": "packages/engine/src/semanticTree.ts",
-      "sha256": "cdf5e4309ab5ece821b55b5049029182681b6cfb9f0ba55b410b012a44582d90"
+      "sha256": "96eaa9bc29043e30ab370dbb79939b574b981da4b16d5029b5fa61a4a179929d"
     },
     {
       "path": "packages/engine/src/semantics.ts",
-      "sha256": "25c9593efcd810bf45a67a6cf2efb31f565395bc9386ad0d036540754ceae791"
+      "sha256": "762ac05e5dca08f3ccd957ed142c634267b20197f6c3439f1bd855645f95082f"
     },
     {
       "path": "packages/engine/web/BrowserSemantics.ts",
-      "sha256": "de5c506e5d2c9ffbc49a029ebe05370a1a43fb62a49972d6d93a05ea62692a91"
+      "sha256": "5742275aab1c9746dea27c7556c493766231254a8009e63dc3d2eeee60237967"
     },
     {
       "path": "packages/engine/web/semantics.ts",
@@ -5125,11 +5132,11 @@
     },
     {
       "path": "tests/ui-semantics.test.mjs",
-      "sha256": "04d12fbd05fbad1998b59405f5da1e959a1be0280361e3d956e4f323c83d89a0"
+      "sha256": "b27c0a9aa198e17dcc65be5e6dfa88013a98fe4363b1e912a2b2ed9570083305"
     },
     {
       "path": "tests/browser-semantics.test.mjs",
-      "sha256": "5db6b6c4f0ab6850f1c2dbfd12318bc560210859754a886de6c8f8c8b47e7b9c"
+      "sha256": "d7e4b1a4928c028d7fc6bfa139fd269b4da76104ac5346da9b96057da9e1eeaa"
     },
     {
       "path": "packages/engine/src/ui/textFieldControl.ts",
@@ -5238,6 +5245,22 @@
     {
       "path": "examples/ui-stepper/verify.mjs",
       "sha256": "4ca4337046c06ca6ef2dd793affd3b0136212e40654cd39809123f6de6baeabd"
+    },
+    {
+      "path": "examples/outfit-studio/mixed-background.mjs",
+      "sha256": "595180b4ad20ee53cd1cc914aa8725f464b95623878e1337cd3c77ff43bbe098"
+    },
+    {
+      "path": "examples/outfit-studio/mixed-preview.mjs",
+      "sha256": "3e1e1915125153f657ce18ce2eff05aa2c14fc6df939c3938736c0fbfc3a1bc8"
+    },
+    {
+      "path": "examples/ui-inventory/main.mjs",
+      "sha256": "ab36ee095d3ec2eeaf86ca0209e09c6f8d806e78a376f01c1cfc633249b4b880"
+    },
+    {
+      "path": "examples/ui-inventory/verify.mjs",
+      "sha256": "caeef1aee9fa50853e45111c3c8a598840254808f000b832a4e00847b9d49be2"
     }
   ],
   "historicalSemanticReview": {
