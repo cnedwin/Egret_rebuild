@@ -96,7 +96,7 @@ await scenario('webgl2: the live stream is shown as it changes, frame by frame',
 
 await scenario('webgl2: four recorded seconds play when asked, pause, end once and loop when told', desktop, async page => {
   // The first picture is shown before it plays.
-  let now = await until(page, s => s.recorded !== null && s.recorded.frames >= 1, 'the recording', 15000);
+  let now = await until(page, s => s.recorded !== null && s.recorded.frames >= 1 && s.recorded.state === 'ready', 'the recording, ready', 15000);
   assert.equal(now.recorded.state, 'ready');
   await page.click('#play');
   now = await until(page, s => s.recorded.state === 'playing' && s.recorded.frames >= 2, 'playing');
