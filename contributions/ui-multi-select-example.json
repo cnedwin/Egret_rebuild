@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/ui-multi-select/index.html",
+      "originRole": "First-party page of the multiple selection example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/ui-multi-select/main.mjs",
+      "originRole": "First-party example of several rows of a managed list chosen at once, with keys, a scroll bar and semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-multi-select/verify.mjs",
+      "originRole": "First-party real-browser check of the multiple selection example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-multi-select/README.md",
+      "originRole": "First-party instructions for the multiple selection example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-multi-select/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the multiple selection example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/ui-multi-select/README.md",
+      "zh": "examples/ui-multi-select/README.zh-CN.md"
+    }
+  ]
+}

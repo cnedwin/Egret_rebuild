@@ -54,6 +54,8 @@ export interface SemanticDescription {
   readonly modal?: boolean;
   /** `textbox`. */
   readonly multiline?: boolean;
+  /** `listbox`: whether several of its options may be selected at once. */
+  readonly multiple?: boolean;
   /** `scrollbar` and `slider`, which need it, and `progressbar`, which without it shows work of unknown length. */
   readonly range?: SemanticRange;
   /** `scrollbar`, `slider` and `tablist`. */
@@ -107,6 +109,7 @@ export interface SemanticSnapshotNode {
   readonly expanded: boolean | undefined;
   readonly modal: boolean | undefined;
   readonly multiline: boolean | undefined;
+  readonly multiple: boolean | undefined;
   readonly range: SemanticRange | undefined;
   readonly orientation: SemanticOrientation | undefined;
   readonly controls: string | undefined;

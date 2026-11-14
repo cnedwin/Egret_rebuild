@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 在列表中同时选中多行 — 2026-11-14
+
+语义树的列表框接受 `multiple`，`createUiListSemantics` 会把它传下去，所以可以选中多行的列表会被如实告知辅助技术。新示例 `examples/ui-multi-select` 可以通过按下、在获得焦点的行上按空格或辅助技术的请求，从四十名成员中选出任意多人并派出；已经外出的成员是被禁用的选项。属于 #90。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-multi-select/README.zh-CN.md)
+
 ## 托管列表上手指可以拖动的滚动条 — 2026-11-14
 
 下拉示例的名册有了滚动条，它的滑块可以用鼠标或手指拖动，另有一个 `scrollbar` 节点指明它所滚动的列表。手指仍然不能平移各行，那属于手势；在此之前，手机通过滑块到达列表的其余部分。只涉及示例和文档。属于 #90。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.zh-CN.md)
