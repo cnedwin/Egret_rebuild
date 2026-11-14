@@ -4,6 +4,7 @@ import { createTexturedGeometry2D } from '@egret/contracts';
 import type { ParticleEmitter, ParticleEmitterOptions, ParticleRange, ParticleShape, ParticleSnapshot, ParticleView } from './particleTypes.js';
 
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
+const linear = (channel: number): number => { const c = channel / 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
 const record = (value: unknown): value is Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value);
 type Pair = readonly [number, number];
 function range(value: unknown, otherwise: Pair, least = -Infinity): Pair {
@@ -86,7 +87,8 @@ export function createParticleEmitter(options: ParticleEmitterOptions): Particle
       const corners = [[-hw, -hh], [hw, -hh], [hw, hh], [-hw, hh]];
       corners.forEach(([cx, cy], k) => { positions[i * 8 + k * 2] = p.x + cx! * cos - cy! * sin; positions[i * 8 + k * 2 + 1] = p.y + cx! * sin + cy! * cos; });
       uvs.set([0, 0, 1, 0, 1, 1, 0, 1], i * 8);
-      const r = ((p.color >> 16) & 255) / 255, g = ((p.color >> 8) & 255) / 255, b = (p.color & 255) / 255;
+      // The colour as it is seen, in the linear light the renderer multiplies a texture by, so that white shows as the colour given.
+      const r = linear((p.color >> 16) & 255), g = linear((p.color >> 8) & 255), b = linear(p.color & 255);
       for (let k = 0; k < 4; k++) lightColors.set([r, g, b, p.alpha], i * 16 + k * 4);
       indices.set([i * 4, i * 4 + 1, i * 4 + 2, i * 4, i * 4 + 2, i * 4 + 3], i * 6);
     }

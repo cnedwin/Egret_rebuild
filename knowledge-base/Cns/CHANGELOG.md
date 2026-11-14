@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 粒子颜色按所见颜色显示 — 2026-11-14
+
+`@egret/engine/particles` 的颜色现在像位图文字的着色一样，以渲染器的线性光照交给渲染器，所以白色粒子纹理显示为所给的颜色；此前着色显示得比所给颜色更浅。这是在浏览器中检查位图文字着色时发现的。属于 #266。[指南](docs/particles.md)
+
 ## 位图字体 — 2026-11-14
 
 `@egret/engine/bitmapfont` 是可选入口。`parseBitmapFont` 读取 BMFont 的文本、XML 和 JSON 格式（AngelCode 生成器、Hiero、Glyph Designer 和 Littera 保存的格式），以及 Egret 纹理合并工具写出的帧格式字体，并用各自的代码拒绝无法读取的内容。`layoutBitmapText` 按字体的字距调整、行距和字间距排版，按宽度在空格之后和表意文字之间换行——不在 `，。！？」` 等闭合标点之前换行——并左、中、右对齐。`createBitmapText` 按字体的每一页把文字绘制为一个网格，以所见颜色着色，并在文字或选项改变时重新排版。新示例 `examples/bitmap-font` 用页面绘制的两种字体显示标题、对话框和得分。已在 Node、真实引擎和无头 Chromium 的软件 WebGL2 中验证；没有读取由生成工具本身保存的字体。属于 #266。[指南](docs/bitmap-font.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-font/README.zh-CN.md)
