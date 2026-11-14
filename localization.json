@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "e583b64921f9c5e2ee159e6124c16b6a12f1dd4b1bee66b0ac8bd51f1f93f638",
-      "zhSha256": "1c1e55a8d7e7cfa217514003861b546dc00c0f812d4dbdcca5485fa10008dd33"
+      "enSha256": "b314a3864557bac39b2cb63606650ca65868906bafe2a0784905fed2f494fef1",
+      "zhSha256": "86a9b00cc60a6d20791605160c880afcd1b165deedb8dc91a6e609754c400f06"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -2250,8 +2250,8 @@
       "en": "knowledge-base/en/docs/native-text-editing.md",
       "zh": "knowledge-base/Cns/docs/native-text-editing.md",
       "kind": "public_reading",
-      "enSha256": "95d6071fff2f2bbcd4e932fa171ad06921730983eeb2e6d556afef5534bf9412",
-      "zhSha256": "5fa5926ff976337f867cdae15d5bc4bc65e58db2fedfac6fd9fd31e976bc805f"
+      "enSha256": "97daafdd96425c6f2841d7ae4d138bdc321fb7713b794fdeca1b133923ff85bf",
+      "zhSha256": "2043462667777ffe8371894b40bbc59f577e8666e3a99212871fc7f7a793aebc"
     },
     {
       "en": "examples/text-editing/README.md",
@@ -5204,6 +5204,10 @@
     {
       "path": "examples/ui-multi-select/verify.mjs",
       "sha256": "974cf95d9bdcc52fe4f15a1159d678e4218a8d9cd0f30f7a1b0439f0e61936f9"
+    },
+    {
+      "path": "tests/ui-editor-row-integration.test.mjs",
+      "sha256": "3ea3b7fc65161fc3b58bf00481e4d54c6150c8ab1cf66cf29ebe61b4fdaa6cd7"
     }
   ],
   "historicalSemanticReview": {
