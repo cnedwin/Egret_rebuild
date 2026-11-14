@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/ui-editor-row-integration.test.mjs",
+      "originRole": "First-party CPU-level integrated case of a focused editor row of a managed list under a late font and a theme change, with a literal paragraph provider, the keyboard input and the semantic tree; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
