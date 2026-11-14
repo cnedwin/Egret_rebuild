@@ -73,6 +73,7 @@ sprite.graphics.beginRadialGradientFill(50, 50, 40, [{ offset: 0, color: 0xfffff
 
 - Colours between two stops are mixed as sRGB values, as a canvas mixes them.
 - A gradient is drawn as the colours of the corners of triangles. The shape is cut into smaller triangles until the colour between corners is within two parts in 255 of the gradient, so a large gradient with strong colours takes some hundreds to some thousands of triangles. At most 16,384 for one fill; beyond that the cutting stops and the gradient is coarser.
+- What that comes to, counted with two colours unless said: a linear gradient over a 200 by 100 rectangle is 102 triangles along a side and 184 along the diagonal, with three colours 234; over a rounded button of 200 by 60 it is 40. A radial gradient costs far more, because it has to be cut round the circle as well as outward: 2,514 triangles for a disc of radius 40, 3,018 for a 600 by 400 rectangle, and 15,296 for a disc of radius 200 with three colours, which took a tenth of a second to cut on the machine that counted them. The cutting is done when the shape is drawn, not each frame. Prefer a linear gradient, or an image, where a radial gradient is large or drawn again often.
 - `beginGradientFill` takes what older code passes: `'linear'` or `'radial'`, colours, alphas, ratios from 0 to 255, and a matrix `{ a, b, c, d, tx, ty }` that places the gradient's own square, 1638.4 units wide and centred on the origin, in the sprite. For a box of a width and height at a corner, with no rotation, that matrix is `{ a: width / 1638.4, b: 0, c: 0, d: height / 1638.4, tx: x + width / 2, ty: y + height / 2 }`.
 - A line has one colour. There is no gradient for lines.
 
@@ -106,8 +107,23 @@ sprite.graphics.beginBitmapFill(lease, { a: 2, b: 0, c: 0, d: 2, tx: 140, ty: 10
 A sprite that draws only filled rectangles keeps them as rectangles, as before. Any other shape, or any line, turns the sprite's whole drawing into one mesh of coloured triangles, in drawing order, with one white pixel as its texture. An image fill is a mesh of its own over its image, so a sprite that draws a colour, then an image, then a colour is three meshes in that order; at most 16. It follows the sprite's position, scale, rotation, alpha, clip, blend mode and filters like any other content.
 
 - **Curves are straight pieces**, each within a quarter of a unit of the true curve: 16 for a circle of radius 10, 32 for radius 40, at most 128. A circle scaled up many times shows its corners; draw it larger instead.
-- **Edges are not smoothed.** A slanted or curved edge is stepped at the size of a pixel.
+- **Edges are stepped unless `smoothing` is set.** A slanted or curved edge is a stair at the size of a pixel. `graphics.smoothing = 1` makes every shape and line drawn after it fade to nothing over one unit at its edge; see below.
 - **A path with several parts, or one that crosses itself,** takes more triangles than a simple outline: it is cut into bands at every corner and crossing.
+
+## Smoothed edges
+
+```js
+const g = sprite.graphics;
+g.smoothing = 1;
+g.beginFill(0xe05050).drawCircle(60, 60, 40).endFill();
+```
+
+- `smoothing` is a width in the sprite's units, from 0 to 8; it is 0 at first. It applies to what is drawn after it is set, until it is set again; `clear()` leaves it as it is.
+- A band of triangles that wide is added around the shape, fading from the shape's colour at its edge to nothing. The shape is that much larger: its bounds, and where it is hit, include the band. Two triangles are added for each side of the outline, so a circle of 64 sides has 128 more.
+- One unit suits a shape shown at the size it is drawn. A sprite scaled to three times its size has a band three pixels wide; draw it with a third of a unit.
+- A fill that has a line has no band of its own, since its edge is under the line; the line has one on each side and at its ends.
+- A sprite of filled rectangles alone stays rectangles and has no band. An image fill has no band.
+- Where a shape crosses itself, or a line crosses itself, the bands lie over each other and that place is a little more opaque.
 
 ## Limits
 
