@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: Apache-2.0
 // Fixed 2D workloads, run in Node against the built SDK without a browser or a GPU.
-// Usage: node tools/bench-2d.mjs [--json] [--quick]
+// Usage: node tools/bench-2d.mjs [--json] [--quick] [--rounds <n>] [--workload <id>]
 // It times the CPU work of a frame before anything reaches the graphics API: turning the
 // display list into a frame record (capture), and turning that record into vertex batches
 // (preparation). A capture after the first one finds the records each node kept; the rows marked
 // "kept" time the preparation of a frame by a Host that kept the draws and batches of the frames before.
 // It also times container edits and the life of display objects.
-// A capture row and a row marked "kept" are the median of their frames, because such a frame is short enough
-// for one pause of the machine to outweigh it; every other row is a mean.
+// A capture row and every preparation row is the median of its frames, after passes that are not measured.
+// Each workload runs in its own process, and a full run reports the lowest figure of several such processes.
 // The figures describe this machine and this run; they are not acceptance thresholds.
 import { performance } from 'node:perf_hooks';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import {
   Bitmap, DisplayObjectContainer, Event, Sprite, createAssetRef, createAssetType, createEngine, createEventType, createImageData2D, createTexture, isTexture,
 } from '@egret/engine';
@@ -30,6 +32,8 @@ const results = [];
 const record = (group, name, value, unit, note) => results.push({ group, name, value, unit, ...(note ? { note } : {}) });
 const failure = error => 'failed: ' + (error?.code ?? error?.message ?? String(error));
 
+// Unmeasured passes before each timed run of the preparation stages.
+const WARM_PASSES = 10;
 const median = values => [...values].sort((a, b) => a - b)[values.length >> 1];
 /** Median milliseconds of `frame` over a run, after two unmeasured calls: the second finds what the first kept. */
 function perFrame(frames, before, frame) {
@@ -40,21 +44,24 @@ function perFrame(frames, before, frame) {
 }
 /** Times the three host stages of one frame record: clipped geometry, vertex rows and draw batches. */
 function prepare(label, frame, frames) {
-  const time = { geometry: 0, vertices: 0, batches: 0 };
+  const time = { geometry: [], vertices: [], batches: [] };
   let draws = 0;
-  for (let i = 0; i <= frames; i++) {
+  // The first passes run before the code is compiled and are not measured; the median of the rest is reported,
+  // so that one pause of the collector does not move a row.
+  const warm = quick ? 1 : WARM_PASSES;
+  frames = Math.max(frames, quick ? 3 : 30);
+  for (let i = 0; i < warm + frames; i++) {
     const scratch = new PreparedBatchScratch2D(), start = performance.now();
     const prepared = prepareSharedDraws2D(frame, FRAME.width, FRAME.height, PREPARE), geometry = performance.now();
     const packed = packSharedDraws2D(prepared), vertices = performance.now();
     const plan = prepareSharedBatches2D(packed, 33554432, scratch), batches = performance.now();
     draws = plan.draws.length;
     scratch.release(plan);
-    // The first pass is not measured.
-    if (i > 0) { time.geometry += geometry - start; time.vertices += vertices - geometry; time.batches += batches - vertices; }
+    if (i >= warm) { time.geometry.push(geometry - start); time.vertices.push(vertices - geometry); time.batches.push(batches - vertices); }
   }
-  record('prepare', label + ', clipped geometry', round(time.geometry / frames), 'ms/frame');
-  record('prepare', label + ', vertex rows', round(time.vertices / frames), 'ms/frame');
-  record('prepare', label + ', draw batches', round(time.batches / frames), 'ms/frame', draws + ' draws');
+  record('prepare', label + ', clipped geometry', round(median(time.geometry)), 'ms/frame');
+  record('prepare', label + ', vertex rows', round(median(time.vertices)), 'ms/frame');
+  record('prepare', label + ', draw batches', round(median(time.batches)), 'ms/frame', draws + ' draws');
   // The same frame again, as a Host prepares it that kept the draws and batches of the frames before.
   // The first pass keeps the geometry, the rows and the batches, the second the packed records; neither is measured.
   // A kept frame is short, so more passes are timed.
@@ -78,15 +85,16 @@ function changing(label, frames, change, capture) {
   frames = Math.max(frames, quick ? 5 : 40);
   for (const retention of [undefined, new SharedPreparationRetention2D()]) {
     const times = [];
-    for (let i = 0; i <= frames + 1; i++) {
+    const warm = quick ? 2 : WARM_PASSES;
+    for (let i = 0; i < warm + frames; i++) {
       change();
       const frame = capture(), scratch = new PreparedBatchScratch2D(), start = performance.now();
       const plan = prepareSharedBatches2D(packSharedDraws2D(prepareSharedDraws2D(frame, FRAME.width, FRAME.height, PREPARE, retention)), 33554432, scratch, retention);
       const end = performance.now();
       scratch.release(plan);
-      if (i > 1) times.push(end - start);
+      if (i >= warm) times.push(end - start);
     }
-    record('prepare', label + ', three stages' + (retention ? ', kept' : ''), round(retention ? median(times) : times.reduce((sum, value) => sum + value, 0) / times.length), 'ms/frame');
+    record('prepare', label + ', three stages' + (retention ? ', kept' : ''), round(median(times)), 'ms/frame');
   }
 }
 
@@ -169,11 +177,39 @@ async function lifecycle() {
   await engine.dispose();
 }
 
-for (const count of quick ? [1000] : [1000, 5000, 20000]) await sprites(count);
-await atlas(quick ? 1000 : 5000, 100);
-await atlas(quick ? 1000 : 5000, 200);
-for (const siblings of quick ? [1000] : [1000, 4000, 16000]) await containers(siblings);
-await lifecycle();
+// Each workload runs in a process of its own, so that the heap and the compiled code one workload leaves do not
+// decide the next one's figures. A full run starts every workload `--rounds` times, three by default, and reports
+// the lowest figure of each row: a row can be slowed by the machine, never sped up.
+const WORKLOADS = [
+  ...(quick ? [1000] : [1000, 5000, 20000]).map(count => ['sprites-' + count, () => sprites(count)]),
+  ['atlas-100', () => atlas(quick ? 1000 : 5000, 100)], ['atlas-200', () => atlas(quick ? 1000 : 5000, 200)],
+  ...(quick ? [1000] : [1000, 4000, 16000]).map(siblings => ['containers-' + siblings, () => containers(siblings)]),
+  ['lifecycle', lifecycle],
+];
+const option = name => { const at = process.argv.indexOf(name); return at < 0 ? undefined : process.argv[at + 1]; };
+const only = option('--workload');
+if (only !== undefined) {
+  const found = WORKLOADS.find(([id]) => id === only);
+  if (!found) throw new TypeError('Unknown workload ' + only + '; one of ' + WORKLOADS.map(([id]) => id).join(', '));
+  await found[1]();
+} else {
+  const rounds = Number(option('--rounds') ?? (quick ? 1 : 3));
+  if (!Number.isSafeInteger(rounds) || rounds < 1 || rounds > 20) throw new TypeError('--rounds takes a whole number from 1 to 20');
+  const script = fileURLToPath(import.meta.url);
+  for (const [id] of WORKLOADS) {
+    const rows = new Map();
+    for (let round = 0; round < rounds; round++) {
+      const child = spawnSync(process.execPath, [script, '--json', '--workload', id, ...(quick ? ['--quick'] : [])], { encoding: 'utf8', maxBuffer: 16777216 });
+      if (child.status !== 0) throw new Error('Workload ' + id + ' failed: ' + child.stderr);
+      for (const row of JSON.parse(child.stdout)) {
+        const key = row.group + '\n' + row.name, best = rows.get(key);
+        // A row that failed has a message for its value and is kept as it is.
+        if (best === undefined || (typeof row.value === 'number' && typeof best.value === 'number' && row.value < best.value)) rows.set(key, row);
+      }
+    }
+    results.push(...rows.values());
+  }
+}
 
 if (process.argv.includes('--json')) console.log(JSON.stringify(results, null, 2));
 else for (const row of results) console.log(row.group.padEnd(10) + row.name.padEnd(58) + String(row.value).padStart(10) + ' ' + row.unit + (row.note ? '  (' + row.note + ')' : ''));
