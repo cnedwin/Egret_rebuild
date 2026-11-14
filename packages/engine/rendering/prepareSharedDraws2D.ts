@@ -34,13 +34,22 @@ function uv(value:number):number { if(!Number.isFinite(value))sharedFailure('pre
 function add(used:number,value:number,limit:number):number { if(!Number.isSafeInteger(value)||value<0||value>limit-used)sharedFailure('budget');return used+value; }
 /** Address qualification follows f32 preparation and never clamps/modulos authored vertices. */
 export function qualifySharedUV(point:SharedPoint2D, draw:Pick<PreparedSharedDraw2D,'region'|'material'|'pageIndex'>, frame:SharedRenderFrame2D):void {
-    if(draw.pageIndex===undefined)return;
+    const domain=sharedUVDomain(draw,frame);if(domain!==undefined)qualifySharedUVIn(point.u,point.v,domain);
+}
+/** What address qualification reads of a draw: the same for each of its corners, so it is found once a draw. */
+export interface SharedUVDomain2D { readonly width:number; readonly height:number; readonly limit:number; }
+/** Undefined for a draw without a page, whose corners are not qualified. */
+export function sharedUVDomain(draw:Pick<PreparedSharedDraw2D,'region'|'material'|'pageIndex'>, frame:SharedRenderFrame2D):SharedUVDomain2D|undefined {
+    if(draw.pageIndex===undefined)return undefined;
     const region=draw.region!, page=frame.pages[draw.pageIndex]!.source, material=draw.material;
     const width=material.samplingDomain==='page'?page.width:region.logicalWidth;
     const height=material.samplingDomain==='page'?page.height:region.logicalHeight;
     const periodic=material.samplingDomain==='page'&&(material.addressU!=='clamp-to-edge'||material.addressV!=='clamp-to-edge');
-    const limit=periodic?8192:1048576;
-    const u=Math.fround(point.u),v=Math.fround(point.v),x=Math.fround(u*width),y=Math.fround(v*height);
+    return {width,height,limit:periodic?8192:1048576};
+}
+/** `qualifySharedUV` of one corner's two texture coordinates, with the draw's domain already found. */
+export function qualifySharedUVIn(pointU:number, pointV:number, domain:SharedUVDomain2D):void {
+    const limit=domain.limit,u=Math.fround(pointU),v=Math.fround(pointV),x=Math.fround(u*domain.width),y=Math.fround(v*domain.height);
     if(!Number.isFinite(u)||!Number.isFinite(v)||!Number.isFinite(x)||!Number.isFinite(y)||Math.abs(x)>limit||Math.abs(y)>limit)sharedFailure('precision');
 }
 function policyFor(budget:TexturedPreparationBudget2D) {
@@ -116,7 +125,8 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
     let viewport:PreparedPoint2D[]|undefined,ratio=0;
     // The state of the command being prepared, read by `accept` below.
     let command:SharedDrawCommand2D,m:Matrix2D,clips:readonly (readonly PreparedPoint2D[])[]=NO_CLIPS,polygons:SharedPoint2D[][]=[],vertexReservation=0;
-    let descriptor:{region:SharedRegion2D|undefined;material:SharedMaterial2D;pageIndex:number|undefined};
+    // What the corners of the command's texture coordinates are qualified against; undefined for a draw without a page.
+    let uvDomain:SharedUVDomain2D|undefined;
     // Both SHARED Hosts authenticate the frame before this private helper owns its budget.
     // Shared polygons retain attributed corners and charge the same XY comparisons as TEXTURED meshes.
     const intersect=(polygon:SharedPoint2D[],clip:readonly PreparedPoint2D[]):SharedPoint2D[]=>
@@ -150,7 +160,7 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
     const placeY=(y:number):number=>coordinate(coordinate(coordinate(coordinate(m.b*0)+coordinate(m.d*y))+m.ty)*ratio);
     // `points` are fresh authored corners; they become the backing-space corners in place.
     const accept=(points:OwnedPoint[]):void=>{
-        for(const p of points)qualifySharedUV(p,descriptor,frame);
+        if(uvDomain!==undefined)for(const p of points)qualifySharedUVIn(p.u,p.v,uvDomain);
         let polygon=points.length===4?axisQuad(points):undefined;
         if(polygon===undefined){
         const authored=preparation.sign(points[0]!,points[1]!,points[2]!);if(authored===0)return;
@@ -160,7 +170,7 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
         const sign=preparation.sign(points[0]!,points[1]!,points[2]!);if(sign===0)return;if(sign!==authored*rank)sharedFailure('precision');
         polygon=normalizeOwned(preparation,points);}for(const clip of clips)polygon=intersect(polygon,clip);
         polygon=intersect(polygon,viewport!);
-        for(const p of polygon)qualifySharedUV(p,descriptor,frame);
+        if(uvDomain!==undefined)for(const p of polygon)qualifySharedUVIn(p.u,p.v,uvDomain);
         if(polygon.length<3||command.opacity===0)return;const count=(polygon.length-2)*3;budget.admitPreparedVertices(count);vertexReservation+=count;polygons.push(polygon);
     };
     try{
@@ -185,7 +195,7 @@ export function prepareSharedDraws2D(frame:SharedRenderFrame2D,width:number,heig
         clips=command.clips.length===0?NO_CLIPS:command.clips.map(clip=>preparation.rectangle(clip));
         // The viewport corners are the same for every command; they are checked when the first draw reaches them.
         viewport??=[{x:0,y:0},{x:coordinate(width),y:0},{x:coordinate(width),y:coordinate(height)},{x:0,y:coordinate(height)}];
-        polygons=[];vertexReservation=0;descriptor={region,material,pageIndex};
+        polygons=[];vertexReservation=0;uvDomain=sharedUVDomain({region,material,pageIndex},frame);
         if(command.kind==='mesh'){
             const g=frame.geometries[command.geometryIndex]!,shared=isSharedGeometry2D(g);
             for(let i=0;i<g.indexCount;i+=3){const points:OwnedPoint[]=[];for(let k=0;k<3;k++){const n=g.indices[i+k]!,p=2*n,c=4*n,d=3*n;
