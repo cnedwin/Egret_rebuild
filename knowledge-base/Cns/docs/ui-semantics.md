@@ -63,12 +63,15 @@ semantics.publish();
 | `row` | 网格中的一行 | `position`、`selected`、`disabled` | `grid` |
 | `gridcell` | 行中的一个单元格 | `selected`、`disabled`、`position` | `row` |
 | `columnheader` | 表头行中某一列的表头 | `sort`、`position`、`disabled` | `row` |
+| `tree` | 项目之下还有项目，其中一些可以展开和收起 | `multiple`、`disabled` | |
+| `treeitem` | 其中的一个项目 | `level`（必填）、`expanded`、`selected`、`position`、`disabled` | `tree` |
+| `heading` | 其后内容的标题 | `level` | |
 | `dialog` | 对话框 | `modal` | |
 | `textbox` | 未处于编辑状态的文本框 | `value`、`multiline`、`disabled` | |
 | `status` | 内容改变时朗读的消息，排在正在朗读的内容之后 | | |
 | `alert` | 立即朗读的消息 | | |
 
-每个节点都有 `bounds`，还可以有 `name`、`hidden`、`focused` 和 `order`。除 `group`、`radiogroup`、`listbox`、`list`、`listitem`、`tablist`、`menu`、`grid` 和 `row` 外，名称必填；`status` 和 `alert` 的名称就是消息本身，可以为空。`image`、`text`、`button`、`checkbox`、`switch`、`radio`、`option`、`scrollbar`、`slider`、`spinbutton`、`progressbar`、`tab`、`menuitem`、`gridcell`、`columnheader`、`textbox`、`status` 和 `alert` 被当作一个整体朗读，内部不能再有节点。
+每个节点都有 `bounds`，还可以有 `name`、`hidden`、`focused` 和 `order`。除 `group`、`radiogroup`、`listbox`、`list`、`listitem`、`tablist`、`menu`、`grid`、`row` 和 `tree` 外，名称必填；`status` 和 `alert` 的名称就是消息本身，可以为空。`image`、`text`、`button`、`checkbox`、`switch`、`radio`、`option`、`scrollbar`、`slider`、`spinbutton`、`progressbar`、`tab`、`menuitem`、`gridcell`、`columnheader`、`treeitem`、`heading`、`textbox`、`status` 和 `alert` 被当作一个整体朗读，内部不能再有节点。
 
 `slider` 和 `tablist` 默认沿文字方向横放，除非 `orientation` 为 `'vertical'`；`scrollbar` 默认竖立在它滚动的内容旁边，`menu` 的各项默认自上而下排列，除非为 `'horizontal'`。滑动条和数值调节框在获得焦点后由[它们的按键](ui-controls.md#按键)移动，所以它们的节点接受 `onFocus`，不需要激活。
 
@@ -106,7 +109,7 @@ semantics.publish(rows.sync());
 `root` 是 `createUiRoot` 返回的根，`list` 是虚拟列表在其树中的 id。`sync()` 读取根已提交的内容：移除不再可见的行的节点，移动留下的行，添加现在可见的行，并返回已提交的修订号，也就是 `publish` 所接受的参数。仅仅提交不会改变语义树。
 
 - **位置。**行的范围是它在舞台上被列表显示出来的那一部分。它的 `position` 是它在整个列表中的序号和记录总数，`order` 是它的序号。
-- **角色。**`'list'` 发布列表项，列表项内部可以有其他节点；`'listbox'` 发布选项，选项需要由 `describeRow` 提供名称。没有说明的选项视为未选中。使用 `multiple: true` 时，列表框表明可以同时选中多个选项；每个选项仍然各自说明是否被选中，被选中的键的集合由应用保存，因为列表只为当前显示的内容生成行。[多选示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-multi-select)就是这样做的。`'menu'` 发布菜单项，菜单项和选项一样需要名称，并且从不处于选中状态。`'grid'` 发布[表格](#托管列表的表格)的行。
+- **角色。**`'list'` 发布列表项，列表项内部可以有其他节点；`'listbox'` 发布选项，选项需要由 `describeRow` 提供名称。没有说明的选项视为未选中。使用 `multiple: true` 时，列表框表明可以同时选中多个选项；每个选项仍然各自说明是否被选中，被选中的键的集合由应用保存，因为列表只为当前显示的内容生成行。[多选示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-multi-select)就是这样做的。`'menu'` 发布菜单项，菜单项和选项一样需要名称，并且从不处于选中状态。`'grid'` 发布[表格](#托管列表的表格)的行，`'tree'` 发布[树](#树)的项目。
 - **id。**列表节点的 id 是 `id`，默认是根的 id、一个斜杠和列表的 id。行在其后再加一个斜杠和自己的键，可用 `rows.rowId(key)` 得到。
 - **焦点。**持有根焦点的行就是获得焦点的节点。设置 `focusable: true` 后可以请求某一行获得焦点，这需要根配有键盘。滚走的行同时失去根里的焦点和树里的节点，所以投射永远不会指向一个不存在的元素。
 - **行内的节点。**某一行的节点添加之后会调用 `onRowAdded(key, id)`。在其中以 `parent: id` 添加的节点会随该行一起消失，该行再次被实例化时回调会再次被调用。
@@ -229,6 +232,30 @@ for (const [at, column] of columns.entries()) semantics.add({ id: 'roster/head/'
 
 顺序改变时，用 `setSource` 把按新顺序排列的记录交给列表，然后说明列表应该停在哪里，例如 `setScrollOffset(0)`：数据源更换后，[列表会让它的锚点留在视野内](ui-data-panel.md)，除非另有指示。[表格示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-roster-table)用这种方式按四列对四十名成员排序。
 
+### 树
+
+`tree` 是项目之下还有项目的结构：门派、堂口和成员；文件夹；功法的分支。每个 `treeitem` 都是直接位于树内部的节点，用 `level` 说明自己的深度，从一开始计数。下面还有项目的节点用 `expanded` 说明这些项目是否显示；下面没有项目的节点不说明。所以显示出来的项目可以就是[托管列表](#托管虚拟列表)的行，而列表只保存显示出来的部分：
+
+```js
+semantics.add({ id: 'title', role: 'heading', describe: () => ({ name: 'Sect', level: 1, bounds: titleBounds }) });
+const rows = createUiListSemantics({
+  semantics, root, list: 'items', id: 'org', role: 'tree', name: 'Sect', focusable: true,
+  describeRow(key) {
+    const { name, level, children } = items.get(key), among = siblings(key);
+    return { name, level, selected: key === selected, position: { index: among.indexOf(key) + 1, size: among.length },
+      ...(children.length > 0 ? { expanded: open.has(key) } : {}) };
+  },
+  onActivateRow: press,
+});
+```
+
+- **列表就是显示出来的部分。**应用保存整棵树以及哪些项目是展开的，并把所有祖先都已展开的项目交给列表。展开或收起一个项目就是换一个新的数据源；列表会让顶部的那一行留在视野内。
+- 项目的 **`position`** 是它在同一个父项目之下的各项目中的位置，这与它的行在列表中的位置不同，所以辅助对象把它留给 `describeRow`。
+- **`selected`**：在项目可以被选中的树里，每个项目都要说明；在没有选中这回事的树里，都不说明。
+- **按键**由应用负责：上下键在显示出来的项目之间移动；右键展开已收起的项目，或进入已展开的项目；左键收起已展开的项目，或从其他项目退到父项目。把焦点所在位置收起来的项目会接过焦点。[树示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-tree)包含了以上全部做法。
+
+`heading` 是其后内容的标题，它的 `name` 就是它的文字。`level` 是它的级别，从一到六；没有给出级别的标题，按页面对待无级别标题的方式朗读。它不接受任何动作。读屏软件可以在标题之间跳转，所以由多个面板组成的界面，如果每个面板都有一个标题，会更容易找到方向。
+
 ### 消息
 
 `status` 和 `alert` 是给没有在看绘制位置的人的消息：还剩多少、游戏已保存、某次修改为什么被拒绝。它的 `name` 就是消息。读屏软件在它已经知道的节点的文字发生变化时朗读消息，所以这个节点只添加一次并一直保持发布，没有内容可说时名称为空：
@@ -265,7 +292,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 `width` 和 `height` 是范围所用的逻辑尺寸。投射在画布之后放置一个不可见的容器，覆盖在画布上方，每个已发布的节点对应其中一个元素，并跟随每一次发布。它只写入发生变化的内容。
 
 - **键盘仍属于画布。**画布获得 `role="application"`、标签，以及指向容器的 `aria-owns`，于是这些节点被读作画布内部的内容。`focused` 的节点由 `aria-activedescendant` 指明。投射中的元素都不是 Tab 停靠点：原生按钮从创建时起就带有 `tabindex="-1"`，无论它能做什么；普通元素只有在可以应请求获得焦点时才带有它。应用原有的按键照常工作，过了最后一个停靠点，Tab 会离开画布。
-- **元素。**`button`、`checkbox`、`switch`、`radio`、`option`、`tab`、`menuitem`、`gridcell` 和 `columnheader` 是带有相应角色的原生按钮，其余是带角色的普通元素，`text`、`status` 和 `alert` 则是它们的文字。状态写成对应的 ARIA 属性：`aria-checked`、`aria-selected`、`aria-expanded`、`aria-disabled`、`aria-modal`、`aria-multiline`、`aria-multiselectable`、`aria-valuenow` 及其上下限、`aria-orientation`、`aria-controls`、`aria-posinset` 和 `aria-setsize`，网格中还有 `aria-rowcount`、`aria-colcount`、`aria-rowindex`、`aria-colindex` 和 `aria-sort`。最外层的 `inert` 元素带有 `inert` 属性，页面会让它内部的一切对所有用户都不可达。
+- **元素。**`button`、`checkbox`、`switch`、`radio`、`option`、`tab`、`menuitem`、`gridcell`、`columnheader` 和 `treeitem` 是带有相应角色的原生按钮，其余是带角色的普通元素，`text`、`heading`、`status` 和 `alert` 则是它们的文字。状态写成对应的 ARIA 属性：`aria-checked`、`aria-selected`、`aria-expanded`、`aria-disabled`、`aria-modal`、`aria-multiline`、`aria-multiselectable`、`aria-valuenow` 及其上下限、`aria-orientation`、`aria-controls`、`aria-posinset` 和 `aria-setsize`，网格中还有 `aria-rowcount`、`aria-colcount`、`aria-rowindex`、`aria-colindex` 和 `aria-sort`，树的项目和标题还有 `aria-level`。最外层的 `inert` 元素带有 `inert` 属性，页面会让它内部的一切对所有用户都不可达。
 - **几何。**每个元素都覆盖在它所描述的控件上，读屏软件的高亮和触摸探索能在控件绘制的位置找到它。容器内部使用逻辑单位，由一个缩放映射到画布的矩形。它跟随窗口缩放、滚动和可视视口的变化；没有事件的布局变化之后可以调用 `projection.sync()` 重新测量。画布没有尺寸时，投射被隐藏。
 - **指针穿透。**容器不接收指针，鼠标和手指仍然落在画布上。
 - **请求。**以无障碍接口的方式对元素发出的点击执行 `activate`；请求聚焦某个元素执行 `focus`，随后页面焦点交还给画布。
@@ -288,11 +315,11 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 
 | 检查 | 环境 | 结果 |
 | --- | --- | --- |
-| 语义树：25 项 | Node | 通过 |
+| 语义树：26 项 | Node | 通过 |
 | 投射对照测试自备的页面替身：17 项 | Node | 通过 |
 | 两个入口的严格 TypeScript 使用方，含九种被拒绝的误用 | Node | 通过 |
 | 示例页面：浏览器计算出的无障碍树、Tab 和方向键下的活动后代、每个元素与其控件重合、对元素发出的请求、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，在控件的 7 个场景之外另有 4 个 |
-| 托管列表的行、被隐藏的列表、可多选的列表框、作为菜单的列表、位于应用自有行之下并作为网格的列表、根的盒，以及作为对话框的层：真实 Engine、真实 UI 根和真实层管理器上的 19 项，另有严格 TypeScript 使用方和七种被拒绝的误用 | Node | 通过 |
+| 托管列表的行、被隐藏的列表、可多选的列表框、作为菜单的列表、位于应用自有行之下并作为网格的列表、作为树的项目的列表、根的盒，以及作为对话框的层：真实 Engine、真实 UI 根和真实层管理器上的 20 项，另有严格 TypeScript 使用方和七种被拒绝的误用 | Node | 通过 |
 | [列表示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-list-semantics)：浏览器为 50,000 行中的 8 行计算出的列表框、穿过被回收行时的活动后代、跳到第 40,000 行、从焦点处滚走、对选项发出的请求、缩放并滚动后的页面、手机配置 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
 | [标签页示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-tabs)：浏览器计算出的一排标签和唯一的面板、被选中标签到其面板的关系、进度条的数值、被选中标签上的活动后代，以及对标签提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，5 个场景 |
 | [多选示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-multi-select)：浏览器计算为可多选的列表框、逐个选中和取消的选项、被禁用的选项、用 Shift 选中的一段，以及对它们提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
@@ -301,17 +328,18 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 | [数值调节示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-stepper)：数值调节框及其数值和上下限、从一开始就是页面元素并在原处改变文字的 status 和 alert、落在某个数量上的活动后代，以及对旁边按钮提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
 | [行囊示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-inventory)：四行六列的网格及其行列数和序号、唯一被选中的单元格、沿两个方向跟随光标的活动后代、在原处改变文字的 status，以及对单元格和按钮提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
 | [表格示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-roster-table)：共四十一行、其中八行在页面中的网格，带有排序状态的表头，滚动时每一行在整张表中的序号，更换顺序后仍被选中的行，落在表头和行上的活动后代，以及对表头和行提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
+| [树示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-tree)：带级别的标题，以及一棵树，其中的项目在展开、收起和滚动的过程中说明自己的深度、是否展开以及在同级中的位置；活动后代进入和退出项目；以及对项目提出的请求 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，6 个场景 |
 | 同一示例加上层管理器的模态层：对话框及其按钮与卡片重合、浏览器计算出的树中不含它后面的列表、Tab 留在对话框内、按下卡片旁边不触达任何对象、Escape，以及焦点回到原来的行 | 无头 Chromium 153，软件 WebGL2，注入输入 | 通过，2 个场景 |
 
 未运行：读屏软件、语音控制、开关控制或任何其他辅助技术；真人操作；已安装的 Edge；Firefox；Safari；真实手机（触摸探索取决于平台的无障碍服务）；硬件 GPU 和 WebGPU。无障碍树通过检查，并不证明界面在读屏软件下可用；页面中文字发生变化的消息，也没有实际听到被朗读。
 
 页面检查的运行方式：`node examples/ui-controls/verify.mjs <Playwright index.mjs 的绝对路径> <新的绝对输出目录> software`，`examples/ui-list-semantics/verify.mjs` 的用法相同。不带 `software` 时启动已安装的 Edge（有界面）。
 
-向列表辅助对象的构建产物逐个写入了 100 个运算符错误，这些用例全部发现。
+向列表辅助对象的构建产物逐个写入了 108 个运算符错误，这些用例全部发现。
 
 ## 本次未包含
 
-- 首批控件集合之外的角色：树和标题。滑动条、数值调节框、标签页、进度条、动作菜单、两种消息、单元格网格及其列表头已加入；网格的行表头和跨格单元格、菜单栏、子菜单、带勾选状态的菜单项，以及 `status` 和 `alert` 之外的实时区域没有加入。
+- 首批控件集合之外的角色。滑动条、数值调节框、标签页、进度条、动作菜单、两种消息、单元格网格及其列表头、树和标题已加入；网格的行表头和跨格单元格、项目内部还包含其他节点的树、菜单栏、子菜单、带勾选状态的菜单项，以及 `status` 和 `alert` 之外的实时区域没有加入。
 - 描述文字、错误文字，以及用一个节点为另一个节点命名。
 - 托管 UI 的叶子和层对应的节点由应用自己添加，用 [`semanticBoxOf`](#托管-ui-的盒与层) 度量。虚拟列表的行有[辅助对象](#托管虚拟列表)。
 - 一次选中一段连续的行（例如 Shift 加方向键）由应用自行处理，多选示例给出了一种做法。
