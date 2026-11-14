@@ -33,6 +33,8 @@ const rules: Readonly<Record<SemanticRole, Rule>> = Object.freeze({
   tablist: { leaf: false, named: false, fields: ['disabled', 'orientation'] },
   tab: { leaf: true, named: true, inside: 'tablist', fields: ['disabled', 'selected', 'position', 'controls'] },
   tabpanel: { leaf: false, named: true, fields: [] },
+  menu: { leaf: false, named: false, fields: ['disabled', 'orientation'] },
+  menuitem: { leaf: true, named: true, inside: 'menu', fields: ['disabled', 'position'] },
   dialog: { leaf: false, named: true, fields: ['modal'] },
   textbox: { leaf: true, named: true, fields: ['disabled', 'value', 'multiline'] },
 });
@@ -178,8 +180,8 @@ export function createUiSemantics(options: UiSemanticsOptions = {}): UiSemantics
         multiline: entry.role === 'textbox' ? multiline === true : undefined,
         multiple: entry.role === 'listbox' ? multiple === true : undefined,
         range: range === undefined ? undefined : Object.freeze({ now: range.now, min: range.min, max: range.max }) as SemanticRange,
-        // A scroll bar stands beside what it scrolls; a slider and a row of tabs lie along the line they are read in.
-        orientation: rule.fields.includes('orientation') ? (orientation ?? (entry.role === 'scrollbar' ? 'vertical' : 'horizontal')) as SemanticOrientation : undefined,
+        // A scroll bar stands beside what it scrolls and a menu lists its items downward; a slider and a row of tabs lie along the line they are read in.
+        orientation: rule.fields.includes('orientation') ? (orientation ?? (entry.role === 'scrollbar' || entry.role === 'menu' ? 'vertical' : 'horizontal')) as SemanticOrientation : undefined,
         controls,
         position: position === undefined ? undefined : Object.freeze({ index: position.index, size: position.size }) as SemanticPosition,
       },

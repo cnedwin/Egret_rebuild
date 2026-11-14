@@ -247,6 +247,21 @@ test('LS16 a list box may have several selected rows, and says so',async()=>fixt
   assert.throws(()=>createUiListSemantics({semantics,root,list:'list',id:'bad',role:'listbox',describeRow:()=>({name:'x'}),...bad,...(bad.role===undefined&&bad.multiple===true?{role:undefined}:{})}),coded('UI_SEMANTICS_OPTIONS'),JSON.stringify(bad));
 }));
 
+test('LS17 a list may be a menu: its rows are menu items that are named, placed, activated or disabled',async()=>fixture(async({semantics,root,list})=>{
+ const done=[];
+ const rows=createUiListSemantics({semantics,root,list:'list',id:'actions',role:'menu',name:'Member',focusable:true,describeRow:(key,index)=>({name:'Action '+index,disabled:key==='k2'}),onActivateRow:key=>done.push(key)});
+ let snapshot=semantics.publish(rows.sync());
+ assert.deepEqual(snapshot.nodes.map(node=>[node.role,node.name,node.disabled,node.selected,node.orientation]),[['menu','Member',false,undefined,'vertical'],['menuitem','Action 0',false,undefined,undefined],['menuitem','Action 1',false,undefined,undefined],['menuitem','Action 2',true,undefined,undefined]]);
+ assert.deepEqual(named(snapshot,'actions/k1').position,{index:2,size:50000});
+ assert.equal(semantics.perform('actions/k1','activate'),true);assert.equal(semantics.perform('actions/k2','activate'),false);assert.deepEqual(done,['k1']);
+ list.focus('k0',{visible:true});assert.equal(semantics.publish(rows.sync()).focused,'actions/k0');
+ // A menu item is not selected: a description that says so is the tree's refusal. And a menu item needs a name.
+ const wrong=createUiListSemantics({semantics,root,list:'list',id:'wrong',role:'menu',describeRow:()=>({name:'x',selected:true})});wrong.sync();
+ assert.throws(()=>semantics.publish(rows.sync()),error=>error?.code==='UI_SEMANTICS_DESCRIPTION'&&error.cause.message==='wrong/k0: selected');wrong.dispose();
+ assert.throws(()=>createUiListSemantics({semantics,root,list:'list',id:'bare',role:'menu'}),coded('UI_SEMANTICS_OPTIONS'));
+ assert.throws(()=>createUiListSemantics({semantics,root,list:'list',id:'many',role:'menu',multiple:true,describeRow:()=>({name:'x'})}),coded('UI_SEMANTICS_OPTIONS'));
+}));
+
 test('LS13 a box the root laid out is measured on the stage, as of the last commit',async()=>fixture(async({root,commit})=>{
  assert.deepEqual(semanticBoxOf(root,'title'),{x:40,y:50,width:100,height:15});
  assert.deepEqual(semanticBoxOf(root,'list'),{x:40,y:70,width:100,height:60});

@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 行的动作菜单 — 2026-11-14
+
+语义树新增 `menu` 和 `menuitem` 两个角色，`createUiListSemantics` 接受 `role: 'menu'`，于是弹出层里的托管列表会作为菜单告知辅助技术，其中的菜单项可以执行，或说明自己不能执行。新示例 `examples/ui-context-menu` 把这样的菜单挂在滚动名册的行上，用鼠标右键、菜单键、Shift+F10、一个按钮或一次请求打开。已在 Node 和无头 Chromium 的软件 WebGL2 上检查。属于 #90。[指南](docs/ui-semantics.md#菜单) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-context-menu/README.zh-CN.md)
+
 ## 字体迟到和主题改变之下持有焦点的编辑器行 — 2026-11-14
 
 一个 CPU 层面的整合用例检查：持有焦点的编辑器行在字体迟到、主题改变，或两者与新的文本值同时发生时，托管列表的各行、焦点、编辑器的文字几何和语义树保持一致。只涉及测试；原生输入元素和真实字体仍需在浏览器中运行。属于 #87。[指南](docs/native-text-editing.md#验证与剩余资格)

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Egret menu of a row / 行的操作菜单</title>
+  <link rel="icon" href="data:,">
+  <script type="importmap">{
+  "imports": {
+    "@egret/engine": "/packages/engine/dist/index.js",
+    "@egret/engine/webgpu": "/packages/engine/dist/web/webgpu.js",
+    "@egret/engine/webgl2": "/packages/engine/dist/web/webgl2.js",
+    "@egret/engine/text": "/packages/engine/dist/text.js",
+    "@egret/engine/ui": "/packages/engine/dist/ui/index.js",
+    "@egret/engine/ui/semantics": "/packages/engine/dist/semantics.js",
+    "@egret/engine/input": "/packages/engine/dist/input.js",
+    "@egret/engine/web/text": "/packages/engine/dist/web/text.js",
+    "@egret/engine/web/text-input": "/packages/engine/dist/web/textInput.js",
+    "@egret/engine/web/semantics": "/packages/engine/dist/web/semantics.js",
+    "@egret/engine/web/pointer": "/packages/engine/dist/web/pointer.js",
+    "@egret/engine/input/hover": "/packages/engine/dist/hover.js",
+    "@egret/engine/web/hover": "/packages/engine/dist/web/hover.js",
+    "@egret/engine/web/keyboard": "/packages/engine/dist/web/keyboard.js",
+    "@egret/runtime": "/packages/runtime/dist/index.js",
+    "@egret/runtime/text": "/packages/runtime/dist/text/index.js",
+    "@egret/runtime/ui": "/packages/runtime/dist/ui/index.js",
+    "@egret/runtime/input": "/packages/runtime/dist/input/index.js",
+    "@egret/contracts": "/packages/contracts/dist/index.js",
+    "@egret/contracts/resources": "/packages/contracts/dist/resources/index.js",
+    "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js",
+    "#egret-pointer-input": "/packages/engine/dist/pointerInput.js",
+    "#egret-keyboard-input": "/packages/engine/dist/keyboardInput.js",
+    "robust-predicates": "/packages/engine/node_modules/robust-predicates/index.js"
+  }
+}</script>
+  <style>
+    body { font: 1rem/1.5 system-ui, sans-serif; margin: 2rem auto; padding: 0 1rem; max-width: 48rem; color: #172033; background: #f4f6fa; }
+    #surface { margin: 1rem 0; }
+    canvas { display: block; width: 100%; max-width: 720px; height: auto; border: 0; padding: 0; object-fit: fill; }
+    button { margin: 0 .5rem .5rem 0; padding: .5rem .9rem; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <h1>Menu of a row / 行的操作菜单</h1>
+  <p>A roster of forty members. Press a member to select it. Its menu opens with the right mouse button, with the Menu key or Shift+F10 on the focused row, or with the Actions button. The arrow keys move among the items, Enter does one, and Escape or a press elsewhere closes the menu.<br>四十名成员的名册。按下某个成员即可选中。用鼠标右键、在获得焦点的行上按菜单键或 Shift+F10，或者按“操作”按钮，可以打开它的菜单。方向键在菜单项之间移动，回车执行，按 Escape 或按在别处会关闭菜单。</p>
+  <div id="surface"><canvas id="scene" width="720" height="480"></canvas></div>
+  <p id="status" role="status" aria-live="polite">Starting… / 正在启动…</p>
+  <pre id="state"></pre>
+  <p><a href="./README.md">English instructions</a> · <a href="./README.zh-CN.md">中文说明</a></p>
+  <script type="module" src="./main.mjs"></script>
+</body>
+</html>

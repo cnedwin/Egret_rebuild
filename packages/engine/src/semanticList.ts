@@ -30,11 +30,11 @@ export interface SemanticListSource {
 }
 
 export interface SemanticListRow {
-  /** What the row is called. An option needs a name; a list item may leave it to the nodes inside it. */
+  /** What the row is called. An option and a menu item need a name; a list item may leave it to the nodes inside it. */
   readonly name?: string;
   /** Options only. An option that does not say is not selected. */
   readonly selected?: boolean;
-  /** Options only. */
+  /** Options and menu items. */
   readonly disabled?: boolean;
 }
 
@@ -47,8 +47,8 @@ export interface UiListSemanticsOptions {
   readonly id?: string;
   /** The node the list is inside. */
   readonly parent?: string;
-  /** A 'list' of list items, which may hold other nodes, or a 'listbox' of options. Defaults to 'list'. */
-  readonly role?: 'list' | 'listbox';
+  /** A 'list' of list items, which may hold other nodes, a 'listbox' of options, or a 'menu' of menu items. Defaults to 'list'. */
+  readonly role?: 'list' | 'listbox' | 'menu';
   readonly name?: string;
   /** A list box only: several of its options may be selected at once. Each option still says whether it is. Defaults to false. */
   readonly multiple?: boolean;
@@ -101,10 +101,10 @@ export function createUiListSemantics(options: UiListSemanticsOptions): UiListSe
   if (options === null || typeof options !== 'object') throw new EgretError('UI_SEMANTICS_OPTIONS');
   const { semantics, root, list, parent, role = 'list', name, multiple, hidden, describeRow, onActivateRow, focusable = false, onRowAdded } = options;
   if (semantics === null || typeof semantics !== 'object' || typeof semantics.add !== 'function' || root === null || typeof root !== 'object' || typeof root.snapshot !== 'function'
-    || typeof root.list !== 'function' || !text(list) || (role !== 'list' && role !== 'listbox') || !optional(name, 'string') || !optional(parent, 'string')
+    || typeof root.list !== 'function' || !text(list) || (role !== 'list' && role !== 'listbox' && role !== 'menu') || !optional(name, 'string') || !optional(parent, 'string')
     || !optional(hidden, 'function') || !optional(describeRow, 'function') || !optional(onActivateRow, 'function') || !optional(onRowAdded, 'function') || typeof focusable !== 'boolean'
-    // An option is read as one thing and needs a name of its own.
-    || (role === 'listbox' && describeRow === undefined)
+    // An option and a menu item are read as one thing and need a name of their own.
+    || (role !== 'list' && describeRow === undefined)
     // Only a list box has a selection for there to be several of.
     || !optional(multiple, 'boolean') || (multiple !== undefined && role !== 'listbox')) throw new EgretError('UI_SEMANTICS_OPTIONS');
   const id = options.id ?? root.id + '/' + list;
@@ -123,7 +123,7 @@ export function createUiListSemantics(options: UiListSemanticsOptions): UiListSe
 
   function addRow(key: string, index: number, box: SemanticBounds): Row {
     const row: Row = { index, box, node: semantics.add({
-      id: rowId(key), role: role === 'list' ? 'listitem' : 'option', parent: id,
+      id: rowId(key), role: role === 'list' ? 'listitem' : role === 'listbox' ? 'option' : 'menuitem', parent: id,
       describe: () => {
         const described = describeRow?.(key, row.index) ?? {};
         return { ...described, ...(role === 'listbox' ? { selected: described.selected ?? false } : {}), bounds: visiblePart(row.box), position: { index: row.index + 1, size }, focused: handle.getFocus().key === key, order: row.index };

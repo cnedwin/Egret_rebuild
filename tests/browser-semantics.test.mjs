@@ -107,6 +107,7 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  add('view','group',{name:'Messages'});add('bar','scrollbar',{name:'Scroll',range:{now:20,min:0,max:150},orientation:'horizontal',controls:'view'},{onFocus(){}});
  add('field','textbox',{name:'Name',value:'张三',multiline:true},{onActivate(){}});add('menu','button',{name:'More',expanded:true});add('ask','dialog',{name:'Rename',modal:false});
  add('team','listbox',{name:'Team',multiple:true});add('single','listbox',{name:'One'});
+ add('actions','menu',{name:'Member'});add('send','menuitem',{name:'Send',position:{index:1,size:2}},{parent:'actions',onActivate(){},onFocus(){}});add('dismiss','menuitem',{name:'Dismiss',disabled:true},{parent:'actions',onFocus(){}});
  add('tabs','tablist',{name:'Sect'});add('one','tab',{name:'Members',selected:true,controls:'pane',position:{index:1,size:2}},{parent:'tabs',onActivate(){},onFocus(){}});add('two','tab',{name:'Stores',selected:false,disabled:true},{parent:'tabs',onFocus(){}});
  add('pane','tabpanel',{name:'Members'});add('work','progressbar',{name:'Training',range:{now:30,min:0,max:100}},{parent:'pane'});add('busy','progressbar',{name:'Loading'},{parent:'pane'});
  add('volume','slider',{name:'Volume',range:{now:60,min:0,max:100}},{onFocus(){}});add('zoom','slider',{name:'Zoom',range:{now:1,min:0.5,max:4},orientation:'vertical',disabled:true},{onFocus(){}});
@@ -119,6 +120,10 @@ test('BS02 every state is written as the attribute a reader looks for, and only 
  assert.deepEqual(read('bar'),{role:'scrollbar','aria-label':'Scroll','aria-valuenow':'20','aria-valuemin':'0','aria-valuemax':'150','aria-orientation':'horizontal',tabindex:'-1','aria-controls':browser.elementOf('view').id});
  // A list box in which several options may be selected says so; one with a single selection says nothing.
  assert.deepEqual([read('team'),read('single')],[{role:'listbox','aria-label':'Team','aria-multiselectable':'true'},{role:'listbox','aria-label':'One'}]);
+ // A menu and its items: an item is a native button that carries its role.
+ assert.deepEqual(read('actions'),{role:'menu','aria-label':'Member','aria-orientation':'vertical'});
+ assert.deepEqual(read('send'),{type:'button',role:'menuitem','aria-label':'Send','aria-posinset':'1','aria-setsize':'2',tabindex:'-1'});
+ assert.deepEqual(read('dismiss'),{type:'button',role:'menuitem','aria-label':'Dismiss','aria-disabled':'true'});
  // A row of tabs: each tab is a native button that carries its role, and the one that is selected names its panel.
  assert.deepEqual(read('tabs'),{role:'tablist','aria-label':'Sect','aria-orientation':'horizontal'});
  assert.deepEqual(read('one'),{type:'button',role:'tab','aria-label':'Members','aria-selected':'true','aria-posinset':'1','aria-setsize':'2',tabindex:'-1','aria-controls':browser.elementOf('pane').id});

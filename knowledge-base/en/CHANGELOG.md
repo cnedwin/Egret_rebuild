@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A menu of actions for a row — 2026-11-14
+
+The semantic tree gains the roles `menu` and `menuitem`, and `createUiListSemantics` takes `role: 'menu'`, so a managed list in a popup is told to assistive technology as a menu whose items act or say that they cannot. A new example, `examples/ui-context-menu`, hangs such a menu from a row of a scrolling roster and opens it with the right mouse button, the Menu key, Shift+F10, a button or a request. Checked in Node and in headless Chromium with software WebGL2. Part of #90. [Guide](docs/ui-semantics.md#a-menu) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-context-menu/README.md)
+
 ## A focused editor row under a late font and a theme change — 2026-11-14
 
 A CPU-level integrated case checks that the rows of a managed list, the focus, the editor's text geometry and the semantic tree stay in step while the font of a focused editor row arrives late, the theme changes, or both happen with a new value. Tests only; the native element and real fonts remain a browser run. Part of #87. [Guide](docs/native-text-editing.md#verification-and-remaining-qualification)
