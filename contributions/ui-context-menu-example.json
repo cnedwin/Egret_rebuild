@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/ui-context-menu/index.html",
+      "originRole": "First-party page of the row menu example; independently authored with AI assistance; Apache-2.0. No third-party asset."
+    },
+    {
+      "path": "examples/ui-context-menu/main.mjs",
+      "originRole": "First-party example of a menu of actions for a row of a managed list, opened by the right button, the Menu key or a button, with semantics; independently authored with AI assistance; Apache-2.0. Original example text and invented names; no third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-context-menu/verify.mjs",
+      "originRole": "First-party real-browser check of the row menu example, with colours read from screenshots; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/ui-context-menu/README.md",
+      "originRole": "First-party instructions for the row menu example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/ui-context-menu/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions for the row menu example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/ui-context-menu/README.md",
+      "zh": "examples/ui-context-menu/README.zh-CN.md"
+    }
+  ]
+}

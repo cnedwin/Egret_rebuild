@@ -89,7 +89,7 @@ test('SM04 a node is refused where its role means nothing',()=>{
  assert.throws(()=>semantics.add({id:'group',role:'group',describe:()=>({bounds:box()})}),coded('UI_SEMANTICS_DUPLICATE'));
  const describe=()=>({bounds:box()});
  for(const options of [null,[],'x',{id:'',role:'group',describe},{id:'a'.repeat(129),role:'group',describe},{id:'a\0',role:'group',describe},{id:1,role:'group',describe},
-  {id:'a',role:'menu',describe},{id:'a',role:'toString',describe},{id:'a',role:'group'},{id:'a',role:'group',describe,parent:''},{id:'a',role:'group',describe,onActivate:1},{id:'a',role:'group',describe,onFocus:'x'}])
+  {id:'a',role:'grid',describe},{id:'a',role:'toString',describe},{id:'a',role:'group'},{id:'a',role:'group',describe,parent:''},{id:'a',role:'group',describe,onActivate:1},{id:'a',role:'group',describe,onFocus:'x'}])
   assert.throws(()=>semantics.add(options),coded('UI_SEMANTICS_OPTIONS'));
  assert.equal(semantics.size,4);
  for(const [id,role,parent] of [['r','radio','group'],['o','option','box'],['i','listitem','list'],['t','text','i']])semantics.add({id,role,parent,describe});
@@ -102,9 +102,9 @@ test('SM04 a node is refused where its role means nothing',()=>{
 });
 
 test('SM04b every role holds nodes or is read as one thing, and is named where a reader needs a name',()=>{
- const holds=['group','radiogroup','listbox','list','listitem','tablist','tabpanel','dialog'],unnamed=['group','radiogroup','listbox','list','listitem','tablist'];
- const inside={radio:'radiogroup',option:'listbox',listitem:'list',tab:'tablist'},needs={checkbox:{checked:false},switch:{checked:false},radio:{checked:false},option:{selected:false},tab:{selected:false},scrollbar:{range:{now:0,min:0,max:0}},slider:{range:{now:0,min:0,max:0}}};
- const roles=['group','image','text','button','checkbox','switch','radiogroup','radio','listbox','option','list','listitem','scrollbar','slider','progressbar','tablist','tab','tabpanel','dialog','textbox'];
+ const holds=['group','radiogroup','listbox','list','listitem','tablist','tabpanel','menu','dialog'],unnamed=['group','radiogroup','listbox','list','listitem','tablist','menu'];
+ const inside={radio:'radiogroup',option:'listbox',listitem:'list',tab:'tablist',menuitem:'menu'},needs={checkbox:{checked:false},switch:{checked:false},radio:{checked:false},option:{selected:false},tab:{selected:false},scrollbar:{range:{now:0,min:0,max:0}},slider:{range:{now:0,min:0,max:0}}};
+ const roles=['group','image','text','button','checkbox','switch','radiogroup','radio','listbox','option','list','listitem','scrollbar','slider','progressbar','tablist','tab','tabpanel','menu','menuitem','dialog','textbox'];
  for(const role of roles){
   const {semantics,state,add}=tree();
   if(inside[role])add('holder',inside[role]);
@@ -203,6 +203,22 @@ test('SM06c a list box says whether several of its options may be selected, and 
  const refused=(id,change,field)=>{const saved={...state[id]};Object.assign(state[id],change);assert.throws(()=>semantics.publish(),about('UI_SEMANTICS_DESCRIPTION',id+': '+field),id+' '+JSON.stringify(change));state[id]=saved;};
  for(const multiple of ['true',1,null])refused('team',{multiple},'multiple');
  for(const id of ['a','rows','panel'])for(const multiple of [true,false])refused(id,{multiple},'multiple');
+});
+
+test('SM06d a menu lists its items downward, and an item is named, placed, activated or disabled',()=>{
+ const {semantics,state,add}=tree();
+ add('menu','menu',{name:'Member'});add('send','menuitem',{name:'Send',position:{index:1,size:2}},{parent:'menu'});add('dismiss','menuitem',{name:'Dismiss',disabled:true},{parent:'menu'});
+ const node=id=>semantics.publish().nodes.find(found=>found.id===id);
+ assert.deepEqual([node('menu').orientation,node('menu').disabled,node('send').position,node('send').disabled,node('dismiss').disabled,node('send').orientation],['vertical',false,{index:1,size:2},false,true,undefined]);
+ state.menu.orientation='horizontal';assert.equal(node('menu').orientation,'horizontal');
+ const refused=(id,change,field)=>{const saved={...state[id]};Object.assign(state[id],change);assert.throws(()=>semantics.publish(),about('UI_SEMANTICS_DESCRIPTION',id+': '+field),id+' '+JSON.stringify(change));state[id]=saved;};
+ for(const [id,change,field] of [['menu',{orientation:'diagonal'},'orientation'],['menu',{selected:true},'selected'],['menu',{multiple:true},'multiple'],['send',{selected:true},'selected'],['send',{checked:true},'checked'],['send',{expanded:true},'expanded'],
+  ['send',{name:' '},'name'],['send',{position:{index:3,size:2}},'position'],['send',{orientation:'vertical'},'orientation']])refused(id,change,field);
+ assert.throws(()=>semantics.add({id:'loose',role:'menuitem',describe:()=>({bounds:box(),name:'Loose'})}),coded('UI_SEMANTICS_PARENT'));
+ const seen=[];semantics.add({id:'promote',role:'menuitem',parent:'menu',onActivate:()=>seen.push('promote'),onFocus:()=>seen.push('focus'),describe:()=>({bounds:box(),name:'Promote'})});
+ assert.deepEqual(node('promote').actions,['activate','focus']);assert.equal(semantics.perform('promote','activate'),true);assert.deepEqual(seen,['promote']);
+ semantics.add({id:'gone',role:'menuitem',parent:'menu',onActivate:()=>seen.push('gone'),describe:()=>({bounds:box(),name:'Gone',disabled:true})});semantics.publish();
+ assert.equal(semantics.perform('gone','activate'),false,'a disabled item refuses');assert.deepEqual(seen,['promote']);
 });
 
 test('SM07 one node holds the focus',()=>{
