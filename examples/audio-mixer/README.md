@@ -21,6 +21,7 @@ Keep the host and port the server prints and open `/examples/audio-mixer/index.h
 
 - Open the page and wait. The line under the text says there is no sound yet. Press anywhere, or any key: the music starts from its beginning, rising over a second.
 - **演武 / Drill** brings the other music in while the first one fades out. **山门 / Gate** while it already plays changes nothing. **停止 / Stop** fades the music out.
+- **长卷 / Scroll** is twelve seconds played as they are read, not decoded into memory: the page shows that the decoded bytes do not grow. It fades in and out like the others. **按住不放 / Hold** holds the music where it is, and lets it go on from there.
 - The three bells are the same sound on the left, in the middle and on the right. They ring over the music and end by themselves.
 - Press **点击声 / Tick** quickly. It is kept to two voices: the third press ends the oldest one, so the sound never piles up on itself.
 - Move a volume, or mute one. Music and effects are turned down separately, and the master turns down both. Reload the page: the volumes are as they were left.
@@ -36,6 +37,8 @@ Keep the host and port the server prints and open `/examples/audio-mixer/index.h
 | A sound | `mixer.decode(bytes)` with the bytes of one encoded file |
 | An effect | `mixer.play(sound, { pan, rate, maxInstances })` |
 | The music | `mixer.playMusic(sound, { fade })` and `mixer.stopMusic({ fade })` |
+| Long music | `mixer.stream(url)`: here the address of a file made in the page |
+| Holding the music | `mixer.music.pause()` and `resume()` |
 | A volume | `mixer.bus('music').setVolume(value, { fade })`, `setMuted`, and `mixer.master` |
 | A pause | `mixer.suspend()` and `mixer.resume()` |
 | The line that says whether the page sounds | `mixer.subscribe` and `mixer.state` |
@@ -50,4 +53,4 @@ See the [sound guide](../../knowledge-base/en/docs/audio.md).
 node examples/audio-mixer/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
 ```
 
-The verifier presses, taps and types through the automation protocol of a real browser and reads what the page says about itself. One case renders ahead of time and measures the samples: the level through a voice, a bus and the master, the two sides of a pan, a fade in and out, a loop, the pitch at a rate, a start part way in, one music giving way to the next, a mute, and a pause. Nothing listens to a loudspeaker, and no phone or tablet is used. A case the browser cannot be brought into is reported as `NOT RUN` with its reason: a browser without a window keeps its page visible, so the hidden page is such a case there.
+The verifier presses, taps and types through the automation protocol of a real browser and reads what the page says about itself. One case renders ahead of time and measures the samples: the level through a voice, a bus and the master, the two sides of a pan, a fade in and out, a loop, the pitch at a rate, a start part way in, one music giving way to the next, a mute, and a pause. The stream is played by the browser's own media element and checked by its level, its place and its end. Nothing listens to a loudspeaker, and no phone or tablet is used. A case the browser cannot be brought into is reported as `NOT RUN` with its reason: a browser without a window keeps its page visible, so the hidden page is such a case there.

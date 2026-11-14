@@ -14,12 +14,14 @@ export type AudioMixerState = 'running' | 'suspended' | 'locked' | 'closed';
 export type AudioEndReason = 'finished' | 'stopped' | 'stolen' | 'limit' | 'silent' | 'released' | 'closed';
 export type AudioVoiceState = 'playing' | 'paused' | 'stopping' | 'ended';
 
-/** Decoded samples held by the host. */
+/** Decoded samples held by the host, or a file it plays as it reads it. */
 export interface AudioBackendSound {
   /** Seconds. */
   readonly duration: number;
   readonly channels: number;
   readonly sampleRate: number;
+  /** Played as it is read: it has one place, so one voice at a time. */
+  readonly streamed?: boolean;
   release(): void;
 }
 /** One gain on the way to the output. */
@@ -48,6 +50,8 @@ export interface AudioBackendVoice {
   setPan(value: number): void;
   /** Stops after the seconds given. The end is told as any other end is. */
   stop(seconds: number): void;
+  /** Seconds into the sound, where the host knows better than the clock of the output does. */
+  position?(): number;
 }
 /**
  * What a host gives the mixer. Its clock stands still while its output is suspended or has not
@@ -58,6 +62,8 @@ export interface AudioBackend {
   readonly time: number;
   /** The bytes of one encoded file. They are the caller's and stay unchanged. */
   decode(bytes: Uint8Array): Promise<AudioBackendSound>;
+  /** A file the host plays as it reads it, where it can. The sound it gives says `streamed`. */
+  openStream?(url: string): Promise<AudioBackendSound>;
   /** Without a parent it feeds the output. */
   createBus(parent: AudioBackendBus | undefined): AudioBackendBus;
   /** `ended` is called once, later, when the voice has stopped sounding for any reason. */
@@ -106,8 +112,10 @@ export interface AudioSound {
   readonly duration: number;
   readonly channels: number;
   readonly sampleRate: number;
-  /** What the decoded samples are counted as against the budget of the mixer. */
+  /** What the decoded samples are counted as against the budget of the mixer. Nothing for a stream. */
   readonly decodedBytes: number;
+  /** Played as it is read. It has one place: a new voice of it ends the one before. */
+  readonly streamed: boolean;
   readonly state: 'ready' | 'released';
   /** Ends its voices and gives the samples back. A scope can own a sound through this. */
   release(): void;
@@ -198,6 +206,11 @@ export interface AudioMixer {
   bus(name: string): AudioBus;
   /** Decodes one encoded file. The bytes stay the caller's. */
   decode(bytes: Uint8Array | ArrayBuffer): Promise<AudioSound>;
+  /**
+   * Opens a file to be played as it is read, without its samples in memory: for long music.
+   * A host that cannot do this refuses.
+   */
+  stream(url: string): Promise<AudioSound>;
   play(sound: AudioSound, options?: AudioPlayOptions): AudioVoice;
   /** One music at a time: the one before it is stopped over the same fade. */
   playMusic(sound: AudioSound, options?: AudioMusicOptions): AudioVoice;

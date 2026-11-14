@@ -28,6 +28,9 @@ export interface BrowserAudio {
 /** A straight line a gain follows, kept here because a browser does not always say where a gain is. */
 interface Line { readonly from: number; readonly to: number; readonly start: number; readonly end: number; }
 interface Pair { readonly target: EventTarget; readonly type: string; readonly listener: EventListener; }
+interface Strip { readonly gain: GainNode; setGain(value: number, seconds: number): void; setPan(pan: number): void; release(): void; }
+/** A file a media element plays as it reads it, and the node that brings it into the graph. */
+interface Stream { readonly element: HTMLAudioElement; readonly node: MediaElementAudioSourceNode; }
 /** Shorter than a click can be heard, long enough that a step in volume makes none. */
 const SMOOTH = 0.005;
 const gestures = ['pointerdown', 'pointerup', 'touchend', 'keydown', 'click'] as const;
@@ -51,6 +54,9 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
   const live = typeof Live === 'function' && context instanceof Live ? context : undefined;
   const buffers = new WeakMap<AudioBackendSound, AudioBuffer>();
   const nodes = new WeakMap<AudioBackendBus, GainNode>();
+  const streams = new WeakMap<AudioBackendSound, Stream>();
+  /** The media elements that should be heard now. */
+  const sounding = new Set<HTMLAudioElement>();
   const pairs: Pair[] = [];
   const armed: Pair[] = [];
   let closed = false, desired = true, output: GainNode | undefined, silent: AudioBuffer | undefined;
@@ -80,6 +86,7 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
   function settle(): void {
     if (closed || live === undefined) return;
     try {
+      follow();
       if (live.state === 'running') {
         unlisten(armed);
         mixer.setLocked(false);
@@ -104,6 +111,8 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
       source.buffer = silent;
       source.connect(live.destination);
       source.start(0);
+      // A media element is let play by the touch it is started in.
+      if (desired) for (const element of sounding) if (element.paused) element.play().catch(held);
       live.resume().then(settle, refused);
     } catch (cause) { report(cause); }
   };
@@ -111,6 +120,104 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
     const target = unlockTarget ?? page;
     if (armed.length > 0 || target === undefined) return;
     for (const type of gestures) listen(armed, target, type, unlock);
+  }
+
+  /** The way of one voice from what makes its sound to its bus: its gain, and its two sides once it leaves the middle. */
+  function makeStrip(input: AudioNode, bus: GainNode, request: AudioBackendStart): Strip {
+    const gain = context.createGain(), time = context.currentTime;
+    let sides: { readonly left: GainNode; readonly right: GainNode; readonly nodes: readonly AudioNode[] } | undefined, line: Line;
+    if (request.fadeIn > 0) {
+      gain.gain.setValueAtTime(0, time);
+      gain.gain.linearRampToValueAtTime(request.gain, time + request.fadeIn);
+      line = { from: 0, to: request.gain, start: time, end: time + request.fadeIn };
+    } else line = ramp(gain.gain, undefined, request.gain, 0);
+    /**
+     * A pan is a balance: towards one side the other side falls in a straight line, and the middle is the sound as it is.
+     * A voice in the middle needs no nodes for it. They are put in the first time it leaves the middle.
+     */
+    function place(pan: number): void {
+      if (sides === undefined) {
+        if (pan === 0) return;
+        const splitter = context.createChannelSplitter(2), merger = context.createChannelMerger(2), left = context.createGain(), right = context.createGain();
+        // One channel is heard on both sides before the sides are told apart.
+        gain.channelCount = 2; gain.channelCountMode = 'explicit'; gain.channelInterpretation = 'speakers';
+        gain.disconnect();
+        gain.connect(splitter);
+        splitter.connect(left, 0); splitter.connect(right, 1);
+        left.connect(merger, 0, 0); right.connect(merger, 0, 1);
+        merger.connect(bus);
+        sides = { left, right, nodes: [splitter, left, right, merger] };
+      }
+      sides.left.gain.value = 1 - Math.max(0, pan);
+      sides.right.gain.value = 1 + Math.min(0, pan);
+    }
+    input.connect(gain);
+    gain.connect(bus);
+    place(request.pan);
+    return {
+      gain,
+      setGain(value: number, seconds: number): void { line = ramp(gain.gain, line, value, seconds); },
+      setPan: place,
+      release(): void { for (const node of [gain, ...sides?.nodes ?? []]) node.disconnect(); },
+    };
+  }
+  /** What a media element was refused: without a touch it waits for one; a pause that overtook it is nothing. */
+  function held(cause: unknown): void {
+    const name = (cause as { name?: unknown } | null)?.name;
+    if (name === 'NotAllowedError') arm();
+    else if (name !== 'AbortError') report(cause);
+  }
+  /** A media element keeps its own time. It is made to play while the output runs and to wait while it does not. */
+  function follow(): void {
+    const run = desired && (live === undefined || live.state === 'running');
+    for (const element of sounding) {
+      if (run && element.paused) element.play().catch(held);
+      else if (!run && !element.paused) element.pause();
+    }
+  }
+  function startStream(stream: Stream, bus: GainNode, request: AudioBackendStart, ended: () => void): AudioBackendVoice {
+    const { element, node } = stream, strip = makeStrip(node, bus, request);
+    let over = false, timer: AudioBufferSourceNode | undefined;
+    function finish(): void {
+      if (over) return;
+      over = true;
+      sounding.delete(element);
+      try {
+        element.removeEventListener('ended', finish);
+        element.pause();
+        if (timer !== undefined) { timer.onended = null; timer.stop(); timer.disconnect(); }
+        node.disconnect(strip.gain);
+        strip.release();
+      } catch (cause) { report(cause); }
+      ended();
+    }
+    element.loop = request.loop;
+    element.playbackRate = request.rate;
+    // A rate is speed and pitch together, as it is for a decoded sound.
+    if ('preservesPitch' in element) element.preservesPitch = false;
+    if (element.currentTime !== request.offset) element.currentTime = request.offset;
+    element.addEventListener('ended', finish);
+    sounding.add(element);
+    follow();
+    return {
+      setGain: strip.setGain,
+      setRate(value: number): void { element.playbackRate = value; },
+      setPan: strip.setPan,
+      stop(seconds: number): void {
+        if (over) return;
+        if (seconds <= 0) { finish(); return; }
+        // The end of a fade is a time on the clock of the output: a silent source that stops then tells it.
+        silent ??= context.createBuffer(1, 1, context.sampleRate);
+        timer = context.createBufferSource();
+        timer.buffer = silent;
+        timer.loop = true;
+        timer.connect(context.destination);
+        timer.onended = finish;
+        timer.start(0);
+        timer.stop(context.currentTime + seconds);
+      },
+      position: (): number => element.currentTime,
+    };
   }
 
   const backend: AudioBackend = {
@@ -124,6 +231,36 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
       });
       const sound: AudioBackendSound = { duration: buffer.duration, channels: buffer.numberOfChannels, sampleRate: buffer.sampleRate, release(): void { buffers.delete(sound); } };
       buffers.set(sound, buffer);
+      return sound;
+    },
+    async openStream(url: string): Promise<AudioBackendSound> {
+      const Element = globalThis.Audio;
+      if (typeof Element !== 'function' || live === undefined) throw new EgretError('AUDIO_HOST_UNAVAILABLE');
+      const element = new Element();
+      element.preload = 'auto';
+      // A file of another origin is asked for in the way that lets its samples into the graph, or not at all.
+      element.crossOrigin = 'anonymous';
+      await new Promise<void>((resolve, reject) => {
+        const done = (): void => { element.removeEventListener('loadedmetadata', loaded); element.removeEventListener('error', failed); };
+        const loaded = (): void => { done(); resolve(); };
+        const failed = (): void => { done(); reject(element.error ?? new EgretError('AUDIO_STREAM_FAILED')); };
+        element.addEventListener('loadedmetadata', loaded);
+        element.addEventListener('error', failed);
+        element.src = url;
+      });
+      const node = live.createMediaElementSource(element);
+      const sound: AudioBackendSound = {
+        duration: element.duration, channels: node.channelCount, sampleRate: live.sampleRate, streamed: true,
+        release(): void {
+          streams.delete(sound);
+          sounding.delete(element);
+          element.pause();
+          element.removeAttribute('src');
+          element.load();
+          node.disconnect();
+        },
+      };
+      streams.set(sound, { element, node });
       return sound;
     },
     createBus(parent: AudioBackendBus | undefined): AudioBackendBus {
@@ -140,54 +277,28 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
       return bus;
     },
     start(request: AudioBackendStart, ended: () => void): AudioBackendVoice {
-      const buffer = buffers.get(request.sound), bus = nodes.get(request.bus);
-      if (buffer === undefined) throw new EgretError('AUDIO_BACKEND_FAILED');
+      const bus = nodes.get(request.bus), stream = streams.get(request.sound);
       if (bus === undefined) throw new EgretError('AUDIO_BACKEND_FAILED');
-      const source = context.createBufferSource(), gain = context.createGain(), time = context.currentTime;
-      let sides: { readonly left: GainNode; readonly right: GainNode; readonly nodes: readonly AudioNode[] } | undefined, line: Line, over = false;
+      if (stream !== undefined) return startStream(stream, bus, request, ended);
+      const buffer = buffers.get(request.sound);
+      if (buffer === undefined) throw new EgretError('AUDIO_BACKEND_FAILED');
+      const source = context.createBufferSource(), strip = makeStrip(source, bus, request);
+      let over = false;
       source.buffer = buffer;
       source.loop = request.loop;
       source.playbackRate.value = request.rate;
-      if (request.fadeIn > 0) {
-        gain.gain.setValueAtTime(0, time);
-        gain.gain.linearRampToValueAtTime(request.gain, time + request.fadeIn);
-        line = { from: 0, to: request.gain, start: time, end: time + request.fadeIn };
-      } else line = ramp(gain.gain, undefined, request.gain, 0);
-      /**
-       * A pan is a balance: towards one side the other side falls in a straight line, and the middle is the sound as it is.
-       * A voice in the middle needs no nodes for it. They are put in the first time it leaves the middle.
-       */
-      function place(pan: number): void {
-        if (sides === undefined) {
-          if (pan === 0) return;
-          const splitter = context.createChannelSplitter(2), merger = context.createChannelMerger(2), left = context.createGain(), right = context.createGain();
-          // One channel is heard on both sides before the sides are told apart.
-          gain.channelCount = 2; gain.channelCountMode = 'explicit'; gain.channelInterpretation = 'speakers';
-          gain.disconnect();
-          gain.connect(splitter);
-          splitter.connect(left, 0); splitter.connect(right, 1);
-          left.connect(merger, 0, 0); right.connect(merger, 0, 1);
-          merger.connect(bus!);
-          sides = { left, right, nodes: [splitter, left, right, merger] };
-        }
-        sides.left.gain.value = 1 - Math.max(0, pan);
-        sides.right.gain.value = 1 + Math.min(0, pan);
-      }
-      source.connect(gain);
-      gain.connect(bus);
-      place(request.pan);
       source.onended = (): void => {
         if (over) return;
         over = true;
         source.onended = null;
-        try { for (const node of [source, gain, ...sides?.nodes ?? []]) node.disconnect(); } catch (cause) { report(cause); }
+        try { source.disconnect(); strip.release(); } catch (cause) { report(cause); }
         ended();
       };
       source.start(0, request.offset);
       return {
-        setGain(value: number, seconds: number): void { line = ramp(gain.gain, line, value, seconds); },
+        setGain: strip.setGain,
         setRate(value: number): void { source.playbackRate.value = value; },
-        setPan(value: number): void { place(value); },
+        setPan: strip.setPan,
         stop(seconds: number): void {
           if (over) return;
           source.stop(seconds > 0 ? context.currentTime + seconds : 0);
@@ -196,11 +307,14 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
     },
     suspend(): void {
       desired = false;
+      follow();
       if (live !== undefined && live.state === 'running') live.suspend().catch(report);
     },
     resume(): void {
       desired = true;
-      if (live !== undefined && live.state !== 'running') live.resume().then(settle, refused);
+      follow();
+      // Asked even of an output that still runs: a suspension on its way would otherwise be the last word.
+      if (live !== undefined) live.resume().then(settle, refused);
     },
     close(): void {
       if (closed) return;

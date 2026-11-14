@@ -12,7 +12,7 @@ const settled=()=>new Promise(resolve=>setImmediate(resolve));
 const gestures=['pointerdown','pointerup','touchend','keydown','click'];
 /** A page with an output whose state the test moves. Every listener and every node is kept. */
 function page(options={}){
- const world={listeners:[],contexts:[],calls:[],decoded:[],allow:options.allow??true,state:options.state??'suspended',failRemove:false,failDecode:false,callbacks:false,rejectSuspend:false,rejectResume:false,failStop:false};
+ const world={elements:[],listeners:[],contexts:[],calls:[],decoded:[],allow:options.allow??true,state:options.state??'suspended',failRemove:false,failDecode:false,callbacks:false,rejectSuspend:false,rejectResume:false,failStop:false};
  class Target extends EventTarget {
   addEventListener(type,listener,o){world.listeners.push({target:this,type,listener,options:o,removed:false});super.addEventListener(type,listener,o);}
   removeEventListener(type,listener,o){
@@ -29,7 +29,7 @@ function page(options={}){
  class Node {
   constructor(kind){this.kind=kind;this.to=[];this.disconnects=0;}
   connect(target,output,input){this.to.push(output===undefined?target:[target,output,input]);return target;}
-  disconnect(){this.to.length=0;this.disconnects++;}
+  disconnect(target){if(target===undefined){this.to.length=0;this.disconnects++;}else{this.to=this.to.filter(other=>other!==target);(this.cuts??=[]).push(target);}}
  }
  const build=context=>({
   createGain(){const node=new Node('gain');node.gain=new Param(1);context.nodes.push(node);return node;},
@@ -37,6 +37,7 @@ function page(options={}){
    const node=new Node('source');
    Object.assign(node,{playbackRate:new Param(1),loop:false,buffer:null,onended:null,starts:[],stops:[],start(when,offset){node.starts.push([when,offset]);},stop(when){if(world.failStop)throw new Error('stop');node.stops.push(when);}});
    context.nodes.push(node);return node;},
+  createMediaElementSource(element){if(world.failMedia)throw new Error('media');const node=new Node('media');node.element=element;node.channelCount=2;context.nodes.push(node);return node;},
   createChannelSplitter(count){const node=new Node('splitter');node.count=count;context.nodes.push(node);return node;},
   createChannelMerger(count){const node=new Node('merger');node.count=count;context.nodes.push(node);return node;},
   createBuffer(numberOfChannels,length,sampleRate){return {numberOfChannels,length,sampleRate,duration:length/sampleRate};},
@@ -55,15 +56,25 @@ function page(options={}){
  }
  /** An output that renders ahead of time: it is no output of the page and cannot be suspended by it. */
  class Offline {constructor(){this.state='suspended';this.currentTime=0;this.sampleRate=48000;this.destination=new Node('destination');this.nodes=[];Object.assign(this,build(this));}}
+ /** A media element whose file loads when the test lets it, and whose playing the page may refuse. */
+ class Media extends Target {
+  constructor(){super();Object.assign(this,{preload:'',crossOrigin:null,loop:false,playbackRate:1,preservesPitch:true,currentTime:0,duration:world.duration??90,paused:true,error:null,plays:0,pauses:0,loads:0,attributes:{}});world.elements.push(this);}
+  get src(){return this.attributes.src??'';}
+  set src(value){this.attributes.src=value;queueMicrotask(()=>{if(world.failLoad){this.error=world.failLoad===true?null:world.failLoad;this.dispatchEvent(new Event('error'));}else this.dispatchEvent(new Event('loadedmetadata'));});}
+  removeAttribute(name){delete this.attributes[name];}
+  load(){this.loads++;}
+  play(){this.plays++;const refusal=world.refusePlay;if(refusal)return Promise.reject(Object.assign(new Error(refusal),{name:refusal}));this.paused=false;return Promise.resolve();}
+  pause(){this.pauses++;this.paused=true;}
+ }
  const document=Object.assign(new Target(),{visibilityState:options.hidden?'hidden':'visible'});
  const live=(target,type)=>world.listeners.filter(pair=>pair.target===target&&pair.type===type&&!pair.removed);
  const fire=(target,type)=>target.dispatchEvent(new Event(type));
- return {world,document,Context,Offline,live,fire,hide(){document.visibilityState='hidden';fire(document,'visibilitychange');},show(){document.visibilityState='visible';fire(document,'visibilitychange');}};
+ return {world,document,Context,Offline,Media,live,fire,hide(){document.visibilityState='hidden';fire(document,'visibilitychange');},show(){document.visibilityState='visible';fire(document,'visibilitychange');}};
 }
 async function fixture(run,options={}){
  const p=page(options.page);
- const before={AudioContext:globalThis.AudioContext,document:globalThis.document,reportError:globalThis.reportError};
- globalThis.AudioContext=p.Context;globalThis.document=p.document;
+ const before={AudioContext:globalThis.AudioContext,document:globalThis.document,reportError:globalThis.reportError,Audio:globalThis.Audio};
+ globalThis.AudioContext=p.Context;globalThis.document=p.document;globalThis.Audio=p.Media;
  const errors=[];
  try{
   const audio=options.create===false?undefined:createBrowserAudio({onError:cause=>errors.push(cause),...options.audio});
@@ -442,15 +453,16 @@ test('BA20 what fails where nothing can be returned is told to the game, or to t
   hide();
   await settled();
   assert.deepEqual(errors.map(error=>error.message),['suspend']);
-  // The output still runs: there is nothing to ask of it when the page is shown.
+  // The output still runs. It is asked to all the same: a suspension on its way would otherwise be the last word.
   show();
+  await settled();
   world.rejectSuspend=false;
   hide();
   await settled();
   world.rejectResume=true;
   show();
   await settled();
-  assert.deepEqual([errors.map(error=>error.message),world.calls],[['suspend','resume'],['suspend','suspend','resume']]);
+  assert.deepEqual([errors.map(error=>error.message),world.calls],[['suspend','resume'],['suspend','resume','suspend','resume']]);
   // An output that refused to start is locked, and the next touch asks it again.
   assert.deepEqual([mixer.state,live(document,'click').length],['locked',1]);
   world.rejectResume=false;
@@ -521,7 +533,7 @@ test('BA22 what the page says after the mixer is disposed moves nothing',async()
  });
 });
 
-test('BA23 a strict consumer compiles against both entries, and ten misuses are refused',()=>{
+test('BA23 a strict consumer compiles against both entries, and eleven misuses are refused',()=>{
  const result=spawnSync(process.execPath,['node_modules/typescript/bin/tsc','--project','tests/types/audio.json','--pretty','false'],{cwd:new URL('..',import.meta.url),encoding:'utf8'});
  assert.equal(result.status,0,result.stdout+result.stderr);
 });
@@ -534,3 +546,217 @@ test('BA24 each entry exports its factory and nothing else, and no other entry h
   for(const name of ['createAudioMixer','createBrowserAudio'])assert.equal(name in values,false,entry+' has '+name);
  }
 });
+
+test('BA25 a file is opened through a media element of the page, asked for in the way that lets it into the graph',async()=>fixture(async({world,mixer,context,Offline})=>{
+ world.duration=180;
+ const sound=await mixer.stream('music/gate.ogg');
+ const [element]=world.elements,node=context.nodes.at(-1);
+ assert.deepEqual([element.src,element.preload,element.crossOrigin,element.plays,world.elements.length],['music/gate.ogg','auto','anonymous',0,1]);
+ assert.deepEqual([node.kind,node.element,node.to],['media',element,[]]);
+ assert.deepEqual([sound.duration,sound.channels,sound.sampleRate,sound.streamed,sound.decodedBytes],[180,2,48000,true,0]);
+ // It waited for the file to say how long it is, and listens to it no longer.
+ assert.deepEqual(world.listeners.filter(pair=>pair.target===element).map(pair=>[pair.type,pair.removed]),[['loadedmetadata',true],['error',true]]);
+ // A file that cannot be read, with the reason the element gives when it gives one.
+ world.failLoad={code:4,message:'no such file'};
+ await assert.rejects(mixer.stream('missing.ogg'),error=>error.code==='AUDIO_STREAM_FAILED'&&error.cause.message==='no such file');
+ world.failLoad=true;
+ await assert.rejects(mixer.stream('missing.ogg'),error=>error.code==='AUDIO_STREAM_FAILED'&&error.cause.code==='AUDIO_STREAM_FAILED');
+ assert.ok(world.listeners.filter(pair=>pair.type==='loadedmetadata'||pair.type==='error').every(pair=>pair.removed));
+ world.failLoad=false;world.failMedia=true;
+ await assert.rejects(mixer.stream('a.ogg'),error=>error.code==='AUDIO_STREAM_FAILED'&&error.cause.message==='media');
+ world.failMedia=false;
+ // A length the file does not say is no sound, and the element is let go.
+ world.duration=Infinity;
+ await assert.rejects(mixer.stream('endless.ogg'),coded('AUDIO_BACKEND_FAILED'));
+ assert.deepEqual([world.elements.at(-1).src,world.elements.at(-1).loads,context.nodes.at(-1).disconnects],['',1,1]);
+ // A page without media elements, and an output that renders ahead of time, play nothing as they read it.
+ world.duration=10;
+ delete globalThis.Audio;
+ await assert.rejects(mixer.stream('a.ogg'),error=>error.code==='AUDIO_STREAM_FAILED'&&error.cause.code==='AUDIO_HOST_UNAVAILABLE');
+ globalThis.Audio=world.elements[0].constructor;
+ const offline=createBrowserAudio({context:new Offline()});
+ await assert.rejects(offline.mixer.stream('a.ogg'),error=>error.code==='AUDIO_STREAM_FAILED'&&error.cause.code==='AUDIO_HOST_UNAVAILABLE');
+ offline.dispose();
+ assert.equal(mixer.snapshot().sounds,1);
+},{page:{state:'running'}}));
+
+test('BA26 a voice of a stream is the element through a gain into its bus, and the element says where it is',async()=>fixture(async({world,mixer,context})=>{
+ const sound=await mixer.stream('music/gate.ogg'),[element]=world.elements,media=context.nodes.at(-1);
+ const voice=mixer.play(sound,{bus:'music',volume:0.5,rate:1.25,offset:12,loop:true,fadeIn:2});
+ const gain=context.nodes.at(-1);
+ assert.deepEqual([gain.kind,media.to,gain.to,gain.gain.events],['gain',[gain],[context.nodes[1]],[['set',0,0],['ramp',0.5,2]]]);
+ assert.deepEqual([element.loop,element.playbackRate,element.preservesPitch,element.currentTime,element.plays,element.paused],[true,1.25,false,12,1,false]);
+ element.currentTime=40;context.currentTime=3;
+ assert.equal(voice.position,40);
+ voice.setRate(0.5);voice.setVolume(1,{fade:1});voice.setPan(-1);
+ assert.equal(element.playbackRate,0.5);
+ assert.deepEqual(gain.gain.events.slice(2),[['cancel',3],['set',0.5,3],['ramp',1,4]]);
+ const [left,right]=context.nodes.slice(-2);
+ assert.deepEqual([left.gain.value,right.gain.value,media.to.length],[1,0,1]);
+ // The file reached its end.
+ assert.equal(world.listeners.filter(pair=>pair.target===element&&pair.type==='ended'&&!pair.removed).length,1);
+ element.paused=true;element.dispatchEvent(new Event('ended'));
+ assert.deepEqual([voice.state,voice.endReason,media.to,media.cuts,gain.disconnects,media.disconnects],['ended','finished',[],[gain],2,0]);
+ assert.equal(world.listeners.filter(pair=>pair.target===element&&pair.type==='ended'&&!pair.removed).length,0);
+ // From the start of the file nothing is sought, and a second telling of the end is nothing.
+ const sought=[];let place=0;
+ Object.defineProperty(element,'currentTime',{get:()=>place,set(value){sought.push(value);place=value;}});
+ const again=mixer.play(sound);
+ assert.deepEqual([sought,element.loop,element.playbackRate,element.plays],[[],false,1,2]);
+ mixer.play(sound,{offset:5});
+ assert.deepEqual([sought,again.endReason],[[5],'stolen']);
+},{page:{state:'running'}}));
+
+test('BA27 a stream stops at once by a pause, and after a fade by the clock of the output',async()=>fixture(async({world,mixer,context})=>{
+ const sound=await mixer.stream('music/gate.ogg'),[element]=world.elements,media=context.nodes.at(-1);
+ const voice=mixer.play(sound);
+ element.currentTime=8;
+ voice.stop();
+ assert.deepEqual([voice.endReason,voice.position,element.paused,element.pauses,media.to],['stopped',8,true,1,[]]);
+ const second=mixer.play(sound);
+ context.currentTime=20;
+ second.stop({fade:3});
+ // A silent source that loops until the fade is over tells the end.
+ const [gain,timer]=context.nodes.slice(-2);
+ assert.deepEqual([timer.kind,timer.loop,timer.buffer,timer.to,timer.starts,timer.stops],['source',true,{numberOfChannels:1,length:1,sampleRate:48000,duration:1/48000},[context.destination],[[0,undefined]],[23]]);
+ assert.deepEqual([gain.gain.events,second.state,element.paused],[[['cancel',20],['set',1,20],['ramp',0,23]],'stopping',false]);
+ const told=timer.onended;
+ told();
+ assert.deepEqual([second.state,second.endReason,element.paused,timer.onended,timer.disconnects,media.to],['ended','stopped',true,null,1,[]]);
+ // Told again, the end unties nothing a second time.
+ const cuts=media.cuts.length,pauses=element.pauses;
+ told();
+ assert.deepEqual([media.cuts.length,element.pauses,timer.disconnects],[cuts,pauses,1]);
+ // A fade cut short takes its silent source with it, and a stream paused in the middle of one is not waited for.
+ const third=mixer.play(sound);
+ third.stop({fade:5});third.stop();
+ const cut=context.nodes.at(-1);
+ assert.deepEqual([third.endReason,cut.onended,cut.stops,cut.disconnects],['stopped',null,[25,undefined],1]);
+ // The same silent sample serves every fade.
+ assert.equal(cut.buffer,timer.buffer);
+ // A browser that refuses to untie a node is told of, and the voice ends all the same.
+ const fourth=mixer.play(sound);
+ media.disconnect=()=>{throw new Error('tied');};
+ fourth.stop();
+ assert.equal(fourth.endReason,'stopped');
+},{page:{state:'running'},audio:{onError:()=>{}}}));
+
+test('BA28 a media element plays while the output runs and waits while it does not',async()=>fixture(async({world,document,mixer,context,fire,hide,show,errors})=>{
+ const sound=await mixer.stream('music/gate.ogg'),[element]=world.elements;
+ // Asked for on a locked page, the music waits: the element is not asked to play before the touch.
+ const music=mixer.playMusic(sound);
+ assert.deepEqual([mixer.state,music.state,element.plays,element.paused],['locked','playing',0,true]);
+ fire(document,'pointerup');
+ // It was started inside the touch, before the output said that it runs.
+ assert.deepEqual([element.plays,element.paused,mixer.state],[1,false,'locked']);
+ await settled();
+ assert.deepEqual([mixer.state,element.plays,element.pauses],['running',1,0]);
+ // The game pauses: a suspended output does not stop a media element, so the adapter does.
+ mixer.suspend();
+ assert.deepEqual([element.paused,element.pauses],[true,1]);
+ await settled();
+ mixer.resume();
+ assert.deepEqual([element.paused,element.plays],[true,1]);
+ await settled();
+ assert.deepEqual([element.paused,element.plays,context.state],[false,2,'running']);
+ hide();
+ assert.equal(element.paused,true);
+ await settled();
+ show();
+ await settled();
+ assert.deepEqual([element.paused,element.plays,element.pauses],[false,3,2]);
+ // A voice of the stream paused by the game is not played by the output coming back.
+ element.currentTime=33;
+ music.pause();
+ assert.deepEqual([music.state,music.position,element.paused,element.pauses],['paused',33,true,3]);
+ hide();
+ await settled();
+ show();
+ await settled();
+ assert.deepEqual([element.paused,element.plays],[true,3]);
+ // It goes on from the place it kept, wherever the element was left.
+ element.currentTime=50;
+ music.resume();
+ assert.deepEqual([element.paused,element.plays,element.currentTime],[false,4,33]);
+ assert.deepEqual(errors,[]);
+}));
+
+test('BA29 an element the page will not let play waits for the next touch',async()=>fixture(async({world,document,mixer,live,fire,errors})=>{
+ const sound=await mixer.stream('music/gate.ogg'),[element]=world.elements;
+ world.refusePlay='NotAllowedError';
+ const music=mixer.playMusic(sound);
+ await settled();
+ // The output runs, and still the element was refused: the adapter listens for a touch again.
+ assert.deepEqual([mixer.state,music.state,element.paused,element.plays,live(document,'click').length],['running','playing',true,1,1]);
+ // A touch the page does not count for it: asked inside the touch and again when the output answers, refused both times.
+ fire(document,'click');
+ await settled();
+ assert.deepEqual([element.plays,element.paused,live(document,'click').length],[3,true,1]);
+ world.refusePlay=undefined;
+ fire(document,'click');
+ await settled();
+ // Played inside the touch; the output answers that it runs, and the listeners go.
+ assert.deepEqual([element.plays,element.paused,live(document,'click').length,mixer.state],[4,false,0,'running']);
+ assert.deepEqual(errors,[]);
+ // A pause that overtook the start is nothing; anything else is told.
+ music.stop();
+ world.refusePlay='AbortError';
+ mixer.playMusic(sound);
+ await settled();
+ assert.deepEqual(errors,[]);
+ mixer.stopMusic();
+ world.refusePlay='NotSupportedError';
+ mixer.playMusic(sound);
+ await settled();
+ assert.deepEqual(errors.map(error=>error.name),['NotSupportedError']);
+ // A touch while the game wants silence plays no element; the game going on does.
+ world.refusePlay=undefined;
+ mixer.stopMusic();
+ const plays=element.plays;
+ world.refusePlay='NotAllowedError';
+ mixer.playMusic(sound);
+ await settled();
+ assert.deepEqual([element.plays,live(document,'click').length],[plays+1,1]);
+ world.refusePlay=undefined;
+ mixer.suspend();
+ await settled();
+ fire(document,'click');
+ await settled();
+ assert.deepEqual([element.plays,element.paused,mixer.state],[plays+1,true,'suspended']);
+ mixer.resume();
+ await settled();
+ assert.deepEqual([element.plays,element.paused,mixer.state],[plays+2,false,'running']);
+},{page:{state:'running'}}));
+
+test('BA30 a released stream lets its element and its file go',async()=>fixture(async({world,audio,mixer,context})=>{
+ const sound=await mixer.stream('music/gate.ogg'),other=await mixer.stream('music/drill.ogg'),[element,second]=world.elements,[media,next]=context.nodes.slice(-2);
+ const voice=mixer.play(sound);
+ sound.release();
+ assert.deepEqual([voice.endReason,element.paused,element.src,element.loads,media.disconnects],['released',true,'',1,1]);
+ // The output coming back plays nothing of it.
+ mixer.suspend();mixer.resume();
+ await settled();
+ assert.equal(element.plays,1);
+ mixer.play(other,{loop:true});
+ audio.dispose();
+ assert.deepEqual([second.paused,second.src,second.loads,next.disconnects,mixer.state],[true,'',1,1,'closed']);
+},{page:{state:'running'}}));
+
+
+test('BA31 a page hidden and shown in the same turn ends sounding',async()=>fixture(async({world,mixer,context,hide,show,errors})=>{
+ const sound=await mixer.stream('music/gate.ogg'),[element]=world.elements;
+ mixer.playMusic(sound);
+ const seen=[];mixer.subscribe(state=>seen.push(state));
+ // The suspension is still on its way when the output is asked to run again.
+ hide();show();
+ assert.deepEqual(world.calls,['suspend','resume']);
+ await settled();
+ assert.deepEqual([context.state,mixer.state,mixer.snapshot().locked,element.paused],['running','running',false,false]);
+ // In between the output did stop, and the mixer said so.
+ assert.deepEqual(seen,['suspended','running','locked','running']);
+ // The same for a game that pauses and goes on at once.
+ mixer.suspend();mixer.resume();
+ await settled();
+ assert.deepEqual([context.state,mixer.state,element.paused],['running','running',false]);
+ assert.deepEqual(errors,[]);
+},{page:{state:'running'}}));
