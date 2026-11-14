@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A scroll bar a finger can drag, on a managed list — 2026-11-14
+
+The roster of the dropdown example has a scroll bar whose thumb is dragged by a mouse or a finger, and a `scrollbar` node that names the list it scrolls. A finger still cannot pan the rows, which is a gesture; the thumb is how a phone reaches the rest of a list until then. Example and documentation only. Part of #90. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.md)
+
 ## A row of a managed list is pointed at and held — 2026-11-14
 
 The binding of a row of a managed list is given `target`, the display object of its row. A hover control and an action control listen on it, so a row is lit under a pointer, darker while it is held, and activated by a completed press, as a drawn button is. The dropdown example paints its rows and its options this way. Part of #90. [Guide](docs/ui-controls.md#rows-of-a-managed-list)

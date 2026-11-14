@@ -15,9 +15,10 @@ import { createBrowserPointerInput } from '@egret/engine/web/pointer';
 import { createBrowserKeyboardInput } from '@egret/engine/web/keyboard';
 import { createExampleHost } from '../host.mjs';
 
-const WIDTH = 480, HEIGHT = 320, FAMILY = 'Arial', ROW = 30, COUNT = 40, OPTION = 26, LIST = { x: 20, y: 44, width: 420, height: 240 }, CHIP = { x: 260, width: 160 };
+const WIDTH = 480, HEIGHT = 320, FAMILY = 'Arial', ROW = 30, COUNT = 40, OPTION = 26, LIST = { x: 20, y: 44, width: 420, height: 240 }, CHIP = { x: 260, width: 160 },
+  TRACK = { x: 446, y: 44, width: 14, height: 240 };
 const COLORS = { page: 0x161a22, panel: 0x1f2633, row: 0x2b2f3a, rowAlt: 0x343a48, rowHover: 0x454c5e, rowPressed: 0x232730, chip: 0x3d4a63, chipOpen: 0x56689a,
-  option: 0x3d4a63, optionHover: 0x56689a, optionPressed: 0x27314a, optionChosen: 0x2f8f6b, ink: 0xf3e9d2, hint: 0x9aa7c4, ring: 0xf2c14e, thumb: 0x56689a };
+  option: 0x3d4a63, optionHover: 0x56689a, optionPressed: 0x27314a, optionChosen: 0x2f8f6b, ink: 0xf3e9d2, hint: 0x9aa7c4, ring: 0xf2c14e, track: 0x10141b, thumb: 0x56689a, thumbHover: 0x7385b8, thumbHeld: 0x9aa7c4 };
 const JOBS = ['idle', 'herbs', 'forge', 'guard', 'study'], JOB_NAMES = { idle: '待命 Idle', herbs: '采药 Herbs', forge: '锻造 Forge', guard: '守山 Guard', study: '修习 Study' };
 const HEROES = ['青锋', '白露', '玄霜', '赤霄', '紫电'];
 const keyOf = index => 'm' + index, indexOf = key => Number(key.slice(1)), nameOf = index => '弟子 ' + (index + 1) + ' ' + HEROES[index % 5];
@@ -40,6 +41,7 @@ const hover = createBrowserHoverInput({ engine, scope, canvas, width: WIDTH, hei
 const keyboard = createBrowserKeyboardInput({ engine, scope, onFocusChange: () => queueMicrotask(show) });
 
 const page = engine.stage.addChild(scope.use(new Sprite())), bar = engine.stage.addChild(scope.use(new Sprite()));
+bar.x = TRACK.x; bar.touchEnabled = true;
 async function line(parent, x, y, fontSize, text, colour, owner) {
   const field = createTextField(engine, owner, cache);
   field.x = x; field.y = y; parent.addChild(field);
@@ -141,14 +143,19 @@ const options = popup.list('options');
 const layers = createUiLayerManager({ engine, scope, input: pointer, keyboard, viewport: { x: 0, y: 0, width: WIDTH, height: HEIGHT }, onInvalidate: () => { void publish(); } });
 const popupOpen = () => layers.snapshot().openStack.includes('jobs');
 
-// The wheel scrolls the roster wherever the pointer is. A finger does not pan it: panning is a gesture, and none is recognized here.
+// The wheel scrolls the roster wherever the pointer is, and the thumb of the scroll bar is dragged by a mouse or a finger.
+// A finger does not pan the rows themselves: panning is a gesture, and none is recognized here.
+const barHover = createHoverControl({ hover, target: bar, onHoverChange: later });
 const scroll = createScrollControl({ viewportLength: LIST.height, contentLength: COUNT * ROW, wheel: { hover, target: engine.stage, lineLength: ROW },
+  thumb: { input: pointer, target: bar, trackLength: TRACK.height, minimumLength: 24 }, onDragChange: later,
   onScroll(offset) { if (offset !== list.snapshot().scrollOffset) { list.setScrollOffset(offset); void publish(); } } });
 
 // What the screen is to someone who does not see it: a list of members, and a listbox of jobs that is there while the popup is.
 const semantics = createUiSemantics();
 const rosterNodes = createUiListSemantics({ semantics, root, list: 'members', id: 'roster', role: 'list', name: '名册 / Roster', focusable: true,
   describeRow: (key, index) => ({ name: nameOf(index) + '，' + JOB_NAMES[jobs[index]] }), onActivateRow: key => { void openFor(key); } });
+// The scroll bar says where the roster is in its whole length, and names what it scrolls.
+semantics.add({ id: 'roster-scroll', role: 'scrollbar', describe: () => ({ name: '名册滚动 / Roster scroll', bounds: TRACK, controls: 'roster', range: { now: Math.round(scroll.offset), min: 0, max: scroll.maximum } }) });
 const jobNodes = createUiListSemantics({ semantics, root: popup, list: 'options', id: 'jobs', role: 'listbox', name: '职务 / Job', focusable: true, hidden: () => !popupOpen(),
   describeRow: key => ({ name: JOB_NAMES[key], selected: opened !== undefined && jobs[indexOf(opened)] === key }), onActivateRow: key => { void choose(key); } });
 const projection = createBrowserSemantics({ semantics, canvas, width: WIDTH, height: HEIGHT, label: 'Roster / 名册', onError: fail });
@@ -209,7 +216,7 @@ async function go(index) {
 export function readSnapshot() {
   const ui = root.snapshot(), focus = keyboard.getSnapshot(), layer = layers.snapshot().layers.find(entry => entry.id === 'jobs'), place = popup.snapshot();
   return {
-    jobs: [...jobs], opened, open: popupOpen(), offset: list.snapshot().scrollOffset,
+    jobs: [...jobs], opened, open: popupOpen(), offset: list.snapshot().scrollOffset, thumb: { x: TRACK.x, y: TRACK.y + scroll.thumb.start, width: TRACK.width, height: scroll.thumb.length }, dragging: scroll.dragging,
     focus: focus.focusedId, focusVisible: focus.focusVisible, row: list.getFocus().key, option: options.getFocus().key,
     rows: ui.rows.filter(row => row.visible).map(row => ({ key: row.key, index: row.index, x: LIST.x + row.box.x, y: LIST.y + row.box.y, width: row.box.width, height: row.box.height })),
     popup: layer === undefined || !layer.visible ? undefined : { x: place.origin.x, y: place.origin.y, width: CHIP.width, height: JOBS.length * OPTION },
@@ -220,10 +227,12 @@ export function readSnapshot() {
 }
 function show() {
   if (scope.state !== 'open') return;
-  page.graphics.clear(); page.graphics.beginFill(COLORS.page).drawRect(0, 0, WIDTH, HEIGHT).beginFill(COLORS.panel).drawRect(LIST.x - 4, LIST.y - 4, LIST.width + 20, LIST.height + 8).endFill();
-  // Where the roster is in its whole length.
-  const length = Math.round(LIST.height * LIST.height / (COUNT * ROW)), start = scroll.maximum === 0 ? 0 : Math.round(scroll.offset / scroll.maximum * (LIST.height - length));
-  bar.graphics.clear(); bar.graphics.beginFill(COLORS.thumb).drawRect(LIST.x + LIST.width + 6, LIST.y + start, 6, length).endFill();
+  page.graphics.clear(); page.graphics.beginFill(COLORS.page).drawRect(0, 0, WIDTH, HEIGHT).beginFill(COLORS.panel).drawRect(LIST.x - 4, LIST.y - 4, LIST.width + 28, LIST.height + 8)
+    .beginFill(COLORS.track).drawRect(TRACK.x, TRACK.y, TRACK.width, TRACK.height).endFill();
+  // The thumb: where the roster is in its whole length. The sprite is the thumb, so that is what a pointer presses.
+  const { start, length } = scroll.thumb;
+  bar.y = TRACK.y + start; bar.hitArea = { x: 0, y: 0, width: TRACK.width, height: length };
+  bar.graphics.clear(); bar.graphics.beginFill(scroll.dragging ? COLORS.thumbHeld : barHover.hovered ? COLORS.thumbHover : COLORS.thumb).drawRect(0, 0, TRACK.width, length).endFill();
   for (const row of members.realized.values()) row.paint();
   for (const row of choices.realized.values()) row.paint();
   try { rosterNodes.sync(); jobNodes.sync(); semantics.publish(layersReady ? layers.snapshot().committedRevision : undefined); } catch (cause) { fail(cause); }
