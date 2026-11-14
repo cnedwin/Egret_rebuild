@@ -1,3 +1,8 @@
 # Preserve reviewed raw payloads across clone, staging and core.autocrlf settings.
 # Authored UTF-8/LF policy is enforced by the repository hygiene gate.
 * -text
+
+# Two pull requests that each add an entry at the top of a changelog both keep theirs: a three-way merge
+# of these two files takes the lines of both sides instead of stopping at a conflict.
+knowledge-base/en/CHANGELOG.md merge=union
+knowledge-base/Cns/CHANGELOG.md merge=union
