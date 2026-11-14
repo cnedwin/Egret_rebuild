@@ -83,6 +83,15 @@ function nodeCapture(): NodeCapture {
 const is = Object.is;
 const freeze = Object.freeze;
 const defaultMaterial = createSharedMaterial2D({});
+// The material of a shape's image fill: the node's own, sampling the image as a whole page that repeats or is held at its edge.
+const shapeFillMaterials = new WeakMap<SharedMaterial2D, [SharedMaterial2D | undefined, SharedMaterial2D | undefined]>();
+function shapeFillMaterial(base: SharedMaterial2D, repeat: boolean): SharedMaterial2D {
+  let pair = shapeFillMaterials.get(base);
+  if (pair === undefined) shapeFillMaterials.set(base, pair = [undefined, undefined]);
+  const address = repeat ? 'repeat' : 'clamp-to-edge';
+  return pair[repeat ? 0 : 1] ??= createSharedMaterial2D({ light: base.light, dark: base.dark, blend: base.blend, samplingDomain: 'page', filter: base.filter,
+    addressU: address, addressV: address, minFilter: base.minFilter, magFilter: base.magFilter });
+}
 /** The glow or outline of an effect as the frame carries it: one kind of spread from the alpha of the group. */
 type Effect = NonNullable<VisualState['renderEffect']>;
 const glows = new WeakMap<Effect, SharedGlow2D | undefined>();
@@ -489,14 +498,20 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
     }
     // Only once every kept rectangle has been checked under it does the matrix become theirs.
     if (!rectsChecked) kept!.rectsMatrix = matrix;
-    if (shape !== undefined) {
-      // A node's shapes are one geometry of coloured triangles over the one white pixel, in the place of its rectangles.
-      const occurrenceId = nextOccurrence++;
-      referencedTuples(matrix, shape.geometry);
-      budget.source(SHAPE_PAGE);
-      const sharedRegionIndex = regionIndex(SHAPE_PAGE, SHAPE_REGION), sharedGeometryIndex = geometryIndex(shape.geometry);
+    if (shape !== undefined) for (const part of shape.parts) {
+      // A node's shapes are geometries of coloured triangles in the place of its rectangles, each over the one white
+      // pixel or over the image it is filled with. An image is sampled as a whole page, repeating or held at its edge.
+      const occurrenceId = nextOccurrence++, fill = part.bitmap;
+      referencedTuples(matrix, part.geometry);
+      let image = SHAPE_PAGE, region: Parameters<typeof regionIndex>[1] = SHAPE_REGION, drawn = material;
+      if (fill !== undefined) {
+        const snapshot = readMeshCaptureImage({ lease: fill.lease } as MeshCaptureState);
+        image = snapshot.image; region = plainRegion(snapshot.sourceRect); drawn = shapeFillMaterial(material, fill.repeat);
+      }
+      budget.source(image);
+      const sharedRegionIndex = regionIndex(image, region), sharedGeometryIndex = geometryIndex(part.geometry);
       budget.emission(clips, false);
-      commands.push(freeze({ kind: 'mesh', ordinal: commands.length, occurrenceId, materialIndex: materialIndex(material), matrix, opacity: alpha,
+      commands.push(freeze({ kind: 'mesh', ordinal: commands.length, occurrenceId, materialIndex: materialIndex(drawn), matrix, opacity: alpha,
         clips: flattenClips(clips), regionIndex: sharedRegionIndex, geometryIndex: sharedGeometryIndex }));
     }
     if (bitmap !== undefined) {
@@ -621,7 +636,7 @@ function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read'
       budget.authoring(primitiveCount);
       if (bitmap !== undefined) budget.authoring(1);
       if (mesh !== undefined) { budget.authoring(1); budget.geometry(mesh.geometry); }
-      if (shape !== undefined) { budget.authoring(1); budget.geometry(shape.geometry); }
+      if (shape !== undefined) for (const part of shape.parts) { budget.authoring(1); budget.geometry(part.geometry); }
       if (text?.committed !== undefined) budget.authoring(1);
     }
     if (drawn && !refused) {

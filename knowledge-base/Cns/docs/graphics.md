@@ -2,9 +2,9 @@
 
 [English](../../en/docs/graphics.md) | 简体中文
 
-`Sprite` 用它的 `graphics` 绘图：填充的矩形、圆、椭圆和圆角矩形，由直线和曲线组成、可以带孔的路径，圆弧，渐变，以及任意宽度的线条：圆头或方头端点、圆角或平切转角、虚线。方法名和参数与白鹭一致。
+`Sprite` 用它的 `graphics` 绘图：填充的矩形、圆、椭圆和圆角矩形，由直线和曲线组成、可以带孔的路径，圆弧，渐变，图片填充，以及任意宽度的线条：圆头或方头端点、圆角或平切转角、虚线。方法名和参数与白鹭一致。
 
-**验证了什么，没有验证什么。** 每个调用生成的三角形在 Node 中验证。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/graphics/README.zh-CN.md)在无头 Chromium 的软件 WebGL2 中从画布核对：每个形状轮廓内是它的颜色，轮廓外是背景，以及半透明形状叠在另一个形状上的结果。未运行 WebGPU。
+早期检查使用 Node 和无头 Chromium 软件 WebGL2。后续 Windows 与 Android 真机结果及负载范围见[共享二维真机结果](shared-2d-hardware-results.md)。
 
 ## 用法
 
@@ -27,6 +27,7 @@ g.beginFill(0x8040c0).moveTo(30, 150).lineTo(120, 150).lineTo(75, 185).endFill()
 | `beginLinearGradientFill(x0, y0, x1, y1, stops)` | 颜色从一点渐变到另一点的填充 |
 | `beginRadialGradientFill(x, y, radius, stops, radiusY = radius)` | 颜色从圆心向外渐变到圆（或椭圆）的填充 |
 | `beginGradientFill(type, colors, alphas, ratios, matrix?)` | 按旧代码的写法给出的渐变填充 |
+| `beginBitmapFill(lease, matrix?, repeat = true)` | 用图片填充 |
 | `lineStyle(thickness, color = 0, alpha = 1, options?)` | 设置之后所绘内容的线条。不给宽度或给 0 则结束线条。`options` 见下文 |
 | `drawRect(x, y, width, height)` | 矩形 |
 | `drawCircle(x, y, radius)` | 以某点为圆心的圆 |
@@ -75,6 +76,22 @@ sprite.graphics.beginRadialGradientFill(50, 50, 40, [{ offset: 0, color: 0xfffff
 - `beginGradientFill` 接受旧代码传入的参数：`'linear'` 或 `'radial'`、颜色、透明度、0 到 255 的比例，以及一个矩阵 `{ a, b, c, d, tx, ty }`。该矩阵把渐变自身的正方形（宽 1638.4 个单位，以原点为中心）放到 sprite 中。对于位于某个角点、给定宽高且不旋转的渐变框，矩阵为 `{ a: width / 1638.4, b: 0, c: 0, d: height / 1638.4, tx: x + width / 2, ty: y + height / 2 }`。
 - 线条只有一种颜色，没有线条渐变。
 
+## 图片填充
+
+`beginBitmapFill(lease, matrix, repeat)` 用图片填充。`lease` 是纹理的租约，与 `Bitmap` 接受的相同。
+
+```js
+// 图片的每个像素宽两个单位，图片从 (140, 104) 开始，在形状范围内重复。
+sprite.graphics.beginBitmapFill(lease, { a: 2, b: 0, c: 0, d: 2, tx: 140, ty: 104 }).drawRoundRect(140, 104, 96, 32, 16).endFill();
+```
+
+- `matrix` 决定图片在 sprite 中的位置：图片的像素 (x, y) 画在 `a·x + c·y + tx`、`b·x + d·y + ty`。省略时一个像素是一个单位，图片从 sprite 的原点开始。
+- 图片在两个方向上重复。`repeat` 为 false 时，改为把边缘像素向外延伸；图片不会在边缘处被截断。
+- 纹理必须是一整张图片。图集中的一部分会以 `GRAPHICS_VALUE_INVALID` 被拒绝，因为重复时它周围的图片内容会露出来。
+- 重复的图片最远只画到距起点 8,192 个自身像素处。超出这个范围的形状以 `GRAPHICS_BUDGET` 被拒绝。
+- 绘图显示期间要一直持有租约。租约已释放的绘图所在的帧会被拒绝。
+- 线条只有一种颜色；图片只能用于填充，不能用于线条。
+
 ## 填充、线条和路径怎样配合
 
 - 形状使用绘制它时已设置的填充和线条。线条以轮廓为中心，画在填充之上。
@@ -86,12 +103,11 @@ sprite.graphics.beginRadialGradientFill(50, 50, 40, [{ offset: 0, color: 0xfffff
 
 ## 一帧里携带什么
 
-只画填充矩形的 sprite 仍然保持为矩形，与以前一样。任何其他形状或任何线条，都会把该 sprite 的全部绘图变成一个由带颜色三角形组成的网格，按绘制顺序排列，以一个白色像素作为纹理。它和其他内容一样，跟随 sprite 的位置、缩放、旋转、透明度、裁剪、混合模式和滤镜。
+只画填充矩形的 sprite 仍然保持为矩形，与以前一样。任何其他形状或任何线条，都会把该 sprite 的全部绘图变成一个由带颜色三角形组成的网格，按绘制顺序排列，以一个白色像素作为纹理。图片填充是单独的一个网格，以它的图片为纹理，所以先画颜色、再画图片、再画颜色的 sprite 是按此顺序的三个网格；最多 16 个。它和其他内容一样，跟随 sprite 的位置、缩放、旋转、透明度、裁剪、混合模式和滤镜。
 
 - **曲线由直线段组成**，每段与真实曲线的距离不超过四分之一单位：半径 10 的圆 16 段，半径 40 的圆 32 段，最多 128 段。放大很多倍的圆会露出棱角；应当直接画得更大。
 - **边缘没有抗锯齿。** 倾斜或弯曲的边缘呈像素大小的阶梯。
 - **有多个部分或自相交的路径**比简单轮廓需要更多三角形：它在每个顶点和交点处被切成横带。
-- **尚不支持位图填充。** 填充只能是单色或渐变。
 
 ## 限制
 
@@ -101,6 +117,7 @@ sprite.graphics.beginRadialGradientFill(50, 50, 40, [{ offset: 0, color: 0xfffff
 | 一帧中所有网格的三角形 | 65,536 | 该帧以 `FRAME_BUDGET_EXCEEDED` 被拒绝 |
 | 一条正在绘制的路径的点数 | 8,192 | 调用抛出 `GRAPHICS_BUDGET`，sprite 保持原有内容 |
 | 线条宽度 | 1,024 | `GRAPHICS_VALUE_INVALID` |
+| 一个 sprite 的网格数：每次在图片填充和其他内容之间切换就开始一个 | 16 | 调用抛出 `GRAPHICS_BUDGET`，sprite 保持原有内容 |
 | 一条线的虚线段数 | 16,384 | 调用抛出 `GRAPHICS_BUDGET`，sprite 保持原有内容 |
 | 一次带孔或自相交的填充的三角形数 | 16,384 | 路径结束时（`endFill`，或下一次填充、线条或形状）抛出 `GRAPHICS_BUDGET`。该路径被丢弃，之前画的内容保留 |
 

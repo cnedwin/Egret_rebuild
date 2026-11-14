@@ -4,7 +4,7 @@ English | [简体中文](../../Cns/docs/filters.md)
 
 A render effect can now change what a subtree draws in the ways Egret's filters did: a colour matrix, a glow, a drop shadow and an inner glow, and an outline. They run in the existing effect group — the subtree drawn into a target of its own — after its blur and before its mask and clips, on both shared hosts, WebGL2 and WebGPU. Like the blur, they need a host made with `enableEffects: true`.
 
-**What is checked and what is not.** The descriptors, what a frame carries and what each group's uniform holds are checked in Node, and the [example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/filters/README.md) in headless Chromium with software WebGL2, where every checked pixel is compared with a value worked out independently from the equations below. WebGPU was not drawn in a browser here: headless Chromium offers a SwiftShader adapter but drops its instance while a frame is checked, for every example alike. No hardware GPU or phone was run. See [What was run](#what-was-run).
+The original checks used Node and headless Chromium with software WebGL2. See the [Shared 2D hardware results](shared-2d-hardware-results.md) for the later native Windows and Android evidence and its workload limits.
 
 ## Use
 
@@ -51,7 +51,7 @@ The group then takes its mask and clips and is drawn over its parent with normal
 | Descriptors copied and frozen with Egret's defaults, every limit refused one at a time, what a frame carries for each kind of effect, the uniform of each group (matrix rows and offsets, spread in backing pixels, colour in linear light, offsets rounded, the 16-pixel cap), and both hosts' shader sources | Node, [`tests/filters.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/filters.test.mjs) | 4 cases |
 | The effect tests already in the repository, with the larger uniform | Node | 323 cases |
 | The example: sixteen places around each of six tiles — inside, at each side, a corner and further out — against values worked out independently from the equations, within 2 of 255; and the same places with the effects removed | Headless Chromium 153, software WebGL2 | 2 scenarios |
-| WebGPU in a browser, a hardware GPU, a phone, the cost of many glowing groups a frame | — | Not run |
+| Hardware WebGPU and WebGL2, including multiple groups and native device recovery | Windows and Android evidence | [Shared 2D hardware results](shared-2d-hardware-results.md) |
 
 ## Not in this slice
 

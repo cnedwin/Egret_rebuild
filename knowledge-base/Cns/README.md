@@ -31,6 +31,8 @@
 
 [完整文档目录](https://github.com/cnedwin/Egret_rebuild/blob/main/DOCUMENTATION.zh-CN.md)继续链接底层契约，各子系统保留准确运行时入口、来源／许可和验证。
 
+- [共享二维真机结果](docs/shared-2d-hardware-results.md)记录原生像素、压力与 SharedFrame2D 成对计时。
+
 ## 阅读状态与证据
 
 当前为工程预览。[#55](https://github.com/cnedwin/Egret_rebuild/issues/55) 的固定桌面 CPU 与准备目标已达到，稀疏和全脏帧节奏及 GPU 时间仍待验收。[Issues](https://github.com/cnedwin/Egret_rebuild/issues)、[里程碑](https://github.com/cnedwin/Egret_rebuild/milestones)和[社区看板](https://github.com/users/cnedwin/projects/2)跟踪工作包。

@@ -33,4 +33,4 @@ See the [filters guide](../../knowledge-base/en/docs/filters.md).
 node examples/filters/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
 ```
 
-The check reads the canvas pixel by pixel and works out each expected value itself from the equations in the guide. No person pressed anything.
+The verifier compares exact native backing pixels with the filter equations. Screenshots are kept as separate records of the page composition. The installed Edge run checks both backends and the software profile checks WebGL2.

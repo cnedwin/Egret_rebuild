@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Graphics: image fills — 2026-11-15
+
+`beginBitmapFill(lease, matrix, repeat)` fills a shape or a path with an image, repeating unless told not to; `matrix` places the image in the sprite. An image fill is a mesh of its own over its image, so a sprite's drawing is now up to 16 meshes in drawing order instead of always one. The texture must be a whole image, not a part of an atlas, and a repeating image is drawn no farther than 8,192 of its pixels from its start. The graphics example fills a rounded panel with an eight-pixel image, and its check reads four of the repeated squares from the canvas with software WebGL2. This completes what Graphics was missing except gradients on lines. See the [graphics guide](docs/graphics.md). The migration map said a lease is ended with `dispose()`; it is `release()`, and the map now says so.
+
 ## Error sentences in Chinese at run time, and no more fallback sentences — 2026-11-15
 
 `setErrorLanguage('zh')` from `@egret/engine` puts the Chinese sentence in the message of every error made after it; `error.code` is the same in both languages. `describeErrorCode(code, 'en' | 'zh')` gives a code's sentence to a program. The 37 codes whose sentence was only "A problem with X: y." now have sentences written for them, in both languages, and a test refuses a new code that would fall back to that form. The sentence of `TWEEN_OPTIONS_INVALID` named options a tween does not have; it now names `from`, `to`, `durationSeconds` and `onUpdate`. The Chinese sentences moved from the documentation tool into the runtime, so the [error code reference](docs/error-codes.md) and the messages are one text.

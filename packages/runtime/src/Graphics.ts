@@ -1,7 +1,11 @@
 import type { DisplayObject } from "./DisplayObject.js";
 import { EgretError } from "./EgretError.js";
 import { assertVisualMutable, color, unit, finite, copyRect, visualOf, recordVisualChange, VISUAL_CONTENT } from "./displayVisualState.js";
-import { GRAPHICS_SHAPE_LIMITS, addOutline, addPath, arcPoints, bezierPoints, createShapeState, curveSegments, ellipseOutline, roundRectOutline, shapeFits } from "./graphicsShape.js";
+import { GRAPHICS_SHAPE_LIMITS, addOutline, addPath, arcPoints, bezierPoints, copyDrawing, createShapeState, curveSegments, drawingFits, ellipseOutline, roundRectOutline, shapeFits } from "./graphicsShape.js";
+import { isAssetLease, readAssetLeaseValue } from "./AssetLease.js";
+import type { AssetLease } from "./AssetLease.js";
+import { isTexture, readTextureSnapshot } from "./Texture.js";
+import type { Texture } from "./Texture.js";
 import type { LineCaps, LineJoints, ShapeLine, ShapePaint, ShapeState } from "./graphicsShape.js";
 import type { GradientStop, ShapeGradient } from "./graphicsFill.js";
 
@@ -107,7 +111,7 @@ export class Graphics {
     this.paintRequired();
     const state = visualOf(this.owner);
     // Filled rectangles alone stay rectangles, which a frame draws without a geometry.
-    if (state.shape === undefined && this.line === undefined && this.fill!.gradient === undefined) { state.primitives.push({ rect, ...this.fill! }); recordVisualChange(this.owner, VISUAL_CONTENT); return this; }
+    if (state.shape === undefined && this.line === undefined && this.fill!.gradient === undefined && this.fill!.bitmap === undefined) { state.primitives.push({ rect, ...this.fill! }); recordVisualChange(this.owner, VISUAL_CONTENT); return this; }
     return this.outline([x, y, x + width, y, x + width, y + height, x, y + height], true);
   }
 
@@ -195,6 +199,34 @@ export class Graphics {
     if (changed) recordVisualChange(this.owner, VISUAL_CONTENT);
   }
 
+  /**
+   * A fill of an image. `lease` is the lease of a texture that is a whole image, not a part of an atlas. `matrix`
+   * places the image in the node: its pixel (x, y) is drawn at `a·x + c·y + tx`, `b·x + d·y + ty`; without it a pixel
+   * is one unit and the image starts at the node's origin. The image repeats unless `repeat` is false, and then its
+   * edge pixels go on outwards. Keep the lease for as long as the drawing is shown.
+   */
+  public beginBitmapFill(lease: AssetLease<Texture>, matrix?: GradientBoxMatrix, repeat = true): this {
+    assertVisualMutable(this.owner);
+    if (!isAssetLease(lease) || typeof repeat !== "boolean") throw invalid();
+    const texture = readAssetLeaseValue(lease);
+    if (!isTexture(texture)) throw invalid();
+    const snapshot = readTextureSnapshot(texture), width = snapshot.image.width, height = snapshot.image.height, rect = snapshot.sourceRect;
+    // A part of an atlas cannot repeat by itself: the image around it would show.
+    if (snapshot.viewRegion !== null || rect.x !== 0 || rect.y !== 0 || rect.width !== width || rect.height !== height) throw invalid();
+    const m = matrix ?? { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+    if (typeof m !== "object" || m === null) throw invalid();
+    numbers(m.a, m.b, m.c, m.d, m.tx, m.ty);
+    const det = m.a * m.d - m.b * m.c;
+    if (det === 0 || !finite(1 / det)) throw invalid();
+    // The node's point as a pixel of the image, then as a part of its width and height.
+    const bitmap = { lease, repeat, width, height, a: m.d / det / width, c: -m.c / det / width, tx: (m.c * m.ty - m.d * m.tx) / det / width,
+      b: -m.b / det / height, d: m.a / det / height, ty: (m.b * m.tx - m.a * m.ty) / det / height };
+    for (const value of [bitmap.a, bitmap.b, bitmap.c, bitmap.d, bitmap.tx, bitmap.ty]) if (!finite(value)) throw invalid();
+    this.finishPath();
+    this.fill = { color: 0xffffff, alpha: 1, bitmap };
+    return this;
+  }
+
   private gradient(gradient: ShapeGradient): this {
     for (const value of [gradient.a, gradient.b, gradient.c, gradient.d, gradient.tx, gradient.ty]) if (!finite(value)) throw invalid();
     this.finishPath();
@@ -231,12 +263,13 @@ export class Graphics {
   private finishPath(): void {
     const shape = visualOf(this.owner).shape;
     if (shape === undefined || shape.path === undefined) return;
-    const path = shape.path, positions = shape.positions.length, colors = shape.colors.length, indices = shape.indices.length;
+    const path = shape.path;
     shape.path = undefined;
     shape.resolved = undefined;
-    if (addPath(shape, path) && shapeFits(shape.positions.length / 2, shape.indices.length)) return;
+    const undo = this.mark();
+    if (addPath(shape, path) && drawingFits(shape)) return;
     // A path that became more than the node may hold is dropped whole; what was drawn before it stays.
-    shape.positions.length = positions; shape.colors.length = colors; shape.indices.length = indices;
+    undo();
     recordVisualChange(this.owner, VISUAL_CONTENT);
     throw new EgretError("GRAPHICS_BUDGET");
   }
@@ -250,10 +283,13 @@ export class Graphics {
   private mark(): () => void {
     const state = visualOf(this.owner), shape = state.shape;
     if (shape === undefined) { const primitives = state.primitives; return () => { state.shape = undefined; state.primitives = primitives; }; }
-    const positions = shape.positions.length, colors = shape.colors.length, indices = shape.indices.length;
+    const positions = shape.positions.length, colors = shape.colors.length, uvs = shape.uvs.length, indices = shape.indices.length, done = shape.done.length, bitmap = shape.bitmap;
     const path = shape.path, parts = path?.subpaths.length ?? 0, last = parts === 0 ? 0 : path!.subpaths[parts - 1]!.length;
     return () => {
-      shape.positions.length = positions; shape.colors.length = colors; shape.indices.length = indices;
+      // A batch begun since is given up, and the one that was being added to is added to again.
+      if (shape.done.length > done) { const batch = shape.done[done]!; shape.positions = batch.positions; shape.colors = batch.colors; shape.uvs = batch.uvs; shape.indices = batch.indices; shape.done.length = done; }
+      shape.bitmap = bitmap;
+      shape.positions.length = positions; shape.colors.length = colors; shape.uvs.length = uvs; shape.indices.length = indices;
       if (path === undefined) shape.path = undefined;
       else { path.subpaths.length = parts; if (parts !== 0) path.subpaths[parts - 1]!.length = last; }
     };
@@ -283,11 +319,9 @@ export class Graphics {
       }
     }
     // Past that count the path is made, to see what it really takes.
-    if (!shapeFits(vertices, indices) && path !== undefined) {
-      const trial = { positions: shape.positions.slice(), colors: shape.colors.slice(), indices: shape.indices.slice() };
-      if (addPath(trial, path)) { vertices = trial.positions.length / 2; indices = trial.indices.length; }
-    }
-    if (!shapeFits(vertices, indices)) { undo(); throw new EgretError("GRAPHICS_BUDGET"); }
+    let fits = shapeFits(vertices, indices) && drawingFits(shape);
+    if (!fits && path !== undefined) { const trial = copyDrawing(shape); fits = addPath(trial, path) && drawingFits(trial); }
+    if (!fits) { undo(); throw new EgretError("GRAPHICS_BUDGET"); }
     shape.resolved = undefined;
     recordVisualChange(this.owner, VISUAL_CONTENT);
     return this;

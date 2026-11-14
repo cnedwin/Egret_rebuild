@@ -1,0 +1,19 @@
+{
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/shared-2d-hardware-results.md",
+      "zh": "knowledge-base/Cns/docs/shared-2d-hardware-results.md"
+    }
+  ],
+  "files": [
+    {
+      "originRole": "First-party record of native filter, blend, Graphics and paired SharedFrame2D verification; independently authored with AI assistance; Apache-2.0.",
+      "path": "knowledge-base/en/docs/shared-2d-hardware-results.md"
+    },
+    {
+      "originRole": "First-party Chinese edition of native filter, blend, Graphics and paired SharedFrame2D verification; independently authored with AI assistance; Apache-2.0.",
+      "path": "knowledge-base/Cns/docs/shared-2d-hardware-results.md"
+    }
+  ],
+  "schemaVersion": 1
+}

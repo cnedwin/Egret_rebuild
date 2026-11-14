@@ -4,7 +4,7 @@
 
 渲染效果现在可以像 Egret 的滤镜一样改变子树的绘制结果：颜色矩阵、发光、投影和内发光，以及描边。它们在现有的效果组中执行——子树先被绘制到自己的目标中——位于模糊之后、遮罩和裁剪之前，两个共享宿主（WebGL2 和 WebGPU）都支持。与模糊一样，宿主需要以 `enableEffects: true` 创建。
 
-**验证了什么，没有验证什么。** 描述符、帧中携带的内容以及每组 uniform 的内容在 Node 中验证，[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/filters/README.zh-CN.md)在无头 Chromium 和软件 WebGL2 中验证，每个被检查的像素都与按下文公式独立算出的值比较。这里没有在浏览器中绘制 WebGPU：无头 Chromium 提供了 SwiftShader 适配器，但在检查帧时会丢失实例，所有示例都是如此。没有运行硬件 GPU 或手机。见[实际运行了什么](#实际运行了什么)。
+早期检查使用 Node 和无头 Chromium 软件 WebGL2。后续 Windows 与 Android 真机结果及负载范围见[共享二维真机结果](shared-2d-hardware-results.md)。
 
 ## 用法
 
@@ -51,7 +51,7 @@ ghost.renderEffect = { glow: { color: 0x40ff80, knockout: true } };
 | 描述符按 Egret 默认值复制并冻结、逐个拒绝每项超限、每种效果在帧中携带的内容、每组 uniform（矩阵行与偏移、以后备像素计的扩散、线性光照中的颜色、取整后的偏移、16 像素上限），以及两个宿主的着色器源码 | Node，[`tests/filters.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/filters.test.mjs) | 4 个用例 |
 | 仓库中已有的效果测试，使用更大的 uniform | Node | 323 个用例 |
 | 示例：六个方块周围各十六处位置——内部、每一侧、拐角和更远处——与按公式独立算出的值比较，误差不超过 2/255；以及去掉效果后的同样位置 | 无头 Chromium 153，软件 WebGL2 | 2 个场景 |
-| 浏览器中的 WebGPU、硬件 GPU、手机、每帧大量发光组的开销 | — | 未运行 |
+| 真机 WebGPU 和 WebGL2，包括多组滤镜与原生设备恢复 | Windows 与 Android 证据 | [共享二维真机结果](shared-2d-hardware-results.md) |
 
 ## 不在本次范围内
 

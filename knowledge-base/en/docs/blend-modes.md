@@ -4,7 +4,7 @@ English | [简体中文](../../Cns/docs/blend-modes.md)
 
 `DisplayObject.blendMode` decides how what an object and its children draw is combined with what is already under it, by the names Egret used: `normal`, `add`, `multiply`, `screen` and `erase`. Both shared hosts, WebGL2 and WebGPU, draw every mode; nothing has to be enabled.
 
-**What is checked and what is not.** The modes are checked in Node and the [example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/blend-modes/README.md) in headless Chromium with software WebGL2, where each pixel is compared with the value worked out from its equation. WebGPU was not drawn in a browser here: headless Chromium offers a SwiftShader adapter but drops its instance while a frame is checked, for every example alike. No hardware GPU or phone was run. See [What was run](#what-was-run).
+The original checks used Node and headless Chromium with software WebGL2. See the [Shared 2D hardware results](shared-2d-hardware-results.md) for the later native Windows and Android evidence and its workload limits.
 
 ## Use
 
@@ -39,7 +39,7 @@ The equations are those of the [shared render profile](shared-render-profile-con
 | --- | --- | --- |
 | Reading and setting each mode, tints and filtering kept, the same mode again changing nothing, materials set afterwards, refused names, a disposed object; modes captured for each draw beneath a container and a child's own mode kept; `erase` in the material contract, the WebGL2 blend factors and the WebGPU blend state of every mode | Node, [`tests/blend-modes.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/blend-modes.test.mjs) | 3 cases |
 | The example: each mode over the same panel compared with its equation within 3 of 255, the panel itself, sparks under an `add` container at one, two and three overlaps, and the same sparks flat in `normal` | Headless Chromium 153, software WebGL2 | 2 scenarios |
-| WebGPU in a browser, a hardware GPU, a phone | — | Not run |
+| Hardware WebGPU and WebGL2, including inherited blend modes and erase | Windows and Android evidence | [Shared 2D hardware results](shared-2d-hardware-results.md) |
 
 ## Not in this slice
 

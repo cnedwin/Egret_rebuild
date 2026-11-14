@@ -110,7 +110,7 @@ export const ZH_WRITTEN: Readonly<Record<string, string>> = {
   INVALID_DISPLAY_CONTAINER: '给出的不是本 SDK 创建的显示容器。',
   GRAPHICS_VALUE_INVALID: '交给 graphics 的值无效：坐标是有限数字，尺寸不能为负，颜色在 0 到 0xffffff 之间，alpha 在 0 到 1 之间。',
   GRAPHICS_FILL_REQUIRED: '形状需要填充或线条。请在绘制前调用 beginFill 或 lineStyle。',
-  GRAPHICS_BUDGET: '绘图超出了一个 sprite 的上限：一条路径 8,192 个点、一条线 16,384 段虚线，或一次带孔或自相交的填充 16,384 个三角形。sprite 之前画的内容保留。请把其余部分画到另一个 sprite 中。',
+  GRAPHICS_BUDGET: '绘图超出了一个 sprite 的上限：一条路径 8,192 个点、一条线 16,384 段虚线、一次带孔或自相交的填充 16,384 个三角形、16 个网格，或把图片重复到超过自身 8,192 个像素之外。sprite 之前画的内容保留。请把其余部分画到另一个 sprite 中。',
   CLOCK_DELTA_LIMIT: '交给 engine.advanceTime 的时间与上一次相差超过了时钟一步允许的长度。请分成更小的步，@egret/engine/web/loop 的帧循环在标签页被隐藏后就是这样做的。',
   CLOCK_SOURCE_BACKWARDS: '交给 engine.advanceTime 的时间早于上一次。它接受的秒数不能倒退。',
   CLOCK_SOURCE_INVALID: '交给 engine.advanceTime 的时间不是大于等于零的有限秒数。',

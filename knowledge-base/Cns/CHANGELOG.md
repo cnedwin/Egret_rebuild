@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## Graphics：图片填充 — 2026-11-15
+
+`beginBitmapFill(lease, matrix, repeat)` 用图片填充形状或路径，默认重复；`matrix` 决定图片在 sprite 中的位置。图片填充是以该图片为纹理的单独网格，所以一个 sprite 的绘图现在是按绘制顺序排列的最多 16 个网格，而不再总是一个。纹理必须是一整张图片，不能是图集的一部分；重复的图片最远只画到距起点 8,192 个自身像素处。绘图示例用一张 8 像素的图片填充了一个圆角面板，它的核对脚本用软件 WebGL2 从画布上读取了其中四个重复的方格。至此 Graphics 原先缺少的部分只剩线条渐变。参见[绘图指南](docs/graphics.md)。迁移对照表原先写租约用 `dispose()` 结束，实际是 `release()`，现已改正。
+
 ## 运行时中文错误说明，不再有兜底句 — 2026-11-15
 
 调用 `@egret/engine` 的 `setErrorLanguage('zh')` 之后创建的错误，message 里是中文说明；`error.code` 在两种语言下相同。`describeErrorCode(code, 'en' | 'zh')` 把某个错误码的说明交给程序。原来只有某部分出现问题：xxx这种兜底句的 37 个错误码，现在都有了专门写的中英文说明，并且测试会拒绝新出现的、只能落到兜底句的错误码。`TWEEN_OPTIONS_INVALID` 的说明原先提到了缓动没有的选项，现在写的是 `from`、`to`、`durationSeconds` 和 `onUpdate`。中文说明从文档工具移到了运行时，所以[错误码对照表](docs/error-codes.md)和 message 是同一份文字。
