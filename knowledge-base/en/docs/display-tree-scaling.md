@@ -285,3 +285,5 @@ Capturing 5,000 nodes in 20 containers, all of them moving in every frame, media
 | 5,000 bitmaps of 100 frames of one atlas | 3.87 ms | 3.61 ms |
 
 These are Node figures and not a browser or GPU measurement.
+
+The [Shared 2D hardware results](shared-2d-hardware-results.md) record the paired native-browser check of the three optimizations and its measurement scope.

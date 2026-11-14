@@ -33,4 +33,4 @@ node tools/serve-canvas.mjs
 node examples/filters/verify.mjs <Playwright index.mjs 的绝对路径> <新的输出目录的绝对路径> [software]
 ```
 
-检查逐像素读取画布，并按指南中的公式自行算出每个期望值。没有人按过任何东西。
+验证器使用 GPU 原生回读的整像素与滤镜公式对照。截图另行记录浏览器合成结果。已安装的 Edge 检查两个后端，软件模式检查 WebGL2。
