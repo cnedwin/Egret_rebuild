@@ -1,0 +1,116 @@
+// SPDX-License-Identifier: Apache-2.0
+// Checks the starter example in a real browser with the browser's own keyboard, mouse and touch input.
+//
+//   node examples/starter/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
+//
+// Without the third argument the installed Edge is launched headed. With `software` the browser that
+// Playwright bundles runs headless with software rendering. Input is injected through the browser's
+// automation protocol; no person pressed a key. Colours are read from screenshots of the canvas.
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+const root = fileURLToPath(new URL('../..', import.meta.url)), [playwrightPath, out, renderer] = process.argv.slice(2);
+if (!playwrightPath || !out || !path.isAbsolute(playwrightPath) || !path.isAbsolute(out) || fs.existsSync(out) || ![undefined, 'software'].includes(renderer))
+  throw new Error('Usage: node examples/starter/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]');
+fs.mkdirSync(out, { recursive: true });
+const { chromium, devices } = await import(pathToFileURL(playwrightPath).href);
+const types = { '.html': 'text/html', '.mjs': 'text/javascript', '.js': 'text/javascript', '.json': 'application/json', '.md': 'text/markdown' };
+const server = http.createServer((request, response) => {
+  const file = path.join(root, decodeURIComponent(new URL(request.url, 'http://localhost').pathname));
+  if (!file.startsWith(root) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) { response.writeHead(404, { connection: 'close' }); response.end(); return; }
+  response.writeHead(200, { 'content-type': types[path.extname(file)] ?? 'application/octet-stream', connection: 'close' }); response.end(fs.readFileSync(file));
+});
+await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+const report = { profile: 'starter-example/1', node: process.version, input: 'injected through the automation protocol',
+  renderer: renderer === 'software' ? 'bundled Chromium, headless, software rendering' : 'installed Edge, headed, default launch', backends: [], cases: [] };
+const browser = await chromium.launch(renderer === 'software' ? { args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--enable-features=Vulkan', '--use-vulkan=swiftshader'] } : { channel: 'msedge', headless: false });
+report.browser = browser.version();
+
+const read = page => page.evaluate(() => globalThis.__egretStarterExample.readSnapshot());
+const drawn = page => page.waitForTimeout(80);
+async function at(page, [x, y]) {
+  const box = await page.evaluate(() => { const bounds = document.querySelector('#scene').getBoundingClientRect(); return [bounds.left, bounds.top, bounds.width, bounds.height]; });
+  return [box[0] + x * box[2] / 480, box[1] + y * box[3] / 270];
+}
+/** The colour the page shows at a place of the stage, read from a screenshot the page decodes itself. */
+async function colour(page, place) {
+  const [x, y] = await at(page, place);
+  const shot = (await page.screenshot({ clip: { x: x - 2, y: y - 2, width: 4, height: 4 } })).toString('base64');
+  return page.evaluate(async data => {
+    const bitmap = await createImageBitmap(await (await fetch('data:image/png;base64,' + data)).blob()), surface = new OffscreenCanvas(bitmap.width, bitmap.height).getContext('2d');
+    surface.drawImage(bitmap, 0, 0);
+    const [red, green, blue] = surface.getImageData(1, 1, 1, 1).data;
+    return ((red << 16) | (green << 8) | blue).toString(16).padStart(6, '0');
+  }, shot);
+}
+async function scenario(name, context, body, query = '?backend=webgl2&manual') {
+  const owned = await browser.newContext(context), page = await owned.newPage(), row = { name, status: 'INCOMPLETE', errors: [] };
+  report.cases.push(row);
+  page.on('pageerror', error => row.errors.push(String(error))); page.on('console', message => { if (message.type() === 'error') row.errors.push(message.text()); });
+  try {
+    await page.goto('http://127.0.0.1:' + server.address().port + '/examples/starter/index.html' + query);
+    await page.waitForFunction(() => globalThis.__egretStarterExample !== undefined);
+    await drawn(page);
+    await body(page);
+    assert.equal((await read(page)).failure, undefined, await page.textContent('#status')); assert.deepEqual(row.errors, []);
+    await page.screenshot({ path: path.join(out, name.replace(/\W+/g, '-') + '.png') });
+    row.status = 'PASS';
+  } catch (error) { row.status = 'FAIL'; row.failure = String(error.stack ?? error); process.exitCode = 1; }
+  await owned.close();
+}
+const desktop = { viewport: { width: 1000, height: 900 } }, phone = { ...devices['Pixel 7'] };
+const until = async (page, test, label, ms = 8000) => { const end = Date.now() + ms; for (;;) { const now = await read(page); if (test(now)) return now; if (Date.now() > end) throw new Error('timed out waiting for ' + label + ': ' + JSON.stringify(now)); await page.waitForTimeout(50); } };
+const HERO = '4a7bd0', COIN = 'f0c030', CLEAR = '1b1f2a';
+
+await scenario('webgl2: the stage shows the square and five coins, each in its own colour', desktop, async page => {
+  const now = await until(page, s => s.frames >= 2, 'two frames');
+  assert.deepEqual([now.backend, now.score, now.coins.length, now.hero], ['webgl2', 0, 5, { x: 40, y: 135 }]);
+  assert.equal(await colour(page, [40, 135]), HERO);
+  for (const place of now.coins) assert.equal(await colour(page, place), COIN, 'coin at ' + place);
+  assert.equal(await colour(page, [240, 30]), CLEAR);
+}, '?backend=webgl2');
+
+await scenario('webgl2: a click sends the square to that place, where it picks up the coin and stops', desktop, async page => {
+  await until(page, s => s.frames >= 2, 'two frames');
+  const [x, y] = await at(page, [240, 135]);
+  await page.mouse.click(x, y);
+  const now = await until(page, s => s.score === 1 && s.hero.x === 240 && s.hero.y === 135, 'the square at the middle coin');
+  assert.equal(now.coins.length, 4);
+  await drawn(page);
+  // The coin is gone and the square stands where it was.
+  assert.equal(await colour(page, [240, 135]), HERO);
+  assert.equal(await colour(page, [40, 135]), CLEAR);
+}, '?backend=webgl2');
+
+await scenario('webgl2: the arrow keys walk the square, the walls stop it, and the button starts again', desktop, async page => {
+  await until(page, s => s.frames >= 2, 'two frames');
+  await page.focus('#scene');
+  await page.keyboard.down('ArrowLeft');
+  const stopped = await until(page, s => s.hero.x === 12, 'the left wall');
+  await page.keyboard.up('ArrowLeft');
+  assert.equal(stopped.hero.y, 135);
+  await page.keyboard.down('ArrowUp'); await page.keyboard.down('ArrowRight');
+  const picked = await until(page, s => s.score >= 1, 'the upper left coin');
+  await page.keyboard.up('ArrowUp'); await page.keyboard.up('ArrowRight');
+  assert.ok(picked.coins.every(place => place[0] !== 80 || place[1] !== 60), JSON.stringify(picked.coins));
+  await page.click('#reset');
+  const again = await until(page, s => s.score === 0 && s.coins.length === 5, 'a new start');
+  assert.deepEqual(again.hero, { x: 40, y: 135 });
+}, '?backend=webgl2');
+
+await scenario('on a phone a tap sends the square to a coin', phone, async page => {
+  await until(page, s => s.frames >= 2, 'two frames');
+  const [x, y] = await at(page, [80, 210]);
+  await page.touchscreen.tap(x, y);
+  // A finger lands within a unit of the place asked for, and the square stops where it landed.
+  const now = await until(page, s => s.score === 1 && Math.abs(s.hero.x - 80) < 1.5 && Math.abs(s.hero.y - 210) < 1.5, 'the square on the lower left coin');
+  assert.equal(now.coins.length, 4);
+}, '?backend=webgl2');
+
+fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
+console.log(report.cases.map(row => (row.status === 'PASS' ? 'ok    ' : 'FAIL  ') + row.name + (row.failure ? '\n' + row.failure : '')).join('\n'));
+await browser.close(); server.close();
+process.exit(process.exitCode ?? 0);

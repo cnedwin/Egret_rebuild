@@ -9,7 +9,7 @@ Use this entry to find product and engineering documents for the community rebui
 | Question | Read |
 | --- | --- |
 | What can I run now? | [Core capabilities and remaining work](docs/core-progress.md) |
-| How do I start or contribute? | [Getting started](docs/getting-started.md) · [Contribution guide](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md) |
+| How do I start or contribute? | [Getting started](docs/getting-started.md) · [What to import](docs/entry-points.md) · [Contribution guide](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md) |
 | What should be built next? | [Engineering plan](docs/engineering-plan.md) · [M2–M4 roadmap](docs/m2-m4-delivery-plan.md) |
 | What is the complete product? | [Requirements](docs/product-requirements.md) · [Components](docs/product-components.md) · [Positioning](docs/design-philosophy-and-positioning.md) |
 | How does it work? | [White paper](docs/technical-white-paper.md) · [Architecture plan](docs/architecture-and-engineering-plan.md) · [Actual/future package structure](docs/engineering-architecture-and-project-structure.md) |
