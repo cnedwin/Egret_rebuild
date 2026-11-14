@@ -4,7 +4,7 @@ English | [简体中文](../../Cns/docs/graphics.md)
 
 A `Sprite` draws with its `graphics`: filled rectangles, circles, ellipses and rounded rectangles, paths of lines and curves with holes, arcs, gradients, image fills, and lines of any width with round or square ends, round or flat corners, and dashes. The names and arguments are Egret's.
 
-**What is checked and what is not.** The triangles each call gives are checked in Node. The [example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/graphics/README.md) is checked from the canvas in headless Chromium with software WebGL2: each shape's colour inside its outline, the background outside it, and a translucent shape over another. WebGPU was not run.
+The original checks used Node and headless Chromium with software WebGL2. See the [Shared 2D hardware results](shared-2d-hardware-results.md) for the later native Windows and Android evidence and its workload limits.
 
 ## Use
 

@@ -4,7 +4,7 @@
 
 `Sprite` 用它的 `graphics` 绘图：填充的矩形、圆、椭圆和圆角矩形，由直线和曲线组成、可以带孔的路径，圆弧，渐变，图片填充，以及任意宽度的线条：圆头或方头端点、圆角或平切转角、虚线。方法名和参数与白鹭一致。
 
-**验证了什么，没有验证什么。** 每个调用生成的三角形在 Node 中验证。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/graphics/README.zh-CN.md)在无头 Chromium 的软件 WebGL2 中从画布核对：每个形状轮廓内是它的颜色，轮廓外是背景，以及半透明形状叠在另一个形状上的结果。未运行 WebGPU。
+早期检查使用 Node 和无头 Chromium 软件 WebGL2。后续 Windows 与 Android 真机结果及负载范围见[共享二维真机结果](shared-2d-hardware-results.md)。
 
 ## 用法
 
