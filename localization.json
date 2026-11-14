@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "df077f189a9256837e7bf570f68b23acc17b5f40a70c7203b807f5c1e0ecc1ce",
-      "zhSha256": "be502a13eb2685789fe5a2030e16668f50594ae76b2609fb627d7a2f257ef17d"
+      "enSha256": "0c4f8b9a6df1464f71c3cce89868bf9429468953211431a31fb02d623d19d68f",
+      "zhSha256": "820d0959148db257279882dd79739a2a581453f9b0bf687325458c9008e278aa"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -2369,15 +2369,15 @@
       "en": "knowledge-base/en/docs/ui-controls.md",
       "zh": "knowledge-base/Cns/docs/ui-controls.md",
       "kind": "public_reading",
-      "enSha256": "2af027f726ec54da83d75defdc59524cc25eb94ef93b856de13b31565f2429d1",
-      "zhSha256": "6fe2eded756e599589be02485271e99e843cdfd16fc445d6e5dcab34c5ae3216"
+      "enSha256": "0ff3cfbbe0d1f09c0a9af55c43ba606b30caa652104b1abac1f6469811a90120",
+      "zhSha256": "9076fa294b2eb58699973e7408f31bbc591bdbbef802a86883f36a7d3f3ab8b0"
     },
     {
       "en": "examples/ui-controls/README.md",
       "zh": "examples/ui-controls/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "22fe90a9fa1604a99f7d7d6ae13ccef9a423b3b2289146d269d434f1a0f3d677",
-      "zhSha256": "aa7fcf917a5e8c2ac82c2f553d74a144681d4e75069c40c0c2934c0b8ec486f6"
+      "enSha256": "33582d2d6f773baacfadb5b4aa2d152c14938e28a99e7a646d3d372f8ddb1136",
+      "zhSha256": "b1c8ce82de7be50fb780b749374b677ebdba8ae393431485cf62f67b61252595"
     },
     {
       "en": "knowledge-base/en/docs/spine-seek.md",
@@ -5038,11 +5038,11 @@
     },
     {
       "path": "examples/ui-controls/main.mjs",
-      "sha256": "c2cbb7fb41690987240274578ab69c39e4369bf52bd625245f7f6a08e0d392a9"
+      "sha256": "7d301cff3a9d3cfa863112ce3c38f46bad3b390fd0dc76b5feceb3977f2eb89a"
     },
     {
       "path": "examples/ui-controls/verify.mjs",
-      "sha256": "9357643d2eb898c0a3fb5692d4d2dbbb8774bd4972f22ae40a0142c7bb7ab55d"
+      "sha256": "543731efc49dd3f5036236b3180cdd3fd1e05486f36886669125e14f390aabc4"
     },
     {
       "path": "packages/engine/src/ui/scrollControl.ts",
@@ -5138,11 +5138,11 @@
     },
     {
       "path": "examples/ui-settings/main.mjs",
-      "sha256": "f599f70d25ee4cad2feb20711f9daf7ed93d151dc9c85c0793ed43a77018c77b"
+      "sha256": "62ea62ba97c675b21a32225d89639e32323a185ba9345d6226259034ee485ab1"
     },
     {
       "path": "examples/ui-settings/verify.mjs",
-      "sha256": "c021e76acfe1d0896bf03ba9fbd2f28469a50c92330e3dec277a0f3ee8290ccf"
+      "sha256": "2a4996d2f8cbe07d067130415336d21c7bf9dfc7c0ab51d7199714a6b4701d5a"
     },
     {
       "path": "tests/ui-skin-states.test.mjs",
