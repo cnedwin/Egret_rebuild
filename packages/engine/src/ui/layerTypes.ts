@@ -11,6 +11,8 @@ export interface UiLayerAnchor {
     readonly root: UiRoot;
     readonly target: UiLayerTarget;
     readonly placement?: 'below' | 'above';
+    /** Which edges meet across the anchor: its start and the overlay's (the default), their centres, or their ends. */
+    readonly align?: 'start' | 'center' | 'end';
     readonly gap?: number;
 }
 export interface UiLayerManagerOptions {

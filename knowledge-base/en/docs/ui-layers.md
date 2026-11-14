@@ -14,7 +14,7 @@ open(id), close(id) and setViewport(rect) stage intent. Closing an overlay also 
 
 ## Geometry and publication
 
-An anchor names another registered root and a committed leaf or visible stable-key row. Bounds are intersected with root/list clipping; hidden, recycled, deleted and fully clipped anchors are unavailable. Registration identity prevents an old anchor from reviving after id reuse. A popup prefers below (default gap4 logical units) or above, flips when the alternative fits and clamps to the supplied viewport. Unanchored overlays are centered. An oversized overlay rejects with UI_LAYER_VIEWPORT_TOO_SMALL, preserving the previous publication; the caller must provide a fitting layout/viewport.
+An anchor names another registered root and a committed leaf or visible stable-key row. Bounds are intersected with root/list clipping; hidden, recycled, deleted and fully clipped anchors are unavailable. Registration identity prevents an old anchor from reviving after id reuse. A popup prefers below (default gap4 logical units) or above, flips when the alternative fits and clamps to the supplied viewport. Across the anchor, align chooses which edges meet: start (the default) puts the start of the overlay at the start of the anchor, center their centres, and end their ends, as for a menu that hangs from the chip at the end of a row; the result is clamped in the same way. Unanchored overlays are centered. An oversized overlay rejects with UI_LAYER_VIEWPORT_TOO_SMALL, preserving the previous publication; the caller must provide a fitting layout/viewport.
 
 Overlay roots are ordered at Stage level, outside the anchor's scrolling clip. Content still retains its own clip. This profile inherits managed UI's identity Stage transform. Layers do not infer CSS transforms, rotate a native editor or resize paragraph content to make it fit.
 
@@ -35,6 +35,8 @@ Background native sessions settle under editorPolicy and retire their DOM contro
 Each registered overlay owns one backdrop in its own Scope. Repeated open/close reuses it; unregister, root close and manager close retire listeners, target registrations and that scope. Manager disposal preserves borrowed roots/input, resumes bases and leaves overlays hidden. Applications dispose the view outside routed callbacks, then their roots/scopes through the normal lifetime path. A true example width change retires its view and recreates the layers against the same models/fonts/cache, preserving stack, draft and selection; height-only keyboard changes preserve the current view.
 
 The existing [native editing form](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.md) offers an opt-in layers=1 mode: list → profile details → rename → details/list. The rename model is a draft; Save updates the original field, Cancel leaves it intact. Both UI roots and the native editor share the existing font replacement and lifecycle. Default/fixed fixtures remain separately declared.
+
+The [dropdown example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.md) anchors one popup to whichever row of a scrolling list was activated, with align end, and registers it again for each row. The device results below predate align and that example.
 
 ## Evidence and remaining work
 

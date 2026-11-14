@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## A dropdown for each row of a list — 2026-11-14
+
+A new example, `examples/ui-dropdown`, opens a popup layer of choices under whichever row of a scrolling managed list was activated, by a press, the keyboard or assistive technology, and closes it when the row scrolls away. Two small additions carry it: an anchor of the layer manager takes `align: 'start' | 'center' | 'end'`, so that a popup can hang from the end of a row, and `createUiListSemantics` takes `hidden`, so that the list of a closed layer is left out of the semantic tree. Part of #90. [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.md)
+
 ## A slider: one value out of a range — 2026-11-14
 
 `createRangeControl` of `@egret/engine/ui` holds one value out of a range for a slider an application draws: a press on the track moves the value there, the same contact drags it, and the value keeps to the steps of the range. `createControlKeys` has the kind `'range'` with the keys of a native slider, and the semantic tree has the role `slider`, projected with its value and its ends. The settings example has a volume. A slider is beyond the first control set of #90, and was added because a settings screen needs one. Part of #90. [Guide](docs/ui-controls.md#value-in-a-range)

@@ -50,6 +50,11 @@ export interface UiListSemanticsOptions {
   /** A 'list' of list items, which may hold other nodes, or a 'listbox' of options. Defaults to 'list'. */
   readonly role?: 'list' | 'listbox';
   readonly name?: string;
+  /**
+   * Read at each publication. A list that says it is hidden is left out with its rows: the list of a
+   * popup or a modal layer while that layer is closed. Its rows are then not asked.
+   */
+  readonly hidden?: () => boolean;
   /** Read at each publication for each row that shows. */
   readonly describeRow?: (key: string, index: number) => SemanticListRow;
   /** The activation of a row, the one a press or a key on it reaches. Without it a row cannot be activated. */
@@ -92,10 +97,10 @@ const optional = (value: unknown, type: string): boolean => value === undefined 
 
 export function createUiListSemantics(options: UiListSemanticsOptions): UiListSemantics {
   if (options === null || typeof options !== 'object') throw new EgretError('UI_SEMANTICS_OPTIONS');
-  const { semantics, root, list, parent, role = 'list', name, describeRow, onActivateRow, focusable = false, onRowAdded } = options;
+  const { semantics, root, list, parent, role = 'list', name, hidden, describeRow, onActivateRow, focusable = false, onRowAdded } = options;
   if (semantics === null || typeof semantics !== 'object' || typeof semantics.add !== 'function' || root === null || typeof root !== 'object' || typeof root.snapshot !== 'function'
     || typeof root.list !== 'function' || !text(list) || (role !== 'list' && role !== 'listbox') || !optional(name, 'string') || !optional(parent, 'string')
-    || !optional(describeRow, 'function') || !optional(onActivateRow, 'function') || !optional(onRowAdded, 'function') || typeof focusable !== 'boolean'
+    || !optional(hidden, 'function') || !optional(describeRow, 'function') || !optional(onActivateRow, 'function') || !optional(onRowAdded, 'function') || typeof focusable !== 'boolean'
     // An option is read as one thing and needs a name of its own.
     || (role === 'listbox' && describeRow === undefined)) throw new EgretError('UI_SEMANTICS_OPTIONS');
   const id = options.id ?? root.id + '/' + list;
@@ -110,7 +115,7 @@ export function createUiListSemantics(options: UiListSemanticsOptions): UiListSe
     const x = Math.max(box.x, frame.x), y = Math.max(box.y, frame.y);
     return { x, y, width: Math.max(0, Math.min(box.x + box.width, frame.x + frame.width) - x), height: Math.max(0, Math.min(box.y + box.height, frame.y + frame.height) - y) };
   }
-  const node = semantics.add({ id, role, ...(parent === undefined ? {} : { parent }), describe: () => ({ bounds: frame, ...(name === undefined ? {} : { name }) }) });
+  const node = semantics.add({ id, role, ...(parent === undefined ? {} : { parent }), describe: () => ({ bounds: frame, ...(name === undefined ? {} : { name }), ...(hidden === undefined ? {} : { hidden: hidden() }) }) });
 
   function addRow(key: string, index: number, box: SemanticBounds): Row {
     const row: Row = { index, box, node: semantics.add({

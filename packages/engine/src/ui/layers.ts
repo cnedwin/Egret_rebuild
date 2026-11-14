@@ -10,7 +10,7 @@ import type { UiLayerManager, UiLayerManagerOptions, UiLayerOptions, UiLayerComm
 
 interface Entry {
     readonly id: string; readonly kind: UiLayerOptions['kind']; readonly root: UiLayerOptions['root']; readonly port: UiRootAccess;
-    readonly anchor: Readonly<{ parent: Entry; target: NonNullable<UiLayerOptions['anchor']>['target']; placement: 'above' | 'below'; gap: number }> | undefined;
+    readonly anchor: Readonly<{ parent: Entry; target: NonNullable<UiLayerOptions['anchor']>['target']; placement: 'above' | 'below'; align: 'start' | 'center' | 'end'; gap: number }> | undefined;
     readonly initialFocus: UiLayerOptions['initialFocus']; readonly escape: boolean; readonly outside: boolean;
     readonly scope: Scope | undefined; readonly backdrop: Sprite | undefined; readonly sentinel: string | undefined;
     readonly keyboardRegistration: KeyboardTargetRegistration | undefined; readonly release: () => void;
@@ -107,7 +107,7 @@ export function createUiLayerManager(options: UiLayerManagerOptions): UiLayerMan
                 if (entry.anchor !== undefined) {
                     const parent = byEntry.get(entry.anchor.parent), box = entry.anchor.parent.port.anchor(entry.anchor.target);
                     if (parent === undefined || !parent.visible || box === undefined) return undefined;
-                    x = parent.x + box.x;
+                    x = parent.x + box.x + (entry.anchor.align === 'start' ? 0 : (box.width - size.width) / (entry.anchor.align === 'end' ? 1 : 2));
                     const below = parent.y + box.y + box.height + entry.anchor.gap, above = parent.y + box.y - size.height - entry.anchor.gap;
                     y = entry.anchor.placement === 'below' ? below : above;
                     if (y + size.height > viewport.y + viewport.height && above >= viewport.y) y = above;
@@ -206,11 +206,11 @@ export function createUiLayerManager(options: UiLayerManagerOptions): UiLayerMan
                 let anchor: Entry['anchor'];
                 if (rawAnchor !== undefined) {
                     if (!object(rawAnchor) || !object(rawAnchor.target)) fail('UI_VALUE_INVALID');
-                    const parentRoot = rawAnchor.root, placement = rawAnchor.placement ?? 'below', gap = number(rawAnchor.gap ?? 4, 0, 4096), target = rawAnchor.target;
+                    const parentRoot = rawAnchor.root, placement = rawAnchor.placement ?? 'below', align = rawAnchor.align ?? 'start', gap = number(rawAnchor.gap ?? 4, 0, 4096), target = rawAnchor.target;
                     const parent = [...entries.values()].find(value => value.root === parentRoot);
-                    if (parent === undefined || !['above', 'below'].includes(placement)) fail('UI_LAYER_ANCHOR_INVALID');
+                    if (parent === undefined || !['above', 'below'].includes(placement) || !['start', 'center', 'end'].includes(align)) fail('UI_LAYER_ANCHOR_INVALID');
                     const captured = target.kind === 'leaf' ? Object.freeze({ kind: 'leaf' as const, id: id(target.id) }) : target.kind === 'row' ? Object.freeze({ kind: 'row' as const, listId: id(target.listId), key: id(target.key) }) : fail('UI_LAYER_ANCHOR_INVALID');
-                    anchor = Object.freeze({ parent, target: captured, placement, gap });
+                    anchor = Object.freeze({ parent, target: captured, placement, align, gap });
                 }
                 const initialFocus = rawFocus === undefined ? undefined : Object.freeze({ listId: id(rawFocus.listId), key: id(rawFocus.key) });
                 open(); port.assertIdle(); if (entries.has(name) || entries.size >= limit) fail('UI_LIMIT');

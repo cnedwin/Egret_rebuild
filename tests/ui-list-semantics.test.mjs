@@ -189,7 +189,7 @@ test('LS11 what is not a tree, a root, a list or a description is refused, and n
  const good={semantics,root,list:'list'};
  for(const bad of [undefined,null,7,{...good,semantics:undefined},{...good,semantics:null},{...good,semantics:{}},{...good,root:undefined},{...good,root:null},{...good,root:{id:'r',snapshot(){}}},{...good,root:{id:'r',list(){}}},
   {...good,list:undefined},{...good,list:''},{...good,list:7},{...good,list:'a\0b'},{...good,list:'l'.repeat(129)},{...good,role:'grid'},{...good,role:'listitem'},{...good,name:7},{...good,parent:7},{...good,id:''},{...good,id:7},{...good,id:'i'.repeat(129)},
-  {...good,describeRow:'name'},{...good,onActivateRow:7},{...good,onRowAdded:{}},{...good,focusable:'yes'},{...good,focusable:null},
+  {...good,describeRow:'name'},{...good,hidden:true},{...good,hidden:'closed'},{...good,onActivateRow:7},{...good,onRowAdded:{}},{...good,focusable:'yes'},{...good,focusable:null},
   // An option is read as one thing, so a listbox says what each row is called.
   {...good,role:'listbox'}])
   assert.throws(()=>createUiListSemantics(bad),coded('UI_SEMANTICS_OPTIONS'),JSON.stringify(bad,(name,value)=>name==='semantics'||name==='root'?typeof value:value));
@@ -206,6 +206,28 @@ test('LS11 what is not a tree, a root, a list or a description is refused, and n
  assert.deepEqual([shortest.id,longest.id.length,edge.size],['i',128,2]);
  assert.deepEqual(Object.keys(await import('@egret/engine/ui/semantics')).sort(),['createUiListSemantics','createUiSemantics','semanticBoundsOf','semanticBoxOf']);
  assert.equal('createUiListSemantics' in await import('@egret/engine'),false);assert.equal('createUiListSemantics' in await import('@egret/engine/ui'),false);
+}));
+
+test('LS15 a list that says it is hidden is left out with its rows, which are then not asked, and comes back as it is',async()=>fixture(async({semantics,root,list,scroll})=>{
+ let closed=false,asked=0;const chosen=[];
+ semantics.add({id:'title',role:'text',describe:()=>({name:'Jobs',bounds:{x:0,y:0,width:10,height:10}})});
+ const rows=createUiListSemantics({semantics,root,list:'list',id:'jobs',role:'listbox',name:'Job',focusable:true,hidden:()=>closed,
+  describeRow:(key,index)=>{asked++;return {name:'Job '+index,selected:index===1};},onActivateRow:key=>chosen.push(key)});
+ let snapshot=semantics.publish(rows.sync());
+ assert.deepEqual(ids(snapshot),['title','jobs','jobs/k0','jobs/k1','jobs/k2']);assert.equal(asked,3);
+ list.focus('k1',{visible:true});assert.equal(semantics.publish(rows.sync()).focused,'jobs/k1');
+ // Closed: the list and its rows are not published, a row is not asked, and nothing in it is focused or acts.
+ closed=true;asked=0;snapshot=semantics.publish(rows.sync());
+ assert.deepEqual([ids(snapshot),snapshot.focused,asked,semantics.size],[['title'],undefined,0,5]);
+ assert.equal(semantics.perform('jobs/k0','activate'),false);assert.equal(semantics.perform('jobs/k2','focus'),false);assert.deepEqual(chosen,[]);
+ // The rows still follow the commits while it is hidden, so it opens on the rows that show then.
+ await scroll(40);semantics.publish(rows.sync());closed=false;snapshot=semantics.publish(rows.sync());
+ assert.deepEqual(ids(snapshot),['title','jobs','jobs/k2','jobs/k3','jobs/k4']);
+ assert.equal(semantics.perform('jobs/k3','activate'),true);assert.deepEqual(chosen,['k3']);
+ // What it says is a flag.
+ closed='yes';assert.throws(()=>semantics.publish(rows.sync()),error=>error?.code==='UI_SEMANTICS_DESCRIPTION'&&error.cause.message==='jobs: hidden');
+ const failure=new Error('no layer');closed=false;const other=createUiListSemantics({semantics,root,list:'list',id:'other',hidden(){throw failure;}});
+ assert.throws(()=>semantics.publish(other.sync()),error=>error?.code==='UI_SEMANTICS_DESCRIBE_FAILED'&&error.cause===failure);
 }));
 
 test('LS13 a box the root laid out is measured on the stage, as of the last commit',async()=>fixture(async({root,commit})=>{
