@@ -27,9 +27,10 @@ export function admitSpineCatalog(manifest: AdmittedResourceManifest): SpineCata
   const entries=new Map(manifest.entries.map(e=>[e.id,e])),skeletons=new Map<string,ResourceManifestEntry>(),selected=new Map<string,ResourceManifestEntry>();
   for(const e of entries.values()) {
     if(e.resourceKind!=='spine')continue;
-    // Binary needs a separately bounded parser boundary before product admission.
-    if(e.importer.id!=='egret.spine-json'||e.importer.version!=='1.0.0'
-      ||e.artifactFormatVersion!=='spine-json/4.3-1'||e.artifact.mediaType!=='application/json'||e.artifact.byteLength>4194304
+    // JSON, or the binary export read through a bounded reader of Core's own: the same profile but for format and media type.
+    const binary=e.importer.id==='egret.spine-binary';
+    if((e.importer.id!=='egret.spine-json'&&!binary)||e.importer.version!=='1.0.0'
+      ||e.artifactFormatVersion!==(binary?'spine-binary/4.3-1':'spine-json/4.3-1')||e.artifact.mediaType!==(binary?'application/octet-stream':'application/json')||e.artifact.byteLength>4194304
       ||e.dependencies.length!==1||!exact(e.settings,['coreVersion'])||e.settings.coreVersion!=='4.3.13')throw spineFault('PROFILE',e.id);
     const atlas=entries.get(e.dependencies[0]!);
     if(!atlas||atlas.resourceKind!=='spine-atlas'||atlas.importer.id!=='egret.spine-atlas'||atlas.importer.version!=='1.0.0'

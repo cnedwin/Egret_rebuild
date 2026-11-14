@@ -5,6 +5,7 @@ import { AssetLease, Texture } from '@egret/engine';
 import type { SpineAssetInfo, SpinePageInfo } from './types.js';
 import { spineFault } from './catalog.js';
 import { readSpineJson } from './jsonAdmission.js';
+import { readSpineBinary } from './binaryAdmission.js';
 
 const APPLY=Reflect.apply;
 const LEASE_VALUE=Object.getOwnPropertyDescriptor(AssetLease.prototype,'value')!.get!;
@@ -23,9 +24,10 @@ class PageTexture extends Core.Texture {
   override setWraps(_u:Core.TextureWrap,_v:Core.TextureWrap): void {}
   override dispose(): void {}
 }
-export function parseSpineSetup(id:string,source:string,atlasText:string,pageNames:readonly string[],imageIds:readonly string[],leases:readonly AssetLease<Texture>[],allowPrerelease:boolean):ParsedSpineSetup {
-  if(typeof atlasText!=='string'||atlasText.length>262144||typeof source!=='string'||source.length>2097152)throw spineFault('SOURCE_LIMIT',id);
-  const decoded=readSpineJson(source,id,allowPrerelease);
+export function parseSpineSetup(id:string,source:string|Uint8Array,atlasText:string,pageNames:readonly string[],imageIds:readonly string[],leases:readonly AssetLease<Texture>[],allowPrerelease:boolean):ParsedSpineSetup {
+  const binary=source instanceof Uint8Array;
+  if(typeof atlasText!=='string'||atlasText.length>262144||(binary?source.byteLength>4194304:typeof source!=='string'||source.length>2097152))throw spineFault('SOURCE_LIMIT',id);
+  const decoded=binary?undefined:readSpineJson(source as string,id,allowPrerelease);
   const atlas=new Core.TextureAtlas(atlasText);
   try {
     if(atlas.pages.length!==pageNames.length||atlas.regions.length>8192)throw spineFault('PAGE_BINDING',id);
@@ -39,13 +41,13 @@ export function parseSpineSetup(id:string,source:string,atlasText:string,pageNam
       if(page.pma)throw spineFault('PAGE_ALPHA_PROFILE',id);
       page.setTexture(new PageTexture(width,height));pages.push(Object.freeze({name:page.name,imageId:imageIds[i]!,width,height,sourcePremultiplied:false}));
     }
-    const loader=new Core.AtlasAttachmentLoader(atlas),data=new Core.SkeletonJson(loader).readSkeletonData(decoded);
+    const loader=new Core.AtlasAttachmentLoader(atlas),data=binary?readSpineBinary(loader,source,id):new Core.SkeletonJson(loader).readSkeletonData(decoded!);
     const exportVersion=data.version;
     if(typeof exportVersion!=='string'||!/^4\.3\.\d+(?:-beta)?$/.test(exportVersion)||!allowPrerelease&&exportVersion.endsWith('-beta'))throw spineFault('EXPORT_VERSION',id);
     if(data.bones.length>1024||data.slots.length>2048||data.skins.length>128||data.animations.length>1024)throw spineFault('SETUP_LIMIT',id);
     const skins=data.skins.map(s=>s.name),animations=data.animations.map(a=>({name:a.name,duration:a.duration}));
     if(skins.some(n=>!label(n))||animations.some(a=>!label(a.name)||!Number.isFinite(a.duration)||a.duration<0||a.duration>86400))throw spineFault('SETUP',id);
-    const info:SpineAssetInfo=Object.freeze({coreVersion:'4.3.13',exportVersion,format:'json',prerelease:exportVersion.endsWith('-beta'),boneCount:data.bones.length,slotCount:data.slots.length,skins:Object.freeze(skins),animations:Object.freeze(animations.map(a=>Object.freeze(a))),pages:Object.freeze(pages)});
+    const info:SpineAssetInfo=Object.freeze({coreVersion:'4.3.13',exportVersion,format:binary?'binary':'json',prerelease:exportVersion.endsWith('-beta'),boneCount:data.bones.length,slotCount:data.slots.length,skins:Object.freeze(skins),animations:Object.freeze(animations.map(a=>Object.freeze(a))),pages:Object.freeze(pages)});
     return {data,atlas,info};
   } catch(cause){atlas.dispose();throw spineFault('PARSE',id,cause);}
 }
