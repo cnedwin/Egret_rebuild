@@ -2,8 +2,9 @@
 // A game in a page from one call: a Host chosen for the browser, an Engine, a scope, pointer and keyboard input and
 // a frame loop, each made the way its own entry makes it, and all of them ended by one dispose.
 import { EgretError } from '@egret/runtime';
-import { createEngineForProfile, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
-import type { Engine, Scope, Stage, SharedFrameOptions2D, SharedRenderFrame2D } from '@egret/engine';
+import { createAssetRef, createAssetType, createEngineForProfile, isTexture, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
+import type { AssetLease, Engine, Scope, Stage, SharedFrameOptions2D, SharedRenderFrame2D, Texture } from '@egret/engine';
+import { createBrowserTextureProvider } from './image.js';
 import { createBrowserFrameLoop } from './loop.js';
 import type { BrowserFrameLoop } from './loop.js';
 import { createBrowserPointerInput } from './pointer.js';
@@ -42,6 +43,8 @@ export interface BrowserGameOptions {
 export interface BrowserGame {
   readonly backend: BrowserGameBackend;
   readonly engine: Engine;
+  /** The Host that draws: its status says what it holds and what last went wrong. It ends with the game. */
+  readonly host: { getStatus(): { readonly pendingFrames: number }; whenIdle(): Promise<void> };
   /** The stage of the Engine: what is added to it is drawn. */
   readonly stage: Stage;
   /** A scope for what the game creates. It is disposed with the game. */
@@ -52,6 +55,11 @@ export interface BrowserGame {
   readonly pointer: PointerInput | undefined;
   readonly keyboard: KeyboardInput | undefined;
   readonly stats: BrowserStatsPanel | undefined;
+  /**
+   * Loads a PNG image from an address and gives the lease of its texture, for `new Bitmap(lease)` or
+   * `graphics.beginBitmapFill(lease)`. The lease belongs to the game's scope. The same address loaded twice is one texture.
+   */
+  loadTexture(url: string): Promise<AssetLease<Texture>>;
   /** A place in the page, as a pointer event gives it in `clientX` and `clientY`, as a place on the stage. */
   toStage(clientX: number, clientY: number): { x: number; y: number };
   /** Stops the loop and ends the input, the scope, the Engine and its Host. */
@@ -109,15 +117,31 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
           update?.(seconds);
         },
       });
+    // Images by address: one asset type whose key is the address, read with the page's own request and decoded as PNG.
+    const imageType = createAssetType<Texture>('egret.browser-game.image', isTexture);
+    const images = createBrowserTextureProvider({ async readBytes(ref, context) {
+      const stop = new AbortController(), abort = (): void => stop.abort();
+      if (context.signal.aborted) abort(); else context.signal.addEventListener('abort', abort, { once: true });
+      try {
+        const response = await globalThis.fetch(ref.id, { signal: stop.signal });
+        if (!response.ok) throw new EgretError('BROWSER_GAME_IMAGE_FAILED', { cause: new Error(response.status + ' ' + ref.id) });
+        return new Uint8Array(await response.arrayBuffer());
+      } finally { context.signal.removeEventListener('abort', abort); }
+    } });
+    engine.assets.register(imageType, images);
     const game: BrowserGame = Object.freeze({
-      backend, engine, stage: engine.stage, scope, frame, loop: made, pointer, keyboard, stats: panel,
+      backend, engine, host, stage: engine.stage, scope, frame, loop: made, pointer, keyboard, stats: panel,
+      async loadTexture(url: string) {
+        if (typeof url !== 'string' || url === '') throw invalid();
+        return scope.use(await engine.assets.acquire(createAssetRef(imageType, url), { signal: scope.signal }));
+      },
       toStage(clientX: number, clientY: number) {
         const box = canvas.getBoundingClientRect();
         return { x: (clientX - box.left) * width / box.width, y: (clientY - box.top) * height / box.height };
       },
       dispose() {
         // The scope ends the input it was given; the Engine ends its scopes and its Host.
-        return disposal ??= (async () => { made.dispose(); panel?.dispose(); await engine.dispose(); })();
+        return disposal ??= (async () => { made.dispose(); panel?.dispose(); await engine.dispose(); await images.close(); })();
       },
     });
     if (options.autoStart !== false) made.start();

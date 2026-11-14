@@ -14,7 +14,7 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['DISPLAY', 'a display object'], ['ENGINE', 'the Engine'], ['EVENT', 'an event'], ['FONT_CONTENT', 'font content'], ['FRAME_LOOP', 'the frame loop'], ['FRAME', 'a frame'],
   ['GAMEPAD', 'gamepad input'], ['GRAPHICS', 'graphics'], ['HIT_TEST', 'a hit test'], ['HOVER_INPUT', 'hover input'], ['KEYBOARD_FOCUS_SCOPE', 'a keyboard focus scope'],
   ['KEYBOARD_INPUT', 'keyboard input'], ['KEYBOARD', 'the keyboard'], ['LAYOUT', 'a layout'], ['MANIFEST_BINDING', 'a manifest binding'], ['MANIFEST_GROUP', 'a manifest group'],
-  ['MESH_BINDING', 'a mesh binding'], ['MESH', 'a mesh'], ['MOUSE_INPUT', 'mouse input'], ['NINE_SLICE_BITMAP', 'a nine-slice bitmap'], ['PARAGRAPH_CACHE', 'the paragraph cache'],
+  ['MOTION', 'a motion'], ['MESH_BINDING', 'a mesh binding'], ['MESH', 'a mesh'], ['MOUSE_INPUT', 'mouse input'], ['NINE_SLICE_BITMAP', 'a nine-slice bitmap'], ['PARAGRAPH_CACHE', 'the paragraph cache'],
   ['PARAGRAPH_FONT_SET', 'a paragraph font set'], ['PARAGRAPH_FONT', 'a paragraph font'], ['PARAGRAPH_PROVIDER', 'the paragraph provider'], ['PARAGRAPH', 'a paragraph'],
   ['PARTICLE', 'a particle emitter'], ['PHYSICS', 'the physics world'], ['POINTER_INPUT', 'pointer input'], ['SCOPE', 'a scope'], ['SEQUENCE_RESET', 'a sequence reset slot'],
   ['SEQ_PLAYBACK', 'a sequence playback'], ['SEQ_PLAYER', 'a sequence player'], ['SEQ', 'a sequence'], ['SHARED_MATERIAL', 'a shared material'], ['SPINE_DISPLAY', 'a Spine display'],

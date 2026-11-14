@@ -72,7 +72,7 @@ Edges are not smoothed, and a curve is drawn as straight pieces. See the [graphi
 | `RES.getRes('name')`, `RES.getResAsync` | `await engine.assets.acquire(ref, { signal: scope.signal })` | A ref names a type and a key: `createAssetRef(type, key)`. Give the lease to a scope with `scope.use` |
 | `RES.loadConfig`, `RES.loadGroup`, group progress events | A content loader over a built manifest: `createContentLoader` from `@egret/engine/resources`, with `@egret/engine/web/resources` in a page | See [the content build](content-build-pipeline.md) and [resource groups](resource-acquisition-groups.md) |
 | `default.res.json` | A manifest written by the content build | [Legacy RES declarations](legacy-res-declarations.md) describes the analyzer that reads an old one |
-| Loading one image by URL | `createBrowserTextureProvider` from `@egret/engine/web/image` | |
+| Loading one image by URL | `await game.loadTexture(url)` | PNG. Without `createBrowserGame`: `createBrowserTextureProvider` from `@egret/engine/web/image` |
 | `egret.SpriteSheet`, a texture atlas | Atlases through the content loader; a bitmap shows a region | See [atlas frames](atlas-frame-layout-contract.md) |
 | `bitmap.scale9Grid` | `NineSliceBitmap` | See [nine-slice bitmaps](nine-slice-bitmap-contract.md) |
 | `bitmap.fillMode = REPEAT` | Not as a property of a bitmap | A `Sprite` with `graphics.beginBitmapFill(lease)` and a `drawRect` draws a tiled image |
@@ -94,10 +94,12 @@ Edges are not smoothed, and a curve is drawn as straight pieces. See the [graphi
 
 | Egret 5 | Now | Notes |
 | --- | --- | --- |
-| `egret.Tween.get(obj).to({ x: 100 }, 500, egret.Ease.quadOut)` | `engine.createTween(scope, { from: obj.x, to: 100, durationSeconds: 0.5, easing: 'quadOut', onUpdate: v => { obj.x = v; } }).start()` | A tween moves one number, in seconds, and runs once `start()` is called; it also has `pause()`, `resume()` and `stop()`. Easings: `'linear'`, `'quadIn'`, `'quadOut'`, `'quadInOut'` |
-| `.to(...).to(...)`, `.wait()`, `.call()` | Start the next tween from `onComplete` | No chain |
-| `{ loop: true }` | Start it again from `onComplete` | |
-| `egret.Tween.removeTweens(obj)` | `tween.dispose()`, or dispose its scope | |
+| `egret.Tween.get(obj).to({ x: 100, alpha: 0 }, 500, egret.Ease.quadOut)` | `animate(engine, scope, obj).to({ x: 100, alpha: 0 }, 0.5, 'quadOut').start()` | From `@egret/engine`. Seconds, not milliseconds, and it runs once `start()` is called |
+| `.to(...).wait(200).call(fn).to(...)` | The same chain: `.to(...).wait(0.2).call(fn).to(...)` | Steps are added before `start()` |
+| `{ loop: true }` | `.loop()`, or `.loop(3)` for three runs | |
+| `egret.Ease.*` | A name: `'linear'`, `'quadIn'`, `'quadOut'`, `'quadInOut'`, and the same for `cubic`, `quart`, `sine`, `expo`, `back`; `'elasticOut'`, `'bounceOut'`; or a function from 0–1 to 0–1 | |
+| `egret.Tween.removeTweens(obj)` | Keep the motion and call `stop()`, or dispose its scope | A motion also stops when its object is disposed |
+| One number with a callback | `engine.createTween(scope, { from, to, durationSeconds, easing, onUpdate }).start()` | The scalar tween that `animate` is built on |
 | `egret.MovieClip` | A frame sequence: `createSequenceController` from `@egret/engine/animation` | See [sequence controls](sequence-controls.md). [Legacy MovieClip](legacy-movieclip-contract.md) describes reading old data |
 | DragonBones | Not supported | Spine is: `@egret/spine`, JSON or binary. See [Spine support](spine-animation-support-and-acceptance.md) |
 | Particles (`particle.GravityParticleSystem`) | `createParticleEmitter` from `@egret/engine/particles` | See [particles](particles.md) |
@@ -155,7 +157,7 @@ function createMenu(game, onStart) {
   button.graphics.beginFill(0x4a7bd0).drawRoundRect(0, 0, 160, 48, 16).endFill();
   button.touchEnabled = true;
   button.on(game.pointer.events.tap, onStart);
-  game.engine.createTween(scope, { from: 1, to: 0.5, durationSeconds: 0.3, onUpdate: v => { button.alpha = v; } }).start();
+  animate(game.engine, scope, button).to({ alpha: 0.5 }, 0.3).start();
   game.stage.addChild(menu);
   // Closing the screen: one call removes the button, its listeners and its tween.
   return () => scope.dispose();

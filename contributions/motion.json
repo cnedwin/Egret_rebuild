@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "packages/engine/src/motion.ts", "originRole": "First-party chained motion of several numbers of one object on the scalar tween, with easing functions written from their standard formulas; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/motion.test.mjs", "originRole": "First-party Node tests of chained motion on the Engine clock; independently authored with AI assistance; Apache-2.0.", "criticalComment": true}
+  ],
+  "documents": []
+}
