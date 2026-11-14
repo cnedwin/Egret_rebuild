@@ -2,7 +2,7 @@
 
 [English](../../en/docs/graphics.md) | 简体中文
 
-`Sprite` 用它的 `graphics` 绘图：填充的矩形、圆、椭圆和圆角矩形，由直线和曲线组成的路径，圆弧，以及任意宽度的线条。方法名和参数与白鹭一致。
+`Sprite` 用它的 `graphics` 绘图：填充的矩形、圆、椭圆和圆角矩形，由直线和曲线组成、可以带孔的路径，圆弧，渐变，以及任意宽度的线条：圆头或方头端点、圆角或平切转角、虚线。方法名和参数与白鹭一致。
 
 **验证了什么，没有验证什么。** 每个调用生成的三角形在 Node 中验证。[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/graphics/README.zh-CN.md)在无头 Chromium 的软件 WebGL2 中从画布核对：每个形状轮廓内是它的颜色，轮廓外是背景，以及半透明形状叠在另一个形状上的结果。未运行 WebGPU。
 
@@ -24,7 +24,10 @@ g.beginFill(0x8040c0).moveTo(30, 150).lineTo(120, 150).lineTo(75, 185).endFill()
 | --- | --- |
 | `beginFill(color, alpha = 1)` | 设置之后所绘内容的填充 |
 | `endFill()` | 结束填充。在该填充下绘制的路径按当前形状填充 |
-| `lineStyle(thickness, color = 0, alpha = 1)` | 设置之后所绘内容的线条。不给宽度或给 0 则结束线条 |
+| `beginLinearGradientFill(x0, y0, x1, y1, stops)` | 颜色从一点渐变到另一点的填充 |
+| `beginRadialGradientFill(x, y, radius, stops, radiusY = radius)` | 颜色从圆心向外渐变到圆（或椭圆）的填充 |
+| `beginGradientFill(type, colors, alphas, ratios, matrix?)` | 按旧代码的写法给出的渐变填充 |
+| `lineStyle(thickness, color = 0, alpha = 1, options?)` | 设置之后所绘内容的线条。不给宽度或给 0 则结束线条。`options` 见下文 |
 | `drawRect(x, y, width, height)` | 矩形 |
 | `drawCircle(x, y, radius)` | 以某点为圆心的圆 |
 | `drawEllipse(x, y, width, height)` | 内切于该角点和尺寸所定矩形的椭圆 |
@@ -37,11 +40,47 @@ g.beginFill(0x8040c0).moveTo(30, 150).lineTo(120, 150).lineTo(75, 185).endFill()
 
 形状需要填充或线条：两者都没有时，`drawRect` 等调用抛出 `GRAPHICS_FILL_REQUIRED`。不是有限数字的值或负的尺寸抛出 `GRAPHICS_VALUE_INVALID`。
 
+## 线条的端点、转角和虚线
+
+`lineStyle` 的第四个参数是一个对象，其中每一项都可以省略。
+
+| 选项 | 取值 | 省略时 |
+| --- | --- | --- |
+| `caps` | `'none'`：开放的线在最后一点处平头结束。`'round'`：以半圆结束。`'square'`：以半个正方形结束 | `'none'` |
+| `joints` | `'miter'`：转角外侧是尖角。`'round'`：圆弧。`'bevel'`：平切 | `'miter'` |
+| `miterLimit` | 尖角长度超过这么多个半宽时改为平切，与 bevel 相同。不小于 1 | 4 |
+| `dash` | 最多 16 个长度，单位与 sprite 相同：实线段、空隙、实线段……奇数个时重复一遍 | 实线 |
+
+```js
+sprite.graphics.lineStyle(6, 0xffffff, 1, { caps: 'round', joints: 'round', dash: [16, 12] }).moveTo(20, 20).lineTo(200, 20).lineTo(200, 120);
+```
+
+- 线条的两段在转角内侧共用一个点，所以半透明的线在转角处不会更深。线条比它所沿曲线的弯曲半径还宽时，各段仍会互相重叠。
+- 虚线的样式沿转角连续。每一段实线都是一条独立的线，端点按 `caps` 绘制。长度为零的实线段不会画出来，即使是圆头。
+- 闭合的轮廓（例如 `drawRect`，或回到起点的路径）在闭合处是转角，没有端点。
+
+## 渐变
+
+渐变是一种填充。它的颜色用色标给出：`{ offset, color, alpha }`，`offset` 从起点的 0 到终点的 1，`alpha` 省略时为 1。色标 2 到 16 个，按 offset 从小到大排列。
+
+```js
+// 从 x = 20 处的红色到 x = 120 处半透明的蓝色。20 左边是红色，120 右边是那种蓝色。
+sprite.graphics.beginLinearGradientFill(20, 0, 120, 0, [{ offset: 0, color: 0xff0000 }, { offset: 1, color: 0x0000ff, alpha: 0.5 }]).drawRect(0, 0, 140, 40).endFill();
+// 圆心白色，半程绿色，半径 40 的圆上及其外为黑色。
+sprite.graphics.beginRadialGradientFill(50, 50, 40, [{ offset: 0, color: 0xffffff }, { offset: 0.5, color: 0x00ff00 }, { offset: 1, color: 0 }]).drawCircle(50, 50, 48).endFill();
+```
+
+- 两个色标之间的颜色按 sRGB 数值混合，与 canvas 相同。
+- 渐变以三角形顶点的颜色绘制。形状会被切成更小的三角形，直到顶点之间的颜色与渐变相差不超过 2/255，所以颜色对比强烈的大面积渐变需要几百到几千个三角形。一次填充最多 16,384 个；超过后不再细分，渐变会变粗糙。
+- `beginGradientFill` 接受旧代码传入的参数：`'linear'` 或 `'radial'`、颜色、透明度、0 到 255 的比例，以及一个矩阵 `{ a, b, c, d, tx, ty }`。该矩阵把渐变自身的正方形（宽 1638.4 个单位，以原点为中心）放到 sprite 中。对于位于某个角点、给定宽高且不旋转的渐变框，矩阵为 `{ a: width / 1638.4, b: 0, c: 0, d: height / 1638.4, tx: x + width / 2, ty: y + height / 2 }`。
+- 线条只有一种颜色，没有线条渐变。
+
 ## 填充、线条和路径怎样配合
 
 - 形状使用绘制它时已设置的填充和线条。线条以轮廓为中心，画在填充之上。
 - 路径是从一次 `moveTo` 起，到下一次 `beginFill`、`endFill`、`lineStyle` 或 `draw...` 形状为止的全部内容。它使用开始时已设置的填充和线条。
 - 填充的路径在填充时闭合：最后一点连回第一点。它的线条只在两端重合时闭合。
+- 同一条路径中由各次 `moveTo` 开始的各部分，按非零规则一起填充，与 canvas 相同。画在另一部分内部且方向相反的部分是一个孔。互相重叠的部分和自相交的轮廓只涂一次。用 `drawRect`、`drawCircle` 等绘制的形状各自单独填充。
 - 路径只要点数够了就会画出来。线条不需要 `endFill`。
 - 形状按调用顺序绘制，后画的在先画的之上。
 
@@ -51,8 +90,8 @@ g.beginFill(0x8040c0).moveTo(30, 150).lineTo(120, 150).lineTo(75, 185).endFill()
 
 - **曲线由直线段组成**，每段与真实曲线的距离不超过四分之一单位：半径 10 的圆 16 段，半径 40 的圆 32 段，最多 128 段。放大很多倍的圆会露出棱角；应当直接画得更大。
 - **边缘没有抗锯齿。** 倾斜或弯曲的边缘呈像素大小的阶梯。
-- **线条是平头端点和尖角转角。** 比四个半宽更长的尖角在该长度处被截断。圆头端点和圆角转角尚未提供。
-- **自相交的路径**会被填充，但不保证填充哪些部分。
+- **有多个部分或自相交的路径**比简单轮廓需要更多三角形：它在每个顶点和交点处被切成横带。
+- **尚不支持位图填充。** 填充只能是单色或渐变。
 
 ## 限制
 
@@ -62,6 +101,8 @@ g.beginFill(0x8040c0).moveTo(30, 150).lineTo(120, 150).lineTo(75, 185).endFill()
 | 一帧中所有网格的三角形 | 65,536 | 该帧以 `FRAME_BUDGET_EXCEEDED` 被拒绝 |
 | 一条正在绘制的路径的点数 | 8,192 | 调用抛出 `GRAPHICS_BUDGET`，sprite 保持原有内容 |
 | 线条宽度 | 1,024 | `GRAPHICS_VALUE_INVALID` |
+| 一条线的虚线段数 | 16,384 | 调用抛出 `GRAPHICS_BUDGET`，sprite 保持原有内容 |
+| 一次带孔或自相交的填充的三角形数 | 16,384 | 路径结束时（`endFill`，或下一次填充、线条或形状）抛出 `GRAPHICS_BUDGET`。该路径被丢弃，之前画的内容保留 |
 
 绘图完全相同的 sprite 共用一份绘图，无论有多少个：300 颗画成同一个圆的子弹只算一份。各自画不同内容的 sprite 则各算一份。需要很多不同形状时，把它们画进同一个 sprite，或者使用位图。
 

@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-用 sprite 的 `graphics` 绘制的形状：圆、椭圆、带线条的圆角矩形、叠在它上面的半透明圆、带缺口的填充路径、带转角的线条、曲线，以及用圆弧画出的四个扇形组成的圆环。
+用 sprite 的 `graphics` 绘制的形状：圆、椭圆、带线条的圆角矩形、叠在它上面的半透明圆、带缺口的填充路径、带转角的线条、曲线、用圆弧画出的四个扇形组成的圆环、从红到蓝的渐变、带孔的方框，以及圆头的虚线。
 
 ## 运行
 
@@ -27,6 +27,9 @@ node tools/serve-canvas.mjs
 | 带缺口的形状 | 在填充下的 `moveTo` 和 `lineTo`，由 `endFill` 闭合 |
 | 线条和曲线 | `lineStyle` 之后的 `moveTo`、`lineTo` 和 `curveTo`，没有填充 |
 | 扇形 | 在填充下的 `moveTo`、一段向外的 `drawArc` 和一段返回的内侧 `drawArc` |
+| 渐变 | 两个色标的 `beginLinearGradientFill`，然后 `drawRect` |
+| 带孔的方框 | 一次填充，两段 `moveTo`：内侧那段方向相反 |
+| 虚线 | `lineStyle` 加 `{ dash: [16, 12], caps: 'round' }` |
 
 参见[绘图指南](../../knowledge-base/Cns/docs/graphics.md)。
 
@@ -36,4 +39,4 @@ node tools/serve-canvas.mjs
 node examples/graphics/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
 ```
 
-脚本从画布读取每个轮廓内外的颜色，以及半透明圆叠在面板上和叠在背景上的颜色，逐一与根据颜色算出的值比较。它只运行 WebGL2。没有人工按键，也没有运行 WebGPU。
+脚本从画布读取每个轮廓内外的颜色，半透明圆叠在面板上和叠在背景上的颜色、渐变两端和中点的颜色、方框及其孔，以及一段实线和一段空隙，逐一与根据颜色算出的值比较。它只运行 WebGL2。没有人工按键，也没有运行 WebGPU。

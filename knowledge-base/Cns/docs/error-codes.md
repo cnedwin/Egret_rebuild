@@ -404,7 +404,7 @@
 
 | 错误码 | 含义 |
 | --- | --- |
-| `GRAPHICS_BUDGET` | 绘图超出了一个 sprite 的上限：一条路径最多 8,192 个点。sprite 保持原有内容。请把其余部分画到另一个 sprite 中。 |
+| `GRAPHICS_BUDGET` | 绘图超出了一个 sprite 的上限：一条路径 8,192 个点、一条线 16,384 段虚线，或一次带孔或自相交的填充 16,384 个三角形。sprite 之前画的内容保留。请把其余部分画到另一个 sprite 中。 |
 | `GRAPHICS_FILL_REQUIRED` | 形状需要填充或线条。请在绘制前调用 beginFill 或 lineStyle。 |
 | `GRAPHICS_VALUE_INVALID` | 交给 graphics 的值无效：坐标是有限数字，尺寸不能为负，颜色在 0 到 0xffffff 之间，alpha 在 0 到 1 之间。 |
 

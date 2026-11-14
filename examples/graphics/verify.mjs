@@ -103,6 +103,17 @@ await scenario('webgl2: every shape is filled and lined in its own colours, insi
   within(await colour(page, [220, 160]), shown(linear(C.stroke)), 'line corner');
   // The curve passes under its control point, halfway to it.
   within(await colour(page, [300, 200]), shown(linear(C.stroke)), 'curve middle');
+  // The gradient: its first colour up to its start, its last from its end, and halfway the two mixed as sRGB values.
+  within(await colour(page, [394, 30]), shown(linear(C.from)), 'gradient, before its start');
+  within(await colour(page, [466, 30]), shown(linear(C.to)), 'gradient, after its end');
+  within(await colour(page, [430, 30]), [128, 0, 128], 'gradient, halfway', 6);
+  // The frame is filled and its hole is not.
+  within(await colour(page, [400, 95]), shown(linear(C.frame)), 'frame');
+  within(await colour(page, [430, 95]), shown(clear), 'the hole in the frame');
+  // The dashed line: a dash from 20 to 36, a gap to 48 that the round ends reach three units into.
+  within(await colour(page, [28, 252]), shown(linear(C.dash)), 'first dash');
+  within(await colour(page, [42, 252]), shown(clear), 'first gap');
+  within(await colour(page, [56, 252]), shown(linear(C.dash)), 'second dash');
 }, '?backend=webgl2');
 
 await scenario('webgl2: the wedges are drawn with arcs, and drawn again when they turn', desktop, async page => {
