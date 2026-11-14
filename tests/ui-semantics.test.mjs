@@ -102,9 +102,9 @@ test('SM04 a node is refused where its role means nothing',()=>{
 });
 
 test('SM04b every role holds nodes or is read as one thing, and is named where a reader needs a name',()=>{
- const holds=['group','radiogroup','listbox','list','listitem','tablist','tabpanel','menu','dialog'],unnamed=['group','radiogroup','listbox','list','listitem','tablist','menu'];
- const inside={radio:'radiogroup',option:'listbox',listitem:'list',tab:'tablist',menuitem:'menu'},needs={checkbox:{checked:false},switch:{checked:false},radio:{checked:false},option:{selected:false},tab:{selected:false},scrollbar:{range:{now:0,min:0,max:0}},slider:{range:{now:0,min:0,max:0}}};
- const roles=['group','image','text','button','checkbox','switch','radiogroup','radio','listbox','option','list','listitem','scrollbar','slider','progressbar','tablist','tab','tabpanel','menu','menuitem','dialog','textbox'];
+ const holds=['group','radiogroup','listbox','list','listitem','tablist','tabpanel','menu','dialog'],unnamed=['group','radiogroup','listbox','list','listitem','tablist','menu','status','alert'];
+ const inside={radio:'radiogroup',option:'listbox',listitem:'list',tab:'tablist',menuitem:'menu'},needs={checkbox:{checked:false},switch:{checked:false},radio:{checked:false},option:{selected:false},tab:{selected:false},scrollbar:{range:{now:0,min:0,max:0}},slider:{range:{now:0,min:0,max:0}},spinbutton:{range:{now:0,min:0,max:0}}};
+ const roles=['group','image','text','button','checkbox','switch','radiogroup','radio','listbox','option','list','listitem','scrollbar','slider','spinbutton','progressbar','tablist','tab','tabpanel','menu','menuitem','dialog','textbox','status','alert'];
  for(const role of roles){
   const {semantics,state,add}=tree();
   if(inside[role])add('holder',inside[role]);
@@ -219,6 +219,24 @@ test('SM06d a menu lists its items downward, and an item is named, placed, activ
  assert.deepEqual(node('promote').actions,['activate','focus']);assert.equal(semantics.perform('promote','activate'),true);assert.deepEqual(seen,['promote']);
  semantics.add({id:'gone',role:'menuitem',parent:'menu',onActivate:()=>seen.push('gone'),describe:()=>({bounds:box(),name:'Gone',disabled:true})});semantics.publish();
  assert.equal(semantics.perform('gone','activate'),false,'a disabled item refuses');assert.deepEqual(seen,['promote']);
+});
+
+test('SM06e a spin button is somewhere in its range, and a message is there before it has anything to say',()=>{
+ const {semantics,state,add}=tree();
+ add('herbs','spinbutton',{name:'Herbs',range:{now:20,min:0,max:60}});add('left','status',{});add('fault','alert',{name:'Not enough'});
+ const node=id=>semantics.publish().nodes.find(found=>found.id===id);
+ assert.deepEqual([node('herbs').range,node('herbs').orientation,node('herbs').disabled,node('left').name,node('left').disabled,node('fault').name],[{now:20,min:0,max:60},undefined,false,'',false,'Not enough']);
+ // A message that changes is a new publication, and the same message again is not.
+ const first=semantics.publish();assert.equal(semantics.publish(),first);
+ state.left.name='40 left';const second=semantics.publish();assert.notEqual(second,first);assert.equal(second.nodes.find(found=>found.id==='left').name,'40 left');assert.equal(semantics.publish(),second);
+ state.herbs.range={now:21,min:0,max:60};assert.notEqual(semantics.publish(),second);
+ const refused=(id,change,field)=>{const saved={...state[id]};Object.assign(state[id],change);assert.throws(()=>semantics.publish(),about('UI_SEMANTICS_DESCRIPTION',id+': '+field),id+' '+JSON.stringify(change));state[id]=saved;};
+ for(const range of [undefined,null,{now:61,min:0,max:60},{now:-1,min:0,max:60},{now:1,min:0}])refused('herbs',{range},'range');
+ for(const [id,change,field] of [['herbs',{orientation:'vertical'},'orientation'],['herbs',{name:''},'name'],['herbs',{value:'20'},'value'],['herbs',{checked:true},'checked'],['herbs',{controls:'left'},'controls'],
+  ['left',{disabled:true},'disabled'],['left',{range:{now:0,min:0,max:1}},'range'],['left',{selected:false},'selected'],['left',{value:'x'},'value'],['left',{name:7},'name'],['fault',{expanded:true},'expanded'],['fault',{modal:true},'modal'],['fault',{name:'x'.repeat(1025)},'name']])refused(id,change,field);
+ // A spin button is changed by its keys once it has the focus; a message takes no action.
+ const seen=[];semantics.add({id:'ore',role:'spinbutton',onFocus:()=>seen.push('focus'),describe:()=>({bounds:box(),name:'Ore',range:{now:0,min:0,max:5},focused:seen.length>0})});
+ assert.deepEqual(node('ore').actions,['focus']);assert.equal(semantics.perform('ore','focus'),true);assert.equal(semantics.publish().focused,'ore');assert.deepEqual(node('left').actions,[]);
 });
 
 test('SM07 one node holds the focus',()=>{
