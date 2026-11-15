@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## World3D WebGL2 material setup — 2026-11-15
+
+The WebGL2 renderer delegates shader variant definitions and material uniform and texture binding to its private `materialWebGL23D` module. The renderer owns program caches, pass order, context recovery and disposal. The split reduced `WebGL2Renderer3D.ts` from 1,308 to 1,108 lines. The existing generated declarations match byte for byte.
+
 ## World3D physics queries use a private module — 2026-11-15
 
 World3D's static-body tree and shape-level ray tests now live in a private query module. The world passes its existing mesh-normal scratch into ray traversal, including compound shapes. The extraction preserves query order, solver logic and public declarations.

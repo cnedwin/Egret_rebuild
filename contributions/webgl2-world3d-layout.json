@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/world3d/materialWebGL23D.ts",
+      "originRole": "First-party WebGL2 material and variant code extracted from the existing Egret World3D renderer; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
