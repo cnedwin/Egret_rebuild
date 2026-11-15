@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/atlas-frame/author-assets.mjs",
+      "originRole": "First-party asset authoring for the earlier atlas frame verification; formatted in this change; Apache-2.0."
+    },
+    {
+      "path": "tools/atlas-frame/oracle.mjs",
+      "originRole": "First-party atlas frame reference model from an earlier verification package; formatted in this change; Apache-2.0."
+    },
+    {
+      "path": "tools/resource-scene/oracle.mjs",
+      "originRole": "First-party resource-scene reference model from an earlier verification package; formatted in this change; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

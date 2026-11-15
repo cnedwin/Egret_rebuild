@@ -11,18 +11,29 @@ const frozen = value => {
 };
 
 export const ASSET_NAMES = frozen([
-  'atlas-v1.png', 'atlas-v2.png',
-  'outfit-A.png', 'outfit-B.png', 'outfit-C.png', 'outfit-D.png',
+  'atlas-v1.png',
+  'atlas-v2.png',
+  'outfit-A.png',
+  'outfit-B.png',
+  'outfit-C.png',
+  'outfit-D.png'
 ]);
 
-export const ASSET_SPECS = frozen(Object.fromEntries(ASSET_NAMES.map(name => [name, {
-  width: name.startsWith('atlas-') ? 32 : 16,
-  height: 16,
-  bitDepth: 8,
-  colorType: 6,
-  interlace: 0,
-  chunkTypes: ['IHDR', 'IDAT', 'IEND'],
-}])));
+export const ASSET_SPECS = frozen(
+  Object.fromEntries(
+    ASSET_NAMES.map(name => [
+      name,
+      {
+        width: name.startsWith('atlas-') ? 32 : 16,
+        height: 16,
+        bitDepth: 8,
+        colorType: 6,
+        interlace: 0,
+        chunkTypes: ['IHDR', 'IDAT', 'IEND']
+      }
+    ])
+  )
+);
 
 const transparent = frozen([0, 0, 0, 0]);
 const skin = frozen([255, 192, 128, 255]);
@@ -33,7 +44,7 @@ const outfit = frozen({
   'outfit-A.png': [255, 0, 0, 255],
   'outfit-B.png': [0, 255, 0, 255],
   'outfit-C.png': [0, 0, 255, 255],
-  'outfit-D.png': [255, 255, 0, 255],
+  'outfit-D.png': [255, 255, 0, 255]
 });
 
 // Half-open coordinate predicates express the complete art independently of
@@ -49,9 +60,7 @@ function pixel(name, x, y) {
     return name === 'atlas-v1.png' ? skin : cyan;
   }
   if (localX >= 4 && localX < 12 && y >= 5 && y < 11) return gray;
-  const leg = secondPose
-    ? localX >= 5 && localX < 11
-    : (localX >= 4 && localX < 7) || (localX >= 9 && localX < 12);
+  const leg = secondPose ? localX >= 5 && localX < 11 : (localX >= 4 && localX < 7) || (localX >= 9 && localX < 12);
   return leg && y >= 11 && y < 15 ? dark : transparent;
 }
 
@@ -70,7 +79,7 @@ export const SCENE_GEOMETRY = frozen({
   frame: { width: 192, height: 128, pixelRatio: 1, clear: [0, 0, 0, 255] },
   actors: [
     { id: 'pilot-left', position: [56, 96], scale: [3, 3], anchor: [8, 16], card: [24, 40, 64, 64] },
-    { id: 'pilot-right', position: [136, 96], scale: [3, 3], anchor: [8, 16], card: [104, 40, 64, 64] },
+    { id: 'pilot-right', position: [136, 96], scale: [3, 3], anchor: [8, 16], card: [104, 40, 64, 64] }
   ],
   cardColor: [64, 64, 64, 255],
   hitArea: [0, 0, 16, 16],
@@ -81,13 +90,26 @@ export const SCENE_GEOMETRY = frozen({
   rotatedLeft: { degrees: 90, local: [8, 8], global: [80, 96] },
   badge: { rect: [8, 8, 16, 8], asset: 'tools/browser-png/assets/rgb-red-green.png' },
   ahem: { position: [32, 8], fontSize: 8, lineHeight: 8, density: 1, literals: ['X X', 'XX'] },
-  chinese: { position: [72, 8], fontSize: 12, lineHeight: 16, density: 1,
-    locale: 'zh-CN', direction: 'ltr', literals: ['左侧 已选择', '右侧 已选择'] },
-  animation: { poses: [0, 1], durations: [0.125, 0.125],
-    sourceTimes: [0, 0.125 - 2 ** -20, 0.125, 0.25], framesAfterAnchor: [0, 1, 0] },
-  scene: { projection: { left: -1, right: 1, bottom: -1, top: 1, near: 1, far: 9 },
+  chinese: {
+    position: [72, 8],
+    fontSize: 12,
+    lineHeight: 16,
+    density: 1,
+    locale: 'zh-CN',
+    direction: 'ltr',
+    literals: ['左侧 已选择', '右侧 已选择']
+  },
+  animation: {
+    poses: [0, 1],
+    durations: [0.125, 0.125],
+    sourceTimes: [0, 0.125 - 2 ** -20, 0.125, 0.25],
+    framesAfterAnchor: [0, 1, 0]
+  },
+  scene: {
+    projection: { left: -1, right: 1, bottom: -1, top: 1, near: 1, far: 9 },
     front: { x: [-0.5, 0.5], y: [-0.5, 0.5], z: -3, rgba: [255, 0, 0, 255] },
-    back: { x: [-0.75, 0.75], y: [-0.75, 0.75], z: -7, rgba: [0, 0, 255, 255] } },
+    back: { x: [-0.75, 0.75], y: [-0.75, 0.75], z: -7, rgba: [0, 0, 255, 255] }
+  }
 });
 
 export const BASELINE_POINTS = frozen([
@@ -97,7 +119,7 @@ export const BASELINE_POINTS = frozen([
   { name: 'left-A-torso', point: [56, 72], rgba: [255, 0, 0, 255] },
   { name: 'left-v1-head', point: [56, 54], rgba: [255, 192, 128, 255] },
   { name: 'left-pose0-leg', point: [45, 87], rgba: [32, 32, 32, 255] },
-  { name: 'right-pose0-leg', point: [125, 87], rgba: [32, 32, 32, 255] },
+  { name: 'right-pose0-leg', point: [125, 87], rgba: [32, 32, 32, 255] }
 ]);
 
 // These rows apply only to their named state; they are not simultaneous startup points.
@@ -106,23 +128,23 @@ export const CHANGED_POINTS = frozen([
   { name: 'right-pose1-leg-gap-unselected', point: [125, 87], rgba: [64, 64, 64, 255] },
   { name: 'left-D-torso', point: [56, 72], rgba: [255, 255, 0, 255] },
   { name: 'left-v2-head', point: [56, 54], rgba: [0, 255, 255, 255] },
-  { name: 'left-clipped-right-half', point: [56, 72], rgba: [64, 64, 64, 255] },
+  { name: 'left-clipped-right-half', point: [56, 72], rgba: [64, 64, 64, 255] }
 ]);
 
 export const PROFILE_POINTS = frozen({
   'canvas-2d': [
     { point: [96, 64], rgba: [0, 0, 0, 255] },
-    { point: [32, 24], rgba: [0, 0, 0, 255] },
+    { point: [32, 24], rgba: [0, 0, 0, 255] }
   ],
   'webgpu-scene-textured': [
     { point: [96, 64], rgba: [255, 0, 0, 255] },
-    { point: [32, 24], rgba: [0, 0, 255, 255] },
-  ],
+    { point: [32, 24], rgba: [0, 0, 255, 255] }
+  ]
 });
 
 export const FONT_REFERENCE_BOUNDARY = frozen({
   ahemSha256: 'f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc',
   notoSha256: '9e435555e47102d40ace35211158051b45c131bce1fc7c1daca871b2386ec895',
   chineseReference: 'Separate approved no-SDK glyph RGBA/metrics references are required before native comparison.',
-  nativeGlyphCoverage: 'NOT_ESTABLISHED_BY_THIS_ORACLE',
+  nativeGlyphCoverage: 'NOT_ESTABLISHED_BY_THIS_ORACLE'
 });

@@ -11,12 +11,17 @@ import { describeErrorCode } from '../packages/runtime/dist/errorHelp.js';
 import { ZH_AREAS } from '../packages/runtime/dist/errorHelpZh.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-export const ERROR_CODE_DOCUMENTS = { en: 'knowledge-base/en/docs/error-codes.md', zh: 'knowledge-base/Cns/docs/error-codes.md' };
+export const ERROR_CODE_DOCUMENTS = {
+  en: 'knowledge-base/en/docs/error-codes.md',
+  zh: 'knowledge-base/Cns/docs/error-codes.md'
+};
 function* sources(directory) {
   for (const entry of fs.readdirSync(path.join(root, directory), { withFileTypes: true })) {
     const relative = directory + '/' + entry.name;
-    if (entry.isDirectory()) { if (entry.name !== 'dist' && entry.name !== 'node_modules' && entry.name !== 'test' && entry.name !== 'tests') yield* sources(relative); }
-    else if (entry.name.endsWith('.ts') && !entry.name.endsWith('.d.ts')) yield relative;
+    if (entry.isDirectory()) {
+      if (entry.name !== 'dist' && entry.name !== 'node_modules' && entry.name !== 'test' && entry.name !== 'tests')
+        yield* sources(relative);
+    } else if (entry.name.endsWith('.ts') && !entry.name.endsWith('.d.ts')) yield relative;
   }
 }
 /**
@@ -26,18 +31,22 @@ function* sources(directory) {
  */
 export function collectErrorCodes() {
   const codes = new Set();
-  for (const name of ['contracts', 'runtime', 'engine', 'spine']) for (const file of sources('packages/' + name)) {
-    if (file.endsWith('/errorHelp.ts') || file.endsWith('/errorHelpZh.ts')) continue;
-    const text = fs.readFileSync(path.join(root, file), 'utf8');
-    for (const match of text.matchAll(/new EgretError\(\s*['"]([A-Z][A-Z0-9_]*[A-Z0-9])['"]/g)) codes.add(match[1]);
-    for (const match of text.matchAll(/['"]([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+)['"]/g)) if (describeErrorCode(match[1], 'en') !== '') codes.add(match[1]);
-    // A part that throws through a helper of its own, which puts the part's name before a short one: the helper is the
-    // function on whose line the prefix is joined to its argument, and the codes are its calls with a short name written out.
-    for (const helper of text.matchAll(/(?:const|let|function)\s+(\w+)\b(?:(?!\b(?:const|let|function)\b)[\s\S]){0,400}?new EgretError\(\s*['"]([A-Z][A-Z0-9_]*_)['"]\s*\+\s*\w+\s*[,)]/g)) {
-      const calls = new RegExp('\\b' + helper[1] + '\\(\\s*[\'"]([A-Z][A-Z0-9_]*[A-Z0-9])[\'"]', 'g');
-      for (const call of text.matchAll(calls)) codes.add(helper[2] + call[1]);
+  for (const name of ['contracts', 'runtime', 'engine', 'spine'])
+    for (const file of sources('packages/' + name)) {
+      if (file.endsWith('/errorHelp.ts') || file.endsWith('/errorHelpZh.ts')) continue;
+      const text = fs.readFileSync(path.join(root, file), 'utf8');
+      for (const match of text.matchAll(/new EgretError\(\s*['"]([A-Z][A-Z0-9_]*[A-Z0-9])['"]/g)) codes.add(match[1]);
+      for (const match of text.matchAll(/['"]([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+)['"]/g))
+        if (describeErrorCode(match[1], 'en') !== '') codes.add(match[1]);
+      // A part that throws through a helper of its own, which puts the part's name before a short one: the helper is the
+      // function on whose line the prefix is joined to its argument, and the codes are its calls with a short name written out.
+      for (const helper of text.matchAll(
+        /(?:const|let|function)\s+(\w+)\b(?:(?!\b(?:const|let|function)\b)[\s\S]){0,400}?new EgretError\(\s*['"]([A-Z][A-Z0-9_]*_)['"]\s*\+\s*\w+\s*[,)]/g
+      )) {
+        const calls = new RegExp('\\b' + helper[1] + '\\(\\s*[\'"]([A-Z][A-Z0-9_]*[A-Z0-9])[\'"]', 'g');
+        for (const call of text.matchAll(calls)) codes.add(helper[2] + call[1]);
+      }
     }
-  }
   return [...codes].sort();
 }
 
@@ -93,37 +102,93 @@ Sentences that also say what to do were written for the codes a game meets most.
 
 | 错误码 | 含义 |
 | --- | --- |
-`,
+`
 };
-const FIRST = ['FRAME_RENDER_FAILED', 'WEBGL2_BACKPRESSURE', 'WEBGPU_BACKPRESSURE', 'CLOCK_DELTA_LIMIT', 'OBJECT_DISPOSED', 'SCOPE_CLOSED', 'ENGINE_CLOSED', 'ENGINE_MISMATCH', 'DISPLAY_VALUE_INVALID',
-  'FRAME_TRANSFORM_INVALID', 'FRAME_BUDGET_EXCEEDED', 'FRAME_IMAGE_BUDGET', 'GRAPHICS_FILL_REQUIRED', 'GRAPHICS_VALUE_INVALID', 'ASSET_PROVIDER_MISSING', 'ASSET_LOAD_FAILED', 'BITMAP_TEXTURE_REQUIRED',
-  'ASYNC_EVENT_HANDLER', 'VIDEO_PLAY_REFUSED', 'WEBGL2_CONTEXT_LOST', 'WEBGPU_DEVICE_LOST', 'WEBGPU_UNAVAILABLE'];
-const GROUPS = { en: ['All codes, by area', 'Other codes', 'Code', 'Meaning'], zh: ['全部错误码，按部分排列', '其他错误码', '错误码', '含义'] };
+const FIRST = [
+  'FRAME_RENDER_FAILED',
+  'WEBGL2_BACKPRESSURE',
+  'WEBGPU_BACKPRESSURE',
+  'CLOCK_DELTA_LIMIT',
+  'OBJECT_DISPOSED',
+  'SCOPE_CLOSED',
+  'ENGINE_CLOSED',
+  'ENGINE_MISMATCH',
+  'DISPLAY_VALUE_INVALID',
+  'FRAME_TRANSFORM_INVALID',
+  'FRAME_BUDGET_EXCEEDED',
+  'FRAME_IMAGE_BUDGET',
+  'GRAPHICS_FILL_REQUIRED',
+  'GRAPHICS_VALUE_INVALID',
+  'ASSET_PROVIDER_MISSING',
+  'ASSET_LOAD_FAILED',
+  'BITMAP_TEXTURE_REQUIRED',
+  'ASYNC_EVENT_HANDLER',
+  'VIDEO_PLAY_REFUSED',
+  'WEBGL2_CONTEXT_LOST',
+  'WEBGPU_DEVICE_LOST',
+  'WEBGPU_UNAVAILABLE'
+];
+const GROUPS = {
+  en: ['All codes, by area', 'Other codes', 'Code', 'Meaning'],
+  zh: ['全部错误码，按部分排列', '其他错误码', '错误码', '含义']
+};
 
 /** The text of one of the two documents, 'en' or 'zh', for the given codes. */
 export function buildErrorCodeDocument(language, codes) {
-  const say = language === 'en' ? code => describeErrorCode(code, 'en') : describeZh, cell = code => say(code) || '—';
+  const say = language === 'en' ? code => describeErrorCode(code, 'en') : describeZh,
+    cell = code => say(code) || '—';
   let out = HEAD[language];
-  for (const code of FIRST) { if (!codes.includes(code)) throw new Error('A code listed first is no longer thrown: ' + code); out += '| `' + code + '` | ' + cell(code) + ' |\n'; }
+  for (const code of FIRST) {
+    if (!codes.includes(code)) throw new Error('A code listed first is no longer thrown: ' + code);
+    out += '| `' + code + '` | ' + cell(code) + ' |\n';
+  }
   out += '\n## ' + GROUPS[language][0] + '\n';
   // Areas in the order of their names; a code of no area goes last.
-  const names = [...new Set(ZH_AREAS.map(([prefix]) => prefix))].sort(), byArea = new Map(names.map(name => [name, []])), other = [];
-  for (const code of codes) { const area = areaOf(code); if (area) byArea.get(area[0]).push(code); else other.push(code); }
-  const table = rows => '| ' + GROUPS[language][2] + ' | ' + GROUPS[language][3] + ' |\n| --- | --- |\n' + rows.map(code => '| `' + code + '` | ' + cell(code) + ' |\n').join('');
-  for (const name of names) { const rows = byArea.get(name); if (rows.length !== 0) out += '\n### ' + name + '\n\n' + table(rows); }
+  const names = [...new Set(ZH_AREAS.map(([prefix]) => prefix))].sort(),
+    byArea = new Map(names.map(name => [name, []])),
+    other = [];
+  for (const code of codes) {
+    const area = areaOf(code);
+    if (area) byArea.get(area[0]).push(code);
+    else other.push(code);
+  }
+  const table = rows =>
+    '| ' +
+    GROUPS[language][2] +
+    ' | ' +
+    GROUPS[language][3] +
+    ' |\n| --- | --- |\n' +
+    rows.map(code => '| `' + code + '` | ' + cell(code) + ' |\n').join('');
+  for (const name of names) {
+    const rows = byArea.get(name);
+    if (rows.length !== 0) out += '\n### ' + name + '\n\n' + table(rows);
+  }
   if (other.length !== 0) out += '\n### ' + GROUPS[language][1] + '\n\n' + table(other);
   return out;
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const codes = collectErrorCodes(), check = process.argv.includes('--check');
+  const codes = collectErrorCodes(),
+    check = process.argv.includes('--check');
   let stale = 0;
   for (const language of ['en', 'zh']) {
-    const text = buildErrorCodeDocument(language, codes), file = path.join(root, ERROR_CODE_DOCUMENTS[language]);
-    if (check) { if (!fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== text) { console.error('Out of date: ' + ERROR_CODE_DOCUMENTS[language] + '. Run node tools/error-codes.mjs'); stale++; } }
-    else fs.writeFileSync(file, text);
+    const text = buildErrorCodeDocument(language, codes),
+      file = path.join(root, ERROR_CODE_DOCUMENTS[language]);
+    if (check) {
+      if (!fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== text) {
+        console.error('Out of date: ' + ERROR_CODE_DOCUMENTS[language] + '. Run node tools/error-codes.mjs');
+        stale++;
+      }
+    } else fs.writeFileSync(file, text);
   }
   const without = codes.filter(code => describeErrorCode(code, 'en') === '' || describeErrorCode(code, 'zh') === '');
-  console.log(codes.length + ' codes; ' + without.length + ' without a sentence' + (without.length ? ': ' + without.join(', ') : '') + (check ? stale ? '; documents OUT OF DATE' : '; documents current' : '; documents written'));
+  console.log(
+    codes.length +
+      ' codes; ' +
+      without.length +
+      ' without a sentence' +
+      (without.length ? ': ' + without.join(', ') : '') +
+      (check ? (stale ? '; documents OUT OF DATE' : '; documents current') : '; documents written')
+  );
   process.exitCode = stale ? 1 : 0;
 }
