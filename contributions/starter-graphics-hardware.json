@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "originRole": "First-party starter and Graphics native browser verification and measurement report; independently authored with AI assistance; Apache-2.0.",
+      "path": "knowledge-base/en/docs/starter-graphics-hardware.md"
+    },
+    {
+      "originRole": "First-party Simplified Chinese edition of the starter and Graphics verification and measurement report; independently authored with AI assistance; Apache-2.0.",
+      "path": "knowledge-base/Cns/docs/starter-graphics-hardware.md"
+    }
+  ],
+  "documents": [
+    {
+      "zh": "knowledge-base/Cns/docs/starter-graphics-hardware.md",
+      "en": "knowledge-base/en/docs/starter-graphics-hardware.md"
+    }
+  ],
+  "schemaVersion": 1
+}

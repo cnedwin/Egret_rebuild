@@ -4,7 +4,9 @@ English | [简体中文](../../Cns/docs/browser-game.md)
 
 `@egret/engine/web/game` starts a 2D game in a page with one call, and has a panel that shows what the game takes.
 
-**What is checked and what is not.** The options and the panel are checked in Node. The [starter example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.md) runs on `createBrowserGame` and is checked in headless Chromium with software rendering, all with WebGL2: it draws, takes clicks, keys and taps, loads an image by its address, and shows the panel with `?stats`. The automatic choice is checked for a browser without WebGPU and for one whose WebGPU gives no adapter: both are given WebGL2. The choice of WebGPU is not checked: that browser's software WebGPU adapter loses its device or never finishes a frame, with `?backend=webgpu` as well, so an earlier note here that it "drew frames without failing" said more than was seen. A hardware GPU and a phone were not run.
+The initial [starter example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.md) ran on software WebGL2 in headless Chromium. Node covers option handling and the statistics panel. The browser checks cover drawing, clicks, keys, taps, image loading and WebGL2 fallback when WebGPU or its adapter is unavailable.
+
+[Starter and Graphics hardware results](starter-graphics-hardware.md) records the later Windows and Android checks and measurements.
 
 ## Use
 

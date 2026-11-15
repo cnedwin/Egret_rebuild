@@ -148,9 +148,12 @@ for (const [fit, expected] of [['contain', [400, 225, 0, 37.5]], ['cover', [533.
     await until(page, s => s.frames >= 2, 'two frames');
     const box = await page.evaluate(() => { const canvas = document.querySelector('#scene').getBoundingClientRect(), holder = document.querySelector('#scene').parentElement.getBoundingClientRect(); return [canvas.width, canvas.height, canvas.left - holder.left, canvas.top - holder.top]; });
     for (let i = 0; i < 4; i++) assert.ok(Math.abs(box[i] - expected[i]) < 0.6, fit + ': ' + box + ' is not ' + expected);
-    // The coin at the middle of the stage is at the middle of the canvas, whatever its shape on the page.
-    await clickAt(page, [240, 135]);
-    await until(page, s => s.score === 1 && s.hero.x === 240 && s.hero.y === 135, 'the square at the middle coin');
+    // An off-center point exposes projection errors that a centered tap would miss. The browser
+    // can round coordinates when it dispatches the pointer event, especially with fractional CSS sizes.
+    const target = [246, 142], xTolerance = 480 / box[0], yTolerance = 270 / box[1];
+    await clickAt(page, target);
+    await until(page, s => s.score === 1 && Math.abs(s.hero.x - target[0]) < xTolerance
+      && Math.abs(s.hero.y - target[1]) < yTolerance, 'the square near the off-center input');
   }, '?backend=webgl2&fit=' + fit);
 
 await scenario('on a phone a tap sends the square to a coin', phone, async page => {
