@@ -21,8 +21,6 @@
 | `build` | 每个包都能编译 |
 | `check-boundaries` | 包的依赖方向、批准的导入边、核心不依赖 DOM |
 | `check-spine-content` | 可选的 Spine 依赖及其声明 |
-| `resource-scene-boundary` | 资源场景的模块闭包 |
-| `atlas-frame/boundary` | 图集帧场景的模块闭包和路由 |
 | `check-type-lanes` | 十四个功能的使用方代码按记录编译通过、按记录报错 |
 | `check-types` | 其余对外类型样例及其诊断 |
 | `test` | 证据通道之外的每个行为测试文件 |
@@ -101,3 +99,13 @@ node tools/evidence.mjs
 - 需要确切字节的新检查，从一开始就属于证据通道。
 - 不要为了让证据工具重新成立而给它们加后继层。要么更新证据，要么让它保持过期。
 - 非产品文件的哈希不受影响，例如第三方声明和冻结的编译器输入。
+
+## 可读性整改后的 Windows 验证
+
+2026 年 11 月 15 日的采集使用 Windows、Node 26.7.0、pnpm 11.25.0 和 TypeScript 7.0.2。采集时构建的源码树与主干 `9cdd47e96b223622cb45ab63085984d420a9afcd` 一致。`node tools/current-identities.mjs --write` 登记了 2,085 个产品文件。生成的身份表 SHA‑256 为 `2b84af3b278acd4f32fad5ba05d13546a5d9ac9d77f4974e22886aa096de86b0`。
+
+`node tools/evidence.mjs --tools --json` 执行了 20 项历史重放工具。20 项在当前构建上均返回 `holds: false`，首条拒绝信息涉及路径已移除、记录的路径拼写与现行身份不符，或编译输入及产物字节不一致。67 份包含产品身份的保存报告均含有发生变化或缺失的身份，共计 2,022 条变化和 337 条缺失。同一路径出现在不同报告时分别计数。本轮未运行 11 个历史测试文件，也未统计仓库里所有内联固定值。
+
+原始回执及其哈希继续作为历史记录。当前结论需要单独的执行结果和源码身份。可读性整改按各工作包的实际格式、导入边界、公开类型和行为检查验收。浏览器覆盖 Windows 的 UI 数据面板、两个 World3D 渲染器和双宿主，以及 Fold7 的双宿主。[可读性整改跟踪任务](https://github.com/cnedwin/Egret_rebuild/issues/289)记录整体计划。真机结果适用于报告中的场景和清理路径，本轮没有新的正式性能验收。
+
+受保护的 `M0 / merge-ready` 沿用现有 Windows 和跨平台路线。`Source layout` 与提示性 lint 独立运行。编译器、第三方文件和现行源码规则的输入固定继续生效。

@@ -21,8 +21,6 @@ A recorded hash proves one thing: these are the bytes that were checked. It does
 | `build` | Every package compiles |
 | `check-boundaries` | Package dependency direction, approved import edges, DOM-free core |
 | `check-spine-content` | Optional Spine dependency and its notice |
-| `resource-scene-boundary` | Module closure of the resource scene |
-| `atlas-frame/boundary` | Module closure and routes of the atlas frame scene |
 | `check-type-lanes` | Consumers of fourteen features compile, and fail, exactly as recorded |
 | `check-types` | The remaining public type fixtures and their diagnostics |
 | `test` | Every behavior test file outside the evidence lane |
@@ -101,3 +99,13 @@ Recorded hashes also made an unreviewed edit to a product file impossible to mis
 - A new check that needs exact bytes belongs in the evidence lane from the start.
 - Do not add successor layers to the evidence tools to make them hold again. Renew the evidence or leave it stale.
 - Hashes of files that are not product files, such as third-party notices and frozen compiler inputs, are unchanged by this.
+
+## Readability verification on Windows
+
+The November 15, 2026 capture used Windows, Node 26.7.0, pnpm 11.25.0 and TypeScript 7.0.2. The source tree built for the capture matches main `9cdd47e96b223622cb45ab63085984d420a9afcd`. `node tools/current-identities.mjs --write` recorded 2,085 product files. The generated identity table has SHA‑256 `2b84af3b278acd4f32fad5ba05d13546a5d9ac9d77f4974e22886aa096de86b0`.
+
+`node tools/evidence.mjs --tools --json` ran 20 historical replay tools. All 20 returned `holds: false` on the current build. Their first refusal included removed paths, incompatible recorded path spelling and mismatched compiler input or output bytes. The inventory found changed or missing identities in all 67 saved reports containing product identities, with 2,022 changed entries and 337 missing entries. File entries are counted once per report in which they appear. The run did not execute the 11 historical test files and does not count every inline pin in the repository.
+
+The original receipts and their hashes remain historical records. A current claim needs its own execution and source identity. The readability changes were accepted through the actual format, import boundary, public type and behavior checks for each package. Browser runs covered the UI panel, both World3D renderers and the two Web Hosts on Windows, and the Web Hosts on Fold7. The [readability tracking issue](https://github.com/cnedwin/Egret_rebuild/issues/289) covers the overall plan. The hardware runs check the reported scenes and cleanup paths. They provide no new formal performance acceptance.
+
+The protected `M0 / merge-ready` check retains its existing Windows and cross-platform routes. `Source layout` and advisory lint run as separate checks. The existing input pins for the compiler, third-party files and active source policies remain in force.
