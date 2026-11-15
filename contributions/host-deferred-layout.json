@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/sharedHostDeferred.ts",
+      "originRole": "First-party private Promise helper shared by the browser hosts; its body is taken unchanged from webgpuLifetime.ts and WebGL2Host.ts; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

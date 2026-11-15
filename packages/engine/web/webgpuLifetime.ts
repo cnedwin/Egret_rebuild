@@ -24,15 +24,7 @@ export function observeAuthenticatedWebGPUDeviceLoss(
     cause => cell.unknown?.(cause)
   );
 }
-export function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void; reject: (cause: unknown) => void } {
-  let resolve!: (value: T) => void, reject!: (cause: unknown) => void;
-  const promise = new Promise<T>((a, b) => {
-    resolve = a;
-    reject = b;
-  });
-  promise.catch(() => undefined);
-  return { promise, resolve, reject };
-}
+export { deferred } from './sharedHostDeferred.js';
 export interface WebGPUResourceGeneration {
   readonly invalidated: boolean;
 }

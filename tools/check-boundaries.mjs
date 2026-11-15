@@ -770,7 +770,7 @@ for(const relative of ['web/webgpu.ts','dist/web/webgpu.d.ts','dist/web/webgpu.j
 }
 const privateSharedGPU = ["SharedStorageLimits2D","SharedStorageFees2D","SharedReadbackLayout2D","SharedStoragePlan2D","planSharedStorageFees2D","withSharedReadbackLayout2D","createRetentionLedger","RetentionRequestBase","KeyedRetentionRequest","LedgerHandle","LedgerLease","LedgerPlan","LedgerReturnPlan","RetentionLedgerStatus","RetentionSettlement","RetentionLedger","MeshPacking3DError","MeshPacking3DErrorCode","MeshPacking3DErrorOrigin","PackedMeshGeometry3D","PackedSharedDraw2D","PackedSharedEntry2D","PreparedSharedBarrier2D","PreparedSharedBatchPlan2D","PreparedSharedDraw2D","PreparedSharedEntry2D","PreparedSharedFrame2D","RetentionBufferRequest","RetentionHandle","RetentionLease","RetentionPlan","RetentionRequest","RetentionReturnPlan","RetentionTargetRequest","SHARED_BLENDS","SharedB1BuiltinProtocol","SharedDrawCommand2D","SharedOwnerSnapshot2D","SharedPoint2D","SharedPreparationError","SharedPreparationOptions2D","SharedSceneStorage2D","SharedStorageError2D","SharedSubmissionStorage2D","SharedWebGPUConfiguration","WebGPURetentionPool","admitSharedWebGPUOptions","checkSharedCapacity2D","copySharedPagePixels","createSharedResolvePipeline","createSharedWebGPUMeshPipeline","createSharedWebGPUPipeline","createWebGPURetentionPool","decodeSharedSRGB","encodeSharedSRGB","encodeSharedWebGPUMesh","getBuiltinSharedB1Protocol","getSharedMeshPacking3DErrorOrigin","isBuiltinSharedB1Protocol","materializeSharedPages2D","packSharedDraws2D","packSharedMeshGeometry3D","packSharedSubmission2D","planSharedSubmission2D","prepareSharedBatches2D","prepareSharedDraws2D","qualifySharedUV","sharedFailure"];
 privateSharedGPU.push("attachSharedSceneCardSources2D","attachSharedSceneSources2D","packSharedSceneCardUniform3D","createSharedWebGPUCardPipeline","createSharedWebGPUTexturedMeshPipeline","packSharedSceneLambertUniform3D","createSharedWebGPULambertMeshPipeline");
-const privateSharedModules = ["sharedSubmissionStorage2D","sharedRetentionLedger","packSharedDraws2D","packSharedMeshGeometry3D","prepareSharedDraws2D","prepareSharedSubmission2D","preparedSharedBatches2D","sharedB1","sharedColor2D","sharedWebGPUOptions","webgpuRetentionPool","webgpuSharedMeshPass","webgpuSharedPass","webgpuSharedResolvePass"];
+const privateSharedModules = ["sharedSubmissionStorage2D","sharedRetentionLedger","packSharedDraws2D","packSharedMeshGeometry3D","prepareSharedDraws2D","prepareSharedSubmission2D","preparedSharedBatches2D","sharedB1","sharedColor2D","sharedHostDeferred","sharedWebGPUOptions","webgpuRetentionPool","webgpuSharedMeshPass","webgpuSharedPass","webgpuSharedResolvePass"];
 for(const [entry,values,stem]of meshEntries) {
   const text=readFileSync(path.join(root,stem+'.d.ts'),'utf8')+'\n'+readFileSync(path.join(root,stem+'.js'),'utf8');
   for(const name of [...privateSharedGPU,...privateSharedModules])if(name in values||new RegExp('\\b'+name+'\\b').test(text))throw new Error('M13: private shared helper leaked: '+entry+'/'+name);
@@ -1755,9 +1755,12 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/engine/web/webgpu.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"]],
   "packages/engine/dist/web/webgpu.js": [["static","./WebGPUHost.js"]],
   "packages/engine/dist/web/webgpu.d.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"]],
-  "packages/engine/web/webgpuLifetime.ts": [],
-  "packages/engine/dist/web/webgpuLifetime.js": [],
-  "packages/engine/dist/web/webgpuLifetime.d.ts": [],
+  "packages/engine/web/webgpuLifetime.ts": [["static","./sharedHostDeferred.js"]],
+  "packages/engine/dist/web/webgpuLifetime.js": [["static","./sharedHostDeferred.js"]],
+  "packages/engine/dist/web/webgpuLifetime.d.ts": [["static","./sharedHostDeferred.js"]],
+  "packages/engine/web/sharedHostDeferred.ts": [],
+  "packages/engine/dist/web/sharedHostDeferred.js": [],
+  "packages/engine/dist/web/sharedHostDeferred.d.ts": [],
   "packages/engine/web/webgpuRetentionPool.ts": [["static","./sharedRetentionLedger.js"],["static","./sharedRetentionLedger.js"],["static","./webgpuLifetime.js"]],
   "packages/engine/dist/web/webgpuRetentionPool.js": [["static","./sharedRetentionLedger.js"]],
   "packages/engine/dist/web/webgpuRetentionPool.d.ts": [["static","./sharedRetentionLedger.js"],["static","./webgpuLifetime.js"]],
@@ -4590,6 +4593,10 @@ for (const [file, targets] of Object.entries(uiRootModuleTargets))
     .sort((a,b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
 if (hasGLTiming) for (const file of ['packages/engine/web/webgl2.ts','packages/engine/dist/web/webgl2.d.ts']) {
   currentSceneLiteralClosure[file] = [...currentSceneLiteralClosure[file],['static','./webgl2Types.js']]
+    .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+}
+for (const file of ['packages/engine/web/WebGL2Host.ts','packages/engine/dist/web/WebGL2Host.js']) {
+  currentSceneLiteralClosure[file] = [...currentSceneLiteralClosure[file],['static','./sharedHostDeferred.js']]
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
 for (const [file,edges] of Object.entries(currentSceneLiteralClosure)) {

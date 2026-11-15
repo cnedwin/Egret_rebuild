@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/sync-srgb-byte-tables.mjs",
+      "originRole": "First-party authoring check and deterministic copy command for the existing Egret sRGB byte constants; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
