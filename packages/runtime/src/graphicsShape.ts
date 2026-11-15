@@ -15,7 +15,8 @@ import type { Texture } from './Texture.js';
  */
 export interface ShapeBitmap { readonly lease: AssetLease<Texture>; readonly repeat: boolean; readonly width: number; readonly height: number;
   readonly a: number; readonly b: number; readonly c: number; readonly d: number; readonly tx: number; readonly ty: number; }
-export interface ShapePaint { readonly color: number; readonly alpha: number; readonly gradient?: ShapeGradient | undefined; readonly bitmap?: ShapeBitmap | undefined; }
+/** `feather` is how far, in the node's units, the edge of what is painted fades to nothing; none when it is not there. */
+export interface ShapePaint { readonly color: number; readonly alpha: number; readonly gradient?: ShapeGradient | undefined; readonly bitmap?: ShapeBitmap | undefined; readonly feather?: number | undefined; }
 export type LineCaps = 'none' | 'round' | 'square';
 export type LineJoints = 'miter' | 'round' | 'bevel';
 /** A line: its width, how its ends and corners are drawn, and the lengths of its dashes and gaps in turn, if it is dashed. */
@@ -146,7 +147,7 @@ function takeTriangles(target: Target, vertices: number, indices: number): numbe
  * A gradient is given as the colours of the corners, with triangles cut until that is close enough.
  * False when the fill would take more triangles than one fill may.
  */
-export function fillOutlines(target: Target, outlines: readonly (readonly number[])[], convex: boolean, color: ShapePaint): boolean {
+export function fillOutlines(target: Target, outlines: readonly (readonly number[])[], convex: boolean, color: ShapePaint, edge = true): boolean {
   batchFor(target, color.bitmap);
   const vertices = target.positions.length / 2, indices = target.indices.length, max = GRAPHICS_SHAPE_LIMITS.maxFillTriangles;
   const closed = outlines.map(points => distinct(points, true)).filter(points => points.length >= 6);
@@ -162,7 +163,60 @@ export function fillOutlines(target: Target, outlines: readonly (readonly number
   const bitmap = color.bitmap;
   if (bitmap !== undefined) for (let i = 2 * vertices; i < target.uvs.length; i += 2)
     if (Math.abs(target.uvs[i]! * bitmap.width) > GRAPHICS_SHAPE_LIMITS.maxRepeatPixels || Math.abs(target.uvs[i + 1]! * bitmap.height) > GRAPHICS_SHAPE_LIMITS.maxRepeatPixels) return false;
+  if (edge && bitmap === undefined && color.feather !== undefined && color.feather > 0) featherEdges(target, indices, color.feather);
   return true;
+}
+/**
+ * A band around the triangles from `firstIndex` on, as wide as `width`, that fades from their colour at their edge to
+ * nothing: what smooths an edge that would otherwise be a stair of pixels. An edge of theirs is a side that only one
+ * of the triangles has; where two edges meet the band turns with them, no farther out than twice its width.
+ */
+function featherEdges(target: Target, firstIndex: number, width: number): void {
+  const P = target.positions, I = target.indices, last = I.length;
+  // Vertices at one place are one vertex here: the first of them.
+  const places = new Map<string, number>(), same = (v: number): number => {
+    const key = P[2 * v]! + ',' + P[2 * v + 1]!, found = places.get(key);
+    if (found !== undefined) return found;
+    places.set(key, v); return v;
+  };
+  const sides = new Map<string, { u: number; v: number; nx: number; ny: number; times: number }>();
+  for (let i = firstIndex; i + 2 < last; i += 3) {
+    const t = [same(I[i]!), same(I[i + 1]!), same(I[i + 2]!)];
+    if (t[0] === t[1] || t[1] === t[2] || t[2] === t[0]) continue;
+    for (let k = 0; k < 3; k++) {
+      const u = t[k]!, v = t[(k + 1) % 3]!, w = t[(k + 2) % 3]!, key = u < v ? u + ':' + v : v + ':' + u, seen = sides.get(key);
+      if (seen !== undefined) { seen.times++; continue; }
+      const dx = P[2 * v]! - P[2 * u]!, dy = P[2 * v + 1]! - P[2 * u + 1]!, length = Math.hypot(dx, dy);
+      // The side's normal, pointing away from the triangle's third corner.
+      let nx = dy / length, ny = -dx / length;
+      if (nx * (P[2 * w]! - P[2 * u]!) + ny * (P[2 * w + 1]! - P[2 * u + 1]!) > 0) { nx = -nx; ny = -ny; }
+      sides.set(key, { u, v, nx, ny, times: 1 });
+    }
+  }
+  const sums = new Map<number, [number, number, number, number]>();
+  for (const side of sides.values()) {
+    if (side.times !== 1) continue;
+    for (const at of [side.u, side.v]) {
+      const sum = sums.get(at);
+      if (sum === undefined) sums.set(at, [side.nx, side.ny, side.nx, side.ny]); else { sum[0] += side.nx; sum[1] += side.ny; }
+    }
+  }
+  const outer = new Map<number, number>();
+  for (const [at, sum] of sums) {
+    let nx = sum[0], ny = sum[1];
+    const length = Math.hypot(nx, ny);
+    if (length < 1e-6) { nx = sum[2]; ny = sum[3]; } else { nx /= length; ny /= length; }
+    const reach = width / Math.max(0.5, nx * sum[2] + ny * sum[3]);
+    outer.set(at, P.length / 2);
+    P.push(P[2 * at]! + nx * reach, P[2 * at + 1]! + ny * reach);
+    target.colors.push(target.colors[4 * at]!, target.colors[4 * at + 1]!, target.colors[4 * at + 2]!, 0);
+    target.uvs.push(0.5, 0.5);
+  }
+  for (const side of sides.values()) {
+    if (side.times !== 1) continue;
+    const u2 = outer.get(side.u)!, v2 = outer.get(side.v)!;
+    I.push(side.u, side.v, v2, side.u, v2, u2);
+  }
 }
 
 /** The pieces of a line that its dashes cover, each a line of its own; undefined when there are too many. */
@@ -262,8 +316,9 @@ function strokeSolid(target: Target, points: readonly number[], loop: boolean, s
     else triangles.push(inside, outA, outB);
   }
   for (let i = 0; i < segments; i++) triangles.push(startPlus[i]!, startMinus[i]!, endMinus[i]!, startPlus[i]!, endMinus[i]!, endPlus[i]!);
-  const first = paint(target, out, style);
+  const first = paint(target, out, style), from = target.indices.length;
   for (const index of triangles) target.indices.push(first + index);
+  if (style.bitmap === undefined && style.feather !== undefined && style.feather > 0) featherEdges(target, from, style.feather);
 }
 
 /** How many straight pieces a curve of this radius is drawn with: each is within a quarter unit of the curve. */
@@ -323,11 +378,12 @@ export function bezierPoints(from: readonly [number, number], controls: readonly
 
 /** A shape drawn at once: its fill under its line. False when it is more than a fill or a line may be. */
 export function addOutline(target: Target, outline: readonly number[], convex: boolean, fill: ShapePaint | undefined, line: ShapeLine | undefined): boolean {
-  return (fill === undefined || fillOutlines(target, [outline], convex, fill)) && (line === undefined || strokeLine(target, outline, true, line));
+  // A fill under a line has its edge under the line, which smooths its own.
+  return (fill === undefined || fillOutlines(target, [outline], convex, fill, line === undefined)) && (line === undefined || strokeLine(target, outline, true, line));
 }
 /** The triangles of a path: its parts filled together as closed outlines, then each lined, closed only where its ends meet. */
 export function addPath(target: Target, path: ShapePath): boolean {
-  if (path.fill !== undefined && !fillOutlines(target, path.subpaths, false, path.fill)) return false;
+  if (path.fill !== undefined && !fillOutlines(target, path.subpaths, false, path.fill, path.line === undefined)) return false;
   if (path.line !== undefined) for (const points of path.subpaths) {
     const n = points.length;
     if (!strokeLine(target, points, n >= 6 && points[0] === points[n - 2] && points[1] === points[n - 1], path.line)) return false;
@@ -341,6 +397,22 @@ export function shapeFits(vertices: number, indices: number): boolean {
 
 // Shapes drawn the same way, on any number of nodes, are one geometry: a frame admits 4,096 of them.
 const shared = new Map<string, ResolvedShape>(), leases = new WeakMap<object, number>();
+// What each shared drawing was made from, to tell a true match of its key from a chance one.
+const sources = new WeakMap<ResolvedShape, readonly ShapeBatch[]>();
+function sameNumbers(a: readonly number[], b: readonly number[]): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
+function sameDrawing(made: readonly ShapeBatch[] | undefined, batches: readonly ShapeBatch[]): boolean {
+  if (made === undefined || made.length !== batches.length) return false;
+  for (let i = 0; i < made.length; i++) {
+    const a = made[i]!, b = batches[i]!;
+    if (a.bitmap?.lease !== b.bitmap?.lease || a.bitmap?.repeat !== b.bitmap?.repeat || !sameNumbers(a.positions, b.positions) || !sameNumbers(a.colors, b.colors)
+      || !sameNumbers(a.indices, b.indices) || (b.bitmap !== undefined && !sameNumbers(a.uvs, b.uvs))) return false;
+  }
+  return true;
+}
 let nextLease = 1;
 const leaseNumber = (lease: object): number => { let n = leases.get(lease); if (n === undefined) { n = nextLease++; leases.set(lease, n); } return n; };
 /** Whether a drawing is one a node may hold: every batch within what one geometry takes, and no more batches than a node has. */
@@ -359,9 +431,23 @@ export function resolveShape(shape: ShapeState): ResolvedShape | undefined {
   }
   const batches = [...target.done, target].filter(batch => batch.indices.length !== 0 && shapeFits(batch.positions.length / 2, batch.indices.length));
   if (batches.length === 0) return undefined;
-  const key = batches.map(batch => batch.positions.join() + '|' + batch.colors.join() + '|' + batch.indices.join()
-    + (batch.bitmap === undefined ? '' : '|' + batch.uvs.join() + '|' + leaseNumber(batch.bitmap.lease) + (batch.bitmap.repeat ? 'r' : 'c'))).join('/');
+  // Two drawings are the same when their numbers are. A key of all the numbers written out would be as long as the
+  // drawing each time it changes; a short key is mixed from them instead, and a match is checked number by number.
+  let h1 = 0x811c9dc5, h2 = 0x1b873593, count = 0;
+  const mix = (value: number): void => {
+    // The value as two whole numbers that tell any two different doubles apart in practice: its integer and scaled fraction parts.
+    const whole = Math.trunc(value), part = Math.round((value - whole) * 4294967296);
+    h1 = Math.imul(h1 ^ (whole | 0), 0x01000193) ^ (part | 0); h2 = Math.imul(h2 + (part | 0), 0x85ebca6b) ^ (whole | 0) ^ (h2 >>> 15);
+    count++;
+  };
+  for (const batch of batches) {
+    for (const list of [batch.positions, batch.colors, batch.indices]) { mix(list.length); for (let i = 0; i < list.length; i++) mix(list[i]!); }
+    if (batch.bitmap !== undefined) { for (let i = 0; i < batch.uvs.length; i++) mix(batch.uvs[i]!); mix(leaseNumber(batch.bitmap.lease)); mix(batch.bitmap.repeat ? 1 : 2); }
+  }
+  const key = count + ':' + (h1 >>> 0) + ':' + (h2 >>> 0);
   let resolved = shared.get(key);
+  // A key that matches a different drawing is not that drawing: it is made anew and takes the key.
+  if (resolved !== undefined && !sameDrawing(sources.get(resolved), batches)) resolved = undefined;
   if (resolved === undefined) {
     let left = Infinity, top = Infinity, right = -Infinity, bottom = -Infinity;
     const parts: ResolvedPart[] = [];
@@ -374,6 +460,7 @@ export function resolveShape(shape: ShapeState): ResolvedShape | undefined {
     resolved = Object.freeze({ parts: Object.freeze(parts), bounds: Object.freeze({ x: left, y: top, width: right - left, height: bottom - top }) });
     if (shared.size >= 512) shared.clear();
     shared.set(key, resolved);
+    sources.set(resolved, batches.map(batch => ({ positions: batch.positions.slice(), colors: batch.colors.slice(), uvs: batch.bitmap === undefined ? [] : batch.uvs.slice(), indices: batch.indices.slice(), bitmap: batch.bitmap })));
   }
   return shape.resolved = resolved;
 }

@@ -4,6 +4,18 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## An API reference written from the declarations, and the guides apart from the contracts — 2026-11-15
+
+`knowledge-base/*/docs/api-reference.md` lists every name each of the 40 entries of `@egret/engine` exports, 1,131 in all, with its kind and the first sentence written above it in the sources. `node tools/api-reference.mjs` writes it from the built declarations and `tests/api-reference.test.mjs` fails when it is stale or a name is not found. It also shows what is missing: 707 exports have no sentence above them yet. The knowledge base index now begins with the guides for writing a game, apart from the contracts and plans.
+
+## Graphics: smoothed edges, and what a gradient costs — 2026-11-15
+
+`graphics.smoothing = 1` makes every shape and line drawn after it fade to nothing over one unit at its edge, instead of ending in a stair of pixels. It is a band of triangles around the shape, two for each side of its outline, so it is drawn by both Hosts as any shape is; it is off until set, from 0 to 8 units. A fill under a line has no band of its own; filled rectangles alone and image fills have none. The Graphics guide now gives the triangles a gradient takes, as counted: 40 to 234 for linear gradients over buttons and panels, 2,514 to 15,296 for radial ones.
+
+## Clearer error sentences, 160 more codes in the reference, and three debts paid — 2026-11-15
+
+English sentences that were put together as "This has not been started: a tween." now read "A tween has not been started."; 29 templates changed. The error code reference follows the helpers through which parts throw, and lists 862 codes where it listed 702; the 48 of those that would have had only a fallback sentence have sentences of their own in both languages. The Spine web loader threw plain `Error` objects with a code as their message; they are `EgretError` now. A gradient's colour between two bytes is read from the written sRGB table instead of a power, so it is the same number on every JavaScript engine, within 1e-5 of the curve. A shape's shared geometry is found by a short mixed key and checked number by number, instead of by a key as long as the drawing. `tests/types/game.ts` compiles the calls a game makes against `@egret/engine/web/game`, and found three of its types missing from the entry: `BrowserGameFit`, `BrowserGameLabel` and `BrowserGameLabelOptions` are exported now.
+
 ## Display objects have skew, a name, a width and a height; a game fits its element and has labels — 2026-11-15
 
 `skewX` and `skewY`, in degrees, lean the two axes of a display object on top of its rotation. `name` and `container.getChildByName(name)` find a child. `width` and `height` are the size an object takes on its parent, and setting one sets `scaleX` or `scaleY`. `createBrowserGame` takes `fit`: `'contain'`, `'cover'` or `'stretch'` sizes the canvas inside its element, and again when the element changes size. `game.createLabel({ text, fontSize, color })` makes a line of text whose `text` can be set like a value. The starter example shows its score as a label in Chinese, and its check covers the three fits and the label with software WebGL2. Masks that are not rectangles are still not there.

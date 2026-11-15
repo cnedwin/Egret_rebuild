@@ -2,6 +2,8 @@
 // Filling for Graphics beyond one simple outline: the non-zero rule over any number of outlines, so that holes and
 // outlines that cross themselves are filled as a canvas fills them, and gradients, which are given as vertex colours.
 
+import { decodeSRGBByte } from './srgbBytes.js';
+
 export interface GradientStop { readonly offset: number; readonly color: number; readonly alpha: number; }
 /**
  * A gradient as the map from a node's units to its own: `u = a·x + c·y + tx` and `v = b·x + d·y + ty`. A linear gradient
@@ -9,7 +11,17 @@ export interface GradientStop { readonly offset: number; readonly color: number;
  */
 export interface ShapeGradient { readonly radial: boolean; readonly a: number; readonly b: number; readonly c: number; readonly d: number; readonly tx: number; readonly ty: number; readonly stops: readonly GradientStop[]; }
 
-const toLinear = (value: number): number => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+/**
+ * The linear-light value of an sRGB value from 0 to 255 that need not be whole: between the two bytes it lies between,
+ * read from the written table. A power here would differ in its last bit from one engine of JavaScript to another.
+ */
+function toLinear(value: number): number {
+  const low = Math.floor(value);
+  if (low >= 255) return decodeSRGBByte(255);
+  if (low < 0) return decodeSRGBByte(0);
+  const from = decodeSRGBByte(low);
+  return from + (decodeSRGBByte(low + 1) - from) * (value - low);
+}
 /** The linear-light red, green and blue and the alpha of a gradient at a point. Stops are mixed as sRGB values, as a canvas mixes them. */
 export function gradientColor(gradient: ShapeGradient, x: number, y: number, out: number[], at = 0): void {
   const u = gradient.a * x + gradient.c * y + gradient.tx;
@@ -25,7 +37,7 @@ export function gradientColor(gradient: ShapeGradient, x: number, y: number, out
     color = to.color;
     r += ((color >> 16 & 255) - r) * f; g += ((color >> 8 & 255) - g) * f; b += ((color & 255) - b) * f; alpha += (to.alpha - alpha) * f;
   }
-  out[at] = toLinear(r / 255); out[at + 1] = toLinear(g / 255); out[at + 2] = toLinear(b / 255); out[at + 3] = alpha;
+  out[at] = toLinear(r); out[at + 1] = toLinear(g); out[at + 2] = toLinear(b); out[at + 3] = alpha;
 }
 
 /** Whether an outline, taken as closed, has two sides that cross. */

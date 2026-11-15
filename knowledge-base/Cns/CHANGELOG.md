@@ -4,6 +4,18 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 根据类型声明生成的 API 参考，以及与契约分开的使用指南 — 2026-11-15
+
+`knowledge-base/*/docs/api-reference.md` 列出 `@egret/engine` 40 个入口各自导出的全部名字，共 1,131 个，附种类和源码中写在它上方的第一句说明。`node tools/api-reference.mjs` 根据构建出的类型声明生成它，`tests/api-reference.test.mjs` 在它过期或有名字找不到时失败。它也显示了缺口：有 707 个导出在源码里还没有说明。知识库索引现在以写游戏用的指南开头，与契约和计划分开。
+
+## Graphics：平滑边缘，以及渐变的开销 — 2026-11-15
+
+`graphics.smoothing = 1` 让之后绘制的每个形状和线条在边缘 1 个单位内渐隐到透明，不再以像素阶梯结束。它是形状外围的一圈三角形带，轮廓每条边两个三角形，所以两种 Host 都像绘制普通形状一样绘制它；默认关闭，取值 0 到 8 个单位。带线条的填充自己没有这圈带；只画填充矩形的 sprite 和图片填充也没有。Graphics 指南现在给出了实际统计的渐变三角形数量：按钮和面板上的线性渐变是 40 到 234 个，径向渐变是 2,514 到 15,296 个。
+
+## 更清楚的错误说明，对照表多列出 160 个错误码，还清三笔欠账 — 2026-11-15
+
+原先拼成 "This has not been started: a tween." 的英文说明现在是 "A tween has not been started."，共改了 29 个模板。错误码对照表现在会跟踪各部分抛错用的辅助函数，从 702 个错误码增加到 862 个；其中 48 个原本只会得到兜底句的错误码，都写了中英文说明。Spine 的 web 加载器以前抛出以错误码为 message 的普通 `Error`，现在是 `EgretError`。渐变在两个字节之间的颜色改为从写定的 sRGB 表中插值，不再用幂运算，所以在任何 JavaScript 引擎上都是同一个数，与曲线的差在 1e-5 以内。形状的共享几何体改为用一个混合出来的短键查找并逐个数字核对，不再用和绘图一样长的键。`tests/types/game.ts` 按游戏会写的调用对 `@egret/engine/web/game` 做类型编译，并发现入口漏导出了三个类型：`BrowserGameFit`、`BrowserGameLabel` 和 `BrowserGameLabelOptions`，现已导出。
+
 ## 显示对象有了 skew、name、width 和 height；游戏可以适配容器并有了文本标签 — 2026-11-15
 
 `skewX` 和 `skewY`（角度）在旋转之上让显示对象的两条轴倾斜。`name` 和 `container.getChildByName(name)` 用来查找子对象。`width` 和 `height` 是对象在父级上的大小，设置其中一个会设置 `scaleX` 或 `scaleY`。`createBrowserGame` 增加 `fit`：`'contain'`、`'cover'` 或 `'stretch'` 把画布放进它的元素，并在元素大小变化时重新调整。`game.createLabel({ text, fontSize, color })` 创建一行文本，它的 `text` 可以像普通值一样设置。起步示例用中文标签显示分数，它的核对脚本用软件 WebGL2 覆盖了三种适配方式和标签。仍然没有非矩形遮罩。

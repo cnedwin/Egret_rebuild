@@ -17,6 +17,7 @@ Open `/examples/graphics/index.html` on the host and port the server prints. Add
 
 - Look at the edges: curves are straight pieces and edges are not smoothed.
 - Add `&many=300` to the address: three hundred more discs, each of its own size, each a drawing of its own.
+- Add `&smooth` to the address: two discs side by side, the first with a stepped edge and the second with `smoothing = 4`, whose edge fades over four units.
 - Press the button: the ring is cleared and drawn again with its two colours changed over.
 
 ## How it works
