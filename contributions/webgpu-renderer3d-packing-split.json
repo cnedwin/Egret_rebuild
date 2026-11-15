@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/world3d/webgpuPacking3D.ts",
+      "originRole": "First-party Egret CPU attribute, index, morph and object data packing extracted from WebGPURenderer3D.ts; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
