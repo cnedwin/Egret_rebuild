@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-A starting point for a 2D game: one Engine, one stage, a frame loop, pointer and keyboard input and one rule. A blue square walks to where you tap, or where the arrow keys send it, and picks up five coins. `main.mjs` is under a hundred lines, and the part to replace is between two lines marked "Game".
+A starting point for a 2D game: one Engine, one stage, a frame loop, pointer and keyboard input and one rule. A blue square walks to where you tap, or where the arrow keys send it, and picks up five coins. In `main.mjs`, replace the sections marked "Game" to add your own rules.
 
 ## Run
 

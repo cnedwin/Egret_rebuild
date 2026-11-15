@@ -28,14 +28,18 @@ async function run() {
   let attached = false;
   let operation = Promise.resolve();
   let finish;
-  const closedByCaller = new Promise(resolve => { finish = resolve; });
+  const closedByCaller = new Promise(resolve => {
+    finish = resolve;
+  });
   // A boolean preserves even a native `throw undefined` as the first failure.
   let failed = false;
   let firstFailure;
   const laterFailures = [];
   const retain = cause => {
-    if (!failed) { failed = true; firstFailure = cause; }
-    else laterFailures.push(cause);
+    if (!failed) {
+      failed = true;
+      firstFailure = cause;
+    } else laterFailures.push(cause);
   };
   const requestClose = () => {
     if (closing) return;
@@ -45,7 +49,10 @@ async function run() {
     status.textContent = 'Closing; waiting for owned work… / 正在关闭，等待自有工作完成…';
     finish();
   };
-  const fail = cause => { retain(cause); requestClose(); };
+  const fail = cause => {
+    retain(cause);
+    requestClose();
+  };
   const onPageHide = () => requestClose();
   let family;
   let cssFont;
@@ -55,9 +62,13 @@ async function run() {
     // using a unique family and the retained font's documented X/space subset.
     // FontFaceSet.load has no AbortSignal; shutdown observes its settlement.
     const matches = await document.fonts.load(cssFont, text + 'X');
-    if (face.status !== 'loaded' || !document.fonts.has(face)
-        || matches.length !== 1 || matches[0] !== face
-        || !document.fonts.check(cssFont, text + 'X')) {
+    if (
+      face.status !== 'loaded' ||
+      !document.fonts.has(face) ||
+      matches.length !== 1 ||
+      matches[0] !== face ||
+      !document.fonts.check(cssFont, text + 'X')
+    ) {
       throw new Error('Owned Ahem selection was not established');
     }
   }
@@ -65,12 +76,24 @@ async function run() {
   async function prepareAndRender(text) {
     await proveSelection(text);
     if (closing) return;
-    field.setRequest({ text, fontFamily: family, fontSize: 20, fontWeight: 400,
-      fontStyle: 'normal', lineHeight: 24, locale: 'en', direction: 'ltr',
-      density: 1, fillColor: 0x164e99 });
+    field.setRequest({
+      text,
+      fontFamily: family,
+      fontSize: 20,
+      fontWeight: 400,
+      fontStyle: 'normal',
+      lineHeight: 24,
+      locale: 'en',
+      direction: 'ltr',
+      density: 1,
+      fillColor: 0x164e99
+    });
     await field.prepare();
     if (closing) return;
-    if (!attached) { engine.stage.addChild(field); attached = true; }
+    if (!attached) {
+      engine.stage.addChild(field);
+      attached = true;
+    }
     engine.renderSharedFrame({ width: 320, height: 160, clearColor: 0xffffff, clearAlpha: 1 });
     committed.textContent = text === '' ? '(empty) /（空）' : text;
     status.textContent = 'Owned Ahem selected; explicitly rendered. / 已选择自有 Ahem，已显式渲染。';
@@ -88,10 +111,12 @@ async function run() {
     replaceButton.disabled = true;
     status.textContent = 'Preparing replacement… / 正在准备替换…';
     // Exactly one explicit operation, no work queue or automatic retries.
-    operation = prepareAndRender(text).catch(fail).finally(() => {
-      busy = false;
-      replaceButton.disabled = closing;
-    });
+    operation = prepareAndRender(text)
+      .catch(fail)
+      .finally(() => {
+        busy = false;
+        replaceButton.disabled = closing;
+      });
   };
 
   form.addEventListener('submit', onSubmit);
@@ -138,26 +163,39 @@ async function run() {
     requestClose();
     // Keep the font stable until preparation settles; every later cleanup is
     // attempted even after an earlier failure. Explicit Close awaits this path.
-    const attempt = async action => { try { await action(); } catch (cause) { retain(cause); } };
+    const attempt = async action => {
+      try {
+        await action();
+      } catch (cause) {
+        retain(cause);
+      }
+    };
     await attempt(() => operation);
     await attempt(() => field?.dispose());
     await attempt(() => scope?.dispose());
     await attempt(() => cache?.dispose());
     await attempt(() => cache?.whenIdle());
     await attempt(() => engine?.dispose());
-    await attempt(() => { if (face !== undefined) document.fonts.delete(face); });
+    await attempt(() => {
+      if (face !== undefined) document.fonts.delete(face);
+    });
     await attempt(() => form.removeEventListener('submit', onSubmit));
     await attempt(() => closeButton.removeEventListener('click', requestClose));
     await attempt(() => window.removeEventListener('pagehide', onPageHide));
-    await attempt(() => { if (canvas !== undefined) canvas.width = 0; });
-    await attempt(() => { if (canvas !== undefined) canvas.height = 0; });
+    await attempt(() => {
+      if (canvas !== undefined) canvas.width = 0;
+    });
+    await attempt(() => {
+      if (canvas !== undefined) canvas.height = 0;
+    });
     await attempt(() => canvas?.remove());
     input.disabled = true;
     if (failed) {
       status.textContent = `Closed with an error; see the console (${laterFailures.length} later errors). / 已关闭但有错误；见控制台（另有 ${laterFailures.length} 个后续错误）。`;
       console.error('Canvas text example first failure:', firstFailure, 'Later failures:', laterFailures);
     } else {
-      status.textContent = 'Closed: cache idle, Engine disposed, owned font and surface removed. / 已关闭：缓存空闲、Engine 已释放、自有字体与画布已移除。';
+      status.textContent =
+        'Closed: cache idle, Engine disposed, owned font and surface removed. / 已关闭：缓存空闲、Engine 已释放、自有字体与画布已移除。';
     }
   }
 }

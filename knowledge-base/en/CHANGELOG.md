@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Example scripts use the source formatter — 2026-11-15
+
+Biome 2.6.7 formats 169 example scripts. Across the 171 tracked example `.mjs` files, lines exceeding 120 characters fell from 3,787 to 186. Syntax comparison verified the same program for every formatted script, including two cases where the formatter removed optional grouping. The Source layout workflow now also runs when example scripts change.
+
 ## The engine's sources are laid out by a formatter — 2026-11-15
 
 Biome 2.6.7 lays out the 408 TypeScript sources under `packages/*/src`, `packages/*/web` and `packages/*/rendering`: two spaces, lines of at most 120 characters, and the quotes each file already used. 369 files changed; they went from 70,423 lines to 110,781, and the lines longer than 120 characters from 6,281 to 320. No behaviour changed: each of the 410 built `.js` files, printed again from its syntax tree without comments or layout, is the same text as before, and of the 410 declaration files one differs, by a pair of brackets that mean the same. `node tools/format.mjs` lays the sources out, and the `Source layout` workflow fails a pull request in which a file is not laid out. The formatter is installed from a lockfile of its own under `tools/format`, apart from the workspace, whose lockfile several checks hold byte for byte. Three places in the boundary check that held source text as it used to be spaced or quoted now hold it as it is, and the scanner of error codes follows a helper written over several lines, which found 19 codes it had missed. The built bytes are new, so evidence bound to the earlier bytes no longer holds until it is taken again.
