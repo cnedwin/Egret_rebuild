@@ -159,9 +159,10 @@ export function fillNonZero(outlines: readonly (readonly number[])[], maxTriangl
 const TOLERANCE = 2 / 255;
 /**
  * Cuts triangles until the colours of their corners, mixed across each side, stay within the tolerance of the gradient.
- * Whether a side is cut depends on its two ends alone, so two triangles that share a side cut it alike.
+ * A side's test depends on its endpoints. The triangle budget can still stop adjacent subdivisions at different depths.
+ * When supplied, boundary masks are replaced in the output order. Only the children of an original boundary inherit it.
  */
-export function refineForGradient(triangles: readonly number[], gradient: ShapeGradient, maxTriangles: number): number[] {
+export function refineForGradient(triangles: readonly number[], gradient: ShapeGradient, maxTriangles: number, boundary?: number[]): number[] {
   const ca = [0, 0, 0, 0], cb = [0, 0, 0, 0], cm = [0, 0, 0, 0];
   const cut = (ax: number, ay: number, bx: number, by: number): boolean => {
     if (ax > bx || (ax === bx && ay > by)) { const x = ax, y = ay; ax = bx; ay = by; bx = x; by = y; }
@@ -177,19 +178,32 @@ export function refineForGradient(triangles: readonly number[], gradient: ShapeG
     return false;
   };
   const stack = triangles.slice(), out: number[] = [];
+  const boundaries = boundary?.slice();
+  if (boundary !== undefined) boundary.length = 0;
   let count = triangles.length / 6;
   while (stack.length !== 0) {
     const p = stack.splice(stack.length - 6, 6);
+    const mask = boundaries?.pop() ?? 0;
     const flags = count < maxTriangles ? [cut(p[0]!, p[1]!, p[2]!, p[3]!), cut(p[2]!, p[3]!, p[4]!, p[5]!), cut(p[4]!, p[5]!, p[0]!, p[1]!)] : [false, false, false];
     const cuts = (flags[0] ? 1 : 0) + (flags[1] ? 1 : 0) + (flags[2] ? 1 : 0);
-    if (cuts === 0) { out.push(...p); continue; }
+    if (cuts === 0) { out.push(...p); boundary?.push(mask); continue; }
     // Turned so that with one cut it is the first side, and with two the uncut side is the last.
     const turnBy = cuts === 3 ? 0 : cuts === 1 ? flags.indexOf(true) : (flags.indexOf(false) + 1) % 3;
     const ax = p[2 * turnBy]!, ay = p[2 * turnBy + 1]!, bx = p[2 * ((turnBy + 1) % 3)]!, by = p[2 * ((turnBy + 1) % 3) + 1]!, cx = p[2 * ((turnBy + 2) % 3)]!, cy = p[2 * ((turnBy + 2) % 3) + 1]!;
     const abx = (ax + bx) / 2, aby = (ay + by) / 2, bcx = (bx + cx) / 2, bcy = (by + cy) / 2, cax = (cx + ax) / 2, cay = (cy + ay) / 2;
-    if (cuts === 1) stack.push(ax, ay, abx, aby, cx, cy, abx, aby, bx, by, cx, cy);
-    else if (cuts === 2) stack.push(abx, aby, bx, by, bcx, bcy, ax, ay, abx, aby, bcx, bcy, ax, ay, bcx, bcy, cx, cy);
-    else stack.push(ax, ay, abx, aby, cax, cay, abx, aby, bx, by, bcx, bcy, cax, cay, bcx, bcy, cx, cy, abx, aby, bcx, bcy, cax, cay);
+    // Rotate the three bits with the corners. New interior sides never carry a boundary bit.
+    const turned = (mask >>> turnBy) | ((mask << (3 - turnBy)) & 7);
+    const ab = turned & 1, bc = turned & 2, ca = turned & 4;
+    if (cuts === 1) {
+      stack.push(ax, ay, abx, aby, cx, cy, abx, aby, bx, by, cx, cy);
+      boundaries?.push(ab | ca, ab | bc);
+    } else if (cuts === 2) {
+      stack.push(abx, aby, bx, by, bcx, bcy, ax, ay, abx, aby, bcx, bcy, ax, ay, bcx, bcy, cx, cy);
+      boundaries?.push(ab | bc, ab, bc | ca);
+    } else {
+      stack.push(ax, ay, abx, aby, cax, cay, abx, aby, bx, by, bcx, bcy, cax, cay, bcx, bcy, cx, cy, abx, aby, bcx, bcy, cax, cay);
+      boundaries?.push(ab | ca, ab | bc, bc | ca, 0);
+    }
     count += cuts;
   }
   return out;

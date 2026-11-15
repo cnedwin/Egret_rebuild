@@ -71,3 +71,26 @@ test('GS04 smoothing is off until it is set, takes 0 to 8, and leaves rectangles
  const faded=vertices(only(frame())).filter(v=>v.alpha===0);
  assert.ok(faded.length>0&&faded.every(v=>v.x>100));
 }));
+
+test('GS05 a refined radial gradient feathers only the original fill boundary', () => withStage(({sprite, frame}) => {
+  const center = 100, radius = 40;
+  const stops = [
+    {offset: 0, color: 0xff0000, alpha: 0.5},
+    {offset: 128 / 255, color: 0xffffff, alpha: 0.5},
+    {offset: 1, color: 0x0000ff, alpha: 0.5},
+  ];
+  const draw = smoothing => {
+    const node = sprite();
+    node.graphics.smoothing = smoothing;
+    node.graphics.beginRadialGradientFill(center, center, radius, stops).drawCircle(center, center, radius).endFill();
+    return only(frame());
+  };
+  const plain = draw(0), smoothed = draw(2);
+  assert.ok(smoothed.triangleCount > plain.triangleCount, 'smoothing still adds an exterior band');
+  const faded = vertices(smoothed).filter(vertex => vertex.alpha === 0);
+  assert.ok(faded.length > 0);
+  for (const vertex of faded) {
+    const distance = Math.hypot(vertex.x - center, vertex.y - center);
+    assert.ok(distance > radius && distance <= radius + 4, 'feather vertex belongs at the perimeter: ' + distance);
+  }
+}));
