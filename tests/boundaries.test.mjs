@@ -1461,6 +1461,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     }
     // Layer policy uses complete current clauses and inert function bodies, not behavioral substitutes.
     const uiLayerPolicyFiles=["packages/runtime/src/ui/displayCommit.ts","packages/runtime/dist/ui/displayCommit.js","packages/runtime/dist/ui/displayCommit.d.ts","packages/engine/src/internal/uiFactoryState.ts","packages/engine/dist/internal/uiFactoryState.js","packages/engine/dist/internal/uiFactoryState.d.ts","packages/engine/src/keyboardInput.ts","packages/engine/dist/keyboardInput.js","packages/engine/src/internal/uiRootState.ts","packages/engine/dist/internal/uiRootState.js","packages/engine/dist/internal/uiRootState.d.ts","packages/engine/src/ui/uiRoot.ts","packages/engine/dist/ui/uiRoot.js","packages/engine/web/BrowserTextEditor.ts","packages/engine/dist/web/BrowserTextEditor.js","packages/engine/src/ui/types.ts","packages/engine/dist/ui/types.d.ts","packages/engine/src/ui/index.ts","packages/engine/dist/ui/index.js","packages/engine/dist/ui/index.d.ts","packages/engine/src/ui/layerTypes.ts","packages/engine/dist/ui/layerTypes.js","packages/engine/dist/ui/layerTypes.d.ts","packages/engine/src/ui/layers.ts","packages/engine/dist/ui/layers.js","packages/engine/dist/ui/layers.d.ts"];
+    for(const name of ['uiRootDisplay','uiRootModel'])uiLayerPolicyFiles.push(
+      'packages/engine/src/ui/'+name+'.ts','packages/engine/dist/ui/'+name+'.js','packages/engine/dist/ui/'+name+'.d.ts');
     for(const file of uiLayerPolicyFiles){
       const original=readFileSync(path.join(repository,file),'utf8');if(!file.endsWith('.js')){write(file,original);continue;}
       const clean=original.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');

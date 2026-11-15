@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/ui/uiRootModel.ts",
+      "originRole": "First-party private UI root model and validation helpers extracted unchanged from uiRoot.ts; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/ui/uiRootDisplay.ts",
+      "originRole": "First-party private display staging extracted from uiRoot.ts, with the original update order and cleanup owner retained; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

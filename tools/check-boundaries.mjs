@@ -59,8 +59,13 @@ const m15DeepClauses = {
   "packages/engine/dist/internal/uiFactoryState.d.ts": [{"operation":"import","kind":"type","members":["createUiDisplayOperations","UiDisplayOperations"],"target":"@egret/runtime/ui"}],
   "packages/engine/src/ui/types.ts": [{"operation":"import","kind":"type","members":["UiLayoutNode","UiDirtyKind","UiLayoutBox"],"target":"@egret/runtime/ui"}],
   "packages/engine/dist/ui/types.d.ts": [{"operation":"import","kind":"type","members":["UiLayoutNode","UiDirtyKind","UiLayoutBox"],"target":"@egret/runtime/ui"}],
-  "packages/engine/src/ui/uiRoot.ts": [{"operation":"import","kind":"value","members":["captureUiLayout","planUiLayout","UiHeightIndex","createUiDisplayOperations"],"target":"@egret/runtime/ui"},{"operation":"import","kind":"type","members":["UiLayoutTree","UiLayoutNode","UiLayoutPlan","UiLayoutBox","UiDisplayUpdate"],"target":"@egret/runtime/ui"}],
+  "packages/engine/src/ui/uiRoot.ts": [{"operation":"import","kind":"value","members":["captureUiLayout","planUiLayout","UiHeightIndex","createUiDisplayOperations"],"target":"@egret/runtime/ui"},{"operation":"import","kind":"type","members":["UiLayoutTree","UiLayoutNode","UiLayoutPlan"],"target":"@egret/runtime/ui"}],
   "packages/engine/dist/ui/uiRoot.js": [{"operation":"import","kind":"value","members":["captureUiLayout","planUiLayout","UiHeightIndex","createUiDisplayOperations"],"target":"@egret/runtime/ui"}],
+  "packages/engine/src/ui/uiRootModel.ts": [{"operation":"import","kind":"value","members":["captureUiLayout"],"target":"@egret/runtime/ui"},{"operation":"import","kind":"type","members":["UiHeightIndex","UiLayoutTree","UiLayoutNode","UiLayoutPlan","UiLayoutBox"],"target":"@egret/runtime/ui"}],
+  "packages/engine/dist/ui/uiRootModel.js": [{"operation":"import","kind":"value","members":["captureUiLayout"],"target":"@egret/runtime/ui"}],
+  "packages/engine/dist/ui/uiRootModel.d.ts": [{"operation":"import","kind":"type","members":["UiHeightIndex","UiLayoutTree","UiLayoutNode","UiLayoutPlan","UiLayoutBox"],"target":"@egret/runtime/ui"}],
+  "packages/engine/src/ui/uiRootDisplay.ts": [{"operation":"import","kind":"type","members":["UiDisplayOperations","UiDisplayUpdate","UiHeightIndex","UiLayoutTree"],"target":"@egret/runtime/ui"}],
+  "packages/engine/dist/ui/uiRootDisplay.d.ts": [{"operation":"import","kind":"type","members":["UiDisplayOperations","UiDisplayUpdate","UiHeightIndex","UiLayoutTree"],"target":"@egret/runtime/ui"}],
   // M2.1: exact optional content adapter clauses; no general deep-import allowance.
   "packages/project/src/resources/content.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceBuildPlanDescription","ResourceBuildSourceEntry","ResourceManifestResult"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["buildResourceManifest","evaluateResourceBuildKeys","validateResourceBuildPlanDescription"],"target":"@egret/contracts/resources"}],
   "packages/project/dist/resources/content.js": [{"operation":"import","kind":"value","members":["buildResourceManifest","evaluateResourceBuildKeys","validateResourceBuildPlanDescription"],"target":"@egret/contracts/resources"}],
@@ -4542,6 +4547,20 @@ const uiTextFieldLiteralClosure = {"packages/engine/src/ui/index.ts":[["static",
 const uiControlKeysLiteralClosure = {"packages/engine/src/ui/index.ts":[["static","./controlKeys.js"],["static","./controlKeys.js"],["static","./controls.js"],["static","./controls.js"],["static","./layers.js"],["static","./layerTypes.js"],["static","./scrollControl.js"],["static","./scrollControl.js"],["static","./stateControls.js"],["static","./stateControls.js"],["static","./textFieldControl.js"],["static","./textFieldControl.js"],["static","./theme.js"],["static","./theme.js"],["static","./types.js"],["static","./uiRoot.js"]],"packages/engine/dist/ui/index.js":[["static","./controlKeys.js"],["static","./controls.js"],["static","./layers.js"],["static","./scrollControl.js"],["static","./stateControls.js"],["static","./textFieldControl.js"],["static","./theme.js"],["static","./uiRoot.js"]],"packages/engine/dist/ui/index.d.ts":[["static","./controlKeys.js"],["static","./controlKeys.js"],["static","./controls.js"],["static","./controls.js"],["static","./layers.js"],["static","./layerTypes.js"],["static","./scrollControl.js"],["static","./scrollControl.js"],["static","./stateControls.js"],["static","./stateControls.js"],["static","./textFieldControl.js"],["static","./textFieldControl.js"],["static","./theme.js"],["static","./theme.js"],["static","./types.js"],["static","./uiRoot.js"]],"packages/engine/src/ui/controlKeys.ts":[["static","../keyboardInputTypes.js"],["static","@egret/runtime"],["static","@egret/runtime"]],"packages/engine/dist/ui/controlKeys.js":[["static","@egret/runtime"]],"packages/engine/dist/ui/controlKeys.d.ts":[["static","../keyboardInputTypes.js"],["static","@egret/runtime"]]};
 const uiRangeControlLiteralClosure = {"packages/engine/src/ui/index.ts":[["static","./controlKeys.js"],["static","./controlKeys.js"],["static","./controls.js"],["static","./controls.js"],["static","./layers.js"],["static","./layerTypes.js"],["static","./rangeControl.js"],["static","./rangeControl.js"],["static","./scrollControl.js"],["static","./scrollControl.js"],["static","./stateControls.js"],["static","./stateControls.js"],["static","./textFieldControl.js"],["static","./textFieldControl.js"],["static","./theme.js"],["static","./theme.js"],["static","./types.js"],["static","./uiRoot.js"]],"packages/engine/dist/ui/index.js":[["static","./controlKeys.js"],["static","./controls.js"],["static","./layers.js"],["static","./rangeControl.js"],["static","./scrollControl.js"],["static","./stateControls.js"],["static","./textFieldControl.js"],["static","./theme.js"],["static","./uiRoot.js"]],"packages/engine/dist/ui/index.d.ts":[["static","./controlKeys.js"],["static","./controlKeys.js"],["static","./controls.js"],["static","./controls.js"],["static","./layers.js"],["static","./layerTypes.js"],["static","./rangeControl.js"],["static","./rangeControl.js"],["static","./scrollControl.js"],["static","./scrollControl.js"],["static","./stateControls.js"],["static","./stateControls.js"],["static","./textFieldControl.js"],["static","./textFieldControl.js"],["static","./theme.js"],["static","./theme.js"],["static","./types.js"],["static","./uiRoot.js"]],"packages/engine/src/ui/rangeControl.ts":[["static","../pointerInputTypes.js"],["static","@egret/runtime"],["static","@egret/runtime"]],"packages/engine/dist/ui/rangeControl.js":[["static","@egret/runtime"]],"packages/engine/dist/ui/rangeControl.d.ts":[["static","../pointerInputTypes.js"],["static","@egret/runtime"]]};
 const currentSceneLiteralClosure = {...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure,...m34EffectLiteralClosure,...fontResourceLiteralClosure,...m34ThemeLiteralClosure,...sequenceResetLiteralClosure,...uiControlsLiteralClosure,...nativeEditingLiteralClosure,...uiLayerLiteralClosure,...uiStateControlsLiteralClosure,...uiScrollControlLiteralClosure,...uiTextFieldLiteralClosure,...uiControlKeysLiteralClosure,...uiRangeControlLiteralClosure};
+// The root retains transaction authority. Its private staging and model modules have only these literal edges.
+const uiRootModuleTargets = {
+  'src/ui/uiRoot.ts': [...currentSceneLiteralClosure['packages/engine/src/ui/uiRoot.ts'].map(([, target]) => target), './uiRootDisplay.js', './uiRootModel.js', './uiRootModel.js'],
+  'dist/ui/uiRoot.js': [...currentSceneLiteralClosure['packages/engine/dist/ui/uiRoot.js'].map(([, target]) => target), './uiRootDisplay.js', './uiRootModel.js'],
+  'src/ui/uiRootModel.ts': ['../internal/uiFactoryState.js', './leafContent.js', './theme.js', './types.js', './virtualList.js', '@egret/runtime', '@egret/runtime', '@egret/runtime/ui', '@egret/runtime/ui'],
+  'dist/ui/uiRootModel.js': ['@egret/runtime', '@egret/runtime/ui'],
+  'dist/ui/uiRootModel.d.ts': ['../internal/uiFactoryState.js', './leafContent.js', './theme.js', './types.js', './virtualList.js', '@egret/runtime', '@egret/runtime', '@egret/runtime/ui'],
+  'src/ui/uiRootDisplay.ts': ['../internal/uiFactoryState.js', './types.js', './uiRootModel.js', '@egret/runtime', '@egret/runtime', '@egret/runtime/ui'],
+  'dist/ui/uiRootDisplay.js': ['@egret/runtime'],
+  'dist/ui/uiRootDisplay.d.ts': ['../internal/uiFactoryState.js', './types.js', './uiRootModel.js', '@egret/runtime', '@egret/runtime/ui'],
+};
+for (const [file, targets] of Object.entries(uiRootModuleTargets))
+  currentSceneLiteralClosure['packages/engine/' + file] = targets.map(target => ['static', target])
+    .sort((a,b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
 if (hasGLTiming) for (const file of ['packages/engine/web/webgl2.ts','packages/engine/dist/web/webgl2.d.ts']) {
   currentSceneLiteralClosure[file] = [...currentSceneLiteralClosure[file],['static','./webgl2Types.js']]
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
@@ -5027,14 +5046,23 @@ const uiFactoryAllowed={
   'src/Engine.ts':1,'src/pointerInput.ts':1,'src/keyboardInput.ts':1,'src/hoverInput.ts':1,'src/ui/uiRoot.ts':1,'src/ui/textEditor.ts':2,'src/ui/layers.ts':1,
   'dist/Engine.js':1,'dist/pointerInput.js':1,'dist/keyboardInput.js':1,'dist/hoverInput.js':1,'dist/ui/uiRoot.js':1,'dist/ui/textEditor.js':2,'dist/ui/layers.js':1,'dist/ui/textEditor.d.ts':1,
 };
+const uiRootFactoryTypes = {
+  'src/ui/uiRootModel.ts': 'UiScopePort',
+  'dist/ui/uiRootModel.d.ts': 'UiScopePort',
+  'src/ui/uiRootDisplay.ts': 'UiEnginePort',
+  'dist/ui/uiRootDisplay.d.ts': 'UiEnginePort',
+};
 const managedStateAllowed=['DisplayObject','DisplayObjectContainer','Scope','displayHitState','displayVisualState','preparedDisplaySubtree','paragraph/Paragraph'];
 for(const pkg of ['runtime','engine'])for(const file of [...files(path.join(root,'packages',pkg,'src')),...files(path.join(root,'packages',pkg,'dist'))]){
   if(!/\.(?:ts|js)$/.test(file))continue;
   const relative=path.relative(path.join(root,'packages',pkg),file).split(path.sep).join('/'),body=uiRead('packages/'+pkg+'/'+relative);
   for(const [,target]of uiGraphEdges(body))if(target.startsWith('.')){
     const resolved=path.relative(path.join(root,'packages',pkg),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
-    if(pkg==='engine'&&/^(?:src|dist)\/internal\/uiFactoryState\.js$/.test(resolved)&&!Object.hasOwn(uiFactoryAllowed,relative))
-      throw new Error('M3.1: private UI authority imported outside named modules: '+relative);
+    if(pkg==='engine'&&/^(?:src|dist)\/internal\/uiFactoryState\.js$/.test(resolved)&&!Object.hasOwn(uiFactoryAllowed,relative)){
+      const type=Object.hasOwn(uiRootFactoryTypes,relative)?uiRootFactoryTypes[relative]:undefined;
+      const exactType=/\bimport\s+type\s*\{\s*(\w+)\s*\}\s*from\s*['"]\.\.\/internal\/uiFactoryState\.js['"]\s*;/.exec(body);
+      if(type===undefined||exactType?.[1]!==type)throw new Error('M3.1: private UI authority imported outside named modules: '+relative);
+    }
     if(pkg==='runtime'&&/^(?:src|dist)\/ui\//.test(resolved)&&!relative.includes('/ui/')){
       const layer=relative.startsWith('src/')?'src':'dist';
       if(resolved!==layer+'/ui/managedState.js'||!managedStateAllowed.some(name=>relative===layer+'/'+name+(layer==='src'?'.ts':'.js')))

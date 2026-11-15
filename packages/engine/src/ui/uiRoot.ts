@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
 import { requireUiTheme, sameThemeMetrics, applyUiTheme } from './theme.js';
 import type { UiTheme } from './theme.js';
-import { EgretError, Sprite, DisplayObject } from '@egret/runtime';
+import { EgretError, DisplayObject } from '@egret/runtime';
 import type { DisplayObjectContainer, Scope } from '@egret/runtime';
 import { captureUiLayout, planUiLayout, UiHeightIndex, createUiDisplayOperations } from '@egret/runtime/ui';
-import type { UiLayoutTree, UiLayoutNode, UiLayoutPlan, UiLayoutBox, UiDisplayUpdate } from '@egret/runtime/ui';
+import type { UiLayoutTree, UiLayoutNode, UiLayoutPlan } from '@egret/runtime/ui';
 import { requireUiEngine } from '../internal/uiFactoryState.js';
 import { registerUiRoot } from '../internal/uiRootState.js';
 import type { UiRootLayerPresentation, UiRootTarget } from '../internal/uiRootState.js';
@@ -31,158 +31,13 @@ import type {
   RowUnbindInfo,
   UiRowPointerNotification
 } from './types.js';
-type ScopePort = ReturnType<ReturnType<typeof requireUiEngine>['scope']>;
+import { withoutSources, preparationError, fail, next, number, viewport, origin } from './uiRootModel.js';
+import type { ScopePort, Binding, LeafBinding, Shell, WindowState, Candidate, TokenState } from './uiRootModel.js';
+import { createUiRootDisplayDraft, stageUiRootDisplay } from './uiRootDisplay.js';
+
 type InputPort = ReturnType<ReturnType<typeof requireUiEngine>['requireInput']>;
-interface Binding {
-  theme: UiTheme | undefined;
-  key: string;
-  version: number;
-  generation: number;
-  width: number;
-  density: number;
-  source: Pick<CapturedSource, 'identity' | 'bind' | 'unbind'> | undefined;
-  scope: ScopePort;
-  wrapper: DisplayObjectContainer;
-  content?: DisplayObjectContainer;
-  height?: number;
-  entered: boolean;
-  terminal: boolean;
-  subscriptions: (() => void)[];
-}
-interface LeafBinding {
-  theme: UiTheme | undefined;
-  readonly id: string;
-  readonly width: number;
-  readonly density: number;
-  readonly scope: ScopePort;
-  readonly wrapper: DisplayObjectContainer;
-  source: CapturedLeafContent | undefined;
-  content?: DisplayObjectContainer;
-  height?: number;
-  measure?: NonNullable<UiLayoutNode['measure']>;
-  terminal: boolean;
-}
-interface Shell {
-  scope: ScopePort;
-  wrapper: DisplayObjectContainer;
-}
-interface WindowState {
-  theme: UiTheme | undefined;
-  paintOnly: boolean;
-  cleanupErrors: unknown[];
-  revision: number;
-  source: CapturedSource | undefined;
-  index: UiHeightIndex | undefined;
-  plan: UiLayoutPlan | undefined;
-  box: UiLayoutBox | undefined;
-  width: number;
-  height: number;
-  scroll: number;
-  round: number;
-  heights: Map<
-    string,
-    {
-      key: string;
-      height: number;
-      contentVersion: number;
-    }
-  >;
-  bindings: Map<string, Binding>;
-  leafBindings: Map<string, LeafBinding>;
-}
-interface Candidate {
-  nextPool: Shell[];
-  discardedShells: Shell[];
-  retiring: readonly {
-    binding: Binding;
-    reason: RowUnbindInfo['reason'];
-  }[];
-  oldFills: ScopePort[];
-  retiringLeaves: readonly LeafBinding[];
-  preparedWindow: WindowState;
-  rows: readonly UiRowSnapshot[];
-  bindings: Map<string, Binding>;
-  shells: Map<string, Shell>;
-  freshShells: Shell[];
-  fillScopes: ScopePort[];
-  displayToken: object;
-  indexJournal: ReturnType<UiHeightIndex['stageHeights']> | undefined;
-  snapshot: UiSnapshot;
-  inputGeneration: number;
-  layerGeneration: number;
-}
-interface TokenState {
-  used: boolean;
-  retired?: boolean;
-  candidate?: Candidate;
-}
 const freeze = Object.freeze;
-const sourceMarker = freeze({});
-// Layout caches retain numeric descriptors, never historical data source snapshots.
-function withoutSources(tree: UiLayoutTree): UiLayoutTree {
-  function copy(node: UiLayoutNode): UiLayoutNode {
-    const result = freeze({
-      ...node,
-      ...(node.kind === 'virtualList'
-        ? {
-            source: sourceMarker
-          }
-        : {}),
-      ...(node.children === undefined
-        ? {}
-        : {
-            children: freeze(node.children.map(copy))
-          })
-    });
-    return result;
-  }
-  const root = copy(tree.root);
-  return captureUiLayout(root);
-}
-function preparationError(cause: unknown, cleanupErrors: unknown[]): EgretError {
-  if (cause instanceof EgretError && cleanupErrors.length === 0) return cause;
-  return new EgretError(cause instanceof EgretError ? cause.code : 'UI_PREPARE_FAILED', { cause, cleanupErrors });
-}
-function fail(code: string): never {
-  throw new EgretError(code);
-}
-function next(value: number): number {
-  if (value >= Number.MAX_SAFE_INTEGER) fail('UI_REVISION_EXHAUSTED');
-  return value + 1;
-}
-function number(value: number, min: number, max: number): number {
-  if (typeof value !== 'number' || !Number.isFinite(value) || value < min || value > max) fail('UI_VALUE_INVALID');
-  return value === 0 ? 0 : value;
-}
-function viewport(
-  value: Readonly<{
-    width: number;
-    height: number;
-  }>
-) {
-  return freeze({
-    width: number(value.width, Number.MIN_VALUE, 16384),
-    height: number(value.height, Number.MIN_VALUE, 16384)
-  });
-}
-function origin(
-  value: Readonly<{
-    x: number;
-    y: number;
-  }>,
-  size: Readonly<{
-    width: number;
-    height: number;
-  }>
-) {
-  const x = number(value.x, -1048576, 1048576),
-    y = number(value.y, -1048576, 1048576);
-  if (Math.abs(x + size.width) > 1048576 || Math.abs(y + size.height) > 1048576) fail('UI_VALUE_INVALID');
-  return freeze({
-    x,
-    y
-  });
-}
+
 /** One owned transaction domain over the genuine display and input authorities. */
 export function createUiRoot(options: UiRootOptions): UiRoot {
   const port = requireUiEngine(options.engine);
@@ -895,160 +750,26 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
       }
       return token('pending');
     }
-    const updates: UiDisplayUpdate[] = [],
-      nextBindings = new Map<string, Binding>(),
-      nextShells = new Map<string, Shell>(),
-      freshShells: Shell[] = [],
-      fillScopes: ScopePort[] = [],
-      rows: UiRowSnapshot[] = [];
-    const available = [...pool, ...[...shells].filter(([key]) => !finalKeys.includes(key)).map(([, s]) => s)];
-    const childWrappers: DisplayObjectContainer[] = [];
+    const draft = createUiRootDisplayDraft(pool, shells, finalKeys);
+    const { updates, nextBindings, nextShells, freshShells, fillScopes, rows } = draft;
     try {
-      let priorIndex = -2,
-        priorEnd = 0;
-      for (const key of finalKeys) {
-        const b = w.bindings.get(key)!,
-          i = view!.indexOf(key),
-          top = i === priorIndex + 1 ? priorEnd : view!.prefix(i),
-          y = top - w.scroll,
-          h = view!.heightAt(i),
-          visible = y + h > 0 && y < w.height;
-        priorIndex = i;
-        priorEnd = top + h;
-        const shell =
-          shells.get(key) ??
-          available.shift() ??
-          (() => {
-            const scope = port.scope(port.createScope());
-            const item = {
-              scope,
-              wrapper: display.createWrapper(scope.scope)
-            };
-            freshShells.push(item);
-            return item;
-          })();
-        nextBindings.set(key, b);
-        nextShells.set(key, shell);
-        childWrappers.push(shell.wrapper);
-        updates.push({
-          wrapper: shell.wrapper,
-          x: 0,
-          y,
-          visible,
-          children: [b.wrapper],
-          touchEnabled: false,
-          touchChildren: true
-        });
-        updates.push({
-          wrapper: b.wrapper,
-          x: 0,
-          y: 0,
-          visible,
-          children: [b.content!],
-          hitArea: {
-            x: 0,
-            y: 0,
-            width: w.width,
-            height: h
-          },
-          touchEnabled: visible,
-          touchChildren: false
-        });
-        rows.push(
-          freeze({
-            key,
-            index: i,
-            bindingGeneration: b.generation,
-            contentVersion: b.version,
-            box: freeze({
-              x: w.box!.innerX,
-              y: w.box!.innerY + y,
-              width: w.width,
-              height: h
-            }),
-            visible
-          })
-        );
-      }
-      const rootChildren: DisplayObjectContainer[] = [],
-        paintOrder = new Map<DisplayObjectContainer, number>();
-      for (const [paintIndex, box] of w.plan!.boxes.entries()) {
-        const node = tree.nodes.get(box.id)!;
-        if (node.kind === 'leaf' && node.fill !== undefined) {
-          const scope = port.scope(port.createScope());
-          fillScopes.push(scope);
-          const shape = new Sprite();
-          scope.use(shape);
-          const color = node.fill;
-          shape.graphics
-            .beginFill(color.color, color.alpha ?? 1)
-            .drawRect(0, 0, box.width, box.height)
-            .endFill();
-          const wrapper = display.createWrapper(scope.scope);
-          updates.push({
-            wrapper,
-            x: box.x,
-            y: box.y,
-            children: [shape],
-            touchEnabled: false,
-            touchChildren: false
-          });
-          rootChildren.push(wrapper);
-          paintOrder.set(wrapper, paintIndex);
-        }
-      }
-      for (const [paintIndex, box] of w.plan!.boxes.entries()) {
-        const binding = w.leafBindings.get(box.id);
-        if (binding === undefined) continue;
-        updates.push({
-          wrapper: binding.wrapper,
-          x: box.innerX,
-          y: box.innerY,
-          children: [binding.content!],
-          hitArea: { x: 0, y: 0, width: box.innerWidth, height: box.innerHeight },
-          touchEnabled: false,
-          touchChildren: true
-        });
-        rootChildren.push(binding.wrapper);
-        paintOrder.set(binding.wrapper, paintIndex);
-      }
-      if (w.box !== undefined && listWrapper !== undefined) {
-        rootChildren.push(listWrapper);
-        paintOrder.set(
-          listWrapper,
-          w.plan!.boxes.findIndex(box => box.id === listId)
-        );
-        updates.push({
-          wrapper: listWrapper,
-          x: w.box.innerX,
-          y: w.box.innerY,
-          clipRect: {
-            x: 0,
-            y: 0,
-            width: w.width,
-            height: w.height
-          },
-          children: childWrappers,
-          touchEnabled: false,
-          touchChildren: true
-        });
-      }
-      updates.push({
-        wrapper: rootWrapper,
-        x: layerOrigin?.x ?? position.x,
-        y: layerOrigin?.y ?? position.y,
-        clipRect: {
-          x: 0,
-          y: 0,
-          width: size.width,
-          height: size.height
-        },
-        children: rootChildren,
-        visible: layerVisible,
-        touchEnabled: false,
-        touchChildren: layerPointer
+      stageUiRootDisplay(draft, {
+        w,
+        finalKeys,
+        view,
+        shells,
+        port,
+        display,
+        tree,
+        listWrapper,
+        listId,
+        rootWrapper,
+        layerOrigin,
+        position,
+        size,
+        layerVisible,
+        layerPointer
       });
-      rootChildren.sort((a, b) => paintOrder.get(a)! - paintOrder.get(b)!);
       const displayToken = display.prepare(rootWrapper, updates);
       check(revision);
       const nextSnapshot: UiSnapshot = freeze({
