@@ -15,7 +15,7 @@ import { GpuParticles3D } from '../../rendering/world3d/GpuParticles3D.js';
 import type { Scene3D } from '../../rendering/world3d/Object3D.js';
 import { RenderList3D } from '../../rendering/world3d/RenderList3D.js';
 import type { RenderItem3D } from '../../rendering/world3d/RenderList3D.js';
-import { CubeTexture3D, RenderTarget3D, type Texture3D } from '../../rendering/world3d/Texture3D.js';
+import { CubeTexture3D, RenderTarget3D } from '../../rendering/world3d/Texture3D.js';
 import type { CompressedFormat3D } from '../../rendering/world3d/Texture3D.js';
 import { FRAME_BLOCK_FLOATS_3D, FRAME_OFFSETS_3D, planShadows3D, writeFrameBlock3D } from './frame3D.js';
 import { createPostProcessSettings3D, outlineActive3D, postViewFromCamera3D } from './post3D.js';
@@ -26,6 +26,11 @@ import { WebGL2FrameMetrics3D } from './webGL2FrameMetrics3D.js';
 import type { World3DFrameMetrics, World3DPassKind, World3DViewKind } from './webGL2FrameMetrics3D.js';
 import { GpuResources3D } from './gpuResources3D.js';
 import type { GeometryGpu3D, Program3D } from './gpuResources3D.js';
+import {
+  applyMaterialWebGL23D,
+  buildMaterialDefinesWebGL23D,
+  MATERIAL_VARIANT_WEBGL2_3D as V
+} from './materialWebGL23D.js';
 import { MAX_MORPH_INFLUENCES_3D, SKYBOX_SHADER_3D, TEXTURE_UNITS_3D, buildMaterialShader3D } from './shaders3D.js';
 
 export interface WebGL2Renderer3DOptions {
@@ -43,35 +48,6 @@ export interface WebGL2Renderer3DOptions {
   readonly onContextLost?: () => void;
   readonly onContextRestored?: () => void;
 }
-// Program variant bits contributed by geometry, mesh and frame state.
-const V = Object.freeze({
-  normal: 1,
-  tangent: 2,
-  uv: 4,
-  color: 8,
-  skin: 16,
-  morph: 32,
-  morphNormals: 64,
-  instancing: 128,
-  instanceColor: 256,
-  receiveShadow: 512,
-  fog: 1024,
-  toneMapped: 2048,
-  environment: 4096,
-  points: 8192,
-  depthOnly: 16384,
-  linearOutput: 32768,
-  mapFromTarget: 65536,
-  uv1: 131072,
-  occlusionSecond: 262144,
-  emissiveSecond: 524288,
-  lightSecond: 1048576,
-  transmission: 2097152,
-  skinInstancing: 4194304,
-  gpuParticles: 8388608,
-  softDepth: 16777216
-} as const);
-const IDENTITY3 = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 
 interface ShadowAtlas3D {
@@ -762,81 +738,8 @@ export class WebGL2Renderer3D implements Renderer3D {
     }
     let program = cache.variants.get(variant);
     if (program) return program;
-    const has = (bit: number): boolean => (variant & bit) !== 0;
-    const depthOnly = has(V.depthOnly),
-      uv = has(V.uv),
-      defines: string[] = [];
-    if (depthOnly) defines.push('DEPTH_ONLY');
-    else
-      defines.push(
-        material.shading === 'unlit'
-          ? 'SHADING_UNLIT'
-          : material.shading === 'lambert'
-            ? 'SHADING_LAMBERT'
-            : material.shading === 'phong'
-              ? 'SHADING_PHONG'
-              : material.shading === 'toon'
-                ? 'SHADING_TOON'
-                : material.shading === 'matcap'
-                  ? 'SHADING_MATCAP'
-                  : 'SHADING_STANDARD'
-      );
-    if (has(V.normal)) defines.push('USE_NORMAL');
-    if (has(V.skin)) defines.push('USE_SKINNING');
-    if (has(V.morph)) defines.push('USE_MORPH');
-    if (has(V.morphNormals) && (!depthOnly || material.shader?.glslVertex !== undefined))
-      defines.push('USE_MORPH_NORMALS');
-    if (has(V.instancing)) defines.push('USE_INSTANCING');
-    if (has(V.skinInstancing)) defines.push('USE_SKIN_INSTANCING');
-    if (has(V.gpuParticles) && !depthOnly) defines.push('GPU_PARTICLES');
-    if (has(V.softDepth)) defines.push('USE_SOFT_DEPTH');
-    if (has(V.points)) defines.push('POINTS');
-    if (material.screenSpace) defines.push('SCREEN_SPACE');
-    else if (material.billboard) defines.push('BILLBOARD');
-    if (uv && material.map) {
-      defines.push('USE_MAP');
-      if (has(V.mapFromTarget)) defines.push('MAP_FROM_TARGET');
-    }
-    if (uv && material.splat && !depthOnly) defines.push('USE_SPLAT');
-    if (material.alphaMode === 'mask') defines.push('ALPHA_MASK');
-    if (material.alphaMode === 'blend') {
-      defines.push('ALPHA_BLEND');
-      if (!depthOnly && material.blending === 'premultiplied') defines.push('PREMULTIPLIED_ALPHA');
-    }
-    if (has(V.color)) defines.push('USE_VERTEX_COLOR');
-    if (!depthOnly) {
-      const lit = material.shading !== 'unlit' && material.shading !== 'matcap';
-      if (has(V.instanceColor)) defines.push('USE_INSTANCE_COLOR');
-      if (lit && uv && material.normalMap) {
-        defines.push('USE_NORMAL_MAP');
-        if (has(V.tangent)) defines.push('USE_TANGENT');
-      }
-      if (lit && uv && material.metallicRoughnessMap && material.shading === 'standard') defines.push('USE_MR_MAP');
-      // A map on the second coordinate set needs only that set; it falls back to the first when the geometry lacks it.
-      const aoSecond = has(V.occlusionSecond),
-        emissiveSecond = has(V.emissiveSecond);
-      if (lit && (uv || aoSecond) && material.occlusionMap) {
-        defines.push('USE_AO_MAP');
-        if (aoSecond) defines.push('AO_UV1');
-      }
-      if ((uv || emissiveSecond) && material.emissiveMap && material.shading !== 'matcap') {
-        defines.push('USE_EMISSIVE_MAP');
-        if (emissiveSecond) defines.push('EMISSIVE_UV1');
-      }
-      if (lit && material.lightMap && (uv || has(V.lightSecond))) {
-        defines.push('USE_LIGHT_MAP');
-        if (has(V.lightSecond)) defines.push('LIGHT_UV1');
-      }
-      if (material.flatShading) defines.push('FLAT_SHADED');
-      if (material.side === 'double') defines.push('DOUBLE_SIDED');
-      if (lit && has(V.receiveShadow)) defines.push('RECEIVE_SHADOW');
-      if (lit && has(V.environment)) defines.push('USE_ENVIRONMENT');
-      if (has(V.fog) && material.fog) defines.push('USE_FOG');
-      if (has(V.toneMapped) && material.toneMapped) defines.push('TONE_MAPPED');
-      if (has(V.linearOutput)) defines.push('LINEAR_OUTPUT');
-      if (has(V.transmission) && material.shading === 'standard') defines.push('USE_TRANSMISSION');
-      if (material.reflectionMap && material.shading === 'standard') defines.push('USE_REFLECTION_MAP');
-    }
+    const depthOnly = (variant & V.depthOnly) !== 0;
+    const defines = buildMaterialDefinesWebGL23D(material, variant, depthOnly);
     const custom = depthOnly ? undefined : material.shader?.glsl,
       customVertex = material.shader?.glslVertex;
     const customNormal =
@@ -857,110 +760,7 @@ export class WebGL2Renderer3D implements Renderer3D {
     return program;
   }
   private applyMaterial(program: Program3D, material: Material3D, depthOnly: boolean): void {
-    const gl = this.#gl,
-      u = program.uniforms,
-      resources = this.#resources;
-    if (u['uColor'])
-      gl.uniform4f(u['uColor'], material.color[0]!, material.color[1]!, material.color[2]!, material.opacity);
-    if (u['uAlphaCutoff']) gl.uniform1f(u['uAlphaCutoff'], material.alphaCutoff);
-    const customLocation = u['uCustom[0]'] ?? u['uCustom'];
-    if (customLocation && material.shader) gl.uniform4fv(customLocation, material.shader.uniforms);
-    if (u['uMap'] && material.map) resources.bindTexture(TEXTURE_UNITS_3D.map, material.map);
-    if (u['uUvTransform']) {
-      const map = material.map;
-      if (map?.hasTransform) {
-        const c = Math.cos(map.rotation),
-          s = Math.sin(map.rotation),
-          m = this.#scratch9;
-        m[0] = c * map.repeat[0]!;
-        m[1] = s * map.repeat[0]!;
-        m[2] = 0;
-        m[3] = -s * map.repeat[1]!;
-        m[4] = c * map.repeat[1]!;
-        m[5] = 0;
-        m[6] = map.offset[0]!;
-        m[7] = map.offset[1]!;
-        m[8] = 1;
-        gl.uniformMatrix3fv(u['uUvTransform'], false, m);
-      } else gl.uniformMatrix3fv(u['uUvTransform'], false, IDENTITY3);
-    }
-    if (u['uSprite']) gl.uniform4f(u['uSprite'], material.rotation, material.sizeAttenuation ? 1 : 0, 0, 0);
-    if (u['uPointSize']) gl.uniform2f(u['uPointSize'], material.pointSize, material.sizeAttenuation ? 1 : 0);
-    if (depthOnly) return;
-    const e = material.emissiveIntensity;
-    if (u['uEmissive'])
-      gl.uniform3f(u['uEmissive'], material.emissive[0]! * e, material.emissive[1]! * e, material.emissive[2]! * e);
-    if (u['uClearcoat']) gl.uniform2f(u['uClearcoat'], material.clearcoat, material.clearcoatRoughness);
-    if (u['uSurface'])
-      gl.uniform4f(
-        u['uSurface'],
-        material.metallic,
-        material.roughness,
-        material.normalScale,
-        material.occlusionStrength
-      );
-    if (u['uSpecular'])
-      gl.uniform4f(
-        u['uSpecular'],
-        material.specular[0]!,
-        material.specular[1]!,
-        material.specular[2]!,
-        material.shading === 'toon' ? material.toonSteps : material.shininess
-      );
-    if (u['uEnvironmentScale']) gl.uniform1f(u['uEnvironmentScale'], material.environmentIntensity);
-    if (u['uNormalMap'] && material.normalMap) resources.bindTexture(TEXTURE_UNITS_3D.normalMap, material.normalMap);
-    if (u['uMetallicRoughnessMap'] && material.metallicRoughnessMap)
-      resources.bindTexture(TEXTURE_UNITS_3D.metallicRoughnessMap, material.metallicRoughnessMap);
-    if (u['uOcclusionMap'] && material.occlusionMap)
-      resources.bindTexture(TEXTURE_UNITS_3D.occlusionMap, material.occlusionMap);
-    if (u['uEmissiveMap'] && material.emissiveMap)
-      resources.bindTexture(TEXTURE_UNITS_3D.emissiveMap, material.emissiveMap);
-    if (u['uLightMap'] && material.lightMap) resources.bindTexture(TEXTURE_UNITS_3D.lightMap, material.lightMap);
-    if (u['uReflectionMap'] && material.reflectionMap)
-      resources.bindTexture(TEXTURE_UNITS_3D.reflectionMap, material.reflectionMap);
-    const splat = material.splat;
-    if (u['uSplatRepeat'] && splat) {
-      // Layers borrow the units of the maps they stand in for; a missing layer reads the first.
-      const layer = (i: number): Texture3D => splat.layers[i] ?? splat.layers[0]!;
-      resources.bindTexture(TEXTURE_UNITS_3D.map, layer(0));
-      resources.bindTexture(TEXTURE_UNITS_3D.emissiveMap, layer(1));
-      resources.bindTexture(TEXTURE_UNITS_3D.occlusionMap, layer(2));
-      resources.bindTexture(TEXTURE_UNITS_3D.metallicRoughnessMap, layer(3));
-      resources.bindTexture(TEXTURE_UNITS_3D.lightMap, splat.weights);
-      gl.uniform4f(
-        u['uSplatRepeat'],
-        splat.repeat[0] ?? 1,
-        splat.repeat[1] ?? 1,
-        splat.repeat[2] ?? 1,
-        splat.repeat[3] ?? 1
-      );
-    }
-    if (u['uSoftness']) gl.uniform1f(u['uSoftness'], material.softness);
-    if (u['uReflection']) gl.uniform2f(u['uReflection'], material.reflectionStrength, material.reflectionDistortion);
-    if (u['uSheen'])
-      gl.uniform4f(
-        u['uSheen'],
-        material.sheenColor[0]! * material.sheen,
-        material.sheenColor[1]! * material.sheen,
-        material.sheenColor[2]! * material.sheen,
-        material.sheenRoughness
-      );
-    if (u['uExtra']) gl.uniform2f(u['uExtra'], material.lightMapIntensity, material.transmission);
-    if (u['uRefraction'])
-      gl.uniform4f(
-        u['uRefraction'],
-        material.ior,
-        material.thickness,
-        Number.isFinite(material.attenuationDistance) ? material.attenuationDistance : 0,
-        0
-      );
-    if (u['uAttenuation'])
-      gl.uniform3f(
-        u['uAttenuation'],
-        material.attenuationColor[0]!,
-        material.attenuationColor[1]!,
-        material.attenuationColor[2]!
-      );
+    applyMaterialWebGL23D(this.#gl, program.uniforms, this.#resources, this.#scratch9, material, depthOnly);
   }
   private applyState(material: Material3D, shadow: boolean, mirrored: boolean): void {
     const gl = this.#gl;
