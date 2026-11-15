@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Advisory source lint — 2026-11-15
+
+Install the locked formatter with `npm ci --ignore-scripts --prefix tools/format`, then run `node tools/lint.mjs`. The separate Biome configuration reports recommended rules for package TypeScript sources. The cognitive complexity threshold is 30, or 60 under the engine rendering and web directories. Reports include totals and up to 12 findings. Findings are advisory, and setup, configuration or source parsing failures still fail the lint job.
+
 ## Selected tests use the source formatter — 2026-11-15
 
 Biome 2.6.7 checks 165 test modules and reformats 163 of them. In the selected files, lines exceeding 120 characters fell from 5,340 to 953. The changed files have equivalent parsed JavaScript, normalized source and comment text. Test scripts registered with fixed source identities and scripts asserted as literal text keep their original bytes, as do compiler diagnostic fixtures. The formatter can read the existing 1.6 MiB incremental-checks test, and the Source layout workflow now checks the selected tests.
