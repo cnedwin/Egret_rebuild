@@ -1282,10 +1282,11 @@ for (const [stem,valueClause,typeClauses] of glFacadeRules) {
     if (sceneRead(file).replace(/\s+/g,'')!==expected) throw new Error('M14: exact WebGL2 forwarding/type erasure mismatch: '+file);
   }
 }
-const glModuleNames = ['webgl2','WebGL2Host','webgl2Types','webgl2Native','sharedWebGL2Options','sharedWebGL2Arena','sharedWebGL2Shaders'];
+const glModuleNames = ['webgl2','WebGL2Host','webgl2Types','webgl2Native','sharedWebGL2Options','sharedWebGL2Arena','sharedWebGL2Shaders','webgl2LayerState'];
 const glPrivateNames = ['SharedGLHost','GLNativeKind','GLNativeOwner','GLNativeSession','glFailure','isGLFailure',
   'SharedWebGL2Configuration','admitSharedWebGL2Options','SharedWebGL2ArenaStrides','SharedWebGL2ArenaPlan','SharedWebGL2ArenaOwner','qualifySharedWebGL2Alignment','planSharedWebGL2Arenas','checkSharedWebGL2ArenaCapacity',
-  'sharedWebGL2VertexSource','sharedWebGL2FragmentSource','sharedWebGL2ResolveVertexSource','sharedWebGL2ResolveFragmentSource','sharedWebGL2BlendFactors','sharedWebGL2LayerVertexSource','sharedWebGL2LayerFragmentSource','sharedWebGL2LayerEffectFragmentSource'];
+  'sharedWebGL2VertexSource','sharedWebGL2FragmentSource','sharedWebGL2ResolveVertexSource','sharedWebGL2ResolveFragmentSource','sharedWebGL2BlendFactors','sharedWebGL2LayerVertexSource','sharedWebGL2LayerFragmentSource','sharedWebGL2LayerEffectFragmentSource',
+  'createWebGL2LayerProgram','readWebGL2LayerEffect','readWebGL2LayerPlacement'];
 const glOtherEntryFiles = [
   ...Object.entries(assetGroupSourceEntries).map(([name,source])=>[name,source]),
   ['engine/layout','packages/engine/src/layout.ts'],['engine/web/input','packages/engine/web/input.ts'],['engine/web/image','packages/engine/web/image.ts'],
@@ -1313,6 +1314,9 @@ const m14WebGL2LiteralClosure = {
   'packages/engine/web/sharedWebGL2Shaders.ts': glEdges(['@egret/contracts']),
   'packages/engine/dist/web/sharedWebGL2Shaders.js': glEdges([]),
   'packages/engine/dist/web/sharedWebGL2Shaders.d.ts': glEdges(['@egret/contracts']),
+  'packages/engine/web/webgl2LayerState.ts': glEdges(['./sharedWebGL2Options.js','./sharedWebGL2Shaders.js','./webgl2Native.js','./webgl2Native.js','./webgl2Types.js']),
+  'packages/engine/dist/web/webgl2LayerState.js': glEdges(['./sharedWebGL2Shaders.js','./webgl2Native.js']),
+  'packages/engine/dist/web/webgl2LayerState.d.ts': glEdges(['./sharedWebGL2Options.js','./webgl2Native.js','./webgl2Types.js']),
 };
 const glTargets = new Set(glModuleNames.flatMap(name=>['web/'+name+'.js','dist/web/'+name+'.js']));
 const glClosureFiles = new Set(glModuleNames.flatMap(name=>['packages/engine/web/'+name+'.ts','packages/engine/dist/web/'+name+'.js','packages/engine/dist/web/'+name+'.d.ts']));
@@ -3113,6 +3117,14 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
+      "./webgl2LayerState.js"
+    ],
+    [
+      "static",
+      "./webgl2LayerState.js"
+    ],
+    [
+      "static",
       "./webgl2Native.js"
     ],
     [
@@ -3196,6 +3208,10 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "./sharedWebGL2Shaders.js"
+    ],
+    [
+      "static",
+      "./webgl2LayerState.js"
     ],
     [
       "static",
