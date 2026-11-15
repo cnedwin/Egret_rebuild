@@ -1,0 +1,5 @@
+# Commits that only changed layout. `git blame --ignore-revs-file .git-blame-ignore-revs` passes over them,
+# and GitHub does so on its own. Add a commit here only when the built programs are the same before and after it.
+
+# Lay out the engine's sources with a formatter (#319)
+2ce30f776e24bc8cba3133117bd94a47f2c1d29a
