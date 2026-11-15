@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/rendering/world3d/PhysicsQueries3D.ts",
+      "originRole": "First-party Egret static hierarchy and ray intersection logic extracted from Physics3D.ts; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
