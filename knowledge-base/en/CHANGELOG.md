@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## WebGPU Host image residency planning — 2026-11-15
+
+The WebGPU Host delegates ready image demand and victim selection to a private module. It still owns generation validation, image upload, lease promotion, resource retirement and submission. Public declarations, image budget and eviction order stayed the same.
+
 ## Separate WebGL2 cached layer preparation — 2026-11-15
 
 A private WebGL2 module owns cached-layer limits, placement and light validation, and program binding construction. The host continues to own submission, cached program publication, generation checks and layer retirement. The public entry and declarations and the native call order are preserved.

@@ -2764,6 +2764,9 @@ const m34EffectLiteralClosure = {
       "@egret/contracts"
     ]
   ],
+  "packages/engine/web/webgpuImageResidency.ts": [["static","./imageProjections2D.js"],["static","./webgpuLifetime.js"],["static","@egret/contracts"]],
+  "packages/engine/dist/web/webgpuImageResidency.js": [],
+  "packages/engine/dist/web/webgpuImageResidency.d.ts": [["static","./imageProjections2D.js"],["static","./webgpuLifetime.js"],["static","@egret/contracts"]],
   "packages/engine/web/WebGPUHost.ts": [
     [
       "static",
@@ -2871,6 +2874,10 @@ const m34EffectLiteralClosure = {
     ],
     [
       "static",
+      "./webgpuImageResidency.js"
+    ],
+    [
+      "static",
       "./webgpuLifetime.js"
     ],
     [
@@ -2966,6 +2973,10 @@ const m34EffectLiteralClosure = {
     [
       "static",
       "./webgpuBindingCache.js"
+    ],
+    [
+      "static",
+      "./webgpuImageResidency.js"
     ],
     [
       "static",

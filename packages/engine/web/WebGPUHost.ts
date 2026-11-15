@@ -51,6 +51,15 @@ import { GeometryPreparationError } from '../rendering/prepareRectangles2D.js';
 import { PreparedBatchScratch2D } from '../rendering/preparedBatches2D.js';
 import type { ProjectionPlan2D, ProjectionView2D } from './imageProjections2D.js';
 import {
+  collectWebGPUImageDemand,
+  selectWebGPUImageVictims,
+  type ImageResidencyCandidate,
+  type ImageResidencyDraw,
+  type ImageResidencyEntry,
+  type ImageResidencyPlan,
+  type ImageResidencyUse
+} from './webgpuImageResidency.js';
+import {
   observed,
   deferred,
   cleanupWebGPUBuffer,
@@ -190,51 +199,6 @@ export interface SharedWebGPUHost extends Pick<SharedRenderHostAdapter, 'sharedF
   getSharedStatus(): SharedWebGPUHostStatus;
 }
 type Ticket = ReturnType<typeof deferred<WebGPUReadback | SharedWebGPUReadback>> & { bound: boolean };
-// READY metadata never retains an image, frame, projection, record or callback.
-interface ImageResidencyEntry {
-  format: 'rgba8unorm' | 'rgba8unorm-srgb';
-  identity: object;
-  epoch: object;
-  bucket: Map<string, ImageResidencyEntry>;
-  cropKey: string;
-  bytes: number;
-  resource: OwnedWebGPUTexture | undefined;
-  view: GPUTextureView | undefined;
-  pinCount: number;
-  previous: ImageResidencyEntry | undefined;
-  next: ImageResidencyEntry | undefined;
-  state: 'cold' | 'ready' | 'detached';
-}
-interface ImageResidencyCandidate {
-  image: ImageData2D;
-  viewIndex: number;
-  entry: ImageResidencyEntry;
-  transferred: boolean;
-}
-// Rectangles have no sampled-page demand and need no synthetic vertex count.
-type ImageResidencyDraw =
-  | { readonly kind: 'rect' }
-  | {
-      readonly kind: 'image' | 'mesh';
-      readonly packed: { readonly vertexCount: number };
-      readonly viewIndex: number;
-    };
-interface ImageResidencyPlan {
-  epoch: object;
-  revision: object;
-  victims: ImageResidencyEntry[];
-  bytes: number;
-  use: ImageResidencyUse;
-}
-interface ImageResidencyUse {
-  epoch: object;
-  hits: Map<number, ImageResidencyEntry>;
-  candidates: Map<number, ImageResidencyCandidate>;
-  reserved: number;
-  pinned: boolean;
-  finished: boolean;
-  touchedQueue: boolean;
-}
 /** Preallocated ownership until a returned target is registered or destroyed. */
 interface RawTargetSlot {
   readonly requestId: number;
@@ -1738,74 +1702,27 @@ class WebGPUHostImplementation {
     this.active();
     const hits = new Map<number, ImageResidencyEntry>(),
       candidates = new Map<number, ImageResidencyCandidate>();
-    const buckets = new Map<ImageData2D, Map<string, ImageResidencyEntry>>();
-    let bytes = 0;
-    for (const draw of draws) {
-      if (
-        draw.kind === 'rect' ||
-        draw.packed.vertexCount === 0 ||
-        hits.has(draw.viewIndex) ||
-        candidates.has(draw.viewIndex)
-      )
-        continue;
-      const view = projectionPlan.views[draw.viewIndex]!,
-        region = view.region;
-      const cropKey =
-        (shared ? 'shared:egret.alpha8-capped-srgb-pma8/1:rgba8unorm-srgb:' : '') +
-        `${region.x},${region.y},${region.width},${region.height}`;
-      let bucket = this.imageDirectory.get(view.image) ?? buckets.get(view.image);
-      if (!bucket) {
-        bucket = new Map();
-        buckets.set(view.image, bucket);
-      }
-      const entry = bucket.get(cropKey);
-      if (this.imageEnabled && entry?.epoch === this.imageEpoch && entry.state === 'ready')
-        hits.set(draw.viewIndex, entry);
-      else {
-        candidates.set(draw.viewIndex, {
-          image: view.image,
-          viewIndex: draw.viewIndex,
-          transferred: false,
-          entry: {
-            format: shared ? 'rgba8unorm-srgb' : 'rgba8unorm',
-            identity: {},
-            epoch: this.imageEpoch,
-            bucket,
-            cropKey,
-            bytes: view.byteLength,
-            resource: undefined,
-            view: undefined,
-            pinCount: 0,
-            previous: undefined,
-            next: undefined,
-            state: 'cold'
-          }
-        });
-        bytes += view.byteLength;
-      }
-    }
-    const protectedHits = new Set(hits.values()),
-      victims: ImageResidencyEntry[] = [];
-    let available = this.allocatedImageBytes + this.reservedImageBytes,
-      count = this.readyCount;
-    for (let entry = this.imageOldest; entry; entry = entry.next) {
-      // Every profile of this Host shares one ready residence; a shared Host may lower its bytes.
-      if (
-        available + bytes <= (SHARED_OPTIONS.get(this)?.maxReadyPageBytes ?? 33554432) &&
-        count + candidates.size <= 256
-      )
-        break;
-      if (
-        entry.epoch !== this.imageEpoch ||
-        entry.state !== 'ready' ||
-        entry.pinCount !== 0 ||
-        protectedHits.has(entry)
-      )
-        continue;
-      victims.push(entry);
-      available -= entry.bytes;
-      count--;
-    }
+    const bytes = collectWebGPUImageDemand(
+      projectionPlan,
+      draws,
+      shared,
+      this.imageDirectory,
+      this.imageEnabled,
+      this.imageEpoch,
+      hits,
+      candidates
+    );
+    // Every profile of this Host shares one ready residence; a shared Host may lower its bytes.
+    const victims = selectWebGPUImageVictims(
+      this.imageOldest,
+      this.imageEpoch,
+      this.allocatedImageBytes + this.reservedImageBytes,
+      this.readyCount,
+      SHARED_OPTIONS.get(this)?.maxReadyPageBytes ?? 33554432,
+      bytes,
+      candidates.size,
+      hits
+    );
     return {
       epoch: this.imageEpoch,
       revision: this.imageRevision,
