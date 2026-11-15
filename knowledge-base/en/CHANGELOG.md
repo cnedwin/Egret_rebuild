@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Selected tools use the source formatter — 2026-11-15
+
+Biome 2.6.7 formats 36 tool scripts. In these scripts, lines exceeding 120 characters fell from 622 to 64. A parser and a source printer independently confirmed identical syntax and normalized JavaScript, and comment text was checked in full. The remaining 88 scripts retain their original bytes to preserve exact-source checks, fixed digests and native verification inputs. The existing Source layout workflow now checks the selected tools.
+
 ## Example scripts use the source formatter — 2026-11-15
 
 Biome 2.6.7 formats 169 example scripts. Across the 171 tracked example `.mjs` files, lines exceeding 120 characters fell from 3,787 to 186. Syntax comparison verified the same program for every formatted script, including two cases where the formatter removed optional grouping. The Source layout workflow now also runs when example scripts change.

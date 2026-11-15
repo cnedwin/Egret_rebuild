@@ -4,8 +4,10 @@
 /** Parse `<index>/<count>`; the index counts from one. */
 export function parseShard(text) {
   const match = typeof text === 'string' ? /^([1-9][0-9]?)\/([1-9][0-9]?)$/.exec(text) : null;
-  const index = match ? Number(match[1]) : 0, count = match ? Number(match[2]) : 0;
-  if (!match || index > count || count > 16) throw new TypeError('A shard is <index>/<count> with 1 <= index <= count <= 16');
+  const index = match ? Number(match[1]) : 0,
+    count = match ? Number(match[2]) : 0;
+  if (!match || index > count || count > 16)
+    throw new TypeError('A shard is <index>/<count> with 1 <= index <= count <= 16');
   return { index, count };
 }
 
@@ -16,14 +18,21 @@ export function parseShard(text) {
  * so the hands always form an exact partition of `files`.
  */
 export function selectShard(files, index, count, slow = []) {
-  if (!Array.isArray(files) || files.some(file => typeof file !== 'string' || !file) || new Set(files).size !== files.length) {
+  if (
+    !Array.isArray(files) ||
+    files.some(file => typeof file !== 'string' || !file) ||
+    new Set(files).size !== files.length
+  ) {
     throw new TypeError('A list of distinct test files is required');
   }
-  if (!Array.isArray(slow) || new Set(slow).size !== slow.length) throw new TypeError('The slow list holds distinct files');
+  if (!Array.isArray(slow) || new Set(slow).size !== slow.length)
+    throw new TypeError('The slow list holds distinct files');
   if (!Number.isInteger(index) || !Number.isInteger(count) || count < 1 || index < 1 || index > count) {
     throw new RangeError('The shard index lies between one and the shard count');
   }
-  const present = new Set(files), first = slow.filter(file => present.has(file)), early = new Set(first);
+  const present = new Set(files),
+    first = slow.filter(file => present.has(file)),
+    early = new Set(first);
   const order = [...first, ...files.filter(file => !early.has(file))];
   return order.filter((_, position) => position % count === index - 1);
 }

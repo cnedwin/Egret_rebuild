@@ -2,15 +2,15 @@
 // Deterministic World3D scenes rendered by tools/verify-world3d.mjs on both backends.
 // Each case returns a scene and camera built only from the public world3d entry.
 export async function verifyTextureSourceReplacement(W, renderer) {
-  const camera = W.createOrthographicCamera3D({height: 2, aspect: 1, near: 0.1, far: 10});
+  const camera = W.createOrthographicCamera3D({ height: 2, aspect: 1, near: 0.1, far: 10 });
   camera.setPosition(0, 0, 3).lookAt(0, 0, 0);
-  const geometry = W.createPlaneGeometry3D({width: 1, height: 1});
+  const geometry = W.createPlaneGeometry3D({ width: 1, height: 1 });
   const source = new W.RenderTarget3D(16, 16);
   const output = new W.RenderTarget3D(16, 16);
-  const pixels = {width: 1, height: 1, data: new Uint8Array([255, 0, 0, 128])};
-  const mutable = new W.Texture3D(pixels, {mipmaps: false});
-  const sourceMaterial = W.createUnlitMaterial3D({color: 0xff0000, opacity: 0.5, toneMapped: false});
-  const material = W.createUnlitMaterial3D({map: mutable, alphaMode: 'blend', toneMapped: false});
+  const pixels = { width: 1, height: 1, data: new Uint8Array([255, 0, 0, 128]) };
+  const mutable = new W.Texture3D(pixels, { mipmaps: false });
+  const sourceMaterial = W.createUnlitMaterial3D({ color: 0xff0000, opacity: 0.5, toneMapped: false });
+  const material = W.createUnlitMaterial3D({ map: mutable, alphaMode: 'blend', toneMapped: false });
   const inputScene = new W.Scene3D();
   const outputScene = new W.Scene3D();
   outputScene.background = [0, 0, 1];
@@ -40,8 +40,12 @@ export async function verifyTextureSourceReplacement(W, renderer) {
     material.map = mutable;
     await verifyPixel('material map changed back to pixels');
   } finally {
-    material.dispose(); sourceMaterial.dispose(); mutable.dispose();
-    output.dispose(); source.dispose(); geometry.dispose();
+    material.dispose();
+    sourceMaterial.dispose();
+    mutable.dispose();
+    output.dispose();
+    source.dispose();
+    geometry.dispose();
   }
 }
 
@@ -50,21 +54,48 @@ export async function verifyTextureSourceReplacement(W, renderer) {
  * the skinned picture before and after drawing a flipY texture has to be identical.
  */
 export async function verifySkinAfterFlippedUpload(W, renderer) {
-  const camera = W.createOrthographicCamera3D({height: 4, aspect: 1, near: 0.1, far: 10});
+  const camera = W.createOrthographicCamera3D({ height: 4, aspect: 1, near: 0.1, far: 10 });
   camera.setPosition(0, 0, 5).lookAt(0, 0, 0);
-  const scene = new W.Scene3D(); scene.background = [0, 0, 0]; scene.addChild(camera);
-  const height = 2.4, geometry = W.createCylinderGeometry3D({radiusTop: 0.2, radiusBottom: 0.3, height, radialSegments: 12, heightSegments: 12});
-  const positions = geometry.getAttribute('position').data, joints = new Uint16Array(positions.length / 3 * 4), weights = new Float32Array(positions.length / 3 * 4);
-  for (let i = 0; i < positions.length / 3; i++) { const upper = positions[i * 3 + 1] > 0 ? 1 : 0; joints.set([upper, 0, 0, 0], i * 4); weights.set([1, 0, 0, 0], i * 4); }
-  geometry.setAttribute('joints', new W.Attribute3D(joints, 4)); geometry.setAttribute('weights', new W.Attribute3D(weights, 4));
-  const material = W.createUnlitMaterial3D({color: 0xffffff, toneMapped: false}), mesh = new W.Mesh3D(geometry, material);
-  const lower = new W.Bone3D(), upper = new W.Bone3D();
-  mesh.addChild(lower); lower.addChild(upper); scene.addChild(mesh);
-  mesh.updateWorldMatrices(); mesh.bind(new W.Skeleton3D([lower, upper]));
+  const scene = new W.Scene3D();
+  scene.background = [0, 0, 0];
+  scene.addChild(camera);
+  const height = 2.4,
+    geometry = W.createCylinderGeometry3D({
+      radiusTop: 0.2,
+      radiusBottom: 0.3,
+      height,
+      radialSegments: 12,
+      heightSegments: 12
+    });
+  const positions = geometry.getAttribute('position').data,
+    joints = new Uint16Array((positions.length / 3) * 4),
+    weights = new Float32Array((positions.length / 3) * 4);
+  for (let i = 0; i < positions.length / 3; i++) {
+    const upper = positions[i * 3 + 1] > 0 ? 1 : 0;
+    joints.set([upper, 0, 0, 0], i * 4);
+    weights.set([1, 0, 0, 0], i * 4);
+  }
+  geometry.setAttribute('joints', new W.Attribute3D(joints, 4));
+  geometry.setAttribute('weights', new W.Attribute3D(weights, 4));
+  const material = W.createUnlitMaterial3D({ color: 0xffffff, toneMapped: false }),
+    mesh = new W.Mesh3D(geometry, material);
+  const lower = new W.Bone3D(),
+    upper = new W.Bone3D();
+  mesh.addChild(lower);
+  lower.addChild(upper);
+  scene.addChild(mesh);
+  mesh.updateWorldMatrices();
+  mesh.bind(new W.Skeleton3D([lower, upper]));
   // The two bones differ, so swapping their rows moves the mesh visibly.
-  upper.setPosition(0.9, 0, 0); upper.setRotation(0, 0, 0.6);
-  const flipped = new W.Texture3D({width: 2, height: 2, data: new Uint8Array([255, 0, 0, 255, 255, 0, 0, 255, 0, 0, 255, 255, 0, 0, 255, 255])}, {flipY: true, mipmaps: false});
-  const tileMaterial = W.createUnlitMaterial3D({map: flipped, toneMapped: false}), tileGeometry = W.createPlaneGeometry3D({width: 0.4, height: 0.4}), tile = new W.Mesh3D(tileGeometry, tileMaterial);
+  upper.setPosition(0.9, 0, 0);
+  upper.setRotation(0, 0, 0.6);
+  const flipped = new W.Texture3D(
+    { width: 2, height: 2, data: new Uint8Array([255, 0, 0, 255, 255, 0, 0, 255, 0, 0, 255, 255, 0, 0, 255, 255]) },
+    { flipY: true, mipmaps: false }
+  );
+  const tileMaterial = W.createUnlitMaterial3D({ map: flipped, toneMapped: false }),
+    tileGeometry = W.createPlaneGeometry3D({ width: 0.4, height: 0.4 }),
+    tile = new W.Mesh3D(tileGeometry, tileMaterial);
   tile.setPosition(-1.6, -1.6, 0);
   const target = new W.RenderTarget3D(64, 64);
   try {
@@ -78,25 +109,45 @@ export async function verifySkinAfterFlippedUpload(W, renderer) {
       renderer.render(scene, camera, target);
       const after = await renderer.readRenderTargetPixels(target);
       let lit = 0;
-      for (let i = 0; i < before.length; i += 4) { if (before[i] > 128) lit++; if (Math.abs(before[i] - after[i]) > 2) throw new Error('Bone matrices changed after a flipped texture upload (pixel ' + i / 4 + ')'); }
+      for (let i = 0; i < before.length; i += 4) {
+        if (before[i] > 128) lit++;
+        if (Math.abs(before[i] - after[i]) > 2)
+          throw new Error('Bone matrices changed after a flipped texture upload (pixel ' + i / 4 + ')');
+      }
       if (lit < 50) throw new Error('The skinned mesh did not draw');
     }
   } finally {
-    target.dispose(); flipped.dispose(); tileMaterial.dispose(); tileGeometry.dispose(); material.dispose(); geometry.dispose();
+    target.dispose();
+    flipped.dispose();
+    tileMaterial.dispose();
+    tileGeometry.dispose();
+    material.dispose();
+    geometry.dispose();
   }
 }
 
 export async function verifySoftDepthVisibility(W, renderer) {
-  const camera = W.createOrthographicCamera3D({height: 2, aspect: 1, near: 0.1, far: 10});
+  const camera = W.createOrthographicCamera3D({ height: 2, aspect: 1, near: 0.1, far: 10 });
   camera.setPosition(0, 0, 4).lookAt(0, 0, 0);
   const scene = new W.Scene3D();
   scene.background = [0, 0, 0];
   const particle = W.createGpuParticles3D({
-    count: 1, lifetime: 2, loop: false, speed: 0, startSize: 0.6, startColor: 0x00ff00,
-    fadeIn: 0, fadeOut: 0, softness: 0.4, blending: 'normal',
+    count: 1,
+    lifetime: 2,
+    loop: false,
+    speed: 0,
+    startSize: 0.6,
+    startColor: 0x00ff00,
+    fadeIn: 0,
+    fadeOut: 0,
+    softness: 0.4,
+    blending: 'normal'
   });
   particle.time = 1;
-  const wall = new W.Mesh3D(W.createPlaneGeometry3D({width: 1, height: 1}), W.createUnlitMaterial3D({color: 0x000000, side: 'front'}));
+  const wall = new W.Mesh3D(
+    W.createPlaneGeometry3D({ width: 1, height: 1 }),
+    W.createUnlitMaterial3D({ color: 0x000000, side: 'front' })
+  );
   const output = new W.RenderTarget3D(16, 16);
   scene.addChild(particle);
   async function green() {
@@ -109,16 +160,18 @@ export async function verifySoftDepthVisibility(W, renderer) {
     wall.setPosition(0, 0, 0.25).setRotation(0, Math.PI, 0);
     scene.addChild(wall);
     const back = await green();
-    if (clear < 210 || Math.abs(clear - back) > 2) throw new Error('A hidden backface changed soft particle visibility: ' + clear + ', ' + back);
+    if (clear < 210 || Math.abs(clear - back) > 2)
+      throw new Error('A hidden backface changed soft particle visibility: ' + clear + ', ' + back);
     wall.setPosition(0, 0, -0.05).setRotation(0, 0, 0);
     const front = await green();
     if (front < 40 || front > 150) throw new Error('A visible face did not fade the particle: ' + front);
-    const turn = Math.PI / 3, sampleX = 1 / output.width;
+    const turn = Math.PI / 3,
+      sampleX = 1 / output.width;
     // Match the flat wall's depth at the sampled pixel; a shadow slope bias would change the fade.
     wall.setPosition(0, 0, -0.05 + Math.tan(turn) * sampleX).setRotation(0, turn, 0);
     const slope = await green();
     if (Math.abs(front - slope) > 3) throw new Error('Soft depth changed with wall slope: ' + front + ', ' + slope);
-    return {clear, back, front, slope};
+    return { clear, back, front, slope };
   } finally {
     output.dispose();
     particle.dispose();
@@ -129,67 +182,107 @@ export async function verifySoftDepthVisibility(W, renderer) {
 
 export async function verifyObliquePostDepth(W, renderer, createCustomPost3D) {
   const savedToneMapping = renderer.toneMapping;
-  const camera = W.createPerspectiveCamera3D({aspect: 1, near: 0.1, far: 100});
+  const camera = W.createPerspectiveCamera3D({ aspect: 1, near: 0.1, far: 100 });
   camera.customProjection = camera.projectionMatrix.slice();
   // Make clip depth depend on view X and Y. The wall still has constant view depth.
   camera.customProjection[2] = 0.05;
   camera.customProjection[6] = -0.04;
   const scene = new W.Scene3D();
-  const geometry = W.createPlaneGeometry3D({width: 6, height: 6});
+  const geometry = W.createPlaneGeometry3D({ width: 6, height: 6 });
   const material = W.createUnlitMaterial3D();
   scene.addChild(new W.Mesh3D(geometry, material)).setPosition(0, 0, -8);
   const target = new W.RenderTarget3D(64, 64);
-  const post = {...renderer.postProcess};
+  const post = { ...renderer.postProcess };
   try {
     renderer.toneMapping = 'none';
-    Object.assign(renderer.postProcess, {enabled: true, bloom: false, fxaa: false, custom: createCustomPost3D({
-      key: 'verify-oblique-depth',
-      glsl: 'vec3 customPost(vec3 c, vec2 uv) { return abs(sceneDepth(uv) - 8.0) < 0.05 ? vec3(0, 1, 0) : vec3(1, 0, 0); }',
-      wgsl: 'fn customPost(c: vec3f, uv: vec2f) -> vec3f { return select(vec3f(1, 0, 0), vec3f(0, 1, 0), abs(sceneDepth(uv) - 8.0) < 0.05); }',
-    })});
+    Object.assign(renderer.postProcess, {
+      enabled: true,
+      bloom: false,
+      fxaa: false,
+      custom: createCustomPost3D({
+        key: 'verify-oblique-depth',
+        glsl: 'vec3 customPost(vec3 c, vec2 uv) { return abs(sceneDepth(uv) - 8.0) < 0.05 ? vec3(0, 1, 0) : vec3(1, 0, 0); }',
+        wgsl: 'fn customPost(c: vec3f, uv: vec2f) -> vec3f { return select(vec3f(1, 0, 0), vec3f(0, 1, 0), abs(sceneDepth(uv) - 8.0) < 0.05); }'
+      })
+    });
     if (!renderer.render(scene, camera, target)) throw new Error('Renderer lost during oblique depth check');
     const pixels = await renderer.readRenderTargetPixels(target);
-    for (const [x, y] of [[19, 32], [32, 32], [43, 32], [32, 20], [32, 44]]) {
+    for (const [x, y] of [
+      [19, 32],
+      [32, 32],
+      [43, 32],
+      [32, 20],
+      [32, 44]
+    ]) {
       const offset = (y * target.width + x) * 4;
       const rgba = pixels.subarray(offset, offset + 4);
-      if (rgba[0] > 2 || rgba[1] < 253) throw new Error(`Expected depth 8 at ${x},${y} under oblique projection, got RGBA ${rgba.join(',')}`);
+      if (rgba[0] > 2 || rgba[1] < 253)
+        throw new Error(`Expected depth 8 at ${x},${y} under oblique projection, got RGBA ${rgba.join(',')}`);
     }
   } finally {
     renderer.toneMapping = savedToneMapping;
     Object.assign(renderer.postProcess, post);
-    target.dispose(); material.dispose(); geometry.dispose();
+    target.dispose();
+    material.dispose();
+    geometry.dispose();
   }
 }
 
 /** Folding repeated meshes into instanced draws must not change a pixel, only the number of draws. */
 export async function verifyAutoInstancing(W, renderer) {
-  const scene = new W.Scene3D(); scene.background = [0.1, 0.12, 0.16];
-  const camera = W.createPerspectiveCamera3D({aspect: 1, fov: 50, near: 0.1, far: 100}); camera.setPosition(6, 9, 14).lookAt(0, 0, 0); scene.addChild(camera);
-  scene.addChild(W.createAmbientLight3D({intensity: 0.2}));
-  const sun = W.createDirectionalLight3D({intensity: 1.8, castShadow: true}); sun.setPosition(5, 10, 4).lookAt(0, 0, 0); sun.shadow.extent = 14; scene.addChild(sun);
-  const floor = new W.Mesh3D(W.createPlaneGeometry3D({width: 30, height: 30}), W.createStandardMaterial3D({color: 0xbbbbbb})); floor.setRotation(-Math.PI / 2, 0, 0); floor.receiveShadow = true; floor.castShadow = false; scene.addChild(floor);
-  const box = W.createBoxGeometry3D({}), ball = W.createSphereGeometry3D({radius: 0.5}), paints = [W.createStandardMaterial3D({color: 0xcc5533}), W.createLambertMaterial3D({color: 0x3377cc})];
+  const scene = new W.Scene3D();
+  scene.background = [0.1, 0.12, 0.16];
+  const camera = W.createPerspectiveCamera3D({ aspect: 1, fov: 50, near: 0.1, far: 100 });
+  camera.setPosition(6, 9, 14).lookAt(0, 0, 0);
+  scene.addChild(camera);
+  scene.addChild(W.createAmbientLight3D({ intensity: 0.2 }));
+  const sun = W.createDirectionalLight3D({ intensity: 1.8, castShadow: true });
+  sun.setPosition(5, 10, 4).lookAt(0, 0, 0);
+  sun.shadow.extent = 14;
+  scene.addChild(sun);
+  const floor = new W.Mesh3D(
+    W.createPlaneGeometry3D({ width: 30, height: 30 }),
+    W.createStandardMaterial3D({ color: 0xbbbbbb })
+  );
+  floor.setRotation(-Math.PI / 2, 0, 0);
+  floor.receiveShadow = true;
+  floor.castShadow = false;
+  scene.addChild(floor);
+  const box = W.createBoxGeometry3D({}),
+    ball = W.createSphereGeometry3D({ radius: 0.5 }),
+    paints = [W.createStandardMaterial3D({ color: 0xcc5533 }), W.createLambertMaterial3D({ color: 0x3377cc })];
   for (let i = 0; i < 90; i++) {
     const mesh = new W.Mesh3D(i % 3 ? box : ball, paints[i % 2]);
-    mesh.setPosition(-7 + (i % 10) * 1.5, 0.5 + (i % 4) * 0.2, -6 + Math.floor(i / 10) * 1.5).setRotation(i * 0.3, i * 0.7, 0).setScale(0.6 + (i % 5) * 0.1);
+    mesh
+      .setPosition(-7 + (i % 10) * 1.5, 0.5 + (i % 4) * 0.2, -6 + Math.floor(i / 10) * 1.5)
+      .setRotation(i * 0.3, i * 0.7, 0)
+      .setScale(0.6 + (i % 5) * 0.1);
     // A few that must stay on their own or in runs of their own: mirrored, not receiving shadows, on another layer.
     if (i % 17 === 0) mesh.setScale(-0.8, 0.8, 0.8);
-    mesh.receiveShadow = i % 11 !== 0; mesh.layers = i % 13 === 0 ? 3 : 1;
+    mesh.receiveShadow = i % 11 !== 0;
+    mesh.layers = i % 13 === 0 ? 3 : 1;
     scene.addChild(mesh);
   }
   const target = new W.RenderTarget3D(96, 96);
   try {
     renderer.autoInstancing = false;
     if (!renderer.render(scene, camera, target)) throw new Error('Renderer lost during the instancing check');
-    const plain = Array.from(await renderer.readRenderTargetPixels(target)), plainDraws = renderer.info.drawCalls;
+    const plain = Array.from(await renderer.readRenderTargetPixels(target)),
+      plainDraws = renderer.info.drawCalls;
     renderer.autoInstancing = true;
     if (!renderer.render(scene, camera, target)) throw new Error('Renderer lost during the instancing check');
-    const folded = await renderer.readRenderTargetPixels(target), foldedDraws = renderer.info.drawCalls;
-    let worst = 0, varied = false;
-    for (let i = 0; i < plain.length; i++) { worst = Math.max(worst, Math.abs(plain[i] - folded[i])); if (plain[i] !== plain[i % 4]) varied = true; }
+    const folded = await renderer.readRenderTargetPixels(target),
+      foldedDraws = renderer.info.drawCalls;
+    let worst = 0,
+      varied = false;
+    for (let i = 0; i < plain.length; i++) {
+      worst = Math.max(worst, Math.abs(plain[i] - folded[i]));
+      if (plain[i] !== plain[i % 4]) varied = true;
+    }
     if (!varied) throw new Error('The instancing check drew a single color');
     if (worst > 1) throw new Error('Automatic instancing changed the image by ' + worst + ' of 255');
-    if (!(foldedDraws < plainDraws / 2)) throw new Error('Automatic instancing drew ' + foldedDraws + ' times against ' + plainDraws);
+    if (!(foldedDraws < plainDraws / 2))
+      throw new Error('Automatic instancing drew ' + foldedDraws + ' times against ' + plainDraws);
     // Moving one mesh must show up in the next frame.
     scene.children[40].setPosition(0, 4, 0);
     renderer.render(scene, camera, target);
@@ -197,45 +290,1346 @@ export async function verifyAutoInstancing(W, renderer) {
     renderer.autoInstancing = false;
     renderer.render(scene, camera, target);
     const reference = await renderer.readRenderTargetPixels(target);
-    let drift = 0, changed = 0;
-    for (let i = 0; i < moved.length; i++) { drift = Math.max(drift, Math.abs(moved[i] - reference[i])); if (moved[i] !== folded[i]) changed++; }
-    if (drift > 1 || changed === 0) throw new Error('A moved mesh was not redrawn in its instanced run: drift ' + drift + ', changed ' + changed);
-  } finally { renderer.autoInstancing = true; target.dispose(); }
+    let drift = 0,
+      changed = 0;
+    for (let i = 0; i < moved.length; i++) {
+      drift = Math.max(drift, Math.abs(moved[i] - reference[i]));
+      if (moved[i] !== folded[i]) changed++;
+    }
+    if (drift > 1 || changed === 0)
+      throw new Error('A moved mesh was not redrawn in its instanced run: drift ' + drift + ', changed ' + changed);
+  } finally {
+    renderer.autoInstancing = true;
+    target.dispose();
+  }
 }
 
 export function buildCases(W, web) {
-  const checker = (size, cells, a, b) => { const data = new Uint8Array(size * size * 4); for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) data.set([...(((Math.floor(x * cells / size) + Math.floor(y * cells / size)) & 1) ? b : a), 255], (y * size + x) * 4); return new W.Texture3D({width: size, height: size, data}); };
-  const dot = size => { const data = new Uint8Array(size * size * 4); for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) { const d = Math.hypot((x + .5) / size - .5, (y + .5) / size - .5) * 2; data.set([255, 255, 255, Math.round(255 * Math.max(0, 1 - d) ** 2)], (y * size + x) * 4); } return new W.Texture3D({width: size, height: size, data}, {wrapS: 'clamp', wrapT: 'clamp'}); };
-  const base = (bg = [0.05, 0.08, 0.12]) => { const scene = new W.Scene3D(); scene.background = bg; const camera = W.createPerspectiveCamera3D({aspect: 1.6, fov: 50, near: 0.1, far: 100}); camera.setPosition(3, 2.5, 5).lookAt(0, 0.4, 0); scene.addChild(camera); return {scene, camera}; };
-  const lights = (scene, shadow = false) => { scene.addChild(W.createAmbientLight3D({intensity: 0.15})); const sun = W.createDirectionalLight3D({intensity: 1.8, castShadow: shadow}); sun.setPosition(4, 7, 3).lookAt(0, 0, 0); Object.assign(sun.shadow, {extent: 6, near: 1, far: 20}); scene.addChild(sun); return sun; };
-  const floor = scene => { const m = new W.Mesh3D(W.createPlaneGeometry3D({width: 12, height: 12}), W.createStandardMaterial3D({color: 0xbbbbbb, roughness: 0.9})); m.setRotation(-Math.PI / 2, 0, 0); m.castShadow = false; scene.addChild(m); return m; };
+  const checker = (size, cells, a, b) => {
+    const data = new Uint8Array(size * size * 4);
+    for (let y = 0; y < size; y++)
+      for (let x = 0; x < size; x++)
+        data.set(
+          [...((Math.floor((x * cells) / size) + Math.floor((y * cells) / size)) & 1 ? b : a), 255],
+          (y * size + x) * 4
+        );
+    return new W.Texture3D({ width: size, height: size, data });
+  };
+  const dot = size => {
+    const data = new Uint8Array(size * size * 4);
+    for (let y = 0; y < size; y++)
+      for (let x = 0; x < size; x++) {
+        const d = Math.hypot((x + 0.5) / size - 0.5, (y + 0.5) / size - 0.5) * 2;
+        data.set([255, 255, 255, Math.round(255 * Math.max(0, 1 - d) ** 2)], (y * size + x) * 4);
+      }
+    return new W.Texture3D({ width: size, height: size, data }, { wrapS: 'clamp', wrapT: 'clamp' });
+  };
+  const base = (bg = [0.05, 0.08, 0.12]) => {
+    const scene = new W.Scene3D();
+    scene.background = bg;
+    const camera = W.createPerspectiveCamera3D({ aspect: 1.6, fov: 50, near: 0.1, far: 100 });
+    camera.setPosition(3, 2.5, 5).lookAt(0, 0.4, 0);
+    scene.addChild(camera);
+    return { scene, camera };
+  };
+  const lights = (scene, shadow = false) => {
+    scene.addChild(W.createAmbientLight3D({ intensity: 0.15 }));
+    const sun = W.createDirectionalLight3D({ intensity: 1.8, castShadow: shadow });
+    sun.setPosition(4, 7, 3).lookAt(0, 0, 0);
+    Object.assign(sun.shadow, { extent: 6, near: 1, far: 20 });
+    scene.addChild(sun);
+    return sun;
+  };
+  const floor = scene => {
+    const m = new W.Mesh3D(
+      W.createPlaneGeometry3D({ width: 12, height: 12 }),
+      W.createStandardMaterial3D({ color: 0xbbbbbb, roughness: 0.9 })
+    );
+    m.setRotation(-Math.PI / 2, 0, 0);
+    m.castShadow = false;
+    scene.addChild(m);
+    return m;
+  };
   return {
-    unlitTexture() { const s = base(); const t = checker(64, 8, [230, 60, 60], [40, 60, 220]); t.repeat.set([2, 1]); t.rotation = 0.3; t.offset.set([0.1, 0.2]); s.scene.addChild(new W.Mesh3D(W.createBoxGeometry3D({width: 2, height: 2, depth: 2}), W.createUnlitMaterial3D({map: t}))); return s; },
-    shadings() { const s = base(); lights(s.scene); floor(s.scene); const mats = [W.createLambertMaterial3D({color: 0xcc5544}), W.createPhongMaterial3D({color: 0x44aa55, shininess: 40, specular: 0x888888}), W.createStandardMaterial3D({color: 0x4466dd, roughness: 0.35, metallic: 0.2}), W.createStandardMaterial3D({color: 0xdddddd, roughness: 0.6, flatShading: true})]; mats.forEach((m, i) => { const mesh = new W.Mesh3D(W.createSphereGeometry3D({radius: 0.6, widthSegments: i === 3 ? 8 : 32, heightSegments: i === 3 ? 6 : 20}), m); mesh.setPosition(-2.1 + i * 1.4, 0.6, 0); s.scene.addChild(mesh); }); const p = W.createPointLight3D({color: 0xff8844, intensity: 6, range: 6}); p.setPosition(0, 1.5, 2); s.scene.addChild(p); return s; },
-    shadows() { const s = base(); lights(s.scene, true); floor(s.scene); const spot = W.createSpotLight3D({color: 0x88aaff, intensity: 40, range: 15, angle: 0.5, penumbra: 0.3, castShadow: true}); spot.setPosition(-3, 5, 2).lookAt(0, 0, 0); s.scene.addChild(spot); [[-1, 0.5, 0], [1, 0.75, -0.5], [0, 0.3, 1.5]].forEach((p, i) => { const mesh = new W.Mesh3D(i === 1 ? W.createCylinderGeometry3D({radiusTop: 0.4, radiusBottom: 0.4, height: 1.5}) : W.createBoxGeometry3D({width: 1, height: p[1] * 2, depth: 1}), W.createStandardMaterial3D({color: [0xdd6655, 0x55bb77, 0x6677dd][i], roughness: 0.5})); mesh.setPosition(...p); mesh.setRotation(0, i * 0.5, 0); s.scene.addChild(mesh); }); return s; },
-    environment() { const s = base(); const sky = W.createGradientCubeTexture3D([70, 120, 210], [200, 215, 235], [70, 66, 62], 32); s.scene.background = sky; s.scene.environment = sky; s.scene.fog = {kind: 'exponential', color: [0.6, 0.7, 0.8], density: 0.05}; lights(s.scene); floor(s.scene); [0.1, 0.5, 0.9].forEach((r, i) => { const mesh = new W.Mesh3D(W.createSphereGeometry3D({radius: 0.7, widthSegments: 40, heightSegments: 24}), W.createStandardMaterial3D({color: 0xdddddd, metallic: 1, roughness: r})); mesh.setPosition(-1.7 + i * 1.7, 0.7, 0); s.scene.addChild(mesh); }); return s; },
-    instancing() { const s = base(); lights(s.scene, true); floor(s.scene); const im = new W.InstancedMesh3D(W.createBoxGeometry3D({width: 0.3, height: 1, depth: 0.3}), W.createLambertMaterial3D({color: 0xffffff}), 64); for (let i = 0; i < 64; i++) { const h = 0.3 + (i * 37 % 11) / 10; im.setTransformAt(i, [(i % 8) * 0.5 - 1.75, h / 2, Math.floor(i / 8) * 0.5 - 1.75], [0, 0, 0, 1], [1, h, 1]); im.setColorAt(i, (i % 8) / 8, 0.5, Math.floor(i / 8) / 8); } s.scene.addChild(im); return s; },
-    skinMorph() { const s = base(); lights(s.scene, true); floor(s.scene); const h = 2.4, n = 3; const g = W.createCylinderGeometry3D({radiusTop: 0.25, radiusBottom: 0.3, height: h, radialSegments: 16, heightSegments: 16}); const pos = g.getAttribute('position').data; const j = new Uint16Array(pos.length / 3 * 4), w = new Float32Array(pos.length / 3 * 4); for (let i = 0; i < pos.length / 3; i++) { const t = (pos[i * 3 + 1] / h + .5) * (n - 1), lo = Math.min(Math.floor(t), n - 2), k = t - lo; j.set([lo, lo + 1, 0, 0], i * 4); w.set([1 - k, k, 0, 0], i * 4); } g.setAttribute('joints', new W.Attribute3D(j, 4)); g.setAttribute('weights', new W.Attribute3D(w, 4)); const mesh = new W.Mesh3D(g, W.createStandardMaterial3D({color: 0x44bbaa, roughness: 0.5})); mesh.setPosition(-1.2, h / 2, 0); const bones = []; for (let i = 0; i < n; i++) { const b = new W.Bone3D(); b.setPosition(0, i ? h / (n - 1) : -h / 2, 0); (i ? bones[i - 1] : mesh).addChild(b); bones.push(b); } s.scene.addChild(mesh); mesh.updateWorldMatrices(); mesh.bind(new W.Skeleton3D(bones)); bones[1].setRotation(0, 0, 0.5); bones[2].setRotation(0, 0, 0.5); const sg = W.createSphereGeometry3D({radius: 0.7, widthSegments: 24, heightSegments: 16}); const sp = sg.getAttribute('position').data, d = new Float32Array(sp.length); for (let i = 0; i < sp.length; i += 3) { d[i] = sp[i] * 0.5; d[i + 1] = -sp[i + 1] * 0.6; d[i + 2] = sp[i + 2] * 0.5; } sg.setMorphTargets([{name: 'squash', position: d}]); const m2 = new W.Mesh3D(sg, W.createPhongMaterial3D({color: 0xeeaa33})); m2.setPosition(1.2, 0.7, 0); m2.morphWeights[0] = 0.7; s.scene.addChild(m2); return s; },
-    spritesLines() { const s = base(); lights(s.scene); floor(s.scene); s.scene.addChild(W.createGridHelper3D(6, 6, 0x4466aa)).setPosition(0, 0.01, 0); s.scene.addChild(W.createAxesHelper3D(1.5)).setPosition(0, 0.02, 0); const t = dot(32); const sprite = W.createSprite3D({map: t, color: 0x99ffaa}); sprite.setPosition(0, 1.5, 0).setScale(1.2); s.scene.addChild(sprite); const fire = W.createParticleEmitter3D({capacity: 200, rate: 100, lifetime: [0.8, 1.2], speed: [0.8, 1.5], spread: 0.4, startSize: 0.4, endSize: 0.1, startColor: [1, 0.5, 0.1], endColor: [0.9, 0.1, 0], startOpacity: 0.6, map: t, seed: 3}); fire.setPosition(1.5, 0.1, 0); s.scene.addChild(fire); for (let i = 0; i < 40; i++) fire.update(1 / 30); const glass = new W.Mesh3D(W.createBoxGeometry3D(), W.createStandardMaterial3D({color: 0x66aaff, opacity: 0.45})); glass.setPosition(-1.5, 0.5, 0.5); s.scene.addChild(glass); const mask = checker(32, 4, [255, 255, 255], [0, 0, 0]); const md = mask.source.data; for (let i = 0; i < md.length; i += 4) md[i + 3] = md[i]; const cut = new W.Mesh3D(W.createPlaneGeometry3D({width: 1.5, height: 1.5}), W.createUnlitMaterial3D({map: mask, color: 0xffcc44, alphaMode: 'mask', side: 'double'})); cut.setPosition(0, 0.8, -1.5); s.scene.addChild(cut); const wire = new W.Mesh3D(W.createTorusGeometry3D({radius: 0.5, tube: 0.2}), W.createUnlitMaterial3D({color: 0xffffff})); wire.material.wireframe = true; wire.setPosition(-0.2, 0.9, 1.6); s.scene.addChild(wire); return s; },
-    cascades() { const s = base([0.5, 0.7, 0.9]); s.camera.far = 300; s.camera.setPosition(0, 4, 8).lookAt(0, 0, -30); s.scene.addChild(W.createAmbientLight3D({intensity: 0.3})); const sun = W.createDirectionalLight3D({intensity: 2, castShadow: true}); sun.setPosition(10, 20, 5).lookAt(0, 0, 0); Object.assign(sun.shadow, {cascades: 4, cascadeDistance: 100, far: 80}); s.scene.addChild(sun); const ground = new W.Mesh3D(W.createPlaneGeometry3D({width: 400, height: 400}), W.createLambertMaterial3D({color: 0xcccccc})); ground.setRotation(-Math.PI / 2, 0, 0); ground.castShadow = false; s.scene.addChild(ground); const box = W.createBoxGeometry3D({width: 1, height: 3, depth: 1}), material = W.createLambertMaterial3D({color: 0xe65533}); for (let i = 0; i < 12; i++) for (const x of [-4, 4]) { const pillar = new W.Mesh3D(box, material); pillar.setPosition(x, 1.5, 2 - i * 8); s.scene.addChild(pillar); } return s; },
-    postProcess() { const s = base([0.02, 0.02, 0.05]); lights(s.scene); const glow = W.createStandardMaterial3D({color: 0x000000, emissive: [1, 0.6, 0.2]}); glow.emissiveIntensity = 6; const ball = new W.Mesh3D(W.createSphereGeometry3D({radius: 0.7}), glow); ball.setPosition(-1.2, 0.6, 0); s.scene.addChild(ball); const box = new W.Mesh3D(W.createBoxGeometry3D({width: 1.2, height: 1.2, depth: 1.2, widthSegments: 6, heightSegments: 6, depthSegments: 6}), W.createStandardMaterial3D({color: 0x3380e6, roughness: 0.4})); box.setPosition(1.3, 0.6, 0).setRotation(0.4, 0.6, 0.2); s.scene.addChild(box); return {...s, setup(renderer) { Object.assign(renderer.postProcess, {enabled: true, bloom: true, fxaa: true, vignette: 0.4, saturation: 0.8, contrast: 1.1}); }}; },
-    compressedTexture() { const s = base(); return {...s, setup(renderer) { const blocks = {bc1: [0x00, 0xf8, 0xe0, 0x07, 0x50, 0x50, 0x05, 0x05], 'etc2-rgb8': [0xf8, 0x40, 0x00, 0x02, 0, 0, 0, 0]}, format = Object.keys(blocks).find(name => renderer.supportsCompressedFormat(name)); let texture; if (format) { const level = new Uint8Array(4 * 8); for (let i = 0; i < 4; i++) level.set(blocks[format], i * 8); texture = new W.Texture3D({width: 8, height: 8, format, levels: [level, new Uint8Array(blocks[format])]}, {mipmaps: true, colorSpace: 'srgb', flipY: false, magFilter: 'nearest', minFilter: 'nearest'}); } else texture = checker(8, 2, [250, 0, 0], [0, 250, 0]); s.scene.addChild(new W.Mesh3D(W.createBoxGeometry3D({width: 2, height: 2, depth: 2}), W.createUnlitMaterial3D({map: texture}))).setPosition(0, 0.4, 0); }}; },
-    screenLayers() { const s = base(); lights(s.scene); floor(s.scene); const knot = new W.Mesh3D(W.createSphereGeometry3D({radius: 0.8}), W.createStandardMaterial3D({color: 0xcc8833, roughness: 0.5})); knot.setPosition(0, 0.8, 0); s.scene.addChild(knot); const hud = new Uint8Array(32 * 32 * 4); for (let y = 0; y < 32; y++) for (let x = 0; x < 32; x++) hud.set(y < 6 || x < 4 ? [40, 220, 120, 200] : [0, 0, 0, 0], (y * 32 + x) * 4); const sky = new Uint8Array(4 * 4 * 4); for (let i = 0; i < 16; i++) sky.set([30 + i * 10, 40, 90, 255], i * 4); s.scene.background = undefined; s.scene.addChild(W.createScreenLayer3D({width: 4, height: 4, data: sky}, {order: 'underlay'})); s.scene.addChild(W.createScreenLayer3D({width: 32, height: 32, data: hud})); return s; },
-    savedScene() { const s = base(); lights(s.scene, true); floor(s.scene); const t = checker(16, 4, [240, 240, 240], [60, 90, 200]); const box = new W.Mesh3D(W.createBoxGeometry3D({width: 1.4, height: 1.4, depth: 1.4}), W.createStandardMaterial3D({map: t, roughness: 0.6})); box.setPosition(0, 0.7, 0).setRotation(0, 0.5, 0); s.scene.addChild(box); const im = new W.InstancedMesh3D(W.createSphereGeometry3D({radius: 0.2}), W.createLambertMaterial3D({color: 0xffcc44}), 6); for (let i = 0; i < 6; i++) { const at = new W.Object3D().setPosition(-2.5 + i, 0.2, 1.6); at.updateWorldMatrices(); im.setMatrixAt(i, at.matrixWorld); } s.scene.addChild(im); const restored = W.deserializeScene3D(JSON.parse(JSON.stringify(W.serializeScene3D(s.scene)))); return {scene: restored.root, camera: restored.cameras[0]}; },
-    stylizedMaterials() { const s = base(); lights(s.scene); const N = 32, image = new Uint8Array(N * N * 4); for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const dx = (x + 0.5) / N * 2 - 1, dy = (y + 0.5) / N * 2 - 1, l = Math.sqrt(Math.max(0, 1 - Math.hypot(dx, dy))); image.set([255 * l, 160 * l + 60 * Math.max(0, dy), 80 + 100 * Math.max(0, -dx), 255], (y * N + x) * 4); } const paint = W.createStandardMaterial3D({color: 0x991111, roughness: 0.7}); paint.clearcoat = 1; paint.clearcoatRoughness = 0.05; const striped = W.createLambertMaterial3D({color: 0xcccccc}); striped.shader = W.createCustomShader3D({key: 'verify-stripes', uniforms: [0.2, 1, 0.3, 8], glsl: 'vec4 customFragment(vec4 color, vec3 p, vec3 n, vec2 uv) { float band = step(0.5, fract(p.y * uCustom[0].w)); return vec4(mix(color.rgb, uCustom[0].rgb, band * 0.6), color.a); }', wgsl: 'fn customFragment(color: vec4f, p: vec3f, n: vec3f, uv: vec2f) -> vec4f { let band = step(0.5, fract(p.y * material.custom[0].w)); return vec4f(mix(color.rgb, material.custom[0].rgb, band * 0.6), color.a); }'}); const materials = [W.createToonMaterial3D({color: 0xe66633, steps: 3}), W.createMatcapMaterial3D({matcap: new W.Texture3D({width: N, height: N, data: image})}), paint, striped]; const geometries = [W.createTorusKnotGeometry3D({radius: 0.6, tube: 0.2}), W.createIcosahedronGeometry3D({radius: 0.6, detail: 2}), W.createSphereGeometry3D({radius: 0.6}), W.createExtrudeGeometry3D(new W.Shape3D([[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [0, 0.1], [-0.5, 0.5]]), {depth: 0.4})]; materials.forEach((material, i) => { s.scene.addChild(new W.Mesh3D(geometries[i], material)).setPosition(-2.4 + i * 1.6, 0.7, 0).setRotation(0.3, 0.5, 0); }); return s; },
-    pointShadows() { const s = base([0.02, 0.02, 0.03]); s.camera.setPosition(0, 7, 9).lookAt(0, 0.5, 0); s.scene.addChild(W.createAmbientLight3D({intensity: 0.05})); const lamp = W.createPointLight3D({intensity: 30, range: 20, castShadow: true}); lamp.setPosition(0, 2, 0); Object.assign(lamp.shadow, {far: 20, bias: 0.002}); s.scene.addChild(lamp); const ground = new W.Mesh3D(W.createPlaneGeometry3D({width: 20, height: 20}), W.createLambertMaterial3D({color: 0xcccccc})); ground.setRotation(-Math.PI / 2, 0, 0); ground.castShadow = false; s.scene.addChild(ground); const material = W.createLambertMaterial3D({color: 0xe68033}), pillar = W.createBoxGeometry3D({width: 0.6, height: 1.5, depth: 0.6}); for (let i = 0; i < 8; i++) { const angle = i / 8 * Math.PI * 2; s.scene.addChild(new W.Mesh3D(pillar, material)).setPosition(Math.cos(angle) * 3, 0.75, Math.sin(angle) * 3); } s.scene.addChild(new W.Mesh3D(W.createSphereGeometry3D({radius: 0.4}), material)).setPosition(0.8, 3.2, 0.5); return s; },
-    screenSpace() { const s = base([0.6, 0.7, 0.8]); s.camera.setPosition(3, 3, 6).lookAt(0, 0.8, 0); s.scene.addChild(W.createAmbientLight3D({intensity: 0.9})); const sun = W.createDirectionalLight3D({intensity: 0.6}); sun.setPosition(2, 6, 3).lookAt(0, 0, 0); s.scene.addChild(sun); const white = W.createLambertMaterial3D({color: 0xe6e6e6}); s.scene.addChild(new W.Mesh3D(W.createPlaneGeometry3D({width: 12, height: 12}), white)).setRotation(-Math.PI / 2, 0, 0); s.scene.addChild(new W.Mesh3D(W.createBoxGeometry3D({width: 12, height: 4, depth: 0.2}), white)).setPosition(0, 2, -2); for (let i = 0; i < 5; i++) { const h = 0.6 + i * 0.4; s.scene.addChild(new W.Mesh3D(W.createBoxGeometry3D({width: 0.8, height: h, depth: 0.8}), white)).setPosition(-3 + i * 1.3, h / 2, -1.2 + (i % 2) * 0.9); } const ball = new W.Mesh3D(W.createSphereGeometry3D({radius: 0.6}), white); ball.setPosition(1.5, 0.6, 1.2); ball.layers |= 2; s.scene.addChild(ball); s.scene.clippingPlanes = [[-1, 0, 0, 3.2]]; return {...s, setup(renderer) { Object.assign(renderer.postProcess, {enabled: true, bloom: false, fxaa: true, ssao: true, ssaoRadius: 0.6, ssaoIntensity: 1.5, outlineLayers: 2, outlineThickness: 3, outlineColor: [1, 0.4, 0]}); }}; },
-    vertexHook() { const s = base([0.5, 0.7, 0.9]); s.camera.setPosition(0, 4, 9).lookAt(0, 1, 0); s.scene.addChild(W.createAmbientLight3D({intensity: 0.3})); const sun = W.createDirectionalLight3D({intensity: 2, castShadow: true}); sun.setPosition(-4, 8, 3).lookAt(0, 0, 0); sun.shadow.extent = 8; s.scene.addChild(sun); const ground = new W.Mesh3D(W.createPlaneGeometry3D({width: 20, height: 20}), W.createLambertMaterial3D({color: 0xcccbb2})); ground.setRotation(-Math.PI / 2, 0, 0); ground.castShadow = false; s.scene.addChild(ground); const swaying = W.createLambertMaterial3D({color: 0x339933}); swaying.shader = W.createCustomShader3D({key: 'verify-wind', uniforms: [1.3, 0.8, 0, 0], glslVertex: 'vec3 customVertex(vec3 w, vec3 l, vec3 n, vec2 uv, vec4 c) { float bend = uv.y * uv.y * uCustom[0].y; return w + vec3(sin(uCustom[0].x + w.x) * bend + bend + n.x * bend * 0.65, 0.0, 0.0); }', wgslVertex: 'fn customVertex(w: vec3f, l: vec3f, n: vec3f, uv: vec2f, c: vec4f) -> vec3f { let bend = uv.y * uv.y * material.custom[0].y; return w + vec3f(sin(material.custom[0].x + w.x) * bend + bend + n.x * bend * 0.65, 0.0, 0.0); }'}); const blade = W.createCylinderGeometry3D({radiusTop: 0.05, radiusBottom: 0.15, height: 3, heightSegments: 12}), still = W.createLambertMaterial3D({color: 0x994d33}); for (let i = 0; i < 6; i++) s.scene.addChild(new W.Mesh3D(blade, i % 2 ? swaying : still)).setPosition(-5 + i * 2, 1.5, 0); return s; },
-    surfaceExtras() { const s = base([0.25, 0.3, 0.4]); s.camera.setPosition(0, 1.5, 7).lookAt(0, 0.3, 0); lights(s.scene); const stripes = new Uint8Array(8 * 8 * 4); for (let i = 0; i < 64; i++) stripes.set((i % 8) < 4 ? [255, 120, 30, 255] : [10, 10, 40, 255], i * 4); s.scene.addChild(new W.Mesh3D(W.createPlaneGeometry3D({width: 9, height: 3}), W.createUnlitMaterial3D({map: new W.Texture3D({width: 8, height: 8, data: stripes}, {magFilter: 'nearest', minFilter: 'nearest', mipmaps: false})}))).setPosition(0, 0.5, -2); const velvet = W.createStandardMaterial3D({color: 0x40050d, roughness: 1}); velvet.sheen = 1; velvet.sheenColor.set([1, 0.5, 0.6]); velvet.sheenRoughness = 0.3; const baked = W.createLambertMaterial3D({color: 0xffffff}); baked.lightMap = new W.Texture3D({width: 2, height: 2, data: new Uint8Array([255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 0, 255])}, {channel: 1, mipmaps: false, magFilter: 'nearest', minFilter: 'nearest'}); const quad = W.createPlaneGeometry3D({width: 1.4, height: 1.4}); quad.setAttribute('uv1', new W.Attribute3D(quad.getAttribute('uv').data.slice(), 2)); const ball = W.createSphereGeometry3D({radius: 0.7}); [[velvet, ball], [W.createGlassMaterial3D({color: 0xe6f2ff}), ball], [baked, quad]].forEach(([material, geometry], i) => { s.scene.addChild(new W.Mesh3D(geometry, material)).setPosition(-3.2 + i * 1.7, 0.5, 0); }); const batch = W.createBatchedMesh3D(W.createLambertMaterial3D({color: 0xffffff, vertexColors: true})); const place = (x, y, scale) => [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, x, y, 0, 1]; const a = batch.addGeometry(W.createBoxGeometry3D({}), place(2, 0.3, 0.7)), b = batch.addGeometry(W.createTorusGeometry3D({}), place(3.1, 0.5, 1)); batch.setColorAt(a, 1, 0.3, 0.2).setColorAt(b, 0.2, 0.6, 1); s.scene.addChild(batch); const wave = []; for (let i = 0; i <= 40; i++) wave.push([-3.5 + i * 0.175, 1.9 + Math.sin(i * 0.5) * 0.25, 0]); s.scene.addChild(W.createFatLine3D(wave, {width: 0.12, color: 0xffcc1a})); return s; },
-    depthOfField() { const s = base([0.5, 0.7, 0.9]); s.camera.far = 300; s.camera.setPosition(0, 4, 8).lookAt(0, 0, -30); s.scene.addChild(W.createAmbientLight3D({intensity: 0.4})); const sun = W.createDirectionalLight3D({intensity: 2}); sun.setPosition(10, 20, 5).lookAt(0, 0, 0); s.scene.addChild(sun); s.scene.addChild(new W.Mesh3D(W.createPlaneGeometry3D({width: 400, height: 400}), W.createLambertMaterial3D({color: 0xcccccc}))).setRotation(-Math.PI / 2, 0, 0); const pillar = W.createBoxGeometry3D({width: 1, height: 3, depth: 1}), material = W.createLambertMaterial3D({color: 0xe65533}); for (let i = 0; i < 12; i++) for (const x of [-4, 4]) s.scene.addChild(new W.Mesh3D(pillar, material)).setPosition(x, 1.5, 2 - i * 8); return {...s, setup(renderer) { Object.assign(renderer.postProcess, {enabled: true, bloom: false, fxaa: false, dof: true, dofFocus: 10, dofRange: 3, dofRadius: 8}); }}; },
-    refraction() { const s = base([0.25, 0.3, 0.4]); s.camera.setPosition(0, 1.5, 7).lookAt(0, 0.3, 0); lights(s.scene); const checks = new Uint8Array(8 * 8 * 4); for (let i = 0; i < 64; i++) checks.set(((i % 8) + (i >> 3)) % 2 ? [255, 120, 30, 255] : [10, 10, 40, 255], i * 4); s.scene.addChild(new W.Mesh3D(W.createPlaneGeometry3D({width: 9, height: 4}), W.createUnlitMaterial3D({map: new W.Texture3D({width: 8, height: 8, data: checks}, {magFilter: 'nearest', minFilter: 'nearest', mipmaps: false})}))).setPosition(0, 0.5, -2); const frosted = W.createGlassMaterial3D({color: 0x99ffb3, thickness: 0.5, roughness: 0.6}); frosted.attenuationColor.set([0.4, 0.9, 0.5]); frosted.attenuationDistance = 0.5; const ball = W.createSphereGeometry3D({radius: 0.9}); [W.createGlassMaterial3D({color: 0xe6f2ff}), W.createGlassMaterial3D({thickness: 1.2, ior: 1.5}), frosted].forEach((material, i) => { s.scene.addChild(new W.Mesh3D(ball, material)).setPosition(-2.9 + i * 2.4, 0.5, 0); }); s.scene.addChild(new W.Mesh3D(W.createBoxGeometry3D({width: 1.2, height: 1.2, depth: 0.3}), W.createGlassMaterial3D({color: 0xffd0d0, thickness: 0.3, ior: 1.33}))).setPosition(3.4, 1.6, 0.5).setRotation(0, 0.5, 0.2); return s; },
-    textAndGizmo() { const s = base([0.12, 0.14, 0.2]); s.camera.setPosition(0, 1.2, 7).lookAt(0, 0.6, 0); lights(s.scene); const font = W.parseTypefaceFont3D({resolution: 1000, boundingBox: {yMin: -200, yMax: 800}, glyphs: {E: {ha: 600, o: 'm 60 0 l 540 0 l 540 120 l 200 120 l 200 290 l 480 290 l 480 410 l 200 410 l 200 580 l 540 580 l 540 700 l 60 700'}, g: {ha: 620, o: 'm 310 -10 q 560 250 560 -10 q 310 510 560 510 q 60 250 60 510 q 310 -10 60 -10 m 310 110 q 180 250 180 110 q 310 390 180 390 q 440 250 440 390 q 310 110 440 110'}, r: {ha: 460, o: 'm 60 0 l 190 0 l 190 300 b 420 390 220 380 320 400 l 420 510 b 190 440 320 520 240 500 l 190 500 l 60 500'}}}); const text = new W.Mesh3D(W.createTextGeometry3D('Egg\nrEg', font, {size: 1.2, depth: 0.35, align: 'center', lineHeight: 1.05}), [W.createStandardMaterial3D({color: 0xf2c14e, roughness: 0.4}), W.createStandardMaterial3D({color: 0x8a4f1d, roughness: 0.7})]); text.setPosition(-1.6, 1.3, 0).setRotation(0, 0.35, 0); s.scene.addChild(text); const box = new W.Mesh3D(W.createBoxGeometry3D({}), W.createLambertMaterial3D({color: 0x5aa0e6})); box.setPosition(2, 0.6, 0).setRotation(0.3, 0.6, 0); s.scene.addChild(box); const modes = ['translate', 'rotate', 'scale']; modes.forEach((mode, i) => { const target = i === 0 ? box : new W.Object3D(); if (i > 0) { target.setPosition(-3 + i * 1.6, -1.1, 1); target.setRotation(0.2, 0.4 * i, 0); s.scene.addChild(target); } const gizmo = W.createTransformGizmo3D(s.camera, {mode, size: 0.14, space: i === 1 ? 'local' : 'world'}); s.scene.addChild(gizmo); gizmo.attach(target); if (i === 0) { s.scene.updateWorldMatrix(); s.scene.updateWorldMatrices(); s.camera.updateViewMatrices(); const o = new Float32Array(3), d = new Float32Array(3), c = [...box.getWorldPosition()], at = s.camera.worldToScreenPoint([0, 0, 0], [c[0], c[1] + gizmo.scale[1] * 0.6, c[2]]); s.camera.screenPointToRay(at[0], at[1], o, d); gizmo.hover(o, d); } }); return s; },
-    terrainWater() { const s = base([0.5, 0.7, 0.9]); const sky = W.createGradientCubeTexture3D([70, 120, 210], [200, 215, 235], [70, 66, 62], 32); s.scene.background = sky; s.scene.environment = sky; s.scene.environmentIntensity = 0.5; s.camera.setPosition(0, 5, 17).lookAt(0, 0.5, 0); lights(s.scene, true); const field = W.createHeightField3D({columns: 65, rows: 65, width: 48, depth: 48, sample: (x, z) => Math.sin(x * 0.35) * Math.cos(z * 0.3) * 1.6 + Math.hypot(x, z) * 0.16 - 1.8}); const weights = new Uint8Array(16 * 16 * 4); for (let i = 0; i < 256; i++) { const u = (i % 16) / 15, v = (i >> 4) / 15, rock = Math.max(0, Math.sin(u * 9) * Math.cos(v * 7)), sand = Math.max(0, 1 - Math.hypot(u - 0.5, v - 0.5) * 3); weights.set([Math.round(255 * sand), Math.round(255 * (1 - sand) * (1 - rock)), Math.round(255 * rock), 0], i * 4); } const ground = W.createTerrainMaterial3D({layers: [checker(16, 4, [214, 196, 140], [190, 170, 118]), checker(16, 4, [70, 130, 50], [52, 104, 40]), checker(16, 2, [120, 116, 110], [84, 82, 80])], weights: new W.Texture3D({width: 16, height: 16, data: weights}, {mipmaps: false, colorSpace: 'linear', wrapS: 'clamp', wrapT: 'clamp'}), repeat: [24, 30, 12, 1]}); const terrain = W.createTerrain3D(field, ground, {chunkCells: 16, levels: 3, lodDistance: 14}); if (!terrain.createDecal(W.createStandardMaterial3D({color: 0xff2200, alphaMode: 'blend', opacity: 0.85}), {position: [-6.5, field.heightAt(-6.5, 6), 6], normal: [0, 1, 0], width: 3, height: 3, depth: 4})) throw new Error('terrain decal missed'); terrain.setShadows(true, true); s.scene.addChild(terrain); const water = W.createWater3D({width: 48, depth: 48, segments: 64, amplitude: 0.08, wavelength: 4, reflectionSize: 256}); water.time = 1.7; s.scene.addChild(water); [0xff4433, 0xffcc22, 0x44aaff].forEach((color, i) => { const post = new W.Mesh3D(W.createBoxGeometry3D({width: 0.8, height: 3, depth: 0.8}), W.createStandardMaterial3D({color, roughness: 0.6})); post.setPosition(-3 + i * 3, 1.5, -1 - i); s.scene.addChild(post); }); return {...s, setup: renderer => { if (!water.renderReflection(renderer, s.scene, s.camera)) throw new Error('no reflection'); }}; },
-    skinnedCrowd() { const s = base(); s.camera.setPosition(0, 4.5, 9).lookAt(0, 1.1, 0); lights(s.scene, true); floor(s.scene); const h = 2.4, n = 3; const g = W.createCylinderGeometry3D({radiusTop: 0.2, radiusBottom: 0.3, height: h, radialSegments: 12, heightSegments: 12}); const pos = g.getAttribute('position').data; const j = new Uint16Array(pos.length / 3 * 4), w = new Float32Array(pos.length / 3 * 4); for (let i = 0; i < pos.length / 3; i++) { const t = (pos[i * 3 + 1] / h + .5) * (n - 1), lo = Math.min(Math.floor(t), n - 2), k = t - lo; j.set([lo, lo + 1, 0, 0], i * 4); w.set([1 - k, k, 0, 0], i * 4); } g.setAttribute('joints', new W.Attribute3D(j, 4)); g.setAttribute('weights', new W.Attribute3D(w, 4)); const swell = new Float32Array(pos.length); for (let i = 0; i < pos.length; i += 3) { const k = Math.max(0, 1 - Math.abs(pos[i + 1] - 0.3) * 2.5); swell[i] = pos[i] * k * 1.5; swell[i + 2] = pos[i + 2] * k * 1.5; } g.setMorphTargets([{name: 'swell', position: swell}]); const rig = new W.Object3D(); const mesh = new W.Mesh3D(g, W.createStandardMaterial3D({color: 0xffffff, roughness: 0.5})); mesh.name = 'body'; mesh.setPosition(0, h / 2, 0); rig.addChild(mesh); const bones = []; for (let i = 0; i < n; i++) { const b = new W.Bone3D(); b.name = 'bone' + i; b.setPosition(0, i ? h / (n - 1) : -h / 2, 0); (i ? bones[i - 1] : mesh).addChild(b); bones.push(b); } rig.updateWorldMatrices(); mesh.bind(new W.Skeleton3D(bones)); const turn = (axis, angle) => [...W.quatFromAxisAngle([0, 0, 0, 1], axis, angle)]; const sway = W.createAnimationClip3D({name: 'sway', tracks: [1, 2].map(b => ({targetName: 'bone' + b, path: 'quaternion', times: [0, 0.5, 1], values: [...turn([0, 0, 1], -0.6), ...turn([0, 0, 1], 0.6), ...turn([0, 0, 1], -0.6)]}))}); const nod = W.createAnimationClip3D({name: 'nod', tracks: [{targetName: 'bone1', path: 'quaternion', times: [0, 1], values: [...turn([1, 0, 0], 0), ...turn([1, 0, 0], 1.1)]}, {targetName: 'bone2', path: 'scale', times: [0, 1], values: [1, 1, 1, 1.8, 1, 1.8]}, {targetName: 'body', path: 'weights', times: [0, 0.5, 1], values: [0, 1, 0]}]}); const baked = W.bakeAnimationTexture3D(rig, mesh, [sway, nod], {fps: 20}); const crowd = W.createSkinnedInstancedMesh3D(g, mesh.material, baked, 10); for (let i = 0; i < 10; i++) { crowd.setTransformAt(i, [-4 + (i % 5) * 2, h / 2, i < 5 ? -1.5 : 1.2], W.quatFromAxisAngle([0, 0, 0, 1], [0, 1, 0], i * 0.4), 0.8 + (i % 3) * 0.1); crowd.setColorAt(i, 0.3 + (i % 5) * 0.15, 0.8 - (i % 4) * 0.15, 0.4 + (i % 2) * 0.4); crowd.setClipAt(i, i % 2 ? 'nod' : 'sway', {time: i * 0.13, loop: true}); if (i % 3 === 0) crowd.setBlendAt(i, i % 2 ? 'sway' : 'nod', 0.5, {sync: false, time: 0.4}); crowd.setBoneRotationAt(i, ...W.quatFromAxisAngle([0, 0, 0, 1], [1, 0, 0], i < 5 ? 0 : 0.9)); } crowd.lookBone = 2; crowd.cullInstances = true; crowd.update(0.05); bones[1].setRotation(0, 0, 0.7); bones[2].setRotation(0.4, 0, 0.5); rig.setPosition(0, 0, 3.4); s.scene.addChild(rig); rig.updateWorldMatrices(); mesh.material = W.createStandardMaterial3D({color: 0x8090a0, roughness: 0.6}); mesh.castShadow = true; if (!W.createDecal3D(mesh, W.createStandardMaterial3D({color: 0xff3020}), {position: [0.25, h / 2 + 0.5, 3.4], normal: [1, 0, 0], width: 0.9, height: 0.9, depth: 0.6})) throw new Error('skinned decal missed'); crowd.castShadow = true; crowd.receiveShadow = true; s.scene.addChild(crowd); return s; },
-    effects() { const s = base([0.1, 0.12, 0.18]); s.camera.setPosition(0, 3.2, 8).lookAt(0, 1, 0); lights(s.scene, true); floor(s.scene); const mark = new W.Texture3D({width: 8, height: 8, data: (() => { const d = new Uint8Array(256); for (let i = 0; i < 64; i++) { const x = i % 8 - 3.5, y = (i >> 3) - 3.5, ring = Math.abs(Math.hypot(x, y) - 2.5) < 0.9 || (Math.abs(x) < 1 && Math.abs(y) < 1); d.set(ring ? [220, 40, 30, 255] : [0, 0, 0, 0], i * 4); } return d; })()}, {magFilter: 'nearest', minFilter: 'nearest', mipmaps: false}); const crate = new W.Mesh3D(W.createBoxGeometry3D({width: 2, height: 2, depth: 2}), W.createStandardMaterial3D({color: 0x8899aa, roughness: 0.7})); crate.setPosition(-2.6, 1, 0).setRotation(0, 0.5, 0); s.scene.addChild(crate); crate.updateWorldMatrices(); const ball = new W.Mesh3D(W.createSphereGeometry3D({radius: 1.1, widthSegments: 32, heightSegments: 20}), W.createStandardMaterial3D({color: 0xc9b458, roughness: 0.5})); ball.setPosition(2.7, 1.1, 0); s.scene.addChild(ball); ball.updateWorldMatrices(); const paint = () => W.createStandardMaterial3D({map: mark, alphaMode: 'blend', roughness: 0.6}); const corner = W.vec3TransformMat4([0, 0, 0], [1, 1, 0.4], crate.matrixWorld); if (!W.createDecal3D(crate, paint(), {position: corner, normal: [0.6, 0.5, 0.62], width: 1.6, height: 1.6, depth: 1.2})) throw new Error('decal missed the crate'); if (!W.createDecal3D(ball, paint(), {position: [2.7, 1.5, 1.02], normal: [0, 0.35, 1], width: 1.3, height: 1.3, rotation: 0.6})) throw new Error('decal missed the ball'); const trail = W.createTrail3D({points: 40, lifetime: 2, width: 0.5, endWidth: 0.05, color: 0x55ccff, endColor: 0xff44cc, minDistance: 0.01}); s.scene.addChild(trail); for (let i = 0; i <= 30; i++) { const a = i / 30 * Math.PI; trail.push(Math.cos(a) * 2.2, 2.6 + Math.sin(a * 2) * 0.5, 1.5 - Math.sin(a) * 1.5); trail.update(0.05); } const fountain = W.createGpuParticles3D({count: 4000, lifetime: [1.2, 2.2], speed: [2.5, 4], spread: 0.45, gravity: [0, -4, 0], drag: 0.3, startSize: [0.25, 0.5], endScale: 2.2, spin: [-2, 2], startColor: 0xffb060, endColor: 0x4060ff, startOpacity: 0.5, endOpacity: 0.2, softness: 0.6, seed: 7, blending: 'normal', sorted: true}); const hail = W.createGpuParticles3D({count: 300, lifetime: 2.4, speed: [2, 4], spread: 0.5, gravity: [0, -9, 0], startSize: 0.14, startColor: 0x80ff60, endColor: 0x80ff60, floor: 0.07, bounce: 0.6, seed: 11, fadeOut: 0.05}); hail.setPosition(3.2, 2.6, 2.2); hail.time = 5.1; s.scene.addChild(hail); const wake = W.createGpuParticles3D({count: 200, lifetime: 2, speed: 0.01, startSize: 0.22, startColor: 0xffffff, endColor: 0xff8020, space: 'world', seed: 5, fadeIn: 0.01, fadeOut: 0.2}); s.scene.addChild(wake); for (let i = 0; i <= 40; i++) { wake.setPosition(-4 + i * 0.2, 0.4 + Math.sin(i * 0.4) * 0.3, 3); wake.update(0.05); } fountain.setPosition(0, 0.05, 0.5); fountain.time = 3.3; s.scene.addChild(fountain); const burst = W.createGpuParticles3D({count: 600, lifetime: 1, speed: [1, 3], spread: Math.PI, startSize: 0.12, startColor: 0xffffff, endColor: 0xffee88, loop: false, seed: 3}); burst.setPosition(-2.6, 3.4, 0); burst.time = 0.45; s.scene.addChild(burst); return s; },
-    volumetricFog() { const s = base([0.02, 0.03, 0.06]); s.camera.setPosition(0, 2.4, 11).lookAt(0, 2.2, 0); const sun = W.createDirectionalLight3D({intensity: 2.2, castShadow: true}); sun.setPosition(-7, 8, -9).lookAt(0, 1, 0); sun.shadow.extent = 14; s.scene.addChild(sun); s.scene.addChild(W.createAmbientLight3D({intensity: 0.08})); const lamp = W.createSpotLight3D({color: 0xff8844, intensity: 30, range: 14, angle: 0.5, penumbra: 0.3}); lamp.setPosition(5, 6, 2).lookAt(4, 0, 1); s.scene.addChild(lamp); const glow = W.createPointLight3D({color: 0x4488ff, intensity: 6, range: 6}); glow.setPosition(-5.5, 1.2, 3); s.scene.addChild(glow); const ground = new W.Mesh3D(W.createPlaneGeometry3D({width: 60, height: 60}), W.createStandardMaterial3D({color: 0x667755, roughness: 0.9})); ground.setRotation(-Math.PI / 2, 0, 0); ground.receiveShadow = true; ground.castShadow = false; s.scene.addChild(ground); const pillar = W.createBoxGeometry3D({width: 0.6, height: 6, depth: 0.6}), stone = W.createStandardMaterial3D({color: 0x998877, roughness: 0.8}); for (let i = 0; i < 6; i++) { const m = new W.Mesh3D(pillar, stone); m.setPosition(-6 + i * 2.2, 3, -1 - (i % 2) * 2); m.castShadow = true; s.scene.addChild(m); } s.scene.addChild(W.createVolumetricFog3D({color: 0xd0d8e4, density: 0.045, falloff: 0.2, height: 0, distance: 40, anisotropy: 0.4})); return s; },
-    jelly() { const s = base([0.16, 0.2, 0.28]); s.camera.setPosition(0, 2.6, 8.5).lookAt(0, 0.9, 0); lights(s.scene, true); floor(s.scene); const blob = (x, color, shape) => { const node = new W.Object3D(); const mesh = new W.Mesh3D(shape === 'box' ? W.createBoxGeometry3D({width: 1.2, height: 1.2, depth: 1.2, widthSegments: 6, heightSegments: 6, depthSegments: 6}) : W.createSphereGeometry3D({radius: 0.7, widthSegments: 32, heightSegments: 20}), W.createStandardMaterial3D({color, roughness: 0.35})); mesh.castShadow = true; mesh.receiveShadow = true; node.addChild(mesh); node.setPosition(x, shape === 'box' ? 0.6 : 0.7, 0); s.scene.addChild(node); return W.createJelly3D(node, {height: shape === 'box' ? 1.2 : 1.4, stiffness: 2, damping: 0.1}); }; blob(-3.2, 0x66cc88, 'ball').update(1 / 60); const pressed = blob(-1.1, 0xff8866, 'ball'); pressed.impact([0, 1, 0], 7); for (let i = 0; i < 7; i++) pressed.update(1 / 60); const stretched = blob(1.1, 0x66aaff, 'ball'); stretched.impact([0, 1, 0], 7); for (let i = 0; i < 22; i++) stretched.update(1 / 60); const shoved = blob(3.2, 0xffcc44, 'box'); shoved.impact([1, 0, 0], 6); for (let i = 0; i < 6; i++) shoved.update(1 / 60); const world = W.createPhysicsWorld3D(); world.createBody({type: 'static', shape: {type: 'plane'}}); const leg = (x, z) => ({shape: {type: 'box', halfExtents: [0.06, 0.35, 0.06]}, position: [x, -0.1, z]}); const table = new W.Object3D(); const wood = W.createStandardMaterial3D({color: 0x9a6b3c, roughness: 0.7}); const part = (w, h, d, x, y, z) => { const m = new W.Mesh3D(W.createBoxGeometry3D({width: w, height: h, depth: d}), wood); m.setPosition(x, y, z); m.castShadow = true; m.receiveShadow = true; table.addChild(m); }; part(1.6, 0.1, 1, 0, 0.3, 0); for (const [x, z] of [[-0.7, -0.4], [0.7, -0.4], [-0.7, 0.4], [0.7, 0.4]]) part(0.12, 0.7, 0.12, x, -0.1, z); s.scene.addChild(table); world.createBody({mass: 5, position: [0, 0.6, -2.6], quaternion: [0, 0.19509, 0, 0.98079], node: table, shape: {type: 'compound', children: [{shape: {type: 'box', halfExtents: [0.8, 0.05, 0.5]}, position: [0, 0.3, 0]}, leg(-0.7, -0.4), leg(0.7, -0.4), leg(-0.7, 0.4), leg(0.7, 0.4)]}}); const ball = new W.Mesh3D(W.createSphereGeometry3D({radius: 0.22}), W.createStandardMaterial3D({color: 0xdd4455, roughness: 0.3})); ball.castShadow = true; s.scene.addChild(ball); world.createBody({mass: 0.3, position: [0.2, 1.6, -2.6], shape: {type: 'sphere', radius: 0.22}, restitution: 0.1, node: ball}); for (let i = 0; i < 150; i++) world.step(1 / 60); return s; },
-    physicsKits() { const s = base([0.2, 0.24, 0.3]); s.camera.setPosition(0, 3.2, 9).lookAt(0, 1.2, 0); lights(s.scene, true); floor(s.scene); const world = W.createPhysicsWorld3D(); const ground = world.createBody({type: 'static', shape: {type: 'plane'}}); const lit = (color, side) => { const m = W.createStandardMaterial3D({color, roughness: 0.6}); if (side) m.side = side; return m; }; const ballBody = world.createBody({type: 'static', shape: {type: 'sphere', radius: 0.7}, position: [-2.6, 0.7, 0.3]}); const ball = new W.Mesh3D(W.createSphereGeometry3D({radius: 0.7}), lit(0x8899aa)); ball.setPosition(-2.6, 0.7, 0.3); ball.castShadow = true; ball.receiveShadow = true; s.scene.addChild(ball); const cloth = W.createCloth3D({columns: 17, rows: 17, origin: [-3.6, 2.6, -0.7], right: [2, 0, 0], down: [0, 0, 2], colliders: [ground, ballBody], thickness: 0.04, iterations: 12}); for (let i = 0; i < 240; i++) cloth.update(1 / 60); const sheet = cloth.createMesh(lit(0xcc5544, 'double')); sheet.castShadow = true; s.scene.addChild(sheet); const rope = W.createRope3D({start: [-0.9, 3.4, 0], end: [0.9, 3.4, 0], segments: 24, slack: 0.5, pinStart: true, pinEnd: true, iterations: 24}); for (let i = 0; i < 300; i++) rope.update(1 / 60); const cable = rope.createMesh(lit(0xddbb55), 0.05, 8); cable.castShadow = true; s.scene.addChild(cable); const chassisNode = new W.Mesh3D(W.createBoxGeometry3D({width: 1.2, height: 0.4, depth: 2.4}), lit(0x3377cc)); chassisNode.castShadow = true; s.scene.addChild(chassisNode); const chassis = world.createBody({mass: 600, shape: {type: 'box', halfExtents: [0.6, 0.2, 1.2]}, position: [2.6, 1.3, 0], quaternion: [0, 0.38268, 0, 0.92388], node: chassisNode}); const tyre = lit(0x222222); const wheel = (x, z, front) => { const node = new W.Object3D(); const m = new W.Mesh3D(W.createCylinderGeometry3D({radiusTop: 0.3, radiusBottom: 0.3, height: 0.22, radialSegments: 16}), tyre); m.setRotation(0, 0, Math.PI / 2); m.castShadow = true; node.addChild(m); s.scene.addChild(node); return {position: [x, -0.1, z], radius: 0.3, restLength: 0.3, travel: 0.15, steered: front, driven: !front, node}; }; const car = W.createVehicle3D(world, chassis, {wheels: [wheel(-0.65, -0.85, true), wheel(0.65, -0.85, true), wheel(-0.65, 0.85, false), wheel(0.65, 0.85, false)]}); car.steering = 0.6; for (let i = 0; i < 180; i++) { car.update(1 / 60); world.step(1 / 60); } return s; },
-    atmosphere() { const s = base([0.45, 0.62, 0.85]); s.camera.setPosition(0, 2.2, 11).lookAt(0, 2.4, 0); const sun = W.createDirectionalLight3D({intensity: 2, castShadow: true}); sun.setPosition(-3, 5, -14).lookAt(0, 1, 0); s.scene.addChild(sun); s.scene.addChild(W.createAmbientLight3D({intensity: 0.25})); const ground = new W.Mesh3D(W.createPlaneGeometry3D({width: 80, height: 80}), W.createStandardMaterial3D({color: 0x667755, roughness: 0.9})); ground.setRotation(-Math.PI / 2, 0, 0); ground.receiveShadow = true; s.scene.addChild(ground); const pillar = W.createBoxGeometry3D({width: 0.7, height: 7, depth: 0.7}), stone = W.createStandardMaterial3D({color: 0x998877, roughness: 0.8}); for (let i = 0; i < 7; i++) { const m = new W.Mesh3D(pillar, stone); m.setPosition(-7.5 + i * 2.5, 3.5, -4 - (i % 2) * 6); m.castShadow = true; s.scene.addChild(m); } return {...s, setup: renderer => { const air = web.createAtmosphere3D({fogColor: 0xa8b8c8, fogDensity: 0.02, fogFalloff: 0.25, fogHeight: 0, shaftIntensity: 1.2, shaftLength: 0.8}); s.camera.aspect = 1.6; air.update(s.camera, [3, -4, 15]); Object.assign(renderer.postProcess, {enabled: true, bloom: false, fxaa: false, ssao: false, custom: air.post}); }}; },
+    unlitTexture() {
+      const s = base();
+      const t = checker(64, 8, [230, 60, 60], [40, 60, 220]);
+      t.repeat.set([2, 1]);
+      t.rotation = 0.3;
+      t.offset.set([0.1, 0.2]);
+      s.scene.addChild(
+        new W.Mesh3D(W.createBoxGeometry3D({ width: 2, height: 2, depth: 2 }), W.createUnlitMaterial3D({ map: t }))
+      );
+      return s;
+    },
+    shadings() {
+      const s = base();
+      lights(s.scene);
+      floor(s.scene);
+      const mats = [
+        W.createLambertMaterial3D({ color: 0xcc5544 }),
+        W.createPhongMaterial3D({ color: 0x44aa55, shininess: 40, specular: 0x888888 }),
+        W.createStandardMaterial3D({ color: 0x4466dd, roughness: 0.35, metallic: 0.2 }),
+        W.createStandardMaterial3D({ color: 0xdddddd, roughness: 0.6, flatShading: true })
+      ];
+      mats.forEach((m, i) => {
+        const mesh = new W.Mesh3D(
+          W.createSphereGeometry3D({ radius: 0.6, widthSegments: i === 3 ? 8 : 32, heightSegments: i === 3 ? 6 : 20 }),
+          m
+        );
+        mesh.setPosition(-2.1 + i * 1.4, 0.6, 0);
+        s.scene.addChild(mesh);
+      });
+      const p = W.createPointLight3D({ color: 0xff8844, intensity: 6, range: 6 });
+      p.setPosition(0, 1.5, 2);
+      s.scene.addChild(p);
+      return s;
+    },
+    shadows() {
+      const s = base();
+      lights(s.scene, true);
+      floor(s.scene);
+      const spot = W.createSpotLight3D({
+        color: 0x88aaff,
+        intensity: 40,
+        range: 15,
+        angle: 0.5,
+        penumbra: 0.3,
+        castShadow: true
+      });
+      spot.setPosition(-3, 5, 2).lookAt(0, 0, 0);
+      s.scene.addChild(spot);
+      [
+        [-1, 0.5, 0],
+        [1, 0.75, -0.5],
+        [0, 0.3, 1.5]
+      ].forEach((p, i) => {
+        const mesh = new W.Mesh3D(
+          i === 1
+            ? W.createCylinderGeometry3D({ radiusTop: 0.4, radiusBottom: 0.4, height: 1.5 })
+            : W.createBoxGeometry3D({ width: 1, height: p[1] * 2, depth: 1 }),
+          W.createStandardMaterial3D({ color: [0xdd6655, 0x55bb77, 0x6677dd][i], roughness: 0.5 })
+        );
+        mesh.setPosition(...p);
+        mesh.setRotation(0, i * 0.5, 0);
+        s.scene.addChild(mesh);
+      });
+      return s;
+    },
+    environment() {
+      const s = base();
+      const sky = W.createGradientCubeTexture3D([70, 120, 210], [200, 215, 235], [70, 66, 62], 32);
+      s.scene.background = sky;
+      s.scene.environment = sky;
+      s.scene.fog = { kind: 'exponential', color: [0.6, 0.7, 0.8], density: 0.05 };
+      lights(s.scene);
+      floor(s.scene);
+      [0.1, 0.5, 0.9].forEach((r, i) => {
+        const mesh = new W.Mesh3D(
+          W.createSphereGeometry3D({ radius: 0.7, widthSegments: 40, heightSegments: 24 }),
+          W.createStandardMaterial3D({ color: 0xdddddd, metallic: 1, roughness: r })
+        );
+        mesh.setPosition(-1.7 + i * 1.7, 0.7, 0);
+        s.scene.addChild(mesh);
+      });
+      return s;
+    },
+    instancing() {
+      const s = base();
+      lights(s.scene, true);
+      floor(s.scene);
+      const im = new W.InstancedMesh3D(
+        W.createBoxGeometry3D({ width: 0.3, height: 1, depth: 0.3 }),
+        W.createLambertMaterial3D({ color: 0xffffff }),
+        64
+      );
+      for (let i = 0; i < 64; i++) {
+        const h = 0.3 + ((i * 37) % 11) / 10;
+        im.setTransformAt(i, [(i % 8) * 0.5 - 1.75, h / 2, Math.floor(i / 8) * 0.5 - 1.75], [0, 0, 0, 1], [1, h, 1]);
+        im.setColorAt(i, (i % 8) / 8, 0.5, Math.floor(i / 8) / 8);
+      }
+      s.scene.addChild(im);
+      return s;
+    },
+    skinMorph() {
+      const s = base();
+      lights(s.scene, true);
+      floor(s.scene);
+      const h = 2.4,
+        n = 3;
+      const g = W.createCylinderGeometry3D({
+        radiusTop: 0.25,
+        radiusBottom: 0.3,
+        height: h,
+        radialSegments: 16,
+        heightSegments: 16
+      });
+      const pos = g.getAttribute('position').data;
+      const j = new Uint16Array((pos.length / 3) * 4),
+        w = new Float32Array((pos.length / 3) * 4);
+      for (let i = 0; i < pos.length / 3; i++) {
+        const t = (pos[i * 3 + 1] / h + 0.5) * (n - 1),
+          lo = Math.min(Math.floor(t), n - 2),
+          k = t - lo;
+        j.set([lo, lo + 1, 0, 0], i * 4);
+        w.set([1 - k, k, 0, 0], i * 4);
+      }
+      g.setAttribute('joints', new W.Attribute3D(j, 4));
+      g.setAttribute('weights', new W.Attribute3D(w, 4));
+      const mesh = new W.Mesh3D(g, W.createStandardMaterial3D({ color: 0x44bbaa, roughness: 0.5 }));
+      mesh.setPosition(-1.2, h / 2, 0);
+      const bones = [];
+      for (let i = 0; i < n; i++) {
+        const b = new W.Bone3D();
+        b.setPosition(0, i ? h / (n - 1) : -h / 2, 0);
+        (i ? bones[i - 1] : mesh).addChild(b);
+        bones.push(b);
+      }
+      s.scene.addChild(mesh);
+      mesh.updateWorldMatrices();
+      mesh.bind(new W.Skeleton3D(bones));
+      bones[1].setRotation(0, 0, 0.5);
+      bones[2].setRotation(0, 0, 0.5);
+      const sg = W.createSphereGeometry3D({ radius: 0.7, widthSegments: 24, heightSegments: 16 });
+      const sp = sg.getAttribute('position').data,
+        d = new Float32Array(sp.length);
+      for (let i = 0; i < sp.length; i += 3) {
+        d[i] = sp[i] * 0.5;
+        d[i + 1] = -sp[i + 1] * 0.6;
+        d[i + 2] = sp[i + 2] * 0.5;
+      }
+      sg.setMorphTargets([{ name: 'squash', position: d }]);
+      const m2 = new W.Mesh3D(sg, W.createPhongMaterial3D({ color: 0xeeaa33 }));
+      m2.setPosition(1.2, 0.7, 0);
+      m2.morphWeights[0] = 0.7;
+      s.scene.addChild(m2);
+      return s;
+    },
+    spritesLines() {
+      const s = base();
+      lights(s.scene);
+      floor(s.scene);
+      s.scene.addChild(W.createGridHelper3D(6, 6, 0x4466aa)).setPosition(0, 0.01, 0);
+      s.scene.addChild(W.createAxesHelper3D(1.5)).setPosition(0, 0.02, 0);
+      const t = dot(32);
+      const sprite = W.createSprite3D({ map: t, color: 0x99ffaa });
+      sprite.setPosition(0, 1.5, 0).setScale(1.2);
+      s.scene.addChild(sprite);
+      const fire = W.createParticleEmitter3D({
+        capacity: 200,
+        rate: 100,
+        lifetime: [0.8, 1.2],
+        speed: [0.8, 1.5],
+        spread: 0.4,
+        startSize: 0.4,
+        endSize: 0.1,
+        startColor: [1, 0.5, 0.1],
+        endColor: [0.9, 0.1, 0],
+        startOpacity: 0.6,
+        map: t,
+        seed: 3
+      });
+      fire.setPosition(1.5, 0.1, 0);
+      s.scene.addChild(fire);
+      for (let i = 0; i < 40; i++) fire.update(1 / 30);
+      const glass = new W.Mesh3D(
+        W.createBoxGeometry3D(),
+        W.createStandardMaterial3D({ color: 0x66aaff, opacity: 0.45 })
+      );
+      glass.setPosition(-1.5, 0.5, 0.5);
+      s.scene.addChild(glass);
+      const mask = checker(32, 4, [255, 255, 255], [0, 0, 0]);
+      const md = mask.source.data;
+      for (let i = 0; i < md.length; i += 4) md[i + 3] = md[i];
+      const cut = new W.Mesh3D(
+        W.createPlaneGeometry3D({ width: 1.5, height: 1.5 }),
+        W.createUnlitMaterial3D({ map: mask, color: 0xffcc44, alphaMode: 'mask', side: 'double' })
+      );
+      cut.setPosition(0, 0.8, -1.5);
+      s.scene.addChild(cut);
+      const wire = new W.Mesh3D(
+        W.createTorusGeometry3D({ radius: 0.5, tube: 0.2 }),
+        W.createUnlitMaterial3D({ color: 0xffffff })
+      );
+      wire.material.wireframe = true;
+      wire.setPosition(-0.2, 0.9, 1.6);
+      s.scene.addChild(wire);
+      return s;
+    },
+    cascades() {
+      const s = base([0.5, 0.7, 0.9]);
+      s.camera.far = 300;
+      s.camera.setPosition(0, 4, 8).lookAt(0, 0, -30);
+      s.scene.addChild(W.createAmbientLight3D({ intensity: 0.3 }));
+      const sun = W.createDirectionalLight3D({ intensity: 2, castShadow: true });
+      sun.setPosition(10, 20, 5).lookAt(0, 0, 0);
+      Object.assign(sun.shadow, { cascades: 4, cascadeDistance: 100, far: 80 });
+      s.scene.addChild(sun);
+      const ground = new W.Mesh3D(
+        W.createPlaneGeometry3D({ width: 400, height: 400 }),
+        W.createLambertMaterial3D({ color: 0xcccccc })
+      );
+      ground.setRotation(-Math.PI / 2, 0, 0);
+      ground.castShadow = false;
+      s.scene.addChild(ground);
+      const box = W.createBoxGeometry3D({ width: 1, height: 3, depth: 1 }),
+        material = W.createLambertMaterial3D({ color: 0xe65533 });
+      for (let i = 0; i < 12; i++)
+        for (const x of [-4, 4]) {
+          const pillar = new W.Mesh3D(box, material);
+          pillar.setPosition(x, 1.5, 2 - i * 8);
+          s.scene.addChild(pillar);
+        }
+      return s;
+    },
+    postProcess() {
+      const s = base([0.02, 0.02, 0.05]);
+      lights(s.scene);
+      const glow = W.createStandardMaterial3D({ color: 0x000000, emissive: [1, 0.6, 0.2] });
+      glow.emissiveIntensity = 6;
+      const ball = new W.Mesh3D(W.createSphereGeometry3D({ radius: 0.7 }), glow);
+      ball.setPosition(-1.2, 0.6, 0);
+      s.scene.addChild(ball);
+      const box = new W.Mesh3D(
+        W.createBoxGeometry3D({
+          width: 1.2,
+          height: 1.2,
+          depth: 1.2,
+          widthSegments: 6,
+          heightSegments: 6,
+          depthSegments: 6
+        }),
+        W.createStandardMaterial3D({ color: 0x3380e6, roughness: 0.4 })
+      );
+      box.setPosition(1.3, 0.6, 0).setRotation(0.4, 0.6, 0.2);
+      s.scene.addChild(box);
+      return {
+        ...s,
+        setup(renderer) {
+          Object.assign(renderer.postProcess, {
+            enabled: true,
+            bloom: true,
+            fxaa: true,
+            vignette: 0.4,
+            saturation: 0.8,
+            contrast: 1.1
+          });
+        }
+      };
+    },
+    compressedTexture() {
+      const s = base();
+      return {
+        ...s,
+        setup(renderer) {
+          const blocks = {
+              bc1: [0x00, 0xf8, 0xe0, 0x07, 0x50, 0x50, 0x05, 0x05],
+              'etc2-rgb8': [0xf8, 0x40, 0x00, 0x02, 0, 0, 0, 0]
+            },
+            format = Object.keys(blocks).find(name => renderer.supportsCompressedFormat(name));
+          let texture;
+          if (format) {
+            const level = new Uint8Array(4 * 8);
+            for (let i = 0; i < 4; i++) level.set(blocks[format], i * 8);
+            texture = new W.Texture3D(
+              { width: 8, height: 8, format, levels: [level, new Uint8Array(blocks[format])] },
+              { mipmaps: true, colorSpace: 'srgb', flipY: false, magFilter: 'nearest', minFilter: 'nearest' }
+            );
+          } else texture = checker(8, 2, [250, 0, 0], [0, 250, 0]);
+          s.scene
+            .addChild(
+              new W.Mesh3D(
+                W.createBoxGeometry3D({ width: 2, height: 2, depth: 2 }),
+                W.createUnlitMaterial3D({ map: texture })
+              )
+            )
+            .setPosition(0, 0.4, 0);
+        }
+      };
+    },
+    screenLayers() {
+      const s = base();
+      lights(s.scene);
+      floor(s.scene);
+      const knot = new W.Mesh3D(
+        W.createSphereGeometry3D({ radius: 0.8 }),
+        W.createStandardMaterial3D({ color: 0xcc8833, roughness: 0.5 })
+      );
+      knot.setPosition(0, 0.8, 0);
+      s.scene.addChild(knot);
+      const hud = new Uint8Array(32 * 32 * 4);
+      for (let y = 0; y < 32; y++)
+        for (let x = 0; x < 32; x++) hud.set(y < 6 || x < 4 ? [40, 220, 120, 200] : [0, 0, 0, 0], (y * 32 + x) * 4);
+      const sky = new Uint8Array(4 * 4 * 4);
+      for (let i = 0; i < 16; i++) sky.set([30 + i * 10, 40, 90, 255], i * 4);
+      s.scene.background = undefined;
+      s.scene.addChild(W.createScreenLayer3D({ width: 4, height: 4, data: sky }, { order: 'underlay' }));
+      s.scene.addChild(W.createScreenLayer3D({ width: 32, height: 32, data: hud }));
+      return s;
+    },
+    savedScene() {
+      const s = base();
+      lights(s.scene, true);
+      floor(s.scene);
+      const t = checker(16, 4, [240, 240, 240], [60, 90, 200]);
+      const box = new W.Mesh3D(
+        W.createBoxGeometry3D({ width: 1.4, height: 1.4, depth: 1.4 }),
+        W.createStandardMaterial3D({ map: t, roughness: 0.6 })
+      );
+      box.setPosition(0, 0.7, 0).setRotation(0, 0.5, 0);
+      s.scene.addChild(box);
+      const im = new W.InstancedMesh3D(
+        W.createSphereGeometry3D({ radius: 0.2 }),
+        W.createLambertMaterial3D({ color: 0xffcc44 }),
+        6
+      );
+      for (let i = 0; i < 6; i++) {
+        const at = new W.Object3D().setPosition(-2.5 + i, 0.2, 1.6);
+        at.updateWorldMatrices();
+        im.setMatrixAt(i, at.matrixWorld);
+      }
+      s.scene.addChild(im);
+      const restored = W.deserializeScene3D(JSON.parse(JSON.stringify(W.serializeScene3D(s.scene))));
+      return { scene: restored.root, camera: restored.cameras[0] };
+    },
+    stylizedMaterials() {
+      const s = base();
+      lights(s.scene);
+      const N = 32,
+        image = new Uint8Array(N * N * 4);
+      for (let y = 0; y < N; y++)
+        for (let x = 0; x < N; x++) {
+          const dx = ((x + 0.5) / N) * 2 - 1,
+            dy = ((y + 0.5) / N) * 2 - 1,
+            l = Math.sqrt(Math.max(0, 1 - Math.hypot(dx, dy)));
+          image.set([255 * l, 160 * l + 60 * Math.max(0, dy), 80 + 100 * Math.max(0, -dx), 255], (y * N + x) * 4);
+        }
+      const paint = W.createStandardMaterial3D({ color: 0x991111, roughness: 0.7 });
+      paint.clearcoat = 1;
+      paint.clearcoatRoughness = 0.05;
+      const striped = W.createLambertMaterial3D({ color: 0xcccccc });
+      striped.shader = W.createCustomShader3D({
+        key: 'verify-stripes',
+        uniforms: [0.2, 1, 0.3, 8],
+        glsl: 'vec4 customFragment(vec4 color, vec3 p, vec3 n, vec2 uv) { float band = step(0.5, fract(p.y * uCustom[0].w)); return vec4(mix(color.rgb, uCustom[0].rgb, band * 0.6), color.a); }',
+        wgsl: 'fn customFragment(color: vec4f, p: vec3f, n: vec3f, uv: vec2f) -> vec4f { let band = step(0.5, fract(p.y * material.custom[0].w)); return vec4f(mix(color.rgb, material.custom[0].rgb, band * 0.6), color.a); }'
+      });
+      const materials = [
+        W.createToonMaterial3D({ color: 0xe66633, steps: 3 }),
+        W.createMatcapMaterial3D({ matcap: new W.Texture3D({ width: N, height: N, data: image }) }),
+        paint,
+        striped
+      ];
+      const geometries = [
+        W.createTorusKnotGeometry3D({ radius: 0.6, tube: 0.2 }),
+        W.createIcosahedronGeometry3D({ radius: 0.6, detail: 2 }),
+        W.createSphereGeometry3D({ radius: 0.6 }),
+        W.createExtrudeGeometry3D(
+          new W.Shape3D([
+            [-0.5, -0.5],
+            [0.5, -0.5],
+            [0.5, 0.5],
+            [0, 0.1],
+            [-0.5, 0.5]
+          ]),
+          { depth: 0.4 }
+        )
+      ];
+      materials.forEach((material, i) => {
+        s.scene
+          .addChild(new W.Mesh3D(geometries[i], material))
+          .setPosition(-2.4 + i * 1.6, 0.7, 0)
+          .setRotation(0.3, 0.5, 0);
+      });
+      return s;
+    },
+    pointShadows() {
+      const s = base([0.02, 0.02, 0.03]);
+      s.camera.setPosition(0, 7, 9).lookAt(0, 0.5, 0);
+      s.scene.addChild(W.createAmbientLight3D({ intensity: 0.05 }));
+      const lamp = W.createPointLight3D({ intensity: 30, range: 20, castShadow: true });
+      lamp.setPosition(0, 2, 0);
+      Object.assign(lamp.shadow, { far: 20, bias: 0.002 });
+      s.scene.addChild(lamp);
+      const ground = new W.Mesh3D(
+        W.createPlaneGeometry3D({ width: 20, height: 20 }),
+        W.createLambertMaterial3D({ color: 0xcccccc })
+      );
+      ground.setRotation(-Math.PI / 2, 0, 0);
+      ground.castShadow = false;
+      s.scene.addChild(ground);
+      const material = W.createLambertMaterial3D({ color: 0xe68033 }),
+        pillar = W.createBoxGeometry3D({ width: 0.6, height: 1.5, depth: 0.6 });
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2;
+        s.scene.addChild(new W.Mesh3D(pillar, material)).setPosition(Math.cos(angle) * 3, 0.75, Math.sin(angle) * 3);
+      }
+      s.scene.addChild(new W.Mesh3D(W.createSphereGeometry3D({ radius: 0.4 }), material)).setPosition(0.8, 3.2, 0.5);
+      return s;
+    },
+    screenSpace() {
+      const s = base([0.6, 0.7, 0.8]);
+      s.camera.setPosition(3, 3, 6).lookAt(0, 0.8, 0);
+      s.scene.addChild(W.createAmbientLight3D({ intensity: 0.9 }));
+      const sun = W.createDirectionalLight3D({ intensity: 0.6 });
+      sun.setPosition(2, 6, 3).lookAt(0, 0, 0);
+      s.scene.addChild(sun);
+      const white = W.createLambertMaterial3D({ color: 0xe6e6e6 });
+      s.scene
+        .addChild(new W.Mesh3D(W.createPlaneGeometry3D({ width: 12, height: 12 }), white))
+        .setRotation(-Math.PI / 2, 0, 0);
+      s.scene
+        .addChild(new W.Mesh3D(W.createBoxGeometry3D({ width: 12, height: 4, depth: 0.2 }), white))
+        .setPosition(0, 2, -2);
+      for (let i = 0; i < 5; i++) {
+        const h = 0.6 + i * 0.4;
+        s.scene
+          .addChild(new W.Mesh3D(W.createBoxGeometry3D({ width: 0.8, height: h, depth: 0.8 }), white))
+          .setPosition(-3 + i * 1.3, h / 2, -1.2 + (i % 2) * 0.9);
+      }
+      const ball = new W.Mesh3D(W.createSphereGeometry3D({ radius: 0.6 }), white);
+      ball.setPosition(1.5, 0.6, 1.2);
+      ball.layers |= 2;
+      s.scene.addChild(ball);
+      s.scene.clippingPlanes = [[-1, 0, 0, 3.2]];
+      return {
+        ...s,
+        setup(renderer) {
+          Object.assign(renderer.postProcess, {
+            enabled: true,
+            bloom: false,
+            fxaa: true,
+            ssao: true,
+            ssaoRadius: 0.6,
+            ssaoIntensity: 1.5,
+            outlineLayers: 2,
+            outlineThickness: 3,
+            outlineColor: [1, 0.4, 0]
+          });
+        }
+      };
+    },
+    vertexHook() {
+      const s = base([0.5, 0.7, 0.9]);
+      s.camera.setPosition(0, 4, 9).lookAt(0, 1, 0);
+      s.scene.addChild(W.createAmbientLight3D({ intensity: 0.3 }));
+      const sun = W.createDirectionalLight3D({ intensity: 2, castShadow: true });
+      sun.setPosition(-4, 8, 3).lookAt(0, 0, 0);
+      sun.shadow.extent = 8;
+      s.scene.addChild(sun);
+      const ground = new W.Mesh3D(
+        W.createPlaneGeometry3D({ width: 20, height: 20 }),
+        W.createLambertMaterial3D({ color: 0xcccbb2 })
+      );
+      ground.setRotation(-Math.PI / 2, 0, 0);
+      ground.castShadow = false;
+      s.scene.addChild(ground);
+      const swaying = W.createLambertMaterial3D({ color: 0x339933 });
+      swaying.shader = W.createCustomShader3D({
+        key: 'verify-wind',
+        uniforms: [1.3, 0.8, 0, 0],
+        glslVertex:
+          'vec3 customVertex(vec3 w, vec3 l, vec3 n, vec2 uv, vec4 c) { float bend = uv.y * uv.y * uCustom[0].y; return w + vec3(sin(uCustom[0].x + w.x) * bend + bend + n.x * bend * 0.65, 0.0, 0.0); }',
+        wgslVertex:
+          'fn customVertex(w: vec3f, l: vec3f, n: vec3f, uv: vec2f, c: vec4f) -> vec3f { let bend = uv.y * uv.y * material.custom[0].y; return w + vec3f(sin(material.custom[0].x + w.x) * bend + bend + n.x * bend * 0.65, 0.0, 0.0); }'
+      });
+      const blade = W.createCylinderGeometry3D({ radiusTop: 0.05, radiusBottom: 0.15, height: 3, heightSegments: 12 }),
+        still = W.createLambertMaterial3D({ color: 0x994d33 });
+      for (let i = 0; i < 6; i++)
+        s.scene.addChild(new W.Mesh3D(blade, i % 2 ? swaying : still)).setPosition(-5 + i * 2, 1.5, 0);
+      return s;
+    },
+    surfaceExtras() {
+      const s = base([0.25, 0.3, 0.4]);
+      s.camera.setPosition(0, 1.5, 7).lookAt(0, 0.3, 0);
+      lights(s.scene);
+      const stripes = new Uint8Array(8 * 8 * 4);
+      for (let i = 0; i < 64; i++) stripes.set(i % 8 < 4 ? [255, 120, 30, 255] : [10, 10, 40, 255], i * 4);
+      s.scene
+        .addChild(
+          new W.Mesh3D(
+            W.createPlaneGeometry3D({ width: 9, height: 3 }),
+            W.createUnlitMaterial3D({
+              map: new W.Texture3D(
+                { width: 8, height: 8, data: stripes },
+                { magFilter: 'nearest', minFilter: 'nearest', mipmaps: false }
+              )
+            })
+          )
+        )
+        .setPosition(0, 0.5, -2);
+      const velvet = W.createStandardMaterial3D({ color: 0x40050d, roughness: 1 });
+      velvet.sheen = 1;
+      velvet.sheenColor.set([1, 0.5, 0.6]);
+      velvet.sheenRoughness = 0.3;
+      const baked = W.createLambertMaterial3D({ color: 0xffffff });
+      baked.lightMap = new W.Texture3D(
+        {
+          width: 2,
+          height: 2,
+          data: new Uint8Array([255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 0, 255])
+        },
+        { channel: 1, mipmaps: false, magFilter: 'nearest', minFilter: 'nearest' }
+      );
+      const quad = W.createPlaneGeometry3D({ width: 1.4, height: 1.4 });
+      quad.setAttribute('uv1', new W.Attribute3D(quad.getAttribute('uv').data.slice(), 2));
+      const ball = W.createSphereGeometry3D({ radius: 0.7 });
+      [
+        [velvet, ball],
+        [W.createGlassMaterial3D({ color: 0xe6f2ff }), ball],
+        [baked, quad]
+      ].forEach(([material, geometry], i) => {
+        s.scene.addChild(new W.Mesh3D(geometry, material)).setPosition(-3.2 + i * 1.7, 0.5, 0);
+      });
+      const batch = W.createBatchedMesh3D(W.createLambertMaterial3D({ color: 0xffffff, vertexColors: true }));
+      const place = (x, y, scale) => [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, x, y, 0, 1];
+      const a = batch.addGeometry(W.createBoxGeometry3D({}), place(2, 0.3, 0.7)),
+        b = batch.addGeometry(W.createTorusGeometry3D({}), place(3.1, 0.5, 1));
+      batch.setColorAt(a, 1, 0.3, 0.2).setColorAt(b, 0.2, 0.6, 1);
+      s.scene.addChild(batch);
+      const wave = [];
+      for (let i = 0; i <= 40; i++) wave.push([-3.5 + i * 0.175, 1.9 + Math.sin(i * 0.5) * 0.25, 0]);
+      s.scene.addChild(W.createFatLine3D(wave, { width: 0.12, color: 0xffcc1a }));
+      return s;
+    },
+    depthOfField() {
+      const s = base([0.5, 0.7, 0.9]);
+      s.camera.far = 300;
+      s.camera.setPosition(0, 4, 8).lookAt(0, 0, -30);
+      s.scene.addChild(W.createAmbientLight3D({ intensity: 0.4 }));
+      const sun = W.createDirectionalLight3D({ intensity: 2 });
+      sun.setPosition(10, 20, 5).lookAt(0, 0, 0);
+      s.scene.addChild(sun);
+      s.scene
+        .addChild(
+          new W.Mesh3D(
+            W.createPlaneGeometry3D({ width: 400, height: 400 }),
+            W.createLambertMaterial3D({ color: 0xcccccc })
+          )
+        )
+        .setRotation(-Math.PI / 2, 0, 0);
+      const pillar = W.createBoxGeometry3D({ width: 1, height: 3, depth: 1 }),
+        material = W.createLambertMaterial3D({ color: 0xe65533 });
+      for (let i = 0; i < 12; i++)
+        for (const x of [-4, 4]) s.scene.addChild(new W.Mesh3D(pillar, material)).setPosition(x, 1.5, 2 - i * 8);
+      return {
+        ...s,
+        setup(renderer) {
+          Object.assign(renderer.postProcess, {
+            enabled: true,
+            bloom: false,
+            fxaa: false,
+            dof: true,
+            dofFocus: 10,
+            dofRange: 3,
+            dofRadius: 8
+          });
+        }
+      };
+    },
+    refraction() {
+      const s = base([0.25, 0.3, 0.4]);
+      s.camera.setPosition(0, 1.5, 7).lookAt(0, 0.3, 0);
+      lights(s.scene);
+      const checks = new Uint8Array(8 * 8 * 4);
+      for (let i = 0; i < 64; i++)
+        checks.set(((i % 8) + (i >> 3)) % 2 ? [255, 120, 30, 255] : [10, 10, 40, 255], i * 4);
+      s.scene
+        .addChild(
+          new W.Mesh3D(
+            W.createPlaneGeometry3D({ width: 9, height: 4 }),
+            W.createUnlitMaterial3D({
+              map: new W.Texture3D(
+                { width: 8, height: 8, data: checks },
+                { magFilter: 'nearest', minFilter: 'nearest', mipmaps: false }
+              )
+            })
+          )
+        )
+        .setPosition(0, 0.5, -2);
+      const frosted = W.createGlassMaterial3D({ color: 0x99ffb3, thickness: 0.5, roughness: 0.6 });
+      frosted.attenuationColor.set([0.4, 0.9, 0.5]);
+      frosted.attenuationDistance = 0.5;
+      const ball = W.createSphereGeometry3D({ radius: 0.9 });
+      [
+        W.createGlassMaterial3D({ color: 0xe6f2ff }),
+        W.createGlassMaterial3D({ thickness: 1.2, ior: 1.5 }),
+        frosted
+      ].forEach((material, i) => {
+        s.scene.addChild(new W.Mesh3D(ball, material)).setPosition(-2.9 + i * 2.4, 0.5, 0);
+      });
+      s.scene
+        .addChild(
+          new W.Mesh3D(
+            W.createBoxGeometry3D({ width: 1.2, height: 1.2, depth: 0.3 }),
+            W.createGlassMaterial3D({ color: 0xffd0d0, thickness: 0.3, ior: 1.33 })
+          )
+        )
+        .setPosition(3.4, 1.6, 0.5)
+        .setRotation(0, 0.5, 0.2);
+      return s;
+    },
+    textAndGizmo() {
+      const s = base([0.12, 0.14, 0.2]);
+      s.camera.setPosition(0, 1.2, 7).lookAt(0, 0.6, 0);
+      lights(s.scene);
+      const font = W.parseTypefaceFont3D({
+        resolution: 1000,
+        boundingBox: { yMin: -200, yMax: 800 },
+        glyphs: {
+          E: {
+            ha: 600,
+            o: 'm 60 0 l 540 0 l 540 120 l 200 120 l 200 290 l 480 290 l 480 410 l 200 410 l 200 580 l 540 580 l 540 700 l 60 700'
+          },
+          g: {
+            ha: 620,
+            o: 'm 310 -10 q 560 250 560 -10 q 310 510 560 510 q 60 250 60 510 q 310 -10 60 -10 m 310 110 q 180 250 180 110 q 310 390 180 390 q 440 250 440 390 q 310 110 440 110'
+          },
+          r: {
+            ha: 460,
+            o: 'm 60 0 l 190 0 l 190 300 b 420 390 220 380 320 400 l 420 510 b 190 440 320 520 240 500 l 190 500 l 60 500'
+          }
+        }
+      });
+      const text = new W.Mesh3D(
+        W.createTextGeometry3D('Egg\nrEg', font, { size: 1.2, depth: 0.35, align: 'center', lineHeight: 1.05 }),
+        [
+          W.createStandardMaterial3D({ color: 0xf2c14e, roughness: 0.4 }),
+          W.createStandardMaterial3D({ color: 0x8a4f1d, roughness: 0.7 })
+        ]
+      );
+      text.setPosition(-1.6, 1.3, 0).setRotation(0, 0.35, 0);
+      s.scene.addChild(text);
+      const box = new W.Mesh3D(W.createBoxGeometry3D({}), W.createLambertMaterial3D({ color: 0x5aa0e6 }));
+      box.setPosition(2, 0.6, 0).setRotation(0.3, 0.6, 0);
+      s.scene.addChild(box);
+      const modes = ['translate', 'rotate', 'scale'];
+      modes.forEach((mode, i) => {
+        const target = i === 0 ? box : new W.Object3D();
+        if (i > 0) {
+          target.setPosition(-3 + i * 1.6, -1.1, 1);
+          target.setRotation(0.2, 0.4 * i, 0);
+          s.scene.addChild(target);
+        }
+        const gizmo = W.createTransformGizmo3D(s.camera, { mode, size: 0.14, space: i === 1 ? 'local' : 'world' });
+        s.scene.addChild(gizmo);
+        gizmo.attach(target);
+        if (i === 0) {
+          s.scene.updateWorldMatrix();
+          s.scene.updateWorldMatrices();
+          s.camera.updateViewMatrices();
+          const o = new Float32Array(3),
+            d = new Float32Array(3),
+            c = [...box.getWorldPosition()],
+            at = s.camera.worldToScreenPoint([0, 0, 0], [c[0], c[1] + gizmo.scale[1] * 0.6, c[2]]);
+          s.camera.screenPointToRay(at[0], at[1], o, d);
+          gizmo.hover(o, d);
+        }
+      });
+      return s;
+    },
+    terrainWater() {
+      const s = base([0.5, 0.7, 0.9]);
+      const sky = W.createGradientCubeTexture3D([70, 120, 210], [200, 215, 235], [70, 66, 62], 32);
+      s.scene.background = sky;
+      s.scene.environment = sky;
+      s.scene.environmentIntensity = 0.5;
+      s.camera.setPosition(0, 5, 17).lookAt(0, 0.5, 0);
+      lights(s.scene, true);
+      const field = W.createHeightField3D({
+        columns: 65,
+        rows: 65,
+        width: 48,
+        depth: 48,
+        sample: (x, z) => Math.sin(x * 0.35) * Math.cos(z * 0.3) * 1.6 + Math.hypot(x, z) * 0.16 - 1.8
+      });
+      const weights = new Uint8Array(16 * 16 * 4);
+      for (let i = 0; i < 256; i++) {
+        const u = (i % 16) / 15,
+          v = (i >> 4) / 15,
+          rock = Math.max(0, Math.sin(u * 9) * Math.cos(v * 7)),
+          sand = Math.max(0, 1 - Math.hypot(u - 0.5, v - 0.5) * 3);
+        weights.set(
+          [Math.round(255 * sand), Math.round(255 * (1 - sand) * (1 - rock)), Math.round(255 * rock), 0],
+          i * 4
+        );
+      }
+      const ground = W.createTerrainMaterial3D({
+        layers: [
+          checker(16, 4, [214, 196, 140], [190, 170, 118]),
+          checker(16, 4, [70, 130, 50], [52, 104, 40]),
+          checker(16, 2, [120, 116, 110], [84, 82, 80])
+        ],
+        weights: new W.Texture3D(
+          { width: 16, height: 16, data: weights },
+          { mipmaps: false, colorSpace: 'linear', wrapS: 'clamp', wrapT: 'clamp' }
+        ),
+        repeat: [24, 30, 12, 1]
+      });
+      const terrain = W.createTerrain3D(field, ground, { chunkCells: 16, levels: 3, lodDistance: 14 });
+      if (
+        !terrain.createDecal(W.createStandardMaterial3D({ color: 0xff2200, alphaMode: 'blend', opacity: 0.85 }), {
+          position: [-6.5, field.heightAt(-6.5, 6), 6],
+          normal: [0, 1, 0],
+          width: 3,
+          height: 3,
+          depth: 4
+        })
+      )
+        throw new Error('terrain decal missed');
+      terrain.setShadows(true, true);
+      s.scene.addChild(terrain);
+      const water = W.createWater3D({
+        width: 48,
+        depth: 48,
+        segments: 64,
+        amplitude: 0.08,
+        wavelength: 4,
+        reflectionSize: 256
+      });
+      water.time = 1.7;
+      s.scene.addChild(water);
+      [0xff4433, 0xffcc22, 0x44aaff].forEach((color, i) => {
+        const post = new W.Mesh3D(
+          W.createBoxGeometry3D({ width: 0.8, height: 3, depth: 0.8 }),
+          W.createStandardMaterial3D({ color, roughness: 0.6 })
+        );
+        post.setPosition(-3 + i * 3, 1.5, -1 - i);
+        s.scene.addChild(post);
+      });
+      return {
+        ...s,
+        setup: renderer => {
+          if (!water.renderReflection(renderer, s.scene, s.camera)) throw new Error('no reflection');
+        }
+      };
+    },
+    skinnedCrowd() {
+      const s = base();
+      s.camera.setPosition(0, 4.5, 9).lookAt(0, 1.1, 0);
+      lights(s.scene, true);
+      floor(s.scene);
+      const h = 2.4,
+        n = 3;
+      const g = W.createCylinderGeometry3D({
+        radiusTop: 0.2,
+        radiusBottom: 0.3,
+        height: h,
+        radialSegments: 12,
+        heightSegments: 12
+      });
+      const pos = g.getAttribute('position').data;
+      const j = new Uint16Array((pos.length / 3) * 4),
+        w = new Float32Array((pos.length / 3) * 4);
+      for (let i = 0; i < pos.length / 3; i++) {
+        const t = (pos[i * 3 + 1] / h + 0.5) * (n - 1),
+          lo = Math.min(Math.floor(t), n - 2),
+          k = t - lo;
+        j.set([lo, lo + 1, 0, 0], i * 4);
+        w.set([1 - k, k, 0, 0], i * 4);
+      }
+      g.setAttribute('joints', new W.Attribute3D(j, 4));
+      g.setAttribute('weights', new W.Attribute3D(w, 4));
+      const swell = new Float32Array(pos.length);
+      for (let i = 0; i < pos.length; i += 3) {
+        const k = Math.max(0, 1 - Math.abs(pos[i + 1] - 0.3) * 2.5);
+        swell[i] = pos[i] * k * 1.5;
+        swell[i + 2] = pos[i + 2] * k * 1.5;
+      }
+      g.setMorphTargets([{ name: 'swell', position: swell }]);
+      const rig = new W.Object3D();
+      const mesh = new W.Mesh3D(g, W.createStandardMaterial3D({ color: 0xffffff, roughness: 0.5 }));
+      mesh.name = 'body';
+      mesh.setPosition(0, h / 2, 0);
+      rig.addChild(mesh);
+      const bones = [];
+      for (let i = 0; i < n; i++) {
+        const b = new W.Bone3D();
+        b.name = 'bone' + i;
+        b.setPosition(0, i ? h / (n - 1) : -h / 2, 0);
+        (i ? bones[i - 1] : mesh).addChild(b);
+        bones.push(b);
+      }
+      rig.updateWorldMatrices();
+      mesh.bind(new W.Skeleton3D(bones));
+      const turn = (axis, angle) => [...W.quatFromAxisAngle([0, 0, 0, 1], axis, angle)];
+      const sway = W.createAnimationClip3D({
+        name: 'sway',
+        tracks: [1, 2].map(b => ({
+          targetName: 'bone' + b,
+          path: 'quaternion',
+          times: [0, 0.5, 1],
+          values: [...turn([0, 0, 1], -0.6), ...turn([0, 0, 1], 0.6), ...turn([0, 0, 1], -0.6)]
+        }))
+      });
+      const nod = W.createAnimationClip3D({
+        name: 'nod',
+        tracks: [
+          {
+            targetName: 'bone1',
+            path: 'quaternion',
+            times: [0, 1],
+            values: [...turn([1, 0, 0], 0), ...turn([1, 0, 0], 1.1)]
+          },
+          { targetName: 'bone2', path: 'scale', times: [0, 1], values: [1, 1, 1, 1.8, 1, 1.8] },
+          { targetName: 'body', path: 'weights', times: [0, 0.5, 1], values: [0, 1, 0] }
+        ]
+      });
+      const baked = W.bakeAnimationTexture3D(rig, mesh, [sway, nod], { fps: 20 });
+      const crowd = W.createSkinnedInstancedMesh3D(g, mesh.material, baked, 10);
+      for (let i = 0; i < 10; i++) {
+        crowd.setTransformAt(
+          i,
+          [-4 + (i % 5) * 2, h / 2, i < 5 ? -1.5 : 1.2],
+          W.quatFromAxisAngle([0, 0, 0, 1], [0, 1, 0], i * 0.4),
+          0.8 + (i % 3) * 0.1
+        );
+        crowd.setColorAt(i, 0.3 + (i % 5) * 0.15, 0.8 - (i % 4) * 0.15, 0.4 + (i % 2) * 0.4);
+        crowd.setClipAt(i, i % 2 ? 'nod' : 'sway', { time: i * 0.13, loop: true });
+        if (i % 3 === 0) crowd.setBlendAt(i, i % 2 ? 'sway' : 'nod', 0.5, { sync: false, time: 0.4 });
+        crowd.setBoneRotationAt(i, ...W.quatFromAxisAngle([0, 0, 0, 1], [1, 0, 0], i < 5 ? 0 : 0.9));
+      }
+      crowd.lookBone = 2;
+      crowd.cullInstances = true;
+      crowd.update(0.05);
+      bones[1].setRotation(0, 0, 0.7);
+      bones[2].setRotation(0.4, 0, 0.5);
+      rig.setPosition(0, 0, 3.4);
+      s.scene.addChild(rig);
+      rig.updateWorldMatrices();
+      mesh.material = W.createStandardMaterial3D({ color: 0x8090a0, roughness: 0.6 });
+      mesh.castShadow = true;
+      if (
+        !W.createDecal3D(mesh, W.createStandardMaterial3D({ color: 0xff3020 }), {
+          position: [0.25, h / 2 + 0.5, 3.4],
+          normal: [1, 0, 0],
+          width: 0.9,
+          height: 0.9,
+          depth: 0.6
+        })
+      )
+        throw new Error('skinned decal missed');
+      crowd.castShadow = true;
+      crowd.receiveShadow = true;
+      s.scene.addChild(crowd);
+      return s;
+    },
+    effects() {
+      const s = base([0.1, 0.12, 0.18]);
+      s.camera.setPosition(0, 3.2, 8).lookAt(0, 1, 0);
+      lights(s.scene, true);
+      floor(s.scene);
+      const mark = new W.Texture3D(
+        {
+          width: 8,
+          height: 8,
+          data: (() => {
+            const d = new Uint8Array(256);
+            for (let i = 0; i < 64; i++) {
+              const x = (i % 8) - 3.5,
+                y = (i >> 3) - 3.5,
+                ring = Math.abs(Math.hypot(x, y) - 2.5) < 0.9 || (Math.abs(x) < 1 && Math.abs(y) < 1);
+              d.set(ring ? [220, 40, 30, 255] : [0, 0, 0, 0], i * 4);
+            }
+            return d;
+          })()
+        },
+        { magFilter: 'nearest', minFilter: 'nearest', mipmaps: false }
+      );
+      const crate = new W.Mesh3D(
+        W.createBoxGeometry3D({ width: 2, height: 2, depth: 2 }),
+        W.createStandardMaterial3D({ color: 0x8899aa, roughness: 0.7 })
+      );
+      crate.setPosition(-2.6, 1, 0).setRotation(0, 0.5, 0);
+      s.scene.addChild(crate);
+      crate.updateWorldMatrices();
+      const ball = new W.Mesh3D(
+        W.createSphereGeometry3D({ radius: 1.1, widthSegments: 32, heightSegments: 20 }),
+        W.createStandardMaterial3D({ color: 0xc9b458, roughness: 0.5 })
+      );
+      ball.setPosition(2.7, 1.1, 0);
+      s.scene.addChild(ball);
+      ball.updateWorldMatrices();
+      const paint = () => W.createStandardMaterial3D({ map: mark, alphaMode: 'blend', roughness: 0.6 });
+      const corner = W.vec3TransformMat4([0, 0, 0], [1, 1, 0.4], crate.matrixWorld);
+      if (
+        !W.createDecal3D(crate, paint(), {
+          position: corner,
+          normal: [0.6, 0.5, 0.62],
+          width: 1.6,
+          height: 1.6,
+          depth: 1.2
+        })
+      )
+        throw new Error('decal missed the crate');
+      if (
+        !W.createDecal3D(ball, paint(), {
+          position: [2.7, 1.5, 1.02],
+          normal: [0, 0.35, 1],
+          width: 1.3,
+          height: 1.3,
+          rotation: 0.6
+        })
+      )
+        throw new Error('decal missed the ball');
+      const trail = W.createTrail3D({
+        points: 40,
+        lifetime: 2,
+        width: 0.5,
+        endWidth: 0.05,
+        color: 0x55ccff,
+        endColor: 0xff44cc,
+        minDistance: 0.01
+      });
+      s.scene.addChild(trail);
+      for (let i = 0; i <= 30; i++) {
+        const a = (i / 30) * Math.PI;
+        trail.push(Math.cos(a) * 2.2, 2.6 + Math.sin(a * 2) * 0.5, 1.5 - Math.sin(a) * 1.5);
+        trail.update(0.05);
+      }
+      const fountain = W.createGpuParticles3D({
+        count: 4000,
+        lifetime: [1.2, 2.2],
+        speed: [2.5, 4],
+        spread: 0.45,
+        gravity: [0, -4, 0],
+        drag: 0.3,
+        startSize: [0.25, 0.5],
+        endScale: 2.2,
+        spin: [-2, 2],
+        startColor: 0xffb060,
+        endColor: 0x4060ff,
+        startOpacity: 0.5,
+        endOpacity: 0.2,
+        softness: 0.6,
+        seed: 7,
+        blending: 'normal',
+        sorted: true
+      });
+      const hail = W.createGpuParticles3D({
+        count: 300,
+        lifetime: 2.4,
+        speed: [2, 4],
+        spread: 0.5,
+        gravity: [0, -9, 0],
+        startSize: 0.14,
+        startColor: 0x80ff60,
+        endColor: 0x80ff60,
+        floor: 0.07,
+        bounce: 0.6,
+        seed: 11,
+        fadeOut: 0.05
+      });
+      hail.setPosition(3.2, 2.6, 2.2);
+      hail.time = 5.1;
+      s.scene.addChild(hail);
+      const wake = W.createGpuParticles3D({
+        count: 200,
+        lifetime: 2,
+        speed: 0.01,
+        startSize: 0.22,
+        startColor: 0xffffff,
+        endColor: 0xff8020,
+        space: 'world',
+        seed: 5,
+        fadeIn: 0.01,
+        fadeOut: 0.2
+      });
+      s.scene.addChild(wake);
+      for (let i = 0; i <= 40; i++) {
+        wake.setPosition(-4 + i * 0.2, 0.4 + Math.sin(i * 0.4) * 0.3, 3);
+        wake.update(0.05);
+      }
+      fountain.setPosition(0, 0.05, 0.5);
+      fountain.time = 3.3;
+      s.scene.addChild(fountain);
+      const burst = W.createGpuParticles3D({
+        count: 600,
+        lifetime: 1,
+        speed: [1, 3],
+        spread: Math.PI,
+        startSize: 0.12,
+        startColor: 0xffffff,
+        endColor: 0xffee88,
+        loop: false,
+        seed: 3
+      });
+      burst.setPosition(-2.6, 3.4, 0);
+      burst.time = 0.45;
+      s.scene.addChild(burst);
+      return s;
+    },
+    volumetricFog() {
+      const s = base([0.02, 0.03, 0.06]);
+      s.camera.setPosition(0, 2.4, 11).lookAt(0, 2.2, 0);
+      const sun = W.createDirectionalLight3D({ intensity: 2.2, castShadow: true });
+      sun.setPosition(-7, 8, -9).lookAt(0, 1, 0);
+      sun.shadow.extent = 14;
+      s.scene.addChild(sun);
+      s.scene.addChild(W.createAmbientLight3D({ intensity: 0.08 }));
+      const lamp = W.createSpotLight3D({ color: 0xff8844, intensity: 30, range: 14, angle: 0.5, penumbra: 0.3 });
+      lamp.setPosition(5, 6, 2).lookAt(4, 0, 1);
+      s.scene.addChild(lamp);
+      const glow = W.createPointLight3D({ color: 0x4488ff, intensity: 6, range: 6 });
+      glow.setPosition(-5.5, 1.2, 3);
+      s.scene.addChild(glow);
+      const ground = new W.Mesh3D(
+        W.createPlaneGeometry3D({ width: 60, height: 60 }),
+        W.createStandardMaterial3D({ color: 0x667755, roughness: 0.9 })
+      );
+      ground.setRotation(-Math.PI / 2, 0, 0);
+      ground.receiveShadow = true;
+      ground.castShadow = false;
+      s.scene.addChild(ground);
+      const pillar = W.createBoxGeometry3D({ width: 0.6, height: 6, depth: 0.6 }),
+        stone = W.createStandardMaterial3D({ color: 0x998877, roughness: 0.8 });
+      for (let i = 0; i < 6; i++) {
+        const m = new W.Mesh3D(pillar, stone);
+        m.setPosition(-6 + i * 2.2, 3, -1 - (i % 2) * 2);
+        m.castShadow = true;
+        s.scene.addChild(m);
+      }
+      s.scene.addChild(
+        W.createVolumetricFog3D({
+          color: 0xd0d8e4,
+          density: 0.045,
+          falloff: 0.2,
+          height: 0,
+          distance: 40,
+          anisotropy: 0.4
+        })
+      );
+      return s;
+    },
+    jelly() {
+      const s = base([0.16, 0.2, 0.28]);
+      s.camera.setPosition(0, 2.6, 8.5).lookAt(0, 0.9, 0);
+      lights(s.scene, true);
+      floor(s.scene);
+      const blob = (x, color, shape) => {
+        const node = new W.Object3D();
+        const mesh = new W.Mesh3D(
+          shape === 'box'
+            ? W.createBoxGeometry3D({
+                width: 1.2,
+                height: 1.2,
+                depth: 1.2,
+                widthSegments: 6,
+                heightSegments: 6,
+                depthSegments: 6
+              })
+            : W.createSphereGeometry3D({ radius: 0.7, widthSegments: 32, heightSegments: 20 }),
+          W.createStandardMaterial3D({ color, roughness: 0.35 })
+        );
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        node.addChild(mesh);
+        node.setPosition(x, shape === 'box' ? 0.6 : 0.7, 0);
+        s.scene.addChild(node);
+        return W.createJelly3D(node, { height: shape === 'box' ? 1.2 : 1.4, stiffness: 2, damping: 0.1 });
+      };
+      blob(-3.2, 0x66cc88, 'ball').update(1 / 60);
+      const pressed = blob(-1.1, 0xff8866, 'ball');
+      pressed.impact([0, 1, 0], 7);
+      for (let i = 0; i < 7; i++) pressed.update(1 / 60);
+      const stretched = blob(1.1, 0x66aaff, 'ball');
+      stretched.impact([0, 1, 0], 7);
+      for (let i = 0; i < 22; i++) stretched.update(1 / 60);
+      const shoved = blob(3.2, 0xffcc44, 'box');
+      shoved.impact([1, 0, 0], 6);
+      for (let i = 0; i < 6; i++) shoved.update(1 / 60);
+      const world = W.createPhysicsWorld3D();
+      world.createBody({ type: 'static', shape: { type: 'plane' } });
+      const leg = (x, z) => ({ shape: { type: 'box', halfExtents: [0.06, 0.35, 0.06] }, position: [x, -0.1, z] });
+      const table = new W.Object3D();
+      const wood = W.createStandardMaterial3D({ color: 0x9a6b3c, roughness: 0.7 });
+      const part = (w, h, d, x, y, z) => {
+        const m = new W.Mesh3D(W.createBoxGeometry3D({ width: w, height: h, depth: d }), wood);
+        m.setPosition(x, y, z);
+        m.castShadow = true;
+        m.receiveShadow = true;
+        table.addChild(m);
+      };
+      part(1.6, 0.1, 1, 0, 0.3, 0);
+      for (const [x, z] of [
+        [-0.7, -0.4],
+        [0.7, -0.4],
+        [-0.7, 0.4],
+        [0.7, 0.4]
+      ])
+        part(0.12, 0.7, 0.12, x, -0.1, z);
+      s.scene.addChild(table);
+      world.createBody({
+        mass: 5,
+        position: [0, 0.6, -2.6],
+        quaternion: [0, 0.19509, 0, 0.98079],
+        node: table,
+        shape: {
+          type: 'compound',
+          children: [
+            { shape: { type: 'box', halfExtents: [0.8, 0.05, 0.5] }, position: [0, 0.3, 0] },
+            leg(-0.7, -0.4),
+            leg(0.7, -0.4),
+            leg(-0.7, 0.4),
+            leg(0.7, 0.4)
+          ]
+        }
+      });
+      const ball = new W.Mesh3D(
+        W.createSphereGeometry3D({ radius: 0.22 }),
+        W.createStandardMaterial3D({ color: 0xdd4455, roughness: 0.3 })
+      );
+      ball.castShadow = true;
+      s.scene.addChild(ball);
+      world.createBody({
+        mass: 0.3,
+        position: [0.2, 1.6, -2.6],
+        shape: { type: 'sphere', radius: 0.22 },
+        restitution: 0.1,
+        node: ball
+      });
+      for (let i = 0; i < 150; i++) world.step(1 / 60);
+      return s;
+    },
+    physicsKits() {
+      const s = base([0.2, 0.24, 0.3]);
+      s.camera.setPosition(0, 3.2, 9).lookAt(0, 1.2, 0);
+      lights(s.scene, true);
+      floor(s.scene);
+      const world = W.createPhysicsWorld3D();
+      const ground = world.createBody({ type: 'static', shape: { type: 'plane' } });
+      const lit = (color, side) => {
+        const m = W.createStandardMaterial3D({ color, roughness: 0.6 });
+        if (side) m.side = side;
+        return m;
+      };
+      const ballBody = world.createBody({
+        type: 'static',
+        shape: { type: 'sphere', radius: 0.7 },
+        position: [-2.6, 0.7, 0.3]
+      });
+      const ball = new W.Mesh3D(W.createSphereGeometry3D({ radius: 0.7 }), lit(0x8899aa));
+      ball.setPosition(-2.6, 0.7, 0.3);
+      ball.castShadow = true;
+      ball.receiveShadow = true;
+      s.scene.addChild(ball);
+      const cloth = W.createCloth3D({
+        columns: 17,
+        rows: 17,
+        origin: [-3.6, 2.6, -0.7],
+        right: [2, 0, 0],
+        down: [0, 0, 2],
+        colliders: [ground, ballBody],
+        thickness: 0.04,
+        iterations: 12
+      });
+      for (let i = 0; i < 240; i++) cloth.update(1 / 60);
+      const sheet = cloth.createMesh(lit(0xcc5544, 'double'));
+      sheet.castShadow = true;
+      s.scene.addChild(sheet);
+      const rope = W.createRope3D({
+        start: [-0.9, 3.4, 0],
+        end: [0.9, 3.4, 0],
+        segments: 24,
+        slack: 0.5,
+        pinStart: true,
+        pinEnd: true,
+        iterations: 24
+      });
+      for (let i = 0; i < 300; i++) rope.update(1 / 60);
+      const cable = rope.createMesh(lit(0xddbb55), 0.05, 8);
+      cable.castShadow = true;
+      s.scene.addChild(cable);
+      const chassisNode = new W.Mesh3D(W.createBoxGeometry3D({ width: 1.2, height: 0.4, depth: 2.4 }), lit(0x3377cc));
+      chassisNode.castShadow = true;
+      s.scene.addChild(chassisNode);
+      const chassis = world.createBody({
+        mass: 600,
+        shape: { type: 'box', halfExtents: [0.6, 0.2, 1.2] },
+        position: [2.6, 1.3, 0],
+        quaternion: [0, 0.38268, 0, 0.92388],
+        node: chassisNode
+      });
+      const tyre = lit(0x222222);
+      const wheel = (x, z, front) => {
+        const node = new W.Object3D();
+        const m = new W.Mesh3D(
+          W.createCylinderGeometry3D({ radiusTop: 0.3, radiusBottom: 0.3, height: 0.22, radialSegments: 16 }),
+          tyre
+        );
+        m.setRotation(0, 0, Math.PI / 2);
+        m.castShadow = true;
+        node.addChild(m);
+        s.scene.addChild(node);
+        return {
+          position: [x, -0.1, z],
+          radius: 0.3,
+          restLength: 0.3,
+          travel: 0.15,
+          steered: front,
+          driven: !front,
+          node
+        };
+      };
+      const car = W.createVehicle3D(world, chassis, {
+        wheels: [
+          wheel(-0.65, -0.85, true),
+          wheel(0.65, -0.85, true),
+          wheel(-0.65, 0.85, false),
+          wheel(0.65, 0.85, false)
+        ]
+      });
+      car.steering = 0.6;
+      for (let i = 0; i < 180; i++) {
+        car.update(1 / 60);
+        world.step(1 / 60);
+      }
+      return s;
+    },
+    atmosphere() {
+      const s = base([0.45, 0.62, 0.85]);
+      s.camera.setPosition(0, 2.2, 11).lookAt(0, 2.4, 0);
+      const sun = W.createDirectionalLight3D({ intensity: 2, castShadow: true });
+      sun.setPosition(-3, 5, -14).lookAt(0, 1, 0);
+      s.scene.addChild(sun);
+      s.scene.addChild(W.createAmbientLight3D({ intensity: 0.25 }));
+      const ground = new W.Mesh3D(
+        W.createPlaneGeometry3D({ width: 80, height: 80 }),
+        W.createStandardMaterial3D({ color: 0x667755, roughness: 0.9 })
+      );
+      ground.setRotation(-Math.PI / 2, 0, 0);
+      ground.receiveShadow = true;
+      s.scene.addChild(ground);
+      const pillar = W.createBoxGeometry3D({ width: 0.7, height: 7, depth: 0.7 }),
+        stone = W.createStandardMaterial3D({ color: 0x998877, roughness: 0.8 });
+      for (let i = 0; i < 7; i++) {
+        const m = new W.Mesh3D(pillar, stone);
+        m.setPosition(-7.5 + i * 2.5, 3.5, -4 - (i % 2) * 6);
+        m.castShadow = true;
+        s.scene.addChild(m);
+      }
+      return {
+        ...s,
+        setup: renderer => {
+          const air = web.createAtmosphere3D({
+            fogColor: 0xa8b8c8,
+            fogDensity: 0.02,
+            fogFalloff: 0.25,
+            fogHeight: 0,
+            shaftIntensity: 1.2,
+            shaftLength: 0.8
+          });
+          s.camera.aspect = 1.6;
+          air.update(s.camera, [3, -4, 15]);
+          Object.assign(renderer.postProcess, {
+            enabled: true,
+            bloom: false,
+            fxaa: false,
+            ssao: false,
+            custom: air.post
+          });
+        }
+      };
+    }
   };
 }

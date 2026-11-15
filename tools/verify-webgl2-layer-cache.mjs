@@ -8,7 +8,10 @@ import { fingerprintFile, ownerRelativePath } from './lib/file-identity.mjs';
 import { createExampleServer } from './serve-example.mjs';
 
 const [playwright, output, ...extra] = process.argv.slice(2);
-assert.ok(playwright && output && extra.length === 0, 'Usage: node tools/verify-webgl2-layer-cache.mjs <playwright-root> <new-output-directory>');
+assert.ok(
+  playwright && output && extra.length === 0,
+  'Usage: node tools/verify-webgl2-layer-cache.mjs <playwright-root> <new-output-directory>'
+);
 const repository = path.resolve(import.meta.dirname, '..');
 const { chromium } = await import(pathToFileURL(path.join(playwright, 'index.mjs')));
 const playwrightVersion = JSON.parse(fs.readFileSync(path.join(playwright, 'package.json'), 'utf8')).version;
@@ -35,7 +38,9 @@ server.on('request', (request, response) => {
       const pin = fingerprintFile(repository, relative);
       if (served.has(relative)) assert.deepEqual(pin, served.get(relative));
       else served.set(relative, pin);
-    } catch (error) { faults.push(String(error)); }
+    } catch (error) {
+      faults.push(String(error));
+    }
   });
 });
 
@@ -51,15 +56,37 @@ async function observe() {
     engine.assets.register(type, {
       async load() {
         const rows = [
-          [[255, 0, 0, 255], [255, 0, 0, 255], [255, 255, 0, 255], [255, 255, 0, 255]],
-          [[0, 0, 255, 128], [0, 0, 255, 128], [255, 0, 255, 128], [255, 0, 255, 128]],
-          [[0, 255, 0, 255], [0, 255, 0, 255], [0, 255, 255, 255], [0, 255, 255, 255]],
-          [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+          [
+            [255, 0, 0, 255],
+            [255, 0, 0, 255],
+            [255, 255, 0, 255],
+            [255, 255, 0, 255]
+          ],
+          [
+            [0, 0, 255, 128],
+            [0, 0, 255, 128],
+            [255, 0, 255, 128],
+            [255, 0, 255, 128]
+          ],
+          [
+            [0, 255, 0, 255],
+            [0, 255, 0, 255],
+            [0, 255, 255, 255],
+            [0, 255, 255, 255]
+          ],
+          [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
+          ]
         ];
         const image = egret.createImageData2D({ width: 4, height: 4, pixels: Uint8Array.from(rows.flat(2)) });
         return egret.createTexture(image);
       },
-      dispose(texture) { texture.dispose(); },
+      dispose(texture) {
+        texture.dispose();
+      }
     });
     const lease = scope.use(await engine.assets.acquire(egret.createAssetRef(type, 'tile')));
     const sprite = scope.use(new egret.Bitmap(lease));
@@ -75,7 +102,10 @@ async function observe() {
     const layer = host.createSharedLayer2D();
     await layer.update(source);
     const writtenAfterBake = host.getSharedStatus().resources.totals.pageWriteCalls;
-    const placements = [[2, 3], [6, 4]];
+    const placements = [
+      [2, 3],
+      [6, 4]
+    ];
     const output = [];
     const diagnostics = [];
     async function draw(x, y, cached) {
@@ -111,14 +141,28 @@ async function observe() {
     const generationAfter = host.getStatus().generation;
     const restoredLayerState = layer.state;
     try {
-      host.renderSharedFrameWithLayers(engine.captureSharedFrame(frameOptions), [{ layer, x: 2, y: 3, width: 4, height: 4 }]);
-    } catch (error) { diagnostics.push(error.code); }
+      host.renderSharedFrameWithLayers(engine.captureSharedFrame(frameOptions), [
+        { layer, x: 2, y: 3, width: 4, height: 4 }
+      ]);
+    } catch (error) {
+      diagnostics.push(error.code);
+    }
     await layer.update(source);
     const rebuilt = await draw(2, 3, true);
     layer.dispose();
     return {
-      devicePixelRatio, writtenAfterBake, writtenAfterMotion, output, lost, restoredLayerState,
-      generationBefore, generationAfter, diagnostics, rebuilt, disposed: layer.state, cache: host.getSharedLayerStatus(),
+      devicePixelRatio,
+      writtenAfterBake,
+      writtenAfterMotion,
+      output,
+      lost,
+      restoredLayerState,
+      generationBefore,
+      generationAfter,
+      diagnostics,
+      rebuilt,
+      disposed: layer.state,
+      cache: host.getSharedLayerStatus()
     };
   } finally {
     scope.dispose();
@@ -126,27 +170,39 @@ async function observe() {
   }
 }
 
-const html = '<!doctype html><html lang="en"><meta charset="utf-8"><title>Shared layer cache</title>'
-  + '<script type="importmap">' + JSON.stringify({ imports: {
-    '@egret/engine': '/packages/engine/dist/index.js',
-    '@egret/engine/webgl2': '/packages/engine/dist/web/webgl2.js',
-    '@egret/contracts': '/packages/contracts/dist/index.js',
-    '@egret/contracts/resources': '/packages/contracts/dist/resources/index.js',
-    '@egret/runtime': '/packages/runtime/dist/index.js',
-    '@egret/runtime/text': '/packages/runtime/dist/text/index.js',
-    '@egret/runtime/ui': '/packages/runtime/dist/ui/index.js',
-    '@egret/runtime/input': '/packages/runtime/dist/input/index.js',
-    '@egret/runtime/paragraph': '/packages/runtime/dist/paragraph/index.js',
-    '#egret-textured-frame-state': '/packages/engine/dist/internal/texturedFrameState.js',
-    '#egret-pointer-input': '/packages/engine/dist/pointerInput.js',
-    'robust-predicates': '/vendor/robust-predicates/index.js',
-  } }) + '</script><canvas width="24" height="20"></canvas></html>';
+const html =
+  '<!doctype html><html lang="en"><meta charset="utf-8"><title>Shared layer cache</title>' +
+  '<script type="importmap">' +
+  JSON.stringify({
+    imports: {
+      '@egret/engine': '/packages/engine/dist/index.js',
+      '@egret/engine/webgl2': '/packages/engine/dist/web/webgl2.js',
+      '@egret/contracts': '/packages/contracts/dist/index.js',
+      '@egret/contracts/resources': '/packages/contracts/dist/resources/index.js',
+      '@egret/runtime': '/packages/runtime/dist/index.js',
+      '@egret/runtime/text': '/packages/runtime/dist/text/index.js',
+      '@egret/runtime/ui': '/packages/runtime/dist/ui/index.js',
+      '@egret/runtime/input': '/packages/runtime/dist/input/index.js',
+      '@egret/runtime/paragraph': '/packages/runtime/dist/paragraph/index.js',
+      '#egret-textured-frame-state': '/packages/engine/dist/internal/texturedFrameState.js',
+      '#egret-pointer-input': '/packages/engine/dist/pointerInput.js',
+      'robust-predicates': '/vendor/robust-predicates/index.js'
+    }
+  }) +
+  '</script><canvas width="24" height="20"></canvas></html>';
 const executionInputs = [
-  'tools/verify-webgl2-layer-cache.mjs', 'tools/serve-example.mjs', 'tools/lib/file-identity.mjs',
+  'tools/verify-webgl2-layer-cache.mjs',
+  'tools/serve-example.mjs',
+  'tools/lib/file-identity.mjs'
 ].map(file => fingerprintFile(repository, file));
 const report = {
-  started: new Date().toISOString(), node: process.version, playwrightVersion,
-  channel: 'msedge', headless: true, extraFlags: [], executionInputs,
+  started: new Date().toISOString(),
+  node: process.version,
+  playwrightVersion,
+  channel: 'msedge',
+  headless: true,
+  extraFlags: [],
+  executionInputs
 };
 let browser;
 let timeout;
@@ -155,11 +211,15 @@ try {
   report.browser = browser.version();
   const page = await browser.newPage({ deviceScaleFactor: 2 });
   page.on('pageerror', error => faults.push(String(error)));
-  await page.route(base + '/native-layer-cache-fixture', route => route.fulfill({ contentType: 'text/html', body: html }));
+  await page.route(base + '/native-layer-cache-fixture', route =>
+    route.fulfill({ contentType: 'text/html', body: html })
+  );
   await page.goto(base + '/native-layer-cache-fixture');
   const observation = await Promise.race([
     page.evaluate(observe),
-    new Promise((_, reject) => { timeout = setTimeout(() => reject(Error('browser fixture timed out')), 25000); }),
+    new Promise((_, reject) => {
+      timeout = setTimeout(() => reject(Error('browser fixture timed out')), 25000);
+    })
   ]);
   const { output: rows, rebuilt, ...metadata } = observation;
   Object.assign(report, metadata);
@@ -174,8 +234,17 @@ try {
     for (let i = 0; i < cachedBytes.length; i++) {
       maxChannelError = Math.max(maxChannelError, Math.abs(cachedBytes[i] - directBytes[i]));
     }
-    return { x, y, width: cached.width, height: cached.height, cachedFile, directFile, maxChannelError,
-      cachedSha256: hash(cachedBytes), directSha256: hash(directBytes) };
+    return {
+      x,
+      y,
+      width: cached.width,
+      height: cached.height,
+      cachedFile,
+      directFile,
+      maxChannelError,
+      cachedSha256: hash(cachedBytes),
+      directSha256: hash(directBytes)
+    };
   });
   fs.writeFileSync(path.join(output, 'rebuilt.rgba'), Buffer.from(rebuilt.bytes));
   report.rebuiltSha256 = hash(Buffer.from(rebuilt.bytes));
@@ -186,15 +255,17 @@ try {
     [2, 4, [0, 0, 188, 255]],
     [3, 4, [255, 128, 0, 255]],
     [2, 5, [0, 255, 0, 255]],
-    [2, 6, [0, 0, 0, 255]],
+    [2, 6, [0, 0, 0, 255]]
   ];
   report.samples = samples.map(([x, y, expected]) => {
     const index = 4 * ((2 * y + 1) * rows[0].cached.width + (2 * x + 1));
     return { x, y, expected, actual: rows[0].cached.bytes.slice(index, index + 4) };
   });
   for (const point of report.samples) {
-    assert.ok(point.actual.every((value, index) => Math.abs(value - point.expected[index]) <= 2),
-      'independent RGBA sample mismatch at ' + point.x + ',' + point.y);
+    assert.ok(
+      point.actual.every((value, index) => Math.abs(value - point.expected[index]) <= 2),
+      'independent RGBA sample mismatch at ' + point.x + ',' + point.y
+    );
   }
   assert.equal(report.devicePixelRatio, 2);
   for (const frame of report.frames) {
@@ -211,7 +282,8 @@ try {
   assert.equal(report.disposed, 'disposed');
   assert.equal(report.cache.residentBytes, 0);
   assert.deepEqual(faults, []);
-  for (const pin of [...executionInputs, ...served.values()]) assert.deepEqual(fingerprintFile(repository, pin.path), pin);
+  for (const pin of [...executionInputs, ...served.values()])
+    assert.deepEqual(fingerprintFile(repository, pin.path), pin);
   report.status = 'PASS';
 } catch (error) {
   report.status = 'FAIL';

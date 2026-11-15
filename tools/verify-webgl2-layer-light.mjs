@@ -8,7 +8,10 @@ import { fingerprintFile, ownerRelativePath } from './lib/file-identity.mjs';
 import { createExampleServer } from './serve-example.mjs';
 
 const [playwright, output, ...extra] = process.argv.slice(2);
-assert.ok(playwright && output && extra.length === 0, 'Usage: node tools/verify-webgl2-layer-light.mjs <playwright-root> <new-output-directory>');
+assert.ok(
+  playwright && output && extra.length === 0,
+  'Usage: node tools/verify-webgl2-layer-light.mjs <playwright-root> <new-output-directory>'
+);
 const repository = path.resolve(import.meta.dirname, '..');
 const { chromium } = await import(pathToFileURL(path.join(playwright, 'index.mjs')));
 const playwrightVersion = JSON.parse(fs.readFileSync(path.join(playwright, 'package.json'), 'utf8')).version;
@@ -35,7 +38,9 @@ server.on('request', (request, response) => {
       const pin = fingerprintFile(repository, relative);
       if (served.has(relative)) assert.deepEqual(pin, served.get(relative));
       else served.set(relative, pin);
-    } catch (error) { faults.push(String(error)); }
+    } catch (error) {
+      faults.push(String(error));
+    }
   });
 });
 
@@ -56,7 +61,9 @@ async function observe(ratio) {
         }
         return egret.createTexture(egret.createImageData2D({ width: 3, height: 3, pixels }));
       },
-      dispose(texture) { texture.dispose(); },
+      dispose(texture) {
+        texture.dispose();
+      }
     });
     const lease = scope.use(await engine.assets.acquire(egret.createAssetRef(type, 'tile')));
     const sprite = scope.use(new egret.Bitmap(lease));
@@ -74,22 +81,30 @@ async function observe(ratio) {
     const light = {
       bounds: { x: 3.25, y: 1.75, width: 3.5, height: 3.5 },
       multiply: [0, 1, 0],
-      add: [0.25, 0, 1],
+      add: [0.25, 0, 1]
     };
     const stats = () => ({
       residentBytes: host.getSharedLayerStatus().residentBytes,
-      uploads: host.getSharedStatus().resources.totals.pageWriteCalls,
+      uploads: host.getSharedStatus().resources.totals.pageWriteCalls
     });
     function placements(variant, custom) {
       const moved = variant === 'moved';
       const shiftX = moved ? 1 : 0;
       const shiftY = moved ? -1 : 0;
-      const effect = variant === 'unlit' ? undefined : custom ?? {
-        ...light, bounds: { ...light.bounds, x: light.bounds.x + shiftX, y: light.bounds.y + shiftY },
-      };
+      const effect =
+        variant === 'unlit'
+          ? undefined
+          : (custom ?? {
+              ...light,
+              bounds: { ...light.bounds, x: light.bounds.x + shiftX, y: light.bounds.y + shiftY }
+            });
       return layers.map((layer, index) => ({
-        layer, x: 2 + index * 3 + shiftX, y: 2 + shiftY, width: 3, height: 3,
-        ...(effect ? { effect } : {}),
+        layer,
+        x: 2 + index * 3 + shiftX,
+        y: 2 + shiftY,
+        width: 3,
+        height: 3,
+        ...(effect ? { effect } : {})
       }));
     }
     async function draw(variant, target = frame, custom) {
@@ -115,11 +130,14 @@ async function observe(ratio) {
       { ...light, bounds: { ...light.bounds, width: -1 } },
       { ...light, multiply: [0, 1] },
       { ...light, add: [0, -0.1, 0] },
-      { ...light, multiply: [Infinity, 1, 1] },
+      { ...light, multiply: [Infinity, 1, 1] }
     ].map(effect => {
       const serial = host.getStatus().lastSerial;
-      try { host.renderSharedFrameWithLayers(frame, placements('lit', effect)); }
-      catch (error) { return { code: error.code, serialStable: host.getStatus().lastSerial === serial }; }
+      try {
+        host.renderSharedFrameWithLayers(frame, placements('lit', effect));
+      } catch (error) {
+        return { code: error.code, serialStable: host.getStatus().lastSerial === serial };
+      }
       return { code: null, serialStable: host.getStatus().lastSerial === serial };
     });
     await host.whenIdle();
@@ -139,8 +157,21 @@ async function observe(ratio) {
     const rebuilt = await draw('lit');
     for (const layer of layers) layer.dispose();
     return {
-      devicePixelRatio, before, after, unlit, lit, moved, reset, fractionalBase, fractionalLit, rejections, lost, rebuilt,
-      generationBefore, generationAfter, disposed: stats(),
+      devicePixelRatio,
+      before,
+      after,
+      unlit,
+      lit,
+      moved,
+      reset,
+      fractionalBase,
+      fractionalLit,
+      rejections,
+      lost,
+      rebuilt,
+      generationBefore,
+      generationAfter,
+      disposed: stats()
     };
   } finally {
     scope.dispose();
@@ -148,63 +179,88 @@ async function observe(ratio) {
   }
 }
 
-const html = '<!doctype html><html lang="en"><meta charset="utf-8"><title>Shared layer cache</title>'
-  + '<script type="importmap">' + JSON.stringify({ imports: {
-    '@egret/engine': '/packages/engine/dist/index.js',
-    '@egret/engine/webgl2': '/packages/engine/dist/web/webgl2.js',
-    '@egret/contracts': '/packages/contracts/dist/index.js',
-    '@egret/contracts/resources': '/packages/contracts/dist/resources/index.js',
-    '@egret/runtime': '/packages/runtime/dist/index.js',
-    '@egret/runtime/text': '/packages/runtime/dist/text/index.js',
-    '@egret/runtime/ui': '/packages/runtime/dist/ui/index.js',
-    '@egret/runtime/input': '/packages/runtime/dist/input/index.js',
-    '@egret/runtime/paragraph': '/packages/runtime/dist/paragraph/index.js',
-    '#egret-textured-frame-state': '/packages/engine/dist/internal/texturedFrameState.js',
-    '#egret-pointer-input': '/packages/engine/dist/pointerInput.js',
-    'robust-predicates': '/vendor/robust-predicates/index.js',
-  } }) + '</script><canvas width="24" height="20"></canvas></html>';
+const html =
+  '<!doctype html><html lang="en"><meta charset="utf-8"><title>Shared layer cache</title>' +
+  '<script type="importmap">' +
+  JSON.stringify({
+    imports: {
+      '@egret/engine': '/packages/engine/dist/index.js',
+      '@egret/engine/webgl2': '/packages/engine/dist/web/webgl2.js',
+      '@egret/contracts': '/packages/contracts/dist/index.js',
+      '@egret/contracts/resources': '/packages/contracts/dist/resources/index.js',
+      '@egret/runtime': '/packages/runtime/dist/index.js',
+      '@egret/runtime/text': '/packages/runtime/dist/text/index.js',
+      '@egret/runtime/ui': '/packages/runtime/dist/ui/index.js',
+      '@egret/runtime/input': '/packages/runtime/dist/input/index.js',
+      '@egret/runtime/paragraph': '/packages/runtime/dist/paragraph/index.js',
+      '#egret-textured-frame-state': '/packages/engine/dist/internal/texturedFrameState.js',
+      '#egret-pointer-input': '/packages/engine/dist/pointerInput.js',
+      'robust-predicates': '/vendor/robust-predicates/index.js'
+    }
+  }) +
+  '</script><canvas width="24" height="20"></canvas></html>';
 const report = {
-  status: 'INCOMPLETE', started: new Date().toISOString(), node: process.version, playwrightVersion,
-  channel: 'msedge', headless: true, extraFlags: [], executionInputs: ['tools/verify-webgl2-layer-light.mjs', 'tools/serve-example.mjs', 'tools/lib/file-identity.mjs']
-    .map(file => fingerprintFile(repository, file)), ratios: [],
+  status: 'INCOMPLETE',
+  started: new Date().toISOString(),
+  node: process.version,
+  playwrightVersion,
+  channel: 'msedge',
+  headless: true,
+  extraFlags: [],
+  executionInputs: [
+    'tools/verify-webgl2-layer-light.mjs',
+    'tools/serve-example.mjs',
+    'tools/lib/file-identity.mjs'
+  ].map(file => fingerprintFile(repository, file)),
+  ratios: []
 };
 function near(actual, expected, tolerance, message) {
   assert.equal(actual.length, expected.length, message);
-  assert.ok(actual.every((value, index) => Math.abs(value - expected[index]) <= tolerance),
-    message + ' expected ' + expected + ' actual ' + actual);
+  assert.ok(
+    actual.every((value, index) => Math.abs(value - expected[index]) <= tolerance),
+    message + ' expected ' + expected + ' actual ' + actual
+  );
 }
 function srgb(value) {
   return Math.round(255 * (value <= 0.0031308 ? value * 12.92 : 1.055 * value ** (1 / 2.4) - 0.055));
 }
 function oracle(frame, original, ratio, moved) {
-  const xShift = moved ? 1 : 0, yShift = moved ? -1 : 0;
+  const xShift = moved ? 1 : 0,
+    yShift = moved ? -1 : 0;
   const values = { effectPixels: 0, unchangedPixels: 0, uiPixels: 0, transparentPixels: 0 };
-  for (let pixelY = 0; pixelY < frame.height; pixelY++) for (let pixelX = 0; pixelX < frame.width; pixelX++) {
-    const x = (pixelX + 0.5) / ratio, y = (pixelY + 0.5) / ratio;
-    const offset = 4 * (pixelY * frame.width + pixelX);
-    const pixel = frame.bytes.slice(offset, offset + 4);
-    const inUi = x >= 4 && x < 6 && y >= 2 && y < 3;
-    const ground = x >= 2 + xShift && x < 8 + xShift && y >= 2 + yShift && y < 5 + yShift;
-    const inLight = x >= 3.25 + xShift && x < 6.75 + xShift && y >= 1.75 + yShift && y < 5.25 + yShift;
-    const alpha = ground ? [255, 128, 0][Math.floor(y - 2 - yShift)] : 0;
-    const label = 'DPR ' + ratio + ' at logical ' + x + ',' + y;
-    if (inUi) {
-      values.uiPixels++;
-      near(pixel, [0, 255, 0, 255], 0, label + ' UI must be untouched');
-    } else if (alpha === 0) {
-      values.transparentPixels++;
-      near(pixel, [0, 0, 0, 0], 0, label + ' additive light must not create opaque pixels');
-    } else if (inLight) {
-      values.effectPixels++;
-      near(pixel, [Math.round(srgb(0.25) * alpha / 255), Math.round(128 * alpha / 255), alpha, alpha], 2, label + ' regional tint');
-    } else {
-      values.unchangedPixels++;
-      const grey = Math.round(128 * alpha / 255);
-      const expected = original?.bytes.slice(offset, offset + 4) ?? [grey, grey, grey, alpha];
-      near(pixel, expected, original ? 0 : 2, label + ' outside rectangle');
+  for (let pixelY = 0; pixelY < frame.height; pixelY++)
+    for (let pixelX = 0; pixelX < frame.width; pixelX++) {
+      const x = (pixelX + 0.5) / ratio,
+        y = (pixelY + 0.5) / ratio;
+      const offset = 4 * (pixelY * frame.width + pixelX);
+      const pixel = frame.bytes.slice(offset, offset + 4);
+      const inUi = x >= 4 && x < 6 && y >= 2 && y < 3;
+      const ground = x >= 2 + xShift && x < 8 + xShift && y >= 2 + yShift && y < 5 + yShift;
+      const inLight = x >= 3.25 + xShift && x < 6.75 + xShift && y >= 1.75 + yShift && y < 5.25 + yShift;
+      const alpha = ground ? [255, 128, 0][Math.floor(y - 2 - yShift)] : 0;
+      const label = 'DPR ' + ratio + ' at logical ' + x + ',' + y;
+      if (inUi) {
+        values.uiPixels++;
+        near(pixel, [0, 255, 0, 255], 0, label + ' UI must be untouched');
+      } else if (alpha === 0) {
+        values.transparentPixels++;
+        near(pixel, [0, 0, 0, 0], 0, label + ' additive light must not create opaque pixels');
+      } else if (inLight) {
+        values.effectPixels++;
+        near(
+          pixel,
+          [Math.round((srgb(0.25) * alpha) / 255), Math.round((128 * alpha) / 255), alpha, alpha],
+          2,
+          label + ' regional tint'
+        );
+      } else {
+        values.unchangedPixels++;
+        const grey = Math.round((128 * alpha) / 255);
+        const expected = original?.bytes.slice(offset, offset + 4) ?? [grey, grey, grey, alpha];
+        near(pixel, expected, original ? 0 : 2, label + ' outside rectangle');
+      }
+      assert.equal(pixel[3], inUi ? 255 : alpha, label + ' alpha is exact');
     }
-    assert.equal(pixel[3], inUi ? 255 : alpha, label + ' alpha is exact');
-  }
   assert.ok(Object.values(values).every(value => value > 0));
   return values;
 }
@@ -217,18 +273,23 @@ try {
     let timeout;
     try {
       page.on('pageerror', error => faults.push(String(error)));
-      await page.route(base + '/native-layer-light-fixture', route => route.fulfill({ contentType: 'text/html', body: html }));
+      await page.route(base + '/native-layer-light-fixture', route =>
+        route.fulfill({ contentType: 'text/html', body: html })
+      );
       await page.goto(base + '/native-layer-light-fixture');
       const observation = await Promise.race([
         page.evaluate(observe, ratio),
-        new Promise((_, reject) => { timeout = setTimeout(() => reject(Error('browser fixture timed out')), 25000); }),
+        new Promise((_, reject) => {
+          timeout = setTimeout(() => reject(Error('browser fixture timed out')), 25000);
+        })
       ]);
       const { unlit, lit, moved, reset, rebuilt, fractionalBase, fractionalLit, ...metadata } = observation;
       const row = { ratio, ...metadata, framePins: {} };
       report.ratios.push(row);
       for (const [label, frame] of Object.entries({ unlit, lit, moved, reset, rebuilt })) {
         assert.deepEqual([frame.width, frame.height], [12 * ratio, 8 * ratio]);
-        const bytes = Buffer.from(frame.bytes), file = ratio + 'x-' + label + '.rgba';
+        const bytes = Buffer.from(frame.bytes),
+          file = ratio + 'x-' + label + '.rgba';
         fs.writeFileSync(path.join(output, file), bytes);
         row.framePins[label] = { file, bytes: bytes.length, sha256: hash(bytes) };
       }
@@ -240,26 +301,43 @@ try {
       }
       const right = [fractionalLit.width - 1, 2 * ratio];
       const bottom = [2 * ratio, fractionalLit.height - 1];
-      for (const [name, point] of [['right', right], ['bottom', bottom]]) {
+      for (const [name, point] of [
+        ['right', right],
+        ['bottom', bottom]
+      ]) {
         const unmodified = at(fractionalBase, ...point);
         assert.ok(unmodified[3] > 0, 'outer logical clip point still samples cached art');
-        assert.deepEqual(at(fractionalLit, ...point), unmodified, 'the fractional frame clip excludes the outer ' + name + ' pixel center');
+        assert.deepEqual(
+          at(fractionalLit, ...point),
+          unmodified,
+          'the fractional frame clip excludes the outer ' + name + ' pixel center'
+        );
       }
       assert.notDeepEqual(at(fractionalLit, 2 * ratio, 2 * ratio), at(fractionalBase, 2 * ratio, 2 * ratio));
       for (const [label, frame] of Object.entries({ fractionalBase, fractionalLit })) {
-        const bytes = Buffer.from(frame.bytes), file = ratio + 'x-' + label + '.rgba';
+        const bytes = Buffer.from(frame.bytes),
+          file = ratio + 'x-' + label + '.rgba';
         fs.writeFileSync(path.join(output, file), bytes);
         row.framePins[label] = { file, bytes: bytes.length, sha256: hash(bytes) };
       }
       row.movedPixels = oracle(moved, undefined, ratio, true);
-      assert.deepEqual(lit.bytes.map((value, index) => index % 4 === 3 ? value : null),
-        unlit.bytes.map((value, index) => index % 4 === 3 ? value : null), 'effect preserves all scene alpha');
+      assert.deepEqual(
+        lit.bytes.map((value, index) => (index % 4 === 3 ? value : null)),
+        unlit.bytes.map((value, index) => (index % 4 === 3 ? value : null)),
+        'effect preserves all scene alpha'
+      );
       assert.deepEqual(reset.bytes, unlit.bytes, 'unlit frame after movement has no previous uniforms');
-      assert.deepEqual(metadata.before, metadata.after, 'effect mutation or camera never uploads or replaces a baked target');
+      assert.deepEqual(
+        metadata.before,
+        metadata.after,
+        'effect mutation or camera never uploads or replaces a baked target'
+      );
       assert.equal(metadata.after.residentBytes, 72);
       assert.equal(metadata.disposed.residentBytes, 0);
-      assert.ok(metadata.rejections.every(value => value.code === 'WEBGL2_LAYER_EFFECT_INVALID' && value.serialStable),
-        'malformed effect rejected without starting a submission');
+      assert.ok(
+        metadata.rejections.every(value => value.code === 'WEBGL2_LAYER_EFFECT_INVALID' && value.serialStable),
+        'malformed effect rejected without starting a submission'
+      );
       assert.deepEqual(metadata.lost, ['stale', 'stale']);
       assert.equal(metadata.generationAfter, metadata.generationBefore + 1);
       assert.deepEqual(rebuilt.bytes, lit.bytes, 'restored target and shader reproduce the original pixels');
@@ -269,7 +347,8 @@ try {
     }
   }
   assert.deepEqual(faults, []);
-  for (const pin of [...report.executionInputs, ...served.values()]) assert.deepEqual(fingerprintFile(repository, pin.path), pin);
+  for (const pin of [...report.executionInputs, ...served.values()])
+    assert.deepEqual(fingerprintFile(repository, pin.path), pin);
   report.status = 'PASS';
 } catch (error) {
   report.status = 'FAIL';

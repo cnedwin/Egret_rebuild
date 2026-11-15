@@ -32,7 +32,7 @@ export const EVIDENCE_TOOLS = Object.freeze([
   'linear-layout-types',
   'nine-slice-bitmap-types',
   'sequence-playback-types',
-  'sequence-reset-types',
+  'sequence-reset-types'
 ]);
 
 /** Test files whose subject is one of the tools above, or the recorded identities themselves. */
@@ -49,5 +49,5 @@ export const EVIDENCE_TESTS = Object.freeze([
   'tests/strict-successor-boundaries.test.mjs',
   // The maintenance tools rebuild earlier revisions of the tools above and of the type checks from
   // recorded bytes. Their gate-order and selection cases stay in incremental-checks.test.mjs.
-  'tests/publication/incremental-checks-evidence.test.mjs',
+  'tests/publication/incremental-checks-evidence.test.mjs'
 ]);
