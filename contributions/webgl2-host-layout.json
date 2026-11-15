@@ -3,7 +3,8 @@
   "files": [
     {
       "path": "packages/engine/web/webgl2LayerState.ts",
-      "originRole": "First-party private WebGL2 layer state, validation and program bindings moved from WebGL2Host.ts; Apache-2.0."
+      "originRole": "First-party private WebGL2 layer state, validation and program bindings moved from WebGL2Host.ts; Apache-2.0.",
+      "criticalComment": true
     }
   ],
   "documents": []
