@@ -1,0 +1,3 @@
+/** Integer target loads and one explicit output transfer; the canvas view is ordinary UNORM. */
+export declare function createSharedResolvePipeline(shader: (d: GPUShaderModuleDescriptor) => GPUShaderModule, pipeline: (d: GPURenderPipelineDescriptor) => Promise<GPURenderPipeline>, format: 'rgba8unorm' | 'bgra8unorm', opaque: boolean): Promise<GPURenderPipeline>;
+//# sourceMappingURL=webgpuSharedResolvePass.d.ts.map

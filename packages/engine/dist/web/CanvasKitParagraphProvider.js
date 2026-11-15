@@ -1,0 +1,691 @@
+// SPDX-License-Identifier: Apache-2.0
+import { createImageData2D, IMAGE_LIMITS_2D } from '@egret/contracts';
+import { EgretError } from '@egret/runtime';
+import { captureCanvasKitTextGeometry } from './canvasKitParagraphGeometry.js';
+const moduleIdentities = new WeakMap();
+let nextModuleIdentity = 1;
+function bounded(value, low, high, label) {
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < low || value > high) {
+        throw new RangeError('Paragraph ' + label + ' is outside the admitted range');
+    }
+    return value;
+}
+function scalarText(text) {
+    if (typeof text !== 'string' || text.length > 8192)
+        throw new RangeError('Paragraph source limit exceeded');
+    for (let index = 0; index < text.length; index++) {
+        const unit = text.charCodeAt(index);
+        if (unit >= 0xd800 && unit <= 0xdbff) {
+            const next = text.charCodeAt(++index);
+            if (!(next >= 0xdc00 && next <= 0xdfff))
+                throw new TypeError('Malformed paragraph UTF-16');
+        }
+        else if (unit >= 0xdc00 && unit <= 0xdfff)
+            throw new TypeError('Malformed paragraph UTF-16');
+    }
+}
+function token(value, limit, label) {
+    if (typeof value !== 'string' || !value.length || value.length > limit || /[\x00-\x1f\x7f]/.test(value)) {
+        throw new TypeError('Invalid paragraph ' + label);
+    }
+}
+/** Transcode CR/CRLF only for layout; keep exact authored UTF16 boundaries. */
+function nativeLayoutSource(source) {
+    if (!source.includes('\r'))
+        return { text: source, boundaries: undefined };
+    const units = [], boundaries = [0];
+    for (let index = 0; index < source.length; index++) {
+        if (source.charCodeAt(index) === 13) {
+            if (source.charCodeAt(index + 1) === 10)
+                index++;
+            units.push('\n');
+        }
+        else
+            units.push(source.charAt(index));
+        boundaries.push(index + 1);
+    }
+    return { text: units.join(''), boundaries: Uint32Array.from(boundaries) };
+}
+function sameFont(a, b) {
+    return (a.fontSize === b.fontSize &&
+        a.fontFamilies.length === b.fontFamilies.length &&
+        a.fontFamilies.every((family, index) => family === b.fontFamilies[index]));
+}
+/** Resolve authored ranges without changing source order or introducing shaping fragments. */
+function captureStyledSource(request, layout, registered) {
+    const runs = request.runs;
+    if (runs === undefined)
+        return undefined;
+    if (!Array.isArray(runs))
+        throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+    const count = runs.length;
+    if (!Number.isSafeInteger(count) || count < 0 || count > 256)
+        throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+    if (count === 0)
+        return undefined;
+    const captureFamilies = (values) => {
+        if (!Array.isArray(values))
+            throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+        const count = values.length;
+        if (!Number.isSafeInteger(count) || count < 1 || count > 16)
+            throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+        const copied = [];
+        for (let index = 0; index < count; index++) {
+            const family = values[index];
+            if (!registered.has(family))
+                throw new EgretError('PARAGRAPH_FONT_NOT_REGISTERED');
+            copied.push(family);
+        }
+        return Object.freeze(copied);
+    };
+    const base = {
+        fontFamilies: captureFamilies(request.fontFamilies),
+        fontSize: request.fontSize,
+        fillColor: request.fillColor
+    };
+    const copied = [];
+    let previous = 0;
+    const boundary = (index) => {
+        const a = request.text.charCodeAt(index - 1), b = request.text.charCodeAt(index);
+        return !(a >= 0xd800 && a <= 0xdbff && b >= 0xdc00 && b <= 0xdfff) && !(a === 13 && b === 10);
+    };
+    for (let index = 0; index < count; index++) {
+        const row = runs[index];
+        if (!row || typeof row !== 'object' || Array.isArray(row))
+            throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+        const start = row.start, end = row.end, authoredFamilies = row.fontFamilies, authoredSize = row.fontSize, authoredColor = row.fillColor;
+        if (!Number.isSafeInteger(start) ||
+            !Number.isSafeInteger(end) ||
+            start < previous ||
+            end <= start ||
+            end > request.text.length ||
+            !boundary(start) ||
+            !boundary(end) ||
+            (authoredFamilies === undefined && authoredSize === undefined && authoredColor === undefined))
+            throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+        const fontFamilies = authoredFamilies === undefined ? base.fontFamilies : captureFamilies(authoredFamilies);
+        const fontSize = authoredSize === undefined ? base.fontSize : bounded(authoredSize, 1, 512, 'run font size');
+        const fillColor = authoredColor === undefined ? base.fillColor : authoredColor;
+        if (!Number.isInteger(fillColor) || fillColor < 0 || fillColor > 0xffffff)
+            throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+        copied.push({ start, end, style: { fontFamilies, fontSize, fillColor } });
+        previous = end;
+    }
+    const styles = [];
+    let row = 0;
+    for (let index = 0; index < layout.text.length; index++) {
+        const authored = layout.boundaries?.[index] ?? index;
+        while (row < copied.length && copied[row].end <= authored)
+            row++;
+        styles.push(row < copied.length && copied[row].start <= authored ? copied[row].style : base);
+    }
+    return { styles, source: layout.text };
+}
+/** Only real emitted glyph starts carry paint authority; gaps add no invented geometry. */
+function clusterPaint(source, shaped) {
+    const byteToUnit = new Map();
+    let byte = 0;
+    for (let unit = 0; unit < source.source.length;) {
+        byteToUnit.set(byte, unit);
+        const point = source.source.codePointAt(unit);
+        byte += point <= 0x7f ? 1 : point <= 0x7ff ? 2 : point <= 0xffff ? 3 : 4;
+        unit += point > 0xffff ? 2 : 1;
+    }
+    const starts = new Set();
+    let glyphCount = 0;
+    for (const line of shaped)
+        for (const run of line.runs) {
+            const offsets = run.offsets;
+            if (!(offsets instanceof Uint32Array) ||
+                offsets.length !== run.glyphs.length + 1 ||
+                (glyphCount += run.glyphs.length) > 65536)
+                throw new EgretError('PARAGRAPH_NATIVE_STYLE_INVALID');
+            // Ignore the terminal offset: in RTL it can repeat the lowest source
+            // start. Source starts are paragraph-absolute UTF8, in visual glyph order.
+            for (let index = 0; index < run.glyphs.length; index++) {
+                const unit = byteToUnit.get(offsets[index]);
+                if (unit === undefined)
+                    throw new EgretError('PARAGRAPH_NATIVE_STYLE_INVALID');
+                starts.add(unit);
+            }
+        }
+    const paint = [];
+    let leading;
+    for (let index = 0; index < source.source.length; index++) {
+        if (starts.has(index))
+            leading = source.styles[index].fillColor;
+        // Hard breaks are inkless and retain their authored style for native
+        // blank-line ellipsis selection. No inferred cluster end is published.
+        if (/[\n\u2028\u2029]/.test(source.source[index]))
+            leading = undefined;
+        paint.push(leading ?? source.styles[index].fillColor);
+    }
+    return paint;
+}
+/**
+ * CPU raster adapter using standard CanvasKit paragraph APIs and explicit font bytes.
+ * Hosts select a qualified native build; final-line and layout controls share its glyph plan.
+ * No private qualification snapshot or its 1024-byte/16-line envelope is used.
+ */
+/** Internal capability port shared by fixed and generation-aware adapters. */
+export function canvasKitParagraphCapabilities(ck) {
+    const alignments = { right: ck.TextAlign.Right, center: ck.TextAlign.Center, justify: ck.TextAlign.Justify };
+    return Object.freeze({
+        styledRuns: typeof ck.TextStyle === 'function' &&
+            typeof ck.ParagraphBuilder.prototype?.pushStyle === 'function' &&
+            typeof ck.ParagraphBuilder.prototype?.pop === 'function' &&
+            typeof ck.Paragraph?.prototype?.getShapedLines === 'function',
+        textGeometry: typeof ck.Paragraph?.prototype?.getGlyphInfoAt === 'function',
+        textAlign: alignments.right !== undefined && alignments.center !== undefined && alignments.justify !== undefined,
+        maxLines: ck.EgretParagraphLayoutVersion === 1 &&
+            typeof ck.Paragraph?.prototype?.didExceedMaxLines === 'function' &&
+            typeof ck.Paragraph?.prototype?.hasLineEllipsis === 'function'
+    });
+}
+export function createCanvasKitParagraphProvider(options) {
+    return createCanvasKitParagraphProviderOwned(options);
+}
+/** CanvasKit's raw binding takes ownership of the allocation, including a null decode result. */
+export function decodeCanvasKitFont(ck, data) {
+    const decode = ck.Typeface._MakeTypefaceFromData;
+    if (typeof decode !== 'function')
+        return ck.Typeface.MakeTypefaceFromData(data);
+    const pointer = ck._malloc(data.byteLength);
+    // The bundled convenience wrapper writes at zero on malloc failure. Never call it on this path.
+    if (!Number.isSafeInteger(pointer) || pointer <= 0)
+        throw new EgretError('PARAGRAPH_FONT_ALLOCATION_REFUSED');
+    try {
+        if (pointer + data.byteLength > ck.HEAPU8.byteLength)
+            throw new EgretError('PARAGRAPH_FONT_ALLOCATION_REFUSED');
+        ck.HEAPU8.set(data, pointer);
+    }
+    catch (cause) {
+        ck._free(pointer);
+        throw cause;
+    }
+    return decode.call(ck.Typeface, pointer, data.byteLength);
+}
+export function createCanvasKitParagraphProviderOwned(options, borrowFont) {
+    const ck = options.canvasKit;
+    const supplied = options.fonts;
+    if (!Array.isArray(supplied) || supplied.length < 1 || supplied.length > 16)
+        throw new RangeError('Paragraph font count');
+    const families = new Set();
+    let fontBytes = 0;
+    // Snapshot bytes before invoking the host's decoder. Identity is a declaration,
+    // not a claim that this synchronous adapter recomputes a cryptographic hash.
+    const inputs = supplied.map(font => {
+        token(font.family, 256, 'font family');
+        token(font.identity, 512, 'font identity');
+        if (families.has(font.family))
+            throw new TypeError('Duplicate paragraph font family');
+        families.add(font.family);
+        if (!(font.data instanceof Uint8Array) || !font.data.byteLength)
+            throw new TypeError('Paragraph font bytes required');
+        fontBytes += font.data.byteLength;
+        if (fontBytes > 33554432)
+            throw new RangeError('Paragraph font byte limit exceeded');
+        return { family: font.family, identity: font.identity, data: Uint8Array.from(font.data) };
+    });
+    let moduleIdentity = moduleIdentities.get(ck);
+    if (moduleIdentity === undefined) {
+        moduleIdentity = nextModuleIdentity++;
+        moduleIdentities.set(ck, moduleIdentity);
+    }
+    if (options.buildIdentity !== undefined)
+        token(options.buildIdentity, 512, 'build identity');
+    // Capture enum ports before publication; prepare never invokes late enum getters.
+    const alignments = Object.freeze({
+        left: ck.TextAlign.Left,
+        right: ck.TextAlign.Right,
+        center: ck.TextAlign.Center,
+        justify: ck.TextAlign.Justify
+    });
+    const capabilities = canvasKitParagraphCapabilities(ck);
+    const identity = 'egret.canvaskit-paragraph.v4:' +
+        JSON.stringify([
+            options.buildIdentity ?? 'host-module-' + moduleIdentity,
+            inputs.map(font => [font.family, font.identity]),
+            capabilities.textAlign,
+            capabilities.maxLines,
+            capabilities.textGeometry,
+            capabilities.styledRuns
+        ]);
+    if (identity.length > 8192)
+        throw new RangeError('Paragraph combined provider identity limit exceeded');
+    const roots = [];
+    let closed = false;
+    let fatal = false;
+    let busy = false;
+    const native = (work) => {
+        if (fatal)
+            throw new EgretError('PARAGRAPH_BACKEND_TERMINAL');
+        try {
+            return work();
+        }
+        catch (cause) {
+            if (cause instanceof WebAssembly.RuntimeError || /Aborted\(/.test(String(cause)))
+                fatal = true;
+            throw cause;
+        }
+    };
+    const retire = (owned, surface) => {
+        if (fatal)
+            return; // A trapped generation cannot be used for native cleanup.
+        const failures = [];
+        if (surface !== undefined) {
+            try {
+                native(() => surface.dispose());
+            }
+            catch (cause) {
+                failures.push(cause);
+            }
+        }
+        for (const item of owned.reverse()) {
+            if (fatal)
+                break;
+            try {
+                native(() => item.delete());
+            }
+            catch (cause) {
+                failures.push(cause);
+            }
+        }
+        owned.length = 0;
+        if (failures.length) {
+            closed = true;
+            throw new EgretError('PARAGRAPH_BACKEND_CLEANUP_FAILED', { cause: failures[0], cleanupErrors: failures });
+        }
+    };
+    let fontProvider;
+    try {
+        const created = native(() => ck.TypefaceFontProvider.Make());
+        if (created === null)
+            throw new EgretError('PARAGRAPH_FONT_PROVIDER_REFUSED');
+        fontProvider = created;
+        roots.push(created);
+        for (const font of inputs) {
+            const borrowed = borrowFont === undefined ? undefined : native(() => borrowFont(font));
+            const face = borrowed === undefined ? native(() => decodeCanvasKitFont(ck, font.data)) : borrowed.face;
+            if (face === null)
+                throw new EgretError('PARAGRAPH_FONT_DECODE_REFUSED');
+            roots.push(borrowed === undefined ? face : { delete: () => borrowed.release() });
+            const alias = new TextEncoder().encode(font.family + '\0');
+            const pointer = native(() => ck._malloc(alias.byteLength));
+            if (pointer === 0)
+                throw new EgretError('PARAGRAPH_FONT_ALLOCATION_REFUSED');
+            if (!Number.isSafeInteger(pointer) || pointer < 0 || pointer + alias.byteLength > ck.HEAPU8.byteLength) {
+                fatal = true;
+                throw new EgretError('PARAGRAPH_FONT_ALLOCATION_TERMINAL');
+            }
+            try {
+                ck.HEAPU8.set(alias, pointer);
+                native(() => fontProvider._registerFont(face, pointer));
+            }
+            finally {
+                if (!fatal)
+                    native(() => ck._free(pointer));
+            }
+        }
+    }
+    catch (cause) {
+        try {
+            retire(roots);
+        }
+        catch {
+            /* Keep the original initialization refusal. */
+        }
+        throw cause;
+    }
+    // Native streams own decoded bytes. A shared owner may retain a comparison
+    // copy; this provider owns only its native face borrows and releases them.
+    inputs.length = 0;
+    const check = (signal) => {
+        if (closed)
+            throw new EgretError('PARAGRAPH_PROVIDER_DISPOSED');
+        if (fatal)
+            throw new EgretError('PARAGRAPH_BACKEND_TERMINAL');
+        if (signal.aborted)
+            throw new EgretError('PARAGRAPH_PREPARE_CANCELLED', { cause: signal.reason });
+    };
+    const provider = Object.freeze({
+        identity,
+        capabilities,
+        async prepare(request, context) {
+            if (this !== provider || busy)
+                throw new EgretError('PARAGRAPH_PROVIDER_BUSY');
+            check(context.signal);
+            const sourceText = request.text;
+            scalarText(sourceText);
+            const layoutSource = nativeLayoutSource(sourceText);
+            bounded(request.width, 0.25, 4096, 'width');
+            bounded(request.fontSize, 1, 512, 'font size');
+            bounded(request.density, 0.25, 4, 'density');
+            if (request.lineHeight !== undefined)
+                bounded(request.lineHeight, 1, 1024, 'line height');
+            if (!Number.isInteger(request.fillColor) || request.fillColor < 0 || request.fillColor > 0xffffff)
+                throw new RangeError('Paragraph fill color');
+            token(request.locale, 64, 'locale');
+            if (request.direction !== 'ltr' && request.direction !== 'rtl')
+                throw new TypeError('Paragraph direction');
+            if (!Array.isArray(request.fontFamilies) ||
+                request.fontFamilies.length < 1 ||
+                request.fontFamilies.some(family => !families.has(family))) {
+                throw new EgretError('PARAGRAPH_FONT_NOT_REGISTERED');
+            }
+            const styled = captureStyledSource(request, layoutSource, families);
+            const textAlign = request.textAlign ?? 'left', maxLines = request.maxLines;
+            if (!['left', 'right', 'center', 'start', 'end', 'justify'].includes(textAlign))
+                throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+            if (maxLines !== undefined && (!Number.isSafeInteger(maxLines) || maxLines < 1 || maxLines > 8193))
+                throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+            if ((textAlign !== 'left' && !capabilities.textAlign) ||
+                (maxLines !== undefined && !capabilities.maxLines) ||
+                (request.textGeometry && !capabilities.textGeometry) ||
+                (styled !== undefined && !capabilities.styledRuns))
+                throw new EgretError('PARAGRAPH_FEATURE_UNSUPPORTED');
+            const physicalAlign = textAlign === 'start'
+                ? request.direction === 'rtl'
+                    ? 'right'
+                    : 'left'
+                : textAlign === 'end'
+                    ? request.direction === 'rtl'
+                        ? 'left'
+                        : 'right'
+                    : textAlign;
+            const alignment = alignments[physicalAlign];
+            busy = true;
+            const owned = [];
+            let surface;
+            let failed = false;
+            try {
+                const color = ck.Color4f((request.fillColor >>> 16) / 255, ((request.fillColor >>> 8) & 255) / 255, (request.fillColor & 255) / 255, 1);
+                const styleInput = {
+                    textStyle: {
+                        color,
+                        fontFamilies: [...request.fontFamilies],
+                        fontSize: request.fontSize,
+                        locale: request.locale
+                    },
+                    textDirection: request.direction === 'rtl' ? ck.TextDirection.RTL : ck.TextDirection.LTR,
+                    textAlign: alignment,
+                    applyRoundingHack: false,
+                    ...(maxLines === undefined ? {} : { maxLines, ellipsis: '\u2026' }),
+                    ...(request.lineHeight === undefined
+                        ? {}
+                        : {
+                            strutStyle: {
+                                strutEnabled: true,
+                                fontFamilies: [...request.fontFamilies],
+                                fontSize: request.fontSize,
+                                heightMultiplier: request.lineHeight / request.fontSize,
+                                halfLeading: true,
+                                forceStrutHeight: false
+                            }
+                        })
+                };
+                const addStyled = (builder, paints) => {
+                    if (styled === undefined) {
+                        native(() => builder.addText(layoutSource.text));
+                        return;
+                    }
+                    if (typeof builder.pushStyle !== 'function' || typeof builder.pop !== 'function')
+                        throw new EgretError('PARAGRAPH_FEATURE_UNSUPPORTED');
+                    for (let start = 0; start < styled.source.length;) {
+                        const current = styled.styles[start], fill = paints?.[start] ?? request.fillColor;
+                        let end = start + 1;
+                        while (end < styled.source.length &&
+                            sameFont(current, styled.styles[end]) &&
+                            (paints === undefined || paints[end] === fill))
+                            end++;
+                        const runColor = ck.Color4f((fill >>> 16) / 255, ((fill >>> 8) & 255) / 255, (fill & 255) / 255, 1);
+                        native(() => builder.pushStyle(new ck.TextStyle({
+                            fontFamilies: [...current.fontFamilies],
+                            fontSize: current.fontSize,
+                            color: runColor,
+                            locale: request.locale
+                        })));
+                        native(() => builder.addText(styled.source.slice(start, end)));
+                        native(() => builder.pop());
+                        start = end;
+                    }
+                };
+                let paints;
+                const uniformPaint = styled !== undefined && styled.styles.every(style => style.fillColor === styled.styles[0].fillColor);
+                if (uniformPaint)
+                    paints = styled.styles.map(style => style.fillColor);
+                if (styled !== undefined && !uniformPaint) {
+                    // Standard shaped lines do not label discretionary synthetic
+                    // hyphens. Uniform paint/font-only runs need no source paint map.
+                    if (sourceText.includes('\u00ad'))
+                        throw new EgretError('PARAGRAPH_FEATURE_UNSUPPORTED');
+                    const probeOwned = [];
+                    let probeFailed = false;
+                    try {
+                        // Shape the whole source once without paint boundaries or
+                        // synthetic ellipsis. The second whole paragraph supplies
+                        // all final metrics, geometry and pixels.
+                        const probeStyle = new ck.ParagraphStyle({ ...styleInput, maxLines: undefined, ellipsis: undefined });
+                        const probeBuilder = native(() => ck.ParagraphBuilder.MakeFromFontProvider(probeStyle, fontProvider));
+                        if (probeBuilder === null)
+                            throw new EgretError('PARAGRAPH_BUILD_REFUSED');
+                        probeOwned.push(probeBuilder);
+                        addStyled(probeBuilder);
+                        const probe = native(() => probeBuilder.build());
+                        if (probe === null)
+                            throw new EgretError('PARAGRAPH_BUILD_REFUSED');
+                        probeOwned.push(probe);
+                        native(() => probe.layout(request.width));
+                        if (native(() => probe.unresolvedCodepoints()).length)
+                            throw new EgretError('PARAGRAPH_GLYPH_UNRESOLVED');
+                        const shaped = native(() => probe.getShapedLines());
+                        for (const line of shaped)
+                            for (const run of line.runs)
+                                probeOwned.push(run.typeface);
+                        paints = clusterPaint(styled, shaped);
+                        check(context.signal);
+                    }
+                    catch (cause) {
+                        probeFailed = true;
+                        throw cause;
+                    }
+                    finally {
+                        try {
+                            retire(probeOwned);
+                        }
+                        catch (cause) {
+                            if (!probeFailed)
+                                throw cause;
+                        }
+                    }
+                }
+                const style = new ck.ParagraphStyle(styleInput);
+                const builder = native(() => ck.ParagraphBuilder.MakeFromFontProvider(style, fontProvider));
+                if (builder === null)
+                    throw new EgretError('PARAGRAPH_BUILD_REFUSED');
+                owned.push(builder);
+                addStyled(builder, paints);
+                const paragraph = native(() => builder.build());
+                if (paragraph === null)
+                    throw new EgretError('PARAGRAPH_BUILD_REFUSED');
+                owned.push(paragraph);
+                native(() => paragraph.layout(request.width));
+                if (native(() => paragraph.unresolvedCodepoints()).length)
+                    throw new EgretError('PARAGRAPH_GLYPH_UNRESOLVED');
+                const nativeLines = native(() => paragraph.getLineMetrics()).map((line, index, all) => {
+                    // Some native builds overlap the terminating hard break in
+                    // their final empty-line range. Its source position is EOF;
+                    // keep the native blank line/metrics and the strict core gate.
+                    if (index === all.length - 1 &&
+                        index > 0 &&
+                        line.width === 0 &&
+                        /[\n\u2028\u2029]$/.test(layoutSource.text) &&
+                        line.endIndex === layoutSource.text.length &&
+                        line.startIndex < all[index - 1].endIndex) {
+                        return { ...line, startIndex: layoutSource.text.length, endIndex: layoutSource.text.length };
+                    }
+                    return line;
+                });
+                const lines = nativeLines.map(line => {
+                    if (!Number.isInteger(line.startIndex) ||
+                        !Number.isInteger(line.endIndex) ||
+                        line.startIndex < 0 ||
+                        line.endIndex < line.startIndex ||
+                        line.endIndex > layoutSource.text.length) {
+                        throw new EgretError('PARAGRAPH_NATIVE_RANGE_INVALID');
+                    }
+                    const start = layoutSource.boundaries?.[line.startIndex] ?? line.startIndex;
+                    const end = layoutSource.boundaries?.[line.endIndex] ?? line.endIndex;
+                    return Object.freeze({
+                        start,
+                        end,
+                        baseline: bounded(line.baseline, -1048576, 1048576, 'baseline'),
+                        ascent: bounded(line.ascent, 0, 1048576, 'ascent'),
+                        descent: bounded(line.descent, 0, 1048576, 'descent'),
+                        height: bounded(line.height, 0, 1048576, 'line height'),
+                        width: bounded(line.width, 0, 1048576, 'line width')
+                    });
+                });
+                const height = bounded(native(() => paragraph.getHeight()), 0, 1048576, 'height');
+                if (request.lineHeight !== undefined && lines.some(line => line.height + 0.0001 < request.lineHeight))
+                    throw new EgretError('PARAGRAPH_MINIMUM_LINE_HEIGHT_UNSUPPORTED');
+                // Use actual native overflow state, including a fully fitting last line.
+                // The visible line count alone cannot distinguish fit from truncation.
+                if (maxLines !== undefined &&
+                    (typeof paragraph.didExceedMaxLines !== 'function' || typeof paragraph.hasLineEllipsis !== 'function'))
+                    throw new EgretError('PARAGRAPH_FEATURE_UNSUPPORTED');
+                const truncated = maxLines === undefined ? undefined : native(() => paragraph.didExceedMaxLines());
+                if (maxLines !== undefined && (lines.length > maxLines || typeof truncated !== 'boolean'))
+                    throw new EgretError('PARAGRAPH_NATIVE_RANGE_INVALID');
+                // The native marker query distinguishes real truncation from a
+                // blank last line when the marker cannot fit. Refuse that result
+                // before touching committed UI or terminally poisoning the backend.
+                if (truncated === true && native(() => paragraph.hasLineEllipsis(lines.length - 1)) !== true)
+                    throw new EgretError('PARAGRAPH_ELLIPSIS_DOES_NOT_FIT');
+                const metrics = Object.freeze({
+                    width: request.width,
+                    height,
+                    lines: Object.freeze(lines),
+                    ...(truncated === undefined ? {} : { truncated })
+                });
+                const geometry = request.textGeometry
+                    ? captureCanvasKitTextGeometry(paragraph, nativeLines, request, metrics, layoutSource, ck.TextDirection.RTL, ck.TextDirection.LTR, native)
+                    : undefined;
+                const shaped = native(() => paragraph.getShapedLines());
+                // getShapedLines returns owned temporary face wrappers, including
+                // repeats. Register every wrapper before inspecting any glyph data.
+                for (const line of shaped)
+                    for (const run of line.runs)
+                        owned.push(run.typeface);
+                let left = Infinity, top = Infinity, right = -Infinity, bottom = -Infinity;
+                for (const line of shaped)
+                    for (const run of line.runs) {
+                        if (!run.glyphs.length)
+                            continue;
+                        const font = native(() => new ck.Font(run.typeface, run.size, run.scaleX ?? 1, 0));
+                        owned.push(font);
+                        native(() => font.setSubpixel(true));
+                        native(() => font.setHinting(ck.FontHinting.Slight));
+                        native(() => font.setEdging(ck.FontEdging.AntiAlias));
+                        const bounds = native(() => font.getGlyphBounds(run.glyphs));
+                        if (bounds.length !== run.glyphs.length * 4 || run.positions.length < run.glyphs.length * 2)
+                            throw new EgretError('PARAGRAPH_NATIVE_GLYPH_INVALID');
+                        for (let index = 0; index < run.glyphs.length; index++) {
+                            // Synthetic ellipsis glyphs are not covered by source-only
+                            // unresolvedCodepoints; refuse visible missing glyphs as well.
+                            if (truncated === true && run.glyphs[index] === 0)
+                                throw new EgretError('PARAGRAPH_GLYPH_UNRESOLVED');
+                            const x = bounded(run.positions[index * 2], -1048576, 1048576, 'glyph x');
+                            const y = bounded(run.positions[index * 2 + 1], -1048576, 1048576, 'glyph y');
+                            const l = bounded(bounds[index * 4], -1048576, 1048576, 'glyph left');
+                            const t = bounded(bounds[index * 4 + 1], -1048576, 1048576, 'glyph top');
+                            const r = bounded(bounds[index * 4 + 2], -1048576, 1048576, 'glyph right');
+                            const b = bounded(bounds[index * 4 + 3], -1048576, 1048576, 'glyph bottom');
+                            if (r > l && b > t) {
+                                left = Math.min(left, x + l);
+                                top = Math.min(top, y + t);
+                                right = Math.max(right, x + r);
+                                bottom = Math.max(bottom, y + b);
+                            }
+                        }
+                    }
+                check(context.signal);
+                if (!(left < right && top < bottom))
+                    return Object.freeze({
+                        metrics,
+                        image: undefined,
+                        offsetX: 0,
+                        offsetY: 0,
+                        ...(geometry ? { geometry } : {})
+                    });
+                const pixelLeft = Math.floor(left * request.density) - 2;
+                const pixelTop = Math.floor(top * request.density) - 2;
+                const width = Math.ceil(right * request.density) + 2 - pixelLeft;
+                const rasterHeight = Math.ceil(bottom * request.density) + 2 - pixelTop;
+                // A paragraph raster keeps the bound it was accepted under; the bound of a 2D image is separate.
+                if (width > IMAGE_LIMITS_2D.maxSourceEdge ||
+                    rasterHeight > IMAGE_LIMITS_2D.maxSourceEdge ||
+                    width * rasterHeight > 1048576)
+                    throw new EgretError('PARAGRAPH_IMAGE_LIMIT');
+                const created = native(() => ck.MakeSurface(width, rasterHeight));
+                if (created === null)
+                    throw new EgretError('PARAGRAPH_RASTER_REFUSED');
+                surface = created;
+                const canvas = native(() => created.getCanvas()); // Borrowed from surface.
+                native(() => canvas.clear(ck.TRANSPARENT));
+                native(() => canvas.scale(request.density, request.density));
+                native(() => canvas.translate(-pixelLeft / request.density, -pixelTop / request.density));
+                native(() => canvas.drawParagraph(paragraph, 0, 0));
+                native(() => created.flush());
+                const raw = native(() => canvas.readPixels(0, 0, {
+                    width,
+                    height: rasterHeight,
+                    colorType: ck.ColorType.RGBA_8888,
+                    alphaType: ck.AlphaType.Unpremul,
+                    colorSpace: ck.ColorSpace.SRGB
+                }));
+                if (raw === null || raw.byteLength !== width * rasterHeight * 4)
+                    throw new EgretError('PARAGRAPH_READBACK_REFUSED');
+                const image = createImageData2D({ width, height: rasterHeight, pixels: Uint8Array.from(raw) });
+                check(context.signal);
+                return Object.freeze({
+                    metrics,
+                    image,
+                    offsetX: pixelLeft / request.density,
+                    offsetY: pixelTop / request.density,
+                    ...(geometry ? { geometry } : {})
+                });
+            }
+            catch (cause) {
+                failed = true;
+                throw cause;
+            }
+            finally {
+                try {
+                    retire(owned, surface);
+                }
+                catch (cause) {
+                    if (!failed)
+                        throw cause;
+                }
+                finally {
+                    busy = false;
+                }
+            }
+        },
+        dispose() {
+            if (this !== provider)
+                throw new EgretError('PARAGRAPH_PROVIDER_INVALID');
+            if (closed)
+                return;
+            if (busy)
+                throw new EgretError('PARAGRAPH_PROVIDER_BUSY');
+            closed = true;
+            retire(roots);
+            if (fatal)
+                throw new EgretError('PARAGRAPH_BACKEND_TERMINAL');
+        }
+    });
+    return provider;
+}
+//# sourceMappingURL=CanvasKitParagraphProvider.js.map

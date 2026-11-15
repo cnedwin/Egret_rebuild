@@ -1,0 +1,8 @@
+/** Optional metadata assembly; importing it creates no provider or CPU value. */
+export { createManifestAssetBinding } from './manifestResourceState.js';
+export { createContentLoader } from './contentLoader.js';
+export type { ContentBinding, ContentProviders, ContentProviderFactory, ContentGroup, ContentLoader } from './contentTypes.js';
+export type { ManifestBinding, ManifestAssetBinding, ManifestAssetGroup, ManifestGroupOptions } from './manifestResourceTypes.js';
+export { createFontContentLoader } from './fontContentLoader.js';
+export type { FontContentBinding, FontContentAsset, FontContentGroup, FontContentLoader, FontContentProviderFactory } from './fontContentTypes.js';
+//# sourceMappingURL=resources.d.ts.map

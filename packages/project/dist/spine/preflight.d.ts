@@ -1,0 +1,33 @@
+import type { SpineImportInput, SpineImportResult } from "./types.js";
+export declare const SPINE_IMPORT_LIMITS: Readonly<{
+    maxSkeletonUtf8Bytes: 8388608;
+    maxAtlasUtf8Bytes: 1048576;
+    maxJsonDepth: 32;
+    maxJsonNodes: 262144;
+    maxJsonProperties: 131072;
+    maxJsonStringUtf8Bytes: 65536;
+    maxJsonKeyUtf8Bytes: 1024;
+    maxSourceIdUtf8Bytes: 256;
+    maxAssetIdUtf8Bytes: 256;
+    maxNameUtf8Bytes: 1024;
+    maxPagePathUtf8Bytes: 1024;
+    maxProvenanceFieldUtf8Bytes: 4096;
+    maxProvenanceTotalUtf8Bytes: 262144;
+    maxAtlasPages: 64;
+    maxAtlasRegions: 8192;
+    maxAtlasFieldsPerSection: 32;
+    maxAtlasLineUtf8Bytes: 4096;
+    maxAtlasPageDimension: 16384;
+    maxAtlasRegionCoordinate: 16384;
+    maxAtlasPackedDimension: 16384;
+    maxAtlasOffset: 16384;
+    maxAtlasOriginalDimension: 16384;
+    maxAtlasIndex: 2147483647;
+    maxNamesPerCollection: 4096;
+    maxObservations: 4096;
+    maxSuccessDiagnostics: 16;
+    maxDiagnosticPointerUtf8Bytes: 2048;
+    maxObservationValueUtf8Bytes: 4096;
+}>;
+export declare function createSpineImportPlan(input: SpineImportInput): SpineImportResult;
+//# sourceMappingURL=preflight.d.ts.map

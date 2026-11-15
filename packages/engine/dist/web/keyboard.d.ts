@@ -1,0 +1,3 @@
+export { createBrowserKeyboardInput } from './BrowserKeyboardInput.js';
+export type { KeyboardSample, KeyboardCancelReason, KeyboardKeyPayload, KeyboardCancelPayload, KeyboardFocusPayload, KeyboardFocusChange, KeyboardInputOptions, KeyboardTargetOptions, KeyboardTargetRegistration, KeyboardInputSnapshot, KeyboardInputEvents, KeyboardFocusOptions, KeyboardInput } from '#egret-keyboard-input';
+//# sourceMappingURL=keyboard.d.ts.map

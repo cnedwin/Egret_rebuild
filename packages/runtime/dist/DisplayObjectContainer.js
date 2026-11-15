@@ -1,0 +1,226 @@
+import { assertManagedEdgeMutable, assertManagedChildrenMutable, cleanupManagedWrapper, managedTerminal } from "./ui/managedState.js";
+import { DisplayObject } from "./DisplayObject.js";
+import { registerDisplayHitContainer, readDisplayTouchChildren, writeDisplayTouchChildren } from "./displayHitState.js";
+import { EgretError } from "./EgretError.js";
+import { ASSERT_ATTACHABLE, ASSERT_BINDABLE, OWNERSHIP_CHILDREN, commitBinding, engineInSubtree, engineOf, ownerOf, preflightBinding, prepareChildInsertion, publishPreparedChildInsertion, validateBinding } from "./ownership.js";
+import { assertAttachable, assertContainer, assertLive, assertNoCycle, assertChildInsertionIndex, attachNode, childAtOf, childCountOf, childIndexOf, childrenOf, detachChildren, detachNode, isDisplayNode, isTerminated, parentOf, registerContainer, removeNode, setNodeIndex } from "./displayTreeState.js";
+// Carries the initiating owner's boundary through unowned intermediate containers.
+const disposalBoundaries = new WeakMap();
+/** Ordered display children with atomic reparenting and ownership-aware cleanup. */
+export class DisplayObjectContainer extends DisplayObject {
+    constructor() {
+        super();
+        registerContainer(this);
+        registerDisplayHitContainer(this);
+    }
+    /** Suppressed descendants never implicitly retarget to this container. */
+    get touchChildren() {
+        return readDisplayTouchChildren(this);
+    }
+    set touchChildren(value) {
+        writeDisplayTouchChildren(this, value);
+    }
+    get numChildren() {
+        return childCountOf(this);
+    }
+    [OWNERSHIP_CHILDREN]() {
+        return childrenOf(this);
+    }
+    /** Subclass hooks run in preflight; final binding and reparenting use internal state. */
+    addChild(child) {
+        assertManagedEdgeMutable(this, child);
+        // A bound receiver's existing descendants already share its permanent
+        // affinity: every attach/bind validates before commit and detach retains it.
+        // Preserve whole-tree checks for a receiver that starts unbound, even if a
+        // subclass hook binds it while this operation is in progress.
+        const receiverWasBound = engineOf(this) !== undefined;
+        const engine = engineInSubtree(this) ?? engineInSubtree(child);
+        engine?.assertOpen();
+        this.assertUsable();
+        child[ASSERT_ATTACHABLE]();
+        assertNoCycle(this, child);
+        if (engine !== undefined) {
+            if (receiverWasBound) {
+                // Incoming attachability can close the Engine. Preserve the original
+                // preflight error priority before invoking any receiver bindable hook.
+                engine.assertOpen();
+                this[ASSERT_BINDABLE]();
+            }
+            else
+                preflightBinding(this, engine);
+            preflightBinding(child, engine);
+        }
+        // Re-read state and both current trees after callback-capable preflight.
+        // Validation, binding and internal detach/attach below invoke no user code.
+        assertManagedEdgeMutable(this, child);
+        const finalEngine = engineInSubtree(this) ?? engineInSubtree(child);
+        finalEngine?.assertOpen();
+        assertLive(this);
+        assertAttachable(child);
+        assertNoCycle(this, child);
+        // Receiver hooks still run; unrelated existing descendants do not. Final
+        // incoming validation always reads the current tree without user callbacks.
+        const binding = finalEngine === undefined
+            ? undefined
+            : [...(receiverWasBound ? [] : validateBinding(this, finalEngine)), ...validateBinding(child, finalEngine)];
+        if (binding !== undefined && finalEngine !== undefined)
+            commitBinding(binding, finalEngine);
+        attachNode(this, child);
+        return child;
+    }
+    /** Insert at an inclusive index; subclass callbacks finish before one private plan. */
+    addChildAt(child, index) {
+        assertManagedEdgeMutable(this, child);
+        // Authenticate and apply this API's fixed refusal order before any display hook.
+        assertContainer(this);
+        const receiverWasBound = engineOf(this) !== undefined;
+        const receiverEngine = engineInSubtree(this);
+        receiverEngine?.assertOpen();
+        assertLive(this);
+        if (!isDisplayNode(child))
+            throw new EgretError("INVALID_DISPLAY_OBJECT");
+        const engine = receiverEngine ?? engineInSubtree(child);
+        engine?.assertOpen();
+        assertAttachable(child);
+        assertNoCycle(this, child);
+        assertChildInsertionIndex(this, index);
+        this.assertUsable();
+        child[ASSERT_ATTACHABLE]();
+        if (engine !== undefined) {
+            if (receiverWasBound) {
+                engine.assertOpen();
+                this[ASSERT_BINDABLE]();
+            }
+            else
+                preflightBinding(this, engine);
+            preflightBinding(child, engine);
+        }
+        // No earlier tree/list/binding plan survives these callback-capable preflights.
+        assertManagedEdgeMutable(this, child);
+        const plan = prepareChildInsertion(this, child, index);
+        publishPreparedChildInsertion(plan);
+        return child;
+    }
+    /** Detach without disposing or transferring the cleanup owner. */
+    removeChild(child) {
+        assertManagedEdgeMutable(this, child);
+        engineOf(this)?.assertOpen();
+        assertLive(this);
+        assertLive(child);
+        removeNode(this, child);
+        return child;
+    }
+    /** Detach every direct child without disposing nodes or transferring owners. */
+    removeChildren() {
+        assertManagedChildrenMutable(this);
+        // Authenticate before reading affinity; preserve Engine-first life checks.
+        assertContainer(this);
+        engineOf(this)?.assertOpen();
+        assertLive(this);
+        detachChildren(this);
+    }
+    /** The first child with this name, or undefined. Children's own children are not looked at. */
+    getChildByName(name) {
+        if (typeof name !== "string")
+            throw new EgretError("DISPLAY_VALUE_INVALID");
+        for (let index = 0, count = childCountOf(this); index < count; index++) {
+            const child = childAtOf(this, index);
+            if (child !== undefined && child.name === name)
+                return child;
+        }
+        return undefined;
+    }
+    getChildAt(index) {
+        this.validateIndex(index);
+        const child = childAtOf(this, index);
+        if (child === undefined)
+            throw new EgretError("INVALID_INDEX");
+        return child;
+    }
+    /** Return a genuine direct child's current zero-based index without mutation. */
+    getChildIndex(child) {
+        // Authenticate before affinity; retain Engine-first receiver lifetime checks.
+        assertContainer(this);
+        engineOf(this)?.assertOpen();
+        assertLive(this);
+        if (!isDisplayNode(child))
+            throw new EgretError("INVALID_DISPLAY_OBJECT");
+        assertLive(child);
+        return childIndexOf(this, child);
+    }
+    setChildIndex(child, index) {
+        assertManagedEdgeMutable(this, child);
+        this.assertUsable();
+        assertLive(this);
+        this.validateIndex(index);
+        engineOf(this)?.assertOpen();
+        assertManagedEdgeMutable(this, child);
+        setNodeIndex(this, child, index);
+    }
+    validateIndex(index) {
+        if (!Number.isInteger(index) || index < 0 || index >= childCountOf(this))
+            throw new EgretError("INVALID_INDEX");
+    }
+    dispose() {
+        if (isTerminated(this))
+            return;
+        if (!managedTerminal(this))
+            assertManagedChildrenMutable(this);
+        const boundary = disposalBoundaries.get(this) ?? { owner: ownerOf(this) };
+        const engine = engineOf(this);
+        const failures = [];
+        const recordFailure = (cause) => {
+            const causes = cause instanceof EgretError &&
+                (cause.code === "EVENT_LISTENER_CLEANUP_FAILED" || cause.code === "DISPLAY_TREE_CLEANUP_FAILED")
+                ? [cause.cause, ...cause.cleanupErrors]
+                : [cause];
+            for (const item of causes) {
+                if (engine === undefined)
+                    failures.push(item);
+                else {
+                    engine.captureCleanup(item);
+                    engine.report({
+                        code: "DISPLAY_CHILD_CLEANUP_FAILED",
+                        phase: "display-tree",
+                        severity: "error",
+                        cause: item
+                    });
+                }
+            }
+        };
+        // A listener cleanup failure must not skip the current child subtree.
+        try {
+            super.dispose();
+        }
+        catch (cause) {
+            recordFailure(cause);
+        }
+        for (const child of childrenOf(this)) {
+            if (parentOf(child) !== this)
+                continue;
+            const childOwner = ownerOf(child);
+            // Detach a foreign-owned subtree intact; its Scope remains responsible for it.
+            if (childOwner !== undefined && childOwner !== boundary.owner) {
+                detachNode(child);
+                engine?.report({ code: "FOREIGN_SUBTREE_DETACHED", phase: "display-tree", severity: "warning" });
+                continue;
+            }
+            disposalBoundaries.set(child, boundary);
+            try {
+                if (!cleanupManagedWrapper(child))
+                    child.dispose();
+            }
+            catch (cause) {
+                recordFailure(cause);
+            }
+            finally {
+                disposalBoundaries.delete(child);
+                if (parentOf(child) === this)
+                    detachNode(child);
+            }
+        }
+        if (failures.length !== 0)
+            throw new EgretError("DISPLAY_TREE_CLEANUP_FAILED", { cause: failures[0], cleanupErrors: failures.slice(1) });
+    }
+}
+//# sourceMappingURL=DisplayObjectContainer.js.map
