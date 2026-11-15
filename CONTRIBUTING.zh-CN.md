@@ -27,6 +27,8 @@
     pnpm check:quick
     pnpm example:browser
 
+`packages/*/src`、`packages/*/web` 和 `packages/*/rendering` 下的源码由格式化工具排版。修改这些文件后，提交前运行 `pnpm format`；有文件的排版与格式化工具的结果不一致时，`tests/format.test.mjs` 会失败。设置在 `biome.json` 中：两个空格缩进，每行最多 120 个字符，引号沿用各文件原来的风格。
+
 开发时使用 `node tools/check-incremental.mjs --base origin/main` 获取受影响行为反馈。推送前审阅来源、两种阅读版本和关键英文注释。提交钩子检查文本字节，推送钩子对干净已提交快照运行 `node tools/check-push.mjs --committed`，在发布检查前执行一次构建与三个公共夹具／类型基线正例。需要提前检查这些前置条件时，可运行 `node tools/check-test-baselines.mjs`。代码和其他高风险改动须运行完整 `pnpm check:merge`／集成 CI。符合条件的阅读文档运行受保护的 Windows 文档检查。合并前仍须独立评审及适用的实际浏览器证据，详见[工程计划](knowledge-base/Cns/docs/architecture-and-engineering-plan.md)的交付分层。
 
 完整的 Windows 路线在同一候选上以并行作业执行：一个作业运行 `node tools/prepush.mjs --integrated --no-tests`，四个 `windows tests` 作业各自通过 `node tools/test.mjs --shard=<序号>/4` 运行四分之一的测试文件。它们合起来执行的内容与本地 `pnpm check:merge` 完全相同；不省略任何测试文件，最终检查要求每个作业都通过。每个作业保留 60 分钟的执行时限。这是执行预算，不是开发迭代耗时目标，也不豁免任何检查；合并前所有必需检查仍须完整通过。
