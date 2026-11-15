@@ -1,0 +1,10 @@
+{
+  "name": "egret-source-format",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The formatter that lays out the engine sources. It is installed here, apart from the workspace, so that the workspace lockfile stays as its checks have it.",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@biomejs/biome": "2.6.7"
+  }
+}

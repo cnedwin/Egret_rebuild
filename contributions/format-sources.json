@@ -6,8 +6,25 @@
       "originRole": "First-party configuration of the source formatter: which files it lays out and how; independently authored with AI assistance; Apache-2.0."
     },
     {
+      "path": "tools/format.mjs",
+      "originRole": "First-party tool that runs the formatter over the sources, or checks them; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/format/package.json",
+      "originRole": "First-party manifest of the small project the formatter is installed in, apart from the workspace; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/format/package-lock.json",
+      "originRole": "Lockfile written by npm for the formatter's own project: the exact packages and integrity of Biome 2.6.7 and its platform builds; generated; Apache-2.0 for the file, each package under its own licence."
+    },
+    {
+      "path": ".github/workflows/format.yml",
+      "originRole": "First-party workflow that installs the formatter and checks that the sources are laid out; independently authored with AI assistance; Apache-2.0."
+    },
+    {
       "path": "tests/format.test.mjs",
-      "originRole": "First-party test that the sources are laid out as the formatter lays them out; independently authored with AI assistance; Apache-2.0.",
+      "originRole": "First-party test that the sources are laid out as the formatter lays them out, skipped where the formatter is not installed; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
     },
     {
