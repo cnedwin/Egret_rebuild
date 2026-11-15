@@ -2,14 +2,13 @@ name: Advisory source lint
 on:
   pull_request:
     paths:
-      - 'packages/*/src/**/*.ts'
-      - 'packages/*/web/**/*.ts'
-      - 'packages/*/rendering/**/*.ts'
+      - 'packages/**'
+      - 'examples/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'devtools/**'
       - 'biome.json'
       - 'biome.lint.json'
-      - 'tools/lint.mjs'
-      - 'tools/format.mjs'
-      - 'tools/format/**'
       - '.github/workflows/lint.yml'
   workflow_dispatch:
 permissions:
@@ -22,9 +21,17 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
+          fetch-depth: 2
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
       - run: npm ci --ignore-scripts --prefix tools/format
-      - run: node tools/lint.mjs
+      - env:
+          EGRET_LINT_PR_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            node tools/lint.mjs --base "$EGRET_LINT_PR_BASE"
+          else
+            node tools/lint.mjs
+          fi

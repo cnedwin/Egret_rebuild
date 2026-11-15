@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Length advice for added source files — 2026-11-15
+
+The advisory lint job reports newly added source and script files over 600 lines using the exact pull request base and the reviewed Git diff. It skips existing files, detected renames, links, and known generated and vendor paths. To run the same advisory locally, use `node tools/lint.mjs --base <commit-sha>`. The warning is for review and does not fail the job.
+
 ## Remove two unused private rendering exports — 2026-11-15
 
 Removed the unused mesh clipping policy and the old one-corner UV wrapper. Shared draws still use the existing clipping and float32 UV checks.
